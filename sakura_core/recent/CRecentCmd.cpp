@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentCmd.h"
 #include <string.h>
 
@@ -12,8 +12,8 @@
 CRecentCmd::CRecentCmd()
 {
 	Create(
-		&GetShareData()->m_aCommands[0],
-		&GetShareData()->m_aCommands._GetSizeRef(),
+		&GetShareData()->m_sHistory.m_aCommands[0],
+		&GetShareData()->m_sHistory.m_aCommands._GetSizeRef(),
 		NULL /*GetShareData()->m_bCmdArrFavorite*/,
 		MAX_CMDARR,
 		NULL

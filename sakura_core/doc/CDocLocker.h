@@ -5,7 +5,7 @@
 class CDocLocker : public CDocListenerEx{
 public:
 	CDocLocker();
-	
+
 	//ÉNÉäÉA
 	void Clear(void) { m_bIsDocWritable = true; }
 

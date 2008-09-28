@@ -22,7 +22,6 @@ SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int
 SAKURA_CORE_API const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
 SAKURA_CORE_API const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版
 SAKURA_CORE_API void GetLineColm( const wchar_t*, int*, int* );
-SAKURA_CORE_API int IsNumber( const wchar_t*, int, int );/* 数値ならその長さを返す */	//@@@ 2001.02.17 by MIK
 
 
 SAKURA_CORE_API int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);

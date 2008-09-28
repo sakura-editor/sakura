@@ -18,9 +18,9 @@
 //@@@ 2001.11.17 add start MIK
 
 #include "stdafx.h"
-#include "global.h"
 #include "CRegexKeyword.h"
 #include "CBregexp.h"
+#include "view/colors/CColorStrategy.h"
 
 #if 0
 #include <stdio.h>
@@ -126,17 +126,17 @@ BOOL CRegexKeyword::RegexKeySetTypes( STypeConfig *pTypesPtr )
 	if( pTypesPtr == NULL ) 
 	{
 		m_pTypes = NULL;
-		m_bUseRegexKeyword = FALSE;
+		m_bUseRegexKeyword = false;
 		return FALSE;
 	}
 
-	if( pTypesPtr->m_bUseRegexKeyword == FALSE )
+	if( !pTypesPtr->m_bUseRegexKeyword )
 	{
 		//OFFになったのにまだONならOFFにする。
 		if( m_bUseRegexKeyword )
 		{
 			m_pTypes = NULL;
-			m_bUseRegexKeyword = FALSE;
+			m_bUseRegexKeyword = false;
 		}
 		return FALSE;
 	}
@@ -199,11 +199,11 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 	m_nTypeIndex = m_pTypes->m_nIdx;
 	m_nCompiledMagicNumber = m_pTypes->m_nRegexKeyMagicNumber - 1;	//Not Compiled.
 	m_bUseRegexKeyword  = m_pTypes->m_bUseRegexKeyword;
-	if( m_bUseRegexKeyword == 0 ) return FALSE;
+	if( !m_bUseRegexKeyword ) return FALSE;
 
 	if( ! IsAvailable() )
 	{
-		m_bUseRegexKeyword = 0;
+		m_bUseRegexKeyword = false;
 		return FALSE;
 	}
 
@@ -294,9 +294,7 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 	MYDBGMSG("RegexKeyLineStart")
 
 	//動作に必要なチェックをする。
-	if( ( m_bUseRegexKeyword == FALSE )
-	 || ( ! IsAvailable() )
-	 || ( m_pTypes == NULL ) )
+	if( !m_bUseRegexKeyword || !IsAvailable() || m_pTypes==NULL )
 	{
 		return FALSE;
 	}
@@ -327,28 +325,28 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 
 	正規表現キーワードを検索する。
 
-	@param pLine [in] １行のデータ
-	@param nPos [in] 検索開始オフセット
-	@param nLineLen [in] １行の長さ
-	@param nMatchLen [out] マッチした長さ
-	@param nMatchColor [out] マッチした色番号
-
 	@retval TRUE 一致
 	@retval FALSE 不一致
 
 	@note RegexKeyLineStart関数によって初期化されていること。
 */
-BOOL CRegexKeyword::RegexIsKeyword( const wchar_t *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor )
+BOOL CRegexKeyword::RegexIsKeyword(
+	const CStringRef&	cStr,		//!< [in] 検索対象文字列
+//	const wchar_t*		pLine,		//!< [in] １行のデータ
+	int					nPos,		//!< [in] 検索開始オフセット
+//	int					nLineLen,	//!< [in] １行の長さ
+	int*				nMatchLen,	//!< [out] マッチした長さ
+	int*				nMatchColor	//!< [out] マッチした色番号
+)
 {
 	int	i, matched;
 
 	MYDBGMSG("RegexIsKeyword")
 
 	//動作に必要なチェックをする。
-	if( ( m_bUseRegexKeyword == FALSE )
-	 || ( ! IsAvailable() )
+	if( !m_bUseRegexKeyword || !IsAvailable()
 #ifdef USE_PARENT
-	 || ( m_pTypes == NULL )
+	 || m_pTypes == NULL
 #endif
 	 /* || ( pLine == NULL ) */ )
 	{
@@ -374,15 +372,15 @@ BOOL CRegexKeyword::RegexIsKeyword( const wchar_t *pLine, int nPos, int nLineLen
 			if( m_sInfo[i].nOffset < nPos )
 			{
 #ifdef USE_PARENT
-				matched = BMatch(m_pTypes->m_RegexKeywordArr[i].m_szKeyword, pLine+nPos, pLine+nLineLen,
+				matched = BMatch(m_pTypes->m_RegexKeywordArr[i].m_szKeyword, cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(),
 					&m_sInfo[i].pBregexp, m_szMsg);
 #else
-				matched = BMatch(m_sInfo[i].sRegexKey.m_szKeyword, pLine+nPos, pLine+nLineLen,
+				matched = BMatch(m_sInfo[i].sRegexKey.m_szKeyword, cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(),
 					&m_sInfo[i].pBregexp, m_szMsg);
 #endif
 				if( matched )
 				{
-					m_sInfo[i].nOffset = m_sInfo[i].pBregexp->startp[0] - pLine;
+					m_sInfo[i].nOffset = m_sInfo[i].pBregexp->startp[0] - cStr.GetPtr();
 					m_sInfo[i].nLength = m_sInfo[i].pBregexp->endp[0] - m_sInfo[i].pBregexp->startp[0];
 					m_sInfo[i].nMatch  = RK_MATCH;
 				

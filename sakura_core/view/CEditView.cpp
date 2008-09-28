@@ -27,7 +27,6 @@
 #include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"
-#include "mymessage.h"
 #include "CWaitCursor.h"
 #include "window/CEditWnd.h"
 #include "dlg/CDlgCancel.h"
@@ -54,6 +53,7 @@
 #include "util/module.h"
 #include "util/tchar_template.h"
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
+#include "view/colors/CColorStrategy.h"
 
 
 CEditView*	g_m_pcEditView;
@@ -218,8 +218,6 @@ BOOL CEditView::Create(
 //	MYTRACE_A( "CEditView::CEditView()おわり\n" );
 	m_bHokan = FALSE;
 
-	m_hFontOld = NULL;
-
 	//	Aug. 31, 2000 genta
 	m_cHistory->SetMax( 30 );
 
@@ -322,7 +320,7 @@ BOOL CEditView::Create(
 	m_pcDropTarget->Register_DropTarget( GetHwnd() );
 
 	/* 辞書Tip表示ウィンドウ作成 */
-	m_cTipWnd.Create( G_AppInstance(), GetHwnd()/*GetDllShareData().m_hwndTray*/ );
+	m_cTipWnd.Create( G_AppInstance(), GetHwnd()/*GetDllShareData().m_sHandles.m_hwndTray*/ );
 
 	/* 再描画用コンパチブルＤＣ */
 	// 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -2055,24 +2053,19 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	){
 		// カーソル位置縦線の描画
 		// アンダーラインと縦線の交点で、下線が上になるように先に縦線を引く。
-		HDC		hdc;
-		HPEN	hPen, hPenOld;
 		int     nROP_Old = 0;
-		hdc = ::GetDC( GetHwnd() );
-		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
-		hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, m_nOldCursorLineX, GetTextArea().GetAreaTop(), NULL );
-		::LineTo(   hdc, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
+		HDC		hdc = ::GetDC( GetHwnd() );
+		CGraphics gr(hdc);
+		gr.SetPen( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
+		::MoveToEx( gr, m_nOldCursorLineX, GetTextArea().GetAreaTop(), NULL );
+		::LineTo(   gr, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
 		// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
 		if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont &&
 			GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
-			::MoveToEx( hdc, m_nOldCursorLineX - 1, GetTextArea().GetAreaTop(), NULL );
-			::LineTo(   hdc, m_nOldCursorLineX - 1, GetTextArea().GetAreaBottom() );
+			::MoveToEx( gr, m_nOldCursorLineX - 1, GetTextArea().GetAreaTop(), NULL );
+			::LineTo(   gr, m_nOldCursorLineX - 1, GetTextArea().GetAreaBottom() );
 		}
-		::SelectObject( hdc, hPenOld );
-		::DeleteObject( hPen );
 		::ReleaseDC( GetHwnd(), hdc );
-		hdc= NULL;
 	}
 	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
 		m_nOldUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
@@ -2092,26 +2085,21 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	){
 //		MYTRACE_A( "★カーソル行アンダーラインの描画\n" );
 		/* ★カーソル行アンダーラインの描画 */
-		HDC		hdc;
-		HPEN	hPen, hPenOld;
-		hdc = ::GetDC( GetHwnd() );
-		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
-		hPenOld = (HPEN)::SelectObject( hdc, hPen );
+		HDC		hdc = ::GetDC( GetHwnd() );
+		CGraphics gr(hdc);
+		gr.SetPen( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
 		::MoveToEx(
-			hdc,
+			gr,
 			GetTextArea().GetAreaLeft(),
 			m_nOldUnderLineY,
 			NULL
 		);
 		::LineTo(
-			hdc,
+			gr,
 			GetTextArea().GetAreaRight(),
 			m_nOldUnderLineY
 		);
-		::SelectObject( hdc, hPenOld );
-		::DeleteObject( hPen );
 		::ReleaseDC( GetHwnd(), hdc );
-		hdc= NULL;
 	}
 }
 

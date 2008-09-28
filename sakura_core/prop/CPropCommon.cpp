@@ -29,7 +29,7 @@
 #include "dlg/CDlgDebug.h"
 #include "window/CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
-#include "funccode.h"	//Stonee, 2001/05/18
+#include "func/Funccode.h"	//Stonee, 2001/05/18
 #include "CEditApp.h"
 #include "util/shell.h"
 #include "CNormalProcess.h"
@@ -212,6 +212,8 @@ void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pM
 
 
 
+
+
 //	From Here Jun. 2, 2001 genta
 /*!
 	「共通設定」プロパティシートの作成時に必要な情報を
@@ -353,11 +355,11 @@ void CPropCommon::InitData( void )
 {
 	int i;
 	m_Common = m_pShareData->m_Common;
-	m_nKeyNameArrNum = m_pShareData->m_nKeyNameArrNum;
-	for( i = 0; i < _countof( m_pShareData->m_pKeyNameArr ); ++i ){
-		m_pKeyNameArr[i] = m_pShareData->m_pKeyNameArr[i];
+	m_nKeyNameArrNum = m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum;
+	for( i = 0; i < _countof( m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ); ++i ){
+		m_pKeyNameArr[i] = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i];
 	}
-	m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
+	m_CKeyWordSetMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	for( i = 0; i < MAX_TYPES; ++i ){
@@ -369,26 +371,26 @@ void CPropCommon::InitData( void )
 	@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	*/
 	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		m_MacroTable[i] = m_pShareData->m_MacroTable[i];
+		m_MacroTable[i] = m_pShareData->m_Common.m_sMacro.m_MacroTable[i];
 	}
 	auto_memcpy(
 		m_szMACROFOLDER,
-		m_pShareData->m_szMACROFOLDER,
-		_countof2(m_pShareData->m_szMACROFOLDER)
+		m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER,
+		_countof2(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER)
 	);
 
 	// ファイル名簡易表示関係
 	memcpy_raw(
 		m_szTransformFileNameFrom,
-		m_pShareData->m_szTransformFileNameFrom,
-		sizeof(m_pShareData->m_szTransformFileNameFrom)
+		m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom,
+		sizeof(m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom)
 	);
 	memcpy_raw(
 		m_szTransformFileNameTo,
-		m_pShareData->m_szTransformFileNameTo,
-		sizeof(m_pShareData->m_szTransformFileNameTo)
+		m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo,
+		sizeof(m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo)
 	);
-	m_nTransformFileNameArrNum = m_pShareData->m_nTransformFileNameArrNum;
+	m_nTransformFileNameArrNum = m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum;
 
 }
 
@@ -400,10 +402,10 @@ void CPropCommon::ApplyData( void )
 {
 	int i;
 
-	for( i = 0; i < _countof( m_pShareData->m_pKeyNameArr ); ++i ){
-		m_pShareData->m_pKeyNameArr[i] = m_pKeyNameArr[i];
+	for( i = 0; i < _countof( m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ); ++i ){
+		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i] = m_pKeyNameArr[i];
 	}
-	m_pShareData->m_CKeyWordSetMgr = m_CKeyWordSetMgr;
+	m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr = m_CKeyWordSetMgr;
 
 	m_pShareData->m_Common = m_Common;
 
@@ -417,19 +419,19 @@ void CPropCommon::ApplyData( void )
 
 	/* マクロ関係 */
 	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		m_pShareData->m_MacroTable[i] = m_MacroTable[i];
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[i] = m_MacroTable[i];
 	}
-	auto_memcpy( m_pShareData->m_szMACROFOLDER, m_szMACROFOLDER, _countof2( m_pShareData->m_szMACROFOLDER ) );
+	auto_memcpy( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, m_szMACROFOLDER, _countof2( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER ) );
 
 	// ファイル名簡易表示関係
 	// 念のため，書き換える前に 0 を設定しておく
-	m_pShareData->m_nTransformFileNameArrNum = 0;
-	memcpy_raw( m_pShareData->m_szTransformFileNameFrom, m_szTransformFileNameFrom,
-		sizeof( m_pShareData->m_szTransformFileNameFrom ) );
-	memcpy_raw( m_pShareData->m_szTransformFileNameTo, m_szTransformFileNameTo,
-		sizeof( m_pShareData->m_szTransformFileNameTo ) );
+	m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum = 0;
+	memcpy_raw( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom, m_szTransformFileNameFrom,
+		sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom ) );
+	memcpy_raw( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo, m_szTransformFileNameTo,
+		sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo ) );
 
-	m_pShareData->m_nTransformFileNameArrNum = m_nTransformFileNameArrNum;
+	m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum = m_nTransformFileNameArrNum;
 
 }
 
@@ -495,7 +497,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-//				m_pShareData->m_nMRUArrNum = 0;
+//				m_pShareData->m_sHistory.m_nMRUArrNum = 0;
 				{
 					CMRU cMRU;
 					cMRU.ClearAll();
@@ -509,7 +511,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
-//				m_pShareData->m_nOPENFOLDERArrNum = 0;
+//				m_pShareData->m_sHistory.m_nOPENFOLDERArrNum = 0;
 				{
 					CMRUFolder cMRUFolder;	//	MRUリストの初期化。ラベル内だと問題あり？
 					cMRUFolder.ClearAll();
@@ -868,3 +870,7 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	}
 	return;
 }
+
+
+
+

@@ -73,8 +73,6 @@ public:
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
 
 
-//	HFONT			m_hFont;
-//	HFONT			m_hFontOld;
 	CNativeW		m_cmemCurWord;
 	CNativeW*		m_pcmemKouho;
 	int				m_nKouhoNum;
@@ -85,7 +83,6 @@ public:
 	POINT			m_poWin;
 	int				m_nWinHeight;
 	int				m_nColmWidth;
-//	void*			m_pcEditView;
 	int				m_bTimerFlag;
 
 protected:

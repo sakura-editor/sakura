@@ -23,7 +23,7 @@ class CPropTypes;
 #define _CPROPTYPES_H_
 
 #include <windows.h>
-#include "CShareData.h"
+#include "env/CShareData.h"
 
 /*-----------------------------------------------------------------------
 íËêî

@@ -18,7 +18,6 @@ CDlgCancel::CDlgCancel()
 {
 	m_bCANCEL = FALSE;	/* IDCANCELボタンが押された */
 	m_bAutoCleanup = false;
-	return;
 }
 
 /** 標準以外のメッセージを捕捉する

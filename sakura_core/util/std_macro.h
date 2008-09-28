@@ -42,6 +42,14 @@ void t_swap(T& t1, T& t2)
 	t2 = tmp;
 }
 
+template <class T>
+T t_unit(T t)
+{
+	return
+		t>T(0)?1:
+		t<T(0)?-1:
+		0;
+}
 
 
 /*

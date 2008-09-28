@@ -15,7 +15,7 @@
 */
 
 #include "stdafx.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CMenuDrawer.h"	//	これでいいのか？
 #include "CMRUFolder.h"
 #include "recent/CRecent.h"	//履歴の管理	//@@@ 2003.04.08 MIK
@@ -46,13 +46,13 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	bool	bFavorite;
 
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
-	CShareData::getInstance()->TransformFileName_MakeCache();
+	CFileNameManager::Instance()->TransformFileName_MakeCache();
 	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
 
-		CShareData::getInstance()->GetTransformFileNameFast( m_cRecentFolder.GetItemText( i ), szMemu, _MAX_PATH );
+		CFileNameManager::Instance()->GetTransformFileNameFast( m_cRecentFolder.GetItemText( i ), szMemu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
 		dupamp( szMemu, szFolder2 );

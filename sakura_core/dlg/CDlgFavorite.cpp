@@ -35,8 +35,7 @@
 #include <stdio.h>
 #include "sakura_rc.h"
 #include "global.h"
-#include "funccode.h"
-#include "mymessage.h"
+#include "func/Funccode.h"
 #include "dlg/CDialog.h"
 #include "dlg/CDlgFavorite.h"
 #include "debug/Debug.h"
@@ -394,7 +393,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 						_T("Å‹ßg‚Á‚½%ts‚Ì—š—ğ‚ğíœ‚µ‚Ü‚·B\n\n‚æ‚ë‚µ‚¢‚Å‚·‚©H\n"),
 						m_aFavoriteInfo[nIndex].m_pszCaption );
 				}
-				
+
 				CRecent	*pRecent = m_aFavoriteInfo[nIndex].m_pRecent;
 
 				switch( nRet )

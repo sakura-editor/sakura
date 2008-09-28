@@ -33,6 +33,7 @@
 #include "sakura.hh"
 #include "CDlgSameColor.h"
 #include "util/shell.h"
+#include "view/colors/CColorStrategy.h"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_SAMECOLOR,						// OK
@@ -263,13 +264,12 @@ BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 	if( IDC_LIST_COLORS != pDis->CtlID )	// オーナー描画にしているのは色選択リストだけ
 		return TRUE;
 
+	//描画対象
+	CGraphics gr(pDis->hDC);
+
 	//
 	// 色選択リストの描画処理
 	//
-	HBRUSH		hBrush;
-	HBRUSH		hBrushOld;
-	HPEN		hPen;
-	HPEN		hPenOld;
 	RECT		rc;
 	WCHAR		szText[30];
 	LPWSTR		pszStop;
@@ -281,18 +281,18 @@ BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 	rc = pDis->rcItem;
 
 	// アイテム矩形塗りつぶし
-	::FillRect( pDis->hDC, &pDis->rcItem, ::GetSysColorBrush( COLOR_WINDOW ) );
+	::FillRect( gr, &pDis->rcItem, ::GetSysColorBrush( COLOR_WINDOW ) );
 
 	// アイテムが選択状態
 	if( pDis->itemState & ODS_SELECTED ){
 		rc = pDis->rcItem;
 		rc.left += (rc.bottom - rc.top);
-		::FillRect( pDis->hDC, &rc, ::GetSysColorBrush( COLOR_HIGHLIGHT ) );
+		::FillRect( gr, &rc, ::GetSysColorBrush( COLOR_HIGHLIGHT ) );
 	}
 
 	// アイテムにフォーカスがある
 	if( pDis->itemState & ODS_FOCUS ){
-		::DrawFocusRect( pDis->hDC, &pDis->rcItem );
+		::DrawFocusRect( gr, &pDis->rcItem );
 	}
 
 	// チェックボックス表示
@@ -304,7 +304,7 @@ BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 	UINT uState =  DFCS_BUTTONCHECK | DFCS_FLAT;
 	if( TRUE == (BOOL)pDis->itemData )
 		uState |= DFCS_CHECKED;		// チェック状態
-	::DrawFrameControl( pDis->hDC, &rc, DFC_BUTTON, uState );
+	::DrawFrameControl( gr, &rc, DFC_BUTTON, uState );
 
 	// 色見本矩形
 	rc = pDis->rcItem;
@@ -312,15 +312,9 @@ BOOL CDlgSameColor::OnDrawItem( WPARAM wParam, LPARAM lParam )
 	rc.top += 2;
 	rc.bottom -= 2;
 	rc.right -= 2;
-	hBrush = ::CreateSolidBrush( cr );
-	hBrushOld = (HBRUSH)::SelectObject( pDis->hDC, hBrush );
-	hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor( COLOR_3DSHADOW ) );
-	hPenOld = (HPEN)::SelectObject( pDis->hDC, hPen );
-	::RoundRect( pDis->hDC, rc.left, rc.top, rc.right, rc.bottom , 5, 5 );
-	::SelectObject( pDis->hDC, hPenOld );
-	::SelectObject( pDis->hDC, hBrushOld );
-	::DeleteObject( hPen );
-	::DeleteObject( hBrush );
+	gr.SetBrushColor( cr );
+	gr.SetPen( ::GetSysColor(COLOR_3DSHADOW) );
+	::RoundRect( gr, rc.left, rc.top, rc.right, rc.bottom , 5, 5 );
 
 	return TRUE;
 }
@@ -381,10 +375,6 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	HDC			hDC;
-	HBRUSH		hBrush;
-	HBRUSH		hBrushOld;
-	HPEN		hPen;
-	HPEN		hPenOld;
 	RECT		rc;
 
 	CDlgSameColor* pCDlgSameColor;
@@ -403,16 +393,12 @@ LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, 
 		rc.top += 2;
 		rc.right -=2;
 		rc.bottom -= 2;
-		hBrush = ::CreateSolidBrush( pCDlgSameColor->m_cr );
-		hBrushOld = (HBRUSH)::SelectObject( hDC, hBrush );
-		hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor( COLOR_3DSHADOW ) );
-		hPenOld = (HPEN)::SelectObject( hDC, hPen );
-		::RoundRect( hDC, rc.left, rc.top, rc.right, rc.bottom, 5, 5 );
-		::SelectObject( hDC, hPenOld );
-		::SelectObject( hDC, hBrushOld );
-		::DeleteObject( hPen );
-		::DeleteObject( hBrush );
-
+		{
+			CGraphics gr(hDC);
+			gr.SetBrushColor( pCDlgSameColor->m_cr );
+			gr.SetPen( ::GetSysColor(COLOR_3DSHADOW) );
+			::RoundRect( gr, rc.left, rc.top, rc.right, rc.bottom, 5, 5 );
+		}
 		::EndPaint( hwnd, &ps );
 		return (LRESULT)0;
 
@@ -422,11 +408,12 @@ LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, 
 		::GetClientRect( hwnd, &rc );
 
 		// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
-		hBrush = (HBRUSH)::SendMessageAny( GetParent( hwnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hwnd );
-		hBrushOld = (HBRUSH)::SelectObject( hDC, hBrush );
-		::FillRect( hDC, &rc, hBrush );
-		::SelectObject( hDC, hBrushOld );
-
+		{
+			HBRUSH	hBrush = (HBRUSH)::SendMessageAny( GetParent( hwnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hwnd );
+			HBRUSH	hBrushOld = (HBRUSH)::SelectObject( hDC, hBrush );
+			::FillRect( hDC, &rc, hBrush );
+			::SelectObject( hDC, hBrushOld );
+		}
 		return (LRESULT)1;
 
 	case WM_DESTROY:

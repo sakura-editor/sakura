@@ -85,6 +85,7 @@
 
 
 //###########’´‰¼
+#include "CGraphics.h"
 #include "CNormalProcess.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"

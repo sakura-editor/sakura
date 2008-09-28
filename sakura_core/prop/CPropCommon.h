@@ -22,9 +22,9 @@ class CPropCommon;
 #ifndef _CPROP1_H_
 #define _CPROP1_H_
 #include <windows.h>
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "sakura_rc.h"
-#include "CFuncLookup.h"
+#include "func/CFuncLookup.h" //MacroRec
 class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here
@@ -360,3 +360,6 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CPROP1_H_ */
+
+
+

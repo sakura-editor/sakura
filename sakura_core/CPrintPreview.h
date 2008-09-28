@@ -15,7 +15,7 @@ class CPrintPreview;
 
 #ifndef _CPRINTPREVIEW_H_
 #define _CPRINTPREVIEW_H_
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CPrint.h" // 2002/2/10 aroka
 #include <windows.h> // 2002/2/10 aroka
 

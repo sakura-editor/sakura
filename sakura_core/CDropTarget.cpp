@@ -92,7 +92,6 @@ DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 
 
 
-
 CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
 {
 	m_pCEditWnd = pCEditWnd;	// 2008.06.20 ryoji

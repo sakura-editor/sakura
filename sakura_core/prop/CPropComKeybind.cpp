@@ -20,7 +20,6 @@
 #include "prop/CPropCommon.h"
 #include "dlg/CDlgOpenFile.h"
 #include "macro/CSMacroMgr.h" // 2002/2/10 aroka
-#include "KeyCode.h"	/// 2002/2/3 aroka from here
 #include "debug/Debug.h" ///
 #include <stdio.h>	/// 2002/2/3 aroka from here
 #include "io/CTextStream.h"
@@ -29,10 +28,12 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/string_ex2.h"
+#include "env/CShareData_IO.h"
 using namespace std;
 
 const wchar_t STR_KEYDATA_HEAD2[] = L"// テキストエディタキー設定 Ver2";	// (旧バージョン） 読み込みのみ対応 2008/5/3 by Uchi
-wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
+const wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
+
 
 #define STR_SHIFT_PLUS        _T("Shift+")  //@@@ 2001.11.08 add MIK
 #define STR_CTRL_PLUS         _T("Ctrl+")  //@@@ 2001.11.08 add MIK
@@ -536,7 +537,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	TCHAR			szInitDir[_MAX_PATH + 1];
 
 	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		G_AppInstance(),
@@ -549,8 +550,8 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_szIMPORTFOLDER, _T("\\") );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
 
 
@@ -579,10 +580,9 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", nKeyNameArrNum);
 		if (nKeyNameArrNum<0 || nKeyNameArrNum>100)	bVer3=false; //範囲チェック
 
-		CShareData::getInstance()->ShareData_IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
+		CShareData_IO::ShareData_IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
 	}
 
-	
 	if (!bVer3) {
 		// 新バージョンでない
 		CTextInputStream in(szPath);
@@ -669,10 +669,6 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	//@@@ 2001.11.07 modify end MIK
-	return;
-
-//err:
-//	ErrorMessage( hwndDlg, _T("キー設定ファイルの形式が違います。\n\n%ts"), szPath );
 }
 
 
@@ -684,7 +680,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	TCHAR			szInitDir[_MAX_PATH + 1];
 
 	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		G_AppInstance(),
@@ -697,8 +693,8 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_szIMPORTFOLDER, _T("\\") );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
 	//@@@ 2001.11.07 add start MIK: テキスト形式で保存
 	{
@@ -710,8 +706,8 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
 			return;
 		}
-
-// delete 2008/5/25 Uchi
+		
+//	delete 2008/5/25 Uchi
 //		out.WriteF( L"[SakuraKeybind]\n" );
 //		out.WriteF( L"Ver=%ls\n", WSTR_KEYDATA_HEAD);
 //		out.WriteF( L"Count=%d\n", m_nKeyNameArrNum);
@@ -752,11 +748,12 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		cProfile.SetWritingMode();
 
 		// ヘッダ
-		cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(WSTR_KEYDATA_HEAD) );
+		StaticString<wchar_t,256> szKeydataHead = WSTR_KEYDATA_HEAD;
+		cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
 		cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_nKeyNameArrNum );
 
 		//内容
-		CShareData::getInstance()->ShareData_IO_KeyBind(cProfile, m_nKeyNameArrNum, m_pKeyNameArr, true);
+		CShareData_IO::ShareData_IO_KeyBind(cProfile, m_nKeyNameArrNum, m_pKeyNameArr, true);
 
 		// 書き込み
 		cProfile.WriteProfile( szPath, WSTR_KEYDATA_HEAD);
@@ -765,3 +762,6 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 
 	return;
 }
+
+
+

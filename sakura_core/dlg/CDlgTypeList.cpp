@@ -19,7 +19,7 @@
 #include "sakura_rc.h"
 #include "dlg/CDlgTypeList.h"
 #include "debug/Debug.h"
-#include "funccode.h"	//Stonee, 2001/03/12
+#include "func/Funccode.h"	//Stonee, 2001/03/12
 #include "util/shell.h"
 
 //内部使用定数
@@ -120,7 +120,7 @@ void CDlgTypeList::SetData( void )
 	TCHAR	szText[130];
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
-		STypeConfig& types = m_pShareData->GetTypeSetting(CTypeConfig(nIdx));
+		STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 		if( 0 < _tcslen( types.m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts ( %ts )"),
 				types.m_szTypeName,	/* タイプ属性：名称 */

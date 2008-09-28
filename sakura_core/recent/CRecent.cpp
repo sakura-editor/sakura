@@ -36,7 +36,7 @@
 
 #include "stdafx.h"
 #include "recent/CRecent.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 
 DLLSHAREDATA* CRecent::GetShareData()
 {

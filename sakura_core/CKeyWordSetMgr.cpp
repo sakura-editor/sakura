@@ -370,6 +370,7 @@ void CKeyWordSetMgr::SortKeyWord( int nIdx )
 	m_IsSorted[nIdx] = 1;
 	return;
 }
+
 /* ｎ番目のセットから指定キーワードをバイナリサーチ 無いときは-1を返す */
 int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKeyWordLen )
 {

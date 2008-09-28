@@ -33,8 +33,7 @@
 #include <stdio.h>
 #include "sakura_rc.h"
 #include "global.h"
-#include "funccode.h"
-#include "mymessage.h"
+#include "func/Funccode.h"
 #include "dlg/CDialog.h"
 #include "dlg/CDlgCtrlCode.h"
 #include "view/CEditView.h"

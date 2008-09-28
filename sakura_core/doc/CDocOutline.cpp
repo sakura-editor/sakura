@@ -23,7 +23,7 @@
 #include "global.h"
 
 #include "doc/CEditDoc.h"
-#include "CFuncInfoArr.h"
+#include "outline/CFuncInfoArr.h"
 #include "doc/CDocLine.h"
 #include "charset/charcode.h"
 #include "util/other_util.h"
@@ -36,7 +36,7 @@
 #include <assert.h>
 
 #include "doc/CEditDoc.h"
-#include "CFuncInfoArr.h"
+#include "outline/CFuncInfoArr.h"
 #include "doc/CDocLine.h"
 #include "charset/charcode.h"
 

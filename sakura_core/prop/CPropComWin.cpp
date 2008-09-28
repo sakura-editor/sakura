@@ -224,9 +224,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 					rc.bottom = m_Common.m_sWindow.m_nWinSizeCY;
 					rc.top    = m_Common.m_sWindow.m_nWinPosX;
 					rc.left   = m_Common.m_sWindow.m_nWinPosY;
-					cDlgWinSize.DoModal( ::GetModuleHandle(NULL), hwndDlg,
-						m_Common.m_sWindow.m_nSaveWindowSize, m_Common.m_sWindow.m_nSaveWindowPos,
-						m_Common.m_sWindow.m_nWinSizeType, rc
+					cDlgWinSize.DoModal(
+						::GetModuleHandle(NULL),
+						hwndDlg,
+						m_Common.m_sWindow.m_eSaveWindowSize,
+						m_Common.m_sWindow.m_eSaveWindowPos,
+						m_Common.m_sWindow.m_nWinSizeType,
+						rc
 					);
 					m_Common.m_sWindow.m_nWinSizeCX = rc.right;
 					m_Common.m_sWindow.m_nWinSizeCY = rc.bottom;
@@ -439,7 +443,7 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 void CPropCommon::EnableWinPropInput( HWND hwndDlg )
 {
 	//	ファクションキーを表示するかどうか
-		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND ) ){
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM ), TRUE );	// IDC_GROUP_FUNCKEYWND_POSITION->IDC_EDIT_FUNCKEYWND_GROUPNUM 2008/7/4 Uchi
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2 ), TRUE );
@@ -450,3 +454,6 @@ void CPropCommon::EnableWinPropInput( HWND hwndDlg )
 	}
 }
 //	To Here Sept. 9, 2000
+
+
+

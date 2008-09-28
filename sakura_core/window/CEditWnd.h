@@ -28,8 +28,8 @@ class CEditWnd;
 
 #include <shellapi.h>// HDROP
 #include "doc/CEditDoc.h"
-#include "CShareData.h"
-#include "CFuncKeyWnd.h"
+#include "env/CShareData.h"
+#include "func/CFuncKeyWnd.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
 #include "CMenuDrawer.h"
 #include "CMainToolBar.h"
@@ -40,7 +40,7 @@ class CEditWnd;
 #include "dlg/CDlgReplace.h"
 #include "dlg/CDlgJump.h"
 #include "dlg/CDlgGrep.h"
-#include "dlg/CDlgFuncList.h"
+#include "outline/CDlgFuncList.h"
 #include "dlg/CDlgOpenFile.h"
 #include "CHokanMgr.h"
 #include "util/design_template.h"
@@ -129,7 +129,7 @@ public:
 	BOOL DoMouseWheel( WPARAM wParam, LPARAM lParam );	// マウスホイール処理	// 2007.10.16 ryoji
 	LRESULT OnHScroll( WPARAM, LPARAM );
 	LRESULT OnVScroll( WPARAM, LPARAM );
-	int	OnClose( void );	/* 終了時の処理 */
+	int	OnClose();	/* 終了時の処理 */
 	void OnDropFiles( HDROP );	/* ファイルがドロップされた */
 	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
 	LRESULT OnTimer( WPARAM, LPARAM );	// WM_TIMER 処理	// 2007.04.03 ryoji

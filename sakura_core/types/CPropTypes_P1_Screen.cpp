@@ -98,7 +98,7 @@ TYPE_NAME<int> ImeSwitchArr[] = {
 
 /*!	2行目以降のインデント方法
 
-	@sa CLayoutMgr::SetLayoutInfo(
+	@sa CLayoutMgr::SetLayoutInfo()
 	@date Oct. 1, 2002 genta 
 */
 TYPE_NAME<int> IndentTypeArr[] = {
@@ -674,3 +674,4 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 	return TRUE;
 }
+

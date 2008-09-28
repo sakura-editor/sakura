@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "CPropertyManager.h"
-#include "mymessage.h"
 
 CPropertyManager::CPropertyManager()
 {
@@ -26,11 +25,11 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		m_cPropCommon.ApplyData();
 		CEditApp::Instance()->m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
 		if( bGroup != (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ) ){
-			CShareData::getInstance()->ResetGroupId();
+			CAppNodeManager::Instance()->ResetGroupId();
 		}
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessageAny( GetDllShareData().m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
 		/* フォントが変わった */
 		for( int i = 0; i < 4; ++i ){
@@ -39,7 +38,7 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
-		CShareData::getInstance()->SendMessageToAllEditors(
+		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			0,
 			(LPARAM)CEditWnd::Instance()->GetHwnd(),
@@ -57,10 +56,10 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 /*! タイプ別設定 プロパティシート */
 BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType )
 {
-	STypeConfig& types = GetDllShareData().GetTypeSetting(nSettingType);
+	STypeConfig& types = CDocTypeManager().GetTypeSetting(nSettingType);
 	m_cPropTypes.SetTypeData( types );
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更しProperySheet内で取得するように
-	//m_cPropTypes.m_CKeyWordSetMgr = GetDllShareData().m_CKeyWordSetMgr;
+	//m_cPropTypes.m_CKeyWordSetMgr = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	/* プロパティシートの作成 */
 	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
@@ -75,11 +74,11 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 			CEditWnd::Instance()->GetDocument().m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessageAny( GetDllShareData().m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
-		CShareData::getInstance()->SendMessageToAllEditors(
+		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			0,
 			(LPARAM)CEditWnd::Instance()->GetHwnd(),

@@ -281,7 +281,7 @@ DWORD CGrepAgent::DoGrep(
 	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
 //	SetDrawSwitch(false);
 	pCEditWnd->RedrawAllViews( pcViewDst );	// ここまでの分を他ビューにも表示
-	pCEditWnd->SetDrawSwitchOfAllViews( 0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView );
+	pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
 
 
 	int nGrepTreeResult = DoGrepTree(

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CRecentImp.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           ê∂ê¨                              //

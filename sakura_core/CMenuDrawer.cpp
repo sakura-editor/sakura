@@ -706,8 +706,8 @@ void CMenuDrawer::MyAppendMenu(
 		/* ƒƒjƒ…[ƒ‰ƒxƒ‹‚Ìì¬ */
 		CKeyBind::GetMenuLabel(
 			m_hInstance,
-			m_pShareData->m_nKeyNameArrNum,
-			m_pShareData->m_pKeyNameArr,
+			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 			nFuncId,
 			szLabel,
 			bAddKeyStr
@@ -1268,3 +1268,5 @@ typedef struct _TBBUTTON {
 	ptb->iString	= iString;
 	return;
 }
+
+

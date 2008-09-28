@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CEditView_Paint.h"
 #include "types/CTypeSupport.h"
+#include "view/colors/CColorStrategy.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           括弧                              //
@@ -100,8 +101,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 		return;
 	}
 
-	HDC			hdc;
-	hdc = ::GetDC( GetHwnd() );
+	CGraphics gr;
+	gr.Init(::GetDC(GetHwnd()));
 	STypeConfig *TypeDataPtr = &( m_pcEditDoc->m_cDocType.GetDocumentAttribute() );
 
 	for( int i = 0; i < 2; i++ )
@@ -128,7 +129,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 			const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptColLine.GetY2(), &nLineLen, &pcLayout );
 			if( pLine )
 			{
-				int		nColorIndex;
+				EColorIndexType		nColorIndex;
 				CLogicInt	OutputX = LineColmnToIndex( pcLayout, ptColLine.GetX2() );
 				if( bDraw )	{
 					nColorIndex = COLORIDX_BRACKET_PAIR;
@@ -137,10 +138,10 @@ void CEditView::DrawBracketPair( bool bDraw )
 					if( IsBracket( pLine, OutputX, CLogicInt(1) ) ){
 						// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 						if( i == 0 ){
-							nColorIndex = GetColorIndex( hdc, pcLayout, m_ptBracketCaretPos_PHY.x );
+							nColorIndex = GetColorIndex( pcLayout, m_ptBracketCaretPos_PHY.x );
 						}
 						else{
-							nColorIndex = GetColorIndex( hdc, pcLayout, m_ptBracketPairPos_PHY.x );
+							nColorIndex = GetColorIndex( pcLayout, m_ptBracketPairPos_PHY.x );
 						}
 					}
 					else{
@@ -149,15 +150,11 @@ void CEditView::DrawBracketPair( bool bDraw )
 					}
 				}
 
-
-				m_hFontOld = NULL;
-
 				//色設定
 				CTypeSupport cTextType(this,COLORIDX_TEXT);
-				cTextType.SetFont(hdc);
-				cTextType.SetColors(hdc);
+				cTextType.SetGraphicsState_WhileThisObj(gr);
 
-				SetCurrentColor( hdc, nColorIndex );
+				SetCurrentColor( gr, nColorIndex );
 
 				int nHeight = GetTextMetrics().GetHankakuDy();
 				int nLeft = (GetTextArea().GetDocumentLeftClientPointX()) + (Int)ptColLine.x * GetTextMetrics().GetHankakuDx();
@@ -167,24 +164,18 @@ void CEditView::DrawBracketPair( bool bDraw )
 				//             選択範囲内に反転表示されない部分がある問題の修正
 				if( ptColLine.x == GetCaret().GetCaretLayoutPos().GetX2() && GetCaret().GetCaretShowFlag() ){
 					GetCaret().HideCaret_( GetHwnd() );	// キャレットが一瞬消えるのを防止
-					GetTextDrawer().DispText( hdc, nLeft, nTop, &pLine[OutputX], 1 );
+					GetTextDrawer().DispText( gr, nLeft, nTop, &pLine[OutputX], 1 );
 					// 2006.04.30 Moca 対括弧の縦線対応
-					GetTextDrawer().DispVerticalLines( hdc, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + CLayoutInt(2) ); //※括弧が全角幅である場合を考慮
+					GetTextDrawer().DispVerticalLines( gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + CLayoutInt(2) ); //※括弧が全角幅である場合を考慮
 					GetCaret().ShowCaret_( GetHwnd() );	// キャレットが一瞬消えるのを防止
 				}
 				else{
-					GetTextDrawer().DispText( hdc, nLeft, nTop, &pLine[OutputX], 1 );
+					GetTextDrawer().DispText( gr, nLeft, nTop, &pLine[OutputX], 1 );
 					// 2006.04.30 Moca 対括弧の縦線対応
-					GetTextDrawer().DispVerticalLines( hdc, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + CLayoutInt(2) ); //※括弧が全角幅である場合を考慮
+					GetTextDrawer().DispVerticalLines( gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + CLayoutInt(2) ); //※括弧が全角幅である場合を考慮
 				}
 
-				if( NULL != m_hFontOld ){
-					::SelectObject( hdc, m_hFontOld );
-					m_hFontOld = NULL;
-				}
-
-				cTextType.RewindFont(hdc);
-				cTextType.RewindColors(hdc);
+				cTextType.RewindGraphicsState(gr);
 
 				if( ( m_pcEditDoc->m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex )
 					&& ( ( ptColLine.y == GetCaret().GetCaretLayoutPos().GetY() ) || ( ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY() ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
@@ -194,7 +185,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 		}
 	}
 
-	::ReleaseDC( GetHwnd(), hdc );
+	::ReleaseDC( GetHwnd(), gr );
 }
 
 

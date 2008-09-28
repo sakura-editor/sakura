@@ -188,3 +188,6 @@ INT_PTR CDlgInput1::DispatchEvent(
 	}
 	return FALSE;
 }
+
+
+

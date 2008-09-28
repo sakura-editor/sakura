@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "types/CType.h"
+#include "view/colors/CColorStrategy.h"
 
 /* 設定ファイル */
 //Nov. 9, 2000 JEPRO Windows標準のini, inf, cnfファイルとsakuraキーワード設定ファイル.kwd, 色設定ファイル.col も読めるようにする

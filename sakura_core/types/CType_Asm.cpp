@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "types/CType.h"
 #include "doc/CDocOutline.h"
-#include "CFuncInfoArr.h"
+#include "outline/CFuncInfoArr.h"
+#include "view/colors/CColorStrategy.h"
 
 /* ƒAƒZƒ“ƒuƒ‰ */
 //	2004.05.01 MIK/genta

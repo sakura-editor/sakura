@@ -17,7 +17,7 @@
 
 #include "stdafx.h"
 #include "dlg/CDlgExec.h"
-#include "funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
+#include "func/Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "sakura_rc.h"
 #include <windows.h>		//Mar. 28, 2001 JEPRO (一応入れたが不要？)
 #include <stdio.h>			//Mar. 28, 2001 JEPRO (一応入れたが不要？)
@@ -106,18 +106,17 @@ void CDlgExec::SetData( void )
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
-
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 	/*****************************
 	*         データ設定         *
 	*****************************/
-	_tcscpy( m_szCommand, m_pShareData->m_aCommands[0] );
+	_tcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand );
 	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
-	for( i = 0; i < m_pShareData->m_aCommands.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_aCommands[i] );
+	for( i = 0; i < m_pShareData->m_sHistory.m_aCommands.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
 	}
 	::SendMessageAny( hwndCombo, CB_SETCURSEL, 0, 0 );
 	return;
@@ -155,14 +154,18 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), bEnabled );
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), bEnabled );
 		}	//	To Here 2007.01.02 maru 引数を拡張のため
-	// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), 
-			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT ) );
+
+		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow(
+			::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), 
+			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT )
+		);
 		break;
 	case IDC_CHECK_SENDSTDIN:	// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_SEND ), 
 			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) );
 		break;
+
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
@@ -208,3 +211,5 @@ LPVOID CDlgExec::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 //@@@ 2002.01.18 add end
+
+

@@ -230,21 +230,21 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 1;
-		sItem.pszText = m_pShareData->m_MacroTable[index].m_szName;
+		sItem.pszText = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_szName;
 		ListView_SetItem( hListView, &sItem );
 
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 2;
-		sItem.pszText = m_pShareData->m_MacroTable[index].m_szFile;
+		sItem.pszText = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_szFile;
 		ListView_SetItem( hListView, &sItem );
 
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		sItem.pszText = m_pShareData->m_MacroTable[index].m_bReloadWhenExecute ? _T("on") : _T("off");
+		sItem.pszText = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute ? _T("on") : _T("off");
 		ListView_SetItem( hListView, &sItem );
 	}
 	

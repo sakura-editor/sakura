@@ -23,10 +23,9 @@
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "debug/Debug.h"
 #include "window/CEditWnd.h" // 2002/2/3 aroka
-#include "mymessage.h" // 2002/2/3 aroka
 #include "doc/CDocLine.h" // 2003/03/28 MIK
 #include <tchar.h>
 #include "debug/CRunningTimer.h"
@@ -101,7 +100,7 @@ bool CNormalProcess::InitializeProcess()
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか
-				CLogicPoint& pt = *CProcess::GetDllShareData().GetWorkBuffer<CLogicPoint>();
+				CLogicPoint& pt = *CProcess::GetDllShareData().m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
 				if( fi.m_ptCursor.x < 0 ){
 					//	桁の指定が無い場合
 					::SendMessageAny( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
@@ -136,7 +135,7 @@ bool CNormalProcess::InitializeProcess()
 		/* デバッグモニタモードに設定 */
 		CAppMode::Instance()->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
-		pEditWnd->GetDocument().m_cDocType.SetDocumentType( GetShareData().GetDocumentTypeExt(_T("output")), true );
+		pEditWnd->GetDocument().m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfExt(_T("output")), true );
 		// 文字コードを有効とする Uchi 2008/6/8
 		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, CTypeConfig(-1));
 	}
@@ -173,9 +172,9 @@ bool CNormalProcess::InitializeProcess()
 		}
 		else{
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
-			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
-			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
-			CShareData::getInstance()->AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
+			CSearchKeywordManager().AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
+			CSearchKeywordManager().AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
+			CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
 			GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder = gi.bGrepSubFolder;
 			GetDllShareData().m_Common.m_sSearch.m_sSearchOption = gi.sGrepSearchOption;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet = gi.nGrepCharSet;
@@ -218,7 +217,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bViewMode, // ビューモードか
-				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
+				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt( fi.m_szDocType )
 			);
 			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
 			if( NULL == pEditWnd->GetHwnd() ){
@@ -272,7 +271,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bViewMode,	// ビューモードか
-				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : GetShareData().GetDocumentTypeExt( fi.m_szDocType )
+				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt( fi.m_szDocType )
 			);
 		}
 	}
@@ -373,3 +372,5 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	}
 	return hMutex;
 }
+
+

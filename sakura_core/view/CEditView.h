@@ -26,7 +26,7 @@
 
 #include <windows.h>
 #include <objidl.h>  // LPDATAOBJECT
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CTipWnd.h"
 #include "CDicMgr.h"
 #include "CHokanMgr.h"
@@ -86,7 +86,7 @@ typedef struct tagRECONVERTSTRING {
 const int CMD_FROM_MOUSE = 2;
 
 class CEditView;
-struct SDrawStrategyInfo;
+struct SColorStrategyInfo;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -200,11 +200,6 @@ public:
 	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );				/* マウスホイールのメッセージ処理 */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           設定                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void SetCurrentColor( HDC, int );							/* 現在の色を指定 */
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 2006.05.14 Moca  互換BMPによる画面バッファ
@@ -218,9 +213,15 @@ protected:
 	);
 
 	//! レイアウト行を1行描画
-	bool DrawLayoutLine(SDrawStrategyInfo* pInfo);
+	bool DrawLayoutLine(SColorStrategyInfo* pInfo);
+
+	//色分け
+public:
+	EColorIndexType GetColorIndex( const CLayout*, int );				/* 指定位置のColorIndexの取得 02/12/13 ai */
+	void SetCurrentColor( CGraphics& gr, EColorIndexType );							/* 現在の色を指定 */
 
 	//画面バッファ
+protected:
 	bool CreateOrUpdateCompatibleBitmap( int cx, int cy );	//!< メモリBMPを作成または更新
 	void UseCompatibleDC(BOOL fCache);
 public:
@@ -242,15 +243,16 @@ public:
 	}
 
 
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        スクロール                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	void AdjustScrollBars();								/* スクロールバーの状態を更新する */
-	BOOL CreateScrollBar();		/* スクロールバー作成 */	// 2006.12.19 ryoji
-	void DestroyScrollBar();	/* スクロールバー破棄 */	// 2006.12.19 ryoji
+	void AdjustScrollBars();											/* スクロールバーの状態を更新する */
+	BOOL CreateScrollBar();												/* スクロールバー作成 */	// 2006.12.19 ryoji
+	void DestroyScrollBar();											/* スクロールバー破棄 */	// 2006.12.19 ryoji
 	CLayoutInt GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
-	CLayoutInt ViewColNumToWrapColNum( CLayoutInt nViewColNum ) const;		/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
+	CLayoutInt ViewColNumToWrapColNum( CLayoutInt nViewColNum ) const;	/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           IME                               //
@@ -266,15 +268,13 @@ public:
 	CLayoutInt  ScrollAtV( CLayoutInt );										/* 指定上端行位置へスクロール */
 	CLayoutInt  ScrollAtH( CLayoutInt );										/* 指定左端桁位置へスクロール */
 	//	From Here Sep. 11, 2004 genta ずれ維持の同期スクロール
-	CLayoutInt  ScrollByV( CLayoutInt vl ){	return ScrollAtV( GetTextArea().GetViewTopLine() + vl );}			/* 指定行スクロール*/
-	CLayoutInt  ScrollByH( CLayoutInt hl ){	return ScrollAtH( GetTextArea().GetViewLeftCol() + hl );}					/* 指定桁スクロール */
+	CLayoutInt  ScrollByV( CLayoutInt vl ){	return ScrollAtV( GetTextArea().GetViewTopLine() + vl );}	/* 指定行スクロール*/
+	CLayoutInt  ScrollByH( CLayoutInt hl ){	return ScrollAtH( GetTextArea().GetViewLeftCol() + hl );}	/* 指定桁スクロール */
 public:
 	void SyncScrollV( CLayoutInt );									/* 垂直同期スクロール */
 	void SyncScrollH( CLayoutInt );									/* 水平同期スクロール */
 
 	void SetBracketPairPos( bool );								/* 対括弧の強調表示位置設定 03/02/18 ai */
-protected:
-	int GetColorIndex( HDC, const CLayout*, int );				/* 指定位置のColorIndexの取得 02/12/13 ai */
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -413,7 +413,7 @@ public:
 	};
 	BOOL KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc );	// 2006.04.10 fon
 
-	bool IsSearchString( const wchar_t*, CLogicInt, CLogicInt, CLogicInt*, CLogicInt* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
+	bool IsSearchString( const CStringRef& cStr, CLogicInt, CLogicInt*, CLogicInt* ) const;	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 
 	void GetCurrentTextForSearch( CNativeW& );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	void GetCurrentTextForSearchDlg( CNativeW& );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */
@@ -587,7 +587,6 @@ public:
 	COLORREF		m_crBack;				/* テキストの背景色 */			// 2006.12.07 ryoji
 	int				m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
 	int				m_nOldCursorLineX;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
-	HFONT			m_hFontOld;
 	bool			m_bUnderLineON;
 
 public:
@@ -617,7 +616,7 @@ public:
 	DWORD			m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
 
 	//検索
-	CBregexp			m_CurRegexp;				/*!< コンパイルデータ */
+	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */
 	bool				m_bCurSrchKeyMark;			/* 検索文字列のマーク */
 	wchar_t				m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
 	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション

@@ -21,8 +21,6 @@ private:
 	BOOL m_bOpenResult;
 
 
-
-
 	// -- -- staticインターフェース -- -- //
 public:
 	static bool HasValidData();    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue

@@ -22,7 +22,7 @@
 #define	_REGEX_KEYWORD_H_
 
 #include <windows.h>
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "global.h"
 #include "CBregexp.h"
 #include "config/maxdata.h" //MAX_REGEX_KEYWORD
@@ -103,14 +103,12 @@ public:
 	//! 行検索開始
 	BOOL RegexKeyLineStart( void );
 	//! 行検索
-	BOOL RegexIsKeyword( const wchar_t *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor );
+	BOOL RegexIsKeyword( const CStringRef& cStr, int nPos, int *nMatchLen, int *nMatchColor );
 	//! タイプ設定
 	BOOL RegexKeySetTypes( STypeConfig *pTypesPtr );
 	//! 書式(囲み)チェック
 	BOOL RegexKeyCheckSyntax( const wchar_t *s );
 
-	int		m_nTypeIndex;		//現在のタイプ設定番号
-	BOOL		m_bUseRegexKeyword;	//正規表現キーワードを使用する・しない
 
 
 protected:
@@ -120,12 +118,16 @@ protected:
 	BOOL RegexKeyInit( void );
 
 
+public:
+	int				m_nTypeIndex;				//現在のタイプ設定番号
+	bool			m_bUseRegexKeyword;			//正規表現キーワードを使用する・しない
+
 private:
-	STypeConfig		*m_pTypes;		//タイプ設定へのポインタ(呼び出し側が持っているもの)
-	int				m_nCompiledMagicNumber;	//コンパイル済みか？
-	int				m_nRegexKeyCount;	//現在のキーワード数
+	STypeConfig*	m_pTypes;					//タイプ設定へのポインタ(呼び出し側が持っているもの)
+	int				m_nCompiledMagicNumber;		//コンパイル済みか？
+	int				m_nRegexKeyCount;			//現在のキーワード数
 	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//キーワード一覧(BREGEXPコンパイル対象)
-	wchar_t			m_szMsg[256];		//!< BREGEXP_Wからのメッセージを保持する
+	wchar_t			m_szMsg[256];				//!< BREGEXP_Wからのメッセージを保持する
 };
 
 #endif	//_REGEX_KEYWORD_H_

@@ -42,6 +42,11 @@ int WINAPI _tWinMain(
 	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
 	setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
 
+	//開発情報
+	DEBUG_TRACE(_T("-- -- WinMain -- --\n"));
+	DEBUG_TRACE(_T("sizeof(DLLSHAREDATA) = %d\n"),sizeof(DLLSHAREDATA));
+
+	//プロセスの生成とメッセージループ
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{

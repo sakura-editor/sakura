@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "CPropTypes.h"
 #include "util/shell.h"
+#include "view/colors/CColorStrategy.h"
 using namespace std;
 
 
@@ -76,7 +77,7 @@ GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,DispatchEvent_KeyHelp)
 CPropTypes::CPropTypes()
 {
 	// Mar. 31, 2003 genta メモリ削減のためポインタに変更
-	m_pCKeyWordSetMgr = &(GetDllShareData().m_CKeyWordSetMgr);
+	m_pCKeyWordSetMgr = &(GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr);
 
 	m_hInstance = NULL;		/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */

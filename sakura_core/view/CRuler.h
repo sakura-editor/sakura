@@ -18,16 +18,15 @@ public:
 	void DispRuler( HDC );
 
 	//! ルーラーの背景のみ描画 2007.08.29 kobake 追加
-	void DrawRulerBg(HDC hdc);
+	void DrawRulerBg(CGraphics& gr);
 
-	//! ルーラーのキャレットのみ描画 2002.02.25 Add By KK
-	void DrawRulerCaret( HDC hdc );
-
-public:
 	void SetRedrawFlag(){ m_bRedrawRuler = true; }
 
 private:
-	void _DrawRulerCaret( HDC hdc, int nCaretDrawX, int nCaretWidth );
+	//! ルーラーのキャレットのみ描画 2002.02.25 Add By KK
+	void DrawRulerCaret( CGraphics& gr );
+
+	void _DrawRulerCaret( CGraphics& gr, int nCaretDrawX, int nCaretWidth );
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //

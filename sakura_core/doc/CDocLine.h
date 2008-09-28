@@ -63,13 +63,19 @@ public:
 			*pnLen = 0; return NULL;
 		}
 	}
+	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
+	{
+		if(this){
+			return CStringRef(GetPtr(),GetLengthWithEOL());
+		}
+		else{
+			return CStringRef(NULL,0);
+		}
+	}
 	const CEol& GetEol() const{ return m_cEol; }
 	void SetEol(const CEol& cEol, COpeBlk* pcOpeBlk);
 
 	const CNativeW& _GetDocLineDataWithEOL() const { return m_cLine; } //###仮
-
-	//! 文字列参照を取得
-	CStringRef GetStringRef() const{ return CStringRef(GetPtr(), GetLengthWithEOL()); }
 
 	//データ設定
 	void SetDocLineString(const wchar_t* pData, int nLength);

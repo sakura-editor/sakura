@@ -16,7 +16,7 @@
 #define _CCONTROLPROCESS_H_
 
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CProcess.h"
 
 class CControlTray;

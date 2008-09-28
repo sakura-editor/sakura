@@ -227,3 +227,6 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 	m_Common.m_sEdit.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );
 	return TRUE;
 }
+
+
+

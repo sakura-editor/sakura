@@ -3,7 +3,35 @@
 #include "CNative.h"
 #include "mem/CNativeT.h"
 #include "SakuraBasis.h"
+#include "debug/Debug2.h" //assert
 
+
+//! 文字列への参照を取得するインターフェース
+class IStringRef{
+public:
+	virtual const wchar_t*	GetPtr()	const = 0;
+	virtual int				GetLength()	const = 0;
+};
+
+
+//! 文字列への参照を保持するクラス
+class CStringRef : public IStringRef{
+public:
+	CStringRef() : m_pData(NULL), m_nDataLen(0) { }
+	CStringRef(const wchar_t* pData, int nDataLen) : m_pData(pData), m_nDataLen(nDataLen) { }
+	const wchar_t*	GetPtr()		const{ return m_pData;    }
+	int				GetLength()		const{ return m_nDataLen; }
+
+	//########補助
+	bool			IsValid()		const{ return m_pData!=NULL; }
+	wchar_t			At(int nIndex)	const{ assert(nIndex>=0 && nIndex<m_nDataLen); return m_pData[nIndex]; }
+private:
+	const wchar_t*	m_pData;
+	int				m_nDataLen;
+};
+
+
+//! UNICODE文字列管理クラス
 class CNativeW : public CNative{
 public:
 	//コンストラクタ・デストラクタ
@@ -139,24 +167,10 @@ public:
 	static CLayoutInt GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が半角何個分かを返す
 	static const wchar_t* GetCharNext( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します */
 	static const wchar_t* GetCharPrev( const wchar_t* pData, int nDataLen, const wchar_t* pDataCurrent ); //!< ポインタで示した文字の直前にある文字の位置を返します */
-};
 
-
-//! 文字列への参照を取得するインターフェース
-class IStringRef{
-public:
-	virtual const wchar_t*	GetPtr()	const = 0;
-	virtual int				GetLength()	const = 0;
-};
-
-//! 文字列への参照を保持するクラス
-class CStringRef : public IStringRef{
-public:
-	CStringRef(const wchar_t* pData, int nDataLen) : m_pData(pData), m_nDataLen(nDataLen) { }
-	const wchar_t*	GetPtr()	const{ return m_pData;    }
-	int				GetLength()	const{ return m_nDataLen; }
-private:
-	const wchar_t*	m_pData;
-	int				m_nDataLen;
+	static CLayoutInt GetKetaOfChar( const CStringRef& cStr, int nIdx ) //!< 指定した位置の文字が半角何個分かを返す
+	{
+		return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);
+	}
 };
 

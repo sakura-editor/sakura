@@ -11,6 +11,8 @@ public:
 		m_ptDrawLayout.x=CLayoutInt(0);
 		m_ptDrawLayout.y=CLayoutInt(0);
 		m_nLineRef=CLayoutInt(0);
+		//キャッシュ
+		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -48,11 +50,18 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//変更
-	void SetLayoutLineRef(CLayoutInt nLogicLine){ m_nLineRef = nLogicLine; }
-	void ForwardLayoutLineRef(int nOffsetLine){ m_nLineRef += CLayoutInt(nOffsetLine); }
+	void SetLayoutLineRef(CLayoutInt nOffsetLine)
+	{
+		m_nLineRef = nOffsetLine;
+		//キャッシュ更新
+		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
+	}
+	void ForwardLayoutLineRef(int nOffsetLine);
+
 
 	//取得
-	CLayoutInt GetLayoutLineRef() const{ return m_nLineRef; }
+	CLayoutInt		GetLayoutLineRef() const{ return m_nLineRef; }
+	const CLayout*	GetLayoutRef() const{ return m_pcLayoutRef; }
 
 
 private:
@@ -66,4 +75,7 @@ private:
 
 	//テキスト参照位置
 	CLayoutInt		m_nLineRef; //絶対レイアウト単位。
+
+	//キャッシュ############
+	CLayout*		m_pcLayoutRef;
 };

@@ -30,7 +30,7 @@
 #include "sakura_rc.h"
 #include "view/CEditView.h"
 #include "debug/Debug.h"
-#include "funccode.h"
+#include "func/Funccode.h"
 #include "debug/CRunningTimer.h"
 #include "charset/charcode.h"
 #include "CControlTray.h"
@@ -50,11 +50,10 @@
 #include "COpeBlk.h"///
 #include "doc/CLayout.h"///
 #include "window/CEditWnd.h"///
-#include "CFuncInfoArr.h"///
+#include "outline/CFuncInfoArr.h"
 #include "CMarkMgr.h"///
 #include "doc/CDocLine.h"///
 #include "macro/CSMacroMgr.h"///
-#include "mymessage.h"/// 2002/2/3 aroka 追加 to here
 #include "dlg/CDlgCancel.h"// 2002/2/8 hor
 #include "CPrintPreview.h"
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
@@ -76,7 +75,7 @@
 #include "window/CEditWnd.h"
 #include "charset/CCodeFactory.h"
 #include "io/CFileLoad.h"
-#include "CSakuraEnvironment.h"
+#include "env/CSakuraEnvironment.h"
 
 //外部依存
 CEditDoc* CViewCommander::GetDocument()
@@ -165,8 +164,8 @@ BOOL CViewCommander::HandleCommand(
 		bRepeat = TRUE;
 	}
 	m_bPrevCommand = nCommand;
-	if( GetDllShareData().m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
-		GetDllShareData().m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
+	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
 	){
 		/* キーリピート状態をなくする */
 		bRepeat = FALSE;
@@ -654,9 +653,11 @@ BOOL CViewCommander::HandleCommand(
 		if( 0 < GetOpeBlk()->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
 			GetDocument()->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( GetOpeBlk() );
+
 			if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 				GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
-		}else{
+		}
+		else{
 			delete GetOpeBlk();
 		}
 		SetOpeBlk(NULL);
@@ -2937,7 +2938,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 
 	//	bFlag1 = FALSE;
 	bSelecting = FALSE;
-	if( L'\0' == GetDllShareData().m_aSearchKeys[0][0] ){
+	if( L'\0' == GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0][0] ){
 		goto end_of_func;
 	}
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -3107,7 +3108,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 
 	bSelecting = FALSE;
 	//	2004.05.30 Moca bChangeCurRegexpに応じて対象文字列を変える
-	if( bChangeCurRegexp  && L'\0' == GetDllShareData().m_aSearchKeys[0][0] 
+	if( bChangeCurRegexp  && L'\0' == GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0][0] 
 	 || !bChangeCurRegexp && L'\0' == m_pCommanderView->m_szCurSrchKey[0] ){
 		goto end_of_func;
 	}
@@ -3485,7 +3486,7 @@ BOOL CViewCommander::Command_FILESAVEAS( const WCHAR* filename, EEolType eEolTyp
 */
 BOOL CViewCommander::Command_FILESAVEALL( void )
 {
-	CShareData::getInstance()->SendMessageToAllEditors(
+	CAppNodeGroupHandle(0).SendMessageToAllEditors(
 		WM_COMMAND,
 		MAKELONG( F_FILESAVE_QUIET, 0 ),
 		0,
@@ -3584,7 +3585,7 @@ void CViewCommander::Command_JUMP( void )
 
 	if( !GetEditWindow()->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if( GetDllShareData().m_bLineNumIsCRLF ){
+		if( GetDllShareData().m_bLineNumIsCRLF_ForJump ){
 			if( CLogicInt(0) >= nLineNum ){
 				nLineNum = CLogicInt(1);
 			}
@@ -3786,8 +3787,7 @@ void CViewCommander::Command_FONT( void )
 		}
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
-		CShareData::getInstance()->PostMessageToAllEditors(
-//		m_cShareData.SendMessageToAllEditors(
+		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)0, (LPARAM)hwndFrame, hwndFrame
 		);
@@ -4450,7 +4450,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 void CViewCommander::Command_EXTHELP1( void )
 {
 retry:;
-	if( CShareData::getInstance()->ExtWinHelpIsSet( GetDocument()->m_cDocType.GetDocumentType() ) == false){
+	if( CHelpManager().ExtWinHelpIsSet( GetDocument()->m_cDocType.GetDocumentType() ) == false){
 //	if( 0 == wcslen( GetDllShareData().m_Common.m_szExtHelp1 ) ){
 		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
@@ -4472,7 +4472,7 @@ retry:;
 	}
 
 	CNativeW		cmemCurText;
-	const TCHAR*	helpfile = CShareData::getInstance()->GetExtWinHelp( GetDocument()->m_cDocType.GetDocumentType() );
+	const TCHAR*	helpfile = CHelpManager().GetExtWinHelp( GetDocument()->m_cDocType.GetDocumentType() );
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	m_pCommanderView->GetCurrentTextForSearch( cmemCurText );
@@ -4510,7 +4510,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//	From Here Jul. 5, 2002 genta
 	const TCHAR *filename = NULL;
 	if ( helpfile == NULL || helpfile[0] == _T('\0') ){
-		while( !CShareData::getInstance()->ExtHTMLHelpIsSet( GetDocument()->m_cDocType.GetDocumentType()) ){
+		while( !CHelpManager().ExtHTMLHelpIsSet( GetDocument()->m_cDocType.GetDocumentType()) ){
 			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
 	//		[Esc]キーと[x]ボタンでも中止できるように変更
@@ -4525,7 +4525,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 				return;
 			}
 		}
-		filename = CShareData::getInstance()->GetExtHTMLHelp( GetDocument()->m_cDocType.GetDocumentType() );
+		filename = CHelpManager().GetExtHTMLHelp( GetDocument()->m_cDocType.GetDocumentType() );
 	}
 	else {
 		filename = helpfile;
@@ -4544,11 +4544,11 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	}
 
 	/* HtmlHelpビューアはひとつ */
-	if( CShareData::getInstance()->HTMLHelpIsSingle( GetDocument()->m_cDocType.GetDocumentType() ) ){
+	if( CHelpManager().HTMLHelpIsSingle( GetDocument()->m_cDocType.GetDocumentType() ) ){
 		// タスクトレイのプロセスにHtmlHelpを起動させる
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-		TCHAR* pWork=GetDllShareData().GetWorkBuffer<TCHAR>();
+		TCHAR* pWork=GetDllShareData().m_sWorkBuffer.GetWorkBuffer<TCHAR>();
 		if( _IS_REL_PATH( filename ) ){
 			GetInidirOrExedir( pWork, filename );
 		}else{
@@ -4557,7 +4557,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		nLen = _tcslen( pWork );
 		_tcscpy( &pWork[nLen + 1], cmemCurText.GetStringT() );
 		hwndHtmlHelp = (HWND)::SendMessageAny(
-			GetDllShareData().m_hwndTray,
+			GetDllShareData().m_sHandles.m_hwndTray,
 			MYWM_HTMLHELP,
 			(WPARAM)GetMainWindow(),
 			0
@@ -4582,7 +4582,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 			GetInidirOrExedir( path, filename );
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetDllShareData().m_hwndTray*/,
+				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
 				path, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
 				(DWORD_PTR)&link
@@ -4590,7 +4590,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		}else{
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
-				NULL/*GetDllShareData().m_hwndTray*/,
+				NULL/*GetDllShareData().m_sHandles.m_hwndTray*/,
 				filename, //	Jul. 5, 2002 genta
 				HH_KEYWORD_LOOKUP,
 				(DWORD_PTR)&link
@@ -5274,7 +5274,7 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 	TagJump tagJump;
 
 	/* タグジャンプ情報の参照 */
-	if( !CShareData::getInstance()->PopTagJump(&tagJump) || !CShareData::IsEditWnd(tagJump.hwndReferer) ){
+	if( !CTagJumpManager().PopTagJump(&tagJump) || !IsSakuraMainWindow(tagJump.hwndReferer) ){
 		m_pCommanderView->SendStatusMessage(_T("タグジャンプバックできません"));
 		// 2004.07.10 Moca m_TagJumpNumを0にしなくてもいいと思う
 		// GetDllShareData().m_TagJumpNum = 0;
@@ -5285,7 +5285,7 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 	ActivateFrameWindow( tagJump.hwndReferer );
 
 	/* カーソルを移動させる */
-	memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &(tagJump.point), sizeof( tagJump.point ) );
+	memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &(tagJump.point), sizeof( tagJump.point ) );
 	::SendMessageAny( tagJump.hwndReferer, MYWM_SETCARETPOS, 0, 0 );
 
 	return;
@@ -5810,8 +5810,8 @@ void CViewCommander::Command_BIND_WINDOW( void )
 
 		//Start 2004.08.27 Kazika 変更
 		//タブウィンドウの設定を変更をブロードキャストする
-		CShareData::getInstance()->ResetGroupId();
-		CShareData::getInstance()->PostMessageToAllEditors(
+		CAppNodeManager::Instance()->ResetGroupId();
+		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
 			(WPARAM)((GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
 			(LPARAM)GetDocument()->m_pcEditWnd->GetHwnd(),	//CEditWndのウィンドウハンドル
@@ -5837,7 +5837,7 @@ void CViewCommander::Command_CASCADE( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
+	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		struct WNDARR {
@@ -5978,7 +5978,7 @@ void CViewCommander::Command_TILE_H( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
+	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -6034,7 +6034,7 @@ void CViewCommander::Command_TILE_V( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
+	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -6136,16 +6136,16 @@ void CViewCommander::Command_MINIMIZE_ALL( void )
 	HWND*	phWndArr;
 	int		i;
 	int		j;
-	j = GetDllShareData().m_nEditArrNum;
+	j = GetDllShareData().m_sNodes.m_nEditArrNum;
 	if( 0 == j ){
 		return;
 	}
 	phWndArr = new HWND[j];
 	for( i = 0; i < j; ++i ){
-		phWndArr[i] = GetDllShareData().m_pEditArr[i].GetHwnd();
+		phWndArr[i] = GetDllShareData().m_sNodes.m_pEditArr[i].GetHwnd();
 	}
 	for( i = 0; i < j; ++i ){
-		if( CShareData::IsEditWnd( phWndArr[i] ) )
+		if( IsSakuraMainWindow( phWndArr[i] ) )
 		{
 			if( ::IsWindowVisible( phWndArr[i] ) )
 				::ShowWindow( phWndArr[i], SW_MINIMIZE );
@@ -6169,7 +6169,7 @@ void CViewCommander::Command_REPLACE_DIALOG( void )
 
 	/* 検索文字列を初期化 */
 	wcscpy( GetEditWindow()->m_cDlgReplace.m_szText, cmemCurText.GetStringPtr() );
-	wcsncpy( GetEditWindow()->m_cDlgReplace.m_szText2, GetDllShareData().m_aReplaceKeys[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
+	wcsncpy( GetEditWindow()->m_cDlgReplace.m_szText2, GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
 	GetEditWindow()->m_cDlgReplace.m_szText2[MAX_PATH - 1] = L'\0';
 
 	if ( m_pCommanderView->GetSelectionInfo().IsTextSelected() && !GetSelect().IsLineOne() ) {
@@ -6244,7 +6244,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
 
 	// 2004.06.01 Moca 検索中に、他のプロセスによってm_aReplaceKeysが書き換えられても大丈夫なように
-	const CNativeW	cMemRepKey( GetDllShareData().m_aReplaceKeys[0] );
+	const CNativeW	cMemRepKey( GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0] );
 
 	/* 次を検索 */
 	Command_SEARCH_NEXT( true, TRUE, hwndParent, 0 );
@@ -6303,7 +6303,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 			} else {
 				cMemRepKey2 = cMemRepKey;
 			}
-			cRegexp.Compile( GetDllShareData().m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
+			cRegexp.Compile( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
 				// From Here Jun. 6, 2005 かろと
 				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
@@ -6336,7 +6336,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
-			//	HandleCommand( F_INSTEXT_W, FALSE, (LPARAM)GetDllShareData().m_aReplaceKeys[0], FALSE, 0, 0 );
+			//	HandleCommand( F_INSTEXT_W, FALSE, (LPARAM)GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0], FALSE, 0, 0 );
 			Command_INSTEXT( FALSE, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
 		}
 
@@ -6514,7 +6514,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	else
 	{
 		// 2004.05.14 Moca 全置換の途中で他のウィンドウで置換されるとまずいのでコピーする
-		cmemClip.SetString( GetDllShareData().m_aReplaceKeys[0] );
+		cmemClip.SetString( GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0] );
 	}
 
 	CLogicInt nREPLACEKEY;			// 置換後文字列の長さ。
@@ -6557,7 +6557,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		// 正規表現オプションの設定2006.04.01 かろと
 		int nFlag = (GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
 		nFlag |= (bConsecutiveAll ? CBregexp::optNothing : CBregexp::optGlobal);	// 2007.01.16 ryoji
-		cRegexp.Compile(GetDllShareData().m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
+		cRegexp.Compile(GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0], cMemRepKey2.GetStringPtr(), nFlag);
 	}
 
 	//$$ 単位混在
@@ -7202,7 +7202,7 @@ void CViewCommander::Command_EXITALL( void )
 void CViewCommander::Command_GROUPCLOSE( void )
 {
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-		int nGroup = CShareData::getInstance()->GetGroupId( GetMainWindow() );
+		int nGroup = CAppNodeManager::Instance()->GetEditNode( GetMainWindow() )->GetGroup();
 		CControlTray::CloseAllEditor( TRUE, GetMainWindow(), TRUE, nGroup );
 	}
 	return;
@@ -7211,7 +7211,7 @@ void CViewCommander::Command_GROUPCLOSE( void )
 /* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 void CViewCommander::Command_FILECLOSEALL( void )
 {
-	int nGroup = CShareData::getInstance()->GetGroupId( GetMainWindow() );
+	int nGroup = CAppNodeManager::Instance()->GetEditNode( GetMainWindow() )->GetGroup();
 	CControlTray::CloseAllEditor( TRUE, GetMainWindow(), FALSE, nGroup );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	return;
 }
@@ -7230,7 +7230,7 @@ void CViewCommander::Command_WINCLOSE( void )
 //アウトプットウィンドウ表示
 void CViewCommander::Command_WIN_OUTPUT( void )
 {
-	if( NULL == GetDllShareData().m_hwndDebug || !CShareData::IsEditWnd(GetDllShareData().m_hwndDebug) ){
+	if( NULL == GetDllShareData().m_sHandles.m_hwndDebug || !IsSakuraMainWindow(GetDllShareData().m_sHandles.m_hwndDebug) ){
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = _T("");
 		sLoadInfo.eCharCode = CODE_SJIS;
@@ -7239,7 +7239,7 @@ void CViewCommander::Command_WIN_OUTPUT( void )
 	}else{
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */
-		ActivateFrameWindow( GetDllShareData().m_hwndDebug );
+		ActivateFrameWindow( GetDllShareData().m_sHandles.m_hwndDebug );
 	}
 	return;
 }
@@ -7372,8 +7372,8 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 
 	CKeyBind::CreateKeyBindList(
 		G_AppInstance(),
-		GetDllShareData().m_nKeyNameArrNum,
-		GetDllShareData().m_pKeyNameArr,
+		GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum,
+		GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr,
 		cMemKeyList,
 		&GetDocument()->m_cFuncLookup,	//	Oct. 31, 2001 genta 追加
 		FALSE	// 2007.02.22 ryoji 追加
@@ -7443,7 +7443,7 @@ void CViewCommander::Command_COMPARE( void )
 	// カーソル位置取得 -> poDes
 	{
 		::SendMessageAny( hwndCompareWnd, MYWM_GETCARETPOS, 0, 0 );
-		CLogicPoint* ppoCaretDes = GetDllShareData().GetWorkBuffer<CLogicPoint>();
+		CLogicPoint* ppoCaretDes = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<CLogicPoint>();
 		poDes.x = ppoCaretDes->x;
 		poDes.y = ppoCaretDes->y;
 	}
@@ -7451,7 +7451,7 @@ void CViewCommander::Command_COMPARE( void )
 	pLineSrc = GetDocument()->m_cDocLineMgr.GetLine(poSrc.GetY2())->GetDocLineStrWithEOL(&nLineLenSrc);
 	/* 行(改行単位)データの要求 */
 	nLineLenDes = ::SendMessageAny( hwndCompareWnd, MYWM_GETLINEDATA, poDes.y, 0 );
-	pLineDes = GetDllShareData().GetWorkBuffer<EDIT_CHAR>();
+	pLineDes = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
 	while( 1 ){
 		if( pLineSrc == NULL &&	0 == nLineLenDes ){
 			bDefferent = FALSE;
@@ -7460,12 +7460,12 @@ void CViewCommander::Command_COMPARE( void )
 		if( pLineSrc == NULL || 0 == nLineLenDes ){
 			break;
 		}
-		if( nLineLenDes > (int)GetDllShareData().GetWorkBufferCount<EDIT_CHAR>() ){
+		if( nLineLenDes > (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() ){
 			TopErrorMessage( m_pCommanderView->GetHwnd(),
 				_T("比較先のファイル\n%ls\n%dバイトを超える行があります。\n")
 				_T("比較できません。"),
 				szPath,
-				GetDllShareData().GetWorkBufferCount<EDIT_CHAR>()
+				GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>()
 			);
 			return;
 		}
@@ -7533,11 +7533,11 @@ end_of_compare:;
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
-		memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &poDes, sizeof( poDes ) );
+		memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &poDes, sizeof( poDes ) );
 		::SendMessageAny( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
 		/* カーソルを移動させる */
-		memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &poSrc, sizeof( poSrc ) );
+		memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &poSrc, sizeof( poSrc ) );
 		::PostMessageAny( GetMainWindow(), MYWM_SETCARETPOS, 0, 0 );
 		TopWarningMessage( hwndMsgBox, _T("異なる箇所が見つかりました。") );	// 位置を変更してからメッセージ	2008/4/27 Uchi
 	}
@@ -7564,7 +7564,7 @@ void CViewCommander::Command_SHOWTOOLBAR( void )
 	pCEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
-	CShareData::getInstance()->PostMessageToAllEditors(
+	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TOOLBAR,
 		(LPARAM)pCEditWnd->GetHwnd(),
@@ -7588,7 +7588,7 @@ void CViewCommander::Command_SHOWSTATUSBAR( void )
 	pCEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
-	CShareData::getInstance()->PostMessageToAllEditors(
+	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_STATUSBAR,
 		(LPARAM)pCEditWnd->GetHwnd(),
@@ -7612,7 +7612,7 @@ void CViewCommander::Command_SHOWFUNCKEY( void )
 	pCEditWnd->EndLayoutBars();
 
 	//全ウインドウに変更を通知する。
-	CShareData::getInstance()->PostMessageToAllEditors(
+	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_FUNCKEY,
 		(LPARAM)pCEditWnd->GetHwnd(),
@@ -7645,8 +7645,8 @@ void CViewCommander::Command_SHOWTAB( void )
 	}
 
 	//全ウインドウに変更を通知する。
-	CShareData::getInstance()->ResetGroupId();
-	CShareData::getInstance()->PostMessageToAllEditors(
+	CAppNodeManager::Instance()->ResetGroupId();
+	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TAB,
 		(LPARAM)pCEditWnd->GetHwnd(),
@@ -7737,9 +7737,9 @@ void CViewCommander::Command_BROWSE( void )
 /* キーマクロの記録開始／終了 */
 void CViewCommander::Command_RECKEYMACRO( void )
 {
-	if( GetDllShareData().m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
-		GetDllShareData().m_bRecordingKeyMacro = FALSE;
-		GetDllShareData().m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
+	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
+		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
 		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダに「RecKey.mac」という名で保存
 		TCHAR szInitDir[MAX_PATH];
 		int nRet;
@@ -7749,20 +7749,20 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"), nRet );
 			return;
 		}else{
-			_tcscpy( GetDllShareData().m_szKeyMacroFileName, szInitDir );
+			_tcscpy( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
 		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		int nSaveResult=CEditApp::Instance()->m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
 			G_AppInstance(),
-			GetDllShareData().m_szKeyMacroFileName
+			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
 		);
 		if ( !nSaveResult ){
-			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ls"), GetDllShareData().m_szKeyMacroFileName );
+			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ls"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 	}else{
-		GetDllShareData().m_bRecordingKeyMacro = TRUE;
-		GetDllShareData().m_hwndRecordingKeyMacro = GetMainWindow();;	/* キーボードマクロを記録中のウィンドウ */
+		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = TRUE;
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = GetMainWindow();;	/* キーボードマクロを記録中のウィンドウ */
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -7783,8 +7783,8 @@ void CViewCommander::Command_RECKEYMACRO( void )
 /* キーマクロの保存 */
 void CViewCommander::Command_SAVEKEYMACRO( void )
 {
-	GetDllShareData().m_bRecordingKeyMacro = FALSE;
-	GetDllShareData().m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
+	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	//	Jun. 16, 2002 genta
 	if( !CEditApp::Instance()->m_pcSMacroMgr->IsSaveOk() ){
@@ -7798,10 +7798,10 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	_tcscpy( szPath, _T("") );
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	if( _IS_REL_PATH( GetDllShareData().m_szMACROFOLDER ) ){
-		GetInidirOrExedir( szInitDir, GetDllShareData().m_szMACROFOLDER );
+	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
+		GetInidirOrExedir( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );
 	}else{
-		_tcscpy( szInitDir, GetDllShareData().m_szMACROFOLDER );	/* マクロ用フォルダ */
+		_tcscpy( szInitDir, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER );	/* マクロ用フォルダ */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -7815,8 +7815,8 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_szMACROFOLDER, NULL );
-//	wcscat( GetDllShareData().m_szMACROFOLDER, L"\\" );
+//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, NULL );
+//	wcscat( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER, L"\\" );
 
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -7834,27 +7834,27 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 void CViewCommander::Command_EXECKEYMACRO( void )
 {
 	//@@@ 2002.1.24 YAZAKI 記録中は終了してから実行
-	if (GetDllShareData().m_bRecordingKeyMacro){
+	if (GetDllShareData().m_sFlags.m_bRecordingKeyMacro){
 		Command_RECKEYMACRO();
 	}
-	GetDllShareData().m_bRecordingKeyMacro = FALSE;
-	GetDllShareData().m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
+	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	/* キーボードマクロの実行中 */
 	m_pCommanderView->m_bExecutingKeyMacro = true;
 
 	/* キーボードマクロの実行 */
 	//@@@ 2002.1.24 YAZAKI
-	if ( GetDllShareData().m_szKeyMacroFileName[0] ){
+	if ( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		BOOL bLoadResult = CEditApp::Instance()->m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
 			G_AppInstance(),
-			GetDllShareData().m_szKeyMacroFileName
+			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
 		);
 		if ( !bLoadResult ){
-			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ls"), GetDllShareData().m_szKeyMacroFileName );
+			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ls"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 		else {
 			CEditApp::Instance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView );
@@ -7878,15 +7878,15 @@ void CViewCommander::Command_EXECKEYMACRO( void )
  */
 void CViewCommander::Command_LOADKEYMACRO( void )
 {
-	GetDllShareData().m_bRecordingKeyMacro = FALSE;
-	GetDllShareData().m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
+	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szPath[_MAX_PATH + 1];
 	TCHAR			szInitDir[_MAX_PATH + 1];
 	const TCHAR*		pszFolder;
 	_tcscpy( szPath, _T("") );
-	pszFolder = GetDllShareData().m_szMACROFOLDER;
+	pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( pszFolder ) ){
@@ -7909,7 +7909,7 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 
 	/* キーボードマクロの読み込み */
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む
-	_tcscpy(GetDllShareData().m_szKeyMacroFileName, szPath);
+	_tcscpy(GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szPath);
 //	GetDllShareData().m_CKeyMacroMgr.LoadKeyMacro( G_AppInstance(), m_pCommanderView->GetHwnd(), szPath );
 	return;
 }
@@ -7930,7 +7930,7 @@ void CViewCommander::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPW
 	// Jan. 8, 2006 genta 判定処理をm_pCommanderView->GetWrapMode()へ移動
 	CEditView::TOGGLE_WRAP_ACTION nWrapMode;
 	CLayoutInt newKetas;
-
+	
 	nWrapMode = m_pCommanderView->GetWrapMode( &newKetas );
 	GetDocument()->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
 	GetDocument()->m_bTextWrapMethodCurTemp = !( GetDocument()->m_nTextWrapMethodCur == GetDocument()->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod );
@@ -7970,23 +7970,23 @@ void CViewCommander::Command_SEARCH_CLEARMARK( void )
 		// 検索文字列設定
 		int i,j;
 		wcscpy( m_pCommanderView->m_szCurSrchKey, cmemCurText.GetStringPtr() );
-		for( i = 0; i < GetDllShareData().m_aSearchKeys.size(); ++i ){
-			if( 0 == wcscmp( m_pCommanderView->m_szCurSrchKey, GetDllShareData().m_aSearchKeys[i] ) ){
+		for( i = 0; i < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
+			if( 0 == wcscmp( m_pCommanderView->m_szCurSrchKey, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] ) ){
 				break;
 			}
 		}
-		if( i < GetDllShareData().m_aSearchKeys.size() ){
+		if( i < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size() ){
 			for( j = i; j > 0; j-- ){
-				wcscpy( GetDllShareData().m_aSearchKeys[j], GetDllShareData().m_aSearchKeys[j - 1] );
+				wcscpy( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[j], GetDllShareData().m_sSearchKeywords.m_aSearchKeys[j - 1] );
 			}
 		}
 		else{
 			for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-				wcscpy( GetDllShareData().m_aSearchKeys[j], GetDllShareData().m_aSearchKeys[j - 1] );
+				wcscpy( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[j], GetDllShareData().m_sSearchKeywords.m_aSearchKeys[j - 1] );
 			}
-			GetDllShareData().m_aSearchKeys.resize( t_min<int>(MAX_SEARCHKEY, GetDllShareData().m_aSearchKeys.size()+1) );
+			GetDllShareData().m_sSearchKeywords.m_aSearchKeys.resize( t_min<int>(MAX_SEARCHKEY, GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size()+1) );
 		}
-		wcscpy( GetDllShareData().m_aSearchKeys[0], cmemCurText.GetStringPtr() );
+		wcscpy( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0], cmemCurText.GetStringPtr() );
 
 		// 検索オプション設定
 		GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp=false;	//正規表現使わない
@@ -8046,7 +8046,7 @@ void CViewCommander::Command_INS_DATE( void )
 	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CShareData::getInstance()->MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
+	CFormatManager().MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
 
 	// テキストを貼り付け ver1
 	Command_INSTEXT( TRUE, to_wchar(szText), CLogicInt(-1), TRUE );
@@ -8062,7 +8062,7 @@ void CViewCommander::Command_INS_TIME( void )
 	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CShareData::getInstance()->MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );
+	CFormatManager().MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );
 
 	// テキストを貼り付け ver1
 	Command_INSTEXT( TRUE, to_wchar(szText), CLogicInt(-1), TRUE );
@@ -8505,6 +8505,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	m_pCommanderView->Redraw();
 	return bResult;
 }
+
 
 /*!
 	@brief テキストの折り返し方法を変更する

@@ -36,8 +36,7 @@
 #include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "global.h"
-#include "funccode.h"
-#include "mymessage.h"
+#include "func/Funccode.h"
 #include "util/shell.h"
 
 #include "sakura.hh"

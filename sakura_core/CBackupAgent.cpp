@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CBackupAgent.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "window/CEditWnd.h"
 #include <time.h> //_tzset
 #include "util/format.h" //GetDateTimeFormat
@@ -87,7 +87,7 @@ int CBackupAgent::MakeBackUp(
 				_T("バックアップエラー"),
 				_T("以下のバックアップフォルダが見つかりません．\n%ts\n")
 				_T("バックアップを作成せずに上書き保存してよろしいですか．"),
-				(LPCTSTR)bup_setting.m_szBackUpFolder
+				bup_setting.m_szBackUpFolder.c_str()
 			);
 			if( nMsgResult == IDYES ){
 				return 0;//	保存継続

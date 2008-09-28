@@ -20,13 +20,13 @@
 #include "dlg/CDlgGrep.h"
 #include "debug/Debug.h"
 #include "global.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/module.h"
 #include "util/file.h"
 #include "util/shell.h"
 #include "CBregexp.h"
 #include "util/os.h"
-#include "CSakuraEnvironment.h"
+#include "env/CSakuraEnvironment.h"
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"
@@ -64,9 +64,9 @@ CDlgGrep::CDlgGrep()
 	m_bGrepOutputLine = TRUE;			// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = 1;				// Grep: 出力形式
 
-	wcscpy( m_szText, m_pShareData->m_aSearchKeys[0] );		/* 検索文字列 */
-	_tcscpy( m_szFile, m_pShareData->m_aGrepFiles[0] );		/* 検索ファイル */
-	_tcscpy( m_szFolder, m_pShareData->m_aGrepFolders[0] );	/* 検索フォルダ */
+	wcscpy( m_szText, m_pShareData->m_sSearchKeywords.m_aSearchKeys[0] );		/* 検索文字列 */
+	_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+	_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
 	return;
 }
 
@@ -303,25 +303,25 @@ void CDlgGrep::SetData( void )
 	/* 検索文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
 	HWND	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
-	for( int i = 0; i < m_pShareData->m_aSearchKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_aSearchKeys[i] );
+	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 	}
 
 	/* 検索ファイル */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, m_szFile );
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE );
-	for( int i = 0; i < m_pShareData->m_aGrepFiles.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_aGrepFiles[i] );
+	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFiles[i] );
 	}
 
 	/* 検索フォルダ */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder );
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
-	for( int i = 0; i < m_pShareData->m_aGrepFolders.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_aGrepFolders[i] );
+	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFolders[i] );
 	}
 
-	if((0 == _tcslen( m_pShareData->m_aGrepFolders[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
+	if((0 == _tcslen( m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
 		0 < _tcslen( m_szCurrentFilePath )
 	){
 		TCHAR	szWorkFolder[MAX_PATH];
@@ -539,16 +539,16 @@ int CDlgGrep::GetData( void )
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
-		CShareData::getInstance()->AddToSearchKeyArr( m_szText );
+		CSearchKeywordManager().AddToSearchKeyArr( m_szText );
 	}
 
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23
 	if (!m_bFromThisText) {
 		/* 検索ファイル */
-		CShareData::getInstance()->AddToGrepFileArr( m_szFile );
+		CSearchKeywordManager().AddToGrepFileArr( m_szFile );
 
 		/* 検索フォルダ */
-		CShareData::getInstance()->AddToGrepFolderArr( m_szFolder );
+		CSearchKeywordManager().AddToGrepFolderArr( m_szFolder );
 	}
 
 	return TRUE;

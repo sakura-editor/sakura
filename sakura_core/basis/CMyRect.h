@@ -37,6 +37,20 @@ public:
 		right  = x+w;
 		bottom = y+h;
 	}
+	void SetPos(int x, int y)
+	{
+		int w = Width();
+		int h = Height();
+		left = x;
+		top  = y;
+		SetSize(w,h);
+	}
+	void SetSize(int w, int h)
+	{
+		right  = left + w;
+		bottom = top  + h;
+	}
+
 
 	//ŒvŽZ
 	int Width() const

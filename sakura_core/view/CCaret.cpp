@@ -10,6 +10,7 @@
 #include "charset/CCodeFactory.h"
 #include "window/CEditWnd.h"
 #include <vector>
+#include "view/colors/CColorStrategy.h"
 using namespace std;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -657,7 +658,6 @@ void CCaret::ShowCaretPosInfo()
 					pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
 					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar);
 				}
-
 			}
 			else{
 				_tcscpy_s(szCaretChar, _countof(szCaretChar), pcLayout->GetLayoutEol().GetName());

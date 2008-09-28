@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentReplace.h"
 #include <string.h>
 
@@ -12,8 +12,8 @@
 CRecentReplace::CRecentReplace()
 {
 	Create(
-		&GetShareData()->m_aReplaceKeys[0],
-		&GetShareData()->m_aReplaceKeys._GetSizeRef(),
+		&GetShareData()->m_sSearchKeywords.m_aReplaceKeys[0],
+		&GetShareData()->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef(),
 		NULL /*GetShareData()->m_bREPLACEKEYArrFavorite*/,
 		MAX_REPLACEKEY,
 		NULL

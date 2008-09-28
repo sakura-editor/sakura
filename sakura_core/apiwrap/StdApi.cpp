@@ -207,6 +207,7 @@ namespace ApiWrap{
 		return ret;
 	}
 
+
 	LPWSTR CharNextW_AnyBuild(
 		LPCWSTR lpsz
 	)
@@ -274,6 +275,44 @@ namespace ApiWrap{
 		//結果
 		return ret2;
 #endif
+	}
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                    描画API 不具合ラップ                     //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	/*
+		VistaでSetPixelが動かないため、代替関数を用意。
+
+		参考：http://forums.microsoft.com/MSDN-JA/ShowPost.aspx?PostID=3228018&SiteID=7
+		> Vista で Aero を OFF にすると SetPixel がうまく動かないそうです。
+		> しかも、SP1 でも修正されていないとか。
+	*/
+	void SetPixelSurely(HDC hdc,int x,int y,COLORREF c)
+	{
+		static COsVersionInfo os;
+		//Vistaより前：SetPixel直呼び出し
+		if(!os.IsWinVista_or_later()){
+			::SetPixel(hdc,x,y,c);
+		}
+		//Vista以降：SetPixelエミュレート
+		else{
+			static HPEN hPen = NULL;
+			static COLORREF clrPen = 0;
+			if(hPen && c!=clrPen){
+				DeleteObject(hPen);
+				hPen = NULL;
+			}
+			//ペン生成
+			if(!hPen){
+				hPen = CreatePen(PS_SOLID,1,clrPen = c);
+			}
+			//描画
+			HPEN hpnOld = (HPEN)SelectObject(hdc,hPen);
+			::MoveToEx(hdc,x,y,NULL);
+			::LineTo(hdc,x+1,y+1);
+			SelectObject(hdc,hpnOld);
+		}
 	}
 
 }

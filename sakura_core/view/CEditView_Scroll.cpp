@@ -401,11 +401,11 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 	RECT		rcClip2;
 	if( nPos < 0 ){
 		nPos = CLayoutInt(0);
-	}else
+	}
 	//	Aug. 18, 2003 ryoji 変数のミスを修正
 	//	ウィンドウの幅をきわめて狭くしたときに編集領域が行番号から離れてしまうことがあった．
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() - GetTextArea().m_nViewColNum  < nPos ){
+	else if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() - GetTextArea().m_nViewColNum  < nPos ){
 		nPos = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() - GetTextArea().m_nViewColNum ;
 		//	May 29, 2004 genta 折り返し幅よりウィンドウ幅が大きいときにWM_HSCROLLが来ると
 		//	nPosが負の値になることがあり，その場合にスクロールバーから編集領域が

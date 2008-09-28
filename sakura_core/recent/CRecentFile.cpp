@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "recent/CRecentFile.h"
 #include <string.h>
 
@@ -25,9 +25,9 @@ const TCHAR* CRecentFile::GetItemText( int nIndex ) const
 CRecentFile::CRecentFile()
 {
 	Create(
-		GetShareData()->m_fiMRUArr,
-		&GetShareData()->m_nMRUArrNum,
-		GetShareData()->m_bMRUArrFavorite,
+		GetShareData()->m_sHistory.m_fiMRUArr,
+		&GetShareData()->m_sHistory.m_nMRUArrNum,
+		GetShareData()->m_sHistory.m_bMRUArrFavorite,
 		MAX_MRU,
 		&(GetShareData()->m_Common.m_sGeneral.m_nMRUArrNum_MAX)
 	);

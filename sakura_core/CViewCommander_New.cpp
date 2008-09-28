@@ -9,7 +9,6 @@
 #include "COpeBlk.h" ///
 #include "doc/CLayout.h"///
 #include "doc/CDocLine.h"///
-#include "mymessage.h"///
 #include "debug/Debug.h"///
 #include <string>///
 #include <vector> /// 2002/2/3 aroka to here
@@ -21,7 +20,7 @@
 #include "window/CEditWnd.h"
 #include "io/CFileLoad.h"	// 2006.12.09 maru
 #include "dlg/CDlgCancel.h"	// 2006.12.09 maru
-#include "CSakuraEnvironment.h"
+#include "env/CSakuraEnvironment.h"
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -337,20 +336,6 @@ void CViewCommander::Command_REDO( void )
 
 	return;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -728,7 +713,7 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 	//検索or置換ダイアログから呼び出された
 	if(!m_pCommanderView->ChangeCurRegexp())return;
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).MarkSearchWord(
-		GetDllShareData().m_aSearchKeys[0],		// 検索条件
+		GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0],		// 検索条件
 		GetDllShareData().m_Common.m_sSearch.m_sSearchOption,	// 検索条件
 		&m_pCommanderView->m_CurRegexp							// 正規表現コンパイルデータ
 	);

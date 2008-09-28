@@ -21,7 +21,7 @@ class CMenuDrawer;
 #define _CMENUDRAWER_H_
 
 #include <windows.h>
-#include "CShareData.h" // MAX_TOOLBARBUTTONS
+#include "env/CShareData.h" // MAX_TOOLBARBUTTONS
 #include "mem/CMemory.h"// 2002/2/10 aroka
 class CImageListMgr;// 2002/2/10 aroka
 

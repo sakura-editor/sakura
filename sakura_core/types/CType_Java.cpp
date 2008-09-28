@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "types/CType.h"
 #include "doc/CDocOutline.h"
-#include "CFuncInfoArr.h"
+#include "outline/CFuncInfoArr.h"
+#include "view/colors/CColorStrategy.h"
 
 /* Java */
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)
@@ -12,7 +13,7 @@ void CType_Java::InitTypeConfigImp(STypeConfig* pType)
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* 行コメントデリミタ */
-	pType->m_cBlockComment.SetBlockCommentRule( 0, L"/*", L"*/" );	/* ブロックコメントデリミタ */
+	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );	/* ブロックコメントデリミタ */
 	pType->m_nKeyWordSetIdx[0] = 4;									/* キーワードセット */
 	pType->m_eDefaultOutline = OUTLINE_JAVA;						/* アウトライン解析方法 */
 	pType->m_eSmartIndent = SMARTINDENT_CPP;						/* スマートインデント種別 */

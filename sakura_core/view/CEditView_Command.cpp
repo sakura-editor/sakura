@@ -3,7 +3,6 @@
 #include "doc/CEditDoc.h"
 #include "util/file.h"
 #include "util/module.h"
-#include "mymessage.h"
 #include "util/window.h"
 #include "CControlTray.h"
 #include <io.h>
@@ -65,7 +64,7 @@ bool CEditView::TagJumpSub(
 	);
 
 	// タグジャンプ情報の保存
-	CShareData::getInstance()->PushTagJump(&tagJump);
+	CTagJumpManager().PushTagJump(&tagJump);
 
 
 	/* 指定ファイルが開かれているか調べる */
@@ -82,7 +81,7 @@ bool CEditView::TagJumpSub(
 			}else{
 				poCaret.x = 0;
 			}
-			memcpy_raw( GetDllShareData().GetWorkBuffer<void>(), &poCaret, sizeof(poCaret) );
+			memcpy_raw( GetDllShareData().m_sWorkBuffer.GetWorkBuffer<void>(), &poCaret, sizeof(poCaret) );
 			::SendMessageAny( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
 		}
 		/* アクティブにする */
@@ -242,7 +241,7 @@ open_c:;
 	);
 	tagJump.hwndReferer = CEditWnd::Instance()->GetHwnd();
 	// タグジャンプ情報の保存
-	CShareData::getInstance()->PushTagJump(&tagJump);
+	CTagJumpManager().PushTagJump(&tagJump);
 	return TRUE;
 }
 
@@ -345,7 +344,7 @@ BOOL CEditView::ChangeCurRegexp(void)
 {
 	BOOL	bChangeState;
 	if( !m_bCurSrchKeyMark
-	 || 0 != wcscmp( m_szCurSrchKey, GetDllShareData().m_aSearchKeys[0] )
+	 || 0 != wcscmp( m_szCurSrchKey, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] )
 	 || m_sCurSearchOption != GetDllShareData().m_Common.m_sSearch.m_sSearchOption
 	){
 		bChangeState = TRUE;
@@ -354,7 +353,7 @@ BOOL CEditView::ChangeCurRegexp(void)
 	}
 
 	m_bCurSrchKeyMark = true;									// 検索文字列のマーク
-	wcscpy( m_szCurSrchKey, GetDllShareData().m_aSearchKeys[0] );// 検索文字列
+	wcscpy( m_szCurSrchKey, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );// 検索文字列
 	m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
 	/* 正規表現 */
 	if( m_sCurSearchOption.bRegularExp

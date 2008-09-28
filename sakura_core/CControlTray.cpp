@@ -33,7 +33,6 @@
 #include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
 #include "sakura_rc.h"
-#include "mymessage.h"
 #include "dlg/CDlgOpenFile.h"
 #include "global.h"
 #include "debug/CRunningTimer.h"
@@ -43,6 +42,8 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
+#include "env/CShareData_IO.h"
+#include "env/CSakuraEnvironment.h"
 
 /////////////////////////////////////////////////////////////////////////
 LRESULT CALLBACK CEditAppWndProc( HWND, UINT, WPARAM, LPARAM );
@@ -62,7 +63,7 @@ void CControlTray::DoGrep()
 		return;
 	}
 
-	wcscpy( m_cDlgGrep.m_szText, m_pShareData->m_aSearchKeys[0] );
+	wcscpy( m_cDlgGrep.m_szText, m_pShareData->m_sSearchKeywords.m_aSearchKeys[0] );
 
 	/* Grepダイアログの表示 */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );
@@ -111,7 +112,7 @@ void CControlTray::DoGrep()
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
-	CControlTray::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, sLoadInfo, cCmdLine.c_str());
+	CControlTray::OpenNewEditor( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, sLoadInfo, cCmdLine.c_str());
 }
 
 
@@ -154,16 +155,16 @@ CControlTray::CControlTray()
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	if( m_pShareData->m_hAccel != NULL ){
-		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-		m_pShareData->m_hAccel = NULL;
+	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
+		m_pShareData->m_sHandles.m_hAccel = NULL;
 	}
-	m_pShareData->m_hAccel =
+	m_pShareData->m_sHandles.m_hAccel =
 		CKeyBind::CreateAccerelator(
-			m_pShareData->m_nKeyNameArrNum,
-			m_pShareData->m_pKeyNameArr
+			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 		);
-	if( NULL == m_pShareData->m_hAccel ){
+	if( NULL == m_pShareData->m_sHandles.m_hAccel ){
 		ErrorMessage(
 			NULL,
 			_T("CControlTray::CControlTray()\n")
@@ -424,7 +425,7 @@ LRESULT CControlTray::DispatchEvent(
 
 	case MYWM_HTMLHELP:
 		{
-			TCHAR* pWork = m_pShareData->GetWorkBuffer<TCHAR>();
+			TCHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<TCHAR>();
 
 			//szHtmlFile取得
 			TCHAR	szHtmlHelpFile[1024];
@@ -477,7 +478,7 @@ LRESULT CControlTray::DispatchEvent(
 		// タスクトレイのアイコンを常駐しない、または、トレイにアイコンを作っていない
 		if( !(m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray && m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray) || !m_bCreatedTrayIcon ){
 			// 現在開いている編集窓のリスト
-			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			RELPRINT_A("nRowNum=%d\n",nRowNum);
 			if( 0 < nRowNum ){
 				delete [] pEditNodeArr;
@@ -570,16 +571,16 @@ LRESULT CControlTray::DispatchEvent(
 //@@		m_cShareData.SaveShareData();
 
 			/* アクセラレータテーブルの再作成 */
-			if( m_pShareData->m_hAccel != NULL ){
-				::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-				m_pShareData->m_hAccel = NULL;
+			if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+				::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
+				m_pShareData->m_sHandles.m_hAccel = NULL;
 			}
-			m_pShareData->m_hAccel =
+			m_pShareData->m_sHandles.m_hAccel =
 				CKeyBind::CreateAccerelator(
-					m_pShareData->m_nKeyNameArrNum,
-					m_pShareData->m_pKeyNameArr
+					m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+					m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 				);
-			if( NULL == m_pShareData->m_hAccel ){
+			if( NULL == m_pShareData->m_sHandles.m_hAccel ){
 				ErrorMessage(
 					NULL,
 					_T("CControlTray::DispatchEvent()\n")
@@ -616,7 +617,7 @@ LRESULT CControlTray::DispatchEvent(
 				case F_EXTHELP1:
 					/* 外部ヘルプ１ */
 					do{
-						if( CShareData::getInstance()->ExtWinHelpIsSet() ) {	//	共通設定のみ確認
+						if( CHelpManager().ExtWinHelpIsSet() ) {	//	共通設定のみ確認
 							break;
 						}
 						else{
@@ -711,7 +712,7 @@ LRESULT CControlTray::DispatchEvent(
 					DoGrep();  //Stonee, 2001/03/21  Grepを別関数に
 					break;
 				case F_FILESAVEALL:	// Jan. 24, 2005 genta 全て上書き保存
-					CShareData::getInstance()->PostMessageToAllEditors(
+					CAppNodeGroupHandle(0).PostMessageToAllEditors(
 						WM_COMMAND,
 						MAKELONG( F_FILESAVE_QUIET, 0 ),
 						(LPARAM)0,
@@ -727,8 +728,8 @@ LRESULT CControlTray::DispatchEvent(
 					CControlTray::TerminateApplication( GetTrayHwnd() );	// 2006.12.25 ryoji 引数追加
 					break;
 				default:
-					if( nId - IDM_SELWINDOW  >= 0 && nId - IDM_SELWINDOW  < m_pShareData->m_nEditArrNum ){
-						hwndWork = m_pShareData->m_pEditArr[nId - IDM_SELWINDOW].GetHwnd();
+					if( nId - IDM_SELWINDOW  >= 0 && nId - IDM_SELWINDOW  < m_pShareData->m_sNodes.m_nEditArrNum ){
+						hwndWork = m_pShareData->m_sNodes.m_pEditArr[nId - IDM_SELWINDOW].GetHwnd();
 
 						/* アクティブにする */
 						ActivateFrameWindow( hwndWork );
@@ -933,7 +934,7 @@ bool CControlTray::OpenNewEditor(
 	DLLSHAREDATA*	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		TCHAR szMsg[512];
 		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
@@ -962,7 +963,7 @@ bool CControlTray::OpenNewEditor(
 
 	// グループID (親ウィンドウから取得)
 	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
-	int nGroup = CShareData::getInstance()->GetGroupId( hwndAncestor );
+	int nGroup = CAppNodeManager::Instance()->GetEditNode( hwndAncestor )->GetGroup();
 	if( nGroup > 0 ){
 		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup );
 	}
@@ -1105,7 +1106,7 @@ bool CControlTray::OpenNewEditor2(
 	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		TCHAR szMsg[512];
 		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
@@ -1136,7 +1137,7 @@ void CControlTray::ActiveNextWindow()
 {
 	/* 現在開いている編集窓のリストを得る */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if(  nRowNum > 0 ){
 		/* 自分のウィンドウを調べる */
 		int				nGroup = 0;
@@ -1175,7 +1176,7 @@ void CControlTray::ActivePrevWindow()
 {
 	/* 現在開いている編集窓のリストを得る */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if(  nRowNum > 0 ){
 		/* 自分のウィンドウを調べる */
 		int				nGroup = 0;
@@ -1224,7 +1225,7 @@ void CControlTray::TerminateApplication(
 
 	/* 現在の編集ウィンドウの数を調べる */
 	if( pShareData->m_Common.m_sGeneral.m_bExitConfirm ){	//終了時の確認
-		if( 0 < CShareData::getInstance()->GetEditorWindowsNum( 0 ) ){
+		if( 0 < CAppNodeGroupHandle(0).GetEditorWindowsNum() ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
@@ -1238,7 +1239,7 @@ void CControlTray::TerminateApplication(
 	/* 「すべてのウィンドウを閉じる」要求 */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	BOOL bCheckConfirm = (pShareData->m_Common.m_sGeneral.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
 	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
-		::PostMessageAny( pShareData->m_hwndTray, WM_CLOSE, 0, 0 );
+		::PostMessageAny( pShareData->m_sHandles.m_hwndTray, WM_CLOSE, 0, 0 );
 	}
 	return;
 }
@@ -1265,8 +1266,8 @@ BOOL CControlTray::CloseAllEditor(
 
 	/* 現在の編集ウィンドウの数を調べる */
 	if( bCheckConfirm && pShareData->m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
-		int nCount = CShareData::getInstance()->IsEditWnd( hWndFrom )? 1: 0;	// 呼び出し元が編集ウィンドウなら編集ウィンドウが複数の場合に確認する
-		if( nCount < CShareData::getInstance()->GetEditorWindowsNum( nGroup ) ){
+		int nCount = IsSakuraMainWindow( hWndFrom )? 1: 0;	// 呼び出し元が編集ウィンドウなら編集ウィンドウが複数の場合に確認する
+		if( nCount < CAppNodeGroupHandle(nGroup).GetEditorWindowsNum() ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
@@ -1279,7 +1280,7 @@ BOOL CControlTray::CloseAllEditor(
 	}
 
 	/* 全編集ウィンドウへ終了要求を出す */
-	if( !CShareData::getInstance()->RequestCloseAllEditor( bExit, nGroup ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
+	if( !CAppNodeGroupHandle(nGroup).RequestCloseAllEditor( bExit ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
 		return FALSE;
 	}else{
 		return TRUE;
@@ -1310,7 +1311,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	m_bUseTrayMenu = true;
 
 	m_CMenuDrawer.ResetContents();
-	CShareData::getInstance()->TransformFileName_MakeCache();
+	CFileNameManager::Instance()->TransformFileName_MakeCache();
 
 	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
 	hMenu = ::GetSubMenu( hMenuTop, 0 );
@@ -1356,8 +1357,8 @@ int	CControlTray::CreatePopUpMenu_L( void )
 
 	/* 現在開いている編集窓のリストをメニューにする */
 	j = 0;
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].GetHwnd() ) ){
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd() ) ){
 			++j;
 		}
 	}
@@ -1365,11 +1366,11 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	if( j > 0 ){
 		m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 		j = 0;
-		for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-			if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].GetHwnd() ) ){
+		for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd() ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
-				::SendMessageAny( m_pShareData->m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
-				pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+				::SendMessageAny( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
+				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 					if( pfi->m_bIsGrep ){
 						/* データを指定バイト数以内に切り詰める */
 
@@ -1397,7 +1398,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 						// 2003/01/27 Moca ファイル名の簡易表示
 						// pfi->m_szPath → szFileName
 						TCHAR szFileName[_MAX_PATH];
-						CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, szFileName, MAX_PATH );
+						CFileNameManager::Instance()->GetTransformFileNameFast( pfi->m_szPath, szFileName, MAX_PATH );
 
 						// szFileName → szMenu2
 						//	Jan. 19, 2002 genta
@@ -1596,7 +1597,7 @@ void CControlTray::OnDestroy()
 	}
 
 	/* 共有データの保存 */
-	CShareData::getInstance()->SaveShareData();
+	CShareData_IO::SaveShareData();
 
 	/* 終了ダイアログを表示する */
 	if( m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog ){
@@ -1609,9 +1610,9 @@ void CControlTray::OnDestroy()
 	}
 
 	/* アクセラレータテーブルの削除 */
-	if( m_pShareData->m_hAccel != NULL ){
-		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-		m_pShareData->m_hAccel = NULL;
+	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
+		m_pShareData->m_sHandles.m_hAccel = NULL;
 	}
 
 	m_hWnd = NULL;

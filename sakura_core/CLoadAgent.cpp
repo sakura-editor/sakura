@@ -101,7 +101,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	}
 
 	// 文書種別
-	pcDoc->m_cDocType.SetDocumentType( CShareData::getInstance()->GetDocumentType( sLoadInfo.cFilePath ), true );
+	pcDoc->m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( sLoadInfo.cFilePath ), true );
 
 	/* レイアウト情報の変更 */
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応

@@ -16,7 +16,7 @@
 #include "stdafx.h"
 #include <io.h>
 #include "CMigemo.h"
-#include "Csharedata.h"
+#include "env/CShareData.h"
 #include "util/module.h"
 #include "util/file.h"
 

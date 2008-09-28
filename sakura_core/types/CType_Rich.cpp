@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "types/CType.h"
+#include "view/colors/CColorStrategy.h"
 
 /* リッチテキスト */
 //JUl. 10, 2001 JEPRO WinHelp作るのにいるケンね

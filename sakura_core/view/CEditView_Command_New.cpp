@@ -27,7 +27,6 @@
 #include "COpeBlk.h" ///
 #include "doc/CLayout.h"///
 #include "doc/CDocLine.h"///
-#include "mymessage.h"///
 #include "debug/Debug.h"///
 #include <string>///
 #include <vector> /// 2002/2/3 aroka to here

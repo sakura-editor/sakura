@@ -23,7 +23,7 @@ class CDlgOpenFile;
 #define _CDLGOPENFILE_H_
 
 #include <windows.h>
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CEol.h"
 #include "COsVersionInfo.h"	// 2005.11.02 ryoji
 

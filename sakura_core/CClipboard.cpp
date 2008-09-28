@@ -199,6 +199,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 	// From Here 2005/05/29 novice UNICODE TEXT ‘Î‰žˆ—‚ð’Ç‰Á
 	HGLOBAL hUnicode = ::GetClipboardData( CF_UNICODETEXT );
 	if( hUnicode != NULL ){
+		//DWORD nLen = GlobalSize(hUnicode);
 		wchar_t* szData = GlobalLockWChar(hUnicode);
 		cmemBuf->SetString( szData );
 		::GlobalUnlock(hUnicode);

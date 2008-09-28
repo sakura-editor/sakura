@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentGrepFolder.h"
 #include <string.h>
 
@@ -12,8 +12,8 @@
 CRecentGrepFolder::CRecentGrepFolder()
 {
 	Create(
-		&GetShareData()->m_aGrepFolders[0],
-		&GetShareData()->m_aGrepFolders._GetSizeRef(),
+		&GetShareData()->m_sSearchKeywords.m_aGrepFolders[0],
+		&GetShareData()->m_sSearchKeywords.m_aGrepFolders._GetSizeRef(),
 		NULL,
 		MAX_GREPFOLDER,
 		NULL

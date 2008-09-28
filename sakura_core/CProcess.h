@@ -15,7 +15,7 @@
 #define _CPROCESS_H_
 
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

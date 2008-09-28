@@ -1,10 +1,117 @@
 #include "stdafx.h"
 #include "docplus/CDiffManager.h"
+#include "view/colors/CColorStrategy.h"
+#include "types/CTypeSupport.h"
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     CDiffLineGetter                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 EDiffMark CDiffLineGetter::GetLineDiffMark() const{ return (EDiffMark)m_pcDocLine->m_sMark.m_cDiffmarked; }
+
+/*! 行の差分マークに対応した色を返す -> pnColorIndex
+	
+	色設定が無い場合は pnColorIndex を変更せずに false を返す。	
+*/
+bool CDiffLineGetter::GetDiffColor(EColorIndexType* pnColorIndex) const
+{
+	EDiffMark type = GetLineDiffMark();
+	CEditView* pView = &CEditWnd::Instance()->GetActiveView();
+
+	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
+	if( type ){
+		switch( type ){
+		case MARK_DIFF_APPEND:	//追加
+			if( CTypeSupport(pView,COLORIDX_DIFF_APPEND).IsDisp() ){
+				*pnColorIndex = COLORIDX_DIFF_APPEND;
+				return true;
+			}
+			break;
+		case MARK_DIFF_CHANGE:	//変更
+			if( CTypeSupport(pView,COLORIDX_DIFF_CHANGE).IsDisp() ){
+				*pnColorIndex = COLORIDX_DIFF_CHANGE;
+				return true;
+			}
+			break;
+		case MARK_DIFF_DELETE:	//削除
+		case MARK_DIFF_DEL_EX:	//削除
+			if( CTypeSupport(pView,COLORIDX_DIFF_DELETE).IsDisp() ){
+				*pnColorIndex = COLORIDX_DIFF_DELETE;
+				return true;
+			}
+			break;
+		}
+	}
+	return false;
+}
+
+
+/*! DIFFマーク描画
+
+	引数は仮。（無駄な引数ありそう）
+*/
+bool CDiffLineGetter::DrawDiffMark(CGraphics& gr, int y, int nLineHeight, CTypeSupport& cColorType) const
+{
+	EDiffMark type = GetLineDiffMark();
+
+	if( type )	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
+	{
+		int	cy = y + nLineHeight / 2;
+
+		gr.PushPen(cColorType.GetTextColor(),0);
+
+		switch( type )
+		{
+		case MARK_DIFF_APPEND:	//追加
+			::MoveToEx( gr, 3, cy, NULL );
+			::LineTo  ( gr, 6, cy );
+			::MoveToEx( gr, 4, cy - 2, NULL );
+			::LineTo  ( gr, 4, cy + 3 );
+			break;
+
+		case MARK_DIFF_CHANGE:	//変更
+			::MoveToEx( gr, 3, cy - 4, NULL );
+			::LineTo  ( gr, 3, cy );
+			::MoveToEx( gr, 3, cy + 2, NULL );
+			::LineTo  ( gr, 3, cy + 3 );
+			break;
+
+		case MARK_DIFF_DELETE:	//削除
+			cy -= 3;
+			::MoveToEx( gr, 3, cy, NULL );
+			::LineTo  ( gr, 5, cy );
+			::LineTo  ( gr, 3, cy + 2 );
+			::LineTo  ( gr, 3, cy );
+			::LineTo  ( gr, 7, cy + 4 );
+			break;
+		
+		case MARK_DIFF_DEL_EX:	//削除(EOF)
+			cy += 3;
+			::MoveToEx( gr, 3, cy, NULL );
+			::LineTo  ( gr, 5, cy );
+			::LineTo  ( gr, 3, cy - 2 );
+			::LineTo  ( gr, 3, cy );
+			::LineTo  ( gr, 7, cy - 4 );
+			break;
+		}
+
+		gr.PopPen();
+
+		return true;
+	}
+	return false;
+}
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     CDiffLineSetter                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 void CDiffLineSetter::SetLineDiffMark(EDiffMark mark){ m_pcDocLine->m_sMark.m_cDiffmarked = mark; }
 
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                       CDiffLineMgr                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!	差分表示の全解除
 	@author	MIK

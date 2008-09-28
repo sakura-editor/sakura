@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentGrepFile.h"
 #include <string.h>
 
@@ -12,8 +12,8 @@
 CRecentGrepFile::CRecentGrepFile()
 {
 	Create(
-		&GetShareData()->m_aGrepFiles[0],
-		&GetShareData()->m_aGrepFiles._GetSizeRef(),
+		&GetShareData()->m_sSearchKeywords.m_aGrepFiles[0],
+		&GetShareData()->m_sSearchKeywords.m_aGrepFiles._GetSizeRef(),
 		NULL,
 		MAX_GREPFILE,
 		NULL
