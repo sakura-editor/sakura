@@ -189,8 +189,8 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			TCHAR szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime( &systime );
-			CShareData::getInstance()->MyGetDateFormat( systime, szTextDate, _countof( szTextDate ) - 1 );
-			CShareData::getInstance()->MyGetTimeFormat( systime, szTextTime, _countof( szTextTime ) - 1 );
+			CFormatManager().MyGetDateFormat( systime, szTextDate, _countof( szTextDate ) - 1 );
+			CFormatManager().MyGetTimeFormat( systime, szTextTime, _countof( szTextTime ) - 1 );
 			CShareData::getInstance()->TraceOut( _T("\r\n%ts\r\n"), _T("#============================================================") );
 			CShareData::getInstance()->TraceOut( _T("#DateTime : %ts %ts\r\n"), szTextDate, szTextTime );
 			CShareData::getInstance()->TraceOut( _T("#CmdLine  : %ts\r\n"), pszCmd );
@@ -354,7 +354,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			CShareData::getInstance()->TraceOut( _T("\r\n終了コード: %d\r\n"), result );
 
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
-			if(result > 0) ActivateFrameWindow( GetDllShareData().m_hwndDebug );
+			if(result > 0) ActivateFrameWindow( GetDllShareData().m_sHandles.m_hwndDebug );
 		}
 		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			GetCommander().Command_INSTEXT(FALSE, to_wchar(work,bufidx), CLogicInt(-1), TRUE);	/* 最後の文字の処理 */
@@ -380,3 +380,4 @@ finish:
 	if( pi.hProcess ) CloseHandle( pi.hProcess );
 	if( pi.hThread ) CloseHandle( pi.hThread );
 }
+

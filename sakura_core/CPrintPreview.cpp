@@ -30,7 +30,8 @@
 #include "CEditApp.h"
 #include "util/window.h"
 #include "util/shell.h"
-#include "CSakuraEnvironment.h"
+#include "env/CSakuraEnvironment.h"
+#include "view/colors/CColorStrategy.h"
 using namespace std;
 
 #define MIN_PREVIEW_ZOOM 10
@@ -222,17 +223,15 @@ LRESULT CPrintPreview::OnPaint(
 	);
 
 	// マージン枠の表示
-	HPEN			hPen, hPenOld;
-	hPen = ::CreatePen( PS_SOLID, 0, RGB(128,128,128) ); // 2006.08.14 Moca 127を128に変更
-	hPenOld = (HPEN)::SelectObject( hdc, hPen );
+	CGraphics gr(hdc);
+	gr.SetPen( RGB(128,128,128) ); // 2006.08.14 Moca 127を128に変更
 	::Rectangle( hdc,
 		m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX,
 		nDirectY * ( m_nPreview_ViewMarginTop + m_pPrintSetting->m_nPrintMarginTY ),
 		m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth - m_pPrintSetting->m_nPrintMarginRX + 1,
 		nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginBY )
 	);
-	::SelectObject( hdc, hPenOld );
-	::DeleteObject( hPen );
+	gr.ClearPen();
 
 	::SetTextColor( hdc, RGB( 0, 0, 0 ) );
 
@@ -767,8 +766,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_cLineComment.CopyTo(0, L"", -1);	/* 行コメントデリミタ */
 	ref.m_cLineComment.CopyTo(1, L"", -1);	/* 行コメントデリミタ2 */
 	ref.m_cLineComment.CopyTo(2, L"", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	ref.m_cBlockComment.SetBlockCommentRule(0, L"", L"");	/* ブロックコメントデリミタ */
-	ref.m_cBlockComment.SetBlockCommentRule(1, L"", L"");	/* ブロックコメントデリミタ2 */
+	ref.m_cBlockComments[0].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ */
+	ref.m_cBlockComments[1].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ2 */
 
 	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false;
@@ -1280,7 +1279,7 @@ void CPrintPreview::DrawPageText(
 				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				if( m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
-					if( 0 != pcLayout->GetLogicOffset() ){
+					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
 						wcscpy( szLineNum, L" " );
 					}else{
 						_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */

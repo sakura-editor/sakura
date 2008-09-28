@@ -30,7 +30,7 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "debug/Debug.h"
-#include "CSakuraEnvironment.h"
+#include "env/CSakuraEnvironment.h"
 
 CCommandLine* CCommandLine::_instance = NULL;
 

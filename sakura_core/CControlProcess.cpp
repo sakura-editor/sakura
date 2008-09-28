@@ -18,7 +18,7 @@
 #include "stdafx.h"
 #include "CControlProcess.h"
 #include "CCommandLine.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "debug/Debug.h"
 #include "CControlTray.h"
 #include "mem/CMemory.h"
@@ -26,7 +26,7 @@
 #include <io.h>
 #include <tchar.h>
 #include "debug/CRunningTimer.h"
-
+#include "env/CShareData_IO.h"
 
 
 //-------------------------------------------------
@@ -48,7 +48,7 @@ bool CControlProcess::InitializeProcess()
 	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
 
 	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
+	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA_OLD );
 	if( NULL == m_hMutex ){
 		ErrorBeep();
 		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
@@ -83,11 +83,11 @@ bool CControlProcess::InitializeProcess()
 	/* 共有データのロード */
 	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
 	TCHAR szIniFile[_MAX_PATH];
-	GetShareData().LoadShareData();
-	GetShareData().GetIniFileName( szIniFile );	// 出力iniファイル名
+	CShareData_IO::LoadShareData();
+	CFileNameManager::Instance()->GetIniFileName( szIniFile );	// 出力iniファイル名
 	if( !fexist(szIniFile) || CCommandLine::Instance()->IsWriteQuit() ){
 		/* レジストリ項目 作成 */
-		GetShareData().SaveShareData();
+		CShareData_IO::SaveShareData();
 		if( CCommandLine::Instance()->IsWriteQuit() ){
 			return false;
 		}
@@ -107,7 +107,7 @@ bool CControlProcess::InitializeProcess()
 		return false;
 	}
 	SetMainWindow(hwnd);
-	GetDllShareData().m_hwndTray = hwnd;
+	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
@@ -146,7 +146,7 @@ bool CControlProcess::MainLoop()
 */
 void CControlProcess::OnExitProcess()
 {
-	GetDllShareData().m_hwndTray = NULL;
+	GetDllShareData().m_sHandles.m_hwndTray = NULL;
 }
 
 CControlProcess::~CControlProcess()

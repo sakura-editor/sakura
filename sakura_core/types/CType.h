@@ -55,7 +55,7 @@ struct STypeConfig{
 	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	/*!< キーワードセット */
 
 	CLineComment		m_cLineComment;					/*!< 行コメントデリミタ */			//@@@ 2002.09.22 YAZAKI
-	CBlockComment		m_cBlockComment;				/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	CBlockComment		m_cBlockComments[2];			/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
 	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	wchar_t				m_szIndentChars[64];			/*!< その他のインデント対象文字 */
@@ -63,7 +63,7 @@ struct STypeConfig{
 	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */
 	ColorInfo			m_ColorInfoArr[64];				/*!< 色設定配列 */
 
-	int					m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
+	bool				m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */
 	wchar_t				m_cLineTermChar;				/*!< 行番号区切り文字 */
 	CLayoutInt			m_nVertLineIdx[MAX_VERTLINES];	/*!< 指定桁縦線 */
@@ -97,9 +97,9 @@ struct STypeConfig{
 	
 	
 //@@@ 2001.11.17 add start MIK
-	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
-	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
-	struct RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
+	bool				m_bUseRegexKeyword;						/* 正規表現キーワードを使うか*/
+	int					m_nRegexKeyMagicNumber;					/* 正規表現キーワード更新マジックナンバー */
+	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD];	/* 正規表現キーワード */
 //@@@ 2001.11.17 add end MIK
 
 //@@@ 2006.04.10 fon ADD-start

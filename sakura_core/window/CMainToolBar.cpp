@@ -28,7 +28,7 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 			if( szText[0] )	//キー文字列がある
 			{
 				//検索キーを登録
-				CShareData::getInstance()->AddToSearchKeyArr( szText );
+				CSearchKeywordManager().AddToSearchKeyArr( szText );
 
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
 				m_pOwner->GetActiveView().SetFocus();
@@ -279,9 +279,9 @@ void CMainToolBar::CreateToolBar( void )
 
 							//検索ボックスを更新
 							::SendMessageAny( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-							for( my_i = 0; my_i < GetDllShareData().m_aSearchKeys.size(); my_i++ )
+							for( my_i = 0; my_i < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size(); my_i++ )
 							{
-								Combo_AddString( m_hwndSearchBox, GetDllShareData().m_aSearchKeys[my_i] );
+								Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[my_i] );
 							}
 							::SendMessageAny( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
 						}
@@ -480,9 +480,9 @@ void CMainToolBar::AcceptSharedSearchKey()
 	{
 		int	i;
 		::SendMessageAny( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-		for( i = 0; i < GetDllShareData().m_aSearchKeys.size(); i++ )
+		for( i = 0; i < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size(); i++ )
 		{
-			Combo_AddString( m_hwndSearchBox, GetDllShareData().m_aSearchKeys[i] );
+			Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
 		}
 		::SendMessageAny( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
 	}

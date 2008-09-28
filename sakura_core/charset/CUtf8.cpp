@@ -92,7 +92,6 @@ EConvertResult CUtf8::UnicodeToUTF8( const CNativeW& cSrcMem, CMemory* pDstMem )
 	return RESULT_COMPLETE; //大丈夫だと思う
 }
 
-
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/21 Uchi
 EConvertResult CUtf8::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst)
 {

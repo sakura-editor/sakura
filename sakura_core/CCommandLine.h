@@ -20,8 +20,23 @@
 #define _CCOMMANDLINE_H_
 
 #include "global.h"
-#include "CShareData.h"	// EditInfo, GrepInfo
+#include "EditInfo.h"
 class CMemory;
+/*!	検索オプション
+	20020118 aroka
+*/
+struct GrepInfo {
+	CNativeW		cmGrepKey;			//!< 検索キー
+	CNativeT		cmGrepFile;			//!< 検索対象ファイル
+	CNativeT		cmGrepFolder;		//!< 検索対象フォルダ
+	SSearchOption	sGrepSearchOption;	//!< 検索オプション
+	bool			bGrepSubFolder;		//!< サブフォルダを検索する
+	bool			bGrepOutputLine;	//!< 結果出力で該当行を出力する
+	int				nGrepOutputStyle;	//!< 結果出力形式
+	ECodeType		nGrepCharSet;		//!< 文字コードセット
+};
+
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/

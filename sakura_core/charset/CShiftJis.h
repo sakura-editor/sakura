@@ -54,3 +54,4 @@ inline bool CShiftJis::IsSJisHanKata( const uchar_t c )
 {
 	return ( 0xa1 <= c && c <= 0xdf );
 }
+

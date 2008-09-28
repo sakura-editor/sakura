@@ -64,22 +64,23 @@ CDlgWinSize::~CDlgWinSize()
 }
 
 
-/* !モーダルダイアログの表示
-	@param nSaveWinSize [in/out] ウィンドウ位置継承
-	@param nSaveWinPos  [in/out] ウィンドウサイズ継承
-	@param nWinSizeType [in/out] ウィンドウの実行時の大きさ
-	@param rc [in/out] 幅、高さ、左、上
-*/
-int CDlgWinSize::DoModal( HINSTANCE hInstance, HWND hwndParent,
-	int &nSaveWinSize, int &nSaveWinPos, int &nWinSizeType, RECT &rc )
+// !モーダルダイアログの表示
+int CDlgWinSize::DoModal(
+	HINSTANCE		hInstance,
+	HWND			hwndParent,
+	EWinSizeMode&	eSaveWinSize,	//!< [in/out] ウィンドウ位置継承
+	EWinSizeMode&	eSaveWinPos,	//!< [in/out] ウィンドウサイズ継承
+	int&			nWinSizeType,	//!< [in/out] ウィンドウの実行時の大きさ
+	RECT&			rc				//!< [in/out] 幅、高さ、左、上
+)
 {
-	m_nSaveWinSize = nSaveWinSize;
-	m_nSaveWinPos  = nSaveWinPos;
+	m_eSaveWinSize = eSaveWinSize;
+	m_eSaveWinPos  = eSaveWinPos;
 	m_nWinSizeType = nWinSizeType;
 	m_rc = rc;
 	(void)CDialog::DoModal( hInstance, hwndParent, IDD_WINPOSSIZE, NULL );
-	nSaveWinSize = m_nSaveWinSize;
-	nSaveWinPos  = m_nSaveWinPos;
+	eSaveWinSize = m_eSaveWinSize;
+	eSaveWinPos  = m_eSaveWinPos;
 	nWinSizeType = m_nWinSizeType;
 	rc = m_rc;
 	return TRUE;
@@ -132,7 +133,7 @@ BOOL CDlgWinSize::OnBnClicked( int wID )
 */
 void CDlgWinSize::SetData( void )
 {
-	switch( m_nSaveWinSize ){
+	switch( m_eSaveWinSize ){
 	case 1:
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_WINSIZE_SAVE, TRUE );
 		break;
@@ -143,7 +144,7 @@ void CDlgWinSize::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_WINSIZE_DEF, TRUE );
 	}
 
-	switch( m_nSaveWinPos ){
+	switch( m_eSaveWinPos ){
 	case 1:
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_WINPOS_SAVE, TRUE );
 		break;
@@ -179,23 +180,23 @@ void CDlgWinSize::SetData( void )
 int CDlgWinSize::GetData( void )
 {
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINSIZE_DEF ) ){
-		m_nSaveWinSize = 0;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINSIZE_SAVE ) ){
-		m_nSaveWinSize = 1;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINSIZE_SET ) ){
-		m_nSaveWinSize = 2;
+		m_eSaveWinSize = WINSIZEMODE_DEF;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINSIZE_SAVE ) ){
+		m_eSaveWinSize = WINSIZEMODE_SAVE;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINSIZE_SET ) ){
+		m_eSaveWinSize = WINSIZEMODE_SET;
 	}
 	
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINPOS_DEF ) ){
-		m_nSaveWinPos = 0;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINPOS_SAVE ) ){
-		m_nSaveWinPos = 1;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINPOS_SET ) ){
-		m_nSaveWinPos = 2;
+		m_eSaveWinPos = WINSIZEMODE_DEF;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINPOS_SAVE ) ){
+		m_eSaveWinPos = WINSIZEMODE_SAVE;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_WINPOS_SET ) ){
+		m_eSaveWinPos = WINSIZEMODE_SET;
 	}
 
 	int nCurIdx;

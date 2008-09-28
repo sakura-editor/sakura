@@ -21,7 +21,7 @@ class CDialog;
 
 #include <windows.h>
 #include <dbt.h>
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "global.h"
 
 

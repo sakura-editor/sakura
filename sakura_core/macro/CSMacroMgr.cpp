@@ -1058,3 +1058,4 @@ bool CSMacroMgr::IsSaveOk(void)
 {
 	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == NULL ? false : true;
 }
+

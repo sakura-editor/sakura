@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "doc/CDocOutline.h"
-#include "CFuncInfoArr.h"
+#include "outline/CFuncInfoArr.h"
 
 
 /*!

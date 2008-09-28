@@ -8,7 +8,7 @@
 	@retval nIdx Shift,Ctrl,AltƒL[ó‘Ô
 	@date 2004.10.10 ŠÖ”‰»
 */
-int getCtrlKeyState(void)
+int getCtrlKeyState()
 {
 	int nIdx = 0;
 

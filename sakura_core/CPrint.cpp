@@ -20,7 +20,7 @@
 #include "CPrint.h"
 #include "global.h"
 #include "debug/Debug.h" // 2002/2/10 aroka
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include <winspool.h>
 
 

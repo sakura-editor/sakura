@@ -20,7 +20,7 @@
 #include "debug/Debug.h"
 #include "view/CEditView.h"
 #include "global.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "doc/CLayout.h"/// 2002/2/3 aroka
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "util/shell.h"
@@ -108,15 +108,15 @@ void CDlgReplace::SetData( void )
 	/* 検索文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
-	for( i = 0; i < m_pShareData->m_aSearchKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_aSearchKeys[i] );
+	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 	}
 
 	/* 置換後文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_szText2 );
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
-	for( i = 0; i < m_pShareData->m_aReplaceKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_aReplaceKeys[i] );
+	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
 	}
 
 	/* 英大文字と英小文字を区別する */
@@ -231,11 +231,11 @@ int CDlgReplace::GetData( void )
 
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
-		CShareData::getInstance()->AddToSearchKeyArr( m_szText );
+		CSearchKeywordManager().AddToSearchKeyArr( m_szText );
 
 		/* 置換後文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToReplaceKeyArr()追加に伴う変更
-		CShareData::getInstance()->AddToReplaceKeyArr( m_szText2 );
+		CSearchKeywordManager().AddToReplaceKeyArr( m_szText2 );
 
 		// From Here 2001.12.03 hor
 		// クリップボードから貼り付ける？

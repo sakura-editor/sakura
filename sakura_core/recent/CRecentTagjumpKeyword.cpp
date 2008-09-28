@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentTagjumpKeyword.h"
 #include <string.h>
 
@@ -12,8 +12,8 @@
 CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 {
 	Create(
-		&GetShareData()->m_aTagJumpKeywords[0],
-		&GetShareData()->m_aTagJumpKeywords._GetSizeRef(),
+		&GetShareData()->m_sTagJump.m_aTagJumpKeywords[0],
+		&GetShareData()->m_sTagJump.m_aTagJumpKeywords._GetSizeRef(),
 		NULL /*GetShareData()->m_bTagJumpKeywordArrFavorite*/,
 		MAX_TAGJUMP_KEYWORD,
 		NULL

@@ -28,10 +28,10 @@
 #include "CAutoSaveAgent.h"
 #include "doc/CDocLineMgr.h"
 #include "CEol.h"
-#include "CFuncLookup.h"
+#include "func/CFuncLookup.h"
 #include "CLayoutMgr.h"
 #include "COpeBuf.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include <string>
 #include "doc/CDocListener.h"
 #include "util/design_template.h"
@@ -113,9 +113,6 @@ public:
 	CDocEditor			m_cDocEditor;
 	CDocType			m_cDocType;
 
-	int m_nTextWrapMethodCur;		// 折り返し方法					// 2008.05.30 nasukoji
-	bool m_bTextWrapMethodCurTemp;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
-
 	//ヘルパ
 public:
 	CBackupAgent		m_cBackupAgent;
@@ -131,6 +128,11 @@ public:
 	//環境情報
 public:
 	CFuncLookup		m_cFuncLookup;				//!< 機能名，機能番号などのresolve
+
+	//未整理変数
+public:
+	int				m_nTextWrapMethodCur;		// 折り返し方法					// 2008.05.30 nasukoji
+	bool			m_bTextWrapMethodCurTemp;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
 };
 
 

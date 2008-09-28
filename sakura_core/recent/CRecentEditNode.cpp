@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentEditNode.h"
 #include <string.h>
 
@@ -12,8 +12,8 @@
 CRecentEditNode::CRecentEditNode()
 {
 	Create(
-		GetShareData()->m_pEditArr,
-		&GetShareData()->m_nEditArrNum,
+		GetShareData()->m_sNodes.m_pEditArr,
+		&GetShareData()->m_sNodes.m_nEditArrNum,
 		NULL,
 		MAX_EDITWINDOWS,
 		NULL

@@ -34,7 +34,7 @@
 #include "stdafx.h"
 #include "sakura_rc.h"
 #include "prop/CPropCommon.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "sakura.hh"
 #include "util/shell.h"
 

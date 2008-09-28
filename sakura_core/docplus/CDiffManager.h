@@ -6,6 +6,8 @@
 #include "util/design_template.h" //TSingleton
 class CDocLine;
 class CDocLineMgr;
+enum EColorIndexType;
+class CTypeSupport;
 
 //! DIFFèÓïÒíËêî
 enum EDiffMark{
@@ -41,6 +43,8 @@ class CDiffLineGetter{
 public:
 	CDiffLineGetter(const CDocLine* pcDocLine) : m_pcDocLine(pcDocLine) { }
 	EDiffMark GetLineDiffMark() const;
+	bool GetDiffColor(EColorIndexType* nColor) const;
+	bool DrawDiffMark(CGraphics& gr, int y, int nLineHeight, CTypeSupport& cColorType) const;
 private:
 	const CDocLine* m_pcDocLine;
 };

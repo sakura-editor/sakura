@@ -112,8 +112,7 @@ const int* CTextMetrics::GenerateDxArray(
 			*p = (bHigh) ? 0 : nHankakuDx*2;
 			bHigh = false;
 		}
-		else 
-		if(IsHankaku(*q)){
+		else  if(IsHankaku(*q)){
 			*p = nHankakuDx;
 			bHigh = false;				// サロゲートペア対策	2008/7/5 Uchi
 		}
@@ -168,3 +167,4 @@ int CTextMetrics::CalcTextWidth2(
 	//ピクセル幅を計算
 	return CalcTextWidth(pText, nLength, pDxArray);
 }
+

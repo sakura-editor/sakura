@@ -22,7 +22,7 @@ class CTextOutputStream;
 
 #include <windows.h>
 #include <objidl.h>  // VARIANT“™
-#include "Funccode.h"
+#include "func/Funccode.h"
 
 class CEditView;
 

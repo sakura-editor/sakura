@@ -21,8 +21,8 @@ void CViewCommander::Command_GREP_DIALOG( void )
 
 	/* キーがないなら、履歴からとってくる */
 	if( 0 == cmemCurText.GetStringLength() ){
-//		cmemCurText.SetData( GetDllShareData().m_aSearchKeys[0], lstrlen( GetDllShareData().m_aSearchKeys[0] ) );
-		cmemCurText.SetString( GetDllShareData().m_aSearchKeys[0] );
+//		cmemCurText.SetData( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0], lstrlen( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] ) );
+		cmemCurText.SetString( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );
 	}
 	wcscpy( GetEditWindow()->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
 
@@ -46,7 +46,7 @@ void CViewCommander::Command_GREP( void )
 	CNativeT		cmWork3;
 
 	/* 編集ウィンドウの上限チェック */
-	if( GetDllShareData().m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		TCHAR szMsg[512];
 		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::MessageBox( m_pCommanderView->GetHwnd(), szMsg, GSTR_APPNAME, MB_OK );

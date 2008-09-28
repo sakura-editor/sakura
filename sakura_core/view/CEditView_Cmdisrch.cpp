@@ -241,7 +241,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 //!	インクリメンタルサーチモードから抜ける
 void CEditView::ISearchExit()
 {
-	CShareData::getInstance()->AddToSearchKeyArr( m_szCurSrchKey );
+	CSearchKeywordManager().AddToSearchKeyArr( m_szCurSrchKey );
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	

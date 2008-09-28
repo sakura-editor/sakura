@@ -32,7 +32,7 @@ class CControlTray;
 
 
 #include <windows.h>
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CMenuDrawer.h"
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2002/2/10 aroka

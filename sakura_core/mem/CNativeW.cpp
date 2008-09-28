@@ -294,3 +294,4 @@ const char* CNativeW::GetStringPtrOld() const
 {
 	return to_achar(GetStringPtr(),GetStringLength());
 }
+

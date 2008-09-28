@@ -23,15 +23,15 @@
 #include <windows.h>
 #include <commctrl.h>
 #include "dlg/CDlgOpenFile.h"
-#include "global.h"
 #include "CProfile.h"
-#include "CShareData.h"
-#include "funccode.h"	//Stonee, 2001/05/18
+#include "env/CShareData.h"
+#include "func/Funccode.h"	//Stonee, 2001/05/18
 #include <stdio.h>	//@@@ 2001.11.17 add MIK
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 #include "io/CTextStream.h"
 #include "util/shell.h"
 #include "util/file.h"
+#include "view/colors/CColorStrategy.h"
 using namespace std;
 
 
@@ -70,7 +70,7 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 		m_hInstance,
 		hwndDlg,
 		_T("*.rkw"),					// [R]egex [K]ey[W]ord
-		GetDllShareData().m_szIMPORTFOLDER	// インポート用フォルダ
+		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return FALSE;
@@ -78,8 +78,8 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_szIMPORTFOLDER, _T("\\") );
+	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
 
 	CTextInputStream in(szPath);
@@ -179,15 +179,15 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 		m_hInstance,
 		hwndDlg,
 		_T("*.rkw"),					// [R]egex [K]ey[W]ord
-		GetDllShareData().m_szIMPORTFOLDER	// インポート用フォルダ
+		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return FALSE;
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_szIMPORTFOLDER, _T("\\") );
+	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
 	CTextOutputStream out(szPath);
 	if(!out){
@@ -823,9 +823,9 @@ int CPropTypes::GetData_Regex( HWND hwndDlg )
 
 	//使用する・使用しない
 	if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )
-		m_Types.m_bUseRegexKeyword = TRUE;
+		m_Types.m_bUseRegexKeyword = true;
 	else
-		m_Types.m_bUseRegexKeyword = FALSE;
+		m_Types.m_bUseRegexKeyword = false;
 
 	//リストに登録されている情報を配列に取り込む
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );

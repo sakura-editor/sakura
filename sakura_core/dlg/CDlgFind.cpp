@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "dlg/CDlgFind.h"
-#include "funccode.h"
+#include "func/Funccode.h"
 #include "sakura_rc.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
@@ -99,8 +99,8 @@ void CDlgFind::SetData( void )
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
 	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
-	for( i = 0; i < m_pShareData->m_aSearchKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_aSearchKeys[i] );
+	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 	}
 
 	/* 英大文字と英小文字を区別する */
@@ -194,7 +194,7 @@ int CDlgFind::GetData( void )
 
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareDataに移動
-		CShareData::getInstance()->AddToSearchKeyArr( m_szText );
+		CSearchKeywordManager().AddToSearchKeyArr( m_szText );
 		if( !m_bModal ){
 			/* ダイアログデータの設定 */
 			SetData();

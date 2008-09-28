@@ -2,7 +2,7 @@
 #include "file.h"
 #include "charset/CharPointer.h"
 #include "util/module.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include <io.h>
 #include <string.h>
 #include "charset/charcode.h"
@@ -448,7 +448,7 @@ void GetInidir(
 	
 	TCHAR	szPath[_MAX_PATH];
 	// sakura.ini ‚ÌƒpƒX‚ðŽæ“¾
-	CShareData::getInstance()->GetIniFileName( szPath );
+	CFileNameManager::Instance()->GetIniFileName( szPath );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}

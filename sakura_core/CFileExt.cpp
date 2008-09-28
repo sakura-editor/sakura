@@ -157,3 +157,4 @@ bool CFileExt::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt
 	free( p );	// 2003.05.20 MIK ƒƒ‚ƒŠ‰ğ•ú˜R‚ê
 	return true;
 }
+

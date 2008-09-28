@@ -37,8 +37,7 @@
 #include <stdio.h>
 #include "sakura_rc.h"
 #include "global.h"
-#include "funccode.h"
-#include "mymessage.h"
+#include "func/Funccode.h"
 #include "dlg/CDialog.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "CSortedTagJumpList.h"
@@ -189,9 +188,9 @@ void CDlgTagJumpList::SetData( void )
 		HWND hwndKey;
 		hwndKey = ::GetDlgItem( GetHwnd(), IDC_KEYWORD );
 
-		m_bTagJumpICase = m_pShareData->m_bTagJumpICase;
+		m_bTagJumpICase = m_pShareData->m_sTagJump.m_bTagJumpICase;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ICASE, m_bTagJumpICase ? BST_CHECKED : BST_UNCHECKED );
-		m_bTagJumpAnyWhere = m_pShareData->m_bTagJumpAnyWhere;
+		m_bTagJumpAnyWhere = m_pShareData->m_sTagJump.m_bTagJumpAnyWhere;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, m_bTagJumpAnyWhere ? BST_CHECKED : BST_UNCHECKED );
 		::SendMessage( hwndKey, CB_LIMITTEXT, (WPARAM)_MAX_PATH-1, 0 );
 		CRecentTagjumpKeyword cRecentTagJump;
@@ -302,8 +301,8 @@ int CDlgTagJumpList::GetData( void )
 	//	From Here 2005.04.03 MIK Ý’è’l‚Ì•Û‘¶
 	if( 0 != m_lParam )
 	{
-		m_pShareData->m_bTagJumpICase = m_bTagJumpICase;
-		m_pShareData->m_bTagJumpAnyWhere = m_bTagJumpAnyWhere;
+		m_pShareData->m_sTagJump.m_bTagJumpICase = m_bTagJumpICase;
+		m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = m_bTagJumpAnyWhere;
 
 		wchar_t	tmp[MAX_TAG_STRING_LENGTH];
 		wcscpy( tmp, L"" );

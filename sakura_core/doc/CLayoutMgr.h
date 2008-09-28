@@ -37,8 +37,9 @@ class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 class CEditDoc;// 2003/07/20 genta
 struct STypeConfig;// 2005.11.20 Moca
+class CColorStrategy;
 #include "basis/SakuraBasis.h"
-
+enum EColorIndexType;
 
 struct LayoutReplaceArg {
 	CLayoutRange	sDelRange;		//!< 削除範囲。レイアウト単位。
@@ -87,14 +88,23 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//2007.10.09 kobake 関数名変更: Search → SearchLineByLayoutY
-	CLayoutInt GetLineCount() const{ return m_nLines; }	/* 全物理行数を返す */
-	const wchar_t* GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
-	const wchar_t* GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen, const CLayout** ppcLayoutDes ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
-	bool IsEndOfLine( const CLayoutPoint& ptLinePos );	/* 指定位置が行末(改行文字の直前)か調べる */	//@@@ 2002.04.18 MIK
-	const CLayout* SearchLineByLayoutY( CLayoutInt nLineLayout ) const;	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
-	CLayout* SearchLineByLayoutY( CLayoutInt nLineLayout ){ return const_cast<CLayout*>(static_cast<const CLayoutMgr*>(this)->SearchLineByLayoutY(nLineLayout)); }
-	bool WhereCurrentWord( CLayoutInt , CLogicInt , CLayoutRange* pSelect, CNativeW*, CNativeW* );	/* 現在位置の単語の範囲を調べる */
+	CLayoutInt		GetLineCount() const{ return m_nLines; }	/* 全物理行数を返す */
+	const wchar_t*	GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
+	const wchar_t*	GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen, const CLayout** ppcLayoutDes ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
 
+	//先頭と末尾
+	CLayout*		GetTopLayout()		{ return m_pLayoutTop; }
+	CLayout*		GetBottomLayout()	{ return m_pLayoutBot; }
+
+	//レイアウトを探す
+	const CLayout*	SearchLineByLayoutY( CLayoutInt nLineLayout ) const;	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
+	CLayout*		SearchLineByLayoutY( CLayoutInt nLineLayout ){ return const_cast<CLayout*>(static_cast<const CLayoutMgr*>(this)->SearchLineByLayoutY(nLineLayout)); }
+
+	//ワードを探す
+	bool			WhereCurrentWord( CLayoutInt , CLogicInt , CLayoutRange* pSelect, CNativeW*, CNativeW* );	/* 現在位置の単語の範囲を調べる */
+
+	//判定
+	bool			IsEndOfLine( const CLayoutPoint& ptLinePos );	/* 指定位置が行末(改行文字の直前)か調べる */	//@@@ 2002.04.18 MIK
 
 	/*! 次のTAB位置までの幅
 		@param pos [in] 現在の位置
@@ -218,14 +228,62 @@ protected:
 	CLayout* DeleteLayoutAsLogical( CLayout*, CLayoutInt, CLogicInt , CLogicInt, CLogicPoint, CLayoutInt* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , CLogicInt );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
+	//部品
+	struct SLayoutWork{
+		//毎ループ初期化
+		int				nKinsokuType;
+		CLogicInt		nPos;
+		CLogicInt		nBgn;
+		CStringRef		cLineStr;
+		CLogicInt		nWordBgn;
+		CLogicInt		nWordLen;
+		CLayoutInt		nPosX;
+		CLayoutInt		nIndent;
+		CLayout*		pLayoutCalculated;
+
+		//ループ外
+		CDocLine*		pcDocLine;
+		CLayout*		pLayout;
+		CColorStrategy*	pcColorStrategy;
+		CColorStrategy*	pcColorStrategy_Prev;
+		CLogicInt		nCurLine;
+
+		//ループ外 (DoLayoutのみ)
+//		CLogicInt		nLineNum;
+
+		//ループ外 (DoLayout_Rangeのみ)
+		bool			bNeedChangeCOMMENTMODE;
+		CLayoutInt		nModifyLayoutLinesNew;
+		
+		//ループ外 (DoLayout_Range引数)
+		CLayoutInt*		pnExtInsLineNum;
+		CLogicPoint		ptDelLogicalFrom;
+
+		//関数
+		CLayout* _CreateLayout(CLayoutMgr* mgr);
+	};
+	//関数ポインタ
+	typedef void (CLayoutMgr::*PF_OnLine)(SLayoutWork*);
+	//DoLayout用
+	bool _DoKinsokuSkip(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	void _DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	void _DoKutoBurasage(SLayoutWork* pWork);
+	void _DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	void _DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	bool _DoTab(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	void _MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine);
+	//DoLayout用コア
+	void _OnLine1(SLayoutWork* pWork);
+	//DoLayout_Range用コア
+	void _OnLine2(SLayoutWork* pWork);
 
 
 private:
 	bool _ExistKinsokuKuto(wchar_t wc) const{ return m_pszKinsokuKuto_1.exist(wc); }
 	bool _ExistKinsokuHead(wchar_t wc) const{ return m_pszKinsokuHead_1.exist(wc); }
-	bool IsKinsokuHead( const wchar_t *pLine, CLogicInt length );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
-	bool IsKinsokuTail( const wchar_t *pLine, CLogicInt length );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
-	bool IsKinsokuKuto( const wchar_t *pLine, CLogicInt length );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
+	bool IsKinsokuHead( wchar_t wc );	/*!< 行頭禁則文字をチェックする */	//@@@ 2002.04.08 MIK
+	bool IsKinsokuTail( wchar_t wc );	/*!< 行末禁則文字をチェックする */	//@@@ 2002.04.08 MIK
+	bool IsKinsokuKuto( wchar_t wc );	/*!< 句読点文字をチェックする */	//@@@ 2002.04.17 MIK
 	//	2005-08-20 D.S.Koba 禁則関連処理の関数化
 	/*! 句読点ぶら下げの処理位置か
 		@date 2005-08-20 D.S.Koba
@@ -237,7 +295,7 @@ private:
 	bool IsKinsokuPosHead(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行頭禁則の処理位置か
 	bool IsKinsokuPosTail(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行末禁則の処理位置か
 
-	int Match_Quote( wchar_t wcQuote, int nPos, int nLineLen, const wchar_t* pLine );
+	int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr );
 
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
@@ -249,7 +307,7 @@ private:
 	*/
 	//@@@ 2002.09.22 YAZAKI
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	bool _CheckColorMODE( EColorIndexType* nCOMMENTMODE, int* nCOMMENTEND, int nPos, int nLineLen, const wchar_t* pLine );
+	bool _CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
 
 protected:
 	/*

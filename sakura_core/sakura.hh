@@ -921,6 +921,8 @@
 #define HIDCANCEL_KEYWORD_SELECT		14101		// キャンセル
 #define HIDC_COMBO_KEYWORD_SELECT		14102		// 強調キーワード1～10
 
+
+
 // 共通設定ステータスバー			// 2008/6/21	Uchi
 #define HIDC_CHECK_DISP_UNICODE_IN_SJIS	14200		// SJISで文字コード値をUnicodeで表示する
 #define HIDC_CHECK_DISP_UNICODE_IN_JIS	14201		// JISで文字コード値をUnicodeで表示する

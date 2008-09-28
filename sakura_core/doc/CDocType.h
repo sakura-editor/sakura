@@ -24,7 +24,7 @@ public:
 	}
 	STypeConfig& GetDocumentAttribute() const						//!< •¶‘Ží•Ê‚ÌÚ×î•ñ
 	{
-		return GetDllShareData().GetTypeSetting(m_nSettingType);
+		return CDocTypeManager().GetTypeSetting(m_nSettingType);
 	}
 
 	// Šg’£‹@”\

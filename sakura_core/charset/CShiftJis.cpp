@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CShiftJis.h"
 #include "charset/charcode.h"
-#include "CShareData.h"
 
 void CShiftJis::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 {
@@ -114,7 +113,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( CMemory* pMem )
 	char* pDst = new char[nDstLen+1];
 
 	//•ÏŠ·
-	BOOL bLost = true;
+	BOOL bLost = TRUE;
 	nDstLen = WideCharToMultiByte(
 		CP_SJIS,				// 2008/5/12 Uchi
 		0,

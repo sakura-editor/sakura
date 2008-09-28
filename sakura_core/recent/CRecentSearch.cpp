@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentSearch.h"
 #include <string.h>
 
@@ -15,8 +15,8 @@
 CRecentSearch::CRecentSearch()
 {
 	Create(
-		&GetShareData()->m_aSearchKeys[0],
-		&GetShareData()->m_aSearchKeys._GetSizeRef(),
+		&GetShareData()->m_sSearchKeywords.m_aSearchKeys[0],
+		&GetShareData()->m_sSearchKeywords.m_aSearchKeys._GetSizeRef(),
 		NULL /*GetShareData()->m_bSEARCHKEYArrFavorite*/,
 		MAX_SEARCHKEY,
 		NULL

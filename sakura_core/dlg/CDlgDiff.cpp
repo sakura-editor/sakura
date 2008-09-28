@@ -24,8 +24,7 @@
 #include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "global.h"
-#include "funccode.h"
-#include "mymessage.h"
+#include "func/Funccode.h"
 #include "util/shell.h"
 
 #include "sakura.hh"
@@ -224,14 +223,14 @@ void CDlgDiff::SetData( void )
 		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
 
 		/* 現在開いている編集窓のリストをメニューにする */
-		nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		if( nRowNum > 0 )
 		{
 			for( i = 0; i < nRowNum; i++ )
 			{
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessageAny( pEditNode[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
-				pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+				pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				/* 自分ならスキップ */
 				if ( pEditNode[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() )
@@ -343,7 +342,7 @@ int CDlgDiff::GetData( void )
 
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessageAny( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
-			pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+			pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 			_tcscpy( m_szFile2, pFileInfo->m_szPath );
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;

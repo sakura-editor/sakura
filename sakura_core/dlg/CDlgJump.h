@@ -38,8 +38,6 @@ public:
 	BOOL		m_bPLSQL;		/*!< PL/SQLソースの有効行か */
 	int			m_nPLSQL_E1;
 	int			m_nPLSQL_E2;
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-//	BOOL		m_bLineNumIsCRLF;	/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 protected:
 	/*
 	||  実装ヘルパ関数

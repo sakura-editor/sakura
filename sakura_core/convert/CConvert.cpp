@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CConvert.h"
-#include "Funccode.h"
+#include "func/Funccode.h"
 #include "CEol.h"
 #include "charset/charcode.h"
 #include "CConvert_ToLower.h"

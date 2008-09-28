@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "window.h"
-#include "CShareData.h"
-#include "mymessage.h"
+#include "env/CShareData.h"
+#include "env/CSakuraEnvironment.h"
 
 
 /**	指定したウィンドウの祖先のハンドルを取得する
@@ -103,10 +103,10 @@ void ActivateFrameWindow( HWND hwnd )
 	DLLSHAREDATA* pShareData = NULL;
 	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
 		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
-			if( pInstance->IsEditWnd( hwnd ) ){
-				if( pShareData->m_bEditWndChanging )
+			if( IsSakuraMainWindow( hwnd ) ){
+				if( pShareData->m_sFlags.m_bEditWndChanging )
 					return;	// 切替の最中(busy)は要求を無視する
-				pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
+				pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
 
 				// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
 				DWORD_PTR dwResult;
@@ -139,7 +139,7 @@ void ActivateFrameWindow( HWND hwnd )
 	::BringWindowToTop( hwndActivate );
 
 	if( pShareData )
-		pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
+		pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
 
 	return;
 }

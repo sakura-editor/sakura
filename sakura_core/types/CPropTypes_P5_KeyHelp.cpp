@@ -669,14 +669,14 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 		m_hInstance,
 		hwndDlg,
 		_T("*.txt"),
-		GetDllShareData().m_szIMPORTFOLDER	// インポート用フォルダ
+		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
 		return FALSE;
 
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_szIMPORTFOLDER, _T("\\") );
+	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
 	CTextInputStream in(szPath);
 	if(!in){
@@ -793,15 +793,15 @@ BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 		m_hInstance,
 		hwndDlg,
 		_T("*.txt"),
-		GetDllShareData().m_szIMPORTFOLDER	// インポート用フォルダ
+		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szXPath ) ){
 		return FALSE;
 	}
 
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szXPath, GetDllShareData().m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_szIMPORTFOLDER, _T("\\") );
+	::SplitPath_FolderAndFile( szXPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
 	CTextOutputStream out(szXPath);
 	if(!out){

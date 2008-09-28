@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "global.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CRecentFolder.h"
 #include <string.h>
 
@@ -15,9 +15,9 @@
 CRecentFolder::CRecentFolder()
 {
 	Create(
-		&GetShareData()->m_szOPENFOLDERArr[0],
-		&GetShareData()->m_nOPENFOLDERArrNum,
-		GetShareData()->m_bOPENFOLDERArrFavorite,
+		&GetShareData()->m_sHistory.m_szOPENFOLDERArr[0],
+		&GetShareData()->m_sHistory.m_nOPENFOLDERArrNum,
+		GetShareData()->m_sHistory.m_bOPENFOLDERArrFavorite,
 		MAX_OPENFOLDER,
 		&(GetShareData()->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX)
 	);

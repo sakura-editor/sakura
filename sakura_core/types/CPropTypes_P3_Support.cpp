@@ -220,3 +220,4 @@ int CPropTypes::GetData_Support( HWND hwndDlg )
 }
 
 // 2001/06/13 End
+

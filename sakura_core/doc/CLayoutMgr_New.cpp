@@ -29,813 +29,10 @@
 #include "mem/CMemoryIterator.h"
 #include "doc/CEditDoc.h" /// 2003/07/20 genta
 #include "util/window.h"
+#include "view/colors/CColorStrategy.h"
 
-//レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK
-#define	KINSOKU_TYPE_NONE			0	//なし
-#define	KINSOKU_TYPE_WORDWRAP		1	//ワードラップ中
-#define	KINSOKU_TYPE_KINSOKU_HEAD	2	//行頭禁則中
-#define	KINSOKU_TYPE_KINSOKU_TAIL	3	//行末禁則中
-#define	KINSOKU_TYPE_KINSOKU_KUTO	4	//句読点ぶら下げ中
 
 
-
-/*!
-	現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します
-
-	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
-		nPosXがインデントを含む幅を保持するように変更．nMaxLineKetasは
-		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
-*/
-void CLayoutMgr::_DoLayout()
-{
-	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::_DoLayout" );
-
-	CLogicInt	nLineNum;
-	CDocLine*	pCDocLine;
-	/*	表示上のX位置
-		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-	*/
-	CLayoutInt			nPosX; //レイアウト単位
-	EColorIndexType		nCOMMENTMODE;
-	EColorIndexType		nCOMMENTMODE_Prev;
-	int			nCOMMENTEND;
-	int			nAllLineNum;
-
-	CLayoutInt	nIndent;			//	インデント幅
-	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
-	CLayoutInt	nMaxLineKetas;
-
-// 2002/03/13 novice
-	nCOMMENTMODE = COLORIDX_TEXT;
-	nCOMMENTMODE_Prev = COLORIDX_TEXT;
-
-	
-	if( GetListenerCount() != 0 ){
-		NotifyProgress(0);
-		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( NULL ) )return;
-	}
-
-	_Empty();
-	Init();
-	nLineNum = CLogicInt(0);
-	
-	//	Nov. 16, 2002 genta
-	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
-	//	TABが折り返し幅以上の時はTAB=4としてしまう
-	//	折り返し幅の最小値=10なのでこの値は問題ない
-	if( m_sTypeConfig.m_nTabSpace >= m_sTypeConfig.m_nMaxLineKetas ){
-		m_sTypeConfig.m_nTabSpace = CLayoutInt(4);
-	}
-
-	pCDocLine = m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
-
-	nCOMMENTEND = 0;
-	nAllLineNum = m_pcDocLineMgr->GetLineCount();
-
-	/*
-		2004.03.28 Moca TAB計算を正しくするためにインデントを幅で調整することはしない
-		nMaxLineKetasは変更しないので，ここでm_nMaxLineKetasを設定する．
-	*/
-	nMaxLineKetas = m_sTypeConfig.m_nMaxLineKetas;
-
-	while( NULL != pCDocLine ){
-		CLogicInt		nLineLen;
-		const wchar_t*	pLine = pCDocLine->GetDocLineStrWithEOL( &nLineLen );
-		nPosX = CLayoutInt(0);
-
-		CLogicInt	nBgn = CLogicInt(0);
-		CLogicInt	nPos = CLogicInt(0); // メモリ上の位置(offset) ロジック単位
-
-		CLogicInt	nWordBgn = CLogicInt(0);
-		CLogicInt	nWordLen = CLogicInt(0);
-
-		int			nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
-
-		int	nEol = pCDocLine->GetEol().GetLen();
-		int nEol_1 = nEol - 1;
-		if( 0 >	nEol_1 ){
-			nEol_1 = 0;
-		}
-
-		nIndent = CLayoutInt(0);	//	インデント幅
-		pLayoutCalculated = NULL;	//	インデント幅計算済みのCLayout.
-
-		while( nPos < nLineLen - CLogicInt(nEol_1) ){
-			//	インデント幅の計算コストを下げるための方策
-			if ( m_pLayoutBot && m_pLayoutBot!=pLayoutCalculated && nBgn )
-			{
-				//	計算
-				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
-				nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
-				
-				//	計算済み
-				pLayoutCalculated = m_pLayoutBot;
-			}
-
-
-			SEARCH_START:;
-			
-			//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-			if( KINSOKU_TYPE_NONE != nKinsokuType )
-			{
-				//禁則処理の最後尾に達したら禁則処理中を解除する
-				if( nPos >= nWordBgn + nWordLen )
-				{
-					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO && nPos == nWordBgn + nWordLen )
-					{
-						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-						{
-							AddLineBottom(
-								CreateLayout(
-									pCDocLine,
-									CLogicPoint(nBgn, nLineNum),
-									nPos - nBgn,
-									nCOMMENTMODE_Prev,
-									nIndent
-								)
-							);
-							m_nLineTypeBot = nCOMMENTMODE;
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-							nBgn = nPos;
-							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
-							pLayoutCalculated = m_pLayoutBot;
-						}
-					}
-					
-					nWordLen = CLogicInt(0);
-					nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
-				}
-			}
-			else
-			{
-			
-				/* ワードラップ処理 */
-				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
-				 && nKinsokuType == KINSOKU_TYPE_NONE )
-				{
-					/* 英単語の先頭か */
-					int nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					if( 0 == nCharChars ){
-						nCharChars = 1;
-					}
-					if( nPos>=nBgn && nCharChars==1 && IS_KEYWORD_CHAR(pLine[nPos]) ){
-						// 2007.09.07 kobake レイアウトとロジックの区別
-						// キーワード文字列の終端を探す
-						// -> iLogic  (ロジック単位終端)
-						// -> iLayout (レイアウト単位終端)
-						CLogicInt	iLogic = nPos + CLogicInt(1);
-						CLayoutInt	iLayout = nPosX + CNativeW::GetKetaOfChar( pLine, nLineLen, nPos);
-						while( iLogic < nLineLen )
-						{
-							CLogicInt nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, iLogic );
-							if( 0 == nCharChars2 ){
-								nCharChars2 = CLogicInt(1);
-							}
-							CLayoutInt nCharKetas = CNativeW::GetKetaOfChar( pLine, nLineLen, iLogic);
-
-							if( nCharChars2 != 1 )break;
-							if( !IS_KEYWORD_CHAR( pLine[iLogic] ) )break;
-
-							iLogic+=nCharChars2;
-							iLayout+=nCharKetas;
-						}
-						nWordBgn = nPos;
-						nWordLen = iLogic - nPos;
-						CLayoutInt nWordKetas = iLayout - nPosX;
-
-						nKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
-						
-						if( nPosX+nWordKetas>=nMaxLineKetas && nPos-nBgn>0 )
-						{
-							AddLineBottom(
-								CreateLayout(
-									pCDocLine,
-									CLogicPoint(nBgn, nLineNum),
-									nPos - nBgn,
-									nCOMMENTMODE_Prev,
-									nIndent
-								)
-							);
-							m_nLineTypeBot = nCOMMENTMODE;
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-							nBgn = nPos;
-							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
-							pLayoutCalculated = m_pLayoutBot;
-						}
-					}
-				}
-
-				//@@@ 2002.04.07 MIK start
-				/* 句読点のぶらさげ */
-				if( m_sTypeConfig.m_bKinsokuKuto && (nMaxLineKetas - nPosX < 2) && (nKinsokuType == KINSOKU_TYPE_NONE) )
-				{
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					// 2007.09.07 kobake   レイアウトとロジックの区別
-					CLogicInt  nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					CLayoutInt nCharKetas  = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-
-					if( IsKinsokuPosKuto( nMaxLineKetas - nPosX, nCharKetas ) && IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
-					{
-						nWordBgn = nPos;
-						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
-					}
-				}
-
-				/* 行頭禁則 */
-				if( m_sTypeConfig.m_bKinsokuHead
-				 && (nMaxLineKetas - nPosX < 4)
-				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
-				{
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					CLogicInt nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					CLogicInt nCharChars3 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
-					CLayoutInt nCharKetas2 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-					CLayoutInt nCharKetas3 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos+nCharChars2 );
-
-					if( IsKinsokuPosHead( nMaxLineKetas - nPosX, nCharKetas2, nCharKetas3 )
-					 && IsKinsokuHead( &pLine[nPos+nCharChars2], nCharChars3 )
-					 && ! IsKinsokuHead( &pLine[nPos], nCharChars2 )	//1文字前が行頭禁則でない
-					 && ! IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )	//句読点でない
-					{
-						nWordBgn = nPos;
-						nWordLen = nCharChars2 + nCharChars3;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
-						AddLineBottom( CreateLayout(pCDocLine, CLogicPoint(nBgn, nLineNum), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-						m_nLineTypeBot = nCOMMENTMODE;
-						nCOMMENTMODE_Prev = nCOMMENTMODE;
-						nBgn = nPos;
-						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
-						pLayoutCalculated = m_pLayoutBot;
-					}
-				}
-
-				/* 行末禁則 */
-				if( m_sTypeConfig.m_bKinsokuTail
-				 && (nMaxLineKetas - nPosX < 4)
-				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
-				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					CLogicInt nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					CLogicInt nCharChars3 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
-					CLayoutInt nCharKetas2 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-					CLayoutInt nCharKetas3 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos+nCharChars2 );
-
-					if( IsKinsokuPosTail( nMaxLineKetas - nPosX, nCharKetas2, nCharKetas3 )
-						&& IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
-					{
-						nWordBgn = nPos;
-						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
-						AddLineBottom( CreateLayout(pCDocLine, CLogicPoint(nBgn, nLineNum), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-						m_nLineTypeBot = nCOMMENTMODE;
-						nCOMMENTMODE_Prev = nCOMMENTMODE;
-						nBgn = nPos;
-						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
-						pLayoutCalculated = m_pLayoutBot;
-					}
-				}
-				//@@@ 2002.04.08 MIK end
-			}	//if( KINSOKU_TYPE_NONE != nKinsokuTyoe ) 禁則処理中
-
-			//@@@ 2002.09.22 YAZAKI
-			bool bGotoSEARCH_START = _CheckColorMODE( &nCOMMENTMODE, &nCOMMENTEND, nPos, nLineLen, pLine );
-			if ( bGotoSEARCH_START )
-				goto SEARCH_START;
-			
-			if( pLine[nPos] == WCODE::TAB ){
-				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
-				CLayoutInt nCharKetas = GetActualTabSpace( nPosX );
-				if( nPosX + nCharKetas > nMaxLineKetas ){
-					AddLineBottom( CreateLayout(pCDocLine, CLogicPoint(nBgn, nLineNum), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-					m_nLineTypeBot = nCOMMENTMODE;
-					nCOMMENTMODE_Prev = nCOMMENTMODE;
-					nBgn = nPos;
-					// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-					nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
-					pLayoutCalculated = m_pLayoutBot;
-					continue;
-				}
-				nPosX += nCharKetas;
-				nPos += CLogicInt(1);
-			}else{
-				// 2005-09-02 D.S.Koba GetSizeOfChar
-				// 2007.09.07 kobake   ロジック幅とレイアウト幅を区別
-				CLogicInt nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-				if( 0 == nCharChars2 ){
-					nCharChars2 = CLogicInt(1);
-					break;	//@@@ 2002.04.16 MIK
-				}
-				CLayoutInt nCharKetas = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-//				if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//					nCharKetas = CLayoutInt(1);
-//				}
-
-				if( nPosX + nCharKetas > nMaxLineKetas ){
-					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
-					{
-						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-						{	//@@@ 2002.04.14 MIK
-							AddLineBottom( CreateLayout(pCDocLine, CLogicPoint(nBgn, nLineNum), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-							m_nLineTypeBot = nCOMMENTMODE;
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-							nBgn = nPos;
-							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
-							pLayoutCalculated = m_pLayoutBot;
-							continue;
-						}	//@@@ 2002.04.14 MIK
-					}
-				}
-				nPos+= CLogicInt(nCharChars2);
-				nPosX += nCharKetas;
-			}
-		}
-		if( nPos - nBgn > 0 ){
-// 2002/03/13 novice
-			if( nCOMMENTMODE == COLORIDX_COMMENT ){	/* 行コメントである */
-				nCOMMENTMODE = COLORIDX_TEXT;
-			}
-			AddLineBottom( CreateLayout(pCDocLine, CLogicPoint(nBgn, nLineNum), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-			m_nLineTypeBot = nCOMMENTMODE;
-			nCOMMENTMODE_Prev = nCOMMENTMODE;
-		}
-		nLineNum++;
-		if( GetListenerCount()!=0 && 0 < nAllLineNum && 0 == ( nLineNum % 1024 ) ){
-			NotifyProgress(nLineNum * 100 / nAllLineNum);
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( NULL ) )return;
-		}
-//		pLine = m_pcDocLineMgr->GetNextLinrStr( &nLineLen );
-		pCDocLine = pCDocLine->GetNextLine();;
-// 2002/03/13 novice
-		if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
-			nCOMMENTMODE_Prev = COLORIDX_TEXT;
-		}
-		nCOMMENTMODE = nCOMMENTMODE_Prev;
-		nCOMMENTEND = 0;
-	}
-	m_nPrevReferLine = CLayoutInt(0);
-	m_pLayoutPrevRefer = NULL;
-
-	if( GetListenerCount()!=0 ){
-		NotifyProgress(0);
-		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( NULL ) )return;
-	}
-}
-
-
-
-
-
-/*!
-	指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする
-	
-	@date 2002.10.07 YAZAKI rename from "DoLayout3_New"
-	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
-		nPosXがインデントを含む幅を保持するように変更．nMaxLineKetasは
-		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
-
-	@note 2004.04.03 Moca
-		_DoLayoutとは違ってレイアウト情報がリスト中間に挿入されるため，
-		挿入後にm_nLineTypeBotへコメントモードを指定してはならない
-		代わりに最終行のコメントモードを終了間際に確認している．
-*/
-CLayoutInt CLayoutMgr::DoLayout_Range(
-	CLayout*		pLayoutPrev,
-	CLogicInt		nLineNum,
-	CLogicPoint		ptDelLogicalFrom,
-	EColorIndexType	nCurrentLineType,
-	CLayoutInt*		pnExtInsLineNum
-)
-{
-	*pnExtInsLineNum = CLayoutInt(0);
-
-	bool		bNeedChangeCOMMENTMODE = false;	//@@@ 2002.09.23 YAZAKI bAddを名称変更
-	CLayoutInt	nMaxLineKetas= m_sTypeConfig.m_nMaxLineKetas;
-	CLogicInt	nLineNumWork = CLogicInt(0);
-
-	CLayout*	pLayout = pLayoutPrev;
-
-	CLogicInt	nCurLine;
-	if( NULL == pLayout ){
-		nCurLine = CLogicInt(0);
-	}else{
-		nCurLine = pLayout->GetLogicLineNo() + CLogicInt(1);
-	}
-
-	EColorIndexType		nCOMMENTMODE = nCurrentLineType;
-	EColorIndexType		nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-	CDocLine*	pCDocLine = m_pcDocLineMgr->GetLine( nCurLine );
-
-	int			nCOMMENTEND = 0;
-	CLayoutInt	nModifyLayoutLinesNew = CLayoutInt(0);
-
-	// 2006.12.01 Moca 途中にまで再構築した場合にEOF位置がずれたまま
-	//	更新されないので，範囲にかかわらず必ずリセットする．
-	m_nEOFColumn = CLayoutInt(-1);
-	m_nEOFLine = CLayoutInt(-1);
-
-	while( NULL != pCDocLine ){
-		CLogicInt		nLineLen;
-		const wchar_t*	pLine = pCDocLine->GetDocLineStrWithEOL( &nLineLen );
-		CLayoutInt		nPosX = CLayoutInt(0); //表示上のX位置
-
-		// メモリ上の位置(offset)
-		CLogicInt	nBgn = CLogicInt(0);
-		CLogicInt	nPos = CLogicInt(0);
-
-		CLogicInt	nWordBgn = CLogicInt(0);
-		CLogicInt	nWordLen = CLogicInt(0);
-
-		int			nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
-
-		int	nEol = pCDocLine->GetEol().GetLen();
-		int nEol_1 = nEol - 1;
-		if( 0 >	nEol_1 ){
-			nEol_1 = 0;
-		}
-
-		CLayoutInt	nIndent = CLayoutInt(0);				//	インデント幅
-		CLayout*	pLayoutCalculated = pLayout;	//	インデント幅計算済みのCLayout.
-
-		while( nPos < nLineLen - CLogicInt(nEol_1) ){
-			//	インデント幅の計算コストを下げるための方策
-			if ( pLayout && pLayout != pLayoutCalculated ){
-
-				 //	計算
-				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
-				nIndent = (this->*m_getIndentOffset)( pLayout );
-
-				//	計算済み
-				pLayoutCalculated = pLayout;
-			}
-
-			SEARCH_START:;
-			
-			//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
-			if( KINSOKU_TYPE_NONE != nKinsokuType )
-			{
-				//禁則処理の最後尾に達したら禁則処理中を解除する
-				if( nPos >= nWordBgn + nWordLen )
-				{
-					if( nKinsokuType==KINSOKU_TYPE_KINSOKU_KUTO && nPos==nWordBgn+nWordLen )
-					{
-						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-						{
-							//@@@ 2002.09.23 YAZAKI 最適化
-							if( bNeedChangeCOMMENTMODE ){
-								pLayout = pLayout->GetNextLayout();
-								pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
-								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
-							}
-							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint(nBgn, nCurLine), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-							}
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-							nBgn = nPos;
-							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
-							pLayoutCalculated = pLayout;
-							if( ( ptDelLogicalFrom.GetY2() == nCurLine && ptDelLogicalFrom.GetX2() < nPos ) ||
-								( ptDelLogicalFrom.GetY2() < nCurLine )
-							){
-								(nModifyLayoutLinesNew)++;;
-							}
-						}
-					}
-
-					nWordLen = CLogicInt(0);
-					nKinsokuType = KINSOKU_TYPE_NONE;	//@@@ 2002.04.20 MIK
-				}
-			}
-			else
-			{
-			
-				/* ワードラップ処理 */
-				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
-				 && nKinsokuType == KINSOKU_TYPE_NONE )
-				{
-					/* 英単語の先頭か */
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					int nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					if( 0 == nCharChars ){
-						nCharChars = 1;
-					}
-					if( nPos >= nBgn && nCharChars == 1 && IS_KEYWORD_CHAR(pLine[nPos]) ){
-						/* キーワード文字列の終端を探す */
-						// 2007.09.07 kobake レイアウトとロジックの区別
-						CLogicInt	iLogic = nPos + CLogicInt(1);
-						CLayoutInt	iLayout = nPosX + CNativeW::GetKetaOfChar( pLine, nLineLen, nPos);
-						while(iLogic < nLineLen){
-							CLogicInt nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, iLogic );
-							if( 0 == nCharChars2 ){
-								nCharChars2 = CLogicInt(1);
-							}
-							CLayoutInt nCharKetas = CNativeW::GetKetaOfChar( pLine, nLineLen, iLogic);
-							if( 0 == nCharKetas ){
-								nCharKetas = CLayoutInt(1);
-							}
-
-							if( nCharChars2 != 1 )break;
-							if( !IS_KEYWORD_CHAR(pLine[iLogic]) )break;
-
-							iLogic+=nCharChars2;
-							iLayout+=nCharKetas;
-						}
-						nWordBgn = nPos;
-						nWordLen = iLogic - nPos;
-						CLayoutInt nWordKetas = iLayout - nPosX;
-						nKinsokuType = KINSOKU_TYPE_WORDWRAP;	//@@@ 2002.04.20 MIK
-
-						if( nPosX+nWordKetas>=nMaxLineKetas && nPos-nBgn>0 )
-						{
-							//@@@ 2002.09.23 YAZAKI 最適化
-							if( bNeedChangeCOMMENTMODE ){
-								pLayout = pLayout->GetNextLayout();
-								pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
-								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
-							}
-							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint(nBgn, nCurLine), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-							}
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-							nBgn = nPos;
-							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
-							pLayoutCalculated = pLayout;
-							if( ( ptDelLogicalFrom.GetY2() == nCurLine && ptDelLogicalFrom.GetX2() < nPos ) ||
-								( ptDelLogicalFrom.GetY2() < nCurLine )
-							){
-								(nModifyLayoutLinesNew)++;;
-							}
-//?							continue;
-						}
-					}
-				}
-
-				//@@@ 2002.04.07 MIK start
-				/* 句読点のぶらさげ */
-				if( m_sTypeConfig.m_bKinsokuKuto
-				 && (nMaxLineKetas - nPosX < 2)
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
-				{
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					// 2007.09.07 kobake   レイアウトとロジックの区別
-					CLogicInt  nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					CLayoutInt nCharKetas = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-
-					if( IsKinsokuPosKuto( nMaxLineKetas - nPosX, nCharKetas )
-						&& IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )
-					{
-						nWordBgn = nPos;
-						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_KUTO;
-					}
-				}
-
-				/* 行頭禁則 */
-				if( m_sTypeConfig.m_bKinsokuHead
-				 && (nMaxLineKetas - nPosX < 4)
-				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
-				{
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					// 2007.09.07 kobake   レイアウトとロジックの区別
-					CLogicInt  nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					CLayoutInt nCharKetas2 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-					CLogicInt  nCharChars3 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
-					CLayoutInt nCharKetas3 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos+nCharChars2 );
-
-					if( IsKinsokuPosHead( nMaxLineKetas - nPosX, nCharKetas2, nCharKetas3 )
-					 && IsKinsokuHead( &pLine[nPos+nCharChars2], nCharChars3 )
-					 && ! IsKinsokuHead( &pLine[nPos], nCharChars2 )	//1文字前が行頭禁則でない
-					 && ! IsKinsokuKuto( &pLine[nPos], nCharChars2 ) )	//句読点でない
-					{
-						nWordBgn = nPos;
-						nWordLen = nCharChars2 + nCharChars3;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
-						//@@@ 2002.09.23 YAZAKI 最適化
-						if( bNeedChangeCOMMENTMODE ){
-							pLayout = pLayout->GetNextLayout();
-							pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
-							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
-						}
-						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint(nBgn, nCurLine), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-						}
-						nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-						nBgn = nPos;
-						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
-						pLayoutCalculated = pLayout;
-						if( ( ptDelLogicalFrom.GetY2() == nCurLine && ptDelLogicalFrom.GetX2() < nPos ) ||
-							( ptDelLogicalFrom.GetY2() < nCurLine )
-						){
-							(nModifyLayoutLinesNew)++;;
-						}
-					}
-				}
-
-				/* 行末禁則 */
-				if( m_sTypeConfig.m_bKinsokuTail
-				 && (nMaxLineKetas - nPosX < 4)
-				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
-				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
-				{	/* 行末禁則する && 行末付近 && 行頭でないこと(無限に禁則してしまいそう) */
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					// 2007.09.07 kobake   レイアウトとロジックの区別
-					CLogicInt  nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
-					CLayoutInt nCharKetas2 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-					CLogicInt  nCharChars3 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos+nCharChars2 );
-					CLayoutInt nCharKetas3 = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos+nCharChars2 );
-
-					if( IsKinsokuPosTail( nMaxLineKetas - nPosX, nCharKetas2, nCharKetas3 )
-						&& IsKinsokuTail( &pLine[nPos], nCharChars2 ) )
-					{
-						nWordBgn = nPos;
-						nWordLen = nCharChars2;
-						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
-						//@@@ 2002.09.23 YAZAKI 最適化
-						if( bNeedChangeCOMMENTMODE ){
-							pLayout = pLayout->GetNextLayout();
-							pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
-							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
-						}
-						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint(nBgn, nCurLine), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-						}
-						nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-						nBgn = nPos;
-						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
-						pLayoutCalculated = pLayout;
-						if( ( ptDelLogicalFrom.GetY2() == nCurLine && ptDelLogicalFrom.GetX2() < nPos ) ||
-							( ptDelLogicalFrom.GetY2() < nCurLine )
-						){
-							(nModifyLayoutLinesNew)++;;
-						}
-					}
-				}
-				//@@@ 2002.04.08 MIK end
-			}	// if( nKinsokuType != KINSOKU_TYPE_NONE )
-
-			//@@@ 2002.09.22 YAZAKI
-			bool bGotoSEARCH_START = _CheckColorMODE( &nCOMMENTMODE, &nCOMMENTEND, nPos, nLineLen, pLine );
-			if ( bGotoSEARCH_START )
-				goto SEARCH_START;
-
-			CLayoutInt nCharKetas;
-			if( pLine[nPos] == WCODE::TAB ){
-				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
-				nCharKetas = GetActualTabSpace( nPosX );
-				if( nPosX + nCharKetas > nMaxLineKetas ){
-					//@@@ 2002.09.23 YAZAKI 最適化
-					if( bNeedChangeCOMMENTMODE ){
-						pLayout = pLayout->GetNextLayout();
-						pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
-						(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
-					}
-					else {
-						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint(nBgn, nCurLine), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-					}
-					nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-					nBgn = nPos;
-					// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-					nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
-					pLayoutCalculated = pLayout;
-					if( ( ptDelLogicalFrom.GetY2() == nCurLine && ptDelLogicalFrom.GetX2() < nPos ) ||
-						( ptDelLogicalFrom.GetY2() < nCurLine )
-					){
-						(nModifyLayoutLinesNew)++;;
-					}
-					continue;
-				}
-				nPos++;
-			}
-			else{
-				// 2005-09-02 D.S.Koba GetSizeOfChar
-				// 2007.09.07 kobake   レイアウトとロジックの区別
-				nCharKetas = CNativeW::GetKetaOfChar( pLine, nLineLen, nPos );
-//				if( 0 == nCharKetas ){				// 削除 サロゲートペア対策	2008/7/5 Uchi
-//					nCharKetas = CLayoutInt(1);
-//				}
-				CLogicInt nCharChars2 = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos);
-				if( 0 == nCharChars2 ){
-					break;
-				}
-				if( nPosX + nCharKetas > nMaxLineKetas ){
-					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
-					{
-						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
-						{	//@@@ 2002.04.14 MIK
-							//@@@ 2002.09.23 YAZAKI 最適化
-							if( bNeedChangeCOMMENTMODE ){
-								pLayout = pLayout->GetNextLayout();
-								pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
-								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
-							}
-							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint(nBgn, nCurLine), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-							}
-							nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-							nBgn = nPos;
-							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
-							pLayoutCalculated = pLayout;
-							if( ( ptDelLogicalFrom.GetY2() == nCurLine && ptDelLogicalFrom.GetX2() < nPos ) ||
-								( ptDelLogicalFrom.GetY2() < nCurLine )
-							){
-								(nModifyLayoutLinesNew)++;;
-							}
-							continue;
-						}
-					}
-				}
-				nPos+= nCharChars2;
-			}
-
-			nPosX += nCharKetas;
-		}
-		if( nPos - nBgn > 0 ){
-// 2002/03/13 novice
-			if( nCOMMENTMODE == COLORIDX_COMMENT ){	/* 行コメントである */
-				nCOMMENTMODE = COLORIDX_TEXT;
-			}
-			//@@@ 2002.09.23 YAZAKI 最適化
-			if( bNeedChangeCOMMENTMODE ){
-				pLayout = pLayout->GetNextLayout();
-				pLayout->SetColorTypePrev(nCOMMENTMODE_Prev);
-				(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
-			}
-			else {
-				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, CLogicPoint(nBgn, nCurLine), nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
-			}
-			nCOMMENTMODE_Prev = nCOMMENTMODE;
-
-			if( ( ptDelLogicalFrom.GetY2() == nCurLine && ptDelLogicalFrom.GetX2() < nPos ) ||
-				( ptDelLogicalFrom.GetY2() < nCurLine )
-			){
-				(nModifyLayoutLinesNew)++;;
-			}
-		}
-
-		nLineNumWork++;
-		nCurLine++;
-
-		/* 目的の行数(nLineNum)に達したか、または通り過ぎた（＝行数が増えた）か確認 */
-		//@@@ 2002.09.23 YAZAKI 最適化
-		if( nLineNumWork >= nLineNum ){
-			if( NULL != pLayout
-			 && NULL != pLayout->m_pNext
-			 && ( nCOMMENTMODE_Prev != pLayout->m_pNext->GetColorTypePrev() )
-			){
-				//	COMMENTMODEが異なる行が増えましたので、次の行→次の行と更新していきます。
-				bNeedChangeCOMMENTMODE = true;
-			}else{
-				break;	//	while( NULL != pCDocLine ) 終了
-			}
-		}
-		pCDocLine = pCDocLine->GetNextLine();
-// 2002/03/13 novice
-		if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* 行コメントである */
-			nCOMMENTMODE_Prev = COLORIDX_TEXT;
-		}
-		nCOMMENTMODE = nCOMMENTMODE_Prev;
-		nCOMMENTEND = 0;
-
-	}
-
-	// 2004.03.28 Moca EOFだけの論理行の直前の行の色分けが確認・更新された
-	if( nCurLine == m_pcDocLineMgr->GetLineCount() ){
-		m_nLineTypeBot = nCOMMENTMODE_Prev;
-		// 2006.10.01 Moca 最終行が変更された。EOF位置情報を破棄する。
-		m_nEOFColumn = CLayoutInt(-1);
-		m_nEOFLine = CLayoutInt(-1);
-	}
-
-// 1999.12.22 レイアウト情報がなくなる訳ではないので
-//	m_nPrevReferLine = 0;
-//	m_pLayoutPrevRefer = NULL;
-//	m_pLayoutCurrent = NULL;
-
-	return nModifyLayoutLinesNew;
-}
 
 /*!
 	行頭禁則文字に該当するかを調べる．
@@ -845,15 +42,9 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuHead( const wchar_t *pLine, CLogicInt length )
+bool CLayoutMgr::IsKinsokuHead( wchar_t wc )
 {
-	if(length==1 && m_pszKinsokuHead_1.size()){
-		wchar_t wc=pLine[0];
-		return m_pszKinsokuHead_1.exist(wc);
-	}
-	else{
-		return false;
-	}
+	return m_pszKinsokuHead_1.exist(wc);
 }
 
 /*!
@@ -864,15 +55,9 @@ bool CLayoutMgr::IsKinsokuHead( const wchar_t *pLine, CLogicInt length )
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuTail( const wchar_t *pLine, CLogicInt length )
+bool CLayoutMgr::IsKinsokuTail( wchar_t wc )
 {
-	if(length==1 && m_pszKinsokuTail_1.size()){
-		wchar_t wc=pLine[0];
-		return m_pszKinsokuTail_1.exist(wc);
-	}
-	else{
-		return false;
-	}
+	return m_pszKinsokuTail_1.exist(wc);
 }
 
 
@@ -884,28 +69,18 @@ bool CLayoutMgr::IsKinsokuTail( const wchar_t *pLine, CLogicInt length )
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuKuto( const wchar_t *pLine, CLogicInt length )
+bool CLayoutMgr::IsKinsokuKuto( wchar_t wc )
 {
-	if(length==1 && m_pszKinsokuKuto_1.size()){
-		wchar_t wc=pLine[0];
-		return m_pszKinsokuKuto_1.exist(wc);
-	}
-	else{
-		return false;
-	}
+	return m_pszKinsokuKuto_1.exist(wc);
 }
 
 /*!
-	@param[in] nRest 行の残り文字数
-	@param[in] nCharChars 現在位置の文字サイズ
-	@param[in] nCharChars2 現在位置の次の文字サイズ
-
 	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
 */
 bool CLayoutMgr::IsKinsokuPosHead(
-	CLayoutInt nRest,
-	CLayoutInt nCharKetas,
-	CLayoutInt nCharKetas2
+	CLayoutInt nRest,		//!< [in] 行の残り文字数
+	CLayoutInt nCharKetas,	//!< [in] 現在位置の文字サイズ
+	CLayoutInt nCharKetas2	//!< [in] 現在位置の次の文字サイズ
 )
 {
 	switch( (Int)nRest )
@@ -942,16 +117,12 @@ bool CLayoutMgr::IsKinsokuPosHead(
 }
 
 /*!
-	@param[in] nRest 行の残り文字数
-	@param[in] nCharChars 現在位置の文字サイズ
-	@param[in] nCharChars2 現在位置の次の文字サイズ
-
 	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
 */
 bool CLayoutMgr::IsKinsokuPosTail(
-	CLayoutInt nRest,
-	CLayoutInt nCharKetas,
-	CLayoutInt nCharKetas2
+	CLayoutInt nRest,		//!< [in] 行の残り文字数
+	CLayoutInt nCharKetas,	//!< [in] 現在位置の文字サイズ
+	CLayoutInt nCharKetas2	//!< [in] 現在位置の次の文字サイズ
 )
 {
 	switch( (Int)nRest )
@@ -982,27 +153,27 @@ bool CLayoutMgr::IsKinsokuPosTail(
 	return false;
 }
 
-int CLayoutMgr::Match_Quote( wchar_t wcQuote, int nPos, int nLineLen, const wchar_t* pLine )
+int CLayoutMgr::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr/*int nLineLen, const wchar_t* pLine*/ )
 {
 	int nCharChars;
 	int i;
-	for( i = nPos; i < nLineLen; ++i ){
+	for( i = nPos; i < cLineStr.GetLength(); ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
+		nCharChars = CNativeW::GetSizeOfChar( cLineStr.GetPtr(), cLineStr.GetLength(), i );
 		if( 0 == nCharChars ){
 			nCharChars = 1;
 		}
 		if(	m_sTypeConfig.m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-			if( 1 == nCharChars && pLine[i] == L'\\' ){
+			if( 1 == nCharChars && cLineStr.At(i) == L'\\' ){
 				++i;
 			}else
-			if( 1 == nCharChars && pLine[i] == wcQuote ){
+			if( 1 == nCharChars && cLineStr.At(i) == wcQuote ){
 				return i + 1;
 			}
 		}
 		else if(	m_sTypeConfig.m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-			if( 1 == nCharChars && pLine[i] == wcQuote ){
-				if( i + 1 < nLineLen && pLine[i + 1] == wcQuote ){
+			if( 1 == nCharChars && cLineStr.At(i) == wcQuote ){
+				if( i + 1 < cLineStr.GetLength() && cLineStr.At(i + 1) == wcQuote ){
 					++i;
 				}else{
 					return i + 1;
@@ -1013,7 +184,7 @@ int CLayoutMgr::Match_Quote( wchar_t wcQuote, int nPos, int nLineLen, const wcha
 			++i;
 		}
 	}
-	return nLineLen;
+	return cLineStr.GetLength();
 }
 
 /*!
@@ -1129,3 +300,5 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	}
 	return nIpos;	//	インデント
 }
+
+

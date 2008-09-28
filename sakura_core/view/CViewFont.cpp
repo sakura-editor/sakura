@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CViewFont.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 
 CViewFont::CViewFont()
 {

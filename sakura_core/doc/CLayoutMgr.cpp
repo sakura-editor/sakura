@@ -15,7 +15,7 @@
 */
 #include "stdafx.h"
 #include "CLayoutMgr.h"
-#include "CShareData.h" // 2005.11.20 Moca
+#include "env/CShareData.h" // 2005.11.20 Moca
 
 #include "charset/charcode.h"
 #include "debug/Debug.h"
@@ -27,6 +27,7 @@
 #include "mem/CMemory.h"/// 2002/2/10 aroka
 #include "mem/CMemoryIterator.h" // 2006.07.29 genta
 #include "basis/SakuraBasis.h"
+#include "view/colors/CColorStrategy.h"
 
 
 
@@ -1338,3 +1339,6 @@ void CLayoutMgr::DUMP()
 #endif
 	return;
 }
+
+
+

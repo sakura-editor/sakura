@@ -18,7 +18,7 @@ class CSplitterWnd;
 #define _CSPLITTERWND_H_
 
 #include "CWnd.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾
 -----------------------------------------------------------------------*/

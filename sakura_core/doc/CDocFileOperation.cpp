@@ -3,7 +3,7 @@
 #include "CWaitCursor.h"
 #include "CControlTray.h"
 #include "util/window.h"
-#include "CSakuraEnvironment.h"
+#include "env/CSakuraEnvironment.h"
 #include "doc/CDocVisitor.h"
 
 
@@ -74,10 +74,10 @@ bool CDocFileOperation::DoLoadFlow(SLoadInfo* pLoadInfo)
 	ELoadResult eLoadResult = LOADED_FAILURE;
 
 	try{
-		//セーブ前チェック
+		//ロード前チェック
 		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyCheckLoad(pLoadInfo))throw CFlowInterruption();
 
-		//セーブ処理
+		//ロード処理
 		m_pcDocRef->NotifyBeforeLoad(*pLoadInfo);			//前処理
 		eLoadResult = m_pcDocRef->NotifyLoad(*pLoadInfo);	//本処理
 		m_pcDocRef->NotifyAfterLoad(*pLoadInfo);			//後処理
@@ -233,7 +233,7 @@ bool CDocFileOperation::SaveFileDialog(
 				_tcscat(szDefaultWildCard, szExt);
 			}
 			// 拡張子を指定に合わせる
-			pStr = pEnd = GetDllShareData().GetTypeSetting(nSettingType).m_szTypeExts;
+			pStr = pEnd = CDocTypeManager().GetTypeSetting(nSettingType).m_szTypeExts;
 			do {
 				if (*pEnd == _T('\0') || *pEnd == _T(',')) {
 					auto_strncpy(szWork, pStr, pEnd - pStr);

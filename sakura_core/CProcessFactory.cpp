@@ -298,7 +298,7 @@ bool CProcessFactory::TestWriteQuit()
 	if( CCommandLine::Instance()->IsWriteQuit() ){
 		TCHAR szIniFileIn[_MAX_PATH];
 		TCHAR szIniFileOut[_MAX_PATH];
-		CShareData::GetIniFileNameDirect( szIniFileIn, szIniFileOut );
+		CFileNameManager::Instance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut );
 		if( szIniFileIn[0] != _T('\0') ){	// マルチユーザ用設定か
 			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
 			if( fexist(szIniFileIn) ){

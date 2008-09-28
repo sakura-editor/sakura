@@ -34,34 +34,48 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        ‹¤—Lƒƒ‚ƒŠ                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+#define N_SHAREDATA_VERSION		1023
+#define STR_SHAREDATA_VERSION	"1023"
+#define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ƒ~ƒ…[ƒeƒbƒNƒX                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#define	GSTR_MUTEX_SAKURA					(_T("MutexSakuraEditor")				_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_CP				(_T("MutexSakuraEditorCP")				_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_INIT				(_T("MutexSakuraEditorInit")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
-#define	GSTR_MUTEX_SAKURA_EDITARR			(_T("MutexSakuraEditorEditArr")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
 
-//ƒCƒxƒ“ƒg
-#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(_T("EventSakuraEditorCPInitialized")	_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+//‹ŒƒTƒNƒ‰ƒGƒfƒBƒ^ (1.2.104.1ˆÈ‘O)
+#define	GSTR_MUTEX_SAKURA_OLD				_T("MutexSakuraEditor")
+
+//ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX
+#define	GSTR_MUTEX_SAKURA_CP				(_T("MutexSakuraEditorCP")				_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+
+//ƒm[ƒ}ƒ‹ƒvƒƒZƒX‰Šú‰»“¯Šú
+#define	GSTR_MUTEX_SAKURA_INIT				(_T("MutexSakuraEditorInit")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+
+//ƒm[ƒh‘€ì“¯Šú
+#define	GSTR_MUTEX_SAKURA_EDITARR			(_T("MutexSakuraEditorEditArr")			_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         ƒCƒxƒ“ƒg                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(_T("EventSakuraEditorCPInitialized")	_T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //ƒRƒ“ƒgƒ[ƒ‹ƒgƒŒƒC
-#define	GSTR_CEDITAPP		(_T("CControlTray") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+#define	GSTR_CEDITAPP		(_T("CControlTray") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)		_T(STR_SHAREDATA_VERSION))
 
 //ƒƒCƒ“ƒEƒBƒ“ƒhƒE
-#define	GSTR_EDITWINDOWNAME	(_T("TextEditorWindow") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+#define	GSTR_EDITWINDOWNAME	(_T("TextEditorWindow") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //ƒrƒ…[
-#define	GSTR_VIEWNAME		_T("EditorClient")
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                        ‹¤—Lƒƒ‚ƒŠ                           //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#define	GSTR_CSHAREDATA	(_T("CShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+#define	GSTR_VIEWNAME		(_T("EditorClient")												_T(STR_SHAREDATA_VERSION))
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -81,3 +95,102 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 	#define ICON_DEFAULT_APP IDI_ICON_STD
 	#define ICON_DEFAULT_GREP IDI_ICON_GREP
 #endif
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          ƒtƒ‰ƒO                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+#define _SHIFT	0x00000001
+#define _CTRL	0x00000002
+#define _ALT	0x00000004
+
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        ƒƒbƒZ[ƒW                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//wParam: X
+//lParam: Y
+#define MYWM_DOSPLIT        (WM_APP+1500)	
+
+//wParam: ‚È‚ñ‚©‚ÌƒCƒ“ƒfƒbƒNƒX
+//lParam: bool‚Á‚Û‚¢‰½‚©
+#define MYWM_SETACTIVEPANE  (WM_APP+1510)
+
+//!Ý’è‚ª•ÏX‚³‚ê‚½‚±‚Æ‚Ì’Ê’mƒƒbƒZ[ƒW
+//wParam:–¢Žg—p
+//lParam:–¢Žg—p
+#define MYWM_CHANGESETTING  (WM_APP+1520)
+
+//! ƒ^ƒXƒNƒgƒŒƒC‚©‚ç‚Ì’Ê’mƒƒbƒZ[ƒW
+#define MYWM_NOTIFYICON		(WM_APP+100)
+
+
+
+/*! ƒgƒŒƒC‚©‚çƒGƒfƒBƒ^‚Ö‚ÌI—¹—v‹ */
+#define	MYWM_CLOSE			(WM_APP+200)
+
+/*! ƒgƒŒƒC‚©‚çƒGƒfƒBƒ^‚Ö‚Ì•ÒWƒtƒ@ƒCƒ‹î•ñ —v‹’Ê’m */
+#define	MYWM_GETFILEINFO	(WM_APP+203)
+
+/*! ƒJ[ƒ\ƒ‹ˆÊ’u•ÏX’Ê’m */
+#define	MYWM_SETCARETPOS	(WM_APP+204)
+/// MYWM_SETCARETPOSƒƒbƒZ[ƒW‚ÌLPARAM
+enum e_PM_SETCARETPOS_SELECTSTATE {
+	PM_SETCARETPOS_NOSELECT		= 0, /*!<‘I‘ð‰ðœ */
+	PM_SETCARETPOS_SELECT		= 1, /*!<‘I‘ðŠJŽnE•ÏX */
+	PM_SETCARETPOS_KEEPSELECT	= 2, /*!<Œ»Ý‚Ì‘I‘ðó‘Ô‚ð•Û‚Á‚ÄˆÚ“® */
+};
+
+/*! ƒJ[ƒ\ƒ‹ˆÊ’uŽæ“¾—v‹ */
+#define	MYWM_GETCARETPOS	(WM_APP+205)
+
+//! ƒeƒLƒXƒg’Ç‰Á’Ê’m(‹¤—Lƒf[ƒ^Œo—R)
+//wParam:–¢Žg—p
+//lParam:–¢Žg—p
+#define	MYWM_ADDSTRING		(WM_APP+206)
+
+/*! ƒ^ƒOƒWƒƒƒ“ƒvŒ³’Ê’m */
+#define	MYWM_SETREFERER		(WM_APP+207)
+
+/*! s(‰üs’PˆÊ)ƒf[ƒ^‚Ì—v‹ */
+#define	MYWM_GETLINEDATA	(WM_APP+208)
+
+
+/*! •ÒWƒEƒBƒ“ƒhƒEƒIƒuƒWƒFƒNƒg‚©‚ç‚ÌƒIƒuƒWƒFƒNƒgíœ—v‹ */
+#define	MYWM_DELETE_ME		(WM_APP+209)
+
+/*! V‚µ‚¢•ÒWƒEƒBƒ“ƒhƒE‚Ìì¬ˆË—Š(ƒRƒ}ƒ“ƒhƒ‰ƒCƒ“‚ð“n‚·) */
+#define	MYWM_OPENNEWEDITOR	(WM_APP+210)
+
+//ƒwƒ‹ƒv‚Á‚Û‚¢‰½‚©
+#define	MYWM_HTMLHELP			(WM_APP+212)
+
+/*! ƒ^ƒuƒEƒCƒ“ƒhƒE—pƒƒbƒZ[ƒW */
+#define	MYWM_TAB_WINDOW_NOTIFY	(WM_APP+213)	//@@@ 2003.05.31 MIK
+
+/*! ƒo[‚Ì•\Ž¦E”ñ•\Ž¦•ÏXƒƒbƒZ[ƒW */
+#define	MYWM_BAR_CHANGE_NOTIFY	(WM_APP+214)	//@@@ 2003.06.10 MIK
+
+/*! ƒGƒfƒBƒ^|ƒgƒŒƒCŠÔ‚Å‚ÌUI“ÁŒ •ª—£‚ÌŠm”FƒƒbƒZ[ƒW */
+#define	MYWM_UIPI_CHECK	(WM_APP+215)	//@@@ 2007.06.07 ryoji
+
+/*! ƒ|ƒbƒvƒAƒbƒvƒEƒBƒ“ƒhƒE‚Ì•\Ž¦Ø‘ÖŽwŽ¦ */
+#define MYWM_SHOWOWNEDPOPUPS (WM_APP+216)	//@@@ 2007.10.22 ryoji
+
+/*! ƒvƒƒZƒX‚Ì‰‰ñƒAƒCƒhƒŠƒ“ƒO’Ê’m */
+#define MYWM_FIRST_IDLE (WM_APP+217)	//@@@ 2008.04.19 ryoji
+
+/*! “ÆŽ©‚Ìƒhƒƒbƒvƒtƒ@ƒCƒ‹’Ê’m */
+#define MYWM_DROPFILES (WM_APP+218)	//@@@ 2008.06.18 ryoji
+
+/* Ä•ÏŠ·‘Î‰ž */ // 20020331 aroka
+#ifndef WM_IME_REQUEST
+#define MYWM_IME_REQUEST 0x288  // ==WM_IME_REQUEST
+#else
+#define MYWM_IME_REQUEST WM_IME_REQUEST
+#endif
+#define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
+#define RWM_RECONVERT TEXT("MSIMEReconvert")

@@ -44,6 +44,12 @@ static const bool UNICODE_BOOL=false;
 #endif
 
 
+// -- -- 仕様変更 -- -- //
+
+//全角スペース描画
+#define NEW_ZENSPACE //新しい描画ルーチン (全角スペースを破線矩形で描画) を採用
+
+
 
 // -- -- -- -- ↑以上、ビルド設定完了 -- -- -- -- //
 

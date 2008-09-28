@@ -16,7 +16,7 @@
 */
 
 #include "stdafx.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CMenuDrawer.h"	//	これでいいのか？
 #include "global.h"
 #include <stdio.h>
@@ -56,7 +56,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	bool	bFavorite;
 	EditInfo	*p;
 
-	CShareData::getInstance()->TransformFileName_MakeCache();
+	CFileNameManager::Instance()->TransformFileName_MakeCache();
 
 	//	空メニューを作る
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
@@ -69,7 +69,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 
 		p = m_cRecentFile.GetItem( i );
 		
-		CShareData::getInstance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
+		CFileNameManager::Instance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
 		dupamp( szMemu, szFile2 );

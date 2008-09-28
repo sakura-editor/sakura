@@ -6,7 +6,7 @@
 #include "util/os.h"
 #include "util/module.h"
 #include "COsVersionInfo.h"
-#include "CShareData.h"
+#include "env/CShareData.h"
 #include "CHtmlHelp.h"
 #include <Shlobj.h>
 #include <shellapi.h>
@@ -205,7 +205,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				if( IDOK == nMsgResult )
 				{
 					DLLSHAREDATA *pShareData = CShareData::getInstance()->GetShareData();
-					GetInidir( pShareData->m_szIMPORTFOLDER );
+					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
 				}
 				break;
 			}

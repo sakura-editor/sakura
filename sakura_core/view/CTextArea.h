@@ -98,6 +98,23 @@ public:
 	int  DetectWidthOfLineNumberArea_calculate() const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           判定                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	bool IsRectIntersected(const RECT& rc) const
+	{
+		//rcが無効またはゼロ領域の場合はfalse
+		if( rc.left >= rc.right )return false;
+		if( rc.top  >= rc.bottom )return false;
+
+		if( rc.left >= this->GetAreaRight() )return false; //右外
+		if( rc.right <= this->GetAreaLeft() )return false; //左外
+		if( rc.top >= this->GetAreaBottom() )return false; //下外
+		if( rc.bottom <= this->GetAreaTop() )return false; //上外
+		
+		return true;
+	}
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        その他取得                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	int GetRulerHeight() const
@@ -132,8 +149,10 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         サポート                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//!クリッピング矩形を作成。表示範囲外だった場合はfalseを返す。
 	//$ Generateなんていう大げさな名前じゃなくて、Get～で良い気がしてきた
+	//!クリッピング矩形を作成。表示範囲外だった場合はfalseを返す。
+	void GenerateCharRect(RECT* rc,const DispPos& sPos,int nHankakuNum) const;
+	bool TrimRectByArea(RECT* rc) const;
 	bool GenerateClipRect(RECT* rc,const DispPos& sPos,int nHankakuNum) const;
 	bool GenerateClipRectRight(RECT* rc,const DispPos& sPos) const; //!< 右端まで全部
 	bool GenerateClipRectLine(RECT* rc,const DispPos& sPos) const;  //!< 行全部
