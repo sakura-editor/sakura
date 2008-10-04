@@ -169,31 +169,45 @@ int CEditView::HokanSearchByFile(
 	const int nKeyLen = wcslen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	int j, nWordLen, nLineLen, nRet;
+	bool bStartWithMark;
 
 	const wchar_t* pszLine;
 	const wchar_t* word;
 
 	CLogicPoint ptCur = GetCaret().GetCaretLogicPos(); //物理カーソル位置
-	
+
+	// キーの先頭が識別子文字かどうか判定
+	if ( WCODE::IsAZ(pszKey[0]) || WCODE::Is09(pszKey[0]) || pszKey[0] == L'_' ) {
+		bStartWithMark = false;
+	} else {
+		bStartWithMark = true;
+	}
+
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
 		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
 		for( j = 0; j < nLineLen; j++ ){
-			//
+			// キーワード文字以外は候補に含めない
 			if( !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
 
-			//
+			// キーの先頭が識別子文字の場合、記号で始まる単語は候補からはずす
+			if( !bStartWithMark &&
+				!(WCODE::IsAZ(pszLine[j]) || WCODE::Is09(pszLine[j]) || pszLine[j] == L'_') )continue;
+
+			// 候補単語の開始位置を求める
 			word = pszLine + j;
+
+			// 候補単語の終了位置を求める
 			for( j++, nWordLen = 1;j < nLineLen && IS_KEYWORD_CHAR( pszLine[j] ); j++ ){
 				nWordLen++;
 			}
 
-			//
-			if( nWordLen > 1020 ){ // CDicMgr等の制限により長すぎる単語は無視する
+			// CDicMgr等の制限により長すぎる単語は無視する
+			if( nWordLen > 1020 ){
 				continue;
 			}
 			if( nKeyLen > nWordLen )continue;
 
-			//
+			// キーと比較する
 			if( bHokanLoHiCase ){
 				nRet = auto_memicmp( pszKey, word, nKeyLen );
 			}else{
