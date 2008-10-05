@@ -1260,6 +1260,13 @@ LRESULT CEditWnd::DispatchEvent(
 		LayoutToolBar();
 // Oct 10, 2000 ao ここまで
 
+		// 2008.10.05 nasukoji	非アクティブなウィンドウのツールバーを更新する
+		// アクティブなウィンドウはタイマにより更新されるが、それ以外のウィンドウは
+		// タイマを停止させており設定変更すると全部有効となってしまうため、ここで
+		// ツールバーを更新する
+		if( !m_bIsActiveApp )
+			m_cToolbar.UpdateToolbar();
+
 		// ファンクションキーを再作成する（バーの内容、位置、グループボタン数の変更も反映）	// 2006.12.19 ryoji
 		m_CFuncKeyWnd.Close();
 		LayoutFuncKey();
