@@ -16,6 +16,7 @@ public:
 
 	//イベント
 	void OnToolbarTimer( void );	//!< タイマーの処理 20060128 aroka
+	void UpdateToolbar( void );		//!< ツールバーの表示を更新する		// 2008.09.23 nasukoji
 
 	//描画
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
