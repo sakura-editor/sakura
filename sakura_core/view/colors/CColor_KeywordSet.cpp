@@ -47,20 +47,23 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 		int nKeyLen = iKeyEnd - iKeyBegin;
 
 		// キーワードが色変え対象であるか調査
-		if( TypeDataPtr->m_nKeyWordSetIdx[GetStrategyColor()] != -1 && // キーワードセット
-			TypeDataPtr->m_ColorInfoArr[GetStrategyColor()].m_bDisp)								//MIK
-		{																							//MIK
-			/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-			int nIdx = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(							//MIK 2000.12.01 binary search
-				TypeDataPtr->m_nKeyWordSetIdx[GetStrategyColor()] ,									//MIK
-				&cStr.GetPtr()[iKeyBegin],															//MIK
-				nKeyLen																				//MIK
-			);																						//MIK
-			if( nIdx != -1 ){																		//MIK
-				this->m_nCOMMENTEND = iKeyEnd;														//MIK
-				return true;
-			}																						//MIK
-		}																							//MIK
+		for( int my_i = 0; my_i < MAX_KEYWORDSET_PER_TYPE; my_i++ )
+		{
+			if( TypeDataPtr->m_nKeyWordSetIdx[my_i] != -1 && // キーワードセット
+				TypeDataPtr->m_ColorInfoArr[GetStrategyColor()].m_bDisp)								//MIK
+			{																							//MIK
+				/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
+				int nIdx = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(							//MIK 2000.12.01 binary search
+					TypeDataPtr->m_nKeyWordSetIdx[my_i] ,									//MIK
+					&cStr.GetPtr()[iKeyBegin],															//MIK
+					nKeyLen																				//MIK
+				);																						//MIK
+				if( nIdx != -1 ){																		//MIK
+					this->m_nCOMMENTEND = iKeyEnd;														//MIK
+					return true;
+				}																						//MIK
+			}
+		}
 	}
 	return false;
 }
