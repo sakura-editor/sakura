@@ -28,7 +28,7 @@ public:
 	}
 	void resize(int nNewSize)
 	{
-		assert(nNewSize < MAX_SIZE);
+		assert(nNewSize <= MAX_SIZE);
 		m_nCount = nNewSize;
 	}
 
