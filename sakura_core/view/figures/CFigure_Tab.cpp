@@ -27,12 +27,6 @@ CLayoutInt CFigure_Tab::GetLayoutLength(const wchar_t* pText, CLayoutInt nStartC
 	return pcDoc->m_cLayoutMgr.GetActualTabSpace( nStartCol );
 }
 
-bool CFigure_Tab::DrawImp(SColorStrategyInfo* pInfo)
-{
-	_DispTab( pInfo->gr, pInfo->pDispPos, pInfo->pcView );
-	return true;
-}
-
 
 
 
@@ -44,7 +38,7 @@ bool CFigure_Tab::DrawImp(SColorStrategyInfo* pInfo)
 //	Sep. 23, 2002 genta LayoutMgrの値を使う
 //@@@ 2001.03.16 by MIK
 //@@@ 2003.03.26 MIK タブ矢印表示
-void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView )
+void CFigure_Tab::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView ) const
 {
 	DispPos& sPos=*pDispPos;
 
@@ -72,29 +66,43 @@ void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView )
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
 
 	if( pArea->IsRectIntersected(rcClip2) ){
-		//背景
-		::ExtTextOutW_AnyBuild(
-			gr,
-			sPos.GetDrawPos().x,
-			sPos.GetDrawPos().y,
-			ExtTextOutOption(),
-			&rcClip2,
-			L"        ",
-			tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
-			pMetrics->GetDxArray_AllHankaku()
-		);
-
-		//タブ矢印表示
-		if( cTabType.IsDisp() && TypeDataPtr->m_bTabArrow && rcClip2.left <= sPos.GetDrawPos().x ){ // Apr. 1, 2003 MIK 行番号と重なる
-			_DrawTabArrow(
+		if( cTabType.IsDisp() && !TypeDataPtr->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
+			//@@@ 2001.03.16 by MIK
+			::ExtTextOutW_AnyBuild(
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,
-				pMetrics->GetHankakuWidth(),
-				pMetrics->GetHankakuHeight(),
-				cTabType.IsFatFont(),
-				::GetTextColor(gr)//cTabType.GetTextColor()
+				ExtTextOutOption(),
+				&rcClip2,
+				TypeDataPtr->m_szTabViewString,
+				tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
+				pMetrics->GetDxArray_AllHankaku()
 			);
+		}else{
+			//背景
+			::ExtTextOutW_AnyBuild(
+				gr,
+				sPos.GetDrawPos().x,
+				sPos.GetDrawPos().y,
+				ExtTextOutOption(),
+				&rcClip2,
+				L"        ",
+				tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
+				pMetrics->GetDxArray_AllHankaku()
+			);
+
+			//タブ矢印表示
+			if( cTabType.IsDisp() && TypeDataPtr->m_bTabArrow && rcClip2.left <= sPos.GetDrawPos().x ){ // Apr. 1, 2003 MIK 行番号と重なる
+				_DrawTabArrow(
+					gr,
+					sPos.GetDrawPos().x,
+					sPos.GetDrawPos().y,
+					pMetrics->GetHankakuWidth(),
+					pMetrics->GetHankakuHeight(),
+					cTabType.IsFatFont(),
+					::GetTextColor(gr)//cTabType.GetTextColor()
+				);
+			}
 		}
 	}
 
@@ -132,8 +140,8 @@ void _DrawTabArrow(
 
 	for(int i = 0; i < (bBold?2:1); i++){
 		int y = sy + i;
-		gr.DrawDotLine(sx - nWidth,	y,	sx,					y				);	//「─」左端から右端
-		gr.DrawDotLine(sx,				y,	sx - nHeight / 4,	y + nHeight / 4	);	//「／」右端から斜め左下
-		gr.DrawDotLine(sx,				y,	sx - nHeight / 4,	y - nHeight / 4	);	//「＼」右端から斜め左上
+		gr.DrawLine(sx - nWidth,	y,	sx,					y				);	//「─」左端から右端
+		gr.DrawLine(sx,				y,	sx - nHeight / 4,	y + nHeight / 4	);	//「／」右端から斜め左下
+		gr.DrawLine(sx,				y,	sx - nHeight / 4,	y - nHeight / 4	);	//「＼」右端から斜め左上
 	}
 }

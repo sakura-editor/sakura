@@ -206,16 +206,7 @@ EColorIndexType CEditView::GetColorIndex(
 void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 {
 	//インデックス決定
-	int		nColorIdx = -1;
-	if(eColorIndex>=0 && eColorIndex<COLORIDX_LAST){
-		nColorIdx=eColorIndex;
-	}
-	else if(eColorIndex==COLORIDX_BLOCK1 || eColorIndex==COLORIDX_BLOCK2){
-		nColorIdx=COLORIDX_COMMENT;
-	}
-	else if( eColorIndex >= COLORIDX_REGEX_FIRST && eColorIndex <= COLORIDX_REGEX_LAST ){
-		nColorIdx = eColorIndex - COLORIDX_REGEX_FIRST;	//下駄を履かせているのをはずす
-	}
+	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
 
 	//実際に色を設定
 	if( -1 != nColorIdx ){

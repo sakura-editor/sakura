@@ -66,9 +66,9 @@ SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_BLOCK1,		// ブロックコメント1(文字色と背景色は行コメントと同じ)
 	COLORIDX_BLOCK2,		// ブロックコメント2(文字色と背景色は行コメントと同じ)
 
-	//1000-1099 : カラー表示制御用(正規表現キーワード)
+	//1000- : カラー表示制御用(正規表現キーワード)
 	COLORIDX_REGEX_FIRST	= 1000,
-	COLORIDX_REGEX_LAST		= 1099,
+	COLORIDX_REGEX_LAST		= COLORIDX_REGEX_FIRST + COLORIDX_LAST - 1,
 
 	// -- -- 別名 -- -- //
 	COLORIDX_DEFAULT		= COLORIDX_TEXT,
@@ -76,9 +76,34 @@ SAKURA_CORE_API enum EColorIndexType {
 //	To Here Sept. 18, 2000
 
 //正規表現キーワードのEColorIndexType値を作る関数
-inline EColorIndexType MakeColorIndexType_RegularExpression(int nRegExpIndex)
+inline EColorIndexType ToColorIndexType_RegularExpression(const int& nRegexColorIndex)
 {
-	return (EColorIndexType)(COLORIDX_REGEX_FIRST + nRegExpIndex);
+	return (EColorIndexType)(COLORIDX_REGEX_FIRST + nRegexColorIndex);
+}
+
+//正規表現キーワードのEColorIndexType値かどうか
+inline bool IsRegularExpression(const EColorIndexType& eColorIndex)
+{
+	return (eColorIndex >= COLORIDX_REGEX_FIRST && eColorIndex <= COLORIDX_REGEX_LAST);
+}
+
+//正規表現キーワードのEColorIndexType値を色番号に戻す関数
+inline int ToColorInfoArrIndex_RegularExpression(const EColorIndexType& eRegexColorIndex)
+{
+	return eRegexColorIndex - COLORIDX_REGEX_FIRST;
+}
+
+//EColorIndexType値を色番号に変換する関数
+inline int ToColorInfoArrIndex(const EColorIndexType& eColorIndex)
+{
+	if(eColorIndex>=0 && eColorIndex<COLORIDX_LAST)
+		return eColorIndex;
+	else if(eColorIndex==COLORIDX_BLOCK1 || eColorIndex==COLORIDX_BLOCK2)
+		return COLORIDX_COMMENT;
+	else if( IsRegularExpression(eColorIndex) )
+		return ToColorInfoArrIndex_RegularExpression(eColorIndex);
+
+	return -1;
 }
 
 // カラー名＜＞インデックス番号の変換	//@@@ 2002.04.30
@@ -140,8 +165,8 @@ public:
 	virtual EColorIndexType GetStrategyColor() const = 0;
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
 	virtual void InitStrategyStatus() = 0;
-	virtual bool BeginColor(const CStringRef& cStr, int nPos) = 0;
-	virtual bool EndColor(const CStringRef& cStr, int nPos) = 0;
+	virtual bool BeginColor(const CStringRef& cStr, int nPos){ return false; }
+	virtual bool EndColor(const CStringRef& cStr, int nPos){ return true; }
 	//イベント
 	virtual void OnStartScanLogic(){}
 

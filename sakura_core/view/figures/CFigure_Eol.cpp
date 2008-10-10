@@ -61,7 +61,8 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 	{
 		// 改行が存在した場合は、改行記号を表示
 		if(cEol.GetLen()){
-			_DispEOL(pInfo->gr,pInfo->pDispPos,pcLayout2->GetLayoutEol(),pInfo->pcView);
+			m_cEol = cEol;
+			__super::DrawImp(pInfo);
 			pInfo->nPosInLogic+=cEol.GetLen();
 		}
 		// 最終行の場合は、EOFを表示
@@ -212,6 +213,10 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       EOF描画実装                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+void CFigure_Eol::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView) const
+{
+	_DispEOL(gr, pDispPos, m_cEol, pcView);
+}
 
 /*!
 EOF記号の描画
@@ -282,11 +287,6 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 {
 	RECT rcClip2;
 	if(pcView->GetTextArea().GenerateClipRect(&rcClip2,*pDispPos,2)){
-
-		// 色決定
-		CTypeSupport cSupport(pcView,pcView->GetTextDrawer()._GetColorIdx(COLORIDX_EOL));
-		cSupport.SetGraphicsState_WhileThisObj(gr);
-
 		// 2003.08.17 ryoji 改行文字が欠けないように
 		::ExtTextOutW_AnyBuild(
 			gr,
@@ -312,7 +312,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 			rcEol.SetSize(pcView->GetTextMetrics().GetHankakuWidth(), pcView->GetTextMetrics().GetHankakuHeight());
 
 			// 描画
-			_DrawEOL(gr, rcEol, cEol, cSupport.IsFatFont(), cSupport.GetTextColor());
+			_DrawEOL(gr, rcEol, cEol, CTypeSupport(pcView,COLORIDX_EOL).IsFatFont(), GetTextColor(gr));
 
 			// リージョン破棄
 			gr.ClearClipping();

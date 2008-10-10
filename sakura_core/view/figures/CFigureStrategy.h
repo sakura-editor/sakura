@@ -15,6 +15,18 @@ public:
 	virtual CLayoutInt GetLayoutLength(const wchar_t* pText, CLayoutInt nStartCol) const = 0;
 };
 
+//! 各種空白（半角空白／全角空白／タブ／改行）描画用の基本クラス
+class CFigureSpace : public CFigure{
+public:
+	virtual bool DrawImp(SColorStrategyInfo* pInfo);
+	virtual int GetSpaceColorType(const EColorIndexType& eCurColor) const
+	{
+		return ( COLORIDX_SEARCH == eCurColor || IsRegularExpression(eCurColor) )? 1: 0;
+	}
+	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView) const = 0;
+	virtual EColorIndexType GetColorIdx(void) const = 0;
+};
+
 
 
 class CFigureManager : public TSingleton<CFigureManager>{

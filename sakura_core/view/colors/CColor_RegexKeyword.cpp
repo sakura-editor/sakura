@@ -18,7 +18,8 @@ bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
 	 && pcView->m_cRegexKeyword->RegexIsKeyword( cStr, nPos, &nMatchLen, &nMatchColor )
 	){
 		this->m_nCOMMENTEND = nPos + nMatchLen;  /* キーワード文字列の終端をセットする */
-		return true; //#######MakeColorIndexType_RegularExpression(nMatchColor);
+		this->m_nCOMMENTMODE = ToColorIndexType_RegularExpression(nMatchColor);
+		return true;
 	}
 	return false;
 }
