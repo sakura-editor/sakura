@@ -6,6 +6,7 @@
 #include "CFigure_HanSpace.h"
 #include "doc/CLayout.h"
 #include "charset/charcode.h"
+#include "types/CTypeSupport.h"
 
 
 //! 通常テキスト描画
@@ -36,6 +37,33 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         描画統合                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      CFigureSpace                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+bool CFigureSpace::DrawImp(SColorStrategyInfo* pInfo)
+{
+	// この DrawImp や GetSpaceColorType は基本クラスでデフォルト動作を実装しているが
+	// 仮想関数なので派生クラス側のオーバーライドで仕様変更可能
+	EColorIndexType eCurColor = pInfo->GetCurrentColor();
+	int nType = GetSpaceColorType(eCurColor);
+
+	// nType	0:空白記号に指定された色を使う, 1:背景色だけ現在の背景色に合わせる
+	// この値については必要に応じて仕様変更・拡張してください
+	// 例）2:記号を表示しない（←文字色を現在の背景色と同じにする）
+	CTypeSupport cSupport(pInfo->pcView, pInfo->pcView->GetTextDrawer()._GetColorIdx(GetColorIdx()));
+	cSupport.SetGraphicsState_WhileThisObj(pInfo->gr);
+	if( nType == 1 )
+	{
+		CTypeSupport cSupportSpecial(pInfo->pcView, eCurColor);
+		pInfo->gr.PushTextBackColor(cSupportSpecial.GetBackColor());
+	}
+	DispSpace(pInfo->gr, pInfo->pDispPos,pInfo->pcView);
+	if( nType == 1 )
+		pInfo->gr.PopTextBackColor();
+	return true;
+}
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

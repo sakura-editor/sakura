@@ -3,6 +3,7 @@
 #include "view/CEditView.h"
 #include "env/CShareData.h"
 #include "doc/CEditDoc.h"
+#include "view/colors/CColorStrategy.h"
 
 //2007.08.28 kobake 追加
 //!タイプサポートクラス
@@ -11,10 +12,11 @@ private:
 	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //無効な色定数
 
 public:
-	CTypeSupport(const CEditView* pEditView,EColorIndexType nColorIdx)
+	CTypeSupport(const CEditView* pEditView,EColorIndexType eColorIdx)
 	: m_pFontset(&pEditView->GetFontset())
-	, m_nColorIdx(nColorIdx)
+	, m_nColorIdx(ToColorInfoArrIndex(eColorIdx))
 	{
+		assert(0 <= m_nColorIdx);
 		m_pTypes = &pEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 		m_gr=NULL;
@@ -108,7 +110,7 @@ public:
 private:
 	const CViewFont*		m_pFontset;
 	const STypeConfig*		m_pTypes;
-	EColorIndexType			m_nColorIdx;
+	int						m_nColorIdx;
 
 	CGraphics* m_gr;        //設定を変更したHDC
 };

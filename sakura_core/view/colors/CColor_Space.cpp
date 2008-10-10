@@ -2,6 +2,8 @@
 #include "CColor_Space.h"
 #include "types/CTypeSupport.h"
 
+#if 0
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           ƒ^ƒu                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -87,3 +89,4 @@ bool CColor_HanSpace::EndColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
+#endif
