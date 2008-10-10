@@ -220,11 +220,24 @@ int CEditView::HokanSearchByFile(
 	const char* word;
 	nCurX = m_nCaretPosX_PHY;
 	nCurY = m_nCaretPosY_PHY;
-	
+	bool bStartWithMark;
+
+	if( IS_KEYWORD_CHAR( (unsigned char)(pszKey[0]) ) == 1 ) {
+		bStartWithMark = false;
+	} else {
+		bStartWithMark = true;
+	}
+
 	for( i = 0; i < nLines; i++  ){
 		pszLine = m_pcEditDoc->m_cDocLineMgr.GetLineStrWithoutEOL( i, &nLineLen );
 		for( j = 0; j < nLineLen; j++ ){
 			if( IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ) ){
+				//キーの先頭が識別子文字の場合、記号で始まる単語は候補からはずす
+				//（記号から始まる単語をスムーズに補完するため）
+				if( !bStartWithMark && IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ) != 1 ) {
+					continue;
+				}
+
 				word = pszLine + j;
 				for( j++, nWordLen = 1;j < nLineLen && IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ); j++ ){
 					nWordLen++;
