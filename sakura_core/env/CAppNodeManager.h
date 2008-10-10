@@ -18,7 +18,7 @@ struct EditNode {
 	HWND GetHwnd() const{ return GetSafeHwnd(); }
 	HWND GetSafeHwnd() const{ if(this)return m_hWnd; else return NULL; }
 	CAppNodeGroupHandle GetGroup() const;
-	bool IsTopInGroup() const{ return this && m_nIndex==0; }
+	bool IsTopInGroup() const;
 };
 
 struct EditNodeEx{	// ägí£ç\ë¢ëÃ
@@ -97,6 +97,8 @@ public:
 
 
 inline CAppNodeGroupHandle EditNode::GetGroup() const{ if(this)return m_nGroup; else return NULL; }
+
+inline bool EditNode::IsTopInGroup() const{ return this && (CAppNodeGroupHandle(m_nGroup).GetEditNodeAt(0) == this); }
 
 inline CAppNodeHandle::CAppNodeHandle(HWND hwnd)
 {
