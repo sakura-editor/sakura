@@ -286,21 +286,21 @@ void CPropCommon::SetData_PROP_FILENAME( HWND hwndDlg )
 	ListView_DeleteAllItems( hListView ); // リストを空にする
 
 	// リストにデータをセット
-	for( i = 0, nIndex = 0; i < m_nTransformFileNameArrNum; i++ ){
-		if( '\0' == m_szTransformFileNameFrom[i][0] ) continue;
+	for( i = 0, nIndex = 0; i < m_Common.m_sFileName.m_nTransformFileNameArrNum; i++ ){
+		if( '\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ) continue;
 
 		::ZeroMemory( &lvItem, sizeof_raw( lvItem ));
 		lvItem.mask     = LVIF_TEXT;
 		lvItem.iItem    = nIndex;
 		lvItem.iSubItem = 0;
-		lvItem.pszText  = m_szTransformFileNameFrom[i];
+		lvItem.pszText  = m_Common.m_sFileName.m_szTransformFileNameFrom[i];
 		ListView_InsertItem( hListView, &lvItem );
 
 		::ZeroMemory( &lvItem, sizeof_raw( lvItem ));
 		lvItem.mask     = LVIF_TEXT;
 		lvItem.iItem    = nIndex;
 		lvItem.iSubItem = 1;
-		lvItem.pszText  = m_szTransformFileNameTo[i];
+		lvItem.pszText  = m_Common.m_sFileName.m_szTransformFileNameTo[i];
 		ListView_SetItem( hListView, &lvItem );
 
 		nIndex++;
@@ -340,22 +340,22 @@ int CPropCommon::GetData_PROP_FILENAME( HWND hwndDlg )
 
 	// ファイル名置換リスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );
-	m_nTransformFileNameArrNum = ListView_GetItemCount( hListView );
+	m_Common.m_sFileName.m_nTransformFileNameArrNum = ListView_GetItemCount( hListView );
 
 	for( nIndex = 0, nCount = 0; nIndex < MAX_TRANSFORM_FILENAME ; ++nIndex ){
-		if( nIndex < m_nTransformFileNameArrNum ){
-			ListView_GetItemText( hListView, nIndex, 0, m_szTransformFileNameFrom[nCount], _MAX_PATH );
+		if( nIndex < m_Common.m_sFileName.m_nTransformFileNameArrNum ){
+			ListView_GetItemText( hListView, nIndex, 0, m_Common.m_sFileName.m_szTransformFileNameFrom[nCount], _MAX_PATH );
 
 			// 置換前文字列がNULLだったら捨てる
-			if( L'\0' == m_szTransformFileNameFrom[nCount][0] ){
-				m_szTransformFileNameTo[nIndex][0] = L'\0';
+			if( L'\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0] ){
+				m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = L'\0';
 			}else{
-				ListView_GetItemText( hListView, nIndex, 1, m_szTransformFileNameTo[nCount], _MAX_PATH );
+				ListView_GetItemText( hListView, nIndex, 1, m_Common.m_sFileName.m_szTransformFileNameTo[nCount], _MAX_PATH );
 				nCount++;
 			}
 		}else{
-			m_szTransformFileNameFrom[nIndex][0] = L'\0';
-			m_szTransformFileNameTo[nIndex][0] = L'\0';
+			m_Common.m_sFileName.m_szTransformFileNameFrom[nIndex][0] = L'\0';
+			m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = L'\0';
 		}
 	}
 

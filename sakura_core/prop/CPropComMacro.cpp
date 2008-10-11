@@ -111,10 +111,10 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, _countof( m_MacroTable[0].m_szName ) - 1, 0 );
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACROPATH ),  EM_LIMITTEXT, _countof( m_MacroTable[0].m_szFile ) - 1, 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, _countof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1, 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACROPATH ),  EM_LIMITTEXT, _countof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1, 0 );
 		// 2003.06.23 Moca
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRODIR ),  EM_LIMITTEXT, _countof( m_szMACROFOLDER ) - 1, 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRODIR ),  EM_LIMITTEXT, _countof2( m_Common.m_sMacro.m_szMACROFOLDER ) - 1, 0 );
 
 		return TRUE;
 	case WM_NOTIFY:
@@ -249,7 +249,7 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 	}
 	
 	//	マクロディレクトリ
-	::DlgItem_SetText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_szMACROFOLDER );
+	::DlgItem_SetText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_Common.m_sMacro.m_szMACROFOLDER );
 
 	nLastPos_Macro = -1;
 	
@@ -288,7 +288,7 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.iSubItem = 1;
 		sItem.cchTextMax = MACRONAME_MAX - 1;
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-		sItem.pszText = /*m_pShareData->*/m_MacroTable[index].m_szName;
+		sItem.pszText = /*m_pShareData->*/m_Common.m_sMacro.m_MacroTable[index].m_szName;
 		ListView_GetItem( hListView, &sItem );
 
 		memset_raw( &sItem, 0, sizeof( sItem ));
@@ -297,7 +297,7 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.iSubItem = 2;
 		sItem.cchTextMax = _MAX_PATH;
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-		sItem.pszText = /*m_pShareData->*/m_MacroTable[index].m_szFile;
+		sItem.pszText = /*m_pShareData->*/m_Common.m_sMacro.m_MacroTable[index].m_szFile;
 		ListView_GetItem( hListView, &sItem );
 
 		memset_raw( &sItem, 0, sizeof( sItem ));
@@ -309,18 +309,18 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
 		if ( _tcscmp(buf, _T("on")) == 0){
-			m_MacroTable[index].m_bReloadWhenExecute = true;
+			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = true;
 		}
 		else {
-			m_MacroTable[index].m_bReloadWhenExecute = false;
+			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = false;
 		}
 	}
 
 	//	マクロディレクトリ
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, m_szMACROFOLDER, _MAX_PATH );
+	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH );
 	// 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
-	AddLastChar( m_szMACROFOLDER, _MAX_PATH, _T('\\') );
+	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, _T('\\') );
 	
 	return TRUE;
 }

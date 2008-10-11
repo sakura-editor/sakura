@@ -200,8 +200,8 @@ void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pM
 
 	// 2007.11.02 ryoji マクロ設定を変更したあと、画面を閉じないでカスタムメニュー、ツールバー、
 	//                  キー割り当ての画面に切り替えた時に各画面でマクロ設定の変更が反映されるよう、
-	//                  m_MacroTable（ローカルメンバ）でm_cLookupを初期化する
-	m_cLookup.Init( m_MacroTable, &m_Common );	//	機能名・番号resolveクラス．
+	//                  m_Common.m_sMacro.m_MacroTable（ローカルメンバ）でm_cLookupを初期化する
+	m_cLookup.Init( m_Common.m_sMacro.m_MacroTable, &m_Common );	//	機能名・番号resolveクラス．
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	m_pcMenuDrawer = pMenuDrawer;
@@ -353,45 +353,15 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 */
 void CPropCommon::InitData( void )
 {
-	int i;
 	m_Common = m_pShareData->m_Common;
-	m_nKeyNameArrNum = m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum;
-	for( i = 0; i < _countof( m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ); ++i ){
-		m_pKeyNameArr[i] = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i];
-	}
-	m_CKeyWordSetMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
+	int i;
 	for( i = 0; i < MAX_TYPES; ++i ){
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 			m_Types_nKeyWordSetIdx[i][j] = CTypeConfig(i)->m_nKeyWordSetIdx[j];
 		}
 	}
-	/* マクロ関係
-	@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	*/
-	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		m_MacroTable[i] = m_pShareData->m_Common.m_sMacro.m_MacroTable[i];
-	}
-	auto_memcpy(
-		m_szMACROFOLDER,
-		m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER,
-		_countof2(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER)
-	);
-
-	// ファイル名簡易表示関係
-	memcpy_raw(
-		m_szTransformFileNameFrom,
-		m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom,
-		sizeof(m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom)
-	);
-	memcpy_raw(
-		m_szTransformFileNameTo,
-		m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo,
-		sizeof(m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo)
-	);
-	m_nTransformFileNameArrNum = m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum;
-
 }
 
 /*!	ShareData に 設定を適用・コピーする
@@ -400,13 +370,9 @@ void CPropCommon::InitData( void )
 */
 void CPropCommon::ApplyData( void )
 {
-	int i;
 	m_pShareData->m_Common = m_Common;
-	for( i = 0; i < _countof( m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ); ++i ){
-		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i] = m_pKeyNameArr[i];
-	}
-	m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr = m_CKeyWordSetMgr;
 
+	int i;
 	for( i = 0; i < MAX_TYPES; ++i ){
 		//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 		/* 変更された設定値のコピー */
@@ -414,23 +380,6 @@ void CPropCommon::ApplyData( void )
 			CTypeConfig(i)->m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i][j];
 		}
 	}
-
-	/* マクロ関係 */
-	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		m_pShareData->m_Common.m_sMacro.m_MacroTable[i] = m_MacroTable[i];
-	}
-	auto_memcpy( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, m_szMACROFOLDER, _countof2( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER ) );
-
-	// ファイル名簡易表示関係
-	// 念のため，書き換える前に 0 を設定しておく
-	m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum = 0;
-	memcpy_raw( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom, m_szTransformFileNameFrom,
-		sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom ) );
-	memcpy_raw( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo, m_szTransformFileNameTo,
-		sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo ) );
-
-	m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum = m_nTransformFileNameArrNum;
-
 }
 
 
