@@ -24,7 +24,7 @@ public:
 
 	//########•â•
 	bool			IsValid()		const{ return m_pData!=NULL; }
-	wchar_t			At(int nIndex)	const{ assert(nIndex>=0 && nIndex<=m_nDataLen); return (nIndex<m_nDataLen)? m_pData[nIndex]: L'0'; }
+	wchar_t			At(int nIndex)	const{ assert(nIndex>=0 && nIndex<=m_nDataLen); return (nIndex<m_nDataLen)? m_pData[nIndex]: L'\0'; }
 private:
 	const wchar_t*	m_pData;
 	int				m_nDataLen;
