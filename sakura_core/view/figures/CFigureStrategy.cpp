@@ -14,13 +14,19 @@ class CFigure_Text : public CFigure{
 public:
 	bool DrawImp(SColorStrategyInfo* pInfo)
 	{
+		int nIdx = pInfo->GetPosInLogic();
+		int nLength =	CNativeW::GetSizeOfChar(	// サロゲートペア対策	2008.10.12 ryoji
+							&pInfo->pLineOfLogic[nIdx],
+							(pInfo->pLineOfLogic[nIdx + 1] == L'\0')? 1: 2,
+							0
+						);
 		pInfo->pcView->GetTextDrawer().DispText(
 			pInfo->gr,
 			pInfo->pDispPos,
-			&pInfo->pLineOfLogic[pInfo->GetPosInLogic()],
-			1
+			&pInfo->pLineOfLogic[nIdx],
+			nLength
 		);
-		pInfo->nPosInLogic++;
+		pInfo->nPosInLogic += nLength;
 		return true;
 	}
 	bool Match(const wchar_t* pText) const
