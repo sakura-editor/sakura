@@ -17,7 +17,7 @@ public:
 		int nIdx = pInfo->GetPosInLogic();
 		int nLength =	CNativeW::GetSizeOfChar(	// サロゲートペア対策	2008.10.12 ryoji
 							pInfo->pLineOfLogic,
-							pInfo->GetLayout()->GetLengthWithoutEOL(),
+							pInfo->GetDocLine()->GetLengthWithoutEOL(),
 							nIdx
 						);
 		pInfo->pcView->GetTextDrawer().DispText(
