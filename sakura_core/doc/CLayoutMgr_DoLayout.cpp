@@ -36,7 +36,7 @@ static bool _GetKeywordLength(
 	CLogicInt nWordBgn = nPos;
 	CLogicInt nWordLen = CLogicInt(0);
 	CLayoutInt nWordKetas = CLayoutInt(0);
-	while(IS_KEYWORD_CHAR(cLineStr.At(nPos))){
+	while(nPos<cLineStr.GetLength() && IS_KEYWORD_CHAR(cLineStr.At(nPos))){
 		CLayoutInt k = CNativeW::GetKetaOfChar( cLineStr, nPos);
 		if(0 == k)k = CLayoutInt(1);
 
