@@ -16,9 +16,9 @@ public:
 	{
 		int nIdx = pInfo->GetPosInLogic();
 		int nLength =	CNativeW::GetSizeOfChar(	// サロゲートペア対策	2008.10.12 ryoji
-							&pInfo->pLineOfLogic[nIdx],
-							(pInfo->pLineOfLogic[nIdx + 1] == L'\0')? 1: 2,
-							0
+							pInfo->pLineOfLogic,
+							pInfo->GetLayout()->GetLengthWithoutEOL(),
+							nIdx
 						);
 		pInfo->pcView->GetTextDrawer().DispText(
 			pInfo->gr,

@@ -199,7 +199,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 
 	// サロゲートチェック					2008/7/5 Uchi
 	if (WCODE::IsUTF16High(pData[nIdx])) {
-		if (nIdx <= nDataLen && WCODE::IsUTF16Low(pData[nIdx + 1])) {
+		if (nIdx + 1 < nDataLen && WCODE::IsUTF16Low(pData[nIdx + 1])) {
 			// サロゲートペア 2個分
 			return CLogicInt(2);
 		}
