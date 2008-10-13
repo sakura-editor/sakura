@@ -289,6 +289,7 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 {
 	AddLineBottom( pWork->_CreateLayout(this) );
 	m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
+	pWork->pLayout = m_pLayoutBot;
 	pWork->pcColorStrategy_Prev = pWork->pcColorStrategy;
 	pWork->nBgn = pWork->nPos;
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
