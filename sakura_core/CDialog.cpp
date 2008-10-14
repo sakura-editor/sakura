@@ -401,6 +401,7 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 //	case LBN_SELCHANGE:	return OnLbnSelChange( hwndCtl, wID );
 //	case CBN_DROPDOWN:	return OnDbnDropDown( hwndCtl, wID );
 //	case CBN_CLOSEUP:	return OnDbnCloseUp( hwndCtl, wID );
+	case CBN_SELENDOK:	return OnCbnSelEndOk( hwndCtl, wID );
 	case LBN_DBLCLK:	return OnLbnDblclk( wID );
 
 	case EN_CHANGE:		return OnEditChange( hwndCtl, wID );
@@ -436,3 +437,12 @@ LPVOID CDialog::GetHelpIdTable(void)
 //@@@ 2002.01.18 add end
 
 /*[EOF]*/
+
+BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
+{
+	//コンボボックスのリストを表示したまま文字列を編集し、Enterキーを
+	//押すと文字列が消える現象の対策。
+	//Enterキーを押してこの関数に入ったら、リストを非表示にしてしまう。
+	::SendMessage( hwndCtl, CB_SHOWDROPDOWN, (WPARAM) FALSE, 0 );
+	return FALSE;
+}

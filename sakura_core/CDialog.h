@@ -69,6 +69,7 @@ public:
 //	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
 //	virtual BOOL OnDbnDropDown( HWND hwndCtl, int wID ){return FALSE;}
 //	virtual BOOL OnDbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
+	virtual BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
 	virtual BOOL OnEditChange( HWND hwndCtl, int wID ){return FALSE;}
 
 	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
