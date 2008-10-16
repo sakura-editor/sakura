@@ -22,6 +22,7 @@
 #include "debug/Debug.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "window/CEditWnd.h"
+#include "parse/CWordParse.h"
 
 /*!
 	@brief コマンド受信前補完処理
@@ -177,7 +178,7 @@ int CEditView::HokanSearchByFile(
 	CLogicPoint ptCur = GetCaret().GetCaretLogicPos(); //物理カーソル位置
 
 	// キーの先頭が識別子文字かどうか判定
-	if ( WCODE::IsAZ(pszKey[0]) || WCODE::Is09(pszKey[0]) || pszKey[0] == L'_' ) {
+	if ( wcschr( L"$@#\\", pszKey[0] ) == NULL ) {
 		bStartWithMark = false;
 	} else {
 		bStartWithMark = true;
@@ -186,19 +187,42 @@ int CEditView::HokanSearchByFile(
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
 		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
 		for( j = 0; j < nLineLen; j++ ){
-			// キーワード文字以外は候補に含めない
-			if( !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
+			// 半角記号・全角記号は候補に含めない（長音は許可）
+			if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
+			if ( WCODE::IsZenkakuKigou( pszLine[j] ) && pszLine[j] != L'ー' )continue;
 
 			// キーの先頭が識別子文字の場合、記号で始まる単語は候補からはずす
-			if( !bStartWithMark &&
-				!(WCODE::IsAZ(pszLine[j]) || WCODE::Is09(pszLine[j]) || pszLine[j] == L'_') )continue;
+			if( !bStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != NULL )continue;
 
 			// 候補単語の開始位置を求める
 			word = pszLine + j;
 
+			// 文字種類取得
+			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
+
 			// 候補単語の終了位置を求める
-			for( j++, nWordLen = 1;j < nLineLen && IS_KEYWORD_CHAR( pszLine[j] ); j++ ){
-				nWordLen++;
+			for( j++, nWordLen = 1; j < nLineLen; j++ ){
+				// 半角記号・全角記号は含めない（長音は許可）
+				if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )break;
+				if ( WCODE::IsZenkakuKigou( pszLine[j] ) && pszLine[j] != L'ー' )break;
+
+				// 文字種類取得
+				ECharKind kindCur = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );
+
+				// 文字種類が変わったら単語の切れ目とする
+				if (kindPre != kindCur) {
+					if( ( kindPre == CK_ZEN_KATA || kindPre == CK_HIRA ) && pszLine[j] == L'ー' ) {
+						kindCur = kindPre;			// カタカナ・ひらがな＋長音なら続行
+					} else if( kindCur == CK_HIRA ) {
+						;							// ひらがななら続行
+					} else {
+						j--;
+						break;						// それ以外は単語の切れ目
+					}
+				}
+
+				kindPre = kindCur;
+				nWordLen++;			// 次の文字へ
 			}
 
 			// CDicMgr等の制限により長すぎる単語は無視する
