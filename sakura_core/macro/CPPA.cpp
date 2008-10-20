@@ -257,7 +257,7 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		);
 	}
 	else {
-		auto_sprintf( szBuffer, "%hs S_%ts%hs; index %d;",
+		auto_sprintf( szBuffer, "%hs S_%ls%hs; index %d;",
 			szType,
 			cMacroFuncInfo.m_pszFuncName,
 			szReturn,
