@@ -75,6 +75,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 						}
 					}
 					nPosX++;
+					if(WCODE::IsZenkaku(pLine[i])) nPosX++;		//‘SŠp•¶Žš‚¸‚ê‘Î‰ž 2008.10.17 matsumo
 					pDes[nPosDes] = pLine[i];
 					nPosDes++;
 					bSpace = FALSE;
