@@ -219,7 +219,7 @@ int CEditView::HokanSearchByFile(
 					kindCur = CK_CSYM;				// ƒ‰ƒeƒ“Šg’£A‚Í‰p”šˆµ‚¢‚Æ‚·‚é
 				}
 				// ‘SŠp‹L†‚ÍŒó•â‚ÉŠÜ‚ß‚È‚¢i‚½‚¾‚µ[XJKRSTUVWYZ‚Í‹–‰Âj
-				if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindCur == CK_ZEN_KIGO || kindCur == CK_ZEN_SKIGO ){
+				if ( kindCur == CK_ZEN_SPACE || kindCur == CK_ZEN_NOBASU || kindCur == CK_ZEN_KIGO || kindCur == CK_ZEN_SKIGO ){
 					if ( wcschr( L"[XJKRSTUVWYZ", pszLine[j] ) ){
 						kindCur = kindPre;			// •âŠ®‘ÎÛ‹L†‚È‚ç‘±s
 					}else{
