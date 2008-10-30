@@ -170,7 +170,8 @@ int CEditView::HokanSearchByFile(
 	const int nKeyLen = wcslen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	int j, nWordLen, nLineLen, nRet;
-	bool bStartWithMark;
+	bool bKeyStartWithMark;			//キーが記号で始まるか
+	bool bWordStartWithMark;		//候補が記号で始まるか
 
 	const wchar_t* pszLine;
 	const wchar_t* word;
@@ -179,43 +180,60 @@ int CEditView::HokanSearchByFile(
 
 	// キーの先頭が識別子文字かどうか判定
 	if ( wcschr( L"$@#\\", pszKey[0] ) == NULL ) {
-		bStartWithMark = false;
+		bKeyStartWithMark = false;
 	} else {
-		bStartWithMark = true;
+		bKeyStartWithMark = true;
 	}
 
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
 		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
 		for( j = 0; j < nLineLen; j++ ){
-			// 半角記号・全角記号は候補に含めない（長音は許可）
+			// 半角記号は候補に含めない
 			if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
-			if ( WCODE::IsZenkakuKigou( pszLine[j] ) && pszLine[j] != L'ー' )continue;
 
 			// キーの先頭が識別子文字の場合、記号で始まる単語は候補からはずす
-			if( !bStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != NULL )continue;
+			if( !bKeyStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != NULL )continue;
 
 			// 候補単語の開始位置を求める
 			word = pszLine + j;
+			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != NULL );
 
 			// 文字種類取得
 			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
+			if ( kindPre == CK_ETC && 0x00C0 <= pszLine[j] && pszLine[j] < 0x0180 ){
+				kindPre = CK_CSYM;				// ラテン拡張Aは英数字扱いとする
+			}
+
+			// 全角記号は候補に含めない
+			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU ||
+				 kindPre == CK_ZEN_KIGO  || kindPre == CK_ZEN_SKIGO )continue;
 
 			// 候補単語の終了位置を求める
 			for( j++, nWordLen = 1; j < nLineLen; j++ ){
-				// 半角記号・全角記号は含めない（長音は許可）
+				// 半角記号は含めない
 				if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )break;
-				if ( WCODE::IsZenkakuKigou( pszLine[j] ) && pszLine[j] != L'ー' )break;
 
 				// 文字種類取得
 				ECharKind kindCur = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );
+				if ( kindCur == CK_ETC && 0x00C0 <= pszLine[j] && pszLine[j] < 0x0180 ){
+					kindCur = CK_CSYM;				// ラテン拡張Aは英数字扱いとする
+				}
+				// 全角記号は候補に含めない（ただしー々゛゜ヽヾゝゞ〃仝〆〇は許可）
+				if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindCur == CK_ZEN_KIGO || kindCur == CK_ZEN_SKIGO ){
+					if ( wcschr( L"ー々゛゜ヽヾゝゞ〃仝〆〇", pszLine[j] ) ){
+						kindCur = kindPre;			// 補完対象記号なら続行
+					}else{
+						break;
+					}
+				}
 
 				// 文字種類が変わったら単語の切れ目とする
-				if (kindPre != kindCur) {
-					if( ( kindPre == CK_ZEN_KATA || kindPre == CK_HIRA ) && pszLine[j] == L'ー' ) {
-						kindCur = kindPre;			// カタカナ・ひらがな＋長音なら続行
-					} else if( kindCur == CK_HIRA ) {
+				if ( kindPre != kindCur ) {
+					if( kindCur == CK_HIRA ) {
 						;							// ひらがななら続行
-					} else {
+					}else if( bKeyStartWithMark && bWordStartWithMark ){
+						;							// 記号で始まる単語は制限を緩める
+					}else{
 						j--;
 						break;						// それ以外は単語の切れ目
 					}
@@ -240,7 +258,7 @@ int CEditView::HokanSearchByFile(
 			if( nRet!=0 )continue;
 
 			// カーソル位置の単語は候補からはずす
-			if( ptCur.y == i && ptCur.x <= j && j - nWordLen <= ptCur.x ){
+			if( ptCur.y == i && ptCur.x <= j && j - nWordLen < ptCur.x ){	// 2008.10.29 syat 修正
 				continue;
 			}
 
