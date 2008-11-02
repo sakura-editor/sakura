@@ -267,6 +267,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_CHGMOD_EOL,				"ChgmodEOL",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //入力改行コード指定 2003.06.23 Moca
 	{F_CANCEL_MODE,				"CancelMode",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //各種モードの取り消し
 
+	/* マクロ系 */
+	{F_EXECEXTMACRO,			"ExecExternalMacro",{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //名前を指定してマクロ実行
+
 	/* 設定系 */
 	{F_SHOWTOOLBAR,				"ShowToolbar",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ツールバーの表示 */
 	{F_SHOWFUNCKEY,				"ShowFunckey",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ファンクションキーの表示 */
@@ -378,6 +381,7 @@ CSMacroMgr::CSMacroMgr()
 	}
 	//	Jun. 16, 2002 genta
 	m_pKeyMacro = NULL;
+	m_pTempMacro = NULL;
 
 	//	Sep. 15, 2005 FILE
 	SetCurrentIdx( INVALID_MACRO_IDX );
@@ -404,6 +408,8 @@ void CSMacroMgr::ClearAll( void )
 	//	Jun. 16, 2002 genta
 	delete m_pKeyMacro;
 	m_pKeyMacro = NULL;
+	delete m_pTempMacro;
+	m_pTempMacro = NULL;
 }
 
 /*! @briefキーマクロのバッファにデータ追加
@@ -456,6 +462,17 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 			SetCurrentIdx( idx );
 			m_pKeyMacro->ExecKeyMacro( pcEditView );
 			//	Sep. 15, 2005 FILE
+			SetCurrentIdx( INVALID_MACRO_IDX );
+			return TRUE;
+		}
+		else {
+			return FALSE;
+		}
+	}
+	if( idx == TEMP_KEYMACRO ){		// 一時マクロ
+		if( m_pTempMacro != NULL ){
+			SetCurrentIdx( idx );
+			m_pTempMacro->ExecKeyMacro( pcEditView );
 			SetCurrentIdx( INVALID_MACRO_IDX );
 			return TRUE;
 		}
@@ -937,6 +954,13 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 
 	case F_CANCEL_MODE				://各種モードの取り消し
 
+	/* マクロ系 */
+//	case F_RECKEYMACRO				://キーマクロの記録開始／終了
+//	case F_SAVEKEYMACRO				://キーマクロの保存
+//	case F_LOADKEYMACRO				://キーマクロの読み込み
+//	case F_EXECKEYMACRO				://キーマクロの実行
+	case F_EXECEXTMACRO				://名前を指定してマクロ実行
+
 	/* 設定系 */
 //	case F_SHOWTOOLBAR				:/* ツールバーの表示 */
 //	case F_SHOWFUNCKEY				:/* ファンクションキーの表示 */
@@ -1028,7 +1052,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 /*!
 	マクロ番号から対応するマクロオブジェクト格納位置へのポインタへの変換
 	
-	@param idx [in] マクロ番号(0-), STAND_KEYMACROは標準キーマクロバッファを表す．
+	@param idx [in] マクロ番号(0-), STAND_KEYMACROは標準キーマクロバッファ、TEMP_KEYMACROは一時マクロバッファを表す．
 	@return オブジェクト位置へのポインタ．マクロ番号が不当な場合はNULL．
 */
 CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
@@ -1037,6 +1061,9 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 	//	キーマクロ以外のマクロを読み込めるように
 	if ( idx == STAND_KEYMACRO ){
 		return &m_pKeyMacro;
+	}
+	else if ( idx == TEMP_KEYMACRO ){
+		return &m_pTempMacro;
 	}
 	else if ( 0 <= idx && idx < MAX_CUSTMACRO ){
 		return &m_cSavedKeyMacro[idx];
@@ -1058,5 +1085,20 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 BOOL CSMacroMgr::IsSaveOk(void)
 {
 	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == NULL ? FALSE : TRUE;
+}
+
+/*!
+	一時マクロを交換する
+	
+	@param newMacro [in] 新しいマクロバッファのポインタ．
+	@return 前の一時マクロバッファのポインタ．
+*/
+CMacroManagerBase* CSMacroMgr::SetTempMacro( CMacroManagerBase *newMacro )
+{
+	CMacroManagerBase *oldMacro = m_pTempMacro;
+
+	m_pTempMacro = newMacro;
+
+	return oldMacro;
 }
 /*[EOF]*/

@@ -2574,6 +2574,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			if( m_pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
 				::CheckMenuItem( hMenu, F_RECKEYMACRO, MF_BYCOMMAND | MF_CHECKED );
 			}
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECEXTMACRO, "名前を指定してマクロ実行(&E)..." ); // 2008.10.22 syat 追加
+
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
@@ -3421,6 +3423,8 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 		}else{
 			return TRUE;
 		}
+	case F_EXECEXTMACRO:	/* 名前を指定してマクロ実行 */
+		return TRUE;
 
 	case F_SEARCH_CLEARMARK:	//検索マークのクリア
 		return TRUE;

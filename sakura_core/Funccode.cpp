@@ -362,6 +362,7 @@ const int pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_M
 	F_SAVEKEYMACRO	,	/* キーマクロの保存 */
 	F_LOADKEYMACRO	,	/* キーマクロの読み込み */
 	F_EXECKEYMACRO	,	/* キーマクロの実行 */
+	F_EXECEXTMACRO	,	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
 	F_EXECCOMMAND_DIALOG	/* 外部コマンド実行 */

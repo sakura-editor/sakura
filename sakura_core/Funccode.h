@@ -337,6 +337,7 @@
 #define F_SAVEKEYMACRO		31251	/* キーマクロの保存 */
 #define F_LOADKEYMACRO		31252	/* キーマクロの読み込み */
 #define F_EXECKEYMACRO		31253	/* キーマクロの実行 */
+#define F_EXECEXTMACRO		31254	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	#define F_EXECCMMAND		31270	/* 外部コマンド実行 */
 #define F_EXECCOMMAND_DIALOG	31270	/* 外部コマンド実行 */

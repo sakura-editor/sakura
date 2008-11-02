@@ -57,6 +57,7 @@ CMemory			CPPA::m_cMemDebug;
 CEditView*		CPPA::m_pcEditView = NULL;
 DLLSHAREDATA*	CPPA::m_pShareData = NULL;
 bool			CPPA::m_bError = false;
+bool			CPPA::m_bIsRunning = false;
 
 
 CPPA::CPPA()
@@ -75,11 +76,23 @@ CPPA::~CPPA()
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 void CPPA::Execute(CEditView* pcEditView )
 {
+	//PPAの多重起動禁止 2008.10.22 syat
+	if ( CPPA::m_bIsRunning ) {
+		::MessageBox( pcEditView->m_hWnd, "PPA実行中に新たにPPAマクロを呼び出すことはできません", "PPA実行エラー", MB_OK );
+		m_fnAbort();
+		CPPA::m_bIsRunning = false;
+		return;
+	}
+	CPPA::m_bIsRunning = true;
+
 	m_pcEditView = pcEditView;
 	m_pShareData = CShareData::getInstance()->GetShareData();
 	m_bError = false;			//	2003.06.01 Moca
 	m_cMemDebug.SetDataSz("");	//	2003.06.01 Moca
 	m_fnExecute();
+
+	//PPAの多重起動禁止 2008.10.22 syat
+	CPPA::m_bIsRunning = false;
 }
 
 LPCTSTR CPPA::GetDllName( LPCTSTR str )

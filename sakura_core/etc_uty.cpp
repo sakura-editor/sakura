@@ -2191,6 +2191,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_SAVEKEYMACRO:	return HLP000127;	/* キーマクロ保存 */
 	case F_LOADKEYMACRO:	return HLP000128;	/* キーマクロ読み込み */
 	case F_EXECKEYMACRO:	return HLP000126;	/* キーマクロ実行 */
+	case F_EXECEXTMACRO:	return HLP000332;	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	case F_EXECCMMAND:		return 103; /* 外部コマンド実行 */
 	case F_EXECCOMMAND_DIALOG:	return HLP000103; /* 外部コマンド実行 */

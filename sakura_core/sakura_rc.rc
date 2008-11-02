@@ -3056,6 +3056,7 @@ BEGIN
     F_SAVEKEYMACRO          "キーマクロの保存"
     F_LOADKEYMACRO          "キーマクロの読み込み"
     F_EXECKEYMACRO          "キーマクロの実行"
+    F_EXECEXTMACRO          "名前を指定してマクロ実行"
 END
 
 STRINGTABLE DISCARDABLE 

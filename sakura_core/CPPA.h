@@ -41,7 +41,6 @@
 
 #define PPADLL_VER 123
 
-
 /*!
 	@brief PPA.DLL をサポートするクラス
 
@@ -263,6 +262,8 @@ private:
 	static DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
 	static bool				m_bError;		//<! エラーが2回表示されるのを防ぐ	2003.06.01 Moca
 	static CMemory			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
+	//PPAの多重起動禁止 2008.10.22 syat
+	static bool				m_bIsRunning;	//!< PPAが同時実行されるのを防ぐ
 
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];

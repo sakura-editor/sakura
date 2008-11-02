@@ -64,6 +64,7 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 	case F_INSTEXT:
 	case F_FILEOPEN:
 	case F_EXECCOMMAND:
+	case F_EXECEXTMACRO:
 		{
 			AddParam( (const char *)lParam );	//	lParam‚ð’Ç‰ÁB
 			LPARAM lFlag = 0x00;
@@ -245,6 +246,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 		switch ( m_nFuncID ){
 		case F_INSTEXT:
 		case F_FILEOPEN:
+		case F_EXECEXTMACRO:
 			//	ˆø”‚Ð‚Æ‚Â•ª‚¾‚¯•Û‘¶
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
@@ -783,6 +785,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		}
 		break;	//	Jan. 29, 2005 genta ”²‚¯‚Ä‚¢‚½
 	case F_TAGJUMP_KEYWORD:	// @@ 2005.03.31 MIK
+	case F_EXECEXTMACRO:	// 2008.10.22 syat
 		{
 			//ˆø”‚ÍNULL‚Å‚àOK
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
