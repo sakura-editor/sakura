@@ -44,6 +44,7 @@
 
 class CEditView;
 
+#define TEMP_KEYMACRO	-2	//	一時マクロ（保存ができない）
 #define STAND_KEYMACRO	-1	//	標準マクロ（保存ができる）
 #define SAVED_KEYMACRO	0	//	保存されたマクロ
 
@@ -70,6 +71,9 @@ class CSMacroMgr
 	//	Jun. 16, 2002 genta
 	//	キーマクロに標準マクロ以外のマクロを読み込めるように
 	CMacroManagerBase* m_pKeyMacro;	//	標準の（保存ができる）キーマクロも管理
+
+	//　一時マクロ（名前を指定してマクロ実行）を管理
+	CMacroManagerBase* m_pTempMacro;
 
 public:
 
@@ -145,6 +149,9 @@ public:
 	void SetCurrentIdx( int idx ) {
 		m_CurrentIdx = idx;
 	}
+
+	//  Oct. 22, 2008 syat 一時マクロ導入
+	CMacroManagerBase* SetTempMacro( CMacroManagerBase *newMacro );
 
 private:
 	DLLSHAREDATA*	m_pShareData;

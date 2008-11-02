@@ -45,7 +45,6 @@ PPA(Poor-Pascal for Application)‚ÍDelphi/C++Builder—p‚ÌPascalƒCƒ“ƒ^ƒvƒŠƒ^ƒRƒ“ƒ|
 
 #define PPADLL_VER 123
 
-
 /*
 PPA(Poor-Pascal for Application)‚ÍDelphi/C++Builder—p‚Ì
 PascalƒCƒ“ƒ^ƒvƒŠƒ^ƒRƒ“ƒ|[ƒlƒ“ƒg‚Å‚·B
@@ -272,6 +271,8 @@ private:
 	static DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
 	static bool				m_bError;		//!< ƒGƒ‰[‚ª2‰ñ•\¦‚³‚ê‚é‚Ì‚ğ–h‚®	2003.06.01 Moca
 	static CNativeA			m_cMemDebug;	//!< ƒfƒoƒbƒO—p•Ï”UserErrorMes 2003.06.01 Moca
+	//PPA‚Ì‘½d‹N“®‹Ö~ 2008.10.22 syat
+	static bool				m_bIsRunning;	//!< PPA‚ª“¯Às‚³‚ê‚é‚Ì‚ğ–h‚®
 
 /*	ŠÖ”–¼‚ÍCMacro‚ª‚ÂB
 	static struct MacroFuncInfo	S_Table[];

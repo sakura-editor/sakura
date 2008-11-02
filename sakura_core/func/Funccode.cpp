@@ -363,6 +363,7 @@ const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List
 	F_SAVEKEYMACRO	,	/* キーマクロの保存 */
 	F_LOADKEYMACRO	,	/* キーマクロの読み込み */
 	F_EXECKEYMACRO	,	/* キーマクロの実行 */
+	F_EXECEXTMACRO	,	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
 	F_EXECMD_DIALOG	/* 外部コマンド実行 */
@@ -809,6 +810,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_SAVEKEYMACRO:	return HLP000127;	/* キーマクロ保存 */
 	case F_LOADKEYMACRO:	return HLP000128;	/* キーマクロ読み込み */
 	case F_EXECKEYMACRO:	return HLP000126;	/* キーマクロ実行 */
+	case F_EXECEXTMACRO:	return HLP000332;	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	case F_EXECCMMAND:		return 103; /* 外部コマンド実行 */
 	case F_EXECMD_DIALOG:	return HLP000103; /* 外部コマンド実行 */
@@ -963,6 +965,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 		}else{
 			return TRUE;
 		}
+	case F_EXECEXTMACRO:	/* 名前を指定してマクロ実行 */
+		return TRUE;
 
 	case F_SEARCH_CLEARMARK:	//検索マークのクリア
 		return TRUE;

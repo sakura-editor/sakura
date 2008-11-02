@@ -171,7 +171,9 @@ BOOL CViewCommander::HandleCommand(
 		bRepeat = FALSE;
 		/* キーマクロに記録可能な機能かどうかを調べる */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		if( CSMacroMgr::CanFuncIsKeyMacro( nCommand ) ){
+		if( CSMacroMgr::CanFuncIsKeyMacro( nCommand ) &&
+			nCommand != F_EXECEXTMACRO	//F_EXECEXTMACROは個別で記録します
+		){
 			/* キーマクロのバッファにデータ追加 */
 			//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 			CEditApp::Instance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, m_pCommanderView );
@@ -535,6 +537,13 @@ BOOL CViewCommander::HandleCommand(
 			ClearOpeBlk();
 		}
 		Command_EXECKEYMACRO();break;
+	case F_EXECEXTMACRO:
+		/* 再帰処理対策 */
+		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
+			ClearOpeBlk();
+		}
+		Command_EXECEXTMACRO( (const WCHAR*)lparam1 );		/* 名前を指定してマクロ実行 */
+		break;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
 	case F_EXECMD_DIALOG:
@@ -7758,7 +7767,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
 		);
 		if ( !nSaveResult ){
-			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ls"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
+			ErrorMessage(	m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ts"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 	}else{
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = TRUE;
@@ -7854,7 +7863,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
 		);
 		if ( !bLoadResult ){
-			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ls"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
+			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ts"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 		else {
 			CEditApp::Instance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView );
@@ -7911,6 +7920,93 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む
 	_tcscpy(GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szPath);
 //	GetDllShareData().m_CKeyMacroMgr.LoadKeyMacro( G_AppInstance(), m_pCommanderView->GetHwnd(), szPath );
+	return;
+}
+
+
+/*! 名前を指定してマクロ実行 */
+void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW )
+{
+	CDlgOpenFile	cDlgOpenFile;
+	TCHAR			szPath[_MAX_PATH + 1];
+	TCHAR			szInitDir[_MAX_PATH + 1];
+	const TCHAR*	pszFolder;
+	const TCHAR*	pszPath = NULL;
+	HWND			hwndRecordingKeyMacro = NULL;
+	_tcscpy( szPath, _T("") );
+
+	if ( pszPathW != NULL ) {
+#ifdef UNICODE
+		pszPath = pszPathW;
+#else
+		wcstombs2( szPath, pszPathW, _countof(szPath) );
+		pszPath = szPath;
+#endif
+
+	} else {
+		// ファイルが指定されていない場合、ダイアログを表示する
+		pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
+
+		if( _IS_REL_PATH( pszFolder ) ){
+			GetInidirOrExedir( szInitDir, pszFolder );
+		}else{
+			_tcscpy( szInitDir, pszFolder );	/* マクロ用フォルダ */
+		}
+		/* ファイルオープンダイアログの初期化 */
+		cDlgOpenFile.Create(
+			G_AppInstance(),
+			m_pCommanderView->GetHwnd(),
+			_T("*.*"),
+			szInitDir
+		);
+		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+			return;
+		}
+		pszPath = szPath;
+	}
+
+	//キーマクロ記録中の場合、追加する
+	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
+	){
+		CEditApp::Instance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, (LPARAM)pszPath, m_pCommanderView );
+
+		//キーマクロの記録を一時停止する
+		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
+		hwndRecordingKeyMacro = GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro;
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	}
+
+	//古い一時マクロの退避
+	CMacroManagerBase* oldMacro = CEditApp::Instance()->m_pcSMacroMgr->SetTempMacro( NULL );
+
+	BOOL bLoadResult = CEditApp::Instance()->m_pcSMacroMgr->Load(
+		TEMP_KEYMACRO,
+		G_AppInstance(),
+		pszPath
+	);
+	if ( !bLoadResult ){
+		ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ts"), pszPath );
+	}
+	else {
+		CEditApp::Instance()->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView );
+	}
+
+	// 終わったら開放
+	CEditApp::Instance()->m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
+	if ( oldMacro != NULL ) {
+		CEditApp::Instance()->m_pcSMacroMgr->SetTempMacro( oldMacro );
+	}
+
+	// キーマクロ記録中だった場合は再開する
+	if ( hwndRecordingKeyMacro != NULL ) {
+		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = TRUE;
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
+	}
+
+	/* フォーカス移動時の再描画 */
+	m_pCommanderView->RedrawAll();
+
 	return;
 }
 
