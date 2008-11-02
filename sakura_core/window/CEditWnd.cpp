@@ -2179,6 +2179,9 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			if( m_pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
 				::CheckMenuItem( hMenu, F_RECKEYMACRO, MF_BYCOMMAND | MF_CHECKED );
 			}
+
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECEXTMACRO, _T("名前を指定してマクロ実行(&E)...") ); // 2008.10.22 syat 追加
+
 			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 
 			//From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
@@ -3978,7 +3981,7 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 		for( int j = 0; j < nAssignedKeyNum; ++j ){
 			_tcscat_s( wszBuf, nBufCount, _T("\n        ") );
 			const TCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
-			_tcscat_s( wszBuf, nBufCount, pszKey );
+					_tcscat_s( wszBuf, nBufCount, pszKey );
 			delete ppcAssignedKeyList[j];
 		}
 		delete [] ppcAssignedKeyList;

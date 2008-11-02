@@ -321,6 +321,7 @@ F_RECKEYMACRO			= 31250,	// キーマクロの記録開始／終了		なし
 F_SAVEKEYMACRO			= 31251,	// キーマクロの保存					なし
 F_LOADKEYMACRO			= 31252,	// キーマクロの読み込み				なし
 F_EXECKEYMACRO			= 31253,	// キーマクロの実行					なし
+F_EXECEXTMACRO			= 31254,	// 名前を指定してマクロ実行			const WCHAR* command
 F_EXECMD_DIALOG			= 31270,	// 外部コマンド実行					const WCHAR* command
 F_EXECMD				= 31271,	// 外部コマンド実行					const WCHAR* command
 
