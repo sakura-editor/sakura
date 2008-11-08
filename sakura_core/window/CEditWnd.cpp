@@ -1107,11 +1107,16 @@ LRESULT CEditWnd::DispatchEvent(
 		switch( pnmh->code ){
 		// 2007.09.08 kobake TTN_NEEDTEXTの処理をA版とW版に分けて明示的に処理するようにしました。
 		//                   ※テキストが80文字を超えそうならTOOLTIPTEXT::lpszTextを利用してください。
+		// 2008.11.03 syat   矩形範囲選択開始のツールチップで80文字超えていたのでlpszTextに変更。
 		case TTN_NEEDTEXT:
 			{
+				static TCHAR szText[256];
+				memset(szText, 0, sizeof(szText));
+
 				//ツールチップテキスト取得、設定
 				LPTOOLTIPTEXT lptip = (LPTOOLTIPTEXT)pnmh;
-				GetTooltipText(lptip->szText, _countof(lptip->szText), lptip->hdr.idFrom);
+				GetTooltipText(szText, _countof(szText), lptip->hdr.idFrom);
+				lptip->lpszText = szText;
 			}
 			break;
 
@@ -3963,8 +3968,9 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 {
 	// 機能文字列の取得 -> tmp -> wszBuf
 	WCHAR tmp[256];
+	size_t nLen;
 	GetDocument().m_cFuncLookup.Funccode2Name( nID, tmp, _countof(tmp) );
-	_wcstotcs(wszBuf, tmp, nBufCount);
+	nLen = _wcstotcs(wszBuf, tmp, nBufCount);
 
 	// 機能に対応するキー名の取得(複数)
 	CNativeT**	ppcAssignedKeyList;
@@ -3979,9 +3985,13 @@ void CEditWnd::GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const
 	// wszBufへ結合
 	if( 0 < nAssignedKeyNum ){
 		for( int j = 0; j < nAssignedKeyNum; ++j ){
-			_tcscat_s( wszBuf, nBufCount, _T("\n        ") );
 			const TCHAR* pszKey = ppcAssignedKeyList[j]->GetStringPtr();
-					_tcscat_s( wszBuf, nBufCount, pszKey );
+			int nKeyLen = _tcslen(pszKey);
+			if ( nLen + 9 + nKeyLen < nBufCount ){
+				_tcscat_s( wszBuf, nBufCount, _T("\n        ") );
+				_tcscat_s( wszBuf, nBufCount, pszKey );
+				nLen += 9 + nKeyLen;
+			}
 			delete ppcAssignedKeyList[j];
 		}
 		delete [] ppcAssignedKeyList;
