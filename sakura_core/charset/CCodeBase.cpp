@@ -1,3 +1,4 @@
+// ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô‚Ì‚½‚ß‚Ì‚à‚Ì‚Å‚·B
 #include "stdafx.h"
 #include "CCodeBase.h"
 #include "charcode.h"
