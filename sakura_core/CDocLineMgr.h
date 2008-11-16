@@ -25,6 +25,44 @@ class CDocLineMgr;
 #include <windows.h>
 #include "global.h" // 2002/2/10 aroka
 #include "CEol.h" // 2002/2/10 aroka
+
+
+/* 文字種類識別子 */
+#define	CK_NULL			0	/*!< NULL 0x0<=c<=0x0 */
+#define	CK_TAB			1	/*!< タブ 0x9<=c<=0x9 */
+#define	CK_CR			2	/*!< CR = 0x0d  */
+#define	CK_LF			3	/*!< LF = 0x0a  */
+
+#define	CK_SPACE		4	/*!< 半角のスペース 0x20<=c<=0x20 */
+#define	CK_CSYM			5	/*!< 半角の英字、アンダースコア、数字のいずれか */
+#define	CK_KATA			6	/*!< 半角のカタカナ 0xA1<=c<=0xFD */
+#define	CK_ETC			7	/*!< 半角のその他 */
+
+#define	CK_MBC_SPACE	12	/*!< 2バイトのスペース */
+							/*!< 0x8140<=c<=0x8140 全角スペース */
+#define	CK_MBC_NOVASU	13	/*!< 伸ばす記号 0x815B<=c<=0x815B 'ー' */
+#define	CK_MBC_CSYM		14	/*!< 2バイトの英字、アンダースコア、数字のいずれか */
+							/*!< 0x8151<=c<=0x8151 全角アンダースコア */
+							/*!< 0x824F<=c<=0x8258 全角数字 */
+							/*!< 0x8260<=c<=0x8279 全角英字大文字 */
+							/*!< 0x8281<=c<=0x829a 全角英字小文字 */
+#define	CK_MBC_KIGO		15	/*!< 2バイトの記号 */
+							/*!< 0x8141<=c<=0x81FD */
+#define	CK_MBC_HIRA		16	/*!< 2バイトのひらがな */
+							/*!< 0x829F<=c<=0x82F1 全角ひらがな */
+#define	CK_MBC_KATA		17	/*!< 2バイトのカタカナ */
+							/*!< 0x8340<=c<=0x8396 全角カタカナ */
+#define	CK_MBC_GIRI		18	/*!< 2バイトのギリシャ文字 */
+							/*!< 0x839F<=c<=0x83D6 全角ギリシャ文字 */
+#define	CK_MBC_ROS		19	/*!< 2バイトのロシア文字: */
+							/*!< 0x8440<=c<=0x8460 全角ロシア文字大文字 */
+							/*!< 0x8470<=c<=0x8491 全角ロシア文字小文字 */
+#define	CK_MBC_SKIGO	20	/*!< 2バイトの特殊記号 */
+							/*!< 0x849F<=c<=0x879C 全角特殊記号 */
+#define	CK_MBC_ETC		21	/*!< 2バイトのその他（漢字など） */
+
+
+
 class CDocLine; // 2002/2/10 aroka
 class CMemory; // 2002/2/10 aroka
 class CBregexp; // 2002/2/10 aroka

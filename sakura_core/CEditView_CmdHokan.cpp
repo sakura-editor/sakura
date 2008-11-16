@@ -22,6 +22,8 @@
 #include "debug.h"
 #include "etc_uty.h"
 #include "charcode.h"  // 2006.06.28 rastiv
+#include "CDocLineMgr.h"	// 2008.10.29 syat
+#include "my_icmp.h"		// 2008.10.29 syat
 
 /*!
 	@brief コマンド受信前補完処理
@@ -194,6 +196,19 @@ retry:;
 	return;
 }
 
+
+/*!
+	補完対象の全角記号(゛゜ヽヾゝゞ〃仝々〆〇ー)であるか
+
+	@return 0:補完対象ではない, 1:補完対象である
+	@note lpsz[nIdx]とlpsz[nIdx+1]のメモリが確保されていること
+*/
+#define IS_MBC_KIGO_HOKAN( lpsz, nIdx )			\
+	( (unsigned char)(lpsz)[nIdx] == 0x81 &&	\
+	  (	( 0x52 <= (unsigned char)(lpsz)[nIdx+1] && (unsigned char)(lpsz)[nIdx+1] <= 0x5B ) ||	\
+		( 0x4A <= (unsigned char)(lpsz)[nIdx+1] && (unsigned char)(lpsz)[nIdx+1] <= 0x4B ) )	\
+	)
+
 /*!
 	編集中データから入力補完キーワードの検索
 	CHokanMgrから呼ばれる
@@ -214,94 +229,133 @@ int CEditView::HokanSearchByFile(
 ){
 	const int nKeyLen = lstrlen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-	int i, j, nWordLen, nLineLen, nRet;
+	int i, j, nWordLen, nLineLen, nRet, nCharSize;
 	int nCurX, nCurY; // 物理カーソル位置
 	const char* pszLine;
 	const char* word;
 	nCurX = m_nCaretPosX_PHY;
 	nCurY = m_nCaretPosY_PHY;
-	bool bStartWithMark;
+	bool bKeyStartWithMark;			//キーが記号で始まるか
+	bool bWordStartWithMark;		//候補が記号で始まるか
 
-	if( IS_KEYWORD_CHAR( (unsigned char)(pszKey[0]) ) == 1 ) {
-		bStartWithMark = false;
-	} else {
-		bStartWithMark = true;
-	}
+	// キーの先頭が記号(#$@\)かどうか判定
+	bKeyStartWithMark = ( IS_KEYWORD_CHAR( pszKey[0] ) == 2 ? true : false );
 
-	for( i = 0; i < nLines; i++  ){
+	for( i = 0; i < nLines; i++ ){
 		pszLine = m_pcEditDoc->m_cDocLineMgr.GetLineStrWithoutEOL( i, &nLineLen );
-		for( j = 0; j < nLineLen; j++ ){
-			if( IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ) ){
-				//キーの先頭が識別子文字の場合、記号で始まる単語は候補からはずす
-				//（記号から始まる単語をスムーズに補完するため）
-				if( !bStartWithMark && IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ) != 1 ) {
-					continue;
+
+		for( j = 0; j < nLineLen; j += nCharSize ){
+			nCharSize = CMemory::GetSizeOfChar( pszLine, nLineLen, j );
+
+			// 半角記号は候補に含めない
+			if ( (unsigned char)pszLine[j] < 0x80 && !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
+
+			// キーの先頭が記号以外の場合、記号で始まる単語は候補からはずす
+			if( !bKeyStartWithMark && IS_KEYWORD_CHAR( pszLine[j] ) == 2 )continue;
+
+			// 候補単語の開始位置を求める
+			word = pszLine + j;
+			bWordStartWithMark = ( IS_KEYWORD_CHAR( pszLine[j] ) == 2 ? true : false );
+
+			// 文字種類取得
+			int kindPre = CDocLineMgr::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
+
+			// 全角記号は候補に含めない
+			if ( kindPre == CK_MBC_SPACE || kindPre == CK_MBC_NOVASU ||
+				 kindPre == CK_MBC_KIGO  || kindPre == CK_MBC_SKIGO )continue;
+
+			// 候補単語の終了位置を求める
+			nWordLen = nCharSize;
+			for( j += nCharSize; j < nLineLen; j += nCharSize ){
+				nCharSize = CMemory::GetSizeOfChar( pszLine, nLineLen, j );
+
+				// 半角記号は含めない
+				if ( (unsigned char)pszLine[j] < 0x80 && !IS_KEYWORD_CHAR( pszLine[j] ) )break;
+
+				// 文字種類取得
+				int kindCur = CDocLineMgr::WhatKindOfChar( pszLine, nLineLen, j );
+
+				// 全角記号は候補に含めない（ただしヽヾゝゞ〃仝々〆〇ー濁点は許可）
+				if ( kindCur == CK_MBC_SPACE || kindCur == CK_MBC_NOVASU || kindCur == CK_MBC_KIGO || kindCur == CK_MBC_SKIGO ){
+					if ( IS_MBC_KIGO_HOKAN( pszLine, j ) ){
+						kindCur = kindPre;			// 補完対象記号なら続行
+					}else{
+						break;
+					}
 				}
 
-				word = pszLine + j;
-				for( j++, nWordLen = 1;j < nLineLen && IS_KEYWORD_CHAR( (unsigned char)(pszLine[j]) ); j++ ){
-					nWordLen++;
-				}
-				if( nWordLen > 1020 ){ // CDicMgr等の制限により長すぎる単語は無視する
-					continue;
-				}
-				if( nKeyLen <= nWordLen ){
-					if( bHokanLoHiCase ){
-						nRet = memicmp( pszKey, word, nKeyLen );
+				// 文字種類が変わったら単語の切れ目とする
+				if ( kindPre != kindCur ) {
+					if( kindCur == CK_MBC_HIRA ) {
+						;							// ひらがななら続行
+					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_ETC ){
+						;							// 記号で始まる単語は制限を緩める
 					}else{
-						nRet = memcmp( pszKey, word, nKeyLen );
+						j -= nCharSize;
+						break;						// それ以外は単語の切れ目
 					}
-					if( 0 == nRet ){
-						// カーソル位置の単語は候補からはずす
-						if( nCurY == i && nCurX <= j && j - nWordLen <= nCurX ){
-							continue;
-						}
-						if( NULL == *ppcmemKouho ){
-							*ppcmemKouho = new CMemory;
-							(*ppcmemKouho)->SetData( word, nWordLen );
-							(*ppcmemKouho)->AppendSz( "\n" );
-							++nKouhoNum;
-						}else{
-							// 重複していたら追加しない
-							int nLen;
-							const char* ptr = (*ppcmemKouho)->GetPtr( &nLen );
-							int nPosKouho;
-							nRet = 1;
-							// 2008.07.23 nasukoji	大文字小文字を同一視の場合でも候補の振るい落としは完全一致で見る
-							if( nWordLen < nLen ){
-								if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
-									nRet = 0;
-								}else{
-									int nPosKouhoMax = nLen - nWordLen - 1;
-									for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-										if( ptr[nPosKouho] == '\n' ){
-											if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
-												if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-													nRet = 0;
-													break;
-												}else{
-													nPosKouho += nWordLen;
-												}
+				}
+
+				kindPre = kindCur;
+				nWordLen += nCharSize;				// 次の文字へ
+			}
+
+			if( nWordLen > 1020 ){ // CDicMgr等の制限により長すぎる単語は無視する
+				continue;
+			}
+			if( nKeyLen <= nWordLen ){
+				if( bHokanLoHiCase ){
+					nRet = my_memicmp( pszKey, word, nKeyLen );		// 2008.10.29 syat memicmpがマルチバイト文字に対し不正な結果をかえすため修正
+				}else{
+					nRet = memcmp( pszKey, word, nKeyLen );
+				}
+				if( 0 == nRet ){
+					// カーソル位置の単語は候補からはずす
+					if( nCurY == i && nCurX <= j && j - nWordLen + nCharSize <= nCurX ){	// 2008.11.09 syat 修正
+						continue;
+					}
+					if( NULL == *ppcmemKouho ){
+						*ppcmemKouho = new CMemory;
+						(*ppcmemKouho)->SetData( word, nWordLen );
+						(*ppcmemKouho)->AppendSz( "\n" );
+						++nKouhoNum;
+					}else{
+						// 重複していたら追加しない
+						int nLen;
+						const char* ptr = (*ppcmemKouho)->GetPtr( &nLen );
+						int nPosKouho;
+						nRet = 1;
+						// 2008.07.23 nasukoji	大文字小文字を同一視の場合でも候補の振るい落としは完全一致で見る
+						if( nWordLen < nLen ){
+							if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
+								nRet = 0;
+							}else{
+								int nPosKouhoMax = nLen - nWordLen - 1;
+								for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
+									if( ptr[nPosKouho] == '\n' ){
+										if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
+											if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
+												nRet = 0;
+												break;
+											}else{
+												nPosKouho += nWordLen;
 											}
 										}
 									}
 								}
 							}
-							if( 0 == nRet ){
-								continue;
-							}
-							(*ppcmemKouho)->Append( word, nWordLen );
-							(*ppcmemKouho)->Append( "\n", 1 );
-							++nKouhoNum;
 						}
-						if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
-							return nKouhoNum;
+						if( 0 == nRet ){
+							continue;
 						}
+						(*ppcmemKouho)->Append( word, nWordLen );
+						(*ppcmemKouho)->Append( "\n", 1 );
+						++nKouhoNum;
+					}
+					if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
+						return nKouhoNum;
 					}
 				}
-			}else if( _IS_SJIS_1( (unsigned char)pszLine[j] ) ){
-				j++;
-				continue;
 			}
 		}
 	}
