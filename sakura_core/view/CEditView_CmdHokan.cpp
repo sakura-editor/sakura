@@ -169,34 +169,33 @@ int CEditView::HokanSearchByFile(
 ){
 	const int nKeyLen = wcslen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-	int j, nWordLen, nLineLen, nRet;
-	bool bKeyStartWithMark;			//キーが記号で始まるか
-	bool bWordStartWithMark;		//候補が記号で始まるか
+	int j, nWordLen, nLineLen, nRet, nCharSize;
 
 	const wchar_t* pszLine;
 	const wchar_t* word;
 
 	CLogicPoint ptCur = GetCaret().GetCaretLogicPos(); //物理カーソル位置
+	bool bKeyStartWithMark;			//キーが記号で始まるか
+	bool bWordStartWithMark;		//候補が記号で始まるか
 
-	// キーの先頭が識別子文字かどうか判定
-	if ( wcschr( L"$@#\\", pszKey[0] ) == NULL ) {
-		bKeyStartWithMark = false;
-	} else {
-		bKeyStartWithMark = true;
-	}
+	// キーの先頭が記号(#$@\)かどうか判定
+	bKeyStartWithMark = ( wcschr( L"$@#\\", pszKey[0] ) != NULL ? true : false );
 
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
 		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
-		for( j = 0; j < nLineLen; j++ ){
+
+		for( j = 0; j < nLineLen; j += nCharSize ){
+			nCharSize = CNativeW::GetSizeOfChar( pszLine, nLineLen, j );
+
 			// 半角記号は候補に含めない
 			if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
 
-			// キーの先頭が識別子文字の場合、記号で始まる単語は候補からはずす
+			// キーの先頭が記号以外の場合、記号で始まる単語は候補からはずす
 			if( !bKeyStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != NULL )continue;
 
 			// 候補単語の開始位置を求める
 			word = pszLine + j;
-			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != NULL );
+			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != NULL ? true : false );
 
 			// 文字種類取得
 			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
@@ -209,7 +208,10 @@ int CEditView::HokanSearchByFile(
 				 kindPre == CK_ZEN_KIGO  || kindPre == CK_ZEN_SKIGO )continue;
 
 			// 候補単語の終了位置を求める
-			for( j++, nWordLen = 1; j < nLineLen; j++ ){
+			nWordLen = nCharSize;
+			for( j += nCharSize; j < nLineLen; j += nCharSize ){
+				nCharSize = CNativeW::GetSizeOfChar( pszLine, nLineLen, j );
+
 				// 半角記号は含めない
 				if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )break;
 
@@ -231,16 +233,16 @@ int CEditView::HokanSearchByFile(
 				if ( kindPre != kindCur ) {
 					if( kindCur == CK_HIRA ) {
 						;							// ひらがななら続行
-					}else if( bKeyStartWithMark && bWordStartWithMark ){
+					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_ETC ){
 						;							// 記号で始まる単語は制限を緩める
 					}else{
-						j--;
+						j -= nCharSize;
 						break;						// それ以外は単語の切れ目
 					}
 				}
 
 				kindPre = kindCur;
-				nWordLen++;			// 次の文字へ
+				nWordLen += nCharSize;				// 次の文字へ
 			}
 
 			// CDicMgr等の制限により長すぎる単語は無視する
@@ -258,7 +260,7 @@ int CEditView::HokanSearchByFile(
 			if( nRet!=0 )continue;
 
 			// カーソル位置の単語は候補からはずす
-			if( ptCur.y == i && ptCur.x <= j && j - nWordLen < ptCur.x ){	// 2008.10.29 syat 修正
+			if( ptCur.y == i && ptCur.x <= j && j - nWordLen + nCharSize <= ptCur.x ){	// 2008.11.09 syat 修正
 				continue;
 			}
 
