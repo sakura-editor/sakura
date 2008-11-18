@@ -14,7 +14,7 @@
 	Copyright (C) 2005, genta, naoh, FILE, Moca, ryoji, D.S.Koba, aroka
 	Copyright (C) 2006, genta, ryoji, aroka
 	Copyright (C) 2007, ryoji, maru
-	Copyright (C) 2008, ryoji, nasukoji
+	Copyright (C) 2008, ryoji, nasukoji, bosagami
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1222,7 +1222,10 @@ BOOL CEditDoc::IsEnablePaste( void )
 {
 	UINT uFormatSakuraClip;
 	uFormatSakuraClip = ::RegisterClipboardFormat( "SAKURAClip" );
+
+	// 2008/02/16 クリップボードからのファイルパス貼り付け対応	bosagami	zlib/libpng license
 	if( ::IsClipboardFormatAvailable( CF_OEMTEXT )
+	 || ::IsClipboardFormatAvailable( CF_HDROP )
 	 || ::IsClipboardFormatAvailable( uFormatSakuraClip )
 	){
 		return TRUE;

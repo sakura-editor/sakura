@@ -15,7 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
-	Copyright (C) 2008, ryoji, nasukoji
+	Copyright (C) 2008, ryoji, nasukoji, bosagami
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -53,6 +53,8 @@
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 //#include "my_icmp.h" // 2002/11/30 Moca 追加
 //#include "CMigemo.h"
+#include <vector> // 2008/02/16 bosagami add
+#include <algorithm> // 2008/02/16 bosagami add
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -8508,7 +8510,10 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 	UINT uFormatSakuraClip;
 	UINT uFormat;
 	uFormatSakuraClip = ::RegisterClipboardFormat( "SAKURAClip" );
+
+	// 2008/02/16 クリップボードからのファイルパス貼り付け対応	bosagami	zlib/libpng license
 	if( !::IsClipboardFormatAvailable( CF_OEMTEXT )
+	 && !::IsClipboardFormatAvailable( CF_HDROP )
 	 && !::IsClipboardFormatAvailable( uFormatSakuraClip )
 	){
 		return FALSE;
@@ -8542,6 +8547,41 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 			lptstr = (char*)::GlobalLock(hglb);
 			cmemBuf.SetData( lptstr + sizeof(int), *((int*)lptstr) );
 			::GlobalUnlock(hglb);
+			::CloseClipboard();
+			return TRUE;
+		}
+	}else if(::IsClipboardFormatAvailable( CF_HDROP )){
+		// 2008/02/16 クリップボードからのファイルパス貼り付け対応	bosagami	zlib/libpng license
+		HDROP hDrop = (HDROP)::GetClipboardData( CF_HDROP );
+		if(hDrop != NULL)
+		{
+			//クリップボードからコピーしたパスの情報を取得
+			char sTmpPath[_MAX_PATH + 1] = {0};
+			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
+
+			std::vector<string> pathList;
+
+			const char* sEol = m_pcEditDoc->GetNewLineCode().GetValue();
+			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++)
+			{
+				DragQueryFile(hDrop, nLoop, sTmpPath, sizeof(sTmpPath) - 1);
+				pathList.push_back((string)sTmpPath);
+			}
+
+			//並べ替えてバッファに追加
+			// 2008.08.06 nasukoji	右ボタンでのファイルドロップと仕様を合わせるため削除
+//			stable_sort(pathList.begin(), pathList.end(), sort_string_nocase);
+
+			std::vector<string>::iterator pathListItr = pathList.begin();
+			while(pathListItr != pathList.end())
+			{
+				cmemBuf.AppendSz(pathListItr->c_str());
+				if(pathList.size() > 1)
+				{
+					cmemBuf.AppendSz(sEol);
+				}
+				pathListItr++;
+			}
 			::CloseClipboard();
 			return TRUE;
 		}
