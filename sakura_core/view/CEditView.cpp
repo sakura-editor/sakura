@@ -563,13 +563,18 @@ LRESULT CEditView::DispatchEvent(
 
 		return 0L;
 
+	// 2008.10.06 nasukoji	マウスの中ボタンUP対応
+	case WM_MBUTTONUP:
+		m_pcEditDoc->m_pcEditWnd->SetMButtonState( FALSE );		// マウスの中ボタンDOWN状態解除
+		return 0L;
+
 	case WM_LBUTTONDOWN:
 		// 2007.10.02 nasukoji
 		m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
 //		MYTRACE_A( " WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
-//	case WM_MBUTTONUP:
+
 	case WM_LBUTTONUP:
 
 //		MYTRACE_A( " WM_LBUTTONUP wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
@@ -943,6 +948,8 @@ void CEditView::OnKillFocus( void )
 		m_pcEditDoc->m_pcEditWnd->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
+
+	m_pcEditDoc->m_pcEditWnd->SetMButtonState( FALSE );		// 2008.10.06 nasukoji	マウスの中ボタンDOWN状態解除
 
 	return;
 }

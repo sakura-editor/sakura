@@ -178,6 +178,7 @@ public:
 	void SetWindowIcon( HICON, int);	//	Sep. 10, 2002 genta
 	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
 	bool GetRelatedIcon(const TCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
+	void SetMButtonState( BOOL bState ) { m_bMButtonDown = bState; };	// マウスの中ボタン状態を設定する（TRUE=down, FALSE=up）	// 2008.10.06 nasukoji
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -195,6 +196,8 @@ public:
 	{
 		return m_pPrintPreview!=NULL;
 	}
+
+	BOOL IsMButtonDown() const { return m_bMButtonDown; };	// マウスの中ボタンDOWN状態		// 2008.10.06 nasukoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           表示                              //
@@ -339,6 +342,7 @@ private:
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
 	int				m_nCurrentFocus;	//!< 現在のフォーカス情報
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
+	BOOL			m_bMButtonDown;		//!< マウスの中ボタンDOWN状態		// 2008.10.06 nasukoji
 
 	//フォント・イメージ
 	HFONT			m_hFontCaretPosInfo;		//!< キャレットの行桁位置表示用フォント
@@ -359,6 +363,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITWND_H_ */
+
 
 
 

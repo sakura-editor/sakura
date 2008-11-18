@@ -255,8 +255,12 @@ struct ARRHEAD {
 	Version 87:
 	テキストの折り返し方法追加 2008.05.30 nasukoji
 
-	Version 1000:
-	バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
+	Version 88:
+	マウスの中ボタン押下中のホイールスクロールではページスクロールする 2008.10.07 nasukoji
+
+	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
+	-- Version 1000:
+	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 */
 const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 
@@ -503,6 +507,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sGeneral.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
 		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(3);	/* キーリピート時のスクロール行数 */
 		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
+		m_pShareData->m_Common.m_sGeneral.m_bPageScroolByMButtonWheel = FALSE;	/* マウスの中ボタン押下中のホイールスクロールではページスクロールする */	// 2008.10.06 nasukoji
 
 		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy = FALSE;			/* 折り返し行に改行を付けてコピー */
 		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */

@@ -584,6 +584,7 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
 	@date 2004.10.11 novice 新規作成
+	@date 2008.10.06 nasukoji	マウス中ボタン押下中のホイール操作対応
 */
 void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
@@ -599,6 +600,8 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
 	}
+
+	m_pcEditDoc->m_pcEditWnd->SetMButtonState( TRUE );		// 2008.10.06 nasukoji	マウスの中ボタンDOWN状態
 }
 
 
@@ -914,39 +917,45 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		nScrollCode = SB_LINEDOWN;
 	}
 
-	/* マウスホイールによるスクロール行数をレジストリから取得 */
-	nRollLineNum = 6;
+	// 2008.10.06 nasukoji	中ボタンDOWN + ホイールスクロールでページUP/DOWNする
+	if( GetDllShareData().m_Common.m_sGeneral.m_bPageScroolByMButtonWheel && m_pcEditDoc->m_pcEditWnd->IsMButtonDown() ){
+		CLayoutInt line = GetTextArea().GetViewTopLine() + (GetTextArea().m_nViewRowNum * (( nScrollCode == SB_LINEUP ) ? -1 : 1 ));
+		SyncScrollV( ScrollAtV( line ));
+	}else{
+		/* マウスホイールによるスクロール行数をレジストリから取得 */
+		nRollLineNum = 6;
 
-	/* レジストリの存在チェック */
-	// 2006.06.03 Moca ReadRegistry に書き換え
-	unsigned int uDataLen;	// size of value data
-	TCHAR szValStr[256];
-	uDataLen = _countof(szValStr) - 1;
-	if( ReadRegistry( HKEY_CURRENT_USER, _T("Control Panel\\desktop"), _T("WheelScrollLines"), szValStr, uDataLen ) ){
-		nRollLineNum = ::_ttoi( szValStr );
-	}
+		/* レジストリの存在チェック */
+		// 2006.06.03 Moca ReadRegistry に書き換え
+		unsigned int uDataLen;	// size of value data
+		TCHAR szValStr[256];
+		uDataLen = _countof(szValStr) - 1;
+		if( ReadRegistry( HKEY_CURRENT_USER, _T("Control Panel\\desktop"), _T("WheelScrollLines"), szValStr, uDataLen ) ){
+			nRollLineNum = ::_ttoi( szValStr );
+		}
 
-	if( -1 == nRollLineNum ){/* 「1画面分スクロールする」 */
-		nRollLineNum = (Int)GetTextArea().m_nViewRowNum;	// 表示域の行数
-	}
-	else{
-		if( nRollLineNum < 1 ){
-			nRollLineNum = 1;
+		if( -1 == nRollLineNum ){/* 「1画面分スクロールする」 */
+			nRollLineNum = (Int)GetTextArea().m_nViewRowNum;	// 表示域の行数
 		}
-		if( nRollLineNum > 30 ){	//@@@ YAZAKI 2001.12.31 10→30へ。
-			nRollLineNum = 30;
+		else{
+			if( nRollLineNum < 1 ){
+				nRollLineNum = 1;
+			}
+			if( nRollLineNum > 30 ){	//@@@ YAZAKI 2001.12.31 10→30へ。
+				nRollLineNum = 30;
+			}
 		}
-	}
-	for( i = 0; i < nRollLineNum; ++i ){
-		//	Sep. 11, 2004 genta 同期スクロール行数
-		CLayoutInt line;
+		for( i = 0; i < nRollLineNum; ++i ){
+			//	Sep. 11, 2004 genta 同期スクロール行数
+			CLayoutInt line;
 
-		if( nScrollCode == SB_LINEUP ){
-			line = ScrollAtV( GetTextArea().GetViewTopLine() - CLayoutInt(1) );
-		}else{
-			line = ScrollAtV( GetTextArea().GetViewTopLine() + CLayoutInt(1) );
+			if( nScrollCode == SB_LINEUP ){
+				line = ScrollAtV( GetTextArea().GetViewTopLine() - CLayoutInt(1) );
+			}else{
+				line = ScrollAtV( GetTextArea().GetViewTopLine() + CLayoutInt(1) );
+			}
+			SyncScrollV( line );
 		}
-		SyncScrollV( line );
 	}
 	return 0;
 }
