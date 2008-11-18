@@ -1972,6 +1972,7 @@ void CEditView::CopySelectedAllLines(
 /*! クリップボードからデータを取得
 	@date 2005/05/29 novice UNICODE TEXT 対応処理を追加
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
+	@date 2008.09.10 bosagami パス貼り付け対応
 */
 bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColmnSelect, bool* pbLineSelect /*= NULL*/ )
 {
@@ -1988,7 +1989,19 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColmnSelect, bool
 	if(!cClipboard)
 		return false;
 
-	return cClipboard.GetText(&cmemBuf,pbColmnSelect,pbLineSelect);
+//	return cClipboard.GetText(&cmemBuf,pbColmnSelect,pbLineSelect);
+	int nClipType = CClipboard::GetDataType();
+
+	if(!cClipboard.GetText(&cmemBuf,pbColmnSelect,pbLineSelect)){
+		return false;
+	}
+	if(nClipType == CF_HDROP)
+	{
+		//パス貼り付けの場合、改行コード変換（かなり苦しい…）
+		cmemBuf.Replace(L"\r\n", this->m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2());
+	}
+
+	return true;
 }
 
 /* クリップボードにデータを設定

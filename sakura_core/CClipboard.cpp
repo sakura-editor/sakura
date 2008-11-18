@@ -221,6 +221,26 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 		return true;
 	}
 
+	/* 2008.09.10 bosagami パス貼り付け対応 */
+	//HDROP形式のデータがあれば取得
+	if(::IsClipboardFormatAvailable(CF_HDROP)){
+		HDROP hDrop = (HDROP)::GetClipboardData(CF_HDROP);
+		if(hDrop != NULL){
+			TCHAR sTmpPath[_MAX_PATH + 1] = {0};
+			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
+
+			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
+				DragQueryFile(hDrop, nLoop, sTmpPath, sizeof(sTmpPath) - 1);
+				if(nLoop > 0){
+					cmemBuf->AppendStringT(_TEXT("\r\n"));
+				}
+				cmemBuf->AppendStringT(sTmpPath);
+			}
+			::CloseClipboard();
+			return true;
+		}
+	}
+	
 	::CloseClipboard();
 	return false;
 }
@@ -238,6 +258,8 @@ bool CClipboard::HasValidData()
 	if(::IsClipboardFormatAvailable(CF_OEMTEXT))return true;
 	if(::IsClipboardFormatAvailable(CF_UNICODETEXT))return true;
 	if(::IsClipboardFormatAvailable(GetSakuraFormat()))return true;
+	/* 2008.09.10 bosagami パス貼り付け対応 */
+	if(::IsClipboardFormatAvailable(CF_HDROP))return true;
 	return false;
 }
 
@@ -252,5 +274,16 @@ UINT CClipboard::GetSakuraFormat()
 		フォーマット名を変更
 	*/
 	return ::RegisterClipboardFormat( _T("SAKURAClipW") );
+}
+
+//!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
+int CClipboard::GetDataType()
+{
+	//扱える形式が１つでもあればtrue
+	if(::IsClipboardFormatAvailable(CF_OEMTEXT))return CF_OEMTEXT;
+	if(::IsClipboardFormatAvailable(CF_UNICODETEXT))return CF_UNICODETEXT;
+	if(::IsClipboardFormatAvailable(GetSakuraFormat()))return GetSakuraFormat();
+	if(::IsClipboardFormatAvailable(CF_HDROP))return CF_HDROP;
+	return -1;
 }
 
