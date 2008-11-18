@@ -108,7 +108,7 @@ END
 // Dialog
 //
 
-IDD_PROP1P1 DIALOGEX 0, 0, 270, 212
+IDD_PROP1P1 DIALOGEX 0, 0, 271, 223
 STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | 
     WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
@@ -143,7 +143,7 @@ BEGIN
                     8,157,120,8
     CONTROL         "HotKey1",IDC_HOTKEY_TRAYMENU,"msctls_hotkey32",
                     WS_BORDER | WS_TABSTOP,8,167,95,12,0
-    GROUPBOX        "スクロール",IDC_STATIC,150,3,117,45,WS_GROUP
+    GROUPBOX        "スクロール",IDC_STATIC,150,3,117,65,WS_GROUP
     LTEXT           "行数(&N)",IDC_STATIC,155,19,24,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_REPEATEDSCROLLLINENUM,180,17,40,12,
                     ES_AUTOHSCROLL | WS_GROUP,0
@@ -152,32 +152,35 @@ BEGIN
                     12
     CONTROL         "少し滑らかにする(&S)",IDC_CHECK_REPEATEDSCROLLSMOOTH,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,155,33,75,10,0
+    CONTROL         "マウスの中ボタン押下中は\nページスクロールする(&M)",
+                    IDC_CHECK_PAGESCROLL_BY_MBUTTONWHEEL,"Button",BS_AUTOCHECKBOX | 
+                    BS_MULTILINE | WS_TABSTOP,155,47,108,19,0
     CONTROL         "画面キャッシュを使う(&G)",IDC_CHECK_MEMDC,"Button",
-                     BS_AUTOCHECKBOX | WS_TABSTOP,155,56,96,16
-    GROUPBOX        "履歴",IDC_STATIC,150,72,117,82,WS_GROUP
-    LTEXT           "ファイルの履歴&MAX",IDC_STATIC,155,87,59,8,NOT WS_GROUP
-    EDITTEXT        IDC_EDIT_MAX_MRU_FILE,160,98,28,12,ES_AUTOHSCROLL | 
+                    BS_AUTOCHECKBOX | WS_TABSTOP,155,74,96,16
+    GROUPBOX        "履歴",IDC_STATIC,150,89,117,82,WS_GROUP
+    LTEXT           "ファイルの履歴&MAX",IDC_STATIC,155,104,59,8,NOT WS_GROUP,0
+    EDITTEXT        IDC_EDIT_MAX_MRU_FILE,160,115,28,12,ES_AUTOHSCROLL | 
                     WS_GROUP,0
     CONTROL         "Spin1",IDC_SPIN_MAX_MRU_FILE,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,188,98,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,188,115,9,
                     12
-    PUSHBUTTON      "履歴をクリア(&C)...",IDC_BUTTON_CLEAR_MRU_FILE,200,97,
+    PUSHBUTTON      "履歴をクリア(&C)...",IDC_BUTTON_CLEAR_MRU_FILE,200,114,
                     61,14,0,0
-    LTEXT           "フォルダの履歴MA&X",IDC_STATIC,155,120,60,8
-    EDITTEXT        IDC_EDIT_MAX_MRU_FOLDER,160,131,28,12,ES_AUTOHSCROLL | 
+    LTEXT           "フォルダの履歴MA&X",IDC_STATIC,155,137,60,8
+    EDITTEXT        IDC_EDIT_MAX_MRU_FOLDER,160,148,28,12,ES_AUTOHSCROLL | 
                     WS_GROUP,0
     CONTROL         "Spin1",IDC_SPIN_MAX_MRU_FOLDER,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,188,131,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,188,148,9,
                     12
     PUSHBUTTON      "履歴をクリア(&L)...",IDC_BUTTON_CLEAR_MRU_FOLDER,200,
-                    130,61,14,0,0
+                    147,61,14,0,0
     CONTROL         "同時に複数の編集用ウィンドウを\n閉じるとき確認(&U)",
                     IDC_CHECK_CLOSEALLCONFIRM,"Button",BS_AUTOCHECKBOX | 
-                    BS_TOP | BS_MULTILINE | WS_GROUP | WS_TABSTOP,150,161,
+                    BS_TOP | BS_MULTILINE | WS_GROUP | WS_TABSTOP,150,178,
                     117,19
     CONTROL         "サクラエディタの全終了で編集用\nウィンドウを閉じるとき確認(&V)",
                     IDC_CHECK_EXITCONFIRM,"Button",BS_AUTOCHECKBOX | BS_TOP | 
-                    BS_MULTILINE | WS_GROUP | WS_TABSTOP,150,180,117,19,0
+                    BS_MULTILINE | WS_GROUP | WS_TABSTOP,150,197,117,19,0
 END
 
 IDD_FIND DIALOGEX 30, 0, 277, 93
@@ -1916,9 +1919,9 @@ BEGIN
     IDD_PROP1P1, DIALOG
     BEGIN
         LEFTMARGIN, 3
-        RIGHTMARGIN, 265
+        RIGHTMARGIN, 266
         TOPMARGIN, 7
-        BOTTOMMARGIN, 206
+        BOTTOMMARGIN, 218
     END
 
     IDD_FIND, DIALOG

@@ -939,6 +939,7 @@ LRESULT CEditWnd::DispatchEvent(
 		// アクティブ化なら編集ウィンドウリストの先頭に移動する		// 2007.04.08 ryoji WM_SETFOCUS から移動
 		if( m_bIsActiveApp ){
 			CAppNodeGroupHandle(0).AddEditWndList( GetHwnd() );	// リスト移動処理
+			m_bMButtonDown = FALSE;		// 2008.10.06 nasukoji	マウスの中ボタンDOWN状態解除
 		}
 
 		// キャプション設定、タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動

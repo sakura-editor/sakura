@@ -619,6 +619,9 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* キーリピート時のスクロールを滑らかにするか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH, m_Common.m_sGeneral.m_nRepeatedScroll_Smooth );
 
+	// 2008.10.06 nasukoji	マウスの中ボタン押下中のホイールスクロールではページスクロールする
+	::CheckDlgButton( hwndDlg, IDC_CHECK_PAGESCROLL_BY_MBUTTONWHEEL, m_Common.m_sGeneral.m_bPageScroolByMButtonWheel );
+
 	// 2007.09.09 Moca 画面キャッシュ設定追加
 	// 画面キャッシュを使う
 	::CheckDlgButton( hwndDlg, IDC_CHECK_MEMDC, m_Common.m_sWindow.m_bUseCompotibleBMP );
@@ -691,6 +694,9 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 
 	/* キーリピート時のスクロールを滑らかにするか */
 	m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH );
+
+	// 2008.10.06 nasukoji	マウスの中ボタン押下中のホイールスクロールではページスクロールする
+	m_Common.m_sGeneral.m_bPageScroolByMButtonWheel = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PAGESCROLL_BY_MBUTTONWHEEL );
 
 	// 2007.09.09 Moca 画面キャッシュ設定追加
 	// 画面キャッシュを使う
@@ -817,6 +823,7 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	}
 	return;
 }
+
 
 
 

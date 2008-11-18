@@ -39,6 +39,7 @@ struct CommonSetting_General
 	//スクロール
 	CLayoutInt		m_nRepeatedScrollLineNum;		// キーリピート時のスクロール行数
 	BOOL	m_nRepeatedScroll_Smooth;		// キーリピート時のスクロールを滑らかにするか
+	BOOL	m_bPageScroolByMButtonWheel;	// マウスの中ボタン押下中のホイールスクロールではページスクロールする	// 2008.10.06 nasukoji
 
 	//タスクトレイ
 	BOOL	m_bUseTaskTray;					// タスクトレイのアイコンを使う
@@ -521,5 +522,6 @@ struct CommonSetting
 	//
 	CommonSetting_Statusbar			m_sStatusbar;				// 2008/6/21 Uchi
 };
+
 
 
