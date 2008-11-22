@@ -48,6 +48,7 @@
 #define _itoa itoa
 #define _stricmp stricmp
 #define _memicmp memicmp
+#define _strlwr strlwr
 #ifndef __max
 #define __max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
