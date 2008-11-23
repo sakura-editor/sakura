@@ -245,6 +245,7 @@ private:
 	LRESULT OnTimer( WPARAM, LPARAM );	// WM_TIMER 処理	// 2007.04.03 ryoji
 	void OnEditTimer( void );	/* タイマーの処理 */
 	void OnToolbarTimer( void );	/* タイマーの処理 20060128 aroka */
+	void UpdateToolbar( void );		// ツールバーの表示を更新する		// 2008.09.23 nasukoji
 	void OnCaptionTimer( void );
 	void OnSysMenuTimer( void );
 	void OnCommand( WORD, WORD , HWND );

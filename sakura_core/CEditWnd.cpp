@@ -1629,6 +1629,13 @@ LRESULT CEditWnd::DispatchEvent(
 		LayoutToolBar();
 // Oct 10, 2000 ao ここまで
 
+		// 2008.09.23 nasukoji	非アクティブなウィンドウのツールバーを更新する
+		// アクティブなウィンドウはタイマにより更新されるが、それ以外のウィンドウは
+		// タイマを停止させており設定変更すると全部有効となってしまうため、ここで
+		// ツールバーを更新する
+		if( !m_bIsActiveApp )
+			UpdateToolbar();
+
 		// ファンクションキーを再作成する（バーの内容、位置、グループボタン数の変更も反映）	// 2006.12.19 ryoji
 		m_CFuncKeyWnd.Close();
 		LayoutFuncKey();
@@ -3119,26 +3126,41 @@ void CEditWnd::OnEditTimer( void )
 	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
 	@date 2006.01.28 aroka OnTimerから分離
 	@date 2007.04.03 ryoji パラメータ無しにした
+	@date 2008.09.23 nasukoji ツールバー更新部分を外に出した
 */
 void CEditWnd::OnToolbarTimer( void )
 {
-	int			i;
-	TBBUTTON	tbb;
 	m_nTimerCount++;
 	if( 10 < m_nTimerCount ){
 		m_nTimerCount = 0;
 	}
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+
+	UpdateToolbar();	// 2008.09.23 nasukoji	ツールバーの表示を更新する
+
+	return;
+}
+
+/*!
+	@brief ツールバーの表示を更新する
+	
+	@note 他から呼べるようにOnToolbarTimer()より切り出した
+	
+	@date 2008.09.23 nasukoji
+*/
+void CEditWnd::UpdateToolbar( void )
+{
+	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューなら、何もしない。そうでなければ、ツールバーの状態更新 */
 	if( !m_pPrintPreview && NULL != m_hwndToolBar ){
-		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-			tbb = m_CMenuDrawer.getButton(m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]);
+		for( int i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
+			TBBUTTON tbb = m_CMenuDrawer.getButton(m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]);
 
 			/* 機能が利用可能か調べる */
 			::PostMessage(
 				m_hwndToolBar, TB_ENABLEBUTTON, tbb.idCommand,
 				(LPARAM) MAKELONG( (IsFuncEnable( &m_cEditDoc, m_pShareData, tbb.idCommand ) ) , 0 )
 			);
+
 			/* 機能がチェック状態か調べる */
 			::PostMessage(
 				m_hwndToolBar, TB_CHECKBUTTON, tbb.idCommand,
@@ -3146,8 +3168,6 @@ void CEditWnd::OnToolbarTimer( void )
 			);
 		}
 	}
-
-	return;
 }
 
 /*! キャプション更新用タイマーの処理
