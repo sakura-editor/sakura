@@ -61,8 +61,8 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "COsVersionInfo.h"
-#include "convert/CConvert_Base64Decode.h"
-#include "convert/CConvert_UuDecode.h"
+#include "convert/CDecode_Base64Decode.h"
+#include "convert/CDecode_UuDecode.h"
 #include "io/CBinaryStream.h"
 #include "CEditApp.h"
 #include "util/window.h"
@@ -6957,14 +6957,18 @@ void CViewCommander::Command_BASE64DECODE( void )
 	}
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	CNativeW	cmemBuf;
-	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	CNativeW	ctextBuf;
+	if( !m_pCommanderView->GetSelectedData( &ctextBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
 
 	/* Base64デコード */
-	CConvert_Base64Decode().DoConvert(&cmemBuf);
+	CMemory cmemBuf;
+	bool bret = CDecode_Base64Decode().CallDecode(ctextBuf, &cmemBuf);
+	if( !bret ){
+		return;
+	}
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
 	TCHAR		szPath[_MAX_PATH] = _T("");
@@ -6974,7 +6978,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 
 	//データ
 	int nDataLen;
-	const void* pData = cmemBuf._GetMemory()->GetRawPtr(&nDataLen);
+	const void* pData = cmemBuf.GetRawPtr(&nDataLen);
 
 	//カキコ
 	CBinaryOutputStream out(szPath);
@@ -7002,16 +7006,20 @@ void CViewCommander::Command_UUDECODE( void )
 
 	// 選択範囲のデータを取得 -> cmemBuf
 	// 正常時はTRUE,範囲未選択の場合はFALSEを返す
-	CNativeW	cmemBuf;
-	if( !m_pCommanderView->GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
+	CNativeW	ctextBuf;
+	if( !m_pCommanderView->GetSelectedData( &ctextBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
 
-	// uudecode(デコード)  cmemBuf -> cmemBin, szPath
+	// uudecode(デコード)  ctextBuf -> cmemBin, szPath
 	CMemory cmemBin;
 	TCHAR szPath[_MAX_PATH]=_T("");
-	CConvert_UuDecode::UUDECODE( cmemBuf, &cmemBin, szPath );
+	CDecode_UuDecode decoder;
+	if( !decoder.CallDecode(ctextBuf, &cmemBin) ){
+		return;
+	}
+	decoder.CopyFilename( szPath );
 
 	/* 保存ダイアログ モーダルダイアログの表示 */
 	if( !GetDocument()->m_cDocFileOperation.SaveFileDialog( szPath ) ){

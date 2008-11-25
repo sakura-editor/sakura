@@ -1870,14 +1870,6 @@
 				Name="charset"
 				>
 				<File
-					RelativePath="..\sakura_core\charset\CBase64.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\charset\CBase64.h"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\charset\CCodeBase.cpp"
 					>
 				</File>
@@ -1935,6 +1927,14 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\charset\charset.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\codechecker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\codechecker.h"
 					>
 				</File>
 				<File
@@ -2026,14 +2026,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_Base64Decode.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\convert\CConvert_Base64Decode.h"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\convert\CConvert_HaneisuToZeneisu.cpp"
 					>
 				</File>
@@ -2122,14 +2114,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_UuDecode.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\convert\CConvert_UuDecode.h"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\convert\CConvert_ZeneisuToHaneisu.cpp"
 					>
 				</File>
@@ -2146,11 +2130,39 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\convert\CDecode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\convert\CDecode_Base64Decode.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\convert\CDecode_Base64Decode.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\convert\CDecode_UuDecode.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\convert\CDecode_UuDecode.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\convert\convert_util.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\sakura_core\convert\convert_util.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\convert\convert_util2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\convert\convert_util2.h"
 					>
 				</File>
 			</Filter>

@@ -174,6 +174,10 @@ inline       WCHAR* auto_strchr(      WCHAR* str, WCHAR c){ return ::wcschr  (st
 //•ÏŠ·Œn
 inline long auto_atol(const ACHAR* str){ return atol(str);  }
 inline long auto_atol(const WCHAR* str){ return _wtol(str); }
+ACHAR* tcstostr( ACHAR* dest, const TCHAR* src, size_t count );
+WCHAR* tcstostr( WCHAR* dest, const TCHAR* src, size_t count );
+TCHAR* strtotcs( TCHAR* dest, const ACHAR* src, size_t count );
+TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count );
 
 //ˆóŽšŒn
 inline int auto_snprintf(ACHAR* buf, size_t count, const ACHAR* format, ...)     { va_list v; va_start(v,format); int ret=tchar_vsprintf_s (buf,count,format,v); va_end(v); return ret; }

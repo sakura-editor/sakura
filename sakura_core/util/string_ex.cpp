@@ -74,6 +74,52 @@ LPWSTR wcscpyn(LPWSTR lpString1,LPCWSTR lpString2,int iMaxLength)
 	return lpString1;
 }
 
+
+/*
+	TCHAR と WCHAR または ACHAR の変換関数
+*/
+
+ACHAR* tcstostr( ACHAR* dest, const TCHAR* src, size_t count){
+	TCHAR* pr = const_cast<TCHAR*>(src);
+	ACHAR* pw = dest;
+	for( ; pr < src+count; ++pr ){
+		*pw = static_cast<ACHAR>(*pr);
+		++pw;
+	}
+	return pw;
+}
+WCHAR* tcstostr( WCHAR* dest, const TCHAR* src, size_t count){
+	TCHAR* pr = const_cast<TCHAR*>(src);
+	WCHAR* pw = dest;
+	for( ; pr < src+count; ++pr ){
+		*pw = static_cast<WCHAR>(*pr);
+		++pw;
+	}
+	return pw;
+}
+
+TCHAR* strtotcs( TCHAR* dest, const ACHAR* src, size_t count )
+{
+	ACHAR* pr = const_cast<ACHAR*>(src);
+	TCHAR* pw = dest;
+	for( ; pr < src+count; ++pr ){
+		*pw = static_cast<TCHAR>(*pr);
+		++pw;
+	}
+	return pw;
+}
+TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count )
+{
+	WCHAR* pr = const_cast<WCHAR*>(src);
+	TCHAR* pw = dest;
+	for( ; pr < src+count; ++pr ){
+		*pw = static_cast<TCHAR>(*pr);
+		++pw;
+	}
+	return pw;
+}
+
+
 /*! 文字数制限機能付きstrncpy
 
 	コピー先のバッファサイズから溢れないようにstrncpyする。

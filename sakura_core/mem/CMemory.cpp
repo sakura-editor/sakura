@@ -177,6 +177,56 @@ int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 
 
 
+/* !上位バイトと下位バイトを交換する
+
+	@author Moca
+	@date 2002/5/27
+	
+	@note	nBufLen が2の倍数でないときは、最後の1バイトは交換されない
+*/
+void CMemory::SwapHLByte( char* pData, const int nDataLen ){
+	unsigned char *p;
+	unsigned char ctemp;
+	unsigned char *p_end;
+	unsigned int *pdwchar;
+	unsigned int *pdw_end;
+	unsigned char*	pBuf;
+	int			nBufLen;
+
+	//pBuf = (unsigned char*)GetRawPtr( &nBufLen );
+	pBuf = reinterpret_cast<unsigned char*>( pData );
+	nBufLen = nDataLen;
+
+	if( nBufLen < 2){
+		return;
+	}
+	// 高速化のため
+	if( (size_t)pBuf % 2 == 0){
+		if( (size_t)pBuf % 4 == 2 ){
+			ctemp = pBuf[0];
+			pBuf[0]  = pBuf[1];
+			pBuf[1]  = ctemp;
+			pdwchar = (unsigned int*)(pBuf + 2);
+		}else{
+			pdwchar = (unsigned int*)pBuf;
+		}
+		pdw_end = (unsigned int*)(pdwchar + nBufLen / sizeof(int)) - 1;
+
+		for(; pdwchar <= pdw_end ; ++pdwchar ){
+			pdwchar[0] = ((pdwchar[0] & (unsigned int)0xff00ff00) >> 8) |
+						 ((pdwchar[0] & (unsigned int)0x00ff00ff) << 8);
+		}
+	}
+	p = (unsigned char*)pdwchar;
+	p_end = pBuf + nBufLen - 2;
+	
+	for(; p <= p_end ; p+=2){
+		ctemp = p[0];
+		p[0]  = p[1];
+		p[1]  = ctemp;
+	}
+	return;
+}
 
 
 /* !上位バイトと下位バイトを交換する
@@ -187,6 +237,12 @@ int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 	@note	nBufLen が2の倍数でないときは、最後の1バイトは交換されない
 */
 void CMemory::SwapHLByte( void ){
+	char *pBuf;
+	int nBufLen;
+	pBuf = reinterpret_cast<char*>( GetRawPtr(&nBufLen) );
+	SwapHLByte( pBuf, nBufLen );
+	return;
+/*
 	unsigned char *p;
 	unsigned char ctemp;
 	unsigned char *p_end;
@@ -225,7 +281,7 @@ void CMemory::SwapHLByte( void ){
 		p[0]  = p[1];
 		p[1]  = ctemp;
 	}
-	return;
+*/
 }
 
 

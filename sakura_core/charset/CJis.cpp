@@ -2,9 +2,9 @@
 #include "CJis.h"
 #include "CShiftJis.h"
 #include <mbstring.h>
-#include "convert/CConvert_Base64Decode.h"
 #include "charset/charcode.h"
 #include "codeutil.h"
+#include "convert/convert_util2.h"
 
 #define ESC_JIS		"\x01b$B"
 #define ESC_ASCII	"\x01b(B"
@@ -166,16 +166,18 @@ void CJis::JIStoSJIS( CMemory* pMem, bool bMIMEdecode )
 					0 == memcmp( "?=", &pszSrc[i], 2 ) ){
 					nWorkLen = i - nWorkBgn;
 					pszWork = new unsigned char [nWorkLen + 1];
-					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-					pszWork[nWorkLen] = '\0';
+					//memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
+					//pszWork[nWorkLen] = '\0';
 					switch( nMEME_Selected ){
 					case MIME_BASE64:
 						// Base64デコード
-						nWorkLen = CConvert_Base64Decode::MemBASE64_Decode((char*)pszWork, nWorkLen, pszWork);
+						nWorkLen = _DecodeBase64( reinterpret_cast<const char*>(&pszSrc[nWorkBgn]), nWorkLen,
+								reinterpret_cast<char*>(pszWork) );
 						break;
 					case MIME_QUOTED:
 						// Quoted-Printableデコード
-						nWorkLen = QuotedPrintable_Decode( (char*)pszWork, nWorkLen );
+						nWorkLen = _DecodeQP(  reinterpret_cast<const char*>(&pszSrc[nWorkBgn]), nWorkLen,
+								reinterpret_cast<char*>(pszWork) );
 						break;
 					}
 					memcpy( &pszDes[j], pszWork, nWorkLen );

@@ -220,6 +220,7 @@ void CDlgProperty::SetData( void )
 	HGLOBAL					hgData;
 	char*					pBuf;
 	int						nBufLen;
+	CNativeT				ctext;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = NULL;
 	CBinaryInputStream in(pCEditDoc->m_cDocFile.GetFilePath());
@@ -240,7 +241,8 @@ void CDlgProperty::SetData( void )
 	in.Close();
 
 	//CESIのデバッグ情報
-	cmemProp.AppendNativeData(CESI::GetDebugInfo(pBuf,nBufLen));
+	CESI::GetDebugInfo(pBuf,nBufLen,&ctext);
+	cmemProp.AppendNativeData(ctext);
 
 	if( NULL != hgData ){
 		::GlobalUnlock( hgData );
