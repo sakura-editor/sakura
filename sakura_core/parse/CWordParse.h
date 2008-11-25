@@ -62,7 +62,87 @@ public:
 		CLogicInt*		pnColmNew,	//	見つかった位置
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
+
+
+	template< class CHAR_TYPE >
+	static int GetWord( const CHAR_TYPE*, const int, const CHAR_TYPE *pszSplitCharList,
+		CHAR_TYPE **ppWordStart, int *pnWordLen );
+
+protected:
+
+	static bool _match_charlist( const ACHAR c, const ACHAR *pszList );
+	static bool _match_charlist( const WCHAR c, const WCHAR *pszList );
 };
 
 SAKURA_CORE_API BOOL IsURL( const wchar_t*, int, int* );/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 SAKURA_CORE_API BOOL IsMailAddress( const wchar_t*, int, int* );	/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
+
+
+
+// ACHAR 版
+inline bool CWordParse::_match_charlist( const ACHAR c, const ACHAR *pszList )
+{
+	for( int i = 0; pszList[i] != '\0'; i++ ){
+		if( pszList[i] == c ){ return true; }
+	}
+	return false;
+}
+// WCHAR 版
+inline bool CWordParse::_match_charlist( const WCHAR c, const WCHAR *pszList )
+{
+	for( int i = 0; pszList[i] != L'\0'; i++ ){
+		if( pszList[i] == c ){ return true; }
+	}
+	return false;
+}
+
+/*!
+	@param [in] pS					文字列バッファ
+	@param [in] nLen				文字列バッファの長さ
+	@param [in] pszSplitCharList	区切り文字たち
+	@param [out] ppWordStart		単語の開始位置
+	@param [out] pnWordLen			単語の長さ
+
+	@return 読んだデータの長さ。
+*/
+template< class CHAR_TYPE >
+int CWordParse::GetWord( const CHAR_TYPE *pS, const int nLen, const CHAR_TYPE *pszSplitCharList,
+	CHAR_TYPE **ppWordStart, int *pnWordLen )
+{
+	const CHAR_TYPE *pr = pS;
+	CHAR_TYPE *pwordstart;
+	int nwordlen;
+
+	if( nLen < 1 ){
+		pwordstart = const_cast<CHAR_TYPE *>(pS);
+		nwordlen = 0;
+		goto end_func;
+	}
+
+	// 区切り文字をスキップ
+	for( ; pr < pS + nLen; pr++ ){
+		// 区切り文字でない文字の間ループ
+		if( !_match_charlist(*pr, pszSplitCharList) ){
+			break;
+		}
+	}
+	pwordstart = const_cast<CHAR_TYPE*>(pr);   // 単語の先頭位置を記録
+
+	// 単語をスキップ
+	for( ; pr < pS + nLen; pr++ ){
+		// 区切り文字がくるまでループ
+		if( _match_charlist(*pr, pszSplitCharList) ){
+			break;
+		}
+	}
+	nwordlen = pr - pwordstart;  // 単語の長さを記録
+
+end_func:
+	if( ppWordStart ){
+		*ppWordStart = pwordstart;
+	}
+	if( pnWordLen ){
+		*pnWordLen = nwordlen;
+	}
+	return pr - pS;
+}

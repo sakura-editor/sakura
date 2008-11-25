@@ -75,6 +75,7 @@ public:
 	static int IsEqual( CMemory&, CMemory& );	/* “™‚µ‚¢“à—e‚© */
 
 	// •ÏŠ·ŠÖ”
+	static void SwapHLByte( char*, const int ); // ‰º‹LŠÖ”‚ÌstaticŠÖ””Å
 	void SwapHLByte();			// Byte‚ğŒğŠ·‚·‚é
 
 

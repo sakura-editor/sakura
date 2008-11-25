@@ -144,7 +144,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	Buffering();
 
 	if( CharCode == CODE_AUTODETECT ){
-		CharCode = CCodeMediator::CheckKanjiCode( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
+		CharCode = CCodeMediator::CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
 	}
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定
@@ -156,7 +156,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 
 	// From Here Jun. 08, 2003 Moca BOMの除去
 //-	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
-	nBomCode = CESI::DetectUnicodeBom( (const char *)m_pReadBuf, m_nReadDataLen );  // 2006.09.22  by rastiv
+	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );  // 2006.09.22  by rastiv
 	m_nFileDataLen = m_nFileSize;
 	if( nBomCode != 0 && nBomCode == m_CharCode ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す

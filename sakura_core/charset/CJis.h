@@ -73,13 +73,3 @@ public:
 	出展：http://www.asahi-net.or.jp/~wq6k-yn/code/
 	参考：http://homepage2.nifty.com/zaco/code/
 */
-enum EJisESCSeqType {
-	JISESC_UNKNOWN,
-	JISESC_ASCII,
-	JISESC_JISX0201Latin,
-	JISESC_JISX0201Latin_OLD,
-	JISESC_JISX0201Katakana,
-	JISESC_JISX0208_1978,
-	JISESC_JISX0208_1983,
-	JISESC_JISX0208_1990,
-};
