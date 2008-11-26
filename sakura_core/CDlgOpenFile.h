@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta, MIK
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, Moca, ryoji
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -118,6 +119,8 @@ protected:
 	BOOL GetOpenFileNameRecover( OPENFILENAMEZ& ofn );
 	//! リトライ機能付き GetOpenFileName
 	BOOL GetSaveFileNameRecover( OPENFILENAMEZ& ofn );
+
+	BOOL CheckPathLengthOverflow( const char *pszPath, int nLength, BOOL bErrDisp = TRUE );	// 2008.11.23 nasukoji	指定のファイルパスのバッファオーバーフローをチェックする
 
 	friend UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
 };

@@ -689,7 +689,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 //void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char* pszLabel, BOOL bAddKeyStr )
 void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char* pszLabel, BOOL bAddKeyStr, int nForceIconId )	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
 {
-	char		szLabel[256];
+	char		szLabel[MAX_PATH + 5];
 	int			nFlagAdd = 0;
 	int			i;
 

@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
+	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1245,10 +1246,26 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 /*! リトライ機能付き GetOpenFileName
 	@author Moca
 	@date 2006.09.03 新規作成
+	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
 */
 BOOL CDlgOpenFile::GetOpenFileNameRecover( OPENFILENAMEZ& ofn )
 {
 	BOOL ret;
+
+	// 2008.11.23 nasukoji	パスが長すぎる場合への対応
+	// パスが長すぎた場合、ofn.lpstrFile[m_ofn.nMaxFile - 1] まで値を入れてしまう
+	// ことがある。
+	// しかし、[ofn.nMaxFile - 1] がSJISの1バイト目となる場合は [ofn.nMaxFile - 2]
+	// まで値を入れて [ofn.nMaxFile - 1] には値をセットせずに返ってくる。
+	// そのため、最初から [ofn.nMaxFile - 1] が0だと指定のパスが長すぎたのかチェック
+	// できない。
+	// 先に [ofn.nMaxFile - 1] を0以外に設定しておく事で、パスが長すぎたことをチェック
+	// 可能とする。
+	// ただし、元の文字列が(ofn.nMaxFile - 1)バイト以下である時のみこの書き換えを
+	// 実施する（元の文字列がofn.nMaxFileバイト以上の時はバッファを破壊してしまう為）
+	if( CheckPathLengthOverflow( ofn.lpstrFile, ofn.nMaxFile - 1, FALSE) )
+		ofn.lpstrFile[ofn.nMaxFile - 1] = -1;
+
 	ret = ::GetOpenFileName( &ofn );
 	if( FALSE == ret  ){
 		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
@@ -1257,16 +1274,38 @@ BOOL CDlgOpenFile::GetOpenFileNameRecover( OPENFILENAMEZ& ofn )
 			ret = ::GetOpenFileName( &ofn );
 		}
 	}
+
+	// ファイルパスが長すぎたらエラーを表示してFALSEを返す
+	if( ret && !CheckPathLengthOverflow( ofn.lpstrFile, ofn.nMaxFile )){
+		ret = FALSE;
+	}
+
 	return ret;
 }
 
 /*! リトライ機能付き GetSaveFileName
 	@author Moca
 	@date 2006.09.03 新規作成
+	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
 */
 BOOL CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ& ofn )
 {
 	BOOL ret;
+
+	// 2008.11.23 nasukoji	パスが長すぎる場合への対応
+	// パスが長すぎた場合、ofn.lpstrFile[m_ofn.nMaxFile - 1] まで値を入れてしまう
+	// ことがある。
+	// しかし、[ofn.nMaxFile - 1] がSJISの1バイト目となる場合は [ofn.nMaxFile - 2]
+	// まで値を入れて [ofn.nMaxFile - 1] には値をセットせずに返ってくる。
+	// そのため、最初から [ofn.nMaxFile - 1] が0だと指定のパスが長すぎたのかチェック
+	// できない。
+	// 先に [ofn.nMaxFile - 1] を0以外に設定しておく事で、パスが長すぎたことをチェック
+	// 可能とする。
+	// ただし、元の文字列が(ofn.nMaxFile - 1)バイト以下である時のみこの書き換えを
+	// 実施する（元の文字列がofn.nMaxFileバイト以上の時はバッファを破壊してしまう為）
+	if( CheckPathLengthOverflow( ofn.lpstrFile, ofn.nMaxFile - 1, FALSE) )
+		ofn.lpstrFile[ofn.nMaxFile - 1] = -1;
+
 	ret = ::GetSaveFileName( &ofn );
 	if( FALSE == ret  ){
 		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
@@ -1275,7 +1314,54 @@ BOOL CDlgOpenFile::GetSaveFileNameRecover( OPENFILENAMEZ& ofn )
 			ret = ::GetSaveFileName( &ofn );
 		}
 	}
+
+	// ファイルパスが長すぎたらエラーを表示してFALSEを返す
+	if( ret && !CheckPathLengthOverflow( ofn.lpstrFile, ofn.nMaxFile )){
+		ret = FALSE;
+	}
+
 	return ret;
+}
+
+/*!
+	@brief 指定のファイルパスのバッファオーバーフローをチェックする
+	
+	指定のファイルパスがチェックサイズ以内に'\0'でターミネートされているか
+	チェックする。
+	チェックサイズ以内に'\0'が現れなかった場合バッファオーバーフローとし、
+	エラー表示が指定されていればエラーを表示する。
+	
+	@param[in] pszPath		チェックする文字列
+	@param[in] nLength		文字列のチェックサイズ
+	@param[in] bErrDisp		オーバーフローの時にエラー表示する
+	@return		文字列がオーバーフローでない時はTRUEを返す
+				文字列がオーバーフロー時はFALSEを返す
+	
+	@note ファイルパスが _MAX_PATH を超える場合、バッファい内に'\0'が存在
+	      しない状態となり異常終了することへの対策。
+	      バッファが小さ過ぎてフルパスを格納できないのにANSI版のAPIがエラーを
+	      返さないため自力でチェックする。
+	      unicode版は長いファイルパスを正しく開けるので、ANSI版ではエラー表示
+	      に留めて無理に対応を考えない。
+	
+	@date 2008.06.25 nasukoji	新規作成
+*/
+BOOL CDlgOpenFile::CheckPathLengthOverflow( const char *pszPath, int nLength, BOOL bErrDisp )
+{
+	int i;
+	
+	// nLength文字内に'\0'があるかチェック
+	for( i = 0; i < nLength && pszPath[i]; i++ )
+		;
+
+	if( bErrDisp && i >= nLength ){
+		::MessageBeep( MB_ICONSTOP );
+		MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+					  "ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。",
+					  nLength );
+	}
+	
+	return ( i >= nLength ) ? FALSE : TRUE;
 }
 
 /*[EOF]*/

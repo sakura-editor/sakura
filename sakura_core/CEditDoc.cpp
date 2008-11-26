@@ -887,6 +887,18 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 			)){
 				return FALSE;
 			}
+		case 4:	//	バックアップファイルのパスが長すぎる
+			if( IDYES != ::MYMESSAGEBOX(
+				m_hWnd,
+				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
+				"ファイル保存",
+				"ファイルパスが長すぎるためバックアップの作成に失敗しました．\n"
+				"ANSI 版では %d バイト以上の絶対パスを扱えません．\n\n"
+				"元ファイルへの上書きを継続して行いますか．",
+				_MAX_PATH
+			)){
+				return FALSE;
+			}
 		break;
 		}
 	}
@@ -1294,11 +1306,13 @@ void CEditDoc::SetParentCaption( void )
 		名前を付けて保存の時は自分のバックアップを作っても無意味なので．
 		また，バックアップも保存も行わない選択肢を追加．
 	@date 2005.11.26 aroka ファイル名生成をFormatBackUpPathに分離
+	@date 2008.11.23 nasukoji パスが長すぎる場合への対応（戻り値4を追加）
 
 	@retval 0 バックアップ作成失敗．
 	@retval 1 バックアップ作成成功．
 	@retval 2 バックアップ作成失敗．保存中断指示．
 	@retval 3 ファイル操作エラーによるバックアップ作成失敗．
+	@retval 4 バックアップ作成失敗．ファイルパスが長すぎる．
 	
 	@todo Advanced modeでの世代管理
 */
@@ -1334,7 +1348,9 @@ int CEditDoc::MakeBackUp( const char* target_file )
 		}
 	}
 
-	FormatBackUpPath( szPath, target_file );
+	if( !FormatBackUpPath( szPath, sizeof(szPath), target_file ) ){
+		return 4;	// 作成すべきバックアップファイルのパスが長すぎる
+	}
 
 	//@@@ 2002.03.23 start ネットワーク・リムーバブルドライブの場合はごみ箱に放り込まない
 	bool dustflag = false;
@@ -1521,33 +1537,39 @@ int CEditDoc::MakeBackUp( const char* target_file )
 /*! バックアップの作成
 
 	@param[out] szNewPath バックアップ先パス名
+	@param[in]  dwSize    バックアップ先パス名のバッファサイズ
 	@param[in]  target_file バックアップ元パス名
 
 	@author aroka
 	@date 2005.11.29 aroka
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
+	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
 
 	@retval true
+	@retval false	作成したファイルパスの長さがdwSizeより大きかった
 	
 	@todo Advanced modeでの世代管理
 */
-bool CEditDoc::FormatBackUpPath( char* szNewPath, const char* target_file )
+bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* target_file )
 {
 	char	szDrive[_MAX_DIR];
 	char	szDir[_MAX_DIR];
 	char	szFname[_MAX_FNAME];
 	char	szExt[_MAX_EXT];
+	char	szTempPath[1024];		// パス名作成用の一時バッファ（_MAX_PATHよりある程度大きいこと）
+
+	bool	bOverflow = false;		// バッファオーバーフロー
 
 	/* パスの分解 */
 	_splitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
-		strcpy( szNewPath, m_pShareData->m_Common.m_szBackUpFolder );
+		strcpy( szTempPath, m_pShareData->m_Common.m_szBackUpFolder );
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-		AddLastYenFromDirectoryPath( szNewPath );
+		AddLastYenFromDirectoryPath( szTempPath );
 	}
 	else{
-		wsprintf( szNewPath, "%s%s", szDrive, szDir );
+		wsprintf( szTempPath, "%s%s", szDrive, szDir );
 	}
 
 	/* 相対フォルダを挿入 */
@@ -1558,7 +1580,7 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, const char* target_file )
 		char	szForm[64];
 		char*	pBase;
 
-		pBase = szNewPath + strlen( szNewPath );
+		pBase = szTempPath + strlen( szTempPath );
 
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		switch( m_pShareData->m_Common.GetBackupType() ){
@@ -1733,42 +1755,76 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, const char* target_file )
 						++q;
 						if( isdigit(*q) ){
 							q[-1] = '\0';
-							strcat( szNewPath, q2 );
+
+							// 2008.11.25 nasukoji	バッファオーバーフローチェック
+							if( strlen( szTempPath ) + strlen( q2 ) + strlen( folders[*q-'0'] ) >= dwSize ){
+								bOverflow = true;
+								break;
+							}
+
+							strcat( szTempPath, q2 );
 							if( folders[*q-'0'] != 0 ){
-								strcat( szNewPath, folders[*q-'0'] );
+								strcat( szTempPath, folders[*q-'0'] );
 							}
 							q2 = q+1;
 						}
 					}
 					++q;
 				}
-				strcat( szNewPath, q2 );
+
+				// 2008.11.25 nasukoji	バッファオーバーフローチェック
+				if( !bOverflow ){
+					if( strlen( szTempPath ) + strlen( q2 ) >= dwSize ){
+						bOverflow = true;
+					}else{
+						strcat( szTempPath, q2 );
+					}
+				}
 			}
 		}
-		{
+
+		if( !bOverflow ){
 			char temp[1024];
 			char *cp;
 			//	2006.03.25 Aroka szExt[0] == '\0'のときのオーバラン問題を修正
 			char *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
 
-			while( strchr( szNewPath, '*' ) ){
-				strcpy( temp, szNewPath );
+			while( strchr( szTempPath, '*' ) ){
+				strcpy( temp, szTempPath );
 				cp = strchr( temp, '*' );
 				*cp = 0;
-				wsprintf( szNewPath, "%s%s%s", temp, ep, cp+1 );
+
+				// 2008.11.25 nasukoji	バッファオーバーフローチェック
+				if( cp - temp + strlen( ep ) + strlen( cp + 1 ) >= dwSize ){
+					bOverflow = true;
+					break;
+				}
+
+				wsprintf( szTempPath, "%s%s%s", temp, ep, cp+1 );
 			}
-			//	??はバックアップ連番にしたいところではあるが，
-			//	連番処理は末尾の2桁にしか対応していないので
-			//	使用できない文字?を_に変換してお茶を濁す
-			while(( cp = strchr( szNewPath, '?' ) ) != NULL){
-				*cp = '_';
-//				strcpy( temp, szNewPath );
-//				cp = strchr( temp, '?' );
-//				*cp = 0;
-//				wsprintf( szNewPath, "%s00%s", temp, cp+2 );
+
+			if( !bOverflow ){
+				//	??はバックアップ連番にしたいところではあるが，
+				//	連番処理は末尾の2桁にしか対応していないので
+				//	使用できない文字?を_に変換してお茶を濁す
+				while(( cp = strchr( szTempPath, '?' ) ) != NULL){
+					*cp = '_';
+//					strcpy( temp, szNewPath );
+//					cp = strchr( temp, '?' );
+//					*cp = 0;
+//					wsprintf( szNewPath, "%s00%s", temp, cp+2 );
+				}
 			}
 		}
 	}
+
+	// 作成したパスがszNewPathに収まらなければエラー
+	if( bOverflow || strlen( szTempPath ) >= dwSize ){
+		return false;
+	}
+
+	strcpy( szNewPath, szTempPath );	// 作成したパスをコピー
+
 	return true;
 }
 

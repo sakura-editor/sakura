@@ -149,6 +149,19 @@ int CCommandLine::CheckCommandLine(
 	return 0;	//	該当無し
 }
 
+void strncpyWithCheckOverflow(char *dest, int destCount, char *src, int srcCount)
+{
+	if( destCount < srcCount + 1 ){
+		dest[0] = '\0';
+		MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+					  "ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。",
+					  destCount );
+	}else{
+		strcpy(dest, src);
+	}
+}
+
+
 /*! コマンドラインの解析
 
 	WinMain()から呼び出される。
@@ -251,13 +264,13 @@ void CCommandLine::ParseCommandLine( void )
 				if( len > 0 ){
 					cmWork.SetData( &pszToken[1], len - ( pszToken[len] == '"' ? 1 : 0 ));
 					cmWork.Replace( "\"\"", "\"" );
-					strcpy( m_fi.m_szPath, cmWork.GetPtr() );	/* ファイル名 */
+					strncpyWithCheckOverflow(m_fi.m_szPath, sizeof(m_fi.m_szPath), cmWork.GetPtr(), cmWork.GetLength());
 				}
 				else {
 					m_fi.m_szPath[0] = '\0';
 				}
 			}else{
-				strcpy( m_fi.m_szPath, pszToken );							/* ファイル名 */
+				strncpyWithCheckOverflow(m_fi.m_szPath, sizeof(m_fi.m_szPath), pszToken, strlen(pszToken));
 			}
 
 			// Nov. 11, 2005 susu
