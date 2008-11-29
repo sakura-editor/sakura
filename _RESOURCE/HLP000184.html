@@ -3,10 +3,8 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
-<TITLE>現在のウィンドウ幅で折り返し</TITLE>
-<META NAME="MS-HKWD" CONTENT="現在のウィンドウ幅で折り返し">
-<META NAME="MS-HKWD" CONTENT="現在のウィンドウ幅で折り返し／折り返さない">
-<META NAME="MS-HKWD" CONTENT="折り返さない">
+<TITLE>折り返し桁数</TITLE>
+<META NAME="MS-HKWD" CONTENT="折り返し桁数">
 <META NAME="MS-HKWD" CONTENT="WrapWindowWidth">
 </HEAD>
 <BODY>
@@ -24,21 +22,22 @@ if (window.event.keyCode == 27)
 aaHHCtlCloseWin.Click(); }
 // -->
 </script>
-<h2>現在のウィンドウ幅で折り返し、折り返さない、タイプ別設定の幅で折り返し</h2>
-ウィンドウ幅の変更を行います。(sakura:1.5.6.0以降)<br>
+<h2>折り返し桁数</h2>
+『設定』メニュー<a href = "HLP000340.html">折り返し方法</a>の指定が「指定桁で折り返す」ときの、指定桁です。<br />
 <br>
-下記の３つの動作をトグル動作で変更します。<br>
+この機能はそのドキュメントのみに適用される一時設定で、下記の３つの指定をトグル動作で変更します。<br>
 <dl>
-<dt>現在のウィンドウ幅で折り返し</dt>
-<dd>現在開いているウィンドウの幅に合わせてテキストを折り返します。<br>そのドキュメントのみに適用されます。</dd>
-<dt>折り返さない</dt>
-<dd>折り返し桁数を最大値(10240)に設定します。<br>そのドキュメントのみに適用されます。</dd>
-<dt>タイプ別設定の幅で折り返し</dt>
-<dd><a href="HLP000074.html">タイプ別設定 『スクリーン』</a>の折り返し桁数で設定されている桁数で折り返します。(sakura:1.5.8.0以降)</dd>
+<dt>右端</dt>
+<dd>指定桁を、現在開いているウィンドウの幅に合わせます。</dd>
+<dt>最大</dt>
+<dd>指定桁を、最大値(10240桁)にします。</dd>
+<dt>指定</dt>
+<dd><a href="HLP000074.html">タイプ別設定 『スクリーン』</a>の折り返し桁数で設定されている桁数とします。</dd>
 </dl>
+<br />
+<img src="images/note.png"><b>注意</b><br>
+ウィンドウ幅の変更に追従して、常に右端で折り返しさせたい場合は、<a href = "HLP000340.html">右端で折り返す</a>を使用してください。<br />
 
-<img src="images/note.png"><b>ヒント</b><br>
-他のドキュメントにもテキストの折り返し行数を反映させたいときは、<a href="HLP000074.html">タイプ別設定 『スクリーン』</a>の折り返し桁数を設定してください。<br>
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文: WrapWindowWidth( );<br>

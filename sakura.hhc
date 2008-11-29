@@ -1310,7 +1310,12 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="現在のウィンドウ幅で折り返し">
+					<param name="Name" value="折り返し方法">
+					<param name="Local" value="_RESOURCE\HLP000340.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="折り返し桁数">
 					<param name="Local" value="_RESOURCE\HLP000184.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>

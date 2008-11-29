@@ -977,7 +977,23 @@
 <param name="Local" value="_RESOURCE\HLP000279.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="現在のウィンドウ幅で折り返し">
+<param name="Name" value="折り返し方法">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="折り返さない">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="指定桁で折り返す">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="右端で折り返す">
+<param name="Local" value="_RESOURCE\HLP000340.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="折り返し桁数">
 <param name="Local" value="_RESOURCE\HLP000184.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
