@@ -1104,6 +1104,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="名前を指定してマクロ実行">
+					<param name="Local" value="_RESOURCE\HLP000332.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="外部コマンド実行">
 					<param name="Local" value="_RESOURCE\HLP000103.html">
 					<param name="ImageNumber" value="9">
