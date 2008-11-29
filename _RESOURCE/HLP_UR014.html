@@ -24,7 +24,7 @@ aaHHCtlCloseWin.Click(); }
 
 <h2>変更履歴(2007/09/27～)</h2>
 <!--<h3>xxx. xx, 2007 (1.x.x.x)</h3>-->
-<h3>xxx. xx, 2008 (1.x.x.x)</h3>
+<h3>Nov. 27, 2008 (1.6.3.0)</h3>
 
 [機能追加]<br />
 <ul>
@@ -40,12 +40,46 @@ aaHHCtlCloseWin.Click(); }
 	<li>行番号エリアのShift+ドラッグ挙動改善 (svn:1351 patches:1846786 dev:5202 なすこじ)</li>
 	<li>ドロップ範囲を選択状態にする (svn:1359 patches:1919556 dev:5251 ryoji)</li>
 	<li>英数字以外も単語補完の対象とする (svn:1465 patches:2209897 dev:5451 syat)</li>
+	<li>HTMLアウトライン解析の改善 (svn:1432 Develop/8 patches:2051936 dev:5405 あろか)</li>
+	<li>最大化画面からのタブ切り離しを可能に (svn:1419 patches:1842668 ryoji)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>長すぎるファイルパスのオープン・クローズで落ちる (svn:1474 patches: 2002211 dev:5363 data:6689 dev:4733 data:5941 dev:5475 なすこじ)</li>
+	<li>設定ダイアログでOKすると非アクティブなウィンドウのツールバーが全て有効となる (svn:1472 patches:2124374 dev:5430 なすこじ)</li>
+	<li>BCCでコンパイルできない(_strlwr未定義エラー) (svn:1470 patches:2308427 dev:5461 ryoji)</li>
+	<li>コンボボックスでリストを表示したまま文字列を修正し確定すると文字列が消える (svn:1454 patches:2164156 dev:5442 syat)</li>
+	<li>上書きモードで改行より右側に文字を入力すると正しい位置に文字が追加されない (svn:1426 patches:2029982 data:6704 dev:5397 ryoji, なすこじ)</li>
+	<li>フリーカーソルで改行ぶら下げONの設定だと右矢印キーで折り返し桁を超えてカーソル移動する (svn:1425 patches:2041524 dev:5401 ryoji)</li>
+	<li>入力補完の[編集中ファイルから...]でメモリリーク (svn:1421 patches:2025814 dev:5393 ryoji)</li>
+	<li>入力補完の[編集中ファイルから...]かつ[大文字小文字を同一視...]で補完候補が過度に絞られる (svn:1421 patches:2025814 data:6720 dev:5392 なすこじ)</li>
+	<li>Windows 98/MEでShiftキーを押しながらのDrag & Drop移動操作が移動にならない (svn:1392 patches:1999312 dev:5356 ryoji)</li>
+	<li>行番号やルーラーの表示領域でもキャレットが表示される (svn:1382 patches:1988108 ryoji)</li>
+	<li>Grep結果が分割他ビューに反映されない (svn:1381 patches:1986607 ryoji)</li>
+	<li>「名前をつけて保存」の保存改行コードがその後の上書き保存にも適用されてしまう (svn:1380 patches:1921321 ryoji)</li>
+	<li>広い範囲（数千行）を削除すると異常終了することがある (svn:1369 patches:1977756 ryoji)</li>
+	<li>画面のちらつき削減 (svn:1368 patches:1977678 ryoji)</li>
+	<li>読み取り専用や上書き禁止状態でもDrag & Drop移動できてしまう (svn:1367 patches:1977662 ryoji)</li>
+	<li>文書の行数の桁が増減すると文書右端の表示位置がずれる(svn:1360 patches:1970178 なすこじ)</li>
+	<li>Drag & Drop編集でタイトルバー，キャレット，アンダーライン等の表示が不適切になることがある (svn:1359 patches:1919556 ryoji)</li>
+	<li>タブ切り替えでスクロールバーの動作が不正になることがある (svn:1356 patches:1971010 ryoji)</li>
+	<li>行数が1のときにCDocLineMgr::DeleteNodeが呼ばれるとメモリリークが発生する (svn:1335 patches:1923031 ryoji)</li>
+	<li>CEditWnd::OnMouseMoveでCDropSourceがメモリリークする (svn:1323 patches:1958000 ryoji)</li>
+	<li>[同名のC/C++ヘッダファイルを開く]と[同名のC/C++ソースファイルを開く]の動作が逆(svn:1293 patches:1938647 ryoji)</li>
+	<li>ATOK16/2007の単語登録操作時に単語欄に選択範囲の語句が表示されない (svn:1231 patches:1881776 もか)</li>
+	<li>2ページになる文書の印刷プレビューで前のページに移動するとホイールスクロールができなくなる (svn:1223 patches:1881776 dev:5243 なすこじ，げんた)</li>
+	<li>タブグループ画面からタブを切り離せなくなることがある (svn:1419 patches:1842668 ryoji)</li>
+	<li>C/C++アウトライン解析で#if(0)以降の解析がおかしくなる (svn:1471 patches:1849852 data:6516 じゅうじ，げんた)</li>
 </ul>
 
 [その他変更]<br />
 <ul>
 	<li>VC++2008対応 (svn:1211 patches:1855829 dev:5225 ryoji)</li>
 	<li>#$@\で始まる文字列の補完がうまくできない (svn:1441 patches:2153215 dev:5414 syat)</li>
+	<li>タブバーツールチップ表示処理の簡素化 (svn:1420 patches:1844808 ryoji)</li>
+	<li>VistaでTortoiseSVN 1.5との併用時に「オープンに失敗」や「エディタ間の対話に失敗」のエラーが発生する問題の対策 (svn:1295 patches:1946334 dev:5288 ryoji)</li>
+	<li>MyGetAncestor関数の動作修正 (svn:1294 patches:1938660 ryoji)</li>
 </ul>
 
 <h3>Dec. 2, 2007 (1.6.2.0)</h3>
