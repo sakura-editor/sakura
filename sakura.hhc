@@ -154,8 +154,13 @@
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="アイコンからドラッグ &amp; ドロップ">
+				<param name="Name" value="パスの貼り付け／ドロップ">
 				<param name="Local" value="_RESOURCE\HLP000259.html">
+				<param name="ImageNumber" value="9">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="右ドロップ">
+				<param name="Local" value="_RESOURCE\HLP000130.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">

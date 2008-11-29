@@ -117,8 +117,12 @@
 <param name="Local" value="_RESOURCE\HLP000135.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="アイコンからドラッグ & ドロップ">
+<param name="Name" value="パスの貼り付け／ドロップ">
 <param name="Local" value="_RESOURCE\HLP000259.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="右ドロップ">
+<param name="Local" value="_RESOURCE\HLP000130.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="インクリメンタルサーチについて">
