@@ -401,7 +401,7 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 			lDataDes |= _UUDECODE_CHAR(pr[i+j]) << ((4 - j - 1) * 6);
 		}
 		for( j = 0; j < 3; ++j ){
-			pDest[k + j] = ((lDataDes >> ((3 - j - 1) * 8)) & 0x000000ff);
+			pDest[k + j] = (char)((lDataDes >> ((3 - j - 1) * 8)) & 0x000000ff);
 		}
 		k += 3;
 	}
