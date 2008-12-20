@@ -1266,8 +1266,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
 	if( cf == CClipboard::GetSakuraFormat() ){
-		wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(int));
-		cmemBuf.SetString( pszData, wcsnlen( pszData, *(int*)pData ) );
+		if( nSize > sizeof(int) ){
+			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(int));
+			cmemBuf.SetString( pszData, __min( (size_t)*(int*)pData, nSize / sizeof(wchar_t) ) );	// “r’†‚ÌNUL•¶Žš‚àŠÜ‚ß‚é
+		}
 	}else if( cf == CF_UNICODETEXT ){
 		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
 	}else{
