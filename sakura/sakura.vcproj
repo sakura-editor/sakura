@@ -253,7 +253,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;NOMINMAX;SAKURA_NO_DLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				SmallerTypeCheck="true"
+				SmallerTypeCheck="false"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
@@ -1930,19 +1930,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\charset\codechecker.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\charset\codechecker.h"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\charset\CJis.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\sakura_core\charset\CJis.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\codechecker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\codechecker.h"
 					>
 				</File>
 				<File
