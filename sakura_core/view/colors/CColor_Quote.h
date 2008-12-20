@@ -6,15 +6,14 @@
 
 class CColor_Quote : public CColorStrategy{
 public:
-	CColor_Quote(wchar_t cQuote) : m_cQuote(cQuote), m_bLastEscape(false), m_bDone(false) { }
+	CColor_Quote(wchar_t cQuote) : m_cQuote(cQuote), m_nCOMMENTEND(0) { }
 	virtual EColorIndexType GetStrategyColor() const = 0;
-	virtual void InitStrategyStatus(){} //#####‚ ‚¦‚Ä‰½‚à‚µ‚È‚¢
+	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; }
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
 private:
-	wchar_t		m_cQuote;
-	bool		m_bLastEscape;
-	bool		m_bDone;
+	wchar_t m_cQuote;
+	int m_nCOMMENTEND;
 };
 
 

@@ -153,7 +153,7 @@ bool CLayoutMgr::IsKinsokuPosTail(
 	return false;
 }
 
-int CLayoutMgr::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr/*int nLineLen, const wchar_t* pLine*/ )
+int CLayoutMgr::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr/*int nLineLen, const wchar_t* pLine*/ ) const
 {
 	int nCharChars;
 	int i;

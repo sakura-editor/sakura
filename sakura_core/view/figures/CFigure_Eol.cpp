@@ -46,7 +46,7 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
-	CEditView* pcView = &CEditWnd::Instance()->GetActiveView();
+	CEditView* pcView = pInfo->pcView;
 
 	//コンフィグ
 	CTypeSupport		cTextType	(pcView,COLORIDX_TEXT);

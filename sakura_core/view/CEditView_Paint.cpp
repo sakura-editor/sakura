@@ -184,7 +184,12 @@ EColorIndexType CEditView::GetColorIndex(
 	const CDocLine* pcDocLine = pInfo->GetDocLine();
 	CStringRef cLineStr(pcDocLine->GetPtr(),pcDocLine->GetLengthWithEOL());
 
-	while(1){
+	//color strategy
+	CColorStrategyPool* pool = CColorStrategyPool::Instance();
+	pInfo->pStrategy = pool->GetStrategyByColor(eRet);
+	if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
+
+	while( pInfo->nPosInLogic <= nCol ){
 		//FØ‘Ö
 		pInfo->DoChangeColor(cLineStr);
 
@@ -196,6 +201,7 @@ EColorIndexType CEditView::GetColorIndex(
 			break;
 		}
 	}
+	eRet = pInfo->GetCurrentColor();
 
 	return eRet;
 }

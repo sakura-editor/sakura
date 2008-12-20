@@ -11,29 +11,6 @@ SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, un
 //                           文字                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*!	大文字に変換する。
-	@param c [in] 変換する文字コード
-
-	@return 変換された文字コード
-*/
-SAKURA_CORE_API int my_toupper( int c )
-{
-	if( c >= 'a' && c <= 'z' ) return c - ('a' - 'A');
-	return c;
-}
-
-
-/*!	小文字に変換する。
-	@param c [in] 変換する文字コード
-
-	@return 変換された文字コード
-*/
-SAKURA_CORE_API int my_tolower( int c )
-{
-	if( c >= 'A' && c <= 'Z' ) return c + ('a' - 'A');
-	return c;
-}
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       拡張・独自実装                        //
@@ -524,7 +501,7 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 int wmemicmp(const WCHAR* p1,const WCHAR* p2,size_t count)
 {
 	for(size_t i=0;i<count;i++){
-		int n=towlower(*p1++)-towlower(*p2++);
+		int n=towlower(*p1++)-towlower(*p2++);	//非ASCIIも変換	//###locale 依存
 		if(n!=0)return n;
 	}
 	return 0;
@@ -533,6 +510,15 @@ int wmemicmp(const WCHAR* p1,const WCHAR* p2,size_t count)
 int wmemicmp(const WCHAR* p1,const WCHAR* p2)
 {
 	return wmemicmp(p1,p2, max(wcslen(p1), wcslen(p2)));
+}
+
+int wmemicmp_ascii(const WCHAR* p1,const WCHAR* p2,size_t count)
+{
+	for(size_t i=0;i<count;i++){
+		int n=my_towlower(*p1++)-my_towlower(*p2++);	//ASCIIのみ変換（高速）
+		if(n!=0)return n;
+	}
+	return 0;
 }
 
 

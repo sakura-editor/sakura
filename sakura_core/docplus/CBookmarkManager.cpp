@@ -153,7 +153,7 @@ void CBookmarkManager::MarkSearchWord(
 				const wchar_t* pData = pDocLine->GetPtr(); // 2002/2/10 aroka CMemoryïœçX
 				
 				if(( nPatternLen == nNextWordTo2 - nNextWordFrom2 ) &&
-				   (( !sSearchOption.bLoHiCase && 0 ==  _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
+				   (( !sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
 					( sSearchOption.bLoHiCase && 0 == auto_memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
 					CBookmarkSetter(pDocLine).SetBookmark(true);
 				}

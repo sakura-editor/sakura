@@ -331,7 +331,7 @@ bool CEditView::IsSearchString(
 		}
 		//‰p‘å•¶š¬•¶š‚Ì‹æ•Ê‚ğ‚·‚é‚©‚Ç‚¤‚©
 		if( m_sCurSearchOption.bLoHiCase ){	/* 1==‰p‘å•¶š¬•¶š‚Ì‹æ•Ê */
-			if( 0 == wmemcmp( &cStr.GetPtr()[nPos], m_szCurSrchKey, nKeyLength ) ){
+			if( 0 == auto_memcmp( &cStr.GetPtr()[nPos], m_szCurSrchKey, nKeyLength ) ){
 				*pnSearchEnd = nPos + nKeyLength;
 				return true;
 			}

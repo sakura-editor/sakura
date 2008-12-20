@@ -35,6 +35,7 @@ inline int amemcmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::mem
 inline int amemicmp(const ACHAR* p1, const ACHAR* p2, size_t count){ return ::memicmp(p1,p2,count); }
        int wmemicmp(const WCHAR* p1, const WCHAR* p2, size_t count);
        int wmemicmp(const WCHAR* p1, const WCHAR* p2 );
+       int wmemicmp_ascii(const WCHAR* p1, const WCHAR* p2, size_t count);
 
 //元の関数と同じシグニチャ版。
 //文字列以外のメモリ処理でmem～系関数を使う場面では、この関数を使っておくと、意味合いがはっきりして良い。
@@ -47,8 +48,10 @@ inline void* memcpy_raw(void* dest, const void* src, size_t size){ return ::memc
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //文字変換
-SAKURA_CORE_API int my_toupper( int c );
-SAKURA_CORE_API int my_tolower( int c );
+inline int my_toupper( int c ){ return (((c) >= 'a') && ((c) <= 'z')) ? ((c) - 'a' + 'A') : (c); }
+inline int my_tolower( int c ){ return (((c) >= 'A') && ((c) <= 'Z')) ? ((c) - 'A' + 'a') : (c); }
+inline int my_towupper( int c ){ return (((c) >= L'a') && ((c) <= L'z')) ? ((c) - L'a' + L'A') : (c); }
+inline int my_towlower( int c ){ return (((c) >= L'A') && ((c) <= L'Z')) ? ((c) - L'A' + L'a') : (c); }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           拡張・独自実装                    //

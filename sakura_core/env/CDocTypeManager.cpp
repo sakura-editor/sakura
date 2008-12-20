@@ -58,12 +58,3 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 	}
 	return CTypeConfig(0);	//	ƒnƒYƒŒ
 }
-
-
-STypeConfig& CDocTypeManager::GetTypeSetting(CTypeConfig cDocumentType)
-{
-	int n = cDocumentType.GetIndex();
-	assert(n>=0 && n<_countof(m_pShareData->m_Types));
-	return m_pShareData->m_Types[n];
-}
-

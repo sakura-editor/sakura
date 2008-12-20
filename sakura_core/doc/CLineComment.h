@@ -36,7 +36,7 @@ public:
 	CLineComment();
 
 	void CopyTo( const int n, const wchar_t* buffer, int nCommentPos );	//	行コメントデリミタをコピーする
-	bool Match( int nPos, int nLineLen, const wchar_t* pLine ) const;	//	行コメントに値するか確認する
+	bool Match( int nPos, const CStringRef& cStr ) const;	//	行コメントに値するか確認する
 
 	const wchar_t* getLineComment( const int n ){
 		return m_pszLineComment[n];

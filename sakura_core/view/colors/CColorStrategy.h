@@ -176,6 +176,11 @@ public:
 
 #include "util/design_template.h"
 #include <vector>
+class CColor_LineComment;
+class CColor_BlockComment;
+class CColor_BlockComment;
+class CColor_SingleQuote;
+class CColor_DoubleQuote;
 
 class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
 public:
@@ -199,7 +204,27 @@ public:
 			GetStrategy(i)->OnStartScanLogic();
 		}
 	}
+
+	/*
+	|| 色分け
+	*/
+	//@@@ 2002.09.22 YAZAKI
+	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
+	bool CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
+
+	//ビューの設定・取得
+	CEditView* GetCurrentView(void) const{ return m_pcView; }
+	void SetCurrentView(CEditView* pcView) { m_pcView = pcView; }
+
 private:
 	std::vector<CColorStrategy*>	m_vStrategies;
 	CColorStrategy*					m_pcFoundStrategy;
+
+	CColor_LineComment*				m_pcLineComment;
+	CColor_BlockComment*			m_pcBlockComment1;
+	CColor_BlockComment*			m_pcBlockComment2;
+	CColor_SingleQuote*				m_pcSingleQuote;
+	CColor_DoubleQuote*				m_pcDoubleQuote;
+
+	CEditView*						m_pcView;
 };

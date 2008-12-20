@@ -246,7 +246,7 @@ SEARCH_START:;
 		}
 
 		//@@@ 2002.09.22 YAZAKI
-		bool bGotoSEARCH_START = _CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
+		bool bGotoSEARCH_START = CColorStrategyPool::Instance()->CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 		if ( bGotoSEARCH_START )
 			goto SEARCH_START;
 		
@@ -530,42 +530,4 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 //	m_pLayoutCurrent = NULL;
 
 	return pWork->nModifyLayoutLinesNew;
-}
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           判定                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-// 2005.11.20 Mocaコメントの色分けがON/OFF関係なく行われていたバグを修正
-bool CLayoutMgr::_CheckColorMODE(
-	CColorStrategy**	ppcColorStrategy,	//!< [in/out]
-	int					nPos,
-	const CStringRef&	cLineStr
-)
-{
-	bool bRet = false;
-
-	//色終了
-	if(*ppcColorStrategy){
-		if((*ppcColorStrategy)->EndColor(cLineStr,nPos)){
-			*ppcColorStrategy = NULL;
-			bRet = true;
-		}
-	}
-
-	//色開始
-	if(!*ppcColorStrategy){
-		CColorStrategyPool* pool = CColorStrategyPool::Instance();
-		for(int i=0;i<pool->GetStrategyCount();i++){
-			CColorStrategy* pcSample = pool->GetStrategy(i);
-			if(pcSample->BeginColor(cLineStr,nPos)){
-				*ppcColorStrategy = pcSample;
-				//bRet = true;
-				break;
-			}
-		}
-	}
-
-	return bRet;
 }

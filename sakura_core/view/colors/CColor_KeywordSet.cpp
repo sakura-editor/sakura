@@ -9,11 +9,10 @@
 //                     キーワードセット                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CColor_KeywordSet::CColor_KeywordSet(int nKeywordIndex)
-: m_nKeywordIndex(nKeywordIndex)
+CColor_KeywordSet::CColor_KeywordSet()
+: m_nKeywordIndex(0)
 , m_nCOMMENTEND(0)
 {
-	assert(m_nKeywordIndex>=0 && m_nKeywordIndex<MAX_KEYWORDSET_PER_TYPE);
 }
 
 
@@ -29,7 +28,7 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 		Summary:
 			現在位置からキーワードを抜き出し、そのキーワードが登録単語ならば、色を変える
 	*/
-	if( TypeDataPtr->m_ColorInfoArr[GetStrategyColor()].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
+	if( TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1].m_bDisp &&  /* 強調キーワードを表示する */ // 2002/03/13 novice
 		_IsPosKeywordHead(cStr,nPos) && IS_KEYWORD_CHAR(cStr.At(nPos))
 	){
 		// キーワードの開始 -> iKeyBegin
@@ -47,19 +46,20 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 		int nKeyLen = iKeyEnd - iKeyBegin;
 
 		// キーワードが色変え対象であるか調査
-		for( int my_i = 0; my_i < MAX_KEYWORDSET_PER_TYPE; my_i++ )
+		for( int i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ )
 		{
-			if( TypeDataPtr->m_nKeyWordSetIdx[my_i] != -1 && // キーワードセット
-				TypeDataPtr->m_ColorInfoArr[GetStrategyColor()].m_bDisp)								//MIK
+			if( TypeDataPtr->m_nKeyWordSetIdx[i] != -1 && // キーワードセット
+				TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + i].m_bDisp)								//MIK
 			{																							//MIK
 				/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
 				int nIdx = GetDllShareData().m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(							//MIK 2000.12.01 binary search
-					TypeDataPtr->m_nKeyWordSetIdx[my_i] ,									//MIK
+					TypeDataPtr->m_nKeyWordSetIdx[i],													//MIK
 					&cStr.GetPtr()[iKeyBegin],															//MIK
 					nKeyLen																				//MIK
 				);																						//MIK
 				if( nIdx != -1 ){																		//MIK
 					this->m_nCOMMENTEND = iKeyEnd;														//MIK
+					m_nKeywordIndex = i;
 					return true;
 				}																						//MIK
 			}
