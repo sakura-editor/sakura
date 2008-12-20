@@ -3,6 +3,8 @@
 #include "func/Funccode.h"
 #include "CEol.h"
 #include "charset/charcode.h"
+#include "charset/CShiftJis.h"
+#include "charset/CJis.h"
 #include "CConvert_ToLower.h"
 #include "CConvert_ToUpper.h"
 #include "CConvert_ToHankaku.h"
@@ -21,6 +23,13 @@
 void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, int nTabWidth )
 {
 	switch( nFuncCode ){
+	//コード変換(2SJIS)
+	case F_CODECNV_EMAIL:
+		CShiftJis::UnicodeToSJIS(pCMemory->_GetMemory());
+		break;
+	}
+
+	switch( nFuncCode ){
 	//文字種変換、整形
 	case F_TOLOWER:					CConvert_ToLower().CallConvert(pCMemory);			break;	// 小文字
 	case F_TOUPPER:					CConvert_ToUpper().CallConvert(pCMemory);			break;	// 大文字
@@ -37,6 +46,8 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_SPACETOTAB:				CConvert_SpaceToTab(nTabWidth).CallConvert(pCMemory);break;	// 空白→TAB
 	case F_LTRIM:					CConvert_Trim(true).CallConvert(pCMemory);			break;	// 2001.12.03 hor
 	case F_RTRIM:					CConvert_Trim(false).CallConvert(pCMemory);			break;	// 2001.12.03 hor
+	//コード変換(2SJIS)
+	case F_CODECNV_EMAIL:			CJis::JISToUnicode(pCMemory->_GetMemory(), true);	break;
 	}
 	return;
 }
