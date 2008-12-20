@@ -1275,7 +1275,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 				// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 4/4
 				if(m_bWaitTreeProcess){
 					if(m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump){
-						::SetFocus(m_hwndParent);
+						::SetFocus( ::GetParent( ::GetParent( m_hwndParent ) ) );
 					}
 					m_bWaitTreeProcess=false;
 				}
@@ -1593,7 +1593,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )	//2002.02.08 hor 引数追加
 					::DestroyWindow( GetHwnd() );
 				}
 				else if( m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump ){
-					::SetFocus( m_hwndParent );
+					::SetFocus( ::GetParent( ::GetParent( m_hwndParent ) ) );
 				}
 			}
 		}
