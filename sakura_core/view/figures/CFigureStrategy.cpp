@@ -4,6 +4,7 @@
 #include "CFigure_Eol.h"
 #include "CFigure_ZenSpace.h"
 #include "CFigure_HanSpace.h"
+#include "CFigure_CtrlCode.h"
 #include "doc/CLayout.h"
 #include "charset/charcode.h"
 #include "types/CTypeSupport.h"
@@ -81,6 +82,7 @@ CFigureManager::CFigureManager()
 	m_vFigures.push_back(new CFigure_HanSpace());
 	m_vFigures.push_back(new CFigure_ZenSpace());
 	m_vFigures.push_back(new CFigure_Eol());
+	m_vFigures.push_back(new CFigure_CtrlCode());
 	m_vFigures.push_back(new CFigure_Text());
 }
 

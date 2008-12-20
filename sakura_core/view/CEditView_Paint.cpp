@@ -9,7 +9,6 @@
 #include "view/colors/CColorStrategy.h"
 #include <memory> //auto_ptr
 #include "view/colors/CColor_Found.h"
-#include "view/colors/CColor_Eol.h"
 #include "view/figures/CFigureStrategy.h"
 
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
