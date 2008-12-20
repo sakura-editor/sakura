@@ -3093,22 +3093,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\view\colors\CColor_CtrlCode.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\sakura_core\view\colors\CColor_CtrlCode.h"
-						>
-					</File>
-					<File
-						RelativePath="..\sakura_core\view\colors\CColor_Eol.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\sakura_core\view\colors\CColor_Eol.h"
-						>
-					</File>
-					<File
 						RelativePath="..\sakura_core\view\colors\CColor_Found.cpp"
 						>
 					</File>
@@ -3149,14 +3133,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\view\colors\CColor_Space.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\sakura_core\view\colors\CColor_Space.h"
-						>
-					</File>
-					<File
 						RelativePath="..\sakura_core\view\colors\CColor_Url.cpp"
 						>
 					</File>
@@ -3176,6 +3152,14 @@
 				<Filter
 					Name="figures"
 					>
+					<File
+						RelativePath="..\sakura_core\view\figures\CFigure_CtrlCode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\sakura_core\view\figures\CFigure_CtrlCode.h"
+						>
+					</File>
 					<File
 						RelativePath="..\sakura_core\view\figures\CFigure_Eol.cpp"
 						>

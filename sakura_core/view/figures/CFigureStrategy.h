@@ -21,7 +21,16 @@ public:
 	virtual bool DrawImp(SColorStrategyInfo* pInfo);
 	virtual int GetSpaceColorType(const EColorIndexType& eCurColor) const
 	{
-		return ( COLORIDX_SEARCH == eCurColor || IsRegularExpression(eCurColor) )? 1: 0;
+		//return ( COLORIDX_SEARCH == eCurColor || IsRegularExpression(eCurColor) )? 1: 0;
+		if( COLORIDX_SEARCH == eCurColor ) return 1;	// ŒŸõ‹­’²•¶Žš—ñ‚Ì’†‚Å‚ÍŒ»Ý‚Ì”wŒiF‚É‡‚í‚¹‚é
+
+		// ’ÊíƒeƒLƒXƒg‚Æ“¯ˆê”wŒiF‚ªŽw’è‚³‚ê‚Ä‚¢‚éê‡‚Í’ÊíƒeƒLƒXƒgˆÈŠO‚ÌêŠ‚Å‚àŒ»Ý‚Ì”wŒiF‚É‡‚í‚¹‚é
+		// ¦‚¿‚å‚Á‚ÆF‚ð‚¸‚ç‚µ‚½Ý’è‚É‚·‚é‚¾‚¯‚ÅŽw’è”wŒiF‚É‚Å‚«‚é
+		const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
+		const ColorInfo* pcColorInfoArr = pcDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr;
+		if( pcColorInfoArr[GetColorIdx()].m_colBACK == pcColorInfoArr[COLORIDX_TEXT].m_colBACK ) return 1;
+
+		return 0;
 	}
 	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView) const = 0;
 	virtual EColorIndexType GetColorIdx(void) const = 0;

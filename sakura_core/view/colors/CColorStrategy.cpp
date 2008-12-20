@@ -3,15 +3,11 @@
 #include "CColor_Comment.h"
 #include "CColor_Quote.h"
 #include "CColor_RegexKeyword.h"
-#include "CColor_Space.h"
 #include "CColor_Found.h"
 #include "CColor_Url.h"
 #include "CColor_Numeric.h"
 #include "CColor_KeywordSet.h"
-#include "CColor_CtrlCode.h"
-#include "CColor_Eol.h"
 #include "CColor_Found.h"
-#include "CColor_Eol.h"
 #include "doc/CLayout.h"
 
 
@@ -99,7 +95,6 @@ CColorStrategyPool::CColorStrategyPool()
 {
 	m_pcFoundStrategy = new CColor_Found;
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
-	m_vStrategies.push_back(new CColor_Eol);				// 行末
 	m_vStrategies.push_back(new CColor_RegexKeyword);		// 正規表現キーワード
 	m_vStrategies.push_back(new CColor_LineComment);		// 行コメント
 	m_vStrategies.push_back(new CColor_BlockComment(0));	// ブロックコメント
@@ -111,10 +106,6 @@ CColorStrategyPool::CColorStrategyPool()
 	for(int i=0;i<MAX_KEYWORDSET_PER_TYPE;i++){
 		m_vStrategies.push_back(new CColor_KeywordSet(i));	// キーワードセット
 	}
-	m_vStrategies.push_back(new CColor_Tab);				// タブ
-	m_vStrategies.push_back(new CColor_ZenSpace);			// 全角スペース
-	m_vStrategies.push_back(new CColor_HanSpace);			// 半角空白（半角スペース）
-	m_vStrategies.push_back(new CColor_CtrlCode);			// コントロールコード
 }
 
 CColorStrategyPool::~CColorStrategyPool()
