@@ -249,6 +249,12 @@ BOOL CViewCommander::HandleCommand(
 	case F_FILESAVECLOSE:
 		//	Feb. 28, 2004 genta 保存＆閉じる
 		//	保存が不要なら単に閉じる
+		{	// Command_FILESAVE()とは別に保存不要をチェック	//### Command_FILESAVE() は実際に保存した場合だけ true を返すようになった（仕様変更？）
+			if( !GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite && !GetDocument()->m_cDocEditor.IsModified() ){
+				Command_WINCLOSE();
+				break;
+			}
+		}
 		if( Command_FILESAVE( false, true )){
 			Command_WINCLOSE();
 		}
