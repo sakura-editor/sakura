@@ -412,8 +412,8 @@ bool CDocFileOperation::FileClose()
 */
 void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 {
-	//閉じる
-	if(!FileClose()){
+	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
+	if( !m_pcDocRef->OnFileClose() ){
 		return;
 	}
 
@@ -424,6 +424,15 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 			return;
 		}
 	}
+
+	/* 既存データのクリア */
+	m_pcDocRef->InitDoc();
+
+	/* 全ビューの初期化 */
+	m_pcDocRef->InitAllView();
+
+	/* 親ウィンドウのタイトルを更新 */
+	m_pcDocRef->m_pcEditWnd->UpdateCaption();
 
 	//開く
 	FileLoad(&sLoadInfo);
