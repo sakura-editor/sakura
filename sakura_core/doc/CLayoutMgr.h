@@ -294,20 +294,13 @@ private:
 	}
 	bool IsKinsokuPosHead(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行頭禁則の処理位置か
 	bool IsKinsokuPosTail(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行末禁則の処理位置か
-
-	int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr );
-
+public:
+	int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr ) const;
+private:
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
 	CLayoutInt getIndentOffset_Tx2x( CLayout* pLayoutPrev );
 	CLayoutInt getIndentOffset_LeftSpace( CLayout* pLayoutPrev );
-
-	/*
-	|| 色分け
-	*/
-	//@@@ 2002.09.22 YAZAKI
-	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	bool _CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
 
 protected:
 	/*

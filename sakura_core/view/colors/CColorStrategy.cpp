@@ -37,6 +37,7 @@ const CLayout* SColorStrategyInfo::GetLayout() const
 void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 {
 	CColorStrategyPool* pool = CColorStrategyPool::Instance();
+	pool->SetCurrentView(this->pcView);
 	CColorStrategy* pcFound = pool->GetFoundStrategy();
 
 	//検索色終了
@@ -93,6 +94,7 @@ EColorIndexType SColorStrategyInfo::GetCurrentColor() const
 
 CColorStrategyPool::CColorStrategyPool()
 {
+	m_pcView = CEditWnd::Instance()->m_pcEditViewArr[0];
 	m_pcFoundStrategy = new CColor_Found;
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
 	m_vStrategies.push_back(new CColor_RegexKeyword);		// 正規表現キーワード
@@ -103,9 +105,14 @@ CColorStrategyPool::CColorStrategyPool()
 	m_vStrategies.push_back(new CColor_DoubleQuote);		// ダブルクォーテーション文字列
 	m_vStrategies.push_back(new CColor_Url);				// URL
 	m_vStrategies.push_back(new CColor_Numeric);			// 半角数字
-	for(int i=0;i<MAX_KEYWORDSET_PER_TYPE;i++){
-		m_vStrategies.push_back(new CColor_KeywordSet(i));	// キーワードセット
-	}
+	m_vStrategies.push_back(new CColor_KeywordSet);			// キーワードセット
+
+	// CheckColorMODE 用
+	m_pcLineComment = (CColor_LineComment*)GetStrategyByColor(COLORIDX_COMMENT);	// 行コメント
+	m_pcBlockComment1 = (CColor_BlockComment*)GetStrategyByColor(COLORIDX_BLOCK1);	// ブロックコメント
+	m_pcBlockComment2 = (CColor_BlockComment*)GetStrategyByColor(COLORIDX_BLOCK2);	// ブロックコメント2
+	m_pcSingleQuote = (CColor_SingleQuote*)GetStrategyByColor(COLORIDX_SSTRING);	// シングルクォーテーション文字列
+	m_pcDoubleQuote = (CColor_DoubleQuote*)GetStrategyByColor(COLORIDX_WSTRING);	// ダブルクォーテーション文字列
 }
 
 CColorStrategyPool::~CColorStrategyPool()
@@ -125,6 +132,36 @@ CColorStrategy*	CColorStrategyPool::GetStrategyByColor(EColorIndexType eColor) c
 		}
 	}
 	return NULL;
+}
+
+// 2005.11.20 Mocaコメントの色分けがON/OFF関係なく行われていたバグを修正
+bool CColorStrategyPool::CheckColorMODE(
+	CColorStrategy**	ppcColorStrategy,	//!< [in/out]
+	int					nPos,
+	const CStringRef&	cLineStr
+)
+{
+	//色終了
+	if(*ppcColorStrategy){
+		if((*ppcColorStrategy)->EndColor(cLineStr,nPos)){
+			*ppcColorStrategy = NULL;
+			return true;
+		}
+	}
+
+	//色開始
+	if(!*ppcColorStrategy){
+		// CheckColorMODE はレイアウト処理全体のボトルネックになるくらい頻繁に呼び出される
+		// 基本クラスからの動的仮想関数呼び出しを使用すると無視できないほどのオーバヘッドになる模様
+		// ここはエレガントさよりも性能優先で個々の派生クラスから BeginColor() を呼び出す
+		if(m_pcLineComment->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcLineComment; return false; }
+		if(m_pcBlockComment1->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcBlockComment1; return false; }
+		if(m_pcBlockComment2->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcBlockComment2; return false; }
+		if(m_pcSingleQuote->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcSingleQuote; return false; }
+		if(m_pcDoubleQuote->BeginColor(cLineStr,nPos)){ *ppcColorStrategy = m_pcDoubleQuote; return false; }
+	}
+
+	return false;
 }
 
 

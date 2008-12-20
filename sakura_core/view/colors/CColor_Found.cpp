@@ -17,7 +17,7 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
 	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 
-	const CEditView* pcView = &CEditWnd::Instance()->GetActiveView();
+	const CEditView* pcView = CColorStrategyPool::Instance()->GetCurrentView();
 	if( !pcView->m_bCurSrchKeyMark || !CTypeSupport(pcView,COLORIDX_SEARCH).IsDisp() ){
 		return false;
 	}
