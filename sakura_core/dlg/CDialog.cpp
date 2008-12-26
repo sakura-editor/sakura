@@ -442,7 +442,27 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	//コンボボックスのリストを表示したまま文字列を編集し、Enterキーを
 	//押すと文字列が消える現象の対策。
 	//Enterキーを押してこの関数に入ったら、リストを非表示にしてしまう。
+
+	//リストを非表示にすると前方一致する文字列を選んでしまうので、
+	//事前に文字列を退避し、リスト非表示後に復元する。
+
+	int nLength;
+	LPTSTR sBuf;
+
+	//文字列を退避
+	nLength = ::GetWindowTextLength( hwndCtl );
+	sBuf = new TCHAR[nLength + 1];
+	::GetWindowText( hwndCtl, sBuf, nLength+1 );
+	sBuf[nLength] = _T('\0');
+
+	//リストを非表示にする
 	::SendMessage( hwndCtl, CB_SHOWDROPDOWN, (WPARAM) FALSE, 0 );
-	return FALSE;
+
+	//文字列を復元・全選択
+	::SetWindowText( hwndCtl, sBuf );
+	::SendMessage( hwndCtl, CB_SETEDITSEL, 0, (LPARAM)MAKELONG( 0, -1 ) );
+	delete[] sBuf;
+
+	return TRUE;
 }
 
