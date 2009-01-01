@@ -563,21 +563,31 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 
 	入力型は char * で。pS は 4 バイト以上の長さだと仮定。
 */
-bool CESI::_CheckUtf16Eol( const char* pS, const bool bbig_endian )
+bool CESI::_CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian )
 {
 	wchar_t wc0;
 	wchar_t wc1;
 
-	if( bbig_endian ){
-		wc0 = (pS[0] << 8) | pS[1];
-		wc1 = (pS[2] << 8) | pS[3];
-	}else{
-		wc0 = pS[0] | (pS[1] << 8);
-		wc1 = pS[2] | (pS[3] << 8);
-	}
-
-	if( (wc0 == 0x000d && wc1 == 0x000a) || (wc0 == 0x000d || wc0 == 0x000a) ){
-		return true;
+	if( nLen >= 4 ){
+		if( bbig_endian ){
+			wc0 = (pS[0] << 8) | pS[1];
+			wc1 = (pS[2] << 8) | pS[3];
+		}else{
+			wc0 = pS[0] | (pS[1] << 8);
+			wc1 = pS[2] | (pS[3] << 8);
+		}
+		if( (wc0 == 0x000d && wc1 == 0x000a) || wc0 == 0x000d || wc0 == 0x000a ){
+			return true;
+		}
+	}else if( nLen >= 2 ){
+		if( bbig_endian ){
+			wc0 = (pS[0] << 8) | pS[1];
+		}else{
+			wc0 = pS[0] | (pS[1] << 8);
+		}
+		if( wc0 == 0x000d || wc0 == 0x000a ){
+			return true;
+		}
 	}
 	return false;
 
@@ -617,7 +627,7 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 	pr1 = pr2 = pS;
 	pr_end = pS + nLen;
 
-	while(1){
+	for( ; ; ){
 
 		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1 );
 		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2 );
@@ -626,16 +636,20 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 			break;
 		}
 
+		//
+		// (pr_end - pr1) と (pr_end - pr2) は常に sizeof(wchar_t) で割り切れること。
+		//
+
 		// UTF-16 LE の処理
 		if( nret1 != 0 ){
 			if( echarset1 != CHARSET_BINARY ){
 				if( nret1 == 1 ){
 					// UTF-16 LE 版の改行コードをカウント
-					if( _CheckUtf16EolLE(pr1) ){ nnewlinew1++; }
+					if( _CheckUtf16EolLE(pr1, pr_end-pr1) ){ nnewlinew1++; }
 				}
 			}else{
-				if( (pr_end-pr1)/sizeof(wchar_t)
-						< static_cast<unsigned int>( GuessUtf16Charsz(pr1[0] | static_cast<wchar_t>(pr1[1] << 8)) ) ){
+				unsigned int n = GuessUtf16Charsz( pr1[0] | static_cast<wchar_t>(pr1[1] << 8) );
+				if( (pr_end-pr1)/sizeof(wchar_t) < n ){
 					break;
 				}
 				nillbytes1 += nret1*sizeof(wchar_t);
@@ -648,11 +662,11 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 			if( echarset2 != CHARSET_BINARY ){
 				if( nret2 == 1 ){
 					// UTF-16 BE 版の改行コードをカウント
-					if( _CheckUtf16EolBE(pr2) ){ nnewlinew2++; }
+					if( _CheckUtf16EolBE(pr2, pr_end-pr2) ){ nnewlinew2++; }
 				}
 			}else{
-				if( (pr_end-pr2)/sizeof(wchar_t)
-						< static_cast<unsigned int>( GuessUtf16Charsz((static_cast<wchar_t>(pr2[0] << 8)) | pr2[1]) ) ){
+				unsigned int n = GuessUtf16Charsz((static_cast<wchar_t>(pr2[0] << 8)) | pr2[1]);
+				if( (pr_end-pr2)/sizeof(wchar_t) < n ){
 					break;
 				}
 				nillbytes2 += nret2*sizeof(wchar_t);
