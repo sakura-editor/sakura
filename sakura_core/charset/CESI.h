@@ -151,9 +151,9 @@ protected:
 	void GetEncodingInfo_utf7( const char *, const int );
 	void GetEncodingInfo_uni( const char *, const int );
 
-	bool _CheckUtf16Eol( const char* pS, const bool bbig_endian );
-	inline bool _CheckUtf16EolLE( const char* p ){ return _CheckUtf16Eol( p, false ); }
-	inline bool _CheckUtf16EolBE( const char* p ){ return _CheckUtf16Eol( p, true ); }
+	bool _CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian );
+	inline bool _CheckUtf16EolLE( const char* p, const int n ){ return _CheckUtf16Eol( p, n, false ); }
+	inline bool _CheckUtf16EolBE( const char* p, const int n ){ return _CheckUtf16Eol( p, n, true ); }
 
 public:
 	//
