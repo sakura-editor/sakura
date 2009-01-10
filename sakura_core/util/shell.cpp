@@ -367,7 +367,9 @@ HWND OpenHtmlHelp(
 
 
 
-/* ショートカット(.lnk)の解決 */
+/*! ショートカット(.lnk)の解決
+	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
+*/
 BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 {
 	BOOL			bRes;
@@ -381,14 +383,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 	*lpszPath = 0; // assume failure
 	bRes = FALSE;
 
-	// COMライブラリの初期化
-	hRes = ::CoInitialize( NULL );
-	if( hRes == E_OUTOFMEMORY
-	 || hRes == E_INVALIDARG
-	 || hRes == E_UNEXPECTED
-	){
-		return FALSE;
-	}
+// 2009.01.08 ryoji CoInitializeを削除（WinMainにOleInitialize追加）
 
 	// Get a pointer to the IShellLink interface.
 //	hRes = 0;
@@ -431,8 +426,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 		pIShellLink->Release();
 		pIShellLink = NULL;
 	}
-	// COMライブラリの後始末処理
-	::CoUninitialize();
+// 2009.01.08 ryoji CoUninitializeを削除（WinMainにOleUninitialize追加）
 	return bRes;
 }
 
