@@ -65,9 +65,11 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 			}
 
 			//改行出力 -> cmemOutputBuffer
-			CMemory cEolMem;
-			pcCodeBase->GetEol(&cEolMem,sSaveInfo.cEol!=EOL_NONE?sSaveInfo.cEol:pcDocLine->GetEol());
-			cmemOutputBuffer.AppendRawData(cEolMem.GetRawPtr(),cEolMem.GetRawLength());
+			if( pcDocLine->GetEol() != EOL_NONE ){
+				CMemory cEolMem;
+				pcCodeBase->GetEol(&cEolMem,sSaveInfo.cEol!=EOL_NONE?sSaveInfo.cEol:pcDocLine->GetEol());
+				cmemOutputBuffer.AppendRawData(cEolMem.GetRawPtr(),cEolMem.GetRawLength());
+			}
 
 			//ファイルに出力 cmemOutputBuffer -> fp
 			out.Write(cmemOutputBuffer.GetRawPtr(), cmemOutputBuffer.GetRawLength());
