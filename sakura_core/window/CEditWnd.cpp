@@ -14,6 +14,7 @@
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji, nasukoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -947,6 +948,16 @@ LRESULT CEditWnd::DispatchEvent(
 		m_CFuncKeyWnd.Timer_ONOFF( m_bIsActiveApp ); // 20060126 aroka
 		this->Timer_ONOFF( m_bIsActiveApp ); // 20060128 aroka
 
+		return 0L;
+
+	case WM_ENABLE:
+		// 右ドロップファイルの受け入れ設定／解除	// 2009.01.09 ryoji
+		// Note: DragAcceptFilesを適用した左ドロップについては Enable/Disable で自動的に受け入れ設定／解除が切り替わる
+		if( (BOOL)wParam ){
+			m_pcDropTarget->Register_DropTarget( m_hWnd );
+		}else{
+			m_pcDropTarget->Revoke_DropTarget();
+		}
 		return 0L;
 
 	case WM_WINDOWPOSCHANGED:
