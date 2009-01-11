@@ -296,7 +296,7 @@ BEGIN
     LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,84,7,88,8,NOT WS_GROUP
     LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
                     20,116,8,NOT WS_GROUP
-    LTEXT           "Copyright (C) 1998-2008  by Norio Nakatani && Collaborators",
+    LTEXT           "Copyright (C) 1998-2009  by Norio Nakatani && Collaborators",
                     IDC_STATIC,40,33,182,8,NOT WS_GROUP
     LTEXT           "å¥çÏé“: ÇΩÇØ(í|ÉpÉìÉ_) Ç≥ÇÒ",IDC_STATIC,12,48,120,8,NOT 
                     WS_GROUP
