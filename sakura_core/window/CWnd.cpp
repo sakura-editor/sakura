@@ -191,13 +191,14 @@ HWND CWnd::Create(
 		m_hInstance, // handle to application instance
 		(LPVOID)this	// pointer to window-creation data
 	);
+
+	//Windowsフック解除
+	CWindowCreationHook::Unuse();
+
 	if( NULL == m_hWnd ){
 		::MessageBox( m_hwndParent, _T("CWnd::Create()\n\n::CreateWindowEx failed."), _T("error"), MB_OK );
 		return NULL;
 	}
-
-	//Windowsフック解除
-	CWindowCreationHook::Unuse();
 
 	/* ウィンドウ作成後の処理 */
 	AfterCreateWindow();
