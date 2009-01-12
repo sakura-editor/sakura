@@ -14,6 +14,7 @@
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji, nasukoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1793,7 +1794,9 @@ int AddLastChar( char* pszPath, int nMaxLen, char c ){
 }
 
 
-/* ショートカット(.lnk)の解決 */
+/*! ショートカット(.lnk)の解決
+	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
+*/
 BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 {
 	BOOL			bRes;
@@ -1811,14 +1814,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 	bRes = FALSE;
 	szGotPath[0] = '\0';
 
-	// COMライブラリの初期化
-	hRes = ::CoInitialize( NULL );
-	if( hRes == E_OUTOFMEMORY
-	 || hRes == E_INVALIDARG
-	 || hRes == E_UNEXPECTED
-	){
-		return FALSE;
-	}
+// 2009.01.08 ryoji CoInitializeを削除（WinMainにOleInitialize追加）
 
 	// Get a pointer to the IShellLink interface.
 //	hRes = 0;
@@ -1856,8 +1852,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 		pIShellLink->Release();
 		pIShellLink = NULL;
 	}
-	// COMライブラリの後始末処理
-	::CoUninitialize();
+// 2009.01.08 ryoji CoUninitializeを削除（WinMainにOleUninitialize追加）
 	return bRes;
 }
 

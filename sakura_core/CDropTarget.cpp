@@ -7,6 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -107,30 +108,33 @@ HRESULT CYbInterfaceBase::QueryInterfaceImpl(
 
 
 
-COleLibrary::COleLibrary():m_dwCount(0)
+COleLibrary::COleLibrary()//:m_dwCount(0)	// 2009.01.08 ryoji m_dwCount削除
 {
 	return;
 }
 COleLibrary::~COleLibrary()
 {
-	if( m_dwCount > 0 )
-		::OleUninitialize();
+// 2009.01.08 ryoji OleUninitialize削除（WinMainにOleInitialize/OleUninitialize追加）
+//	if( m_dwCount > 0 )
+//		::OleUninitialize();
 	return;
 }
 
 
 void COleLibrary::Initialize()
 {
-	if( m_dwCount++ == 0 )
-		::OleInitialize( NULL );
+// 2009.01.08 ryoji OleInitialize削除（WinMainにOleInitialize/OleUninitialize追加）
+//	if( m_dwCount++ == 0 )
+//		::OleInitialize( NULL );
 	return;
 }
 
 
 void COleLibrary::UnInitialize()
 {
-	if( m_dwCount > 0 && --m_dwCount == 0 )
-		::OleUninitialize();
+// 2009.01.08 ryoji OleUninitialize削除（WinMainにOleInitialize/OleUninitialize追加）
+//	if( m_dwCount > 0 && --m_dwCount == 0 )
+//		::OleUninitialize();
 	return;
 }
 

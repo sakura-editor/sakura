@@ -7,6 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -33,7 +34,7 @@ class COleLibrary
 {
 	friend class CYbInterfaceBase;
 private:
-	DWORD m_dwCount;
+//	DWORD m_dwCount;	// 2009.01.08 ryoji m_dwCountçÌèú
 	COleLibrary();
 public:
 	~COleLibrary();
