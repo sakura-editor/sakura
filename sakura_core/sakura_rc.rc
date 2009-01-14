@@ -2833,6 +2833,9 @@ BEGIN
     F_TAB_SEPARATE          "新規グループ"
     F_TAB_JOINTNEXT         "次のグループに移動"
     F_TAB_JOINTPREV         "前のグループに移動"
+    F_TAB_CLOSEOTHER        "このタブ以外を閉じる"
+    F_TAB_CLOSELEFT         "左をすべて閉じる"
+    F_TAB_CLOSERIGHT        "右をすべて閉じる"
 END
 
 STRINGTABLE DISCARDABLE 

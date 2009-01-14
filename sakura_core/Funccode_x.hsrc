@@ -352,6 +352,9 @@ F_TAB_MOVELEFT		= 31384,	// タブを左に移動							なし
 F_TAB_SEPARATE		= 31385,	// 新規グループ								なし
 F_TAB_JOINTNEXT		= 31386,	// 次のグループに移動						なし
 F_TAB_JOINTPREV		= 31387,	// 前のグループに移動						なし
+F_TAB_CLOSEOTHER	= 31388,	// このタブ以外を閉じる						なし
+F_TAB_CLOSELEFT		= 31389,	// 左をすべて閉じる							なし
+F_TAB_CLOSERIGHT	= 31390,	// 右をすべて閉じる							なし
 
 
 // 支援

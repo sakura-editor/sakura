@@ -1262,25 +1262,16 @@ BOOL CControlTray::CloseAllEditor(
 	int		nGroup			//!< [in] グループID
 )
 {
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();	/* 共有データ構造体のアドレスを返す */
+	EditNode*	pWndArr;
+	int		n;
 
-	/* 現在の編集ウィンドウの数を調べる */
-	if( bCheckConfirm && pShareData->m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
-		int nCount = IsSakuraMainWindow( hWndFrom )? 1: 0;	// 呼び出し元が編集ウィンドウなら編集ウィンドウが複数の場合に確認する
-		if( nCount < CAppNodeGroupHandle(nGroup).GetEditorWindowsNum() ){
-			if( IDYES != ::MYMESSAGEBOX(
-				hWndFrom,
-				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
-				GSTR_APPNAME,
-				_T("同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?")
-			) ){
-				return FALSE;
-			}
-		}
+	n = CAppNodeManager::Instance()->GetOpenedWindowArr( &pWndArr, FALSE );
+	if( 0 == n ){
+		return TRUE;
 	}
-
+	
 	/* 全編集ウィンドウへ終了要求を出す */
-	if( !CAppNodeGroupHandle(nGroup).RequestCloseAllEditor( bExit ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
+	if( !CAppNodeGroupHandle(nGroup).RequestCloseEditor( pWndArr, n, bExit, bCheckConfirm, hWndFrom ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
 		return FALSE;
 	}else{
 		return TRUE;
