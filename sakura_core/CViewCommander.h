@@ -324,6 +324,9 @@ public:
 	void Command_TAB_SEPARATE( void );	/* 新規グループ */			// 2007.06.20 ryoji
 	void Command_TAB_JOINTNEXT( void );	/* 次のグループに移動 */	// 2007.06.20 ryoji
 	void Command_TAB_JOINTPREV( void );	/* 前のグループに移動 */	// 2007.06.20 ryoji
+	void Command_TAB_CLOSEOTHER( void );/* このタブ以外を閉じる */	// 2008.11.22 syat
+	void Command_TAB_CLOSELEFT( void );	/* 左をすべて閉じる */		// 2008.11.22 syat
+	void Command_TAB_CLOSERIGHT( void );/* 右をすべて閉じる */		// 2008.11.22 syat
 
 
 	void Command_ToggleKeySearch( void );	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon

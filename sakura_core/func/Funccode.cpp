@@ -430,6 +430,9 @@ const EFunctionCode pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List7
 	F_TAB_SEPARATE		,	//V‹KƒOƒ‹[ƒv	// 2007.06.20 ryoji
 	F_TAB_JOINTNEXT		,	//ŽŸ‚ÌƒOƒ‹[ƒv‚ÉˆÚ“®	// 2007.06.20 ryoji
 	F_TAB_JOINTPREV		,	//‘O‚ÌƒOƒ‹[ƒv‚ÉˆÚ“®	// 2007.06.20 ryoji
+	F_TAB_CLOSEOTHER	,	//‚±‚Ìƒ^ƒuˆÈŠO‚ð•Â‚¶‚é	// 2008.11.22 syat
+	F_TAB_CLOSELEFT 	,	//¶‚ð‚·‚×‚Ä•Â‚¶‚é		// 2008.11.22 syat
+	F_TAB_CLOSERIGHT	,	//‰E‚ð‚·‚×‚Ä•Â‚¶‚é		// 2008.11.22 syat
 	F_MAXIMIZE_V		,	//c•ûŒü‚ÉÅ‘å‰»
 	F_MAXIMIZE_H		,	//‰¡•ûŒü‚ÉÅ‘å‰» //2001.02.10 by MIK
 	F_MINIMIZE_ALL		,	//‚·‚×‚ÄÅ¬‰»	//Sept. 17, 2000 jepro à–¾‚Ìu‘S‚Äv‚ðu‚·‚×‚Äv‚É“ˆê
