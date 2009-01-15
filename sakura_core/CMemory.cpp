@@ -2830,7 +2830,7 @@ void CMemory::SetDataSz( const char* pszData )
 
 
 /* バッファの内容を置き換える */
-void CMemory::SetData( CMemory* pcmemData )
+void CMemory::SetData( const CMemory* pcmemData )
 {
 	char*	pData;
 	int		nDataLen;
@@ -2858,7 +2858,7 @@ void CMemory::AppendSz( const char* pszData )
 	AddData( pszData, nDataLen );
 }
 /* バッファの最後にデータを追加する（publicメンバ）*/
-void CMemory::Append( CMemory* pcmemData )
+void CMemory::Append( const CMemory* pcmemData )
 {
 	char*	pData;
 	int		nDataLen;

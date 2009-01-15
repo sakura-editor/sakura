@@ -6954,7 +6954,15 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 
 
 
-/* Grep実行 */
+/*! Grep実行
+
+  @param[in] pcmGrepKey 検索パターン
+  @param[in] pcmGrepFile 検索対象ファイルパターン(!で除外指定))
+  @param[in] pcmGrepFolder 検索対象フォルダ
+
+  @date 2008.12.07 nasukoji	ファイル名パターンのバッファオーバラン対策
+  @date 2008.12.13 genta 検索パターンのバッファオーバラン対策
+*/
 DWORD CEditView::DoGrep(
 	const CMemory*	pcmGrepKey,
 	const CMemory*	pcmGrepFile,
@@ -6977,8 +6985,6 @@ DWORD CEditView::DoGrep(
 
 	int			nDummy;
 	int			nHitCount = 0;
-	char		szKey[_MAX_PATH];
-	char		szFile[_MAX_PATH];
 	char		szPath[_MAX_PATH];
 //	int			nNewLine;		/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
@@ -7079,11 +7085,11 @@ DWORD CEditView::DoGrep(
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, " " );	// 2002/09/09 Moca add
 	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_bGrepRealTimeView );	// 2003.06.23 Moca
-
-	pszWork = pcmGrepKey->GetPtr();
-	strcpy( szKey, pszWork );
-
-	strcpy( m_pcEditDoc->m_szGrepKey, szKey );
+	//	2008.12.13 genta パターンが長すぎる場合は登録しない
+	//	(正規表現が途中で途切れると困るので)
+	if( sizeof( m_pcEditDoc->m_szGrepKey ) < pcmGrepKey->GetLength() ){
+		strcpy( m_pcEditDoc->m_szGrepKey, pcmGrepKey->GetPtr() );
+	}
 	m_pcEditDoc->m_bGrepMode = TRUE;
 
 	//	2007.07.22 genta
@@ -7095,14 +7101,14 @@ DWORD CEditView::DoGrep(
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
 		nFlag |= bGrepLoHiCase ? 0x01 : 0x00;
-		if( !cRegexp.Compile( szKey, nFlag ) ){
+		if( !cRegexp.Compile( pcmGrepKey->GetPtr(), nFlag ) ){
 			return 0;
 		}
 	}else{
 		/* 検索条件の情報 */
 		CDocLineMgr::CreateCharCharsArr(
-			(const unsigned char *)szKey,
-			lstrlen( szKey ),
+			(const unsigned char *)pcmGrepKey->GetPtr(),
+			pcmGrepKey->GetLength(),
 			&pnKey_CharCharsArr
 		);
 	}
@@ -7129,15 +7135,14 @@ DWORD CEditView::DoGrep(
 	}else{
 		strcat( szPath, "\\" );
 	}
-	strcpy( szFile, pcmGrepFile->GetPtr( /* &nDummy */ ) );
 
-	nWork = lstrlen( szKey ); // 2003.06.10 Moca あらかじめ長さを計算しておく
+	nWork = pcmGrepKey->GetLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
 	/* 最後にテキストを追加 */
 	cmemMessage.AppendSz( "\r\n□検索条件  " );
 	if( 0 < nWork ){
 		CMemory cmemWork2;
-		cmemWork2.SetDataSz( szKey );
+		cmemWork2.SetData( pcmGrepKey );
 		if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 			cmemWork2.Replace_j( "\\", "\\\\" );
 			cmemWork2.Replace_j( "\'", "\\\'" );
@@ -7157,11 +7162,10 @@ DWORD CEditView::DoGrep(
 
 
 	cmemMessage.AppendSz( "検索対象   " );
-	cmemWork.SetDataSz( szFile );
 	if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
-	cmemMessage += cmemWork;
+	cmemMessage += *pcmGrepFile;
 
 
 
@@ -7241,10 +7245,9 @@ DWORD CEditView::DoGrep(
 
 
 	if( -1 == DoGrepTree(
-		&cDlgCancel, hwndCancel, szKey,
+		&cDlgCancel, hwndCancel, pcmGrepKey->GetPtr(),
 		pnKey_CharCharsArr,
-//		pnKey_CharUsedArr,
-		szFile, szPath, bGrepSubFolder, bGrepLoHiCase,
+		pcmGrepFile->GetPtr(), szPath, bGrepSubFolder, bGrepLoHiCase,
 		bGrepRegularExp, nGrepCharSet,
 		bGrepOutputLine, bWordOnly, nGrepOutputStyle, &cRegexp, 0, &nHitCount
 	) ){

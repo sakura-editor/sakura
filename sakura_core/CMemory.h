@@ -59,10 +59,10 @@ public:
 	void AllocBuffer( int );	/* バッファサイズの調整 */
 	void SetData( const char*, int );	/* バッファの内容を置き換える */
 	void SetDataSz( const char* );	/* バッファの内容を置き換える */
-	void SetData( CMemory* );	/* バッファの内容を置き換える */
+	void SetData( const CMemory* );	/* バッファの内容を置き換える */
 	const char* Append( const char* pData, int nDataLen );/* バッファの最後にデータを追加する（publicメンバ）*/
 	void AppendSz( const char* pszData );/* バッファの最後にデータを追加する（publicメンバ）*/
-	void Append( CMemory* );/* バッファの最後にデータを追加する（publicメンバ）*/
+	void Append( const CMemory* );/* バッファの最後にデータを追加する（publicメンバ）*/
 //	void InsertTop( const char*, int );	/* バッファの先頭にデータを挿入する */
 	// 2005-09-02 D.S.Koba
 	static int GetSizeOfChar( const char*, const int, const int );	//!< 指定した位置の文字が何バイト文字かを返す
