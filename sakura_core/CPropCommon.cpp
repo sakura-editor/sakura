@@ -12,6 +12,7 @@
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, genta, ryoji
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -35,6 +36,24 @@
 //@@@ 2001.02.04 Start by MIK: Popup Help
 #if 1	//@@@ 2002.01.03 add MIK
 #include "sakura.hh"
+
+// 2009.01.12 nasukoji	オプションの取得・設定用（CPropTypes.cppからコピー）
+struct TYPE_NAME {
+	int		nMethod;
+	char*	pszName;
+};
+
+TYPE_NAME SpecialScrollModeArr[] = {
+	{ 0,						"組み合わせなし" },
+	{ MOUSEFUNCTION_CENTER,		"マウス中ボタン" },
+	{ MOUSEFUNCTION_LEFTSIDE,	"マウスサイドボタン1" },
+	{ MOUSEFUNCTION_RIGHTSIDE,	"マウスサイドボタン2" },
+	{ VK_CONTROL,				"CONTROLキー" },
+	{ VK_SHIFT,					"SHIFTキー" },
+};
+
+const int	nSpecialScrollModeArrNum = sizeof( SpecialScrollModeArr ) / sizeof( SpecialScrollModeArr[0] );
+
 static const DWORD p_helpids[] = {	//10900
 	IDC_BUTTON_CLEAR_MRU_FILE,		HIDC_BUTTON_CLEAR_MRU_FILE,			//履歴をクリア（ファイル）
 	IDC_BUTTON_CLEAR_MRU_FOLDER,	HIDC_BUTTON_CLEAR_MRU_FOLDER,		//履歴をクリア（フォルダ）
@@ -59,6 +78,8 @@ static const DWORD p_helpids[] = {	//10900
 	IDC_SPIN_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,
 	IDC_SPIN_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,
 	IDC_CHECK_MEMDC,				HIDC_CHECK_MEMDC,			//画面キャッシュを使う
+	IDC_COMBO_WHEEL_PAGESCROLL,		HIDC_COMBO_WHEEL_PAGESCROLL,		// 組み合わせてホイール操作した時ページスクロールする		// 2009.01.12 nasukoji
+	IDC_COMBO_WHEEL_HSCROLL,		HIDC_COMBO_WHEEL_HSCROLL,			// 組み合わせてホイール操作した時横スクロールする			// 2009.01.12 nasukoji
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -725,6 +746,32 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 
 			}
 			break;	/* BN_CLICKED */
+		// 2009.01.12 nasukoji	コンボボックスのリストの項目が選択された
+		case CBN_SELENDOK:
+			HWND	hwndCombo;
+			int		nSelPos;
+
+			switch( wID ){
+			// 組み合わせてホイール操作した時ページスクロールする
+			case IDC_COMBO_WHEEL_PAGESCROLL:
+				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
+				nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
+				if( nSelPos && nSelPos == ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 ) ){
+					::SendMessage( hwndCombo, CB_SETCURSEL, 0, 0 );
+				}
+				return TRUE;
+			// 組み合わせてホイール操作した時横スクロールする
+			case IDC_COMBO_WHEEL_HSCROLL:
+				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
+				nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+				hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
+				if( nSelPos && nSelPos == ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 ) ){
+					::SendMessage( hwndCombo, CB_SETCURSEL, 0, 0 );
+				}
+				return TRUE;
+			}
+			break;	// CBN_SELENDOK
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
@@ -934,6 +981,34 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	// 画面キャッシュを使う
 	::CheckDlgButton( hwndDlg, IDC_CHECK_MEMDC, m_Common.m_bUseCompotibleBMP );
 
+	// 2009.01.12 nasukoji	組み合わせてホイール操作した時ページスクロールする
+	HWND	hwndCombo;
+	int		nSelPos;
+	int		i;
+
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
+	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	nSelPos = 0;
+	for( i = 0; i < nSpecialScrollModeArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SpecialScrollModeArr[i].pszName );
+		if( SpecialScrollModeArr[i].nMethod == m_Common.m_nPageScrollByWheel ){		// ページスクロールとする組み合わせ操作
+			nSelPos = i;
+		}
+	}
+	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+
+	// 2009.01.12 nasukoji	組み合わせてホイール操作した時横スクロールする
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
+	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	nSelPos = 0;
+	for( i = 0; i < nSpecialScrollModeArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SpecialScrollModeArr[i].pszName );
+		if( SpecialScrollModeArr[i].nMethod == m_Common.m_nHorizontalScrollByWheel ){		// 横スクロールとする組み合わせ操作
+			nSelPos = i;
+		}
+	}
+	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+
 	/* ファイルの履歴MAX */
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_nMRUArrNum_MAX, FALSE );
 
@@ -1006,6 +1081,19 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 	// 2007.09.09 Moca 画面キャッシュ設定追加
 	// 画面キャッシュを使う
 	m_Common.m_bUseCompotibleBMP = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MEMDC );
+
+	// 2009.01.12 nasukoji	組み合わせてホイール操作した時ページスクロールする
+	HWND	hwndCombo;
+	int		nSelPos;
+
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
+	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+	m_Common.m_nPageScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;			// ページスクロールとする組み合わせ操作
+
+	// 2009.01.12 nasukoji	組み合わせてホイール操作した時横スクロールする
+	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
+	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
+	m_Common.m_nHorizontalScrollByWheel = SpecialScrollModeArr[nSelPos].nMethod;	// 横スクロールとする組み合わせ操作
 
 	/* ファイルの履歴MAX */
 	m_Common.m_nMRUArrNum_MAX = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );

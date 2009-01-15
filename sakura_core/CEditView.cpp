@@ -16,6 +16,7 @@
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
 	Copyright (C) 2008, ryoji, nasukoji, bosagami
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -55,6 +56,7 @@
 //#include "CMigemo.h"
 #include <vector> // 2008/02/16 bosagami add
 #include <algorithm> // 2008/02/16 bosagami add
+#include "keycode.h"	// 2009.01.12 nasukoji
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -756,6 +758,9 @@ LRESULT CEditView::DispatchEvent(
 	case WM_KILLFOCUS:
 		OnKillFocus();
 
+		// 2009.01.12 nasukoji	ホイールスクロール有無状態をクリア
+		m_pcEditDoc->m_pcEditWnd->ClearMouseState();
+
 //		/* 親ウィンドウのタイトルを更新 */
 //		SetParentCaption( TRUE );
 
@@ -894,7 +899,11 @@ LRESULT CEditView::DispatchEvent(
 // novice 2004/10/11 マウス中ボタン対応
 	case WM_MBUTTONDOWN:
 		OnMBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+		return 0L;
 
+	case WM_MBUTTONUP:
+		// 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
+		OnMBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
 	case WM_LBUTTONDOWN:
@@ -903,12 +912,13 @@ LRESULT CEditView::DispatchEvent(
 //		MYTRACE( " WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
-//	case WM_MBUTTONUP:
+
 	case WM_LBUTTONUP:
 
 //		MYTRACE( " WM_LBUTTONUP wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
+
 	case WM_MOUSEMOVE:
 		OnMOUSEMOVE( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
@@ -940,7 +950,20 @@ LRESULT CEditView::DispatchEvent(
 			break;
 		}
 
-		return 0L;
+		return TRUE;
+
+	case WM_XBUTTONUP:
+		// 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
+		switch ( HIWORD(wParam) ){
+		case XBUTTON1:
+			OnXLBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+			break;
+		case XBUTTON2:
+			OnXRBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+			break;
+		}
+
+		return TRUE;
 
 	case WM_VSCROLL:
 //		MYTRACE( "	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
@@ -4080,18 +4103,51 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 // novice 2004/10/11 マウス中ボタン対応
 /*!
-	マウス中ボタンを押したときの処理
+	@brief マウス中ボタンを押したときの処理
 
 	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+
 	@date 2004.10.11 novice 新規作成
+	@date 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
 */
 void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+{
+}
+
+
+/*!
+	@brief マウス中ボタンを開放したときの処理
+
+	@param fwKeys [in] first message parameter
+	@param xPos [in] マウスカーソルX座標
+	@param yPos [in] マウスカーソルY座標
+	
+	@date 2009.01.12 nasukoji	新規作成（ボタンUPでコマンドを起動するように変更）
+*/
+void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
 	int		nIdx;
 	int		nFuncID;
 
+	// ホイール操作によるページスクロールあり
+	if( m_pShareData->m_Common.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER &&
+	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	{
+		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		return;
+	}
+
+	// ホイール操作によるページスクロールあり
+	if( m_pShareData->m_Common.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER &&
+	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	{
+		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		return;
+	}
+
+	// ホイール操作によるページスクロール・横スクロールあり
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス中ボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
@@ -4106,22 +4162,54 @@ void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 // novice 2004/10/10 マウスサイドボタン対応
 /*!
-	マウス左サイドボタンを押したときの処理
+	@brief マウスサイドボタン1を押したときの処理
 
 	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+
 	@date 2004.10.10 novice 新規作成
 	@date 2004.10.11 novice マウス中ボタン対応のため変更
+	@date 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
 */
 void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+{
+}
+
+
+/*!
+	@brief マウスサイドボタン1を開放したときの処理
+
+	@param fwKeys [in] first message parameter
+	@param xPos [in] マウスカーソルX座標
+	@param yPos [in] マウスカーソルY座標
+
+	@date 2009.01.12 nasukoji	新規作成（ボタンUPでコマンドを起動するように変更）
+*/
+void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
 	int		nIdx;
 	int		nFuncID;
 
+	// ホイール操作によるページスクロールあり
+	if( m_pShareData->m_Common.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
+	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	{
+		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		return;
+	}
+
+	// ホイール操作によるページスクロールあり
+	if( m_pShareData->m_Common.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
+	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	{
+		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		return;
+	}
+
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
+	/* マウスサイドボタン1に対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
 	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
@@ -4134,22 +4222,56 @@ void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 
 /*!
-	マウス右サイドボタン押したときの処理
+	@brief マウスサイドボタン2を押したときの処理
 
 	@param fwKeys [in] first message parameter
 	@param xPos [in] マウスカーソルX座標
 	@param yPos [in] マウスカーソルY座標
+
 	@date 2004.10.10 novice 新規作成
 	@date 2004.10.11 novice マウス中ボタン対応のため変更
+	@date 2009.01.12 nasukoji	ボタンUPでコマンドを起動するように変更
 */
 void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
+{
+}
+
+
+/*!
+	@brief マウスサイドボタン2を開放したときの処理
+
+	@param fwKeys [in] first message parameter
+	@param xPos [in] マウスカーソルX座標
+	@param yPos [in] マウスカーソルY座標
+
+	@date 2009.01.12 nasukoji	新規作成（ボタンUPでコマンドを起動するように変更）
+*/
+void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
 	int		nIdx;
 	int		nFuncID;
 
+	// ホイール操作によるページスクロールあり
+	if( m_pShareData->m_Common.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
+	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
+	{
+		// ホイール操作によるページスクロールありをOFF
+		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
+		return;
+	}
+
+	// ホイール操作によるページスクロールあり
+	if( m_pShareData->m_Common.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
+	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
+	{
+		// ホイール操作による横スクロールありをOFF
+		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
+		return;
+	}
+
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウス右サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
+	/* マウスサイドボタン2に対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
 	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
@@ -4690,41 +4812,117 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 
 
 
-	/* マウスホイールによるスクロール行数をレジストリから取得 */
-	nRollLineNum = 6;
-	/* レジストリの存在チェック */
-	// 2006.06.03 Moca ReadRegistry に書き換え
-	unsigned int uDataLen;	// size of value data
-	char szValStr[256];
-	uDataLen = sizeof(szValStr) - 1;
-	if( ReadRegistry( HKEY_CURRENT_USER, "Control Panel\\desktop", "WheelScrollLines", szValStr, uDataLen ) ){
-		nRollLineNum = ::atoi( szValStr );
-	}
-	if( -1 == nRollLineNum ){/* 「1画面分スクロールする」 */
-		nRollLineNum = m_nViewRowNum;	// 表示域の行数
-	}else{
-		if( nRollLineNum < 1 ){
-			nRollLineNum = 1;
-		}
-		if( nRollLineNum > 30 ){	//@@@ YAZAKI 2001.12.31 10→30へ。
-			nRollLineNum = 30;
-		}
-	}
-	for( i = 0; i < nRollLineNum; ++i ){
-//		::PostMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
-//		::SendMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
+	// 2009.01.12 nasukoji	ホイールスクロールを利用したページスクロール・横スクロール対応
+	if( IsSpecialScrollMode( m_pShareData->m_Common.m_nPageScrollByWheel ) ){				// ページスクロール？
+		if( IsSpecialScrollMode( m_pShareData->m_Common.m_nHorizontalScrollByWheel ) ){		// 横スクロール？
+			int line = m_nViewLeftCol + (( nScrollCode == SB_LINEUP ) ? -m_nViewColNum : m_nViewColNum );
+			SyncScrollH( ScrollAtH( line ) );
 
-		//	Sep. 11, 2004 genta 同期スクロール行数
-		int line;
-
-		if( nScrollCode == SB_LINEUP ){
-			line = ScrollAtV( m_nViewTopLine - 1 );
+			// ホイール操作による横スクロールあり
+			m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
 		}else{
-			line = ScrollAtV( m_nViewTopLine + 1 );
+			int line = m_nViewTopLine + (( nScrollCode == SB_LINEUP ) ? -m_nViewRowNum : m_nViewRowNum );
+			SyncScrollV( ScrollAtV( line ) );
 		}
-		SyncScrollV( line );
+
+		// ホイール操作によるページスクロールあり
+		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( TRUE );
+	}else{
+		/* マウスホイールによるスクロール行数をレジストリから取得 */
+		nRollLineNum = 6;
+		/* レジストリの存在チェック */
+		// 2006.06.03 Moca ReadRegistry に書き換え
+		unsigned int uDataLen;	// size of value data
+		char szValStr[256];
+		uDataLen = sizeof(szValStr) - 1;
+		if( ReadRegistry( HKEY_CURRENT_USER, "Control Panel\\desktop", "WheelScrollLines", szValStr, uDataLen ) ){
+			nRollLineNum = ::atoi( szValStr );
+		}
+		if( -1 == nRollLineNum ){/* 「1画面分スクロールする」 */
+			nRollLineNum = m_nViewRowNum;	// 表示域の行数
+		}else{
+			if( nRollLineNum < 1 ){
+				nRollLineNum = 1;
+			}
+			if( nRollLineNum > 30 ){	//@@@ YAZAKI 2001.12.31 10→30へ。
+				nRollLineNum = 30;
+			}
+		}
+
+		// 2009.01.12 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
+		BOOL bHorizontal = IsSpecialScrollMode( m_pShareData->m_Common.m_nHorizontalScrollByWheel );
+		int nCount = ( nScrollCode == SB_LINEUP ) ? -1 : 1;		// スクロール数
+
+		for( i = 0; i < nRollLineNum; ++i ){
+//			::PostMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
+//			::SendMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
+
+			//	Sep. 11, 2004 genta 同期スクロール行数
+			if( bHorizontal ){
+				SyncScrollH( ScrollAtH( m_nViewLeftCol + nCount ) );
+
+				// ホイール操作による横スクロールあり
+				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
+			}else{
+				SyncScrollV( ScrollAtV( m_nViewTopLine + nCount ) );
+			}
+		}
 	}
+
 	return 0;
+}
+
+
+/*!
+	@brief キー・マウスボタン状態よりスクロールモードを判定する
+
+	マウスホイール時、行スクロールすべきかページスクロール・横スクロール
+	すべきかを判定する。
+	現在のキーまたはマウス状態が引数で指定された組み合わせに合致する場合
+	TRUEを返す。
+
+	@param nSelect	[in] キー・マウスボタンの組み合わせ指定番号
+
+	@return ページスクロールまたは横スクロールすべき状態の時TRUEを返す
+	        通常の行スクロールすべき状態の時FALSEを返す
+
+	@date 2009.01.12 nasukoji	新規作成
+*/
+BOOL CEditView::IsSpecialScrollMode( int nSelect )
+{
+	BOOL bSpecialScrollMode;
+
+	switch( nSelect ){
+	case 0:		// 指定の組み合わせなし
+		bSpecialScrollMode = FALSE;
+		break;
+
+	case MOUSEFUNCTION_CENTER:		// マウス中ボタン
+		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetAsyncKeyState( VK_MBUTTON ) ) ? TRUE : FALSE;
+		break;
+
+	case MOUSEFUNCTION_LEFTSIDE:	// マウスサイドボタン1
+		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetAsyncKeyState( VK_XBUTTON1 ) ) ? TRUE : FALSE;
+		break;
+
+	case MOUSEFUNCTION_RIGHTSIDE:	// マウスサイドボタン2
+		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetAsyncKeyState( VK_XBUTTON2 ) ) ? TRUE : FALSE;
+		break;
+
+	case VK_CONTROL:	// Controlキー
+		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ) ? TRUE : FALSE;
+		break;
+
+	case VK_SHIFT:		// Shiftキー
+		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ) ? TRUE : FALSE;
+		break;
+
+	default:	// 上記以外（ここには来ない）
+		bSpecialScrollMode = FALSE;
+		break;
+	}
+
+	return bSpecialScrollMode;
 }
 
 

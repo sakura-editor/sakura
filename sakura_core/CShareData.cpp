@@ -15,6 +15,7 @@
 	Copyright (C) 2006, aroka, ryoji, genta
 	Copyright (C) 2007, ryoji, genta, maru
 	Copyright (C) 2008, ryoji, nasukoji
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -253,9 +254,12 @@ struct ARRHEAD {
 
 	Version 87:
 	テキストの折り返し方法追加 2008.05.30 nasukoji
+
+	Version 88:
+	ホイールスクロールを利用したページスクロール・横スクロール対応 2009.01.12 nasukoji
 */
 
-const unsigned int uShareDataVersion = 87;
+const unsigned int uShareDataVersion = 88;
 
 /*
 ||	Singleton風
@@ -545,6 +549,8 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
 		m_pShareData->m_Common.m_nRepeatedScrollLineNum = 3;	/* キーリピート時のスクロール行数 */
 		m_pShareData->m_Common.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
+		m_pShareData->m_Common.m_nPageScrollByWheel = 0;		/* キー/マウスボタン + ホイールスクロールでページスクロールする */	// 2009.01.12 nasukoji
+		m_pShareData->m_Common.m_nHorizontalScrollByWheel = 0;	/* キー/マウスボタン + ホイールスクロールで横スクロールする */		// 2009.01.12 nasukoji
 
 		m_pShareData->m_Common.m_bAddCRLFWhenCopy = FALSE;		/* 折り返し行に改行を付けてコピー */
 		m_pShareData->m_Common.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */

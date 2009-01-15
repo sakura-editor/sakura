@@ -237,6 +237,8 @@
 #define HIDC_COMBO_TEXT                 0x806d03fd    // IDD_FIND
 #define HIDC_COMBO_TEXT2                0x808903fe    // IDD_REPLACE
 #define HIDC_COMBO_m_szCommand          0x80b60530    // IDD_EXEC
+#define HIDC_COMBO_WHEEL_HSCROLL        0x806b05f7    // IDD_PROP1P1
+#define HIDC_COMBO_WHEEL_PAGESCROLL     0x806b05f6    // IDD_PROP1P1
 #define HIDC_EDIT1                      0x809a043e    // IDD_INPUT1
 #define HIDC_EDIT_ABOUT                 0x80730576    // IDD_ABOUT
 #define HIDC_EDIT_AUTOBACKUP_INTERVAL   0x806e0444    // IDD_PROP_FILE

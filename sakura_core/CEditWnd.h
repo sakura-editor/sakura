@@ -15,6 +15,8 @@
 	Copyright (C) 2005, genta, Moca
 	Copyright (C) 2006, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2008, nasukoji
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -227,7 +229,9 @@ private:
 	int		m_nCurrentFocus;
 	BOOL	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
-	
+	BOOL	m_bPageScrollByWheel;		// ホイール操作によるページスクロールあり	// 2009.01.12 nasukoji
+	BOOL	m_bHorizontalScrollByWheel;	// ホイール操作による横スクロールあり		// 2009.01.12 nasukoji
+
 	//	Jul. 21, 2003 genta ToolBarのOwner Draw
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
 
@@ -252,6 +256,12 @@ private:
 	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
 public:
 	BOOL IsActiveApp() const { return m_bIsActiveApp; };	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
+	BOOL IsPageScrollByWheel() const { return m_bPageScrollByWheel; };		// ホイール操作によるページスクロール有無	// 2009.01.12 nasukoji
+	BOOL IsHScrollByWheel() const { return m_bHorizontalScrollByWheel; };	// ホイール操作による横スクロール有無		// 2009.01.12 nasukoji
+	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; };	// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
+	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; };	// ホイール操作による横スクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
+	void ClearMouseState( void );		// 2009.01.12 nasukoji	マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
+
 };
 
 

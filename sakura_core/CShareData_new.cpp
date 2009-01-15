@@ -16,6 +16,7 @@
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
 	Copyright (C) 2007, ryoji, genta, maru
 	Copyright (C) 2008, nasukoji
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -488,6 +489,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bAddCRLFWhenCopy"		, common.m_bAddCRLFWhenCopy );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScrollLineNum"	, common.m_nRepeatedScrollLineNum );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScroll_Smooth"	, common.m_nRepeatedScroll_Smooth );
+	cProfile.IOProfileData( pszSecName, "nPageScrollByWheel"	, common.m_nPageScrollByWheel );	// 2009.01.12 nasukoji
+	cProfile.IOProfileData( pszSecName, "nHorizontalScrollByWheel"	, common.m_nHorizontalScrollByWheel );	// 2009.01.12 nasukoji
 	cProfile.IOProfileData( pszSecName, "bCloseAllConfirm"		, common.m_bCloseAllConfirm );	/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 	cProfile.IOProfileData( pszSecName, "bExitConfirm"			, common.m_bExitConfirm );
 	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_bRegularExp );

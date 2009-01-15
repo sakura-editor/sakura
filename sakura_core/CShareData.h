@@ -15,6 +15,7 @@
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -438,6 +439,8 @@ struct Common {
 	int					m_bAddCRLFWhenCopy;				/* 折り返し行に改行を付けてコピー */
 	int					m_nRepeatedScrollLineNum;		/* キーリピート時のスクロール行数 */
 	BOOL				m_nRepeatedScroll_Smooth;		/* キーリピート時のスクロールを滑らかにするか */
+	int					m_nPageScrollByWheel;			// キー/マウスボタン + ホイールスクロールでページUP/DOWNする	// 2009.01.12 nasukoji
+	int					m_nHorizontalScrollByWheel;		// キー/マウスボタン + ホイールスクロールで横スクロールする		// 2009.01.12 nasukoji
 	BOOL				m_bCloseAllConfirm;				/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 	BOOL				m_bExitConfirm;					/* 終了時の確認をする */
 	int					m_bRegularExp;					/* 検索／置換  1==正規表現 */
