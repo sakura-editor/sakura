@@ -14,7 +14,7 @@
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, ryoji
+	Copyright (C) 2009, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -131,6 +131,9 @@ CEditWnd::CEditWnd()
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
+
+	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
+	ClearMouseState();
 }
 
 CEditWnd::~CEditWnd()
@@ -940,7 +943,9 @@ LRESULT CEditWnd::DispatchEvent(
 		// アクティブ化なら編集ウィンドウリストの先頭に移動する		// 2007.04.08 ryoji WM_SETFOCUS から移動
 		if( m_bIsActiveApp ){
 			CAppNodeGroupHandle(0).AddEditWndList( GetHwnd() );	// リスト移動処理
-			m_bMButtonDown = FALSE;		// 2008.10.06 nasukoji	マウスの中ボタンDOWN状態解除
+
+			// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
+			ClearMouseState();
 		}
 
 		// キャプション設定、タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動
@@ -4434,4 +4439,18 @@ CEditDoc& CEditWnd::GetDocument()
 const CEditDoc& CEditWnd::GetDocument() const
 {
 	return CEditApp::Instance()->GetDocument();
+}
+
+/*!
+	@brief マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
+
+	@note ホイール操作によるページスクロール・横スクロール対応のために追加。
+		  ページスクロール・横スクロールありフラグをOFFする。
+
+	@date 2009.01.17 nasukoji	新規作成
+*/
+void CEditWnd::ClearMouseState( void )
+{
+	SetPageScrollByWheel( FALSE );		// ホイール操作によるページスクロール有無
+	SetHScrollByWheel( FALSE );			// ホイール操作による横スクロール有無
 }

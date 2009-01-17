@@ -15,6 +15,7 @@
 	Copyright (C) 2006, aroka, ryoji, genta
 	Copyright (C) 2007, ryoji, genta, maru
 	Copyright (C) 2008, ryoji, Uchi, nasukoji
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -257,6 +258,9 @@ struct ARRHEAD {
 
 	Version 88:
 	マウスの中ボタン押下中のホイールスクロールではページスクロールする 2008.10.07 nasukoji
+
+	Version 89:
+	ホイールスクロールを利用したページスクロール・横スクロール対応（Ver.88追加部分は削除） 2009.01.17 nasukoji
 
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
@@ -507,7 +511,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sGeneral.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
 		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum = CLayoutInt(3);	/* キーリピート時のスクロール行数 */
 		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
-		m_pShareData->m_Common.m_sGeneral.m_bPageScroolByMButtonWheel = FALSE;	/* マウスの中ボタン押下中のホイールスクロールではページスクロールする */	// 2008.10.06 nasukoji
+		m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel = 0;			/* キー/マウスボタン + ホイールスクロールでページスクロールする */	// 2009.01.17 nasukoji
+		m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel = 0;	/* キー/マウスボタン + ホイールスクロールで横スクロールする */		// 2009.01.17 nasukoji
 
 		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy = FALSE;			/* 折り返し行に改行を付けてコピー */
 		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */

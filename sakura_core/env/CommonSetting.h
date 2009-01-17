@@ -39,7 +39,8 @@ struct CommonSetting_General
 	//スクロール
 	CLayoutInt		m_nRepeatedScrollLineNum;		// キーリピート時のスクロール行数
 	BOOL	m_nRepeatedScroll_Smooth;		// キーリピート時のスクロールを滑らかにするか
-	BOOL	m_bPageScroolByMButtonWheel;	// マウスの中ボタン押下中のホイールスクロールではページスクロールする	// 2008.10.06 nasukoji
+	int		m_nPageScrollByWheel;			// キー/マウスボタン + ホイールスクロールでページUP/DOWNする	// 2009.01.17 nasukoji
+	int		m_nHorizontalScrollByWheel;		// キー/マウスボタン + ホイールスクロールで横スクロールする		// 2009.01.17 nasukoji
 
 	//タスクトレイ
 	BOOL	m_bUseTaskTray;					// タスクトレイのアイコンを使う
