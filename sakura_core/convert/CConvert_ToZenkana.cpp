@@ -16,6 +16,9 @@ bool CConvert_ToZenkana::DoConvert(CNativeW* pcData)
 	//‘SŠp‚Ð‚ç¨‘SŠpƒJƒi
 	Convert_ZenhiraToZenkana(pBuf, wcslen(pBuf));
 
+	//”¼Šp‰p”¨‘SŠp‰p”
+	Convert_HanEisuu_To_ZenEisuu(pBuf, wcslen(pBuf));
+
 	//Ý’è
 	pcData->SetString(pBuf);
 
