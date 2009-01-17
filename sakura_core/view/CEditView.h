@@ -15,6 +15,7 @@
 	Copyright (C) 2006, genta, aroka, fon, yukihane, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -195,9 +196,13 @@ public:
 	void OnRBUTTONDOWN( WPARAM, int, int );				/* マウス右ボタン押下 */
 	void OnRBUTTONUP( WPARAM, int, int );				/* マウス右ボタン開放 */
 	void OnMBUTTONDOWN( WPARAM, int, int );				/* マウス中ボタン押下 */
-	void OnXLBUTTONDOWN( WPARAM, int, int );			/* マウス左サイドボタン押下 */
-	void OnXRBUTTONDOWN( WPARAM, int, int );			/* マウス右サイドボタン押下 */
+	void OnMBUTTONUP( WPARAM, int, int );				/* マウス中ボタン開放 */
+	void OnXLBUTTONDOWN( WPARAM, int, int );			/* マウスサイドボタン1押下 */
+	void OnXLBUTTONUP( WPARAM, int, int );				/* マウスサイドボタン1開放 */		// 2009.01.17 nasukoji
+	void OnXRBUTTONDOWN( WPARAM, int, int );			/* マウスサイドボタン2押下 */
+	void OnXRBUTTONUP( WPARAM, int, int );				/* マウスサイドボタン2開放 */		// 2009.01.17 nasukoji
 	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );				/* マウスホイールのメッセージ処理 */
+	int  IsSpecialScrollMode( int );					/* キー・マウスボタン状態よりスクロールモードを判定する */		// 2009.01.17 nasukoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           描画                              //

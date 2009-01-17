@@ -2,6 +2,7 @@
 //2006.04.10 ryoji  ƒRƒ“ƒgƒ[ƒ‹ƒvƒƒZƒX‰Šú‰»Š®—¹‚ðŽ¦‚·ƒCƒxƒ“ƒgƒtƒ‰ƒO–¼‚ð’Ç‰Á
 //2007.09.05 kobake ANSI”Å‚ÆÕ“Ë‚ð”ð‚¯‚é‚½‚ßA–¼‘O•ÏX
 //2007.09.20 kobake ANSI”Å‚ÆUNICODE”Å‚Å•Ê‚Ì–¼‘O‚ð—p‚¢‚é
+//2009.01.17 nasukoji	ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“‚ÌƒL[ƒR[ƒh’è‹`’Ç‰Ái_WIN32_WINNT‚Ì“s‡‚É‚æ‚èƒVƒXƒeƒ€‘¤‚Å’è‹`‚³‚ê‚È‚¢ˆ×j
 
 #pragma once
 
@@ -36,8 +37,8 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ‹¤—Lƒƒ‚ƒŠ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#define N_SHAREDATA_VERSION		88
-#define STR_SHAREDATA_VERSION	"88"
+#define N_SHAREDATA_VERSION		89
+#define STR_SHAREDATA_VERSION	"89"
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 
@@ -194,3 +195,6 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 #endif
 #define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
 #define RWM_RECONVERT TEXT("MSIMEReconvert")
+
+#define	VK_XBUTTON1		0x05	// ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“1iWindows2000ˆÈ~‚ÅŽg—p‰Â”\j	// 2009.01.17 nasukoji
+#define	VK_XBUTTON2		0x06    // ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“2iWindows2000ˆÈ~‚ÅŽg—p‰Â”\j	// 2009.01.17 nasukoji

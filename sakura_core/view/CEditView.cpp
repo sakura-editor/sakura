@@ -15,6 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -455,6 +456,9 @@ LRESULT CEditView::DispatchEvent(
 	case WM_KILLFOCUS:
 		OnKillFocus();
 
+		// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
+		m_pcEditDoc->m_pcEditWnd->ClearMouseState();
+
 		return 0L;
 	case WM_CHAR:
 		GetCommander().HandleCommand( F_WCHAR, TRUE, tchar_to_wchar((TCHAR)wParam), 0, 0, 0 );
@@ -563,9 +567,9 @@ LRESULT CEditView::DispatchEvent(
 
 		return 0L;
 
-	// 2008.10.06 nasukoji	マウスの中ボタンUP対応
 	case WM_MBUTTONUP:
-		m_pcEditDoc->m_pcEditWnd->SetMButtonState( FALSE );		// マウスの中ボタンDOWN状態解除
+		// 2009.01.17 nasukoji	ボタンUPでコマンドを起動するように変更
+		OnMBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
 	case WM_LBUTTONDOWN:
@@ -611,7 +615,20 @@ LRESULT CEditView::DispatchEvent(
 			break;
 		}
 
-		return 0L;
+		return TRUE;
+
+	case WM_XBUTTONUP:
+		// 2009.01.17 nasukoji	ボタンUPでコマンドを起動するように変更
+		switch ( HIWORD(wParam) ){
+		case XBUTTON1:
+			OnXLBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+			break;
+		case XBUTTON2:
+			OnXRBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
+			break;
+		}
+
+		return TRUE;
 
 	case WM_VSCROLL:
 //		MYTRACE_A( "	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
@@ -948,8 +965,6 @@ void CEditView::OnKillFocus( void )
 		m_pcEditDoc->m_pcEditWnd->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
 	}
-
-	m_pcEditDoc->m_pcEditWnd->SetMButtonState( FALSE );		// 2008.10.06 nasukoji	マウスの中ボタンDOWN状態解除
 
 	return;
 }
