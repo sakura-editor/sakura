@@ -41,17 +41,19 @@ static const wchar_t tableHanKana_Kigo[] =
 
 //‘SŠp‰p‹L†B•¶š‚Ì•À‚Ñ‚É[‚¢ˆÓ–¡‚Í‚ ‚è‚Ü‚¹‚ñBƒoƒbƒNƒXƒ‰ƒbƒVƒ…‚Í–³‹B
 static const wchar_t tableZenKigo[] =
+	L"@CD"
 	L"{|–^“b•"
 	L"O—GF"
-	L"ghefƒ„ijop"
-	L"IH”`Q"
+	L"hefƒ„ijopmn"
+	L"IH”PQ"
 ;
 
 //”¼Šp‰p‹L†
 static const wchar_t tableHanKigo[] =
+	L" ,."
 	L"+-*/%=|&"
 	L"^\\@;:"
-	L"\"\"''<>(){}"
+	L"\"`'<>(){}[]"
 	L"!?#$~_"
 ;
 
