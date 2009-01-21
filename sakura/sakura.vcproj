@@ -63,6 +63,7 @@
 				ProgramDataBaseFileName="$(IntDir)/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -82,7 +83,9 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ManifestFile="$(IntDir)\$(TargetFileName).manifest"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)/sakura.pdb"
+				GenerateMapFile="true"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -367,6 +370,7 @@
 				ProgramDataBaseFileName="$(IntDir)/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -386,7 +390,9 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ManifestFile="$(IntDir)\$(TargetFileName).manifest"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(TargetDir)/sakura.pdb"
+				GenerateMapFile="true"
 				SubSystem="2"
 				LargeAddressAware="2"
 				OptimizeReferences="2"

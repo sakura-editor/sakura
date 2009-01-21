@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2002, aroka 新規作成
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -36,6 +37,7 @@ protected:
 
 protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
+	int				WriteDump( PEXCEPTION_POINTERS pExceptPtrs );
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
 	CShareData&		GetShareData()   { return m_cShareData; }
@@ -46,6 +48,15 @@ private:
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
 	LPTSTR		m_CommandLine;
+	BOOL (WINAPI *m_pfnMiniDumpWriteDump)(
+		HANDLE hProcess,
+		DWORD ProcessId,
+		HANDLE hFile,
+		MINIDUMP_TYPE DumpType,
+		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
+		);
 	
 	//	唯一のCShareDateとする。（CProcessが責任を持ってnew/deleteする）
 	CShareData		m_cShareData;
