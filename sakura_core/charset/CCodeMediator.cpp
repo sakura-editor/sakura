@@ -154,15 +154,21 @@ ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 		cesi.m_dwStatus ‚É‹L˜^‚·‚éB
 	*/
 
-	pcesi->SetInformation( pBuf, nBufLen, CODE_SJIS );
+	if( !pcesi->SetInformation( pBuf, nBufLen, CODE_SJIS ) ){
+		delete pcesi;
+		return CODE_DEFAULT;
+	}
 	nret = DetectUnicode( pcesi );
 	if( nret != CODE_NONE && pcesi->GetStatus() != ESI_NODETECTED ){
+		delete pcesi;
 		return nret;
 	}
 	nret = DetectMBCode( pcesi );
 	if( nret != CODE_NONE && pcesi->GetStatus() != ESI_NODETECTED ){
+		delete pcesi;
 		return nret;
 	}
+	delete pcesi;
 	return CODE_DEFAULT;
 }
 
