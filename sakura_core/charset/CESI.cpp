@@ -424,6 +424,8 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 		return;
 	}
 
+	CMemory cmbuffer;
+
 	npoints = 0;
 	berror = false;
 	pr = pS;
@@ -461,35 +463,26 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 		}
 
 		// 実際にデコードして内容を確認する。
-		CMemory* pcmbuffer;
-		try{
-			pcmbuffer = new CMemory();
-		}catch( ... ){
-			pcmbuffer = NULL;
-		}
-		if( pcmbuffer != NULL )
-		{
-			wchar_t* pdata;
-			int ndatalen, nret;
-			ECharSet echarset;
+		wchar_t* pdata;
+		int ndatalen, nret;
+		ECharSet echarset;
 
-			pcmbuffer->AllocBuffer( nlen_setb );
-			pdata = reinterpret_cast<wchar_t*>( pcmbuffer->GetRawPtr() );
-			if( pdata != NULL ){
-				ndatalen = _DecodeBase64( pr, nlen_setb, reinterpret_cast<char*>(pdata) ) / sizeof(wchar_t);
-				CMemory::SwapHLByte( reinterpret_cast<char*>(pdata), ndatalen * sizeof(wchar_t) );
-				for( int i = 0; i < ndatalen; i++ ){
-					nret = CheckUtf16leChar( &pdata[i], ndatalen - i, &echarset );
-					if( echarset == CHARSET_BINARY ){
+		cmbuffer.AllocBuffer( nlen_setb );
+		pdata = reinterpret_cast<wchar_t*>( cmbuffer.GetRawPtr() );
+		if( pdata != NULL ){
+			ndatalen = _DecodeBase64( pr, nlen_setb, reinterpret_cast<char*>(pdata) ) / sizeof(wchar_t);
+			CMemory::SwapHLByte( reinterpret_cast<char*>(pdata), ndatalen * sizeof(wchar_t) );
+			for( int i = 0; i < ndatalen; i++ ){
+				nret = CheckUtf16leChar( &pdata[i], ndatalen - i, &echarset );
+				if( echarset == CHARSET_BINARY ){
+					berror = true;
+					goto finish_codecheck;
+				}
+
+				if( nret == 1 ){
+					if( IsUtf7SetD(pdata[i]) ){
 						berror = true;
 						goto finish_codecheck;
-					}
-
-					if( nret == 1 ){
-						if( IsUtf7SetD(pdata[i]) ){
-							berror = true;
-							goto finish_codecheck;
-						}
 					}
 				}
 			}
@@ -560,8 +553,6 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 
 /*
 	UTF-16 チェッカ内で使う改行コード確認関数
-
-	入力型は char * で。pS は 4 バイト以上の長さだと仮定。
 */
 bool CESI::_CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian )
 {
