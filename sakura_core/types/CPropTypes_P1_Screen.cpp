@@ -611,7 +611,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		m_Types.m_eSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
 
 		/* その他のインデント対象文字 */
-		::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, _countof( m_Types.m_szIndentChars ) - 1 );
+		::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, _countof( m_Types.m_szIndentChars ) );
 
 		// 折り返し行インデント	//	Oct. 1, 2002 genta コンボボックスに変更
 		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_INDENTLAYOUT );
