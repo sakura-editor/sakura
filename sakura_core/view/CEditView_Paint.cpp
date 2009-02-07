@@ -256,7 +256,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 
 	if( !GetDrawSwitch() )return;
 	//@@@
-#ifdef _DEBUG
+#if 0
 	::MYTRACE( _T("OnPaint(%d,%d)-(%d,%d) : %d\n"),
 		pPs->rcPaint.left,
 		pPs->rcPaint.top,
