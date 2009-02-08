@@ -4527,7 +4527,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 		po.x,
 		po.y,
 		0,
-		hwnd,
+		m_hWnd,	// 2009.02.03 ryoji アクセスキー有効化のため hwnd -> m_hWnd に変更
 		NULL
 	);
 

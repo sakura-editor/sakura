@@ -14,6 +14,7 @@
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, nasukoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1299,7 +1300,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	}
 
 	/* ÇªÇÃëºÇÃÉCÉìÉfÉìÉgëŒè€ï∂éö */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, sizeof( m_Types.m_szIndentChars ) - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, sizeof( m_Types.m_szIndentChars ) );
 
 	/* TABïù */
 	m_Types.m_nTabSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE );
