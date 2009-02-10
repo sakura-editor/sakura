@@ -126,6 +126,9 @@ CColorStrategyPool::~CColorStrategyPool()
 
 CColorStrategy*	CColorStrategyPool::GetStrategyByColor(EColorIndexType eColor) const
 {
+	if(m_pcFoundStrategy->GetStrategyColor()==eColor){
+		return m_pcFoundStrategy;
+	}
 	for(int i=0;i<(int)m_vStrategies.size();i++){
 		if(m_vStrategies[i]->GetStrategyColor()==eColor){
 			return m_vStrategies[i];
