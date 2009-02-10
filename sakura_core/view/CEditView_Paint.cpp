@@ -380,7 +380,10 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	int nMaxRollBackLineNum = 260 / (Int)nWrapKeta + 1;
 	int nRollBackLineNum = 0;
 	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLayoutLine );
-	while( nRollBackLineNum < nMaxRollBackLineNum ){
+	// 論理行の先頭まで戻らないと確実には正確な色は得られない
+	// （正規表現キーワードにマッチした長い強調表示がその位置のレイアウト行頭をまたいでいる場合など）
+	//while( nRollBackLineNum < nMaxRollBackLineNum ){
+	while(1){
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLayoutLine );
 		if( NULL == pcLayout ){
 			break;
