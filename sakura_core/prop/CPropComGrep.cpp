@@ -154,8 +154,8 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_sSearch.m_bGTJW_LDBLCLK );
 
 	//	2007.08.12 genta 正規表現DLL
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( sizeof(m_Common.m_sSearch.m_szRegexpLib ) - 1 ), 0 );
-	::SetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( _countof(m_Common.m_sSearch.m_szRegexpLib ) - 1 ), 0 );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
 
 	return;
@@ -186,7 +186,7 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 	m_Common.m_sSearch.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
 
 	//	2007.08.12 genta 正規表現DLL
-	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, sizeof( m_Common.m_sSearch.m_szRegexpLib ));
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, _countof( m_Common.m_sSearch.m_szRegexpLib ));
 
 	return TRUE;
 }
@@ -195,13 +195,13 @@ void CPropCommon::SetRegexpVersion( HWND hwndDlg )
 {
 	TCHAR regexp_dll[_MAX_PATH];
 	
-	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, sizeof( regexp_dll ));
+	::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, _countof( regexp_dll ));
 	CBregexp breg;
 	if( DLL_SUCCESS != breg.InitDll( regexp_dll ) ){
-		::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, _T("正規表現は使用できません") );
+		::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, _T("正規表現は使用できません") );
 		return;
 	}
-	::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionT() );
+	::DlgItem_SetText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionT() );
 }
 
 
