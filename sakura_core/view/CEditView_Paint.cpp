@@ -152,11 +152,20 @@ EColorIndexType CEditView::GetColorIndex(
 		const CLayout* pcLayoutLineFirst = pcLayout;
 		while( 0 != pcLayoutLineFirst->GetLogicOffset() ){
 			pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
+
+			// 論理行の先頭まで戻らないと確実には正確な色は得られない
+			// （正規表現キーワードにマッチした長い強調表示がその位置のレイアウト行頭をまたいでいる場合など）
+			//if( pcLayout->GetLogicOffset() - pcLayoutLineFirst->GetLogicOffset() > 260 )
+			//	break;
 		}
 
 		// 2005.11.20 Moca 色が正しくないことがある問題に対処
 		eRet = pcLayoutLineFirst->GetColorTypePrev();	/* 現在の色を指定 */	// 02/12/18 ai
 		pInfo->nPosInLogic = pcLayoutLineFirst->GetLogicOffset();
+
+		//CColorStrategyPool初期化
+		CColorStrategyPool* pool = CColorStrategyPool::Instance();
+		pool->NotifyOnStartScanLogic();
 
 
 		// 2009.02.07 ryoji この関数では pInfo->DoChangeColor() で色を調べるだけなので以下の処理は不要
@@ -377,24 +386,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 		nLayoutLine = GetTextArea().GetViewTopLine() + CLayoutInt( ( nTop - GetTextArea().GetAreaTop() ) / nLineHeight ); //ビュー途中から描画
 	}
 
-	int nMaxRollBackLineNum = 260 / (Int)nWrapKeta + 1;
-	int nRollBackLineNum = 0;
-	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLayoutLine );
-	// 論理行の先頭まで戻らないと確実には正確な色は得られない
-	// （正規表現キーワードにマッチした長い強調表示がその位置のレイアウト行頭をまたいでいる場合など）
-	//while( nRollBackLineNum < nMaxRollBackLineNum ){
-	while(1){
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLayoutLine );
-		if( NULL == pcLayout ){
-			break;
-		}
-		if( 0 == pcLayout->GetLogicOffset() ){	/* 対応する論理行の先頭からのオフセット */
-			break;
-		}
-		nLayoutLine--;
-		nRollBackLineNum++;
-	}
-
+	// ※ ここにあった描画範囲の 260 文字ロールバック処理は GetColorIndex() に吸収	// 2009.02.11 ryoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//          描画終了レイアウト絶対行 -> nLayoutLineTo            //
@@ -607,10 +599,12 @@ bool CEditView::DrawLogicLine(
 	// 前行の最終設定色
 	{
 		const CLayout* pcLayout = pInfo->pDispPos->GetLayoutRef();
-		EColorIndexType eType = pcLayout? pcLayout->GetColorTypePrev(): COLORIDX_TEXT;
+		//EColorIndexType eType = pcLayout? pcLayout->GetColorTypePrev(): COLORIDX_TEXT;
+		EColorIndexType eType = GetColorIndex(pcLayout, 0);
 		CColorStrategyPool* pool = CColorStrategyPool::Instance();
 		pInfo->pStrategy = pool->GetStrategyByColor(eType);
-		if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
+		//ここではGetColorIndex()からの継続処理にするためInitStrategyStatus()を行わない
+		//if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
 		pInfo->ChangeColor(eType);
 	}
 
