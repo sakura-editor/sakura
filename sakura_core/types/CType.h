@@ -49,7 +49,7 @@ struct STypeConfig{
 	int					m_nLineSpace;					/*!< 行間のすきま */
 	CLayoutInt			m_nTabSpace;					/*!< TABの文字数 */
 	bool				m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
-	EDIT_CHAR			m_szTabViewString[17];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張
+	EDIT_CHAR			m_szTabViewString[8+1];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
 	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
 	// 2005.01.13 MIK 配列化
 	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	/*!< キーワードセット */
