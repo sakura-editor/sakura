@@ -3,22 +3,18 @@
 //2007.09.05 kobake ANSI”Å‚ÆÕ“Ë‚ð”ð‚¯‚é‚½‚ßA–¼‘O•ÏX
 //2007.09.20 kobake ANSI”Å‚ÆUNICODE”Å‚Å•Ê‚Ì–¼‘O‚ð—p‚¢‚é
 //2009.01.17 nasukoji	ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“‚ÌƒL[ƒR[ƒh’è‹`’Ç‰Ái_WIN32_WINNT‚Ì“s‡‚É‚æ‚èƒVƒXƒeƒ€‘¤‚Å’è‹`‚³‚ê‚È‚¢ˆ×j
+//2009.02.11 ryoji		‹¤—Lƒƒ‚ƒŠ—š—ð’Ç‰Á, NUM_TO_STRƒ}ƒNƒ’Ç‰Á
 
 #pragma once
-
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      ƒpƒtƒH[ƒ}ƒ“ƒX                         //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//ƒoƒbƒtƒ@ƒTƒCƒY
-const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒoƒbƒtƒ@ƒTƒCƒY
-
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       ’è”–½–¼•â•                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//”’l’è”‚Ì•¶Žš—ñ‰» 2009.02.11 ryoji
+#define _NUM_TO_STR(n) #n
+#define NUM_TO_STR(n) _NUM_TO_STR(n)
+
 //ƒfƒoƒbƒO”»•ÊA’è”ƒTƒtƒBƒbƒNƒX 2007.09.20 kobake
 #ifdef _DEBUG
 	#define _DEBUG_SUFFIX_ "_DEBUG"
@@ -37,8 +33,237 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ‹¤—Lƒƒ‚ƒŠ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#define N_SHAREDATA_VERSION		89
-#define STR_SHAREDATA_VERSION	"89"
+
+//!	‹¤—Lƒƒ‚ƒŠ‚Ìƒo[ƒWƒ‡ƒ“
+/*!
+	‹¤—Lƒƒ‚ƒŠ‚Ìƒo[ƒWƒ‡ƒ“”Ô†B‹¤—Lƒƒ‚ƒŠ‚ÌŒ`Ž®‚ð•ÏX‚µ‚½‚Æ‚«‚Í‚±‚±‚ð1‘‚â‚·B
+
+	‚±‚Ì’l‚Í‹¤—Lƒƒ‚ƒŠ‚Ìƒo[ƒWƒ‡ƒ“ƒtƒB[ƒ‹ƒh‚ÉŠi”[‚³‚êAˆÙ‚È‚é\‘¢‚Ì‹¤—Lƒƒ‚ƒŠ‚ð
+	Žg‚¤ƒGƒfƒBƒ^‚ª“¯Žž‚É‹N“®‚µ‚È‚¢‚æ‚¤‚É‚·‚éB
+
+	Ý’è‰Â”\‚È’l‚Í 1`unsinged int‚ÌÅ‘å’l
+
+	@sa Init()
+
+	Version 1`24:
+	‚¢‚ë‚¢‚ë
+	
+	Version 25:
+	m_bStopsBothEndsWhenSearchWord’Ç‰Á
+	
+	Version 26:
+	MacroRec‚ÉAm_bReloadWhenExecute‚ð’Ç‰Á 2002/03/11 YAZAKI
+	EditInfo‚ÉAm_szDocType’Ç‰Á Mar. 7, 2002 genta
+	
+	Version 27:
+	STypeConfig‚ÉAm_szOutlineRuleFilename‚ð’Ç‰Á 2002.04.01 YAZAKI 
+	
+	Version 28:
+	PRINTSETTING‚ÉAm_bPrintKinsokuHeadAm_bPrintKinsokuTail‚ð’Ç‰Á 2002.04.09 MIK
+	STypeConfig‚ÉAm_bKinsokuHeadAm_bKinsokuTailAm_szKinsokuHeadAm_szKinsokuTail‚ð’Ç‰Á 2002.04.09 MIK
+
+	Version 29:
+	PRINTSETTING‚ÉAm_bPrintKinsokuRet‚ð’Ç‰Á 2002.04.13 MIK
+	STypeConfig‚ÉAm_bKinsokuRet‚ð’Ç‰Á 2002.04.13 MIK
+
+	Version 30:
+	PRINTSETTING‚ÉAm_bPrintKinsokuKuto‚ð’Ç‰Á 2002.04.17 MIK
+	STypeConfig‚ÉAm_bKinsokuKuto‚ð’Ç‰Á 2002.04.17 MIK
+
+	Version 31:
+	Common‚ÉAm_bStopsBothEndsWhenSearchParagraph‚ð’Ç‰Á 2002/04/26 YAZAKI
+
+	Version 32:
+	Common‚©‚çSTypeConfig‚ÖAm_bAutoIndentAm_bAutoIndent_ZENSPACE‚ðˆÚ“® 2002/04/30 YAZAKI
+
+	Version 33:
+	Common‚ÉAm_lf_kh‚ð’Ç‰Á 2002/05/21 ai
+	m_nDiffFlgOpt‚ð’Ç‰Á 2002.05.27 MIK
+	STypeConfig-Color‚ÉCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETE‚ð’Ç‰Á
+
+	Version 34:
+	STypeConfig‚Ém_bUseDocumentIcon ’Ç‰ÁD 2002.09.10 genta
+	
+	Version 35:
+	Common‚Ém_nLineNumRightSpace ’Ç‰ÁD2002.09.18 genta
+
+	Version 36:
+	Common‚Ìm_bGrepKanjiCode_AutoDetect‚ðíœAm_nGrepCharSet‚ð’Ç‰Á 2002/09/21 Moca
+
+	Version 37:
+	STypeConfig‚ÌLineCommentŠÖ˜A‚ðm_cLineComment‚É•ÏXD  @@@ 2002.09.23 YAZAKI
+	STypeConfig‚ÌBlockCommentŠÖ˜A‚ðm_cBlockComments‚É•ÏXD@@@ 2002.09.23 YAZAKI
+
+	Version 38:
+	STypeConfig‚Ém_bIndentLayout‚ð’Ç‰Á. @@@ 2002.09.29 YAZAKI
+	2002.10.01 genta m_nIndentLayout‚É–¼‘O•ÏX
+
+	Version 39:
+	Common‚Ém_nFUNCKEYWND_GroupNum‚ð’Ç‰ÁD 2002/11/04 Moca
+
+	Version 40:
+	ƒtƒ@ƒCƒ‹–¼ŠÈˆÕ•\‹LŠÖ˜A‚ð’Ç‰ÁD 2002/12/08`2003/01/15 Moca
+
+	Version 41:
+	STypeConfig‚Ìm_szTabViewStringƒTƒCƒYŠg’£
+	m_nWindowSizeX/Y m_nWindowOriginX/Y’Ç‰Á 2003.01.26 aroka
+
+	Version 42:
+	STypeConfig‚É“ÆŽ©TABƒ}[ƒNƒtƒ‰ƒO’Ç‰Á 2003.03.28 MIK
+
+	Version 43:
+	Å‹ßŽg‚Á‚½ƒtƒ@ƒCƒ‹EƒtƒHƒ‹ƒ_‚É‚¨‹C‚É“ü‚è‚ð’Ç‰Á 2003.04.08 MIK
+
+	Version 44:
+	Window Caption•¶Žš—ñ—Ìˆæ‚ðCommon‚É’Ç‰Á 2003.04.05 genta
+
+	Version 45:
+	ƒ^ƒOƒtƒ@ƒCƒ‹ì¬—pƒRƒ}ƒ“ƒhƒIƒvƒVƒ‡ƒ“•Û‘¶—Ìˆæ(m_nTagsOpt,m_szTagsCmdLine)‚ð’Ç‰Á 2003.05.12 MIK
+
+	Version 46:
+	•ÒWƒEƒCƒ“ƒhƒE”C³Aƒ^ƒuƒEƒCƒ“ƒhƒE—pî•ñ’Ç‰Á
+
+	Version 47:
+	ƒtƒ@ƒCƒ‹‚©‚ç‚Ì•âŠ®‚ðSTypeConfig‚É’Ç‰Á 2003.06.28 Moca
+
+	Version 48:
+	GrepƒŠƒAƒ‹ƒ^ƒCƒ€•\Ž¦’Ç‰Á 2003.06.28 Moca
+
+	Version 49:
+	ƒtƒ@ƒCƒ‹î•ñ‚ÉIsDebug’Ç‰Á (ƒ^ƒu•\Ž¦—p) 2003.10.13 MIK
+	
+	Version 50:
+	ƒEƒBƒ“ƒhƒEˆÊ’uŒÅ’èEŒp³‚ð’Ç‰Á 2004.05.13 Moca
+
+	Version 51:
+	ƒ^ƒOƒWƒƒƒ“ƒv‹@”\’Ç‰Á 2004/06/21 novice
+
+	Version 52:
+	‘O‰ñ‚ÆˆÙ‚È‚é•¶ŽšƒR[ƒh‚Ì‚Æ‚«‚É–â‚¢‡‚í‚¹‚ðs‚¤‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO’Ç‰Á	2004.10.03 genta
+
+	Version 53:
+	‘¶Ý‚µ‚È‚¢ƒtƒ@ƒCƒ‹‚ðŠJ‚±‚¤‚Æ‚µ‚½ê‡‚ÉŒx‚·‚éƒtƒ‰ƒO‚Ì’Ç‰Á	2004.10.09 genta
+
+	Version 54:
+	ƒ}ƒEƒXƒTƒCƒhƒ{ƒ^ƒ“‘Î‰ž 2004/10/10 novice
+
+	Version 55:
+	ƒ}ƒEƒX’†ƒ{ƒ^ƒ“‘Î‰ž 2004/10/11 novice
+
+	Version 56:
+	ƒCƒ“ƒNƒŠƒƒ“ƒ^ƒ‹ƒT[ƒ`(Migemo path—p) 2004/10/13 isearch
+	
+	Version 57:
+	‹­’²ƒL[ƒ[ƒhŽw’èŠg‘å 2005/01/13 MIK
+	
+	Version 58:
+	‹­’²ƒL[ƒ[ƒhƒZƒbƒg‰Â•Ï’·Š„‚è“–‚Ä 2005/01/25 Moca
+
+	Version 59:
+	ƒ}ƒNƒ”‚ð‘‚â‚µ‚½ 2005/01/30 genta
+	
+	Version 60:
+	ƒL[ƒ[ƒhŽw’èƒ^ƒOƒWƒƒƒ“ƒv—š—ð•Û‘¶ 2005/04/03 MIK
+
+	Version 61:
+	‰üs‚Ås––‚Ì‹ó”’‚ðíœ‚·‚éƒIƒvƒVƒ‡ƒ“(ƒ^ƒCƒv•ÊÝ’è) 2005/10/11 ryoji
+
+	Version 62:
+	ƒoƒbƒNƒAƒbƒvƒtƒHƒ‹ƒ_ 2005.11.07 aroka
+
+	Version 63:
+	Žw’èŒ…cü•\Ž¦’Ç‰Á 2005.11.08 Moca
+
+	Version 64:
+	ƒ^ƒu‚Ì‹@”\Šg’£(“™•AƒAƒCƒRƒ“•\Ž¦) 2006/01/28 ryoji
+	ƒAƒEƒgƒvƒbƒgƒEƒBƒ“ƒhƒEˆÊ’u 2006.02.01 aroka
+
+	Version 65:
+	ƒ^ƒuˆê——‚ðƒ\[ƒg‚·‚é 2006/05/10 ryoji
+
+	Version 66:
+	ƒL[ƒ[ƒhƒwƒ‹ƒv‹@”\Šg’£ 2006.04.10 fon
+		ƒL[ƒ[ƒhƒwƒ‹ƒv‹@”\Ý’è‚ð•Êƒ^ƒu‚ÉˆÚ“®, Ž«‘‚Ì•¡”‰»‚É‘Î‰ž, ƒLƒƒƒŒƒbƒgˆÊ’uƒL[ƒ[ƒhŒŸõ’Ç‰Á
+
+	Version 67:
+	ƒLƒƒƒŒƒbƒgFŽw’è‚ð’Ç‰Á 2006.12.07 ryoji
+
+	Version 68:
+	ƒtƒ@ƒCƒ‹ƒ_ƒCƒAƒƒO‚ÌƒtƒBƒ‹ƒ^Ý’è 2006.11.16 ryoji
+
+	Version 69:
+	u‚·‚×‚Ä’uŠ·v‚Í’uŠ·‚ÌŒJ•Ô‚µ 2006.11.16 ryoji
+
+	Version 70:
+	[‚·‚×‚Ä•Â‚¶‚é]‚Å‘¼‚É•ÒW—p‚ÌƒEƒBƒ“ƒhƒE‚ª‚ ‚ê‚ÎŠm”F‚·‚é 2006.12.25 ryoji
+
+	Version 71:
+	ƒ^ƒu‚ð•Â‚¶‚é“®ì‚ð§Œä‚·‚éƒIƒvƒVƒ‡ƒ“2‚Â‚ð’Ç‰Á 2007.02.11 genta
+		m_bRetainEmptyTab, m_bCloseOneWinInTabMode
+
+	Version 72:
+	ƒ^ƒuˆê——‚ðƒtƒ‹ƒpƒX•\Ž¦‚·‚é 2007.02.28 ryoji
+
+	Version 73:
+	•ÒWƒEƒBƒ“ƒhƒEØ‘Ö’† 2007.04.03 ryoji
+
+	Version 74:
+	ƒJ[ƒ\ƒ‹ˆÊ’u‚Ì•¶Žš—ñ‚ðƒfƒtƒHƒ‹ƒg‚ÌŒŸõ•¶Žš—ñ‚É‚·‚é 2006.08.23 ryoji
+
+	Version 75:
+	ƒ}ƒEƒXƒzƒC[ƒ‹‚ÅƒEƒBƒ“ƒhƒEØ‚è‘Ö‚¦ 2006.03.26 ryoji
+
+	Version 76:
+	ƒ^ƒu‚ÌƒOƒ‹[ƒv‰» 2007.06.20 ryoji
+
+	Version 77:
+	iniƒtƒHƒ‹ƒ_Ý’è 2007.05.31 ryoji
+
+	Version 78:
+	ƒGƒfƒBƒ^|ƒgƒŒƒCŠÔ‚Å‚ÌUI“ÁŒ •ª—£Šm”F‚Ì‚½‚ß‚Ìƒo[ƒWƒ‡ƒ“‡‚í‚¹ 2007.06.07 ryoji
+
+	Version 79:
+	ŠO•”ƒRƒ}ƒ“ƒhŽÀs‚ÌƒIƒvƒVƒ‡ƒ“Šg’£ 2007.04.29 maru
+
+	Version 80:
+	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚ÌØ‚è‘Ö‚¦ 2007.07.22 genta
+
+	Version 81:
+	ƒ}ƒEƒXƒNƒŠƒbƒN‚É‚ÄƒAƒNƒeƒBƒx[ƒg‚³‚ê‚½Žž‚ÍƒJ[ƒ\ƒ‹ˆÊ’u‚ðˆÚ“®‚µ‚È‚¢ 2007.10.02 nasukoji
+
+	Version 82:
+	ƒ‰ƒCƒ“ƒ‚[ƒh“\‚è•t‚¯‚ð‰Â”\‚É‚·‚é 2007.10.08 ryoji
+
+	Version 83:
+	‘I‘ð‚È‚µ‚ÅƒRƒs[‚ð‰Â”\‚É‚·‚é 2007.11.18 ryoji
+
+	Version 84:
+	‰æ–ÊƒLƒƒƒbƒVƒ…‚ðŽg‚¤ 2007.09.09 Moca
+
+	Version 85:
+	ƒL[ƒ[ƒhƒZƒbƒgÅ‘å’l‘‰Á 2007.12.01 genta
+
+	Version 86:
+	ƒ^ƒCƒv•ÊÝ’èÅ‘å’l‘‰Á 2007.12.13 ryoji
+
+	Version 87:
+	ƒeƒLƒXƒg‚ÌÜ‚è•Ô‚µ•û–@’Ç‰Á 2008.05.30 nasukoji
+
+	Version 88:
+	ƒ}ƒEƒX‚Ì’†ƒ{ƒ^ƒ“‰Ÿ‰º’†‚ÌƒzƒC[ƒ‹ƒXƒNƒ[ƒ‹‚Å‚Íƒy[ƒWƒXƒNƒ[ƒ‹‚·‚é 2008.10.07 nasukoji
+
+	Version 89:
+	ƒzƒC[ƒ‹ƒXƒNƒ[ƒ‹‚ð—˜—p‚µ‚½ƒy[ƒWƒXƒNƒ[ƒ‹E‰¡ƒXƒNƒ[ƒ‹‘Î‰žiVer.88’Ç‰Á•”•ª‚Ííœj 2009.01.17 nasukoji
+
+	Version 90:
+	STypeConfig‚Ìm_szTabViewStringƒTƒCƒYŠg’£iVersion 41j‚Ì–ß‚µ 2009.02.11 ryoji
+
+	-- “‡‚³‚ê‚½‚Ì‚ÅŒ³‚É–ß‚·i1000`1023‚ªŽg—pÏ‚Ýj 	2008.11.16 nasukoji
+	-- Version 1000:
+	-- ƒo[ƒWƒ‡ƒ“1000ˆÈ~‚ð–{‰Æ“‡‚Ü‚Å‚ÌŠÔAŽg‚í‚¹‚Ä‚­‚¾‚³‚¢B‚©‚È‚è•p”É‚É\¬‚ª•ÏX‚³‚ê‚é‚ÆŽv‚í‚ê‚é‚Ì‚ÅBby kobake 2008.03.02
+*/
+#define N_SHAREDATA_VERSION		90
+#define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 
@@ -96,6 +321,13 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 	#define ICON_DEFAULT_APP IDI_ICON_STD
 	#define ICON_DEFAULT_GREP IDI_ICON_GREP
 #endif
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      ƒpƒtƒH[ƒ}ƒ“ƒX                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//ƒoƒbƒtƒ@ƒTƒCƒY
+const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒoƒbƒtƒ@ƒTƒCƒY
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

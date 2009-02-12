@@ -280,24 +280,6 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nVal, FALSE );
 			return TRUE;
-		case IDC_SPIN_REPEATEDSCROLLLINENUM:
-			/* キーリピート時のスクロール行数 */
-//			MYTRACE_A( "IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 10 ){
-				nVal = 10;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nVal, FALSE );
-			return TRUE;
 		case IDC_SPIN_TABSPACE:
 			//	Sep. 22, 2002 genta
 			/* TAB幅 */
@@ -480,6 +462,10 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 			}
 		}
 
+		//ルールファイル	// 2003.06.23 Moca ルールファイル名は使わなくてもセットしておく
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
+		::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
+
 		//標準ルール
 		if( m_Types.m_eDefaultOutline != OUTLINE_FILE ){
 			::CheckDlgButton( hwndDlg, IDC_RADIO_OUTLINEDEFAULT, TRUE );
@@ -499,10 +485,6 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_RULEFILE_REF ), TRUE );
 		}
-
-		//ルールファイル	// 2003.06.23 Moca ルールファイル名は使わなくてもセットしておく
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_OUTLINERULEFILE ), TRUE );
-		::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
 	}
 
 	//その他
@@ -582,8 +564,8 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		}
 
 		/* TAB表示文字列 */
-		WIN_CHAR szTab[8+1+1]; /* +1. happy */
-		::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, _countof( szTab ) - 1 );
+		WIN_CHAR szTab[8+1]; /* +1. happy */
+		::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, _countof( szTab ) );
 		wcscpy( m_Types.m_szTabViewString, L"^       " );
 		for( int i = 0; i < 8; i++ ){
 			if( !TCODE::IsTabAvailableCode(szTab[i]) )break;
@@ -624,15 +606,15 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 	//起動時のIME(日本語入力変換)	Nov. 20, 2000 genta
 	{
-		//ON/OFF状態
-		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
-		int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-		m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
-
 		//入力モード
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
-		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
+		int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
 		m_Types.m_nImeState = ImeStateArr[nSelPos].nMethod << 2;	//	IME入力モード
+
+		//ON/OFF状態
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
+		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
 	}
 
 	//アウトライン解析方法
