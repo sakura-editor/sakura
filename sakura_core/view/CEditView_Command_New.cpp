@@ -13,6 +13,7 @@
 	Copyright (C) 2005, ryoji, genta, D.S.Koba
 	Copyright (C) 2006, genta, Moca, fon
 	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -80,13 +81,33 @@ void CEditView::InsertData_CEditView(
 	//テキスト取得 -> pLine, nLineLen, pcLayout
 	CLogicInt		nLineLen;
 	const CLayout*	pcLayout;
+	bool			bHintPrev = false;	// 更新が前行からになる可能性があることを示唆する
+	bool			bHintNext = false;	// 更新が次行からになる可能性があることを示唆する
+	bool			bKinsoku;			// 禁則の有無
 	const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.GetY2(), &nLineLen, &pcLayout );
+
+	//禁則がある場合は1行前から再描画を行う	@@@ 2002.04.19 MIK
+	bKinsoku = ( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bWordWrap
+			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuHead	//@@@ 2002.04.19 MIK
+			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuTail	//@@@ 2002.04.19 MIK
+			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuRet	//@@@ 2002.04.19 MIK
+			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto );	//@@@ 2002.04.19 MIK
 
 	CLayoutInt	nLineAllColLen;
 	CLogicInt	nIdxFrom = CLogicInt(0);
 	CNativeW	cMem;
 	cMem.SetString(L"");
 	if( pLine ){
+		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
+		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
+		// ※挿入位置は行途中でも句読点入力＋ワードラップで前の文字列から続けて前行に回り込む場合もある
+		const CLayout* pcLayoutWk = pcLayout->GetPrevLayout();
+		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){	// レイアウト２行目以後？（前行の終端で調査）
+			bHintPrev = true;	// 更新が前行からになる可能性がある
+		}
+
+		// 更新が次行からになる可能性を調べる	// 2009.02.17 ryoji
+		// ※折り返し行末への文字入力や文字列貼り付けで現在行は更新されず次行以後が更新される場合もある
 		// 指定された桁に対応する行のデータ内の位置を調べる
 		nIdxFrom = LineColmnToIndex2( pcLayout, ptInsertPos.GetX2(), &nLineAllColLen );
 
@@ -107,6 +128,7 @@ void CEditView::InsertData_CEditView(
 					cMem += L' ';
 				}
 				cMem.AppendString( pData, nDataLen );
+				bHintNext = true;	// 更新が次行からになる可能性がある
 			}
 		}
 		else{
@@ -114,6 +136,12 @@ void CEditView::InsertData_CEditView(
 		}
 	}
 	else{
+		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
+		const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
+		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){
+			bHintPrev = true;	// 更新が前行からになる可能性がある
+		}
+
 		for( CLayoutInt i = CLayoutInt(0); i < ptInsertPos.GetX2(); ++i ){
 			cMem += L' ';
 		}
@@ -196,40 +224,46 @@ void CEditView::InsertData_CEditView(
 		PAINTSTRUCT ps;
 
 		if( bRedraw ){
+			CLayoutInt nStartLine(ptInsertPos.y);
 			if( 0 < nInsLineNum ){
 				// スクロールバーの状態を更新する
 				AdjustScrollBars();
+
+				// 描画開始行位置を調整する	// 2009.02.17 ryoji
+				if( bHintPrev ){	// 更新が前行からになる可能性がある
+					nStartLine--;
+				}
+
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = GetTextArea().GetAreaRight();
-				ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (Int)(ptInsertPos.y - GetTextArea().GetViewTopLine());
+				ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (Int)(nStartLine - GetTextArea().GetViewTopLine());
 				ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
 			}
 			else{
 				if( nModifyLayoutLinesOld < 1 ){
 					nModifyLayoutLinesOld = CLayoutInt(1);
 				}
+
+				// 描画開始行位置と描画行数を調整する	// 2009.02.17 ryoji
+				if( bHintPrev ){	// 更新が前行からになる可能性がある
+					nStartLine--;
+					nModifyLayoutLinesOld++;
+				}
+				if( bHintNext ){	// 更新が次行からになる可能性がある
+					nModifyLayoutLinesOld++;
+				}
+
 	//			ps.rcPaint.left = GetTextArea().GetAreaLeft();
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = GetTextArea().GetAreaRight();
 
 				// 2002.02.25 Mod By KK 次行 (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1); => (ptInsertPos.y - GetTextArea().GetViewTopLine());
 				//ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (ptInsertPos.y - GetTextArea().GetViewTopLine() - 1);
-				ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (Int)(ptInsertPos.y - GetTextArea().GetViewTopLine());
-
-				//禁則がある場合は1行前から再描画を行う	@@@ 2002.04.19 MIK
-				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bWordWrap
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuHead	//@@@ 2002.04.19 MIK
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuTail	//@@@ 2002.04.19 MIK
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuRet	//@@@ 2002.04.19 MIK
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.19 MIK
-				{
-					ps.rcPaint.top -= GetTextMetrics().GetHankakuDy();
-				}
+				ps.rcPaint.top = GetTextArea().GetAreaTop() + GetTextMetrics().GetHankakuDy() * (Int)(nStartLine - GetTextArea().GetViewTopLine());
+				ps.rcPaint.bottom = ps.rcPaint.top + GetTextMetrics().GetHankakuDy() * (Int)(nModifyLayoutLinesOld);
 				if( ps.rcPaint.top < 0 ){
 					ps.rcPaint.top = 0;
 				}
-
-				ps.rcPaint.bottom = ps.rcPaint.top + GetTextMetrics().GetHankakuDy() * (Int)( nModifyLayoutLinesOld + 1);
 				if( GetTextArea().GetAreaBottom() < ps.rcPaint.bottom ){
 					ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
 				}
