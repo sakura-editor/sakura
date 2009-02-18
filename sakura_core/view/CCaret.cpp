@@ -405,12 +405,15 @@ BOOL CCaret::GetAdjustCursorPos(
 			const CLayout* pcLayout = m_pEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptPosXY2.GetY2() );
 			if( pcLayout->GetLayoutEol() == EOL_NONE ){
 				ptPosXY2.x = m_pEditView->LineIndexToColmn( pcLayout, (CLogicInt)pcLayout->GetLengthWithEOL() );
+				// [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
+				// 復活するなら ptPosXY2.x に折り返し行インデントを適用するのがよい
+
 				// EOFだけ折り返されているか
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				if( ptPosXY2.x >= m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
-					ptPosXY2.y++;
-					ptPosXY2.x = CLayoutInt(0);
-				}
+				//if( ptPosXY2.x >= m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
+				//	ptPosXY2.y++;
+				//	ptPosXY2.x = CLayoutInt(0);
+				//}
 			}
 			else{
 				// EOFだけの行
@@ -629,7 +632,10 @@ void CCaret::ShowCaretPosInfo()
 	if(pTypes->m_bLineNumIsCRLF){
 		ptCaret.x = (Int)GetCaretLayoutPos().GetX();
 		ptCaret.y = (Int)GetCaretLogicPos().y;
-		if(pcLayout)ptCaret.x += (Int)pcLayout->CalcLayoutOffset(*pLayoutMgr);
+		if(pcLayout){
+			ptCaret.x -= (Int)pcLayout->GetIndent();
+			ptCaret.x += (Int)pcLayout->CalcLayoutOffset(*pLayoutMgr);
+		}
 	}
 	//行番号をレイアウト単位で表示
 	else {
@@ -749,7 +755,8 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 				if( ( EOL_NONE != pcLayout->GetLayoutEol().GetLen() )
 //				if( ( pLine[ nLineLen - 1 ] == L'\n' || pLine[ nLineLen - 1 ] == L'\r' )
-				 || nLineCols >= pLayoutMgr->GetMaxLineKetas()
+				 // [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
+				 //|| nLineCols >= pLayoutMgr->GetMaxLineKetas()
 				){
 					if( bSelect ){
 						if( !m_pEditView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -956,6 +963,7 @@ POINT CCaret::CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const
 	@date 2007.08.23 ryoji 関数化（MoveCursorToPoint()から処理を抜き出し）
 	@date 2007.09.26 ryoji 半角文字でも中央で左右にカーソルを振り分ける
 	@date 2007.10.23 kobake 引数説明の誤りを修正 ([in/out]→[in])
+	@date 2009.02.17 ryoji レイアウト行末以後のカラム位置指定なら末尾文字の前ではなく末尾文字の後に移動する
 */
 CLayoutInt CCaret::MoveCursorProperly(
 	CLayoutPoint	ptNewXY,			//!< [in] カーソルのレイアウト座標X
@@ -1007,7 +1015,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 		nPosX += it.getColumn();
 		if ( it.end() ){
 			i = it.getIndex();
-			nPosX -= it.getColumnDelta();
+			//nPosX -= it.getColumnDelta();	// 2009.02.17 ryoji コメントアウト（末尾文字の後に移動する）
 		}
 
 		if( i >= nLineLen ){

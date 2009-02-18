@@ -468,12 +468,13 @@ void CLayoutMgr::GetEndLayoutPos(
 			it.addDelta();
 		}
 		ptLayoutEnd->Set(it.getColumn(), GetLineCount() - CLayoutInt(1));
-		// 2006.10.01 Moca Start [EOF]のみのレイアウト行処理が抜けていたバグを修正
-		if( GetMaxLineKetas() <= ptLayoutEnd->GetX2() ){
-			ptLayoutEnd->SetX(CLayoutInt(0));
-			ptLayoutEnd->y++;
-		}
-		// 2006.10.01 Moca End
+		// [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
+		//// 2006.10.01 Moca Start [EOF]のみのレイアウト行処理が抜けていたバグを修正
+		//if( GetMaxLineKetas() <= ptLayoutEnd->GetX2() ){
+		//	ptLayoutEnd->SetX(CLayoutInt(0));
+		//	ptLayoutEnd->y++;
+		//}
+		//// 2006.10.01 Moca End
 	}
 	m_nEOFColumn = ptLayoutEnd->x;
 	m_nEOFLine = ptLayoutEnd->y;
