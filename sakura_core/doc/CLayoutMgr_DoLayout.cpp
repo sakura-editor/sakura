@@ -145,6 +145,7 @@ void CLayoutMgr::_DoKutoBurasage(SLayoutWork* pWork)
 void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
 	if( m_sTypeConfig.m_bKinsokuHead
+	 && (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
 	 && (m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX < 4)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -170,6 +171,7 @@ void CLayoutMgr::_DoGyotoKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 void CLayoutMgr::_DoGyomatsuKinsoku(SLayoutWork* pWork, PF_OnLine pfOnLine)
 {
 	if( m_sTypeConfig.m_bKinsokuTail
+	 && (pWork->nPos+1 < pWork->cLineStr.GetLength())	// 2007.02.17 ryoji 追加
 	 && (m_sTypeConfig.m_nMaxLineKetas - pWork->nPosX < 4)
 	 && ( pWork->nPosX > pWork->nIndent )	//	2004.04.09 pWork->nPosXの解釈変更のため，行頭チェックも変更
 	 && (pWork->nKinsokuType == KINSOKU_TYPE_NONE) )
