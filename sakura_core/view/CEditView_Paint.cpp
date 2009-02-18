@@ -969,7 +969,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 	int nBmpWidthNew  = ((cx + 63) & (0x7fffffff - 63));
 	int nBmpHeightNew = ((cy + 63) & (0x7fffffff - 63));
 	if( nBmpWidthNew != m_nCompatBMPWidth || nBmpHeightNew != m_nCompatBMPHeight ){
-#ifdef _DEBUG
+#if 0
 	MYTRACE( _T("CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n"), cx, cy );
 #endif
 		HDC	hdc = ::GetDC( GetHwnd() );
