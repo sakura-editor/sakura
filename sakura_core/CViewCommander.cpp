@@ -948,7 +948,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			CMemoryIterator it( pcLayout, GetDocument()->m_cLayoutMgr.GetTabSpace() );
 			while( !it.end() ){
 				it.scanNext();
-				if ( it.getColumn() + it.getColumnDelta() > GetCaret().GetCaretLayoutPos().GetX2() + it.getColumnDelta() ){
+				if ( it.getColumn() > GetCaret().GetCaretLayoutPos().GetX2() ){
 					break;
 				}
 				if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
@@ -999,6 +999,12 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 						}
 					}
 					else{
+						if( ptPos.x <= GetCaret().GetCaretLayoutPos().GetX2()
+							&& EOL_NONE == pcLayout->GetLayoutEol()
+							&& pcLayout->GetNextLayout()
+						){
+							nRepeat++;	// レイアウト行の右端は次の行の先頭と論理的に同等なのでさらに右へ	// 2007.02.19 ryoji
+						}
 						ptPos.x = pcLayout->GetNextLayout() ? pcLayout->GetNextLayout()->GetIndent() : CLayoutInt(0);
 						++ptPos.y;
 					}
@@ -1006,6 +1012,11 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 				//	キャレット位置が折り返し位置より右側だった場合の処理
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 				if( ptPos.x >= GetDocument()->m_cLayoutMgr.GetMaxLineKetas() ){
+					if( GetCaret().GetCaretLayoutPos().GetX2() >= GetDocument()->m_cLayoutMgr.GetMaxLineKetas()
+						&& pcLayout->GetNextLayout()
+					){
+						nRepeat++;	// レイアウト行の右端は次の行の先頭と論理的に同等なのでさらに右へ	// 2007.02.19 ryoji
+					}
 					ptPos.x = pcLayout->GetNextLayout() ? pcLayout->GetNextLayout()->GetIndent() : CLayoutInt(0);
 					++ptPos.y;
 				}
@@ -1603,10 +1614,31 @@ void CViewCommander::Command_DELETE( void )
 			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 			if( pcLayout ){
 				CLayoutInt nLineLen;
-				m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
+				CLogicInt nIndex;
+				nIndex = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 				if( nLineLen != 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					if( EOL_NONE != pcLayout->GetLayoutEol().GetType() ){	// 行終端は改行コードか?
 						Command_INSTEXT( TRUE, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
+					}else{	// 行終端が折り返し
+						// 折り返し行末ではスペース挿入後、次の文字を削除する	// 2009.02.19 ryoji
+
+						// フリーカーソル時の折り返し越え位置での削除はどうするのが妥当かよくわからないが
+						// 非フリーカーソル時（ちょうどカーソルが折り返し位置にある）には次の行の先頭文字を削除したい
+
+						if( nLineLen < GetCaret().GetCaretLayoutPos().GetX2() ){	// 折り返し行末とカーソルの間に隙間がある
+							Command_INSTEXT( TRUE, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
+							pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+							nIndex = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
+						}
+						if( nLineLen != 0 ){	// （スペース挿入後も）折り返し行末なら次文字を削除するために次行の先頭に移動する必要がある
+							if( pcLayout->GetNextLayout() != NULL ){	// 最終行末ではない
+								CLayoutPoint ptLay;
+								CLogicPoint ptLog(pcLayout->GetLogicOffset() + nIndex, pcLayout->GetLogicLineNo());
+								GetDocument()->m_cLayoutMgr.LogicToLayout( ptLog, &ptLay );
+								GetCaret().MoveCursor( ptLay, TRUE );
+								GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+							}
+						}
 					}
 				}
 			}

@@ -1028,13 +1028,15 @@ CLayoutInt CCaret::MoveCursorProperly(
 			  || ( m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting() )	/* マウス範囲選択中 && 矩形範囲選択中 */
 			  || ( m_pEditView->m_bDragMode && m_pEditView->m_bDragBoxData ) /* OLE DropTarget && 矩形データ */
 			){
-				nPosX = ptNewXY.GetX2();
+				// 折り返し幅とレイアウト行桁数（ぶら下げを含む）のどちらか大きいほうまでカーソル移動可能
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+				CLayoutInt nMaxX = __max(nPosX, m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas());
+				nPosX = ptNewXY.GetX2();
 				if( nPosX < CLayoutInt(0) ){
 					nPosX = CLayoutInt(0);
 				}
-				else if( nPosX > m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){	/* 折り返し桁数 */
-					nPosX = m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas();
+				else if( nPosX > nMaxX ){
+					nPosX = nMaxX;
 				}
 			}
 		}
