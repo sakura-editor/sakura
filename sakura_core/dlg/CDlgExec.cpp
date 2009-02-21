@@ -128,7 +128,7 @@ void CDlgExec::SetData( void )
 /* ダイアログデータの取得 */
 int CDlgExec::GetData( void )
 {
-	DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, sizeof( m_szCommand ));
+	DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, _countof( m_szCommand ));
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
 		int nFlgOpt = 0;
