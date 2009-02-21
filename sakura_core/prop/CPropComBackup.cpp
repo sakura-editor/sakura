@@ -215,7 +215,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 		case EN_CHANGE: // 20051107 aroka フォルダが変更されたらリアルタイムにエディットボックス内を更新
 			switch( wID ){
 			case IDC_EDIT_BACKUPFOLDER:
-				::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder, _countof2(m_Common.m_sBackup.m_szBackUpFolder) );
+				// 2009.02.21 ryoji 後ろに\が追加されるので，1文字余裕をみる必要がある．
+				::DlgItem_GetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder, _countof2(m_Common.m_sBackup.m_szBackUpFolder) - 1 );
 				UpdateBackupFile( hwndDlg );
 				break;
 			}
@@ -466,130 +467,63 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 		を廃止してレイアウト変更
 	@date 2005.11.07 aroka レイアウトに合わせて順序を入れ替え、インデントを整理
 	@date 2005.11.21 aroka 詳細設定モードの制御を追加
+	@date 2009.02.20 ryoji IDC_LABEL_BACKUP_HELPによる別コントロール隠しを廃止、if文制御をShowEnableフラグ制御に置き換えて簡素化して下記問題修正。
+	                       ・Vista Aeroだと詳細設定ONにしても詳細設定OFF項目が画面から消えない
+	                       ・詳細設定OFF項目が非表示ではなかったので隠れていてもTooltipヘルプが表示される
+	                       ・詳細設定ONなのにバックアップ作成OFFだと詳細設定OFF項目のほうが表示される
 */
+static inline void ShowEnable(HWND hWnd, BOOL bShow, BOOL bEnable)
+{
+	::ShowWindow( hWnd, bShow? SW_SHOW: SW_HIDE );
+	::EnableWindow( hWnd, bEnable );
+}
+
 void CPropCommon::EnableBackupInput(HWND hwndDlg)
 {
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP ) ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_ADVANCED ), TRUE );	// 20050628 aroka
-		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_ADVANCED ) ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DAY ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_3 ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUP_3 ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), FALSE );
-			//	Jun.  5, 2005 genta 追加
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT ), FALSE );
-			//	20051107 aroka 追加
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_BACKUP_GENS ), FALSE ); // 20051107 aroka
-			// 詳細設定
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), TRUE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_HELP ), SW_SHOW );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_HELP2 ), TRUE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_HELP2 ), SW_SHOW );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1A ), TRUE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1A ), SW_SHOW );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2A ), TRUE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2A ), SW_SHOW );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), TRUE );
+	#define SHOWENABLE(id, show, enable) ShowEnable( ::GetDlgItem( hwndDlg, id ), show, enable )
 
-			if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ) ||
-				::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE3 )){
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT ), TRUE );
-			}
-			else {
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT ), FALSE );
-			}
+	BOOL bBackup = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP );
+	BOOL bAdvanced = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_ADVANCED );
+	BOOL bType1 = ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE1 );
+	//BOOL bType2 = ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE2 );
+	BOOL bType3 = ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE3 );
+	BOOL bDate1 = ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 );
+	BOOL bDate2 = ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 );
+	BOOL bFolder = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER );
 
-			if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ) ){
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_3 ), TRUE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUP_3 ), TRUE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_BACKUP_GENS ), TRUE );	// added Oct. 6, JEPRO Enableになるように変更
-			}
-			else {
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_3 ), FALSE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUP_3 ), FALSE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_BACKUP_GENS ), FALSE );	// added Oct. 6, JEPRO Disableになるように変更
-			}
-			if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ) ||
-				::IsDlgButtonChecked( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ) ){
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), TRUE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), TRUE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DAY ), TRUE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), TRUE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), TRUE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), TRUE );
-			}else{
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), FALSE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), FALSE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DAY ), FALSE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), FALSE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), FALSE );
-				::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), FALSE );
-			}
+	SHOWENABLE( IDC_CHECK_BACKUP_ADVANCED,	TRUE, bBackup );	// 20050628 aroka
+	SHOWENABLE( IDC_RADIO_BACKUP_TYPE1,		!bAdvanced, bBackup );
+	SHOWENABLE( IDC_RADIO_BACKUP_TYPE3,		!bAdvanced, bBackup );
+	SHOWENABLE( IDC_RADIO_BACKUP_DATETYPE1,	!bAdvanced, bBackup );
+	SHOWENABLE( IDC_RADIO_BACKUP_DATETYPE2,	!bAdvanced, bBackup );
+	SHOWENABLE( IDC_LABEL_BACKUP_3,			!bAdvanced, bBackup && bType3);
+	SHOWENABLE( IDC_EDIT_BACKUP_3,			!bAdvanced, bBackup && bType3);
+	SHOWENABLE( IDC_SPIN_BACKUP_GENS,		!bAdvanced, bBackup && bType3 );	//	20051107 aroka 追加
+	SHOWENABLE( IDC_CHECK_BACKUP_RETAINEXT,	!bAdvanced, bBackup && (bType1 || bType3) );	//	Jun.  5, 2005 genta 追加
+	SHOWENABLE( IDC_CHECK_BACKUP_YEAR,		!bAdvanced, bBackup && (bDate1 || bDate2) );
+	SHOWENABLE( IDC_CHECK_BACKUP_MONTH,		!bAdvanced, bBackup && (bDate1 || bDate2) );
+	SHOWENABLE( IDC_CHECK_BACKUP_DAY,		!bAdvanced, bBackup && (bDate1 || bDate2) );
+	SHOWENABLE( IDC_CHECK_BACKUP_HOUR,		!bAdvanced, bBackup && (bDate1 || bDate2) );
+	SHOWENABLE( IDC_CHECK_BACKUP_MIN,		!bAdvanced, bBackup && (bDate1 || bDate2) );
+	SHOWENABLE( IDC_CHECK_BACKUP_SEC,		!bAdvanced, bBackup && (bDate1 || bDate2) );
 
-			// 詳細設定
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), FALSE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_HELP ), SW_HIDE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_HELP2 ), SW_HIDE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1A ), SW_HIDE );
-			::ShowWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2A ), SW_HIDE );
-		}
+	// 詳細設定
+	SHOWENABLE( IDC_EDIT_BACKUPFILE,		TRUE, bBackup && bAdvanced );
+//	SHOWENABLE( IDC_LABEL_BACKUP_HELP,		bAdvanced, bBackup );	// 不可視のまま放置（他コントロール隠しの方式は廃止） 2009.02.20 ryoji
+	SHOWENABLE( IDC_LABEL_BACKUP_HELP2,		bAdvanced, bBackup );
+	SHOWENABLE( IDC_RADIO_BACKUP_DATETYPE1A,	bAdvanced, bBackup );
+	SHOWENABLE( IDC_RADIO_BACKUP_DATETYPE2A,	bAdvanced, bBackup );
 
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUPFOLDER ), TRUE );
-		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER ) ){
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_4 ), TRUE );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKUP_FOLDER_REF ), TRUE );
-		}else{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_4 ), FALSE );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKUP_FOLDER_REF ), FALSE );
-		}
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ), TRUE );	//@@@ 2001.12.11 add MIK
+	SHOWENABLE( IDC_CHECK_BACKUPFOLDER,		TRUE, bBackup );
+	SHOWENABLE( IDC_LABEL_BACKUP_4,			TRUE, bBackup && bFolder );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
+	SHOWENABLE( IDC_EDIT_BACKUPFOLDER,		TRUE, bBackup && bFolder );
+	SHOWENABLE( IDC_BUTTON_BACKUP_FOLDER_REF,	TRUE, bBackup && bFolder );
+	SHOWENABLE( IDC_CHECK_BACKUP_DUSTBOX,	TRUE, bBackup );	//@@@ 2001.12.11 add MIK
 
-		// 作成前に確認
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUPDIALOG ), TRUE );
-	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE1 ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_TYPE3 ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_YEAR ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MONTH ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DAY ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_HOUR ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_MIN ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_SEC ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_3 ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUP_3 ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUPDIALOG ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUPFOLDER ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_4 ), FALSE );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKUP_FOLDER_REF ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1 ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2 ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ), FALSE );	//@@@ 2001.12.11 add MIK
-		//	Jun.  5, 2005 genta 追加
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_RETAINEXT ), FALSE );
-		//	20051107 aroka 追加
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_BACKUP_GENS ), FALSE ); // 20051107 aroka
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BACKUP_ADVANCED ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), FALSE );
-		::ShowWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_HELP ), SW_HIDE );
-		::ShowWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_BACKUP_HELP2 ), SW_HIDE );
-		::ShowWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE1A ), SW_HIDE );
-		::ShowWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_BACKUP_DATETYPE2A ), SW_HIDE );
-	}
+	// 作成前に確認
+	SHOWENABLE( IDC_CHECK_BACKUPDIALOG,		TRUE, bBackup );
+
+	#undef SHOWENABLE
 }
 //	To Here Aug. 16, 2000 genta
 
