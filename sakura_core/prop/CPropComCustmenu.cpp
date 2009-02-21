@@ -10,6 +10,7 @@
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -46,6 +47,8 @@ static const DWORD p_helpids[] = {	//10100
 	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT,				//エクスポート
 	IDC_COMBO_FUNCKIND,				HIDC_COMBO_FUNCKIND,			//機能の種別
 	IDC_COMBO_MENU,					HIDC_COMBO_MENU,				//メニューの種別
+	IDC_EDIT_MENUNAME,				HIDC_EDIT_MENUNAME,				//メニュー名		// 2009.02.20 ryoji
+	IDC_BUTTON_MENUNAME,			HIDC_BUTTON_MENUNAME,			//メニュー名設定	// 2009.02.20 ryoji
 	IDC_LIST_FUNC,					HIDC_LIST_FUNC,					//機能一覧
 	IDC_LIST_RES,					HIDC_LIST_RES,					//メニュー一覧
 //	IDC_LABEL_MENUFUNCKIND,			-1,
