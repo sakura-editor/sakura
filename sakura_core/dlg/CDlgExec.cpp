@@ -10,6 +10,7 @@
 	Copyright (C) 2002, aroka, YAZAKI, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, maru
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -59,6 +60,7 @@ CDlgExec::CDlgExec()
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	m_szCommand[0] = _T('\0');	/* コマンドライン */
+	m_bEditable = ( !CAppMode::Instance()->IsViewMode() && CEditDoc::GetInstance(0)->m_cDocLocker.IsDocWritable() );
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
 
@@ -95,6 +97,11 @@ void CDlgExec::SetData( void )
 		int nExecFlgOpt;
 		nExecFlgOpt = m_pShareData->m_nExecFlgOpt;
 		
+		// ビューモードや上書き禁止のときは編集中ウィンドウへは出力しない	// 2009.02.21 ryoji
+		if( !m_bEditable ){
+			nExecFlgOpt &= ~0x02;
+		}
+
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_GETSTDOUT, nExecFlgOpt & 0x01 ? BST_CHECKED : BST_UNCHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUT, nExecFlgOpt & 0x02 ? BST_UNCHECKED : BST_CHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_EDITWINDOW, nExecFlgOpt & 0x02 ? BST_CHECKED : BST_UNCHECKED );
@@ -103,7 +110,7 @@ void CDlgExec::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_UNICODE_SEND, nExecFlgOpt & 0x10 ? BST_CHECKED : BST_UNCHECKED );	// 2008/6/20 Uchi
 
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), ((nExecFlgOpt & 0x01) && m_bEditable)? TRUE : FALSE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
@@ -152,7 +159,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			BOOL bEnabled;
 			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), bEnabled );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), bEnabled );
+			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), bEnabled && m_bEditable );	// ビューモードや上書き禁止の条件追加	// 2009.02.21 ryoji
 		}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
