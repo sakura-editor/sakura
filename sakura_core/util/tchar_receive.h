@@ -20,12 +20,15 @@
 	TCHAR→wchar_t変換が発生します。
 
 	2007.10.27 kobake 作成
+	2009.02.21 ryoji		標準文字列以外を扱う場合（UNICODEビルドでACHAR、ANSIビルドでWCHAR）に
+							512文字のサイズ制限付き静的バッファを使用していたのを、
+							サイズ制限の無い動的バッファを使うように変更。（負荷はどのみち変換のほうにがかかる）
 */
 template <class RECEIVE_CHAR_TYPE>
 class TcharReceiver{
 public:
 	TcharReceiver(RECEIVE_CHAR_TYPE* pReceiver, size_t nReceiverCount)	//!< 受け取りバッファを指定。
-	: m_pReceiver(pReceiver), m_nReceiverCount(nReceiverCount) { }
+	: m_pReceiver(pReceiver), m_nReceiverCount(nReceiverCount), m_pBuff(NULL) { }
 	operator TCHAR* (){ return GetBufferPointer(); }
 	~TcharReceiver(){ Apply(); }
 protected:
@@ -34,4 +37,5 @@ protected:
 private:
 	RECEIVE_CHAR_TYPE*	m_pReceiver;
 	size_t				m_nReceiverCount;
+	TCHAR*				m_pBuff;
 };
