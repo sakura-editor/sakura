@@ -31,6 +31,7 @@
 	@date	2004/01/28	Moca	改行コードが分割されるのを防ぐ
 	@date	2007/03/18	maru	オプションの拡張
 	@date	2008/06/07	Uchi	Unidoeの使用
+	@date	2009/02/21	ryoji	ビューモードや上書き禁止のときは編集中ウィンドウへは出力しない（指定時はアウトプットへ）
 */
 void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 {
@@ -39,9 +40,11 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	ZeroMemory( &pi, sizeof(pi) );
 	CDlgCancel				cDlgCancel;
 
+	BOOL bEditable = ( !CAppMode::Instance()->IsViewMode() && m_pcEditDoc->m_cDocLocker.IsDocWritable() );
+
 	//	From Here 2006.12.03 maru 引数を拡張のため
 	BOOL	bGetStdout		= nFlgOpt & 0x01 ? TRUE : FALSE;	//	子プロセスの標準出力を得る
-	BOOL	bToEditWindow	= nFlgOpt & 0x02 ? TRUE : FALSE;	//	TRUE=編集中のウィンドウ / FALSAE=アウトプットウィンドウ
+	BOOL	bToEditWindow	= ((nFlgOpt & 0x02) && bEditable) ? TRUE : FALSE;	//	TRUE=編集中のウィンドウ / FALSAE=アウトプットウィンドウ
 	BOOL	bSendStdin		= nFlgOpt & 0x04 ? TRUE : FALSE;	//	編集中ファイルを子プロセスSTDINに渡す
 	BOOL	bIOUnicodeGet	= nFlgOpt & 0x08 ? TRUE : FALSE;	//	標準出力をUnicodeで行う	2008/6/17 Uchi
 	BOOL	bIOUnicodeSend	= nFlgOpt & 0x10 ? TRUE : FALSE;	//	標準入力をUnicodeで行う	2008/6/20 Uchi
