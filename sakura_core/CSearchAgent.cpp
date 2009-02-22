@@ -571,6 +571,16 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		}
 	}
 
+	// バッファを確保
+	nWorkLen = 0;
+	i = pArg->sDelRange.GetFrom().y;
+	pCDocLine = m_pcDocLineMgr->GetLine( CLogicInt(i) );
+	while( i <= pArg->sDelRange.GetTo().y && NULL != pCDocLine ){
+		nWorkLen += pCDocLine->GetLengthWithEOL();
+		++i;
+		pCDocLine = m_pcDocLineMgr->GetLine( CLogicInt(i) );
+	}
+	pArg->pcmemDeleted->AllocStringBuffer( nWorkLen );
 
 	// 削除データの取得のループ
 	/* 前から処理していく */
@@ -630,7 +640,9 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			);
 		}
 
-		pArg->pcmemDeleted->AppendString( &pLine[nWorkPos], nWorkLen );
+		if( pArg->pcmemDeleted->GetStringPtr() != NULL ){
+			pArg->pcmemDeleted->AppendString( &pLine[nWorkPos], nWorkLen );
+		}
 
 next_line:;
 		/* 次の行のオブジェクトのポインタ */
