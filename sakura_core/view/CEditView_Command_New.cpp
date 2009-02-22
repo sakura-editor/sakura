@@ -686,9 +686,9 @@ void CEditView::ReplaceData_CEditView(
 	/*
 	|| バッファサイズの調整
 	*/
-	if( 2000 < sDelRange.GetTo().y - sDelRange.GetFrom().y ){
-		pcMemDeleted.AllocStringBuffer( 1024000 );
-	}
+//	if( 2000 < sDelRange.GetTo().y - sDelRange.GetFrom().y ){
+//		pcMemDeleted.AllocStringBuffer( 1024000 );
+//	}
 
 
 	/* 文字列置換 */
