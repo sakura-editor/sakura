@@ -398,8 +398,8 @@ normal_action:;
 			GetSelectionInfo().m_bBeginLineSelect = TRUE;
 
 			// 2009.02.22 ryoji 
-			// Command_GOLINEEND()/Command_RIGHT()ではなく末尾座標を計算して移動選択する方法に変更
-			// ※Command_GOLINEEND()/Command_RIGHT()は[行末文字の右へ移動]＋[次行の先頭文字の右に移動]の仕様だとＮＧ
+			// Command_GOLINEEND()/Command_RIGHT()ではなく次のレイアウトを調べて移動選択する方法に変更
+			// ※Command_GOLINEEND()/Command_RIGHT()は[折り返し末尾文字の右へ移動]＋[次行の先頭文字の右に移動]の仕様だとＮＧ
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 			if( pcLayout ){
 				CLayoutPoint ptCaret;
@@ -409,7 +409,7 @@ normal_action:;
 				}else{
 					ptCaret.x = CLayoutInt(0);
 				}
-				ptCaret.y = GetCaret().GetCaretLayoutPos().GetY2() + 1;	// 改行無し末尾行でも MoveCursor() が有効な座標に調整してくれる
+				ptCaret.y = GetCaret().GetCaretLayoutPos().GetY2() + 1;	// 改行無しEOF行でも MoveCursor() が有効な座標に調整してくれる
 				GetCaret().MoveCursor( ptCaret, TRUE );
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 				GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
