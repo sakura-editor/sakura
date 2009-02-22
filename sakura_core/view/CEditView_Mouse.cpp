@@ -397,25 +397,22 @@ normal_action:;
 			/* 現在のカーソル位置から選択を開始する */
 			GetSelectionInfo().m_bBeginLineSelect = TRUE;
 
-			// 2002.10.07 YAZAKI 折り返し行をインデントしているときに選択がおかしいバグの対策
-			// １行が画面幅よりも長いと左右にスクロールしてちらつきが激しくなるので後で全体を再描画	// 2008.05.20 ryoji
-			bool bDrawSwitchOld = GetDrawSwitch();
-			bool bDrawAfter = false;
-			if( bDrawSwitchOld ){
-				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-				if( pcLayout ){
-					CLayoutInt nColumn = LineIndexToColmn( pcLayout, CLogicInt(pcLayout->GetLengthWithoutEOL()) );
-					bDrawAfter = (nColumn + CLayoutInt(SCROLLMARGIN_RIGHT) >= GetTextArea().m_nViewColNum);
-					if( bDrawAfter ){
-						SetDrawSwitch( false );
-					}
+			// 2009.02.22 ryoji 
+			// Command_GOLINEEND()/Command_RIGHT()ではなく末尾座標を計算して移動選択する方法に変更
+			// ※Command_GOLINEEND()/Command_RIGHT()は[行末文字の右へ移動]＋[次行の先頭文字の右に移動]の仕様だとＮＧ
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+			if( pcLayout ){
+				CLayoutPoint ptCaret;
+				const CLayout* pNext = pcLayout->GetNextLayout();
+				if( pNext ){
+					ptCaret.x = pNext->GetIndent();
+				}else{
+					ptCaret.x = CLayoutInt(0);
 				}
-			}
-			GetCommander().Command_GOLINEEND( TRUE, FALSE );
-			GetCommander().Command_RIGHT( true, false, false );
-			if( bDrawSwitchOld && bDrawAfter ){
-				SetDrawSwitch( true );
-				Redraw();
+				ptCaret.y = GetCaret().GetCaretLayoutPos().GetY2() + 1;	// 改行無し末尾行でも MoveCursor() が有効な座標に調整してくれる
+				GetCaret().MoveCursor( ptCaret, TRUE );
+				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+				GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
 			}
 
 			//	Apr. 14, 2003 genta
