@@ -2,6 +2,7 @@
 	タイプ別設定 - カラー
 
 	2008.04.12 kobake CPropTypes.cppから分離
+	2009.02.22 ryoji
 */
 #include "stdafx.h"
 #include "CPropTypes.h"
@@ -242,20 +243,22 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( -1 == nIndex ){
 			break;
 		}
-		::SendMessageAny( hwnd, LB_SETCURSEL, nIndex, 0 );
-		::SendMessageCmd( ::GetParent( hwnd ), WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwnd );
-		pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
-		/* 下線 */
-		if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )	// 2006.12.18 ryoji フラグ利用で簡素化
-		{
-			if( pColorInfo->m_bUnderLine ){	/* 下線で表示 */
-				pColorInfo->m_bUnderLine = false;
-				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, FALSE );
-			}else{
-				pColorInfo->m_bUnderLine = true;
-				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, TRUE );
+		if( 18 <= xPos && xPos <= rcItem.right - 29 ){	// 2009.02.22 ryoji 有効範囲の制限追加
+			::SendMessageAny( hwnd, LB_SETCURSEL, nIndex, 0 );
+			::SendMessageCmd( ::GetParent( hwnd ), WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwnd );
+			pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
+			/* 下線 */
+			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )	// 2006.12.18 ryoji フラグ利用で簡素化
+			{
+				if( pColorInfo->m_bUnderLine ){	/* 下線で表示 */
+					pColorInfo->m_bUnderLine = false;
+					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, FALSE );
+				}else{
+					pColorInfo->m_bUnderLine = true;
+					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, TRUE );
+				}
+				::InvalidateRect( hwnd, &rcItem, TRUE );
 			}
-			::InvalidateRect( hwnd, &rcItem, TRUE );
 		}
 		break;
 
@@ -263,18 +266,20 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( -1 == nIndex ){
 			break;
 		}
-		pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
-		/* 太字で表示 */
-		if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BOLD) )	// 2006.12.18 ryoji フラグ利用で簡素化
-		{
-			if( pColorInfo->m_bFatFont ){	/* 太字で表示 */
-				pColorInfo->m_bFatFont = false;
-				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, FALSE );
-			}else{
-				pColorInfo->m_bFatFont = true;
-				::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, TRUE );
+		if( 18 <= xPos && xPos <= rcItem.right - 29 ){	// 2009.02.22 ryoji 有効範囲の制限追加
+			pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
+			/* 太字で表示 */
+			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BOLD) )	// 2006.12.18 ryoji フラグ利用で簡素化
+			{
+				if( pColorInfo->m_bFatFont ){	/* 太字で表示 */
+					pColorInfo->m_bFatFont = false;
+					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, FALSE );
+				}else{
+					pColorInfo->m_bFatFont = true;
+					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, TRUE );
+				}
+				::InvalidateRect( hwnd, &rcItem, TRUE );
 			}
-			::InvalidateRect( hwnd, &rcItem, TRUE );
 		}
 		break;
 	case WM_LBUTTONUP:
