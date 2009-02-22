@@ -366,6 +366,8 @@
 #define HIDC_RADIO_BACKUP_DATETYPE2				10064 //付加する日時の種類（更新日時）//Jul. 05, 2001 JEPRO 追加
 #define HIDC_CHECK_BACKUP_RETAINEXT				10065 //元の拡張子を保存	// 2006.08.06 ryoji
 #define HIDC_CHECK_BACKUP_ADVANCED				10066 //詳細設定	// 2006.08.06 ryoji
+#define HIDC_RADIO_BACKUP_DATETYPE1A			10067 //付加する日時の種類（作成日時）※詳細設定ON用	// 2009.02.20 ryoji
+#define HIDC_RADIO_BACKUP_DATETYPE2A			10068 //付加する日時の種類（更新日時）※詳細設定ON用	// 2009.02.20 ryoji
 #define HIDC_BUTTON_DELETE						10100 //メニューから機能削除
 #define HIDC_BUTTON_INSERTSEPARATOR				10101 //セパレータ挿入
 #define HIDC_BUTTON_INSERT						10102 //メニューへ機能挿入
@@ -376,6 +378,8 @@
 #define HIDC_BUTTON_EXPORT						10107 //エクスポート
 #define HIDC_COMBO_FUNCKIND						10130 //機能の種別
 #define HIDC_COMBO_MENU							10131 //メニューの種別
+#define HIDC_EDIT_MENUNAME						10132 //メニュー名	// 2009.02.20 ryoji
+#define HIDC_BUTTON_MENUNAME					10133 //メニュー名設定	// 2009.02.20 ryoji
 #define HIDC_LIST_FUNC							10150 //機能一覧
 #define HIDC_LIST_RES							10151 //メニュー一覧
 #define HIDC_CHECK_ADDCRLFWHENCOPY				10210 //折り返し行に改行を付けてコピー
