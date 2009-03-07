@@ -692,7 +692,7 @@ LRESULT CControlTray::DispatchEvent(
 							m_hInstance,
 							NULL,
 							_T("*.*"),
-							vMRU[0],//@@@ 2001.12.26 YAZAKI m_fiMRUArrにはアクセスしない
+							vMRU.empty()? NULL: vMRU[0],//@@@ 2001.12.26 YAZAKI m_fiMRUArrにはアクセスしない
 							vMRU,
 							CMRUFolder().GetPathList()	// OPENFOLDERリストのファイルのリスト
 						);
