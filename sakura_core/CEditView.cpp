@@ -7285,7 +7285,7 @@ DWORD CEditView::DoGrep(
 	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_bGrepRealTimeView );	// 2003.06.23 Moca
 	//	2008.12.13 genta ƒpƒ^[ƒ“‚ª’·‚·‚¬‚éê‡‚Í“o˜^‚µ‚È‚¢
 	//	(³‹K•\Œ»‚ª“r’†‚Å“rØ‚ê‚é‚Æ¢‚é‚Ì‚Å)
-	if( sizeof( m_pcEditDoc->m_szGrepKey ) < pcmGrepKey->GetLength() ){
+	if( pcmGrepKey->GetLength() < sizeof( m_pcEditDoc->m_szGrepKey )){
 		strcpy( m_pcEditDoc->m_szGrepKey, pcmGrepKey->GetPtr() );
 	}
 	m_pcEditDoc->m_bGrepMode = TRUE;
