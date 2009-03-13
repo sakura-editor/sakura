@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CTextMetrics.h"
-#include "charset/charcode.h"
+//#include "charset/charcode.h"
+#include "charset/codechecker.h"
 #include <vector>
 using namespace std;
 
@@ -109,7 +110,18 @@ const int* CTextMetrics::GenerateDxArray(
 		}
 		else if (IsUTF16Low(*q)) {
 			// サロゲートペア（下位）単独の場合は全角扱い
-			*p = (bHigh) ? 0 : nHankakuDx*2;
+			//*p = (bHigh) ? 0 : nHankakuDx*2;
+			if (bHigh) {
+				*p = 0;
+			}
+			else{
+				if (IsBinaryOnSurrogate(*q)) {
+					*p = nHankakuDx;
+				}
+				else{
+					*p = nHankakuDx*2;
+				}
+			}
 			bHigh = false;
 		}
 		else  if(IsHankaku(*q)){

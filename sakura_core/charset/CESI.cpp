@@ -318,7 +318,7 @@ void CESI::GetEncodingInfo_sjis( const char* pS, const int nLen )
 void CESI::GetEncodingInfo_jis( const char* pS, const int nLen )
 {
 	const char *pr, *pr_end;
-	char *pr_next;
+	const char *pr_next;
 	int nescbytes, nillbytes;
 	int nlen, nerror;
 	EMyJisEscseq emyjisesc;
@@ -424,8 +424,6 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 		return;
 	}
 
-	CMemory cmbuffer;
-
 	npoints = 0;
 	berror = false;
 	pr = pS;
@@ -435,64 +433,31 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 	do{ // 検査ループ --------------------------------------------------
 
 		/* セットD/O 文字列の検査 */
-
 		nlen_setd = CheckUtf7DPart( pr, pr_end-pr, &pr_next, &berror );
-
-		if( berror || pr+nlen_setd == pr_end ){
+		if( berror || pr_next == pr_end ){
 			// エラーが出た、または、データの検査が終了した場合、検査終了。
-			//goto finish_codecheck;
 			break;
 		}
+
 		pr = pr_next;
 
 		/* セットB 文字列の検査 */
-
-		nlen_setb = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror );
-
+		nlen_setb = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror, UC_NONCHARACTER | UC_RESERVED_CP );
 		if( pr+nlen_setb == pr_next && pr_next == pr_end ){
 			// セットＢ文字列の終端文字 '-' が無い、かつ、
 			// 次の読み込み位置が調査データの終端文字上にある場合、エラーを取り消して検査終了
 			berror = false;
-			//goto finish_codecheck;
 			break;
 		}
 		if( berror ){
 			// 一つ以上のエラーが見つかれば、検査終了。
-			//goto finish_codecheck;
 			break;
 		}
 
-		// 実際にデコードして内容を確認する。
-		wchar_t* pdata;
-		int ndatalen, nret;
-		ECharSet echarset;
-
-		cmbuffer.AllocBuffer( nlen_setb );
-		pdata = reinterpret_cast<wchar_t*>( cmbuffer.GetRawPtr() );
-		if( pdata != NULL ){
-			ndatalen = _DecodeBase64( pr, nlen_setb, reinterpret_cast<char*>(pdata) ) / sizeof(wchar_t);
-			CMemory::SwapHLByte( reinterpret_cast<char*>(pdata), ndatalen * sizeof(wchar_t) );
-			for( int i = 0; i < ndatalen; i++ ){
-				nret = CheckUtf16leChar( &pdata[i], ndatalen - i, &echarset );
-				if( echarset == CHARSET_BINARY ){
-					berror = true;
-					goto finish_codecheck;
-				}
-
-				if( nret == 1 ){
-					if( IsUtf7SetD(pdata[i]) ){
-						berror = true;
-						goto finish_codecheck;
-					}
-				}
-			}
-		}
 		pr = pr_next;
 		npoints += nlen_setb; // セットＢの文字列の長さをポイントとして加算する。
 
 	}while( pr_next < pr_end );  // 検査ループ終了  --------------------
-
-finish_codecheck:;
 
 
 	if( berror ){
@@ -532,7 +497,7 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 	pr = pS;
 	pr_end = pS + nLen;
 
-	for( ; 0 != (nret = CheckUtf8Char(pr, pr_end-pr, &echarset)); pr += nret ){
+	for( ; 0 != (nret = CheckUtf8Char(pr, pr_end-pr, &echarset, true, UC_NONCHARACTER)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
 				num_of_utf8_encoded_bytes += nret;
@@ -620,8 +585,8 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 
 	for( ; ; ){
 
-		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1 );
-		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2 );
+		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1, UC_NONCHARACTER );
+		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2, UC_NONCHARACTER );
 		if( nret1 == 0 && nret2 == 0 ){
 			// LE BE 両方共のチェックが終了した。
 			break;

@@ -34,10 +34,6 @@ public:
 	{
 		return true;
 	}
-	CLayoutInt GetLayoutLength(const wchar_t* pText, CLayoutInt nStartCol) const
-	{
-		return CLayoutInt(WCODE::IsZenkaku(pText[0])?2:1);
-	}
 };
 
 
@@ -69,6 +65,11 @@ bool CFigureSpace::DrawImp(SColorStrategyInfo* pInfo)
 	DispSpace(pInfo->gr, pInfo->pDispPos,pInfo->pcView);
 	if( nType == 1 )
 		pInfo->gr.PopTextBackColor();
+	pInfo->nPosInLogic += CNativeW::GetSizeOfChar(	// 行末以外はここでスキャン位置を１字進める
+							pInfo->pLineOfLogic,
+							pInfo->GetDocLine()->GetLengthWithoutEOL(),
+							pInfo->GetPosInLogic()
+							);
 	return true;
 }
 
@@ -83,6 +84,8 @@ CFigureManager::CFigureManager()
 	m_vFigures.push_back(new CFigure_ZenSpace());
 	m_vFigures.push_back(new CFigure_Eol());
 	m_vFigures.push_back(new CFigure_CtrlCode());
+	m_vFigures.push_back(new CFigure_HanBinary());
+	m_vFigures.push_back(new CFigure_ZenBinary());
 	m_vFigures.push_back(new CFigure_Text());
 }
 

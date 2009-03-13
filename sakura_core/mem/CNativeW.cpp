@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "mem/CNativeW.h"
-#include "charset/charcode.h"
+//#include "charset/charcode.h"
 #include "CEol.h"
 #include <mbstring.h>
 #include "charset/CShiftJis.h"
+#include "charset/codechecker.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
@@ -198,8 +199,8 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, int nDataLen, int nIdx 
 		return CLogicInt(0);
 
 	// サロゲートチェック					2008/7/5 Uchi
-	if (WCODE::IsUTF16High(pData[nIdx])) {
-		if (nIdx + 1 < nDataLen && WCODE::IsUTF16Low(pData[nIdx + 1])) {
+	if (IsUTF16High(pData[nIdx])) {
+		if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
 			// サロゲートペア 2個分
 			return CLogicInt(2);
 		}
@@ -216,16 +217,20 @@ CLayoutInt CNativeW::GetKetaOfChar( const wchar_t* pData, int nDataLen, int nIdx
 		return CLayoutInt(0);
 
 	// サロゲートチェック BMP 以外は全角扱い		2008/7/5 Uchi
-	if (WCODE::IsUTF16High(pData[nIdx])) {
+	if (IsUTF16High(pData[nIdx])) {
 		return CLayoutInt(2);	// 仮
 	}
-	if (WCODE::IsUTF16Low(pData[nIdx])) {
-		if (nIdx > 0 && WCODE::IsUTF16High(pData[nIdx - 1])) {
+	if (IsUTF16Low(pData[nIdx])) {
+		if (nIdx > 0 && IsUTF16High(pData[nIdx - 1])) {
 			// サロゲートペア（下位）
 			return CLayoutInt(0);
 		}
 		// 単独（ブロークンペア）
-		return CLayoutInt(2);
+		// return CLayoutInt(2);
+		 if( IsBinaryOnSurrogate(pData[nIdx]) )
+			return CLayoutInt(1);
+		else
+			return CLayoutInt(2);
 	}
 
 	//半角文字なら 1
@@ -249,8 +254,8 @@ const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, int nDataLen, const 
 	}
 
 	// サロゲートペア対応	2008/7/6 Uchi
-	if (WCODE::IsUTF16High(*pDataCurrent)) {
-		if (WCODE::IsUTF16Low(*pNext)) {
+	if (IsUTF16High(*pDataCurrent)) {
+		if (IsUTF16Low(*pNext)) {
 			pNext += 1;
 		}
 	}
@@ -268,8 +273,8 @@ const wchar_t* CNativeW::GetCharPrev( const wchar_t* pData, int nDataLen, const 
 	}
 
 	// サロゲートペア対応	2008/7/6 Uchi
-	if (WCODE::IsUTF16Low(*pPrev)) {
-		if (WCODE::IsUTF16High(*(pPrev-1))) {
+	if (IsUTF16Low(*pPrev)) {
+		if (IsUTF16High(*(pPrev-1))) {
 			pPrev -= 1;
 		}
 	}

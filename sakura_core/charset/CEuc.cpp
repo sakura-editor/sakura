@@ -2,173 +2,220 @@
 #include "CEuc.h"
 #include "CShiftJis.h"
 #include "charset/charcode.h"
-#include <mbstring.h>
-#include "codeutil.h"
-//#include <MLang.h>
+#include "charset/codechecker.h"
+
+
+/*!
+	EUCJP → Unicode 変換関数
+*/
+int CEuc::EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+{
+	const unsigned char *pr, *pr_end;
+	unsigned short *pw;
+	int nclen;
+	ECharSet echarset;
+	bool berror_tmp, berror=false;
+
+	if( nSrcLen < 1 ){
+		if( pbError ){
+			*pbError = false;
+		}
+		return 0;
+	}
+
+	pr = reinterpret_cast<const unsigned char*>(pSrc);
+	pr_end = reinterpret_cast<const unsigned char*>(pSrc + nSrcLen);
+	pw = reinterpret_cast<unsigned short*>(pDst);
+
+	for( ; (nclen = CheckEucjpChar(reinterpret_cast<const char*>(pr), pr_end-pr, &echarset)) != 0; pr += nclen ){
+		switch( echarset ){
+		case CHARSET_ASCII7:
+			// 保護コード
+			if( nclen != 1 ){
+				nclen = 1;
+			}
+			// 7-bit ASCII の変換
+			*pw = *pr;
+			++pw;
+			break;
+		case CHARSET_JIS_HANKATA:
+		case CHARSET_JIS_ZENKAKU:
+			// 保護コード
+			if( echarset == CHARSET_JIS_HANKATA && nclen != 2 ){
+				nclen = 2;
+			}
+			if( echarset == CHARSET_JIS_ZENKAKU && nclen != 2 ){
+				nclen = 2;
+			}
+			// 全角文字・半角カタカナ文字の変換
+			pw += _EucjpToUni_char( pr, pw, echarset, &berror_tmp );
+			if( berror_tmp == true ){
+				berror = true;
+			}
+			break;
+		default:// case CHARSET_BINARY:
+			// 保護コード
+			if( nclen != 1 ){
+				nclen = 1;
+			}
+			// 読み込みエラーになった文字を PUA に対応づける
+			pw += BinToText( pr, nclen, pw );
+		}
+	}
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return pw - reinterpret_cast<unsigned short*>(pDst);
+}
+
 
 /* EUC→Unicodeコード変換 */
 //2007.08.13 kobake 追加
 EConvertResult CEuc::EUCToUnicode(CMemory* pMem)
 {
+	// エラー状態
+	bool bError = false;
+
+	// ソース取得
+	int nSrcLen;
+	const char* pSrc = reinterpret_cast<const char*>( pMem->GetRawPtr(&nSrcLen) );
+
+	// 変換先バッファサイズとその確保
+	wchar_t* pDst;
+	try{
+		pDst = new wchar_t[nSrcLen];
+	}catch( ... ){
+		pDst = NULL;
+	}
+	if( pDst == NULL ){
+		return RESULT_FAILURE;
+	}
+
+	// 変換
+	int nDstLen = EucjpToUni( pSrc, nSrcLen, pDst, &bError );
+
+	// pMem を更新
+	pMem->SetRawData( pDst, nDstLen*sizeof(wchar_t) );
+
+	// 後始末
+	delete [] pDst;
+
 	//$$ SJISを介しているので無駄にデータを失うかも？
-	EUCToSJIS(pMem);
-	return CShiftJis::SJISToUnicode(pMem);		//	エラーを返すようにする。	2008/5/12 Uchi
+	// エラーを返すようにする。	2008/5/12 Uchi
+	if( bError == false ){
+		return RESULT_COMPLETE;
+	}else{
+		return RESULT_LOSESOME;
+	}
 }
+
+
+
+
+
+int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError )
+{
+	int nclen;
+	const unsigned short *pr, *pr_end;
+	unsigned char* pw;
+	bool berror=false, berror_tmp;
+	ECharSet echarset;
+
+	pr = reinterpret_cast<const unsigned short*>(pSrc);
+	pr_end = reinterpret_cast<const unsigned short*>(pSrc + nSrcLen);
+	pw = reinterpret_cast<unsigned char*>(pDst);
+
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, false)) > 0 ){
+		// 保護コード
+		switch( echarset ){
+		case CHARSET_UNI_NORMAL:
+			nclen = 1;
+			break;
+		case CHARSET_UNI_SURROG:
+			nclen = 2;
+			break;
+		default:
+			echarset = CHARSET_BINARY;
+			nclen = 1;
+		}
+		if( echarset != CHARSET_BINARY ){
+			pw += _UniToEucjp_char( pr, pw, echarset, &berror_tmp );
+			// 保護コード
+			if( berror_tmp == true ){
+				berror = true;
+			}
+			pr += nclen;
+		}else{
+			if( nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr)) ){
+				*pw = static_cast<unsigned char>( TextToBin(*pr) & 0x00ff );
+				++pw;
+			}else{
+				// 保護コード
+				berror = true;
+				*pw = '?';
+				++pw;
+			}
+			++pr;
+		}
+	}
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return pw - reinterpret_cast<unsigned char*>(pDst);
+}
+
 
 EConvertResult CEuc::UnicodeToEUC(CMemory* pMem)
 {
-	EConvertResult	res;
+	// エラー状態
+	bool bError = false;
 
-	//$$ SJISを介しているので無駄にデータを失うかも？
-	res = CShiftJis::UnicodeToSJIS(pMem);
-	if (res != RESULT_COMPLETE) {
-		return res;				//	エラーがあったならばエラーを返すようにする。	2008/5/12 Uchi
+	const wchar_t* pSrc = reinterpret_cast<wchar_t*>( pMem->GetRawPtr() );
+	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
+
+	// 必要なバッファサイズを調べてメモリを確保
+	char* pDst;
+	try{
+		pDst = new char[nSrcLen * 2];
+	}catch( ... ){
+		pDst = NULL;
 	}
-	SJISToEUC(pMem);
+	if( pDst == NULL ){
+		return RESULT_FAILURE;
+	}
 
-	return RESULT_COMPLETE;
+	// 変換
+	int nDstLen = UniToEucjp( pSrc, nSrcLen, pDst, &bError );
+
+	// pMem を更新
+	pMem->SetRawData( pDst, nDstLen );
+
+	// 後始末
+	delete [] pDst;
+
+	if( bError == false ){
+		return RESULT_COMPLETE;
+	}else{
+		return RESULT_LOSESOME;
+	}
 }
 
 
-/************************************************************************
-*
-*【関数名】
-*	EUCToSJIS
-*
-*【機能】
-*	指定範囲のバッファ内にEUC漢字コード
-*	があればSJIS全角コードに変換する。	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-*	半角文字は変換せずにそのまま残す。
-*
-*	制御文字CRLF以外のバイナリコードが混入している場合には結果が不定と
-*	なることがあるので注意。
-*	バッファの最後に漢字コードの1バイト目だけがあると困る
-*
-*【入力】	なし
-*
-*【戻り値】	なし
-*
-************************************************************************/
-/* EUC→SJISコード変換 */
-void CEuc::EUCToSJIS( CMemory* pMem )
-{
-	//データ取得
-	int				nBufLen;
-	const char*		pBuf = (const char*)pMem->GetRawPtr(&nBufLen);
-
-	CMemory cmemTmp;
-
-	int				nPtr = 0L;
-	int				nPtrDes = 0L;
-	char*			pszDes = new char[nBufLen];
-	unsigned int	sCode;
-
-	while( nPtr < nBufLen ){
-		if( (unsigned char)pBuf[nPtr] == (unsigned char)0x8e && nPtr < nBufLen - 1 ){
-			/* 半角カタカナ */
-			pszDes[nPtrDes] = pBuf[nPtr + 1];
-			nPtrDes++;
-			nPtr += 2;
-		}
-		/* EUC漢字コードか? */
-		else if( nPtr < nBufLen - 1 && CEuc::IsEucKan1(pBuf[nPtr]) && CEuc::IsEucKan2(pBuf[nPtr + 1L]) ){
-			/* 通常のJISコードに変換 */
-			char jis[2];
-			jis[0] = pBuf[nPtr	  ] & 0x7f;
-			jis[1] = pBuf[nPtr + 1L] & 0x7f;
-
-			/* SJISコードに変換 */	//Sept. 1, 2000 jepro 'シフト'を'S'に変更
-			sCode = (unsigned short)_mbcjistojms(
-				(unsigned int)
-				((unsigned short)jis[0] << 8) |
-				 ((unsigned short)jis[1])
-			);
-			if( sCode != 0 ){
-				pszDes[nPtrDes	  ] = (unsigned char)(sCode >> 8);
-				pszDes[nPtrDes + 1] = (unsigned char)(sCode);
-				nPtrDes += 2;;
-				nPtr += 2;
-			}else{
-				pszDes[nPtrDes] = jis[0];
-				nPtrDes++;
-				nPtr++;
-			}
-		}
-		else{
-			pszDes[nPtrDes] = pBuf[nPtr];
-			nPtrDes++;
-			nPtr++;
-		}
-	}
-	pMem->SetRawData( pszDes, nPtrDes );
-	delete [] pszDes;
-	return;
-}
-
-
-/* SJIS→EUCコード変換 */
-void CEuc::SJISToEUC( CMemory* pMem )
-{
-	//データ取得
-	int				nBufLen;
-	unsigned char*	pBuf = (unsigned char*)pMem->GetRawPtr(&nBufLen);
-
-	int				i;
-	int				nCharChars;
-	unsigned char*	pDes;
-	int				nDesIdx;
-	unsigned short	sCode;
-
-	pDes = new unsigned char[nBufLen * 2];
-	nDesIdx = 0;
-	for( i = 0; i < nBufLen; ++i ){
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CShiftJis::GetSizeOfChar( reinterpret_cast<char*>(pBuf), nBufLen, i );
-		if( nCharChars == 1 ){
-			if( pBuf[i] >= (unsigned char)0x80 ){
-				/* 半角カタカナ */
-				pDes[nDesIdx	] = (unsigned char)0x8e;
-				pDes[nDesIdx + 1] = pBuf[i];
-				nDesIdx += 2;
-			}else{
-				pDes[nDesIdx] = pBuf[i];
-				nDesIdx++;
-			}
-		}else
-		if( nCharChars == 2 ){
-			/* 全角文字 */
-			//	Oct. 3, 2002 genta IBM拡張文字対応
-			sCode =	(unsigned short)_mbcjmstojis_ex( pBuf + i );
-			if(sCode != 0){
-				pDes[nDesIdx	] = (unsigned char)0x80 | (unsigned char)(sCode >> 8);
-				pDes[nDesIdx + 1] = (unsigned char)0x80 | (unsigned char)(sCode);
-				nDesIdx += 2;
-				++i;
-			}else{
-				pDes[nDesIdx	] = pBuf[i];
-				pDes[nDesIdx + 1] = pBuf[i + 1];
-				nDesIdx += 2;
-				++i;
-			}
-		}else
-		if( nCharChars > 0 ){
-			i += nCharChars - 1;
-		}
-	}
-	pMem->SetRawData( pDes, nDesIdx );
-	delete [] pDes;
-	return;
-}
 
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
 EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst)
 {
-	static CMemory	cCharBuffer;
+	CMemory	cCharBuffer;
 	EConvertResult	res;
 	int				i;
 	TCHAR*			pd; 
 	unsigned char*	ps; 
+	bool			bbinary=false;
 
 	// 2008/6/21 Uchi
 	if (CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispUniInEuc) {
@@ -180,6 +227,10 @@ EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* p
 	cCharBuffer.SetRawData("",0);
 	cCharBuffer.AppendRawData( cSrc, sizeof(wchar_t));
 
+	if( IsBinaryOnSurrogate(cSrc[0]) ){
+		bbinary = true;
+	}
+
 	// EUC-JP 変換
 	res = UnicodeToEUC(&cCharBuffer);
 	if (res != RESULT_COMPLETE) {
@@ -187,8 +238,14 @@ EConvertResult CEuc::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* p
 	}
 
 	// Hex変換
-	for (i = cCharBuffer.GetRawLength(), ps = (unsigned char*)cCharBuffer.GetRawPtr(), pd = pDst; i >0; i--, ps ++, pd += 2) {
-		auto_sprintf( pd, _T("%02x"), *ps);
+	ps = reinterpret_cast<unsigned char*>( cCharBuffer.GetRawPtr() );
+	pd = pDst;
+	if( bbinary == false ){
+		for (i = cCharBuffer.GetRawLength(); i >0; i--, ps ++, pd += 2) {
+			auto_sprintf( pd, _T("%02x"), *ps);
+		}
+	}else{
+		auto_sprintf( pd, _T("?%02x"), *ps );
 	}
 
 	return RESULT_COMPLETE;

@@ -2,12 +2,45 @@
 
 #include "stdafx.h"
 #include "CUnicode.h"
+#include "codechecker.h"
+#include "mem/CMemory.h"
 
-EConvertResult CUnicode::UnicodeToUnicode( CMemory* pMem )
+
+EConvertResult CUnicode::_UnicodeToUnicode_in( CMemory* pMem, const bool bBigEndian )
 {
-	//何もしない
+	// ソース取得
+	int nSrcLen;
+	unsigned char* pSrc = reinterpret_cast<unsigned char*>( pMem->GetRawPtr(&nSrcLen) );
+
+	if( bBigEndian ){
+		pMem->SwapHLByte();  // UnicodeBe -> Unicode
+	}
+
+	if( nSrcLen % 2 == 1 ){
+		// 最後の1バイトを U+0000 から U+00FF までにマップする。
+		pMem->AllocBuffer( nSrcLen + 1 );
+		if( pMem->GetRawPtr() != NULL ){
+			pSrc[nSrcLen] = 0;
+			pMem->_SetRawLength( nSrcLen + 1 );
+		}
+
+		return RESULT_LOSESOME;
+	}
 	return RESULT_COMPLETE;
 }
+
+
+EConvertResult CUnicode::_UnicodeToUnicode_out( CMemory* pMem, const bool bBigEndian )
+{
+	if( bBigEndian == true ){
+		pMem->SwapHLByte();
+	}
+
+	return RESULT_COMPLETE;   // 何もしない
+}
+
+
+
 
 void CUnicode::GetBom(CMemory* pcmemBom)
 {

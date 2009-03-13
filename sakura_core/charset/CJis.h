@@ -18,14 +18,12 @@ public:
 	static EConvertResult JISToUnicode(CMemory* pMem, bool base64decode = true);	// E-Mail(JIS→Unicode)コード変換	//2007.08.13 kobake 追加
 	static EConvertResult UnicodeToJIS(CMemory* pMem);		// Unicode   → JISコード変換
 
-	static void SJIStoJIS(CMemory* pMem);		// SJIS→JISコード変換
-	static void JIStoSJIS( CMemory* pMem, bool base64decode = true);		// E-Mail(JIS→SJIS)コード変換	//Jul. 15, 2001 JEPRO
-
 protected:
-	static long MemJIStoSJIS(unsigned char*, long );	/* JIS→SJIS変換 */
-	static long MemSJIStoJIS( unsigned char*, long );	/* SJIS→JIS変換 */
-	static int StrSJIStoJIS( CMemory*, unsigned char*, int );	/* SJIS→JISで新メモリ確保 */
-	static long QuotedPrintable_Decode(char*, long );	/* Quoted-Printableデコード */
+	// 2008.11.10  変換ロジックを書き直す
+	static int _JisToUni_block( const unsigned char*, const int, unsigned short*, const EMyJisEscseq, bool* pbError );
+	static int JisToUni( const char*, const int, wchar_t*, bool* pbError );
+	static int _SjisToJis_char( const unsigned char*, unsigned char*, const ECharSet, bool* pbError );
+	static int UniToJis( const wchar_t*, const int, char*, bool* pbError );
 
 private:
 	//変換方針
@@ -34,19 +32,19 @@ private:
 public:
 	//各種判定定数
 	// JIS コードのエスケープシーケンス文字列データ
-	static const char JISESCDATA_ASCII[];
+	static const char JISESCDATA_ASCII7[];
 	static const char JISESCDATA_JISX0201Latin[];
 	static const char JISESCDATA_JISX0201Latin_OLD[];
 	static const char JISESCDATA_JISX0201Katakana[];
 	static const char JISESCDATA_JISX0208_1978[];
 	static const char JISESCDATA_JISX0208_1983[];
 	static const char JISESCDATA_JISX0208_1990[];
-	static const int TABLE_JISESCLEN[];
-	static const char* TABLE_JISESCDATA[];
+//	static const int TABLE_JISESCLEN[];
+//	static const char* TABLE_JISESCDATA[];
 };
 
 
-
+#if 0 // codechecker.h に定義されている
 /*! JIS コードのエスケープシーケンスたち */
 /*
 	符号化文字集合       16進表現            文字列表現[*1]
@@ -73,3 +71,15 @@ public:
 	出展：http://www.asahi-net.or.jp/~wq6k-yn/code/
 	参考：http://homepage2.nifty.com/zaco/code/
 */
+enum EJisESCSeqType {
+	JISESC_UNKNOWN,
+	JISESC_ASCII,
+	JISESC_JISX0201Latin,
+	JISESC_JISX0201Latin_OLD,
+	JISESC_JISX0201Katakana,
+	JISESC_JISX0208_1978,
+	JISESC_JISX0208_1983,
+	JISESC_JISX0208_1990,
+};
+
+#endif

@@ -20,11 +20,6 @@ bool CFigure_ZenSpace::Match(const wchar_t* pText) const
 	return false;
 }
 
-CLayoutInt CFigure_ZenSpace::GetLayoutLength(const wchar_t* pText, CLayoutInt nStartCol) const
-{
-	return CLayoutInt(2);
-}
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         •`‰æŽÀ‘•                            //

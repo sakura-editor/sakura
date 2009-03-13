@@ -213,7 +213,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 	if( hText != NULL ){
 		char* szData = GlobalLockChar(hText);
 		//SJIS¨UNICODE
-		CMemory cmemSjis( szData, GlobalSize(szData) );
+		CMemory cmemSjis( szData, GlobalSize(hText) );
 		CShiftJis::SJISToUnicode(&cmemSjis);
 		cmemBuf->SetString( reinterpret_cast<const wchar_t*>(cmemSjis.GetRawPtr()) );
 		::GlobalUnlock(hText);

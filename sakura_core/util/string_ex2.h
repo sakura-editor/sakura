@@ -21,6 +21,7 @@ SAKURA_CORE_API int LimitStringLengthT( const TCHAR*, int, int, CNativeT& );/* ƒ
 SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é */
 SAKURA_CORE_API const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
 SAKURA_CORE_API const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol* ); // GetNextLine‚Ìwchar_t”Å
+// SAKURA_CORE_API const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLine‚Ìwchar_t”Å(ƒrƒbƒNƒGƒ“ƒfƒBƒAƒ“—p)  // –¢g—p
 SAKURA_CORE_API void GetLineColm( const wchar_t*, int*, int* );
 
 

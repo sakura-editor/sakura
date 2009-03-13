@@ -1,9 +1,9 @@
 #pragma once
 
 #include "CCodeBase.h"
+#include "charset/codeutil.h"
 
 class CShiftJis : public CCodeBase{
-public:
 
 public:
 	//CCodeBaseインターフェース
@@ -22,36 +22,98 @@ public:
 	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
 
 protected:
-	static int MemSJISToUnicode( char**, const char*, int );	/* ASCII&SJIS文字列をUnicode に変換 */
-
-public:
-	//各種判定関数
-	static bool IsSJisKan1( const uchar_t c );		//!< SJIS 文字長2 の場合の 0バイト目チェック
-	static bool IsSJisKan2( const uchar_t c );		//!< SJIS 文字長2 の場合の 1バイト目チェック
-	static bool IsSJisKan( const uchar_t* pC );		//!< IsSJisKan1 + IsSJisKan2
-	static bool IsSJisHanKata( const uchar_t c );	//!< SJIS 半角カタカナ判別
+	// 実装
+	// 2008.11.10 変換ロジックを書き直す
+	inline static int _SjisToUni_char( const unsigned char*, unsigned short*, const ECharSet, bool* pbError );
+	static int SjisToUni( const char*, const int, wchar_t *, bool* pbError );
+	inline static int _UniToSjis_char( const unsigned short*, unsigned char*, const ECharSet, bool* pbError );
+	static int UniToSjis( const wchar_t*, const int, char*, bool *pbError );
 };
 
 
-inline bool CShiftJis::IsSJisKan1( const uchar_t c )
+
+/*!
+	SJIS の全角一文字または半角一文字のUnicodeへの変換
+
+	eCharset は CHARSET_JIS_ZENKAKU または CHARSET_JIS_HANKATA 。
+
+	高速化のため、インライン化
+*/
+inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short *pDst, const ECharSet eCharset, bool* pbError )
 {
-	// 参考 URL: http://www.st.rim.or.jp/~phinloda/cqa/cqa15.html#Q4
-	//	return ( ((0x81 <= c) && (c <= 0x9f)) || ((0xe0 <= c) && (c <= 0xfc)) );
-	return static_cast<unsigned int>(c ^ 0x20) - 0xa1 < 0x3c;
+	int nret;
+	bool berror = false;
+
+	switch( eCharset ){
+	case CHARSET_JIS_HANKATA:
+		// 半角カタカナを処理
+		// エラーは起こらない。
+		nret = MyMultiByteToWideChar_JP( pSrc, 1, pDst );
+		// 保護コード
+		if( nret < 1 ){
+			nret = 1;
+		}
+		break;
+	case CHARSET_JIS_ZENKAKU:
+		// 全角文字を処理
+		nret = MyMultiByteToWideChar_JP( pSrc, 2, pDst );
+		if( nret < 1 ){	// SJIS -> Unicode 変換に失敗
+			nret = BinToText( pSrc, 2, pDst );
+		}
+		break;
+	default:
+		// 致命的エラー回避コード
+		berror = true;
+		pDst[0] = L'?';
+		nret = 1;
+	}
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return nret;
 }
 
-inline bool CShiftJis::IsSJisKan2( const uchar_t c )
-{
-	return ( 0x40 <= c && c <= 0xfc && c != 0x7f );
-}
 
-inline bool CShiftJis::IsSJisKan( const uchar_t* pC )
-{
-	return ( IsSJisKan1(*pC) && IsSJisKan2(*(pC+1)) );
-}
 
-inline bool CShiftJis::IsSJisHanKata( const uchar_t c )
+
+/*!
+	UNICODE -> SJIS 一文字変換
+
+	eCharset は CHARSET_UNI_NORMAL または CHARSET_UNI_SURROG。
+
+	高速化のため、インライン化
+*/
+inline int CShiftJis::_UniToSjis_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError )
 {
-	return ( 0xa1 <= c && c <= 0xdf );
+	int nret;
+	bool berror = false;
+
+	if( eCharset == CHARSET_UNI_NORMAL ){
+		nret = MyWideCharToMultiByte_JP( pSrc, 1, pDst );
+		if( nret < 1 ){
+			// Uni -> SJIS 変換に失敗
+			berror = true;
+			pDst[0] = '?';
+			nret = 1;
+		}
+	}else if( eCharset == CHARSET_UNI_SURROG ){
+		// サロゲートペアは SJIS に変換できない。
+		berror = true;
+		pDst[0] = '?';
+		nret = 1;
+	}else{
+		// 保護コード
+		berror = true;
+		pDst[0] = '?';
+		nret = 1;
+	}
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return nret;
 }
 

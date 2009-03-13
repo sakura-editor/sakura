@@ -5,30 +5,30 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         判定関数                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#include "charset/CShiftJis.h"
+#include "charset/codechecker.h"
 inline bool _IS_SJIS_1(unsigned char c)
 {
-	return CShiftJis::IsSJisKan1(c);
+	return IsSjisZen1(static_cast<char>(c));
 }
 inline bool _IS_SJIS_2(unsigned char c)
 {
-	return CShiftJis::IsSJisKan2(c);
+	return IsSjisZen2(static_cast<char>(c));
 }
 inline bool _IS_SJIS_1(char c)
 {
-	return CShiftJis::IsSJisKan1((unsigned char)c);
+	return IsSjisZen1(c);
 }
 inline bool _IS_SJIS_2(char c)
 {
-	return CShiftJis::IsSJisKan2((unsigned char)c);
+	return IsSjisZen2(c);
 }
 inline int my_iskanji1( int c )
 {
-	return CShiftJis::IsSJisKan1((unsigned char)c);
+	return IsSjisZen1(static_cast<char>(c & 0x00ff));
 }
 inline int my_iskanji2( int c )
 {
-	return CShiftJis::IsSJisKan2((unsigned char)c);
+	return IsSjisZen2(static_cast<char>(c & 0x00ff));
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -234,6 +234,7 @@ namespace WCODE
 	//! 句読点か
 	bool IsKutoten( wchar_t wc );
 
+/* codechecker.h へ移動
 	//! 高位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
 	inline bool IsUTF16High( wchar_t c )
 	{
@@ -244,7 +245,7 @@ namespace WCODE
 	{
 		return ( 0xdc00 == (0xfc00 & c ));
 	}
-
+*/
 }
 
 

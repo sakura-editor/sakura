@@ -34,11 +34,6 @@ bool CFigure_Eol::Match(const wchar_t* pText) const
 	return false;
 }
 
-CLayoutInt CFigure_Eol::GetLayoutLength(const wchar_t* pText, CLayoutInt nStartCol) const
-{
-	return CLayoutInt(2);
-}
-
 // 2006.04.29 Moca ‘I‘ğˆ—‚Ì‚½‚ßcüˆ—‚ğ’Ç‰Á
 //$$ ‚‘¬‰»‰Â”\B
 bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)

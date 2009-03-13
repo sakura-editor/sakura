@@ -22,17 +22,6 @@ bool CFigure_CtrlCode::Match(const wchar_t* pText) const
 	return false;
 }
 
-CLayoutInt CFigure_CtrlCode::GetLayoutLength(const wchar_t* pText, CLayoutInt nStartCol) const
-{
-	return CLayoutInt(1);
-}
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         描画実装                            //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//! コントロールコード描画
 void CFigure_CtrlCode::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView ) const
 {
 	//クリッピング矩形を計算。画面外なら描画しない
@@ -53,4 +42,94 @@ void CFigure_CtrlCode::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* p
 
 	//位置進める
 	pDispPos->ForwardDrawCol(1);
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     CFigure_HanBinary                       //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+bool CFigure_HanBinary::Match(const wchar_t* pText) const
+{
+	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+
+	if(TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp){
+		int nLen = pText[1]? 2:1;	// ※ pText は常に終端よりも手前
+		if(CNativeW::GetKetaOfChar(pText, nLen, 0) == 1){	// 半角
+			ECharSet e;
+			CheckUtf16leChar(pText, nLen, &e, UC_NONCHARACTER);
+			if(e == CHARSET_BINARY){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void CFigure_HanBinary::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView ) const
+{
+	//クリッピング矩形を計算。画面外なら描画しない
+	RECT rc;
+	if(pcView->GetTextArea().GenerateClipRect(&rc,*pDispPos,1))
+	{
+		::ExtTextOutW_AnyBuild(
+			gr,
+			pDispPos->GetDrawPos().x,
+			pDispPos->GetDrawPos().y,
+			ExtTextOutOption(),
+			&rc,
+			L"〓",
+			1,
+			pcView->GetTextMetrics().GetDxArray_AllHankaku()
+		);
+	}
+
+	//位置進める
+	pDispPos->ForwardDrawCol(1);
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     CFigure_ZenBinary                       //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+bool CFigure_ZenBinary::Match(const wchar_t* pText) const
+{
+	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
+	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
+
+	if(TypeDataPtr->m_ColorInfoArr[COLORIDX_CTRLCODE].m_bDisp){
+		int nLen = pText[1]? 2:1;	// ※ pText は常に終端よりも手前
+		if(CNativeW::GetKetaOfChar(pText, nLen, 0) > 1){	// 全角
+			ECharSet e;
+			CheckUtf16leChar(pText, nLen, &e, UC_NONCHARACTER);
+			if(e == CHARSET_BINARY){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void CFigure_ZenBinary::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView ) const
+{
+	//クリッピング矩形を計算。画面外なら描画しない
+	RECT rc;
+	if(pcView->GetTextArea().GenerateClipRect(&rc,*pDispPos,2))
+	{
+		::ExtTextOutW_AnyBuild(
+			gr,
+			pDispPos->GetDrawPos().x,
+			pDispPos->GetDrawPos().y,
+			ExtTextOutOption(),
+			&rc,
+			L"〓",
+			1,
+			pcView->GetTextMetrics().GetDxArray_AllZenkaku()
+		);
+	}
+
+	//位置進める
+	pDispPos->ForwardDrawCol(2);
 }

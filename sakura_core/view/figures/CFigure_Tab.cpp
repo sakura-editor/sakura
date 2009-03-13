@@ -19,14 +19,6 @@ bool CFigure_Tab::Match(const wchar_t* pText) const
 	return false;
 }
 
-//$$ 高速化可能。
-//$$ 整理可能。Matchの所でnStartColを取るとよい。CFigure_Tabインスタンスにタブ幅メンバを持たせる？
-CLayoutInt CFigure_Tab::GetLayoutLength(const wchar_t* pText, CLayoutInt nStartCol) const
-{
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	return pcDoc->m_cLayoutMgr.GetActualTabSpace( nStartCol );
-}
-
 
 
 

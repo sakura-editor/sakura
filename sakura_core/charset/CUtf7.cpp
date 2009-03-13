@@ -1,70 +1,253 @@
+// 2008.11.10 変換ロジックを書き直す
+
+
 #include "stdafx.h"
 #include "CUtf7.h"
 #include "charset/charcode.h"
+#include "charset/codechecker.h"
+#include "convert/convert_util2.h"
+
+
 
 
 /*!
-	UTF-7 セットD の文字たち
+	UTF-7 Set D 部分の読み込み。
 */
-const bool    bNA  = false;
-const bool CUtf7::UTF7SetD[] = {
-	bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  //00-07:
-	bNA,  true, true, bNA,  bNA,  true, bNA,  bNA,  //08-0f:TAB, LF, CR
-	bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  //10-17:
-	bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  //18-1f:
-	true, bNA,  bNA,  bNA,  bNA,  bNA,  bNA,  true, //20-27:SP, `'`
-	true, true, bNA,  bNA,  true, true, true, true, //28-2f:(, ), `,`, -, ., /
-	true, true, true, true, true, true, true, true, //30-37:0 - 7
-	true, true, true, bNA,  bNA,  bNA,  bNA,  true, //38-3f:8, 9, :, ?
-	bNA,  true, true, true, true, true, true, true, //40-47:A - G
-	true, true, true, true, true, true, true, true, //48-4f:H - O
-	true, true, true, true, true, true, true, true, //50-57:P - W
-	true, true, true, bNA,  bNA,  bNA,  bNA,  bNA,  //58-5f:X, Y, Z
-	bNA,  true, true, true, true, true, true, true, //60-67:a - g
-	true, true, true, true, true, true, true, true, //68-6f:h - o
-	true, true, true, true, true, true, true, true, //70-77:p - w
-	true, true, true, bNA,  bNA,  bNA,  bNA,  bNA,  //78-7f:x, y, z
-};
+int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst )
+{
+	const char* pr = pSrc;
+	wchar_t* pw = pDst;
+
+	for( ; pr < pSrc+nSrcLen; ++pr ){
+		if( IsUtf7Direct(*pr) ){
+			*pw = *pr;
+		}else{
+			*pw = L'?';
+		}
+		++pw;
+	}
+	return pw - pDst;
+}
+
+/*!
+	UTF-7 Set B 部分の読み込み
+*/
+int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst )
+{
+	const char* pr = pSrc;
+
+	int ndecoded_len = 0;
+	char* pbuf;
+
+	try{
+		pbuf = new char[nSrcLen];
+	}catch( ... ){
+		pbuf = NULL;
+	}
+
+	if( pbuf != NULL ){
+		ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
+		CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE を UTF-16 LE に直す
+		memcpy( reinterpret_cast<char*>(pDst), pbuf, ndecoded_len );
+	}else{
+		;
+	}
+
+	delete [] pbuf;
+
+	return ndecoded_len / sizeof(wchar_t);
+}
+
+int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+{
+	const char *pr, *pr_end;
+	char *pr_next;
+	wchar_t *pw;
+	int nblocklen=0;
+	bool berror_tmp, berror=false;
+
+	pr = pSrc;
+	pr_end = pSrc + nSrcLen;
+	pw = pDst;
+
+	do{
+		// UTF-7 Set D 部分のチェック
+		nblocklen = CheckUtf7DPart( pr, pr_end-pr, &pr_next, &berror_tmp );
+		if( berror_tmp == true ){
+			berror = true;
+		}
+		pw += _Utf7SetDToUni_block( pr, nblocklen, pw );
+
+		pr = pr_next;  // 次の読み込み位置を取得
+		if( pr_next >= pr_end ){
+			break;
+		}
+
+		// UTF-7 Set B 部分のチェック
+		nblocklen = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror_tmp, false );
+		if( berror_tmp == false ){
+			if( nblocklen < 1 && *(pr_next-1) == '-' ){
+				// +- → + 変換
+				*pw = L'+';
+				++pw;
+			}else{
+				pw += _Utf7SetBToUni_block( pr, nblocklen, pw );
+			}
+		}else{
+			// フォーマットエラーがある場合、
+			// 置換文字を使う
+			berror = true;
+			for( int i = 0; i < nblocklen; ++i ){
+				*pw = L'?';
+				++pw;
+			}
+		}
+
+		pr = pr_next;  // 次の読み込み位置を取得
+	}while( pr_next < pr_end );
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return pw - pDst;
+}
 
 
 //! UTF-7→Unicodeコード変換
 // 2007.08.13 kobake 作成
 EConvertResult CUtf7::UTF7ToUnicode( CMemory* pMem )
 {
-	//データ取得
+	// エラー状態：
+	bool bError;
+
+	// データ取得
 	int nDataLen;
-	const char* pData=(char*)pMem->GetRawPtr(&nDataLen);
+	const char* pData = reinterpret_cast<const char*>( pMem->GetRawPtr(&nDataLen) );
 
-	//必要なバッファサイズを調べる
-	size_t dstlen=MultiByteToWideChar(
-		CP_UTF7,
-		0,
-		pData,
-		nDataLen,
-		NULL,
-		0
-	);
+	// 必要なバッファサイズを調べて確保
+	wchar_t* pDst;
+	try{
+		pDst = new wchar_t[nDataLen * 3 + 1];
+		if( pDst == NULL ){
+			return RESULT_FAILURE;
+		}
+	}catch( ... ){
+		return RESULT_FAILURE;
+	}
 
-	//バッファ確保
-	std::vector<wchar_t> dst(dstlen+1);
+	// 変換
+	int nDstLen = Utf7ToUni( pData, nDataLen, pDst, &bError );
 
-	//変換
-	int ret=MultiByteToWideChar(
-		CP_UTF7,
-		0,
-		pData,
-		nDataLen,
-		&dst[0],
-		dstlen
-	);
-	dst[dstlen]=L'\0';
+	// pMem を設定
+	pMem->SetRawData( pDst, nDstLen*sizeof(wchar_t) );
 
-	//設定
-	const void* p=&dst[0];
-	pMem->SetRawData(p,dstlen*sizeof(wchar_t));
+	delete [] pDst;
 
-	return RESULT_COMPLETE;
+	if( bError == false ){
+		return RESULT_COMPLETE;
+	}else{
+		return RESULT_LOSESOME;
+	}
 }
+
+
+
+int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+{
+	int i;
+
+	if( nSrcLen < 1 ){
+		return 0;
+	}
+
+	for( i = 0; i < nSrcLen; ++i ){
+		pDst[i] = static_cast<char>( pSrc[i] & 0x00ff );
+	}
+
+	return i;
+}
+
+
+
+int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+{
+	wchar_t* psrc;
+	char* pw;
+
+	if( nSrcLen < 1 ){
+		return 0;
+	}
+
+	try{
+		psrc = new wchar_t[nSrcLen];
+	}catch( ... ){
+		psrc = NULL;
+	}
+	if( psrc == NULL ){
+		return 0;
+	}
+
+	// // UTF-16 LE → UTF-16 BE
+	wcsncpy( &psrc[0], pSrc, nSrcLen );
+	CMemory::SwapHLByte( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(wchar_t) );
+
+	// 書き込み
+	pw = pDst;
+	pw[0] = '+';
+	++pw;
+	pw += _EncodeBase64( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(wchar_t), pw );
+	pw[0] = '-';
+	++pw;
+
+	delete [] psrc;
+
+	return pw - pDst;
+}
+
+
+
+
+int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+{
+	const wchar_t *pr, *pr_base;
+	const wchar_t* pr_end;
+	char* pw;
+
+	pr = pSrc;
+	pr_base = pSrc;
+	pr_end = pSrc + nSrcLen;
+	pw = pDst;
+
+	do{
+		for( ; pr < pr_end; ++pr ){
+			if( !IsUtf7SetD(*pr) ){
+				break;
+			}
+		}
+		pw += _UniToUtf7SetD_block( pr_base, pr-pr_base, pw );
+		pr_base = pr;
+
+		if( *pr == L'+' ){
+			// '+' → "+-"
+			pw[0] = '+';
+			pw[1] = '-';
+			++pr;
+			pw += 2;
+		}else{
+			for( ; pr < pr_end; ++pr ){
+				if( IsUtf7SetD(*pr) ){
+					break;
+				}
+			}
+			pw += _UniToUtf7SetB_block( pr_base, pr-pr_base, pw );
+		}
+		pr_base = pr;
+	}while( pr_base < pr_end );
+
+	return pw - pDst;
+}
+
 
 
 /*! コード変換 Unicode→UTF-7
@@ -72,300 +255,31 @@ EConvertResult CUtf7::UTF7ToUnicode( CMemory* pMem )
 */
 EConvertResult CUtf7::UnicodeToUTF7( CMemory* pMem )
 {
-	//データ取得
-	int nDataLen;
-	const wchar_t* pData=(wchar_t*)pMem->GetRawPtr(&nDataLen);
-	nDataLen/=sizeof(wchar_t);
 
-	//出力先
-	wchar_t*		pUniBuf;
-	int				nUniBufLen = nDataLen;		// / sizeof(wchar_t);	2008/7/19 Uchi
-	pUniBuf = new wchar_t[nUniBufLen + 1];
+	// データ取得
+	const wchar_t* pSrc = reinterpret_cast<const wchar_t*>( pMem->GetRawPtr() );
+	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
 
-	int				i;
-	int				j;
-	unsigned char*	pDes;
-	int				k;
-	BOOL			bBASE64;
-	int				nBgn;
-	char*			pszBase64Buf;
-	int				nBase64BufLen;
-	char*			pszWork;
-	char			cWork;
+	// 出力先バッファの確保
+	char *pDst;
+	try{
+		// 最大で、変換元のデータ長の５倍。
+		pDst = new char[ nSrcLen * 5 + 1 ];  // * → +ACo-
+	}catch( ... ){
+		pDst = NULL;
+	}
+	if( pDst == NULL ){
+		return RESULT_FAILURE;
+	}
 
-//	setlocale( LC_ALL, "Japanese" ); // wctomb を使わなくなったためコメントアウト
-	k = 0;
-	bBASE64 = FALSE;
-	nBgn = 0;
-//	memset( pUniBuf, 0, (nUniBufLen + 1) * sizeof( wchar_t ) );
-	memcpy( pUniBuf, pData, nUniBufLen * sizeof( wchar_t ) );
-	pUniBuf[nUniBufLen] = L'\0';
-	for( i = 0; i < nUniBufLen; ++i ){
-		j = IsUTF7Direct( pUniBuf[i]);
-		if( !bBASE64 ){
-			if( 1 == j ){
-				k++;
-			}else
-			if( L'+' == pUniBuf[i] ){
-				k += 2;
-			}else{
-				bBASE64 = TRUE;
-				nBgn = i;
-			}
-		}else{
-			if( 1 == j ){
-				/* 2バイトのUnicodeがあるという前提でLO/HIバイトを交換 */
-				pszWork = (char*)(char*)&pUniBuf[nBgn];
-				for( j = 0; j < (int)((i - nBgn) * sizeof( wchar_t )); j += 2 ){
-					cWork = pszWork[j + 1];
-					pszWork[j + 1] = pszWork[j];
-					pszWork[j] = cWork;
-				}
-				/* Base64エンコード */
-				pszBase64Buf = NULL;
-				nBase64BufLen = 0;
-				nBase64BufLen = MemBASE64_Encode(
-					(char*)&pUniBuf[nBgn],			// エンコード対象データ
-					(i - nBgn) * sizeof( wchar_t ), // エンコード対象データ長
-					&pszBase64Buf,					// 結果データ格納メモリポインタのアドレス
-					-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
-					FALSE	// パディングするか
-				);
-				//////////////
-				k++;
-				k += nBase64BufLen;
-				k++;
-				//////////////
-				delete [] pszBase64Buf;
-				pszBase64Buf = NULL;
-				nBase64BufLen = 0;
-				bBASE64 = FALSE;
-				i--;
-			}else{
-			}
-		}
-	}
-	if( bBASE64 && 0 < (i - nBgn) ){
-		/* 2バイトのUnicodeがあるという前提でLO/HIバイトを交換 */
-		pszWork = (char*)(char*)&pUniBuf[nBgn];
-		for( j = 0; j < (int)((i - nBgn) * sizeof( wchar_t )); j += 2 ){
-			cWork = pszWork[j + 1];
-			pszWork[j + 1] = pszWork[j];
-			pszWork[j] = cWork;
-		}
-		/* Base64エンコード */
-		pszBase64Buf = NULL;
-		nBase64BufLen = 0;
-		nBase64BufLen = MemBASE64_Encode(
-			(char*)&pUniBuf[nBgn],			// エンコード対象データ
-			(i - nBgn) * sizeof( wchar_t ), // エンコード対象データ長
-			&pszBase64Buf,					// 結果データ格納メモリポインタのアドレス
-			-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
-			FALSE	// パディングするか
-		);
-		//////////////
-		k++;
-		k += nBase64BufLen;
-		k++;
-		//////////////
-		delete [] pszBase64Buf;
-		pszBase64Buf = NULL;
-		nBase64BufLen = 0;
-		bBASE64 = FALSE;
-	}
-	delete [] pUniBuf;
+	// 変換
+	int nDstLen = UniToUtf7( pSrc, nSrcLen, pDst );
 
-	pDes = new unsigned char[k + 1];
-	memset( pDes, 0, k + 1 );
-	k = 0;
-	bBASE64 = FALSE;
-	nBgn = 0;
-	pUniBuf = (wchar_t*)pData;
-	for( i = 0; i < nUniBufLen; ++i ){
-		j = IsUTF7Direct( pUniBuf[i] );
-		if( !bBASE64 ){
-			if( 1 == j ){
-				pDes[k] = (unsigned char)(pUniBuf[i] & 0x007f);
-				k++;
-			}else
-			if( L'+' == pUniBuf[i] ){
-				pDes[k    ] = '+';
-				pDes[k + 1] = '-';
-				k += 2;
-			}else{
-				bBASE64 = TRUE;
-				nBgn = i;
-			}
-		}else{
-			if( 1 == j ){
-				/* 2バイトのUnicodeがあるという前提でLO/HIバイトを交換 */
-				pszWork = (char*)(char*)&pUniBuf[nBgn];
-				for( j = 0; j < (int)((i - nBgn) * sizeof( wchar_t )); j += 2 ){
-					cWork = pszWork[j + 1];
-					pszWork[j + 1] = pszWork[j];
-					pszWork[j] = cWork;
-				}
-				char*	pszBase64Buf;
-				int		nBase64BufLen;
-				/* Base64エンコード */
-				nBase64BufLen = MemBASE64_Encode(
-					(char*)&pUniBuf[nBgn],			// エンコード対象データ
-					(i - nBgn) * sizeof( wchar_t ), // エンコード対象データ長
-					&pszBase64Buf,					// 結果データ格納メモリポインタのアドレス
-					-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
-					FALSE	// パディングするか
-				);
-				//////////////
-				pDes[k] = '+';
-				k++;
-				memcpy( &pDes[k], pszBase64Buf, nBase64BufLen );
-				k += nBase64BufLen;
-				pDes[k] = '-';
-				k++;
-				//////////////
-				delete [] pszBase64Buf;
-				bBASE64 = FALSE;
-				i--;
-			}else{
-			}
-		}
-	}
-	if( bBASE64 && 0 < (i - nBgn) ){
-		/* 2バイトのUnicodeがあるという前提でLO/HIバイトを交換 */
-		pszWork = (char*)(char*)&pUniBuf[nBgn];
-		for( j = 0; j < (int)((i - nBgn) * sizeof( wchar_t )); j += 2 ){
-			cWork = pszWork[j + 1];
-			pszWork[j + 1] = pszWork[j];
-			pszWork[j] = cWork;
-		}
-		/* Base64エンコード */
-		pszBase64Buf = NULL;
-		nBase64BufLen = 0;
-		nBase64BufLen = MemBASE64_Encode(
-			(char*)&pUniBuf[nBgn],			// エンコード対象データ
-			(i - nBgn) * sizeof( wchar_t ), // エンコード対象データ長
-			&pszBase64Buf,					// 結果データ格納メモリポインタのアドレス
-			-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
-			FALSE	// パディングするか
-		);
-		//////////////
-		pDes[k] = '+';
-		k++;
-		memcpy( &pDes[k], pszBase64Buf, nBase64BufLen );
-		k += nBase64BufLen;
-		pDes[k] = '-';
-		k++;
-		//////////////
-		delete [] pszBase64Buf;
-		pszBase64Buf = NULL;
-		nBase64BufLen = 0;
-		bBASE64 = FALSE;
-	}
-	pMem->SetRawData( pDes, k );
-	delete [] pDes;
+	// pMem にデータをセット
+	pMem->SetRawData( pDst, nDstLen );
+
+	delete [] pDst;
 
 	return RESULT_COMPLETE;
 }
 
-
-/*!
-	Unicodeの文字がUTF-7で直接エンコードできるか調べる
-	@author Moca
-	@date 2002.10.25 新規作成
-
-	TAB SP CR LF は 直接エンコード可能
-	基本セット
-	         '(),-./012...789:?ABC...XYZabc...xyz
-	以下はオプションでメールでは支障をきたす場合がある
-	         !"#$%&*;<=>@[\]^_`{|}
-	とりあえず無条件でオプションは直接変換できないと判断する
-*/
-int CUtf7::IsUTF7Direct( wchar_t wc )
-{
-	int nret = 0;
-	if( (wc & 0xff00) == 0 ){
-		nret = CUtf7::IsUtf7SetDChar( (unsigned char)wc );
-	}
-	return nret;
-}
-
-
-
-/*
-* Base64エンコード
-*
-*	符号化したデータは、新たに確保したメモリに格納されます
-*	終了時に、そのメモリハンドルを指定されたアドレスに格納します
-*	符号化されたデータ列は、一応NULL終端文字列になっています
-*
-*/
-int CUtf7::MemBASE64_Encode(
-	const char*	pszSrc		,	// エンコード対象データ
-	int			nSrcLen		,	// エンコード対象データ長
-	char**		ppszDes		,	// 結果データ格納メモリポインタのアドレス
-	int			nWrap		,	// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
-	int			bPadding		// パディングするか
-)
-{
-	int			i, j, k, m, n;
-	long		nDesIdx;
-//	char*		pszDes;
-	long		nDataDes;
-	long		nDataSrc;
-	long		nLineLen;
-	char		cw;
-	const char	szBASE64CODE[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-	int			nBASE64CODE_Num = _countof( szBASE64CODE );
-	int			nDesLen;
-
-	// 符号化後の長さを算出（ヘッダー・フッターを除く）
-	//=?ISO-2022-JP?B? GyRC QXc/ Lkgi JE4/ NiRq Siwk MRso Qg== ?=
-	nDesLen = ((nSrcLen / 3) + ((nSrcLen % 3)? 1:0)) * 4;
-	if( -1 != nWrap ){
-		nDesLen += 2 * ( nDesLen / nWrap + ((nDesLen % nWrap)? 1:0 ));
-	}
-
-	(*ppszDes) = new char[nDesLen + 1];
-	memset( (*ppszDes), 0, nDesLen + 1 );
-
-	nDesIdx = 0;
-	nLineLen = 0;
-	for( i = 0; i < nSrcLen; i += 3 ){
-		memcpy( &nDataDes, "====", 4 );
-		nDataSrc = 0;
-		if( nSrcLen - i < 3 ){
-			k = (nSrcLen % 3) * 8 / 6 + 1;
-			for( m = 0; m < nSrcLen % 3; m++ ){
-				((char*)&nDataSrc)[3 - m] = pszSrc[i + m];
-			}
-		}else{
-			k = 4;
-			for( m = 0; m < 3; m++ ){
-				((char*)&nDataSrc)[3 - m] = pszSrc[i + m];
-			}
-		}
-		for( j = 0; j < k; j++ ){
-			cw = (char)((nDataSrc >> (6 * (3 - j) + 8)) & 0x0000003f);
-			((char*)&nDataDes)[j] = szBASE64CODE[(int)cw];
-		}
-		if( bPadding ){		// パディングするか
-			k = 4;
-		}else{
-			nDesLen -= (4 - k);
-		}
-		for( n = 0; n < k; n++ ){
-			// 自動折り返しの処理
-			if( nWrap != -1 && nLineLen == nWrap ){
-				(*ppszDes)[nDesIdx + 0] = ACODE::CR;
-				(*ppszDes)[nDesIdx + 1] = ACODE::LF;
-				nDesIdx += 2;
-				nLineLen = 0;
-			}
-			(*ppszDes)[nDesIdx] = ((char*)&nDataDes)[n];
-			nDesIdx++;
-			nLineLen++;
-		}
-	}
-//	GlobalUnlock( *phgDes );
-	return nDesLen;
-}
