@@ -61,6 +61,26 @@ static const SEolDefinition g_aEolTable[] = {
 };
 
 
+
+struct SEolDefinitionForUniFile{
+	const char*	m_szDataW;
+	const char* m_szDataWB;
+	int			m_nLen;
+
+	bool StartsWithW(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataW,m_nLen); }
+	bool StartsWithWB(const char* pData, int nLen) const{ return m_nLen<=nLen && 0==memcmp(pData,m_szDataWB,m_nLen); }
+};
+static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
+	"",					"", 					0,
+	"\x0d\x00\x0a\x00",	"\x00\x0d\x00\x0a",		4,
+	"\x0a\x00",			"\x00\x0a",				2,
+	"\x0d\x00",			"\x00\x0d",				2,
+};
+
+
+
+
+
 //-----------------------------------------------
 //	実装補助
 //-----------------------------------------------
@@ -81,6 +101,29 @@ enumEOLType GetEOLType( const T* pszData, int nDataLen )
 	return EOL_NONE;
 }
 
+
+/*
+	ファイルを読み込むときに使用するもの
+*/
+
+EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
+{
+	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( g_aEolTable_uni_file[i].StartsWithW(pszData, nDataLen) )
+			return gm_pnEolTypeArr[i];
+	}
+	return EOL_NONE;
+}
+
+EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
+{
+	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
+		bool bret = g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen);
+		if( bret == true )
+			return gm_pnEolTypeArr[i];
+	}
+	return EOL_NONE;
+}
 
 //-----------------------------------------------
 //	実装部
@@ -133,5 +176,14 @@ void CEol::SetTypeByString( const char* pszData, int nDataLen )
 	SetType( GetEOLType( pszData, nDataLen ) );
 }
 
+void CEol::SetTypeByStringForFile_uni( const char* pszData, int nDataLen )
+{
+	SetType( _GetEOLType_uni( pszData, nDataLen ) );
+}
+
+void CEol::SetTypeByStringForFile_unibe( const char* pszData, int nDataLen )
+{
+	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
+}
 
 

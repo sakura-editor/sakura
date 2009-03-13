@@ -17,11 +17,6 @@ bool CFigure_HanSpace::Match(const wchar_t* pText) const
 	return false;
 }
 
-CLayoutInt CFigure_HanSpace::GetLayoutLength(const wchar_t* pText, CLayoutInt nStartCol) const
-{
-	return CLayoutInt(1);
-}
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         •`‰æŽÀ‘•                            //

@@ -14,19 +14,19 @@ public:
 	//実装
 	static EConvertResult UTF7ToUnicode(CMemory* pMem);		// UTF-7     → Unicodeコード変換 //2007.08.13 kobake 追加
 	static EConvertResult UnicodeToUTF7(CMemory* pMem);		// Unicode   → UTF-7コード変換
-	static int IsUTF7Direct( wchar_t ); /* Unicode文字がUTF7で直接エンコードできるか */ // 2002.10.25 Moca
-	static int MemBASE64_Encode( const char*, int, char**, int, int );/* Base64エンコード */
+//	static int MemBASE64_Encode( const char*, int, char**, int, int );/* Base64エンコード */  // convert/convert_util2.h へ移動
+
+protected:
+
+	// 2008.11.10 変換ロジックを書き直す
+	static int _Utf7SetDToUni_block( const char*, const int, wchar_t* );
+	static int _Utf7SetBToUni_block( const char*, const int, wchar_t* );
+	static int Utf7ToUni( const char*, const int, wchar_t*, bool* pbError );
+
+	static int _UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
+	static int _UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
+	static int UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst );
 
 
-public:
-	//各種判定定数
-	static const bool UTF7SetD[];	// UTF7SetD を処理する際に使うブール値
-public:
-	//各種判定関数
-	static bool IsUtf7SetDChar( const uchar_t ); // UTF-7 Set D の文字を判別
 };
 
-inline bool CUtf7::IsUtf7SetDChar( const uchar_t c )
-{
-	return ( !(c & 0x80) && UTF7SetD[c] );
-}

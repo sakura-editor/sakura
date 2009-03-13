@@ -2,6 +2,7 @@
 #include "CLoadAgent.h"
 #include "CControlTray.h"
 #include "util/file.h"
+#include "CAppMode.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {
@@ -135,6 +136,9 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 		pcDoc->SetFilePathAndIcon( _T("") );
 		pcDoc->m_cDocFile.m_sFileInfo.bBomExist = false;
 		if(pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODE || pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODEBE)pcDoc->m_cDocFile.m_sFileInfo.bBomExist = true;
+	}
+	if(eLoadResult==LOADED_LOSESOME){
+		CAppMode::Instance()->SetViewMode(true);
 	}
 
 	//Ä•`‰æ $$•s‘«

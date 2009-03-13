@@ -1,38 +1,31 @@
+// 2008.11.10  変換ロジックを書き直す
+
 #include "stdafx.h"
 #include "CJis.h"
 #include "CShiftJis.h"
 #include <mbstring.h>
+#include "convert/CDecode_Base64Decode.h"
 #include "charset/charcode.h"
-#include "codeutil.h"
+#include "charset/codeutil.h"
 #include "convert/convert_util2.h"
-
-#define ESC_JIS		"\x01b$B"
-#define ESC_ASCII	"\x01b(B"
-#define ESC_8BIT	"\x01b(I"
-
-#define MIME_BASE64	1
-#define MIME_QUOTED	2
-
-/* 文字種別 */
-#define CHAR_ASCII		0	/* ASCII文字 */
-#define CHAR_8BITCODE	1	/* 8ビットコード(半角カタカナなど) */
-#define CHAR_ZENKAKU	2	/* 全角文字 */
-#define CHAR_NULL		3	/* なにもない */
+#include "charset/codechecker.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       各種判定定数                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-const char CJis::JISESCDATA_ASCII[]				= "\x1b" "(B";
+//	@author D. S. Koba
+//	星マークを添えてあるものは、書き込みで使われる。
+const char CJis::JISESCDATA_ASCII7[]				= "\x1b" "(B";  // ☆
 const char CJis::JISESCDATA_JISX0201Latin[]		= "\x1b" "(J";
 const char CJis::JISESCDATA_JISX0201Latin_OLD[]	= "\x1b" "(H";
-const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";
+const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";  // ☆
 const char CJis::JISESCDATA_JISX0208_1978[]		= "\x1b" "$@";
-const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";
+const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";  // ☆
 const char CJis::JISESCDATA_JISX0208_1990[]		= "\x1b" "&@""\x1b""$B";
 
-// 順序は enumJISEscSeqType に依存 (charcode.h にて定義されている)
+#if 0 // 未使用
 const int CJis::TABLE_JISESCLEN[] = {
 	0,		// JISESC_UNKNOWN
 	3,		// JISESC_ASCII
@@ -53,442 +46,430 @@ const char* CJis::TABLE_JISESCDATA[] = {
 	JISESCDATA_JISX0208_1983,
 	JISESCDATA_JISX0208_1990,
 };
+#endif
+
+/*!
+	JIS の一ブロック（エスケープシーケンスとエスケープシーケンスの間の区間）を変換 
+
+	eMyJisesc は、MYJISESC_HANKATA か MYJISESC_ZENKAKU。
+*/
+int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, const EMyJisEscseq eMyJisesc, bool* pbError )
+{
+	const unsigned char* pr;
+	unsigned short* pw;
+	unsigned char chankata;
+	unsigned char czenkaku[2];
+	unsigned int ctemp;
+	bool berror=false;
+	int nret;
+
+	if( nSrcLen < 1 ){
+		if( pbError ){
+			*pbError = false;
+		}
+		return 0;
+	}
+
+	pr = pSrc;
+	pw = pDst;
+
+	switch( eMyJisesc ){
+	case MYJISESC_ASCII7:
+		for( ; pr < pSrc+nSrcLen; ++pr ){
+			if( IsAscii7(static_cast<const char>(*pr)) ){
+				*pw = *pr;
+			}else{
+				berror = true;
+				*pw = L'?';
+			}
+			++pw;
+		}
+	case MYJISESC_HANKATA:
+		for( ; pr < pSrc+nSrcLen; ++pr ){
+			// JIS → SJIS
+			chankata = (*pr | 0x80);
+			// SJIS → Unicode
+			nret = MyMultiByteToWideChar_JP( &chankata, 1, pw, false );
+			if( nret < 1 ){
+				nret = 1;
+			}
+			pw += nret;
+		}
+		break;
+	case MYJISESC_ZENKAKU:
+		for( ; pr < pSrc+nSrcLen-1; pr += 2 ){
+			// JIS -> SJIS
+			ctemp = _mbcjistojms( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
+			if( ctemp != 0 ){
+			// 変換に成功。
+				// SJIS → Unicode
+				czenkaku[0] = static_cast<unsigned char>( (ctemp & 0x0000ff00) >> 8 );
+				czenkaku[1] = static_cast<unsigned char>( ctemp & 0x000000ff );
+				nret = MyMultiByteToWideChar_JP( &czenkaku[0], 2, pw, false );
+				if( nret < 1 ){
+					// SJIS → Unicode 変換に失敗
+  					berror = true;
+					pw[0] = L'?';
+					nret = 1;
+				}
+				pw += nret;
+			}else{
+			// 変換に失敗。
+				berror = true;
+				pw[0] = L'?';
+				++pw;
+			}
+		}
+		break;
+	default:
+		// 致命的エラー回避コード
+		berror = true;
+		for( ; pr < pSrc+nSrcLen; ++pr ){
+			pw[0] = L'?';
+			++pw;
+		}
+	}
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return pw - pDst;
+}
+
+
+
+
+/*
+	JIS → Unicode 変換
+*/
+int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+{
+	const unsigned char *pr, *pr_end;
+	const unsigned char *pr_next;
+	unsigned short *pw;
+	bool berror=false, berror_tmp;
+	int nblocklen;
+	EMyJisEscseq esctype, next_esctype;
+
+	if( nSrcLen < 1 ){
+		if( pbError ){
+			*pbError = false;
+		}
+		return 0;
+	}
+
+	pr = reinterpret_cast<const unsigned char*>(pSrc);
+	pr_end = reinterpret_cast<const unsigned char*>(pSrc + nSrcLen);
+	pw = reinterpret_cast<unsigned short*>(pDst);
+	esctype = MYJISESC_ASCII7;
+
+//	enum EMyJisEscseq {
+//		MYJISESC_NONE,
+//		MYJISESC_ASCII7,
+//		MYJISESC_HANKATA,
+//		MYJISESC_ZENKAKU,
+//		MYJISESC_UNKNOWN,
+//	};
+
+	do{
+		switch( esctype ){
+		case MYJISESC_ASCII7:
+			nblocklen = CheckJisAscii7Part( reinterpret_cast<const char*>(pr), pr_end-pr, reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+			pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
+			if( berror_tmp == true ){
+				berror = true;
+			}
+			break;
+		case MYJISESC_HANKATA:
+			nblocklen = CheckJisHankataPart( reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+			pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
+			if( berror_tmp == true ){
+				berror = true;
+			}
+			break;
+		case MYJISESC_ZENKAKU:
+			nblocklen = CheckJisZenkakuPart( reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+			pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
+			if( berror_tmp == true ){
+				berror = true;
+			}
+			break;
+		default: // MYJISESC_UNKNOWN:
+			nblocklen = CheckJisUnknownPart( reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+			berror = true;
+			for( int i = 0; i < nblocklen; ++i ){
+				if( IsJis(static_cast<const char>(pr[i])) ){
+					*pw = pr[i];
+				}else{
+					*pw = L'?';
+				}
+				++pw;
+			}
+		}
+		esctype = next_esctype;
+		pr = pr_next;
+	}while( pr_next < pr_end );
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return pw - reinterpret_cast<unsigned short*>(pDst);
+}
+
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     インターフェース                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+
 /* E-Mail(JIS→Unicode)コード変換 */
 //2007.08.13 kobake 追加
 EConvertResult CJis::JISToUnicode(CMemory* pMem, bool base64decode)
 {
-	//$$ SJISを介しているため、無駄にデータが失われるかもしれません
-	JIStoSJIS(pMem,base64decode);
-	return CShiftJis::SJISToUnicode(pMem);		//	エラーを返すようにする。	2008/5/12 Uchi
+	// エラー状態
+	bool berror;
+
+	// ソースを取得
+	int nSrcLen;
+	const char* pSrc = reinterpret_cast<const char*>( pMem->GetRawPtr(&nSrcLen) );
+
+	// ソースバッファポインタとソースの長さ
+	const char* psrc = pSrc;
+	int nsrclen = nSrcLen;
+	CMemory cmem;
+
+	if( base64decode == true ){
+		// ISO-2202-J 用の MIME ヘッダーをデコード
+		bool bret = MIMEHeaderDecode( pSrc, nSrcLen, &cmem, CODE_JIS );
+		if( bret == true ){
+			psrc = reinterpret_cast<const char*>( cmem.GetRawPtr() );
+			nsrclen = cmem.GetRawLength();
+		}
+	}
+
+
+	// 変換先バッファを取得
+	wchar_t* pDst;
+	try{
+		pDst = new wchar_t[nsrclen * 3 + 1];
+		if( pDst == NULL ){
+			return RESULT_FAILURE;
+		}
+	}catch( ... ){
+		return RESULT_FAILURE;
+	}
+
+	// 変換
+	int nDstLen = JisToUni( psrc, nsrclen, pDst, &berror );
+
+	// pMem にセット
+	pMem->SetRawData( pDst, nDstLen * sizeof(wchar_t) );
+
+	
+	delete [] pDst;
+
+	if( berror == false ){
+		return RESULT_COMPLETE;
+	}else{
+		return RESULT_LOSESOME;
+	}
 }
+
+
+/*!
+	SJIS -> JIS 変換
+*/
+int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, ECharSet eCharset, bool* pbError )
+{
+	int nret;
+	bool berror=false;
+	unsigned int ctemp, ctemp_;
+
+	switch( eCharset ){
+	case CHARSET_ASCII7:
+		*pDst = static_cast<char>( *pSrc );
+		nret = 1;
+		break;
+	case CHARSET_JIS_HANKATA:
+		*pDst = static_cast<char>(*pSrc & 0x7f);
+		nret = 1;
+		break;
+	case CHARSET_JIS_ZENKAKU:
+		// JIS -> SJIS
+		ctemp_ = SjisFilter_basis( static_cast<unsigned int>(pSrc[0] << 8) | pSrc[1] );
+		ctemp_ = SjisFilter_ibm2nec( ctemp_ );
+		ctemp = _mbcjmstojis( ctemp_ );
+		if( ctemp != 0 ){
+			// 返還に成功。
+			pDst[0] = static_cast<char>( (ctemp & 0x0000ff00) >> 8 );
+			pDst[1] = static_cast<char>( ctemp & 0x000000ff );
+			nret = 2;
+		}else{
+			// 変換に失敗
+			berror = true;
+			// '・'  0x2126(JIS) を出力
+			pDst[0] = 0x21;
+			pDst[1] = 0x26;
+			nret = 2;
+		}
+		break;
+	default:
+		// エラー回避コード
+		berror = true;
+		*pDst = '?';
+		nret = 1;
+	}
+
+	if( pbError ){
+		*pbError = berror;
+	}
+
+	return nret;
+}
+
+
+
+int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError )
+{
+	const unsigned short *pr, *pr_end;
+	unsigned char* pw;
+	ECharSet echarset, echarset_cur, echarset_tmp;
+	unsigned char cbuf[4];
+	int nlen, nclen;
+	bool berror=false, berror_tmp;
+
+	if( nSrcLen < 1 ){
+		if( pbError ){
+			*pbError = false;
+		}
+		return 0;
+	}
+
+	pr = reinterpret_cast<const unsigned short*>(pSrc);
+	pr_end = reinterpret_cast<const unsigned short*>(pSrc + nSrcLen);
+	pw = reinterpret_cast<unsigned char*>(pDst);
+	echarset_cur = CHARSET_ASCII7;
+
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset_tmp, false)) > 0 ){
+		// Unicode -> SJIS
+		nlen = MyWideCharToMultiByte_JP( pr, nclen, &cbuf[0] );
+		if( nlen < 1 ){
+			// Unicode -> SJIS に失敗
+			berror = true;
+			if( echarset_cur == CHARSET_ASCII7 ){
+				*pw = '?';
+				++pw;
+			}else if( echarset_cur == CHARSET_JIS_HANKATA ){
+				// '･' 0x25(JIS) を出力
+				*pw = 0x25;
+				++pw;
+			}else if( echarset_cur == CHARSET_JIS_ZENKAKU ){
+				// '・' 0x2126(JIS) を出力
+				pw[0] = 0x21;
+				pw[1] = 0x26;
+				pw += 2;
+			}else{
+				// 保護コード
+				*pw = '?';
+				++pw;
+			}
+			pr += nclen;
+		}else{
+			// 文字セットを確認
+			if( nlen == 1 ){
+				if( IsAscii7(cbuf[0]) ){
+					echarset = CHARSET_ASCII7;
+				}else{
+					echarset = CHARSET_JIS_HANKATA;
+				}
+			}else if( nlen == 2 ){
+				echarset = CHARSET_JIS_ZENKAKU;
+			}else{
+				// エラー回避コード
+				echarset = CHARSET_ASCII7;
+				nlen = 1;
+			}
+
+			// const char CJis::JISESCDATA_ASCII[]				= "\x1b" "(B";  // ☆
+			// const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";  // ☆
+			// const char CJis::JISESCDATA_JISX0208_1983[]		= "\x1b" "$B";  // ☆
+			if( echarset != echarset_cur ){
+				// 文字セットが変われば、
+				// エスケープシーケンス文字列を出力
+				switch( echarset ){
+				case CHARSET_JIS_HANKATA:
+					strncpy( reinterpret_cast<char*>(pw), JISESCDATA_JISX0201Katakana, 3 );
+					pw += 3;
+					break;
+				case CHARSET_JIS_ZENKAKU:
+					strncpy( reinterpret_cast<char*>(pw), JISESCDATA_JISX0208_1983, 3 );
+					pw += 3;
+					break;
+				default: // case CHARSET_ASCII7:
+					strncpy( reinterpret_cast<char*>(pw), JISESCDATA_ASCII7, 3 );
+					pw += 3;
+					break;
+				}
+				echarset_cur = echarset; // 現在の文字セットを設定
+			}
+
+			// SJIS -> JIS
+			pw += _SjisToJis_char( &cbuf[0], pw, echarset_cur, &berror_tmp );
+			if( berror_tmp == true ){
+				berror = true;
+			}
+			pr += nclen;
+		}
+	}
+	// CHARSET_ASCII7 でデータが終了しない場合は、変換データの最後に
+	// CHARSET_ASCII7 のエスケープシーケンスを出力
+	if( echarset_cur != CHARSET_ASCII7 ){
+		strncpy( reinterpret_cast<char*>(pw), JISESCDATA_ASCII7, 3 );
+		pw += 3;
+	}
+
+	return pw - reinterpret_cast<unsigned char*>(pDst);
+}
+
 
 EConvertResult CJis::UnicodeToJIS(CMemory* pMem)
 {
-	EConvertResult	res;
+	bool berror=false;
 
-	//$$ SJISを介しているため、無駄にデータが失われるかもしれません
-	res = CShiftJis::UnicodeToSJIS(pMem);
-	if (res != RESULT_COMPLETE) {
-		return res;				//	エラーがあったならばエラーを返すようにする。	2008/5/12 Uchi
+	// ソースを取得
+	const wchar_t* pSrc = reinterpret_cast<const wchar_t*>( pMem->GetRawPtr() );
+	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
+
+	// 必要なバッファ容量を確認してバッファを確保
+	char* pDst;
+	try{
+		pDst = new char[nSrcLen * 8];
+	}catch( ... ){
+		pDst = NULL;
 	}
-	SJIStoJIS(pMem);
+	if( pDst == NULL ){
+		return RESULT_FAILURE;
+	}
 
-	return RESULT_COMPLETE;
+	// 変換
+	int nDstLen = UniToJis( pSrc, nSrcLen, pDst, &berror );
+
+	// pMem をセット
+	pMem->SetRawData( pDst, nDstLen );
+
+	delete [] pDst;
+
+	if( berror ){
+		return RESULT_LOSESOME;
+	}else{
+		return RESULT_COMPLETE;
+	}
 }
 
 
-/* JIS→SJIS変換 */
-long CJis::MemJIStoSJIS( unsigned char* pszSrc, long nSrcLen )
-{
-	int				i, j;
-	char*			pszDes;
-	unsigned short	sCode;
-
-	pszDes = new char [nSrcLen + 1];
-	memset( pszDes, 0, nSrcLen + 1 );
-	j = 0;
-	for( i = 0; i < nSrcLen - 1; i++ ){
-		sCode = (unsigned short)_mbcjistojms(
-			(unsigned int)
-			(((unsigned short)pszSrc[i	  ] << 8) |
-			 ((unsigned short)pszSrc[i + 1]))
-		);
-		if( sCode != 0 ){
-			pszDes[j	] = (unsigned char)(sCode >> 8);
-			pszDes[j + 1] = (unsigned char)(sCode);
-			++i;
-			j+=2;
-		}else{
-			pszDes[j] = pszSrc[i];
-			j++;
-		}
-	}
-	pszDes[j] = 0;
-	memcpy( pszSrc, pszDes, j );
-	delete [] pszDes;
-	return j;
-}
-
-
-
-/* コード変換 JIS→SJIS */
-void CJis::JIStoSJIS( CMemory* pMem, bool bMIMEdecode )
-{
-	//データ取得
-	CMemory cSrcMem(pMem->GetRawPtr(),pMem->GetRawLength());
-	int						nSrcLen;
-	const unsigned char*	pszSrc = (const unsigned char*)cSrcMem.GetRawPtr(&nSrcLen);
-
-	CMemory cTmpMem;
-
-	int				i;
-	int				j;
-	unsigned char*	pszDes;
-	BOOL			bMIME = FALSE;
-	int				nMEME_Selected;
-	long			nWorkBgn;
-	long			nWorkLen;
-	unsigned char*	pszWork;
-
-	int				nISOCode = CHAR_ASCII;
-	int				nOldISOCode = nISOCode;
-	BOOL			bFindESCSeq = FALSE;
-	int				nESCSeqLen  = - 1; // エスケープシーケンス長 - 1
-
-	pszDes = new unsigned char [nSrcLen + 1];
-	memset( pszDes, 0, nSrcLen + 1 );
-	j = 0;
-	if( bMIMEdecode ){
-		for( i = 0; i < nSrcLen; i++ ){
-			if( i <= nSrcLen - 16 && '=' == pszSrc[i] ){
-				if( 0 == auto_memicmp( "=?ISO-2022-JP?B?", (char*)&pszSrc[i], 16 ) ){
-					nMEME_Selected = MIME_BASE64;
-					bMIME = TRUE;
-					i += 15;
-					nWorkBgn = i + 1;
-					continue;
-				}
-				if( 0 == auto_memicmp( "=?ISO-2022-JP?Q?", (char*)&pszSrc[i], 16 ) ){
-					nMEME_Selected = MIME_QUOTED;
-					bMIME = TRUE;
-					i += 15;
-					nWorkBgn = i + 1;
-					continue;
-				}
-			}
-			if( bMIME == TRUE ){
-				if( i <= nSrcLen - 2  &&
-					0 == memcmp( "?=", &pszSrc[i], 2 ) ){
-					nWorkLen = i - nWorkBgn;
-					pszWork = new unsigned char [nWorkLen + 1];
-					//memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-					//pszWork[nWorkLen] = '\0';
-					switch( nMEME_Selected ){
-					case MIME_BASE64:
-						// Base64デコード
-						nWorkLen = _DecodeBase64( reinterpret_cast<const char*>(&pszSrc[nWorkBgn]), nWorkLen,
-								reinterpret_cast<char*>(pszWork) );
-						break;
-					case MIME_QUOTED:
-						// Quoted-Printableデコード
-						nWorkLen = _DecodeQP(  reinterpret_cast<const char*>(&pszSrc[nWorkBgn]), nWorkLen,
-								reinterpret_cast<char*>(pszWork) );
-						break;
-					}
-					memcpy( &pszDes[j], pszWork, nWorkLen );
-					bMIME = FALSE;
-					j += nWorkLen;
-					++i;
-					delete [] pszWork;
-					continue;
-				}else{
-					continue;
-				}
-			}
-			pszDes[j] = pszSrc[i];
-			j++;
-		}
-		if( bMIME ){
-			nWorkBgn -= 16; // MIMEヘッダをそのままコピー
-			nWorkLen = i - nWorkBgn;
-			memcpy( &pszDes[j], &pszSrc[nWorkBgn], nWorkLen );
-			j += nWorkLen;
-		}
-
-		// 非ASCIIテキスト対応メッセージヘッダのMIMEコード
-		cTmpMem.SetRawData(pszDes,j);
-		//memcpy( pszSrc, pszDes, j );
-
-		nSrcLen = j;
-		pszSrc=(const unsigned char*)cTmpMem.GetRawPtr();
-	}
-
-	nWorkBgn = 0;
-	j = 0;
-	for( i = 0; i < nSrcLen; i++ ){
-		if( i <= nSrcLen - 3		&&
-			pszSrc[i + 0] == 0x1b	&&
-			pszSrc[i + 1] == '$'	&&
-		   (pszSrc[i + 2] == 'B' || pszSrc[i + 2] == '@') ){
-
-			bFindESCSeq = TRUE;
-			nOldISOCode = nISOCode;
-			nISOCode = CHAR_ZENKAKU;
-			nESCSeqLen = 2;
-		}
-		else if( i <= nSrcLen - 3		&&
-			pszSrc[i + 0] == 0x1b	&&
-			pszSrc[i + 1] == '('	&&
-			pszSrc[i + 2] == 'I' ){
-
-			bFindESCSeq = TRUE;
-			nOldISOCode = nISOCode;
-			nISOCode = CHAR_8BITCODE;
-			nESCSeqLen = 2;
-		}
-		else if( i <= nSrcLen - 3		&&
-			pszSrc[i + 0] == 0x1b	&&
-			pszSrc[i + 1] == '('	&&
-		   (pszSrc[i + 2] == 'B' || pszSrc[i + 2] == 'J') ){
-			
-			bFindESCSeq = TRUE;
-			nOldISOCode = nISOCode;
-			nISOCode = CHAR_ASCII;
-			nESCSeqLen = 2;
-		}
-
-		if( bFindESCSeq ){
-			if( 0 < i - nWorkBgn ){
-				if( CHAR_ZENKAKU == nOldISOCode ){
-					nWorkLen = i - nWorkBgn;
-					pszWork = new unsigned char [nWorkLen + 1];
-					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-					pszWork[nWorkLen] = '\0';
-					// JIS→SJIS変換
-					nWorkLen = MemJIStoSJIS( (unsigned char*)pszWork, nWorkLen );
-					memcpy( &pszDes[j], pszWork, nWorkLen );
-					j += nWorkLen;
-					delete [] pszWork;
-				}
-			}
-			i += nESCSeqLen;
-			nWorkBgn = i + 1;
-			bFindESCSeq = FALSE;
-			continue;
-		}
-		else if( CHAR_ASCII == nISOCode ){
-			pszDes[j] = pszSrc[i];
-			j++;
-			continue;
-		}
-		else if( CHAR_8BITCODE == nISOCode ){
-			pszDes[j] = (unsigned char)0x80 | pszSrc[i];
-			j++;
-			continue;
-		}
-	}
-
-	// ESCSeqがASCIIに戻らなかったときに，データを失わないように
-	if( CHAR_ZENKAKU == nISOCode ){
-		if( 0 < i - nWorkBgn ){
-			nWorkBgn -= nESCSeqLen + 1; // ESCSeqも残しておきたい
-			nWorkLen = i - nWorkBgn;
-			memcpy( &pszDes[j], &pszSrc[nWorkBgn], nWorkLen );
-			j += nWorkLen;
-		}
-	}
-
-	pMem->SetRawData(pszDes,j);
-//	memcpy( pszSrc, pszDes, j );
- //	m_nDataLen = j;
-	delete [] pszDes;
-	return;
-}
-
-
-
-/* Quoted-Printableデコード */
-long CJis::QuotedPrintable_Decode( char* pszSrc, long nSrcLen )
-{
-	int			i;
-	char*		pszDes;
-	long		lDesSize;
-	char		szHex[3];
-	int			nHex;
-
-	memset( szHex, 0, 3 );
-	pszDes = new char [nSrcLen + 1];
-	memset( pszDes, 0, nSrcLen + 1 );
-	lDesSize = 0;
-	for( i = 0; i < nSrcLen; i++ ){
-		if( pszSrc[i] == '=' ){
-			szHex[0] = pszSrc[i + 1];
-			szHex[1] = pszSrc[i + 2];
-			sscanf( szHex, "%x", &nHex );
-			pszDes[lDesSize] = (char)nHex;
-			lDesSize++;
-			i += 2;
-		}else{
-			pszDes[lDesSize] = pszSrc[i];
-			lDesSize++;
-		}
-	}
-	pszDes[lDesSize] = 0;
-	memcpy( pszSrc, pszDes, lDesSize );
-	delete [] pszDes;
-	return lDesSize;
-}
-
-
-
-
-
-
-/* コード変換 SJIS→JIS */
-void CJis::SJIStoJIS( CMemory* pMem )
-{
-	void*	pBufJIS;
-	int		nBufJISLen;
-	CMemory	cMem;
-
-	/* SJIS→JIS */
-	StrSJIStoJIS( &cMem, (unsigned char *)pMem->GetRawPtr(), pMem->GetRawLength() );
-	pBufJIS = cMem.GetRawPtr( &nBufJISLen );
-	pMem->SetRawData( pBufJIS, nBufJISLen );
-	return;
-}
-
-
-
-/*!	SJIS→JIS
-
-	@date 2003.09.07 genta 不要なキャスト除去
-*/
-int CJis::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen )
-{
-//	BOOL bSJISKAN	= FALSE;
-//	BOOL b8BITCODE	= FALSE;
-
-	long			nWorkBgn;
-	long			nWorkLen;
-	int				i;
-	int				j;
-	unsigned char *	pszWork;
-	int				nCharKindOld;
-	int				nCharKind;
-	int				bChange;
-	nCharKind = CHAR_ASCII;		/* ASCII文字 */
-	nCharKindOld = nCharKind;
-	bChange = FALSE;
-//	/* 文字種別 */
-//	#define CHAR_ASCII		0	/* ASCII文字 */
-//	#define CHAR_8BITCODE	1	/* 8ビットコード(半角カタカナなど) */
-//	#define CHAR_ZENKAKU	2	/* 全角文字 */
-
-	pcmemDes->SetRawData("",0);
-	pcmemDes->AllocBuffer( nSrcLen );
-//	bSJISKAN  = FALSE;
-	nWorkBgn = 0;
-	for( i = 0;; i++ ){
-		/* 処理が終了した */
-		if( i >= nSrcLen ){
-			nCharKind = CHAR_NULL;	/* なにもない */
-		}else
-		// 漢字か？
-		if( ( i < nSrcLen - 1) && _IS_SJIS_1(pszSrc[i + 0]) && _IS_SJIS_2(pszSrc[i + 1]) ){
-			nCharKind = CHAR_ZENKAKU;	/* 全角文字 */
-//			++i;
-		}
-		else if( pszSrc[i] & (unsigned char)0x80 ){
-			nCharKind = CHAR_8BITCODE;	/* 8ビットコード(半角カタカナなど) */
-		}else{
-			nCharKind = CHAR_ASCII;		/* ASCII文字 */
-		}
-		/* 文字種類が変化した */
-		if( nCharKindOld != nCharKind ){
-			if( CHAR_NULL != nCharKind ){
-				bChange = TRUE;
-			}
-
-			nWorkLen = i - nWorkBgn;
-			/* 以前の文字種類 */
-			switch( nCharKindOld ){
-			case CHAR_ASCII:	/* ASCII文字 */
-				if( 0 < nWorkLen ){
-					pcmemDes->AppendRawData( &(pszSrc[nWorkBgn]), nWorkLen );
-				}
-				break;
-			case CHAR_8BITCODE:	/* 8ビットコード(半角カタカナなど) */
-				if( 0 < nWorkLen ){
-					pszWork = new unsigned char[nWorkLen + 1];
-					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-					pszWork[ nWorkLen ] = '\0';
-					for( j = 0; j < nWorkLen; ++j ){
-						pszWork[j] -= (unsigned char)0x80;
-					}
-					pcmemDes->AppendRawData( pszWork, nWorkLen );
-					delete [] pszWork;
-				}
-				break;
-			case CHAR_ZENKAKU:	/* 全角文字 */
-				if( 0 < nWorkLen ){
-					pszWork = new unsigned char[nWorkLen + 1];
-					memcpy( pszWork, &pszSrc[nWorkBgn], nWorkLen );
-					pszWork[ nWorkLen ] = '\0';
-					// SJIS→JIS変換
-					nWorkLen = MemSJIStoJIS( pszWork, nWorkLen );
-					pcmemDes->AppendRawData( pszWork, nWorkLen );
-					delete [] pszWork;
-				}
-				break;
-			}
-			/* 新しい文字種類 */
-			switch( nCharKind ){
-			case CHAR_ASCII:	/* ASCII文字 */
-				pcmemDes->_AppendSz( ESC_ASCII );
-				break;
-			case CHAR_NULL:		/* なにもない */
-				if( bChange &&					/* 一回は文字種が変化した */
-					nCharKindOld != CHAR_ASCII	/* 直前がASCII文字ではない */
-				){
-					pcmemDes->_AppendSz( ESC_ASCII );
-				}
-				break;
-			case CHAR_8BITCODE:	/* 8ビットコード(半角カタカナなど) */
-				pcmemDes->_AppendSz( ESC_8BIT );
-				break;
-			case CHAR_ZENKAKU:	/* 全角文字 */
-				pcmemDes->_AppendSz( ESC_JIS );
-				break;
-			}
-			nCharKindOld = nCharKind;
-			nWorkBgn = i;
-			if( nCharKind == CHAR_NULL ){	/* なにもない */
-				break;
-			}
-		}
-		if( nCharKind == CHAR_ZENKAKU ){	/* 全角文字 */
-			++i;
-		}
-	}
-	return pcmemDes->GetRawLength();
-}
-
-
-
-/* SJIS→JIS変換 */
-long CJis::MemSJIStoJIS( unsigned char* pszSrc, long nSrcLen )
-{
-	int				i, j;
-	char *			pszDes;
-	unsigned short	sCode;
-
-	pszDes = new char[nSrcLen + 1];
-	memset( pszDes, 0, nSrcLen + 1 );
-	j = 0;
-	for( i = 0; i < nSrcLen - 1; i++ ){
-		//	Oct. 3, 2002 genta IBM拡張文字対応
-		sCode = _mbcjmstojis_ex( pszSrc + i );
-		if( sCode != 0 ){
-			pszDes[j	] = (unsigned char)(sCode >> 8);
-			pszDes[j + 1] = (unsigned char)(sCode);
-			++i;
-			j += 2;
-		}else{
-			pszDes[j] = pszSrc[i];
-			j++;
-		}
-	}
-	pszDes[j] = 0;
-	memcpy( pszSrc, pszDes, j );
-	delete [] pszDes;
-	return j;
-}
 
 
 

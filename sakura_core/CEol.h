@@ -46,12 +46,12 @@ SAKURA_CORE_API enum enumEOLType {
 };
 typedef enumEOLType EEolType;
 
-#define EOL_TYPE_NUM	5
+#define EOL_TYPE_NUM	EOL_CODEMAX // 5
 
 /* 行終端子の配列 */
 SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
-#include "SakuraBasis.h"
+#include "basis/SakuraBasis.h"
 
 /*!
 	@brief 行末の改行コードを管理
@@ -80,6 +80,11 @@ public:
 	bool SetType( EEolType t);	//	Typeの設定
 	void SetTypeByString( const wchar_t* pszData, int nDataLen );
 	void SetTypeByString( const char* pszData, int nDataLen );
+
+	//設定（ファイル読み込み時に使用）
+	void SetTypeByStringForFile( const char* pszData, int nDataLen ){ SetTypeByString( pszData, nDataLen ); }
+	void SetTypeByStringForFile_uni( const char* pszData, int nDataLen );
+	void SetTypeByStringForFile_unibe( const char* pszData, int nDataLen );
 
 	//取得
 	EEolType		GetType()	const{ return m_eEolType; }		//!< 現在のTypeを取得

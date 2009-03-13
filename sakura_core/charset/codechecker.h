@@ -38,6 +38,7 @@
 
 #include "global.h"
 #include "convert/convert_util2.h"
+#include "charset/codeutil.h"
 
 
 
@@ -170,9 +171,89 @@ extern const int TABLE_JISESCLEN[];
 extern const char* TABLE_JISESCDATA[];
 #endif
 
-// Unicode 判別関係
-bool __fastcall IsUnicodeResvdCP( wchar32_t );  //!< Unicode の予約コードポイントを判定
 
+// Unicode 判別関係
+
+/*!
+	Unicode の Noncharacter を確認
+
+	参考資料：http://unicode.org/versions/Unicode4.0.0/ch15.pdf
+*/
+inline bool IsUnicodeNoncharacter( const wchar32_t wc )
+{
+	wchar32_t wc_ = wc & 0xffff;
+
+	if( wc_ == 0xfffe || wc_ == 0xffff ){
+		return true;
+	}
+	if( wc >= 0xfdd0 && wc <= 0xfdef ){
+		return true;
+	}
+	return false;
+}
+
+/*!
+	Unicode の予約コードポイントまたは不正文字の各二院
+	サロゲートでない文字用
+
+	参考資料：「Unicode.org」http://www.unicode.org/Public/UNIDATA/Blocks.txt
+*/
+inline bool IsUnicodeResvdCP_normal( const wchar32_t wc )
+{
+	if(
+		0
+		|| 0x0 <= wc && wc <= 0xff
+		|| 0x900 <= wc && wc <= 0x8af
+		|| 0x1900 <= wc && wc <= 0x1a1f
+		|| 0x1b00 <= wc && wc <= 0x1bbf
+		|| 0x1c00 <= wc && wc <= 0x1c7f
+		|| 0x1d00 <= wc && wc <= 0x2fdf
+		|| 0x2ff0 <= wc && wc <= 0xa4cf
+		|| 0xa500 <= wc && wc <= 0xa69f
+		|| 0xa700 <= wc && wc <= 0xa82f
+		|| 0xa840 <= wc && wc <= 0xa8df
+		|| 0xa900 <= wc && wc <= 0xa95f
+		|| 0xaa00 <= wc && wc <= 0xaa5f
+		|| 0xac00 <= wc && wc <= 0xd7af
+		|| 0xd800 <= wc && wc <= 0xffff
+	){
+		return false;
+	}
+	return true;
+}
+/*!
+	Unicode の予約コードポイントまたは不正文字の各二院
+	サロゲート用
+
+	参考資料：「Unicode.org」http://www.unicode.org/Public/UNIDATA/Blocks.txt
+*/
+inline bool IsUnicodeResvdCP_surrog( const wchar32_t wc )
+{
+	if(
+		0
+		|| 0x10000 <= wc && wc <= 0x101ff
+		|| 0x10280 <= wc && wc <= 0x102df
+		|| 0x10300 <= wc && wc <= 0x1034f
+		|| 0x10380 <= wc && wc <= 0x103df
+		|| 0x10400 <= wc && wc <= 0x104af
+		|| 0x10800 <= wc && wc <= 0x1083f
+		|| 0x10900 <= wc && wc <= 0x1093f
+		|| 0x10a00 <= wc && wc <= 0x10a5f
+		|| 0x12000 <= wc && wc <= 0x1247f
+		|| 0x1d000 <= wc && wc <= 0x1d24f
+		|| 0x1d300 <= wc && wc <= 0x1d37f
+		|| 0x1d400 <= wc && wc <= 0x1d7ff
+		|| 0x1f000 <= wc && wc <= 0x1f09f
+		|| 0x20000 <= wc && wc <= 0x2a6df
+		|| 0x2f800 <= wc && wc <= 0x2fa1f
+		|| 0xe0000 <= wc && wc <= 0xe007f
+		|| 0xe0100 <= wc && wc <= 0xe01ef
+		|| 0xf0000 <= wc && wc <= 0x10ffff
+	){
+		return false;
+	}
+	return true;
+}
 
 
 
@@ -252,6 +333,16 @@ inline bool IsJisZen( const char* pC ){
 	return ( CHARCODE__IS_JIS(static_cast<unsigned char>(pC[0]))
 		&& CHARCODE__IS_JIS(static_cast<unsigned char>(pC[1])) );
 }
+
+
+#undef CHARCODE__IS_SJIS_ZEN1
+#undef CHARCODE__IS_SJIS_ZEN2
+#undef CHARCODE__IS_EUCJP_ZEN1
+#undef CHARCODE__IS_EUCJP_ZEN2
+#undef CHARCODE__IS_EUCJP_HANKATA2
+#undef CHARCODE__IS_JIS
+
+
 //! UTF16 上位サロゲートか
 inline bool IsUtf16SurrogHi( const wchar_t wc ){
 //	return ( 0xd800 <= wc && wc <= 0xdbff );
@@ -262,7 +353,7 @@ inline bool IsUtf16SurrogLow( const wchar_t wc ){
 //	return ( 0xdc00 <= wc && wc <= 0xdfff );
 	return ( (wc & 0xfc00) == 0xdc00 );
 }
-//! UtF-8 上位サロゲートか
+//! UtF-8版 上位サロゲートか
 inline bool IsUtf8SurrogHi( const char* pS ) {
 	const unsigned char* ps = reinterpret_cast<const unsigned char*>( pS );
 	if( (ps[0] & 0xff) == 0xed && (ps[1] & 0xf0) == 0xa0 ){
@@ -270,7 +361,7 @@ inline bool IsUtf8SurrogHi( const char* pS ) {
 	}
 	return false;
 }
-//! UtF-8 下位サロゲートか
+//! UtF-8版 下位サロゲートか
 inline bool IsUtf8SurrogLow( const char* pS ) {
 	const unsigned char* ps = reinterpret_cast<const unsigned char*>( pS );
 	if( (ps[0] & 0xff) == 0xed && (ps[1] & 0xf0) == 0xb0 ){
@@ -305,18 +396,25 @@ inline bool IsBase64( const CHAR_TYPE c ){
 	return (c_ < 0x80 && (int)TABLE_BASE64CharToValue[c_] < 64)? true : false;
 }
 
+inline bool IsBinaryOnSurrogate( const wchar_t wc ){
+	int wc_ = wc;
+	return ( 0xdc00 <= wc_ && wc_ <= 0xdcff );
+}
 
-#undef CHARCODE__IS_SJIS_ZEN1
-#undef CHARCODE__IS_SJIS_ZEN2
-#undef CHARCODE__IS_EUCJP_ZEN1
-#undef CHARCODE__IS_EUCJP_ZEN2
-#undef CHARCODE__IS_EUCJP_HANKATA2
-#undef CHARCODE__IS_JIS
+//! 高位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+inline bool IsUTF16High( wchar_t c ){
+	return IsUtf16SurrogHi(c);
+}
+//! 下位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
+inline bool IsUTF16Low( wchar_t c ){
+	return IsUtf16SurrogLow(c);
+}
+
 
 //! 上位バイトと下位バイトを交換 (主に UTF-16 LE/BE 向け)
-inline wchar_t _SwapHLByte( const wchar_t wc ){
-	wchar_t wc1 = static_cast<wchar_t>( (static_cast<unsigned int>(wc) << 8) & 0x0000ffff );
-	wchar_t wc2 = static_cast<wchar_t>( (static_cast<unsigned int>(wc) >> 8) & 0x0000ffff );
+inline unsigned short _SwapHLByte( const unsigned short wc ){
+	unsigned short wc1 = static_cast<unsigned short>( (static_cast<unsigned int>(wc) << 8) & 0x0000ffff );
+	unsigned short wc2 = static_cast<unsigned short>( (static_cast<unsigned int>(wc) >> 8) & 0x0000ffff );
 	return (wc1 | wc2);
 }
 
@@ -359,7 +457,7 @@ inline int GuessEucjpCharsz( const char uc_ ){
 int CheckSjisChar( const char*, const int, ECharSet* );
 int CheckEucjpChar( const char*, const int, ECharSet* );
 int DetectJisEscseq( const char*, const int, EMyJisEscseq* ); // JIS エスケープシーケンス検出器
-int _CheckJisAnyPart( const char*, const int, char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount, const int nType );
+int _CheckJisAnyPart( const char*, const int, const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount, const int nType );
 enum EJisChecker{
 	JISCHECK_ASCII7,
 	JISCHECK_HANKATA,
@@ -368,29 +466,30 @@ enum EJisChecker{
 };
 
 inline int CheckJisAscii7Part( const char *pS, const int nLen,
-		char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
+		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_ASCII7 ); }
 inline int CheckJisHankataPart( const char *pS, const int nLen,
-		char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
+		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_HANKATA ); }
 inline int CheckJisZenkakuPart( const char *pS, const int nLen,
-		char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
+		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_ZENKAKU ); }
 inline int CheckJisUnknownPart( const char *pS, const int nLen,
-		char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
+		const char **ppNextChar, EMyJisEscseq *peNextEsc, int *pnErrorCount )
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_UNKNOWN ); }
 
 
-/* --- Unicode 系コードチェック */
-#define UTF16CHECK_BIG_ENDIAN 1
-int _CheckUtf16Char( const wchar_t*, const int, const int nOpt, ECharSet* );
-inline int CheckUtf16leChar( const wchar_t* p, const int n, ECharSet* e ) { return _CheckUtf16Char( p, n, 0, e ); }
-inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e ) { return _CheckUtf16Char( p, n, UTF16CHECK_BIG_ENDIAN, e ); }
+#define UC_NONCHARACTER 1
+#define UC_RESERVED_CP  2
 
-int CheckUtf8Char( const char*, const int, ECharSet*, bool bAllow4byteCode=true );
-int CheckCesu8Char( const char*, const int, ECharSet* );
+/* --- Unicode 系コードチェック */
+inline int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );
+inline int CheckUtf16leChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, false ); }
+inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, true ); }
+
+int CheckUtf8Char( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
+int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );
-int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError );
-
+int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError, const int nOption );
 

@@ -31,7 +31,7 @@
 */
 
 #include "parse/CWordParse.h"
-
+#include "mem/CMemory.h"
 
 
 
@@ -602,4 +602,159 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 	}
 
 	return true;
+}
+
+
+
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+//    MIME ヘッダーデコード
+//
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//
+
+
+enum EEncodingMethod {
+	EM_NONE,
+	EM_QP,
+	EM_BASE64,
+};
+
+/*!
+	MIMEヘッダーデコード補助関数
+
+	@return  CMemory と置き換えられる入力文字列長 (nSkipLen)
+*/
+template< class CHAR_TYPE >
+int _DecodeMimeHeader( const CHAR_TYPE* pSrc, const int nSrcLen, CMemory* pcMem_alt, ECodeType* peCodetype )
+{
+	ECodeType ecode = CODE_NONE;
+	EEncodingMethod emethod = EM_NONE;
+	int nLen_part1, nLen_part2, nskipped_len;
+	int ncmpresult1, ncmpresult2, ncmpresult;
+
+	const CHAR_TYPE *pr, *pr_base;
+	char* pdst;
+	int ndecoded_len;
+
+
+	// MIME の該当部分を検出。----------------------------------------
+	//
+
+
+	//   part1 部分
+	//
+	//   "=?ISO-2022-JP?", "=?UTF-8?" などの部分を検出
+	//
+
+	if( pSrc+14 < pSrc+nSrcLen ){
+		// JIS の場合
+		if( sizeof(CHAR_TYPE) == 2 ){
+			ncmpresult = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?ISO-2022-JP?", 14 );
+		}else{
+			ncmpresult = strnicmp( &pSrc[0], "=?ISO-2022-JP?", 14 );
+		}
+		if( ncmpresult == 0 ){  // 
+			ecode = CODE_JIS;
+			nLen_part1 = 14;
+			goto finish_first_detect;
+		}
+	}
+	if( pSrc+8 < pSrc+nSrcLen ){
+		// UTF-8 の場合
+		if( sizeof(CHAR_TYPE) == 2 ){
+			ncmpresult = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[0]), L"=?UTF-8?", 8 );
+		}else{
+			ncmpresult = strnicmp( &pSrc[0], "=?UTF-8?", 8 );
+		}
+		if( ncmpresult == 0 ){
+			ecode = CODE_UTF8;
+			nLen_part1 = 8;
+			goto finish_first_detect;
+		}
+	}
+	// マッチしなかった場合
+	pcMem_alt->SetRawData( "", 0 );
+	if( peCodetype ){
+		*peCodetype = CODE_NONE;
+	}
+	return 0;
+
+finish_first_detect:;
+
+	if( peCodetype ){
+		*peCodetype = ecode;
+	}
+
+	//
+	//    part2 部分
+	//
+	//   "B?" または "Q?" の部分を検出
+	//
+
+	if( pSrc+nLen_part1+2 >= pSrc+nSrcLen ){
+		pcMem_alt->SetRawData( "", 0 );
+		return 0;
+	}
+	if( sizeof(CHAR_TYPE) == 2 ){
+		ncmpresult1 = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"B?", 2 );
+		ncmpresult2 = wcsnicmp( reinterpret_cast<const wchar_t*>(&pSrc[nLen_part1]), L"Q?", 2 );
+	}else{
+		ncmpresult1 = strnicmp( &pSrc[nLen_part1], "B?", 2 );
+		ncmpresult2 = strnicmp( &pSrc[nLen_part1], "Q?", 2 );
+	}
+	if( ncmpresult1 == 0 ){
+		emethod = EM_BASE64;
+	}else if( ncmpresult2 == 0 ){
+		emethod = EM_QP;
+	}else{
+		pcMem_alt->SetRawData( "", 0 );
+		return 0;
+	}
+	nLen_part2 = 2;
+
+	//
+	//   エンコード文字列の部分を検出
+	//
+
+	pr_base = pSrc + nLen_part1 + nLen_part2;
+	pr = pSrc + nLen_part1 + nLen_part2;
+	for( ; pr < pSrc+nSrcLen-1; ++pr ){
+		if( sizeof(CHAR_TYPE) == 2 ){
+			ncmpresult = wcsncmp( reinterpret_cast<const wchar_t*>(pr), L"?=", 2 );
+		}else{
+			ncmpresult = strncmp( pr, "?=", 2 );
+		}
+		if( ncmpresult == 0 ){
+			break;
+		}
+	}
+	if( pr == pSrc+nSrcLen-1 ){
+		pcMem_alt->SetRawData( "", 0 );
+		return 0;
+	}
+
+	nskipped_len = pr - pSrc + 2;  // =? から ?= までの、全体の長さを記録
+
+	//   デコード ----------------------------------------------------
+	//
+
+	pcMem_alt->AllocBuffer( pr - pr_base );
+	pdst = reinterpret_cast<char*>( pcMem_alt->GetRawPtr() );
+	if( pdst == NULL ){
+		pcMem_alt->SetRawData( "", 0 );
+		return 0;
+	}
+
+	if( emethod == EM_BASE64 ){
+		ndecoded_len = _DecodeBase64( pr_base, pr-pr_base, pdst );
+	}else{
+		ndecoded_len = _DecodeQP( pr_base, pr-pr_base, pdst );
+	}
+
+	pcMem_alt->_SetRawLength( ndecoded_len );
+
+	return nskipped_len;
 }

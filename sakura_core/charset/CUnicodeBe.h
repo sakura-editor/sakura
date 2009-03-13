@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CCodeBase.h"
+#include "CUnicode.h"
 
 class CUnicodeBe : public CCodeBase{
 public:
@@ -11,10 +12,15 @@ public:
 	void GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得
 
 public:
-	//実装
-	static EConvertResult UnicodeBEToUnicode(CMemory* pMem);	// UnicodeBE → Unicodeコード変換 //2007.08.13 kobake 追加
-	static EConvertResult UnicodeToUnicodeBE(CMemory* pMem);	// Unicode   → UnicodeBEコード変換
+
+	inline static EConvertResult UnicodeBEToUnicode(CMemory* pMem)
+		{ return CUnicode::_UnicodeToUnicode_in(pMem,true); }	// UnicodeBE → Unicodeコード変換 //2007.08.13 kobake 追加
+	inline static EConvertResult UnicodeToUnicodeBE(CMemory* pMem)
+		{ return CUnicode::_UnicodeToUnicode_out(pMem,true); }	// Unicode   → UnicodeBEコード変換
+
 };
 
-class CEol;
-SAKURA_CORE_API const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)
+
+// util_string_ex2.h へ移動
+//class CEol;
+//SAKURA_CORE_API const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)

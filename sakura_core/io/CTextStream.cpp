@@ -60,9 +60,8 @@ wstring CTextInputStream::ReadLineW()
 
 	//UTF-8 Å® UNICODE
 	if(m_bIsUtf8){
-		CNativeW cUnicode;
-		CUtf8::UTF8ToUnicode(line,&cUnicode);
-		return cUnicode.GetStringPtr();
+		CUtf8::UTF8ToUnicode(&line);
+		return (const wchar_t*)line.GetRawPtr();
 	}
 	//Shift_JIS Å® UNICODE
 	else{

@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "basis/SakuraBasis.h"
+class CNativeW;
+
 //! •¶ŽšŽí—ÞŽ¯•ÊŽq
 enum ECharKind{
 	CK_NULL,			//!< NULL

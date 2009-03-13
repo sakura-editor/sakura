@@ -4,19 +4,8 @@
 #include "CUnicodeBe.h"
 #include "CEol.h"
 
-//! UnicodeBE→Unicodeコード変換
-// 2007.08.13 kobake 作成
-EConvertResult CUnicodeBe::UnicodeBEToUnicode( CMemory* pMem )
-{
-	pMem->SwapHLByte();
-	return RESULT_COMPLETE;
-}
+#include "codechecker.h"
 
-EConvertResult CUnicodeBe::UnicodeToUnicodeBE( CMemory* pMem )
-{
-	pMem->SwapHLByte();
-	return RESULT_COMPLETE;
-}
 
 void CUnicodeBe::GetBom(CMemory* pcmemBom)
 {
@@ -40,6 +29,7 @@ void CUnicodeBe::GetEol(CMemory* pcmemEol, EEolType eEolType)
 }
 
 
+#if 0 // util/string_ex2.cpp へ移動
 
 /*
 	行端子の種類を調べるUnicodeBE版
@@ -67,6 +57,7 @@ static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 	}
 	return EOL_NONE;
 }
+
 
 /*!
 	GetNextLineのwchar_t版(ビックエンディアン用)
@@ -102,3 +93,4 @@ const wchar_t* GetNextLineWB(
 	return &pData[nBgn];
 }
 
+#endif

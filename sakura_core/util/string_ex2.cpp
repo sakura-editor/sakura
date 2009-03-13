@@ -166,8 +166,68 @@ const wchar_t* GetNextLineW(
 	*pnLineLen = i - nBgn;
 	return &pData[nBgn];
 }
+#if 0 // 未使用
+/*
+	行端子の種類を調べるUnicodeBE版
+	@param pszData 調査対象文字列へのポインタ
+	@param nDataLen 調査対象文字列の長さ(wchar_tの長さ)
+	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
+*/
+static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
+{
+	/*! 行終端子のデータの配列(UnicodeBE版) 2000.05.30 Moca */
+	static const wchar_t* aEolTable[EOL_TYPE_NUM] = {
+		L"",									// EOL_NONE
+		(const wchar_t*)"\x00\x0d\x00\x0a\x00",	// EOL_CRLF
+		(const wchar_t*)"\x00\x0a\x00",			// EOL_LF
+		(const wchar_t*)"\x00\x0d\x00"			// EOL_CR
+	};
 
+	/* 改行コードの長さを調べる */
 
+	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
+		CEol cEol((EEolType)i);
+		if( cEol.GetLen()<=nDataLen && 0==auto_memcmp(pszData,aEolTable[i],cEol.GetLen()) ){
+			return gm_pnEolTypeArr[i];
+		}
+	}
+	return EOL_NONE;
+}
+
+/*!
+	GetNextLineのwchar_t版(ビックエンディアン用)
+	GetNextLineより作成
+	static メンバ関数
+*/
+const wchar_t* GetNextLineWB(
+	const wchar_t*	pData,	//!< [in]	検索文字列
+	int			nDataLen,	//!< [in]	検索文字列の文字数
+	int*		pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
+	int*		pnBgn,		//!< [i/o]	検索文字列のオフセット位置
+	CEol*		pcEol		//!< [i/o]	EOL
+)
+{
+	int		i;
+	int		nBgn;
+	nBgn = *pnBgn;
+
+	pcEol->SetType( EOL_NONE );
+	if( *pnBgn >= nDataLen ){
+		return NULL;
+	}
+	for( i = *pnBgn; i < nDataLen; ++i ){
+		// 改行コードがあった
+		if( pData[i] == (wchar_t)0x0a00 || pData[i] == (wchar_t)0x0d00 ){
+			// 行終端子の種類を調べる
+			pcEol->SetType( GetEOLTypeUniBE( &pData[i], nDataLen - i ) );
+			break;
+		}
+	}
+	*pnBgn = i + pcEol->GetLen();
+	*pnLineLen = i - nBgn;
+	return &pData[nBgn];
+}
+#endif
 
 /*! 指定長以下のテキストに切り分ける
 

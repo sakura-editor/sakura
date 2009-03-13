@@ -230,7 +230,7 @@ EConvertResult CFileLoad::ReadLine(
 	}
 #endif
 	//行データバッファ (文字コード変換無しの生のデータ)
-	static CMemory cLineBuffer;
+	/*static */CMemory cLineBuffer;
 	cLineBuffer.SetRawData("",0);
 
 	// 1行取り出し ReadBuf -> m_memLine
@@ -371,41 +371,57 @@ const char* CFileLoad::GetNextLineCharCode(
 	CEol*		pcEol,		//!< [i/o]	EOL
 	int*		pnEolLen	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
 ){
-	const char *pRetStr;
+	int nbgn = *pnBgn;
+	int i;
+	int neollen;
+
+	pcEol->SetType( EOL_NONE );
+
+	if( nDataLen <= nbgn ){
+		*pnLineLen = 0;
+		*pnEolLen = 0;
+		return NULL;
+	}
+
 	switch( m_CharCode ){
 	case CODE_UNICODE:
-		*pnBgn /= sizeof( wchar_t );
-		pRetStr = (const char*)GetNextLineW(
-			(const wchar_t*)pData,
-			nDataLen / sizeof( wchar_t ),
-			pnLineLen,
-			pnBgn,
-			pcEol );
-		*pnLineLen *= sizeof( wchar_t );
-		*pnBgn     *= sizeof( wchar_t );
-		*pnEolLen   = (Int)pcEol->GetLen() * sizeof( wchar_t );
+		for( i = nbgn; i < nDataLen; i += 2 ){
+			if( (pData[i] == '\r' || pData[i] == '\n') && pData[i+1] == 0x00 ){
+				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
+				break;
+			}
+		}
 		break;
-
 	case CODE_UNICODEBE:
-		*pnBgn /= sizeof( wchar_t );
-		pRetStr = (const char*)GetNextLineWB(
-			(const wchar_t*)pData,
-			nDataLen / sizeof( wchar_t ),
-			pnLineLen,
-			pnBgn,
-			pcEol );
-		*pnLineLen *= sizeof( wchar_t );
-		*pnBgn     *= sizeof( wchar_t );
-		*pnEolLen   = (Int)pcEol->GetLen() * sizeof( wchar_t );
+		for( i = nbgn; i < nDataLen; i += 2 ){
+			if( pData[i] == 0x00 && (pData[i+1] == '\r' || pData[i+1] == '\n') ){
+				pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
+				break;
+			}
+		}
 		break;
-
 	default:
-		pRetStr = GetNextLine( pData, nDataLen, pnLineLen, pnBgn, pcEol );
-		*pnEolLen = (Int)pcEol->GetLen();
-		break;
+		for( i = nbgn; i < nDataLen; ++i ){
+			if( pData[i] == '\r' || pData[i] == '\n' ){
+				pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
+				break;
+			}
+		}
 	}
-	return pRetStr;
+
+	neollen = pcEol->GetLen();
+	if( m_CharCode == CODE_UNICODE || m_CharCode == CODE_UNICODEBE ){
+		neollen *= sizeof(wchar_t);   // EOL のバイト数を計算
+		if( neollen < 1 ){
+			if( i != nDataLen ){
+				i = nDataLen;		// 最後の半端な1バイトを落とさないように
+			}
+		}
+	}
+
+	*pnBgn = i + neollen;
+	*pnLineLen = i - nbgn;
+	*pnEolLen = neollen;
+
+	return &pData[nbgn];
 }
-
-
-
