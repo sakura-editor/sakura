@@ -257,9 +257,12 @@ struct ARRHEAD {
 
 	Version 88:
 	ホイールスクロールを利用したページスクロール・横スクロール対応 2009.01.12 nasukoji
+
+	Version 89:
+	Typesのm_szTabViewStringサイズ拡張（Version 41）の戻し 2009.02.11 ryoji
 */
 
-const unsigned int uShareDataVersion = 88;
+const unsigned int uShareDataVersion = 89;
 
 /*
 ||	Singleton風

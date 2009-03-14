@@ -937,24 +937,6 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nVal, FALSE );
 			return TRUE;
-		case IDC_SPIN_REPEATEDSCROLLLINENUM:
-			/* キーリピート時のスクロール行数 */
-//			MYTRACE( "IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 10 ){
-				nVal = 10;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, nVal, FALSE );
-			return TRUE;
 		case IDC_SPIN_TABSPACE:
 			//	Sep. 22, 2002 genta
 			/* TAB幅 */
@@ -1247,7 +1229,7 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 int CPropTypes::GetData_p1( HWND hwndDlg )
 {
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-	char szTab[8+1+1]; /* +1. happy */
+	char szTab[8+1]; /* +1. happy */
 	int  i;
 //#endif
 
@@ -1313,7 +1295,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	/* TAB表示文字列 */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, sizeof( szTab ) - 1 );
+	::GetDlgItemText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, sizeof( szTab ) );
 	strcpy( m_Types.m_szTabViewString, "^       " );
 	for( i = 0; i < 8; i++ ){
 		if( (szTab[i] == '\0') || (szTab[i] < 0x20 || szTab[i] >= 0x7f) ) break;
