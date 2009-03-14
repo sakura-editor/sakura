@@ -245,7 +245,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	}
 
 	nY = ( i - m_nViewTopLine ) * nLineHeight + m_nViewAlignTop;
-	nLineTo = m_nViewTopLine + ( ( pPs->rcPaint.bottom - m_nViewAlignTop ) / nLineHeight );
+	nLineTo = m_nViewTopLine + ( ( pPs->rcPaint.bottom - m_nViewAlignTop + (nLineHeight - 1) ) / nLineHeight ) - 1;	// 2009.02.17 ryoji åvéZÇê∏ñßâª
 
 	BOOL bSelected;
 	bSelected = IsTextSelected();

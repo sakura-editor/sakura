@@ -12,6 +12,7 @@
 	Copyright (C) 2002, MIK, aroka, genta, YAZAKI
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, Moca, genta, D.S.Koba
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -99,6 +100,8 @@ public:
 	bool ChangeLayoutParam( HWND hwndProgress, int nTabSize, int nMaxLineSize );
 	// Jul. 29, 2006 genta
 	void GetEndLayoutPos(int& lX, int& lY);
+	CLayout* GetTopLayout()		{ return m_pLayoutTop; }	// 2009.02.17 ryoji
+	CLayout* GetBottomLayout()	{ return m_pLayoutBot; }	// 2009.02.17 ryoji
 	
 protected:
 	int PrevOrNextWord( int, int, int*, int*, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
