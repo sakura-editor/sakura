@@ -9538,6 +9538,7 @@ void CEditView::Command_EXECCOMMAND_DIALOG( void )
 	CDlgExec cDlgExec;
 
 	/* モードレスダイアログの表示 */
+	cDlgExec.m_bEditable = ( m_pcEditDoc->m_bReadOnly == FALSE && !( 0 != m_pcEditDoc->m_nFileShareModeOld && m_pcEditDoc->m_hLockedFile == NULL ) );	// 編集禁止
 	if( FALSE == cDlgExec.DoModal( m_hInstance, m_hWnd, 0 ) ){
 		return;
 	}

@@ -10,6 +10,7 @@
 	Copyright (C) 2002, aroka, YAZAKI, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, maru
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -91,13 +92,18 @@ void CDlgExec::SetData( void )
 		int nExecFlgOpt;
 		nExecFlgOpt = m_pShareData->m_nExecFlgOpt;
 		
+		// 編集禁止のときは編集中ウィンドウへは出力しない	// 2009.02.21 ryoji
+		if( !m_bEditable ){
+			nExecFlgOpt &= ~0x02;
+		}
+
 		::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, nExecFlgOpt & 0x01 ? BST_CHECKED : BST_UNCHECKED );
 		::CheckDlgButton( m_hWnd, IDC_RADIO_OUTPUT, nExecFlgOpt & 0x02 ? BST_UNCHECKED : BST_CHECKED );
 		::CheckDlgButton( m_hWnd, IDC_RADIO_EDITWINDOW, nExecFlgOpt & 0x02 ? BST_CHECKED : BST_UNCHECKED );
 		::CheckDlgButton( m_hWnd, IDC_CHECK_SENDSTDIN, nExecFlgOpt & 0x04 ? BST_CHECKED : BST_UNCHECKED );
 
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
-		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
+		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), ((nExecFlgOpt & 0x01) && m_bEditable) & 0x01 ? TRUE : FALSE );
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 	/*****************************
@@ -155,7 +161,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			BOOL bEnabled;
 			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_OUTPUT ), bEnabled );
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), bEnabled );
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), bEnabled && m_bEditable );	// 編集禁止の条件追加	// 2009.02.21 ryoji
 		}	//	To Here 2007.01.02 maru 引数を拡張のため
 		break;
 	//	To Here Sept. 12, 2000 うまくいかないので元に戻してある

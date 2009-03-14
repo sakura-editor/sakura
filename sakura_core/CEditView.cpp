@@ -16,7 +16,7 @@
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
 	Copyright (C) 2008, ryoji, nasukoji, bosagami
-	Copyright (C) 2009, nasukoji
+	Copyright (C) 2009, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -9878,6 +9878,7 @@ CEOL CEditView::GetCurrentInsertEOL( void )
 	@date	2004/01/23	genta
 	@date	2004/01/28	Moca	改行コードが分割されるのを防ぐ
 	@date	2007/03/18	maru	オプションの拡張
+	@date	2009/02/21	ryoji	編集禁止のときは編集中ウィンドウへは出力しない（指定時はアウトプットへ）
 */
 void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 {
@@ -9887,13 +9888,15 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	ZeroMemory( &pi, sizeof(PROCESS_INFORMATION) );
 	CDlgCancel				cDlgCancel;
 
+	BOOL bEditable = ( m_pcEditDoc->m_bReadOnly == FALSE && !( 0 != m_pcEditDoc->m_nFileShareModeOld && m_pcEditDoc->m_hLockedFile == NULL ) );	// 編集禁止
+
 	//	From Here 2006.12.03 maru 引数を拡張のため
 	BOOL	bGetStdout;			//	子プロセスの標準出力を得る
 	BOOL	bToEditWindow;		//	TRUE=編集中のウィンドウ / FALSAE=アウトプットウィンドウ
 	BOOL	bSendStdin;			//	編集中ファイルを子プロセスSTDINに渡す
 	
 	bGetStdout = nFlgOpt & 0x01 ? TRUE : FALSE;
-	bToEditWindow = nFlgOpt & 0x02 ? TRUE : FALSE;
+	bToEditWindow = ((nFlgOpt & 0x02) && bEditable) ? TRUE : FALSE;
 	bSendStdin = nFlgOpt & 0x04 ? TRUE : FALSE;
 	//	To Here 2006.12.03 maru 引数を拡張のため
 
