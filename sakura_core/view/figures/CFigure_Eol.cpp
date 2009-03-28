@@ -14,9 +14,6 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 //2007.08.28 kobake 引数 fuOptions を削除
 void _DispEOF( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 
-//空(から)行描画
-bool _DispEmptyLine(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
-
 //改行記号描画
 //2007.08.30 kobake 追加
 void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView);
@@ -62,9 +59,7 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 		}
 		// 最終行の場合は、EOFを表示
 		else if(pInfo->pDispPos->GetLayoutLineRef()+1==CEditDoc::GetInstance(0)->m_cLayoutMgr.GetLineCount() && pInfo->pDispPos->GetDrawCol() < nWrapKeta){
-			if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bDisp ){
-				_DispEOF(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
-			}
+			_DispEOF(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
 			pInfo->nPosInLogic+=CLogicInt(1);
 		}
 		// それ以外では、折り返し記号を表示
@@ -89,81 +84,7 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 		CLayoutInt(-1)
 	);
 
-
-
 	return true;
-}
-
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                    空(から)行描画実装                       //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//! 空行を描画。EOFを描画した場合はtrueを返す。
-bool _DispEmptyLine(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
-{
-	bool bEof=false;
-
-	CTypeSupport cEofType(pcView,COLORIDX_EOF);
-	CTypeSupport cTextType(pcView,COLORIDX_TEXT);
-
-	const CLayoutInt nWrapKetas = pcView->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
-
-	int nYPrev = pDispPos->GetDrawPos().y;
-	
-	if( !pcView->IsBkBitmap() ){
-		// 背景描画
-		RECT rcClip;
-		pcView->GetTextArea().GenerateClipRectLine(&rcClip,*pDispPos);
-		cTextType.FillBack(gr,rcClip);
-	}
-
-	// EOF記号の表示
-	CLayoutInt nCount = pcView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-
-	// ドキュメントが空(nCount==0)。そして1行目(pDispPos->GetLayoutLineRef() == 0)。表示域も1行目(m_nViewTopLine==0)
-	if( nCount == 0 && pcView->GetTextArea().GetViewTopLine() == 0 && pDispPos->GetLayoutLineRef() == 0 ){
-		// EOF記号の表示
-		if( cEofType.IsDisp() ){
-			_DispEOF(gr,pDispPos,pcView);
-		}
-
-		bEof = true;
-	}
-	else{
-		//最終行の次の行
-		if( nCount > 0 && pDispPos->GetLayoutLineRef() == nCount ){
-			//最終行の取得
-			const wchar_t*	pLine;
-			CLogicInt		nLineLen;
-			const CLayout*	pcLayout;
-			pLine = pcView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCount - CLayoutInt(1), &nLineLen, &pcLayout );
-			
-			//最終行の桁数
-			CLayoutInt nLineCols = pcView->LineIndexToColmn( pcLayout, nLineLen );
-
-			if( WCODE::IsLineDelimiter(pLine[nLineLen-1]) || nLineCols >= nWrapKetas ){
-				// EOF記号の表示
-				if( cEofType.IsDisp() ){
-					_DispEOF(gr,pDispPos,pcView);
-				}
-
-				bEof = true;
-			}
-		}
-	}
-
-	// 2006.04.29 Moca 選択処理のため縦線処理を追加
-	pcView->GetTextDrawer().DispVerticalLines(
-		gr,
-		nYPrev,
-		nYPrev + pcView->GetTextMetrics().GetHankakuDy(),
-		CLayoutInt(0),
-		CLayoutInt(-1)
-	);
-
-	return bEof;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -228,6 +149,8 @@ void _DispEOF(
 {
 	// 描画に使う色情報
 	CTypeSupport cEofType(pcView,COLORIDX_EOF);
+	if(!cEofType.IsDisp())
+		return;
 
 	//必要なインターフェースを取得
 	const CTextMetrics* pMetrics=&pcView->GetTextMetrics();
