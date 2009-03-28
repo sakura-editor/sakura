@@ -63,15 +63,16 @@ public:
 	virtual int GetData( void ){return 1;}/* ダイアログデータの取得 */
 	virtual void SetData( void ){return;}/* ダイアログデータの設定 */
 	virtual BOOL OnBnClicked( int );
+	virtual BOOL OnStnClicked( int ){return FALSE;}
+	virtual BOOL OnEnChange( HWND hwndCtl, int wID ){return FALSE;}
+	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
+	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
 	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnCbnEditChange( HWND hwndCtl, int wID ){return FALSE;} // @@2005.03.31 MIK タグジャンプDialog
-//	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
-//	virtual BOOL OnDbnDropDown( HWND hwndCtl, int wID ){return FALSE;}
-//	virtual BOOL OnDbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
+	virtual BOOL OnCbnDropDown( HWND hwndCtl, int wID );
+//	virtual BOOL OnCbnCloseUp( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnCbnSelEndOk( HWND hwndCtl, int wID );
-	virtual BOOL OnEditChange( HWND hwndCtl, int wID ){return FALSE;}
 
-	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
 	virtual BOOL OnKillFocus( WPARAM wParam, LPARAM lParam ){return FALSE;}
 	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
 	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }

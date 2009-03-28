@@ -57,8 +57,8 @@ protected:
 	||  実装ヘルパ関数
 	*/
 	BOOL	OnBnClicked( int );
-	BOOL	OnCbnSelChange( HWND hwndCtl, int wID );
-	BOOL	OnEditChange( HWND hwndCtl, int wID );
+	BOOL	OnLbnSelChange( HWND hwndCtl, int wID );
+	BOOL	OnEnChange( HWND hwndCtl, int wID );
 	LPVOID	GetHelpIdTable(void);
 
 	void	SetData( void );	/* ダイアログデータの設定 */

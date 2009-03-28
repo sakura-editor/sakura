@@ -1347,8 +1347,8 @@ CAPTION "ファイル名を指定して実行"
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
 BEGIN
     LTEXT           "名前(&N)",IDC_STATIC,5,6,24,8
-    COMBOBOX        IDC_COMBO_m_szCommand,30,4,240,150,CBS_DROPDOWN | 
-                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP,0
+    COMBOBOX        IDC_COMBO_m_szCommand,30,4,240,240,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_TABSTOP,0
     PUSHBUTTON      "&...",IDC_BUTTON_REFERENCE,260,20,9,12,WS_GROUP,0
     CONTROL         "標準出力を得る(&S)",IDC_CHECK_GETSTDOUT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,5,32,70,10
