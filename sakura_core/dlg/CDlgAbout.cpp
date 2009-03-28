@@ -168,7 +168,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 }
 
 
-BOOL CDlgAbout::OnBnClicked( int wID )
+BOOL CDlgAbout::OnStnClicked( int wID )
 {
 	switch( wID ){
 	//	2006.07.27 genta 原作者連絡先のボタンを削除 (ヘルプから削除されているため)
@@ -183,7 +183,7 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 		}
 	}
 	/* 基底クラスメンバ */
-	return CDialog::OnBnClicked( wID );
+	return CDialog::OnStnClicked( wID );
 }
 
 //@@@ 2002.01.18 add start
