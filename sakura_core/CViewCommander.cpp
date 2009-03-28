@@ -673,6 +673,9 @@ BOOL CViewCommander::HandleCommand(
 			/* 操作の追加 */
 			GetDocument()->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( GetOpeBlk() );
 
+			if( GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
+				m_pCommanderView->Call_OnPaint( PAINT_LINENUMBER, false );	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
+
 			if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 				GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 		}
