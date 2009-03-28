@@ -305,7 +305,8 @@ void CTextDrawer::DispLineNumber(
 	int				nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	int				nCharWidth = pView->GetTextMetrics().GetHankakuDx();
 	// s”Ô†•\Ž¦•”•ªX•	Sep. 23, 2002 genta ‹¤’ÊŽ®‚Ì‚­‚­‚è‚¾‚µ
-	int				nLineNumAreaWidth = pView->GetTextArea().m_nViewAlignLeftCols * nCharWidth;
+	//int				nLineNumAreaWidth = pView->GetTextArea().m_nViewAlignLeftCols * nCharWidth;
+	int				nLineNumAreaWidth = pView->GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace;	// 2009.03.26 ryoji
 
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
 

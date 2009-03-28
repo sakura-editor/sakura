@@ -253,7 +253,9 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 	@param bDrawFromComptibleBmp  TRUE 画面バッファからhdcに作画する(コピーするだけ)。
 			TRUEの場合、pPs.rcPaint領域外は作画されないが、FALSEの場合は作画される事がある。
 			互換DC/BMPが無い場合は、普通の作画処理をする。
-@date 2007.09.09 Moca 元々無効化されていた第三パラメータのbUseMemoryDCをbDrawFromComptibleBmpに変更。
+
+	@date 2007.09.09 Moca 元々無効化されていた第三パラメータのbUseMemoryDCをbDrawFromComptibleBmpに変更。
+	@date 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
 */
 void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 {
@@ -410,24 +412,41 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	//                      全部の行を描画                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	//必要な行を描画する
-	while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
-	{
-		//描画X位置リセット
-		sPos.ResetDrawCol();
+	//必要な行を描画する	// 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
+	if(pPs->rcPaint.right <= GetTextArea().GetAreaLeft()){
+		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
+		{
+			if(!sPos.GetLayoutRef())
+				break;
 
-		//1行描画
-		bool bDispResult = DrawLogicLine(
-			gr,
-			&sPos,
-			nLayoutLineTo
-		);
-
-		if(bDispResult){
-			pPs->rcPaint.bottom += nLineHeight;	// EOF再描画対応
-			break;
+			//1行描画（行番号のみ）
+			GetTextDrawer().DispLineNumber(
+				gr,
+				sPos.GetLayoutLineRef(),
+				sPos.GetDrawPos().y
+			);
+			//行を進める
+			sPos.ForwardDrawLine(1);		//描画Y座標＋＋
+			sPos.ForwardLayoutLineRef(1);	//レイアウト行＋＋
 		}
+	}else{
+		while(sPos.GetLayoutLineRef() <= nLayoutLineTo)
+		{
+			//描画X位置リセット
+			sPos.ResetDrawCol();
 
+			//1行描画
+			bool bDispResult = DrawLogicLine(
+				gr,
+				&sPos,
+				nLayoutLineTo
+			);
+
+			if(bDispResult){
+				pPs->rcPaint.bottom += nLineHeight;	// EOF再描画対応
+				break;
+			}
+		}
 	}
 
 	gr.ClearMyFont();

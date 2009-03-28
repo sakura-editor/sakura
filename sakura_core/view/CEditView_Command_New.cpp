@@ -85,6 +85,7 @@ void CEditView::InsertData_CEditView(
 	bool			bHintNext = false;	// 更新が次行からになる可能性があることを示唆する
 	bool			bKinsoku;			// 禁則の有無
 	const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.GetY2(), &nLineLen, &pcLayout );
+	bool			bLineModifiedChange = (pLine)? !CModifyVisitor().IsLineModified(pcLayout->GetDocLineRef()): true;
 
 	//禁則がある場合は1行前から再描画を行う	@@@ 2002.04.19 MIK
 	bKinsoku = ( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bWordWrap
@@ -101,8 +102,7 @@ void CEditView::InsertData_CEditView(
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
 		// ※挿入位置は行途中でも句読点入力＋ワードラップで前の文字列から続けて前行に回り込む場合もある
-		const CLayout* pcLayoutWk = pcLayout->GetPrevLayout();
-		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){	// レイアウト２行目以後？（前行の終端で調査）
+		if( pcLayout->GetLogicOffset() && bKinsoku ){	// 折り返しレイアウト行か？
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 
@@ -138,7 +138,7 @@ void CEditView::InsertData_CEditView(
 	else{
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
-		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){
+		if( pcLayoutWk && pcLayoutWk->GetLayoutEol() == EOL_NONE && bKinsoku ){	// 折り返しレイアウト行か？（前行の終端で調査）
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 
@@ -271,6 +271,14 @@ void CEditView::InsertData_CEditView(
 			HDC hdc = this->GetDC();
 			OnPaint( hdc, &ps, FALSE );
 			this->ReleaseDC( hdc );
+
+			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
+			if( bLineModifiedChange ){	// 無変更だった行が変更された
+				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nStartLine );
+				if( pcLayoutWk && pcLayoutWk->GetLogicOffset() ){	// 折り返しレイアウト行か？
+					Call_OnPaint( PAINT_LINENUMBER, false );
+				}
+			}
 		}
 	}
 
@@ -608,6 +616,8 @@ void CEditView::ReplaceData_CEditView(
 	COpeBlk*		pcOpeBlk
 )
 {
+	bool bLineModifiedChange;
+
 	{
 		//	May. 29, 2000 genta
 		//	From Here
@@ -618,6 +628,7 @@ void CEditView::ReplaceData_CEditView(
 		const CLayout*	pcLayout;
 		CLogicInt		len;
 		const wchar_t*	line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetFrom().GetY2(), &len, &pcLayout );
+		bLineModifiedChange = (line)? !CModifyVisitor().IsLineModified(pcLayout->GetDocLineRef()): true;
 		if( line ){
 			CLogicInt pos = LineColmnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
 			//	Jun. 1, 2000 genta
@@ -752,6 +763,14 @@ void CEditView::ReplaceData_CEditView(
 				HDC hdc = this->GetDC();
 				OnPaint( hdc, &ps, FALSE );
 				this->ReleaseDC( hdc );
+
+				// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
+				if( bLineModifiedChange ){	// 無変更だった行が変更された
+					const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
+					if( pcLayoutWk && pcLayoutWk->GetLogicOffset() ){	// 折り返しレイアウト行か？
+						Call_OnPaint( PAINT_LINENUMBER, false );
+					}
+				}
 			}
 		}
 	}
