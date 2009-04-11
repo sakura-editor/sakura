@@ -2680,7 +2680,6 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 	CLogicInt		nCharChars;
 	CLogicInt		nIdxTo;
 	CLayoutInt		nPosX;
-	const CLayout*	pcLayout;
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
@@ -2780,23 +2779,7 @@ end_of_for:;
 		}
 		else{
 			if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-				BOOL bDelete = TRUE;
-				if( GetDllShareData().m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
-					pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-					if( NULL != pcLayout ){
-						/* 指定された桁に対応する行のデータ内の位置を調べる */
-						nIdxTo = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
-						if( nIdxTo == pcLayout->GetLengthWithoutEOL() ){
-
-							/* 現在位置が改行ならば削除しない */
-							bDelete = FALSE;
-						}
-					}
-				}
-				if( bDelete ){
-					/* 上書きモードなので、現在位置の文字を１文字消去 */
-					m_pCommanderView->DeleteData( FALSE );
-				}
+				DelCharForOverwrite();	// 上書き用の一文字削除	// 2009.04.11 ryoji
 			}
 		}
 	}
@@ -2856,7 +2839,6 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 		return;
 	}
 
-	CLogicInt		nIdxTo;
 	CMemory			cmemData;
 
 	//	Oct. 6 ,2002 genta 上下逆転
@@ -2883,22 +2865,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 	}
 	else{
 		if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			BOOL bDelete = TRUE;
-			if( GetDllShareData().m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
-				const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-				if( NULL != pcLayout ){
-					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxTo = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
-					if( nIdxTo == pcLayout->GetLengthWithoutEOL() ){
-						/* 現在位置が改行ならば削除しない */
-						bDelete = FALSE;
-					}
-				}
-			}
-			if( bDelete ){
-				/* 上書きモードなので、現在位置の文字を１文字消去 */
-				m_pCommanderView->DeleteData( FALSE );
-			}
+			DelCharForOverwrite();	// 上書き用の一文字削除	// 2009.04.11 ryoji
 		}
 	}
 
@@ -8786,4 +8753,33 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	// 折り返し位置を変更
 	GetEditWindow()->ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpace(), (CLayoutInt)nWidth );
+}
+
+/* 	上書き用の一文字削除	2009.04.11 ryoji */
+void CViewCommander::DelCharForOverwrite( void )
+{
+	bool bEol = false;
+	BOOL bDelete = TRUE;
+	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+	if( NULL != pcLayout ){
+		/* 指定された桁に対応する行のデータ内の位置を調べる */
+		CLogicInt nIdxTo = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+		if( nIdxTo >= pcLayout->GetLengthWithoutEOL() ){
+			bEol = true;	// 現在位置は改行または折り返し以後
+			if( pcLayout->GetLayoutEol() != EOL_NONE ){
+				if( GetDllShareData().m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
+					/* 現在位置が改行ならば削除しない */
+					bDelete = FALSE;
+				}
+			}
+		}
+	}
+	if( bDelete ){
+		/* 上書きモードなので、現在位置の文字を１文字消去 */
+		if( bEol ){
+			Command_DELETE();	//行数減では再描画が必要＆行末以後の削除を処理統一
+		}else{
+			m_pCommanderView->DeleteData( FALSE );
+		}
+	}
 }

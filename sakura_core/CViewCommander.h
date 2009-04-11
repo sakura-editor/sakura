@@ -344,4 +344,7 @@ public:
 //@@@ 2002.01.14 YAZAKI 不使用のため
 //	void Command_SENDMAIL( void );		/* メール送信 */
 
+private:
+	void DelCharForOverwrite( void );	// 上書き用の一文字削除	// 2009.04.11 ryoji
+
 };
