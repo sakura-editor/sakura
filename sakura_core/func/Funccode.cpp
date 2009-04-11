@@ -14,6 +14,7 @@
 	Copyright (C) 2006, aroka, ryoji, fon
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, nasukoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1097,7 +1098,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:						//ブラウズ
 	//case F_VIEWMODE:					//ビューモード	//	Sep. 10, 2002 genta 常に使えるように
-	case F_PROPERTY_FILE:
+	//case F_PROPERTY_FILE:				//ファイルのプロパティ	// 2009.04.11 ryoji コメントアウト
 		return pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath();	// 現在編集中のファイルのパス名をクリップボードにコピーできるか
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
