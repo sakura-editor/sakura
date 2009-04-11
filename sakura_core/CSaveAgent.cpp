@@ -34,6 +34,21 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 		}
 	}
 
+	// 他ウィンドウで開いているか確認する	// 2009.04.07 ryoji
+	if( !pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
+		HWND hwndOwner;
+		if( CShareData::getInstance()->IsPathOpened( pSaveInfo->cFilePath, &hwndOwner ) ){
+			ErrorMessage(
+				CEditWnd::Instance()->GetHwnd(),
+				_T("\'%ts\'\n")
+				_T("ファイルを保存できません。\n")
+				_T("他のウィンドウで使用中です。"),
+				(LPCTSTR)pSaveInfo->cFilePath
+			);
+			return CALLBACK_INTERRUPT;
+		}
+	}
+
 	// 書込可能チェック ######### スマートじゃない。ホントは書き込み時エラーチェック検出機構を用意したい
 	if(!pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) || !pcDoc->m_cDocFileOperation._ToDoLock()){ //名前を付けて保存 or ロックしてない
 		CFile cFile;
