@@ -296,6 +296,22 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 	ESaveResult eSaveResult = SAVED_FAILURE;
 
 	try{
+		//オプション：無変更でも上書きするか
+		// 2009.04.12 ryoji CSaveAgent::OnCheckSave()から移動
+		// ### 無変更なら上書きしないで抜ける処理はどの CDocListener の OnCheckSave() よりも前に
+		// ### （保存するかどうか問い合わせたりするよりも前に）やるぺきことなので、
+		// ### スマートじゃない？かもしれないけど、とりあえずここに配置しておく
+		if( !GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
+			// 上書きの場合
+			if(pSaveInfo->bOverwriteMode){
+				// 無変更の場合は警告音を出し、終了
+				if(!m_pcDocRef->m_cDocEditor.IsModified() && pSaveInfo->cEol==EOL_NONE){ //※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
+					CEditApp::Instance()->m_cSoundSet.NeedlessToSaveBeep();
+					throw CFlowInterruption();
+				}
+			}
+		}
+
 		//セーブ前チェック
 		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyCheckSave(pSaveInfo))throw CFlowInterruption();
 
