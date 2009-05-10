@@ -1330,6 +1330,11 @@ void CViewCommander::Command_GOFILEEND( bool bSelect )
 	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), TRUE );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
 	if( !(m_pCommanderView->GetSelectionInfo().IsTextSelected() && m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) ) GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+
+	// 選択範囲情報メッセージを表示する	// 2009.05.06 ryoji 追加
+	if( bSelect ){
+		m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
+	}
 }
 
 
