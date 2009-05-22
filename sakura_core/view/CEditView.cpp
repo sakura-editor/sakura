@@ -1090,17 +1090,12 @@ bool CEditView::IsCurrentPositionURL(
 	const wchar_t*	pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
 
 	int			nUrlLen;
-	CLogicInt	i = ptXY.GetX2() - CLogicInt(200);
-	if( i < CLogicInt(0) ){
-		i = CLogicInt(0);
-	}
-	for( ; i <= ptXY.GetX2() && i < nLineLen && i < ptXY.GetX2() + CLogicInt(200); ){
-	/* カーソル位置から前方に250バイトまでの範囲内で行頭に向かってサーチ */
-		/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-		if( !IsURL( &pLine[i], (Int)(nLineLen - i), &nUrlLen ) ){
-			++i;
-		}
-		else{
+	CLogicInt	i = CLogicInt(__max(0, ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
+	//nLineLen = CLogicInt(__min(nLineLen, ptXY.GetX2() + _MAX_PATH));
+	while( i <= ptXY.GetX2() && i < nLineLen ){
+		if( (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CColor_Url::BeginColor()と同条件に
+			&& IsURL(&pLine[i], (Int)(nLineLen - i), &nUrlLen)	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+		){
 			if( i <= ptXY.GetX2() && ptXY.GetX2() < i + CLogicInt(nUrlLen) ){
 				/* URLを返す場合 */
 				if( pwstrURL ){
@@ -1112,6 +1107,8 @@ bool CEditView::IsCurrentPositionURL(
 			}else{
 				i += CLogicInt(nUrlLen);
 			}
+		}else{
+			++i;
 		}
 	}
 	return false;
