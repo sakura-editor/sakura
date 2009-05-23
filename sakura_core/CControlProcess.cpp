@@ -127,13 +127,10 @@ bool CControlProcess::InitializeProcess()
 */
 bool CControlProcess::MainLoop()
 {
-	RELPRINT_A("CControlProcess begin");
 	if( m_pcTray && GetMainWindow() ){
 		m_pcTray->MessageLoop();	/* メッセージループ */
-		RELPRINT_A("CControlProcess done.");
 		return true;
 	}
-	RELPRINT_A("CControlProcess done failed.");
 	return false;
 }
 

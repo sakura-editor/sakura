@@ -465,32 +465,17 @@ LRESULT CControlTray::DispatchEvent(
 
 	/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 	case MYWM_DELETE_ME:
-		RELPRINT_A("MYWM_DELETE_ME\n");
-		RELPRINT_A(
-			"m_bStayTaskTray   =%d\n"
-			"m_bUseTaskTray    =%d\n"
-			"m_bCreatedTrayIcon=%d\n",
-			m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray?1:0,
-			m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray?1:0,
-			m_bCreatedTrayIcon?1:0
-		);
-
 		// タスクトレイのアイコンを常駐しない、または、トレイにアイコンを作っていない
 		if( !(m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray && m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray) || !m_bCreatedTrayIcon ){
 			// 現在開いている編集窓のリスト
 			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-			RELPRINT_A("nRowNum=%d\n",nRowNum);
 			if( 0 < nRowNum ){
 				delete [] pEditNodeArr;
 			}
 			// 編集ウィンドウの数が0になったら終了
 			if( 0 == nRowNum ){
-				RELPRINT_A("トレイClose\n");
 				::SendMessageAny( hwnd, WM_CLOSE, 0, 0 );
 			}
-		}
-		else{
-			RELPRINT_A("トレイ残す\n");
 		}
 		return 0;
 
