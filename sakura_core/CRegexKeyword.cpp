@@ -100,7 +100,7 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 		m_sInfo[i].pBregexp = NULL;
 #ifdef USE_PARENT
 #else
-		m_sInfo[i].sRegexKey.m_szKeyword[0] = '\0';
+		m_sInfo[i].sRegexKey.m_szKeyword[0] = L'\0';
 		m_sInfo[i].sRegexKey.m_nColorIndex = COLORIDX_REGEX1;
 #endif
 	}
@@ -187,7 +187,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 	m_nRegexKeyCount = 0;
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		if( m_pTypes->m_RegexKeywordArr[i].m_szKeyword[0] == '\0' ) break;
+		if( m_pTypes->m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' ) break;
 #ifdef USE_PARENT
 #else
 		strcpy(m_sInfo[i].sRegexKey.m_szKeyword, m_pTypes->m_RegexKeywordArr[i].m_szKeyword);
