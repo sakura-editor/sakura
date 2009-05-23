@@ -1178,8 +1178,6 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return 0L;
 	case WM_DESTROY:
-		RELPRINT_A("CEditWnd WM_DESTROY");
-		
 		if( m_pShareData->m_sFlags.m_bRecordingKeyMacro ){					/* キーボードマクロの記録中 */
 			if( m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == GetHwnd() ){	/* キーボードマクロを記録中のウィンドウ */
 				m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;			/* キーボードマクロの記録中 */
@@ -1204,7 +1202,6 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 		/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
-		RELPRINT_A("post MYWM_DELETE_ME to 0x%08X", m_pShareData->m_sHandles.m_hwndTray);
 		::PostMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_DELETE_ME, 0, 0 );
 
 		/* Windows にスレッドの終了を要求します */
