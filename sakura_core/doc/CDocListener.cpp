@@ -1,3 +1,4 @@
+// ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô—p‚Å‚·B
 #include "stdafx.h"
 #include "doc/CDocListener.h"
 #include <map>
