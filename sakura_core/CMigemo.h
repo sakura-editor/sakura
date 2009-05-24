@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 2004, isearch
 	Copyright (C) 2005, aroka
+	Copyright (C) 2009, miau
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -110,6 +111,15 @@ public:
 	int migemo_load_all();
 
 };
+
+/*! @brief PCRE メタキャラクタのエスケープ処理を行う。
+ （CMigemo::migemo_setproc_int2char の引数として使用）
+ @param[in] in 入力文字コード(unsigned int)
+ @param[out] out 出力バイト列(unsigned char*)
+ @return 出力された文字列のバイト数。
+  0を返せばデフォルトのプロシージャが実行される。
+*/
+static int __cdecl pcre_int2char(unsigned int in, unsigned char* out);	// 2009.04.30 miau
 
 #endif
 
