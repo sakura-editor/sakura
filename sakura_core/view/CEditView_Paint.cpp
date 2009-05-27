@@ -229,16 +229,14 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 	//ŽÀÛ‚ÉF‚ðÝ’è
 	if( -1 != nColorIdx ){
 		const ColorInfo& info = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
-		if( info.m_bDisp ){
-			gr.SetForegroundColor(info.m_colTEXT);
-			gr.SetBackgroundColor(info.m_colBACK);
-			gr.SetMyFont(
-				GetFontset().ChooseFontHandle(
-					info.m_bFatFont,
-					info.m_bUnderLine
-				)
-			);
-		}
+		gr.SetForegroundColor(info.m_colTEXT);
+		gr.SetBackgroundColor(info.m_colBACK);
+		gr.SetMyFont(
+			GetFontset().ChooseFontHandle(
+				info.m_bFatFont,
+				info.m_bUnderLine
+			)
+		);
 	}
 }
 
