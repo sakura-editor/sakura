@@ -15,7 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
-	Copyright (C) 2009, nasukoji
+	Copyright (C) 2009, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1063,6 +1063,8 @@ void CEditView::MoveCursorSelecting(
 	指定カーソル位置にURLが有る場合のその範囲を調べる
 
 	2007.01.18 kobake URL文字列の受け取りをwstringで行うように変更
+	2007.05.27 ryoji URL色指定の正規表現キーワードにマッチする文字列もURLとみなす
+	                 URLの強調表示OFFのチェックはこの関数内で行うように変更
 */
 bool CEditView::IsCurrentPositionURL(
 	const CLayoutPoint&	ptCaretPos,		//!< [in]  カーソル位置
@@ -1072,6 +1074,28 @@ bool CEditView::IsCurrentPositionURL(
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::IsCurrentPositionURL" );
 
+	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
+	bool bDispUrl = CTypeSupport(this,COLORIDX_URL).IsDisp();
+	bool bUseRegexKeyword = false;
+	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+	if( TypeDataPtr->m_bUseRegexKeyword ){
+		for( int i = 0; i < MAX_REGEX_KEYWORD; i++ ){
+			if( TypeDataPtr->m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' )
+				break;
+			if( TypeDataPtr->m_RegexKeywordArr[i].m_nColorIndex == COLORIDX_URL ){
+				bUseRegexKeyword = true;	// URL色指定の正規表現キーワードがある
+				break;
+			}
+		}
+	}
+	if( !bDispUrl && !bUseRegexKeyword ){
+		return false;	// URL強調表示しないのでURLではない
+	}
+
+	// 正規表現キーワード（URL色指定）行検索開始処理	// 2009.05.27 ryoji
+	if( bUseRegexKeyword ){
+		m_cRegexKeyword->RegexKeyLineStart();
+	}
 
 	/*
 	  カーソル位置変換
@@ -1084,18 +1108,24 @@ bool CEditView::IsCurrentPositionURL(
 		ptCaretPos,
 		&ptXY
 	);
-	pUrlRange->SetLine(ptXY.GetY2());
-//	*pnUrlLine = ptXY.GetY2();
 	CLogicInt		nLineLen;
 	const wchar_t*	pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
 
+	bool		bMatch;
+	int			nMatchColor;
 	int			nUrlLen;
 	CLogicInt	i = CLogicInt(__max(0, ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
 	//nLineLen = CLogicInt(__min(nLineLen, ptXY.GetX2() + _MAX_PATH));
 	while( i <= ptXY.GetX2() && i < nLineLen ){
-		if( (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CColor_Url::BeginColor()と同条件に
-			&& IsURL(&pLine[i], (Int)(nLineLen - i), &nUrlLen)	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-		){
+		bMatch = ( bUseRegexKeyword
+					&& m_cRegexKeyword->RegexIsKeyword( CStringRef(pLine, nLineLen), i, &nUrlLen, &nMatchColor )
+					&& nMatchColor == COLORIDX_URL );
+		if( !bMatch ){
+			bMatch = ( bDispUrl
+						&& (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CColor_Url::BeginColor()と同条件に
+						&& IsURL(&pLine[i], (Int)(nLineLen - i), &nUrlLen) );	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+		}
+		if( bMatch ){
 			if( i <= ptXY.GetX2() && ptXY.GetX2() < i + CLogicInt(nUrlLen) ){
 				/* URLを返す場合 */
 				if( pwstrURL ){
@@ -1106,10 +1136,10 @@ bool CEditView::IsCurrentPositionURL(
 				return true;
 			}else{
 				i += CLogicInt(nUrlLen);
+				continue;
 			}
-		}else{
-			++i;
 		}
+		++i;
 	}
 	return false;
 }
