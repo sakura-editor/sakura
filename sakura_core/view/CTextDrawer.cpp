@@ -33,7 +33,7 @@ EColorIndexType CTextDrawer::_GetColorIdx(EColorIndexType nColorIdx) const
 @@@ 2002.09.22 YAZAKI    const unsigned char* pDataを、const char* pDataに変更
 @@@ 2007.08.25 kobake 戻り値を void に変更。引数 x, y を DispPos に変更
 */
-void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, int nLength ) const
+void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, int nLength, bool bTransparent ) const
 {
 	if( 0 >= nLength ){
 		return;
@@ -124,7 +124,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 			hdc,
 			nDrawX,					//X
 			y,						//Y
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTransparent? ETO_OPAQUE: 0),
 			&rcClip,
 			pDrawData,				//文字列
 			nDrawLength,			//文字列長
@@ -137,11 +137,11 @@ end:
 	pDispPos->ForwardDrawCol(nTextWidth / nDx);
 }
 
-void CTextDrawer::DispText( HDC hdc, int x, int y, const wchar_t* pData, int nLength ) const
+void CTextDrawer::DispText( HDC hdc, int x, int y, const wchar_t* pData, int nLength, bool bTransparent ) const
 {
 	DispPos sPos(m_pEditView->GetTextMetrics().GetHankakuDx(),m_pEditView->GetTextMetrics().GetHankakuDy());
 	sPos.InitDrawPos(CMyPoint(x,y));
-	DispText(hdc,&sPos,pData,nLength);
+	DispText(hdc,&sPos,pData,nLength,bTransparent);
 }
 
 

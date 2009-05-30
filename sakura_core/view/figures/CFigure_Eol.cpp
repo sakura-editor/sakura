@@ -230,7 +230,12 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 			rcEol.SetSize(pcView->GetTextMetrics().GetHankakuWidth(), pcView->GetTextMetrics().GetHankakuHeight());
 
 			// 描画
-			_DrawEOL(gr, rcEol, cEol, CTypeSupport(pcView,COLORIDX_EOL).IsFatFont(), GetTextColor(gr));
+			// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
+			// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
+			TEXTMETRIC tm;
+			::GetTextMetrics(gr, &tm);
+			LONG lfWeightNormal = CShareData::getInstance()->GetShareData()->m_Common.m_sView.m_lf.lfWeight;
+			_DrawEOL(gr, rcEol, cEol, tm.tmWeight > lfWeightNormal, GetTextColor(gr));
 
 			// リージョン破棄
 			gr.ClearClipping();

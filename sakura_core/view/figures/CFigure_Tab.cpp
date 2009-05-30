@@ -85,13 +85,18 @@ void CFigure_Tab::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView
 
 			//タブ矢印表示
 			if( cTabType.IsDisp() && TypeDataPtr->m_bTabArrow && rcClip2.left <= sPos.GetDrawPos().x ){ // Apr. 1, 2003 MIK 行番号と重なる
+				// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
+				// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
+				TEXTMETRIC tm;
+				::GetTextMetrics(gr, &tm);
+				LONG lfWeightNormal = CShareData::getInstance()->GetShareData()->m_Common.m_sView.m_lf.lfWeight;
 				_DrawTabArrow(
 					gr,
 					sPos.GetDrawPos().x,
 					sPos.GetDrawPos().y,
 					pMetrics->GetHankakuWidth(),
 					pMetrics->GetHankakuHeight(),
-					cTabType.IsFatFont(),
+					tm.tmWeight > lfWeightNormal,
 					::GetTextColor(gr)//cTabType.GetTextColor()
 				);
 			}
