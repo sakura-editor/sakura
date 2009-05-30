@@ -47,24 +47,67 @@ public:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 bool CFigureSpace::DrawImp(SColorStrategyInfo* pInfo)
 {
-	// この DrawImp や GetSpaceColorType は基本クラスでデフォルト動作を実装しているが
-	// 仮想関数なので派生クラス側のオーバーライドで仕様変更可能
-	EColorIndexType eCurColor = pInfo->GetCurrentColor();
-	int nType = GetSpaceColorType(eCurColor);
+	// この DrawImp はここ（基本クラス）でデフォルト動作を実装しているが
+	// 仮想関数なので派生クラス側のオーバーライドで個別に仕様変更可能
 
-	// nType	0:空白記号に指定された色を使う, 1:背景色だけ現在の背景色に合わせる
-	// この値については必要に応じて仕様変更・拡張してください
-	// 例）2:記号を表示しない（←文字色を現在の背景色と同じにする）
-	CTypeSupport cSupport(pInfo->pcView, pInfo->pcView->GetTextDrawer()._GetColorIdx(GetColorIdx()));
-	cSupport.SetGraphicsState_WhileThisObj(pInfo->gr);
-	if( nType == 1 )
+	CTypeSupport cCurrentType(pInfo->pcView, pInfo->GetCurrentColor());	// 周辺の色（現在の指定色）
+	CTypeSupport cTextType(pInfo->pcView, COLORIDX_TEXT);				// テキストの指定色
+	CTypeSupport cSpaceType(pInfo->pcView, pInfo->pcView->GetTextDrawer()._GetColorIdx(GetColorIdx()));	// 空白の指定色
+
+	// 空白記号類は特に明示指定した部分以外はなるべく周辺の指定に合わせるようにしてみた	// 2009.05.30 ryoji
+	// 例えば、下線を指定していない場合、正規表現キーワード内なら正規表現キーワード側の下線指定に従うほうが自然な気がする。
+	// （そのほうが空白記号の「表示」をチェックしていない場合の表示に近い）
+	//
+	// 前景色・背景色の扱い
+	// ・通常テキストとは異なる色が指定されている場合は空白記号の側の指定色を使う
+	// ・通常テキストと同じ色が指定されている場合は周辺の色指定に合わせる
+	// 太字の扱い
+	// ・空白記号か周辺のどちらか一方でも太字指定されていれば「前景色・背景色の扱い」で決定した前景色で太字にする
+	// 下線の扱い
+	// ・空白記号で下線指定されていれば「前景色・背景色の扱い」で決定した前景色で下線を引く
+	// ・空白記号で下線指定されておらず周辺で下線指定されていれば周辺の前景色で下線を引く
+
+	COLORREF crText = (cSpaceType.GetTextColor() == cTextType.GetTextColor())? cCurrentType.GetTextColor(): cSpaceType.GetTextColor();
+	COLORREF crBack = (cSpaceType.GetBackColor() == cTextType.GetBackColor())? cCurrentType.GetBackColor(): cSpaceType.GetBackColor();
+
+	//cSpaceType.SetGraphicsState_WhileThisObj(pInfo->gr);
+
+	pInfo->gr.PushTextForeColor(crText);
+	pInfo->gr.PushTextBackColor(crBack);
+	pInfo->gr.PushMyFont(
+		pInfo->pcView->GetFontset().ChooseFontHandle(cSpaceType.IsFatFont() || cCurrentType.IsFatFont(), cSpaceType.HasUnderLine())
+	);
+
+	DispPos sPos(*pInfo->pDispPos);	// 現在位置を覚えておく
+	DispSpace(pInfo->gr, pInfo->pDispPos,pInfo->pcView);	// 空白描画
+
+	pInfo->gr.PopTextForeColor();
+	pInfo->gr.PopTextBackColor();
+	pInfo->gr.PopMyFont();
+
+	if( !cSpaceType.HasUnderLine() && cCurrentType.HasUnderLine() )
 	{
-		CTypeSupport cSupportSpecial(pInfo->pcView, eCurColor);
-		pInfo->gr.PushTextBackColor(cSupportSpecial.GetBackColor());
+		// 下線を周辺の前景色で描画する
+		pInfo->gr.PushMyFont(
+			pInfo->pcView->GetFontset().ChooseFontHandle(false, true)
+		);
+
+		int nLength = (Int)(pInfo->pDispPos->GetDrawCol() - sPos.GetDrawCol());
+		wchar_t* pszText = new wchar_t[nLength];
+		for( int i = 0; i < nLength; i++ )
+			pszText[i] = L' ';
+		pInfo->pcView->GetTextDrawer().DispText(
+			pInfo->gr,
+			&sPos,
+			pszText,
+			nLength,
+			true		// 背景は透明
+		);
+		delete []pszText;
+
+		pInfo->gr.PopMyFont();
 	}
-	DispSpace(pInfo->gr, pInfo->pDispPos,pInfo->pcView);
-	if( nType == 1 )
-		pInfo->gr.PopTextBackColor();
+
 	pInfo->nPosInLogic += CNativeW::GetSizeOfChar(	// 行末以外はここでスキャン位置を１字進める
 							pInfo->pLineOfLogic,
 							pInfo->GetDocLine()->GetLengthWithoutEOL(),

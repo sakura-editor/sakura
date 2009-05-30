@@ -26,8 +26,8 @@ public:
 
 	//2007.08.25 kobake 戻り値を void に変更。引数 x, y を DispPos に変更
 	//実際には pX と nX が更新される。
-	void DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, int nLength ) const; // テキスト表示 (新しい版)
-	void DispText( HDC hdc, int x, int y, const wchar_t* pData, int nLength ) const;      // テキスト表示 (古い版)
+	void DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, int nLength, bool bTransparent = false ) const; // テキスト表示 (新しい版)
+	void DispText( HDC hdc, int x, int y, const wchar_t* pData, int nLength, bool bTransparent = false ) const;      // テキスト表示 (古い版)
 
 	// -- -- 指定桁縦線描画 -- -- //
 	//!	指定桁縦線描画関数	// 2005.11.08 Moca
