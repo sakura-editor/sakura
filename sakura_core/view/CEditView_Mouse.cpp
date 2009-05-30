@@ -9,6 +9,8 @@
 #include "CClipboard.h"
 #include "doc/CLayout.h"
 #include "config/system_constants.h"
+#include "CWaitCursor.h"
+#include <process.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
@@ -430,9 +432,7 @@ normal_action:;
 		}
 		else{
 			/* URLがクリックされたら選択するか */
-			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLは普通の文字として扱う
-			if( CTypeSupport(this,COLORIDX_URL).IsDisp() &&
-				TRUE == GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL ){
+			if( TRUE == GetDllShareData().m_Common.m_sEdit.m_bSelectClickedURL ){
 
 				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
@@ -820,8 +820,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 			}
 			/* カーソル位置にURLが有る場合 */
-			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
-			else if( CTypeSupport(this,COLORIDX_URL).IsDisp() &&
+			else if(
 				IsCurrentPositionURL(
 					ptNew,			// カーソル位置
 					&cUrlRange,		// URL範囲
@@ -1155,6 +1154,15 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 
 
+/* ShellExecuteを呼び出すプロシージャ */
+/*   呼び出し前に lpParameter を new しておくこと */
+static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
+{
+	LPCTSTR pszFile = (LPCTSTR)lpParameter;
+	::ShellExecute( NULL, _T("open"), (LPCTSTR)pszFile, NULL, NULL, SW_SHOW );
+	delete []pszFile;
+	return 0;
+}
 
 
 // マウス左ボタンダブルクリック
@@ -1170,9 +1178,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
 	if(! m_dwTripleClickCheck){
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
-		//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
-		if( CTypeSupport(this,COLORIDX_URL).IsDisp()
-			&&
+		if(
 			IsCurrentPositionURL(
 				GetCaret().GetCaretLayoutPos(),	// カーソル位置
 				&cUrlRange,				// URL範囲
@@ -1197,7 +1203,27 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 					wstrOPEN = wstrURL;
 				}
 			}
-			::ShellExecute( NULL, _T("open"), to_tchar(wstrOPEN.c_str()), NULL, NULL, SW_SHOW );
+			{
+				// URLを開く
+				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化
+				CWaitCursor cWaitCursor( GetHwnd() );	// カーソルを砂時計にする
+
+				unsigned int nThreadId;
+				LPCTSTR szUrl = to_tchar(wstrOPEN.c_str());
+				LPTSTR szUrlDup = new TCHAR[_tcslen( szUrl ) + 1];
+				_tcscpy( szUrlDup, szUrl );
+				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
+				if( hThread != INVALID_HANDLE_VALUE ){
+					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
+					// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep を使用（ex.存在しないパスの起動）
+					// 【補足】いずれの API でも待ちを長め（2～3秒）にするとなぜか Web ブラウザ未起動からの起動が重くなる模様（PCタイプ, XP/Vista, IE/FireFox に関係なく）
+					::Sleep(200);
+					::CloseHandle(hThread);
+				}else{
+					//スレッド作成失敗
+					delete[] szUrlDup;
+				}
+			}
 			return;
 		}
 
