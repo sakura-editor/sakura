@@ -1158,8 +1158,8 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 /*   åƒÇ—èoÇµëOÇ… lpParameter Ç new ÇµÇƒÇ®Ç≠Ç±Ç∆ */
 static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 {
-	LPCTSTR pszFile = (LPCTSTR)lpParameter;
-	::ShellExecute( NULL, _T("open"), (LPCTSTR)pszFile, NULL, NULL, SW_SHOW );
+	LPTSTR pszFile = (LPTSTR)lpParameter;
+	::ShellExecute( NULL, _T("open"), pszFile, NULL, NULL, SW_SHOW );
 	delete []pszFile;
 	return 0;
 }
