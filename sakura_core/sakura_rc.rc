@@ -288,12 +288,12 @@ BEGIN
                     WS_TABSTOP,8,198,223,10,0
     CONTROL         "開こうとしたファイルが大きい場合に警告する(&T)",
                     IDC_CHECK_ALERT_IF_LARGEFILE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,213,153,8
-    EDITTEXT        IDC_EDIT_ALERT_FILESIZE,163,212,28,12,ES_AUTOHSCROLL
+                    WS_TABSTOP,8,214,153,10
+    EDITTEXT        IDC_EDIT_ALERT_FILESIZE,163,212,30,12,ES_AUTOHSCROLL
     CONTROL         "Spin1",IDC_SPIN_ALERT_FILESIZE,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,220,211,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,222,211,9,
                     14
-    LTEXT           "MBから",IDC_STATIC,194,214,23,8
+    LTEXT           "MBから",IDC_STATIC,196,214,25,10
     GROUPBOX        "ファイルオープン",IDC_STATIC,3,97,264,135,WS_GROUP
 END
 
@@ -1951,7 +1951,7 @@ BEGIN
         LEFTMARGIN, 1
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 217
+        BOTTOMMARGIN, 233
     END
 
     IDD_ABOUT, DIALOG
