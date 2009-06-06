@@ -405,6 +405,7 @@
 #define HIDC_CHECK_AlertIfFileNotExist			10344 //開こうとしたファイルが存在しないとき警告する	// 2006.08.06 ryoji
 #define HIDC_CHECK_NoFilterSaveNew				10345 //新規から保存時は全ファイル表示	// 2006.11.16 ryoji
 #define HIDC_CHECK_NoFilterSaveFile				10346 //新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
+#define HIDC_CHECK_ALERT_IF_LARGEFILE			10347 //開こうとしたファイルが大きい場合に警告する
 #define HIDC_EDIT_DFORM							10440 //日付書式
 #define HIDC_EDIT_TFORM							10441 //時刻書式
 #define HIDC_EDIT_DFORM_EX						10442 //日付書式（表示例）

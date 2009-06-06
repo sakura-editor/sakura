@@ -601,6 +601,9 @@
 #define IDC_CHECK_KEYHELP_ALLSEARCH     1549
 #define IDC_CHECK_KEYHELP_KEYDISP       1550
 #define IDC_CHECK_KEYHELP_PREFIX        1551
+#define IDC_SPIN_ALERT_FILESIZE         1552
+#define IDC_EDIT_ALERT_FILESIZE         1553
+#define IDC_CHECK_ALERT_IF_LARGEFILE    1554
 #define IDC_COMBO_WHEEL_PAGESCROLL      1555
 #define IDC_COMBO_WHEEL_HSCROLL         1556
 #define IDS_AUTHOR_PAGE                 4054
@@ -630,9 +633,7 @@
 #define IDD_PROP_HELPER                 5214
 #define IDD_PROP_MACRO                  5215
 #define IDD_WINPOSSIZE                  5220
-#ifndef IDC_STATIC
 #define IDC_STATIC                      -1
-#endif
 
 // Next default values for new objects
 // 
@@ -640,7 +641,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        233
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1552
+#define _APS_NEXT_CONTROL_VALUE         1557
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
