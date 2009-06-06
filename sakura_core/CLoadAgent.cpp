@@ -71,10 +71,12 @@ next:
 	if( GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile ){
 		WIN32_FIND_DATA wfd;
 		HANDLE nFind = ::FindFirstFile( pLoadInfo->cFilePath.c_str(), &wfd );
-		int nFileSize = wfd.nFileSizeLow;
+		LARGE_INTEGER nFileSize;
+		nFileSize.HighPart = wfd.nFileSizeHigh;
+		nFileSize.LowPart = wfd.nFileSizeLow;
 		FindClose( nFind );
 		// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize ‚ÍMB’PˆÊ
-		if( nFileSize >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize<<20) ){
+		if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
 			int nRet = MYMESSAGEBOX( CEditWnd::Instance()->GetHwnd(),
 				MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
 				GSTR_APPNAME,
