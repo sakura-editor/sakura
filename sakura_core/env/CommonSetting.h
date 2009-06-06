@@ -205,6 +205,8 @@ public:
 	bool	m_bAutoMIMEdecode;				// ファイル読み込み時にMIMEのdecodeを行うか
 	bool	m_bQueryIfCodeChange;			// 前回と文字コードが異なるときに問い合わせを行う Oct. 03, 2004 genta
 	bool	m_bAlertIfFileNotExist;			// 開こうとしたファイルが存在しないとき警告する Oct. 09, 2004 genta
+	bool	m_bAlertIfLargeFile;			// 開こうとしたファイルサイズが大きいバイイに警告する
+	int		m_nAlertFileSize;				// 警告を始めるファイルサイズ
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

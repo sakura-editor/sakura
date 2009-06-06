@@ -67,6 +67,26 @@ next:
 	}
 	while(false);
 
+	// ファイルサイズチェック
+	if( GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile ){
+		WIN32_FIND_DATA wfd;
+		HANDLE nFind = ::FindFirstFile( pLoadInfo->cFilePath.c_str(), &wfd );
+		int nFileSize = wfd.nFileSizeLow;
+		FindClose( nFind );
+		// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
+		if( nFileSize >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize<<20) ){
+			int nRet = MYMESSAGEBOX( CEditWnd::Instance()->GetHwnd(),
+				MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
+				GSTR_APPNAME,
+				_T("ファイルサイズが%dMB以上あります。開きますか？"),
+				GetDllShareData().m_Common.m_sFile.m_nAlertFileSize );
+			if( nRet != IDYES ){
+				return CALLBACK_INTERRUPT;
+			}
+		}
+	}
+
+
 	return CALLBACK_CONTINUE;
 }
 
