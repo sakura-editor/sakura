@@ -99,7 +99,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					m_pcEditWnd->SetDragSourceView( NULL );
 					if( m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
 						m_pcEditWnd->SetActivePane( m_nMyIndex );
-						if( ::GetTickCount() - nTickDrag <= ::GetDoubleClickTime() ){	// 短時間ならクリックとみなす
+						if( ::GetTickCount() - nTickDrag <= ::GetDoubleClickTime() * 2 ){	// 短時間ならクリックとみなす	// 2009.06.06 ryoji 時間を2倍に調整
 							// クリック位置にカーソル移動する
 							if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 								/* 現在の選択範囲を非選択状態に戻す */
@@ -1389,9 +1389,10 @@ STDMETHODIMP CEditView::DragLeave( void )
 
 	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
 	// ※範囲選択中のときに選択範囲とカーソルが分離すると変だから
+	// 2009.06.06 RedrawAllでの即時再描画を後で再描画に変更（選択範囲内クリックでの選択解除を軽量化，ドロップ不可カーソルの表示時間短縮）
 	GetCaret().MoveCursor( m_ptCaretPos_DragEnter, FALSE );
 	GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
-	RedrawAll();
+	::PostMessageCmd(GetHwnd(), WM_COMMAND, MAKEWPARAM(F_REDRAW, 0), (LPARAM)NULL);	// ルーラー、アンダーライン、カーソル位置表示を更新
 
 	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
 	if( ::GetActiveWindow() == NULL )
