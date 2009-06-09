@@ -15,7 +15,7 @@
 	Copyright (C) 2006, aroka, ryoji, genta
 	Copyright (C) 2007, ryoji, genta, maru
 	Copyright (C) 2008, ryoji, Uchi, nasukoji
-	Copyright (C) 2009, nasukoji
+	Copyright (C) 2009, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -375,7 +375,7 @@ bool CShareData::InitShareData()
 		//	Sep. 18, 2002 genta
 		m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 		m_pShareData->m_Common.m_sWindow.m_nVertLineOffset = -1;			// 2005.11.10 Moca 指定桁縦線
-		m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP = FALSE;		// 2007.09.09 Moca 画面キャッシュを使う
+		m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP = TRUE;		// 2007.09.09 Moca 画面キャッシュを使う	// 2009.06.09 ryoji FALSE->TRUE
 		m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
