@@ -1386,7 +1386,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 		!pcDragSourceView->IsCurrentPositionSelected( GetCaret().GetCaretLayoutPos() )
 	){
 		*pdwEffect = DROPEFFECT_NONE;
-	};
+	}
 
 	return S_OK;
 }
@@ -1462,14 +1462,14 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		!pcDragSourceView->IsCurrentPositionSelected( GetCaret().GetCaretLayoutPos() )
 	){
 		// DragEnter時のカーソル位置を復元
-		// Note. ここにくるのはドラッグ元が自ビューのときだけ
-		//       （他ビューのときは DragOver で DROPEFFECT_NONE にしているので DragLeave にいく）
-		//       再描画はこのあとドラッグ元処理のほうで行われるのでここでは不要
+		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
 		*pdwEffect = DROPEFFECT_NONE;
 		GetCaret().MoveCursor( m_ptCaretPos_DragEnter, FALSE );
 		GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
+		if( !IsDragSource() )	// ドラッグ元の場合はここでは再描画不要（DragDrop後処理のSetActivePaneで再描画される）
+			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
 		return S_OK;
-	};
+	}
 
 	// ドロップデータの取得
 	HGLOBAL hData = GetGlobalData( pDataObject, cf );
