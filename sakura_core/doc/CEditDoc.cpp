@@ -111,6 +111,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+
+	// 文字コード種別を初期化
+	m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultCodetype );
 }
 
 
@@ -179,7 +182,7 @@ void CEditDoc::InitDoc()
 	m_cDocEditor.SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	m_cDocFile.m_sFileInfo.eCharCode = CODE_DEFAULT;
+	m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultCodetype );
 	m_cDocFile.m_sFileInfo.bBomExist = false;	//	Jul. 26, 2003 ryoji
 
 	//	May 12, 2000
@@ -291,6 +294,15 @@ void CEditDoc::SetDocumentEncoding(ECodeType eCharCode)
 
 	m_cDocFile.m_sFileInfo.eCharCode = eCharCode;
 }
+
+//! ドキュメントのデフォルト文字コードを取得
+ECodeType CEditDoc::GetDefaultDocumentEncoding() const
+{
+	int ntype = m_cDocType.GetDocumentType().GetIndex();
+	return static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[ntype].m_eDefaultCodetype );
+}
+
+
 
 void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 {

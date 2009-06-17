@@ -5,6 +5,7 @@
 */
 #pragma once
 
+#include "types/CType.h" // CTypeConfig
 
 class CDocType{
 public:

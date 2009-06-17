@@ -1999,6 +1999,14 @@
 					RelativePath="..\sakura_core\charset\CUtf8.h"
 					>
 				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CCesu8.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CCesu8.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="config"

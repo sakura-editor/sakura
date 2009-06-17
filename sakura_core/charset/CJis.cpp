@@ -77,48 +77,71 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 	case MYJISESC_ASCII7:
 		for( ; pr < pSrc+nSrcLen; ++pr ){
 			if( IsAscii7(static_cast<const char>(*pr)) ){
-				*pw = *pr;
+				pw[0] = *pr;
 			}else{
 				berror = true;
-				*pw = L'?';
+				pw[0] = L'?';
 			}
 			++pw;
 		}
 	case MYJISESC_HANKATA:
 		for( ; pr < pSrc+nSrcLen; ++pr ){
-			// JIS → SJIS
-			chankata = (*pr | 0x80);
-			// SJIS → Unicode
-			nret = MyMultiByteToWideChar_JP( &chankata, 1, pw, false );
-			if( nret < 1 ){
-				nret = 1;
-			}
-			pw += nret;
-		}
-		break;
-	case MYJISESC_ZENKAKU:
-		for( ; pr < pSrc+nSrcLen-1; pr += 2 ){
-			// JIS -> SJIS
-			ctemp = _mbcjistojms( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
-			if( ctemp != 0 ){
-			// 変換に成功。
+			if( IsJisHankata(static_cast<const char>(*pr)) ){
+				// JIS → SJIS
+				chankata = (*pr | 0x80);
 				// SJIS → Unicode
-				czenkaku[0] = static_cast<unsigned char>( (ctemp & 0x0000ff00) >> 8 );
-				czenkaku[1] = static_cast<unsigned char>( ctemp & 0x000000ff );
-				nret = MyMultiByteToWideChar_JP( &czenkaku[0], 2, pw, false );
+				nret = MyMultiByteToWideChar_JP( &chankata, 1, pw, false );
 				if( nret < 1 ){
-					// SJIS → Unicode 変換に失敗
-  					berror = true;
-					pw[0] = L'?';
 					nret = 1;
 				}
 				pw += nret;
 			}else{
-			// 変換に失敗。
 				berror = true;
 				pw[0] = L'?';
 				++pw;
 			}
+		}
+		break;
+	case MYJISESC_ZENKAKU:
+		for( ; pr < pSrc+nSrcLen-1; pr += 2 ){
+			if( IsJisZen(reinterpret_cast<const char*>(pr)) ){
+				// JIS -> SJIS
+				ctemp = _mbcjistojms( (static_cast<unsigned int>(pr[0]) << 8) | pr[1] );
+				if( ctemp != 0 ){
+				// 変換に成功。
+					// SJIS → Unicode
+					czenkaku[0] = static_cast<unsigned char>( (ctemp & 0x0000ff00) >> 8 );
+					czenkaku[1] = static_cast<unsigned char>( ctemp & 0x000000ff );
+					nret = MyMultiByteToWideChar_JP( &czenkaku[0], 2, pw, false );
+					if( nret < 1 ){
+						// SJIS → Unicode 変換に失敗
+	  					berror = true;
+						pw[0] = L'?';
+						nret = 1;
+					}
+					pw += nret;
+				}else{
+				// 変換に失敗。
+					berror = true;
+					pw[0] = L'?';
+					++pw;
+				}
+			}else{
+				berror = true;
+				pw[0] = L'?';
+				++pw;
+			}
+		}
+		break;
+	case MYJISESC_UNKNOWN:
+		berror = true;
+		for( ; pr < pSrc+nSrcLen; ++pr ){
+			if( IsJis(static_cast<const char>(*pr)) ){
+				pw[0] = *pr;
+			}else{
+				pw[0] = L'?';
+			}
+			++pw;
 		}
 		break;
 	default:
@@ -173,39 +196,32 @@ int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pb
 //	};
 
 	do{
+		// シーケンスのチェック
 		switch( esctype ){
 		case MYJISESC_ASCII7:
-			nblocklen = CheckJisAscii7Part( reinterpret_cast<const char*>(pr), pr_end-pr, reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
-			pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
-			if( berror_tmp == true ){
-				berror = true;
-			}
+			// ASCII7 ブロックをチェック
+			nblocklen = CheckJisAscii7Part(
+				reinterpret_cast<const char*>(pr), pr_end-pr, reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
 			break;
 		case MYJISESC_HANKATA:
-			nblocklen = CheckJisHankataPart( reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
-			pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
-			if( berror_tmp == true ){
-				berror = true;
-			}
+			// 半角カタカナブロックをチェック
+			nblocklen = CheckJisHankataPart(
+				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
 			break;
 		case MYJISESC_ZENKAKU:
-			nblocklen = CheckJisZenkakuPart( reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
-			pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
-			if( berror_tmp == true ){
-				berror = true;
-			}
+			// 全角ブロックをチェック
+			nblocklen = CheckJisZenkakuPart(
+				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
 			break;
 		default: // MYJISESC_UNKNOWN:
-			nblocklen = CheckJisUnknownPart( reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+			// 不明なエスケープシーケンスから始まるブロックをチェック
+			nblocklen = CheckJisUnknownPart(
+				reinterpret_cast<const char*>(pr), pr_end-pr,  reinterpret_cast<const char**>(&pr_next), &next_esctype, NULL );
+		}
+		// 変換実行
+		pw += _JisToUni_block( pr, nblocklen, pw, esctype, &berror_tmp );
+		if( berror_tmp == true ){
 			berror = true;
-			for( int i = 0; i < nblocklen; ++i ){
-				if( IsJis(static_cast<const char>(pr[i])) ){
-					*pw = pr[i];
-				}else{
-					*pw = L'?';
-				}
-				++pw;
-			}
 		}
 		esctype = next_esctype;
 		pr = pr_next;
@@ -353,7 +369,7 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 	pw = reinterpret_cast<unsigned char*>(pDst);
 	echarset_cur = CHARSET_ASCII7;
 
-	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset_tmp, false)) > 0 ){
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset_tmp, 0)) > 0 ){
 		// Unicode -> SJIS
 		nlen = MyWideCharToMultiByte_JP( pr, nclen, &cbuf[0] );
 		if( nlen < 1 ){

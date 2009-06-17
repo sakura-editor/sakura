@@ -16,6 +16,7 @@ CCodeBase* CCodeFactory::CreateCodeBase(
 	case CODE_UTF8:			return new CUtf8();
 	case CODE_UTF7:			return new CUtf7();
 	case CODE_UNICODEBE:	return new CUnicodeBe();
+	case CODE_CESU8:		return new CCesu8();
 	default:
 		assert(0);
 	}

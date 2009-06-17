@@ -195,6 +195,46 @@ void CPropTypes::SetData_Support( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE, m_Types.m_bHtmlHelpIsSingle );
+
+	/* 「文字コード」グループの設定 */
+	{
+		int i;
+		HWND hCombo;
+		static const wchar_t* aszStr[] = {
+			L"SJIS",
+			L"EUC",
+			L"UTF-8",
+			L"CESU-8",
+			L"Unicode",
+			L"UnicodeBE"
+		};
+		static const ECodeType aeCodeType[] = {
+			CODE_SJIS,
+			CODE_EUC,
+			CODE_UTF8,
+			CODE_CESU8,
+			CODE_UNICODE,
+			CODE_UNICODEBE
+		};
+
+		// 「自動認識時にCESU-8を優先」m_Types.m_bPriorCesu8 をチェック
+		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_bPriorCesu8 );
+
+		// デフォルトコードタイプのコンボボックス設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
+		for( i = 0; i < _countof(aszStr); ++i ){
+			ApiWrap::Combo_AddString( hCombo, aszStr[i] );
+		}
+		for( i = 0; i < _countof(aeCodeType); ++i ){
+			if( m_Types.m_eDefaultCodetype == aeCodeType[i] ){
+				break;
+			}
+		}
+		if( i == _countof(aeCodeType) ){
+			i = 0;
+		}
+		SendMessageAny( hCombo, CB_SETCURSEL, (WPARAM)i, 0 );
+	}
 }
 
 /* ダイアログデータの取得 */
@@ -216,6 +256,38 @@ int CPropTypes::GetData_Support( HWND hwndDlg )
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _countof2( m_Types.m_szExtHelp ));
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE );
+
+	/* 「文字コード」グループの設定 */
+	{
+		int i;
+		HWND hCombo;
+		static const wchar_t* aszStr[] = {
+			L"SJIS",
+			L"EUC",
+			L"UTF-8",
+			L"CESU-8",
+			L"Unicode",
+			L"UnicodeBE"
+		};
+		static const ECodeType aeCodeType[] = {
+			CODE_SJIS,
+			CODE_EUC,
+			CODE_UTF8,
+			CODE_CESU8,
+			CODE_UNICODE,
+			CODE_UNICODEBE
+		};
+
+		// m_Types.m_bPriorCesu8 を設定
+		m_Types.m_bPriorCesu8 = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PRIOR_CESU8 );
+
+		// m_Types.eDefaultCodetype を設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
+		i = ::SendMessage( hCombo, CB_GETCURSEL, 0, 0 );
+		m_Types.m_eDefaultCodetype = aeCodeType[i];
+	}
+
+
 	return TRUE;
 }
 

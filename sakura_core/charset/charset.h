@@ -14,6 +14,7 @@ SAKURA_CORE_API enum ECodeType {
 	CODE_UTF8,						//!< UTF-8(UCS-2)
 	CODE_UTF7,						//!< UTF-7(UCS-2)
 	CODE_UNICODEBE,					//!< Unicode BigEndian	(UTF-16 BigEndian(UCS-2))
+	CODE_CESU8,						//!< CESU-8
 	CODE_CODEMAX,
 	CODE_AUTODETECT	= 99,			//!< 文字コード自動判別
 	CODE_ERROR      = -1,			//!< エラー

@@ -1519,6 +1519,12 @@ BEGIN
     CONTROL         "編集中のファイルから候補を探す(&F)",
                     IDC_CHECK_HOKANBYFILE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,132,31,127,10
+    GROUPBOX        "文字コード",IDC_STATIC,3,149,264,49
+    COMBOBOX        IDC_COMBO_DEFAULT_CODETYPE,8,178,48,57,CBS_DROPDOWN | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "自動判別時にCESU-8 を優先する",IDC_CHECK_PRIOR_CESU8,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,163,115,8
+    LTEXT           "をデフォルト文字コードとする",IDC_STATIC,59,181,85,9
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 271, 222
@@ -1914,7 +1920,7 @@ BEGIN
     CONTROL         "EUCで文字コード値をUnicodeで表示する(&E)",
                     IDC_CHECK_DISP_UNICODE_IN_EUC,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,48,181,10
-    CONTROL         "UTF-8をコードポイントで表示する(&8)",
+    CONTROL         "UTF-8およびCESU-8をコードポイントで表示する(&8)",
                     IDC_CHECK_DISP_UTF8_CODEPOINT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,64,181,10
     CONTROL         "サロゲートペアをコードポイントで表示する(&P)",
@@ -2431,6 +2437,7 @@ BEGIN
     F_FILE_REOPEN_EUC       "EUCで開き直す"
     F_FILE_REOPEN_UNICODE   "Unicodeで開き直す"
     F_FILE_REOPEN_UTF8      "UTF-8で開き直す"
+    F_FILE_REOPEN_CESU8     "CESU-8で開き直す"
     F_FILE_REOPEN_UTF7      "UTF-7で開き直す"
     F_FILE_REOPEN_UNICODEBE "UnicodeBEで開き直す"
     F_FILE_REOPEN           "開き直す"

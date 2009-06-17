@@ -273,6 +273,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_FILE_REOPEN_UNICODE:		Command_FILE_REOPEN( CODE_UNICODE, lparam1!=0 );break;	//Unicodeで開き直す
 	case F_FILE_REOPEN_UNICODEBE: 	Command_FILE_REOPEN( CODE_UNICODEBE, lparam1!=0 );break;	//UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:		Command_FILE_REOPEN( CODE_UTF8, lparam1!=0 );break;		//UTF-8で開き直す
+	case F_FILE_REOPEN_CESU8:		Command_FILE_REOPEN( CODE_CESU8, lparam1!=0 );break;	//CESU-8で開きなおす
 	case F_FILE_REOPEN_UTF7:		Command_FILE_REOPEN( CODE_UTF7, lparam1!=0 );break;		//UTF-7で開き直す
 	case F_PRINT:				Command_PRINT();break;					/* 印刷 */
 	case F_PRINT_PREVIEW:		Command_PRINT_PREVIEW();break;			/* 印刷プレビュー */
@@ -3386,7 +3387,7 @@ void CViewCommander::Command_FILENEW( void )
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
-	sLoadInfo.eCharCode = CODE_DEFAULT;
+	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo );
 	return;

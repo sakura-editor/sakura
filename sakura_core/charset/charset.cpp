@@ -14,7 +14,8 @@ LPCTSTR CCodeTypeName::Normal() const
 		_T("Unicode"),		/* Unicode */
 		_T("UTF-8"),		/* UTF-8 */
 		_T("UTF-7"),		/* UTF-7 */
-		_T("UniBE")			/* Unicode BigEndian */
+		_T("UniBE"),		/* Unicode BigEndian */
+		_T("CESU-8")		/* CESU-8 */
 	};
 	if(!IsValidCodeType(m_eCodeType))return NULL;
 	return table[m_eCodeType];
@@ -29,7 +30,8 @@ LPCTSTR CCodeTypeName::Short() const
 		_T("Uni"),			/* Unicode */
 		_T("UTF-8"),		/* UTF-8 */
 		_T("UTF-7"),		/* UTF-7 */
-		_T("UniBE")			/* Unicode BigEndian */
+		_T("UniBE"),		/* Unicode BigEndian */
+		_T("CESU-8")		/* CESU-8 */
 	};
 	if(!IsValidCodeType(m_eCodeType))return NULL;
 	return table[m_eCodeType];
@@ -44,7 +46,8 @@ LPCTSTR CCodeTypeName::Bracket() const
 		_T("  [Unicode]"),	/* Unicode */
 		_T("  [UTF-8]"),	/* UTF-8 */
 		_T("  [UTF-7]"),	/* UTF-7 */
-		_T("  [UniBE]")		/* Unicode BigEndian */
+		_T("  [UniBE]"),	/* Unicode BigEndian */
+		_T("  [CESU-8]")	/* CESU-8 */
 	};
 	if(!IsValidCodeType(m_eCodeType))return NULL;
 	return table[m_eCodeType];
@@ -63,6 +66,7 @@ ECodeType gm_nCodeComboValueArr[] = {
 	CODE_UNICODE,
 	CODE_UNICODEBE,
 	CODE_UTF8,
+	CODE_CESU8,
 	CODE_UTF7
 };
 
@@ -74,6 +78,7 @@ LPCTSTR	gm_pszCodeComboNameArr[] = {
 	_T("Unicode"),
 	_T("UnicodeBE"),
 	_T("UTF-8"),
+	_T("CESU-8"),
 	_T("UTF-7")
 };
 

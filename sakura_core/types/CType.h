@@ -4,6 +4,7 @@
 #include "config/maxdata.h" //MAX_REGEX_KEYWORD
 #include "doc/CLineComment.h"
 #include "doc/CBlockComment.h"
+#include "charset/charset.h"  // ECodeType
 
 /* アウトライン解析の種類 */
 SAKURA_CORE_API enum EOutlineType{
@@ -48,7 +49,7 @@ struct STypeConfig{
 	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
 	int					m_nLineSpace;					/*!< 行間のすきま */
 	CLayoutInt			m_nTabSpace;					/*!< TABの文字数 */
-	bool				m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
+	BOOL				m_bTabArrow;					/*!< タブ矢印表示 */	//@@@ 2003.03.26 MIK
 	EDIT_CHAR			m_szTabViewString[8+1];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
 	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
 	// 2005.01.13 MIK 配列化
@@ -94,8 +95,12 @@ struct STypeConfig{
 	SFilePath			m_szExtHelp;					/* 外部ヘルプ１ */
 	SFilePath			m_szExtHtmlHelp;				/* 外部HTMLヘルプ */
 	BOOL				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
-	
-	
+
+	BOOL				m_bPriorCesu8;					/* 自動判別時に CESU-8 を優先するかどうか */
+	int					m_eDefaultCodetype;				/* デフォルト文字コード */
+
+
+
 //@@@ 2001.11.17 add start MIK
 	bool				m_bUseRegexKeyword;						/* 正規表現キーワードを使うか*/
 	int					m_nRegexKeyMagicNumber;					/* 正規表現キーワード更新マジックナンバー */

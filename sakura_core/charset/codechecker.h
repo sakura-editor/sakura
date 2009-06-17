@@ -192,68 +192,6 @@ inline bool IsUnicodeNoncharacter( const wchar32_t wc )
 	return false;
 }
 
-/*!
-	Unicode の予約コードポイントまたは不正文字の各二院
-	サロゲートでない文字用
-
-	参考資料：「Unicode.org」http://www.unicode.org/Public/UNIDATA/Blocks.txt
-*/
-inline bool IsUnicodeResvdCP_normal( const wchar32_t wc )
-{
-	if(
-		0
-		|| 0x0 <= wc && wc <= 0xff
-		|| 0x900 <= wc && wc <= 0x8af
-		|| 0x1900 <= wc && wc <= 0x1a1f
-		|| 0x1b00 <= wc && wc <= 0x1bbf
-		|| 0x1c00 <= wc && wc <= 0x1c7f
-		|| 0x1d00 <= wc && wc <= 0x2fdf
-		|| 0x2ff0 <= wc && wc <= 0xa4cf
-		|| 0xa500 <= wc && wc <= 0xa69f
-		|| 0xa700 <= wc && wc <= 0xa82f
-		|| 0xa840 <= wc && wc <= 0xa8df
-		|| 0xa900 <= wc && wc <= 0xa95f
-		|| 0xaa00 <= wc && wc <= 0xaa5f
-		|| 0xac00 <= wc && wc <= 0xd7af
-		|| 0xd800 <= wc && wc <= 0xffff
-	){
-		return false;
-	}
-	return true;
-}
-/*!
-	Unicode の予約コードポイントまたは不正文字の各二院
-	サロゲート用
-
-	参考資料：「Unicode.org」http://www.unicode.org/Public/UNIDATA/Blocks.txt
-*/
-inline bool IsUnicodeResvdCP_surrog( const wchar32_t wc )
-{
-	if(
-		0
-		|| 0x10000 <= wc && wc <= 0x101ff
-		|| 0x10280 <= wc && wc <= 0x102df
-		|| 0x10300 <= wc && wc <= 0x1034f
-		|| 0x10380 <= wc && wc <= 0x103df
-		|| 0x10400 <= wc && wc <= 0x104af
-		|| 0x10800 <= wc && wc <= 0x1083f
-		|| 0x10900 <= wc && wc <= 0x1093f
-		|| 0x10a00 <= wc && wc <= 0x10a5f
-		|| 0x12000 <= wc && wc <= 0x1247f
-		|| 0x1d000 <= wc && wc <= 0x1d24f
-		|| 0x1d300 <= wc && wc <= 0x1d37f
-		|| 0x1d400 <= wc && wc <= 0x1d7ff
-		|| 0x1f000 <= wc && wc <= 0x1f09f
-		|| 0x20000 <= wc && wc <= 0x2a6df
-		|| 0x2f800 <= wc && wc <= 0x2fa1f
-		|| 0xe0000 <= wc && wc <= 0xe007f
-		|| 0xe0100 <= wc && wc <= 0xe01ef
-		|| 0xf0000 <= wc && wc <= 0x10ffff
-	){
-		return false;
-	}
-	return true;
-}
 
 
 
@@ -306,6 +244,12 @@ inline bool IsEucjpZen( const char* pC ){
 	return ( CHARCODE__IS_EUCJP_ZEN1(static_cast<unsigned char>(pC[0]))
 		&& CHARCODE__IS_EUCJP_ZEN2(static_cast<unsigned char>(pC[1])) );
 }
+inline bool IsEucZen_hirakata( const char* pC ){
+	unsigned char c0 = pC[0];
+	unsigned char c1 = pC[1];
+	return ( (c0 == 0xa4 && (c1 >= 0xa1 && c1 <= 0xf3))
+	      || (c0 == 0xa5 && (c1 >= 0xa1 && c1 <= 0xf6)) );
+}
 //! EUCJP 全角文字　補助漢字か
 inline bool IsEucjpSupplemtal( const char* pC){
 	return ( static_cast<unsigned char>(pC[0]) == 0x8f
@@ -346,12 +290,12 @@ inline bool IsJisZen( const char* pC ){
 //! UTF16 上位サロゲートか
 inline bool IsUtf16SurrogHi( const wchar_t wc ){
 //	return ( 0xd800 <= wc && wc <= 0xdbff );
-	return ( (wc & 0xfc00) == 0xd800 );
+	return ( (static_cast<unsigned short>(wc) & 0xfc00) == 0xd800 );
 }
 //! UTF16 下位サロゲート文字か
 inline bool IsUtf16SurrogLow( const wchar_t wc ){
 //	return ( 0xdc00 <= wc && wc <= 0xdfff );
-	return ( (wc & 0xfc00) == 0xdc00 );
+	return ( (static_cast<unsigned short>(wc) & 0xfc00) == 0xdc00 );
 }
 //! UtF-8版 上位サロゲートか
 inline bool IsUtf8SurrogHi( const char* pS ) {
@@ -442,6 +386,13 @@ inline int GuessUtf8Charsz( const char uc_ ){
 	if( (uc & 0xf8) == 0xf0 ){ return 4; }
 	return 1;
 }
+//! CESU-8 の文字長を推測
+inline int GuessCesu8Charsz( const char uc_ ){
+	unsigned char uc = uc_;
+	if( (uc & 0xe0) == 0xc0 ){ return 2; }
+	if( (uc & 0xf0) == 0xe0 ){ return 6; }
+	return 1;
+}
 //! EUCJP の文字長を推測
 inline int GuessEucjpCharsz( const char uc_ ){
 	unsigned char uc = uc_;
@@ -479,8 +430,8 @@ inline int CheckJisUnknownPart( const char *pS, const int nLen,
 	{ return _CheckJisAnyPart( pS, nLen, ppNextChar, peNextEsc, pnErrorCount, JISCHECK_UNKNOWN ); }
 
 
-#define UC_NONCHARACTER 1
-#define UC_RESERVED_CP  2
+// _CheckUtf16Char のオプション定義
+#define UC_NONCHARACTER 1  //!< 非文字を不正文字とする
 
 /* --- Unicode 系コードチェック */
 inline int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );

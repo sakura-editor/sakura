@@ -47,6 +47,7 @@
 #include "charset/CCodeMediator.h"
 #include "util/string_ex2.h"
 #include "charset/CESI.h"
+#include "window/CEditWnd.h"
 
 /*
 	@note Win32APIで実装
@@ -144,21 +145,21 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	Buffering();
 
 	if( CharCode == CODE_AUTODETECT ){
-		CharCode = CCodeMediator::CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
+		CEditDoc& ref_cEditDoc = CEditWnd::Instance()->GetDocument();
+		CharCode = CCodeMediator(ref_cEditDoc).CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
 	}
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定
-	if( 0 > CharCode || CODE_CODEMAX <= CharCode ){
-		CharCode = CODE_SJIS;
+	if( !IsValidCodeType(CharCode) ){
+		CharCode = CODE_DEFAULT;
 	}
 	m_CharCode = CharCode;
 	m_nFlag = nFlag;
 
 	// From Here Jun. 08, 2003 Moca BOMの除去
-//-	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
-	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );  // 2006.09.22  by rastiv
+	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );
 	m_nFileDataLen = m_nFileSize;
-	if( nBomCode != 0 && nBomCode == m_CharCode ){
+	if( nBomCode != CODE_NONE && nBomCode == m_CharCode ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		m_bBomExist = TRUE;
 		if( pbBomExist != NULL ){

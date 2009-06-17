@@ -1,6 +1,7 @@
 #pragma once
 
 #include "charset/CESI.h"
+class CEditDoc;
 
 class CCodeMediator{
 protected:
@@ -10,14 +11,19 @@ protected:
 
 public:
 
+	explicit CCodeMediator( CEditDoc &ref ) : m_pcEditDoc(&ref) { }
+
 	static ECodeType DetectUnicodeBom( const char* pS, const int nLen );
 
 	/* 日本語コードセット判別 */
-	static ECodeType CheckKanjiCode( const char*, int );
-	static ECodeType CheckKanjiCode( CESI* );  // CESI 構造体（？）を外部で構築した場合に使用
+	ECodeType CheckKanjiCode( const char*, int );
 	/* ファイルの日本語コードセット判別 */
-	static ECodeType CheckKanjiCodeOfFile( const TCHAR* );
+	ECodeType CheckKanjiCodeOfFile( const TCHAR* );
 
+	static ECodeType CheckKanjiCode( CESI* );  // CESI 構造体（？）を外部で構築した場合に使用
+
+private:
+	CEditDoc* m_pcEditDoc;
 };
 
 #include "CEuc.h"
@@ -27,3 +33,4 @@ public:
 #include "CUnicodeBe.h"
 #include "CUtf7.h"
 #include "CUtf8.h"
+#include "CCesu8.h"
