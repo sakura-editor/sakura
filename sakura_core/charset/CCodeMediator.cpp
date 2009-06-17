@@ -4,8 +4,8 @@
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 
-
-
+#include "window/CEditWnd.h"
+#include "env/CShareData.h"
 
 
 
@@ -19,7 +19,7 @@
 	@retval CODE_UNICODE   UTF-16 LE
 	@retval CODE_UTF8      UTF-8
 	@retval CODE_UNICODEBE UTF-16 BE
-	@retval 0              未検出
+	@retval CODE_NONE      未検出
 
 	@date 2007.08.11 charcode.cpp から移動
 */
@@ -75,22 +75,6 @@ ECodeType CCodeMediator::DetectMBCode( CESI* pcesi )
 		判定状況を確認
 	*/
 	pcesi->SetStatus( ESI_MBC_DETECTED );
-
-	if( pcesi->m_apMbcInfo[0]->eCodeID == CODE_EUC && pcesi->m_apMbcInfo[1]->eCodeID == CODE_SJIS ){
-		if( pcesi->m_apMbcInfo[0]->nPoints > 0 && pcesi->m_nMbcSjisHankata > 0 ){
-			// 第一候補に EUCJP、第二候補に SJIS が挙がっていて、
-			// EUCJP のポイント数が 1 以上かつ SJIS 半角カタカナが検出されている場合は、
-			// SJIS のポイント数に半角カタカナの分を加算する。
-			pcesi->m_apMbcInfo[1]->nSpecific += pcesi->m_nMbcSjisHankata;
-			pcesi->m_apMbcInfo[1]->nPoints += pcesi->m_nMbcSjisHankata;
-			pcesi->SortMBCInfo();
-			pcesi->SetStatus( ESI_MBC_HANKATACOUNTED );
-		}
-	}
-	if( pcesi->m_apMbcInfo[0]->eCodeID == CODE_UTF8 && pcesi->m_bMbcCesu8Enabled ){
-		pcesi->SetStatus( ESI_MBC_CESU8DETECTED );
-	}
-
 	return pcesi->m_apMbcInfo[0]->eCodeID;
 }
 
@@ -103,22 +87,63 @@ ECodeType CCodeMediator::DetectMBCode( CESI* pcesi )
 	@retval CODE_UNICODEBE  UTF-16 BE が検出された
 	@retval 0               UTF-16 LE/BE ともに検出されなかった
 
-	@note CESI::GuessUtf16Bom の結果を確認するだけ。
 */
 ECodeType CCodeMediator::DetectUnicode( CESI* pcesi )
 {
 //	pcesi->m_dwStatus = ESI_NOINFORMATION;
 
-	if( pcesi->GetBOMType() == ESI_BOMTYPE_UNKNOWN ){
+	EBOMType ebom_type = pcesi->GetBOMType();
+	int ndatalen;
+	int nlinebreak;
+
+	if( ebom_type == ESI_BOMTYPE_UNKNOWN ){
+		pcesi->SetStatus( ESI_NODETECTED );
+		return CODE_NONE;
+	}
+
+	// 1行の平均桁数が200を超えている場合はUnicode未検出とする
+	ndatalen = pcesi->GetDataLen();
+	nlinebreak = pcesi->m_aWcInfo[ebom_type].nSpecific;  // 改行数を nlinebreakに取得
+	if( static_cast<double>(ndatalen) / nlinebreak > 200 ){
 		pcesi->SetStatus( ESI_NODETECTED );
 		return CODE_NONE;
 	}
 
 	pcesi->SetStatus( ESI_WC_DETECTED );
-	return pcesi->m_aWcInfo[ pcesi->GetBOMType() ].eCodeID;
+	return pcesi->m_aWcInfo[ebom_type].eCodeID;
 }
 
 
+
+
+/*
+	日本語コードセット判定
+*/
+ECodeType CCodeMediator::CheckKanjiCode( CESI* pcesi )
+{
+	ECodeType nret;
+
+	/*
+		判定状況は、
+		DetectMBCode(), DetectUnicode() 内で
+		cesi.m_dwStatus に記録する。
+	*/
+
+	if( pcesi == NULL ){
+		return CODE_DEFAULT;
+	}
+	nret = DetectUnicode( pcesi );
+	if( nret != CODE_NONE && pcesi->GetStatus() != ESI_NODETECTED ){
+		return nret;
+	}
+	nret = DetectMBCode( pcesi );
+	if( nret != CODE_NONE && pcesi->GetStatus() != ESI_NODETECTED ){
+		return nret;
+	}
+
+	// デフォルト文字コードを返す
+	return pcesi->m_pcEditDoc->GetDefaultDocumentEncoding();
+}
 
 
 /*
@@ -135,18 +160,7 @@ ECodeType CCodeMediator::DetectUnicode( CESI* pcesi )
 */
 ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 {
-	ECodeType nret;
-	CESI* pcesi;
-
-	try{
-		pcesi = new CESI();
-	}catch( ... ){
-		pcesi = NULL;
-	}
-	if( pcesi == NULL ){
-		return CODE_DEFAULT;
-	}
-
+	CESI cesi(*m_pcEditDoc);
 
 	/*
 		判定状況は、
@@ -154,46 +168,8 @@ ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 		cesi.m_dwStatus に記録する。
 	*/
 
-	if( !pcesi->SetInformation( pBuf, nBufLen, CODE_SJIS ) ){
-		delete pcesi;
-		return CODE_DEFAULT;
-	}
-	nret = DetectUnicode( pcesi );
-	if( nret != CODE_NONE && pcesi->GetStatus() != ESI_NODETECTED ){
-		delete pcesi;
-		return nret;
-	}
-	nret = DetectMBCode( pcesi );
-	if( nret != CODE_NONE && pcesi->GetStatus() != ESI_NODETECTED ){
-		delete pcesi;
-		return nret;
-	}
-	delete pcesi;
-	return CODE_DEFAULT;
-}
-
-/*
-	日本語コードセット判定
-*/
-ECodeType CCodeMediator::CheckKanjiCode( CESI* pcesi )
-{
-	ECodeType nret;
-
-	/*
-		判定状況は、
-		DetectMBCode(), DetectUnicode() 内で
-		cesi.m_dwStatus に記録する。
-	*/
-
-	nret = DetectUnicode( pcesi );
-	if( nret != CODE_NONE ){
-		return nret;
-	}
-	nret = DetectMBCode( pcesi );
-	if( nret != CODE_NONE ){
-		return nret;
-	}
-	return CODE_DEFAULT;
+	cesi.SetInformation( pBuf, nBufLen/*, CODE_SJIS*/ );
+	return CheckKanjiCode( &cesi );
 }
 
 
@@ -227,7 +203,7 @@ ECodeType CCodeMediator::CheckKanjiCodeOfFile( const TCHAR* pszFile )
 
 	// 0バイトならSJIS扱い
 	if( 0 == nBufLen ){
-		return CODE_DEFAULT;
+		return m_pcEditDoc->GetDefaultDocumentEncoding();
 	}
 
 	// データ確保

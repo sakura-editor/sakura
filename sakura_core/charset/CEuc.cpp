@@ -127,7 +127,7 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 	pr_end = reinterpret_cast<const unsigned short*>(pSrc + nSrcLen);
 	pw = reinterpret_cast<unsigned char*>(pDst);
 
-	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, false)) > 0 ){
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
 		// ï€åÏÉRÅ[Éh
 		switch( echarset ){
 		case CHARSET_UNI_NORMAL:

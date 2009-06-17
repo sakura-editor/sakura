@@ -110,7 +110,7 @@ void CControlTray::DoGrep()
 	/* 新規編集ウィンドウの追加 ver 0 */
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
-	sLoadInfo.eCharCode = CODE_DEFAULT;
+	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	CControlTray::OpenNewEditor( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, sLoadInfo, cCmdLine.c_str());
 }
@@ -891,7 +891,7 @@ void CControlTray::OnNewEditor()
 
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
-	sLoadInfo.eCharCode = CODE_DEFAULT;
+	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, szCurDir );
 }
@@ -941,7 +941,7 @@ bool CControlTray::OpenNewEditor(
 	if(szCmdLineOption)cCmdLineBuf.AppendF(_T(" %ts"), szCmdLineOption);
 
 	// コード指定
-	if( sLoadInfo.eCharCode != CODE_AUTODETECT )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
+	if( IsValidCodeType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
 
 	// ビューモード指定
 	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( _T(" -R") );

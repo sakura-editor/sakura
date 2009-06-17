@@ -73,7 +73,7 @@ CDocSubject::~CDocSubject()
 }
 
 DEF_NOTIFY2(CheckLoad,SLoadInfo*)
-VOID_NOTIFY2(BeforeLoad,const SLoadInfo&)
+VOID_NOTIFY2(BeforeLoad,SLoadInfo*)
 CORE_NOTIFY2(Load,const SLoadInfo&)
 VOID_NOTIFY2(Loading,int)
 VOID_NOTIFY2(AfterLoad,const SLoadInfo&)

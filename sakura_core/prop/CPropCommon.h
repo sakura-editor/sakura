@@ -310,7 +310,7 @@ protected:
 	static int MoveListViewItem_FILENAME( HWND hListView, int, int );//!<ListViewのアイテムを移動する
 
 	//==============================================================
-	//!	ツールバーページのDialog Procedure
+	//!	ステータスバーページのDialog Procedure
 	static INT_PTR CALLBACK DlgProc_PROP_STATUSBAR(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	//! Message Handler for edit page

@@ -19,7 +19,7 @@ void CMruListener::OnAfterSave(const SSaveInfo& sSaveInfo)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-ECallbackResult CMruListener::OnCheckLoad(SLoadInfo* pLoadInfo)
+void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
@@ -33,10 +33,12 @@ ECallbackResult CMruListener::OnCheckLoad(SLoadInfo* pLoadInfo)
 		ePrevCode = fi.m_nCharCode;
 	}
 
+
 	// 指定のコード -> pLoadInfo->eCharCode
 	if( CODE_AUTODETECT == pLoadInfo->eCharCode ){
 		if( fexist(pLoadInfo->cFilePath) ){
-			pLoadInfo->eCharCode = CCodeMediator::CheckKanjiCodeOfFile( pLoadInfo->cFilePath );
+			CCodeMediator cmediator( *pcDoc );
+			pLoadInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pLoadInfo->cFilePath );
 		}
 		else{
 			pLoadInfo->eCharCode = ePrevCode;
@@ -56,7 +58,7 @@ ECallbackResult CMruListener::OnCheckLoad(SLoadInfo* pLoadInfo)
 			::MessageBeep( MB_ICONQUESTION );
 			int nRet = MYMESSAGEBOX(
 				CEditWnd::Instance()->GetHwnd(),
-				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
+				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
 				_T("文字コード情報"),
 				_T("%ts\n")
 				_T("\n")
@@ -64,8 +66,7 @@ ECallbackResult CMruListener::OnCheckLoad(SLoadInfo* pLoadInfo)
 				_T("前回と同じ文字コードを使いますか？\n")
 				_T("\n")
 				_T("・[はい(Y)]  ＝%ts\n")
-				_T("・[いいえ(N)]＝%ts\n")
-				_T("・[キャンセル]＝開きません"),
+				_T("・[いいえ(N)]＝%ts"),
 				pLoadInfo->cFilePath.c_str(),
 				pszCodeNameNew,
 				pszCodeNameOld,
@@ -76,12 +77,9 @@ ECallbackResult CMruListener::OnCheckLoad(SLoadInfo* pLoadInfo)
 				// 前回の文字コードを採用する
 				pLoadInfo->eCharCode = ePrevCode;
 			}
-			else if( IDNO == nRet ){
+			else{
 				// 元々使おうとしていた文字コードを採用する
 				pLoadInfo->eCharCode = pLoadInfo->eCharCode;
-			}
-			else if( IDCANCEL == nRet ){
-				return CALLBACK_INTERRUPT;
 			}
 		}
 		//食い違っても問い合わせを行わない場合
@@ -98,14 +96,11 @@ ECallbackResult CMruListener::OnCheckLoad(SLoadInfo* pLoadInfo)
 		}
 	}
 
-	return CALLBACK_CONTINUE;
-}
 
-void CMruListener::OnBeforeLoad(const SLoadInfo& sLoadInfo)
-{
 	// Mar. 30, 2003 genta ブックマーク保存のためMRUへ登録
 	_HoldBookmarks_And_AddToMRU();
 }
+
 
 void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {

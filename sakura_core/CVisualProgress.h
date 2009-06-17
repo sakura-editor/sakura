@@ -10,7 +10,7 @@ public:
 	virtual ~CVisualProgress();
 
 	//ロード前後
-	void OnBeforeLoad(const SLoadInfo& sLoadInfo);
+	void OnBeforeLoad(SLoadInfo* sLoadInfo);
 	void OnAfterLoad(const SLoadInfo& sLoadInfo);
 
 	//セーブ前後

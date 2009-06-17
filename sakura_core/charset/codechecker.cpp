@@ -541,16 +541,10 @@ inline int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peChars
 			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc1) ){
 				echarset = CHARSET_BINARY;
 				ncwidth = 1;
-			}else if( (nOption & UC_RESERVED_CP) && IsUnicodeResvdCP_normal(wc1) ){
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
 			}
 		}else if( ncwidth == 2 ){
 			wchar32_t wc32_checking = DecodeUtf16Surrog( wc1, wc2 );
 			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32_checking) ){
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}else if( (nOption & UC_RESERVED_CP) && IsUnicodeResvdCP_surrog(wc32_checking) ){
 				echarset = CHARSET_BINARY;
 				ncwidth = 1;
 			}
@@ -698,22 +692,9 @@ EndFunc:
 	if( nOption != 0 && echarset != CHARSET_BINARY ){
 		wchar32_t wc32;
 		wc32 = DecodeUtf8( reinterpret_cast<const unsigned char*>(pS), ncwidth );
-		if( ncwidth < 4 ){
-			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}else if( (nOption & UC_RESERVED_CP) && IsUnicodeResvdCP_normal(wc32) ){
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
-		}else if( ncwidth == 4 ){
-			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}else if( (nOption & UC_RESERVED_CP) && IsUnicodeResvdCP_surrog(wc32) ){
-				echarset = CHARSET_BINARY;
-				ncwidth = 1;
-			}
+		if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
+			echarset = CHARSET_BINARY;
+			ncwidth = 1;
 		}else{
 			// 保護コード
 			echarset = CHARSET_BINARY;
@@ -753,14 +734,14 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 		// 正常な３バイト文字があった。
 
 		// ２文字目のスキャン
-		nclen2 = CheckUtf8Char( &pS[3], nLen-3, &echarset2, false, false );
+		nclen2 = CheckUtf8Char( &pS[3], nLen-3, &echarset2, false, 0 );
 
-		// 文字長が３でないか echarset2 が CHARSET_BINARY だった場合。
+		// &pS[3]からの文字長が３でないか echarset2 が CHARSET_BINARY だった場合。
 		if( nclen2 != 3 || echarset2 == CHARSET_BINARY ){
 			// nclen1 と echarset1 を結果とする。
 			eret_charset = echarset1;
 			nret_clen = nclen1;
-			// pS[0] から３バイトがサロゲート片だった場合。
+			// &pS[0] から３バイトがサロゲート片だった場合。
 			if( IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0]) ){
 				eret_charset = CHARSET_BINARY;
 				nret_clen = 1;
@@ -777,7 +758,7 @@ int CheckCesu8Char( const char* pS, const int nLen, ECharSet* peCharset, const i
 			eret_charset = CHARSET_UNI_SURROG;
 			nret_clen = 6;  // CESU-8 のサロゲートである
 		}else
-		// pS[0] から３バイトがサロゲート片だった場合。
+		// &pS[0] から３バイトがサロゲート片だった場合。
 		if( IsUtf8SurrogHi(&pS[0]) || IsUtf8SurrogLow(&pS[0]) ){
 			eret_charset = CHARSET_BINARY;
 			nret_clen = 1;
@@ -807,18 +788,12 @@ EndFunc:;
 			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
 				eret_charset = CHARSET_BINARY;
 				nret_clen = 1;
-			}else if( (nOption & UC_RESERVED_CP) && IsUnicodeResvdCP_normal(wc32) ){
-				eret_charset = CHARSET_BINARY;
-				nret_clen = 1;
 			}
 		}else if( nret_clen == 6 ){
 			wc32 = DecodeUtf16Surrog(
 				static_cast<unsigned short>(DecodeUtf8(reinterpret_cast<const unsigned char*>(&pS[0]), 3) & 0x0000ffff),
 				static_cast<unsigned short>(DecodeUtf8(reinterpret_cast<const unsigned char*>(&pS[3]), 3) & 0x0000ffff) );
 			if( (nOption & UC_NONCHARACTER) && IsUnicodeNoncharacter(wc32) ){
-				eret_charset = CHARSET_BINARY;
-				nret_clen = 1;
-			}else if( (nOption & UC_RESERVED_CP) && IsUnicodeResvdCP_surrog(wc32) ){
 				eret_charset = CHARSET_BINARY;
 				nret_clen = 1;
 			}

@@ -8,6 +8,7 @@
 #include "io/CFileLoad.h"
 #include "charset/CCodeMediator.h"
 #include "parse/CWordParse.h"
+#include "window/CEditWnd.h"
 
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
@@ -993,8 +994,9 @@ int CGrepAgent::DoGrepFile(
 			// 2003.06.10 Moca コード判別処理をここに移動．
 			// 判別エラーでもファイル数にカウントするため
 			// ファイルの日本語コードセット判別
-			nCharCode = CCodeMediator::CheckKanjiCodeOfFile( pszFullPath );
-			if( -1 == nCharCode ){
+			CCodeMediator cmediator( CEditWnd::Instance()->GetDocument() );
+			nCharCode = cmediator.CheckKanjiCodeOfFile( pszFullPath );
+			if( !IsValidCodeType(nCharCode) ){
 				pszCodeName = _T("  [(DetectError)]");
 			}else{
 				pszCodeName = CCodeTypeName(nCharCode).Bracket();

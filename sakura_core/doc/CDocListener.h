@@ -115,7 +115,7 @@ public:
 
 	//ロード前後
 	ECallbackResult NotifyCheckLoad	(SLoadInfo* pLoadInfo);
-	void NotifyBeforeLoad			(const SLoadInfo& sLoadInfo);
+	void NotifyBeforeLoad			(SLoadInfo* sLoadInfo);
 	ELoadResult NotifyLoad			(const SLoadInfo& sLoadInfo);
 	void NotifyLoading				(int nPer);
 	void NotifyAfterLoad			(const SLoadInfo& sLoadInfo);
@@ -146,7 +146,7 @@ public:
 	// -- -- 各種イベント -- -- //
 	//ロード前後
 	virtual ECallbackResult	OnCheckLoad	(SLoadInfo* pLoadInfo)		{ return CALLBACK_CONTINUE; }	//!< 本当にロードを行うかの判定を行う
-	virtual void			OnBeforeLoad(const SLoadInfo& sLoadInfo){ return ; }	//!< ロード事前処理
+	virtual void			OnBeforeLoad(SLoadInfo* sLoadInfo){ return ; }	//!< ロード事前処理
 	virtual ELoadResult		OnLoad		(const SLoadInfo& sLoadInfo){ return LOADED_NOIMPLEMENT; }	//!< ロード処理
 	virtual void			OnLoading	(int nPer)					{ return ; }	//!< ロード処理の経過情報を受信
 	virtual void			OnAfterLoad	(const SLoadInfo& sLoadInfo){ return ; }	//!< ロード事後処理

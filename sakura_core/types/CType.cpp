@@ -173,6 +173,10 @@ void _DefaultConfig(STypeConfig* pType)
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	pType->m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
 
+	// 文字コード設定
+	pType->m_bPriorCesu8 = FALSE;
+	pType->m_eDefaultCodetype = CODE_SJIS;
+
 	//@@@2002.2.4 YAZAKI
 	pType->m_szExtHelp[0] = L'\0';
 	pType->m_szExtHtmlHelp[0] = L'\0';

@@ -24,6 +24,8 @@
 #include "CConvert_ToZenkana.h"
 #include "CConvert_Trim.h"
 
+#include "window/CEditWnd.h"
+
 /* 機能種別によるバッファの変換 */
 void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, int nTabWidth )
 {
@@ -54,7 +56,12 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	}
 
 	if( nFuncCode == F_CODECNV_AUTO2SJIS ){
-		switch( CCodeMediator::CheckKanjiCode( reinterpret_cast<const char*>(pCMemory->_GetMemory()->GetRawPtr()), pCMemory->_GetMemory()->GetRawLength() ) ){
+		ECodeType ecode;
+		CCodeMediator ccode( CEditWnd::Instance()->GetDocument() );
+		ecode = ccode.CheckKanjiCode(
+			reinterpret_cast<const char*>(pCMemory->_GetMemory()->GetRawPtr()),
+			pCMemory->_GetMemory()->GetRawLength() );
+		switch( ecode ){
 		case CODE_JIS:			nFuncCode = F_CODECNV_EMAIL;			break;
 		case CODE_EUC:			nFuncCode = F_CODECNV_EUC2SJIS;			break;
 		case CODE_UNICODE:		nFuncCode = F_CODECNV_UNICODE2SJIS;		break;

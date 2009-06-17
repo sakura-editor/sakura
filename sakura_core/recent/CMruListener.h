@@ -5,8 +5,8 @@
 class CMruListener : public CDocListenerEx{
 public:
 	//ロード前後
-	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo);
-	void OnBeforeLoad(const SLoadInfo& sLoadInfo);
+//	ECallbackResult OnCheckLoad(SLoadInfo* pLoadInfo);
+	void OnBeforeLoad(SLoadInfo* sLoadInfo);
 	void OnAfterLoad(const SLoadInfo& sLoadInfo);
 
 	//セーブ前後

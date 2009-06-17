@@ -4,6 +4,7 @@
 #include "util/window.h"
 #include "io/CFileLoad.h"
 #include <io.h>
+#include "window/CEditWnd.h"
 
 /*!
 	ファイルを読み込んで格納する（分割読み込みテスト版）
@@ -25,7 +26,8 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	// 文字コード種別
 	pFileInfo->eCharCode = sLoadInfo.eCharCode;
 	if( CODE_AUTODETECT==pFileInfo->eCharCode) {
-		pFileInfo->eCharCode = CCodeMediator::CheckKanjiCodeOfFile( pszPath );
+		CCodeMediator cmediator( CEditWnd::Instance()->GetDocument() );
+		pFileInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
 	}
 	if( !IsValidCodeType(pFileInfo->eCharCode) ){
 		pFileInfo->eCharCode = CODE_DEFAULT;

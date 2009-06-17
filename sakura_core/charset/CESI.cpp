@@ -34,7 +34,7 @@
 
 #include <limits.h>
 #include <stdio.h>
-#include <winbase.h>
+#include <windows.h>
 #include "charset/codechecker.h"
 #include "charset/CESI.h"
 #include "mem/CMemory.h"
@@ -43,6 +43,10 @@
 #include "charset/CCodeMediator.h"
 #include "convert/convert_util2.h"
 #include "charset/charcode.h"
+
+#include "window/CEditWnd.h"
+#include "env/CShareData.h"
+#include "doc/CEditDoc.h"
 
 
 /*!
@@ -55,87 +59,38 @@
 	CODE_UNICODE と CODE_UNICODEBE を除く各項目の値は、
 	対応する文字コード情報の格納先 (m_pMbInfo) インデックスとして使っているため、
 	連続させている。
+
+	CODE_SJIS と CODE_UTF8 が同ポイントの第一候補になる可能性があるため、
+	CODE_UTF8, CODE_CESU8 を優先的にしている。つまり、SJIS と UTF-8系(UTF-8 と CESU-8) が
+	同ポイントになった場合は、必ず UTF=8系 を優先させるようにする。
 */
-const int gm_aMbcDefaultPriority[] =
+static const int gm_aMbcPriority[] =
 {
-	0,			//CODE_SJIS
-	1,			//CODE_JIS
-	2,			//CODE_EUC
+	2,			//CODE_SJIS
+	4,			//CODE_JIS
+	3,			//CODE_EUC
 	INT_MAX,	//CODE_UNICODE
-	3,			//CODE_UTF8
-	4,			//CODE_UTF7
+	0,			//CODE_UTF8
+	5,			//CODE_UTF7
 	INT_MAX,	//CODE_UNICODEBE
+	1,			//CODE_CESU8
 };
 
 
 
 
-/*!
-	優先順位表を作成
 
-	@param[in] eFavoriteId 最優先したい文字コードID
-
-	@note
-	(sjis, jis, eucjp, uni, utf8, utf7, unibe)
-
-	上の文字コードID列に対応する優先度数値列の調整の仕方：
-
-	  ex. utf8 を優先させたい場合の手順
-
-               sjis, jis, eucjp, uni, utf8, utf7, unibe <-- ECodeType の宣言順
-	  Step0.  (0,    1,   2,     X,   3,    4,    X    ) <-- 初期状態
-	  Step1.  (0,    1,   3,     X,   2,    4,    X    )
-	  Step2.  (0,    2,   3,     X,   1,    4,    X    )
-	  Step3.  (1,    2,   3,     X,   0,    4,    X    )
-*/
-void CESI::MakePriorityTable( const ECodeType eFavoriteId )
-{
-	int i, temp;
-
-	if( CODE_CODEMAX <= eFavoriteId
-	 || eFavoriteId == CODE_UNICODE || eFavoriteId == CODE_UNICODEBE ){
-		return;
-	}
-
-	for( i = eFavoriteId-1; 0 <= i; i-- ){
-		if( i != CODE_UNICODE && i != CODE_UNICODEBE ){
-			temp = m_aMbcPriority[i];
-			m_aMbcPriority[i] = m_aMbcPriority[eFavoriteId];
-			m_aMbcPriority[eFavoriteId] = temp;
-		}
-	}
-}
-
-/*!
-	コンストラクタ実装関数
-*/
-void CESI::InitPriorityTable( const ECodeType eFavoriteCodeId )
-{
-	// デフォルトの優先順位表を m_pMbPriority[] に丸ごとコピー
-	for( int i = 0; i < CODE_CODEMAX; i++ ){
-		m_aMbcPriority[i] = gm_aMbcDefaultPriority[i];
-	}
-	// eFavoriteId が優先度が最も高くなるように設定
-	MakePriorityTable( eFavoriteCodeId );
-}
 
 
 
 /*!
 	デフォルトコンストラクタ
 */
-bool CESI::SetInformation( const char *pS, const int nLen, ECodeType eFavoriteCodeId )
+void CESI::SetInformation( const char *pS, const int nLen )
 {
-	if( pS == NULL || nLen < 1 ){
-		return false;
-	}
-
-	InitPriorityTable( eFavoriteCodeId );   // MBCode の（情報配列 m_pMbInfo の添え字に使用される）優先順位表を作成。
-	ScanMBCode( pS, nLen );    // マルチバイトコードにたいする調査。
-	ScanUnicode( pS, nLen );   // Unicode にたいする調査。
-	SetDataLen( nLen );      // 対象となったデータ長を記録。
-
-	return true;
+	// 文字情報を収集
+	ScanCode( pS, nLen );
+	return;
 }
 
 
@@ -145,7 +100,7 @@ bool CESI::SetInformation( const char *pS, const int nLen, ECodeType eFavoriteCo
 
 	@return
 	　nCodeType が CODE_UNICODE, CODE_UNICODEBE の場合は m_pWcInfo 用の添え字が，
-	それ以外の場合は m_pMbInfo 用の添え字が返却されることに注意。
+	それ以外の場合は m_pMbInfo 用の添え字が返却される。
 */
 int CESI::GetIndexById( const ECodeType eCodeType ) const
 {
@@ -155,8 +110,7 @@ int CESI::GetIndexById( const ECodeType eCodeType ) const
 	}else if( CODE_UNICODEBE == eCodeType ){
 		nret = 1;
 	}else{
-		nret = m_aMbcPriority[eCodeType];
-		// 優先順位表の優先度数をそのまま m_aMbcInfo の添え字として使う。
+		nret = gm_aMbcPriority[eCodeType]; // 優先順位表の優先度数をそのまま m_aMbcInfo の添え字として使う。
 	}
 	return nret;
 }
@@ -213,19 +167,6 @@ void CESI::GetEvaluation( const ECodeType eCodeId, int *pv1, int *pv2 ) const
 
 
 
-/*!
-	優先順位表から最も優先度の高い文字コードを取得
-*/
-ECodeType CESI::GetFavoriteCode( void ) const
-{
-	int i, v;
-	for( v = 0, i = 1; i < CODE_CODEMAX; i++ ){
-		if( m_aMbcPriority[v] > m_aMbcPriority[i] ){
-			v = i;
-		}
-	}
-	return static_cast<ECodeType>( v );
-}
 
 
 
@@ -275,7 +216,7 @@ void CESI::GetEncodingInfo_sjis( const char* pS, const int nLen )
 	int nret;
 	ECharSet echarset;
 
-	if( nLen < 1 ){
+	if( nLen < 1 || pS == NULL ){
 		SetEvaluation( CODE_SJIS, 0, 0 );
 		m_nMbcSjisHankata = 0;
 		return;
@@ -293,6 +234,7 @@ void CESI::GetEncodingInfo_sjis( const char* pS, const int nLen )
 				num_of_sjis_encoded_bytes += nret;
 			}
 			if( echarset == CHARSET_JIS_HANKATA ){
+				num_of_sjis_encoded_bytes += nret;
 				num_of_sjis_hankata++;
 			}
 		}else{
@@ -323,7 +265,7 @@ void CESI::GetEncodingInfo_jis( const char* pS, const int nLen )
 	int nlen, nerror;
 	EMyJisEscseq emyjisesc;
 
-	if( nLen < 1 ){
+	if( nLen < 1 || pS == NULL ){
 		SetEvaluation( CODE_JIS, 0, 0 );
 		return;
 	}
@@ -372,11 +314,14 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 {
 	const char *pr, *pr_end;
 	int nillbytes, num_of_eucjp_encoded_bytes;
+	int num_of_euc_zen_hirakata, num_of_euc_zen;
 	int nret;
 	ECharSet echarset;
 
-	if( nLen < 1 ){
+	if( nLen < 1 || pS == NULL ){
 		SetEvaluation( CODE_EUC, 0, 0 );
+		m_nMbcEucZenHirakata = 0;
+		m_nMbcEucZen = 0;
 		return;
 	}
 
@@ -385,10 +330,17 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 	pr = pS;
 	pr_end = pr + nLen;
 
+	num_of_euc_zen_hirakata = 0;
+	num_of_euc_zen = 0;
+
 	for( ; 0 != (nret = CheckEucjpChar(pr, pr_end-pr, &echarset)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
 				num_of_eucjp_encoded_bytes += nret;
+				num_of_euc_zen += nret;
+				if( IsEucZen_hirakata(pr) ){
+					num_of_euc_zen_hirakata += 2;
+				}
 			}
 		}else{
 			if( pr_end - pr < GuessEucjpCharsz(pr[0]) ){ break; }
@@ -399,6 +351,9 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 	SetEvaluation( CODE_EUC,
 		num_of_eucjp_encoded_bytes,
 		num_of_eucjp_encoded_bytes - nillbytes );
+
+	m_nMbcEucZen = num_of_euc_zen;
+	m_nMbcEucZenHirakata = num_of_euc_zen_hirakata;
 
 	return;
 }
@@ -419,7 +374,7 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 	int npoints, nlen_setd, nlen_setb;
 	bool berror;
 
-	if( nLen < 1 ){
+	if( nLen < 1 || pS == NULL ){
 		SetEvaluation( CODE_UTF7, 0, 0 );
 		return;
 	}
@@ -442,7 +397,7 @@ void CESI::GetEncodingInfo_utf7( const char* pS, const int nLen )
 		pr = pr_next;
 
 		/* セットB 文字列の検査 */
-		nlen_setb = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror, UC_NONCHARACTER | UC_RESERVED_CP );
+		nlen_setb = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror, 0 );
 		if( pr+nlen_setb == pr_next && pr_next == pr_end ){
 			// セットＢ文字列の終端文字 '-' が無い、かつ、
 			// 次の読み込み位置が調査データの終端文字上にある場合、エラーを取り消して検査終了
@@ -487,7 +442,7 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 	int nret;
 	ECharSet echarset;
 
-	if( nLen < 1 ){
+	if( nLen < 1 || pS == NULL ){
 		SetEvaluation( CODE_UTF8, 0, 0 );
 		return;
 	}
@@ -497,7 +452,7 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 	pr = pS;
 	pr_end = pS + nLen;
 
-	for( ; 0 != (nret = CheckUtf8Char(pr, pr_end-pr, &echarset, true, UC_NONCHARACTER)); pr += nret ){
+	for( ; 0 != (nret = CheckUtf8Char(pr, pr_end-pr, &echarset, true, 0)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
 				num_of_utf8_encoded_bytes += nret;
@@ -516,7 +471,48 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 }
 
 
-/*
+
+/*!
+	CESU-8 の文字コード判定情報を収集する
+*/
+void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
+{
+	const char *pr, *pr_end;
+	int nillbytes, num_of_cesu8_encoded_bytes;
+	int nret;
+	ECharSet echarset;
+
+	if( nLen < 1 || pS == NULL ){
+		SetEvaluation( CODE_CESU8, 0, 0 );
+		return;
+	}
+
+	nillbytes = 0;
+	num_of_cesu8_encoded_bytes = 0;
+	pr = pS;
+	pr_end = pS + nLen;
+
+	for( ; 0 != (nret = CheckCesu8Char(pr, pr_end-pr, &echarset, 0)); pr += nret ){
+		if( echarset != CHARSET_BINARY ){
+			if( 1 < nret ){
+				num_of_cesu8_encoded_bytes += nret;
+			}
+		}else{
+			if( pr_end - pr < GuessCesu8Charsz(pr[0]) ){ break; }
+			nillbytes += nret;
+		}
+	}
+
+	SetEvaluation( CODE_CESU8,
+		num_of_cesu8_encoded_bytes,
+		num_of_cesu8_encoded_bytes - nillbytes );
+
+	return;
+}
+
+
+
+/*!
 	UTF-16 チェッカ内で使う改行コード確認関数
 */
 bool CESI::_CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian )
@@ -565,16 +561,16 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 	register int nret1, nret2;
 	ECharSet echarset1, echarset2;
 
-	if( nLen < 1 || nLen % 2 == 1 ){
-		if( nLen < 1 ){
-			SetEvaluation( CODE_UNICODE, 0, 0 );
-			SetEvaluation( CODE_UNICODEBE, 0, 0 );
-		}else{
-			// 2 で割り切れない長さのデータだった場合は、候補から外す。
-			SetEvaluation( CODE_UNICODE, 0, INT_MIN );
-			SetEvaluation( CODE_UNICODEBE, 0, INT_MIN );
-		}
-		m_eWcBomType = ESI_BOMTYPE_UNKNOWN;
+	if( nLen < 1 || pS == NULL ){
+		SetEvaluation( CODE_UNICODE, 0, 0 );
+		SetEvaluation( CODE_UNICODEBE, 0, 0 );
+		return;
+	}
+
+	if( nLen % 2 == 1 ){
+		// 2 で割り切れない長さのデータだった場合は、候補から外す。
+		SetEvaluation( CODE_UNICODE, 0, INT_MIN );
+		SetEvaluation( CODE_UNICODEBE, 0, INT_MIN );
 		return;
 	}
 
@@ -585,8 +581,8 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 
 	for( ; ; ){
 
-		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1, UC_NONCHARACTER );
-		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2, UC_NONCHARACTER );
+		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1, 0 );
+		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2, 0 );
 		if( nret1 == 0 && nret2 == 0 ){
 			// LE BE 両方共のチェックが終了した。
 			break;
@@ -642,13 +638,8 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 		SetEvaluation( CODE_UNICODEBE, 0, INT_MIN );
 	}
 
-	// BOM種別を推測しておく。
-	m_eWcBomType = GuessUtf16Bom();
-
 	return;
 }
-
-
 
 
 
@@ -658,21 +649,25 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 
 	@return 入力データがない時に false
 */
-void CESI::ScanMBCode( const char* pS, const int nLen )
+void CESI::ScanCode( const char* pS, const int nLen )
 {
-	/* マルチバイト文字の調査 */
+	// 対象となったデータ長を記録。
+	SetDataLen( nLen );
+
+	// データを調査
 	GetEncodingInfo_sjis( pS, nLen );
-	GetEncodingInfo_eucjp( pS, nLen );
 	GetEncodingInfo_jis( pS, nLen );
+	GetEncodingInfo_eucjp( pS, nLen );
 	GetEncodingInfo_utf8( pS, nLen );
 	GetEncodingInfo_utf7( pS, nLen );
-	SortMBCInfo();
-}
-
-void CESI::ScanUnicode( const char* pS, const int nLen )
-{
+	GetEncodingInfo_cesu8( pS, nLen );
 	GetEncodingInfo_uni( pS, nLen );
-	GuessUtf16Bom();
+	SortMBCInfo();
+
+	GuessEucOrSjis();  // EUC か SJIS かを判定
+	GuessUtf8OrCesu8(); // UTF-8 か CESU-8 かを判定
+
+	GuessUtf16Bom();   // UTF-16 の BOM を判定
 }
 
 
@@ -685,7 +680,7 @@ void CESI::ScanUnicode( const char* pS, const int nLen )
 	@retval CESI_BOMTYPE_UTF16BE   Big-Endian(BE)
 	@retval CESI_BOMTYPE_UNKNOWN   不明
 */
-EBOMType CESI::GuessUtf16Bom( void ) const
+void CESI::GuessUtf16Bom( void )
 {
 	int i, j;
 	EBOMType ebom_type;
@@ -705,16 +700,63 @@ EBOMType CESI::GuessUtf16Bom( void ) const
 		}
 	}
 
-	return ebom_type;
+	m_eWcBomType = ebom_type;
 }
 
 
 
 
+/*!
+	SJIS と EUC の紛らわしさを解消する
+
+	m_bEucFlag が TRUE のとき EUC, FALSE のとき SJIS
+*/
+void CESI::GuessEucOrSjis( void )
+{
+	if( IsAmbiguousEucAndSjis()
+	 && static_cast<double>(m_nMbcEucZenHirakata) / m_nMbcEucZen >= 0.25 ){ // 0.25 という値は適当です。
+		// EUC をトップに持ってくる
+		int i;
+		for( i = 0; i < 2; ++i ){
+			if( m_apMbcInfo[i]->eCodeID == CODE_EUC ){
+				break;
+			}
+		}
+		if( i == 1 ){
+			MBCODE_INFO* ptemp;
+			ptemp = m_apMbcInfo[0];
+			m_apMbcInfo[0] = m_apMbcInfo[1];
+			m_apMbcInfo[1] = ptemp;
+		}
+	}
+}
 
 
+/*!
+	UTF-8 と CESU-8 の紛らわしさを解消する
 
+	m_bCesu8Flag が TRUE のとき CESU-8, FALSE のとき UTF-8
+*/
+void CESI::GuessUtf8OrCesu8( void )
+{
+	int ntype = m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex();
 
+	if( IsAmbiguousUtf8AndCesu8()
+	 && CShareData::getInstance()->GetShareData()->m_Types[ntype].m_bPriorCesu8 ){
+		int i;
+		for( i = 0; i < 2; ++i ){
+			if( m_apMbcInfo[i]->eCodeID == CODE_CESU8 ){
+				break;
+			}
+		}
+		if( i == 1 ){
+			MBCODE_INFO* ptemp;
+			ptemp = m_apMbcInfo[0];
+			m_apMbcInfo[0] = m_apMbcInfo[1];
+			m_apMbcInfo[1] = ptemp;
+		}
+	}
+}
 
 
 
@@ -728,10 +770,6 @@ EBOMType CESI::GuessUtf16Bom( void ) const
 	収集した情報をダンプする
 
 	@param[out] pcmtxtOut 出力は、このポインタが指すオブジェクトに追加される。
-
-	@note
-		@li m_nTargetDataLen が 1 未満のときはサンプルデータ長のみをダンプして終了。
-		@li CDlgProperty::SetData() 関数と協調するように出力する。
 */
 void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 {
@@ -740,10 +778,10 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	int i;
 
 	ECodeType ecode_result;
+	CESI cesi( CEditWnd::Instance()->GetDocument() );
 
 	// テスト実行
-	CESI cesi;
-	cesi.SetInformation( pS, nLen, CODE_SJIS );
+	cesi.SetInformation( pS, nLen/*, CODE_SJIS*/ );
 	ecode_result = CCodeMediator::CheckKanjiCode( &cesi );
 
 	//
@@ -766,11 +804,20 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	}
 
 
-	pcmtxtOut->AppendString( _T("優先された文字コード\r\n") );
+
+	pcmtxtOut->AppendString( _T("文書種別\r\n") );
 
 
-	CCodeTypeName ccodetype( cesi.GetFavoriteCode() );
-	auto_sprintf( szWork, _T("\t%s\r\n"), ccodetype.Normal() );
+	CTypeConfig ctypeconf( cesi.m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex() );
+	STypeConfig& type = CDocTypeManager().GetTypeSetting(ctypeconf);
+	auto_sprintf( szWork, _T("\t%s\r\n"), type.m_szTypeName );
+	pcmtxtOut->AppendString( szWork );
+
+
+	pcmtxtOut->AppendString( _T("デフォルト文字コード\r\n") );
+
+
+	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(cesi.m_pcEditDoc->GetDefaultDocumentEncoding()).Normal() );
 	pcmtxtOut->AppendString( szWork );
 
 
@@ -782,8 +829,8 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 
 
 	pcmtxtOut->AppendString( _T("固有バイト数とポイント数\r\n") );
-	
-	
+
+
 	pcmtxtOut->AppendString( _T("\tUNICODE\r\n") );
 	cesi.GetEvaluation( CODE_UNICODE, &v1, &v2 );
 	cesi.GetEvaluation( CODE_UNICODEBE, &v3, &v4 );
@@ -805,25 +852,22 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	pcmtxtOut->AppendString( szWork );
 	pcmtxtOut->AppendString( _T("\tMBC と 上記以外の UNICODE ファミリ\r\n") );
 	for( i = 0; i < NUM_OF_MBCODE; ++i ){
+		if( !IsValidCodeType(cesi.m_apMbcInfo[i]->eCodeID) ){
+			cesi.m_apMbcInfo[i]->eCodeID = CODE_SJIS;
+		}
 		cesi.GetEvaluation( cesi.m_apMbcInfo[i]->eCodeID, &v1, &v2 );
-		CCodeTypeName ccodetypename( cesi.m_apMbcInfo[i]->eCodeID );
-		auto_sprintf( szWork, _T("\t\t%d.%s\t固有バイト数 %d\tポイント数 %d\r\n"), i+1, ccodetypename.Normal(), v1, v2 );
+		auto_sprintf( szWork, _T("\t\t%d.%s\t固有バイト数 %d\tポイント数 %d\r\n"),
+			i+1, CCodeTypeName(cesi.m_apMbcInfo[i]->eCodeID).Normal(), v1, v2 );
 		pcmtxtOut->AppendString( szWork );
 	}
-	if( cesi.m_dwStatus & ESI_MBC_HANKATACOUNTED ){
-		auto_sprintf( szWork, _T("\t\t（SJIS 半角カタカナ %d バイト分が考慮されました。）\r\n"), cesi.m_nMbcSjisHankata );
-		pcmtxtOut->AppendString( szWork );
-	}
-	if( cesi.m_dwStatus & ESI_MBC_CESU8DETECTED ){
-		pcmtxtOut->AppendString( _T("\t\t（CESU-8 が検出されました。）\r\n") );
-	}
+	auto_sprintf( szWork, _T("\t\t・EUC全角カナかな/EUC全角\t%6.3f\r\n"), static_cast<double>(cesi.m_nMbcEucZenHirakata)/cesi.m_nMbcEucZen );
+	pcmtxtOut->AppendString( szWork );
+
 
 	pcmtxtOut->AppendString( _T("判定結果\r\n") );
 
 
-
-	CCodeTypeName ccodetypename( ecode_result );
-	auto_sprintf( szWork, _T("\t%s\r\n"), ccodetypename.Normal() );
+	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(ecode_result).Normal() );
 	pcmtxtOut->AppendString( szWork );
 
 

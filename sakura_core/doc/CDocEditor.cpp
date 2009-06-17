@@ -32,7 +32,7 @@ void CDocEditor::SetModified( bool flag, bool redraw)
 		m_pcDocRef->m_pcEditWnd->UpdateCaption();
 }
 
-void CDocEditor::OnBeforeLoad(const SLoadInfo& sLoadInfo)
+void CDocEditor::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
 	//ビューのテキスト選択解除
 	GetListeningDoc()->m_pcEditWnd->Views_DisableSelectArea(true);

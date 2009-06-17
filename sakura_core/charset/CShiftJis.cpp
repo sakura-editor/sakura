@@ -183,7 +183,7 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 	pr_end = reinterpret_cast<const unsigned short*>(pSrc+nSrcLen);
 	pw = reinterpret_cast<unsigned char*>(pDst);
 
-	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, false)) > 0 ){
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
 		// 保護コード
 		switch( echarset ){
 		case CHARSET_UNI_NORMAL:
@@ -198,7 +198,6 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 		}
 		if( echarset != CHARSET_BINARY ){
 			pw += _UniToSjis_char( pr, pw, echarset, &berror_tmp );
-			// 保護コード
 			if( berror_tmp == true ){
 				berror = true;
 			}

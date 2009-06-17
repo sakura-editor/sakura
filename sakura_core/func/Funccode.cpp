@@ -81,6 +81,7 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5
 	F_FILE_REOPEN_UNICODE	,//Unicodeで開き直す
 	F_FILE_REOPEN_UNICODEBE	,//UnicodeBEで開き直す
 	F_FILE_REOPEN_UTF8		,//UTF-8で開き直す
+	F_FILE_REOPEN_CESU8		,//CESU-8で開き直す
 	F_FILE_REOPEN_UTF7		,//UTF-7で開き直す
 	F_PRINT				,	//印刷
 	F_PRINT_PREVIEW		,	//印刷プレビュー
@@ -547,6 +548,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_FILE_REOPEN_UNICODE:	return HLP000159;			//Unicodeで開き直す
 	case F_FILE_REOPEN_UNICODEBE:	return HLP000256;		//UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:	return HLP000160;			//UTF-8で開き直す
+	case F_FILE_REOPEN_CESU8:	return HLP000163;			//CESU-8で開き直す
 	case F_FILE_REOPEN_UTF7:	return HLP000161;			//UTF-7で開き直す
 	case F_PRINT:				return HLP000162;			//印刷				//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
 	case F_PRINT_PREVIEW:		return HLP000120;			//印刷プレビュー
@@ -1164,6 +1166,7 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, EFunctionCode
 	case F_FILE_REOPEN_UNICODE:		return CODE_UNICODE == eDocCode;
 	case F_FILE_REOPEN_UNICODEBE:	return CODE_UNICODEBE == eDocCode;
 	case F_FILE_REOPEN_UTF8:		return CODE_UTF8 == eDocCode;
+	case F_FILE_REOPEN_CESU8:		return CODE_CESU8 == eDocCode;
 	case F_FILE_REOPEN_UTF7:		return CODE_UTF7 == eDocCode;
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
 		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */

@@ -22,7 +22,7 @@ CVisualProgress::~CVisualProgress()
 //                        ÉçÅ[ÉhëOå„                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CVisualProgress::OnBeforeLoad(const SLoadInfo& sLoadInfo)
+void CVisualProgress::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
 	_Begin();
 }

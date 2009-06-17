@@ -89,10 +89,22 @@ next:
 	}
 
 
+
+	// OnBeforeLoad() で 文字コード自動認識処理（CMruListenerにて）が文書種別に依存しているので、
+	// InitDoc() と文書種別を確定する処理をここで行う。
+
+	/* 既存データのクリア */
+	pcDoc->InitDoc(); //$$
+
+	// パスを確定
+	pcDoc->SetFilePathAndIcon( pLoadInfo->cFilePath );
+	// 文書種別確定
+	pcDoc->m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( pLoadInfo->cFilePath ), true );
+
 	return CALLBACK_CONTINUE;
 }
 
-void CLoadAgent::OnBeforeLoad(const SLoadInfo& sLoadInfo)
+void CLoadAgent::OnBeforeLoad(SLoadInfo* sLoadInfo)
 {
 }
 
@@ -101,11 +113,9 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	ELoadResult eRet = LOADED_OK;
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	/* 既存データのクリア */
-	pcDoc->InitDoc(); //$$
-
-	// パスを確定
-	pcDoc->SetFilePathAndIcon( sLoadInfo.cFilePath );
+//	OnCheckLoad() で文書種別とアイコンを設定するため、OnCheckLoad() に移動
+//	/* 既存データのクリア */
+//	pcDoc->InitDoc(); //$$
 
 	//ファイルが存在する場合はファイルを読む
 	if(fexist(sLoadInfo.cFilePath)){
@@ -122,9 +132,6 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		}
 		CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	}
-
-	// 文書種別
-	pcDoc->m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( sLoadInfo.cFilePath ), true );
 
 	/* レイアウト情報の変更 */
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応

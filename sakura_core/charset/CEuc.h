@@ -119,7 +119,7 @@ inline int CEuc::_UniToEucjp_char( const unsigned short* pSrc, unsigned char* pD
 			pDst[0] = cbuf[0];
 			nret = 1;
 		}else if( nclen == 1 && IsSjisHankata(cbuf[0]) ){
-			// 半角文字の処理：
+			// 半角カタカナ文字の処理：
 			pDst[0] = 0x8e;
 			pDst[1] = cbuf[0];
 			nret = 2;

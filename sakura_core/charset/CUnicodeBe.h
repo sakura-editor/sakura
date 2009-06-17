@@ -19,8 +19,3 @@ public:
 		{ return CUnicode::_UnicodeToUnicode_out(pMem,true); }	// Unicode   → UnicodeBEコード変換
 
 };
-
-
-// util_string_ex2.h へ移動
-//class CEol;
-//SAKURA_CORE_API const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)

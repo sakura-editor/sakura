@@ -1198,9 +1198,12 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 
 		//@@@ 2002.2.4 YAZAKI
 		cProfile.IOProfileData( pszSecName, LTEXT("szExtHelp")			, types.m_szExtHelp );
-			
+
 		cProfile.IOProfileData( pszSecName, LTEXT("szExtHtmlHelp")		, types.m_szExtHtmlHelp );
 		cProfile.IOProfileData( pszSecName, LTEXT("bHtmlHelpIsSingle")	, types.m_bHokanLoHiCase );
+
+		cProfile.IOProfileData( pszSecName, LTEXT("bPriorCesu8")		, types.m_bPriorCesu8 );
+		cProfile.IOProfileData( pszSecName, LTEXT("eDefaultCodetype")	, types.m_eDefaultCodetype );
 
 		cProfile.IOProfileData( pszSecName, LTEXT("bAutoIndent")			, types.m_bAutoIndent );
 		cProfile.IOProfileData( pszSecName, LTEXT("bAutoIndent_ZENSPACE")	, types.m_bAutoIndent_ZENSPACE );
