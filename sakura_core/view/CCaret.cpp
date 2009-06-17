@@ -659,10 +659,12 @@ void CCaret::ShowCaretPosInfo()
 				//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(m_pEditDoc->GetDocumentEncoding(), false);
 				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar);
+				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった(Unicodeで表示)
 					pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
 					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar);
+					delete pCode;
 				}
 			}
 			else{
