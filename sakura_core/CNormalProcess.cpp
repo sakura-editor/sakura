@@ -306,6 +306,16 @@ end_of_func:
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
 
+	// 起動時マクロオプション
+	LPCWSTR pszMacro = CCommandLine::Instance()->GetMacro();
+	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){
+		LPCWSTR pszMacroType = CCommandLine::Instance()->GetMacroType();
+		if( pszMacroType == NULL || pszMacroType[0] == L'\0' || wcsicmp(pszMacroType, L"file") == 0 ){
+			pszMacroType = NULL;
+		}
+		CEditView* view = pEditWnd->m_pcEditViewArr[ pEditWnd->m_nActivePaneIndex ];
+		view->GetCommander().HandleCommand( F_EXECEXTMACRO, TRUE, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
+	}
 
 	return pEditWnd->GetHwnd() ? true : false;
 }

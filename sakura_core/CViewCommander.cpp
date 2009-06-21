@@ -550,7 +550,8 @@ BOOL CViewCommander::HandleCommand(
 		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
 			ClearOpeBlk();
 		}
-		Command_EXECEXTMACRO( (const WCHAR*)lparam1 );		/* 名前を指定してマクロ実行 */
+		/* 名前を指定してマクロ実行 */
+		Command_EXECEXTMACRO( (const WCHAR*)lparam1, (const WCHAR*)lparam2 );
 		break;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
@@ -7887,7 +7888,8 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 		BOOL bLoadResult = CEditApp::Instance()->m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
 			G_AppInstance(),
-			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
+			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName,
+			NULL
 		);
 		if ( !bLoadResult ){
 			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ts"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
@@ -7951,24 +7953,27 @@ void CViewCommander::Command_LOADKEYMACRO( void )
 }
 
 
-/*! 名前を指定してマクロ実行 */
-void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW )
+/*! 名前を指定してマクロ実行
+	@param pszPath	マクロのファイルパス、またはマクロのコード。
+	@param pszType	種別。NULLの場合ファイル指定、それ以外の場合は言語の拡張子を指定
+
+	@date 2008.10.23 syat 新規作成
+	@date 2008.12.21 syat 引数「種別」を追加
+ */
+void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* pszTypeW )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szPath[_MAX_PATH + 1];
-	TCHAR			szInitDir[_MAX_PATH + 1];
-	const TCHAR*	pszFolder;
-	const TCHAR*	pszPath = NULL;
+	TCHAR			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダ
+	const TCHAR*	pszFolder;					//マクロフォルダ
+	const TCHAR*	pszPath = NULL;				//第1引数をTCHAR*に変換した文字列
+	const TCHAR*	pszType = NULL;				//第2引数をTCHAR*に変換した文字列
 	HWND			hwndRecordingKeyMacro = NULL;
-	_tcscpy( szPath, _T("") );
 
 	if ( pszPathW != NULL ) {
-#ifdef UNICODE
-		pszPath = pszPathW;
-#else
-		wcstombs2( szPath, pszPathW, _countof(szPath) );
-		pszPath = szPath;
-#endif
+		//to_tchar()で取得した文字列はdeleteしないこと。
+		pszPath = to_tchar( pszPathW );
+		pszType = to_tchar( pszTypeW );
 
 	} else {
 		// ファイルが指定されていない場合、ダイアログを表示する
@@ -7990,6 +7995,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW )
 			return;
 		}
 		pszPath = szPath;
+		pszType = NULL;
 	}
 
 	//キーマクロ記録中の場合、追加する
@@ -8010,10 +8016,11 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW )
 	BOOL bLoadResult = CEditApp::Instance()->m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
 		G_AppInstance(),
-		pszPath
+		pszPath,
+		pszType
 	);
 	if ( !bLoadResult ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ts"), pszPath );
+		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロの読み込みに失敗しました。\n\n%ts"), pszPath );
 	}
 	else {
 		CEditApp::Instance()->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView );

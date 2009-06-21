@@ -50,7 +50,8 @@ public:
 	BOOL SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath) const;	/* CMacroの列を、キーボードマクロに保存 */
 	//@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
 	virtual void ExecKeyMacro( class CEditView* pcEditView ) const;				/* キーボードマクロの実行 */
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);		/* キーボードマクロを読み込み、CMacroの列に変換 */
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);		/* キーボードマクロをファイルから読み込む */
+	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode);	/* キーボードマクロを文字列から読み込む */
 	
 	// Apr. 29, 2002 genta
 	static CMacroManagerBase* Creator(const TCHAR* ext);
