@@ -283,8 +283,10 @@ int CPropTypes::GetData_Support( HWND hwndDlg )
 
 		// m_Types.eDefaultCodetype Çê›íË
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
-		i = ::SendMessage( hCombo, CB_GETCURSEL, 0, 0 );
-		m_Types.m_eDefaultCodetype = aeCodeType[i];
+		i = ::SendMessageAny( hCombo, CB_GETCURSEL, 0, 0 );
+		if( CB_ERR != i ){
+			m_Types.m_eDefaultCodetype = aeCodeType[i];
+		}
 	}
 
 
