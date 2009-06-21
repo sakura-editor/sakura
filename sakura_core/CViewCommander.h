@@ -281,7 +281,7 @@ public:
 	void Command_SAVEKEYMACRO( void );	/* キーマクロの保存 */
 	void Command_LOADKEYMACRO( void );	/* キーマクロの読み込み */
 	void Command_EXECKEYMACRO( void );	/* キーマクロの実行 */
-	void Command_EXECEXTMACRO( const WCHAR* path );	/* 名前を指定してマクロ実行 */
+	void Command_EXECEXTMACRO( const WCHAR* path, const WCHAR* type );	/* 名前を指定してマクロ実行 */
 //	From Here 2006.12.03 maru 引数の拡張．
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	void Command_EXECCMMAND( void );	/* 外部コマンド実行 */

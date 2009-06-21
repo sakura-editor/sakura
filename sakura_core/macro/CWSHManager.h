@@ -39,6 +39,7 @@ public:
 
 	virtual void ExecKeyMacro(CEditView *EditView) const;
 	virtual BOOL LoadKeyMacro(HINSTANCE Instance, const TCHAR* Path);
+	virtual BOOL LoadKeyMacroStr(HINSTANCE Instance, const TCHAR* Code);
 
 	static CMacroManagerBase* Creator(const TCHAR* FileExt);
 	static void declare();

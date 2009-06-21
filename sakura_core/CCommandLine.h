@@ -55,7 +55,8 @@ private:
 	static int CheckCommandLine(
 		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
 		int		quotelen,	//!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
-		TCHAR**	arg			//!< [out] 引数がある場合はその先頭へのポインタ
+		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
+		int*	arglen		//!< [out] 引数の長さ
 	);
 	
 	// 外から作らせない。
@@ -82,6 +83,8 @@ public:
 	bool GetEditInfo(EditInfo* fi) const { *fi = m_fi; return true; }
 	bool GetGrepInfo(GrepInfo* gi) const { *gi = m_gi; return true; }
 	int GetGroupId() const {return m_nGroup;};	// 2007.06.26 ryoji
+	LPCWSTR GetMacro() const{ return m_pszMacro; }
+	LPCWSTR GetMacroType() const{ return m_pszMacroType; }
 
 // member valiables
 private:
@@ -94,8 +97,10 @@ private:
 	bool		m_bWriteQuit;		//! [out] TRUE: 設定を保存して終了	// 2007.05.19 ryoji sakuext用に追加
 	EditInfo	m_fi;				//!
 	GrepInfo	m_gi;				//!
-	bool		m_bViewMode;	//! [out] TRUE: Read Only
+	bool		m_bViewMode;		//! [out] TRUE: Read Only
 	int			m_nGroup;			//! グループID	// 2007.06.26 ryoji
+	LPWSTR		m_pszMacro;			//! [out] マクロファイル名／マクロ文
+	LPWSTR		m_pszMacroType;		//! [out] マクロ種別
 };
 
 ///////////////////////////////////////////////////////////////////////

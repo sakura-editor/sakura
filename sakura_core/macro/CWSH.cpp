@@ -710,7 +710,7 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView) const
 }
 
 /*!
-	WSHマクロの読み込み
+	WSHマクロの読み込み（ファイルから）
 
 	@param Instance [in] インスタンスハンドル(未使用)
 	@param Path		[in] ファイルのパス
@@ -727,6 +727,19 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const TCHAR* szPath)
 	while(in){
 		m_Source+=in.ReadLineW()+L"\r\n";
 	}
+	return TRUE;
+}
+
+/*!
+	WSHマクロの読み込み（文字列から）
+
+	@param Instance [in] インスタンスハンドル(未使用)
+	@param szCode	[in] マクロコード
+*/
+BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const TCHAR* szCode)
+{
+	//ソース読み込み -> m_Source
+	m_Source = to_wchar( szCode );
 	return TRUE;
 }
 

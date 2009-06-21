@@ -786,8 +786,10 @@ void CMacro::HandleCommand(
 			pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, (LPARAM)eEol, 0);
 		}
 		break;
+	/* 2‚Â‚Ìˆø”‚ª•¶Žš—ñ */
 	// Jul. 5, 2002 genta
 	case F_EXTHTMLHELP:
+	case F_EXECEXTMACRO:				// 2009.06.14 syat
 		pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
 		break;
 	//	From Here Dec. 4, 2002 genta
@@ -818,7 +820,6 @@ void CMacro::HandleCommand(
 		}
 		break;	//	Jan. 29, 2005 genta ”²‚¯‚Ä‚¢‚½
 	case F_TAGJUMP_KEYWORD:	// @@ 2005.03.31 MIK
-	case F_EXECEXTMACRO:	// 2008.10.22 syat
 		{
 			//ˆø”‚ÍNULL‚Å‚àOK
 			pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
