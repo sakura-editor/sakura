@@ -46,6 +46,7 @@ struct SLoadInfo
 	CFilePath	cFilePath;
 	ECodeType	eCharCode;
 	bool		bViewMode;
+	CTypeConfig	nType;
 
 	//モード
 	bool		bRequestReload;	//リロード要求
@@ -57,14 +58,16 @@ struct SLoadInfo
 	: cFilePath(_T(""))
 	, eCharCode(CODE_AUTODETECT)
 	, bViewMode(false)
+	, nType(-1)
 	, bRequestReload(false)
 	, bOpened(false)
 	{
 	}
-	SLoadInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, bool _bReadOnly)
+	SLoadInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, bool _bReadOnly, CTypeConfig _nType = CTypeConfig(-1))
 	: cFilePath(_cFilePath)
 	, eCharCode(_eCodeType)
 	, bViewMode(_bReadOnly)
+	, nType(_nType)
 	, bRequestReload(false)
 	, bOpened(false)
 	{

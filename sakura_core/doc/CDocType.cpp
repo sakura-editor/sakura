@@ -9,10 +9,11 @@ CDocType::CDocType(CEditDoc* pcDoc)
 }
 
 //	文書種別の設定
-void CDocType::SetDocumentType(CTypeConfig type, bool force)
+void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 {
 	if( !m_nSettingTypeLocked || force ){
 		m_nSettingType = type;
+		if( bTypeOnly ) return;	// bTypeOnly == true は特殊ケース（一時利用）に限定
 		UnlockDocumentType();
 		CDocTypeManager().GetTypeSetting(m_nSettingType).m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
 		this->SetDocumentIcon();	// Sep. 11, 2002 genta

@@ -18,7 +18,7 @@ public:
 	bool GetDocumentLockState(){ return m_nSettingTypeLocked; }
 	
 	// •¶‘í•Ê‚Ìİ’è‚Ææ“¾		// Nov. 23, 2000 genta
-	void SetDocumentType(CTypeConfig type, bool force);	//!< •¶‘í•Ê‚Ìİ’è
+	void SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly = false);	//!< •¶‘í•Ê‚Ìİ’è
 	CTypeConfig GetDocumentType() const					//!< •¶‘í•Ê‚Ìæ“¾
 	{
 		return m_nSettingType;
