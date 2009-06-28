@@ -412,8 +412,10 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* コマンドコードによる処理振り分け */
 			/* 前を検索 */
 			pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
-			/* 再描画 */
-			pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			/* 再描画（0文字幅マッチでキャレットを表示するため） */
+			CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
+			if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
+				pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{
 			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
 		}
@@ -434,8 +436,10 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* コマンドコードによる処理振り分け */
 			/* 次を検索 */
 			pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
-			/* 再描画 */
-			pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			/* 再描画（0文字幅マッチでキャレットを表示するため） */
+			CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
+			if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
+				pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 			// 2001.12.03 hor
 			//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
