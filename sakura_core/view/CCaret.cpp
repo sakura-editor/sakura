@@ -680,22 +680,52 @@ void CCaret::ShowCaretPosInfo()
 	if( !hwndStatusBar ){
 		TCHAR	szText[64];
 		TCHAR	szFormat[64];
-		int		nLen = _tcslen(pszCodeName) + _tcslen(szEolMode) + _tcslen(szCaretChar);
-		auto_sprintf(
-			szFormat,
-			_T("%%ts(%%ts)%%%dc%%ts%%c%%6d:%%d"),
-			(nLen < 14)? 14 - nLen: 1
-		);
+		TCHAR	szLeft[64];
+		TCHAR	szRight[64];
+		int		nLen;
+		{	// メッセージの左側文字列（「行:列」を除いた表示）
+			nLen = _tcslen(pszCodeName) + _tcslen(szEolMode) + _tcslen(szCaretChar);
+			auto_sprintf(
+				szFormat,
+				_T("%%s(%%s)%%%ds%%s%%s"),	// 「キャレット位置の文字情報」を右詰で配置（足りないときは左詰になって右に伸びる）
+				(nLen < 15)? 15 - nLen: 1
+			);
+			auto_sprintf(
+				szLeft,
+				szFormat,
+				pszCodeName,
+				szEolMode,
+				szCaretChar[0]? _T("["): _T(" "),	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
+				szCaretChar,
+				szCaretChar[0]? _T("]"): _T(" ")	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
+			);
+		}
+		szRight[0] = _T('\0');
+		nLen = MENUBAR_MESSAGE_MAX_LEN - _tcslen(szLeft);	// 右側に残っている文字長
+		if( nLen > 0 ){	// メッセージの右側文字列（「行:列」表示）
+			TCHAR szRowCol[32];
+			auto_sprintf(
+				szRowCol,
+				_T("%d:%-4d"),	// 「列」は最小幅を指定して左寄せ（足りないときは右に伸びる）
+				ptCaret.y,
+				ptCaret.x
+			);
+			auto_sprintf(
+				szFormat,
+				_T("%%%ds"),	// 「行:列」を右詰で配置（足りないときは左詰になって右に伸びる）
+				nLen
+			);
+			auto_sprintf(
+				szRight,
+				szFormat,
+				szRowCol
+			);
+		}
 		auto_sprintf(
 			szText,
-			szFormat,
-			pszCodeName,
-			szEolMode,
-			szCaretChar[0]? '[': ' ',	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
-			szCaretChar,
-			szCaretChar[0]? ']': ' ',	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
-			ptCaret.y,
-			ptCaret.x
+			_T("%s%s"),
+			szLeft,
+			szRight
 		);
 		m_pEditDoc->m_pcEditWnd->PrintMenubarMessage( szText );
 	}

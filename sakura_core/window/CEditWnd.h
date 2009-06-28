@@ -50,6 +50,8 @@ class CEditWnd;
 //by 鬼
 #include"CDropTarget.h"
 
+const static int MENUBAR_MESSAGE_MAX_LEN = 30;
+
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
@@ -206,7 +208,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           表示                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void PrintMenubarMessage( const TCHAR* msg ) const;
+	void PrintMenubarMessage( const TCHAR* msg );
 	void SendStatusMessage( const TCHAR* msg );		//	Dec. 4, 2002 genta 実体をCEditViewから移動
 
 
@@ -343,6 +345,7 @@ private:
 	//状態
 	bool			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPTSTR			m_pszLastCaption;
+	LPTSTR			m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
 	int				m_nCurrentFocus;	//!< 現在のフォーカス情報
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。

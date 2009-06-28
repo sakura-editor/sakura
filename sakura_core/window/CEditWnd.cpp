@@ -119,10 +119,13 @@ CEditWnd::CEditWnd()
 , m_cStatusBar(this)
 , m_nActivePaneIndex( 0 )
 , m_pcDragSourceView( NULL )
+, m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 {
 	g_pcEditWnd=this;
 	for(int i=0;i<4;i++)
 		m_pcEditViewArr[i]=new CEditView(this);
+
+	auto_memset( m_pszMenubarMessage, _T(' '), MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
 	//	Dec. 4, 2002 genta
 	InitMenubarMessageFont();
@@ -140,10 +143,11 @@ CEditWnd::~CEditWnd()
 {
 	g_pcEditWnd=NULL;
 
-	delete[] m_pszLastCaption;
-
 	for(int i=0;i<4;i++)
 		delete m_pcEditViewArr[i];
+
+	delete[] m_pszMenubarMessage;
+	delete[] m_pszLastCaption;
 
 	//	Dec. 4, 2002 genta
 	/* キャレットの行桁位置表示用フォント */
@@ -1526,13 +1530,24 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
+	case WM_NCPAINT:
+		DefWindowProc( hwnd, uMsg, wParam, lParam );
+		if( NULL == m_cStatusBar.GetStatusHwnd() ){
+			PrintMenubarMessage( NULL );
+		}
+		return 0;
+
 	case WM_NCACTIVATE:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（１）	// 2007.04.03 ryoji
 		// 前面にいるのが編集ウィンドウならアクティブ状態を保持する
 		if( m_pShareData->m_sFlags.m_bEditWndChanging && IsSakuraMainWindow(::GetForegroundWindow()) ){
 			wParam = TRUE;	// アクティブ
 		}
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		lRes = DefWindowProc( hwnd, uMsg, wParam, lParam );
+		if( NULL == m_cStatusBar.GetStatusHwnd() ){
+			PrintMenubarMessage( NULL );
+		}
+		return lRes;
 
 	case WM_SETTEXT:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（２）	// 2007.04.03 ryoji
@@ -3663,7 +3678,7 @@ void CEditWnd::InitMenubarMessageFont(void)
 	@author genta
 	@date 2002.12.04
 */
-void CEditWnd::PrintMenubarMessage( const TCHAR* msg ) const
+void CEditWnd::PrintMenubarMessage( const TCHAR* msg )
 {
 	if( NULL == ::GetMenu( GetHwnd() ) )	// 2007.03.08 ryoji 追加
 		return;
@@ -3672,17 +3687,16 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg ) const
 	RECT	rc,rcFrame;
 	HFONT	hFontOld;
 	int		nStrLen;
-	const int MAX_LEN = 30;
-	TCHAR	szText[MAX_LEN + 1];
-	
-	int len = _tcslen( msg );
-	_tcsncpy( szText, msg, MAX_LEN );
-	
-	if( len < MAX_LEN ){
-		auto_memset( szText + len, _T(' '), MAX_LEN - len );
+
+	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
+	if( msg ){
+		int len = _tcslen( msg );
+		_tcsncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
+		if( len < MENUBAR_MESSAGE_MAX_LEN ){
+			auto_memset( m_pszMenubarMessage + len, _T(' '), MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
+		}
 	}
-	szText[MAX_LEN] = _T('\0');
-	
+
 	HDC		hdc;
 	hdc = ::GetWindowDC( GetHwnd() );
 	poFrame.x = 0;
@@ -3692,7 +3706,7 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg ) const
 	po.x = rcFrame.right - rcFrame.left;
 	po.y = poFrame.y - rcFrame.top;
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
-	nStrLen = MAX_LEN;
+	nStrLen = MENUBAR_MESSAGE_MAX_LEN;
 	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - ( ::GetSystemMetrics( SM_CXSIZEFRAME ) + 2 );
 	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth + 2;
 	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
@@ -3708,7 +3722,7 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg ) const
 		m_pnCaretPosInfoDx[i] = ( m_nCaretPosInfoCharWidth );
 	}
 	*/
-	::ExtTextOut( hdc,rc.left,rc.top,ETO_CLIPPED | ETO_OPAQUE,&rc,szText,nStrLen,NULL/*m_pnCaretPosInfoDx*/); //2007.10.17 kobake めんどいので今のところは文字間隔配列を使わない。
+	::ExtTextOut( hdc,rc.left,rc.top,ETO_CLIPPED | ETO_OPAQUE,&rc,m_pszMenubarMessage,nStrLen,NULL/*m_pnCaretPosInfoDx*/); //2007.10.17 kobake めんどいので今のところは文字間隔配列を使わない。
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( GetHwnd(), hdc );
 }
