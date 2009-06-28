@@ -257,11 +257,13 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 1 );
 			}else{
-
 				/* 前を検索 */
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
+
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+				CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
+				if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
+					pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
@@ -296,9 +298,11 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			else{
 				/* 次を検索 */
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
-			
+
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+				CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
+				if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
+					pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 
 				// 検索開始位置を登録
 				if( TRUE == pcEditView->m_bSearch ){
