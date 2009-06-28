@@ -13,6 +13,7 @@
 	Copyright (C) 2004, Moca, naoh
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, Uchi
+	Copyright (C) 2009, syat, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -124,6 +125,11 @@ bool CNormalProcess::InitializeProcess()
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	m_pcEditApp = new CEditApp(GetProcessInstance());
 	CEditWnd* pEditWnd = m_pcEditApp->GetWindow();
+	if( NULL == pEditWnd->GetHwnd() ){
+		::ReleaseMutex( hMutex );
+		::CloseHandle( hMutex );
+		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
+	}
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::Instance()->IsDebugMode();
@@ -140,10 +146,6 @@ bool CNormalProcess::InitializeProcess()
 		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, CTypeConfig(-1));
 	}
 	else if( bGrepMode ){
-		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
-		if( NULL == pEditWnd->GetHwnd() ){
-			goto end_of_func;
-		}
 		/* GREP */
 		CCommandLine::Instance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
@@ -221,10 +223,6 @@ bool CNormalProcess::InitializeProcess()
 				bViewMode, // ビューモードか
 				nType
 			);
-			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
-			if( NULL == pEditWnd->GetHwnd() ){
-				goto end_of_func;
-			}
 			//	Nov. 6, 2000 genta
 			//	キャレット位置の復元のため
 			//	オプション指定がないときは画面移動を行わないようにする
@@ -278,7 +276,6 @@ bool CNormalProcess::InitializeProcess()
 		}
 	}
 
-end_of_func:
 	SetMainWindow( pEditWnd->GetHwnd() );
 
 	//ウィンドウキャプション更新
