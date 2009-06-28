@@ -21,6 +21,10 @@ void CMruListener::OnAfterSave(const SSaveInfo& sSaveInfo)
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 {
+	// 再ロード用に現在ファイルをMRU登録しておく
+	// Mar. 30, 2003 genta ブックマーク保存のためMRUへ登録
+	_HoldBookmarks_And_AddToMRU();	// ← 新規オープン（ファイル名未設定）では何もしない
+
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// 文字コード指定は明示的であるか
@@ -37,8 +41,12 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	// 指定のコード -> pLoadInfo->eCharCode
 	if( CODE_AUTODETECT == pLoadInfo->eCharCode ){
 		if( fexist(pLoadInfo->cFilePath) ){
+			// デフォルト文字コード認識のために一時的に読み込み対象ファイルのファイルタイプを適用する
+			CTypeConfig nTypeOld = pcDoc->m_cDocType.GetDocumentType();
+			pcDoc->m_cDocType.SetDocumentType(pLoadInfo->nType, true, true);
 			CCodeMediator cmediator( *pcDoc );
 			pLoadInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pLoadInfo->cFilePath );
+			pcDoc->m_cDocType.SetDocumentType(nTypeOld, true, true);	// 戻し
 		}
 		else{
 			pLoadInfo->eCharCode = ePrevCode;
@@ -95,10 +103,6 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 			}
 		}
 	}
-
-
-	// Mar. 30, 2003 genta ブックマーク保存のためMRUへ登録
-	_HoldBookmarks_And_AddToMRU();
 }
 
 

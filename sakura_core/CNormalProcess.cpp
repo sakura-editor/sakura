@@ -205,19 +205,21 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bViewMode = CCommandLine::Instance()->IsViewMode(); // 2002/2/8 aroka ここに移動
+		CTypeConfig nType = fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt( fi.m_szDocType );
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(
 				SLoadInfo(
 					fi.m_szPath,
 					fi.m_nCharCode,
-					bViewMode
+					bViewMode,
+					nType
 				)
 			);
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bViewMode, // ビューモードか
-				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt( fi.m_szDocType )
+				nType
 			);
 			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
 			if( NULL == pEditWnd->GetHwnd() ){
@@ -271,7 +273,7 @@ bool CNormalProcess::InitializeProcess()
 			pEditWnd->SetDocumentTypeWhenCreate(
 				fi.m_nCharCode,
 				bViewMode,	// ビューモードか
-				fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt( fi.m_szDocType )
+				nType
 			);
 		}
 	}
