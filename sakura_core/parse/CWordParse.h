@@ -15,10 +15,12 @@ enum ECharKind{
 	CK_SPACE,			//!< 半角のスペース 0x20<=c<=0x20
 	CK_CSYM,			//!< 識別子に使用可能な文字 (英数字、アンダースコア)
 	CK_KATA,			//!< 半角のカタカナ 0xA1<=c<=0xFD
+	CK_LATIN,			//!< ラテン１補助、ラテン拡張のうちアルファベット風のもの 0x00C0<=c<0x0180
 	CK_ETC,				//!< 半角のその他
 
 	CK_ZEN_SPACE,		//!< 全角スペース
 	CK_ZEN_NOBASU,		//!< 伸ばす記号 0x815B<=c<=0x815B 'ー'
+	CK_ZEN_DAKU,		//!< 全角濁点 0x309B<=c<=0x309C 「゛゜」
 	CK_ZEN_CSYM,		//!< 全角版、識別子に使用可能な文字 (英数字、アンダースコア)
 
 	CK_ZEN_KIGO,		//!< 全角の記号

@@ -199,12 +199,12 @@ int CEditView::HokanSearchByFile(
 
 			// •¶ŽšŽí—ÞŽæ“¾
 			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// •¶ŽšŽí—ÞŽæ“¾
-			if ( kindPre == CK_ETC && 0x00C0 <= pszLine[j] && pszLine[j] < 0x0180 ){
+			if ( kindPre == CK_LATIN ){
 				kindPre = CK_CSYM;				// ƒ‰ƒeƒ“Šg’£A‚Í‰p”Žšˆµ‚¢‚Æ‚·‚é
 			}
 
 			// ‘SŠp‹L†‚ÍŒó•â‚ÉŠÜ‚ß‚È‚¢
-			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU ||
+			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ||
 				 kindPre == CK_ZEN_KIGO  || kindPre == CK_ZEN_SKIGO )continue;
 
 			// Œó•â’PŒê‚ÌI—¹ˆÊ’u‚ð‹‚ß‚é
@@ -217,16 +217,17 @@ int CEditView::HokanSearchByFile(
 
 				// •¶ŽšŽí—ÞŽæ“¾
 				ECharKind kindCur = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );
-				if ( kindCur == CK_ETC && 0x00C0 <= pszLine[j] && pszLine[j] < 0x0180 ){
+				if ( kindCur == CK_LATIN ){
 					kindCur = CK_CSYM;				// ƒ‰ƒeƒ“Šg’£A‚Í‰p”Žšˆµ‚¢‚Æ‚·‚é
 				}
-				// ‘SŠp‹L†‚ÍŒó•â‚ÉŠÜ‚ß‚È‚¢i‚½‚¾‚µ[XJKRSTUVWYZ‚Í‹–‰Âj
-				if ( kindCur == CK_ZEN_SPACE || kindCur == CK_ZEN_NOBASU || kindCur == CK_ZEN_KIGO || kindCur == CK_ZEN_SKIGO ){
-					if ( wcschr( L"[XJKRSTUVWYZ", pszLine[j] ) ){
-						kindCur = kindPre;			// •âŠ®‘ÎÛ‹L†‚È‚ç‘±s
-					}else{
-						break;
-					}
+				// ‘SŠp‹L†‚ÍŒó•â‚ÉŠÜ‚ß‚È‚¢
+				if ( kindCur == CK_ZEN_SPACE || kindCur == CK_ZEN_KIGO || kindCur == CK_ZEN_SKIGO ){
+					break;
+				}
+				// ‚Ð‚ç‚ª‚ÈEƒJƒ^ƒJƒi‚É‘±‚­’·‰¹E‘÷“_‚È‚ç‘±s
+				if ( ( kindCur == CK_ZEN_NOBASU || kindCur == CK_ZEN_DAKU ) &&
+					 ( kindPre == CK_ZEN_KATA   || kindPre == CK_HIRA     ) ){
+					kindCur = kindPre;
 				}
 
 				// •¶ŽšŽí—Þ‚ª•Ï‚í‚Á‚½‚ç’PŒê‚ÌØ‚ê–Ú‚Æ‚·‚é

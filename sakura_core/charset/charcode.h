@@ -197,20 +197,23 @@ namespace WCODE
 	inline bool IsZenkakuKigou(wchar_t c)
 	{
 		//$ ‘¼‚É‚à‘SŠp‹L†‚Í‚ ‚é‚ÆŽv‚¤‚¯‚ÇA‚Æ‚è‚ ‚¦‚¸ANSI”ÅŽž‘ã‚Ì”»’è‚ð“¥PBƒpƒtƒH[ƒ}ƒ“ƒXˆ«‚µB
-		static const wchar_t* table=L"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬¸¹º»¼½¾¿ÈÉÊËÌÍÎÚÛÜÝÞßàáâãäåæçèðñòóôõö÷ü";
+		// 2009.06.26 syat uTUi‚Ð‚ç‚ª‚ÈjvuRSiƒJƒ^ƒJƒijvuJKi‘SŠp‘÷“_jvuWXZiŠ¿Žšjvu[i’·‰¹jv‚ðœŠO
+		static const wchar_t* table=L"@ABCDEFGHILMNOPQVY\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬¸¹º»¼½¾¿ÈÉÊËÌÍÎÚÛÜÝÞßàáâãäåæçèðñòóôõö÷ü";
 		return wcschr(table,c)!=NULL;
 	}
 
 	//! ‚Ð‚ç‚ª‚È‚©‚Ç‚¤‚©
 	inline bool IsHiragana(wchar_t c)
 	{
-		return c>=0x3041 && c<=0x3093;
+		// 2009.06.26 syat uTUv‚ð’Ç‰Á
+		return (c>=0x3041 && c<=0x3096) || (c>=0x309D && c<=0x309E);
 	}
 
 	//! ƒJƒ^ƒJƒi‚©‚Ç‚¤‚©
 	inline bool IsZenkakuKatakana(wchar_t c)
 	{
-		return c>=0x30A1 && c<=0x30F6;
+		// 2009.06.26 syat uRSv‚ð’Ç‰Á
+		return (c>=0x30A1 && c<=0x30FA) || (c>=0x30FD && c<=0x30FE);
 	}
 
 	//! ƒMƒŠƒVƒƒ•¶Žš‚©‚Ç‚¤‚©

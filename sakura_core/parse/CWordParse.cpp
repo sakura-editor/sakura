@@ -149,10 +149,13 @@ ECharKind CWordParse::WhatKindOfChar(
 		if( c == SPACE           )return CK_SPACE;	// 半角スペース
 		if( isCSymbol(c)         )return CK_CSYM;	// 識別子に使用可能な文字 (半角英数字、半角アンダースコア)
 		if( IsHankakuKatakana(c) )return CK_KATA;	// 半角のカタカナ
+		if( 0x00C0 <= c && c < 0x0180 && c != 0x00D7 && c != 0x00F7 )return CK_LATIN;
+													// ラテン１補助、ラテン拡張のうちアルファベット風のもの（×÷を除く）
 
 		//その他
 		if( IsZenkakuSpace(c)    )return CK_ZEN_SPACE;	// 全角スペース
 		if( c==L'ー'             )return CK_ZEN_NOBASU;	// 伸ばす記号 'ー'
+		if( c==L'゛' || c==L'゜' )return CK_ZEN_DAKU;	// 全角濁点 「゛゜」
 		if( isCSymbolZen(c)      )return CK_ZEN_CSYM;	// 全角版、識別子に使用可能な文字 
 		if( IsZenkakuKigou(c)    )return CK_ZEN_KIGO;	// 全角の記号
 		if( IsHiragana(c)        )return CK_HIRA;		// ひらがな
