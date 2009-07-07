@@ -59,6 +59,12 @@ public:
 		int				nIdx
 	);
 
+	//! 二つの文字を結合したものの種類を調べる
+	static ECharKind WhatKindOfTwoChars(
+		ECharKind		kindPre,
+		ECharKind		kindCur
+	);
+
 	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。
 	static bool SearchNextWordPosition(
 		const wchar_t*	pLine,
