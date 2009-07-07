@@ -156,34 +156,26 @@ bool CSearchAgent::PrevOrNextWord(
 			CLogicInt		nIdxNextPrev = nIdxNext;
 			nIdxNext -= nCharChars;
 			ECharKind nCharKindNext = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdxNext );
-			/* 空白とタブは無視する */
-			if( nCharKind == CK_ZEN_NOBASU ){
-				if( nCharKindNext == CK_HIRA || nCharKindNext == CK_ZEN_KATA ){
-					nCharKind = nCharKindNext;
-				}
-			}
-			else if( nCharKind == CK_HIRA || nCharKind == CK_ZEN_KATA ){
-				if( nCharKindNext == CK_ZEN_NOBASU ){
-					nCharKindNext = nCharKind;
-				}
-			}
-			if( nCharKind != nCharKindNext ){
+
+			ECharKind nCharKindMerge = CWordParse::WhatKindOfTwoChars( nCharKindNext, nCharKind );
+			if( nCharKindMerge == CK_NULL ){
 				/* サーチ開始位置の文字が空白またはタブの場合 */
 				if( nCharKind == CK_TAB	|| nCharKind == CK_SPACE ){
 					if ( bStopsBothEnds && nCount ){
 						nIdxNext = nIdxNextPrev;
 						break;
 					}
-					nCharKind = nCharKindNext;
+					nCharKindMerge = nCharKindNext;
 				}else{
 					if( nCount == 0){
-						nCharKind = nCharKindNext;
+						nCharKindMerge = nCharKindNext;
 					}else{
 						nIdxNext = nIdxNextPrev;
 						break;
 					}
 				}
 			}
+			nCharKind = nCharKindMerge;
 			nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
 			++nCount;
 		}

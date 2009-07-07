@@ -199,9 +199,6 @@ int CEditView::HokanSearchByFile(
 
 			// 文字種類取得
 			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
-			if ( kindPre == CK_LATIN ){
-				kindPre = CK_CSYM;				// ラテン拡張Aは英数字扱いとする
-			}
 
 			// 全角記号は候補に含めない
 			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ||
@@ -217,32 +214,25 @@ int CEditView::HokanSearchByFile(
 
 				// 文字種類取得
 				ECharKind kindCur = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );
-				if ( kindCur == CK_LATIN ){
-					kindCur = CK_CSYM;				// ラテン拡張Aは英数字扱いとする
-				}
 				// 全角記号は候補に含めない
 				if ( kindCur == CK_ZEN_SPACE || kindCur == CK_ZEN_KIGO || kindCur == CK_ZEN_SKIGO ){
 					break;
 				}
-				// ひらがな・カタカナに続く長音・濁点なら続行
-				if ( ( kindCur == CK_ZEN_NOBASU || kindCur == CK_ZEN_DAKU ) &&
-					 ( kindPre == CK_ZEN_KATA   || kindPre == CK_HIRA     ) ){
-					kindCur = kindPre;
-				}
 
 				// 文字種類が変わったら単語の切れ目とする
-				if ( kindPre != kindCur ) {
+				ECharKind kindMerge = CWordParse::WhatKindOfTwoChars( kindPre, kindCur );
+				if ( kindMerge == CK_NULL ) {	// kindPreとkindCurが別種
 					if( kindCur == CK_HIRA ) {
-						;							// ひらがななら続行
+						kindMerge = kindCur;		// ひらがななら続行
 					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_ETC ){
-						;							// 記号で始まる単語は制限を緩める
+						kindMerge = kindCur;		// 記号で始まる単語は制限を緩める
 					}else{
 						j -= nCharSize;
 						break;						// それ以外は単語の切れ目
 					}
 				}
 
-				kindPre = kindCur;
+				kindPre = kindMerge;
 				nWordLen += nCharSize;				// 次の文字へ
 			}
 

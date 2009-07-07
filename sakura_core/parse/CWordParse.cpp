@@ -47,23 +47,13 @@ bool CWordParse::WhereCurrentWord_2(
 		CLogicInt	nIdxNextPrev = nIdxNext;
 		nIdxNext -= nCharChars;
 		ECharKind	nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
-		if( nCharKind == CK_ZEN_NOBASU ){
-			if( nCharKindNext == CK_HIRA ||
-				nCharKindNext == CK_ZEN_KATA ){
-				nCharKind = nCharKindNext;
-			}
-		}
-		else if( nCharKind == CK_HIRA ||
-			nCharKind == CK_ZEN_KATA ){
-			if( nCharKindNext == CK_ZEN_NOBASU ){
-				nCharKindNext = nCharKind;
-			}
-		}
 
-		if( nCharKind != nCharKindNext ){
+		ECharKind nCharKindMerge = WhatKindOfTwoChars( nCharKindNext, nCharKind );
+		if( nCharKindMerge == CK_NULL ){
 			nIdxNext = nIdxNextPrev;
 			break;
 		}
+		nCharKind = nCharKindMerge;
 		nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
 	}
 	*pnIdxFrom = nIdxNext;
@@ -78,20 +68,12 @@ bool CWordParse::WhereCurrentWord_2(
 	while( nCharChars > 0 ){
 		nIdxNext += nCharChars;
 		ECharKind	nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
-		if( nCharKind == CK_ZEN_NOBASU ){
-			if( nCharKindNext == CK_HIRA || nCharKindNext == CK_ZEN_KATA ){
-				nCharKind = nCharKindNext;
-			}
-		}
-		else if( nCharKind == CK_HIRA || nCharKind == CK_ZEN_KATA ){
-			if( nCharKindNext == CK_ZEN_NOBASU ){
-				nCharKindNext = nCharKind;
-			}
-		}
 
-		if( nCharKind != nCharKindNext ){
+		ECharKind nCharKindMerge = WhatKindOfTwoChars( nCharKindNext, nCharKind );
+		if( nCharKindMerge == CK_NULL ){
 			break;
 		}
+		nCharKind = nCharKindMerge;
 		nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nIdxNext ); // 2005-09-02 D.S.Koba GetSizeOfChar
 	}
 	*pnIdxTo = nIdxNext;
@@ -126,7 +108,7 @@ inline bool isCSymbolZen(wchar_t c)
 
 
 
-// 現在位置の文字の種類を調べる
+//! 現在位置の文字の種類を調べる
 ECharKind CWordParse::WhatKindOfChar(
 	const wchar_t*	pData,
 	int				pDataLen,
@@ -185,6 +167,28 @@ ECharKind CWordParse::WhatKindOfChar(
 
 
 
+//! 二つの文字を結合したものの種類を調べる
+ECharKind CWordParse::WhatKindOfTwoChars( ECharKind kindPre, ECharKind kindCur )
+{
+	if( kindPre == kindCur )return kindCur;			// 同種ならその種別を返す
+
+	// 全角長音・全角濁点は前後の全角ひらがな・全角カタカナに引きずられる
+	if( ( kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ) &&
+		( kindCur == CK_ZEN_KATA   || kindCur == CK_HIRA     ) )return kindCur;
+	if( ( kindCur == CK_ZEN_NOBASU || kindCur == CK_ZEN_DAKU ) &&
+		( kindPre == CK_ZEN_KATA   || kindPre == CK_HIRA     ) )return kindPre;
+	// 全角濁点、全角長音の連続は、とりあえず同種の文字とみなす
+	if( ( kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ) &&
+		( kindCur == CK_ZEN_NOBASU || kindCur == CK_ZEN_DAKU ) )return kindCur;
+
+	if( kindPre == CK_LATIN )kindPre = CK_CSYM;		// ラテン系文字はアルファベットとみなす
+	if( kindCur == CK_LATIN )kindCur = CK_CSYM;
+
+	if( kindPre == kindCur )return kindCur;			// 同種ならその種別を返す
+
+	return CK_NULL;									// それ以外なら二つの文字は別種
+}
+
 
 
 /*!	次の単語の先頭を探す
@@ -220,21 +224,12 @@ bool CWordParse::SearchNextWordPosition(
 			nCharKind = nCharKindNext;
 		}
 		else {
-			if( nCharKind == CK_ZEN_NOBASU ){
-				if( nCharKindNext == CK_HIRA || nCharKindNext == CK_ZEN_KATA ){
-					nCharKind = nCharKindNext;
-				}
-			}
-			else if( nCharKind == CK_HIRA || nCharKind == CK_ZEN_KATA ){
-				if( nCharKindNext == CK_ZEN_NOBASU ){
-					nCharKindNext = nCharKind;
-				}
-			}
-
-			if( nCharKind != nCharKindNext ){
+			ECharKind nCharKindMerge = WhatKindOfTwoChars( nCharKind, nCharKindNext );
+			if( nCharKindMerge == CK_NULL ){
 				*pnColmNew = nIdxNext;
 				return true;
 			}
+			nCharKind = nCharKindMerge;
 		}
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nIdxNext );
