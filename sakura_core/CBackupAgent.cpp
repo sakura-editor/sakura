@@ -465,7 +465,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 				for( idx=1; idx<10; ++idx ){
 					TCHAR *cp;
-					cp = auto_strchr(keybuff, _T('\\'));
+					cp = _tcsrchr(keybuff, _T('\\'));
 					if( cp != NULL ){
 						folders[idx] = cp+1;
 						*cp = _T('\0');
