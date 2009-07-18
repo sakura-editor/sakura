@@ -14,6 +14,7 @@
 	Copyright (C) 2006, ‚©‚ë‚Æ
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -790,6 +791,10 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			//ˆø”‚ÍNULL‚Å‚àOK
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 		}
+		break;
+	case F_NEXTWINDOW:
+	case F_PREVWINDOW:
+		pcEditView->m_pcEditDoc->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOW‚ª“®ì‚µ‚È‚©‚Á‚½‚Ì‚ğC³
 		break;
 	default:
 		//	ˆø”‚È‚µB
