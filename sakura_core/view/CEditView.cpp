@@ -1211,7 +1211,11 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		return;
 	}
 
-	CLayoutRange sSelectOld = GetSelectionInfo().m_sSelect;		// 範囲選択
+	CLogicPoint ptFromLogic;	// 2009.07.18 ryoji Logicで記憶するように変更
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+		GetSelectionInfo().m_sSelect.GetFrom(),
+		&ptFromLogic
+	);
 
 	bBeginBoxSelectOld	= GetSelectionInfo().IsBoxSelecting();
 
@@ -1227,7 +1231,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		);
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		GetSelectionInfo().DisableSelectArea( TRUE );
+		GetSelectionInfo().DisableSelectArea( FALSE );	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
 
 		nIdxFrom = CLogicInt(0);
 		nIdxTo = CLogicInt(0);
@@ -1279,7 +1283,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 						cmemBuf.GetStringPtr(),
 						cmemBuf.GetStringLength(),
 						&ptLayoutNew,
-						true
+						false	// 2009.07.18 ryoji true -> false 各行にアンダーラインが残る問題の修正
 					);
 
 					/* カーソルを移動 */
@@ -1327,7 +1331,12 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 
 		// From Here 2001.12.03 hor
 		//	選択エリアの復元
-		GetSelectionInfo().m_sSelect.SetFrom(sSelectOld.GetFrom());	// 範囲選択開始位置
+		CLayoutPoint ptFrom;	// 2009.07.18 ryoji LogicからLayoutに戻す
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
+			ptFromLogic,
+			&ptFrom
+		);
+		GetSelectionInfo().m_sSelect.SetFrom(ptFrom);	// 範囲選択開始位置
 		GetSelectionInfo().m_sSelect.SetTo(GetCaret().GetCaretLayoutPos());	// 範囲選択終了位置
 		if(nCaretPosYOLD==GetSelectionInfo().m_sSelect.GetFrom().y) {
 			GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetFrom(), TRUE );
@@ -1344,9 +1353,9 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				)
 			);
 		}
-		RedrawAll();
 		// To Here 2001.12.03 hor
 	}
+	RedrawAll();	// 2009.07.18 ryoji 対象が矩形だった場合も最後に再描画する
 }
 
 

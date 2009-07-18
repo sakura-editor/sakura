@@ -702,6 +702,10 @@ void CEditView::ReplaceData_CEditView(
 //	}
 
 
+	/* 現在の選択範囲を非選択状態に戻す */
+	// 2009.07.18 ryoji 置換後→置換前に位置を変更（置換後だと反転が不正になって汚い Wiki BugReport/43）
+	GetSelectionInfo().DisableSelectArea( bRedraw );
+
 	/* 文字列置換 */
 	LayoutReplaceArg LRArg;
 	LRArg.sDelRange    = sDelRange;		//!< 削除範囲レイアウト
@@ -719,9 +723,6 @@ void CEditView::ReplaceData_CEditView(
 	if( pcOpeBlk ){	/* アンドゥ・リドゥの実行中か */
 		m_pcEditDoc->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	}
-
-	/* 現在の選択範囲を非選択状態に戻す */
-	GetSelectionInfo().DisableSelectArea( bRedraw );
 
 	/* 行番号表示に必要な幅を設定 */
 	if( m_pcEditWnd->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
@@ -791,7 +792,7 @@ void CEditView::ReplaceData_CEditView(
 
 	if( pcOpeBlk && 0 < nInsDataLen ){
 		CInsertOpe* pcInsertOpe = new CInsertOpe();
-		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(sDelRange.GetFrom(), &pcInsertOpe->m_ptCaretPos_PHY_Before);
+		pcInsertOpe->m_ptCaretPos_PHY_Before = sDelRangeLogic.GetFrom();	// 2009.07.18 ryoji レイアウトは変化するのに以前のsDelRangeからLayoutToLogicで計算していたバグを修正
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(LRArg.ptLayoutNew,   &pcInsertOpe->m_ptCaretPos_PHY_After);
 
 		/* 操作の追加 */
