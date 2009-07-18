@@ -4968,7 +4968,8 @@ void CEditWnd::Timer_ONOFF( BOOL bStart )
 
 	@date 2006.03.23 fon OnListBtnClickをベースに新規作成
 	@date 2006.05.10 ryoji ポップアップ位置変更、その他微修正
-	@data 2007.02.28 ryoji フルパス指定のパラメータを削除
+	@date 2007.02.28 ryoji フルパス指定のパラメータを削除
+	@date 2009.06.02 ryoji m_CMenuDrawerの初期化漏れ修正
 */
 LRESULT CEditWnd::PopupWinList( bool bMousePos )
 {
@@ -4993,6 +4994,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 		m_cTabWnd.TabListMenu( pt );
 	}
 	else{
+		m_CMenuDrawer.ResetContents();	// 2009.06.02 ryoji 追加
 		EditNode*	pEditNodeArr;
 		HMENU hMenu = ::CreatePopupMenu();	// 2006.03.23 fon
 		int nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
@@ -5014,6 +5016,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 
 /*! @brief 現在開いている編集窓のリストをメニューにする 
 	@date  2006.03.23 fon CEditWnd::InitMenuから移動。////が元からあるコメント。//>は追加コメントアウト。
+	@date 2009.06.02 ryoji アイテム数が多いときはアクセスキーを 1-9,A-Z の範囲で再使用する（従来は36個未満を仮定）
 */
 LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
 {
@@ -5030,6 +5033,8 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
+////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
+			char c = ((1 + i%35) <= 9)?('1' + i%35):('A' + i%35 - 9);	// 2009.06.02 ryoji アクセスキーを 1-9,A-Z の範囲で再使用
 			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 			if( pfi->m_bIsGrep ){
 				/* データを指定バイト数以内に切り詰める */
@@ -5039,15 +5044,12 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 				LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
 				pszDes = cmemDes.GetPtr();
 				nDesLen = lstrlen( pszDes );
-////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
-////		i >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
-				wsprintf( szMemu, "&%c 【Grep】\"%s%s\"", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
+				wsprintf( szMemu, "&%c 【Grep】\"%s%s\"", c,
 					pszDes, ( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? "・・・":""
 				);
 			}else
 			if( pEditNodeArr[i].m_hWnd == m_pShareData->m_hwndDebug ){
-////		i >= 10 + 26 の時の考慮を省いた(に近い)が出力ファイル数が36個を越えることはまずないので事実上OKでしょう
-				wsprintf( szMemu, "&%c アウトプット", ((1 + i) <= 9)?('1' + i):('A' + i - 9) );
+				wsprintf( szMemu, "&%c アウトプット", c );
 
 			}else{
 ////		From Here Jan. 23, 2001 JEPRO
@@ -5061,7 +5063,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 					CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
 					dupamp( buf, szFile2 );
 				}
-				wsprintf( szMemu, "&%c %s %s", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
+				wsprintf( szMemu, "&%c %s %s", c,
 					szFile2,
 					pfi->m_bIsModified ? "*":" "
 				);
