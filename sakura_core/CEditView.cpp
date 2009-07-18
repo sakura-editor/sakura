@@ -3488,6 +3488,26 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 				nNewY		// カーソル位置Y
 				)
 			){
+				POINT ptWk = {xPos, yPos};
+				::ClientToScreen(m_hWnd, &ptWk);
+				if( !::DragDetect(m_hWnd, ptWk) ){
+					// ドラッグ開始条件を満たさなかったのでクリック位置にカーソル移動する
+					if( IsTextSelected() ){	/* テキストが選択されているか */
+						/* 現在の選択範囲を非選択状態に戻す */
+						DisableSelectArea( TRUE );
+					}
+//@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
+					/* カーソル移動。 */
+					if( yPos >= m_nViewAlignTop && yPos < m_nViewAlignTop  + m_nViewCy ){
+						if( xPos >= m_nViewAlignLeft && xPos < m_nViewAlignLeft + m_nViewCx ){
+							MoveCursorToPoint( xPos, yPos );
+						}else
+						if( xPos < m_nViewAlignLeft ){
+							MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
+						}
+					}
+					return;
+				}
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
@@ -3496,7 +3516,6 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							|| ( 0 != m_pcEditDoc->m_nFileShareModeOld && NULL == m_pcEditDoc->m_hLockedFile )	// 上書き禁止
 						)? DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cOpeBuf.GetCurrentPointer();
-					int nTickDrag = ::GetTickCount();
 					m_pcEditDoc->SetDragSourceView( this );
 					CDataObject data( cmemCurText.GetPtr(), cmemCurText.GetLength(), m_bBeginBoxSelect );	// 2008.03.26 ryoji テキスト長、矩形の指定を追加
 					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
@@ -3504,23 +3523,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 //					MYTRACE( "dwEffects=%d\n", dwEffects );
 					if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
 						m_pcEditDoc->SetActivePane( m_nMyIndex );
-						if( ::GetTickCount() - nTickDrag <= ::GetDoubleClickTime() ){	// 短時間ならクリックとみなす
-							// クリック位置にカーソル移動する
-							if( IsTextSelected() ){	/* テキストが選択されているか */
-								/* 現在の選択範囲を非選択状態に戻す */
-								DisableSelectArea( TRUE );
-							}
-//@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
-							/* カーソル移動。 */
-							if( yPos >= m_nViewAlignTop && yPos < m_nViewAlignTop  + m_nViewCy ){
-								if( xPos >= m_nViewAlignLeft && xPos < m_nViewAlignLeft + m_nViewCx ){
-									MoveCursorToPoint( xPos, yPos );
-								}else
-								if( xPos < m_nViewAlignLeft ){
-									MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
-								}
-							}
-						}else if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
+						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
 							// 移動範囲を削除する
 							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 							// →ドロップ先は外部のウィンドウである
@@ -9000,6 +9003,16 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
 
+	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
+
+	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
+	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
+	if( pcDragSourceView && !IsDragSource() &&
+		!pcDragSourceView->IsCurrentPositionSelected( m_nCaretPosX, m_nCaretPosY )
+	){
+		*pdwEffect = DROPEFFECT_NONE;
+	}
+
 	return S_OK;
 }
 
@@ -9016,7 +9029,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
 	MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, FALSE );
 	m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
-	RedrawAll();
+	RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
 
 	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
 	if( ::GetActiveWindow() == NULL )
@@ -9081,6 +9094,20 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
 	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
 	bBoxData = m_bDragBoxData;
+
+	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
+	if( pcDragSourceView &&
+		!pcDragSourceView->IsCurrentPositionSelected( m_nCaretPosX, m_nCaretPosY )
+	){
+		// DragEnter時のカーソル位置を復元
+		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
+		*pdwEffect = DROPEFFECT_NONE;
+		MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, FALSE );
+		m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
+		if( !IsDragSource() )	// ドラッグ元の場合はここでは再描画不要（DragDrop後処理のSetActivePaneで再描画される）
+			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
+		return S_OK;
+	}
 
 	// ドロップデータの取得
 	HGLOBAL hData = GetGlobalData( pDataObject, cf );
@@ -9495,13 +9522,6 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt
 		return DROPEFFECT_LINK;
 
 	CEditView* pcDragSourceView = m_pcEditDoc->GetDragSourceView();
-
-	/* このビューのカーソルがドラッグ元の選択範囲内にあるか */
-	if( pcDragSourceView &&
-		!pcDragSourceView->IsCurrentPositionSelected( m_nCaretPosX, m_nCaretPosY )
-	){
-		return DROPEFFECT_NONE;
-	};
 
 	// 2008.06.21 ryoji
 	// Win 98/Me 環境では外部からのドラッグ時に GetKeyState() ではキー状態を正しく取得できないため、
