@@ -3969,16 +3969,12 @@ BOOL CEditView::IsCurrentPositionURL(
 	*pnUrlLine = nY;
 	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( nY, &nLineLen );
 
-	i = nX - 200;
-	if( i < 0 ){
-		i = 0;
-	}
-	for( ; i <= nX && i < nLineLen && i < nX + 200; ){
-	/* カーソル位置から前方に250バイトまでの範囲内で行頭に向かってサーチ */
-		/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-		if( FALSE == IsURL( &pLine[i], nLineLen - i, &nUrlLen ) ){
-			++i;
-		}else{
+	i = __max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH
+	// nLineLen = __min(nLineLen, nX + _MAX_PATH);
+	while( i <= nX && i < nLineLen ){
+		if( (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CEditView::GetColorIndex()と同条件に
+			&& IsURL(&pLine[i], nLineLen - i, &nUrlLen)	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+		){
 			if( i <= nX && nX < i + nUrlLen ){
 				/* URLを返す場合 */
 				if( NULL != ppszURL ){
@@ -3994,6 +3990,8 @@ BOOL CEditView::IsCurrentPositionURL(
 			}else{
 				i += nUrlLen;
 			}
+		}else{
+			++i;
 		}
 	}
 	return FALSE;
