@@ -7012,6 +7012,22 @@ void CEditView::Redraw( void )
 }
 // 2001/06/21 End
 
+/** 行番号再描画
+	@date 2009.03.26 ryoji 新規作成
+*/
+void CEditView::RedrawLineNumber( void )
+{
+	//描画
+	PAINTSTRUCT	ps;
+	ps.rcPaint.left = 0;
+	ps.rcPaint.right = m_nViewAlignLeft;
+	ps.rcPaint.top = m_nViewAlignTop;
+	ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
+	HDC hdc = GetDC( m_hWnd );
+	OnPaint( hdc, &ps, FALSE );
+	ReleaseDC( m_hWnd, hdc );
+}
+
 /* 自分の表示状態を他のビューにコピー */
 void CEditView::CopyViewStatus( CEditView* pView )
 {

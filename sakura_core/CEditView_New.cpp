@@ -14,6 +14,7 @@
 	Copyright (C) 2005, genta, Moca, MIK, D.S.Koba
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -67,6 +68,7 @@ HFONT CEditView::ChooseFontHandle( BOOL bFat, BOOL bUnderLine )
 			TRUEの場合、pPs.rcPaint領域外は作画されないが、FALSEの場合は作画される事がある。
 			互換DC/BMPが無い場合は、普通の作画処理をする。
 	@date 2007.09.09 Moca 元々無効化されていた第三パラメータのbUseMemoryDCをbDrawFromComptibleBmpに変更。
+	@date 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
 */
 void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 {
@@ -249,41 +251,51 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 
 	BOOL bSelected;
 	bSelected = IsTextSelected();
-	for( ; i <= nLineTo; ){
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+	if( pPs->rcPaint.right <= m_nViewAlignLeft ){	// 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
+		for( ; i <= nLineTo; ){
+			pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+			if( NULL == pcLayout )
+				break;
+			DispLineNumber( hdc, pcLayout, i, nY );
+			nY += nLineHeight;	//描画Y座標＋＋
+			i++;				//レイアウト行＋＋
+		}
+	}else{
+		for( ; i <= nLineTo; ){
+			pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
 #ifdef _DEBUG
-		{
-			if( NULL != pcLayout ){
-				if( (void*)0xdddddddd == (void*)pcLayout->m_pCDocLine->m_pLine ){
-					m_pcEditDoc->m_cDocLineMgr.DUMP();
-					m_pcEditDoc->m_cLayoutMgr.DUMP();
+			{
+				if( NULL != pcLayout ){
+					if( (void*)0xdddddddd == (void*)pcLayout->m_pCDocLine->m_pLine ){
+						m_pcEditDoc->m_cDocLineMgr.DUMP();
+						m_pcEditDoc->m_cLayoutMgr.DUMP();
 
-					pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+						pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+					}
+
+					int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
+					const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
 				}
-
-				int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
-				const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
 			}
-		}
 #endif
-
-		if( DispLineNew(
-			hdc,
-			pcLayout,
-			i,
-			nX,
-			nY,
-			bDispBkBitmap,
-			nLineTo,
-			bSelected
-		) ){
-			pPs->rcPaint.bottom += nLineHeight;	/* EOF再描画対応 */
-			bEOF = TRUE;
-			break;
-		}
-		if( NULL == pcLayout ){
-			bEOF = TRUE;
-			break;
+			if( DispLineNew(
+				hdc,
+				pcLayout,
+				i,
+				nX,
+				nY,
+				bDispBkBitmap,
+				nLineTo,
+				bSelected
+			) ){
+				pPs->rcPaint.bottom += nLineHeight;	/* EOF再描画対応 */
+				bEOF = TRUE;
+				break;
+			}
+			if( NULL == pcLayout ){
+				bEOF = TRUE;
+				break;
+			}
 		}
 	}
 	if( NULL != m_hFontOld ){

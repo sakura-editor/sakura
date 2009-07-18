@@ -680,6 +680,10 @@ BOOL CEditView::HandleCommand(
 		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
 			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+
+			if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
+				RedrawLineNumber();	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
+
 			if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 				m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 #if 0

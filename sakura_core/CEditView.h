@@ -15,7 +15,7 @@
 	Copyright (C) 2006, genta, aroka, fon, yukihane, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
-	Copyright (C) 2009, nasukoji
+	Copyright (C) 2009, nasukoji, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -169,6 +169,7 @@ public:
 	void SetFont( void );										/* フォントの変更 */
 	void RedrawAll( void );										/* フォーカス移動時の再描画 */
 	void Redraw( void );										// 2001/06/21 asa-o 再描画
+	void RedrawLineNumber( void );								/* 行番号再描画 */	// 2009.03.26 ryoji
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 	DWORD DoGrep( const CMemory*, const CMemory*, const CMemory*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int );	/* Grep実行 */

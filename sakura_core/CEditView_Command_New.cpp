@@ -103,6 +103,7 @@ void CEditView::InsertData_CEditView(
 			 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto );	//@@@ 2002.04.19 MIK
 
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nY, &nLineLen, &pcLayout );
+	bool bLineModifiedChange = (pLine)? !pcLayout->m_pCDocLine->IsModifyed(): true;
 
 	nIdxFrom = 0;
 //	cMem.SetData( "", lstrlen( "" ) );
@@ -111,8 +112,7 @@ void CEditView::InsertData_CEditView(
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
 		// ※挿入位置は行途中でも句読点入力＋ワードラップで前の文字列から続けて前行に回り込む場合もある
-		const CLayout* pcLayoutWk = pcLayout->m_pPrev;
-		if (pcLayoutWk && pcLayoutWk->m_cEol == EOL_NONE && bKinsoku){	// レイアウト２行目以後？（前行の終端で調査）
+		if (pcLayout->m_nOffset && bKinsoku){	// 折り返しレイアウト行か？
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 
@@ -144,7 +144,7 @@ void CEditView::InsertData_CEditView(
 	}else{
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
-		if (pcLayoutWk && pcLayoutWk->m_cEol == EOL_NONE && bKinsoku){	// レイアウト２行目以後？（前行の終端で調査）
+		if (pcLayoutWk && pcLayoutWk->m_cEol == EOL_NONE && bKinsoku){	// 折り返しレイアウト行か？（前行の終端で調査）
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 
@@ -281,6 +281,14 @@ void CEditView::InsertData_CEditView(
 			OnPaint( hdc, &ps, FALSE );
 //			OnSetFocus();
 			::ReleaseDC( m_hWnd, hdc );
+
+			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
+			if( bLineModifiedChange ){	// 無変更だった行が変更された
+				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.Search( nStartLine );
+				if( pcLayoutWk && pcLayoutWk->m_nOffset ){	// 折り返しレイアウト行か？
+					RedrawLineNumber();
+				}
+			}
 		}
 	}
 
@@ -1129,6 +1137,8 @@ void CEditView::ReplaceData_CEditView(
 //	BOOL		bUndo					/* Undo操作かどうか */
 )
 {
+	bool bLineModifiedChange;
+
 	{
 		//	Jun 23, 2000 genta
 		//	変数名を書き換え忘れていたのを修正
@@ -1146,6 +1156,7 @@ void CEditView::ReplaceData_CEditView(
 		const char *line;
 		const CLayout* pcLayout;
 		line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nDelLineFrom, &len, &pcLayout );
+		bLineModifiedChange = (line)? !pcLayout->m_pCDocLine->IsModifyed(): true;
 		//	Jun. 1, 2000 genta
 		//	ちゃんとNULLチェックしましょう
 		if( line != NULL ){
@@ -1369,6 +1380,14 @@ void CEditView::ReplaceData_CEditView(
 			OnPaint( hdc, &ps, FALSE );
 //			OnSetFocus();
 			::ReleaseDC( m_hWnd, hdc );
+
+			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
+			if( bLineModifiedChange ){	// 無変更だった行が変更された
+				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.Search( LRArg.nModLineFrom );
+				if( pcLayoutWk && pcLayoutWk->m_nOffset ){	// 折り返しレイアウト行か？
+					RedrawLineNumber();
+				}
+			}
 		}
 	}
 
