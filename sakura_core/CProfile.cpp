@@ -11,6 +11,7 @@
 	Copyright (C) 2003, D.S.Koba
 	Copyright (C) 2004, D.S.Koba, MIK, genta
 	Copyright (C) 2006, D.S.Koba, ryoji
+	Copyright (C) 2009, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -105,7 +106,9 @@ void CProfile::ReadOneline(
 	@date 2003-10-26 D.S.Koba ReadProfile()から分離
 	@date 2004-01-29 genta stream使用をやめてCライブラリ使用に．
 	@date 2004-01-31 genta 行の解析の方を別関数にしてReadFileをReadProfileに
-		
+	@date 2007-07-02 ryoji バイナリモードで読むように変更
+		テキストモードではCtrl+Z(0x1A)は入力時にEOF文字として解釈されるので末尾に到達する前に読み終わってしまうことがある
+		例）0x1Aを検索した後で再起動すると設定が初期状態に戻る障害が発生する
 */
 bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 {
@@ -129,7 +132,7 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 	}
 	ifs.close();
 #else
-	FILE* fp = _tfopen( m_strProfileName.c_str(), _T( "r" ));
+	FILE* fp = _tfopen( m_strProfileName.c_str(), _T("rb"));	// 2009.07.02 ryoji "r"->"rb"
 	if( fp == NULL ){
 		return false;
 	}
@@ -155,10 +158,10 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 			
 			int pos;
 			//	\nが見つかる間ループ
-			while(( pos = bstr.find( _T('\n' ), offset ) ) != bstr.npos ){
+			while(( pos = bstr.find( _T("\r\n"), offset ) ) != bstr.npos ){	// 2009.07.02 ryoji '\n'->"\r\n"
 				//	改行コードは渡さない
 				ReadOneline( bstr.substr( offset, pos - offset ) );
-				offset = pos + 1;
+				offset = pos + 2;	// 2009.07.02 ryoji 1->2
 			}
 
 			if( feof( fp )){
