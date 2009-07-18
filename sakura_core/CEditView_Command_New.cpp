@@ -1272,13 +1272,8 @@ void CEditView::ReplaceData_CEditView(
 		pcOpe = NULL;
 	}
 	pcMemDeleted = new CMemory;
-	/*
-	|| バッファサイズの調整
-	*/
-	if( 2000 < nDelLineTo - nDelLineFrom ){
-		pcMemDeleted->AllocBuffer( 1024000 );
-	}
 
+	// Feb. 08, 2008 genta 削除バッファの確保はCDocLineMgr::ReplaceDataで行うので削除
 
 	/* 文字列置換 */
 //	int		nAddLineNum;	/* 再描画ヒント レイアウト行の増減 */

@@ -92,6 +92,15 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 		}
 	}
 
+	// From Here Feb. 08, 2008 genta 削除バッファをあらかじめ確保する
+	pCDocLine = GetLineInfo( pArg->nDelLineFrom );
+	nWorkLen = 0;
+	for( i = pArg->nDelLineFrom; i <= pArg->nDelLineTo && NULL != pCDocLine; i++ ){
+		nWorkLen += pCDocLine->m_pLine->GetLength();
+		pCDocLine = pCDocLine->m_pNext;
+	}
+	pArg->pcmemDeleted->AllocBuffer( nWorkLen );
+	// To Here Feb. 08, 2008 genta
 
 	// 削除データの取得のループ
 	/* 前から処理していく */
