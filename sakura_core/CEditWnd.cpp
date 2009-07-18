@@ -3623,7 +3623,7 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_PLSQL_COMPILE_ON_SQLPLUS:	/* Oracle SQL*Plusで実行 */
 	case F_BROWSE:						//ブラウズ
 	//case F_READONLY:					//読み取り専用	//	Sep. 10, 2002 genta 常に使えるように
-	case F_PROPERTY_FILE:
+	//case F_PROPERTY_FILE:				//ファイルのプロパティ	// 2009.04.11 ryoji コメントアウト
 		/* 現在編集中のファイルのパス名をクリップボードにコピーできるか */
 		if( pcEditDoc->IsFilePathAvailable() ){
 			return TRUE;

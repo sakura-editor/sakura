@@ -9,6 +9,7 @@
 	Copyright (C) 2001, Stonee
 	Copyright (C) 2002, Moca, MIK, YAZAKI
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -112,7 +113,7 @@ void CDlgProperty::SetData( void )
 	cmemProp.AppendSz( szWork );
 
 	if( pCEditDoc->m_bReadOnly ){
-		cmemProp.AppendSz( "上書き禁止モードで開いています。\r\n" );
+		cmemProp.AppendSz( "読み取り専用モードで開いています。\r\n" );	// 2009.04.11 ryoji 「上書き禁止モード」→「読み取り専用モード」
 	}
 	if( pCEditDoc->IsModified() ){
 		cmemProp.AppendSz( "変更されています。\r\n" );
