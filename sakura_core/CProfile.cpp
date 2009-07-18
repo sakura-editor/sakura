@@ -199,6 +199,7 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 
 	@date 2003-10-21 D.S.Koba STLで書き直す
 	@date 2004-01-28 D.S.Koba ファイル書き込み部を分離
+	@date 2009.06.24 ryoji 別ファイルに書き込んでから置き換える処理を追加
 */
 bool CProfile::WriteProfile(
 	const TCHAR* pszProfileName,
@@ -229,7 +230,38 @@ bool CProfile::WriteProfile(
 		vecLine.push_back( _T("") );
 	}
 
-	return WriteFile( m_strProfileName, vecLine );
+	// 別ファイルに書き込んでから置き換える（プロセス強制終了などへの安全対策）
+	TCHAR szMirrorFile[_MAX_PATH];
+	szMirrorFile[0] = _T('\0');
+	TCHAR szPath[_MAX_PATH];
+	LPTSTR lpszName;
+	DWORD nLen = ::GetFullPathName(m_strProfileName.c_str(), sizeof(szPath)/sizeof(TCHAR), szPath, &lpszName);
+	if( 0 < nLen && nLen < sizeof(szPath)/sizeof(TCHAR)
+		&& (lpszName - szPath + 11) < sizeof(szMirrorFile)/sizeof(TCHAR) )	// path\preuuuu.TMP
+	{
+		*lpszName = _T('\0');
+		::GetTempFileName(szPath, _T("sak"), 0, szMirrorFile);
+	}
+
+	if( !WriteFile(szMirrorFile[0]? szMirrorFile: m_strProfileName, vecLine) )
+		return false;
+
+	if( szMirrorFile[0] ){
+		BOOL (__stdcall *pfnReplaceFile)(LPCTSTR, LPCTSTR, LPCTSTR, DWORD, LPVOID, LPVOID);
+		HMODULE hModule = ::GetModuleHandle(_T("KERNEL32"));
+		pfnReplaceFile = (BOOL (__stdcall *)(LPCTSTR, LPCTSTR, LPCTSTR, DWORD, LPVOID, LPVOID))
+#ifndef _UNICODE
+			::GetProcAddress(hModule, "ReplaceFileA");
+#else
+			::GetProcAddress(hModule, "ReplaceFileW");
+#endif
+		if( !pfnReplaceFile || !pfnReplaceFile(m_strProfileName.c_str(), szMirrorFile, NULL, 0, NULL, NULL) ){
+			::DeleteFile(m_strProfileName.c_str());
+			::MoveFile(szMirrorFile, m_strProfileName.c_str());
+		}
+	}
+
+	return true;
 }
 
 /*! ファイルへ書き込む
