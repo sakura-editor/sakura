@@ -2903,7 +2903,6 @@ void CEditView::Command_CHAR( char cChar )
 	int				nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
 	char			szCurrent[10];
-	const CLayout*	pcLayout;
 
 	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 
@@ -3013,23 +3012,7 @@ void CEditView::Command_CHAR( char cChar )
 			}
 		}else{
 			if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){
-				BOOL bDelete = TRUE;
-				if( m_pShareData->m_Common.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
-					pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
-					if( NULL != pcLayout ){
-						/* 指定された桁に対応する行のデータ内の位置を調べる */
-						nIdxTo = LineColmnToIndex( pcLayout, m_nCaretPosX );
-						if( nIdxTo == pcLayout->GetLengthWithoutEOL() ){
-
-							/* 現在位置が改行ならば削除しない */
-							bDelete = FALSE;
-						}
-					}
-				}
-				if( bDelete ){
-					/* 上書きモードなので、現在位置の文字を１文字消去 */
-					DeleteData( FALSE );
-				}
+				DelCharForOverwrite();	// 上書き用の一文字削除	// 2009.04.11 ryoji
 			}
 		}
 	}
@@ -3119,13 +3102,11 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		return;
 	}
 
-	int				nIdxTo;
 	CMemory			cmemData;
 	int				nNewLine;		/* 挿入された部分の次の位置の行 */
 	int				nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
 	COpe*			pcOpe = NULL;
 	char	sWord[2];
-//	const CLayout*	pcLayout;
 	//	Oct. 6 ,2002 genta 上下逆転
 	if( 0 == (wChar & 0xff00) ){
 		Command_CHAR( wChar & 0xff );
@@ -3148,22 +3129,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		}
 	}else{
 		if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){
-			BOOL bDelete = TRUE;
-			if( m_pShareData->m_Common.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
-				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
-				if( NULL != pcLayout ){
-					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxTo = LineColmnToIndex( pcLayout, m_nCaretPosX );
-					if( nIdxTo == pcLayout->GetLengthWithoutEOL() ){
-						/* 現在位置が改行ならば削除しない */
-						bDelete = FALSE;
-					}
-				}
-			}
-			if( bDelete ){
-				/* 上書きモードなので、現在位置の文字を１文字消去 */
-				DeleteData( FALSE );
-			}
+			DelCharForOverwrite();	// 上書き用の一文字削除	// 2009.04.11 ryoji
 		}
 	}
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -9781,6 +9747,35 @@ void CEditView::Command_TAB_JOINTPREV( void )
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->JoinPrev();
+}
+
+/* 	上書き用の一文字削除	2009.04.11 ryoji */
+void CEditView::DelCharForOverwrite( void )
+{
+	bool bEol = false;
+	BOOL bDelete = TRUE;
+	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	if( NULL != pcLayout ){
+		/* 指定された桁に対応する行のデータ内の位置を調べる */
+		int nIdxTo = LineColmnToIndex( pcLayout, m_nCaretPosX );
+		if( nIdxTo >= pcLayout->GetLengthWithoutEOL() ){
+			bEol = true;	// 現在位置は改行または折り返し以後
+			if( pcLayout->m_cEol != EOL_NONE ){
+				if( m_pShareData->m_Common.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
+					/* 現在位置が改行ならば削除しない */
+					bDelete = FALSE;
+				}
+			}
+		}
+	}
+	if( bDelete ){
+		/* 上書きモードなので、現在位置の文字を１文字消去 */
+		if( bEol ){
+			Command_DELETE();	//行数減では再描画が必要＆行末以後の削除を処理統一
+		}else{
+			DeleteData( FALSE );
+		}
+	}
 }
 
 /*[EOF]*/

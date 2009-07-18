@@ -1011,6 +1011,9 @@ private:
 
 	// 2007.10.02 nasukoji
 	DWORD	m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻
+
+private:
+	void DelCharForOverwrite( void );	// 上書き用の一文字削除	// 2009.04.11 ryoji
 };
 
 
