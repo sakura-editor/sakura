@@ -5313,7 +5313,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 				nLineCols = LineIndexToColmn( pcLayout, nLineLen );
 				/* 改行で終わっているか */
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				if( ( EOL_NONE != pcLayout->m_cEol.GetLen() )
+				if( ( EOL_NONE != pcLayout->m_cEol )
 //				if( ( pLine[ nLineLen - 1 ] == '\n' || pLine[ nLineLen - 1 ] == '\r' )
 				 || nLineCols >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize()
 				){
@@ -5330,11 +5330,11 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 					}
 					nPosX = 0;
 					++nPosY;
+					nScrollLines = MoveCursor( nPosX, nPosY, m_bDrawSWITCH /* TRUE */ ); // YAZAKI.
 					if( bSelect ){
 						/* 現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nPosX, nPosY );
 					}
-					nScrollLines = MoveCursor( nPosX, nPosY, m_bDrawSWITCH /* TRUE */ ); // YAZAKI.
 				}
 			}
 			//	Sep. 11, 2004 genta 同期スクロールの関数化

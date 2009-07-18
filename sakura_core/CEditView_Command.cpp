@@ -1355,6 +1355,11 @@ void CEditView::Command_GOFILEEND( int bSelect )
 	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
 	if( !(IsTextSelected() && m_bBeginBoxSelect) ) m_nCaretPosX_Prev = m_nCaretPosX;
+
+	// 選択範囲情報メッセージを表示する	// 2009.05.06 ryoji 追加
+	if( bSelect ){
+		PrintSelectionInfoMsg();
+	}
 	return;
 // 2001.12.13 hor 以下をコメント (////はもともとコメント)
 //	HDC			hdc;
