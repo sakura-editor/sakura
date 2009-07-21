@@ -275,6 +275,7 @@ public:
 	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	void Command_Favorite( void );	//履歴の管理	//@@@ 2003.04.08 MIK
 	void Command_SET_QUOTESTRING( const wchar_t* );	//	Jan. 29, 2005 genta 引用符の設定
+	void Command_SELECT_COUNT_MODE( int nMode );	/* 文字カウント方法 */	//2009.07.06 syat
 
 	/* マクロ系 */
 	void Command_RECKEYMACRO( void );	/* キーマクロの記録開始／終了 */

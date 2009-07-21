@@ -161,6 +161,13 @@ enum WRAP_TEXT_WRAP_METHOD {
 	WRAP_WINDOW_WIDTH,					// 右端で折り返す
 };
 
+// 2009.07.06 syat	文字カウント方法
+enum ESelectCountMode {
+	SELECT_COUNT_TOGGLE		= 0,	// 文字カウント方法をトグル
+	SELECT_COUNT_BY_CHAR	= 1,	// 文字数でカウント
+	SELECT_COUNT_BY_BYTE	= 2		// バイト数でカウント
+};
+
 //2007.09.06 kobake 追加
 //!検索方向
 enum ESearchDirection{

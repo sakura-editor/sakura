@@ -5,6 +5,8 @@
 #include "mem/CMemoryIterator.h"
 #include "doc/CLayout.h"
 #include "window/CEditWnd.h"
+#include "charset/CCodeBase.h"
+#include "charset/CCodeFactory.h"
 
 CViewSelect::CViewSelect(CEditView* pcEditView)
 : m_pcEditView(pcEditView)
@@ -18,6 +20,7 @@ CViewSelect::CViewSelect(CEditView* pcEditView)
 	m_sSelectBgn.Clear(-1); // 範囲選択(原点)
 	m_sSelect   .Clear(-1); // 範囲選択
 	m_sSelectOld.Clear(0);  // 範囲選択(Old)
+	m_nLastSelectedByteLen = 0;	// 前回選択時の選択バイト数
 }
 
 void CViewSelect::CopySelectStatus(CViewSelect* pSelect) const
@@ -62,6 +65,7 @@ void CViewSelect::DisableSelectArea( bool bDraw )
 	m_bBeginBoxSelect = false;		// 矩形範囲選択中
 	m_bBeginLineSelect = false;		// 行単位選択中
 	m_bBeginWordSelect = false;		// 単語単位選択中
+	m_nLastSelectedByteLen = 0;		// 前回選択時の選択バイト数
 
 	// 2002.02.16 hor 直前のカーソル位置をリセット
 	pView2->GetCaret().m_nCaretPosX_Prev=pView->GetCaret().GetCaretLayoutPos().GetX();
@@ -101,6 +105,7 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 		if( ptCaretPos==m_sSelectBgn.GetFrom() ){
 			// 選択解除
 			pSelect->Clear(-1);
+			m_nLastSelectedByteLen = 0;		// 前回選択時の選択バイト数
 		}
 		else if( PointCompare(ptCaretPos,m_sSelectBgn.GetFrom() ) < 0 ){ //キャレット位置がm_sSelectBgnのfromより小さかったら
 			 pSelect->SetFrom(ptCaretPos);
@@ -454,6 +459,7 @@ void CViewSelect::DrawSelectAreaLine(
 	@author genta
 	@date 2005.07.09 genta 新規作成
 	@date 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策を追加
+	@date 2006.06.28 syat バイト数カウントを追加
 */
 void CViewSelect::PrintSelectionInfoMsg() const
 {
@@ -501,62 +507,154 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		const wchar_t *pLine;	//	データを受け取る
 		CLogicInt	nLineLen;		//	行の長さ
 		const CLayout*	pcLayout;
+		CViewSelect* thiz = const_cast<CViewSelect*>( this );	// const外しthis
+
+		// 共通設定・選択文字数を文字単位ではなくバイト単位で表示する
+		BOOL bCountByByteCommon = CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispSelCountByByte;
+		BOOL bCountByByte = ( pView->m_pcEditWnd->m_nSelectCountMode == SELECT_COUNT_TOGGLE ?
+								bCountByByteCommon :
+								pView->m_pcEditWnd->m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
 
 		//	1行目
 		pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.GetFrom().GetY2(), &nLineLen, &pcLayout );
 		if( pLine ){
-			//	1行だけ選択されている場合
-			if( m_sSelect.IsLineOne() ){
-				select_sum =
-					pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() )
-					- pView->LineColmnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
-			}
-			else {	//	2行以上選択されている場合
-				select_sum =
-					pcLayout->GetLengthWithoutEOL()
-					+ pcLayout->GetLayoutEol().GetLen()
-					- pView->LineColmnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
+			if( bCountByByte ){
+				//  バイト数でカウント
+				//  内部文字コードから現在の文字コードに変換し、バイト数を取得する。
+				//  コード変換は負荷がかかるため、選択範囲の増減分のみを対象とする。
 
-				//	GetSelectedDataと似ているが，先頭行と最終行は排除している
-				//	Aug. 16, 2005 aroka nLineNumはfor以降でも使われるのでforの前で宣言する
-				//	VC .NET以降でもMicrosoft拡張を有効にした標準動作はVC6と同じことに注意
-				CLayoutInt nLineNum;
-				for( nLineNum = m_sSelect.GetFrom().GetY2() + CLayoutInt(1);
-					nLineNum < m_sSelect.GetTo().GetY2(); ++nLineNum ){
-					pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
-					//	2006.06.06 ryoji 指定行のデータが存在しない場合の対策
-					if( NULL == pLine )
-						break;
-					select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
-				}
+				CNativeW* cmemW = new CNativeW();
+				CMemory* cmemCode = new CMemory();
 
-				//	最終行の処理
-				pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+				// 増減分文字列の取得にCEditView::GetSelectedDataを使いたいが、m_sSelect限定のため、
+				// 呼び出し前にm_sSelectを書き換える。呼出し後に元に戻すので、constと言えないこともない。
+				CLayoutRange rngSelect = m_sSelect;		// 選択領域の退避
+				bool bSelExtend;						// 選択領域拡大フラグ
+
+				// 最終行の処理
+				pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.GetTo().y, &nLineLen, &pcLayout );
 				if( pLine ){
-					int last_line_chars = pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() );
-					select_sum += last_line_chars;
-					if( last_line_chars == 0 ){
+					if( pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() ) == 0 ){
 						//	最終行の先頭にキャレットがある場合は
 						//	その行を行数に含めない
 						--select_line;
 					}
-				}
-				else
-				{
+				}else{
 					//	最終行が空行なら
 					//	その行を行数に含めない
 					--select_line;
+				}
+
+				//2009.07.07 syat m_nLastSelectedByteLenが0の場合は、差分ではなく全体を変換する（モード切替時にキャッシュクリアするため）
+
+				if( m_nLastSelectedByteLen && m_sSelect.GetFrom() == m_sSelectOld.GetFrom() ){
+					// 範囲が後方に拡大された
+					if( PointCompare( m_sSelect.GetTo(), m_sSelectOld.GetTo() ) < 0 ){
+						bSelExtend = false;				// 縮小
+						thiz->m_sSelect = CLayoutRange( m_sSelect.GetTo(), m_sSelectOld.GetTo() );
+					}else{
+						bSelExtend = true;				// 拡大
+						thiz->m_sSelect = CLayoutRange( m_sSelectOld.GetTo(), m_sSelect.GetTo() );
+					}
+
+					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, FALSE );
+					thiz->m_sSelect = rngSelect;		// m_sSelectを元に戻す
+				}
+				else if( m_nLastSelectedByteLen && m_sSelect.GetTo() == m_sSelectOld.GetTo() ){
+					// 範囲が前方に拡大された
+					if( PointCompare( m_sSelect.GetFrom(), m_sSelectOld.GetFrom() ) < 0 ){
+						bSelExtend = true;				// 拡大
+						thiz->m_sSelect = CLayoutRange( m_sSelect.GetFrom(), m_sSelectOld.GetFrom() );
+					}else{
+						bSelExtend = false;				// 縮小
+						thiz->m_sSelect = CLayoutRange( m_sSelectOld.GetFrom(), m_sSelect.GetFrom() );
+					}
+
+					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, FALSE );
+					thiz->m_sSelect = rngSelect;		// m_sSelectを元に戻す
+				}
+				else{
+					// 選択領域全体をコード変換対象にする
+					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, FALSE );
+					bSelExtend = true;
+					thiz->m_nLastSelectedByteLen = 0;
+				}
+				//  現在の文字コードに変換し、バイト長を取得する
+				CCodeBase* pCode = CCodeFactory::CreateCodeBase(pView->m_pcEditDoc->GetDocumentEncoding(), false);
+				pCode->UnicodeToCode( *cmemW, cmemCode );
+				delete pCode;
+
+				if( bSelExtend ){
+					select_sum = m_nLastSelectedByteLen + cmemCode->GetRawLength();
+				}else{
+					select_sum = m_nLastSelectedByteLen - cmemCode->GetRawLength();
+				}
+				thiz->m_nLastSelectedByteLen = select_sum;
+
+				delete cmemW;
+				delete cmemCode;
+			}
+			else{
+				//  文字数でカウント
+
+				//2009.07.07 syat カウント方法を切り替えながら選択範囲を拡大・縮小すると整合性が
+				//                とれなくなるため、モード切替時にキャッシュをクリアする。
+				thiz->m_nLastSelectedByteLen = 0;
+
+				//	1行だけ選択されている場合
+				if( m_sSelect.IsLineOne() ){
+					select_sum =
+						pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() )
+						- pView->LineColmnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
+				} else {	//	2行以上選択されている場合
+					select_sum =
+						pcLayout->GetLengthWithoutEOL()
+						+ pcLayout->GetLayoutEol().GetLen()
+						- pView->LineColmnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
+
+					//	GetSelectedDataと似ているが，先頭行と最終行は排除している
+					//	Aug. 16, 2005 aroka nLineNumはfor以降でも使われるのでforの前で宣言する
+					//	VC .NET以降でもMicrosoft拡張を有効にした標準動作はVC6と同じことに注意
+					CLayoutInt nLineNum;
+					for( nLineNum = m_sSelect.GetFrom().GetY2() + CLayoutInt(1);
+						nLineNum < m_sSelect.GetTo().GetY2(); ++nLineNum ){
+						pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+						//	2006.06.06 ryoji 指定行のデータが存在しない場合の対策
+						if( NULL == pLine )
+							break;
+						select_sum += pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
+					}
+
+					//	最終行の処理
+					pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
+					if( pLine ){
+						int last_line_chars = pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() );
+						select_sum += last_line_chars;
+						if( last_line_chars == 0 ){
+							//	最終行の先頭にキャレットがある場合は
+							//	その行を行数に含めない
+							--select_line;
+						}
+					}
+					else
+					{
+						//	最終行が空行なら
+						//	その行を行数に含めない
+						--select_line;
+					}
 				}
 			}
 		}
 
 #ifdef _DEBUG
-		auto_sprintf( msg, _T("%d chars (%d lines) selected. [%d:%d]-[%d:%d]"),
-			select_sum, select_line,
+		auto_sprintf( msg, _T("%d %ts (%d lines) selected. [%d:%d]-[%d:%d]"),
+			select_sum,
+			( bCountByByte ? _T("bytes") : _T("chars") ),
+			select_line,
 			m_sSelect.GetFrom().x, m_sSelect.GetFrom().y,
 			m_sSelect.GetTo().x, m_sSelect.GetTo().y );
 #else
-		auto_sprintf( msg, _T("%d chars (%d lines) selected."), select_sum, select_line );
+		auto_sprintf( msg, _T("%d %ts (%d lines) selected."), select_sum, ( bCountByByte ? _T("bytes") : _T("chars") ), select_line );
 #endif
 	}
 	pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );

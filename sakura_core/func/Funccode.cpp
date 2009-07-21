@@ -355,6 +355,7 @@ const EFunctionCode pnFuncList_Set[] = {	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List9
 	F_TMPWRAPNOWRAP		,	//Ü‚è•Ô‚³‚È‚¢iˆêİ’èj			// 2008.05.30 nasukoji
 	F_TMPWRAPSETTING	,	//w’èŒ…‚ÅÜ‚è•Ô‚·iˆêİ’èj		// 2008.05.30 nasukoji
 	F_TMPWRAPWINDOW		,	//‰E’[‚ÅÜ‚è•Ô‚·iˆêİ’èj		// 2008.05.30 nasukoji
+	F_SELECT_COUNT_MODE		//•¶šƒJƒEƒ“ƒgİ’è	// 2009.07.06 syat
 };
 int		nFincList_Set_Num = _countof( pnFuncList_Set );	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List9¨List_Set)
 
@@ -810,6 +811,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_TMPWRAPNOWRAP:	return HLP000340;	// Ü‚è•Ô‚³‚È‚¢			// 2008.05.31 nasukoji
 	case F_TMPWRAPSETTING:	return HLP000340;	// w’èŒ…‚ÅÜ‚è•Ô‚·		// 2008.05.31 nasukoji
 	case F_TMPWRAPWINDOW:	return HLP000340;	// ‰E’[‚ÅÜ‚è•Ô‚·		// 2008.05.31 nasukoji
+	case F_SELECT_COUNT_MODE: return HLP000336;	// •¶šƒJƒEƒ“ƒg•û–@		// 2009.07.06 syat
 
 	/* ƒ}ƒNƒ */
 	case F_RECKEYMACRO:		return HLP000125;	/* ƒL[ƒ}ƒNƒ‹L˜^ŠJn^I—¹ */
@@ -878,6 +880,9 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_TAB_SEPARATE:	return HLP000325;	//V‹KƒOƒ‹[ƒv	// 2007.06.20 ryoji
 	case F_TAB_JOINTNEXT:	return HLP000326;	//Ÿ‚ÌƒOƒ‹[ƒv‚ÉˆÚ“®	// 2007.06.20 ryoji
 	case F_TAB_JOINTPREV:	return HLP000327;	//‘O‚ÌƒOƒ‹[ƒv‚ÉˆÚ“®	// 2007.06.20 ryoji
+	case F_TAB_CLOSEOTHER:	return HLP000333;	//‚±‚Ìƒ^ƒuˆÈŠO‚ğ•Â‚¶‚é	// 2009.07.07 syat
+	case F_TAB_CLOSELEFT:	return HLP000334;	//¶‚ğ‚·‚×‚Ä•Â‚¶‚é		// 2009.07.07 syat
+	case F_TAB_CLOSERIGHT:	return HLP000335;	//‰E‚ğ‚·‚×‚Ä•Â‚¶‚é		// 2009.07.07 syat
 
 
 	/* x‰‡ */
@@ -1186,6 +1191,10 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, EFunctionCode
 	case F_TMPWRAPNOWRAP:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP );		// Ü‚è•Ô‚³‚È‚¢
 	case F_TMPWRAPSETTING:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_SETTING_WIDTH );		// w’èŒ…‚ÅÜ‚è•Ô‚·
 	case F_TMPWRAPWINDOW:		return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH );		// ‰E’[‚ÅÜ‚è•Ô‚·
+	// 2009.07.06 syat  •¶šƒJƒEƒ“ƒg•û–@
+	case F_SELECT_COUNT_MODE:	return ( pCEditWnd->m_nSelectCountMode == SELECT_COUNT_TOGGLE ?
+											pShareData->m_Common.m_sStatusbar.m_bDispSelCountByByte == TRUE :
+											pCEditWnd->m_nSelectCountMode == SELECT_COUNT_BY_BYTE );
 	// Mar. 6, 2002 genta
 	case F_VIEWMODE:			return CAppMode::Instance()->IsViewMode(); //ƒrƒ…[ƒ‚[ƒh
 	//	From Here 2003.06.23 Moca

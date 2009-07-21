@@ -366,6 +366,9 @@ private:
 	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	EIconClickStatus	m_IconClicked;
 
+public:
+	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
+
 };
 
 
