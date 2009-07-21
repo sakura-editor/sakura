@@ -534,6 +534,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_TMPWRAPSETTING:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_SETTING_WIDTH, 0, 0, 0 );break;	// 指定桁で折り返す（一時設定）		// 2008.05.30 nasukoji
 	case F_TMPWRAPWINDOW:	HandleCommand( F_TEXTWRAPMETHOD, bRedraw, WRAP_WINDOW_WIDTH, 0, 0, 0 );break;	// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
 	case F_TEXTWRAPMETHOD:	Command_TEXTWRAPMETHOD( (int)lparam1 );break;		// テキストの折り返し方法		// 2008.05.30 nasukoji
+	case F_SELECT_COUNT_MODE:	Command_SELECT_COUNT_MODE( (int)lparam1 );break;	// 文字カウントの方法		// 2009.07.06 syat
 
 	/* マクロ系 */
 	case F_RECKEYMACRO:		Command_RECKEYMACRO();break;	/* キーマクロの記録開始／終了 */
@@ -8794,5 +8795,37 @@ void CViewCommander::DelCharForOverwrite( void )
 		}else{
 			m_pCommanderView->DeleteData( FALSE );
 		}
+	}
+}
+
+/*!
+	@brief 文字カウント方法を変更する
+	
+	@param[in] nMode 文字カウント方法
+		SELECT_COUNT_TOGGLE  : 文字カウント方法をトグル
+		SELECT_COUNT_BY_CHAR ; 文字数でカウント
+		SELECT_COUNT_BY_BYTE ; バイト数でカウント
+*/
+void CViewCommander::Command_SELECT_COUNT_MODE( int nMode )
+{
+	//設定には保存せず、View毎に持つフラグを設定
+	//BOOL* pbDispSelCountByByte = &GetDllShareData().m_Common.m_sStatusbar.m_bDispSelCountByByte;
+	ESelectCountMode* pnSelectCountMode = &GetEditWindow()->m_nSelectCountMode;
+
+	if( nMode == SELECT_COUNT_TOGGLE ){
+		//文字数⇔バイト数トグル
+		ESelectCountMode nCurrentMode;
+		if( *pnSelectCountMode == SELECT_COUNT_TOGGLE ){
+			nCurrentMode = ( GetDllShareData().m_Common.m_sStatusbar.m_bDispSelCountByByte ?
+								SELECT_COUNT_BY_BYTE :
+								SELECT_COUNT_BY_CHAR );
+		}else{
+			nCurrentMode = *pnSelectCountMode;
+		}
+		*pnSelectCountMode = ( nCurrentMode == SELECT_COUNT_BY_BYTE ?
+								SELECT_COUNT_BY_CHAR :
+								SELECT_COUNT_BY_BYTE );
+	}else if( nMode == SELECT_COUNT_BY_BYTE || nMode == SELECT_COUNT_BY_CHAR ){
+		*pnSelectCountMode = ( ESelectCountMode )nMode;
 	}
 }

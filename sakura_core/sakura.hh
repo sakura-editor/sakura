@@ -214,6 +214,7 @@
 #define HLP000071	71 //フォント設定
 #define HLP000340	340 //テキストの折り返し方法			// 2008.05.31 nasukoji
 #define HLP000184	184 //折り返し桁数
+#define HLP000336	336 //文字カウント方法		// 2009.07.06 syat
 #define HLP000125	125 //キーマクロの記録開始／終了
 #define HLP000127	127 //キーマクロの保存
 #define HLP000128	128 //キーマクロの読み込み
@@ -251,6 +252,9 @@
 #define HLP000325	325 //新規グループ			// 2007.07.04 ryoji
 #define HLP000326	326 //次のグループに移動	// 2007.07.04 ryoji
 #define HLP000327	327 //前のグループに移動	// 2007.07.04 ryoji
+#define HLP000333	333 //このタブ以外を閉じる	// 2009.07.07 syat
+#define HLP000334	334 //左をすべて閉じる		// 2009.07.07 syat
+#define HLP000335	335 //右をすべて閉じる		// 2009.07.07 syat
 #define HLP000328	328 //編集文書の一時出力			// 2007.09.29 maru
 #define HLP000329	329 //編集文書にファイル挿入		// 2007.09.29 maru
 #define HLP000330	330 //引用符の変更					// 2007.09.29 maru
@@ -941,6 +945,7 @@
 #define HIDC_CHECK_DISP_UNICODE_IN_EUC	14202		// EUCで文字コード値をUnicodeで表示する
 #define HIDC_CHECK_DISP_UTF8_CODEPOINT	14203		// UTF-8をコードポイントで表示する
 #define HIDC_CHECK_DISP_SP_CODEPOINT	14204		// サロゲートペアをコードポイントで表示する
+#define HIDC_CHECK_DISP_SELCOUNT_BY_BYTE	14205	// 選択文字数を文字単位ではなくバイト単位で表示する
 
 
 #define HIDC_STATIC						19999 //不明

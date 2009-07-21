@@ -608,6 +608,7 @@
 #define IDC_COMBO_WHEEL_PAGESCROLL      1556
 #define IDC_COMBO_DEFAULT_CODETYPE      1557
 #define IDC_CHECK_PRIOR_CESU8           1558
+#define IDC_CHECK_DISP_SELCOUNT_BY_BYTE	1559
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000

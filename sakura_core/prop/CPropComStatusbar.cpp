@@ -30,6 +30,7 @@ static const DWORD p_helpids[] = {
 	IDC_CHECK_DISP_UNICODE_IN_EUC,		HIDC_CHECK_DISP_UNICODE_IN_EUC,			// EUCで文字コード値をUnicodeで表示する
 	IDC_CHECK_DISP_UTF8_CODEPOINT,		HIDC_CHECK_DISP_UTF8_CODEPOINT,			// UTF-8をコードポイントで表示する
 	IDC_CHECK_DISP_SP_CODEPOINT,		HIDC_CHECK_DISP_SP_CODEPOINT,			// サロゲートペアをコードポイントで表示する
+	IDC_CHECK_DISP_SELCOUNT_BY_BYTE,	HIDC_CHECK_DISP_SELCOUNT_BY_BYTE,		// 選択文字数を文字単位ではなくバイト単位で表示する
 	0, 0
 };
 
@@ -127,6 +128,8 @@ void CPropCommon::SetData_PROP_STATUSBAR( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_UTF8_CODEPOINT,  m_Common.m_sStatusbar.m_bDispUtf8Codepoint );
 	// サロゲートペアをコードポイントで表示
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_SP_CODEPOINT,    m_Common.m_sStatusbar.m_bDispSPCodepoint );
+	// 選択文字数を文字単位ではなくバイト単位で表示する
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DISP_SELCOUNT_BY_BYTE,m_Common.m_sStatusbar.m_bDispSelCountByByte );
 	return;
 }
 
@@ -145,6 +148,8 @@ int CPropCommon::GetData_PROP_STATUSBAR( HWND hwndDlg )
 	m_Common.m_sStatusbar.m_bDispUtf8Codepoint	= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_UTF8_CODEPOINT );
 	// サロゲートペアをコードポイントで表示
 	m_Common.m_sStatusbar.m_bDispSPCodepoint	= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_SP_CODEPOINT );
+	// 選択文字数を文字単位ではなくバイト単位で表示する
+	m_Common.m_sStatusbar.m_bDispSelCountByByte	= ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP_SELCOUNT_BY_BYTE );
 
 	return TRUE;
 }

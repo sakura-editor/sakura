@@ -292,6 +292,7 @@ F_WRAPWINDOWWIDTH	= 31140,	// 現在のウィンドウ幅で折り返し			なし
 F_TMPWRAPNOWRAP		= 31141,	// 折り返さない（一時設定）				なし
 F_TMPWRAPSETTING	= 31142,	// 指定桁で折り返す（一時設定）			なし
 F_TMPWRAPWINDOW		= 31143,	// 右端で折り返す（一時設定）			なし
+F_SELECT_COUNT_MODE	= 31144,	// 文字カウントの方法を取得、設定する	int nMode
 
 F_TYPE_SCREEN			= 31115,	// タイプ別設定『スクリーン』			？
 F_TYPE_COLOR			= 31116,	// タイプ別設定『カラー』				？
