@@ -6073,22 +6073,20 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	CMemory*	pcMemDeleted;
 	CWaitCursor cWaitCursor( m_hWnd );
 
-	int			nSelectLineFromOld;				/* 範囲選択開始行 */
-	int			nSelectColFromOld; 				/* 範囲選択開始桁 */
-	int			nSelectLineToOld;				/* 範囲選択終了行 */
-	int			nSelectColToOld;				/* 範囲選択終了桁 */
-	BOOL		bBeginBoxSelectOld;
+	int			nSelectLineFromOld_PHY;			/* 範囲選択開始行(PHY) */
+	int			nSelectColFromOld_PHY; 			/* 範囲選択開始桁(PHY) */
 
 	/* テキストが選択されているか */
 	if( !IsTextSelected() ){
 		return;
 	}
 
-	nSelectLineFromOld	= m_nSelectLineFrom;	/* 範囲選択開始行 */
-	nSelectColFromOld	= m_nSelectColmFrom;	/* 範囲選択開始桁 */
-	nSelectLineToOld	= m_nSelectLineTo;		/* 範囲選択終了行 */
-	nSelectColToOld		= m_nSelectColmTo;		/* 範囲選択終了桁 */
-	bBeginBoxSelectOld	= m_bBeginBoxSelect;
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(	// 2009.07.18 ryoji PHYで記憶するように変更
+		m_nSelectColmFrom,
+		m_nSelectLineFrom,
+		&nSelectColFromOld_PHY,	/* 範囲選択開始桁(PHY) */
+		&nSelectLineFromOld_PHY	/* 範囲選択開始行(PHY) */
+	);
 
 
 	/* 矩形範囲選択中か */
@@ -6104,7 +6102,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		);
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( FALSE );	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
 
 		nIdxFrom = 0;
 		nIdxTo = 0;
@@ -6191,7 +6189,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
-					TRUE/*FALSE*/
+					FALSE	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
 				);
 				/* カーソルを移動 */
 				MoveCursor( nNewPos, nNewLine, FALSE );
@@ -6245,8 +6243,12 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 
 		// From Here 2001.12.03 hor
 		//	選択エリアの復元
-		m_nSelectLineFrom	=	nSelectLineFromOld;	/* 範囲選択開始行 */
-		m_nSelectColmFrom	=	nSelectColFromOld;	/* 範囲選択開始桁 */
+		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(	// 2009.07.18 ryoji PHYから戻す
+			nSelectColFromOld_PHY,
+			nSelectLineFromOld_PHY,
+			&m_nSelectColmFrom,	/* 範囲選択開始桁 */
+			&m_nSelectLineFrom	/* 範囲選択開始行 */
+		);
 		m_nSelectLineTo		=	m_nCaretPosY;		/* 範囲選択終了行 */
 		m_nSelectColmTo		=	m_nCaretPosX;		/* 範囲選択終了桁 */
 		if(nCaretPosYOLD==m_nSelectLineFrom) {
@@ -6265,67 +6267,9 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			/* 操作の追加 */
 			m_pcOpeBlk->AppendOpe( pcOpe );
 		}
-		RedrawAll();
 		// To Here 2001.12.03 hor
-
-		return;
-
-
-#if 0///////////////////////////////
-		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe = new COpe;
-			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
-		}
-		/* 現在位置にデータを挿入 */
-		InsertData_CEditView(
-			m_nCaretPosX,
-			m_nCaretPosY,
-			cmemBuf.GetPtr(),
-			cmemBuf.GetLength(),
-			&nNewLine,
-			&nNewPos,
-			pcOpe,
-			TRUE/*FALSE*/
-		);
-
-		/* カーソルを移動 */
-		MoveCursor( nNewPos, nNewLine, TRUE );
-		m_nCaretPosX_Prev = m_nCaretPosX;
-
-		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-			pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
-			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe( pcOpe );
-		}
-#endif ///////////////////////////////
-
 	}
-#if 0///////////////////////////////
-	m_nSelectLineFrom	= nSelectLineFromOld;	/* 範囲選択開始行 */
-	m_nSelectColmFrom	= nSelectColFromOld;	/* 範囲選択開始桁 */
-	m_nSelectLineTo		= nSelectLineToOld;		/* 範囲選択終了行 */
-	m_nSelectColmTo		= nSelectColToOld;		/* 範囲選択終了桁 */
-	m_bBeginBoxSelect	= bBeginBoxSelectOld;
-
-	m_pcEditDoc->SetModified(true);	/* 変更フラグ */
-
-	/* 再描画 */
-	//	::UpdateWindow();
-	hdc = ::GetDC( m_hWnd );
-	ps.rcPaint.left		= 0;
-	ps.rcPaint.right	= m_nViewAlignLeft + m_nViewCx;
-	ps.rcPaint.top		= m_nViewAlignTop;
-	ps.rcPaint.bottom	= m_nViewAlignTop + m_nViewCy;
-	OnKillFocus();
-	OnPaint( hdc, &ps, FALSE );
-	OnSetFocus();
-	::ReleaseDC( m_hWnd, hdc );
-#endif ///////////////////////////////
-
-
-	return;
+	RedrawAll();	// 2009.07.18 ryoji 対象が矩形だった場合も最後に再描画する
 }
 
 

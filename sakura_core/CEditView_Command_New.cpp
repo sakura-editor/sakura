@@ -1193,6 +1193,15 @@ void CEditView::ReplaceData_CEditView(
 		//	To Here
 	}
 
+	int nDelLineFrom_PHY;
+	int nDelColmFrom_PHY;
+	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(	// 2009.07.18 ryoji PHYで記憶する
+		nDelColmFrom,
+		nDelLineFrom,
+		&nDelColmFrom_PHY,
+		&nDelLineFrom_PHY
+	);
+
 	COpe* pcOpe = NULL;		/* 編集操作要素 COpe */
 	CMemory* pcMemDeleted;
 	int	nCaretPosXOld;
@@ -1275,6 +1284,10 @@ void CEditView::ReplaceData_CEditView(
 
 	// Feb. 08, 2008 genta 削除バッファの確保はCDocLineMgr::ReplaceDataで行うので削除
 
+	/* 現在の選択範囲を非選択状態に戻す */
+	// 2009.07.18 ryoji 置換後→置換前に位置を変更（置換後だと反転が不正になって汚い Wiki BugReport/43）
+	DisableSelectArea( bRedraw );
+
 	/* 文字列置換 */
 //	int		nAddLineNum;	/* 再描画ヒント レイアウト行の増減 */
 //	int		nModLineFrom;	/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
@@ -1324,9 +1337,6 @@ void CEditView::ReplaceData_CEditView(
 	if( FALSE == m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		m_pcEditDoc->SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 	}
-
-	/* 現在の選択範囲を非選択状態に戻す */
-	DisableSelectArea( bRedraw );
 
 	/* 行番号表示に必要な幅を設定 */
 	if( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( bRedraw ) ){
@@ -1412,14 +1422,9 @@ void CEditView::ReplaceData_CEditView(
 		pcOpe = new COpe;
 		pcOpe->m_nOpe = OPE_INSERT;				/* 操作種別 */
 
-//		pcOpe->m_nCaretPosX_Before = nDelColmFrom/*m_nCaretPosX*/;	/* 操作前のキャレット位置Ｘ */
-//		pcOpe->m_nCaretPosY_Before = nDelLineFrom/*m_nCaretPosY*/;	/* 操作前のキャレット位置Ｙ */
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
-			nDelColmFrom,
-			nDelLineFrom,
-			&pcOpe->m_nCaretPosX_PHY_Before,
-			&pcOpe->m_nCaretPosY_PHY_Before
-		);
+		// 2009.07.18 ryoji レイアウトは変化するのに以前のnDelColmFrom,nDelLineFromからCaretPos_Log2Physで計算していたバグを修正
+		pcOpe->m_nCaretPosX_PHY_Before = nDelColmFrom_PHY;
+		pcOpe->m_nCaretPosY_PHY_Before = nDelLineFrom_PHY;
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
 			LRArg.nNewPos,
 			LRArg.nNewLine,
