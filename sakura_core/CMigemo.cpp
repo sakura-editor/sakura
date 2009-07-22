@@ -96,6 +96,7 @@ long CMigemo::migemo_open(char* dict)
 	if (m_migemo == NULL)
 		return 0;
 	
+	migemo_setproc_int2char(pcre_int2char);
 	//if (!migemo_load(MIGEMO_DICTID_MIGEMO, path2))
 	//	return 0;
 	
@@ -210,5 +211,40 @@ CMigemo::~CMigemo()
 {
 }
 
+// C/Migemo ソース中の rxgen.c:default_int2char を元に作成。
+static int __cdecl pcre_int2char(unsigned int in, unsigned char* out)
+{
+    /* outは最低でも16バイトはある、という仮定を置く */
+    if (in >= 0x100)
+    {
+	if (out)
+	{
+	    out[0] = (unsigned char)((in >> 8) & 0xFF);
+	    out[1] = (unsigned char)(in & 0xFF);
+	}
+	return 2;
+    }
+    else
+    {
+	int len = 0;
+	switch (in)
+	{
+	    case '\\':
+	    case '.': case '*': case '^': case '$': case '/':
+	    case '[': case ']': case '~':
+	    case '|': case '(': case ')':
+	    case '+': case '?': case '{': case '}':
+		if (out)
+		    out[len] = '\\';
+		++len;
+	    default:
+		if (out)
+		    out[len] = (unsigned char)(in & 0xFF);
+		++len;
+		break;
+	}
+	return len;
+    }
+}
 
 /*[EOF]*/
