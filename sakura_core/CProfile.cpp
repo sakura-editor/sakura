@@ -243,7 +243,7 @@ bool CProfile::WriteProfile(
 		::GetTempFileName(szPath, _T("sak"), 0, szMirrorFile);
 	}
 
-	if( !WriteFile(szMirrorFile[0]? szMirrorFile: m_strProfileName, vecLine) )
+	if( !WriteFile(szMirrorFile[0]? std::basic_string< TCHAR >(szMirrorFile): m_strProfileName, vecLine) )
 		return false;
 
 	if( szMirrorFile[0] ){
