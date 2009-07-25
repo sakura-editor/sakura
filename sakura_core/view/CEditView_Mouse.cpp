@@ -1586,8 +1586,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			ptCaretLogicPos_Old,
 			&ptSelectFrom
 		);
-		GetSelectionInfo().m_sSelect.SetFrom( ptSelectFrom );
-		GetSelectionInfo().m_sSelect.SetTo( GetCaret().GetCaretLayoutPos() );
+		GetSelectionInfo().SetSelectArea( CLayoutRange(ptSelectFrom, GetCaret().GetCaretLayoutPos()) );	// 2009.07.25 ryoji
 	}else{
 		// 2004.07.12 Moca クリップボードを書き換えないように
 		// TRUE == bBoxSelected
@@ -1651,10 +1650,12 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				sSelLogic.SetToY( sSelLogic.GetTo().GetY2() - (nLines_Old - nLines) );
 
 				// 調整後の選択範囲を設定する
+				CLayoutRange sSelect;
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 					sSelLogic,
-					&GetSelectionInfo().m_sSelect
+					&sSelect
 				);
+				GetSelectionInfo().SetSelectArea( sSelect );	// 2009.07.25 ryoji
 				ptCaretPos_Old = GetSelectionInfo().m_sSelect.GetTo();
 			}
 
@@ -1836,8 +1837,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			ptCaretLogicPos_Old,
 			&ptSelectFrom
 		);
-		GetSelectionInfo().m_sSelect.SetFrom( ptSelectFrom );
-		GetSelectionInfo().m_sSelect.SetTo( GetCaret().GetCaretLayoutPos() );
+		GetSelectionInfo().SetSelectArea( CLayoutRange(ptSelectFrom, GetCaret().GetCaretLayoutPos()) );	// 2009.07.25 ryoji
 		GetSelectionInfo().DrawSelectArea();
 		break;
 	}
