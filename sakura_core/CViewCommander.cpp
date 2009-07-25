@@ -5015,7 +5015,7 @@ void CViewCommander::Command_INDENT( const wchar_t* pData, CLogicInt nDataLen , 
 	}
 	/* 再描画 */
 	m_pCommanderView->SetDrawSwitch(true);	// 2002.01.25 hor
-	m_pCommanderView->Redraw();			// 2002.01.25 hor
+	m_pCommanderView->RedrawAll();			// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 	return;
 }
 
@@ -5135,7 +5135,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 	}
 
 	/* 再描画 */
-	m_pCommanderView->Redraw();	// 2002.01.25 hor
+	m_pCommanderView->RedrawAll();	// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 }
 
 /* 最後にテキストを追加 */
