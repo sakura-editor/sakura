@@ -1314,11 +1314,6 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		/* 機能種別によるバッファの変換 */
 		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 
-//		/* 選択エリアを削除 */
-//		DeleteData( FALSE );
-
-		CLayoutInt nCaretPosYOLD=GetCaret().GetCaretLayoutPos().GetY();
-
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
 			GetSelectionInfo().m_sSelect,
@@ -1336,14 +1331,10 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			ptFromLogic,
 			&ptFrom
 		);
-		GetSelectionInfo().m_sSelect.SetFrom(ptFrom);	// 範囲選択開始位置
-		GetSelectionInfo().m_sSelect.SetTo(GetCaret().GetCaretLayoutPos());	// 範囲選択終了位置
-		if(nCaretPosYOLD==GetSelectionInfo().m_sSelect.GetFrom().y) {
-			GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetFrom(), TRUE );
-		}else{
-			GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), TRUE );
-		}
+		GetSelectionInfo().SetSelectArea( CLayoutRange(ptFrom, GetCaret().GetCaretLayoutPos()) );	// 2009.07.25 ryoji
+		GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), TRUE );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
 			m_pcOpeBlk->AppendOpe(

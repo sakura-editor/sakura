@@ -6932,9 +6932,10 @@ void CViewCommander::Command_REPLACE_ALL()
 			);
 		}
 		if(sRangeA.GetFrom().y<sRangeA.GetTo().y || sRangeA.GetFrom().x<sRangeA.GetTo().x){
-			GetSelect() = sRangeA;
+			m_pCommanderView->GetSelectionInfo().SetSelectArea( sRangeA );	// 2009.07.25 ryoji
 		}
 		GetCaret().MoveCursor( sRangeA.GetTo(), TRUE );
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();	// 2009.07.25 ryoji
 	}
 	// To Here 2001.12.03 hor
 
