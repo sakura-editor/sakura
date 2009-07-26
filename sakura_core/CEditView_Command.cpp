@@ -8102,12 +8102,10 @@ void CEditView::Command_REPLACE_ALL()
 			);
 		}
 		if(linFrom<linTo || colFrom<colTo){
-			m_nSelectLineFrom = linFrom;
-			m_nSelectColmFrom = colFrom;
-			m_nSelectLineTo   = linTo;
-			m_nSelectColmTo   = colTo;
+			SetSelectArea( linFrom, colFrom, linTo, colTo );	// 2009.07.25 ryoji
 		}
 		MoveCursor( colTo, linTo, TRUE );
+		m_nCaretPosX_Prev = m_nCaretPosX;	// 2009.07.25 ryoji
 	}
 	// To Here 2001.12.03 hor
 

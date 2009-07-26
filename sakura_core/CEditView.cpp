@@ -6224,11 +6224,6 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		/* 機能種別によるバッファの変換 */
 		ConvMemory( &cmemBuf, nFuncCode );
 
-//		/* 選択エリアを削除 */
-//		DeleteData( FALSE );
-
-		int nCaretPosYOLD=m_nCaretPosY;
-
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
 			m_nSelectLineFrom,		/* 範囲選択開始行 */
@@ -6249,14 +6244,10 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			&m_nSelectColmFrom,	/* 範囲選択開始桁 */
 			&m_nSelectLineFrom	/* 範囲選択開始行 */
 		);
-		m_nSelectLineTo		=	m_nCaretPosY;		/* 範囲選択終了行 */
-		m_nSelectColmTo		=	m_nCaretPosX;		/* 範囲選択終了桁 */
-		if(nCaretPosYOLD==m_nSelectLineFrom) {
-			MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
-		}else{
-			MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
-		}
+		SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nCaretPosY, m_nCaretPosX );	// 2009.07.25 ryoji
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
 		m_nCaretPosX_Prev = m_nCaretPosX;
+
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
@@ -9178,8 +9169,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
 			&m_nSelectColmFrom, &m_nSelectLineFrom
 		);
-		m_nSelectLineTo = m_nCaretPosY;
-		m_nSelectColmTo = m_nCaretPosX;
+		SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nCaretPosY, m_nCaretPosX );	// 2009.07.25 ryoji
 	}else{
 		// 2004.07.12 Moca クリップボードを書き換えないように
 		// TRUE == bBoxData
@@ -9265,6 +9255,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 					nSelectColmTo_PHY, nSelectLineTo_PHY,
 					&m_nSelectColmTo, &m_nSelectLineTo
 				);
+				SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nSelectLineTo, m_nSelectColmTo );	// 2009.07.25 ryoji
 				nCaretPosX_Old = m_nSelectColmTo;
 				nCaretPosY_Old = m_nSelectLineTo;
 			}
@@ -9433,8 +9424,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
 			&m_nSelectColmFrom, &m_nSelectLineFrom
 		);
-		m_nSelectLineTo = m_nCaretPosY;
-		m_nSelectColmTo = m_nCaretPosX;
+		SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nCaretPosY, m_nCaretPosX );	// 2009.07.25 ryoji
 		DrawSelectArea();
 		break;
 	}
