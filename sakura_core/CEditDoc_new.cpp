@@ -1353,6 +1353,9 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 			m_cEditViewArr[i].AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
+	if( !GetDocumentAttribute().m_bLineNumIsCRLF ){
+		ActiveView().DrawCaretPosInfo();	// 2009.07.25 ryoji
+	}
 
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );

@@ -41,6 +41,7 @@ class CEditWnd;
 class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
 
+const static int MENUBAR_MESSAGE_MAX_LEN = 30;
 
 
 
@@ -242,6 +243,7 @@ private:
 	int			m_nCaretPosInfoCharHeight;	/*!< キャレットの行桁位置表示用フォントの高さ */
 	int			m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
 
+	LPTSTR		m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
 	LPTSTR		m_pszLastCaption;
 	int m_nTimerCount; //!< OnTimer用 2003.08.29 wmlhq
 

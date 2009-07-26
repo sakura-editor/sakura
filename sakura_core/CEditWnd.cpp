@@ -155,7 +155,8 @@ CEditWnd::CEditWnd() :
 	m_fontSearchBox( NULL ),
 	m_nCurrentFocus( 0 ),
 	m_bIsActiveApp( FALSE ),
-	m_IconClicked(icNone) //by 鬼(2)
+	m_IconClicked(icNone), //by 鬼(2)
+	m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 {
 	//	Dec. 4, 2002 genta
 	InitMenubarMessageFont();
@@ -166,6 +167,7 @@ CEditWnd::CEditWnd() :
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
+	memset( m_pszMenubarMessage, ' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
 	// 2009.01.12 nasukoji	ホイールスクロール有無状態をクリア
 	ClearMouseState();
@@ -179,6 +181,7 @@ CEditWnd::CEditWnd() :
 
 CEditWnd::~CEditWnd()
 {
+	delete []m_pszMenubarMessage;
 	delete []m_pszLastCaption;
 
 	//	Dec. 4, 2002 genta
@@ -1893,13 +1896,24 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
+	case WM_NCPAINT:
+		DefWindowProc( hwnd, uMsg, wParam, lParam );
+		if( NULL == m_hwndStatusBar ){
+			PrintMenubarMessage( NULL );
+		}
+		return 0;
+
 	case WM_NCACTIVATE:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（１）	// 2007.04.03 ryoji
 		// 前面にいるのが編集ウィンドウならアクティブ状態を保持する
 		if( m_pShareData->m_bEditWndChanging && CShareData::IsEditWnd(::GetForegroundWindow()) ){
 			wParam = TRUE;	// アクティブ
 		}
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		lRes = DefWindowProc( hwnd, uMsg, wParam, lParam );
+		if( NULL == m_hwndStatusBar ){
+			PrintMenubarMessage( NULL );
+		}
+		return lRes;
 
 	case WM_SETTEXT:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（２）	// 2007.04.03 ryoji
@@ -4717,17 +4731,16 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	RECT	rc,rcFrame;
 	HFONT	hFontOld;
 	int		nStrLen;
-	const int MAX_LEN = 30;
-	char	szText[MAX_LEN + 1];
-	
-	int len = strlen( msg );
-	strncpy( szText, msg, MAX_LEN );
-	
-	if( len < MAX_LEN ){
-		memset( szText + len, ' ', MAX_LEN - len );
+
+	// msg == NULL のときは以前の m_pszMenubarMessage で再描画
+	if( msg ){
+		int len = strlen( msg );
+		strncpy( m_pszMenubarMessage, msg, MENUBAR_MESSAGE_MAX_LEN );
+		if( len < MENUBAR_MESSAGE_MAX_LEN ){
+			memset( m_pszMenubarMessage + len, ' ', MENUBAR_MESSAGE_MAX_LEN - len );	//  null終端は不要
+		}
 	}
-	szText[MAX_LEN] = '\0';
-	
+
 	hdc = ::GetWindowDC( m_hWnd );
 	poFrame.x = 0;
 	poFrame.y = 0;
@@ -4736,7 +4749,7 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	po.x = rcFrame.right - rcFrame.left;
 	po.y = poFrame.y - rcFrame.top;
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontCaretPosInfo );
-	nStrLen = MAX_LEN;
+	nStrLen = MENUBAR_MESSAGE_MAX_LEN;
 	rc.left = po.x - nStrLen * m_nCaretPosInfoCharWidth - ( ::GetSystemMetrics( SM_CXSIZEFRAME ) + 2 );
 	rc.right = rc.left + nStrLen * m_nCaretPosInfoCharWidth;
 	rc.top = po.y - m_nCaretPosInfoCharHeight - 2;
@@ -4746,7 +4759,7 @@ void CEditWnd::PrintMenubarMessage( const char* msg )
 	COLORREF bkColor =
 		::GetSysColor( COsVersionInfo().IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
 	::SetBkColor( hdc, bkColor );
-	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,szText,nStrLen,m_pnCaretPosInfoDx);
+	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,m_pszMenubarMessage,nStrLen,m_pnCaretPosInfoDx);
 	::SelectObject( hdc, hFontOld );
 	::ReleaseDC( m_hWnd, hdc );
 }
