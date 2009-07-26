@@ -5658,7 +5658,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 	}
 	/* Ä•`‰æ */
 	m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
-	Redraw();			// 2002.01.25 hor
+	RedrawAll();		// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 	return;
 }
 
@@ -5824,7 +5824,7 @@ void CEditView::Command_UNINDENT( char cChar )
 //	OnPaint( hdc, &ps, FALSE );
 //	OnSetFocus();
 //	::ReleaseDC( m_hWnd, hdc );
-	Redraw();	// 2002.01.25 hor
+	RedrawAll();	// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 	return;
 }
 
