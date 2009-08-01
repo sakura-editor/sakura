@@ -99,7 +99,7 @@ bool CEditView::ProcessCommand_isearch(
 	switch( nCommand ){
 		//	検索文字列の変更操作
 		case F_ISEARCH_ADD_CHAR:
-			ISearchExec((WORD)lparam1);
+			ISearchExec((DWORD)lparam1);
 			return true;
 		
 		case F_ISEARCH_DEL_BACK:
@@ -107,7 +107,7 @@ bool CEditView::ProcessCommand_isearch(
 			return true;
 
 		case F_ISEARCH_ADD_STR:
-			ISearchExec((const char*)lparam1);
+			ISearchExec((LPCWSTR)lparam1);
 			return true;
 
 		//	検索モードへの移行
@@ -264,7 +264,7 @@ void CEditView::ISearchExit()
 	
 	@param wChar [in] 追加する文字 (1byte or 2byte)
 */
-void CEditView::ISearchExec(WORD wChar)
+void CEditView::ISearchExec(DWORD wChar)
 {
 	//特殊文字は処理しない
 	switch ( wChar){
@@ -283,16 +283,16 @@ void CEditView::ISearchExec(WORD wChar)
 	}else	
 		l = wcslen(m_szCurSrchKey) ;
 
-	if (wChar <= 255 ) {
-		if ( l < _countof(m_szCurSrchKey) - 1) {
-			m_szCurSrchKey[l] = wChar;
-			m_szCurSrchKey[l+1] = L'\0';				
+	if( wChar <= 0xffff ){
+		if( l < _countof(m_szCurSrchKey) - 1 ){
+			m_szCurSrchKey[l] = (WCHAR)wChar;
+			m_szCurSrchKey[l+1] = L'\0';
 		}
 	}else{
-		if ( l < _countof(m_szCurSrchKey) - 2) {
-			m_szCurSrchKey[l]   =(char)(wChar>>8);
-			m_szCurSrchKey[l+1] = wChar;
-			m_szCurSrchKey[l+2] = L'\0';				
+		if( l < _countof(m_szCurSrchKey) - 2 ){
+			m_szCurSrchKey[l]   = (WCHAR)(wChar>>16);
+			m_szCurSrchKey[l+1] = (WCHAR)wChar;
+			m_szCurSrchKey[l+2] = L'\0';
 		}
 	}
 
@@ -305,20 +305,21 @@ void CEditView::ISearchExec(WORD wChar)
 	
 	@param pszText [in] 追加する文字列
 */
-void CEditView::ISearchExec(const char* pszText)
+void CEditView::ISearchExec(LPCWSTR pszText)
 {
 	//一文字ずつ分解して実行
 
-	const char* p;
-	WORD  c;
+	const WCHAR* p;
+	DWORD c;
 	p = pszText;
 	
-	while(*p!='\0'){
-		if (IsDBCSLeadByte(*p)){
-			c =( ((WORD)*p) * 256) | (unsigned char)*(p+1);
+	while(*p!=L'\0'){
+		if( IsUtf16SurrogHi(*p) && IsUtf16SurrogLow(*(p+1)) ){
+			c = ( ((WORD)*p)<<16 ) | ( (WORD)*(p+1) );
 			p++;
-		}else
-			c =*p;
+		}else{
+			c = *p;
+		}
 		ISearchExec(c);
 		p++;
 	}
@@ -334,7 +335,7 @@ void CEditView::ISearchExec(bool bNext)
 {
 	//検索を実行する.
 
-	if ( (m_szCurSrchKey[0] == '\0') || (m_nISearchMode == 0)){
+	if ( (m_szCurSrchKey[0] == L'\0') || (m_nISearchMode == 0)){
 		//ステータスの表示
 		CNativeT msg;
 		ISearchSetStatusMsg(&msg);
@@ -461,7 +462,7 @@ void CEditView::ISearchBack(void) {
 		long l = wcslen(m_szCurSrchKey);
 		if (l > 0 ){
 			//最後の文字の一つ前
-			wchar_t* p = CharPrevW_AnyBuild(m_szCurSrchKey,&m_szCurSrchKey[l]);
+			wchar_t* p = (wchar_t*)CNativeW::GetCharPrev( m_szCurSrchKey, l, &m_szCurSrchKey[l] );
 			*p = L'\0';
 			//m_szCurSrchKey[l-1] = '\0';
 
