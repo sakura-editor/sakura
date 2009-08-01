@@ -428,8 +428,8 @@ private:
 	//2004.10.24 isearch migemo
 	void ISearchEnter( int mode, ESearchDirection direction);
 	void ISearchExit();
-	void ISearchExec(WORD wChar);
-	void ISearchExec(const char* pszText);
+	void ISearchExec(DWORD wChar);
+	void ISearchExec(LPCWSTR pszText);
 	void ISearchExec(bool bNext);
 	void ISearchBack(void) ;
 	void ISearchWordMake(void);
