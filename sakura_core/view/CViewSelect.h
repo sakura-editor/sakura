@@ -131,6 +131,7 @@ public:
 private:
 	bool	m_bBeginSelect;			// 範囲選択中
 	bool	m_bBeginBoxSelect;		// 矩形範囲選択中
+	bool	m_bSelectAreaChanging;	// 選択範囲変更中
 	int		m_nLastSelectedByteLen;	// 前回選択時の選択バイト数
 
 public:

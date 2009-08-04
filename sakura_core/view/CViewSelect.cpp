@@ -20,6 +20,7 @@ CViewSelect::CViewSelect(CEditView* pcEditView)
 	m_sSelectBgn.Clear(-1); // 範囲選択(原点)
 	m_sSelect   .Clear(-1); // 範囲選択
 	m_sSelectOld.Clear(0);  // 範囲選択(Old)
+	m_bSelectAreaChanging = false;	// 選択範囲変更中
 	m_nLastSelectedByteLen = 0;	// 前回選択時の選択バイト数
 }
 
@@ -88,7 +89,9 @@ void CViewSelect::ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPo
 	);
 
 	// 選択領域の描画
+	m_bSelectAreaChanging = true;
 	DrawSelectArea();
+	m_bSelectAreaChanging = false;
 }
 
 
@@ -547,7 +550,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 
 				//2009.07.07 syat m_nLastSelectedByteLenが0の場合は、差分ではなく全体を変換する（モード切替時にキャッシュクリアするため）
 
-				if( m_nLastSelectedByteLen && m_sSelect.GetFrom() == m_sSelectOld.GetFrom() ){
+				if( m_bSelectAreaChanging && m_nLastSelectedByteLen && m_sSelect.GetFrom() == m_sSelectOld.GetFrom() ){
 					// 範囲が後方に拡大された
 					if( PointCompare( m_sSelect.GetTo(), m_sSelectOld.GetTo() ) < 0 ){
 						bSelExtend = false;				// 縮小
@@ -560,7 +563,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, FALSE );
 					thiz->m_sSelect = rngSelect;		// m_sSelectを元に戻す
 				}
-				else if( m_nLastSelectedByteLen && m_sSelect.GetTo() == m_sSelectOld.GetTo() ){
+				else if( m_bSelectAreaChanging && m_nLastSelectedByteLen && m_sSelect.GetTo() == m_sSelectOld.GetTo() ){
 					// 範囲が前方に拡大された
 					if( PointCompare( m_sSelect.GetFrom(), m_sSelectOld.GetFrom() ) < 0 ){
 						bSelExtend = true;				// 拡大
