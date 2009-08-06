@@ -9,6 +9,7 @@
 	Copyright (C) 2003, genta, Moca
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, Moca
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -143,7 +144,7 @@ void CLayoutMgr::SetLayoutInfo(
 	m_pszKinsokuKuto_1.clear();
 	m_pszKinsokuHead_1.clear();
 	for( const wchar_t* p = refType.m_szKinsokuHead; *p; p++ ){
-		if(WCODE::IsKutoten(*p)){
+		if(m_sTypeConfig.m_bKinsokuKuto && WCODE::IsKutoten(*p)){	// 2009.08.06 ryoji m_bKinsokuKutoÇ≈êUÇËï™ÇØÇÈ(Fix)
 			m_pszKinsokuKuto_1.push_back_unique(*p);
 		}
 		else{
