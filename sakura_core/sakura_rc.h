@@ -590,6 +590,9 @@
 #define IDC_CHECK_RetainEmptyWindow     1518
 #define IDC_BUTTON_DIRECTPAGE           1519
 #define IDC_CHECK_CloseOneWin           1519
+#define IDC_CHECK_MacroOnOpened         1520
+#define IDC_CHECK_MacroOnTypeChanged    1521
+#define IDC_CHECK_MacroOnSave           1522
 #define IDC_CHECK_bCaretTextForSearch   1520
 #define IDC_CHECK_ChgWndByWheel         1521
 #define IDC_LABEL_REGEXP                1522

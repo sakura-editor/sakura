@@ -221,7 +221,6 @@ struct ARRHEAD {
 	Version 76:
 	タブのグループ化 2007.06.20 ryoji
 
-
 	Version 77:
 	iniフォルダ設定 2007.05.31 ryoji
 
@@ -260,9 +259,12 @@ struct ARRHEAD {
 
 	Version 89:
 	Typesのm_szTabViewStringサイズ拡張（Version 41）の戻し 2009.02.11 ryoji
+
+	Version 90:
+	自動実行マクロ 2006/08/31 ryoji
 */
 
-const unsigned int uShareDataVersion = 89;
+const unsigned int uShareDataVersion = 90;
 
 /*
 ||	Singleton風
@@ -720,6 +722,9 @@ bool CShareData::Init( void )
 			mptr->m_bReloadWhenExecute = FALSE;
 		}
 		//	To Here Sep. 14, 2001 genta
+		m_pShareData->m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+		m_pShareData->m_nMacroOnTypeChanged = -1;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+		m_pShareData->m_nMacroOnSave = -1;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 		// 2004/06/21 novice タグジャンプ機能追加
 		m_pShareData->m_TagJumpNum = 0;

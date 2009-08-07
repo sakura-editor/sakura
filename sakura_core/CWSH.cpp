@@ -595,7 +595,8 @@ static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void
 {
 	CEditView *View = reinterpret_cast<CEditView*>(Data);
 
-	if(ID >= F_FUNCTION_FIRST)
+	//	2007.07.22 genta : コマンドは下位16ビットのみ
+	if(LOWORD(ID) >= F_FUNCTION_FIRST)
 	{
 		VARIANT ret; // 2005.06.27 zenryaku 戻り値の受け取りが無くても関数を実行する
 		VariantInit(&ret);
@@ -661,7 +662,11 @@ CWSHMacroManager::~CWSHMacroManager()
 {
 }
 
-void CWSHMacroManager::ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *Info)
+/** WSHマクロエンジンへコマンド登録を行う
+
+	@date 2007.07.20 genta flags追加．flagはコマンド登録段階で混ぜておく．
+*/
+void CWSHMacroManager::ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *Info, int flags)
 {
 	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
 	{
@@ -673,18 +678,20 @@ void CWSHMacroManager::ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *In
 			if(Info->m_varArguments[I] != VT_EMPTY) 
 				++ArgCount;
 		
-		Object->AddMethod(FuncName, Info->m_nFuncID, Info->m_varArguments, ArgCount, Info->m_varResult, MacroCommand);
+		//	2007.07.21 genta : flagを加えた値を登録する
+		Object->AddMethod(FuncName, Info->m_nFuncID | flags, Info->m_varArguments, ArgCount, Info->m_varResult, MacroCommand);
 		
 		++Info;
 	}
 }
 
-/*!
-	WSHマクロの実行
+/** WSHマクロの実行
 
 	@param EditView [in] 操作対象EditView
+	
+	@date 2007.07.20 genta : flags追加
 */
-void CWSHMacroManager::ExecKeyMacro(CEditView *EditView) const
+void CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 {
 	CWSHClient* Engine;
 	Engine = new CWSHClient(m_EngineName.c_str(), MacroError, EditView);
@@ -695,8 +702,9 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView) const
 						sizeof (CSMacroMgr::m_MacroFuncInfoArr) / sizeof (CSMacroMgr::m_MacroFuncInfoArr[0]) +
 						sizeof (CSMacroMgr::m_MacroFuncInfoNotCommandArr) / sizeof (CSMacroMgr::m_MacroFuncInfoNotCommandArr[0]));
 */
-		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoArr);
-		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoNotCommandArr);
+		//	 2007.07.20 genta : コマンドに混ぜ込むフラグを渡す
+		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoArr, flags | FA_FROMMACRO );
+		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoNotCommandArr, 0);
 		
 		Engine->Execute(m_Source.c_str());
 		

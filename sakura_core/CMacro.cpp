@@ -11,7 +11,7 @@
 	Copyright (C) 2003, 鬼, ryoji, Moca
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, zenryaku, FILE
-	Copyright (C) 2006, かろと
+	Copyright (C) 2006, かろと, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2009, ryoji
@@ -196,17 +196,21 @@ void CMacro::AddParam( const int nParam )
 	}
 }
 
-/*	コマンドを実行する（pcEditView->HandleCommandを発行する）
+/**	コマンドを実行する（pcEditView->HandleCommandを発行する）
 	m_nFuncIDによって、引数の型を正確に渡してあげましょう。
 	
+	@note
 	paramArrは何かのポインタ（アドレス）をLONGであらわした値になります。
 	引数がchar*のときは、paramArr[i]をそのままHandleCommandに渡してかまいません。
 	引数がintのときは、*((int*)paramArr[i])として渡しましょう。
 	
 	たとえば、F_INSTEXTの1つめ、2つめの引数は文字列、3つめの引数はint、4つめの引数が無し。だったりする場合は、次のようにしましょう。
 	pcEditView->HandleCommand( m_nFuncID, TRUE, paramArr[0], paramArr[1], *((int*)paramArr[2]), 0);
+	
+	@date 2007.07.20 genta : flags追加．FA_FROMMACROはflagsに含めて渡すものとする．
+		(1コマンド発行毎に毎回演算する必要はないので)
 */
-void CMacro::Exec( CEditView* pcEditView )
+void CMacro::Exec( CEditView* pcEditView, int flags )
 {
 	const char* paramArr[4] = {NULL, NULL, NULL, NULL};	//	4つに限定。
 	
@@ -217,7 +221,7 @@ void CMacro::Exec( CEditView* pcEditView )
 		paramArr[i] = p->m_pData;
 		p = p->m_pNext;
 	}
-	CMacro::HandleCommand(pcEditView, m_nFuncID, paramArr, i);
+	CMacro::HandleCommand(pcEditView, m_nFuncID | flags, paramArr, i);
 }
 
 /*	CMacroを再現するための情報をhFileに書き出します。
@@ -334,20 +338,23 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 	_lwrite( hFile, szLine, strlen( szLine ) );
 }
 
-/*!	MacroコマンドをCEditView::HandleCommandに引き渡す。
+/**	マクロ引数変換
 
+	MacroコマンドをCEditView::HandleCommandに引き渡す．
 	引数がないマクロを除き，マクロとHandleCommandでの対応をここで定義する必要がある．
 
 	@param pcEditView	[in]	操作対象EditView
-	@param Index	[in] 機能 ID
+	@param Index	[in] 下位16bit: 機能ID, 上位ワードはそのままCMacro::HandleCommand()に渡す．
 	@param Argument [in] 引数
 	@param ArgSize	[in] 引数の数
 	
+	@date 2007.07.08 genta Indexのコマンド番号を下位ワードに制限
 */
 void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* Argument[], const int ArgSize )
 {
 	const char EXEC_ERROR_TITLE[] = "Macro実行エラー";
-	switch (Index) 
+
+	switch ( LOWORD(Index) ) 
 	{
 	case F_CHAR:		//	文字入力。数値は文字コード
 	case F_IME_CHAR:	//	日本語入力
@@ -562,11 +569,11 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
 //			pcEditView->m_pShareData->m_Common.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
-			if (Index == F_REPLACE) {
+			if (LOWORD(Index) == F_REPLACE) {	// 2007.07.08 genta コマンドは下位ワード
 				//	置換する時は選べない
 				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= 0;
 			}
-			else if (Index == F_REPLACE_ALL) {
+			else if (LOWORD(Index) == F_REPLACE_ALL) {	// 2007.07.08 genta コマンドは下位ワード
 				//	全置換の時は選べる？
 				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}
@@ -803,10 +810,10 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	}
 }
 
-/*!	値を返す関数を処理する
+/**	値を返す関数を処理する
 
 	@param View      [in] 対象となるView
-	@param ID        [in] 関数番号
+	@param ID        [in] 下位16bit: 関数番号
 	@param Arguments [in] 引数の配列
 	@param ArgSize   [in] 引数の数(Argument)
 	@param Result  [out] 結果の値を返す場所。戻り値がfalseのときは不定。
@@ -824,11 +831,19 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	Variant varCopy;	// VT_BYREFだと困るのでコピー用
 
 	//2003-02-21 鬼
-	switch(ID)
+	switch(LOWORD(ID))
 	{
 	case F_GETFILENAME:
 		{
 			char const * FileName = View->m_pcEditDoc->GetFilePath();
+			SysString S(FileName, lstrlen(FileName));
+			Wrap(&Result)->Receive(S);
+		}
+		return true;
+	case F_GETSAVEFILENAME:
+		//	2006.09.04 ryoji 保存時のファイルのパス
+		{
+			char const * FileName = View->m_pcEditDoc->GetSaveFilePath();
 			SysString S(FileName, lstrlen(FileName));
 			Wrap(&Result)->Receive(S);
 		}
@@ -1006,6 +1021,45 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod );
 			View->m_pcEditDoc->ChangeLayoutParam( false, 
 				View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), varCopy.Data.iVal );
+		}
+		return true;
+	case F_ISCURTYPEEXT:
+		//	2006.09.04 ryoji 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる
+		{
+			if( ArgSize != 1 ) return false;
+
+			char *Source;
+			int SourceLength;
+
+			int nType1 = View->m_pcEditDoc->GetDocumentType();	// 現在のタイプ
+
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+			int nType2 = CShareData::getInstance()->GetDocumentTypeExt(Source);	// 指定拡張子のタイプ
+			delete[] Source;
+
+			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// タイプ別設定の一致／不一致
+		}
+		return true;
+	case F_ISSAMETYPEEXT:
+		//	2006.09.04 ryoji ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる
+		{
+			if( ArgSize != 2 ) return false;
+
+			char *Source;
+			int SourceLength;
+
+			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+			int nType1 = CShareData::getInstance()->GetDocumentTypeExt(Source);	// 拡張子１のタイプ
+			delete[] Source;
+
+			if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+			int nType2 = CShareData::getInstance()->GetDocumentTypeExt(Source);	// 拡張子２のタイプ
+			delete[] Source;
+
+			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// タイプ別設定の一致／不一致
 		}
 		return true;
 	default:

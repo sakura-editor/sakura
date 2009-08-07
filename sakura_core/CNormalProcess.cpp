@@ -279,6 +279,11 @@ end_of_func:
 	m_hWnd = hWnd;
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
+
+	// 2006.09.03 ryoji オープン後自動実行マクロを実行する
+	if( hWnd && !( bDebugMode || bGrepMode ) )
+		m_pcEditWnd->m_cEditDoc.RunAutoMacro( m_pShareData->m_nMacroOnOpened );
+
 	return hWnd ? true : false;
 }
 

@@ -115,6 +115,9 @@ public:
 	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
 	char			m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
+	int				m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int				m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int				m_nMacroOnSave;		/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 	//! ファイル名簡易表示
 	int		m_nTransformFileNameArrNum;

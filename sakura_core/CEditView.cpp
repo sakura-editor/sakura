@@ -184,7 +184,6 @@ CEditView::CEditView() :
 	m_bCurSrchLoHiCase = 0;					/* 検索／置換  1==英大文字小文字の区別 */
 	m_bCurSrchWordOnly = 0;					/* 検索／置換  1==単語のみ検索 */
 
-	m_bExecutingKeyMacro = FALSE;			/* キーボードマクロの実行中 */
 	m_bPrevCommand = 0;
 	m_nMyIndex = 0;
 

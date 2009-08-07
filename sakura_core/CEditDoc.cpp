@@ -97,6 +97,7 @@ CEditDoc::CEditDoc() :
 //	m_pcDlgTest = new CDlgTest;
 
 	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
+	m_szSaveFilePath[0] = '\0';			/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 	strcpy( m_szGrepKey, "" );
 	/* 共有データ構造体のアドレスを返す */
 
@@ -3545,6 +3546,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 	int				nPane;
 	HWND			hwndWork;
 	EditNode*		pEditNodeArr;
+
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
 	//	下位16ビットのみを取り出す
 	switch( LOWORD( nCommand )){
@@ -4260,6 +4262,8 @@ void CEditDoc::ReloadCurrentFile(
 	m_cEditViewArr[m_nActivePaneIndex].MoveCursorProperly( nCaretPosX, nCaretPosY, TRUE );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
 	m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 
+	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+	RunAutoMacro( m_pShareData->m_nMacroOnOpened );
 }
 
 //	From Here Nov. 20, 2000 genta
@@ -4773,6 +4777,36 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 		return 0;
 	}
 	return 0;
+}
+
+/*!	@brief マクロ自動実行
+
+	@param type [in] 自動実行マクロ番号
+	@return
+
+	@author ryoji
+	@date 2006.09.01 ryoji 作成
+	@date 2007.07.20 genta HandleCommandに追加情報を渡す．
+		自動実行マクロで発行したコマンドはキーマクロに保存しない
+*/
+void CEditDoc::RunAutoMacro( int idx, const char *pszSaveFilePath )
+{
+	static bool bRunning = false;
+
+	if( bRunning )
+		return;	// 再入り実行はしない
+
+	bRunning = true;
+	if( m_pcSMacroMgr->IsEnabled(idx) ){
+		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
+			if( NULL != pszSaveFilePath )
+				strcpy( m_szSaveFilePath, pszSaveFilePath );
+			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
+			HandleCommand(( F_USERMACRO_0 + idx ) | FA_NONRECORD );
+			m_szSaveFilePath[0] = '\0';
+		}
+	}
+	bRunning = false;
 }
 
 /*[EOF]*/

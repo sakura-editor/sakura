@@ -13,7 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, Moca, genta, aroka
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
@@ -144,6 +144,7 @@ public:
 
 	//	Sep. 9, 2002 genta
 	const char* GetFilePath(void) const { return m_szFilePath; }
+	const char* GetSaveFilePath(void) const { return (m_szSaveFilePath[0] != '\0')? m_szSaveFilePath: m_szFilePath; }
 	bool IsFilePathAvailable(void) const { return m_szFilePath[0] != '\0'; }
 	//	2002.10.13 Moca
 	const char* GetFileName(void) const; //!< ファイル名(パスなし)を取得
@@ -223,6 +224,8 @@ public:
 	bool IsInsMode() const { return m_bInsMode; }
 	void SetInsMode(bool mode) { m_bInsMode = mode; }
 
+	void RunAutoMacro( int idx, const char *pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
+
 	// 2007.09.09 Moca 互換BMPによる画面バッファ 
 	void DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
 
@@ -237,9 +240,10 @@ protected:
 	bool			m_bIsModified;
 	//	Sep. 9, 2002 genta protectedに移動
 	char			m_szFilePath[_MAX_PATH];	/* 現在編集中のファイルのパス */
+	char			m_szSaveFilePath[_MAX_PATH];	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 	
 	void SetFilePath(const char*);	// Sep. 9, 2002 genta
-
+	
 public: /* テスト用にアクセス属性を変更 */
 	/* 入力補完 */
 	CHokanMgr		m_cHokanMgr;

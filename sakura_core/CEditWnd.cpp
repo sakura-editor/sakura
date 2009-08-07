@@ -2116,7 +2116,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 				/* コマンドコードによる処理振り分け */
 				//	May 19, 2006 genta 上位ビットを渡す
-				m_cEditDoc.HandleCommand( MAKELONG( wID, wNotifyCode ));
+				//	Jul. 7, 2007 genta 上位ビットを定数に
+				m_cEditDoc.HandleCommand( wID | 0 );
 			}
 			break;
 		}
@@ -2133,7 +2134,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			m_pShareData->m_pKeyNameArr
 		);
 //		MYTRACE( "CEditWnd::OnCommand()  nFuncCode=%d\n", nFuncCode );
-		m_cEditDoc.HandleCommand( MAKELONG( nFuncCode, wNotifyCode ) );
+		m_cEditDoc.HandleCommand( nFuncCode | FA_FROMKEYBOARD );
 		break;
 
 	case CBN_SETFOCUS:
@@ -3028,8 +3029,9 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						/* 変更フラグがオフで、ファイルを読み込んでいない場合 */
 						//	2005.06.24 Moca
 						if( m_cEditDoc.IsFileOpenInThisWindow() ){
+								BOOL bRet;
 								/* ファイル読み込み */
-								m_cEditDoc.FileRead(
+								bRet = m_cEditDoc.FileRead(
 										szFile,
 										&bOpened,
 										CODE_AUTODETECT,	/* 文字コード自動判別 */
@@ -3042,6 +3044,10 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 								// 2007.06.17 maru すでに開いているかチェック済みだが
 								// ドロップされたのはフォルダかもしれないので再チェック
 								if(FALSE==bOpened) ActivateFrameWindow( hWndOwner );
+
+								// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+								// 2007.06.27 maru すでに編集ウィンドウは開いているのでFileReadがキャンセルされたときは開くマクロを実行する必要なし
+								if(TRUE==bRet) m_cEditDoc.RunAutoMacro( m_pShareData->m_nMacroOnOpened );
 						}else{
 								/* ファイルをドロップしたときは閉じて開く */
 								if( m_pShareData->m_Common.m_bDropFileAndClose ){
@@ -3069,6 +3075,9 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 												hWndOwner = m_hWnd;
 												/* アクティブにする */
 												ActivateFrameWindow( hWndOwner );
+
+												// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+												m_cEditDoc.RunAutoMacro( m_pShareData->m_nMacroOnOpened );
 										}
 										goto end_of_drop_query;
 								}else{

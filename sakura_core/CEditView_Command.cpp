@@ -79,7 +79,8 @@ BOOL CEditView::HandleCommand(
 
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
 	//	下位16ビットのみを取り出す
-	int	nCommandFrom = HIWORD( nCommand );
+	//	Jul.  7, 2007 genta 定数と比較するためにシフトしないで使う
+	int nCommandFrom = nCommand & ~0xffff;
 	nCommand = LOWORD( nCommand );
 
 	//	Oct. 30, 2004 genta
@@ -116,6 +117,10 @@ BOOL CEditView::HandleCommand(
 	TranslateCommand_grep( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 	TranslateCommand_isearch( nCommand, bRedraw, lparam1, lparam2, lparam3, lparam4 );
 
+#ifdef _DEBUG
+//	::MYTRACE( "Command %d, flags = %08x\n", nCommand, nCommandFrom );
+#endif
+
 	//	Aug, 14. 2000 genta
 	if( m_pcEditDoc->IsModificationForbidden( nCommand ) ){
 		return TRUE;
@@ -146,12 +151,14 @@ BOOL CEditView::HandleCommand(
 	}
 	m_bPrevCommand = nCommand;
 	if( m_pShareData->m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
-		m_pShareData->m_hwndRecordingKeyMacro == ::GetParent( m_hwndParent )	/* キーボードマクロを記録中のウィンドウ */
+		m_pShareData->m_hwndRecordingKeyMacro == ::GetParent( m_hwndParent ) &&	/* キーボードマクロを記録中のウィンドウ */
+		( nCommandFrom & FA_NONRECORD ) != FA_NONRECORD	/* 2007.07.07 genta 記録抑制フラグ off */
 	){
 		/* キーリピート状態をなくする */
 		bRepeat = FALSE;
 		/* キーマクロに記録可能な機能かどうかを調べる */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+		//F_EXECEXTMACROコマンドはファイルを選択した後にマクロ文が確定するため個別に記録する。
 		if( CSMacroMgr::CanFuncIsKeyMacro( nCommand ) &&
 			nCommand != F_EXECEXTMACRO	//F_EXECEXTMACROは個別で記録します
 		){
@@ -160,6 +167,12 @@ BOOL CEditView::HandleCommand(
 			m_pcEditDoc->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, this );
 		}
 	}
+	
+	//	2007.07.07 genta マクロ実行中フラグの設定
+	//	マクロからのコマンドかどうかはnCommandFromでわかるが
+	//	nCommandFromを引数で浸透させるのが大変なので，従来のフラグにも値をコピーする
+	m_bExecutingKeyMacro = ( nCommandFrom & FA_FROMMACRO ) ? TRUE : FALSE;
+	
 	/* キーボードマクロの実行中 */
 	if( m_bExecutingKeyMacro ){
 		/* キーリピート状態をなくする */
@@ -168,15 +181,14 @@ BOOL CEditView::HandleCommand(
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
-		m_bExecutingKeyMacro = TRUE;
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !m_pcEditDoc->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, m_hInstance, this )){
+		if( !m_pcEditDoc->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, m_hInstance, this,
+			nCommandFrom & FA_NONRECORD )){
 			::MYMESSAGEBOX( m_hwndParent,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 				"マクロ %d (%s) の実行に失敗しました。", nCommand - F_USERMACRO_0,
 				m_pcEditDoc->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
 		}
-		m_bExecutingKeyMacro = FALSE;
 		return TRUE;
 	}
 	//	To Here Sep. 29, 2001 genta マクロの実行機能追加
@@ -4274,6 +4286,9 @@ void CEditView::Command_TYPE_LIST( void )
 			/* 設定変更を反映させる */
 			m_pcEditDoc->m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
 			m_pcEditDoc->OnChangeSetting();
+
+			// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
+			m_pcEditDoc->RunAutoMacro( m_pShareData->m_nMacroOnTypeChanged );
 		}
 		else{
 			/* タイプ別設定 */
@@ -9099,9 +9114,6 @@ void CEditView::Command_EXECKEYMACRO( void )
 	m_pShareData->m_bRecordingKeyMacro = FALSE;
 	m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
-	/* キーボードマクロの実行中 */
-	m_bExecutingKeyMacro = TRUE;
-
 	/* キーボードマクロの実行 */
 	//@@@ 2002.1.24 YAZAKI
 	if ( m_pShareData->m_szKeyMacroFileName[0] ){
@@ -9115,13 +9127,11 @@ void CEditView::Command_EXECKEYMACRO( void )
 		}
 		else {
 //			m_pcEditDoc->m_CKeyMacroMgr.ExecKeyMacro( this );
-			m_pcEditDoc->m_pcSMacroMgr->Exec( STAND_KEYMACRO, m_hInstance, this );
+			//	2007.07.20 genta : flagsオプション追加
+			m_pcEditDoc->m_pcSMacroMgr->Exec( STAND_KEYMACRO, m_hInstance, this, 0 );
 		}
 	}
 //	m_pShareData->m_CKeyMacroMgr.ExecKeyMacro( (void*)this );
-
-	/* キーボードマクロの実行中 */
-	m_bExecutingKeyMacro = FALSE;
 
 	/* フォーカス移動時の再描画 */
 	RedrawAll();
@@ -9227,11 +9237,11 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath )
 	);
 	if ( !bLoadResult ){
 		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", pszPath
+			"マクロの読み込みに失敗しました。\n\n%s", pszPath
 		);
 	}
 	else {
-		m_pcEditDoc->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, m_hInstance, this );
+		m_pcEditDoc->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, m_hInstance, this, FA_NONRECORD | FA_FROMMACRO );
 	}
 
 	// 終わったら開放

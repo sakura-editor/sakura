@@ -165,7 +165,8 @@ private:
 
 public:
 	// exported
-	void Execute(class CEditView* pcEditView );
+	//	2007.07.22 genta : flags追加
+	void Execute(class CEditView* pcEditView, int flags );
 	void SetSource(const char* ss)
 		{ m_fnSetSource(ss); }
 	void SetDeclare(const char* ss)
@@ -257,13 +258,26 @@ private:
 	//	メンバ変数
 	char		m_szMsg[80];		//!< CPPAからのメッセージを保持する
 
-	static CMemory			m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
-	static CEditView*		m_pcEditView;	//	2003.06.01 Moca
-	static DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
-	static bool				m_bError;		//<! エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-	static CMemory			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
+	//	2007.07.26 genta : PPAのネストを許容するために，別データ構造とする．
+	
+	struct PpaExecInfo {
+		CMemory			m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
+		CEditView*		m_pcEditView;	//	2003.06.01 Moca
+		DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
+		bool				m_bError;		//<! エラーが2回表示されるのを防ぐ	2003.06.01 Moca
+		CMemory			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
+		/** オプションフラグ
+		
+			CEditView::HandleCommand()にコマンドと一緒に渡すことで
+			コマンドの素性を教える．
+		*/
+		int				m_commandflags;	//<! 
+	};
+	//	2007.07.26 genta : 現在実行中のインスタンス
+	static PpaExecInfo* m_CurInstance;
 	//PPAの多重起動禁止 2008.10.22 syat
 	static bool				m_bIsRunning;	//!< PPAが同時実行されるのを防ぐ
+
 
 /*	関数名はCMacroが持つ。
 	static struct MacroFuncInfo	S_Table[];

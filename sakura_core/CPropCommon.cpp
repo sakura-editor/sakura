@@ -580,6 +580,9 @@ void CPropCommon::InitData( void )
 		m_MacroTable[i] = m_pShareData->m_MacroTable[i];
 	}
 	memcpy( m_szMACROFOLDER, m_pShareData->m_szMACROFOLDER, sizeof( m_pShareData->m_szMACROFOLDER ) );
+	m_nMacroOnOpened = m_pShareData->m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	m_nMacroOnTypeChanged = m_pShareData->m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	m_nMacroOnSave = m_pShareData->m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 	// ファイル名簡易表示関係
 	memcpy( m_szTransformFileNameFrom, m_pShareData->m_szTransformFileNameFrom,
@@ -618,6 +621,9 @@ void CPropCommon::ApplyData( void )
 		m_pShareData->m_MacroTable[i] = m_MacroTable[i];
 	}
 	memcpy( m_pShareData->m_szMACROFOLDER, m_szMACROFOLDER, sizeof( m_pShareData->m_szMACROFOLDER ) );
+	m_pShareData->m_nMacroOnOpened = m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	m_pShareData->m_nMacroOnTypeChanged = m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	m_pShareData->m_nMacroOnSave = m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 	// ファイル名簡易表示関係
 	// 念のため，書き換える前に 0 を設定しておく

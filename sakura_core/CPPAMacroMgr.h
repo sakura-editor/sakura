@@ -19,6 +19,7 @@
 #include <windows.h>
 #include "CKeyMacroMgr.h"
 #include "CMemory.h"
+#include "CPPA.h"
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -36,7 +37,7 @@ public:
 	/*
 	||	PPA.DLLに委譲する部分
 	*/
-	virtual void ExecKeyMacro( class CEditView* pcEditView ) const;				/* キーボードマクロの実行 */
+	virtual void ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* PPAマクロの実行 */
 	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);	/* キーボードマクロを読み込み、CMacroの列に変換 */
 
 	static class CPPA m_cPPA;

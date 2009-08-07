@@ -54,6 +54,9 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_MACROLIST,		HIDC_MACROLIST,		//マクロリスト
 	IDC_MACRODIR,		HIDC_MACRODIR,		//マクロ一覧
 	IDC_CHECK_RELOADWHENEXECUTE,	HIDC_CHECK_RELOADWHENEXECUTE,	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
+	IDC_CHECK_MacroOnOpened,		HIDC_CHECK_MacroOnOpened,		//オープン後自動実行マクロ	// 2006.09.01 ryoji
+	IDC_CHECK_MacroOnTypeChanged,	HIDC_CHECK_MacroOnTypeChanged,	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
+	IDC_CHECK_MacroOnSave,			HIDC_CHECK_MacroOnSave,			//保存前自動実行マクロ	// 2006.09.01 ryoji
 //	IDC_STATIC,			-1,
 	0, 0
 };
@@ -245,6 +248,22 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 		sItem.iSubItem = 3;
 		sItem.pszText = m_pShareData->m_MacroTable[index].m_bReloadWhenExecute ? "on" : "off";
 		ListView_SetItem( hListView, &sItem );
+
+		// 自動実行マクロ	// 2006.09.01 ryoji
+		TCHAR szText[8];
+		szText[0] = _T('\0');
+		if( index == m_pShareData->m_nMacroOnOpened )
+			::lstrcat(szText, _T("O"));
+		if( index == m_pShareData->m_nMacroOnTypeChanged )
+			::lstrcat(szText, _T("T"));
+		if( index == m_pShareData->m_nMacroOnSave )
+			::lstrcat(szText, _T("S"));
+		memset( &sItem, 0, sizeof( sItem ));
+		sItem.iItem = index;
+		sItem.mask = LVIF_TEXT;
+		sItem.iSubItem = 4;
+		sItem.pszText = szText;
+		ListView_SetItem( hListView, &sItem );
 	}
 	
 	//	マクロディレクトリ
@@ -276,6 +295,11 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 
 	int index;
 	LVITEM sItem;
+
+	// 自動実行マクロ変数初期化	// 2006.09.01 ryoji
+	m_nMacroOnOpened = -1;
+	m_nMacroOnTypeChanged = -1;
+	m_nMacroOnSave = -1;
 
 	//	マクロデータ
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
@@ -313,6 +337,28 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		else {
 			m_MacroTable[index].m_bReloadWhenExecute = FALSE;
 		}
+
+		// 自動実行マクロ	// 2006.09.01 ryoji
+		memset( &sItem, 0, sizeof( sItem ));
+		sItem.iItem = index;
+		sItem.mask = LVIF_TEXT;
+		sItem.iSubItem = 4;
+		TCHAR szText[8];
+		sItem.pszText = szText;
+		sItem.cchTextMax = sizeof(szText) / sizeof(TCHAR);
+		ListView_GetItem( hListView, &sItem );
+		int i;
+		int nLen;
+		nLen = ::lstrlen(szText);
+		for( i = 0; i < nLen; i++)
+		{
+			if( szText[i] == _T('O') )
+				m_nMacroOnOpened = index;
+			if( szText[i] == _T('T') )
+				m_nMacroOnTypeChanged = index;
+			if( szText[i] == _T('S') )
+				m_nMacroOnSave = index;
+		}
 	}
 
 	//	マクロディレクトリ
@@ -331,9 +377,10 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 		int width;
 	} ColumnList[] = {
 		{ "番号", 40 },
-		{ "マクロ名", 180 },
-		{ "ファイル名", 180 },
+		{ "マクロ名", 150 },
+		{ "ファイル名", 150 },
 		{ "実行時に読み込み", 40 },
+		{ "自動実行", 40 },
 	};
 
 	//	ListViewの初期化
@@ -442,6 +489,61 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 	sItem.iSubItem = 3;
 	sItem.pszText = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? "on" : "off";
 	ListView_SetItem( hListView, &sItem );
+
+	// 自動実行マクロ	// 2006.09.01 ryoji
+	int nMacroOnOpened = -1;
+	int nMacroOnTypeChanged = -1;
+	int nMacroOnSave = -1;
+	TCHAR szText[8];
+	int iItem;
+	for( iItem = 0; iItem < MAX_CUSTMACRO; iItem++){
+		memset( &sItem, 0, sizeof( sItem ));
+		sItem.iItem = iItem;
+		sItem.mask = LVIF_TEXT;
+		sItem.iSubItem = 4;
+		sItem.pszText = szText;
+		sItem.cchTextMax = sizeof(szText) / sizeof(TCHAR);
+		ListView_GetItem( hListView, &sItem );
+		int i;
+		int nLen;
+		nLen = ::lstrlen(szText);
+		for( i = 0; i < nLen; i++)
+		{
+			if( szText[i] == _T('O') )
+				nMacroOnOpened = iItem;
+			if( szText[i] == _T('T') )
+				nMacroOnTypeChanged = iItem;
+			if( szText[i] == _T('S') )
+				nMacroOnSave = iItem;
+		}
+	}
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MacroOnOpened ) )
+		nMacroOnOpened = index;
+	else if( nMacroOnOpened == index )
+		nMacroOnOpened = -1;
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MacroOnTypeChanged ) )
+		nMacroOnTypeChanged = index;
+	else if( nMacroOnTypeChanged == index )
+		nMacroOnTypeChanged = -1;
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MacroOnSave ) )
+		nMacroOnSave = index;
+	else if( nMacroOnSave == index )
+		nMacroOnSave = -1;
+	for( iItem = 0; iItem < MAX_CUSTMACRO; iItem++){
+		szText[0] = _T('\0');
+		if( iItem == nMacroOnOpened )
+			::lstrcat(szText, _T("O"));
+		if( iItem == nMacroOnTypeChanged )
+			::lstrcat(szText, _T("T"));
+		if( iItem == nMacroOnSave )
+			::lstrcat(szText, _T("S"));
+		memset( &sItem, 0, sizeof( sItem ));
+		sItem.iItem = iItem;
+		sItem.mask = LVIF_TEXT;
+		sItem.iSubItem = 4;
+		sItem.pszText = szText;
+		ListView_SetItem( hListView, &sItem );
+	}
 }
 
 /*!
@@ -595,6 +697,31 @@ void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
 	}
 	else {
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, false );
+	}
+
+	// 自動実行マクロ	// 2006.09.01 ryoji
+	memset( &sItem, 0, sizeof( sItem ));
+	sItem.iItem = current;
+	sItem.mask = LVIF_TEXT;
+	sItem.iSubItem = 4;
+	TCHAR szText[8];
+	sItem.pszText = szText;
+	sItem.cchTextMax = sizeof(szText) / sizeof(TCHAR);
+	ListView_GetItem( hListView, &sItem );
+	int i;
+	int nLen;
+	nLen = ::lstrlen(szText);
+	::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnOpened, false );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnTypeChanged, false );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnSave, false );
+	for( i = 0; i < nLen; i++)
+	{
+		if( szText[i] == _T('O') )
+			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnOpened, true );
+		if( szText[i] == _T('T') )
+			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnTypeChanged, true );
+		if( szText[i] == _T('S') )
+			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnSave, true );
 	}
 }
 

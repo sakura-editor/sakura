@@ -22,9 +22,39 @@
 #ifndef _FUNCCODE_H_
 #define _FUNCCODE_H_
 
+/*	コマンドコード
+
+	エディタ内部で使われるコマンド番号．16bitの数値．
+
+	Windows 95では32768以上のコマンドをメニューやアクセラレータに設定すると
+	動作しない．
+
+	30000-32767 : 機能番号．メニューやキーに割り当てられる．
+	32768-39999 : メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能
+	40000-49511 : マクロ関数
+	49512-      : 変換コマンド．状況に応じて機能を置き換える場合に用いる
+
+	HandleCommandの引数としては32bit幅だが，上位16bitはコマンドが送られた状況を
+	通知するために使用する．
+
+	[参考]
+	10000- : ウィンドウ一覧で使用する
+	11000- : 最近使ったファイルで使用する
+	12000- : 最近使ったフォルダで使用する
+
+*/
+
 /* 未定義用(ダミーとしても使う) */	//Oct. 17, 2000 jepro noted
 #define F_DISABLE		0	//未使用
 #define F_SEPARATOR		1	//セパレータ
+
+//	2007.07.07 genta 状況通知フラグ
+//	コマンドが送られた状況をコマンドと併せて通知する．
+enum FunctionAttribute {
+	FA_FROMKEYBOARD		 = 0x00010000,	//!< キーボードアクセラレータからのコマンド
+	FA_FROMMACRO		 = 0x00020000,	//!< マクロからのコマンド実行
+	FA_NONRECORD		 = 0x00040000,	//!< マクロへの記録を抑制する
+};
 
 #define F_MENU_FIRST 30000
 
@@ -436,6 +466,7 @@
 #define F_FUNCTION_FIRST  40000 // 2003-02-21 鬼 これ以上だと関数
 
 #define F_GETFILENAME     40001 /* 編集中のファイル名を取得する */
+#define F_GETSAVEFILENAME 40018 /* 保存時のファイル名を取得する */	// 2006.09.04 ryoji
 #define F_GETSELECTED     40002 // Oct. 19, 2002 genta 選択範囲の取得
 #define F_EXPANDPARAMETER 40003 // 2003-02-21 鬼 コマンドラインパラメータ展開
 #define F_GETLINESTR      40004 // 指定行論理データを取得する 2003.06.25 Moca
@@ -452,11 +483,15 @@
 #define F_ISPOSSIBLEUNDO  40015 // Undo可能か調べる 2005.08.05 maru
 #define F_ISPOSSIBLEREDO  40016 // Redo可能か調べる 2005.08.05 maru
 #define F_CHGWRAPCOLM     40017 // 折り返し桁を取得、設定する 2008.06.19 ryoji
+#define F_ISCURTYPEEXT    40019 // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+#define F_ISSAMETYPEEXT   40020 // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+
 
 //	2005.01.10 genta ISearch用補助コード
-#define F_ISEARCH_ADD_CHAR	0x10001	//	Incremental Searchへ1文字へ追加
-#define F_ISEARCH_ADD_STR	0x10002	//	Incremental Searchへ文字列へ追加
-#define F_ISEARCH_DEL_BACK	0x10003	//	Incremental Searchの末尾から1文字削除
+//	2007.07.07 genta 16bit以内に収めないと状況コードと衝突するのでコードを変更
+#define F_ISEARCH_ADD_CHAR	0xC001	//	Incremental Searchへ1文字へ追加
+#define F_ISEARCH_ADD_STR	0xC002	//	Incremental Searchへ文字列へ追加
+#define F_ISEARCH_DEL_BACK	0xC003	//	Incremental Searchの末尾から1文字削除
 
 /* 機能一覧に関するデータ宣言 */
 namespace nsFuncCode{

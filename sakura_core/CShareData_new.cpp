@@ -1490,6 +1490,9 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 		wsprintf( szKeyName, "ReloadWhenExecute[%03d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_bReloadWhenExecute );
 	}
+	cProfile.IOProfileData( pszSecName, "nMacroOnOpened", m_pShareData->m_nMacroOnOpened );	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnTypeChanged", m_pShareData->m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnSave", m_pShareData->m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 }
 
 /*!

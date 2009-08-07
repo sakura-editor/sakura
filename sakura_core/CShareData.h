@@ -679,6 +679,9 @@ struct DLLSHAREDATA {
 	
 	//	Sep. 14, 2001 genta
 	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
+	int					m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int					m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int					m_nMacroOnSave;				/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 	// 2004/06/21 タグジャンプ機能追加
 	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数

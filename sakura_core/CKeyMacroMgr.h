@@ -54,7 +54,8 @@ public:
 	/* キーボードマクロをまとめて取り扱う */
 	BOOL SaveKeyMacro( HINSTANCE hInstance, const char* pszPath) const;	/* CMacroの列を、キーボードマクロに保存 */
 	//@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
-	virtual void ExecKeyMacro( class CEditView* pcEditView ) const;				/* キーボードマクロの実行 */
+	//	2007.07.20 genta flags追加
+	virtual void ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* キーボードマクロの実行 */
 	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);		/* キーボードマクロを読み込み、CMacroの列に変換 */
 	
 	/* キーボードマクロが読み込み済みか確認する */

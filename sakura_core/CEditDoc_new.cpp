@@ -565,6 +565,9 @@ void CEditDoc::ReloadAutoSaveParam(void)
 //
 bool CEditDoc::SaveFile( const char* pszPath )
 {
+	// 2006.09.01 ryoji 保存前自動実行マクロを実行する
+	RunAutoMacro( m_pShareData->m_nMacroOnSave, pszPath );
+
 	if( FileWrite( pszPath, m_cSaveLineCode ) ){
 		SetModified(false,true);	//	Jan. 22, 2002 genta
 
@@ -1298,10 +1301,15 @@ void CEditDoc::OpenFile( const char *filename, int nCharCode, BOOL bReadOnly )
 //@@@ 2001.12.26 YAZAKI Grep結果で無い場合も含める。
 		if( IsFileOpenInThisWindow()
 		){
+			BOOL bRet;
 			/* ファイル読み込み */
 			//	Oct. 03, 2004 genta コード確認は設定に依存
-			FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
+			bRet = FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
 							m_pShareData->m_Common.m_bQueryIfCodeChange );
+
+			// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+			// 2007.06.27 maru すでに編集ウィンドウは開いているので、FileReadがキャンセルされた場合は開くマクロは実行不要
+			if(TRUE==bRet) RunAutoMacro( m_pShareData->m_nMacroOnOpened );
 		}else{
 			if( strchr( pszPath, ' ' ) ){
 				char	szFile2[_MAX_PATH + 3];
@@ -1380,6 +1388,9 @@ void CEditDoc::FileClose( void )
 
 	/* 親ウィンドウのタイトルを更新 */
 	SetParentCaption();
+
+	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+	RunAutoMacro( m_pShareData->m_nMacroOnOpened );
 
 	return;
 }

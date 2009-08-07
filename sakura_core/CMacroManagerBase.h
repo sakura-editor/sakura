@@ -42,9 +42,12 @@ public:
 
 	/*! キーボードマクロの実行
 	
-		@param pcEditView [in] マクロ実行対象の編集ウィンドウ
+		@param[in] pcEditView マクロ実行対象の編集ウィンドウ
+		@param[in] flags マクロ実行属性．
+		
+		@date 2007.07.20 genta マクロ実行属性を渡すためにflagsを追加
 	*/
-	virtual void ExecKeyMacro( class CEditView* pcEditView ) const = 0;
+	virtual void ExecKeyMacro( class CEditView* pcEditView, int flags ) const = 0;
 	
 	/*! キーボードマクロを読み込む
 

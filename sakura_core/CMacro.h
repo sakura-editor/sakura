@@ -50,7 +50,8 @@ public:
 
 	void SetNext(CMacro* pNext){ m_pNext = pNext; };
 	CMacro* GetNext(){ return m_pNext;};
-	void Exec( CEditView* pcEditView );
+	// 2007.07.20 genta : flags’Ç‰Á
+	void Exec( CEditView* pcEditView, int flags );
 	void Save( HINSTANCE hInstance, HFILE hFile );
 	
 	void AddLParam( LPARAM lParam, CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditView‚à“n‚·
