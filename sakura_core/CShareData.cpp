@@ -1186,45 +1186,62 @@ void CShareData::SaveShareData( void )
 }
 
 
+/** いくつかのウィンドウへ終了要求を出す
 
-
-/** 全編集ウィンドウへ終了要求を出す
-
+	@param pWndArr [in] EditNodeの配列。m_hWndがNULLの要素は処理しない
+	@param nArrCnt [in] pWndArrの長さ
 	@param bExit [in] TRUE: 編集の全終了 / FALSE: すべて閉じる
 	@param nGroup [in] グループ指定（0:全グループ）
+	@param bCheckConfirm [in] FALSE:複数ウィンドウを閉じるときの警告を出さない / TRUE:警告を出す（設定による）
+	@param hWndFrom [in] 終了要求元のウィンドウ（警告メッセージの親となる）
 
 	@date 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
 	@date 2007.06.22 ryoji nGroup引数を追加
+	@date 2009.07.20 syat 全て→いくつかに変更。複数ウィンドウを閉じる時の警告メッセージを追加
 */
-BOOL CShareData::RequestCloseAllEditor( BOOL bExit, int nGroup )
+BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, int nGroup, BOOL bCheckConfirm, HWND hWndFrom )
 {
-	EditNode*	pWndArr;
-	int		i;
-	int		n;
+	int nCloseCount = 0;
 
-	n = GetOpenedWindowArr( &pWndArr, FALSE );
-	if( 0 == n ){
-		return TRUE;
+	/* クローズ対象ウィンドウの数を調べる */
+	for( int i = 0; i < nArrCnt; i++){
+		if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
+			if( pWndArr[i].m_hWnd ){
+				nCloseCount++;
+			}
+		}
 	}
 
-	for( i = 0; i < n; ++i ){
+	if( bCheckConfirm && GetShareData()->m_Common.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
+		if( 1 < nCloseCount ){
+			if( IDYES != ::MYMESSAGEBOX(
+				hWndFrom,
+				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
+				GSTR_APPNAME,
+				"同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?"
+			) ){
+				return FALSE;
+			}
+		}
+	}
+
+	for( int i = 0; i < nArrCnt; ++i ){
+		/* m_hWndにNULLを設定したEditNodeはとばす */
+		if( pWndArr[i].m_hWnd == NULL )continue;
+
 		if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
 			if( IsEditWnd( pWndArr[i].m_hWnd ) ){
 				/* アクティブにする */
 				ActivateFrameWindow( pWndArr[i].m_hWnd );
 				/* トレイからエディタへの終了要求 */
 				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit, 0 ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
-					delete []pWndArr;
 					return FALSE;
 				}
 			}
 		}
 	}
-
-	delete []pWndArr;
 	return TRUE;
 }
-
 
 
 /*!
@@ -5714,6 +5731,21 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_GROUPCLOSE;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'G';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSEOTHER;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'O';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSELEFT;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'H';
+	n++;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSERIGHT;
+	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'M';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';

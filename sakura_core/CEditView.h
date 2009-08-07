@@ -917,6 +917,9 @@ void ReplaceData_CEditView(
 	void Command_TAB_SEPARATE( void );	/* 新規グループ */			// 2007.06.20 ryoji
 	void Command_TAB_JOINTNEXT( void );	/* 次のグループに移動 */	// 2007.06.20 ryoji
 	void Command_TAB_JOINTPREV( void );	/* 前のグループに移動 */	// 2007.06.20 ryoji
+	void Command_TAB_CLOSEOTHER( void );/* このタブ以外を閉じる */	// 2009.07.20 syat
+	void Command_TAB_CLOSELEFT( void );	/* 左をすべて閉じる */		// 2009.07.20 syat
+	void Command_TAB_CLOSERIGHT( void );/* 右をすべて閉じる */		// 2009.07.20 syat
 
 	/* 支援 */
 	//	Jan. 10, 2005 genta HandleCommandから補完関連処理を分離

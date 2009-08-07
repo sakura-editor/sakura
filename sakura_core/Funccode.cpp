@@ -429,6 +429,9 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_TAB_SEPARATE		,	//新規グループ	// 2007.06.20 ryoji
 	F_TAB_JOINTNEXT		,	//次のグループに移動	// 2007.06.20 ryoji
 	F_TAB_JOINTPREV		,	//前のグループに移動	// 2007.06.20 ryoji
+	F_TAB_CLOSEOTHER	,	//このタブ以外を閉じる	// 2009.07.20 syat
+	F_TAB_CLOSELEFT 	,	//左をすべて閉じる		// 2009.07.20 syat
+	F_TAB_CLOSERIGHT	,	//右をすべて閉じる		// 2009.07.20 syat
 	F_MAXIMIZE_V		,	//縦方向に最大化
 	F_MAXIMIZE_H		,	//横方向に最大化 //2001.02.10 by MIK
 	F_MINIMIZE_ALL		,	//すべて最小化	//Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一

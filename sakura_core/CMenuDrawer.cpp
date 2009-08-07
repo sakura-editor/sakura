@@ -432,7 +432,7 @@ CMenuDrawer::CMenuDrawer()
 /* 285 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 286 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 287 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 288 */		F_DISABLE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 288 */		F_TAB_CLOSEOTHER		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//このタブ以外を閉じる		// 2009.07.20 syat,ウィンドウ系に空きがないので上の行を侵食
 
 /* カスタムメニュー(10段目32個: 289-320) */
 /* 289 */		F_MENU_RBUTTON				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//右クリックメニュー 	//Sept. 30, 2000 JEPRO 追加
@@ -465,8 +465,8 @@ CMenuDrawer::CMenuDrawer()
 /* 316 */		F_TAB_SEPARATE				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規グループ	// 2007.06.20 ryoji
 /* 317 */		F_TAB_JOINTNEXT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//次のグループに移動	// 2007.06.20 ryoji
 /* 318 */		F_TAB_JOINTPREV				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//前のグループに移動	// 2007.06.20 ryoji
-/* 319 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 320 */		F_DISABLE					/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 319 */		F_TAB_CLOSERIGHT			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//右をすべて閉じる		// 2009.07.20 syat
+/* 320 */		F_TAB_CLOSELEFT				/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//左をすべて閉じる		// 2009.07.20 syat
 
 /* ウィンドウ系(11段目22個: 321-342) */
 /* 321 */		F_SPLIT_V		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//上下に分割	//Sept. 16, 2000 jepro 説明を「縦」から「上下に」に変更

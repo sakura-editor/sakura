@@ -663,6 +663,9 @@ BOOL CEditView::HandleCommand(
 	case F_TAB_SEPARATE:	Command_TAB_SEPARATE();break;	/* 新規グループ */			// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTNEXT:	Command_TAB_JOINTNEXT();break;	/* 次のグループに移動 */	// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTPREV:	Command_TAB_JOINTPREV();break;	/* 前のグループに移動 */	// 2007.06.20 ryoji 追加
+	case F_TAB_CLOSEOTHER:	Command_TAB_CLOSEOTHER();break;	/* このタブ以外を閉じる */	// 2009.07.20 syat 追加
+	case F_TAB_CLOSELEFT:	Command_TAB_CLOSELEFT();break;	/* 左をすべて閉じる */		// 2009.07.20 syat 追加
+	case F_TAB_CLOSERIGHT:	Command_TAB_CLOSERIGHT();break;	/* 右をすべて閉じる */		// 2009.07.20 syat 追加
 
 	/* 支援 */
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完
@@ -9768,6 +9771,89 @@ void CEditView::Command_TAB_JOINTPREV( void )
 	if( pcTabWnd->m_hWnd == NULL )
 		return;
 	pcTabWnd->JoinPrev();
+}
+
+/* このタブ以外を閉じる */	// 2009.07.20 syat
+void CEditView::Command_TAB_CLOSEOTHER( void )
+{
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+		int nGroup = 0;
+
+		// ウィンドウ一覧を取得する
+		EditNode* pEditNode;
+		int nCount = CShareData::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		if( 0 >= nCount )return;
+
+		for( int i = 0; i < nCount; i++ ){
+			if( pEditNode[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
+				nGroup = pEditNode[i].m_nGroup;
+			}
+		}
+
+		//終了要求を出す
+		CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditDoc->m_hwndParent );
+		delete []pEditNode;
+	}
+	return;
+}
+
+/* 左をすべて閉じる */		// 2009.07.20 syat
+void CEditView::Command_TAB_CLOSELEFT( void )
+{
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+		int nGroup = 0;
+
+		// ウィンドウ一覧を取得する
+		EditNode* pEditNode;
+		int nCount = CShareData::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		BOOL bSelfFound = FALSE;
+		if( 0 >= nCount )return;
+
+		for( int i = 0; i < nCount; i++ ){
+			if( pEditNode[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
+				nGroup = pEditNode[i].m_nGroup;
+				bSelfFound = TRUE;
+			}else if( bSelfFound ){
+				pEditNode[i].m_hWnd = NULL;		//右は閉じない
+			}
+		}
+
+		//終了要求を出す
+		CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditDoc->m_hwndParent );
+		delete []pEditNode;
+	}
+	return;
+}
+
+/* 右をすべて閉じる */		// 2009.07.20 syat
+void CEditView::Command_TAB_CLOSERIGHT( void )
+{
+	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+		int nGroup = 0;
+
+		// ウィンドウ一覧を取得する
+		EditNode* pEditNode;
+		int nCount = CShareData::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		BOOL bSelfFound = FALSE;
+		if( 0 >= nCount )return;
+
+		for( int i = 0; i < nCount; i++ ){
+			if( pEditNode[i].m_hWnd == m_pcEditDoc->m_hwndParent ){
+				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
+				nGroup = pEditNode[i].m_nGroup;
+				bSelfFound = TRUE;
+			}else if( !bSelfFound ){
+				pEditNode[i].m_hWnd = NULL;		//左は閉じない
+			}
+		}
+
+		//終了要求を出す
+		CShareData::getInstance()->RequestCloseEditor( pEditNode, nCount, FALSE, nGroup, TRUE, m_pcEditDoc->m_hwndParent );
+		delete []pEditNode;
+	}
+	return;
 }
 
 /* 	上書き用の一文字削除	2009.04.11 ryoji */

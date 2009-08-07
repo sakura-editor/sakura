@@ -434,6 +434,9 @@ enum FunctionAttribute {
 #define F_TAB_SEPARATE		31385	/* 新規グループ */	// 2007.06.20 ryoji
 #define F_TAB_JOINTNEXT		31386	/* 次のグループに移動 */	// 2007.06.20 ryoji
 #define F_TAB_JOINTPREV		31387	/* 前のグループに移動 */	// 2007.06.20 ryoji
+#define F_TAB_CLOSEOTHER	31388	/* このタブ以外を閉じる */	// 2009.07.20 syat
+#define F_TAB_CLOSELEFT		31389	/* 左をすべて閉じる */		// 2009.07.20 syat
+#define F_TAB_CLOSERIGHT	31390	/* 右をすべて閉じる */		// 2009.07.20 syat
 
 
 /* 支援 */

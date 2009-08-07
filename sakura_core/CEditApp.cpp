@@ -1565,29 +1565,19 @@ void CEditApp::TerminateApplication( HWND hWndFrom )
 */
 BOOL CEditApp::CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit, int nGroup )
 {
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();	/* 共有データ構造体のアドレスを返す */
+	EditNode*	pWndArr;
+	int		n;
+	BOOL	ret;
 
-	/* 現在の編集ウィンドウの数を調べる */
-	if( bCheckConfirm && pShareData->m_Common.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
-		int nCount = CShareData::getInstance()->IsEditWnd( hWndFrom )? 1: 0;	// 呼び出し元が編集ウィンドウなら編集ウィンドウが複数の場合に確認する
-		if( nCount < CShareData::getInstance()->GetEditorWindowsNum( nGroup ) ){
-			if( IDYES != ::MYMESSAGEBOX(
-				hWndFrom,
-				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
-				GSTR_APPNAME,
-				"同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?"
-			) ){
-				return FALSE;
-			}
-		}
-	}
-
-	/* 全編集ウィンドウへ終了要求を出す */
-	if( !CShareData::getInstance()->RequestCloseAllEditor( bExit, nGroup ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
-		return FALSE;
-	}else{
+	n = CShareData::getInstance()->GetOpenedWindowArr( &pWndArr, FALSE );
+	if( 0 == n ){
 		return TRUE;
 	}
+	/* 全編集ウィンドウへ終了要求を出す */
+	ret = CShareData::getInstance()->RequestCloseEditor( pWndArr, n, bExit, nGroup, bCheckConfirm, hWndFrom );	// 2007.02.13 ryoji bExitを引き継ぐ
+
+	delete[] pWndArr;
+	return ret;
 }
 
 

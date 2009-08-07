@@ -2248,6 +2248,9 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TAB_SEPARATE:	return HLP000325;	//新規グループ	// 2007.06.20 ryoji
 	case F_TAB_JOINTNEXT:	return HLP000326;	//次のグループに移動	// 2007.06.20 ryoji
 	case F_TAB_JOINTPREV:	return HLP000327;	//前のグループに移動	// 2007.06.20 ryoji
+	case F_TAB_CLOSEOTHER:	return HLP000333;	//このタブ以外を閉じる	// 2009.07.20 syat
+	case F_TAB_CLOSELEFT:	return HLP000334;	//左をすべて閉じる		// 2009.07.20 syat
+	case F_TAB_CLOSERIGHT:	return HLP000335;	//右をすべて閉じる		// 2009.07.20 syat
 
 
 	/* 支援 */
