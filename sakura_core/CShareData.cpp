@@ -5445,7 +5445,15 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
 	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
-	
+	//Jun. 2, 2009 syat     クリッカブルパス用正規表現キーワード
+	pShareData->m_Types[0].m_bUseRegexKeyword = TRUE;							// 正規表現キーワードを使うか
+	pShareData->m_Types[0].m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
+	strcpy(pShareData->m_Types[0].m_RegexKeywordArr[0].m_szKeyword,				// 正規表現キーワード
+		   "/\\b[a-zA-Z]:\\\\[\\w\\-_\\.\\\\\\/\\$%~]*/k");						//   C:\～にマッチするパターン
+	pShareData->m_Types[0].m_bUseRegexKeyword = TRUE;							// 正規表現キーワードを使うか
+	pShareData->m_Types[0].m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
+	strcpy(pShareData->m_Types[0].m_RegexKeywordArr[1].m_szKeyword,				// 正規表現キーワード
+		   "/\\B\\\\\\\\[\\w\\-_\\.\\\\\\/\\$%~]+/k");						//   C:\～にマッチするパターン
 
 //		nIdx = 0;
 	/* テキスト */

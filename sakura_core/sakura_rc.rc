@@ -1754,7 +1754,7 @@ BEGIN
                     WS_TABSTOP,132,31,127,10
 END
 
-IDD_PROP_REGEX DIALOGEX 0, 0, 270, 213
+IDD_PROP_REGEX DIALOGEX 0, 0, 271, 222
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック", 0, 0, 0x1
@@ -1799,6 +1799,8 @@ BEGIN
     CONTROL         "正規表現キーワードを使用する(&R)",IDC_CHECK_REGEX,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,6,
                     118,13,0,HIDC_CHECK_REGEX
+    LTEXT           "[色指定]で「URL」を選択するとマッチ文字列がクリッカブルになります",
+                    IDC_STATIC,14,192,136,18
 END
 
 // 2006.04.10 fon ADD-start タイプ別設定に「キーワードヘルプ」タブを追加
@@ -2485,9 +2487,9 @@ BEGIN
     IDD_PROP_REGEX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 264
+        RIGHTMARGIN, 265
         TOPMARGIN, 7
-        BOTTOMMARGIN, 204
+        BOTTOMMARGIN, 213
     END
 
     IDD_DIFF, DIALOG

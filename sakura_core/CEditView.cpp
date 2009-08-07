@@ -3865,9 +3865,7 @@ normal_action:;
 //			m_bBeginLineSelect = FALSE;
 
 			/* URLがクリックされたら選択するか */
-			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLは普通の文字として扱う
-			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
-				TRUE == m_pShareData->m_Common.m_bSelectClickedURL ){
+			if( TRUE == m_pShareData->m_Common.m_bSelectClickedURL ){
 
 				int			nUrlLine;	// URLの行(折り返し単位)
 				int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
@@ -3932,8 +3930,11 @@ normal_action:;
 	return;
 }
 
-/* 指定カーソル位置にURLが有る場合のその範囲を調べる */
-/* 戻り値がTRUEの場合、*ppszURLは呼び出し側でdeleteすること */
+/*	指定カーソル位置にURLが有る場合のその範囲を調べる
+	戻り値がTRUEの場合、*ppszURLは呼び出し側でdeleteすること
+	2009.05.27 ryoji URL色指定の正規表現キーワードにマッチする文字列もURLとみなす
+	                 URLの強調表示OFFのチェックはこの関数内で行うように変更
+ */
 BOOL CEditView::IsCurrentPositionURL(
 		int		nCaretPosX,		// カーソル位置X
 		int		nCaretPosY,		// カーソル位置Y
@@ -3956,6 +3957,29 @@ BOOL CEditView::IsCurrentPositionURL(
 //	int			nCharChars;
 	int			nUrlLen;
 
+	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
+	BOOL bDispUrl = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp;
+	BOOL bUseRegexKeyword = FALSE;
+	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+	if( TypeDataPtr->m_bUseRegexKeyword ){
+		for( int i = 0; i < MAX_REGEX_KEYWORD; i++ ){
+			if( TypeDataPtr->m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' )
+				break;
+			if( TypeDataPtr->m_RegexKeywordArr[i].m_nColorIndex == COLORIDX_URL ){
+				bUseRegexKeyword = TRUE;	// URL色指定の正規表現キーワードがある
+				break;
+			}
+		}
+	}
+	if( !bDispUrl && !bUseRegexKeyword ){
+		return FALSE;	// URL強調表示しないのでURLではない
+	}
+
+	// 正規表現キーワード（URL色指定）行検索開始処理	// 2009.05.27 ryoji
+	if( bUseRegexKeyword ){
+		m_cRegexKeyword->RegexKeyLineStart();
+	}
+
 	/*
 	  カーソル位置変換
 	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -3968,15 +3992,23 @@ BOOL CEditView::IsCurrentPositionURL(
 		(int*)&nX,
 		(int*)&nY
 	);
+	bool		bMatch;
+	int			nMatchColor;
 	*pnUrlLine = nY;
 	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( nY, &nLineLen );
 
 	i = __max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH
 	// nLineLen = __min(nLineLen, nX + _MAX_PATH);
 	while( i <= nX && i < nLineLen ){
-		if( (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CEditView::GetColorIndex()と同条件に
-			&& IsURL(&pLine[i], nLineLen - i, &nUrlLen)	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-		){
+		bMatch = ( bUseRegexKeyword
+					&& m_cRegexKeyword->RegexIsKeyword( pLine, i, nLineLen, &nUrlLen, &nMatchColor )
+					&& nMatchColor == COLORIDX_URL );
+		if( !bMatch ){
+			bMatch = ( bDispUrl
+						&& (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CColor_Url::BeginColor()と同条件に
+						&& IsURL(&pLine[i], (int)(nLineLen - i), &nUrlLen) );	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+		}
+		if( bMatch ){
 			if( i <= nX && nX < i + nUrlLen ){
 				/* URLを返す場合 */
 				if( NULL != ppszURL ){
@@ -3991,10 +4023,10 @@ BOOL CEditView::IsCurrentPositionURL(
 				return TRUE;
 			}else{
 				i += nUrlLen;
+				continue;
 			}
-		}else{
-			++i;
 		}
+		++i;
 	}
 	return FALSE;
 }
@@ -4598,8 +4630,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 			}else
 			/* カーソル位置にURLが有る場合 */
-			//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
-			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+			if(
 				IsCurrentPositionURL(
 				nNewX,			// カーソル位置X
 				nNewY,			// カーソル位置Y
@@ -5136,6 +5167,15 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 }
 
 
+/* ShellExecuteを呼び出すプロシージャ */
+/*   呼び出し前に lpParameter を GlobalAlloc しておくこと */
+/*   CreateThreadにてスレッドが生成されているため、Cランタイム関数は使用できない */
+DWORD WINAPI ShellExecuteProc( LPVOID lpParameter )
+{
+	::ShellExecute( NULL, "open", (char*)lpParameter, NULL, NULL, SW_SHOW );
+	::GlobalFree( lpParameter );
+	return 0;
+}
 
 
 
@@ -5155,8 +5195,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
 	if(! m_dwTripleClickCheck){
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
-		//	Sep. 7, 2003 genta URLの強調表示OFFの時はURLチェックも行わない
-		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp &&
+		if(
 			IsCurrentPositionURL(
 			m_nCaretPosX,	// カーソル位置X
 			m_nCaretPosY,	// カーソル位置Y
@@ -5190,7 +5229,28 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 					pszOPEN = pszURL;
 				}
 			}
-			::ShellExecute( NULL, "open", pszOPEN, NULL, NULL, SW_SHOW );
+			{
+				// URLを開く
+				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化
+				CWaitCursor cWaitCursor( m_hWnd );	// カーソルを砂時計にする
+
+				char* sUrlGlobal = (char*)::GlobalAlloc( 0, strlen(pszURL)+1 );
+				strcpy( sUrlGlobal, pszURL );
+				// bccなど他のビルド環境での設定変更を不要とするため、_beginthreadexではなく
+				// CreateThreadを使用してスレッドを生成する
+				DWORD nThreadId;
+				HANDLE hThread = ::CreateThread( NULL, 0, ShellExecuteProc, (LPVOID)sUrlGlobal, 0, &nThreadId );
+				if( hThread ){
+					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
+					// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep を使用（ex.存在しないパスの起動）
+					// 【補足】いずれの API でも待ちを長め（2～3秒）にするとなぜか Web ブラウザ未起動からの起動が重くなる模様（PCタイプ, XP/Vista, IE/FireFox に関係なく）
+					::Sleep(200);
+					::CloseHandle(hThread);
+				}else{
+					//スレッド作成失敗
+					::GlobalFree( sUrlGlobal );
+				}
+			}
 			delete [] pszURL;
 			if( NULL != pszWork ){
 				delete [] pszWork;
