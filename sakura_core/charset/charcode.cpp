@@ -49,6 +49,7 @@ namespace WCODE
 		return iswcntrl(wc)!=0;
 	}
 
+#if 0
 	/*!
 		‹å“Ç“_‚©
 		2008.04.27 kobake CLayoutMgr::IsKutoTen ‚©‚ç•ª—£
@@ -72,6 +73,7 @@ namespace WCODE
 		}
 		return false;
 	}
+#endif
 
 
 /*!

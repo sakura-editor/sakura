@@ -208,6 +208,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	wcscpy( pType->m_szKinsokuHead, L"" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	wcscpy( pType->m_szKinsokuTail, L"" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	wcscpy( pType->m_szKinsokuKuto, L"、。，．､｡,." );	/* 句読点ぶら下げ文字 */	// 2009.08.07 ryoji
 
 	pType->m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
 
