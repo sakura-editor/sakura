@@ -356,6 +356,28 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	return m_nReady ? TRUE : FALSE;
 }
 
+/* キーボードマクロを文字列から読み込む */
+BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode )
+{
+	// 一時ファイル名を作成
+	char	szTempDir[_MAX_PATH];
+	char	szTempFile[_MAX_PATH];
+	if( 0 == ::GetTempPath( _MAX_PATH, szTempDir ) )return FALSE;
+	if( 0 == ::GetTempFileName( szTempDir, "mac", 0, szTempFile ) )return FALSE;
+	// 一時ファイルに書き込む
+	FILE*	fpTmp = fopen( szTempFile, "w" );
+	if( fpTmp == NULL ){ return FALSE; }
+	fputs( pszCode, fpTmp );
+	fclose( fpTmp );
+
+	// マクロ読み込み
+	BOOL bRet = LoadKeyMacro( hInstance, szTempFile );
+
+	::DeleteFile( szTempFile );			// 一時ファイル削除
+
+	return bRet;
+}
+
 //	From Here Apr. 29, 2002 genta
 /*!
 	Factory

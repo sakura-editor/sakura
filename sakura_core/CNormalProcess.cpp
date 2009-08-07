@@ -284,6 +284,18 @@ end_of_func:
 	if( hWnd && !( bDebugMode || bGrepMode ) )
 		m_pcEditWnd->m_cEditDoc.RunAutoMacro( m_pShareData->m_nMacroOnOpened );
 
+
+	// 起動時マクロオプション
+	LPCSTR pszMacro = CCommandLine::Instance()->GetMacro();
+	if( hWnd  &&  pszMacro  &&  pszMacro[0] != '\0' ){
+		LPCSTR pszMacroType = CCommandLine::Instance()->GetMacroType();
+		if( pszMacroType == NULL || pszMacroType == "" || strcmpi(pszMacroType, "file") == 0 ){
+			pszMacroType = NULL;
+		}
+		CEditView* view = &m_pcEditWnd->m_cEditDoc.m_cEditViewArr[ m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex ];
+		view->HandleCommand( F_EXECEXTMACRO, TRUE, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
+	}
+
 	return hWnd ? true : false;
 }
 

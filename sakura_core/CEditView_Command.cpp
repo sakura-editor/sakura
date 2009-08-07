@@ -569,7 +569,7 @@ BOOL CEditView::HandleCommand(
 			delete m_pcOpeBlk;
 			m_pcOpeBlk = NULL;
 		}
-		Command_EXECEXTMACRO( (const char*)lparam1 );		/* 名前を指定してマクロ実行 */
+		Command_EXECEXTMACRO( (const char*)lparam1, (const char*)lparam2 );		/* 名前を指定してマクロ実行 */
 		break;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
@@ -9120,7 +9120,7 @@ void CEditView::Command_EXECKEYMACRO( void )
 		//	ファイルが保存されていたら
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 //		if ( FALSE == m_pcEditDoc->m_CKeyMacroMgr.LoadKeyMacro( m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
-		if ( FALSE == m_pcEditDoc->m_pcSMacroMgr->Load( STAND_KEYMACRO, m_hInstance, m_pShareData->m_szKeyMacroFileName ) ){
+		if ( FALSE == m_pcEditDoc->m_pcSMacroMgr->Load( STAND_KEYMACRO, m_hInstance, m_pShareData->m_szKeyMacroFileName, NULL ) ){
 			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 				"ファイルを開けませんでした。\n\n%s", m_pShareData->m_szKeyMacroFileName
 			);
@@ -9183,17 +9183,23 @@ void CEditView::Command_LOADKEYMACRO( void )
 	return;
 }
 
-/*! 名前を指定してマクロ実行 */
-void CEditView::Command_EXECEXTMACRO( const char* pszPath )
+/*! 名前を指定してマクロ実行
+	@param pszPath	マクロのファイルパス、またはマクロのコード。
+	@param pszType	種別。NULLの場合ファイル指定、それ以外の場合は言語の拡張子を指定
+
+	@date 2008.10.23 syat 新規作成
+	@date 2009.07.19 syat pszType追加
+ */
+void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
-	char			szInitDir[_MAX_PATH + 1];
-	const char*		pszFolder;
+	char			szInitDir[_MAX_PATH + 1];	//ファイル選択ダイアログの初期フォルダ
+	const char*		pszFolder;					//マクロフォルダ
 	HWND			hwndRecordingKeyMacro = NULL;
 	strcpy( szPath, "" );
 
-	if ( pszPath == NULL ) {
+	if( pszType == NULL && pszPath == NULL ) {
 		// ファイルが指定されていない場合、ダイアログを表示する
 		pszFolder = m_pShareData->m_szMACROFOLDER;
 
@@ -9213,6 +9219,7 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath )
 			return;
 		}
 		pszPath = szPath;
+		pszType = NULL;
 	}
 
 	//キーマクロ記録中の場合、追加する
@@ -9233,7 +9240,8 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath )
 	BOOL bLoadResult = m_pcEditDoc->m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
 		m_hInstance,
-		pszPath
+		pszPath,
+		pszType
 	);
 	if ( !bLoadResult ){
 		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,

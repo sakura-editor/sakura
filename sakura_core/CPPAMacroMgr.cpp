@@ -39,7 +39,7 @@ void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 	m_cPPA.Execute(pcEditView, flags);
 }
 
-/*! キーボードマクロの読み込み
+/*! キーボードマクロをファイルから読み込む
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
 BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
@@ -61,6 +61,17 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	fclose( hFile );
 
 	m_cBuffer.SetData( &cmemWork );	//	m_cBufferにコピー
+
+	m_nReady = true;
+	return TRUE;
+}
+
+/*! キーボードマクロを文字列から読み込む
+	エラーメッセージは出しません。呼び出し側でよきにはからってください。
+*/
+BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode )
+{
+	m_cBuffer.SetData( pszCode, strlen(pszCode) );	//	m_cBufferにコピー
 
 	m_nReady = true;
 	return TRUE;

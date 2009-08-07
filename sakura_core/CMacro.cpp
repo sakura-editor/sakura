@@ -763,6 +763,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		break;
 	// Jul. 5, 2002 genta
 	case F_EXTHTMLHELP:
+	case F_EXECEXTMACRO:	// 2008.10.22 syat
 		pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
 		break;
 	//	From Here Dec. 4, 2002 genta
@@ -793,7 +794,6 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		}
 		break;	//	Jan. 29, 2005 genta 抜けていた
 	case F_TAGJUMP_KEYWORD:	// @@ 2005.03.31 MIK
-	case F_EXECEXTMACRO:	// 2008.10.22 syat
 		{
 			//引数はNULLでもOK
 			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
@@ -802,6 +802,17 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 	case F_NEXTWINDOW:
 	case F_PREVWINDOW:
 		pcEditView->m_pcEditDoc->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWが動作しなかったのを修正
+		break;
+	case F_CHGTABWIDTH:		//  タブサイズを取得、設定する（キーマクロでは取得は無意味）
+	case F_CHGWRAPCOLM:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
+		{
+			VARIANT vArg[1];			// HandleFunctionに渡す引数
+			VARIANT vResult;			// HandleFunctionから返る値
+			//	一つ目の引数が数値。
+			vArg[0].vt = VT_I4;
+			vArg[0].intVal = (Argument[0] != NULL ? atoi(Argument[0]) : 0 );
+			HandleFunction( pcEditView, Index, vArg, 1, vResult );
+		}
 		break;
 	default:
 		//	引数なし。

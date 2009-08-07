@@ -56,6 +56,8 @@ CCommandLine* CCommandLine::_instance = NULL;
 #define CMDLINEOPT_GFOLDER		103
 #define CMDLINEOPT_GOPT			104
 #define CMDLINEOPT_GCODE		105
+#define CMDLINEOPT_M			106
+#define CMDLINEOPT_MTYPE		107
 #define CMDLINEOPT_GROUP		500
 
 /*!
@@ -72,7 +74,8 @@ CCommandLine* CCommandLine::_instance = NULL;
 int CCommandLine::CheckCommandLine(
 	LPSTR  str, //!< [in] 検証する文字列（先頭の-は含まない）
 	int quotelen, //!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
-	char** arg	//!< [out] 引数がある場合はその先頭へのポインタ
+	char** arg,	//!< [out] 引数がある場合はその先頭へのポインタ
+	int* arglen //!< [out] 引数の長さ
 )
 {
 	/*!
@@ -120,6 +123,8 @@ int CCommandLine::CheckCommandLine(
 		{"GOPT", 4,			CMDLINEOPT_GOPT},
 		{"GCODE", 5,		CMDLINEOPT_GCODE},	// 2002/09/21 Moca 追加
 		{"GROUP", 5,		CMDLINEOPT_GROUP},	// 2007.06.26 ryoji
+		{"M", 1,			CMDLINEOPT_M},		// 2009.07.19 syat
+		{"MTYPE", 5,		CMDLINEOPT_MTYPE},	// 2009.07.19 syat
 		{NULL, 0, 0}
 	};
 
@@ -134,6 +139,7 @@ int CCommandLine::CheckCommandLine(
 			//	文字列の比較
 			_memicmp( str, ptr->opt, ptr->len ) == 0 ){		// 2006.10.25 ryoji memcmp() -> _memicmp()
 			*arg = str + ptr->len + 1;
+			*arglen = len - ptr->len;
 			return ptr->value;
 		}
 	}
@@ -143,6 +149,7 @@ int CCommandLine::CheckCommandLine(
 		if( len == ptr->len &&	//	長さチェック
 			//	文字列の比較
 			_memicmp( str, ptr->opt, ptr->len ) == 0 ){		// 2006.10.25 ryoji memcmp() -> _memicmp()
+			*arglen = 0;
 			return ptr->value;
 		}
 	}
@@ -301,14 +308,19 @@ void CCommandLine::ParseCommandLine( void )
 			}
 
 		}else{
-			int qlen = 0;
+			int nQuoteLen = 0;
 			if( *pszToken == '"' ){
 				++pszToken;	// 2007.09.09 genta 先頭の"はスキップ
-				qlen = 1;
+				nQuoteLen = 1;
+				int tokenlen = strlen( pszToken );
+				if( pszToken[ tokenlen-1 ] == '"' ){	// 2009.07.19 syat 末尾の"を取り除く
+					pszToken[ tokenlen-1 ] = '\0';
+				}
 			}
 			++pszToken;	//	先頭の'-'はskip
 			char *arg;
-			switch( CheckCommandLine( pszToken, qlen, &arg ) ){
+			int nArgLen = 0;
+			switch( CheckCommandLine( pszToken, nQuoteLen, &arg, &nArgLen ) ){
 			case CMDLINEOPT_X: //	X
 				/* 行桁指定を1開始にした */
 				m_fi.m_nX = AtoiOptionInt( arg ) - 1;
@@ -340,7 +352,7 @@ void CCommandLine::ParseCommandLine( void )
 				//	Mar. 7, 2002 genta
 				//	ファイルタイプの強制指定
 				strncpy( m_fi.m_szDocType, arg, MAX_DOCTYPE_LEN );
-				m_fi.m_szDocType[ MAX_DOCTYPE_LEN ]= '\0';
+				m_fi.m_szDocType[ nArgLen < MAX_DOCTYPE_LEN ? nArgLen : MAX_DOCTYPE_LEN ]= '\0';
 				break;
 			case CMDLINEOPT_CODE:	//	CODE
 				m_fi.m_nCharCode = AtoiOptionInt( arg );
@@ -410,6 +422,20 @@ void CCommandLine::ParseCommandLine( void )
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効
 				bParseOptDisabled = true;
 				break;
+			case CMDLINEOPT_M:			// 2009.07.19 syat 追加
+				{
+					if( m_pszMacro ){ delete[] m_pszMacro; }
+					m_pszMacro = new char[ nArgLen + 1 ];
+					strcpy( m_pszMacro, arg );
+				}
+				break;
+			case CMDLINEOPT_MTYPE:		// 2009.07.19 syat 追加
+				{
+					if( m_pszMacroType ){ delete[] m_pszMacroType; }
+					m_pszMacroType = new char[ nArgLen + 1 ];
+					strcpy( m_pszMacroType, arg );
+				}
+				break;
 			}
 		}
 		pszToken = my_strtok( pszCmdLineWork, nCmdLineWorkLen, &nPos, " " );
@@ -467,6 +493,8 @@ CCommandLine::CCommandLine(LPSTR cmd) :
 	m_gi.nGrepOutputStyle	= 1;
 	m_bReadOnly				= false;
 	m_nGroup				= 0;		// 2007.06.26 ryoji
+	m_pszMacro				= NULL;		// 2009.07.19 syat
+	m_pszMacroType			= NULL;		// 2009.07.19 syat
 	
 	ParseCommandLine();
 }

@@ -49,12 +49,19 @@ public:
 	*/
 	virtual void ExecKeyMacro( class CEditView* pcEditView, int flags ) const = 0;
 	
-	/*! キーボードマクロを読み込む
+	/*! キーボードマクロをファイルから読み込む
 
 		@param hInstance [in]
 		@param pszPath [in] ファイル名
 	*/
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath) = 0;
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath ) = 0;
+
+	/*! キーボードマクロを文字列から読み込む
+
+		@param hInstance [in]
+		@param pszCode [in] コード文字列
+	*/
+	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode ) = 0;
 
 	//static CMacroManagerBase* Creator( const char* str );
 	//純粋仮想クラスは実体化できないのでFactoryは不要。

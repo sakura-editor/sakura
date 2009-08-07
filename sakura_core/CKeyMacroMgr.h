@@ -56,7 +56,8 @@ public:
 	//@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
 	//	2007.07.20 genta flags追加
 	virtual void ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* キーボードマクロの実行 */
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath);		/* キーボードマクロを読み込み、CMacroの列に変換 */
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath );		/* キーボードマクロをファイルから読み込む */
+	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode );		/* キーボードマクロを文字列から読み込む */
 	
 	/* キーボードマクロが読み込み済みか確認する */
 	//	Apr. 29, 2002 genta

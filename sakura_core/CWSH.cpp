@@ -715,7 +715,7 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 }
 
 /*!
-	WSHマクロの読み込み
+	WSHマクロをファイルから読み込み
 
 	@param Instance [in] インスタンスハンドル(未使用)
 	@param Path		[in] ファイルのパス
@@ -743,6 +743,25 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE Instance, char const* Path)
 		CloseHandle(File);
 	}
 	return Result;
+}
+
+/*!
+	WSHマクロを文字列から読み込み
+
+	@param Instance [in] インスタンスハンドル(未使用)
+	@param pszCode	[in] コード文字列
+*/
+BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE Instance, char const* pszCode)
+{
+	unsigned long Size = strlen(pszCode); //ギガ単位のマクロはさすがに無いでしょう…
+	wchar_t *WideBuffer = new wchar_t[Size + 1]; //Unicode化して長くはならない
+
+	WideBuffer[MultiByteToWideChar(CP_ACP, 0, pszCode, Size, WideBuffer, Size)] = 0;
+	m_Source = WideBuffer;
+
+	delete [] WideBuffer;
+
+	return TRUE;
 }
 
 CMacroManagerBase* CWSHMacroManager::Creator(char const *FileExt)

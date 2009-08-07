@@ -506,7 +506,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			return FALSE;
 		}
 
-		if( !Load( idx, hInstance, ptr ) )
+		if( !Load( idx, hInstance, ptr, NULL ) )
 			return FALSE;
 	}
 
@@ -524,14 +524,15 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 /*! キーボードマクロの読み込み
 
 	@param idx [in] 読み込み先マクロバッファ番号
-	@param pszPath [in] マクロファイル名
+	@param pszPath [in] マクロファイル名、またはコード文字列
+	@param pszType [in] 種別。NULLの場合ファイルから読み込む。NULL以外の場合は言語の拡張子
 
 	読み込みに失敗したときはマクロバッファのオブジェクトは解放され，
 	NULLが設定される．
 
-	@author Norio Nakatani, YAZAKI, genta
+	@author Norio Nakatani, YAZAKI, genta, syat
 */
-BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstance, const char* pszPath )
+BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstance, const char* pszPath, const char* pszType )
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
@@ -543,25 +544,37 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 	//	バッファクリア
 	delete *ppMacro;
 	*ppMacro = NULL;
-	
-	const char *ext = strrchr( pszPath, '.');
-	//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
-	if( ext != NULL ){
-		const char *chk = strrchr( ext, '\\' );
-		if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
-							//	\が漢字の2バイト目の場合も拡張子ではない。
-			ext = NULL;
+
+	const char *ext;
+	if( pszType == NULL ){		//ファイル指定
+		//ファイルの拡張子を取得する
+		ext = strrchr( pszPath, '.');
+		//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
+		if( ext != NULL ){
+			const char *chk = strrchr( ext, '\\' );
+			if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
+								//	\が漢字の2バイト目の場合も拡張子ではない。
+				ext = NULL;
+			}
 		}
-	}
-	if(ext != NULL){
-		++ext;
+		if(ext != NULL){
+			++ext;
+		}
+	}else{						//コード指定
+		ext = pszType;
 	}
 	*ppMacro = CMacroFactory::Instance()->Create(ext);
 	if( *ppMacro == NULL )
 		return FALSE;
 	//	From Here Jun. 16, 2002 genta
 	//	読み込みエラー時はインスタンス削除
-	if( (*ppMacro)->LoadKeyMacro(hInstance, pszPath )){
+	BOOL bRet;
+	if( pszType == NULL ){
+		bRet = (*ppMacro)->LoadKeyMacro( hInstance, pszPath );
+	}else{
+		bRet = (*ppMacro)->LoadKeyMacroStr( hInstance, pszPath );
+	}
+	if( bRet ){
 		return TRUE;
 	}
 	else {
@@ -715,6 +728,7 @@ char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFu
 	pszFuncNameJapanese の指す先がNULLの時は日本語名を格納しない．
 	
 	@date 2002.06.16 genta ループ内の文字列コピーを排除
+	@date 2009.07.19 syat  ChangeTabWidthとChangeWrapColmを許容する
 */
 int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName, char* pszFuncNameJapanese )
 {
@@ -734,10 +748,27 @@ int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName,
 		normalizedFuncName = pszFuncName;
 	}
 	
-	char szBuffer[1024] = "S_";
+//	char szBuffer[1024] = "S_";
+	// コマンド関数を検索
 	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
 			nFuncID = m_MacroFuncInfoArr[i].m_nFuncID;
+			if( pszFuncNameJapanese != NULL ){
+				::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
+			}
+			return nFuncID;
+		}
+	}
+
+	// 非コマンド関数を検索
+	for( i = 0; m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; ++i ){
+		if( m_MacroFuncInfoNotCommandArr[i].m_nFuncID != F_CHGTABWIDTH &&
+			m_MacroFuncInfoNotCommandArr[i].m_nFuncID != F_CHGWRAPCOLM ){
+			// キーマクロではChangeTabWidthとChangeWrapColm以外は許可しない
+			continue;
+		}
+		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoNotCommandArr[i].m_pszFuncName) ){
+			nFuncID = m_MacroFuncInfoNotCommandArr[i].m_nFuncID;
 			if( pszFuncNameJapanese != NULL ){
 				::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
 			}

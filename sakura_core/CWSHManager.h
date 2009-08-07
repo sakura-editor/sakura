@@ -39,7 +39,8 @@ public:
 
 	//	2007.07.20 genta : flags追加
 	virtual void ExecKeyMacro(CEditView *EditView, int flags) const;
-	virtual BOOL LoadKeyMacro(HINSTANCE Instance, char const* Path);
+	virtual BOOL LoadKeyMacro(HINSTANCE Instance, char const* Path);		//WSHマクロをファイルから読み込む
+	virtual BOOL LoadKeyMacroStr(HINSTANCE Instance, char const* pszCode);	//WSHマクロを文字列から読み込む
 
 	static CMacroManagerBase* Creator(char const *FileExt);
 	static void declare();

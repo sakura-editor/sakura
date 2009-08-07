@@ -121,7 +121,7 @@ public:
 	}
 
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int idx, HINSTANCE hInstance, const char* pszPath );
+	BOOL Load( int idx, HINSTANCE hInstance, const char* pszPath, const char* pszType );
 	BOOL Save( int idx, HINSTANCE hInstance, const char* pszPath );
 	void UnloadAll(void);
 
