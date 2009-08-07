@@ -235,7 +235,7 @@ namespace WCODE
 	}
 
 	//! 句読点か
-	bool IsKutoten( wchar_t wc );
+	//bool IsKutoten( wchar_t wc );
 
 /* codechecker.h へ移動
 	//! 高位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi

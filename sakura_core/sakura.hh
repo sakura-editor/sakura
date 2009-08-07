@@ -561,6 +561,7 @@
 #define HIDC_EDIT_OUTLINERULEFILE				11355 //ルールファイル名	// 2006.08.06 ryoji
 #define HIDC_BUTTON_RULEFILE_REF				11356 //ルールファイル参照	// 2006/09/09 novice
 #define HIDC_CHECK_DOCICON						11357 //文書アイコンを使う	// 2006.08.06 ryoji
+#define HIDC_EDIT_KINSOKUKUTO					11358 //句読点ぶら下げ文字	// 2009.08.07 ryoji
 #define HIDC_BUTTON_TEXTCOLOR					11400 //文字色
 #define HIDC_BUTTON_BACKCOLOR					11401 //背景色
 #define HIDC_BUTTON_SAMETEXTCOLOR				11402 //文字色統一

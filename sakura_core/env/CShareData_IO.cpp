@@ -1271,6 +1271,7 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuKuto")	, types.m_bKinsokuKuto );	//@@@ 2002.04.17 MIK
 		cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuHead")	, MakeStringBufferW(types.m_szKinsokuHead) );
 		cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuTail")	, MakeStringBufferW(types.m_szKinsokuTail) );
+		cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuKuto")	, MakeStringBufferW(types.m_szKinsokuKuto) );	// 2009.08.07 ryoji
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseDocumentIcon")	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta ïœêîñºåÎÇËèCê≥
 
 //@@@ 2006.04.10 fon ADD-start

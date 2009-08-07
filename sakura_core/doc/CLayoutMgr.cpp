@@ -138,14 +138,21 @@ void CLayoutMgr::SetLayoutInfo(
 		break;
 	}
 
-	//行頭禁則文字、句読点のぶらさげ
-	//refType.m_szKinsokuHead → (句読点)   m_pszKinsokuKuto_1
-	//                        → (それ以外) m_pszKinsokuHead_1
+	//句読点ぶら下げ文字	// 2009.08.07 ryoji
+	//refType.m_szKinsokuKuto → m_pszKinsokuKuto_1
 	m_pszKinsokuKuto_1.clear();
+	if(m_sTypeConfig.m_bKinsokuKuto){	// 2009.08.06 ryoji m_bKinsokuKutoで振り分ける(Fix)
+		for( const wchar_t* p = refType.m_szKinsokuKuto; *p; p++ ){
+			m_pszKinsokuKuto_1.push_back_unique(*p);
+		}
+	}
+
+	//行頭禁則文字
+	//refType.m_szKinsokuHead → (句読点以外) m_pszKinsokuHead_1
 	m_pszKinsokuHead_1.clear();
 	for( const wchar_t* p = refType.m_szKinsokuHead; *p; p++ ){
-		if(m_sTypeConfig.m_bKinsokuKuto && WCODE::IsKutoten(*p)){	// 2009.08.06 ryoji m_bKinsokuKutoで振り分ける(Fix)
-			m_pszKinsokuKuto_1.push_back_unique(*p);
+		if(m_pszKinsokuKuto_1.exist(*p)){
+			continue;
 		}
 		else{
 			m_pszKinsokuHead_1.push_back_unique(*p);

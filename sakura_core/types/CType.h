@@ -76,6 +76,7 @@ struct STypeConfig{
 	BOOL				m_bKinsokuKuto;					/*!< 句読点のぶらさげ */	//@@@ 2002.04.17 MIK
 	wchar_t				m_szKinsokuHead[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 	wchar_t				m_szKinsokuTail[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
+	wchar_t				m_szKinsokuKuto[200];			/*!< 句読点ぶらさげ文字 */	// 2009.08.07 ryoji
 
 	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
 
