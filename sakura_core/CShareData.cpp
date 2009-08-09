@@ -262,9 +262,12 @@ struct ARRHEAD {
 
 	Version 90:
 	自動実行マクロ 2006/08/31 ryoji
+
+	Version 91:
+	句読点ぶら下げ文字 2009.08.07 ryoji
 */
 
-const unsigned int uShareDataVersion = 90;
+const unsigned int uShareDataVersion = 91;
 
 /*
 ||	Singleton風
@@ -5335,6 +5338,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	strcpy( pShareData->m_Types[nIdx].m_szKinsokuHead, "" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	strcpy( pShareData->m_Types[nIdx].m_szKinsokuTail, "" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	strcpy( pShareData->m_Types[nIdx].m_szKinsokuKuto, "、。，．､｡,." );	/* 句読点ぶら下げ文字 */	// 2009.08.07 ryoji
 
 	pShareData->m_Types[nIdx].m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
 
@@ -5472,6 +5476,7 @@ void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
 //		strcpy( pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕ぁぃぅぇぉっゃゅょゎ゛゜ゝゞァィゥェォッャュョヮヵヶ・ーヽヾ！％），．：；？］｝｡｣､･ｧｨｩｪｫｬｭｮｯｰﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	strcpy( pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK
 	strcpy( pShareData->m_Types[1].m_szKinsokuTail, "$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	// pShareData->m_Types[1].m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji
 
 
 	// nIdx = 1;

@@ -914,6 +914,7 @@ bool CLayoutMgr::IsKinsokuTail( const char *pLine, int length )
 	return false;
 }
 
+#if 0
 /*!
 	‹å“Ç“_‚©
 
@@ -946,6 +947,7 @@ bool CLayoutMgr::IsKutoTen( unsigned char c1, unsigned char c2 )
 
 	return false;
 }
+#endif
 
 /*!
 	‹Ö‘¥‘ÎÛ‹å“Ç“_‚ÉŠY“–‚·‚é‚©‚ğ’²‚×‚éD

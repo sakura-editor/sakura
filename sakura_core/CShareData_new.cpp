@@ -1326,6 +1326,9 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, "szKinsokuTail"	,
 			types.m_szKinsokuTail,
 			sizeof( m_pShareData->m_Types[0].m_szKinsokuTail ));
+		cProfile.IOProfileData( pszSecName, "szKinsokuKuto"	,
+			types.m_szKinsokuKuto,
+			sizeof( m_pShareData->m_Types[0].m_szKinsokuKuto ));	// 2009.08.07 ryoji
 		cProfile.IOProfileData( pszSecName, "bUseDocumentIcon"	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta •Ï”–¼Œë‚èC³
 
 //@@@ 2006.04.10 fon ADD-start

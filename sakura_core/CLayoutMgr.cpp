@@ -9,6 +9,7 @@
 	Copyright (C) 2003, genta, Moca
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, Moca
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -143,7 +144,7 @@ void CLayoutMgr::SetLayoutInfo(
 	}
 	
 	{	//@@@ 2002.04.08 MIK start
-		unsigned char	*p, *q1, *q2, *k1, *k2;
+		unsigned char	*p, *q1, *q2;
 		int	length;
 
 		//句読点のぶらさげ
@@ -158,16 +159,30 @@ void CLayoutMgr::SetLayoutInfo(
 			delete [] m_pszKinsokuKuto_2;
 			m_pszKinsokuKuto_2 = NULL;
 		}
-		//length = strlen( pszKinsokuHead ) + 1;
-		//	Kuto_2="。、，．", Kuto_1="｡､,."
-		length = 16;	//これだけあれば十分
+		length = strlen( refType.m_szKinsokuKuto ) + 1;
 		m_pszKinsokuKuto_1 = new char[ length ];
 		m_pszKinsokuKuto_2 = new char[ length ];
-		k1 = (unsigned char *)m_pszKinsokuKuto_1;
-		k2 = (unsigned char *)m_pszKinsokuKuto_2;
-		memset( (void *)k1, 0, length );
-		memset( (void *)k2, 0, length );
-		//データ部は行頭禁則処理で設定する。
+		q1 = (unsigned char *)m_pszKinsokuKuto_1;
+		q2 = (unsigned char *)m_pszKinsokuKuto_2;
+		memset( (void *)q1, 0, length );
+		memset( (void *)q2, 0, length );
+		if( m_bKinsokuKuto )	// 2009.08.06 ryoji m_bKinsokuKutoで振り分ける(Fix)
+		{
+			for( p = (unsigned char *)refType.m_szKinsokuKuto; *p; p++ )
+			{
+				if( _IS_SJIS_1( *p ) )
+				{
+					*q2 = *p; q2++; p++;
+					*q2 = *p; q2++;
+					*q2 = 0;
+				}
+				else
+				{
+					*q1 = *p; q1++;
+					*q1 = 0;
+				}
+			}
+		}
 
 		//行頭禁則文字の1,2バイト文字を分けて管理する。
 		m_bKinsokuHead = refType.m_bKinsokuHead;
@@ -192,20 +207,10 @@ void CLayoutMgr::SetLayoutInfo(
 		{
 			if( _IS_SJIS_1( *p ) )
 			{
-				if( IsKutoTen( *p, *(p+1) ) )	//句読点は別管理
+				if( IsKinsokuKuto( (char*)p, 2 ) )	//句読点は別管理
 				{
-					unsigned char	*r;
-					// 2004.11.12 Moca 重複していたら登録しない
-					for( r = (unsigned char *)m_pszKinsokuKuto_2; r < k2; r+=2 ){
-						if( *r == *p && *(r + 1) == *(p + 1) ){
-							break;
-						}
-					}
-					if( r == k2 ){
-						*k2 = *p; k2++; p++;
-						*k2 = *p; k2++;
-						*k2 = 0;
-					}
+					p++;
+					continue;
 				}
 				else
 				{
@@ -216,20 +221,9 @@ void CLayoutMgr::SetLayoutInfo(
 			}
 			else
 			{
-				if( IsKutoTen( *p, 0 ) )	//句読点は別管理
+				if( IsKinsokuKuto( (char*)p, 1 ) )	//句読点は別管理
 				{
-					// Dec.23, 2004 genta チェックすべき点が誤っていたので移動
-					unsigned char	*r;
-					// 2004.11.12 Moca 重複していたら登録しない
-					for( r = (unsigned char *)m_pszKinsokuKuto_1; r < k1; r++ ){
-						if( *r == *p ){
-							break;
-						}
-					}
-					if( r == k1 ){
-						*k1 = *p; k1++;
-						*k1 = 0;
-					}
+					continue;
 				}
 				else
 				{
