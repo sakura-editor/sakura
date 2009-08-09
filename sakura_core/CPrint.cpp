@@ -182,28 +182,32 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	DEVMODE*	pDEVMODE;
 	DEVNAMES*	pDEVNAMES;		/* プリンタ設定 DEVNAMES用*/
 
-	// すでに DEVMODEを取得済みなら、何もしない
-	if (m_hDevMode != NULL) {
-		return TRUE;
-	}
+	// 2009.08.08 印刷で用紙サイズ、横指定が効かない問題対応 syat
+	//// すでに DEVMODEを取得済みなら、何もしない
+	//if (m_hDevMode != NULL) {
+	//	return TRUE;
+	//}
 
-	//
-	// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
-	// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
-	//
-	memset ( &pd, 0, sizeof(PRINTDLG) );
-	pd.lStructSize	= sizeof(PRINTDLG);
-	pd.Flags		= PD_RETURNDEFAULT;
-	if( FALSE == ::PrintDlg( &pd ) ){
-		pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
-		return FALSE;
-	}
-	pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンタがなかったフラグ */
+	// DEVMODEを取得済みでない場合、取得する
+	if( m_hDevMode == NULL ){
+		//
+		// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
+		// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
+		//
+		memset ( &pd, 0, sizeof(PRINTDLG) );
+		pd.lStructSize	= sizeof(PRINTDLG);
+		pd.Flags		= PD_RETURNDEFAULT;
+		if( FALSE == ::PrintDlg( &pd ) ){
+			pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
+			return FALSE;
+		}
+		pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンタがなかったフラグ */
 
-	/* 初期化 */
-	memset( (void *)pMYDEVMODE, 0, sizeof(MYDEVMODE) );
-	m_hDevMode = pd.hDevMode;
-	m_hDevNames = pd.hDevNames;
+		/* 初期化 */
+		memset( (void *)pMYDEVMODE, 0, sizeof(MYDEVMODE) );
+		m_hDevMode = pd.hDevMode;
+		m_hDevNames = pd.hDevNames;
+	}
 
 	// MYDEVMODEへのコピー
 	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );

@@ -626,6 +626,12 @@ void CPrintPreview::OnChangePrintSetting( void )
 		(LPARAM)this
 	);
 
+	// 2009.08.08 印刷で用紙サイズ、横指定が効かない問題対応 syat
+	/* DEVMODE構造体が設定されていなかったら既定のプリンタを設定 */
+	if( m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName[0] == '\0' ){
+		GetDefaultPrinterInfo();
+	}
+
 	/* 印刷プレビュー表示情報 */
 	m_nPreview_LineNumberColmns = 0;	/* 行番号エリアの幅(文字数) */
 
