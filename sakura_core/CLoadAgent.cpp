@@ -74,16 +74,18 @@ next:
 		LARGE_INTEGER nFileSize;
 		nFileSize.HighPart = wfd.nFileSizeHigh;
 		nFileSize.LowPart = wfd.nFileSizeLow;
-		FindClose( nFind );
-		// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
-		if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
-			int nRet = MYMESSAGEBOX( CEditWnd::Instance()->GetHwnd(),
-				MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
-				GSTR_APPNAME,
-				_T("ファイルサイズが%dMB以上あります。開きますか？"),
-				GetDllShareData().m_Common.m_sFile.m_nAlertFileSize );
-			if( nRet != IDYES ){
-				return CALLBACK_INTERRUPT;
+		if( nFind != INVALID_HANDLE_VALUE ){
+			FindClose( nFind );
+			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
+			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
+				int nRet = MYMESSAGEBOX( CEditWnd::Instance()->GetHwnd(),
+					MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
+					GSTR_APPNAME,
+					_T("ファイルサイズが%dMB以上あります。開きますか？"),
+					GetDllShareData().m_Common.m_sFile.m_nAlertFileSize );
+				if( nRet != IDYES ){
+					return CALLBACK_INTERRUPT;
+				}
 			}
 		}
 	}
