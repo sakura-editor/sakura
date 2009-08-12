@@ -12,6 +12,7 @@ public:
 
 	// イベント
 	ECallbackResult OnBeforeClose();
+	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
 	// Grep実行
 	DWORD DoGrep(

@@ -29,6 +29,9 @@ CEditApp::CEditApp(HINSTANCE hInst)
 	//GREPモード管理
 	m_pcGrepAgent = new CGrepAgent();
 
+	//編集モード
+	CAppMode::Instance();	//ウィンドウよりも前にイベントを受け取るためにここでインスタンス作成
+
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
 	m_pcEditWnd->Create(
