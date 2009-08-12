@@ -20,10 +20,7 @@ public:
 	void	SetDebugModeOFF();	//!< デバッグモニタモード解除
 
 	//イベント
-	void OnAfterSave(const SSaveInfo& sSaveInfo)
-	{
-		m_bViewMode = false;	/* ビューモード */
-	}
+	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
 protected:
 	void _SetDebugMode(bool bDebugMode){ m_bDebugMode = bDebugMode; }

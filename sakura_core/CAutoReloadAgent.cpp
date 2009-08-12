@@ -32,6 +32,11 @@ void CAutoReloadAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	//	Sep. 7, 2003 genta
 	//	ファイル更新の通知を元に戻す
 	ResumeWatching();
+
+	// 名前を付けて保存から再ロードが除去された分の不足処理を追加（ANSI版との差異）	// 2009.08.12 ryoji
+	if(!sSaveInfo.bOverwriteMode){
+		m_eWatchUpdate = WU_QUERY;	// 「名前を付けて保存」で対象ファイルが変更されたので更新監視方法をデフォルトに戻す
+	}
 }
 
 
