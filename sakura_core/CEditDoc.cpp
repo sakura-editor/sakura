@@ -3018,15 +3018,19 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 				pLine++; i++;
 				bEndTag = true;
 			}
-			for(j=0;i+j<nLineLen && j<sizeof(szTitle)-1;j++)
+			for(j=0;i+j<nLineLen && j<sizeof(szTitle)-1; )
 			{
-				if((pLine[j]<'a' || pLine[j]>'z') &&
-					(pLine[j]<'A' || pLine[j]>'Z') &&
-					!(j!=0 && pLine[j]>='0' && pLine[j]<='9'))
+				// タグ名を切り出す
+				// スペース、タブ、「_:-.英数」以外の半角文字、１文字目の「-.数字」は認めない。
+				if( (pLine[j]==' ' || pLine[j]=='\t') ||
+					(pLine[j]<0x80 && !strchr("_:-.",pLine[j]) && !isalnum(pLine[j])) ||
+					(j==0 &&( (pLine[j]>='0' && pLine[j]<='9') || pLine[j]=='-' || pLine[j]=='.' )) )
 				{
 					break;
 				}
-				szTitle[j] = pLine[j];
+				int nCharSize = CMemory::GetSizeOfChar((char*)pLine, nLineLen-i, j);
+				memcpy(szTitle + j, pLine + j, nCharSize);
+				j += nCharSize;
 			}
 			if(j==0)
 			{
@@ -3103,34 +3107,11 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 				nLabelType = 'hd';//heading
 			}
 
-			if( bEndTag ) // 終了タグ
+			// 2009.08.08 syat 「/>」で終わるタグの判定のため、終了タグ処理を開始タグ処理の後にした。
+			//                  （開始タグ処理の中で、bEndTagをtrueにしている所がある。）
+
+			if( ! bEndTag ) // 開始タグ
 			{
-				int nDepthOrg = nDepth; // 2004.04.20 Moca 追加
-				while(nDepth>0)
-				{
-					nDepth--;
-					if(!_stricmp(pszStack[nDepth],szTitle))
-					{
-						break;
-					}
-				}
-				// 2004.04.20 Moca ツリー中と一致しないときは、この終了タグは無視
-				if( nDepth == 0 )
-				{
-					if(_stricmp(pszStack[nDepth],szTitle))
-					{
-						nDepth = nDepthOrg;
-					}
-				}else{
-					if( nLabelType=='hd' ){	//	見出しの終わり
-						nHeadDepth[szTitle[1]-'0'] = nDepth;
-						nDepth++;
-					}
-					if( nLabelType=='pa' ){
-						bParaTag = false;
-					}
-				}
-			} else { // 開始タグ
 				if( nLabelType!='in' && nLabelType!='ig' ){
 					// pの中でブロック要素がきたら、自動的にpを閉じる。 2008.09.07 aroka
 					if( bParaTag ){
@@ -3195,7 +3176,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 									}
 									szTitle[k] = pLine[j+k];
 								}
-							j += k-1;
+								j += k-1;
 							}
 						}
 						szTitle[k]	=	'\0';
@@ -3213,6 +3194,34 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 						}
 						szTitle[j]	=	'\0';
 						pcFuncInfoArr->AppendData(nLineCount+1,nPosY+1,szTitle,0,nDepth);
+					}
+				}
+			}
+			if( bEndTag ) // 終了タグ
+			{
+				int nDepthOrg = nDepth; // 2004.04.20 Moca 追加
+				while(nDepth>0)
+				{
+					nDepth--;
+					if(!_stricmp(pszStack[nDepth],szTitle))
+					{
+						break;
+					}
+				}
+				// 2004.04.20 Moca ツリー中と一致しないときは、この終了タグは無視
+				if( nDepth == 0 )
+				{
+					if(_stricmp(pszStack[nDepth],szTitle))
+					{
+						nDepth = nDepthOrg;
+					}
+				}else{
+					if( nLabelType=='hd' ){	//	見出しの終わり
+						nHeadDepth[szTitle[1]-'0'] = nDepth;
+						nDepth++;
+					}
+					if( nLabelType=='pa' ){
+						bParaTag = false;
 					}
 				}
 			}
