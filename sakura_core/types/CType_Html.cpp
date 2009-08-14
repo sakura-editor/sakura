@@ -189,34 +189,11 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 				nLabelType = LT_HEADING;
 			}
 
-			if( bEndTag ) // 終了タグ
+			// 2009.08.13 syat 「/>」で終わるタグの判定のため、終了タグ処理を開始タグ処理の後にした。
+			//                  （開始タグ処理の中で、bEndTagをtrueにしている所がある。）
+
+			if( ! bEndTag ) // 開始タグ
 			{
-				int nDepthOrg = nDepth; // 2004.04.20 Moca 追加
-				while(nDepth>0)
-				{
-					nDepth--;
-					if(!wcsicmp(pszStack[nDepth],szTitle))
-					{
-						break;
-					}
-				}
-				// 2004.04.20 Moca ツリー中と一致しないときは、この終了タグは無視
-				if( nDepth == 0 )
-				{
-					if(wcsicmp(pszStack[nDepth],szTitle))
-					{
-						nDepth = nDepthOrg;
-					}
-				}else{
-					if( nLabelType==LT_HEADING ){	//	見出しの終わり
-						nHeadDepth[szTitle[1]-L'0'] = nDepth;
-						nDepth++;
-					}
-					if( nLabelType==LT_PARAGRAPH ){
-						bParaTag = false;
-					}
-				}
-			} else { // 開始タグ
 				if( nLabelType!=LT_INLINE && nLabelType!=LT_IGNORE ){
 					// pの中でブロック要素がきたら、自動的にpを閉じる。 2008.09.07 aroka
 					if( bParaTag ){
@@ -296,6 +273,34 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 						}
 						szTitle[j]	=	L'\0';
 						pcFuncInfoArr->AppendData(nLineCount+CLogicInt(1),ptPos.GetY2()+CLayoutInt(1),szTitle,0,nDepth);
+					}
+				}
+			}
+			if( bEndTag ) // 終了タグ
+			{
+				int nDepthOrg = nDepth; // 2004.04.20 Moca 追加
+				while(nDepth>0)
+				{
+					nDepth--;
+					if(!wcsicmp(pszStack[nDepth],szTitle))
+					{
+						break;
+					}
+				}
+				// 2004.04.20 Moca ツリー中と一致しないときは、この終了タグは無視
+				if( nDepth == 0 )
+				{
+					if(wcsicmp(pszStack[nDepth],szTitle))
+					{
+						nDepth = nDepthOrg;
+					}
+				}else{
+					if( nLabelType==LT_HEADING ){	//	見出しの終わり
+						nHeadDepth[szTitle[1]-L'0'] = nDepth;
+						nDepth++;
+					}
+					if( nLabelType==LT_PARAGRAPH ){
+						bParaTag = false;
 					}
 				}
 			}
