@@ -144,6 +144,20 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 	case F_WCHAR:
 		AddIntParam( lParam ); //※文字コードが渡される
 		break;
+	case F_CHGMOD_EOL:
+		{
+			// EOLタイプ値をマクロ引数値に変換する	// 2009.08.18 ryoji
+			int nFlag;
+			switch( (int)lParam ){
+			case EOL_CRLF:	nFlag = 1; break;
+//			case EOL_LFCR:	nFlag = 2; break;
+			case EOL_LF:	nFlag = 3; break;
+			case EOL_CR:	nFlag = 4; break;
+			default:		nFlag = 0; break;
+			}
+			AddIntParam( nFlag );
+		}
+		break;
 
 	/*	標準もパラメータを追加 */
 	default:
@@ -375,7 +389,6 @@ void CMacro::HandleCommand(
 	{
 	case F_WCHAR:		//	文字入力。数値は文字コード
 	case F_IME_CHAR:	//	日本語入力
-	case F_CHGMOD_EOL:	//	入力改行コード指定。enumEOLTypeの数値を指定。2003.06.23 Moca
 		//	Jun. 16, 2002 genta
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
@@ -386,12 +399,35 @@ void CMacro::HandleCommand(
 			);
 			break;
 		}
-		/* NO BREAK */
 	case F_TEXTWRAPMETHOD:	//	テキストの折り返し方法の指定。数値は、0x0（折り返さない）、0x1（指定桁で折り返す）、0x2（右端で折り返す）	// 2008.05.30 nasukoji
 	case F_GOLINETOP:	//	行頭に移動。数値は、0x0（デフォルト）、0x1（空白を無視して先頭に移動）、0x2（未定義）、0x4（選択して移動）、0x8（改行単位で先頭に移動：未実装）
 	case F_SELECT_COUNT_MODE:	//	文字カウントの方法を指定。数値は、0x0（変更せず取得のみ）、0x1（文字数）、0x2（バイト数）、0x3（文字数⇔バイト数トグル）	// 2009.07.06 syat
 		//	一つ目の引数が数値。
 		pcEditView->GetCommander().HandleCommand( Index, FALSE, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
+		break;
+	case F_CHGMOD_EOL:	//	入力改行コード指定。enumEOLTypeの数値を指定。2003.06.23 Moca
+		//	Jun. 16, 2002 genta
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX(
+				NULL,
+				MB_OK | MB_ICONSTOP | MB_TOPMOST,
+				EXEC_ERROR_TITLE,
+				_T("入力改行コードが指定されていません．")
+			);
+			break;
+		}
+		{
+			// マクロ引数値をEOLタイプ値に変換する	// 2009.08.18 ryoji
+			int nEol;
+			switch( Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ){
+			case 1:		nEol = EOL_CRLF; break;
+//			case 2:		nEol = EOL_LFCR; break;
+			case 3:		nEol = EOL_LF; break;
+			case 4:		nEol = EOL_CR; break;
+			default:	nEol = EOL_NONE; break;
+			}
+			pcEditView->GetCommander().HandleCommand( Index, FALSE, nEol, 0, 0, 0 );
+		}
 		break;
 	case F_INSTEXT_W:		//	テキスト挿入
 	case F_ADDTAIL_W:		//	この操作はキーボード操作では存在しないので保存することができない？
