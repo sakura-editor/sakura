@@ -232,6 +232,7 @@ private:
 	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	BOOL	m_bPageScrollByWheel;		// ホイール操作によるページスクロールあり	// 2009.01.12 nasukoji
 	BOOL	m_bHorizontalScrollByWheel;	// ホイール操作による横スクロールあり		// 2009.01.12 nasukoji
+	HACCEL	m_hAccel;		// ウィンドウ毎のアクセラレータテーブルのハンドル(Wine用)	// 2009.08.15 nasukoji
 
 	//	Jul. 21, 2003 genta ToolBarのOwner Draw
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );

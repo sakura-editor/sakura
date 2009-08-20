@@ -608,6 +608,8 @@ struct Common {
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
 	BOOL				m_bNoFilterSaveNew;		// 新規から保存時は全ファイル表示
 	BOOL				m_bNoFilterSaveFile;	// 新規以外から保存時は全ファイル表示
+
+	BOOL				m_bCreateAccelTblEachWin;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 }; /* Common */
 
 

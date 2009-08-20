@@ -265,9 +265,12 @@ struct ARRHEAD {
 
 	Version 91:
 	句読点ぶら下げ文字 2009.08.07 ryoji
+
+	Version 92:
+	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用) 2009.08.15 nasukoji
 */
 
-const unsigned int uShareDataVersion = 91;
+const unsigned int uShareDataVersion = 92;
 
 /*
 ||	Singleton風
@@ -695,6 +698,8 @@ bool CShareData::Init( void )
 		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
 		m_pShareData->m_Common.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
 		m_pShareData->m_Common.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
+
+		m_pShareData->m_Common.m_bCreateAccelTblEachWin = FALSE;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */

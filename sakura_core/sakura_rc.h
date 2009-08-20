@@ -601,6 +601,7 @@
 #define IDC_LABEL_REGEXP_VER            1525
 #define IDC_COMBO_WHEEL_PAGESCROLL      1526
 #define IDC_COMBO_WHEEL_HSCROLL         1527
+#define IDC_CHECK_ACCELTBL_EACHWIN      1528
 #define IDC_RADIO_OUTPUT                1536
 #define IDC_RADIO_EDITWINDOW            1537
 #define IDC_CHECK_SENDSTDIN             1538
@@ -663,7 +664,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        249
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1528
+#define _APS_NEXT_CONTROL_VALUE         1529
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

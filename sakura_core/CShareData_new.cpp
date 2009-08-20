@@ -711,6 +711,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 	cProfile.IOProfileData( pszSecName, "bNoFilterSaveNew"			, common.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示	// 2006.11.16 ryoji
 	cProfile.IOProfileData( pszSecName, "bNoFilterSaveFile"			, common.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
+
+	cProfile.IOProfileData( pszSecName, "bCreateAccelTblEachWin"	, common.m_bCreateAccelTblEachWin);	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 	
 	/* 「開く」ダイアログのサイズと位置 */
 	const char* pszKeyName = "rcOpenDialog";
