@@ -14,7 +14,7 @@
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, ryoji, nasukoji
+	Copyright (C) 2009, ryoji, nasukoji, Hidetaka Sakai
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -138,6 +138,25 @@ CEditWnd::CEditWnd()
 
 	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
 	ClearMouseState();
+
+	// 2009.08.15 Hidetaka Sakai, nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){
+		m_hAccel = CKeyBind::CreateAccerelator(
+						m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+						m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
+				   );
+
+		if( NULL == m_hAccel ){
+			ErrorMessage(
+				NULL,
+				_T("CEditWnd::CEditWnd()\n")
+				_T("アクセラレータ テーブルが作成できません。\n")
+				_T("システムリソースが不足しています。"),
+			);
+		}
+	}else{
+		m_hAccel = NULL;
+	}
 }
 
 CEditWnd::~CEditWnd()
@@ -156,6 +175,12 @@ CEditWnd::~CEditWnd()
 
 	delete m_pcDropTarget;	// 2008.06.20 ryoji
 	m_pcDropTarget = NULL;
+
+	// 2009.08.15 Hidetaka Sakai, nasukoji	ウィンドウ毎に作成したアクセラレータテーブルを開放する
+	if( m_hAccel ){
+		::DestroyAcceleratorTable( m_hAccel );
+		m_hAccel = NULL;
+	}
 
 	m_hWnd = NULL;
 }
@@ -757,11 +782,19 @@ void CEditWnd::MessageLoop( void )
 		else if( MyIsDialogMessage( m_cHokanMgr.GetHwnd(),								&msg ) ){}	//!<「入力補完」
 		else if( m_cToolbar.EatMessage(&msg ) ){ }													//!<ツールバー
 		//アクセラレータ
-		else if( m_pShareData->m_sHandles.m_hAccel && TranslateAccelerator( msg.hwnd, m_pShareData->m_sHandles.m_hAccel, &msg ) ){}
-		//通常メッセージ
 		else{
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
+			// 2009.08.15 Hidetaka Sakai, nasukoji
+			// Wineでは別プロセスで作成したアクセラレータテーブルを使用することができない。
+			// m_bCreateAccelTblEachWinオプション選択によりプロセス毎にアクセラレータテーブルが作成されるようになる
+			// ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
+			HACCEL hAccel = m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ? m_hAccel : m_pShareData->m_sHandles.m_hAccel;
+
+			if( hAccel && TranslateAccelerator( msg.hwnd, hAccel, &msg ) ){}
+			//通常メッセージ
+			else{
+				TranslateMessage( &msg );
+				DispatchMessage( &msg );
+			}
 		}
 	}
 }
@@ -1320,6 +1353,28 @@ LRESULT CEditWnd::DispatchEvent(
 
 		// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 		EndLayoutBars();
+
+		// 2009.08.15 nasukoji	アクセラレータテーブルを再作成する(Wine用)
+		if( m_hAccel ){
+			::DestroyAcceleratorTable( m_hAccel );		// ウィンドウ毎に作成したアクセラレータテーブルを開放する
+			m_hAccel = NULL;
+		}
+
+		if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+			m_hAccel = CKeyBind::CreateAccerelator(
+							m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+							m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
+					   );
+
+			if( NULL == m_hAccel ){
+				ErrorMessage(
+					NULL,
+					_T("CEditWnd::DispatchEvent()\n")
+					_T("アクセラレータ テーブルが作成できません。\n")
+					_T("システムリソースが不足しています。"),
+				);
+			}
+		}
 
 		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
 		{

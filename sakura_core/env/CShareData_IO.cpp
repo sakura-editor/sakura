@@ -778,6 +778,9 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 	WCHAR	szFuncNameJapanese[256];
 	bool	bOldVer = false;
 
+	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
+	cProfile.IOProfileData( szSecName, LTEXT("bCreateAccelTblEachWin"), GetDllShareData().m_Common.m_sKeyBind.m_bCreateAccelTblEachWin );
+
 	if( cProfile.IsReadingMode() ){ 
 		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {
 			bOldVer = true;
