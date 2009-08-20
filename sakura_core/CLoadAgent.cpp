@@ -11,6 +11,21 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	// リロード要求の場合は、継続。
 	if(pLoadInfo->bRequestReload)goto next;
 
+	//フォルダが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
+	if( IsDirectory(pLoadInfo->cFilePath) ){
+		SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
+		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
+			CEditWnd::Instance()->GetHwnd(),
+			pLoadInfo->cFilePath,	//指定されたフォルダ
+			&sLoadInfo
+		);
+		if( !bDlgResult ){
+			return CALLBACK_INTERRUPT; //キャンセルされた場合は中断
+		}
+		*pLoadInfo = sLoadInfo;
+		pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfPath( pLoadInfo->cFilePath );
+	}
+
 	// 他のウィンドウで既に開かれている場合は、それをアクティブにする
 	HWND	hWndOwner;
 	if( CShareData::getInstance()->ActiveAlreadyOpenedWindow(pLoadInfo->cFilePath, &hWndOwner, pLoadInfo->eCharCode) ){
