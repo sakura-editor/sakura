@@ -523,13 +523,34 @@ void GetInidirOrExedir(
 bool IsFileExists(const TCHAR* path, bool bFileOnly)
 {
 	WIN32_FIND_DATA fd;
-	::ZeroMemory( &fd, sizeof(fd));
-
 	HANDLE hFind = ::FindFirstFile( path, &fd );
 	if( hFind != INVALID_HANDLE_VALUE ){
 		::FindClose( hFind );
 		if( bFileOnly && (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )return false;
 		return true;
+	}
+	return false;
+}
+
+/**	ディレクトリチェック
+
+	指定されたパスがディレクトリかどうかを確認する。
+
+	@param pszPath [in] 調べるパス名
+
+	@retval true  ディレクトリ
+	@retval false ディレクトリではない
+	
+	@author ryoji
+	@date 2009.08.20 新規作成
+*/
+bool IsDirectory(LPCTSTR pszPath)
+{
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = ::FindFirstFile( pszPath, &fd );
+	if(hFind!=INVALID_HANDLE_VALUE){
+		::FindClose( hFind );
+		return (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 	}
 	return false;
 }

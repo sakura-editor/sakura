@@ -1585,14 +1585,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CReadHelper.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CReadHelper.h"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CReadManager.cpp"
 				>
 			</File>
@@ -1876,6 +1868,14 @@
 				Name="charset"
 				>
 				<File
+					RelativePath="..\sakura_core\charset\CCesu8.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CCesu8.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\charset\CCodeBase.cpp"
 					>
 				</File>
@@ -1997,14 +1997,6 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\charset\CUtf8.h"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\charset\CCesu8.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\charset\CCesu8.h"
 					>
 				</File>
 			</Filter>

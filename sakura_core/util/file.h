@@ -4,6 +4,7 @@ bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
 SAKURA_CORE_API bool IsFilePath( const wchar_t*, int*, int*, bool = true );
 SAKURA_CORE_API bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
+bool IsDirectory(LPCTSTR pszPath);	// 2009.08.20 ryoji
 
 //	Apr. 30, 2003 genta
 //	ディレクトリの深さを調べる
