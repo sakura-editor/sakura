@@ -38,18 +38,12 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	}
 
 	// 書込可能チェック ######### スマートじゃない。ホントは書き込み時エラーチェック検出機構を用意したい
-	if(!pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) || !pcDoc->m_cDocFileOperation._ToDoLock()){ //名前を付けて保存 or ロックしてない
-		CFile cFile;
-		cFile.SetFilePath(pSaveInfo->cFilePath);
+	if(!pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) || !pcDoc->m_cDocFile.IsFileLocking()){ //名前を付けて保存 or ロックしてない
 		try{
-			if(fexist(pSaveInfo->cFilePath)){
-				if(!cFile.IsFileWritable()){
-					throw CError_FileOpen();
-				}
-			}
-			else{
-				CBinaryOutputStream out(pSaveInfo->cFilePath);
-				out.Close();
+			bool bExist = fexist(pSaveInfo->cFilePath);
+			CStream out(pSaveInfo->cFilePath, _T("ab"), true);	// 実際の保存は "wb" だがここは "ab"（ファイル内容は破棄しない）でチェックする	// 2009.08.21 ryoji
+			out.Close();
+			if(!bExist){
 				::DeleteFile(pSaveInfo->cFilePath);
 			}
 		}

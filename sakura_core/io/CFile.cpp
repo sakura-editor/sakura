@@ -37,10 +37,13 @@ bool CFile::HasWritablePermission() const
 bool CFile::IsFileWritable() const
 {
 	//書き込めるか検査
+	// Note. 他のプロセスが明示的に書き込み禁止しているかどうか
+	//       ⇒ GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE でチェックする
+	//          実際のファイル保存もこれと等価な _tfopen の _T("wb") を使用している
 	HANDLE hFile = CreateFile(
 		this->GetFilePath(),			//ファイル名
-		GENERIC_READ | GENERIC_WRITE,	//読み書きモード
-		0,								//共有無し
+		GENERIC_WRITE,					//書きモード
+		FILE_SHARE_READ | FILE_SHARE_WRITE,	//読み書き共有
 		NULL,							//既定のセキュリティ記述子
 		OPEN_EXISTING,					//ファイルが存在しなければ失敗
 		FILE_ATTRIBUTE_NORMAL,			//特に属性は指定しない
