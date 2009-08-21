@@ -168,7 +168,6 @@ BOOL CEditView::Create(
 
 	m_sCurSearchOption.Reset();				// 検索／置換 オプション
 
-	m_bExecutingKeyMacro = false;			/* キーボードマクロの実行中 */
 	m_nMyIndex = 0;
 
 	//	Dec. 4, 2002 genta

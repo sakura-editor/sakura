@@ -14,7 +14,7 @@
 	Copyright (C) 2003, MIK, genta, Moca
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, FILE
-	Copyright (C) 2006, かろと, fon
+	Copyright (C) 2006, かろと, fon, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
 
@@ -36,6 +36,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 {
 	//ID					関数名							引数										戻り値の型	m_pszData
 	{F_GETFILENAME,			LTEXT("GetFilename"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイル名を返す
+	{F_GETSAVEFILENAME,		LTEXT("GetSaveFilename"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //保存時のファイル名を返す 2006.09.04 ryoji
 	{F_GETSELECTED,			LTEXT("GetSelectedString"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //選択部分
 	{F_EXPANDPARAMETER,		LTEXT("ExpandParameter"),		{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //特殊文字の展開
 	{F_GETLINESTR,			LTEXT("GetLineStr"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, // 指定論理行の取得 2003.06.01 Moca
@@ -52,7 +53,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 	{F_ISPOSSIBLEUNDO,		LTEXT("IsPossibleUndo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Undo可能か調べる 2005.08.05 maru
 	{F_ISPOSSIBLEREDO,		LTEXT("IsPossibleRedo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Redo可能か調べる 2005.08.05 maru
 	{F_CHGWRAPCOLM,			LTEXT("ChangeWrapColm"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
-	
+	{F_ISCURTYPEEXT,		LTEXT("IsCurTypeExt"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_ISSAMETYPEEXT,		LTEXT("IsSameTypeExt"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，
@@ -457,18 +460,21 @@ int CSMacroMgr::Append(
 	@param hwndParent [in] 親ウィンドウの
 	@param pViewClass [in] macro実行対象のView
 	@param idx [in] マクロ番号。
+	@param flags [in] マクロ実行フラグ．HandleCommandに渡すオプション．
+
+	@date 2007.07.16 genta flags追加
 */
-BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
+BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int flags )
 {
 	if( idx == STAND_KEYMACRO ){
 		//	Jun. 16, 2002 genta
 		//	キーマクロ以外のサポートによりNULLの可能性が出てきたので判定追加
 		if( m_pKeyMacro != NULL ){
 			//	Sep. 15, 2005 FILE
-			SetCurrentIdx( idx );
-			m_pKeyMacro->ExecKeyMacro( pcEditView );
-			//	Sep. 15, 2005 FILE
-			SetCurrentIdx( INVALID_MACRO_IDX );
+			//	Jul. 01, 2007 マクロの多重実行時に備えて直前のマクロ番号を退避
+			int prevmacro = SetCurrentIdx( idx );
+			m_pKeyMacro->ExecKeyMacro( pcEditView, flags );
+			SetCurrentIdx( prevmacro );
 			return TRUE;
 		}
 		else {
@@ -478,7 +484,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 	if( idx == TEMP_KEYMACRO ){		// 一時マクロ
 		if( m_pTempMacro != NULL ){
 			SetCurrentIdx( idx );
-			m_pTempMacro->ExecKeyMacro( pcEditView );
+			m_pTempMacro->ExecKeyMacro( pcEditView, flags );
 			SetCurrentIdx( INVALID_MACRO_IDX );
 			return TRUE;
 		}
@@ -506,10 +512,11 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView )
 	}
 
 	//	Sep. 15, 2005 FILE
+	//	Jul. 01, 2007 マクロの多重実行時に備えて直前のマクロ番号を退避
+	int prevmacro = SetCurrentIdx( idx );
 	SetCurrentIdx( idx );
-	m_cSavedKeyMacro[idx]->ExecKeyMacro(pcEditView);
-	//	Sep. 15, 2005 FILE
-	SetCurrentIdx( INVALID_MACRO_IDX );
+	m_cSavedKeyMacro[idx]->ExecKeyMacro(pcEditView, flags);
+	SetCurrentIdx( prevmacro );
 
 	pcEditView->Redraw();	//	必要？
 	return TRUE;

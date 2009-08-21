@@ -131,7 +131,8 @@ BOOL CViewCommander::HandleCommand(
 
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
 	//	下位16ビットのみを取り出す
-	int	nCommandFrom = HIWORD( nCommand );
+	//	Jul.  7, 2007 genta 定数と比較するためにシフトしないで使う
+	int nCommandFrom = nCommand & ~0xffff;
 	nCommand = (EFunctionCode)LOWORD( nCommand );
 
 
@@ -166,12 +167,14 @@ BOOL CViewCommander::HandleCommand(
 	}
 	m_bPrevCommand = nCommand;
 	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
-		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
+		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow() &&	/* キーボードマクロを記録中のウィンドウ */
+		( nCommandFrom & FA_NONRECORD ) != FA_NONRECORD	/* 2007.07.07 genta 記録抑制フラグ off */
 	){
 		/* キーリピート状態をなくする */
 		bRepeat = FALSE;
 		/* キーマクロに記録可能な機能かどうかを調べる */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+		//F_EXECEXTMACROコマンドはファイルを選択した後にマクロ文が確定するため個別に記録する。
 		if( CSMacroMgr::CanFuncIsKeyMacro( nCommand ) &&
 			nCommand != F_EXECEXTMACRO	//F_EXECEXTMACROは個別で記録します
 		){
@@ -180,6 +183,12 @@ BOOL CViewCommander::HandleCommand(
 			CEditApp::Instance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, m_pCommanderView );
 		}
 	}
+
+	//	2007.07.07 genta マクロ実行中フラグの設定
+	//	マクロからのコマンドかどうかはnCommandFromでわかるが
+	//	nCommandFromを引数で浸透させるのが大変なので，従来のフラグにも値をコピーする
+	m_pCommanderView->m_bExecutingKeyMacro = ( nCommandFrom & FA_FROMMACRO ) ? true : false;
+
 	/* キーボードマクロの実行中 */
 	if( m_pCommanderView->m_bExecutingKeyMacro ){
 		/* キーリピート状態をなくする */
@@ -188,9 +197,9 @@ BOOL CViewCommander::HandleCommand(
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
-		m_pCommanderView->m_bExecutingKeyMacro = true;
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !CEditApp::Instance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView )){
+		if( !CEditApp::Instance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
+			nCommandFrom & FA_NONRECORD )){
 			InfoMessage(
 				this->m_pCommanderView->m_hwndParent,
 				_T("マクロ %d (%ts) の実行に失敗しました。"),
@@ -198,7 +207,6 @@ BOOL CViewCommander::HandleCommand(
 				CEditApp::Instance()->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
 		}
-		m_pCommanderView->m_bExecutingKeyMacro = false;
 		return TRUE;
 	}
 	//	To Here Sep. 29, 2001 genta マクロの実行機能追加
@@ -3493,16 +3501,7 @@ bool CViewCommander::Command_FILESAVEAS_DIALOG()
 */
 BOOL CViewCommander::Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType )
 {
-	CEditDoc* pcDoc = GetDocument();
-
-	//セーブ情報
-	SSaveInfo sSaveInfo;
-	pcDoc->GetSaveInfo(&sSaveInfo);
-	sSaveInfo.cFilePath = to_tchar(filename);
-	sSaveInfo.cEol = eEolType;
-
-	//セーブ処理
-	return pcDoc->m_cDocFileOperation.DoSaveFlow(&sSaveInfo);
+	return 	GetDocument()->m_cDocFileOperation.FileSaveAs(filename, eEolType);
 }
 
 /*!	全て上書き保存
@@ -3870,6 +3869,9 @@ void CViewCommander::Command_TYPE_LIST( void )
 			/* 設定変更を反映させる */
 			GetDocument()->m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
 			GetDocument()->OnChangeSetting();
+
+			// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
+			GetDocument()->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnTypeChanged );
 		}
 		else{
 			/* タイプ別設定 */
@@ -7879,9 +7881,6 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 	GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
 	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
-	/* キーボードマクロの実行中 */
-	m_pCommanderView->m_bExecutingKeyMacro = true;
-
 	/* キーボードマクロの実行 */
 	//@@@ 2002.1.24 YAZAKI
 	if ( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName[0] ){
@@ -7897,12 +7896,10 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 			ErrorMessage( m_pCommanderView->GetHwnd(), _T("ファイルを開けませんでした。\n\n%ts"), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 		else {
-			CEditApp::Instance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView );
+			//	2007.07.20 genta : flagsオプション追加
+			CEditApp::Instance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView, 0 );
 		}
 	}
-
-	/* キーボードマクロの実行中 */
-	m_pCommanderView->m_bExecutingKeyMacro = false;
 
 	/* フォーカス移動時の再描画 */
 	m_pCommanderView->RedrawAll();
@@ -8025,7 +8022,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロの読み込みに失敗しました。\n\n%ts"), pszPath );
 	}
 	else {
-		CEditApp::Instance()->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView );
+		CEditApp::Instance()->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
 	}
 
 	// 終わったら開放

@@ -105,6 +105,18 @@ bool CDocFileOperation::FileLoad(
 	SLoadInfo*	pLoadInfo		//!< [in/out]
 )
 {
+	bool bRet = DoLoadFlow(pLoadInfo);
+	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+	if( bRet ) m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
+	return bRet;
+}
+
+//! ファイルを開く（自動実行マクロを実行しない）
+//	2009.08.11 ryoji FileLoadへのパラメータ追加にしてもいいがANSI版と整合がとりやすいので当面は別関数にしておく
+bool CDocFileOperation::FileLoadWithoutAutoMacro(
+	SLoadInfo*	pLoadInfo		//!< [in/out]
+)
+{
 	return DoLoadFlow(pLoadInfo);
 }
 
@@ -147,7 +159,7 @@ void CDocFileOperation::ReloadCurrentFile(
 	sLoadInfo.eCharCode=nCharCode;
 	sLoadInfo.bViewMode=CAppMode::Instance()->IsViewMode();
 	sLoadInfo.bRequestReload=true;
-	this->DoLoadFlow(&sLoadInfo);
+	bool bRet = this->DoLoadFlow(&sLoadInfo);
 
 	//文字コード確認フラグ復元
 	GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange = backup_bQueryIfCodeChange; //####仮
@@ -160,6 +172,9 @@ void CDocFileOperation::ReloadCurrentFile(
 	}
 	m_pcDocRef->m_pcEditWnd->GetActiveView().GetCaret().MoveCursorProperly( ptCaretPosXY, TRUE );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
 	m_pcDocRef->m_pcEditWnd->GetActiveView().GetCaret().m_nCaretPosX_Prev = m_pcDocRef->m_pcEditWnd->GetActiveView().GetCaret().GetCaretLayoutPos().GetX2();
+
+	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+	if( bRet ) m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 }
 
 
@@ -321,6 +336,9 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 		//セーブ前おまけ処理
 		if(CALLBACK_INTERRUPT==m_pcDocRef->NotifyPreBeforeSave(pSaveInfo))throw CFlowInterruption();
 
+		// 2006.09.01 ryoji 保存前自動実行マクロを実行する
+		m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnSave, pSaveInfo->cFilePath );
+
 		//セーブ処理
 		m_pcDocRef->NotifyBeforeSave(*pSaveInfo);	//前処理
 		m_pcDocRef->NotifySave(*pSaveInfo);			//本処理
@@ -376,18 +394,31 @@ bool CDocFileOperation::FileSave()
 
 	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS_DIALOG()から処理本体を切り出し
 */
-bool CDocFileOperation::FileSaveAs()
+bool CDocFileOperation::FileSaveAs( const WCHAR* filename, EEolType eEolType )
 {
 	//セーブ情報
 	SSaveInfo sSaveInfo;
 	m_pcDocRef->GetSaveInfo(&sSaveInfo);
-	if(CAppMode::Instance()->IsViewMode())sSaveInfo.cFilePath = _T(""); //※読み込み専用モードのときはファイル名を指定しない
+	if( filename ){
+		sSaveInfo.cFilePath = to_tchar(filename);
+		sSaveInfo.cEol = eEolType;
+	}else{
+		if(CAppMode::Instance()->IsViewMode())sSaveInfo.cFilePath = _T(""); //※読み込み専用モードのときはファイル名を指定しない
 
-	//ダイアログ表示
-	if(!SaveFileDialog(&sSaveInfo))return false;
+		//ダイアログ表示
+		if(!SaveFileDialog(&sSaveInfo))return false;
+	}
 
 	//セーブ処理
-	return DoSaveFlow(&sSaveInfo);
+	if( DoSaveFlow(&sSaveInfo) ){
+		// オープン後自動実行マクロを実行する（ANSI版ではここで再ロード実行→自動実行マクロが実行される）
+		// 提案時の Patches#1550557 に、「名前を付けて保存」でオープン後自動実行マクロが実行されることの是非について議論の経緯あり
+		//   →”ファイル名に応じて表示を変化させるマクロとかを想定すると、これはこれでいいように思います。”
+		m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
+		return true;
+	}
+
+	return false;
 }
 
 
@@ -417,6 +448,9 @@ bool CDocFileOperation::FileClose()
 
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcDocRef->m_pcEditWnd->UpdateCaption();
+
+	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
+	m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 	return true;
 }
@@ -454,5 +488,9 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	m_pcDocRef->m_pcEditWnd->UpdateCaption();
 
 	//開く
-	FileLoad(&sLoadInfo);
+	FileLoadWithoutAutoMacro(&sLoadInfo);
+
+	// オープン後自動実行マクロを実行する
+	// ※ロードしてなくても(無題)には変更済み
+	m_pcDocRef->RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 }

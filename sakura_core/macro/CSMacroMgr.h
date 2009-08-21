@@ -89,8 +89,8 @@ public:
 	void Clear( int idx );
 	void ClearAll( void );	/* キーマクロのバッファをクリアする */
 
-	/*! キーボードマクロの実行 */
-	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView );
+	//! キーボードマクロの実行
+	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
 	
 	//!	実行可能か？CShareDataに問い合わせ
 	bool IsEnabled(int idx) const {
@@ -146,8 +146,10 @@ public:
 	int GetCurrentIdx( void ) const {
 		return m_CurrentIdx;
 	}
-	void SetCurrentIdx( int idx ) {
+	int SetCurrentIdx( int idx ) {
+		int oldIdx = m_CurrentIdx;
 		m_CurrentIdx = idx;
+		return oldIdx;
 	}
 
 	//  Oct. 22, 2008 syat 一時マクロ導入

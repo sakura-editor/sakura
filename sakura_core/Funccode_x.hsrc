@@ -1,5 +1,25 @@
 //このファイルから、Funccode_define.h と Funccode_enum.h が生成されます。
 
+//	コマンドコード
+//
+//	エディタ内部で使われるコマンド番号．16bitの数値．
+//
+//	Windows 95では32768以上のコマンドをメニューやアクセラレータに設定すると
+//	動作しない．
+//
+//	30000-32767 : 機能番号．メニューやキーに割り当てられる．
+//	32768-39999 : メニューからは直接呼ばれないが、他のIDから間接的に呼ばれる機能
+//	40000-49511 : マクロ関数
+//	49512-      : 変換コマンド．状況に応じて機能を置き換える場合に用いる
+//
+//	HandleCommandの引数としては32bit幅だが，上位16bitはコマンドが送られた状況を
+//	通知するために使用する．
+//
+//	[参考]
+//	10000- : ウィンドウ一覧で使用する
+//	11000- : 最近使ったファイルで使用する
+//	12000- : 最近使ったフォルダで使用する
+
 //enum EFunctionCode{
 
 //aliases
@@ -10,6 +30,12 @@ F_0				= 0,
 // 未定義用(ダミーとしても使う) 	//Oct. 17, 2000 jepro noted
 F_DISABLE		= 0,	//未使用
 F_SEPARATOR		= 1,	//セパレータ
+
+//	2007.07.07 genta 状況通知フラグ
+//	コマンドが送られた状況をコマンドと併せて通知する．
+FA_FROMKEYBOARD		 = 0x00010000,	//!< キーボードアクセラレータからのコマンド
+FA_FROMMACRO		 = 0x00020000,	//!< マクロからのコマンド実行
+FA_NONRECORD		 = 0x00040000,	//!< マクロへの記録を抑制する
 
 F_MENU_FIRST				= 30000
 
@@ -421,6 +447,7 @@ F_TEXTWRAPMETHOD		= 32805,		// テキストの折り返し方法					なし
 F_FUNCTION_FIRST	= 40000,	// 2003-02-21 鬼 これ以上だと関数
 
 F_GETFILENAME		= 40001,	// 編集中のファイル名を取得する
+F_GETSAVEFILENAME	= 40018,	// 保存時のファイル名を取得する	// 2006.09.04 ryoji
 F_GETSELECTED		= 40002,	// 選択範囲の取得
 F_EXPANDPARAMETER	= 40003,	// コマンドラインパラメータ展開
 F_GETLINESTR		= 40004,	// 指定行論理データを取得する
@@ -437,10 +464,13 @@ F_GETLINECODE		= 40014,	// 改行コード取得
 F_ISPOSSIBLEUNDO	= 40015,	// Undo可能か調べる
 F_ISPOSSIBLEREDO	= 40016,	// Redo可能か調べる
 F_CHGWRAPCOLM		= 40017,	// 折り返し桁を取得、設定する 2008.06.19 ryoji
+F_ISCURTYPEEXT		= 40019,	// 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+F_ISSAMETYPEEXT		= 40020,	// ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 
 //	= 2005,.01.10 genta ISearch用補助コード
-F_ISEARCH_ADD_CHAR	= 0x10001,	//	Incremental Searchへ1文字へ追加
-F_ISEARCH_ADD_STR	= 0x10002,	//	Incremental Searchへ文字列へ追加
-F_ISEARCH_DEL_BACK	= 0x10003,	//	Incremental Searchの末尾から1文字削除
+//	2007.07.07 genta 16bit以内に収めないと状況コードと衝突するのでコードを変更
+F_ISEARCH_ADD_CHAR	= 0xC001,	//	Incremental Searchへ1文字へ追加
+F_ISEARCH_ADD_STR	= 0xC002,	//	Incremental Searchへ文字列へ追加
+F_ISEARCH_DEL_BACK	= 0xC003,	//	Incremental Searchの末尾から1文字削除
 
 //}; //end of enum EFunction
