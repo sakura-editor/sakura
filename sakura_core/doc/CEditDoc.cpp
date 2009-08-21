@@ -647,3 +647,33 @@ BOOL CEditDoc::OnFileClose()
 	}
 }
 
+/*!	@brief マクロ自動実行
+
+	@param type [in] 自動実行マクロ番号
+	@return
+
+	@author ryoji
+	@date 2006.09.01 ryoji 作成
+	@date 2007.07.20 genta HandleCommandに追加情報を渡す．
+		自動実行マクロで発行したコマンドはキーマクロに保存しない
+*/
+void CEditDoc::RunAutoMacro( int idx, LPCTSTR pszSaveFilePath )
+{
+	static bool bRunning = false;
+
+	if( bRunning )
+		return;	// 再入り実行はしない
+
+	bRunning = true;
+	if( CEditApp::Instance()->m_pcSMacroMgr->IsEnabled(idx) ){
+		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
+			if( NULL != pszSaveFilePath )
+				m_cDocFile.SetSaveFilePath(pszSaveFilePath);
+			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
+			HandleCommand((EFunctionCode)(( F_USERMACRO_0 + idx ) | FA_NONRECORD) );
+			m_cDocFile.SetSaveFilePath(_T(""));
+		}
+	}
+	bRunning = false;
+}
+

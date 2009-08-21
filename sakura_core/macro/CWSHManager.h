@@ -37,7 +37,8 @@ public:
 	CWSHMacroManager(std::wstring const AEngineName);
 	virtual ~CWSHMacroManager();
 
-	virtual void ExecKeyMacro(CEditView *EditView) const;
+	//	2007.07.20 genta : flags’Ç‰Á
+	virtual void ExecKeyMacro(CEditView *EditView, int flags) const;
 	virtual BOOL LoadKeyMacro(HINSTANCE Instance, const TCHAR* Path);
 	virtual BOOL LoadKeyMacroStr(HINSTANCE Instance, const TCHAR* Code);
 
@@ -47,6 +48,7 @@ public:
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;
-	static void ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *Info);
+	//	2007.07.20 genta : flags’Ç‰Á
+	static void ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *Info, int flags);
 };
 #endif

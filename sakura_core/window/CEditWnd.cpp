@@ -618,7 +618,7 @@ void CEditWnd::OpenDocumentWhenStart(
 		::ShowWindow( GetHwnd(), SW_SHOW );
 		//	Oct. 03, 2004 genta コード確認は設定に依存
 		SLoadInfo	sLoadInfo = _sLoadInfo;
-		bool		bReadResult = GetDocument().m_cDocFileOperation.FileLoad(&sLoadInfo);
+		bool		bReadResult = GetDocument().m_cDocFileOperation.FileLoadWithoutAutoMacro(&sLoadInfo);	// 自動実行マクロは後で別の場所で実行される
 		if( !bReadResult ){
 			/* ファイルが既に開かれている */
 			if( sLoadInfo.bOpened ){
@@ -1768,7 +1768,9 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					::SetFocus( GetActiveView().GetHwnd() );
 
 				// コマンドコードによる処理振り分け
-				GetDocument().HandleCommand( (EFunctionCode)MAKELONG( wID, wNotifyCode ));	//	May 19, 2006 genta 上位ビットを渡す
+				//	May 19, 2006 genta 上位ビットを渡す
+				//	Jul. 7, 2007 genta 上位ビットを定数に
+				GetDocument().HandleCommand( (EFunctionCode)(wID | 0) );
 			}
 			break;
 		}
@@ -1785,7 +1787,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 			);
-			GetDocument().HandleCommand( (EFunctionCode)MAKELONG( nFuncCode, wNotifyCode ) );
+			GetDocument().HandleCommand( (EFunctionCode)(nFuncCode | FA_FROMKEYBOARD) );
 		}
 		break;
 
@@ -2653,6 +2655,9 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 		cFiles = m_pShareData->m_Common.m_sFile.m_nDropFileNumMax;
 	}
 
+	/* アクティブにする */	// 2009.08.20 ryoji 処理開始前に無条件でアクティブ化
+	ActivateFrameWindow( GetHwnd() );
+
 	for( i = 0; i < cFiles; i++ ) {
 		//ファイルパス取得、解決。
 		TCHAR		szFile[_MAX_PATH + 1];
@@ -2676,25 +2681,13 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				/* ファイル読み込み */
 				SLoadInfo sLoadInfo(szFile, CODE_AUTODETECT, false);
 				GetDocument().m_cDocFileOperation.FileLoad(&sLoadInfo);
-				hWndOwner = GetHwnd();
-				/* アクティブにする */
-				// 2007.06.17 maru すでに開いているかチェック済みだが
-				// ドロップされたのはフォルダかもしれないので再チェック
-				if(!sLoadInfo.bOpened) ActivateFrameWindow( hWndOwner );
 			}
 			else{
 				/* ファイルをドロップしたときは閉じて開く */
 				if( m_pShareData->m_Common.m_sFile.m_bDropFileAndClose ){
-					/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
-					if( GetDocument().m_cDocFileOperation.FileClose() ){
-						/* ファイル読み込み */
-						SLoadInfo	sLoadInfo(szFile, CODE_AUTODETECT, false);
-						GetDocument().m_cDocFileOperation.FileLoad(&sLoadInfo);
-						hWndOwner = GetHwnd();
-						/* アクティブにする */
-						ActivateFrameWindow( hWndOwner );
-					}
-					goto end_of_drop_query;
+					/* ファイル読み込み */
+					SLoadInfo sLoadInfo(szFile, CODE_AUTODETECT, false);
+					GetDocument().m_cDocFileOperation.FileCloseOpen(sLoadInfo);
 				}
 				else{
 					/* 編集ウィンドウの上限チェック */
@@ -2724,7 +2717,6 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 			}
 		}
 	}
-end_of_drop_query:;
 	::DragFinish( hDrop );
 	return;
 }

@@ -23,6 +23,9 @@ public:
 	bool FileLoad(
 		SLoadInfo*	pLoadInfo			//!< [in/out]
 	);
+	bool FileLoadWithoutAutoMacro(
+		SLoadInfo*	pLoadInfo			//!< [in/out]
+	);
 	void ReloadCurrentFile(				//!< 同一ファイルの再オープン Jul. 26, 2003 ryoji BOMオプション追加
 		ECodeType	nCharCode			//!< [in] 文字コード種別
 	);
@@ -34,7 +37,7 @@ public:
 
 	//セーブフロー
 	bool DoSaveFlow(SSaveInfo* pSaveInfo);
-	bool FileSaveAs();			//!< ダイアログでファイル名を入力させ、保存。	// 2006.12.30 ryoji
+	bool FileSaveAs( const WCHAR* filename = NULL, EEolType eEolType = EOL_NONE );			//!< ダイアログでファイル名を入力させ、保存。	// 2006.12.30 ryoji
 	bool FileSave();			//!< 上書き保存。ファイル名が指定されていなかったらダイアログで入力を促す。	// 2006.12.30 ryoji
 
 	//クローズ

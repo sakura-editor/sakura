@@ -51,13 +51,17 @@
 #define omGet (0)
 #define omSet (1)
 
-CNativeA		CPPA::m_cMemRet;
-CNativeA		CPPA::m_cMemDebug;
-CEditView*		CPPA::m_pcEditView = NULL;
-DLLSHAREDATA*	CPPA::m_pShareData = NULL;
-bool			CPPA::m_bError = false;
+//	2007.07.26 初期化はコンストラクタへ移動
+//CNativeA		CPPA::m_cMemRet;
+//CNativeA		CPPA::m_cMemDebug;
+//CEditView*		CPPA::m_pcEditView = NULL;
+//DLLSHAREDATA*	CPPA::m_pShareData = NULL;
+//bool			CPPA::m_bError = false;
+//	2007.07.22 genta
+//int				CPPA::m_commandflags = FA_FROMMACRO;
+//	2007.07.26 genta
+CPPA::PpaExecInfo* CPPA::m_CurInstance = NULL;
 bool			CPPA::m_bIsRunning = false;
-
 
 CPPA::CPPA()
 {
@@ -67,24 +71,32 @@ CPPA::~CPPA()
 {
 }
 
-
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-void CPPA::Execute(CEditView* pcEditView )
+void CPPA::Execute(CEditView* pcEditView, int flags )
 {
 	//PPAの多重起動禁止 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {
-		MYMESSAGEBOX( m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("PPA実行中に新たにPPAマクロを呼び出すことはできません") );
+		MYMESSAGEBOX( pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("PPA実行中に新たにPPAマクロを呼び出すことはできません") );
 		m_fnAbort();
 		CPPA::m_bIsRunning = false;
 		return;
 	}
 	CPPA::m_bIsRunning = true;
 
-	m_pcEditView = pcEditView;
-	m_pShareData = CShareData::getInstance()->GetShareData();
-	m_bError = false;			//	2003.06.01 Moca
-	m_cMemDebug.SetString("");	//	2003.06.01 Moca
+	PpaExecInfo info;
+	info.m_pcEditView = pcEditView;
+	info.m_pShareData = CShareData::getInstance()->GetShareData();
+	info.m_bError = false;			//	2003.06.01 Moca
+	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
+	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
+	
+	//	実行前にインスタンスを待避する
+	PpaExecInfo* old_instance = m_CurInstance;
+	m_CurInstance = &info;
 	m_fnExecute();
+	
+	//	マクロ実行完了後はここに戻ってくる
+	m_CurInstance = old_instance;
 
 	//PPAの多重起動禁止 2008.10.22 syat
 	CPPA::m_bIsRunning = false;
@@ -294,10 +306,10 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 	case 2:
 		switch(GS_Mode){
 		case omGet:
-			*Value = m_cMemDebug.GetStringPtr();
+			*Value = m_CurInstance->m_cMemDebug.GetStringPtr();
 			break;
 		case omSet:
-			m_cMemDebug.SetString(*Value);
+			m_CurInstance->m_cMemDebug.SetString(*Value);
 			break;
 		}
 		break;
@@ -322,10 +334,10 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 */
 void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 {
-	if( false != m_bError ){
+	if( false != m_CurInstance->m_bError ){
 		return;
 	}
-	m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
+	m_CurInstance->m_bError = true; // 関数内で関数を呼ぶ場合等、2回表示されるのを防ぐ
 
 	char szMes[2048]; // 2048あれば足りるかと
 	const char* pszErr;
@@ -358,17 +370,26 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 			auto_sprintf( szMes, "未定義のエラー\nError_CD=%d\n%hs", Err_CD, Err_Mes );
 		}
 	}
-	if( 0 == m_cMemDebug.GetStringLength() ){
-		MYMESSAGEBOX( m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("%hs"), pszErr );
+	//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
+	//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
+	if( IsBadStringPtrA( pszErr, 256 )){
+		pszErr = "エラー情報が不正";
+	}
+	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("%hs"), pszErr );
 	}
 	else{
-		MYMESSAGEBOX( m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("%hs\n%hs"), pszErr, m_cMemDebug.GetStringPtr() );
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("%hs\n%hs"), pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
 	}
 }
 
 
 
 //----------------------------------------------------------------------
+/** プロシージャ実行callback
+
+	@date 2007.07.20 genta Indexと一緒にフラグを渡す
+*/
 void __stdcall CPPA::stdProc(
 	const char*		FuncName,
 	const int		_Index,
@@ -395,7 +416,7 @@ void __stdcall CPPA::stdProc(
 	const WCHAR** tmpArguments=(const WCHAR**)tmpArguments2;
 
 	//処理
-	CMacro::HandleCommand( m_pcEditView, Index, tmpArguments, ArgSize );
+	CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments, ArgSize );
 
 	//tmpArgumentsを解放
 	for(int i=0;i<ArgSize;i++){
@@ -470,9 +491,9 @@ void __stdcall CPPA::stdStrFunc(
 			int len;
 			char* buf;
 			Wrap(&Ret.bstrVal)->Get(&buf,&len);
-			m_cMemRet.SetString(buf,len); // Mar. 9, 2003 genta
+			m_CurInstance->m_cMemRet.SetString(buf,len); // Mar. 9, 2003 genta
 			delete[] buf;
-			*ResultValue = m_cMemRet.GetStringPtr();
+			*ResultValue = m_CurInstance->m_cMemRet.GetStringPtr();
 			::VariantClear(&Ret);
 			return;
 		}
@@ -531,7 +552,7 @@ bool CPPA::CallHandleFunction(
 
 	if(Index >= F_FUNCTION_FIRST)
 	{
-		Ret = CMacro::HandleFunction(m_pcEditView, Index, vtArg, ArgCnt, *Result);
+		Ret = CMacro::HandleFunction(m_CurInstance->m_pcEditView, Index, vtArg, ArgCnt, *Result);
 		for( i=0; i<4; i++ ){
 			::VariantClear( &vtArg[i] );
 		}
@@ -554,11 +575,7 @@ bool CPPA::CallHandleFunction(
 */
 void __stdcall CPPA::stdFinishProc()
 {
-	m_cMemRet.SetString("");
-	m_cMemDebug.SetString("");
-	m_pShareData = NULL;
-	m_pcEditView = NULL;
-	m_bError = false;
+	// 2007.07.26 genta : 終了処理は不要
 }
 
 #endif

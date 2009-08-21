@@ -305,6 +305,10 @@ bool CNormalProcess::InitializeProcess()
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
 
+	// 2006.09.03 ryoji オープン後自動実行マクロを実行する
+	if( !( bDebugMode || bGrepMode ) )
+		pEditWnd->GetDocument().RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
+
 	// 起動時マクロオプション
 	LPCWSTR pszMacro = CCommandLine::Instance()->GetMacro();
 	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){

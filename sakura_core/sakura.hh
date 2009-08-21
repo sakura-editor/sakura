@@ -634,6 +634,9 @@
 #define HIDC_MACRODIR				11750	//マクロ一覧
 #define HIDC_CHECK_RELOADWHENEXECUTE	11751	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
 #define HIDC_CHECK_MEMDC			11752	//画面キャッシュを使う
+#define HIDC_CHECK_MacroOnOpened		11753	//オープン後自動実行マクロ	// 2006.09.01 ryoji
+#define HIDC_CHECK_MacroOnTypeChanged	11754	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
+#define HIDC_CHECK_MacroOnSave		11755	//保存前自動実行マクロ	// 2006.09.01 ryoji
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索

@@ -416,6 +416,9 @@ struct CommonSetting_Macro
 	TCHAR			m_szKeyMacroFileName[MAX_PATH];	//!< キーボードマクロのファイル名
 	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル	//	Sep. 14, 2001 genta
 	SFilePath		m_szMACROFOLDER;	/* マクロ用フォルダ */
+	int				m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int				m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int				m_nMacroOnSave;		/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

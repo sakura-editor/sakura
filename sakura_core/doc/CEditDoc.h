@@ -13,7 +13,7 @@
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, Moca, genta, aroka
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
@@ -95,6 +95,8 @@ public:
 	BOOL HandleCommand( EFunctionCode );
 	void OnChangeSetting();		/* ビューに設定変更を反映させる */
 	BOOL OnFileClose();			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
+
+	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //

@@ -123,14 +123,18 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 
 
 
-/*! キーボードマクロの実行
+/** キーボードマクロの実行
 	CMacroに委譲。
+	
+	@date 2007.07.20 genta flags追加．CMacro::Exec()に
+		FA_FROMMACROを含めた値を渡す．
 */
-void CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView ) const
+void CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 {
 	CMacro* p = m_pTop;
+	int macroflag = flags | FA_FROMMACRO;
 	while (p){
-		p->Exec(pcEditView);
+		p->Exec(pcEditView, macroflag);
 		p = p->GetNext();
 	}
 }

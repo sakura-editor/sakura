@@ -13,7 +13,6 @@
 */
 #include "stdafx.h"
 #include "CPPAMacroMgr.h"
-#include "CPPA.h"
 #include "mem/CMemory.h"
 #include "CMacroFactory.h"
 #include <string.h>
@@ -30,13 +29,16 @@ CPPAMacroMgr::~CPPAMacroMgr()
 {
 }
 
-/*! キーボードマクロの実行
+/** PPAマクロの実行
+
 	PPA.DLLに、バッファ内容を渡して実行。
+
+	@date 2007.07.20 genta flags追加
 */
-void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView ) const
+void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 {
 	m_cPPA.SetSource( to_achar(m_cBuffer.GetStringPtr()) );
-	m_cPPA.Execute(pcEditView);
+	m_cPPA.Execute(pcEditView, flags);
 }
 
 /*! キーボードマクロの読み込み（ファイルから）

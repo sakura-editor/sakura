@@ -1210,6 +1210,7 @@ void CViewCommander::Command_SET_QUOTESTRING( const wchar_t* quotestr )
 /*!	@brief ウィンドウ一覧ポップアップ表示処理（ファイル名のみ）
 	@date  2006.03.23 fon 新規作成
 	@date  2006.05.19 genta コマンド実行要因を表す引数追加
+	@date  2007.07.07 genta コマンド実行要因の値を変更
 */
 void CViewCommander::Command_WINLIST( int nCommandFrom )
 {
@@ -1217,7 +1218,8 @@ void CViewCommander::Command_WINLIST( int nCommandFrom )
 	pCEditWnd = GetDocument()->m_pcEditWnd;
 
 	//ウィンドウ一覧をポップアップ表示する
-	pCEditWnd->PopupWinList( nCommandFrom != 1 );	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
+	pCEditWnd->PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
+	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
 
 }
 
