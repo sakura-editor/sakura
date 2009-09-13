@@ -940,6 +940,13 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 			View->m_pcEditDoc->ChangeLayoutParam( false, 
 				varCopy.Data.iVal, View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
+
+			// 2009.08.28 nasukoji	「折り返さない」選択時にTAB幅が変更されたらテキスト最大幅の再算出が必要
+			if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP && varCopy.Data.iVal ){
+				// 最大幅の再算出時に各行のレイアウト長の計算も行う
+				View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
+				View->m_pcEditDoc->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+			}
 		}
 		return true;
 	case F_ISTEXTSELECTED:

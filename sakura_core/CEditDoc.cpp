@@ -15,6 +15,7 @@
 	Copyright (C) 2006, genta, ryoji, aroka
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji, bosagami
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -3844,6 +3845,12 @@ void CEditDoc::OnChangeSetting( void )
 		ref
 	); /* レイアウト情報の変更 */
 
+	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
+	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
+		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+	else
+		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
+
 	/* ビューに設定変更を反映させる */
 	for( i = 0; i < 4; ++i ){
 		m_cEditViewArr[i].OnChangeSetting();
@@ -4097,6 +4104,12 @@ void CEditDoc::InitAllView( void )
 	// 2008.05.30 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+
+	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
+	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
+		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+	else
+		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
 	/* 先頭へカーソルを移動 */
 	for( i = 0; i < 4; ++i ){

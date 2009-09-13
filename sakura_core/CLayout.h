@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI, aroka
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -52,6 +53,7 @@ public:
 	int				m_nIndent;		/*!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI */
 	int				m_nTypePrev;	/*!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 	CEOL			m_cEol;
+	int				m_nLayoutWidth;	/*!< このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ） */	// 2009.08.28 nasukoji
 };
 
 

@@ -10,6 +10,7 @@
 	Copyright (C) 2003, genta
 	Copyright (C) 2004, Moca, genta
 	Copyright (C) 2005, D.S.Koba, Moca
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -165,7 +166,7 @@ void CLayoutMgr::DoLayout(
 					{
 						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
@@ -217,7 +218,7 @@ void CLayoutMgr::DoLayout(
 						if( nPosX + i - nPos >= nMaxLineSize
 						 && nPos - nBgn > 0
 						){
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
@@ -272,7 +273,7 @@ void CLayoutMgr::DoLayout(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2 + nCharChars3;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_HEAD;
-						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
@@ -299,7 +300,7 @@ void CLayoutMgr::DoLayout(
 						nWordBgn = nPos;
 						nWordLen = nCharChars2;
 						nKinsokuType = KINSOKU_TYPE_KINSOKU_TAIL;
-						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+						AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						m_nLineTypeBot = nCOMMENTMODE;
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
@@ -320,7 +321,7 @@ void CLayoutMgr::DoLayout(
 				//	Sep. 23, 2002 genta せっかく作ったので関数を使う
 				int nCharChars2 = GetActualTabSpace( nPosX );
 				if( nPosX + nCharChars2 > nMaxLineSize ){
-					AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+					AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 					m_nLineTypeBot = nCOMMENTMODE;
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 					nBgn = nPos;
@@ -344,7 +345,7 @@ void CLayoutMgr::DoLayout(
 					{
 						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
-							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
@@ -364,7 +365,7 @@ void CLayoutMgr::DoLayout(
 			if( nCOMMENTMODE == COLORIDX_COMMENT ){	/* 行コメントである */
 				nCOMMENTMODE = COLORIDX_TEXT;
 			}
-			AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+			AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 			m_nLineTypeBot = nCOMMENTMODE;
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 		}
@@ -410,6 +411,8 @@ void CLayoutMgr::DoLayout(
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
 		nPosXがインデントを含む幅を保持するように変更．nMaxLineSizeは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
+	@date 2009.08.28 nasukoji	テキスト最大幅の算出に対応
+		「折り返さない」選択時のみテキスト最大幅を算出する．
 
 	@note 2004.04.03 Moca
 		DoLayoutとは違ってレイアウト情報がリスト中間に挿入されるため，
@@ -422,6 +425,7 @@ int CLayoutMgr::DoLayout_Range(
 			int		nDelLogicalLineFrom,
 			int		nDelLogicalColFrom,
 			int		nCurrentLineType,
+			const CalTextWidthArg*	pctwArg,
 			int*	pnExtInsLineNum
 )
 {
@@ -537,7 +541,7 @@ int CLayoutMgr::DoLayout_Range(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -601,7 +605,7 @@ int CLayoutMgr::DoLayout_Range(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -664,7 +668,7 @@ int CLayoutMgr::DoLayout_Range(
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
 						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						}
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -704,7 +708,7 @@ int CLayoutMgr::DoLayout_Range(
 							(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 						}
 						else {
-							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+							pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 						}
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -739,7 +743,7 @@ int CLayoutMgr::DoLayout_Range(
 						(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 					}
 					else {
-						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+						pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 					}
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -774,7 +778,7 @@ int CLayoutMgr::DoLayout_Range(
 								(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 							}
 							else {
-								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+								pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							}
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -808,7 +812,7 @@ int CLayoutMgr::DoLayout_Range(
 				(*pnExtInsLineNum)++;								//	再描画してほしい行数+1
 			}
 			else {
-				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent) );
+				pLayout = InsertLineNext( pLayout, CreateLayout(pCDocLine, nCurLine, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 			}
 			nCOMMENTMODE_Prev = nCOMMENTMODE;
 
@@ -854,12 +858,84 @@ int CLayoutMgr::DoLayout_Range(
 		m_nEOFLine = -1;
 	}
 
+	// 2009.08.28 nasukoji	テキストが編集されたら最大幅を算出する
+	CalculateTextWidth_Range(pctwArg);
+
 // 1999.12.22 レイアウト情報がなくなる訳ではないので
 //	m_nPrevReferLine = 0;
 //	m_pLayoutPrevRefer = NULL;
 //	m_pLayoutCurrent = NULL;
 
 	return nModifyLayoutLinesNew;
+}
+
+/*!
+	@brief テキストが編集されたら最大幅を算出する
+
+	@param[in] pctwArg テキスト最大幅算出用構造体
+
+	@note 「折り返さない」選択時のみテキスト最大幅を算出する．
+	      編集された行の範囲について算出する（下記を満たす場合は全行）
+	      　削除行なし時：最大幅の行を行頭以外にて改行付きで編集した
+	      　削除行あり時：最大幅の行を含んで編集した
+	      pctwArg->nDelLines が負数の時は削除行なし．
+
+	@date 2009.08.28 nasukoji	新規作成
+*/
+void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
+{
+	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){	// 「折り返さない」
+		int nCalTextWidthLinesFrom;		// テキスト最大幅の算出開始レイアウト行
+		int nCalTextWidthLinesTo;		// テキスト最大幅の算出終了レイアウト行
+		BOOL bCalTextWidth = TRUE;		// テキスト最大幅の算出要求をON
+		int nInsLineNum    = m_nLines - pctwArg->nAllLinesOld;		// 追加削除行数
+
+		// 削除行なし時：最大幅の行を行頭以外にて改行付きで編集した
+		// 削除行あり時：最大幅の行を含んで編集した
+		if(( pctwArg->nDelLines < 0  && m_nTextWidth &&
+		     nInsLineNum && pctwArg->nColmFrom && m_nTextWidthMaxLine == pctwArg->nLineFrom )||
+		   ( pctwArg->nDelLines >= 0 && m_nTextWidth &&
+		     pctwArg->nLineFrom <= m_nTextWidthMaxLine && m_nTextWidthMaxLine <= pctwArg->nLineFrom + pctwArg->nDelLines ))
+		{
+			// 全ラインを走査する
+			nCalTextWidthLinesFrom = -1;
+			nCalTextWidthLinesTo   = -1;
+		}else if( nInsLineNum || pctwArg->bInsData ){		// 追加削除行 または 追加文字列あり
+			// 追加削除行のみを走査する
+			nCalTextWidthLinesFrom = pctwArg->nLineFrom;
+
+			// 最終的に編集された行数（3行削除2行追加なら2行追加）
+			// 　1行がMAXLINESIZEを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
+			// 　不要なので計算を省くためこのままとする。
+			int nEditLines = nInsLineNum + ((pctwArg->nDelLines > 0) ? pctwArg->nDelLines : 0);
+			nCalTextWidthLinesTo   = pctwArg->nLineFrom + ((nEditLines > 0) ? nEditLines : 0);
+
+			// 最大幅の行が上下するのを計算
+			if( m_nTextWidth && nInsLineNum && m_nTextWidthMaxLine >= pctwArg->nLineFrom )
+				m_nTextWidthMaxLine += nInsLineNum;
+		}else{
+			// 最大幅以外の行を改行を含まずに（1行内で）編集した
+			bCalTextWidth = FALSE;		// テキスト最大幅の算出要求をOFF
+		}
+
+#ifdef _DEBUG
+		static int testcount = 0;
+		testcount++;
+
+		// テキスト最大幅を算出する
+		if( bCalTextWidth ){
+//			MYTRACE( "CLayoutMgr::DoLayout_Range(%d) nCalTextWidthLinesFrom=%d nCalTextWidthLinesTo=%d\n", testcount, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
+			CalculateTextWidth( FALSE, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
+//			MYTRACE( "CLayoutMgr::DoLayout_Range() m_nTextWidthMaxLine=%d\n", m_nTextWidthMaxLine );
+		}else{
+//			MYTRACE( "CLayoutMgr::DoLayout_Range(%d) FALSE\n", testcount );
+		}
+#else
+		// テキスト最大幅を算出する
+		if( bCalTextWidth )
+			CalculateTextWidth( FALSE, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
+#endif
+	}
 }
 
 /*!
@@ -1308,6 +1384,148 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
+}
+
+/*!
+	@brief  テキスト最大幅を算出する
+
+	指定されたラインを走査してテキストの最大幅を作成する。
+	全て削除された時は未算出状態に戻す。
+
+	@param bCalLineLen	[in] 各レイアウト行の長さの算出も行う
+	@param nStart		[in] 算出開始レイアウト行
+	@param nEnd			[in] 算出終了レイアウト行
+
+	@retval TRUE 最大幅が変化した
+	@retval FALSE 最大幅が変化しなかった
+
+	@note nStart, nEndが両方とも-1の時、全ラインを走査する
+		  範囲が指定されている場合は最大幅の拡大のみチェックする
+
+	@date 2009.08.28 nasukoji	新規作成
+*/
+BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, int nStart, int nEnd )
+{
+	BOOL bRet = FALSE;
+	BOOL bOnlyExpansion = TRUE;		// 最大幅の拡大のみをチェックする
+	int nMaxLen = 0;
+	int nMaxLineNum = 0;
+
+	int nLines = GetLineCount();		// テキストのレイアウト行数
+
+	// 開始・終了位置がどちらも指定されていない
+	if( nStart < 0 && nEnd < 0 )
+		bOnlyExpansion = FALSE;		// 最大幅の拡大・縮小をチェックする
+
+	if( nStart < 0 )			// 算出開始行の指定なし
+		nStart = 0;
+	else if( nStart > nLines )	// 範囲オーバー
+		nStart = nLines;
+	
+	if( nEnd < 0 || nEnd >= nLines )	// 算出終了行の指定なし または 文書行数以上
+		nEnd = nLines;
+	else
+		nEnd++;					// 算出終了行の次行
+
+	CLayout* pLayout;
+
+	// 算出開始レイアウト行を探す
+	if( nStart * 2 < nLines ){
+		// 前方からサーチ
+		int nCount = 0;
+		pLayout = m_pLayoutTop;
+		while( NULL != pLayout ){
+			if( nStart == nCount ){
+				break;
+			}
+			pLayout = pLayout->m_pNext;
+			nCount++;
+		}
+	}else{
+		// 後方からサーチ
+		int nCount = m_nLines - 1;
+		pLayout = m_pLayoutBot;
+		while( NULL != pLayout ){
+			if( nStart == nCount ){
+				break;
+			}
+			pLayout = pLayout->m_pPrev;
+			nCount--;
+		}
+	}
+
+	// レイアウト行の最大幅を取り出す
+	for( int i = nStart; i < nEnd; i++ ){
+		if( !pLayout )
+			break;
+
+		// レイアウト行の長さを算出する
+		if( bCalLineLen ){
+			CMemoryIterator<CLayout> it( pLayout, GetTabSpace() );
+			while( !it.end() ){
+				it.scanNext();
+				it.addDelta();
+			}
+			
+			// 算出した長さを設定
+			pLayout->m_nLayoutWidth = it.getColumn();
+		}
+
+		// 最大幅を更新
+		if( nMaxLen < pLayout->m_nLayoutWidth ){
+			nMaxLen = pLayout->m_nLayoutWidth;
+			nMaxLineNum = i;		// 最大幅のレイアウト行
+
+			// アプリケーションの最大幅となったら算出は停止
+			if( nMaxLen >= MAXLINESIZE && !bCalLineLen )
+				break;
+		}
+
+		// 次のレイアウト行のデータ
+		pLayout = pLayout->m_pNext;
+	}
+
+	// テキストの幅の変化をチェック
+	if( nMaxLen ){
+		// 最大幅が拡大した または 最大幅の拡大のみチェックでない
+		if( m_nTextWidth < nMaxLen || !bOnlyExpansion ){
+			m_nTextWidthMaxLine = nMaxLineNum;
+			if( m_nTextWidth != nMaxLen ){	// 最大幅変化あり
+				m_nTextWidth = nMaxLen;
+				bRet = TRUE;
+			}
+		}
+	}else if( m_nTextWidth && !nLines ){
+		// 全削除されたら幅の記憶をクリア
+		m_nTextWidthMaxLine = 0;
+		m_nTextWidth = 0;
+		bRet = TRUE;
+	}
+	
+	return bRet;
+}
+
+/*!
+	@brief  各行のレイアウト行長の記憶をクリアする
+	
+	@note 折り返し方法が「折り返さない」以外の時は、パフォーマンスの低下を
+		  防止する目的で各行のレイアウト行長(m_nLayoutWidth)を計算していない。
+		  後で設計する人が誤って使用してしまうかもしれないので「折り返さない」
+		  以外の時はクリアしておく。
+		  パフォーマンスの低下が気にならない程なら、全ての折り返し方法で計算
+		  するようにしても良いと思う。
+
+	@date 2009.08.28 nasukoji	新規作成
+*/
+void CLayoutMgr::ClearLayoutLineWidth( void )
+{
+	CLayout* pLayout = m_pLayoutTop;
+
+	while( pLayout ){
+		pLayout->m_nLayoutWidth = 0;	// レイアウト行長をクリア
+		pLayout = pLayout->m_pNext;		// 次のレイアウト行のデータ
+		
+	}
 }
 
 /*[EOF]*/

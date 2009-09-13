@@ -6,6 +6,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK, aroka
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -19,6 +20,7 @@
 #include <stdlib.h>
 #include "CLayout.h" // 2002/2/10 aroka
 #include "CDocLineMgr.h" // 2002/2/10 aroka
+#include "CEditDoc.h"		// 2009.08.28 nasukoji
 
 
 
@@ -169,6 +171,14 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		}
 	}
 
+	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
+	CalTextWidthArg ctwArg;
+	ctwArg.nLineFrom    = pArg->nDelLineFrom;						// 編集開始桁
+	ctwArg.nColmFrom    = pArg->nDelColmFrom;						// 編集開始列
+	ctwArg.nDelLines    = pArg->nDelLineTo - pArg->nDelLineFrom;	// 削除行なし
+	ctwArg.nAllLinesOld = nWork_nLines;								// 編集前のテキスト行数
+	ctwArg.bInsData     = pArg->nInsDataLen ? TRUE : FALSE;			// 追加文字列の有無
+
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	int nAddInsLineNum;
 	pArg->nModLineTo = DoLayout_Range(
@@ -176,6 +186,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		nRowNum,
 		nyFrom, nxFrom,
 		nCurrentLineType,
+		&ctwArg,
 		&nAddInsLineNum
 	);
 

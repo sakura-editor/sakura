@@ -3192,6 +3192,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOp
 	@note ウィンドウが左右に分割されている場合、左側のウィンドウ幅を折り返し幅とする。
 	
 	@date 2008.05.31 nasukoji	新規作成
+	@date 2009.08.28 nasukoji	テキストの最大幅を算出する
 */
 void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 {
@@ -3226,6 +3227,14 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	// 折り返し位置を変更
 	m_pcEditDoc->ChangeLayoutParam( false, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), nWidth );
+
+	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
+	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+		m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+		m_pcEditDoc->RedrawAllViews( NULL );				// スクロールバーの更新が必要なので再表示を実行する
+	}else{
+		m_pcEditDoc->m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
+	}
 }
 
 /*!

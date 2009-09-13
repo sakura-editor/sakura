@@ -509,6 +509,7 @@ protected:
 	void ChangeSelectAreaByCurrentCursorTEST( int, int, int&, int&, int&, int& );/* 現在のカーソル位置によって選択範囲を変更 */
 	void PrintSelectionInfoMsg(void);		// 選択情報データの作成	2005.07.09 genta
 	int  MoveCursorToPoint( int, int );							/* マウス等による座標指定によるカーソル移動 */
+	int  GetRightEdgeForScrollBar( void );						/* スクロールバー制御用に右端座標を取得する */		// 2009.08.28 nasukoji
 	int  ScrollAtV( int );										/* 指定上端行位置へスクロール */
 	int  ScrollAtH( int );										/* 指定左端桁位置へスクロール */
 	//	From Here Sep. 11, 2004 genta ずれ維持の同期スクロール
