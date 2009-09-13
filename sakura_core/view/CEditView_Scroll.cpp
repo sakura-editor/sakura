@@ -227,6 +227,7 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 
 	@date 2008.05.24 ryoji 有効／無効の強制切替を追加
 	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
+	@date 2009.08.28 nasukoji	「折り返さない」選択時のスクロールバー調整
 */
 void CEditView::AdjustScrollBars()
 {
@@ -276,14 +277,14 @@ void CEditView::AdjustScrollBars()
 		si.cbSize = sizeof( si );
 		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		si.nMin  = 0;
-		si.nMax  = (Int)m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + (Int)GetWrapOverhang() - 1; //	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
+		si.nMax  = (Int)GetRightEdgeForScrollBar() - 1;		// 2009.08.28 nasukoji	スクロールバー制御用の右端座標を取得
 		si.nPage = (Int)GetTextArea().m_nViewColNum;			/* 表示域の桁数 */
 		si.nPos  = (Int)GetTextArea().GetViewLeftCol();		/* 表示域の一番左の桁(0開始) */
 		si.nTrackPos = 1;
 		::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
 
 		//	2006.1.28 aroka 判定条件誤り修正 (バーが消えてもスクロールしない)
-		bEnable = ( GetTextArea().m_nViewColNum < m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() );
+		bEnable = ( GetTextArea().m_nViewColNum < GetRightEdgeForScrollBar() );
 		if( bEnable != (::IsWindowEnabled( m_hwndHScrollBar ) != 0) ){
 			::EnableWindow( m_hwndHScrollBar, bEnable? TRUE: FALSE );	// SIF_DISABLENOSCROLL 誤動作時の強制切替
 		}
@@ -393,6 +394,7 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 
 	@date 2004.09.11 genta 桁数を戻り値として返すように．(同期スクロール用)
 	@date 2008.06.08 ryoji 水平スクロール範囲にぶら下げ余白を追加
+	@date 2009.08.28 nasukoji	「折り返さない」選択時右に行き過ぎないようにする
 */
 CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 {
@@ -405,8 +407,8 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 	//	Aug. 18, 2003 ryoji 変数のミスを修正
 	//	ウィンドウの幅をきわめて狭くしたときに編集領域が行番号から離れてしまうことがあった．
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-	else if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() - GetTextArea().m_nViewColNum  < nPos ){
-		nPos = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang() - GetTextArea().m_nViewColNum ;
+	else if( GetRightEdgeForScrollBar() + GetWrapOverhang() - GetTextArea().m_nViewColNum  < nPos ){
+		nPos = GetRightEdgeForScrollBar() + GetWrapOverhang() - GetTextArea().m_nViewColNum ;
 		//	May 29, 2004 genta 折り返し幅よりウィンドウ幅が大きいときにWM_HSCROLLが来ると
 		//	nPosが負の値になることがあり，その場合にスクロールバーから編集領域が
 		//	離れてしまう．
@@ -579,4 +581,57 @@ CLayoutInt CEditView::ViewColNumToWrapColNum( CLayoutInt nViewColNum ) const
 		nWidth = MINLINEKETAS;		// 折り返し幅の最小桁数に設定
 
 	return CLayoutInt( nWidth );
+}
+
+/*!
+	@brief  スクロールバー制御用に右端座標を取得する
+
+	「折り返さない」
+		フリーカーソル状態の時はテキストの幅よりも右側へカーソルが移動できる
+		ので、それを考慮したスクロールバーの制御が必要。
+		本関数は、下記の内で最も大きな値（右端の座標）を返す。
+		　・テキストの右端
+		　・キャレット位置
+		　・選択範囲の右端
+	
+	「指定桁で折り返す」
+	「右端で折り返す」
+		上記の場合折り返し桁以後のぶら下げ余白計算
+
+	@return     右端のレイアウト座標を返す
+
+	@note   「折り返さない」選択時は、スクロール後にキャレットが見えなく
+	        ならない様にするために右マージンとして半角3個分固定で加算する。
+
+	@date 2009.08.28 nasukoji	新規作成
+*/
+CLayoutInt CEditView::GetRightEdgeForScrollBar( void )
+{
+	// 折り返し桁以後のぶら下げ余白計算
+	CLayoutInt nWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang();
+	
+	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+		CLayoutInt nRightEdge = m_pcEditDoc->m_cLayoutMgr.GetMaxTextWidth();	// テキストの最大幅
+
+		// 選択範囲あり かつ 範囲の右端がテキストの幅より右側
+		if( GetSelectionInfo().IsTextSelected() ){
+			// 開始位置・終了位置のより右側にある方で比較
+			if( GetSelectionInfo().m_sSelect.GetFrom().GetX2() < GetSelectionInfo().m_sSelect.GetTo().GetX2() ){
+				if( nRightEdge < GetSelectionInfo().m_sSelect.GetTo().GetX2() )
+					nRightEdge = GetSelectionInfo().m_sSelect.GetTo().GetX2();
+			}else{
+				if( nRightEdge < GetSelectionInfo().m_sSelect.GetFrom().GetX2() )
+					nRightEdge = GetSelectionInfo().m_sSelect.GetFrom().GetX2();
+			}
+		}
+
+		// フリーカーソルモード かつ キャレット位置がテキストの幅より右側
+		if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode && nRightEdge < GetCaret().GetCaretLayoutPos().GetX2() )
+			nRightEdge = GetCaret().GetCaretLayoutPos().GetX2();
+
+		// 右マージン分（3桁）を考慮しつつnWidthを超えないようにする
+		nWidth = ( nRightEdge + 3 < nWidth ) ? nRightEdge + CLayoutInt(3) : nWidth;
+	}
+
+	return nWidth;
 }

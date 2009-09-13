@@ -103,6 +103,7 @@ CCaret::~CCaret()
 	@date 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
 	@date 2004.09.11 genta bDrawスイッチは動作と名称が一致していないので
 		再描画スイッチ→画面位置調整スイッチと名称変更
+	@date 2009.08.28 nasukoji	テキスト折り返しの「折り返さない」対応
 */
 CLayoutInt CCaret::MoveCursor(
 	CLayoutPoint	ptWk_CaretPos,		//!< [in] 移動先レイアウト位置
@@ -294,6 +295,14 @@ CLayoutInt CCaret::MoveCursor(
 				if( nScrollColNum != 0 ){
 					m_pEditView->InvalidateRect( &rcClip2 );
 				}
+			}
+		}
+
+		// 2009.08.28 nasukoji	「折り返さない」（スクロールバーをテキスト幅に合わせる）
+		if( m_pEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+			// AdjustScrollBars()で移動後のキャレット位置が必要なため、ここでコピー
+			if( m_pEditView->GetSelectionInfo().IsTextSelected() || GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode ){
+				SetCaretLayoutPos(ptWk_CaretPos);
 			}
 		}
 

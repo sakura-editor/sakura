@@ -6,6 +6,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, MIK, aroka
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -123,6 +124,14 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		}
 	}
 
+	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
+	CalTextWidthArg ctwArg;
+	ctwArg.nLineFrom    = pArg->sDelRange.GetFrom().GetY2();		// 編集開始行
+	ctwArg.nColmFrom    = pArg->sDelRange.GetFrom().GetX2();		// 編集開始桁
+	ctwArg.nDelLines    = pArg->sDelRange.GetTo().GetY2() - pArg->sDelRange.GetFrom().GetY2();	// 削除行数 - 1
+	ctwArg.nAllLinesOld = nWork_nLines;								// 編集前のテキスト行数
+	ctwArg.bInsData     = pArg->nInsDataLen ? TRUE : FALSE;			// 追加文字列の有無
+
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLayoutInt nAddInsLineNum;
 	pArg->nModLineTo = DoLayout_Range(
@@ -130,6 +139,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		nRowNum,
 		ptFrom,
 		nCurrentLineType,
+		&ctwArg,
 		&nAddInsLineNum
 	);
 

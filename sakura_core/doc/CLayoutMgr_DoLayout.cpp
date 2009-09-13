@@ -67,7 +67,8 @@ CLayout* CLayoutMgr::SLayoutWork::_CreateLayout(CLayoutMgr* mgr)
 		CLogicPoint(this->nBgn, this->nCurLine),
 		this->nPos - this->nBgn,
 		this->pcColorStrategy_Prev->GetStrategyColorSafe(),
-		this->nIndent
+		this->nIndent,
+		this->nPosX
 	);
 }
 
@@ -430,6 +431,7 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 	@date 2004.04.03 Moca TABが使われると折り返し位置がずれるのを防ぐため，
 		pWork->nPosXがインデントを含む幅を保持するように変更．m_sTypeConfig.m_nMaxLineKetasは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
+	@date 2009.08.28 nasukoji	テキスト最大幅の算出に対応
 
 	@note 2004.04.03 Moca
 		_DoLayoutとは違ってレイアウト情報がリスト中間に挿入されるため，
@@ -441,6 +443,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	CLogicInt		nLineNum,
 	CLogicPoint		_ptDelLogicalFrom,
 	EColorIndexType	nCurrentLineType,
+	const CalTextWidthArg*	pctwArg,
 	CLayoutInt*		_pnExtInsLineNum
 )
 {
@@ -526,10 +529,83 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 		m_nEOFLine = CLayoutInt(-1);
 	}
 
+	// 2009.08.28 nasukoji	テキストが編集されたら最大幅を算出する
+	CalculateTextWidth_Range(pctwArg);
+
 // 1999.12.22 レイアウト情報がなくなる訳ではないので
 //	m_nPrevReferLine = 0;
 //	m_pLayoutPrevRefer = NULL;
 //	m_pLayoutCurrent = NULL;
 
 	return pWork->nModifyLayoutLinesNew;
+}
+
+/*!
+	@brief テキストが編集されたら最大幅を算出する
+
+	@param[in] pctwArg テキスト最大幅算出用構造体
+
+	@note 「折り返さない」選択時のみテキスト最大幅を算出する．
+	      編集された行の範囲について算出する（下記を満たす場合は全行）
+	      　削除行なし時：最大幅の行を行頭以外にて改行付きで編集した
+	      　削除行あり時：最大幅の行を含んで編集した
+	      pctwArg->nDelLines が負数の時は削除行なし．
+
+	@date 2009.08.28 nasukoji	新規作成
+*/
+void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
+{
+	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){	// 「折り返さない」
+		CLayoutInt nCalTextWidthLinesFrom;		// テキスト最大幅の算出開始レイアウト行
+		CLayoutInt nCalTextWidthLinesTo;		// テキスト最大幅の算出終了レイアウト行
+		BOOL bCalTextWidth        = TRUE;		// テキスト最大幅の算出要求をON
+		CLayoutInt nInsLineNum    = m_nLines - pctwArg->nAllLinesOld;		// 追加削除行数
+
+		// 削除行なし時：最大幅の行を行頭以外にて改行付きで編集した
+		// 削除行あり時：最大幅の行を含んで編集した
+
+		if(( pctwArg->nDelLines < CLayoutInt(0)  && Int(m_nTextWidth) &&
+		     Int(nInsLineNum) && Int(pctwArg->nColmFrom) && m_nTextWidthMaxLine == pctwArg->nLineFrom )||
+		   ( pctwArg->nDelLines >= CLayoutInt(0) && Int(m_nTextWidth) &&
+		     pctwArg->nLineFrom <= m_nTextWidthMaxLine && m_nTextWidthMaxLine <= pctwArg->nLineFrom + pctwArg->nDelLines ))
+		{
+			// 全ラインを走査する
+			nCalTextWidthLinesFrom = -1;
+			nCalTextWidthLinesTo   = -1;
+		}else if( Int(nInsLineNum) || Int(pctwArg->bInsData) ){		// 追加削除行 または 追加文字列あり
+			// 追加削除行のみを走査する
+			nCalTextWidthLinesFrom = pctwArg->nLineFrom;
+
+			// 最終的に編集された行数（3行削除2行追加なら2行追加）
+			// 　1行がMAXLINESIZEを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
+			// 　不要なので計算を省くためこのままとする。
+			CLayoutInt nEditLines = nInsLineNum + ((pctwArg->nDelLines > 0) ? pctwArg->nDelLines : CLayoutInt(0));
+			nCalTextWidthLinesTo   = pctwArg->nLineFrom + ((nEditLines > 0) ? nEditLines : CLayoutInt(0));
+
+			// 最大幅の行が上下するのを計算
+			if( Int(m_nTextWidth) && Int(nInsLineNum) && m_nTextWidthMaxLine >= pctwArg->nLineFrom )
+				m_nTextWidthMaxLine += nInsLineNum;
+		}else{
+			// 最大幅以外の行を改行を含まずに（1行内で）編集した
+			bCalTextWidth = FALSE;		// テキスト最大幅の算出要求をOFF
+		}
+
+#if defined( _DEBUG ) && defined( _UNICODE )
+		static int testcount = 0;
+		testcount++;
+
+		// テキスト最大幅を算出する
+		if( bCalTextWidth ){
+//			MYTRACE_W( L"CLayoutMgr::DoLayout_Range(%d) nCalTextWidthLinesFrom=%d nCalTextWidthLinesTo=%d\n", testcount, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
+			CalculateTextWidth( FALSE, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
+//			MYTRACE_W( L"CLayoutMgr::DoLayout_Range() m_nTextWidthMaxLine=%d\n", m_nTextWidthMaxLine );
+		}else{
+//			MYTRACE_W( L"CLayoutMgr::DoLayout_Range(%d) FALSE\n", testcount );
+		}
+#else
+		// テキスト最大幅を算出する
+		if( bCalTextWidth )
+			CalculateTextWidth( FALSE, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
+#endif
+	}
 }

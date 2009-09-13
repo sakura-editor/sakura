@@ -15,7 +15,7 @@
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
 	Copyright (C) 2007, ryoji, maru, Uchi
 	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, ryoji
+	Copyright (C) 2009, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -8729,6 +8729,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	@note ウィンドウが左右に分割されている場合、左側のウィンドウ幅を折り返し幅とする。
 	
 	@date 2008.05.31 nasukoji	新規作成
+	@date 2009.08.28 nasukoji	テキストの最大幅を算出する
 */
 void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 {
@@ -8765,6 +8766,14 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	// 折り返し位置を変更
 	GetEditWindow()->ChangeLayoutParam( false, pcDoc->m_cLayoutMgr.GetTabSpace(), (CLayoutInt)nWidth );
+
+	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
+	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+		pcDoc->m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+		pcDoc->m_pcEditWnd->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+	}else{
+		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
+	}
 }
 
 /* 	上書き用の一文字削除	2009.04.11 ryoji */

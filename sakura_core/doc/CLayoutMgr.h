@@ -5,6 +5,7 @@
 	@date 1998/03/06 新規作成
 	@date 1998/04/14 データの削除を実装
 	@date 1999/12/20 データの置換を実装
+	@date 2009/08/28 nasukoji	CalTextWidthArg定義追加、DoLayout_Range()の引数変更
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -12,6 +13,7 @@
 	Copyright (C) 2002, MIK, aroka, genta, YAZAKI
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, Moca, genta, D.S.Koba
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -50,6 +52,15 @@ struct LayoutReplaceArg {
 	CLayoutInt		nModLineFrom;	//!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
 	CLayoutInt		nModLineTo;		//!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
 	CLayoutPoint	ptLayoutNew;	//!< 挿入された部分の次の位置の位置(レイアウト桁位置, レイアウト行)
+};
+
+// 編集時のテキスト最大幅算出用		// 2009.08.28 nasukoji
+struct CalTextWidthArg {
+	CLayoutInt		nLineFrom;		//!< 編集開始行 */
+	CLayoutInt		nColmFrom;		//!< 編集開始桁 */
+	CLayoutInt		nDelLines;		//!< 削除に関係する行数 - 1（負数の時削除なし） */
+	CLayoutInt		nAllLinesOld;	//!< 編集前のテキスト行数 */
+	BOOL			bInsData;		//!< 追加文字列あり */
 };
 
 
@@ -121,6 +132,8 @@ public:
 
 	// Jul. 29, 2006 genta
 	void GetEndLayoutPos(CLayoutPoint* ptLayoutEnd);
+
+	CLayoutInt GetMaxTextWidth(void) const { return m_nTextWidth; }		// 2009.08.28 nasukoji	テキスト最大幅を返す
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -208,6 +221,9 @@ public:
 		LayoutReplaceArg*	pArg
 	);
 
+	BOOL CalculateTextWidth( BOOL bCalLineLen = TRUE, CLayoutInt nStart = CLayoutInt(-1), CLayoutInt nEnd = CLayoutInt(-1) );	/* テキスト最大幅を算出する */		// 2009.08.28 nasukoji
+	void ClearLayoutLineWidth( void );				/* 各行のレイアウト行長の記憶をクリアする */		// 2009.08.28 nasukoji
+
 
 
 protected:
@@ -224,7 +240,9 @@ protected:
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	void _DoLayout();	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	CLayoutInt DoLayout_Range( CLayout* , CLogicInt, CLogicPoint, EColorIndexType, CLayoutInt* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
+	// 2009.08.28 nasukoji	テキスト最大幅算出用引数追加
+	CLayoutInt DoLayout_Range( CLayout* , CLogicInt, CLogicPoint, EColorIndexType, const CalTextWidthArg*, CLayoutInt* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
+	void CalculateTextWidth_Range( const CalTextWidthArg* pctwArg );	/* テキストが編集されたら最大幅を算出する */	// 2009.08.28 nasukoji
 	CLayout* DeleteLayoutAsLogical( CLayout*, CLayoutInt, CLogicInt , CLogicInt, CLogicPoint, CLayoutInt* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , CLogicInt );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
 
@@ -307,7 +325,8 @@ protected:
 	|| 実装ヘルパ系
 	*/
 	//@@@ 2002.09.23 YAZAKI
-	CLayout* CreateLayout( CDocLine* pCDocLine, CLogicPoint ptLogicPos, CLogicInt nLength, EColorIndexType nTypePrev, CLayoutInt nIndent );
+	// 2009.08.28 nasukoji	nPosX引数追加
+	CLayout* CreateLayout( CDocLine* pCDocLine, CLogicPoint ptLogicPos, CLogicInt nLength, EColorIndexType nTypePrev, CLayoutInt nIndent, CLayoutInt nPosX );
 	CLayout* InsertLineNext( CLayout*, CLayout* );
 	void AddLineBottom( CLayout* );
 
@@ -346,6 +365,10 @@ protected:
 	// EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)	//2006.10.01 Moca
 	CLayoutInt				m_nEOFLine; //!< EOF行数
 	CLayoutInt				m_nEOFColumn; //!< EOF幅位置
+
+	// テキスト最大幅を記憶（折り返し位置算出に使用）	// 2009.08.28 nasukoji
+	CLayoutInt				m_nTextWidth;				// テキスト最大幅の記憶
+	CLayoutInt				m_nTextWidthMaxLine;		// 最大幅のレイアウト行
 };
 
 
