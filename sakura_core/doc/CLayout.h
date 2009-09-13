@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI, aroka
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -67,6 +68,7 @@ public:
 	CLogicInt GetLogicOffset() const{ return m_ptLogicPos.GetX2(); }
 	CLogicPoint GetLogicPos() const{ return m_ptLogicPos; }
 	EColorIndexType GetColorTypePrev() const{ return m_nTypePrev; } //#########汚っ
+	CLayoutInt GetLayoutWidth() const{ return m_nLayoutWidth; }		// 2009.08.28 nasukoji	このレイアウト行の改行を含むレイアウト長を返す
 
 	//変更インターフェース
 	void OffsetLogicLineNo(CLogicInt n){ m_ptLogicPos.y+=n; }
@@ -74,6 +76,7 @@ public:
 	{
 		m_nTypePrev=n;
 	}
+	void SetLayoutWidth(CLayoutInt nWidth){ m_nLayoutWidth = nWidth; }
 
 	//!レイアウト幅を計算。インデントも改行も含まない。2007.10.11 kobake
 	CLayoutInt CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const;
@@ -109,6 +112,7 @@ private:
 	EColorIndexType		m_nTypePrev;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
 	CLayoutInt			m_nIndent;			//!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
 	CEol				m_cEol;
+	CLayoutInt			m_nLayoutWidth;		//!< このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ） */	// 2009.08.28 nasukoji
 };
 
 

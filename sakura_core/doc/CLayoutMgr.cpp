@@ -9,7 +9,7 @@
 	Copyright (C) 2003, genta, Moca
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, Moca
-	Copyright (C) 2009, ryoji
+	Copyright (C) 2009, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -55,6 +55,9 @@ CLayoutMgr::CLayoutMgr()
 	m_sTypeConfig.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false; 
 	m_sTypeConfig.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 	m_sTypeConfig.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
+
+	m_nTextWidth = CLayoutInt(0);			// テキスト最大幅の記憶		// 2009.08.28 nasukoji
+	m_nTextWidthMaxLine = CLayoutInt(0);	// 最大幅のレイアウト行		// 2009.08.28 nasukoji
 
 	Init();
 }
@@ -350,13 +353,15 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 
 /* CLayoutを作成する
 	@@@ 2002.09.23 YAZAKI
+	@date 2009.08.28 nasukoji	レイアウト長を引数に追加
 */
 CLayout* CLayoutMgr::CreateLayout(
 	CDocLine*		pCDocLine,
 	CLogicPoint		ptLogicPos,
 	CLogicInt		nLength,
 	EColorIndexType	nTypePrev,
-	CLayoutInt		nIndent
+	CLayoutInt		nIndent,
+	CLayoutInt		nPosX
 )
 {
 	CLayout* pLayout = new CLayout(
@@ -378,6 +383,14 @@ CLayout* CLayoutMgr::CreateLayout(
 			pLayout->m_cEol = EOL_NONE;/* 改行コードの種類 */
 		}
 	}
+
+	// 2009.08.28 nasukoji	「折り返さない」選択時のみレイアウト長を記憶する
+	// 「折り返さない」以外で計算しないのはパフォーマンス低下を防ぐ目的なので、
+	// パフォーマンスの低下が気にならない程なら全ての折り返し方法で計算する
+	// ようにしても良いと思う。
+	// （その場合CLayoutMgr::CalculateTextWidth()の呼び出し箇所をチェック）
+	pLayout->SetLayoutWidth( ( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ) ? nPosX : CLayoutInt(0) );
+
 	return pLayout;
 }
 
@@ -492,6 +505,7 @@ void CLayoutMgr::GetEndLayoutPos(
 /*!	行内文字削除
 
 	@date 2002/03/24 YAZAKI bUndo削除
+	@date 2009/08/28 nasukoji	テキスト最大幅の算出に対応
 */
 void CLayoutMgr::DeleteData_CLayoutMgr(
 	CLayoutInt	nLineNum,
@@ -589,6 +603,14 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		}
 	}
 
+	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
+	CalTextWidthArg ctwArg;
+	ctwArg.nLineFrom    = nLineNum;				// 編集開始行
+	ctwArg.nColmFrom    = CLayoutInt(nDelPos);	// 編集開始桁
+	ctwArg.nDelLines    = 0;					// 削除行は1行
+	ctwArg.nAllLinesOld = nAllLinesOld;			// 編集前のテキスト行数
+	ctwArg.bInsData     = FALSE;				// 追加文字列なし
+
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLayoutInt	nAddInsLineNum;
 	*pnModifyLayoutLinesNew = DoLayout_Range(
@@ -596,6 +618,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		nRowNum,
 		CLogicPoint(nDelStartLogicalPos, nDelStartLogicalLine),
 		nCurrentLineType,
+		&ctwArg,
 		&nAddInsLineNum
 	);
 
@@ -611,6 +634,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 /*!	文字列挿入
 
 	@date 2002/03/24 YAZAKI bUndo削除
+	@date 2009/08/28 nasukoji	テキスト最大幅の算出に対応
 */
 void CLayoutMgr::InsertData_CLayoutMgr(
 	CLayoutInt		nLineNum,
@@ -758,6 +782,14 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		}
 	}
 
+	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
+	CalTextWidthArg ctwArg;
+	ctwArg.nLineFrom    = nLineNum;				// 編集開始行
+	ctwArg.nColmFrom    = CLayoutInt(nInsPos);	// 編集開始桁
+	ctwArg.nDelLines    = -1;					// 削除行なし
+	ctwArg.nAllLinesOld = nAllLinesOld;			// 編集前のテキスト行数
+	ctwArg.bInsData     = TRUE;					// 追加文字列あり
+
 	// 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする
 	CLayoutInt		nAddInsLineNum;
 	DoLayout_Range(
@@ -765,6 +797,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nRowNum,
 		CLogicPoint(nInsStartLogicalPos, nInsStartLogicalLine),
 		nCurrentLineType,
+		&ctwArg,
 		&nAddInsLineNum
 	);
 

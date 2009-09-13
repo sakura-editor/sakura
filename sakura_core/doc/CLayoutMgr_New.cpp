@@ -10,6 +10,7 @@
 	Copyright (C) 2003, genta
 	Copyright (C) 2004, Moca, genta
 	Copyright (C) 2005, D.S.Koba, Moca
+	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -299,6 +300,142 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
+}
+
+/*!
+	@brief  テキスト最大幅を算出する
+
+	指定されたラインを走査してテキストの最大幅を作成する。
+	全て削除された時は未算出状態に戻す。
+
+	@param bCalLineLen	[in] 各レイアウト行の長さの算出も行う
+	@param nStart		[in] 算出開始レイアウト行
+	@param nEnd			[in] 算出終了レイアウト行
+
+	@retval TRUE 最大幅が変化した
+	@retval FALSE 最大幅が変化しなかった
+
+	@note nStart, nEndが両方とも-1の時、全ラインを走査する
+		  範囲が指定されている場合は最大幅の拡大のみチェックする
+
+	@date 2009.08.28 nasukoji	新規作成
+*/
+BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayoutInt nEnd )
+{
+	BOOL bRet = FALSE;
+	BOOL bOnlyExpansion = TRUE;		// 最大幅の拡大のみをチェックする
+	CLayoutInt nMaxLen = CLayoutInt(0);
+	CLayoutInt nMaxLineNum = CLayoutInt(0);
+
+	CLayoutInt nLines = CLayoutInt( GetLineCount() );		// テキストのレイアウト行数
+
+	// 開始・終了位置がどちらも指定されていない
+	if( nStart < 0 && nEnd < 0 )
+		bOnlyExpansion = FALSE;		// 最大幅の拡大・縮小をチェックする
+
+	if( nStart < 0 )			// 算出開始行の指定なし
+		nStart = 0;
+	else if( nStart > nLines )	// 範囲オーバー
+		nStart = nLines;
+	
+	if( nEnd < 0 || nEnd >= nLines )	// 算出終了行の指定なし または 文書行数以上
+		nEnd = nLines;
+	else
+		nEnd++;					// 算出終了行の次行
+
+	CLayout* pLayout;
+
+	// 算出開始レイアウト行を探す
+	if( nStart * 2 < nLines ){
+		// 前方からサーチ
+		CLayoutInt nCount = CLayoutInt(0);
+		pLayout = m_pLayoutTop;
+		while( NULL != pLayout ){
+			if( nStart == nCount ){
+				break;
+			}
+			pLayout = pLayout->GetNextLayout();
+			nCount++;
+		}
+	}else{
+		// 後方からサーチ
+		CLayoutInt nCount = CLayoutInt( m_nLines - 1 );
+		pLayout = m_pLayoutBot;
+		while( NULL != pLayout ){
+			if( nStart == nCount ){
+				break;
+			}
+			pLayout = pLayout->GetPrevLayout();
+			nCount--;
+		}
+	}
+
+	// レイアウト行の最大幅を取り出す
+	for( CLayoutInt i = nStart; i < nEnd; i++ ){
+		if( !pLayout )
+			break;
+
+		// レイアウト行の長さを算出する
+		if( bCalLineLen ){
+			CLayoutInt nWidth = pLayout->GetIndent() + pLayout->CalcLayoutWidth(*this) + CLayoutInt(pLayout->GetLayoutEol().GetLen()>0?1:0);
+			pLayout->SetLayoutWidth( nWidth );
+		}
+
+		// 最大幅を更新
+		if( nMaxLen < pLayout->GetLayoutWidth() ){
+			nMaxLen = pLayout->GetLayoutWidth();
+			nMaxLineNum = i;		// 最大幅のレイアウト行
+
+			// アプリケーションの最大幅となったら算出は停止
+			if( nMaxLen >= MAXLINEKETAS && !bCalLineLen )
+				break;
+		}
+
+		// 次のレイアウト行のデータ
+		pLayout = pLayout->GetNextLayout();
+	}
+
+	// テキストの幅の変化をチェック
+	if( Int(nMaxLen) ){
+		// 最大幅が拡大した または 最大幅の拡大のみチェックでない
+		if( m_nTextWidth < nMaxLen || !bOnlyExpansion ){
+			m_nTextWidthMaxLine = nMaxLineNum;
+			if( m_nTextWidth != nMaxLen ){	// 最大幅変化あり
+				m_nTextWidth = nMaxLen;
+				bRet = TRUE;
+			}
+		}
+	}else if( Int(m_nTextWidth) && !Int(nLines) ){
+		// 全削除されたら幅の記憶をクリア
+		m_nTextWidthMaxLine = 0;
+		m_nTextWidth = 0;
+		bRet = TRUE;
+	}
+	
+	return bRet;
+}
+
+/*!
+	@brief  各行のレイアウト行長の記憶をクリアする
+	
+	@note 折り返し方法が「折り返さない」以外の時は、パフォーマンスの低下を
+		  防止する目的で各行のレイアウト行長(m_nLayoutWidth)を計算していない。
+		  後で設計する人が誤って使用してしまうかもしれないので「折り返さない」
+		  以外の時はクリアしておく。
+		  パフォーマンスの低下が気にならない程なら、全ての折り返し方法で計算
+		  するようにしても良いと思う。
+
+	@date 2009.08.28 nasukoji	新規作成
+*/
+void CLayoutMgr::ClearLayoutLineWidth( void )
+{
+	CLayout* pLayout = m_pLayoutTop;
+
+	while( pLayout ){
+		pLayout->m_nLayoutWidth = 0;			// レイアウト行長をクリア
+		pLayout = pLayout->GetNextLayout();		// 次のレイアウト行のデータ
+		
+	}
 }
 
 

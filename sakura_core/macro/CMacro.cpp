@@ -14,7 +14,7 @@
 	Copyright (C) 2006, かろと, ryoji
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
-	Copyright (C) 2009, ryoji
+	Copyright (C) 2009, ryoji, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -1003,6 +1003,13 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 				CLayoutInt(varCopy.Data.iVal),
 				View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas()
 			);
+
+			// 2009.08.28 nasukoji	「折り返さない」選択時にTAB幅が変更されたらテキスト最大幅の再算出が必要
+			if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP && varCopy.Data.iVal ){
+				// 最大幅の再算出時に各行のレイアウト長の計算も行う
+				View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
+				View->m_pcEditDoc->m_pcEditWnd->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+			}
 		}
 		return true;
 	case F_ISTEXTSELECTED:

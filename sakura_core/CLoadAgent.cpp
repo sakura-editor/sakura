@@ -163,6 +163,19 @@ void CLoadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 	/* 親ウィンドウのタイトルを更新 */
 	pcDoc->m_pcEditWnd->UpdateCaption();
+
+	// -- -- ※ InitAllViewでやってたこと -- -- //	// 2009.08.28 nasukoji	CEditView::OnAfterLoad()からここに移動
+	pcDoc->m_nCommandExecNum=0;
+
+	// テキストの折り返し方法を初期化
+	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	pcDoc->m_bTextWrapMethodCurTemp = false;													// 一時設定適用中を解除
+
+	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
+	if( pcDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
+		pcDoc->m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+	else
+		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
 }
 
 

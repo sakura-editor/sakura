@@ -2286,12 +2286,6 @@ void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// -- -- ※ InitAllViewでやってたこと -- -- //
-	pcDoc->m_nCommandExecNum=0;
-
-	// テキストの折り返し方法を初期化
-	pcDoc->m_nTextWrapMethodCur = pcDoc->m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
-	pcDoc->m_bTextWrapMethodCurTemp = false;													// 一時設定適用中を解除
-
 	m_cHistory->Flush();
 
 	/* 現在の選択範囲を非選択状態に戻す */
