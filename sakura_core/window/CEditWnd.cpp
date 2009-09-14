@@ -1036,10 +1036,18 @@ LRESULT CEditWnd::DispatchEvent(
 		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
 			if( !::IsZoomed( GetHwnd() ) && !::IsIconic( GetHwnd() ) ){
 				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
-				RECT rcWork;
-				::GetWindowRect( hwnd, &rcWork);
-				m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWork.left;
-				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWork.top;
+				// Aero Snapで縦方向最大化で終了して次回起動するときは元のサイズにする必要があるので、
+				// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
+				RECT rcWin;
+				WINDOWPLACEMENT wp;
+				wp.length = sizeof(wp);
+				::GetWindowPlacement( GetHwnd(), &wp );	// ワークエリア座標
+				rcWin = wp.rcNormalPosition;
+				RECT rcWork, rcMon;
+				GetMonitorWorkRect( GetHwnd(), &rcWork, &rcMon );
+				::OffsetRect(&rcWin, rcWork.left - rcMon.left, rcWork.top - rcMon.top);	// スクリーン座標に変換
+				m_pShareData->m_Common.m_sWindow.m_nWinPosX = rcWin.left;
+				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
 			}
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
@@ -2920,7 +2928,15 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeType = wParam;
 				}
 			}else{
-				::GetWindowRect( GetHwnd(), &rcWin );
+				// Aero Snapの縦方向最大化状態で終了して次回起動するときは元のサイズにする必要があるので、
+				// GetWindowRect()ではなくGetWindowPlacement()で得たワークエリア座標をスクリーン座標に変換して記憶する	// 2009.09.02 ryoji
+				WINDOWPLACEMENT wp;
+				wp.length = sizeof(wp);
+				::GetWindowPlacement( GetHwnd(), &wp );	// ワークエリア座標
+				rcWin = wp.rcNormalPosition;
+				RECT rcWork, rcMon;
+				GetMonitorWorkRect( GetHwnd(), &rcWork, &rcMon );
+				::OffsetRect(&rcWin, rcWork.left - rcMon.left, rcWork.top - rcMon.top);	// スクリーン座標に変換
 				/* ウィンドウサイズに関するデータが変更されたか */
 				if( m_pShareData->m_Common.m_sWindow.m_nWinSizeType != (int)wParam ||
 					m_pShareData->m_Common.m_sWindow.m_nWinSizeCX != rcWin.right - rcWin.left ||
