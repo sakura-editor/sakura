@@ -1762,7 +1762,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "ダイレクトタグジャンプ一覧"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    RTEXT           "キーワード(&K)",IDC_STATIC_KEYWORD,4,158,46,8
+    LTEXT           "キーワード",IDC_STATIC_KEYWORD,4,158,46,8
     COMBOBOX        IDC_KEYWORD,3,170,134,180,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP
     CONTROL         "List1",IDC_LIST_TAGJUMP,"SysListView32",LVS_REPORT | 
@@ -1771,9 +1771,9 @@ BEGIN
     DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,283,168,50,14
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,337,168,50,14
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,337,152,50,14
-    CONTROL         "大文字小文字の同一視(&C)",IDC_CHECK_ICASE,"Button",
+    CONTROL         "大文字小文字の同一視",IDC_CHECK_ICASE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,144,162,101,10
-    CONTROL         "文字列の途中にマッチ(&M)",IDC_CHECK_ANYWHERE,"Button",
+    CONTROL         "文字列の途中にマッチ",IDC_CHECK_ANYWHERE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,144,174,98,10
 END
 
@@ -1783,13 +1783,13 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "タグファイルの作成"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    LTEXT           "タグ作成フォルダ(&F)",IDC_STATIC,7,7,65,8
+    LTEXT           "タグ作成フォルダ",IDC_STATIC,7,7,65,8
     EDITTEXT        IDC_EDIT_TAG_MAKE_FOLDER,7,18,201,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BUTTON_TAG_MAKE_REF,211,17,15,12
-    CONTROL         "サブフォルダも対象にする(&S)",
+    CONTROL         "サブフォルダも対象にする",
                     IDC_CHECK_TAG_MAKE_RECURSE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,34,107,10
-    LTEXT           "コマンドラインオプション(&O)",IDC_STATIC,7,49,86,8
+    LTEXT           "コマンドラインオプション",IDC_STATIC,7,49,86,8
     EDITTEXT        IDC_EDIT_TAG_MAKE_CMDLINE,96,47,130,12,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "作成(&O)",IDOK,68,64,50,14
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,122,64,50,14
