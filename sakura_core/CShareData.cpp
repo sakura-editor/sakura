@@ -1210,9 +1210,10 @@ void CShareData::SaveShareData( void )
 BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, int nGroup, BOOL bCheckConfirm, HWND hWndFrom )
 {
 	int nCloseCount = 0;
+	int i;
 
 	/* クローズ対象ウィンドウの数を調べる */
-	for( int i = 0; i < nArrCnt; i++){
+	for( i = 0; i < nArrCnt; i++ ){
 		if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
 			if( pWndArr[i].m_hWnd ){
 				nCloseCount++;
@@ -1233,7 +1234,7 @@ BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit,
 		}
 	}
 
-	for( int i = 0; i < nArrCnt; ++i ){
+	for( i = 0; i < nArrCnt; ++i ){
 		/* m_hWndにNULLを設定したEditNodeはとばす */
 		if( pWndArr[i].m_hWnd == NULL )continue;
 
