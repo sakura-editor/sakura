@@ -60,6 +60,7 @@ class CDocLineMgr;
 #define	CK_MBC_SKIGO	20	/*!< 2バイトの特殊記号 */
 							/*!< 0x849F<=c<=0x879C 全角特殊記号 */
 #define	CK_MBC_ETC		21	/*!< 2バイトのその他（漢字など） */
+#define	CK_MBC_DAKU		22	/*!< 2バイトの濁点（゛゜） */
 
 
 
@@ -107,8 +108,12 @@ public:
 	// 2001/06/23 N.Nakatani WhereCurrentWord_2()追加 staticメンバ
 	static int WhereCurrentWord_2( const char*, int, int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 
+	// 現在位置の文字の種類を調べる
 	static int WhatKindOfChar( const char*, int, int );	/* 現在位置の文字の種類を調べる */
+	// 二つの文字を結合したものの種類を調べる
+	static int WhatKindOfTwoChars( int kindPre, int kindCur );
 	int PrevOrNextWord( int , int , int* , BOOL bLEFT, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
+
 	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。
 	static int SearchNextWordPosition(
 		const char* pLine,

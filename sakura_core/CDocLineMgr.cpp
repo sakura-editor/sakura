@@ -1370,22 +1370,12 @@ int	CDocLineMgr::WhereCurrentWord_2(
 		nIdxNextPrev = nIdxNext;
 		nIdxNext -= nCharChars;
 		nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
-		if( nCharKind == CK_MBC_NOVASU ){
-			if( nCharKindNext == CK_MBC_HIRA ||
-				nCharKindNext == CK_MBC_KATA ){
-				nCharKind = nCharKindNext;
-			}
-		}else
-		if( nCharKind == CK_MBC_HIRA ||
-			nCharKind == CK_MBC_KATA ){
-			if( nCharKindNext == CK_MBC_NOVASU ){
-				nCharKindNext = nCharKind;
-			}
-		}
-		if( nCharKind != nCharKindNext ){
+		int nCharKindMerge = WhatKindOfTwoChars( nCharKindNext, nCharKind );
+		if( nCharKindMerge == CK_NULL ){
 			nIdxNext = nIdxNextPrev;
 			break;
 		}
+		nCharKind = nCharKindMerge;
 		nCharChars = &pLine[nIdxNext] - CMemory::MemCharPrev( pLine, nLineLen, &pLine[nIdxNext] );
 	}
 	*pnIdxFrom = nIdxNext;
@@ -1401,21 +1391,11 @@ int	CDocLineMgr::WhereCurrentWord_2(
 	while( nCharChars > 0 ){
 		nIdxNext += nCharChars;
 		nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
-		if( nCharKind == CK_MBC_NOVASU ){
-			if( nCharKindNext == CK_MBC_HIRA ||
-				nCharKindNext == CK_MBC_KATA ){
-				nCharKind = nCharKindNext;
-			}
-		}else
-		if( nCharKind == CK_MBC_HIRA ||
-			nCharKind == CK_MBC_KATA ){
-			if( nCharKindNext == CK_MBC_NOVASU ){
-				nCharKindNext = nCharKind;
-			}
-		}
-		if( nCharKind != nCharKindNext ){
+		int nCharKindMerge = WhatKindOfTwoChars( nCharKindNext, nCharKind );
+		if( nCharKindMerge == CK_NULL ){
 			break;
 		}
+		nCharKind = nCharKindMerge;
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
 	}
@@ -1462,22 +1442,12 @@ int CDocLineMgr::SearchNextWordPosition(
 			nCharKind = nCharKindNext;
 		}
 		else {
-			if( nCharKind == CK_MBC_NOVASU ){
-				if( nCharKindNext == CK_MBC_HIRA ||
-					nCharKindNext == CK_MBC_KATA ){
-					nCharKind = nCharKindNext;
-				}
-			}else
-			if( nCharKind == CK_MBC_HIRA ||
-				nCharKind == CK_MBC_KATA ){
-				if( nCharKindNext == CK_MBC_NOVASU ){
-					nCharKindNext = nCharKind;
-				}
-			}
-			if( nCharKind != nCharKindNext ){
+			int nCharKindMerge = WhatKindOfTwoChars( nCharKind, nCharKindNext );
+			if( nCharKindMerge == CK_NULL ){
 				*pnColmNew = nIdxNext;
 				return TRUE;
 			}
+			nCharKind = nCharKindMerge;
 		}
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
@@ -1538,36 +1508,26 @@ int CDocLineMgr::PrevOrNextWord(
 			nIdxNextPrev = nIdxNext;
 			nIdxNext -= nCharChars;
 			nCharKindNext = WhatKindOfChar( pLine, nLineLen, nIdxNext );
-			/* 空白とタブは無視する */
-			if( nCharKind == CK_MBC_NOVASU ){
-				if( nCharKindNext == CK_MBC_HIRA ||
-					nCharKindNext == CK_MBC_KATA ){
-					nCharKind = nCharKindNext;
-				}
-			}else
-			if( nCharKind == CK_MBC_HIRA ||
-				nCharKind == CK_MBC_KATA ){
-				if( nCharKindNext == CK_MBC_NOVASU ){
-					nCharKindNext = nCharKind;
-				}
-			}
-			if( nCharKind != nCharKindNext ){
+
+			int nCharKindMerge = WhatKindOfTwoChars( nCharKindNext, nCharKind );
+			if( nCharKindMerge == CK_NULL ){
 				/* サーチ開始位置の文字が空白またはタブの場合 */
 				if( nCharKind == CK_TAB	|| nCharKind == CK_SPACE ){
 					if ( bStopsBothEnds && nCount ){
 						nIdxNext = nIdxNextPrev;
 						break;
 					}
-					nCharKind = nCharKindNext;
+					nCharKindMerge = nCharKindNext;
 				}else{
 					if( nCount == 0){
-						nCharKind = nCharKindNext;
+						nCharKindMerge = nCharKindNext;
 					}else{
 						nIdxNext = nIdxNextPrev;
 						break;
 					}
 				}
 			}
+			nCharKind = nCharKindMerge;
 			nCharChars = &pLine[nIdxNext] - CMemory::MemCharPrev( pLine, nLineLen, &pLine[nIdxNext] );
 			++nCount;
 		}
@@ -2201,6 +2161,18 @@ int	CDocLineMgr::WhatKindOfChar(
 		   ){
 			return CK_MBC_CSYM;	/* 2バイトの英字、アンダースコア、数字のいずれか */
 		}
+		if( (WORD)(wChar - 0x814a) <= 0x01 ){ /* ゛゜ 全角濁点 */
+			return CK_MBC_DAKU;	/* 2バイトの濁点 */
+		}
+		if( (WORD)(wChar - 0x8152) <= 0x01 ){ /* ヽヾ カタカナ踊り字 */
+			return CK_MBC_KATA;	/* 2バイトのカタカナ */
+		}
+		if( (WORD)(wChar - 0x8154) <= 0x01 ){ /* ゝゞ ひらがな踊り字 */
+			return CK_MBC_HIRA;	/* 2バイトのひらがな */
+		}
+		if( (WORD)(wChar - 0x8157) <= 0x03 ){ /* 仝々〆〇 漢字とみなせる字 */
+			return CK_MBC_ETC;	/* 2バイトの漢字 */
+		}
 //		if( wChar >= (WORD)0x8140 && wChar <= (WORD)0x81FD ){
 		if( (WORD)(wChar - 0x8140) <= 0xBD ){ /* 0x8140<=c<=0x81FD 2バイトの記号 */
 			return CK_MBC_KIGO;	/* 2バイトの記号 */
@@ -2234,6 +2206,23 @@ int	CDocLineMgr::WhatKindOfChar(
 	}else{
 		return CK_NULL;	/* NULL 0x0<=c<=0x0 */
 	}
+}
+
+
+/* 二つの文字を結合したものの種類を調べる */
+int CDocLineMgr::WhatKindOfTwoChars( int kindPre, int kindCur )
+{
+	if( kindPre == kindCur )return kindCur;			// 同種ならその種別を返す
+
+	// 全角長音・全角濁点は前後の全角ひらがな・全角カタカナに引きずられる
+	if( ( kindPre == CK_MBC_NOVASU || kindPre == CK_MBC_DAKU ) &&
+		( kindCur == CK_MBC_KATA   || kindCur == CK_MBC_HIRA ) )return kindCur;
+	if( ( kindCur == CK_MBC_NOVASU || kindCur == CK_MBC_DAKU ) &&
+		( kindPre == CK_MBC_KATA   || kindPre == CK_MBC_HIRA ) )return kindPre;
+
+	if( kindPre == kindCur )return kindCur;			// 同種ならその種別を返す
+
+	return CK_NULL;									// それ以外なら二つの文字は別種
 }
 
 

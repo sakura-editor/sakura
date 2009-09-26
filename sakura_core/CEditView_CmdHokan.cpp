@@ -198,18 +198,6 @@ retry:;
 
 
 /*!
-	補完対象の全角記号(゛゜ヽヾゝゞ〃仝々〆〇ー)であるか
-
-	@return 0:補完対象ではない, 1:補完対象である
-	@note lpsz[nIdx]とlpsz[nIdx+1]のメモリが確保されていること
-*/
-#define IS_MBC_KIGO_HOKAN( lpsz, nIdx )			\
-	( (unsigned char)(lpsz)[nIdx] == 0x81 &&	\
-	  (	( 0x52 <= (unsigned char)(lpsz)[nIdx+1] && (unsigned char)(lpsz)[nIdx+1] <= 0x5B ) ||	\
-		( 0x4A <= (unsigned char)(lpsz)[nIdx+1] && (unsigned char)(lpsz)[nIdx+1] <= 0x4B ) )	\
-	)
-
-/*!
 	編集中データから入力補完キーワードの検索
 	CHokanMgrから呼ばれる
 
@@ -261,7 +249,7 @@ int CEditView::HokanSearchByFile(
 			int kindPre = CDocLineMgr::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
 
 			// 全角記号は候補に含めない
-			if ( kindPre == CK_MBC_SPACE || kindPre == CK_MBC_NOVASU ||
+			if ( kindPre == CK_MBC_SPACE || kindPre == CK_MBC_NOVASU || kindPre == CK_MBC_DAKU ||
 				 kindPre == CK_MBC_KIGO  || kindPre == CK_MBC_SKIGO )continue;
 
 			// 候補単語の終了位置を求める
@@ -275,28 +263,25 @@ int CEditView::HokanSearchByFile(
 				// 文字種類取得
 				int kindCur = CDocLineMgr::WhatKindOfChar( pszLine, nLineLen, j );
 
-				// 全角記号は候補に含めない（ただしヽヾゝゞ〃仝々〆〇ー濁点は許可）
-				if ( kindCur == CK_MBC_SPACE || kindCur == CK_MBC_NOVASU || kindCur == CK_MBC_KIGO || kindCur == CK_MBC_SKIGO ){
-					if ( IS_MBC_KIGO_HOKAN( pszLine, j ) ){
-						kindCur = kindPre;			// 補完対象記号なら続行
-					}else{
-						break;
-					}
+				// 全角記号は候補に含めない（ただしヽヾゝゞ仝々〆〇ー濁点は許可）
+				if ( kindCur == CK_MBC_SPACE || kindCur == CK_MBC_KIGO || kindCur == CK_MBC_SKIGO ){
+					break;
 				}
 
 				// 文字種類が変わったら単語の切れ目とする
-				if ( kindPre != kindCur ) {
+				int kindMerge = CDocLineMgr::WhatKindOfTwoChars( kindPre, kindCur );
+				if ( kindMerge == CK_NULL ) {	// kindPreとkindCurが別種
 					if( kindCur == CK_MBC_HIRA ) {
-						;							// ひらがななら続行
+						kindMerge = kindCur;		// ひらがななら続行
 					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_ETC ){
-						;							// 記号で始まる単語は制限を緩める
+						kindMerge = kindCur;		// 記号で始まる単語は制限を緩める
 					}else{
 						j -= nCharSize;
 						break;						// それ以外は単語の切れ目
 					}
 				}
 
-				kindPre = kindCur;
+				kindPre = kindMerge;
 				nWordLen += nCharSize;				// 次の文字へ
 			}
 
