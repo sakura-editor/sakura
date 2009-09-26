@@ -11,6 +11,7 @@
 	Copyright (C) 2003, MIK, genta
 	Copyright (C) 2004, MIK, genta, じゅうじ
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -226,6 +227,11 @@ void CDlgDiff::SetData( void )
 		nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		if( nRowNum > 0 )
 		{
+			// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
+			HDC hDC = ::GetDC( hwndList );
+			HFONT hFont = (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
+			HFONT hFontOld = (HFONT)::SelectObject(hDC, hFont);
+			int nExtent = 0;	// 文字列の横幅
 			for( i = 0; i < nRowNum; i++ )
 			{
 				/* トレイからエディタへの編集ファイル名要求通知 */
@@ -255,11 +261,19 @@ void CDlgDiff::SetData( void )
 				nItem = ::List_AddString( hwndList, szName );
 				::SendMessageAny( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNode[i].GetHwnd() );
 				count++;
+
+				// 横幅を計算する
+				SIZE sizeExtent;
+				if( ::GetTextExtentPoint32( hDC, szName, _tcslen(szName), &sizeExtent ) && sizeExtent.cx > nExtent ){
+					nExtent = sizeExtent.cx;
+				}
 			}
 
 			delete [] pEditNode;
 			// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
-			::SendMessageAny( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)1000, 0 );
+			::SelectObject(hDC, hFontOld);
+			::ReleaseDC( hwndList, hDC );
+			::SendMessageAny( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)(nExtent + 8), 0 );
 
 			/* 最初を選択 */
 			//::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
