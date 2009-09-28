@@ -40,6 +40,7 @@
 */
 
 #include "stdafx.h"
+#include <string>
 #include <stdio.h>
 #include <string.h>
 #include "CBregexp.h"
@@ -277,6 +278,88 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 
 
 /*!
+	CBregexp::MakePattern()の代替。
+	* エスケープされておらず、文字集合の中にもない . を [^\r\n] に置換する。
+	* エスケープされておらず、文字集合の中にもない $ を (?<![\r\n])(?=\r|$) に置換する。
+	これは「改行」の意味を LF のみ(BREGEXP.DLLの仕様)から、CR, LF, CRLF に拡張するための変更である。
+	また、$ は改行の後ろ、行文字列末尾にマッチしなくなる。最後の一行の場合をのぞいて、
+	正規表現DLLに与えられる文字列の末尾は文書末とはいえず、$ がマッチする必要はないだろう。
+	$ が行文字列末尾にマッチしないことは、一括置換での期待しない置換を防ぐために必要である。
+*/
+wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption )
+{
+	this->CheckPattern( szSearch );
+
+	const bool nestedBracketIsAllowed = true;
+	const wchar_t szDotAlternative[] = L"[^\\r\\n]";
+	const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
+
+	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$) へ置換すると仮定して、strModifiedSearchの最大長を決定する。
+	std::wstring::size_type modifiedSearchSize = 0;
+	for( const wchar_t* p = szSearch; *p; ++p ) {
+		if( *p == L'.') {
+			modifiedSearchSize += (sizeof szDotAlternative) / (sizeof szDotAlternative[0]) - 1;
+		} else if( *p == L'$' ) {
+			modifiedSearchSize += (sizeof szDollarAlternative) / (sizeof szDollarAlternative[0]) - 1;
+		} else {
+			modifiedSearchSize += 1;
+		}
+	}
+	++modifiedSearchSize; // '\0'
+
+	std::wstring strModifiedSearch;
+	strModifiedSearch.reserve( modifiedSearchSize );
+
+	// szSearchを strModifiedSearchへ、ところどころ置換しながら順次コピーしていく。
+	struct Sequence {
+		enum State { None = 0, Escaped, SmallC } state;
+		Sequence() : state( None ) {}
+		bool EatCharacter( const wchar_t ch )
+		{
+			const wchar_t acceptChars[] = { L'\\', L'c', 0 };
+			const wchar_t acceptChar = acceptChars[this->state];
+			if( acceptChar && acceptChar == ch ) {
+				// 特定の文字を食べて次の状態へ。
+				this->state =  State( state + 1 );
+				return true;
+			} else if( this->state == Escaped || this->state == SmallC ) {
+				// 何でも一文字消費して終了。
+				this->state = None;
+				return true;
+			}
+			return false; // 関係ない文字だった。
+		}
+	} seq;
+	int charsetLevel = 0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
+	const wchar_t *left = szSearch, *right = szSearch;
+	for( ; *right; ++right ) { // CNativeW::GetSizeOfChar()は使わなくてもいいかな？
+		if( seq.EatCharacter( *right ) ) {
+			// (ブラケットの内外で有効な)エスケープシークエンス( \X, \cX )の一部だった。
+		} else if( *right == L'[' ) { // 鬼車では文字集合の中の [ は POSIXブラケット表現などの意味を持つので、必ずエスケープされている。これはエスケープされていないので、無条件でレベルを増す。
+			++charsetLevel;
+		} else if( *right == L']' ) {
+			if( 0 < charsetLevel ) { // 文字集合の外のエスケープされていない ] は合法なので考慮する。
+				charsetLevel -= nestedBracketIsAllowed ? 1 : charsetLevel;
+			}
+		} else {
+			if( *right == L'.' && charsetLevel == 0 ) {
+				strModifiedSearch.append( left, right );
+				left = right + 1;
+				strModifiedSearch.append( szDotAlternative );
+			} else if( *right == L'$' && charsetLevel == 0 ) {
+				strModifiedSearch.append( left, right );
+				left = right + 1;
+				strModifiedSearch.append( szDollarAlternative );
+			}
+		}
+	}
+	strModifiedSearch.append( left, right + 1 ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
+
+	return this->MakePatternSub( strModifiedSearch.c_str(), szReplace, L"", nOption );
+}
+
+
+/*!
 	JRE32のエミュレーション関数．空の文字列に対して検索・置換を行うことにより
 	BREGEXP_W構造体の生成のみを行う．
 
@@ -299,7 +382,7 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	wchar_t *szNPattern = MakePattern( szPattern0, szPattern1, nOption );
+	wchar_t *szNPattern = MakePatternAlternate( szPattern0, szPattern1, nOption );
 	m_szMsg[0] = L'\0';		//!< エラー解除
 	if (szPattern1 == NULL) {
 		// 検索実行

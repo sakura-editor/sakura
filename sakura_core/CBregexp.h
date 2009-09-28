@@ -204,6 +204,7 @@ private:
 	int CheckPattern( const wchar_t* szPattern );
 	wchar_t* MakePatternSub( const wchar_t* szPattern, const wchar_t* szPattern2, const wchar_t* szAdd2, int nOption );
 	wchar_t* MakePattern( const wchar_t* szPattern, const wchar_t* szPattern2, int nOption );
+	wchar_t* MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption );
 
 	//	メンバ変数
 	BREGEXP_W*			m_pRegExp;			//!< コンパイル構造体
