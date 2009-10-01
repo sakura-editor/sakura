@@ -11,6 +11,7 @@
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2009, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -58,13 +59,18 @@
 //#endif
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
-#define TAB_WINDOW_HEIGHT	24
-#define TAB_MARGIN_TOP		3
-#define TAB_MARGIN_LEFT		1
-#define TAB_MARGIN_RIGHT	47
-#define TAB_ITEM_HEIGHT		(TAB_WINDOW_HEIGHT - 5)
-#define MAX_TABITEM_WIDTH	200
-#define MIN_TABITEM_WIDTH	60
+// 2009.10.01 ryoji 高DPI対応スケーリング
+#define TAB_MARGIN_TOP		DpiScaleY(3)
+#define TAB_MARGIN_LEFT		DpiScaleX(1)
+#define TAB_MARGIN_RIGHT	DpiScaleX(47)
+
+#define TAB_FONT_HEIGHT		DpiPointsToPixels(9)
+#define TAB_ITEM_HEIGHT		(TAB_FONT_HEIGHT + DpiScaleY(7))
+#define TAB_WINDOW_HEIGHT	(TAB_ITEM_HEIGHT + TAB_MARGIN_TOP + 2)
+
+#define MAX_TABITEM_WIDTH	DpiScaleX(200)
+#define MIN_TABITEM_WIDTH	DpiScaleX(60)
+
 #define CX_SMICON			16
 #define CY_SMICON			16
 static const RECT rcBtnBase = { 0, 0, 16, 16 };
@@ -731,7 +737,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		/* LOGFONTの初期化 */
 		LOGFONT	lf;
 		::ZeroMemory( &lf, sizeof(lf) );
-		lf.lfHeight			= -12;
+		lf.lfHeight			= -TAB_FONT_HEIGHT;	// 2009.10.01 ryoji 高DPI対応
 		lf.lfWidth			= 0;
 		lf.lfEscapement		= 0;
 		lf.lfOrientation	= 0;
@@ -821,13 +827,28 @@ void CTabWnd::Close( void )
 //WM_SIZE処理
 LRESULT CTabWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	RECT	rcParent;
+	RECT	rcWnd;
 
 	if( NULL == GetHwnd() || NULL == m_hwndTab ) return 0L;
 
-	::GetWindowRect( GetHwnd(), &rcParent );
+	::GetWindowRect( GetHwnd(), &rcWnd );
 
-	::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcParent.right - rcParent.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), TAB_WINDOW_HEIGHT, TRUE );	// 2005.01.30 ryoji
+	int nHeight = TAB_WINDOW_HEIGHT;
+#if 0	// 多段化しなければ不要
+	if( TabCtrl_GetItemCount( m_hwndTab ) )
+	{
+		// 正確に再配置（多段タブでは段数が変わることがあるので必須）
+		RECT rcTab, rcDisp;
+		::GetWindowRect( m_hwndTab, &rcTab );
+		rcDisp = rcTab;
+		TabCtrl_AdjustRect( m_hwndTab, FALSE, &rcDisp );
+		nHeight = (rcDisp.top - rcTab.top - 2) + TAB_MARGIN_TOP;
+
+		::SetWindowPos( GetHwnd(), NULL, 0, 0, rcWnd.right - rcWnd.left, nHeight, SWP_NOMOVE | SWP_NOZORDER );
+	}
+#endif
+
+	::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), nHeight, TRUE );	// 2005.01.30 ryoji
 
 	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
 
@@ -1066,7 +1087,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		// アイコン描画
 		if( NULL != m_hIml && 0 <= pData->iImage )
 		{
-			int top = rcItem.top + ( rcItem.bottom - rcItem.top - CY_SMICON ) / 2;
+			int top = rcItem.top + ( rcItem.bottom - rcItem.top - DpiScaleX(CY_SMICON) ) / 2;
 			ImageList_Draw( m_hIml, pData->iImage, lpdis->hDC, rcItem.left + 2, top, ILD_TRANSPARENT );
 		}
 
@@ -2147,6 +2168,7 @@ void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 /*! 一覧ボタン描画処理
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.10.21 ryoji 背景描画を関数呼び出しに変更
+	@date 2009.10.01 ryoji 描画イメージを矩形中央にもってくる
 */
 void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 {
@@ -2156,6 +2178,12 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	RECT rcBtn;
 	GetListBtnRect( lprcClient, &rcBtn );
 	DrawBtnBkgnd( gr, &rcBtn, m_bListBtnHilighted );	// 2006.10.21 ryoji
+
+	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2;
+	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
+	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
 	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	gr.SetPen( ::GetSysColor( nIndex ) );
@@ -2170,6 +2198,7 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 
 /*! 閉じるボタン描画処理
 	@date 2006.10.21 ryoji 新規作成
+	@date 2009.10.01 ryoji 描画イメージを矩形中央にもってくる
 */
 void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 {
@@ -2204,10 +2233,16 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 
 	// ボタンの左側にセパレータを描画する	// 2007.02.27 ryoji
 	gr.SetPen( ::GetSysColor( COLOR_3DSHADOW ) );
-	::MoveToEx( gr, rcBtn.left - 4, rcBtn.top + 1, NULL );
-	::LineTo( gr, rcBtn.left - 4, rcBtn.bottom - 1 );
+	::MoveToEx( gr, rcBtn.left - DpiScaleX(4), rcBtn.top + 1, NULL );
+	::LineTo( gr, rcBtn.left - DpiScaleX(4), rcBtn.bottom - 1 );
 
 	DrawBtnBkgnd( gr, &rcBtn, m_bCloseBtnHilighted );
+
+	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2;
+	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
+	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
 	int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	gr.SetPen( ::GetSysColor(nIndex) );
@@ -2248,7 +2283,8 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4, lprcClient->top + TAB_MARGIN_TOP + 2 );
+	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4), lprcClient->top + TAB_MARGIN_TOP + DpiScaleX(2) );
 }
 
 /*! 閉じるボタンの矩形取得処理
@@ -2257,7 +2293,8 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4 + (rcBtnBase.right - rcBtnBase.left) + 7, lprcClient->top + TAB_MARGIN_TOP + 2 );
+	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(7), lprcClient->top + TAB_MARGIN_TOP + DpiScaleX(2) );
 }
 
 

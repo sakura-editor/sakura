@@ -24,4 +24,4 @@ int MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 
 
 
 //!フォント選択ダイアログ
-BOOL MySelectFont( LOGFONT* plf, HWND hwndDlgOwner );
+BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner );	// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加

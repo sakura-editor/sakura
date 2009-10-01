@@ -214,7 +214,7 @@ bool CShareData::InitShareData()
 //	MS ゴシック標準スタイル10ptに設定
 //		/* LOGFONTの初期化 */
 		memset_raw( &m_pShareData->m_Common.m_sView.m_lf, 0, sizeof( m_pShareData->m_Common.m_sView.m_lf ) );
-		m_pShareData->m_Common.m_sView.m_lf.lfHeight			= -13;
+		m_pShareData->m_Common.m_sView.m_lf.lfHeight			= DpiPointsToPixels(-10);	// 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
 		m_pShareData->m_Common.m_sView.m_lf.lfWidth				= 0;
 		m_pShareData->m_Common.m_sView.m_lf.lfEscapement		= 0;
 		m_pShareData->m_Common.m_sView.m_lf.lfOrientation		= 0;
@@ -228,6 +228,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sView.m_lf.lfQuality			= 0x1;
 		m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily	= 0x31;
 		_tcscpy( m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
+		m_pShareData->m_Common.m_sView.m_nPointSize = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
 
 		InitCharWidthCacheCommon();								// 2008/5/17 Uchi
 
@@ -239,6 +240,7 @@ bool CShareData::InitShareData()
 			NULL									// user profile update flag
 		);
 		// ai 02/05/21 Add E
+		m_pShareData->m_Common.m_sHelper.m_ps_kh = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
 
 //	To Here Sept. 19,2000
 

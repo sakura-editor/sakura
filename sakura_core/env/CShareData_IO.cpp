@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "env/CShareData_IO.h"
 #include "util/string_ex2.h"
+#include "util/window.h"
 #include "view/colors/CColorStrategy.h"
 
 /* 共有データのロード */
@@ -419,6 +420,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	{// Keword Help Font
 		const TCHAR*	pszForm = _T("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
 		TCHAR		szKeyData[1024];
+		cProfile.IOProfileData( pszSecName, LTEXT("khps"), common.m_sHelper.m_ps_kh );	// 2009.10.01 ryoji
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData( pszSecName, LTEXT("khlf"), MakeStringBufferT(szKeyData) ) ){
 				//##########################危険
@@ -437,6 +439,14 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 					&common.m_sHelper.m_lf_kh.lfQuality,
 					&common.m_sHelper.m_lf_kh.lfPitchAndFamily
 				);
+			}
+			if( common.m_sHelper.m_ps_kh != 0 ){
+				// DPI変更してもフォントのポイントサイズが変わらないように
+				// ポイント数からピクセル数に変換する
+				common.m_sHelper.m_lf_kh.lfHeight = DpiPointsToPixels( -abs(common.m_sHelper.m_ps_kh) ) / 10;	// 1/10ポイント単位のサイズ
+			}else{
+				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
+				common.m_sHelper.m_ps_kh = DpiPixelsToPoints( abs(common.m_sHelper.m_lf_kh.lfHeight * 10) );
 			}
 		}else{
 			auto_sprintf( szKeyData, pszForm,
@@ -719,6 +729,7 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 	const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
 	WCHAR		szKeyData[1024];
 	CommonSetting_View& view = pShare->m_Common.m_sView;
+	cProfile.IOProfileData( pszSecName, LTEXT("nPointSize"), view.m_nPointSize );	// 2009.10.01 ryoji
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, LTEXT("lf"), MakeStringBufferW(szKeyData) ) ){
 			int buf[13];
@@ -736,6 +747,14 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 			view.m_lf.lfClipPrecision	= buf[10];
 			view.m_lf.lfQuality			= buf[11];
 			view.m_lf.lfPitchAndFamily	= buf[12];
+			if( view.m_nPointSize != 0 ){
+				// DPI変更してもフォントのポイントサイズが変わらないように
+				// ポイント数からピクセル数に変換する
+				view.m_lf.lfHeight = DpiPointsToPixels( -abs(view.m_nPointSize) ) / 10;	// 1/10ポイント単位のサイズ
+			}else{
+				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
+				view.m_nPointSize = DpiPixelsToPoints( abs(view.m_lf.lfHeight * 10) );
+			}
 		}
 	}else{
 		auto_sprintf( szKeyData, pszForm,

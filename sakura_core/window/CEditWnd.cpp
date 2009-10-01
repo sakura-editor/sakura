@@ -3706,7 +3706,7 @@ void CEditWnd::InitMenubarMessageFont(void)
 
 	/* LOGFONTの初期化 */
 	memset_raw( &lf, 0, sizeof( lf ) );
-	lf.lfHeight			= -12;
+	lf.lfHeight			= DpiPointsToPixels(-9);	// 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
 	lf.lfWidth			= 0;
 	lf.lfEscapement		= 0;
 	lf.lfOrientation	= 0;

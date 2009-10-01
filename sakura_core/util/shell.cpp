@@ -546,7 +546,8 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 
 //フォント選択ダイアログ
 //2008.04.27 kobake CEditDoc::SelectFont から分離
-BOOL MySelectFont( LOGFONT* plf, HWND hwndDlgOwner )
+// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
+BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner )
 {
 	// 2004.02.16 Moca CHOOSEFONTをメンバから外す
 	CHOOSEFONT cf;
@@ -586,6 +587,7 @@ BOOL MySelectFont( LOGFONT* plf, HWND hwndDlgOwner )
 #endif
 		return FALSE;
 	}
+	*piPointSize = cf.iPointSize;
 
 	return TRUE;
 }
