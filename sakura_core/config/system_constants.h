@@ -276,12 +276,15 @@
 	Version 96:
 	自動実行マクロ 2006/08/31 ryoji
 
+	Version 97:
+	高DPI用にフォントサイズ（1/10ポイント単位）を追加 2009/10/01 ryoji
+
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		96
+#define N_SHAREDATA_VERSION		97
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 

@@ -3799,8 +3799,10 @@ void CViewCommander::Command_FONT( void )
 
 	/* フォント設定ダイアログ */
 	LOGFONT cLogfont = GetDllShareData().m_Common.m_sView.m_lf;
-	if( MySelectFont( &cLogfont, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd() )  ){
+	INT nPointSize;
+	if( MySelectFont( &cLogfont, &nPointSize, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd() )  ){
 		GetDllShareData().m_Common.m_sView.m_lf = cLogfont;
+		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 
 		// 文字幅キャッシュの初期化	// 2008/5/15 Uchi
 		InitCharWidthCache(cLogfont);

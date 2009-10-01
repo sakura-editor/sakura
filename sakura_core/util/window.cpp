@@ -1,7 +1,9 @@
 #include "stdafx.h"
-#include "window.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
+
+#define COMPILE_WINDOW_STUBS
+#include "window.h"
 
 
 /**	指定したウィンドウの祖先のハンドルを取得する
