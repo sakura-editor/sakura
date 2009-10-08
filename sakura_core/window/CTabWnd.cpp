@@ -71,8 +71,9 @@
 #define MAX_TABITEM_WIDTH	DpiScaleX(200)
 #define MIN_TABITEM_WIDTH	DpiScaleX(60)
 
-#define CX_SMICON			16
-#define CY_SMICON			16
+#define CX_SMICON			DpiScaleX(16)
+#define CY_SMICON			DpiScaleY(16)
+
 static const RECT rcBtnBase = { 0, 0, 16, 16 };
 
 // 2006.02.01 ryoji タブ一覧メニュー用データ
@@ -1036,12 +1037,19 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		HDC hdc = ::GetDC( hwnd );
 		HFONT hfnt = CreateMenuFont();
 		HFONT hfntOld = (HFONT)::SelectObject( hdc, hfnt );
-		SIZE size;
 
+		SIZE size;
 		::GetTextExtentPoint32( hdc, pData->szText, ::_tcslen(pData->szText), &size );
 
+		int cxIcon = CX_SMICON;
+		int cyIcon = CY_SMICON;
+		if( NULL != m_hIml )
+		{
+			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
+		}
+
 		lpmis->itemHeight = ::GetSystemMetrics( SM_CYMENU );
-		lpmis->itemWidth = size.cx + CX_SMICON + 8;
+		lpmis->itemWidth = (cxIcon + DpiScaleX(8)) + size.cx;
 
 		::SelectObject( hdc, hfntOld );
 		::DeleteObject( hfnt );
@@ -1085,10 +1093,16 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		::FillRect( gr, &rcItem, (HBRUSH)(clrBk + 1) );
 
 		// アイコン描画
-		if( NULL != m_hIml && 0 <= pData->iImage )
+		int cxIcon = CX_SMICON;
+		int cyIcon = CY_SMICON;
+		if( NULL != m_hIml )
 		{
-			int top = rcItem.top + ( rcItem.bottom - rcItem.top - DpiScaleX(CY_SMICON) ) / 2;
-			ImageList_Draw( m_hIml, pData->iImage, lpdis->hDC, rcItem.left + 2, top, ILD_TRANSPARENT );
+			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
+			if( 0 <= pData->iImage )
+			{
+				int top = rcItem.top + ( rcItem.bottom - rcItem.top - cyIcon ) / 2;
+				ImageList_Draw( m_hIml, pData->iImage, lpdis->hDC, rcItem.left + DpiScaleX(2), top, ILD_TRANSPARENT );
+			}
 		}
 
 		// テキスト描画
@@ -1097,7 +1111,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		HFONT hfnt = CreateMenuFont();
 		gr.PushMyFont(hfnt);
 		RECT rcText = rcItem;
-		rcText.left += (CX_SMICON + 8);
+		rcText.left += (cxIcon + DpiScaleX(8));
 
 		::DrawText( gr, pData->szText, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
 
@@ -2112,6 +2126,8 @@ int CTabWnd::GetImageIndex( EditNode* pNode )
 */
 HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 {
+	if( NULL == himl ) return NULL;
+
 	// 本物の ImageList_Duplicate() があればそれを呼び出す
 	HIMAGELIST hImlNew;
 	if( m_RealImageList_Duplicate )
@@ -2125,7 +2141,10 @@ HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 	// 本物の ImageList_Duplicate() の代替処理
 	// 新しいイメージリストを作成してアイコン単位でコピーする
 	//（この場合、多色アイコンは綺麗には表示されないかもしれない）
-	hImlNew = ImageList_Create( CX_SMICON, CY_SMICON, ILC_COLOR32 | ILC_MASK, 4, 4 );
+	int cxIcon = CX_SMICON;
+	int cyIcon = CY_SMICON;
+	ImageList_GetIconSize( himl, &cxIcon, &cyIcon );
+	hImlNew = ImageList_Create( cxIcon, cyIcon, ILC_COLOR32 | ILC_MASK, 4, 4 );
 	if( hImlNew )
 	{
 		ImageList_SetBkColor( hImlNew, CLR_NONE );
