@@ -42,6 +42,11 @@ int WINAPI _tWinMain(
 	int			nCmdShow		//!< show state of window
 )
 {
+#ifdef USE_LEAK_CHECK_WITH_CRTDBG
+	// 2009.9.10 syat メモリリークチェックを追加
+	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
+#endif
+
 	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
 	setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
 	::OleInitialize( NULL );	// 2009.01.07 ryoji 追加

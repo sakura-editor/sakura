@@ -1,5 +1,6 @@
 //ビルド(コンパイル)設定
 //2007.10.18 kobake 作成
+//2009.09.10 syat メモリリークチェックを追加
 
 #pragma once
 
@@ -44,6 +45,11 @@ static const bool UNICODE_BOOL=false;
 #endif
 
 
+//crtdbg.hによるメモリーリークチェックを使うかどうか（デバッグ用）
+#ifdef _DEBUG
+//#define USE_LEAK_CHECK_WITH_CRTDBG
+#endif
+
 // -- -- 仕様変更 -- -- //
 
 //全角スペース描画
@@ -86,4 +92,20 @@ static const bool UNICODE_BOOL=false;
 	{
 		::free(p);
 	}
+#endif
+
+
+//crtdbg.hによるメモリーリークチェックを使うかどうか（デバッグ用）
+#ifdef USE_LEAK_CHECK_WITH_CRTDBG
+	//new演算子をオーバーライドするヘッダはcrtdbg.hの前にincludeしないとコンパイルエラーとなる	
+	//参考：http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=99818
+	#include <xiosbase>
+	#include <xlocale>
+	#include <xmemory>
+	#include <xtree>
+
+	#include <crtdbg.h>
+	#define new DEBUG_NEW
+	#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+	//それと、WinMainの先頭で _CrtSetDbgFlag() を呼ぶ
 #endif
