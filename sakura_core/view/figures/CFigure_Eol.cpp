@@ -48,41 +48,11 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 	// 改行取得
 	const CLayout*	pcLayout2 = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( pInfo->pDispPos->GetLayoutLineRef() );
 	CEol cEol = pcLayout2->GetLayoutEol();
-
-	// 行末記号を描画
-	{
-		// 改行が存在した場合は、改行記号を表示
-		if(cEol.GetLen()){
-			m_cEol = cEol;
-			__super::DrawImp(pInfo);
-			pInfo->nPosInLogic+=cEol.GetLen();
-		}
-		// 最終行の場合は、EOFを表示
-		else if(pInfo->pDispPos->GetLayoutLineRef()+1==CEditDoc::GetInstance(0)->m_cLayoutMgr.GetLineCount() && pInfo->pDispPos->GetDrawCol() < nWrapKeta){
-			_DispEOF(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
-			pInfo->nPosInLogic+=CLogicInt(1);
-		}
-		// それ以外では、折り返し記号を表示
-		else{
-			_DispWrap(pInfo->gr,pInfo->pDispPos,pcView);
-			pInfo->nPosInLogic+=CLogicInt(1);
-		}
+	if(cEol.GetLen()){
+		m_cEol = cEol;
+		__super::DrawImp(pInfo);
+		pInfo->nPosInLogic+=cEol.GetLen();
 	}
-
-	// 行末背景描画
-	RECT rcClip;
-	if(pInfo->pcView->GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos)){
-		cTextType.FillBack(pInfo->gr,rcClip);
-	}
-
-	// 縦線描画
-	pInfo->pcView->GetTextDrawer().DispVerticalLines(
-		pInfo->gr,
-		pInfo->pDispPos->GetDrawPos().y,
-		pInfo->pDispPos->GetDrawPos().y + nLineHeight,
-		CLayoutInt(0),
-		CLayoutInt(-1)
-	);
 
 	return true;
 }

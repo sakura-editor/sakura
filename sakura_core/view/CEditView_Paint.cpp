@@ -805,6 +805,15 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		cTextType.FillBack(pInfo->gr,rcClip);
 	}
 
+	// cü•`‰æ
+	pInfo->pcView->GetTextDrawer().DispVerticalLines(
+		pInfo->gr,
+		pInfo->pDispPos->GetDrawPos().y,
+		pInfo->pDispPos->GetDrawPos().y + nLineHeight,
+		CLayoutInt(0),
+		CLayoutInt(-1)
+	);
+
 	// ”½“]•`‰æ
 	if( pcLayout && pInfo->pcView->GetSelectionInfo().IsTextSelected() ){
 		pInfo->pcView->DispTextSelected(
