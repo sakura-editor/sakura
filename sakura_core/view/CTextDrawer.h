@@ -33,6 +33,9 @@ public:
 	//!	w’èŒ…cü•`‰æŠÖ”	// 2005.11.08 Moca
 	void DispVerticalLines( CGraphics& gr, int nTop, int nBottom, CLayoutInt nLeftCol, CLayoutInt nRightCol ) const;
 
+	// -- -- Ü‚è•Ô‚µŒ…cü•`‰æ -- -- //
+	void DispWrapLine( CGraphics& gr, int nTop, int nBottom ) const;
+
 	// -- -- s”Ô† -- -- //
 	void DispLineNumber( CGraphics& gr, CLayoutInt nLineNum, int y ) const;		// s”Ô†•\¦
 

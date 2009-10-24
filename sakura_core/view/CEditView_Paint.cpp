@@ -468,29 +468,11 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 
 			// 2006.04.29 s•”•ª‚Ís‚²‚Æ‚Éì‰æ‚µA‚±‚±‚Å‚Ícü‚Ìc‚è‚ğì‰æ
 			GetTextDrawer().DispVerticalLines( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom, CLayoutInt(0), CLayoutInt(-1) );
+			GetTextDrawer().DispWrapLine( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom );	// 2009.10.24 ryoji
 		}
 	}
 
 	cTextType.RewindGraphicsState(gr);
-
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                Ü‚è•Ô‚µˆÊ’u‚Ì•\¦ (cü)                    //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	CTypeSupport cWrapType(this,COLORIDX_WRAP);
-	if( cWrapType.IsDisp() ){
-		int nXPos = GetTextArea().GetAreaLeft() + (Int)( nWrapKeta - GetTextArea().GetViewLeftCol() ) * nCharDx;
-		//	2005.11.08 Moca ì‰æğŒ•ÏX
-		if( GetTextArea().GetAreaLeft() < nXPos && nXPos < GetTextArea().GetAreaRight() ){
-			/// Ü‚è•Ô‚µ‹L†‚ÌF‚Ìƒyƒ“‚ğİ’è
-			gr.PushPen(cWrapType.GetTextColor(),0);
-
-			::MoveToEx( gr, nXPos, GetTextArea().GetAreaTop(), NULL );
-			::LineTo( gr, nXPos, GetTextArea().GetAreaBottom() );
-
-			gr.PopPen();
-		}
-	}
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -805,13 +787,20 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		cTextType.FillBack(pInfo->gr,rcClip);
 	}
 
-	// cü•`‰æ
+	// w’èŒ…cü•`‰æ
 	pInfo->pcView->GetTextDrawer().DispVerticalLines(
 		pInfo->gr,
 		pInfo->pDispPos->GetDrawPos().y,
 		pInfo->pDispPos->GetDrawPos().y + nLineHeight,
 		CLayoutInt(0),
 		CLayoutInt(-1)
+	);
+
+	// Ü‚è•Ô‚µŒ…cü•`‰æ
+	pInfo->pcView->GetTextDrawer().DispWrapLine(
+		pInfo->gr,
+		pInfo->pDispPos->GetDrawPos().y,
+		pInfo->pDispPos->GetDrawPos().y + nLineHeight
 	);
 
 	// ”½“]•`‰æ

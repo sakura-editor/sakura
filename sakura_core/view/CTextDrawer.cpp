@@ -284,6 +284,39 @@ void CTextDrawer::DispVerticalLines(
 	}
 }
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        折り返し桁縦線                       //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+/*!	折り返し桁縦線の描画
+	@date 2009.10.24 ryoji 新規作成
+*/
+void CTextDrawer::DispWrapLine(
+	CGraphics&	gr,			//!< 作画するウィンドウのDC
+	int			nTop,		//!< 線を引く上端のクライアント座標y
+	int			nBottom		//!< 線を引く下端のクライアント座標y
+) const
+{
+	const CEditView* pView = m_pEditView;
+	CTypeSupport cWrapType(pView, COLORIDX_WRAP);
+	if( !cWrapType.IsDisp() ) return;
+
+	const CTextArea& rArea = *GetTextArea();
+	const CLayoutInt nWrapKetas = pView->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
+	const int nCharDx = pView->GetTextMetrics().GetHankakuDx();
+	int nXPos = rArea.GetAreaLeft() + (Int)( nWrapKetas - rArea.GetViewLeftCol() ) * nCharDx;
+	//	2005.11.08 Moca 作画条件変更
+	if( rArea.GetAreaLeft() < nXPos && nXPos < rArea.GetAreaRight() ){
+		/// 折り返し記号の色のペンを設定
+		gr.PushPen(cWrapType.GetTextColor(), 0);
+
+		::MoveToEx( gr, nXPos, nTop, NULL );
+		::LineTo( gr, nXPos, nBottom );
+
+		gr.PopPen();
+	}
+}
+
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
