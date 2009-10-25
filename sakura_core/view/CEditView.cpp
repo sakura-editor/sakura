@@ -2130,7 +2130,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		}	// ReleaseDC の前に gr デストラクト
 		::ReleaseDC( GetHwnd(), hdc );
 	}
-	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp ){
+	if( bUnderLine ){
 		m_nOldUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
 			 * (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace + GetTextMetrics().GetHankakuHeight()) + GetTextMetrics().GetHankakuHeight();
 		if( -1 == m_nOldUnderLineY ){
