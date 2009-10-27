@@ -340,16 +340,14 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 	);
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
 
-	auto_snprintf( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".ini") );
-	pszIniFile[_MAX_PATH - 1] = _T('\0');
+	auto_snprintf_s( pszIniFile, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".ini") );
 
 	// マルチユーザ用のiniファイルパス
 	//		exeと同じフォルダに置かれたマルチユーザ構成設定ファイル（sakura.exe.ini）の内容
 	//		に従ってマルチユーザ用のiniファイルパスを決める
 	pszPrivateIniFile[0] = _T('\0');
 	if( COsVersionInfo().IsWin2000_or_later() ){
-		auto_snprintf( szPath, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".exe.ini") );
-		szPath[_MAX_PATH - 1] = _T('\0');
+		auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts%ts%ts%ts"), szDrive, szDir, szFname, _T(".exe.ini") );
 		int nEnable = ::GetPrivateProfileInt(_T("Settings"), _T("MultiUser"), 0, szPath );
 		if( nEnable ){
 			int nFolder = ::GetPrivateProfileInt(_T("Settings"), _T("UserRootFolder"), 0, szPath );
@@ -371,8 +369,7 @@ void CFileNameManager::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR ps
 			if( szDir[0] == _T('\0') )
 				::lstrcpy( szDir, _T("sakura") );
 			if( GetSpecialFolderPath( nFolder, szPath ) ){
-				auto_snprintf( pszPrivateIniFile, _MAX_PATH - 1, _T("%ts\\%ts\\%ts%ts"), szPath, szDir, szFname, _T(".ini") );
-				pszPrivateIniFile[_MAX_PATH - 1] = _T('\0');
+				auto_snprintf_s( pszPrivateIniFile, _MAX_PATH - 1, _T("%ts\\%ts\\%ts%ts"), szPath, szDir, szFname, _T(".ini") );
 			}
 		}
 	}
@@ -411,8 +408,7 @@ void CFileNameManager::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE
 				TCHAR szDrive[_MAX_DRIVE];
 				TCHAR szDir[_MAX_DIR];
 				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
-				auto_snprintf( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
-				szPath[_MAX_PATH - 1] = _T('\0');
+				auto_snprintf_s( szPath, _MAX_PATH - 1, _T("%ts\\%ts"), szDrive, szDir );
 				MakeSureDirectoryPathExistsT( szPath );
 			}
 		}

@@ -66,7 +66,7 @@ inline bool is_field_type(wchar_t c)
 }
 
 
-
+//vsprintf_s API
 static int local_vsprintf_s(char* buf, size_t nBufCount, const char* format, va_list& v)
 {
 	return vsprintf_s(buf,nBufCount,format,v);
@@ -77,6 +77,7 @@ static int local_vsprintf_s(wchar_t* buf, size_t nBufCount, const wchar_t* forma
 	return vswprintf_s(buf,nBufCount,format,v);
 }
 
+//vsprintf API
 static int local_vsprintf(char* buf, const char* format, va_list& v)
 {
 	return vsprintf(buf,format,v);
@@ -85,6 +86,17 @@ static int local_vsprintf(char* buf, const char* format, va_list& v)
 static int local_vsprintf(wchar_t* buf, const wchar_t* format, va_list& v)
 {
 	return vswprintf(buf,format,v);
+}
+
+//vsnprintf_s API
+static int local_vsnprintf_s(char* buf, size_t nBufCount, const char* format, va_list& v)
+{
+	return vsnprintf_s(buf,nBufCount,_TRUNCATE,format,v);
+}
+
+static int local_vsnprintf_s(wchar_t* buf, size_t nBufCount, const wchar_t* format, va_list& v)
+{
+	return _vsnwprintf_s(buf,nBufCount,_TRUNCATE,format,v);
 }
 
 static void my_va_forward(va_list& v, const char* field)
@@ -190,7 +202,7 @@ static void field_convert(wchar_t* src)
 //"%ts","%tc"をサポート
 //※日本語考慮しない。(UNICODE版ではこれで問題が発生しない)
 template <class T>
-int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v)
+int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v, bool truncate)
 {
 	T* buf_end=buf+nBufCount; //変換リミット
 
@@ -223,7 +235,14 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v)
 				//変換処理は標準ライブラリに委譲
 				int ret;
 				va_list tmp_v=v; //※vをコピーして用いる
-				if(nBufCount!=MAX_BUF){
+				if(truncate){
+					ret=local_vsnprintf_s(dst,buf_end-dst,field,tmp_v);
+					if( ret<0 ){
+						//バッファに入りきらない文字列が切り捨てられた
+						return -1;
+					}
+				}
+				else if(nBufCount!=MAX_BUF){
 					ret=local_vsprintf_s(dst,buf_end-dst,field,tmp_v);
 				}
 				else{
@@ -251,18 +270,22 @@ int tchar_vsprintf_s_imp(T* buf, size_t nBufCount, const T* format, va_list& v)
 	}
 	//終端
 	*dst = 0;
+
+	if( truncate && *src != '\0' ){		//切り詰めありで、srcの処理が完了していない場合
+		return -1;						//切り詰められた
+	}
 	return dst-buf;
 }
 
 
 int tchar_vsprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v)
 {
-	return tchar_vsprintf_s_imp<ACHAR>(buf,nBufCount,format,v);
+	return tchar_vsprintf_s_imp<ACHAR>(buf,nBufCount,format,v,false);
 }
 
 int tchar_vswprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v)
 {
-	return tchar_vsprintf_s_imp<WCHAR>(buf,nBufCount,format,v);
+	return tchar_vsprintf_s_imp<WCHAR>(buf,nBufCount,format,v,false);
 }
 
 
@@ -278,6 +301,19 @@ int tchar_vsprintf(ACHAR* buf, const ACHAR* format, va_list& v)
 int tchar_vswprintf(WCHAR* buf, const WCHAR* format, va_list& v)
 {
 	return tchar_vswprintf_s(buf,MAX_BUF,format,v);
+}
+
+
+// vsnprintf_sラップ
+// バッファが出力文字列より小さい場合は可能な限り出力して末尾に\0を付け、戻り値-1で返ります。
+//
+int tchar_vsnprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, va_list& v)
+{
+	return tchar_vsprintf_s_imp<ACHAR>(buf,nBufCount,format,v,true);
+}
+int tchar_vsnwprintf_s(WCHAR* buf, size_t nBufCount, const WCHAR* format, va_list& v)
+{
+	return tchar_vsprintf_s_imp<WCHAR>(buf,nBufCount,format,v,true);
 }
 
 
@@ -334,7 +370,10 @@ int tchar_swprintf(WCHAR* buf, const WCHAR* format, ...)
 	return ret;
 }
 
-int tchar_snprintf(ACHAR* buf, size_t count, const ACHAR* format, ...) 
+// snprintf_sラップ
+// バッファが出力文字列より小さい場合は可能な限り出力して末尾に\0を付け、戻り値-1で返ります。
+//
+int tchar_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...) 
 {
 	va_list v;
 	va_start(v,format);
@@ -342,7 +381,7 @@ int tchar_snprintf(ACHAR* buf, size_t count, const ACHAR* format, ...)
 	va_end(v);
 	return ret;
 }
-int tchar_snwprintf(WCHAR* buf, size_t count, const WCHAR* format, ...)
+int tchar_snwprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...)
 {
 	va_list v;
 	va_start(v,format);
