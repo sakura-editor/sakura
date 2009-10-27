@@ -42,15 +42,15 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	int			nFuncNum;
 	wchar_t		szClass[1024];
 
-	int			nClassNestArr[16];
 	int			nClassNestArrNum;
-	int			nNestLevel2Arr[16];
+	std::vector<int>	nClassNestArr(0);
+	std::vector<int>	nNestLevel2Arr(0);
 
 	nNestLevel = 0;
 	szWordPrev[0] = L'\0';
 	szWord[nWordIdx] = L'\0';
 	nMode = 0;
-	nNestLevel2Arr[0] = 0;
+	//nNestLevel2Arr[0] = 0;
 	nFuncNum = 0;
 	szClass[0] = L'\0';
 	nClassNestArrNum = 0;
@@ -113,14 +113,14 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						szWord[nWordIdx] = pLine[i];
 						szWord[nWordIdx + 1] = '\0';
 					}
-				}
-else{
+				}else{
 					/* クラス宣言部分を見つけた */
 					//	Oct. 10, 2002 genta interfaceも対象に
 					if( 0 == wcscmp( L"class", szWordPrev ) ||
 						0 == wcscmp( L"interface", szWordPrev )
 					 ){
-						nClassNestArr[nClassNestArrNum] = nNestLevel;
+						nClassNestArr.push_back( nNestLevel );
+						nNestLevel2Arr.push_back( 0 );
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
 							wcscat( szClass, L"\\" );
@@ -142,8 +142,9 @@ else{
 							&ptPosXY_Layout
 						);
 						wchar_t szWork[256];
-						auto_sprintf( szWork, L"%ls::%ls", szClass, L"定義位置" );
-						pcFuncInfoArr->AppendData( ptPosXY_Logic.GetY2() + CLogicInt(1), ptPosXY_Layout.GetY2() + CLayoutInt(1), szWork, nFuncId ); //2007.10.09 kobake レイアウト・ロジックの混在バグ修正
+						if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, L"定義位置" ) ){
+							pcFuncInfoArr->AppendData( ptPosXY_Logic.GetY2() + CLogicInt(1), ptPosXY_Layout.GetY2() + CLayoutInt(1), szWork, nFuncId ); //2007.10.09 kobake レイアウト・ロジックの混在バグ修正
+						}
 					}
 
 					nMode = 0;
@@ -246,8 +247,9 @@ else{
 								&ptPosXY
 							);
 							wchar_t szWork[256];
-							auto_sprintf( szWork, L"%ls::%ls", szClass, szFuncName );
-							pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
+							if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, szFuncName ) ){
+								pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
+							}
 						}
 					}
 					if( 0 < nClassNestArrNum ){
@@ -266,6 +268,8 @@ else{
 					if( 0 < nClassNestArrNum &&
 						nClassNestArr[nClassNestArrNum - 1] == nNestLevel
 					){
+						nClassNestArr.pop_back();
+						nNestLevel2Arr.pop_back();
 						nClassNestArrNum--;
 						int k;
 						for( k = wcslen( szClass ) - 1; k >= 0; k-- ){
@@ -384,8 +388,9 @@ else{
 								&ptPosXY
 							);
 							wchar_t szWork[256];
-							auto_sprintf( szWork, L"%ls::%ls", szClass, szFuncName );
-							pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
+							if( 0 < auto_snprintf_s( szWork, _countof(szWork), L"%ls::%ls", szClass, szFuncName ) ){
+								pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
+							}
 						}
 					}
 					if( 0 < nClassNestArrNum ){
