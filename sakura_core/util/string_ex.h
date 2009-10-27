@@ -183,8 +183,8 @@ TCHAR* strtotcs( TCHAR* dest, const ACHAR* src, size_t count );
 TCHAR* strtotcs( TCHAR* dest, const WCHAR* src, size_t count );
 
 //ˆóŽšŒn
-inline int auto_snprintf(ACHAR* buf, size_t count, const ACHAR* format, ...)     { va_list v; va_start(v,format); int ret=tchar_vsprintf_s (buf,count,format,v); va_end(v); return ret; }
-inline int auto_snprintf(WCHAR* buf, size_t count, const WCHAR* format, ...)     { va_list v; va_start(v,format); int ret=tchar_vswprintf_s(buf,count,format,v); va_end(v); return ret; }
+inline int auto_snprintf_s(ACHAR* buf, size_t count, const ACHAR* format, ...)   { va_list v; va_start(v,format); int ret=tchar_vsnprintf_s (buf,count,format,v); va_end(v); return ret; }
+inline int auto_snprintf_s(WCHAR* buf, size_t count, const WCHAR* format, ...)   { va_list v; va_start(v,format); int ret=tchar_vsnwprintf_s(buf,count,format,v); va_end(v); return ret; }
 inline int auto_sprintf(ACHAR* buf, const ACHAR* format, ...)                    { va_list v; va_start(v,format); int ret=tchar_vsprintf (buf,format,v); va_end(v); return ret; }
 inline int auto_sprintf(WCHAR* buf, const WCHAR* format, ...)                    { va_list v; va_start(v,format); int ret=tchar_vswprintf(buf,format,v); va_end(v); return ret; }
 inline int auto_sprintf_s(ACHAR* buf, size_t nBufCount, const ACHAR* format, ...){ va_list v; va_start(v,format); int ret=tchar_vsprintf_s (buf,nBufCount,format,v); va_end(v); return ret; }
