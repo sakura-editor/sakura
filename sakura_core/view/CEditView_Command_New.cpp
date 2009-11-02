@@ -322,12 +322,30 @@ void CEditView::DeleteData2(
 	gm_ProfileOutput = 1;
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(1)" );
 #endif
-	//_ptCaretPosをロジック位置に変換 -> ptDelPos
-	CLogicPoint ptDelPos;
-	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-		_ptCaretPos,
-		&ptDelPos
-	);
+	const wchar_t*	pLine;
+	CLogicInt		nLineLen;
+	CLogicInt		nIdxFrom;
+
+	const CLayout* pcLayout;
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( _ptCaretPos.GetY2(), &nLineLen, &pcLayout );
+	if( NULL == pLine ){
+		return;
+	}
+	nIdxFrom = LineColmnToIndex( pcLayout, _ptCaretPos.GetX2() );
+
+	//2007.10.18 kobake COpeの生成をここにまとめる
+	CDeleteOpe*	pcOpe = NULL;
+	if( !m_bDoing_UndoRedo ){
+		pcOpe = new CDeleteOpe();
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+			CLayoutPoint( LineIndexToColmn( pcLayout, nIdxFrom ), _ptCaretPos.GetY2() ),
+			&pcOpe->m_ptCaretPos_PHY_Before
+		);
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
+			CLayoutPoint( LineIndexToColmn( pcLayout, nIdxFrom + nDelLen ), _ptCaretPos.GetY2() ),
+			&pcOpe->m_ptCaretPos_PHY_To
+		);
+	}
 
 	/* データ削除 */
 	CLayoutInt	nModifyLayoutLinesOld;
@@ -335,7 +353,7 @@ void CEditView::DeleteData2(
 	CLayoutInt	nDeleteLayoutLines;
 	m_pcEditDoc->m_cLayoutMgr.DeleteData_CLayoutMgr(
 		_ptCaretPos.GetY2(),
-		ptDelPos.x,
+		nIdxFrom,
 		nDelLen,
 		&nModifyLayoutLinesOld,
 		&nModifyLayoutLinesNew,
@@ -343,22 +361,14 @@ void CEditView::DeleteData2(
 		pcMem
 	);
 
-	//2007.10.18 kobake COpeの生成をここにまとめる
-	CDeleteOpe*	pcOpe = NULL;
-	if( !m_bDoing_UndoRedo ){
-		pcOpe = new CDeleteOpe();
-		pcOpe->m_ptCaretPos_PHY_Before = ptDelPos;
-		pcOpe->m_ptCaretPos_PHY_To = ptDelPos + CLogicPoint(nDelLen, CLogicInt(0));
-		pcOpe->m_nDataLen = pcMem->GetStringLength();	/* 操作に関連するデータのサイズ */
-		pcOpe->m_pcmemData = *pcMem;					/* 操作に関連するデータ */
-	}
-
 	/* 選択エリアの先頭へカーソルを移動 */
 	GetCaret().MoveCursor( _ptCaretPos, false );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 
 	//2007.10.18 kobake COpeの追加をここにまとめる
 	if( pcOpe ){
+		pcOpe->m_nDataLen = pcMem->GetStringLength();	/* 操作に関連するデータのサイズ */
+		pcOpe->m_pcmemData = *pcMem;					/* 操作に関連するデータ */
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			_ptCaretPos,
 			&pcOpe->m_ptCaretPos_PHY_After
