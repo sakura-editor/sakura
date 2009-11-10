@@ -193,6 +193,16 @@ public:
 		return IsLookAhead();
 	}
 
+	//! 正規表現ライブラリが戻り読みをサポートするなら真。
+	bool IsLookBehindAvailable() const {
+		return this->m_checkedSyntax.lookBehindIsAvailable;
+	}
+
+	//! 正規表現ライブラリが文字集合の中で、POSIXブラケット以外のエスケープされていない [ を禁じていたら真。
+	bool IsNestedRawBracketDisallowed() const {
+		return this->m_checkedSyntax.nestedRawBracketIsDisallowed;
+	}
+
 protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
 	virtual LPCTSTR GetDllNameInOrder(LPCTSTR, int);
@@ -241,11 +251,18 @@ private:
 	int CheckPattern( const char *szPattern );
 	char* MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int nOption );
 	char* MakePattern( const char* szPattern, const char* szPattern2, int nOption );
+	char* MakePatternAlternate( const char* const szSearch, const char* const szReplace, int nOption );
+	void CheckSupportedSyntax(); //!< 正規表現ライブラリ初期化時に呼んで、サポートされる文法を確かめる。
 	//	メンバ変数
 	BREGEXP*			m_pRegExp;			//!< コンパイル構造体
 	int					m_ePatType;			//!< 検索文字列パターン種別
 	const char			*m_szTarget;		//!< 対象文字列へのポインタ
 	char				m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
+	struct SyntaxInfo {
+		SyntaxInfo() : lookBehindIsAvailable( false ), nestedRawBracketIsDisallowed( false ) {}
+		bool lookBehindIsAvailable; //!< 正規表現ライブラリが戻り読みをサポートするなら真。
+		bool nestedRawBracketIsDisallowed; //!< 正規表現ライブラリが文字集合の中で、POSIXブラケット以外のエスケープされていない [ を禁じていたら真。
+	} m_checkedSyntax;
 	// 静的メンバ変数
 	static const char	m_tmpBuf[2];		//!< ダミー文字列
 };
