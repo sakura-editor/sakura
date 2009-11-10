@@ -1615,16 +1615,16 @@ int CDocLineMgr::SearchWord(
 				while( 1 ){
 					nHitPosOld = nHitPos;
 					nIdxPosOld = nIdxPos;
+					// 長さ０でマッチしたので、この位置で再度マッチしないように、１文字進める
+					if (nIdxPos == nHitPos) {
+						// 2005-09-02 D.S.Koba GetSizeOfChar
+						nIdxPos += (CMemory::GetSizeOfChar( pLine, nLineLen, nIdxPos ) == 2 ? 2 : 1);
+					}
 					if (	nIdxPos <= pDocLine->GetLengthWithoutEOL() 
 						&&	pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
 						// 検索にマッチした！
 						nHitPos = pRegexp->GetIndex();
 						nIdxPos = pRegexp->GetLastIndex();
-						// 長さ０でマッチしたので、この位置で再度マッチしないように、１文字進める
-						if (nIdxPos == nHitPos) {
-							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nIdxPos += (CMemory::GetSizeOfChar( pLine, nLineLen, nIdxPos ) == 2 ? 2 : 1);
-						}
 						if( nHitPos >= nHitTo ){
 							// マッチしたのは、カーソル位置以降だった
 							// すでにマッチした位置があれば、それを返し、なければ前の行へ
