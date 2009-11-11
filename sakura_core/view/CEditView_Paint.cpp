@@ -563,6 +563,7 @@ bool CEditView::DrawLogicLine(
 )
 {
 //	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DrawLogicLine" );
+	bool bDispEOF = false;
 	SColorStrategyInfo _sInfo;
 	SColorStrategyInfo* pInfo = &_sInfo;
 	pInfo->gr.Init(_hdc);
@@ -633,7 +634,7 @@ bool CEditView::DrawLogicLine(
 		}
 
 		//レイアウト行を1行描画
-		bool bDrawLayoutLine = DrawLayoutLine(pInfo);
+		bDispEOF = DrawLayoutLine(pInfo);
 
 		//行を進める
 		CLogicInt nOldLogicLineNo = pInfo->pDispPos->GetLayoutRef()->GetLogicLineNo();
@@ -651,7 +652,7 @@ bool CEditView::DrawLogicLine(
 		}
 	}
 
-	return pInfo->pLineOfLogic==NULL;
+	return bDispEOF;
 }
 
 /*!
@@ -660,6 +661,7 @@ bool CEditView::DrawLogicLine(
 //改行記号を描画した場合はtrueを返す？
 bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 {
+	bool bDispEOF = false;
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
 	CTypeSupport cSearchType(this,COLORIDX_SEARCH);
 
@@ -767,12 +769,14 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	if(pcLayout && pcLayout->GetNextLayout()==NULL && pcLayout->GetLayoutEol().GetLen()==0){
 		// 有文字行のEOF
 		_DispEOF(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
+		bDispEOF = true;
 	}
 	else if(!pcLayout && pInfo->pDispPos->GetLayoutLineRef()==m_pcEditDoc->m_cLayoutMgr.GetLineCount()){
 		// 空行のEOF
 		CLayout* pBottom = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
 		if(pBottom==NULL || (pBottom && pBottom->GetLayoutEol().GetLen())){
 			_DispEOF(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
+			bDispEOF = true;
 		}
 	}
 
@@ -813,7 +817,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		);
 	}
 
-	return false;
+	return bDispEOF;
 }
 
 
