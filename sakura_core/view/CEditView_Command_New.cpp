@@ -748,6 +748,11 @@ void CEditView::ReplaceData_CEditView(
 				Call_OnPaint( PAINT_LINENUMBER | PAINT_BODY, false);
 			}
 			else{
+				// 文書末が改行なし→ありに変化したら				// 2009.11.11 ryoji
+				// EOFのみ行が追加になるので、1行余分に描画する。
+				// （文書末が改行あり→なしに変化する場合の末尾EOF消去は描画関数側で行われる）
+				int nAddLine = ( LRArg.ptLayoutNew.GetY2() > LRArg.sDelRange.GetTo().GetY2() )? 1: 0;
+
 				PAINTSTRUCT ps;
 
 				ps.rcPaint.left = 0;
@@ -766,7 +771,7 @@ void CEditView::ReplaceData_CEditView(
 				if( ps.rcPaint.top < 0 ){
 					ps.rcPaint.top = 0;
 				}
-				ps.rcPaint.bottom = GetTextArea().GetAreaTop() + (Int)(LRArg.nModLineTo - GetTextArea().GetViewTopLine() + 1)* GetTextMetrics().GetHankakuDy();
+				ps.rcPaint.bottom = GetTextArea().GetAreaTop() + (Int)(LRArg.nModLineTo - GetTextArea().GetViewTopLine() + 1 + nAddLine)* GetTextMetrics().GetHankakuDy();
 				if( GetTextArea().GetAreaBottom() < ps.rcPaint.bottom ){
 					ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
 				}
