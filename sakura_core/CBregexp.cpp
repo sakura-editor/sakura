@@ -386,7 +386,8 @@ char* CBregexp::MakePatternAlternate( const char* const szSearch, const char* co
 		Sequence() : state( None ) {}
 		bool EatCharacter( const char ch )
 		{
-			const char acceptChars[] = { '\\', 'c', 0 };
+			char acceptChars[3];
+			acceptChars[None] = '\\'; acceptChars[Escaped] = 'c'; acceptChars[SmallC] = 0;
 			const char acceptChar = acceptChars[this->state];
 			if( acceptChar && acceptChar == ch ) {
 				// 特定の文字を食べて次の状態へ。
@@ -413,17 +414,17 @@ char* CBregexp::MakePatternAlternate( const char* const szSearch, const char* co
 			}
 		} else {
 			if( *right == '.' && charsetLevel == 0 ) {
-				strModifiedSearch.append( left, right );
+				strModifiedSearch.append( left, right - left );
 				left = right + 1;
 				strModifiedSearch.append( szDotAlternative );
 			} else if( *right == '$' && charsetLevel == 0 ) {
-				strModifiedSearch.append( left, right );
+				strModifiedSearch.append( left, right - left );
 				left = right + 1;
 				strModifiedSearch.append( szDollarAlternative );
 			}
 		}
 	}
-	strModifiedSearch.append( left, right + 1 ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
+	strModifiedSearch.append( left, right + 1 - left ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
 
 	return this->MakePatternSub( strModifiedSearch.c_str(), szReplace, "", nOption );
 }
