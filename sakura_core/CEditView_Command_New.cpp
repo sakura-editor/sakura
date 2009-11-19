@@ -1359,6 +1359,11 @@ void CEditView::ReplaceData_CEditView(
 				ps.rcPaint.top = m_nViewAlignTop - m_nTopYohaku;	// ルーラーを範囲に含めない。2002.02.25 Add By KK
 				ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 			}else{
+				// 文書末が改行なし→ありに変化したら				// 2009.11.11 ryoji
+				// EOFのみ行が追加になるので、1行余分に描画する。
+				// （文書末が改行あり→なしに変化する場合の末尾EOF消去は描画関数側で行われる）
+				int nAddLine = ( LRArg.nNewLine > LRArg.nDelLineTo )? 1: 0;
+
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
 
@@ -1375,7 +1380,7 @@ void CEditView::ReplaceData_CEditView(
 				if( ps.rcPaint.top < 0 ){
 					ps.rcPaint.top = 0;
 				}
-				ps.rcPaint.bottom = m_nViewAlignTop + (LRArg.nModLineTo - m_nViewTopLine + 1)* (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
+				ps.rcPaint.bottom = m_nViewAlignTop + (LRArg.nModLineTo - m_nViewTopLine + 1 + nAddLine)* (m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace);
 				if( m_nViewAlignTop + m_nViewCy < ps.rcPaint.bottom ){
 					ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
 				}
