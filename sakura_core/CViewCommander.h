@@ -36,6 +36,13 @@ public:
 
 
 
+private:
+	enum EIndentType {
+		INDENT_NONE,
+		INDENT_TAB,
+		INDENT_SPACE
+	};
+
 	// -- -- -- -- 以下、コマンド処理関数群 -- -- -- -- //
 public:
 	BOOL HandleCommand(
@@ -106,11 +113,10 @@ public:
 	void Command_CUT_LINE( void );			/* 行切り取り(折り返し単位) */
 	void Command_DELETE_LINE( void );		/* 行削除(折り返し単位) */
 	void Command_DUPLICATELINE( void );		/* 行の二重化(折り返し単位) */
-	void Command_INDENT( wchar_t cChar );		/* インデント ver 1 */
+	void Command_INDENT( wchar_t cChar, EIndentType = INDENT_NONE ); /* インデント ver 1 */
 // From Here 2001.12.03 hor
 //	void Command_INDENT( const char*, int );/* インデント ver0 */
-	void Command_INDENT( const wchar_t*, CLogicInt ,BOOL=FALSE );/* インデント ver0 */
-	void Command_INDENT_TAB( void );		/* インデント ver 2 */
+	void Command_INDENT( const wchar_t*, CLogicInt , EIndentType = INDENT_NONE );/* インデント ver0 */
 // To Here 2001.12.03 hor
 	void Command_UNINDENT( wchar_t wcChar );	/* 逆インデント */
 //	void Command_WORDSREFERENCE( void );	/* 単語リファレンス */
