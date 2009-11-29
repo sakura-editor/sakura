@@ -10,6 +10,7 @@
 	Copyright (C) 2002, MIK, hor, novice, genta, aroka, YAZAKI
 	Copyright (C) 2006, かろと, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -413,9 +414,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 前を検索 */
 			pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
-			CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
-			if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
-				pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
 			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
 		}
@@ -437,9 +436,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 次を検索 */
 			pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
-			CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
-			if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
-				pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 
 			// 2001.12.03 hor
 			//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
@@ -522,6 +519,17 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
+}
+
+BOOL CDlgReplace::OnActivate( WPARAM wParam, LPARAM lParam )
+{
+	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
+	CEditView*	pcEditView = (CEditView*)m_lParam;
+	CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
+	if( cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne() )
+		pcEditView->InvalidateRect(NULL);	// アクティブ化／非アクティブ化が完了してから再描画
+
+	return CDialog::OnActivate(wParam, lParam);
 }
 
 //@@@ 2002.01.18 add start

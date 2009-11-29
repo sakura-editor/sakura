@@ -908,7 +908,7 @@ void CEditView::DispTextSelected(
 			if( GetTextArea().GetRightCol() < nSelectFrom ){
 				return;
 			}
-			if( nSelectTo <= GetTextArea().GetViewLeftCol() ){
+			if( nSelectTo < GetTextArea().GetViewLeftCol() ){	// nSelectTo == GetTextArea().GetViewLeftCol()のケースは後で０文字マッチでないことを確認してから抜ける
 				return;
 			}
 
@@ -927,7 +927,13 @@ void CEditView::DispTextSelected(
 				GetSelectionInfo().m_sSelect.IsLineOne() &&
 				GetSelectionInfo().m_sSelect.GetFrom().x >= GetTextArea().GetViewLeftCol())
 			{
-				rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
+				HWND hWnd = ::GetForegroundWindow();
+				if( hWnd == m_pcEditWnd->m_cDlgFind.GetHwnd() || hWnd == m_pcEditWnd->m_cDlgReplace.GetHwnd() ){
+					rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
+				}
+			}
+			if( rcClip.right == rcClip.left ){
+				return;	//０文字マッチによる反転幅拡張なし
 			}
 
 			// 2006.03.28 Moca ウィンドウ幅が大きいと正しく反転しない問題を修正
