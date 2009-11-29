@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -54,6 +55,7 @@ protected:
 	int GetData( void );	/* ダイアログデータの取得 */
 	void SetData( void );	/* ダイアログデータの設定 */
 	BOOL OnBnClicked( int );
+	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 
 	// virtual BOOL OnKeyDown( WPARAM wParam, LPARAM lParam );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add

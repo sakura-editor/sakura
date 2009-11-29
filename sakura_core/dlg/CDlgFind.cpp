@@ -11,6 +11,7 @@
 	Copyright (C) 2002, MIK, hor, YAZAKI, genta
 	Copyright (C) 2005, zenryaku
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -261,9 +262,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
-				if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
-					pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
@@ -300,9 +299,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
-				if( cRangeSel.IsValid() && cRangeSel.IsOne() )	// 見つからなかったときはステータスバーの当該メッセージを残したい	// 2009.06.23 ryoji
-					pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 
 				// 検索開始位置を登録
 				if( TRUE == pcEditView->m_bSearch ){
@@ -350,7 +347,16 @@ BOOL CDlgFind::OnBnClicked( int wID )
 	return FALSE;
 }
 
+BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
+{
+	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
+	CEditView*	pcEditView = (CEditView*)m_lParam;
+	CLayoutRange cRangeSel = pcEditView->GetCommander().GetSelect();
+	if( cRangeSel.IsValid() && cRangeSel.IsLineOne() && cRangeSel.IsOne() )
+		pcEditView->InvalidateRect(NULL);	// アクティブ化／非アクティブ化が完了してから再描画
 
+	return CDialog::OnActivate(wParam, lParam);
+}
 
 //@@@ 2002.01.18 add start
 LPVOID CDlgFind::GetHelpIdTable(void)
