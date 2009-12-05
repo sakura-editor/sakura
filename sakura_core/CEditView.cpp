@@ -5299,8 +5299,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化
 				CWaitCursor cWaitCursor( m_hWnd );	// カーソルを砂時計にする
 
-				char* sUrlGlobal = (char*)::GlobalAlloc( 0, strlen(pszURL)+1 );
-				strcpy( sUrlGlobal, pszURL );
+				char* sUrlGlobal = (char*)::GlobalAlloc( 0, strlen(pszOPEN)+1 );
+				strcpy( sUrlGlobal, pszOPEN );
 				// bccなど他のビルド環境での設定変更を不要とするため、_beginthreadexではなく
 				// CreateThreadを使用してスレッドを生成する
 				DWORD nThreadId;
