@@ -4017,7 +4017,7 @@ BOOL CEditView::IsCurrentPositionURL(
 //	char*		pURL;
 	int			i;
 //	BOOL		bFindURL;
-//	int			nCharChars;
+	int			nCharChars;
 	int			nUrlLen;
 
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
@@ -4060,15 +4060,15 @@ BOOL CEditView::IsCurrentPositionURL(
 	*pnUrlLine = nY;
 	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( nY, &nLineLen );
 
-	i = __max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH
+	i = __max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH（※長い行は精度低下しても性能優先で行頭以外から開始）
 	// nLineLen = __min(nLineLen, nX + _MAX_PATH);
+	bool bKeyWordTop = (i == 0);
 	while( i <= nX && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword
 					&& m_cRegexKeyword->RegexIsKeyword( pLine, i, nLineLen, &nUrlLen, &nMatchColor )
 					&& nMatchColor == COLORIDX_URL );
 		if( !bMatch ){
-			bMatch = ( bDispUrl
-						&& (i == 0 || !IS_KEYWORD_CHAR(pLine[i - 1]))	// 2009.05.22 ryoji CColor_Url::BeginColor()と同条件に
+			bMatch = ( bDispUrl && bKeyWordTop
 						&& IsURL(&pLine[i], (int)(nLineLen - i), &nUrlLen) );	/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 		}
 		if( bMatch ){
@@ -4089,7 +4089,9 @@ BOOL CEditView::IsCurrentPositionURL(
 				continue;
 			}
 		}
-		++i;
+		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+		bKeyWordTop = (nCharChars == 2 || !IS_KEYWORD_CHAR(pLine[i]));
+		i += nCharChars;
 	}
 	return FALSE;
 }
