@@ -9,6 +9,7 @@
 	Copyright (C) 2001, hor
 	Copyright (C) 2002, hor
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -62,6 +63,7 @@ protected:
 	*/
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
+	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 	void SetData( void );	/* ダイアログデータの設定 */

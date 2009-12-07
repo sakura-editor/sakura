@@ -11,6 +11,7 @@
 	Copyright (C) 2002, MIK, hor, YAZAKI, genta
 	Copyright (C) 2005, zenryaku
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -280,7 +281,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				/* 前を検索 */
 				pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
 
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
@@ -325,7 +326,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				/* 次を検索 */
 				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
-				pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
 
 				// 02/06/26 ai Start
 				// 検索開始位置を登録
@@ -386,6 +387,20 @@ BOOL CDlgFind::OnBnClicked( int wID )
 		return TRUE;
 	}
 	return FALSE;
+}
+
+BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
+{
+	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
+	CEditView*	pcEditView = (CEditView*)m_lParam;
+	if( pcEditView->IsTextSelected()
+		&& pcEditView->m_nSelectLineFrom == pcEditView->m_nSelectLineTo
+		&& pcEditView->m_nSelectColmFrom == pcEditView->m_nSelectColmTo
+	){
+		::InvalidateRect( pcEditView->m_hWnd, NULL, TRUE );	// アクティブ化／非アクティブ化が完了してから再描画
+	}
+
+	return CDialog::OnActivate( wParam, lParam );
 }
 
 

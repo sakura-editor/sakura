@@ -13,6 +13,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, genta, MIK, Moca, かろと, ryoji, zenryaku, D.S.Koba
 	Copyright (C) 2006, Moca, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -511,7 +512,7 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 			if( m_nViewLeftCol + m_nViewColNum < nSelectFrom ){
 				return;
 			}
-			if( nSelectTo <= m_nViewLeftCol ){
+			if( nSelectTo < m_nViewLeftCol ){	// nSelectTo == m_nViewLeftColのケースは後で０文字マッチでないことを確認してから抜ける
 				return;
 			}
 
@@ -529,7 +530,13 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 				m_nSelectLineFrom == m_nSelectLineTo &&
 				m_nSelectColmFrom >= m_nViewLeftCol)
 			{
-				rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
+				HWND hWnd = ::GetForegroundWindow();
+				if( hWnd && (hWnd == m_pcEditDoc->m_cDlgFind.m_hWnd || hWnd == m_pcEditDoc->m_cDlgReplace.m_hWnd) ){
+					rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
+				}
+			}
+			if( rcClip.right == rcClip.left ){
+				return;	//０文字マッチによる反転幅拡張なし
 			}
 			// 2006.03.28 Moca ウィンドウ幅が大きいと正しく反転しない問題を修正
 			if( rcClip.right > m_nViewAlignLeft + m_nViewCx ){

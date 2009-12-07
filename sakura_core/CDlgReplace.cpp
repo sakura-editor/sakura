@@ -10,6 +10,7 @@
 	Copyright (C) 2002, MIK, hor, novice, genta, aroka, YAZAKI
 	Copyright (C) 2006, かろと, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -454,7 +455,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 前を検索 */
 			pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
 			/* 再描画 */
-			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
 				"文字列を指定してください。"
@@ -475,7 +476,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 次を検索 */
 			pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
 			/* 再描画 */
-			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
 
 			// 2001.12.03 hor
 			//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
@@ -569,6 +570,20 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
+}
+
+BOOL CDlgReplace::OnActivate( WPARAM wParam, LPARAM lParam )
+{
+	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
+	CEditView*	pcEditView = (CEditView*)m_lParam;
+	if( pcEditView->IsTextSelected()
+		&& pcEditView->m_nSelectLineFrom == pcEditView->m_nSelectLineTo
+		&& pcEditView->m_nSelectColmFrom == pcEditView->m_nSelectColmTo
+	){
+		::InvalidateRect( pcEditView->m_hWnd, NULL, TRUE );	// アクティブ化／非アクティブ化が完了してから再描画
+	}
+
+	return CDialog::OnActivate( wParam, lParam );
 }
 
 //@@@ 2002.01.18 add start
