@@ -881,7 +881,7 @@ LRESULT CEditWnd::DispatchEvent(
 			if( 0 < nAssignedKeyNum ){
 				for( j = 0; j < nAssignedKeyNum; ++j ){
 					if( j > 0 ){
-						cmemWork.AppendString(_T(" , L"));
+						cmemWork.AppendString(_T(" , "));
 					}
 					cmemWork.AppendNativeData( *ppcAssignedKeyList[j] );
 					delete ppcAssignedKeyList[j];
