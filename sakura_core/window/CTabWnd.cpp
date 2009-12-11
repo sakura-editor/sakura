@@ -731,7 +731,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		HWND hwndToolTips;
 		hwndToolTips = TabCtrl_GetToolTips( m_hwndTab );
 		lngStyle = (UINT)::GetWindowLongPtr( hwndToolTips, GWL_STYLE );
-		lngStyle |= TTS_ALWAYSTIP;	// 従来通りTTS_ALWAYSTIPにしておく
+		lngStyle |= TTS_ALWAYSTIP | TTS_NOPREFIX;	// 従来通りTTS_ALWAYSTIPにしておく
 		::SetWindowLongPtr( hwndToolTips, GWL_STYLE, lngStyle );
 
 		/* 表示用フォント */
