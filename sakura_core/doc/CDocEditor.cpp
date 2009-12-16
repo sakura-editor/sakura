@@ -67,10 +67,15 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 void CDocEditor::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
+	CEditDoc* pcDoc = GetListeningDoc();
+
 	this->SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
 
 	/* 現在位置で無変更な状態になったことを通知 */
 	this->m_cOpeBuf.SetNoModified();
+
+	// カレントディレクトリの変更
+	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
 }
 
 
