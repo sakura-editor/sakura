@@ -22,6 +22,9 @@ void CDocLocker::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 	//書き込めるか検査
 	CheckWritable(true);
+	if( !m_bIsDocWritable ){
+		return;
+	}
 
 	// ファイルの排他ロック
 	pcDoc->m_cDocFileOperation.DoFileLock();
