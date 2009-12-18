@@ -157,7 +157,7 @@ void CDlgProperty::SetData( void )
 			cmemProp.AppendString( _T("/オフライン") );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_READONLY ){
-			cmemProp.AppendString( _T("/ビューモード") );
+			cmemProp.AppendString( _T("/読み取り専用") );
 		}
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM ){
 			cmemProp.AppendString( _T("/システム") );
