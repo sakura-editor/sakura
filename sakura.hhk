@@ -1064,6 +1064,19 @@
 <param name="Local" value="_RESOURCE\HLP000320.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="このタブ以外を閉じる">
+<param name="Local" value="_RESOURCE\HLP000333.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="左をすべて閉じる">
+<param name="Local" value="_RESOURCE\HLP000334.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="右をすべて閉じる">
+<param name="Local" value="_RESOURCE\HLP000335.html">
+<param name="ImageNumber" value="9">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="次のグループ">
 <param name="Local" value="_RESOURCE\HLP000321.html">
 </OBJECT>
@@ -1336,7 +1349,7 @@
 <param name="Local" value="_RESOURCE\HLP000269.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="PPA/WSH専用マクロ関数">
+<param name="Name" value="マクロ専用関数">
 <param name="Local" value="_RESOURCE\HLP000268.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">

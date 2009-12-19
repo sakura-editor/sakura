@@ -1397,6 +1397,26 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="重ねて表示">
+					<param name="Local" value="_RESOURCE\HLP000138.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="上下に並べて表示">
+					<param name="Local" value="_RESOURCE\HLP000140.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="左右に並べて表示">
+					<param name="Local" value="_RESOURCE\HLP000139.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="常に手前に表示">
+					<param name="Local" value="_RESOURCE\HLP000312.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="タブの操作">
 					<param name="ImageNumber" value="1">
 					</OBJECT>
@@ -1409,6 +1429,21 @@
 					<LI> <OBJECT type="text/sitemap">
 						<param name="Name" value="グループを閉じる">
 						<param name="Local" value="_RESOURCE\HLP000320.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="このタブ以外を閉じる">
+						<param name="Local" value="_RESOURCE\HLP000333.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="左をすべて閉じる">
+						<param name="Local" value="_RESOURCE\HLP000334.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="右をすべて閉じる">
+						<param name="Local" value="_RESOURCE\HLP000335.html">
 						<param name="ImageNumber" value="9">
 						</OBJECT>
 					<LI> <OBJECT type="text/sitemap">
@@ -1447,26 +1482,6 @@
 						<param name="ImageNumber" value="9">
 						</OBJECT>
 				</UL>
-				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="重ねて表示">
-					<param name="Local" value="_RESOURCE\HLP000138.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="上下に並べて表示">
-					<param name="Local" value="_RESOURCE\HLP000140.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="左右に並べて表示">
-					<param name="Local" value="_RESOURCE\HLP000139.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="常に手前に表示">
-					<param name="Local" value="_RESOURCE\HLP000312.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="縦方向に最大化">
 					<param name="Local" value="_RESOURCE\HLP000141.html">
@@ -1764,7 +1779,7 @@
 				<param name="ImageNumber" value="9">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="PPA/WSH専用マクロ関数">
+				<param name="Name" value="マクロ専用関数">
 				<param name="Local" value="_RESOURCE\HLP000268.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>

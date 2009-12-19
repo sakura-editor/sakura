@@ -38,7 +38,9 @@ int3には「すべて置換」の動作のみに影響を与えるオプションを指定できます。<br>
 ReplaceAll専用オプション<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x400&nbsp;&nbsp;&nbsp;&nbsp;「すべて置換」は置換の繰返し(sakura:1.5.15.0以降)<br>
 <br>
-<img src="images/note.png">注意：sakura:1.5.15.0以前に作成されたマクロで「すべて置換」を使用して、
+<img src="images/note.png">注意：sakura:1.5.15.0以前に作成されたマクロで「すべて置換」(ReplaceAll)を使用して、
 位置指定(行頭指定^や単語区切り指定\b)を含むパターンを消去(置換後の文字列が空)しているために
 期待の動作をしない場合は、マクロ修正が必要です。第３引数のint3に0x400のオプションを追加してください。<br>
+ReplaceAllLine は廃止しました。1.5.15.0以降では ReplaceAll で 0x400 を指定しない場合と等価です。<br>
+また<br>
 </BODY></HTML>

@@ -3,13 +3,26 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
-<TITLE>PPA/WSH専用マクロ関数</TITLE>
-<META NAME="MS-HKWD" CONTENT="PPA/WSH専用マクロ関数">
+<TITLE>マクロ専用関数</TITLE>
+<META NAME="MS-HKWD" CONTENT="マクロ専用関数">
 <META NAME="MS-HKWD" CONTENT="GetFileName">
 <META NAME="MS-HKWD" CONTENT="GetSelectedString">
 <META NAME="MS-HKWD" CONTENT="ExpandParameter">
 <META NAME="MS-HKWD" CONTENT="GetLineStr">
 <META NAME="MS-HKWD" CONTENT="GetLineCount">
+<META NAME="MS-HKWD" CONTENT="ChangeTabWidth">
+<META NAME="MS-HKWD" CONTENT="IsTextSelected">
+<META NAME="MS-HKWD" CONTENT="GetSelectLineFrom">
+<META NAME="MS-HKWD" CONTENT="GetSelectColmFrom">
+<META NAME="MS-HKWD" CONTENT="GetSelectLineTo">
+<META NAME="MS-HKWD" CONTENT="GetSelectColmTo">
+<META NAME="MS-HKWD" CONTENT="IsInsMode">
+<META NAME="MS-HKWD" CONTENT="GetCharCode">
+<META NAME="MS-HKWD" CONTENT="GetLineCode">
+<META NAME="MS-HKWD" CONTENT="IsPossibleUndo">
+<META NAME="MS-HKWD" CONTENT="IsPossibleRedo">
+<META NAME="MS-HKWD" CONTENT="IsCurTypeExt">
+<META NAME="MS-HKWD" CONTENT="IsSameTypeExt">
 </HEAD>
 <BODY>
 <script type="text/javascript">
@@ -26,216 +39,311 @@ if (window.event.keyCode == 27)
 aaHHCtlCloseWin.Click(); }
 // -->
 </script>
-<h2>PPA/WSH専用マクロ関数/変数</h2>
-キーマクロからは利用できない(しても意味がない)、関数があります。<br>
+<h2>マクロ専用関数/変数</h2>
+メニューやツールバーからは直接利用できないマクロ専用関数があります。<br>
+ほとんどはWSH/PPA用でキーマクロ(.mac)からは利用できませんが一部例外があります。<br>
+<br>
+<a href="CNT000924.html">メニューに入ってないコマンド</a> にもマクロ向けコマンドがあります。<br>
+こちらは キーマクロからも利用できます。<br>
+<br>
 <br>
 ■関数宣言の書式<br>
-function 関数名( 仮引数名 :変数型 ): 戻り値型;<br>
+構文: 関数名( 仮引数名 :変数型 ): 戻り値型;<br>
 <br>
 <img src="images/note.png">解説<br>
 PPAから利用する場合、「<b>S_関数名</b>」と、S_をつけてください。<br>
-WSHから利用する場合、「<b>Editor.関数名</b>」と、オブジェクト名をつけてください。<br>
+WSHから利用する場合、「<b>Editor.関数名</b>」のように、オブジェクト名をつけてください。<br>
 <br>
 C言語で書くと、以下のようになります。<br>
 戻り値型 関数名( 変数型 仮引数名 );<br>
 <br>
 sakura: その関数が利用可能なバージョンを示します。<br>
 <br>
-■GetFileName<br>
-function GetFileName(): String;<br>
+<hr>
+<span id="list">一覧</span>：<br>
+・<a href="#GetFilename">GetFilename</a>(): String<br>
+・<a href="#GetSaveFilename">GetSaveFilename</a>(): String<br>
+・<a href="#GetSelectedString">GetSelectedString</a>( int1 :Integer ) :String<br>
+・<a href="#ExpandParameter">ExpandParameter</a>( str1 :String ): String<br>
+・<a href="#GetLineStr">GetLineStr</a>( int1 :Integer ): String<br>
+・<a href="#GetLineCount">GetLineCount</a>( int1 :Integer ) :Integer<br>
+・<a href="#ChangeTabWidth">ChangeTabWidth</a>( int1 :Integer ) :Integer<br>
+・<a href="#ChangeWrapColm">ChangeWrapColm</a>( int1 :Integer ) :Integer<br>
+・<a href="#IsTextSelected">IsTextSelected</a>() :Integer<br>
+・<a href="#GetSelectLineFrom">GetSelectLineFrom</a>() :Integer<br>
+・<a href="#GetSelectColmFrom">GetSelectColmFrom</a>() :Integer<br>
+・<a href="#GetSelectLineTo">GetSelectLineTo</a>() :Integer<br>
+・<a href="#GetSelectColmTo">GetSelectColmTo</a>() :Integer<br>
+・<a href="#IsInsMode">IsInsMode</a>() :Integer<br>
+・<a href="#GetCharCode">GetCharCode</a>() :Integer<br>
+・<a href="#GetLineCode">GetLineCode</a>() :Integer<br>
+・<a href="#IsPossibleUndo">IsPossibleUndo</a>() :Integer<br>
+・<a href="#IsPossibleRedo">IsPossibleRedo</a>() :Integer<br>
+・<a href="#IsCurTypeExt">IsCurTypeExt</a>( str1 :String ) :Integer<br>
+・<a href="#IsSameTypeExt">IsSameTypeExt</a>( str1 :String, str2 :String ) :Integer<br>
+<hr>
+■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
+<b>戻り値</b><br>
 現在のファイル名が返ります。<br>
 <br>
-・解説<br>
+<b>解説</b><br>
 取得できるファイル名はフルパスです。<br>
 ファイル名が「(無題)」の場合は、空文字列が返ります。<br>
 エラーにはなりません。<br>
-</div><br>
-(sakura:1.2.106.9以降)<br>
 <br>
-■GetSelectedString<br>
-function GetSelectedString( int1 :Integer ) :String;<br>
+自動実行マクロの「ファイル保存時」で使う場合、変更前の名前になります。<br>
+例えば「C:\file.txt」を開いて、名前をつけて保存でダイアログなどで「C:\backup.txt」を選んだ場合でも「C:\file.txt」です。<br>
+新規作成後なら、ファイル名は空になります。<br>
+保存するファイル名は、GetSaveFilename を使用してください。<br>
+</div>
+sakura:1.2.106.9以降<br>
+<br>
+■ function <span id="GetSaveFilename">GetSaveFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・引数<br>
-int1<br>
-予約されています。0を指定してください。<br>
+<b>戻り値</b><br>
+保存時のファイル名が返ります。<br>
 <br>
-・戻り値<br>
+<b>解説</b><br>
+自動実行マクロの「<a href="HLP000201.html">ファイル保存時</a>」の実行中のみ文字列が設定されます。<br>
+それ以外では、空文字列が返ります。<br>
+取得できるファイル名はたいていの場合フルパスです。<br>
+<a href="HLP000021.html">FileSaveAs</a> を実行した結果呼ばれた場合は、引数に依存します。<br>
+<br>
+</div>
+sakura:1.6.5.0以降<br>
+<br>
+■ function <span id="GetSelectedString">GetSelectedString</span>( int1 :Integer ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;予約されています。0を指定してください。<br>
+<br>
+<b>戻り値</b><br>
 選択されている文字列が返ります。<br>
 <br>
-・解説<br>
+<b>解説</b><br>
+sakura:1.3.8.0以降<br>
+選択部分全体を返します。未選択の時は空文字列を返します。<br>
+改行コードなども含めて選択範囲の文字列をそのまま取得します。<br>
+複数行の取得も可能です。<br>
+従来の機能を使いたいときはExpandParameter('$s')を使ってください。<br>
+<br>
 sakura:1.3.5.4以降 1.3.7.0まで<br>
 1行の一部が選択されている場合 → 選択範囲<br>
 2行以上選択されている場合 → 1行目の選択されている部分<br>
 選択されていない場合 → カーソル位置の単語<br>
 改行コード/NULL文字は文字列に含まれません。<br>
-<br>
-sakura:1.3.8.0以降<br>
-選択部分全体を返します。未選択の時は空文字列を返します。<br>
-改行コードなども含めて選択範囲の文字列をそのまま取得します。<br>
-複数行の取得も可能です。<br>
-従来の機能を使いたいときはExpandParameter("$s")を使ってください。<br>
-</div><br>
+</div>
 sakura:1.3.5.4以降<br>
 <br>
-■ExpandParameter<br>
-function ExpandParameter( str1 :String ): String;<br>
+■ function <span id="ExpandParameter">ExpandParameter</span>( str1 :String ): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・引数<br>
-str1<br>
-展開したい、特殊文字列を指定します。<br>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;展開したい特殊文字列を指定します。<br>
 <br>
-・戻り値<br>
-str1で指定した文字列が、展開・置き換えられた文字列が戻ります。<br>
+<b>戻り値</b><br>
+str1 で指定した文字列を展開・置き換えられた結果の文字列が戻ります。<br>
 <br>
-・解説<br>
+<b>解説</b><br>
 <a href="HLP000284.html">ExpandParameter</a>書式がそのまま使える関数です。<br>
-</div><br>
-<img src="images/hint.png">ヒント ExpandParameter( ’$F’ )； は S_GetFilename( )； と同じ値を返します。<br>
-<br>
+</div>
+<img src="images/hint.png">ヒント ExpandParameter('$F'); は GetFilename(); と同じ値を返します。(無題のときは違います。)<br>
 sakura:1.3.5.4以降<br>
 <br>
-■GetLineStr<br>
-function GetLineStr( int1 :Integer ): String;<br>
+■ function <span id="GetLineStr">GetLineStr</span>( int1 :Integer ): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・引数<br>
-int1<br>
-取得したい行の行番号を改行単位(1開始)で指定します。<br>
-0を指定すると、カーソル行の文字列を取得できます。<br>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;取得したい行の行番号を改行単位(1開始)で指定します。<br>
+0 を指定すると、カーソル行の文字列を取得できます。<br>
 <br>
-・戻り値<br>
+<b>戻り値</b><br>
 改行コードを含む1行の文字列です。<br>
 <br>
-・解説<br>
+<b>解説</b><br>
 取得する文字列も改行単位です。<br>
-戻り値が、長さ0の文字列の場合、その行は存在しなかったことを意味します。<br>
-int1がマイナス値だと、エラーが発生します。<br>
-</div><br>
+戻り値の文字列が長さ 0 のだった場合、その行は存在しなかったことを意味します。<br>
+int1 がマイナス値だと、エラーが発生します。<br>
+</div>
 sakura:1.4.2.0以降<br>
 <br>
-■GetLineCount( int1 :Integer ) :Integer;<br>
+■ function <span id="GetLineCount">GetLineCount</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・引数<br>
-int1<br>
-予約されています。0を指定しください。<br>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;予約されています。0を指定しください。<br>
 <br>
-・戻り値<br>
+<b>戻り値</b><br>
 改行単位の全行数を返します。<br>
 最終行にデータがない場合、すなわちEOFだけの行は、この行数に含まれません。<br>
 <br>
-・解説<br>
-int1に0以外を指定すると、エラーが発生します。<br>
-EOFだけの行は、行数に含まれませんが、カーソルは移動できることに注意してください。<br>
-</div><br>
+<b>解説</b><br>
+int1 に 0 以外を指定すると、エラーが発生します。<br>
+EOF だけの行は行数に含まれませんが、カーソルは移動できることに注意してください。<br>
+</div>
 sakura:1.4.2.0以降<br>
 <br>
-■ChangeTabWidth( int1 :Integer ) :Integer;<br>
+■ function <span id="ChangeTabWidth">ChangeTabWidth</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・引数<br>
-int1<br>
-1～64までの間の値が有効です。<br>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;1～64までの間の値が有効です。<br>
 <br>
-・戻り値<br>
+<b>戻り値</b><br>
 設定変更前のタブ幅を返します。<br>
 <br>
-・解説<br>
+<b>解説</b><br>
 引数で指定した値でタブ幅を設定します。<br>
 タブ幅の取得のみ行いたいときは 0 など無効な引数を指定してください。<br>
-</div><br>
+変更はこのマクロを実行した画面にだけ適用され、設定には保存しません。<br>
+<br>
+sakura:1.6.5.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。ただし戻り値は取得できません。<br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■IsTextSelected :Integer;<br>
+■ function <span id="ChangeWrapColm">ChangeWrapColm</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
-0  非選択状態<br>
-1  選択中<br>
-2  矩形選択中<br>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;折り返し桁数を指定します。<br>
 <br>
-・解説<br>
+<b>戻り値</b><br>
+元の折り返し桁数を返します。
+<br>
+<b>解説</b><br>
+引数で指定した桁数で折り返します。<br>
+有効な桁数の範囲は10～10240です。範囲外の桁数では折り返し桁数を変更しません。<br>
+折り返し桁数の取得のみ行いたいときは 0 を指定してください。<br>
+実行すると折り返し方法は自動的に「指定桁で折り返す」になります。<br>
+ChangeTabWidth マクロと同様、変更はこのマクロを実行した画面にだけ適用され、設定には保存しません。<br>
+<br>
+sakura:1.6.5.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。ただし戻り値は取得できません。<br>
+</div>
+sakura:1.6.3.0以降<br>
+<br>
+■ function <span id="IsTextSelected">IsTextSelected</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;非選択状態<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;選択中<br>
+2&nbsp;&nbsp;&nbsp;&nbsp;矩形選択中<br>
+<br>
+<b>解説</b><br>
 選択幅が 0 のときも選択モードになっていれば選択中と判断します。<br>
-</div><br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■GetSelectLineFrom :Integer;<br>
+■ function <span id="GetSelectLineFrom">GetSelectLineFrom</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
+<b>戻り値</b><br>
 選択開始行（1から始まる）を返します。<br>
-</div><br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■GetSelectColmFrom :Integer;<br>
+■ function <span id="GetSelectColmFrom">GetSelectColmFrom</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
+<b>戻り値</b><br>
 選択開始桁（1から始まる）を返します。<br>
-</div><br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■GetSelectLineTo :Integer;<br>
+■ function <span id="GetSelectLineTo">GetSelectLineTo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
+<b>戻り値</b><br>
 選択終了行（1から始まる）を返します。<br>
-</div><br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■GetSelectColmTo :Integer;<br>
+■ function <span id="GetSelectColmTo">GetSelectColmTo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
+<b>戻り値</b><br>
 選択終了桁（1から始まる）を返します。<br>
-</div><br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■IsInsMode :Integer;<br>
+■ function <span id="IsInsMode">IsInsMode</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
-0  上書きモード<br>
-1  挿入モード<br>
-</div><br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;上書きモード<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;挿入モード<br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■GetCharCode :Integer;<br>
+■ function <span id="GetCharCode">GetCharCode</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
-0  SJIS<br>
-1  JIS<br>
-2  EUC<br>
-3  Unicode<br>
-4  UTF-8<br>
-5  UTF-7<br>
-6  UnicodeBE<br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;SJIS<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
+2&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
+3&nbsp;&nbsp;&nbsp;&nbsp;Unicode<br>
+4&nbsp;&nbsp;&nbsp;&nbsp;UTF-8<br>
+5&nbsp;&nbsp;&nbsp;&nbsp;UTF-7<br>
+6&nbsp;&nbsp;&nbsp;&nbsp;UnicodeBE<br>
 <br>
-・解説<br>
+<b>解説</b><br>
 現在開いているファイルがどの文字コードとして開かれているかを調べます。<br>
 特定範囲、または指定位置のテキストの状態を取得するものではありません。<br>
-</div><br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■GetLineCode :Integer;<br>
+■ function <span id="GetLineCode">GetLineCode</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
-0  CRLF<br>
-1  CR<br>
-2  LF<br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;CRLF<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;CR<br>
+2&nbsp;&nbsp;&nbsp;&nbsp;LF<br>
 <br>
-・解説<br>
+<b>解説</b><br>
 『入力改行コードの指定』で指定された改行コードを調べます。<br>
 特定範囲、または指定位置のテキストの状態を取得するものではありません。<br>
-</div><br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■IsPossibleUndo :Integer;<br>
+■ function <span id="IsPossibleUndo">IsPossibleUndo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
-0  無効<br>
-1  有効<br>
-</div><br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;無効<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;有効<br>
+<b>解説</b><br>
+「<a href="HLP000032.html">元に戻す</a>」が可能か調べます。<br>
+</div>
 sakura:1.5.5.0以降<br>
 <br>
-■IsPossibleRedo :Integer;<br>
+■ function <span id="IsPossibleRedo">IsPossibleRedo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
-・戻り値<br>
-0  無効<br>
-1  有効<br>
-</div><br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;無効<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;有効<br>
+<b>解説</b><br>
+「<a href="HLP000033.html">やり直し</a>」が可能か調べます。<br>
+</div>
 sakura:1.5.5.0以降<br>
+<br>
+■ function <span id="IsCurTypeExt">IsCurTypeExt</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;調べる拡張子を指定します。<br>
+<br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;不一致<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;一致<br>
+<b>解説</b><br>
+現在適用されているタイプ別設定と、指定した拡張子を持ったファイルを開いた場合に適用されるタイプ別設定が同じかを調べます。<br>
+拡張子はピリオドを除いた文字列です。<br>
+</div>
+sakura:1.6.5.0以降<br>
+<br>
+■ function <span id="IsSameTypeExt">IsSameTypeExt</span>( str1 :String, str2 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;調べる1つめの拡張子を指定します。<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;調べる2つめの拡張子を指定します。<br>
+<br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;不一致<br>
+1&nbsp;&nbsp;&nbsp;&nbsp;一致<br>
+<b>解説</b><br>
+2 つそれぞれの拡張子を持ったファイルを開いた場合に適用されるタイプ別設定が同じかどうかを調べます。<br>
+拡張子はピリオドを除いた文字列です。<br>
+</div>
+sakura:1.6.5.0以降<br>
+<br>
 </BODY></HTML>

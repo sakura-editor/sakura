@@ -37,14 +37,15 @@ aaHHCtlCloseWin.Click(); }
 <a href="HLP000088.html">『支援』</a>
 <a href="HLP000201.html">『マクロ』</a>
 <a href="HLP000277.html">『ファイル名表示』</a>
+<br>
 <img src="images/ComMacro.png"><br>
 <br>
 ここで登録されたファイルは、<a href="HLP000202.html">登録済みマクロ</a>メニューの下に一覧表示されます。<br>
 <br>
 <b>マクロフォルダ</b><br>
 <div class=li200>マクロリストのファイル名が相対パスの場合の元になるフォルダを指定します。<br>
-フォルダ名が相対パスの場合も、フォルダ名は、エディタからの相対パスとして認識します。ただし、「..」は使えません。<br>
-たとえば、「Macro\」と指定し、エディタが「C:\Program files\sakura」フォルダにある場合は、「C:\Program files\sakura\Macro\」を指すことになります。<br>
+フォルダ名が相対パスの場合も、フォルダ名は、設定フォルダからの相対パスとして認識します。ただし、「..」は使えません。<br>
+たとえば、「Macro\」と指定し、設定ファイルが「C:\Program files\sakura」フォルダにある場合は、「C:\Program files\sakura\Macro\」を指すことになります。<br>
 <a href="HLP000125.html">キーマクロの記録</a>は、このフォルダに「RecKey.mac」と言うファイル名で保存されます。<br>
 </div><br>
 <b>[参照]</b>ボタン<br>
@@ -58,6 +59,7 @@ aaHHCtlCloseWin.Click(); }
 &nbsp;&nbsp;&nbsp;&nbsp;ID<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ファイル名<br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロを実行するたびにファイルを読み込みなおす<br>
+&nbsp;&nbsp;&nbsp;&nbsp;自動実行<br>
 を表示します。<br>
 </div><br>
 <b>名前</b><br>
@@ -66,8 +68,20 @@ aaHHCtlCloseWin.Click(); }
 &nbsp;&nbsp;&nbsp;&nbsp;マクロを登録する位置を指定します。<br>
 <b>File</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロのファイル名を指定します。<br>
+フルパス指定も有効です。<br>
 □<b>マクロを実行するたびにファイルを読み込みなおす</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;マクロ実行時に対応するマクロファイルを読み込みなおしてからマクロを実行します。<br>
+□<b>自動実行：新規／開ファイル後</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ファイルを読み取った直後または(無題)になるタイミングでマクロを実行します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;新規作成、ファイルを開く、閉じて(無題)、名前をつけて保存、開き直す系コマンドなどで発生します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;マクロ一覧では「O」で表示されます。1つのみ指定可能です。<br>
+□<b>自動実行：タイプ変更後</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定一覧で、「一時適用」を行ったときに実行します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;マクロ一覧では「T」で表示されます。1つのみ指定可能です。<br>
+□<b>自動実行：ファイル保存前</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ファイル保存の直前にマクロを実行します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ファイル名の扱いは <a href="HLP000268.html#GetSaveFilename">GetSaveFilename</a> などを参照してください。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;マクロ一覧では「S」で表示されます。1つのみ指定可能です。<br>
 <b>[設定]</b>ボタン<br>
 <div class=li200>マクロファイルをIDで示す位置に登録します。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;・ファイル名が未入力の場合 --&gt; 未登録として扱われる<br>
@@ -79,6 +93,7 @@ aaHHCtlCloseWin.Click(); }
 <br>
 <img src="images/hint.png">ヒント<br>
 名前、ファイルなどを変更しても、<b>[設定]</b>ボタンを押さないとリストには登録されません。<br>
+<a href="HLP000109.html">コマンドラインオプション</a> による起動時のマクロ実行もあります。<br>
 <br>
 <img src="images/note.png">注意<br>
 ツールバーに登録できるのは２０番目までです。<br>

@@ -1,3 +1,5 @@
+@charset "shift_jis";
+
 BODY {
 	MARGIN: 2em 5%; LINE-HEIGHT: 1.5; FONT-FAMILY: "‚l‚r ‚oƒSƒVƒbƒN", sans-serif, "Verdana", "Arial", "Helvetica"
 }
@@ -107,6 +109,10 @@ STRONG {
 	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-TOP-STYLE: none; PADDING-TOP: 0px; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
 }
 
+.li100 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 1em;
+}
+
 .li200 {
 	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 2em;
 }
@@ -133,4 +139,8 @@ STRONG {
 
 .fs18 {
 	MARGIN-TOP: 0em; FONT-SIZE: 90%;
+}
+
+PRE {
+	FONT-SIZE: 100%;
 }

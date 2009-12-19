@@ -250,6 +250,9 @@
 #define HLP000325	325 //新規グループ			// 2007.07.04 ryoji
 #define HLP000326	326 //次のグループに移動	// 2007.07.04 ryoji
 #define HLP000327	327 //前のグループに移動	// 2007.07.04 ryoji
+#define HLP000333	333 //このタブ以外を閉じる	// 2009.07.20 syat
+#define HLP000334	334 //左をすべて閉じる		// 2009.07.20 syat
+#define HLP000335	335 //右をすべて閉じる		// 2009.07.20 syat
 #define HLP000328	328 //編集文書の一時出力			// 2007.09.29 maru
 #define HLP000329	329 //編集文書にファイル挿入		// 2007.09.29 maru
 #define HLP000330	330 //引用符の変更					// 2007.09.29 maru
@@ -366,6 +369,8 @@
 #define HIDC_RADIO_BACKUP_DATETYPE2				10064 //付加する日時の種類（更新日時）//Jul. 05, 2001 JEPRO 追加
 #define HIDC_CHECK_BACKUP_RETAINEXT				10065 //元の拡張子を保存	// 2006.08.06 ryoji
 #define HIDC_CHECK_BACKUP_ADVANCED				10066 //詳細設定	// 2006.08.06 ryoji
+#define HIDC_RADIO_BACKUP_DATETYPE1A			10067 //付加する日時の種類（作成日時）※詳細設定ON用	// 2009.02.20 ryoji
+#define HIDC_RADIO_BACKUP_DATETYPE2A			10068 //付加する日時の種類（更新日時）※詳細設定ON用	// 2009.02.20 ryoji
 #define HIDC_BUTTON_DELETE						10100 //メニューから機能削除
 #define HIDC_BUTTON_INSERTSEPARATOR				10101 //セパレータ挿入
 #define HIDC_BUTTON_INSERT						10102 //メニューへ機能挿入
@@ -376,6 +381,8 @@
 #define HIDC_BUTTON_EXPORT						10107 //エクスポート
 #define HIDC_COMBO_FUNCKIND						10130 //機能の種別
 #define HIDC_COMBO_MENU							10131 //メニューの種別
+#define HIDC_EDIT_MENUNAME						10132 //メニュー名	// 2009.02.20 ryoji
+#define HIDC_BUTTON_MENUNAME					10133 //メニュー名設定	// 2009.02.20 ryoji
 #define HIDC_LIST_FUNC							10150 //機能一覧
 #define HIDC_LIST_RES							10151 //メニュー一覧
 #define HIDC_CHECK_ADDCRLFWHENCOPY				10210 //折り返し行に改行を付けてコピー
@@ -452,6 +459,7 @@
 #define HIDC_LIST_FUNC_KEYBIND					10750 //機能一覧
 #define HIDC_LIST_KEY							10751 //キー一覧
 #define HIDC_LIST_ASSIGNEDKEYS					10752 //機能に割り当てられているキー
+#define HIDC_CHECK_ACCELTBL_EACHWIN				10760 //ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// nasukoji 2009.08.11
 #define HIDC_BUTTON_ADDSET						10800 //キーワードセット追加
 #define HIDC_BUTTON_DELSET						10801 //キーワードセット削除
 #define HIDC_BUTTON_ADDKEYWORD					10802 //キーワード追加
@@ -477,6 +485,8 @@
 #define HIDC_CHECK_STOPS_PARAGRAPH				10918 //段落単位で移動するときに段落の両端に止まる
 #define HIDC_CHECK_CLOSEALLCONFIRM				10919 //[すべて閉じる]で他に編集用のウィンドウがあれば確認する	// 2006.12.25 ryoji
 #define HIDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE		10920 //マウスクリックでアクティブになったときはカーソルをクリック位置に移動しない 2007.10.08 genta
+#define HIDC_COMBO_WHEEL_PAGESCROLL				10921 //組み合わせてホイール操作した時ページスクロールする	// 2008.12.01 nasukoji
+#define HIDC_COMBO_WHEEL_HSCROLL				10922 //組み合わせてホイール操作した時横スクロールする	// 2008.12.01 nasukoji
 #define HIDC_HOTKEY_TRAYMENU					10940 //左クリックメニューのショートカットキー
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM			10941 //スクロール行数
 #define HIDC_EDIT_MAX_MRU_FILE					10942 //ファイル履歴の最大数
@@ -549,6 +559,7 @@
 #define HIDC_EDIT_OUTLINERULEFILE				11355 //ルールファイル名	// 2006.08.06 ryoji
 #define HIDC_BUTTON_RULEFILE_REF				11356 //ルールファイル参照	// 2006/09/09 novice
 #define HIDC_CHECK_DOCICON						11357 //文書アイコンを使う	// 2006.08.06 ryoji
+#define HIDC_EDIT_KINSOKUKUTO					11358 //句読点ぶら下げ文字	// 2009.08.07 ryoji
 #define HIDC_BUTTON_TEXTCOLOR					11400 //文字色
 #define HIDC_BUTTON_BACKCOLOR					11401 //背景色
 #define HIDC_BUTTON_SAMETEXTCOLOR				11402 //文字色統一
@@ -618,6 +629,9 @@
 #define HIDC_MACRODIR				11750	//マクロ一覧
 #define HIDC_CHECK_RELOADWHENEXECUTE	11751	//マクロを実行するたびにファイルを読み込みなおす	// 2006.08.06 ryoji
 #define HIDC_CHECK_MEMDC			11752	//画面キャッシュを使う
+#define HIDC_CHECK_MacroOnOpened		11753	//オープン後自動実行マクロ	// 2006.09.01 ryoji
+#define HIDC_CHECK_MacroOnTypeChanged	11754	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
+#define HIDC_CHECK_MacroOnSave		11755	//保存前自動実行マクロ	// 2006.09.01 ryoji
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索

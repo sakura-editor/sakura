@@ -42,6 +42,7 @@ aaHHCtlCloseWin.Click(); }
 <a href="HLP000088.html">『支援』</a>
 <a href="HLP000201.html">『マクロ』</a>
 <a href="HLP000277.html">『ファイル名表示』</a>
+<br>
 <img src="images/ComWin.png"><br>
 <br>
 <b>&lt;基本設定&gt;</b><br>
@@ -84,12 +85,18 @@ aaHHCtlCloseWin.Click(); }
 &nbsp;&nbsp;&nbsp;&nbsp;上下に分割しているときに分割ペインの一方を水平スクロールすると他方も同時に動きます。<br>
 </div><br>
 <b>&lt;タイトルバー&gt;</b><br>
-<div class=li200><b>アクティブ時</b><br>
-&nbsp;&nbsp;&nbsp;&nbsp;ウインドウがアクティブのときにタイトルバーに表示する情報を指定します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;書式は、<a href="HLP000284.html">ExpandParameter</a> の形式です。<br>
-<b>非アクティブ時</b><br>
-&nbsp;&nbsp;&nbsp;&nbsp;ウインドウがアクティブのときにタイトルバーに表示する情報を指定します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;書式は、<a href="HLP000284.html">ExpandParameter</a> の形式です。<br>
+<div class=li200><b>アクティブ時</b>
+<div class=li100>ウインドウがアクティブのときにタイトルバーに表示する情報を指定します。<br>
+書式は、<a href="HLP000284.html">ExpandParameter</a> の形式です。<br>
+<b>デフォルト設定(1.6.5.0時点)</b><br>
+<code>${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}</code>
+</div>
+<b>非アクティブ時</b>
+<div class=li100>ウインドウがアクティブのときにタイトルバーに表示する情報を指定します。<br>
+書式は、<a href="HLP000284.html">ExpandParameter</a> の形式です。<br>
+<b>デフォルト設定(1.6.5.0時点)</b><br>
+<code>${w?$h$:アウトプット$:$f$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}</code>
+</div>
 </div><br>
 <b>[設定フォルダ]</b><br>
 <a href="HLP000077.html">設定フォルダ</a>ボタンは、<a href="HLP000078.html">ユーザー別設定</a>を行っている場合のみ表示されます。<br>

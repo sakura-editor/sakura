@@ -51,13 +51,22 @@ aaHHCtlCloseWin.Click(); }
 <tr><td>-VX=</td>    <td>スクロール：ウィンドウ左端の桁位置</td></tr>
 <tr><td>-VY=</td>    <td>スクロール：ウィンドウ上端の行位置</td></tr>
 <tr><td>-CODE=</td>  <td>文字コード種別<br> (0=SJIS, 1=JIS, 2=EUC, 3=Unicode, 4=UTF-8, 5=UTF-7, 6=UnicodeBE, 99=自動判別)</td></tr>
-<tr><td>-TYPE=</td>  <td>タイプ別設定の強制指定。拡張子で指定します。<br>(例) -TYPE=txt&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定をテキストで開く</td></tr>
+<tr><td>-TYPE=</td>  <td>タイプ別設定の強制指定。拡張子で指定します。<br>(例) -TYPE=txt&nbsp;&nbsp;&nbsp;&nbsp;タイプ別設定をテキストとして開く</td></tr>
 <tr><td>-R</td>      <td>読み取り専用で開く</td></tr>
 <tr><td>-SX=</td>    <td>ウィンドウの幅を指定します。</td></tr>
 <tr><td>-SY=</td>    <td>ウィンドウの高さを指定します。</td></tr>
-<tr><td>-WX=</td>    <td>ウィンドウ位置のX座標(1開始)。</td></tr>
-<tr><td>-WY=</td>    <td>ウィンドウ位置のY座標(1開始)。</td></tr>
+<tr><td>-WX=</td>    <td>ウィンドウ左上のX座標。</td></tr>
+<tr><td>-WY=</td>    <td>ウィンドウ左上のY座標。</td></tr>
 <tr><td><nobr>-GROUP=</nobr></td> <td>タブモードのグループを指定して開く(1開始)。<br>・0を指定するとアクティブのグループ<br>・未使用のグループ番号を指定すると新規グループ<br>ファイル名指定なしのときも使えます。</td></tr>
+<tr><td>-M=</td>    <td>-MTYPE 未指定時、起動時に実行するマクロのファイル名を指定します。<br><a href="HLP000201.html">共通設定の自動実行マクロ</a>の後に実行されます。<br>Grep、アウトプットでは実行されません。<br>
+相対パスの場合その時点のカレントフォルダからの相対になります。<br>
+</td></tr>
+<tr><td>-MTYPE=</td>    <td>-M とあわせて指定します。-M はマクロの文字列そのものとして解釈されます。<br>-MTYPE にはマクロの種類を拡張子名で指定します。(ピリオドを除く)<br>-MTYPE=file は-M単独と同じ意味になります。<br>
+sakura.exe -M=D:\macro.mac<br>
+sakura.exe -M=D:\macro.mac -MTYPE=file<br>
+sakura.exe -M=InsText('data') -MTYPE=mac<br>
+sakura.exe "-M=Editor.InsText('hello world:\r\n')" "-MTYPE=js" -- "myfile.txt"<br>
+</td></tr>
 <tr><td>--</td>      <td>オプション指定の終端を明示します。</td></tr>
 </table>
 <br>
