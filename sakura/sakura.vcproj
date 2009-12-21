@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del $(TargetPath).manifest"
+				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del &quot;$(TargetPath).manifest&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -126,7 +126,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del $(TargetPath).manifest"
+				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del &quot;$(TargetPath).manifest&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -223,7 +223,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del $(TargetPath).manifest"
+				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del &quot;$(TargetPath).manifest&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -322,7 +322,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del $(TargetPath).manifest"
+				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode&#x0D;&#x0A;del &quot;$(TargetPath).manifest&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
