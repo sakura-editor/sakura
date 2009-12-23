@@ -22,6 +22,8 @@ SAKURA_CORE_API enum EOutlineType{
 	OUTLINE_TEX,		// 2003.07.20 naoh TeXアウトライン解析
 	OUTLINE_FILE,		//	2002.04.01 YAZAKI ルールファイル用
 	OUTLINE_PYTHON,		//	2007.02.08 genta Pythonアウトライン解析
+	OUTLINE_ERLANG,		//	2009.08.10 genta Erlangアウトライン解析
+	//	新しいアウトライン解析は必ずこの直前へ挿入
 	OUTLINE_CODEMAX,
 	OUTLINE_BOOKMARK,	//	2001.12.03 hor
 	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
