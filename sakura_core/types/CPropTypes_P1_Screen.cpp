@@ -70,6 +70,7 @@ TYPE_NAME<EOutlineType> OlmArr[] = {
 	{ OUTLINE_ASM,		_T("アセンブラ") },
 	{ OUTLINE_VB,		_T("Visual Basic") },		// 2001/06/23 N.Nakatani
 	{ OUTLINE_PYTHON,	_T("Python") },				//	2007.02.08 genta
+	{ OUTLINE_ERLANG,	_T("Erlang") },				//	2009.08.10 genta
 	{ OUTLINE_WZTXT,	_T("WZ階層付テキスト") },	// 2003.05.20 zenryaku, 2003.06.23 Moca 名称変更
 	{ OUTLINE_HTML,		_T("HTML") },				// 2003.05.20 zenryaku
 	{ OUTLINE_TEX,		_T("TeX") },				// 2003.07.20 naoh
