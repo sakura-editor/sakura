@@ -276,7 +276,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_CANCEL_MODE,				"CancelMode",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //各種モードの取り消し
 
 	/* マクロ系 */
-	{F_EXECEXTMACRO,			"ExecExternalMacro",{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //名前を指定してマクロ実行
+	{F_EXECEXTMACRO,			"ExecExternalMacro",{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //名前を指定してマクロ実行
 
 	/* 設定系 */
 	{F_SHOWTOOLBAR,				"ShowToolbar",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* ツールバーの表示 */
