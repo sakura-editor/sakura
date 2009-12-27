@@ -7992,6 +7992,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 
 	} else {
 		// ファイルが指定されていない場合、ダイアログを表示する
+		_tcscpy( szPath, _T("") );
 		pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 
 		if( _IS_REL_PATH( pszFolder ) ){
