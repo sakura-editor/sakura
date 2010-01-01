@@ -8401,34 +8401,33 @@ void CViewCommander::Command_TAB_JOINTPREV( void )
 }
 
 /* このタブ以外を閉じる */	// 2008.11.22 syat
+// 2009.12.26 syat このウィンドウ以外を閉じるとの兼用化
 void CViewCommander::Command_TAB_CLOSEOTHER( void )
 {
-	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-		int nGroup = 0;
+	int nGroup = 0;
 
-		// ウィンドウ一覧を取得する
-		EditNode* pEditNode;
-		int nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
-		if( 0 >= nCount )return;
+	// ウィンドウ一覧を取得する
+	EditNode* pEditNode;
+	int nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
+	if( 0 >= nCount )return;
 
-		for( int i = 0; i < nCount; i++ ){
-			if( pEditNode[i].m_hWnd == GetMainWindow() ){
-				pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
-				nGroup = pEditNode[i].m_nGroup;
-			}
+	for( int i = 0; i < nCount; i++ ){
+		if( pEditNode[i].m_hWnd == GetMainWindow() ){
+			pEditNode[i].m_hWnd = NULL;		//自分自身は閉じない
+			nGroup = pEditNode[i].m_nGroup;
 		}
-
-		//終了要求を出す
-		CAppNodeGroupHandle(nGroup).RequestCloseEditor( pEditNode, nCount, FALSE, TRUE, GetMainWindow() );
-		delete []pEditNode;
 	}
+
+	//終了要求を出す
+	CAppNodeGroupHandle(nGroup).RequestCloseEditor( pEditNode, nCount, FALSE, TRUE, GetMainWindow() );
+	delete []pEditNode;
 	return;
 }
 
 /* 左をすべて閉じる */		// 2008.11.22 syat
 void CViewCommander::Command_TAB_CLOSELEFT( void )
 {
-	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
+	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd ){
 		int nGroup = 0;
 
 		// ウィンドウ一覧を取得する
@@ -8457,7 +8456,7 @@ void CViewCommander::Command_TAB_CLOSELEFT( void )
 /* 右をすべて閉じる */		// 2008.11.22 syat
 void CViewCommander::Command_TAB_CLOSERIGHT( void )
 {
-	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
+	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd ){
 		int nGroup = 0;
 
 		// ウィンドウ一覧を取得する
