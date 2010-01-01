@@ -2831,6 +2831,7 @@ BEGIN
     F_SPLIT_VH              "縦横に分割／分割解除"
     F_WINCLOSE              "閉じる"
     F_WIN_CLOSEALL          "すべて閉じる"
+    F_TAB_CLOSEOTHER        "このタブ／ウィンドウ以外を閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2868,7 +2869,6 @@ BEGIN
     F_TAB_SEPARATE          "新規グループ"
     F_TAB_JOINTNEXT         "次のグループに移動"
     F_TAB_JOINTPREV         "前のグループに移動"
-    F_TAB_CLOSEOTHER        "このタブ以外を閉じる"
     F_TAB_CLOSELEFT         "左をすべて閉じる"
     F_TAB_CLOSERIGHT        "右をすべて閉じる"
 END

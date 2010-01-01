@@ -416,6 +416,7 @@ const EFunctionCode pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List7
 	F_SPLIT_VH			,	//c‰¡‚É•ªŠ„	//Sept. 17, 2000 jepro à–¾‚Éu‚Év‚ð’Ç‰Á
 	F_WINCLOSE			,	//ƒEƒBƒ“ƒhƒE‚ð•Â‚¶‚é
 	F_WIN_CLOSEALL		,	//‚·‚×‚Ä‚ÌƒEƒBƒ“ƒhƒE‚ð•Â‚¶‚é	//Oct. 17, 2000 JEPRO –¼‘O‚ð•ÏX(F_FILECLOSEALL¨F_WIN_CLOSEALL)
+	F_TAB_CLOSEOTHER	,	//‚±‚Ìƒ^ƒuˆÈŠO‚ð•Â‚¶‚é	// 2008.11.22 syat
 	F_NEXTWINDOW		,	//ŽŸ‚ÌƒEƒBƒ“ƒhƒE
 	F_PREVWINDOW		,	//‘O‚ÌƒEƒBƒ“ƒhƒE
  	F_WINLIST			,	//ŠJ‚¢‚Ä‚¢‚éƒEƒBƒ“ƒhƒEˆê——ƒ|ƒbƒvƒAƒbƒv•\Ž¦	// 2006.03.23 fon
@@ -432,7 +433,6 @@ const EFunctionCode pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO •Ï”–¼•ÏX(List7
 	F_TAB_SEPARATE		,	//V‹KƒOƒ‹[ƒv	// 2007.06.20 ryoji
 	F_TAB_JOINTNEXT		,	//ŽŸ‚ÌƒOƒ‹[ƒv‚ÉˆÚ“®	// 2007.06.20 ryoji
 	F_TAB_JOINTPREV		,	//‘O‚ÌƒOƒ‹[ƒv‚ÉˆÚ“®	// 2007.06.20 ryoji
-	F_TAB_CLOSEOTHER	,	//‚±‚Ìƒ^ƒuˆÈŠO‚ð•Â‚¶‚é	// 2008.11.22 syat
 	F_TAB_CLOSELEFT 	,	//¶‚ð‚·‚×‚Ä•Â‚¶‚é		// 2008.11.22 syat
 	F_TAB_CLOSERIGHT	,	//‰E‚ð‚·‚×‚Ä•Â‚¶‚é		// 2008.11.22 syat
 	F_MAXIMIZE_V		,	//c•ûŒü‚ÉÅ‘å‰»
@@ -1139,6 +1139,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 	case F_BIND_WINDOW:	//2004.07.14 Kazika V‹K’Ç‰Á
 	case F_TAB_MOVERIGHT:	// 2007.06.20 ryoji ’Ç‰Á
 	case F_TAB_MOVELEFT:	// 2007.06.20 ryoji ’Ç‰Á
+	case F_TAB_CLOSELEFT:	// 2009.12.26 syat ’Ç‰Á
+	case F_TAB_CLOSERIGHT:	// 2009.12.26 syat ’Ç‰Á
 		//”ñƒ^ƒuƒ‚[ƒhŽž‚ÍƒEƒBƒ“ƒhƒE‚ðŒ‹‡‚µ‚Ä•\Ž¦‚Å‚«‚È‚¢
 		return pShareData->m_Common.m_sTabBar.m_bDispTabWnd != FALSE;
 	case F_GROUPCLOSE:		// 2007.06.20 ryoji ’Ç‰Á
