@@ -9,6 +9,7 @@
 	Copyright (C) 2002, MIK, genta, Moca, YAZAKI
 	Copyright (C) 2003, Moca
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2010, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -81,8 +82,9 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 	m_bGrepOutputLine = m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine;	// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;	// Grep: 出力形式
 
-
-	_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
+	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
+		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
+	}
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, NULL );
 }
