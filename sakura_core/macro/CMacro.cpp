@@ -504,7 +504,6 @@ void CMacro::HandleCommand(
 		//		0x08	見つからないときにメッセージを表示
 		//		0x10	検索ダイアログを自動的に閉じる
 		//		0x20	先頭（末尾）から再検索する
-		//	各値をShareDataに設定してコマンドを発行し、ShareDataの値を元に戻す。
 		{
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
 			if( 0 < wcslen( Argument[0] ) ){
@@ -627,7 +626,6 @@ void CMacro::HandleCommand(
 		//		0x200	見つかった文字列の後に追加
 		//		**********************************
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
-		//	各値をShareDataに設定してコマンドを発行し、ShareDataの値を元に戻す。
 		if( Argument[0] == NULL || 0 == wcslen( Argument[0] ) ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("置換元パターンが指定されていません．"));
