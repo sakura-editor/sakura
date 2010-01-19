@@ -197,7 +197,6 @@ bool CNormalProcess::InitializeProcess()
 
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
-			BlockingHook(NULL);	// ポストされたMYWM_SETACTIVEPANEでGREPダイアログのキャレットが消える問題の修正	// 2010.01.10 ryoji
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
 			if( FALSE != nRet ){
 				pEditWnd->m_pcEditViewArr[0]->GetCommander().HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
