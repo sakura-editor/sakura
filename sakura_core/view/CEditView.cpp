@@ -781,7 +781,7 @@ LRESULT CEditView::DispatchEvent(
 		}
 
 		/* アクティブなペインを設定 */
-		if( m_nMyIndex != m_pcEditDoc->m_pcEditWnd->GetActivePane() ){
+		if( ::GetFocus() != GetHwnd() ){
 			POINT ptCursor;
 			::GetCursorPos( &ptCursor );
 			HWND hwndCursorPos = ::WindowFromPoint( ptCursor );
