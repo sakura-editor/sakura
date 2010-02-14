@@ -55,6 +55,7 @@ const static int MENUBAR_MESSAGE_MAX_LEN = 30;
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
+class CPlug;
 
 
 //メインウィンドウ内コントロールID
@@ -160,6 +161,9 @@ public:
 	void InitMenubarMessageFont(void);	//	メニューバーへのメッセージ表示機能をCEditWndより移管	//	Dec. 4, 2002 genta
 	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
 	LRESULT PopupWinList( bool bMousePos );	/*!< ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon	// 2007.02.28 ryoji フルパス指定のパラメータを削除
+	void RegisterPluginCommand();			//プラグインコマンドをエディタに登録する
+	void RegisterPluginCommand( int id );	//プラグインコマンドをエディタに登録する
+	void RegisterPluginCommand( CPlug* id );	//プラグインコマンドをエディタに登録する
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

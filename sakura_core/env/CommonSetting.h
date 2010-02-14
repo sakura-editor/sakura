@@ -498,6 +498,21 @@ struct CommonSetting_Statusbar
 	BOOL		m_bDispSelCountByByte;			// 選択文字数を文字単位ではなくバイト単位で表示する
 };
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        プラグイン                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct PluginRec
+{
+	WCHAR			m_szId[MAX_PLUGIN_ID];
+	WCHAR			m_szName[MAX_PLUGIN_NAME];
+};
+
+struct CommonSetting_Plugin
+{
+	BOOL			m_bEnablePlugin;			//!< プラグインを使用するかどうか
+	PluginRec		m_PluginTable[MAX_PLUGIN];	//!< プラグインテーブル
+};
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                                                             //
@@ -531,6 +546,7 @@ struct CommonSetting
 	CommonSetting_Others			m_sOthers;
 	//
 	CommonSetting_Statusbar			m_sStatusbar;				// 2008/6/21 Uchi
+	CommonSetting_Plugin			m_sPlugin;			// プラグイン 2009/11/30 syat
 };
 
 

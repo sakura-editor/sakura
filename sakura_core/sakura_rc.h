@@ -614,6 +614,13 @@
 #define IDC_CHECK_MacroOnOpened         1562
 #define IDC_CHECK_MacroOnTypeChanged    1563
 #define IDC_CHECK_MacroOnSave           1564
+#define IDC_PLUGINLIST                  1565
+#define IDC_CHECK_PluginEnable          1566
+#define IDC_PLUGIN_SearchNew            1567
+#define IDC_PLUGIN_Remove	            1568
+#define IDC_LABEL_PLUGIN_Description    1569
+#define IDC_LABEL_PLUGIN_Author         1570
+#define IDC_LABEL_PLUGIN_Version        1571
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -640,6 +647,7 @@
 #define IDD_PROP_KEYWORD                5213
 #define IDD_PROP_HELPER                 5214
 #define IDD_PROP_MACRO                  5215
+#define IDD_PROP_PLUGIN                 5216
 #define IDD_WINPOSSIZE                  5220
 #define IDC_STATIC                      -1
 

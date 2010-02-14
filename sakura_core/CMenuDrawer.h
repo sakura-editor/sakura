@@ -21,6 +21,7 @@ class CMenuDrawer;
 #define _CMENUDRAWER_H_
 
 #include <windows.h>
+#include <vector>
 #include "env/CShareData.h" // MAX_TOOLBARBUTTONS
 #include "mem/CMemory.h"// 2002/2/10 aroka
 class CImageListMgr;// 2002/2/10 aroka
@@ -83,6 +84,7 @@ public:
 	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
+	void AddToolButton( int iBitmap, int iCommand );	//ツールバーボタンを追加する 2009.11.14 syat
 
 private:
 	int Find( int nFuncID );
@@ -98,7 +100,9 @@ private:
 
 	int				m_nMenuItemNum;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	TBBUTTON		m_tbMyButton[MAX_TOOLBARBUTTONS+1];	/* ツールバーのボタン +1はセパレータ */
+//2009.11.14 syat プラグインコマンド動的追加のためvector化
+//	TBBUTTON		m_tbMyButton[MAX_TOOLBARBUTTONS+1];	/* ツールバーのボタン +1はセパレータ */
+	std::vector<TBBUTTON>	m_tbMyButton;	/* ツールバーのボタン +1はセパレータ */
 	int				m_nMyButtonNum;
 
 	int				m_nMenuItemBitmapIdxArr[MAX_MENUITEMS];
@@ -108,6 +112,8 @@ private:
 	HFONT			m_hFontMenu;
 	HFONT			m_hFontMenuUndelLine;
 
+public:
+	// 2010.01.30 syat アイコンイメージリストをprivate->public
 	//	Oct. 16, 2000 genta
 	CImageListMgr	*m_pcIcons;	//	Image List
 

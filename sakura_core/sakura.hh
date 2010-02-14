@@ -637,7 +637,10 @@
 #define HIDC_CHECK_MacroOnOpened		11753	//オープン後自動実行マクロ	// 2006.09.01 ryoji
 #define HIDC_CHECK_MacroOnTypeChanged	11754	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
 #define HIDC_CHECK_MacroOnSave		11755	//保存前自動実行マクロ	// 2006.09.01 ryoji
-
+#define HIDC_PLUGINLIST				11756	//プラグインリスト
+#define HIDC_CHECK_PluginEnable		11757	//プラグインを有効にする
+#define HIDC_PLUGIN_SearchNew		11758	//新規プラグインを追加
+#define HIDC_PLUGIN_Remove			11759	//新規プラグインを追加
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索
 #define HIDC_FIND_BUTTON_SEARCHPREV			11801	//前を検索

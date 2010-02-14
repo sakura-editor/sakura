@@ -58,7 +58,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "util/os.h" //WM_MOUSEWHEEL,WM_THEMECHANGED
 #include "env/CSakuraEnvironment.h"
-
+#include "plugin/CJackManager.h"
 
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
@@ -501,6 +501,8 @@ HWND CEditWnd::Create(
 	//イメージ、ヘルパなどの作成
 	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), &CEditApp::Instance()->GetIcons() );
 
+	// プラグインコマンドを登録する
+	RegisterPluginCommand();
 
 	// -- -- -- -- 子ウィンドウ作成 -- -- -- -- //
 
@@ -2296,6 +2298,32 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HOKAN			, _T("入力補完(&/)") );
 			m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
+
+			//プラグインコマンドを提供するプラグインを列挙する
+			{
+				const CJackManager* pcJackManager = CJackManager::Instance();
+				const CPlugin* prevPlugin = NULL;
+				HMENU hMenuPlugin;
+
+				CPlug::List plugs = pcJackManager->GetPlugs( PP_COMMAND );
+				for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ){
+					const CPlugin* curPlugin = &(*it)->m_cPlugin;
+					if( curPlugin != prevPlugin ){
+						//プラグインが変わったらプラグインポップアップメニューを登録
+						hMenuPlugin = ::CreatePopupMenu();
+						m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPlugin, to_tchar( curPlugin->m_sName.c_str() ) );
+						prevPlugin = curPlugin;
+					}
+
+					//コマンドを登録
+					m_CMenuDrawer.MyAppendMenu( hMenuPlugin, MF_BYPOSITION | MF_STRING,
+						(*it)->GetFunctionCode(), to_tchar( (*it)->m_sLabel.c_str() ), TRUE, (*it)->GetFunctionCode() );
+				}
+
+				if( prevPlugin != NULL ){
+					m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	//セパレータ
+				}
+			}
 
 			//「カスタムメニュー」ポップアップ
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
@@ -4545,3 +4573,31 @@ void CEditWnd::ClearMouseState( void )
 	SetPageScrollByWheel( FALSE );		// ホイール操作によるページスクロール有無
 	SetHScrollByWheel( FALSE );			// ホイール操作による横スクロール有無
 }
+
+//プラグインコマンドをエディタに登録する
+void CEditWnd::RegisterPluginCommand( int idCommand )
+{
+	CPlug* plug = CJackManager::Instance()->GetCommandById( idCommand );
+	RegisterPluginCommand( plug );
+}
+
+//プラグインコマンドをエディタに登録する（一括）
+void CEditWnd::RegisterPluginCommand()
+{
+	const CPlug::List& plugs = CJackManager::Instance()->GetPlugs( PP_COMMAND );
+	for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ) {
+		RegisterPluginCommand( *it );
+	}
+}
+
+//プラグインコマンドをエディタに登録する
+void CEditWnd::RegisterPluginCommand( CPlug* plug )
+{
+	int iBitmap = 383;
+	if( !plug->m_sIcon.empty() ){
+		iBitmap = m_CMenuDrawer.m_pcIcons->Add( to_tchar(plug->m_cPlugin.GetFilePath( plug->m_sIcon ).c_str()) );
+	}
+
+	m_CMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
+}
+

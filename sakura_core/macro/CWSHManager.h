@@ -25,9 +25,9 @@
 #include <windows.h>
 #include <string>
 #include "macro/CSMacroMgr.h"
-#include "CMacroManagerBase.h"
+#include "macro/CMacroManagerBase.h"
+#include "macro/CWSHIfObj.h"
 class CEditView;
-class CInterfaceObject;
 
 typedef void (*EngineCallback)(wchar_t *Ext, char *EngineName);
 
@@ -44,11 +44,17 @@ public:
 
 	static CMacroManagerBase* Creator(const TCHAR* FileExt);
 	static void declare();
-	static void EnumEngines(EngineCallback Proc); //スクリプトエンジン列挙
+	static void EnumEngines(EngineCallback Proc);	//スクリプトエンジン列挙
+
+	void AddParam( CWSHIfObj* param );				//インタフェースオブジェクトを追加する
+	void AddParam( CWSHIfObj::List& params );		//インタフェースオブジェクト達を追加する
+	void ClearParam();								//インタフェースオブジェクトを削除する
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;
-	//	2007.07.20 genta : flags追加
-	static void ReadyCommands(CInterfaceObject *Object, MacroFuncInfo *Info, int flags);
+	CWSHIfObj::List m_Params;
+	//2009.10.29 syat CWSHIfObjへ移動
+	////	2007.07.20 genta : flags追加
+	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
 #endif

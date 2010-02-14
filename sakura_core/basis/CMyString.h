@@ -84,7 +84,8 @@ public:
 		_tcscat( szDirPath, szDir );
 		return szDirPath;
 	}
-	LPCTSTR GetExt() const
+	//拡張子を取得する
+	LPCTSTR GetExt( bool bWithoutDot = false ) const
 	{
 		const TCHAR* head = c_str();
 		const TCHAR* p = auto_strchr(head,_T('\0')) - 1;
@@ -94,8 +95,11 @@ public:
 			if(*p==_T('/'))break;
 			p--;
 		}
-		if(p>=head && *p==_T('.'))return p;
-		else return _T("");
+		if(p>=head && *p==_T('.')){
+			return bWithoutDot ? p+1 : p;	//bWithoutDot==trueならドットなしを返す
+		}else{
+			return _T("");
+		}
 	}
 };
 

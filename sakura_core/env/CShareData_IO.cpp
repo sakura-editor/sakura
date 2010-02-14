@@ -71,6 +71,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_KeyWords( cProfile );
 	ShareData_IO_Macro( cProfile );
 	ShareData_IO_Statusbar( cProfile );		// 2008/6/21 Uchi
+	ShareData_IO_Plugin( cProfile );
 	ShareData_IO_Other( cProfile );
 	
 	if( !bRead ){
@@ -1485,6 +1486,33 @@ void CShareData_IO::ShareData_IO_Statusbar( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("DispUtf8Codepoint")			, statusbar.m_bDispUtf8Codepoint);	// UTF-8をコードポイントで表示する
 	cProfile.IOProfileData( pszSecName, LTEXT("DispSurrogatePairCodepoint")	, statusbar.m_bDispSPCodepoint);	// サロゲートペアをコードポイントで表示する
 	cProfile.IOProfileData( pszSecName, LTEXT("DispSelectCountByByte")		, statusbar.m_bDispSelCountByByte);	// 選択文字数を文字単位ではなくバイト単位で表示する
+}
+
+/*!
+	@brief 共有データのPluginセクションの入出力
+	@param[in,out]	cProfile	INIファイル入出力クラス
+
+	@date 2009/11/30 syat
+*/
+void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
+{
+	const WCHAR* pszSecName = LTEXT("Plugin");
+	CommonSetting& common = GetDllShareData().m_Common;
+	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
+
+	cProfile.IOProfileData( pszSecName, LTEXT("EnablePlugin"), plugin.m_bEnablePlugin);		// プラグインを使用する
+
+	//プラグインテーブル
+	int		i;	
+	WCHAR	szKeyName[64];
+	for( i = 0; i < MAX_PLUGIN; ++i ){
+		PluginRec& pluginrec = common.m_sPlugin.m_PluginTable[i];
+
+		auto_sprintf( szKeyName, LTEXT("P[%02d].Name"), i );
+		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(pluginrec.m_szName) );
+		auto_sprintf( szKeyName, LTEXT("P[%02d].Id"), i );
+		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(pluginrec.m_szId) );
+	}
 }
 
 /*!

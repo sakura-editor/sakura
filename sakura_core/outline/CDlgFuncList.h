@@ -47,6 +47,7 @@ public:
 	*/
 	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nListType; }
 	void Redraw( int nOutLineType, CFuncInfoArr*, CLayoutInt nCurLine );
+	void SetWindowText( const TCHAR* szTitle );		//ダイアログタイトルの設定
 
 	CFuncInfoArr*	m_pcFuncInfoArr;	/* 関数情報配列 */
 	CLayoutInt		m_nCurLine;			/* 現在行 */

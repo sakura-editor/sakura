@@ -449,6 +449,12 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sStatusbar.m_bDispSPCodepoint		= TRUE;		// サロゲートペアをコードポイントで表示する
 		m_pShareData->m_Common.m_sStatusbar.m_bDispSelCountByByte	= FALSE;	// 選択文字数を文字単位ではなくバイト単位で表示する
 
+		// [プラグイン]タブ
+		m_pShareData->m_Common.m_sPlugin.m_bEnablePlugin			= FALSE;	// プラグインを使用する
+		for( int nPlugin=0; nPlugin < MAX_PLUGIN; nPlugin++ ){
+			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_szName[0]	= L'\0';	// プラグイン名
+			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_szId[0]		= L'\0';	// プラグイン名
+		}
 
 		m_pShareData->m_sHistory.m_aCommands.clear();
 

@@ -49,6 +49,7 @@ enum ComPropSheetOrder {
 	ID_PAGENUM_KEYWORD,			// 強調キーワード
 	ID_PAGENUM_HELPER,			// 支援
 	ID_PAGENUM_MACRO,			// マクロ
+	ID_PAGENUM_PLUGIN,			// プラグイン
 };
 #else
 #define ID_PAGENUM_ZENPAN		0	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更
@@ -67,6 +68,7 @@ enum ComPropSheetOrder {
 #define ID_PAGENUM_MACRO		13	//Oct. 25, 2000 JEPRO 10→11 に変更
 #define ID_PAGENUM_FILENAME		14	// Moca 追加
 #define ID_PAGENUM_STATUSBAR	15	// 2008/6/21 Uchi 追加
+#define ID_PAGENUM_PLUGIN		16	// 2009/11/29 syat 追加
 #endif
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -317,6 +319,18 @@ protected:
 	INT_PTR DispatchEvent_PROP_STATUSBAR( HWND, UINT, WPARAM, LPARAM );
 	void SetData_PROP_STATUSBAR( HWND );
 	int GetData_PROP_STATUSBAR( HWND );
+
+	//==============================================================
+	//!	プラグインページのDialog Procedure
+	static INT_PTR CALLBACK DlgProc_PROP_PLUGIN(
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	//! Message Handler for edit page
+	INT_PTR DispatchEvent_PROP_PLUGIN( HWND, UINT, WPARAM, LPARAM );
+	void SetData_PROP_PLUGIN( HWND );
+	void SetData_PROP_PLUGIN_LIST( HWND );
+	int GetData_PROP_PLUGIN( HWND );
+	void InitDialog_PROP_PLUGIN( HWND hwndDlg );//!< Pluginページの初期化
+	void EnablePluginPropInput(HWND hwndDlg);
 
 
 	int nLastPos_Macro; //!< 前回フォーカスのあった場所

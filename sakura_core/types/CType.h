@@ -26,6 +26,7 @@ SAKURA_CORE_API enum EOutlineType{
 	//	新しいアウトライン解析は必ずこの直前へ挿入
 	OUTLINE_CODEMAX,
 	OUTLINE_BOOKMARK,	//	2001.12.03 hor
+	OUTLINE_PLUGIN,		//	2009.10.29 syat プラグインによるアウトライン解析
 	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
 	OUTLINE_UNKNOWN	= 99
 };

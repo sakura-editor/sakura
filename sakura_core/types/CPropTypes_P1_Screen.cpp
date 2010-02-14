@@ -53,13 +53,7 @@ static const DWORD p_helpids1[] = {	//11300
 };
 
 
-//2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
-template <class TYPE>
-struct TYPE_NAME {
-	TYPE		nMethod;
-	TCHAR*		pszName;
-};
-
+//アウトライン解析方法・標準ルール
 TYPE_NAME<EOutlineType> OlmArr[] = {
 //	{ OUTLINE_C,		_T("C") },
 	{ OUTLINE_CPP,		_T("C/C++") },
@@ -76,7 +70,6 @@ TYPE_NAME<EOutlineType> OlmArr[] = {
 	{ OUTLINE_TEX,		_T("TeX") },				// 2003.07.20 naoh
 	{ OUTLINE_TEXT,		_T("テキスト") }			//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
-
 
 TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
 	{ SMARTINDENT_NONE,	_T("なし") },
@@ -116,7 +109,21 @@ TYPE_NAME<int> WrapMethodArr[] = {
 	{ WRAP_WINDOW_WIDTH,	_T("右端で折り返す") },
 };
 
+//静的メンバ
+std::vector<TYPE_NAME<EOutlineType>> CPropTypes::m_OlmArr;	//!<アウトライン解析ルール配列
+std::vector<TYPE_NAME<ESmartIndentType>> CPropTypes::m_SIndentArr;	//!<スマートインデントルール配列
 
+//スクリーンタブの初期化
+void CPropTypes::CPropTypes_Screen()
+{
+	//プラグイン無効の場合、ここで静的メンバを初期化する。プラグイン有効の場合はAddXXXMethod内で初期化する。
+	if( m_OlmArr.empty() ){
+		m_OlmArr.insert(m_OlmArr.end(), OlmArr, &OlmArr[_countof(OlmArr)]);	//アウトライン解析ルール
+	}
+	if( m_SIndentArr.empty() ){
+		m_SIndentArr.insert(m_SIndentArr.end(), SmartIndentArr, &SmartIndentArr[_countof(SmartIndentArr)]);	//スマートインデントルール
+	}
+}
 
 /* p1 メッセージ処理 */
 INT_PTR CPropTypes::DispatchEvent_Screen(
@@ -393,9 +400,9 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
 		int		nSelPos = 0;
-		for( int i = 0; i < _countof( SmartIndentArr ); ++i ){
-			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SmartIndentArr[i].pszName );
-			if( SmartIndentArr[i].nMethod == m_Types.m_eSmartIndent ){	/* スマートインデント種別 */
+		for( int i = 0; i < (int)m_SIndentArr.size(); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)m_SIndentArr[i].pszName );
+			if( m_SIndentArr[i].nMethod == m_Types.m_eSmartIndent ){	/* スマートインデント種別 */
 				nSelPos = i;
 			}
 		}
@@ -457,9 +464,9 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
 		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
 		int		nSelPos = 0;
-		for( int i = 0; i < _countof( OlmArr ); ++i ){
-			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)OlmArr[i].pszName );
-			if( OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
+		for( int i = 0; i < (int)m_OlmArr.size(); ++i ){
+			::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)m_OlmArr[i].pszName );
+			if( m_OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
 				nSelPos = i;
 			}
 		}
@@ -594,7 +601,9 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		/* スマートインデント種別 */
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 		int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-		m_Types.m_eSmartIndent = SmartIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
+		if( nSelPos >= 0 ){
+			m_Types.m_eSmartIndent = m_SIndentArr[nSelPos].nMethod;	/* スマートインデント種別 */
+		}
 
 		/* その他のインデント対象文字 */
 		::DlgItem_GetText( hwndDlg, IDC_EDIT_INDENTCHARS, m_Types.m_szIndentChars, _countof( m_Types.m_szIndentChars ) );
@@ -628,7 +637,9 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 		if ( !::IsDlgButtonChecked( hwndDlg, IDC_RADIO_OUTLINERULEFILE) ){
 			HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
 			int		nSelPos = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
-			m_Types.m_eDefaultOutline = OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+			if( nSelPos >= 0 ){
+				m_Types.m_eDefaultOutline = m_OlmArr[nSelPos].nMethod;	/* アウトライン解析方法 */
+			}
 		}
 		//ルールファイル
 		else {
@@ -662,3 +673,30 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	return TRUE;
 }
 
+//アウトライン解析ルールの追加
+void CPropTypes::AddOutlineMethod(int nMethod, const WCHAR* szName)
+{
+	if( m_OlmArr.empty() ){
+		m_OlmArr.insert(m_OlmArr.end(), OlmArr, &OlmArr[_countof(OlmArr)]);	//アウトライン解析ルール
+	}
+	TYPE_NAME<EOutlineType> method;
+	method.nMethod = (EOutlineType)nMethod;
+	const TCHAR* tszName = to_tchar( szName );
+	method.pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
+	_tcscpy( method.pszName, tszName );
+	m_OlmArr.push_back(method);
+}
+
+//スマートインデントルールの追加
+void CPropTypes::AddSIndentMethod(int nMethod, const WCHAR* szName)
+{
+	if( m_SIndentArr.empty() ){
+		m_SIndentArr.insert(m_SIndentArr.end(), SmartIndentArr, &SmartIndentArr[_countof(SmartIndentArr)]);	//スマートインデントルール
+	}
+	TYPE_NAME<ESmartIndentType> method;
+	method.nMethod = (ESmartIndentType)nMethod;
+	const TCHAR* tszName = to_tchar( szName );
+	method.pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
+	_tcscpy( method.pszName, tszName );
+	m_SIndentArr.push_back(method);
+}

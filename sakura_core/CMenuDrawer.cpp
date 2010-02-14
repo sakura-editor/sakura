@@ -63,6 +63,7 @@ CMenuDrawer::CMenuDrawer()
 		int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
 	} TBBUTTON;
 	*/
+	m_tbMyButton.resize( 1 );
 	SetTBBUTTONVal( &m_tbMyButton[0], -1, 0, 0, TBSTYLE_SEP, 0, 0 );	//セパレータ	// 2007.11.02 ryoji アイコンの未定義化(-1)
 #if 0
 	2002/04/26 無用な汎用性は排除。
@@ -532,14 +533,16 @@ CMenuDrawer::CMenuDrawer()
 /* 380 */		F_DISABLE 			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 381 */		F_DISABLE 			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 382 */		F_DISABLE 			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 383 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 383 */		F_PLUGCOMMAND_FIRST	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//プラグインコマンド用に予約
 //	2007.10.17 genta 384は折り返しマークとして使用しているのでアイコンとしては使用できない
 /* 384 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 
 };
 	int tbd_num = _countof( tbd );
 	BYTE	style;	//@@@ 2002.06.15 MIK
-	
+
+	m_tbMyButton.resize( tbd_num + 1 );
+
 	for( int i = 0; i < tbd_num; i++ ){
 		switch( tbd[i] )	//@@@ 2002.06.15 MIK
 		{
@@ -1079,7 +1082,8 @@ int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc )
 {
 	if( bOnlyFunc ){
 		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
-		if ( !( F_MENU_FIRST <= idCommand && idCommand < F_MENU_NOT_USED_FIRST ) ){
+		if ( !( F_MENU_FIRST <= idCommand && idCommand < F_MENU_NOT_USED_FIRST )
+			&& !( F_PLUGCOMMAND_FIRST <= idCommand && idCommand < F_PLUGCOMMAND_LAST )){
 			return -1;
 		}
 	}
@@ -1269,4 +1273,14 @@ typedef struct _TBBUTTON {
 	return;
 }
 
+//ツールバーボタンを追加する
+void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
+{
+	TBBUTTON tbb;
 
+	SetTBBUTTONVal( &tbb, iBitmap, iCommand, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
+
+	//最後から２番目に挿入する。一番最後は番兵で固定。
+	m_tbMyButton.insert( m_tbMyButton.end() - 1, tbb );
+	m_nMyButtonNum++;
+}

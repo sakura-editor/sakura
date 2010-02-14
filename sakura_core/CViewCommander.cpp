@@ -77,6 +77,8 @@
 #include "charset/CCodeFactory.h"
 #include "io/CFileLoad.h"
 #include "env/CSakuraEnvironment.h"
+#include "plugin/CJackManager.h"
+#include "plugin/COutlineIfObj.h"
 
 //外部依存
 CEditDoc* CViewCommander::GetDocument()
@@ -666,6 +668,24 @@ BOOL CViewCommander::HandleCommand(
 
 	/* その他 */
 //	case F_SENDMAIL:	Command_SENDMAIL();break;		/* メール送信 */
+
+	default:
+		//プラグインコマンドを実行する
+		{
+			CPlug::List plugs;
+			CJackManager::Instance()->GetUsablePlug( PP_COMMAND, nCommand, &plugs );
+
+			if( plugs.size() > 0 ){
+				//インタフェースオブジェクト準備
+				CWSHIfObj::List params;
+				//プラグイン呼び出し
+				( *plugs.begin() )->Invoke( m_pCommanderView, params );
+
+				/* フォーカス移動時の再描画 */
+				m_pCommanderView->RedrawAll();
+				break;
+			}
+		}
 
 	}
 
@@ -2810,9 +2830,28 @@ end_of_for:;
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 	/* スマートインデント */
-	if( SMARTINDENT_CPP == GetDocument()->m_cDocType.GetDocumentAttribute().m_eSmartIndent ){	/* スマートインデント種別 */
+	ESmartIndentType nSIndentType = GetDocument()->m_cDocType.GetDocumentAttribute().m_eSmartIndent;
+	switch( nSIndentType ){	/* スマートインデント種別 */
+	case SMARTINDENT_NONE:
+		break;
+	case SMARTINDENT_CPP:
 		/* C/C++スマートインデント処理 */
 		m_pCommanderView->SmartIndent_CPP( wcChar );
+		break;
+	default:
+		//プラグインから検索する
+		{
+			CPlug::List plugs;
+			CJackManager::Instance()->GetUsablePlug( PP_SMARTINDENT, nSIndentType, &plugs );
+
+			if( plugs.size() > 0 ){
+				//インタフェースオブジェクト準備
+				CWSHIfObj::List params;
+				//プラグイン呼び出し
+				( *plugs.begin() )->Invoke( m_pCommanderView, params );				break;
+			}
+		}
+		break;
 	}
 
 	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
@@ -4242,6 +4281,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	static CFuncInfoArr	cFuncInfoArr;
 //	int		nLine;
 //	int		nListType;
+	tstring sTitleOverride;				//プラグインによるダイアログタイトル上書き
 
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){
@@ -4300,6 +4340,29 @@ BOOL CViewCommander::Command_FUNCLIST(
 		//	fall though
 		//	ここには何も入れてはいけない 2007.02.28 genta 注意書き
 	default:
+		//プラグインから検索する
+		{
+			CPlug::List plugs;
+			CJackManager::Instance()->GetUsablePlug( PP_OUTLINE, nOutlineType, &plugs );
+
+			if( plugs.size() > 0 ){
+				//インタフェースオブジェクト準備
+				CWSHIfObj::List params;
+				COutlineIfObj* objOutline = new COutlineIfObj( cFuncInfoArr );
+				objOutline->AddRef();
+				params.push_back( objOutline );
+				//プラグイン呼び出し
+				( *plugs.begin() )->Invoke( m_pCommanderView, params );
+
+				nOutlineType = objOutline->m_nListType;			//ダイアログの表示方法をを上書き
+				sTitleOverride = objOutline->m_sOutlineTitle;	//ダイアログタイトルを上書き
+
+				objOutline->Release();
+				break;
+			}
+		}
+
+		//それ以外
 		GetDocument()->m_cDocOutline.MakeTopicList_txt( &cFuncInfoArr );
 		break;
 	}
@@ -4322,6 +4385,11 @@ BOOL CViewCommander::Command_FUNCLIST(
 		/* アクティブにする */
 		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, GetCaret().GetCaretLayoutPos().GetY2() + 1 );
 		ActivateFrameWindow( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
+	}
+
+	// ダイアログタイトルを上書き
+	if( ! sTitleOverride.empty() ){
+		GetEditWindow()->m_cDlgFuncList.SetWindowText( sTitleOverride.c_str() );
 	}
 
 	return TRUE;

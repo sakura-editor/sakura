@@ -2489,6 +2489,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\util\ole_convert.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\util\ole_convert.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\util\os.cpp"
 					>
 				</File>
@@ -3261,6 +3269,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\prop\CPropComPlugin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\prop\CPropComStatusbar.cpp"
 					>
 				</File>
@@ -3705,6 +3717,14 @@
 				Name="macro"
 				>
 				<File
+					RelativePath="..\sakura_core\macro\CEditorIfObj.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\macro\CEditorIfObj.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\macro\CKeyMacroMgr.cpp"
 					>
 				</File>
@@ -3766,6 +3786,18 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\macro\CWSH.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\macro\CWSHIfObj.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\macro\CWSHIfObj.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\macro\CWSHManager.cpp"
 					>
 				</File>
 				<File
@@ -4802,6 +4834,58 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\func\Funccode.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="plugin"
+				>
+				<File
+					RelativePath="..\sakura_core\plugin\CDllPlugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CDllPlugin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CJackManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CJackManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\COutlineIfObj.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CPlugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CPlugin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CPluginIfObj.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CPluginManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CPluginManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CWSHPlugin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\plugin\CWSHPlugin.h"
 					>
 				</File>
 			</Filter>
