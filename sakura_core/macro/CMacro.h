@@ -61,8 +61,9 @@ public:
 	void AddStringParam( const ACHAR* lParam ){ return AddStringParam(to_wchar(lParam)); }
 	void AddIntParam( const int lParam );
 
-	static void HandleCommand( CEditView* pcEditView, const EFunctionCode Index,	const WCHAR* Argument[], const int ArgSize );
-	static bool HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result);
+	static void HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgSize );
+	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
+	//2009.10.29 syat HandleCommandÇ∆HandleFunctionÇÃà¯êîÇè≠ÇµÇªÇÎÇ¶ÇΩ
 #if 0
 	/*
 	||  Attributes & Operations

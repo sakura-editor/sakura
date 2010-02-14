@@ -1669,5 +1669,10 @@ void CDlgFuncList::Redraw( int nOutLineType, CFuncInfoArr* pcFuncInfoArr, CLayou
 	SetData();
 }
 
+//ダイアログタイトルの設定
+void CDlgFuncList::SetWindowText( const TCHAR* szTitle )
+{
+	::SetWindowText( GetHwnd(), szTitle );
+}
 
 

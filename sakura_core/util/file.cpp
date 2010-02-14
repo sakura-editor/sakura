@@ -284,6 +284,35 @@ void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR*
 	return;
 }
 
+/* フォルダ、ファイル名から、結合したパスを作成
+ * [c:\work\test] + [aaa.txt] → [c:\work\test\aaa.txt]
+ * フォルダ末尾に円記号があってもなくても良い。
+ */
+void Concat_FolderAndFile( const TCHAR* pszDir, const TCHAR* pszTitle, TCHAR* pszPath )
+{
+	TCHAR* out=pszPath;
+	const TCHAR* in;
+
+	//フォルダをコピー
+	for( in=pszDir ; *in != '\0'; ){
+		*out++ = *in++;
+	}
+	//円記号を付加
+#if UNICODE
+	if( *(out-1) != '\\' ){ *out++ = '\\'; }
+#else
+	if( *(out-1) != '\\' ||
+		(1 == out - CNativeT::GetCharPrev( pszDir, out - pszDir, out )) ){
+			*out++ = '\\';
+	}
+#endif
+	//ファイル名をコピー
+	for( in=pszTitle; *in != '\0'; ){
+		*out++ = *in++;
+	}
+	*out = '\0';
+	return;
+}
 
 
 /*! ロングファイル名を取得する 

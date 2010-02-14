@@ -10,6 +10,7 @@
 	Copyright (C) 2001, GAE, jepro
 	Copyright (C) 2003, Moca, genta, wmlhq
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2010, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -24,6 +25,15 @@
 //	Oct. 21, 2000 JEPRO 設定
 const int MAX_X = 32;
 const int MAX_Y = 12;	//2002.01.17
+
+/*! コンストラクタ */
+CImageListMgr::CImageListMgr()
+	: m_cx( 16 ), m_cy( 16 )
+	, m_hIconBitmap( NULL )
+	, m_cTrans( RGB( 0, 0, 0 ))
+	, m_nIconCount( MAX_X * MAX_Y )
+{
+}
 
 /*!	領域を指定色で塗りつぶす
 
@@ -164,6 +174,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 	@author Nakatani
 	@date 2003.07.21 genta 以前のCMenuDrawerより移転復活
 	@date 2003.08.27 Moca 背景は透過処理に変更し、colBkColorを削除
+	@date 2010.01.30 syat 透明にする色を引数に移動
 */
 void CImageListMgr::MyBitBlt(
 	HDC drawdc, 
@@ -173,10 +184,10 @@ void CImageListMgr::MyBitBlt(
 	int nHeight, 
 	HBITMAP bmp, 
 	int nXSrc, 
-	int nYSrc
+	int nYSrc,
+	COLORREF colToTransParent	/* BMPの中の透明にする色 */
 ) const
 {
-	COLORREF colToTransParent = m_cTrans;	/* BMPの中の透明にする色 */
 //	HBRUSH	brShadow, brHilight;
 	HDC		hdcMask;
 	HBITMAP bmpMask;
@@ -334,11 +345,11 @@ bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 
 	if( fstyle == ILD_MASK ){
 		DitherBlt2( dc, x, y, cx(), cy(), m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
+			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
 	}
 	else {
 		MyBitBlt( dc, x, y, cx(), cy(), m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
+			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), m_cTrans );
 	}
 	return true;
 }
@@ -349,6 +360,73 @@ bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 */
 int CImageListMgr::Count() const
 {
-	return MAX_X * MAX_Y;
+	return m_nIconCount;
+//	return MAX_X * MAX_Y;
 }
 
+/*!	アイコンを追加してそのIDを返す */
+int CImageListMgr::Add(const TCHAR* szPath)
+{
+	if( (m_nIconCount % MAX_X) == 0 ){
+		Extend();
+	}
+	int index = m_nIconCount;
+	m_nIconCount++;
+
+	//アイコンを読み込む
+	HBITMAP hExtBmp = (HBITMAP)::LoadImage( NULL, szPath, IMAGE_BITMAP, 0, 0,
+		LR_LOADFROMFILE | LR_CREATEDIBSECTION );
+
+	if( hExtBmp == NULL ) {
+		return -1;
+	}
+
+	//m_hIconBitmapにコピーする
+	HDC hDestDC = ::CreateCompatibleDC( 0 );
+	HBITMAP hOldDestBmp = (HBITMAP)::SelectObject( hDestDC, m_hIconBitmap );
+
+	HDC hExtDC = ::CreateCompatibleDC( 0 );
+	HBITMAP hOldBmp = (HBITMAP)::SelectObject( hExtDC, hExtBmp );
+	COLORREF cTrans = GetPixel( hExtDC, 0, 0 );//	取得した画像の(0,0)の色を背景色として使う
+	::SelectObject( hExtDC, hOldBmp );
+	::DeleteDC( hExtDC );
+
+	MyBitBlt( hDestDC, (index % MAX_X) * cx(), (index / MAX_X) * cy(), cx(), cy(), hExtBmp, 0, 0, cTrans );
+
+	::SelectObject( hDestDC, hOldDestBmp );
+	::DeleteDC( hDestDC );
+	::DeleteObject( hExtBmp );
+
+	return index;
+}
+
+// ビットマップを一行（MAX_X個）拡張する
+void CImageListMgr::Extend()
+{
+	int curY = m_nIconCount / MAX_X;
+	if( curY < MAX_Y )
+		curY = MAX_Y;
+
+	HDC hSrcDC = ::CreateCompatibleDC( 0 );
+	HBITMAP hSrcBmpOld = (HBITMAP)::SelectObject( hSrcDC, m_hIconBitmap );
+
+	//1行拡張したビットマップを作成
+	HDC hDestDC = ::CreateCompatibleDC( hSrcDC );
+	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hSrcDC, MAX_X * cx(), (curY + 1) * cy() );
+	HBITMAP hDestBmpOld = (HBITMAP)::SelectObject( hDestDC, hDestBmp );
+
+	::BitBlt( hDestDC, 0, 0, MAX_X * cx(), curY * cy(), hSrcDC, 0, 0, SRCCOPY );
+
+	//拡張した部分は透過色で塗る
+	FillSolidRect( hDestDC, 0, curY * cy(), MAX_X * cx(), cy(), m_cTrans );
+
+	::SelectObject( hSrcDC, hSrcBmpOld );
+	::DeleteObject( m_hIconBitmap );
+	::DeleteDC( hSrcDC );
+
+	::SelectObject( hDestDC, hDestBmpOld );
+	::DeleteDC( hDestDC );
+
+	//ビットマップの差し替え
+	m_hIconBitmap = hDestBmp;
+}

@@ -33,6 +33,8 @@
 #include "debug/CRunningTimer.h"
 #include "util/window.h"
 #include "util/file.h"
+#include "plugin/CPluginManager.h"
+#include "plugin/CJackManager.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
@@ -46,6 +48,8 @@ CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine )
 
 CNormalProcess::~CNormalProcess()
 {
+	/* プラグイン解放 */
+	CPluginManager::Instance()->UnloadAllPlugin();
 }
 
 
@@ -75,6 +79,7 @@ bool CNormalProcess::InitializeProcess()
 		return false;
 	}
 
+	/* 共有メモリを初期化する */
 	if ( !CProcess::InitializeProcess() ){
 		return false;
 	}
@@ -122,6 +127,17 @@ bool CNormalProcess::InitializeProcess()
 		}
 	}
 
+
+	// プラグイン読み込み
+	MY_TRACETIME( cRunningTimer, "Before Init Jack" );
+	/* ジャック初期化 */
+	CJackManager::Instance();
+	MY_TRACETIME( cRunningTimer, "After Init Jack" );
+
+	MY_TRACETIME( cRunningTimer, "Before Load Plugins" );
+	/* プラグイン読み込み */
+	CPluginManager::Instance()->LoadAllPlugin();
+	MY_TRACETIME( cRunningTimer, "After Load Plugins" );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	m_pcEditApp = new CEditApp(GetProcessInstance());
@@ -305,6 +321,18 @@ bool CNormalProcess::InitializeProcess()
 
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
+
+	//プラグイン：EditorStartイベント実行
+	CPlug::List plugs;
+	CWSHIfObj::List params;
+	CJackManager::Instance()->GetUsablePlug(
+			PP_EDITOR_START,
+			0,
+			&plugs
+		);
+	for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ){
+		(*it)->Invoke(&pEditWnd->GetActiveView(), params);
+	}
 
 	// 2006.09.03 ryoji オープン後自動実行マクロを実行する
 	if( !( bDebugMode || bGrepMode ) )

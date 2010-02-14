@@ -35,6 +35,13 @@ class CPropTypes;
 #define STR_COLORDATA_SECTION	"SakuraColor"
 
 
+//2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
+template <class TYPE>
+struct TYPE_NAME {
+	TYPE		nMethod;
+	TCHAR*		pszName;
+};
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -44,6 +51,7 @@ class CPropTypes;
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class SAKURA_CORE_API CPropTypes{
+
 public:
 	//生成と破棄
 	CPropTypes();
@@ -76,9 +84,14 @@ private:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	INT_PTR DispatchEvent_Screen( HWND, UINT, WPARAM, LPARAM );		//!< p1 メッセージ処理
+	static void AddOutlineMethod(int nMethod, const WCHAR* szName);	//!<アウトライン解析ルールの追加
+	static void AddSIndentMethod(int nMethod, const WCHAR* szName);	//!<スマートインデントルールの追加
 protected:
-	void SetData_p1( HWND );	//!< ダイアログデータの設定 p1
-	int  GetData_p1( HWND );	//!< ダイアログデータの取得 p1
+	void SetData_p1( HWND );										//!< ダイアログデータの設定 p1
+	int  GetData_p1( HWND );										//!< ダイアログデータの取得 p1
+	static std::vector<TYPE_NAME<EOutlineType>> m_OlmArr;			//!<アウトライン解析ルール配列
+	static std::vector<TYPE_NAME<ESmartIndentType>> m_SIndentArr;	//!<スマートインデントルール配列
+	void CPropTypes_Screen();										//!<スクリーンタブのコンストラクタ
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

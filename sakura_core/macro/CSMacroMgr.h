@@ -50,6 +50,7 @@ class CEditView;
 
 const int INVALID_MACRO_IDX	= -2;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
+//マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
 	EFunctionCode	m_nFuncID;
@@ -58,6 +59,8 @@ struct MacroFuncInfo {
 	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
 	wchar_t*		m_pszData;
 };
+//マクロ関数情報構造体配列
+typedef MacroFuncInfo* MacroFuncInfoArray;
 
 /*-----------------------------------------------------------------------
 クラスの宣言

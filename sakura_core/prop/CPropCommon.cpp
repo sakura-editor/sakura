@@ -41,12 +41,12 @@
 
 // 2009.01.17 nasukoji	オプションの取得・設定用（CPropTypes_P1_Screen.cppからコピー）
 //template <class TYPE>
-struct TYPE_NAME {
-	int/*TYPE*/		nMethod;
-	TCHAR*		pszName;
-};
+//struct TYPE_NAME {
+//	int/*TYPE*/		nMethod;
+//	TCHAR*		pszName;
+//};
 
-TYPE_NAME/*<ESpecialScrollModeType>*/ SpecialScrollModeArr[] = {
+TYPE_NAME<int> SpecialScrollModeArr[] = {
 	{ 0,						_T("組み合わせなし") },
 	{ MOUSEFUNCTION_CENTER,		_T("マウス中ボタン") },
 	{ MOUSEFUNCTION_LEFTSIDE,	_T("マウスサイドボタン1") },
@@ -282,6 +282,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ _T("強調キーワード"),		IDD_PROP_KEYWORD,	DlgProc_PROP_KEYWORD },
 		{ _T("支援"),				IDD_PROP_HELPER,	DlgProc_PROP_HELPER },
 		{ _T("マクロ"),				IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
+		{ _T("プラグイン"),			IDD_PROP_PLUGIN,	DlgProc_PROP_PLUGIN },
 	};
 
 	PROPSHEETPAGE		psp[32];
@@ -893,6 +894,9 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 		break;
 	case IDD_PROP_FNAME:	// 2002.12.09 Moca FNAME追加
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_FNAME);
+		break;
+	case IDD_PROP_PLUGIN:	//@@@ 2002.01.02
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_PLUGIN);
 		break;
 
 	default:

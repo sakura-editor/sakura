@@ -21,6 +21,7 @@ FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 200
 SAKURA_CORE_API void CutLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 SAKURA_CORE_API void AddLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 SAKURA_CORE_API void SplitPath_FolderAndFile( const TCHAR*, TCHAR*, TCHAR* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+SAKURA_CORE_API void Concat_FolderAndFile( const TCHAR*, const TCHAR*, TCHAR* );/* フォルダ、ファイル名から、結合したパスを作成 */
 SAKURA_CORE_API BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ロングファイル名を取得する */
 SAKURA_CORE_API BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* 拡張子を調べる */
 const TCHAR* GetFileTitlePointer(const TCHAR* tszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成

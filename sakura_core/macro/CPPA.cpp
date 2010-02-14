@@ -552,7 +552,7 @@ bool CPPA::CallHandleFunction(
 
 	if(Index >= F_FUNCTION_FIRST)
 	{
-		Ret = CMacro::HandleFunction(m_CurInstance->m_pcEditView, Index, vtArg, ArgCnt, *Result);
+		Ret = CMacro::HandleFunction(m_CurInstance->m_pcEditView, (EFunctionCode)Index, vtArg, ArgCnt, *Result);
 		for( i=0; i<4; i++ ){
 			::VariantClear( &vtArg[i] );
 		}

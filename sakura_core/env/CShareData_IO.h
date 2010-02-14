@@ -29,6 +29,7 @@ public:
 	static void ShareData_IO_KeyWords( CDataProfile& );
 	static void ShareData_IO_Macro( CDataProfile& );
 	static void ShareData_IO_Statusbar( CDataProfile& );	// 2008/6/21 Uchi
+	static void ShareData_IO_Plugin( CDataProfile& );		// 2009/11/30 syat
 	static void ShareData_IO_Other( CDataProfile& );
 
 

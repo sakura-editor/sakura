@@ -169,8 +169,15 @@ protected:
 	{
 		*profile = to_wchar(value.GetBufferPointer());
 	}
-
-	
+	//wstring
+	void profile_to_value(const wstring& profile, wstring* value)
+	{
+		*value = profile;
+	}
+	void value_to_profile(const wstring& value, wstring* profile)
+	{
+		*profile = value;
+	}
 
 
 
