@@ -67,7 +67,7 @@ public:
 		return true;
 	}
 	CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel );
-	CPlug::List GetPlugs() const{
+	CPlug::Array GetPlugs() const{
 		return m_plugs;
 	}
 	bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params );

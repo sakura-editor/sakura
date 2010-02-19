@@ -33,7 +33,7 @@
 // デストラクタ
 CWSHPlugin::~CWSHPlugin(void)
 {
-	for( CPlug::ListIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
+	for( CPlug::ArrayIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
 		delete *it;
 	}
 }

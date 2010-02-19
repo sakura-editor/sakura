@@ -77,7 +77,7 @@ public:
 public:
 	bool ReadPluginDef( CDataProfile *cProfile );
 	bool ReadPluginOption( CDataProfile *cProfile );
-	CPlug::List GetPlugs() const{
+	CPlug::Array GetPlugs() const{
 		return m_plugs;
 	}
 	bool InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& params );

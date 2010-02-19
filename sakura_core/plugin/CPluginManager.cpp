@@ -160,7 +160,7 @@ bool CPluginManager::LoadAllPlugin()
 	for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
 		if( plugin_table[iNo].m_szName[0] == '\0' ) continue;
 
-		CPlugin* plugin = LoadPlugin( szPluginPath, plugin_table[iNo].m_szName );
+		CPlugin* plugin = LoadPlugin( szPluginPath, const_cast<TCHAR*>(to_tchar(plugin_table[iNo].m_szName)) );
 		if( plugin ){
 			plugin->m_id = iNo;		//プラグインテーブルの行番号をIDとする
 			m_plugins.push_back( plugin );
@@ -234,9 +234,9 @@ CPlugin* CPluginManager::LoadPlugin( TCHAR* pszPluginDir, TCHAR* pszPluginName )
 bool CPluginManager::RegisterPlugin( CPlugin* plugin )
 {
 	CJackManager* pJackMgr = CJackManager::Instance();
-	CPlug::List plugs = plugin->GetPlugs();
+	CPlug::Array plugs = plugin->GetPlugs();
 
-	for( CPlug::ListIter plug = plugs.begin() ; plug != plugs.end(); plug++ ){
+	for( CPlug::ArrayIter plug = plugs.begin() ; plug != plugs.end(); plug++ ){
 		pJackMgr->RegisterPlug( (*plug)->m_sJack.c_str(), *plug );
 	}
 

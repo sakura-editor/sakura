@@ -66,7 +66,7 @@ private:
 private:
 	DLLSHAREDATA* m_pShareData;
 	CPlugin::List m_plugins;
-	wstring m_sInstallError;			//InstallPluginのエラー理由
+	std::wstring m_sInstallError;			//InstallPluginのエラー理由
 
 };
 

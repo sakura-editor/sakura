@@ -99,13 +99,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 					if( sel >= 0 ){
 						CPlugin* plugin = CPluginManager::Instance()->GetPlugin(sel);
 						if( plugin != NULL ){
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), plugin->m_sDescription.c_str() );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), plugin->m_sAuthor.c_str() );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), plugin->m_sVersion.c_str() );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), to_tchar(plugin->m_sDescription.c_str()) );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), to_tchar(plugin->m_sAuthor.c_str()) );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), to_tchar(plugin->m_sVersion.c_str()) );
 						}else{
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), L"" );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), L"" );
-							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), L"" );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), _T("") );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), _T("") );
+							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), _T("") );
 						}
 					}
 				}
@@ -150,7 +150,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 ){
 						CPlugin* plugin = CPluginManager::Instance()->GetPlugin( sel );
-						if( plugin && MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, (plugin->m_sName + _T(" ÇçÌèúÇµÇ‹Ç∑Ç©")).c_str() ) == IDYES ){
+						if( plugin && MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, to_tchar((plugin->m_sName + std::wstring(L" ÇçÌèúÇµÇ‹Ç∑Ç©")).c_str()) ) == IDYES ){
 							CPluginManager::Instance()->UninstallPlugin( m_Common, sel );
 							SetData_PROP_PLUGIN_LIST( hwndDlg );
 						}
@@ -249,7 +249,7 @@ void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 1;
-		sItem.pszText = plugin ? const_cast<LPWSTR>(plugin->m_sName.c_str()) : L"";
+		sItem.pszText = plugin ? const_cast<LPTSTR>( to_tchar(plugin->m_sName.c_str()) ) : _T("");
 		ListView_SetItem( hListView, &sItem );
 
 		//èÛë‘
@@ -269,7 +269,7 @@ void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		sItem.pszText = plugin_table[index].m_szName;
+		sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin_table[index].m_szName) );
 		ListView_SetItem( hListView, &sItem );
 	}
 	

@@ -64,8 +64,14 @@ class CPlug
 protected:
 	typedef std::wstring wstring;
 public:
-	typedef std::vector<CPlug*> List;		//プラグのリスト
-	typedef List::const_iterator ListIter;	//そのイテレータ
+	/*!
+	  CPlug::Arrayはstd::vectorなので、要素の追加削除（insert/erase）をすると
+	  イテレータが無効になることがある。そのため変数に格納したイテレータを
+	  insert/eraseの第一引数に指定すると、VC2005でビルドエラーが出る。
+	  かわりにbegin/endからの相対位置指定や、インデックス指定を使うこと。
+	*/
+	typedef std::vector<CPlug*> Array;			//プラグのリスト
+	typedef Array::const_iterator ArrayIter;	//そのイテレータ
 
 	//コンストラクタ
 public:
@@ -141,7 +147,7 @@ protected:
 public:
 	tstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
 	tstring GetOptionPath() const{ return m_sBaseDir + PII_OPTFILEEXT; }	//オプションファイルのパス
-	virtual CPlug::List GetPlugs() const = 0;								//プラグの一覧
+	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数
 public:
@@ -156,7 +162,7 @@ public:
 private:
 	bool m_bLoaded;
 protected:
-	CPlug::List m_plugs;
+	CPlug::Array m_plugs;
 	int m_nCommandCount;
 
 	//非実装提供

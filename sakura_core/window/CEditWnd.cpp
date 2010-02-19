@@ -2305,8 +2305,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				const CPlugin* prevPlugin = NULL;
 				HMENU hMenuPlugin;
 
-				CPlug::List plugs = pcJackManager->GetPlugs( PP_COMMAND );
-				for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ){
+				CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
+				for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
 					const CPlugin* curPlugin = &(*it)->m_cPlugin;
 					if( curPlugin != prevPlugin ){
 						//プラグインが変わったらプラグインポップアップメニューを登録
@@ -4584,8 +4584,8 @@ void CEditWnd::RegisterPluginCommand( int idCommand )
 //プラグインコマンドをエディタに登録する（一括）
 void CEditWnd::RegisterPluginCommand()
 {
-	const CPlug::List& plugs = CJackManager::Instance()->GetPlugs( PP_COMMAND );
-	for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ) {
+	const CPlug::Array& plugs = CJackManager::Instance()->GetPlugs( PP_COMMAND );
+	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
 		RegisterPluginCommand( *it );
 	}
 }
@@ -4595,7 +4595,7 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 {
 	int iBitmap = 383;
 	if( !plug->m_sIcon.empty() ){
-		iBitmap = m_CMenuDrawer.m_pcIcons->Add( to_tchar(plug->m_cPlugin.GetFilePath( plug->m_sIcon ).c_str()) );
+		iBitmap = m_CMenuDrawer.m_pcIcons->Add( to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
 	}
 
 	m_CMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );

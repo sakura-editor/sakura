@@ -31,7 +31,7 @@
 // デストラクタ
 CDllPlugin::~CDllPlugin(void)
 {
-	for( CPlug::ListIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
+	for( CPlug::ArrayIter it = m_plugs.begin(); it != m_plugs.end(); it++ ){
 		delete (CDllPlug*)(*it);
 	}
 }
@@ -64,7 +64,7 @@ bool CDllPlugin::ReadPluginDef( CDataProfile *cProfile )
 // プラグ実行
 bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& params )
 {
-	tstring dllPath = GetFilePath( m_sDllName );
+	tstring dllPath = GetFilePath( to_tchar(m_sDllName.c_str()) );
 	EDllResult resInit = InitDll( to_tchar( dllPath.c_str() ) );
 	if( resInit != DLL_SUCCESS ){
 		::MYMESSAGEBOX( view->m_hwndParent, MB_OK, _T("DLLプラグイン"), _T("DLLの読み込みに失敗しました\n%ts\n%ls"), dllPath, m_sName );
