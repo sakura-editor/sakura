@@ -54,7 +54,7 @@ enum EJack {
 typedef struct tagJackDef {
 	EJack			ppId;
 	const WCHAR*	szName;
-	CPlug::List		plugs;	//ジャックに関連付けられたプラグ
+	CPlug::Array		plugs;	//ジャックに関連付けられたプラグ
 } JackDef;
 
 // プラグ登録結果
@@ -80,7 +80,7 @@ protected:
 public:
 	ERegisterPlugResult RegisterPlug( wstring pszJack, CPlug* plug );	//プラグをジャックに関連付ける
 	bool UnRegisterPlug( wstring pszJack, CPlug* plug );	//プラグの関連付けを解除する
-	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::List* plugs );	//利用可能なプラグを検索する
+	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する
 private:
 	EJack GetJackFromName( wstring sName );	//ジャック名をジャック番号に変換する
 
@@ -91,7 +91,7 @@ public:
 	int GetCommandName( int funccode, WCHAR* buf, int size ) const;	//プラグインコマンドの名前を返す
 	int GetCommandCount() const;	//プラグインコマンドの数を返す
 	CPlug* GetCommandById( int id ) const;	//IDに合致するコマンドプラグを返す
-	const CPlug::List& GetPlugs( EJack jack ) const;	//プラグを返す
+	const CPlug::Array& GetPlugs( EJack jack ) const;	//プラグを返す
 	//TODO: 作りが一貫してないので整理する syat
 
 	//メンバ変数

@@ -937,7 +937,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		// 2003.02.24 Moca
 		{
 			if(ArgSize != 1) return false;
-			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			//void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);
 			//pszSourceを展開して、pszBufferにコピー
 			wchar_t *Source;
@@ -954,7 +954,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2003.06.01 Moca マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			if( -1 < varCopy.Data.lVal ){
 				const wchar_t *Buffer;
 				CLogicInt nLength;
@@ -981,7 +981,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2003.06.01 Moca マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			if( 0 == varCopy.Data.lVal ){
 				int nLineCount;
 				nLineCount = View->m_pcEditDoc->m_cDocLineMgr.GetLineCount();
@@ -995,7 +995,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2004.03.16 zenryaku マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			Wrap( &Result )->Receive( (Int)View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 			View->m_pcEditDoc->m_pcEditWnd->ChangeLayoutParam(
 				false, 
@@ -1093,7 +1093,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		//	2008.06.19 ryoji マクロ追加
 		{
 			if( ArgSize != 1 ) return false;
-			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			Wrap( &Result )->Receive( (Int)View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() );
 			if( varCopy.Data.iVal < MINLINEKETAS || varCopy.Data.iVal > MAXLINEKETAS )
 				return true;
@@ -1116,7 +1116,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			int nType1 = View->m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex();	// 現在のタイプ
 
-			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
 			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 指定拡張子のタイプ
 			delete[] Source;
@@ -1132,12 +1132,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			TCHAR *Source;
 			int SourceLength;
 
-			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
 			int nType1 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 拡張子１のタイプ
 			delete[] Source;
 
-			if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
 			int nType2 = CDocTypeManager().GetDocumentTypeOfExt(Source).GetIndex();	// 拡張子２のタイプ
 			delete[] Source;

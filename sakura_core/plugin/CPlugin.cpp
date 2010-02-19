@@ -106,16 +106,16 @@ bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile )
 	WCHAR bufKey[64];
 
 	for( int nCount = 1; nCount < 100; nCount++ ){	//添え字は１から始める
-		wsprintf( bufKey, L"C[%d]", nCount );
+		swprintf( bufKey, L"C[%d]", nCount );
 		if( cProfile->IOProfileData( PII_COMMAND, bufKey, sHandler ) ){
 			wstring sLabel;
 			wstring sIcon;
 
 			//ラベルの取得
-			wsprintf( bufKey, L"C[%d].Label", nCount );
+			swprintf( bufKey, L"C[%d].Label", nCount );
 			cProfile->IOProfileData( PII_COMMAND, bufKey, sLabel );
 			//アイコンの取得
-			wsprintf( bufKey, L"C[%d].Icon", nCount );
+			swprintf( bufKey, L"C[%d].Icon", nCount );
 			cProfile->IOProfileData( PII_COMMAND, bufKey, sIcon );
 
 			AddCommand( sHandler.c_str(), sLabel.c_str(), sIcon.c_str(), false );

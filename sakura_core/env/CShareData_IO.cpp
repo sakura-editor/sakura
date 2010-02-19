@@ -1509,9 +1509,9 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
 		PluginRec& pluginrec = common.m_sPlugin.m_PluginTable[i];
 
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Name"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(pluginrec.m_szName) );
+		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szName) );
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Id"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(pluginrec.m_szId) );
+		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szId) );
 	}
 }
 

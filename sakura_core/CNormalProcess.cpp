@@ -323,14 +323,14 @@ bool CNormalProcess::InitializeProcess()
 	::CloseHandle( hMutex );
 
 	//プラグイン：EditorStartイベント実行
-	CPlug::List plugs;
+	CPlug::Array plugs;
 	CWSHIfObj::List params;
 	CJackManager::Instance()->GetUsablePlug(
 			PP_EDITOR_START,
 			0,
 			&plugs
 		);
-	for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ){
+	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
 		(*it)->Invoke(&pEditWnd->GetActiveView(), params);
 	}
 

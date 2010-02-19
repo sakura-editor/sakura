@@ -672,7 +672,7 @@ BOOL CViewCommander::HandleCommand(
 	default:
 		//プラグインコマンドを実行する
 		{
-			CPlug::List plugs;
+			CPlug::Array plugs;
 			CJackManager::Instance()->GetUsablePlug( PP_COMMAND, nCommand, &plugs );
 
 			if( plugs.size() > 0 ){
@@ -2841,7 +2841,7 @@ end_of_for:;
 	default:
 		//プラグインから検索する
 		{
-			CPlug::List plugs;
+			CPlug::Array plugs;
 			CJackManager::Instance()->GetUsablePlug( PP_SMARTINDENT, nSIndentType, &plugs );
 
 			if( plugs.size() > 0 ){
@@ -4342,7 +4342,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	default:
 		//プラグインから検索する
 		{
-			CPlug::List plugs;
+			CPlug::Array plugs;
 			CJackManager::Instance()->GetUsablePlug( PP_OUTLINE, nOutlineType, &plugs );
 
 			if( plugs.size() > 0 ){

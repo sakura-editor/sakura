@@ -80,14 +80,14 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 	}
 
 	//機能IDの昇順になるようにプラグを登録する
-	CPlug::List& plugs = m_Jacks[ ppId ].plugs;
+	CPlug::Array& plugs = m_Jacks[ ppId ].plugs;
 	int plugid = plug->GetFunctionCode();
 	if( plugs.empty()  ||  (*(plugs.end() - 1))->GetFunctionCode() < plugid ){
 		plugs.push_back( plug );
 	} else {
-		for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ){
-			if( plugid < (*it)->GetFunctionCode() ){
-				plugs.insert( it, plug );
+		for( unsigned int index=0; index<plugs.size(); index++ ){
+			if( plugid < plugs[index]->GetFunctionCode() ){
+				plugs.insert( plugs.begin() + index, plug );
 				break;
 			}
 		}
@@ -115,9 +115,9 @@ bool CJackManager::UnRegisterPlug( wstring pszJack, CPlug* plug )
 {
 	EJack ppId = GetJackFromName( pszJack );
 
-	for( CPlug::ListIter it = m_Jacks[ ppId ].plugs.begin(); it != m_Jacks[ ppId ].plugs.end(); it++ ){
-		if( (*it) == plug ){
-			m_Jacks[ ppId ].plugs.erase( it );
+	for( unsigned int index=0; index<m_Jacks[ ppId ].plugs.size(); index++ ){
+		if( m_Jacks[ ppId ].plugs[index] == plug ){
+			m_Jacks[ ppId ].plugs.erase( m_Jacks[ ppId ].plugs.begin() + index );
 		}
 	}
 
@@ -144,10 +144,10 @@ EJack CJackManager::GetJackFromName( wstring sName )
 bool CJackManager::GetUsablePlug(
 	EJack			jack,		//!< [in] ジャック番号
 	PlugId			plugId,		//!< [in] プラグID
-	CPlug::List*	plugs		//!< [out] 利用可能プラグのリスト
+	CPlug::Array*	plugs		//!< [out] 利用可能プラグのリスト
 )
 {
-	for( CPlug::List::iterator it = m_Jacks[jack].plugs.begin(); it != m_Jacks[jack].plugs.end(); it++ ){
+	for( CPlug::Array::iterator it = m_Jacks[jack].plugs.begin(); it != m_Jacks[jack].plugs.end(); it++ ){
 		if( plugId == 0 || plugId == (*it)->GetFunctionCode() ){
 			plugs->push_back( *it );
 		}
@@ -158,7 +158,7 @@ bool CJackManager::GetUsablePlug(
 //プラグインコマンドの機能番号を返す
 EFunctionCode CJackManager::GetCommandCode( int index ) const
 {
-	CPlug::List commands = m_Jacks[ PP_COMMAND ].plugs;
+	CPlug::Array commands = m_Jacks[ PP_COMMAND ].plugs;
 
 	if( (unsigned int)index < commands.size() ){
 		return ( commands[index] )->GetFunctionCode();
@@ -170,7 +170,7 @@ EFunctionCode CJackManager::GetCommandCode( int index ) const
 //プラグインコマンドの名前を返す
 int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 {
-	for( CPlug::ListIter it = m_Jacks[ PP_COMMAND ].plugs.begin(); it != m_Jacks[ PP_COMMAND ].plugs.end(); it++ ){
+	for( CPlug::ArrayIter it = m_Jacks[ PP_COMMAND ].plugs.begin(); it != m_Jacks[ PP_COMMAND ].plugs.end(); it++ ){
 		if( ((CPlug*)(*it))->GetFunctionCode() == funccode ){
 			wcsncpy( buf, ((CPlug*)(*it))->m_sLabel.c_str(), size );
 			buf[ size-1 ] = L'\0';
@@ -189,8 +189,8 @@ int CJackManager::GetCommandCount() const
 //IDに合致するコマンドプラグを返す
 CPlug* CJackManager::GetCommandById( int id ) const
 {
-	const CPlug::List& plugs = GetPlugs( PP_COMMAND );
-	for( CPlug::ListIter it = plugs.begin(); it != plugs.end(); it++ ){
+	const CPlug::Array& plugs = GetPlugs( PP_COMMAND );
+	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
 		if( (*it)->GetFunctionCode() == id ){
 			return (*it);
 		}
@@ -200,7 +200,7 @@ CPlug* CJackManager::GetCommandById( int id ) const
 }
 
 //プラグを返す
-const CPlug::List& CJackManager::GetPlugs( EJack jack ) const
+const CPlug::Array& CJackManager::GetPlugs( EJack jack ) const
 {
 	return m_Jacks[ jack ].plugs;	
 }
