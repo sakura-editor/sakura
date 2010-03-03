@@ -27,13 +27,21 @@ aaHHCtlCloseWin.Click(); }
 <br>
 
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
-・構文: ExecExternalMacro( str1 :String );<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;実行したいマクロファイルのパス<br>
-・記録:	○<br>
-
+・構文: ExecExternalMacro( str1 :String, str2:String );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;(オプション)実行したいマクロファイルのパス、またはコード<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;(オプション)マクロ種別の.を除く拡張子、'mac', 'js', 'vbs'等<br>
+・記録:○<br>
 ・解説<br>
-マクロファイル名を省略すると、ファイルを開くダイアログが表示されます。<br>
+<div class="li200">
+str1 および str2 を省略すると、ファイルを開くダイアログが表示されます。<br>
 PPAの実行中に別のPPAを実行しようとするとメッセージを表示して以降のPPA実行を中止します。<br>
+str1 のみを指定して str2 を省略した場合、str1 は、マクロファイルのパスになります。<br>
+str2 を指定した場合、str1 は str2 の種類の、マクロのコードそのものになります。<br>
+ファイルを実行の例：ExecExternalMacro( 'file.mac' );<br>
+コードを実行の例：ExecExternalMacro( 'Editor.ChangeWrapColm(Editor.ChangeWrapColm(0)+2);', 'js' );<br>
+</div>
+sakura:1.6.3.0 コマンド追加<br>
+sakura:1.6.5.0 str2 追加(PPA以外)<br>
 <br>
 
 </BODY></HTML>

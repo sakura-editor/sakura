@@ -24,6 +24,9 @@ aaHHCtlCloseWin.Click(); }
 </script>
 <h2>開く</h2>
 ディスクにあるファイルを開くことができます。<br>
+(無題)で変更していないウィンドウの場合は、今のウィンドウでファイルを開きます。<br>
+それ以外の場合は、新しいウィンドウを作成して開きます。<br>
+フォルダの初期値はカレントディレクトリです。<br>
 <br>
 <img src="images/OpenFile.png"><br>
 <br>
@@ -108,5 +111,6 @@ Unicode(UTF-7)なコードのファイルとして読み込みます。<br>
 <br>
 <img src="images/note.png"><b>注意</b><br>
 開くのダイアログをマクロで出すことはできません。<br>
-またマクロで文字コードを指定することもできません。<br>
+またマクロで文字コードを指定することもできません。今のところFileReopen系コマンドを併用してください。<br>
+開いた後の文字コードは、<a href="HLP000268.html#GetCharCode">GetCharCode</a>で取得できます。
 </BODY></HTML>
