@@ -501,10 +501,22 @@ struct CommonSetting_Statusbar
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        プラグイン                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//プラグイン状態
+enum EPluginState {
+	PLS_NONE,			//!< プラグインテーブルに登録がない
+	PLS_INSTALLED,		//!< 追加された
+	PLS_UPDATED,		//!< 更新された
+	PLS_STOPPED,		//!< 停止している
+	PLS_LOADED,			//!< 読み込まれた
+	PLS_DELETED			//!< 削除された
+};
+
 struct PluginRec
 {
-	WCHAR			m_szId[MAX_PLUGIN_ID];
-	WCHAR			m_szName[MAX_PLUGIN_NAME];
+	WCHAR			m_szId[MAX_PLUGIN_ID];		//!< プラグインID
+	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< プラグイン和名
+	EPluginState	m_state;					//!< プラグイン状態。設定ファイルに保存せずメモリ上のみ。
 };
 
 struct CommonSetting_Plugin

@@ -151,13 +151,13 @@ public:
 
 	//メンバ変数
 public:
-	PluginId m_id;
-	wstring m_sId;
-	wstring m_sName;
-	wstring m_sDescription;
-	wstring m_sAuthor;
-	wstring m_sVersion;
-	wstring m_sUrl;
+	PluginId m_id;				//!< プラグイン番号（エディタがふる0～MAX_PLUGIN-1の番号）
+	wstring m_sId;				//!< プラグインID
+	wstring m_sName;			//!< プラグイン和名
+	wstring m_sDescription;		//!< プラグインについての簡単な記述
+	wstring m_sAuthor;			//!< 作者
+	wstring m_sVersion;			//!< バージョン
+	wstring m_sUrl;				//!< 配布URL
 	tstring m_sBaseDir;
 private:
 	bool m_bLoaded;

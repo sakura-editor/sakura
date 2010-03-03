@@ -35,16 +35,14 @@
 class CPluginManager : public TSingleton<CPluginManager>{
 	// 型定義
 private:
+	typedef std::wstring wstring;
 	typedef std::basic_string<TCHAR> tstring;
 public:
 	friend class TSingleton<CPluginManager>;
 
 	// コンストラクタ
 protected:
-	CPluginManager()
-	{
-		m_pShareData = &GetDllShareData();
-	}
+	CPluginManager();
 
 	// デストラクタ
 	// Singletonのため呼ばれない。
@@ -53,20 +51,25 @@ protected:
 public:
 	bool LoadAllPlugin();				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
-	bool SearchNewPlugin( CommonSetting& common );		//新規プラグインを追加する
-	bool InstallPlugin( CommonSetting& common, TCHAR* pszPluginDir, TCHAR* pszPluginName );	//プラグインの初期導入をする
+	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを追加する
+	int InstallPlugin( CommonSetting& common, TCHAR* pszPluginName, HWND hWndOwner );	//プラグインの初期導入をする
 	CPlugin* GetPlugin( int id );		//プラグインを取得する
 	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
 
 private:
-	CPlugin* LoadPlugin( TCHAR* pszPluginDir, TCHAR* pszPluginName );	//プラグインを読み込む
+	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, TCHAR* pszPluginName );	//プラグインを読み込む
 	bool RegisterPlugin( CPlugin* plugin );	//プラグインをCJackManagerに登録する
+
+	//属性
+public:
+	//pluginsフォルダのパス
+	const tstring GetBaseDir() { return m_sBaseDir; }
 
 	// メンバ変数
 private:
-	DLLSHAREDATA* m_pShareData;
 	CPlugin::List m_plugins;
-	std::wstring m_sInstallError;			//InstallPluginのエラー理由
+	wstring m_sInstallError;			//InstallPluginのエラー理由
+	tstring m_sBaseDir;					//pluginsフォルダのパス
 
 };
 

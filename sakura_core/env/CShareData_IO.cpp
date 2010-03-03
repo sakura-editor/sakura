@@ -1512,6 +1512,7 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szName) );
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Id"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szId) );
+		pluginrec.m_state = ( pluginrec.m_szId[0] == '\0' ? PLS_NONE : PLS_STOPPED );
 	}
 }
 
