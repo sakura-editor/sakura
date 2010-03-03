@@ -453,7 +453,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sPlugin.m_bEnablePlugin			= FALSE;	// プラグインを使用する
 		for( int nPlugin=0; nPlugin < MAX_PLUGIN; nPlugin++ ){
 			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_szName[0]	= L'\0';	// プラグイン名
-			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_szId[0]		= L'\0';	// プラグイン名
+			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_szId[0]	= L'\0';	// プラグインID
+			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_state = PLS_NONE;		// プラグイン状態
 		}
 
 		m_pShareData->m_sHistory.m_aCommands.clear();

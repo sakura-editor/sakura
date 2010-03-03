@@ -138,7 +138,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_PLUGIN_SearchNew:		// 新規プラグインを追加
-				CPluginManager::Instance()->SearchNewPlugin( m_Common );
+				CPluginManager::Instance()->SearchNewPlugin( m_Common, hwndDlg );
 				SetData_PROP_PLUGIN_LIST( hwndDlg );	//リストの再構築
 				break;
 			case IDC_CHECK_PluginEnable:	// プラグインを有効にする
@@ -149,8 +149,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 ){
-						CPlugin* plugin = CPluginManager::Instance()->GetPlugin( sel );
-						if( plugin && MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, to_tchar((plugin->m_sName + std::wstring(L" を削除しますか")).c_str()) ) == IDYES ){
+						if( MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, to_tchar((m_Common.m_sPlugin.m_PluginTable[sel].m_szName + std::wstring(L" を削除しますか")).c_str()) ) == IDYES ){
 							CPluginManager::Instance()->UninstallPlugin( m_Common, sel );
 							SetData_PROP_PLUGIN_LIST( hwndDlg );
 						}
@@ -231,6 +230,7 @@ void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
 	ListView_DeleteAllItems( hListView );
 
 	for( index = 0; index < MAX_PLUGIN; ++index ){
+		std::basic_string<TCHAR> sDirName;	//CPlugin.GetDirName()の結果保持変数
 		CPlugin* plugin = CPluginManager::Instance()->GetPlugin( index );
 
 		//番号
@@ -249,7 +249,11 @@ void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 1;
-		sItem.pszText = plugin ? const_cast<LPTSTR>( to_tchar(plugin->m_sName.c_str()) ) : _T("");
+		if( plugin ){
+			sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin->m_sName.c_str()) );
+		}else{
+			sItem.pszText = _T("-");
+		}
 		ListView_SetItem( hListView, &sItem );
 
 		//状態
@@ -257,10 +261,14 @@ void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 2;
-		if( plugin ){
-			sItem.pszText = _T("稼働");
-		}else{
-			sItem.pszText = _T("停止");
+		switch( plugin_table[index].m_state ){
+		case PLS_INSTALLED: sItem.pszText = _T("追加"); break;
+		case PLS_UPDATED:   sItem.pszText = _T("更新"); break;
+		case PLS_STOPPED:   sItem.pszText = _T("停止"); break;
+		case PLS_LOADED:    sItem.pszText = _T("稼働"); break;
+		case PLS_DELETED:   sItem.pszText = _T("削除"); break;
+		case PLS_NONE:      sItem.pszText = _T(""); break;
+		default:            sItem.pszText = _T("未定義"); break;
 		}
 		ListView_SetItem( hListView, &sItem );
 
@@ -269,7 +277,21 @@ void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin_table[index].m_szName) );
+		switch( plugin_table[index].m_state ){
+		case PLS_INSTALLED:
+		case PLS_UPDATED:
+		case PLS_STOPPED:
+		case PLS_LOADED:
+			if( plugin ){
+				sDirName = plugin->m_sBaseDir.substr( plugin->m_sBaseDir.rfind(_T('\\'))+1 );
+				sItem.pszText = const_cast<LPTSTR>( sDirName.c_str() );
+			}else{
+				sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin_table[index].m_szName) );
+			}
+			break;
+		default:
+			sItem.pszText = _T("");
+		}
 		ListView_SetItem( hListView, &sItem );
 	}
 	
