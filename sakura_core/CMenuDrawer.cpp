@@ -535,7 +535,8 @@ CMenuDrawer::CMenuDrawer()
 /* 382 */		F_DISABLE 			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 383 */		F_PLUGCOMMAND_FIRST	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//プラグインコマンド用に予約
 //	2007.10.17 genta 384は折り返しマークとして使用しているのでアイコンとしては使用できない
-/* 384 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
+/* 384 */		F_TOOLBARWRAP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//折返で予約済みであることを示す仮想アイコン
+/* 385 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 
 };
 	int tbd_num = _countof( tbd );
@@ -544,6 +545,24 @@ CMenuDrawer::CMenuDrawer()
 	m_tbMyButton.resize( tbd_num + 1 );
 
 	for( int i = 0; i < tbd_num; i++ ){
+
+		if( tbd[i] == F_TOOLBARWRAP ){
+			// ツールバー改行用の仮想ボタン（実際は表示されない） // 20050809 aroka
+			//	2007.10.12 genta 折り返しボタンが最後のデータと重なっているが，
+			//	インデックスを変更するとsakura.iniが引き継げなくなるので
+			//	重複を承知でそのままにする
+			SetTBBUTTONVal(
+				&m_tbMyButton[i+1],
+				-1,						// 2007.11.02 ryoji アイコンの未定義化(-1)
+				F_MENU_NOT_USED_FIRST,			//	tbd[i].idCommand,
+				TBSTATE_ENABLED|TBSTATE_WRAP,	//	tbd[i].fsState,
+				TBSTYLE_SEP,			//	tbd[i].fsStyle,
+				0,						//	tbd[i].dwData,
+				0						//	tbd[i].iString
+			);
+			continue;
+		}
+
 		switch( tbd[i] )	//@@@ 2002.06.15 MIK
 		{
 		case F_FILEOPEN_DROPDOWN:
@@ -571,19 +590,6 @@ CMenuDrawer::CMenuDrawer()
 		);
 	}
 
-	// ツールバー改行用の仮想ボタン（実際は表示されない） // 20050809 aroka
-	//	2007.10.12 genta 折り返しボタンが最後のデータと重なっているが，
-	//	インデックスを変更するとsakura.iniが引き継げなくなるので
-	//	重複を承知でそのままにする
-	SetTBBUTTONVal(
-		&m_tbMyButton[tbd_num],
-		-1,						// 2007.11.02 ryoji アイコンの未定義化(-1)
-		F_MENU_NOT_USED_FIRST,			//	tbd[i].idCommand,
-		TBSTATE_ENABLED|TBSTATE_WRAP,	//	tbd[i].fsState,
-		TBSTYLE_SEP,			//	tbd[i].fsStyle,
-		0,						//	tbd[i].dwData,
-		0						//	tbd[i].iString
-	);
 	m_nMyButtonNum = tbd_num + 1;	//	+ 1は、セパレータの分
 	return;
 }
