@@ -31,6 +31,7 @@ F_0				= 0,
 // 未定義用(ダミーとしても使う) 	//Oct. 17, 2000 jepro noted
 F_DISABLE		= 0,	//未使用
 F_SEPARATOR		= 1,	//セパレータ
+F_TOOLBARWRAP	= 2,	//ツールバー折返
 
 //	2007.07.07 genta 状況通知フラグ
 //	コマンドが送られた状況をコマンドと併せて通知する．
@@ -39,7 +40,7 @@ FA_FROMMACRO		 = 0x00020000,	//!< マクロからのコマンド実行
 FA_NONRECORD		 = 0x00040000,	//!< マクロへの記録を抑制する
 
 F_PLUGCOMMAND_FIRST			= 20000
-F_PLUGCOMMAND_LAST			= 29999
+F_PLUGCOMMAND_LAST			= 21999
 
 F_MENU_FIRST				= 30000
 
