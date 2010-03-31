@@ -126,7 +126,9 @@ void CEditView::Redraw()
 */
 EColorIndexType CEditView::GetColorIndex(
 	const CLayout*			pcLayout,
-	int						nIndex
+	int						nIndex,
+	CColorStrategy**		ppStrategy,		// 2010.03.31 ryoji 追加
+	CColorStrategy**		ppStrategyFound	// 2010.03.31 ryoji 追加
 )
 {
 	EColorIndexType eRet = COLORIDX_TEXT;
@@ -203,7 +205,7 @@ EColorIndexType CEditView::GetColorIndex(
 	if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
 
 	int nPosTo = pcLayout->GetLogicOffset() + __min(nIndex, pcLayout->GetLengthWithEOL() - 1);
-	while(pInfo->nPosInLogic <= nPosTo){
+	while(pInfo->nPosInLogic < nPosTo){	// 2010.03.31 ryoji 指定位置の色変更直前まで（"<="を"<"に変更）
 		//色切替
 		pInfo->DoChangeColor(cLineStr);
 
@@ -215,6 +217,8 @@ EColorIndexType CEditView::GetColorIndex(
 								);
 	}
 	eRet = pInfo->GetCurrentColor();
+	if(ppStrategy) *ppStrategy = pInfo->pStrategy;
+	if(ppStrategyFound) *ppStrategyFound = pInfo->pStrategyFound;
 
 	return eRet;
 }
@@ -599,12 +603,7 @@ bool CEditView::DrawLogicLine(
 	// 前行の最終設定色
 	{
 		const CLayout* pcLayout = pInfo->pDispPos->GetLayoutRef();
-		//EColorIndexType eType = pcLayout? pcLayout->GetColorTypePrev(): COLORIDX_TEXT;
-		EColorIndexType eType = GetColorIndex(pcLayout, 0);
-		CColorStrategyPool* pool = CColorStrategyPool::Instance();
-		pInfo->pStrategy = pool->GetStrategyByColor(eType);
-		//ここではGetColorIndex()からの継続処理にするためInitStrategyStatus()を行わない
-		//if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
+		EColorIndexType eType = GetColorIndex(pcLayout, 0, &pInfo->pStrategy, &pInfo->pStrategyFound);
 		pInfo->ChangeColor(eType);
 	}
 
