@@ -3269,6 +3269,9 @@ re_do:;
 
 			nLineNum = sRangeA.GetTo().GetY2();
 			nIdx     = sRange_Logic.GetTo().GetX2();
+			if( sRange_Logic.GetFrom() == sRange_Logic.GetTo() ) { // 幅0マッチでの無限ループ対策。
+				nIdx += 1; // wchar_t一個分進めるだけでは足りないかもしれないが。
+			}
 			goto re_do;
 		}
 
