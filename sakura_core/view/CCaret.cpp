@@ -973,6 +973,7 @@ void CCaret::HideCaret_( HWND hwnd )
 void CCaret::CopyCaretStatus(CCaret* pCaret) const
 {
 	pCaret->SetCaretLayoutPos(GetCaretLayoutPos());
+	pCaret->SetCaretLogicPos(GetCaretLogicPos());
 	pCaret->m_nCaretPosX_Prev = m_nCaretPosX_Prev;	/* ビュー左端からのカーソル桁位置（０オリジン）*/
 
 	//※ キャレットのサイズはコピーしない。2002/05/12 YAZAKI
