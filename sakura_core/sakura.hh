@@ -640,7 +640,10 @@
 #define HIDC_PLUGINLIST				11756	//プラグインリスト
 #define HIDC_CHECK_PluginEnable		11757	//プラグインを有効にする
 #define HIDC_PLUGIN_SearchNew		11758	//新規プラグインを追加
-#define HIDC_PLUGIN_Remove			11759	//新規プラグインを追加
+#define HIDC_PLUGIN_Remove			11759	//新規プラグインを削除
+#define HIDC_PLUGIN_OPTION			11760	//プラグインオプション設定	// 2010/3/22 Uchi
+#define HIDC_LIST_PLUGIN_OPTIONS	11761	//プラグインオプションリスト	// 2010/3/22 Uchi
+#define HIDC_EDIT_PLUGIN_OPTION		11762	//プラグインオプション編集		// 2010/3/22 Uchi
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索
 #define HIDC_FIND_BUTTON_SEARCHPREV			11801	//前を検索

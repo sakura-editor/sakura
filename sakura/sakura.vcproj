@@ -2741,6 +2741,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\dlg\CDlgPluginOption.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\dlg\CDlgPluginOption.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\dlg\CDlgPrintPage.cpp"
 					>
 				</File>
