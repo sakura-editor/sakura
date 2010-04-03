@@ -72,8 +72,15 @@ SAKURA_CORE_API int MessageBoxF_A ( HWND hwndOwner, UINT uType, LPCSTR  lpCaptio
 #define DBPRINT_A DebugOutA
 #define DBPRINT_W DebugOutW
 #else
+#if (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
 #define DBPRINT_A(...)
 #define DBPRINT_W(...)
+#else
+// Not support C99 variable macro
+inline void DBPRINT_A( ... ){};
+inline void DBPRINT_W( ... ){};
+#endif
+ 
 #endif
 
 #ifdef _UNICODE
@@ -113,35 +120,49 @@ void DBMSG_IMP(const ACHAR* msg); //!< ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ð•\Ž¦BƒLƒƒƒvƒVƒ‡ƒ“‚É‚
 #define MYMESSAGEBOX MessageBoxF
 #define MYMESSAGEBOX_A MessageBoxF_A
 
-//ƒGƒ‰[FÔŠÛ‚Éu~v
-#define ErrorMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK | MB_ICONSTOP						, GSTR_APPNAME,   format, __VA_ARGS__)
-#define ErrorMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_ICONSTOP						, GSTR_APPNAME_A, format, __VA_ARGS__)
+
+//ƒGƒ‰[FÔŠÛ‚Éu~v[OK]
+int ErrorMessage  (HWND hwnd, LPCTSTR format, ...);
+int ErrorMessage_A(HWND hwnd, LPCSTR  format, ...);
 //(TOPMOST)
-#define TopErrorMessage(hwnd, format, ...)		MessageBoxF		(hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST			, GSTR_APPNAME,   format, __VA_ARGS__)
-#define TopErrorMessage_A(hwnd, format, ...)	MessageBoxF_A	(hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST			, GSTR_APPNAME_A, format, __VA_ARGS__)
-#define ErrorBeep()								MessageBeep(MB_ICONSTOP)
+int TopErrorMessage  (HWND hwnd, LPCTSTR format, ...);
+int TopErrorMessage_A(HWND hwnd, LPCSTR format, ...);
+#define ErrorBeep()     MessageBeep(MB_ICONSTOP)
 
-//ŒxFŽOŠp‚ÉuIv
-#define WarningMessage(hwnd, format, ...)		MessageBoxF		(hwnd, MB_OK | MB_ICONEXCLAMATION				, GSTR_APPNAME,   format, __VA_ARGS__)
-#define WarningMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_ICONEXCLAMATION				, GSTR_APPNAME_A, format, __VA_ARGS__)
-#define TopWarningMessage(hwnd, format, ...)	MessageBoxF		(hwnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST	, GSTR_APPNAME,   format, __VA_ARGS__)
-#define WarningBeep()							MessageBeep(MB_ICONEXCLAMATION)
+//ŒxFŽOŠp‚ÉuIv[OK]
+int WarningMessage   (HWND hwnd, LPCTSTR format, ...);
+int WarningMessage_A (HWND hwnd, LPCSTR  format, ...);
+int TopWarningMessage(HWND hwnd, LPCTSTR format, ...);
+#define WarningBeep()   MessageBeep(MB_ICONEXCLAMATION)
 
-//î•ñFÂŠÛ‚Éuiv
-#define InfoMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK | MB_ICONINFORMATION				, GSTR_APPNAME,   format, __VA_ARGS__)
-#define InfoMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_ICONINFORMATION				, GSTR_APPNAME_A, format, __VA_ARGS__)
-#define TopInfoMessage(hwnd, format, ...)		MessageBoxF		(hwnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST	, GSTR_APPNAME,   format, __VA_ARGS__)
-#define InfoBeep()								MessageBeep(MB_ICONINFORMATION)
+//î•ñFÂŠÛ‚Éuiv[OK]
+int InfoMessage   (HWND hwnd, LPCTSTR format, ...);
+int InfoMessage_A (HWND hwnd, LPCSTR  format, ...);
+int TopInfoMessage(HWND hwnd, LPCTSTR format, ...);
+#define InfoBeep()      MessageBeep(MB_ICONINFORMATION)
 
-//‚»‚Ì‘¼ƒƒbƒZ[ƒW•\Ž¦—pƒ{ƒbƒNƒX
-#define OkMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK									, GSTR_APPNAME,   format, __VA_ARGS__)
-#define OkMessage_A(hwnd, format, ...)			MessageBoxF_A	(hwnd, MB_OK									, GSTR_APPNAME_A, format, __VA_ARGS__)
+//Šm”FF‚«o‚µ‚ÌuHv [‚Í‚¢][‚¢‚¢‚¦] –ß‚è’l:IDYES,IDNO
+int ConfirmMessage   (HWND hwnd, LPCTSTR format, ...);
+int ConfirmMessage_A (HWND hwnd, LPCSTR  format, ...);
+int TopConfirmMessage(HWND hwnd, LPCTSTR format, ...);
+#define ConfirmBeep()   MessageBeep(MB_ICONQUESTION)
+
+//‚»‚Ì‘¼ƒƒbƒZ[ƒW•\Ž¦—pƒ{ƒbƒNƒX[OK]
+int OkMessage  (HWND hwnd, LPCTSTR format, ...);
+int OkMessage_A(HWND hwnd, LPCSTR  format, ...);
+int TopOkMessage  (HWND hwnd, LPCTSTR format, ...);
+int TopOkMessage_A(HWND hwnd, LPCSTR format, ...);
+
+//ƒ^ƒCƒvŽw’èƒƒbƒZ[ƒW•\Ž¦—pƒ{ƒbƒNƒX
+int CustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);
+int CustomMessage_A(HWND hwnd, UINT uType, LPCSTR format, ...);
 //(TOPMOST)
-#define TopOkMessage(hwnd, format, ...)			MessageBoxF		(hwnd, MB_OK | MB_TOPMOST						, GSTR_APPNAME,   format, __VA_ARGS__)
-#define TopOkMessage_A(hwnd, format, ...)		MessageBoxF_A	(hwnd, MB_OK | MB_TOPMOST						, GSTR_APPNAME_A, format, __VA_ARGS__)
+int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);
+int TopCustomMessage_A(HWND hwnd, UINT uType, LPCSTR format, ...);
 
 //ìŽÒ‚É‹³‚¦‚Ä—~‚µ‚¢ƒGƒ‰[
-#define PleaseReportToAuthor(hwnd, format, ...)	MessageBoxF		(hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST	, _T("ìŽÒ‚É‹³‚¦‚Ä—~‚µ‚¢ƒGƒ‰["), format, __VA_ARGS__)
+int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...);
+
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

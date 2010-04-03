@@ -169,7 +169,7 @@ CControlTray::CControlTray()
 			NULL,
 			_T("CControlTray::CControlTray()\n")
 			_T("アクセラレータ テーブルが作成できません。\n")
-			_T("システムリソースが不足しています。"),
+			_T("システムリソースが不足しています。")
 		);
 	}
 
@@ -570,7 +570,7 @@ LRESULT CControlTray::DispatchEvent(
 					NULL,
 					_T("CControlTray::DispatchEvent()\n")
 					_T("アクセラレータ テーブルが作成できません。\n")
-					_T("システムリソースが不足しています。"),
+					_T("システムリソースが不足しています。")
 				);
 			}
 
