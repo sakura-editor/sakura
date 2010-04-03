@@ -127,6 +127,51 @@ bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile )
 	return true;
 }
 
+//プラグイン定義ファイルのOptionセクションを読み込む	// 2010/3/24 Uchi
+bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
+{
+	wstring sLabel;
+	wstring sSection;
+	wstring sSection_wk;
+	wstring sKey;
+	wstring sType;
+	WCHAR bufKey[64];
+
+	sSection = L"";
+	for( int nCount = 1; nCount < 100; nCount++ ){	//添え字は１から始める
+		sKey = sLabel = sType = L"";
+		//Keyの取得
+		swprintf( bufKey, L"O[%d].Key", nCount );
+		if( cProfile->IOProfileData( PII_OPTION, bufKey, sKey ) ){
+			//Sectionの取得
+			swprintf( bufKey, L"O[%d].Section", nCount );
+			cProfile->IOProfileData( PII_OPTION, bufKey, sSection_wk );
+			if (!sSection_wk.empty()) {		// 指定が無ければ前を引き継ぐ
+				sSection = sSection_wk;
+			}
+			//ラベルの取得
+			swprintf( bufKey, L"O[%d].Label", nCount );
+			cProfile->IOProfileData( PII_OPTION, bufKey, sLabel );
+			//Typeの取得
+			swprintf( bufKey, L"O[%d].Type", nCount );
+			cProfile->IOProfileData( PII_OPTION, bufKey, sType );
+
+			if (sSection.empty() || sKey.empty()) {
+				// 設定が無かったら無視
+				continue;
+			}
+			if (sLabel.empty()) {
+				// Label指定が無ければ、Keyで代用
+				sLabel = sKey;
+			}
+
+			m_options.push_back( new CPluginOption( this, sLabel, sSection, sKey, sType, nCount ) );
+		}
+	}
+
+	return true;
+}
+
 //プラグインフォルダ基準の相対パスをフルパスに変換
 CPlugin::tstring CPlugin::GetFilePath( const tstring& sFileName ) const
 {

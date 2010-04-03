@@ -621,6 +621,12 @@
 #define IDC_LABEL_PLUGIN_Description    1569
 #define IDC_LABEL_PLUGIN_Author         1570
 #define IDC_LABEL_PLUGIN_Version        1571
+#define IDC_PLUGIN_OPTION               1572
+#define IDC_LIST_PLUGIN_OPTIONS         1573
+#define IDC_EDIT_PLUGIN_OPTION          1574
+#define IDC_EDIT_PLUGIN_OPTION_NUM      1575
+#define IDC_SPIN_PLUGIN_OPTION          1576
+#define IDC_CHECK_PLUGIN_OPTION         1577
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -649,6 +655,7 @@
 #define IDD_PROP_MACRO                  5215
 #define IDD_PROP_PLUGIN                 5216
 #define IDD_WINPOSSIZE                  5220
+#define IDD_PLUGIN_OPTION               5221
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

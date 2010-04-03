@@ -51,6 +51,7 @@
 #define PII_PLUG					L"Plug"			//プラグ情報
 
 #define PII_COMMAND					L"Command"		//コマンド情報
+#define PII_OPTION					L"Option"		//オプション定義情報	// 2010/3/24 Uchi
 
 
 class CPlugin;
@@ -105,6 +106,55 @@ public:
 	CPlugin& m_cPlugin;					//親プラグイン
 };
 
+
+// オプション定義	// 2010/3/24 Uchi
+class CPluginOption
+{
+	//型定義
+protected:
+	typedef std::wstring wstring;
+public:
+	typedef std::vector<CPluginOption*> Array;	// オプションのリスト
+	typedef Array::const_iterator ArrayIter;	// そのイテレータ
+
+	//コンストラクタ
+public:
+	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, int index) 
+	{
+		m_parent	= parent;
+		m_sLabel	= sLabel;
+		m_sSection	= sSection;
+		m_sKey		= sKey;
+		// 小文字変換
+		transform( sType.begin (), sType.end (), sType.begin (), tolower );
+		m_sType		= sType;
+		m_index		= index; 
+	}
+
+	//デストラクタ
+public:
+	~CPluginOption() {}
+
+	//操作
+public:
+	wstring	GetLabel( void )	{ return m_sLabel; }
+	void	GetKey( wstring* sectin, wstring* key )	{ 
+		*sectin = m_sSection; 
+		*key = m_sKey;
+	}
+	wstring	GetType( void )		{ return m_sType; }
+	int 	GetIndex( void )	{ return m_index; }
+
+protected:
+	CPlugin*	m_parent;
+	wstring		m_sLabel;
+	wstring		m_sSection;
+	wstring		m_sKey;
+	wstring		m_sType;
+	int 		m_index; 
+};
+
+
 //プラグインクラス
 typedef int PluginId;
 
@@ -134,6 +184,7 @@ protected:
 	bool ReadPluginDefCommon( CDataProfile *cProfile );					//プラグイン定義ファイルのCommonセクションを読み込む
 	bool ReadPluginDefPlug( CDataProfile *cProfile );					//プラグイン定義ファイルのPlugセクションを読み込む
 	bool ReadPluginDefCommand( CDataProfile *cProfile );				//プラグイン定義ファイルのCommandセクションを読み込む
+	bool ReadPluginDefOption( CDataProfile *cProfile );					//プラグイン定義ファイルのOptionセクションを読み込む	// 2010/3/24 Uchi
 
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
 	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, wstring sJack, wstring sHandler, wstring sLabel )
@@ -159,6 +210,7 @@ public:
 	wstring m_sVersion;			//!< バージョン
 	wstring m_sUrl;				//!< 配布URL
 	tstring m_sBaseDir;
+	CPluginOption::Array m_options;		// オプション	// 2010/3/24 Uchi
 private:
 	bool m_bLoaded;
 protected:

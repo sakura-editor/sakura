@@ -58,6 +58,9 @@ bool CDllPlugin::ReadPluginDef( CDataProfile *cProfile )
 	//コマンドの読み込み
 	ReadPluginDefCommand( cProfile );
 
+	//オプション定義の読み込み	// 2010/3/24 Uchi
+	ReadPluginDefOption( cProfile );
+
 	return true;
 }
 

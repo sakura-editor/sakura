@@ -35,6 +35,7 @@
 #include "util/string_ex2.h"
 #include "sakura_rc.h"
 #include "plugin/CPluginManager.h"
+#include "dlg/CDlgPluginOption.h"	// 2010/3/22 Uchi
 
 //! Popup Help用ID
 #include "sakura.hh"
@@ -43,6 +44,7 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//プラグインリスト
 	IDC_PLUGIN_SearchNew,	HIDC_PLUGIN_SearchNew,		//新規プラグインを追加
 	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//新規プラグインを追加
+	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//プラグイン設定	// 2010/3/22 Uchi
 //	IDC_STATIC,			-1,
 	0, 0
 };
@@ -154,6 +156,18 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 							SetData_PROP_PLUGIN_LIST( hwndDlg );
 						}
 					}
+				}
+				break;
+			case IDC_PLUGIN_OPTION:		// プラグイン設定	// 2010/3/22 Uchi
+				CDlgPluginOption cDlgPluginOption;
+				HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
+				int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
+				if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
+					cDlgPluginOption.DoModal(
+						::GetModuleHandle(NULL),
+						hwndDlg,
+						sel
+					);
 				}
 				break;
 			}
@@ -377,11 +391,13 @@ void CPropCommon::EnablePluginPropInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGINLIST               ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_SearchNew         ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove            ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION            ), FALSE );
 	}
 	else
 	{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGINLIST               ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_SearchNew         ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove            ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION            ), TRUE );
 	}
 }
