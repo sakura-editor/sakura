@@ -60,6 +60,7 @@ void CViewCommander::Command_GREP( void )
 		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
 	*/
 	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ||
+		CAppMode::Instance()->IsDebugMode() ||	// 2010.04.02 Moca [アウトプットでない]を追加
 		( !GetDocument()->m_cDocEditor.IsModified() &&
 		  !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() )		/* 現在編集中のファイルのパス */
 	){
