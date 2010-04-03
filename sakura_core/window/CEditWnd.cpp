@@ -151,7 +151,7 @@ CEditWnd::CEditWnd()
 				NULL,
 				_T("CEditWnd::CEditWnd()\n")
 				_T("アクセラレータ テーブルが作成できません。\n")
-				_T("システムリソースが不足しています。"),
+				_T("システムリソースが不足しています。")
 			);
 		}
 	}else{
@@ -1387,7 +1387,7 @@ LRESULT CEditWnd::DispatchEvent(
 					NULL,
 					_T("CEditWnd::DispatchEvent()\n")
 					_T("アクセラレータ テーブルが作成できません。\n")
-					_T("システムリソースが不足しています。"),
+					_T("システムリソースが不足しています。")
 				);
 			}
 		}
