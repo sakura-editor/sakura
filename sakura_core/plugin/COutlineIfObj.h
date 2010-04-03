@@ -75,21 +75,31 @@ public:
 		case F_OL_ADDFUNCINFO:			//アウトライン解析に追加する
 		case F_OL_ADDFUNCINFO2:			//アウトライン解析に追加する（深さ指定）
 			{
-				CLogicInt nLogicLine( _wtoi(Arguments[0]) );
-				CLayoutInt nLayoutLine( _wtoi(Arguments[1]) );
+				if( Arguments[0] == NULL )break;
+				if( Arguments[1] == NULL )break;
+				if( Arguments[2] == NULL )break;
+				if( Arguments[3] == NULL )break;
+				CLogicPoint ptLogic( _wtoi(Arguments[1])-1, _wtoi(Arguments[0])-1 );
+				if( ptLogic.x < 0 )ptLogic.x = 0;
+				if( ptLogic.y < 0 )ptLogic.y = 0;
+				CLayoutPoint ptLayout;
+				View->GetDocument()->m_cLayoutMgr.LogicToLayout( ptLogic, &ptLayout );
 				int nParam = _wtoi(Arguments[3]);
-
 				if( LOWORD(ID) == F_OL_ADDFUNCINFO ){
-					m_cFuncInfoArr.AppendData( nLogicLine, nLayoutLine, Arguments[2], nParam );
+					m_cFuncInfoArr.AppendData( ptLogic.GetY()+1, ptLogic.GetX()+1, ptLayout.GetY()+1, ptLayout.GetX()+1, Arguments[2], nParam );
 				}else{
-					m_cFuncInfoArr.AppendData( nLogicLine, nLayoutLine, Arguments[2], 0, nParam );
+					int nDepth = nParam & FUNCINFO_INFOMASK;
+					nParam -= nDepth;
+					m_cFuncInfoArr.AppendData( ptLogic.GetY()+1, ptLogic.GetX()+1, ptLayout.GetY()+1, ptLayout.GetX()+1, Arguments[2], nParam, nDepth );
 				}
 			}
 			break;
 		case F_OL_SETTITLE:				//アウトラインダイアログタイトルを指定
+			if( Arguments[0] == NULL )break;
 			m_sOutlineTitle = to_tchar( Arguments[0] );
 			break;
 		case F_OL_SETLISTTYPE:			//アウトラインリスト種別を指定
+			if( Arguments[0] == NULL )break;
 			m_nListType = (EOutlineType)_wtol(Arguments[0]);
 			break;
 		}

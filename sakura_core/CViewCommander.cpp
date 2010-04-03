@@ -4275,6 +4275,13 @@ BOOL CViewCommander::Command_FUNCLIST(
 	int _nOutlineType
 )
 {
+	static bool bIsProcessing = false;	//アウトライン解析処理中フラグ
+
+	//アウトラインプラグイン内でのEditor.Outline呼び出しによる再入を禁止する
+	if( bIsProcessing )return FALSE;
+
+	bIsProcessing = true;
+
 	EOutlineType nOutlineType = (EOutlineType)_nOutlineType; //2007.11.29 kobake
 
 //	if( bCheckOnly ){
@@ -4298,6 +4305,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
 			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )){
 				ActivateFrameWindow( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
+				bIsProcessing = false;
 				return TRUE;
 			}
 			break;
@@ -4305,6 +4313,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 			//	開いているものと種別が同じなら閉じる．異なれば再解析
 			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )){
 				::SendMessageAny( GetEditWindow()->m_cDlgFuncList.GetHwnd(), WM_CLOSE, 0, 0 );
+				bIsProcessing = false;
 				return TRUE;
 			}
 			break;
@@ -4374,19 +4383,21 @@ BOOL CViewCommander::Command_FUNCLIST(
 	_tcscpy( cFuncInfoArr.m_szFilePath, GetDocument()->m_cDocFile.GetFilePath() );
 
 	/* アウトライン ダイアログの表示 */
+	CLayoutPoint poCaret = GetCaret().GetCaretLayoutPos();
 	if( NULL == GetEditWindow()->m_cDlgFuncList.GetHwnd() ){
 		GetEditWindow()->m_cDlgFuncList.DoModeless(
 			G_AppInstance(),
 			m_pCommanderView->GetHwnd(),
 			(LPARAM)m_pCommanderView,
 			&cFuncInfoArr,
-			GetCaret().GetCaretLayoutPos().GetY2() + CLayoutInt(1),
+			poCaret.GetY2() + CLayoutInt(1),
+			poCaret.GetX2() + CLayoutInt(1),
 			nOutlineType,
 			GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 		);
 	}else{
 		/* アクティブにする */
-		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, GetCaret().GetCaretLayoutPos().GetY2() + 1 );
+		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
 		ActivateFrameWindow( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
 	}
 
@@ -4395,6 +4406,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 		GetEditWindow()->m_cDlgFuncList.SetWindowText( sTitleOverride.c_str() );
 	}
 
+	bIsProcessing = false;
 	return TRUE;
 }
 

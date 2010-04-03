@@ -25,6 +25,7 @@ class CDlgFuncList;
 
 #include <windows.h>
 #include "dlg/CDialog.h"
+#include "CFuncInfo.h"
 class CFuncInfoArr; // 2002/2/10 aroka
 
 
@@ -40,17 +41,18 @@ public:
 	||  Attributes & Operations
 	*/
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
-	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, int, bool );/* モードレスダイアログの表示 */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, bool );/* モードレスダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
 	
 	/*! 現在の種別と同じなら
 	*/
 	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nListType; }
-	void Redraw( int nOutLineType, CFuncInfoArr*, CLayoutInt nCurLine );
+	void Redraw( int nOutLineType, CFuncInfoArr*, CLayoutInt nCurLine, CLayoutInt nCurCol );
 	void SetWindowText( const TCHAR* szTitle );		//ダイアログタイトルの設定
 
 	CFuncInfoArr*	m_pcFuncInfoArr;	/* 関数情報配列 */
 	CLayoutInt		m_nCurLine;			/* 現在行 */
+	CLayoutInt		m_nCurCol;			/* 現在桁 */
 	int				m_nSortCol;			/* ソートする列番号 */
 	int				m_nListType;		/* 一覧の種類 */
 	CNativeW		m_cmemClipText;		/* クリップボードコピー用テキスト */
@@ -109,6 +111,10 @@ private:
 	// 0 デフォルト(ノードに関連づけれられた値順)
 	// 1 アルファベット順
 	int m_nSortType;
+
+	// 選択中の関数情報
+	CFuncInfo* m_cFuncInfo;
+
 };
 
 
