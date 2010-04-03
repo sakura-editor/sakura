@@ -144,7 +144,7 @@ void CDlgPluginOption::SetData( void )
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// ”’l‚Ö³‹K‰»
-			auto_sprintf( buf, _T("%d"), _ttoi(sValue.c_str()));
+			auto_sprintf( buf, _T("%d"), _wtoi(sValue.c_str()));
 			lvi.mask     = LVIF_TEXT;
 			lvi.iItem    = i;
 			lvi.iSubItem = 1;
@@ -222,7 +222,14 @@ int CDlgPluginOption::GetData( void )
 			continue;
 		}
 
+#ifdef _UNICODE
 		sValue = buf;
+#else
+		wchar_t	buf2[MAX_LENGTH_VALUE+1];
+		auto_sprintf(buf2, L"%s", buf);
+
+		sValue = buf2;
+#endif
 
 		cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
 	}
@@ -484,7 +491,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 		}
 		else if (sType == OPTION_TYPE_INT) {
 			nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, NULL, TRUE );
-			auto_sprintf( buf, L"%d", nVal);
+			auto_sprintf( buf, _T("%d"), nVal);
 		}
 		else {
 			::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
