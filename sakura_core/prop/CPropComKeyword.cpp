@@ -555,7 +555,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		wstring szLine = in.ReadLineW();
 
 		//ƒRƒƒ“ƒg–³‹
-		if( 2 < szLine.length() && 0 == auto_memcmp( szLine.c_str(), L"//", 2 )  )continue;
+		if( 2 <= szLine.length() && 0 == auto_memcmp( szLine.c_str(), L"//", 2 )  )continue;
 		
 		//‰ğÍ
 		if( 0 < szLine.length() ){
