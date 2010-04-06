@@ -37,6 +37,7 @@
 #include "CKeyWordSetMgr.h"
 #include <stdlib.h>
 #include <malloc.h>
+#include <limits>
 #include "charset/charcode.h"
 
 //! 1ブロック当たりのキーワード数
@@ -371,43 +372,59 @@ void CKeyWordSetMgr::SortKeyWord( int nIdx )
 	return;
 }
 
-/* ｎ番目のセットから指定キーワードをバイナリサーチ 無いときは-1を返す */
+/** nIdx番目のキーワードセットから pszKeyWordを探す。
+	見つかれば 0以上を、見つからなければ負の数を返す。
+	@retval 0以上 見つかった。
+	@retval -1     見つからなかった。
+	@retval -2     見つからなかったが、pszKeywordから始まるキーワードが存在している。
+	@retval intmax 見つかったが、pszKeywordから始まる、より長いキーワードが存在している。
+*/
 int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const wchar_t* pszKeyWord, int nKeyWordLen )
 {
-	int pc, pr, pl, ret, wcase;
-
 	//sort
-	if(m_IsSorted[nIdx] == 0) SortKeyWord(nIdx);
+	if( m_IsSorted[nIdx] == 0 ) {
+		SortKeyWord( nIdx );
+	}
 
-	pl = m_nStartIdx[nIdx];
-	pr = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
-//	if( pr < 0 ) return -1;
-	if( nKeyWordLen > m_nKeyWordMaxLenArr[nIdx] ) return -1;
-	pc = (pr + 1 - pl) / 2 + pl;
-	wcase = m_bKEYWORDCASEArr[nIdx];
-	while(pl <= pr) {
-		if( wcase ) {
-			ret = wcsncmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
-		} else {
-			ret = wcsnicmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
-		}
-		if( ret == 0 ) {
-			if( (int)wcslen( m_szKeyWordArr[pc] ) > nKeyWordLen ) {
-				ret = -1;
-			} else {
-				return pc - m_nStartIdx[nIdx];
-			}
-		}
+	if( m_nKeyWordMaxLenArr[nIdx] < nKeyWordLen ) {
+		return -1; // 字数オーバー。
+	}
 
-		if( ret < 0 ) {
+	int result = -1;
+	int pl = m_nStartIdx[nIdx];
+	int pr = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
+	int pc = (pr + 1 - pl) / 2 + pl;
+	int (*const cmp)(const wchar_t*, const wchar_t*, size_t) = m_bKEYWORDCASEArr[nIdx] ? wcsncmp : wcsnicmp;
+	while( pl <= pr ) {
+		const int ret = cmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
+		if( 0 < ret ) {
+			pl = pc + 1;
+		} else if( ret < 0 ) {
 			pr = pc - 1;
 		} else {
-			pl = pc + 1;
+			if( wcslen( m_szKeyWordArr[pc] ) > static_cast<size_t>(nKeyWordLen) ) {
+				// 始まりは一致したが長さが足りない。
+				if( 0 <= result ) {
+					result = std::numeric_limits<int>::max();
+					break;
+				}
+				result = -2;
+				// ぴったり一致するキーワードを探すために続ける。
+				pr = pc - 1;
+			} else {
+				// 一致するキーワードが見つかった。
+				if( result == -2 ) {
+					result = std::numeric_limits<int>::max();
+					break;
+				}
+				result = pc - m_nStartIdx[nIdx];
+				// より長いキーワードを探すために続ける。
+				pl = pc + 1;
+			}
 		}
-
 		pc = (pr + 1 - pl) / 2 + pl;
 	}
-	return -1;
+	return result;
 }
 //MIK END
 //MIK START 2000.12.01 START
@@ -516,28 +533,17 @@ int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 	while( i < GetKeyWordNum( nIdx ) - 1 ){
 		const wchar_t* p = GetKeyWord( nIdx, i );
 		bool bDelKey = false;	//!< trueなら削除対象
-		// 表示できないキーワードか
-		int k;
-		for( k = 0;p[k] != '\0'; k++ ){
-			if( IS_KEYWORD_CHAR( p[k] ) ){
+		// 重複するキーワードか
+		const wchar_t* r = GetKeyWord( nIdx, i + 1 );
+		unsigned int nKeyWordLen = wcslen( p );
+		if( nKeyWordLen == wcslen( r ) ){
+			if( m_bKEYWORDCASEArr[nIdx] ){
+				if( 0 == auto_memcmp( p, r, nKeyWordLen ) ){
+					bDelKey = true;
+				}
 			}else{
-				bDelKey = true;
-				break;
-			}
-		}
-		if( !bDelKey ){
-			// 重複するキーワードか
-			const wchar_t* r = GetKeyWord( nIdx, i + 1 );
-			unsigned int nKeyWordLen = wcslen( p );
-			if( nKeyWordLen == wcslen( r ) ){
-				if( m_bKEYWORDCASEArr[nIdx] ){
-					if( 0 == auto_memcmp( p, r, nKeyWordLen ) ){
-						bDelKey = true;
-					}
-				}else{
-					if( 0 == auto_memicmp( p, r, nKeyWordLen ) ){
-						bDelKey = true;
-					}
+				if( 0 == auto_memicmp( p, r, nKeyWordLen ) ){
+					bDelKey = true;
 				}
 			}
 		}
