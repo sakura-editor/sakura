@@ -114,7 +114,7 @@ public:
 	///	@name 検索
 	//int SearchKeyWord( int , const char*, int );	/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
 	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */
-	int SearchKeyWord2( int , const wchar_t*, int );	/* ｎ番目のセットから指定キーワードをバイナリサーチ 無いときは-1を返す */	//MIK
+	int SearchKeyWord2( int nIdx , const wchar_t* pszKeyWord, int nKeyWordLen );	/* ｎ番目のセットから指定キーワードをバイナリサーチ。見つかれば 0以上を返す */	//MIK
 	//@}
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶
