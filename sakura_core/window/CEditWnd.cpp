@@ -15,6 +15,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji, nasukoji, Hidetaka Sakai
+	Copyright (C) 2010, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -617,12 +618,6 @@ void CEditWnd::OpenDocumentWhenStart(
 )
 {
 	if( _sLoadInfo.cFilePath.Length() ){
-		//  MYWM_SETACTIVEPANE をポストしておく	// 2010.02.11 ryoji
-		// タブが (無題) からファイル名に切り替わるのが目障りにならないようにするための暫定的な処置。
-		// こうすることでファイルを読み始めるときの最初の BlockingHook でファイル名がタブに表示されるようになる。
-		// （起動時に CSplitterWnd::DoSplit() から MYWM_SETACTIVEPANE がポストされていたのをやめた代替）
-		::PostMessageAny( GetActiveView().GetHwnd(), MYWM_SETACTIVEPANE, 0, 0 );
-
 		::ShowWindow( GetHwnd(), SW_SHOW );
 		//	Oct. 03, 2004 genta コード確認は設定に依存
 		SLoadInfo	sLoadInfo = _sLoadInfo;
@@ -4241,10 +4236,16 @@ void  CEditWnd::SetActivePane( int nIndex )
 		// ::SetFocus()でフォーカスを切り替える
 		::SetFocus( m_pcEditViewArr[m_nActivePaneIndex]->GetHwnd() );
 	}else{
-		// アクティブでないときに::SetFocus()するとアクティブになってしまう
-		// （不可視なら可視になる）ので内部的に切り替えるだけにする
-		m_pcEditViewArr[nOldIndex]->OnKillFocus();
-		m_pcEditViewArr[m_nActivePaneIndex]->OnSetFocus();
+		// 2010.04.08 ryoji
+		// 起動直後にエディットボックスにフォーカスのあるダイアログを表示する場合にキャレットが消える問題の修正
+		// （例: -GREPDLGオプションで起動するとGREPダイアログのキャレットが消えている）
+		// この問題を修正するのため、内部的な切り替え動作をするのはアクティブペインが替わるときだけにした．
+		if( m_nActivePaneIndex != nOldIndex ){
+			// アクティブでないときに::SetFocus()するとアクティブになってしまう
+			// （不可視なら可視になる）ので内部的に切り替えるだけにする
+			m_pcEditViewArr[nOldIndex]->OnKillFocus();
+			m_pcEditViewArr[m_nActivePaneIndex]->OnSetFocus();
+		}
 	}
 
 	this->GetActiveView().RedrawAll();	/* フォーカス移動時の再描画 */
