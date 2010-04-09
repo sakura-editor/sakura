@@ -561,10 +561,6 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	OnSize( 0, 0, 0, 0 );
 
 	/* アクティブになったことをペインに通知 */
-	// 2010.01.19 ryoji
-	// 起動と同時にダイアログ表示するケース(*1)でダイアログ側のエディットボックスにキャレットが
-	// 表示されなくなる問題を回避するため、サイズボックス位置変更のみのときは通知しないでおく。
-	// (*1) -GREPDLGオプションによるGREPダイアログ表示や開ファイル後自動実行マクロでのInputBox表示
 	if( m_ChildWndArr[nActivePane] != NULL ){
 		::PostMessageAny( m_ChildWndArr[nActivePane], MYWM_SETACTIVEPANE, 0, 0 );
 	}
