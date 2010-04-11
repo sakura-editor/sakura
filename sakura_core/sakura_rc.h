@@ -627,6 +627,7 @@
 #define IDC_EDIT_PLUGIN_OPTION_NUM      1575
 #define IDC_SPIN_PLUGIN_OPTION          1576
 #define IDC_CHECK_PLUGIN_OPTION         1577
+#define IDC_COMBO_PLUGIN_OPTION         1578
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000

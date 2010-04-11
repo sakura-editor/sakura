@@ -26,6 +26,7 @@
 		   distribution.
 */
 #include "stdafx.h"
+#include <vector>		// wstring_split用 2010/4/4 Uchi
 #include "CPlugin.h"
 #include "CJackManager.h"
 
@@ -52,6 +53,9 @@ CPlugin::CPlugin( tstring sBaseDir )
 //デストラクタ
 CPlugin::~CPlugin(void)
 {
+	for( CPluginOption::ArrayIter it = m_options.begin(); it != m_options.end(); it++ ){
+		delete *it;
+	}
 }
 
 //プラグイン定義ファイルのCommonセクションを読み込む
@@ -135,6 +139,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 	wstring sSection_wk;
 	wstring sKey;
 	wstring sType;
+	wstring sSelect;
 	WCHAR bufKey[64];
 
 	sSection = L"";
@@ -155,6 +160,9 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 			//Typeの取得
 			swprintf( bufKey, L"O[%d].Type", nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sType );
+			// 項目選択候補
+			swprintf( bufKey, L"O[%d].Select", nCount );
+			cProfile->IOProfileData( PII_OPTION, bufKey, sSelect );
 
 			if (sSection.empty() || sKey.empty()) {
 				// 設定が無かったら無視
@@ -165,7 +173,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 				sLabel = sKey;
 			}
 
-			m_options.push_back( new CPluginOption( this, sLabel, sSection, sKey, sType, nCount ) );
+			m_options.push_back( new CPluginOption( this, sLabel, sSection, sKey, sType, sSelect, nCount ) );
 		}
 	}
 
@@ -197,4 +205,22 @@ int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* 
 		CJackManager::Instance()->RegisterPlug( PP_COMMAND_STR, newPlug );
 	}
 	return newPlug->GetFunctionCode();
+}
+
+// 文字列分割	2010/4/4 Uchi
+//	独立させたほうがいいのだが
+std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
+{
+    std::vector<std::wstring>	splitVec;
+    int 	idx;
+
+    while ((idx = sTrg.find( cSep )) != std::wstring::npos) {
+        splitVec.push_back( sTrg.substr( 0, idx ) );
+        sTrg = sTrg.substr( ++idx );
+    }
+	if (sTrg != L"") {
+		splitVec.push_back( sTrg );
+	}
+
+    return splitVec;
 }

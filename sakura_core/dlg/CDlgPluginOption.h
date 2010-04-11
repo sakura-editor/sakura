@@ -50,8 +50,9 @@ class CDlgPluginOption;
 typedef std::wstring wstring;
 
 // Œ^ 
-static wstring	OPTION_TYPE_BOOL = wstring( L"bool" );
-static wstring	OPTION_TYPE_INT  = wstring( L"int" );
+static const wstring	OPTION_TYPE_BOOL = wstring( L"bool" );
+static const wstring	OPTION_TYPE_INT  = wstring( L"int" );
+static const wstring	OPTION_TYPE_SEL  = wstring( L"sel" );
 
 class SAKURA_CORE_API CDlgPluginOption : public CDialog
 {
@@ -83,6 +84,8 @@ protected:
 	void	ChangeListPosition( void );
 	void	SetToEdit( int );
 	void	SetFromEdit( int );
+	void	SelectEdit( int );							// •ÒW—Ìˆæ‚ÌØ‚è‘Ö‚¦
+	void	SepSelect( wstring, wstring*, wstring* );	// ‘I‘ğ—p•¶š—ñ•ª‰ğ
 
 private:
 	CPlugin*		m_cPlugin;

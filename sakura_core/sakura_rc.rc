@@ -1975,6 +1975,8 @@ BEGIN
                     148, 25, 10, 14,WS_EX_TRANSPARENT
     CONTROL         "Check", IDC_CHECK_PLUGIN_OPTION, "Button", BS_AUTOCHECKBOX, 
                     26, 216, 200, 10
+    COMBOBOX        IDC_COMBO_PLUGIN_OPTION, 26, 214, 100, 30, CBS_DROPDOWNLIST | 
+                    CBS_HASSTRINGS
     DEFPUSHBUTTON   "&OK", IDOK, 104, 234, 50, 14
     PUSHBUTTON      "ƒLƒƒƒ“ƒZƒ‹(&X)", IDCANCEL, 159, 234, 50, 14
     PUSHBUTTON      "ƒwƒ‹ƒv(&H)", IDC_BUTTON_HELP, 214, 234, 50, 14

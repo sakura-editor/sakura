@@ -106,8 +106,9 @@ public:
 	CPlugin& m_cPlugin;					//親プラグイン
 };
 
-
 // オプション定義	// 2010/3/24 Uchi
+std::vector<std::wstring> wstring_split( std::wstring, wchar_t );
+
 class CPluginOption
 {
 	//型定義
@@ -119,7 +120,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, int index) 
+	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, wstring sSelects, int index) 
 	{
 		m_parent	= parent;
 		m_sLabel	= sLabel;
@@ -128,7 +129,8 @@ public:
 		// 小文字変換
 		transform( sType.begin (), sType.end (), sType.begin (), tolower );
 		m_sType		= sType;
-		m_index		= index; 
+		m_sSelects	= sSelects;
+		m_index		= index;
 	}
 
 	//デストラクタ
@@ -144,6 +146,10 @@ public:
 	}
 	wstring	GetType( void )		{ return m_sType; }
 	int 	GetIndex( void )	{ return m_index; }
+	std::vector<wstring>	GetSelects()
+	{
+		return (wstring_split(m_sSelects, L'|'));
+	}
 
 protected:
 	CPlugin*	m_parent;
@@ -151,6 +157,7 @@ protected:
 	wstring		m_sSection;
 	wstring		m_sKey;
 	wstring		m_sType;
+	wstring		m_sSelects;		// 選択候補
 	int 		m_index; 
 };
 
