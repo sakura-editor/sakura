@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji, bosagami
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2010, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -3393,10 +3394,16 @@ void  CEditDoc::SetActivePane( int nIndex )
 		// ::SetFocus()でフォーカスを切り替える
 		::SetFocus( m_cEditViewArr[m_nActivePaneIndex].m_hWnd );
 	}else{
-		// アクティブでないときに::SetFocus()するとアクティブになってしまう
-		// （不可視なら可視になる）ので内部的に切り替えるだけにする
-		m_cEditViewArr[nOldIndex].OnKillFocus();
-		m_cEditViewArr[m_nActivePaneIndex].OnSetFocus();
+		// 2010.04.08 ryoji
+		// 起動直後にエディットボックスにフォーカスのあるダイアログを表示する場合にキャレットが消える問題の修正
+		// （例: -GREPDLGオプションで起動するとGREPダイアログのキャレットが消えている）
+		// この問題を修正するのため、内部的な切り替え動作をするのはアクティブペインが替わるときだけにした．
+		if( m_nActivePaneIndex != nOldIndex ){
+			// アクティブでないときに::SetFocus()するとアクティブになってしまう
+			// （不可視なら可視になる）ので内部的に切り替えるだけにする
+			m_cEditViewArr[nOldIndex].OnKillFocus();
+			m_cEditViewArr[m_nActivePaneIndex].OnSetFocus();
+		}
 	}
 
 	m_cEditViewArr[m_nActivePaneIndex].RedrawAll();	/* フォーカス移動時の再描画 */
