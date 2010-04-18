@@ -413,6 +413,7 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_SPLIT_VH			,	//縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
 	F_WINCLOSE			,	//ウィンドウを閉じる
 	F_WIN_CLOSEALL		,	//すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
+	F_TAB_CLOSEOTHER	,	//このウィンドウ／タブ以外を閉じる	// 2009.07.20 syat  // 2009.12.26 syat ウィンドウ／タブ兼用化に伴い移動
 	F_NEXTWINDOW		,	//次のウィンドウ
 	F_PREVWINDOW		,	//前のウィンドウ
  	F_WINLIST			,	//開いているウィンドウ一覧ポップアップ表示	// 2006.03.23 fon
@@ -429,7 +430,6 @@ const int pnFuncList_Win[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List7→List_Win)
 	F_TAB_SEPARATE		,	//新規グループ	// 2007.06.20 ryoji
 	F_TAB_JOINTNEXT		,	//次のグループに移動	// 2007.06.20 ryoji
 	F_TAB_JOINTPREV		,	//前のグループに移動	// 2007.06.20 ryoji
-	F_TAB_CLOSEOTHER	,	//このタブ以外を閉じる	// 2009.07.20 syat
 	F_TAB_CLOSELEFT 	,	//左をすべて閉じる		// 2009.07.20 syat
 	F_TAB_CLOSERIGHT	,	//右をすべて閉じる		// 2009.07.20 syat
 	F_MAXIMIZE_V		,	//縦方向に最大化

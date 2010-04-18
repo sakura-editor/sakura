@@ -2858,6 +2858,11 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WINCLOSE		, "閉じる(&C)" );			//Feb. 18, 2001 JEPRO アクセスキー変更(O→C)
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WIN_CLOSEALL	, "すべて閉じる(&Q)" );		//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)
+			if( m_pShareData->m_Common.m_bDispTabWnd ){
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAB_CLOSEOTHER	, "このタブ以外を閉じる(&O)" );	// 2009.12.26 syat タブの操作メニューから移動
+			}else{
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TAB_CLOSEOTHER	, "このウィンドウ以外を閉じる(&O)" );	// 2009.12.26 syat タブの操作メニューから移動
+			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_NEXTWINDOW		, "次のウィンドウ(&N)" );	//Sept. 11, 2000 JEPRO "次"を"前"の前に移動
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_PREVWINDOW		, "前のウィンドウ(&P)" );
@@ -2882,7 +2887,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_BIND_WINDOW, pszLabel );		//2004.07.14 Kazika 新規追加	// 2007.02.13 ryoji 「結合して表示」→「ひとつにまとめて表示」	// 2007.06.20 ryoji 「グループ化」
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_GROUPCLOSE		, "グループを閉じる(&G)" );	// 2007.06.20 ryoji
-			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_CLOSEOTHER	, "このタブ以外を閉じる(&O)" );	// 2009.07.20 syat
+			//2009.12.26 syat 「このタブ以外を閉じる」は「このウィンドウ以外を閉じる」と兼用とし、ウィンドウメニュー直下へ移動。
+			//m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_CLOSEOTHER	, "このタブ以外を閉じる(&O)" );	// 2009.07.20 syat
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_CLOSELEFT	, "左をすべて閉じる(&H)" );		// 2009.07.20 syat
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_TAB_CLOSERIGHT	, "右をすべて閉じる(&M)" );		// 2009.07.20 syat
 			m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );	/* セパレータ */
@@ -3723,6 +3729,8 @@ int CEditWnd::IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int n
 	case F_BIND_WINDOW:	//2004.07.14 Kazika 新規追加
 	case F_TAB_MOVERIGHT:	// 2007.06.20 ryoji 追加
 	case F_TAB_MOVELEFT:	// 2007.06.20 ryoji 追加
+	case F_TAB_CLOSELEFT:	// 2009.12.26 syat 追加
+	case F_TAB_CLOSERIGHT:	// 2009.12.26 syat 追加
 		//非タブモード時はウィンドウを結合して表示できない
 		return (pShareData->m_Common.m_bDispTabWnd);
 	case F_GROUPCLOSE:		// 2007.06.20 ryoji 追加
