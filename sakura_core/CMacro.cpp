@@ -428,9 +428,10 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x10	検索ダイアログを自動的に閉じる
 		//		0x20	先頭（末尾）から再検索する
 		{
+			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 0;
 			if( 0 < lstrlen( Argument[0] ) ){
 				/* 正規表現 */
-				if( pcEditView->m_pShareData->m_Common.m_bRegularExp && !CheckRegexpSyntax( Argument[0], NULL, true ) ){
+				if( lFlag & 0x04 && !CheckRegexpSyntax( Argument[0], NULL, true ) ){
 					break;
 				}
 
@@ -439,7 +440,6 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			}
 			//	設定値バックアップ
 			//	マクロパラメータ→設定値変換
-			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 0;
 			pcEditView->m_pShareData->m_Common.m_bWordOnly			= lFlag & 0x01 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bLoHiCase			= lFlag & 0x02 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bRegularExp		= lFlag & 0x04 ? 1 : 0;
@@ -533,7 +533,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x200	見つかった文字列の後に追加
 		//		**********************************
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
-		if( Argument[0] == NULL ){
+		if( Argument[0] == NULL || 0 == lstrlen( Argument[0] ) ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T(	"置換元パターンが指定されていません．" ));
 			break;
@@ -544,9 +544,10 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			break;
 		}
 		{
+			LPARAM lFlag = Argument[2] != NULL ? atoi(Argument[2]) : 0;
 //			if( 0 < lstrlen( Argument[0] ) ){
 				/* 正規表現 */
-				if( pcEditView->m_pShareData->m_Common.m_bRegularExp && !CheckRegexpSyntax( Argument[0], NULL, true ) ){
+				if( lFlag & 0x04 && !CheckRegexpSyntax( Argument[0], NULL, true ) ){
 					break;
 				}
 
@@ -557,7 +558,6 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 				/* 検索文字列 */
 				CShareData::getInstance()->AddToReplaceKeyArr( (const char*)Argument[1] );
 //			}
-			LPARAM lFlag = Argument[2] != NULL ? atoi(Argument[2]) : 0;
 			pcEditView->m_pShareData->m_Common.m_bWordOnly			= lFlag & 0x01 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bLoHiCase			= lFlag & 0x02 ? 1 : 0;
 			pcEditView->m_pShareData->m_Common.m_bRegularExp		= lFlag & 0x04 ? 1 : 0;
