@@ -11,6 +11,7 @@
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2009, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -718,7 +719,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		HWND hwndToolTips;
 		hwndToolTips = TabCtrl_GetToolTips( m_hwndTab );
 		lngStyle = (UINT)::GetWindowLongPtr( hwndToolTips, GWL_STYLE );
-		lngStyle |= TTS_ALWAYSTIP;	// 従来通りTTS_ALWAYSTIPにしておく
+		lngStyle |= TTS_ALWAYSTIP | TTS_NOPREFIX;	// 従来通りTTS_ALWAYSTIPにしておく	// 2009.12.11 ryoji TTS_NOPREFIX追加
 		::SetWindowLongPtr( hwndToolTips, GWL_STYLE, lngStyle );
 
 		/* 表示用フォント */
