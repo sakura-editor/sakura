@@ -1546,6 +1546,7 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	@date 2005.11.29 aroka
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
 	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
+	@date 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
 
 	@retval true
 	@retval false	作成したファイルパスの長さがdwSizeより大きかった
@@ -1726,12 +1727,12 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 			strcpy( keybuff, szDir );
 			CutLastYenFromDirectoryPath( keybuff );
 
-			char *folders[10];
+			const char *folders[10];
 			{
 				//	Jan. 9, 2006 genta VC6対策
 				int idx;
 				for( idx=0; idx<10; ++idx ){
-					folders[idx] = 0;
+					folders[idx] = "";		// 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
 				}
 				folders[0] = szFname;
 
@@ -1751,7 +1752,7 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 				// $0-$9を置換
 				//strcpy( szNewPath, "" );
 				char *q= szFormat;
-				char *q2 = szFormat;
+				const char *q2 = szFormat;
 				while( *q ){
 					if( *q=='$' ){
 						++q;
@@ -1764,10 +1765,19 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 								break;
 							}
 
-							strcat( szTempPath, q2 );
-							if( folders[*q-'0'] != 0 ){
-								strcat( szTempPath, folders[*q-'0'] );
+							if( '\\' == *q2 ){
+								// 2010.04.13 Moca \の重複チェック C:\backup\\dirになるのを先に防ぐ
+								// ただしネットワークパスを取り除くと困るので、3文字以上
+								int nTempPathLen = strlen( szTempPath );
+								if( 3 <= nTempPathLen && *::CharPrev( szTempPath, &szTempPath[nTempPathLen] ) == '\\' ){
+									q2 +=1; // \を飛ばす
+								}
 							}
+
+							strcat( szTempPath, q2 );
+							//if( folders[*q-'0'] != 0 ){	// 2009.10.10 aroka	バグ対応でチェック不要になった
+							strcat( szTempPath, folders[*q-'0'] );
+							//}
 							q2 = q+1;
 						}
 					}
