@@ -16,7 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji, bosagami
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2010, ryoji
+	Copyright (C) 2010, ryoji, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -2565,8 +2565,9 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 	char*					pszText;
 
 	/* ルールファイルの内容をバッファに読み込む */
-	oneRule test[1024];	//	1024個許可。
-	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test, 1024 );
+	const int nRuleSize = 1024;
+	oneRule* test = new oneRule[nRuleSize];	//	1024個許可。 // 516*1024 = 528,384 byte
+	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test, nRuleSize );
 	if ( nCount < 1 ){
 		return;
 	}
@@ -2665,6 +2666,7 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		delete [] pszText;
 
 	}
+	delete [] test;
 	return;
 }
 
