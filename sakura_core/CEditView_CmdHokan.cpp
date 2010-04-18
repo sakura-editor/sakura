@@ -217,7 +217,7 @@ int CEditView::HokanSearchByFile(
 ){
 	const int nKeyLen = lstrlen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-	int i, j, nWordLen, nLineLen, nRet, nCharSize;
+	int i, j, nWordLen, nLineLen, nRet, nCharSize, nWordEnd;
 	int nCurX, nCurY; // 物理カーソル位置
 	const char* pszLine;
 	const char* word;
@@ -254,7 +254,9 @@ int CEditView::HokanSearchByFile(
 
 			// 候補単語の終了位置を求める
 			nWordLen = nCharSize;
+			nWordEnd = 0;
 			for( j += nCharSize; j < nLineLen; j += nCharSize ){
+				nWordEnd = j;			// ループを抜けた時点で単語の終わりを指す			
 				nCharSize = CMemory::GetSizeOfChar( pszLine, nLineLen, j );
 
 				// 半角記号は含めない
@@ -284,6 +286,7 @@ int CEditView::HokanSearchByFile(
 				kindPre = kindMerge;
 				nWordLen += nCharSize;				// 次の文字へ
 			}
+			if( j >= nLineLen ) nWordEnd = nLineLen;
 
 			if( nWordLen > 1020 ){ // CDicMgr等の制限により長すぎる単語は無視する
 				continue;
@@ -296,7 +299,7 @@ int CEditView::HokanSearchByFile(
 				}
 				if( 0 == nRet ){
 					// カーソル位置の単語は候補からはずす
-					if( nCurY == i && nCurX <= j && j - nWordLen + nCharSize <= nCurX ){	// 2008.11.09 syat 修正
+					if( nCurY == i && nCurX <= nWordEnd && nWordEnd - nWordLen <= nCurX ){	// 2010.02.20 syat 修正// 2008.11.09 syat 修正
 						continue;
 					}
 					if( NULL == *ppcmemKouho ){
