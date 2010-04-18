@@ -17,6 +17,7 @@
 	Copyright (C) 2007, ryoji, じゅうじ, maru
 	Copyright (C) 2008, ryoji, nasukoji, bosagami
 	Copyright (C) 2009, nasukoji, ryoji
+	Copyright (C) 2010, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1116,20 +1117,28 @@ LRESULT CEditView::DispatchEvent(
 		}
 
 		/* アクティブなペインを設定 */
-		POINT ptCursor;
-		::GetCursorPos( &ptCursor );
-		if( ::WindowFromPoint( ptCursor ) == m_hWnd ){
-			// ビュー上にマウスがあるので SetActivePane() を直接呼び出す
-			// （個別のマウスメッセージが届く前にアクティブペインを設定しておく）
-			m_pcEditDoc->SetActivePane( m_nMyIndex );
-		}else{
-			// 2008.05.24 ryoji
-			// スクロールバー上にマウスがあるかもしれないので MYWM_SETACTIVEPANE をポストする
-			// SetActivePane() にはスクロールバーのスクロール範囲調整処理が含まれているが、
-			// このタイミング（WM_MOUSEACTIVATE）でスクロール範囲を変更するのはまずい。
-			// 例えば Win XP/Vista だとスクロール範囲が小さくなってスクロールバーが有効から
-			// 無効に切り替わるとそれ以後スクロールバーが機能しなくなる。
-			::PostMessage( m_hWnd, MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
+		if( ::GetFocus() != m_hWnd ){
+			POINT ptCursor;
+			::GetCursorPos( &ptCursor );
+			HWND hwndCursorPos = ::WindowFromPoint( ptCursor );
+			if( hwndCursorPos == m_hWnd ){
+				// ビュー上にマウスがあるので SetActivePane() を直接呼び出す
+				// （個別のマウスメッセージが届く前にアクティブペインを設定しておく）
+				m_pcEditDoc->SetActivePane( m_nMyIndex );
+			}else if( (m_pcsbwVSplitBox && hwndCursorPos == m_pcsbwVSplitBox->m_hWnd)
+						|| (m_pcsbwHSplitBox && hwndCursorPos == m_pcsbwHSplitBox->m_hWnd) ){
+				// 2010.01.19 ryoji
+				// 分割ボックス上にマウスがあるときはアクティブペインを切り替えない
+				// （併せて MYWM_SETACTIVEPANE のポストにより分割線のゴミが残っていた問題も修正）
+			}else{
+				// 2008.05.24 ryoji
+				// スクロールバー上にマウスがあるかもしれないので MYWM_SETACTIVEPANE をポストする
+				// SetActivePane() にはスクロールバーのスクロール範囲調整処理が含まれているが、
+				// このタイミング（WM_MOUSEACTIVATE）でスクロール範囲を変更するのはまずい。
+				// 例えば Win XP/Vista だとスクロール範囲が小さくなってスクロールバーが有効から
+				// 無効に切り替わるとそれ以後スクロールバーが機能しなくなる。
+				::PostMessage( m_hWnd, MYWM_SETACTIVEPANE, (WPARAM)m_nMyIndex, 0 );
+			}
 		}
 
 		return nRes;
