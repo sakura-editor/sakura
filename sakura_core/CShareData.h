@@ -584,6 +584,8 @@ struct Common {
 	BOOL				m_bAutoMIMEdecode;	// ファイル読み込み時にMIMEのdecodeを行うか
 	BOOL				m_bQueryIfCodeChange;	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
 	BOOL				m_bAlertIfFileNotExist;	// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
+	bool				m_bAlertIfLargeFile;    // 開こうとしたファイルサイズが大きいバイイに警告する
+	int 				m_nAlertFileSize;       // 警告を始めるファイルサイズ(MB)
 
 	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
 	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor

@@ -30,7 +30,6 @@
 
 
 #include "stdafx.h"
-#include "charcode.h"
 #include "CDocLineMgr.h"
 #include "debug.h"
 #include "charcode.h"
@@ -51,6 +50,8 @@
 
 #include "CFileWrite.h" //2002/05/22 Frozen
 #include "CFileLoad.h" // 2002/08/30 Moca
+#include "CShareData.h" // 2010/03/03 Moca
+
 #include "my_icmp.h" // Nov. 29, 2002 genta/moca
 
 
@@ -485,6 +486,22 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 //		MYTRACE( "GetFileTime() error.\n" );
 	}
 
+	// ファイルサイズチェック(ANSI版)
+	if( CShareData::getInstance()->GetShareData()->m_Common.m_bAlertIfLargeFile ){
+		int nFileMBSize = CShareData::getInstance()->GetShareData()->m_Common.m_nAlertFileSize;
+		// m_Common.m_nAlertFileSize はMB単位
+		if( cfl.GetFileSize() >> 20 >= nFileMBSize ){
+			int nRet = MYMESSAGEBOX( hWndParent,
+				MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
+				GSTR_APPNAME,
+				"ファイルサイズが%dMB以上あります。開きますか？",
+				nFileMBSize );
+			if( nRet != IDYES ){
+				return FALSE;
+			}
+		}
+	}
+	
 	if( NULL != hwndProgress ){
 		::PostMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
 		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );

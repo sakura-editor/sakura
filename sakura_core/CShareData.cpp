@@ -268,9 +268,12 @@ struct ARRHEAD {
 
 	Version 92:
 	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用) 2009.08.15 nasukoji
+
+	Version 93:
+	「開こうとしたファイルが大きい場合に警告」機能追加  2010.03.03 Moca Unicode版からbackport
 */
 
-const unsigned int uShareDataVersion = 92;
+const unsigned int uShareDataVersion = 93;
 
 /*
 ||	Singleton風
@@ -694,6 +697,8 @@ bool CShareData::Init( void )
 		m_pShareData->m_Common.m_bQueryIfCodeChange = TRUE;
 		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 		m_pShareData->m_Common.m_bAlertIfFileNotExist = FALSE;
+		m_pShareData->m_Common.m_bAlertIfLargeFile = false;  // 開こうとしたファイルが大きい場合に警告する
+		m_pShareData->m_Common.m_nAlertFileSize = 10;        // 警告を始めるファイルサイズ（MB単位）
 
 		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
 		m_pShareData->m_Common.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
