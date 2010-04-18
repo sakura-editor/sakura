@@ -7112,6 +7112,8 @@ void CEditView::CopyViewStatus( CEditView* pView )
 	pView->m_nCaretPosX 			= m_nCaretPosX;			/* ビュー左端からのカーソル桁位置（０開始）*/
 	pView->m_nCaretPosX_Prev		= m_nCaretPosX_Prev;	/* ビュー左端からのカーソル桁位置（０オリジン）*/
 	pView->m_nCaretPosY				= m_nCaretPosY;			/* ビュー上端からのカーソル行位置（０開始）*/
+	pView->m_nCaretPosX_PHY			= m_nCaretPosX_PHY;		/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
+	pView->m_nCaretPosY_PHY			= m_nCaretPosY_PHY;		/* カーソル位置  改行単位行の行番号（０開始）*/
 //	キャレットの幅・高さはコピーしない。2002/05/12 YAZAKI
 //	pView->m_nCaretWidth			= m_nCaretWidth;		/* キャレットの幅 */
 //	pView->m_nCaretHeight			= m_nCaretHeight;		/* キャレットの高さ */
