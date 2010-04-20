@@ -1,7 +1,7 @@
 @charset "shift_jis";
 
 BODY {
-	MARGIN: 2em 5%; LINE-HEIGHT: 1.5; FONT-FAMILY: "‚l‚r ‚oƒSƒVƒbƒN", sans-serif, "Verdana", "Arial", "Helvetica"
+	margin: 1em 5%; line-height: 1.5; font-family: "‚l‚r ‚oƒSƒVƒbƒN", sans-serif, "verdana", "arial", "helvetica"; color: #000; background-color: #fff;
 }
 A:link {
 	COLOR: #f03; BACKGROUND-COLOR: transparent
@@ -13,40 +13,34 @@ A:hover {
 	COLOR: #000; BACKGROUND-COLOR: #fab
 }
 A:link IMG {
-	BORDER-LEFT-COLOR: #f03; BORDER-BOTTOM-COLOR: #f03; BORDER-TOP-COLOR: #f03; BORDER-RIGHT-COLOR: #f03
+	border-color: #f03;
 }
 A:visited IMG {
-	BORDER-LEFT-COLOR: #903; BORDER-BOTTOM-COLOR: #903; BORDER-TOP-COLOR: #903; BORDER-RIGHT-COLOR: #903
+	border-color: #903;
 }
 A:hover IMG {
-	BORDER-LEFT-COLOR: #fab; BORDER-BOTTOM-COLOR: #fab; BORDER-TOP-COLOR: #fab; BORDER-RIGHT-COLOR: #fab
+	border-color: #fab;
 }
 HR {
-	BORDER-LEFT-COLOR: #666; BORDER-BOTTOM-COLOR: #666; MARGIN: 1em; BORDER-TOP-STYLE: solid; BORDER-TOP-COLOR: #666; BORDER-RIGHT-STYLE: solid; BORDER-LEFT-STYLE: solid; HEIGHT: 2px; BORDER-RIGHT-COLOR: #666; BORDER-BOTTOM-STYLE: solid
+	border-color: #666; margin: 1em; border-style: solid; height: 2px;
 }
 H1 {
-	PADDING-RIGHT: 0.2em; PADDING-LEFT: 0.5em; FONT-WEIGHT: bold; BORDER-LEFT-COLOR: #f28; BORDER-BOTTOM-COLOR: #f28; PADDING-BOTTOM: 0.2em; BORDER-TOP-COLOR: #f28; LINE-HEIGHT: 1; PADDING-TOP: 0.2em; BACKGROUND-COLOR: #fee; BORDER-RIGHT-COLOR: #f28
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1.5em; line-height: 1;
+	border-color: #f28; background-color: #fee; color: #000;
 }
 H2 {
-	PADDING-RIGHT: 0.2em; PADDING-LEFT: 0.5em; FONT-WEIGHT: bold; BORDER-LEFT-COLOR: #f28; BORDER-BOTTOM-COLOR: #f28; PADDING-BOTTOM: 0.2em; BORDER-TOP-COLOR: #f28; LINE-HEIGHT: 1; PADDING-TOP: 0.2em; BACKGROUND-COLOR: #fee; BORDER-RIGHT-COLOR: #f28
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1.2em; line-height: 1; margin-top: 1em;
+	border-top: 2px solid #f28; border-bottom: 2px solid #f28;
+	background-color: #fee; color: #000;
 }
 H3 {
-	PADDING-RIGHT: 0.2em; PADDING-LEFT: 0.5em; FONT-WEIGHT: bold; BORDER-LEFT-COLOR: #f28; BORDER-BOTTOM-COLOR: #f28; PADDING-BOTTOM: 0.2em; BORDER-TOP-COLOR: #f28; LINE-HEIGHT: 1; PADDING-TOP: 0.2em; BACKGROUND-COLOR: #fee; BORDER-RIGHT-COLOR: #f28
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
+	border-bottom: 2px solid #f28;
+	background-color: #fee; color: #000;
 }
 H4 {
-	PADDING-RIGHT: 0.2em; PADDING-LEFT: 0.5em; FONT-WEIGHT: bold; BORDER-LEFT-COLOR: #f28; BORDER-BOTTOM-COLOR: #f28; PADDING-BOTTOM: 0.2em; BORDER-TOP-COLOR: #f28; LINE-HEIGHT: 1; PADDING-TOP: 0.2em; BACKGROUND-COLOR: #fee; BORDER-RIGHT-COLOR: #f28
-}
-H1 {
-	BORDER-RIGHT: 4px; BORDER-TOP: 4px solid; FONT-SIZE: 1.5em; BORDER-LEFT: 4px; BORDER-BOTTOM: 4px solid
-}
-H2 {
-	BORDER-RIGHT: 2px; BORDER-TOP: 2px solid; MARGIN-TOP: 2em; FONT-SIZE: 1.2em; BORDER-LEFT: 2px; BORDER-BOTTOM: 2px solid
-}
-H3 {
-	BORDER-RIGHT: 2px; BORDER-TOP: 2px; MARGIN-TOP: 1.5em; FONT-SIZE: 1em; BORDER-LEFT: 2px; BORDER-BOTTOM: 2px solid
-}
-H4 {
-	MARGIN-TOP: 1em; FONT-SIZE: 1em; BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
+	background-color: #fee; color: #000;
 }
 DL {
 	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN-LEFT: 1em; BORDER-LEFT: #666 1px solid; MARGIN-RIGHT: 1em; PADDING-TOP: 0px; BORDER-BOTTOM: #666 1px solid
