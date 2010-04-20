@@ -47,10 +47,10 @@ PPA.DLLがインストールされている場合、マクロで制御構文や変数が利用できます。<br>
 <img src="images/hint.png">マクロの実行に<b>WSH</b>を使用できるようになりました。(sakura:1.3.3.0以降)<br>
 Windows95系OSでWSHが一応動くようになりました。(sakura:1.4.3.4以降)<br>
 <br>
-WSHから利用する場合、「<b>Editor.関数名</b>」と、オブジェクト名をつけてください。<br>
+WSHから利用する場合、「<b>Editor.関数名</b>」のようにオブジェクト名をつけてください。<br>
 <div class=li200>エディタを操作するためのオブジェクトは Editor です。メソッド名及びその引数はキーボードマクロと同じです。<br>
-WScript オブジェクトはいきなりは使えません。CreateObjectでオブジェクトを取得して使ってください。<br>
-ウィンドウを出すMessageBox, InputBoxは使えません。<br>
+WScript オブジェクトはwscript.exe/cscript.exeが内蔵しているためサクラエディタでは使えません。<br>
+任意のActiveXオブジェクトをVBScriptならCreateObject、JScriptならActiveXObjectで取得して使ってください。<br>
 </div><br>
 <img src="images/hint.png">VBScriptからMsgBox, Inputが使用できるようになりました。(sakura:1.5.7.0以降)<br>
 </BODY></HTML>

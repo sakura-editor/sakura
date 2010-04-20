@@ -37,16 +37,17 @@ aaHHCtlCloseWin.Click(); }
   指定位置にかかわらず除外指定は検索指定より優先されます． <br>
 何も指定しない場合は、「*.*」を指定したことになります。<br>
 <b>(フォルダ)</b> … 検索対象ファイルのあるフォルダを指定します。エクスプローラなどからのフォルダのドロップも受け付けます。<br>
-</div><br>
+</div><div class=li200>
 <b>[現フォルダ]ボタン</b><br>
-&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルのフォルダが指定されます。<br>
-<div class=li200>
+&nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルを元に「フォルダ」を設定します。<br>
 □<b>単語単位で探す</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;単語として識別するもののみ検索します。キーワードに単語以外を入れると何もヒットしません。<br>
 ■<b>サブフォルダからも検索する</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;指定フォルダの下層フォルダからも検索するかどうかを指定します。<br>
-□<b>現在編集中のファイルから検索</b>	※<br>
+□<b>現在編集中のファイルから検索</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;現在編集中のファイルのみを検索対象に指定します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;編集中の内容ではなく、最後に保存されたファイル内容から検索して一覧を作成します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;編集中の内容ではなく、最後に保存されたファイル内容から検索して一覧を作成します。<a href="#hintmarksearch">※データから検索</a>
+<br>
 □<b>英大文字と小文字を区別する</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;半角英字の大文字と小文字を区別して検索するかどうかを指定します。<br>
 □<b>正規表現</b> … 検索条件に、<a href="HLP000089.html">正規表現</a>を使うかどうかを指定します。<br>
@@ -71,11 +72,9 @@ aaHHCtlCloseWin.Click(); }
 <br>
 <font color="blue">※正規表現は、<a href="HLP000006.html">BREGEXP.DLL(またはbregonig.dll)</a>というフリーソフトウェアによって実現していますので、お持ちでない方は別途入手していただく必要があります。</font><br>
 <br>
-Grepで「条件」を指定せずに実行すると、ファイル名検索ができます。<br>
-ただし、フォルダ名検索はできません。<br>
-<br>
-「文字コードセット自動判別チェックボタン」は廃止されました。<br>
-替わりに「文字コードセット」で{自動選択}を選んでください。<br>
+<span id="hintmarksearch"><br></span>
+<img src="images/hint.png">ヒント<br>
+編集中のドキュメント、Grep結果などの中から行を抽出したい場合は、「<a href="HLP000059.html">検索</a>」の[該当行マーク]と「<a href="HLP000209.html">ブックマーク一覧</a>」の[コピー]を組み合わせると便利です。<br>
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文: Grep( str1 :String, str2 :String, str3 :String, int4 :Integer );<br>
