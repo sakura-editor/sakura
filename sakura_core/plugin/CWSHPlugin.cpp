@@ -78,7 +78,7 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 
 		BOOL bLoadResult = pWsh->LoadKeyMacro( G_AppInstance(), path );
 		if ( !bLoadResult ){
-			ErrorMessage( NULL, _T("マクロの読み込みに失敗しました。\n\n%ts"), (TCHAR*)path );
+			ErrorMessage( NULL, _T("マクロの読み込みに失敗しました。\n\n%ts"), static_cast<const TCHAR*>(path) );
 			delete pWsh;
 			return false;
 		}

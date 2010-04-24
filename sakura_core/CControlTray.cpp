@@ -271,7 +271,7 @@ bool CControlTray::CreateTrayIcon( HWND hWnd )
 		GetAppVersionInfo( NULL, VS_VERSION_INFO,
 			&dwVersionMS, &dwVersionLS );
 
-		auto_sprintf( pszTips, _T("%ts %d.%d.%d.%d"),		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
+		auto_snprintf_s( pszTips, _countof(pszTips), _T("%ts %d.%d.%d.%d"),		//Jul. 06, 2001 jepro UR はもう付けなくなったのを忘れていた
 			GSTR_APPNAME,
 			HIWORD( dwVersionMS ),
 			LOWORD( dwVersionMS ),
@@ -920,7 +920,7 @@ bool CControlTray::OpenNewEditor(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		TCHAR szMsg[512];
+		TCHAR szMsg[128];
 		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
 		return false;
@@ -1025,7 +1025,7 @@ bool CControlTray::OpenNewEditor(
 		if( nResult != 0 ){
 			ErrorMessage(
 				hWndParent,
-				_T("\'%ls\'\nプロセスの起動に失敗しました。"),
+				_T("\'%ts\'\nプロセスの起動に失敗しました。"),
 				szEXE
 			);
 			bRet = false;
@@ -1092,7 +1092,7 @@ bool CControlTray::OpenNewEditor2(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		TCHAR szMsg[512];
+		TCHAR szMsg[128];
 		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
 		return false;

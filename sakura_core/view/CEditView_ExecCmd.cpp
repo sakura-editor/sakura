@@ -141,10 +141,10 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 		//コマンドライン文字列作成
 		auto_sprintf(
 			cmdline,
-			_T("%ls %ls%ls%ts"),
-			( cOsVer.IsWin32NT() ? L"cmd.exe" : L"command.com" ),
-			( bIOUnicodeGet ? L"/U" : L"" ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
-			( bGetStdout ? L"/C " : L"/K " ),
+			_T("%ts %ts%ts%ts"),
+			( cOsVer.IsWin32NT() ? _T("cmd.exe") : _T("command.com") ),
+			( bIOUnicodeGet ? _T("/U") : _T("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
+			( bGetStdout ? _T("/C ") : _T("/K ") ),
 			pszCmd
 		);
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,

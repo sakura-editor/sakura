@@ -97,7 +97,7 @@ void CDlgPluginOption::SetData( void )
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 
 	// タイトル
-	auto_sprintf( buf, _T("%s プラグインの設定"), m_cPlugin->m_sName.c_str());
+	auto_sprintf( buf, _T("%ls プラグインの設定"), m_cPlugin->m_sName.c_str());
 	::SetWindowText( GetHwnd(), buf );
 
 	// リスト
@@ -114,7 +114,7 @@ void CDlgPluginOption::SetData( void )
 	for( i=0, it = m_cPlugin->m_options.begin(); it != m_cPlugin->m_options.end(); i++, it++ ){
 		cOpt = *it;
 
-		auto_sprintf( buf, _T("%s"), cOpt->GetLabel().c_str());
+		auto_snprintf_s( buf, _countof(buf), _T("%ls"), cOpt->GetLabel().c_str());
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = buf;
 		lvi.iItem    = i;
@@ -153,13 +153,13 @@ void CDlgPluginOption::SetData( void )
 			for (std::vector<wstring>::iterator it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sTrg);
 				if (sValue == sTrg) {
-					auto_sprintf( buf, _T("%s"), sView.c_str());
+					auto_snprintf_s( buf, _countof(buf), _T("%ls"), sView.c_str());
 					break;
 				}
 			}
 		}
 		else {
-			auto_sprintf( buf, _T("%s"), sValue.c_str());
+			auto_snprintf_s( buf, _countof(buf), _T("%ls"), sValue.c_str());
 		}
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
@@ -225,19 +225,12 @@ int CDlgPluginOption::GetData( void )
 			wstring	sTrg;
 			std::vector<wstring>	selects;
 			selects = cOpt->GetSelects();
-#ifndef _UNICODE
-			wchar_t	buf2[MAX_LENGTH_VALUE+1];
-			auto_sprintf(buf2, L"%s", buf);
-#endif
+			wstring sWbuf = to_wchar(buf);
 
 			for (std::vector<wstring>::iterator it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sTrg);
-#ifdef _UNICODE
-				if (sView == buf) {
-#else
-				if (sView == buf2) {
-#endif
-					auto_sprintf( buf, _T("%s"), sTrg.c_str());
+				if (sView == sWbuf) {
+					auto_sprintf( buf, _T("%ls"), sTrg.c_str());
 					break;
 				}
 			}
@@ -252,14 +245,7 @@ int CDlgPluginOption::GetData( void )
 			continue;
 		}
 
-#ifdef _UNICODE
-		sValue = buf;
-#else
-		wchar_t	buf2[MAX_LENGTH_VALUE+1];
-		auto_sprintf(buf2, L"%s", buf);
-
-		sValue = buf2;
-#endif
+		sValue = to_wchar(buf);
 
 		cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
 	}
@@ -489,21 +475,13 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			int		nItemIdx;
 			wstring	sView;
 			wstring	sValue;
-#ifndef _UNICODE
-			wchar_t	buf2[MAX_LENGTH_VALUE+1];
-			auto_sprintf(buf2, L"%s", buf);
-#endif
-
+			wstring	sWbuf = to_wchar(buf);
 			nSelIdx = -1;		// 選択
 			i = 0;
 			for (std::vector<wstring>::iterator it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sValue);
 				nItemIdx = ::SendMessageW( hwndCombo, CB_ADDSTRING, 0,(LPARAM)sView.c_str() );
-#ifdef _UNICODE
-				if (sView == buf) {
-#else
-				if (sView == buf2) {
-#endif
+				if (sView == sWbuf) {
 					nSelIdx = i;
 				}
 				::SendMessageAny( hwndCombo, CB_SETITEMDATA, nItemIdx, (LPARAM)i++ );

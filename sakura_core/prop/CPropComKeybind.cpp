@@ -529,7 +529,7 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 	::SendMessageAny( hwndKeyList, LB_RESETCONTENT, 0, 0 );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
 		TCHAR	pszLabel[256];
-		auto_sprintf( pszLabel, _T("%ls%ls"), szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		auto_sprintf( pszLabel, _T("%ls%ts"), szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 		::List_AddString( hwndKeyList, pszLabel );
 	}
 	::SendMessageAny( hwndKeyList, LB_SETCURSEL, nIndex, 0 );

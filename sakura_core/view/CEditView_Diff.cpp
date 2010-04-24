@@ -148,7 +148,7 @@ void CEditView::ViewDiffInfo(
 		if (cOsVer.IsWin32NT()){
 			auto_sprintf(
 				cmdline,
-				_T("cmd.exe /C \"\"%ts\\%ls\" %ls \"%ts\" \"%ts\"\""),
+				_T("cmd.exe /C \"\"%ts\\%ts\" %ts \"%ts\" \"%ts\"\""),
 				szExeFolder,	//sakura.exeパス
 				_T("diff.exe"),		//diff.exe
 				szOption,		//diffオプション
@@ -159,7 +159,7 @@ void CEditView::ViewDiffInfo(
 		else{
 			auto_sprintf(
 				cmdline,
-				_T("command.com /C \"%ls\\%ls\" %ls \"%ts\" \"%ts\""),
+				_T("command.com /C \"%ts\\%ts\" %ts \"%ts\" \"%ts\""),
 				szExeFolder,	//sakura.exeパス
 				_T("diff.exe"),		//diff.exe
 				szOption,		//diffオプション

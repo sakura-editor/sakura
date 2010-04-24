@@ -703,7 +703,7 @@ void CDlgTagJumpList::find_key( const wchar_t* _keyword )
 	for( i = 0; i <= m_nLoop; i++ )
 	{
 		//タグファイル名を作成する。
-		auto_sprintf( szTagFile, _T("%ls%ls"), szCurrentPath, TAG_FILENAME );
+		auto_sprintf( szTagFile, _T("%ts%ls"), szCurrentPath, TAG_FILENAME );
 
 		//タグファイルを開く。
 		fp = _tfopen( szTagFile, _T("r") );

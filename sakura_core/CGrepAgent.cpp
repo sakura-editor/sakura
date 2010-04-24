@@ -887,7 +887,7 @@ void CGrepAgent::SetGrepResult(
 
 	/* ÉmÅ[É}Éã */
 	if( 1 == nGrepOutputStyle ){
-		nWorkLen = ::auto_sprintf( pWork, L"%ls(%d,%d)%ls: ", pszFullPath, nLine, nColm, pszCodeName );
+		nWorkLen = ::auto_sprintf( pWork, L"%ts(%d,%d)%ts: ", pszFullPath, nLine, nColm, pszCodeName );
 		nMaxOutStr = 2000; // 2003.06.10 Moca ç≈ëÂí∑ïœçX
 	}
 	/* WZïó */
@@ -1073,7 +1073,7 @@ int CGrepAgent::DoGrepFile(
 				int nPercent = cfl.GetPercent();
 				if( 5 <= nPercent - nOldPercent ){
 					nOldPercent = nPercent;
-					::auto_sprintf( szWork, L"%ls (%3d%%)", pszFile, nPercent );
+					::auto_sprintf( szWork, L"%ts (%3d%%)", pszFile, nPercent );
 					::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, szWork );
 				}
 			}

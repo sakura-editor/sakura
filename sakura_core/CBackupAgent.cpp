@@ -86,7 +86,7 @@ int CBackupAgent::MakeBackUp(
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
 				_T("バックアップエラー"),
 				_T("以下のバックアップフォルダが見つかりません．\n%ts\n")
-				_T("バックアップを作成せずに上書き保存してよろしいですか．"),
+				_T("バックアップを作成せずに上書き保存してよろしいですか？"),
 				bup_setting.m_szBackUpFolder.c_str()
 			);
 			if( nMsgResult == IDYES ){
@@ -99,7 +99,17 @@ int CBackupAgent::MakeBackUp(
 	}
 
 	TCHAR	szPath[_MAX_PATH];
-	FormatBackUpPath( szPath, target_file );
+	if( false == FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
+		int nMsgResult = ::TopConfirmMessage(
+			CEditWnd::Instance()->GetHwnd(),
+			_T("バックアップ先のパス作成中にエラーになりました。パスが長すぎます。\n")
+			_T("バックアップを作成せずに上書き保存してよろしいですか？")
+		);
+		if( nMsgResult == IDYES ){
+			return 0;//	保存継続
+		}
+		return 2;// 保存中断
+	}
 
 	//@@@ 2002.03.23 start ネットワーク・リムーバブルドライブの場合はごみ箱に放り込まない
 	bool dustflag = false;
@@ -289,12 +299,14 @@ int CBackupAgent::MakeBackUp(
 	@date 2005.11.29 aroka
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
 
-	@retval true
+	@retval true  成功
+	@retval false バッファ不足
 	
 	@todo Advanced modeでの世代管理
 */
 bool CBackupAgent::FormatBackUpPath(
 	TCHAR*			szNewPath,	//!< [out] szNewPath バックアップ先パス名
+	size_t 			newPathCount,	//!< [in] szNewPathのサイズ
 	const TCHAR*	target_file	//!< [in]  target_file バックアップ元パス名
 )
 {
@@ -326,15 +338,21 @@ bool CBackupAgent::FormatBackUpPath(
 		wchar_t	szForm[64];
 
 		TCHAR*	pBase;
+		int     nBaseCount;
 		pBase = szNewPath + _tcslen( szNewPath );
+		nBaseCount = newPathCount - _tcslen( szNewPath );
 
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		switch( bup_setting.GetBackupType() ){
 		case 1:
-			auto_sprintf( pBase, _T("%ls.bak"), szFname );
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts.bak"), szFname ) ){
+				return false;
+			}
 			break;
 		case 5: //	Jun.  5, 2005 genta 1の拡張子を残す版
-			auto_sprintf( pBase, _T("%ts%ts.bak"), szFname, szExt );
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts%ts.bak"), szFname, szExt ) ){
+				return false;
+			}
 			break;
 		case 2:	//	日付，時刻
 			_tzset();
@@ -364,7 +382,9 @@ bool CBackupAgent::FormatBackUpPath(
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
 			wcsftime( szTime, _countof( szTime ) - 1, szForm, today );
-			auto_sprintf( pBase, _T("%ts_%ls%ls"), szFname, szTime, szExt );
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts_%ls%ts"), szFname, szTime, szExt ) ){
+				return false;
+			}
 			break;
 	//	2001/06/12 Start by asa-o: ファイルに付ける日付を前回の保存時(更新日時)にする
 		case 4:	//	日付，時刻
@@ -391,7 +411,9 @@ bool CBackupAgent::FormatBackUpPath(
 				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
 					auto_sprintf(szTime,L"%ls%02d",szTime,ctimeLastWrite->wSecond);
 				}
-				auto_sprintf( pBase, _T("%ts_%ls%ts"), szFname, szTime, szExt );
+				if( -1 == auto_sprintf_s( pBase, nBaseCount, _T("%ts_%ls%ts"), szFname, szTime, szExt ) ){
+					return false;
+				}
 			}
 			break;
 	// 2001/06/12 End
@@ -416,7 +438,9 @@ bool CBackupAgent::FormatBackUpPath(
 				*++ptr = _T('0');
 				*++ptr = _T('\0');
 			}
-			auto_sprintf( pBase, _T("%ts%ts"), szFname, szExt );
+			if( -1 == auto_snprintf_s( pBase, nBaseCount, _T("%ts%ts"), szFname, szExt ) ){
+				return false;
+			}
 			break;
 		}
 
@@ -429,7 +453,9 @@ bool CBackupAgent::FormatBackUpPath(
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
-				GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() );
+				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
+					return false;
+				}
 			}
 			break;
 		case 2:	//	現在の日付，時刻
@@ -486,8 +512,14 @@ bool CBackupAgent::FormatBackUpPath(
 						if( isdigit(*q) ){
 							q[-1] = _T('\0');
 							_tcscat( szNewPath, q2 );
+//							if( newPathCount <  auto_strlcat( szNewPath, q2, newPathCount ) ){
+//								return false;
+//							}
 							if( folders[*q-_T('0')] != 0 ){
 								_tcscat( szNewPath, folders[*q-_T('0')] );
+//								if( newPathCount < auto_strlcat( szNewPath, folders[*q-_T('0')], newPathCount ) ){
+//									return false;
+//								}
 							}
 							q2 = q+1;
 						}
@@ -495,6 +527,9 @@ bool CBackupAgent::FormatBackUpPath(
 					++q;
 				}
 				_tcscat( szNewPath, q2 );
+//				if( newPathCount < auto_strlcat( szNewPath, q2, newPathCount ) ){
+//					return false;
+//				}
 			}
 		}
 		{
@@ -502,12 +537,16 @@ bool CBackupAgent::FormatBackUpPath(
 			TCHAR *cp;
 			//	2006.03.25 Aroka szExt[0] == '\0'のときのオーバラン問題を修正
 			TCHAR *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
+			assert( newPathCount <= _countof(temp) );
 
+			// * を拡張子にする
 			while( _tcschr( szNewPath, _T('*') ) ){
 				_tcscpy( temp, szNewPath );
 				cp = _tcschr( temp, _T('*') );
 				*cp = 0;
-				auto_sprintf( szNewPath, _T("%ts%ts%ts"), temp, ep, cp+1 );
+				if( -1 == auto_snprintf_s( szNewPath, newPathCount, _T("%ts%ts%ts"), temp, ep, cp+1 ) ){
+					return false;
+				}
 			}
 			//	??はバックアップ連番にしたいところではあるが，
 			//	連番処理は末尾の2桁にしか対応していないので

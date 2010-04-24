@@ -978,7 +978,7 @@ void CPrintPreview::OnPrint( void )
 		TCHAR	szFileName[_MAX_FNAME];
 		TCHAR	szExt[_MAX_EXT];
 		_tsplitpath( m_pParentWnd->GetDocument().m_cDocFile.GetFilePath(), NULL, NULL, szFileName, szExt );
-		auto_sprintf( szJobName, _T("%ts%ts"), szFileName, szExt );
+		auto_snprintf_s( szJobName, _countof(szJobName), _T("%ts%ts"), szFileName, szExt );
 	}
 
 	/* 印刷範囲を指定できるプリンタダイアログを作成 */
@@ -1299,7 +1299,8 @@ void CPrintPreview::DrawPageText(
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
 				if( 2 == m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_nLineTermType ){
 					wchar_t szLineTerm[2];
-					auto_sprintf( szLineTerm, L"%lc", m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_cLineTermChar );	/* 行番号区切り文字 */
+					szLineTerm[0] = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
+					szLineTerm[1] = L'\0';
 					wcscat( szLineNum, szLineTerm );
 				}
 				else{

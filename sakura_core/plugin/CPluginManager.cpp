@@ -215,19 +215,19 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, TCHAR* pszPlugin
 	DebugOut(L"  定義ファイル読込 %ts\n",  pszPath );
 #endif
 
-	WCHAR szPlugType[128];
-	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_PLUGTYPE, MakeStringBufferW(szPlugType) );
+	std::wstring sPlugType;
+	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_PLUGTYPE, sPlugType );
 
-	if( wcsicmp( szPlugType, L"wsh" ) == 0 ){
+	if( wcsicmp( sPlugType.c_str(), L"wsh" ) == 0 ){
 		plugin = new CWSHPlugin( tstring(pszBasePath) );
-	}else if( wcsicmp( szPlugType, L"dll" ) == 0 ){
+	}else if( wcsicmp( sPlugType.c_str(), L"dll" ) == 0 ){
 		plugin = new CDllPlugin( tstring(pszBasePath) );
 	}else{
 		return NULL;
 	}
 	plugin->ReadPluginDef( &cProfDef );
 #if _DEBUG & _UNICODE
-	DebugOut(L"  プラグインタイプ %ls\n", szPlugType);
+	DebugOut(L"  プラグインタイプ %ls\n", sPlugType.c_str() );
 #endif
 
 	//オプションファイルを読み込む

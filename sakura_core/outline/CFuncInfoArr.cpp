@@ -146,7 +146,7 @@ void CFuncInfoArr::DUMP( void )
 		MYTRACE_A( "[%d]------------------\n", i );
 		MYTRACE_A( "m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
 		MYTRACE_A( "m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
-		MYTRACE_A( "m_cmemFuncName	=[%ls]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
+		MYTRACE_A( "m_cmemFuncName	=[%ts]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
 		MYTRACE_A( "m_nInfo			=%d\n", m_ppcFuncInfoArr[i]->m_nInfo );
 	}
 	MYTRACE_A( "=============================\n" );

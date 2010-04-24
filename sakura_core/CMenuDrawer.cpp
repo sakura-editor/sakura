@@ -700,7 +700,7 @@ void CMenuDrawer::MyAppendMenu(
 	int				nForceIconId	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
 )
 {
-	TCHAR		szLabel[256];
+	TCHAR		szLabel[300];
 	int			nFlagAdd = 0;
 	int			i;
 

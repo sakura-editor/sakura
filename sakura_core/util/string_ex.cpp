@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "string_ex.h"
 #include "charset/charcode.h"
-#include <minmax.h>
+#include "util/std_macro.h"
 
 SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 
@@ -224,6 +224,7 @@ const char* stristr_j( const char* s1, const char* s2 )
 #if _MSC_VER<1400 //VS2005より前なら
 error_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
 {
+	// 本物は _set_invalid_parameter_handler で設定されたハンドラが起動します
 	if(!szDst)return EINVAL;
 	if(!szSrc)return EINVAL;
 
@@ -509,7 +510,7 @@ int wmemicmp(const WCHAR* p1,const WCHAR* p2,size_t count)
 
 int wmemicmp(const WCHAR* p1,const WCHAR* p2)
 {
-	return wmemicmp(p1,p2, max(wcslen(p1), wcslen(p2)));
+	return wmemicmp(p1,p2, t_max(wcslen(p1), wcslen(p2)));
 }
 
 int wmemicmp_ascii(const WCHAR* p1,const WCHAR* p2,size_t count)
