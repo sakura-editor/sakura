@@ -107,7 +107,6 @@ namespace ApiWrap{
 			//êÊì™Ç©ÇÁpÇ‹Ç≈ÇÃïîï™ï∂éöóÒ -> szBuf
 			wchar_t szBuf[_MAX_PATH];
 			wcsncpy_s(szBuf,_countof(szBuf),szDirPath,p-szDirPath);
-			szBuf[p-szDirPath]=L'\0';
 
 			//ë∂ç›Ç∑ÇÈÇ©
 			int nAcc = _waccess(szBuf,0);

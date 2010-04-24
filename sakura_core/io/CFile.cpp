@@ -137,7 +137,7 @@ bool CFile::FileLock( EShareMode eShareMode )
 		WarningBeep();
 		TopWarningMessage(
 			CEditWnd::Instance()->GetHwnd(),
-			_T("%ls\nを%lsでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
+			_T("%ts\nを%tsでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
 			GetFilePathClass().IsValidPath() ? GetFilePath() : _T("（無題）"),
 			pszMode
 		);

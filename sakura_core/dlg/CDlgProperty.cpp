@@ -205,7 +205,7 @@ void CDlgProperty::SetData( void )
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );
 
-		auto_sprintf( szWork, _T("MS-DOSファイル名  %ls\r\n"), wfd.cAlternateFileName );
+		auto_sprintf( szWork, _T("MS-DOSファイル名  %ts\r\n"), wfd.cAlternateFileName );
 		cmemProp.AppendString( szWork );
 
 		auto_sprintf( szWork, _T("ファイルサイズ  %d バイト\r\n"), wfd.nFileSizeLow );

@@ -185,7 +185,8 @@ protected:
 	//                         入出力部                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	template <class T> //T=={bool, int, WORD, wchar_t, char, wstring}
+	// 注意：StringBuffer系はバッファが足りないとabortします
+	template <class T> //T=={bool, int, WORD, wchar_t, char, wstring, StringBufferA, StringBufferW, StaticString}
 	bool IOProfileData( const WCHAR* pszSectionName, const WCHAR* pszEntryKey, T& tEntryValue )
 	{
 		//読み込み

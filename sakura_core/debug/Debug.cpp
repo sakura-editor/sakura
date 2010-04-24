@@ -54,10 +54,13 @@ void DebugOutW( LPCWSTR lpFmt, ...)
 	static WCHAR szText[16000];
 	va_list argList;
 	va_start(argList, lpFmt);
-	auto_vsprintf( szText, lpFmt, argList );
+	int ret = tchar_vsnwprintf_s( szText, _countof(szText), lpFmt, argList );
 
 	//出力
 	::OutputDebugStringW( szText );
+	if( -1 == ret ){
+		::OutputDebugStringW( L"(切り捨てました...)\n" );
+	}
 #ifdef USE_DEBUGMON
 	DebugMonitor_Output(NULL, to_wchar(szText));
 #endif
@@ -76,10 +79,13 @@ void DebugOutA( LPCSTR lpFmt, ...)
 	static CHAR szText[16000];
 	va_list argList;
 	va_start(argList, lpFmt);
-	::tchar_vsprintf( szText, lpFmt, argList );
+	int ret = tchar_vsnprintf_s( szText, _countof(szText), lpFmt, argList );
 
 	//出力
 	::OutputDebugStringA( szText );
+	if( -1 == ret ){
+		::OutputDebugStringA( "(切り捨てました...)\n" );
+	}
 #ifdef USE_DEBUGMON
 	DebugMonitor_Output(NULL, to_wchar(szText));
 #endif
@@ -124,7 +130,7 @@ SAKURA_CORE_API int VMessageBoxF_W(
 	hwndOwner=GetMessageBoxOwner(hwndOwner);
 	//整形
 	static WCHAR szBuf[16000];
-	auto_vsprintf(szBuf,lpText,v);
+	tchar_vsnwprintf_s(szBuf,_countof(szBuf),lpText,v);
 	//API呼び出し
 #ifdef _UNICODE
 	return ::MessageBoxW( hwndOwner, szBuf, lpCaption, uType);
@@ -144,7 +150,7 @@ SAKURA_CORE_API int VMessageBoxF_A(
 	hwndOwner=GetMessageBoxOwner(hwndOwner);
 	//整形
 	static ACHAR szBuf[16000];
-	tchar_vsprintf(szBuf,lpText,v);
+	tchar_vsnprintf_s(szBuf,_countof(szBuf),lpText,v);
 	//API呼び出し
 	return ::MessageBoxA( hwndOwner, szBuf, lpCaption, uType);
 }

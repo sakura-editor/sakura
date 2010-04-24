@@ -49,7 +49,7 @@ class CDlgTagJumpList;
 #define TAG_FILENAME        L"tags"
 //タグファイルのフォーマット	//	@@ 2005.03.31 MIK 定数化
 //	@@ 2005.04.03 MIK キーワードに空白が含まれる場合の考慮
-#define TAG_FORMAT       _T("%[^\t\r\n]\t%[^\t\r\n]\t%d;\"\t%ls\t%ls")
+#define TAG_FORMAT       _T("%[^\t\r\n]\t%[^\t\r\n]\t%d;\"\t%s\t%s")
 
 /*!	@brief ダイレクトタグジャンプ候補一覧ダイアログ
 

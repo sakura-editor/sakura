@@ -694,6 +694,7 @@ void CCaret::ShowCaretPosInfo()
 		int		nLen;
 		{	// メッセージの左側文字列（「行:列」を除いた表示）
 			nLen = _tcslen(pszCodeName) + _tcslen(szEolMode) + _tcslen(szCaretChar);
+			// これは %s(%s)%6s%s%s 等になる。%6ts表記は使えないので注意
 			auto_sprintf(
 				szFormat,
 				_T("%%s(%%s)%%%ds%%s%%s"),	// 「キャレット位置の文字情報」を右詰で配置（足りないときは左詰になって右に伸びる）

@@ -163,6 +163,8 @@ inline int auto_stricmp(const WCHAR* p1, const WCHAR* p2){ return wmemicmp(p1,p2
 //’·‚³ŒvZŒn
 inline size_t auto_strlen(const ACHAR* str){ return strlen(str); }
 inline size_t auto_strlen(const WCHAR* str){ return wcslen(str); }
+inline size_t auto_strnlen(const ACHAR* str, size_t count){ return strnlen(str, count); }
+inline size_t auto_strnlen(const WCHAR* str, size_t count){ return wcsnlen(str, count); }
 
 //ŒŸõŒniSJIS, UCS2 ê—pj
 inline const ACHAR* auto_strstr(const ACHAR* str, const ACHAR* strSearch){ return ::strstr_j(str,strSearch); }

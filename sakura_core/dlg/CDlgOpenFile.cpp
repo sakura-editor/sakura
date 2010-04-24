@@ -689,7 +689,7 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 		pszPath[0] = _T('\0');
 	}
 	else {
-		auto_sprintf( pszPath, _T("%ls%ls%ls%ls"), szDrive, szDir, szName, szExt );
+		auto_sprintf( pszPath, _T("%ts%ts%ts%ts"), szDrive, szDir, szName, szExt );
 	}
 	m_ofn.lpstrFile = pszPath;
 	// To Here Jun. 23, 2002 genta
@@ -943,7 +943,7 @@ void CDlgOpenFile::DlgOpenFail(void)
 	TopErrorMessage( m_hwndParent,
 		_T("ダイアログが開けません。\n")
 		_T("\n")
-		_T("エラー:%ls"),
+		_T("エラー:%ts"),
 		pszError
 	);
 }

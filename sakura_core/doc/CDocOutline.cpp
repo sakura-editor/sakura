@@ -63,6 +63,7 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 	wchar_t*	pszWork;
 	int nDelimitLen = wcslen( pszDelimit );
 	int nCount = 0;
+	szLine[LINEREADBUFSIZE-1] = '\0';
 	while( NULL != fgetws( szLine, _countof(szLine), pFile ) && nCount < nMaxCount ){
 		pszWork = wcsstr( szLine, pszDelimit );
 		if( NULL != pszWork && szLine[0] != L';' ){
@@ -89,6 +90,8 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 				pszToken = wcstok( NULL, pszKeySeps );
 			}
 		}
+		assert_warning( '\0' != szLine[LINEREADBUFSIZE-1] && '\n' != szLine[LINEREADBUFSIZE-1] );
+		// TODO:Œã‚ë‚Ìƒf[ƒ^“Ç‚Ý”ò‚Î‚µ
 	}
 	fclose( pFile );
 	return nCount;

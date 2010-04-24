@@ -539,7 +539,7 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 
 	if( ppMacro == NULL ){
 #ifdef _DEBUG
-	MYTRACE_A( "CSMacroMgr::Load() Out of range: idx=%d Path=%ls\n", idx, pszPath);
+	MYTRACE_A( "CSMacroMgr::Load() Out of range: idx=%d Path=%ts\n", idx, pszPath);
 #endif
 	}
 	//	バッファクリア

@@ -81,7 +81,8 @@ BOOL CDicMgr::Search(
 		//1çsì«Ç›çûÇ›
 		{
 			wstring tmp = in.ReadLineW(); //NULL != fgetws( szLine, _countof(szLine), pFile );
-			wcscpy_s(szLine,_countof(szLine),tmp.c_str());
+			wcsncpy_s(szLine,_countof(szLine),tmp.c_str(), _TRUNCATE);
+			// auto_strlcpy(szLine,tmp.c_str(), _countof(szLine));
 		}
 
 		pszWork = wcsstr( szLine, pszDelimit );

@@ -6,10 +6,11 @@
 //!デバッグメッセージ出力
 void debug_output(const char* str, ...)
 {
-	static char buf[256];
+	static char buf[_MAX_PATH+150];
 	va_list mark;
 	va_start(mark,str);
-	tchar_vsprintf(buf,str,mark);
+	// FILE名, LINE 式 分必要
+	tchar_vsnprintf_s(buf,_countof(buf),str,mark);
 	va_end(mark);
 
 	//デバッガに出力

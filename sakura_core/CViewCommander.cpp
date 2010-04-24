@@ -3605,7 +3605,7 @@ void CViewCommander::Command_COPYTAG( void )
 		GetDocument()->m_cLayoutMgr.LayoutToLogic( GetCaret().GetCaretLayoutPos(), &ptColLine );
 
 		/* クリップボードにデータを設定 */
-		auto_sprintf( buf, L"%ls (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
+		auto_sprintf( buf, L"%ts (%d,%d): ", GetDocument()->m_cDocFile.GetFilePath(), ptColLine.y+1, ptColLine.x+1 );
 		m_pCommanderView->MySetClipboardData( buf, wcslen( buf ), false );
 	}
 	else{
@@ -5465,7 +5465,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( void )
 		for( i = 0; i <= nLoop; i++ )
 		{
 			//タグファイル名を作成する。
-			auto_sprintf( szTagFile, _T("%ls%ls"), szCurrentPath, TAG_FILENAME );
+			auto_sprintf( szTagFile, _T("%ts%ls"), szCurrentPath, TAG_FILENAME );
 
 			//タグファイルを開く。
 			fp = _tfopen( szTagFile, _T("r") );
@@ -5557,7 +5557,7 @@ next_line:
 					}
 					else
 					{
-						auto_sprintf( szTagFile, _T("%ls%ls"), szCurrentPath, p );
+						auto_sprintf( szTagFile, _T("%ts%ls"), szCurrentPath, p );
 					}
 
 					return m_pCommanderView->TagJumpSub( szTagFile, CMyPoint(0, n2) );
@@ -5672,7 +5672,7 @@ bool CViewCommander::Command_TagsMake( void )
 	if (cOsVer.IsWin32NT())
 	{
 		//	2006.08.04 genta add /D to disable autorun
-		auto_sprintf( cmdline, _T("cmd.exe /D /C \"\"%ls\\%ls\" %ls\""),
+		auto_sprintf( cmdline, _T("cmd.exe /D /C \"\"%ts\\%ts\" %ts\""),
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
 				options			//ctagsオプション
@@ -5680,7 +5680,7 @@ bool CViewCommander::Command_TagsMake( void )
 	}
 	else
 	{
-		auto_sprintf( cmdline, _T("command.com /C \"%ls\\%ls\" %ls"),
+		auto_sprintf( cmdline, _T("command.com /C \"%ts\\%ts\" %ts"),
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
 				options			//ctagsオプション
@@ -5694,7 +5694,7 @@ bool CViewCommander::Command_TagsMake( void )
 	);
 	if( !bProcessResult)
 	{
-		WarningMessage( m_pCommanderView->GetHwnd(), _T("タグ作成コマンド実行は失敗しました。\n\n%ls"), cmdline );
+		WarningMessage( m_pCommanderView->GetHwnd(), _T("タグ作成コマンド実行は失敗しました。\n\n%ts"), cmdline );
 		goto finish;
 	}
 
@@ -7229,9 +7229,9 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( _tcschr( GetDocument()->m_cDocFile.GetFilePath(), TCODE::SPACE ) ? TRUE : FALSE ){
-			auto_sprintf( szPath, _T("@\"%ls\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, _T("@\"%ts\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
-			auto_sprintf( szPath, _T("@%ls\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, _T("@%ts\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		m_pCommanderView->MySetClipboardData( szPath, _tcslen( szPath ), false );
@@ -7416,12 +7416,13 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 			//	Oct. 3, 2001 genta
 			WCHAR		szLabel[300];
 			WCHAR		szLabel2[300];
+			const WCHAR*	pszMenuLabel = szLabel2;
 			FuncLookup.Funccode2Name( GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* キー */
 			if( L'\0' == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
-				auto_strcpy( szLabel2, szLabel );
+				pszMenuLabel = szLabel;
 			}else{
-				auto_sprintf( szLabel2, LTEXT("%ls (&%lc)"),
+				auto_sprintf( szLabel2, LTEXT("%ls (&%hc)"),
 					szLabel,
 					GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
 				);
@@ -7434,7 +7435,7 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 			}
 			pCEditWnd->GetMenuDrawer().MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
+				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , pszMenuLabel );
 		}
 	}
 	po.x = 0;
@@ -7602,7 +7603,7 @@ void CViewCommander::Command_COMPARE( void )
 		}
 		if( nLineLenDes > (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() ){
 			TopErrorMessage( m_pCommanderView->GetHwnd(),
-				_T("比較先のファイル\n%ls\n%dバイトを超える行があります。\n")
+				_T("比較先のファイル\n%ts\n%d文字を超える行があります。\n")
 				_T("比較できません。"),
 				szPath,
 				GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>()

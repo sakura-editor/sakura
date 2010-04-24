@@ -47,7 +47,7 @@ void CViewCommander::Command_GREP( void )
 
 	/* 編集ウィンドウの上限チェック */
 	if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		TCHAR szMsg[512];
+		TCHAR szMsg[128];
 		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::MessageBox( m_pCommanderView->GetHwnd(), szMsg, GSTR_APPNAME, MB_OK );
 		return;
@@ -86,7 +86,7 @@ void CViewCommander::Command_GREP( void )
 		// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 		CCommandLineString cCmdLine;
 		cCmdLine.AppendF(
-			_T("-GREPMODE -GKEY=\"%ls\" -GFILE=\"%ls\" -GFOLDER=\"%ts\" -GCODE=%d"),
+			_T("-GREPMODE -GKEY=\"%ls\" -GFILE=\"%ts\" -GFOLDER=\"%ts\" -GCODE=%d"),
 			cmWork1.GetStringPtr(),
 			cmWork2.GetStringPtr(),
 			cmWork3.GetStringPtr(),

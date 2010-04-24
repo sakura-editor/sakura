@@ -1398,7 +1398,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 			if( L'\0' == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
 				auto_strcpy( szLabel2, szLabel );
 			}else{
-				auto_sprintf( szLabel2, LTEXT("%ls (&%lc)"),
+				auto_sprintf( szLabel2, LTEXT("%ls (&%hc)"),
 					szLabel,
 					GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
 				);
