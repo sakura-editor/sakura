@@ -3,7 +3,7 @@
 
 	2008.04.12 kobake CPropTypes.cpp‚©‚ç•ª—£
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropTypes.h"
 #include "sakura.hh"
 #include "util/module.h"

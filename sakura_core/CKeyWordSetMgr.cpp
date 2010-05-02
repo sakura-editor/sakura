@@ -33,12 +33,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CKeyWordSetMgr.h"
-#include <stdlib.h>
-#include <malloc.h>
+//#include <stdlib.h>
+//#include <malloc.h>
 #include <limits>
-#include "charset/charcode.h"
+//#include "charset/charcode.h"
 
 //! 1ブロック当たりのキーワード数
 static const int nKeyWordSetBlockSize = 50;
@@ -671,6 +671,21 @@ int CKeyWordSetMgr::GetFreeSize( void ) const
 	return MAX_KEYWORDNUM - m_nStartIdx[m_nKeyWordSetNum];
 }
 // To Here 2004.07.29 Moca
+
+// キーワードセット名からセット番号を取得。見つからなければ -1
+//	Uchi 2010/4/14
+int  CKeyWordSetMgr::SearchKeyWordSet( const wchar_t* pszKeyWord )
+{
+	int		i;
+	int 	nIdx = -1;
+	for (i = 0; i < m_nKeyWordSetNum; i++) {
+		if ( wcscmp(m_szSetNameArr[i], pszKeyWord) == 0) {
+			nIdx = i;
+			break;
+		}
+	}
+	return nIdx;
+}
 
 
 

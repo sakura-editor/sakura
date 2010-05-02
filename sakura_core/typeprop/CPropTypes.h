@@ -30,9 +30,9 @@ class CPropTypes;
 -----------------------------------------------------------------------*/
 //#define STR_COLORDATA_HEAD2	" テキストエディタ色設定 Ver2"
 //#define STR_COLORDATA_HEAD21	" テキストエディタ色設定 Ver2.1"	//Nov. 2, 2000 JEPRO 変更 [注]. 0.3.9.0:ur3β10以降、設定項目の番号を入れ替えたため
-#define STR_COLORDATA_HEAD3	" テキストエディタ色設定 Ver3"		//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
+//#define STR_COLORDATA_HEAD3	" テキストエディタ色設定 Ver3"		//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 //#define STR_COLORDATA_HEAD4		" テキストエディタ色設定 Ver4"		//2007.10.02 kobake UNICODE化に際してカラーファイル仕様も変更
-#define STR_COLORDATA_SECTION	"SakuraColor"
+//#define STR_COLORDATA_SECTION	"SakuraColor"
 
 
 //2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
@@ -102,12 +102,12 @@ public:
 protected:
 	void SetData_Color( HWND );								//!< ダイアログデータの設定 p3
 	int  GetData_Color( HWND );								//!< ダイアログデータの取得 p3
-	void _Import_Colors( HWND );							//!< 色の設定をインポート
-	void _Export_Colors( HWND );							//!< 色の設定をエクスポート
-	void DrawColorListItem( DRAWITEMSTRUCT*);				//!< 色種別リスト オーナー描画
+	void Import_Colors( HWND );								//!< 色の設定をインポート
+	void Export_Colors( HWND );								//!< 色の設定をエクスポート
+	void DrawColorListItem( DRAWITEMSTRUCT* );				//!< 色種別リスト オーナー描画
 	void EnableTypesPropInput( HWND hwndDlg );				//!< タイプ別設定のカラー設定のON/OFF
 	void RearrangeKeywordSet( HWND );						//!< キーワードセット再配置  Jan. 23, 2005 genta
-	void _DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	//!< 色ボタンの描画
+	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );		//!< 色ボタンの描画
 public:
 	static BOOL SelectColor( HWND , COLORREF*, DWORD* );	//!< 色選択ダイアログ
 private:
@@ -132,12 +132,12 @@ protected:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	INT_PTR DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );		//!< メッセージ処理 正規表現キーワード	//@@@ 2001.11.17 add MIK
+	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK	to public 2010/4/23 Uchi
 protected:
 	void SetData_Regex( HWND );	//!< ダイアログデータの設定 正規表現キーワード	//@@@ 2001.11.17 add MIK
 	int  GetData_Regex( HWND );	//!< ダイアログデータの取得 正規表現キーワード	//@@@ 2001.11.17 add MIK
 	BOOL Import_Regex( HWND );	//@@@ 2001.11.17 add MIK
 	BOOL Export_Regex( HWND );	//@@@ 2001.11.17 add MIK
-	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

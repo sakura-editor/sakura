@@ -18,11 +18,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropTypes.h"
 #include "util/shell.h"
 #include "view/colors/CColorStrategy.h"
-using namespace std;
+//using namespace std;
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

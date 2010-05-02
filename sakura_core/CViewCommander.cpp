@@ -22,7 +22,7 @@
 */
 // 2007.10.25 kobake CViewCommanderクラスに分離
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CViewCommander.h"
 
 #include <stdlib.h>
@@ -39,7 +39,7 @@
 #include "window/CSplitterWnd.h"
 //@@@ 2002.2.2 YAZAKI マクロはCSMacroMgrに統一
 #include "macro/CSMacroMgr.h"
-#include "dlg/CDlgTypeList.h"
+#include "typeprop/CDlgTypeList.h"
 #include "dlg/CDlgProperty.h"
 #include "dlg/CDlgCompare.h"
 #include "global.h"

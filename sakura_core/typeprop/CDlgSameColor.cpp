@@ -28,7 +28,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "CDlgSameColor.h"

@@ -17,8 +17,9 @@ class CDlgTypeList;
 #ifndef _CDLGTYPELIST_H_
 #define _CDLGTYPELIST_H_
 
-
 #include "dlg/CDialog.h"
+using std::wstring;
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -44,6 +45,9 @@ protected:
 	BOOL OnBnClicked( int );
 	void SetData();	/* ダイアログデータの設定 */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
+	bool Import( void );			// 2010/4/12 Uchi
+	bool Export( void );			// 2010/4/12 Uchi
+	bool InitializeType( void );	// 2010/4/12 Uchi
 
 private:
 	CTypeConfig				m_nSettingType;

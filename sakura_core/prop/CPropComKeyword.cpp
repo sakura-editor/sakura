@@ -18,19 +18,21 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
-#include "prop/CPropCommon.h"
+//#include "prop/CPropCommon.h"
 #include "debug/Debug.h"
-#include <windows.h>
-#include <stdio.h>
-#include <commctrl.h>
-#include "dlg/CDlgOpenFile.h"
+//#include <windows.h>
+//#include <stdio.h>
+//#include <commctrl.h>
+//#include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgInput1.h"
-#include "global.h"
-#include "io/CTextStream.h"
+//#include "global.h"
+//#include "io/CTextStream.h"
 #include "util/shell.h"
-#include "util/file.h"
+//#include "util/file.h"
+#include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
+
 using namespace std;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -520,58 +522,69 @@ void CPropCommon::p7_Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 
 /* p7:リスト中のキーワードをインポートする */
-/* p7:リスト中のキーワードをインポートする */
 void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1];
-	TCHAR			szInitDir[_MAX_PATH + 1];
-	bool			bAddError = false;
+	//CDlgOpenFile	cDlgOpenFile;
+	//TCHAR			szPath[_MAX_PATH + 1];
+	//TCHAR			szInitDir[_MAX_PATH + 1];
+	//bool			bAddError = false;
 
-	// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
-	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
-	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create(
-		G_AppInstance(),
-		hwndDlg,
-		_T("*.kwd"),
-		szInitDir
-	);
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+	//// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
+	//_tcscpy( szPath, _T("") );
+	//_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	///* ファイルオープンダイアログの初期化 */
+	//cDlgOpenFile.Create(
+	//	G_AppInstance(),
+	//	hwndDlg,
+	//	_T("*.kwd"),
+	//	szInitDir
+	//);
+	//if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+	//	return;
+	//}
+	///* ファイルのフルパスを、フォルダとファイル名に分割 */
+	///* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+	//::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	//_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+
+	//CTextInputStream in(szPath);
+	//if(!in){
+	//	ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+	//	return;
+	//}
+	//while( in ){
+	//	wstring szLine = in.ReadLineW();
+
+	//	//コメント無視
+	//	if( 2 <= szLine.length() && 0 == auto_memcmp( szLine.c_str(), L"//", 2 )  )continue;
+	//	
+	//	//解析
+	//	if( 0 < szLine.length() ){
+	//		/* ｎ番目のセットにキーワードを追加 */
+	//		int nRetValue = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szLine.c_str() );
+	//		if( 2 == nRetValue ){
+	//			bAddError = true;
+	//			break;
+	//		}
+	//	}
+	//}
+	//in.Close();
+
+	//if( bAddError ){
+	//	ErrorMessage( hwndDlg, _T("キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。") );
+	//}
+
+	bool	bCase = false;
+	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
+	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase( nIdx, bCase );
+	CImpExpKeyWord	cImpExpKeyWord( m_Common, nIdx, bCase );
+
+	// インポート
+	if (!cImpExpKeyWord.ImportUI( G_AppInstance(), hwndDlg )) {
+		// インポートをしていない
 		return;
 	}
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
-	CTextInputStream in(szPath);
-	if(!in){
-		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-		return;
-	}
-	while( in ){
-		wstring szLine = in.ReadLineW();
-
-		//コメント無視
-		if( 2 <= szLine.length() && 0 == auto_memcmp( szLine.c_str(), L"//", 2 )  )continue;
-		
-		//解析
-		if( 0 < szLine.length() ){
-			/* ｎ番目のセットにキーワードを追加 */
-			int nRetValue = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szLine.c_str() );
-			if( 2 == nRetValue ){
-				bAddError = true;
-				break;
-			}
-		}
-	}
-	in.Close();
-
-	if( bAddError ){
-		ErrorMessage( hwndDlg, _T("キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。") );
-	}
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	return;
@@ -581,60 +594,73 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 /* p7:リスト中のキーワードをエクスポートする */
 void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1];
-	TCHAR			szInitDir[_MAX_PATH + 1];
-	int				i;
-	int				nKeyWordNum;
+////
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1];
+//	TCHAR			szInitDir[_MAX_PATH + 1];
+//	int				i;
+//	int				nKeyWordNum;
+//
+//	// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
+//	_tcscpy( szPath, _T("") );
+//	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
+//	/* ファイルオープンダイアログの初期化 */
+//	cDlgOpenFile.Create(
+//		G_AppInstance(),
+//		hwndDlg,
+//		_T("*.kwd"),
+//		szInitDir
+//	);
+//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
+//		return;
+//	}
+////	MYTRACE_A( "%ls\n", szPath );
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//	CTextOutputStream out(szPath);
+//	if(!out){
+//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//		return;
+//	}
+//	out.WriteF( L"// " );
+//	out.WriteF( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
+//	out.WriteF( L"  キーワード定義ファイル" );
+//	out.WriteF( L"\n" );
+//	out.WriteF( L"\n" );
+//
+//	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SortKeyWord(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx);	//MIK 2000.12.01 sort keyword
+//
+//	/* ｎ番目のセットのキーワードの数を返す */
+//	nKeyWordNum = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+//	for( i = 0; i < nKeyWordNum; ++i ){
+//		/* ｎ番目のセットのｍ番目のキーワードを返す */
+//		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i );
+//		out.WriteF( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i ) );
+//		out.WriteF( L"\n" );
+//	}
+//	out.Close();
+//
+//	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+//	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+//
+//	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szPath );
+//
+//	return;
 
-	// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
-	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
-	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create(
-		G_AppInstance(),
-		hwndDlg,
-		_T("*.kwd"),
-		szInitDir
-	);
-	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
-		return;
-	}
-//	MYTRACE_A( "%ls\n", szPath );
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-	CTextOutputStream out(szPath);
-	if(!out){
-		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-		return;
-	}
-	out.WriteF( L"// " );
-	out.WriteF( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
-	out.WriteF( L"  キーワード定義ファイル" );
-	out.WriteF( L"\n" );
-	out.WriteF( L"\n" );
-
-	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SortKeyWord(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx);	//MIK 2000.12.01 sort keyword
-
-	/* ｎ番目のセットのキーワードの数を返す */
-	nKeyWordNum = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
-	for( i = 0; i < nKeyWordNum; ++i ){
-		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i );
-		out.WriteF( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i ) );
-		out.WriteF( L"\n" );
-	}
-	out.Close();
-
-	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
-	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szPath );
+	bool	bCase;
+	CImpExpKeyWord	cImpExpKeyWord( m_Common, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, bCase );
 
-	return;
+	// エクスポート
+	if (!cImpExpKeyWord.ExportUI( G_AppInstance(), hwndDlg )) {
+		// エクスポートをしていない
+		return;
+	}
 }
 
 
