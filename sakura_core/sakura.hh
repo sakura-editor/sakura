@@ -183,6 +183,7 @@
 #define	HLP000282	282	//タブの表示／非表示	//@@@ 2003.06.10 MIK
 #define HLP000134	134 //ステータスバーを表示(隠す)
 #define HLP000072	72 //タイプ別設定一覧
+#define HLP000338	338 //タイプ別設定インポート	// 2010/5/1 Uchi
 #define HLP000073	73 //タイプ別設定
 #define HLP000074	74 //タイプ別設定 『スクリーン』プロパティ
 #define HLP000075	75 //タイプ別設定 『カラー』プロパティ
@@ -794,6 +795,12 @@
 #define HIDCANCEL_TL			12702	//キャンセル
 #define HIDC_TL_BUTTON_HELP		12703	//ヘルプ
 #define HIDC_TL_LIST_TYPES		12704	//リスト
+
+//タイプ別設定インポート確認
+#define HIDC_COMBO_COLORS		12720	//色指定
+#define HIDOK_DTA				12721	//OK
+#define HIDCANCEL_DTA			12722	//キャンセル
+#define HIDC_DTA_BUTTON_HELP	12723	//ヘルプ
 
 //ジャンプ
 #define HIDC_JUMP_BUTTON_JUMP		12800	//ジャンプ

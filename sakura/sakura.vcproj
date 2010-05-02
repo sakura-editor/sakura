@@ -1750,52 +1750,80 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="types"
+				Name="typeprop"
 				>
 				<File
-					RelativePath="..\sakura_core\types\CDlgKeywordSelect.cpp"
+					RelativePath="..\sakura_core\typeprop\CDlgKeywordSelect.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CDlgKeywordSelect.h"
+					RelativePath="..\sakura_core\typeprop\CDlgKeywordSelect.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CDlgSameColor.cpp"
+					RelativePath="..\sakura_core\typeprop\CDlgSameColor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CDlgSameColor.h"
+					RelativePath="..\sakura_core\typeprop\CDlgSameColor.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CPropTypes.cpp"
+					RelativePath="..\sakura_core\typeprop\CDlgTypeAscertain.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CPropTypes.h"
+					RelativePath="..\sakura_core\typeprop\CDlgTypeAscertain.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CPropTypes_P1_Screen.cpp"
+					RelativePath="..\sakura_core\typeprop\CDlgTypeList.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CPropTypes_P2_Color.cpp"
+					RelativePath="..\sakura_core\typeprop\CDlgTypeList.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CPropTypes_P3_Support.cpp"
+					RelativePath="..\sakura_core\typeprop\CImpExpManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CPropTypes_P4_Regex.cpp"
+					RelativePath="..\sakura_core\typeprop\CImpExpManager.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\types\CPropTypes_P5_KeyHelp.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypes.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypes_P1_Screen.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypes_P2_Color.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypes_P3_Support.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypes_P4_Regex.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypes_P5_KeyHelp.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="types"
+				>
 				<File
 					RelativePath="..\sakura_core\types\CType.cpp"
 					>
@@ -2797,14 +2825,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\dlg\CDlgTypeList.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\dlg\CDlgTypeList.h"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\dlg\CDlgWinSize.cpp"
 					>
 				</File>
@@ -3162,6 +3182,18 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\plugin\CWSHPlugin.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="mfclike"
+				>
+				<File
+					RelativePath="..\sakura_core\mfclike\CMyWnd.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\mfclike\CMyWnd.h"
 					>
 				</File>
 			</Filter>

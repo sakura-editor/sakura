@@ -628,10 +628,15 @@
 #define IDC_SPIN_PLUGIN_OPTION          1576
 #define IDC_CHECK_PLUGIN_OPTION         1577
 #define IDC_COMBO_PLUGIN_OPTION         1578
+#define IDC_BUTTON_INITIALIZE           1578
+#define IDC_STATIC_TYPE_TO              1579
+#define IDC_STATIC_TYPE_FILE            1580
+#define IDC_COMBO_COLORS                1581
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
 #define IDD_PROPTYPESP1                 5100
+#define IDD_TYPE_ASCERTAIN              5001
 #define IDD_PROP_COLOR                  5101
 #define IDD_PROPTYPESP2                 5102
 #define IDD_PROP_REGEX                  5103

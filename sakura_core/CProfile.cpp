@@ -33,13 +33,14 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "stdafx.h"
-#include <stdio.h>
-#include <string.h>
-#include <algorithm>
-#include "CProfile.h"
+#include "StdAfx.h"
+//#include <stdio.h>
+//#include <string.h>
+//#include <algorithm>
+//#include "CProfile.h"
 #include "debug/Debug.h"
 #include "io/CTextStream.h"
+
 using namespace std;
 
 /*! ProfileÇèâä˙âª
@@ -197,8 +198,14 @@ bool CProfile::WriteProfile(
 			::GetProcAddress(hModule, "ReplaceFileW");
 #endif
 		if( !pfnReplaceFile || !pfnReplaceFile(m_strProfileName.c_str(), szMirrorFile, NULL, 0, NULL, NULL) ){
-			::DeleteFile(m_strProfileName.c_str());
-			::MoveFile(szMirrorFile, m_strProfileName.c_str());
+			if (fexist(m_strProfileName.c_str())) {
+				if (!::DeleteFile(m_strProfileName.c_str())) {
+					return false;
+				}
+			}
+			if (!::MoveFile(szMirrorFile, m_strProfileName.c_str())) {
+				return false;
+			}
 		}
 	}
 

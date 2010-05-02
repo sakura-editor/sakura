@@ -26,6 +26,7 @@ public:
 	static void ShareData_IO_KeyBind( CDataProfile&, int, KEYDATA[], bool);
 	static void ShareData_IO_Print( CDataProfile& );
 	static void ShareData_IO_Types( CDataProfile& );
+	static void ShareData_IO_Type_One( CDataProfile&, int, const WCHAR* );	// 2010/04/12 Uchi •ª—£
 	static void ShareData_IO_KeyWords( CDataProfile& );
 	static void ShareData_IO_Macro( CDataProfile& );
 	static void ShareData_IO_Statusbar( CDataProfile& );	// 2008/6/21 Uchi

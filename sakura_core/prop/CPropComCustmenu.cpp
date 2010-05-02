@@ -16,15 +16,16 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include "prop/CPropCommon.h"
+#include "StdAfx.h"
+//#include "prop/CPropCommon.h"
 #include "dlg/CDlgInput1.h"
-#include "dlg/CDlgOpenFile.h"
+//#include "dlg/CDlgOpenFile.h"
 #include "debug/Debug.h" // 2002/2/10 aroka
-#include "io/CTextStream.h"
+//#include "io/CTextStream.h"
 #include "util/shell.h"
-#include "util/file.h"
-#include "env/CShareData_IO.h"
+//#include "util/file.h"
+//#include "env/CShareData_IO.h"
+#include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
 
 using namespace std;
 
@@ -719,159 +720,175 @@ int CPropCommon::GetData_p8( HWND hwndDlg )
 /* p8:カスタムメニュー設定をインポートする */
 void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 {
-	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1] = _T("");
-	cDlgOpenFile.Create(
-		G_AppInstance(),
-		hwndDlg,
-		_T("*.mnu"),
-		m_pShareData->m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
-	);
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-		return;
-	}
-
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-
-	//ヘッダ確認
-	CTextInputStream in(szPath);
-	if(!in){
-		ErrorMessage_A( hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
-		return;
-	}
-//	wstring szHeader=in.ReadLineW();
-//	if(szHeader.length()>2)szHeader=&szHeader.c_str()[2]; //コメント除去
-//	if(wcscmp(szHeader.c_str(),WSTR_CUSTMENU_HEAD_V2)==0){
-//		//OK
+//	/* ファイルオープンダイアログの初期化 */
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1] = _T("");
+//	cDlgOpenFile.Create(
+//		G_AppInstance(),
+//		hwndDlg,
+//		_T("*.mnu"),
+//		m_pShareData->m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
+//	);
+//	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+//		return;
 //	}
-//	else{
+//
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//
+//	//ヘッダ確認
+//	CTextInputStream in(szPath);
+//	if(!in){
+//		ErrorMessage_A( hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
+//		return;
+//	}
+////	wstring szHeader=in.ReadLineW();
+////	if(szHeader.length()>2)szHeader=&szHeader.c_str()[2]; //コメント除去
+////	if(wcscmp(szHeader.c_str(),WSTR_CUSTMENU_HEAD_V2)==0){
+////		//OK
+////	}
+////	else{
+////		ErrorMessage_A( hwndDlg, "カスタムメニュー設定ファイルの形式が違います。\n\n%ts", szPath );
+////		return;
+////	}
+//	in.Close();
+//
+//	//中身
+////	delete 2008/5/24 Uchi
+////	CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
+////	for(int i=0;i<MAX_CUSTOM_MENU;i++){
+////		//セクション名
+////		wchar_t szSection[64];
+////		auto_sprintf(szSection, L"Menu%d", i);
+////
+////		cProfile.IOProfileData(szSection,L"Name",MakeStringBufferW(menu->m_szCustMenuNameArr[i]));
+////		cProfile.IOProfileData(szSection,L"ItemCount",menu->m_nCustMenuItemNumArr[i]);
+////		for(int j=0;j<menu->m_nCustMenuItemNumArr[i];j++){
+////			cProfile.IOProfileData_WrapInt(szSection,easy_format(L"FNC[%02d]",j),menu->m_nCustMenuItemFuncArr[i][j]);
+////			cProfile.IOProfileData(szSection,easy_format(L"KEY[%02d]",j),menu->m_nCustMenuItemKeyArr[i][j]);
+////		}
+////	}
+//
+//	static const wchar_t*	szSecInfo=L"Info";
+//	CDataProfile cProfile;
+//	cProfile.SetReadingMode();
+//	cProfile.ReadProfile(szPath);
+//
+//	//バージョン確認
+//	WCHAR szHeader[256];
+//	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
+//	if(wcscmp(szHeader, WSTR_CUSTMENU_HEAD_V2)!=0) {
 //		ErrorMessage_A( hwndDlg, "カスタムメニュー設定ファイルの形式が違います。\n\n%ts", szPath );
 //		return;
 //	}
-	in.Close();
-
-	//中身
-//	delete 2008/5/24 Uchi
-//	CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
-//	for(int i=0;i<MAX_CUSTOM_MENU;i++){
-//		//セクション名
-//		wchar_t szSection[64];
-//		auto_sprintf(szSection, L"Menu%d", i);
 //
-//		cProfile.IOProfileData(szSection,L"Name",MakeStringBufferW(menu->m_szCustMenuNameArr[i]));
-//		cProfile.IOProfileData(szSection,L"ItemCount",menu->m_nCustMenuItemNumArr[i]);
-//		for(int j=0;j<menu->m_nCustMenuItemNumArr[i];j++){
-//			cProfile.IOProfileData_WrapInt(szSection,easy_format(L"FNC[%02d]",j),menu->m_nCustMenuItemFuncArr[i][j]);
-//			cProfile.IOProfileData(szSection,easy_format(L"KEY[%02d]",j),menu->m_nCustMenuItemKeyArr[i][j]);
-//		}
-//	}
+//	CShareData_IO::ShareData_IO_CustMenu(cProfile,m_Common.m_sCustomMenu, true);			// 2008/5/24 Uchi
+//
+//	HWND	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
+//	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCtrl );
+//
+//	return;
 
-	static const wchar_t*	szSecInfo=L"Info";
-	CDataProfile cProfile;
-	cProfile.SetReadingMode();
-	cProfile.ReadProfile(szPath);
+	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
-	//バージョン確認
-	WCHAR szHeader[256];
-	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
-	if(wcscmp(szHeader, WSTR_CUSTMENU_HEAD_V2)!=0) {
-		ErrorMessage_A( hwndDlg, "カスタムメニュー設定ファイルの形式が違います。\n\n%ts", szPath );
+	// インポート
+	if (!cImpExpCustMenu.ImportUI( G_AppInstance(), hwndDlg )) {
+		// インポートをしていない
 		return;
 	}
-
-	CShareData_IO::ShareData_IO_CustMenu(cProfile,m_Common.m_sCustomMenu, true);			// 2008/5/24 Uchi
-
-	HWND	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
-	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCtrl );
-
-	return;
 }
 
 /* p8:カスタムメニュー設定をエクスポートする */
 void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 {
-	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1] = _T("");
-	cDlgOpenFile.Create(
-		G_AppInstance(),
-		hwndDlg,
-		_T("*.mnu"),
-		m_pShareData->m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
-	);
-	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
-		return;
-	}
-
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-	// オープン
-	CTextOutputStream out(szPath);
-	if(!out){
-		ErrorMessage_A(hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
-		return;
-	}
-
-	/* カスタムメニュー情報 */
-//	delete 2008/5/24 Uchi
-//	class WriteError{};
-//	try{
-//		//ヘッダ
-//		out.WriteF(L"; %ls\n\n",WSTR_CUSTMENU_HEAD_V2);
+//	/* ファイルオープンダイアログの初期化 */
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1] = _T("");
+//	cDlgOpenFile.Create(
+//		G_AppInstance(),
+//		hwndDlg,
+//		_T("*.mnu"),
+//		m_pShareData->m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
+//	);
+//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
+//		return;
+//	}
 //
-//		//内容
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//	// オープン
+//	CTextOutputStream out(szPath);
+//	if(!out){
+//		ErrorMessage_A(hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
+//		return;
+//	}
+//
+//	/* カスタムメニュー情報 */
+////	delete 2008/5/24 Uchi
+////	class WriteError{};
+////	try{
+////		//ヘッダ
+////		out.WriteF(L"; %ls\n\n",WSTR_CUSTMENU_HEAD_V2);
+////
+////		//内容
+////		CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
+////		out.WriteF(L"[Info]\n",MAX_CUSTOM_MENU);
+////		out.WriteF(L"MENU_VERSION=%ls\n",WSTR_CUSTMENU_HEAD_V2);
+////		out.WriteF(L"MAX_CUSTOM_MENU=%d\n",MAX_CUSTOM_MENU);
+////		out.WriteF(L"\n");
+////		for(int i=0;i<MAX_CUSTOM_MENU;i++){
+////			out.WriteF(L"[Menu%d]\n",i);
+////			out.WriteF(L"Name=%ls\n",menu->m_szCustMenuNameArr[i]);
+////			out.WriteF(L"ItemCount=%d\n",menu->m_nCustMenuItemNumArr[i]);
+////			for(int j=0;j<menu->m_nCustMenuItemNumArr[i];j++){
+////				out.WriteF(L"FNC[%02d]=%d\n",j,menu->m_nCustMenuItemFuncArr[i][j]);
+////				out.WriteF(L"KEY[%02d]=%hc",j,menu->m_nCustMenuItemKeyArr[i][j]); out.WriteF(L"\n"); //※charが'\0'の場合を考慮して、改行を別に出力
+////			}
+////			out.WriteF(L"\n");
+////		}
+////	}
+////	catch(const WriteError&){
+////		ErrorMessage_A( hwndDlg, "ファイルの書き込みに失敗しました。\n\n%ts", szPath );
+////	}
+//	out.Close();
+//
+//	/* カスタムメニュー情報 */
+//	// start 2008/5/24 Uchi
+//	{
+//		//ヘッダ
+//		static const wchar_t*	szSecInfo=L"Info";
+//		CDataProfile	cProfile;
 //		CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
-//		out.WriteF(L"[Info]\n",MAX_CUSTOM_MENU);
-//		out.WriteF(L"MENU_VERSION=%ls\n",WSTR_CUSTMENU_HEAD_V2);
-//		out.WriteF(L"MAX_CUSTOM_MENU=%d\n",MAX_CUSTOM_MENU);
-//		out.WriteF(L"\n");
-//		for(int i=0;i<MAX_CUSTOM_MENU;i++){
-//			out.WriteF(L"[Menu%d]\n",i);
-//			out.WriteF(L"Name=%ls\n",menu->m_szCustMenuNameArr[i]);
-//			out.WriteF(L"ItemCount=%d\n",menu->m_nCustMenuItemNumArr[i]);
-//			for(int j=0;j<menu->m_nCustMenuItemNumArr[i];j++){
-//				out.WriteF(L"FNC[%02d]=%d\n",j,menu->m_nCustMenuItemFuncArr[i][j]);
-//				out.WriteF(L"KEY[%02d]=%hc",j,menu->m_nCustMenuItemKeyArr[i][j]); out.WriteF(L"\n"); //※charが'\0'の場合を考慮して、改行を別に出力
-//			}
-//			out.WriteF(L"\n");
-//		}
+//
+//		// 書き込みモード設定
+//		cProfile.SetWritingMode();
+//
+//		//ヘッダ
+//		cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", MakeStringBufferW(WSTR_CUSTMENU_HEAD_V2) );
+//		int iWork = MAX_CUSTOM_MENU;
+//		cProfile.IOProfileData_WrapInt( szSecInfo, L"MAX_CUSTOM_MENU", iWork );
+//		
+//		//内容
+//		CShareData_IO::ShareData_IO_CustMenu(cProfile, *menu, true);
+//
+//		// 書き込み
+//		cProfile.WriteProfile( szPath, WSTR_CUSTMENU_HEAD_V2);
 //	}
-//	catch(const WriteError&){
-//		ErrorMessage_A( hwndDlg, "ファイルの書き込みに失敗しました。\n\n%ts", szPath );
-//	}
-	out.Close();
+//	// end 2008/5/25
 
-	/* カスタムメニュー情報 */
-	// start 2008/5/24 Uchi
-	{
-		//ヘッダ
-		static const wchar_t*	szSecInfo=L"Info";
-		CDataProfile	cProfile;
-		CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
+	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
-		// 書き込みモード設定
-		cProfile.SetWritingMode();
-
-		//ヘッダ
-		cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", MakeStringBufferW(WSTR_CUSTMENU_HEAD_V2) );
-		int iWork = MAX_CUSTOM_MENU;
-		cProfile.IOProfileData_WrapInt( szSecInfo, L"MAX_CUSTOM_MENU", iWork );
-		
-		//内容
-		CShareData_IO::ShareData_IO_CustMenu(cProfile, *menu, true);
-
-		// 書き込み
-		cProfile.WriteProfile( szPath, WSTR_CUSTMENU_HEAD_V2);
+	// エクスポート
+	if (!cImpExpCustMenu.ExportUI( G_AppInstance(), hwndDlg )) {
+		// エクスポートをしていない
+		return;
 	}
-	// end 2008/5/25
 }
 
 

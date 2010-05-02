@@ -29,20 +29,22 @@
 		   distribution.
 */
 
-#include "stdafx.h"
-#include "global.h"
+#include "StdAfx.h"
+//#include "global.h"
 #include "sakura_rc.h"
-#include "types/CPropTypes.h"
+//#include "types/CPropTypes.h"
 #include "debug/Debug.h"
-#include "dlg/CDlgOpenFile.h"
-#include <stdio.h>	//@@@ 2001.11.17 add MIK
-#include "charset/charcode.h"
+//#include "dlg/CDlgOpenFile.h"
+//#include <stdio.h>	//@@@ 2001.11.17 add MIK
+//#include "charset/charcode.h"
 #include "sakura.hh"
 #include "charset/CharPointer.h"
 #include "io/CTextStream.h"
 #include "util/shell.h"
-#include "util/file.h"
+//#include "util/file.h"
 #include "util/module.h"
+#include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
+
 using namespace std;
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
@@ -662,120 +664,132 @@ int CPropTypes::GetData_KeyHelp( HWND hwndDlg )
 */
 BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 {
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1]=_T("");
-	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create(
-		m_hInstance,
-		hwndDlg,
-		_T("*.txt"),
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
-	);
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1]=_T("");
+//	/* ファイルオープンダイアログの初期化 */
+//	cDlgOpenFile.Create(
+//		m_hInstance,
+//		hwndDlg,
+//		_T("*.txt"),
+//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
+//	);
+//	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
+//		return FALSE;
+//
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//	CTextInputStream in(szPath);
+//	if(!in){
+//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//		return FALSE;
+//	}
+//
+//	/* LIST内のデータ全削除 */
+//	HWND hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
+//	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
+//	GetData_KeyHelp(hwndDlg);
+//	
+//	int invalid_record = 0; // 不正な行
+//	/* データ取得 */
+//	int i=0;
+//	while(in && i<MAX_KEYHELP_FILE){
+//		wstring buff=in.ReadLineW();
+//		
+//		// 2007.02.03 genta コメントみたいな行は黙ってスキップ
+//		// 2007.10.08 kobake 空行もスキップ
+//		if( buff[0] == LTEXT('\0') ||
+//			buff[0] == LTEXT('\n') ||
+//			buff[0] == LTEXT('#') ||
+//			buff[0] == LTEXT(';') ||
+//			( buff[0] == LTEXT('/') && buff[1] == LTEXT('/') )){
+//				//	2007.02.03 genta 処理を継続
+//				continue;
+//			}
+//		
+//		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
+//		if( buff.length() < 10 ||
+//			auto_memcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
+//			auto_memcmp(&buff[7], LTEXT("]="), 2) != 0 ||
+//			0 ){
+//			//	2007.02.03 genta 処理を継続
+//			++invalid_record;
+//			continue;
+//		}
+//
+//		WCHAR *p1, *p2, *p3;
+//		p1 = &buff[9];
+//		p3 = p1;					//結果確認用に初期化
+//		if( NULL != (p2=wcsstr(p1,LTEXT(","))) ){
+//			*p2 = LTEXT('\0');
+//			p2 += 1;				//カンマの次が、次の要素
+//			if( NULL != (p3=wcsstr(p2,LTEXT(","))) ){
+//				*p3 = LTEXT('\0');
+//				p3 += 1;			//カンマの次が、次の要素
+//			}
+//		}/* 結果の確認 */
+//		if( (p3==NULL) ||			//カンマが1個足りない
+//			(p3==p1) ||				//カンマが2個足りない
+//			//	2007.02.03 genta ファイル名にカンマがあるかもしれない
+//			0 //(NULL!=wcsstr(p3,","))	//カンマが多すぎる
+//		){
+//			//	2007.02.03 genta 処理を継続
+//			++invalid_record;
+//			continue;
+//		}
+//		/* valueのチェック */
+//		//ON/OFF
+//		//	2007.02.03 genta 1でなければ1にする
+//		unsigned int b_enable_flag = (unsigned int)_wtoi(p1);
+//		if( b_enable_flag > 1){
+//			b_enable_flag = 1;
+//		}
+//		//Path
+//		FILE* fp2;
+//		if( (fp2=_tfopen_absini(to_tchar(p3),_T("r"))) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+//			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
+//			p2 = L"【辞書ファイルが見つかりません】";
+//			b_enable_flag = 0;
+//		}
+//		else
+//			fclose(fp2);
+//
+//		//About
+//		if(wcslen(p2)>DICT_ABOUT_LEN){
+//			ErrorMessage( hwndDlg, _T("辞書の説明は%d文字以内にしてください。\n"), DICT_ABOUT_LEN );
+//			++invalid_record;
+//			continue;
+//		}
+//
+//		//良さそうなら
+//		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
+//		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, to_tchar(p2));
+//		_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, to_tchar(p3));
+//		i++;
+//	}
+//	in.Close();
+//
+//	/*データのセット*/
+//	SetData_KeyHelp(hwndDlg);
+//	// 2007.02.03 genta 失敗したら警告する
+//	if( invalid_record > 0 ){
+//		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONWARNING, GSTR_APPNAME,
+//		_T("一部のデータが読み込めませんでした\n不正な行数: %d"),
+//		invalid_record );
+//	}
+
+	CImpExpKeyHelp	cImpExpKeyHelp( m_Types, GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ) );
+
+	// インポート
+	GetData_KeyHelp( hwndDlg );	// ???
+
+	if (!cImpExpKeyHelp.ImportUI(m_hInstance, hwndDlg)) {
+		// インポートをしていない
 		return FALSE;
-
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-	CTextInputStream in(szPath);
-	if(!in){
-		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-		return FALSE;
 	}
+	SetData_KeyHelp(hwndDlg);	// ???
 
-	/* LIST内のデータ全削除 */
-	HWND hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
-	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
-	GetData_KeyHelp(hwndDlg);
-	
-	int invalid_record = 0; // 不正な行
-	/* データ取得 */
-	int i=0;
-	while(in && i<MAX_KEYHELP_FILE){
-		wstring buff=in.ReadLineW();
-		
-		// 2007.02.03 genta コメントみたいな行は黙ってスキップ
-		// 2007.10.08 kobake 空行もスキップ
-		if( buff[0] == LTEXT('\0') ||
-			buff[0] == LTEXT('\n') ||
-			buff[0] == LTEXT('#') ||
-			buff[0] == LTEXT(';') ||
-			( buff[0] == LTEXT('/') && buff[1] == LTEXT('/') )){
-				//	2007.02.03 genta 処理を継続
-				continue;
-			}
-		
-		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
-		if( buff.length() < 10 ||
-			auto_memcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
-			auto_memcmp(&buff[7], LTEXT("]="), 2) != 0 ||
-			0 ){
-			//	2007.02.03 genta 処理を継続
-			++invalid_record;
-			continue;
-		}
-
-		WCHAR *p1, *p2, *p3;
-		p1 = &buff[9];
-		p3 = p1;					//結果確認用に初期化
-		if( NULL != (p2=wcsstr(p1,LTEXT(","))) ){
-			*p2 = LTEXT('\0');
-			p2 += 1;				//カンマの次が、次の要素
-			if( NULL != (p3=wcsstr(p2,LTEXT(","))) ){
-				*p3 = LTEXT('\0');
-				p3 += 1;			//カンマの次が、次の要素
-			}
-		}/* 結果の確認 */
-		if( (p3==NULL) ||			//カンマが1個足りない
-			(p3==p1) ||				//カンマが2個足りない
-			//	2007.02.03 genta ファイル名にカンマがあるかもしれない
-			0 //(NULL!=wcsstr(p3,","))	//カンマが多すぎる
-		){
-			//	2007.02.03 genta 処理を継続
-			++invalid_record;
-			continue;
-		}
-		/* valueのチェック */
-		//ON/OFF
-		//	2007.02.03 genta 1でなければ1にする
-		unsigned int b_enable_flag = (unsigned int)_wtoi(p1);
-		if( b_enable_flag > 1){
-			b_enable_flag = 1;
-		}
-		//Path
-		FILE* fp2;
-		if( (fp2=_tfopen_absini(to_tchar(p3),_T("r"))) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
-			p2 = L"【辞書ファイルが見つかりません】";
-			b_enable_flag = 0;
-		}
-		else
-			fclose(fp2);
-
-		//About
-		if(wcslen(p2)>DICT_ABOUT_LEN){
-			ErrorMessage( hwndDlg, _T("辞書の説明は%d文字以内にしてください。\n"), DICT_ABOUT_LEN );
-			++invalid_record;
-			continue;
-		}
-
-		//良さそうなら
-		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
-		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, to_tchar(p2));
-		_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, to_tchar(p3));
-		i++;
-	}
-	in.Close();
-
-	/*データのセット*/
-	SetData_KeyHelp(hwndDlg);
-	// 2007.02.03 genta 失敗したら警告する
-	if( invalid_record > 0 ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONWARNING, GSTR_APPNAME,
-		_T("一部のデータが読み込めませんでした\n不正な行数: %d"),
-		invalid_record );
-	}
 	return TRUE;
 }
 
@@ -786,47 +800,56 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 */
 BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 {
-	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szXPath[_MAX_PATH + 1]=_T("");
-	cDlgOpenFile.Create(
-		m_hInstance,
-		hwndDlg,
-		_T("*.txt"),
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
-	);
-	if( !cDlgOpenFile.DoModal_GetSaveFileName( szXPath ) ){
+//	/* ファイルオープンダイアログの初期化 */
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szXPath[_MAX_PATH + 1]=_T("");
+//	cDlgOpenFile.Create(
+//		m_hInstance,
+//		hwndDlg,
+//		_T("*.txt"),
+//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
+//	);
+//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szXPath ) ){
+//		return FALSE;
+//	}
+//
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szXPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//	CTextOutputStream out(szXPath);
+//	if(!out){
+//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szXPath );
+//		return FALSE;
+//	}
+//
+//	out.WriteF( L"// キーワード辞書設定 Ver1\n" );
+//
+//	GetData_KeyHelp(hwndDlg);
+//	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
+//	int j = ListView_GetItemCount(hwndList);
+//
+//	for(int i = 0; i < j; i++){
+//		out.WriteF(
+//			L"KDct[%02d]=%d,%ts,%ts\n",
+//			i,
+//			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
+//			m_Types.m_KeyHelpArr[i].m_szAbout,
+//			m_Types.m_KeyHelpArr[i].m_szPath.c_str()
+//		);
+//	}
+//	out.Close();
+//
+//	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szXPath );
+
+	CImpExpKeyHelp	cImpExpKeyHelp( m_Types, GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ) );
+
+	// エクスポート
+	if (!cImpExpKeyHelp.ExportUI(m_hInstance, hwndDlg)) {
+		// エクスポートをしていない
 		return FALSE;
 	}
 
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szXPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-	CTextOutputStream out(szXPath);
-	if(!out){
-		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szXPath );
-		return FALSE;
-	}
-
-	out.WriteF( L"// キーワード辞書設定 Ver1\n" );
-
-	GetData_KeyHelp(hwndDlg);
-	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
-	int j = ListView_GetItemCount(hwndList);
-
-	for(int i = 0; i < j; i++){
-		out.WriteF(
-			L"KDct[%02d]=%d,%ts,%ts\n",
-			i,
-			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
-			m_Types.m_KeyHelpArr[i].m_szAbout,
-			m_Types.m_KeyHelpArr[i].m_szPath.c_str()
-		);
-	}
-	out.Close();
-
-	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szXPath );
 	return TRUE;
 }
 

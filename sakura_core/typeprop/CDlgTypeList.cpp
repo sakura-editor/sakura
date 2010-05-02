@@ -9,24 +9,26 @@
 	Copyright (C) 2001, Stonee
 	Copyright (C) 2002, MIK
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
-#include <windows.h>
-#include <commctrl.h>
+#include "StdAfx.h"
+//#include <windows.h>
+//#include <commctrl.h>
 #include "sakura_rc.h"
-#include "dlg/CDlgTypeList.h"
+#include "CDlgTypeList.h"
 #include "debug/Debug.h"
 #include "func/Funccode.h"	//Stonee, 2001/03/12
 #include "util/shell.h"
+#include "sakura.hh"
+#include "typeprop/CImpExpManager.h"	// 2010/4/24 Uchi
 
 //内部使用定数
 static const int PROP_TEMPCHANGE_FLAG = 0x10000;
 
 // タイプ別設定一覧 CDlgTypeList.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12700
 	IDC_BUTTON_TEMPCHANGE,	HIDC_TL_BUTTON_TEMPCHANGE,	//一時適用
 	IDOK,					HIDOK_TL,					//設定
@@ -105,6 +107,15 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), -1 );
 		return TRUE;
+	case IDC_BUTTON_IMPORT:
+		Import();
+		return TRUE;
+	case IDC_BUTTON_EXPORT:
+		Export();
+		return TRUE;
+	case IDC_BUTTON_INITIALIZE:
+		InitializeType();
+		return TRUE;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
@@ -119,6 +130,7 @@ void CDlgTypeList::SetData( void )
 	HWND	hwndList;
 	TCHAR	szText[130];
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	::SendMessageAny( hwndList, LB_RESETCONTENT, 0, 0 );	/* リストを空にする */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
 		STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 		if( 0 < _tcslen( types.m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
@@ -145,3 +157,90 @@ LPVOID CDlgTypeList::GetHelpIdTable(void)
 //@@@ 2002.01.18 add end
 
 
+
+// タイプ別設定インポート
+//		2010/4/12 Uchi
+bool CDlgTypeList::Import()
+{
+	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	int nIdx = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
+
+	CImpExpType	cImpExpType( nIdx, types, hwndList );
+
+	// インポート
+	cImpExpType.SetBaseName( to_wchar( types.m_szTypeName ) );
+	if (!cImpExpType.ImportUI( G_AppInstance(), GetHwnd() )) {
+		// インポートをしていない
+		return false;
+	}
+
+	// リスト再初期化
+	SetData();
+	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)nIdx, 0 );
+
+	return true;
+}
+
+// タイプ別設定エクスポート
+//		2010/4/12 Uchi
+bool CDlgTypeList::Export()
+{
+	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	int nIdx = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
+
+	CImpExpType	cImpExpType( nIdx, types, hwndList );
+
+	// エクスポート
+	cImpExpType.SetBaseName( to_wchar( types.m_szTypeName) );
+	if (!cImpExpType.ExportUI( G_AppInstance(), GetHwnd() )) {
+		// エクスポートをしていない
+		return false;
+	}
+
+	return true;
+}
+
+//void _DefaultConfig(STypeConfig* pType);
+
+// タイプ別設定初期化
+//		2010/4/12 Uchi
+bool CDlgTypeList::InitializeType( void )
+{
+	HWND hwndDlg = GetHwnd();
+	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	int iDocType = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	if (iDocType == 0) {
+		// 基本の場合には何もしない
+		return true;
+	}
+	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(iDocType));
+	int			nRet;
+	if (0 < _tcslen( types.m_szTypeExts )) { 
+		nRet = ::MYMESSAGEBOX(
+			GetHwnd(),
+			MB_YESNO | MB_ICONQUESTION,
+			GSTR_APPNAME,
+			_T("%ts を初期化します。 よろしいですか？"),
+			types.m_szTypeName );
+		if (nRet != IDYES) {
+			return false;
+		}
+	}
+
+//	_DefaultConfig(&types);		//規定値をコピー
+	types = CDocTypeManager().GetTypeSetting(CTypeConfig(0));	// 基本をコピー
+
+	types.m_nIdx = iDocType;
+	auto_sprintf( types.m_szTypeName, _T("設定%d"), iDocType+1 );
+	_tcscpy( types.m_szTypeExts, _T("") );
+
+	// リスト再初期化
+	SetData();
+	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)iDocType, 0 );
+
+	InfoMessage( hwndDlg, _T("%ts を初期化しました。"), types.m_szTypeName );
+
+	return true;
+}

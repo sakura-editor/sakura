@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CType.h"
 #include "view/Colors/CColorStrategy.h"
 
@@ -65,20 +65,20 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		new CType_Vb(),		//Visual Basic
 		new CType_Rich(),	//リッチテキスト
 		new CType_Ini(),	//設定ファイル
-		new CType_Other1(),	//設定17
-		new CType_Other2(),	//設定18
-		new CType_Other3(),	//設定19
-		new CType_Other4(),	//設定20
-		new CType_Other5(),	//設定21
-		new CType_Other6(),	//設定22
-		new CType_Other7(),	//設定23
-		new CType_Other8(),	//設定24
-		new CType_Other9(),	//設定25
-		new CType_Other10(),	//設定26
-		new CType_Other11(),	//設定27
-		new CType_Other12(),	//設定28
-		new CType_Other13(),	//設定29
-		new CType_Other14(),	//設定30
+		new CType_Other17(),	//設定17
+		new CType_Other18(),	//設定18
+		new CType_Other19(),	//設定19
+		new CType_Other20(),	//設定20
+		new CType_Other21(),	//設定21
+		new CType_Other22(),	//設定22
+		new CType_Other23(),	//設定23
+		new CType_Other24(),	//設定24
+		new CType_Other25(),	//設定25
+		new CType_Other26(),	//設定26
+		new CType_Other27(),	//設定27
+		new CType_Other28(),	//設定28
+		new CType_Other29(),	//設定29
+		new CType_Other30(),	//設定30
 	};
 	for(int i=0;i<_countof(table);i++){
 		table[i]->InitTypeConfig(i);

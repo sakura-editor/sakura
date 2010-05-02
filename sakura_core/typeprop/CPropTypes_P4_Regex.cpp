@@ -16,22 +16,24 @@
 
 //@@@ 2001.11.17 add start MIK
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
-#include "types/CPropTypes.h"
+//#include "types/CPropTypes.h"
 #include "debug/Debug.h"
-#include <windows.h>
-#include <commctrl.h>
-#include "dlg/CDlgOpenFile.h"
-#include "CProfile.h"
-#include "env/CShareData.h"
-#include "func/Funccode.h"	//Stonee, 2001/05/18
-#include <stdio.h>	//@@@ 2001.11.17 add MIK
-#include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
-#include "io/CTextStream.h"
+//#include <windows.h>
+//#include <commctrl.h>
+//#include "dlg/CDlgOpenFile.h"
+//#include "CProfile.h"
+//#include "env/CShareData.h"
+//#include "func/Funccode.h"	//Stonee, 2001/05/18
+//#include <stdio.h>	//@@@ 2001.11.17 add MIK
+//#include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
+//#include "io/CTextStream.h"
 #include "util/shell.h"
-#include "util/file.h"
+//#include "util/file.h"
 #include "view/colors/CColorStrategy.h"
+#include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
+
 using namespace std;
 
 
@@ -61,170 +63,188 @@ static const DWORD p_helpids[] = {	//11600
 
 
 
+// Import
+// 2010/4/23 Uchi Importの外出し
 BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 {
-	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1]=_T("");
-	cDlgOpenFile.Create(
-		m_hInstance,
-		hwndDlg,
-		_T("*.rkw"),					// [R]egex [K]ey[W]ord
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
-	);
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+//	/* ファイルオープンダイアログの初期化 */
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1]=_T("");
+//	cDlgOpenFile.Create(
+//		m_hInstance,
+//		hwndDlg,
+//		_T("*.rkw"),					// [R]egex [K]ey[W]ord
+//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
+//	);
+//	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+//		return FALSE;
+//	}
+//
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//
+//	CTextInputStream in(szPath);
+//	if(!in){
+//	/*
+//	FILE		*fp;
+//	if( (fp = _tfopen(szPath, _T("r"))) == NULL )
+//	{
+//	*/
+//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//		return FALSE;
+//	}
+//
+//	RegexKeywordInfo	pRegexKey[MAX_REGEX_KEYWORD];
+//	TCHAR				buff[1024];
+//	int					i, j, k;
+//	j = 0;
+//	while(in)
+//	{
+//		//1行読み込み
+//		wstring line=in.ReadLineW();
+//		_wcstotcs(buff,line.c_str(),_countof(buff));
+//
+//		if(j >= MAX_REGEX_KEYWORD) break;
+//
+//		//RxKey[999]=ColorName,RegexKeyword
+//		if( auto_strlen(buff) < 12 ) continue;
+//		if( auto_memcmp(buff, _T("RxKey["), 6) != 0 ) continue;
+//		if( auto_memcmp(&buff[9], _T("]="), 2) != 0 ) continue;
+//		TCHAR	*p;
+//		p = auto_strstr(&buff[11], _T(","));
+//		if( p )
+//		{
+//			*p = _T('\0');
+//			p++;
+//			if( p[0] && RegexKakomiCheck(to_wchar(p)) )	//囲みがある
+//			{
+//				//色指定名に対応する番号を探す
+//				k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30
+//				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
+//				{
+//					pRegexKey[j].m_nColorIndex = k;
+//					_tcstowcs(pRegexKey[j].m_szKeyword, p, _countof(pRegexKey[j].m_szKeyword));
+//					j++;
+//				}
+//				else
+//				{	/* 日本語名からインデックス番号に変換する */
+//					for(k = 0; k < COLORIDX_LAST; k++)
+//					{
+//						if( auto_strcmp(m_Types.m_ColorInfoArr[k].m_szName, &buff[11]) == 0 )
+//						{
+//							pRegexKey[j].m_nColorIndex = k;
+//							_tcstowcs(pRegexKey[j].m_szKeyword, p, _countof(pRegexKey[j].m_szKeyword));
+//							j++;
+//							break;
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	in.Close();
+//
+//	HWND	hwndWork;
+//	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
+//	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
+//	for(i = 0; i < j; i++)
+//	{
+//		LV_ITEM	lvi;
+//		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
+//		lvi.pszText  = const_cast<TCHAR*>(to_tchar(pRegexKey[i].m_szKeyword));
+//		lvi.iItem    = i;
+//		lvi.iSubItem = 0;
+//		lvi.lParam   = 0;
+//		ListView_InsertItem( hwndWork, &lvi );
+//
+//		lvi.mask     = LVIF_TEXT;
+//		lvi.iItem    = i;
+//		lvi.iSubItem = 1;
+//		lvi.pszText  = m_Types.m_ColorInfoArr[pRegexKey[i].m_nColorIndex].m_szName;
+//		ListView_SetItem( hwndWork, &lvi );
+//	}
+//	ListView_SetItemState( hwndWork, 0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
+
+	CImpExpRegex	cImpExpRegex( m_Types, GetDlgItem( hwndDlg, IDC_LIST_REGEX ));
+
+	// インポート
+	if (!cImpExpRegex.ImportUI(m_hInstance, hwndDlg)) {
+		// インポートをしていない
 		return FALSE;
 	}
-
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-
-	CTextInputStream in(szPath);
-	if(!in){
-	/*
-	FILE		*fp;
-	if( (fp = _tfopen(szPath, _T("r"))) == NULL )
-	{
-	*/
-		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-		return FALSE;
-	}
-
-	RegexKeywordInfo	pRegexKey[MAX_REGEX_KEYWORD];
-	TCHAR				buff[1024];
-	int					i, j, k;
-	j = 0;
-	while(in)
-	{
-		//1行読み込み
-		wstring line=in.ReadLineW();
-		_wcstotcs(buff,line.c_str(),_countof(buff));
-
-		if(j >= MAX_REGEX_KEYWORD) break;
-
-		//RxKey[999]=ColorName,RegexKeyword
-		if( auto_strlen(buff) < 12 ) continue;
-		if( auto_memcmp(buff, _T("RxKey["), 6) != 0 ) continue;
-		if( auto_memcmp(&buff[9], _T("]="), 2) != 0 ) continue;
-		TCHAR	*p;
-		p = auto_strstr(&buff[11], _T(","));
-		if( p )
-		{
-			*p = _T('\0');
-			p++;
-			if( p[0] && RegexKakomiCheck(to_wchar(p)) )	//囲みがある
-			{
-				//色指定名に対応する番号を探す
-				k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30
-				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
-				{
-					pRegexKey[j].m_nColorIndex = k;
-					_tcstowcs(pRegexKey[j].m_szKeyword, p, _countof(pRegexKey[j].m_szKeyword));
-					j++;
-				}
-				else
-				{	/* 日本語名からインデックス番号に変換する */
-					for(k = 0; k < COLORIDX_LAST; k++)
-					{
-						if( auto_strcmp(m_Types.m_ColorInfoArr[k].m_szName, &buff[11]) == 0 )
-						{
-							pRegexKey[j].m_nColorIndex = k;
-							_tcstowcs(pRegexKey[j].m_szKeyword, p, _countof(pRegexKey[j].m_szKeyword));
-							j++;
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	in.Close();
-
-	HWND	hwndWork;
-	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
-	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
-	for(i = 0; i < j; i++)
-	{
-		LV_ITEM	lvi;
-		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText  = const_cast<TCHAR*>(to_tchar(pRegexKey[i].m_szKeyword));
-		lvi.iItem    = i;
-		lvi.iSubItem = 0;
-		lvi.lParam   = 0;
-		ListView_InsertItem( hwndWork, &lvi );
-
-		lvi.mask     = LVIF_TEXT;
-		lvi.iItem    = i;
-		lvi.iSubItem = 1;
-		lvi.pszText  = m_Types.m_ColorInfoArr[pRegexKey[i].m_nColorIndex].m_szName;
-		ListView_SetItem( hwndWork, &lvi );
-	}
-	ListView_SetItemState( hwndWork, 0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 
 	return TRUE;
 }
 
+// Export
+// 2010/4/23 Uchi Exportの外出し
 BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 {
+//	/* ファイルオープンダイアログの初期化 */
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1]=_T("");
+//	cDlgOpenFile.Create(
+//		m_hInstance,
+//		hwndDlg,
+//		_T("*.rkw"),					// [R]egex [K]ey[W]ord
+//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
+//	);
+//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
+//		return FALSE;
+//	}
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//	CTextOutputStream out(szPath);
+//	if(!out){
+//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//		return FALSE;
+//	}
+//
+//	out.WriteF(L"// 正規表現キーワード Ver1\n");
+//
+//	HWND	hwndList;
+//	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
+//	int j = ListView_GetItemCount(hwndList);
+//	for(int i = 0; i < j; i++)
+//	{
+//		TCHAR	szKeyWord[256];
+//		auto_memset(szKeyWord, 0, _countof(szKeyWord));
+//		ListView_GetItemText(hwndList, i, 0, szKeyWord, _countof(szKeyWord));
+//
+//		TCHAR	szColorIndex[256];
+//		auto_memset(szColorIndex, 0, _countof(szColorIndex));
+//		ListView_GetItemText(hwndList, i, 1, szColorIndex, _countof(szColorIndex));
+//
+//		const TCHAR* p = szColorIndex;
+//		for(int k = 0; k < COLORIDX_LAST; k++)
+//		{
+//			if( _tcscmp( m_Types.m_ColorInfoArr[k].m_szName, szColorIndex ) == 0 )
+//			{
+//				p = GetColorNameByIndex(k);
+//				break;
+//			}
+//		}
+//		out.WriteF( L"RxKey[%03d]=%ts,%ts\n", i, p, szKeyWord);
+//	}
+//
+//	out.Close();
+//
+//	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szPath );
 
-	
-	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1]=_T("");
-	cDlgOpenFile.Create(
-		m_hInstance,
-		hwndDlg,
-		_T("*.rkw"),					// [R]egex [K]ey[W]ord
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER	// インポート用フォルダ
-	);
-	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
+	CImpExpRegex	cImpExpRegex( m_Types, GetDlgItem( hwndDlg, IDC_LIST_REGEX ));
+
+	// エクスポート
+	if (!cImpExpRegex.ExportUI(m_hInstance, hwndDlg)) {
+		// エクスポートをしていない
 		return FALSE;
 	}
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-	CTextOutputStream out(szPath);
-	if(!out){
-		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-		return FALSE;
-	}
-
-	out.WriteF(L"// 正規表現キーワード Ver1\n");
-
-	HWND	hwndList;
-	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
-	int j = ListView_GetItemCount(hwndList);
-	for(int i = 0; i < j; i++)
-	{
-		TCHAR	szKeyWord[256];
-		auto_memset(szKeyWord, 0, _countof(szKeyWord));
-		ListView_GetItemText(hwndList, i, 0, szKeyWord, _countof(szKeyWord));
-
-		TCHAR	szColorIndex[256];
-		auto_memset(szColorIndex, 0, _countof(szColorIndex));
-		ListView_GetItemText(hwndList, i, 1, szColorIndex, _countof(szColorIndex));
-
-		const TCHAR* p = szColorIndex;
-		for(int k = 0; k < COLORIDX_LAST; k++)
-		{
-			if( _tcscmp( m_Types.m_ColorInfoArr[k].m_szName, szColorIndex ) == 0 )
-			{
-				p = GetColorNameByIndex(k);
-				break;
-			}
-		}
-		out.WriteF( L"RxKey[%03d]=%ts,%ts\n", i, p, szKeyWord);
-	}
-
-	out.Close();
-
-	InfoMessage( hwndDlg, _T("ファイルへエクスポートしました。\n\n%ts"), szPath );
 
 	return TRUE;
 }

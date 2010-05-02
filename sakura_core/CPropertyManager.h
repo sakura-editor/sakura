@@ -1,7 +1,7 @@
 #pragma once
 
 #include "prop/CPropCommon.h"
-#include "types/CPropTypes.h"
+#include "typeprop/CPropTypes.h"
 
 class CPropertyManager{
 public:

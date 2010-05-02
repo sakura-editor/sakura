@@ -32,6 +32,24 @@
 #include <map>
 #include "macro/CWSHIfObj.h"
 
+typedef int PlugId;
+
+// Plugin Function番号の計算(クラス外でも使えるバージョン)
+// 2010/4/19 Uchi
+inline EFunctionCode GetPluginFunctionCode( PlugId nPluginId, int nPluginNo )
+{
+	return EFunctionCode(nPluginId * 100 + nPluginNo + F_PLUGCOMMAND_FIRST);
+}
+
+// PlugId番号の計算(クラス外でも使えるバージョン)
+// 2010/4/19 Uchi
+inline PlugId GetPluginId( EFunctionCode nFunctionCode )
+{
+	if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
+		return PlugId((nFunctionCode - F_PLUGCOMMAND_FIRST) / 100);
+	}
+	return -1;
+}
 
 //プラグイン定義ファイル名
 #define PII_FILENAME				_T("plugin.def")
@@ -57,8 +75,6 @@
 class CPlugin;
 
 //プラグ（プラグイン内の処理単位）クラス
-typedef int PlugId;
-
 class CPlug
 {
 	//型定義

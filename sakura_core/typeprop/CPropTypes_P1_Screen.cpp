@@ -3,14 +3,14 @@
 
 	2008.04.12 kobake CPropTypes.cppから分離
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropTypes.h"
 #include "sakura.hh"
 #include "util/module.h"
 #include "util/shell.h"
 #include <windowsx.h> //Edit_LimitText
 #include "util/window.h"
-#include "types/CType.h"
+//#include "types/CType.h"
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ

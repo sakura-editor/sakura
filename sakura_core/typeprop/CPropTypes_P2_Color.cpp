@@ -4,15 +4,17 @@
 	2008.04.12 kobake CPropTypes.cppから分離
 	2009.02.22 ryoji
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropTypes.h"
 #include "sakura.hh"
-#include "io/CTextStream.h"
+//#include "io/CTextStream.h"
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
 #include "util/shell.h"
 #include "view/colors/CColorStrategy.h"
-#include "env/CShareData_IO.h"
+//#include "env/CShareData_IO.h"
+#include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
+
 using namespace std;
 
 WNDPROC	m_wpColorListProc;
@@ -70,135 +72,171 @@ struct {
 };
 
 /* 色の設定をインポート */
-void CPropTypes::_Import_Colors( HWND hwndDlg )
+// 2010/4/23 Uchi Importの外出し
+void CPropTypes::Import_Colors( HWND hwndDlg )
 {
-	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
-	cDlgOpenFile.Create(
-		m_hInstance,
-		hwndDlg,
-		_T("*.col"),
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER, // インポート用フォルダ
-		std::vector<LPCTSTR>(),
-		std::vector<LPCTSTR>()
-	);
-	TCHAR	szPath[_MAX_PATH + 1] = _T("");
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-		return;
-	}
+//	/* ファイルオープンダイアログの初期化 */
+//	CDlgOpenFile	cDlgOpenFile;
+//	cDlgOpenFile.Create(
+//		m_hInstance,
+//		hwndDlg,
+//		_T("*.col"),
+//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER, // インポート用フォルダ
+//		std::vector<LPCTSTR>(),
+//		std::vector<LPCTSTR>()
+//	);
+//	TCHAR	szPath[_MAX_PATH + 1] = _T("");
+//	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+//		return;
+//	}
+//
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//
+//	/* 色設定Ver1か */
+//	CTextInputStream in(szPath);
+//	if(!in){
+//		ErrorMessage(hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//		return;
+//	}
+//
+//	/* ファイル先頭 */
+//	//ヘッダ読取
+//	wstring szHeader = in.ReadLineW().c_str();
+//	//if(szHeader.length()>=2)szHeader=&szHeader.c_str()[2]; //コメントを抜く
+//	if(szHeader.length()>=2) {
+//		//コメントを抜く	コメント文字 変更対応 2008/6/28 Uchi
+//		szHeader = &szHeader.c_str()[ szHeader.c_str()[0] == _T(';') ? 1 : 2];
+//	}
+//	//比較
+//	if(wcscmp(szHeader.c_str(),LTEXT(STR_COLORDATA_HEAD3))==0){
+//		//OK
+//	}
+//	else{
+//		ErrorMessage_A( hwndDlg,
+//			"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n%ts\n\n"	//Jan. 20, 2001 JEPRO 改行を1つ取った
+//			"色設定Ver3では CI[番号] から C[名前] に変更されました。\n"
+//			"上記ファイルの設定内容を利用したい場合は、以下の修正を行ってからインポートしてください。\n\n"
+//			"・UR1.2.24.0 (00/12/04) 以降で使っていた場合は\n"
+//			"  (1) 一行目を Ver3 と書き換え、CI をすべて C に縮める\n"
+//			"  (2) (1)の後、番号を( )内の文字列に変更:\n"
+//			"      00(TXT), 01(RUL), 02(UND), 03(LNO), 04(MOD), 05(TAB), 06(ZEN), 07(CTL), 08(EOL),\n"
+//			"      09(RAP), 10(EOF), 11(FND), 12(KW1), 13(KW), 14(CMT), 15(SQT), 16(WQT), 17(URL)\n\n"
+//			"・ur3β10 (00/09/28)～UR1.2.23.0 (00/11/29) で使っていた場合は\n"
+//			"  (3) (1)の後、00-12 までは(2)と同じ  13(CMT), 14(SQT), 15(WQT), 16(URL)\n\n"
+//			"・ur3β9 (00/09/26) 以前で使っていた場合は\n"
+//			"  (4) (1)の後、(2)と同様:\n"
+//			"      00(TXT), 01(LNO), 02(EOL), 03(TAB), 04(ZEN), 05(EOF), 06(KW1), 07(CMT), 08(SQT),\n"
+//			"      09(WQT), 10(UND), 11(RAP), 12(CTL), 13(URL), 14(FND), 15(MOD), 16(RUL)\n\n"
+//			, szPath
+//		);
+//		in.Close();
+//		return;
+//	}
+//	in.Close();
+//
+//
+//	CDataProfile	cProfile;
+//	cProfile.SetReadingMode();
+//
+//	int				nColorInfoArrNum;						/* キー割り当て表の有効データ数 */
+//	ColorInfo		ColorInfoArr[64];
+//
+//	/* 色設定Ver2 */
+//	nColorInfoArrNum = COLORIDX_LAST;
+//	if( !cProfile.ReadProfile( szPath ) ){
+//		/* 設定ファイルが存在しない */
+//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//		return;
+//	}
+//	/* 色設定Ver2 */
+//	nColorInfoArrNum = COLORIDX_LAST;
+//	if( !cProfile.ReadProfile( szPath ) ){
+//		/* 設定ファイルが存在しない */
+//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//		return;
+//	}
+//	/* 色設定 I/O */
+//	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
+//		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
+//		_tcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
+//	}
+//	CShareData_IO::IO_ColorSet( &cProfile, LTEXT(STR_COLORDATA_SECTION), ColorInfoArr );
+//
+//
+////complete:;
+//	/* データのコピー */
+//	m_Types.m_nColorInfoArrNum = nColorInfoArrNum;
+//	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
+//		m_Types.m_ColorInfoArr[i] =  ColorInfoArr[i];
+//		_tcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
+//	}
+//	/* ダイアログデータの設定 p5 */
+//	SetData_Color( hwndDlg );
 
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-
-	/* 色設定Ver1か */
-	CTextInputStream in(szPath);
-	if(!in){
-		ErrorMessage(hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-		return;
-	}
-
-	/* ファイル先頭 */
-	//ヘッダ読取
-	wstring szHeader = in.ReadLineW().c_str();
-	//if(szHeader.length()>=2)szHeader=&szHeader.c_str()[2]; //コメントを抜く
-	if(szHeader.length()>=2) {
-		//コメントを抜く	コメント文字 変更対応 2008/6/28 Uchi
-		szHeader = &szHeader.c_str()[ szHeader.c_str()[0] == _T(';') ? 1 : 2];
-	}
-	//比較
-	if(wcscmp(szHeader.c_str(),LTEXT(STR_COLORDATA_HEAD3))==0){
-		//OK
-	}
-	else{
-		ErrorMessage_A( hwndDlg,
-			"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n%ts\n\n"	//Jan. 20, 2001 JEPRO 改行を1つ取った
-			"色設定Ver3では CI[番号] から C[名前] に変更されました。\n"
-			"上記ファイルの設定内容を利用したい場合は、以下の修正を行ってからインポートしてください。\n\n"
-			"・UR1.2.24.0 (00/12/04) 以降で使っていた場合は\n"
-			"  (1) 一行目を Ver3 と書き換え、CI をすべて C に縮める\n"
-			"  (2) (1)の後、番号を( )内の文字列に変更:\n"
-			"      00(TXT), 01(RUL), 02(UND), 03(LNO), 04(MOD), 05(TAB), 06(ZEN), 07(CTL), 08(EOL),\n"
-			"      09(RAP), 10(EOF), 11(FND), 12(KW1), 13(KW), 14(CMT), 15(SQT), 16(WQT), 17(URL)\n\n"
-			"・ur3β10 (00/09/28)～UR1.2.23.0 (00/11/29) で使っていた場合は\n"
-			"  (3) (1)の後、00-12 までは(2)と同じ  13(CMT), 14(SQT), 15(WQT), 16(URL)\n\n"
-			"・ur3β9 (00/09/26) 以前で使っていた場合は\n"
-			"  (4) (1)の後、(2)と同様:\n"
-			"      00(TXT), 01(LNO), 02(EOL), 03(TAB), 04(ZEN), 05(EOF), 06(KW1), 07(CMT), 08(SQT),\n"
-			"      09(WQT), 10(UND), 11(RAP), 12(CTL), 13(URL), 14(FND), 15(MOD), 16(RUL)\n\n"
-			, szPath
-		);
-		in.Close();
-		return;
-	}
-	in.Close();
-
-
-	CDataProfile	cProfile;
-	cProfile.SetReadingMode();
-
-	int				nColorInfoArrNum;						/* キー割り当て表の有効データ数 */
 	ColorInfo		ColorInfoArr[64];
+	CImpExpColors	cImpExpColors( ColorInfoArr );
 
-	/* 色設定Ver2 */
-	nColorInfoArrNum = COLORIDX_LAST;
-	if( !cProfile.ReadProfile( szPath ) ){
-		/* 設定ファイルが存在しない */
-		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-		return;
-	}
 	/* 色設定 I/O */
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
 		_tcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
 	}
-	CShareData_IO::IO_ColorSet( &cProfile, LTEXT(STR_COLORDATA_SECTION), ColorInfoArr );
 
+	// インポート
+	if (!cImpExpColors.ImportUI(m_hInstance, hwndDlg)) {
+		// インポートをしていない
+		return;
+	}
 
-//complete:;
 	/* データのコピー */
-	m_Types.m_nColorInfoArrNum = nColorInfoArrNum;
+	m_Types.m_nColorInfoArrNum = COLORIDX_LAST;
 	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
 		m_Types.m_ColorInfoArr[i] =  ColorInfoArr[i];
 		_tcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
 	}
-	/* ダイアログデータの設定 p5 */
+	/* ダイアログデータの設定 color */
 	SetData_Color( hwndDlg );
 }
 
 
 /* 色の設定をエクスポート */
-void CPropTypes::_Export_Colors( HWND hwndDlg )
+// 2010/4/23 Uchi Exportの外出し
+void CPropTypes::Export_Colors( HWND hwndDlg )
 {
-	/* ファイルオープンダイアログの初期化 */
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1] = _T("");
-	cDlgOpenFile.Create(
-		m_hInstance,
-		hwndDlg,
-		_T("*.col"),
-		GetDllShareData().m_sHistory.m_szIMPORTFOLDER, // インポート用フォルダ
-		std::vector<LPCTSTR>(),
-		std::vector<LPCTSTR>()
-	);
-	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
-		return;
-	}
+//	/* ファイルオープンダイアログの初期化 */
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1] = _T("");
+//	cDlgOpenFile.Create(
+//		m_hInstance,
+//		hwndDlg,
+//		_T("*.col"),
+//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER, // インポート用フォルダ
+//		std::vector<LPCTSTR>(),
+//		std::vector<LPCTSTR>()
+//	);
+//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
+//		return;
+//	}
+//
+//	/* ファイルのフルパスをフォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//	/* 色設定 I/O */
+//	CDataProfile	cProfile;
+//	cProfile.SetWritingMode();
+//	CShareData_IO::IO_ColorSet( &cProfile, LTEXT(STR_COLORDATA_SECTION), m_Types.m_ColorInfoArr );
+//	cProfile.WriteProfile( szPath, LTEXT(STR_COLORDATA_HEAD3) );	//Jan. 15, 2001 Stonee
 
-	/* ファイルのフルパスをフォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+	CImpExpColors	cImpExpColors( m_Types.m_ColorInfoArr);
 
-	/* 色設定 I/O */
-	CDataProfile	cProfile;
-	cProfile.SetWritingMode();
-	CShareData_IO::IO_ColorSet( &cProfile, LTEXT(STR_COLORDATA_SECTION), m_Types.m_ColorInfoArr );
-	cProfile.WriteProfile( szPath, LTEXT(STR_COLORDATA_HEAD3) );	//Jan. 15, 2001 Stonee
-
-	return;
+	// エクスポート
+	cImpExpColors.ExportUI(m_hInstance, hwndDlg);
 }
 
 
@@ -342,7 +380,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 
 
-/* p3 メッセージ処理 */
+/* color メッセージ処理 */
 INT_PTR CPropTypes::DispatchEvent_Color(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
@@ -368,7 +406,7 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 
 		hwndListColor = ::GetDlgItem( hwndDlg, IDC_LIST_COLORS );
 
-		/* ダイアログデータの設定 p3 */
+		/* ダイアログデータの設定 color */
 		SetData_Color( hwndDlg );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
@@ -508,12 +546,12 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 				return TRUE;
 
 			case IDC_BUTTON_IMPORT:	/* 色の設定をインポート */
-				_Import_Colors( hwndDlg );
+				Import_Colors( hwndDlg );
 				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 
 			case IDC_BUTTON_EXPORT:	/* 色の設定をエクスポート */
-				_Export_Colors( hwndDlg );
+				Export_Colors( hwndDlg );
 				return TRUE;
 
 			//	From Here Sept. 10, 2000 JEPRO
@@ -626,8 +664,8 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 				OnHelp( hwndDlg, IDD_PROP_COLOR );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "p3 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p3 */
+//				MYTRACE_A( "color PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 color */
 				GetData_Color( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -644,10 +682,10 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 		switch( idCtrl ){
 
 		case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
-			_DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT );
+			DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT );
 			return TRUE;
 		case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
-			_DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK );
+			DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK );
 			return TRUE;
 		case IDC_LIST_COLORS:		/* 色種別リスト */
 			DrawColorListItem( pDis );
@@ -681,7 +719,7 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 
 
 
-/* ダイアログデータの設定 p3 */
+/* ダイアログデータの設定 color */
 void CPropTypes::SetData_Color( HWND hwndDlg )
 {
 
@@ -857,7 +895,7 @@ void CPropTypes::SetData_Color( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 p3 */
+/* ダイアログデータの取得 color */
 int CPropTypes::GetData_Color( HWND hwndDlg )
 {
 	int		nIdx;
@@ -1015,7 +1053,7 @@ int CPropTypes::GetData_Color( HWND hwndDlg )
 
 
 /* 色ボタンの描画 */
-void CPropTypes::_DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
+void CPropTypes::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
 //	MYTRACE_A( "pDis->itemAction = " );
 

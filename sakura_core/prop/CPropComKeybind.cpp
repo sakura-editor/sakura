@@ -17,23 +17,25 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "dlg/CDlgOpenFile.h"
-#include "macro/CSMacroMgr.h" // 2002/2/10 aroka
+//#include "dlg/CDlgOpenFile.h"
+//#include "macro/CSMacroMgr.h" // 2002/2/10 aroka
 #include "debug/Debug.h" ///
-#include <stdio.h>	/// 2002/2/3 aroka from here
-#include "io/CTextStream.h"
-#include "CDataProfile.h"
-#include "charset/charcode.h"
+//#include <stdio.h>	/// 2002/2/3 aroka from here
+//#include "io/CTextStream.h"
+//#include "CDataProfile.h"
+//#include "charset/charcode.h"
 #include "util/shell.h"
-#include "util/file.h"
-#include "util/string_ex2.h"
-#include "env/CShareData_IO.h"
+//#include "util/file.h"
+//#include "util/string_ex2.h"
+//#include "env/CShareData_IO.h"
+#include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
+
 using namespace std;
 
-const wchar_t STR_KEYDATA_HEAD2[] = L"// テキストエディタキー設定 Ver2";	// (旧バージョン） 読み込みのみ対応 2008/5/3 by Uchi
-const wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
+//const wchar_t STR_KEYDATA_HEAD2[] = L"// テキストエディタキー設定 Ver2";	// (旧バージョン） 読み込みのみ対応 2008/5/3 by Uchi
+//const wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
 
 
 #define STR_SHIFT_PLUS        _T("Shift+")  //@@@ 2001.11.08 add MIK
@@ -540,136 +542,153 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 /* p5:キー割り当て設定をインポートする */
 void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 {
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1];
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1];
+//
+//	KEYDATA			pKeyNameArr[100];				/* キー割り当て表 */
+//	TCHAR			szInitDir[_MAX_PATH + 1];
+//
+//	_tcscpy( szPath, _T("") );
+//	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
+//	/* ファイルオープンダイアログの初期化 */
+//	cDlgOpenFile.Create(
+//		G_AppInstance(),
+//		hwndDlg,
+//		_T("*.key"),
+//		szInitDir
+//	);
+//	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+//		return;
+//	}
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//
+//
+//	//オープン
+//	CDataProfile in;
+//	in.SetReadingMode();
+//	if(!in.ReadProfile(szPath)){
+//		ErrorMessage_A( hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
+//		return;
+//	}
+//	static const wchar_t* szSection=L"Keybind";
+//	static const wchar_t* szSecInfo=L"Info";
+//
+//	//バージョン確認
+//	bool	bVer3;			// 新バージョンのファイル
+//	bool	bVer2;
+//	WCHAR szHeader[256];
+//	bVer3 = true;
+//	bVer2 = false;
+//	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(szHeader));
+//	if(wcscmp(szHeader,WSTR_KEYDATA_HEAD)!=0)	bVer3=false;
+//
+//	int	nKeyNameArrNum;			// キー割り当て表の有効データ数
+//	if ( bVer3 ) {
+//		//Count取得 -> nKeyNameArrNum
+//		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", nKeyNameArrNum);
+//		if (nKeyNameArrNum<0 || nKeyNameArrNum>100)	bVer3=false; //範囲チェック
+//
+//		CShareData_IO::ShareData_IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
+//	}
+//
+//	if (!bVer3) {
+//		// 新バージョンでない
+//		CTextInputStream in(szPath);
+//		if (!in) {
+//			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//			return;
+//		}
+//		// ヘッダチェック
+//		wstring	szLine = in.ReadLineW();
+//		bVer2 = true;
+//		if ( wcscmp(szLine.c_str(), STR_KEYDATA_HEAD2) != 0)	bVer2 = false;
+//		// カウントチェック
+//		int	i, cnt;
+//		if ( bVer2 ) {
+//			int	an;
+//			szLine = in.ReadLineW();
+//			cnt = swscanf(szLine.c_str(), L"Count=%d", &an);
+//			if ( cnt != 1 || an < 0 || an > 100 ) {
+//				bVer2 = false;
+//			}
+//			else {
+//				nKeyNameArrNum = an;
+//			}
+//		}
+//		if ( bVer2 ) {
+//			//各要素取得
+//			for(i = 0; i < 100; i++) {
+//				int n, kc, nc;
+//				//値 -> szData
+//				wchar_t szData[1024];
+//				auto_strcpy(szData, in.ReadLineW().c_str());
+//
+//				//解析開始
+//				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
+//												&n,   &kc, &nc);
+//				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
+//				if( i != n ) break;
+//				pKeyNameArr[i].m_nKeyCode = kc;
+//				wchar_t* p = szData + nc;
+//
+//				//後に続くトークン
+//				for(int j=0;j<8;j++)
+//				{
+//					wchar_t* q=auto_strchr(p,L',');
+//					if(!q)	{ bVer2= false; break;}
+//					*q=L'\0';
+//
+//					//機能名を数値に置き換える。(数値の機能名もあるかも)
+//					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+//					WCHAR	szFuncNameJapanese[256];
+//					EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, szFuncNameJapanese);
+//					if( n == F_INVALID )
+//					{
+//						if( WCODE::Is09(*p) )
+//						{
+//							n = (EFunctionCode)auto_atol(p);
+//						}
+//						else
+//						{
+//							n = F_DEFAULT;
+//						}
+//					}
+//					pKeyNameArr[i].m_nFuncCodeArr[j] = n;
+//					p = q + 1;
+//				}
+//
+//				auto_strcpy(pKeyNameArr[i].m_szKeyName, to_tchar(p));
+//			}
+//		}
+//	}
+//	if (!bVer3  && !bVer2) {
+//		ErrorMessage( hwndDlg, _T("キー設定ファイルの形式が違います。\n\n%ts"), szPath );
+//	}
+//
+//	// データのコピー
+//	m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrNum;
+//	memcpy_raw( m_Common.m_sKeyBind.m_pKeyNameArr, pKeyNameArr, sizeof_raw( pKeyNameArr ) );
+//
+//	// ダイアログデータの設定 p5
+//	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
+//	HWND			hwndCtrl;
+//	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
+//	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
+//	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
+//	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
+//	//@@@ 2001.11.07 modify end MIK
 
-	KEYDATA			pKeyNameArr[100];				/* キー割り当て表 */
-	TCHAR			szInitDir[_MAX_PATH + 1];
+	CImpExpKeybind	cImpExpKeybind( m_Common );
 
-	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
-	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create(
-		G_AppInstance(),
-		hwndDlg,
-		_T("*.key"),
-		szInitDir
-	);
-	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+	// インポート
+	if (!cImpExpKeybind.ImportUI( G_AppInstance(), hwndDlg )) {
+		// インポートをしていない
 		return;
 	}
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-
-
-	//オープン
-	CDataProfile in;
-	in.SetReadingMode();
-	if(!in.ReadProfile(szPath)){
-		ErrorMessage_A( hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
-		return;
-	}
-	static const wchar_t* szSection=L"Keybind";
-	static const wchar_t* szSecInfo=L"Info";
-
-	//バージョン確認
-	bool	bVer3;			// 新バージョンのファイル
-	bool	bVer2;
-	WCHAR szHeader[256];
-	bVer3 = true;
-	bVer2 = false;
-	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(szHeader));
-	if(wcscmp(szHeader,WSTR_KEYDATA_HEAD)!=0)	bVer3=false;
-
-	int	nKeyNameArrNum;			// キー割り当て表の有効データ数
-	if ( bVer3 ) {
-		//Count取得 -> nKeyNameArrNum
-		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", nKeyNameArrNum);
-		if (nKeyNameArrNum<0 || nKeyNameArrNum>100)	bVer3=false; //範囲チェック
-
-		CShareData_IO::ShareData_IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
-	}
-
-	if (!bVer3) {
-		// 新バージョンでない
-		CTextInputStream in(szPath);
-		if (!in) {
-			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-			return;
-		}
-		// ヘッダチェック
-		wstring	szLine = in.ReadLineW();
-		bVer2 = true;
-		if ( wcscmp(szLine.c_str(), STR_KEYDATA_HEAD2) != 0)	bVer2 = false;
-		// カウントチェック
-		int	i, cnt;
-		if ( bVer2 ) {
-			int	an;
-			szLine = in.ReadLineW();
-			cnt = swscanf(szLine.c_str(), L"Count=%d", &an);
-			if ( cnt != 1 || an < 0 || an > 100 ) {
-				bVer2 = false;
-			}
-			else {
-				nKeyNameArrNum = an;
-			}
-		}
-		if ( bVer2 ) {
-			//各要素取得
-			for(i = 0; i < 100; i++) {
-				int n, kc, nc;
-				//値 -> szData
-				wchar_t szData[1024];
-				auto_strcpy(szData, in.ReadLineW().c_str());
-
-				//解析開始
-				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
-												&n,   &kc, &nc);
-				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
-				if( i != n ) break;
-				pKeyNameArr[i].m_nKeyCode = kc;
-				wchar_t* p = szData + nc;
-
-				//後に続くトークン
-				for(int j=0;j<8;j++)
-				{
-					wchar_t* q=auto_strchr(p,L',');
-					if(!q)	{ bVer2= false; break;}
-					*q=L'\0';
-
-					//機能名を数値に置き換える。(数値の機能名もあるかも)
-					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-					WCHAR	szFuncNameJapanese[256];
-					EFunctionCode n = CSMacroMgr::GetFuncInfoByName(G_AppInstance(), p, szFuncNameJapanese);
-					if( n == F_INVALID )
-					{
-						if( WCODE::Is09(*p) )
-						{
-							n = (EFunctionCode)auto_atol(p);
-						}
-						else
-						{
-							n = F_DEFAULT;
-						}
-					}
-					pKeyNameArr[i].m_nFuncCodeArr[j] = n;
-					p = q + 1;
-				}
-
-				auto_strcpy(pKeyNameArr[i].m_szKeyName, to_tchar(p));
-			}
-		}
-	}
-	if (!bVer3  && !bVer2) {
-		ErrorMessage( hwndDlg, _T("キー設定ファイルの形式が違います。\n\n%ts"), szPath );
-	}
-
-	// データのコピー
-	m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrNum;
-	memcpy_raw( m_Common.m_sKeyBind.m_pKeyNameArr, pKeyNameArr, sizeof_raw( pKeyNameArr ) );
 
 	// ダイアログデータの設定 p5
 	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
@@ -685,93 +704,98 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 /* p5:キー割り当て設定をエクスポートする */
 void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 {
-	CDlgOpenFile	cDlgOpenFile;
-	TCHAR			szPath[_MAX_PATH + 1];
-	TCHAR			szInitDir[_MAX_PATH + 1];
+//	CDlgOpenFile	cDlgOpenFile;
+//	TCHAR			szPath[_MAX_PATH + 1];
+//	TCHAR			szInitDir[_MAX_PATH + 1];
+//
+//	_tcscpy( szPath, _T("") );
+//	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
+//	/* ファイルオープンダイアログの初期化 */
+//	cDlgOpenFile.Create(
+//		G_AppInstance(),
+//		hwndDlg,
+//		_T("*.key"),
+//		szInitDir
+//	);
+//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
+//		return;
+//	}
+//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
+//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+//	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
+//
+//	//@@@ 2001.11.07 add start MIK: テキスト形式で保存
+//	{
+////		int	i, j;
+////		WCHAR	szFuncNameJapanese[256];
+//		
+//		CTextOutputStream out(szPath);
+//		if(!out){
+//			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
+//			return;
+//		}
+//		
+////	delete 2008/5/25 Uchi
+////		out.WriteF( L"[SakuraKeybind]\n" );
+////		out.WriteF( L"Ver=%ls\n", WSTR_KEYDATA_HEAD);
+////		out.WriteF( L"Count=%d\n", m_Common.m_sKeyBind.m_nKeyNameArrNum);
+////		
+////		for(i = 0; i < 100; i++)
+////		{
+////			out.WriteF( L"KeyBind[%03d]=%04x", i, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_nKeyCode);
+////
+////			for(j = 0; j < 8; j++)
+////			{
+////				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+////				WCHAR szFuncName[256];
+////				WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+////					G_AppInstance(),
+////					m_Common.m_sKeyBind.m_pKeyNameArr[i].m_nFuncCodeArr[j],
+////					szFuncName,
+////					szFuncNameJapanese
+////				);
+////				if( p ) {
+////					out.WriteF( L",%ls", p);
+////				}
+////				else {
+////					out.WriteF( L",%d", m_Common.m_sKeyBind.m_pKeyNameArr[i].m_nFuncCodeArr[j]);
+////				}
+////			}
+////			
+////			out.WriteF( L",%ls\n", m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName);
+////		}
+//		
+//		out.Close();
+//
+//		/* キー割り当て情報 */
+//		// 2008/5/25 Uchi
+//		static const wchar_t* szSecInfo=L"Info";
+//		CDataProfile cProfile;
+//
+//		// 書き込みモード設定
+//		cProfile.SetWritingMode();
+//
+//		// ヘッダ
+//		StaticString<wchar_t,256> szKeydataHead = WSTR_KEYDATA_HEAD;
+//		cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
+//		cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
+//
+//		//内容
+//		CShareData_IO::ShareData_IO_KeyBind(cProfile, m_Common.m_sKeyBind.m_nKeyNameArrNum, m_Common.m_sKeyBind.m_pKeyNameArr, true);
+//
+//		// 書き込み
+//		cProfile.WriteProfile( szPath, WSTR_KEYDATA_HEAD);
+//	}
+////@@@ 2001.11.07 add end MIK
+//
+//	return;
 
-	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
-	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create(
-		G_AppInstance(),
-		hwndDlg,
-		_T("*.key"),
-		szInitDir
-	);
-	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
+	CImpExpKeybind	cImpExpKeybind( m_Common );
+
+	// エクスポート
+	if (!cImpExpKeybind.ExportUI( G_AppInstance(), hwndDlg )) {
+		// エクスポートをしていない
 		return;
 	}
-	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-
-	//@@@ 2001.11.07 add start MIK: テキスト形式で保存
-	{
-//		int	i, j;
-//		WCHAR	szFuncNameJapanese[256];
-		
-		CTextOutputStream out(szPath);
-		if(!out){
-			ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-			return;
-		}
-		
-//	delete 2008/5/25 Uchi
-//		out.WriteF( L"[SakuraKeybind]\n" );
-//		out.WriteF( L"Ver=%ls\n", WSTR_KEYDATA_HEAD);
-//		out.WriteF( L"Count=%d\n", m_Common.m_sKeyBind.m_nKeyNameArrNum);
-//		
-//		for(i = 0; i < 100; i++)
-//		{
-//			out.WriteF( L"KeyBind[%03d]=%04x", i, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_nKeyCode);
-//
-//			for(j = 0; j < 8; j++)
-//			{
-//				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-//				WCHAR szFuncName[256];
-//				WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-//					G_AppInstance(),
-//					m_Common.m_sKeyBind.m_pKeyNameArr[i].m_nFuncCodeArr[j],
-//					szFuncName,
-//					szFuncNameJapanese
-//				);
-//				if( p ) {
-//					out.WriteF( L",%ls", p);
-//				}
-//				else {
-//					out.WriteF( L",%d", m_Common.m_sKeyBind.m_pKeyNameArr[i].m_nFuncCodeArr[j]);
-//				}
-//			}
-//			
-//			out.WriteF( L",%ls\n", m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName);
-//		}
-		
-		out.Close();
-
-		/* キー割り当て情報 */
-		// 2008/5/25 Uchi
-		static const wchar_t* szSecInfo=L"Info";
-		CDataProfile cProfile;
-
-		// 書き込みモード設定
-		cProfile.SetWritingMode();
-
-		// ヘッダ
-		StaticString<wchar_t,256> szKeydataHead = WSTR_KEYDATA_HEAD;
-		cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
-		cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
-
-		//内容
-		CShareData_IO::ShareData_IO_KeyBind(cProfile, m_Common.m_sKeyBind.m_nKeyNameArrNum, m_Common.m_sKeyBind.m_pKeyNameArr, true);
-
-		// 書き込み
-		cProfile.WriteProfile( szPath, WSTR_KEYDATA_HEAD);
-	}
-//@@@ 2001.11.07 add end MIK
-
-	return;
 }
-
-
-
