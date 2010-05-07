@@ -548,7 +548,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_FILE_REOPEN_UNICODE:	return HLP000159;			//Unicodeで開き直す
 	case F_FILE_REOPEN_UNICODEBE:	return HLP000256;		//UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:	return HLP000160;			//UTF-8で開き直す
-	case F_FILE_REOPEN_CESU8:	return HLP000163;			//CESU-8で開き直す
+	case F_FILE_REOPEN_CESU8:	return HLP000337;			//CESU-8で開き直す		HLP000163->	2010/5/5 Uchi
 	case F_FILE_REOPEN_UTF7:	return HLP000161;			//UTF-7で開き直す
 	case F_PRINT:				return HLP000162;			//印刷				//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
 	case F_PRINT_PREVIEW:		return HLP000120;			//印刷プレビュー
@@ -803,6 +803,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_OPTION_HELPER:	return HLP000088;	/* 共通設定『支援』 */
 //To here  Stonee, 2001/05/18
 	case F_OPTION_MACRO:	return HLP000201;	/* 共通設定『マクロ』 */	//@@@ 2002.01.02
+	case F_OPTION_STATUSBAR: return HLP000147;	/* 共通設定『ステータスバー』 */	// 2010/5/6 Uchi
+	case F_OPTION_PLUGIN:	return HLP000151;	/* 共通設定『プラグイン』 */	// 2010/5/6 Uchi
 	case F_OPTION_FNAME:	return HLP000277;	/* 共通設定 『全般』プロパティ */	// 2002.12.09 Moca Add	//重複回避
 	case F_FONT:			return HLP000071;	/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	return HLP000184;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更	//Jul. 03, 2001 JEPRO 番号修正

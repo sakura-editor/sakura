@@ -40,7 +40,7 @@
 #include "charset/charcode.h"
 #include "global.h"
 #include "dlg/CDlgPrintSetting.h"
-#include "dlg/CDlgPrintPage.h"
+//#include "dlg/CDlgPrintPage.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "CPrintPreview.h" /// 2002/2/3 aroka
 #include "CCommandLine.h" /// 2003/1/26 aroka
