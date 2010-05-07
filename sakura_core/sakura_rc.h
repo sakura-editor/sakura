@@ -23,7 +23,7 @@
 #define IDD_EXECRUNNING                 126
 #define IDD_HOKAN                       127
 #define IDD_PRINTING                    128
-#define IDD_PRINTPAGE                   129
+//#define IDD_PRINTPAGE                   129
 #define IDD_FILEOPEN                    130
 #define IDD_FILEUPDATEQUERY             131
 #define IDD_FAVORITE                    132
@@ -33,12 +33,10 @@
 #define IDD_DIFF                        136
 #define IDD_CTRLCODE                    137
 #define IDB_MYTOOL                      200
-#define IDB_OPENED                      201
-#define IDB_OPENED_THIS                 202
-#define IDB_PRINTER                     203
 #define IDI_ICON_STD                    210
 #define IDI_ICON_DEBUG                  211
 #define IDI_ICON_GREP                   212
+#define IDI_PRINTER                     215
 #define IDC_CURSOR_COPYARROW            220
 #define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
@@ -143,7 +141,7 @@
 #define IDC_BUTTON_HELP                 1091
 #define IDC_BUTTON_OPENMDLL             1092
 #define IDC_BUTTON_OPENMDICT            1093
-#define IDC_EDIT_TO                     1094
+//#define IDC_EDIT_TO                     1094
 #define IDC_EDIT_BLOCKCOMMENT_TO        1095
 #define IDC_EDIT_BLOCKCOMMENT_TO2       1096
 #define IDC_EDIT_TYPEEXTS               1097
@@ -341,14 +339,14 @@
 #define IDC_RADIO_TFORM_1               1289
 #define IDC_EDIT_TFORM_EX               1290
 #define IDC_EDIT_DFORM                  1291
-#define IDC_RADIO_ALL                   1292
+//#define IDC_RADIO_ALL                   1292
 #define IDC_RADIO_PORTRAIT              1293
 #define IDC_RADIO_BACKUP_DATETYPE1      1294
 #define IDC_RADIO_REPLACE               1295
 #define IDC_RADIO_DIFF_FILE1            1296
 #define IDC_RADIO_DIFF_FILE2            1297
 #define IDC_RADIO_OUTLINEDEFAULT        1298
-#define IDC_RADIO_FROMTO                1299
+//#define IDC_RADIO_FROMTO                1299
 #define IDC_RADIO_LANDSCAPE             1300
 #define IDC_RADIO_BACKUP_DATETYPE2      1301
 #define IDC_RADIO_INSERT                1302
@@ -369,8 +367,8 @@
 #define IDC_EDIT_SY                     1317
 #define IDC_STATIC_JOBNAME              1318
 #define IDC_STATIC_PROGRESS             1319
-#define IDC_EDIT_FROM                   1320
-#define IDC_STATIC_ALL                  1321
+//#define IDC_EDIT_FROM                   1320
+//#define IDC_STATIC_ALL                  1321
 #define IDC_CHECK_bMenuIcon             1322
 #define IDC_LABEL_BACKUP_3              1323
 #define IDC_LABEL_BACKUP_4              1324
@@ -391,8 +389,8 @@
 #define IDC_LABEL_LINETERMCHAR          1339
 #define IDC_LABEL_DFORM                 1340
 #define IDC_LABEL_TFORM                 1341
-#define IDC_LABEL_FROM                  1342
-#define IDC_LABEL_TO                    1343
+//#define IDC_LABEL_FROM                  1342
+//#define IDC_LABEL_TO                    1343
 #define IDC_LABEL_PLSQL1                1344
 #define IDC_LABEL_PLSQL2                1345
 #define IDC_LABEL_PLSQL3                1346
@@ -608,7 +606,7 @@
 #define IDC_COMBO_WHEEL_PAGESCROLL      1556
 #define IDC_COMBO_DEFAULT_CODETYPE      1557
 #define IDC_CHECK_PRIOR_CESU8           1558
-#define IDC_CHECK_DISP_SELCOUNT_BY_BYTE	1559
+#define IDC_CHECK_DISP_SELCOUNT_BY_BYTE 1559
 #define IDC_EDIT_KINSOKUKUTO            1560
 #define IDC_CHECK_ACCELTBL_EACHWIN      1561
 #define IDC_CHECK_MacroOnOpened         1562
@@ -617,7 +615,7 @@
 #define IDC_PLUGINLIST                  1565
 #define IDC_CHECK_PluginEnable          1566
 #define IDC_PLUGIN_SearchNew            1567
-#define IDC_PLUGIN_Remove	            1568
+#define IDC_PLUGIN_Remove               1568
 #define IDC_LABEL_PLUGIN_Description    1569
 #define IDC_LABEL_PLUGIN_Author         1570
 #define IDC_LABEL_PLUGIN_Version        1571
@@ -635,8 +633,8 @@
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
-#define IDD_PROPTYPESP1                 5100
 #define IDD_TYPE_ASCERTAIN              5001
+#define IDD_PROPTYPESP1                 5100
 #define IDD_PROP_COLOR                  5101
 #define IDD_PROPTYPESP2                 5102
 #define IDD_PROP_REGEX                  5103
@@ -668,9 +666,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        233
+#define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1565
+#define _APS_NEXT_CONTROL_VALUE         1579
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

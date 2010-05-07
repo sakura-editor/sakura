@@ -586,14 +586,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\resource\icon_hana.ico"
-				>
-			</File>
-			<File
-				RelativePath="..\resource\icon_moji.ico"
-				>
-			</File>
-			<File
 				RelativePath="..\resource\icon_std.ico"
 				>
 			</File>
@@ -602,15 +594,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\resource\opened.bmp"
-				>
-			</File>
-			<File
-				RelativePath="..\resource\opened_this.bmp"
-				>
-			</File>
-			<File
-				RelativePath="..\resource\printer.bmp"
+				RelativePath="..\resource\printer.ico"
 				>
 			</File>
 		</Filter>
@@ -2516,10 +2500,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CLayoutMgr_Color.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\sakura_core\doc\CLayoutMgr_DoLayout.cpp"
 						>
 					</File>
@@ -2774,14 +2754,6 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\dlg\CDlgPluginOption.h"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\dlg\CDlgPrintPage.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\dlg\CDlgPrintPage.h"
 					>
 				</File>
 				<File

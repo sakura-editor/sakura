@@ -42,7 +42,7 @@
 #define HLP000159	159 //Unicodeで開き直す
 #define HLP000256	256 //UnicodeBEで開き直す
 #define HLP000160	160 //UTF-8で開き直す
-#define HLP000163	163 //CESU-8で開き直す
+#define HLP000337	337 //CESU-8で開き直す	163から変更	2010/4/27 Uchi
 #define HLP000161	161 //UTF-7で開き直す
 #define HLP000162	162 //印刷
 #define HLP000120	120 //印刷プレビュー
@@ -112,8 +112,8 @@
 #define HLP000056	56 //このファイルのパス名をコピー
 #define HLP000175	175 //このファイルのパス名とカーソル位置をコピー
 #define HLP000057	57 //キー割り当て一覧をコピー
-#define HLP000176	176 //「移動(O)」メニューの一覧
-#define HLP000177	177 //「選択(S)」メニューの一覧
+//#define HLP000176	176 //「移動(O)」メニューの一覧
+//#define HLP000177	177 //「選択(S)」メニューの一覧
 #define HLP000210	210 //左(先頭)の空白を削除
 #define HLP000211	211 //右(末尾)の空白を削除
 #define HLP000212	212 //選択行の昇順ソート
@@ -211,6 +211,8 @@
 #define HLP000088	88 //共通設定 『支援』プロパティ
 #define HLP000201	201 //共通設定 『マクロ』プロパティ
 #define HLP000277	277 //共通設定『ファイル名表示』タブ
+#define HLP000147	147 //共通設定『ステータスバー』タブ
+#define HLP000151	151 //共通設定『プラグイン』タブ
 #define HLP000279	279 //履歴の管理
 #define HLP000071	71 //フォント設定
 #define HLP000340	340 //テキストの折り返し方法			// 2008.05.31 nasukoji
@@ -322,12 +324,21 @@
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
-#define HLP000302	302 //色設定ファイル
+//#define HLP000302	302 //色設定ファイル
 // note: 303 は 「このファイル名をコピー」が使用
 //#define HLP000304	304 //メタ文字列の仕様 HLP000272
 #define HLP000089	89 //利用可能な正規表現	// 2007.09.30
 #define HLP000108	108 //1行選択	// 2007.12.01
 
+#define HLP000284	284	//ExpandParameter
+#define HLP000288	288	//文字入力
+#define HLP000292	292	//置換(実行)
+#define HLP000293	293	//すべて置換(実行)
+#define HLP000294	294	//指定パターンに一致する行をマーク
+#define HLP000295	295	//最後にテキストを追加
+
+#define HLP000400	400	//タスクトレイメニュー
+#define HLP000500	500	//「設定(O)」メニュー
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
 #define HLP_UR014	3014 //変更履歴(2007/09/27-)
@@ -744,13 +755,13 @@
 #define HIDC_CMP_LIST_FILES		12306	//ファイル一覧
 #define HIDC_CMP_STATIC_COMPARESRC	12307	//ソースファイル
 
-//印刷
-#define HIDOK_PP			12400	//OK
-#define HIDCANCEL_PP		12401	//キャンセル
-#define HIDC_PP_EDIT_FROM	12402	//ページから
-#define HIDC_PP_EDIT_TO		12403	//ページまで
-#define HIDC_PP_RADIO_ALL	12404	//すべて
-#define HIDC_PP_RADIO_FROMTO	12405	//指定
+//印刷	del Uchi 2010/4/26
+//#define HIDOK_PP			12400	//OK
+//#define HIDCANCEL_PP		12401	//キャンセル
+//#define HIDC_PP_EDIT_FROM	12402	//ページから
+//#define HIDC_PP_EDIT_TO		12403	//ページまで
+//#define HIDC_PP_RADIO_ALL	12404	//すべて
+//#define HIDC_PP_RADIO_FROMTO	12405	//指定
 
 //印刷設定
 #define HIDC_PS_BUTTON_EDITSETTINGNAME	12500	//設定名変更
@@ -911,7 +922,7 @@
 #define	HIDC_EDIT_WY			13802
 #define	HIDC_EDIT_SX			13803
 #define	HIDC_EDIT_SY			13804
-#define	HIDC_CHECK_WINPOS		13805
+//#define	HIDC_CHECK_WINPOS		13805
 #define	HIDC_RADIO_WINSIZE_DEF	13806
 #define	HIDC_RADIO_WINSIZE_SAVE	13807
 #define	HIDC_RADIO_WINSIZE_SET	13808
