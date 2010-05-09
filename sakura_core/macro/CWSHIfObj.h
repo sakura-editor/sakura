@@ -30,134 +30,42 @@
 */
 #ifndef SAKURA_CWSHIFOBJ_EAA6C3E3_1442_4940_B8A3_2AAB324D8788D_H_
 #define SAKURA_CWSHIFOBJ_EAA6C3E3_1442_4940_B8A3_2AAB324D8788D_H_
-
-#include <string>
 #include <list>
-#include <vector>
+#include "OleTypes.h"
+#include "macro/CIfObj.h"
+#include "macro/CWSH.h" // CWSHClient::List, ListIter
+class CEditView;
 
 
-//COM一般
-
-template<class Base>
-class ImplementsIUnknown: public Base
-{
-private:
-	int m_RefCount;
-	ImplementsIUnknown(const ImplementsIUnknown &);
-	ImplementsIUnknown& operator = (const ImplementsIUnknown &);
-public:
-	#ifdef __BORLANDC__
-	#pragma argsused
-	#endif
-	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject) 
-	{ 
-		return E_NOINTERFACE; 
-	}
-	virtual ULONG STDMETHODCALLTYPE AddRef() { ++ m_RefCount; return m_RefCount; };
-	virtual ULONG STDMETHODCALLTYPE Release() { -- m_RefCount; int R = m_RefCount; if(m_RefCount == 0) delete this; return R; };
-public:
-	ImplementsIUnknown(): m_RefCount(0) {};
-	virtual ~ImplementsIUnknown(){};
-};
-
-//WSH一般
-class CWSHIfObj;
-enum EFunctionCode;
-typedef HRESULT (CWSHIfObj::*CIfObjMethod)(EFunctionCode ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
-typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
-
-//CWSHIfObjが必要とするWSHClientのインタフェース
-class IWSHClient
+class CWSHIfObj
+: public CIfObj
 {
 public:
-	virtual void* GetData() const = 0;
-};
-
-//スクリプトに渡されるオブジェクト
-class CWSHIfObj: public ImplementsIUnknown<IDispatch>
-{
 	// 型定義
-private:
-	typedef std::wstring wstring;
-public:
-	typedef std::list<CWSHIfObj*> List;		//インタフェースオブジェクトのリスト
-	typedef List::const_iterator ListIter;	//そのイテレータ
-	struct CMethodInfo
-	{
-		FUNCDESC				Desc;
-		wchar_t					Name[64];
-		CIfObjMethod			Method;
-		ELEMDESC				Arguments[8];
-		EFunctionCode			ID;
-	};
-	typedef std::vector<CMethodInfo> CMethodInfoList;
+	typedef std::list<CWSHIfObj*> List;
+	typedef List::const_iterator ListIter;
 
 	// コンストラクタ
-public:
-	CWSHIfObj(WCHAR* name);
+	CWSHIfObj(const wchar_t* name, bool isGlobal)
+	: CIfObj(name, isGlobal)
+	{}
 
-	// デストラクタ
-public:
-	virtual ~CWSHIfObj();
+	virtual void ReadyMethods( CEditView* pView, int flags );
 
-	// 操作
-public:
-	void AddMethod(wchar_t *Name, EFunctionCode ID, VARTYPE *ArgumentTypes,
-		int ArgumentCount, VARTYPE ResultType, CIfObjMethod Method);
-	void ReserveMethods(int Count)
-	{
-		m_Methods.reserve(Count);
-	}
-	virtual void ReadyMethods( int flags );	//コマンド・関数を準備する
 protected:
+	// 操作
 	//	2007.07.20 genta : flags追加
 	//  2009.09.05 syat CWSHManagerから移動
 	void ReadyCommands(MacroFuncInfo *Info, int flags);
-	HRESULT MacroCommand(EFunctionCode ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
-
-	// 属性
-public:
-	virtual bool IsGlobalMember() { return false; }	//オブジェクト名の省略可否
-
-	// 実装
-public:
-	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject);
-	virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(
-					REFIID riid,
-					OLECHAR FAR* FAR* rgszNames,
-					UINT cNames,
-					LCID lcid,
-					DISPID FAR* rgdispid);
-	virtual HRESULT STDMETHODCALLTYPE Invoke(
-					DISPID dispidMember,
-					REFIID riid,
-					LCID lcid,
-					WORD wFlags,
-					DISPPARAMS FAR* pdispparams,
-					VARIANT FAR* pvarResult,
-					EXCEPINFO FAR* pexcepinfo,
-					UINT FAR* puArgErr);
-	virtual HRESULT STDMETHODCALLTYPE GetTypeInfo( 
-					/* [in] */ UINT iTInfo,
-					/* [in] */ LCID lcid,
-					/* [out] */ ITypeInfo __RPC_FAR *__RPC_FAR *ppTInfo);
-	virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount( 
-					/* [out] */ UINT __RPC_FAR *pctinfo);
-
-	// メンバ変数
-public:
-	CMethodInfoList m_Methods;			//メソッド情報リスト
-	IWSHClient *m_Owner;				//オーナーCWSHClient
-	wstring m_sName;					//インタフェースオブジェクト名
-private:
-	ITypeInfo* m_TypeInfo;
+	HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 
 	// 非実装提供
-protected:
 	virtual bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result) = 0;	//関数を処理する
 	virtual void HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize) = 0;	//コマンドを処理する
 	virtual MacroFuncInfoArray GetMacroCommandInfo() const = 0;	//コマンド情報を取得する
 	virtual MacroFuncInfoArray GetMacroFuncInfo() const = 0;	//関数情報を取得する
+
+	CEditView* m_pView;
 };
 
 

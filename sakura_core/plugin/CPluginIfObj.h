@@ -51,7 +51,7 @@ class CPluginIfObj : public CWSHIfObj {
 	// コンストラクタ
 public:
 	CPluginIfObj( CPlugin& cPlugin )
-		: CWSHIfObj( L"Plugin" )
+		: CWSHIfObj( L"Plugin", false )
 		, m_cPlugin( cPlugin )
 	{
 	}
