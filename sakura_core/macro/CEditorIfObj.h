@@ -36,11 +36,7 @@ class CEditorIfObj : public CWSHIfObj
 {
 	// コンストラクタ
 public:
-	CEditorIfObj() : CWSHIfObj( L"Editor" ){}
-
-	// 属性
-public:
-	virtual bool IsGlobalMember() { return true; }	//オブジェクト名の省略可否
+	CEditorIfObj() : CWSHIfObj( L"Editor", true ){}
 
 	// 実装
 	MacroFuncInfoArray GetMacroCommandInfo() const;	//コマンド情報を取得する

@@ -18,10 +18,7 @@
 
 #include "stdafx.h"
 #include "macro/CWSH.h"
-#include "macro/CSMacroMgr.h"
-#include "macro/CEditorIfObj.h"
-#include "view/CEditView.h"
-#include "doc/CEditDoc.h"
+#include "macro/CIfObj.h"
 
 /* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
@@ -90,8 +87,8 @@ public:
 		wcout << L"GetItemInfo:" << pstrName << endl;
 #endif
 		//指定された名前のインタフェースオブジェクトを検索
-		const CWSHIfObj::List& objects = m_Client->GetInterfaceObject();
-		for( CWSHIfObj::ListIter it = objects.begin(); it != objects.end(); it++ )
+		const CWSHClient::List& objects = m_Client->GetInterfaceObjects();
+		for( CWSHClient::ListIter it = objects.begin(); it != objects.end(); it++ )
 		{
 			//	Nov. 10, 2003 FILE Win9Xでは、[lstrcmpiW]が無効のため、[_wcsicmp]に修正
 			if( _wcsicmp( pstrName, (*it)->m_sName.c_str() ) == 0 )
@@ -228,7 +225,7 @@ CWSHClient::CWSHClient(wchar_t const *AEngine, ScriptErrorHandler AErrorHandler,
 CWSHClient::~CWSHClient()
 {
 	//インタフェースオブジェクトを解放
-	for( CWSHIfObj::ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ ){
+	for( ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ ){
 		(*it)->Release();
 	}
 	
@@ -249,13 +246,13 @@ void CWSHClient::Execute(wchar_t const *AScript)
 		{
 			bool bAddNamedItemError = false;
 
-			for( CWSHIfObj::ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ )
+			for( ListIter it = m_IfObjArr.begin(); it != m_IfObjArr.end(); it++ )
 			{
 				DWORD dwFlag = SCRIPTITEM_ISVISIBLE;
 
-				if( (*it)->IsGlobalMember() ){ dwFlag |= SCRIPTITEM_GLOBALMEMBERS; }
+				if( (*it)->IsGlobal() ){ dwFlag |= SCRIPTITEM_GLOBALMEMBERS; }
 
-				if(m_Engine->AddNamedItem( (*it)->m_sName.c_str(), dwFlag ) != S_OK)
+				if(m_Engine->AddNamedItem( (*it)->Name(), dwFlag ) != S_OK)
 				{
 					bAddNamedItemError = true;
 					Error(L"オブジェクトを渡せなかった");
@@ -294,27 +291,14 @@ void CWSHClient::Error(wchar_t* Description)
 }
 
 //インタフェースオブジェクトの追加
-void CWSHClient::AddInterfaceObject( CWSHIfObj* obj )
+void CWSHClient::AddInterfaceObject( CIfObj* obj )
 {
 	if( !obj ) return;
 	m_IfObjArr.push_back( obj );
 	obj->m_Owner = this;
+	obj->AddRef();
 }
 
-//インタフェースオブジェクトの追加（複数）
-void CWSHClient::AddInterfaceObject( CWSHIfObj::List& obj )
-{
-	for( CWSHIfObj::ListIter it = obj.begin(); it != obj.end(); it++ ){
-		AddInterfaceObject( *it );
-		(*it)->AddRef();
-	}
-}
-
-//インタフェースオブジェクトの取得
-const CWSHIfObj::List& CWSHClient::GetInterfaceObject()
-{
-	return m_IfObjArr;
-}
 
 /////////////////////////////////////////////
 /*!

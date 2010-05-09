@@ -67,17 +67,13 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	{
 		//インタフェースオブジェクトの登録
 		CWSHIfObj* objEditor = new CEditorIfObj();
-		objEditor->AddRef();
+		objEditor->ReadyMethods( EditView, flags );
 		Engine->AddInterfaceObject( objEditor );
-
-		Engine->AddInterfaceObject( (CWSHIfObj::List&)m_Params );
-	
-		//コマンド準備
-		const CWSHIfObj::List& objects = Engine->GetInterfaceObject();
-		for( CWSHIfObj::ListIter it = objects.begin(); it != objects.end(); it++ ){
-			(*it)->ReadyMethods( flags );
+		for( CWSHIfObj::ListIter it = m_Params.begin(); it != m_Params.end(); it++ ) {
+			(*it)->ReadyMethods( EditView, flags );
+			Engine->AddInterfaceObject(*it);
 		}
-		
+
 		Engine->Execute(m_Source.c_str());
 		
 		//EditView->Redraw();

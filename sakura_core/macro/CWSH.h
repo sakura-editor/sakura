@@ -19,13 +19,14 @@
 #ifndef __WSH_H__
 #define __WSH_H__
 
+#include <vector>
 //#include <windows.h>
 //#include <winreg.h>
 //#include <objbase.h>
 //#include <initguid.h>
 #include "activscp.h"
 //↑Microsoft Platform SDK より
-#include "CWSHIfObj.h"
+#include "macro/CIfObj.h"
 
 /* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
 template<class Base>
@@ -33,26 +34,35 @@ class ImplementsIUnknown: public Base
 
 class CInterfaceObject: public ImplementsIUnknown<IDispatch>
  */
+typedef void (*ScriptErrorHandler)(BSTR Description, BSTR Source, void *Data);
 
 class CWSHClient : IWSHClient
 {
-private:
-	IActiveScript *m_Engine;
-	void *m_Data;
-protected:
-	ScriptErrorHandler m_OnError;
-	CWSHIfObj::List m_IfObjArr;
 public:
+	// 型定義
+	typedef std::vector<CIfObj*> List;      // 所有しているインタフェースオブジェクトのリスト
+	typedef List::const_iterator ListIter;	// そのイテレータ
+
+	// コンストラクタ・デストラクタ
 	CWSHClient(wchar_t const *AEngine, ScriptErrorHandler AErrorHandler, void *AData);
 	~CWSHClient();
-	bool m_Valid; //trueの場合使用可能
+
+	// フィールド・アクセサ
+	ScriptErrorHandler m_OnError;
+	void *m_Data;
+	bool m_Valid; ///< trueの場合スクリプトエンジンが使用可能。falseになる場合は ScriptErrorHandlerにエラー内容が通知されている。
+	virtual /*override*/ void* GetData() const { return this->m_Data; }
+	const List& GetInterfaceObjects() {	return this->m_IfObjArr; }
+
+	// 操作
+	void AddInterfaceObject( CIfObj* obj );
 	void Execute(wchar_t const *AScript);
-	void Error(BSTR Description, BSTR Source);
-	void Error(wchar_t* Description);
-	void* GetData() const { return m_Data; }
-	void AddInterfaceObject( CWSHIfObj* obj );
-	void AddInterfaceObject( CWSHIfObj::List& obj );
-	const CWSHIfObj::List& GetInterfaceObject();
+	void Error(BSTR Description, BSTR Source); ///< ScriptErrorHandlerを呼び出す。
+	void Error(wchar_t* Description);          ///< ScriptErrorHandlerを呼び出す。
+
+private:
+	IActiveScript *m_Engine;
+	List m_IfObjArr;
 };
 
 

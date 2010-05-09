@@ -2545,6 +2545,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\macro\CIfObj.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\macro\CIfObj.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\macro\CKeyMacroMgr.cpp"
 					>
 				</File>
