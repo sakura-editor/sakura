@@ -671,14 +671,100 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 
 
 /*!
-	アウトプットウインドウに出力
+	アウトプットウインドウに出力(書式付)
 
 	アウトプットウインドウが無ければオープンする
-	@param lpFmt [in] 書式指定文字列
+	@param lpFmt [in] 書式指定文字列(wchar_t版)
+	@date 2010.02.22 Moca auto_vsprintfから tchar_vsnwprintf_s に変更.長すぎるときは切り詰められる
 */
 void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 {
+	if( false == OpenDebugWindow( m_hwndTraceOutSource, false ) ){
+		return;
+	}
+	
+	va_list argList;
+	va_start( argList, lpFmt );
+	int ret = tchar_vsnwprintf_s( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>(), 
+		m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>(),
+		to_wchar(lpFmt), argList );
+	va_end( argList );
+	if( -1 == ret ){
+		// 切り詰められた
+		ret = auto_strlen( m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>() );
+	}else if( ret < 0 ){
+		// 保護コード:受け側はwParam→size_tで符号なしのため
+		ret = 0;
+	}
+	DWORD_PTR dwMsgResult;
+	::SendMessageTimeout( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, ret, 0,
+		SMTO_NORMAL, 10000, &dwMsgResult );
+}
 
+/*!
+	アウトプットウインドウに出力(文字列指定)
+
+	長い場合は分割して送る
+	アウトプットウインドウが無ければオープンする
+	@param  pStr  出力する文字列
+	@param  len   pStrの文字数(終端NULを含まない) -1で自動計算
+	@date 2010.05.11 Moca 新設
+*/
+void CShareData::TraceOutString( const wchar_t* pStr, int len )
+{
+	if( false == OpenDebugWindow( m_hwndTraceOutSource, false ) ){
+		return;
+	}
+	if( -1 == len ){
+		len = wcslen(pStr);
+	}
+	// m_sWorkBufferぎりぎりでも問題ないけれど、念のため\0終端にするために余裕をとる
+	// -1 より 8,4バイト境界のほうがコピーが早いはずなので、-4にする
+	const int buffLen = (int)m_pShareData->m_sWorkBuffer.GetWorkBufferCount<WCHAR>() - 4;
+	wchar_t*  pOutBuffer = m_pShareData->m_sWorkBuffer.GetWorkBuffer<WCHAR>();
+	int outPos = 0;
+	if(0 == len){
+		// 0のときは何も追加しないが、カーソル移動が発生する
+		pOutBuffer[0] = L'\0';
+		::SendMessage( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, 0, 0 );
+	}else{
+		while(outPos < len){
+			int outLen = buffLen;
+			if(len - outPos < buffLen){
+				// 残り全部
+				outLen = len - outPos;
+			}
+			// あまりが1文字以上ある
+			if( outPos + outLen < len ){
+				// CRLF(\r\n)とUTF-16が分離されないように
+				if( (pStr[outPos + outLen - 1] == WCODE::CR && pStr[outPos + outLen] == WCODE::LF)
+					|| (IsUtf16SurrogHi( pStr[outPos + outLen - 1] ) && IsUtf16SurrogLow( pStr[outPos + outLen] )) ){
+					--outLen;
+				}
+			}
+			wmemcpy( pOutBuffer, pStr + outPos, outLen );
+			pOutBuffer[outLen] = L'\0';
+			DWORD_PTR	dwMsgResult;
+			if( 0 == ::SendMessageTimeout( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRINGLEN_W, outLen, 0,
+				SMTO_NORMAL, 10000, &dwMsgResult ) ){
+				// エラーかタイムアウト
+				break;
+			}
+			outPos += outLen;
+		}
+	}
+}
+
+/*
+	デバッグウィンドウを表示
+	@param hwnd 新規ウィンドウのときのデバッグウィンドウの所属グループ
+	@param bAllwaysActive 表示済みウィンドウでもアクティブにする
+	@return true:表示できた。またはすでに表示されている。
+	@date 2010.05.11 Moca TraceOutから分離
+*/
+bool CShareData::OpenDebugWindow( HWND hwnd, bool bAllwaysActive )
+{
+	bool ret = true;
 	if( NULL == m_pShareData->m_sHandles.m_hwndDebug
 	|| !IsSakuraMainWindow( m_pShareData->m_sHandles.m_hwndDebug )
 	){
@@ -686,25 +772,24 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 		// アウトプットウィンドウを作成元と同じグループに作成するために m_hwndTraceOutSource を使っています
 		// （m_hwndTraceOutSource は CEditWnd::Create() で予め設定）
 		// ちょっと不恰好だけど、TraceOut() の引数にいちいち起動元を指定するのも．．．
+		// 2010.05.11 Moca m_hwndTraceOutSourceは依然として使っていますが引数にしました
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = _T("");
-		sLoadInfo.eCharCode = CODE_UNICODE;		// CODE_SJIS->	2008/6/8 Uchi
+		// CODE_SJIS->CODE_UNICODE	2008/6/8 Uchi
+		// CODE_UNICODE->CODE_NONE	2010.05.11 Moca デフォルト文字コードで設定できるように無指定に変更
+		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( NULL, m_hwndTraceOutSource, sLoadInfo, _T("-DEBUGMODE"), true );
+		ret = CControlTray::OpenNewEditor( NULL, hwnd, sLoadInfo, _T("-DEBUGMODE"), true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更
-
-		/* 開いているウィンドウをアクティブにする */
-		/* アクティブにする */
+		bAllwaysActive = true; // 新しく作ったときはactive
+	}
+	/* 開いているウィンドウをアクティブにする */
+	if(ret && bAllwaysActive){
 		ActivateFrameWindow( m_pShareData->m_sHandles.m_hwndDebug );
 	}
-	va_list argList;
-	va_start( argList, lpFmt );
-	auto_vsprintf( m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>(), to_wchar(lpFmt), argList );
-	va_end( argList );
-	::SendMessage( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRING, 0, 0 );
-	return;
+	return ret;
 }
 
 

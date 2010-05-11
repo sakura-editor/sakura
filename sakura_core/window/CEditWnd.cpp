@@ -15,7 +15,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji, nasukoji, Hidetaka Sakai
-	Copyright (C) 2010, ryoji
+	Copyright (C) 2010, ryoji, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1520,24 +1520,23 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case MYWM_ADDSTRING:
 		{
+			// TraceOutはMYWM_ADDSTRINGLEN_Wに変更。実質未使用
+			// 共有データ構造体verが変更されたら削除してもOK。それまでは同時起動用にとっておく
 			EDIT_CHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
+			// 2010.05.11 Moca wcslenをwcsnlenに変更。m_sWorkBufferの大きさを超えないように
+			int addSize = wcsnlen( pWork, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() );
+			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, TRUE, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
+			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
+		}
+		return 0L;
 
-			GetActiveView().GetCommander().HandleCommand(
-				F_ADDTAIL_W,
-				TRUE,
-				(LPARAM)pWork,
-				(LPARAM)wcslen( pWork ),
-				0,
-				0
-			);
-			GetActiveView().GetCommander().HandleCommand(
-				F_GOFILEEND,
-				TRUE,
-				0,
-				0,
-				0,
-				0
-			);
+	// 2010.05.11 Moca MYWM_ADDSTRINGLEN_Wを追加 NULセーフ
+	case MYWM_ADDSTRINGLEN_W:
+		{
+			EDIT_CHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
+			size_t addSize = t_min((size_t)wParam, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() );
+			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, TRUE, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
+			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
 		}
 		return 0L;
 
