@@ -1236,13 +1236,13 @@ void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nFlgOpt )
 	if (nFlgOpt & 0x01) {
 		wchar_t Buffer[2048];
 		CSakuraEnvironment::ExpandParameter(outputstr, Buffer, 2047);
-		CShareData::getInstance()->TraceOut( _T("%ls"), Buffer );
+		CShareData::getInstance()->TraceOutString( Buffer );
 	} else {
-		CShareData::getInstance()->TraceOut( _T("%ls"), outputstr );
+		CShareData::getInstance()->TraceOutString(outputstr );
 	}
 
 	// 0x02 改行コードの有無
-	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOut( _T("\r\n") );
+	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOutString( L"\r\n" );
 
 }
 

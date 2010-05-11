@@ -7370,17 +7370,10 @@ void CViewCommander::Command_WINCLOSE( void )
 //アウトプットウィンドウ表示
 void CViewCommander::Command_WIN_OUTPUT( void )
 {
-	if( NULL == GetDllShareData().m_sHandles.m_hwndDebug || !IsSakuraMainWindow(GetDllShareData().m_sHandles.m_hwndDebug) ){
-		SLoadInfo sLoadInfo;
-		sLoadInfo.cFilePath = _T("");
-		sLoadInfo.eCharCode = CODE_SJIS;
-		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( NULL, m_pCommanderView->GetHwnd(), sLoadInfo, _T("-DEBUGMODE"), true );
-	}else{
-		/* 開いているウィンドウをアクティブにする */
-		/* アクティブにする */
-		ActivateFrameWindow( GetDllShareData().m_sHandles.m_hwndDebug );
-	}
+	// 2010.05.11 Moca CShareData::OpenDebugWindow()に統合
+	// メッセージ表示ウィンドウをViewから親に変更
+	// TraceOut経由ではCODE_UNICODE,こちらではCODE_SJISだったのを無指定に変更
+	CShareData::getInstance()->OpenDebugWindow( GetMainWindow(), true );
 	return;
 }
 

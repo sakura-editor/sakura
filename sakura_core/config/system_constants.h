@@ -444,6 +444,12 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 /*! 独自のドロップファイル通知 */
 #define MYWM_DROPFILES (WM_APP+218)	//@@@ 2008.06.18 ryoji
 
+//! テキスト追加通知(共有データ経由)
+// wParam:追加する文字数(WCHAR単位)
+// lParam:未使用
+// @2010.05.11 Moca メッセージ追加
+#define	MYWM_ADDSTRINGLEN_W (WM_APP+219)
+
 /* 再変換対応 */ // 20020331 aroka
 #ifndef WM_IME_REQUEST
 #define MYWM_IME_REQUEST 0x288  // ==WM_IME_REQUEST
