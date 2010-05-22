@@ -19,14 +19,15 @@
 
 #include "stdafx.h"
 #include <string.h>
-#include "sakura_rc.h"
-#include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgDiff.h"
-#include "debug/Debug.h"
-#include "doc/CEditDoc.h"
 #include "global.h"
+#include "dlg/CDlgOpenFile.h"
+#include "doc/CEditDoc.h"
+#include "window/CEditWnd.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
+#include "debug/Debug.h"
+#include "sakura_rc.h"
 
 #include "sakura.hh"
 const DWORD p_helpids[] = {	//13200

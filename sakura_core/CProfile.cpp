@@ -37,7 +37,7 @@
 //#include <stdio.h>
 //#include <string.h>
 //#include <algorithm>
-//#include "CProfile.h"
+#include "CProfile.h"
 #include "debug/Debug.h"
 #include "io/CTextStream.h"
 

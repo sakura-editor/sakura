@@ -3,6 +3,8 @@
 */
 
 #include "stdafx.h"
+#include "DLLSHAREDATA.h"
+
 #include "CFormatManager.h"
 
 /*! 日付をフォーマット

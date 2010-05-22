@@ -1,5 +1,8 @@
 #include "stdafx.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Tab.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
 
 //2007.08.28 kobake ’Ç‰Á

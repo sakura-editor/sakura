@@ -1,26 +1,27 @@
 #include "stdafx.h"
 #include "CViewCommander.h"
+#include <algorithm>		// 2001.12.11 hor    for VC++
+#include <string>///	2002/2/3 aroka 
+#include <vector> ///	2002/2/3 aroka
 #include "view/CEditView.h"
 #include "CWaitCursor.h"
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
-#include <algorithm>		// 2001.12.11 hor    for VC++
 #include "COpe.h" ///	2002/2/3 aroka from here
-#include "COpeBlk.h" ///
-#include "doc/CLayout.h"///
-#include "doc/CDocLine.h"///
-#include "debug/Debug.h"///
-#include <string>///
-#include <vector> /// 2002/2/3 aroka to here
+#include "COpeBlk.h" ///	2002/2/3 aroka 
+#include "doc/CLayout.h"///	2002/2/3 aroka 
+#include "doc/CDocLine.h"///	2002/2/3 aroka 
+#include "debug/Debug.h"///	2002/2/3 aroka 
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
-#include "window/CEditWnd.h"
 #include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "window/CEditWnd.h"
 #include "io/CFileLoad.h"	// 2006.12.09 maru
 #include "dlg/CDlgCancel.h"	// 2006.12.09 maru
 #include "env/CSakuraEnvironment.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 using namespace std; // 2002/2/3 aroka to here
 

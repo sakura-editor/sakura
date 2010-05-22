@@ -15,15 +15,17 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
+#include "debug/Debug.h" // 2002/2/10 aroka
+#include "env/DLLSHAREDATA.h" // CFormatManager.hより前に必要
+#include "env/CFormatManager.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10400
 	IDC_EDIT_DFORM,						HIDC_EDIT_DFORM,		//日付書式
 	IDC_EDIT_TFORM,						HIDC_EDIT_TFORM,		//時刻書式
@@ -38,22 +40,6 @@ static const DWORD p_helpids[] = {	//10400
 //	IDC_STATIC,							-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10400
-	IDC_EDIT_DFORM,						10440,	//日付書式
-	IDC_EDIT_TFORM,						10441,	//時刻書式
-	IDC_EDIT_DFORM_EX,					10442,	//日付書式（表示例）
-	IDC_EDIT_TFORM_EX,					10443,	//時刻書式（表示例）
-	IDC_EDIT_MIDASHIKIGOU,				10444,	//見出し記号
-	IDC_EDIT_INYOUKIGOU,				10445,	//引用符
-	IDC_RADIO_DFORM_0,					10460,	//日付書式（標準）
-	IDC_RADIO_DFORM_1,					10461,	//日付書式（カスタム）
-	IDC_RADIO_TFORM_0,					10462,	//時刻書式（標準）
-	IDC_RADIO_TFORM_1,					10463,	//時刻書式（カスタム）
-//	IDC_STATIC,							-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //@@@ 2002.01.12 add start
@@ -93,17 +79,17 @@ static const char *p_time_form[] = {
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FORMAT(
+INT_PTR CALLBACK CPropFormat::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p9, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
-void CPropCommon::ChangeDateExample( HWND hwndDlg )
+void CPropFormat::ChangeDateExample( HWND hwndDlg )
 {
-	/* ダイアログデータの取得 p9 */
-	GetData_p9( hwndDlg );
+	/* ダイアログデータの取得 Format */
+	GetData( hwndDlg );
 
 	/* 日付をフォーマット */
 	TCHAR szText[1024];
@@ -113,10 +99,10 @@ void CPropCommon::ChangeDateExample( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_DFORM_EX, szText );
 	return;
 }
-void CPropCommon::ChangeTimeExample( HWND hwndDlg )
+void CPropFormat::ChangeTimeExample( HWND hwndDlg )
 {
-	/* ダイアログデータの取得 p9 */
-	GetData_p9( hwndDlg );
+	/* ダイアログデータの取得 Format */
+	GetData( hwndDlg );
 
 	/* 時刻をフォーマット */
 	TCHAR szText[1024];
@@ -128,8 +114,8 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 }
 
 
-/* p9 メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p9(
+/* Format メッセージ処理 */
+INT_PTR CPropFormat::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -146,8 +132,8 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p9 */
-		SetData_p9( hwndDlg );
+		/* ダイアログデータの設定 Format */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -227,9 +213,9 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 				OnHelp( hwndDlg, IDD_PROP_FORMAT );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "p9 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p9 */
-				GetData_p9( hwndDlg );
+//				MYTRACE_A( "Format PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 Format */
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -272,8 +258,8 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 
 
 
-/* ダイアログデータの設定 p9 */
-void CPropCommon::SetData_p9( HWND hwndDlg )
+/* ダイアログデータの設定 Format */
+void CPropFormat::SetData( HWND hwndDlg )
 {
 
 	/* 見出し記号 */
@@ -313,8 +299,8 @@ void CPropCommon::SetData_p9( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 p9 */
-int CPropCommon::GetData_p9( HWND hwndDlg )
+/* ダイアログデータの取得 Format */
+int CPropFormat::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_FORMAT;
@@ -372,7 +358,7 @@ int CPropCommon::GetData_p9( HWND hwndDlg )
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
-void CPropCommon::EnableFormatPropInput( HWND hwndDlg )
+void CPropFormat::EnableFormatPropInput( HWND hwndDlg )
 {
 	//	日付書式をカスタムにするかどうか
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_DFORM_1 ) ){

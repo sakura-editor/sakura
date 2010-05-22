@@ -1,5 +1,7 @@
 #pragma once
 
+#include "config/maxdata.h"
+
 //共有メモリ内構造体
 struct SShare_History{
 	//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。

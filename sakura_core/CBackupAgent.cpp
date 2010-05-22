@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CBackupAgent.h"
-#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
 #include <time.h> //_tzset
 #include "util/format.h" //GetDateTimeFormat

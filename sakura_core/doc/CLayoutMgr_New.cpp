@@ -30,6 +30,7 @@
 #include "mem/CMemoryIterator.h"
 #include "doc/CEditDoc.h" /// 2003/07/20 genta
 #include "util/window.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 
 

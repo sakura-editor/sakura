@@ -12,18 +12,20 @@
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, MIK, aroka, genta
 	Copyright (C) 2006, fon
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-class CPropTypes;
-
-#ifndef _CPROPTYPES_H_
-#define _CPROPTYPES_H_
+#ifndef SAKURA_TYPES_CPROPTYPES_H_
+#define SAKURA_TYPES_CPROPTYPES_H_
 
 #include <windows.h>
-#include "env/CShareData.h"
+#include "types/CType.h"
+
+class CPropTypes;
+class CKeyWordSetMgr;
 
 /*-----------------------------------------------------------------------
 定数
@@ -67,7 +69,7 @@ protected:
 	//イベント
 	void OnHelp( HWND , int );	//!< ヘルプ
 
-private:
+protected:
 	//各種参照
 	HINSTANCE	m_hInstance;	//!< アプリケーションインスタンスのハンドル
 	HWND		m_hwndParent;	//!< オーナーウィンドウのハンドル
@@ -78,32 +80,66 @@ private:
 	int			m_nPageNum;
 	STypeConfig		m_Types;
 
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                        スクリーン                           //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
-	INT_PTR DispatchEvent_Screen( HWND, UINT, WPARAM, LPARAM );		//!< p1 メッセージ処理
-	static void AddOutlineMethod(int nMethod, const WCHAR* szName);	//!<アウトライン解析ルールの追加
-	static void AddSIndentMethod(int nMethod, const WCHAR* szName);	//!<スマートインデントルールの追加
-protected:
-	void SetData_p1( HWND );										//!< ダイアログデータの設定 p1
-	int  GetData_p1( HWND );										//!< ダイアログデータの取得 p1
+	// スクリーン用データ	2010/5/10 CPropTypes_P1_Screen.cppから移動
 	static std::vector<TYPE_NAME<EOutlineType>> m_OlmArr;			//!<アウトライン解析ルール配列
 	static std::vector<TYPE_NAME<ESmartIndentType>> m_SIndentArr;	//!<スマートインデントルール配列
-	void CPropTypes_Screen();										//!<スクリーンタブのコンストラクタ
 
+	// カラー用データ
+	DWORD			m_dwCustColors[16];						//!< フォントDialogカスタムパレット
+	int				m_nSet[ MAX_KEYWORDSET_PER_TYPE ];		//!< keyword set index  2005.01.13 MIK
+	int				m_nCurrentColorType;					//!< 現在選択されている色タイプ
+	CKeyWordSetMgr*	m_pCKeyWordSetMgr;						//!< メモリ削減のためポインタに  Mar. 31, 2003 genta
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                          カラー                             //
+	//                      各プロパティページ                     //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	INT_PTR DispatchEvent_Color( HWND, UINT, WPARAM, LPARAM );		//!< p3 メッセージ処理
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
 protected:
-	void SetData_Color( HWND );								//!< ダイアログデータの設定 p3
-	int  GetData_Color( HWND );								//!< ダイアログデータの取得 p3
-	void Import_Colors( HWND );								//!< 色の設定をインポート
-	void Export_Colors( HWND );								//!< 色の設定をエクスポート
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
+};
+
+
+/*!
+	@brief タイプ別設定プロパティページクラス
+
+	プロパティページ毎に定義
+	変数の定義はCPropTypesで行う
+*/
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        スクリーン                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropScreen : CPropTypes
+{
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+
+public:
+	static void AddOutlineMethod(int nMethod, const WCHAR* szName);	//!<アウトライン解析ルールの追加
+	static void AddSIndentMethod(int nMethod, const WCHAR* szName);	//!<スマートインデントルールの追加
+	void CPropTypes_Screen();										//!<スクリーンタブのコンストラクタ
+};
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          カラー                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropColor : CPropTypes
+{
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
+
+protected:
 	void DrawColorListItem( DRAWITEMSTRUCT* );				//!< 色種別リスト オーナー描画
 	void EnableTypesPropInput( HWND hwndDlg );				//!< タイプ別設定のカラー設定のON/OFF
 	void RearrangeKeywordSet( HWND );						//!< キーワードセット再配置  Jan. 23, 2005 genta
@@ -111,51 +147,55 @@ protected:
 public:
 	static BOOL SelectColor( HWND , COLORREF*, DWORD* );	//!< 色選択ダイアログ
 private:
-	DWORD			m_dwCustColors[16];						//!< フォントDialogカスタムパレット
-	int				m_nSet[ MAX_KEYWORDSET_PER_TYPE ];		//!< keyword set index  2005.01.13 MIK
-	int				m_nCurrentColorType;					//!< 現在選択されている色タイプ
-	CKeyWordSetMgr*	m_pCKeyWordSetMgr;						//!< メモリ削減のためポインタに  Mar. 31, 2003 genta
+};
 
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                           支援                              //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           支援                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropSupport : CPropTypes
+{
 public:
-	INT_PTR DispatchEvent_Support( HWND, UINT, WPARAM, LPARAM );	//!< p2 メッセージ処理 支援タブ // 2001/06/14 asa-o
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
 protected:
-	void SetData_Support( HWND );	//!< ダイアログデータの設定 p2 支援タブ
-	int  GetData_Support( HWND );	//!< ダイアログデータの取得 p2 支援タブ
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+};
 
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                    正規表現キーワード                       //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                    正規表現キーワード                       //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropRegex : CPropTypes
+{
 public:
-	INT_PTR DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );		//!< メッセージ処理 正規表現キーワード	//@@@ 2001.11.17 add MIK
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
+
+public:
 	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK	to public 2010/4/23 Uchi
-protected:
-	void SetData_Regex( HWND );	//!< ダイアログデータの設定 正規表現キーワード	//@@@ 2001.11.17 add MIK
-	int  GetData_Regex( HWND );	//!< ダイアログデータの取得 正規表現キーワード	//@@@ 2001.11.17 add MIK
-	BOOL Import_Regex( HWND );	//@@@ 2001.11.17 add MIK
-	BOOL Export_Regex( HWND );	//@@@ 2001.11.17 add MIK
+};
 
-
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//                     キーワードヘルプ                        //
-	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     キーワードヘルプ                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropKeyHelp : CPropTypes
+{
 public:
-	INT_PTR DispatchEvent_KeyHelp( HWND, UINT, WPARAM, LPARAM );	//!< メッセージ処理 キーワード辞書選択	//@@@ 2006.04.10 fon
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
 protected:
-	void SetData_KeyHelp( HWND );	//!< ダイアログデータの設定 キーワード辞書選択
-	int  GetData_KeyHelp( HWND );	//!< ダイアログデータの取得 キーワード辞書選択
-	BOOL Import_KeyHelp( HWND );	//@@@ 2006.04.10 fon
-	BOOL Export_KeyHelp( HWND );	//@@@ 2006.04.10 fon
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
 };
 
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CPROPTYPES_H_ */
+#endif /* SAKURA_TYPES_CPROPTYPES_H_ */
 
 
 

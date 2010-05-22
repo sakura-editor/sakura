@@ -1,16 +1,17 @@
 #include "stdafx.h"
 #include "shell.h"
 #include <HtmlHelp.h>
+#include <Shlobj.h>
+#include <shellapi.h>
+#include <Cderr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE“™
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
 #include "util/module.h"
 #include "COsVersionInfo.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "CHtmlHelp.h"
-#include <Shlobj.h>
-#include <shellapi.h>
-#include <Cderr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE“™
 
 int CALLBACK MYBrowseCallbackProc(
 	HWND hwnd,

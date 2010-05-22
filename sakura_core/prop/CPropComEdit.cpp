@@ -16,15 +16,14 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
-
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10210
 	IDC_CHECK_ADDCRLFWHENCOPY,			HIDC_CHECK_ADDCRLFWHENCOPY,				//折り返し行に改行を付けてコピー
 	IDC_CHECK_COPYnDISABLESELECTEDAREA,	HIDC_CHECK_COPYnDISABLESELECTEDAREA,	//コピーしたら選択解除
@@ -38,17 +37,6 @@ static const DWORD p_helpids[] = {	//10210
 //	IDC_STATIC,							-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10210
-	IDC_CHECK_ADDCRLFWHENCOPY,			10210,	//折り返し行に改行を付けてコピー
-	IDC_CHECK_COPYnDISABLESELECTEDAREA,	10211,	//コピーしたら選択解除
-	IDC_CHECK_DRAGDROP,					10212,	//Drag&Drop編集する
-	IDC_CHECK_DROPSOURCE,				10213,	//ドロップ元にする
-	IDC_CHECK_bNotOverWriteCRLF,		10214,	//上書きモード
-//	IDC_STATIC,							-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -58,15 +46,15 @@ static const DWORD p_helpids[] = {	//10210
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_EDIT(
+INT_PTR CALLBACK CPropEdit::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_EDIT, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
+INT_PTR CPropEdit::DispatchEvent(
     HWND		hwndDlg,	// handle to dialog box
     UINT		uMsg,		// message
     WPARAM		wParam,		// first message parameter
@@ -85,8 +73,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
-		SetData_PROP_EDIT( hwndDlg );
+		/* ダイアログデータの設定 Edit */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -123,10 +111,10 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 			OnHelp( hwndDlg, IDD_PROP_EDIT );
 			return TRUE;
 		case PSN_KILLACTIVE:
-			DBPRINT_A( "p1 PSN_KILLACTIVE\n" );
+			DBPRINT_A( "Edit PSN_KILLACTIVE\n" );
 
-			/* ダイアログデータの取得 p1 */
-			GetData_PROP_EDIT( hwndDlg );
+			/* ダイアログデータの取得 Edit */
+			GetData( hwndDlg );
 			return TRUE;
 
 		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -159,7 +147,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
+void CPropEdit::SetData( HWND hwndDlg )
 {
 	/* ドラッグ & ドロップ編集 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_sEdit.m_bUseOLE_DragDrop );
@@ -198,7 +186,7 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
+int CPropEdit::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_EDIT;

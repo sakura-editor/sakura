@@ -17,13 +17,14 @@
 */
 
 #include "stdafx.h"
-#include "sakura_rc.h"
 #include "dlg/CDlgCompare.h"
-#include "debug/Debug.h"
-#include "doc/CEditDoc.h"
 #include "global.h"
+#include "doc/CEditDoc.h"
+#include "window/CEditWnd.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/shell.h"
+#include "debug/Debug.h"
+#include "sakura_rc.h"
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

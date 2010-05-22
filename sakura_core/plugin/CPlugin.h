@@ -29,8 +29,9 @@
 #define SAKURA_CPLUGIN_E837BF6E_3F18_4A7E_89FD_F4DAE8DF9CFFD_H_
 
 #include <list>
-#include <map>
+#include <algorithm>
 #include "macro/CWSHIfObj.h"
+#include "CDataProfile.h"
 
 typedef int PlugId;
 
@@ -143,7 +144,7 @@ public:
 		m_sSection	= sSection;
 		m_sKey		= sKey;
 		// è¨ï∂éöïœä∑
-		transform( sType.begin (), sType.end (), sType.begin (), tolower );
+		std::transform( sType.begin (), sType.end (), sType.begin (), tolower );
 		m_sType		= sType;
 		m_sSelects	= sSelects;
 		m_index		= index;

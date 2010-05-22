@@ -11,10 +11,17 @@
 #endif // _MSC_VER > 1000
 
 // この位置にヘッダーを挿入してください
-#define WIN32_LEAN_AND_MEAN		// Windows ヘッダーから殆ど使用されないスタッフを除外します
+// #define WIN32_LEAN_AND_MEAN		// Windows ヘッダーから殆ど使用されないスタッフを除外します
+#ifndef STRICT
+#define STRICT 1
+#endif
 
 #if _MSC_VER >= 1400
-#pragma warning( disable : 4996 )
+
+//#pragma warning(disable: 4786)
+#pragma warning(disable: 4996)	//warning C4996: 'xxxx': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+#pragma warning(disable: 4355)	//warning C4355: 'this' : ベース メンバ初期化リストで使用されました。
+
 #if defined _M_IX86
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #elif defined _M_IA64
@@ -30,7 +37,7 @@
 //ビルドオプション的なヘッダ
 #include "config/build_config.h"
 
-//定数
+//定数(プリコンパイル日付に依存)
 #include "config/system_constants.h"	//システム定数
 #include "config/app_constants.h"		//アプリケーション定数
 
@@ -39,8 +46,28 @@
 
 //高頻度API等
 #include <windows.h>
+// #include <commdlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
+#include <commctrl.h> // コモンコントロール
 #include <stdlib.h>  // _MAX_PATH
+#include <wchar.h>
 #include <tchar.h>
+
+#ifndef SAKURA_PCH_MODE_MIN
+// 2010.04.19 重そうなので追加
+#include <htmlhelp.h>
+#include <objidl.h>
+#include <shlobj.h>
+#include <shellapi.h>
+#include <string.h>
+#include <stdio.h>
+#include <io.h>
+#include <time.h>
+#include <string>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <memory>
+#endif // ifndef SAKURA_PCH_MODE_MIN
 
 //シンプルでよく使うもの
 #include "basis/primitive.h"
@@ -64,7 +91,6 @@
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
 #include "mem/CNativeT.h"
-#include <wchar.h>
 
 #include "util/string_ex.h"
 
@@ -86,6 +112,18 @@
 
 //###########超仮
 #include "CGraphics.h"
+
+// 2010.04.19 Moca includeの大規模整理
+#ifndef SAKURA_PCH_MODE_MIN
+#define SAKURA_PCH_MODE_DLLSHARE 1
+#endif
+
+#if defined(SAKURA_PCH_MODE_MAX) || defined(SAKURA_PCH_MODE_DLLSHARE)
+#include "env/DLLSHAREDATA.h"
+#endif
+
+#ifdef SAKURA_PCH_MODE_MAX
+#include "env/CShareData.h"
 #include "CNormalProcess.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
@@ -97,7 +135,7 @@
 #include "CSearchAgent.h"
 #include "doc/CDocReader.h"
 #include "CAppMode.h"
-#pragma warning( disable : 4355 ) //warning C4355: 'this' : ベース メンバ初期化リストで使用されました。
+#endif // SAKURA_PCH_MODE_MAX
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。

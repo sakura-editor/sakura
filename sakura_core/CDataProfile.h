@@ -2,7 +2,6 @@
 
 #include "util/StaticType.h"
 #include "CProfile.h"
-#include "types/CType.h"
 
 //•¶Žš—ñƒoƒbƒtƒ@‚ÌŒ^
 struct StringBufferW{
@@ -90,7 +89,8 @@ protected:
 		void value_to_profile(const TYPE& value, wstring* profile){ *profile = _work_itow(value);    }
 
 	//intŽ®
-	AS_INT(EOutlineType)
+// CType.h‚ðinclude‚µ‚È‚¢‚Æ‚¢‚¯‚È‚¢‚©‚ç”pŽ~
+//	AS_INT(EOutlineType) 
 	AS_INT(WORD)
 
 #ifdef USE_STRICT_INT

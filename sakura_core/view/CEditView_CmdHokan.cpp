@@ -16,13 +16,14 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "stdafx.h"
-#include "sakura_rc.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
+#include "doc/CDocReader.h"
 #include "debug/Debug.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "window/CEditWnd.h"
 #include "parse/CWordParse.h"
+#include "sakura_rc.h"
 
 /*!
 	@brief コマンド受信前補完処理

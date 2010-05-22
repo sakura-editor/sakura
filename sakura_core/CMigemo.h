@@ -66,7 +66,7 @@ protected:
 	typedef migemo*        (__cdecl *Proc_migemo_open)            (char* dict);
 	typedef void           (__cdecl *Proc_migemo_close)           (migemo* object);
 	typedef unsigned char* (__cdecl *Proc_migemo_query)           (migemo* object, unsigned char* query);
-	typedef void           (__cdecl *Proc_migemo_release)         (migemo* object, unsigned char* string);
+	typedef void           (__cdecl *Proc_migemo_release)         (migemo* object, unsigned char* str);
 	typedef int            (__cdecl *Proc_migemo_set_operator)    (migemo* object, int index, unsigned char* op);
 	typedef const uchar_t* (__cdecl *Proc_migemo_get_operator)    (migemo* object, int index);
 	typedef void           (__cdecl *Proc_migemo_setproc_char2int)(migemo* object, MIGEMO_PROC_CHAR2INT proc);
@@ -95,7 +95,7 @@ public:
 	long migemo_open(char* dict);
 	void migemo_close();
 	unsigned char* migemo_query(unsigned char* query);
-	void migemo_release( unsigned char* string);
+	void migemo_release( unsigned char* str);
 	int migemo_set_operator(int index, unsigned char* op);
 	const unsigned char* migemo_get_operator(int index);
 	void migemo_setproc_char2int(MIGEMO_PROC_CHAR2INT proc);

@@ -27,6 +27,7 @@
 */
 #include "stdafx.h"
 #include "plugin/CDllPlugin.h"
+#include "view/CEditView.h"
 
 // デストラクタ
 CDllPlugin::~CDllPlugin(void)

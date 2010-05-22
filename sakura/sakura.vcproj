@@ -2209,6 +2209,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\prop\CPropComGeneral.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\prop\CPropComGrep.cpp"
 					>
 				</File>

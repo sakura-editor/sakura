@@ -1,8 +1,14 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CEditView.h"
+#include "CAppMode.h"
+#include "COsVersionInfo.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "env/CFormatManager.h"
 #include "dlg/CDlgCancel.h"
 #include "util/window.h"
 #include "util/tchar_template.h"
+#include "sakura_rc.h" // IDD_EXECRUNNING
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //

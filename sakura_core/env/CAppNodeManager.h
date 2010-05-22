@@ -1,6 +1,7 @@
 #pragma once
 
 #include "util/design_template.h"
+#include "config/maxdata.h"
 
 class CAppNodeGroupHandle;
 

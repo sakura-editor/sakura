@@ -27,6 +27,8 @@
 */
 #include "StdAfx.h"
 #include "CJackManager.h"
+#include "CPropertyManager.h"
+#include "typeprop/CPropTypes.h"
 
 //コンストラクタ
 CJackManager::CJackManager()
@@ -98,14 +100,14 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 		{
 //			int nMethod = (EOutlineType)( plug->m_cPlugin.m_id * 100 + F_PLUGCOMMAND_FIRST );
 			int nMethod = (EOutlineType)GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );	// 2010/5/1 Uchi 関数化
-			CPropTypes::AddOutlineMethod( nMethod, plug->m_sLabel.c_str() );
+			CPropScreen::AddOutlineMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
 	case PP_SMARTINDENT:				//スマートインデント方法を追加
 		{
 //			int nMethod = (ESmartIndentType)( plug->m_cPlugin.m_id * 100 + F_PLUGCOMMAND_FIRST );
 			int nMethod = (ESmartIndentType)GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );	// 2010/5/1 Uchi 関数化
-			CPropTypes::AddSIndentMethod( nMethod, plug->m_sLabel.c_str() );
+			CPropScreen::AddSIndentMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
 	}

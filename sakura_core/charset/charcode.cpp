@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "charset/charcode.h"
 
+#include "env/DLLSHAREDATA.h"
 
 
 namespace WCODE

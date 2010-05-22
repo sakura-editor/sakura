@@ -16,22 +16,26 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPrintPreview.h"
 #include "doc/CLayout.h"
 #include "window/CEditWnd.h"
-#include "charset/charcode.h"
+//#include "charset/charcode.h"
 //#include "dlg/CDlgPrintPage.h"
 #include "dlg/CDlgCancel.h"/// 2002/2/3 aroka from here
 #include "dlg/CDlgInput1.h" /// 2007.02.11 Moca
-#include "debug/Debug.h"///
-#include <stdio.h>/// 2002/2/3 aroka to here
-#include <vector>
+//#include "debug/Debug.h"///
+//#include <stdio.h>/// 2002/2/3 aroka to here
+//#include <vector>
 #include "CEditApp.h"
 #include "util/window.h"
 #include "util/shell.h"
 #include "env/CSakuraEnvironment.h"
+// CColorStrategyは本来はCEditViewが必要だが、CEditWnd.hあたりでinclude済み
 #include "view/colors/CColorStrategy.h"
+#include "sakura_rc.h"
+
+#include "sakura_rc.h"
 using namespace std;
 
 #define MIN_PREVIEW_ZOOM 10

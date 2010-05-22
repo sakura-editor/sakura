@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "global.h"
-#include "env/CShareData.h"
 #include "CRecentSearch.h"
+#include "config/maxdata.h"
+#include "env/DLLSHAREDATA.h"
 #include <string.h>
 
 

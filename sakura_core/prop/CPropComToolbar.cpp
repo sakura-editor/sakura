@@ -16,17 +16,17 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "CMenuDrawer.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2005/8/9 aroka
-#include "debug/Debug.h" // 2002/2/10 aroka
+//#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//11000
 	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE_TOOLBAR,				//ツールバーから機能削除
 	IDC_BUTTON_INSERTSEPARATOR,		HIDC_BUTTON_INSERTSEPARATOR_TOOLBAR,	//セパレータ挿入
@@ -45,25 +45,6 @@ static const DWORD p_helpids[] = {	//11000
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//11000
-	IDC_BUTTON_DELETE,				11000,	//ツールバーから機能削除
-	IDC_BUTTON_INSERTSEPARATOR,		11001,	//セパレータ挿入
-	IDC_BUTTON_INSERT,				11002,	//ツールバーへ機能挿入
-	IDC_BUTTON_ADD,					11003,	//ツールバーへ機能追加
-	IDC_BUTTON_UP,					11004,	//ツールバーの機能を上へ移動
-	IDC_BUTTON_DOWN,				11005,	//ツールバーの機能を下へ移動
-	IDC_CHECK_TOOLBARISFLAT,		11010,	//フラットなボタン
-	IDC_COMBO_FUNCKIND,				11030,	//機能の種別
-	IDC_LIST_FUNC,					11040,	//機能一覧
-	IDC_LIST_RES,					11041,	//ツールバー一覧
-	IDC_LABEL_MENUFUNCKIND,			-1,
-	IDC_LABEL_MENUFUNC,				-1,
-	IDC_LABEL_TOOLBAR,				-1,
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -73,10 +54,10 @@ static const DWORD p_helpids[] = {	//11000
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_TOOLBAR(
+INT_PTR CALLBACK CPropToolbar::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_TOOLBAR, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
@@ -145,8 +126,8 @@ int Listbox_ADDDATA(
 	return nIndex1;
 }
 
-/* PROP_TOOLBAR メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
+/* Toolbar メッセージ処理 */
+INT_PTR CPropToolbar::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -177,8 +158,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 PROP_TOOLBAR */
-		SetData_PROP_TOOLBAR( hwndDlg );
+		/* ダイアログデータの設定 Toolbar */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -226,8 +207,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 			return TRUE;
 		case PSN_KILLACTIVE:
 //			MYTRACE_A( "PROP_TOOLBAR PSN_KILLACTIVE\n" );
-			/* ダイアログデータの取得 PROP_TOOLBAR */
-			GetData_PROP_TOOLBAR( hwndDlg );
+			/* ダイアログデータの取得 Toolbar */
+			GetData( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -479,8 +460,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 
 
 
-/* ダイアログデータの設定 PROP_TOOLBAR */
-void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
+/* ダイアログデータの設定 Toolbar */
+void CPropToolbar::SetData( HWND hwndDlg )
 {
 	HWND		hwndCombo;
 	HWND		hwndResList;
@@ -521,7 +502,7 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 		//	To Here Apr. 13, 2002 genta
 		lResult = ::SendMessageAny( hwndResList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
 	}
-//	/* ツールバーの先頭の項目を選択(リストボックス)*/
+	/* ツールバーの先頭の項目を選択(リストボックス)*/
 	::SendMessageAny( hwndResList, LB_SETCURSEL, 0, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 
 	/* フラットツールバーにする／しない  */
@@ -531,8 +512,8 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 PROP_TOOLBAR */
-int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
+/* ダイアログデータの取得 Toolbar */
+int CPropToolbar::GetData( HWND hwndDlg )
 {
 	HWND	hwndResList;
 	int		i;
@@ -570,7 +551,7 @@ int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 	@date 2005.08.09 aroka CPropCommon.cpp から移動
 	@date 2007.11.02 ryoji ボタンとセパレータとで処理を分ける
 */
-void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
+void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
 	TBBUTTON	tbb;
 	HBRUSH		hBrush;

@@ -4,6 +4,7 @@ class CViewFont;
 class CEditView;
 #include "DispPos.h"
 
+
 class CTextArea{
 public:
 	CTextArea(CEditView* pEditView);

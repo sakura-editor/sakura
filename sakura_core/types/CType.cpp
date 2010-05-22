@@ -1,6 +1,9 @@
 #include "StdAfx.h"
 #include "CType.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/Colors/CColorStrategy.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 void _DefaultConfig(STypeConfig* pType);
 

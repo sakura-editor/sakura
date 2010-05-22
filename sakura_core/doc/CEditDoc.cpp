@@ -25,39 +25,42 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>	// Apr. 03, 2003 genta
-#include <io.h>
-#include "doc/CEditDoc.h"
-#include "debug/Debug.h"
-#include "func/Funccode.h"
-#include "debug/CRunningTimer.h"
-#include "charset/charcode.h"
 #include <DLGS.H>
-#include "env/CShareData.h"
-#include "window/CEditWnd.h"
-#include "sakura_rc.h"
 #include "global.h"
-#include "outline/CFuncInfoArr.h" /// 2002/2/3 aroka
-#include "CMarkMgr.h"///
-#include "doc/CDocLine.h" /// 2002/2/3 aroka
-#include "CPrintPreview.h"
-#include "dlg/CDlgFileUpdateQuery.h"
-#include <assert.h> /// 2002/11/2 frozen
+#include "window/CEditWnd.h"
+#include "CAppMode.h"
 #include "CClipboard.h"
-#include "doc/CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
-#include "mem/CMemoryIterator.h"	// 2007.08.22 ryoji ’Ç‰Á
+#include "CCodeChecker.h"
+#include "CControlTray.h"
+#include "CEditApp.h"
+#include "CGrepAgent.h"
+#include "CMarkMgr.h"///
+#include "CNormalProcess.h"
+#include "CPrintPreview.h"
+#include "CVisualProgress.h"
 #include "charset/CCodeMediator.h"
+#include "charset/charcode.h"
+#include "debug/CRunningTimer.h"
+#include "debug/Debug.h"
+#include "dlg/CDlgFileUpdateQuery.h"
+#include "doc/CDocLine.h" /// 2002/2/3 aroka
+#include "doc/CEditDoc.h"
+#include "doc/CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
+#include "docplus/CModifyManager.h"
+#include "env/CSakuraEnvironment.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "func/Funccode.h"
+#include "mem/CMemoryIterator.h"	// 2007.08.22 ryoji ’Ç‰Á
+#include "outline/CFuncInfoArr.h" /// 2002/2/3 aroka
+#include "macro/CSMacroMgr.h"
 #include "util/file.h"
-#include "util/window.h"
-#include "util/string_ex2.h"
 #include "util/format.h"
 #include "util/module.h"
-#include "CEditApp.h"
 #include "util/other_util.h"
-#include "env/CSakuraEnvironment.h"
-#include "CNormalProcess.h"
-#include "CControlTray.h"
-#include "docplus/CModifyManager.h"
-#include "CCodeChecker.h"
+#include "util/string_ex2.h"
+#include "util/window.h"
+#include "sakura_rc.h"
 
 #define IDT_ROLLMOUSE	1
 

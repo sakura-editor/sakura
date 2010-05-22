@@ -17,23 +17,24 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include "sakura_rc.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "debug/Debug.h"
-#include <windows.h>
-#include <stdio.h>
-#include <commctrl.h>
+//#include "debug/Debug.h"
+//#include <windows.h>
+//#include <stdio.h>
+//#include <commctrl.h>
 #include "dlg/CDlgOpenFile.h"
-#include "dlg/CDlgInput1.h"
-#include "global.h"
+//#include "dlg/CDlgInput1.h"
+//#include "global.h"
 #include "util/shell.h"
 #include "util/module.h"
-#include "util/file.h"
+//#include "util/file.h"
+#include "doc/CDocListener.h" // 暫定：SLoadInfo, SSaveInfo
+#include "sakura_rc.h"
+#include "sakura.hh"
+
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10600
 	IDC_BUTTON_OPENHELP1,			HIDC_BUTTON_OPENHELP1,			//外部ヘルプファイル参照
 	IDC_BUTTON_OPENEXTHTMLHELP,		HIDC_BUTTON_OPENEXTHTMLHELP,	//外部HTMLファイル参照
@@ -55,28 +56,6 @@ static const DWORD p_helpids[] = {	//10600
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10600
-//	IDC_BUTTON_HOKANFILE_REF,		10600,	//入力補完 単語ファイル参照		//Jul. 05, 2001 JEPRO タイプ別に移動
-//	IDC_BUTTON_KEYWORDHELPFILE_REF,	10601,	//キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_BUTTON_OPENHELP1,			10602,	//外部ヘルプファイル参照
-	IDC_BUTTON_OPENEXTHTMLHELP,		10603,	//外部HTMLファイル参照
-//	IDC_CHECK_USEHOKAN,				10610,	//逐次入力補完
-//	IDC_CHECK_HOKANLOHICASE,		10611,	//入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_CHECK_m_bHokanKey_RETURN,	10612,	//候補決定キー（Enter）
-	IDC_CHECK_m_bHokanKey_TAB,		10613,	//候補決定キー（Tab）
-	IDC_CHECK_m_bHokanKey_RIGHT,	10614,	//候補決定キー（→）
-//	IDC_CHECK_m_bHokanKey_SPACE,	10615,	//候補決定キー（Space）
-//	IDC_CHECK_USEKEYWORDHELP,		10616,	//キーワードヘルプ機能			//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_CHECK_HTMLHELPISSINGLE,		10617,	//ビューアの複数起動
-//	IDC_EDIT_HOKANFILE,				10640,	//単語ファイル名				//Jul. 05, 2001 JEPRO タイプ別に移動
-//	IDC_EDIT_KEYWORDHELPFILE,		10641,	//辞書ファイル名				//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_EDIT_EXTHELP1,				10642,	//外部ヘルプファイル名
-	IDC_EDIT_EXTHTMLHELP,			10643,	//外部HTMLヘルプファイル名
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -86,15 +65,15 @@ static const DWORD p_helpids[] = {	//10600
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_HELPER(
+INT_PTR CALLBACK CPropHelper::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p10, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
-/* p10 メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p10(
+/* Helper メッセージ処理 */
+INT_PTR CPropHelper::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -111,8 +90,8 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p10 */
-		SetData_p10( hwndDlg );
+		/* ダイアログデータの設定 Helper */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -131,8 +110,8 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			/* ダイアログデータの取得 p10 */
-			GetData_p10( hwndDlg );
+			/* ダイアログデータの取得 Helper */
+			GetData( hwndDlg );
 			switch( wID ){
 			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
@@ -264,9 +243,9 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 				OnHelp( hwndDlg, IDD_PROP_HELPER );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "p10 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p10 */
-				GetData_p10( hwndDlg );
+//				MYTRACE_A( "Helper PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 Helper */
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -305,8 +284,8 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 	return FALSE;
 }
 
-/* ダイアログデータの設定 p10 */
-void CPropCommon::SetData_p10( HWND hwndDlg )
+/* ダイアログデータの設定 Helper */
+void CPropHelper::SetData( HWND hwndDlg )
 {
 	/* 外部ヘルプ１ */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sHelper.m_szExtHelp );
@@ -330,8 +309,8 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 }
 
 
-/* ダイアログデータの取得 p10 */
-int CPropCommon::GetData_p10( HWND hwndDlg )
+/* ダイアログデータの取得 Helper */
+int CPropHelper::GetData( HWND hwndDlg )
 {
 	// Oct. 5, 2002 genta サイズ制限方法変更
 	/* 外部ヘルプ１ */

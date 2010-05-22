@@ -2,6 +2,10 @@
 #include "CCodeChecker.h"
 #include "io/CIoBridge.h"
 
+#include "doc/CEditDoc.h"
+#include "doc/CDocLineMgr.h"
+#include "window/CEditWnd.h"
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     セーブ時チェック                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

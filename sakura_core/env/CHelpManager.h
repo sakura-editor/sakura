@@ -4,6 +4,10 @@
 
 #pragma once
 
+// 要先行定義
+// #include "DLLSHAREDATA.h"
+
+
 //!ヘルプ管理
 class CHelpManager{
 public:

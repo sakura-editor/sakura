@@ -20,7 +20,8 @@
 #include "debug/Debug.h"
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"
-#include <tchar.h>
+#include "env/DLLSHAREDATA.h"
+
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
@@ -37,7 +38,7 @@ CSplitterWnd::CSplitterWnd()
 , m_pCEditWnd(NULL)
 {
 	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
+	m_pShareData = &GetDllShareData();
 
 	m_hcurOld = NULL;						/* もとのマウスカーソル */
 

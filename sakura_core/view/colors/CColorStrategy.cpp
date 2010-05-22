@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 #include "CColor_Comment.h"
 #include "CColor_Quote.h"
@@ -9,6 +10,7 @@
 #include "CColor_KeywordSet.h"
 #include "CColor_Found.h"
 #include "doc/CLayout.h"
+#include "window/CEditWnd.h"
 
 
 

@@ -38,6 +38,7 @@
 #include "sakura_rc.h"
 #include "global.h"
 #include "func/Funccode.h"
+#include "env/DLLSHAREDATA.h"
 #include "dlg/CDialog.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "CSortedTagJumpList.h"

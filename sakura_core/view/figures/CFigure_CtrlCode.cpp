@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_CtrlCode.h"
 #include "types/CTypeSupport.h"
 

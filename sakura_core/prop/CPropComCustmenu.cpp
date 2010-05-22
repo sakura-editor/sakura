@@ -17,26 +17,24 @@
 */
 
 #include "StdAfx.h"
-//#include "prop/CPropCommon.h"
+#include "prop/CPropCommon.h"
 #include "dlg/CDlgInput1.h"
 //#include "dlg/CDlgOpenFile.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
+#include "env/DLLSHAREDATA.h"
 //#include "io/CTextStream.h"
 #include "util/shell.h"
-//#include "util/file.h"
-//#include "env/CShareData_IO.h"
+#include "util/file.h"
+#include "CDataProfile.h"
+#include "env/CShareData.h"
+#include "env/CShareData_IO.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
+#include "debug/Debug.h" // 2002/2/10 aroka
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 using namespace std;
 
-// Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(27→46)
-// 2007.10.02 kobake UNICODE化に際して、カスタムメニューファイルの仕様を変更
-#define WSTR_CUSTMENU_HEAD_V2		L"SakuraEditorMenu_Ver2"
-
-
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10100
 	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE,				//メニューから機能削除
 	IDC_BUTTON_INSERTSEPARATOR,		HIDC_BUTTON_INSERTSEPARATOR,	//セパレータ挿入
@@ -60,29 +58,6 @@ static const DWORD p_helpids[] = {	//10100
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10100
-	IDC_BUTTON_DELETE,				10100,	//メニューから機能削除
-	IDC_BUTTON_INSERTSEPARATOR,		10101,	//セパレータ挿入
-	IDC_BUTTON_INSERT,				10102,	//メニューへ機能挿入
-	IDC_BUTTON_ADD,					10103,	//メニューへ機能追加
-	IDC_BUTTON_UP,					10104,	//メニューの機能を上へ移動
-	IDC_BUTTON_DOWN,				10105,	//メニューの機能を下へ移動
-	IDC_BUTTON_IMPORT,				10106,	//インポート
-	IDC_BUTTON_EXPORT,				10107,	//エクスポート
-	IDC_COMBO_FUNCKIND,				10130,	//機能の種別
-	IDC_COMBO_MENU,					10131,	//メニューの種別
-	IDC_LIST_FUNC,					10150,	//機能一覧
-	IDC_LIST_RES,					10151,	//メニュー一覧
-	IDC_LABEL_MENUFUNCKIND,			-1,
-	IDC_LABEL_MENUCHOICE,			-1,
-	IDC_LABEL_MENUFUNC,				-1,
-	IDC_LABEL_MENU,					-1,
-	IDC_LABEL_MENUKEYCHANGE,		-1,
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -92,15 +67,15 @@ static const DWORD p_helpids[] = {	//10100
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_CUSTMENU(
+INT_PTR CALLBACK CPropCustmenu::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p8, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
-/* p8 メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p8(
+/* Custom menu メッセージ処理 */
+INT_PTR CPropCustmenu::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -132,8 +107,8 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p8 */
-		SetData_p8( hwndDlg );
+		/* ダイアログデータの設定 Custom menu */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -159,9 +134,9 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 			OnHelp( hwndDlg, IDD_PROP_CUSTMENU );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE_A( "p8 PSN_KILLACTIVE\n" );
-			/* ダイアログデータの取得 p8 */
-			GetData_p8( hwndDlg );
+//			MYTRACE_A( "Custom menu PSN_KILLACTIVE\n" );
+			/* ダイアログデータの取得 Custom menu */
+			GetData( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -198,12 +173,12 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_BUTTON_IMPORT:	/* インポート */
-				/* p8:カスタムメニュー設定をインポートする */
-				p8_Import_CustMenuSetting( hwndDlg );
+				/* カスタムメニュー設定をインポートする */
+				Import( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_EXPORT:	/* エクスポート */
-				/* p8:カスタムメニュー設定をエクスポートする */
-				p8_Export_CustMenuSetting( hwndDlg );
+				/* カスタムメニュー設定をエクスポートする */
+				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_MENUNAME:
 				//	メニュー文字列の設定
@@ -643,8 +618,8 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 
 
 
-/* ダイアログデータの設定 p8 */
-void CPropCommon::SetData_p8( HWND hwndDlg )
+/* ダイアログデータの設定 Custom menu */
+void CPropCustmenu::SetData( HWND hwndDlg )
 {
 	HWND		hwndCOMBO_MENU;
 	HWND		hwndCombo;
@@ -704,8 +679,8 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 p8 */
-int CPropCommon::GetData_p8( HWND hwndDlg )
+/* ダイアログデータの取得 Custom menu */
+int CPropCustmenu::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_CUSTMENU;
@@ -717,8 +692,8 @@ int CPropCommon::GetData_p8( HWND hwndDlg )
 
 
 
-/* p8:カスタムメニュー設定をインポートする */
-void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
+/* カスタムメニュー設定をインポートする */
+void CPropCustmenu::Import( HWND hwndDlg )
 {
 //	/* ファイルオープンダイアログの初期化 */
 //	CDlgOpenFile	cDlgOpenFile;
@@ -801,8 +776,8 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 	}
 }
 
-/* p8:カスタムメニュー設定をエクスポートする */
-void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
+/* カスタムメニュー設定をエクスポートする */
+void CPropCustmenu::Export( HWND hwndDlg )
 {
 //	/* ファイルオープンダイアログの初期化 */
 //	CDlgOpenFile	cDlgOpenFile;

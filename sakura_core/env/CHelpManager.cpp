@@ -3,7 +3,10 @@
 */
 
 #include "stdafx.h"
+#include "DLLSHAREDATA.h"
+
 #include "CHelpManager.h"
+#include "env/CDocTypeManager.h"
 
 
 /*!	外部Winヘルプが設定されているか確認。

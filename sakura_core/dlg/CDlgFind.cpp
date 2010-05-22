@@ -24,6 +24,7 @@
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
 #include "view/CEditView.h"
+#include "env/DLLSHAREDATA.h"
 #include "debug/Debug.h"// 2002/2/10 aroka ヘッダ整理
 #include "util/shell.h"
 

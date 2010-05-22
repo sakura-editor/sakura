@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "CEditView.h"
 #include "charset/CShiftJis.h"
+#include "doc/CEditDoc.h"
+#include "env/DLLSHAREDATA.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

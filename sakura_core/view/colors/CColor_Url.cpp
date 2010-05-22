@@ -1,6 +1,8 @@
 #include "stdafx.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Url.h"
 #include "parse/CWordParse.h"
+#include "doc/CEditDoc.h"
 #include "doc/CLayout.h"
 #include "types/CTypeSupport.h"
 

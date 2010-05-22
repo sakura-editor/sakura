@@ -35,6 +35,8 @@
 #include "macro/CIfObj.h"
 #include "macro/CWSH.h" // CWSHClient::List, ListIter
 class CEditView;
+#include <activscp.h>
+#include "CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
 
 
 class CWSHIfObj

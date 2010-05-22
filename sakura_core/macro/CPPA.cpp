@@ -40,8 +40,7 @@
 #include "CMacro.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "env/CShareData.h"
-#include "CControlTray.h"
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ÉwÉbÉ_êÆóù
+#include "env/DLLSHAREDATA.h"
 #include "OleTypes.h"
 
 #define NEVER_USED_PARAM(p) ((void)p)

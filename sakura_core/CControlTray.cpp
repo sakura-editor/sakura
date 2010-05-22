@@ -28,22 +28,26 @@
 #define ID_HOTKEY_TRAYMENU	0x1234
 
 #include <windows.h>
-#include "debug/Debug.h"
+#include <htmlhelp.h>
 #include "CControlTray.h"
+#include "global.h"
+#include "CEditApp.h"
+#include "debug/Debug.h"
+#include "debug/CRunningTimer.h"
 #include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
-#include "sakura_rc.h"
 #include "dlg/CDlgOpenFile.h"
-#include "global.h"
-#include "debug/CRunningTimer.h"
-#include <htmlhelp.h>
-#include "CEditApp.h"
 #include "util/module.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
+#include "env/DLLSHAREDATA.h"
+#include "env/CHelpManager.h"
+#include "env/CShareData.h"
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
+#include "doc/CDocListener.h" // SLoadInfo,EditInfo
+#include "sakura_rc.h"
 
 /////////////////////////////////////////////////////////////////////////
 LRESULT CALLBACK CEditAppWndProc( HWND, UINT, WPARAM, LPARAM );

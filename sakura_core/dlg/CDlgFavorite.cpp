@@ -36,8 +36,8 @@
 #include "sakura_rc.h"
 #include "global.h"
 #include "func/Funccode.h"
-#include "dlg/CDialog.h"
 #include "dlg/CDlgFavorite.h"
+#include "recent/CRecent.h"
 #include "debug/Debug.h"
 #include "util/shell.h"
 

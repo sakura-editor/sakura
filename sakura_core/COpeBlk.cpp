@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include <windows.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include "COpeBlk.h"
 #include "debug/Debug.h"
 

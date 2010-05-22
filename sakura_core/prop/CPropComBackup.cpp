@@ -17,15 +17,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
 #include "util/window.h"
-
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10000
 	IDC_BUTTON_BACKUP_FOLDER_REF,	HIDC_BUTTON_BACKUP_FOLDER_REF,	//バックアップフォルダ参照
 	IDC_CHECK_BACKUP,				HIDC_CHECK_BACKUP,				//バックアップの作成
@@ -54,31 +53,6 @@ static const DWORD p_helpids[] = {	//10000
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10000
-	IDC_BUTTON_BACKUP_FOLDER_REF,	10000,	//バックアップフォルダ参照
-	IDC_CHECK_BACKUP,				10010,	//バックアップの作成
-	IDC_CHECK_BACKUP_YEAR,			10011,	//バックアップファイル名（西暦年）
-	IDC_CHECK_BACKUP_MONTH,			10012,	//バックアップファイル名（月）
-	IDC_CHECK_BACKUP_DAY,			10013,	//バックアップファイル名（日）
-	IDC_CHECK_BACKUP_HOUR,			10014,	//バックアップファイル名（時）
-	IDC_CHECK_BACKUP_MIN,			10015,	//バックアップファイル名（分）
-	IDC_CHECK_BACKUP_SEC,			10016,	//バックアップファイル名（秒）
-	IDC_CHECK_BACKUPDIALOG,			10017,	//作成前に確認
-	IDC_CHECK_BACKUPFOLDER,			10018,	//指定フォルダに作成
-	IDC_CHECK_BACKUP_DUSTBOX,		10019,	//バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
-	IDC_EDIT_BACKUPFOLDER,			10040,	//保存フォルダ名
-	IDC_EDIT_BACKUP_3,				10041,	//世代数
-	IDC_RADIO_BACKUP_TYPE1,			10060,	//バックアップの種類（拡張子）
-//	IDC_RADIO_BACKUP_TYPE2,			10062,	//バックアップの種類（日付・時刻	// Jun.  5, 2004 genta 廃止
-	IDC_RADIO_BACKUP_TYPE3,			10061,	//バックアップの種類（連番）
-	IDC_RADIO_BACKUP_DATETYPE1,		10063,	//付加する日時の種類（作成日時）	//Jul. 05, 2001 JEPRO 追加
-	IDC_RADIO_BACKUP_DATETYPE2,		10064,	//付加する日時の種類（更新日時）	//Jul. 05, 2001 JEPRO 追加
-	IDC_SPIN_BACKUP_GENS,			-1,
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -88,16 +62,16 @@ static const DWORD p_helpids[] = {	//10000
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_BACKUP(
+INT_PTR CALLBACK CPropBackup::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_BACKUP, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	WORD		wNotifyCode;
 	WORD		wID;
@@ -113,8 +87,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
-		SetData_PROP_BACKUP( hwndDlg );
+		/* ダイアログデータの設定 Backup */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -137,8 +111,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 				OnHelp( hwndDlg, IDD_PROP_BACKUP );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
-				GetData_PROP_BACKUP( hwndDlg );
+				/* ダイアログデータの取得 Backup */
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -190,7 +164,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 			case IDC_RADIO_BACKUP_DATETYPE2:
 			// 20051107 aroka
 			case IDC_CHECK_BACKUP_ADVANCED:
-				GetData_PROP_BACKUP( hwndDlg );
+				GetData( hwndDlg );
 				UpdateBackupFile( hwndDlg );
 				EnableBackupInput(hwndDlg);
 				return TRUE;
@@ -208,7 +182,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 				}
 				return TRUE;
 			default: // 20051107 aroka Default節 追加
-				GetData_PROP_BACKUP( hwndDlg );
+				GetData( hwndDlg );
 				UpdateBackupFile( hwndDlg );
 			}
 			break;	/* BN_CLICKED */
@@ -253,7 +227,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 		IDC_RADIO_BACKUP_TYPE2
 		を廃止してレイアウト変更
 */
-void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
+void CPropBackup::SetData( HWND hwndDlg )
 {
 //	BOOL	bRet;
 
@@ -355,7 +329,7 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
+int CPropBackup::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_BACKUP;
@@ -478,7 +452,7 @@ static inline void ShowEnable(HWND hWnd, BOOL bShow, BOOL bEnable)
 	::EnableWindow( hWnd, bEnable );
 }
 
-void CPropCommon::EnableBackupInput(HWND hwndDlg)
+void CPropBackup::EnableBackupInput(HWND hwndDlg)
 {
 	#define SHOWENABLE(id, show, enable) ShowEnable( ::GetDlgItem( hwndDlg, id ), show, enable )
 
@@ -535,7 +509,7 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 	@note 詳細設定切り替え時のデフォルトをオプションに合わせるため、
 		m_szBackUpPathAdvanced を更新する
 */
-void CPropCommon::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設定
+void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設定
 {
 	wchar_t temp[MAX_PATH];
 	/* バックアップを作成するファイル */ // 20051107 aroka

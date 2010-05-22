@@ -19,6 +19,7 @@
 #include "stdafx.h"
 #include "macro/CWSH.h"
 #include "macro/CIfObj.h"
+#include "window/CEditWnd.h"
 
 /* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>

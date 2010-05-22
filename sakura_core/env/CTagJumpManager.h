@@ -4,6 +4,10 @@
 
 #pragma once
 
+// 要先行定義
+// #define DLLSHAREDATA.h
+
+
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
 struct TagJump {

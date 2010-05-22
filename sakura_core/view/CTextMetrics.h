@@ -4,6 +4,8 @@
 
 #include <vector>
 
+class CTextMetrics;
+
 class CTextMetrics{
 public:
 	//コンストラクタ・デストラクタ

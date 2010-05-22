@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "CDocLocker.h"
+#include "CDocFile.h"
+#include "window/CEditWnd.h"
 
 
 

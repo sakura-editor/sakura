@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "CPropertyManager.h"
+#include "window/CEditWnd.h"
+#include "CEditApp.h"
+#include "env/DLLSHAREDATA.h"
+#include "macro/CSMacroMgr.h"
 
 CPropertyManager::CPropertyManager()
 {

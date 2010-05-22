@@ -5,9 +5,12 @@
 */
 #include "StdAfx.h"
 #include "CPropTypes.h"
-#include "sakura.hh"
+#include "dlg/CDlgOpenFile.h"
 #include "util/module.h"
 #include "util/shell.h"
+//#include "util/file.h" // _IS_REL_PATH
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 static const DWORD p_helpids3[] = {	//11500
 	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//入力補完 単語ファイル参照
@@ -28,7 +31,7 @@ static const DWORD p_helpids3[] = {	//11500
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
 /* メッセージ処理 */
-INT_PTR CPropTypes::DispatchEvent_Support(
+INT_PTR CPropSupport::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -42,7 +45,7 @@ INT_PTR CPropTypes::DispatchEvent_Support(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 p2 */
-		SetData_Support( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -61,7 +64,7 @@ INT_PTR CPropTypes::DispatchEvent_Support(
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			/* ダイアログデータの取得 p2 */
-			GetData_Support( hwndDlg );
+			GetData( hwndDlg );
 			switch( wID ){
 			case IDC_BUTTON_HOKANFILE_REF:	/* 入力補完 単語ファイルの「参照...」ボタン */
 				{
@@ -149,7 +152,7 @@ INT_PTR CPropTypes::DispatchEvent_Support(
 			return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 p2 */
-			GetData_Support( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -181,7 +184,7 @@ INT_PTR CPropTypes::DispatchEvent_Support(
 }
 
 /* ダイアログデータの設定 */
-void CPropTypes::SetData_Support( HWND hwndDlg )
+void CPropSupport::SetData( HWND hwndDlg )
 {
 	/* 入力補完 単語ファイル */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
@@ -240,7 +243,7 @@ void CPropTypes::SetData_Support( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 */
-int CPropTypes::GetData_Support( HWND hwndDlg )
+int CPropSupport::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = 2;

@@ -16,20 +16,19 @@
 */
 #include "stdafx.h"
 #include "CLayoutMgr.h"
-#include "env/CShareData.h" // 2005.11.20 Moca
-
 #include "charset/charcode.h"
 #include "debug/Debug.h"
-#include <commctrl.h>
 #include "debug/CRunningTimer.h"
 #include "doc/CLayout.h"/// 2002/2/10 aroka
 #include "doc/CDocLine.h"/// 2002/2/10 aroka
 #include "doc/CDocLineMgr.h"/// 2002/2/10 aroka
+#include "doc/CDocReader.h" // for _DEBUG
 #include "mem/CMemory.h"/// 2002/2/10 aroka
 #include "mem/CMemoryIterator.h" // 2006.07.29 genta
 #include "basis/SakuraBasis.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
-
+#include "CSearchAgent.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

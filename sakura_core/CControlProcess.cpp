@@ -17,16 +17,13 @@
 
 #include "stdafx.h"
 #include "CControlProcess.h"
-#include "CCommandLine.h"
-#include "env/CShareData.h"
-#include "debug/Debug.h"
 #include "CControlTray.h"
-#include "mem/CMemory.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
-#include <io.h>
-#include <tchar.h>
-#include "debug/CRunningTimer.h"
+#include "env/DLLSHAREDATA.h"
+#include "CCommandLine.h"
 #include "env/CShareData_IO.h"
+#include "debug/Debug.h"
+#include "debug/CRunningTimer.h"
+#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
 
 
 //-------------------------------------------------

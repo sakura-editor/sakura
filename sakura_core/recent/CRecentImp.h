@@ -1,3 +1,7 @@
+// 各CRecent実装クラスのベースクラス
+
+// エディタ系ファイルからincludeするときは CRecent.h をinclude
+
 #pragma once
 
 #include "recent/CRecent.h"

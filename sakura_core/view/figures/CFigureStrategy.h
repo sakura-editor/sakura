@@ -4,7 +4,6 @@
 #include "util/design_template.h"
 #include <vector>
 
-struct SColorStrategyInfo;
 
 //$$レイアウト構築フロー(DoLayout)も CFigure で行うと整理しやすい
 class CFigure{

@@ -14,11 +14,13 @@
 	Copyright (C) 2007, genta, ryoji
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
-
+#include "sakura_rc.h"
 #include "sakura.hh"
+
+
 static const DWORD p_helpids[] = {
 	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 	IDC_CHECK_SameTabWidth,			HIDC_CHECK_SameTabWidth,		//等幅	// 2006.08.06 ryoji
@@ -39,15 +41,15 @@ static const DWORD p_helpids[] = {
 	@param wParam[in] パラメータ1
 	@param lParam[in] パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_TAB(
+INT_PTR CALLBACK CPropTab::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_TAB, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
@@ -56,8 +58,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
-		SetData_PROP_TAB( hwndDlg );
+		/* ダイアログデータの設定 Tab */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -75,8 +77,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 				OnHelp( hwndDlg, IDD_PROP_TAB );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
-				GetData_PROP_TAB( hwndDlg );
+				/* ダイアログデータの取得 Tab */
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -122,7 +124,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
+void CPropTab::SetData( HWND hwndDlg )
 {
 
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
@@ -144,7 +146,7 @@ void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
+int CPropTab::GetData( HWND hwndDlg )
 {
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
 	m_Common.m_sTabBar.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
@@ -167,7 +169,7 @@ int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
 
 	@date 2007.02.12 genta 新規作成
 */
-void CPropCommon::EnableTabPropInput(HWND hwndDlg)
+void CPropTab::EnableTabPropInput(HWND hwndDlg)
 {
 	if( !::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd ) )
 	{

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ObjIdl.h> // LPDATAOBJECT
+
+
 //システム資源
 SAKURA_CORE_API BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
 SAKURA_CORE_API BOOL CheckSystemResources( const TCHAR* );	/* システムリソースのチェック */

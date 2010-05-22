@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CRegexKeyword.h" //struct RegexKeywordInfo
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          色設定                             //
@@ -43,5 +42,5 @@ struct KeyHelpInfo {
 };
 //@@@ 2006.04.10 fon ADD-end
 
-
-#include "types/CType.h"
+// とりあえずコメントアウト
+// #include "../types/CType.h"

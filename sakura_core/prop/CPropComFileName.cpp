@@ -31,12 +31,13 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "stdafx.h"
-#include "sakura_rc.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "env/CShareData.h"
-#include "sakura.hh"
+#include "env/CommonSetting.h"
 #include "util/shell.h"
+//#include "env/CShareData.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 
 static const DWORD p_helpids[] = {	//13400
@@ -57,13 +58,13 @@ static const DWORD p_helpids[] = {	//13400
 
 
 
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FILENAME(
+INT_PTR CALLBACK CPropFileName::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_FILENAME, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
-INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 
 	HWND	hListView;
@@ -100,7 +101,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 			m_nLastPos_FILENAME = -1;
 
 			// ダイアログデータの設定
-			SetData_PROP_FILENAME( hwndDlg );
+			SetData( hwndDlg );
 
 			// エディット コントロールに入力できるテキストの長さを制限する
 			::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_FROM ),  EM_LIMITTEXT, (WPARAM)( _MAX_PATH - 1 ), 0 );
@@ -145,7 +146,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 					return TRUE;
 				case PSN_KILLACTIVE:
 					// ダイアログデータの取得
-					GetData_PROP_FILENAME( hwndDlg );
+					GetData( hwndDlg );
 					return TRUE;
 	//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 				case PSN_SETACTIVE:
@@ -274,7 +275,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
-void CPropCommon::SetData_PROP_FILENAME( HWND hwndDlg )
+void CPropFileName::SetData( HWND hwndDlg )
 {
 	int nIndex;
 	int i;
@@ -325,7 +326,7 @@ void CPropCommon::SetData_PROP_FILENAME( HWND hwndDlg )
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
 
-int CPropCommon::GetData_PROP_FILENAME( HWND hwndDlg )
+int CPropFileName::GetData( HWND hwndDlg )
 {
 
 	int nIndex;
@@ -363,7 +364,7 @@ int CPropCommon::GetData_PROP_FILENAME( HWND hwndDlg )
 }
 
 
-int CPropCommon::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo, bool bInsMode )
+int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo, bool bInsMode )
 {
 	LV_ITEM	Item;
 	int nCount;
@@ -401,14 +402,14 @@ int CPropCommon::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR sz
 }
 
 
-void CPropCommon::GetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo )
+void CPropFileName::GetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR szFrom, LPTSTR szTo )
 {
 	ListView_GetItemText( hListView, nIndex, 0, szFrom, _MAX_PATH );
 	ListView_GetItemText( hListView, nIndex, 1, szTo, _MAX_PATH );
 }
 
 
-int CPropCommon::MoveListViewItem_FILENAME( HWND hListView, int nIndex, int nIndex2 )
+int CPropFileName::MoveListViewItem_FILENAME( HWND hListView, int nIndex, int nIndex2 )
 {
 	TCHAR szFrom[_MAX_PATH];
 	TCHAR szTo[_MAX_PATH];

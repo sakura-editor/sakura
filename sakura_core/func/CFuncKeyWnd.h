@@ -12,13 +12,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CFuncKeyWnd;
+#ifndef SAKURA_CFUNCKEYWND_H_
+#define SAKURA_CFUNCKEYWND_H_
 
-#ifndef _CFUNCKEYWND_H_
-#define _CFUNCKEYWND_H_
+#include "window/CWnd.h"
+#include "env/DLLSHAREDATA.h"
 
-#include "CWnd.h"
-#include "env/CShareData.h"
+struct DLLSHAREDATA;
 class CEditDoc; // 2002/2/10 aroka
 
 //! ファンクションキーウィンドウ
@@ -74,7 +74,7 @@ protected:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CFUNCKEYWND_H_ */
+#endif /* SAKURA_CFUNCKEYWND_H_ */
 
 
 

@@ -1,5 +1,10 @@
 #pragma once
 
+#include "global.h"
+
+class CDocLineMgr;
+struct DocLineReplaceArg;
+
 class CSearchAgent{
 public:
 	// •¶š—ñŒŸõ

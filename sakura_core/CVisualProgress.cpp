@@ -2,6 +2,8 @@
 #include "CVisualProgress.h"
 #include "CWaitCursor.h"
 
+#include "window/CEditWnd.h"
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

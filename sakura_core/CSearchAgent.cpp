@@ -1,7 +1,12 @@
-#include "stdafx.h"
+#include "StdAfx.h"
+#include "CBregexp.h" // ƒwƒbƒ_ˆË‘¶ CSearchAgent
+
 #include "CSearchAgent.h"
-#include "parse/CWordParse.h"
+#include "doc/CDocLineMgr.h"
+#include "doc/CDocLine.h"
+//#include "parse/CWordParse.h"
 #include "dlg/CDlgCancel.h"
+#include "sakura_rc.h"
 
 /*!
 	•¶š—ñŒŸõ

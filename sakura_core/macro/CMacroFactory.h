@@ -32,8 +32,6 @@
 #ifndef __CMACROTYPEMGR_H_
 #define __CMACROTYPEMGR_H_
 
-#pragma warning(disable: 4786)
-
 #include <map>
 #include <list>
 #include <string>

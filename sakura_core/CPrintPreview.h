@@ -11,13 +11,18 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CPrintPreview;
 
 #ifndef _CPRINTPREVIEW_H_
 #define _CPRINTPREVIEW_H_
-#include "env/CShareData.h"
+
+class CPrintPreview;
+
+#include "basis/SakuraBasis.h"
 #include "CPrint.h" // 2002/2/10 aroka
 #include <windows.h> // 2002/2/10 aroka
+
+class CEditWnd;
+class CLayoutMgr;
 
 class CPrintPreview {
 /* ƒƒ“ƒoŠÖ”éŒ¾ */

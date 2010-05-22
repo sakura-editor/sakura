@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "CReadManager.h"
-#include "charset/CCodeMediator.h"
-#include "util/window.h"
-#include "io/CFileLoad.h"
-#include <io.h>
+#include <io.h>	// access
+#include "CEditApp.h"	// CAppExitException
 #include "window/CEditWnd.h"
+#include "charset/CCodeMediator.h"
+#include "io/CFileLoad.h"
+#include "util/window.h"
 
 /*!
 	ファイルを読み込んで格納する（分割読み込みテスト版）

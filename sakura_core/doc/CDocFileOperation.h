@@ -1,5 +1,8 @@
 #pragma once
 
+#include "doc/CDocListener.h" // SLoadInfo
+#include "CEol.h"
+
 class CEditDoc;
 
 class CDocFileOperation{

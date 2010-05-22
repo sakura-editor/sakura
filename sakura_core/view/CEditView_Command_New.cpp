@@ -23,21 +23,19 @@
 #include "CWaitCursor.h"
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
-#include <algorithm>		// 2001.12.11 hor    for VC++
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
 #include "doc/CLayout.h"///
 #include "doc/CDocLine.h"///
-#include "debug/Debug.h"///
-#include <string>///
-#include <vector> /// 2002/2/3 aroka to here
+#include "debug/Debug.h"///  2002/2/3 aroka to here
 #include "COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "doc/CDocReader.h"
 #include "window/CEditWnd.h"
 #include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 
-using namespace std; // 2002/2/3 aroka to here
+using namespace std; // 2002/2/3 aroka
 
 
 
@@ -610,6 +608,19 @@ end_of_func:;
 }
 
 
+void CEditView::ReplaceData_CEditView2(
+	const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
+	CNativeW*			pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
+	const wchar_t*		pInsData,			// 挿入するデータ
+	CLogicInt			nInsDataLen,		// 挿入するデータの長さ
+	bool				bRedraw,
+	COpeBlk*			pcOpeBlk
+)
+{
+	CLayoutRange sDelRangeLayout;
+	this->m_pcEditDoc->m_cLayoutMgr.LogicToLayout(sDelRange,&sDelRangeLayout);
+	ReplaceData_CEditView(sDelRangeLayout,pcmemCopyOfDeleted,pInsData,nInsDataLen,bRedraw,pcOpeBlk);
+}
 
 
 

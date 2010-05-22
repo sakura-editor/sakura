@@ -1,5 +1,9 @@
 #pragma once
 
+#include "doc/CEditDoc.h"
+#include "doc/CLayoutMgr.h"
+#include "doc/CLayout.h"
+
 struct DispPos{
 public:
 	DispPos(int nDx,int nDy)

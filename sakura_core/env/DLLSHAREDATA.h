@@ -12,10 +12,36 @@ DLLSHAREDATA& GetDllShareData();
 //                    共有メモリ構成要素                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#include "CSearchKeywordManager.h"	//SShare_SearchKeywords
-#include "CTagJumpManager.h"		//SShare_TagJump
-#include "CFileNameManager.h"		//SShare_FileNameManagement
+// 2010.04.19 Moca CShareDataからDLLSHAREDATAメンバのincludeをDLLSHAREDATA.hに移動
+
+#include "config/maxdata.h"
+
+
+#include "EditInfo.h"
+#include "env/CAppNodeManager.h"	//SShare_Nodes
+
+//2007.09.28 kobake Common構造体をCShareData.hから分離
+#include "env/CommonSetting.h"
+
+#include "types/CType.h" // STypeConfig
+#include "CPrint.h" //PRINTSETTING
+#include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
+#include "env/CTagJumpManager.h"		//SShare_TagJump
+#include "env/CFileNameManager.h"		//SShare_FileNameManagement
 #include "recent/SShare_History.h"	//SShare_History
+
+#ifndef SAKURA_EXCLUDE_OPTIONAL_INCLUDE
+//@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
+#include "recent/CMRU.h"
+#include "recent/CMRUFolder.h"
+
+#include "env/CFormatManager.h"
+#include "env/CHelpManager.h"
+#endif
+
+
+
+
 
 //共有フラグ
 struct SShare_Flags{

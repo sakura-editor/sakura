@@ -19,6 +19,8 @@
 #include "stdafx.h"
 #include "func/CKeyBind.h"
 #include "debug/Debug.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "func/CFuncLookup.h"
 #include "mem/CMemory.h"// 2002/2/10 aroka

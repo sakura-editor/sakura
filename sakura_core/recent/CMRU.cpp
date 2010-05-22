@@ -16,11 +16,13 @@
 */
 
 #include "stdafx.h"
-#include "env/CShareData.h"
-#include "CMenuDrawer.h"	//	Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÇ©ÅH
-#include "global.h"
-#include <stdio.h>
 #include "CMRU.h"
+#include <stdio.h>
+#include "global.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "env/CFileNameManager.h"
+#include "CMenuDrawer.h"	//	Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÇ©ÅH
 #include "recent/CRecent.h"	//óöóÇÃä«óù	//@@@ 2003.04.08 MIK
 #include "util/string_ex2.h"
 

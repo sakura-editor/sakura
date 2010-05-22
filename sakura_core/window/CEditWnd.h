@@ -28,12 +28,10 @@
 class CEditWnd;
 
 #include <shellapi.h>// HDROP
-#include "doc/CEditDoc.h"
-#include "env/CShareData.h"
-#include "func/CFuncKeyWnd.h"
-#include "CTabWnd.h"	//@@@ 2003.05.31 MIK
-#include "CMenuDrawer.h"
+#include "global.h"
 #include "CMainToolBar.h"
+#include "CTabWnd.h"	//@@@ 2003.05.31 MIK
+#include "func/CFuncKeyWnd.h"
 #include "CMainStatusBar.h"
 #include "view/CEditView.h"
 #include "window/CSplitterWnd.h"
@@ -46,6 +44,7 @@ class CEditWnd;
 #include "CHokanMgr.h"
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
+#include "CMenuDrawer.h"
 
 //by 鬼
 #include"CDropTarget.h"
@@ -56,6 +55,8 @@ const static int MENUBAR_MESSAGE_MAX_LEN = 30;
 class CPrintPreview;// 2002/2/10 aroka
 class CDropTarget;
 class CPlug;
+class CEditDoc;
+struct DLLSHAREDATA;
 
 
 //メインウィンドウ内コントロールID

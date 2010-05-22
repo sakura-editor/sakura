@@ -21,10 +21,13 @@
 #include "doc/CEditDoc.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "global.h"		// Moca, 2002/05/26
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "charset/charcode.h"	// rastiv, 2006/06/28
 #include "io/CBinaryStream.h"
 #include "util/shell.h"
 #include "charset/CESI.h"
+#include "CAppMode.h"
 
 // プロパティ CDlgProperty.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

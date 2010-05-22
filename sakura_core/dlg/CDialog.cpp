@@ -20,6 +20,8 @@
 #include "dlg/CDialog.h"
 #include "debug/Debug.h"/// 2002/2/10 aroka ƒwƒbƒ_®—
 #include "CEditApp.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "util/os.h"
 #include "util/shell.h"
 

@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "CKeyWordSetMgr.h"
+#include "func/CKeyBind.h"
+#include "func/CFuncLookup.h" //MacroRec
 #include "io/CFile.h" //EShareMode
 
 // Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ

@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 #include "global.h"
+#include "window/CEditWnd.h"
+#include "CNormalProcess.h"
 
 //2007.10.02 kobake CEditWndのインスタンスへのポインタをここに保存しておく
 CEditWnd* g_pcEditWnd = NULL;

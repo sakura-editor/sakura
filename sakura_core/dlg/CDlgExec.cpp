@@ -17,18 +17,21 @@
 */
 
 #include "stdafx.h"
-#include "dlg/CDlgExec.h"
-#include "func/Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
-#include "sakura_rc.h"
 #include <windows.h>		//Mar. 28, 2001 JEPRO (一応入れたが不要？)
 #include <stdio.h>			//Mar. 28, 2001 JEPRO (一応入れたが不要？)
 #include <commctrl.h>		//Mar. 28, 2001 JEPRO
+#include "dlg/CDlgExec.h"
+#include "func/Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "dlg/CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
 #include "debug/Debug.h"// 2002/2/10 aroka ヘッダ整理
 #include "util/shell.h"
+#include "CAppMode.h"
+#include "doc/CEditDoc.h"
+#include "env/DLLSHAREDATA.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12100
 	IDC_BUTTON_REFERENCE,			HIDC_EXEC_BUTTON_REFERENCE,		//参照
 	IDOK,							HIDOK_EXEC,						//実行

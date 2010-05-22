@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CAppMode.h"
+#include "window/CEditWnd.h"
 #include "env/CSakuraEnvironment.h"
 
 void CAppMode::OnAfterSave(const SSaveInfo& sSaveInfo)

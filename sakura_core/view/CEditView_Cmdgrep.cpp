@@ -20,6 +20,8 @@
 #include "doc/CEditDoc.h"
 #include "CControlTray.h"
 #include "charset/charcode.h"
+#include "CEditApp.h"
+#include "CGrepAgent.h"
 
 /*!
 	コマンドコードの変換(grep mode時)

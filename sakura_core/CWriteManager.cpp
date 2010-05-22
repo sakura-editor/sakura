@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "CWriteManager.h"
+#include <list>
+#include "doc/CDocLineMgr.h"
+#include "doc/CDocLine.h"
+#include "CEditApp.h" // CAppExitException
+#include "window/CEditWnd.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
-#include <list>
 #include "io/CIoBridge.h"
 #include "io/CBinaryStream.h"
 #include "util/window.h"

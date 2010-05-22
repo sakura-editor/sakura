@@ -1,7 +1,11 @@
 #include "stdafx.h"
 #include "env/CAppNodeManager.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
 #include "util/window.h"
+#include "CMutex.h"
+
 
 // GetOpenedWindowArr用静的変数／構造体
 static BOOL s_bSort;	// ソート指定

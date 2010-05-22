@@ -21,8 +21,6 @@
 #ifndef	_REGEX_KEYWORD_H_
 #define	_REGEX_KEYWORD_H_
 
-#include <windows.h>
-#include "env/CShareData.h"
 #include "global.h"
 #include "CBregexp.h"
 #include "config/maxdata.h" //MAX_REGEX_KEYWORD

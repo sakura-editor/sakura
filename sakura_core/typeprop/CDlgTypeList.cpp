@@ -15,15 +15,19 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-//#include <windows.h>
-//#include <commctrl.h>
-#include "sakura_rc.h"
-#include "CDlgTypeList.h"
-#include "debug/Debug.h"
+#include "types/CType.h" // use CDlgTypeListíËã`
+
+#include "typeprop/CDlgTypeList.h"
+#include "CDataProfile.h"
+#include "env/CShareData.h"
+#include "typeprop/CImpExpManager.h"	// 2010/4/24 Uchi
+#include "config/maxdata.h" // MAX_TYPES
+#include "env/CDocTypeManager.h"
 #include "func/Funccode.h"	//Stonee, 2001/03/12
 #include "util/shell.h"
+#include "debug/Debug.h"
+#include "sakura_rc.h"
 #include "sakura.hh"
-#include "typeprop/CImpExpManager.h"	// 2010/4/24 Uchi
 
 //ì‡ïîégópíËêî
 static const int PROP_TEMPCHANGE_FLAG = 0x10000;

@@ -27,62 +27,15 @@
 //2007.09.23 kobake m_nTagJumpKeywordArrNum, m_szTagJumpKeywordArr を m_aTagJumpKeywords にまとめました
 //2007.12.13 kobake DLLSHAREDATAへの簡易アクセサを用意
 
+
+#ifndef SAKURA_ENV_CSHAREDATA_H_
+#define SAKURA_ENV_CSHAREDATA_H_
+
 class CShareData;
 
-#ifndef _CSHAREDATA_H_
-#define _CSHAREDATA_H_
-
-#include <windows.h>
-#include <commctrl.h>
-#include "func/CKeyBind.h"
-#include "CKeyWordSetMgr.h"
-#include "CPrint.h"
-#include "CDataProfile.h"
-#include "basis/SakuraBasis.h"
-#include "config/maxdata.h"
-#include "env/CAppNodeManager.h"
-#include "func/CFuncLookup.h" //MacroRec
-
-
-
-
-//@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
-#include "recent/CMRU.h"
-#include "recent/CMRUFolder.h"
-
-//20020129 aroka
-#include "func/Funccode.h"
-#include "mem/CMemory.h"
-
-#include "CMutex.h"	// 2007.07.07 genta
-
-#include "doc/CLineComment.h"	//@@@ 2002.09.22 YAZAKI
-#include "doc/CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
-
-#include "EditInfo.h"
-#include "doc/CDocTypeSetting.h"
-
-
-
-
-
-//2007.09.28 kobake Common構造体を
-#include "env/CommonSetting.h"
-
-
-
-#include "util/StaticType.h"
-
-#include "basis/CStrictInteger.h"
-#include "CPrint.h" //PRINTSETTING
-
-
-#include "CDocTypeManager.h"
-#include "CFormatManager.h"
-#include "CHelpManager.h"
-
-
-#include "DLLSHAREDATA.h"
+// 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
+// CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
+struct DLLSHAREDATA;
 
 /*!	@brief 共有データの管理
 
@@ -131,7 +84,7 @@ public:
 	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOut起動元ウィンドウの設定 */
 	bool OpenDebugWindow( HWND hwnd, bool bAllwaysActive );	//!<  デバッグウィンドウを開く
 
-	BOOL IsPrivateSettings( void ){ return m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate; }			/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
+	BOOL IsPrivateSettings( void );
 
 
 	//マクロ関連
@@ -166,7 +119,7 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CSHAREDATA_H_ */
+#endif /* SAKURA_ENV_CSHAREDATA_H_ */
 
 
 

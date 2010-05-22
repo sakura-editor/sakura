@@ -32,11 +32,8 @@
 #ifndef __CMARKMGR_H_
 #define __CMARKMGR_H_
 
-#pragma warning(disable: 4786)
 #include <vector>
-#include <string>
 
-using namespace std;
 
 /*!
 	行マークを管理するクラス。

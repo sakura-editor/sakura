@@ -1,6 +1,6 @@
 #pragma once
 
-#include "env/CShareData.h" //ColorInfo
+// #include "view/colors/CColorStrategy.h"
 class CTextMetrics;
 class CTextArea;
 class CViewFont;
@@ -8,6 +8,8 @@ class CEol;
 class CEditView;
 class CLayout;
 #include "DispPos.h"
+
+class CGraphics;
 
 class CTextDrawer{
 public:

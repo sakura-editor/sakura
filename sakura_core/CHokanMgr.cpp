@@ -17,13 +17,15 @@
 */
 #include "stdafx.h"
 #include "CHokanMgr.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "debug/Debug.h"
 #include "func/CKeyBind.h"
 #include "CDicMgr.h"
 #include "view/CEditView.h"
-#include "sakura_rc.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "sakura_rc.h"
 
 WNDPROC			gm_wpHokanListProc;
 

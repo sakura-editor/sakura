@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "CRecentImp.h"
-#include "env/CShareData.h"
+
+//#include "env/DLLSHAREDATA.h"
+#include "env/CAppNodeManager.h" // EditNode
+#include "EditInfo.h" // EditInfo
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //
@@ -471,7 +474,6 @@ bool CRecentImp<T, S>::UpdateView()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      インスタンス化                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#include "recent/CRecent.h"
 template class CRecentImp<CCmdString, LPCTSTR>;
 template class CRecentImp<EditNode>;
 template class CRecentImp<EditInfo>;

@@ -15,11 +15,12 @@
 #include "CLayoutMgr.h"
 #include "charset/charcode.h"
 #include "debug/Debug.h"
-#include <commctrl.h>
 #include <stdlib.h>
 #include "doc/CLayout.h" // 2002/2/10 aroka
 #include "doc/CDocLineMgr.h" // 2002/2/10 aroka
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
+#include "CSearchAgent.h"
 
 
 
@@ -77,7 +78,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	CLayoutInt	nModifyLayoutLinesOld = CLayoutInt(0);
 	CLayout* pLayoutPrev;
 	CLogicInt nWork;
-	nWork = __max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
+	nWork = t_max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
 
 
 	if( pLayoutWork ){

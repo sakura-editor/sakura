@@ -7,6 +7,8 @@
 #include "window/CEditWnd.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 CViewSelect::CViewSelect(CEditView* pcEditView)
 : m_pcEditView(pcEditView)
