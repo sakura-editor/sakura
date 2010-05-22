@@ -28,11 +28,12 @@
 #include <stdlib.h>
 #include <io.h>
 #include <mbstring.h>
-#include "sakura_rc.h"
+#include <htmlhelp.h>
+#include "global.h"
 #include "view/CEditView.h"
 #include "debug/Debug.h"
-#include "func/Funccode.h"
 #include "debug/CRunningTimer.h"
+#include "func/Funccode.h"
 #include "charset/charcode.h"
 #include "CControlTray.h"
 #include "CWaitCursor.h"
@@ -42,25 +43,21 @@
 #include "typeprop/CDlgTypeList.h"
 #include "dlg/CDlgProperty.h"
 #include "dlg/CDlgCompare.h"
-#include "global.h"
-#include <htmlhelp.h>
-#include "debug/CRunningTimer.h"
+#include "dlg/CDlgCancel.h"// 2002/2/8 hor
 #include "dlg/CDlgExec.h"
 #include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO 追加
-#include "COpe.h"/// 2002/2/3 aroka 追加 from here
-#include "COpeBlk.h"///
-#include "doc/CLayout.h"///
-#include "window/CEditWnd.h"///
-#include "outline/CFuncInfoArr.h"
-#include "CMarkMgr.h"///
-#include "doc/CDocLine.h"///
-#include "macro/CSMacroMgr.h"///
-#include "dlg/CDlgCancel.h"// 2002/2/8 hor
-#include "CPrintPreview.h"
-#include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
-#include "dlg/CDlgCancel.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
+#include "doc/CDocReader.h"	//  Command_PROPERTY_FILE for _DEBUG
+#include "COpe.h"/// 2002/2/3 aroka 追加
+#include "COpeBlk.h"/// 2002/2/3 aroka 追加
+#include "doc/CLayout.h"/// 2002/2/3 aroka 追加
+#include "window/CEditWnd.h"/// 2002/2/3 aroka 追加
+#include "outline/CFuncInfoArr.h"
+#include "CMarkMgr.h"/// 2002/2/3 aroka 追加
+#include "doc/CDocLine.h"/// 2002/2/3 aroka 追加
+#include "CPrintPreview.h"
+#include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "COsVersionInfo.h"
 #include "convert/CDecode_Base64Decode.h"
 #include "convert/CDecode_UuDecode.h"
@@ -72,14 +69,18 @@
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/os.h"
-#include "view/CEditView.h"
-#include "window/CEditWnd.h"
 #include "charset/CCodeFactory.h"
 #include "io/CFileLoad.h"
+#include "env/DLLSHAREDATA.h"
+#include "env/CShareData.h"
+#include "env/CHelpManager.h"
 #include "env/CSakuraEnvironment.h"
 #include "plugin/CJackManager.h"
 #include "plugin/COutlineIfObj.h"
-
+#include "CPropertyManager.h"
+#include "CAppMode.h"
+#include "CWriteManager.h"
+#include "sakura_rc.h"
 //外部依存
 CEditDoc* CViewCommander::GetDocument()
 {
@@ -481,8 +482,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_GREP:			Command_GREP();break;							//Grep
 	case F_JUMP_DIALOG:		Command_JUMP_DIALOG();break;					//指定行ヘジャンプダイアログの表示
 	case F_JUMP:			Command_JUMP();break;							//指定行ヘジャンプ
-	case F_OUTLINE:			bRet = Command_FUNCLIST( (int)lparam1 );break;	//アウトライン解析
-	case F_OUTLINE_TOGGLE:	bRet = Command_FUNCLIST( SHOW_TOGGLE );break;	//アウトライン解析(toggle) // 20060201 aroka
+	case F_OUTLINE:			bRet = Command_FUNCLIST( (int)lparam1, OUTLINE_DEFAULT );break;	//アウトライン解析
+	case F_OUTLINE_TOGGLE:	bRet = Command_FUNCLIST( SHOW_TOGGLE, OUTLINE_DEFAULT );break;	//アウトライン解析(toggle) // 20060201 aroka
 	case F_TAGJUMP:			Command_TAGJUMP(lparam1 != 0);break;			/* タグジャンプ機能 */ //	Apr. 03, 2003 genta 引数追加
 	case F_TAGJUMP_CLOSE:	Command_TAGJUMP(true);break;					/* タグジャンプ(元ウィンドウClose) *///	Apr. 03, 2003 genta
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
@@ -4272,7 +4273,7 @@ void CViewCommander::Command_CODECNV_AUTO2SJIS( void )
 // トグル用のフラグに変更 20060201 aroka
 BOOL CViewCommander::Command_FUNCLIST(
 	int nAction,
-	int _nOutlineType
+	int _nOutlineType = OUTLINE_DEFAULT
 )
 {
 	static bool bIsProcessing = false;	//アウトライン解析処理中フラグ
@@ -4291,7 +4292,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 	static CFuncInfoArr	cFuncInfoArr;
 //	int		nLine;
 //	int		nListType;
-	tstring sTitleOverride;				//プラグインによるダイアログタイトル上書き
+	std::tstring sTitleOverride;				//プラグインによるダイアログタイトル上書き
 
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){

@@ -1,12 +1,18 @@
 #pragma once
 
+// #include "CGraphics.h"	// stdafx.h参照
+// #include "types/CTypes.h"	// STypeConfig たぶんCLayoutMgr.hがinclude
 #include "view/CEditView.h"
-#include "env/CShareData.h"
 #include "doc/CEditDoc.h"
 #include "view/colors/CColorStrategy.h"
+// #include "view/CViewFont.h"	// in view/CEditView.h
+
+
 
 //2007.08.28 kobake 追加
-//!タイプサポートクラス
+/*!タイプサポートクラス
+	今のところタイプ別設定の色情報取得の補助
+*/
 class CTypeSupport{
 private:
 	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //無効な色定数

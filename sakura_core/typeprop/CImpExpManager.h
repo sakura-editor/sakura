@@ -31,6 +31,10 @@
 #ifndef _CIMPEXPMANAGER_H_
 #define _CIMPEXPMANAGER_H_
 
+// óvêÊçsíËã`
+// #include "CDataProfile.h"
+// #include "env/CShareData.h"
+
 using std::wstring;
 
 class CImpExpManager

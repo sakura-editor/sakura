@@ -29,13 +29,18 @@
 */
 
 #include "StdAfx.h"
+#include "CPropTypes.h"
+#include "CDataProfile.h"
+#include "env/CShareData.h"
+#include "dlg/CDlgOpenFile.h"
 #include "CImpExpManager.h"
 
+#include "view/CEditView.h"
 #include "io/CTextStream.h"
 #include "env/CShareData_IO.h"
 #include "view/colors/CColorStrategy.h"
 #include "typeprop/CDlgTypeAscertain.h"
-#include "types/Ctype.h"
+//#include "types/Ctype.h"
 #include "plugin/CPlugin.h"
 
 /*-----------------------------------------------------------------------
@@ -595,7 +600,7 @@ bool CImpExpRegex::Import( const wstring sFileName, wstring& sErrMsg )
 		return false;
 	}
 
-	CPropTypes			cPropTypes;		// RegexKakomiCheck使用のため
+	CPropRegex			cPropRegex;		// RegexKakomiCheck使用のため
 	RegexKeywordInfo	pRegexKey[MAX_REGEX_KEYWORD];
 	TCHAR				buff[1024];
 	int					i, j, k;
@@ -618,7 +623,7 @@ bool CImpExpRegex::Import( const wstring sFileName, wstring& sErrMsg )
 		{
 			*p = _T('\0');
 			p++;
-			if( p[0] && cPropTypes.RegexKakomiCheck(to_wchar(p)) )	//囲みがある
+			if( p[0] && cPropRegex.RegexKakomiCheck(to_wchar(p)) )	//囲みがある
 			{
 				//色指定名に対応する番号を探す
 				k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30

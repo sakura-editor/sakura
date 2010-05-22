@@ -3,7 +3,10 @@
 */
 
 #include "stdafx.h"
+#include "DLLSHAREDATA.h"
+
 #include "CSearchKeywordManager.h"
+#include "recent/CRecent.h"
 
 
 /*!	m_aSearchKeys‚ÉpszSearchKey‚ğ’Ç‰Á‚·‚éB

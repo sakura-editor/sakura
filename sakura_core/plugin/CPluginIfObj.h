@@ -32,6 +32,9 @@
 #include "OleTypes.h"
 #include "util/ole_convert.h"
 
+// cpp‚ÖˆÚ“®—\’è
+#include "window/CEditWnd.h"
+#include "view/CEditView.h"
 
 class CPluginIfObj : public CWSHIfObj {
 	// Œ^’è‹`

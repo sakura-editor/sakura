@@ -17,13 +17,14 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
+//#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
-
-
+#include "sakura_rc.h"
 #include "sakura.hh"
+
+
 static const DWORD p_helpids[] = {
 	IDC_CHECK_DISP_UNICODE_IN_SJIS,		HIDC_CHECK_DISP_UNICODE_IN_SJIS,		// SJISで文字コード値をUnicodeで表示する
 	IDC_CHECK_DISP_UNICODE_IN_JIS,		HIDC_CHECK_DISP_UNICODE_IN_JIS,			// JISで文字コード値をUnicodeで表示する
@@ -40,14 +41,14 @@ static const DWORD p_helpids[] = {
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_STATUSBAR(
+INT_PTR CALLBACK CPropStatusbar::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_STATUSBAR, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_STATUSBAR(
+INT_PTR CPropStatusbar::DispatchEvent(
     HWND		hwndDlg,	// handle to dialog box
     UINT		uMsg,		// message
     WPARAM		wParam,		// first message parameter
@@ -62,7 +63,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_STATUSBAR(
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 */
-		SetData_PROP_STATUSBAR( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -82,7 +83,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_STATUSBAR(
 			DBPRINT_A( "statusbar PSN_KILLACTIVE\n" );
 
 			/* ダイアログデータの取得 */
-			GetData_PROP_STATUSBAR( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 
 		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -115,7 +116,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_STATUSBAR(
 
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_STATUSBAR( HWND hwndDlg )
+void CPropStatusbar::SetData( HWND hwndDlg )
 {
 	// 示文字コードの指定
 	// SJISで文字コード値をUnicodeで出力する
@@ -135,7 +136,7 @@ void CPropCommon::SetData_PROP_STATUSBAR( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_STATUSBAR( HWND hwndDlg )
+int CPropStatusbar::GetData( HWND hwndDlg )
 {
 	// 示文字コードの指定
 	// SJISで文字コード値をUnicodeで出力する

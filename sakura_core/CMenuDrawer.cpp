@@ -22,6 +22,8 @@
 #include "CMenuDrawer.h"
 #include "sakura_rc.h"
 #include "global.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "debug/Debug.h"
 #include "window/CSplitBoxWnd.h"
 #include "window/CEditWnd.h"

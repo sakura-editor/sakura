@@ -15,9 +15,10 @@
 */
 
 #include "stdafx.h"
-#include "env/CShareData.h"
-#include "CMenuDrawer.h"	//	Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÇ©ÅH
 #include "CMRUFolder.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "CMenuDrawer.h"	//	Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÇ©ÅH
 #include "recent/CRecent.h"	//óöóÇÃä«óù	//@@@ 2003.04.08 MIK
 #include "util/string_ex2.h"
 

@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "docplus/CBookmarkManager.h"
+#include "doc/CDocLineMgr.h"
 #include "CSearchAgent.h"
+#include "CBregexp.h"
+
 
 bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_cBookmarked; }
 void CBookmarkSetter::SetBookmark(bool bFlag){ m_pcDocLine->m_sMark.m_cBookmarked = bFlag; }

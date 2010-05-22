@@ -1,7 +1,10 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CPropertyManager.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
+#include "CEditApp.h"
+#include "CPropertyManager.h"
 
 /*!	“ü—Í•âŠ®
 	Ctrl+Space‚Å‚±‚±‚É“’…B

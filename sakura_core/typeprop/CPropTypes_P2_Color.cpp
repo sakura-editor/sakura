@@ -6,14 +6,20 @@
 */
 #include "StdAfx.h"
 #include "CPropTypes.h"
-#include "sakura.hh"
+#include "CDataProfile.h"
+#include "env/CShareData.h"
+#include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 //#include "io/CTextStream.h"
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
-#include "util/shell.h"
+//#include "dlg/CDlgOpenFile.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
+//#include "CDataProfile.h"
 //#include "env/CShareData_IO.h"
-#include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
+#include "util/shell.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 using namespace std;
 
@@ -73,7 +79,7 @@ struct {
 
 /* 色の設定をインポート */
 // 2010/4/23 Uchi Importの外出し
-void CPropTypes::Import_Colors( HWND hwndDlg )
+bool CPropColor::Import( HWND hwndDlg )
 {
 //	/* ファイルオープンダイアログの初期化 */
 //	CDlgOpenFile	cDlgOpenFile;
@@ -189,7 +195,7 @@ void CPropTypes::Import_Colors( HWND hwndDlg )
 	// インポート
 	if (!cImpExpColors.ImportUI(m_hInstance, hwndDlg)) {
 		// インポートをしていない
-		return;
+		return false;
 	}
 
 	/* データのコピー */
@@ -199,13 +205,15 @@ void CPropTypes::Import_Colors( HWND hwndDlg )
 		_tcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
 	}
 	/* ダイアログデータの設定 color */
-	SetData_Color( hwndDlg );
+	SetData( hwndDlg );
+
+	return true;
 }
 
 
 /* 色の設定をエクスポート */
 // 2010/4/23 Uchi Exportの外出し
-void CPropTypes::Export_Colors( HWND hwndDlg )
+bool CPropColor::Export( HWND hwndDlg )
 {
 //	/* ファイルオープンダイアログの初期化 */
 //	CDlgOpenFile	cDlgOpenFile;
@@ -236,7 +244,7 @@ void CPropTypes::Export_Colors( HWND hwndDlg )
 	CImpExpColors	cImpExpColors( m_Types.m_ColorInfoArr);
 
 	// エクスポート
-	cImpExpColors.ExportUI(m_hInstance, hwndDlg);
+	return cImpExpColors.ExportUI(m_hInstance, hwndDlg);
 }
 
 
@@ -347,7 +355,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropTypes::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
+			if( CPropColor::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 			}
@@ -360,7 +368,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropTypes::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
+			if( CPropColor::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 			}
@@ -381,7 +389,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 
 /* color メッセージ処理 */
-INT_PTR CPropTypes::DispatchEvent_Color(
+INT_PTR CPropColor::DispatchEvent(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
 	WPARAM				wParam,		// first message parameter
@@ -407,7 +415,7 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 		hwndListColor = ::GetDlgItem( hwndDlg, IDC_LIST_COLORS );
 
 		/* ダイアログデータの設定 color */
-		SetData_Color( hwndDlg );
+		SetData( hwndDlg );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), EM_LIMITTEXT, (WPARAM)1, 0 );
@@ -546,12 +554,12 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 				return TRUE;
 
 			case IDC_BUTTON_IMPORT:	/* 色の設定をインポート */
-				Import_Colors( hwndDlg );
+				Import( hwndDlg );
 				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 
 			case IDC_BUTTON_EXPORT:	/* 色の設定をエクスポート */
-				Export_Colors( hwndDlg );
+				Export( hwndDlg );
 				return TRUE;
 
 			//	From Here Sept. 10, 2000 JEPRO
@@ -666,7 +674,7 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 			case PSN_KILLACTIVE:
 //				MYTRACE_A( "color PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 color */
-				GetData_Color( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -720,7 +728,7 @@ INT_PTR CPropTypes::DispatchEvent_Color(
 
 
 /* ダイアログデータの設定 color */
-void CPropTypes::SetData_Color( HWND hwndDlg )
+void CPropColor::SetData( HWND hwndDlg )
 {
 
 	HWND	hwndWork;
@@ -896,7 +904,7 @@ void CPropTypes::SetData_Color( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 color */
-int CPropTypes::GetData_Color( HWND hwndDlg )
+int CPropColor::GetData( HWND hwndDlg )
 {
 	int		nIdx;
 	HWND	hwndWork;
@@ -1053,7 +1061,7 @@ int CPropTypes::GetData_Color( HWND hwndDlg )
 
 
 /* 色ボタンの描画 */
-void CPropTypes::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
+void CPropColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
 //	MYTRACE_A( "pDis->itemAction = " );
 
@@ -1147,7 +1155,7 @@ void CPropTypes::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
-void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
+void CPropColor::EnableTypesPropInput( HWND hwndDlg )
 {
 	//	行番号区切りを任意の半角文字にするかどうか
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE2 ) ){
@@ -1211,7 +1219,7 @@ void CPropTypes::EnableTypesPropInput( HWND hwndDlg )
 	@date	2005.01.23 genta new
 
 */
-void CPropTypes::RearrangeKeywordSet( HWND hwndDlg )
+void CPropColor::RearrangeKeywordSet( HWND hwndDlg )
 {
 	int i, j;
 	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
@@ -1267,7 +1275,7 @@ void CPropTypes::RearrangeKeywordSet( HWND hwndDlg )
 
 
 /* 色種別リスト オーナー描画 */
-void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
+void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 {
 	ColorInfo*	pColorInfo;
 //	RECT		rc0,rc1,rc2;
@@ -1384,7 +1392,7 @@ void CPropTypes::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 
 
 /* 色選択ダイアログ */
-BOOL CPropTypes::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
+BOOL CPropColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
 {
 	CHOOSECOLOR		cc;
 	cc.lStructSize = sizeof_raw( cc );

@@ -1,6 +1,10 @@
 #include "stdafx.h"
-#include "doc/CDocVisitor.h"
+#include "CDocVisitor.h"
+#include "doc/CEditDoc.h"
+#include "view/CEditView.h"
+#include "window/CEditWnd.h"
 #include "COpeBlk.h"
+
 
 //! 改行コードを統一する
 void CDocVisitor::SetAllEol(CEol cEol)

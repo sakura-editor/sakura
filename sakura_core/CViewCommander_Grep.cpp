@@ -1,11 +1,14 @@
 #include "stdafx.h"
 #include "CViewCommander.h"
-#include "sakura_rc.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "CControlTray.h"
+#include "CEditApp.h"
+#include "CGrepAgent.h"
 #include "charset/charcode.h"
 #include "window/CEditWnd.h"
+#include "CAppMode.h"
+#include "sakura_rc.h"
 
 /*! GREPダイアログの表示
 

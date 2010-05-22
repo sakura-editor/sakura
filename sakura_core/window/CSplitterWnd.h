@@ -11,14 +11,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CSplitterWnd;
-
-
-#ifndef _CSPLITTERWND_H_
-#define _CSPLITTERWND_H_
+#ifndef SAKURA_WINDOW_CSPLITTERWND_H_
+#define SAKURA_WINDOW_CSPLITTERWND_H_
 
 #include "CWnd.h"
-#include "env/CShareData.h"
+
+struct DLLSHAREDATA;
+
 /*-----------------------------------------------------------------------
 ÉNÉâÉXÇÃêÈåæ
 -----------------------------------------------------------------------*/
@@ -96,7 +95,7 @@ protected:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CSPLITTERWND_H_ */
+#endif /* SAKURA_WINDOW_CSPLITTERWND_H_ */
 
 
 

@@ -1,4 +1,8 @@
+
 #pragma once
+
+// —væs’è‹`
+// #include "view/CEditView.h"
 
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
 

@@ -4,6 +4,10 @@
 #include "CUtf8.h"
 #include "charset/codechecker.h"
 
+// ”ñˆË‘¶„§
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+
 //! BOMƒf[ƒ^æ“¾
 void CUtf8::GetBom(CMemory* pcmemBom)
 {

@@ -30,7 +30,7 @@
 
 #include "stdafx.h"
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "CFileExt.h"
 
 CFileExt::CFileExt()

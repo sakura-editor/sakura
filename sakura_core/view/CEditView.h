@@ -27,10 +27,9 @@
 
 #include <windows.h>
 #include <objidl.h>  // LPDATAOBJECT
-#include "env/CShareData.h"
-#include "CTipWnd.h"
+#include <shellapi.h>  // HDROP
+#include "window/CTipWnd.h"
 #include "CDicMgr.h"
-#include "CHokanMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
 #include "CEol.h"
@@ -40,7 +39,7 @@
 #include "CViewFont.h"
 #include "CCaret.h"
 #include "CRuler.h"
-#include "CViewCalc.h"
+#include "CViewCalc.h" // parent
 #include "CViewCommander.h"
 #include "CViewParser.h"
 #include "CViewSelect.h"
@@ -49,18 +48,22 @@
 #include "mfclike/CMyWnd.h"
 #include "doc/CDocListener.h"
 
+class CEditView;
+
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
-class CMemory;///
-class COpe;///
 class COpeBlk;///
 class CSplitBoxWnd;///
-class CDlgCancel;///
 class CRegexKeyword;///
 class CAutoMarkMgr; /// 2002/2/3 aroka ヘッダ軽量化 to here
 class CEditDoc;	//	2002/5/13 YAZAKI ヘッダ軽量化
 class CLayout;	//	2002/5/13 YAZAKI ヘッダ軽量化
-class CDocLine;
 class CMigemo;	// 2004.09.14 isearch
+struct SColorStrategyInfo;
+
+// struct DispPos; //	誰かがincludeしてます
+// class CColorStrategy;	// 誰かがincludeしてます
+// enum EColorIndexType;	// 誰かがincludeしてます
+
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -86,8 +89,6 @@ typedef struct tagRECONVERTSTRING {
 ///	@date 2006.05.19 genta
 const int CMD_FROM_MOUSE = 2;
 
-class CEditView;
-struct SColorStrategyInfo;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -382,12 +383,7 @@ public:
 		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 		bool				bRedraw,
 		COpeBlk*			pcOpeBlk
-	)
-	{
-		CLayoutRange sDelRangeLayout;
-		this->m_pcEditDoc->m_cLayoutMgr.LogicToLayout(sDelRange,&sDelRangeLayout);
-		ReplaceData_CEditView(sDelRangeLayout,pcmemCopyOfDeleted,pInsData,nInsDataLen,bRedraw,pcOpeBlk);
-	}
+	);
 	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
 
 	//	Oct. 2, 2005 genta 挿入モードの設定・取得

@@ -1,7 +1,6 @@
 #include "stdafx.h"
-#include "global.h"
-#include "env/CShareData.h"
 #include "CRecentTagjumpKeyword.h"
+#include "env/DLLSHAREDATA.h"
 #include <string.h>
 
 

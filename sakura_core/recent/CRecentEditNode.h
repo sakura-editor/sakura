@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CRecentImp.h"
-#include "env/CShareData.h" //EditNode
+struct EditNode;
 
 //! EditNode(ウィンドウリスト)の履歴を管理 (RECENT_FOR_EDITNODE)
 class CRecentEditNode : public CRecentImp<EditNode>{

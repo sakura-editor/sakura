@@ -17,15 +17,16 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
-#include "global.h"
+//#include "debug/Debug.h" // 2002/2/10 aroka
+//#include "global.h"
 #include "dlg/CDlgWinSize.h"	//	2004.05.13 Moca
 #include "util/shell.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_DispFUNCKEYWND,		HIDC_CHECK_DispFUNCKEYWND,		//ファンクションキー表示
 	IDC_CHECK_DispSTATUSBAR,		HIDC_CHECK_DispSTATUSBAR,		//ステータスバー表示
@@ -60,16 +61,16 @@ static const DWORD p_helpids[] = {	//11200
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_WIN(
+INT_PTR CALLBACK CPropWin::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_WIN, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
+INT_PTR CPropWin::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -96,8 +97,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
-		SetData_PROP_WIN( hwndDlg );
+		/* ダイアログデータの設定 Window */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -120,9 +121,9 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 				OnHelp( hwndDlg, IDD_PROP_WIN );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "p1 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p1 */
-				GetData_PROP_WIN( hwndDlg );
+//				MYTRACE_A( "Window PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 Window */
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -268,7 +269,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 }
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
+void CPropWin::SetData( HWND hwndDlg )
 {
 //	BOOL	bRet;
 
@@ -344,7 +345,7 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
+int CPropWin::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_WIN;
@@ -440,7 +441,7 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 //	From Here Sept. 9, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
-void CPropCommon::EnableWinPropInput( HWND hwndDlg )
+void CPropWin::EnableWinPropInput( HWND hwndDlg )
 {
 	//	ファクションキーを表示するかどうか
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND ) ){

@@ -44,9 +44,10 @@
 #include "convert/convert_util2.h"
 #include "charset/charcode.h"
 
+// ”ñˆË‘¶„§
 #include "window/CEditWnd.h"
 #include "env/CShareData.h"
-#include "doc/CEditDoc.h"
+#include "env/DLLSHAREDATA.h"
 
 
 /*!

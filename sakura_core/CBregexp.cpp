@@ -46,6 +46,7 @@
 #include "CBregexp.h"
 #include "charset/charcode.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと

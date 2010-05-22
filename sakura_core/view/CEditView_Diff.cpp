@@ -36,6 +36,7 @@
 #include "util/file.h"
 #include "window/CEditWnd.h"
 #include "io/CTextStream.h"
+#include "CWriteManager.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	_T("sakura_diff_")
 

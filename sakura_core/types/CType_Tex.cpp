@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "types/CType.h"
+#include "doc/CEditDoc.h"
+#include "doc/CDocLineMgr.h"
 #include "doc/CDocOutline.h"
 #include "outline/CFuncInfoArr.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 
 /* TeX */

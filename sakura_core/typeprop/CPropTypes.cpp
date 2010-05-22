@@ -13,6 +13,7 @@
 	Copyright (C) 2005, MIK, genta, Moca, ryoji
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -20,9 +21,11 @@
 
 #include "StdAfx.h"
 #include "CPropTypes.h"
-#include "util/shell.h"
+#include "CEditApp.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
-//using namespace std;
+#include "util/shell.h"
+#include "sakura_rc.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -57,16 +60,17 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 }
 
 // 各種ダイアログプロシージャ
-#define GEN_PROPTYPES_CALLBACK(FUNC,METHOD) \
+typedef	INT_PTR (CPropTypes::*pDispatchPage)( HWND, UINT, WPARAM, LPARAM );
+#define GEN_PROPTYPES_CALLBACK(FUNC,CLASS) \
 INT_PTR CALLBACK FUNC(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) \
 { \
-	return PropTypesCommonProc(hwndDlg,uMsg,wParam,lParam,&CPropTypes::METHOD); \
+	return PropTypesCommonProc(hwndDlg,uMsg,wParam,lParam,reinterpret_cast<pDispatchPage>(&CLASS::DispatchEvent)); \
 }
-GEN_PROPTYPES_CALLBACK(PropTypesP1Proc,	DispatchEvent_Screen)
-GEN_PROPTYPES_CALLBACK(PropTypesP2Proc,	DispatchEvent_Color)
-GEN_PROPTYPES_CALLBACK(PropTypesP3Proc,	DispatchEvent_Support)
-GEN_PROPTYPES_CALLBACK(PropTypesRegex,	DispatchEvent_Regex)
-GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,DispatchEvent_KeyHelp)
+GEN_PROPTYPES_CALLBACK(PropTypesScreen,		CPropScreen)
+GEN_PROPTYPES_CALLBACK(PropTypesColor,		CPropColor)
+GEN_PROPTYPES_CALLBACK(PropTypesSupport,	CPropSupport)
+GEN_PROPTYPES_CALLBACK(PropTypesRegex,		CPropRegex)
+GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,	CPropKeyHelp)
 
 
 
@@ -93,7 +97,7 @@ CPropTypes::CPropTypes()
 	/* ヘルプファイルのフルパスを返す */
 	m_szHelpFile = CEditApp::Instance()->GetHelpFilePath();
 
-	CPropTypes_Screen();
+	((CPropScreen*)(this))->CPropTypes_Screen();
 }
 
 CPropTypes::~CPropTypes()
@@ -126,7 +130,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROPTYPESP1 );
 	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesP1Proc;
+	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesScreen;
 	psp[nIdx].pszTitle    = _T("スクリーン");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
@@ -138,7 +142,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_COLOR );
 	psp[nIdx].pszIcon     = NULL /*MAKEINTRESOURCE( IDI_BORDER) */;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesP2Proc;
+	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesColor;
 	psp[nIdx].pszTitle    = _T("カラー");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
@@ -151,7 +155,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROPTYPESP2 );
 	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesP3Proc;
+	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesSupport;
 	psp[nIdx].pszTitle    = _T("支援");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
@@ -251,8 +255,6 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 
 
 
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -276,6 +278,3 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 		MyWinHelp( hwndParent, m_szHelpFile, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 }
-
-
-

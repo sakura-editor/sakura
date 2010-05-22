@@ -24,16 +24,18 @@
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"
-#include "env/CShareData.h"
-#include "debug/Debug.h"
 #include "window/CEditWnd.h" // 2002/2/3 aroka
+#include "CGrepAgent.h"
+#include "doc/CEditDoc.h"
 #include "doc/CDocLine.h" // 2003/03/28 MIK
-#include <tchar.h>
+#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 #include "util/window.h"
 #include "util/file.h"
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
+#include "CAppMode.h"
+#include "env/CDocTypeManager.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

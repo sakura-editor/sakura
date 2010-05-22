@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "docplus/CDiffManager.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 #include "types/CTypeSupport.h"
+#include "window/CEditWnd.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CDiffLineGetter                         //

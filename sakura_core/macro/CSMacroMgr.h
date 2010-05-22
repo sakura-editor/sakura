@@ -38,11 +38,11 @@
 #include <wtypes.h> //VARTYPE
 
 #include "CKeyMacroMgr.h"
-#include "env/CShareData.h"
-
-//using namespace std;
+#include "env/DLLSHAREDATA.h"
+#include "config/maxdata.h"
 
 class CEditView;
+
 
 #define TEMP_KEYMACRO	-2	//	一時マクロ（保存ができない）
 #define STAND_KEYMACRO	-1	//	標準マクロ（保存ができる）

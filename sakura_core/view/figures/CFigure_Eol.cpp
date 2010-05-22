@@ -1,7 +1,10 @@
 #include "stdafx.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Eol.h"
-#include "doc/CLayout.h"
 #include "types/CTypeSupport.h"
+#include "doc/CLayout.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 //ê‹ÇËï‘Çµï`âÊ
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);

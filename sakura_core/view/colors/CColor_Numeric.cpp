@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Numeric.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"

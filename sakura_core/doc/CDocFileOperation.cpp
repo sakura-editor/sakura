@@ -1,10 +1,16 @@
 #include "stdafx.h"
 #include "CDocFileOperation.h"
+#include "CDocVisitor.h"
+#include "CEditDoc.h"
+
+#include "CAppMode.h" 
+#include "CEditApp.h"
+#include "window/CEditWnd.h"
 #include "CWaitCursor.h"
 #include "CControlTray.h"
 #include "util/window.h"
+#include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
-#include "doc/CDocVisitor.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

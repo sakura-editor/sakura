@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "StdApi.h"
-#include "charset/charcode.h"
 #include <vector>
+#include "charset/charcode.h"
+#include "COsVersionInfo.h"
 using namespace std;
 
 //デバッグ用。

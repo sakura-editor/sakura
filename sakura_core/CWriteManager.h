@@ -2,6 +2,10 @@
 
 
 #include "doc/CDocListener.h"
+#include "charset/CCodeBase.h"
+
+class CDocLineMgr;
+struct SSaveInfo;
 
 class CWriteManager : public CProgressSubject{
 public:

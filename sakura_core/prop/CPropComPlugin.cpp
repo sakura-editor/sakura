@@ -28,17 +28,17 @@
 */
 
 
-#include "stdafx.h"
-#include <WindowsX.h>
+#include "StdAfx.h"
+//#include <WindowsX.h>
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
-#include "util/string_ex2.h"
+//#include "util/string_ex2.h"
 #include "sakura_rc.h"
-#include "plugin/CPluginManager.h"
+//#include "plugin/CPluginManager.h"
 #include "dlg/CDlgPluginOption.h"	// 2010/3/22 Uchi
+#include "sakura.hh"
 
 //! Popup Help用ID
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//11700
 	IDC_CHECK_PluginEnable,	HIDC_CHECK_PluginEnable,	//プラグインを有効にする
 	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//プラグインリスト
@@ -55,10 +55,10 @@ static const DWORD p_helpids[] = {	//11700
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_PLUGIN(
+INT_PTR CALLBACK CPropPlugin::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc(&CPropCommon::DispatchEvent_PROP_PLUGIN, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
 /*! Pluginページのメッセージ処理
@@ -67,7 +67,7 @@ INT_PTR CALLBACK CPropCommon::DlgProc_PROP_PLUGIN(
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
@@ -80,9 +80,9 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
-		InitDialog_PROP_PLUGIN( hwndDlg );
-		SetData_PROP_PLUGIN( hwndDlg );
+		/* ダイアログデータの設定 Plugin */
+		InitDialog( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -119,8 +119,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 				OnHelp( hwndDlg, IDD_PROP_PLUGIN );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
-				GetData_PROP_PLUGIN( hwndDlg );
+				/* ダイアログデータの取得 Plugin */
+				GetData( hwndDlg );
 				return TRUE;
 			case PSN_SETACTIVE:
 				m_nPageNum = ID_PAGENUM_PLUGIN;
@@ -141,7 +141,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 			switch( wID ){
 			case IDC_PLUGIN_SearchNew:		// 新規プラグインを追加
 				CPluginManager::Instance()->SearchNewPlugin( m_Common, hwndDlg );
-				SetData_PROP_PLUGIN_LIST( hwndDlg );	//リストの再構築
+				SetData_LIST( hwndDlg );	//リストの再構築
 				break;
 			case IDC_CHECK_PluginEnable:	// プラグインを有効にする
 				EnablePluginPropInput( hwndDlg );
@@ -153,7 +153,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 					if( sel >= 0 ){
 						if( MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, to_tchar((m_Common.m_sPlugin.m_PluginTable[sel].m_szName + std::wstring(L" を削除しますか")).c_str()) ) == IDYES ){
 							CPluginManager::Instance()->UninstallPlugin( m_Common, sel );
-							SetData_PROP_PLUGIN_LIST( hwndDlg );
+							SetData_LIST( hwndDlg );
 						}
 					}
 				}
@@ -215,13 +215,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_PLUGIN( HWND hwndDlg, UINT uMsg, WPARAM 
 
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
-void CPropCommon::SetData_PROP_PLUGIN( HWND hwndDlg )
+void CPropPlugin::SetData( HWND hwndDlg )
 {
 	//プラグインを有効にする
 	::CheckDlgButton( hwndDlg, IDC_CHECK_PluginEnable, m_Common.m_sPlugin.m_bEnablePlugin );
 
 	//プラグインリスト
-	SetData_PROP_PLUGIN_LIST( hwndDlg );
+	SetData_LIST( hwndDlg );
 	
 	EnablePluginPropInput( hwndDlg );
 	return;
@@ -232,7 +232,7 @@ void CPropCommon::SetData_PROP_PLUGIN( HWND hwndDlg )
 
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
-void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
+void CPropPlugin::SetData_LIST( HWND hwndDlg )
 {
 	int index;
 	LVITEM sItem;
@@ -325,7 +325,7 @@ void CPropCommon::SetData_PROP_PLUGIN_LIST( HWND hwndDlg )
 
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
-int CPropCommon::GetData_PROP_PLUGIN( HWND hwndDlg )
+int CPropPlugin::GetData( HWND hwndDlg )
 {
 	//プラグインを有効にする
 	m_Common.m_sPlugin.m_bEnablePlugin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PluginEnable );
@@ -341,7 +341,7 @@ int CPropCommon::GetData_PROP_PLUGIN( HWND hwndDlg )
 
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
-void CPropCommon::InitDialog_PROP_PLUGIN( HWND hwndDlg )
+void CPropPlugin::InitDialog( HWND hwndDlg )
 {
 	struct ColumnData {
 		TCHAR *title;
@@ -384,7 +384,7 @@ void CPropCommon::InitDialog_PROP_PLUGIN( HWND hwndDlg )
 
 	@date 2009.12.06 syat 新規作成
 */
-void CPropCommon::EnablePluginPropInput(HWND hwndDlg)
+void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 {
 	if( !::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PluginEnable ) )
 	{

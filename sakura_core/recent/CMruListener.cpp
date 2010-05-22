@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "CMruListener.h"
 #include "doc/CEditDoc.h"
-#include "util/file.h"
+#include "window/CEditWnd.h"
+#include "view/CEditView.h"
 #include "charset/CCodeMediator.h"
+#include "util/file.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        セーブ前後                           //

@@ -35,18 +35,21 @@
 */
 
 #include "stdafx.h"
-#include <windows.h>
+//#include <windows.h>
 #include "CTabWnd.h"
 #include "debug/Debug.h"
 #include "window/CEditWnd.h"
 #include "global.h"
 #include "charset/charcode.h"
+
+#include "env/CShareData.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
-#include "env/CAppNodeManager.h"
+//#include "env/CAppNodeManager.h"
 #include "env/CSakuraEnvironment.h"
+#include "sakura_rc.h"
 
 
 //#if(WINVER >= 0x0500)

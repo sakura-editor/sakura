@@ -128,8 +128,6 @@ VOID CALLBACK EditViewTimerProc(
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#pragma warning(disable:4355) //「thisポインタが初期化リストで使用されました」の警告を無効化
-
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditView::CEditView(CEditWnd* pcEditWnd)
 : CViewCalc(this)
@@ -2067,7 +2065,7 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColmnSelect, bool
 bool CEditView::MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= false*/ )
 {
 	//WCHARに変換
-	vector<wchar_t> buf;
+	std::vector<wchar_t> buf;
 	mbstowcs_vector(pszText,nTextLen,&buf);
 	return MySetClipboardData(&buf[0],buf.size()-1,bColmnSelect,bLineSelect);
 }

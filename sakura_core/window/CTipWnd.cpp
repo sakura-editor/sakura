@@ -18,6 +18,7 @@
 #include "stdafx.h"
 #include "CTipWnd.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 
 /* CTipWndクラス デストラクタ */

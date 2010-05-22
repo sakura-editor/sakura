@@ -4,6 +4,9 @@
 
 #pragma once
 
+// 要先行定義
+// #include "DLLSHAREDATA.h"
+
 #include "util/design_template.h"
 
 //! iniフォルダ設定	// 2007.05.31 ryoji

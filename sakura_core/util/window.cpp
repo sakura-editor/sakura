@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
 
 #define COMPILE_WINDOW_STUBS

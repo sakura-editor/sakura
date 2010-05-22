@@ -1,8 +1,10 @@
 #pragma once
 
 #include "doc/CDocListener.h"
+#include "COpeBuf.h"
 
 class CEditDoc;
+class CDocLineMgr;
 
 class CDocEditor : public CDocListenerEx{
 public:
@@ -54,7 +56,6 @@ public:
 	bool			m_bIsDocModified;
 };
 
-class CDocLineMgr;
 
 class CDocEditAgent{
 public:

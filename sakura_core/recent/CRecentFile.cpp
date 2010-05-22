@@ -1,8 +1,7 @@
 #include "stdafx.h"
-#include "global.h"
-#include "env/CShareData.h"
 #include "recent/CRecentFile.h"
 #include <string.h>
+#include "env/DLLSHAREDATA.h"
 
 
 /*

@@ -14,14 +14,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "util/shell.h"
 #include "CBregexp.h"	// 2007.08/12 genta バージョン取得
+#include "util/shell.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10500
 	IDC_EDIT_REGEXPLIB,				HIDC_EDIT_REGEXPLIB,	//正規表現ライブラリ選択	// 2007.09.02 genta
 	IDC_LABEL_REGEXP,				HIDC_EDIT_REGEXPLIB,
@@ -34,15 +34,6 @@ static const DWORD p_helpids[] = {	//10500
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10500
-	IDC_CHECK_bGrepExitConfirm,		10510,	//GREPの保存確認
-	IDC_CHECK_GTJW_RETURN,			10511,	//タグジャンプ（エンターキー）
-	IDC_CHECK_GTJW_LDBLCLK,			10512,	//タグジャンプ（ダブルクリック）
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -52,15 +43,15 @@ static const DWORD p_helpids[] = {	//10500
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_GREP(
+INT_PTR CALLBACK CPropGrep::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_GREP, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 //	WORD		wNotifyCode;
 //	WORD		wID;
@@ -74,8 +65,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
-		SetData_PROP_GREP( hwndDlg );
+		/* ダイアログデータの設定 Grep */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -93,8 +84,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 				OnHelp( hwndDlg, IDD_PROP_GREP );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
-				GetData_PROP_GREP( hwndDlg );
+				/* ダイアログデータの取得 Grep */
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -135,7 +126,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
+void CPropGrep::SetData( HWND hwndDlg )
 {
 	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_sSearch.m_bCaretTextForSearch );
@@ -165,7 +156,7 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
+int CPropGrep::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_GREP;
@@ -191,7 +182,7 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 	return TRUE;
 }
 
-void CPropCommon::SetRegexpVersion( HWND hwndDlg )
+void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 {
 	TCHAR regexp_dll[_MAX_PATH];
 	

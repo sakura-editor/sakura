@@ -27,6 +27,8 @@
 #include "util/shell.h"
 #include "CBregexp.h"
 #include "util/os.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
@@ -300,7 +302,6 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 /* ダイアログデータの設定 */
 void CDlgGrep::SetData( void )
 {
-	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 検索文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
@@ -444,7 +445,6 @@ void CDlgGrep::SetData( void )
 /* TRUE==正常  FALSE==入力エラー  */
 int CDlgGrep::GetData( void )
 {
-	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* サブフォルダからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_SUBFOLDER );

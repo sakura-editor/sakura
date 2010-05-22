@@ -29,12 +29,16 @@
 #include "stdafx.h"
 #include "func/Funccode.h"
 #include "sakura.hh"
-#include "recent/CMRU.h" //MAX_MRU
+#include "config/maxdata.h" //MAX_MRU
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "doc/CEditDoc.h"
+#include "CAppMode.h"
+#include "CEditApp.h"
 #include "macro/CSMacroMgr.h"
-#include "CMarkMgr.h"
 #include "window/CEditWnd.h"
+#include "docplus/CDiffManager.h"
+#include "CMarkMgr.h"	// CAutoMarkMgr
 
 //using namespace nsFuncCode;
 

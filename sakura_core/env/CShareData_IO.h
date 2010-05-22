@@ -1,5 +1,12 @@
 #pragma once
 
+#include "doc/CDocTypeSetting.h" // ColorInfo typedef‚³‚ê‚Ä‚¢‚é
+
+class CDataProfile;
+struct CommonSetting_CustomMenu; // defined CommonSetting.h
+struct KEYDATA; // defined CKeyBind.h
+// struct ColorInfo; // defined doc/CDocTypeSetting.h
+
 // 2008.XX.XX kobake CShareData‚©‚ç•ª—£
 // 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move ExportAImport‚Ég—p
 class CShareData_IO{

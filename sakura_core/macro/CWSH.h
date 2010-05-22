@@ -19,12 +19,7 @@
 #ifndef __WSH_H__
 #define __WSH_H__
 
-#include <vector>
-//#include <windows.h>
-//#include <winreg.h>
-//#include <objbase.h>
-//#include <initguid.h>
-#include "activscp.h"
+#include <activscp.h>
 //Å™Microsoft Platform SDK ÇÊÇË
 #include "macro/CIfObj.h"
 

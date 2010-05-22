@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "types/CType.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 
 /* İ’èƒtƒ@ƒCƒ‹ */

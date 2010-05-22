@@ -15,16 +15,18 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CMenuDrawer;
 
 #ifndef _CMENUDRAWER_H_
 #define _CMENUDRAWER_H_
 
+class CMenuDrawer;
+
 #include <windows.h>
 #include <vector>
-#include "env/CShareData.h" // MAX_TOOLBARBUTTONS
-#include "mem/CMemory.h"// 2002/2/10 aroka
+#include "mem/CNative.h"// 2002/2/10 aroka
+
 class CImageListMgr;// 2002/2/10 aroka
+struct DLLSHAREDATA;
 
 //#define MAX_MENUPOS	10
 //	Jul. 2, 2005 genta : É}ÉNÉçÇÇΩÇ≠Ç≥ÇÒìoò^Ç∑ÇÈÇ∆è„å¿Çí¥Ç¶ÇƒÇµÇ‹Ç§ÇÃÇ≈

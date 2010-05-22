@@ -22,6 +22,10 @@
 #define _GLOBAL_H_
 
 //////////////////////////////////////////////////////////////
+#ifndef STRICT
+#define STRICT
+#endif
+
 #include <windows.h>
 #include <tchar.h>
 
@@ -43,21 +47,13 @@
 #endif	//SAKURA_NO_DLL
 
 #if defined(__BORLANDC__)
-#define __forceinline
+#define __forceinline inline
 #define _itoa itoa
 #define _stricmp stricmp
 #define _memicmp memicmp
-#ifndef __max
-#define __max(a,b)  (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef __min
-#define __min(a,b)  (((a) < (b)) ? (a) : (b))
-#endif
 #define __access access
-#ifndef STRICT
-#define STRICT
 #endif
-#endif
+
 
 
 

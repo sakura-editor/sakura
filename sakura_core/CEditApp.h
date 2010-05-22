@@ -3,19 +3,18 @@
 #pragma once
 
 #include "util/design_template.h"
+class CEditDoc;
 class CEditWnd;
-class CPropertyManager;
+class CLoadAgent;
+class CSaveAgent;
+class CVisualProgress;
 class CMruListener;
+class CSMacroMgr;
+class CPropertyManager;
+class CGrepAgent;
 enum EFunctionCode;
-#include "doc/CEditDoc.h"
-#include "CImageListMgr.h"
-#include "CPropertyManager.h"
-#include "macro/CSMacroMgr.h"
-#include "CGrepAgent.h"
 #include "CSoundSet.h"
-#include "CSaveAgent.h"
-#include "CLoadAgent.h"
-#include "CVisualProgress.h"
+#include "CImageListMgr.h"
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
 // 2007.10.30 kobake OnHelp_MenuItemをCEditWndから持ってきた

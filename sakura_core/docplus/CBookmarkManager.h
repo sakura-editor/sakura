@@ -1,6 +1,11 @@
 #pragma once
 
 class CDocLine;
+class CDocLineMgr;
+class CBregexp;
+
+#include "global.h" // ESearchDirection, SSearchOption
+
 
 //! 行に付加するブックマーク情報
 class CLineBookmarked{

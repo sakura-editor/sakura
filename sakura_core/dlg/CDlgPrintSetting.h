@@ -17,6 +17,7 @@ class CDlgPrintSetting;
 #define _CDLGPRINTSETTING_H_
 
 #include "dlg/CDialog.h"
+#include "config/maxdata.h" // MAX_PRINTSETTINGARR
 #include "CPrint.h" //PRINTSETTING
 
 /*!	印刷設定ダイアログ

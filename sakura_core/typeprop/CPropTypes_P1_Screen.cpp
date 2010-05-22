@@ -5,12 +5,15 @@
 */
 #include "StdAfx.h"
 #include "CPropTypes.h"
-#include "sakura.hh"
+#include <windowsx.h> //Edit_LimitText
+#include "dlg/CDlgOpenFile.h"
 #include "util/module.h"
 #include "util/shell.h"
-#include <windowsx.h> //Edit_LimitText
 #include "util/window.h"
+//#include "util/file.h" // _IS_REL_PATH
 //#include "types/CType.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 static const DWORD p_helpids1[] = {	//11300
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//âpï∂ÉèÅ[ÉhÉâÉbÉv
@@ -114,7 +117,7 @@ std::vector<TYPE_NAME<EOutlineType>> CPropTypes::m_OlmArr;	//!<ÉAÉEÉgÉâÉCÉìâêÕÉ
 std::vector<TYPE_NAME<ESmartIndentType>> CPropTypes::m_SIndentArr;	//!<ÉXÉ}Å[ÉgÉCÉìÉfÉìÉgÉãÅ[ÉãîzóÒ
 
 //ÉXÉNÉäÅ[ÉìÉ^ÉuÇÃèâä˙âª
-void CPropTypes::CPropTypes_Screen()
+void CPropScreen::CPropTypes_Screen()
 {
 	//ÉvÉâÉOÉCÉìñ≥å¯ÇÃèÍçáÅAÇ±Ç±Ç≈ê√ìIÉÅÉìÉoÇèâä˙âªÇ∑ÇÈÅBÉvÉâÉOÉCÉìóLå¯ÇÃèÍçáÇÕAddXXXMethodì‡Ç≈èâä˙âªÇ∑ÇÈÅB
 	if( m_OlmArr.empty() ){
@@ -125,8 +128,8 @@ void CPropTypes::CPropTypes_Screen()
 	}
 }
 
-/* p1 ÉÅÉbÉZÅ[ÉWèàóù */
-INT_PTR CPropTypes::DispatchEvent_Screen(
+/* Screen ÉÅÉbÉZÅ[ÉWèàóù */
+INT_PTR CPropScreen::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -144,8 +147,8 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 
 	case WM_INITDIALOG:
 		m_hwndThis = hwndDlg;
-		/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃê›íË p1 */
-		SetData_p1( hwndDlg );
+		/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃê›íË Screen */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -315,8 +318,8 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 				OnHelp( hwndDlg, IDD_PROPTYPESP1 );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃéÊìæ p1 */
-				GetData_p1( hwndDlg );
+				/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃéÊìæ Screen */
+				GetData( hwndDlg );
 
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI ç≈å„Ç…ï\é¶ÇµÇƒÇ¢ÇΩÉVÅ[ÉgÇê≥ÇµÇ≠äoÇ¶ÇƒÇ¢Ç»Ç¢ÉoÉOèCê≥
@@ -358,8 +361,8 @@ INT_PTR CPropTypes::DispatchEvent_Screen(
 
 
 
-/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃê›íË p1 */
-void CPropTypes::SetData_p1( HWND hwndDlg )
+/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃê›íË Screen */
+void CPropScreen::SetData( HWND hwndDlg )
 {
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );	//ê›íËÇÃñºëO
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );	//ÉtÉ@ÉCÉãägí£éq
@@ -522,8 +525,8 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 
 
 
-/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃéÊìæ p1 */
-int CPropTypes::GetData_p1( HWND hwndDlg )
+/* É_ÉCÉAÉçÉOÉfÅ[É^ÇÃéÊìæ Screen */
+int CPropScreen::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI ç≈å„Ç…ï\é¶ÇµÇƒÇ¢ÇΩÉVÅ[ÉgÇê≥ÇµÇ≠äoÇ¶ÇƒÇ¢Ç»Ç¢ÉoÉOèCê≥
 //	m_nPageNum = 0;
@@ -674,7 +677,7 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 }
 
 //ÉAÉEÉgÉâÉCÉìâêÕÉãÅ[ÉãÇÃí«â¡
-void CPropTypes::AddOutlineMethod(int nMethod, const WCHAR* szName)
+void CPropScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 {
 	if( m_OlmArr.empty() ){
 		m_OlmArr.insert(m_OlmArr.end(), OlmArr, &OlmArr[_countof(OlmArr)]);	//ÉAÉEÉgÉâÉCÉìâêÕÉãÅ[Éã
@@ -688,7 +691,7 @@ void CPropTypes::AddOutlineMethod(int nMethod, const WCHAR* szName)
 }
 
 //ÉXÉ}Å[ÉgÉCÉìÉfÉìÉgÉãÅ[ÉãÇÃí«â¡
-void CPropTypes::AddSIndentMethod(int nMethod, const WCHAR* szName)
+void CPropScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
 {
 	if( m_SIndentArr.empty() ){
 		m_SIndentArr.insert(m_SIndentArr.end(), SmartIndentArr, &SmartIndentArr[_countof(SmartIndentArr)]);	//ÉXÉ}Å[ÉgÉCÉìÉfÉìÉgÉãÅ[Éã

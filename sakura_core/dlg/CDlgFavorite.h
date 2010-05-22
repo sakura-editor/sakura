@@ -36,6 +36,7 @@ class CDlgFavorite;
 #define	_CDLGFAVORITE_H_
 
 #include "dlg/CDialog.h"
+#include "recent/CRecentFile.h"
 
 //!「履歴の管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]

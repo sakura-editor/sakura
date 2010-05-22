@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "CTextArea.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "CViewFont.h"
 #include "view/CEditView.h"
-#include "doc/CEditDoc.h"
 #include "view/colors/CColorStrategy.h"
+#include "doc/CEditDoc.h"
 
 CTextArea::CTextArea(CEditView* pEditView)
 : m_pEditView(pEditView)

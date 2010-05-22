@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include <windows.h>
+#include <ole2.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
 #include "debug/CRunningTimer.h"

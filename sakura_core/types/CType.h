@@ -1,10 +1,11 @@
 #pragma once
 
 #include "doc/CDocTypeSetting.h"
-#include "config/maxdata.h" //MAX_REGEX_KEYWORD
 #include "doc/CLineComment.h"
 #include "doc/CBlockComment.h"
 #include "charset/charset.h"  // ECodeType
+#include "CRegexKeyword.h"	// RegexKeywordInfo
+
 
 /* アウトライン解析の種類 */
 SAKURA_CORE_API enum EOutlineType{

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "io/CFile.h"
+#include "window/CEditWnd.h" // •ÏX—\’è
 #include <io.h>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

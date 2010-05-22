@@ -23,6 +23,8 @@
 */
 #include "stdafx.h"
 #include "macro/CSMacroMgr.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "view/CEditView.h"
 #include "CPPAMacroMgr.h"
 #include "CWSHManager.h"

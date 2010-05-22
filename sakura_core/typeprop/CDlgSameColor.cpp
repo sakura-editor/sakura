@@ -29,11 +29,12 @@
 */
 
 #include "StdAfx.h"
-#include "sakura_rc.h"
-#include "sakura.hh"
 #include "CDlgSameColor.h"
 #include "util/shell.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_SAMECOLOR,						// OK

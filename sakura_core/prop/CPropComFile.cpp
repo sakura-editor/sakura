@@ -14,16 +14,15 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "util/window.h"
-
-
-//@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
+#include "sakura_rc.h"
 #include "sakura.hh"
+
+
 static const DWORD p_helpids[] = {	//01310
 	IDC_CHECK_EXCVLUSIVE_NO,				HIDC_CHECK_EXCVLUSIVE_NO,				//ファイルの排他制御（排他制御しない）
 	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
@@ -47,27 +46,6 @@ static const DWORD p_helpids[] = {	//01310
 //	IDC_STATIC,								-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//01310
-	IDC_CHECK_EXCVLUSIVE_NO,				10310,	//ファイルの排他制御（排他制御しない）
-	IDC_CHECK_bCheckFileTimeStamp,			10311,	//更新の監視
-	IDC_CHECK_EXCVLUSIVE_WRITE,				10312,	//ファイルの排他制御（上書き禁止）
-	IDC_CHECK_EXCVLUSIVE_READWRITE,			10313,	//ファイルお排他制御（読み書き禁止）
-	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	10314,	//無変更でも上書き
-	IDC_CHECK_AUTOSAVE,						10315,	//自動的に保存
-	IDC_CHECK_bDropFileAndClose,			10316,	//閉じて開く
-	IDC_CHECK_RestoreCurPosition,			10317,	//カーソル位置の復元
-	IDC_CHECK_AutoMIMEDecode,				10318,	//MIMEデコード
-	IDC_EDIT_AUTOBACKUP_INTERVAL,			10340,	//自動保存間隔
-	IDC_EDIT_nDropFileNumMax,				10341,	//ファイルドロップ最大数
-	IDC_CHECK_RestoreBookmarks				10342,	// 2002.01.16 hor ブックマークの復元
-	IDC_SPIN_AUTOBACKUP_INTERVAL,			-1,
-	IDC_SPIN_nDropFileNumMax,				-1,
-//	IDC_STATIC,								-1,
-	0, 0
-};
-#endif
-//@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
 /*!
@@ -76,15 +54,15 @@ static const DWORD p_helpids[] = {	//01310
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FILE(
+INT_PTR CALLBACK CPropFile::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p2, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /*! ファイルページ メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p2(
+INT_PTR CPropFile::DispatchEvent(
 	HWND	hwndDlg,	//!< handle to dialog box
 	UINT	uMsg,	//!< message
 	WPARAM	wParam,	//!< first message parameter
@@ -103,8 +81,8 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p2 */
-		SetData_p2( hwndDlg );
+		/* ダイアログデータの設定 File */
+		SetData( hwndDlg );
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		return TRUE;
@@ -139,9 +117,9 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 				OnHelp( hwndDlg, IDD_PROP_FILE );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "p2 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p2 */
-				GetData_p2( hwndDlg );
+//				MYTRACE_A( "File PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 File */
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -265,9 +243,9 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 
 	@param hwndDlg プロパティページのWindow Handle
 */
-void CPropCommon::SetData_p2( HWND hwndDlg )
+void CPropFile::SetData( HWND hwndDlg )
 {
-	/*--- p2 ---*/
+	/*--- File ---*/
 	/* ファイルの排他制御モード */
 	switch( m_Common.m_sFile.m_nFileShareMode ){
 	case SHAREMODE_DENY_WRITE:	/* 書き込み禁止 */
@@ -338,7 +316,7 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	@param hwndDlg プロパティページのWindow Handle
 	@return 常にTRUE
 */
-int CPropCommon::GetData_p2( HWND hwndDlg )
+int CPropFile::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_FILE;
@@ -431,7 +409,7 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 
 	@param hwndDlg プロパティシートのWindow Handle
 */
-void CPropCommon::EnableFilePropInput(HWND hwndDlg)
+void CPropFile::EnableFilePropInput(HWND hwndDlg)
 {
 
 	//	Drop時の動作

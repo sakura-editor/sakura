@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "types/CType.h"
 #include "doc/CDocOutline.h"
+#include "doc/CEditDoc.h"
 #include "outline/CFuncInfoArr.h"
 
 /* PL/SQL */

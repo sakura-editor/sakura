@@ -4,8 +4,8 @@
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 
-#include "window/CEditWnd.h"
-#include "env/CShareData.h"
+// ”ñˆË‘¶„§
+#include "doc/CEditDoc.h"
 
 
 

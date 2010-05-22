@@ -1,8 +1,16 @@
 #include "stdafx.h"
 #include "CLoadAgent.h"
+#include "CReadManager.h"
 #include "CControlTray.h"
-#include "util/file.h"
+#include "CEditApp.h"
 #include "CAppMode.h"
+#include "env/CDocTypeManager.h"
+#include "env/CShareData.h"
+#include "doc/CEditDoc.h"
+#include "view/CEditView.h"
+#include "window/CEditWnd.h"
+#include "CVisualProgress.h"
+#include "util/file.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {

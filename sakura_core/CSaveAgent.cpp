@@ -1,8 +1,16 @@
 #include "stdafx.h"
+#include "doc/CDocListener.h" // êeÉNÉâÉX
 #include "CSaveAgent.h"
+#include "doc/CEditDoc.h"
 #include "doc/CDocVisitor.h"
+#include "window/CEditWnd.h"
+#include "CVisualProgress.h"
+#include "CWriteManager.h"
 #include "CWaitCursor.h"
 #include "io/CBinaryStream.h"
+#include "CEditApp.h"
+#include "CAppMode.h"
+#include "env/CShareData.h"
 
 CSaveAgent::CSaveAgent()
 {

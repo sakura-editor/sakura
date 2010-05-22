@@ -19,20 +19,24 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
+#include "CDataProfile.h"
+#include "env/CShareData.h"
+#include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
+//#include <stdio.h>	/// 2002/2/3 aroka from here
 //#include "dlg/CDlgOpenFile.h"
 //#include "macro/CSMacroMgr.h" // 2002/2/10 aroka
-#include "debug/Debug.h" ///
-//#include <stdio.h>	/// 2002/2/3 aroka from here
 //#include "io/CTextStream.h"
 //#include "CDataProfile.h"
+//#include "env/CShareData_IO.h"
 //#include "charset/charcode.h"
+// #include "doc/CDocLineter.h" // 暫定：SLoadInfo, SSaveInfo 
 #include "util/shell.h"
 //#include "util/file.h"
 //#include "util/string_ex2.h"
-//#include "env/CShareData_IO.h"
-#include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
+#include "debug/Debug.h" /// 2002/2/3 aroka
+#include "sakura_rc.h"
+#include "sakura.hh"
 
-using namespace std;
 
 //const wchar_t STR_KEYDATA_HEAD2[] = L"// テキストエディタキー設定 Ver2";	// (旧バージョン） 読み込みのみ対応 2008/5/3 by Uchi
 //const wchar_t WSTR_KEYDATA_HEAD[] = L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
@@ -43,8 +47,6 @@ using namespace std;
 #define STR_ALT_PLUS          _T("Alt+")  //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10700
 	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT_KEYBIND,		//インポート
 	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT_KEYBIND,		//エクスポート
@@ -67,30 +69,6 @@ static const DWORD p_helpids[] = {	//10700
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10700
-	IDC_BUTTON_IMPORT,				10700,	//インポート
-	IDC_BUTTON_EXPORT,				10701,	//エクスポート
-	IDC_BUTTON_ASSIGN,				10702,	//キー割り当て
-	IDC_BUTTON_RELEASE,				10703,	//キー解除
-	IDC_CHECK_SHIFT,				10710,	//Shiftキー
-	IDC_CHECK_CTRL,					10711,	//Ctrlキー
-	IDC_CHECK_ALT,					10712,	//Altキー
-	IDC_COMBO_FUNCKIND,				10730,	//機能の種別
-	IDC_EDIT_KEYSFUNC,				10740,	//キーに割り当てられている機能
-	IDC_LIST_FUNC,					10750,	//機能一覧
-	IDC_LIST_KEY,					10751,	//キー一覧
-	IDC_LIST_ASSIGNEDKEYS,			10752,	//機能に割り当てられているキー
-	IDC_LABEL_MENUFUNCKIND,			-1,
-	IDC_LABEL_MENUFUNC,				-1,
-	IDC_LABEL_KEYKIND,				-1,
-	IDC_LABEL_FUNCtoKEY,			-1,
-	IDC_LABEL_KEYtoFUNC,			-1,
-	IDC_CHECK_ACCELTBL_EACHWIN,		10760,	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -100,10 +78,10 @@ static const DWORD p_helpids[] = {	//10700
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_KEYBIND(
+INT_PTR CALLBACK CPropKeybind::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p5, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
@@ -129,8 +107,8 @@ LRESULT CALLBACK CPropComKeybindWndProc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 
 
 
-/* p5 メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p5(
+/* Keybind メッセージ処理 */
+INT_PTR CPropKeybind::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -165,8 +143,8 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p5 */
-		SetData_p5( hwndDlg );
+		/* ダイアログデータの設定 Keybind */
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -203,9 +181,9 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 			OnHelp( hwndDlg, IDD_PROP_KEYBIND );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE_A( "p5 PSN_KILLACTIVE\n" );
-			/* ダイアログデータの取得 p5 */
-			GetData_p5( hwndDlg );
+//			MYTRACE_A( "Keybind PSN_KILLACTIVE\n" );
+			/* ダイアログデータの取得 Keybind */
+			GetData( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -238,12 +216,12 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_BUTTON_IMPORT:	/* インポート */
-				/* p5:キー割り当て設定をインポートする */
-				p5_Import_KeySetting( hwndDlg );
+				/* Keybind:キー割り当て設定をインポートする */
+				Import( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_EXPORT:	/* エクスポート */
-				/* p5:キー割り当て設定をエクスポートする */
-				p5_Export_KeySetting( hwndDlg );
+				/* Keybind:キー割り当て設定をエクスポートする */
+				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_ASSIGN:	/* 割付 */
 				nIndex = ::SendMessageAny( hwndKeyList, LB_GETCURSEL, 0, 0 );
@@ -296,7 +274,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 		){
 			switch( wNotifyCode ){
 			case BN_CLICKED:
-				p5_ChangeKeyList( hwndDlg );
+				ChangeKeyList( hwndDlg );
 
 				return TRUE;
 			}
@@ -410,7 +388,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 								::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 
 								// キー一覧の文字列も変更
-								p5_ChangeKeyList( hwndDlg );
+								ChangeKeyList( hwndDlg );
 								break;
 							}
 						}
@@ -464,8 +442,8 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 
 
 
-/* ダイアログデータの設定 p5 */
-void CPropCommon::SetData_p5( HWND hwndDlg )
+/* ダイアログデータの設定 Keybind */
+void CPropKeybind::SetData( HWND hwndDlg )
 {
 	HWND		hwndCombo;
 	HWND		hwndKeyList;
@@ -492,8 +470,8 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 p5 */
-int CPropCommon::GetData_p5( HWND hwndDlg )
+/* ダイアログデータの取得 Keybind */
+int CPropKeybind::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_KEYBOARD;
@@ -502,8 +480,9 @@ int CPropCommon::GetData_p5( HWND hwndDlg )
 
 	return TRUE;
 }
-/*! p5: キーリストをチェックボックスの状態に合わせて更新する */
-void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
+	
+/*! Keybind: キーリストをチェックボックスの状態に合わせて更新する */
+void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	HWND	hwndKeyList;
 	int 	nIndex;
 	int 	nIndexTop;
@@ -539,8 +518,8 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 }
 
-/* p5:キー割り当て設定をインポートする */
-void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
+/* Keybind:キー割り当て設定をインポートする */
+void CPropKeybind::Import( HWND hwndDlg )
 {
 //	CDlgOpenFile	cDlgOpenFile;
 //	TCHAR			szPath[_MAX_PATH + 1];
@@ -673,7 +652,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 //	m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrNum;
 //	memcpy_raw( m_Common.m_sKeyBind.m_pKeyNameArr, pKeyNameArr, sizeof_raw( pKeyNameArr ) );
 //
-//	// ダイアログデータの設定 p5
+//	// ダイアログデータの設定 Keybind
 //	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
 //	HWND			hwndCtrl;
 //	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
@@ -690,7 +669,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		return;
 	}
 
-	// ダイアログデータの設定 p5
+	// ダイアログデータの設定 Keybind
 	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
 	HWND			hwndCtrl;
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
@@ -701,8 +680,8 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 }
 
 
-/* p5:キー割り当て設定をエクスポートする */
-void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
+/* Keybind:キー割り当て設定をエクスポートする */
+void CPropKeybind::Export( HWND hwndDlg )
 {
 //	CDlgOpenFile	cDlgOpenFile;
 //	TCHAR			szPath[_MAX_PATH + 1];

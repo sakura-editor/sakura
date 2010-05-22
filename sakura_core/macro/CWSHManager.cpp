@@ -35,6 +35,7 @@
 #include "macro/CWSHManager.h"
 #include "macro/CWSH.h"
 #include "macro/CEditorIfObj.h"
+#include "view/CEditView.h"
 #include "io/CTextStream.h"
 #include "util/os.h"
 #include "macro/CMacroFactory.h"

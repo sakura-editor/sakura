@@ -10,6 +10,10 @@
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
 
+// ”ñˆË‘¶„§
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       Šeí”»’è’è”                          //

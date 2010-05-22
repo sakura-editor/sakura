@@ -1,11 +1,18 @@
 #include "stdafx.h"
-#include "env/CSakuraEnvironment.h"
-#include "util/string_ex2.h"
+#include "CSakuraEnvironment.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "env/CFormatManager.h"
+#include "env/CFileNameManager.h"
+#include "CAppMode.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "CPrintPreview.h"
-#include "util/module.h" //GetAppVersionInfo
 #include "macro/CSMacroMgr.h"
+#include "CEditApp.h"
+#include "CGrepAgent.h"
+#include "util/string_ex2.h"
+#include "util/module.h" //GetAppVersionInfo
 #include "util/shell.h"
 
 CEditWnd* CSakuraEnvironment::GetMainWindow()

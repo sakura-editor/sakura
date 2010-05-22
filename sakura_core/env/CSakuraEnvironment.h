@@ -2,6 +2,8 @@
 
 #include <string>
 
+class CEditWnd;
+
 class CSakuraEnvironment{
 public:
 	static CEditWnd* GetMainWindow();

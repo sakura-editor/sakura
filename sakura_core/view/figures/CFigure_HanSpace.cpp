@@ -1,4 +1,6 @@
 #include "stdafx.h"
+#include "view/CEditView.h" // SColorStrategyInfo
+
 #include "CFigure_HanSpace.h"
 #include "types/CTypeSupport.h"
 

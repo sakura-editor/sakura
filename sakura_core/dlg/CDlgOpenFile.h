@@ -17,15 +17,19 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgOpenFile;
-
 #ifndef _CDLGOPENFILE_H_
 #define _CDLGOPENFILE_H_
 
+class CDlgOpenFile;
+
 #include <windows.h>
-#include "env/CShareData.h"
+#include <vector>
 #include "CEol.h"
 #include "COsVersionInfo.h"	// 2005.11.02 ryoji
+
+struct DLLSHAREDATA;
+struct SLoadInfo;	// doc/CDocListener.h
+struct SSaveInfo;	// doc/CDocListener.h
 
 // 2005.10.29 ryoji
 // Windows 2000 version of OPENFILENAME.

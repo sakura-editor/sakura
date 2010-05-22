@@ -3,6 +3,8 @@
 */
 
 #include "stdafx.h"
+#include "env/DLLSHAREDATA.h"
+
 #include "CTagJumpManager.h"
 
 

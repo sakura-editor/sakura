@@ -30,20 +30,23 @@
 */
 
 #include "StdAfx.h"
-//#include "global.h"
-#include "sakura_rc.h"
-//#include "types/CPropTypes.h"
-#include "debug/Debug.h"
-//#include "dlg/CDlgOpenFile.h"
 //#include <stdio.h>	//@@@ 2001.11.17 add MIK
+#include "CPropTypes.h"
+#include "CDataProfile.h"
+#include "env/CShareData.h"
+#include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
+//#include "global.h"
+//#include "env/DLLSHAREDATA.h"
+#include "dlg/CDlgOpenFile.h"
 //#include "charset/charcode.h"
-#include "sakura.hh"
 #include "charset/CharPointer.h"
 #include "io/CTextStream.h"
 #include "util/shell.h"
 //#include "util/file.h"
 #include "util/module.h"
-#include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
+#include "debug/Debug.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 using namespace std;
 
@@ -76,7 +79,7 @@ static TCHAR* GetFileName(const TCHAR *fullpath);
 
 	@date 2006.04.10 fon 新規作成
 */
-INT_PTR CPropTypes::DispatchEvent_KeyHelp(
+INT_PTR CPropKeyHelp::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -130,7 +133,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
 		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
-		SetData_KeyHelp( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
+		SetData( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
 
 		/* リストがあれば先頭をフォーカスする */
 		if(ListView_GetItemCount(hwndList) > 0){
@@ -291,7 +294,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 				/* 更新したキーを選択する。 */
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_DEL:	/* 削除 */
@@ -311,7 +314,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				else{
 					ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				}
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_TOP:	/* 先頭 */
@@ -345,7 +348,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_LAST:	/* 最終 */
@@ -379,7 +382,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_UP:	/* 上へ */
@@ -415,7 +418,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_DOWN:	/* 下へ */
@@ -451,7 +454,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
@@ -474,12 +477,12 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_IMPORT:	/* インポート */
-				Import_KeyHelp(hwndDlg);
+				Import(hwndDlg);
 				m_Types.m_nKeyHelpNum = ListView_GetItemCount( hwndList );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_EXPORT:	/* エクスポート */
-				Export_KeyHelp(hwndDlg);
+				Export(hwndDlg);
 				return TRUE;
 			}
 			break;
@@ -497,7 +500,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 辞書ファイルリスト */
-			GetData_KeyHelp( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 
 		case PSN_SETACTIVE:
@@ -538,7 +541,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 	@date 2006.04.10 fon 新規作成
 */
-void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
+void CPropKeyHelp::SetData( HWND hwndDlg )
 {
 	HWND	hwndWork;
 	int		i;
@@ -608,7 +611,7 @@ void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-int CPropTypes::GetData_KeyHelp( HWND hwndDlg )
+int CPropKeyHelp::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i;
@@ -662,7 +665,7 @@ int CPropTypes::GetData_KeyHelp( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
+bool CPropKeyHelp::Import(HWND hwndDlg)
 {
 //	CDlgOpenFile	cDlgOpenFile;
 //	TCHAR			szPath[_MAX_PATH + 1]=_T("");
@@ -782,15 +785,15 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 	CImpExpKeyHelp	cImpExpKeyHelp( m_Types, GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ) );
 
 	// インポート
-	GetData_KeyHelp( hwndDlg );	// ???
+	GetData( hwndDlg );
 
 	if (!cImpExpKeyHelp.ImportUI(m_hInstance, hwndDlg)) {
 		// インポートをしていない
-		return FALSE;
+		return false;
 	}
-	SetData_KeyHelp(hwndDlg);	// ???
+	SetData( hwndDlg );
 
-	return TRUE;
+	return true;
 }
 
 
@@ -798,7 +801,7 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 
 	@date 2006.04.10 fon 新規作成
 */
-BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
+bool CPropKeyHelp::Export(HWND hwndDlg)
 {
 //	/* ファイルオープンダイアログの初期化 */
 //	CDlgOpenFile	cDlgOpenFile;
@@ -845,12 +848,7 @@ BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 	CImpExpKeyHelp	cImpExpKeyHelp( m_Types, GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ) );
 
 	// エクスポート
-	if (!cImpExpKeyHelp.ExportUI(m_hInstance, hwndDlg)) {
-		// エクスポートをしていない
-		return FALSE;
-	}
-
-	return TRUE;
+	return cImpExpKeyHelp.ExportUI(m_hInstance, hwndDlg);
 }
 
 

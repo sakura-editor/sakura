@@ -1,8 +1,7 @@
 #include "stdafx.h"
-#include "global.h"
-#include "env/CShareData.h"
-#include "CRecentGrepFolder.h"
 #include <string.h>
+#include "CRecentGrepFolder.h"
+#include "env/DLLSHAREDATA.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

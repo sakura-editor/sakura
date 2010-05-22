@@ -3,7 +3,8 @@
 #include "charset/CharPointer.h"
 #include "util/module.h"
 #include "env/CShareData.h"
-#include <io.h>
+#include "env/DLLSHAREDATA.h"
+#include <io.h>  // access
 #include <string.h>
 #include "charset/charcode.h"
 

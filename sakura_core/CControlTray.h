@@ -22,20 +22,17 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CControlTray;
-
 #ifndef _CEDITAPP_H_
 #define _CEDITAPP_H_
 
-
-
-
-
 #include <windows.h>
-#include "env/CShareData.h"
 #include "CMenuDrawer.h"
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2002/2/10 aroka
+
+struct SLoadInfo;
+struct EditInfo;
+struct DLLSHAREDATA;
 
 //!	í’“•”‚ÌŠÇ—
 /*!

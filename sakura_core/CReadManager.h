@@ -1,7 +1,10 @@
 #pragma once
 
-#include "doc/CDocListener.h"
+#include "doc/CDocListener.h" // CProgressSubject
+#include "charset/CCodeBase.h" // EConvertResult
+
 class CDocLineMgr;
+struct SFileInfo; // doc/CDocFile.h
 
 class CReadManager : public CProgressSubject{
 public:

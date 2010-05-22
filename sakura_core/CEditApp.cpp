@@ -1,13 +1,18 @@
 #include "stdafx.h"
 #include "CEditApp.h"
-#include "util/module.h"
+#include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
+#include "CLoadAgent.h"
+#include "CSaveAgent.h"
+#include "CVisualProgress.h"
+#include "recent/CMruListener.h"
+#include "macro/CSMacroMgr.h"
+#include "CPropertyManager.h"
+#include "CGrepAgent.h"
+#include "CAppMode.h"
+#include "util/module.h"
 #include "util/shell.h"
 #include "CCommandLine.h"
-#include "CPropertyManager.h"
-#include "recent/CMruListener.h"
-
-#pragma warning(disable:4355) //「thisポインタが初期化リストで使用されました」の警告を無効化
 
 CEditApp::CEditApp(HINSTANCE hInst)
 : m_hInst(hInst)

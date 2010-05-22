@@ -25,11 +25,12 @@ class CLayoutMgr;
 #define _CLAYOUTMGR_H_
 
 #include <windows.h>// 2002/2/10 aroka
-#include "global.h"// 2002/2/10 aroka
-#include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
-#include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
-#include "basis/SakuraBasis.h"
 #include <vector>
+#include "global.h"// 2002/2/10 aroka
+#include "basis/SakuraBasis.h"
+#include "types/CType.h"
+#include "CDocListener.h"
+
 #include "util/container.h"
 
 class CBregexp;// 2002/2/10 aroka
@@ -38,9 +39,7 @@ class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 class CEditDoc;// 2003/07/20 genta
-struct STypeConfig;// 2005.11.20 Moca
 class CColorStrategy;
-#include "basis/SakuraBasis.h"
 enum EColorIndexType;
 
 struct LayoutReplaceArg {

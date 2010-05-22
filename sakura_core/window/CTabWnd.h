@@ -32,16 +32,14 @@
 		   distribution.
 */
 
-class CTabWnd;
 
-#ifndef _CTABWND_H_
-#define _CTABWND_H_
+#ifndef SAKURA_WINDOW_CTABWND_H_
+#define SAKURA_WINDOW_CTABWND_H_
 
 #include "CWnd.h"
-#include "doc/CEditDoc.h"
-#include "env/CShareData.h"
-#include <string>
-#include <map>
+
+struct EditNode;
+struct DLLSHAREDATA;
 
 //! タブバーウィンドウ
 class SAKURA_CORE_API CTabWnd : public CWnd
@@ -182,7 +180,7 @@ private:
 	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
 };
 
-#endif /* _CTABWND_H_ */
+#endif /* SAKURA_WINDOW_CTABWND_H_ */
 
 
 

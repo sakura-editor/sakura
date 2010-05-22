@@ -25,26 +25,20 @@
 
 
 #include "global.h"
-#include "CAutoSaveAgent.h"
-#include "doc/CDocLineMgr.h"
-#include "CEol.h"
-#include "func/CFuncLookup.h"
 #include "CLayoutMgr.h"
-#include "COpeBuf.h"
-#include "env/CShareData.h"
-#include <string>
-#include "doc/CDocListener.h"
-#include "util/design_template.h"
+#include "CDocLineMgr.h"
 #include "CBackupAgent.h"
+#include "CAutoSaveAgent.h"
 #include "CAutoReloadAgent.h"
-#include "util/file.h" //CFileTime
-#include "io/CFile.h"
 #include "CDocEditor.h"
 #include "CDocFile.h"
 #include "CDocFileOperation.h"
-#include "CDocOutline.h"
 #include "CDocType.h"
+#include "CDocOutline.h"
 #include "CDocLocker.h"
+#include "func/CFuncLookup.h"
+#include "CEol.h"
+#include "util/design_template.h"
 
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka

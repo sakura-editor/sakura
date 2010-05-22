@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "CDocType.h"
+#include "CEditDoc.h"
+#include "CEditApp.h"
+#include "window/CEditWnd.h"
+#include "CGrepAgent.h"
 
 CDocType::CDocType(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)

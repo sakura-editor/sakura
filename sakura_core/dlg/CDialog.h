@@ -14,16 +14,16 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDialog;
 
 #ifndef _CDIALOG_H_
 #define _CDIALOG_H_
 
+class CDialog;
+
 #include <windows.h>
-#include <dbt.h>
-#include "env/CShareData.h"
 #include "global.h"
 
+struct DLLSHAREDATA;
 
 /*-----------------------------------------------------------------------
 ÉNÉâÉXÇÃêÈåæ

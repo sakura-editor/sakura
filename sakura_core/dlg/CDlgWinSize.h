@@ -32,6 +32,7 @@
 #define SC_CDLGWINPOSSIZE_H__
 
 #include "dlg/CDialog.h"
+#include "env/CommonSetting.h"
 
 /*!	@brief 位置と大きさの設定ダイアログ
 

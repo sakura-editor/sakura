@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CCaret.h"
+#include <vector>
 #include "CTextArea.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
@@ -9,7 +10,6 @@
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"
 #include "window/CEditWnd.h"
-#include <vector>
 #include "view/colors/CColorStrategy.h"
 using namespace std;
 

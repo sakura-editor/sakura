@@ -3,6 +3,9 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 
+// ”ñˆË‘¶„§
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 void CShiftJis::S_GetEol(CMemory* pcmemEol, EEolType eEolType)
 {

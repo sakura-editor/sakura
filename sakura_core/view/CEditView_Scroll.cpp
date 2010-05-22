@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "CEditView.h"
+#include "env/DLLSHAREDATA.h"
+#include "window/CEditWnd.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）

@@ -18,6 +18,7 @@
 #include <io.h>
 #include "CMigemo.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "util/module.h"
 #include "util/file.h"
 
@@ -126,12 +127,12 @@ unsigned char* CMigemo::migemo_query(unsigned char* query)
 	
 	return (*m_migemo_query)(m_migemo, query);
 }
-void CMigemo::migemo_release( unsigned char* string)
+void CMigemo::migemo_release( unsigned char* str)
 {
 	if (!IsAvailable() || (m_migemo == NULL))
 		return;
 
-	(*m_migemo_release)(m_migemo, string);
+	(*m_migemo_release)(m_migemo, str);
 
 }
 int CMigemo::migemo_set_operator(int index, unsigned char* op)

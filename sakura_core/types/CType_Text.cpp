@@ -1,7 +1,12 @@
 #include "stdafx.h"
 #include "types/CType.h"
 #include "doc/CDocOutline.h"
+#include "doc/CDocLineMgr.h"
+#include "doc/CDocLine.h"
+#include "doc/CEditDoc.h"
+#include "env/DLLSHAREDATA.h"
 #include "outline/CFuncInfoArr.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 
 /* テキスト */

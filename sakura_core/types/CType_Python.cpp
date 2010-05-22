@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "doc/CDocOutline.h"
 #include "outline/CFuncInfoArr.h"
+#include "doc/CEditDoc.h"
 
 
 /*!

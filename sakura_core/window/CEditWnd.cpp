@@ -22,9 +22,9 @@
 */
 
 #include "stdafx.h"
-#include <stdio.h>
 #include <windows.h>
-#include <winuser.h>
+#include <shlobj.h>
+#include <stdio.h>
 #include <mbctype.h>
 #include <mbstring.h>
 
@@ -36,6 +36,7 @@
 #include "debug/Debug.h"
 #include "dlg/CDlgAbout.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "CPrint.h"
 #include "charset/charcode.h"
 #include "global.h"
@@ -55,11 +56,11 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/string_ex2.h"
-#include <shlobj.h>
 #include "env/CSakuraEnvironment.h"
 #include "util/os.h" //WM_MOUSEWHEEL,WM_THEMECHANGED
-#include "env/CSakuraEnvironment.h"
 #include "plugin/CJackManager.h"
+#include "CGrepAgent.h"
+#include "CAppMode.h"
 
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
@@ -102,8 +103,6 @@ LRESULT CALLBACK CEditWndProc(
 	}
 	return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 }
-
-#pragma warning(disable:4355) //「thisポインタが初期化リストで使用されました」の警告を無効化
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd()

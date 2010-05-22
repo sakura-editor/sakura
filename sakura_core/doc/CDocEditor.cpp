@@ -1,6 +1,13 @@
 #include "stdafx.h"
 #include "CDocEditor.h"
 #include "CClipboard.h"
+#include "env/DLLSHAREDATA.h"
+#include "doc/CEditDoc.h"
+#include "doc/CDocLine.h"
+#include "doc/CDocLineMgr.h"
+#include "CAppMode.h"
+#include "CEol.h"
+#include "window/CEditWnd.h"
 #include "debug/CRunningTimer.h"
 
 CDocEditor::CDocEditor(CEditDoc* pcDoc)

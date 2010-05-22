@@ -2,8 +2,14 @@
 
 #include "StdAfx.h"
 #include "env/CShareData_IO.h"
+#include "doc/CDocTypeSetting.h" // ColorInfo !!
+#include "env/DLLSHAREDATA.h"
+#include "CDataProfile.h"
+#include "CShareData.h"
+#include "macro/CSMacroMgr.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
+#include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 
 /* 共有データのロード */
@@ -1215,11 +1221,11 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	cProfile.IOProfileData( pszSecName, LTEXT("szIndentChars")		, MakeStringBufferW(types.m_szIndentChars) );
 	cProfile.IOProfileData( pszSecName, LTEXT("cLineTermChar")		, types.m_cLineTermChar );
 
-	cProfile.IOProfileData( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* アウトライン解析方法 */
-	cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* アウトライン解析ルールファイル */
-	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* スマートインデント種別 */
-	//	Nov. 20, 2000 genta
-	cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME制御
+		cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* アウトライン解析方法 */
+		cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* アウトライン解析ルールファイル */
+		cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* スマートインデント種別 */
+		//	Nov. 20, 2000 genta
+		cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME制御
 
 	//	2001/06/14 Start By asa-o: タイプ別の補完ファイル
 	//	Oct. 5, 2002 genta _countof()で誤ってポインタのサイズを取得していたのを修正

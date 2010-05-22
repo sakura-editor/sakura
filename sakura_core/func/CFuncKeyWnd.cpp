@@ -17,10 +17,13 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "stdafx.h"
-#include "func/CFuncKeyWnd.h"
-#include "debug/Debug.h"
-#include "window/CEditWnd.h"
 #include "global.h"
+#include "func/CFuncKeyWnd.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "window/CEditWnd.h"
+#include "doc/CEditDoc.h"
+#include "debug/Debug.h"
 #include "util/input.h"
 #include "util/window.h"
 

@@ -18,21 +18,26 @@
 */
 
 #include "stdafx.h"
-#include "dlg/CDlgOpenFile.h"
-#include "debug/Debug.h"
-#include "sakura_rc.h"
-#include "global.h"
-#include "func/Funccode.h"	//Stonee, 2001/05/18
-#include "CFileExt.h"
 #include <dlgs.h>    // stc3,...
 #include <cderr.h>   // FNERR...,CDERR...
+#include "dlg/CDlgOpenFile.h"
+#include "global.h"
+#include "debug/Debug.h"
+#include "func/Funccode.h"	//Stonee, 2001/05/18
+#include "CFileExt.h"
+#include "env/CDocTypeManager.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "CEditApp.h"
+#include "doc/CDocListener.h"
+#include "types/CType.h"	// STypeConfig
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/os.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 // オープンファイル CDlgOpenFile.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
 //	IDCANCEL,				HIDCANCEL_OPENDLG,		//Winのヘルプで勝手に出てくる

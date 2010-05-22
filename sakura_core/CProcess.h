@@ -17,6 +17,7 @@
 
 #include "global.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾
