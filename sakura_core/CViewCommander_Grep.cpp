@@ -60,12 +60,13 @@ void CViewCommander::Command_GREP( void )
 	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
 
 	/*	今のEditViewにGrep結果を表示する。
-		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
+		Grepモードのとき、または未編集で無題かつアウトプットでない場合。
 	*/
 	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ||
-		CAppMode::Instance()->IsDebugMode() ||	// 2010.04.02 Moca [アウトプットでない]を追加
 		( !GetDocument()->m_cDocEditor.IsModified() &&
-		  !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() )		/* 現在編集中のファイルのパス */
+		  !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() &&		/* 現在編集中のファイルのパス */
+		  !CAppMode::Instance()->IsDebugMode()
+		)
 	){
 		CEditApp::Instance()->m_pcGrepAgent->DoGrep(
 			m_pCommanderView,
