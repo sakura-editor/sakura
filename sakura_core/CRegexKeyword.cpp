@@ -373,11 +373,13 @@ BOOL CRegexKeyword::RegexIsKeyword(
 			if( m_sInfo[i].nOffset < nPos )
 			{
 #ifdef USE_PARENT
-				matched = BMatch(m_pTypes->m_RegexKeywordArr[i].m_szKeyword, cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(),
-					&m_sInfo[i].pBregexp, m_szMsg);
+				matched = ExistBMatchEx()
+					? BMatchEx(m_pTypes->m_RegexKeywordArr[i].m_szKeyword, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg)
+					: BMatch(m_pTypes->m_RegexKeywordArr[i].m_szKeyword,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
 #else
-				matched = BMatch(m_sInfo[i].sRegexKey.m_szKeyword, cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(),
-					&m_sInfo[i].pBregexp, m_szMsg);
+				matched = ExistBMatchEx()
+					? BMatchEx(m_sInfo[i].sRegexKey.m_szKeyword, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
+					: BMatch(m_sInfo[i].sRegexKey.m_szKeyword,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
 #endif
 				if( matched )
 				{
