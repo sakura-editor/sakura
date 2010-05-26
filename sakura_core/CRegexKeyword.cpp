@@ -375,11 +375,13 @@ BOOL CRegexKeyword::RegexIsKeyword( const char *pLine, int nPos, int nLineLen, i
 			if( m_sInfo[i].nOffset < nPos )
 			{
 #ifdef USE_PARENT
-				matched = BMatch(m_pTypes->m_RegexKeywordArr[i].m_szKeyword, pLine+nPos, pLine+nLineLen,
-					&m_sInfo[i].pBregexp, m_szMsg);
+				matched = ExistBMatchEx()
+					? BMatchEx(m_pTypes->m_RegexKeywordArr[i].m_szKeyword, pLine, pLine+nPos, pLine+nLineLen, &m_sInfo[i].pBregexp, m_szMsg)
+					: BMatch(m_pTypes->m_RegexKeywordArr[i].m_szKeyword,          pLine+nPos, pLine+nLineLen, &m_sInfo[i].pBregexp, m_szMsg);
 #else
-				matched = BMatch(m_sInfo[i].sRegexKey.m_szKeyword, pLine+nPos, pLine+nLineLen,
-					&m_sInfo[i].pBregexp, m_szMsg);
+				matched = ExistBMatchEx()
+					? BMatchEx(m_sInfo[i].sRegexKey.m_szKeyword, pLine, pLine+nPos, pLine+nLineLen,&m_sInfo[i].pBregexp, m_szMsg);
+					: BMatch(m_sInfo[i].sRegexKey.m_szKeyword,          pLine+nPos, pLine+nLineLen,&m_sInfo[i].pBregexp, m_szMsg);
 #endif
 				if( matched )
 				{

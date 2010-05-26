@@ -231,6 +231,10 @@ protected:
 	BREGEXP_BMatchEx BMatchEx;
 	BREGEXP_BSubstEx BSubstEx;
 
+	// 関数があるかどうか
+	bool ExistBMatchEx() const{ return BMatchEx!=NULL; }
+	bool ExistBSubstEx() const{ return BSubstEx!=NULL; }
+
 	//!	コンパイルバッファを解放する
 	/*!
 		m_pcRegをBRegfree()に渡して解放する．解放後はNULLにセットする．
