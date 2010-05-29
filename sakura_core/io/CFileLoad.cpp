@@ -158,7 +158,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	// From Here Jun. 08, 2003 Moca BOMの除去
 	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );
 	m_nFileDataLen = m_nFileSize;
-	if( nBomCode != CODE_NONE && nBomCode == m_CharCode ){
+	if(( nBomCode != CODE_NONE && nBomCode == m_CharCode ) || ( m_CharCode == CODE_CESU8 && nBomCode == CODE_UTF8 )){	// 2010/3/20 Uchi
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		m_bBomExist = TRUE;
 		if( pbBomExist != NULL ){

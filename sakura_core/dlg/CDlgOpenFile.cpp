@@ -271,8 +271,9 @@ UINT_PTR CALLBACK OFNHookProc(
 			//	使うときは有効／無効を切り替え、チェック状態を初期値に設定する
 			switch( pcDlgOpenFile->m_nCharCode ){
 			case CODE_UNICODE:
-			case CODE_UTF8:
 			case CODE_UNICODEBE:
+			case CODE_UTF8:
+			case CODE_CESU8:		// 2010/3/20 Uchi
 				::EnableWindow( hwndCheckBOM, TRUE );
 				fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
 				break;
@@ -464,13 +465,14 @@ UINT_PTR CALLBACK OFNHookProc(
 				lRes = ::SendMessageAny( (HWND) lParam, CB_GETITEMDATA, nIdx, 0 );
 				switch( lRes ){
 				case CODE_UNICODE:
-				case CODE_UTF8:
 				case CODE_UNICODEBE:
+				case CODE_UTF8:
+				case CODE_CESU8:		// 2010/3/20 Uchi
 					::EnableWindow( hwndCheckBOM, TRUE );
 					if (lRes == pcDlgOpenFile->m_nCharCode){
 						fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
 					}else{
-						fCheck = (lRes == CODE_UTF8)? BST_UNCHECKED: BST_CHECKED;
+						fCheck = (lRes == CODE_UTF8 || lRes == CODE_CESU8)? BST_UNCHECKED: BST_CHECKED;	// 2010/3/20 Uchi add CODE_CESU8
 					}
 					break;
 				default:
