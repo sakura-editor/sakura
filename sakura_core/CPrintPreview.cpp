@@ -35,7 +35,6 @@
 #include "view/colors/CColorStrategy.h"
 #include "sakura_rc.h"
 
-#include "sakura_rc.h"
 using namespace std;
 
 #define MIN_PREVIEW_ZOOM 10

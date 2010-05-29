@@ -33,7 +33,7 @@
 */
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "env/CommonSetting.h"
+//#include "env/CommonSetting.h"
 #include "util/shell.h"
 //#include "env/CShareData.h"
 #include "sakura_rc.h"

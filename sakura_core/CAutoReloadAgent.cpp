@@ -4,7 +4,6 @@
 #include "window/CEditWnd.h"
 #include "dlg/CDlgFileUpdateQuery.h"
 #include "sakura_rc.h"
-#include "sakura_rc.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

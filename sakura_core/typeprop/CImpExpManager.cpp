@@ -1068,7 +1068,7 @@ bool CImpExpCustMenu::Export( const wstring sFileName, wstring& sErrMsg )
 	CShareData_IO::ShareData_IO_CustMenu(cProfile, *menu, true);
 
 	// èëÇ´çûÇ›
-	if (cProfile.WriteProfile( szPath, WSTR_CUSTMENU_HEAD_V2)) {
+	if (!cProfile.WriteProfile( szPath, WSTR_CUSTMENU_HEAD_V2)) {
 		sErrMsg = MSG_NOT_EXPORT + sFileName;
 		return false;
 	}

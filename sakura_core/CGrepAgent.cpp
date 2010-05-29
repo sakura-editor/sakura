@@ -6,7 +6,6 @@
 #include "COpeBlk.h"
 //#include "parse/CWordParse.h"
 #include "window/CEditWnd.h"
-#include "sakura_rc.h"
 #include "charset/CCodeMediator.h"
 #include "io/CFileLoad.h"
 #include "util/window.h"

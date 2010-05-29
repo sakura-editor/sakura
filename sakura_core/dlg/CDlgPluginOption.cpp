@@ -36,7 +36,6 @@
 #include "util/window.h"
 //#include "debug/Debug.h"
 #include "sakura_rc.h"
-#include "sakura_rc.h"
 
 // BOOL•Ï”‚Ì•\¦
 #define	BOOL_DISP_TRUE	_T("<True>")
