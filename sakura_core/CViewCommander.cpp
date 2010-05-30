@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, maru, Uchi
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji, nasukoji
+	Copyright (C) 2010, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -4298,6 +4299,11 @@ BOOL CViewCommander::Command_FUNCLIST(
 	if( nOutlineType == OUTLINE_DEFAULT ){
 		/* タイプ別に設定されたアウトライン解析方法 */
 		nOutlineType = GetDocument()->m_cDocType.GetDocumentAttribute().m_eDefaultOutline;
+		if( nOutlineType == OUTLINE_CPP ){
+			if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), _T("c") ) ){
+				nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
+			}
+		}
 	}
 
 	if( NULL != GetEditWindow()->m_cDlgFuncList.GetHwnd() && nAction != SHOW_RELOAD ){
@@ -4327,14 +4333,8 @@ BOOL CViewCommander::Command_FUNCLIST(
 	cFuncInfoArr.Empty();
 
 	switch( nOutlineType ){
-//	case OUTLINE_C:			GetDocument()->MakeFuncList_C( &cFuncInfoArr );break;
-	case OUTLINE_CPP:
-		GetDocument()->m_cDocOutline.MakeFuncList_C( &cFuncInfoArr );
-		/* C言語標準保護委員会勧告特別処理実装箇所(嘘) */
-		if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), _T("c") ) ){
-			nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
-		}
-		break;
+	case OUTLINE_C:			// C/C++ は MakeFuncList_C
+	case OUTLINE_CPP:		GetDocument()->m_cDocOutline.MakeFuncList_C( &cFuncInfoArr );break;
 	case OUTLINE_PLSQL:		GetDocument()->m_cDocOutline.MakeFuncList_PLSQL( &cFuncInfoArr );break;
 	case OUTLINE_JAVA:		GetDocument()->m_cDocOutline.MakeFuncList_Java( &cFuncInfoArr );break;
 	case OUTLINE_COBOL:		GetDocument()->m_cDocOutline.MakeTopicList_cobol( &cFuncInfoArr );break;
