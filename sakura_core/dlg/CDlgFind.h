@@ -52,8 +52,9 @@ protected:
 //@@@ 2002.2.2 YAZAKI CShareDataに移動
 //	void AddToSearchKeyArr( const char* );
 	/* オーバーライド? */
-	int GetData( void );	/* ダイアログデータの取得 */
-	void SetData( void );	/* ダイアログデータの設定 */
+	int GetData( void );		/* ダイアログデータの取得 */
+	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
+	void SetData( void );		/* ダイアログデータの設定 */
 	BOOL OnBnClicked( int );
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 

@@ -15,20 +15,16 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
-#include "sakura_rc.h"
+#include "StdAfx.h"
+#include <WindowsX.h>	//  ダイアログコントロール用マクロ定義
 #include "dlg/CDlgReplace.h"
-#include "debug/Debug.h"
 #include "view/CEditView.h"
-#include "global.h"
-#include "func/Funccode.h"		// Stonee, 2001/03/12
-#include "doc/CLayout.h"/// 2002/2/3 aroka
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "util/shell.h"
 #include "util/window.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //置換 CDlgReplace.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//11900
 	IDC_BUTTON_SEARCHNEXT,			HIDC_REP_BUTTON_SEARCHNEXT,			//下検索
 	IDC_BUTTON_SEARCHPREV,			HIDC_REP_BUTTON_SEARCHPREV,			//上検索
@@ -102,23 +98,8 @@ void CDlgReplace::ChangeView( LPARAM pcEditView )
 /* ダイアログデータの設定 */
 void CDlgReplace::SetData( void )
 {
-	int		i;
-	HWND	hwndCombo;
-//	GetHwnd() = hwndDlg;	/* このダイアログのハンドル */
-
-	/* 検索文字列 */
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
-	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
-	}
-
-	/* 置換後文字列 */
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_szText2 );
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
-	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
-	}
+	// 検索文字列/置換後文字列リストの設定(関数化)	2010/5/26 Uchi
+	SetCombosList();
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
@@ -180,6 +161,41 @@ void CDlgReplace::SetData( void )
 }
 
 
+
+// 検索文字列/置換後文字列リストの設定
+//	2010/5/26 Uchi
+void CDlgReplace::SetCombosList( void )
+{
+	int		i;
+	HWND	hwndCombo;
+	TCHAR	szBuff[_MAX_PATH+1];
+
+	/* 検索文字列 */
+	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
+	while (ComboBox_GetCount(hwndCombo) > 0) {
+		ComboBox_DeleteString( hwndCombo, 0);
+	}
+	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i) {
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
+	}
+	ComboBox_GetText( hwndCombo, szBuff, _MAX_PATH);
+	if (auto_strcmp( to_wchar(szBuff), m_szText ) != 0) {
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
+	}
+
+	/* 置換後文字列 */
+	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
+	while (ComboBox_GetCount(hwndCombo) > 0) {
+		ComboBox_DeleteString( hwndCombo, 0);
+	}
+	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i) {
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
+	}
+	ComboBox_GetText( hwndCombo, szBuff, _MAX_PATH);
+	if (auto_strcmp( to_wchar(szBuff), m_szText2 ) != 0) {
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_szText2 );
+	}
+}
 
 
 /* ダイアログデータの取得 */
@@ -252,6 +268,10 @@ int CDlgReplace::GetData( void )
 		}
 		// To Here 2001.12.03 hor
 
+		// 検索文字列/置換後文字列リストの設定	2010/5/26 Uchi
+		if (!m_bModal) {
+			SetCombosList();
+		}
 		return 1;
 	}else{
 		return 0;
@@ -269,12 +289,12 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	他との一貫性を保つため削除
 
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
-	::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
+	ComboBox_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), (WPARAM)_MAX_PATH - 1 );
+	ComboBox_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), (WPARAM)_MAX_PATH - 1 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
+	ComboBox_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
+	ComboBox_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 
 
 	/* テキスト選択中か */
@@ -441,7 +461,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			// 2001.12.03 hor
 			//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
 			//	キャレットが表示されなくなるのを回避する
-			::SendMessageAny(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
+			::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
 			// To Here 2001.12.03 hor
                
 		}else{
@@ -452,7 +472,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
 		if( 0 < GetData() ){
 			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, FALSE, 0, 0, 0, 0 );
-			::SendMessageAny(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
+			::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
 		}
 		return TRUE;
 

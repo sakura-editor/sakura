@@ -17,19 +17,15 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
+#include <WindowsX.h>
 #include "dlg/CDlgFind.h"
-#include "func/Funccode.h"
-#include "sakura_rc.h"
-//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-#include "CBregexp.h"
 #include "view/CEditView.h"
-#include "env/DLLSHAREDATA.h"
-#include "debug/Debug.h"// 2002/2/10 aroka ヘッダ整理
 #include "util/shell.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //検索 CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//11800
 	IDC_BUTTON_SEARCHNEXT,			HIDC_FIND_BUTTON_SEARCHNEXT,		//次を検索
 	IDC_BUTTON_SEARCHPREV,			HIDC_FIND_BUTTON_SEARCHPREV,		//前を検索
@@ -79,8 +75,6 @@ void CDlgFind::ChangeView( LPARAM pcEditView )
 void CDlgFind::SetData( void )
 {
 //	MYTRACE_A( "CDlgFind::SetData()" );
-	int		i;
-	HWND	hwndCombo;
 
 	/*****************************
 	*           初期化           *
@@ -89,21 +83,17 @@ void CDlgFind::SetData( void )
 	// 正規表現ライブラリの差し替えに伴う処理の見直しによりjre.dll判定を削除
 
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), CB_LIMITTEXT, _MAX_PATH - 1, 0 );
+	ComboBox_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), (WPARAM)_MAX_PATH - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), CB_SETEXTENDEDUI, TRUE, 0 );
+	ComboBox_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
 
 
 	/*****************************
 	*         データ設定         *
 	*****************************/
 	/* 検索文字列 */
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
-	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
-	}
+	// 検索文字列リストの設定(関数化)	2010/5/28 Uchi
+	SetCombosList();
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
@@ -146,16 +136,33 @@ void CDlgFind::SetData( void )
 }
 
 
+// 検索文字列リストの設定
+//	2010/5/28 Uchi
+void CDlgFind::SetCombosList( void )
+{
+	int		i;
+	HWND	hwndCombo;
+	TCHAR	szBuff[_MAX_PATH+1];
+
+	/* 検索文字列 */
+	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
+	while (ComboBox_GetCount(hwndCombo) > 0) {
+		ComboBox_DeleteString( hwndCombo, 0);
+	}
+	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i) {
+		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
+	}
+	ComboBox_GetText( hwndCombo, szBuff, _MAX_PATH);
+	if (auto_strcmp( to_wchar(szBuff), m_szText ) != 0) {
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
+	}
+}
 
 
 /* ダイアログデータの取得 */
 int CDlgFind::GetData( void )
 {
 //	MYTRACE_A( "CDlgFind::GetData()" );
-//	int			i;
-//	int			j;
-//	CMemory*	pcmWork;
-	//
 
 	/* 英大文字と英小文字を区別する */
 	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( GetHwnd(), IDC_CHK_LOHICASE ));
@@ -199,7 +206,8 @@ int CDlgFind::GetData( void )
 		CSearchKeywordManager().AddToSearchKeyArr( m_szText );
 		if( !m_bModal ){
 			/* ダイアログデータの設定 */
-			SetData();
+			//SetData();
+			SetCombosList();		//	コンボのみの初期化	2010/5/28 Uchi
 		}
 		return 1;
 	}else{
@@ -317,7 +325,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
 				//	キャレットが表示されなくなるのを回避する
 				else{
-					::SendMessageAny(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
+					::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
 				}
 			}
 		}
@@ -336,7 +344,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 					CloseDialog( 0 );
 				}
 				else{
-					::SendMessageAny(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
+					::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
 				}
 			}
 		}
