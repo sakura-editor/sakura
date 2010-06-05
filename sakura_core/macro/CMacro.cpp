@@ -872,6 +872,17 @@ void CMacro::HandleCommand(
 	case F_PREVWINDOW:
 		pcEditView->GetDocument()->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWが動作しなかったのを修正
 		break;
+	case F_CHGTABWIDTH:		//  タブサイズを取得、設定する（キーマクロでは取得は無意味）
+	case F_CHGWRAPCOLM:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
+		{
+			VARIANT vArg[1];			// HandleFunctionに渡す引数
+			VARIANT vResult;			// HandleFunctionから返る値
+			//	一つ目の引数が数値。
+			vArg[0].vt = VT_I4;
+			vArg[0].intVal = (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 );
+			HandleFunction( pcEditView, Index, vArg, 1, vResult );
+		}
+		break;
 	default:
 		//	引数なし。
 		pcEditView->GetCommander().HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準
