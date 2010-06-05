@@ -69,8 +69,9 @@ protected:
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
-	void SetData( void );	/* ダイアログデータの設定 */
-	int GetData( void );	/* ダイアログデータの取得 */
+	void SetData( void );		/* ダイアログデータの設定 */
+	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
+	int GetData( void );		/* ダイアログデータの取得 */
 };
 
 
