@@ -371,6 +371,7 @@
 #define HIDC_CHECK_BACKUPDIALOG					10017 //作成前に確認
 #define HIDC_CHECK_BACKUPFOLDER					10018 //指定フォルダに作成
 #define HIDC_CHECK_BACKUP_DUSTBOX				10019 //バックアップをごみ箱に放り込む	//@@@ 2002.01.03
+#define HIDC_CHECK_BACKUP_FOLDER_RM				10020 //指定フォルダに作成(リムーバブルメディアのみ)	// 2010/5/27 Uchi
 #define HIDC_EDIT_BACKUPFOLDER					10040 //保存フォルダ名
 #define HIDC_EDIT_BACKUP_3						10041 //世代数
 #define HIDC_EDIT_BACKUPFILE					10042 //保存ファイル名
@@ -385,6 +386,7 @@
 #define HIDC_CHECK_BACKUP_ADVANCED				10066 //詳細設定	// 2006.08.06 ryoji
 #define HIDC_RADIO_BACKUP_DATETYPE1A			10067 //付加する日時の種類（作成日時）※詳細設定ON用	// 2009.02.20 ryoji
 #define HIDC_RADIO_BACKUP_DATETYPE2A			10068 //付加する日時の種類（更新日時）※詳細設定ON用	// 2009.02.20 ryoji
+
 #define HIDC_BUTTON_DELETE						10100 //メニューから機能削除
 #define HIDC_BUTTON_INSERTSEPARATOR				10101 //セパレータ挿入
 #define HIDC_BUTTON_INSERT						10102 //メニューへ機能挿入

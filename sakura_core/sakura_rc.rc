@@ -1597,58 +1597,65 @@ BEGIN
     CONTROL         "保存時にバックアップを作成する(&K)",IDC_CHECK_BACKUP,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,16,
                     136,10
+
+    CONTROL         "詳細設定する(&A)",IDC_CHECK_BACKUP_ADVANCED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,12,32,69,10
+    EDITTEXT        IDC_EDIT_BACKUPFILE,24,44,255,13,ES_AUTOHSCROLL
+
     CONTROL         "拡張子を .bakに変更したもの(1世代 &B)",
                     IDC_RADIO_BACKUP_TYPE1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_TABSTOP,12,31,142,10
+                    WS_GROUP,12,66,142,10
     CONTROL         "拡張子を連番(.b00～b98)に変更したもの(&G)",
-                    IDC_RADIO_BACKUP_TYPE3,"Button",BS_AUTORADIOBUTTON,12,44,
+                    IDC_RADIO_BACKUP_TYPE3,"Button",BS_AUTORADIOBUTTON,12,80,
                     156,10
     CONTROL         "ファイル名の後ろに保存時の日付・時刻を付加したもの(&E)",
                     IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON,
-                    12,70,204,10
+                    12,104,204,10
     CONTROL         "ファイル名の後ろに前回の保存時の日付・時刻を付加したもの(&U)",
                     IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
-                    12,83,230,10
+                    12,118,230,10
     CONTROL         "元の拡張子を保存(&R)",IDC_CHECK_BACKUP_RETAINEXT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,162,30,86,10
-    LTEXT           "保存する世代数(1-99 &N)",IDC_LABEL_BACKUP_3,22,58,81,8
-    EDITTEXT        IDC_EDIT_BACKUP_3,106,56,28,12
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,66,86,10
+    LTEXT           "保存する世代数(1-99 &N)",IDC_LABEL_BACKUP_3,22,90,81,8
+    EDITTEXT        IDC_EDIT_BACKUP_3,106,92,28,12
     CONTROL         "Spin1",IDC_SPIN_BACKUP_GENS,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,134,56,9,
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,134,92,9,
                     12
     CONTROL         "西暦(&Y)",IDC_CHECK_BACKUP_YEAR,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,96,35,10
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,130,35,10
     CONTROL         "月(&M)",IDC_CHECK_BACKUP_MONTH,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,60,96,34,10
+                    WS_TABSTOP,60,130,34,10
     CONTROL         "日(&D)",IDC_CHECK_BACKUP_DAY,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,97,96,34,10
+                    WS_TABSTOP,97,130,34,10
     CONTROL         "時(&H)",IDC_CHECK_BACKUP_HOUR,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,134,96,34,10
+                    WS_TABSTOP,134,130,34,10
     CONTROL         "分(&I)",IDC_CHECK_BACKUP_MIN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,171,96,31,10
+                    WS_TABSTOP,171,130,31,10
     CONTROL         "秒(&S)",IDC_CHECK_BACKUP_SEC,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,205,96,33,10
-    CONTROL         "指定フォルダに作成する(&P)",IDC_CHECK_BACKUPFOLDER,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,120,107,10
-    LTEXT           "フォルダ名(&F)",IDC_LABEL_BACKUP_4,24,133,47,8
-    EDITTEXT        IDC_EDIT_BACKUPFOLDER,73,131,195,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "&...",IDC_BUTTON_BACKUP_FOLDER_REF,271,131,9,12
-    CONTROL         "バックアップファイルをごみ箱に放り込む(&X)",
-                    IDC_CHECK_BACKUP_DUSTBOX,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,13,146,150,10
-    CONTROL         "詳細設定する(&A)",IDC_CHECK_BACKUP_ADVANCED,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,13,159,69,10
-    EDITTEXT        IDC_EDIT_BACKUPFILE,24,172,255,13,ES_AUTOHSCROLL
-    CONTROL         "作成前に確認する(&V)",IDC_CHECK_BACKUPDIALOG,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,198,84,10
-    LTEXT           "",IDC_LABEL_BACKUP_HELP,12,29,271,83,NOT WS_VISIBLE
+                    WS_TABSTOP,205,130,33,10
+
+    LTEXT           "",IDC_STATIC,12,60,271,83,NOT WS_VISIBLE
     CONTROL         "保存時の日付・時刻を使用",IDC_RADIO_BACKUP_DATETYPE1A,
-                    "Button",BS_AUTORADIOBUTTON,12,41,101,10
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP,12,104,101,10
     CONTROL         "前回のファイル更新時の日付・時刻を使用",
                     IDC_RADIO_BACKUP_DATETYPE2A,"Button",BS_AUTORADIOBUTTON,
-                    12,53,149,10
+                    12,118,149,10
     LTEXT           "$x : x個上のフォルダ名(0-9)\r* : 拡張子\r\r%Y/%m/%d : 年月日 %y西暦(2桁) \r%H:%M:%S: 時分秒   \r%% : '%'記号\r",
-                    IDC_LABEL_BACKUP_HELP2,165,41,115,50,SS_SUNKEN
+                    IDC_LABEL_BACKUP_HELP2,165,75,115,50,SS_SUNKEN
+
+    CONTROL         "指定フォルダに作成する(&P)",IDC_CHECK_BACKUPFOLDER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,148,107,10
+    AUTOCHECKBOX    "リムーバブルメディアのみ(&L)", IDC_CHECK_BACKUP_FOLDER_RM,
+                    120, 148, 103, 10
+    LTEXT           "フォルダ名(&F)",IDC_LABEL_BACKUP_4,24,162,47,8
+    EDITTEXT        IDC_EDIT_BACKUPFOLDER,73,160,195,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&...",IDC_BUTTON_BACKUP_FOLDER_REF,271,160,9,12
+    CONTROL         "バックアップファイルをごみ箱に放り込む(&X)",
+                    IDC_CHECK_BACKUP_DUSTBOX,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,12,176,150,10
+
+    CONTROL         "作成前に確認する(&V)",IDC_CHECK_BACKUPDIALOG,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,12,196,84,10
 END
 
 IDD_PROP_FORMAT DIALOGEX 0, 0, 293, 240

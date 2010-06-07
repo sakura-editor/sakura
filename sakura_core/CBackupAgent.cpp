@@ -1,10 +1,7 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CBackupAgent.h"
-#include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
-#include <time.h> //_tzset
 #include "util/format.h" //GetDateTimeFormat
-#include <io.h>
 
 ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 {
@@ -76,27 +73,6 @@ int CBackupAgent::MakeBackUp(
 	}
 
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
-
-	if( bup_setting.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
-		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
-		if( !fexist( bup_setting.m_szBackUpFolder ) ){
-
-			int nMsgResult = ::MYMESSAGEBOX(
-				CEditWnd::Instance()->GetHwnd(),
-				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-				_T("バックアップエラー"),
-				_T("以下のバックアップフォルダが見つかりません．\n%ts\n")
-				_T("バックアップを作成せずに上書き保存してよろしいですか？"),
-				bup_setting.m_szBackUpFolder.c_str()
-			);
-			if( nMsgResult == IDYES ){
-				return 0;//	保存継続
-			}
-			else {
-				return 2;// 保存中断
-			}
-		}
-	}
 
 	TCHAR	szPath[_MAX_PATH];
 	if( false == FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
@@ -314,14 +290,19 @@ bool CBackupAgent::FormatBackUpPath(
 	TCHAR	szDir[_MAX_DIR];
 	TCHAR	szFname[_MAX_FNAME];
 	TCHAR	szExt[_MAX_EXT];
+	TCHAR*	psNext;
 
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
 	/* パスの分解 */
 	_tsplitpath( target_file, szDrive, szDir, szFname, szExt );
 
-	if( bup_setting.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
-		_tcscpy( szNewPath, bup_setting.m_szBackUpFolder );
+	if( bup_setting.m_bBackUpFolder
+	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
+		if (GetFullPathName(bup_setting.m_szBackUpFolder, _MAX_PATH, szNewPath, & psNext) == 0) {
+			// うまく取れなかった
+			_tcscpy( szNewPath, bup_setting.m_szBackUpFolder );
+		}
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szNewPath );
 	}

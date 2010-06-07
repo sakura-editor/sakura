@@ -1,12 +1,8 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "file.h"
 #include "charset/CharPointer.h"
 #include "util/module.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
-#include <io.h>  // access
-#include <string.h>
-#include "charset/charcode.h"
 
 bool fexist(LPCTSTR pszPath)
 {
@@ -143,6 +139,10 @@ bool IsLocalDrive( const TCHAR* pszDrive )
 		{
 			return false;
 		}
+	}
+	else if (pszDrive[0] == _T('\\') && pszDrive[1] == _T('\\')) {
+		// ネットワークパス	2010/5/27 Uchi
+		return false;
 	}
 	return true;
 }
