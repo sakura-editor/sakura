@@ -13,11 +13,13 @@
 	Copyright (C) 2005, genta, aroka
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <WindowsX.h>
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
 #include "util/window.h"
@@ -36,6 +38,7 @@ static const DWORD p_helpids[] = {	//10000
 	IDC_CHECK_BACKUP_SEC,			HIDC_CHECK_BACKUP_SEC,			//バックアップファイル名（秒）
 	IDC_CHECK_BACKUPDIALOG,			HIDC_CHECK_BACKUPDIALOG,		//作成前に確認
 	IDC_CHECK_BACKUPFOLDER,			HIDC_CHECK_BACKUPFOLDER,		//指定フォルダに作成
+	IDC_CHECK_BACKUP_FOLDER_RM,		HIDC_CHECK_BACKUP_FOLDER_RM,	//指定フォルダに作成(リムーバブルメディアのみ)
 	IDC_CHECK_BACKUP_DUSTBOX,		HIDC_CHECK_BACKUP_DUSTBOX,		//バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
 	IDC_EDIT_BACKUPFOLDER,			HIDC_EDIT_BACKUPFOLDER,			//保存フォルダ名
 	IDC_EDIT_BACKUP_3,				HIDC_EDIT_BACKUP_3,				//世代数
@@ -95,9 +98,9 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		//	Oct. 5, 2002 genta バックアップフォルダ名の入力サイズを指定
 		//	Oct. 8, 2002 genta 最後に付加される\の領域を残すためバッファサイズ-1しか入力させない
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ),  EM_LIMITTEXT, _countof2(m_Common.m_sBackup.m_szBackUpFolder) - 1 - 1, 0 );
+		Edit_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), _countof2(m_Common.m_sBackup.m_szBackUpFolder) - 1 - 1 );
 		// 20051107 aroka
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ),  EM_LIMITTEXT, _countof2(m_Common.m_sBackup.m_szBackUpPathAdvanced) - 1 - 1, 0 );
+		Edit_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), _countof2(m_Common.m_sBackup.m_szBackUpPathAdvanced) - 1 - 1 );
 		return TRUE;
 
 	case WM_NOTIFY:
@@ -281,6 +284,7 @@ void CPropBackup::SetData( HWND hwndDlg )
 
 	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動：連動対象にする。
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_sBackup.m_bBackUpFolder );
+	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BACKUP_FOLDER_RM, m_Common.m_sBackup.m_bBackUpFolderRM );	// 2010/5/27 Uchi
 
 	/* バックアップを作成するフォルダ */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder );
@@ -389,6 +393,7 @@ int CPropBackup::GetData( HWND hwndDlg )
 
 	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動
 	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUPFOLDER );
+	m_Common.m_sBackup.m_bBackUpFolderRM = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BACKUP_FOLDER_RM );	// 2010/5/27 Uchi
 
 	/* バックアップを作成するフォルダ */
 	//	Oct. 5, 2002 genta サイズをsizeof()で指定
@@ -449,7 +454,7 @@ int CPropBackup::GetData( HWND hwndDlg )
 static inline void ShowEnable(HWND hWnd, BOOL bShow, BOOL bEnable)
 {
 	::ShowWindow( hWnd, bShow? SW_SHOW: SW_HIDE );
-	::EnableWindow( hWnd, bEnable );
+	::EnableWindow( hWnd, bEnable && bShow );		// bShow=false,bEnable=trueの場合ショートカットキーが変な動きをするので修正	2010/5/27 Uchi
 }
 
 void CPropBackup::EnableBackupInput(HWND hwndDlg)
@@ -490,6 +495,7 @@ void CPropBackup::EnableBackupInput(HWND hwndDlg)
 
 	SHOWENABLE( IDC_CHECK_BACKUPFOLDER,		TRUE, bBackup );
 	SHOWENABLE( IDC_LABEL_BACKUP_4,			TRUE, bBackup && bFolder );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
+	SHOWENABLE( IDC_CHECK_BACKUP_FOLDER_RM,	TRUE, bBackup && bFolder );	// 2010/5/27 Uchi
 	SHOWENABLE( IDC_EDIT_BACKUPFOLDER,		TRUE, bBackup && bFolder );
 	SHOWENABLE( IDC_BUTTON_BACKUP_FOLDER_REF,	TRUE, bBackup && bFolder );
 	SHOWENABLE( IDC_CHECK_BACKUP_DUSTBOX,	TRUE, bBackup );	//@@@ 2001.12.11 add MIK

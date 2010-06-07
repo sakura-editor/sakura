@@ -2,8 +2,6 @@
 
 #include "StdAfx.h"
 #include "env/CShareData_IO.h"
-#include "doc/CDocTypeSetting.h" // ColorInfo !!
-#include "env/DLLSHAREDATA.h"
 #include "CDataProfile.h"
 #include "CShareData.h"
 #include "macro/CSMacroMgr.h"
@@ -380,6 +378,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bBackUp")				, common.m_sBackup.m_bBackUp );
 	cProfile.IOProfileData( pszSecName, LTEXT("bBackUpDialog")			, common.m_sBackup.m_bBackUpDialog );
 	cProfile.IOProfileData( pszSecName, LTEXT("bBackUpFolder")			, common.m_sBackup.m_bBackUpFolder );
+	cProfile.IOProfileData( pszSecName, LTEXT("bBackUpFolderRM")		, common.m_sBackup.m_bBackUpFolderRM );	// 2010/5/27 Uchi
 	
 	if( !cProfile.IsReadingMode() ){
 		int	nDummy;
