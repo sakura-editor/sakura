@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include "StdAfx.h"
+#include <WindowsX.h>
 #include "CMainToolBar.h"
 #include "window/CEditWnd.h"
 #include "util/os.h"
@@ -30,6 +31,9 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 			{
 				//検索キーを登録
 				CSearchKeywordManager().AddToSearchKeyArr( szText );
+
+				//検索ボックスを更新	// 2010/6/6 Uchi
+				AcceptSharedSearchKey();
 
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
 				m_pOwner->GetActiveView().SetFocus();
@@ -121,7 +125,7 @@ void CMainToolBar::CreateToolBar( void )
 
 		::ZeroMemory(&rbi, sizeof(rbi));
 		rbi.cbSize = sizeof(rbi);
-		::SendMessageAny(m_hwndReBar, RB_SETBARINFO, 0, (LPARAM)&rbi);
+		::SendMessage(m_hwndReBar, RB_SETBARINFO, 0, (LPARAM)&rbi);
 
 		nFlag = CCS_NORESIZE | CCS_NODIVIDER | CCS_NOPARENTALIGN | TBSTYLE_FLAT;	// ツールバーへの追加スタイル
 	}
@@ -160,8 +164,8 @@ void CMainToolBar::CreateToolBar( void )
 			(LONG_PTR)ToolBarWndProc
 		);
 
-		::SendMessageAny( m_hwndToolBar, TB_SETBUTTONSIZE, 0, (LPARAM)MAKELONG(DpiScaleX(22),DpiScaleY(22)) );	// 2009.10.01 ryoji 高DPI対応スケーリング
-		::SendMessageAny( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0 );
+		::SendMessage( m_hwndToolBar, TB_SETBUTTONSIZE, 0, (LPARAM)MAKELONG(DpiScaleX(22),DpiScaleY(22)) );	// 2009.10.01 ryoji 高DPI対応スケーリング
+		::SendMessage( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0 );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
 		CEditApp::Instance()->GetIcons().SetToolBarImages( m_hwndToolBar );
@@ -202,7 +206,7 @@ void CMainToolBar::CreateToolBar( void )
 			{
 			case TBSTYLE_DROPDOWN:	//ドロップダウン
 				//拡張スタイルに設定
-				::SendMessageAny( m_hwndToolBar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS );
+				::SendMessage( m_hwndToolBar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS );
 				::SendMessage( m_hwndToolBar, TB_ADDBUTTONSW, (WPARAM)1, (LPARAM)&tbb );
 				count++;
 				break;
@@ -213,7 +217,6 @@ void CMainToolBar::CreateToolBar( void )
 					TBBUTTONINFO	tbi;
 					TBBUTTON		my_tbb;
 					LOGFONT		lf;
-					int				my_i;
 
 					switch( tbb.idCommand )
 					{
@@ -241,7 +244,7 @@ void CMainToolBar::CreateToolBar( void )
 
 						//サイズを取得する
 						rc.right = rc.left = rc.top = rc.bottom = 0;
-						::SendMessageAny( m_hwndToolBar, TB_GETITEMRECT, (WPARAM)(count-1), (LPARAM)&rc );
+						::SendMessage( m_hwndToolBar, TB_GETITEMRECT, (WPARAM)(count-1), (LPARAM)&rc );
 
 						//コンボボックスを作る
 						//	Mar. 8, 2003 genta 検索ボックスを1ドット下にずらした
@@ -268,31 +271,22 @@ void CMainToolBar::CreateToolBar( void )
 							lf.lfClipPrecision	= CLIP_DEFAULT_PRECIS;
 							lf.lfQuality		= DEFAULT_QUALITY;
 							lf.lfPitchAndFamily	= FF_MODERN | DEFAULT_PITCH;
-							//wcscpy( lf.lfFaceName, _T("ＭＳ ゴシック") );
 							_tcscpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
 							m_fontSearchBox = ::CreateFontIndirect( &lf );
 							if( m_fontSearchBox )
 							{
-								::SendMessageAny( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_fontSearchBox, MAKELONG (TRUE, 0) );
+								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_fontSearchBox, MAKELONG (TRUE, 0) );
 							}
 
 							//入力長制限
-							::SendMessage( m_hwndSearchBox, CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
+							ComboBox_LimitText( m_hwndSearchBox, (WPARAM)_MAX_PATH - 1 );
 
-							//検索ボックスを更新
-							::SendMessageAny( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-							for( my_i = 0; my_i < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size(); my_i++ )
-							{
-								Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[my_i] );
-							}
-							::SendMessageAny( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
+							//検索ボックスを更新	// 関数化 2010/6/6 Uchi
+							AcceptSharedSearchKey();
 						}
 						break;
 
 					default:
-						//width = 0;
-						//my_hwnd = NULL;
-						//my_font = NULL;
 						break;
 					}
 				}
@@ -489,17 +483,18 @@ void CMainToolBar::UpdateToolbar( void )
 	}
 }
 
+//検索ボックスを更新
 void CMainToolBar::AcceptSharedSearchKey()
 {
 	if( m_hwndSearchBox )
 	{
 		int	i;
-		::SendMessageAny( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
+		ComboBox_ResetContent( m_hwndSearchBox );
 		for( i = 0; i < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size(); i++ )
 		{
 			Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
 		}
-		::SendMessageAny( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
+		ComboBox_SetCurSel( m_hwndSearchBox, 0 );
 	}
 }
 
