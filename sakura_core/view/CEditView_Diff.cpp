@@ -327,10 +327,7 @@ finish:
 	if( pi.hThread  ) CloseHandle( pi.hThread  );
 
 	//分割したビューも更新
-	for( int v = 0; v < 4; ++v )
-		if( m_pcEditWnd->m_nActivePaneIndex != v )
-			m_pcEditWnd->m_pcEditViewArr[v]->Redraw();
-	Redraw();
+	m_pcEditWnd->Views_Redraw();
 
 	return;
 }

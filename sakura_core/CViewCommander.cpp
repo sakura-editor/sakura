@@ -8846,7 +8846,7 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	case WRAP_WINDOW_WIDTH:		// 右端で折り返す
 		// ウィンドウが左右に分割されている場合は左側のウィンドウ幅を使用する
-		nWidth = (Int)m_pCommanderView->ViewColNumToWrapColNum( GetEditWindow()->m_pcEditViewArr[0]->GetTextArea().m_nViewColNum );
+		nWidth = (Int)m_pCommanderView->ViewColNumToWrapColNum( GetEditWindow()->GetView(0).GetTextArea().m_nViewColNum );
 		break;
 
 	default:

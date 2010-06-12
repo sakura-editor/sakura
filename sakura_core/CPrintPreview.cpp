@@ -690,7 +690,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	/* 行番号を表示するか */
 	if( m_pPrintSetting->m_bPrintLineNumber ){
 		/* 行番号表示に必要な桁数を計算 */
-		m_nPreview_LineNumberColmns = m_pParentWnd->m_pcEditViewArr[0]->GetTextArea().DetectWidthOfLineNumberArea_calculate();
+		m_nPreview_LineNumberColmns = m_pParentWnd->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate();
 	}
 	/* 現在のページ設定の、用紙サイズと用紙方向を反映させる */
 	m_pPrintSetting->m_mdmDevMode.dmPaperSize = m_pPrintSetting->m_nPrintPaperSize;

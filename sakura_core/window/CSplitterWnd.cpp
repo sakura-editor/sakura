@@ -35,6 +35,7 @@ CSplitterWnd::CSplitterWnd()
 , m_bDragging(0)						/* 分割バーをドラッグ中か */
 , m_nDragPosX(0)						/* ドラッグ位置Ｘ */
 , m_nDragPosY(0)						/* ドラッグ位置Ｙ */
+, m_nChildWndCount(0)
 , m_pCEditWnd(NULL)
 {
 	/* 共有データ構造体のアドレスを返す */
@@ -102,11 +103,19 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 
 
 
-/* 子ウィンドウの設定 */
-void CSplitterWnd::SetChildWndArr( HWND* pcEditViewArr )
+/* 子ウィンドウの設定
+	@param hwndEditViewArr [in] HWND配列 NULL終端
+*/
+void CSplitterWnd::SetChildWndArr( HWND* hwndEditViewArr )
 {
-	for( int v=0; v < MAXCOUNTOFVIEW; v++ ){
-		m_ChildWndArr[v] = pcEditViewArr[v];				/* 子ウィンドウ配列 */
+	int v=0;
+	for( ; v < MAXCOUNTOFVIEW && hwndEditViewArr[v]; v++ ){
+		m_ChildWndArr[v] = hwndEditViewArr[v];				/* 子ウィンドウ配列 */
+	}
+	m_nChildWndCount = v;
+	// 残りはNULLで埋める
+	for( ; v < MAXCOUNTOFVIEW; v++ ){
+		m_ChildWndArr[v] = NULL;
 	}
 
 	// 2002/05/11 YAZAKI 不要な処理と思われる
@@ -234,7 +243,10 @@ int CSplitterWnd::HitTestSplitter( int xPos, int yPos )
 	}
 }
 
-/* ウィンドウの分割 */
+/*! ウィンドウの分割
+	@param nHorizontal 水平クライアント座標 1以上で分割 0:分割しない  -1: 前の設定を保持
+	@param nVertical   垂直クライアント座標 1以上で分割 0:分割しない  -1: 前の設定を保持
+*/
 void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 {
 	int					nActivePane;
@@ -254,6 +266,12 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	if( -1 == nHorizontal && -1 == nVertical ){
 		nVertical = m_nVSplitPos;		/* 垂直分割位置 */
 		nHorizontal = m_nHSplitPos;		/* 水平分割位置 */
+	}
+
+	if( 0 != nVertical || 0 != nHorizontal ){
+		// 分割指示。まだ未作成なら2つ目以降のビューを作成します
+		// 今のところは分割数に関係なく4つまで一度に作ります。
+		pCEditWnd->CreateEditViewBySplit(2*2);
 	}
 	/*
 	|| ファンクションキーを下に表示している場合はサイズボックスを表示しない
@@ -281,7 +299,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	}
 
 	int v;
-	for( v=0; v < MAXCOUNTOFVIEW; v++ ){
+	for( v=0; v < m_nChildWndCount; v++ ){
 		pcViewArr[v] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[v], 0 );
 	}
 	::GetClientRect( GetHwnd(), &rc );
@@ -572,6 +590,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 /* アクティブペインの設定 */
 void CSplitterWnd::SetActivePane( int nIndex )
 {
+	assert( nIndex < MAXCOUNTOFVIEW );
 	m_nActivePane = nIndex;
 	return;
 }
@@ -812,7 +831,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	RECT		rcClient;
 	int			nFrameWidth = 3;
 	BOOL		bSizeBox;
-	for( i = 0; i < MAXCOUNTOFVIEW; ++i ){
+	for( i = 0; i < m_nChildWndCount; ++i ){
 		pcViewArr[i] = ( CEditView* )::GetWindowLongPtr( m_ChildWndArr[i], 0 );
 	}
 

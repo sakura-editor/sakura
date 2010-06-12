@@ -204,9 +204,6 @@ void CViewCommander::Command_Diff_Reset( void )
 	CDiffLineMgr(&GetDocument()->m_cDocLineMgr).ResetAllDiffMark();
 
 	//分割したビューも更新
-	for( int v = 0; v < 4; ++v )
-		if( GetEditWindow()->m_nActivePaneIndex != v )
-			GetEditWindow()->m_pcEditViewArr[v]->Redraw();
-	m_pCommanderView->Redraw();
+	GetEditWindow()->Views_Redraw();
 	return;
 }

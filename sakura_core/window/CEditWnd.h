@@ -226,6 +226,8 @@ public:
 	//                        ビュー管理                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	LRESULT Views_DispatchEvent(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	bool CreateEditViewBySplit(int);
+	void InitAllViews();
 	void Views_RedrawAll();
 	void Views_Redraw();
 	void SetActivePane( int );	/* アクティブなペインを設定 */
@@ -256,6 +258,11 @@ public:
 	//ビュー
 	const CEditView&	GetActiveView() const { return *m_pcEditViewArr[m_nActivePaneIndex]; }
 	CEditView&			GetActiveView()       { return *m_pcEditViewArr[m_nActivePaneIndex]; }
+	const CEditView&    GetView(int n) const { return *m_pcEditViewArr[n]; }
+	CEditView&          GetView(int n)       { return *m_pcEditViewArr[n]; }
+	bool                IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
+	int                 GetAllViewCount() const { return m_nEditViewCount; }
+
 	CEditView*			GetDragSourceView() const					{ return m_pcDragSourceView; }
 	void				SetDragSourceView( CEditView* pcDragSourceView )	{ m_pcDragSourceView = pcDragSourceView; }
 
@@ -323,7 +330,6 @@ public:
 	CPrintPreview*	m_pPrintPreview;	//!< 印刷プレビュー表示情報。必要になったときのみインスタンスを生成する。
 
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
-	CEditView*		m_pcEditViewArr[4];	//!< ビュー
 	int				m_nActivePaneIndex;	//!< アクティブなビュー
 	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
 
@@ -337,6 +343,11 @@ public:
 	CHokanMgr		m_cHokanMgr;		// 入力補完
 
 private:
+	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意
+	CEditView*		m_pcEditViewArr[4];	//!< ビュー 
+	int				m_nEditViewCount;	//!< 有効なビューの数
+	int				m_nEditViewMaxCount;	//!< ビューの最大数=4
+
 	//共有データ
 	DLLSHAREDATA*	m_pShareData;
 

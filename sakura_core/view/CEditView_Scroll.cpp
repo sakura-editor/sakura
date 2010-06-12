@@ -512,14 +512,15 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 */
 void CEditView::SyncScrollV( CLayoutInt line )
 {
-	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 )
-	{
-		CEditView*	pcEditView = m_pcEditDoc->m_pcEditWnd->m_pcEditViewArr[m_nMyIndex^0x01];
+	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0 
+		&& m_pcEditDoc->m_pcEditWnd->IsEnablePane(m_nMyIndex^0x01) 
+	){
+		CEditView&	editView = m_pcEditDoc->m_pcEditWnd->GetView(m_nMyIndex^0x01);
 #if 0
 		//	差分を保ったままスクロールする場合
-		pcEditView -> ScrollByV( line );
+		editView.ScrollByV( line );
 #else
-		pcEditView -> ScrollAtV( GetTextArea().GetViewTopLine() );
+		editView.ScrollAtV( GetTextArea().GetViewTopLine() );
 #endif
 	}
 }
@@ -538,16 +539,17 @@ void CEditView::SyncScrollV( CLayoutInt line )
 */
 void CEditView::SyncScrollH( CLayoutInt col )
 {
-	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0 )
-	{
-		CEditView*	pcEditView = m_pcEditDoc->m_pcEditWnd->m_pcEditViewArr[m_nMyIndex^0x02];
-		HDC			hdc = ::GetDC( pcEditView->GetHwnd() );
+	if( GetDllShareData().m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
+		&& m_pcEditDoc->m_pcEditWnd->IsEnablePane(m_nMyIndex^0x02)
+	){
+		CEditView&	cEditView = m_pcEditDoc->m_pcEditWnd->GetView(m_nMyIndex^0x02);
+		HDC			hdc = ::GetDC( cEditView.GetHwnd() );
 		
 #if 0
 		//	差分を保ったままスクロールする場合
-		pcEditView -> ScrollByH( col );
+		cEditView.ScrollByH( col );
 #else
-		pcEditView -> ScrollAtH( GetTextArea().GetViewLeftCol() );
+		cEditView.ScrollAtH( GetTextArea().GetViewLeftCol() );
 #endif
 		GetRuler().SetRedrawFlag(); //2002.02.25 Add By KK スクロール時ルーラー全体を描きなおす。
 		GetRuler().DispRuler( hdc );
