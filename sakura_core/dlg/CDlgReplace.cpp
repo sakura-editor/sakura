@@ -457,13 +457,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
-
-			// 2001.12.03 hor
-			//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
-			//	キャレットが表示されなくなるのを回避する
-			::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
-			// To Here 2001.12.03 hor
-               
 		}else{
 			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
 		}

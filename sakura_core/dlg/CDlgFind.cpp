@@ -321,12 +321,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
-				// 2001.12.03 hor
-				//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
-				//	キャレットが表示されなくなるのを回避する
-				else{
-					::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
-				}
 			}
 		}
 		else{
