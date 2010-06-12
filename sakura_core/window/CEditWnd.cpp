@@ -21,46 +21,29 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include <windows.h>
+#include "StdAfx.h"
 #include <shlobj.h>
-#include <stdio.h>
-#include <mbctype.h>
-#include <mbstring.h>
 
 #include "CControlTray.h"
 #include "window/CEditWnd.h"
-#include "sakura_rc.h"
-#include "doc/CEditDoc.h"
-#include "doc/CDocLine.h"
-#include "debug/Debug.h"
 #include "dlg/CDlgAbout.h"
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
-#include "CPrint.h"
-#include "charset/charcode.h"
-#include "global.h"
 #include "dlg/CDlgPrintSetting.h"
-//#include "dlg/CDlgPrintPage.h"
-#include "func/Funccode.h"		// Stonee, 2001/03/12
-#include "CPrintPreview.h" /// 2002/2/3 aroka
-#include "CCommandLine.h" /// 2003/1/26 aroka
-#include "macro/CSMacroMgr.h" // Jun. 16, 2002 genta
-#include "COsVersioninfo.h"	// Sep. 6, 2003 genta
+#include "env/CShareData.h"
+#include "env/CSakuraEnvironment.h"
+#include "CPrintPreview.h"	/// 2002/2/3 aroka
+#include "CCommandLine.h"	/// 2003/1/26 aroka
 #include "debug/CRunningTimer.h"
 #include "charset/CharPointer.h"
 #include "CEditApp.h"
 #include "util/module.h"
-#include "util/os.h"
+#include "util/os.h"		//WM_MOUSEWHEEL,WM_THEMECHANGED
 #include "util/window.h"
 #include "util/shell.h"
-#include "util/file.h"
 #include "util/string_ex2.h"
-#include "env/CSakuraEnvironment.h"
-#include "util/os.h" //WM_MOUSEWHEEL,WM_THEMECHANGED
 #include "plugin/CJackManager.h"
 #include "CGrepAgent.h"
 #include "CAppMode.h"
+#include "sakura_rc.h"
 
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたので
@@ -746,7 +729,7 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 		RECT		rc;
 		m_cSplitterWnd.DoSplit( -1, -1 );
 		::GetClientRect( GetHwnd(), &rc );
-		::SendMessageAny( GetHwnd(), WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+		::SendMessage( GetHwnd(), WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		::RedrawWindow( GetHwnd(), NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
 
 		GetActiveView().SetIMECompFormPos();
@@ -1773,8 +1756,11 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//その他コマンド
 			else{
 				//ビューにフォーカスを移動しておく
-				if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX )
+				if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
 					::SetFocus( GetActiveView().GetHwnd() );
+					//検索ボックスを更新	// 2010/6/6 Uchi
+					m_cToolbar.AcceptSharedSearchKey();
+				}
 
 				// コマンドコードによる処理振り分け
 				//	May 19, 2006 genta 上位ビットを渡す
@@ -2707,7 +2693,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 
 		/* 指定ファイルが開かれているか調べる */
 		if( CShareData::getInstance()->IsPathOpened( szFile, &hWndOwner ) ){
-			::SendMessageAny( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
+			::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 			/* アクティブにする */
 			ActivateFrameWindow( hWndOwner );
@@ -2999,13 +2985,13 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	hwndToolBar = (NULL != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();
 	nToolBarHeight = 0;
 	if( NULL != hwndToolBar ){
-		::SendMessageAny( hwndToolBar, WM_SIZE, wParam, lParam );
+		::SendMessage( hwndToolBar, WM_SIZE, wParam, lParam );
 		::GetWindowRect( hwndToolBar, &rc );
 		nToolBarHeight = rc.bottom - rc.top;
 	}
 	nFuncKeyWndHeight = 0;
 	if( NULL != m_CFuncKeyWnd.GetHwnd() ){
-		::SendMessageAny( m_CFuncKeyWnd.GetHwnd(), WM_SIZE, wParam, lParam );
+		::SendMessage( m_CFuncKeyWnd.GetHwnd(), WM_SIZE, wParam, lParam );
 		::GetWindowRect( m_CFuncKeyWnd.GetHwnd(), &rc );
 		nFuncKeyWndHeight = rc.bottom - rc.top;
 	}
@@ -3014,14 +3000,14 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	nTabWndHeight = 0;
 	if( NULL != m_cTabWnd.GetHwnd() )
 	{
-		::SendMessageAny( m_cTabWnd.GetHwnd(), WM_SIZE, wParam, lParam );
+		::SendMessage( m_cTabWnd.GetHwnd(), WM_SIZE, wParam, lParam );
 		::GetWindowRect( m_cTabWnd.GetHwnd(), &rc );
 		nTabWndHeight = rc.bottom - rc.top;
 	}
 	//@@@ To Here 2003.05.31 MIK
 	nStatusBarHeight = 0;
 	if( NULL != m_cStatusBar.GetStatusHwnd() ){
-		::SendMessageAny( m_cStatusBar.GetStatusHwnd(), WM_SIZE, wParam, lParam );
+		::SendMessage( m_cStatusBar.GetStatusHwnd(), WM_SIZE, wParam, lParam );
 		::GetClientRect( m_cStatusBar.GetStatusHwnd(), &rc );
 		//	May 12, 2000 genta
 		//	2カラム目に改行コードの表示を挿入
@@ -3043,7 +3029,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		// 2004-02-28 yasu
 		// 正確な幅を計算するために、表示フォントを取得してhdcに選択させる。
 		hdc = ::GetDC( m_cStatusBar.GetStatusHwnd() );
-		HFONT hFont = (HFONT)::SendMessageAny(m_cStatusBar.GetStatusHwnd(), WM_GETFONT, 0, 0);
+		HFONT hFont = (HFONT)::SendMessage(m_cStatusBar.GetStatusHwnd(), WM_GETFONT, 0, 0);
 		if (hFont != NULL)
 		{
 			hFont = (HFONT)::SelectObject(hdc, hFont);
@@ -3063,7 +3049,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		//	最初に「枠無し」状態を設定した後でバーの分割を行う．
 		m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
 
-		::SendMessageAny( m_cStatusBar.GetStatusHwnd(), SB_SETPARTS, nStArrNum, (LPARAM)nStArr );
+		::SendMessage( m_cStatusBar.GetStatusHwnd(), SB_SETPARTS, nStArrNum, (LPARAM)nStArr );
 		if (hFont != NULL)
 		{
 			::SelectObject(hdc, hFont);
@@ -3255,7 +3241,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 		{
 			POINT P;
 			GetCursorPos(&P); //スクリーン座標
-			if(SendMessageAny(GetHwnd(), WM_NCHITTEST, 0, P.x | (P.y << 16)) != HTSYSMENU)
+			if(SendMessage(GetHwnd(), WM_NCHITTEST, 0, P.x | (P.y << 16)) != HTSYSMENU)
 			{
 				ReleaseCapture();
 				m_IconClicked = icNone;
@@ -3554,7 +3540,7 @@ LRESULT CEditWnd::OnLButtonDblClk(WPARAM wp, LPARAM lp) //by 鬼(2)
 		ReleaseCapture();
 		m_IconClicked = icDoubleClicked;
 
-		SendMessageCmd(GetHwnd(), WM_SYSCOMMAND, SC_CLOSE, 0);
+		SendMessage(GetHwnd(), WM_SYSCOMMAND, SC_CLOSE, 0);
 
 		Result = 0;
 	}
@@ -3581,11 +3567,11 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	//    複数あるときはどれを押した時も１個目のボタン情報が入るようなのでマウス位置からボタン位置を求める
 	::GetCursorPos( &po );
 	::ScreenToClient( hwnd, &po );
-	nIndex = ::SendMessageAny( hwnd, TB_HITTEST, (WPARAM)0, (LPARAM)&po );
+	nIndex = ::SendMessage( hwnd, TB_HITTEST, (WPARAM)0, (LPARAM)&po );
 	if( nIndex < 0 ){
 		return 0;
 	}
-	::SendMessageAny( hwnd, TB_GETITEMRECT, (WPARAM)nIndex, (LPARAM)&rc );
+	::SendMessage( hwnd, TB_GETITEMRECT, (WPARAM)nIndex, (LPARAM)&rc );
 	po.x = rc.left;
 	po.y = rc.bottom;
 	::ClientToScreen( hwnd, &po );
@@ -3658,7 +3644,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 */
 void CEditWnd::SetWindowIcon(HICON hIcon, int flag)
 {
-	HICON hOld = (HICON)::SendMessageAny( GetHwnd(), WM_SETICON, flag, (LPARAM)hIcon );
+	HICON hOld = (HICON)::SendMessage( GetHwnd(), WM_SETICON, flag, (LPARAM)hIcon );
 	if( hOld != NULL ){
 		::DestroyIcon( hOld );
 	}
@@ -4005,7 +3991,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 									0, GetHwnd(), NULL);
 		delete [] pEditNodeArr;
 		::DestroyMenu( hMenu );
-		::SendMessageCmd( GetHwnd(), WM_COMMAND, (WPARAM)nId, (LPARAM)NULL );
+		::SendMessage( GetHwnd(), WM_COMMAND, (WPARAM)nId, (LPARAM)NULL );
 	}
 
 	return 0L;
@@ -4029,7 +4015,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 		CFileNameManager::Instance()->TransformFileName_MakeCache();
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
-			::SendMessageAny( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
+			::SendMessage( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 ////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
 			TCHAR c = ((1 + i%35) <= 9)?(_T('1') + i%35):(_T('A') + i%35 - 9);	// 2009.06.02 ryoji アクセスキーを 1-9,A-Z の範囲で再使用
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
