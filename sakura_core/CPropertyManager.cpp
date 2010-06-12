@@ -27,6 +27,10 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする
 		BOOL bGroup = (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin);
 		m_cPropCommon.ApplyData();
+		// note: 基本的にここで適用しないで、MYWM_CHANGESETTINGからたどって適用してください。
+		// 自ウィンドウには最後に通知されます。大抵は、OnChangeSetting にあります。
+		// ここでしか適用しないと、ほかのウィンドウが変更されません。
+		
 		CEditApp::Instance()->m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
 		if( bGroup != (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ) ){
 			CAppNodeManager::Instance()->ResetGroupId();
@@ -35,10 +39,6 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		/* アクセラレータテーブルの再作成 */
 		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
-		/* フォントが変わった */
-		for( int i = 0; i < 4; ++i ){
-			CEditApp::Instance()->m_pcEditWnd->m_pcEditViewArr[i]->m_cTipWnd.ChangeFont( &(GetDllShareData().m_Common.m_sHelper.m_lf_kh) );
-		}
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */

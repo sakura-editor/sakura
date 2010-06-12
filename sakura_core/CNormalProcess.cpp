@@ -178,7 +178,7 @@ bool CNormalProcess::InitializeProcess()
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
-				pEditWnd->m_pcEditViewArr[0],
+				&pEditWnd->GetActiveView(),
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
@@ -216,7 +216,7 @@ bool CNormalProcess::InitializeProcess()
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
 			if( FALSE != nRet ){
-				pEditWnd->m_pcEditViewArr[0]->GetCommander().HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
+				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
 			}
 			return true; // 2003.06.23 Moca
 		}
@@ -249,8 +249,8 @@ bool CNormalProcess::InitializeProcess()
 			//	移動するようにする． || → &&
 			if( ( CLayoutInt(0) <= fi.m_nViewTopLine && CLayoutInt(0) <= fi.m_nViewLeftCol )
 				&& fi.m_nViewTopLine < pEditWnd->GetDocument().m_cLayoutMgr.GetLineCount() ){
-				pEditWnd->m_pcEditViewArr[0]->GetTextArea().SetViewTopLine( fi.m_nViewTopLine );
-				pEditWnd->m_pcEditViewArr[0]->GetTextArea().SetViewLeftCol( fi.m_nViewLeftCol );
+				pEditWnd->GetActiveView().GetTextArea().SetViewTopLine( fi.m_nViewTopLine );
+				pEditWnd->GetActiveView().GetTextArea().SetViewLeftCol( fi.m_nViewLeftCol );
 			}
 
 			//	オプション指定がないときはカーソル位置設定を行わないようにする
@@ -278,11 +278,11 @@ bool CNormalProcess::InitializeProcess()
 				}
 				// To Here Mar. 28, 2003 MIK
 
-				pEditWnd->m_pcEditViewArr[0]->GetCaret().MoveCursor( ptPos, TRUE );
-				pEditWnd->m_pcEditViewArr[0]->GetCaret().m_nCaretPosX_Prev =
-					pEditWnd->m_pcEditViewArr[0]->GetCaret().GetCaretLayoutPos().GetX2();
+				pEditWnd->GetActiveView().GetCaret().MoveCursor( ptPos, TRUE );
+				pEditWnd->GetActiveView().GetCaret().m_nCaretPosX_Prev =
+					pEditWnd->GetActiveView().GetCaret().GetCaretLayoutPos().GetX2();
 			}
-			pEditWnd->m_pcEditViewArr[0]->RedrawAll();
+			pEditWnd->GetActiveView().RedrawAll();
 		}
 		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
@@ -346,8 +346,8 @@ bool CNormalProcess::InitializeProcess()
 		if( pszMacroType == NULL || pszMacroType[0] == L'\0' || wcsicmp(pszMacroType, L"file") == 0 ){
 			pszMacroType = NULL;
 		}
-		CEditView* view = pEditWnd->m_pcEditViewArr[ pEditWnd->m_nActivePaneIndex ];
-		view->GetCommander().HandleCommand( F_EXECEXTMACRO, TRUE, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
+		CEditView& view = pEditWnd->GetActiveView();
+		view.GetCommander().HandleCommand( F_EXECEXTMACRO, TRUE, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
 
 	return pEditWnd->GetHwnd() ? true : false;

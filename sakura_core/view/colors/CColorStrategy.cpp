@@ -96,7 +96,7 @@ EColorIndexType SColorStrategyInfo::GetCurrentColor() const
 
 CColorStrategyPool::CColorStrategyPool()
 {
-	m_pcView = CEditWnd::Instance()->m_pcEditViewArr[0];
+	m_pcView = &(CEditWnd::Instance()->GetView(0));
 	m_pcFoundStrategy = new CColor_Found;
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
 	m_vStrategies.push_back(new CColor_RegexKeyword);		// 正規表現キーワード

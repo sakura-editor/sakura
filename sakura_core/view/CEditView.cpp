@@ -1497,6 +1497,10 @@ void CEditView::OnChangeSetting()
 	::GetClientRect( GetHwnd(), &rc );
 	OnSize( rc.right, rc.bottom );
 
+	/* ƒtƒHƒ“ƒg‚ª•Ï‚í‚Á‚½ */
+	m_cTipWnd.ChangeFont( &(GetDllShareData().m_Common.m_sHelper.m_lf_kh) );
+
+
 	/* Ä•`‰æ */
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 }

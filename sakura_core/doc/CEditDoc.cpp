@@ -34,7 +34,6 @@
 #include "CControlTray.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
-#include "CMarkMgr.h"///
 #include "CNormalProcess.h"
 #include "CPrintPreview.h"
 #include "CVisualProgress.h"
@@ -199,7 +198,6 @@ void CEditDoc::InitDoc()
 /* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 void CEditDoc::InitAllView( void )
 {
-	int		i;
 
 	m_nCommandExecNum = 0;	/* コマンド実行回数 */
 
@@ -213,19 +211,8 @@ void CEditDoc::InitAllView( void )
 	else
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
-	/* 先頭へカーソルを移動 */
-	for( i = 0; i < 4; ++i ){
-		//	Apr. 1, 2001 genta
-		// 移動履歴の消去
-		m_pcEditWnd->m_pcEditViewArr[i]->m_cHistory->Flush();
-
-		/* 現在の選択範囲を非選択状態に戻す */
-		m_pcEditWnd->m_pcEditViewArr[i]->GetSelectionInfo().DisableSelectArea( FALSE );
-
-		m_pcEditWnd->m_pcEditViewArr[i]->OnChangeSetting();
-		m_pcEditWnd->m_pcEditViewArr[i]->GetCaret().MoveCursor( CLayoutPoint(0, 0), TRUE );
-		m_pcEditWnd->m_pcEditViewArr[i]->GetCaret().m_nCaretPosX_Prev = CLayoutInt(0);
-	}
+	// CEditWndに引越し
+	m_pcEditWnd->InitAllViews();
 
 	return;
 }
@@ -575,8 +562,9 @@ void CEditDoc::OnChangeSetting()
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
 	/* ビューに設定変更を反映させる */
-	for( i = 0; i < 4; ++i ){
-		m_pcEditWnd->m_pcEditViewArr[i]->OnChangeSetting();
+	int viewCount = m_pcEditWnd->GetAllViewCount();
+	for( i = 0; i < viewCount; ++i ){
+		m_pcEditWnd->GetView(i).OnChangeSetting();
 	}
 	m_pcEditWnd->RestorePhysPosOfAllView( posSaveAry );
 	if( hwndProgress ){
