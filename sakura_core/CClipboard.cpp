@@ -231,7 +231,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 			const int nMaxCnt = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
 
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
-				DragQueryFile(hDrop, nLoop, sTmpPath, sizeof(sTmpPath) - 1);
+				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
 				if(nLoop > 0){
 					cmemBuf->AppendStringT(_TEXT("\r\n"));
 				}

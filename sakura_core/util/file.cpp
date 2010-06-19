@@ -450,7 +450,7 @@ void GetExedir(
 	
 	TCHAR	szPath[_MAX_PATH];
 	// sakura.exe ‚ÌƒpƒX‚ðŽæ“¾
-	::GetModuleFileName( NULL, szPath, sizeof(szPath) );
+	::GetModuleFileName( NULL, szPath, _countof(szPath) );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}
