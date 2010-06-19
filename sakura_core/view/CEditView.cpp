@@ -1416,21 +1416,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 	if( !GetSelectionInfo().IsMouseSelecting() ){	/* 範囲選択中 */
 		if( TRUE == KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
-			const TCHAR*	pszWork;
-			pszWork = m_cTipWnd.m_cInfo.GetStringPtr();
-			// 2002.05.25 Moca &の考慮を追加 
-			TCHAR*	pszShortOut = new TCHAR[160 + 1];
-			if( 80 < _tcslen( pszWork ) ){
-				TCHAR*	pszShort = new TCHAR[80 + 1];
-				auto_memcpy( pszShort, pszWork, 80 );
-				pszShort[80] = _T('\0');
-				dupamp( pszShort, pszShortOut );
-				delete [] pszShort;
-			}else{
-				dupamp( pszWork, pszShortOut );
-			}
 			::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, _T("キーワードの説明をクリップボードにコピー(&K)") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
-			delete [] pszShortOut;
 			::InsertMenu( hMenu, 1, MF_BYPOSITION, IDM_JUMPDICT, _T("キーワード辞書を開く(&J)") );	// 2006.04.10 fon
 			::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 		}
