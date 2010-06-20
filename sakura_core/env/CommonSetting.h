@@ -14,7 +14,7 @@ static const int MAX_DATETIMEFOREMAT_LEN	= 100;
 static const int MAX_CUSTOM_MENU			=  25;
 static const int MAX_CUSTOM_MENU_NAME_LEN	=  32;
 static const int MAX_CUSTOM_MENU_ITEMS		=  48;
-static const int MAX_TOOLBARBUTTONS			= 384;	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)
+static const int MAX_TOOLBARBUTTONS			= 416;	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)	2010/3/14 Uchi アイコンの最大登録数を32個増やした(384→416)
 
 
 // 旧版と違い、bool型使えるようにしてあります by kobake

@@ -21,17 +21,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "macro/CSMacroMgr.h"
+#include "macro/CPPAMacroMgr.h"
+#include "macro/CWSHManager.h"
+#include "macro/CMacroFactory.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "view/CEditView.h"
-#include "CPPAMacroMgr.h"
-#include "CWSHManager.h"
-#include "CMacroFactory.h"
-#include <stdio.h>
-#include <assert.h> // 試験用
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
@@ -354,6 +350,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_TAB_SEPARATE,			LTEXT("TabSeparate"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //新規グループ	// 2007.06.20 ryoji
 	{F_TAB_JOINTNEXT,			LTEXT("TabJointNext"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のグループに移動	// 2007.06.20 ryoji
 	{F_TAB_JOINTPREV,			LTEXT("TabJointPrev"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のグループに移動	// 2007.06.20 ryoji
+	{F_TAB_CLOSEOTHER,			LTEXT("TabCloseOther"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //このタブ以外を閉じる	// 2010/3/14 Uchi
+	{F_TAB_CLOSELEFT,			LTEXT("TabCloseLeft"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //左をすべて閉じる		// 2010/3/14 Uchi
+	{F_TAB_CLOSERIGHT,			LTEXT("TabCloseRight"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //右をすべて閉じる		// 2010/3/14 Uchi
 
 	/* 支援 */
 	{F_HOKAN,					LTEXT("Complete"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 入力補完 */	//Oct. 15, 2000 JEPRO 入ってなかったので英名を付けて入れてみた
@@ -859,7 +858,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_GOFILEEND				://ファイルの最後に移動
 	case F_WORDLEFT					://単語の左端に移動
 	case F_WORDRIGHT				://単語の右端に移動
-//	case F_CURLINECENTER			://カーソル行をウィンドウ中央へ
+	case F_CURLINECENTER			://カーソル行をウィンドウ中央へ
 	case F_JUMPHIST_PREV			://移動履歴: 前へ
 	case F_JUMPHIST_NEXT			://移動履歴: 次へ
 	case F_JUMPHIST_SET				://現在位置を移動履歴に登録

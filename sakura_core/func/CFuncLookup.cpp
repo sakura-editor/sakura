@@ -32,11 +32,8 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "func/CFuncLookup.h"
-#include "macro/CSMacroMgr.h"// 2002/2/10 aroka
-#include <stdio.h>
-#include "CNormalProcess.h"
 #include "plugin/CJackManager.h"
 
 //	オフセット値
@@ -139,7 +136,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		ptr[bufsize-1] = LTEXT('\0');
 		return true;
 	}
-	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTMACRO ){
+	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU ){	// MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/3/14 Uchi
 		wcsncpy( ptr, m_pCommon->m_sCustomMenu.m_szCustMenuNameArr[ funccode - F_CUSTMENU_BASE ], bufsize );
 		ptr[bufsize-1] = LTEXT('\0');
 		return true;
@@ -265,6 +262,3 @@ int CFuncLookup::GetItemCount(int category) const
 	}
 	return 0;
 }
-
-
-

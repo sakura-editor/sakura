@@ -4638,7 +4638,7 @@ void CEditWnd::RegisterPluginCommand()
 //プラグインコマンドをエディタに登録する
 void CEditWnd::RegisterPluginCommand( CPlug* plug )
 {
-	int iBitmap = 383;
+	int iBitmap = MAX_TOOLBARBUTTONS-1;	// 383-> 2010/5/22 Uchi
 	if( !plug->m_sIcon.empty() ){
 		iBitmap = m_CMenuDrawer.m_pcIcons->Add( to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
 	}
