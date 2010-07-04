@@ -951,7 +951,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	//	ツールバーアイコン数の最大値を超えないためのおまじない
 	//	最大値を超えて定義しようとするとここでコンパイルエラーになります．
-	char dummy[ _countof(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBARBUTTONS ? 1:0 ];
+	char dummy[ _countof(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
 	dummy[0]=0;
 
 	memcpy_raw(
