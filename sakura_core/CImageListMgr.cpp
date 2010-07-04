@@ -21,17 +21,18 @@
 #include "debug/CRunningTimer.h"
 #include "util/module.h"
 
+//  2010/06/29 syat MAX_X, MAX_Yの値をCommonSettings.hに移動
 //	Jul. 21, 2003 genta 他でも使うので関数の外に出した
 //	Oct. 21, 2000 JEPRO 設定
-const int MAX_X = 32;
-const int MAX_Y = 12;	//2002.01.17
+const int MAX_X = MAX_TOOLBAR_ICON_X;
+const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
 
 /*! コンストラクタ */
 CImageListMgr::CImageListMgr()
 	: m_cx( 16 ), m_cy( 16 )
 	, m_hIconBitmap( NULL )
 	, m_cTrans( RGB( 0, 0, 0 ))
-	, m_nIconCount( MAX_X * MAX_Y )
+	, m_nIconCount( MAX_TOOLBAR_ICON_COUNT )
 {
 }
 

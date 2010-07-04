@@ -87,6 +87,9 @@ public:
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
 	void AddToolButton( int iBitmap, int iCommand );	//ツールバーボタンを追加する 2009.11.14 syat
+	
+	static const int TOOLBAR_BUTTON_F_PLUGCOMMAND = 283;	//プラグインコマンド既定アイコン
+	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384;	//ツールバー折返しアイコン（ダミー）
 
 private:
 	int Find( int nFuncID );
@@ -103,8 +106,7 @@ private:
 	int				m_nMenuItemNum;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 //2009.11.14 syat プラグインコマンド動的追加のためvector化
-//	TBBUTTON		m_tbMyButton[MAX_TOOLBARBUTTONS+1];	/* ツールバーのボタン +1はセパレータ */
-	std::vector<TBBUTTON>	m_tbMyButton;	/* ツールバーのボタン +1はセパレータ */
+	std::vector<TBBUTTON>	m_tbMyButton;	/* ツールバーのボタン */
 	int				m_nMyButtonNum;
 
 	int				m_nMenuItemBitmapIdxArr[MAX_MENUITEMS];
