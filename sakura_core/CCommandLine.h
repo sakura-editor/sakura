@@ -54,7 +54,6 @@ private:
 	
 	static int CheckCommandLine(
 		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
-		int		quotelen,	//!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
 		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
 		int*	arglen		//!< [out] 引数の長さ
 	);
@@ -83,8 +82,8 @@ public:
 	bool GetEditInfo(EditInfo* fi) const { *fi = m_fi; return true; }
 	bool GetGrepInfo(GrepInfo* gi) const { *gi = m_gi; return true; }
 	int GetGroupId() const {return m_nGroup;};	// 2007.06.26 ryoji
-	LPCWSTR GetMacro() const{ return m_pszMacro; }
-	LPCWSTR GetMacroType() const{ return m_pszMacroType; }
+	LPCWSTR GetMacro() const{ return m_cmMacro.GetStringPtr(); }
+	LPCWSTR GetMacroType() const{ return m_cmMacroType.GetStringPtr(); }
 
 // member valiables
 private:
@@ -99,8 +98,8 @@ private:
 	GrepInfo	m_gi;				//!
 	bool		m_bViewMode;		//! [out] TRUE: Read Only
 	int			m_nGroup;			//! グループID	// 2007.06.26 ryoji
-	LPWSTR		m_pszMacro;			//! [out] マクロファイル名／マクロ文
-	LPWSTR		m_pszMacroType;		//! [out] マクロ種別
+	CNativeW	m_cmMacro;			//! [out] マクロファイル名／マクロ文
+	CNativeW	m_cmMacroType;		//! [out] マクロ種別
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -74,7 +74,6 @@ CCommandLine* CCommandLine::_instance = NULL;
 */
 int CCommandLine::CheckCommandLine(
 	LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
-	int		quotelen,	//!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
 	TCHAR** arg,		//!< [out] 引数がある場合はその先頭へのポインタ
 	int*	arglen		//!< [out] 引数の長さ
 )
@@ -130,26 +129,38 @@ int CCommandLine::CheckCommandLine(
 	};
 
 	const _CmdLineOpt *ptr;
-	int len = lstrlen( str ) - quotelen;
+	int len = lstrlen( str );
 
 	//	引数がある場合を先に確認
-	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ ){
+	for( ptr = _COptWithA; ptr->opt != NULL; ptr++ )
+	{
 		if( len >= ptr->len &&	//	長さが足りているか
-			//	オプション部分の長さチェック
-			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&
-			//	文字列の比較
-			auto_memicmp( str, ptr->opt, ptr->len ) == 0 ){		// 2006.10.25 ryoji memcmp() -> _memicmp()
-			*arg = str + ptr->len + 1;
-			*arglen = len - ptr->len;
+			( str[ptr->len] == '=' || str[ptr->len] == ':' ) &&	//	オプション部分の長さチェック
+			auto_memicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較	// 2006.10.25 ryoji memcmp() -> _memicmp()
+		{
+			*arg = str + ptr->len + 1;				// 引数開始位置
+			*arglen = len - ptr->len - 1;
+			if (**arg == '"') {						// 引数先頭に"があれば削除
+				(*arg)++;
+				(*arglen)--;
+				if (*arglen > 0 && (*arg)[(*arglen)-1] == '"') {	// 引数末尾に"があれば削除
+					(*arg)[(*arglen)-1] = '\0';
+					(*arglen)--;
+				}
+			}
+			if (*arglen <= 0) {
+				return 0;		//2010.06.12 syat 値なしはオプションとして認めない
+			}
 			return ptr->value;
 		}
 	}
 
 	//	引数がない場合
-	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ ){
+	for( ptr = _COptWoA; ptr->opt != NULL; ptr++ )
+	{
 		if( len == ptr->len &&	//	長さチェック
-			//	文字列の比較
-			auto_memicmp( str, ptr->opt, ptr->len ) == 0 ){
+			auto_memicmp( str, ptr->opt, ptr->len ) == 0 )	//	文字列の比較
+		{
 			*arglen = 0;
 			return ptr->value;
 		}
@@ -195,7 +206,7 @@ void CCommandLine::ParseCommandLine( void )
 
 
 	TCHAR	szPath[_MAX_PATH + 1];
-	bool	bFind = false;
+	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
 	int		i, j;
@@ -296,9 +307,9 @@ void CCommandLine::ParseCommandLine( void )
 				}
 			}
 			++pszToken;	//	先頭の'-'はskip
-			TCHAR *arg;
+			TCHAR *arg = NULL;
 			int nArgLen;
-			switch( CheckCommandLine( pszToken, nQuoteLen, &arg, &nArgLen ) ){
+			switch( CheckCommandLine( pszToken, &arg, &nArgLen ) ){
 			case CMDLINEOPT_X: //	X
 				/* 行桁指定を1開始にした */
 				m_fi.m_ptCursor.x = AtoiOptionInt( arg ) - 1;
@@ -355,16 +366,16 @@ void CCommandLine::ParseCommandLine( void )
 				break;
 			case CMDLINEOPT_GKEY:	//	GKEY
 				//	前後の""を取り除く
-				m_gi.cmGrepKey.SetStringT( arg + 1,  lstrlen( arg ) - 2 );
+				m_gi.cmGrepKey.SetStringT( arg,  lstrlen( arg ) );
 				m_gi.cmGrepKey.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
-				m_gi.cmGrepFile.SetStringT( arg + 1,  lstrlen( arg ) - 2 );
+				m_gi.cmGrepFile.SetStringT( arg,  lstrlen( arg ) );
 				m_gi.cmGrepFile.Replace( _T("\"\""), _T("\"") );
 				break;
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
-				m_gi.cmGrepFolder.SetString( arg + 1,  lstrlen( arg ) - 2 );
+				m_gi.cmGrepFolder.SetString( arg,  lstrlen( arg ) );
 				m_gi.cmGrepFolder.Replace( _T("\"\""), _T("\"") );
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT
@@ -411,22 +422,11 @@ void CCommandLine::ParseCommandLine( void )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat 追加
-				{
-					if( m_pszMacro ){ delete[] m_pszMacro; }
-					LPCWSTR argW = to_wchar(arg);
-					int valuelenW = wcslen(argW);
-					m_pszMacro = new WCHAR[ valuelenW + 1 ];
-					wcscpy( m_pszMacro, argW );
-				}
+				m_cmMacro.SetStringW( arg,  lstrlen( arg ) );
+				m_cmMacro.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
-				{
-					if( m_pszMacroType ){ delete[] m_pszMacroType; }
-					LPCWSTR argW = to_wchar(arg);
-					int valuelenW = wcslen(argW);
-					m_pszMacroType = new WCHAR[ valuelenW + 1 ];
-					wcscpy( m_pszMacroType, argW );
-				}
+				m_cmMacroType.SetStringW( arg,  lstrlen( arg ) );
 				break;
 			}
 		}
@@ -479,8 +479,6 @@ CCommandLine::CCommandLine(LPTSTR cmd)
 	m_gi.nGrepOutputStyle	= 1;
 	m_bViewMode			= false;
 	m_nGroup				= 0;		// 2007.06.26 ryoji
-	m_pszMacro				= NULL;		// 2009.06.14 syat
-	m_pszMacroType			= NULL;		// 2009.06.14 syat
 	
 	ParseCommandLine();
 }
