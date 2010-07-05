@@ -50,23 +50,24 @@ public:
 	~CMRU();
 
 	//	メニューを取得する
-	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer );	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
-	BOOL DestroyMenu( HMENU hMenu );
+	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
+	BOOL DestroyMenu( HMENU hMenu ) const;
 	
 	//	ファイル名の一覧を教えて
 	std::vector<LPCTSTR> GetPathList() const;
 
 	//	アクセス関数
-	int Length(void);	//	アイテムの数。
+	int Length(void) const;	//	アイテムの数。
+	int MenuLength(void) const { return t_min(Length(), m_cRecentFile.GetViewCount()); };	//	メニューに表示されるアイテムの数
 	void ClearAll(void);//	アイテムを削除～。
-	bool GetEditInfo( int num, EditInfo* pfi );				//	番号で指定したEditInfo（情報をまるごと）
-	bool GetEditInfo( const TCHAR* pszPath, EditInfo* pfi );	//	ファイル名で指定したEditInfo（情報をまるごと）
+	bool GetEditInfo( int num, EditInfo* pfi ) const;				//	番号で指定したEditInfo（情報をまるごと）
+	bool GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const;	//	ファイル名で指定したEditInfo（情報をまるごと）
 	void Add( EditInfo* pEditInfo );		//	*pFileInfoを追加する。
 
 protected:
 	//	共有メモリアクセス用。
 	struct DLLSHAREDATA*	m_pShareData;		//	共有メモリを参照するよ。
-	bool IsRemovableDrive( const char* pszDrive );
 
 private:
 	CRecentFile	m_cRecentFile;	//履歴	//@@@ 2003.04.08 MIK

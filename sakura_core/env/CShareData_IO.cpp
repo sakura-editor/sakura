@@ -2,6 +2,7 @@
 
 #include "StdAfx.h"
 #include "env/CShareData_IO.h"
+#include "doc/CDocTypeSetting.h" // ColorInfo !!
 #include "CDataProfile.h"
 #include "CShareData.h"
 #include "macro/CSMacroMgr.h"
@@ -76,6 +77,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Macro( cProfile );
 	ShareData_IO_Statusbar( cProfile );		// 2008/6/21 Uchi
 	ShareData_IO_Plugin( cProfile );
+	ShareData_IO_MainMenu( cProfile, GetDllShareData().m_Common.m_sMainMenu, false );		// 2010/5/15 Uchi
 	ShareData_IO_Other( cProfile );
 	
 	if( !bRead ){
@@ -685,7 +687,8 @@ void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting
 					n = CSMacroMgr::GetFuncInfoByName(0, szFuncName, szFuncNameJapanese);
 				}
 				if ( n == F_INVALID ) {
-					if ( WCODE::Is09(*szFuncName) ) {
+					if (WCODE::Is09( *szFuncName ) 
+					  && (WCODE::Is09( szFuncName[1] ) == L'\0' ||  WCODE::Is09( szFuncName[1] ))) {
 						n = (EFunctionCode)auto_atol(szFuncName);
 					}
 					else {
@@ -1533,6 +1536,160 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
 }
 
 /*!
+	@brief 共有データのMainMenuセクションの入出力
+	@param[in,out]	cProfile	INIファイル入出力クラス
+	@param[in,out]	mainmenu	共通設定MainMenuクラス
+	@param[in]		bOutCmdName	出力時、名前で出力
+
+	@date 2010/5/15 Uchi
+*/
+void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSetting_MainMenu&	mainmenu, bool bOutCmdName)
+{
+	const WCHAR*	pszSecName = LTEXT("MainMenu");
+	CommonSetting&	common = GetDllShareData().m_Common;
+	CMainMenu*		pcMenu;
+	int		i;
+	WCHAR	szKeyName[64];
+	WCHAR	szFuncName[MAX_MAIN_MENU_NAME_LEN+1];
+	WCHAR	szFuncNameJapanese[256];
+	EFunctionCode n;
+	int		nIdx;
+	WCHAR	szLine[1024];
+	WCHAR*	p;
+	WCHAR*	pn;
+
+	if (cProfile.IsReadingMode()) {
+		i = 0;
+		cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), i);
+		if (i == 0) {
+			return;
+		}
+		mainmenu.m_nMainMenuNum = i;
+	}
+	else {
+		cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), mainmenu.m_nMainMenuNum);
+	}
+	
+	cProfile.IOProfileData( pszSecName, LTEXT("bKeyParentheses"), mainmenu.m_bMainMenuKeyParentheses );
+
+	if (cProfile.IsReadingMode()) {
+		// Top Level 初期化
+		memset( mainmenu.m_nMenuTopIdx, -1, sizeof(mainmenu.m_nMenuTopIdx) );
+	}
+
+	nIdx = 0;
+	for (i = 0; i < mainmenu.m_nMainMenuNum; i++) {
+		//メインメニューテーブル
+		pcMenu = &mainmenu.m_cMainMenuTbl[i];
+
+		auto_sprintf( szKeyName, LTEXT("MM[%03d]"), i );
+		if (cProfile.IsReadingMode()) {
+			// 読み込み時初期化
+			pcMenu->m_nType    = T_NODE;
+			pcMenu->m_nFunc    = F_INVALID;
+			pcMenu->m_nLevel   = 0;
+			pcMenu->m_sName[0] = L'\0';
+			pcMenu->m_sKey[0]  = L'\0';
+			pcMenu->m_sKey[1]  = L'\0';
+
+			// 読み出し
+			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
+
+			// レベル
+			p = szLine;
+			pn = wcschr( p, L',' );
+			if (pn != NULL)		*pn++ = L'\0';
+			pcMenu->m_nLevel = auto_atol( p );
+			if (pn == NULL) {
+				continue;
+			}
+
+			// 種類
+			p = pn;
+			pn = wcschr( p, L',' );
+			if (pn != NULL)		*pn++ = L'\0';
+			pcMenu->m_nType = (EMainMenuType)auto_atol( p );
+			if (pn == NULL) {
+				continue;
+			}
+			
+			// 機能(マクロ名対応)
+			p = pn;
+			pn = wcschr( p, L',' );
+			if (pn != NULL)		*pn++ = L'\0';
+			if ( WCODE::Is09( *p ) ) {
+				n = F_INVALID;
+			}
+			else {
+				n = CSMacroMgr::GetFuncInfoByName(0, p, szFuncNameJapanese);
+			}
+			if ( n == F_INVALID ) {
+				if (WCODE::Is09( *p )
+				  && (WCODE::Is09( p[1] ) == L'\0' ||  WCODE::Is09( p[1] ))) {
+					n = (EFunctionCode)auto_atol( p );
+				}
+				else {
+					n = F_DEFAULT;
+				}
+			}
+			pcMenu->m_nFunc = n;
+			if (pn == NULL) {
+				continue;
+			}
+
+			// アクセスキー
+			p = pn;
+			if ( *p == L',' ) {
+				// Key なし or ,
+				if ( p[1] == L',') {
+					// Key = ,
+					pcMenu->m_sKey[0]  = *p++;
+				}
+			}
+			else {
+				pcMenu->m_sKey[0]  = *p++;
+			}
+			if (*p == L'\0') {
+				continue;
+			}
+
+			// 表示名
+			p++;
+			auto_strcpy_s( pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN+1, p );
+		}
+		else {
+			if (bOutCmdName) {
+				// マクロ名対応
+				p = CSMacroMgr::GetFuncInfoByID(
+					G_AppInstance(),
+					pcMenu->m_nFunc,
+					szFuncName,
+					szFuncNameJapanese
+				);
+			}
+			if ( !bOutCmdName || p == NULL ) {
+				auto_sprintf( szFuncName, L"%d", pcMenu->m_nFunc );
+			}
+			// 書き込み
+			auto_sprintf( szLine, L"%d,%d,%ls,%ls,%ls", 
+				pcMenu->m_nLevel, 
+				pcMenu->m_nType, 
+				szFuncName, 
+				pcMenu->m_sKey, 
+				pcMenu->m_sName );
+			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
+		}
+
+		if (cProfile.IsReadingMode() && pcMenu->m_nLevel == 0) {
+			// Top Level設定
+			if (nIdx < MAX_MAINMENU_TOP) {
+				mainmenu.m_nMenuTopIdx[nIdx++] = i;
+			}
+		}
+	}
+}
+
+/*!
 	@brief 共有データのOtherセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
@@ -1584,6 +1741,11 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 					HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
 					LOWORD( pShare->m_sVersion.m_dwProductVersionLS ) );
 		cProfile.IOProfileData( pszSecName, LTEXT("szVersion"), MakeStringBufferT(iniVer) );
+
+		// 共有メモリバージョン	2010/5/20 Uchi
+		int		nStructureVersion;
+		nStructureVersion = int(pShare->m_vStructureVersion);
+		cProfile.IOProfileData( pszSecName, LTEXT("vStructureVersion"), nStructureVersion );
 	}
 }
 

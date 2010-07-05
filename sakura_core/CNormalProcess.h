@@ -29,7 +29,7 @@ class CEditWnd;
 	
 	エディタプロセスはCEditWndクラスのインスタンスを作る。
 */
-class SAKURA_CORE_API CNormalProcess : public CProcess, public TSingleInstance<CNormalProcess> {
+class SAKURA_CORE_API CNormalProcess : public CProcess {
 public:
 	//コンストラクタ・デストラクタ
 	CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );

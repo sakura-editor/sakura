@@ -16,14 +16,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "func/CKeyBind.h"
-#include "debug/Debug.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
-#include "func/CFuncLookup.h"
-#include "mem/CMemory.h"// 2002/2/10 aroka
 
 
 //実装補助
@@ -411,8 +407,51 @@ int CKeyBind::GetKeyStrList(
 }
 
 
+
+
+// アクセスキー付きの文字列の作成
+TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
+{
+	static	TCHAR	sLabel[300];
+	const	TCHAR*	p;
+
+	if (sKey == NULL || sKey[0] == L'\0') {
+		return const_cast<TCHAR*>( to_tchar(sName) );
+	}
+	else {
+		if (!CShareData::getInstance()->GetShareData()->m_Common.m_sMainMenu.m_bMainMenuKeyParentheses
+			  && (p = auto_strchr( sName, sKey[0] )) != NULL) {
+			// 欧文風、使用している文字をアクセスキーに
+			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			sLabel[p-sName] = _T('&');
+			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+		}
+		else if( (p = auto_strchr( sName, _T('(') )) != NULL
+			  && (p = auto_strchr( p, sKey[0] )) != NULL) {
+			// (付その後にアクセスキー
+			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			sLabel[p-sName] = _T('&');
+			auto_strcpy_s( sLabel + (p-sName) + 1, _countof(sLabel), p );
+		}
+		else if (_tcscmp( sName + _tcslen(sName) - 3, _T("...") ) == 0) {
+			// 末尾...
+			auto_strcpy_s( sLabel, _countof(sLabel), sName );
+			sLabel[_tcslen(sName) - 3] = '\0';						// 末尾の...を取る
+			auto_strcat_s( sLabel, _countof(sLabel), _T("(&") );
+			auto_strcat_s( sLabel, _countof(sLabel), sKey );
+			auto_strcat_s( sLabel, _countof(sLabel), _T(")...") );
+		}
+		else {
+			auto_sprintf_s( sLabel, _countof(sLabel), _T("%ts(&%ts)"), sName, sKey );
+		}
+
+		return sLabel;
+	}
+}
+
 /*! メニューラベルの作成
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
+	2010/5/17	アクセスキーの追加
 */
 TCHAR* CKeyBind::GetMenuLabel(
 		HINSTANCE	hInstance,
@@ -420,18 +459,23 @@ TCHAR* CKeyBind::GetMenuLabel(
 		KEYDATA*	pKeyNameArr,
 		int			nFuncId,
 		TCHAR*		pszLabel,
+		const TCHAR*	pszKey,
 		BOOL		bKeyStr,
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
 	CNativeT		cMemList;
-//	int			i;
 
 
 	if( 0 == _tcslen( pszLabel ) ){
-		_tcscpy( pszLabel, _T("-- undefined name --") );
 		::LoadString( hInstance, nFuncId, pszLabel, 255 );
 	}
+	if( 0 == _tcslen( pszLabel ) ){
+		_tcscpy( pszLabel, _T("-- undefined name --") );
+	}
+	// アクセスキーの追加	2010/5/17 Uchi
+	auto_strcpy_s( pszLabel, 255, MakeMenuLabel( pszLabel, pszKey ) );
+	pszLabel[255] = '\0';
 
 
 	/* 機能に対応するキー名を追加するか */

@@ -24,25 +24,19 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #define ID_HOTKEY_TRAYMENU	0x1234
 
-#include <windows.h>
 #include <htmlhelp.h>
 #include "CControlTray.h"
-#include "global.h"
 #include "CEditApp.h"
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 #include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
-#include "dlg/CDlgOpenFile.h"
 #include "util/module.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
-#include "env/DLLSHAREDATA.h"
-#include "env/CHelpManager.h"
 #include "env/CShareData.h"
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
@@ -478,7 +472,7 @@ LRESULT CControlTray::DispatchEvent(
 			}
 			// 編集ウィンドウの数が0になったら終了
 			if( 0 == nRowNum ){
-				::SendMessageAny( hwnd, WM_CLOSE, 0, 0 );
+				::SendMessage( hwnd, WM_CLOSE, 0, 0 );
 			}
 		}
 		return 0;
@@ -669,7 +663,7 @@ LRESULT CControlTray::DispatchEvent(
 						CDlgOpenFile	cDlgOpenFile;
 
 						// MRUリストのファイルのリスト
-						CMRU cMRU;
+						const CMRU cMRU;
 						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
 
 						// ファイルオープンダイアログの初期化
@@ -727,7 +721,7 @@ LRESULT CControlTray::DispatchEvent(
 
 						/* 新しい編集ウィンドウを開く */
 						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
-						CMRU cMRU;
+						const CMRU cMRU;
 						EditInfo openEditInfo;
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
 
@@ -750,11 +744,11 @@ LRESULT CControlTray::DispatchEvent(
 					}
 					else if( nId - IDM_SELOPENFOLDER  >= 0 && nId - IDM_SELOPENFOLDER  < 999 ){
 						/* MRUリストのファイルのリスト */
-						CMRU cMRU;
+						const CMRU cMRU;
 						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
 
 						/* OPENFOLDERリストのファイルのリスト */
-						CMRUFolder cMRUFolder;
+						const CMRUFolder cMRUFolder;
 						std::vector<LPCTSTR> vOPENFOLDER = cMRUFolder.GetPathList();
 
 						//Stonee, 2001/12/21 UNCであれば接続を試みる
@@ -877,7 +871,7 @@ void CControlTray::OnNewEditor()
 	const TCHAR* szCurDir = NULL;
 
 	//	最近使ったフォルダを順番にたどる
-	CMRUFolder mrufolder;
+	const CMRUFolder mrufolder;
 
 	int nCount = mrufolder.Length();
 	for( int i = 0; i < nCount ; i++ ){
@@ -1282,8 +1276,6 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	TCHAR		szMemu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	POINT		po;
 	RECT		rc;
-//	HWND		hwndDummy;
-	int			nMenuNum;
 	EditInfo*	pfi;
 
 	//本当はセマフォにしないとだめ
@@ -1293,47 +1285,45 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	m_CMenuDrawer.ResetContents();
 	CFileNameManager::Instance()->TransformFileName_MakeCache();
 
-	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
-	hMenu = ::GetSubMenu( hMenuTop, 0 );
-	nMenuNum = ::GetMenuItemCount( hMenu )/* - 1*/;
-	for( i = nMenuNum - 1; i >= 0; i-- ){
-		::DeleteMenu( hMenu, i, MF_BYPOSITION );
-	}
+	// リソースを使わないように
+	hMenuTop = ::CreatePopupMenu();
+	hMenu = ::CreatePopupMenu();
+	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenu, L"TrayL", L"" );
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T("新規作成(&N)"), FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T("開く(&O)..."), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T(""), _T("N"), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T(""), _T("O"), FALSE );
 
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, _T("Grep(&G)..."), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_GREP_DIALOG, _T(""), _T("G"), FALSE );
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 
 	/* MRUリストのファイルのリストをメニューにする */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRU cMRU;
+	const CMRU cMRU;
 	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
-	if ( cMRU.Length() > 0 ){
+	if ( cMRU.MenuLength() > 0 ){
 		//	アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("最近使ったファイル(&F)") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("最近使ったファイル"), _T("F") );
 	}
 	else {
 		//	非アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , _T("最近使ったファイル(&F)") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , _T("最近使ったファイル"), _T("F") );
 	}
 
 	/* 最近使ったフォルダのメニューを作成 */
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
-	CMRUFolder cMRUFolder;
+	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
-	if ( cMRUFolder.Length() > 0 ){
+	if ( cMRUFolder.MenuLength() > 0 ){
 		//	アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("最近使ったフォルダ(&D)") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
 	}
 	else {
 		//	非アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, _T("最近使ったフォルダ(&D)") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
 	}
 
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, _T("すべて上書き保存(&Z)"), FALSE );	// Jan. 24, 2005 genta
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILESAVEALL, _T(""), _T("Z"), FALSE );	// Jan. 24, 2005 genta
 
 	/* 現在開いている編集窓のリストをメニューにする */
 	j = 0;
@@ -1349,7 +1339,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 		for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
 			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd() ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
-				::SendMessageAny( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
+				::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 					if( pfi->m_bIsGrep ){
 						/* データを指定バイト数以内に切り詰める */
@@ -1398,20 +1388,20 @@ int	CControlTray::CreatePopUpMenu_L( void )
 					}
 
 //				::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMemu );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMemu, FALSE );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMemu, _T(""), FALSE );
 				++j;
 			}
 		}
 	}
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T("編集の全終了(&Q)"), FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALLEDITORS, _T(""), _T("Q"), FALSE );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	//Feb. 18, 2001 JEPRO アクセスキー変更(L→Q)	// 2006.10.21 ryoji 表示文字列変更	// 2007.02.13 ryoji →F_EXITALLEDITORS
 	if( j == 0 ){
 		::EnableMenuItem( hMenu, F_EXITALLEDITORS, MF_BYCOMMAND | MF_GRAYED );	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)	// 2007.02.13 ryoji →F_EXITALLEDITORS
 		::EnableMenuItem( hMenu, F_FILESAVEALL, MF_BYCOMMAND | MF_GRAYED );	// Jan. 24, 2005 genta
 	}
 
 	//	Jun. 9, 2001 genta ソフトウェア名改称
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T("サクラエディタの全終了(&X)"), FALSE );	//Dec. 26, 2000 JEPRO F_に変更
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 
 	po.x = 0;
 	po.y = 0;
@@ -1453,13 +1443,11 @@ int	CControlTray::CreatePopUpMenu_L( void )
 /*! ポップアップメニュー(トレイ右ボタン) */
 int	CControlTray::CreatePopUpMenu_R( void )
 {
-	int		i;
 	int		nId;
 	HMENU	hMenuTop;
 	HMENU	hMenu;
 	POINT	po;
 	RECT	rc;
-	int		nMenuNum;
 
 	//本当はセマフォにしないとだめ
 	if( m_bUseTrayMenu ) return -1;
@@ -1467,12 +1455,10 @@ int	CControlTray::CreatePopUpMenu_R( void )
 
 	m_CMenuDrawer.ResetContents();
 
-	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
-	hMenu = ::GetSubMenu( hMenuTop, 0 );
-	nMenuNum = ::GetMenuItemCount( hMenu )/* - 1*/;
-	for( i = nMenuNum - 1; i >= 0; i-- ){
-		::DeleteMenu( hMenu, i, MF_BYPOSITION );
-	}
+	// リソースを使わないように
+	hMenuTop = ::CreatePopupMenu();
+	hMenu = ::CreatePopupMenu();
+	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenu, L"TrayR", L"" );
 
 #if 0
 	2002/04/26 YAZAKI 使えないものは表示しない
@@ -1486,8 +1472,8 @@ int	CControlTray::CreatePopUpMenu_R( void )
 #endif
 
 	/* トレイ右クリックの「ヘルプ」メニュー */
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T("ヘルプ目次(&O)"), FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T("ヘルプキーワード検索(&S)"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
 //	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 //	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MENU_ALLFUNC , _T("コマンド一覧(&M)"), FALSE );	//Jan. 12, 2001 JEPRO まずコメントアウト第一号 (T_T)
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
@@ -1501,13 +1487,13 @@ int	CControlTray::CreatePopUpMenu_R( void )
 #endif
 
 //	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("バージョン情報(&A)"), FALSE );
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T("バージョン情報(&A)"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
 
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 //	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_EXITALL, _T("テキストエディタの全終了(&X)"), FALSE );
 //	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T("テキストエディタの全終了(&X)"), FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 	//	Jun. 18, 2001 genta ソフトウェア名改称
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T("サクラエディタの全終了(&X)"), FALSE );	//De
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//De
 
 	po.x = 0;
 	po.y = 0;
@@ -1615,4 +1601,3 @@ INT_PTR CALLBACK CControlTray::ExitingDlgProc(
 	}
 	return FALSE;
 }
-

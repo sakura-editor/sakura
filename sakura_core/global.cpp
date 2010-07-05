@@ -44,5 +44,5 @@ HWND G_GetProgressBar()
 
 HINSTANCE G_AppInstance()
 {
-	return CNormalProcess::Instance()->GetProcessInstance();
+	return CProcess::Instance()->GetProcessInstance();
 }

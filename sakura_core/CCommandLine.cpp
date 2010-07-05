@@ -422,11 +422,11 @@ void CCommandLine::ParseCommandLine( void )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat ’Ç‰Á
-				m_cmMacro.SetStringW( arg,  lstrlen( arg ) );
+				m_cmMacro.SetStringT( arg,  auto_strlen( arg ) );
 				m_cmMacro.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat ’Ç‰Á
-				m_cmMacroType.SetStringW( arg,  lstrlen( arg ) );
+				m_cmMacroType.SetStringT( arg,  auto_strlen( arg ) );
 				break;
 			}
 		}

@@ -34,12 +34,11 @@
 		   distribution.
 */
 #include "StdAfx.h"
-//#include <stdio.h>
-//#include <string.h>
-//#include <algorithm>
 #include "CProfile.h"
 #include "debug/Debug.h"
 #include "io/CTextStream.h"
+#include "charset/CUtf8.h"		// Resource読み込みに使用
+#include "util/file.h"
 
 using namespace std;
 
@@ -130,6 +129,70 @@ bool CProfile::ReadProfile( const TCHAR* pszProfileName )
 	return true;
 }
 
+
+/*! Profileをリソースから読み出す
+	
+	@param pName [in] リソース名
+	@param pType [in] リソースタイプ
+
+	@retval true  成功
+	@retval false 失敗
+
+	@date 2010/5/19 MainMenu用に作成
+
+	1行300文字までに制限
+*/
+bool CProfile::ReadProfileRes( const TCHAR* pName, const TCHAR* pType )
+{
+	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
+	HRSRC		hRsrc;
+	HGLOBAL		hGlobal;
+	size_t		nSize;
+	char*		psMMres;
+	char*		p;
+	char		sLine[300+1];
+	char*		pn;
+	size_t		lnsz;
+	wstring		line;
+
+	m_strProfileName = _T("-Res-");
+
+	if (( hRsrc = ::FindResource( 0, pName, pType )) != NULL
+	 && ( hGlobal = ::LoadResource( 0, hRsrc )) != NULL
+	 && ( psMMres = (char *)::LockResource(hGlobal)) != NULL
+	 && ( nSize = (size_t)::SizeofResource( 0, hRsrc )) != 0) {
+		p    = psMMres;
+		if (nSize >= sizeof(UTF8_BOM) && memcmp( p, UTF8_BOM, sizeof(UTF8_BOM) )==0) {
+			// Skip BOM
+			p += sizeof(UTF8_BOM);
+		}
+		for (; p < psMMres + nSize ; p = pn) {
+			// 1行切り取り（長すぎた場合切捨て）
+			pn = strpbrk(p, "\n");
+			if (pn == NULL) {
+				// 最終行
+				pn = psMMres + nSize;
+			}
+			else {
+				pn++;
+			}
+			lnsz = (pn-p)<=300 ? (pn-p) : 300;
+			memcpy(sLine, p, lnsz);
+			sLine[lnsz] = '\0';
+			if (sLine[lnsz-1] == '\n')	sLine[--lnsz] = '\0';
+			if (sLine[lnsz-1] == '\r')	sLine[--lnsz] = '\0';
+			
+			// UTF-8 -> UNICODE
+			CMemory cmLine( sLine, lnsz );
+			CUtf8::UTF8ToUnicode( &cmLine );
+			line = (const wchar_t*)cmLine.GetRawPtr();
+
+			//解析
+			ReadOneline(line);
+		}
+	}
+	return true;
+}
 
 /*! Profileをファイルへ書き出す
 	

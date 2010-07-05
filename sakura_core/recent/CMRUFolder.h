@@ -47,17 +47,19 @@ public:
 	~CMRUFolder();
 
 	//	メニューを取得する
-	HMENU CreateMenu( class CMenuDrawer* pCMenuDrawer );	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
-	BOOL DestroyMenu( HMENU hMenu );
+	HMENU CreateMenu( class CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
+	BOOL DestroyMenu( HMENU hMenu ) const;
 	
 	//	フォルダ名の一覧を教えて
 	std::vector<LPCTSTR> GetPathList() const;
 
 	//	アクセス関数
-	int Length();	//	アイテムの数。
+	int Length() const;	//	アイテムの数。
+	int MenuLength(void) const{ return t_min(Length(), m_cRecentFolder.GetViewCount()); };	//	メニューに表示されるアイテムの数
 	void ClearAll();					//	アイテムを削除～。
 	void Add( const TCHAR* pszFolder );	//	pszFolderを追加する。
-	const TCHAR* GetPath(int num);
+	const TCHAR* GetPath(int num) const;
 
 protected:
 

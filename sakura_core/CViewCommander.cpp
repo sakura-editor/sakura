@@ -4523,11 +4523,11 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
 				uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
 				//	Oct. 3, 2001 genta
-				pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenuPopUp, uFlags, code, szLabel );
+				pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, L"" );
 			}
 		}
 		//	Oct. 3, 2001 genta
-		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , FuncLookup.Category2Name(i) );
+		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , FuncLookup.Category2Name(i) , _T(""));
 //		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
 
@@ -7429,7 +7429,7 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 			}
 			pCEditWnd->GetMenuDrawer().MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , pszMenuLabel );
+				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , pszMenuLabel, L"" );
 		}
 	}
 	po.x = 0;
@@ -8723,8 +8723,8 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 
 	ECodeType	nSaveCharCode = nCharCode;
 	if(nSaveCharCode == CODE_AUTODETECT) {
-		EditInfo		fi;
-		CMRU			cMRU;
+		EditInfo    fi;
+		const CMRU  cMRU;
 		if ( cMRU.GetEditInfo( to_tchar(filename), &fi ) ){
 				nSaveCharCode = fi.m_nCharCode;
 		} else {

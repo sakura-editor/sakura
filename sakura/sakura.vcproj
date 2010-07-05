@@ -566,6 +566,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\resource\MainMenu.ini"
+				>
+			</File>
+			<File
 				RelativePath="..\resource\mytool.bmp"
 				>
 			</File>
@@ -2206,6 +2210,10 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\prop\CPropComMacro.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\prop\CPropComMainMenu.cpp"
 					>
 				</File>
 				<File

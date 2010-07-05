@@ -968,8 +968,6 @@
 #define HIDCANCEL_KEYWORD_SELECT		14101		// キャンセル
 #define HIDC_COMBO_KEYWORD_SELECT		14102		// 強調キーワード1～10
 
-
-
 // 共通設定ステータスバー			// 2008/6/21	Uchi
 #define HIDC_CHECK_DISP_UNICODE_IN_SJIS	14200		// SJISで文字コード値をUnicodeで表示する
 #define HIDC_CHECK_DISP_UNICODE_IN_JIS	14201		// JISで文字コード値をUnicodeで表示する
@@ -978,5 +976,20 @@
 #define HIDC_CHECK_DISP_SP_CODEPOINT	14204		// サロゲートペアをコードポイントで表示する
 #define HIDC_CHECK_DISP_SELCOUNT_BY_BYTE	14205	// 選択文字数を文字単位ではなくバイト単位で表示する
 
+// 共通設定メインメニュー			// 2010/5/16	Uchi
+#define HIDC_TREE_RES						14400	//メニュー一覧
+#define HIDC_BUTTON_TREE_DELETE				14401	//メニューから機能削除
+#define HIDC_BUTTON_TREE_INSERT_NODE 		14402	//メニューへノード追加
+#define HIDC_BUTTON_TREE_INSERT_SEPARATOR 	14403	//メニューへ区切線挿入
+#define HIDC_BUTTON_TREE_INSERT				14404	//メニューへ機能挿入(上)
+#define HIDC_BUTTON_TREE_INSERT_A 			14405	//メニューへ機能挿入(下)
+#define HIDC_BUTTON_TREE_ADD				14406	//メニューへ機能追加
+#define HIDC_BUTTON_TREE_UP					14407	//メニューの機能を上へ移動
+#define HIDC_BUTTON_TREE_DOWN				14408	//メニューの機能を下へ移動
+#define HIDC_BUTTON_TREE_RIGHT				14409	//メニューの機能を右へ移動
+#define HIDC_BUTTON_TREE_LEFT				14410	//メニューの機能を左へ移動
+#define HIDC_BUTTON_NENU_CHECK				14411	//メニューの検査
+#define HIDC_BUTTON_TREE_CLEAR				14412	//メニューをクリア
+#define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
 
 #define HIDC_STATIC						19999 //不明

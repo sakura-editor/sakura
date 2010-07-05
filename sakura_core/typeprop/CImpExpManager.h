@@ -31,9 +31,8 @@
 #ifndef _CIMPEXPMANAGER_H_
 #define _CIMPEXPMANAGER_H_
 
-// 要先行定義
-// #include "CDataProfile.h"
-// #include "env/CShareData.h"
+#include "CDataProfile.h"
+#include "env/DLLSHAREDATA.h"
 
 using std::wstring;
 
@@ -281,6 +280,32 @@ private:
 	CommonSetting&		m_Common;
 	int 				m_nIdx;
 	bool&				m_bCase;
+};
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     メインメニュー                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class CImpExpMainMenu : public CImpExpManager
+{
+public:
+	// Constructor
+	CImpExpMainMenu( CommonSetting& common )
+		: m_Common( common )
+	{
+	}
+
+public:
+	bool Import( const wstring, wstring& );
+	bool Export( const wstring, wstring& );
+
+public:
+	// デフォルト拡張子の取得
+	const TCHAR* GetDefaultExtension()	{ return _T("*.ini"); }
+	const wchar_t* GetOriginExtension()	{ return L"ini"; }
+
+private:
+	CommonSetting&		m_Common;
 };
 
 

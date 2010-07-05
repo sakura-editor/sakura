@@ -14,12 +14,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CMRUFolder.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "CMenuDrawer.h"	//	これでいいのか？
-#include "recent/CRecent.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "util/string_ex2.h"
 
 /*!	コンストラクタ
@@ -38,15 +37,39 @@ CMRUFolder::~CMRUFolder()
 	m_cRecentFolder.Terminate();
 }
 
-HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
+/*!
+	フォルダ履歴メニューの作成
+	
+	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
+	
+	@return 生成したメニューのハンドル
+
+	2010/5/21 Uchi 組み直し
+*/
+HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
 	HMENU	hMenuPopUp;
+
+	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
+	return CreateMenu( hMenuPopUp, pCMenuDrawer );
+}
+
+/*!
+	フォルダ履歴メニューの作成
+	
+	@param 追加するメニューのハンドル
+	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
+	
+	@author Norio Nakantani
+	@return メニューのハンドル
+*/
+HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
+{
 	TCHAR	szFolder2[_MAX_PATH * 2];	//	全部&でも問題ないように :-)
-	TCHAR	szMemu[300];				//	メニューキャプション
+	TCHAR	szMemu[_MAX_PATH * 2 + 10];				//	メニューキャプション
 	int		i;
 	bool	bFavorite;
 
-	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 	CFileNameManager::Instance()->TransformFileName_MakeCache();
 	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
 	{
@@ -59,14 +82,14 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		dupamp( szMemu, szFolder2 );
 
 		bFavorite = m_cRecentFolder.IsFavorite( i );
-		//	j >= 10 + 26 の時の考慮を省いた(に近い)がフォルダの履歴MAXを36個にしてあるので事実上OKでしょう
+		const int nAccKey = i % 36;
 		auto_sprintf( szMemu, _T("&%tc %ts%ts"), 
-			(i < 10) ? (_T('0') + i) : (_T('A') + i - 10), 
+			(nAccKey < 10) ? (_T('0') + nAccKey) : (_T('A') + nAccKey - 10), 
 			(!m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
 			szFolder2 );
 
 		//	メニューに追加
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMemu, TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMemu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;
@@ -83,7 +106,7 @@ std::vector<LPCTSTR> CMRUFolder::GetPathList() const
 	return ret;
 }
 
-int CMRUFolder::Length()
+int CMRUFolder::Length() const
 {
 	return m_cRecentFolder.GetItemCount();
 }
@@ -108,7 +131,7 @@ void CMRUFolder::Add( const TCHAR* pszFolder )
 	m_cRecentFolder.AppendItem( pszFolder );
 }
 
-const TCHAR* CMRUFolder::GetPath(int num)
+const TCHAR* CMRUFolder::GetPath(int num) const
 {
 	return m_cRecentFolder.GetItemText( num );
 }

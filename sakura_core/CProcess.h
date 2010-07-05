@@ -25,7 +25,7 @@
 /*!
 	@brief プロセス基底クラス
 */
-class SAKURA_CORE_API CProcess {
+class SAKURA_CORE_API CProcess : public TSingleInstance<CProcess> {
 public:
 	CProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );
 	bool Run();

@@ -40,7 +40,6 @@
 #include "env/CShareData_IO.h"
 #include "view/colors/CColorStrategy.h"
 #include "typeprop/CDlgTypeAscertain.h"
-//#include "types/Ctype.h"
 #include "plugin/CPlugin.h"
 
 /*-----------------------------------------------------------------------
@@ -97,6 +96,8 @@ static const wchar_t	WSTR_KEYWORD_CASE[]		= L"// CASE=";
 static const wchar_t	WSTR_CASE_TRUE[]		= L"// CASE=True";
 static const wchar_t	WSTR_CASE_FALSE[]		= L"// CASE=False";
 
+// メインメニューファイル
+static       wchar_t	WSTR_MAINMENU_HEAD_V1[]	= L"SakuraEditorMainMenu Ver1";
 
 // Exportファイル名の作成
 //	  タイプ名などファイルとして扱うことを考えていない文字列を扱う
@@ -1163,6 +1164,76 @@ bool CImpExpKeyWord::Export( const wstring sFileName, wstring& sErrMsg )
 		out.WriteF( L"\n" );
 	}
 	out.Close();
+
+	return true;
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     メインメニュー                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//	2010/5/23 Uchi
+// インポート
+bool CImpExpMainMenu::Import( const wstring sFileName, wstring& sErrMsg )
+{
+	TCHAR*		szPath = (TCHAR*)to_tchar( sFileName.c_str() );
+
+	//ヘッダ確認
+	CTextInputStream in(szPath);
+	if (!in) {
+		sErrMsg = MSG_NOT_OPEN + sFileName;
+		return false;
+	}
+
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+	cProfile.ReadProfile(szPath);
+
+	//バージョン確認
+	WCHAR szHeader[256];
+	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
+	if(wcscmp(szHeader, WSTR_MAINMENU_HEAD_V1)!=0) {
+		sErrMsg = wstring( L"メインメニュー設定ファイルの形式が違います。\n\n" ) + sFileName;
+		return false;
+	}
+
+	CShareData_IO::ShareData_IO_MainMenu(cProfile,m_Common.m_sMainMenu, true);
+
+	return true;
+}
+
+// エクスポート
+bool CImpExpMainMenu::Export( const wstring sFileName, wstring& sErrMsg )
+{
+	TCHAR*		szPath = (TCHAR*)to_tchar( sFileName.c_str() );
+
+	// オープン
+	CTextOutputStream out(szPath);
+	if (!out) {
+		sErrMsg = MSG_NOT_OPEN + sFileName;
+		return false;
+	}
+
+	out.Close();
+
+	//ヘッダ
+	CDataProfile	cProfile;
+	CommonSetting_MainMenu* menu=&m_Common.m_sMainMenu;
+
+	// 書き込みモード設定
+	cProfile.SetWritingMode();
+
+	//ヘッダ
+	cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", MakeStringBufferW(WSTR_MAINMENU_HEAD_V1) );
+	
+	//内容
+	CShareData_IO::ShareData_IO_MainMenu(cProfile, *menu, true);
+
+	// 書き込み
+	if (!cProfile.WriteProfile( szPath, WSTR_MAINMENU_HEAD_V1)) {
+		sErrMsg = MSG_NOT_EXPORT + sFileName;
+		return false;
+	}
 
 	return true;
 }
