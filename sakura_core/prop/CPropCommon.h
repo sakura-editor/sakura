@@ -37,6 +37,7 @@ class CMenuDrawer;// 2002/2/10 aroka to here
 enum ComPropSheetOrder {
 	ID_PAGENUM_GENERAL = 0,		// 全般
 	ID_PAGENUM_WIN,				// ウィンドウ
+	ID_PAGENUM_MAINMENU,		// メインメニュー
 	ID_PAGENUM_TOOLBAR,			// ツールバー
 	ID_PAGENUM_TAB,				// タブバー
 	ID_PAGENUM_STATUSBAR,		// ステータスバー
@@ -485,10 +486,30 @@ private:
 	void EnablePluginPropInput(HWND hwndDlg);
 };
 
+//==============================================================
+//!	メインメニューページ
+class SAKURA_CORE_API CPropMainMenu : CPropCommon
+{
+public:
+	//!	Dialog Procedure
+	static INT_PTR CALLBACK DlgProc_page(
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+protected:
+	//! Message Handler
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
+	void SetData( HWND );	/* ダイアログデータの設定 */
+	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void Import( HWND );	/* メニュー設定をインポートする */
+	void Export( HWND );	/* メニュー設定をエクスポートする */
+
+private:
+	bool GetDataTree( HWND, HTREEITEM, int );
+
+	bool Check_MainMenu( HWND, std::wstring& );						// メニューの検査
+	bool Check_MainMenu_Sub( HWND, HTREEITEM, int, std::wstring& );	// メニューの検査
+};
+
 
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* SAKURA_PROP_CPROPCOMMON_H_ */
-
-
-

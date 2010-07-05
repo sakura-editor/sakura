@@ -4,6 +4,7 @@
 
 class CDataProfile;
 struct CommonSetting_CustomMenu; // defined CommonSetting.h
+struct CommonSetting_MainMenu; // defined CommonSetting.h
 struct KEYDATA; // defined CKeyBind.h
 // struct ColorInfo; // defined doc/CDocTypeSetting.h
 
@@ -38,6 +39,7 @@ public:
 	static void ShareData_IO_Macro( CDataProfile& );
 	static void ShareData_IO_Statusbar( CDataProfile& );	// 2008/6/21 Uchi
 	static void ShareData_IO_Plugin( CDataProfile& );		// 2009/11/30 syat
+	static void ShareData_IO_MainMenu( CDataProfile&, CommonSetting_MainMenu&, bool );		// 2010/5/15 Uchi
 	static void ShareData_IO_Other( CDataProfile& );
 
 

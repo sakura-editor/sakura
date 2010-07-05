@@ -22,40 +22,20 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include <stdlib.h>
-#include <time.h>
+#include "StdAfx.h"
 #include "view/CEditView.h"
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
-#include "charset/charcode.h"
 #include "CWaitCursor.h"
 #include "window/CEditWnd.h"
-#include "dlg/CDlgCancel.h"
-#include "doc/CLayout.h"/// 2002/2/3 aroka
-#include "COpe.h"///
 #include "COpeBlk.h"///
 #include "CDropTarget.h"///
 #include "window/CSplitBoxWnd.h"///
-#include "CRegexKeyword.h"///	//@@@ 2001.11.17 add MIK
 #include "CMarkMgr.h"///
-#include "COsVersionInfo.h"
-#include "io/CFileLoad.h" // 2002/08/30 Moca
-#include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "CClipboard.h"
 #include "types/CTypeSupport.h"
-#include "parse/CWordParse.h"
 #include "convert/CConvert.h"
-#include "charset/CCodeMediator.h"
-#include "charset/CShiftJis.h"
-#include "util/input.h"
-#include "util/os.h"
 #include "util/string_ex2.h"
-#include "util/window.h"
-#include "util/module.h"
-#include "util/tchar_template.h"
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
-#include "view/colors/CColorStrategy.h"
 
 
 CEditView*	g_m_pcEditView;
@@ -91,7 +71,7 @@ LRESULT CALLBACK EditViewWndProc(
 			//	May 16, 2000 genta
 			//	From Here
 			if( uMsg == WM_COMMAND ){
-				::SendMessageCmd( ::GetParent( pCEdit->m_hwndParent ), WM_COMMAND, wParam,  lParam );
+				::SendMessage( ::GetParent( pCEdit->m_hwndParent ), WM_COMMAND, wParam,  lParam );
 			}
 			else{
 				return pCEdit->DispatchEvent( hwnd, uMsg, wParam, lParam );
@@ -735,7 +715,7 @@ LRESULT CEditView::DispatchEvent(
 		nPosX = (int)wParam;
 		nPosY = (int)lParam;
 //		MYTRACE_A( "MYWM_DOSPLIT nPosX=%d nPosY=%d\n", nPosX, nPosY );
-		::SendMessageAny( m_hwndParent, MYWM_DOSPLIT, wParam, lParam );
+		::SendMessage( m_hwndParent, MYWM_DOSPLIT, wParam, lParam );
 		return 0L;
 
 	case MYWM_SETACTIVEPANE:
@@ -1409,7 +1389,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 			}
 			pCEditWnd->GetMenuDrawer().MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
+				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel2, L"" );
 
 		}
 	}

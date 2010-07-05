@@ -166,10 +166,13 @@ public:
 	void RegisterPluginCommand( int id );	//プラグインコマンドをエディタに登録する
 	void RegisterPluginCommand( CPlug* id );	//プラグインコマンドをエディタに登録する
 
+	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bool flag );				// 表示の動的選択	2010/5/19 Uchi
+	void SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bool flag0, bool flag1 );	// 表示の動的選択	2010/5/19 Uchi
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           整形                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	void LayoutMainMenu( void );		// メインメニュー					// 2010/5/16 Uchi
 	void LayoutToolBar( void );			/* ツールバーの配置処理 */			// 2006.12.19 ryoji
 	void LayoutFuncKey( void );			/* ファンクションキーの配置処理 */	// 2006.12.19 ryoji
 	void LayoutTabBar( void );			/* タブバーの配置処理 */			// 2006.12.19 ryoji
@@ -285,6 +288,10 @@ protected:
 	//タイマー
 	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
 
+	// メニュー
+	void CheckFreeSubMenu( HWND, HMENU, UINT );		// メニューバーの無効化を検査	2010/6/18 Uchi
+	void CheckFreeSubMenuSub( HMENU, int );			// メニューバーの無効化を検査	2010/6/18 Uchi
+
 public:
 	//! 周期内でm_nTimerCountをインクリメント
 	void IncrementTimerCount(int nInterval)
@@ -391,8 +398,3 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CEDITWND_H_ */
-
-
-
-
-

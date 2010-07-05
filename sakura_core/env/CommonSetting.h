@@ -535,6 +535,34 @@ struct CommonSetting_Plugin
 	PluginRec		m_PluginTable[MAX_PLUGIN];	//!< プラグインテーブル
 };
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        メインメニュー                       //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+// 種類
+enum EMainMenuType {
+	T_NODE,			// Node
+	T_LEAF,			// 機能
+	T_SEPARATOR,	// 区切線
+	T_SPECIAL,		// 特殊機能
+}; 
+
+class CMainMenu {
+public:
+	EMainMenuType	m_nType;		// 種類
+	EFunctionCode	m_nFunc;		// Function
+	WCHAR			m_sKey[2];		// アクセスキー
+	WCHAR			m_sName[MAX_MAIN_MENU_NAME_LEN+1];	// 名前
+	int 			m_nLevel;
+};
+
+struct CommonSetting_MainMenu
+{
+	int				m_nMenuTopIdx[MAX_MAINMENU_TOP];	//!< メインメニュートップレベル
+	int 			m_nMainMenuNum;
+	CMainMenu		m_cMainMenuTbl[MAX_MAINMENU];		//!< メインメニューデータ
+	bool 			m_bMainMenuKeyParentheses;			//!< アクセスキーを( )付で表示
+};
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                                                             //
@@ -567,9 +595,7 @@ struct CommonSetting
 	CommonSetting_View				m_sView;
 	CommonSetting_Others			m_sOthers;
 	//
-	CommonSetting_Statusbar			m_sStatusbar;				// 2008/6/21 Uchi
+	CommonSetting_Statusbar			m_sStatusbar;		// ステータスバー		// 2008/6/21 Uchi
 	CommonSetting_Plugin			m_sPlugin;			// プラグイン 2009/11/30 syat
+	CommonSetting_MainMenu			m_sMainMenu;		// メインメニュー		// 2010/5/15 Uchi
 };
-
-
-

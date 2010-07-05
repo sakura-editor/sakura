@@ -15,15 +15,13 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CMRU.h"
-#include <stdio.h>
-#include "global.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
 #include "CMenuDrawer.h"	//	これでいいのか？
-#include "recent/CRecent.h"	//履歴の管理	//@@@ 2003.04.08 MIK
+#include "window/CEditWnd.h"
 #include "util/string_ex2.h"
 
 /*!	コンストラクタ
@@ -48,20 +46,38 @@ CMRU::~CMRU()
 	
 	@author Norio Nakantani
 	@return 生成したメニューのハンドル
+
+	2010/5/21 Uchi 組み直し
 */
-HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
+HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
 	HMENU	hMenuPopUp;
-	TCHAR	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
-	TCHAR	szMemu[300];			//	メニューキャプション
-	int		i;
-	bool	bFavorite;
-	EditInfo	*p;
-
-	CFileNameManager::Instance()->TransformFileName_MakeCache();
 
 	//	空メニューを作る
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
+	return CreateMenu( hMenuPopUp, pCMenuDrawer );
+}
+/*!
+	ファイル履歴メニューの作成
+	
+	@param 追加するメニューのハンドル
+	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
+	
+	@author Norio Nakantani
+	@return 生成したメニューのハンドル
+
+	2010/5/21 Uchi 組み直し
+*/
+HMENU CMRU::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
+{
+	TCHAR	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
+	TCHAR	szMemu[_MAX_PATH * 2 + 10];				//	メニューキャプション
+	int		i;
+	bool	bFavorite;
+	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
+
+	CFileNameManager::Instance()->TransformFileName_MakeCache();
+
 	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
@@ -69,7 +85,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		
 		/* MRUリストの中にある開かれていないファイル */
 
-		p = m_cRecentFile.GetItem( i );
+		const EditInfo	*p = m_cRecentFile.GetItem( i );
 		
 		CFileNameManager::Instance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
 		//	&を&&に置換。
@@ -77,12 +93,12 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		dupamp( szMemu, szFile2 );
 		
 		bFavorite = m_cRecentFile.IsFavorite( i );
-		//	j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
+		const int nAccKey = i % 36;
 		auto_sprintf(
 			szMemu,
 			_T("&%tc %ts%ts"),
-			(i < 10) ? (_T('0') + i) : (_T('A') + i - 10), 
-			(!m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
+			(nAccKey < 10) ? (_T('0') + nAccKey) : (_T('A') + nAccKey - 10), 
+			(!bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
 			szFile2
 		);
 
@@ -93,13 +109,13 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		}
 
 		//	メニューに追加。
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu, TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;
 }
 
-BOOL CMRU::DestroyMenu( HMENU hMenuPopUp )
+BOOL CMRU::DestroyMenu( HMENU hMenuPopUp ) const
 {
 	return ::DestroyMenu( hMenuPopUp );
 }
@@ -123,7 +139,7 @@ std::vector<LPCTSTR> CMRU::GetPathList() const
 }
 
 /*! アイテム数を返す */
-int CMRU::Length(void)
+int CMRU::Length(void) const
 {
 	return m_cRecentFile.GetItemCount();
 }
@@ -145,9 +161,9 @@ void CMRU::ClearAll(void)
 	@retval TRUE データが格納された
 	@retval FALSE 正しくない番号が指定された．データは格納されなかった．
 */
-bool CMRU::GetEditInfo( int num, EditInfo* pfi )
+bool CMRU::GetEditInfo( int num, EditInfo* pfi ) const
 {
-	EditInfo*	p = m_cRecentFile.GetItem( num );
+	const EditInfo*	p = m_cRecentFile.GetItem( num );
 	if( NULL == p ) return false;
 
 	*pfi = *p;
@@ -166,9 +182,9 @@ bool CMRU::GetEditInfo( int num, EditInfo* pfi )
 
 	@date 2001.12.26 CShareData::IsExistInMRUListから移動した。（YAZAKI）
 */
-bool CMRU::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi )
+bool CMRU::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 {
-	EditInfo*	p = m_cRecentFile.GetItem( m_cRecentFile.FindItemByPath( pszPath ) );
+	const EditInfo*	p = m_cRecentFile.GetItem( m_cRecentFile.FindItemByPath( pszPath ) );
 	if( NULL == p ) return false;
 
 	*pfi = *p;

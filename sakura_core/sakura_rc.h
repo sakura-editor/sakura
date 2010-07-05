@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by sakura_rc.rc
 //
+#define ID_RC_TYPE_INI                  100
 #define IDR_MENU1                       102
 #define IDR_TRAYMENU_L                  103
 #define IDD_FIND                        110
@@ -630,6 +631,15 @@
 #define IDC_STATIC_TYPE_TO              1579
 #define IDC_STATIC_TYPE_FILE            1580
 #define IDC_COMBO_COLORS                1581
+#define IDC_TREE_RES                    1589	//
+#define IDC_BUTTON_INSERT_NODE          1590	//
+#define IDC_BUTTON_INSERT_A             1091	//
+#define IDC_BUTTON_RIGHT                1592	//
+#define IDC_BUTTON_LEFT                 1593	//
+#define IDC_CHECK_KEY_PARENTHESES       1594	//
+#define IDC_BUTTON_EXPAND               1595	//
+#define IDC_BUTTON_COLLAPSE             1596	//
+#define IDC_BUTTON_CHECK                1597	//
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -658,6 +668,7 @@
 #define IDD_PROP_HELPER                 5214
 #define IDD_PROP_MACRO                  5215
 #define IDD_PROP_PLUGIN                 5216
+#define IDD_PROP_MAINMENU               5217	//
 #define IDD_WINPOSSIZE                  5220
 #define IDD_PLUGIN_OPTION               5221
 #define IDC_STATIC                      -1
@@ -668,7 +679,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1579
+#define _APS_NEXT_CONTROL_VALUE         1598
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

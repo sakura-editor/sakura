@@ -24,19 +24,17 @@
 #include "StdAfx.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "env/CShareData_IO.h"
 #include "doc/CDocListener.h" // SLoadInfo
 #include "CControlTray.h"
-#include "debug/Debug.h"
-#include "global.h"
 #include "debug/CRunningTimer.h"
-#include "charset/charcode.h"
-#include <tchar.h>
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
-#include "util/file.h"
 #include "util/os.h"
 #include "env/CSakuraEnvironment.h"
+#include "CDataProfile.h"
+#include "sakura_rc.h"
 
 struct ARRHEAD {
 	int		nLength;
@@ -461,6 +459,15 @@ bool CShareData::InitShareData()
 			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_szName[0]	= L'\0';	// プラグイン名
 			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_szId[0]	= L'\0';	// プラグインID
 			m_pShareData->m_Common.m_sPlugin.m_PluginTable[nPlugin].m_state = PLS_NONE;		// プラグイン状態
+		}
+
+		// [メインメニュー]タブ
+		{
+			CDataProfile	cProfile;
+			cProfile.SetReadingMode();
+			cProfile.ReadProfileRes( MAKEINTRESOURCE(IDR_MENU1), MAKEINTRESOURCE(ID_RC_TYPE_INI) );
+
+			CShareData_IO::ShareData_IO_MainMenu( cProfile, m_pShareData->m_Common.m_sMainMenu, false );
 		}
 
 		m_pShareData->m_sHistory.m_aCommands.clear();

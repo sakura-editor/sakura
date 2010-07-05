@@ -20,24 +20,12 @@
 */
 
 #include "StdAfx.h"
-#include <windows.h>
-#include <commctrl.h>
 #include "prop/CPropCommon.h"
-#include "global.h"
-#include "dlg/CDlgOpenFile.h"
-#include "doc/CDocListener.h"
-#include "dlg/CDlgInput1.h"
-#include "dlg/CDlgDebug.h"
+#include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "CEditApp.h"
-#include "CNormalProcess.h"
-#include "CMenuDrawer.h"
-#include "window/CSplitBoxWnd.h"
-#include "func/Funccode.h"	//Stonee, 2001/05/18
-#include "typeprop/CPropTypes.h" // 暫定：TYPE_NAME
 #include "util/shell.h"
-#include "debug/Debug.h"
 #include "sakura_rc.h"
-#include "sakura.hh"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -181,6 +169,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	static ComPropSheetInfo ComPropSheetInfoList[] = {
 		{ _T("全般"), 				IDD_PROP1P1,		CPropGeneral::DlgProc_page },
 		{ _T("ウィンドウ"),			IDD_PROP_WIN,		CPropWin::DlgProc_page },
+		{ _T("メインメニュー"),		IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
 		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	CPropToolbar::DlgProc_page },
 		{ _T("タブバー"),			IDD_PROP_TAB,		CPropTab::DlgProc_page },
 		{ _T("ステータスバー"),		IDD_PROP_STATUSBAR,	CPropStatusbar::DlgProc_page},	// 文字コード表示指定	2008/6/21	Uchi
@@ -377,6 +366,9 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 		break;
 	case IDD_PROP_PLUGIN:	//@@@ 2002.01.02
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_PLUGIN);
+		break;
+	case IDD_PROP_MAINMENU:	//@@@ 2010/6/2 Uchi
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_MAINMENU);
 		break;
 
 	default:

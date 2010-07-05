@@ -33,6 +33,7 @@ F_DISABLE		= 0,	//未使用
 F_SEPARATOR		= 1,	//セパレータ
 F_TOOLBARWRAP	= 2,	//ツールバー折返
 F_PLUGCOMMAND	= 3,	//プラグインコマンド（デフォルトアイコン）
+F_NODE			= F_DEFAULT,		// ノード(Main Menu用)
 
 //	2007.07.07 genta 状況通知フラグ
 //	コマンドが送られた状況をコマンドと併せて通知する．
@@ -42,6 +43,16 @@ FA_NONRECORD		 = 0x00040000,	//!< マクロへの記録を抑制する
 
 F_PLUGCOMMAND_FIRST			= 20000
 F_PLUGCOMMAND_LAST			= 21999
+
+// Main Menu 特殊機能
+F_WINDOW_LIST				= 29001,	// ウィンドウリスト
+F_FILE_USED_RECENTLY		= 29002,	// 最近使ったファイル
+F_FOLDER_USED_RECENTLY		= 29003,	// 最近使ったフォルダ
+F_CUSTMENU_LIST				= 29004,	// カスタムメニューリスト
+F_USERMACRO_LIST			= 29005,	// 登録済みマクロリスト
+F_PLUGIN_LIST				= 29006,	// プラグインコマンドリスト
+F_SPECIAL_FIRST				= F_WINDOW_LIST,
+F_SPECIAL_LAST				= F_PLUGIN_LIST,
 
 F_MENU_FIRST				= 30000
 
@@ -349,7 +360,7 @@ F_OPTION_FNAME			= 32014,	// 共通設定『ファイル名表示』			？
 F_OPTION_TAB			= 32015,	// 共通設定『タブ』						？
 F_OPTION_STATUSBAR		= 32016,	// 共通設定『ステータスバー』			？
 F_OPTION_PLUGIN			= 32017,	// 共通設定『プラグイン』				？
-
+F_OPTION_MAINMENU		= 32018,	// 共通設定『メインメニュー』			？
 
 // マクロ系
 F_RECKEYMACRO			= 31250,	// キーマクロの記録開始／終了		なし
