@@ -236,7 +236,8 @@ CLayoutInt CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 		}
 		it.addDelta();
 	}
-	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < 6 ){
+	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
+	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < m_sTypeConfig.m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
@@ -297,7 +298,8 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		}
 		it.addDelta();
 	}
-	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < 6 ){
+	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
+	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < m_sTypeConfig.m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
