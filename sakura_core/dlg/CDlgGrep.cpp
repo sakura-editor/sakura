@@ -182,28 +182,8 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		MyWinHelp( GetHwnd(), m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_GREP_DIALOG) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_CHK_FROMTHISTEXT:	/* この編集中のテキストから検索する */
-		if( 0 < (int)_tcslen(m_szCurrentFilePath ) ){
-			if( ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_FROMTHISTEXT ) ){
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), FALSE );
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), FALSE );
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_FOLDER ), FALSE );
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_SUBFOLDER ), FALSE );
-				::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, 0 );
-			}else{
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), TRUE );
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), TRUE );
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_FOLDER ), TRUE );
-				::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_SUBFOLDER ), TRUE );
-			}
-			TCHAR	szWorkFolder[MAX_PATH];
-			TCHAR	szWorkFile[MAX_PATH];
-			// 2003.08.01 Moca ファイル名はスペースなどは区切り記号になるので、""で囲い、エスケープする
-			szWorkFile[0] = _T('"');
-			SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile + 1 );
-			_tcscat( szWorkFile, _T("\"") ); // 2003.08.01 Moca
-			::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, szWorkFolder );
-			::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, szWorkFile );
-		}
+		// 2010.05.30 関数化
+		SetDataFromThisText( 0 != ::IsDlgButtonChecked( GetHwnd(), IDC_CHK_FROMTHISTEXT ) );
 		return TRUE;
 	case IDC_BUTTON_CURRENTFOLDER:	/* 現在編集中のファイルのフォルダ */
 		/* ファイルを開いているか */
@@ -333,29 +313,13 @@ void CDlgGrep::SetData( void )
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, szWorkFolder );
 	}
 
-	/* この編集中のテキストから検索する */
-	::CheckDlgButton( GetHwnd(), IDC_CHK_FROMTHISTEXT, m_bFromThisText );
-	if( 0 < _tcslen( m_szCurrentFilePath ) ){
-		if( m_bFromThisText ){
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_FOLDER ), FALSE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_SUBFOLDER ), FALSE );
-			TCHAR	szWorkFolder[MAX_PATH];
-			TCHAR	szWorkFile[MAX_PATH];
-			SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
-			::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, szWorkFolder );
-			::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, szWorkFile );
-		}else{
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_FOLDER ), TRUE );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_SUBFOLDER ), TRUE );
-		}
-	}
-
 	/* サブフォルダからも検索する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, m_bSubFolder );
+
+	// この編集中のテキストから検索する
+	::CheckDlgButton( GetHwnd(), IDC_CHK_FROMTHISTEXT, m_bFromThisText );
+	// 2010.05.30 関数化
+	SetDataFromThisText( m_bFromThisText != FALSE );
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( GetHwnd(), IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
@@ -439,7 +403,31 @@ void CDlgGrep::SetData( void )
 }
 
 
+/*!
+	現在編集中ファイルから検索チェックでの設定
+*/
+void CDlgGrep::SetDataFromThisText( bool bChecked )
+{
+	BOOL bEnableControls = TRUE;
+	if( 0 != m_szCurrentFilePath[0] && bChecked ){
+		TCHAR	szWorkFolder[MAX_PATH];
+		TCHAR	szWorkFile[MAX_PATH];
+		// 2003.08.01 Moca ファイル名はスペースなどは区切り記号になるので、""で囲い、エスケープする
+		szWorkFile[0] = _T('"');
+		SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile + 1 );
+		_tcscat( szWorkFile, _T("\"") ); // 2003.08.01 Moca
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, szWorkFolder );
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, szWorkFile );
 
+		::CheckDlgButton( GetHwnd(), IDC_CHK_SUBFOLDER, BST_UNCHECKED );
+		bEnableControls = FALSE;
+	}
+	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ),    bEnableControls );
+	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ),  bEnableControls );
+	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_FOLDER ), bEnableControls );
+	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_SUBFOLDER ), bEnableControls );
+	return;
+}
 
 /* ダイアログデータの取得 */
 /* TRUE==正常  FALSE==入力エラー  */
