@@ -132,7 +132,7 @@ void CDlgTypeList::SetData( void )
 {
 	int		nIdx;
 	HWND	hwndList;
-	TCHAR	szText[130];
+	TCHAR	szText[64 + MAX_TYPES_EXTS + 10];
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	::SendMessageAny( hwndList, LB_RESETCONTENT, 0, 0 );	/* ƒŠƒXƒg‚ð‹ó‚É‚·‚é */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){

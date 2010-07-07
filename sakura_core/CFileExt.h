@@ -56,7 +56,7 @@ private:
 
 	typedef struct {
 		TCHAR	m_szName[64];		//名前(64文字以下のはず→m_szTypeName)
-		TCHAR	m_szExt[64*3+1];	//拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要
+		TCHAR	m_szExt[MAX_TYPES_EXTS*3+1];	//拡張子(64文字以下のはず→m_szTypeExts) なお "*." を追加するのでそれなりに必要
 	} FileExtInfoTag;
 
 	int				m_nCount;

@@ -43,7 +43,7 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 
 	int		i;
 	TCHAR*	pszToken;
-	TCHAR	szText[256];
+	TCHAR	szText[MAX_TYPES_EXTS];
 
 	for( i = 0; i < MAX_TYPES; ++i ){
 		CTypeConfig nType(i);

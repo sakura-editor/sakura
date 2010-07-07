@@ -225,7 +225,7 @@ bool CDocFileOperation::SaveFileDialog(
 	TCHAR	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
 	{
 		LPCTSTR	szExt;
-		TCHAR	szWork[64];
+		TCHAR	szWork[MAX_TYPES_EXTS];
 		TCHAR*	pStr;
 		TCHAR*	pEnd;
 
