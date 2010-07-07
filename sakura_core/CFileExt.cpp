@@ -57,7 +57,7 @@ CFileExt::~CFileExt()
 
 bool CFileExt::AppendExt( const TCHAR *pszName, const TCHAR *pszExt )
 {
-	TCHAR	szWork[1024];
+	TCHAR	szWork[_countof(m_puFileExtInfo[0].m_szExt) + 10];
 
 	if( !ConvertTypesExtToDlgExt( pszExt, szWork ) ) return false;
 	return AppendExtRaw( pszName, szWork );
@@ -106,7 +106,7 @@ const TCHAR *CFileExt::GetExt( int nIndex )
 const TCHAR *CFileExt::GetExtFilter( void )
 {
 	int		i;
-	TCHAR	szWork[1024];
+	TCHAR	szWork[_countof(m_puFileExtInfo[0].m_szName) + _countof(m_puFileExtInfo[0].m_szExt)*2 + 10];
 
 	/* 拡張子フィルタの作成 */
 	_tcscpy( m_szFilter, _T("") );
@@ -132,6 +132,10 @@ const TCHAR *CFileExt::GetExtFilter( void )
 	return m_szFilter;
 }
 
+/*! タイプ別設定の拡張子リストをダイアログ用リストに変換する
+	@param pszSrcExt [in]  拡張子リスト 例「.c .cpp;.h」
+	@param pszDstExt [out] 拡張子リスト 例「*.c;*.cpp;*.h」
+*/
 bool CFileExt::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt )
 {
 	TCHAR	*token;
