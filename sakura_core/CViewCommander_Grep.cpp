@@ -61,8 +61,10 @@ void CViewCommander::Command_GREP( void )
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき、または未編集で無題かつアウトプットでない場合。
+		自ウィンドウがGrep実行中も、(異常終了するので)別ウィンドウにする
 	*/
-	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ||
+	if( (  CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode &&
+		  !CEditApp::Instance()->m_pcGrepAgent->m_bGrepRunning ) ||
 		( !GetDocument()->m_cDocEditor.IsModified() &&
 		  !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() &&		/* 現在編集中のファイルのパス */
 		  !CAppMode::Instance()->IsDebugMode()
