@@ -13,16 +13,37 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       外部コマンド                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class OutputAdapter
+{
+public:
+	OutputAdapter(CEditView* view, BOOL bToEditWindow) : m_view(view),m_bWindow(bToEditWindow){
+		m_pCShareData = CShareData::getInstance();
+		m_pCommander  = &(view->GetCommander());
+	}
+
+	void OutputW(const WCHAR* pBuf, int size = -1);
+	void OutputA(const ACHAR* pBuf, int size = -1);
+	void Output(const WCHAR* pBuf, int size = -1){ OutputW(pBuf, size); }
+	void Output(const ACHAR* pBuf, int size = -1){ OutputA(pBuf, size); }
+
+private:
+	BOOL m_bWindow;
+	CEditView* m_view;
+	CShareData* m_pCShareData;
+	CViewCommander* m_pCommander;
+};
 
 /*!	@brief	外部コマンドの実行
 
 	@param[in] pszCmd コマンドライン
 	@param[in] nFlgOpt オプション
 		@li	0x01	標準出力を得る
-		@li	0x02	標準出力のりダイレクト先（無効=アウトプットウィンドウ / 有効=編集中のウィンドウ）
+		@li	0x02	標準出力のリダイレクト先（無効=アウトプットウィンドウ / 有効=編集中のウィンドウ）
 		@li	0x04	編集中ファイルを標準入力へ
 		@li	0x08	標準出力をUnicodeで行う
 		@li	0x10	標準入力をUnicodeで行う
+		@li	0x20	情報出力する
+		@li	0x40	情報出力しない
 
 	@note	子プロセスの標準出力取得はパイプを使用する
 	@note	子プロセスの標準入力への送信は一時ファイルを使用
@@ -38,6 +59,9 @@
 	@date	2007/03/18	maru	オプションの拡張
 	@date	2008/06/07	Uchi	Unidoeの使用
 	@date	2009/02/21	ryoji	ビューモードや上書き禁止のときは編集中ウィンドウへは出力しない（指定時はアウトプットへ）
+	@date	2010/04/12	Moca	nFlgOptの0x20,0x40追加。無限出力対策。WM_QUIT対策。UnicodeのCarry周りの修正
+
+	TODO:	標準入力・標準エラーの取込選択。カレントディレクトリ。UTF-8等への対応
 */
 void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 {
@@ -55,6 +79,10 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	BOOL	bIOUnicodeGet	= nFlgOpt & 0x08 ? TRUE : FALSE;	//	標準出力をUnicodeで行う	2008/6/17 Uchi
 	BOOL	bIOUnicodeSend	= nFlgOpt & 0x10 ? TRUE : FALSE;	//	標準入力をUnicodeで行う	2008/6/20 Uchi
 	//	To Here 2006.12.03 maru 引数を拡張のため
+	// 2010.04.12 Moca 情報出力
+	BOOL	bOutputExtInfo	= !bToEditWindow;
+	if( nFlgOpt & 0x20 ) bOutputExtInfo = TRUE;
+	if( nFlgOpt & 0x40 ) bOutputExtInfo = FALSE;
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
 	CLayoutInt	nLineFrom, nColmFrom;
@@ -183,33 +211,49 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	hStdOutWrite = NULL;	// 2007.09.08 genta 二重closeを防ぐ
 
 	if( bGetStdout ) {
-		DWORD	read_cnt;
 		DWORD	new_cnt;
 		int		bufidx = 0;
-		int		j;
-		BOOL	bLoopFlag = TRUE;
+		bool	bLoopFlag = true;
+		bool	bCancelEnd = false; // キャンセルでプロセス停止
+		OutputAdapter oa(this, bToEditWindow );
 
 		//中断ダイアログ表示
 		cDlgCancel.DoModeless( G_AppInstance(), m_hwndParent, IDD_EXECRUNNING );
+		// ダイアログにコマンドを表示
+		::DlgItem_SetText( cDlgCancel.GetHwnd(), IDC_STATIC_CMD, pszCmd );
 		//実行したコマンドラインを表示
 		// 2004.09.20 naoh 多少は見やすく・・・
-		if (FALSE==bToEditWindow)	//	2006.12.03 maru アウトプットウィンドウにのみ出力
+		// 2006.12.03 maru アウトプットウィンドウにのみ出力
+		if (bOutputExtInfo)
 		{
 			TCHAR szTextDate[1024], szTextTime[1024];
 			SYSTEMTIME systime;
 			::GetLocalTime( &systime );
 			CFormatManager().MyGetDateFormat( systime, szTextDate, _countof( szTextDate ) - 1 );
 			CFormatManager().MyGetTimeFormat( systime, szTextTime, _countof( szTextTime ) - 1 );
-			CShareData::getInstance()->TraceOut( _T("\r\n%ts\r\n"), _T("#============================================================") );
-			CShareData::getInstance()->TraceOut( _T("#DateTime : %ts %ts\r\n"), szTextDate, szTextTime );
-			CShareData::getInstance()->TraceOut( _T("#CmdLine  : %ts\r\n"), pszCmd );
-			CShareData::getInstance()->TraceOut( _T("#%ts\r\n"), _T("============================================================") );
+			WCHAR szOutTemp[1024*2+100];
+			oa.OutputW( L"\r\n" );
+			oa.OutputW( L"#============================================================\r\n" );
+			int len = auto_snprintf_s( szOutTemp, _countof(szOutTemp),
+				L"#DateTime : %ts %ts\r\n", szTextDate, szTextTime );
+			oa.OutputW( szOutTemp, len );
+			len = auto_snprintf_s( szOutTemp, _countof(szOutTemp),
+				L"#CmdLine  : %ts\r\n", pszCmd );
+			oa.OutputW( szOutTemp, len );
+			oa.OutputW( L"#============================================================\r\n" );
 		}
 		
 		//charで読む
 		typedef char PIPE_CHAR;
-		PIPE_CHAR work[1024];
-		
+		const int WORK_NULL_TERMS = sizeof(wchar_t); // 出力用\0の分
+		const int MAX_BUFIDX = 10; // bufidxの分
+		const int MAX_WORK_READ = 1024*5; // 5KiB ReadFileで読み込む限界値
+		// 2010.04.13 Moca バッファサイズの調整 1022 Byte 読み取りを 5KiBに変更
+		// ボトルネックはアウトプットウィンドウへの転送
+		// 相手のプログラムがVC9のstdoutではデフォルトで4096。VC6,VC8やWinXPのtypeコマンドでは1024
+		// テキストモードだと new_cntが改行に\rがつく分だけ向こう側の設定値より多く一度に送られてくる
+		// 4KBだと 4096 -> 100 -> 4096 -> 100 のように読み取ることになるので5KBにした
+		PIPE_CHAR work[MAX_WORK_READ + MAX_BUFIDX + WORK_NULL_TERMS];
 		//実行結果の取り込み
 		do {
 			//プロセスが終了していないか確認
@@ -221,14 +265,16 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			// 停止してしまうため，待ち時間を200msから20msに減らす
 			switch( MsgWaitForMultipleObjects( 1, &pi.hProcess, FALSE, 20, QS_ALLEVENTS )){
 				case WAIT_OBJECT_0:
-					//終了していればループフラグをFALSEとする
+					//終了していればループフラグをfalseとする
 					//ただしループの終了条件は プロセス終了 && パイプが空
-					bLoopFlag = FALSE;
+					bLoopFlag = false;
 					break;
 				case WAIT_OBJECT_0 + 1:
 					//処理中のユーザー操作を可能にする
 					if( !::BlockingHook( cDlgCancel.GetHwnd() ) ){
-						break;
+						// WM_QUIT受信。ただちに終了処理
+						::TerminateProcess( pi.hProcess, 0 );
+						goto finish;
 					}
 					break;
 				default:
@@ -238,10 +284,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			if( cDlgCancel.IsCanceled() ){
 				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
 				::TerminateProcess( pi.hProcess, 0 );
-				if (!bToEditWindow) {	//	2006.12.03 maru アウトプットウィンドウにのみ出力
-					//最後にテキストを追加
-					CShareData::getInstance()->TraceOut( _T("%ts"), _T("\r\n中断しました。\r\n") );
-				}
+				bCancelEnd  = true;
 				break;
 			}
 			new_cnt = 0;
@@ -249,9 +292,10 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			if( PeekNamedPipe( hStdOutRead, NULL, 0, NULL, &new_cnt, NULL ) ) {	//パイプの中の読み出し待機中の文字数を取得
 				while( new_cnt > 0 ) {												//待機中のものがある
 
-					if( new_cnt >= _countof(work)-2 - bufidx) {							//パイプから読み出す量を調整
-						new_cnt = _countof(work)-2 - bufidx;
+					if( new_cnt > MAX_WORK_READ) {							//パイプから読み出す量を調整
+						new_cnt = MAX_WORK_READ;
 					}
+					DWORD	read_cnt;
 					::ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
 
@@ -264,26 +308,34 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						wchar_t*	workw;
 						int			read_cntw;
 						bool		bCarry;
+						char		byteCarry;
 						workw = (wchar_t*)work;
 						read_cntw = (int)read_cnt/sizeof(wchar_t);
-						workw[read_cntw] = '\0';
-						bCarry = false;
-						//読み出した文字列をチェックする
-						if (workw[read_cntw-1] == L'\r') {
-							bCarry = true;
-							read_cntw -= sizeof(wchar_t);
-							workw[read_cntw] = '\0';
+						if( read_cnt % (int)sizeof(wchar_t) ){
+							byteCarry = work[read_cnt-1];
 						}
-						if (FALSE==bToEditWindow) {
-							CShareData::getInstance()->TraceOut( _T("%s"), workw );
-						} else {
-							GetCommander().Command_INSTEXT(FALSE, workw, CLogicInt(-1), TRUE);
+						if(read_cntw){
+							workw[read_cntw] = L'\0';
+							bCarry = false;
+							//読み出した文字列をチェックする
+							if (workw[read_cntw-1] == L'\r') {
+								bCarry = true;
+								read_cntw -= 1; // 2010.04.12 1文字余分に消されてた
+								workw[read_cntw] = L'\0';
+							}
+							oa.OutputW( workw, read_cntw );
+							bufidx = 0;
+							if (bCarry) {
+								workw[0] = L'\r'; // 2010.04.12 'r' -> '\r'
+								bufidx = sizeof(wchar_t);
+								DBPRINT_A( "ExecCmd: Carry last character [CR]\n");
+							}
 						}
-						bufidx = 0;
-						if (bCarry) {
-							workw[0] = L'r';
-							bufidx = sizeof(wchar_t);
-							DBPRINT_A( "ExecCmd: Carry last character [CR]\n");
+						if( read_cnt % (int)sizeof(wchar_t) ){
+							// 高確率で0だと思うが1だと困る
+							DBPRINT_A( "ExecCmd: Carry Unicode 1byte [%x]\n", byteCarry);
+							work[bufidx] = byteCarry;
+							bufidx += 1;
 						}
 					}
 					// end 2008/6/8 Uchi
@@ -292,6 +344,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
 						//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
 						//	Jan. 28, 2004 Moca 最後の文字はあとでチェックする
+						int		j;
 						for( j=0; j<(int)read_cnt - 1; j++ ) {
 							//	2007.09.10 ryoji
 							if( CNativeA::GetSizeOfChar(work, read_cnt, j) == 2 ) {
@@ -319,27 +372,19 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						}
 						//	To Here Jan. 28, 2004 Moca
 						if( j == (int)read_cnt ) {	//ぴったり出力できる場合
+							work[read_cnt] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
-							if (FALSE==bToEditWindow) {
-								work[read_cnt] = '\0';
-								CShareData::getInstance()->TraceOut( _T("%hs"), work );
-							} else {
-								GetCommander().Command_INSTEXT(FALSE, to_wchar(work,read_cnt), CLogicInt(-1), TRUE);
-							}
+							oa.OutputA( work, read_cnt );
 							bufidx = 0;
 						}
 						else {
 							char tmp = work[read_cnt-1];
+							work[read_cnt-1] = '\0';
 							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
-							if (FALSE==bToEditWindow) {
-								work[read_cnt-1] = '\0';
-								CShareData::getInstance()->TraceOut( _T("%hs"), work );
-							} else {
-								GetCommander().Command_INSTEXT(FALSE, to_wchar(work,read_cnt-1), CLogicInt(-1), TRUE);
-							}
+							oa.OutputA( work, read_cnt-1 );
 							work[0] = tmp;
 							bufidx = 1;
-							DBPRINT_A( "ExecCmd: Carry last character [%d]\n", tmp );
+							DBPRINT_A( "ExecCmd: Carry last character [%x]\n", tmp );
 						}
 					}
 					// Jan. 23, 2004 genta
@@ -350,23 +395,69 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						break;
 					}
 					Sleep(0);
+					
+					// 2010.04.12 Moca 相手が出力しつづけていると止められないから
+					// BlockingHookとキャンセル確認を読取ループ中でも行う
+					// bLoopFlag が立っていないときは、すでにプロセスは終了しているからTerminateしない
+					if( !::BlockingHook( cDlgCancel.GetHwnd() ) ){
+						if( bLoopFlag ){
+							::TerminateProcess( pi.hProcess, 0 );
+						}
+						goto finish;
+					}
+					if( cDlgCancel.IsCanceled() ){
+						//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
+						if( bLoopFlag ){
+							::TerminateProcess( pi.hProcess, 0 );
+						}
+						bCancelEnd = true;
+						goto user_cancel;
+					}
 				}
 			}
 		} while( bLoopFlag || new_cnt > 0 );
+
+user_cancel:
+
+		// 最後の文字の出力(たいていCR)
+		if( 0 < bufidx ){
+			if( bIOUnicodeGet ){
+				if( bufidx % (int)sizeof(wchar_t) ){
+					DBPRINT_A( "ExecCmd: Carry last Unicode byte [%x]\n", work[bufidx-1] );
+					// UTF-16なのに奇数バイトだった
+					work[bufidx] = 0x00; // 上位バイトを0にしてごまかす
+					bufidx += 1;
+				}
+				wchar_t* workw = (wchar_t*)work;
+				int bufidxw = bufidx / (int)sizeof(wchar_t);
+				workw[bufidxw] = L'\0';
+				oa.OutputW( workw, bufidxw );
+			}else{
+				work[bufidx] = '\0';
+				oa.OutputA( work, bufidx );
+			}
+		}
+
+		if( bCancelEnd && bOutputExtInfo ){
+			//	2006.12.03 maru アウトプットウィンドウにのみ出力
+			//最後にテキストを追加
+			oa.OutputW( L"\r\n中断しました。\r\n" );
+		}
 		
-		if (!bToEditWindow) {	//	2006.12.03 maru アウトプットウィンドウにのみ出力
-			work[bufidx] = '\0';
-			CShareData::getInstance()->TraceOut( _T("%hs"), work );	/* 最後の文字の処理 */
+		{
+			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//	Jun. 04, 2003 genta	終了コードの取得と出力
 			DWORD result;
 			::GetExitCodeProcess( pi.hProcess, &result );
-			CShareData::getInstance()->TraceOut( _T("\r\n終了コード: %d\r\n"), result );
-
+			if( bOutputExtInfo ){
+				WCHAR endCode[128];
+				auto_sprintf( endCode, L"\r\n終了コード: %d\r\n", result );
+				oa.OutputW( endCode );
+			}
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
-			if(result > 0) ActivateFrameWindow( GetDllShareData().m_sHandles.m_hwndDebug );
+			if(!bToEditWindow && result > 0) ActivateFrameWindow( GetDllShareData().m_sHandles.m_hwndDebug );
 		}
-		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
-			GetCommander().Command_INSTEXT(FALSE, to_wchar(work,bufidx), CLogicInt(-1), TRUE);	/* 最後の文字の処理 */
+		if (bToEditWindow) {
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
 				GetSelectionInfo().SetSelectArea(
 					CLayoutRange(
@@ -376,6 +467,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 				);
 				GetSelectionInfo().DrawSelectArea();
 			}
+			//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			RedrawAll();
 		}
 	}
@@ -390,3 +482,41 @@ finish:
 	if( pi.hThread ) CloseHandle( pi.hThread );
 }
 
+/*!
+	@param pBuf size未指定なら要NUL終端
+	@param size WCHAR単位 
+*/
+void OutputAdapter::OutputW(const WCHAR* pBuf, int size)
+{
+	if( m_bWindow ){
+		m_pCommander->Command_INSTEXT(FALSE, pBuf, CLogicInt(size), TRUE);
+	}else{
+		m_pCShareData->TraceOutString( pBuf , size );
+	}
+}
+
+/*
+	@param pBuf size未指定なら要NUL終端
+	@param size ACHAR単位 
+*/
+void OutputAdapter::OutputA(const ACHAR* pBuf, int size)
+{
+	if( m_bWindow ){
+		CNativeW buf;
+		if( -1 == size ){
+			buf.SetStringOld(pBuf);
+		}else{
+			buf.SetStringOld(pBuf,size);
+		}
+		m_pCommander->Command_INSTEXT(FALSE, buf.GetStringPtr(), buf.GetStringLength(), TRUE);
+	}else{
+		// TraceOutString側にANSI版を作ったほうが高速
+		CNativeW buf;
+		if( -1 == size ){
+			buf.SetStringOld(pBuf);
+		}else{
+			buf.SetStringOld(pBuf,size);
+		}
+		m_pCShareData->TraceOutString( buf.GetStringPtr(), (int)buf.GetStringLength() );
+	}
+}
