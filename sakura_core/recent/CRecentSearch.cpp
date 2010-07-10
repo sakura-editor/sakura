@@ -15,7 +15,7 @@
 CRecentSearch::CRecentSearch()
 {
 	Create(
-		&GetShareData()->m_sSearchKeywords.m_aSearchKeys[0],
+		GetShareData()->m_sSearchKeywords.m_aSearchKeys.dataPtr(),
 		&GetShareData()->m_sSearchKeywords.m_aSearchKeys._GetSizeRef(),
 		NULL /*GetShareData()->m_bSEARCHKEYArrFavorite*/,
 		MAX_SEARCHKEY,

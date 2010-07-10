@@ -146,3 +146,81 @@ void ActivateFrameWindow( HWND hwnd )
 
 	return;
 }
+
+
+CTextWidthCalc::CTextWidthCalc(HWND hParent, int nID)
+{
+	assert_warning(hParent);
+
+	hwnd = ::GetDlgItem(hParent, nID);
+	hDC = ::GetDC( hwnd );
+	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
+	hFontOld = (HFONT)::SelectObject(hDC, hFont);
+}
+
+CTextWidthCalc::CTextWidthCalc(HWND hwndThis)
+{
+	assert_warning(hwndThis);
+
+	hwnd = hwndThis;
+	hDC = ::GetDC( hwnd );
+	assert(hDC);
+	hFont = (HFONT)::SendMessageAny(hwnd, WM_GETFONT, 0, 0);
+	hFontOld = (HFONT)::SelectObject(hDC, hFont);
+	nCx = 0;
+	nExt = 0;
+}
+
+CTextWidthCalc::CTextWidthCalc(HFONT font)
+{
+	hwnd = 0;
+	hDC = 0;
+	hFont = font;
+	hFontOld = 0;
+	nCx = 0;
+	nExt = 0;
+}
+
+CTextWidthCalc::~CTextWidthCalc()
+{
+	if(hDC){
+		::SelectObject(hDC, hFontOld);
+		::ReleaseDC(hwnd, hDC);
+		hwnd = 0;
+		hDC = 0;
+	}
+}
+
+
+bool CTextWidthCalc::SetWidthIfMax(int width)
+{
+	return SetWidthIfMax(0, INT_MIN);
+}
+
+bool CTextWidthCalc::SetWidthIfMax(int width, int extCx)
+{
+	if( INT_MIN == extCx ){
+		extCx = nExt;
+	}
+	if( nCx < width + extCx ){
+		nCx = width + extCx;
+		return true;
+	}
+	return false;
+}
+
+bool CTextWidthCalc::SetTextWidthIfMax(LPCTSTR pszText)
+{
+	return SetTextWidthIfMax(pszText, INT_MIN);
+}
+
+bool CTextWidthCalc::SetTextWidthIfMax(LPCTSTR pszText, int extCx)
+{
+	SIZE size;
+	::GetTextExtentPoint32( hDC, pszText, _tcslen(pszText), &size );
+	if( ::GetTextExtentPoint32( hDC, pszText, _tcslen(pszText), &size ) ){
+		return SetWidthIfMax(size.cx, extCx);
+	}
+	return false;
+}
+

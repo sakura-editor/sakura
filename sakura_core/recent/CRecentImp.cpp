@@ -259,6 +259,30 @@ bool CRecentImp<T, S>::DeleteItem( int nIndex )
 }
 
 /*
+	お気に入り以外のアイテムを削除する。
+*/
+template <class T, class S>
+bool CRecentImp<T, S>::DeleteItemsNoFavorite()
+{
+	if( ! IsAvailable() ) return false;
+
+	bool bDeleted = false;
+	int i;
+	for( i = *m_pnUserItemCount - 1; 0 <= i; i-- )
+	{
+		if( false == IsFavorite( i ) )
+		{
+			if( DeleteItem( i ) )
+			{
+				bDeleted = true;
+			}
+		}
+	}
+
+	return bDeleted;
+}
+
+/*
 	すべてのアイテムを削除する。
 
 	@note	ゼロクリアを可能とするため、すべてが対象になる。

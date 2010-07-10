@@ -54,6 +54,7 @@ public:
 	{
 		return DeleteItem( FindItem( pItemData ) );
 	}
+	bool DeleteItemsNoFavorite();			//お気に入り以外のアイテムをクリア
 	void DeleteAllItem();					//アイテムをすべてクリア
 
 	//アイテム取得
