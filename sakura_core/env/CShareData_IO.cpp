@@ -11,6 +11,18 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 
+template <typename T>
+void SetValueLimit(T& target, int minval, int maxval)
+{
+	target = std::max<T>(minval, std::min<T>(maxval, target));
+}
+
+template <typename T>
+void SetValueLimit(T& target, int maxval)
+{
+	SetValueLimit( target, 0, maxval );
+}
+
 /* 共有データのロード */
 bool CShareData_IO::LoadShareData()
 {
@@ -107,6 +119,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 	WCHAR		szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_MRU_Counts"), pShare->m_sHistory.m_nMRUArrNum );
+	SetValueLimit( pShare->m_sHistory.m_nMRUArrNum, MAX_MRU );
 	nSize = pShare->m_sHistory.m_nMRUArrNum;
 	for( i = 0; i < nSize; ++i ){
 		pfiWork = &pShare->m_sHistory.m_fiMRUArr[i];
@@ -145,6 +158,7 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 	}
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_MRUFOLDER_Counts"), pShare->m_sHistory.m_nOPENFOLDERArrNum );
+	SetValueLimit( pShare->m_sHistory.m_nOPENFOLDERArrNum, MAX_OPENFOLDER );
 	nSize = pShare->m_sHistory.m_nOPENFOLDERArrNum;
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("MRUFOLDER[%02d]"), i );
@@ -179,6 +193,7 @@ void CShareData_IO::ShareData_IO_Keys( CDataProfile& cProfile )
 	WCHAR	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_SEARCHKEY_Counts"), pShare->m_sSearchKeywords.m_aSearchKeys._GetSizeRef() );
+	pShare->m_sSearchKeywords.m_aSearchKeys.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aSearchKeys.size();
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("SEARCHKEY[%02d]"), i );
@@ -192,6 +207,7 @@ void CShareData_IO::ShareData_IO_Keys( CDataProfile& cProfile )
 	}
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_REPLACEKEY_Counts"), pShare->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef() );
+	pShare->m_sSearchKeywords.m_aReplaceKeys.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aReplaceKeys.size();
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("REPLACEKEY[%02d]"), i );
@@ -221,6 +237,7 @@ void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 	WCHAR	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_GREPFILE_Counts"), pShare->m_sSearchKeywords.m_aGrepFiles._GetSizeRef() );
+	pShare->m_sSearchKeywords.m_aGrepFiles.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aGrepFiles.size();
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("GREPFILE[%02d]"), i );
@@ -234,6 +251,7 @@ void CShareData_IO::ShareData_IO_Grep( CDataProfile& cProfile )
 	}
 
 	cProfile.IOProfileData( pszSecName, LTEXT("_GREPFOLDER_Counts"), pShare->m_sSearchKeywords.m_aGrepFolders._GetSizeRef() );
+	pShare->m_sSearchKeywords.m_aGrepFolders.SetSizeLimit();
 	nSize = pShare->m_sSearchKeywords.m_aGrepFolders.size();
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("GREPFOLDER[%02d]"), i );
@@ -279,6 +297,7 @@ void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 	WCHAR	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, LTEXT("nCmdArrNum"), pShare->m_sHistory.m_aCommands._GetSizeRef() );
+	pShare->m_sHistory.m_aCommands.SetSizeLimit();
 	int nSize = pShare->m_sHistory.m_aCommands.size();
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCmdArr[%02d]"), i );
@@ -307,6 +326,7 @@ void CShareData_IO::ShareData_IO_Nickname( CDataProfile& cProfile )
 	WCHAR	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, LTEXT("ArrNum"), pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum );
+	SetValueLimit( pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum, MAX_TRANSFORM_FILENAME );
 	int nSize = pShare->m_Common.m_sFileName.m_nTransformFileNameArrNum;
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("From%02d"), i );
@@ -481,7 +501,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	
 	
 	cProfile.IOProfileData( pszSecName, LTEXT("nMRUArrNum_MAX")			, common.m_sGeneral.m_nMRUArrNum_MAX );
+	SetValueLimit( common.m_sGeneral.m_nMRUArrNum_MAX, MAX_MRU );
 	cProfile.IOProfileData( pszSecName, LTEXT("nOPENFOLDERArrNum_MAX")	, common.m_sGeneral.m_nOPENFOLDERArrNum_MAX );
+	SetValueLimit( common.m_sGeneral.m_nOPENFOLDERArrNum_MAX, MAX_OPENFOLDER );
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispTOOLBAR")			, common.m_sWindow.m_bDispTOOLBAR );
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispSTATUSBAR")			, common.m_sWindow.m_bDispSTATUSBAR );
 	cProfile.IOProfileData( pszSecName, LTEXT("bDispFUNCKEYWND")		, common.m_sWindow.m_bDispFUNCKEYWND );
@@ -634,8 +656,10 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile )
 	WCHAR	szKeyName[64];
 	CommonSetting_ToolBar& toolbar = pShare->m_Common.m_sToolBar;
 
-	cProfile.IOProfileData( pszSecName, LTEXT("nToolBarButtonNum"), toolbar.m_nToolBarButtonNum );
 	cProfile.IOProfileData( pszSecName, LTEXT("bToolBarIsFlat"), toolbar.m_bToolBarIsFlat );
+
+	cProfile.IOProfileData( pszSecName, LTEXT("nToolBarButtonNum"), toolbar.m_nToolBarButtonNum );
+	SetValueLimit( toolbar.m_nToolBarButtonNum, MAX_TOOLBAR_BUTTON_ITEMS );
 	int	nSize = toolbar.m_nToolBarButtonNum;
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("nTBB[%03d]"), i );
@@ -674,6 +698,7 @@ void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(menu.m_szCustMenuNameArr[i]) );	//	Oct. 15, 2001 genta 最大長指定
 		auto_sprintf( szKeyName, LTEXT("nCMIN[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemNumArr[i] );
+		SetValueLimit( menu.m_nCustMenuItemNumArr[i], _countof(menu.m_nCustMenuItemNumArr[0]) );
 		int nSize = menu.m_nCustMenuItemNumArr[i];
 		for( j = 0; j < nSize; ++j ){
 			// start マクロ名でも設定できるように 2008/5/24 Uchi
@@ -1270,7 +1295,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	{	//正規表現キーワード
 		WCHAR	*p;
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseRegexKeyword"), types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
-		for(j = 0; j < 100; j++)
+		for(j = 0; j < _countof(types.m_RegexKeywordArr); j++)
 		{
 			auto_sprintf( szKeyName, LTEXT("RxKey[%03d]"), j );
 			if( cProfile.IsReadingMode() )
@@ -1294,6 +1319,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
 						}
 					}
+				}else{
+					// 2010.06.18 Moca 値がない場合は終了
+					break;
 				}
 			}
 			// 2002.02.08 hor 未定義値を無視
@@ -1548,7 +1576,6 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 	const WCHAR*	pszSecName = LTEXT("MainMenu");
 	CommonSetting&	common = GetDllShareData().m_Common;
 	CMainMenu*		pcMenu;
-	int		i;
 	WCHAR	szKeyName[64];
 	WCHAR	szFuncName[MAX_MAIN_MENU_NAME_LEN+1];
 	WCHAR	szFuncNameJapanese[256];
@@ -1559,12 +1586,13 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 	WCHAR*	pn;
 
 	if (cProfile.IsReadingMode()) {
-		i = 0;
-		cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), i);
-		if (i == 0) {
+		int menuNum = 0;
+		cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), menuNum);
+		if (menuNum == 0) {
 			return;
 		}
-		mainmenu.m_nMainMenuNum = i;
+		mainmenu.m_nMainMenuNum = menuNum;
+		SetValueLimit( mainmenu.m_nMainMenuNum, MAX_MAINMENU );
 	}
 	else {
 		cProfile.IOProfileData( pszSecName, LTEXT("nMainMenuNum"), mainmenu.m_nMainMenuNum);
@@ -1578,7 +1606,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 	}
 
 	nIdx = 0;
-	for (i = 0; i < mainmenu.m_nMainMenuNum; i++) {
+	for (int i = 0; i < mainmenu.m_nMainMenuNum; i++) {
 		//メインメニューテーブル
 		pcMenu = &mainmenu.m_cMainMenuTbl[i];
 
@@ -1721,6 +1749,7 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
 	cProfile.IOProfileData( pszSecName, LTEXT("_TagJumpKeyword_Counts"), pShare->m_sTagJump.m_aTagJumpKeywords._GetSizeRef() );
+	pShare->m_sHistory.m_aCommands.SetSizeLimit();
 	for( i = 0; i < pShare->m_sTagJump.m_aTagJumpKeywords.size(); ++i ){
 		auto_sprintf( szKeyName, LTEXT("TagJumpKeyword[%02d]"), i );
 		if( i >= pShare->m_sTagJump.m_aTagJumpKeywords.size() ){

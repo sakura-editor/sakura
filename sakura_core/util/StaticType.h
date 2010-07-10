@@ -28,12 +28,20 @@ public:
 	}
 	void resize(int nNewSize)
 	{
+		assert(0 <= nNewSize);
 		assert(nNewSize <= MAX_SIZE);
 		m_nCount = nNewSize;
 	}
 
 	//“ÁŽê
 	int& _GetSizeRef(){ return m_nCount; }
+	void SetSizeLimit(){
+		if( m_nCount < MAX_SIZE ){
+			m_nCount = MAX_SIZE;
+		}else if( m_nCount < 0 ){
+			m_nCount = 0;
+		}
+	}
 
 private:
 	int         m_nCount;

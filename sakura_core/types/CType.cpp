@@ -211,7 +211,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
 
 //@@@ 2001.11.17 add start MIK
-	for(int i = 0; i < 100; i++)
+	for(int i = 0; i < _countof(pType->m_RegexKeywordArr); i++)
 	{
 		pType->m_RegexKeywordArr[i].m_szKeyword[0] = L'\0';
 		pType->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;

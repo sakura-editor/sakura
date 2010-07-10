@@ -264,7 +264,8 @@ INT_PTR CPropRegex::DispatchEvent(
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 
-	TCHAR	szKeyWord[256];
+	// ANSIビルドではCP932だと2倍程度必要
+	TCHAR	szKeyWord[ _countof( m_Types.m_RegexKeywordArr[0].m_szKeyword ) * 2 + 1 ];
 	TCHAR	szColorIndex[256];
 
 	switch( uMsg ){
@@ -828,7 +829,8 @@ int CPropRegex::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i, j;
-	TCHAR	szKeyWord[256], szColorIndex[256];
+	TCHAR	szKeyWord[ _countof( m_Types.m_RegexKeywordArr[0].m_szKeyword ) * 2 + 1 ]
+	TCHAR	szColorIndex[256];
 
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	//自分のページ番号
