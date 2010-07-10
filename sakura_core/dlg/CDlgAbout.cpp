@@ -17,17 +17,16 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+
+#include "StdAfx.h"
 #include "dlg/CDlgAbout.h"
-#include "sakura_rc.h" // 2002/2/10 aroka 復帰
-#include "CBREGEXP.h"
-#include "macro/CPPA.h"
+#include <shellapi.h>
 #include "util/file.h"
 #include "util/module.h"
-#include <shellapi.h>
+#include "sakura_rc.h" // 2002/2/10 aroka 復帰
+#include "sakura.hh"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12900
 	IDOK,					HIDOK_ABOUT,
 	IDC_EDIT_ABOUT,			HIDC_ABOUT_EDIT_ABOUT,
@@ -41,26 +40,61 @@ const DWORD p_helpids[] = {	//12900
 
 //	From Here Feb. 7, 2002 genta
 // 2006.01.17 Moca COMPILER_VERを追加
+// 2010.04.15 Moca icc/dmcを追加しCPUを分離
+#if defined(_M_IA64)
+#  define TARGET_M_SUFFIX "_I64"
+#elif defined(_M_AMD64)
+#  define TARGET_M_SUFFIX "_A64"
+#else
+#  define TARGET_M_SUFFIX ""
+#endif
+
 #if defined(__BORLANDC__)
 #  define COMPILER_TYPE "B"
 #  define COMPILER_VER  __BORLANDC__ 
 #elif defined(__GNUG__)
 #  define COMPILER_TYPE "G"
 #  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
+#elif __INTEL_COMPILER
+#  define COMPILER_TYPE "I"
+#  define COMPILER_VER __INTEL_COMPILER
+#elif __DMC__
+#  define COMPILER_TYPE "D"
+#  define COMPILER_VER __DMC__
 #elif defined(_MSC_VER)
-#  if defined(_M_IA64)
-#    define COMPILER_TYPE "V_I64"
-#  elif defined(_M_AMD64)
-#    define COMPILER_TYPE "V_A64"
-#  else
-#    define COMPILER_TYPE "V"
-#  endif
+#  define COMPILER_TYPE "V"
 #  define COMPILER_VER _MSC_VER
 #else
 #  define COMPILER_TYPE "U"
 #  define COMPILER_VER 0
 #endif
 //	To Here Feb. 7, 2002 genta
+
+#ifdef _UNICODE
+	#define TARGET_STRING_MODEL "W"
+#else
+	#define TARGET_STRING_MODEL "A"
+#endif
+
+#ifdef _DEBUG
+	#define TARGET_DEBUG_MODE "D"
+#else
+	#define TARGET_DEBUG_MODE "R"
+#endif
+
+#define TSTR_TARGET_MODE _T(TARGET_STRING_MODEL) _T(TARGET_DEBUG_MODE)
+
+#ifdef _WIN32_WINDOWS
+	#define MY_WIN32_WINDOWS _WIN32_WINDOWS
+#else
+	#define MY_WIN32_WINDOWS 0
+#endif
+
+#ifdef _WIN32_WINNT
+	#define MY_WIN32_WINNT _WIN32_WINNT
+#else
+	#define MY_WIN32_WINNT 0
+#endif
 
 //	From Here Nov. 7, 2000 genta
 /*!
@@ -73,6 +107,12 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 	switch( wMsg ){
 	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORSTATIC:
+		// EDITも READONLY か DISABLEの場合 WM_CTLCOLORSTATIC になります
+		if( (HWND)lParam == GetDlgItem(hWnd, IDC_EDIT_ABOUT) ){
+			::SetTextColor( (HDC)wParam, RGB( 102, 102, 102 ) );
+		} else {
+			::SetTextColor( (HDC)wParam, RGB( 0, 0, 0 ) );
+        }
 		return (INT_PTR)GetStockObject( WHITE_BRUSH );
 	}
 	return result;
@@ -99,37 +139,55 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
 	
 	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
-	//	2003.10.04 Moca ハンドルのクローズ忘れ
-	//::ZeroMemory( &wfd, sizeof( wfd ));
-	//HANDLE hFind = ::FindFirstFile( szFile, &wfd );
-	//if( hFind != INVALID_HANDLE_VALUE ){
-	//	FindClose( hFind );
-	//}
-
 
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
 	//	Feb. 7, 2002 genta コンパイラ情報追加
 	//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
+	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
+
+	// 以下の形式で出力
+	//サクラエディタW   Ver. 1.6.5.0
+	//
+	//      Share Ver: 96
+	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
+	//      Last Modified: 1999/9/9 00:00:00
+	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
+	CNativeT cmemMsg;
+	cmemMsg.AppendString(_T("サクラエディタW   "));
+
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO,
 		&dwVersionMS, &dwVersionLS );
-
-	int ComPiler_ver = COMPILER_VER;
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (") _T(COMPILER_TYPE) _T(" %d)"),
+	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
 		HIWORD( dwVersionLS ),
-		LOWORD( dwVersionLS ),
-		ComPiler_ver
+		LOWORD( dwVersionLS )
 	);
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_VER, szMsg );
+	cmemMsg.AppendString( szMsg );
+
+	cmemMsg.AppendString( _T("\r\n") );
+
+	auto_sprintf( szMsg,  _T("      Share Ver: %3d\r\n"),
+		N_SHAREDATA_VERSION
+	);
+	cmemMsg.AppendString( szMsg );
+
+	cmemMsg.AppendString( _T("      Compile Info: ") );
+	int Compiler_ver = COMPILER_VER;
+	auto_sprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T(" %d  ")
+			TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
+		Compiler_ver,
+		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
+	);
+	cmemMsg.AppendString( szMsg );
 
 	/* 更新日情報 */
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
-	auto_sprintf( szMsg, _T("Last Modified: %d/%d/%d %02d:%02d:%02d"),
+	auto_sprintf( szMsg,  _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
 		cFileTime->wYear,
 		cFileTime->wMonth,
 		cFileTime->wDay,
@@ -137,7 +195,18 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		cFileTime->wMinute,
 		cFileTime->wSecond
 	);
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_UPDATE, szMsg );
+	cmemMsg.AppendString( szMsg );
+
+// パッチ(かリビジョン)の情報をコンパイル時に渡せるようにする
+#ifdef SKR_PATCH_INFO
+	cmemMsg.AppendString( _T("      ") );
+	const TCHAR* ptszPatchInfo = to_tchar(SKR_PATCH_INFO);
+	int patchInfoLen = auto_strlen(ptszPatchInfo);
+	cmemMsg.AppendString( ptszPatchInfo, t_min(80, patchInfoLen) );
+#endif
+	cmemMsg.AppendString( _T("\r\n"));
+
+	::DlgItem_SetText( GetHwnd(), IDC_EDIT_VER, cmemMsg.GetStringPtr() );
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
@@ -167,6 +236,21 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
+
+BOOL CDlgAbout::OnBnClicked( int wID )
+{
+	switch( wID ){
+	case IDC_BUTTON_COPY:
+		{
+			HWND hwndEditVer = GetDlgItem( GetHwnd(), IDC_EDIT_VER );
+	 		SendMessage( hwndEditVer, EM_SETSEL, 0, -1); 
+	 		SendMessage( hwndEditVer, WM_COPY, 0, 0 );
+	 		SendMessage( hwndEditVer, EM_SETSEL, -1, 0); 
+ 		}
+		return TRUE;
+	}
+	return CDialog::OnBnClicked( wID );
+}
 
 BOOL CDlgAbout::OnStnClicked( int wID )
 {
