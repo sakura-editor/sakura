@@ -698,7 +698,7 @@ void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(menu.m_szCustMenuNameArr[i]) );	//	Oct. 15, 2001 genta ç≈ëÂí∑éwíË
 		auto_sprintf( szKeyName, LTEXT("nCMIN[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemNumArr[i] );
-		SetValueLimit( menu.m_nCustMenuItemNumArr[i], _countof(menu.m_nCustMenuItemNumArr[0]) );
+		SetValueLimit( menu.m_nCustMenuItemNumArr[i], _countof(menu.m_nCustMenuItemFuncArr[0]) );
 		int nSize = menu.m_nCustMenuItemNumArr[i];
 		for( j = 0; j < nSize; ++j ){
 			// start É}ÉNÉçñºÇ≈Ç‡ê›íËÇ≈Ç´ÇÈÇÊÇ§Ç… 2008/5/24 Uchi
