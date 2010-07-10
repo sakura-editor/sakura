@@ -114,6 +114,7 @@ protected:
 	void CreateSizeBox( void );
 	BOOL OnCommand( WPARAM, LPARAM );
 
+	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); };
 };
 
 

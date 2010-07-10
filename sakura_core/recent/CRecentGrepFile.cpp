@@ -11,7 +11,7 @@
 CRecentGrepFile::CRecentGrepFile()
 {
 	Create(
-		&GetShareData()->m_sSearchKeywords.m_aGrepFiles[0],
+		GetShareData()->m_sSearchKeywords.m_aGrepFiles.dataPtr(),
 		&GetShareData()->m_sSearchKeywords.m_aGrepFiles._GetSizeRef(),
 		NULL,
 		MAX_GREPFILE,

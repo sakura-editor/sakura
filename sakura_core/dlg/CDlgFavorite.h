@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2003, MIK
+	Copyright (C) 2010, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,15 +31,13 @@
 
 
 
-class CDlgFavorite;
-
-#ifndef	_CDLGFAVORITE_H_
-#define	_CDLGFAVORITE_H_
+#ifndef SAKURA_CDLGFAVORITE_H_
+#define SAKURA_CDLGFAVORITE_H_
 
 #include "dlg/CDialog.h"
-#include "recent/CRecentFile.h"
+#include "recent/CRecent.h"
 
-//!「履歴の管理」ダイアログ
+//!「履歴とお気に入りの管理」ダイアログ
 //アクセス方法：[設定] - [履歴の管理]
 class SAKURA_CORE_API CDlgFavorite : public CDialog
 {
@@ -68,9 +67,12 @@ protected:
 	int		GetData( void );	/* ダイアログデータの取得 */
 
 	bool	RefreshList( void );
-	void	SetDataOne( int nIndex, int CurrentIndex );	/* ダイアログデータの設定 */
+	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ダイアログデータの設定 */
 	bool	RefreshListOne( int nIndex );
 	//void	ChangeSlider( int nIndex );
+	
+	void    GetFavorite( int nIndex );
+	int     DeleteSelected();
 
 private:
 	CRecentFile			m_cRecentFile;
@@ -81,21 +83,35 @@ private:
 	CRecentGrepFolder	m_cRecentGrepFolder;
 	CRecentCmd			m_cRecentCmd;
 
-	typedef struct FavoriteInfoTag {
+	enum {
+		// ! 管理数
+		FAVORITE_INFO_MAX = 8 // 管理数 +1(番兵)
+	};
+
+	struct FavoriteInfo {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
 		TCHAR*		m_pszCaption;		//キャプション
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
+		bool		m_bFilePath;		//ファイル/フォルダか？
 		int			m_nViewCount;		//カレントの表示数
-	} FavoriteInfoTag;
+	};
 
-	FavoriteInfoTag	m_aFavoriteInfo[8];
+	struct ListViewSortInfo {
+		HWND	hListView; //!< リストビューの HWND
+		int		nSortColumn; //!< ソート列 -1で未指定
+		bool	bSortAscending; //!< ソートが昇順
+	};
+
+	FavoriteInfo        m_aFavoriteInfo[FAVORITE_INFO_MAX];
+	ListViewSortInfo    m_aListViewInfo[FAVORITE_INFO_MAX];
 
 	int		m_nCurrentTab;
 	TCHAR	m_szMsg[1024];
 
+	static void  ListViewSort(ListViewSortInfo&, const CRecent* , int, bool);
 };
 
-#endif	//_CDLGFAVORITE_H_
+#endif	//SAKURA_CDLGFAVORITE_H_
 

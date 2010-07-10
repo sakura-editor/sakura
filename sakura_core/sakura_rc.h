@@ -630,6 +630,10 @@
 #define IDC_STATIC_TYPE_TO              1579
 #define IDC_STATIC_TYPE_FILE            1580
 #define IDC_COMBO_COLORS                1581
+#define IDC_STATIC_BUTTONS              1582
+#define IDC_BUTTON_DELETE_NOFAVORATE    1583
+#define IDC_BUTTON_DELETE_NOTFOUND      1584
+#define IDC_BUTTON_DELETE_SELECTED      1585
 #define IDC_TREE_RES                    1589	//
 #define IDC_BUTTON_INSERT_NODE          1590	//
 #define IDC_BUTTON_INSERT_A             1091	//

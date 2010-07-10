@@ -89,3 +89,48 @@ inline bool IsDlgButtonCheckedBool(HWND hDlg, int nIDButton)
 {
 	return (IsDlgButtonChecked(hDlg,nIDButton) & BST_CHECKED) != 0;
 }
+
+//ダイアログアイテムの有効化
+inline bool DlgItem_Enable(HWND hwndDlg, int nIDDlgItem, bool nEnable)
+{
+	return FALSE != ::EnableWindow( ::GetDlgItem(hwndDlg, nIDDlgItem), nEnable?TRUE:FALSE);
+}
+
+// 幅計算補助クラス
+// 最大の幅を報告します
+class CTextWidthCalc
+{
+public:
+	CTextWidthCalc(HWND hParentDlg, int nID);
+	CTextWidthCalc(HWND hwndThis);
+	CTextWidthCalc(HFONT font);
+	virtual ~CTextWidthCalc();
+	void Reset(){ nCx = 0; nExt = 0; };
+	void SetCx(int cx = 0){ nCx = cx; };
+	void SetDefaultExtend(int extCx = 0){ nExt = 0; };
+	bool SetWidthIfMax(int width);
+	bool SetWidthIfMax(int width, int extCx);
+	bool SetTextWidthIfMax(LPCTSTR pszText);
+	bool SetTextWidthIfMax(LPCTSTR pszText, int extCx);
+	int GetCx(){ return nCx; };
+	// 算出方法がよく分からないので定数にしておく
+	// 制御不要なら ListViewはLVSCW_AUTOSIZE等推奨
+	enum StaticMagicNambers{
+		//! スクロールバーとアイテムの間の隙間
+		WIDTH_MARGIN_SCROLLBER = 8,
+		//! リストビューヘッダ マージン
+		WIDTH_LV_HEADER = 17,
+		//! リストビューのマージン
+		WIDTH_LV_ITEM_NORMAL  = 14,
+		//! リストビューのチェックボックスとマージンの幅
+		WIDTH_LV_ITEM_CHECKBOX = 30,
+	};
+private:
+	HWND  hwnd;
+	HDC   hDC;
+	HFONT hFont;
+	HFONT hFontOld;
+	int nCx;
+	int nExt;
+};
+

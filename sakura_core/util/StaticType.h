@@ -32,6 +32,9 @@ public:
 		assert(nNewSize <= MAX_SIZE);
 		m_nCount = nNewSize;
 	}
+	
+	//! 要素数が0でも要素へのポインタを取得
+	ElementType*  dataPtr(){ return m_aElements;}
 
 	//特殊
 	int& _GetSizeRef(){ return m_nCount; }

@@ -55,6 +55,7 @@ public:
 	virtual const TCHAR*	GetItemText( int nIndex ) const = 0;
 	virtual int				GetItemCount() const = 0;
 	virtual void			DeleteAllItem() = 0;
+	virtual bool			DeleteItemsNoFavorite() = 0;
 	virtual bool			DeleteItem( int nIndex ) = 0;	//!< アイテムをクリア
 	int FindItemByText(const TCHAR* pszText) const
 	{
