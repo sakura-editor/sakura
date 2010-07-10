@@ -96,23 +96,21 @@ CAPTION "バージョン情報"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     DEFPUSHBUTTON   "&OK",IDOK,97,178,50,14
+    PUSHBUTTON      "情報をコピー(&C)",IDC_BUTTON_COPY,178,178,60,14
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
-    CONTROL         "サクラエディタW",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP,
-                    30,7,50,8
-    LTEXT           "Ver. 8.8.8.8",IDC_STATIC_VER,84,7,88,8,NOT WS_GROUP
-    LTEXT           "Last Update:1999/99/99 99:99:99",IDC_STATIC_UPDATE,40,
-                    20,123,8,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_VER,33,6,204,51,ES_MULTILINE | ES_READONLY | 
+                    NOT WS_BORDER | NOT WS_TABSTOP
     LTEXT           "Copyright (C) 1998-2010  by Norio Nakatani && Collaborators",
-                    IDC_STATIC,40,33,198,8,NOT WS_GROUP
-    LTEXT           "原作者: たけ(竹パンダ) さん",IDC_STATIC,12,48,120,8,NOT 
+                    IDC_STATIC,33,61,205,8,NOT WS_GROUP
+    LTEXT           "原作者: たけ(竹パンダ) さん",IDC_STATIC,33,75,125,8,NOT 
                     WS_GROUP
-    LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,12,60,66,
+    LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,33,88,71,
                     8,NOT WS_GROUP
     LTEXT           "http://sakura-editor.sourceforge.net/",
-                    IDC_STATIC_URL_UR,80,60,122,8,SS_NOTIFY | NOT WS_GROUP | 
+                    IDC_STATIC_URL_UR,101,88,120,8,SS_NOTIFY | NOT WS_GROUP | 
                     WS_TABSTOP
-    EDITTEXT        IDC_EDIT_ABOUT,5,73,233,101,ES_MULTILINE | ES_READONLY | 
-                    ES_WANTRETURN | WS_DISABLED | WS_VSCROLL
+    EDITTEXT        IDC_EDIT_ABOUT,5,107,233,67,ES_MULTILINE | ES_READONLY | 
+                    WS_VSCROLL | NOT WS_TABSTOP
 END
 
 IDD_JUMP DIALOGEX 0, 0, 252, 121

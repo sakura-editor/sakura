@@ -174,7 +174,7 @@
 #define IDC_STATIC_CURPATH              1123
 #define IDC_CHK_DEFAULTFOLDER           1124
 #define IDC_STATIC_HITCOUNT             1125
-#define IDC_STATIC_VER                  1126
+#define IDC_EDIT_VER                    1126
 #define IDC_LIST_ASSIGNEDKEYS           1127
 #define IDC_STATIC_MSG                  1128
 #define IDC_RADIO_OUTPUTLINE            1129
@@ -235,7 +235,6 @@
 #define IDC_STATIC_MYICON               1184
 #define IDC_EDIT_HOKANFILE              1185
 #define IDC_BUTTON_HOKANFILE_REF        1186
-#define IDC_STATIC_UPDATE               1187
 #define IDC_LIST_COLORS                 1188
 #define IDC_CHECK_DISP                  1189
 #define IDC_CHECK_FAT                   1190
