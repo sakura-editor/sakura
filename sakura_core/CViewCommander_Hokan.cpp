@@ -27,10 +27,10 @@ retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
 	if( GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
-		0 == _tcslen( GetDocument()->m_cDocType.GetDocumentAttribute().m_szHokanFile 
-	) ){
-		ErrorBeep();
-		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
+		_T('\0') == GetDocument()->m_cDocType.GetDocumentAttribute().m_szHokanFile[0]
+	){
+		ConfirmBeep();
+		if( IDYES == ::ConfirmMessage( GetMainWindow(),
 			_T("補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* タイプ別設定 プロパティシート */
@@ -46,7 +46,8 @@ retry:;
 	if( 0 < m_pCommanderView->GetParser().GetLeftWord( &cmemData, 100 ) ){
 		m_pCommanderView->ShowHokanMgr( cmemData, TRUE );
 	}else{
-		ErrorBeep();
+		InfoBeep(); //2010.04.03 Error→Info
+		m_pCommanderView->SendStatusMessage(_T("補完対象がありません")); // 2010.05.29 ステータスで表示
 		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;

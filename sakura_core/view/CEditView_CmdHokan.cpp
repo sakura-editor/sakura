@@ -132,8 +132,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 			m_bHokan = FALSE;
 		}
 		// 2004.05.14 Moca CHokanMgr::Search側で改行を削除するようにし、直接書き換えるのをやめた
-//		pszKouhoWord = cmemHokanWord.GetPtr( &nKouhoWordLen );
-//		pszKouhoWord[nKouhoWordLen] = L'\0';
+
 		GetCommander().Command_WordDeleteToStart();
 		GetCommander().Command_INSTEXT( TRUE, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE );
 	}
@@ -160,17 +159,20 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 
 	@date 2005/01/10 genta  CEditView_Commandから移動
 	@date 2007/10/17 kobake 読みやすいようにネストを浅くしました。
+	@date 2008.07.25 nasukoji 大文字小文字を同一視の場合でも候補の振るい落としは完全一致で見る
+	@date 2008.10.11 syat 日本語の補完
+	@date 2010.06.16 Moca ひらがなで続行する場合、直前を漢字に制限
 */
 int CEditView::HokanSearchByFile(
 	const wchar_t*	pszKey,			//!< [in]
 	BOOL			bHokanLoHiCase,	//!< [in] 英大文字小文字を同一視する
-	CNativeW**		ppcmemKouho,	//!< [in/out] 候補
+	CNativeW**		ppcmemKouho,	//!< [in,out] 候補
 	int				nKouhoNum,		//!< [in] ppcmemKouhoのすでに入っている数
 	int				nMaxKouho		//!< [in] Max候補数(0==無制限)
 ){
 	const int nKeyLen = wcslen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-	int j, nWordLen, nLineLen, nRet, nCharSize, nWordEnd;
+	int j, nWordLen, nLineLen, nRet, nCharSize, nWordBegin, nWordLenStop;
 
 	const wchar_t* pszLine;
 	const wchar_t* word;
@@ -194,10 +196,6 @@ int CEditView::HokanSearchByFile(
 			// キーの先頭が記号以外の場合、記号で始まる単語は候補からはずす
 			if( !bKeyStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != NULL )continue;
 
-			// 候補単語の開始位置を求める
-			word = pszLine + j;
-			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != NULL ? true : false );
-
 			// 文字種類取得
 			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
 
@@ -205,11 +203,13 @@ int CEditView::HokanSearchByFile(
 			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ||
 				 kindPre == CK_ZEN_KIGO  || kindPre == CK_ZEN_SKIGO )continue;
 
+			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != NULL ? true : false );
+
+			nWordBegin = j;
 			// 候補単語の終了位置を求める
 			nWordLen = nCharSize;
-			nWordEnd = 0;
+			nWordLenStop = -1; // 送り仮名無視用単語の終わり。-1は無効
 			for( j += nCharSize; j < nLineLen; j += nCharSize ){
-				nWordEnd = j;						// ループを抜けた時点で単語の終わりを指す
 				nCharSize = CNativeW::GetSizeOfChar( pszLine, nLineLen, j );
 
 				// 半角記号は含めない
@@ -227,6 +227,10 @@ int CEditView::HokanSearchByFile(
 				if ( kindMerge == CK_NULL ) {	// kindPreとkindCurが別種
 					if( kindCur == CK_HIRA ) {
 						kindMerge = kindCur;		// ひらがななら続行
+						// 2010.06.16 Moca 漢字のみ送り仮名を候補に含める
+						if( kindPre != CK_ZEN_ETC ) {
+							nWordLenStop = nWordLen;
+						}
 					}else if( bKeyStartWithMark && bWordStartWithMark && kindPre == CK_ETC ){
 						kindMerge = kindCur;		// 記号で始まる単語は制限を緩める
 					}else{
@@ -238,13 +242,20 @@ int CEditView::HokanSearchByFile(
 				kindPre = kindMerge;
 				nWordLen += nCharSize;				// 次の文字へ
 			}
-			if( j >= nLineLen ) nWordEnd = nLineLen;
+
+			if( 0 < nWordLenStop ){
+				nWordLen  = nWordLenStop;
+			}
+
 
 			// CDicMgr等の制限により長すぎる単語は無視する
 			if( nWordLen > 1020 ){
 				continue;
 			}
-			if( nKeyLen > nWordLen )continue;
+			if( nKeyLen > nWordLen ) continue;
+
+			// 候補単語の開始位置を求める
+			word = pszLine + nWordBegin;
 
 			// キーと比較する
 			if( bHokanLoHiCase ){
@@ -255,7 +266,7 @@ int CEditView::HokanSearchByFile(
 			if( nRet!=0 )continue;
 
 			// カーソル位置の単語は候補からはずす
-			if( ptCur.y == i && ptCur.x <= nWordEnd && nWordEnd - nWordLen <= ptCur.x ){	// 2010.02.20 syat 修正// 2008.11.09 syat 修正
+			if( ptCur.y == i && nWordBegin <= ptCur.x && ptCur.x <= nWordBegin + nWordLen ){	// 2010.02.20 syat 修正// 2008.11.09 syat 修正
 				continue;
 			}
 
@@ -276,7 +287,7 @@ int CEditView::HokanSearchByFile(
 					if( L'\n' == ptr[nWordLen] && 0 == auto_memcmp( ptr, word, nWordLen )  ){
 						nRet = 0;
 					}else{
-						int nPosKouhoMax = nLen - nWordLen - 1;
+						const int nPosKouhoMax = nLen - nWordLen - 1;
 						for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
 							if( ptr[nPosKouho] == L'\n' ){
 								if( ptr[nPosKouho + nWordLen + 1] == L'\n' ){
