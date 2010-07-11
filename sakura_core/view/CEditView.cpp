@@ -173,6 +173,8 @@ BOOL CEditView::Create(
 	GetSelectionInfo().m_bDrawSelectArea = false;	/* 選択範囲を描画したか */	// 02/12/13 ai
 
 	m_crBack = -1;				/* テキストの背景色 */			// 2006.12.16 ryoji
+	
+	m_szComposition[0] = _T('\0');
 
 
 
@@ -455,6 +457,8 @@ LRESULT CEditView::DispatchEvent(
 			HGLOBAL hstr;
 			hIMC = ImmGetContext( hwnd );
 
+			m_szComposition[0] = _T('\0');
+
 			if( !hIMC ){
 				return 0;
 //				MyError( ERROR_NULLCONTEXT );
@@ -494,9 +498,13 @@ LRESULT CEditView::DispatchEvent(
 			GlobalFree( hstr );
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 //			return 0;
-		}else{
-			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
+	case WM_IME_ENDCOMPOSITION:
+		m_szComposition[0] = _T('\0');
+		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+
 	case WM_IME_CHAR:
 		if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){ /* 上書きモードか？ */
 			GetCommander().HandleCommand( F_IME_CHAR, TRUE, wParam, 0, 0, 0 );
@@ -733,9 +741,14 @@ LRESULT CEditView::DispatchEvent(
 		case IMR_CONFIRMRECONVERTSTRING:
 			return SetSelectionFromReonvert((PRECONVERTSTRING)lParam, UNICODE_BOOL);
 			
+		// 2010.03.16 MS-IME 2002 だと「カーソル位置の前後の内容を参照して変換を行う」の機能
+		case IMR_DOCUMENTFEED:
+			return SetReconvertStruct((PRECONVERTSTRING)lParam, UNICODE_BOOL, true);
+			
+		//default:
 		}
-		
-		return 0L;
+		// 2010.03.16 0LではなくTSFが何かするかもしれないのでDefにまかせる
+		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 	
 	case MYWM_DROPFILES:	// 独自のドロップファイル通知	// 2008.06.20 ryoji
 		OnMyDropFiles( (HDROP)wParam );

@@ -320,7 +320,7 @@ public:
 	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const TCHAR* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
 	void SendStatusMessage2( const TCHAR* msg );					// Jul. 9, 2005 genta
-	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode);	/* 再変換用構造体を設定する 2002.04.09 minfu */
+	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, bool bDocumentFeed = false);	/* 再変換用構造体を設定する 2002.04.09 minfu */
 	LRESULT SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool bUnicode);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -649,6 +649,8 @@ public:
 	POINT			m_poTipCurPos;			/* Tip起動時のマウスカーソル位置 */
 	BOOL			m_bInMenuLoop;			/* メニュー モーダル ループに入っています */
 	CDicMgr			m_cDicMgr;				/* 辞書マネージャ */
+
+	TCHAR			m_szComposition[512]; // IMR_DOCUMENTFEED用入力中文字列データ
 
 	// IME
 private:

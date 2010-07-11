@@ -1033,9 +1033,13 @@ void CViewCommander::Command_MERGE(void)
 /* メニューからの再変換対応 minfu 2002.04.09
 
 	@date 2002.04.11 YAZAKI COsVersionInfoのカプセル化を守りましょう。
+	@date 2010.03.17 ATOK用はSCS_SETRECONVERTSTRING => ATRECONVERTSTRING_SETに変更
+		2002.11.20 Stoneeさんの情報
 */
 void CViewCommander::Command_Reconvert(void)
 {
+	const int ATRECONVERTSTRING_SET = 1;
+
 	//サイズを取得
 	int nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL);
 	if( 0 == nSize )  // サイズ０の時は何もしない
@@ -1091,11 +1095,14 @@ void CViewCommander::Command_Reconvert(void)
 	);
 	
 	//構造体設定
+	// Sizeはバッファ確保側が設定
+	pReconv->dwSize = nSize;
+	pReconv->dwVersion = 0;
 	m_pCommanderView->SetReconvertStruct( pReconv, UNICODE_BOOL || bUseUnicodeATOK);
 	
 	//変換範囲の調整
 	if(bUseUnicodeATOK){
-		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize);
+		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, ATRECONVERTSTRING_SET, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 	}
@@ -1105,7 +1112,7 @@ void CViewCommander::Command_Reconvert(void)
 	
 	//再変換実行
 	if(bUseUnicodeATOK){
-		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize);
+		(*m_pCommanderView->m_AT_ImmSetReconvertString)(hIMC, ATRECONVERTSTRING_SET, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL, 0);
 	}
