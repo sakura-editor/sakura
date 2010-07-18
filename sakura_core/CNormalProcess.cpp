@@ -49,8 +49,6 @@ CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine )
 
 CNormalProcess::~CNormalProcess()
 {
-	/* プラグイン解放 */
-	CPluginManager::Instance()->UnloadAllPlugin();
 }
 
 
@@ -377,7 +375,9 @@ bool CNormalProcess::MainLoop()
 */
 void CNormalProcess::OnExitProcess()
 {
+	/* プラグイン解放 */
 	SAFE_DELETE(m_pcEditApp);
+	CPluginManager::Instance()->UnloadAllPlugin();		// Mpve here	2010/7/11 Uchi
 }
 
 
