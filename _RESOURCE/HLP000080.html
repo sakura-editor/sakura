@@ -9,25 +9,9 @@
 <META NAME="MS-HKWD" CONTENT="sakura.exe.manifest">
 </HEAD>
 <BODY>
-<script type="text/javascript">
-<!--
-document.writeln('<OBJECT id="hhctrl" type="application/x-oleobject"');
-document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"');
-document.writeln(' codebase="hhctrl.ocx#Version=4,74,8793,0" width="0" height="0">');
-document.writeln('</OBJECT>');
-
-document.writeln('<OBJECT id="aaHHCtlCloseWin" type="application/x-oleobject"');
-document.writeln(' classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> ');
-document.writeln(' <PARAM name="Command" value="Close"> ');
-document.writeln('</OBJECT> ');
-
-document.onkeypress=CheckClose;
-
-function CheckClose() {
-if (window.event.keyCode == 27)
-aaHHCtlCloseWin.Click(); }
-// -->
-</script>
+<script type="text/javascript" src="item.js"></script>
+<script type="text/javascript">HHCtrlPopup();</script>
+<noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>Virtual Store</h2>
 Vista以降のOSでは、特に設定を行わずにサクラエディタを単品で起動させると、Virtual Storeが有効になります。
 <em>sakura.exe.manifest</em>を設置することで<a href="javascript:id=hhctrl.TextPopup('User Account Control\nVista以降に実装されたOS保護機能','ＭＳゴシック,11',9,9,-1,-1)">UAC</a>に対応した動作になり、Virtual Storeを無効にできます。<br>
