@@ -2145,7 +2145,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 					break;
 				case F_TOGGLE_KEY_SEARCH:
 					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, IsFuncChecked( &GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
+						!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, !IsFuncChecked( &GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
 					break;
 				case F_WRAPWINDOWWIDTH:
 					{
