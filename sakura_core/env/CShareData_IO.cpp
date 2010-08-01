@@ -3,13 +3,16 @@
 #include "StdAfx.h"
 #include "env/CShareData_IO.h"
 #include "doc/CDocTypeSetting.h" // ColorInfo !!
-#include "CDataProfile.h"
 #include "CShareData.h"
-#include "macro/CSMacroMgr.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
+#include "plugin/CPluginManager.h"		// for plugin 2010/6/24 Uchi
+#include "CMenuDrawer.h"
+
+// 常駐時仮設定用		// 2010/7/4 Uchi
+static CMenuDrawer*	pcMenuDrawer = NULL;
 
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
@@ -70,7 +73,9 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		}
 	}
 //	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
-		
+
+	pcMenuDrawer = new CMenuDrawer;			// 2010/7/4 Uchi
+
 	// Feb. 12, 2006 D.S.Koba
 	ShareData_IO_Mru( cProfile );
 	ShareData_IO_Keys( cProfile );
@@ -79,6 +84,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Cmd( cProfile );
 	ShareData_IO_Nickname( cProfile );
 	ShareData_IO_Common( cProfile );
+	ShareData_IO_Plugin( cProfile );		// Move here	2010/6/24 Uchi
 	ShareData_IO_Toolbar( cProfile );
 	ShareData_IO_CustMenu( cProfile, GetDllShareData().m_Common.m_sCustomMenu, false );		// add Parameter 2008/5/24
 	ShareData_IO_Font( cProfile );
@@ -88,10 +94,12 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_KeyWords( cProfile );
 	ShareData_IO_Macro( cProfile );
 	ShareData_IO_Statusbar( cProfile );		// 2008/6/21 Uchi
-	ShareData_IO_Plugin( cProfile );
 	ShareData_IO_MainMenu( cProfile, GetDllShareData().m_Common.m_sMainMenu, false );		// 2010/5/15 Uchi
 	ShareData_IO_Other( cProfile );
-	
+
+	delete pcMenuDrawer;					// 2010/7/4 Uchi
+	pcMenuDrawer = NULL;
+
 	if( !bRead ){
 		cProfile.WriteProfile( szIniFileName, LTEXT(" sakura.ini テキストエディタ設定ファイル") );
 	}
@@ -640,6 +648,72 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	
 }
 
+
+// プラグインコマンドを名前から機能番号へ変換
+EFunctionCode GetPlugCmdInfoByName(
+	const WCHAR*	pszFuncName			//!< [in]  プラグインコマンド名
+)
+{
+	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
+	WCHAR		sPluginName[MAX_PLUGIN_ID+1];
+	const WCHAR* psCmdName;
+	size_t		nLen;
+	int			i;
+	int			nId;
+	int			nNo;
+
+	if (pszFuncName == NULL) {
+		return F_INVALID;
+	}
+	if ((psCmdName = wcschr(pszFuncName, L'/')) == NULL) {
+		return F_INVALID;
+	}
+	nLen = MAX_PLUGIN_ID < (psCmdName - pszFuncName) ? MAX_PLUGIN_ID : (psCmdName - pszFuncName);
+	wcsncpy( sPluginName, pszFuncName, nLen);
+	sPluginName[nLen] = L'\0'; 
+	psCmdName++;
+
+	nId = -1;
+	for (i = 0; i < MAX_PLUGIN; i++) {
+		PluginRec& pluginrec = plugin.m_PluginTable[i];
+		if (auto_strcmp( pluginrec.m_szId, sPluginName ) == 0) {
+			nId = i;
+			break;
+		}
+	}
+	nNo = _wtoi( psCmdName );
+
+	if (nId < 0 || nNo <= 0 || nNo >= MAX_PLUG_CMD) {
+		// プラグインがない/番号がおかしい
+		return F_INVALID;
+	}
+	
+	return GetPluginFunctionCode( nId, nNo );
+}
+
+// プラグインコマンドを機能番号から名前へ変換
+bool GetPlugCmdInfoByFuncCode(
+	EFunctionCode	eFuncCode,				//!< [in]  機能コード
+	WCHAR*			pszFuncName				//!< [out] 機能名．この先にはMAX_PLUGIN_ID + 20文字のメモリが必要．
+)
+{
+	CommonSetting& common = GetDllShareData().m_Common;
+	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
+
+	if (eFuncCode < F_PLUGCOMMAND_FIRST || eFuncCode > F_PLUGCOMMAND_LAST) {
+		return false;
+	}
+
+	int nID = GetPluginId( eFuncCode );
+	int nNo = GetPlugNo( eFuncCode );
+	if (nID < 0 || nNo < 0) {
+		return false;
+	}
+	auto_sprintf(pszFuncName, L"%ls/%02d", plugin.m_PluginTable[nID].m_szId, nNo);
+	return true;
+}
+
+
 /*!
 	@brief 共有データのToolbarセクションの入出力
 	@param[in]		bRead		true: 読み込み / false: 書き込み
@@ -656,6 +730,10 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile )
 	WCHAR	szKeyName[64];
 	CommonSetting_ToolBar& toolbar = pShare->m_Common.m_sToolBar;
 
+	EFunctionCode	eFunc;
+	WCHAR			szText[MAX_PLUGIN_ID+20];
+	int				nInvalid = -1;
+
 	cProfile.IOProfileData( pszSecName, LTEXT("bToolBarIsFlat"), toolbar.m_bToolBarIsFlat );
 
 	cProfile.IOProfileData( pszSecName, LTEXT("nToolBarButtonNum"), toolbar.m_nToolBarButtonNum );
@@ -663,7 +741,44 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile )
 	int	nSize = toolbar.m_nToolBarButtonNum;
 	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("nTBB[%03d]"), i );
-		cProfile.IOProfileData( pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i] );
+		// Plugin String Parametor
+		if( cProfile.IsReadingMode() ){
+			//読み込み
+			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szText) );
+			if (wcschr(szText, L'/') == NULL) {
+				// 番号
+				toolbar.m_nToolBarButtonIdxArr[i] = _wtoi( szText );
+			}
+			else {
+				// Plugin
+				eFunc = GetPlugCmdInfoByName( szText );
+				if ( eFunc == F_INVALID ) {
+					toolbar.m_nToolBarButtonIdxArr[i] = -1;		// 未解決
+				}
+				else {
+					toolbar.m_nToolBarButtonIdxArr[i] = pcMenuDrawer->FindIndexFromCommandId( eFunc, false );
+				}
+			}
+		}
+		else {
+			//書き込み
+			if (toolbar.m_nToolBarButtonIdxArr[i] <= MAX_TOOLBAR_ICON_COUNT + 1) {	// +1はセパレータ分
+				cProfile.IOProfileData( pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i] );	
+			}
+			else {
+				// Plugin
+				eFunc = pcMenuDrawer->GetFunctionCode(toolbar.m_nToolBarButtonIdxArr[i]);
+				if (eFunc == F_DEFAULT) {
+					cProfile.IOProfileData( pszSecName, szKeyName, nInvalid );	
+				}
+				else if (GetPlugCmdInfoByFuncCode( eFunc, szText )) {
+					cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szText) );	
+				}
+				else {
+					cProfile.IOProfileData( pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i] );	
+				}
+			}
+		}
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
@@ -705,44 +820,47 @@ void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting
 			auto_sprintf( szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j );
 			if (cProfile.IsReadingMode()) {
 				cProfile.IOProfileData(pszSecName, szKeyName, MakeStringBufferW(szFuncName));
-				if ( WCODE::Is09(*szFuncName) ) {
-					n = F_INVALID;
+				if (wcschr(szFuncName, L'/') != NULL) {
+					// Plugin名
+					n = GetPlugCmdInfoByName(szFuncName);
+				}
+				else if ( WCODE::Is09(*szFuncName) 
+				  && (szFuncName[1] == L'\0' || WCODE::Is09(szFuncName[1])) ) {
+					n = (EFunctionCode)auto_atol(szFuncName);
 				}
 				else {
 					n = CSMacroMgr::GetFuncInfoByName(0, szFuncName, szFuncNameJapanese);
 				}
 				if ( n == F_INVALID ) {
-					if (WCODE::Is09( *szFuncName ) 
-					  && (WCODE::Is09( szFuncName[1] ) == L'\0' ||  WCODE::Is09( szFuncName[1] ))) {
-						n = (EFunctionCode)auto_atol(szFuncName);
-					}
-					else {
-						n = F_DEFAULT;
-					}
+					n = F_DEFAULT;
 				}
 				menu.m_nCustMenuItemFuncArr[i][j] = n;
 			}
 			else {
-				if (bOutCmdName) {
-					WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-						G_AppInstance(),
-						menu.m_nCustMenuItemFuncArr[i][j],
-						szFuncName,
-						szFuncNameJapanese
-					);
-					if ( p == NULL ) {
-						auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
-					}
+				if (GetPlugCmdInfoByFuncCode( menu.m_nCustMenuItemFuncArr[i][j], szFuncName)) {
+					// Plugin
 					cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szFuncName) );
 				}
 				else {
-					cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
+					if (bOutCmdName) {
+						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+							G_AppInstance(),
+							menu.m_nCustMenuItemFuncArr[i][j],
+							szFuncName,
+							szFuncNameJapanese
+						);
+						if ( p == NULL ) {
+							auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
+						}
+						cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szFuncName) );
+					}
+					else {
+						cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
+					}
 				}
 			}
 			// end
 
-			auto_sprintf( szKeyName, LTEXT("nCMIF[%02d][%02d]"), i, j );
-			cProfile.IOProfileData_WrapInt( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
 			auto_sprintf( szKeyName, LTEXT("nCMIK[%02d][%02d]"), i, j );
 			cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemKeyArr[i][j] );
 		}
@@ -887,19 +1005,18 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 						pn = auto_strchr(p,',');
 						if (pn == NULL)	break;
 						*pn = 0;
-						if( WCODE::Is09(*p) ) {
-							n = F_INVALID;
+						if (wcschr(p, L'/') != NULL) {
+							// Plugin名
+							n = GetPlugCmdInfoByName( p );
+						}
+						else if (WCODE::Is09(*p) && (p[1] == L'\0' || WCODE::Is09(p[1]))) {
+							n = (EFunctionCode)auto_atol( p);
 						}
 						else {
 							n = CSMacroMgr::GetFuncInfoByName(0, p, szFuncNameJapanese);
 						}
 						if( n == F_INVALID ) {
-							if( WCODE::Is09(*p) ) {
-								n = (EFunctionCode)auto_atol(p);
-							}
-							else {
-								n = F_DEFAULT;
-							}
+							n = F_DEFAULT;
 						}
 						keydata.m_nFuncCodeArr[j] = n;
 						p = pn+1;
@@ -926,25 +1043,31 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 			auto_sprintf(szKeyData, L"%04x", keydata.m_nKeyCode);
 			for(int j = 0; j < 8; j++)
 			{
-				if (bOutCmdName) {
-					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-					WCHAR	szFuncName[256];
-					WCHAR	szFuncNameJapanese[256];
-					WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-						0,
-						keydata.m_nFuncCodeArr[j],
-						szFuncName,
-						szFuncNameJapanese
-					);
-					if( p ) {
-						auto_sprintf(szWork, L",%ls", p);
+				WCHAR	szFuncName[256];
+				WCHAR	szFuncNameJapanese[256];
+				if (GetPlugCmdInfoByFuncCode( keydata.m_nFuncCodeArr[j], szFuncName )) {
+					// Plugin
+					auto_sprintf( szWork, L",%ls", szFuncName );
+				}
+				else {
+					if (bOutCmdName) {
+						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
+							0,
+							keydata.m_nFuncCodeArr[j],
+							szFuncName,
+							szFuncNameJapanese
+						);
+						if( p ) {
+							auto_sprintf(szWork, L",%ls", p);
+						}
+						else {
+							auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
+						}
 					}
 					else {
 						auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 					}
-				}
-				else {
-					auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
 				}
 				wcscat(szKeyData, szWork);
 			}
@@ -1550,7 +1673,8 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("EnablePlugin"), plugin.m_bEnablePlugin);		// プラグインを使用する
 
 	//プラグインテーブル
-	int		i;	
+	int		i;
+	int		j;
 	WCHAR	szKeyName[64];
 	for( i = 0; i < MAX_PLUGIN; ++i ){
 		PluginRec& pluginrec = common.m_sPlugin.m_PluginTable[i];
@@ -1559,7 +1683,15 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szName) );
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Id"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szId) );
+		auto_sprintf( szKeyName, LTEXT("P[%02d].CmdNum"), i );
+		cProfile.IOProfileData( pszSecName, szKeyName, pluginrec.m_nCmdNum );	// 2010/7/4 Uchi
 		pluginrec.m_state = ( pluginrec.m_szId[0] == '\0' ? PLS_NONE : PLS_STOPPED );
+		// Command 仮設定	// 2010/7/4 Uchi
+		if (pluginrec.m_szId[0] != '\0' && pluginrec.m_nCmdNum >0) {
+			for (j = 1; j <= pluginrec.m_nCmdNum; j++) {
+				pcMenuDrawer->AddToolButton( CMenuDrawer::TOOLBAR_BUTTON_F_PLUGCOMMAND - 1, GetPluginFunctionCode(i, j) );
+			}
+		}
 	}
 }
 
@@ -1577,7 +1709,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 	CommonSetting&	common = GetDllShareData().m_Common;
 	CMainMenu*		pcMenu;
 	WCHAR	szKeyName[64];
-	WCHAR	szFuncName[MAX_MAIN_MENU_NAME_LEN+1];
+	WCHAR	szFuncName[MAX_PLUGIN_ID+1];
 	WCHAR	szFuncNameJapanese[256];
 	EFunctionCode n;
 	int		nIdx;
@@ -1645,20 +1777,19 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 			p = pn;
 			pn = wcschr( p, L',' );
 			if (pn != NULL)		*pn++ = L'\0';
-			if ( WCODE::Is09( *p ) ) {
-				n = F_INVALID;
+			if (wcschr(p, L'/') != NULL) {
+				// Plugin名
+				n = GetPlugCmdInfoByName(p);
+			}
+			else if (WCODE::Is09( *p )
+			  && (WCODE::Is09( p[1] ) == L'\0' ||  WCODE::Is09( p[1] ))) {
+				n = (EFunctionCode)auto_atol( p );
 			}
 			else {
 				n = CSMacroMgr::GetFuncInfoByName(0, p, szFuncNameJapanese);
 			}
 			if ( n == F_INVALID ) {
-				if (WCODE::Is09( *p )
-				  && (WCODE::Is09( p[1] ) == L'\0' ||  WCODE::Is09( p[1] ))) {
-					n = (EFunctionCode)auto_atol( p );
-				}
-				else {
-					n = F_DEFAULT;
-				}
+				n = F_DEFAULT;
 			}
 			pcMenu->m_nFunc = n;
 			if (pn == NULL) {
@@ -1686,17 +1817,22 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 			auto_strcpy_s( pcMenu->m_sName, MAX_MAIN_MENU_NAME_LEN+1, p );
 		}
 		else {
-			if (bOutCmdName) {
-				// マクロ名対応
-				p = CSMacroMgr::GetFuncInfoByID(
-					G_AppInstance(),
-					pcMenu->m_nFunc,
-					szFuncName,
-					szFuncNameJapanese
-				);
+			if (GetPlugCmdInfoByFuncCode( pcMenu->m_nFunc, szFuncName )) {
+				// Plugin
 			}
-			if ( !bOutCmdName || p == NULL ) {
-				auto_sprintf( szFuncName, L"%d", pcMenu->m_nFunc );
+			else {
+				if (bOutCmdName) {
+					// マクロ名対応
+					p = CSMacroMgr::GetFuncInfoByID(
+						G_AppInstance(),
+						pcMenu->m_nFunc,
+						szFuncName,
+						szFuncNameJapanese
+					);
+				}
+				if ( !bOutCmdName || p == NULL ) {
+					auto_sprintf( szFuncName, L"%d", pcMenu->m_nFunc );
+				}
 			}
 			// 書き込み
 			auto_sprintf( szLine, L"%d,%d,%ls,%ls,%ls", 

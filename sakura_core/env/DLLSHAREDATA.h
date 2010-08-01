@@ -107,8 +107,11 @@ struct DLLSHAREDATA{
 	SShare_Nodes				m_sNodes;
 	SShare_Handles				m_sHandles;
 	// 文字半角全角キャッシュ
-	BYTE				m_bCharWidthCache[0x10000/4];		//16KB 文字半角全角キャッシュ 2008/5/16 Uchi
-	int					m_nCharWidthCacheTest;				//cache溢れ検出
+	BYTE						m_bCharWidthCache[0x10000/4];		//16KB 文字半角全角キャッシュ 2008/5/16 Uchi
+	int							m_nCharWidthCacheTest;				//cache溢れ検出
+	// プラグイン
+	short						m_PlugCmdIcon[MAX_PLUGIN*MAX_PLUG_CMD];	//!< プラグイン コマンド ICON 番号	// 2010/7/3 Uchi
+	int							m_maxTBNum;							//!< ツールバーボタン 最大値		// 2010/7/5 Uchi
 
 	// -- -- 保存対象 -- -- //
 	//設定

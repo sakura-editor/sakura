@@ -157,6 +157,22 @@ int CPluginManager::InstallPlugin( CommonSetting& common, TCHAR* pszPluginName, 
 	plugin_table[nEmpty].m_szId[ MAX_PLUGIN_ID-1 ] = '\0';
 	plugin_table[nEmpty].m_state = isDuplicate ? PLS_UPDATED : PLS_INSTALLED;
 
+	// コマンド数の設定	2010/7/11 Uchi
+	int			i;
+	WCHAR		szPlugKey[10];
+	wstring		sPlugCmd;
+
+	plugin_table[nEmpty].m_nCmdNum = 0;
+	for (i = 1; i < MAX_PLUG_CMD; i++) {
+		auto_sprintf( szPlugKey, L"C[%d]", i);
+		sPlugCmd.clear();
+		cProfDef.IOProfileData( PII_COMMAND, szPlugKey, sPlugCmd );
+		if (sPlugCmd == L"") {
+			break;
+		}
+		plugin_table[nEmpty].m_nCmdNum = i;
+	}
+
 	return nEmpty;
 }
 
@@ -179,6 +195,8 @@ bool CPluginManager::LoadAllPlugin()
 			plugin->m_id = iNo;		//プラグインテーブルの行番号をIDとする
 			m_plugins.push_back( plugin );
 			plugin_table[iNo].m_state = PLS_LOADED;
+			// コマンド数設定
+			plugin_table[iNo].m_nCmdNum = plugin->GetCommandCount();
 		}
 	}
 
@@ -275,4 +293,5 @@ void CPluginManager::UninstallPlugin( CommonSetting& common, int id )
 	plugin_table[id].m_szId[0] = '\0';
 	plugin_table[id].m_szName[0] = '\0';
 	plugin_table[id].m_state = PLS_DELETED;
+	plugin_table[id].m_nCmdNum = 0;
 }

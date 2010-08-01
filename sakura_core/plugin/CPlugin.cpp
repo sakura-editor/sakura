@@ -25,7 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <vector>		// wstring_split—p 2010/4/4 Uchi
 #include "CPlugin.h"
 #include "CJackManager.h"
@@ -37,7 +37,7 @@ bool CPlug::Invoke( CEditView* view, CWSHIfObj::List& params ){
 }
 
 EFunctionCode CPlug::GetFunctionCode() const{
-	return static_cast<EFunctionCode>(m_cPlugin.m_id * 100 + m_id + F_PLUGCOMMAND_FIRST);
+	return static_cast<EFunctionCode>(m_cPlugin.m_id * MAX_PLUG_CMD + m_id + F_PLUGCOMMAND_FIRST);
 }
 
 /////////////////////////////////////////////
@@ -109,7 +109,7 @@ bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile )
 	wstring sHandler;
 	WCHAR bufKey[64];
 
-	for( int nCount = 1; nCount < 100; nCount++ ){	//“Y‚¦Žš‚Í‚P‚©‚çŽn‚ß‚é
+	for( int nCount = 1; nCount < MAX_PLUG_CMD; nCount++ ){	//“Y‚¦Žš‚Í‚P‚©‚çŽn‚ß‚é
 		swprintf( bufKey, L"C[%d]", nCount );
 		if( cProfile->IOProfileData( PII_COMMAND, bufKey, sHandler ) ){
 			wstring sLabel;
@@ -143,7 +143,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 	WCHAR bufKey[64];
 
 	sSection = L"";
-	for( int nCount = 1; nCount < 100; nCount++ ){	//“Y‚¦Žš‚Í‚P‚©‚çŽn‚ß‚é
+	for( int nCount = 1; nCount < MAX_PLUG_CMD; nCount++ ){	//“Y‚¦Žš‚Í‚P‚©‚çŽn‚ß‚é
 		sKey = sLabel = sType = L"";
 		//Key‚ÌŽæ“¾
 		swprintf( bufKey, L"O[%d].Key", nCount );
