@@ -19,11 +19,9 @@
 #ifndef _CMENUDRAWER_H_
 #define _CMENUDRAWER_H_
 
-class CMenuDrawer;
+#include "Funccode_enum.h"
 
-#include <windows.h>
-#include <vector>
-#include "mem/CNative.h"// 2002/2/10 aroka
+class CMenuDrawer;
 
 class CImageListMgr;// 2002/2/10 aroka
 struct DLLSHAREDATA;
@@ -84,6 +82,7 @@ public:
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
 	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ); /* ツールバーIndexの取得 */// 20050809 aroka
 	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
+	EFunctionCode GetFunctionCode( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? (EFunctionCode)m_tbMyButton[nIndex].idCommand: F_INVALID; }		// 機能番号を検索	//2010/7/4 Uchi
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
 	void AddToolButton( int iBitmap, int iCommand );	//ツールバーボタンを追加する 2009.11.14 syat

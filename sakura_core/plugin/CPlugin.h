@@ -28,7 +28,6 @@
 #ifndef SAKURA_CPLUGIN_E837BF6E_3F18_4A7E_89FD_F4DAE8DF9CFFD_H_
 #define SAKURA_CPLUGIN_E837BF6E_3F18_4A7E_89FD_F4DAE8DF9CFFD_H_
 
-#include <list>
 #include <algorithm>
 #include "macro/CWSHIfObj.h"
 #include "CDataProfile.h"
@@ -37,9 +36,9 @@ typedef int PlugId;
 
 // Plugin Function番号の計算(クラス外でも使えるバージョン)
 // 2010/4/19 Uchi
-inline EFunctionCode GetPluginFunctionCode( PlugId nPluginId, int nPluginNo )
+inline EFunctionCode GetPluginFunctionCode( PlugId nPluginId, int nPlugNo )
 {
-	return EFunctionCode(nPluginId * 100 + nPluginNo + F_PLUGCOMMAND_FIRST);
+	return EFunctionCode( nPluginId * MAX_PLUG_CMD + nPlugNo + F_PLUGCOMMAND_FIRST );
 }
 
 // PlugId番号の計算(クラス外でも使えるバージョン)
@@ -47,7 +46,17 @@ inline EFunctionCode GetPluginFunctionCode( PlugId nPluginId, int nPluginNo )
 inline PlugId GetPluginId( EFunctionCode nFunctionCode )
 {
 	if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
-		return PlugId((nFunctionCode - F_PLUGCOMMAND_FIRST) / 100);
+		return PlugId( (nFunctionCode - F_PLUGCOMMAND_FIRST) / MAX_PLUG_CMD );
+	}
+	return -1;
+}
+
+// PluginNo番号の計算(クラス外でも使えるバージョン)
+// 2010/6/24 Uchi
+inline PlugId GetPlugNo( EFunctionCode nFunctionCode )
+{
+	if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
+		return PlugId( (nFunctionCode - F_PLUGCOMMAND_FIRST) % MAX_PLUG_CMD );
 	}
 	return -1;
 }
@@ -204,6 +213,8 @@ public:
 public:
 	tstring GetFilePath( const tstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
 	virtual int AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* icon, bool doRegister );//コマンドを追加する
+	int 	GetCommandCount()	{ return m_nCommandCount; };			// コマンド数を返す	2010/7/4 Uchi
+
 protected:
 	bool ReadPluginDefCommon( CDataProfile *cProfile );					//プラグイン定義ファイルのCommonセクションを読み込む
 	bool ReadPluginDefPlug( CDataProfile *cProfile );					//プラグイン定義ファイルのPlugセクションを読み込む

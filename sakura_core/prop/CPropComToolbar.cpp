@@ -20,7 +20,6 @@
 #include "prop/CPropCommon.h"
 #include "CMenuDrawer.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2005/8/9 aroka
-//#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -584,7 +583,7 @@ void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		WCHAR	szLabel[256];
 		if( tbb.fsStyle & TBSTYLE_SEP ){
 			// テキストだけ表示する
-			if( tbb.idCommand == F_DISABLE ){
+			if( tbb.idCommand == F_SEPARATOR ){
 				auto_strcpy( szLabel, LTEXT("───────────") );	// nLength 未使用 2003/01/09 Moca
 			}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
 				if( ::LoadStringW_AnyBuild( G_AppInstance(), tbb.idCommand, szLabel, _countof( szLabel ) ) <= 0 ){
