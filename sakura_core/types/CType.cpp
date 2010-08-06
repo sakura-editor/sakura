@@ -195,7 +195,15 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_cLineTermChar = L':';					/* 行番号区切り文字 */
 	pType->m_bWordWrap = FALSE;					/* 英文ワードラップをする */
 	pType->m_nCurrentPrintSetting = 0;				/* 現在選択している印刷設定 */
+	pType->m_bOutlineDockDisp = FALSE;				/* アウトライン解析表示の有無 */
+	pType->m_eOutlineDockSide = DOCKSIDE_FLOAT;		/* アウトライン解析ドッキング配置 */
+	pType->m_cxOutlineDockLeft = 0;					// アウトラインの左ドッキング幅
+	pType->m_cyOutlineDockTop = 0;					// アウトラインの上ドッキング高
+	pType->m_cxOutlineDockRight = 0;				// アウトラインの右ドッキング幅
+	pType->m_cyOutlineDockBottom = 0;				// アウトラインの下ドッキング高
 	pType->m_eDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
+	pType->m_nOutlineSortCol = 0;					/* アウトライン解析ソート列番号 */
+	pType->m_nOutlineSortType = 0;					/* アウトライン解析ソート基準 */
 	pType->m_eSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
 	pType->m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 

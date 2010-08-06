@@ -746,6 +746,7 @@
 #define HIDC_FL_CHECK_bMarkUpBlankLineEnable	12208	//空行を無視する
 #define HIDC_COMBO_nSortType	12209	//順序
 #define HIDC_FL_BUTTON_WINSIZE	12210	//ウィンドウ位置保存	// 2006.08.06 ryoji
+#define HIDC_FL_BUTTON_MENU		12211	//ウィンドウの位置メニュー
 
 //ファイル内容比較
 #define HIDC_CMP_BUTTON1		12300	//上下に表示

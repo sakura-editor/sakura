@@ -1,5 +1,6 @@
 #pragma once
 
+#include "env/CommonSetting.h"
 #include "doc/CDocTypeSetting.h"
 #include "doc/CLineComment.h"
 #include "doc/CBlockComment.h"
@@ -87,8 +88,16 @@ struct STypeConfig{
 
 	int					m_nCurrentPrintSetting;			/*!< 現在選択している印刷設定 */
 
+	BOOL				m_bOutlineDockDisp;				/*!< アウトライン解析表示の有無 */
+	EDockSide			m_eOutlineDockSide;				/*!< アウトライン解析ドッキング配置 */
+	int					m_cxOutlineDockLeft;			/*!< アウトラインの左ドッキング幅 */
+	int					m_cyOutlineDockTop;				/*!< アウトラインの上ドッキング高 */
+	int					m_cxOutlineDockRight;			/*!< アウトラインの右ドッキング幅 */
+	int					m_cyOutlineDockBottom;			/*!< アウトラインの下ドッキング高 */
 	EOutlineType		m_eDefaultOutline;				/*!< アウトライン解析方法 */
 	SFilePath			m_szOutlineRuleFilename;		/*!< アウトライン解析ルールファイル */
+	int					m_nOutlineSortCol;				/*!< アウトライン解析ソート列番号 */
+	int					m_nOutlineSortType;				/*!< アウトライン解析ソート基準 */
 
 	ESmartIndentType	m_eSmartIndent;					/*!< スマートインデント種別 */
 	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態

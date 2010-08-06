@@ -663,8 +663,12 @@ BOOL CEditDoc::OnFileClose()
 */
 void CEditDoc::RunAutoMacro( int idx, LPCTSTR pszSaveFilePath )
 {
-	static bool bRunning = false;
+	// 開ファイル／タイプ変更時はアウトラインを再解析する
+	if( pszSaveFilePath == NULL ){
+		m_pcEditWnd->m_cDlgFuncList.Refresh();
+	}
 
+	static bool bRunning = false;
 	if( bRunning )
 		return;	// 再入り実行はしない
 
