@@ -645,6 +645,35 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, LTEXT("xOutlineWindowPos")	, common.m_sOutline.m_xOutlineWindowPos);
 		cProfile.IOProfileData( pszSecName, LTEXT("yOutlineWindowPos")	, common.m_sOutline.m_yOutlineWindowPos);
 	}
+	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineDockSet"), common.m_sOutline.m_nOutlineDockSet );
+	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineDockSync"), common.m_sOutline.m_bOutlineDockSync );
+	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineDockDisp"), common.m_sOutline.m_bOutlineDockDisp );
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eOutlineDockSide"), common.m_sOutline.m_eOutlineDockSide );
+	{
+		const WCHAR* pszKeyName = LTEXT("xyOutlineDock");
+		const WCHAR* pszForm = LTEXT("%d,%d,%d,%d");
+		WCHAR		szKeyData[1024];
+		if( cProfile.IsReadingMode() ){
+			if( cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData)) ){
+				int buf[4];
+				scan_ints( szKeyData, pszForm, buf );
+				common.m_sOutline.m_cxOutlineDockLeft	= buf[0];
+				common.m_sOutline.m_cyOutlineDockTop	= buf[1];
+				common.m_sOutline.m_cxOutlineDockRight	= buf[2];
+				common.m_sOutline.m_cyOutlineDockBottom	= buf[3];
+			}
+		}else{
+			auto_sprintf(
+				szKeyData,
+				pszForm,
+				common.m_sOutline.m_cxOutlineDockLeft,
+				common.m_sOutline.m_cyOutlineDockTop,
+				common.m_sOutline.m_cxOutlineDockRight,
+				common.m_sOutline.m_cyOutlineDockBottom
+			);
+			cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
+		}
+	}
 	
 }
 
@@ -1371,11 +1400,40 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	cProfile.IOProfileData( pszSecName, LTEXT("szIndentChars")		, MakeStringBufferW(types.m_szIndentChars) );
 	cProfile.IOProfileData( pszSecName, LTEXT("cLineTermChar")		, types.m_cLineTermChar );
 
-		cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* アウトライン解析方法 */
-		cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* アウトライン解析ルールファイル */
-		cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* スマートインデント種別 */
-		//	Nov. 20, 2000 genta
-		cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME制御
+	cProfile.IOProfileData( pszSecName, LTEXT("bOutlineDockDisp")			, types.m_bOutlineDockDisp );/* アウトライン解析表示の有無 */
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eOutlineDockSide")	, types.m_eOutlineDockSide );/* アウトライン解析ドッキング配置 */
+	{
+		const WCHAR* pszKeyName = LTEXT("xyOutlineDock");
+		const WCHAR* pszForm = LTEXT("%d,%d,%d,%d");
+		WCHAR		szKeyData[1024];
+		if( cProfile.IsReadingMode() ){
+			if( cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData)) ){
+				int buf[4];
+				scan_ints( szKeyData, pszForm, buf );
+				types.m_cxOutlineDockLeft	= buf[0];
+				types.m_cyOutlineDockTop	= buf[1];
+				types.m_cxOutlineDockRight	= buf[2];
+				types.m_cyOutlineDockBottom	= buf[3];
+			}
+		}else{
+			auto_sprintf(
+				szKeyData,
+				pszForm,
+				types.m_cxOutlineDockLeft,
+				types.m_cyOutlineDockTop,
+				types.m_cxOutlineDockRight,
+				types.m_cyOutlineDockBottom
+			);
+			cProfile.IOProfileData( pszSecName, pszKeyName, MakeStringBufferW(szKeyData) );
+		}
+	}
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nDefaultOutline")	, types.m_eDefaultOutline );/* アウトライン解析方法 */
+	cProfile.IOProfileData( pszSecName, LTEXT("szOutlineRuleFilename")	, types.m_szOutlineRuleFilename );/* アウトライン解析ルールファイル */
+	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortCol")		, types.m_nOutlineSortCol );/* アウトライン解析ソート列番号 */
+	cProfile.IOProfileData( pszSecName, LTEXT("nOutlineSortType")		, types.m_nOutlineSortType );/* アウトライン解析ソート基準 */
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nSmartIndent")		, types.m_eSmartIndent );/* スマートインデント種別 */
+	//	Nov. 20, 2000 genta
+	cProfile.IOProfileData( pszSecName, LTEXT("nImeState")			, types.m_nImeState );	//	IME制御
 
 	//	2001/06/14 Start By asa-o: タイプ別の補完ファイル
 	//	Oct. 5, 2002 genta _countof()で誤ってポインタのサイズを取得していたのを修正

@@ -859,6 +859,8 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), nCmdShow );
 	if( NULL != m_cTabWnd.GetHwnd() )
 		::ShowWindow( m_cTabWnd.GetHwnd(), nCmdShow );
+	if( NULL != m_cDlgFuncList.GetHwnd() && m_cDlgFuncList.IsDocking() )
+		::ShowWindow( m_cDlgFuncList.GetHwnd(), nCmdShow );
 
 	if( bAdjust )
 	{
@@ -1553,6 +1555,24 @@ LRESULT CEditWnd::DispatchEvent(
 
 		GetDocument().m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
 		GetDocument().OnChangeSetting();	/* ビューに設定変更を反映させる */
+
+		{	// アウトライン解析画面処理
+			bool bAnalyzed = FALSE;
+#if 0
+			if( /* 必要なら変更条件をここに記述する（将来用） */ )
+			{
+				// アウトライン解析画面の位置を現在の設定に合わせる
+				bAnalyzed = m_cDlgFuncList.ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// 外部からの変更通知と同等の扱い
+			}
+#endif
+			if( m_cDlgFuncList.GetHwnd() && !bAnalyzed ){	// アウトラインを開いていれば再解析
+				// SHOW_NORMAL: 解析方法が変化していれば再解析される。そうでなければ描画更新（変更されたカラーの適用）のみ。
+				EFunctionCode nFuncCode = (m_cDlgFuncList.m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
+				GetActiveView().GetCommander().HandleCommand( nFuncCode, TRUE, SHOW_NORMAL, 0, 0, 0 );
+			}
+			if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == GetHwnd() )
+				::SetFocus( GetActiveView().GetHwnd() );	// フォーカスを戻す
+		}
 		return 0L;
 	case MYWM_SETACTIVEPANE:
 		if( -1 == (int)wParam ){
@@ -1665,6 +1685,11 @@ LRESULT CEditWnd::DispatchEvent(
 	//タブウインドウ	//@@@ 2003.05.31 MIK
 	case MYWM_TAB_WINDOW_NOTIFY:
 		m_cTabWnd.TabWindowNotify( wParam, lParam );
+		return 0L;
+
+	//アウトライン	// 2010.06.06 ryoji
+	case MYWM_OUTLINE_NOTIFY:
+		m_cDlgFuncList.OnOutlineNotify( wParam, lParam );
 		return 0L;
 
 	//バーの表示・非表示	//@@@ 2003.06.10 MIK
@@ -2558,6 +2583,7 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 		OnSysMenuTimer();
 		break;
 	case IDT_FIRST_IDLE:
+		m_cDlgFuncList.m_bEditWndReady = true;	// エディタ画面の準備完了
 		CAppNodeGroupHandle(0).PostMessageToAllEditors( MYWM_FIRST_IDLE, ::GetCurrentProcessId(), 0, NULL );	// プロセスの初回アイドリング通知	// 2008.04.19 ryoji
 		::KillTimer( m_hWnd, wParam );
 		break;
@@ -2645,6 +2671,12 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::ShowWindow( m_cStatusBar.GetStatusHwnd(), SW_SHOW );
 		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), SW_SHOW );
 		::ShowWindow( m_cTabWnd.GetHwnd(), SW_SHOW );	//@@@ 2003.06.25 MIK
+		::ShowWindow( m_cDlgFuncList.GetHwnd(), SW_SHOW );	// 2010.06.25 ryoji
+
+		// その他のモードレスダイアログも戻す	// 2010.06.25 ryoji
+		::ShowWindow( m_cDlgFind.GetHwnd(), SW_SHOW );
+		::ShowWindow( m_cDlgReplace.GetHwnd(), SW_SHOW );
+		::ShowWindow( m_cDlgGrep.GetHwnd(), SW_SHOW );
 
 		::SetFocus( GetHwnd() );
 
@@ -2670,6 +2702,12 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		::ShowWindow( m_cStatusBar.GetStatusHwnd(), SW_HIDE );
 		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), SW_HIDE );
 		::ShowWindow( m_cTabWnd.GetHwnd(), SW_HIDE );	//@@@ 2003.06.25 MIK
+		::ShowWindow( m_cDlgFuncList.GetHwnd(), SW_HIDE );	// 2010.06.25 ryoji
+
+		// その他のモードレスダイアログも隠す	// 2010.06.25 ryoji
+		::ShowWindow( m_cDlgFind.GetHwnd(), SW_HIDE );
+		::ShowWindow( m_cDlgReplace.GetHwnd(), SW_HIDE );
+		::ShowWindow( m_cDlgGrep.GetHwnd(), SW_HIDE );
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 		m_pPrintPreview = new CPrintPreview( this );
@@ -2901,28 +2939,40 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		::UpdateWindow( m_CFuncKeyWnd.GetHwnd() );	// 2006.06.17 ryoji 即時描画でちらつきを減らす
 	}
 
-	if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 )
+	int nFuncListWidth = 0;
+	int nFuncListHeight = 0;
+	if( m_cDlgFuncList.GetHwnd() && m_cDlgFuncList.IsDocking() )
+	{
+		::SendMessageAny( m_cDlgFuncList.GetHwnd(), WM_SIZE, wParam, lParam );
+		::GetWindowRect( m_cDlgFuncList.GetHwnd(), &rc );
+		nFuncListWidth = rc.right - rc.left;
+		nFuncListHeight = rc.bottom - rc.top;
+	}
+
+	EDockSide eDockSideFL = m_cDlgFuncList.GetDockSide();
+	int nTop = nToolBarHeight + nTabWndHeight;
+	if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0)
+		nTop += nFuncKeyWndHeight;
+	int nHeight = cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight;
+	if( m_cDlgFuncList.GetHwnd() && m_cDlgFuncList.IsDocking() )
 	{
 		::MoveWindow(
-			m_cSplitterWnd.GetHwnd(),
-			0,
-			nToolBarHeight + nFuncKeyWndHeight + nTabWndHeight,	//@@@ 2003.05.31 MIK
-			cx,
-			cy - nToolBarHeight - nFuncKeyWndHeight - nTabWndHeight - nStatusBarHeight,	//@@@ 2003.05.31 MIK
+			m_cDlgFuncList.GetHwnd(),
+			(eDockSideFL == DOCKSIDE_RIGHT)? cx - nFuncListWidth: 0,
+			(eDockSideFL == DOCKSIDE_BOTTOM)? nTop + nHeight - nFuncListHeight: nTop,
+			(eDockSideFL == DOCKSIDE_LEFT || eDockSideFL == DOCKSIDE_RIGHT)? nFuncListWidth: cx,
+			(eDockSideFL == DOCKSIDE_TOP || eDockSideFL == DOCKSIDE_BOTTOM)? nFuncListHeight: nHeight,
 			TRUE
 		);
 	}
-	else
-	{
-		::MoveWindow(
-			m_cSplitterWnd.GetHwnd(),
-			0,
-			nToolBarHeight + nTabWndHeight,
-			cx,
-			cy - nToolBarHeight - nTabWndHeight - nFuncKeyWndHeight - nStatusBarHeight,	//@@@ 2003.05.31 MIK
-			TRUE
-		);
-	}
+	::MoveWindow(
+		m_cSplitterWnd.GetHwnd(),
+		(eDockSideFL == DOCKSIDE_LEFT)? nFuncListWidth: 0,
+		(eDockSideFL == DOCKSIDE_TOP)? nTop + nFuncListHeight: nTop,	//@@@ 2003.05.31 MIK
+		(eDockSideFL == DOCKSIDE_LEFT || eDockSideFL == DOCKSIDE_RIGHT)? cx - nFuncListWidth: cx,
+		(eDockSideFL == DOCKSIDE_TOP || eDockSideFL == DOCKSIDE_BOTTOM)? nHeight - nFuncListHeight: nHeight,	//@@@ 2003.05.31 MIK
+		TRUE
+	);
 	//@@@ To 2003.05.31 MIK
 
 	/* 印刷プレビューモードか */

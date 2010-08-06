@@ -4284,6 +4284,12 @@ BOOL CViewCommander::Command_FUNCLIST(
 
 	bIsProcessing = true;
 
+	// 自プロセスが前面にいるかどうか調べる
+	DWORD dwPid1, dwPid2;
+	dwPid1 = ::GetCurrentProcessId();
+	::GetWindowThreadProcessId( ::GetForegroundWindow(), &dwPid2 );
+	bool bForeground = (dwPid1 == dwPid2);
+
 	EOutlineType nOutlineType = (EOutlineType)_nOutlineType; //2007.11.29 kobake
 
 //	if( bCheckOnly ){
@@ -4310,8 +4316,11 @@ BOOL CViewCommander::Command_FUNCLIST(
 		switch(nAction ){
 		case SHOW_NORMAL: // アクティブにする
 			//	開いているものと種別が同じならActiveにするだけ．異なれば再解析
+			GetEditWindow()->m_cDlgFuncList.SyncColor();
 			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )){
-				ActivateFrameWindow( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
+				if( bForeground ){
+					::SetFocus( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
+				}
 				bIsProcessing = false;
 				return TRUE;
 			}
@@ -4319,7 +4328,10 @@ BOOL CViewCommander::Command_FUNCLIST(
 		case SHOW_TOGGLE: // 閉じる
 			//	開いているものと種別が同じなら閉じる．異なれば再解析
 			if( GetEditWindow()->m_cDlgFuncList.CheckListType( nOutlineType )){
-				::SendMessageAny( GetEditWindow()->m_cDlgFuncList.GetHwnd(), WM_CLOSE, 0, 0 );
+				if( GetEditWindow()->m_cDlgFuncList.IsDocking() )
+					::DestroyWindow( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
+				else
+					::SendMessageAny( GetEditWindow()->m_cDlgFuncList.GetHwnd(), WM_CLOSE, 0, 0 );
 				bIsProcessing = false;
 				return TRUE;
 			}
@@ -4399,7 +4411,9 @@ BOOL CViewCommander::Command_FUNCLIST(
 	}else{
 		/* アクティブにする */
 		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
-		ActivateFrameWindow( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
+		if( bForeground ){
+			::SetFocus( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
+		}
 	}
 
 	// ダイアログタイトルを上書き

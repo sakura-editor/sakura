@@ -161,19 +161,20 @@ BEGIN
     CONTROL         "List1",IDC_LIST_FL,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,0,
                     0,238,205
+    PUSHBUTTON      "▼",IDC_BUTTON_MENU,1,235,10,14
     CONTROL         "■",IDC_BUTTON_WINSIZE,"Button",BS_AUTOCHECKBOX | 
-                    BS_PUSHLIKE,0,235,10,14
-    PUSHBUTTON      "コピー(&C)",IDC_BUTTON_COPY,12,235,50,14,WS_DISABLED
-    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,64,235,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,116,235,50,14
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,168,235,50,14
+                    BS_PUSHLIKE,12,235,10,14
+    PUSHBUTTON      "コピー(&C)",IDC_BUTTON_COPY,24,235,50,14,WS_DISABLED
+    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,76,235,50,14
+    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,128,235,50,14
+    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,180,235,50,14
     CONTROL         "自動的に閉じる(&D)",IDC_CHECK_bAutoCloseDlgFuncList,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,255,75,10
     CONTROL         "フォーカスを移す(&F)",IDC_CHECK_bFunclistSetFocusOnJump,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,82,255,77,10
     CONTROL         "空行を無視する(&B)",IDC_CHECK_bMarkUpBlankLineEnable,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,160,255,76,10
-    LTEXT           "順序(&S)",IDC_STATIC_nSortType,0,6,23,8
+    LTEXT           "順序(&S)",IDC_STATIC_nSortType,3,6,28,8
     COMBOBOX        IDC_COMBO_nSortType,34,4,94,65,CBS_DROPDOWNLIST | 
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
 END

@@ -6,6 +6,31 @@
 #include "CGraphics.h"
 #include "util/std_macro.h"
 
+class CGDIStock
+{
+public:
+	CGDIStock(){};
+	~CGDIStock()
+	{
+		while(!m_vObjects.empty()){
+			::DeleteObject(m_vObjects.back());
+			m_vObjects.pop_back();
+		}
+	}
+	bool Register(HGDIOBJ hObject)
+	{
+		if(hObject){
+			m_vObjects.push_back(hObject);
+			return true;
+		}
+		return false;
+	}
+protected:
+	std::vector<HGDIOBJ> m_vObjects;
+};
+
+static CGDIStock s_cGDIStock;	// 唯一の CGDIStock オブジェクト
+
 void CGraphics::Init(HDC hdc)
 {
 	m_hdc = hdc;
@@ -431,4 +456,76 @@ void CGraphics::FillMyRect(const RECT& rc)
 #endif
 }
 
+// ドロップ先矩形描画用のリージョンを作成する
+static HRGN CreateDropRectRgn(LPCRECT lpRect, SIZE size)
+{
+	HRGN hRgnOutside = ::CreateRectRgnIndirect(lpRect);
+	RECT rc = *lpRect;
+	::InflateRect(&rc, -size.cx, -size.cy);
+	::IntersectRect(&rc, &rc, lpRect);
+	HRGN hRgnInside = ::CreateRectRgnIndirect(&rc);
+	HRGN hRgn = ::CreateRectRgn(0, 0, 0, 0);
+	::CombineRgn(hRgn, hRgnOutside, hRgnInside, RGN_XOR);
+	if(hRgnOutside) ::DeleteObject(hRgnOutside);
+	if(hRgnInside) ::DeleteObject(hRgnInside);
+	return hRgn;
+}
 
+// ドロップ先矩形描画用のブラシを取得する
+static HBRUSH GetDropRectBrush()
+{
+	static HBRUSH s_hBrush = NULL;
+	if(!s_hBrush){
+		WORD wBits[8] = {0x5555, 0xAAAA, 0x5555, 0xAAAA, 0x5555, 0xAAAA, 0x5555, 0xAAAA};
+		HBITMAP hBitmap = ::CreateBitmap(8, 8, 1, 1, wBits);
+		if(hBitmap){
+			s_hBrush = ::CreatePatternBrush(hBitmap);
+			::DeleteObject(hBitmap);
+			s_cGDIStock.Register(s_hBrush);	// 終了時破棄用にストックしておく
+		}
+	}
+	return s_hBrush;
+}
+
+// ドロップ先の矩形を描画する
+void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast)
+{
+	if(!lpRectNew && !lpRectLast)
+		return;
+
+	HWND hwndDt = ::GetDesktopWindow();
+	HDC hdc = ::GetDCEx(hwndDt, NULL, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+
+	HRGN hRgnNew = NULL;
+	HRGN hRgnUpdate = NULL;
+	if(lpRectNew){
+		hRgnNew = CreateDropRectRgn(lpRectNew, sizeNew);
+	}
+	if(lpRectLast){
+		HRGN hRgnLast = CreateDropRectRgn(lpRectLast, sizeLast);
+		if(lpRectNew){
+			hRgnUpdate = ::CreateRectRgn(0, 0, 0, 0);
+			::CombineRgn(hRgnUpdate, hRgnLast, hRgnNew, RGN_XOR);
+			::DeleteObject(hRgnLast);
+		}else{
+			hRgnUpdate = hRgnLast;
+		}
+	}
+
+	RECT rc;
+	::SelectClipRgn(hdc, hRgnUpdate? hRgnUpdate: hRgnNew);
+	::GetClipBox(hdc, &rc);
+
+	HBRUSH hBrush = GetDropRectBrush();
+	HBRUSH hBrushOld = (HBRUSH)::SelectObject(hdc, hBrush);
+
+	::PatBlt(hdc, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATINVERT);
+
+	::SelectObject(hdc, hBrushOld);
+	::SelectClipRgn(hdc, NULL);
+
+	if(hRgnNew) ::DeleteObject(hRgnNew);
+	if(hRgnUpdate) ::DeleteObject(hRgnUpdate);
+
+	::ReleaseDC(hwndDt, hdc);
+}

@@ -134,6 +134,17 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// 文書種別確定
 	pcDoc->m_cDocType.SetDocumentType( sLoadInfo.nType, true );
 
+	// 起動と同時に読む場合は予めアウトライン解析画面を配置しておく
+	// （ファイル読み込み開始とともにビューが表示されるので、あとで配置すると画面のちらつきが大きいの）
+	if( !pcDoc->m_pcEditWnd->m_cDlgFuncList.m_bEditWndReady ){
+		pcDoc->m_pcEditWnd->m_cDlgFuncList.Refresh();
+		if( pcDoc->m_pcEditWnd->m_cDlgFuncList.GetHwnd() ){
+			RECT rc;
+			::GetClientRect( pcDoc->m_pcEditWnd->GetHwnd(), &rc );
+			::SendMessageAny( pcDoc->m_pcEditWnd->GetHwnd(), WM_SIZE, SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+		}
+	}
+
 	//ファイルが存在する場合はファイルを読む
 	if(fexist(sLoadInfo.cFilePath)){
 		//CDocLineMgrの構成

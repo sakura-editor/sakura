@@ -134,6 +134,26 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 	return m_hWnd;
 }
 
+HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE lpTemplate, LPARAM lParam, int nCmdShow )
+{
+	m_bInited = FALSE;
+	m_bModal = FALSE;
+	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
+	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
+	m_lParam = lParam;
+	m_hWnd = ::CreateDialogIndirectParam(
+		m_hInstance,
+		lpTemplate,
+		m_hwndParent,
+		(DLGPROC)MyDialogProc,
+		(LPARAM)this
+	);
+	if( NULL != m_hWnd ){
+		::ShowWindow( m_hWnd, nCmdShow );
+	}
+	return m_hWnd;
+}
+
 void CDialog::CloseDialog( int nModalRetVal )
 {
 	if( NULL != m_hWnd ){
@@ -173,45 +193,47 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if( -1 != m_xPos && -1 != m_yPos ){
 		/* ウィンドウ位置・サイズを再現 */
 
-		// 2006.06.09 ryoji
-		// モニタのワーク領域よりも左右上下に１ドット小さい領域内に全体が収まるように位置調整する
-		//
-		// note: ダイアログをワーク領域境界にぴったり合わせようとすると、
-		//       強制的に親の中央に移動させられてしまうときがある
-		//      （マルチモニタ環境で親が非プライマリモニタにある場合だけ？）
-		//       状況に合わせて処理を変えるのは厄介なので、一律、１ドットの空きを入れる
+		if( !(::GetWindowLongPtr( hwndDlg, GWL_STYLE ) & WS_CHILD) ){
+			// 2006.06.09 ryoji
+			// モニタのワーク領域よりも左右上下に１ドット小さい領域内に全体が収まるように位置調整する
+			//
+			// note: ダイアログをワーク領域境界にぴったり合わせようとすると、
+			//       強制的に親の中央に移動させられてしまうときがある
+			//      （マルチモニタ環境で親が非プライマリモニタにある場合だけ？）
+			//       状況に合わせて処理を変えるのは厄介なので、一律、１ドットの空きを入れる
 
-		RECT rc;
-		RECT rcWork;
-		rc.left = m_xPos;
-		rc.top = m_yPos;
-		rc.right = m_xPos + m_nWidth;
-		rc.bottom = m_yPos + m_nHeight;
-		GetMonitorWorkRect(&rc, &rcWork);
-		rcWork.top += 1;
-		rcWork.bottom -= 1;
-		rcWork.left += 1;
-		rcWork.right -= 1;
-		if( rc.bottom > rcWork.bottom ){
-			rc.top -= (rc.bottom - rcWork.bottom);
-			rc.bottom = rcWork.bottom;
+			RECT rc;
+			RECT rcWork;
+			rc.left = m_xPos;
+			rc.top = m_yPos;
+			rc.right = m_xPos + m_nWidth;
+			rc.bottom = m_yPos + m_nHeight;
+			GetMonitorWorkRect(&rc, &rcWork);
+			rcWork.top += 1;
+			rcWork.bottom -= 1;
+			rcWork.left += 1;
+			rcWork.right -= 1;
+			if( rc.bottom > rcWork.bottom ){
+				rc.top -= (rc.bottom - rcWork.bottom);
+				rc.bottom = rcWork.bottom;
+			}
+			if( rc.right > rcWork.right ){
+				rc.left -= (rc.right - rcWork.right);
+				rc.right = rcWork.right;
+			}
+			if( rc.top < rcWork.top ){
+				rc.bottom += (rcWork.top - rc.top);
+				rc.top = rcWork.top;
+			}
+			if( rc.left < rcWork.left ){
+				rc.right += (rcWork.left - rc.left);
+				rc.left = rcWork.left;
+			}
+			m_xPos = rc.left;
+			m_yPos = rc.top;
+			m_nWidth = rc.right - rc.left;
+			m_nHeight = rc.bottom - rc.top;
 		}
-		if( rc.right > rcWork.right ){
-			rc.left -= (rc.right - rcWork.right);
-			rc.right = rcWork.right;
-		}
-		if( rc.top < rcWork.top ){
-			rc.bottom += (rcWork.top - rc.top);
-			rc.top = rcWork.top;
-		}
-		if( rc.left < rcWork.left ){
-			rc.right += (rcWork.left - rc.left);
-			rc.left = rcWork.left;
-		}
-		m_xPos = rc.left;
-		m_yPos = rc.top;
-		m_nWidth = rc.right - rc.left;
-		m_nHeight = rc.bottom - rc.top;
 
 		WINDOWPLACEMENT cWindowPlacement;
 		cWindowPlacement.length = sizeof( cWindowPlacement );

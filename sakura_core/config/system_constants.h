@@ -294,12 +294,15 @@
 	Version 102:
 	Pluginのiniファイルへの書き込みの文字列化	2010/7/15 Uchi
 
+	Version 103:
+	アウトライン解析画面のドッキング機能追加 2010.06.05 ryoji
+
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		102
+#define N_SHAREDATA_VERSION		103
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
@@ -461,6 +464,9 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 // lParam:未使用
 // @2010.05.11 Moca メッセージ追加
 #define	MYWM_ADDSTRINGLEN_W (WM_APP+219)
+
+/*! アウトライン解析画面の通知 */
+#define MYWM_OUTLINE_NOTIFY (WM_APP+220)	//@@@ 2010.06.06 ryoji
 
 /* 再変換対応 */ // 20020331 aroka
 #ifndef WM_IME_REQUEST

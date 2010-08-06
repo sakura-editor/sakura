@@ -449,6 +449,17 @@ struct CommonSetting_FileName
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       アウトライン                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+// ドッキング配置
+enum EDockSide{
+	DOCKSIDE_FLOAT,			//!< フローティング
+	DOCKSIDE_LEFT,			//!< 左ドッキング
+	DOCKSIDE_TOP,			//!< 上ドッキング
+	DOCKSIDE_RIGHT,			//!< 右ドッキング
+	DOCKSIDE_BOTTOM,		//!< 下ドッキング
+	DOCKSIDE_UNDOCKABLE = -1,//!< ドッキング禁止
+};
+
 struct CommonSetting_OutLine
 {
 	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
@@ -457,6 +468,15 @@ struct CommonSetting_OutLine
 	int			m_heightOutlineWindow;
 	int			m_xOutlineWindowPos;
 	int			m_yOutlineWindowPos;
+
+	int			m_nOutlineDockSet;			// アウトライン解析のドッキング位置継承方法(0:共通設定, 1:タイプ別設定)
+	BOOL		m_bOutlineDockSync;			// アウトライン解析のドッキング位置を同期する
+	BOOL		m_bOutlineDockDisp;			// アウトライン解析表示の有無
+	EDockSide	m_eOutlineDockSide;			// アウトライン解析ドッキング配置
+	int			m_cxOutlineDockLeft;		// アウトラインの左ドッキング幅
+	int			m_cyOutlineDockTop;			// アウトラインの上ドッキング高
+	int			m_cxOutlineDockRight;		// アウトラインの右ドッキング幅
+	int			m_cyOutlineDockBottom;		// アウトラインの下ドッキング高
 
 	//IDD_FUNCLIST (ツール - アウトライン解析)
 	BOOL		m_bAutoCloseDlgFuncList;	// アウトラインダイアログを自動的に閉じる

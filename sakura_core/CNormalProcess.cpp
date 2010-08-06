@@ -160,9 +160,16 @@ bool CNormalProcess::InitializeProcess()
 		pEditWnd->GetDocument().m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfExt(_T("output")), true );
 		// 文字コードを有効とする Uchi 2008/6/8
 		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, CTypeConfig(-1));
+		pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを表示する
 	}
 	else if( bGrepMode ){
 		/* GREP */
+		pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを予め表示しておく
+		if( pEditWnd->m_cDlgFuncList.GetHwnd() ){
+			RECT rc;
+			::GetClientRect( pEditWnd->GetHwnd(), &rc );
+			::SendMessageAny( pEditWnd->GetHwnd(), WM_SIZE, SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+		}
 		CCommandLine::Instance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
@@ -186,6 +193,7 @@ bool CNormalProcess::InitializeProcess()
 				gi.bGrepOutputLine,
 				gi.nGrepOutputStyle
 			);
+			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 			return true; // 2003.06.23 Moca
 		}
 		else{
@@ -216,6 +224,7 @@ bool CNormalProcess::InitializeProcess()
 			if( FALSE != nRet ){
 				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
 			}
+			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 			return true; // 2003.06.23 Moca
 		}
 	}
@@ -224,6 +233,7 @@ bool CNormalProcess::InitializeProcess()
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bViewMode = CCommandLine::Instance()->IsViewMode(); // 2002/2/8 aroka ここに移動
 		CTypeConfig nType = fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt( fi.m_szDocType );
+
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(
