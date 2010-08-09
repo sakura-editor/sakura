@@ -38,7 +38,14 @@ class CEditView;
 #include <activscp.h>
 #include "CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
 
-
+/* CWSHIfObj - プラグインやマクロに公開するオブジェクト
+ * 使用上の注意:
+ *   1. 生成はnewで。
+ *      参照カウンタを持つので、自動変数で生成するとスコープ抜けて解放されるときにヒープエラーが出ます。
+ *   2. 生成したらAddRef()、不要になったらRelease()を呼ぶこと。
+ *   3. 新しいIfObjを作る時はCWSHIfObjを継承し、以下の4つをオーバーライドすること。
+ *      GetMacroCommandInfo, GetMacroFuncInfo, HandleCommand, HandleFunction
+ */
 class CWSHIfObj
 : public CIfObj
 {
