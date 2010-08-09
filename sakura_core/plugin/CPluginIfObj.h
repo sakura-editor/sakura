@@ -46,6 +46,7 @@ class CPluginIfObj : public CWSHIfObj {
 		F_PL_GETPLUGINDIR,						//プラグインフォルダパスを取得する
 		F_PL_GETDEF,							//設定ファイルから値を読む
 		F_PL_GETOPTION,							//オプションファイルから値を読む
+		F_PL_GETCOMMANDNO,						//実行中プラグの番号を取得する
 	};
 	typedef std::string string;
 	typedef std::wstring wstring;
@@ -63,6 +64,9 @@ public:
 public:
 	~CPluginIfObj(){}
 
+	// 操作
+public:
+	void SetPlugIndex(int nIndex) { m_nPlugIndex = nIndex; }
 	// 実装
 public:
 	//コマンド情報を取得する
@@ -110,6 +114,11 @@ public:
 				Wrap(&Result)->Receive(S);
 			}
 			return true;
+		case F_PL_GETCOMMANDNO:			//実行中プラグの番号を取得する
+			{
+				Wrap(&Result)->Receive(m_nPlugIndex);
+			}
+			return true;
 		}
 		return false;
 	}
@@ -143,6 +152,7 @@ private:
 	CPlugin& m_cPlugin;
 	static MacroFuncInfo m_MacroFuncInfoArr[];
 	static MacroFuncInfo m_MacroFuncInfoNotCommandArr[];
+	int m_nPlugIndex;	//実行中プラグの番号
 };
 
 //コマンド情報
@@ -162,6 +172,7 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoNotCommandArr[] =
 	{EFunctionCode(F_PL_GETPLUGINDIR),		LTEXT("GetPluginDir"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //プラグインフォルダパスを取得する
 	{EFunctionCode(F_PL_GETDEF),			LTEXT("GetDef"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //設定ファイルから値を読む
 	{EFunctionCode(F_PL_GETOPTION),			LTEXT("GetOption"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	NULL }, //オプションファイルから値を読む
+	{EFunctionCode(F_PL_GETCOMMANDNO),		LTEXT("GetCommandNo"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //オプションファイルから値を読む
 	//	終端
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
