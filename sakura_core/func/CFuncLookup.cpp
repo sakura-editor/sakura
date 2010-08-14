@@ -194,8 +194,8 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 {
 	int i;
 
-	//	リストを初期化する
-	::SendMessageAny( hComboBox, CB_RESETCONTENT, 0, (LPARAM)0 );
+	//	コンボボックスを初期化する
+	Combo_ResetContent( hComboBox );
 
 	//	固定機能リスト
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
@@ -224,7 +224,7 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 	int i;
 
 	//	リストを初期化する
-	::SendMessageAny( hListBox, LB_RESETCONTENT , 0, (LPARAM)0 );
+	List_ResetContent( hListBox );
 
 	n = GetItemCount( category );
 	for( i = 0; i < n; i++ ){

@@ -125,7 +125,7 @@ void CMainToolBar::CreateToolBar( void )
 
 		::ZeroMemory(&rbi, sizeof(rbi));
 		rbi.cbSize = sizeof(rbi);
-		::SendMessage(m_hwndReBar, RB_SETBARINFO, 0, (LPARAM)&rbi);
+		Rebar_SetbarInfo(m_hwndReBar, &rbi);
 
 		nFlag = CCS_NORESIZE | CCS_NODIVIDER | CCS_NOPARENTALIGN | TBSTYLE_FLAT;	// ツールバーへの追加スタイル
 	}
@@ -164,8 +164,8 @@ void CMainToolBar::CreateToolBar( void )
 			(LONG_PTR)ToolBarWndProc
 		);
 
-		::SendMessage( m_hwndToolBar, TB_SETBUTTONSIZE, 0, (LPARAM)MAKELONG(DpiScaleX(22),DpiScaleY(22)) );	// 2009.10.01 ryoji 高DPI対応スケーリング
-		::SendMessage( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0 );
+		Toolbar_SetButtonSize( m_hwndToolBar, DpiScaleX(22), DpiScaleY(22) );	// 2009.10.01 ryoji 高DPI対応スケーリング
+		Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
 		CEditApp::Instance()->GetIcons().SetToolBarImages( m_hwndToolBar );
@@ -206,8 +206,8 @@ void CMainToolBar::CreateToolBar( void )
 			{
 			case TBSTYLE_DROPDOWN:	//ドロップダウン
 				//拡張スタイルに設定
-				::SendMessage( m_hwndToolBar, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS );
-				::SendMessage( m_hwndToolBar, TB_ADDBUTTONSW, (WPARAM)1, (LPARAM)&tbb );
+				Toolbar_SetExtendedStyle( m_hwndToolBar, TBSTYLE_EX_DRAWDDARROWS );
+				Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
 				count++;
 				break;
 
@@ -233,18 +233,18 @@ void CMainToolBar::CreateToolBar( void )
 						if( tbb.fsState & TBSTATE_WRAP ){   //折り返し 2005/8/29 aroka
 							my_tbb.fsState |=  TBSTATE_WRAP;
 						}
-						::SendMessage( m_hwndToolBar, TB_ADDBUTTONSW, (WPARAM)1, (LPARAM)&my_tbb );
+						Toolbar_AddButtons( m_hwndToolBar, 1, &my_tbb );
 						count++;
 
 						//サイズを設定する
 						tbi.cbSize = sizeof(tbi);
 						tbi.dwMask = TBIF_SIZE;
 						tbi.cx     = DpiScaleX(160);	//ボックスの幅	// 2009.10.01 ryoji 高DPI対応スケーリング
-						::SendMessage( m_hwndToolBar, TB_SETBUTTONINFO, (WPARAM)(tbb.idCommand), (LPARAM)&tbi );
+						Toolbar_SetButtonInfo( m_hwndToolBar, tbb.idCommand, &tbi );
 
 						//サイズを取得する
 						rc.right = rc.left = rc.top = rc.bottom = 0;
-						::SendMessage( m_hwndToolBar, TB_GETITEMRECT, (WPARAM)(count-1), (LPARAM)&rc );
+						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 
 						//コンボボックスを作る
 						//	Mar. 8, 2003 genta 検索ボックスを1ドット下にずらした
@@ -295,7 +295,7 @@ void CMainToolBar::CreateToolBar( void )
 			case TBSTYLE_BUTTON:	//ボタン
 			case TBSTYLE_SEP:		//セパレータ
 			default:
-				::SendMessage( m_hwndToolBar, TB_ADDBUTTONSW, (WPARAM)1, (LPARAM)&tbb );
+				Toolbar_AddButtons( m_hwndToolBar, 1, &tbb );
 				count++;
 				break;
 			}
@@ -314,8 +314,8 @@ void CMainToolBar::CreateToolBar( void )
 	// ツールバーを Rebar に入れる
 	if( m_hwndReBar && m_hwndToolBar ){
 		// ツールバーの高さを取得する
-		DWORD dwBtnSize = ::SendMessage( m_hwndToolBar, TB_GETBUTTONSIZE, 0, 0 );
-		DWORD dwRows = ::SendMessage( m_hwndToolBar, TB_GETROWS, 0, 0 );
+		DWORD dwBtnSize = Toolbar_GetButtonSize( m_hwndToolBar );
+		DWORD dwRows = Toolbar_GetRows( m_hwndToolBar );
 
 		// バンド情報を設定する
 		// 以前のプラットフォームに _WIN32_WINNT >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	// 2007.12.21 ryoji
@@ -328,7 +328,7 @@ void CMainToolBar::CreateToolBar( void )
 		rbBand.cx         = 250;
 
 		// バンドを追加する
-		::SendMessage( m_hwndReBar, RB_INSERTBAND, (WPARAM)-1, (LPARAM)&rbBand );
+		Rebar_InsertBand( m_hwndReBar, -1, &rbBand );
 		::ShowWindow( m_hwndToolBar, SW_SHOW );
 	}
 
@@ -410,7 +410,7 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 		{
 			//	描画
 			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
-			int nIconId = ::SendMessage( pnmh->hdr.hwndFrom, TB_GETBITMAP, (WPARAM)pnmh->dwItemSpec, 0 );
+			int nIconId = Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (WPARAM)pnmh->dwItemSpec );
 
 			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - CEditApp::Instance()->GetIcons().cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
@@ -465,19 +465,17 @@ void CMainToolBar::UpdateToolbar( void )
 			);
 
 			// 機能が利用可能か調べる
-			::PostMessageAny(
+			Toolbar_EnableButton(
 				m_hwndToolBar,
-				TB_ENABLEBUTTON,
 				tbb.idCommand,
-				MAKELONG( (IsFuncEnable( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) ) , 0 )
+				IsFuncEnable( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
 			);
 
 			// 機能がチェック状態か調べる
-			::PostMessageAny(
+			Toolbar_CheckButton(
 				m_hwndToolBar,
-				TB_CHECKBUTTON,
 				tbb.idCommand,
-				MAKELONG( IsFuncChecked( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ), 0 )
+				IsFuncChecked( &m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
 			);
 		}
 	}

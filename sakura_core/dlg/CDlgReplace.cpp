@@ -16,7 +16,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <WindowsX.h>	//  ダイアログコントロール用マクロ定義
 #include "dlg/CDlgReplace.h"
 #include "view/CEditView.h"
 #include "util/shell.h"
@@ -172,26 +171,26 @@ void CDlgReplace::SetCombosList( void )
 
 	/* 検索文字列 */
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
-	while (ComboBox_GetCount(hwndCombo) > 0) {
-		ComboBox_DeleteString( hwndCombo, 0);
+	while (Combo_GetCount(hwndCombo) > 0) {
+		Combo_DeleteString( hwndCombo, 0);
 	}
 	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i) {
 		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 	}
-	ComboBox_GetText( hwndCombo, szBuff, _MAX_PATH);
+	Combo_GetText( hwndCombo, szBuff, _MAX_PATH );
 	if (auto_strcmp( to_wchar(szBuff), m_szText ) != 0) {
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
 	}
 
 	/* 置換後文字列 */
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
-	while (ComboBox_GetCount(hwndCombo) > 0) {
-		ComboBox_DeleteString( hwndCombo, 0);
+	while (Combo_GetCount(hwndCombo) > 0) {
+		Combo_DeleteString( hwndCombo, 0);
 	}
 	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i) {
 		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
 	}
-	ComboBox_GetText( hwndCombo, szBuff, _MAX_PATH);
+	Combo_GetText( hwndCombo, szBuff, _MAX_PATH );
 	if (auto_strcmp( to_wchar(szBuff), m_szText2 ) != 0) {
 		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_szText2 );
 	}
@@ -289,12 +288,12 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	他との一貫性を保つため削除
 
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	ComboBox_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), (WPARAM)_MAX_PATH - 1 );
-	ComboBox_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), (WPARAM)_MAX_PATH - 1 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), _MAX_PATH - 1 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	ComboBox_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
-	ComboBox_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 
 
 	/* テキスト選択中か */

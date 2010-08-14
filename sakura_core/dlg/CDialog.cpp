@@ -16,12 +16,10 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dlg/CDialog.h"
-#include "debug/Debug.h"/// 2002/2/10 aroka ヘッダ整理
 #include "CEditApp.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "util/os.h"
 #include "util/shell.h"
 
@@ -504,11 +502,11 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	sBuf[nLength] = _T('\0');
 
 	//リストを非表示にする
-	::SendMessage( hwndCtl, CB_SHOWDROPDOWN, (WPARAM) FALSE, 0 );
+	Combo_ShowDropdown( hwndCtl, FALSE );
 
 	//文字列を復元・全選択
 	::SetWindowText( hwndCtl, sBuf );
-	::SendMessage( hwndCtl, CB_SETEDITSEL, 0, (LPARAM)MAKELONG( 0, -1 ) );
+	Combo_SetEditSel( hwndCtl, 0, -1 );
 	delete[] sBuf;
 
 	return TRUE;
@@ -542,14 +540,14 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 		return FALSE;
 	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, NULL );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = ::SendMessageAny( hwndCtl, CB_GETCOUNT, 0, NULL );
+	nItem = Combo_GetCount( hwndCtl );
 	::GetWindowRect( hwndCtl, &rc );
 	nWidth = rc.right - rc.left - nMargin;
 	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = ::SendMessage( hwndCtl, CB_GETLBTEXTLEN, (WPARAM)iItem, NULL );
+		nTextLen = Combo_GetLBTextLen( hwndCtl, iItem );
 		if( 0 < nTextLen ) {
 			TCHAR* pszText = new TCHAR[nTextLen + 1];
-			Combo_GetText( hwndCtl, iItem, pszText );
+			Combo_GetLBText( hwndCtl, iItem, pszText );
 			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
 				if ( nWidth < sizeText.cx )
 					nWidth = sizeText.cx;
@@ -557,7 +555,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 			delete []pszText;
 		}
 	}
-	::SendMessageAny( hwndCtl, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + nMargin), NULL );
+	Combo_SetDroppedWidth( hwndCtl, nWidth + nMargin );
 	::SelectObject( hDC, hFont );
 	::ReleaseDC( hwndCtl, hDC );
 	return TRUE;

@@ -20,9 +20,6 @@
 
 class CDialog;
 
-#include <windows.h>
-#include "global.h"
-
 struct DLLSHAREDATA;
 
 /*-----------------------------------------------------------------------

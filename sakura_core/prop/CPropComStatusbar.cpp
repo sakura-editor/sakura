@@ -19,7 +19,6 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-//#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"

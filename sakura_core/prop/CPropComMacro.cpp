@@ -36,11 +36,8 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-//#include <memory.h>
-//#include <stdlib.h>
 #include "env/DLLSHAREDATA.h"
 #include "util/shell.h"
-//#include "util/file.h"
 #include "util/string_ex2.h"
 #include "util/module.h"
 #include "sakura_rc.h"
@@ -103,10 +100,10 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, _countof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1, 0 );
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACROPATH ),  EM_LIMITTEXT, _countof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1, 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRONAME ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACROPATH ), _countof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1 );
 		// 2003.06.23 Moca
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRODIR ),  EM_LIMITTEXT, _countof2( m_Common.m_sMacro.m_szMACROFOLDER ) - 1, 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_MACRODIR ), _countof2( m_Common.m_sMacro.m_szMACROFOLDER ) - 1 );
 
 		return TRUE;
 	case WM_NOTIFY:
@@ -421,7 +418,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	for( pos = 0; pos < MAX_CUSTMACRO ; ++pos ){
 		wchar_t buf[10];
 		auto_sprintf( buf, L"%d", pos );
-		int result = ::SendMessage( hNumCombo, CB_ADDSTRING, (WPARAM)0, (LPARAM)buf );
+		int result = Combo_AddString( hNumCombo, buf );
 		if( result == CB_ERR ){
 			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::AddMacroId"), _T("バグ報告お願い"), MB_OK );
 			return;	//	よくわからんけど失敗した
@@ -432,7 +429,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 			return;	//	よくわからんけど失敗した
 		}
 	}
-	::SendMessageAny( hNumCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
+	Combo_SetCurSel( hNumCombo, 0 );
 }
 
 void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
@@ -444,7 +441,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	HWND hNum = ::GetDlgItem( hwndDlg, IDC_COMBO_MACROID );
 
 	//	設定先取得
-	index = ::SendMessageAny( hNum, CB_GETCURSEL, 0, 0 );
+	index = Combo_GetCurSel( hNum );
 	if( index == CB_ERR ){
 		::MessageBox( hwndDlg, _T("PropComMacro::SetMacro2List::GetCurSel"),
 			_T("バグ報告お願い"), MB_OK );
@@ -591,7 +588,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	_tcscat( path, _T("*.*") );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
-	::SendMessageAny( hCombo, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0 );
+	Combo_ResetContent( hCombo );
 
 	//	ファイルの検索
 	WIN32_FIND_DATA wf;
@@ -606,7 +603,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 		//	でも.と..は勘弁。
 		//if (_tcscmp( wf.cFileName, _T(".") ) != 0 && _tcscmp( wf.cFileName, _T("..") ) != 0){
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダを除外
-			int result = ::SendMessage( hCombo, CB_ADDSTRING, (WPARAM)0, (LPARAM)wf.cFileName );
+			int result = Combo_AddString( hCombo, wf.cFileName );
 			if( result == CB_ERR || result == CB_ERRSPACE )
 				break;
 		}
@@ -629,7 +626,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	nLastPos_Macro = current;
 	
 	//	初期値の設定
-	::SendMessageAny( hNum, CB_SETCURSEL, nLastPos_Macro, 0 );
+	Combo_SetCurSel( hNum, nLastPos_Macro );
 	
 	TCHAR buf[MAX_PATH + MACRONAME_MAX];	// MAX_PATHとMACRONAME_MAXの両方より大きい値
 	LVITEM sItem;

@@ -18,14 +18,10 @@
 #include "types/CType.h" // use CDlgTypeList定義
 
 #include "typeprop/CDlgTypeList.h"
-#include "CDataProfile.h"
 #include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/24 Uchi
-#include "config/maxdata.h" // MAX_TYPES
 #include "env/CDocTypeManager.h"
-#include "func/Funccode.h"	//Stonee, 2001/03/12
 #include "util/shell.h"
-#include "debug/Debug.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -69,12 +65,7 @@ BOOL CDlgTypeList::OnLbnDblclk( int wID )
 		//	動作変更: 指定タイプの設定ダイアログ→一時的に別の設定を適用
 		::EndDialog(
 			GetHwnd(),
-			::SendMessageAny(
-				GetDlgItem( GetHwnd(), IDC_LIST_TYPES ),
-				LB_GETCURSEL,
-				0,
-				0
-			)
+			List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_TYPES ) )
 			| PROP_TEMPCHANGE_FLAG
 		);
 		return TRUE;
@@ -95,18 +86,13 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	case IDC_BUTTON_TEMPCHANGE:
 		::EndDialog(
 			GetHwnd(),
-			::SendMessageAny(
-				GetDlgItem( GetHwnd(), IDC_LIST_TYPES ),
-				LB_GETCURSEL,
-				0,
-				0
-			)
+ 			List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_TYPES ) )
 			| PROP_TEMPCHANGE_FLAG
 		);
 		return TRUE;
 	//	Nov. 29, 2000	To Here
 	case IDOK:
-		::EndDialog( GetHwnd(), ::SendMessageAny( GetDlgItem( GetHwnd(), IDC_LIST_TYPES ), LB_GETCURSEL, (WPARAM)0, (LPARAM)0 ) );
+		::EndDialog( GetHwnd(), List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_TYPES ) ) );
 		return TRUE;
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), -1 );
@@ -134,7 +120,7 @@ void CDlgTypeList::SetData( void )
 	HWND	hwndList;
 	TCHAR	szText[64 + MAX_TYPES_EXTS + 10];
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
-	::SendMessageAny( hwndList, LB_RESETCONTENT, 0, 0 );	/* リストを空にする */
+	List_ResetContent( hwndList );	/* リストを空にする */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
 		STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 		if( 0 < _tcslen( types.m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
@@ -149,7 +135,7 @@ void CDlgTypeList::SetData( void )
 		}
 		::List_AddString( hwndList, szText );
 	}
-	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)m_nSettingType.GetIndex(), (LPARAM)0 );
+	List_SetCurSel( hwndList, m_nSettingType.GetIndex() );
 	return;
 }
 
@@ -167,7 +153,7 @@ LPVOID CDlgTypeList::GetHelpIdTable(void)
 bool CDlgTypeList::Import()
 {
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
-	int nIdx = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	int nIdx = List_GetCurSel( hwndList );
 	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 
 	CImpExpType	cImpExpType( nIdx, types, hwndList );
@@ -181,7 +167,7 @@ bool CDlgTypeList::Import()
 
 	// リスト再初期化
 	SetData();
-	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)nIdx, 0 );
+	List_SetCurSel( hwndList, nIdx );
 
 	return true;
 }
@@ -191,7 +177,7 @@ bool CDlgTypeList::Import()
 bool CDlgTypeList::Export()
 {
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
-	int nIdx = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	int nIdx = List_GetCurSel( hwndList );
 	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
 
 	CImpExpType	cImpExpType( nIdx, types, hwndList );
@@ -214,7 +200,7 @@ bool CDlgTypeList::InitializeType( void )
 {
 	HWND hwndDlg = GetHwnd();
 	HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
-	int iDocType = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	int iDocType = List_GetCurSel( hwndList );
 	if (iDocType == 0) {
 		// 基本の場合には何もしない
 		return true;
@@ -242,7 +228,7 @@ bool CDlgTypeList::InitializeType( void )
 
 	// リスト再初期化
 	SetData();
-	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)iDocType, 0 );
+	List_SetCurSel( hwndList, iDocType );
 
 	InfoMessage( hwndDlg, _T("%ts を初期化しました。"), types.m_szTypeName );
 

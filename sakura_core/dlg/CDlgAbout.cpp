@@ -20,7 +20,6 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgAbout.h"
-#include <shellapi.h>
 #include "util/file.h"
 #include "util/module.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
@@ -222,12 +221,12 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	HWND hIconWnd = GetDlgItem( GetHwnd(), IDC_STATIC_MYICON );
 	
 	if( hIconWnd != NULL && hIcon != NULL ){
-		::SendMessageAny( hIconWnd, STM_SETICON, (WPARAM)hIcon, 0 );
+		StCtl_SetIcon( hIconWnd, hIcon );
 	}
 	//	To Here Dec. 2, 2002 genta
 
 	// URLウィンドウをサブクラス化する
-	m_UrlUrWnd.SubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
+	m_UrlUrWnd.SetSubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_UR ) );
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( GetHwnd(), IDC_STATIC_URL_ORG ) );
@@ -243,9 +242,9 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 	case IDC_BUTTON_COPY:
 		{
 			HWND hwndEditVer = GetDlgItem( GetHwnd(), IDC_EDIT_VER );
-	 		SendMessage( hwndEditVer, EM_SETSEL, 0, -1); 
+	 		EditCtl_SetSel( hwndEditVer, 0, -1); 
 	 		SendMessage( hwndEditVer, WM_COPY, 0, 0 );
-	 		SendMessage( hwndEditVer, EM_SETSEL, -1, 0); 
+	 		EditCtl_SetSel( hwndEditVer, -1, 0); 
  		}
 		return TRUE;
 	}
@@ -276,7 +275,7 @@ LPVOID CDlgAbout::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 
-BOOL CUrlWnd::SubclassWindow( HWND hWnd )
+BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 {
 	// STATICウィンドウをサブクラス化する
 	// 元のSTATICは WS_TABSTOP, SS_NOTIFY スタイルのものを使用すること

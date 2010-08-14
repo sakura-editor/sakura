@@ -33,9 +33,7 @@
 */
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-//#include "env/CommonSetting.h"
 #include "util/shell.h"
-//#include "env/CShareData.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -104,8 +102,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 			SetData( hwndDlg );
 
 			// エディット コントロールに入力できるテキストの長さを制限する
-			::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_FROM ),  EM_LIMITTEXT, (WPARAM)( _MAX_PATH - 1 ), 0 );
-			::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_TO ),    EM_LIMITTEXT, (WPARAM)( _MAX_PATH - 1 ), 0 );
+			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_FROM ), _MAX_PATH - 1 );
+			EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_FNAME_TO ),   _MAX_PATH - 1 );
 		}
 		return TRUE;
 

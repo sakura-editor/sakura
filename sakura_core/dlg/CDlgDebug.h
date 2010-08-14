@@ -14,12 +14,6 @@ class CDlgDebug;
 #ifndef _CDLGDEBUG_H_
 #define _CDLGDEBUG_H_
 
-#include <windows.h>
-#include "mem/CMemory.h"
-
-//#define MAX_SRCHTXT 1024
-//#define MAX_TEXTARR 32
-
 /*-----------------------------------------------------------------------
 ÉNÉâÉXÇÃêÈåæ
 -----------------------------------------------------------------------*/

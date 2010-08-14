@@ -31,8 +31,8 @@
 
 #include "StdAfx.h"
 #include "CDlgKeywordSelect.h"
-//#include "CKeyWordSetMgr.h"
-//#include "env/DLLSHAREDATA.h"
+#include "env/DLLSHAREDATA.h"
+#include "CKeyWordSetMgr.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -133,7 +133,7 @@ void CDlgKeywordSelect::SetData( void )
 		hwndCombo = ::GetDlgItem( GetHwnd(), keyword_select_target_combo[ index ] );
 
 		/* コンボボックスを空にする */
-		::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+		Combo_ResetContent( hwndCombo );
 		
 		/* 一行目は空白 */
 		Combo_AddString( hwndCombo, L" " );
@@ -148,12 +148,12 @@ void CDlgKeywordSelect::SetData( void )
 			if( -1 == m_nSet[ index ] )
 			{
 				/* セット名コンボボックスのデフォルト選択 */
-				::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)0, 0 );
+				Combo_SetCurSel( hwndCombo, 0 );
 			}
 			else
 			{
 				/* セット名コンボボックスのデフォルト選択 */
-				::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)(m_nSet[ index ] + 1), 0 );
+				Combo_SetCurSel( hwndCombo, m_nSet[ index ] + 1 );
 			}
 		}
 	}
@@ -172,7 +172,7 @@ int CDlgKeywordSelect::GetData( void )
 	{
 		hwndCombo = ::GetDlgItem( GetHwnd(), keyword_select_target_combo[ index ] );
 
-		n = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+		n = Combo_GetCurSel( hwndCombo );
 		if( CB_ERR == n || 0 == n )
 		{
 			m_nSet[ index ] = -1;

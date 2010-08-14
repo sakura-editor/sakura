@@ -26,19 +26,11 @@
 #include "StdAfx.h"
 #include "CViewCommander.h"
 
-#include <stdlib.h>
-#include <io.h>
-#include <mbstring.h>
 #include <htmlhelp.h>
-#include "global.h"
 #include "view/CEditView.h"
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
-#include "func/Funccode.h"
-#include "charset/charcode.h"
 #include "CControlTray.h"
 #include "CWaitCursor.h"
-#include "window/CSplitterWnd.h"
 //@@@ 2002.2.2 YAZAKI マクロはCSMacroMgrに統一
 #include "macro/CSMacroMgr.h"
 #include "typeprop/CDlgTypeList.h"
@@ -50,31 +42,25 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "doc/CDocReader.h"	//  Command_PROPERTY_FILE for _DEBUG
-#include "COpe.h"/// 2002/2/3 aroka 追加
 #include "COpeBlk.h"/// 2002/2/3 aroka 追加
-#include "doc/CLayout.h"/// 2002/2/3 aroka 追加
 #include "window/CEditWnd.h"/// 2002/2/3 aroka 追加
 #include "outline/CFuncInfoArr.h"
 #include "CMarkMgr.h"/// 2002/2/3 aroka 追加
 #include "doc/CDocLine.h"/// 2002/2/3 aroka 追加
 #include "CPrintPreview.h"
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
-#include "COsVersionInfo.h"
 #include "convert/CDecode_Base64Decode.h"
 #include "convert/CDecode_UuDecode.h"
 #include "io/CBinaryStream.h"
 #include "CEditApp.h"
 #include "util/window.h"
-#include "util/file.h"
 #include "util/module.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/os.h"
 #include "charset/CCodeFactory.h"
 #include "io/CFileLoad.h"
-#include "env/DLLSHAREDATA.h"
 #include "env/CShareData.h"
-#include "env/CHelpManager.h"
 #include "env/CSakuraEnvironment.h"
 #include "plugin/CJackManager.h"
 #include "plugin/COutlineIfObj.h"
@@ -82,6 +68,7 @@
 #include "CAppMode.h"
 #include "CWriteManager.h"
 #include "sakura_rc.h"
+
 //外部依存
 CEditDoc* CViewCommander::GetDocument()
 {
@@ -6641,9 +6628,9 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	/* プログレスバー初期化 */
 	HWND		hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS_REPLACE );
-	::SendMessageAny( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, nAllLineNum ) );
+	Progress_SetRange( hwndProgress, 0, nAllLineNum );
 	int			nNewPos = 0;
- 	::SendMessageAny( hwndProgress, PBM_SETPOS, nNewPos, 0 );
+	Progress_SetPos( hwndProgress, nNewPos);
 
 	/* 置換個数初期化 */
 	int			nReplaceNum = 0;
@@ -6810,7 +6797,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		// と思ったけど、逆にこちらの方が自然ではないので、やめる。
 		{
 			nNewPos = (Int)GetSelect().GetFrom().GetY2() >> nShiftCount;
-			::PostMessageAny( hwndProgress, PBM_SETPOS, nNewPos, 0 );
+			Progress_SetPos( hwndProgress, nNewPos);
 			_itot( nReplaceNum, szLabel, 10 );
 			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 		}
@@ -7076,7 +7063,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	if( 0 < nAllLineNum )
 	{
 		nNewPos = (Int)GetSelect().GetFrom().GetY2() >> nShiftCount;
-		::SendMessageAny( hwndProgress, PBM_SETPOS, nNewPos, 0 );
+		Progress_SetPos( hwndProgress, nNewPos);
 	}
 	//>> 2002/03/26 Azumaiya
 
@@ -7085,7 +7072,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	if( !cDlgCancel.IsCanceled() ){
 		nNewPos = nAllLineNum;
-		::SendMessageAny( hwndProgress, PBM_SETPOS, nNewPos, 0 );
+		Progress_SetPos( hwndProgress, nNewPos);
 	}
 	cDlgCancel.CloseDialog( 0 );
 	::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
@@ -8832,8 +8819,8 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			pcDlgCancel = new CDlgCancel;
 			if( NULL != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
-				::SendMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM(0, 100) );
-				::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+				Progress_SetRange( hwndProgress, 0, 100 );
+				Progress_SetPos( hwndProgress, 0);
 			}
 		}
 
@@ -8861,7 +8848,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 				break;
 			}
 			if( 0 == ( nLineNum & 0xFF ) ){
-				::PostMessage( hwndProgress, PBM_SETPOS, cfl.GetPercent(), 0 );
+				Progress_SetPos( hwndProgress, cfl.GetPercent() );
 				m_pCommanderView->Redraw();
 			}
 		}

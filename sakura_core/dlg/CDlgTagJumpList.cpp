@@ -33,23 +33,16 @@
 
 
 
-#include "stdafx.h"
-#include <stdio.h>
-#include "sakura_rc.h"
-#include "global.h"
+#include "StdAfx.h"
+#include "dlg/CDlgTagJumpList.h"
 #include "func/Funccode.h"
 #include "env/DLLSHAREDATA.h"
-#include "dlg/CDialog.h"
-#include "dlg/CDlgTagJumpList.h"
 #include "CSortedTagJumpList.h"
-//#include <Shlwapi.h> // 2006.01.08 genta Not used
 #include "recent/CRecent.h"
-#include "debug/Debug.h"
-#include "charset/charcode.h"
 #include "util/shell.h"
-#include "util/file.h"
-
+#include "sakura_rc.h"
 #include "sakura.hh"
+
 const DWORD p_helpids[] = {
 	IDC_LIST_TAGJUMP,		HIDC_LIST_TAGJUMPLIST,			//ファイル
 	IDOK,					HIDC_TAGJUMPLIST_IDOK,			//OK
@@ -193,7 +186,7 @@ void CDlgTagJumpList::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ICASE, m_bTagJumpICase ? BST_CHECKED : BST_UNCHECKED );
 		m_bTagJumpAnyWhere = m_pShareData->m_sTagJump.m_bTagJumpAnyWhere;
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_ANYWHERE, m_bTagJumpAnyWhere ? BST_CHECKED : BST_UNCHECKED );
-		::SendMessage( hwndKey, CB_LIMITTEXT, (WPARAM)_MAX_PATH-1, 0 );
+		Combo_LimitText( hwndKey, _MAX_PATH-1 );
 		CRecentTagjumpKeyword cRecentTagJump;
 		for( int i = 0; i < cRecentTagJump.GetItemCount(); i++ ){
 			Combo_AddString( hwndKey, cRecentTagJump.GetItemText(i) );
@@ -202,7 +195,7 @@ void CDlgTagJumpList::SetData( void )
 			::DlgItem_SetText( GetHwnd(), IDC_KEYWORD, m_pszKeyword );
 		}
 		else if( cRecentTagJump.GetItemCount() > 0 ){
-			::SendMessageAny( hwndKey, CB_SETCURSEL, 0, 0 );
+			Combo_SetCurSel( hwndKey, 0 );
 		}
 		cRecentTagJump.Terminate();
 		StartTimer();
@@ -383,9 +376,9 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	ListView_InsertColumn( hwndList, 5, &col );
 
 	/* 行選択 */
-	lngStyle = ::SendMessageAny( hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	lngStyle = ListView_GetExtendedListViewStyle( hwndList );
 	lngStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessageAny( hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+	ListView_SetExtendedListViewStyle( hwndList, lngStyle );
 
 	HWND hwndKey;
 	hwndKey = ::GetDlgItem( GetHwnd(), IDC_KEYWORD );

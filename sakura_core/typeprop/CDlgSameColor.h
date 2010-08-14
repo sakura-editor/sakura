@@ -32,7 +32,8 @@
 #define SC_CDLGSAMECOLOR_H__
 
 #include "dlg/CDialog.h"
-//#include "env/CShareData.h"
+
+struct STypeConfig;
 
 /*!	@brief 文字色／背景色統一ダイアログ
 

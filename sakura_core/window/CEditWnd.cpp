@@ -2877,7 +2877,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		//	最初に「枠無し」状態を設定した後でバーの分割を行う．
 		m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
 
-		::SendMessage( m_cStatusBar.GetStatusHwnd(), SB_SETPARTS, nStArrNum, (LPARAM)nStArr );
+		StatusBar_SetParts( m_cStatusBar.GetStatusHwnd(), nStArrNum, nStArr );
 		if (hFont != NULL)
 		{
 			::SelectObject(hdc, hFont);
@@ -3407,11 +3407,11 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	//    複数あるときはどれを押した時も１個目のボタン情報が入るようなのでマウス位置からボタン位置を求める
 	::GetCursorPos( &po );
 	::ScreenToClient( hwnd, &po );
-	nIndex = ::SendMessage( hwnd, TB_HITTEST, (WPARAM)0, (LPARAM)&po );
+	nIndex = Toolbar_Hittest( hwnd, &po );
 	if( nIndex < 0 ){
 		return 0;
 	}
-	::SendMessage( hwnd, TB_GETITEMRECT, (WPARAM)nIndex, (LPARAM)&rc );
+	Toolbar_GetItemRect( hwnd, nIndex, &rc );
 	po.x = rc.left;
 	po.y = rc.bottom;
 	::ClientToScreen( hwnd, &po );

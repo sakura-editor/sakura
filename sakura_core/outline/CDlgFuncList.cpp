@@ -22,17 +22,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include <windows.h>
-#include <commctrl.h>
-#include "sakura_rc.h"
+#include "StdAfx.h"
 #include "outline/CDlgFuncList.h"
-#include "debug/Debug.h"
-#include "global.h"
-#include "view/CEditView.h"
-#include "func/Funccode.h"		//Stonee, 2001/03/12
 #include "outline/CFuncInfoArr.h"// 2002/2/3 aroka
-#include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "window/CEditWnd.h"	//	2006/2/11 aroka 追加
 #include "util/shell.h"
 #include "util/os.h"
@@ -41,6 +33,8 @@
 #include "view/colors/CColorStrategy.h"
 #include "env/CAppNodeManager.h"
 #include "CUxTheme.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 // 画面ドッキング用の定義	// 2010.06.05 ryoji
 #define DEFINE_SYNCCOLOR
@@ -49,7 +43,6 @@
 #define DOCK_BUTTON_NUM			(3)
 
 //アウトライン解析 CDlgFuncList.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12200
 	IDC_BUTTON_COPY,					HIDC_FL_BUTTON_COPY,	//コピー
 	IDOK,								HIDOK_FL,				//ジャンプ
@@ -617,10 +610,10 @@ void CDlgFuncList::SetData()
 		HWND hWnd_Combo_Sort = ::GetDlgItem( GetHwnd(), IDC_COMBO_nSortType );
 		::EnableWindow( hWnd_Combo_Sort , TRUE );
 		::ShowWindow( hWnd_Combo_Sort , SW_SHOW );
-		::SendMessageAny( hWnd_Combo_Sort , CB_RESETCONTENT, 0, 0 ); // 2002.11.10 Moca 追加
+		Combo_ResetContent( hWnd_Combo_Sort ); // 2002.11.10 Moca 追加
 		Combo_AddString( hWnd_Combo_Sort , _WINT("デフォルト"));
 		Combo_AddString( hWnd_Combo_Sort , _WINT("アルファベット順"));
-		::SendMessageAny( hWnd_Combo_Sort , CB_SETCURSEL, m_nSortType, 0L);
+		Combo_SetCurSel( hWnd_Combo_Sort , m_nSortType );
 		::ShowWindow( GetDlgItem( GetHwnd(), IDC_STATIC_nSortType ), SW_SHOW );
 		// 2002.11.10 Moca 追加 ソートする
 		if( 1 == m_nSortType ){
@@ -1331,8 +1324,8 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_FL );
 	::SetWindowLongPtr(hwndList, GWL_STYLE, ::GetWindowLongPtr(hwndList, GWL_STYLE) | LVS_SHOWSELALWAYS );
 	// 2005.10.21 zenryaku 1行選択
-	SendMessageAny(hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0,
-		SendMessageAny(hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) | LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP);
+	ListView_SetExtendedListViewStyle(hwndList,
+		ListView_GetExtendedListViewStyle(hwndList) | LVS_EX_FULLROWSELECT | LVS_EX_INFOTIP);
 
 	::GetWindowRect( hwndList, &rc );
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
@@ -1444,7 +1437,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 			);
 
 		// ツールチップをマルチライン可能にする（SHRT_MAX: Win95でINT_MAXだと表示されない）
-		::SendMessage( m_hwndToolTip, TTM_SETMAXTIPWIDTH, 0, (LPARAM)SHRT_MAX );
+		Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
 
 		// アウトラインにツールチップを追加する
 		TOOLINFO	ti;
@@ -1458,7 +1451,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		ti.rect.top    = 0;
 		ti.rect.right  = 0;
 		ti.rect.bottom = 0;
-		::SendMessage( m_hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)&ti );
+		Tooltip_AddTool( m_hwndToolTip, &ti );
 
 		// 不要なコントロールを隠す
 		HWND hwndPrev;
@@ -1937,7 +1930,7 @@ BOOL CDlgFuncList::OnDestroy( void )
 BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 {
 	CEditView* pcEditView=(CEditView*)m_lParam;
-	int nSelect = ::SendMessageAny(hwndCtl,CB_GETCURSEL, 0, 0L);
+	int nSelect = Combo_GetCurSel( hwndCtl );
 	switch(wID)
 	{
 	case IDC_COMBO_nSortType:
@@ -2335,7 +2328,7 @@ INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		case 2: ti.lpszText = _T("更新"); break;
 		default: ti.lpszText = NULL;	// 消す
 		}
-		::SendMessage( m_hwndToolTip, TTM_UPDATETIPTEXT, (WPARAM)0, (LPARAM)&ti );
+		Tooltip_UpdateTipText( m_hwndToolTip, &ti );
 	}
 
 	return 0L;

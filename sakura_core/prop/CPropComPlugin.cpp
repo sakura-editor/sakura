@@ -29,13 +29,10 @@
 
 
 #include "StdAfx.h"
-//#include <WindowsX.h>
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
-//#include "util/string_ex2.h"
-#include "sakura_rc.h"
-//#include "plugin/CPluginManager.h"
 #include "dlg/CDlgPluginOption.h"	// 2010/3/22 Uchi
+#include "sakura_rc.h"
 #include "sakura.hh"
 
 //! Popup Help—pID

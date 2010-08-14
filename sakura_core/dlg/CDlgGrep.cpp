@@ -14,25 +14,18 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
-#include <windows.h>
-#include <shellapi.h>
-#include "sakura_rc.h"
+#include "StdAfx.h"
 #include "dlg/CDlgGrep.h"
-#include "debug/Debug.h"
-#include "global.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/module.h"
-#include "util/file.h"
 #include "util/shell.h"
-#include "CBregexp.h"
 #include "util/os.h"
-#include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12000
 	IDC_BUTTON_FOLDER,				HIDC_GREP_BUTTON_FOLDER,			//フォルダ
 	IDC_BUTTON_CURRENTFOLDER,		HIDC_GREP_BUTTON_CURRENTFOLDER,		//現フォルダ
@@ -100,14 +93,14 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	_SetHwnd( hwndDlg );
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
-	::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
-	::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), CB_LIMITTEXT, (WPARAM)_MAX_PATH - 1, 0 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), _MAX_PATH - 1 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), _MAX_PATH - 1 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), TRUE );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), TRUE );
 
 	/* ダイアログのアイコン */
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
@@ -123,8 +116,8 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* 文字コードセット選択コンボボックス初期化 */
 	CCodeTypesForCombobox cCodeTypes;
 	for( i = 0; i < cCodeTypes.GetCount(); ++i ){
-		int idx = ::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), CB_ADDSTRING,   0, (LPARAM)cCodeTypes.GetName(i) );
-		::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), CB_SETITEMDATA, idx, cCodeTypes.GetCode(i) );
+		int idx = Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), cCodeTypes.GetName(i) );
+		Combo_SetItemData( ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET ), idx, cCodeTypes.GetCode(i) );
 	}
 	//	2007.02.09 bosagami
 	HWND hFolder = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
@@ -340,15 +333,15 @@ void CDlgGrep::SetData( void )
 		int		nIdx, nCurIdx;
 		ECodeType nCharSet;
 		HWND	hWndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
-		nCurIdx = ::SendMessageAny( hWndCombo , CB_GETCURSEL, 0, 0 );
+		nCurIdx = Combo_GetCurSel( hWndCombo );
 		CCodeTypesForCombobox cCodeTypes;
 		for( nIdx = 0; nIdx < cCodeTypes.GetCount(); nIdx++ ){
-			nCharSet = (ECodeType)::SendMessageAny( hWndCombo, CB_GETITEMDATA, nIdx, 0 );
+			nCharSet = (ECodeType)Combo_GetItemData( hWndCombo, nIdx );
 			if( nCharSet == m_nGrepCharSet ){
 				nCurIdx = nIdx;
 			}
 		}
-		::SendMessageAny( hWndCombo, CB_SETCURSEL, (WPARAM)nCurIdx, 0 );
+		Combo_SetCurSel( hWndCombo, nCurIdx );
 	}
 
 	/* 行を出力するか該当部分だけ出力するか */
@@ -458,8 +451,8 @@ int CDlgGrep::GetData( void )
 	{
 		int		nIdx;
 		HWND	hWndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_CHARSET );
-		nIdx = ::SendMessageAny( hWndCombo, CB_GETCURSEL, 0, 0 );
-		m_nGrepCharSet = (ECodeType)::SendMessageAny( hWndCombo, CB_GETITEMDATA, nIdx, 0 );
+		nIdx = Combo_GetCurSel( hWndCombo );
+		m_nGrepCharSet = (ECodeType)Combo_GetItemData( hWndCombo, nIdx );
 	}
 
 

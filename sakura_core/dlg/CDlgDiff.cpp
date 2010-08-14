@@ -17,19 +17,15 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include <string.h>
+#include "StdAfx.h"
 #include "dlg/CDlgDiff.h"
-#include "global.h"
 #include "dlg/CDlgOpenFile.h"
-#include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
-#include "debug/Debug.h"
 #include "sakura_rc.h"
-
 #include "sakura.hh"
+
 const DWORD p_helpids[] = {	//13200
 	IDC_BUTTON_DIFF_DST,		HIDC_BUTTON_DIFF_DST,
 	IDC_CHECK_DIFF_OPT_BLINE,	HIDC_CHECK_DIFF_OPT_BLINE,
@@ -113,7 +109,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 				//外部ファイルを選択状態に
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 				::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
-				::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), LB_SETCURSEL, (WPARAM)-1, 0 );
+				List_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), -1 );
 			}
 		}
 		return TRUE;
@@ -134,12 +130,12 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 		//::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), FALSE );
 		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶
 		{
-			int n = ::SendMessageAny( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), LB_GETCURSEL, 0, 0 );
+			int n = List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ) );
 			if( n != LB_ERR ){
 				m_nIndexSave = n;
 			}
 		}
-		::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), LB_SETCURSEL, (WPARAM)-1, 0 );
+		List_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), -1 );
 		return TRUE;
 
 	case IDC_RADIO_DIFF_DST2:
@@ -151,9 +147,9 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 			//	Aug. 9, 2003 genta
 			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
 			HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
-			if( ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 ) == LB_ERR )
+			if( List_GetCurSel( hwndList ) == LB_ERR )
 			{
-				::SendMessageAny( hwndList, LB_SETCURSEL, m_nIndexSave, 0 );
+				List_SetCurSel( hwndList, m_nIndexSave );
 			}
 		}
 		return TRUE;
@@ -260,7 +256,7 @@ void CDlgDiff::SetData( void )
 
 				/* リストに登録する */
 				nItem = ::List_AddString( hwndList, szName );
-				::SendMessageAny( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNode[i].GetHwnd() );
+				List_SetItemData( hwndList, nItem, pEditNode[i].GetHwnd() );
 				count++;
 
 				// 横幅を計算する
@@ -274,10 +270,10 @@ void CDlgDiff::SetData( void )
 			// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
 			::SelectObject(hDC, hFontOld);
 			::ReleaseDC( hwndList, hDC );
-			::SendMessageAny( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)(nExtent + 8), 0 );
+			List_SetHorizontalExtent( hwndList, nExtent + 8 );
 
 			/* 最初を選択 */
-			//::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
+			//List_SetCurSel( hwndList, 0 );
 		}
 
 		//	From Here 2004.02.22 じゅうじ
@@ -298,9 +294,9 @@ void CDlgDiff::SetData( void )
 			::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, TRUE );
 			//	ListBoxが選択されていなかったら，先頭のファイルを選択する．
 			HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
-			if( ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 ) == LB_ERR )
+			if( List_GetCurSel( hwndList ) == LB_ERR )
 			{
-			    ::SendMessageAny( hwndList, LB_SETCURSEL, 0 /*先頭アイテム*/, 0 );
+			    List_SetCurSel( hwndList, 0 /*先頭アイテム*/ );
 			}
 		}
 		//	To Here 2004.02.22 じゅうじ
@@ -350,10 +346,10 @@ int CDlgDiff::GetData( void )
 
 		/* リストから相手のウインドウハンドルを取得 */
 		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
-		nItem = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+		nItem = List_GetCurSel( hwndList );
 		if( nItem != LB_ERR )
 		{
-			m_hWnd_Dst = (HWND)::SendMessageAny( hwndList, LB_GETITEMDATA, nItem, 0 );
+			m_hWnd_Dst = (HWND)List_GetItemData( hwndList, nItem );
 
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessageAny( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
@@ -419,11 +415,11 @@ BOOL CDlgDiff::OnEnChange( HWND hwndCtl, int wID )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST1, TRUE );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_DIFF_DST2, FALSE );
 		//	Feb. 28, 2004 genta 選択解除前に前回の位置を記憶して選択解除
-		int n = ::SendMessageAny( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ), LB_GETCURSEL, 0, 0 );
+		int n = List_GetCurSel( GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES ) );
 		if( n != LB_ERR ){
 			m_nIndexSave = n;
 		}
-		::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), LB_SETCURSEL, (WPARAM)-1, 0 );
+		List_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES), -1 );
 		return TRUE;
 	}
 

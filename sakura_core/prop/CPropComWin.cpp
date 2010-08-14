@@ -19,8 +19,6 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-//#include "debug/Debug.h" // 2002/2/10 aroka
-//#include "global.h"
 #include "dlg/CDlgWinSize.h"	//	2004.05.13 Moca
 #include "util/shell.h"
 #include "sakura_rc.h"
@@ -77,10 +75,6 @@ INT_PTR CPropWin::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
-//	WORD		wNotifyCode;
-//	WORD		wID;
-//	HWND		hwndCtl;
-
 // From Here Sept. 9, 2000 JEPRO
 	WORD		wNotifyCode;
 	WORD		wID;
@@ -90,9 +84,7 @@ INT_PTR CPropWin::DispatchEvent(
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
-//	int			nVal;
 	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
-//	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
 
@@ -104,9 +96,9 @@ INT_PTR CPropWin::DispatchEvent(
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* ルーラー高さ */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerHeight ), EM_LIMITTEXT, (WPARAM)2, 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerHeight ), 2 );
 		/* ルーラーとテキストの隙間 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerBottomSpace ), EM_LIMITTEXT, (WPARAM)2, 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerBottomSpace ), 2 );
 
 		return TRUE;
 
@@ -327,8 +319,8 @@ void CPropWin::SetData( HWND hwndDlg )
 	//	2001/06/20 End
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), EM_LIMITTEXT, _countof( m_Common.m_sWindow.m_szWindowCaptionActive   ) - 1, (LPARAM)0 );	//@@@ 2003.06.13 MIK
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), EM_LIMITTEXT, _countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) - 1, (LPARAM)0 );	//@@@ 2003.06.13 MIK
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), _countof( m_Common.m_sWindow.m_szWindowCaptionActive   ) - 1 );	//@@@ 2003.06.13 MIK
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), _countof( m_Common.m_sWindow.m_szWindowCaptionInactive ) - 1 );	//@@@ 2003.06.13 MIK
 	::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_sWindow.m_szWindowCaptionActive );
 	::DlgItem_SetText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_sWindow.m_szWindowCaptionInactive );
 

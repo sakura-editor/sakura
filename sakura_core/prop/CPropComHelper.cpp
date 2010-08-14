@@ -19,17 +19,9 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-//#include "debug/Debug.h"
-//#include <windows.h>
-//#include <stdio.h>
-//#include <commctrl.h>
 #include "dlg/CDlgOpenFile.h"
-//#include "dlg/CDlgInput1.h"
-//#include "global.h"
 #include "util/shell.h"
 #include "util/module.h"
-//#include "util/file.h"
-#include "doc/CDocListener.h" // 暫定：SLoadInfo, SSaveInfo
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -86,7 +78,6 @@ INT_PTR CPropHelper::DispatchEvent(
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
-//	int			nVal;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -97,10 +88,9 @@ INT_PTR CPropHelper::DispatchEvent(
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* 外部ヘルプ１ */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHELP1 ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHELP1 ), _MAX_PATH - 1 );
 		/* 外部HTMLヘルプ */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHTMLHELP ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHTMLHELP ), _MAX_PATH - 1 );
 
 		return TRUE;
 	case WM_COMMAND:

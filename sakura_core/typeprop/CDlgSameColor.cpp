@@ -149,9 +149,9 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		for( i = 0; i < COLORIDX_LAST; ++i ){
 			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_colTEXT ){
 				_ultow( m_pTypes->m_ColorInfoArr[i].m_colTEXT, szText, 10 );
-				if( LB_ERR == ::SendMessage( hwndList, LB_FINDSTRING, (WPARAM)-1, (LPARAM)szText ) ){
+				if( LB_ERR == List_FindStringExact( hwndList, -1, szText ) ){
 					nItem = ::List_AddString( hwndList, szText );
-					::SendMessageAny( hwndList, LB_SETITEMDATA, (WPARAM)nItem, (LPARAM)FALSE ); 
+					List_SetItemData( hwndList, nItem, FALSE ); 
 				}
 			}
 		}
@@ -165,9 +165,9 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 				continue;
 			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_colBACK ){
 				_ultow( m_pTypes->m_ColorInfoArr[i].m_colBACK, szText, 10 );
-				if( LB_ERR == ::SendMessage( hwndList, LB_FINDSTRING, (WPARAM)-1, (LPARAM)szText ) ){
+				if( LB_ERR == List_FindStringExact( hwndList, -1, szText ) ){
 					nItem = ::List_AddString( hwndList, szText );
-					::SendMessageAny( hwndList, LB_SETITEMDATA, (WPARAM)nItem, (LPARAM)FALSE ); 
+					List_SetItemData( hwndList, nItem, FALSE ); 
 				}
 			}
 		}
@@ -178,8 +178,8 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		break;
 	}
 
-	if( 0 < ::SendMessageAny( hwndList, LB_GETCOUNT, (WPARAM)0, (LPARAM)0 ) ){
-		::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
+	if( 0 < List_GetCount( hwndList ) ){
+		List_SetCurSel( hwndList, 0 );
 		OnSelChangeListColors( hwndList );
 	}
 
@@ -192,7 +192,7 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgSameColor::OnBnClicked( int wID )
 {
 	HWND hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_COLORS );
-	int nItemNum = ::SendMessageAny( hwndList, LB_GETCOUNT, 0, 0 );
+	int nItemNum = List_GetCount( hwndList );
 	BOOL bCheck;
 	int i;
 	int j;
@@ -208,7 +208,7 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 		// 全選択／全解除の処理
 		bCheck = (wID == IDC_BUTTON_SELALL);
 		for( i = 0; i < nItemNum; ++i ){
-			::SendMessageAny( hwndList, LB_SETITEMDATA, (WPARAM)i, (LPARAM)bCheck );
+			List_SetItemData( hwndList, i, bCheck );
 		}
 		::InvalidateRect( hwndList, NULL, TRUE );
 		break;
@@ -220,7 +220,7 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 		COLORREF cr;
 
 		for( i = 0; i < nItemNum; ++i ){
-			bCheck = (BOOL)::SendMessageAny( hwndList, LB_GETITEMDATA, (WPARAM)i, (LPARAM)0 );
+			bCheck = (BOOL)List_GetItemData( hwndList, i );
 			if( bCheck ){
 				List_GetText( hwndList, i, szText );
 				cr = wcstoul( szText, &pszStop, 10 );
@@ -335,9 +335,9 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 	int j;
 
 	hwndListInfo = ::GetDlgItem( GetHwnd(), IDC_LIST_ITEMINFO );
-	::SendMessageAny( hwndListInfo, LB_RESETCONTENT, (WPARAM)0, (LPARAM)0 );
+	List_ResetContent( hwndListInfo );
 
-	i = ::SendMessageAny( hwndCtl, LB_GETCARETINDEX, (WPARAM)0, (LPARAM)0 );
+	i = List_GetCaretIndex( hwndCtl );
 	if( LB_ERR != i ){
 		List_GetText( hwndCtl, i, szText );
 		cr = wcstoul( szText, &pszStop, 10 );
@@ -449,9 +449,9 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 		// マウスボタン下にある項目の選択／選択解除をトグルする
 		po.x = LOWORD(lParam);	// horizontal position of cursor
 		po.y = HIWORD(lParam);	// vertical position of cursor
-		nItemNum = ::SendMessageAny( hwnd, LB_GETCOUNT, 0, 0 );
+		nItemNum = List_GetCount( hwnd );
 		for( i = 0; i < nItemNum; ++i ){
-			::SendMessageAny( hwnd, LB_GETITEMRECT, i, (LPARAM)&rcItem );
+			List_GetItemRect( hwnd, i, &rcItem );
 			rc = rcItem;
 			rc.top += 2;
 			rc.bottom -= 2;
@@ -459,8 +459,8 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 			rc.right = rc.left + (rc.bottom - rc.top);
 			if( ::PtInRect( &rc, po ) ){
 				BOOL bCheck;
-				bCheck = !(BOOL)::SendMessageAny( hwnd, LB_GETITEMDATA, (WPARAM)i, (LPARAM)0 );
-				::SendMessageAny( hwnd, LB_SETITEMDATA, (WPARAM)i, (LPARAM)bCheck );
+				bCheck = !(BOOL)List_GetItemData( hwnd, i );
+				List_SetItemData( hwnd, i, bCheck );
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				break;
 			}
@@ -471,10 +471,10 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 		// フォーカス項目の選択／選択解除をトグルする
 		if( VK_SPACE == wParam ){
 			BOOL bCheck;
-			i = ::SendMessageAny( hwnd, LB_GETCARETINDEX, (WPARAM)0, (LPARAM)0 );
+			i = List_GetCaretIndex( hwnd );
 			if( LB_ERR != i ){
-				bCheck = !(BOOL)::SendMessageAny( hwnd, LB_GETITEMDATA, (WPARAM)i, (LPARAM)0 );
-				::SendMessageAny( hwnd, LB_SETITEMDATA, (WPARAM)i, (LPARAM)bCheck );
+				bCheck = !(BOOL)List_GetItemData( hwnd, i );
+				List_SetItemData( hwnd, i, bCheck );
 				::InvalidateRect( hwnd, NULL, TRUE );
 			}
 		}

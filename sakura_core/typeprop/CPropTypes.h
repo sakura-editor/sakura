@@ -21,8 +21,7 @@
 #ifndef SAKURA_TYPES_CPROPTYPES_H_
 #define SAKURA_TYPES_CPROPTYPES_H_
 
-#include <windows.h>
-#include "types/CType.h"
+#include "types/CType.h" // STypeConfig
 
 class CPropTypes;
 class CKeyWordSetMgr;
@@ -30,12 +29,6 @@ class CKeyWordSetMgr;
 /*-----------------------------------------------------------------------
 定数
 -----------------------------------------------------------------------*/
-//#define STR_COLORDATA_HEAD2	" テキストエディタ色設定 Ver2"
-//#define STR_COLORDATA_HEAD21	" テキストエディタ色設定 Ver2.1"	//Nov. 2, 2000 JEPRO 変更 [注]. 0.3.9.0:ur3β10以降、設定項目の番号を入れ替えたため
-//#define STR_COLORDATA_HEAD3	" テキストエディタ色設定 Ver3"		//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
-//#define STR_COLORDATA_HEAD4		" テキストエディタ色設定 Ver4"		//2007.10.02 kobake UNICODE化に際してカラーファイル仕様も変更
-//#define STR_COLORDATA_SECTION	"SakuraColor"
-
 
 //2007.11.29 kobake 変数の意味を明確にするため、nMethos を テンプレート化。
 template <class TYPE>
