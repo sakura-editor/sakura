@@ -32,8 +32,6 @@
 #ifndef _DLG_FILE_UPDATE_QUERY_H_
 #define _DLG_FILE_UPDATE_QUERY_H_
 
-#include <windows.h>
-#include "global.h"
 #include "dlg/CDialog.h"
 
 class SAKURA_CORE_API CDlgFileUpdateQuery : public CDialog {

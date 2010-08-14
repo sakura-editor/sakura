@@ -29,11 +29,11 @@
 		   distribution.
 */
 
-#include "stdafx.h"
-#include "sakura_rc.h"
-#include "sakura.hh"
+#include "StdAfx.h"
 #include "dlg/CDlgWinSize.h"
 #include "util/shell.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_WINSIZE,				// 閉じる
@@ -96,13 +96,11 @@ BOOL CDlgWinSize::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), L"最大化" );
 	Combo_AddString( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), L"(最小化)" );
 
-	LPARAM range = (LPARAM) MAKELONG((short) 30000, (short) 0 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_SPIN_SX ), UDM_SETRANGE, 0, range );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_SPIN_SY ), UDM_SETRANGE, 0, range );
+	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_SX ), 30000, 0 );
+	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_SY ), 30000, 0 );
 	// ウィンドウの座標は、マイナス値も有効。
-	range = (LPARAM) MAKELONG((short) 30000, (short) -30000 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_SPIN_WX ), UDM_SETRANGE, 0, range );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_SPIN_WY ), UDM_SETRANGE, 0, range );
+	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_WX ), 30000, -30000 );
+	UpDown_SetRange( ::GetDlgItem( GetHwnd(), IDC_SPIN_WY ), 30000, -30000 );
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
@@ -166,7 +164,7 @@ void CDlgWinSize::SetData( void )
 	default:
 		nCurIdx = 0;
 	}
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), CB_SETCURSEL, (WPARAM)nCurIdx, 0 );
+	Combo_SetCurSel( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), nCurIdx );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_SX, m_rc.right,  TRUE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_SY, m_rc.bottom, TRUE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_WX, m_rc.top,  TRUE );
@@ -200,7 +198,7 @@ int CDlgWinSize::GetData( void )
 	}
 
 	int nCurIdx;
-	nCurIdx = ::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ), CB_GETCURSEL, 0, 0 );
+	nCurIdx = Combo_GetCurSel( ::GetDlgItem( GetHwnd(), IDC_COMBO_WINTYPE ) );
 	switch( nCurIdx ){
 	case 2:
 		m_nWinSizeType = SIZE_MINIMIZED;

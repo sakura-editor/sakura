@@ -145,7 +145,7 @@ void CPropGrep::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_sSearch.m_bGTJW_LDBLCLK );
 
 	//	2007.08.12 genta ê≥ãKï\åªDLL
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( _countof(m_Common.m_sSearch.m_szRegexpLib ) - 1 ), 0 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ), _countof(m_Common.m_sSearch.m_szRegexpLib ) - 1 );
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
 

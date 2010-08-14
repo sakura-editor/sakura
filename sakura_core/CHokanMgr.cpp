@@ -15,13 +15,9 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CHokanMgr.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
-#include "debug/Debug.h"
-#include "func/CKeyBind.h"
-#include "CDicMgr.h"
 #include "view/CEditView.h"
 #include "util/input.h"
 #include "util/os.h"
@@ -225,7 +221,7 @@ int CHokanMgr::Search(
 
 	HWND hwndList;
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
-	::SendMessageAny( hwndList, LB_RESETCONTENT, 0, 0 );
+	List_ResetContent( hwndList );
 	wchar_t*	pszCR = L"\n";
 	wchar_t*	pszWork;
 	wchar_t*	pszNext;
@@ -246,7 +242,7 @@ int CHokanMgr::Search(
 		pszTest = NULL;
 		pszWork = pszNext + wcslen( pszCR );
 	}
-	::SendMessageAny( hwndList, LB_SETCURSEL, 0, 0 );
+	List_SetCurSel( hwndList, 0 );
 
 
 //@@	::EnableWindow( ::GetParent( ::GetParent( m_hwndParent ) ), FALSE );
@@ -503,7 +499,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	wchar_t wszLabel[1024];
 	CEditView* pcEditView;
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
-	nItem = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
+	nItem = List_GetCurSel( hwndList );
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}
@@ -627,7 +623,7 @@ void CHokanMgr::ShowTip()
 
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_LIST_WORDS );
 
-	nItem = ::SendMessageAny( hwndCtrl, LB_GETCURSEL, 0, 0 );
+	nItem = List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;
 
 	List_GetText( hwndCtrl, nItem, szLabel );	// 選択中の単語を取得
@@ -643,8 +639,8 @@ void CHokanMgr::ShowTip()
 	}
 
 	// 表示する位置を決定
-	nTopItem = ::SendMessageAny(hwndCtrl,LB_GETTOPINDEX,0,0);
-	nItemHeight = ::SendMessageAny( hwndCtrl, LB_GETITEMHEIGHT, 0, 0 );
+	nTopItem = List_GetTopIndex( hwndCtrl );
+	nItemHeight = List_GetItemHeight( hwndCtrl, 0 );
 	point.x = m_poWin.x + m_nWidth;
 	point.y = m_poWin.y + 4 + (nItem - nTopItem) * nItemHeight;
 	// 2001/06/19 asa-o 選択中の単語が補完ウィンドウに表示されているなら辞書Tipを表示

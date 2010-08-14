@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CVisualProgress.h"
 #include "CWaitCursor.h"
 
@@ -76,8 +76,8 @@ void CVisualProgress::_Begin()
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_SHOW );
 		//範囲設定・リセット
-		::PostMessageAny( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
-		::PostMessageAny( hwndProgress, PBM_SETPOS, 0, 0 );
+		Progress_SetRange( hwndProgress, 0, 100 );
+		Progress_SetPos( hwndProgress, 0);
 	}
 }
 
@@ -86,7 +86,7 @@ void CVisualProgress::_Doing(int nPer)
 	//プログレスバー更新
 	HWND hwndProgress = CEditWnd::Instance()->m_cStatusBar.GetProgressHwnd();
 	if(hwndProgress)
-		::PostMessageAny( hwndProgress, PBM_SETPOS, nPer , 0 );
+		Progress_SetPos( hwndProgress, nPer );
 }
 
 void CVisualProgress::_End()
@@ -94,7 +94,7 @@ void CVisualProgress::_End()
 	//プログレスバー
 	HWND hwndProgress = CEditWnd::Instance()->m_cStatusBar.GetProgressHwnd();
 	if( hwndProgress ){
-		::PostMessageAny( hwndProgress, PBM_SETPOS, 0, 0 );
+		Progress_SetPos( hwndProgress, 0);
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
 

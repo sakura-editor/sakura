@@ -3,8 +3,6 @@
 
 #include "CSearchAgent.h"
 #include "doc/CDocLineMgr.h"
-#include "doc/CDocLine.h"
-//#include "parse/CWordParse.h"
 #include "dlg/CDlgCancel.h"
 #include "sakura_rc.h"
 
@@ -563,8 +561,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		pCDlgCancel = new CDlgCancel;
 		if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
 			hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
-			::SendMessageAny( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM(0, 100) );
- 			::SendMessageAny( hwndProgress, PBM_SETPOS, 0, 0 );
+			Progress_SetRange( hwndProgress, 0, 100 );
+ 			Progress_SetPos( hwndProgress, 0 );
 		}
 	}
 
@@ -651,7 +649,7 @@ next_line:;
 		if( NULL != hwndCancel){
 			if( 0 != (i - pArg->sDelRange.GetFrom().y) && ( 0 == ((i - pArg->sDelRange.GetFrom().y) % 32)) ){
 				nProgress = (i - pArg->sDelRange.GetFrom().y) * 100 / (pArg->sDelRange.GetTo().y - pArg->sDelRange.GetFrom().y) / 2;
-				::SendMessageAny( hwndProgress, PBM_SETPOS, nProgress, 0 );
+				Progress_SetPos( hwndProgress, nProgress );
 
 			}
 		}
@@ -759,7 +757,7 @@ prev_line:;
 		if( NULL != hwndCancel){
 			if( 0 != (pArg->sDelRange.GetTo().y - i) && ( 0 == ((pArg->sDelRange.GetTo().y - i) % 32) ) ){
 				nProgress = (pArg->sDelRange.GetTo().y - i) * 100 / (pArg->sDelRange.GetTo().y - pArg->sDelRange.GetFrom().y) / 2 + 50;
-				::SendMessageAny( hwndProgress, PBM_SETPOS, nProgress, 0 );
+				Progress_SetPos( hwndProgress, nProgress );
 			}
 		}
 	}
@@ -835,7 +833,7 @@ prev_line:;
 			if( NULL != hwndCancel ){
 				if( 0 != pArg->nInsDataLen && ( 0 == (nPos % 1024) ) ){
 					nProgress = nPos * 100 / pArg->nInsDataLen;
-					::SendMessageAny( hwndProgress, PBM_SETPOS, nProgress, 0 );
+					Progress_SetPos( hwndProgress, nProgress );
 				}
 			}
 

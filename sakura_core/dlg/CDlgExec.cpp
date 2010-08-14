@@ -16,18 +16,13 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include <windows.h>		//Mar. 28, 2001 JEPRO (一応入れたが不要？)
-#include <stdio.h>			//Mar. 28, 2001 JEPRO (一応入れたが不要？)
-#include <commctrl.h>		//Mar. 28, 2001 JEPRO
+#include "StdAfx.h"
 #include "dlg/CDlgExec.h"
 #include "func/Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "dlg/CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
-#include "debug/Debug.h"// 2002/2/10 aroka ヘッダ整理
 #include "util/shell.h"
 #include "CAppMode.h"
 #include "doc/CEditDoc.h"
-#include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -81,9 +76,9 @@ void CDlgExec::SetData( void )
 	*           初期             *
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	::SendMessage( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), CB_LIMITTEXT, _countof( m_szCommand ) - 1, 0 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), CB_SETEXTENDEDUI, TRUE, 0 );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), TRUE );
 
 
 	// 標準出力を得る
@@ -123,12 +118,12 @@ void CDlgExec::SetData( void )
 	*****************************/
 	_tcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand );
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	Combo_ResetContent( hwndCombo );
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
 	for( i = 0; i < m_pShareData->m_sHistory.m_aCommands.size(); ++i ){
 		Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
 	}
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, 0, 0 );
+	Combo_SetCurSel( hwndCombo, 0 );
 	return;
 }
 

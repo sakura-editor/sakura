@@ -28,16 +28,12 @@
 */
 
 #include "StdAfx.h"
-#include <WindowsX.h>
 #include "prop/CPropCommon.h"
-#include "CDataProfile.h"
 #include "env/CShareData.h"
 #include "env/cShareData_IO.h"
 #include "typeprop/CImpExpManager.h"
 #include "dlg/CDlgInput1.h"
-#include "debug/Debug.h"
 #include "util/shell.h"
-#include "util/window.h"	//
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -292,12 +288,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			m_nPageNum = ID_PAGENUM_MAINMENU;
 
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）
-			nIdxFIdx = ComboBox_GetCurSel( hwndComboFunkKind );
-			nIdxFunc = ListBox_GetCurSel( hwndListFunk );
+			nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind );
+			nIdxFunc = List_GetCurSel( hwndListFunk );
 			if( nIdxFIdx != CB_ERR ){
 				::SendMessage( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndComboFunkKind );
 				if( nIdxFunc != LB_ERR ){
-					ListBox_SetCurSel( hwndListFunk, nIdxFunc );
+					List_SetCurSel( hwndListFunk, nIdxFunc );
 				}
 			}
 			return TRUE;
@@ -307,7 +303,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				if (msMenu[ptdi->item.lParam].m_nFunc == F_NODE) {
 					// ノードのみ有効
 					SetWindowText( hEdit, to_tchar( msMenu[ptdi->item.lParam].m_sName.c_str() ) ) ;
-					Edit_LimitText( hEdit, MAX_MAIN_MENU_NAME_LEN+1 );
+					EditCtl_LimitText( hEdit, MAX_MAIN_MENU_NAME_LEN );
 					// 編集時のメッセージ処理
 					m_wpEdit = (WNDPROC)SetWindowLongPtr( hEdit, GWLP_WNDPROC, (LONG_PTR)WindowProcEdit );
 				}
@@ -399,11 +395,11 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		if (hwndComboFunkKind == hwndCtl) {
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIdxFIdx = ComboBox_GetCurSel( hwndComboFunkKind );
+				nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind );
 
 				if (nIdxFIdx == nSpecialFuncsNum) {
 					// 機能一覧に特殊機能をセット
-					ListBox_ResetContent( hwndListFunk );
+					List_ResetContent( hwndListFunk );
 					for (i = 0; i <_countof(sSpecialFuncs); i++) {
 						List_AddString( hwndListFunk, sSpecialFuncs[i].m_sName );
 					}
@@ -499,10 +495,10 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_INSERT_A:			// 挿入
 					case IDC_BUTTON_ADD:				// 追加
 						// Function 取得
-						if (CB_ERR == (nIdxFIdx = ComboBox_GetCurSel( hwndComboFunkKind ))) {
+						if (CB_ERR == (nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind ))) {
 							break;
 						}
-						if (LB_ERR == (nIdxFunc = ListBox_GetCurSel( hwndListFunk ))) {
+						if (LB_ERR == (nIdxFunc = List_GetCurSel( hwndListFunk ))) {
 							break;
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
@@ -632,7 +628,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_INSERT:				// 挿入
 					case IDC_BUTTON_INSERT_A:			// 挿入
 					case IDC_BUTTON_ADD:				// 追加
-						ListBox_SetCurSel( hwndListFunk, nIdxFunc+1 );
+						List_SetCurSel( hwndListFunk, nIdxFunc+1 );
 						break;
 					}
 					break;
@@ -774,9 +770,9 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 	case WM_TIMER:
 		nIdxMenu = TreeView_GetSelection( hwndTreeRes );
-		nIdxFIdx = ComboBox_GetCurSel( hwndComboFunkKind );
-		nIdxFunc = ListBox_GetCurSel( hwndListFunk );
-		i = ListBox_GetCount( hwndTreeRes );
+		nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind );
+		nIdxFunc = List_GetCurSel( hwndListFunk );
+		i = List_GetCount( hwndTreeRes );
 		if (nIdxMenu == NULL) {
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ),     FALSE );
@@ -888,7 +884,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 	nSpecialFuncsNum = Combo_AddString( hwndCombo, NAME_SPECIAL_TOP );
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
-	ComboBox_SetCurSel( hwndCombo, 0 );
+	Combo_SetCurSel( hwndCombo, 0 );
 
 	// ワーク、TreeViewの初期化
 	msMenu.clear();
@@ -899,7 +895,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 
 	// アクセスキーを( )付で表示
 	hwndCheck = ::GetDlgItem( hwndDlg, IDC_CHECK_KEY_PARENTHESES );
-	Button_SetCheck( hwndCheck, m_Common.m_sMainMenu.m_bMainMenuKeyParentheses );
+	BtnCtl_SetCheck( hwndCheck, m_Common.m_sMainMenu.m_bMainMenuKeyParentheses );
 
 	/* メニュー項目一覧と内部データをセット（TreeView）*/
 	nCurLevel = 0;
@@ -971,7 +967,7 @@ int CPropMainMenu::GetData( HWND hwndDlg )
 
 	// アクセスキーを( )付で表示
 	hwndCheck = ::GetDlgItem( hwndDlg, IDC_CHECK_KEY_PARENTHESES );
-	m_Common.m_sMainMenu.m_bMainMenuKeyParentheses = (Button_GetCheck( hwndCheck ) != 0);
+	m_Common.m_sMainMenu.m_bMainMenuKeyParentheses = (BtnCtl_GetCheck( hwndCheck ) != 0);
 
 	// メニュートップ項目をセット
 	m_Common.m_sMainMenu.m_nMainMenuNum = 0;

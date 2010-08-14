@@ -16,18 +16,15 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
-#include <stdio.h>
+#include "StdAfx.h"
 #include "dlg/CDlgPrintSetting.h"
-#include "CPrint.h"
 #include "dlg/CDlgInput1.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
-#include "sakura_rc.h"	// 2002/2/10 aroka
-#include "debug/Debug.h"		// 2002/2/10 aroka
 #include "util/shell.h"
+#include "sakura_rc.h"	// 2002/2/10 aroka
+#include "sakura.hh"
 
 // 印刷設定 CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12500
 	IDC_BUTTON_EDITSETTINGNAME,		HIDC_PS_BUTTON_EDITSETTINGNAME,	//設定名変更
 	IDOK,							HIDOK_PS,					//OK
@@ -131,10 +128,10 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	_SetHwnd( hwndDlg );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-	::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ), TRUE );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN ), TRUE );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN ), TRUE );
+	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER ), TRUE );
 
 	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
 
@@ -222,22 +219,22 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			_tcscpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork );
 			/* 印刷設定名一覧 */
 			hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
-			::SendMessageAny( hwndComboSettingName, CB_RESETCONTENT, 0, 0 );
+			Combo_ResetContent( hwndComboSettingName );
 			int		nSelectIdx;
 			int		i;
 			int		nItemIdx;
 			nSelectIdx = 0;
 			for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
-				nItemIdx = ::SendMessage(
-					hwndComboSettingName, CB_ADDSTRING, 0,
-					(LPARAM)m_PrintSettingArr[i].m_szPrintSettingName
+				nItemIdx = Combo_AddString( 
+					hwndComboSettingName,
+					m_PrintSettingArr[i].m_szPrintSettingName
 				);
-				::SendMessageAny( hwndComboSettingName, CB_SETITEMDATA, nItemIdx, (LPARAM)i );
+				Combo_SetItemData( hwndComboSettingName, nItemIdx, i );
 				if( i == m_nCurrentPrintSetting ){
 					nSelectIdx = nItemIdx;
 				}
 			}
-			::SendMessageAny( hwndComboSettingName, CB_SETCURSEL, nSelectIdx, 0 );
+			Combo_SetCurSel( hwndComboSettingName, nSelectIdx );
 		}
 		return TRUE;
 	case IDOK:			/* 下検索 */
@@ -268,9 +265,9 @@ void CDlgPrintSetting::SetData( void )
 	/* フォント一覧 */
 	hdc = ::GetDC( m_hwndParent );
 	hwndComboFont = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
-	::SendMessageAny( hwndComboFont, CB_RESETCONTENT, 0, 0 );
+	Combo_ResetContent( hwndComboFont );
 	hwndComboFont = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
-	::SendMessageAny( hwndComboFont, CB_RESETCONTENT, 0, 0 );
+	Combo_ResetContent( hwndComboFont );
 	::EnumFontFamilies(
 		hdc,
 		NULL,
@@ -281,26 +278,26 @@ void CDlgPrintSetting::SetData( void )
 
 	/* 用紙サイズ一覧 */
 	hwndComboPaper = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
-	::SendMessageAny( hwndComboPaper, CB_RESETCONTENT, 0, 0 );
+	Combo_ResetContent( hwndComboPaper );
 	// 2006.08.14 Moca 用紙名一覧の重複削除
 	for( i = 0; i < CPrint::m_nPaperInfoArrNum; ++i ){
 		nItemIdx = Combo_AddString( hwndComboPaper, CPrint::m_paperInfoArr[i].m_pszName );
-		::SendMessageAny( hwndComboPaper, CB_SETITEMDATA, nItemIdx, CPrint::m_paperInfoArr[i].m_nId );
+		Combo_SetItemData( hwndComboPaper, nItemIdx, CPrint::m_paperInfoArr[i].m_nId );
 	}
 
 
 	/* 印刷設定名一覧 */
 	hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
-	::SendMessageAny( hwndComboSettingName, CB_RESETCONTENT, 0, 0 );
+	Combo_ResetContent( hwndComboSettingName );
 	nSelectIdx = 0;
 	for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
 		nItemIdx = Combo_AddString( hwndComboSettingName, m_PrintSettingArr[i].m_szPrintSettingName );
-		::SendMessageAny( hwndComboSettingName, CB_SETITEMDATA, nItemIdx, (LPARAM)i );
+		Combo_SetItemData( hwndComboSettingName, nItemIdx, i );
 		if( i == m_nCurrentPrintSetting ){
 			nSelectIdx = nItemIdx;
 		}
 	}
-	::SendMessageAny( hwndComboSettingName, CB_SETCURSEL, nSelectIdx, 0 );
+	Combo_SetCurSel( hwndComboSettingName, nSelectIdx );
 
 	/* 設定のタイプが変わった */
 	OnChangeSettingType( FALSE );
@@ -321,22 +318,22 @@ int CDlgPrintSetting::GetData( void )
 
 	/* フォント一覧 */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
-	nIdx1 = ::SendMessageAny( hwndCtrl, CB_GETCURSEL, 0, 0 );
-	Combo_GetText( hwndCtrl, nIdx1,
+	nIdx1 = Combo_GetCurSel( hwndCtrl );
+	Combo_GetLBText( hwndCtrl, nIdx1,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan
 	);
 	/* フォント一覧 */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
-	nIdx1 = ::SendMessageAny( hwndCtrl, CB_GETCURSEL, 0, 0 );
-	Combo_GetText( hwndCtrl, nIdx1,
+	nIdx1 = Combo_GetCurSel( hwndCtrl );
+	Combo_GetLBText( hwndCtrl, nIdx1,
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen
 	);
 
 	/* 用紙サイズ一覧 */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
-	nIdx1 = ::SendMessageAny( hwndCtrl, CB_GETCURSEL, 0, 0 );
+	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
-		::SendMessageAny( hwndCtrl, CB_GETITEMDATA, nIdx1, 0 );
+		Combo_GetItemData( hwndCtrl, nIdx1 );
 
 	// 用紙の向き
 	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
@@ -486,11 +483,11 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	}
 
 	hwndComboSettingName = ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME );
-	nIdx1 = ::SendMessageAny( hwndComboSettingName, CB_GETCURSEL, 0, 0 );
+	nIdx1 = Combo_GetCurSel( hwndComboSettingName );
 	if( CB_ERR == nIdx1 ){
 		return;
 	}
-	m_nCurrentPrintSetting = ::SendMessageAny( hwndComboSettingName, CB_GETITEMDATA, nIdx1, 0 );
+	m_nCurrentPrintSetting = Combo_GetItemData( hwndComboSettingName, nIdx1 );
 
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_FONTWIDTH, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINESPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing, FALSE );
@@ -526,21 +523,21 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 
 	/* フォント一覧 */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_HAN );
-	nIdx1 = ::SendMessage( hwndCtrl, CB_FINDSTRING, 0, (LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
-	::SendMessageAny( hwndCtrl, CB_SETCURSEL, nIdx1, 0 );
+	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
+	Combo_SetCurSel( hwndCtrl, nIdx1 );
 
 	/* フォント一覧 */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN );
-	nIdx1 = ::SendMessage( hwndCtrl, CB_FINDSTRING, 0, (LPARAM)m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
-	::SendMessageAny( hwndCtrl, CB_SETCURSEL, nIdx1, 0 );
+	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
+	Combo_SetCurSel( hwndCtrl, nIdx1 );
 
 	/* 用紙サイズ一覧 */
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
-	nItemNum = ::SendMessageAny( hwndCtrl, CB_GETCOUNT, 0, 0 );
+	nItemNum = Combo_GetCount( hwndCtrl );
 	for( i = 0; i < nItemNum; ++i ){
-		nItemData = ::SendMessageAny( hwndCtrl, CB_GETITEMDATA, i, 0 );
+		nItemData = Combo_GetItemData( hwndCtrl, i );
 		if( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize == nItemData ){
-			::SendMessageAny( hwndCtrl, CB_SETCURSEL, i, 0 );
+			Combo_SetCurSel( hwndCtrl, i );
 			break;
 		}
 	}

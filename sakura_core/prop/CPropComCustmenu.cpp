@@ -19,16 +19,9 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "dlg/CDlgInput1.h"
-//#include "dlg/CDlgOpenFile.h"
-#include "env/DLLSHAREDATA.h"
-//#include "io/CTextStream.h"
-#include "util/shell.h"
-#include "util/file.h"
-#include "CDataProfile.h"
 #include "env/CShareData.h"
-#include "env/CShareData_IO.h"
+#include "util/shell.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
-#include "debug/Debug.h" // 2002/2/10 aroka
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -143,20 +136,20 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			m_nPageNum = ID_PAGENUM_CUSTMENU;
 
 			// 表示を更新する（マクロ設定画面でのマクロ名変更を反映）	// 2007.11.02 ryoji
-			nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-			nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
-			nIdx3 = ::SendMessageAny( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
-			nIdx4 = ::SendMessageAny( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
+			nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
+			nIdx2 = List_GetCurSel( hwndLIST_RES );
+			nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
+			nIdx4 = List_GetCurSel( hwndLIST_FUNC );
 			if( nIdx1 != CB_ERR ){
 				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_MENU );
 				if( nIdx2 != LB_ERR ){
-					::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
+					List_SetCurSel( hwndLIST_RES, nIdx2 );
 				}
 			}
 			if( nIdx3 != CB_ERR ){
 				::SendMessageAny( hwndDlg, WM_COMMAND, MAKEWPARAM( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCOMBO_FUNCKIND );
 				if( nIdx4 != LB_ERR ){
-					::SendMessageAny( hwndLIST_FUNC, LB_SETCURSEL, nIdx4, 0 );
+					List_SetCurSel( hwndLIST_FUNC, nIdx4 );
 				}
 			}
 			return TRUE;
@@ -182,18 +175,18 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				return TRUE;
 			case IDC_BUTTON_MENUNAME:
 				//	メニュー文字列の設定
-				nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( LB_ERR == nIdx1 ){
 					break;
 				}
 				::DlgItem_GetText( hwndDlg, IDC_EDIT_MENUNAME,
 					m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1], MAX_CUSTOM_MENU_NAME_LEN );
 				//	Combo Boxも変更 削除＆再登録
-				::SendMessageAny( hwndCOMBO_MENU, CB_DELETESTRING, nIdx1, 0 );
-				::SendMessage( hwndCOMBO_MENU, CB_INSERTSTRING, nIdx1,
-					(LPARAM)m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1] );
+				Combo_DeleteString( hwndCOMBO_MENU, nIdx1 );
+				Combo_InsertString( hwndCOMBO_MENU, nIdx1,
+					m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1] );
 				// 削除すると選択が解除されるので，元に戻す
-				::SendMessageAny( hwndCOMBO_MENU, CB_SETCURSEL, nIdx1, 0 );
+				Combo_SetCurSel( hwndCOMBO_MENU, nIdx1 );
 				return TRUE;
 			}
 			break;	/* BN_CLICKED */
@@ -202,12 +195,12 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		if( hwndCOMBO_MENU == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( CB_ERR == nIdx1 ){
 					break;
 				}
 				/* メニュー項目一覧に文字列をセット（リストボックス）*/
-				::SendMessageAny( hwndLIST_RES, LB_RESETCONTENT, 0, 0 );
+				List_ResetContent( hwndLIST_RES );
 				for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; ++i ){
 					if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] ){
 						auto_strcpy( szLabel2, LTEXT(" ─────────────") );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
@@ -232,11 +225,11 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		if( hwndLIST_RES == hwndCtl ){
 			switch( wNotifyCode ){
 			case LBN_DBLCLK:
-				nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( LB_ERR == nIdx1 ){
 					break;
 				}
-				nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+				nIdx2 = Combo_GetCurSel( hwndLIST_RES );
 				if( LB_ERR == nIdx2 ){
 					break;
 				}
@@ -281,12 +274,12 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					auto_sprintf( szLabel2, LTEXT("%ls"), szLabel );
 				}
 
-				::SendMessage( hwndLIST_RES, LB_INSERTSTRING, nIdx2, (LPARAM)szLabel2 );
-				::SendMessageAny( hwndLIST_RES, LB_DELETESTRING, nIdx2 + 1, 0 );
+				List_InsertString( hwndLIST_RES, nIdx2, szLabel2 );
+				List_DeleteString( hwndLIST_RES, nIdx2 + 1 );
 
 				break;
 			case LBN_SELCHANGE:
-				nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+				nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 				if( LB_ERR == nIdx1 ){
 					break;
 				}
@@ -295,7 +288,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					break;
 				}
 
-				nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+				nIdx2 = List_GetCurSel( hwndLIST_RES );
 				if( LB_ERR == nIdx2 ){
 					break;
 				}
@@ -311,7 +304,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		else if( hwndCOMBO_FUNCKIND == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-				nIdx3 = ::SendMessageAny( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
+				nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
 
 				/* 機能一覧に文字列をセット（リストボックス）*/
 //	Oct. 14, 2000 jepro note: ここのforブロックで実際にリストを書いているようである
@@ -326,7 +319,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			case BN_CLICKED:
 				switch( wID ){
 				case IDC_BUTTON_INSERTSEPARATOR:
-					nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 					if( LB_ERR == nIdx1 ){
 						break;
 					}
@@ -335,15 +328,15 @@ INT_PTR CPropCustmenu::DispatchEvent(
 						break;
 					}
 
-					nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+					nIdx2 = List_GetCurSel( hwndLIST_RES );
 					if( LB_ERR == nIdx2 ){
 						nIdx2 = 0;
 					}
-					nIdx2 = ::SendMessage( hwndLIST_RES, LB_INSERTSTRING, nIdx2, (LPARAM)L" ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
+					nIdx2 = List_InsertString( hwndLIST_RES, nIdx2, L" ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 					if( nIdx2 == LB_ERR || nIdx2 == LB_ERRSPACE ){
 						break;
 					}
-					::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
+					List_SetCurSel( hwndLIST_RES, nIdx2 );
 
 
 					for( i = m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; i > nIdx2; i--){
@@ -357,7 +350,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 //					::SetWindowText( hwndEDIT_KEY, L"" );
 					break;
 				case IDC_BUTTON_DELETE:
-					nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 					if( LB_ERR == nIdx1 ){
 						break;
 					}
@@ -366,11 +359,11 @@ INT_PTR CPropCustmenu::DispatchEvent(
 						break;
 					}
 
-					nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+					nIdx2 = List_GetCurSel( hwndLIST_RES );
 					if( LB_ERR == nIdx2 ){
 						break;
 					}
-					nNum2 = ::SendMessageAny( hwndLIST_RES, LB_DELETESTRING, nIdx2, 0 );
+					nNum2 = List_DeleteString( hwndLIST_RES, nIdx2 );
 					if( nNum2 == LB_ERR ){
 						break;
 					}
@@ -385,7 +378,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 						if( nNum2 <= nIdx2 ){
 							nIdx2 = nNum2 - 1;
 						}
-						nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
+						nIdx2 = List_SetCurSel( hwndLIST_RES, nIdx2 );
 
 					}else{
 					}
@@ -393,7 +386,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 
 
 				case IDC_BUTTON_INSERT:
-					nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 					if( LB_ERR == nIdx1 ){
 						break;
 					}
@@ -402,15 +395,15 @@ INT_PTR CPropCustmenu::DispatchEvent(
 						break;
 					}
 
-					nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+					nIdx2 = List_GetCurSel( hwndLIST_RES );
 					if( LB_ERR == nIdx2 ){
 						nIdx2 = 0;
 					}
-					nIdx3 = ::SendMessageAny( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
+					nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
 					if( LB_ERR == nIdx3 ){
 						break;
 					}
-					nIdx4 = ::SendMessageAny( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
+					nIdx4 = List_GetCurSel( hwndLIST_FUNC );
 					if( LB_ERR == nIdx4 ){
 						break;
 					}
@@ -425,17 +418,17 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
 					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
-					nIdx2 = ::SendMessage( hwndLIST_RES, LB_INSERTSTRING, nIdx2, (LPARAM)szLabel );
+					nIdx2 = List_InsertString( hwndLIST_RES, nIdx2, szLabel );
 					if( LB_ERR == nIdx2 || LB_ERRSPACE == nIdx2 ){
 						break;
 					}
-					::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
+					List_SetCurSel( hwndLIST_RES, nIdx2 );
 
 					break;
 
 
 				case IDC_BUTTON_ADD:
-					nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 					if( LB_ERR == nIdx1 ){
 						break;
 					}
@@ -444,19 +437,19 @@ INT_PTR CPropCustmenu::DispatchEvent(
 						break;
 					}
 
-					nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+					nIdx2 = List_GetCurSel( hwndLIST_RES );
 					if( LB_ERR == nIdx2 ){
 						nIdx2 = 0;
 					}
-					nNum2 = ::SendMessageAny( hwndLIST_RES, LB_GETCOUNT, 0, 0 );
+					nNum2 = List_GetCount( hwndLIST_RES );
 					if( LB_ERR == nNum2 ){
 						nIdx2 = 0;
 					}
-					nIdx3 = ::SendMessageAny( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
+					nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
 					if( LB_ERR == nIdx3 ){
 						break;
 					}
-					nIdx4 = ::SendMessageAny( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
+					nIdx4 = List_GetCurSel( hwndLIST_FUNC );
 					if( LB_ERR == nIdx4 ){
 						break;
 					}
@@ -475,16 +468,16 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					if( LB_ERR == nIdx2 || LB_ERRSPACE == nIdx2 ){
 						break;
 					}
-					::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
+					List_SetCurSel( hwndLIST_RES, nIdx2 );
 
 					break;
 
 				case IDC_BUTTON_UP:
-					nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 					if( LB_ERR == nIdx1 ){
 						break;
 					}
-					nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+					nIdx2 = List_GetCurSel( hwndLIST_RES );
 					if( LB_ERR == nIdx2 ){
 						break;
 					}
@@ -502,21 +495,21 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 
 					List_GetText( hwndLIST_RES, nIdx2, szLabel );
-					::SendMessageAny( hwndLIST_RES, LB_DELETESTRING, nIdx2, 0 );
-					::SendMessage( hwndLIST_RES, LB_INSERTSTRING, nIdx2 - 1, (LPARAM)szLabel );
-					::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2 - 1, 0 );
+					List_DeleteString( hwndLIST_RES, nIdx2 );
+					List_InsertString( hwndLIST_RES, nIdx2 - 1, szLabel );
+					List_SetCurSel( hwndLIST_RES, nIdx2 - 1 );
 					break;
 
 				case IDC_BUTTON_DOWN:
-					nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
+					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
 					if( LB_ERR == nIdx1 ){
 						break;
 					}
-					nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
+					nIdx2 = List_GetCurSel( hwndLIST_RES );
 					if( LB_ERR == nIdx2 ){
 						break;
 					}
-					nNum2 = ::SendMessageAny( hwndLIST_RES, LB_GETCOUNT, 0, 0 );
+					nNum2 = List_GetCount( hwndLIST_RES );
 					if( LB_ERR == nNum2 ){
 						break;
 					}
@@ -533,9 +526,9 @@ INT_PTR CPropCustmenu::DispatchEvent(
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
 					}
 					List_GetText( hwndLIST_RES, nIdx2, szLabel );
-					::SendMessageAny( hwndLIST_RES, LB_DELETESTRING, nIdx2, 0 );
-					::SendMessage( hwndLIST_RES, LB_INSERTSTRING, nIdx2 + 1, (LPARAM)szLabel );
-					::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, nIdx2 + 1, 0 );
+					List_DeleteString( hwndLIST_RES, nIdx2 );
+					List_InsertString( hwndLIST_RES, nIdx2 + 1, szLabel );
+					List_SetCurSel( hwndLIST_RES, nIdx2 + 1 );
 					break;
 				}
 
@@ -545,11 +538,11 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		break;
 
 	case WM_TIMER:
-		nIdx1 = ::SendMessageAny( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-		nIdx2 = ::SendMessageAny( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
-		nIdx3 = ::SendMessageAny( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
-		nIdx4 = ::SendMessageAny( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
-		i = ::SendMessageAny( hwndLIST_RES, LB_GETCOUNT, 0, 0 );
+		nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
+		nIdx2 = List_GetCurSel( hwndLIST_RES );
+		nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
+		nIdx4 = List_GetCurSel( hwndLIST_FUNC );
+		i = List_GetCount( hwndLIST_RES );
 		if( LB_ERR == nIdx2	){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELETE ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_UP ), FALSE );
@@ -634,7 +627,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
+	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
 
 	/* メニュー一覧に文字列をセット（コンボボックス）*/
 	hwndCOMBO_MENU = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
@@ -642,12 +635,12 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 		Combo_AddString( hwndCOMBO_MENU, m_Common.m_sCustomMenu.m_szCustMenuNameArr[i] );
 	}
 	/* メニュー一覧の先頭の項目を選択（コンボボックス）*/
-	::SendMessageAny( hwndCOMBO_MENU, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
+	Combo_SetCurSel( hwndCOMBO_MENU, 0 );
 
 	/* メニュー項目一覧に文字列をセット（リストボックス）*/
 	hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 //	hwndEDIT_KEY = ::GetDlgItem( hwndDlg, IDC_EDIT_KEY );
-	::SendMessageAny( hwndLIST_RES, LB_RESETCONTENT, 0, 0 );
+	List_ResetContent( hwndLIST_RES );
 	nIdx = 0;
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
@@ -673,7 +666,7 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[0] );
 	
 //	/* カスタムメニューの先頭の項目を選択（リストボックス）*/	//Oct. 8, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
-	::SendMessageAny( hwndLIST_RES, LB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
+	List_SetCurSel( hwndLIST_RES, 0 );
 	return;
 }
 
@@ -695,78 +688,6 @@ int CPropCustmenu::GetData( HWND hwndDlg )
 /* カスタムメニュー設定をインポートする */
 void CPropCustmenu::Import( HWND hwndDlg )
 {
-//	/* ファイルオープンダイアログの初期化 */
-//	CDlgOpenFile	cDlgOpenFile;
-//	TCHAR			szPath[_MAX_PATH + 1] = _T("");
-//	cDlgOpenFile.Create(
-//		G_AppInstance(),
-//		hwndDlg,
-//		_T("*.mnu"),
-//		m_pShareData->m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
-//	);
-//	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//		return;
-//	}
-//
-//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-//	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-//
-//
-//	//ヘッダ確認
-//	CTextInputStream in(szPath);
-//	if(!in){
-//		ErrorMessage_A( hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
-//		return;
-//	}
-////	wstring szHeader=in.ReadLineW();
-////	if(szHeader.length()>2)szHeader=&szHeader.c_str()[2]; //コメント除去
-////	if(wcscmp(szHeader.c_str(),WSTR_CUSTMENU_HEAD_V2)==0){
-////		//OK
-////	}
-////	else{
-////		ErrorMessage_A( hwndDlg, "カスタムメニュー設定ファイルの形式が違います。\n\n%ts", szPath );
-////		return;
-////	}
-//	in.Close();
-//
-//	//中身
-////	delete 2008/5/24 Uchi
-////	CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
-////	for(int i=0;i<MAX_CUSTOM_MENU;i++){
-////		//セクション名
-////		wchar_t szSection[64];
-////		auto_sprintf(szSection, L"Menu%d", i);
-////
-////		cProfile.IOProfileData(szSection,L"Name",MakeStringBufferW(menu->m_szCustMenuNameArr[i]));
-////		cProfile.IOProfileData(szSection,L"ItemCount",menu->m_nCustMenuItemNumArr[i]);
-////		for(int j=0;j<menu->m_nCustMenuItemNumArr[i];j++){
-////			cProfile.IOProfileData_WrapInt(szSection,easy_format(L"FNC[%02d]",j),menu->m_nCustMenuItemFuncArr[i][j]);
-////			cProfile.IOProfileData(szSection,easy_format(L"KEY[%02d]",j),menu->m_nCustMenuItemKeyArr[i][j]);
-////		}
-////	}
-//
-//	static const wchar_t*	szSecInfo=L"Info";
-//	CDataProfile cProfile;
-//	cProfile.SetReadingMode();
-//	cProfile.ReadProfile(szPath);
-//
-//	//バージョン確認
-//	WCHAR szHeader[256];
-//	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", MakeStringBufferW(szHeader));
-//	if(wcscmp(szHeader, WSTR_CUSTMENU_HEAD_V2)!=0) {
-//		ErrorMessage_A( hwndDlg, "カスタムメニュー設定ファイルの形式が違います。\n\n%ts", szPath );
-//		return;
-//	}
-//
-//	CShareData_IO::ShareData_IO_CustMenu(cProfile,m_Common.m_sCustomMenu, true);			// 2008/5/24 Uchi
-//
-//	HWND	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
-//	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCtrl );
-//
-//	return;
-
 	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
 	// インポート
@@ -779,84 +700,6 @@ void CPropCustmenu::Import( HWND hwndDlg )
 /* カスタムメニュー設定をエクスポートする */
 void CPropCustmenu::Export( HWND hwndDlg )
 {
-//	/* ファイルオープンダイアログの初期化 */
-//	CDlgOpenFile	cDlgOpenFile;
-//	TCHAR			szPath[_MAX_PATH + 1] = _T("");
-//	cDlgOpenFile.Create(
-//		G_AppInstance(),
-//		hwndDlg,
-//		_T("*.mnu"),
-//		m_pShareData->m_sHistory.m_szIMPORTFOLDER // インポート用フォルダ
-//	);
-//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
-//		return;
-//	}
-//
-//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
-//	_tcscat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-//
-//	// オープン
-//	CTextOutputStream out(szPath);
-//	if(!out){
-//		ErrorMessage_A(hwndDlg, "ファイルを開けませんでした。\n\n%ts", szPath );
-//		return;
-//	}
-//
-//	/* カスタムメニュー情報 */
-////	delete 2008/5/24 Uchi
-////	class WriteError{};
-////	try{
-////		//ヘッダ
-////		out.WriteF(L"; %ls\n\n",WSTR_CUSTMENU_HEAD_V2);
-////
-////		//内容
-////		CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
-////		out.WriteF(L"[Info]\n",MAX_CUSTOM_MENU);
-////		out.WriteF(L"MENU_VERSION=%ls\n",WSTR_CUSTMENU_HEAD_V2);
-////		out.WriteF(L"MAX_CUSTOM_MENU=%d\n",MAX_CUSTOM_MENU);
-////		out.WriteF(L"\n");
-////		for(int i=0;i<MAX_CUSTOM_MENU;i++){
-////			out.WriteF(L"[Menu%d]\n",i);
-////			out.WriteF(L"Name=%ls\n",menu->m_szCustMenuNameArr[i]);
-////			out.WriteF(L"ItemCount=%d\n",menu->m_nCustMenuItemNumArr[i]);
-////			for(int j=0;j<menu->m_nCustMenuItemNumArr[i];j++){
-////				out.WriteF(L"FNC[%02d]=%d\n",j,menu->m_nCustMenuItemFuncArr[i][j]);
-////				out.WriteF(L"KEY[%02d]=%hc",j,menu->m_nCustMenuItemKeyArr[i][j]); out.WriteF(L"\n"); //※charが'\0'の場合を考慮して、改行を別に出力
-////			}
-////			out.WriteF(L"\n");
-////		}
-////	}
-////	catch(const WriteError&){
-////		ErrorMessage_A( hwndDlg, "ファイルの書き込みに失敗しました。\n\n%ts", szPath );
-////	}
-//	out.Close();
-//
-//	/* カスタムメニュー情報 */
-//	// start 2008/5/24 Uchi
-//	{
-//		//ヘッダ
-//		static const wchar_t*	szSecInfo=L"Info";
-//		CDataProfile	cProfile;
-//		CommonSetting_CustomMenu* menu=&m_Common.m_sCustomMenu;
-//
-//		// 書き込みモード設定
-//		cProfile.SetWritingMode();
-//
-//		//ヘッダ
-//		cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", MakeStringBufferW(WSTR_CUSTMENU_HEAD_V2) );
-//		int iWork = MAX_CUSTOM_MENU;
-//		cProfile.IOProfileData_WrapInt( szSecInfo, L"MAX_CUSTOM_MENU", iWork );
-//		
-//		//内容
-//		CShareData_IO::ShareData_IO_CustMenu(cProfile, *menu, true);
-//
-//		// 書き込み
-//		cProfile.WriteProfile( szPath, WSTR_CUSTMENU_HEAD_V2);
-//	}
-//	// end 2008/5/25
-
 	CImpExpCustMenu	cImpExpCustMenu( m_Common );
 
 	// エクスポート
@@ -865,6 +708,3 @@ void CPropCustmenu::Export( HWND hwndDlg )
 		return;
 	}
 }
-
-
-

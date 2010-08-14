@@ -32,6 +32,9 @@
 #define SC_CDLGKEYWORDSELECT_H__
 
 #include "dlg/CDialog.h"
+#include "config/maxdata.h" // MAX_KEYWORDSET_PER_TYPE
+ 
+class CKeyWordSetMgr;
 
 /*
 	強調キーワード選択可能数

@@ -29,18 +29,13 @@
 		   distribution.
 */
 
-#include "stdafx.h"
-#include <stdio.h>
-#include "sakura_rc.h"
-#include "global.h"
-#include "func/Funccode.h"
-#include "dlg/CDialog.h"
+#include "StdAfx.h"
 #include "dlg/CDlgCtrlCode.h"
-#include "view/CEditView.h"
-#include "debug/Debug.h"
+#include "func/Funccode.h"
 #include "util/shell.h"
-
+#include "sakura_rc.h"
 #include "sakura.hh"
+
 const DWORD p_helpids[] = {	//13300
 	IDC_LIST_CTRLCODE,		HIDC_LIST_CTRLCODE,
 	IDOK,					HIDC_CTRLCODE_IDOK,
@@ -123,9 +118,9 @@ void CDlgCtrlCode::SetData( void )
 	ListView_DeleteAllItems( hwndWork );  /* リストを空にする */
 
 	/* 行選択 */
-	lngStyle = ::SendMessageAny( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	lngStyle = ListView_GetExtendedListViewStyle( hwndWork );
 	lngStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessageAny( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+	ListView_SetExtendedListViewStyle( hwndWork, lngStyle );
 
 	/* データ表示 */
 	TCHAR	tmp[10];

@@ -17,20 +17,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include <dlgs.h>    // stc3,...
-#include <cderr.h>   // FNERR...,CDERR...
+#include "StdAfx.h"
 #include "dlg/CDlgOpenFile.h"
-#include "global.h"
-#include "debug/Debug.h"
 #include "func/Funccode.h"	//Stonee, 2001/05/18
 #include "CFileExt.h"
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 #include "CEditApp.h"
 #include "doc/CDocListener.h"
-#include "types/CType.h"	// STypeConfig
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/os.h"
@@ -242,10 +236,10 @@ UINT_PTR CALLBACK OFNHookProc(
 		CDlgOpenFile::InitLayout( hwndOpenDlg, hdlg, hwndComboCODES );
 
 		/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-		::SendMessageAny( hwndComboCODES,		CB_SETEXTENDEDUI, TRUE, 0 );
-		::SendMessageAny( hwndComboMRU,			CB_SETEXTENDEDUI, TRUE, 0 );
-		::SendMessageAny( hwndComboOPENFOLDER,	CB_SETEXTENDEDUI, TRUE, 0 );
-		::SendMessageAny( hwndComboEOL,			CB_SETEXTENDEDUI, TRUE, 0 );
+		Combo_SetExtendedUI( hwndComboCODES, TRUE );
+		Combo_SetExtendedUI( hwndComboMRU, TRUE );
+		Combo_SetExtendedUI( hwndComboOPENFOLDER, TRUE );
+		Combo_SetExtendedUI( hwndComboEOL, TRUE );
 
 		//	From Here Feb. 9, 2001 genta
 		//	改行コードの選択コンボボックス初期化
@@ -254,10 +248,10 @@ UINT_PTR CALLBACK OFNHookProc(
 			//	値の設定
 			for( i = 0; i < nEolNameArrNum; ++i ){
 				nIdx = Combo_AddString( hwndComboEOL, pEolNameArr[i] );
-				::SendMessageAny( hwndComboEOL, CB_SETITEMDATA, nIdx, nEolValueArr[i] );
+				Combo_SetItemData( hwndComboEOL, nIdx, nEolValueArr[i] );
 			}
 			//	使うときは先頭の要素を選択状態にする
-			::SendMessageAny( hwndComboEOL, CB_SETCURSEL, (WPARAM)0, 0 );
+			Combo_SetCurSel( hwndComboEOL, 0 );
 		}
 		else {
 			//	使わないときは隠す
@@ -282,7 +276,7 @@ UINT_PTR CALLBACK OFNHookProc(
 				fCheck = BST_UNCHECKED;
 				break;
 			}
-			::SendMessageAny( hwndCheckBOM, BM_SETCHECK, fCheck, 0 );
+			BtnCtl_SetCheck( hwndCheckBOM, fCheck );
 		}
 		else {
 			//	使わないときは隠す
@@ -304,12 +298,12 @@ UINT_PTR CALLBACK OFNHookProc(
 		CCodeTypesForCombobox cCodeTypes;
 		for( /*i = 0*/; i < cCodeTypes.GetCount(); ++i ){
 			nIdx = Combo_AddString( hwndComboCODES, cCodeTypes.GetName(i) );
-			::SendMessageAny( hwndComboCODES, CB_SETITEMDATA, nIdx, cCodeTypes.GetCode(i) );
+			Combo_SetItemData( hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
 			if( cCodeTypes.GetCode(i) == pcDlgOpenFile->m_nCharCode ){
 				nIdxSel = nIdx;
 			}
 		}
-		::SendMessageAny( hwndComboCODES, CB_SETCURSEL, (WPARAM)nIdxSel, 0 );
+		Combo_SetCurSel( hwndComboCODES, nIdxSel );
 
 
 		/* ビューモードの初期値セット */
@@ -410,19 +404,19 @@ UINT_PTR CALLBACK OFNHookProc(
 			}
 
 			/* 文字コード選択コンボボックス 値を取得 */
-			nIdx = ::SendMessageAny( hwndComboCODES, CB_GETCURSEL, 0, 0 );
-			lRes = ::SendMessageAny( hwndComboCODES, CB_GETITEMDATA, nIdx, 0 );
+			nIdx = Combo_GetCurSel( hwndComboCODES );
+			lRes = Combo_GetItemData( hwndComboCODES, nIdx );
 			pcDlgOpenFile->m_nCharCode = (ECodeType)lRes;	/* 文字コード */
 			//	Feb. 9, 2001 genta
 			if( pcDlgOpenFile->m_bUseEol ){
-				nIdx = ::SendMessageAny( hwndComboEOL, CB_GETCURSEL, 0, 0 );
-				lRes = ::SendMessageAny( hwndComboEOL, CB_GETITEMDATA, nIdx, 0 );
+				nIdx = Combo_GetCurSel( hwndComboEOL );
+				lRes = Combo_GetItemData( hwndComboEOL, nIdx );
 				pcDlgOpenFile->m_cEol = (enumEOLType)lRes;	/* 文字コード */
 			}
 			//	From Here Jul. 26, 2003 ryoji
 			//	BOMチェックボックスの状態を取得
 			if( pcDlgOpenFile->m_bUseBom ){
-				lRes = ::SendMessageAny( hwndCheckBOM, BM_GETCHECK, 0, 0 );
+				lRes = BtnCtl_GetCheck( hwndCheckBOM );
 				pcDlgOpenFile->m_bBom = (lRes == BST_CHECKED);	/* BOM */
 			}
 			//	To Here Jul. 26, 2003 ryoji
@@ -435,7 +429,7 @@ UINT_PTR CALLBACK OFNHookProc(
 //			MYTRACE_A( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
 			{
 				wchar_t szFolder[_MAX_PATH];
-				lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, _countof( szFolder ), (LPARAM)szFolder );
+				lRes = CommDlg_OpenSave_GetFolderPath( hwndOpenDlg, _countof( szFolder ), szFolder );
 			}
 //			MYTRACE_A( "\tlRes=%d\tszFolder=[%ls]\n", lRes, szFolder );
 
@@ -461,8 +455,8 @@ UINT_PTR CALLBACK OFNHookProc(
 			//	From Here Jul. 26, 2003 ryoji
 			//	文字コードの変更をBOMチェックボックスに反映
 			case IDC_COMBO_CODE:
-				nIdx = ::SendMessageAny( (HWND) lParam, CB_GETCURSEL, 0, 0 );
-				lRes = ::SendMessageAny( (HWND) lParam, CB_GETITEMDATA, nIdx, 0 );
+				nIdx = Combo_GetCurSel( (HWND) lParam );
+				lRes = Combo_GetItemData( (HWND) lParam, nIdx );
 				switch( lRes ){
 				case CODE_UNICODE:
 				case CODE_UNICODEBE:
@@ -480,16 +474,16 @@ UINT_PTR CALLBACK OFNHookProc(
 					fCheck = BST_UNCHECKED;
 					break;
 				}
-				::SendMessageAny( hwndCheckBOM, BM_SETCHECK, fCheck, 0 );
+				BtnCtl_SetCheck( hwndCheckBOM, fCheck );
 				break;
 			//	To Here Jul. 26, 2003 ryoji
 			case IDC_COMBO_MRU:
 			case IDC_COMBO_OPENFOLDER:
 				{
 					TCHAR	szWork[_MAX_PATH + 1];
-					nIdx = ::SendMessageAny( (HWND) lParam, CB_GETCURSEL, 0, 0 );
+					nIdx = Combo_GetCurSel( (HWND) lParam );
 
-					if( CB_ERR != Combo_GetText( (HWND) lParam, nIdx, szWork ) ){
+					if( CB_ERR != Combo_GetLBText( (HWND) lParam, nIdx, szWork ) ){
 						// 2005.11.02 ryoji ファイル名指定のコントロールを確認する
 						hwndFilebox = ::GetDlgItem( hwndOpenDlg, cmb13 );		// ファイル名コンボ（Windows 2000タイプ）
 						if( !::IsWindow( hwndFilebox ) )
@@ -1072,14 +1066,14 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 		return;
 	hFont = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, NULL );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
-	nItem = ::SendMessageAny( hwnd, CB_GETCOUNT, 0, NULL );
+	nItem = Combo_GetCount( hwnd );
 	::GetWindowRect( hwnd, &rc );
 	nWidth = rc.right - rc.left - 8;
 	for( iItem = 0; iItem < nItem; iItem++ ){
-		nTextLen = ::SendMessage( hwnd, CB_GETLBTEXTLEN, (WPARAM)iItem, NULL );
+		nTextLen = Combo_GetLBTextLen( hwnd, iItem );
 		if( 0 < nTextLen ) {
 			TCHAR* pszText = new TCHAR[nTextLen + 1];
-			Combo_GetText( hwnd, iItem, pszText );
+			Combo_GetLBText( hwnd, iItem, pszText );
 			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
 				if ( nWidth < sizeText.cx )
 					nWidth = sizeText.cx;
@@ -1087,7 +1081,7 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 			delete []pszText;
 		}
 	}
-	::SendMessageAny( hwnd, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + 8), NULL );
+	Combo_SetDroppedWidth( hwnd, nWidth + 8);
 	::SelectObject( hDC, hFont );
 	::ReleaseDC( hwnd, hDC );
 }

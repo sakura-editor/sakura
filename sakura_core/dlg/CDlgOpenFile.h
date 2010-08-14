@@ -22,7 +22,6 @@
 
 class CDlgOpenFile;
 
-#include <windows.h>
 #include <vector>
 #include "CEol.h"
 #include "COsVersionInfo.h"	// 2005.11.02 ryoji

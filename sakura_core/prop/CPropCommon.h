@@ -23,7 +23,6 @@
 
 class CPropCommon;
 
-//#include <windows.h>
 #include "func/CFuncLookup.h"
 #include "env/CommonSetting.h"
 

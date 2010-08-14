@@ -28,14 +28,12 @@
 		   distribution.
 */
 
-
-
 #include "StdAfx.h"
 #include "dlg/CDlgPluginOption.h"
 #include "util/shell.h"
 #include "util/window.h"
-//#include "debug/Debug.h"
 #include "sakura_rc.h"
+#include "sakura.hh"
 
 // BOOL変数の表示
 #define	BOOL_DISP_TRUE	_T("<True>")
@@ -49,7 +47,6 @@ static inline void CtrlShow(HWND hwndDlg, int id, BOOL bShow)
 	::EnableWindow( hWnd, bShow );
 }
 
-#include "sakura.hh"
 const DWORD p_helpids[] = {
 	IDC_LIST_PLUGIN_OPTIONS,		HIDC_LIST_PLUGIN_OPTIONS,		// オプションリスト
 	IDC_EDIT_PLUGIN_OPTION,			HIDC_EDIT_PLUGIN_OPTION,		// オプション編集
@@ -283,9 +280,9 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	ListView_InsertColumn( hwndList, 1, &col );
 
 	/* 行選択 */
-	lngStyle = ::SendMessageAny( hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	lngStyle = ListView_GetExtendedListViewStyle( hwndList );
 	lngStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessageAny( hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+	ListView_SetExtendedListViewStyle( hwndList, lngStyle );
 
 	// 編集領域の非アクティブ化
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION ), FALSE );
@@ -295,10 +292,9 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	CtrlShow( hwndDlg, IDC_COMBO_PLUGIN_OPTION,    FALSE );
 
 	// 桁数制限
-	::SendMessageAny( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION     ), EM_LIMITTEXT, MAX_LENGTH_VALUE, 0 );
-	::SendMessageAny( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_NUM ), EM_LIMITTEXT, 11, 0 );
+	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION     ), MAX_LENGTH_VALUE );
+	EditCtl_LimitText( GetDlgItem( hwndDlg, IDC_EDIT_PLUGIN_OPTION_NUM ), 11 );
 
-	
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
@@ -469,7 +465,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 
 			HWND	hwndCombo;
 			hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_PLUGIN_OPTION );
-			::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+			Combo_ResetContent( hwndCombo );
 
 			int		nSelIdx;
 			int		i;
@@ -481,13 +477,13 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			i = 0;
 			for (std::vector<wstring>::iterator it = selects.begin(); it != selects.end(); it++) {
 				SepSelect(*it, &sView, &sValue);
-				nItemIdx = ::SendMessageW( hwndCombo, CB_ADDSTRING, 0,(LPARAM)sView.c_str() );
+				nItemIdx = Combo_AddString( hwndCombo, sView.c_str() );
 				if (sView == sWbuf) {
 					nSelIdx = i;
 				}
-				::SendMessageAny( hwndCombo, CB_SETITEMDATA, nItemIdx, (LPARAM)i++ );
+				Combo_SetItemData( hwndCombo, nItemIdx, i++ );
 			}
-			::SendMessageAny( hwndCombo, CB_SETCURSEL, nSelIdx, 0 );
+			Combo_SetCurSel( hwndCombo, nSelIdx );
 
 			// 編集領域の切り替え
 			SelectEdit(IDC_COMBO_PLUGIN_OPTION);

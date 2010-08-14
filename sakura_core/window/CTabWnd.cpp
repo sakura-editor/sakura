@@ -778,7 +778,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 			);
 
 		// ツールチップをマルチライン可能にする（SHRT_MAX: Win95でINT_MAXだと表示されない）	// 2007.03.03 ryoji
-		::SendMessage( m_hwndToolTip, TTM_SETMAXTIPWIDTH, 0, (LPARAM)SHRT_MAX );
+		Tooltip_SetMaxTipWidth( m_hwndToolTip, SHRT_MAX );
 
 		// タブバーにツールチップを追加する
 		TOOLINFO	ti;
@@ -792,7 +792,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		ti.rect.top    = 0;
 		ti.rect.right  = 0;
 		ti.rect.bottom = 0;
-		::SendMessage( m_hwndToolTip, TTM_ADDTOOL, 0, (LPARAM)&ti );
+		Tooltip_AddTool( m_hwndToolTip, &ti );
 
 		// 2006.02.22 ryoji イメージリストを初期化する
 		InitImageList();
@@ -1222,7 +1222,7 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		ti.hinst        = GetAppInstance();
 		ti.uId          = (UINT)GetHwnd();
 		ti.lpszText     = pszTip;
-		::SendMessage( m_hwndToolTip, TTM_UPDATETIPTEXT, (WPARAM)0, (LPARAM)&ti );
+		Tooltip_UpdateTipText( m_hwndToolTip, &ti );
 	}
 
 	return 0L;
@@ -1442,7 +1442,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
 			if( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 			{
-				nScrollPos = LOWORD( ::SendMessageAny( hwndUpDown, UDM_GETPOS, (WPARAM)0, (LPARAM)0 ) );
+				nScrollPos = UpDown_GetPos( hwndUpDown );
 
 				// 現在位置 nScrollPos と画面表示とを一致させる
 				::SendMessageAny( m_hwndTab, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, LOWORD( nScrollPos ) ), (LPARAM)NULL );	// 設定位置にタブをスクロール
@@ -1466,7 +1466,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 				// 自タブアイテムを強制的に可視位置にするために、
 				// 自タブアイテム選択前に一時的に画面左端のタブアイテムを選択する
 				hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
-				nScrollPos = ( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )? LOWORD( ::SendMessage( hwndUpDown, UDM_GETPOS, (WPARAM)0, (LPARAM)0 ) ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
+				nScrollPos = ( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )? UpDown_GetPos( hwndUpDown ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 				TabCtrl_SetCurSel( m_hwndTab, nScrollPos );
 				TabCtrl_SetCurSel( m_hwndTab, nIndex );
 

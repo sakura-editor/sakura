@@ -15,18 +15,17 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
-#include "sakura_rc.h"
+#include "StdAfx.h"
 #include "dlg/CDlgJump.h"
-#include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "outline/CFuncInfoArr.h"// 2002/2/10 aroka ヘッダ整理
 #include "util/shell.h"
 #include "window/CEditWnd.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 // ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12800
 	IDC_BUTTON_JUMP,				HIDC_JUMP_BUTTON_JUMP,			//ジャンプ
 	IDCANCEL,						HIDCANCEL_JUMP,					//キャンセル
@@ -123,8 +122,8 @@ BOOL CDlgJump::OnCbnSelChange( HWND hwndCtl, int wID )
 	int	nWorkLine;
 	switch( wID ){
 	case IDC_COMBO_PLSQLBLOCKS:
-		nIndex = ::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), CB_GETCURSEL, 0, 0 );
-		nWorkLine = (int)::SendMessageAny( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), CB_GETITEMDATA, nIndex, 0 );
+		nIndex = Combo_GetCurSel( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ) );
+		nWorkLine = (int)Combo_GetItemData( ::GetDlgItem( GetHwnd(), IDC_COMBO_PLSQLBLOCKS ), nIndex );
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLSQL_E1, nWorkLine, FALSE );
 		return TRUE;
 	}
@@ -251,10 +250,10 @@ void CDlgJump::SetData( void )
 			nIndex = Combo_AddString( hwndCtrl, szText );
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-				::SendMessageAny( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}
 			else{
-				::SendMessageAny( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
 			}
 			nPLSQLBlockNum++;
 		}
@@ -275,15 +274,15 @@ void CDlgJump::SetData( void )
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				nWorkLine = (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF;
-				::SendMessageAny( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
 			}else{
 				nWorkLine = (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT;
-				::SendMessageAny( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
+				Combo_SetItemData( hwndCtrl, nIndex, (Int)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
 			}
 			++nPLSQLBlockNum;
 		}
 	}
-	::SendMessageAny( hwndCtrl, CB_SETCURSEL, nIndexCurSel, 0 );
+	Combo_SetCurSel( hwndCtrl, nIndexCurSel );
 
 	/* PL/SQLのパッケージ本体が検出された場合 */
 	if( -1 != nWorkLine ){

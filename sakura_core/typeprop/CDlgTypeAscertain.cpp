@@ -76,8 +76,8 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 		wchar_t	buff2[_MAX_PATH + 20];
 
 		m_psi->sColorFile = L"";
-		m_psi->nColorType = ::SendMessageAny( GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ), CB_GETCURSEL, 0, 0 ) - 1;
-		if (m_psi->nColorType >= MAX_TYPES && Combo_GetText( ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
+		m_psi->nColorType = Combo_GetCurSel( GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ) ) - 1;
+		if (m_psi->nColorType >= MAX_TYPES && Combo_GetLBText( ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS ), m_psi->nColorType + 1, buff1)) {
 			if (_stscanf( buff1, _T("File -- %ls"), buff2 ) > 0) {
 				m_psi->sColorFile = buff2;
 				m_psi->nColorType = MAX_TYPES;
@@ -106,7 +106,7 @@ void CDlgTypeAscertain::SetData( void )
 	TCHAR	szText[130];
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_COLORS );
 	/* コンボボックスを空にする */
-	::SendMessageAny( hwndCombo, CB_RESETCONTENT, 0, 0 );
+	Combo_ResetContent( hwndCombo );
 	/* 一行目はそのまま */
 	Combo_AddString( hwndCombo, L"--そのままインポート--" );
 
@@ -146,7 +146,7 @@ void CDlgTypeAscertain::SetData( void )
 	FindClose( hFind );
 
 	// コンボボックスのデフォルト選択
-	::SendMessageAny( hwndCombo, CB_SETCURSEL, 0, 0 );
+	Combo_SetCurSel( hwndCombo, 0 );
 	return;
 }
 

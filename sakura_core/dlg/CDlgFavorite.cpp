@@ -32,15 +32,13 @@
 
 
 
-#include "stdafx.h"
-#include <stdio.h>
-#include <vector>
+#include "StdAfx.h"
 #include <algorithm>
 #include "CDlgFavorite.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
 #include "util/window.h"
-#include "util/std_macro.h"
+#include "util/file.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -392,10 +390,10 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		ListView_InsertColumn( hwndList, 1, &col );
 
 		/* 行選択 */
-		lngStyle = ::SendMessageAny( hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+		lngStyle = ListView_GetExtendedListViewStyle( hwndList );
 		lngStyle |= LVS_EX_FULLROWSELECT;
 		if( m_aFavoriteInfo[nTab].m_bHaveFavorite ) lngStyle |= LVS_EX_CHECKBOXES;
-		::SendMessageAny( hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+		ListView_SetExtendedListViewStyle( hwndList, lngStyle );
 
 		/* タブ項目追加 */
 		tcitem.mask = TCIF_TEXT;

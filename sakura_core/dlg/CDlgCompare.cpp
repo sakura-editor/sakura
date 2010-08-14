@@ -16,18 +16,15 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "dlg/CDlgCompare.h"
-#include "global.h"
-#include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/shell.h"
-#include "debug/Debug.h"
 #include "sakura_rc.h"
+#include "sakura.hh"
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12300
 //	IDC_BUTTON1,					HIDC_CMP_BUTTON1,			//上下に表示
 //	IDOK2,							HIDOK2_CMP,					//左右に表示
@@ -159,7 +156,7 @@ void CDlgCompare::SetData( void )
 				_tcscat( szMenu, CCodeTypeName(pfi->m_nCharCode).Bracket() );
 			}
 			nItem = ::List_AddString( hwndList, szMenu );
-			::SendMessageAny( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].GetHwnd() );
+			List_SetItemData( hwndList, nItem, pEditNodeArr[i].GetHwnd() );
 
 			// 横幅を計算する
 			SIZE sizeExtent;
@@ -171,9 +168,9 @@ void CDlgCompare::SetData( void )
 		// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
 		::SelectObject(hDC, hFontOld);
 		::ReleaseDC( hwndList, hDC );
-		::SendMessageAny( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)(nExtent + 8), 0 );
+		List_SetHorizontalExtent( hwndList, nExtent + 8 );
 	}
-	::SendMessageAny( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
+	List_SetCurSel( hwndList, 0 );
 	TCHAR	szWork[512];
 	auto_sprintf( szWork, _T("%ts %ts"),
 		(0 < _tcslen( m_pszPath )?m_pszPath:_T("(無題)") ),
@@ -204,8 +201,8 @@ int CDlgCompare::GetData( void )
 	int				nItem;
 	EditInfo*		pfi;
 	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
-	nItem = ::SendMessageAny( hwndList, LB_GETCURSEL, 0, 0 );
-	*m_phwndCompareWnd = (HWND)::SendMessageAny( hwndList, LB_GETITEMDATA, nItem, 0 );
+	nItem = List_GetCurSel( hwndList );
+	*m_phwndCompareWnd = (HWND)List_GetItemData( hwndList, nItem );
 	/* トレイからエディタへの編集ファイル名要求通知 */
 	::SendMessageAny( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
 	pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;

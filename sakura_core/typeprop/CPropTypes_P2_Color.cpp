@@ -6,17 +6,12 @@
 */
 #include "StdAfx.h"
 #include "CPropTypes.h"
-#include "CDataProfile.h"
 #include "env/CShareData.h"
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
-//#include "io/CTextStream.h"
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
-//#include "dlg/CDlgOpenFile.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
-//#include "CDataProfile.h"
-//#include "env/CShareData_IO.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -38,7 +33,6 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
 	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
 	IDC_COMBO_SET,					HIDC_COMBO_SET_COLOR,			//強調キーワード１セット名
-//	IDC_COMBO_SET2,					HIDC_COMBO_SET2_COLOR,			//強調キーワード２セット名	del 2008/6/3 Uchi
 	IDC_EDIT_BLOCKCOMMENT_FROM,		HIDC_EDIT_BLOCKCOMMENT_FROM,	//ブロックコメント１開始
 	IDC_EDIT_BLOCKCOMMENT_TO,		HIDC_EDIT_BLOCKCOMMENT_TO,		//ブロックコメント１終了
 	IDC_EDIT_LINECOMMENT,			HIDC_EDIT_LINECOMMENT,			//行コメント１
@@ -81,108 +75,6 @@ struct {
 // 2010/4/23 Uchi Importの外出し
 bool CPropColor::Import( HWND hwndDlg )
 {
-//	/* ファイルオープンダイアログの初期化 */
-//	CDlgOpenFile	cDlgOpenFile;
-//	cDlgOpenFile.Create(
-//		m_hInstance,
-//		hwndDlg,
-//		_T("*.col"),
-//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER, // インポート用フォルダ
-//		std::vector<LPCTSTR>(),
-//		std::vector<LPCTSTR>()
-//	);
-//	TCHAR	szPath[_MAX_PATH + 1] = _T("");
-//	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//		return;
-//	}
-//
-//	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-//
-//
-//	/* 色設定Ver1か */
-//	CTextInputStream in(szPath);
-//	if(!in){
-//		ErrorMessage(hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-//		return;
-//	}
-//
-//	/* ファイル先頭 */
-//	//ヘッダ読取
-//	wstring szHeader = in.ReadLineW().c_str();
-//	//if(szHeader.length()>=2)szHeader=&szHeader.c_str()[2]; //コメントを抜く
-//	if(szHeader.length()>=2) {
-//		//コメントを抜く	コメント文字 変更対応 2008/6/28 Uchi
-//		szHeader = &szHeader.c_str()[ szHeader.c_str()[0] == _T(';') ? 1 : 2];
-//	}
-//	//比較
-//	if(wcscmp(szHeader.c_str(),LTEXT(STR_COLORDATA_HEAD3))==0){
-//		//OK
-//	}
-//	else{
-//		ErrorMessage_A( hwndDlg,
-//			"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n%ts\n\n"	//Jan. 20, 2001 JEPRO 改行を1つ取った
-//			"色設定Ver3では CI[番号] から C[名前] に変更されました。\n"
-//			"上記ファイルの設定内容を利用したい場合は、以下の修正を行ってからインポートしてください。\n\n"
-//			"・UR1.2.24.0 (00/12/04) 以降で使っていた場合は\n"
-//			"  (1) 一行目を Ver3 と書き換え、CI をすべて C に縮める\n"
-//			"  (2) (1)の後、番号を( )内の文字列に変更:\n"
-//			"      00(TXT), 01(RUL), 02(UND), 03(LNO), 04(MOD), 05(TAB), 06(ZEN), 07(CTL), 08(EOL),\n"
-//			"      09(RAP), 10(EOF), 11(FND), 12(KW1), 13(KW), 14(CMT), 15(SQT), 16(WQT), 17(URL)\n\n"
-//			"・ur3β10 (00/09/28)～UR1.2.23.0 (00/11/29) で使っていた場合は\n"
-//			"  (3) (1)の後、00-12 までは(2)と同じ  13(CMT), 14(SQT), 15(WQT), 16(URL)\n\n"
-//			"・ur3β9 (00/09/26) 以前で使っていた場合は\n"
-//			"  (4) (1)の後、(2)と同様:\n"
-//			"      00(TXT), 01(LNO), 02(EOL), 03(TAB), 04(ZEN), 05(EOF), 06(KW1), 07(CMT), 08(SQT),\n"
-//			"      09(WQT), 10(UND), 11(RAP), 12(CTL), 13(URL), 14(FND), 15(MOD), 16(RUL)\n\n"
-//			, szPath
-//		);
-//		in.Close();
-//		return;
-//	}
-//	in.Close();
-//
-//
-//	CDataProfile	cProfile;
-//	cProfile.SetReadingMode();
-//
-//	int				nColorInfoArrNum;						/* キー割り当て表の有効データ数 */
-//	ColorInfo		ColorInfoArr[64];
-//
-//	/* 色設定Ver2 */
-//	nColorInfoArrNum = COLORIDX_LAST;
-//	if( !cProfile.ReadProfile( szPath ) ){
-//		/* 設定ファイルが存在しない */
-//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-//		return;
-//	}
-//	/* 色設定Ver2 */
-//	nColorInfoArrNum = COLORIDX_LAST;
-//	if( !cProfile.ReadProfile( szPath ) ){
-//		/* 設定ファイルが存在しない */
-//		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%ts"), szPath );
-//		return;
-//	}
-//	/* 色設定 I/O */
-//	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
-//		ColorInfoArr[i] = m_Types.m_ColorInfoArr[i];
-//		_tcscpy( ColorInfoArr[i].m_szName, m_Types.m_ColorInfoArr[i].m_szName );
-//	}
-//	CShareData_IO::IO_ColorSet( &cProfile, LTEXT(STR_COLORDATA_SECTION), ColorInfoArr );
-//
-//
-////complete:;
-//	/* データのコピー */
-//	m_Types.m_nColorInfoArrNum = nColorInfoArrNum;
-//	for( int i = 0; i < m_Types.m_nColorInfoArrNum; ++i ){
-//		m_Types.m_ColorInfoArr[i] =  ColorInfoArr[i];
-//		_tcscpy( m_Types.m_ColorInfoArr[i].m_szName, ColorInfoArr[i].m_szName );
-//	}
-//	/* ダイアログデータの設定 p5 */
-//	SetData_Color( hwndDlg );
-
 	ColorInfo		ColorInfoArr[64];
 	CImpExpColors	cImpExpColors( ColorInfoArr );
 
@@ -215,32 +107,6 @@ bool CPropColor::Import( HWND hwndDlg )
 // 2010/4/23 Uchi Exportの外出し
 bool CPropColor::Export( HWND hwndDlg )
 {
-//	/* ファイルオープンダイアログの初期化 */
-//	CDlgOpenFile	cDlgOpenFile;
-//	TCHAR			szPath[_MAX_PATH + 1] = _T("");
-//	cDlgOpenFile.Create(
-//		m_hInstance,
-//		hwndDlg,
-//		_T("*.col"),
-//		GetDllShareData().m_sHistory.m_szIMPORTFOLDER, // インポート用フォルダ
-//		std::vector<LPCTSTR>(),
-//		std::vector<LPCTSTR>()
-//	);
-//	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
-//		return;
-//	}
-//
-//	/* ファイルのフルパスをフォルダとファイル名に分割 */
-//	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-//	::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, NULL );
-//	_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
-//
-//	/* 色設定 I/O */
-//	CDataProfile	cProfile;
-//	cProfile.SetWritingMode();
-//	CShareData_IO::IO_ColorSet( &cProfile, LTEXT(STR_COLORDATA_SECTION), m_Types.m_ColorInfoArr );
-//	cProfile.WriteProfile( szPath, LTEXT(STR_COLORDATA_HEAD3) );	//Jan. 15, 2001 Stonee
-
 	CImpExpColors	cImpExpColors( m_Types.m_ColorInfoArr);
 
 	// エクスポート
@@ -270,10 +136,10 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 		poMouse.x = xPos;
 		poMouse.y = yPos;
-		nItemNum = ::SendMessageAny( hwnd, LB_GETCOUNT, 0, 0 );
+		nItemNum = List_GetCount( hwnd );
 		nIndex = -1;
 		for( i = 0; i < nItemNum; ++i ){
-			::SendMessageAny( hwnd, LB_GETITEMRECT, i, (LPARAM)&rcItem );
+			List_GetItemRect( hwnd, i, &rcItem );
 			if( ::PtInRect( &rcItem, poMouse ) ){
 //				MYTRACE_A( "hit at i==%d\n", i );
 //				MYTRACE_A( "\n" );
@@ -290,9 +156,9 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			break;
 		}
 		if( 18 <= xPos && xPos <= rcItem.right - 29 ){	// 2009.02.22 ryoji 有効範囲の制限追加
-			::SendMessageAny( hwnd, LB_SETCURSEL, nIndex, 0 );
+			List_SetCurSel( hwnd, nIndex );
 			::SendMessageCmd( ::GetParent( hwnd ), WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwnd );
-			pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
+			pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
 			/* 下線 */
 			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			{
@@ -313,7 +179,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			break;
 		}
 		if( 18 <= xPos && xPos <= rcItem.right - 29 ){	// 2009.02.22 ryoji 有効範囲の制限追加
-			pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
+			pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
 			/* 太字で表示 */
 			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BOLD) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			{
@@ -332,7 +198,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		if( -1 == nIndex ){
 			break;
 		}
-		pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
+		pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
 		/* 色分け/表示 する */
 		if( 2 <= xPos && xPos <= 16
 			&& ( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_FORCE_DISP) )	// 2006.12.18 ryoji フラグ利用で簡素化
@@ -344,7 +210,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 				pColorInfo->m_bDisp = true;
 			}
 			if( COLORIDX_GYOU == nIndex ){
-				pColorInfo = (ColorInfo*)::SendMessageAny( hwnd, LB_GETITEMDATA, nIndex, 0 );
+				pColorInfo = (ColorInfo*)List_GetItemData( hwnd, nIndex );
 
 			}
 
@@ -418,7 +284,7 @@ INT_PTR CPropColor::DispatchEvent(
 		SetData( hwndDlg );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), EM_LIMITTEXT, (WPARAM)1, 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), 1 );
 
 
 		/* 色リストをフック */
@@ -436,7 +302,7 @@ INT_PTR CPropColor::DispatchEvent(
 		if( hwndListColor == hwndCtl ){
 			switch( wNotifyCode ){
 			case LBN_SELCHANGE:
-				nIndex = ::SendMessageAny( hwndListColor, LB_GETCURSEL, 0, 0 );
+				nIndex = List_GetCurSel( hwndListColor );
 				m_nCurrentColorType = nIndex;		/* 現在選択されている色タイプ */
 
 				{
@@ -514,7 +380,7 @@ INT_PTR CPropColor::DispatchEvent(
 					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 				}
 				/* 現在選択されている色タイプ */
-				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
+				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
 			case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
 				/* 色選択ダイアログ */
@@ -522,7 +388,7 @@ INT_PTR CPropColor::DispatchEvent(
 					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 				}
 				/* 現在選択されている色タイプ */
-				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
+				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
 			case IDC_CHECK_DISP:	/* 色分け/表示 をする */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP ) ){
@@ -531,7 +397,7 @@ INT_PTR CPropColor::DispatchEvent(
 					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = false;
 				}
 				/* 現在選択されている色タイプ */
-				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
+				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 			case IDC_CHECK_FAT:	/* 太字か */
@@ -541,7 +407,7 @@ INT_PTR CPropColor::DispatchEvent(
 					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont = false;
 				}
 				/* 現在選択されている色タイプ */
-				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
+				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
 			case IDC_CHECK_UNDERLINE:	/* 下線を表示 */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_UNDERLINE ) ){
@@ -550,7 +416,7 @@ INT_PTR CPropColor::DispatchEvent(
 					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine = false;
 				}
 				/* 現在選択されている色タイプ */
-				::SendMessageAny( hwndListColor, LB_SETCURSEL, m_nCurrentColorType, 0 );
+				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
 
 			case IDC_BUTTON_IMPORT:	/* 色の設定をインポート */
@@ -583,7 +449,7 @@ INT_PTR CPropColor::DispatchEvent(
 					CDlgKeywordSelect cDlgKeywordSelect;
 					//強調キーワード1を取得する。
 					HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-					int nIdx = ::SendMessageAny( hwndCombo, CB_GETCURSEL, 0, 0 );
+					int nIdx = Combo_GetCurSel( hwndCombo );
 					if( CB_ERR == nIdx || 0 == nIdx ){
 						m_nSet[ 0 ] = -1;
 					}else{
@@ -593,9 +459,9 @@ INT_PTR CPropColor::DispatchEvent(
 					RearrangeKeywordSet( hwndDlg );	//	Jan. 23, 2005 genta キーワードセット再配置
 					//強調キーワード1を反映する。
 					if( -1 == m_nSet[ 0 ] ){
-						::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)0, 0 );
+						Combo_SetCurSel( hwndCombo, 0 );
 					}else{
-						::SendMessageAny( hwndCombo, CB_SETCURSEL, (WPARAM)m_nSet[ 0 ] + 1, 0 );
+						Combo_SetCurSel( hwndCombo, m_nSet[ 0 ] + 1 );
 					}
 				}
 				break;
@@ -738,14 +604,14 @@ void CPropColor::SetData( HWND hwndDlg )
 	m_nCurrentColorType = 0;	/* 現在選択されている色タイプ */
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */	//@@@ 2002.09.22 YAZAKI
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT )		, EM_LIMITTEXT, (WPARAM)( COMMENT_DELIMITER_BUFFERSIZE - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT2 )		, EM_LIMITTEXT, (WPARAM)( COMMENT_DELIMITER_BUFFERSIZE - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT3 )		, EM_LIMITTEXT, (WPARAM)( COMMENT_DELIMITER_BUFFERSIZE - 1 ), 0 );	//Jun. 01, 2001 JEPRO 追加
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM )	, EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO )	, EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT )		, COMMENT_DELIMITER_BUFFERSIZE - 1 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT2 )		, COMMENT_DELIMITER_BUFFERSIZE - 1 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINECOMMENT3 )		, COMMENT_DELIMITER_BUFFERSIZE - 1 );	//Jun. 01, 2001 JEPRO 追加
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM )	, BLOCKCOMMENT_BUFFERSIZE - 1 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO )	, BLOCKCOMMENT_BUFFERSIZE - 1 );
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2 ), EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2 )	, EM_LIMITTEXT, (WPARAM)( BLOCKCOMMENT_BUFFERSIZE - 1 ), 0 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2 ), BLOCKCOMMENT_BUFFERSIZE - 1 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2 )	, BLOCKCOMMENT_BUFFERSIZE - 1 );
 //#endif
 
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_cBlockComments[0].getBlockCommentFrom() );	/* ブロックコメントデリミタ(From) */
@@ -795,7 +661,7 @@ void CPropColor::SetData( HWND hwndDlg )
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-	::SendMessageAny( hwndWork, CB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */
+	Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
 	/* 一行目は空白 */
 	Combo_AddString( hwndWork, L" " );
 	//	Mar. 31, 2003 genta KeyWordSetMgrをポインタに
@@ -805,10 +671,10 @@ void CPropColor::SetData( HWND hwndDlg )
 		}
 		if( -1 == m_Types.m_nKeyWordSetIdx[0] ){
 			/* セット名コンボボックスのデフォルト選択 */
-			::SendMessageAny( hwndWork, CB_SETCURSEL, (WPARAM)0, 0 );
+			Combo_SetCurSel( hwndWork, 0 );
 		}else{
 			/* セット名コンボボックスのデフォルト選択 */
-			::SendMessageAny( hwndWork, CB_SETCURSEL, (WPARAM)m_Types.m_nKeyWordSetIdx[0] + 1, 0 );
+			Combo_SetCurSel( hwndWork, m_Types.m_nKeyWordSetIdx[0] + 1 );
 		}
 	}
 
@@ -819,13 +685,13 @@ void CPropColor::SetData( HWND hwndDlg )
 
 	/* 色をつける文字種類のリスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_COLORS );
-	::SendMessageAny( hwndWork, LB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */
+	List_ResetContent( hwndWork );  /* リストを空にする */
 	for( i = 0; i < COLORIDX_LAST; ++i ){
 		nItem = ::List_AddString( hwndWork, m_Types.m_ColorInfoArr[i].m_szName );
-		::SendMessageAny( hwndWork, LB_SETITEMDATA, nItem, (LPARAM)&m_Types.m_ColorInfoArr[i] );
+		List_SetItemData( hwndWork, nItem, &m_Types.m_ColorInfoArr[i] );
 	}
 	/* 現在選択されている色タイプ */
-	::SendMessageAny( hwndWork, LB_SETCURSEL, m_nCurrentColorType, 0 );
+	List_SetCurSel( hwndWork, m_nCurrentColorType );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwndWork );
 
 	/* 行番号区切り  0=なし 1=縦線 2=任意 */
@@ -888,7 +754,7 @@ void CPropColor::SetData( HWND hwndDlg )
 			offset += auto_sprintf( &szVertLine[offset], L"%d", nXCol );
 		}
 	}
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_VERTLINE ), EM_LIMITTEXT, (WPARAM)(MAX_VERTLINES * 15), 0 );
+	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_VERTLINE ), MAX_VERTLINES * 15 );
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_VERTLINE, szVertLine );
 	// to here 2005.11.30 Moca 指定位置縦線の設定
 	return;
@@ -963,7 +829,7 @@ int CPropColor::GetData( HWND hwndDlg )
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
-	nIdx = ::SendMessageAny( hwndWork, CB_GETCURSEL, 0, 0 );
+	nIdx = Combo_GetCurSel( hwndWork );
 	if( CB_ERR == nIdx ||
 		0 == nIdx ){
 		m_Types.m_nKeyWordSetIdx[0] = -1;

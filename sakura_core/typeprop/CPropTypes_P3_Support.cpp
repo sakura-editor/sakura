@@ -8,7 +8,7 @@
 #include "dlg/CDlgOpenFile.h"
 #include "util/module.h"
 #include "util/shell.h"
-//#include "util/file.h" // _IS_REL_PATH
+#include "util/file.h" // _IS_REL_PATH
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -51,9 +51,7 @@ INT_PTR CPropSupport::DispatchEvent(
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* 入力補完 単語ファイル */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-		/* キーワードヘルプ 辞書ファイル *///	del 2008/7/4 Uchi
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), _MAX_PATH - 1 );
 
 		return TRUE;
 	case WM_COMMAND:
@@ -238,7 +236,7 @@ void CPropSupport::SetData( HWND hwndDlg )
 		if( i == _countof(aeCodeType) ){
 			i = 0;
 		}
-		SendMessageAny( hCombo, CB_SETCURSEL, (WPARAM)i, 0 );
+		Combo_SetCurSel( hCombo, i );
 	}
 }
 
@@ -288,7 +286,7 @@ int CPropSupport::GetData( HWND hwndDlg )
 
 		// m_Types.eDefaultCodetype を設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
-		i = ::SendMessageAny( hCombo, CB_GETCURSEL, 0, 0 );
+		i = Combo_GetCurSel( hCombo );
 		if( CB_ERR != i ){
 			m_Types.m_eDefaultCodetype = aeCodeType[i];
 		}

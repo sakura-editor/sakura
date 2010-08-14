@@ -18,7 +18,6 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
 #include "env/DLLSHAREDATA.h" // CFormatManager.hより前に必要
 #include "env/CFormatManager.h"
 #include "sakura_rc.h"
@@ -141,16 +140,16 @@ INT_PTR CPropFormat::DispatchEvent(
 		ChangeTimeExample( hwndDlg );
 
 		/* 見出し記号 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szMidashiKigou) - 1 ), 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), _countof(m_Common.m_sFormat.m_szMidashiKigou) - 1 );
 
 		/* 引用符 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szInyouKigou) - 1 ), 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INYOUKIGOU ), _countof(m_Common.m_sFormat.m_szInyouKigou) - 1 );
 
 		/* 日付書式 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szDateFormat) - 1 ), 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_DFORM ), _countof(m_Common.m_sFormat.m_szDateFormat) - 1 );
 
 		/* 時刻書式 */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), EM_LIMITTEXT, (WPARAM)(_countof(m_Common.m_sFormat.m_szTimeFormat) - 1 ), 0 );
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_TFORM ), _countof(m_Common.m_sFormat.m_szTimeFormat) - 1 );
 
 
 

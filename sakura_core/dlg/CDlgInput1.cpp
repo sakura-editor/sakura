@@ -13,15 +13,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
-#include "sakura_rc.h"
+#include "StdAfx.h"
 #include "dlg/CDlgInput1.h"
-#include "debug/Debug.h"
 #include "CEditApp.h"
 #include "util/shell.h"
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 // 入力 CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//13000
 	IDOK,					HIDOK_DLG1,
 	IDCANCEL,				HIDCANCEL_DLG1,
@@ -147,7 +146,7 @@ INT_PTR CDlgInput1::DispatchEvent(
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		::SetWindowText( hwndDlg, m_pszTitle );	/* ダイアログタイトル */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), EM_LIMITTEXT, m_nMaxTextLen, 0 );	/* 入力サイズ上限 */
+		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_INPUT1 ), m_nMaxTextLen );	/* 入力サイズ上限 */
 		DlgItem_SetText( hwndDlg, IDC_EDIT_INPUT1, m_cmemText.GetStringPtr() );	/* テキスト */
 		::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_MSG ), m_pszMessage );	/* メッセージ */
 
