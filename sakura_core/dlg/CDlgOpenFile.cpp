@@ -429,7 +429,7 @@ UINT_PTR CALLBACK OFNHookProc(
 //			MYTRACE_A( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
 			{
 				wchar_t szFolder[_MAX_PATH];
-				lRes = CommDlg_OpenSave_GetFolderPath( hwndOpenDlg, _countof( szFolder ), szFolder );
+				lRes = CommDlg_OpenSave_GetFolderPath( hwndOpenDlg, szFolder, _countof( szFolder ) );
 			}
 //			MYTRACE_A( "\tlRes=%d\tszFolder=[%ls]\n", lRes, szFolder );
 
