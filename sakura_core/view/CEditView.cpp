@@ -2098,7 +2098,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 
 	if( bDraw
 	 && m_bDrawSWITCH
-	 && GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
+	 && m_nOldCursorLineX >= GetTextArea().GetAreaLeft() - 1	// 2010.08.10 ryoji テキストと行番号の隙間が半角文字幅より大きいと隙間位置にあるカーソルの縦線が描画される問題修正
 	 && m_nOldCursorLineX <= GetTextArea().GetAreaRight()
 	 && m_bDoing_UndoRedo == FALSE
 	){
