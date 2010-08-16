@@ -1442,7 +1442,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
 			if( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 			{
-				nScrollPos = UpDown_GetPos( hwndUpDown );
+				nScrollPos = LOWORD( UpDown_GetPos( hwndUpDown ) );
 
 				// 現在位置 nScrollPos と画面表示とを一致させる
 				::SendMessageAny( m_hwndTab, WM_HSCROLL, MAKEWPARAM(SB_THUMBPOSITION, LOWORD( nScrollPos ) ), (LPARAM)NULL );	// 設定位置にタブをスクロール
@@ -1466,7 +1466,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 				// 自タブアイテムを強制的に可視位置にするために、
 				// 自タブアイテム選択前に一時的に画面左端のタブアイテムを選択する
 				hwndUpDown = ::FindWindowEx( m_hwndTab, NULL, UPDOWN_CLASS, 0 );	// タブ内の Up-Down コントロール
-				nScrollPos = ( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )? UpDown_GetPos( hwndUpDown ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
+				nScrollPos = ( hwndUpDown != NULL && ::IsWindowVisible( hwndUpDown ) )? LOWORD( UpDown_GetPos( hwndUpDown ) ): 0;	// 2007.09.24 ryoji hwndUpDown可視の条件追加
 				TabCtrl_SetCurSel( m_hwndTab, nScrollPos );
 				TabCtrl_SetCurSel( m_hwndTab, nIndex );
 
