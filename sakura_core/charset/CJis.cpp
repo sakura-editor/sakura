@@ -451,6 +451,10 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 		pw += 3;
 	}
 
+	if( pbError ){
+		*pbError = berror;
+	}
+
 	return pw - reinterpret_cast<unsigned char*>(pDst);
 }
 
