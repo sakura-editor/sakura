@@ -788,7 +788,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_LEFT ),   NULL != TreeView_GetParent( hwndTreeRes, nIdxMenu ) );
 		}
 		if (LB_ERR == nIdxFunc ||
-		  ( LB_ERR != nIdxFIdx && LB_ERR != nIdxFunc &&
+		  ( CB_ERR != nIdxFIdx && LB_ERR != nIdxFunc &&
 		    (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) == 0 && nIdxFIdx != nSpecialFuncsNum))) {
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT_A ), FALSE );
