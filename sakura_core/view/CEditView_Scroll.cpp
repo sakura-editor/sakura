@@ -470,7 +470,7 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 			// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
 			if( m_nOldCursorLineX == GetTextArea().GetAreaLeft() - 1 ){
 				RECT rcClip3;
-				rcClip3.left = m_nOldCursorLineX;
+				rcClip3.left = m_nOldCursorLineX - (m_nOldCursorVLineWidth - 1);
 				rcClip3.right = m_nOldCursorLineX + 1;
 				rcClip3.top  = GetTextArea().GetAreaTop();
 				rcClip3.bottom = GetTextArea().GetAreaBottom();

@@ -188,6 +188,10 @@ BOOL CEditView::Create(
 	m_nCompatBMPWidth = -1;
 	m_nCompatBMPHeight = -1;
 	// To Here 2007.09.09 Moca
+	
+	m_nOldUnderLineY = -1;
+	m_nOldCursorLineX = -1;
+	m_nOldCursorVLineWidth = 1;
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	//	2007.08.12 genta 初期化にShareDataの値が必要になった
@@ -2071,6 +2075,14 @@ bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bCo
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      アンダーライン                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+/*! カーソルの縦線の座標で作画範囲か
+	@2010.08.21 関数に分離。太線対応
+*/
+inline bool CEditView::IsDrawCursorVLinePos( int posX ){
+	return posX >= GetTextArea().GetAreaLeft() - 2	// 2010.08.10 ryoji テキストと行番号の隙間が半角文字幅より大きいと隙間位置にあるカーソルの縦線が描画される問題修正
+		&& posX >  GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace // 隙間(+1)がないときは線を引かない判定
+		&& posX <= GetTextArea().GetAreaRight();
+}
 
 /* カーソル行アンダーラインのON */
 void CEditView::CaretUnderLineON( bool bDraw )
@@ -2081,61 +2093,61 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		return;
 	}
 
+	m_nOldCursorLineX = -1;
+	m_nOldUnderLineY  = -1;
 	if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
+	
+	int nCursorVLineX = -1;
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	if( bCursorVLine ){
 		// カーソル位置縦線。-1してキャレットの左に来るように。
-		m_nOldCursorLineX = GetTextArea().GetAreaLeft() + (Int)(GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol())
+		nCursorVLineX = GetTextArea().GetAreaLeft() + (Int)(GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol())
 			* (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace + GetTextMetrics().GetHankakuWidth() ) - 1;
-		if( -1 == m_nOldCursorLineX ){
-			m_nOldCursorLineX = -2;
-		}
-	}else{
-		m_nOldCursorLineX = -1;
 	}
 
 	if( bDraw
 	 && m_bDrawSWITCH
-	 && m_nOldCursorLineX >= GetTextArea().GetAreaLeft() - 1	// 2010.08.10 ryoji テキストと行番号の隙間が半角文字幅より大きいと隙間位置にあるカーソルの縦線が描画される問題修正
-	 && m_nOldCursorLineX <= GetTextArea().GetAreaRight()
+	 && IsDrawCursorVLinePos(nCursorVLineX)
 	 && m_bDoing_UndoRedo == FALSE
 	){
+		m_nOldCursorLineX = nCursorVLineX;
 		// カーソル位置縦線の描画
 		// アンダーラインと縦線の交点で、下線が上になるように先に縦線を引く。
-		int     nROP_Old = 0;
 		HDC		hdc = ::GetDC( GetHwnd() );
 		{
 			CGraphics gr(hdc);
 			gr.SetPen( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
 			::MoveToEx( gr, m_nOldCursorLineX, GetTextArea().GetAreaTop(), NULL );
 			::LineTo(   gr, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
+			int nBoldX = m_nOldCursorLineX - 1;
 			// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
 			if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont &&
-				GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
-				::MoveToEx( gr, m_nOldCursorLineX - 1, GetTextArea().GetAreaTop(), NULL );
-				::LineTo(   gr, m_nOldCursorLineX - 1, GetTextArea().GetAreaBottom() );
+				IsDrawCursorVLinePos(nBoldX) ){
+				::MoveToEx( gr, nBoldX, GetTextArea().GetAreaTop(), NULL );
+				::LineTo(   gr, nBoldX, GetTextArea().GetAreaBottom() );
+				m_nOldCursorVLineWidth = 2;
+			}else{
+				m_nOldCursorVLineWidth = 1;
 			}
 		}	// ReleaseDC の前に gr デストラクト
 		::ReleaseDC( GetHwnd(), hdc );
 	}
+	
+	int nUnderLineY = -1;
 	if( bUnderLine ){
-		m_nOldUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
+		nUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
 			 * (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace + GetTextMetrics().GetHankakuHeight()) + GetTextMetrics().GetHankakuHeight();
-		if( -1 == m_nOldUnderLineY ){
-			m_nOldUnderLineY = -2;
-		}
-	}else{
-		m_nOldUnderLineY = -1;
 	}
 	// To Here 2007.09.09 Moca
 
 	if( bDraw
 	 && GetDrawSwitch()
-	 && m_nOldUnderLineY >=GetTextArea().GetAreaTop()
+	 && nUnderLineY >= GetTextArea().GetAreaTop()
 	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
 	){
+		m_nOldUnderLineY = nUnderLineY;
 //		MYTRACE_A( "★カーソル行アンダーラインの描画\n" );
 		/* ★カーソル行アンダーラインの描画 */
 		HDC		hdc = ::GetDC( GetHwnd() );
@@ -2204,18 +2216,14 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 	if( -1 != m_nOldCursorLineX ){
 		if( bDraw
 		 && m_bDrawSWITCH
-		 && GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
-		 && m_nOldCursorLineX <= GetTextArea().GetAreaRight()
+		 && IsDrawCursorVLinePos( m_nOldCursorLineX )
 		 && m_bDoing_UndoRedo == FALSE
 		){
 			PAINTSTRUCT ps;
-			ps.rcPaint.left = m_nOldCursorLineX;
+			ps.rcPaint.left = m_nOldCursorLineX - (m_nOldCursorVLineWidth - 1);
 			ps.rcPaint.right = m_nOldCursorLineX + 1;
 			ps.rcPaint.top = GetTextArea().GetAreaTop();
 			ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
-			if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont ){
-				ps.rcPaint.left += -1;
-			}
 			HDC hdc = ::GetDC( GetHwnd() );
 			GetCaret().m_cUnderLine.Lock();
 			//	不本意ながら選択情報をバックアップ。
