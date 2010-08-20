@@ -242,7 +242,7 @@ void CMainToolBar::CreateToolBar( void )
 						tbi.cx     = DpiScaleX(160);	//ボックスの幅	// 2009.10.01 ryoji 高DPI対応スケーリング
 						Toolbar_SetButtonInfo( m_hwndToolBar, tbb.idCommand, &tbi );
 
-						//サイズを取得する
+						//位置とサイズを取得する
 						rc.right = rc.left = rc.top = rc.bottom = 0;
 						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 
@@ -404,6 +404,10 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 	case CDDS_ITEMPREPAINT:
 		//	面倒くさいので，枠はToolbarに描いてもらう
 		//	アイコンが登録されていないので中身は何も描かれない
+		// 2010.07.15 Moca 検索(ボックス)なら枠を描かない
+		if( pnmh->dwItemSpec == F_SEARCH_BOX ){
+			return CDRF_SKIPDEFAULT;
+		}
 		return CDRF_NOTIFYPOSTPAINT;
 	
 	case CDDS_ITEMPOSTPAINT:
