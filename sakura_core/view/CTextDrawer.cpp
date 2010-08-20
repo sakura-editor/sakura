@@ -397,6 +397,7 @@ void CTextDrawer::DispLineNumber(
 		//•`‰æ•¶Žš—ñ
 		wchar_t szLineNum[18];
 		int nLineCols;
+		int nLineNumCols;
 		{
 			/* s”Ô†‚Ì•\Ž¦ FALSE=Ü‚è•Ô‚µ’PˆÊ^TRUE=‰üs’PˆÊ */
 			if( pTypes->m_bLineNumIsCRLF ){
@@ -411,6 +412,7 @@ void CTextDrawer::DispLineNumber(
 				_itow( (Int)nLineNum + 1, szLineNum, 10 );
 			}
 			nLineCols = wcslen( szLineNum );
+			nLineNumCols = nLineCols; // 2010.08.17 Moca ˆÊ’uŒˆ’è‚És”Ô†‹æØ‚è‚ÍŠÜ‚ß‚È‚¢
 
 			/* s”Ô†‹æØ‚è 0=‚È‚µ 1=cü 2=”CˆÓ */
 			if( 2 == pTypes->m_nLineTermType ){
@@ -421,7 +423,7 @@ void CTextDrawer::DispLineNumber(
 		}
 
 		//	Sep. 23, 2002 genta
-		int drawNumTop = (pView->GetTextArea().m_nViewAlignLeftCols - nLineCols - 1) * ( nCharWidth );
+		int drawNumTop = (pView->GetTextArea().m_nViewAlignLeftCols - nLineNumCols - 1) * ( nCharWidth );
 		::ExtTextOutW_AnyBuild( gr,
 			drawNumTop,
 			y,
