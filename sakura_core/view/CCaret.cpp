@@ -277,7 +277,7 @@ CLayoutInt CCaret::MoveCursor(
 				// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
 				if( nScrollColNum != 0 && m_pEditView->m_nOldCursorLineX == m_pEditView->GetTextArea().GetAreaLeft() - 1 ){
 					RECT rcClip3;
-					rcClip3.left  = m_pEditView->m_nOldCursorLineX;
+					rcClip3.left  = m_pEditView->m_nOldCursorLineX - (m_pEditView->m_nOldCursorVLineWidth - 1);
 					rcClip3.right = m_pEditView->m_nOldCursorLineX + 1;
 					rcClip3.top   = m_pEditView->GetTextArea().GetAreaTop();
 					rcClip3.bottom = m_pEditView->GetTextArea().GetAreaBottom();

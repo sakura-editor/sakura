@@ -247,6 +247,7 @@ public:
 	{
 		m_bDrawSWITCH = b;
 	}
+	bool IsDrawCursorVLinePos( int );
 
 
 
@@ -589,7 +590,7 @@ public:
 	COLORREF		m_crBack;				/* テキストの背景色 */			// 2006.12.07 ryoji
 	int				m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
 	int				m_nOldCursorLineX;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
-	bool			m_bUnderLineON;
+	int				m_nOldCursorVLineWidth;	// カーソル位置縦線の太さ(px)
 
 public:
 	//画面バッファ
