@@ -22,7 +22,7 @@ namespace ApiWrap
 	//                  プログレスバー コントロール                //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline int Progress_SetRange(HWND hwndCtl, int minimum, int maximum)	{ return (int)(DWORD)::SendMessage(hwndCtl, PBM_SETRANGE, 0L, MAKELPARAM(minimum, maximum)); }
-	inline int Progress_SetPos(HWND hwndCtl, int position)					{ return (int)(DWORD)::PostMessage(hwndCtl, PBM_SETPOS, (WPARAM)position, 0L); }
+	inline int Progress_SetPos(HWND hwndCtl, int position)					{ return (int)(DWORD)::SendMessage(hwndCtl, PBM_SETPOS, (WPARAM)position, 0L); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      Up-Down コントロール                   //
