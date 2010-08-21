@@ -21,6 +21,7 @@ public:
 	void DrawRulerBg(CGraphics& gr);
 
 	void SetRedrawFlag(){ m_bRedrawRuler = true; }
+	bool GetRedrawFlag(){ return m_bRedrawRuler; }
 
 private:
 	//! ルーラーのキャレットのみ描画 2002.02.25 Add By KK
