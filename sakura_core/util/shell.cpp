@@ -54,7 +54,7 @@ BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TC
 	bi.iImage = 0;
 	// アイテムＩＤリストを返す
 	// ITEMIDLISTはアイテムの一意を表す構造体
-	ITEMIDLIST* pList = ::SHBrowseForFolder(&bi);
+	LPITEMIDLIST pList = ::SHBrowseForFolder(&bi);
 	if( NULL != pList ){
 		// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
 		bRes = ::SHGetPathFromIDList( pList, strFolderName );
