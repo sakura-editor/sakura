@@ -2093,8 +2093,10 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		return;
 	}
 
-	m_nOldCursorLineX = -1;
-	m_nOldUnderLineY  = -1;
+//	2010.08.24 下線・縦線が残るバグの修正
+//	ON(作画)→ON(未作画)のパターンなどで、画面上に線が残ったままになるので座標をクリアしてはいけない
+//	m_nOldCursorLineX = -1;
+//	m_nOldUnderLineY  = -1;
 	if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
@@ -2108,7 +2110,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	}
 
 	if( bDraw
-	 && m_bDrawSWITCH
+	 && GetDrawSwitch()
 	 && IsDrawCursorVLinePos(nCursorVLineX)
 	 && m_bDoing_UndoRedo == FALSE
 	){
@@ -2215,7 +2217,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 	// カーソル位置縦線
 	if( -1 != m_nOldCursorLineX ){
 		if( bDraw
-		 && m_bDrawSWITCH
+		 && GetDrawSwitch()
 		 && IsDrawCursorVLinePos( m_nOldCursorLineX )
 		 && m_bDoing_UndoRedo == FALSE
 		){
