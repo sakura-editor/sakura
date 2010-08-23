@@ -2394,18 +2394,14 @@ void CViewCommander::Command_PASTE( void )
 		}
 	}
 	if( bBox ){
-		//改行までを抜き出す pszText -> szPaste
+		//改行までを抜き出す
 		for( i = 0; i < nTextLen; i++  ){
 			if( pszText[i] == WCODE::CR || pszText[i] == WCODE::LF ){
 				break;
 			}
 		}
-		wchar_t szPaste[1024];
-		wmemcpy( szPaste, pszText, i );
-		szPaste[i] = L'\0';
-
-		//szPasteを挿入
-		Command_INDENT( szPaste, CLogicInt(i) );
+		// 2010.08.23 Moca バッファオーバーランの修正。szPaste[1024]は使わない
+		Command_INDENT( pszText, CLogicInt(i) );
 	}
 	else{
 		GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
