@@ -11,9 +11,6 @@
 #include "plugin/CPluginManager.h"		// for plugin 2010/6/24 Uchi
 #include "CMenuDrawer.h"
 
-// 常駐時仮設定用		// 2010/7/4 Uchi
-static CMenuDrawer*	pcMenuDrawer = NULL;
-
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
 {
@@ -74,7 +71,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	}
 //	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
-	pcMenuDrawer = new CMenuDrawer;			// 2010/7/4 Uchi
+	CMenuDrawer* pcMenuDrawer = new CMenuDrawer; // 2010/7/4 Uchi
 
 	// Feb. 12, 2006 D.S.Koba
 	ShareData_IO_Mru( cProfile );
@@ -84,17 +81,17 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	ShareData_IO_Cmd( cProfile );
 	ShareData_IO_Nickname( cProfile );
 	ShareData_IO_Common( cProfile );
-	ShareData_IO_Plugin( cProfile );		// Move here	2010/6/24 Uchi
-	ShareData_IO_Toolbar( cProfile );
-	ShareData_IO_CustMenu( cProfile, GetDllShareData().m_Common.m_sCustomMenu, false );		// add Parameter 2008/5/24
+	ShareData_IO_Plugin( cProfile, pcMenuDrawer );		// Move here	2010/6/24 Uchi
+	ShareData_IO_Toolbar( cProfile, pcMenuDrawer );
+	ShareData_IO_CustMenu( cProfile );
 	ShareData_IO_Font( cProfile );
-	ShareData_IO_KeyBind( cProfile, GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum, GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr, false );	// add Parameter 2008/5/24
+	ShareData_IO_KeyBind( cProfile );
 	ShareData_IO_Print( cProfile );
 	ShareData_IO_Types( cProfile );
 	ShareData_IO_KeyWords( cProfile );
 	ShareData_IO_Macro( cProfile );
 	ShareData_IO_Statusbar( cProfile );		// 2008/6/21 Uchi
-	ShareData_IO_MainMenu( cProfile, GetDllShareData().m_Common.m_sMainMenu, false );		// 2010/5/15 Uchi
+	ShareData_IO_MainMenu( cProfile );		// 2010/5/15 Uchi
 	ShareData_IO_Other( cProfile );
 
 	delete pcMenuDrawer;					// 2010/7/4 Uchi
@@ -750,7 +747,7 @@ bool GetPlugCmdInfoByFuncCode(
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。読み込み時の初期化を修正
 */
-void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile )
+void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
@@ -821,21 +818,29 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile )
 	@brief 共有データのCustMenuセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
+	@date 2010.08.21 Moca 旧ShareData_IO_CustMenuをIO_CustMenuに変更
+*/
+void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile )
+{
+	IO_CustMenu( cProfile, GetDllShareData().m_Common.m_sCustomMenu, false );
+}
+
+/*!
+	@brief CustMenuの入出力
+	@param[in,out]	cProfile	INIファイル入出力クラス
+	@param[in,out]	menu	入出力対象
+	@param	bOutCmdName	出力時にマクロ名で出力
+
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 */
-void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName)
+void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMenu& menu, bool bOutCmdName)
 {
-	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = LTEXT("CustMenu");
 	int		i, j;
 	WCHAR	szKeyName[64];
 	wchar_t	szFuncName[1024];
-	wchar_t	szFuncNameJapanese[256];
 	EFunctionCode n;
-
-	//#################################
-//	CommonSetting_CustomMenu& menu = pShare->m_Common.m_sCustomMenu;
 
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCMN[%02d]"), i );
@@ -858,7 +863,7 @@ void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting
 					n = (EFunctionCode)auto_atol(szFuncName);
 				}
 				else {
-					n = CSMacroMgr::GetFuncInfoByName(0, szFuncName, szFuncNameJapanese);
+					n = CSMacroMgr::GetFuncInfoByName(0, szFuncName, NULL);
 				}
 				if ( n == F_INVALID ) {
 					n = F_DEFAULT;
@@ -876,7 +881,7 @@ void CShareData_IO::ShareData_IO_CustMenu( CDataProfile& cProfile, CommonSetting
 							G_AppInstance(),
 							menu.m_nCustMenuItemFuncArr[i][j],
 							szFuncName,
-							szFuncNameJapanese
+							NULL
 						);
 						if ( p == NULL ) {
 							auto_sprintf( szFuncName, L"%d", menu.m_nCustMenuItemFuncArr[i][j] );
@@ -963,11 +968,21 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 
 /*!
 	@brief 共有データのKeyBindセクションの入出力
+*/
+void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
+{
+	DLLSHAREDATA* pShare = &GetDllShareData();
+	IO_KeyBind( cProfile, pShare->m_Common.m_sKeyBind.m_nKeyNameArrNum, pShare->m_Common.m_sKeyBind.m_pKeyNameArr, false );	// add Parameter 2008/5/24
+}
+
+/*!
+	@brief KeyBindセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
+	@date 2010.08.21 Moca ShareData_IO_KeyBindをIO_KeyBindに名称変更
 */
-void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KEYDATA ppKeyNameArr[], bool bOutCmdName)
+void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, int nSize, KEYDATA ppKeyNameArr[], bool bOutCmdName)
 {
 	const WCHAR*	szSecName = L"KeyBind";
 	int		i;
@@ -975,7 +990,6 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 	WCHAR	szKeyData[1024];
 //	int		nSize = m_pShareData->m_nKeyNameArrNum;
 	WCHAR	szWork[64];
-	WCHAR	szFuncNameJapanese[256];
 	bool	bOldVer = false;
 
 	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
@@ -987,7 +1001,7 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 		}
 	}
 
-	for( i = 0; i < pnSize; ++i ){
+	for( i = 0; i < nSize; ++i ){
 		// 2005.04.07 D.S.Koba
 		//KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
 		KEYDATA& keydata = ppKeyNameArr[i];
@@ -1042,7 +1056,7 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 							n = (EFunctionCode)auto_atol( p);
 						}
 						else {
-							n = CSMacroMgr::GetFuncInfoByName(0, p, szFuncNameJapanese);
+							n = CSMacroMgr::GetFuncInfoByName(0, p, NULL);
 						}
 						if( n == F_INVALID ) {
 							n = F_DEFAULT;
@@ -1073,7 +1087,6 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 			for(int j = 0; j < 8; j++)
 			{
 				WCHAR	szFuncName[256];
-				WCHAR	szFuncNameJapanese[256];
 				if (GetPlugCmdInfoByFuncCode( keydata.m_nFuncCodeArr[j], szFuncName )) {
 					// Plugin
 					auto_sprintf( szWork, L",%ls", szFuncName );
@@ -1081,11 +1094,12 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile, int pnSize, KE
 				else {
 					if (bOutCmdName) {
 						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
+						// 2010.06.30 Moca 日本語名を取得しないように
 						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
 							0,
 							keydata.m_nFuncCodeArr[j],
 							szFuncName,
-							szFuncNameJapanese
+							NULL
 						);
 						if( p ) {
 							auto_sprintf(szWork, L",%ls", p);
@@ -1722,7 +1736,7 @@ void CShareData_IO::ShareData_IO_Statusbar( CDataProfile& cProfile )
 
 	@date 2009/11/30 syat
 */
-void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
+void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pcMenuDrawer )
 {
 	const WCHAR* pszSecName = LTEXT("Plugin");
 	CommonSetting& common = GetDllShareData().m_Common;
@@ -1753,6 +1767,12 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
 	}
 }
 
+void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
+{
+	IO_MainMenu( cProfile, GetDllShareData().m_Common.m_sMainMenu, false );		// 2010/5/15 Uchi
+}
+
+
 /*!
 	@brief 共有データのMainMenuセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
@@ -1761,14 +1781,13 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile )
 
 	@date 2010/5/15 Uchi
 */
-void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSetting_MainMenu&	mainmenu, bool bOutCmdName)
+void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu& mainmenu, bool bOutCmdName)
 {
 	const WCHAR*	pszSecName = LTEXT("MainMenu");
 	CommonSetting&	common = GetDllShareData().m_Common;
 	CMainMenu*		pcMenu;
 	WCHAR	szKeyName[64];
 	WCHAR	szFuncName[MAX_PLUGIN_ID+1];
-	WCHAR	szFuncNameJapanese[256];
 	EFunctionCode n;
 	int		nIdx;
 	WCHAR	szLine[1024];
@@ -1844,7 +1863,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 				n = (EFunctionCode)auto_atol( p );
 			}
 			else {
-				n = CSMacroMgr::GetFuncInfoByName(0, p, szFuncNameJapanese);
+				n = CSMacroMgr::GetFuncInfoByName(0, p, NULL);
 			}
 			if ( n == F_INVALID ) {
 				n = F_DEFAULT;
@@ -1885,7 +1904,7 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile , CommonSettin
 						G_AppInstance(),
 						pcMenu->m_nFunc,
 						szFuncName,
-						szFuncNameJapanese
+						NULL
 					);
 				}
 				if ( !bOutCmdName || p == NULL ) {
