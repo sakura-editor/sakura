@@ -475,7 +475,7 @@ bool CShareData::InitShareData()
 			cProfile.SetReadingMode();
 			cProfile.ReadProfileRes( MAKEINTRESOURCE(IDR_MENU1), MAKEINTRESOURCE(ID_RC_TYPE_INI) );
 
-			CShareData_IO::ShareData_IO_MainMenu( cProfile, m_pShareData->m_Common.m_sMainMenu, false );
+			CShareData_IO::IO_MainMenu( cProfile, m_pShareData->m_Common.m_sMainMenu, false );
 		}
 
 		m_pShareData->m_sHistory.m_aCommands.clear();

@@ -884,7 +884,7 @@ bool CImpExpKeybind::Import( const wstring sFileName, wstring& sErrMsg )
 		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", nKeyNameArrNum);
 		if (nKeyNameArrNum<0 || nKeyNameArrNum>100)	bVer3=false; //範囲チェック
 
-		CShareData_IO::ShareData_IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
+		CShareData_IO::IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
 	}
 
 	if (!bVer3) {
@@ -994,7 +994,7 @@ bool CImpExpKeybind::Export( const wstring sFileName, wstring& sErrMsg )
 	cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
 	//内容
-	CShareData_IO::ShareData_IO_KeyBind(cProfile, m_Common.m_sKeyBind.m_nKeyNameArrNum, m_Common.m_sKeyBind.m_pKeyNameArr, true);
+	CShareData_IO::IO_KeyBind(cProfile, m_Common.m_sKeyBind.m_nKeyNameArrNum, m_Common.m_sKeyBind.m_pKeyNameArr, true);
 
 	// 書き込み
 	if (!cProfile.WriteProfile( szPath, WSTR_KEYBIND_HEAD)) {
@@ -1033,7 +1033,7 @@ bool CImpExpCustMenu::Import( const wstring sFileName, wstring& sErrMsg )
 		return false;
 	}
 
-	CShareData_IO::ShareData_IO_CustMenu(cProfile,m_Common.m_sCustomMenu, true);			// 2008/5/24 Uchi
+	CShareData_IO::IO_CustMenu(cProfile,m_Common.m_sCustomMenu, true);			// 2008/5/24 Uchi
 
 	return true;
 }
@@ -1066,7 +1066,7 @@ bool CImpExpCustMenu::Export( const wstring sFileName, wstring& sErrMsg )
 	cProfile.IOProfileData_WrapInt( szSecInfo, L"MAX_CUSTOM_MENU", iWork );
 	
 	//内容
-	CShareData_IO::ShareData_IO_CustMenu(cProfile, *menu, true);
+	CShareData_IO::IO_CustMenu(cProfile, *menu, true);
 
 	// 書き込み
 	if (!cProfile.WriteProfile( szPath, WSTR_CUSTMENU_HEAD_V2)) {
@@ -1197,7 +1197,7 @@ bool CImpExpMainMenu::Import( const wstring sFileName, wstring& sErrMsg )
 		return false;
 	}
 
-	CShareData_IO::ShareData_IO_MainMenu(cProfile,m_Common.m_sMainMenu, true);
+	CShareData_IO::IO_MainMenu(cProfile,m_Common.m_sMainMenu, true);
 
 	return true;
 }
@@ -1227,7 +1227,7 @@ bool CImpExpMainMenu::Export( const wstring sFileName, wstring& sErrMsg )
 	cProfile.IOProfileData( szSecInfo, L"MENU_VERSION", MakeStringBufferW(WSTR_MAINMENU_HEAD_V1) );
 	
 	//内容
-	CShareData_IO::ShareData_IO_MainMenu(cProfile, *menu, true);
+	CShareData_IO::IO_MainMenu(cProfile, *menu, true);
 
 	// 書き込み
 	if (!cProfile.WriteProfile( szPath, WSTR_MAINMENU_HEAD_V1)) {
