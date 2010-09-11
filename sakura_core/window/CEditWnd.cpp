@@ -3088,28 +3088,11 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 				if(GetDocument().m_cDocFile.GetFilePathClass().IsValidPath())
 				{
-					const TCHAR *PathEnd = GetDocument().m_cDocFile.GetFilePath();
-					for(CharPointerT I = GetDocument().m_cDocFile.GetFilePath(); *I != 0; ++I)
-					{
-						if(*I == _T('\\'))
-							PathEnd = I.GetPointer();
-					}
-
-					//CMyString WPath(GetDocument().GetFilePath(), PathEnd-GetDocument().GetFilePath()); //wchar_tへの変換用
-					wchar_t WPath[MAX_PATH];
-					{
-						//文字列抜き出し
-						const TCHAR* p=GetDocument().m_cDocFile.GetFilePath();
-						int n = PathEnd - p;
-						CMyString tmp(p,n);
-
-						//wchar_tに変換
-						wcscpy(WPath,tmp);
-					}
-
-					//CMyString WFile(PathEnd+1); //wchar_tへの変換用
-					wchar_t WFile[MAX_PATH];
-					_tcstowcs(WFile,PathEnd+1,_countof(WFile));
+					// 2010.08.22 Moca C:\temp.txt などのtopのファイルがD&Dできないバグの修正
+					CNativeW cmemTitle;
+					CNativeW cmemDir;
+					cmemTitle = to_wchar(GetDocument().m_cDocFile.GetFileName());
+					cmemDir   = to_wchar(GetDocument().m_cDocFile.GetFilePathClass().GetDirPath().c_str());
 
 					IDataObject *DataObject;
 					IMalloc *Malloc;
@@ -3118,11 +3101,11 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 					SHGetMalloc(&Malloc);
 					SHGetDesktopFolder(&Desktop);
 					DWORD Eaten, Attribs;
-					if(SUCCEEDED(Desktop->ParseDisplayName(0, NULL, WPath, &Eaten, &PathID, &Attribs)))
+					if(SUCCEEDED(Desktop->ParseDisplayName(0, NULL, cmemDir.GetStringPtr(), &Eaten, &PathID, &Attribs)))
 					{
 						Desktop->BindToObject(PathID, NULL, IID_IShellFolder, (void**)&Folder);
 						Malloc->Free(PathID);
-						if(SUCCEEDED(Folder->ParseDisplayName(0, NULL, WFile, &Eaten, &ItemID, &Attribs)))
+						if(SUCCEEDED(Folder->ParseDisplayName(0, NULL, cmemTitle.GetStringPtr(), &Eaten, &ItemID, &Attribs)))
 						{
 							LPCITEMIDLIST List[1];
 							List[0] = ItemID;
