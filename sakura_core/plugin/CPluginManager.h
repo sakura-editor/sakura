@@ -36,7 +36,7 @@ class CPluginManager : public TSingleton<CPluginManager>{
 	// 型定義
 private:
 	typedef std::wstring wstring;
-	typedef std::basic_string<TCHAR> tstring;
+	typedef std::string string;
 public:
 	friend class TSingleton<CPluginManager>;
 
@@ -52,12 +52,12 @@ public:
 	bool LoadAllPlugin();				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを追加する
-	int InstallPlugin( CommonSetting& common, TCHAR* pszPluginName, HWND hWndOwner );	//プラグインの初期導入をする
+	int InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg );	//プラグインの初期導入をする
 	CPlugin* GetPlugin( int id );		//プラグインを取得する
 	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
 
 private:
-	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, TCHAR* pszPluginName );	//プラグインを読み込む
+	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName );	//プラグインを読み込む
 	bool RegisterPlugin( CPlugin* plugin );	//プラグインをCJackManagerに登録する
 
 	//属性
@@ -68,7 +68,6 @@ public:
 	// メンバ変数
 private:
 	CPlugin::List m_plugins;
-	wstring m_sInstallError;			//InstallPluginのエラー理由
 	tstring m_sBaseDir;					//pluginsフォルダのパス
 
 };

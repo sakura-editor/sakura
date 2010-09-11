@@ -8,7 +8,7 @@
 #include "util/window.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
-#include "plugin/CPluginManager.h"		// for plugin 2010/6/24 Uchi
+#include "plugin/CPlugin.h"
 #include "CMenuDrawer.h"
 
 template <typename T>
@@ -714,7 +714,7 @@ EFunctionCode GetPlugCmdInfoByName(
 		return F_INVALID;
 	}
 	
-	return GetPluginFunctionCode( nId, nNo );
+	return CPlug::GetPluginFunctionCode( nId, nNo );
 }
 
 // プラグインコマンドを機能番号から名前へ変換
@@ -730,8 +730,8 @@ bool GetPlugCmdInfoByFuncCode(
 		return false;
 	}
 
-	int nID = GetPluginId( eFuncCode );
-	int nNo = GetPlugNo( eFuncCode );
+	PluginId nID = CPlug::GetPluginId( eFuncCode );
+	PlugId nNo = CPlug::GetPlugId( eFuncCode );
 	if (nID < 0 || nNo < 0) {
 		return false;
 	}
@@ -1751,6 +1751,11 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 	for( i = 0; i < MAX_PLUGIN; ++i ){
 		PluginRec& pluginrec = common.m_sPlugin.m_PluginTable[i];
 
+		// 2010.08.04 Moca 書き込み直前に削除フラグで削除扱いにする
+		if( pluginrec.m_state == PLS_DELETED ){
+			pluginrec.m_szName[0] = L'\0';
+			pluginrec.m_szId[0] = L'\0';
+		}
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Name"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pluginrec.m_szName) );
 		auto_sprintf( szKeyName, LTEXT("P[%02d].Id"), i );
@@ -1761,7 +1766,7 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 		// Command 仮設定	// 2010/7/4 Uchi
 		if (pluginrec.m_szId[0] != '\0' && pluginrec.m_nCmdNum >0) {
 			for (j = 1; j <= pluginrec.m_nCmdNum; j++) {
-				pcMenuDrawer->AddToolButton( CMenuDrawer::TOOLBAR_BUTTON_F_PLUGCOMMAND - 1, GetPluginFunctionCode(i, j) );
+				pcMenuDrawer->AddToolButton( CMenuDrawer::TOOLBAR_BUTTON_F_PLUGCOMMAND - 1, CPlug::GetPluginFunctionCode(i, j) );
 			}
 		}
 	}

@@ -32,34 +32,10 @@
 #include "macro/CWSHIfObj.h"
 #include "CDataProfile.h"
 
+//! プラグインの管理番号index
+typedef int PluginId;
+//! プラグの管理番号 プラグインのコマンドプラグごとに一意。ほかは0
 typedef int PlugId;
-
-// Plugin Function番号の計算(クラス外でも使えるバージョン)
-// 2010/4/19 Uchi
-inline EFunctionCode GetPluginFunctionCode( PlugId nPluginId, int nPlugNo )
-{
-	return EFunctionCode( nPluginId * MAX_PLUG_CMD + nPlugNo + F_PLUGCOMMAND_FIRST );
-}
-
-// PlugId番号の計算(クラス外でも使えるバージョン)
-// 2010/4/19 Uchi
-inline PlugId GetPluginId( EFunctionCode nFunctionCode )
-{
-	if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
-		return PlugId( (nFunctionCode - F_PLUGCOMMAND_FIRST) / MAX_PLUG_CMD );
-	}
-	return -1;
-}
-
-// PluginNo番号の計算(クラス外でも使えるバージョン)
-// 2010/6/24 Uchi
-inline PlugId GetPlugNo( EFunctionCode nFunctionCode )
-{
-	if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
-		return PlugId( (nFunctionCode - F_PLUGCOMMAND_FIRST) % MAX_PLUG_CMD );
-	}
-	return -1;
-}
 
 //プラグイン定義ファイル名
 #define PII_FILENAME				_T("plugin.def")
@@ -121,6 +97,43 @@ public:
 	//属性
 public:
 	EFunctionCode GetFunctionCode() const;
+
+	//補助関数
+public:
+	// Plug Function番号の計算(クラス外でも使えるバージョン)
+	// 2010/4/19 Uchi
+	static inline EFunctionCode GetPluginFunctionCode( PluginId nPluginId, PlugId nPlugId )
+	{
+		return static_cast<EFunctionCode>( nPluginId * MAX_PLUG_CMD + nPlugId + F_PLUGCOMMAND_FIRST );
+	}
+
+	// PluginId番号の計算(クラス外でも使えるバージョン)
+	// 2010/4/19 Uchi
+	static inline PluginId GetPluginId( EFunctionCode nFunctionCode )
+	{
+		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
+			return PluginId( (nFunctionCode - F_PLUGCOMMAND_FIRST) / MAX_PLUG_CMD );
+		}
+		return PluginId(-1);
+	}
+
+	// PluginNo番号の計算(クラス外でも使えるバージョン)
+	// 2010/6/24 Uchi
+	static inline PlugId GetPlugId( EFunctionCode nFunctionCode )
+	{
+		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
+			return PlugId( (nFunctionCode - F_PLUGCOMMAND_FIRST) % MAX_PLUG_CMD );
+		}
+		return PlugId(-1);
+	}
+	
+	static EOutlineType GetOutlineType( PluginId nPluginId ){
+		return static_cast<EOutlineType>(GetPluginFunctionCode(nPluginId, 0));
+	}
+
+	static ESmartIndentType GetSmartIndentType( PluginId nPluginId ){
+		return static_cast<ESmartIndentType>(GetPluginFunctionCode(nPluginId, 0));
+	}
 
 	//メンバ変数
 public:
@@ -189,7 +202,6 @@ protected:
 
 
 //プラグインクラス
-typedef int PluginId;
 
 class CPlugin
 {
@@ -211,7 +223,6 @@ public:
 
 	//操作
 public:
-	tstring GetFilePath( const tstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
 	virtual int AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* icon, bool doRegister );//コマンドを追加する
 	int 	GetCommandCount()	{ return m_nCommandCount; };			// コマンド数を返す	2010/7/4 Uchi
 
@@ -231,8 +242,10 @@ protected:
 
 	//属性
 public:
+	tstring GetFilePath( const tstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
 	tstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
 	tstring GetOptionPath() const{ return m_sBaseDir + PII_OPTFILEEXT; }	//オプションファイルのパス
+	tstring GetFolderName() const;	//プラグインのフォルダ名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数

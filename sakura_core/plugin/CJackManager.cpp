@@ -99,14 +99,14 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 	case PP_OUTLINE:					//アウトライン解析方法を追加
 		{
 //			int nMethod = (EOutlineType)( plug->m_cPlugin.m_id * 100 + F_PLUGCOMMAND_FIRST );
-			int nMethod = (EOutlineType)GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );	// 2010/5/1 Uchi 関数化
+			int nMethod = CPlug::GetOutlineType( plug->m_cPlugin.m_id );	// 2010/5/1 Uchi 関数化
 			CPropScreen::AddOutlineMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
 	case PP_SMARTINDENT:				//スマートインデント方法を追加
 		{
 //			int nMethod = (ESmartIndentType)( plug->m_cPlugin.m_id * 100 + F_PLUGCOMMAND_FIRST );
-			int nMethod = (ESmartIndentType)GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );	// 2010/5/1 Uchi 関数化
+			int nMethod = CPlug::GetSmartIndentType( plug->m_cPlugin.m_id );	// 2010/5/1 Uchi 関数化
 			CPropScreen::AddSIndentMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;

@@ -37,7 +37,7 @@ bool CPlug::Invoke( CEditView* view, CWSHIfObj::List& params ){
 }
 
 EFunctionCode CPlug::GetFunctionCode() const{
-	return static_cast<EFunctionCode>(m_cPlugin.m_id * MAX_PLUG_CMD + m_id + F_PLUGCOMMAND_FIRST);
+	return GetPluginFunctionCode(m_cPlugin.m_id, m_id);
 }
 
 /////////////////////////////////////////////
@@ -184,6 +184,11 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 CPlugin::tstring CPlugin::GetFilePath( const tstring& sFileName ) const
 {
 	return m_sBaseDir + _T("\\") + to_tchar( sFileName.c_str() );
+}
+
+CPlugin::tstring CPlugin::GetFolderName() const
+{
+	return tstring(GetFileTitlePointer(m_sBaseDir.c_str()));
 }
 
 //ƒRƒ}ƒ“ƒh‚ð’Ç‰Á‚·‚é

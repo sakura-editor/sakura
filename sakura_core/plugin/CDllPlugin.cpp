@@ -75,7 +75,7 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 		return false;
 	}
 
-	CDllPlug& plug = dynamic_cast<CDllPlug&>(plug_raw);
+	CDllPlug& plug = *(static_cast<CDllPlug*>(&plug_raw));
 	if( ! plug.m_handler ){
 		//DLLŠÖ”‚Ìæ“¾
 		ImportTable imp[2] = {
