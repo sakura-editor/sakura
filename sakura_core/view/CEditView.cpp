@@ -236,6 +236,8 @@ BOOL CEditView::Create(
 	// 2007.10.02 nasukoji
 	m_dwTripleClickCheck = 0;		// トリプルクリックチェック用時刻初期化
 
+	// 2010.07.15 Moca
+	m_cMouseDownPos.Set(-INT_MAX, -INT_MAX);
 
 
 	//↑今までコンストラクタでやってたこと

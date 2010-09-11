@@ -617,6 +617,7 @@ public:
 	//マウス
 	bool			m_bActivateByMouse;		//!< マウスによるアクティベート	//2007.10.02 nasukoji
 	DWORD			m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
+	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
 
 	//検索
 	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */

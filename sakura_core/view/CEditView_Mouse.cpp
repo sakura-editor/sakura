@@ -82,6 +82,9 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 	CLayoutPoint ptNew;
 	GetTextArea().ClientToLayout(ptMouse, &ptNew);
 
+	// 2010.07.15 Moca マウスダウン時の座標を覚えて利用する
+	m_cMouseDownPos = ptMouse;
+
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.12.02 nasukoji	トリプルクリック時はドラッグを開始しない
 	if( !tripleClickMode && GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop ){
@@ -760,28 +763,18 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 }
 
 /* マウス移動のメッセージ処理 */
-void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
+void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 {
-	CMyPoint ptMouse(_xPos,_yPos);
+	CMyPoint ptMouse(xPos_, yPos_);
 
 	CLayoutInt	nScrollRowNum;
-	POINT		po;
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
 
-	CLogicInt	nIdx;
-	int			nWorkF;
-	int			nWorkT;
+//	CLayoutRange sSelectBgn_Old = GetSelectionInfo().m_sSelectBgn;  // 範囲選択(原点)
+	CLayoutRange sSelect_Old    = GetSelectionInfo().m_sSelect;
 
-	CLayoutRange sRange;
-	CLayoutRange sSelectBgn_Old; // 範囲選択(原点)
-	CLayoutRange sSelect_Old;
-	CLayoutRange sSelect;
-
-	sSelectBgn_Old = GetSelectionInfo().m_sSelectBgn;
-	sSelect_Old    = GetSelectionInfo().m_sSelect;
-
-	if( !GetSelectionInfo().IsMouseSelecting() ){	/* 範囲選択中 */
+	if( !GetSelectionInfo().IsMouseSelecting() ){
+		// マウスによる範囲選択中でない場合
+		POINT		po;
 		::GetCursorPos( &po );
 		//	2001/06/18 asa-o: 補完ウィンドウが表示されていない
 		if(!m_bHokan){
@@ -852,7 +845,19 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 		}
 		return;
 	}
+	// 以下、マウスでの選択中(ドラッグ中)
+
 	::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
+
+	// 2010.07.15 Moca ドラッグ開始位置から移動していない場合はMOVEとみなさない
+	// 遊びは 2px固定とする
+	CMyPoint ptMouseMove = ptMouse - m_cMouseDownPos;
+	if(m_cMouseDownPos.x != -INT_MAX && abs(ptMouseMove.x) <= 2 && abs(ptMouseMove.y) <= 2 ){
+		return;
+	}
+	// 一度移動したら戻ってきたときも、移動とみなすように設定
+	m_cMouseDownPos.Set(-INT_MAX, -INT_MAX);
+	
 	if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
 		/* 座標指定によるカーソル移動 */
 		nScrollRowNum = GetCaret().MoveCursorToClientPoint( ptMouse );
@@ -915,6 +920,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
 		}else{
+			CLayoutRange sSelect;
+			
 			/* 現在のカーソル位置によって選択範囲を変更(テストのみ) */
 			GetSelectionInfo().ChangeSelectAreaByCurrentCursorTEST(
 				GetCaret().GetCaretLayoutPos(),
@@ -927,9 +934,12 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 				);
 				return;
 			}
+			CLogicInt nLineLen;
 			const CLayout* pcLayout;
-			if( NULL != ( pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout ) ) ){
-				nIdx = LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+			if( NULL != m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout ) ){
+				CLogicInt	nIdx = LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+				CLayoutRange sRange;
+
 				/* 現在位置の単語の範囲を調べる */
 				int nResult=m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 					GetCaret().GetCaretLayoutPos().GetY2(),
@@ -947,12 +957,11 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int _xPos , int _yPos )
 					pLine     = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetTo().GetY2(), &nLineLen, &pcLayout );
 					sRange.SetToX( LineIndexToColmn( pcLayout, sRange.GetTo().x ) );
 					*/
-
-					nWorkF = IsCurrentPositionSelectedTEST(
+					int nWorkF = IsCurrentPositionSelectedTEST(
 						sRange.GetFrom(), //カーソル位置
 						sSelect
 					);
-					nWorkT = IsCurrentPositionSelectedTEST(
+					int nWorkT = IsCurrentPositionSelectedTEST(
 						sRange.GetTo(),	// カーソル位置
 						sSelect
 					);
@@ -1145,6 +1154,9 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 		GetCaret().ShowCaret_( GetHwnd() ); // 2002/07/22 novice
 
 		GetSelectionInfo().SelectEnd();
+
+		// 20100715 Moca マウスクリック座標をリセット
+		m_cMouseDownPos.Set(-INT_MAX, -INT_MAX);
 
 		if( GetSelectionInfo().m_sSelect.IsOne() ){
 			/* 現在の選択範囲を非選択状態に戻す */
