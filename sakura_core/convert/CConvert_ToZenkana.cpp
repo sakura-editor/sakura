@@ -11,16 +11,17 @@ bool CConvert_ToZenkana::DoConvert(CNativeW* pcData)
 {
 	//”¼ŠpƒJƒi¨‘SŠpƒJƒi
 	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //•¶Žš”‚ªŒ¸‚é‚±‚Æ‚Í‚ ‚Á‚Ä‚à‘‚¦‚é‚±‚Æ‚Í–³‚¢‚Ì‚ÅA‚±‚ê‚Å‚n‚j
-	Convert_HankanaToZenkana(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf);
+	int nBufLen = 0;
+	Convert_HankanaToZenkana(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nBufLen);
 
 	//‘SŠp‚Ð‚ç¨‘SŠpƒJƒi
-	Convert_ZenhiraToZenkana(pBuf, wcslen(pBuf));
+	Convert_ZenhiraToZenkana(pBuf, nBufLen);
 
 	//”¼Šp‰p”¨‘SŠp‰p”
-	Convert_HanEisuu_To_ZenEisuu(pBuf, wcslen(pBuf));
+	Convert_HanEisuu_To_ZenEisuu(pBuf, nBufLen);
 
 	//Ý’è
-	pcData->SetString(pBuf);
+	pcData->SetString(pBuf, nBufLen);
 
 	//ƒoƒbƒtƒ@‰ð•ú
 	delete[] pBuf;

@@ -32,7 +32,6 @@
 
 #include "stdafx.h"
 #include "convert/convert_util2.h"
-#include "parse/CWordParse.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
