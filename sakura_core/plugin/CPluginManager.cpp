@@ -48,6 +48,10 @@ void CPluginManager::UnloadAllPlugin()
 	for( CPlugin::ListIter it = m_plugins.begin(); it != m_plugins.end(); it++ ){
 		delete *it;
 	}
+	
+	// 2010.08.04 Moca m_plugins.claerする
+	// ただし、CJackManagerにUnRegisterPlugがないので再読み込みするとおかしくなります
+	m_plugins.clear();
 }
 
 //新規プラグインを追加する
@@ -72,12 +76,14 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	bool bFindNewDir = false;
 	do {
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY &&
-			_tcscmp(wf.cFileName, _T("."))!=0 && _tcscmp(wf.cFileName, _T(".."))!=0 )
+			_tcscmp(wf.cFileName, _T("."))!=0 && _tcscmp(wf.cFileName, _T(".."))!=0 &&
+			auto_stricmp(wf.cFileName, _T("unuse")) !=0 )
 		{
 			//インストール済みチェック。フォルダ名＝プラグインテーブルの名前ならインストールしない
+			// 2010.08.04 大文字小文字同一視にする
 			bool isNotInstalled = true;
 			for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
-				if( _tcscmp( wf.cFileName, to_tchar( plugin_table[iNo].m_szName ) ) == 0 ){
+				if( auto_stricmp( wf.cFileName, to_tchar( plugin_table[iNo].m_szName ) ) == 0 ){
 					isNotInstalled = false;
 					break;
 				}
@@ -88,9 +94,10 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 			TCHAR msg[512];
 			auto_snprintf_s( msg, _countof(msg), _T("プラグイン「%ts」をインストールしますか？"), wf.cFileName );
 			if( ::MessageBox( hWndOwner, msg, GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) == IDYES ){
-				int pluginNo = InstallPlugin( common, wf.cFileName, hWndOwner );
+				std::wstring errMsg;
+				int pluginNo = InstallPlugin( common, wf.cFileName, hWndOwner, errMsg );
 				if( pluginNo < 0 ){
-					auto_snprintf_s( msg, _countof(msg), _T("プラグイン「%ts」をインストールできませんでした\n理由：%ls"), wf.cFileName, m_sInstallError.c_str() );
+					auto_snprintf_s( msg, _countof(msg), _T("プラグイン「%ts」をインストールできませんでした\n理由：%ls"), wf.cFileName, errMsg.c_str() );
 					::MessageBox( hWndOwner, msg, GSTR_APPNAME, MB_OK | MB_ICONERROR );
 				}
 			}
@@ -106,21 +113,34 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 }
 
 //プラグインの初期導入をする
-int CPluginManager::InstallPlugin( CommonSetting& common, TCHAR* pszPluginName, HWND hWndOwner )
+int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, std::wstring& errorMsg )
 {
 	CDataProfile cProfDef;				//プラグイン定義ファイル
 
 	//プラグイン定義ファイルを読み込む
 	cProfDef.SetReadingMode();
 	if( !cProfDef.ReadProfile( (m_sBaseDir + pszPluginName + _T("\\") + PII_FILENAME).c_str() ) ){
-		m_sInstallError = L"プラグイン定義ファイル（plugin.def）がありません";
+		errorMsg = L"プラグイン定義ファイル（plugin.def）がありません";
 		return -1;
 	}
 
 	std::wstring sId;
 	cProfDef.IOProfileData( PII_PLUGIN, PII_PLUGIN_ID, sId );
 	if( sId.length() == 0 ){
-		m_sInstallError = L"Plugin.IDがありません";
+		errorMsg = L"Plugin.IDがありません";
+		return -1;
+	}
+	//2010.08.04 ID使用不可の文字を確認
+	//  後々ファイル名やiniで使うことを考えていくつか拒否する
+	const WCHAR szReservedChars[] = L"/\\,[]*?<>&|;:=\" \t";
+	for( int x = 0; x < _countof(szReservedChars); ++x ){
+		if( sId.npos != sId.find(szReservedChars[x]) ){
+			errorMsg = std::wstring(L"Plugin.IDに\"") + szReservedChars + L"\"は使用できません";
+			return -1;
+		}
+	}
+	if( WCODE::Is09(sId[0]) ){
+		errorMsg = L"Plugin.IDの先頭に数字は使用できません";
 		return -1;
 	}
 
@@ -131,23 +151,24 @@ int CPluginManager::InstallPlugin( CommonSetting& common, TCHAR* pszPluginName, 
 	for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
 		if( nEmpty == -1 && plugin_table[iNo].m_state == PLS_NONE ){
 			nEmpty = iNo;
+			// break してはいけない。後ろで同一IDがあるかも
 		}
 		if( wcscmp( sId.c_str(), plugin_table[iNo].m_szId ) == 0 ){	//ID一致
-			TCHAR msg[512];
-			auto_snprintf_s( msg, _countof(msg), _T("同じプラグインが別の名前でインストールされています。上書きしますか？\n　はい　→　新しい「%ts」を使用\n　いいえ→　インストール済みの「%ls」を使用"), pszPluginName, plugin_table[iNo].m_szName );
-			if( ::MessageBox( hWndOwner, msg, GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) == IDYES ){
-				nEmpty = iNo;
-				isDuplicate = true;
-				break;
-			}else{
-				m_sInstallError = L"ユーザキャンセル";
+			const TCHAR* msg = _T("同じプラグインが別の名前でインストールされています。上書きしますか？\n　はい　→　新しい「%ts」を使用\n　いいえ→　インストール済みの「%ls」を使用");
+			// 2010.08.04 削除中のIDは元の位置へ追加(復活させる)
+			if( plugin_table[iNo].m_state != PLS_DELETED &&
+			  ConfirmMessage( hWndOwner, msg, static_cast<const TCHAR*>(pszPluginName), static_cast<const WCHAR*>(plugin_table[iNo].m_szName) ) != IDYES ){
+				errorMsg = L"ユーザキャンセル";
 				return -1;
 			}
+			nEmpty = iNo;
+			isDuplicate = plugin_table[iNo].m_state != PLS_DELETED;
+			break;
 		}
 	}
 
 	if( nEmpty == -1 ){
-		m_sInstallError = L"プラグインをこれ以上登録できません";
+		errorMsg = L"プラグインをこれ以上登録できません";
 		return -1;
 	}
 
@@ -189,9 +210,13 @@ bool CPluginManager::LoadAllPlugin()
 	PluginRec* plugin_table = GetDllShareData().m_Common.m_sPlugin.m_PluginTable;
 	for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
 		if( plugin_table[iNo].m_szName[0] == '\0' ) continue;
-
-		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), const_cast<TCHAR*>(to_tchar(plugin_table[iNo].m_szName)) );
+		// 2010.08.04 削除状態を見る(今のところ保険)
+		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
+		std::tstring name = to_tchar(plugin_table[iNo].m_szName);
+		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str() );
 		if( plugin ){
+			// 要検討：plugin.defのidとsakuraw.iniのidの不一致処理
+			assert_warning( 0 == auto_strcmp( plugin_table[iNo].m_szId, plugin->m_sId.c_str() ) );
 			plugin->m_id = iNo;		//プラグインテーブルの行番号をIDとする
 			m_plugins.push_back( plugin );
 			plugin_table[iNo].m_state = PLS_LOADED;
@@ -200,6 +225,7 @@ bool CPluginManager::LoadAllPlugin()
 		}
 	}
 
+	// Note: アドレス順でソート？
 	m_plugins.sort();
 
 	for( CPlugin::ListIter it = m_plugins.begin(); it != m_plugins.end(); it++ ){
@@ -210,7 +236,7 @@ bool CPluginManager::LoadAllPlugin()
 }
 
 //プラグインを読み込む
-CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, TCHAR* pszPluginName )
+CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName )
 {
 	TCHAR pszBasePath[_MAX_PATH];
 	TCHAR pszPath[_MAX_PATH];
@@ -290,7 +316,9 @@ void CPluginManager::UninstallPlugin( CommonSetting& common, int id )
 {
 	PluginRec* plugin_table = common.m_sPlugin.m_PluginTable;
 
-	plugin_table[id].m_szId[0] = '\0';
+	// 2010.08.04 ここではIDを保持する。後で再度追加するときに同じ位置に追加
+	// PLS_DELETEDのm_szId/m_szNameはiniを保存すると削除されます
+//	plugin_table[id].m_szId[0] = '\0';
 	plugin_table[id].m_szName[0] = '\0';
 	plugin_table[id].m_state = PLS_DELETED;
 	plugin_table[id].m_nCmdNum = 0;

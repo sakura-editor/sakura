@@ -735,6 +735,7 @@ BOOL CViewCommander::HandleCommand(
 			CJackManager::Instance()->GetUsablePlug( PP_COMMAND, nCommand, &plugs );
 
 			if( plugs.size() > 0 ){
+				assert_warning( 1 == plugs.size() );
 				//インタフェースオブジェクト準備
 				CWSHIfObj::List params;
 				//プラグイン呼び出し
@@ -2900,6 +2901,7 @@ end_of_for:;
 			CJackManager::Instance()->GetUsablePlug( PP_SMARTINDENT, nSIndentType, &plugs );
 
 			if( plugs.size() > 0 ){
+				assert_warning( 1 == plugs.size() );
 				//インタフェースオブジェクト準備
 				CWSHIfObj::List params;
 				CSmartIndentIfObj* objIndent = new CSmartIndentIfObj( wcChar );	//スマートインデントオブジェクト
@@ -4428,6 +4430,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 			CJackManager::Instance()->GetUsablePlug( PP_OUTLINE, nOutlineType, &plugs );
 
 			if( plugs.size() > 0 ){
+				assert_warning( 1 == plugs.size() );
 				//インタフェースオブジェクト準備
 				CWSHIfObj::List params;
 				COutlineIfObj* objOutline = new COutlineIfObj( cFuncInfoArr );

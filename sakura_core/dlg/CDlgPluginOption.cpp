@@ -82,6 +82,11 @@ int CDlgPluginOption::DoModal(
 	m_ID = ID;
 	m_cPlugin = CPluginManager::Instance()->GetPlugin( m_ID );
 
+	if( m_cPlugin == NULL ){
+		::ErrorMessage( hwndParent, _T("プラグインがロードされていません。") );
+		return 0;
+	}
+
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PLUGIN_OPTION, NULL );
 }
 

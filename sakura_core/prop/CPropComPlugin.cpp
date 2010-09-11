@@ -106,8 +106,14 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), _T("") );
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Version ), _T("") );
 						}
+						// 2010.08.21 明らかに使えないときはDisableにする
+						EPluginState state = m_Common.m_sPlugin.m_PluginTable[sel].m_state;
+						BOOL bEdit = (state != PLS_DELETED && state != PLS_NONE);
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove ), bEdit );
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), state == PLS_LOADED && plugin );
 					}
 				}
+				break;
 			}
 			break;
 		default:
@@ -156,15 +162,20 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				}
 				break;
 			case IDC_PLUGIN_OPTION:		// プラグイン設定	// 2010/3/22 Uchi
-				CDlgPluginOption cDlgPluginOption;
-				HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
-				int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-				if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
-					cDlgPluginOption.DoModal(
-						::GetModuleHandle(NULL),
-						hwndDlg,
-						sel
-					);
+				{
+					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
+					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
+					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
+						// 2010.08.21 プラグイン名(フォルダ名)の同一性の確認
+						CPlugin* plugin = CPluginManager::Instance()->GetPlugin(sel);
+						wstring sDirName = to_wchar(plugin->GetFolderName().c_str());
+						if( plugin && 0 == auto_stricmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
+							CDlgPluginOption cDlgPluginOption;
+							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, sel );
+						}else{
+							WarningMessage( hwndDlg, _T("プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません") );
+						}
+					}
 				}
 				break;
 			}
@@ -235,6 +246,9 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 	LVITEM sItem;
 	PluginRec* plugin_table = m_Common.m_sPlugin.m_PluginTable;
 
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), FALSE );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove ), FALSE );
+
 	//プラグインリスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 
@@ -282,19 +296,30 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		default:            sItem.pszText = _T("未定義"); break;
 		}
 		ListView_SetItem( hListView, &sItem );
+		
+		//読込
+		sItem.iItem = index;
+		sItem.mask = LVIF_TEXT;
+		sItem.iSubItem = 3;
+		if( plugin_table[index].m_state != PLS_NONE ){
+			sItem.pszText = plugin ? _T("読込") : _T("");
+		}else{
+			sItem.pszText = _T("");
+		}
+		ListView_SetItem( hListView, &sItem );
 
 		//フォルダ
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
-		sItem.iSubItem = 3;
+		sItem.iSubItem = 4;
 		switch( plugin_table[index].m_state ){
 		case PLS_INSTALLED:
 		case PLS_UPDATED:
 		case PLS_STOPPED:
 		case PLS_LOADED:
 			if( plugin ){
-				sDirName = plugin->m_sBaseDir.substr( plugin->m_sBaseDir.rfind(_T('\\'))+1 );
+				sDirName = plugin->GetFolderName();
 				sItem.pszText = const_cast<LPTSTR>( sDirName.c_str() );
 			}else{
 				sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin_table[index].m_szName) );
@@ -345,17 +370,14 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 		int width;
 	} ColumnList[] = {
 		{ _T("番号"), 40 },
-		{ _T("プラグイン名"), 150 },
+		{ _T("プラグイン名"), 200 },
 		{ _T("状態"), 40 },
-		{ _T("フォルダ"), 80 },
+		{ _T("読込"), 40 },
+		{ _T("フォルダ"), 150 },
 	};
 
 	//	ListViewの初期化
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
-	if( hListView == NULL ){
-		::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::NoListView"), _T("バグ報告お願い"), MB_OK );
-		return;	//	よくわからんけど失敗した	
-	}
 
 	LVCOLUMN sColumn;
 	int pos;
@@ -380,21 +402,16 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 /*! 「プラグイン」シート上のアイテムの有効・無効を適切に設定する
 
 	@date 2009.12.06 syat 新規作成
+	@date 2010.08.21 Moca プラグイン無効状態でも削除操作などを可能にする
 */
 void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 {
 	if( !::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PluginEnable ) )
 	{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGINLIST               ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_SearchNew         ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove            ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION            ), FALSE );
 	}
 	else
 	{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGINLIST               ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_SearchNew         ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove            ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION            ), TRUE );
 	}
 }

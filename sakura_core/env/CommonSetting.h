@@ -545,7 +545,7 @@ enum EPluginState {
 struct PluginRec
 {
 	WCHAR			m_szId[MAX_PLUGIN_ID];		//!< プラグインID
-	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< プラグイン和名
+	WCHAR			m_szName[MAX_PLUGIN_NAME];	//!< プラグインフォルダ/設定ファイル名
 	EPluginState	m_state;					//!< プラグイン状態。設定ファイルに保存せずメモリ上のみ。
 	int 			m_nCmdNum;					//!< プラグイン コマンドの数	// 2010/7/3 Uchi
 };

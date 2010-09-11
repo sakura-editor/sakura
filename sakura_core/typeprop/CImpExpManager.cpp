@@ -417,7 +417,7 @@ bool CImpExpType::Import( const wstring sFileName, wstring& sErrMsg )
 			}
 		}
 		if (nIdx > 0) {
-			m_Types.m_eDefaultOutline = EOutlineType( GetPluginFunctionCode( nIdx, 0 ));
+			m_Types.m_eDefaultOutline = CPlug::GetOutlineType( nIdx );
 		}
 	}
 	//  スマートインデント
@@ -430,7 +430,7 @@ bool CImpExpType::Import( const wstring sFileName, wstring& sErrMsg )
 			}
 		}
 		if (nIdx > 0) {
-			m_Types.m_eSmartIndent = ESmartIndentType( GetPluginFunctionCode( nIdx, 0 ));
+			m_Types.m_eSmartIndent = CPlug::GetSmartIndentType( nIdx );
 		}
 	}
 
@@ -493,12 +493,12 @@ bool CImpExpType::Export( const wstring sFileName, wstring& sErrMsg )
 	//  アウトライン解析方法
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
 	int		nPIdx;
-	if ((nPIdx = GetPluginId( EFunctionCode( m_Types.m_eDefaultOutline ))) >= 0) {
+	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) >= 0) {
 		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineName, MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
 		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId,   MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szId));
 	}
 	//  スマートインデント
-	if ((nPIdx = GetPluginId( EFunctionCode( m_Types.m_eSmartIndent ))) >= 0) {
+	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) >= 0) {
 		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentName, MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
 		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId,   MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szId));
 	}
