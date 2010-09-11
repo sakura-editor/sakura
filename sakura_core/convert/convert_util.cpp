@@ -155,7 +155,7 @@ void Convert_HanEisuu_To_ZenEisuu(wchar_t* pData, int nLength)
 	濁点の分だけ、文字数は増える可能性がある。最大で2倍になる。
 	pDstにはあらかじめ十分なメモリを確保しておくこと。
 */
-void Convert_ZenKana_To_HanKana(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst)
+void Convert_ZenKana_To_HanKana(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength)
 {
 	const wchar_t* src = pSrc;
 	const wchar_t* src_end = src + nSrcLength;
@@ -175,6 +175,7 @@ void Convert_ZenKana_To_HanKana(const wchar_t* pSrc, int nSrcLength, wchar_t* pD
 		src++;
 	}
 	*dst=L'\0';
+	*nDstLength = dst - pDst;
 }
 
 /*!
@@ -182,7 +183,7 @@ void Convert_ZenKana_To_HanKana(const wchar_t* pSrc, int nSrcLength, wchar_t* pD
 	濁点の分だけ、文字数は減る可能性がある。最小で2分の1になる。
 	pDstにはあらかじめ十分なメモリを確保しておくこと。
 */
-void Convert_HankanaToZenkana(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst)
+void Convert_HankanaToZenkana(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst, int* nDstLength)
 {
 	const wchar_t* src = pSrc;
 	const wchar_t* src_end = src + nSrcLength;
@@ -204,4 +205,5 @@ void Convert_HankanaToZenkana(const wchar_t* pSrc, int nSrcLength, wchar_t* pDst
 		src++;
 	}
 	*dst=L'\0';
+	*nDstLength = dst - pDst;
 }

@@ -11,8 +11,9 @@ bool CConvert_HankanaToZenkana::DoConvert(CNativeW* pcData)
 {
 	//”¼ŠpƒJƒi¨‘SŠpƒJƒi
 	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //•¶Žš”‚ªŒ¸‚é‚±‚Æ‚Í‚ ‚Á‚Ä‚à‘‚¦‚é‚±‚Æ‚Í–³‚¢‚Ì‚ÅA‚±‚ê‚Å‚n‚j
-	Convert_HankanaToZenkana(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf);
-	pcData->SetString(pBuf);
+	int nDstLen = 0;
+	Convert_HankanaToZenkana(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nDstLen);
+	pcData->SetString(pBuf, nDstLen);
 	delete[] pBuf;
 
 	return true;
