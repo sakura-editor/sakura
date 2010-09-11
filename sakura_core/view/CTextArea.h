@@ -145,6 +145,10 @@ public:
 	{
 		m_nViewTopLine += nOff;
 	}
+protected:
+	void UpdateViewColRowNums();
+
+public:
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
