@@ -41,21 +41,30 @@ void CTextArea::CopyTextAreaStatus(CTextArea* pDst) const
 	pDst->SetViewLeftCol			( this->GetViewLeftCol() );		// 表示域の一番左の桁(0開始)
 }
 
+//!表示域の再計算
+void CTextArea::UpdateViewColRowNums()
+{
+	CEditView* pView=m_pEditView;
+	// Note: マイナスの割り算は処理系依存です。
+	// 0だとカーソルを設定できない・選択できないなど動作不良になるので1以上にする
+	m_nViewColNum = CLayoutInt(std::max(1, std::max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx()));	// 表示域の桁数
+	m_nViewRowNum = CLayoutInt(std::max(1, std::max(0, m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy()));	// 表示域の行数
+}
 
 //!フォント変更の際、各種パラメータを計算し直す
 void CTextArea::UpdateAreaMetrics(HDC hdc)
 {
 	CEditView* pView=m_pEditView;
 
-	//表示域の再計算
-	m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
-	m_nViewRowNum = CLayoutInt((m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy());	// 表示域の行数
-
 	// 文字間隔
 	pView->GetTextMetrics().SetHankakuDx( pView->GetTextMetrics().GetHankakuWidth() + pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace );
 
 	// 行間隔
 	pView->GetTextMetrics().SetHankakuDy( pView->GetTextMetrics().GetHankakuHeight() + pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace );
+
+	//表示域の再計算
+	//2010.08.24 Dx/Dyを使うので後で設定
+	UpdateViewColRowNums();
 }
 
 void CTextArea::GenerateCharRect(RECT* rc,const DispPos& sPos,int nHankakuNum) const
@@ -156,7 +165,8 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 		int nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL ); // 垂直スクロールバーの横幅
 		m_nViewCx = rc.Width() - nCxVScroll - GetAreaLeft(); // 表示域の幅
 		// 2008.05.27 nasukoji	表示域の桁数も算出する（右端カーソル移動時の表示場所ずれへの対処）
-		m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
+		// m_nViewColNum = CLayoutInt(std::max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
+		UpdateViewColRowNums();
 
 		if( bRedraw ){
 			/* 再描画 */
@@ -229,8 +239,7 @@ void CTextArea::TextArea_OnSize(
 
 	m_nViewCx = sizeClient.cx - nCxVScroll - GetAreaLeft(); // 表示域の幅
 	m_nViewCy = sizeClient.cy - nCyHScroll - GetAreaTop();  // 表示域の高さ
-	m_nViewColNum = CLayoutInt((m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
-	m_nViewRowNum = CLayoutInt((m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy());	// 表示域の行数
+	UpdateViewColRowNums();
 }
 
 

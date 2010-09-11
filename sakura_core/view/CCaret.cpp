@@ -13,6 +13,10 @@
 #include "view/colors/CColorStrategy.h"
 using namespace std;
 
+#define SCROLLMARGIN_LEFT 4
+#define SCROLLMARGIN_RIGHT 4
+#define SCROLLMARGIN_NOMOVE 4
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         外部依存                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -148,6 +152,16 @@ CLayoutInt CCaret::MoveCursor(
 	nScrollMarginRight = CLayoutInt(SCROLLMARGIN_RIGHT);
 	nScrollMarginLeft = CLayoutInt(SCROLLMARGIN_LEFT);
 
+	// 2010.08.24 Moca 幅が狭い場合のマージンの調整
+	{
+		// カーソルが真ん中にあるときに左右にぶれないように
+		int nNoMove = SCROLLMARGIN_NOMOVE;
+		CLayoutInt a = ((m_pEditView->GetTextArea().m_nViewColNum) - nNoMove) / 2;
+		CLayoutInt nMin = (2 <= a ? a : CLayoutInt(0)); // 1だと全角移動に支障があるので2以上
+		nScrollMarginRight = std::min(nScrollMarginRight, nMin);
+		nScrollMarginLeft  = std::min(nScrollMarginLeft,  nMin);
+	}
+	
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	if( m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas() > m_pEditView->GetTextArea().m_nViewColNum &&
 		ptWk_CaretPos.GetX() > m_pEditView->GetTextArea().GetViewLeftCol() + m_pEditView->GetTextArea().m_nViewColNum - nScrollMarginRight ){
