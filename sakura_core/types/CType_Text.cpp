@@ -83,7 +83,8 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		}
 
 		//先頭文字が見出し記号のいずれかであれば、次へ進む
-		if(NULL==wcschr(pszStarts,pLine[0]))continue;
+		// 2010.09.15 行頭以外が見出しになっていなかったバグの修正(サロゲートペア未対応)
+		if(NULL==wcschr(pszStarts,pLine[i]))continue;
 
 		//見出し種類の判別 -> szTitle
 		if( pLine[i] == L'(' ){
