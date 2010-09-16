@@ -6459,7 +6459,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		// From Here 2001.12.03 hor
 		CLayoutPoint ptTmp(0,0);
-		if ( !bRegularExp ) {
+		if ( nPaste || !bRegularExp ) {
 			// 正規表現時は 後方参照($&)で実現するので、正規表現は除外
 			if(nReplaceTarget==1){	//挿入位置へ移動
 				ptTmp = GetSelect().GetTo() - GetSelect().GetFrom();
@@ -6875,7 +6875,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 		CLayoutPoint ptTmp(0,0);
 
-		if ( !bRegularExp ) {
+		if ( nPaste || !bRegularExp ) {
 			// 正規表現時は 後方参照($&)で実現するので、正規表現は除外
 			if( nReplaceTarget == 1 )	//挿入位置セット
 			{
@@ -6913,6 +6913,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 				m_pCommanderView->Redraw();
 			}
+			++nReplaceNum;
 		}
 		// 2002/01/19 novice 正規表現による文字列置換
 		else if( bRegularExp ) /* 検索／置換  1==正規表現 */
