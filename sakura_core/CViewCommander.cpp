@@ -2312,9 +2312,6 @@ void CViewCommander::Command_PASTE( void )
 	//砂時計
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
-	BOOL		bBox;
-	int			i;
-
 	// クリップボードからデータを取得 -> cmemClip, bColmnSelect
 	CNativeW	cmemClip;
 	bool		bColmnSelect;
@@ -2341,19 +2338,61 @@ void CViewCommander::Command_PASTE( void )
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
 	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
 	if( bLineSelect ){
-		// ※CRやLFは2バイト文字の2バイト目として扱われることはないので末尾だけで判定（CMemory::GetSizeOfChar()参照）
 		if( pszText[nTextLen - 1] != WCODE::CR && pszText[nTextLen - 1] != WCODE::LF ){
 			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 			pszText = cmemClip.GetStringPtr( &nTextLen );
 		}
 	}
 
+	// テキストを貼り付け
+	Command_INSTEXT( true, pszText, nTextLen, true, bLineSelect );	// 2010.09.17 ryoji
+	return;
+}
+
+
+/*! テキストを貼り付け
+	@date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
+	@date 2010.09.17 ryoji ラインモード貼り付けオプションを追加して以前の Command_PASTE() との重複部を整理・統合
+*/
+void CViewCommander::Command_INSTEXT(
+	bool			bRedraw,		//!< 
+	const wchar_t*	pszText,		//!< [in] 貼り付ける文字列。
+	CLogicInt		nTextLen,		//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
+	bool			bNoWaitCursor,	//!< 
+	bool			bLinePaste		//!< [in] ラインモード貼り付け
+)
+{
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
+		ErrorBeep();
+		return;
+	}
+
+	CWaitCursor*	pcWaitCursor;
+	if( bNoWaitCursor ){
+		pcWaitCursor = NULL;
+	}else{
+		pcWaitCursor = new CWaitCursor( m_pCommanderView->GetHwnd() );
+	}
+
+	if( nTextLen < 0 ){
+		nTextLen = CLogicInt(wcslen( pszText ));
+	}
+
+	GetDocument()->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
+
 	// テキストが選択されているか
-	bBox = FALSE;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		// 矩形範囲選択中か
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
-			bBox = TRUE;
+			//改行までを抜き出す
+			CLogicInt i;
+			for( i = CLogicInt(0); i < nTextLen; i++ ){
+				if( pszText[i] == WCODE::CR || pszText[i] == WCODE::LF ){
+					break;
+				}
+			}
+			Command_INDENT( pszText, i );
+			goto end_of_func;
 		}
 		else{
 			//	Jun. 23, 2000 genta
@@ -2377,38 +2416,23 @@ void CViewCommander::Command_PASTE( void )
 				m_pCommanderView->ReplaceData_CEditView(
 					GetSelect(),				// 選択範囲
 					NULL,					// 削除されたデータのコピー(NULL可能)
-					/*
-					pszText,				// 挿入するデータ
-					nTextLen,				// 挿入するデータの長さ
-					*/
-					bLineSelect? L"": pszText,	// 挿入するデータ
-					bLineSelect? CLogicInt(0): nTextLen,	// 挿入するデータの長さ
-					true,
+					bLinePaste? L"": pszText,	// 挿入するデータ
+					bLinePaste? CLogicInt(0): nTextLen,	// 挿入するデータの長さ
+					bRedraw,
 					m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
 				);
 #ifdef _DEBUG
 				gm_ProfileOutput = FALSE;
 #endif
-				if( !bLineSelect )	// 2007.10.04 ryoji
-					return;
+				if( !bLinePaste )	// 2007.10.04 ryoji
+					goto end_of_func;
 			}
 		}
 	}
-	if( bBox ){
-		//改行までを抜き出す
-		for( i = 0; i < nTextLen; i++  ){
-			if( pszText[i] == WCODE::CR || pszText[i] == WCODE::LF ){
-				break;
-			}
-		}
-		// 2010.08.23 Moca バッファオーバーランの修正。szPaste[1024]は使わない
-		Command_INDENT( pszText, CLogicInt(i) );
-	}
-	else{
-		GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
+	{	// 非選択時の処理 or ラインモード貼り付け時の残りの処理
 		CLogicInt nPosX_PHY_Delta;
-		if( bLineSelect ){	// 2007.10.04 ryoji
+		if( bLinePaste ){	// 2007.10.04 ryoji
 			/* 挿入ポイント（折り返し単位行頭）にカーソルを移動 */
 			CLogicPoint ptCaretBefore = GetCaret().GetCaretLogicPos();	// 操作前のキャレット位置
 			Command_GOLINETOP( FALSE, 1 );								// 行頭に移動(折り返し単位)
@@ -2435,15 +2459,14 @@ void CViewCommander::Command_PASTE( void )
 			pszText,
 			nTextLen,
 			&ptLayoutNew,
-			true
+			bRedraw
 		);
 
-		//		::GlobalUnlock(hglb);
 		// 挿入データの最後へカーソルを移動
-		GetCaret().MoveCursor( ptLayoutNew, TRUE );
+		GetCaret().MoveCursor( ptLayoutNew, bRedraw );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-		if( bLineSelect ){	// 2007.10.04 ryoji
+		if( bLinePaste ){	// 2007.10.04 ryoji
 			/* 元の位置へカーソルを移動 */
 			CLogicPoint ptCaretBefore = GetCaret().GetCaretLogicPos();	//操作前のキャレット位置
 			CLayoutPoint ptLayout;
@@ -2451,9 +2474,8 @@ void CViewCommander::Command_PASTE( void )
 				ptCaretBefore + CLogicPoint(nPosX_PHY_Delta, CLogicInt(0)),
 				&ptLayout
 			);
-			GetCaret().MoveCursor( ptLayout, true );					//カーソル移動
+			GetCaret().MoveCursor( ptLayout, bRedraw );					//カーソル移動
 			CLogicPoint ptCaretAfter = GetCaret().GetCaretLogicPos();	//操作後のキャレット位置
-
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().x;
 
 			//UNDO用記録
@@ -2467,89 +2489,8 @@ void CViewCommander::Command_PASTE( void )
 			}
 		}
 	}
-	return;
 
-}
-
-
-/*! テキストを貼り付け
-	@date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
-*/
-void CViewCommander::Command_INSTEXT(
-	bool			bRedraw,		//!< 
-	const wchar_t*	pszText,		//!< [in] 貼り付ける文字列。
-	CLogicInt		nTextLen,		//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
-	bool			bNoWaitCursor	//!< 
-)
-{
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
-		ErrorBeep();
-		return;
-	}
-
-	CWaitCursor*	pcWaitCursor;
-
-	GetDocument()->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
-	if( bNoWaitCursor ){
-		pcWaitCursor = NULL;
-	}else{
-		pcWaitCursor = new CWaitCursor( m_pCommanderView->GetHwnd() );
-	}
-
-	if( nTextLen < 0 ){
-		nTextLen = CLogicInt(wcslen( pszText ));
-	}
-
-	/* テキストが選択されているか */
-	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-		/* 矩形範囲選択中か */
-		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
-			// i = strcspn(pszText, CRLF);
-			// 2004.05.14 Moca strcspnでは'\0'が扱えないので
-			CLogicInt i;
-			for( i = CLogicInt(0); i < nTextLen; i++ ){
-				if( pszText[i] == WCODE::CR 
-				 || pszText[i] == WCODE::LF ){
-					break;
-				}
-			}
-			Command_INDENT( pszText, i );
-		}
-		else{
-			/* データ置換 削除&挿入にも使える */
-			m_pCommanderView->ReplaceData_CEditView(
-				GetSelect(),			//選択範囲
-				NULL,				// 削除されたデータのコピー(NULL可能)
-				pszText,			// 挿入するデータ
-				nTextLen,			// 挿入するデータの長さ
-				bRedraw,
-				m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
-			);
-#ifdef _DEBUG
-				gm_ProfileOutput = FALSE;
-#endif
-		}
-	}
-	else
-	{
-		GetDocument()->m_cDocEditor.SetModified(true,true);	/* 変更フラグ */
-		
-		//	Jun. 13, 2004 genta 不要なチェック？
-		if( nTextLen < 0 ){
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONWARNING, GSTR_APPNAME,
-				_T("バグじゃないの？ @Command_INSTEXT") );
-			nTextLen = CLogicInt(wcslen( pszText ));
-		}
-
-		/* 現在位置にデータを挿入 */
-		CLayoutPoint ptLayoutNew;	// 挿入された部分の次の位置
-		m_pCommanderView->InsertData_CEditView( GetCaret().GetCaretLayoutPos(), pszText, nTextLen, &ptLayoutNew, true );
-
-		/* 挿入データの最後へカーソルを移動 */
-		GetCaret().MoveCursor( ptLayoutNew, bRedraw );
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-	}
-
+end_of_func:
 	if( NULL != pcWaitCursor ){
 		delete pcWaitCursor;
 	}
@@ -6467,7 +6408,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 			}
 			else if(nReplaceTarget==2){	//追加位置へ移動
 				// 正規表現を除外したので、「検索後の文字が改行やったら次の行の先頭へ移動」の処理を削除
-				GetCaret().SetCaretLayoutPos(GetSelect().GetTo());
+				GetCaret().MoveCursor(GetSelect().GetTo(), false);
 				GetSelect().Clear(-1);
 			}
 			else{
@@ -6568,6 +6509,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 	@date 2006.03.31 かろと 行置換機能追加
 	@date 2007.01.16 ryoji 行置換機能を全置換のオプションに変更
 	@date 2009.09.20 genta 左下～右上で矩形選択された領域の置換が行われない
+	@date 2010.09.17 ryoji ラインモード貼り付け処理を追加
 */
 void CViewCommander::Command_REPLACE_ALL()
 {
@@ -6683,13 +6625,14 @@ void CViewCommander::Command_REPLACE_ALL()
 	// ループの外で文字列の長さを特定できるので、一時変数化。
 	const wchar_t *szREPLACEKEY;		// 置換後文字列。
 	bool		bColmnSelect;	// 矩形貼り付けを行うかどうか。
+	bool		bLineSelect = false;	// ラインモード貼り付けを行うかどうか
 	CNativeW	cmemClip;		// 置換後文字列のデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
 
 	// クリップボードからのデータ貼り付けかどうか。
 	if( nPaste != 0 )
 	{
 		// クリップボードからデータを取得。
-		if ( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect ) )
+		if ( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
 		{
 			ErrorBeep();
 			return;
@@ -6725,6 +6668,15 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	CLogicInt nREPLACEKEY;			// 置換後文字列の長さ。
 	szREPLACEKEY = cmemClip.GetStringPtr(&nREPLACEKEY);
+
+	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
+	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
+	if( bLineSelect ){
+		if( szREPLACEKEY[nREPLACEKEY - 1] != WCODE::CR && szREPLACEKEY[nREPLACEKEY - 1] != WCODE::LF ){
+			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
+			szREPLACEKEY = cmemClip.GetStringPtr( &nREPLACEKEY );
+		}
+	}
 
 	// 取得にステップがかかりそうな変数などを、一時変数化する。
 	// とはいえ、これらの操作をすることによって得をするクロック数は合わせても 1 ループで数十だと思います。
@@ -6886,7 +6838,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			else if( nReplaceTarget == 2 )	//追加位置セット
 			{
 				// 正規表現を除外したので、「検索後の文字が改行やったら次の行の先頭へ移動」の処理を削除
-				GetCaret().SetCaretLayoutPos(GetSelect().GetTo());
+				GetCaret().MoveCursor(GetSelect().GetTo(), false);
 				GetSelect().Clear(-1);
 		    }
 			else {
@@ -6904,7 +6856,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				** →m_nSelectXXXが-1の時に m_pCommanderView->ReplaceData_CEditViewを直接たたくと動作不良となるため
 				**   直接たたくのやめた。2003.05.18 by かろと
 				*/
-				Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
+				Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE, bLineSelect );
 			}
 			else
 			{
