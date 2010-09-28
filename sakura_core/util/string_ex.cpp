@@ -771,7 +771,8 @@ int skr_towupper( int c )
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
 		for( i = 0; i < 0x80; i++ ) szMap[i] = my_towupper( i );	// 自前で変換
 		for( ; i < 0xA0; i++ ) szMap[i] = i;						// 無変換（制御コード部）
-		for( ; i < 256; i++ ) szMap[i] = _towupper_l( i, locale );	// "English"localeで変換
+		for( ; i < 255; i++ ) szMap[i] = _towupper_l( i, locale );	// "English"localeで変換
+		szMap[255] = 0x0178;	// Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
 		_free_locale( locale );
 		bInit = true;
 	}
