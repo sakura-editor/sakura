@@ -4,6 +4,7 @@
 #include "CSearchAgent.h"
 #include "doc/CDocLineMgr.h"
 #include "dlg/CDlgCancel.h"
+#include "util/string_ex.h"
 #include "sakura_rc.h"
 
 /*!
@@ -30,23 +31,14 @@ const wchar_t* CSearchAgent::SearchString(
 	int	nPos;
 	int	nCompareTo;
 
-	// 線形探索 (kobake注: 後でCharPointerWに置き換えると、サロゲートペアに対応できます)
+	// 線形探索
 	nCompareTo = nLineLen - nPatternLen;	//	Mar. 4, 2001 genta
 
-	for( nPos = nIdxPos; nPos <= nCompareTo; nPos++ ){
-		int	i;
-		for( i = 0; i < nPatternLen; i++ ){
-			if( !bLoHiCase ){	//	英大小文字の同一視
-				if( towupper( pLine[nPos + i] ) != towupper( pszPattern[i] ) )
-					break;
-			}
-			else {
-				if( pLine[nPos + i] != pszPattern[i] ){
-					break;
-				}
-			}
-		}
-		if( i >= nPatternLen ){
+	for( nPos = nIdxPos; nPos <= nCompareTo; nPos += CNativeW::GetSizeOfChar(pLine, nLineLen, nPos) ){
+		int n = bLoHiCase?
+					wmemcmp( &pLine[nPos], pszPattern, nPatternLen ):
+					wmemicmp( &pLine[nPos], pszPattern, nPatternLen );
+		if( n == 0 ){
 			return &pLine[nPos];
 		}
 	}

@@ -502,7 +502,7 @@ void wcstombs_vector(const wchar_t* pSrc, int nSrcLen, std::vector<char>* ret)
 int wmemicmp(const WCHAR* p1,const WCHAR* p2,size_t count)
 {
 	for(size_t i=0;i<count;i++){
-		int n=towlower(*p1++)-towlower(*p2++);	//非ASCIIも変換	//###locale 依存
+		int n=skr_towlower(*p1++)-skr_towlower(*p2++);	//非ASCIIも変換
 		if(n!=0)return n;
 	}
 	return 0;
@@ -749,4 +749,51 @@ SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, un
 	}
 
 	return 0;
+}
+
+
+// skr_towupper() / skr_tolower()
+//
+// 2010.09.28 ryoji
+// BugReport/64: towupper(c) によって U+00e0-U+00fc と U+0020 が同一視される問題の対策
+// VC のランタイムは c < 256 の条件ではなぜか locale に対応した "ANSI 系の" 変換テーブル引きを行っている模様
+// （Unicode 系変換関数なのに locale が "Japanese" だと c < 256 の範囲では SJIS 用らしき変換テーブルが使われる）
+// それでは都合が悪いので c < 256 範囲の変換に "English"(Windows-1252) locale を利用する。
+//   ・Unicode の最初の 256 個の符号位置は Windows-1252 の親戚の ISO-8859-1 由来。
+//   ・相違は 0x80-0x9F の区間で、Windows-1252 では図形文字、ISO-8859-1(Unicode) では制御文字。
+// ※ ランタイムの towupper(c)/tolower(c) が将来期待する動作になったとしてもこの方法を使い続けて問題無いはず
+int skr_towupper( int c )
+{
+	static wchar_t szMap[256];	// c < 256 用の変換テーブル
+	static bool bInit = false;
+	if( !bInit ){
+		int i;
+		_locale_t locale = _create_locale( LC_CTYPE, "English" );
+		for( i = 0; i < 0x80; i++ ) szMap[i] = my_towupper( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) szMap[i] = i;						// 無変換（制御コード部）
+		for( ; i < 256; i++ ) szMap[i] = _towupper_l( i, locale );	// "English"localeで変換
+		_free_locale( locale );
+		bInit = true;
+	}
+
+	if( c < 256 ) return szMap[c];
+	return towupper( c );
+}
+
+int skr_towlower( int c )
+{
+	static wchar_t szMap[256];	// c < 256 用の変換テーブル
+	static bool bInit = false;
+	if( !bInit ){
+		int i;
+		_locale_t locale = _create_locale( LC_CTYPE, "English" );
+		for( i = 0; i < 0x80; i++ ) szMap[i] = my_towlower( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) szMap[i] = i;						// 無変換（制御コード部）
+		for( ; i < 256; i++ ) szMap[i] = _towlower_l( i, locale );	// "English"localeで変換
+		_free_locale( locale );
+		bInit = true;
+	}
+
+	if( c < 256 ) return szMap[c];
+	return towlower( c );
 }
