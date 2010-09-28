@@ -52,6 +52,8 @@ inline int my_toupper( int c ){ return (((c) >= 'a') && ((c) <= 'z')) ? ((c) - '
 inline int my_tolower( int c ){ return (((c) >= 'A') && ((c) <= 'Z')) ? ((c) - 'A' + 'a') : (c); }
 inline int my_towupper( int c ){ return (((c) >= L'a') && ((c) <= L'z')) ? ((c) - L'a' + L'A') : (c); }
 inline int my_towlower( int c ){ return (((c) >= L'A') && ((c) <= L'Z')) ? ((c) - L'A' + L'a') : (c); }
+int skr_towupper( int c );
+int skr_towlower( int c );
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           Šg’£E“ÆŽ©ŽÀ‘•                    //
