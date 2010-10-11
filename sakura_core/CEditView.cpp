@@ -7351,6 +7351,7 @@ DWORD CEditView::DoGrep(
 	strcpy( m_szCurSrchKey, pcmGrepKey->GetPtr() );	/* 検索文字列 */
 	m_bCurSrchRegularExp = bGrepRegularExp;					/* 検索／置換  1==正規表現 */
 	m_bCurSrchLoHiCase = bGrepLoHiCase;						/* 検索／置換  1==英大文字小文字の区別 */
+	m_bCurSrchWordOnly = bWordOnly;				// 2010.08.29 追加
 	/* 正規表現 */
 
 	//	From Here Jun. 27 genta
@@ -7374,10 +7375,6 @@ DWORD CEditView::DoGrep(
 	}
 	//	To Here Jun. 27 genta
 
-//まだ m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
-
-//	cDlgCancel.Create( m_hInstance, m_hwndParent );
-//	hwndCancel = cDlgCancel.Open( MAKEINTRESOURCE(IDD_GREPRUNNING) );
 	hwndCancel = cDlgCancel.DoModeless( m_hInstance, m_hwndParent, IDD_GREPRUNNING );
 
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
@@ -7531,6 +7528,9 @@ DWORD CEditView::DoGrep(
 	if( 0 < nWork ){
 		Command_ADDTAIL( pszWork, nWork );
 	}
+	cmemMessage.SetDataSz("");
+	cmemWork.SetDataSz("");
+
 	//	2007.07.22 genta バージョンを取得するために，
 	//	正規表現の初期化を上へ移動
 
@@ -7794,7 +7794,6 @@ int CEditView::DoGrepTree(
 	free( pWildCard );
 	pWildCard = NULL;
 
-
 	/*
 	 * カレントフォルダのファイルを探索する。
 	 */
@@ -7967,6 +7966,14 @@ int CEditView::DoGrepTree(
 	checked_list_count = 0;
 	checked_list_size = 0;
 
+	// 2010.08.25 フォルダ移動前に残りを先に出力
+	if( 0 < cmemMessage.GetLength() ){
+		Command_ADDTAIL( cmemMessage.GetPtr(), cmemMessage.GetLength() );
+		Command_GOFILEEND( FALSE );
+		m_pcEditDoc->RedrawAllViews( this );
+		cmemMessage.SetDataSz( _T("") );
+		nWork = 0;
+	}
 
 	/*
 	 * サブフォルダを検索する。
@@ -8290,7 +8297,8 @@ int CEditView::DoGrepFile(
 		pCompareData = pLine;
 
 		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( pcDlgCancel->m_hWnd ) ){
+		// 2010.08.31 間隔を1/32にする
+		if( ((0 == nLine % 32)|| 10000 < nLineLen ) && !::BlockingHook( pcDlgCancel->m_hWnd ) ){
 			return -1;
 		}
 		if( 0 == nLine % 64 ){
@@ -8315,26 +8323,36 @@ int CEditView::DoGrepFile(
 
 		/* 正規表現検索 */
 		if( bGrepRegularExp ){
-			int nColmPrev = 0;
-
+			int nIndex = 0;
+#ifdef _DEBUG
+			int nIndexPrev = -1;
+#endif
 			//	Jun. 21, 2003 genta ループ条件見直し
 			//	マッチ箇所を1行から複数検出するケースを標準に，
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
 			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
 			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-			while( pRegexp->Match( pCompareData, nLineLen, 0 ) ){
+			// 2010.08.25 行頭以外で^にマッチする不具合の修正
+			while( nIndex <= nLineLen && pRegexp->Match( pLine, nLineLen, nIndex ) ){
 
 					//	パターン発見
-					nColm = pRegexp->GetIndex() + 1;
+					nIndex = pRegexp->GetIndex();
 					int matchlen = pRegexp->GetMatchLen();
+#ifdef _DEBUG
+					if( nIndex <= nIndexPrev ){
+						MYTRACE( "ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n" );
+						break;
+					}
+					nIndexPrev = nIndex;
+#endif
 
 					/* Grep結果を、szWorkに格納する */
 					SetGrepResult(
 						szWork, &nWorkLen,
 						pszFullPath, pszCodeName,
-						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
-						pCompareData + nColm - 1, matchlen,
+						nLine, nIndex + 1, pLine, nLineLen, nEolCodeLen,
+						pLine + nIndex, matchlen,
 						bGrepOutputLine, nGrepOutputStyle
 					);
 					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
@@ -8357,15 +8375,13 @@ int CEditView::DoGrepFile(
 					}
 					//	探し始める位置を補正
 					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	nClom : マッチ位置
-					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColm + matchlen;
-					if( matchlen != 0 ){
-						nPosDiff--;
+					if( matchlen <= 0 ){
+						matchlen = CMemory::GetSizeOfChar( pLine, nLineLen, nIndex );
+						if( matchlen <= 0 ){
+							matchlen = 1;
+						}
 					}
-					pCompareData += nPosDiff;
-					nLineLen -= nPosDiff;
-					nColmPrev += nPosDiff;
+					nIndex += matchlen;
 			}
 		}else
 		/* 単語のみ検索 */
@@ -8414,9 +8430,9 @@ int CEditView::DoGrepFile(
 							++nHitCount;
 							++(*pnHitCount);
 							//	May 22, 2000 genta
-							// if( 0 == ( (*pnHitCount) % 16 ) ){
+							if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
 								::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-							// }
+							}
 						}
 					}
 					/* 現在位置の左右の単語の先頭位置を調べる */

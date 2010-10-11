@@ -593,7 +593,8 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 		nKeyLength = lstrlen( m_szCurSrchKey );		/* 検索条件 */
 
 		// 2001/06/23 単語単位の検索のために追加
-		if( m_pShareData->m_Common.m_bWordOnly ){	/* 検索／置換  1==単語のみ検索 */
+		// 2010.10.04 単語単位のフラグをm_pShareDataからviewごとに修正
+		if( m_bCurSrchWordOnly ){	/* 検索／置換  1==単語のみ検索 */
 			/* 現在位置の単語の範囲を調べる */
 			/* 現在位置の単語の範囲を調べる */
 			int nIdxFrom, nIdxTo;

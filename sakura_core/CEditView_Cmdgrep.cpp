@@ -98,10 +98,10 @@ void CEditView::Command_GREP( void )
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
+		Grep中とアウトプットウィンドウも除外する
 	*/
-	if( m_pcEditDoc->m_bGrepMode ||
-		( !m_pcEditDoc->IsModified() &&
-		  !m_pcEditDoc->IsFilePathAvailable() )		/* 現在編集中のファイルのパス */
+	if( (  m_pcEditDoc->m_bGrepMode && !m_pcEditDoc->m_bGrepRunning ) ||
+	    ( !m_pcEditDoc->m_bGrepMode && !m_pcEditDoc->IsModified() && !m_pcEditDoc->IsFilePathAvailable() && !m_pcEditDoc->m_bDebugMode )
 	){
 		DoGrep(
 			&cmWork1,
