@@ -4778,6 +4778,7 @@ BOOL CEditView::Command_FUNCLIST( int nAction/*nReLoad,bCheckOnly*/, int nOutlin
 	case OUTLINE_FILE:		m_pcEditDoc->MakeFuncList_RuleFile( &cFuncInfoArr );break;	//	2002.04.01 YAZAKI アウトライン解析にルールファイルを導入
 //	case OUTLINE_UNKNOWN:	//Jul. 08, 2001 JEPRO 使わないように変更
 	case OUTLINE_PYTHON:	m_pcEditDoc->MakeFuncList_python(&cFuncInfoArr);break;		// 2007.02.08 genta
+	case OUTLINE_ERLANG:	m_pcEditDoc->MakeFuncList_Erlang(&cFuncInfoArr);break;		// 2009.08.11 genta
 	case OUTLINE_TEXT:
 		//	fall though
 		//	ここには何も入れてはいけない 2007.02.28 genta 注意書き

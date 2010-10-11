@@ -315,6 +315,9 @@ void CDlgFuncList::SetData( void/*HWND hwndDlg*/ )
 //			::SetWindowText( m_hWnd, "Visual Basic アウトライン" );
 //			break;
 // <<---ここまで
+		case OUTLINE_ERLANG:	//	2009.08.11 genta
+			::SetWindowText( m_hWnd, "Erlang 関数一覧" );
+			break;
 		case OUTLINE_BOOKMARK:
 			LV_COLUMN col;
 			col.mask = LVCF_TEXT;
