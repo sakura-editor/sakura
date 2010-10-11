@@ -76,6 +76,9 @@ public:
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
 
+	enum EButtonIndex{
+		TOOLBAR_BUTTON_F_TOOLBARWRAP = 384,	//ツールバー折返しアイコン（ダミー）
+	};
 private:
 	int Find( int nFuncID );
 	const char* GetLabel( int nFuncID );
@@ -94,7 +97,7 @@ private:
 
 	int				m_nMenuItemNum;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	TBBUTTON		m_tbMyButton[MAX_TOOLBARBUTTONS+1];	/* ツールバーのボタン +1はセパレータ */
+	TBBUTTON		m_tbMyButton[MAX_TOOLBAR_ICON_COUNT+1];	/* ツールバーのボタン +1はセパレータ */
 	int				m_nMyButtonNum;
 
 	int				m_nMenuItemBitmapIdxArr[MAX_MENUITEMS];

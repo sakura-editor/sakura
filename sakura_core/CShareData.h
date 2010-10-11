@@ -53,7 +53,12 @@ enum maxdata{
 	MAX_GREPFILE				=  30,
 	MAX_GREPFOLDER				=  30,
 	MAX_TYPES					=  30,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした	// 2007.12.13 ryoji 20→30
-	MAX_TOOLBARBUTTONS			= 384,	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)
+	MAX_TOOLBAR_BUTTON_ITEMS	= 384,	//ツールバーに登録可能なボタン最大数	
+	MAX_TOOLBAR_ICON_X			=  32,	//アイコンBMPの桁数
+	MAX_TOOLBAR_ICON_Y			=  13,	//アイコンBMPの段数
+	MAX_TOOLBAR_ICON_COUNT		= MAX_TOOLBAR_ICON_X * MAX_TOOLBAR_ICON_Y, // =416
+	//Oct. 22, 2000 JEPRO アイコンの最大登録数を128個増やした(256→384)	
+	//2010/6/9 Uchi アイコンの最大登録数を32個増やした(384→416)
 	MAX_CUSTOM_MENU				=  25,
 	MAX_CUSTOM_MENU_NAME_LEN	=  32,
 	MAX_CUSTOM_MENU_ITEMS		=  48,
@@ -484,7 +489,7 @@ struct Common {
 	BOOL				m_bUseCaretKeyWord;				/* キャレット位置の単語を辞書検索 */		// 2006.03.24 fon
 
 	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
-	int					m_nToolBarButtonIdxArr[MAX_TOOLBARBUTTONS];	/* ツールバーボタン構造体 */
+	int					m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	/* ツールバーボタン構造体 */
 	int					m_bToolBarIsFlat;				/* フラットツールバーにする／しない */
 	int					m_nMRUArrNum_MAX;
 	int					m_nOPENFOLDERArrNum_MAX;

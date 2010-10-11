@@ -271,9 +271,12 @@ struct ARRHEAD {
 
 	Version 93:
 	「開こうとしたファイルが大きい場合に警告」機能追加  2010.03.03 Moca Unicode版からbackport
+
+	Version 94:
+	ICONをすべてのコマンドに
 */
 
-const unsigned int uShareDataVersion = 93;
+const unsigned int uShareDataVersion = 94;
 
 /*
 ||	Singleton風
@@ -5189,7 +5192,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	//	ツールバーアイコン数の最大値を超えないためのおまじない
 	//	最大値を超えて定義しようとするとここでコンパイルエラーになります．
-	char dummy[ sizeof(DEFAULT_TOOL_BUTTONS)/sizeof(DEFAULT_TOOL_BUTTONS[0]) < MAX_TOOLBARBUTTONS ? 1:0 ];
+	char dummy[ sizeof(DEFAULT_TOOL_BUTTONS)/sizeof(DEFAULT_TOOL_BUTTONS[0]) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
 	dummy[0]=0;
 
 	memcpy( (void*)pShareData->m_Common.m_nToolBarButtonIdxArr, DEFAULT_TOOL_BUTTONS, sizeof(DEFAULT_TOOL_BUTTONS) );

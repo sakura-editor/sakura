@@ -334,7 +334,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 						nIndex1 = 0;
 					}
 					//	From Here Apr. 13, 2002 genta
-					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, MAX_TOOLBARBUTTONS );
+					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, CMenuDrawer::TOOLBAR_BUTTON_F_TOOLBARWRAP );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;
 					}

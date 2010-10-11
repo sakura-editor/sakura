@@ -783,7 +783,7 @@ void CShareData::ShareData_IO_Toolbar( CProfile& cProfile )
 	}
 	//“Ç‚İ‚İ‚Íc‚è‚ğ‰Šú‰»
 	if( cProfile.IsReadingMode() ){
-		for(; i< MAX_TOOLBARBUTTONS; ++i){
+		for(; i< MAX_TOOLBAR_BUTTON_ITEMS; ++i){
 			common.m_nToolBarButtonIdxArr[i] = 0;
 		}
 	}

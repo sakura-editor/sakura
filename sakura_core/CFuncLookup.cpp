@@ -132,7 +132,7 @@ bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 		ptr[bufsize-1] = '\0';
 		return true;
 	}
-	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTMACRO ){
+	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU ){	// MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/6/9 Uchi
 		strncpy( ptr, m_pCommon->m_szCustMenuNameArr[ funccode - F_CUSTMENU_BASE ], bufsize );
 		ptr[bufsize-1] = '\0';
 		return true;

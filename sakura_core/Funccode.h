@@ -47,6 +47,7 @@
 /* 未定義用(ダミーとしても使う) */	//Oct. 17, 2000 jepro noted
 #define F_DISABLE		0	//未使用
 #define F_SEPARATOR		1	//セパレータ
+#define F_TOOLBARWRAP	2	//ツールバー折返
 
 //	2007.07.07 genta 状況通知フラグ
 //	コマンドが送られた状況をコマンドと併せて通知する．
