@@ -1289,7 +1289,7 @@ int CLayoutMgr::getIndentOffset_Normal( CLayout* )
 	@brief インデント幅を計算する (Tx2x)
 	
 	前の行の最後のTABの位置をインデント位置として返す．
-	ただし，残り幅が6文字未満の場合はインデントを行わない．
+	ただし，残り幅が(m_nTabSpace + 2)文字未満の場合はインデントを行わない．
 	
 	@author Yazaki
 	@return インデントすべき文字数
@@ -1316,7 +1316,8 @@ int CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 		}
 		it.addDelta();
 	}
-	if ( m_nMaxLineSize - nIpos < 6 ){
+	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
+	if ( m_nMaxLineSize - nIpos < m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
@@ -1326,7 +1327,7 @@ int CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 	@brief インデント幅を計算する (スペース字下げ版)
 	
 	論理行行頭のホワイトスペースの終わりインデント位置として返す．
-	ただし，残り幅が6文字未満の場合はインデントを行わない．
+	ただし，残り幅が(m_nTabSpace + 2)文字未満の場合はインデントを行わない．
 	
 	@author genta
 	@return インデントすべき文字数
@@ -1380,7 +1381,8 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		}
 		it.addDelta();
 	}
-	if ( m_nMaxLineSize - nIpos < 6 ){
+	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
+	if ( m_nMaxLineSize - nIpos < m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
