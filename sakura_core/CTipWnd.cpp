@@ -325,6 +325,8 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 
 	// ウィンドウのサイズを得る
 	ComputeWindowSize( hdc, m_hFont, pszText , pRect );
+	// 2010.08.30 from trunk2 2007.10.10 kobake ReleaseDCが抜けていたのを修正
+	::ReleaseDC( m_hWnd, hdc );
 }
 
 // 2001/06/19 End
