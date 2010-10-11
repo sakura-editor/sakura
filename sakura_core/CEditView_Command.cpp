@@ -7432,7 +7432,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 		// From Here 2001.12.03 hor
 		int colTmp = 0;
 		int linTmp = 0;
-		if ( !bRegularExp ) {
+		if ( nPaste || !bRegularExp ) {
 			// 正規表現時は 後方参照($&)で実現するので、正規表現は除外
 			if(nReplaceTarget==1){	//挿入位置へ移動
 				colTmp = m_nSelectColmTo - m_nSelectColmFrom;
@@ -7876,7 +7876,7 @@ void CEditView::Command_REPLACE_ALL()
 
 		colTmp = 0;
 		linTmp = 0;
-		if ( !bRegularExp ) {
+		if ( nPaste || !bRegularExp ) {
 			// 正規表現時は 後方参照($&)で実現するので、正規表現は除外
 			if( nReplaceTarget == 1 )	//挿入位置セット
 			{
@@ -7921,6 +7921,7 @@ void CEditView::Command_REPLACE_ALL()
 				AdjustScrollBars(); // 2007.07.22 ryoji
 				Redraw();
 			}
+			++nReplaceNum;
 		}
 		// 2002/01/19 novice 正規表現による文字列置換
 		else if( bRegularExp ) /* 検索／置換  1==正規表現 */
