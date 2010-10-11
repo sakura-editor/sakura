@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2010, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -4720,6 +4721,9 @@ BOOL CEditView::Command_FUNCLIST( int nAction/*nReLoad,bCheckOnly*/, int nOutlin
 	if( nOutlineType == OUTLINE_DEFAULT ){
 		/* タイプ別に設定されたアウトライン解析方法 */
 		nOutlineType = m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
+		if( CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
+			nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
+		}
 	}
 
 	if( NULL != m_pcEditDoc->m_cDlgFuncList.m_hWnd && nAction != SHOW_RELOAD ){
@@ -4757,14 +4761,8 @@ BOOL CEditView::Command_FUNCLIST( int nAction/*nReLoad,bCheckOnly*/, int nOutlin
 	cFuncInfoArr.Empty();
 
 	switch( nOutlineType ){
-//	case OUTLINE_C:			m_pcEditDoc->MakeFuncList_C( &cFuncInfoArr );break;
-	case OUTLINE_CPP:
-		m_pcEditDoc->MakeFuncList_C( &cFuncInfoArr );
-		/* C言語標準保護委員会勧告特別処理実装箇所(嘘) */
-		if( CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
-			nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
-		}
-		break;
+	case OUTLINE_C:			// C/C++ は MakeFuncList_C
+	case OUTLINE_CPP:		m_pcEditDoc->MakeFuncList_C( &cFuncInfoArr );break;
 	case OUTLINE_PLSQL:		m_pcEditDoc->MakeFuncList_PLSQL( &cFuncInfoArr );break;
 	case OUTLINE_JAVA:		m_pcEditDoc->MakeFuncList_Java( &cFuncInfoArr );break;
 	case OUTLINE_COBOL:		m_pcEditDoc->MakeTopicList_cobol( &cFuncInfoArr );break;
