@@ -220,10 +220,15 @@ void CEditView::ViewDiffInfo(
 
 	//OSバージョン取得
 	{
+		// 2010.08.28 Moca システムディレクトリ付加
+		TCHAR szCmdDir[_MAX_PATH];
+
 		COsVersionInfo cOsVer;
 		//コマンドライン文字列作成(MAX:1024)
 		if (cOsVer.IsWin32NT()){
-			wsprintf( cmdline, "cmd.exe /C \"\"%s\\%s\" %s \"%s\" \"%s\"\"",
+			::GetSystemDirectory(szCmdDir, sizeof(szCmdDir));
+			wsprintf( cmdline, "\"%s\\cmd.exe\" /C \"\"%s\\%s\" %s \"%s\" \"%s\"\"",
+					szCmdDir,
 					szExeFolder,	//sakura.exeパス
 					"diff.exe",		//diff.exe
 					szOption,		//diffオプション
@@ -232,7 +237,9 @@ void CEditView::ViewDiffInfo(
 				);
 		}
 		else{
-			wsprintf( cmdline, "command.com /C \"%s\\%s\" %s \"%s\" \"%s\"",
+			::GetWindowsDirectory(szCmdDir, sizeof(szCmdDir));
+			wsprintf( cmdline, "\"%s\\command.com\" /C \"%s\\%s\" %s \"%s\" \"%s\"",
+					szCmdDir,
 					szExeFolder,	//sakura.exeパス
 					"diff.exe",		//diff.exe
 					szOption,		//diffオプション

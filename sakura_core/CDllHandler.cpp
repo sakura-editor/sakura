@@ -30,6 +30,7 @@
 
 #include "stdafx.h"
 #include "CDllHandler.h"
+#include "etc_uty.h"
 
 CDllHandler::CDllHandler()
 	: m_hInstance( NULL )
@@ -65,7 +66,7 @@ int CDllHandler::LoadLibrary(const char* str)
 			}
 		}
 
-		m_hInstance = ::LoadLibrary( name );
+		m_hInstance = LoadLibraryExedir( name );
 	}
 
 	int ret = InitDll();

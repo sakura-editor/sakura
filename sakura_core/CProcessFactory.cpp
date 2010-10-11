@@ -184,7 +184,7 @@ bool CProcessFactory::StartControlProcess()
 	TCHAR szDir[MAX_PATH + 1];	//	ディレクトリパス名
 
 	::GetModuleFileName( NULL, szEXE, sizeof( szEXE ));
-	::wsprintf( szCmdLineBuf, _T("%s -NOWIN"), szEXE );
+	::wsprintf( szCmdLineBuf, _T("\"%s\" -NOWIN"), szEXE );
 	::GetSystemDirectory( szDir, sizeof( szDir ));
 
 	if( 0 == ::CreateProcess( szEXE, szCmdLineBuf, NULL, NULL, FALSE,

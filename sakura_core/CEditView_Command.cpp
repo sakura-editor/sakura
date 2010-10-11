@@ -6386,8 +6386,12 @@ bool CEditView::Command_TagsMake( void )
 	//コマンドライン文字列作成(MAX:1024)
 	if (cOsVer.IsWin32NT())
 	{
+		// 2010.08.28 Moca システムディレクトリ付加
+		TCHAR szCmdDir[_MAX_PATH];
+		::GetSystemDirectory(szCmdDir, sizeof(szCmdDir));
 		//	2006.08.04 genta add /D to disable autorun
-		wsprintf( cmdline, "cmd.exe /D /C \"\"%s\\%s\" %s\"",
+		wsprintf( cmdline, "\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\"",
+				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
 				options			//ctagsオプション
@@ -6395,7 +6399,11 @@ bool CEditView::Command_TagsMake( void )
 	}
 	else
 	{
-		wsprintf( cmdline, "command.com /C \"%s\\%s\" %s",
+		// 2010.08.27 Moca システムディレクトリ付加
+		TCHAR szCmdDir[_MAX_PATH];
+		::GetWindowsDirectory(szCmdDir, sizeof(szCmdDir));
+		wsprintf( cmdline, "\"%s\\command.com\" /C \"%s\\%s\" %s",
+				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
 				options			//ctagsオプション

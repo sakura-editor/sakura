@@ -713,7 +713,14 @@ void CDlgOpenFile::Create(
 		char szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
 		my_splitpath( pszDefaultPath, szDrive, szDir, NULL, NULL );
-		wsprintf( m_szInitialDir, "%s%s", szDrive, szDir );
+		// 2010.08.28 相対パス解決
+		char szRelPath[_MAX_PATH];
+		sprintf( szRelPath, "%s%s", szDrive, szDir );
+		const char* p = szRelPath;
+		if( !::GetLongFileName( p, m_szInitialDir ) ){
+			// 失敗。相対のままコピー
+			strcpy(m_szInitialDir, p );
+		}
 	}
 	m_ppszMRU = ppszMRU;
 	m_ppszOPENFOLDER = ppszOPENFOLDER;
@@ -734,15 +741,8 @@ void CDlgOpenFile::Create(
 */
 BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 {
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	if( false == bSetCurDir ){
-		int nRetVal;
-		nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-		if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-			bGetCurDirSuc = true;
-		}
-	}
+	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
@@ -758,22 +758,29 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 	// From Here Jun. 23, 2002 genta
 	// 「開く」での初期フォルダチェック強化
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
-	char szDrive[_MAX_DRIVE];
-	char szDir[_MAX_DIR];
-	char szName[_MAX_FNAME];
-	char szExt  [_MAX_EXT];
+	{
+		char szDrive[_MAX_DRIVE];
+		char szDir[_MAX_DIR];
+		char szName[_MAX_FNAME];
+		char szExt  [_MAX_EXT];
 
-	//	Jun. 23, 2002 Thanks to sui
-	my_splitpath( pszPath, szDrive, szDir, szName, szExt );
-	
-	//	指定されたファイルが存在しないとき szName == NULL
-	//	ファイルの場所にディレクトリを指定するとエラーになるので
-	//	ファイルが無い場合は全く指定しないことにする．
-	if( szName[0] == '\0' ){
-		pszPath[0] = '\0';
-	}
-	else {
-		wsprintf( pszPath, "%s%s%s%s", szDrive, szDir, szName, szExt );
+		//	Jun. 23, 2002 Thanks to sui
+		my_splitpath( pszPath, szDrive, szDir, szName, szExt );
+		
+		//	指定されたファイルが存在しないとき szName == NULL
+		//	ファイルの場所にディレクトリを指定するとエラーになるので
+		//	ファイルが無い場合は全く指定しないことにする．
+		if( szName[0] == '\0' ){
+			pszPath[0] = '\0';
+		}
+		else {
+			TCHAR szRelPath[_MAX_PATH];
+			wsprintf( szRelPath, "%s%s%s%s", szDrive, szDir, szName, szExt );
+			const TCHAR* p = szRelPath;
+			if( ! ::GetLongFileName( p, pszPath ) ){
+				strcpy( pszPath, p );
+			}
+		}
 	}
 	m_ofn.lpstrFile = pszPath;
 	// To Here Jun. 23, 2002 genta
@@ -788,11 +795,11 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 		;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
+
+	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
+
 	if( GetOpenFileNameRecover( m_ofn ) ){
-		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
-		}
 		return TRUE;
 	}else{
 		//	May 29, 2004 genta 関数にまとめた
@@ -812,21 +819,24 @@ BOOL CDlgOpenFile::DoModal_GetOpenFileName( char* pszPath , bool bSetCurDir )
 */
 BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 {
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	if( false == bSetCurDir ){
-		int nRetVal;
-		nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-		if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-			bGetCurDirSuc = true;
-		}
-	}
+	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( "ユーザー指定",     m_szDefaultWildCard );
 	cFileExt.AppendExtRaw( "テキストファイル", "*.txt" );
 	cFileExt.AppendExtRaw( "すべてのファイル", "*.*" );
+	
+	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
+	if( pszPath[0] ){
+		TCHAR szFullPath[_MAX_PATH];
+		const TCHAR* pOrg = pszPath;
+		if( ::GetLongFileName( pOrg, szFullPath ) ){
+			// 成功。書き戻す
+			strcpy( pszPath , szFullPath );
+		}
+	}
 
 	/* 構造体の初期化 */
 	InitOfn( m_ofn );		// 2005.10.29 ryoji
@@ -849,11 +859,11 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( char* pszPath, bool bSetCurDir )
 		 /*| OFN_ENABLETEMPLATE | OFN_ENABLEHOOK*/;
 // 2005/02/20 novice 拡張子を省略したら補完する
 	m_ofn.lpstrDefExt = "";
+
+	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
+
 	if( GetSaveFileNameRecover( m_ofn ) ){
-		// 変わってしまった可能性のあるカレントディレクトリを元に戻す
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
-		}
 		return TRUE;
 	}else{
 		//	May 29, 2004 genta 関数にまとめた
@@ -917,13 +927,10 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 	m_bUseEol = false;	//	Feb. 9, 2001 genta
 	m_bUseBom = false;	//	Jul. 26, 2003 ryoji
 	// 2002/08/22 カレントディレクトリを保存
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	int nRetVal;
-	nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-	if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-		bGetCurDirSuc = true;
-	}
+	//カレントディレクトリを保存。関数を抜けるときに自動でカレントディレクトリは復元されます。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
+	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
 
 
 	if( GetOpenFileNameRecover( m_ofn ) ){
@@ -935,9 +942,6 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 		}
 		if( NULL != pbReadOnly ){
 			*pbReadOnly = m_bReadOnly;
-		}
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
 		}
 		return TRUE;
 	}else{
@@ -1004,13 +1008,10 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 	m_ofn.lpstrDefExt = (m_ofn.Flags & OFN_ENABLEHOOK)? NULL: _T("");	// 2006.11.10 ryoji フックを使うときは自前で拡張子を補完する
 
 	// 2002/08/22 カレントディレクトリを保存
-	TCHAR	szCurDir[_MAX_PATH];
-	bool	bGetCurDirSuc = false;
-	int nRetVal;
-	nRetVal = ::GetCurrentDirectory( _MAX_PATH, szCurDir );
-	if( 0 < nRetVal && _MAX_PATH > nRetVal ){
-		bGetCurDirSuc = true;
-	}
+	//カレントディレクトリを保存。関数を抜けるときに自動でカレントディレクトリは復元されます。
+	CCurrentDirectoryBackupPoint cCurDirBackup;
+	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
 
 	if( NULL != pnCharCode ){
 		m_nCharCode = *pnCharCode;
@@ -1051,9 +1052,6 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, 
 		//	Jul. 26, 2003 ryoji BOM設定
 		if( m_bUseBom ){
 			*pbBom = m_bBom;
-		}
-		if( bGetCurDirSuc ){
-			::SetCurrentDirectory( szCurDir );
 		}
 		return TRUE;
 	}else{

@@ -217,6 +217,20 @@ BOOL IsVisualStyle();						// 自分が現在ビジュアルスタイル表示状態かどうかを示す
 void PreventVisualStyle( HWND hWnd );		// 指定ウィンドウでビジュアルスタイルを使わないようにする	// 2006.06.23 ryoji
 void MyInitCommonControls();				// コモンコントロールを初期化する							// 2006.06.21 ryoji
 
+//カレントディレクトリユーティリティ。
+//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
+//2008.03.01 kobake 作成
+class CCurrentDirectoryBackupPoint{
+public:
+	CCurrentDirectoryBackupPoint();
+	~CCurrentDirectoryBackupPoint();
+private:
+	TCHAR m_szCurDir[_MAX_PATH];
+};
+
+void ChangeCurrentDirectoryToExeDir();
+HMODULE LoadLibraryExedir(LPCTSTR pszDll);
+
 BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath );	// 特殊フォルダのパスを取得する	// 2007.05.19 ryoji
 int MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 2007.05.24 ryoji
 

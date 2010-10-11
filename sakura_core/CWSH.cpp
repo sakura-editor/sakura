@@ -509,6 +509,10 @@ CWSHClient::CWSHClient(wchar_t const *AEngine, ScriptErrorHandler AErrorHandler,
 	m_InterfaceObject = new CInterfaceObject(this);
 	m_InterfaceObject->AddRef();
 	
+	// 2010.08.27 DLL インジェクション対策としてEXEのフォルダに移動する
+	CCurrentDirectoryBackupPoint dirBack;
+	ChangeCurrentDirectoryToExeDir();
+
 	CLSID ClassID;
 	if(CLSIDFromProgID(AEngine, &ClassID) != S_OK)
 		Error(L"指名のスクリプトエンジンが見つかりません");

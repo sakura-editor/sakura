@@ -308,7 +308,7 @@ CEditView::CEditView() :
 		m_uATOKReconvertMsg = ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ;
 		m_uWM_MSIME_RECONVERTREQUEST = ::RegisterWindowMessage("MSIMEReconvertRequest");
 		
-		m_hAtokModule = LoadLibrary("ATOK10WC.DLL");
+		m_hAtokModule = LoadLibraryExedir("ATOK10WC.DLL");
 		AT_ImmSetReconvertString = NULL;
 		if ( NULL != m_hAtokModule ) {
 			AT_ImmSetReconvertString =(BOOL (WINAPI *)( HIMC , int ,PRECONVERTSTRING , DWORD  ) ) GetProcAddress(m_hAtokModule,"AT_ImmSetReconvertString");
@@ -10111,8 +10111,18 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 
 		//OSバージョン取得
 		COsVersionInfo cOsVer;
+
+		// 2010.08.27 Moca システムディレクトリ付加
+		TCHAR szCmdDir[_MAX_PATH];
+		if( cOsVer.IsWin32NT() ){
+			::GetSystemDirectory(szCmdDir, sizeof(szCmdDir));
+		}else{
+			::GetWindowsDirectory(szCmdDir, sizeof(szCmdDir));
+		}
+
 		//コマンドライン文字列作成
-		wsprintf( cmdline, "%s %s%s",
+		wsprintf( cmdline, "\"%s\\%s\" %s%s",
+				szCmdDir,
 				( cOsVer.IsWin32NT() ? "cmd.exe" : "command.com" ),
 				( bGetStdout ? "/C " : "/K " ), pszCmd );
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,

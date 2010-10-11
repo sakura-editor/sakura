@@ -197,6 +197,10 @@ BOOL SelectDir( HWND hWnd, const char* pszTitle, const char* pszInitFolder, char
 	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 	CutLastYenFromDirectoryPath( szInitFolder );
 
+	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
+	CCurrentDirectoryBackupPoint dirBack;
+	ChangeCurrentDirectoryToExeDir();
+
 	// SHBrowseForFolder()関数に渡す構造体
 	BROWSEINFO bi;
 	bi.hwndOwner = hWnd;
@@ -387,7 +391,7 @@ BOOL GetSystemResources(
 	HINSTANCE	hlib;
 	int (CALLBACK *GetFreeSystemResources)( int );
 
-	hlib = ::LoadLibrary( "RSRC32.dll" );
+	hlib = LoadLibraryExedir( "RSRC32.dll" );
 	if( (int)hlib > 32 ){
 		GetFreeSystemResources = (int (CALLBACK *)( int ))GetProcAddress(
 			hlib,
@@ -1818,11 +1822,20 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 
 	// Get a pointer to the IShellLink interface.
 //	hRes = 0;
+	TCHAR szAbsLongPath[_MAX_PATH];
+	if( ! ::GetLongFileName( lpszLinkFile, szAbsLongPath ) ){
+		return FALSE;
+	}
+
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
+	CCurrentDirectoryBackupPoint dirBack;
+	ChangeCurrentDirectoryToExeDir();
 	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
+		
 		// Get a pointer to the IPersistFile interface.
 		if( SUCCEEDED(hRes = pIShellLink->QueryInterface( IID_IPersistFile, (void**)&pIPersistFile ) ) ){
 			// Ensure that the string is Unicode.
-			MultiByteToWideChar( CP_ACP, 0, lpszLinkFile, -1, wsz, MAX_PATH );
+			MultiByteToWideChar( CP_ACP, 0, szAbsLongPath, -1, wsz, MAX_PATH );
 			// Load the shortcut.
 			if( SUCCEEDED(hRes = pIPersistFile->Load( wsz, STGM_READ ) ) ){
 				// Resolve the link.
@@ -3175,7 +3188,7 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 	/* For security purposes, LoadLibrary should be provided with a
 	   fully-qualified path to the DLL. The lpszDllName variable should be
 	   tested to ensure that it is a fully qualified path before it is used. */
-	hinstDll = LoadLibrary(lpszDllName);
+	hinstDll = LoadLibraryExedir(lpszDllName);
 
 	if(hinstDll)
 	{
@@ -3307,6 +3320,58 @@ BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
 	return bRet;
 }
 
+//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
+//kobake
+CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
+{
+	int n = ::GetCurrentDirectory(sizeof(m_szCurDir), m_szCurDir);
+	if( n > 0 && n < (sizeof(m_szCurDir)/sizeof(m_szCurDir[0]))){
+		//ok
+	}
+	else{
+		//ng
+		m_szCurDir[0] = _T('\0');
+	}
+}
+
+CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
+{
+	if(m_szCurDir[0]){
+		::SetCurrentDirectory(m_szCurDir);
+	}
+}
+
+/*! 
+	カレントディレクトリを実行ファイルの場所に移動
+	@date 2010.08.28 Moca 新規作成
+*/
+void ChangeCurrentDirectoryToExeDir()
+{
+	TCHAR szExeDir[_MAX_PATH];
+	szExeDir[0] = _T('\0');
+	GetExedir( szExeDir, NULL );
+	if( szExeDir[0] ){
+		::SetCurrentDirectory( szExeDir );
+	}else{
+		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
+		szExeDir[0] = _T('\0');
+		int n = ::GetSystemDirectory( szExeDir, _MAX_PATH );
+		if( n && n < _MAX_PATH ){
+			::SetCurrentDirectory( szExeDir );
+		}
+	}
+}
+
+/*! 
+	@date 2010.08.28 Moca 新規作成
+*/
+HMODULE LoadLibraryExedir(LPCTSTR pszDll)
+{
+	CCurrentDirectoryBackupPoint dirBack;
+	// DLL インジェクション対策としてEXEのフォルダに移動する
+	ChangeCurrentDirectoryToExeDir();
+	return ::LoadLibrary( pszDll );
+}
 
 ///////////////////////////////////////////////////////////////////////
 // From Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群

@@ -22,6 +22,7 @@
 #include <windows.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
+#include "etc_uty.h"
 #include "CRunningTimer.h"
 
 /*!
@@ -42,7 +43,13 @@ int WINAPI WinMain(
 )
 {
 	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
-	::OleInitialize( NULL );	// 2009.01.07 ryoji ’Ç‰Á
+	{
+		// 2010.08.28 Moca OleInitialize—p‚ÉˆÚ“®
+		CCurrentDirectoryBackupPoint dirBack;
+		ChangeCurrentDirectoryToExeDir();
+ 
+		::OleInitialize( NULL );	// 2009.01.07 ryoji ’Ç‰Á
+	}
 
 	CProcessFactory aFactory;
 	CProcess *process = 0;
