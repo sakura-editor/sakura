@@ -172,7 +172,6 @@ CEditView::CEditView() :
 //	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
 //	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 {
-	LOGFONT		lf;
 
 	m_bDrawSWITCH = TRUE;
 	m_pcDropTarget = new CDropTarget( this );
@@ -275,29 +274,12 @@ CEditView::CEditView() :
 	m_nCharHeight = 18;			/* 文字の高さ */
 
 	/* フォント作成 */
-	m_hFont_HAN = CreateFontIndirect( &(m_pShareData->m_Common.m_lf) );
-
-	/* 太字フォント作成 */
-	lf = m_pShareData->m_Common.m_lf;
-	lf.lfWeight += 300;
-	if( 1000 < lf.lfWeight ){
-		lf.lfWeight = 1000;
-	}
-	m_hFont_HAN_FAT = CreateFontIndirect( &lf );
-
-	/* 下線フォント作成 */
-	lf = m_pShareData->m_Common.m_lf;
-	lf.lfUnderline = TRUE;
-	m_hFont_HAN_UL = CreateFontIndirect( &lf );
-
-	/* 太字下線フォント作成 */
-	lf = m_pShareData->m_Common.m_lf;
-	lf.lfUnderline = TRUE;
-	lf.lfWeight += 300;
-	if( 1000 < lf.lfWeight ){
-		lf.lfWeight = 1000;
-	}
-	m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
+	// 2010.05.30 Moca フォントの作成をCreateに移動
+	m_hFont_HAN = NULL;
+	m_hFont_HAN_FAT = NULL;
+	m_hFont_HAN_UL = NULL;
+	m_hFont_HAN_FAT_UL = NULL;
+	
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	//	2007.08.12 genta 初期化にShareDataの値が必要になった
@@ -357,10 +339,10 @@ CEditView::CEditView() :
 
 CEditView::~CEditView()
 {
-	DeleteObject( m_hFont_HAN );
-	DeleteObject( m_hFont_HAN_FAT );
-	DeleteObject( m_hFont_HAN_UL );
-	DeleteObject( m_hFont_HAN_FAT_UL );
+	if( m_hFont_HAN )        DeleteObject( m_hFont_HAN );
+	if( m_hFont_HAN_FAT )    DeleteObject( m_hFont_HAN_FAT );
+	if( m_hFont_HAN_UL )     DeleteObject( m_hFont_HAN_UL );
+	if( m_hFont_HAN_FAT_UL ) DeleteObject( m_hFont_HAN_FAT_UL );
 
 	// キャレット用ビットマップ	// 2006.11.28 ryoji
 	if( m_hbmpCaret != NULL )
@@ -404,6 +386,35 @@ BOOL CEditView::Create(
 	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
 	m_nMyIndex = nMyIndex;
+	
+	// 2010.05.30 Moca フォントの作成をコンストラクタからCreateに移動
+	{
+		LOGFONT		lf;
+		m_hFont_HAN = ::CreateFontIndirect( &(m_pShareData->m_Common.m_lf) );
+
+		/* 太字フォント作成 */
+		lf = m_pShareData->m_Common.m_lf;
+		lf.lfWeight += 300;
+		if( 1000 < lf.lfWeight ){
+			lf.lfWeight = 1000;
+		}
+		m_hFont_HAN_FAT = CreateFontIndirect( &lf );
+
+		/* 下線フォント作成 */
+		lf = m_pShareData->m_Common.m_lf;
+		lf.lfUnderline = TRUE;
+		m_hFont_HAN_UL = CreateFontIndirect( &lf );
+
+		/* 太字下線フォント作成 */
+		lf = m_pShareData->m_Common.m_lf;
+		lf.lfUnderline = TRUE;
+		lf.lfWeight += 300;
+		if( 1000 < lf.lfWeight ){
+			lf.lfWeight = 1000;
+		}
+		m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
+	}
+	m_dwTipTimer = ::GetTickCount();
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
 	m_cRegexKeyword = new CRegexKeyword( m_pShareData->m_Common.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
@@ -412,7 +423,6 @@ BOOL CEditView::Create(
 	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
 	m_nViewAlignTop = m_nTopYohaku;								/* 表示域の上端座標 */
 	/* ルーラー表示 */
-//	if( m_pShareData->m_Common.m_bRulerDisp ){
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		m_nViewAlignTop += m_pShareData->m_Common.m_nRulerHeight;	/* ルーラー高さ */
 	}
@@ -5789,8 +5799,9 @@ int CEditView::ScrollAtH( int nPos )
 */
 void CEditView::SyncScrollV( int line )
 {
-	if( m_pShareData->m_Common.m_bSplitterWndVScroll && line != 0 )
-	{
+	if( m_pShareData->m_Common.m_bSplitterWndVScroll && line != 0
+		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x01)
+	) {
 		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
 #if 0
 		//	差分を保ったままスクロールする場合
@@ -5815,8 +5826,9 @@ void CEditView::SyncScrollV( int line )
 */
 void CEditView::SyncScrollH( int col )
 {
-	if( m_pShareData->m_Common.m_bSplitterWndHScroll && col != 0 )
-	{
+	if( m_pShareData->m_Common.m_bSplitterWndHScroll && col != 0
+		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x02)
+	) {
 		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
 		HDC			hdc = ::GetDC( pcEditView->m_hWnd );
 		

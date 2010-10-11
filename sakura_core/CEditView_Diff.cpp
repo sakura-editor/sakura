@@ -418,10 +418,7 @@ finish:
 	if( pi.hThread  ) CloseHandle( pi.hThread  );
 
 	//分割したビューも更新
-	for( int v = 0; v < 4; ++v )
-		if( m_pcEditDoc->m_nActivePaneIndex != v )
-			m_pcEditDoc->m_cEditViewArr[v].Redraw();
-	Redraw();
+	m_pcEditDoc->Views_Redraw();
 
 	return;
 }
@@ -660,10 +657,7 @@ void CEditView::Command_Diff_Reset( void )
 	m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
 	//分割したビューも更新
-	for( int v = 0; v < 4; ++v )
-		if( m_pcEditDoc->m_nActivePaneIndex != v )
-			m_pcEditDoc->m_cEditViewArr[v].Redraw();
-	Redraw();
+	m_pcEditDoc->Views_Redraw();
 	return;
 }
 

@@ -109,6 +109,7 @@ CEditDoc::CEditDoc() :
 	//int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	//SetDocumentType( doctype, true );
 
+	m_nEditViewCount = 0;
 
 	/* レイアウト管理情報の初期化 */
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
@@ -189,7 +190,7 @@ BOOL CEditDoc::Create(
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::Create" );
 
-	HWND		hWndArr[4];
+	HWND		hWndArr[2];
 	CEditWnd*	pCEditWnd;
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
@@ -200,9 +201,7 @@ BOOL CEditDoc::Create(
 
 	/* ビュー */
 	m_cEditViewArr[0].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 0, /*FALSE,*/ TRUE  );
-	m_cEditViewArr[1].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 1, /*TRUE ,*/ FALSE );
-	m_cEditViewArr[2].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 2, /*TRUE ,*/ FALSE );
-	m_cEditViewArr[3].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 3, /*TRUE ,*/ FALSE );
+	m_nEditViewCount = 1;
 
 #if 0
 	YAZAKI 不要な処理と思われる。
@@ -216,9 +215,7 @@ BOOL CEditDoc::Create(
 
 	/* 子ウィンドウの設定 */
 	hWndArr[0] = m_cEditViewArr[0].m_hWnd;
-	hWndArr[1] = m_cEditViewArr[1].m_hWnd;
-	hWndArr[2] = m_cEditViewArr[2].m_hWnd;
-	hWndArr[3] = m_cEditViewArr[3].m_hWnd;
+	hWndArr[1] = NULL;
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
 	m_hWnd = m_cSplitterWnd.m_hWnd;
 
@@ -256,10 +253,12 @@ LRESULT CEditDoc::DispatchEvent(
 	switch( uMsg ){
 	case WM_ENTERMENULOOP:
 	case WM_EXITMENULOOP:
-		m_cEditViewArr[0].DispatchEvent( hwnd, uMsg, wParam, lParam );
-		m_cEditViewArr[1].DispatchEvent( hwnd, uMsg, wParam, lParam );
-		m_cEditViewArr[2].DispatchEvent( hwnd, uMsg, wParam, lParam );
-		m_cEditViewArr[3].DispatchEvent( hwnd, uMsg, wParam, lParam );
+		{
+			int i;
+			for( i = 0; i < GetAllViewCount(); ++i ){
+				m_cEditViewArr[i].DispatchEvent( hwnd, uMsg, wParam, lParam );
+			}
+		}
 		return 0L;
 	default:
 		return m_cEditViewArr[m_nActivePaneIndex].DispatchEvent( hwnd, uMsg, wParam, lParam );
@@ -522,7 +521,7 @@ BOOL CEditDoc::FileRead(
 		bRet = FALSE;
 		goto end_of_func;
 	}
-	for( i = 0; i < 4; ++i ){
+	for( i = 0; i < GetAllViewCount(); ++i ){
 		if( m_cEditViewArr[i].IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			m_cEditViewArr[i].DisableSelectArea( TRUE );
@@ -926,7 +925,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 #endif
 
 	int	v;
-	for( v = 0; v < 4; ++v ){
+	for( v = 0; v < GetAllViewCount(); ++v ){
 		if( m_nActivePaneIndex != v ){
 			m_cEditViewArr[v].RedrawAll();
 		}
@@ -1153,7 +1152,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
 		/* フォントが変わった */
-		for( i = 0; i < 4; ++i ){
+		for( i = 0; i < GetAllViewCount(); ++i ){
 			m_cEditViewArr[i].m_cTipWnd.ChangeFont( &(m_pShareData->m_Common.m_lf_kh) );
 		}
 
@@ -3462,7 +3461,7 @@ void CEditDoc::SetDrawSwitchOfAllViews( BOOL bDraw )
 	int i;
 	CEditView* pView;
 
-	for( i = 0; i < sizeof( m_cEditViewArr )/sizeof( CEditView ); i++ ){
+	for( i = 0; i < GetAllViewCount(); i++ ){
 		pView = &m_cEditViewArr[i];
 		pView->m_bDrawSWITCH = bDraw;
 	}
@@ -3482,7 +3481,7 @@ void CEditDoc::RedrawAllViews( CEditView* pViewExclude )
 	int i;
 	CEditView* pView;
 
-	for( i = 0; i < sizeof( m_cEditViewArr )/sizeof( CEditView ); i++ ){
+	for( i = 0; i < GetAllViewCount(); i++ ){
 		pView = &m_cEditViewArr[i];
 		if( pView == pViewExclude )
 			continue;
@@ -3495,9 +3494,27 @@ void CEditDoc::RedrawAllViews( CEditView* pViewExclude )
 	}
 }
 
+void CEditDoc::Views_Redraw()
+{
+	//アクティブ以外を再描画してから…
+	for( int v = 0; v < GetAllViewCount(); ++v ){
+		if( m_nActivePaneIndex != v ){
+			m_cEditViewArr[v].Redraw();
+		}
+	}
+	//アクティブを再描画
+	ActiveView().Redraw();
+}
+
+
 /* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 BOOL CEditDoc::DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw )
 {
+	if( 1 == GetAllViewCount() ){
+		return m_cEditViewArr[m_nActivePaneIndex].DetectWidthOfLineNumberArea( bRedraw );
+	}
+	// 以下2,4分割限定
+
 	if ( m_cEditViewArr[m_nActivePaneIndex].DetectWidthOfLineNumberArea( bRedraw ) ){
 		/* ActivePaneで計算したら、再設定・再描画が必要と判明した */
 		if ( m_cSplitterWnd.GetAllSplitCols() == 2 ){
@@ -3550,7 +3567,7 @@ BOOL CEditDoc::UpdateTextWrap( void )
 		BOOL bWrap = WrapWindowWidth( 0 );	// 右端で折り返す
 		if( bWrap ){
 			// WrapWindowWidth() で追加した更新リージョンで画面更新する
-			for( int i = 0; i < sizeof(m_cEditViewArr)/sizeof(CEditView); i++ ){
+			for( int i = 0; i < GetAllViewCount(); i++ ){
 				::UpdateWindow( m_cEditViewArr[i].m_hWnd );
 			}
 		}
@@ -3687,7 +3704,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 */
 int* CEditDoc::SavePhysPosOfAllView(void)
 {
-	const int NUM_OF_VIEW = 4;
+	const int NUM_OF_VIEW = GetAllViewCount();
 	const int NUM_OF_POS = 5;
 	const int XY = 2;
 	
@@ -3744,7 +3761,7 @@ int* CEditDoc::SavePhysPosOfAllView(void)
 */
 void CEditDoc::RestorePhysPosOfAllView( int* posary )
 {
-	const int NUM_OF_VIEW = 4;
+	const int NUM_OF_VIEW = GetAllViewCount();
 	const int NUM_OF_POS = 5;
 	const int XY = 2;
 
@@ -3871,7 +3888,7 @@ void CEditDoc::OnChangeSetting( void )
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
 	/* ビューに設定変更を反映させる */
-	for( i = 0; i < 4; ++i ){
+	for( i = 0; i < GetAllViewCount(); ++i ){
 		m_cEditViewArr[i].OnChangeSetting();
 	}
 	RestorePhysPosOfAllView( posSaveAry );
@@ -4131,7 +4148,7 @@ void CEditDoc::InitAllView( void )
 		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
 
 	/* 先頭へカーソルを移動 */
-	for( i = 0; i < 4; ++i ){
+	for( i = 0; i < GetAllViewCount(); ++i ){
 		//	Apr. 1, 2001 genta
 		// 移動履歴の消去
 		m_cEditViewArr[i].m_cHistory->Flush();
@@ -4145,6 +4162,35 @@ void CEditDoc::InitAllView( void )
 	}
 
 	return;
+}
+
+
+/*
+	分割指示。2つ目以降のビューを作る
+	@param nViewCount  既存のビューも含めたビューの合計要求数
+*/
+bool CEditDoc::CreateEditViewBySplit(int nViewCount )
+{
+	const int MAX_EDITVIEW = sizeof(m_cEditViewArr)/sizeof(m_cEditViewArr[0]);
+	if( MAX_EDITVIEW < nViewCount ){
+		return false;
+	}
+	if( GetAllViewCount() < nViewCount ){
+		int i;
+		for( i = GetAllViewCount(); i < nViewCount; i++ ){
+			m_cEditViewArr[i].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, i, FALSE );
+		}
+		m_nEditViewCount = nViewCount;
+
+		HWND hWndArr[MAX_EDITVIEW+1];
+		for( i = 0; i < nViewCount; i++ ){
+			hWndArr[i] = m_cEditViewArr[i].m_hWnd;
+		}
+		hWndArr[nViewCount] = NULL;
+
+		m_cSplitterWnd.SetChildWndArr( hWndArr );
+	}
+	return true;
 }
 
 

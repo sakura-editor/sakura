@@ -68,6 +68,7 @@ public:
 	BOOL Create( HINSTANCE, HWND, CImageListMgr* /*, int, int, int, int*/ );
 	void Init( void );	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
+	bool CreateEditViewBySplit( int );	/* ビューの分割分のウィンドウ作成要求 */
 
 	/*
 	|| 状態
@@ -87,6 +88,7 @@ public:
 	int GetActivePane( void );	/* アクティブなペインを取得 */
 	void SetDrawSwitchOfAllViews( BOOL bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
 	void RedrawAllViews( CEditView* pViewExclude );				/* すべてのペインをRedrawする */
+	void Views_Redraw();				/* Redrawする */
 	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
 	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
@@ -135,6 +137,8 @@ public:
 	//	Aug. 31, 2000 genta
 	const CEditView& ActiveView(void) const { return m_cEditViewArr[m_nActivePaneIndex]; }
 	CEditView& ActiveView(void) { return m_cEditViewArr[m_nActivePaneIndex]; }
+	bool IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
+	int	GetAllViewCount() const { return m_nEditViewCount; }
 
 	CEditView* GetDragSourceView() const { return m_pcDragSourceView; }
 	void SetDragSourceView( CEditView* pcDragSourceView ) { m_pcDragSourceView = pcDragSourceView; }
@@ -294,6 +298,7 @@ public:
 
 	CSplitterWnd	m_cSplitterWnd;				/* 分割フレーム */
 	CEditView		m_cEditViewArr[4];			/* ビュー */
+	int				m_nEditViewCount;			/* ビューのうちウィンドウが存在している数 */
 	int				m_nActivePaneIndex;			/* アクティブなビュー */
 	CEditView*		m_pcDragSourceView;			/* ドラッグ元のビュー */
 //	HWND			m_hwndActiveDialog;			/* アクティブな子ダイアログ */

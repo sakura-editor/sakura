@@ -1355,7 +1355,7 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 	RestorePhysPosOfAllView( posSave );
 	SetDrawSwitchOfAllViews( TRUE );
 
-	for( int i = 0; i < sizeof(m_cEditViewArr)/sizeof(CEditView); i++ ){
+	for( int i = 0; i < GetAllViewCount(); i++ ){
 		if( m_cEditViewArr[i].m_hWnd ){
 			InvalidateRect( m_cEditViewArr[i].m_hWnd, NULL, TRUE );
 			m_cEditViewArr[i].AdjustScrollBars();	// 2008.06.18 ryoji
@@ -1564,7 +1564,7 @@ BOOL CEditDoc::FileSaveAs( const char *filename )
 void CEditDoc::DeleteCompatibleBitmap()
 {
 	// CEditViewŒQ‚Ö“]‘—‚·‚é
-	for( int i = 0; i < 4; i++ ){
+	for( int i = 0; i < GetAllViewCount(); i++ ){
 		if( m_cEditViewArr[i].m_hWnd ){
 			m_cEditViewArr[i].DeleteCompatibleBitmap();
 		}

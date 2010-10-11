@@ -1694,7 +1694,7 @@ LRESULT CEditWnd::DispatchEvent(
 			bool b1;
 			bool b2;
 			b1 = (m_pShareData->m_Common.m_bScrollBarHorz == FALSE);
-			for( i = 0; i < 4; i++ )
+			for( i = 0; i < m_cEditDoc.GetAllViewCount(); i++ )
 			{
 				b2 = (m_cEditDoc.m_cEditViewArr[i].m_hwndHScrollBar == NULL);
 				if( b1 != b2 )		/* 水平スクロールバーを使う */

@@ -52,6 +52,7 @@ private: // 2002/2/3 aroka
 	int				m_nVSplitPos;			/* 垂直分割位置 */
 	int				m_nHSplitPos;			/* 水平分割位置 */
 	HWND			m_ChildWndArr[MAXCOUNTOFVIEW];		/* 子ウィンドウ配列 */
+	int				m_nChildWndCount;		/*!< 有効な子ウィンドウ配列の数 */
 	HCURSOR			m_hcurOld;				/* もとのマウスカーソル */
 	int				m_bDragging;			/* 分割バーをドラッグ中か */
 	int				m_nDragPosX;			/* ドラッグ位置Ｘ */
