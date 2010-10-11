@@ -715,7 +715,6 @@ void CEditView::Command_UNDO( void )
 	COpeBlk*	pcOpeBlk;
 	int			nOpeBlkNum;
 	int			i;
-	CMemory*	pcMem;
 	int			bIsModified;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
@@ -768,7 +767,8 @@ void CEditView::Command_UNDO( void )
 		//	}
 			switch( pcOpe->m_nOpe ){
 			case OPE_INSERT:
-				pcMem = new CMemory;
+				{
+				CMemory* pcMem = new CMemory;
 
 				/* 選択範囲の変更 */
 				m_nSelectLineBgnFrom = nCaretPosY_Before;	/* 範囲選択開始行(原点) */
@@ -817,9 +817,10 @@ void CEditView::Command_UNDO( void )
 //					MYTRACE( "?? ERROR\n" );
 //				}
 
+				}
 				break;
 			case OPE_DELETE:
-				pcMem = new CMemory;
+				// 2010.08.25 メモリーリーク修正
 				if( 0 < pcOpe->m_pcmemData->GetLength() ){
 					/* データ置換 削除&挿入にも使える */
 					ReplaceData_CEditView(
@@ -827,7 +828,7 @@ void CEditView::Command_UNDO( void )
 						nCaretPosX_Before,					/* 範囲選択開始桁 */
 						nCaretPosY_Before,					/* 範囲選択終了行 */
 						nCaretPosX_Before,					/* 範囲選択終了桁 */
-						pcMem,								/* 削除されたデータのコピー(NULL可能) */
+						NULL,								// 削除されたデータのコピー(NULL可能)
 						pcOpe->m_pcmemData->GetPtr(),	/* 挿入するデータ */
 						pcOpe->m_nDataLen,					/* 挿入するデータの長さ */
 						FALSE								/*再描画するか否か*/
@@ -936,7 +937,6 @@ void CEditView::Command_REDO( void )
 	COpeBlk*	pcOpeBlk;
 	int			nOpeBlkNum;
 	int			i;
-	CMemory*	pcMem;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
 	int			bIsModified;
@@ -987,7 +987,7 @@ void CEditView::Command_REDO( void )
 			}
 			switch( pcOpe->m_nOpe ){
 			case OPE_INSERT:
-				pcMem = new CMemory;
+				// 2010.08.25 メモリーリークの修正
 				if( 0 < pcOpe->m_pcmemData->GetLength() ){
 					/* データ置換 削除&挿入にも使える */
 					ReplaceData_CEditView(
@@ -1016,7 +1016,8 @@ void CEditView::Command_REDO( void )
 				pcOpe->m_pcmemData = NULL;
 				break;
 			case OPE_DELETE:
-				pcMem = new CMemory;
+				{
+				CMemory* pcMem = new CMemory;
 
 				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
 					pcOpe->m_nCaretPosX_PHY_To,
@@ -1048,6 +1049,7 @@ void CEditView::Command_REDO( void )
 //					FALSE
 //				);
 				pcOpe->m_pcmemData = pcMem;
+				}
 				break;
 			case OPE_MOVECARET:
 				break;
