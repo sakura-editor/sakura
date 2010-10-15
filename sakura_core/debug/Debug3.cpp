@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "debug/Debug3.h"
+#include "util/module.h"
 
 static HINSTANCE hDll=NULL;
 static void Load()
 {
 	if(!hDll){
-		hDll=::LoadLibrary(_T("DebugMonitorLib.dll"));
+		hDll=LoadLibraryExedir(_T("DebugMonitorLib.dll"));
 	}
 }
 

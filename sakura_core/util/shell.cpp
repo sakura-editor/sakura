@@ -42,6 +42,10 @@ BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TC
 	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 	CutLastYenFromDirectoryPath( szInitFolder );
 
+	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
+	CCurrentDirectoryBackupPoint dirBack;
+	ChangeCurrentDirectoryToExeDir();
+
 	// SHBrowseForFolder()関数に渡す構造体
 	BROWSEINFO bi;
 	bi.hwndOwner = hWnd;
@@ -388,12 +392,21 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 
 	// Get a pointer to the IShellLink interface.
 //	hRes = 0;
+	TCHAR szAbsLongPath[_MAX_PATH];
+	if( ! ::GetLongFileName( lpszLinkFile, szAbsLongPath ) ){
+		return FALSE;
+	}
+
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
+	CCurrentDirectoryBackupPoint dirBack;
+	ChangeCurrentDirectoryToExeDir();
+
 	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
 		// Get a pointer to the IPersistFile interface.
 		if( SUCCEEDED(hRes = pIShellLink->QueryInterface( IID_IPersistFile, (void**)&pIPersistFile ) ) ){
 			// Ensure that the string is Unicode.
 			WCHAR wsz[MAX_PATH];
-			_tcstowcs(wsz, lpszLinkFile, _countof(wsz));
+			_tcstowcs(wsz, szAbsLongPath, _countof(wsz));
 //			MultiByteToWideChar( CP_ACP, 0, lpszLinkFile, -1, wsz, MAX_PATH );
 			// Load the shortcut.
 			if( SUCCEEDED(hRes = pIPersistFile->Load( wsz, STGM_READ ) ) ){

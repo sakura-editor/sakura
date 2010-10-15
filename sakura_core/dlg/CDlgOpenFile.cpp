@@ -28,6 +28,7 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/os.h"
+#include "util/module.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -637,7 +638,13 @@ void CDlgOpenFile::Create(
 		TCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, NULL, NULL );
-		auto_sprintf( m_szInitialDir, _T("%ts%ts"), szDrive, szDir );
+		// 2010.08.28 相対パス解決
+		TCHAR szRelPath[_MAX_PATH];
+		auto_sprintf( szRelPath, _T("%ts%ts"), szDrive, szDir );
+		const TCHAR* p = szRelPath;
+		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
+			auto_strcpy(m_szInitialDir, p );
+		}
 	}
 	m_vMRU = vMRU;
 	m_vOPENFOLDER = vOPENFOLDER;
@@ -675,22 +682,29 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 	// From Here Jun. 23, 2002 genta
 	// 「開く」での初期フォルダチェック強化
 // 2005/02/20 novice デフォルトのファイル名は何も設定しない
-	TCHAR szDrive[_MAX_DRIVE];
-	TCHAR szDir[_MAX_DIR];
-	TCHAR szName[_MAX_FNAME];
-	TCHAR szExt  [_MAX_EXT];
+	{
+		TCHAR szDrive[_MAX_DRIVE];
+		TCHAR szDir[_MAX_DIR];
+		TCHAR szName[_MAX_FNAME];
+		TCHAR szExt  [_MAX_EXT];
 
-	//	Jun. 23, 2002 Thanks to sui
-	my_splitpath_t( pszPath, szDrive, szDir, szName, szExt );
+		//	Jun. 23, 2002 Thanks to sui
+		my_splitpath_t( pszPath, szDrive, szDir, szName, szExt );
 	
-	//	指定されたファイルが存在しないとき szName == NULL
-	//	ファイルの場所にディレクトリを指定するとエラーになるので
-	//	ファイルが無い場合は全く指定しないことにする．
-	if( szName[0] == _T('\0') ){
-		pszPath[0] = _T('\0');
-	}
-	else {
-		auto_sprintf( pszPath, _T("%ts%ts%ts%ts"), szDrive, szDir, szName, szExt );
+		//	指定されたファイルが存在しないとき szName == NULL
+		//	ファイルの場所にディレクトリを指定するとエラーになるので
+		//	ファイルが無い場合は全く指定しないことにする．
+		if( szName[0] == _T('\0') ){
+			pszPath[0] = _T('\0');
+		}
+		else {
+			TCHAR szRelPath[_MAX_PATH];
+			auto_sprintf( szRelPath, _T("%ts%ts%ts%ts"), szDrive, szDir, szName, szExt );
+			const TCHAR* p = szRelPath;
+			if( ! ::GetLongFileName( p, pszPath ) ){
+				auto_strcpy( pszPath, p );
+			}
+		}
 	}
 	m_ofn.lpstrFile = pszPath;
 	// To Here Jun. 23, 2002 genta
@@ -698,6 +712,10 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 	m_ofn.lpstrInitialDir = m_szInitialDir;
 	m_ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 	m_ofn.lpstrDefExt = _T(""); // 2005/02/20 novice 拡張子を省略したら補完する
+
+	// 2010.08.28 Moca DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
+
 	if( _GetOpenFileNameRecover( &m_ofn ) ){
 		return true;
 	}
@@ -727,6 +745,16 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 	cFileExt.AppendExtRaw( _T("ユーザー指定"),     m_szDefaultWildCard );
 	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
+	
+	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
+	if( pszPath[0] ){
+		TCHAR szFullPath[_MAX_PATH];
+		const TCHAR* pOrg = pszPath;
+		if( ::GetLongFileName( pOrg, szFullPath ) ){
+			// 成功。書き戻す
+			auto_strcpy( pszPath , szFullPath );
+		}
+	}
 
 	/* 構造体の初期化 */
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji
@@ -739,6 +767,10 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 	m_ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 
 	m_ofn.lpstrDefExt = _T("");	// 2005/02/20 novice 拡張子を省略したら補完する
+
+	// 2010.08.28 Moca DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
+
 	if( GetSaveFileNameRecover( &m_ofn ) ){
 		return true;
 	}
@@ -795,6 +827,9 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo )
 
 	//カレントディレクトリを保存。関数を抜けるときに自動でカレントディレクトリは復元されます。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
+
+	// 2010.08.28 Moca DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
 
 	//ダイアログ表示
 	bool bDlgResult = _GetOpenFileNameRecover( &m_ofn );
@@ -857,6 +892,9 @@ bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
+
+	// 2010.08.28 Moca DLLが読み込まれるので移動
+	ChangeCurrentDirectoryToExeDir();
 
 	m_nCharCode = pSaveInfo->eCharCode;
 

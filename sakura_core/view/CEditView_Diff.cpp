@@ -86,11 +86,12 @@ void CEditView::ViewDiffInfo(
 
 	//	From Here Dec. 28, 2002 MIK
 	//	diff.exeの存在チェック
-	if( -1 == ::GetFileAttributes( cmdline ) )
+	if( INVALID_FILE_ATTRIBUTES == ::GetFileAttributes( cmdline ) )
 	{
 		WarningMessage( GetHwnd(), _T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
 		return;
 	}
+	cmdline[0] = _T('\0');
 
 	//今あるDIFF差分を消去する。
 	if( CDiffManager::Instance()->IsDiffUse() )
@@ -144,12 +145,17 @@ void CEditView::ViewDiffInfo(
 
 	//OSバージョン取得
 	{
+		// 2010.08.28 Moca システムディレクトリ付加
+		TCHAR szCmdDir[_MAX_PATH];
+
 		COsVersionInfo cOsVer;
 		//コマンドライン文字列作成(MAX:1024)
 		if (cOsVer.IsWin32NT()){
+			::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 			auto_sprintf(
 				cmdline,
-				_T("cmd.exe /C \"\"%ts\\%ts\" %ts \"%ts\" \"%ts\"\""),
+				_T("\"%ts\\cmd.exe\" /C \"\"%ts\\%ts\" %ts \"%ts\" \"%ts\"\""),
+				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				_T("diff.exe"),		//diff.exe
 				szOption,		//diffオプション
@@ -158,9 +164,11 @@ void CEditView::ViewDiffInfo(
 			);
 		}
 		else{
+			::GetWindowsDirectory(szCmdDir, _countof(szCmdDir));
 			auto_sprintf(
 				cmdline,
-				_T("command.com /C \"%ts\\%ts\" %ts \"%ts\" \"%ts\""),
+				_T("\"%ts\\command.com\" /C \"%ts\\%ts\" %ts \"%ts\" \"%ts\""),
+				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				_T("diff.exe"),		//diff.exe
 				szOption,		//diffオプション

@@ -69,7 +69,7 @@ bool CProcess::Run()
 {
 	if( InitializeProcess() )
 	{
-		HMODULE hDllDbgHelp = ::LoadLibrary( _T("dbghelp.dll") );
+		HMODULE hDllDbgHelp = LoadLibraryExedir( _T("dbghelp.dll") );
 		m_pfnMiniDumpWriteDump = NULL;
 		if( hDllDbgHelp ){
 			*(FARPROC*)&m_pfnMiniDumpWriteDump = ::GetProcAddress( hDllDbgHelp, "MiniDumpWriteDump" );
