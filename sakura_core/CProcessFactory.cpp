@@ -185,7 +185,7 @@ bool CProcessFactory::StartControlProcess()
 	TCHAR szDir[MAX_PATH + 1];	//	ディレクトリパス名
 
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
-	::auto_sprintf( szCmdLineBuf, _T("%ts -NOWIN"), szEXE );
+	::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN"), szEXE ); // ""付加
 	::GetSystemDirectory( szDir, _countof( szDir ));
 
 	//常駐プロセス起動

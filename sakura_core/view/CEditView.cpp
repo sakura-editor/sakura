@@ -36,6 +36,7 @@
 #include "convert/CConvert.h"
 #include "util/string_ex2.h"
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
+#include "util/module.h"
 
 
 CEditView*	g_m_pcEditView;
@@ -215,7 +216,7 @@ BOOL CEditView::Create(
 		m_uATOKReconvertMsg = ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ;
 		m_uWM_MSIME_RECONVERTREQUEST = ::RegisterWindowMessage(_T("MSIMEReconvertRequest"));
 		
-		m_hAtokModule = ::LoadLibrary(_T("ATOK10WC.DLL"));
+		m_hAtokModule = LoadLibraryExedir(_T("ATOK10WC.DLL"));
 		m_AT_ImmSetReconvertString = NULL;
 		if ( NULL != m_hAtokModule ) {
 			m_AT_ImmSetReconvertString =(BOOL (WINAPI *)( HIMC , int ,PRECONVERTSTRING , DWORD  ) ) GetProcAddress(m_hAtokModule,"AT_ImmSetReconvertString");

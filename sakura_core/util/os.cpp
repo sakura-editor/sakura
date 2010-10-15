@@ -313,7 +313,7 @@ BOOL GetSystemResources(
 	HINSTANCE	hlib;
 	int (CALLBACK *GetFreeSystemResources)( int );
 
-	hlib = ::LoadLibrary( _T("RSRC32.dll") );
+	hlib = ::LoadLibraryExedir( _T("RSRC32.dll") );
 	if( (int)hlib > 32 ){
 		GetFreeSystemResources = (int (CALLBACK *)( int ))GetProcAddress(
 			hlib,

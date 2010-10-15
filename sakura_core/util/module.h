@@ -6,6 +6,12 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSma
 
 DWORD GetDllVersion( LPCTSTR lpszDllName );	// シェルやコモンコントロール DLL のバージョン番号を取得	// 2006.06.17 ryoji
 
+void ChangeCurrentDirectoryToExeDir();
+
+//! カレントディレクトリ移動機能付LoadLibrary
+HMODULE LoadLibraryExedir( LPCTSTR pszDll);
+
+
 //※サクラ依存
 void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
 void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji

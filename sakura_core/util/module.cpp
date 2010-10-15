@@ -1,7 +1,39 @@
 #include "stdafx.h"
 #include "module.h"
 #include "util/os.h"
+#include "util/file.h"
 #include <Shlwapi.h>	// 2006.06.17 ryoji
+
+/*! 
+	カレントディレクトリを実行ファイルの場所に移動
+	@date 2010.08.28 Moca 新規作成
+*/void ChangeCurrentDirectoryToExeDir()
+{
+	TCHAR szExeDir[_MAX_PATH];
+	szExeDir[0] = _T('\0');
+	GetExedir( szExeDir, NULL );
+	if( szExeDir[0] ){
+		::SetCurrentDirectory( szExeDir );
+	}else{
+		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
+		szExeDir[0] = _T('\0');
+		int n = ::GetSystemDirectory( szExeDir, _MAX_PATH );
+		if( n && n < _MAX_PATH ){
+			::SetCurrentDirectory( szExeDir );
+		}
+	}
+}
+
+/*! 
+	@date 2010.08.28 Moca 新規作成
+*/
+HMODULE LoadLibraryExedir(LPCTSTR pszDll)
+{
+	CCurrentDirectoryBackupPoint dirBack;
+	// DLL インジェクション対策としてEXEのフォルダに移動する
+	ChangeCurrentDirectoryToExeDir();
+	return ::LoadLibrary( pszDll );
+}
 
 /*!	シェルやコモンコントロール DLL のバージョン番号を取得
 
@@ -19,7 +51,7 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
 	/* For security purposes, LoadLibrary should be provided with a
 	   fully-qualified path to the DLL. The lpszDllName variable should be
 	   tested to ensure that it is a fully qualified path before it is used. */
-	hinstDll = ::LoadLibrary(lpszDllName);
+	hinstDll = LoadLibraryExedir(lpszDllName);
 
 	if(hinstDll)
 	{

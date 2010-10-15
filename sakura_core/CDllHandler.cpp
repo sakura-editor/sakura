@@ -30,6 +30,7 @@
 
 #include "stdafx.h"
 #include "CDllHandler.h"
+#include "util/module.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
@@ -88,7 +89,7 @@ EDllResult CDllImp::InitDll(LPCTSTR pszSpecifiedDllName)
 		if(!pszName || !pszName[0])continue;
 
 		//DLLロード。ロードできなかったら次の名前候補を試す。
-		m_hInstance = ::LoadLibrary(pszName);
+		m_hInstance = LoadLibraryExedir(pszName);
 		if(!m_hInstance)continue;
 
 		//初期処理

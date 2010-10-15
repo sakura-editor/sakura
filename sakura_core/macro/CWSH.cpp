@@ -20,6 +20,8 @@
 #include "macro/CWSH.h"
 #include "macro/CIfObj.h"
 #include "window/CEditWnd.h"
+#include "util/os.h"
+#include "util/module.h"
 
 /* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
@@ -200,6 +202,10 @@ public:
 CWSHClient::CWSHClient(wchar_t const *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
 				m_Engine(NULL), m_Data(AData), m_OnError(AErrorHandler), m_Valid(false)
 { 
+	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
+	CCurrentDirectoryBackupPoint dirBack;
+	ChangeCurrentDirectoryToExeDir();
+	
 	CLSID ClassID;
 	if(CLSIDFromProgID(AEngine, &ClassID) != S_OK)
 		Error(L"指名のスクリプトエンジンが見つかりません");
