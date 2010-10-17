@@ -11,6 +11,54 @@
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>変更履歴(2007/09/27～)</h2>
 <!--<h3>xxx. xx, 2007 (1.x.x.x)</h3>-->
+<h3>17. Oct, 2010 (1.6.6.0)</h3>
+<ul>
+	<li>読み込むファイルサイズが大きい場合に警告する(ANSI版) (svn:1746 patches:2970236 unicode:931 unicode:942 unicode:943 ラスティブ,もか)
+	<li>Erlang アウトライン解析 (svn:1828 patches:2835545 げんた)
+</ul>
+[仕様変更]<br />
+<ul>
+	<li>[U済] . を [^\n] から [^\r\n] 相当へ変更し、$のマッチ範囲を \r\n, \r, \n直前に変更 (bregonig.dllを使用している場合のみ。svn:1676 patches:2869238 unicode:1034 ds14050)</li>
+	<li>タブを閉じるコマンドの改良 (svn:1740 patches:2921307 dev:5641 syat)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+	<li>０文字選択の描画不正 (svn:1688 patches:2905577 unicode:1057 ryoji)</li>
+	<li>「ttp://～」や「tp://～」の動作が不正 (svn:1687 patches:2905209 dev:5628 ryoji)</li>
+	<li>全角スペース直後のクリッカブルURLが無効 (svn:1686 patches:2905012 data:7102 ryoji)</li>
+	<li>文書末を含む選択状態で文字列を貼り付けるとEOF表示が消える (svn:1681 patches:2895958 unicode:1052 ryoji)</li>
+	<li>r1676(#2869217)で起きる bcc5.5.1のエラー対策 (svn:1680 patches:2869217 ds14050)</li>
+	<li>上検索の結果が幅0のとき選択範囲が 1あったのを 0に修正 (svn:1675 patches:2869217 unicode:1035 ds14050)</li>
+	<li>浅いフォルダにあるファイルの編集・保存時にバックアップ処理で異常終了する (svn:1738 patches:2875910 dev:5624 あろか)</li>
+	<li>タブバーツールチップの&表示不正 (svn:1739 patches:2912612 dev:5637 ryoji)</li>
+	<li>検索・置換マクロのエラーチェック不具合 (svn:1741 patches:2921768 dev:5648 ryoji)</li>
+	<li>-GREPDLG指定でキャレットが消える (svn:1742 patches:2928898 dev:5650 ryoji)</li>
+	<li>画面分割ボックス操作時の動作不正 (svn:1743 patches:2934911 dev:5656 ryoji)</li>
+	<li>文字種が変わる位置での単語補完候補にカーソル位置の単語が出る (svn:1744 patches:2955419 unicode:1117 syat)</li>
+	<li>WIN64でコンパイルエラー (svn:1745 patches:2964148 もか)</li>
+	<li>[U済]ルールファイル解析でスタック使いすぎ (svn:1747 patches:2970250 もか)</li>
+	<li>画面分割でカーソル行位置表示が不正 (svn:1748 patches:2981137 unicode:1144 ryoji)</li>
+	<li>不要なコードの存在によりコンパイル時に警告が発生する (svn:1749 patches:2989036 dev:5671 なすこじ)</li>
+	<li>アウトライン解析（トグル）で「C 関数一覧」画面が閉じない (svn:1831 patches:3009187 dev:5675 ryoji)</li>
+	<li>折り返し行インデントで折り返すとメモリを食い尽くす (svn:1832 patches:3025944 dev:5677 もか)</li>
+	<li>Undo/Redoでのメモリーリーク修正 (svn:1834 patches:3055719 もか)</li>
+	<li>チップウィンドウのリソースリーク修正 (svn:1835 patches:3056634 もか)</li>
+	<li>Grep結果画面の強調表示に単語単位が適用されていない (svn:1836 patches:3056638 dev:5685 unicode:1334 もか)</li>
+	<li>Grepの出力順が不正になることがある (svn:1836 patches:3056638 dev:5685 もか)</li>
+	<li>Grep正規表現の「^」・戻り読みの不具合の修正 (svn:1836 patches:3056638 dev:5685 unicode:1213 もか)</li>
+	<li>Grep中に同一ウィンドウでGrepすると落ちる (svn:1836 patches:3056638 dev:5685 unicode:1311 もか)</li>
+	<li>「クリップボードから」で全置換したときの置換数表示がゼロになる (svn:1837 patches:3067444 dev:5681 ryoji)</li>
+	<li>「クリップボードから」と「正規表現」がONの置換で「選択始点挿入」「選択終点追加」が効かない (svn:1837 patches:3067444 dev:5681 ryoji)</li>
+	<li>フリーカーソル時のデータ挿入がカーソル位置でなく次行頭への挿入になってしまうことがある (svn:1838 patches:3069797 dev:5682 ryoji)</li>
+	<li>MSDEVLineSelect形式で「クリップボードから」全置換したときにラインモード貼り付けにならない (svn:1838 patches:3069797 dev:5682 ryoji)</li>
+</ul>
+[その他変更]<br />
+<ul>
+	<li>存在しないcursor1.curのsakura.dsp登録を解除 (svn:1829 patches:2992320 dev:5673 ryoji)</li>
+	<li>Viewウィンドウの遅延作成(ANSI版) (svn:1830 patches:3008991 unicode:1249 もか)</li>
+	<li>ツールバー折返しの番号ずれ対応 (svn:1833 patches:3026401 dev:5676 syat,もか)</li>
+	<li>ユーザの意図しないプログラム実行の抑制(A用) (svn:1839 patches:3055711 dev:5679 dev:5685 もか)</li>
+</ul>
 
 <h3>Sep. 66, 2009 (1.6.5.0)</h3>
 
@@ -19,8 +67,8 @@
 	<li>自動実行マクロ (svn:1631 patches:1550557 dev:4501 dev:5545 全略, ryoji, げんた, maru, syat)</li>
 	<li>マクロ実行コマンドラインオプション追加 (svn:1632 patches:2457700 dev:5505 syat)</li>
 	<li>Sleipnir風タブを閉じるコマンド (svn:1633 patches:2326632 dev:5450 syat)</li>
-	<li>[U済]正規表現キーワードのURLをクリッカブルに (svn:1634 patches:2800435 dev:5569 syat)</li>
-	<li>[U済]句読点ぶら下げ文字指定オプション追加 (svn:1635 patches:2832975 dev:5602 ryoji)</li>
+	<li>正規表現キーワードのURLをクリッカブルに (svn:1634 patches:2800435 dev:5569 syat)</li>
+	<li>句読点ぶら下げ文字指定オプション追加 (svn:1635 patches:2832975 dev:5602 ryoji)</li>
 	<li>ウィンドウ毎にアクセラレータテーブルを作成する(Wine用) (svn:1648 patches:2838119 dev:5587 dev:5612 Hidetaka Sakai, nasukoji)</li>
 </ul>
 [仕様変更]<br />
