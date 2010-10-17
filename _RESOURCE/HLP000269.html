@@ -3,24 +3,52 @@
 <HEAD>
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
-<TITLE>PPAマクロとWSHマクロ</TITLE>
-<META NAME="MS-HKWD" CONTENT="PPAマクロとWSHマクロ">
+<TITLE>WSHマクロとPPAマクロ</TITLE>
+<META NAME="MS-HKWD" CONTENT="WSHマクロとPPAマクロ">
 <META NAME="MS-HKWD" CONTENT="Editorオブジェクト">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
-<h2>PPAマクロとWSHマクロ</h2>
-ここでは、PPAとWSHそれぞれの情報を記載してあります。<br>
-<b>■ PPAマクロ</b><br>
+<h2>WSHマクロとPPAマクロ</h2>
+ここでは、WSHとPPAそれぞれの情報を記載してあります。<br>
+
+<h3>WSHマクロ(JScrpt/VBScript等)</h3>
+WSHがインストールされている必要があります。<br>
+WSHとはWindows Scripting Host の略で、Windows98 以降であれば、標準でインストールされています。<br>
+<br>
+エディタを操作するためのオブジェクトは Editor です。メソッド名及びその引数はキーマクロと同じです。<br>
+オブジェクトは省略しても動作しますが、<b>Editor.関数名</b>(言語依存)のようにオブジェクト名を付けることを推奨します。<br>
+<br>
+WScript オブジェクトは wscript.exe/cscript.exe が内蔵しているためサクラエディタでは使えません。<br>
+任意のActiveXオブジェクト(WScript.Shell等)は、VBScriptならCreateObject、JScriptならActiveXObjectで取得して使ってください。<br>
+また、サクラエディタのEditorなどのオブジェクトを WScript.exe などから利用することはできません。<br>
+<br>
+.vbs, .jsの他、追加のエンジンをインストールしていれば、それも使えることがあります。<br>
+しかしながら、エディタ側の問題で、正常に動作しない環境や、エンジンがあるようです。<br>
+<br>
+<img src="images/hint.png"><br>
+マクロの実行に<b>WSH</b>を使用できるようになりました。(sakura:1.3.3.0以降)<br>
+Windows95系OSでWSHが一応動くようになりました。(sakura:1.4.3.4以降)<br>
+VBScriptからMsgBox, Inputが使用できるようになりました。(sakura:1.5.7.0以降)<br>
+
+<h3>PPAマクロ</h3>
+●PPA.DLL<br>
+PPA.DLLが必要です。PPA ではマクロで制御構文や変数が利用できます。<br>
+<br>
+ダウンロードは以下のサイトから可能です。<br>
+<div class=li200>
+<a href="http://ht-deko.minim.ne.jp/junkbox.html#PPA" target="_blank">http://ht-deko.minim.ne.jp/junkbox.html#PPA</a><br>
+</div>
+
+サクラエディタのマクロ関数は、「<b>S_関数名</b>」と、S_をつけてください。<br>
+<br>
 PPAでは、デバッグ用文字列型変数<b>UserErrorMes</b>を利用できます。<br>
 この変数に書き込んでおくと、PPAがエラーを返したときに表示されるメッセージボックスに、この変数の内容も表示されます。(sakur:1.4.2.0以降)<br>
 <br>
 IsDefine( 'sakura-editor' );<br>
 を利用すると、マクロを実行しているのがサクラエディタかどうか判別できます。(sakura:1.4.2.0以降)<br>
 <br>
-sakura:1.4.2.0以降では、PPA.DLL ver1.23 以上である必要があります。<br>
-それ以前のsakuraでは PPA.DLL ver1.0が必要です。<br>
 <br>
 PPAでは、文字列型の中にNULを含める事ができません。選択文字列にNULが含まれていた場合は、NULの手前までしかアクセスできません。<br>
 <br>
@@ -28,15 +56,7 @@ PPAでは、文字列型の中にNULを含める事ができません。選択文字列にNULが含まれていた�
 PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の使用も可能です。<br>
 文字列はシングルクォーテーションで括り、シングルクォーテーション文字そのものは '' と記述します。\ という文字は \ のままです。<br>
 <br>
-<b>■ WSHマクロ</b><br>
-WSHがインストールされている必要があります。<br>
-WSHとはWindows Scripting Host の略で、Windows98以降であれば、標準でインストールされています。<br>
-.vbs, .jsの他、追加のエンジンをインストールしていれば、それも使えることがあります。<br>
-しかしながら、エディタ側の問題で、正常に動作しない環境や、エンジンがあるようです。<br>
-サクラエディタのオブジェクトは<b>Editor</b>です。<br>
+<img src="images/hint.png">マクロの実行に<b>PPA.DLL</b>を使用できるようになりました。PPA.DLL ver1.0以上が必要です。(sakura:1.2.106.1 以降)<br>
+sakura:1.4.2.0以降では、PPA.DLL ver1.23 以上である必要があります。<br>
 <br>
-WScriptオブジェクト自体は、公開されていないため、利用できません。<br>
-WScript.Shell オブジェクトなどはいきなりは使えませんので、<br>
-CreateObject/ActiveXObjectでオブジェクトを取得して使ってください。<br>
-また、サクラエディタのEditorは、WScript.exeなどからCreateObjectできません。<br>
 </BODY></HTML>

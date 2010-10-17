@@ -1,7 +1,7 @@
 @charset "shift_jis";
 
 BODY {
-	margin: 1em 5%; line-height: 1.5; font-family: "‚l‚r ‚oƒSƒVƒbƒN", sans-serif, "verdana", "arial", "helvetica"; color: #000; background-color: #fff;
+	margin: 1em 5%; line-height: 1.4; font-family: "‚l‚r ‚oƒSƒVƒbƒN", sans-serif, "verdana", "arial", "helvetica"; color: #000; background-color: #fff;
 }
 A:link {
 	COLOR: #f03; BACKGROUND-COLOR: transparent
@@ -10,7 +10,7 @@ A:visited {
 	COLOR: #903; BACKGROUND-COLOR: transparent
 }
 A:hover {
-	COLOR: #000; BACKGROUND-COLOR: #fab
+	COLOR: #000; BACKGROUND-COLOR: #fcd
 }
 A:link IMG {
 	border-color: #f03;
@@ -19,7 +19,7 @@ A:visited IMG {
 	border-color: #903;
 }
 A:hover IMG {
-	border-color: #fab;
+	border-color: #fcd;
 }
 HR {
 	border-color: #666; margin: 1em; border-style: solid; height: 2px;
@@ -43,16 +43,16 @@ H4 {
 	background-color: #fee; color: #000;
 }
 DL {
-	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN-LEFT: 1em; BORDER-LEFT: #666 1px solid; MARGIN-RIGHT: 1em; PADDING-TOP: 0px; BORDER-BOTTOM: #666 1px solid
+	padding: 0; border: 1px solid #666; margin-right: 1em; margin-left: 1em;
 }
 DT {
-	BORDER-RIGHT: 1px; PADDING-RIGHT: 0.3em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.3em; PADDING-BOTTOM: 0.1em; MARGIN: 0.5em 0px 0px; BORDER-LEFT: 1px; PADDING-TOP: 0.1em; BORDER-BOTTOM: #f28 1px solid; BACKGROUND-COLOR: #fee
+	PADDING: 0.1em 0.3em 0.1em 0.3em; MARGIN: 0.5em 0px 0px; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
 }
 DD {
 	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0px; PADDING-TOP: 0.2em
 }
 TABLE {
-	BORDER-RIGHT: #666 2px solid; BORDER-TOP: #666 2px solid; BORDER-LEFT: #666 2px solid; BORDER-BOTTOM: #666 2px solid; BORDER-COLLAPSE: collapse
+	BORDER-RIGHT: #666 2px solid; BORDER-TOP: 2px solid #666; BORDER-LEFT: #666 2px solid; BORDER-BOTTOM: #666 2px solid; BORDER-COLLAPSE: collapse
 }
 TH {
 	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid
@@ -61,16 +61,16 @@ TD {
 	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid
 }
 P {
-	LINE-HEIGHT: 1.5
+	LINE-HEIGHT: 1.4
 }
 DL {
-	LINE-HEIGHT: 1.5
+	LINE-HEIGHT: 1.4
 }
 UL {
-	LINE-HEIGHT: 1.5
+	LINE-HEIGHT: 1.4
 }
 OL {
-	LINE-HEIGHT: 1.5
+	LINE-HEIGHT: 1.4
 }
 DT {
 	FONT-WEIGHT: bold
@@ -97,10 +97,21 @@ STRONG {
 	FONT-WEIGHT: bold; TEXT-ALIGN: center
 }
 .example {
-	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; FONT-WEIGHT: bold; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-TOP-STYLE: none; PADDING-TOP: 0px; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #e0fce8; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
+	margin: 0px; padding: 0 1em 0 1em; font-weight: bold; border-top-style: none; 
+	; border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none
 }
 .note {
 	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-TOP-STYLE: none; PADDING-TOP: 0px; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
+}
+.codesample {
+	color: #000; background-color: #f9f9f9;
+	border: 1px solid #888;
+}
+.codecomment {
+	color: #070;
+}
+.codestr {
+	color: #A11; 
 }
 
 .li100 {

@@ -10,35 +10,39 @@
 <script type="text/javascript" src="item.js"></script>
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>マクロについて</h2>
-<a href="HLP000125.html">キーマクロ</a>によってユーザの操作をマクロとして記録することができますが、この他にマクロファイルを直接記述することによって、キーマクロで記録されないいくつかの機能が使えるようになります。<br>
+<a href="HLP000125.html">キーマクロの記録</a>によってユーザの操作をマクロとして記録することができます。<br>
+この他にマクロファイルを直接記述することによって、キーマクロで記録されない機能も使えるようになります。<br>
+記録・手書きの<a href="HLP000267.html">キーマクロ</a>、<a href="HLP000269.html">WSH・PPAマクロ</a>が利用できます。<br>
 <br>
-<img src="images/hint.png">マクロの実行に<b>PPA.DLL</b>を使用できるようになりました。(sakura:1.2.106.1 以降)<br>
-PPAから利用する場合、「<b>S_関数名</b>」と、S_をつけてください。<br>
+
+<h3>拡張子</h3>
+マクロは拡張子によって、種類を判別して実行しています。<br>
+「.mac」「.ppa」はWindowsの関連付けや設定に関係なく実行できます。<br>
+<pre>
+<table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tr><td>拡張子</td><td>種類</td></tr>
+<tr><td>mac</td><td>キーマクロ</td></tr>
+<tr><td>ppa</td><td>PPAマクロ</td></tr>
+<tr><td>js</td><td>WSH:Jscriptマクロ</td></tr>
+<tr><td>vbs</td><td>WSH:VBScriptマクロ</td></tr>
+<tr><td>その他</td><td>WSH:他にWSHが認識できるものであれば使える</td></tr>
+</table>
+</pre>
+
+<h3>キーマクロ例</h3>
+【キーマクロ例1】<br>
 <div class=li200>
 S_InsText("string"); // 文字列挿入<br>
-S_ExecCommand( "command" ); // コマンド実行<br>
-S_Up(行数); // 指定行数上に<br>
-S_GoLineTop(flag); // 1: 空白に関係なく桁位置1に移動，8: 選択して移動<br>
+S_ExecCommand( "C:\\WINDOWS\\explorer .", 0 ); // コマンド実行<br>
+S_Up(3); // 3行上に移動<br>
+S_GoLineTop(1); // 1: 空白に関係なく桁位置1に移動，8: 選択して移動<br>
 </div><br>
-【例】<br>
-<div class=li200>//一行挿入のマクロ<br>
-S_GoLineTop(1);	/* 行頭に移動(折り返し単位) */<br>
-S_Char(13);	/* 文字入力 */<br>
-S_Up();	/* カーソル上移動 */<br>
-</div><br>
-●PPA.DLL<br>
-PPA.DLLがインストールされている場合、マクロで制御構文や変数が利用できます。<br>
-ダウンロードは以下のサイトから可能です。<br>
+
+【キーマクロ例2】<br>
 <div class=li200>
-<a href="http://homepage1.nifty.com/ht_deko/junkbox.html#PPA" target=_blank>http://homepage1.nifty.com/ht_deko/junkbox.html#PPA</a><br>
+//一行挿入のマクロ<br>
+GoLineTop(1);	// 行頭に移動(折り返し単位)<br>
+Char(13);	// 文字入力<br>
+Up();	// カーソル上移動<br>
 </div><br>
-<img src="images/hint.png">マクロの実行に<b>WSH</b>を使用できるようになりました。(sakura:1.3.3.0以降)<br>
-Windows95系OSでWSHが一応動くようになりました。(sakura:1.4.3.4以降)<br>
-<br>
-WSHから利用する場合、「<b>Editor.関数名</b>」のようにオブジェクト名をつけてください。<br>
-<div class=li200>エディタを操作するためのオブジェクトは Editor です。メソッド名及びその引数はキーボードマクロと同じです。<br>
-WScript オブジェクトはwscript.exe/cscript.exeが内蔵しているためサクラエディタでは使えません。<br>
-任意のActiveXオブジェクトをVBScriptならCreateObject、JScriptならActiveXObjectで取得して使ってください。<br>
-</div><br>
-<img src="images/hint.png">VBScriptからMsgBox, Inputが使用できるようになりました。(sakura:1.5.7.0以降)<br>
 </BODY></HTML>

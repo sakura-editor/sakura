@@ -1337,15 +1337,11 @@
 <param name="Local" value="_RESOURCE\HLP000204.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="拡張子">
-<param name="Local" value="_RESOURCE\HLP000266.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
 <param name="Name" value="キーボードマクロ">
 <param name="Local" value="_RESOURCE\HLP000267.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="PPAマクロとWSHマクロ">
+<param name="Name" value="WSHマクロとPPAマクロ">
 <param name="Local" value="_RESOURCE\HLP000269.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
@@ -1353,7 +1349,7 @@
 <param name="Local" value="_RESOURCE\HLP000268.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="記載例">
+<param name="Name" value="マクロ記載例">
 <param name="Local" value="_RESOURCE\HLP000270.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
