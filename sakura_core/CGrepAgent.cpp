@@ -60,16 +60,19 @@ DWORD CGrepAgent::DoGrep(
 	CRunningTimer cRunningTimer( "CEditView::DoGrep" );
 #endif
 
+	// 再入不可
+	if( this->m_bGrepRunning ){
+		assert_warning( false == this->m_bGrepRunning );
+		return 0xffffffff;
+	}
+
 	this->m_bGrepRunning = true;
 
-
-	int			nDummy;
 	int			nHitCount = 0;
 	wchar_t		szKey[_MAX_PATH];
 	TCHAR		szFile[_MAX_PATH];
 	CDlgCancel	cDlgCancel;
 	HWND		hwndCancel;
-	int			nCharChars;
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	CBregexp	cRegexp;
 	CNativeW	cmemMessage;
@@ -100,6 +103,9 @@ DWORD CGrepAgent::DoGrep(
 	wcscpy( pcViewDst->m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
 	pcViewDst->m_sCurSearchOption.bRegularExp = sSearchOption.bRegularExp;		/* 検索／置換  1==正規表現 */
 	pcViewDst->m_sCurSearchOption.bLoHiCase   = sSearchOption.bLoHiCase;			/* 検索／置換  1==英大文字小文字の区別 */
+	// 2010.08.21 単語単位の適用漏れ
+	pcViewDst->m_sCurSearchOption.bWordOnly   = sSearchOption.bWordOnly;
+
 	/* 正規表現 */
 
 	//	From Here Jun. 27 genta
@@ -113,6 +119,8 @@ DWORD CGrepAgent::DoGrep(
 	if( pcViewDst->m_sCurSearchOption.bRegularExp ){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		if( !InitRegexp( pcViewDst->GetHwnd(), pcViewDst->m_CurRegexp, true ) ){
+			this->m_bGrepRunning = false;
+			pcViewDst->m_bDoing_UndoRedo = false;
 			return 0;
 		}
 
@@ -142,12 +150,16 @@ DWORD CGrepAgent::DoGrep(
 	//	バージョン番号取得のため，処理を前の方へ移動した
 	if( sSearchOption.bRegularExp ){
 		if( !InitRegexp( pcViewDst->GetHwnd(), cRegexp, true ) ){
+			this->m_bGrepRunning = false;
+			pcViewDst->m_bDoing_UndoRedo = false;
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
 		nFlag |= sSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if( !cRegexp.Compile( szKey, nFlag ) ){
+			this->m_bGrepRunning = false;
+			pcViewDst->m_bDoing_UndoRedo = false;
 			return 0;
 		}
 	}else{
@@ -173,14 +185,10 @@ DWORD CGrepAgent::DoGrep(
 
 	TCHAR szPath[_MAX_PATH];
 	_tcscpy( szPath, pcmGrepFolder->GetStringPtr() );
-	nDummy = _tcslen( szPath );
 
 	/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
-	nCharChars = &szPath[nDummy] - CNativeT::GetCharPrev( szPath, nDummy, &szPath[nDummy] );
-	if( 1 == nCharChars && szPath[nDummy - 1] == _T('\\') ){
-	}else{
-		_tcscat( szPath, _T("\\") );
-	}
+	AddLastYenFromDirectoryPath( szPath );
+
 	_tcscpy( szFile, pcmGrepFile->GetStringPtr() );
 
 	nWork = wcslen( szKey ); // 2003.06.10 Moca あらかじめ長さを計算しておく
@@ -283,6 +291,9 @@ DWORD CGrepAgent::DoGrep(
 	if( 0 < nWork ){
 		pcViewDst->GetCommander().Command_ADDTAIL( pszWork, nWork );
 	}
+	cmemMessage.Clear(); // もういらない
+	pszWork = NULL;
+	
 	//	2007.07.22 genta バージョンを取得するために，
 	//	正規表現の初期化を上へ移動
 
@@ -291,7 +302,8 @@ DWORD CGrepAgent::DoGrep(
 	// 2003.06.23 Moca 共通設定で変更できるように
 	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
 //	SetDrawSwitch(false);
-	pCEditWnd->RedrawAllViews( pcViewDst );	// ここまでの分を他ビューにも表示
+	if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新
+		CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 	pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
 
 
@@ -314,16 +326,17 @@ DWORD CGrepAgent::DoGrep(
 	);
 	if( -1 == nGrepTreeResult ){
 		const wchar_t* p = L"中断しました。\r\n";
-		pcViewDst->GetCommander().Command_ADDTAIL( p, wcslen( p ) );
+		pcViewDst->GetCommander().Command_ADDTAIL( p, -1 );
 	}
-	auto_sprintf( szPath, _T("%d 個が検索されました。\r\n"), nHitCount );
-	pcViewDst->GetCommander().Command_ADDTAIL( to_wchar(szPath), -1 );
-//	GetCommander().Command_GOFILEEND( FALSE );
+	{
+		WCHAR szBuffer[128];
+		auto_sprintf( szBuffer, L"%d 個が検索されました。\r\n", nHitCount );
+		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
 #ifdef _DEBUG
-	auto_sprintf( szPath, _T("処理時間: %dミリ秒\r\n"), cRunningTimer.Read() );
-	pcViewDst->GetCommander().Command_ADDTAIL( to_wchar(szPath), -1 );
+		auto_sprintf( szBuffer, L"処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
+		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
 #endif
-
+	}
 	pcViewDst->GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), tmp_PosY_Layout), TRUE );	//	カーソルをGrep直前の位置に戻す。
 
 	cDlgCancel.CloseDialog( 0 );
@@ -459,7 +472,6 @@ int CGrepAgent::DoGrepTree(
 	WIN32_FIND_DATA w32fd;
 	CNativeW		cmemMessage;
 	int				nHitCountOld;
-	const wchar_t*	pszWork;
 	int				nWork = 0;
 	nHitCountOld = -100;
 
@@ -499,14 +511,12 @@ int CGrepAgent::DoGrepTree(
 			p++;
 		}
 		*q = _T('\0');
-		TCHAR* currentPath = NULL;	//現在探索中のパス
-		currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-		if( ! currentPath ) goto error_return;	//メモリ確保失敗
-		_tcscpy( currentPath, pszPath );
-		_tcscat( currentPath, token );
-
-		//ファイルの羅列を開始する。
-		handle = FindFirstFile( currentPath, &w32fd );
+		{
+			std::tstring currentPath = pszPath;	//現在探索中のパス
+			currentPath += token;
+			//ファイルの羅列を開始する。
+			handle = FindFirstFile( currentPath.c_str(), &w32fd );
+		}
 		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
 		{
@@ -533,12 +543,9 @@ int CGrepAgent::DoGrepTree(
 			FindClose( handle );
 			handle = INVALID_HANDLE_VALUE;
 		}
-		delete [] currentPath;
-		currentPath = NULL;
 	}
 	free( pWildCard );
 	pWildCard = NULL;
-
 
 	/*
 	 * カレントフォルダのファイルを探索する。
@@ -562,20 +569,18 @@ int CGrepAgent::DoGrepTree(
 			p++;
 		}
 		*q = _T('\0');
-		TCHAR* currentPath = NULL;	//現在探索中のパス
-		currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-		if( ! currentPath ) goto error_return;
-		_tcscpy( currentPath, pszPath );
-		_tcscat( currentPath, token );
-
-		//ファイルの羅列を開始する。
+		{
+			std::tstring currentPath = pszPath;	//現在探索中のパス
+			currentPath += token;
+			//ファイルの羅列を開始する。
+			handle = FindFirstFile( currentPath.c_str(), &w32fd );
+		}
+		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 #ifdef SORTED_LIST
 		//ソート
 		qsort( checked_list, checked_list_count, sizeof( WCHAR* ), (COMP)grep_compare_pp_w );
 #endif
 		int current_checked_list_count = checked_list_count;	//前回までのリストの数
-		handle = FindFirstFile( currentPath, &w32fd );
-		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
 		{
 			/* 処理中のユーザー操作を可能にする */
@@ -680,16 +685,14 @@ int CGrepAgent::DoGrepTree(
 					}
 					if( *pnHitCount - nHitCountOld  >= 10 ){
 						/* 結果出力 */
-						pszWork = cmemMessage.GetStringPtr( &nWork );
-						if( 0 < nWork ){
-							pcViewDst->GetCommander().Command_ADDTAIL( pszWork, nWork );
+						if( 0 < cmemMessage.GetStringLength() ){
+							pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 							pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
 							if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 								CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
-							/* 結果格納エリアをクリア */
-							cmemMessage.SetString( L"" );
-							nWork = 0;
+							cmemMessage.Clear();
 						}
+						nWork = 0;
 						nHitCountOld = *pnHitCount;
 					}
 					if( -1 == nRet ){
@@ -707,8 +710,6 @@ int CGrepAgent::DoGrepTree(
 			FindClose( handle );
 			handle = INVALID_HANDLE_VALUE;
 		}
-		delete [] currentPath;
-		currentPath = NULL;
 	}
 	free( pWildCard );
 	pWildCard = NULL;
@@ -722,17 +723,25 @@ int CGrepAgent::DoGrepTree(
 	checked_list_count = 0;
 	checked_list_size = 0;
 
+	// 2010.08.25 フォルダ移動前に残りを先に出力
+	if( 0 < cmemMessage.GetStringLength() ){
+		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
+		pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
+		if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新
+			CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+		cmemMessage.Clear();
+	}
 
 	/*
 	 * サブフォルダを検索する。
 	 */
 	if( bGrepSubFolder ){
-		TCHAR* subPath     = NULL;
-		subPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( WILDCARD_ANY ) + 1 ];
-		if( ! subPath ) goto error_return;	//メモリ確保失敗
-		_tcscpy( subPath, pszPath );
-		_tcscat( subPath, WILDCARD_ANY );
-		handle = FindFirstFile( subPath, &w32fd );
+		// 2010.08.01 キャンセルでのメモリーリーク修正
+		{
+			std::tstring subPath = pszPath;
+			subPath += WILDCARD_ANY;
+			handle = FindFirstFile( subPath.c_str(), &w32fd );
+		}
 		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
 		{
@@ -755,12 +764,10 @@ int CGrepAgent::DoGrepTree(
 			 && 0 != _tcscmp( w32fd.cFileName, _T("..")) )
 			{
 				//フォルダ名を作成する。
-				TCHAR* currentPath = NULL;	//現在探索中のパス
-				currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( w32fd.cFileName ) + 2 ];
-				if( ! currentPath ) goto error_return;	//メモリ確保失敗
-				_tcscpy( currentPath, pszPath );
-				_tcscat( currentPath, w32fd.cFileName );
-				_tcscat( currentPath, _T("\\") );
+				// 2010.08.01 キャンセルでメモリーリークしてました
+				std::tstring currentPath  = pszPath;
+				currentPath += w32fd.cFileName;
+				currentPath += _T("\\");
 
 				int nGrepTreeResult = DoGrepTree(
 					pcViewDst,
@@ -769,7 +776,7 @@ int CGrepAgent::DoGrepTree(
 					pszKey,
 					pnKey_CharCharsArr,
 					pszFile,
-					currentPath,
+					currentPath.c_str(),
 					bGrepSubFolder,
 					sSearchOption,
 					nGrepCharSet,
@@ -784,8 +791,6 @@ int CGrepAgent::DoGrepTree(
 				}
 				::DlgItem_SetText( hwndCancel, IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダから戻ってきたら...
 
-				delete [] currentPath;
-				currentPath = NULL;
 			}
 
 			//次のファイルを羅列する。
@@ -797,19 +802,9 @@ int CGrepAgent::DoGrepTree(
 			FindClose( handle );
 			handle = INVALID_HANDLE_VALUE;
 		}
-		delete [] subPath;
-		subPath = NULL;
 	}
 
 	::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, LTEXT(" ") );	// 2002/09/09 Moca add
-	/* 結果出力 */
-	pszWork = cmemMessage.GetStringPtr( &nWork );
-	if( 0 < nWork ){
-		pcViewDst->GetCommander().Command_ADDTAIL( pszWork, nWork );
-		pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-		/* 結果格納エリアをクリア */
-		cmemMessage.SetString( LTEXT("") );
-	}
 
 	return 0;
 
@@ -822,8 +817,6 @@ error_return:;
 	if( INVALID_HANDLE_VALUE != handle ) FindClose( handle );
 
 	if( pWildCard ) free( pWildCard );
-//	if( currentPath ) delete [] currentPath;
-//	if( subPath ) delete [] subPath;
 
 	if( checked_list )
 	{
@@ -835,13 +828,12 @@ error_return:;
 	}
 
 	/* 結果出力 */
-	pszWork = cmemMessage.GetStringPtr( &nWork );
-	if( 0 < nWork )
-	{
-		pcViewDst->GetCommander().Command_ADDTAIL( pszWork, nWork );
+	if( 0 < cmemMessage.GetStringLength() ){
+		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-		/* 結果格納エリアをクリア */
-		cmemMessage.SetString( LTEXT("") );
+		if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新
+			CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+		cmemMessage.Clear();
 	}
 
 	return -1;
@@ -1059,7 +1051,8 @@ int CGrepAgent::DoGrepFile(
 		pCompareData = pLine;
 
 		/* 処理中のユーザー操作を可能にする */
-		if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
+		// 2010.08.31 間隔を1/32にする
+		if( ((0 == nLine % 32)|| 10000 < nLineLen ) && !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
 			return -1;
 		}
 		if( 0 == nLine % 64 ){
@@ -1084,7 +1077,10 @@ int CGrepAgent::DoGrepFile(
 
 		/* 正規表現検索 */
 		if( sSearchOption.bRegularExp ){
-			int nColmPrev = 0;
+			int nIndex = 0;
+#ifdef _DEBUG
+			int nIndexPrev = -1;
+#endif
 
 			//	Jun. 21, 2003 genta ループ条件見直し
 			//	マッチ箇所を1行から複数検出するケースを標準に，
@@ -1092,11 +1088,19 @@ int CGrepAgent::DoGrepFile(
 			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
 			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 			// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-			while( pRegexp->Match( pCompareData, nLineLen, 0 ) ){
+			// 2010.08.25 行頭以外で^にマッチする不具合の修正
+			while( nIndex <= nLineLen && pRegexp->Match( pLine, nLineLen, nIndex ) ){
 
 					//	パターン発見
-					nColm = pRegexp->GetIndex() + 1;
+					nIndex = pRegexp->GetIndex();
 					int matchlen = pRegexp->GetMatchLen();
+#ifdef _DEBUG
+					if( nIndex <= nIndexPrev ){
+						MYTRACE_A( "ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n" );
+						break;
+					}
+					nIndexPrev = nIndex;
+#endif
 
 					/* Grep結果を、szWorkに格納する */
 					SetGrepResult(
@@ -1105,11 +1109,11 @@ int CGrepAgent::DoGrepFile(
 						pszFullPath,
 						pszCodeName,
 						nLine,
-						nColm + nColmPrev,
-						pCompareData,
+						nIndex + 1,
+						pLine,
 						nLineLen,
 						nEolCodeLen,
-						pCompareData + nColm - 1,
+						pLine + nIndex,
 						matchlen,
 						bGrepOutputLine,
 						nGrepOutputStyle
@@ -1134,15 +1138,13 @@ int CGrepAgent::DoGrepFile(
 					}
 					//	探し始める位置を補正
 					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	nClom : マッチ位置
-					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColm + matchlen;
-					if( matchlen != 0 ){
-						nPosDiff--;
+					if( matchlen <= 0 ){
+						matchlen = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
+						if( matchlen <= 0 ){
+							matchlen = 1;
+						}
 					}
-					pCompareData += nPosDiff;
-					nLineLen -= nPosDiff;
-					nColmPrev += nPosDiff;
+					nIndex += matchlen;
 			}
 		}
 		/* 単語のみ検索 */
@@ -1189,9 +1191,14 @@ int CGrepAgent::DoGrepFile(
 						++nHitCount;
 						++(*pnHitCount);
 						//	May 22, 2000 genta
-						// if( 0 == ( (*pnHitCount) % 16 ) ){
+						if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
 							::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-						// }
+						}
+
+						// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
+						if ( bGrepOutputLine ) {
+							break;
+						}
 					}
 				}
 				/* 現在位置の左右の単語の先頭位置を調べる */
