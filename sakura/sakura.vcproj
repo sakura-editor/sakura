@@ -1125,19 +1125,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_HankanaToZenhira.cpp"
+					RelativePath="..\sakura_core\convert\CConvert_HankataToZenhira.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_HankanaToZenhira.h"
+					RelativePath="..\sakura_core\convert\CConvert_HankataToZenhira.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_HankanaToZenkana.cpp"
+					RelativePath="..\sakura_core\convert\CConvert_HankataToZenkata.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_HankanaToZenkana.h"
+					RelativePath="..\sakura_core\convert\CConvert_HankataToZenkata.h"
 					>
 				</File>
 				<File
@@ -1189,11 +1189,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_ToZenkana.cpp"
+					RelativePath="..\sakura_core\convert\CConvert_ToZenkata.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_ToZenkana.h"
+					RelativePath="..\sakura_core\convert\CConvert_ToZenkata.h"
 					>
 				</File>
 				<File
@@ -1213,11 +1213,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_ZenkanaToHankana.cpp"
+					RelativePath="..\sakura_core\convert\CConvert_ZenkataToHankata.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\convert\CConvert_ZenkanaToHankana.h"
+					RelativePath="..\sakura_core\convert\CConvert_ZenkataToHankata.h"
 					>
 				</File>
 				<File

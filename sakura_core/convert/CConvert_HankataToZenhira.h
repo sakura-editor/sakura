@@ -3,8 +3,8 @@
 #include "CConvert.h"
 
 
-//!できる限り全角カタカナにする
-class CConvert_ToZenkana : public CConvert{
+//!半角カナ→全角ひらがな
+class CConvert_HankataToZenhira : public CConvert{
 public:
 	bool DoConvert(CNativeW* pcData);
 };
