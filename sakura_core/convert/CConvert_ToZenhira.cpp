@@ -12,13 +12,13 @@ bool CConvert_ToZenhira::DoConvert(CNativeW* pcData)
 	//”¼ƒJƒi¨‘SŠpƒJƒi
 	wchar_t* pBuf = new wchar_t[pcData->GetStringLength()+1]; //•¶Žš”‚ªŒ¸‚é‚±‚Æ‚Í‚ ‚Á‚Ä‚à‘‚¦‚é‚±‚Æ‚Í–³‚¢‚Ì‚ÅA‚±‚ê‚Å‚n‚j
 	int nBufLen = 0;
-	Convert_HankanaToZenkana(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nBufLen);
+	Convert_HankataToZenkata(pcData->GetStringPtr(), pcData->GetStringLength(), pBuf, &nBufLen);
 
 	//‘SƒJƒi¨‘SŠp‚Ð‚ç‚ª‚È
-	Convert_ZenkanaToZenhira(pBuf, nBufLen);
+	Convert_ZenkataToZenhira(pBuf, nBufLen);
 
 	//”¼Šp‰p”¨‘SŠp‰p”
-	Convert_HanEisuu_To_ZenEisuu(pBuf, nBufLen);
+	Convert_HaneisuToZeneisu(pBuf, nBufLen);
 
 	//Ý’è
 	pcData->SetString(pBuf, nBufLen);
