@@ -94,7 +94,10 @@ static int compTABMENU_DATA( const void *arg1, const void *arg2 )
 {
 	int ret;
 
-	ret = ::_tcscmp( ((TABMENU_DATA*)arg1)->szText, ((TABMENU_DATA*)arg2)->szText );
+	// ここは文字列ソート（tcscmp）ではなく単語ソート（lstrcmp）を使用する
+	// 文字列ソート: "XYZ" が "ABC" と "abc" との間に割って入る
+	// 単語ソート: "ABC" と "abc" とは隣接し "XYZ" はそれらの後ろに入る（実際の辞書と同様な順序）
+	ret = ::lstrcmp( ((TABMENU_DATA*)arg1)->szText, ((TABMENU_DATA*)arg2)->szText );
 	if( 0 == ret )
 		ret = ((TABMENU_DATA*)arg1)->iItem - ((TABMENU_DATA*)arg2)->iItem;
 	return ret;
