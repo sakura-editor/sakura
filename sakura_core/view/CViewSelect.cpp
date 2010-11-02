@@ -210,6 +210,7 @@ void CViewSelect::DrawSelectArea() const
 		rcOld.right  = t_max(rcOld.right , pView->GetTextArea().GetViewLeftCol()  );
 		rcOld.right  = t_min(rcOld.right , pView->GetTextArea().GetRightCol() + 1 );
 		rcOld.top    = t_max(rcOld.top   , pView->GetTextArea().GetViewTopLine()  );
+		rcOld.bottom = t_max(rcOld.bottom, pView->GetTextArea().GetViewTopLine() - 1);	// 2010.11.02 ryoji 追加（画面上端よりも上にある矩形選択を解除するとルーラーが反転表示になる問題の修正）
 		rcOld.bottom = t_min(rcOld.bottom, pView->GetTextArea().GetBottomLine()   );
 
 		RECT rcOld2;
@@ -230,6 +231,7 @@ void CViewSelect::DrawSelectArea() const
 		rcNew.right  = t_max(rcNew.right , pView->GetTextArea().GetViewLeftCol() );
 		rcNew.right  = t_min(rcNew.right , pView->GetTextArea().GetRightCol() + 1);
 		rcNew.top    = t_max(rcNew.top   , pView->GetTextArea().GetViewTopLine() );
+		rcNew.bottom = t_max(rcNew.bottom, pView->GetTextArea().GetViewTopLine() - 1);	// 2010.11.02 ryoji 追加（画面上端よりも上にある矩形選択を解除するとルーラーが反転表示になる問題の修正）
 		rcNew.bottom = t_min(rcNew.bottom, pView->GetTextArea().GetBottomLine()  );
 
 		RECT rcNew2;
