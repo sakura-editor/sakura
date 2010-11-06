@@ -27,7 +27,7 @@
 #include "window/CEditWnd.h"
 
 /* 機能種別によるバッファの変換 */
-void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, int nTabWidth )
+void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, int nTabWidth, int nStartColumn )
 {
 	// コード変換はできるだけANSI版のsakuraと互換の結果が得られるように実装する	// 2009.03.26 ryoji
 	// xxx2SJIS:
@@ -84,8 +84,8 @@ void CConvertMediator::ConvMemory( CNativeW* pCMemory, EFunctionCode nFuncCode, 
 	case F_HANKATATOZENKATA:		CConvert_HankataToZenkata().CallConvert(pCMemory);	break;	// 半角カタカナ→全角カタカナ
 	case F_HANKATATOZENHIRA:		CConvert_HankataToZenhira().CallConvert(pCMemory);	break;	// 半角カタカナ→全角ひらがな
 	//文字種変換、整形
-	case F_TABTOSPACE:				CConvert_TabToSpace(nTabWidth).CallConvert(pCMemory);break;	// TAB→空白
-	case F_SPACETOTAB:				CConvert_SpaceToTab(nTabWidth).CallConvert(pCMemory);break;	// 空白→TAB
+	case F_TABTOSPACE:				CConvert_TabToSpace(nTabWidth, nStartColumn).CallConvert(pCMemory);break;	// TAB→空白
+	case F_SPACETOTAB:				CConvert_SpaceToTab(nTabWidth, nStartColumn).CallConvert(pCMemory);break;	// 空白→TAB
 	case F_LTRIM:					CConvert_Trim(true).CallConvert(pCMemory);			break;	// 2001.12.03 hor
 	case F_RTRIM:					CConvert_Trim(false).CallConvert(pCMemory);			break;	// 2001.12.03 hor
 	//コード変換(xxx2SJIS)

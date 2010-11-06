@@ -4,8 +4,8 @@
 
 class CConvert_SpaceToTab : public CConvert{
 public:
-	CConvert_SpaceToTab(int nTabWidth)
-	: m_nTabWidth(nTabWidth)
+	CConvert_SpaceToTab(int nTabWidth, int nStartColumn)
+	: m_nTabWidth(nTabWidth), m_nStartColumn(nStartColumn)
 	{
 	}
 
@@ -13,4 +13,5 @@ public:
 
 private:
 	int m_nTabWidth;
+	int m_nStartColumn;
 };
