@@ -1808,7 +1808,7 @@ bool CEditView::GetSelectedData(
 				}
 			}else{
 				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-				if( nIdxTo - nIdxFrom >= nLineLen ){
+				if( nIdxTo >= nLineLen ){
 					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
 						NULL != pszQuote || /* 先頭に付ける引用符 */
 						bWithLineNumber 	/* 行番号を付与する */
