@@ -40,7 +40,8 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
 	while( NULL != ( pLine = GetNextLineW( pcData->GetStringPtr(), pcData->GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
-			nPosX = 0;	// 処理中のiに対応する表示桁位置
+			// 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？）
+			nPosX = (pcData->GetStringPtr() == pLine)? m_nStartColumn: 0;	// 処理中のiに対応する表示桁位置
 			bSpace = FALSE;	//直前がスペースか
 			nStartPos = 0;	// スペースの先頭
 			for( i = 0; i < nLineLen; ++i ){

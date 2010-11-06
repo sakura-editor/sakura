@@ -1280,7 +1280,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				
 				{
 					/* 機能種別によるバッファの変換 */
-					CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+					CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), (Int)sPos.GetX2() );
 
 					/* 現在位置にデータを挿入 */
 					CLayoutPoint ptLayoutNew;	// 挿入された部分の次の位置
@@ -1318,7 +1318,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy );
 
 		/* 機能種別によるバッファの変換 */
-		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+		CConvertMediator::ConvMemory( &cmemBuf, nFuncCode, (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), (Int)GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
