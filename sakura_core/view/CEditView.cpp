@@ -1959,38 +1959,30 @@ void CEditView::CopySelectedAllLines(
 	BOOL			bWithLineNumber	//!< 行番号を付与する
 )
 {
-	RECT		rcSel;
 	CNativeW	cmemBuf;
 
 	if( !GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
-	/* 矩形範囲選択中か */
-	if( GetSelectionInfo().IsBoxSelecting() ){
-		/* 2点を対角とする矩形を求める */
-		TwoPointToRect(
-			&rcSel,
-			GetSelectionInfo().m_sSelect.GetFrom(),	// 範囲選択開始
-			GetSelectionInfo().m_sSelect.GetTo()		// 範囲選択終了
-		);
-
-		/* 現在の選択範囲を非選択状態に戻す */
-		GetSelectionInfo().DisableSelectArea( TRUE );
-
-		/* 挿入データの先頭位置へカーソルを移動 */
-		GetSelectionInfo().m_sSelect.SetFrom(CLayoutPoint(0,rcSel.top     )); // 範囲選択開始
-		GetSelectionInfo().m_sSelect.SetTo  (CLayoutPoint(0,rcSel.bottom+1)); // 範囲選択終了
-	}
-	else{
-		CLayoutRange sSelectOld;
-		sSelectOld.SetFrom(CLayoutPoint(CLayoutInt(0),GetSelectionInfo().m_sSelect.GetFrom().y));
-		sSelectOld.SetTo  (CLayoutPoint(CLayoutInt(0),GetSelectionInfo().m_sSelect.GetTo().y  ));
-		if( GetSelectionInfo().m_sSelect.GetTo().x > 0 ){
-			sSelectOld.GetToPointer()->y++;
+	{	// 選択範囲内の全行を選択状態にする
+		CLayoutRange sSelect( GetSelectionInfo().m_sSelect );
+		const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetFrom().y );
+		if( !pcLayout ) return;
+		sSelect.SetFromX( pcLayout->GetIndent() );
+		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sSelect.GetTo().y );
+		if( pcLayout && (GetSelectionInfo().IsBoxSelecting() || sSelect.GetTo().x > pcLayout->GetIndent()) ){
+			// 選択範囲を次行頭まで拡大する
+			sSelect.SetToY( sSelect.GetTo().y + 1 );
+			pcLayout = pcLayout->GetNextLayout();
 		}
-		// 現在の選択範囲を非選択状態に戻す
+		sSelect.SetToX( pcLayout? pcLayout->GetIndent(): CLayoutInt(0) );
+		GetCaret().GetAdjustCursorPos( sSelect.GetToPointer() );	// EOF行を超えていたら座標修正
+
 		GetSelectionInfo().DisableSelectArea( TRUE );
-		GetSelectionInfo().m_sSelect = sSelectOld;		//範囲選択
+		GetSelectionInfo().SetSelectArea( sSelect );
+
+		GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), false );
+		GetCaret().ShowEditCaret();
 	}
 	/* 再描画 */
 	//	::UpdateWindow();
