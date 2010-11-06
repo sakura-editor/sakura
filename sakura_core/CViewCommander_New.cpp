@@ -843,7 +843,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 			}
 		}
 	}
-	sSelectOld.SetFromX(0);
+	sSelectOld.SetFromX(CLogicInt(0));
 	sSelectOld.SetToX(CLogicInt(0));
 
 	//行選択されてない
@@ -970,7 +970,7 @@ void CViewCommander::Command_MERGE(void)
 		}
 	}
 
-	sSelectOld.SetFromX(0);
+	sSelectOld.SetFromX(CLogicInt(0));
 	sSelectOld.SetToX(CLogicInt(0));
 
 	//行選択されてない

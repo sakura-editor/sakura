@@ -93,7 +93,7 @@ public:
 		m_ptTo = pt;
 	}
 
-	void SetFromX(int nX)
+	void SetFromX(IntType nX)
 	{
 		m_ptFrom.x = nX;
 	}
