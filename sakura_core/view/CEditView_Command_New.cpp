@@ -668,7 +668,7 @@ void CEditView::ReplaceData_CEditView(
 				}
 				else {
 					sDelRange.GetFromPointer()->y++;
-					sDelRange.SetFromX(0);
+					sDelRange.SetFromX(CLayoutInt(0));
 				}
 			}
 		}

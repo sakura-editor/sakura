@@ -206,9 +206,9 @@ int CSearchAgent::SearchWord(
 	const wchar_t*	pLine;
 	int			nLineLen;
 	const wchar_t*	pszRes;
-	int			nHitTo;
-	int			nHitPos;
-	int			nHitPosOld;
+	CLogicInt	nHitTo;
+	CLogicInt	nHitPos;
+	CLogicInt	nHitPosOld;
 	int			nRetVal = 0;
 	//	Jun. 10, 2003 Moca
 	//	lstrlenを毎回呼ばずにnPatternLenを使うようにする
@@ -482,7 +482,7 @@ int CSearchAgent::SearchWord(
 				if( NULL != pszRes ){
 					pMatchRange->SetFromY(nLinePos);	// マッチ行
 					pMatchRange->SetToY  (nLinePos);	// マッチ行
-					pMatchRange->SetFromX(pszRes - pLine);							// マッチ位置from (文字単位)
+					pMatchRange->SetFromX(CLogicInt(pszRes - pLine));							// マッチ位置from (文字単位)
 					pMatchRange->SetToX  (pMatchRange->GetFrom().x + nPatternLen);	// マッチ位置to   (文字単位)
 					nRetVal = 1;
 					goto end_of_func;
