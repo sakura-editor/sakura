@@ -1816,7 +1816,7 @@ bool CEditView::GetSelectedData(
 //						cmemBuf.Append( CRLF, lstrlen( CRLF ) );
 						//	Jul. 25, 2000 genta
 						cmemBuf->AppendString(( neweol == EOL_UNKNOWN ) ?
-							WCODE::CRLF :						//	コード保存
+							m_pcEditDoc->m_cDocEditor.GetNewLineCode().GetValue2() :	//	コード保存
 							appendEol.GetValue2() );		//	新規改行コード
 					}
 				}
