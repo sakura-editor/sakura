@@ -42,6 +42,10 @@ bool CClipboard::SetText(
 	bool			bLineSelect
 )
 {
+	if( !m_bOpenResult ){
+		return false;
+	}
+
 	/*
 	// テキスト形式のデータ (CF_OEMTEXT)
 	HGLOBAL hgClipText = ::GlobalAlloc(
@@ -81,7 +85,7 @@ bool CClipboard::SetText(
 	// バイナリ形式のデータ
 	//	(int) 「データ」の長さ
 	//	「データ」
-	HGLOBAL	hgClipSakura = NULL;
+	HGLOBAL hgClipSakura = NULL;
 	do{
 		//サクラエディタ専用フォーマットを取得
 		UINT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
@@ -125,7 +129,7 @@ bool CClipboard::SetText(
 	}
 
 	/* 行選択を示すダミーデータ */
-	HGLOBAL		hgClipMSDEVLine = NULL;
+	HGLOBAL hgClipMSDEVLine = NULL;		// VS2008 以前の形式
 	if( bLineSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( _T("MSDEVLineSelect") );
 		if( 0 != uFormat ){
@@ -141,14 +145,30 @@ bool CClipboard::SetText(
 			}
 		}
 	}
+	HGLOBAL hgClipMSDEVLine2 = NULL;	// VS2010 形式
+	if( bLineSelect ){
+		UINT uFormat = ::RegisterClipboardFormat( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag") );
+		if( 0 != uFormat ){
+			hgClipMSDEVLine2 = ::GlobalAlloc(
+				GMEM_MOVEABLE | GMEM_DDESHARE,
+				1
+			);
+			if( hgClipMSDEVLine2 ){
+				BYTE* pClip = (BYTE*)::GlobalLock( hgClipMSDEVLine2 );
+				pClip[0] = 0x01;	// ※ ClipSpy で調べるとデータはこれとは違うが内容には無関係に動くっぽい
+				::GlobalUnlock( hgClipMSDEVLine2 );
+				::SetClipboardData( uFormat, hgClipMSDEVLine2 );
+			}
+		}
+	}
 
 	if( bColmnSelect && !hgClipMSDEVColm ){
 		return false;
 	}
-	if( bLineSelect && !hgClipMSDEVLine ){
+	if( bLineSelect && !(hgClipMSDEVLine && hgClipMSDEVLine2) ){
 		return false;
 	}
-	if( !hgClipText && !hgClipSakura ){
+	if( !(hgClipText && hgClipSakura) ){
 		return false;
 	}
 	return true;
@@ -157,30 +177,39 @@ bool CClipboard::SetText(
 //! テキストを取得する
 bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSelect)
 {
+	if( !m_bOpenResult ){
+		return false;
+	}
 	if( NULL != pbColmnSelect ){
 		*pbColmnSelect = false;
 	}
+	if( NULL != pbLineSelect ){
+		*pbLineSelect = false;
+	}
 
-	//矩形選択のデータがあれば取得
-	if( NULL != pbColmnSelect ){
-		// 矩形選択のテキストデータがクリップボードにあるか
+	//矩形選択や行選択のデータがあれば取得
+	if( NULL != pbColmnSelect || NULL != pbLineSelect ){
 		UINT uFormat = 0;
 		while( uFormat = ::EnumClipboardFormats( uFormat ) ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			TCHAR szFormatName[128];
 			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){
-				if( NULL != pbColmnSelect && 0 == lstrcmp( _T("MSDEVColumnSelect"), szFormatName ) ){
-					*pbColmnSelect = TRUE;
+				if( NULL != pbColmnSelect && 0 == lstrcmpi( _T("MSDEVColumnSelect"), szFormatName ) ){
+					*pbColmnSelect = true;
 					break;
 				}
-				if( NULL != pbLineSelect && 0 == lstrcmp( _T("MSDEVLineSelect"), szFormatName ) ){
-					*pbLineSelect = TRUE;
+				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("MSDEVLineSelect"), szFormatName ) ){
+					*pbLineSelect = true;
+					break;
+				}
+				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag"), szFormatName ) ){
+					*pbLineSelect = true;
 					break;
 				}
 			}
 		}
 	}
-	
+
 	//サクラ形式のデータがあれば取得
 	UINT uFormatSakuraClip = CClipboard::GetSakuraFormat();
 	if( ::IsClipboardFormatAvailable( uFormatSakuraClip ) ){
@@ -191,7 +220,6 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 			const wchar_t* szData = (const wchar_t*)(pData + sizeof(int));
 			cmemBuf->SetString( szData, nLength );
 			::GlobalUnlock(hSakura);
-			::CloseClipboard();
 			return true;
 		}
 	}
@@ -204,7 +232,6 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 		wchar_t* szData = GlobalLockWChar(hUnicode);
 		cmemBuf->SetString( szData );
 		::GlobalUnlock(hUnicode);
-		::CloseClipboard();
 		return true;
 	}
 	//	To Here 2005/05/29 novice
@@ -218,7 +245,6 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 		CShiftJis::SJISToUnicode(&cmemSjis);
 		cmemBuf->SetString( reinterpret_cast<const wchar_t*>(cmemSjis.GetRawPtr()) );
 		::GlobalUnlock(hText);
-		::CloseClipboard();
 		return true;
 	}
 
@@ -237,12 +263,10 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 				}
 				cmemBuf->AppendStringT(sTmpPath);
 			}
-			::CloseClipboard();
 			return true;
 		}
 	}
-	
-	::CloseClipboard();
+
 	return false;
 }
 
