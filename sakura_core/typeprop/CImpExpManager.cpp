@@ -138,7 +138,10 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndDlg )
 		std::vector<LPCTSTR>()
 	);
 	TCHAR	szPath[_MAX_PATH + 1];
-	auto_strcpy( szPath, (TCHAR*)to_tchar( GetFullPath().c_str() ));
+	szPath[0] = _T('\0');
+	if( !GetFileName().empty() ){
+		auto_strcpy( szPath, (TCHAR*)to_tchar( GetFullPath().c_str() ));
+	}
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return false;
 	}
@@ -189,7 +192,10 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndDlg )
 		std::vector<LPCTSTR>()
 	);
 	TCHAR			szPath[_MAX_PATH + 1];
-	auto_strcpy( szPath, (TCHAR*)to_tchar( m_sOriginName.c_str() ));
+	szPath[0] = _T('\0');
+	if( !GetFileName().empty() ){
+		auto_strcpy( szPath, (TCHAR*)to_tchar( GetFullPath().c_str() ));
+	}
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return false;
 	}
