@@ -211,6 +211,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				{
 					DLLSHAREDATA *pShareData = CShareData::getInstance()->GetShareData();
 					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
+					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, _countof2(pShareData->m_sHistory.m_szIMPORTFOLDER), _T('\\') );
 				}
 				break;
 			}
