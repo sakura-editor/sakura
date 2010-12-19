@@ -2180,6 +2180,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 		 && GetDrawSwitch()
 		 && m_nOldUnderLineY >=GetTextArea().GetAreaTop()
 		 && !m_bDoing_UndoRedo	/* アンドゥ・リドゥの実行中か */
+		 && !GetCaret().m_cUnderLine.GetUnderLineDoNotOFF()	// アンダーラインを消去するか
 		){
 			// -- -- カーソル行アンダーラインの消去（無理やり） -- -- //
 
@@ -2207,7 +2208,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 		}
 		m_nOldUnderLineY = -1;
 	}
-	
+
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	// カーソル位置縦線
 	if( -1 != m_nOldCursorLineX ){
@@ -2215,6 +2216,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 		 && GetDrawSwitch()
 		 && IsDrawCursorVLinePos( m_nOldCursorLineX )
 		 && m_bDoing_UndoRedo == FALSE
+		 && !GetCaret().m_cUnderLine.GetVertLineDoNotOFF()	// カーソル位置縦線を消去するか
 		){
 			PAINTSTRUCT ps;
 			ps.rcPaint.left = m_nOldCursorLineX - (m_nOldCursorVLineWidth - 1);

@@ -863,6 +863,10 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 	}else{
 		nRepeat = 1;
 	}
+	bool	bUnderlineDoNotOFF = true;	// アンダーラインを消去しない
+	if( bSelect ){
+		bUnderlineDoNotOFF = false;		//選択状態ならアンダーライン消去を行う
+	}
 	for( nRepCount = 0; nRepCount < nRepeat; ++nRepCount ){
 		CLayoutPoint ptPos(CLayoutInt(0), GetCaret().GetCaretLayoutPos().GetY2());
 		const CLayout*	pcLayout;
@@ -921,6 +925,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 				nRes = 0;
 				goto end_of_func;
 			}
+			bUnderlineDoNotOFF = false;	//行が変わるのでアンダーラインを消去する
 		}
 		//  2004.03.28 Moca EOFだけの行以降の途中にカーソルがあると落ちるバグ修正
 		else if( pcLayout ){
@@ -939,7 +944,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 				ptPos.x = GetCaret().GetCaretLayoutPos().GetX2() - CLayoutInt(1);
 			}
 		}
-		GetCaret().MoveCursor( ptPos, TRUE );
+		GetCaret().MoveCursor( ptPos, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( bSelect ){
 			/*	現在のカーソル位置によって選択範囲を変更．
@@ -969,6 +974,10 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 		nRepeat = 2;
 	}else{
 		nRepeat = 1;
+	}
+	bool	bUnderlineDoNotOFF = true;	// アンダーラインを消去しない
+	if( bSelect ){
+		bUnderlineDoNotOFF = false;		//選択状態ならアンダーライン消去を行う
 	}
 	for( int nRepCount = 0; nRepCount < nRepeat; ++nRepCount ){
 		CLayoutPoint ptPos;
@@ -1079,6 +1088,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 						if( EOL_NONE != pcLayout->GetLayoutEol().GetType() ){
 							ptPos.x = pcLayout->GetNextLayout() ? pcLayout->GetNextLayout()->GetIndent() : CLayoutInt(0);
 							++ptPos.y;
+							bUnderlineDoNotOFF = false;
 						}
 						else{
 						}
@@ -1092,6 +1102,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 						}
 						ptPos.x = pcLayout->GetNextLayout() ? pcLayout->GetNextLayout()->GetIndent() : CLayoutInt(0);
 						++ptPos.y;
+						bUnderlineDoNotOFF = false;
 					}
 				}
 				//	キャレット位置が折り返し位置より右側だった場合の処理
@@ -1104,13 +1115,14 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 					}
 					ptPos.x = pcLayout->GetNextLayout() ? pcLayout->GetNextLayout()->GetIndent() : CLayoutInt(0);
 					++ptPos.y;
+					bUnderlineDoNotOFF = false;
 				}
 			}
 		}else{
 			// pcLayoutがNULLの場合はptPos.x=0に調整
 			ptPos.x = CLayoutInt(0);
 		}
-		GetCaret().MoveCursor( ptPos, TRUE );
+		GetCaret().MoveCursor( ptPos, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
@@ -1425,6 +1437,10 @@ void CViewCommander::Command_GOFILEEND( bool bSelect )
 /* 単語の左端に移動 */
 void CViewCommander::Command_WORDLEFT( bool bSelect )
 {
+	bool	bUnderlineDoNotOFF = true;	// アンダーラインを消去しない
+	if( bSelect ){
+		bUnderlineDoNotOFF = false;		//選択状態ならアンダーライン消去を行う
+	}
 	CLogicInt		nIdx;
 	if( bSelect ){
 		if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -1467,6 +1483,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 			if( NULL == pcLayout ){
 				return;
 			}
+			bUnderlineDoNotOFF = false;
 		}
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
@@ -1476,7 +1493,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 		*/
 
 		/* カーソル移動 */
-		GetCaret().MoveCursor( ptLayoutNew, TRUE );
+		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
@@ -1498,6 +1515,10 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 /* 単語の右端に移動 */
 void CViewCommander::Command_WORDRIGHT( bool bSelect )
 {
+	bool	bUnderlineDoNotOFF = true;	// アンダーラインを消去しない
+	if( bSelect ){
+		bUnderlineDoNotOFF = false;		//選択状態ならアンダーライン消去を行う
+	}
 	CLogicInt	nIdx;
 	CLayoutInt	nCurLine;
 	if( bSelect ){
@@ -1543,6 +1564,7 @@ try_again:;
 			if( NULL == pcLayout ){
 				return;
 			}
+			bUnderlineDoNotOFF = false;
 		}
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
@@ -1550,7 +1572,7 @@ try_again:;
 		ptLayoutNew.x = m_pCommanderView->LineIndexToColmn( pcLayout, ptLayoutNew.x );
 		*/
 		// カーソル移動
-		GetCaret().MoveCursor( ptLayoutNew, TRUE );
+		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
