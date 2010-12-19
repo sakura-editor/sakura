@@ -86,22 +86,19 @@ namespace WCODE{
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-
+/*! キーワードキャラクタ */
+extern const unsigned char gm_keyword_char[128];
 
 //Oct. 31, 2000 JEPRO  TeX Keyword のために'\'を追加
 //Nov.  9, 2000 JEPRO  HSP Keyword のために'@'を追加
 //Oct. 18, 2007 kobake UNICODE用に書き直し
+//Nov. 27, 2010 syat   速度改善のためテーブルに変更
 inline bool IS_KEYWORD_CHAR(wchar_t wc)
 {
-	if(wc==L'#')return true;				//user-define
-	if(wc==L'$')return true;				//user-define
-	if(wc>=L'0' && wc<=L'9')return true;	//iscsym
-	if(wc==L'@')return true;				//user-define
-	if(wc>=L'A' && wc<=L'Z')return true;	//iscsym
-	if(wc>=L'a' && wc<=L'z')return true;	//iscsym
-	if(wc==L'_')return true;				//iscsym
-	if(wc==L'\\')return true;				//user-define
-	return false;
+	if(0 <= wc && wc < _countof(gm_keyword_char) && gm_keyword_char[wc] >= 0)
+		return true;
+	else
+		return false;
 }
 
 

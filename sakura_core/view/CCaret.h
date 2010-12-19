@@ -31,10 +31,16 @@ public:
 	}
 	void CaretUnderLineON( bool );	// カーソル行アンダーラインのON
 	void CaretUnderLineOFF( bool );	// カーソル行アンダーラインのOFF
+	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; };
+	void SetVertLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bVertLineDoNotOFF = flag; };
+	inline bool GetUnderLineDoNotOFF( )const { return m_bUnderLineDoNotOFF; };
+	inline bool GetVertLineDoNotOFF( )const { return m_bVertLineDoNotOFF; };
 private:
 	/* ロックカウンタ。0のときは、ロックされていない。UnLockが呼ばれすぎても負にはならない */
 	int m_nLockCounter;
 	CEditView* m_pcEditView;
+	bool m_bUnderLineDoNotOFF;
+	bool m_bVertLineDoNotOFF;
 };
 
 
@@ -93,7 +99,9 @@ public:
 	CLayoutInt MoveCursor(												//!< 行桁指定によるカーソル移動
 		CLayoutPoint	ptWk_CaretPos,									//!< [in] 移動先レイアウト位置
 		bool			bScroll,										//!< [in] true: 画面位置調整有り  false: 画面位置調整無し
-		int				nCaretMarginRate	= _CARETMARGINRATE			//!< [in] 縦スクロール開始位置を決める値
+		int				nCaretMarginRate	= _CARETMARGINRATE,			//!< [in] 縦スクロール開始位置を決める値
+		bool			bUnderlineDoNotOFF	= false,					//!< [in] アンダーラインを消去しない
+		bool			bVertLineDoNotOFF	= false						//!< [in] カーソル位置縦線を消去しない
 	);
 	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 

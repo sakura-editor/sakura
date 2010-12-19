@@ -46,7 +46,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, const wchar_t* pData, in
 	const CTextArea* pArea=GetTextArea();
 
 	//文字間隔配列を生成
-	vector<int> vDxArray;
+	static vector<int> vDxArray(1);
 	const int* pDxArray=pMetrics->GenerateDxArray(&vDxArray,pData,nLength,this->m_pEditView->GetTextMetrics().GetHankakuDx());
 
 	//文字列のピクセル幅

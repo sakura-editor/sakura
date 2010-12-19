@@ -103,16 +103,24 @@ CCaret::~CCaret()
 	@note bScrollがfalseの場合にはカーソル位置のみ移動する．
 		trueの場合にはスクロール位置があわせて変更される
 
+	@note 同じ行の左右移動はアンダーラインを一度消す必要が無いので
+		bUnderlineDoNotOFFを指定すると高速化できる.
+		同様に同じ桁の上下移動はbVertLineDoNotOFFを指定すると
+		カーソル位置縦線の消去を省いて高速化できる.
+
 	@date 2001/10/20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
 	@date 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
 	@date 2004.09.11 genta bDrawスイッチは動作と名称が一致していないので
 		再描画スイッチ→画面位置調整スイッチと名称変更
 	@date 2009.08.28 nasukoji	テキスト折り返しの「折り返さない」対応
+	@date 2010.11.27 syat アンダーライン、縦線を消去しないフラグを追加
 */
 CLayoutInt CCaret::MoveCursor(
 	CLayoutPoint	ptWk_CaretPos,		//!< [in] 移動先レイアウト位置
 	bool			bScroll,			//!< [in] true: 画面位置調整有り  false: 画面位置調整無し
-	int				nCaretMarginRate	//!< [in] 縦スクロール開始位置を決める値
+	int				nCaretMarginRate,	//!< [in] 縦スクロール開始位置を決める値
+	bool			bUnderLineDoNotOFF,	//!< [in] アンダーラインを消去しない
+	bool			bVertLineDoNotOFF	//!< [in] カーソル位置縦線を消去しない
 )
 {
 	//必要なインターフェース
@@ -131,7 +139,11 @@ CLayoutInt CCaret::MoveCursor(
 	}
 
 	// カーソル行アンダーラインのOFF
+	m_cUnderLine.SetUnderLineDoNotOFF( bUnderLineDoNotOFF );
+	m_cUnderLine.SetVertLineDoNotOFF( bVertLineDoNotOFF );
 	m_cUnderLine.CaretUnderLineOFF( bScroll );	//	YAZAKI
+	m_cUnderLine.SetUnderLineDoNotOFF( false );
+	m_cUnderLine.SetVertLineDoNotOFF( false );
 
 	if( m_pEditView->GetSelectionInfo().IsMouseSelecting() ){	// 範囲選択中
 		nCaretMarginY = 0;
@@ -787,6 +799,10 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 //	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
 	CommonSetting* pCommon=&GetDllShareData().m_Common;
 
+	bool	bVertLineDoNotOFF = true;	// カーソル位置縦線を消去しない
+	if( bSelect ){
+		bVertLineDoNotOFF = false;		//選択状態ならカーソル位置縦線消去を行う
+	}
 
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
@@ -827,6 +843,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 					}
 					ptPosXY.x = CLayoutInt(0);
 					++ptPosXY.y;
+					bVertLineDoNotOFF = false;
 					nScrollLines = MoveCursor( ptPosXY, m_pEditView->GetDrawSwitch() /* TRUE */ ); // YAZAKI.
 					if( bSelect ){
 						/* 現在のカーソル位置によって選択範囲を変更 */
@@ -897,7 +914,14 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 			}
 		}
 	}
-	nScrollLines = MoveCursor( CLayoutPoint(ptPosXY.x, GetCaretLayoutPos().GetY() + nMoveLines), m_pEditView->GetDrawSwitch() /* TRUE */ ); // YAZAKI.
+	if( ptPosXY.x != GetCaretLayoutPos().GetX() ){
+		bVertLineDoNotOFF = false;
+	}
+	nScrollLines = MoveCursor(	CLayoutPoint(ptPosXY.x, GetCaretLayoutPos().GetY() + nMoveLines),
+								m_pEditView->GetDrawSwitch() /* TRUE */,
+								_CARETMARGINRATE,
+								false,
+								bVertLineDoNotOFF );
 	if( bSelect ){
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( CLayoutPoint(ptPosXY.x, GetCaretLayoutPos().GetY()) );
