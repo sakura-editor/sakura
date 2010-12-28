@@ -2446,3 +2446,25 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 
 	return result;
 }
+
+/*! アンドゥバッファの処理 */
+void CEditView::SetUndoBuffer(bool bPaintLineNumber)
+{
+	if( NULL != m_pcOpeBlk && m_pcOpeBlk->Release() == 0 ){
+		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
+			/* 操作の追加 */
+			m_pcEditDoc->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+
+			if( bPaintLineNumber
+			 &&	m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
+				Call_OnPaint( PAINT_LINENUMBER, false );	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
+
+			if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
+		}
+		else{
+			delete m_pcOpeBlk;
+		}
+		m_pcOpeBlk = NULL;
+	}
+}

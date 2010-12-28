@@ -346,16 +346,7 @@ DWORD CGrepAgent::DoGrep(
 
 
 	/* アンドゥバッファの処理 */
-	if( NULL != pcViewDst->m_pcOpeBlk ){
-		if( 0 < pcViewDst->m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
-			/* 操作の追加 */
-			pcViewDst->m_pcEditDoc->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( pcViewDst->m_pcOpeBlk );
-		}
-		else{
-			delete pcViewDst->m_pcOpeBlk;
-		}
-		pcViewDst->m_pcOpeBlk = NULL;
-	}
+	pcViewDst->SetUndoBuffer();
 
 	//	Apr. 13, 2001 genta
 	//	Grep実行後はファイルを変更無しの状態にする．

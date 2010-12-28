@@ -519,6 +519,7 @@ public:
 
 //	2001/06/18 asa-o
 	bool  ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
+	void SetUndoBuffer( bool bPaintLineNumber = false );			// アンドゥバッファの処理
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
