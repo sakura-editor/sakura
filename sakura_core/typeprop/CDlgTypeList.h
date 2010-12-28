@@ -43,6 +43,7 @@ protected:
 	// 実装ヘルパ関数
 	BOOL OnLbnDblclk( int );
 	BOOL OnBnClicked( int );
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 	void SetData();	/* ダイアログデータの設定 */
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 	bool Import( void );			// 2010/4/12 Uchi
@@ -51,6 +52,10 @@ protected:
 
 private:
 	CTypeConfig				m_nSettingType;
+	// 関連付け状態
+	bool m_bRegistryChecked[ MAX_TYPES ];	//レジストリ確認 未／済
+	bool m_bExtRMenu[ MAX_TYPES ];			//右クリック登録 未／済
+	bool m_bExtDblClick[ MAX_TYPES ];		//ダブルクリック 未／済
 };
 
 

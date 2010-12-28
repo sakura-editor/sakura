@@ -1545,6 +1545,9 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\util\RegKey.h"
+					>
+				<File
 					RelativePath="..\sakura_core\util\relation_tool.cpp"
 					>
 				</File>
