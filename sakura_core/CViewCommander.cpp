@@ -288,6 +288,7 @@ BOOL CViewCommander::HandleCommand(
 	if( NULL == GetOpeBlk() ){	/* 操作ブロック */
 		SetOpeBlk(new COpeBlk);
 	}
+	GetOpeBlk()->AddRef();	//参照カウンタ増加
 	
 	//	Jan. 10, 2005 genta コメント
 	//	ここより後ではswitchの後ろでUndoを正しく登録するため，
@@ -750,27 +751,10 @@ BOOL CViewCommander::HandleCommand(
 	}
 
 	/* アンドゥバッファの処理 */
-	if( NULL != GetOpeBlk() ){
-		if( 0 < GetOpeBlk()->GetNum() ){	/* 操作の数を返す */
-			/* 操作の追加 */
-			GetDocument()->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( GetOpeBlk() );
-
-			if( GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
-				m_pCommanderView->Call_OnPaint( PAINT_LINENUMBER, false );	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
-
-			if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-				GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
-		}
-		else{
-			delete GetOpeBlk();
-		}
-		SetOpeBlk(NULL);
-	}
+	m_pCommanderView->SetUndoBuffer( true );
 
 	return bRet;
 }
-
-
 
 /////////////////////////////////// 以下はコマンド群 (Oct. 17, 2000 jepro note) ///////////////////////////////////////////
 
@@ -2870,6 +2854,14 @@ end_of_for:;
 				CSmartIndentIfObj* objIndent = new CSmartIndentIfObj( wcChar );	//スマートインデントオブジェクト
 				objIndent->AddRef();
 				params.push_back( objIndent );
+
+				//キー入力をアンドゥバッファに反映
+				m_pCommanderView->SetUndoBuffer();
+
+				//キー入力とは別の操作ブロックにする（ただしプラグイン内の操作はまとめる）
+				SetOpeBlk(new COpeBlk);
+				GetOpeBlk()->AddRef();	// ※ReleaseはHandleCommandの最後で行う
+
 				//プラグイン呼び出し
 				( *plugs.begin() )->Invoke( m_pCommanderView, params );
 				objIndent->Release();

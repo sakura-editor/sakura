@@ -23,6 +23,7 @@
 
 COpeBlk::COpeBlk()
 {
+	m_refCount = 0;
 }
 
 COpeBlk::~COpeBlk()

@@ -139,16 +139,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 							DeleteData( TRUE );
 
 							// アンドゥバッファの処理
-							if( NULL != m_pcOpeBlk ){
-								if( 0 < m_pcOpeBlk->GetNum() ){
-									m_pcEditDoc->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-									if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-										m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
-								}else{
-									delete m_pcOpeBlk;
-								}
-								m_pcOpeBlk = NULL;
-							}
+							SetUndoBuffer();
 						}
 					}
 				}
@@ -1698,17 +1689,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	GetSelectionInfo().DrawSelectArea();
 
 	/* アンドゥバッファの処理 */
-	if( NULL != m_pcOpeBlk ){
-		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
-			/* 操作の追加 */
-			m_pcEditDoc->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-			if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-				m_pcEditWnd->RedrawAllViews( this );	// 他のペインの表示を更新	// 2007.07.22 ryoji
-		}else{
-			delete m_pcOpeBlk;
-		}
-		m_pcOpeBlk = NULL;
-	}
+	SetUndoBuffer();
 
 	::GlobalUnlock( hData );
 	// 2004.07.12 fotomo/もか メモリーリークの修正
