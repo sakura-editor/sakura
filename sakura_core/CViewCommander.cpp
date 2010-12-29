@@ -5160,8 +5160,18 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 	//	選択されていない場合に逆インデントした場合に
 	//	注意メッセージを出す
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-		/* wchar_t1個分の文字入力 */
-		Command_WCHAR( wcChar );	//	2003.10.09 zenryaku警告を出すが，動作は以前のままにする 
+		EIndentType eIndent;
+		switch( wcChar ){
+		case WCODE::TAB:
+			eIndent = INDENT_TAB;	// ※[SPACEの挿入]オプションが ON ならソフトタブにする（Wiki BugReport/66）
+			break;
+		case WCODE::SPACE:
+			eIndent = INDENT_SPACE;
+			break;
+		default:
+			eIndent = INDENT_NONE;
+		}
+		Command_INDENT( wcChar, eIndent );
 		m_pCommanderView->SendStatusMessage(_T("★逆インデントは選択時のみ"));
 		return;
 	}
