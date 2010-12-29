@@ -269,8 +269,6 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndDlg, const wstr
 {
 	TCHAR*		szPath = (TCHAR*)to_tchar( sFileName.c_str() );
 
-	CShareData_IO*	MyIO = new CShareData_IO();
-
 	m_cProfile.SetReadingMode();
 
 	if (!m_cProfile.ReadProfile( szPath )) {
@@ -325,8 +323,6 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndDlg, const wstr
 // インポート
 bool CImpExpType::Import( const wstring sFileName, wstring& sErrMsg )
 {
-	CShareData_IO*	MyIO = new CShareData_IO();
-
 	wstring	files = L"";
 	wstring TmpMsg;
 	ColorInfo	colorInfoArr[64];				// 色設定配列(バックアップ)
@@ -351,7 +347,7 @@ bool CImpExpType::Import( const wstring sFileName, wstring& sErrMsg )
 	}
 
 	// 読み込み
-	MyIO->ShareData_IO_Type_One( m_cProfile, m_nIdx, szSecTypes);
+	CShareData_IO::ShareData_IO_Type_One( m_cProfile, m_nIdx, szSecTypes );
 
 	m_Types.m_nIdx = m_nIdx;
 	if (m_nIdx == 0) {
@@ -449,12 +445,11 @@ bool CImpExpType::Import( const wstring sFileName, wstring& sErrMsg )
 // エクスポート
 bool CImpExpType::Export( const wstring sFileName, wstring& sErrMsg )
 {
-	CShareData_IO*	MyIO = new CShareData_IO();
 	CDataProfile	cProfile;
 
 	cProfile.SetWritingMode();
 
-	MyIO->ShareData_IO_Type_One( cProfile , m_nIdx, szSecTypes);
+	CShareData_IO::ShareData_IO_Type_One( cProfile , m_nIdx, szSecTypes );
 
 	// 共通設定との連結部
 	int		i;
