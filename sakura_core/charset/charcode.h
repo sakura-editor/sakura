@@ -95,7 +95,7 @@ extern const unsigned char gm_keyword_char[128];
 //Nov. 27, 2010 syat   速度改善のためテーブルに変更
 inline bool IS_KEYWORD_CHAR(wchar_t wc)
 {
-	if(0 <= wc && wc < _countof(gm_keyword_char) && gm_keyword_char[wc] >= 0)
+	if(0 <= wc && wc < _countof(gm_keyword_char) && gm_keyword_char[wc] > 0)
 		return true;
 	else
 		return false;
