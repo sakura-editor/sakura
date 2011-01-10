@@ -442,13 +442,39 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
+		bool bStopAnimation = COsVersionInfo().IsWinVista_or_later();	// Vista 以降の初回表示アニメーション効果を抑止する
+		ANIMATIONINFO ai = {sizeof(ANIMATIONINFO)};
+		int iMinAnimate;
+		if( bStopAnimation ){
+			// 可能な限り画面描画の様子が見えないよう一時的に先頭ウィンドウの後ろに配置
+			::SetWindowPos( GetHwnd(), sTabGroupInfo.hwndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+
+			// アニメーション効果は一時的に OFF にする
+			::SystemParametersInfo( SPI_GETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+			iMinAnimate = ai.iMinAnimate;
+			ai.iMinAnimate = 0;
+			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+		}
 		if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
 		{
 			::ShowWindow( GetHwnd(), SW_SHOWMAXIMIZED );
 		}
 		else
 		{
-			::ShowWindow( GetHwnd(), SW_SHOW );
+			::ShowWindow( GetHwnd(), bStopAnimation? SW_SHOWNOACTIVATE: SW_SHOW );
+		}
+		if( bStopAnimation ){
+			// アニメーション効果を戻す
+			ai.iMinAnimate = iMinAnimate;
+			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+#if 0	// SystemParametersInfo() によるアニメーション抑止を控えなければならない場合の次善策
+			// アニメーションを抑えるために一度消して再表示する（workaround）
+			::SetWindowPos( GetHwnd(), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW );
+			::SetWindowPos( GetHwnd(), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW );
+#endif
+			// 画面を描画してから前面に出す
+			::UpdateWindow( GetHwnd() );
+			::BringWindowToTop( GetHwnd() );
 		}
 	}
 	else
@@ -505,6 +531,13 @@ HWND CEditWnd::Create(
 	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
 	if(!hWnd)return NULL;
 	m_hWnd = hWnd;
+	/* 編集ウィンドウリストへの登録 */
+	if( !CAppNodeGroupHandle(nGroup).AddEditWndList( GetHwnd() ) ){	// 2007.06.26 ryoji nGroup引数追加
+		OkMessage( GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		::DestroyWindow( GetHwnd() );
+		m_hWnd = hWnd = NULL;
+		return hWnd;
+	}
 
 	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
 	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
@@ -536,15 +569,6 @@ HWND CEditWnd::Create(
 	m_cSplitterWnd.SetChildWndArr( hWndArr );
 
 	MY_TRACETIME( cRunningTimer, "View created" );
-
-	// -- -- -- -- ダイアログ作成 -- -- -- -- //
-
-	/* 入力補完ウィンドウ作成 */
-	m_cHokanMgr.DoModeless(
-		G_AppInstance(),
-		GetView(0).GetHwnd(),
-		(LPARAM)&GetView(0)
-	);
 
 
 	// -- -- -- -- 各種バー作成 -- -- -- -- //
@@ -598,13 +622,6 @@ HWND CEditWnd::Create(
 		}
 	}
 
-	/* 編集ウィンドウリストへの登録 */
-	if( !CAppNodeGroupHandle(nGroup).AddEditWndList( GetHwnd() ) ){	// 2007.06.26 ryoji nGroup引数追加
-		OkMessage( GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-		::DestroyWindow( GetHwnd() );
-		m_hWnd = hWnd = NULL;
-		return hWnd;
-	}
 	CShareData::getInstance()->SetTraceOutSource( GetHwnd() );	// TraceOut()起動元ウィンドウの設定	// 2006.06.26 ryoji
 
 	//	Aug. 29, 2003 wmlhq
@@ -1772,6 +1789,7 @@ LRESULT CEditWnd::DispatchEvent(
 			::SetTimer( GetHwnd(), IDT_CAPTION, 50, NULL );
 			return 0L;
 		}
+		::KillTimer( GetHwnd(), IDT_CAPTION );	// タイマーが残っていたら削除する（遅延タイトルを破棄）
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	case WM_TIMER:
