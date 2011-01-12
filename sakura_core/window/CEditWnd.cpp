@@ -443,37 +443,71 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
 		bool bStopAnimation = COsVersionInfo().IsWinVista_or_later();	// Vista 以降の初回表示アニメーション効果を抑止する
-		ANIMATIONINFO ai = {sizeof(ANIMATIONINFO)};
-		int iMinAnimate;
-		if( bStopAnimation ){
-			// 可能な限り画面描画の様子が見えないよう一時的に先頭ウィンドウの後ろに配置
-			::SetWindowPos( GetHwnd(), sTabGroupInfo.hwndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
-
-			// アニメーション効果は一時的に OFF にする
-			::SystemParametersInfo( SPI_GETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
-			iMinAnimate = ai.iMinAnimate;
-			ai.iMinAnimate = 0;
-			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
-		}
-		if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
-		{
-			::ShowWindow( GetHwnd(), SW_SHOWMAXIMIZED );
+		if( !bStopAnimation ){
+			if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
+			{
+				::ShowWindow( GetHwnd(), SW_SHOWMAXIMIZED );
+			}
+			else
+			{
+				::ShowWindow( GetHwnd(), SW_SHOW );
+			}
 		}
 		else
 		{
-			::ShowWindow( GetHwnd(), bStopAnimation? SW_SHOWNOACTIVATE: SW_SHOW );
-		}
-		if( bStopAnimation ){
-			// アニメーション効果を戻す
-			ai.iMinAnimate = iMinAnimate;
-			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+			// 初回表示のアニメーション効果を抑止する
+
+			// 先頭ウィンドウの背後で画面描画してから手前に出す（ツールバーやビューのちらつきを抑える）
+			// ここでは、あとで正式に適用されるはずのドキュメントタイプを仮設定して一時描画しておく（ビューの配色切替によるちらつきを抑える）
+			// さらに、タイプを戻して画面を無効化だけしておく（何らかの原因で途中停止した場合にはもとのタイプ色で再描画されるように ← 例えばファイルサイズが大きすぎる警告を出すときなど）
+			// ※ 正攻法とはいえないかもしれないがあちこち手を入れることなく簡潔に済ませられるのでこうしておく
+			CTypeConfig cTypeOld, cTypeNew;
+			cTypeOld = GetDocument().m_cDocType.GetDocumentType();	// 現在のタイプ
+			if( CCommandLine::Instance()->IsDebugMode() )
+				cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( _T("output") );
+			else if( CCommandLine::Instance()->IsGrepMode() )
+				cTypeNew = cTypeOld;
+			else{
+				EditInfo ei;
+				CCommandLine::Instance()->GetEditInfo( &ei );
+				if( ei.m_szDocType[0] != '\0' ){
+					cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( ei.m_szDocType );
+				}else{
+					cTypeNew = CDocTypeManager().GetDocumentTypeOfPath( ei.m_szPath );
+				}
+			}
+			GetDocument().m_cDocType.SetDocumentType( cTypeNew, true, true );	// 仮設定
+
+			// 可能な限り画面描画の様子が見えないよう一時的に先頭ウィンドウの後ろに配置
+			::SetWindowPos( GetHwnd(), sTabGroupInfo.hwndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+
+			// 可視化する（最大化のときは次の ::ShowWindow() で手前に出てしまうので、アニメーション除去効果はあるがクライアント領域のちらつきは抑えきれない）
+			int nCmdShow = ( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )? SW_SHOWMAXIMIZED: SW_SHOWNOACTIVATE;
+
 #if 0	// SystemParametersInfo() によるアニメーション抑止を控えなければならない場合の次善策
+			::ShowWindow( GetHwnd(), nCmdShow );
+
 			// アニメーションを抑えるために一度消して再表示する（workaround）
 			::SetWindowPos( GetHwnd(), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW );
 			::SetWindowPos( GetHwnd(), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW );
+#else
+			// アニメーション効果は一時的に OFF にする
+			ANIMATIONINFO ai = {sizeof(ANIMATIONINFO)};
+			::SystemParametersInfo( SPI_GETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+			int iMinAnimateOld = ai.iMinAnimate;
+			ai.iMinAnimate = 0;
+			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+
+			::ShowWindow( GetHwnd(), nCmdShow );
+
+			// アニメーション効果を戻す
+			ai.iMinAnimate = iMinAnimateOld;
+			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
 #endif
-			// 画面を描画してから前面に出す
-			::UpdateWindow( GetHwnd() );
+
+			::UpdateWindow( GetHwnd() );	// 画面更新
+			GetDocument().m_cDocType.SetDocumentType( cTypeOld, true, true );	// 戻し
+			::InvalidateRect( GetHwnd(), NULL, TRUE );	// 画面無効化（あとでアイドリング開始したらその時点のタイプ設定で再描画される）
 			::BringWindowToTop( GetHwnd() );
 		}
 	}
@@ -531,18 +565,22 @@ HWND CEditWnd::Create(
 	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
 	if(!hWnd)return NULL;
 	m_hWnd = hWnd;
+
+	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
+	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
+	// ※起動元での起動先アイドリング検出については CControlTray::OpenNewEditor を参照
+	::SetTimer( GetHwnd(), IDT_FIRST_IDLE, 0, NULL );
+
 	/* 編集ウィンドウリストへの登録 */
+	// 2011.01.12 ryoji この処理は以前はウィンドウ可視化よりも後の位置にあった
+	// Vista/7 での初回表示アニメーション抑止（rev1868）とのからみで、ウィンドウが可視化される時点でタブバーに全タブが揃っていないと見苦しいのでここに移動。
+	// AddEditWndList() で自ウィンドウにポストされる MYWM_TAB_WINDOW_NOTIFY(TWNT_ADD) はタブバー作成後の初回アイドリング時に処理されるので特に問題は無いはず。
 	if( !CAppNodeGroupHandle(nGroup).AddEditWndList( GetHwnd() ) ){	// 2007.06.26 ryoji nGroup引数追加
 		OkMessage( GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::DestroyWindow( GetHwnd() );
 		m_hWnd = hWnd = NULL;
 		return hWnd;
 	}
-
-	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
-	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
-	// ※起動元での起動先アイドリング検出については CControlTray::OpenNewEditor を参照
-	::SetTimer( GetHwnd(), IDT_FIRST_IDLE, 0, NULL );
 
 	//コモンコントロール初期化
 	MyInitCommonControls();
