@@ -138,10 +138,11 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	// （ファイル読み込み開始とともにビューが表示されるので、あとで配置すると画面のちらつきが大きいの）
 	if( !pcDoc->m_pcEditWnd->m_cDlgFuncList.m_bEditWndReady ){
 		pcDoc->m_pcEditWnd->m_cDlgFuncList.Refresh();
-		if( pcDoc->m_pcEditWnd->m_cDlgFuncList.GetHwnd() ){
+		HWND hEditWnd = pcDoc->m_pcEditWnd->GetHwnd();
+		if( !::IsIconic( hEditWnd ) && pcDoc->m_pcEditWnd->m_cDlgFuncList.GetHwnd() ){
 			RECT rc;
-			::GetClientRect( pcDoc->m_pcEditWnd->GetHwnd(), &rc );
-			::SendMessageAny( pcDoc->m_pcEditWnd->GetHwnd(), WM_SIZE, SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+			::GetClientRect( hEditWnd, &rc );
+			::SendMessageAny( hEditWnd, WM_SIZE, ::IsZoomed( hEditWnd )? SIZE_MAXIMIZED: SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		}
 	}
 
