@@ -165,10 +165,11 @@ bool CNormalProcess::InitializeProcess()
 	else if( bGrepMode ){
 		/* GREP */
 		pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを予め表示しておく
-		if( pEditWnd->m_cDlgFuncList.GetHwnd() ){
+		HWND hEditWnd = pEditWnd->GetHwnd();
+		if( !::IsIconic( hEditWnd ) && pEditWnd->m_cDlgFuncList.GetHwnd() ){
 			RECT rc;
-			::GetClientRect( pEditWnd->GetHwnd(), &rc );
-			::SendMessageAny( pEditWnd->GetHwnd(), WM_SIZE, SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+			::GetClientRect( hEditWnd, &rc );
+			::SendMessageAny( hEditWnd, WM_SIZE, ::IsZoomed( hEditWnd )? SIZE_MAXIMIZED: SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		}
 		CCommandLine::Instance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
@@ -311,18 +312,13 @@ bool CNormalProcess::InitializeProcess()
 	pEditWnd->GetActiveView().SetIMECompFormPos();
 
 	//WM_SIZEをポスト
-	{
-		RECT rc;
-		GetClientRect( pEditWnd->GetHwnd(), &rc);
-		::PostMessageAny(
-			pEditWnd->GetHwnd(),
-			WM_SIZE,
-			SIZE_RESTORED,
-			MAKELPARAM(
-				rc.right -rc.left,
-				rc.bottom-rc.top
-			)
-		);
+	{	// ファイル読み込みしなかった場合にはこの WM_SIZE がアウトライン画面を配置する
+		HWND hEditWnd = pEditWnd->GetHwnd();
+		if( !::IsIconic( hEditWnd ) ){
+			RECT rc;
+			::GetClientRect( hEditWnd, &rc );
+			::PostMessageAny( hEditWnd, WM_SIZE, ::IsZoomed( hEditWnd )? SIZE_MAXIMIZED: SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
+		}
 	}
 
 	//再描画
