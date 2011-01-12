@@ -222,7 +222,11 @@ open_c:;
 		/* ファイルを開いているか */
 		if( CShareData::getInstance()->IsPathOpened( szPath, &hwndOwner ) ){
 		}else{
-			ErrorMessage( this->GetHwnd(), _T("%ts\n\n%ts\n\n"), errmes, szPath );
+			// 2011.01.12 ryoji エラーは表示しないでおく
+			// ファイルサイズが大きすぎて読むかどうか問い合わせているような場合でもエラー表示になるのは変
+			// OpenNewEditor()または起動された側のメッセージ表示で十分と思われる
+
+			//ErrorMessage( this->GetHwnd(), _T("%ts\n\n%ts\n\n"), errmes, szPath );
 			return FALSE;
 		}
 	}
