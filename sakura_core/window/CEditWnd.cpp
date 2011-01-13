@@ -491,15 +491,17 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			// 可視化する（最大化のときは次の ::ShowWindow() で手前に出てしまうので、アニメーション除去効果はあるがクライアント領域のちらつきは抑えきれない）
 			int nCmdShow = ( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )? SW_SHOWMAXIMIZED: SW_SHOWNOACTIVATE;
 			::ShowWindow( GetHwnd(), nCmdShow );
-
 			::UpdateWindow( GetHwnd() );	// 画面更新
-			GetDocument().m_cDocType.SetDocumentType( cTypeOld, true, true );	// 戻し
-			::InvalidateRect( GetHwnd(), NULL, TRUE );	// 画面無効化（あとでアイドリング開始したらその時点のタイプ設定で再描画される）
 			::BringWindowToTop( GetHwnd() );
+			::ShowWindow( sTabGroupInfo.hwndTop , SW_HIDE );	// 以前の先頭ウィンドウはここで消しておかないと消えるアニメーションが見える場合がある
 
 			// アニメーション効果を戻す
 			ai.iMinAnimate = iMinAnimateOld;
 			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+
+			// アイドリング開始時にその時点のタイプ別設定色で再描画されるようにしておく
+			GetDocument().m_cDocType.SetDocumentType( cTypeOld, true, true );	// タイプ戻し
+			::InvalidateRect( GetHwnd(), NULL, TRUE );	// 画面無効化
 		}
 	}
 	else
