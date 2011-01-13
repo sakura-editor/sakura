@@ -481,16 +481,6 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			// 可能な限り画面描画の様子が見えないよう一時的に先頭ウィンドウの後ろに配置
 			::SetWindowPos( GetHwnd(), sTabGroupInfo.hwndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 
-			// 可視化する（最大化のときは次の ::ShowWindow() で手前に出てしまうので、アニメーション除去効果はあるがクライアント領域のちらつきは抑えきれない）
-			int nCmdShow = ( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )? SW_SHOWMAXIMIZED: SW_SHOWNOACTIVATE;
-
-#if 0	// SystemParametersInfo() によるアニメーション抑止を控えなければならない場合の次善策
-			::ShowWindow( GetHwnd(), nCmdShow );
-
-			// アニメーションを抑えるために一度消して再表示する（workaround）
-			::SetWindowPos( GetHwnd(), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW );
-			::SetWindowPos( GetHwnd(), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW );
-#else
 			// アニメーション効果は一時的に OFF にする
 			ANIMATIONINFO ai = {sizeof(ANIMATIONINFO)};
 			::SystemParametersInfo( SPI_GETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
@@ -498,17 +488,18 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			ai.iMinAnimate = 0;
 			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
 
+			// 可視化する（最大化のときは次の ::ShowWindow() で手前に出てしまうので、アニメーション除去効果はあるがクライアント領域のちらつきは抑えきれない）
+			int nCmdShow = ( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )? SW_SHOWMAXIMIZED: SW_SHOWNOACTIVATE;
 			::ShowWindow( GetHwnd(), nCmdShow );
-
-			// アニメーション効果を戻す
-			ai.iMinAnimate = iMinAnimateOld;
-			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
-#endif
 
 			::UpdateWindow( GetHwnd() );	// 画面更新
 			GetDocument().m_cDocType.SetDocumentType( cTypeOld, true, true );	// 戻し
 			::InvalidateRect( GetHwnd(), NULL, TRUE );	// 画面無効化（あとでアイドリング開始したらその時点のタイプ設定で再描画される）
-			//::BringWindowToTop( GetHwnd() );	// ※ コメントアウト ← 無くても TWNT_ADD で手前のウィンドウが消えて前に出てくる。逆にこれをすると半端なアニメーションが発生することがある模様。
+			::BringWindowToTop( GetHwnd() );
+
+			// アニメーション効果を戻す
+			ai.iMinAnimate = iMinAnimateOld;
+			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
 		}
 	}
 	else
