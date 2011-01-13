@@ -508,7 +508,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			::UpdateWindow( GetHwnd() );	// 画面更新
 			GetDocument().m_cDocType.SetDocumentType( cTypeOld, true, true );	// 戻し
 			::InvalidateRect( GetHwnd(), NULL, TRUE );	// 画面無効化（あとでアイドリング開始したらその時点のタイプ設定で再描画される）
-			::BringWindowToTop( GetHwnd() );
+			//::BringWindowToTop( GetHwnd() );	// ※ コメントアウト ← 無くても TWNT_ADD で手前のウィンドウが消えて前に出てくる。逆にこれをすると半端なアニメーションが発生することがある模様。
 		}
 	}
 	else
