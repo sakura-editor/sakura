@@ -16,6 +16,7 @@
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji, nasukoji, Hidetaka Sakai
 	Copyright (C) 2010, ryoji, Moca、Uchi
+	Copyright (C) 2011, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -894,6 +895,7 @@ void CEditWnd::LayoutTabBar( void )
 /*! バーの配置終了処理
 	@date 2006.12.19 ryoji 新規作成
 	@data 2007.03.04 ryoji 印刷プレビュー時はバーを隠す
+	@data 2011.01.21 ryoji アウトライン画面にゴミが描画されるのを抑止する
 */
 void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 {
@@ -907,8 +909,14 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 		::ShowWindow( m_CFuncKeyWnd.GetHwnd(), nCmdShow );
 	if( NULL != m_cTabWnd.GetHwnd() )
 		::ShowWindow( m_cTabWnd.GetHwnd(), nCmdShow );
-	if( NULL != m_cDlgFuncList.GetHwnd() && m_cDlgFuncList.IsDocking() )
+	if( NULL != m_cDlgFuncList.GetHwnd() && m_cDlgFuncList.IsDocking() ){
 		::ShowWindow( m_cDlgFuncList.GetHwnd(), nCmdShow );
+		// アウトラインを最背後にしておく（ゴミ描画の抑止策）
+		// この対策以前は、アウトラインを下ドッキングしている状態で、
+		// メニューから[ファンクションキーを表示]/[ステータスバーを表示]を実行して非表示のバーをアウトライン直下に表示したり、
+		// その後、ウィンドウの下部境界を上下ドラッグしてサイズ変更するとゴミが現れることがあった。
+		::SetWindowPos( m_cDlgFuncList.GetHwnd(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE );
+	}
 
 	if( bAdjust )
 	{
