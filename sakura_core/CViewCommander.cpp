@@ -17,6 +17,7 @@
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2010, ryoji
+	Copyright (C) 2011, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -4517,6 +4518,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 
 	UINT	uFlags;
 	POINT	po;
+	RECT	rc;
 	HMENU	hMenu;
 	HMENU	hMenuPopUp;
 	int		i;
@@ -4531,9 +4533,14 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 	po.x = 540;
 //	To Here Sept. 15, 2000 (Oct. 7, 2000 300¨500; Nov. 3, 2000 500¨540)
 	po.y = 0;
-	::ClientToScreen( m_pCommanderView->GetHwnd(), &po );
 
 	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
+	::GetClientRect( pCEditWnd->GetHwnd(), &rc );
+	po.x = t_min( po.x, rc.right );
+	::ClientToScreen( pCEditWnd->GetHwnd(), &po );
+	::GetWindowRect( pCEditWnd->m_cSplitterWnd.GetHwnd() , &rc );
+	po.y = rc.top;
+
 	pCEditWnd->GetMenuDrawer().ResetContents();
 
 	//	Oct. 3, 2001 genta
