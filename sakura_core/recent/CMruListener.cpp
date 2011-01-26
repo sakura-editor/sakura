@@ -57,12 +57,13 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	else if( CODE_NONE == pLoadInfo->eCharCode ){
 		pLoadInfo->eCharCode = ePrevCode;
 	}
-	if(CODE_NONE==pLoadInfo->eCharCode)pLoadInfo->eCharCode = CODE_DEFAULT;	//無効値の回避
+	if(CODE_NONE==pLoadInfo->eCharCode)
+		pLoadInfo->eCharCode = static_cast<ECodeType>( pLoadInfo->nType.GetTypeConfig()->m_eDefaultCodetype );	//無効値の回避	// 2011.01.24 ryoji CODE_DEFAULT -> m_eDefaultCodetype
 
 	//食い違う場合
 	if(IsValidCodeType(ePrevCode) && pLoadInfo->eCharCode!=ePrevCode){
 		//オプション：前回と文字コードが異なるときに問い合わせを行う
-		if( GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange ){
+		if( GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange && !pLoadInfo->bRequestReload ){
 			const TCHAR* pszCodeNameOld = CCodeTypeName(ePrevCode).Normal();
 			const TCHAR* pszCodeNameNew = CCodeTypeName(pLoadInfo->eCharCode).Normal();
 			::MessageBeep( MB_ICONQUESTION );

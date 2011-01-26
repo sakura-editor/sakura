@@ -245,11 +245,19 @@ bool CNormalProcess::InitializeProcess()
 					nType
 				)
 			);
-			pEditWnd->SetDocumentTypeWhenCreate(
-				fi.m_nCharCode,
-				bViewMode, // ビューモードか
-				nType
-			);
+			// 読み込み中断して「(無題)」になった時（他プロセスからのロックなど）もオプション指定を有効にする
+			// Note. fi.m_nCharCode で文字コードが明示指定されていても、読み込み中断しない場合は別の文字コードが選択されることがある。
+			//       以前は「(無題)」にならない場合でも無条件に SetDocumentTypeWhenCreate() を呼んでいたが、
+			//       「前回と異なる文字コード」の問い合わせで前回の文字コードが選択された場合におかしくなっていた。
+			if( !pEditWnd->GetDocument().m_cDocFile.GetFilePathClass().IsValidPath() ){
+				// 読み込み中断して「(無題)」になった
+				// ---> 無効になったオプション指定を有効にする
+				pEditWnd->SetDocumentTypeWhenCreate(
+					fi.m_nCharCode,
+					bViewMode,
+					nType
+				);
+			}
 			//	Nov. 6, 2000 genta
 			//	キャレット位置の復元のため
 			//	オプション指定がないときは画面移動を行わないようにする

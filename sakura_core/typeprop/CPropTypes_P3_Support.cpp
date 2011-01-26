@@ -23,9 +23,46 @@ static const DWORD p_helpids3[] = {	//11500
 	IDC_BUTTON_TYPEOPENEXTHTMLHELP,	HIDC_BUTTON_TYPEOPENEXTHTMLHELP,	//外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_CHECK_TYPEHTMLHELPISSINGLE,	HIDC_CHECK_TYPEHTMLHELPISSINGLE,	//ビューアを複数起動しない	// 2006.08.06 ryoji
 	IDC_COMBO_DEFAULT_CODETYPE,		HIDC_COMBO_DEFAULT_CODETYPE,		//デフォルト文字コード
+	IDC_COMBO_DEFAULT_EOLTYPE,		HIDC_COMBO_DEFAULT_EOLTYPE,			//デフォルト改行コード	// 2011.01.24 ryoji
+	IDC_CHECK_DEFAULT_BOM,			HIDC_CHECK_DEFAULT_BOM,				//デフォルトBOM	// 2011.01.24 ryoji
 	IDC_CHECK_PRIOR_CESU8,			HIDC_CHECK_PRIOR_CESU8,				//自動判別時にCESU-8を優先する
 //	IDC_STATIC,						-1,
 	0, 0
+};
+
+static const wchar_t* aszCodeStr[] = {
+	L"SJIS",
+	L"EUC",
+	L"UTF-8",
+	L"CESU-8",
+	L"Unicode",
+	L"UnicodeBE"
+};
+static const ECodeType aeCodeType[] = {
+	CODE_SJIS,
+	CODE_EUC,
+	CODE_UTF8,
+	CODE_CESU8,
+	CODE_UNICODE,
+	CODE_UNICODEBE
+};
+static const BOOL abBomEnable[] = {
+	FALSE,
+	FALSE,
+	TRUE,
+	TRUE,
+	TRUE,
+	TRUE
+};
+static const wchar_t* aszEolStr[] = {
+	L"CR+LF",
+	L"LF (UNIX)",
+	L"CR (Mac)",
+};
+static const EEolType aeEolType[] = {
+	EOL_CRLF,
+	EOL_LF,
+	EOL_CR,
 };
 
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
@@ -59,6 +96,27 @@ INT_PTR CPropSupport::DispatchEvent(
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 //		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
+		case CBN_SELCHANGE:
+			{
+				int i;
+				switch( wID ){
+				case IDC_COMBO_DEFAULT_CODETYPE:
+					// 文字コードの変更をBOMチェックボックスに反映
+					i = Combo_GetCurSel( (HWND) lParam );
+					if( CB_ERR != i ){
+						int nCheck = BST_UNCHECKED;
+						if( abBomEnable[i] ){
+							if( (aeCodeType[i] == CODE_UNICODE || aeCodeType[i] == CODE_UNICODEBE) )
+								nCheck = BST_CHECKED;
+						}
+						::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, nCheck );
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
+					}
+					break;
+				}
+			}
+			break;
+
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			/* ダイアログデータの取得 p2 */
@@ -203,30 +261,14 @@ void CPropSupport::SetData( HWND hwndDlg )
 	{
 		int i;
 		HWND hCombo;
-		static const wchar_t* aszStr[] = {
-			L"SJIS",
-			L"EUC",
-			L"UTF-8",
-			L"CESU-8",
-			L"Unicode",
-			L"UnicodeBE"
-		};
-		static const ECodeType aeCodeType[] = {
-			CODE_SJIS,
-			CODE_EUC,
-			CODE_UTF8,
-			CODE_CESU8,
-			CODE_UNICODE,
-			CODE_UNICODEBE
-		};
 
 		// 「自動認識時にCESU-8を優先」m_Types.m_bPriorCesu8 をチェック
 		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_bPriorCesu8 );
 
 		// デフォルトコードタイプのコンボボックス設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
-		for( i = 0; i < _countof(aszStr); ++i ){
-			ApiWrap::Combo_AddString( hCombo, aszStr[i] );
+		for( i = 0; i < _countof(aszCodeStr); ++i ){
+			ApiWrap::Combo_AddString( hCombo, aszCodeStr[i] );
 		}
 		for( i = 0; i < _countof(aeCodeType); ++i ){
 			if( m_Types.m_eDefaultCodetype == aeCodeType[i] ){
@@ -234,6 +276,27 @@ void CPropSupport::SetData( HWND hwndDlg )
 			}
 		}
 		if( i == _countof(aeCodeType) ){
+			i = 0;
+		}
+		Combo_SetCurSel( hCombo, i );
+
+		// BOM チェックボックス設定
+		if( !abBomEnable[i] )
+			m_Types.m_bDefaultBom = FALSE;
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, m_Types.m_bDefaultBom );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
+
+		// デフォルト改行タイプのコンボボックス設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
+		for( i = 0; i < _countof(aszEolStr); ++i ){
+			ApiWrap::Combo_AddString( hCombo, aszEolStr[i] );
+		}
+		for( i = 0; i < _countof(aeEolType); ++i ){
+			if( m_Types.m_eDefaultEoltype == aeEolType[i] ){
+				break;
+			}
+		}
+		if( i == _countof(aeEolType) ){
 			i = 0;
 		}
 		Combo_SetCurSel( hCombo, i );
@@ -264,22 +327,6 @@ int CPropSupport::GetData( HWND hwndDlg )
 	{
 		int i;
 		HWND hCombo;
-		static const wchar_t* aszStr[] = {
-			L"SJIS",
-			L"EUC",
-			L"UTF-8",
-			L"CESU-8",
-			L"Unicode",
-			L"UnicodeBE"
-		};
-		static const ECodeType aeCodeType[] = {
-			CODE_SJIS,
-			CODE_EUC,
-			CODE_UTF8,
-			CODE_CESU8,
-			CODE_UNICODE,
-			CODE_UNICODEBE
-		};
 
 		// m_Types.m_bPriorCesu8 を設定
 		m_Types.m_bPriorCesu8 = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PRIOR_CESU8 );
@@ -289,6 +336,16 @@ int CPropSupport::GetData( HWND hwndDlg )
 		i = Combo_GetCurSel( hCombo );
 		if( CB_ERR != i ){
 			m_Types.m_eDefaultCodetype = aeCodeType[i];
+		}
+
+		// m_Types.m_bDefaultBom を設定
+		m_Types.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM );
+
+		// m_Types.eDefaultEoltype を設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
+		i = Combo_GetCurSel( hCombo );
+		if( CB_ERR != i ){
+			m_Types.m_eDefaultEoltype = aeEolType[i];
 		}
 	}
 

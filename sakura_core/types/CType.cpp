@@ -174,6 +174,8 @@ void _DefaultConfig(STypeConfig* pType)
 	// •¶ŽšƒR[ƒhÝ’è
 	pType->m_bPriorCesu8 = FALSE;
 	pType->m_eDefaultCodetype = CODE_SJIS;
+	pType->m_eDefaultEoltype = EOL_CRLF;
+	pType->m_bDefaultBom = FALSE;
 
 	//@@@2002.2.4 YAZAKI
 	pType->m_szExtHelp[0] = L'\0';

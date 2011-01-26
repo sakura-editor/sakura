@@ -161,6 +161,17 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		}
 		CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	}
+	else{
+		// 存在しないときもドキュメントに文字コードを反映する
+		pcDoc->m_cDocFile.m_sFileInfo.eCharCode = sLoadInfo.eCharCode;
+		STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
+		if ( sLoadInfo.eCharCode == static_cast<ECodeType>( types.m_eDefaultCodetype ) ){
+			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = ( types.m_bDefaultBom != FALSE );	// 2011.01.24 ryoji デフォルトBOM
+		}
+		else{
+			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = ( sLoadInfo.eCharCode == CODE_UNICODE || sLoadInfo.eCharCode == CODE_UNICODEBE );
+		}
+	}
 
 	/* レイアウト情報の変更 */
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応

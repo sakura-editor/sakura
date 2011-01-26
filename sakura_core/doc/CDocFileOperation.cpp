@@ -155,10 +155,6 @@ void CDocFileOperation::ReloadCurrentFile(
 	CLayoutInt		nViewLeftCol = m_pcDocRef->m_pcEditWnd->GetActiveView().GetTextArea().GetViewLeftCol();	/* 表示域の一番左の桁(0開始) */
 	CLayoutPoint	ptCaretPosXY = m_pcDocRef->m_pcEditWnd->GetActiveView().GetCaret().GetCaretLayoutPos();
 
-	//文字コード確認フラグオフ
-	bool backup_bQueryIfCodeChange = GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange; //####仮
-	GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange = false; //####仮
-
 	//ロード
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath=m_pcDocRef->m_cDocFile.GetFilePath();
@@ -166,9 +162,6 @@ void CDocFileOperation::ReloadCurrentFile(
 	sLoadInfo.bViewMode=CAppMode::Instance()->IsViewMode();
 	sLoadInfo.bRequestReload=true;
 	bool bRet = this->DoLoadFlow(&sLoadInfo);
-
-	//文字コード確認フラグ復元
-	GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange = backup_bQueryIfCodeChange; //####仮
 
 	// カーソル位置復元 (※ここではオプションのカーソル位置復元（＝改行単位）が指定されていない場合でも復元する)
 	// 2007.08.23 ryoji 表示領域復元

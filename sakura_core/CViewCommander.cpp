@@ -3918,6 +3918,15 @@ void CViewCommander::Command_TYPE_LIST( void )
 		if( sResult.bTempChange ){
 			GetDocument()->m_cDocType.SetDocumentType( sResult.cDocumentType, true );
 			GetDocument()->m_cDocType.LockDocumentType();
+			// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
+			if( !GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+				if( !GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0 ){
+					STypeConfig& types = GetDocument()->m_cDocType.GetDocumentAttribute();
+					GetDocument()->m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( types.m_eDefaultCodetype );
+					GetDocument()->m_cDocFile.m_sFileInfo.bBomExist = ( types.m_bDefaultBom != FALSE );
+					GetDocument()->m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_eDefaultEoltype );
+				}
+			}
 			/* 設定変更を反映させる */
 			GetDocument()->m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
 			GetDocument()->OnChangeSetting();

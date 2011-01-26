@@ -1468,6 +1468,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 
 	cProfile.IOProfileData( pszSecName, LTEXT("bPriorCesu8")		, types.m_bPriorCesu8 );
 	cProfile.IOProfileData( pszSecName, LTEXT("eDefaultCodetype")	, types.m_eDefaultCodetype );
+	cProfile.IOProfileData( pszSecName, LTEXT("eDefaultEoltype")	, types.m_eDefaultEoltype );
+	cProfile.IOProfileData( pszSecName, LTEXT("bDefaultBom")		, types.m_bDefaultBom );
 
 	cProfile.IOProfileData( pszSecName, LTEXT("bAutoIndent")			, types.m_bAutoIndent );
 	cProfile.IOProfileData( pszSecName, LTEXT("bAutoIndent_ZENSPACE")	, types.m_bAutoIndent_ZENSPACE );
