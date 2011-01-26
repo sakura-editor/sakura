@@ -646,6 +646,8 @@
 #define IDC_BUTTON_CHECK                1597	//
 #define IDC_CHECK_EXT_RMENU             1598
 #define IDC_CHECK_EXT_DBLCLICK          1599
+#define IDC_COMBO_DEFAULT_EOLTYPE       1600
+#define IDC_CHECK_DEFAULT_BOM           1601
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -685,7 +687,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1598
+#define _APS_NEXT_CONTROL_VALUE         1602
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

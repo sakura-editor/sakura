@@ -30,11 +30,16 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		CCodeMediator cmediator( CEditWnd::Instance()->GetDocument() );
 		pFileInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
 	}
+	STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
 	if( !IsValidCodeType(pFileInfo->eCharCode) ){
-		pFileInfo->eCharCode = CODE_DEFAULT;
+		pFileInfo->eCharCode = static_cast<ECodeType>( types.m_eDefaultCodetype );	// 2011.01.24 ryoji デフォルト文字コード
 	}
-	pFileInfo->bBomExist = false;
-	if(pFileInfo->eCharCode==CODE_UNICODE || pFileInfo->eCharCode==CODE_UNICODEBE)pFileInfo->bBomExist = true; //BOMの有無の初期状態
+	if ( pFileInfo->eCharCode == static_cast<ECodeType>( types.m_eDefaultCodetype ) ){
+		pFileInfo->bBomExist = ( types.m_bDefaultBom != FALSE );	// 2011.01.24 ryoji デフォルトBOM
+	}
+	else{
+		pFileInfo->bBomExist = ( pFileInfo->eCharCode == CODE_UNICODE || pFileInfo->eCharCode == CODE_UNICODEBE );
+	}
 
 	/* 既存データのクリア */
 	pcDocLineMgr->DeleteAllLine();

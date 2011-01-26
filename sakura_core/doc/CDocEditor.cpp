@@ -52,7 +52,13 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	//	May 12, 2000 genta
 	//	編集用改行コードの設定
 	{
-		SetNewLineCode( EOL_CRLF );
+		STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
+		if ( pcDoc->m_cDocFile.m_sFileInfo.eCharCode == static_cast<ECodeType>( types.m_eDefaultCodetype ) ){
+			SetNewLineCode( static_cast<EEolType>( types.m_eDefaultEoltype ) );	// 2011.01.24 ryoji デフォルトEOL
+		}
+		else{
+			SetNewLineCode( EOL_CRLF );
+		}
 		CDocLine*	pFirstlineinfo = pcDoc->m_cDocLineMgr.GetLine( CLogicInt(0) );
 		if( pFirstlineinfo != NULL ){
 			EEolType t = pFirstlineinfo->GetEol();

@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2011, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -117,6 +118,8 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 	// 文字コード種別を初期化
 	m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultCodetype );
+	m_cDocFile.m_sFileInfo.bBomExist = ( CShareData::getInstance()->GetShareData()->m_Types[0].m_bDefaultBom != FALSE );
+	m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultEoltype );
 }
 
 
@@ -186,11 +189,9 @@ void CEditDoc::InitDoc()
 
 	/* 文字コード種別 */
 	m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultCodetype );
-	m_cDocFile.m_sFileInfo.bBomExist = false;	//	Jul. 26, 2003 ryoji
+	m_cDocFile.m_sFileInfo.bBomExist = ( CShareData::getInstance()->GetShareData()->m_Types[0].m_bDefaultBom != FALSE );
+	m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultEoltype );
 
-	//	May 12, 2000
-	m_cDocEditor.m_cNewLineCode.SetType( EOL_CRLF );
-	
 	//	Oct. 2, 2005 genta 挿入モード
 	m_cDocEditor.SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
 }

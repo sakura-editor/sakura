@@ -701,23 +701,39 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 	CTypeConfig		nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
 )
 {
-	// 文字コードの指定	2008/6/14 Uchi
-	if (IsValidCodeType(nCharCode)) {
-		GetDocument().SetDocumentEncoding(nCharCode);
-	}
-
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
 	if( nDocumentType.IsValid() ){
 		GetDocument().m_cDocType.SetDocumentType( nDocumentType, true );
 		//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
 		GetDocument().m_cDocType.LockDocumentType();
-		/* 設定変更を反映させる */
-		GetDocument().OnChangeSetting();
+	}
+
+	// 文字コードの指定	2008/6/14 Uchi
+	if( IsValidCodeType( nCharCode ) || nDocumentType.IsValid() ){
+		STypeConfig& types = GetDocument().m_cDocType.GetDocumentAttribute();
+		ECodeType eDefaultCharCode = static_cast<ECodeType>( types.m_eDefaultCodetype );
+		if( !IsValidCodeType( nCharCode ) ){
+			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用
+		}
+		GetDocument().SetDocumentEncoding( nCharCode );
+		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
+			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = ( types.m_bDefaultBom != FALSE );
+			GetDocument().m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_eDefaultEoltype );
+		}
+		else{
+			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = ( nCharCode == CODE_UNICODE || nCharCode == CODE_UNICODEBE );
+			GetDocument().m_cDocEditor.m_cNewLineCode = EOL_CRLF;
+		}
 	}
 
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもビューモード強制指定を有効にする
 	CAppMode::Instance()->SetViewMode(bViewMode);
+
+	if( nDocumentType.IsValid() ){
+		/* 設定変更を反映させる */
+		GetDocument().OnChangeSetting();	// <--- 内部に BlockingHook() 呼び出しがあるので溜まった描画がここで実行される
+	}
 }
 
 

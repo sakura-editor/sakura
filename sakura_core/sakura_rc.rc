@@ -1024,13 +1024,18 @@ BEGIN
     CONTROL         "ビューアを複数起動しない(&N)",
                     IDC_CHECK_TYPEHTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,125,109,10
-    LTEXT           "デフォルト文字コード(&D)",IDC_STATIC,8,161,77,8
-    COMBOBOX        IDC_COMBO_DEFAULT_CODETYPE,87,159,52,57,CBS_DROPDOWNLIST | 
+    LTEXT           "文字コード(&C)",IDC_STATIC,8,161,46,8
+    COMBOBOX        IDC_COMBO_DEFAULT_CODETYPE,57,159,52,57,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
+    LTEXT           "改行コード(&E)",IDC_STATIC,118,161,46,8
+    COMBOBOX        IDC_COMBO_DEFAULT_EOLTYPE,166,159,52,57,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&BOM",IDC_CHECK_DEFAULT_BOM,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,222,161,30,10
     CONTROL         "自動判別時にCESU-8 を優先する(&U)",
                     IDC_CHECK_PRIOR_CESU8,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,177,135,10
-    GROUPBOX        "文字コード",IDC_STATIC,3,148,297,43
+    GROUPBOX        "デフォルトの文字コード",IDC_STATIC,3,148,297,43
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244

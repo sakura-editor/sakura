@@ -115,6 +115,8 @@ struct STypeConfig{
 
 	BOOL				m_bPriorCesu8;					/* 自動判別時に CESU-8 を優先するかどうか */
 	int					m_eDefaultCodetype;				/* デフォルト文字コード */
+	int					m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
+	BOOL				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
 
 
 
