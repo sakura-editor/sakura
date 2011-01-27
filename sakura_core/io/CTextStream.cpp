@@ -61,13 +61,13 @@ wstring CTextInputStream::ReadLineW()
 	//UTF-8 Å® UNICODE
 	if(m_bIsUtf8){
 		CUtf8::UTF8ToUnicode(&line);
-		return (const wchar_t*)line.GetRawPtr();
 	}
 	//Shift_JIS Å® UNICODE
 	else{
 		CShiftJis::SJISToUnicode(&line);
-		return (const wchar_t*)line.GetRawPtr();
 	}
+
+	return wstring().assign( (wchar_t*)line.GetRawPtr(), line.GetRawLength()/sizeof(wchar_t) );	// EOL Ç‹Ç≈ NULL ï∂éöÇ‡ä‹ÇﬂÇÈ
 }
 
 

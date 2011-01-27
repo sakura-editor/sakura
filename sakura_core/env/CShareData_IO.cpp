@@ -1623,8 +1623,6 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 		if( bIOSuccess ){
 			// 2004.11.25 Moca キーワードセットの情報は、直接書き換えないで関数を利用する
 			// 初期設定されているため、先に削除しないと固定メモリの確保に失敗する可能性がある
-			int  nMemLen = MAX_KEYWORDNUM * ( MAX_KEYWORDLEN + 1 ) + 1;
-			wchar_t *pszMem = new wchar_t[nMemLen];
 			pCKeyWordSetMgr->ResetAllKeyWordSet();
 			for( i = 0; i < nKeyWordSetNum; ++i ){
 				bool bKEYWORDCASE = false;
@@ -1640,11 +1638,11 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 				//追加
 				pCKeyWordSetMgr->AddKeyWordSet( szKeyData, bKEYWORDCASE, nKeyWordNum );
 				auto_sprintf( szKeyName, LTEXT("szKW[%02d]"), i );
-				if( cProfile.IOProfileData( pszSecName, szKeyName, StringBufferW(pszMem,nMemLen)) ){
-					pCKeyWordSetMgr->SetKeyWordArr( i, nKeyWordNum, pszMem );
+				std::wstring sValue;	// wstring のまま受ける（古い ini ファイルのキーワードは中身が NULL 文字区切りなので StringBufferW では NG だった）
+				if( cProfile.IOProfileData( pszSecName, szKeyName, sValue ) ){
+					pCKeyWordSetMgr->SetKeyWordArr( i, nKeyWordNum, sValue.c_str() );
 				}
 			}
-			delete [] pszMem;
 		}
 	}else{
 		int nSize = pCKeyWordSetMgr->m_nKeyWordSetNum;
