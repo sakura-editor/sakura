@@ -6,18 +6,18 @@
 
 // アプリ名。2007.09.21 kobake 整理
 #ifdef _UNICODE
-	#define _APP_NAME_(TYPE) TYPE("sakuraW")
+	#define _APP_NAME_(TYPE) TYPE("sakura")
 #else
-	#define _APP_NAME_(TYPE) TYPE("sakuraA")
+	#define _APP_NAME_(TYPE) TYPE("sakura")
 #endif
 
 #ifdef _DEBUG
-	#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版 ") TYPE(__DATE__) TYPE(")")
+	#define _APP_NAME_2_(TYPE) TYPE("(デバッグ版)")
 #else
-	#define _APP_NAME_2_(TYPE) TYPE("(") TYPE(__DATE__) TYPE(")")
+	#define _APP_NAME_2_(TYPE) TYPE("")
 #endif
 
-#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) //例:UNICODEデバッグ→_T("sakuraW2(デバッグ版)")
+#define _GSTR_APPNAME_(TYPE)  _APP_NAME_(TYPE) _APP_NAME_2_(TYPE) //例:UNICODEデバッグ→_T("sakura(デバッグ版)")
 
 #define GSTR_APPNAME    (_GSTR_APPNAME_(_T)   )
 #define GSTR_APPNAME_A  (_GSTR_APPNAME_(ATEXT))

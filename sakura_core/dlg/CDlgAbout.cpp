@@ -147,14 +147,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタW   Ver. 1.6.5.0
+	//サクラエディタ   Ver. 2.0.0.0
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CNativeT cmemMsg;
-	cmemMsg.AppendString(_T("サクラエディタW   "));
+	cmemMsg.AppendString(_T("サクラエディタ   "));
 
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO,
