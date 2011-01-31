@@ -34,6 +34,22 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	wcscpy( pType->m_szKinsokuHead, L"!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
 	wcscpy( pType->m_szKinsokuTail, L"$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
 	// pType->m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji 
+
+	//※小さな親切として、C:\～～ や \\～～ などのファイルパスをクリッカブルにする設定を「テキスト」に既定で仕込む
+	//※""で挟まれる設定は挟まれない設定よりも上に無ければならない
+	//※""で挟まれる設定を複製してちょっと修正すれば、<>や[]に挟まれたものにも対応できる（ユーザに任せる）
+
+	//正規表現キーワード
+	pType->m_bUseRegexKeyword = true;							// 正規表現キーワードを使うか
+	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
+	wcscpyn( pType->m_RegexKeywordArr[0].m_szKeyword,			// 正規表現キーワード
+		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""で挟まれた C:\～, \\～ にマッチするパターン
+		sizeof(pType->m_RegexKeywordArr[0].m_szKeyword) );
+	pType->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
+	wcscpyn( pType->m_RegexKeywordArr[1].m_szKeyword,			// 正規表現キーワード
+		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\～, \\～ にマッチするパターン
+		sizeof(pType->m_RegexKeywordArr[1].m_szKeyword) );
+	
 }
 
 
