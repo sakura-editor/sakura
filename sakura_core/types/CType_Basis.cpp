@@ -15,15 +15,4 @@ void CType_Basis::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_eDefaultOutline = OUTLINE_TEXT;					// アウトライン解析方法
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	// シングルクォーテーション文字列を色分け表示しない	//Oct. 17, 2000 JEPRO
 	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	// ダブルクォーテーション文字列を色分け表示しない	//Sept. 4, 2000 JEPRO
-
-	//正規表現キーワード
-	pType->m_bUseRegexKeyword = true;							// 正規表現キーワードを使うか
-	pType->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	wcscpyn( pType->m_RegexKeywordArr[0].m_szKeyword,			// 正規表現キーワード
-		L"/\\b[a-zA-Z]:\\\\[\\w\\-_\\.\\\\\\/\\$%~]*/k",		//   C:\～にマッチするパターン
-		sizeof(pType->m_RegexKeywordArr[0].m_szKeyword) );
-	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	wcscpyn( pType->m_RegexKeywordArr[1].m_szKeyword,			// 正規表現キーワード
-		L"/\\B\\\\\\\\[\\w\\-_\\.\\\\\\/\\$%~]+/k",				//   \\～にマッチするパターン
-		sizeof(pType->m_RegexKeywordArr[1].m_szKeyword) );
 }
