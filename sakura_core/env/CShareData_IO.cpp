@@ -68,6 +68,24 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			/* 設定ファイルが存在しない */
 			return false;
 		}
+
+		// バージョンアップ時はバックアップファイルを作成する	// 2011.01.28 ryoji
+		TCHAR iniVer[256];
+		DWORD mH, mL, lH, lL;
+		mH = mL = lH = lL = 0;	// ※ 古～い ini だと "szVersion" は無い
+		if( cProfile.IOProfileData( LTEXT("Other"), LTEXT("szVersion"), MakeStringBufferT(iniVer) ) )
+			_stscanf( iniVer, _T("%u.%u.%u.%u"), &mH, &mL, &lH, &lL );
+		DWORD dwMS = (DWORD)MAKELONG(mL, mH);
+		DWORD dwLS = (DWORD)MAKELONG(lL, lH);
+		DLLSHAREDATA* pShareData = pcShare->GetShareData();
+		if( pShareData->m_sVersion.m_dwProductVersionMS > dwMS
+			|| (pShareData->m_sVersion.m_dwProductVersionMS == dwMS && pShareData->m_sVersion.m_dwProductVersionLS > dwLS) )
+		{
+			TCHAR szBkFileName[_countof(szIniFileName) + 4];
+			::lstrcpy(szBkFileName, szIniFileName);
+			::lstrcat(szBkFileName, _T(".bak"));
+			::CopyFile(szIniFileName, szBkFileName, FALSE);
+		}
 	}
 //	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
