@@ -13,6 +13,7 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -32,6 +33,15 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_UNDERLINE,			HIDC_CHECK_UNDERLINE,			//下線
 	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
 	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
+	IDC_EDIT_BACKIMG_PATH,			HIDC_EDIT_BACKIMG_PATH,			//背景画像
+	IDC_BUTTON_BACKIMG_PATH_SEL,	HIDC_BUTTON_BACKIMG_PATH_SEL,	//背景画像ボタン
+	IDC_COMBO_BACKIMG_POS,			HIDC_COMBO_BACKIMG_POS,			//背景画像位置
+	IDC_CHECK_BACKIMG_SCR_X,		HIDC_CHECK_BACKIMG_SCR_X,		//背景画像ScrollX
+	IDC_CHECK_BACKIMG_SCR_Y,		HIDC_CHECK_BACKIMG_SCR_Y,		//背景画像ScrollY
+	IDC_CHECK_BACKIMG_REP_X,		HIDC_CHECK_BACKIMG_REP_X,		//背景画像RepeatX
+	IDC_CHECK_BACKIMG_REP_Y,		HIDC_CHECK_BACKIMG_REP_Y,		//背景画像RepeatY
+	IDC_EDIT_BACKIMG_OFFSET_X,		HIDC_EDIT_BACKIMG_OFFSET_X,		//背景画像OffsetX
+	IDC_EDIT_BACKIMG_OFFSET_Y,		HIDC_EDIT_BACKIMG_OFFSET_Y,		//背景画像OffsetY
 	IDC_COMBO_SET,					HIDC_COMBO_SET_COLOR,			//強調キーワード１セット名
 	IDC_EDIT_BLOCKCOMMENT_FROM,		HIDC_EDIT_BLOCKCOMMENT_FROM,	//ブロックコメント１開始
 	IDC_EDIT_BLOCKCOMMENT_TO,		HIDC_EDIT_BLOCKCOMMENT_TO,		//ブロックコメント１終了
@@ -382,6 +392,12 @@ INT_PTR CPropColor::DispatchEvent(
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
+			case IDC_BUTTON_BACKIMG_PATH_SEL:
+				{
+					CDialog::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH),
+						_T("*.bmp;*.jpg;*.jpeg"), true );
+				}
+				return TRUE;
 			case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
 				/* 色選択ダイアログ */
 				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK, m_dwCustColors ) ){
@@ -590,7 +606,14 @@ INT_PTR CPropColor::DispatchEvent(
 }
 
 
-
+void SetCombobox(HWND hwndWork, const TCHAR** pszLabels, int nCount, int select)
+{
+	Combo_ResetContent(hwndWork);
+	for(int i = 0; i < nCount; ++i ){
+		Combo_AddString( hwndWork, pszLabels[i] );
+	}
+	Combo_SetCurSel(hwndWork, select);
+}
 
 
 /* ダイアログデータの設定 color */
@@ -658,6 +681,34 @@ void CPropColor::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_CRLF, TRUE );
 	}
 
+	// 背景画像
+	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH), _countof2(m_Types.m_szBackImgPath));
+	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X), 5);
+	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y), 5);
+
+	DlgItem_SetText( hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath );
+	{
+		const TCHAR* posNames[] ={
+			_T("左上"),
+			_T("右上"),
+			_T("左下"),
+			_T("右下"),
+			_T("中央"),
+			_T("中央上"),
+			_T("中央下"),
+			_T("中央左"),
+			_T("中央右"),
+		};
+		/*BGIMAGE_TOP_LEFT .. */
+		int nCount = _countof(posNames);
+		SetCombobox( ::GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS), posNames, nCount, m_Types.m_backImgPos);
+	}
+	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X, m_Types.m_backImgRepeatX);
+	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_Y, m_Types.m_backImgRepeatY);
+	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_X, m_Types.m_backImgScrollX);
+	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y, m_Types.m_backImgScrollY);
+	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, m_Types.m_backImgPosOffset.x, TRUE);
+	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, m_Types.m_backImgPosOffset.y, TRUE);
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
@@ -826,6 +877,15 @@ int CPropColor::GetData( HWND hwndDlg )
 	}else{
 		m_Types.m_bLineNumIsCRLF = true;
 	}
+
+	DlgItem_GetText(hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath, _countof2(m_Types.m_szBackImgPath));
+	m_Types.m_backImgPos = static_cast<EBackgroundImagePos>(Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS)));
+	m_Types.m_backImgRepeatX = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X);
+	m_Types.m_backImgRepeatY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_REP_Y);
+	m_Types.m_backImgScrollX = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_X);
+	m_Types.m_backImgScrollY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y);
+	m_Types.m_backImgPosOffset.x = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, NULL, TRUE);
+	m_Types.m_backImgPosOffset.y = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, NULL, TRUE);
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );

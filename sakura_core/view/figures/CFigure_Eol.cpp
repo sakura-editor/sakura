@@ -15,11 +15,11 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 //2007.08.25 kobake 戻り値を void に変更。引数 x, y を DispPos に変更
 //2007.08.25 kobake 引数から nCharWidth, nLineHeight を削除
 //2007.08.28 kobake 引数 fuOptions を削除
-void _DispEOF( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
+//void _DispEOF( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, bool bTrans);
 
 //改行記号描画
 //2007.08.30 kobake 追加
-void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView);
+void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans);
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -72,6 +72,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
 	{
 		//サポートクラス
 		CTypeSupport cWrapType(pcView,COLORIDX_WRAP);
+		bool bTrans = pcView->IsBkBitmap() && cWrapType.GetBackColor() == CTypeSupport(pcView,COLORIDX_TEXT).GetBackColor();
 
 		//描画文字列と色の決定
 		const wchar_t* szText;
@@ -90,7 +91,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClip2,
 			szText,
 			wcslen(szText),
@@ -102,9 +103,9 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       EOF描画実装                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-void CFigure_Eol::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView) const
+void CFigure_Eol::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const
 {
-	_DispEOL(gr, pDispPos, m_cEol, pcView);
+	_DispEOL(gr, pDispPos, m_cEol, pcView, bTrans);
 }
 
 /*!
@@ -124,6 +125,8 @@ void _DispEOF(
 	CTypeSupport cEofType(pcView,COLORIDX_EOF);
 	if(!cEofType.IsDisp())
 		return;
+	CTypeSupport cTextType(pcView,COLORIDX_TEXT);
+	bool bTrans = pcView->IsBkBitmap() && cEofType.GetBackColor() == cTextType.GetBackColor();
 
 	//必要なインターフェースを取得
 	const CTextMetrics* pMetrics=&pcView->GetTextMetrics();
@@ -145,7 +148,7 @@ void _DispEOF(
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClip,
 			szEof,
 			nEofLen,
@@ -174,7 +177,7 @@ void _DrawEOL(
 );
 
 //2007.08.30 kobake 追加
-void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView)
+void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcView, bool bTrans)
 {
 	RECT rcClip2;
 	if(pcView->GetTextArea().GenerateClipRect(&rcClip2,*pDispPos,2)){
@@ -183,7 +186,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClip2,
 			L"  ",
 			2,

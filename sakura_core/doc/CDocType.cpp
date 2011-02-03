@@ -21,6 +21,7 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 		UnlockDocumentType();
 		CDocTypeManager().GetTypeSetting(m_nSettingType).m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
 		this->SetDocumentIcon();	// Sep. 11, 2002 genta
+		m_pcDocRef->SetBackgroundImage();
 	}
 }
 

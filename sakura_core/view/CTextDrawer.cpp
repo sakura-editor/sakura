@@ -384,10 +384,15 @@ void CTextDrawer::DispLineNumber(
 	rcLineNum.right = nLineNumAreaWidth;
 	rcLineNum.top = y;
 	rcLineNum.bottom = y + nLineHeight;
+	
+	bool bTrans = pView->IsBkBitmap() && cTextType.GetBackColor() == cColorType.GetBackColor();
+	bool bTransText = pView->IsBkBitmap();
 
 	if(!pcLayout){
 		//行が存在しない場合は、テキスト描画色で塗りつぶし
-		cTextType.FillBack(gr,rcLineNum);
+		if( !bTransText ){
+			cTextType.FillBack(gr,rcLineNum);
+		}
 	}
 	else if( CTypeSupport(pView,COLORIDX_GYOU).IsDisp() ){ /* 行番号表示／非表示 */
 		gr.PushTextForeColor(cColorType.GetTextColor());	//テキスト：行番号の色
@@ -427,7 +432,7 @@ void CTextDrawer::DispLineNumber(
 		::ExtTextOutW_AnyBuild( gr,
 			drawNumTop,
 			y,
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcLineNum,
 			szLineNum,
 			nLineCols,
@@ -448,7 +453,9 @@ void CTextDrawer::DispLineNumber(
 	}
 	else{
 		// 行番号エリアの背景描画
-		cColorType.FillBack(gr,rcLineNum);
+		if( !bTrans ){
+			cColorType.FillBack(gr,rcLineNum);
+		}
 	}
 
 	//行属性描画 ($$$分離予定)
@@ -469,7 +476,7 @@ void CTextDrawer::DispLineNumber(
 	}
 
 	// 行番号とテキストの隙間の描画
-	{
+	if( !bTransText ){
 		RECT rcRest;
 		rcRest.left   = rcLineNum.right;
 		rcRest.right  = pView->GetTextArea().GetAreaLeft();

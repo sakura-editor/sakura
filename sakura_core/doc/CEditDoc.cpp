@@ -27,6 +27,7 @@
 #include <time.h>
 #include <string.h>	// Apr. 03, 2003 genta
 #include <DLGS.H>
+#include <OleCtl.h>
 #include "global.h"
 #include "window/CEditWnd.h"
 #include "CAppMode.h"
@@ -84,6 +85,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 , m_cDocType(this)
 , m_cDocEditor(this)
 , m_cDocFileOperation(this)
+, m_hBackImg(NULL)
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
 
@@ -125,6 +127,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 CEditDoc::~CEditDoc()
 {
+	if( m_hBackImg ){
+		::DeleteObject( m_hBackImg );
+	}
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -196,6 +201,78 @@ void CEditDoc::InitDoc()
 	m_cDocEditor.SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
 }
 
+void CEditDoc::SetBackgroundImage()
+{
+	CFilePath path = m_cDocType.GetDocumentAttribute().m_szBackImgPath.c_str();
+	if( m_hBackImg ){
+		::DeleteObject( m_hBackImg );
+		m_hBackImg = NULL;
+	}
+	if( 0 == path[0] ){
+		return;
+	}
+	if( _IS_REL_PATH(path.c_str()) ){
+		CFilePath fullPath;
+		GetInidirOrExedir( &fullPath[0], &path[0] );
+		path = fullPath;
+	}
+	const TCHAR* ext = path.GetExt();
+	if( 0 != auto_stricmp(ext, _T(".bmp")) ){
+		HANDLE hFile = ::CreateFile(path.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
+		if( hFile == INVALID_HANDLE_VALUE ){
+			return;
+		}
+		DWORD fileSize  = ::GetFileSize(hFile, NULL);
+		HGLOBAL hGlobal = ::GlobalAlloc(GMEM_MOVEABLE, fileSize);
+		if( hGlobal == NULL ){
+			::CloseHandle(hFile);
+			return;
+		}
+		DWORD nRead;
+		BOOL bRead = ::ReadFile(hFile, GlobalLock(hGlobal), fileSize, &nRead, NULL);
+		::CloseHandle(hFile);
+		hFile = NULL;
+		if( !bRead ){
+			::GlobalFree(hGlobal);
+			return;
+		}
+		::GlobalUnlock(hGlobal);
+		{
+			IPicture* iPicture = NULL;
+			IStream*  iStream = NULL;
+			//hGlobalの管理を移譲
+			if( S_OK != ::CreateStreamOnHGlobal(hGlobal, TRUE, &iStream) ){
+				GlobalFree(hGlobal);
+			}else{
+				if( S_OK != ::OleLoadPicture(iStream, fileSize, FALSE, IID_IPicture, (void**)&iPicture) ){
+				}else{
+					HBITMAP hBitmap = NULL;
+					short imgType = PICTYPE_NONE;
+					if( S_OK == iPicture->get_Type(&imgType) && imgType == PICTYPE_BITMAP &&
+					    S_OK == iPicture->get_Handle((OLE_HANDLE*)&hBitmap) ){
+						m_nBackImgWidth = m_nBackImgHeight = 1;
+						m_hBackImg = (HBITMAP)::CopyImage(hBitmap, IMAGE_BITMAP, 0, 0, 0);
+					}
+				}
+			}
+			if( iStream )  iStream->Release();
+			if( iPicture ) iPicture->Release();
+		}
+	}else{
+		m_hBackImg = (HBITMAP)::LoadImage(NULL, path.c_str(), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+	}
+	if( m_hBackImg ){
+		BITMAP bmp;
+		GetObject(m_hBackImg, sizeof(BITMAP), &bmp);
+		m_nBackImgWidth  = bmp.bmWidth;
+		m_nBackImgHeight = bmp.bmHeight;
+		if( 0 == m_nBackImgWidth || 0 == m_nBackImgHeight ){
+			::DeleteObject(m_hBackImg);
+			m_hBackImg = NULL;
+		}
+	}
+}
+
 /* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 void CEditDoc::InitAllView( void )
 {
@@ -240,6 +317,7 @@ BOOL CEditDoc::Create(
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( GetDllShareData().m_Common.m_sMacro.m_MacroTable, &GetDllShareData().m_Common );
 
+	SetBackgroundImage();
 
 	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
 

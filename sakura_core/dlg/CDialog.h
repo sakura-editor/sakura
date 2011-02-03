@@ -84,6 +84,10 @@ public:
 //	virtual BOOL OnLbnSelChange( HWND, int );
 
 public:
+	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
+	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath);
+
+public:
 	HWND GetHwnd() const{ return m_hWnd; }
 	//特殊インターフェース (使用は好ましくない)
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
@@ -106,7 +110,6 @@ public:
 	SFilePath		m_szHelpFile;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
-
 
 protected:
 	void CreateSizeBox( void );

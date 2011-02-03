@@ -22,11 +22,13 @@ public:
 							pInfo->GetDocLine()->GetLengthWithoutEOL(),
 							nIdx
 						);
+		bool bTrans = pInfo->pcView->IsBkBitmap() && CTypeSupport(pInfo->pcView, COLORIDX_TEXT).GetBackColor() == GetBkColor(pInfo->gr);
 		pInfo->pcView->GetTextDrawer().DispText(
 			pInfo->gr,
 			pInfo->pDispPos,
 			&pInfo->pLineOfLogic[nIdx],
-			nLength
+			nLength,
+			bTrans
 		);
 		pInfo->nPosInLogic += nLength;
 		return true;
@@ -78,9 +80,10 @@ bool CFigureSpace::DrawImp(SColorStrategyInfo* pInfo)
 	pInfo->gr.PushMyFont(
 		pInfo->pcView->GetFontset().ChooseFontHandle(cSpaceType.IsFatFont() || cCurrentType.IsFatFont(), cSpaceType.HasUnderLine())
 	);
+	bool bTrans = pInfo->pcView->IsBkBitmap() && cTextType.GetBackColor() == crBack;
 
 	DispPos sPos(*pInfo->pDispPos);	// Œ»ÝˆÊ’u‚ðŠo‚¦‚Ä‚¨‚­
-	DispSpace(pInfo->gr, pInfo->pDispPos,pInfo->pcView);	// ‹ó”’•`‰æ
+	DispSpace(pInfo->gr, pInfo->pDispPos,pInfo->pcView, bTrans);	// ‹ó”’•`‰æ
 
 	pInfo->gr.PopTextForeColor();
 	pInfo->gr.PopTextBackColor();

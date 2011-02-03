@@ -20,8 +20,10 @@
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
+#include "CDlgOpenFile.h"
 #include "util/os.h"
 #include "util/shell.h"
+#include "util/module.h"
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(
@@ -560,3 +562,45 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 	::ReleaseDC( hwndCtl, hDC );
 	return TRUE;
 }
+
+BOOL CDialog::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath)
+{
+	CDlgOpenFile	cDlgOpenFile;
+	TCHAR			szFilePath[_MAX_PATH + 1];
+	TCHAR			szPath[_MAX_PATH + 1];
+	GetWindowText(hwndCtl, szFilePath, _countof(szFilePath));
+	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
+	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+	if( resolvePath && _IS_REL_PATH( szFilePath ) ){
+		GetInidirOrExedir(szPath, szFilePath);
+	}else{
+		auto_strcpy(szPath, szFilePath);
+	}
+	/* ファイルオープンダイアログの初期化 */
+	cDlgOpenFile.Create(
+		GetModuleHandle(NULL),
+		parent,
+		filter,
+		szPath
+	);
+	if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+		const TCHAR* fileName = szPath;
+		if( resolvePath ){
+			GetInidir(szFilePath, NULL);
+			int nLen = auto_strlen(szFilePath);
+			if( 0 == auto_strnicmp(szFilePath, szPath, nLen) ){
+				fileName = szPath + nLen + 1;
+			}else{
+				GetExedir(szFilePath, NULL);
+				nLen = auto_strlen(szFilePath);
+				if( 0 == auto_strnicmp(szFilePath, szPath, nLen) ){
+					fileName = szPath + nLen + 1;
+				}
+			}
+		}
+		::SetWindowText(hwndCtl, fileName);
+		return TRUE;
+	}
+	return FALSE;
+}
+

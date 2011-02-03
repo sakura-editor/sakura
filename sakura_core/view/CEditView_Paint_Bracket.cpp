@@ -106,7 +106,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 	CGraphics gr;
 	gr.Init(::GetDC(GetHwnd()));
-	STypeConfig *TypeDataPtr = &( m_pcEditDoc->m_cDocType.GetDocumentAttribute() );
+	bool bCaretChange = false;
+	gr.SetTextBackTransparent(true);
 
 	for( int i = 0; i < 2; i++ )
 	{
@@ -149,32 +150,46 @@ void CEditView::DrawBracketPair( bool bDraw )
 					}
 				}
 
-				//色設定
-				CTypeSupport cTextType(this,COLORIDX_TEXT);
-				cTextType.SetGraphicsState_WhileThisObj(gr);
-
-				SetCurrentColor( gr, nColorIndex );
-
 				int nHeight = GetTextMetrics().GetHankakuDy();
 				int nLeft = (GetTextArea().GetDocumentLeftClientPointX()) + (Int)ptColLine.x * GetTextMetrics().GetHankakuDx();
 				int nTop  = (Int)( ptColLine.GetY2() - GetTextArea().GetViewTopLine() ) * nHeight + GetTextArea().GetAreaTop();
+				CLayoutInt charsWidth = CNativeW::GetKetaOfChar(pLine, nLineLen, OutputX);
 
 				// 03/03/03 ai カーソルの左に括弧があり括弧が強調表示されている状態でShift+←で選択開始すると
 				//             選択範囲内に反転表示されない部分がある問題の修正
-				if( ptColLine.x == GetCaret().GetCaretLayoutPos().GetX2() && GetCaret().GetCaretShowFlag() ){
+				CLayoutInt caretX = GetCaret().GetCaretLayoutPos().GetX2();
+				bool bCaretHide = (!bCaretChange && (ptColLine.x == caretX || ptColLine.x + 1 == caretX) && GetCaret().GetCaretShowFlag());
+				if( bCaretHide ){
+					bCaretChange = true;
 					GetCaret().HideCaret_( GetHwnd() );	// キャレットが一瞬消えるのを防止
-					GetTextDrawer().DispText( gr, nLeft, nTop, &pLine[OutputX], 1 );
-					// 2006.04.30 Moca 対括弧の縦線対応
-					GetTextDrawer().DispVerticalLines( gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + CLayoutInt(2) ); //※括弧が全角幅である場合を考慮
-					GetCaret().ShowCaret_( GetHwnd() );	// キャレットが一瞬消えるのを防止
 				}
-				else{
-					GetTextDrawer().DispText( gr, nLeft, nTop, &pLine[OutputX], 1 );
-					// 2006.04.30 Moca 対括弧の縦線対応
-					GetTextDrawer().DispVerticalLines( gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + CLayoutInt(2) ); //※括弧が全角幅である場合を考慮
-				}
+				{
+					//色設定
+					CTypeSupport cTextType(this,COLORIDX_TEXT);
+					cTextType.SetGraphicsState_WhileThisObj(gr);
 
-				cTextType.RewindGraphicsState(gr);
+					SetCurrentColor( gr, nColorIndex );
+					bool bTrans = false;
+					// DBPRINT_A("DrawBracket %d %d ", ptColLine.y, ptColLine.x );
+					if( IsBkBitmap() &&
+							cTextType.GetBackColor() == CTypeSupport(this,nColorIndex).GetBackColor() ){
+						bTrans = true;
+						RECT rcChar;
+						rcChar.left  = nLeft;
+						rcChar.top = nTop;
+						rcChar.right = nLeft + (Int)charsWidth * GetTextMetrics().GetHankakuDx();
+						rcChar.bottom = nTop + nHeight;
+						HDC hdcBgImg = ::CreateCompatibleDC(gr);
+						HBITMAP hBmpOld = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
+						DrawBackImage(gr, rcChar, hdcBgImg);
+						::SelectObject(hdcBgImg, hBmpOld);
+						::DeleteDC(hdcBgImg);
+					}
+					GetTextDrawer().DispText(gr, nLeft, nTop, &pLine[OutputX], 1, bTrans);
+					// 2006.04.30 Moca 対括弧の縦線対応
+					GetTextDrawer().DispVerticalLines(gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + charsWidth); //※括弧が全角幅である場合を考慮
+					cTextType.RewindGraphicsState(gr);
+				}
 
 				if( ( m_pcEditDoc->m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex )
 					&& ( ( ptColLine.y == GetCaret().GetCaretLayoutPos().GetY() ) || ( ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY() ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
@@ -182,6 +197,9 @@ void CEditView::DrawBracketPair( bool bDraw )
 				}
 			}
 		}
+	}
+	if( bCaretChange ){
+		GetCaret().ShowCaret_( GetHwnd() );	// キャレットが一瞬消えるのを防止
 	}
 
 	::ReleaseDC( GetHwnd(), gr );

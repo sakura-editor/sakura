@@ -73,9 +73,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void FillBack(CGraphics& gr,const RECT& rc)
 	{
-		gr.PushBrushColor( m_pTypes->m_ColorInfoArr[m_nColorIdx].m_colBACK );
-		gr.FillMyRect(rc);
-		gr.PopBrushColor();
+		gr.FillSolidMyRect(rc, m_pTypes->m_ColorInfoArr[m_nColorIdx].m_colBACK);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

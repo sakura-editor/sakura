@@ -648,6 +648,15 @@
 #define IDC_CHECK_EXT_DBLCLICK          1599
 #define IDC_COMBO_DEFAULT_EOLTYPE       1600
 #define IDC_CHECK_DEFAULT_BOM           1601
+#define IDC_EDIT_BACKIMG_PATH           1602
+#define IDC_BUTTON_BACKIMG_PATH_SEL     1603
+#define IDC_COMBO_BACKIMG_POS           1604
+#define IDC_CHECK_BACKIMG_SCR_X         1605
+#define IDC_CHECK_BACKIMG_SCR_Y         1606
+#define IDC_CHECK_BACKIMG_REP_X         1607
+#define IDC_CHECK_BACKIMG_REP_Y         1608
+#define IDC_EDIT_BACKIMG_OFFSET_X       1609
+#define IDC_EDIT_BACKIMG_OFFSET_Y       1610
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -687,7 +696,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1602
+#define _APS_NEXT_CONTROL_VALUE         1611
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

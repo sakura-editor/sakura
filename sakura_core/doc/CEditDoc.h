@@ -92,6 +92,8 @@ public:
 
 	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
 
+	void SetBackgroundImage();
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       メンバ変数群                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -130,6 +132,10 @@ public:
 public:
 	int				m_nTextWrapMethodCur;		// 折り返し方法					// 2008.05.30 nasukoji
 	bool			m_bTextWrapMethodCurTemp;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
+
+	HBITMAP			m_hBackImg;
+	int				m_nBackImgWidth;
+	int				m_nBackImgHeight;
 };
 
 

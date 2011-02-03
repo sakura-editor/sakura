@@ -21,6 +21,7 @@ CTextArea::CTextArea(CEditView* pEditView)
 	m_nViewTopLine = CLayoutInt(0);			/* 表示域の一番上の行 */
 	m_nViewLeftCol = CLayoutInt(0);			/* 表示域の一番左の桁 */
 	SetTopYohaku( pShareData->m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
+	SetLeftYohaku( pShareData->m_Common.m_sWindow.m_nLineNumRightSpace );
 	m_nViewAlignTop = GetTopYohaku();		/* 表示域の上端座標 */
 }
 

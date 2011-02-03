@@ -192,6 +192,16 @@ void _DefaultConfig(STypeConfig* pType)
 	for( int i = 0; i < COLORIDX_LAST; ++i ){
 		GetDefaultColorInfo(&pType->m_ColorInfoArr[i],i);
 	}
+	pType->m_szBackImgPath[0] = '\0';
+	pType->m_backImgPos = BGIMAGE_TOP_LEFT;
+	pType->m_backImgRepeatX = true;
+	pType->m_backImgRepeatY = true;
+	pType->m_backImgScrollX = true;
+	pType->m_backImgScrollY = true;
+	{
+		POINT pt ={0,0};
+		pType->m_backImgPosOffset = pt;
+	}
 	pType->m_bLineNumIsCRLF = true;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	pType->m_nLineTermType = 1;					/* 行番号区切り 0=なし 1=縦線 2=任意 */
 	pType->m_cLineTermChar = L':';					/* 行番号区切り文字 */

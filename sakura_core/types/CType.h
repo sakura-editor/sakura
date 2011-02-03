@@ -42,6 +42,18 @@ SAKURA_CORE_API enum ESmartIndentType {
 	SMARTINDENT_CPP
 };
 
+enum EBackgroundImagePos {
+	BGIMAGE_TOP_LEFT,
+	BGIMAGE_TOP_RIGHT,
+	BGIMAGE_BOTTOM_LEFT,
+	BGIMAGE_BOTTOM_RIGHT,
+	BGIMAGE_CENTER,
+	BGIMAGE_TOP_CENTER,
+	BGIMAGE_BOTTOM_CENTER,
+	BGIMAGE_CENTER_LEFT,
+	BGIMAGE_CENTER_RIGHT
+};
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       タイプ別設定                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -71,6 +83,14 @@ struct STypeConfig{
 
 	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */
 	ColorInfo			m_ColorInfoArr[64];				/*!< 色設定配列 */
+
+	SFilePath			m_szBackImgPath;				//!< 背景画像
+	EBackgroundImagePos m_backImgPos;					
+	bool				m_backImgRepeatX;				
+	bool				m_backImgRepeatY;				
+	bool				m_backImgScrollX;				
+	bool				m_backImgScrollY;				
+	POINT				m_backImgPosOffset;				
 
 	bool				m_bLineNumIsCRLF;				/*!< 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	int					m_nLineTermType;				/*!< 行番号区切り  0=なし 1=縦線 2=任意 */

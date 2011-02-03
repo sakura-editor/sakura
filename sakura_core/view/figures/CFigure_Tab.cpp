@@ -33,7 +33,7 @@ bool CFigure_Tab::Match(const wchar_t* pText) const
 //	Sep. 23, 2002 genta LayoutMgrの値を使う
 //@@@ 2001.03.16 by MIK
 //@@@ 2003.03.26 MIK タブ矢印表示
-void CFigure_Tab::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView ) const
+void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const
 {
 	DispPos& sPos=*pDispPos;
 
@@ -67,7 +67,7 @@ void CFigure_Tab::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,
-				ExtTextOutOption(),
+				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
 				TypeDataPtr->m_szTabViewString,
 				tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
@@ -79,7 +79,7 @@ void CFigure_Tab::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView
 				gr,
 				sPos.GetDrawPos().x,
 				sPos.GetDrawPos().y,
-				ExtTextOutOption(),
+				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
 				L"        ",
 				tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta

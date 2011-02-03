@@ -883,6 +883,8 @@ void CEditView::OnSize( int cx, int cy )
 	if( NULL != m_hwndSizeBox ){
 		::MoveWindow( m_hwndSizeBox, cx - nCxVScroll, cy - nCyHScroll, nCxHScroll, nCyVScroll, TRUE );
 	}
+	int nAreaWidthOld  = GetTextArea().GetAreaWidth();
+	int nAreaHeightOld = GetTextArea().GetAreaHeight();
 
 	// エリア情報更新
 	GetTextArea().TextArea_OnSize(
@@ -909,6 +911,38 @@ void CEditView::OnSize( int cx, int cy )
 		CreateOrUpdateCompatibleBitmap( cx, cy );
  	}
 	// To Here 2007.09.09 Moca
+
+	if( IsBkBitmap() ){
+		EBackgroundImagePos imgPos = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_backImgPos;
+		if( imgPos != BGIMAGE_TOP_LEFT ){
+			bool bUpdateWidth = false;
+			bool bUpdateHeight = false;
+			switch( imgPos ){
+			case BGIMAGE_TOP_RIGHT:
+			case BGIMAGE_BOTTOM_RIGHT:
+			case BGIMAGE_CENTER_RIGHT:
+			case BGIMAGE_TOP_CENTER:
+			case BGIMAGE_BOTTOM_CENTER:
+			case BGIMAGE_CENTER:
+				bUpdateWidth = true;
+				break;
+			}
+			switch( imgPos ){
+			case BGIMAGE_BOTTOM_CENTER:
+			case BGIMAGE_BOTTOM_LEFT:
+			case BGIMAGE_BOTTOM_RIGHT:
+			case BGIMAGE_CENTER:
+			case BGIMAGE_CENTER_LEFT:
+			case BGIMAGE_CENTER_RIGHT:
+				bUpdateHeight = true;
+				break;
+			}
+			if( bUpdateWidth  && nAreaWidthOld  != GetTextArea().GetAreaWidth() ||
+			    bUpdateHeight && nAreaHeightOld != GetTextArea().GetAreaHeight() ){
+				InvalidateRect(NULL, FALSE);
+			}
+		}
+	}
 
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcEditWnd->UpdateCaption(); // [Q] genta 本当に必要？
@@ -1463,7 +1497,7 @@ void CEditView::OnChangeSetting()
 	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
-
+	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
 	// フォント更新
 	GetFontset().UpdateFont();
 

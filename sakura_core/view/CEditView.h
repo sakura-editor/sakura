@@ -122,8 +122,9 @@ public:
 		return m_pcEditDoc;
 	}
 public:
-	//! 背景にビットマップを使用するかどうか(事実上は常にFALSE。TRUEの場合背景作画しない)
-	bool IsBkBitmap() const{ return false; }
+	//! 背景にビットマップを使用するかどうか
+	//! 2010.10.03 背景実装
+	bool IsBkBitmap() const{ return NULL != m_pcEditDoc->m_hBackImg; }
 
 public:
 	CEditView* GetEditView()
@@ -179,6 +180,7 @@ public:
 	//
 	void OnChangeSetting();										/* 設定変更を反映させる */
 	void OnPaint( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
+	void DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg);
 	void OnTimer( HWND, UINT, UINT, DWORD );
 	//ウィンドウ
 	void OnSize( int, int );							/* ウィンドウサイズの変更処理 */
@@ -278,6 +280,7 @@ public:
 	//	From Here Sep. 11, 2004 genta ずれ維持の同期スクロール
 	CLayoutInt  ScrollByV( CLayoutInt vl ){	return ScrollAtV( GetTextArea().GetViewTopLine() + vl );}	/* 指定行スクロール*/
 	CLayoutInt  ScrollByH( CLayoutInt hl ){	return ScrollAtH( GetTextArea().GetViewLeftCol() + hl );}	/* 指定桁スクロール */
+	void ScrollDraw(CLayoutInt, CLayoutInt, const RECT&, const RECT&, const RECT&);
 public:
 	void SyncScrollV( CLayoutInt );									/* 垂直同期スクロール */
 	void SyncScrollH( CLayoutInt );									/* 水平同期スクロール */

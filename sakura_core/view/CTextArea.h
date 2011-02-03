@@ -66,6 +66,10 @@ public:
 	{
 		return m_nViewAlignTop + m_nViewCy;
 	}
+	CMyRect GetAreaRect() const
+	{
+		return CMyRect(GetAreaLeft(), GetAreaTop(), GetAreaRight(), GetAreaBottom());
+	}
 
 	int GetAreaWidth() const
 	{
@@ -83,6 +87,19 @@ public:
 	void SetTopYohaku(int nPixel)
 	{
 		m_nTopYohaku=nPixel;
+	}
+	int GetLeftYohaku() const
+	{
+		return m_nLeftYohaku;
+	}
+	void SetLeftYohaku(int nPixel)
+	{
+		m_nLeftYohaku=nPixel;
+	}
+	// 行番号の幅(余白なし)
+	int GetLineNumberWidth() const
+	{
+		return m_nViewAlignLeft - m_nLeftYohaku;
 	}
 
 	//! クライアントサイズ更新
@@ -183,6 +200,7 @@ private:
 	int		m_nViewAlignTop;		/* 表示域の上端座標 */
 private:
 	int		m_nTopYohaku;
+	int		m_nLeftYohaku;
 private:
 	int		m_nViewCx;				/* 表示域の幅 */
 	int		m_nViewCy;				/* 表示域の高さ */
