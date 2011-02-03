@@ -25,7 +25,7 @@ bool CFigure_HanSpace::Match(const wchar_t* pText) const
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 半角スペース描画
-void CFigure_HanSpace::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView ) const
+void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const
 {
 	//クリッピング矩形を計算。画面外なら描画しない
 	CMyRect rcClip;
@@ -38,7 +38,7 @@ void CFigure_HanSpace::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* p
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClipBottom,
 			L"o",
 			1,
@@ -52,7 +52,7 @@ void CFigure_HanSpace::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* p
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClipTop,
 			L" ",
 			1,

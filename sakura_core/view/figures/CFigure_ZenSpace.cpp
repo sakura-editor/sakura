@@ -3,8 +3,6 @@
 #include "CFigure_ZenSpace.h"
 #include "types/CTypeSupport.h"
 
-void _DispZenkakuSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView );
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      CFigure_ZenSpace                         //
@@ -27,7 +25,7 @@ bool CFigure_ZenSpace::Match(const wchar_t* pText) const
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 全角スペース描画
-void CFigure_ZenSpace::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView ) const
+void CFigure_ZenSpace::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans ) const
 {
 	//クリッピング矩形を計算。画面外なら描画しない
 	RECT rc;
@@ -40,7 +38,7 @@ void CFigure_ZenSpace::DispSpace( CGraphics& gr, DispPos* pDispPos, CEditView* p
 			gr,
 			pDispPos->GetDrawPos().x,
 			pDispPos->GetDrawPos().y,
-			ExtTextOutOption(),
+			ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rc,
 			szZenSpace,
 			wcslen(szZenSpace),

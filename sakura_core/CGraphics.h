@@ -121,6 +121,9 @@ public:
 	void DrawLine(int x1, int y1, int x2, int y2);		//直線
 	void DrawDotLine(int x1, int y1, int x2, int y2);	//点線
 	void FillMyRect(const RECT& rc);					//矩形塗り潰し
+	void FillSolidMyRect(const RECT& rc, COLORREF color);		//矩形塗り潰し
+	void FillMyRectTextBackColor(const RECT& rc);				//矩形塗り潰し
+
 	static void DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast);	// ドロップ先の矩形を描画する
 
 private:

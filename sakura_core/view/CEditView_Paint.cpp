@@ -98,6 +98,172 @@ void CEditView::Redraw()
 }
 // 2001/06/21 End
 
+void MyFillRect(HDC hdc, RECT& re)
+{
+	::ExtTextOut(hdc, re.left, re.top, ETO_OPAQUE|ETO_CLIPPED, &re, _T(""), 0, NULL);
+}
+
+void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
+{
+#if 0
+//	テスト背景パターン
+	static int testColorIndex = 0;
+	testColorIndex = testColorIndex % 7;
+	COLORREF cols[7] = {RGB(255,255,255),
+		RGB(200,255,255),RGB(255,200,255),RGB(255,255,200),
+		RGB(200,200,255),RGB(255,200,200),RGB(200,255,200),
+	};
+	COLORREF colorOld = ::SetBkColor(hdc, cols[testColorIndex]);
+	MyFillRect(hdc, rcPaint);
+	::SetBkColor(hdc, colorOld);
+	testColorIndex++;
+#else
+	CTypeSupport cTextType(this,COLORIDX_TEXT);
+	COLORREF colorOld = ::SetBkColor(hdc, cTextType.GetBackColor());
+	const CTextArea& area = GetTextArea();
+	const CEditDoc& doc  = *m_pcEditDoc;
+	const STypeConfig& typeConfig = doc.m_cDocType.GetDocumentAttribute();
+
+	CMyRect rcImagePos;
+	switch( typeConfig.m_backImgPos ){
+	case BGIMAGE_TOP_LEFT:
+	case BGIMAGE_BOTTOM_LEFT:
+	case BGIMAGE_CENTER_LEFT:
+		rcImagePos.left = area.GetAreaLeft();
+		break;
+	case BGIMAGE_TOP_RIGHT:
+	case BGIMAGE_BOTTOM_RIGHT:
+	case BGIMAGE_CENTER_RIGHT:
+		rcImagePos.left = area.GetAreaRight() - doc.m_nBackImgWidth;
+		break;
+	case BGIMAGE_TOP_CENTER:
+	case BGIMAGE_BOTTOM_CENTER:
+	case BGIMAGE_CENTER:
+		rcImagePos.left = area.GetAreaLeft() + area.GetAreaWidth()/2 - doc.m_nBackImgWidth/2;
+		break;
+	default:
+		assert_warning(0 != typeConfig.m_backImgPos);
+		break;
+	}
+	switch( typeConfig.m_backImgPos ){
+	case BGIMAGE_TOP_LEFT:
+	case BGIMAGE_TOP_RIGHT:
+	case BGIMAGE_TOP_CENTER:
+		rcImagePos.top  = area.GetAreaTop();
+		break;
+	case BGIMAGE_BOTTOM_LEFT:
+	case BGIMAGE_BOTTOM_RIGHT:
+	case BGIMAGE_BOTTOM_CENTER:
+		rcImagePos.top  = area.GetAreaBottom() - doc.m_nBackImgHeight;
+		break;
+	case BGIMAGE_CENTER_LEFT:
+	case BGIMAGE_CENTER_RIGHT:
+	case BGIMAGE_CENTER:
+		rcImagePos.top  = area.GetAreaTop() + area.GetAreaHeight()/2 - doc.m_nBackImgHeight/2;
+		break;
+	default:
+		assert_warning(0 != typeConfig.m_backImgPos);
+		break;
+	}
+	rcImagePos.left += typeConfig.m_backImgPosOffset.x;
+	rcImagePos.top  += typeConfig.m_backImgPosOffset.y;
+	// スクロール時の画面の端を作画するときの位置あたりへ移動
+	if( typeConfig.m_backImgScrollX ){
+		int tile = typeConfig.m_backImgRepeatX ? doc.m_nBackImgWidth : INT_MAX;
+		Int posX = (area.GetViewLeftCol() % tile) * GetTextMetrics().GetHankakuDx();
+		rcImagePos.left -= posX % tile;
+	}
+	if( typeConfig.m_backImgScrollY ){
+		int tile = typeConfig.m_backImgRepeatY ? doc.m_nBackImgHeight : INT_MAX;
+		Int posY = (area.GetViewTopLine() % tile) * GetTextMetrics().GetHankakuDy();
+		rcImagePos.top -= posY % tile;
+	}
+	if( typeConfig.m_backImgRepeatX ){
+		if( 0 < rcImagePos.left ){
+			// rcImagePos.left = rcImagePos.left - (rcImagePos.left / doc.m_nBackImgWidth + 1) * doc.m_nBackImgWidth;
+			rcImagePos.left = rcImagePos.left % doc.m_nBackImgWidth - doc.m_nBackImgWidth;
+		}
+	}
+	if( typeConfig.m_backImgRepeatY ){
+		if( 0 < rcImagePos.top ){
+			// rcImagePos.top = rcImagePos.top - (rcImagePos.top / doc.m_nBackImgHeight + 1) * doc.m_nBackImgHeight;
+			rcImagePos.top = rcImagePos.top % doc.m_nBackImgHeight - doc.m_nBackImgHeight;
+		}
+	}
+	rcImagePos.SetSize(doc.m_nBackImgWidth, doc.m_nBackImgHeight);
+	
+	
+	RECT rc = rcPaint;
+	// rc.left = std::max((int)rc.left, area.GetAreaLeft());
+	rc.top  = std::max((int)rc.top,  area.GetRulerHeight()); // ルーラーを除外
+	const int nXEnd = area.GetAreaRight();
+	const int nYEnd = area.GetAreaBottom();
+	CMyRect rcBltAll;
+	rcBltAll.SetLTRB(INT_MAX, INT_MAX, -INT_MAX, -INT_MAX);
+	CMyRect rcImagePosOrg = rcImagePos;
+	for(; rcImagePos.top <= nYEnd; ){
+		for(; rcImagePos.left <= nXEnd; ){
+			CMyRect rcBlt;
+			if( ::IntersectRect(&rcBlt, &rc, &rcImagePos) ){
+				::BitBlt(
+					hdc,
+					rcBlt.left,
+					rcBlt.top,
+					rcBlt.right  - rcBlt.left,
+					rcBlt.bottom - rcBlt.top,
+					hdcBgImg,
+					rcBlt.left - rcImagePos.left,
+					rcBlt.top - rcImagePos.top,
+					SRCCOPY
+				);
+				rcBltAll.left   = std::min(rcBltAll.left,   rcBlt.left);
+				rcBltAll.top    = std::min(rcBltAll.top,    rcBlt.top);
+				rcBltAll.right  = std::max(rcBltAll.right,  rcBlt.right);
+				rcBltAll.bottom = std::max(rcBltAll.bottom, rcBlt.bottom);
+			}
+			rcImagePos.left  += doc.m_nBackImgWidth;
+			rcImagePos.right += doc.m_nBackImgWidth;
+			if( !typeConfig.m_backImgRepeatX ){
+				break;
+			}
+		}
+		rcImagePos.left  = rcImagePosOrg.left;
+		rcImagePos.right = rcImagePosOrg.right;
+		rcImagePos.top    += doc.m_nBackImgHeight;
+		rcImagePos.bottom += doc.m_nBackImgHeight;
+		if( !typeConfig.m_backImgRepeatY ){
+			break;
+		}
+	}
+	if( rcBltAll.left != INT_MAX ){
+		// 上下左右ななめの隙間を埋める
+		CMyRect rcFill;
+		LONG& x1 = rc.left;
+		LONG& x2 = rcBltAll.left;
+		LONG& x3 = rcBltAll.right;
+		LONG& x4 = rc.right;
+		LONG& y1 = rc.top;
+		LONG& y2 = rcBltAll.top;
+		LONG& y3 = rcBltAll.bottom;
+		LONG& y4 = rc.bottom;
+		if( y1 < y2 ){
+			rcFill.SetLTRB(x1,y1, x4,y2); MyFillRect(hdc, rcFill);
+		}
+		if( x1 < x2 ){
+			rcFill.SetLTRB(x1,y2, x2,y3); MyFillRect(hdc, rcFill);
+		}
+		if( x3 < x4 ){
+			rcFill.SetLTRB(x3,y2, x4,y3); MyFillRect(hdc, rcFill);
+		}
+		if( y3 < y4 ){
+			rcFill.SetLTRB(x1,y3, x4,y4); MyFillRect(hdc, rcFill);
+		}
+	}else{
+		MyFillRect(hdc, rc);
+	}
+	::SetBkColor(hdc, colorOld);
+#endif
+}
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -341,41 +507,65 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	}
 //@@@ 2001.11.17 add end MIK
 
+	bool bTransText = IsBkBitmap();
 	// メモリＤＣを利用した再描画の場合は描画先のＤＣを切り替える
 	HDC hdcOld;
 	// 2007.09.09 Moca bUseMemoryDCを有効化。
 	// bUseMemoryDC = FALSE;
 	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);
+	assert_warning(gr != m_hdcCompatDC);
 	if( bUseMemoryDC ){
 		hdcOld = gr;
 		gr = m_hdcCompatDC;
+	}else{
+		if( bTransText || pPs->rcPaint.bottom - pPs->rcPaint.top <= 2 || pPs->rcPaint.left - pPs->rcPaint.right <= 2 ){
+			// 透過処理の場合フォントの輪郭が重ね塗りになるため自分でクリッピング領域を設定
+			// 2以下はたぶんアンダーライン・カーソル行縦線の作画
+			// MemoryDCの場合は転送が矩形クリッピングの代わりになっている
+			gr.SetClipping(pPs->rcPaint);
+		}
 	}
 
 	/* 03/02/18 対括弧の強調表示(消去) ai */
-	DrawBracketPair( false );
+	if( !bUseMemoryDC ){
+		// MemoryDCだとスクロール時に先に括弧だけ表示されて不自然なので後でやる。
+		DrawBracketPair( false );
+	}
+
+	// 背景の表示
+	if( IsBkBitmap() ){
+		HDC hdcBgImg = CreateCompatibleDC(gr);
+		HBITMAP hOldBmp = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
+		DrawBackImage(gr, pPs->rcPaint, hdcBgImg);
+		SelectObject(hdcBgImg, hOldBmp);
+		DeleteObject(hdcBgImg);
+	}
 
 	/* ルーラーとテキストの間の余白 */
 	//@@@ 2002.01.03 YAZAKI 余白が0のときは無駄でした。
 	if ( GetTextArea().GetTopYohaku() ){
-		rc.left   = 0;
-		rc.top    = GetTextArea().GetRulerHeight();
-		rc.right  = GetTextArea().GetAreaRight();
-		rc.bottom = GetTextArea().GetAreaTop();
-
-		cTextType.FillBack(gr,rc);
+		if( !bTransText ){
+			rc.left   = 0;
+			rc.top    = GetTextArea().GetRulerHeight();
+			rc.right  = GetTextArea().GetAreaRight();
+			rc.bottom = GetTextArea().GetAreaTop();
+			cTextType.FillBack(gr,rc);
+		}
 	}
 	
 	/* 行番号の表示 */
 	//	From Here Sep. 7, 2001 genta
 	//	Sep. 23, 2002 genta 行番号非表示でも行番号色の帯があるので隙間を埋める
-	if( GetTextArea().GetTopYohaku() ){ 
-		rc.left   = 0;
-		rc.top    = GetTextArea().GetRulerHeight();
-		rc.right  = GetTextArea().GetAreaLeft() - GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace; //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
-		rc.bottom = GetTextArea().GetAreaTop();
-		HBRUSH hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK );
-		::FillRect( gr, &rc, hBrush );
-		::DeleteObject( hBrush );
+	if( GetTextArea().GetTopYohaku() ){
+		if( bTransText && TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK == cTextType.GetBackColor() ){
+		}else{
+			rc.left   = 0;
+			rc.top    = GetTextArea().GetRulerHeight();
+			rc.right  = GetTextArea().GetLineNumberWidth(); //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
+			rc.bottom = GetTextArea().GetAreaTop();
+			gr.SetBackgroundColor(TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK);
+			gr.FillMyRectTextBackColor(rc);
+		}
 	}
 	//	To Here Sep. 7, 2001 genta
 
@@ -468,18 +658,21 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	else{
 		/* テキストのない部分を背景色で塗りつぶす */
 		if( sPos.GetDrawPos().y < pPs->rcPaint.bottom ){
-			RECT rcBack;
-			rcBack.left   = pPs->rcPaint.left;
-			rcBack.right  = pPs->rcPaint.right;
-			rcBack.top    = sPos.GetDrawPos().y;
-			rcBack.bottom = pPs->rcPaint.bottom;
+			if( !bTransText ){
+				RECT rcBack;
+				rcBack.left   = pPs->rcPaint.left;
+				rcBack.right  = pPs->rcPaint.right;
+				rcBack.top    = sPos.GetDrawPos().y;
+				rcBack.bottom = pPs->rcPaint.bottom;
 
-			cTextType.FillBack(gr,rcBack);
-
-			// 2006.04.29 行部分は行ごとに作画し、ここでは縦線の残りを作画
-			GetTextDrawer().DispVerticalLines( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom, CLayoutInt(0), CLayoutInt(-1) );
-			GetTextDrawer().DispWrapLine( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom );	// 2009.10.24 ryoji
+				cTextType.FillBack(gr,rcBack);
+			}
 		}
+	}
+	{
+		// 2006.04.29 行部分は行ごとに作画し、ここでは縦線の残りを作画
+		GetTextDrawer().DispVerticalLines( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom, CLayoutInt(0), CLayoutInt(-1) );
+		GetTextDrawer().DispWrapLine( gr, sPos.GetDrawPos().y, pPs->rcPaint.bottom );	// 2009.10.24 ryoji
 	}
 
 	cTextType.RewindGraphicsState(gr);
@@ -498,6 +691,9 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	/* メモリＤＣを利用した再描画の場合はメモリＤＣに描画した内容を画面へコピーする */
 	if( bUseMemoryDC ){
+		// 2010.10.11 先に描くと背景固定のスクロールなどでの表示が不自然になる
+		DrawBracketPair( false );
+
 		::BitBlt(
 			hdcOld,
 			pPs->rcPaint.left,
@@ -713,6 +909,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	// コンフィグ
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
 	STypeConfig* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	bool bTransText = IsBkBitmap();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        行番号描画                           //
@@ -736,7 +933,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	if(pcLayout && pcLayout->GetIndent()!=0)
 	{
 		RECT rcClip;
-		if(GetTextArea().GenerateClipRect(&rcClip,*pInfo->pDispPos,(Int)pcLayout->GetIndent())){
+		if(!bTransText && GetTextArea().GenerateClipRect(&rcClip,*pInfo->pDispPos,(Int)pcLayout->GetIndent())){
 			cTextType.FillBack(pInfo->gr,rcClip);
 		}
 		//描画位置進める
@@ -792,8 +989,11 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	// 行末背景描画
 	RECT rcClip;
-	if(pInfo->pcView->GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos)){
-		cTextType.FillBack(pInfo->gr,rcClip);
+	bool rcClipRet = pInfo->pcView->GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos);
+	if(rcClipRet){
+		if( !bTransText ){
+			cTextType.FillBack(pInfo->gr,rcClip);
+		}
 	}
 
 	// 指定桁縦線描画

@@ -2,6 +2,7 @@
 #include "CEditView.h"
 #include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
+#include "types/CTypeSupport.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -355,24 +356,8 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 			rcClip.bottom = GetTextArea().GetAreaBottom();
 		}
 		if( GetDrawSwitch() ){
-			::ScrollWindowEx(
-				GetHwnd(),
-				0,	/* 水平スクロール量 */
-				(Int)nScrollRowNum * GetTextMetrics().GetHankakuDy(),		/* 垂直スクロール量 */
-				&rcScrol,	/* スクロール長方形の構造体のアドレス */
-				NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
-			);
-			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-			// 互換BMPのスクロール
-			if( m_hbmpCompatBMP ){
-				::BitBlt(
-					m_hdcCompatDC, rcScrol.left,
-					rcScrol.top + (Int)nScrollRowNum * ( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace + GetTextMetrics().GetHankakuHeight() ),
-					rcScrol.right - rcScrol.left, rcScrol.bottom - rcScrol.top,
-					m_hdcCompatDC, rcScrol.left, rcScrol.top, SRCCOPY
-				);
-			}
-			::InvalidateRect( GetHwnd(), &rcClip, TRUE );
+			RECT rcClip2 = {0,0,0,0};
+			ScrollDraw(nScrollRowNum, CLayoutInt(0), rcScrol, rcClip, rcClip2);
 			::UpdateWindow( GetHwnd() );
 		}
 	}
@@ -451,32 +436,8 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 		}
 		GetTextArea().SetViewLeftCol( nPos );
 		if( GetDrawSwitch() ){
-			::ScrollWindowEx(
-				GetHwnd(),
-				(Int)nScrollColNum * GetTextMetrics().GetHankakuDx(),		/* 水平スクロール量 */
-				0,	/* 垂直スクロール量 */
-				&rcScrol,	/* スクロール長方形の構造体のアドレス */
-				NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
-			);
-			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-			// 互換BMPのスクロール
-			if( m_hbmpCompatBMP ){
-				::BitBlt(
-					m_hdcCompatDC, rcScrol.left + (Int)nScrollColNum * ( GetTextMetrics().GetHankakuWidth() + m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace ),
-						rcScrol.top, rcScrol.right - rcScrol.left, rcScrol.bottom - rcScrol.top,
-					m_hdcCompatDC, rcScrol.left, rcScrol.top , SRCCOPY
-				);
-			}
-			// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
-			if( m_nOldCursorLineX == GetTextArea().GetAreaLeft() - 1 ){
-				RECT rcClip3;
-				rcClip3.left = m_nOldCursorLineX - (m_nOldCursorVLineWidth - 1);
-				rcClip3.right = m_nOldCursorLineX + 1;
-				rcClip3.top  = GetTextArea().GetAreaTop();
-				rcClip3.bottom = GetTextArea().GetAreaBottom();
-				::InvalidateRect( GetHwnd(), &rcClip3, TRUE );
-			}
-			::InvalidateRect( GetHwnd(), &rcClip2, TRUE );
+			RECT rcClip = {0,0,0,0};
+			ScrollDraw(CLayoutInt(0), nScrollColNum, rcScrol, rcClip, rcClip2);
 			::UpdateWindow( GetHwnd() );
 		}
 	}
@@ -496,6 +457,96 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 
 	return -nScrollColNum;	//方向が逆なので符号反転が必要
 }
+
+
+void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, const RECT& rcScroll, const RECT& rcClip, const RECT& rcClip2)
+{
+	const STypeConfig& typeConfig = GetDocument()->m_cDocType.GetDocumentAttribute();
+	const CTextArea& area = GetTextArea();
+
+	// 背景は画面に対して固定か
+	bool bBackImgFixed = IsBkBitmap() &&
+		(0 != nScrollRowNum && !typeConfig.m_backImgScrollY ||
+		 0 != nScrollColNum && !typeConfig.m_backImgScrollX);
+	if( bBackImgFixed ){
+		CMyRect rcBody = area.GetAreaRect();
+		rcBody.left = 0; // 行番号も移動
+		rcBody.top = area.GetRulerHeight();
+		InvalidateRect(&rcBody, FALSE);
+	}else{
+		int nScrollColPxWidth = (Int)nScrollColNum * GetTextMetrics().GetHankakuDx();
+		ScrollWindowEx(
+			nScrollColPxWidth,	// 水平スクロール量
+			(Int)nScrollRowNum * GetTextMetrics().GetHankakuDy(),	// 垂直スクロール量
+			&rcScroll,	/* スクロール長方形の構造体のアドレス */
+			NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE
+		);
+		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
+		if( m_hbmpCompatBMP ){
+			// 互換BMPもスクロール処理のためにBitBltで移動させる
+			::BitBlt(
+				m_hdcCompatDC,
+				rcScroll.left + nScrollColPxWidth,
+				rcScroll.top  + (Int)nScrollRowNum * GetTextMetrics().GetHankakuDy(),
+				rcScroll.right - rcScroll.left, rcScroll.bottom - rcScroll.top,
+				m_hdcCompatDC, rcScroll.left, rcScroll.top, SRCCOPY
+			);
+		}
+
+		if( 0 < area.GetTopYohaku() &&
+		  IsBkBitmap() &&
+		  (0 != nScrollRowNum && typeConfig.m_backImgScrollY || 0 != nScrollColNum && typeConfig.m_backImgScrollX) ){
+			// Scrollのときにルーラー余白更新
+			CMyRect rcTopYohaku;
+			if( CTypeSupport(this, COLORIDX_TEXT).GetBackColor() == CTypeSupport(this, COLORIDX_GYOU).GetBackColor() ){
+				rcTopYohaku.left = 0;
+			}else{
+				rcTopYohaku.left = area.GetLineNumberWidth();
+			}
+			rcTopYohaku.top  = area.GetRulerHeight();
+			rcTopYohaku.right  = area.GetAreaRight();
+			rcTopYohaku.bottom = area.GetAreaTop();
+			HDC hdcSelf = GetDC();
+			HDC hdcBgImg = m_hdcCompatDC ? m_hdcCompatDC : CreateCompatibleDC(hdcSelf);
+			HBITMAP hOldBmp = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
+			DrawBackImage(hdcSelf, rcTopYohaku, hdcBgImg);
+			SelectObject(hdcBgImg, hOldBmp);
+			ReleaseDC(hdcSelf);
+			if( !m_hdcCompatDC ){
+				DeleteObject(hdcBgImg);
+			}
+		}
+		if( IsBkBitmap() && 0 != nScrollColNum && typeConfig.m_backImgScrollX ){
+			// 行番号背景のために更新
+			CMyRect rcLineNum;
+			area.GenerateLineNumberRect(&rcLineNum);
+			InvalidateRect( &rcLineNum, FALSE );
+		}
+	}
+	// カーソルの縦線がテキストと行番号の隙間にあるとき、スクロール時に縦線領域を更新
+	if( nScrollColNum != 0 && m_nOldCursorLineX == GetTextArea().GetAreaLeft() - 1 ){
+		RECT rcClip3;
+		rcClip3.left   = m_nOldCursorLineX - (m_nOldCursorVLineWidth - 1);
+		rcClip3.right  = m_nOldCursorLineX + 1;
+		rcClip3.top    = GetTextArea().GetAreaTop();
+		rcClip3.bottom = GetTextArea().GetAreaBottom();
+		InvalidateRect( &rcClip3, FALSE );
+	}
+	// To Here 2007.09.09 Moca
+
+	if( nScrollRowNum != 0 ){
+		InvalidateRect( &rcClip );
+		if( nScrollColNum != 0 ){
+			RECT lineNumClip;
+			GetTextArea().GenerateLineNumberRect(&lineNumClip);
+			InvalidateRect( &lineNumClip, FALSE );
+		}
+	}
+	if( nScrollColNum != 0 ){
+		InvalidateRect( &rcClip2, FALSE );
+	}
+}
+
 
 /*!	垂直同期スクロール
 

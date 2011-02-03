@@ -1497,6 +1497,16 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	/* êFê›íË I/O */
 	IO_ColorSet( &cProfile, pszSecName, types.m_ColorInfoArr  );
 
+	// 2010.09.17 îwåiâÊëú
+	cProfile.IOProfileData( pszSecName, L"bgImgPath", types.m_szBackImgPath );
+	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPos", types.m_backImgPos );
+	cProfile.IOProfileData( pszSecName, L"bgImgScrollX",   types.m_backImgScrollX );
+	cProfile.IOProfileData( pszSecName, L"bgImgScrollY",   types.m_backImgScrollY );
+	cProfile.IOProfileData( pszSecName, L"bgImgRepeartX",  types.m_backImgRepeatX );
+	cProfile.IOProfileData( pszSecName, L"bgImgRepeartY",  types.m_backImgRepeatY );
+	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPosOffsetX",  types.m_backImgPosOffset.x );
+	cProfile.IOProfileData_WrapInt( pszSecName, L"bgImgPosOffsetY",  types.m_backImgPosOffset.y );
+
 	// 2005.11.08 Moca éwíËåÖècê¸
 	for(j = 0; j < MAX_VERTLINES; j++ ){
 		auto_sprintf( szKeyName, LTEXT("nVertLineIdx%d"), j + 1 );

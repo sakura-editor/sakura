@@ -456,6 +456,19 @@ void CGraphics::FillMyRect(const RECT& rc)
 #endif
 }
 
+void CGraphics::FillSolidMyRect(const RECT& rc, COLORREF color)
+{
+	PushTextBackColor(color);
+	FillMyRectTextBackColor(rc);
+	PopTextBackColor();
+}
+
+void CGraphics::FillMyRectTextBackColor(const RECT& rc)
+{
+	::ExtTextOut(m_hdc, rc.left, rc.top, ETO_OPAQUE|ETO_CLIPPED, &rc, _T(""), 0, NULL);
+}
+
+
 // ドロップ先矩形描画用のリージョンを作成する
 static HRGN CreateDropRectRgn(LPCRECT lpRect, SIZE size)
 {
