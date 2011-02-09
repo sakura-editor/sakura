@@ -685,7 +685,8 @@ re_do:;								// hor
 		if(!bFound	&&	// Œ©‚Â‚©‚ç‚È‚©‚Á‚½
 			bRedo		// Å‰‚ÌŒŸõ
 		){
-			ptXY.y=(CLogicInt)(Int)GetDocument()->m_cLayoutMgr.GetLineCount();	// 2002/06/01 MIK // $$ ’PˆÊ¬İ
+			// 2011.02.02 m_cLayoutMgr¨m_cDocLineMgr
+			ptXY.y= GetDocument()->m_cDocLineMgr.GetLineCount();	// 2002/06/01 MIK
 			bRedo=FALSE;
 			goto re_do;	// ––”ö‚©‚çÄŒŸõ
 		}

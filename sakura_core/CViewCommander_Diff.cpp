@@ -177,7 +177,8 @@ re_do:;
 	if( GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった、かつ、最初の検索
 		if( !bFound	&& bRedo ){
-			ptXY.y = (CLogicInt)(Int)GetDocument()->m_cLayoutMgr.GetLineCount();	// 1個手前を指定 //$$ 単位混在
+			// 2011.02.02 m_cLayoutMgr→m_cDocLineMgr
+			ptXY.y = GetDocument()->m_cDocLineMgr.GetLineCount();	// 1個手前を指定
 			bRedo = FALSE;
 			goto re_do;	// 末尾から再検索
 		}
