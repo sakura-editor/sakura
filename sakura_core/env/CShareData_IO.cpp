@@ -1007,7 +1007,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, int nSize, KEYDATA ppKey
 	WCHAR	szKeyName[64];
 	WCHAR	szKeyData[1024];
 //	int		nSize = m_pShareData->m_nKeyNameArrNum;
-	WCHAR	szWork[64];
+	WCHAR	szWork[MAX_PLUGIN_ID+20+4];
 	bool	bOldVer = false;
 
 	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
@@ -1820,7 +1820,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu&
 	CommonSetting&	common = GetDllShareData().m_Common;
 	CMainMenu*		pcMenu;
 	WCHAR	szKeyName[64];
-	WCHAR	szFuncName[MAX_PLUGIN_ID+1];
+	WCHAR	szFuncName[MAX_PLUGIN_ID+20];
 	EFunctionCode n;
 	int		nIdx;
 	WCHAR	szLine[1024];
