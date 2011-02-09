@@ -730,6 +730,8 @@ BOOL CViewCommander::HandleCommand(
 	/* その他 */
 //	case F_SENDMAIL:	Command_SENDMAIL();break;		/* メール送信 */
 
+	case F_0: break; // F_0でプラグインが実行されるバグ対策
+
 	default:
 		//プラグインコマンドを実行する
 		{
