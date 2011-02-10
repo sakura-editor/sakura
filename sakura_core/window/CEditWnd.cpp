@@ -1934,6 +1934,28 @@ int	CEditWnd::OnClose()
 //Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行(F_HELP_CONTENTS,F_HELP_SEARCH)を修正・復活
 void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
+	// 検索ボックスからの WM_COMMAND はすべてコンボボックス通知
+	// ##### 検索ボックス処理はツールバー側の WindowProc に集約するほうがスマートかも
+	if( m_cToolbar.GetSearchHwnd() && hwndCtl == m_cToolbar.GetSearchHwnd() ){
+		switch( wNotifyCode ){
+		case CBN_SETFOCUS:
+			m_nCurrentFocus = F_SEARCH_BOX;
+			break;
+		case CBN_KILLFOCUS:
+			m_nCurrentFocus = 0;
+			//フォーカスがはずれたときに検索キーにしてしまう。
+			//検索キーワードを取得
+			wchar_t	szText[_MAX_PATH];
+			if( m_cToolbar.GetSearchKey(szText,_countof(szText)) )	//キー文字列がある
+			{
+				//検索キーを登録
+				CSearchKeywordManager().AddToSearchKeyArr( szText );
+			}
+			break;
+		}
+		return;	// CBN_SELCHANGE(1) がアクセラレータと誤認されないようにここで抜ける（rev1886 の問題の抜本対策）
+	}
+
 	switch( wNotifyCode ){
 	/* メニューからのメッセージ */
 	case 0:
@@ -2023,36 +2045,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			GetDocument().HandleCommand( (EFunctionCode)(nFuncCode | FA_FROMKEYBOARD) );
 		}
 		break;
-
-	case CBN_SETFOCUS:
-		if( NULL != m_cToolbar.GetSearchHwnd() && hwndCtl == m_cToolbar.GetSearchHwnd() )
-		{
-			m_nCurrentFocus = F_SEARCH_BOX;
-		}
-		break;
-
-	case CBN_KILLFOCUS:
-		if( NULL != m_cToolbar.GetSearchHwnd() && hwndCtl == m_cToolbar.GetSearchHwnd() )
-		{
-			m_nCurrentFocus = 0;
-
-			//フォーカスがはずれたときに検索キーにしてしまう。
-
-			//検索キーワードを取得
-			wchar_t	szText[_MAX_PATH];
-			if( m_cToolbar.GetSearchKey(szText,_countof(szText)) )	//キー文字列がある
-			{
-				//検索キーを登録
-				CSearchKeywordManager().AddToSearchKeyArr( szText );
-			}
-
-		}
-		break;
-
-	/* コントロールからのメッセージには通知コード */
-	default:
-		break;
 	}
+
 	return;
 }
 

@@ -730,7 +730,7 @@ BOOL CViewCommander::HandleCommand(
 	/* その他 */
 //	case F_SENDMAIL:	Command_SENDMAIL();break;		/* メール送信 */
 
-	case F_0: break; // F_0でプラグインが実行されるバグ対策
+	case F_0: break; // F_0でプラグインが実行されるバグ対策	// ← rev1886 の問題は呼び元で対策したが安全弁として残す
 
 	default:
 		//プラグインコマンドを実行する
