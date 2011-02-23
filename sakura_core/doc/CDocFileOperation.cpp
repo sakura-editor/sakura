@@ -31,10 +31,10 @@ bool CDocFileOperation::_ToDoLock() const
 	return true;
 }
 
-void CDocFileOperation::DoFileLock()
+void CDocFileOperation::DoFileLock(bool bMsg)
 {
 	if(this->_ToDoLock()){
-		m_pcDocRef->m_cDocFile.FileLock(GetDllShareData().m_Common.m_sFile.m_nFileShareMode);
+		m_pcDocRef->m_cDocFile.FileLock(GetDllShareData().m_Common.m_sFile.m_nFileShareMode, bMsg);
 	}
 }
 

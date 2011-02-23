@@ -92,7 +92,7 @@ void CFile::FileUnlock()
 
 
 //! ファイルの排他ロック
-bool CFile::FileLock( EShareMode eShareMode )
+bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 {
 	// ロック解除
 	FileUnlock();
@@ -126,14 +126,13 @@ bool CFile::FileLock( EShareMode eShareMode )
 	);
 
 	//結果
-	if( INVALID_HANDLE_VALUE == m_hLockedFile ){
+	if( INVALID_HANDLE_VALUE == m_hLockedFile && bMsg ){
 		const TCHAR*	pszMode;
 		switch( eShareMode ){
 		case SHAREMODE_DENY_READWRITE:	pszMode = _T("読み書き禁止モード"); break;
 		case SHAREMODE_DENY_WRITE:		pszMode = _T("書き込み禁止モード"); break;
 		default:						pszMode = _T("未定義のモード（問題があります）"); break;
 		}
-		WarningBeep();
 		TopWarningMessage(
 			CEditWnd::Instance()->GetHwnd(),
 			_T("%ts\nを%tsでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
