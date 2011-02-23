@@ -88,8 +88,6 @@ void CFile::FileUnlock()
 		::CloseHandle( m_hLockedFile );
 		m_hLockedFile = INVALID_HANDLE_VALUE;
 	}
-	// ファイルの排他制御モード
-	m_nFileShareModeOld = SHAREMODE_NOT_EXCLUSIVE;
 }
 
 
@@ -144,7 +142,6 @@ bool CFile::FileLock( EShareMode eShareMode )
 		);
 		return false;
 	}
-	m_nFileShareModeOld = eShareMode;
 
 	return true;
 }

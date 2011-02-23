@@ -122,6 +122,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultCodetype );
 	m_cDocFile.m_sFileInfo.bBomExist = ( CShareData::getInstance()->GetShareData()->m_Types[0].m_bDefaultBom != FALSE );
 	m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultEoltype );
+
+	// 排他制御オプションを初期化
+	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
 }
 
 
@@ -594,10 +597,22 @@ void CEditDoc::OnChangeSetting()
 
 	/* ファイルの排他モード変更 */
 	if( m_cDocFile.GetShareMode() != GetDllShareData().m_Common.m_sFile.m_nFileShareMode ){
+		m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
+
 		/* ファイルの排他ロック解除 */
 		m_cDocFileOperation.DoFileUnlock();
+
+		// ファイル書込可能のチェック処理
+		bool bOld = m_cDocLocker.IsDocWritable();
+		m_cDocLocker.CheckWritable(bOld);	// 書込可から不可に遷移したときだけメッセージを出す（出過ぎると鬱陶しいよね？）
+		if(bOld != m_cDocLocker.IsDocWritable()){
+			pCEditWnd->UpdateCaption();
+		}
+
 		/* ファイルの排他ロック */
-		m_cDocFileOperation.DoFileLock();
+		if( m_cDocLocker.IsDocWritable() ){
+			m_cDocFileOperation.DoFileLock();
+		}
 	}
 
 	/* 共有データ構造体のアドレスを返す */

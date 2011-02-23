@@ -30,6 +30,7 @@ public:
 	void FileUnlock();						//!< ファイルの排他ロック解除
 	bool IsFileLocking() const{ return m_hLockedFile!=INVALID_HANDLE_VALUE; }
 	EShareMode GetShareMode() const{ return m_nFileShareModeOld; }
+	void SetShareMode(EShareMode eShareMode) { m_nFileShareModeOld = eShareMode; }
 private:
 	CFilePath	m_szFilePath;				//!< ファイルパス
 	HANDLE		m_hLockedFile;				//!< ロックしているファイルのハンドル
