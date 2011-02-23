@@ -197,6 +197,7 @@ public:
 	//ファイルの排他制御モード
 	EShareMode		m_nFileShareMode;
 	bool			m_bCheckFileTimeStamp;	// 更新の監視
+	bool			m_bUneditableIfUnwritable;	// 上書き禁止検出時は編集禁止にする
 
 	//ファイルの保存
 	bool	m_bEnableUnmodifiedOverwrite;	// 無変更でも上書きするか

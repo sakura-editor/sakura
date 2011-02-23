@@ -393,6 +393,7 @@ bool CShareData::InitShareData()
 			//ファイルの排他制御
 			m_pShareData->m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE;	// ファイルの排他制御モード
 			m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = true;			// 更新の監視
+			m_pShareData->m_Common.m_sFile.m_bUneditableIfUnwritable = true;		// 上書き禁止検出時は編集禁止にする
 
 			//ファイルの保存
 			m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = false;	// 無変更でも上書きするか

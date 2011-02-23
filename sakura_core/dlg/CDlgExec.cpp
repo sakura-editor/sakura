@@ -58,7 +58,7 @@ CDlgExec::CDlgExec()
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	m_szCommand[0] = _T('\0');	/* コマンドライン */
-	m_bEditable = ( !CAppMode::Instance()->IsViewMode() && CEditDoc::GetInstance(0)->m_cDocLocker.IsDocWritable() );
+	m_bEditable = ( CEditDoc::GetInstance(0)->IsEditable() );
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
 

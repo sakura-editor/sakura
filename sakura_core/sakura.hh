@@ -425,6 +425,8 @@
 #define HIDC_CHECK_NoFilterSaveNew				10345 //新規から保存時は全ファイル表示	// 2006.11.16 ryoji
 #define HIDC_CHECK_NoFilterSaveFile				10346 //新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
 #define HIDC_CHECK_ALERT_IF_LARGEFILE			10347 //開こうとしたファイルが大きい場合に警告する
+#define HIDC_COMBO_FILESHAREMODE				10348 //排他制御
+#define HIDC_CHECK_bUneditableIfUnwritable		10349 //上書き禁止検出時は編集禁止にする
 #define HIDC_EDIT_DFORM							10440 //日付書式
 #define HIDC_EDIT_TFORM							10441 //時刻書式
 #define HIDC_EDIT_DFORM_EX						10442 //日付書式（表示例）

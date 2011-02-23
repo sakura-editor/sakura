@@ -77,9 +77,8 @@
 #define IDC_BUTTON_TEXTCOLOR            1026
 #define IDC_BUTTON_BACKCOLOR            1027
 #define IDC_STATIC_JRE32VER             1028
-#define IDC_CHECK_EXCVLUSIVE_NO         1029
-#define IDC_CHECK_EXCVLUSIVE_READWRITE  1030
-#define IDC_CHECK_EXCVLUSIVE_WRITE      1031
+#define IDC_COMBO_FILESHAREMODE         1029
+#define IDC_CHECK_bUneditableIfUnwritable 1030
 #define IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE 1032
 #define IDC_EDIT_LINENUM                1033
 #define IDC_CHECK_BACKUP                1034

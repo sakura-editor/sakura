@@ -16,6 +16,7 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
+#include "CPropertyManager.h"
 #include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "util/window.h"
@@ -24,11 +25,9 @@
 
 
 static const DWORD p_helpids[] = {	//01310
-	IDC_CHECK_EXCVLUSIVE_NO,				HIDC_CHECK_EXCVLUSIVE_NO,				//ファイルの排他制御（排他制御しない）
+	IDC_COMBO_FILESHAREMODE,				HIDC_COMBO_FILESHAREMODE,				//排他制御
 	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
-	IDC_CHECK_EXCVLUSIVE_WRITE,				HIDC_CHECK_EXCVLUSIVE_WRITE,			//ファイルの排他制御（上書き禁止）
-	IDC_CHECK_EXCVLUSIVE_READWRITE,			HIDC_CHECK_EXCVLUSIVE_READWRITE,		//ファイルお排他制御（読み書き禁止）
-	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	//無変更でも上書き
+	IDC_CHECK_bUneditableIfUnwritable,		HIDC_CHECK_bUneditableIfUnwritable,		//上書き禁止検出時は編集禁止にする
 	IDC_CHECK_AUTOSAVE,						HIDC_CHECK_AUTOSAVE,					//自動的に保存
 	IDC_CHECK_bDropFileAndClose,			HIDC_CHECK_bDropFileAndClose,			//閉じて開く
 	IDC_CHECK_RestoreCurPosition,			HIDC_CHECK_RestoreCurPosition,			//カーソル位置の復元
@@ -45,6 +44,12 @@ static const DWORD p_helpids[] = {	//01310
 	IDC_CHECK_NoFilterSaveFile,				HIDC_CHECK_NoFilterSaveFile,			// 新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
 //	IDC_STATIC,								-1,
 	0, 0
+};
+
+TYPE_NAME<EShareMode> ShareModeArr[] = {
+	{ SHAREMODE_NOT_EXCLUSIVE,	_T("しない") },
+	{ SHAREMODE_DENY_WRITE,		_T("上書きを禁止する") },
+	{ SHAREMODE_DENY_READWRITE,	_T("読み書きを禁止する") },
 };
 
 //	From Here Jun. 2, 2001 genta
@@ -192,13 +197,16 @@ INT_PTR CPropFile::DispatchEvent(
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+
+		if( wID == IDC_COMBO_FILESHAREMODE && wNotifyCode == CBN_SELCHANGE ){	// コンボボックスの選択変更
+			EnableFilePropInput(hwndDlg);
+			break;
+		}
+
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_CHECK_EXCVLUSIVE_NO:
-			case IDC_CHECK_EXCVLUSIVE_WRITE:
-			case IDC_CHECK_EXCVLUSIVE_READWRITE:
 			case IDC_CHECK_bDropFileAndClose:/* ファイルをドロップしたときは閉じて開く */
 			case IDC_CHECK_AUTOSAVE:
 			case IDC_CHECK_ALERT_IF_LARGEFILE:
@@ -247,20 +255,22 @@ void CPropFile::SetData( HWND hwndDlg )
 {
 	/*--- File ---*/
 	/* ファイルの排他制御モード */
-	switch( m_Common.m_sFile.m_nFileShareMode ){
-	case SHAREMODE_DENY_WRITE:	/* 書き込み禁止 */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE, BST_CHECKED );
-		break;
-	case SHAREMODE_DENY_READWRITE:	/* 読み書き禁止 */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE, BST_CHECKED );
-		break;
-	case SHAREMODE_NOT_EXCLUSIVE:	/* 排他なし */
-	default:	/* 排他なし */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO, BST_CHECKED );
-		break;
+	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
+	Combo_ResetContent( hwndCombo );
+	int		nSelPos = 0;
+	for( int i = 0; i < _countof( ShareModeArr ); ++i ){
+		Combo_InsertString( hwndCombo, i, ShareModeArr[i].pszName );
+		if( ShareModeArr[i].nMethod == m_Common.m_sFile.m_nFileShareMode ){
+			nSelPos = i;
+		}
 	}
+	Combo_SetCurSel( hwndCombo, nSelPos );
+
 	/* 更新の監視 */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
+
+	/* 上書き禁止検出時は編集禁止にする */
+	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bUneditableIfUnwritable, m_Common.m_sFile.m_bUneditableIfUnwritable );
 
 	/* 無変更でも上書きするか */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_sFile.m_bEnableUnmodifiedOverwrite );
@@ -322,21 +332,15 @@ int CPropFile::GetData( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_FILE;
 
 	/* ファイルの排他制御モード */
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO ) ){	/* 排他なし */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_NOT_EXCLUSIVE;
-	}
-	else if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE ) ){	/* 書き込み禁止 */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_WRITE	;
-	}
-	else if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE ) ){	/* 読み書き禁止 */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_DENY_READWRITE;
-	}
-	else{
-		/* 排他なし */
-		m_Common.m_sFile.m_nFileShareMode = SHAREMODE_NOT_EXCLUSIVE;
-	}
+	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
+	int		nSelPos = Combo_GetCurSel( hwndCombo );
+	m_Common.m_sFile.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
+
 	/* 更新の監視 */
 	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
+
+	/* 上書き禁止検出時は編集禁止にする */
+	m_Common.m_sFile.m_bUneditableIfUnwritable = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bUneditableIfUnwritable );
 
 	/* 無変更でも上書きするか */
 	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
@@ -426,7 +430,8 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 	}
 
 	//	排他するかどうか
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO ) ){
+	int nSelPos = Combo_GetCurSel( ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE ) );
+	if( ShareModeArr[nSelPos].nMethod == SHAREMODE_NOT_EXCLUSIVE ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), FALSE );
