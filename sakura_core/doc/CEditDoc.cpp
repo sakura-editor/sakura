@@ -427,11 +427,11 @@ void CEditDoc::GetEditInfo(
 //
 bool CEditDoc::IsModificationForbidden( EFunctionCode nCommand )
 {
-	//	ビューモードでも上書き禁止でもなければ
-	if( !CAppMode::Instance()->IsViewMode() && m_cDocLocker.IsDocWritable() )
+	//	編集可能の場合
+	if( IsEditable() )
 		return false; // 常に書き換え許可
 
-	//	上書き禁止モードの場合
+	//	編集禁止の場合
 	//	暫定Case文: 実際にはもっと効率の良い方法を使うべき
 	switch( nCommand ){
 	//	ファイルを書き換えるコマンドは使用禁止

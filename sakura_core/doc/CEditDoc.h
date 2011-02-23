@@ -39,6 +39,7 @@
 #include "func/CFuncLookup.h"
 #include "CEol.h"
 #include "util/design_template.h"
+#include "CAppMode.h"
 
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka
@@ -79,6 +80,7 @@ public:
 	void		SetDocumentEncoding(ECodeType eCharCode);	//!< ドキュメントの文字コードを設定
 	ECodeType	GetDefaultDocumentEncoding() const;			//!< 各文書種別で設定するデフォルト文字コードを取得
 	bool IsModificationForbidden( EFunctionCode nCommand );	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
+	bool IsEditable() const { return !CAppMode::Instance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< 編集可能かどうか
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
 
 	//状態

@@ -118,7 +118,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
-					DWORD dwEffectsSrc = ( CAppMode::Instance()->IsViewMode() || !m_pcEditDoc->m_cDocLocker.IsDocWritable() )?
+					DWORD dwEffectsSrc = ( !m_pcEditDoc->IsEditable() )?
 											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
 					m_pcEditWnd->SetDragSourceView( this );
@@ -1336,11 +1336,8 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
 	if(!GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
-	//ビューモードの場合はドロップを受け付けない
-	if(CAppMode::Instance()->IsViewMode())return E_UNEXPECTED;
-
-	//上書き禁止の場合はドロップを受け付けない
-	if(!m_pcEditDoc->m_cDocLocker.IsDocWritable())return E_UNEXPECTED;
+	//編集禁止の場合はドロップを受け付けない
+	if(!m_pcEditDoc->IsEditable())return E_UNEXPECTED;
 
 
 	if( pDataObject == NULL || pdwEffect == NULL )
