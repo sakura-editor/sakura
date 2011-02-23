@@ -78,7 +78,8 @@ int CBackupAgent::MakeBackUp(
 	if( false == FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
 		int nMsgResult = ::TopConfirmMessage(
 			CEditWnd::Instance()->GetHwnd(),
-			_T("バックアップ先のパス作成中にエラーになりました。パスが長すぎます。\n")
+			_T("バックアップ先のパス作成中にエラーになりました。\n")
+			_T("パスが長すぎるか不正な書式です。\n")
 			_T("バックアップを作成せずに上書き保存してよろしいですか？")
 		);
 		if( nMsgResult == IDYES ){
@@ -269,6 +270,46 @@ int CBackupAgent::MakeBackUp(
 
 
 
+// CInvalidParameterHandler: CRT 内でのエラー検出を横取りして異常終了を防ぐためのクラス
+// ※ マルチスレッドには非対応
+class CInvalidParameterHandler{
+public:
+	CInvalidParameterHandler()
+	{
+		bInvalid = false;	// エラーの有無
+		oldParamFunc = _set_invalid_parameter_handler( newParamFunc );	// Release 用（無効パラメータハンドラ）
+		oldRepoFunc = _CrtSetReportHook( newRepoFunc );					// Debug 用（デバッグレポートフック）
+	}
+	~CInvalidParameterHandler()
+	{
+		_set_invalid_parameter_handler(oldParamFunc);
+		_CrtSetReportHook(oldRepoFunc);
+	}
+	bool IsInvalid(){ return bInvalid; }
+private:
+	static void newParamFunc(
+		const wchar_t* expression,
+		const wchar_t* function,
+		const wchar_t* file,
+		unsigned int line,
+		uintptr_t pReserved)
+	{
+		bInvalid = true;
+	}
+	static int newRepoFunc( int reportType, char *message, int *returnValue )
+	{
+		bInvalid = true;
+		return TRUE;
+	}
+	static bool bInvalid;
+	static _invalid_parameter_handler oldParamFunc;
+	static _CRT_REPORT_HOOK oldRepoFunc;
+};
+bool CInvalidParameterHandler::bInvalid;
+_invalid_parameter_handler CInvalidParameterHandler::oldParamFunc;
+_CRT_REPORT_HOOK CInvalidParameterHandler::oldRepoFunc;
+
+
 /*! バックアップの作成
 
 	@author aroka
@@ -449,7 +490,10 @@ bool CBackupAgent::FormatBackUpPath(
 				today = localtime( &ltime );/* 現地時間に変換する */
 
 				/* YYYYMMDD時分秒 形式に変換 */
+				CInvalidParameterHandler cInvalidParam;	// CRT 内エラー検出クラス	// 2011.02.23 ryoji Wiki BugReport/67 の修正
 				_tcsftime( szFormat, _countof( szFormat ) - 1, bup_setting.m_szBackUpPathAdvanced , today );
+				if( cInvalidParam.IsInvalid() )
+					return false;	// _tcsftime() が無効な引数を検出した
 			}
 			break;
 		}
