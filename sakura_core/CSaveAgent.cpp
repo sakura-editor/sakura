@@ -46,7 +46,11 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	}
 
 	// 書込可能チェック ######### スマートじゃない。ホントは書き込み時エラーチェック検出機構を用意したい
-	if(!pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) || !pcDoc->m_cDocFile.IsFileLocking()){ //名前を付けて保存 or ロックしてない
+	{
+		// ロックは一時的に解除してチェックする（チェックせずに後戻りできないところまで進めるより安全）
+		// ※ ロックしていてもファイル属性やアクセス許可の変更によって書き込めなくなっていることもある
+		bool bLock = (pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocFile.IsFileLocking());
+		if( bLock ) pcDoc->m_cDocFileOperation.DoFileUnlock();
 		try{
 			bool bExist = fexist(pSaveInfo->cFilePath);
 			CStream out(pSaveInfo->cFilePath, _T("ab"), true);	// 実際の保存は "wb" だがここは "ab"（ファイル内容は破棄しない）でチェックする	// 2009.08.21 ryoji
@@ -56,6 +60,8 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 			}
 		}
 		catch(CError_FileOpen){
+			// ※ たとえ上書き保存の場合でもここでの失敗では書込み禁止へは遷移しない
+			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
 				CEditWnd::Instance()->GetHwnd(),
 				_T("\'%ts\'\n")
@@ -65,6 +71,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 			);
 			return CALLBACK_INTERRUPT;
 		}
+		if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 	}
 
 	return CALLBACK_CONTINUE;

@@ -11,7 +11,7 @@ public:
 
 	//ロック
 	bool _ToDoLock() const;
-	void DoFileLock();
+	void DoFileLock(bool bMsg = true);
 	void DoFileUnlock();
 	
 	//ロードUI

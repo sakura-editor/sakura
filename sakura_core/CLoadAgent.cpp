@@ -73,11 +73,14 @@ next:
 		//ファイルが存在しない場合はチェック省略
 		if(!cFile.IsFileExist())break;
 
-		//ロックしている場合はチェック省略
-		if(pLoadInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocFile.IsFileLocking())break;
+		// ロックは一時的に解除してチェックする（チェックせずに後戻りできないところまで進めるより安全）
+		// ※ ロックしていてもアクセス許可の変更によって読み取れなくなっていることもある
+		bool bLock = (pLoadInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) && pcDoc->m_cDocFile.IsFileLocking());
+		if( bLock ) pcDoc->m_cDocFileOperation.DoFileUnlock();
 
 		//チェック
 		if(!cFile.IsFileReadable()){
+			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
 				CEditWnd::Instance()->GetHwnd(),
 				_T("\'%ls\'\n")
@@ -87,6 +90,7 @@ next:
 			);
 			return CALLBACK_INTERRUPT; //ファイルが存在しているのに読み取れない場合は中断
 		}
+		if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 	}
 	while(false);
 
