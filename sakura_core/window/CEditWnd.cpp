@@ -4024,6 +4024,7 @@ void CEditWnd::OnEditTimer( void )
 		// ファイルのタイムスタンプのチェック処理
 		GetDocument().m_cAutoReloadAgent.CheckFileTimeStamp();
 
+#if 0	// 2011.02.11 ryoji 書込禁止の監視を廃止（復活させるなら「更新の監視」付随ではなく別オプションにしてほしい）
 		// ファイル書込可能のチェック処理
 		if(GetDocument().m_cAutoReloadAgent._ToDoChecking()){
 			bool bOld = GetDocument().m_cDocLocker.IsDocWritable();
@@ -4032,6 +4033,7 @@ void CEditWnd::OnEditTimer( void )
 				this->UpdateCaption();
 			}
 		}
+#endif
 	}
 
 	GetDocument().m_cAutoSaveAgent.CheckAutoSave();
