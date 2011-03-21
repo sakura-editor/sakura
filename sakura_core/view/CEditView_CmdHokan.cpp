@@ -119,6 +119,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 			GetHwnd(),
 			(LPARAM)this
 		);
+		::SetFocus( GetHwnd() );	//エディタにフォーカスを戻す
 	}
 	nKouhoNum = m_pcEditWnd->m_cHokanMgr.CHokanMgr::Search(
 		&poWin,
