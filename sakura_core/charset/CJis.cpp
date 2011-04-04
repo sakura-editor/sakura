@@ -88,6 +88,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 			}
 			++pw;
 		}
+		break;
 	case MYJISESC_HANKATA:
 		for( ; pr < pSrc+nSrcLen; ++pr ){
 			if( IsJisHankata(static_cast<const char>(*pr)) ){
