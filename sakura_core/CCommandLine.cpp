@@ -205,33 +205,30 @@ void CCommandLine::ParseCommandLine( void )
 	}
 
 
-	TCHAR	szPath[_MAX_PATH + 1];
+	TCHAR	szPath[_MAX_PATH];
 	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
-	int		i, j;
+	int		i;
 	if( m_pszCmdLineSrc[0] != '-' ){
-		auto_memset( szPath, 0, _countof( szPath ) );
-		i = 0;
-		j = 0;
-		for( ; i < _countof( szPath ) - 1 && i <= (int)lstrlen(m_pszCmdLineSrc); ++i ){
-			if( m_pszCmdLineSrc[i] != _T(' ') && m_pszCmdLineSrc[i] != _T('\0') ){
-				szPath[j] = m_pszCmdLineSrc[i];
-				++j;
-				continue;
+		for( i = 0; i < _countof( szPath ); ++i ){
+			if( m_pszCmdLineSrc[i] == _T(' ') || m_pszCmdLineSrc[i] == _T('\0') ){
+				/* ファイルの存在をチェック */
+				szPath[i] = _T('\0');	// 終端文字
+				if( fexist(szPath) ){
+					bFind = true;
+					break;
+				}
+				if( m_pszCmdLineSrc[i] == _T('\0') ){
+					break;
+				}
 			}
-			/* ファイルの存在と、ファイルかどうかをチェック */
-			if( fexist(szPath) ){
-				bFind = true;
-				break;
-			}
-			szPath[j] = m_pszCmdLineSrc[i];
-			++j;
+			szPath[i] = m_pszCmdLineSrc[i];
 		}
 	}
 	if( bFind ){
 		_tcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
-		nPos = j + 1;
+		nPos = i + 1;
 	}else{
 		nPos = 0;
 	}

@@ -203,6 +203,7 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			::SendMessage( GetHwnd(), WM_CONTEXTMENU, (WPARAM)GetHwnd(), lParam );
 			return 1L;
 		}
+		break;
 	case WM_TIMER:
 		return OnTimer( hWnd, wMsg, wParam, lParam );
 	case WM_SETTEXT:
