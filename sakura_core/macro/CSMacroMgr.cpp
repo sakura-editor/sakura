@@ -708,7 +708,7 @@ WCHAR* CSMacroMgr::GetFuncInfoByID(
 					*p = LTEXT('\0');
 					break;
 				}
-				*p++;
+				p++;
 			}
 		}
 		//	Jun. 16, 2002 genta NULLÇÃÇ∆Ç´ÇÕâΩÇ‡ÇµÇ»Ç¢ÅD

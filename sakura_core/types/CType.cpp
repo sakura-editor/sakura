@@ -70,7 +70,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		new CType_Ini(),	//ê›íËÉtÉ@ÉCÉã
 	};
 	assert( 1 <= MAX_TYPES );
-	for(int i=0;i<_countof(table) && i <= MAX_TYPES;i++){
+	for(int i=0;i<_countof(table) && i < MAX_TYPES;i++){
 		table[i]->InitTypeConfig(i);
 		SAFE_DELETE(table[i]);
 	}
