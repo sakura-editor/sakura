@@ -98,7 +98,7 @@ public:
 };
 
 
-inline CAppNodeGroupHandle EditNode::GetGroup() const{ if(this)return m_nGroup; else return NULL; }
+inline CAppNodeGroupHandle EditNode::GetGroup() const{ if(this)return m_nGroup; else return 0; }
 
 inline bool EditNode::IsTopInGroup() const{ return this && (CAppNodeGroupHandle(m_nGroup).GetEditNodeAt(0) == this); }
 
