@@ -1653,8 +1653,8 @@ LRESULT CEditWnd::DispatchEvent(
 			}else{
 				nPane = m_cSplitterWnd.GetLastPane();
 			}
+			this->SetActivePane( nPane );
 		}
-		this->SetActivePane( nPane );
 		return 0L;
 
 
@@ -3493,7 +3493,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	else 
 	{
 		//	非アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, __T("最近使ったフォルダ"),  _T("") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, _T("最近使ったフォルダ"),  _T("") );
 	}
 
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );

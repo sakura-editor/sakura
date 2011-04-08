@@ -111,13 +111,13 @@ static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar
 
 	p = conv;
 	while ( (p = wcspbrk( p, L"\\:*?\"<>|" )) != NULL ) {
-		// ファイル名に使えない文字を_ の置き換える
-		*p++ = _T('_');
+		// ファイル名に使えない文字を置き換える
+		*p++ = L'_';
 	}
 	p = conv;
 	while ( (p = wcspbrk( p, L"/" )) != NULL ) {
-		// ファイル名に使えない文字を_ の置き換える
-		*p++ = _T('／');
+		// ファイル名に使えない文字を置き換える
+		*p++ = L'／';
 	}
 	auto_sprintf_s(res, _MAX_PATH, L"%ls.%ls", conv, ext);
 

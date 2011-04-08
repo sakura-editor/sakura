@@ -694,7 +694,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					tvi.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 					tvi.hItem = htiTemp;
 					i = TreeView_GetItem( hwndTreeRes, &tvi );
-					if (TreeView_GetItem( hwndTreeRes, &tvi ) == NULL) {
+					if (!TreeView_GetItem( hwndTreeRes, &tvi )) {
 						// エラー
 						break;
 					}
@@ -1005,7 +1005,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 		}
 		tvi.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 		tvi.hItem = s;
-		if (TreeView_GetItem( hwndTree, &tvi ) == NULL) {
+		if (!TreeView_GetItem( hwndTree, &tvi )) {
 			// Error
 			return false;
 		}
@@ -1146,7 +1146,7 @@ static HTREEITEM TreeCopy( HWND hwndTree, HTREEITEM dst, HTREEITEM src, bool fCh
 		tvi.hItem = s;
 		tvi.pszText = szLabel;
 		tvi.cchTextMax = MAX_MAIN_MENU_NAME_LEN;
-		if (TreeView_GetItem( hwndTree, &tvi ) == NULL) {
+		if (!TreeView_GetItem( hwndTree, &tvi )) {
 			// Error
 			break;
 		}
@@ -1313,7 +1313,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 		}
 		tvi.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 		tvi.hItem = s;
-		if (TreeView_GetItem( hwndTree, &tvi ) == NULL) {
+		if (!TreeView_GetItem( hwndTree, &tvi )) {
 			// Error
 			sErrMsg = L"メニュー設定の取得に失敗しました";
 			return false;
@@ -1383,7 +1383,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 				// 目印設定（元分）
 				tvi.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_CHILDREN;
 				tvi.hItem = mKey[pFuncWk->m_sKey[0]];
-				if (TreeView_GetItem( hwndTree, &tvi ) == NULL) {
+				if (!TreeView_GetItem( hwndTree, &tvi )) {
 					// Error
 					sErrMsg = L"メニュー設定の取得に失敗しました";
 					return false;
