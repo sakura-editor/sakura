@@ -138,7 +138,7 @@ inline int MyWideCharToMultiByte_JP( const unsigned short* pSrc, const int nSrcL
 	int nsrclen;
 
 	// •ÛŒìƒR[ƒh
-	if( nSrcLen > 2 && nSrcLen < 1 ){
+	if( nSrcLen > 2 || nSrcLen < 1 ){
 		nsrclen = 1;
 	}else{
 		nsrclen = nSrcLen;
