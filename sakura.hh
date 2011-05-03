@@ -42,6 +42,7 @@
 #define HLP000159	159 //Unicodeで開き直す
 #define HLP000256	256 //UnicodeBEで開き直す
 #define HLP000160	160 //UTF-8で開き直す
+#define HLP000337	337 //CESU-8で開き直す	163から変更	2010/4/27 Uchi
 #define HLP000161	161 //UTF-7で開き直す
 #define HLP000162	162 //印刷
 #define HLP000120	120 //印刷プレビュー
