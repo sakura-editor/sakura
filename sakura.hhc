@@ -282,6 +282,11 @@
 						<param name="ImageNumber" value="9">
 						</OBJECT>
 					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="CESU-8‚ÅŠJ‚«’¼‚·">
+						<param name="Local" value="_RESOURCE\HLP000337.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
 						<param name="Name" value="UTF-7‚ÅŠJ‚«’¼‚·">
 						<param name="Local" value="_RESOURCE\HLP000161.html">
 						<param name="ImageNumber" value="9">
@@ -1897,4 +1902,5 @@
 	<param name="Merge" value="script56.chm::script56.hhc">
 
 	</OBJECT>
+</UL>
 </BODY></HTML>
