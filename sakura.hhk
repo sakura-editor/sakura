@@ -213,6 +213,10 @@
 <param name="Local" value="_RESOURCE\HLP000160.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="CESU-8で開き直す">
+<param name="Local" value="_RESOURCE\HLP000337.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="UTF-7で開き直す">
 <param name="Local" value="_RESOURCE\HLP000161.html">
 </OBJECT>
@@ -874,6 +878,10 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="タイプ別設定一覧">
 <param name="Local" value="_RESOURCE\HLP000072.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="タイプ別設定一覧インポート">
+<param name="Local" value="_RESOURCE\HLP000338.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="タイプ別設定">

@@ -1182,6 +1182,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="タイプ別設定インポート">
+					<param name="Local" value="_RESOURCE\HLP000338.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="タイプ別設定">
 					<param name="Local" value="_RESOURCE\HLP000073.html">
 					<param name="ImageNumber" value="1">
@@ -1902,5 +1907,4 @@
 	<param name="Merge" value="script56.chm::script56.hhc">
 
 	</OBJECT>
-</UL>
 </BODY></HTML>

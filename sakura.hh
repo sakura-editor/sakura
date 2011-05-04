@@ -183,6 +183,7 @@
 #define	HLP000282	282	//タブの表示／非表示	//@@@ 2003.06.10 MIK
 #define HLP000134	134 //ステータスバーを表示(隠す)
 #define HLP000072	72 //タイプ別設定一覧
+#define HLP000338	338 //タイプ別設定インポート	// 2010/5/1 Uchi
 #define HLP000073	73 //タイプ別設定
 #define HLP000074	74 //タイプ別設定 『スクリーン』プロパティ
 #define HLP000075	75 //タイプ別設定 『カラー』プロパティ
@@ -251,9 +252,9 @@
 #define HLP000325	325 //新規グループ			// 2007.07.04 ryoji
 #define HLP000326	326 //次のグループに移動	// 2007.07.04 ryoji
 #define HLP000327	327 //前のグループに移動	// 2007.07.04 ryoji
-#define HLP000333	333 //このタブ以外を閉じる	// 2009.07.20 syat
-#define HLP000334	334 //左をすべて閉じる		// 2009.07.20 syat
-#define HLP000335	335 //右をすべて閉じる		// 2009.07.20 syat
+#define HLP000333	333 //このタブ以外を閉じる	// 2009.07.07 syat
+#define HLP000334	334 //左をすべて閉じる		// 2009.07.07 syat
+#define HLP000335	335 //右をすべて閉じる		// 2009.07.07 syat
 #define HLP000328	328 //編集文書の一時出力			// 2007.09.29 maru
 #define HLP000329	329 //編集文書にファイル挿入		// 2007.09.29 maru
 #define HLP000330	330 //引用符の変更					// 2007.09.29 maru
@@ -486,8 +487,8 @@
 #define HIDC_CHECK_STOPS_PARAGRAPH				10918 //段落単位で移動するときに段落の両端に止まる
 #define HIDC_CHECK_CLOSEALLCONFIRM				10919 //[すべて閉じる]で他に編集用のウィンドウがあれば確認する	// 2006.12.25 ryoji
 #define HIDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE		10920 //マウスクリックでアクティブになったときはカーソルをクリック位置に移動しない 2007.10.08 genta
-#define HIDC_COMBO_WHEEL_PAGESCROLL				10921 //組み合わせてホイール操作した時ページスクロールする	// 2008.12.01 nasukoji
-#define HIDC_COMBO_WHEEL_HSCROLL				10922 //組み合わせてホイール操作した時横スクロールする	// 2008.12.01 nasukoji
+#define HIDC_COMBO_WHEEL_PAGESCROLL				10921 //組み合わせてホイール操作した時ページスクロールする	// 2009.01.17 nasukoji
+#define HIDC_COMBO_WHEEL_HSCROLL				10922 //組み合わせてホイール操作した時横スクロールする	// 2009.01.17 nasukoji
 #define HIDC_HOTKEY_TRAYMENU					10940 //左クリックメニューのショートカットキー
 #define HIDC_EDIT_REPEATEDSCROLLLINENUM			10941 //スクロール行数
 #define HIDC_EDIT_MAX_MRU_FILE					10942 //ファイル履歴の最大数
@@ -782,6 +783,17 @@
 #define HIDCANCEL_TL			12702	//キャンセル
 #define HIDC_TL_BUTTON_HELP		12703	//ヘルプ
 #define HIDC_TL_LIST_TYPES		12704	//リスト
+#define HIDC_TL_BUTTON_IMPORT	12705	//インポート
+#define HIDC_TL_BUTTON_EXPORT	12706	//エクスポート
+#define HIDC_TL_BUTTON_INIT		12707	//初期化
+#define HIDC_TL_CHECK_RMENU		12708	//右クリックメニューに追加
+#define HIDC_TL_CHECK_DBLCLICK	12709	//ダブルクリックで開く
+
+//タイプ別設定インポート確認
+#define HIDC_COMBO_COLORS		12720	//色指定
+#define HIDOK_DTA				12721	//OK
+#define HIDCANCEL_DTA			12722	//キャンセル
+#define HIDC_DTA_BUTTON_HELP	12723	//ヘルプ
 
 //ジャンプ
 #define HIDC_JUMP_BUTTON_JUMP		12800	//ジャンプ
