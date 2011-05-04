@@ -822,6 +822,11 @@
 #define HIDCANCEL_TL			12702	//キャンセル
 #define HIDC_TL_BUTTON_HELP		12703	//ヘルプ
 #define HIDC_TL_LIST_TYPES		12704	//リスト
+#define HIDC_TL_BUTTON_IMPORT	12705	//インポート
+#define HIDC_TL_BUTTON_EXPORT	12706	//エクスポート
+#define HIDC_TL_BUTTON_INIT		12707	//初期化
+#define HIDC_TL_CHECK_RMENU		12708	//右クリックメニューに追加
+#define HIDC_TL_CHECK_DBLCLICK	12709	//ダブルクリックで開く
 
 //タイプ別設定インポート確認
 #define HIDC_COMBO_COLORS		12720	//色指定
