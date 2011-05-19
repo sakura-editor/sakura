@@ -1056,9 +1056,15 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 
 		// 2009.01.17 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
 		BOOL bHorizontal = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
-		CLayoutInt nCount = ( nScrollCode == SB_LINEUP ) ? CLayoutInt(-1) : CLayoutInt(1);		// スクロール数
+		
+		// 2011.05.18 APIのスクロール量に従う
+		nRollLineNum = t_abs(zDelta) * nRollLineNum / 120;
+		
+		const bool bSmooth = !! GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth;
+		const int nRollActions = bSmooth ? nRollLineNum : 1;
+		const CLayoutInt nCount = CLayoutInt(((nScrollCode == SB_LINEUP) ? -1 : 1) * (bSmooth ? 1 : nRollLineNum) );
 
-		for( i = 0; i < nRollLineNum; ++i ){
+		for( i = 0; i < nRollActions; ++i ){
 			//	Sep. 11, 2004 genta 同期スクロール行数
 			if( bHorizontal ){
 				SyncScrollH( ScrollAtH( GetTextArea().GetViewLeftCol() + nCount ) );
