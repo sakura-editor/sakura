@@ -99,8 +99,8 @@ public:
 				wstring sSection;
 				wstring sKey;
 				wstring sValue;
-				if( variant_to_wstr( Arguments[1], sSection ) != true) return false;
-				if( variant_to_wstr( Arguments[0], sKey ) != true) return false;
+				if( variant_to_wstr( Arguments[0], sSection ) != true) return false;
+				if( variant_to_wstr( Arguments[1], sKey ) != true) return false;
 
 				cProfile.SetReadingMode();
 				if( LOWORD(ID) == F_PL_GETDEF ){

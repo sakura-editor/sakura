@@ -87,13 +87,24 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 */
 HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
 {
+	int I;
+	int ArgCount = Arguments->cArgs;
+	if(ArgCount > 4) ArgCount = 4;
+
 	const EFunctionCode ID = static_cast<EFunctionCode>(IntID);
 	//	2007.07.22 genta : コマンドは下位16ビットのみ
 	if(LOWORD(ID) >= F_FUNCTION_FIRST)
 	{
 		VARIANT ret; // 2005.06.27 zenryaku 戻り値の受け取りが無くても関数を実行する
 		VariantInit(&ret);
-		
+
+		// 2011.3.18 syat 引数の順序を正しい順にする
+		VARIANTARG rgvargBak[4];
+		memcpy( rgvargBak, Arguments->rgvarg, sizeof(VARIANTARG) * 4 );
+		for(I = 0; I < ArgCount; I++){
+			Arguments->rgvarg[ArgCount-I-1] = rgvargBak[I];
+		}
+
 		// 2009.9.5 syat HandleFunctionはサブクラスでオーバーライドする
 		bool r = HandleFunction(m_pView, ID, Arguments->rgvarg, Arguments->cArgs, ret);
 		if(Result) {::VariantCopyInd(Result, &ret);}
@@ -102,15 +113,12 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 	}
 	else
 	{
-		int ArgCount = Arguments->cArgs;
-		if(ArgCount > 4) ArgCount = 4;
-
 		//	Nov. 29, 2005 FILE 引数を文字列で取得する
 		WCHAR *StrArgs[4] = {NULL, NULL, NULL, NULL};	// 初期化必須
 		WCHAR *S = NULL;								// 初期化必須
 		Variant varCopy;							// VT_BYREFだと困るのでコピー用
 		int Len;
-		for(int I = 0; I < ArgCount; ++I)
+		for(I = 0; I < ArgCount; ++I)
 		{
 			if(VariantChangeType(&varCopy.Data, &(Arguments->rgvarg[I]), 0, VT_BSTR) == S_OK)
 			{
