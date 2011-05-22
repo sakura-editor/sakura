@@ -112,8 +112,8 @@
 #define HLP000056	56 //このファイルのパス名をコピー
 #define HLP000175	175 //このファイルのパス名とカーソル位置をコピー
 #define HLP000057	57 //キー割り当て一覧をコピー
-#define HLP000176	176 //「移動(O)」メニューの一覧
-#define HLP000177	177 //「選択(S)」メニューの一覧
+//#define HLP000176	176 //「移動(O)」メニューの一覧
+//#define HLP000177	177 //「選択(S)」メニューの一覧
 #define HLP000210	210 //左(先頭)の空白を削除
 #define HLP000211	211 //右(末尾)の空白を削除
 #define HLP000212	212 //選択行の昇順ソート
@@ -211,10 +211,14 @@
 #define HLP000088	88 //共通設定 『支援』プロパティ
 #define HLP000201	201 //共通設定 『マクロ』プロパティ
 #define HLP000277	277 //共通設定『ファイル名表示』タブ
+#define HLP000147	147 //共通設定『ステータスバー』タブ
+#define HLP000151	151 //共通設定『プラグイン』タブ
+#define HLP000152	152 //共通設定『メインメニュー』タブ
 #define HLP000279	279 //履歴の管理
 #define HLP000071	71 //フォント設定
 #define HLP000340	340 //テキストの折り返し方法			// 2008.05.31 nasukoji
 #define HLP000184	184 //折り返し桁数
+#define HLP000336	336 //文字カウント方法		// 2009.07.06 syat
 #define HLP000125	125 //キーマクロの記録開始／終了
 #define HLP000127	127 //キーマクロの保存
 #define HLP000128	128 //キーマクロの読み込み
@@ -327,6 +331,15 @@
 #define HLP000089	89 //利用可能な正規表現	// 2007.09.30
 #define HLP000108	108 //1行選択	// 2007.12.01
 
+#define HLP000284	284	//ExpandParameter
+#define HLP000288	288	//文字入力
+#define HLP000292	292	//置換(実行)
+#define HLP000293	293	//すべて置換(実行)
+#define HLP000294	294	//指定パターンに一致する行をマーク
+#define HLP000295	295	//最後にテキストを追加
+
+#define HLP000400	400	//タスクトレイメニュー
+#define HLP000500	500	//「設定(O)」メニュー
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
 #define HLP_UR014	3014 //変更履歴(2007/09/27-)
@@ -359,6 +372,7 @@
 #define HIDC_CHECK_BACKUPDIALOG					10017 //作成前に確認
 #define HIDC_CHECK_BACKUPFOLDER					10018 //指定フォルダに作成
 #define HIDC_CHECK_BACKUP_DUSTBOX				10019 //バックアップをごみ箱に放り込む	//@@@ 2002.01.03
+#define HIDC_CHECK_BACKUP_FOLDER_RM				10020 //指定フォルダに作成(リムーバブルメディアのみ)	// 2010/5/27 Uchi
 #define HIDC_EDIT_BACKUPFOLDER					10040 //保存フォルダ名
 #define HIDC_EDIT_BACKUP_3						10041 //世代数
 #define HIDC_EDIT_BACKUPFILE					10042 //保存ファイル名
@@ -373,6 +387,7 @@
 #define HIDC_CHECK_BACKUP_ADVANCED				10066 //詳細設定	// 2006.08.06 ryoji
 #define HIDC_RADIO_BACKUP_DATETYPE1A			10067 //付加する日時の種類（作成日時）※詳細設定ON用	// 2009.02.20 ryoji
 #define HIDC_RADIO_BACKUP_DATETYPE2A			10068 //付加する日時の種類（更新日時）※詳細設定ON用	// 2009.02.20 ryoji
+
 #define HIDC_BUTTON_DELETE						10100 //メニューから機能削除
 #define HIDC_BUTTON_INSERTSEPARATOR				10101 //セパレータ挿入
 #define HIDC_BUTTON_INSERT						10102 //メニューへ機能挿入
@@ -410,6 +425,9 @@
 #define HIDC_CHECK_AlertIfFileNotExist			10344 //開こうとしたファイルが存在しないとき警告する	// 2006.08.06 ryoji
 #define HIDC_CHECK_NoFilterSaveNew				10345 //新規から保存時は全ファイル表示	// 2006.11.16 ryoji
 #define HIDC_CHECK_NoFilterSaveFile				10346 //新規以外から保存時は全ファイル表示	// 2006.11.16 ryoji
+#define HIDC_CHECK_ALERT_IF_LARGEFILE			10347 //開こうとしたファイルが大きい場合に警告する
+#define HIDC_COMBO_FILESHAREMODE				10348 //排他制御
+#define HIDC_CHECK_bUneditableIfUnwritable		10349 //上書き禁止検出時は編集禁止にする
 #define HIDC_EDIT_DFORM							10440 //日付書式
 #define HIDC_EDIT_TFORM							10441 //時刻書式
 #define HIDC_EDIT_DFORM_EX						10442 //日付書式（表示例）
@@ -634,7 +652,13 @@
 #define HIDC_CHECK_MacroOnOpened		11753	//オープン後自動実行マクロ	// 2006.09.01 ryoji
 #define HIDC_CHECK_MacroOnTypeChanged	11754	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
 #define HIDC_CHECK_MacroOnSave		11755	//保存前自動実行マクロ	// 2006.09.01 ryoji
-
+#define HIDC_PLUGINLIST				11756	//プラグインリスト
+#define HIDC_CHECK_PluginEnable		11757	//プラグインを有効にする
+#define HIDC_PLUGIN_SearchNew		11758	//新規プラグインを追加
+#define HIDC_PLUGIN_Remove			11759	//新規プラグインを削除
+#define HIDC_PLUGIN_OPTION			11760	//プラグインオプション設定	// 2010/3/22 Uchi
+#define HIDC_LIST_PLUGIN_OPTIONS	11761	//プラグインオプションリスト	// 2010/3/22 Uchi
+#define HIDC_EDIT_PLUGIN_OPTION		11762	//プラグインオプション編集		// 2010/3/22 Uchi
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索
 #define HIDC_FIND_BUTTON_SEARCHPREV			11801	//前を検索
@@ -948,5 +972,28 @@
 #define HIDCANCEL_KEYWORD_SELECT		14101		// キャンセル
 #define HIDC_COMBO_KEYWORD_SELECT		14102		// 強調キーワード1～10
 
+// 共通設定ステータスバー			// 2008/6/21	Uchi
+#define HIDC_CHECK_DISP_UNICODE_IN_SJIS	14200		// SJISで文字コード値をUnicodeで表示する
+#define HIDC_CHECK_DISP_UNICODE_IN_JIS	14201		// JISで文字コード値をUnicodeで表示する
+#define HIDC_CHECK_DISP_UNICODE_IN_EUC	14202		// EUCで文字コード値をUnicodeで表示する
+#define HIDC_CHECK_DISP_UTF8_CODEPOINT	14203		// UTF-8をコードポイントで表示する
+#define HIDC_CHECK_DISP_SP_CODEPOINT	14204		// サロゲートペアをコードポイントで表示する
+#define HIDC_CHECK_DISP_SELCOUNT_BY_BYTE	14205	// 選択文字数を文字単位ではなくバイト単位で表示する
+
+// 共通設定メインメニュー			// 2010/5/16	Uchi
+#define HIDC_TREE_RES						14400	//メニュー一覧
+#define HIDC_BUTTON_TREE_DELETE				14401	//メニューから機能削除
+#define HIDC_BUTTON_TREE_INSERT_NODE 		14402	//メニューへノード追加
+#define HIDC_BUTTON_TREE_INSERT_SEPARATOR 	14403	//メニューへ区切線挿入
+#define HIDC_BUTTON_TREE_INSERT				14404	//メニューへ機能挿入(上)
+#define HIDC_BUTTON_TREE_INSERT_A 			14405	//メニューへ機能挿入(下)
+#define HIDC_BUTTON_TREE_ADD				14406	//メニューへ機能追加
+#define HIDC_BUTTON_TREE_UP					14407	//メニューの機能を上へ移動
+#define HIDC_BUTTON_TREE_DOWN				14408	//メニューの機能を下へ移動
+#define HIDC_BUTTON_TREE_RIGHT				14409	//メニューの機能を右へ移動
+#define HIDC_BUTTON_TREE_LEFT				14410	//メニューの機能を左へ移動
+#define HIDC_BUTTON_NENU_CHECK				14411	//メニューの検査
+#define HIDC_BUTTON_TREE_CLEAR				14412	//メニューをクリア
+#define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
 
 #define HIDC_STATIC								19999 //不明
