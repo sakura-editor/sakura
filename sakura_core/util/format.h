@@ -1,9 +1,9 @@
-// 2007.10.20 kobake Ö˜A
+// 2007.10.20 kobake ‘®ŠÖ˜A
 
 #pragma once
 
 
 // 20051121 aroka
 bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime );
-UINT32 ParseVersion( const TCHAR* ver );	//o[WÔÌ‰
-int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//o[WÔÌ”r
+UINT32 ParseVersion( const TCHAR* ver );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì‰ğÍ
+int CompareVersion( const TCHAR* verA, const TCHAR* verB );	//ƒo[ƒWƒ‡ƒ“”Ô†‚Ì”äŠr
