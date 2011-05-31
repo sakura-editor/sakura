@@ -2,6 +2,65 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CColor_Found.h"
 #include "types/CTypeSupport.h"
+#include "view/CViewSelect.h"
+#include <limits.h>
+
+
+void CColor_Select::OnStartScanLogic()
+{
+	m_bSelectFlg	= true;
+	m_nSelectStart	= CLogicInt(-1);
+	m_nSelectEnd	= CLogicInt(-1);
+}
+
+bool CColor_Select::BeginColor(const CStringRef& cStr, int nPos)
+{
+	assert(0);
+	return false;
+}
+
+bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nLineNum, const CLayout* pcLayout)
+{
+
+	if(!cStr.IsValid())return false;
+
+	const CEditView& view = *(CColorStrategyPool::Instance()->GetCurrentView());
+	if( !view.GetSelectionInfo().IsTextSelected() || !CTypeSupport(&view,COLORIDX_SELECT).IsDisp() ){
+		return false;
+	}
+
+	CLayoutRange selectArea = view.GetSelectionInfo().GetSelectAreaLine(nLineNum, pcLayout);
+	CLayoutInt nSelectFrom = selectArea.GetFrom().x;
+	CLayoutInt nSelectTo = selectArea.GetTo().x;
+	if( nSelectFrom == nSelectTo ){
+		return false;
+	}
+	if( -1 == nSelectFrom ){
+		return false;
+	}
+	CLogicInt nIdxFrom = view.LineColmnToIndex(pcLayout, nSelectFrom) + pcLayout->GetLogicOffset();
+	if( nIdxFrom <= nPos ){
+		CLogicInt nIdxTo = view.LineColmnToIndex(pcLayout, nSelectTo) + pcLayout->GetLogicOffset();
+		if( nPos < nIdxTo ){
+			m_nSelectStart = nIdxFrom;
+			m_nSelectEnd = nIdxTo;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CColor_Select::EndColor(const CStringRef& cStr, int nPos)
+{
+	//マッチ文字列終了検出
+	if( m_nSelectEnd <= nPos ){
+		// -- -- マッチ文字列を描画 -- -- //
+
+		return true;
+	}
+
+	return false;
+}
 
 
 void CColor_Found::OnStartScanLogic()
@@ -14,10 +73,6 @@ void CColor_Found::OnStartScanLogic()
 bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
-
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
-
 	const CEditView* pcView = CColorStrategyPool::Instance()->GetCurrentView();
 	if( !pcView->m_bCurSrchKeyMark || !CTypeSupport(pcView,COLORIDX_SEARCH).IsDisp() ){
 		return false;
@@ -44,9 +99,6 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 
 bool CColor_Found::EndColor(const CStringRef& cStr, int nPos)
 {
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
-
 	//マッチ文字列終了検出
 	if( m_nSearchEnd <= nPos ){ //+ == では行頭文字の場合、m_nSearchEndも０であるために文字色の解除ができないバグを修正 2003.05.03 かろと
 		// -- -- マッチ文字列を描画 -- -- //
@@ -56,3 +108,4 @@ bool CColor_Found::EndColor(const CStringRef& cStr, int nPos)
 
 	return false;
 }
+

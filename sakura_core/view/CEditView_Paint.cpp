@@ -297,7 +297,7 @@ EColorIndexType CEditView::GetColorIndex(
 	int						nIndex,
 	bool					bPrev,			// 指定位置の色変更直前まで	2010.06.19 ryoji 追加
 	CColorStrategy**		ppStrategy,		// 2010.03.31 ryoji 追加
-	CColorStrategy**		ppStrategyFound	// 2010.03.31 ryoji 追加
+	CColor_Found**		ppStrategyFound	// 2010.03.31 ryoji 追加
 )
 {
 	EColorIndexType eRet = COLORIDX_TEXT;
@@ -416,6 +416,68 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 	}
 }
 
+/* 現在の色を指定
+	eColorIndex   選択を含む現在の色
+	eColorIndex2  選択以外の現在の色
+*/
+void CEditView::SetCurrentColor2( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2)
+{
+	//インデックス決定
+	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
+	int		nColorIdx2 = ToColorInfoArrIndex(eColorIndex2);
+	STypeConfig& config = m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+
+	//実際に色を設定
+	if( -1 != nColorIdx ){
+		if(nColorIdx2 == -1){ nColorIdx2 = nColorIdx; }
+		const ColorInfo& info  = config.m_ColorInfoArr[nColorIdx];
+		const ColorInfo& info2 = config.m_ColorInfoArr[nColorIdx2];
+		gr.SetForegroundColor(GetTextColorByColorInfo2(info, info2));
+		gr.SetBackgroundColor(GetBackColorByColorInfo2(info, info2));
+		gr.SetMyFont(
+			GetFontset().ChooseFontHandle(
+				info.m_colTEXT != info.m_colBACK ? info.m_bFatFont   : info2.m_bFatFont,
+				info.m_colTEXT != info.m_colBACK ? info.m_bUnderLine : info2.m_bUnderLine
+			)
+		);
+	}
+}
+
+inline COLORREF MakeColor2(COLORREF a, COLORREF b, int alpha)
+{
+	const int ap = alpha;
+	const int bp = 256 - ap;
+	BYTE valR = ((GetRValue(a) * ap + GetRValue(b) * bp) / 256);
+	BYTE valG = ((GetGValue(a) * ap + GetGValue(b) * bp) / 256);
+	BYTE valB = ((GetBValue(a) * ap + GetBValue(b) * bp) / 256);
+	return RGB(valR, valG, valB);
+}
+
+COLORREF CEditView::GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2)
+{
+	if( info.m_colTEXT != info.m_colBACK ){
+		return info.m_colTEXT;
+	}
+	// 反転表示
+	if( info.m_colBACK == m_crBack ){
+		return  info2.m_colTEXT ^ 0x00FFFFFF;
+	}
+	int alpha = 255*30/100; // 30%
+	return MakeColor2(info.m_colTEXT, info2.m_colTEXT, alpha);
+}
+
+COLORREF CEditView::GetBackColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2)
+{
+	if( info.m_colTEXT != info.m_colBACK ){
+		return info.m_colBACK;
+	}
+	// 反転表示
+	if( info.m_colBACK == m_crBack ){
+		return  info2.m_colBACK ^ 0x00FFFFFF;
+	}
+	int alpha = 255*30/100; // 30%
+	return MakeColor2(info.m_colBACK, info2.m_colBACK, alpha);
+}
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -994,6 +1056,30 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		if( !bTransText ){
 			cTextType.FillBack(pInfo->gr,rcClip);
 		}
+		CTypeSupport cSelectType(this, COLORIDX_SELECT);
+		if( GetSelectionInfo().IsTextSelected() && GetSelectionInfo().IsBoxSelecting() && cSelectType.IsDisp() ){
+			// 選択範囲の指定色：必要ならテキストのない部分の矩形選択を作画
+			const CEditView& view = *pInfo->pcView;
+			CLayoutRange selectArea = GetSelectionInfo().GetSelectAreaLine(pInfo->pDispPos->GetLayoutLineRef(), pcLayout);
+			// 2010.10.04 スクロール分の足し忘れ
+			int nSelectFromPx = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetFrom().x - view.GetTextArea().GetViewLeftCol());
+			int nSelectToPx   = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetTo().x - view.GetTextArea().GetViewLeftCol());
+			if( nSelectFromPx != nSelectToPx ){
+				const int nCharWidth = view.GetTextMetrics().GetHankakuDx();
+				RECT rcSelect; // Pixel
+				rcSelect.top    = pInfo->pDispPos->GetDrawPos().y;
+				rcSelect.bottom = pInfo->pDispPos->GetDrawPos().y + view.GetTextMetrics().GetHankakuDy();
+				rcSelect.left   = view.GetTextArea().GetAreaLeft() + nSelectFromPx;
+				rcSelect.right  = view.GetTextArea().GetAreaLeft() + nSelectToPx;
+				RECT rcDraw;
+				if( ::IntersectRect(&rcDraw, &rcClip, &rcSelect) ){
+					COLORREF color = GetBackColorByColorInfo2(cSelectType.GetColorInfo(), cTextType.GetColorInfo());
+					if( color != cTextType.GetBackColor() ){
+						pInfo->gr.FillSolidMyRect(rcDraw, color);
+					}
+				}
+			}
+		}
 	}
 
 	// 指定桁縦線描画
@@ -1059,54 +1145,19 @@ void CEditView::DispTextSelected(
 	int			nCharWidth = GetTextMetrics().GetHankakuDx();
 	HRGN		hrgnDraw;
 	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+	CLayoutRange& sSelect = GetSelectionInfo().m_sSelect;
 
 	/* 選択範囲内の行かな */
 //	if( IsTextSelected() ){
-		if( nLineNum >= GetSelectionInfo().m_sSelect.GetFrom().y && nLineNum <= GetSelectionInfo().m_sSelect.GetTo().y ){
-			if( GetSelectionInfo().IsBoxSelecting() ){		/* 矩形範囲選択中 */
-				nSelectFrom = GetSelectionInfo().m_sSelect.GetFrom().GetX2();
-				nSelectTo   = GetSelectionInfo().m_sSelect.GetTo().GetX2();
-				// 2006.09.30 Moca From 矩形選択時[EOF]とその右側は反転しないように修正。処理を追加
-				if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 <= nLineNum ){
-					CLayoutPoint ptEnd(0, 0);
-					m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptEnd );
-					if( ptEnd.y == nLineNum ){
-						if( ptEnd.GetX2() < nSelectFrom ){
-							nSelectFrom = ptEnd.GetX2();
-						}
-						if( ptEnd.GetX2() < nSelectTo ){
-							nSelectTo = ptEnd.GetX2();
-						}
-					}
-				}
-				// 2006.09.30 Moca To
+		if( nLineNum >= sSelect.GetFrom().y && nLineNum <= sSelect.GetTo().y ){
+			CLayoutRange selectArea = GetSelectionInfo().GetSelectAreaLine(nLineNum, pcLayout);
+			nSelectFrom = selectArea.GetFrom().x;
+			nSelectTo   = selectArea.GetTo().x;
+			if( nSelectFrom == INT_MAX ){
+				nSelectFrom = nX_Layout;
 			}
-			else{
-				if( GetSelectionInfo().m_sSelect.IsLineOne() ){
-					nSelectFrom = GetSelectionInfo().m_sSelect.GetFrom().GetX2();
-					nSelectTo   = GetSelectionInfo().m_sSelect.GetTo().GetX2();
-				}
-				else{
-					if( nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y ){
-						nSelectFrom = GetSelectionInfo().m_sSelect.GetFrom().GetX2();
-						nSelectTo   = nX_Layout;
-					}
-					else if( nLineNum == GetSelectionInfo().m_sSelect.GetTo().GetY2() ){
-						nSelectFrom = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
-						nSelectTo   = GetSelectionInfo().m_sSelect.GetTo().GetX2();
-					}
-					else{
-						nSelectFrom = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
-						nSelectTo   = nX_Layout;
-					}
-				}
-			}
-			// 2006.05.24 Moca 矩形選択/フリーカーソル選択(選択開始/終了行)で
-			// To < From になることがある。必ず From < To になるように入れ替える。
-			if( nSelectTo < nSelectFrom ){
-				CLayoutInt t = nSelectFrom;
-				nSelectFrom = nSelectTo;
-				nSelectTo = t;
+			if( nSelectTo == INT_MAX ){
+				nSelectTo = nX_Layout;
 			}
 
 			// 2006.03.28 Moca 表示域外なら何もしない
@@ -1120,21 +1171,24 @@ void CEditView::DispTextSelected(
 			if( nSelectFrom < GetTextArea().GetViewLeftCol() ){
 				nSelectFrom = GetTextArea().GetViewLeftCol();
 			}
-			rcClip.left   = ptXY.x + (Int)nSelectFrom * ( nCharWidth );
-			rcClip.right  = ptXY.x + (Int)nSelectTo   * ( nCharWidth );
+			rcClip.left   = ptXY.x + (Int)nSelectFrom * nCharWidth;
+			rcClip.right  = ptXY.x + (Int)nSelectTo   * nCharWidth;
 			rcClip.top    = ptXY.y;
 			rcClip.bottom = ptXY.y + nLineHeight;
+
+			bool bOMatch = false;
 
 			// 2005/04/02 かろと ０文字マッチだと反転幅が０となり反転されないので、1/3文字幅だけ反転させる
 			// 2005/06/26 zenryaku 選択解除でキャレットの残骸が残る問題を修正
 			// 2005/09/29 ryoji スクロール時にキャレットのようなゴミが表示される問題を修正
 			if (GetSelectionInfo().IsTextSelected() && rcClip.right == rcClip.left &&
-				GetSelectionInfo().m_sSelect.IsLineOne() &&
-				GetSelectionInfo().m_sSelect.GetFrom().x >= GetTextArea().GetViewLeftCol())
+				sSelect.IsLineOne() &&
+				sSelect.GetFrom().x >= GetTextArea().GetViewLeftCol())
 			{
 				HWND hWnd = ::GetForegroundWindow();
 				if( hWnd && (hWnd == m_pcEditWnd->m_cDlgFind.GetHwnd() || hWnd == m_pcEditWnd->m_cDlgReplace.GetHwnd()) ){
 					rcClip.right = rcClip.left + (nCharWidth/3 == 0 ? 1 : nCharWidth/3);
+					bOMatch = true;
 				}
 			}
 			if( rcClip.right == rcClip.left ){
@@ -1144,6 +1198,11 @@ void CEditView::DispTextSelected(
 			// 2006.03.28 Moca ウィンドウ幅が大きいと正しく反転しない問題を修正
 			if( rcClip.right > GetTextArea().GetAreaRight() ){
 				rcClip.right = GetTextArea().GetAreaRight();
+			}
+			
+			// 選択色表示なら反転しない
+			if( !bOMatch && CTypeSupport(this, COLORIDX_SELECT).IsDisp() ){
+				return;
 			}
 			
 			HBRUSH hBrush    = ::CreateSolidBrush( SELECTEDAREA_RGB );

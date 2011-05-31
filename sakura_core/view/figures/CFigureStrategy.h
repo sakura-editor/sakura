@@ -17,8 +17,14 @@ public:
 class CFigureSpace : public CFigure{
 public:
 	virtual bool DrawImp(SColorStrategyInfo* pInfo);
+protected:
 	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const = 0;
 	virtual EColorIndexType GetColorIdx(void) const = 0;
+
+	// é¿ëïï‚èï
+	bool DrawImp_StyleSelect(SColorStrategyInfo* pInfo);
+	void DrawImp_StylePop(SColorStrategyInfo* pInfo);
+	void DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos&);
 };
 
 

@@ -9,6 +9,7 @@
 #include "charset/CCodeFactory.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "types/CTypeSupport.h"
 
 CViewSelect::CViewSelect(CEditView* pcEditView)
 : m_pcEditView(pcEditView)
@@ -162,22 +163,111 @@ void CViewSelect::DrawSelectArea() const
 	if( !pView->GetDrawSwitch() ){
 		return;
 	}
-
-	CLayoutRange sRangeA;
-
-	CLayoutInt			nLineNum;
-
 	m_bDrawSelectArea = true;
+	
+	bool bDispText = CTypeSupport(pView,COLORIDX_SELECT).IsDisp();
+	if( bDispText ){
+		if( m_sSelect != m_sSelectOld ){
+			// 選択色表示の時は、WM_PAINT経由で作画
+			const int nCharWidth = pView->GetTextMetrics().GetHankakuDx();
+			const int nCharHeight = pView->GetTextMetrics().GetHankakuDy();
+			const CTextArea& area =  pView->GetTextArea();
+			CLayoutRect rcOld; // CLayoutRect
+			TwoPointToRect( &rcOld, m_sSelectOld.GetFrom(), m_sSelectOld.GetTo() );
+			CLayoutRect rcNew; // CLayoutRect
+			TwoPointToRect( &rcNew, m_sSelect.GetFrom(), m_sSelect.GetTo() );
+			CLayoutRect rc; // CLayoutRect ただしtop,bottomだけ使う
+			CLayoutInt drawLeft = CLayoutInt(0);
+			CLayoutInt drawRight = CLayoutInt(-1);
+			if( !m_sSelect.IsValid() ){
+				rc.top    = rcOld.top;
+				rc.bottom = rcOld.bottom;
+			}else if( !m_sSelectOld.IsValid() ){
+				rc.top    = rcNew.top;
+				rc.bottom = rcNew.bottom;
+			}else if(IsBoxSelecting() && 
+				(m_sSelect.GetTo().x != m_sSelectOld.GetTo().x || m_sSelect.GetFrom().x != m_sSelectOld.GetFrom().x)){
+				rc.UnionStrictRect(rcOld, rcNew);
+			}else if(!IsBoxSelecting() && rcOld.top == rcNew.top && rcOld.bottom == rcNew.bottom){
+				if(m_sSelect.GetFrom() == m_sSelectOld.GetFrom() && m_sSelect.GetTo().x != m_sSelectOld.GetTo().x){
+					// GetToの行が対象
+					rc.top = rc.bottom = m_sSelect.GetTo().GetY2();
+					drawLeft  = t_min(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x);
+					drawRight = t_max(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x);
+				}else if(m_sSelect.GetTo() == m_sSelectOld.GetTo() && m_sSelect.GetFrom().x != m_sSelectOld.GetFrom().x){
+					// GetFromの行が対象
+					rc.top = rc.bottom = m_sSelect.GetFrom().GetY2();
+					drawLeft  = t_min(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x);
+					drawRight = t_max(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x);
+				}else{
+					rc.UnionStrictRect(rcOld, rcNew);
+				}
+			}else if(rcOld.top == rcNew.top){
+				rc.top    = t_min(rcOld.bottom, rcNew.bottom);
+				rc.bottom = t_max(rcOld.bottom, rcNew.bottom);
+			}else if(rcOld.bottom == rcNew.bottom){
+				rc.top    = t_min(rcOld.top, rcNew.top);
+				rc.bottom = t_max(rcOld.top, rcNew.top);
+			}else{
+				rc.UnionStrictRect(rcOld, rcNew);
+			}
+			CMyRect rcPx;
+			if( pView->IsBkBitmap() ||  drawRight == -1){
+				// 背景表示のクリッピングが甘いので左右を指定しない
+				rcPx.left   =  0;
+				rcPx.right  = SHRT_MAX; 
+			}else{
+				rcPx.left   =  area.GetAreaLeft() + nCharWidth * (Int)(drawLeft - area.GetViewLeftCol());
+				rcPx.right  = area.GetAreaLeft() + nCharWidth * (Int)(drawRight- area.GetViewLeftCol());
+			}
+			rcPx.top    = area.GetAreaTop() + nCharHeight * (Int)(rc.top -area.GetViewTopLine());
+			rcPx.bottom = area.GetAreaTop() + nCharHeight * (Int)(rc.bottom + 1 -area.GetViewTopLine());
+
+			CMyRect rcArea;
+			pView->GetTextArea().GenerateTextAreaRect(&rcArea);
+			RECT rcUpdate;
+			if( ::IntersectRect(&rcUpdate, &rcPx, &rcArea) ){
+				CEditView& view = *const_cast<CEditView*>(pView);
+				HDC hdc = view.GetDC();
+				PAINTSTRUCT ps;
+				ps.rcPaint = rcUpdate;
+				// DrawSelectAreaLine2での下線OFFの代わり
+				view.GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
+				view.GetCaret().m_cUnderLine.Lock();
+				view.OnPaint(hdc, &ps, false);
+				view.GetCaret().m_cUnderLine.UnLock();
+				// 2010.10.10 0幅選択(解除)状態での、カーソル位置ライン復帰(リージョン外)
+				view.GetCaret().m_cUnderLine.CaretUnderLineON(true);
+				view.ReleaseDC( hdc );
+			}
+		}
+	}else{
+		HDC hdc = pView->GetDC();
+		DrawSelectArea2( hdc );
+		pView->ReleaseDC( hdc );
+	}
+
+
+	//	Jul. 9, 2005 genta 選択領域の情報を表示
+	PrintSelectionInfoMsg();
+}
+
+/*!
+	反転用再作画処理本体
+*/
+void CViewSelect::DrawSelectArea2( HDC hdc ) const
+{
+	CEditView const * const pView = GetEditView();
 
 	// 2006.10.01 Moca 重複コード統合
-	HDC         hdc = pView->GetDC();
 	HBRUSH      hBrush = ::CreateSolidBrush( SELECTEDAREA_RGB );
 	HBRUSH      hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 	int         nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	HBRUSH		hBrushCompatOld;
 	int			nROPCompatOld;
-	if( pView->m_hbmpCompatBMP ){
+	bool bCompatBMP = pView->m_hbmpCompatBMP && hdc != pView->m_hdcCompatDC;
+	if( bCompatBMP ){
 		hBrushCompatOld = (HBRUSH)::SelectObject( pView->m_hdcCompatDC, hBrush );
 		nROPCompatOld = ::SetROP2( pView->m_hdcCompatDC, SELECTEDAREA_ROP2 );
 	}
@@ -276,7 +366,7 @@ void CViewSelect::DrawSelectArea() const
 				}
 				::PaintRgn( hdc, hrgnDraw );
 				// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-				if( pView->m_hbmpCompatBMP ){
+				if( bCompatBMP ){
 					::PaintRgn( pView->m_hdcCompatDC, hrgnDraw );
 				}
 				// To Here 2007.09.09 Moca
@@ -298,6 +388,8 @@ void CViewSelect::DrawSelectArea() const
 			::DeleteObject( hrgnOld );
 		}
 	}else{
+		CLayoutRange sRangeA;
+		CLayoutInt nLineNum;
 
 		// 現在描画されている範囲と始点が同じ
 		if( m_sSelect.GetFrom() == m_sSelectOld.GetFrom() ){
@@ -349,7 +441,7 @@ void CViewSelect::DrawSelectArea() const
 	}
 
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-	if( pView->m_hbmpCompatBMP ){
+	if( bCompatBMP ){
 		::SetROP2( pView->m_hdcCompatDC, nROPCompatOld );
 		::SelectObject( pView->m_hdcCompatDC, hBrushCompatOld );
 	}
@@ -359,9 +451,6 @@ void CViewSelect::DrawSelectArea() const
 	::SetROP2( hdc, nROP_Old );
 	::SelectObject( hdc, hBrushOld );
 	::DeleteObject( hBrush );
-	pView->ReleaseDC( hdc );
-	//	Jul. 9, 2005 genta 選択領域の情報を表示
-	PrintSelectionInfoMsg();
 }
 
 
@@ -380,21 +469,19 @@ void CViewSelect::DrawSelectAreaLine(
 	const CLayoutRange&	sRange		//!< [in] 選択範囲(レイアウト単位)
 ) const
 {
-	const CEditView* pView=GetEditView();
+	CEditView const * const pView = m_pcEditView;
+	bool bCompatBMP = pView->m_hbmpCompatBMP && hdc != pView->m_hdcCompatDC;
 
-	RECT			rcClip;
-	CLayoutInt		nSelectFrom;	// 描画行の選択開始桁位置
-	CLayoutInt		nSelectTo;		// 描画行の選択開始終了位置
-
-	if( sRange.IsLineOne() ){
-		nSelectFrom = sRange.GetFrom().x;
-		nSelectTo	= sRange.GetTo().x;
-	}
-	else{
-		// 2006.03.29 Moca 行末までの長さを求める位置を上からここに移動
+	const CLayoutMgr& layoutMgr = pView->m_pcEditDoc->m_cLayoutMgr;
+	const CLayout* pcLayout = layoutMgr.SearchLineByLayoutY( nLineNum );
+	CLayoutRange lineArea;
+	GetSelectAreaLineFromRange(lineArea, nLineNum, pcLayout, sRange);
+	CLayoutInt nSelectFrom = lineArea.GetFrom().GetX2();
+	CLayoutInt nSelectTo = lineArea.GetTo().GetX2();
+	if( nSelectFrom == INT_MAX || nSelectTo == INT_MAX ){
 		CLayoutInt nPosX = CLayoutInt(0);
-		const CLayout* pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-		CMemoryIterator it( pcLayout, pView->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
+		CMemoryIterator it = CMemoryIterator(pcLayout, layoutMgr.GetTabSpace());
+		
 		while( !it.end() ){
 			it.scanNext();
 			if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
@@ -402,29 +489,18 @@ void CViewSelect::DrawSelectAreaLine(
 				break;
 			}
 			// 2006.03.28 Moca 画面外まで求めたら打ち切る
-			if( it.getColumn() >pView->GetTextArea().GetRightCol() ){
+			if( it.getColumn() > pView->GetTextArea().GetRightCol() ){
 				break;
 			}
 			it.addDelta();
 		}
 		nPosX += it.getColumn();
-		
-		if( nLineNum == sRange.GetFrom().y ){
-			nSelectFrom = sRange.GetFrom().x;
-			nSelectTo	= nPosX;
+
+		if( nSelectFrom == INT_MAX ){
+			nSelectFrom = nPosX;
 		}
-		else if( nLineNum == sRange.GetTo().y ){
-			nSelectFrom = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
-			nSelectTo	= sRange.GetTo().x;
-		}
-		else{
-			nSelectFrom = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
-			nSelectTo	= nPosX;
-		}
-		// 2006.05.24 Mocaフリーカーソル選択(選択開始/終了行)で
-		// To < From になることがある。必ず From < To になるように入れ替える。
-		if( nSelectTo < nSelectFrom ){
-			t_swap(nSelectFrom, nSelectTo);
+		if( nSelectTo == INT_MAX ){
+			nSelectTo = nPosX;
 		}
 	}
 	
@@ -434,6 +510,7 @@ void CViewSelect::DrawSelectAreaLine(
 	}
 	int		nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	int		nCharWidth = pView->GetTextMetrics().GetHankakuDx();
+	CMyRect	rcClip; // px
 	rcClip.left		= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)nSelectFrom * nCharWidth;
 	rcClip.right	= (pView->GetTextArea().GetAreaLeft() - (Int)pView->GetTextArea().GetViewLeftCol() * nCharWidth) + (Int)nSelectTo   * nCharWidth;
 	rcClip.top		= (Int)(nLineNum - pView->GetTextArea().GetViewTopLine()) * nLineHeight + pView->GetTextArea().GetAreaTop();
@@ -443,14 +520,14 @@ void CViewSelect::DrawSelectAreaLine(
 	}
 	//	必要なときだけ。
 	if ( rcClip.right != rcClip.left ){
-		pView->GetCaret().m_cUnderLine.CaretUnderLineOFF( TRUE );
+		pView->GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
 		
 		// 2006.03.28 Moca 表示域内のみ処理する
 		if( nSelectFrom <=pView->GetTextArea().GetRightCol() && pView->GetTextArea().GetViewLeftCol() < nSelectTo ){
 			HRGN hrgnDraw = ::CreateRectRgn( rcClip.left, rcClip.top, rcClip.right, rcClip.bottom );
 			::PaintRgn( hdc, hrgnDraw );
 			// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-			if( pView->m_hbmpCompatBMP ){
+			if( bCompatBMP ){
 				::PaintRgn( pView->m_hdcCompatDC, hrgnDraw );
 			}
 			// To Here 2007.09.09 Moca
@@ -459,7 +536,69 @@ void CViewSelect::DrawSelectAreaLine(
 	}
 }
 
-
+void CViewSelect::GetSelectAreaLineFromRange(
+	CLayoutRange& ret,
+	CLayoutInt nLineNum,
+	const CLayout* pcLayout,
+	const CLayoutRange&	sRange
+) const
+{
+	const CEditView& view = *GetEditView();
+	if( nLineNum >= sRange.GetFrom().y && nLineNum <= sRange.GetTo().y ||
+		nLineNum >= sRange.GetTo().y && nLineNum <= sRange.GetFrom().y ){
+		CLayoutInt	nSelectFrom = sRange.GetFrom().GetX2();
+		CLayoutInt	nSelectTo   = sRange.GetTo().GetX2();
+		if( IsBoxSelecting() ){		/* 矩形範囲選択中 */
+			nSelectFrom = sRange.GetFrom().GetX2();
+			nSelectTo   = sRange.GetTo().GetX2();
+			// 2006.09.30 Moca From 矩形選択時[EOF]とその右側は反転しないように修正。処理を追加
+			if( view.m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 <= nLineNum ){
+				CLayoutPoint ptEnd(0, 0);
+				view.m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptEnd );
+				if( ptEnd.y == nLineNum ){
+					if( ptEnd.GetX2() < nSelectFrom ){
+						nSelectFrom = ptEnd.GetX2();
+					}
+					if( ptEnd.GetX2() < nSelectTo ){
+						nSelectTo = ptEnd.GetX2();
+					}
+				}
+			}
+			// 2006.09.30 Moca To
+		}
+		else{
+			if( sRange.IsLineOne() ){
+				nSelectFrom = sRange.GetFrom().GetX2();
+				nSelectTo   = sRange.GetTo().GetX2();
+			}
+			else{
+				CLayoutInt nX_Layout = CLayoutInt(INT_MAX);
+				if( nLineNum == sRange.GetFrom().y ){
+					nSelectFrom = sRange.GetFrom().GetX2();
+					nSelectTo   = nX_Layout;
+				}
+				else if( nLineNum == sRange.GetTo().GetY2() ){
+					nSelectFrom = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
+					nSelectTo   = sRange.GetTo().GetX2();
+				}
+				else{
+					nSelectFrom = pcLayout ? pcLayout->GetIndent() : CLayoutInt(0);
+					nSelectTo   = nX_Layout;
+				}
+			}
+		}
+		// 2006.05.24 Moca 矩形選択/フリーカーソル選択(選択開始/終了行)で
+		// To < From になることがある。必ず From < To になるように入れ替える。
+		if( nSelectTo < nSelectFrom ){
+			t_swap(nSelectFrom, nSelectTo);
+		}
+		ret.SetFrom(CLayoutPoint(nSelectFrom, nLineNum));
+		ret.SetTo(CLayoutPoint(nSelectTo, nLineNum));
+	}else{
+		ret.SetFrom(CLayoutPoint(-1, -1));
+		ret.SetTo(CLayoutPoint(-1, -1));
+	}
+}
 
 /*!	選択範囲情報メッセージの表示
 

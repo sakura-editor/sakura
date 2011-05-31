@@ -63,7 +63,7 @@ struct SColorStrategyInfo;
 // struct DispPos; //	誰かがincludeしてます
 // class CColorStrategy;	// 誰かがincludeしてます
 // enum EColorIndexType;	// 誰かがincludeしてます
-
+class CColor_Found;
 
 #ifndef IDM_COPYDICINFO
 #define IDM_COPYDICINFO 2000
@@ -225,8 +225,11 @@ protected:
 
 	//色分け
 public:
-	EColorIndexType GetColorIndex( const CLayout*, int, bool bPrev = false, CColorStrategy** ppStrategy = NULL, CColorStrategy** ppStrategyFound = NULL );				/* 指定位置のColorIndexの取得 02/12/13 ai */
+	EColorIndexType GetColorIndex( const CLayout*, int, bool bPrev = false, CColorStrategy** ppStrategy = NULL, CColor_Found** ppStrategyFound = NULL );				/* 指定位置のColorIndexの取得 02/12/13 ai */
 	void SetCurrentColor( CGraphics& gr, EColorIndexType );							/* 現在の色を指定 */
+	void SetCurrentColor2( CGraphics& gr, EColorIndexType, EColorIndexType);
+	COLORREF GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
+	COLORREF GetBackColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
 
 	//画面バッファ
 protected:

@@ -32,7 +32,13 @@ SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_VERTLINE,		// 指定桁縦線	// 2005.11.08 Moca
 	COLORIDX_EOF,			// EOF記号
 	COLORIDX_DIGIT,			// 半角数値	 //@@@ 2001.02.17 by MIK //色設定Ver.3からユーザファイルに対しては文字列で処理しているのでリナンバリングしてもよい. Mar. 7, 2001 JEPRO noted
+	COLORIDX_BRACKET_PAIR,	// 対括弧	  // 02/09/18 ai Add
+	COLORIDX_SELECT,		// 選択範囲
 	COLORIDX_SEARCH,		// 検索文字列
+	COLORIDX_COMMENT,		// 行コメント						//Dec. 4, 2000 shifted by MIK
+	COLORIDX_SSTRING,		// シングルクォーテーション文字列	//Dec. 4, 2000 shifted by MIK
+	COLORIDX_WSTRING,		// ダブルクォーテーション文字列		//Dec. 4, 2000 shifted by MIK
+	COLORIDX_URL,			// URL								//Dec. 4, 2000 shifted by MIK
 	COLORIDX_KEYWORD1,		// 強調キーワード1 // 2002/03/13 novice
 	COLORIDX_KEYWORD2,		// 強調キーワード2 // 2002/03/13 novice  //MIK ADDED
 	COLORIDX_KEYWORD3,		// 強調キーワード3 // 2005.01.13 MIK 3-10 added
@@ -43,10 +49,6 @@ SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_KEYWORD8,		// 強調キーワード8
 	COLORIDX_KEYWORD9,		// 強調キーワード9
 	COLORIDX_KEYWORD10,		// 強調キーワード10
-	COLORIDX_COMMENT,		// 行コメント						//Dec. 4, 2000 shifted by MIK
-	COLORIDX_SSTRING,		// シングルクォーテーション文字列	//Dec. 4, 2000 shifted by MIK
-	COLORIDX_WSTRING,		// ダブルクォーテーション文字列		//Dec. 4, 2000 shifted by MIK
-	COLORIDX_URL,			// URL								//Dec. 4, 2000 shifted by MIK
 	COLORIDX_REGEX1,		// 正規表現キーワード1  //@@@ 2001.11.17 add MIK
 	COLORIDX_REGEX2,		// 正規表現キーワード2  //@@@ 2001.11.17 add MIK
 	COLORIDX_REGEX3,		// 正規表現キーワード3  //@@@ 2001.11.17 add MIK
@@ -60,7 +62,6 @@ SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_DIFF_APPEND,	// DIFF追加  //@@@ 2002.06.01 MIK
 	COLORIDX_DIFF_CHANGE,	// DIFF追加  //@@@ 2002.06.01 MIK
 	COLORIDX_DIFF_DELETE,	// DIFF追加  //@@@ 2002.06.01 MIK
-	COLORIDX_BRACKET_PAIR,	// 対括弧	  // 02/09/18 ai Add
 	COLORIDX_MARK,			// ブックマーク  // 02/10/16 ai Add
 
 	//カラーの最後
@@ -124,8 +125,11 @@ class CColorStrategy;
 #include "view/DispPos.h"
 #include <memory> //auto_ptr
 
+class CColor_Found;
+class CColor_Select;
+
 struct SColorStrategyInfo{
-	SColorStrategyInfo() : sDispPosBegin(0,0), pStrategy(NULL), pStrategyFound(NULL) {}
+	SColorStrategyInfo() : sDispPosBegin(0,0), pStrategy(NULL), pStrategyFound(NULL), pStrategySelect(NULL) {}
 
 	//参照
 	CEditView*	pcView;
@@ -134,6 +138,7 @@ struct SColorStrategyInfo{
 	//スキャン位置
 	LPCWSTR			pLineOfLogic;
 	CLogicInt		nPosInLogic;
+	CLayoutInt		nLayoutLineNum;
 
 	//描画位置
 	DispPos*		pDispPos;
@@ -141,16 +146,22 @@ struct SColorStrategyInfo{
 
 	//色変え
 	CColorStrategy*		pStrategy;
-	CColorStrategy*		pStrategyFound;
+	CColor_Found*		pStrategyFound;
+	CColor_Select*		pStrategySelect;
 
 	//! 色の切り替え
 	void ChangeColor(EColorIndexType eNewColor)
 	{
 		this->pcView->SetCurrentColor( this->gr, eNewColor );
 	}
+	void ChangeColor2(EColorIndexType eNewColor, EColorIndexType eNewColor2)
+	{
+		this->pcView->SetCurrentColor2(this->gr, eNewColor, eNewColor2);
+	}
 
 	void DoChangeColor(const CStringRef& cLineStr);
 	EColorIndexType GetCurrentColor() const;
+	EColorIndexType GetCurrentColor2() const;
 
 	//! 現在のスキャン位置
 	CLogicInt GetPosInLogic() const
@@ -198,16 +209,11 @@ public:
 	CColorStrategy*	GetStrategyByColor(EColorIndexType eColor) const;
 
 	//特定取得
-	CColorStrategy* GetFoundStrategy() const{ return m_pcFoundStrategy; }
+	CColor_Found*   GetFoundStrategy() const{ return m_pcFoundStrategy; }
+	CColor_Select*  GetSelectStrategy() const{ return m_pcSelectStrategy; }
 
 	//イベント
-	void NotifyOnStartScanLogic()
-	{
-		m_pcFoundStrategy->OnStartScanLogic();
-		for(int i=0;i<GetStrategyCount();i++){
-			GetStrategy(i)->OnStartScanLogic();
-		}
-	}
+	void NotifyOnStartScanLogic();
 
 	/*
 	|| 色分け
@@ -222,7 +228,8 @@ public:
 
 private:
 	std::vector<CColorStrategy*>	m_vStrategies;
-	CColorStrategy*					m_pcFoundStrategy;
+	CColor_Found*					m_pcFoundStrategy;
+	CColor_Select*					m_pcSelectStrategy;
 
 	CColor_LineComment*				m_pcLineComment;
 	CColor_BlockComment*			m_pcBlockComment1;
