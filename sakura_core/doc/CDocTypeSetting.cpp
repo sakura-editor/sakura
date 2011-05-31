@@ -33,7 +33,13 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	_T("指定桁縦線"),						FALSE,		FALSE,		FALSE,		RGB( 192, 192, 192 ),	RGB( 255, 251, 240 ), //2005.11.08 Moca
 	_T("EOF記号"),							TRUE,		FALSE,		FALSE,		RGB(   0, 255, 255 ),	RGB(   0,   0,   0 ),
 	_T("半角数値"),							FALSE,		FALSE,		FALSE,		RGB( 235,   0,   0 ),	RGB( 255, 251, 240 ),	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)を変更  Mar.10, 2001 標準は色なしに
+	_T("対括弧の強調表示"),					FALSE,		TRUE,		FALSE,		RGB( 128,   0,   0 ),	RGB( 255, 251, 240 ),	// 02/09/18 ai
+	_T("選択範囲"),							TRUE,		FALSE,		FALSE,		RGB(  49, 106, 197 ),	RGB(  49, 106, 197 ),	//2011.05.18
 	_T("検索文字列"),						TRUE,		FALSE,		FALSE,		RGB(   0,   0,   0 ),	RGB( 255, 255,   0 ),
+	_T("コメント"),							TRUE,		FALSE,		FALSE,		RGB(   0, 128,   0 ),	RGB( 255, 251, 240 ),
+	_T("シングルクォーテーション文字列"),	TRUE,		FALSE,		FALSE,		RGB(  64, 128, 128 ),	RGB( 255, 251, 240 ),
+	_T("ダブルクォーテーション文字列"),		TRUE,		FALSE,		FALSE,		RGB( 128,   0,  64 ),	RGB( 255, 251, 240 ),
+	_T("URL"),								TRUE,		FALSE,		TRUE,		RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ),
 	_T("強調キーワード1"),					TRUE,		FALSE,		FALSE,		RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ),
 	_T("強調キーワード2"),					TRUE,		FALSE,		FALSE,		RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
 	_T("強調キーワード3"),					TRUE,		FALSE,		FALSE,		RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更
@@ -44,10 +50,6 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	_T("強調キーワード8"),					TRUE,		FALSE,		FALSE,		RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ),
 	_T("強調キーワード9"),					TRUE,		FALSE,		FALSE,		RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ),
 	_T("強調キーワード10"),					TRUE,		FALSE,		FALSE,		RGB( 255, 128,   0 ),	RGB( 255, 251, 240 ),
-	_T("コメント"),							TRUE,		FALSE,		FALSE,		RGB(   0, 128,   0 ),	RGB( 255, 251, 240 ),
-	_T("シングルクォーテーション文字列"),	TRUE,		FALSE,		FALSE,		RGB(  64, 128, 128 ),	RGB( 255, 251, 240 ),
-	_T("ダブルクォーテーション文字列"),		TRUE,		FALSE,		FALSE,		RGB( 128,   0,  64 ),	RGB( 255, 251, 240 ),
-	_T("URL"),								TRUE,		FALSE,		TRUE,		RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ),
 	_T("正規表現キーワード1"),				FALSE,		FALSE,		FALSE,		RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
 	_T("正規表現キーワード2"),				FALSE,		FALSE,		FALSE,		RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
 	_T("正規表現キーワード3"),				FALSE,		FALSE,		FALSE,		RGB(   0,   0, 255 ),	RGB( 255, 251, 240 ),	//@@@ 2001.11.17 add MIK
@@ -61,7 +63,6 @@ static ColorInfoIni ColorInfo_DEFAULT[] = {
 	_T("DIFF差分表示(追加)"),				FALSE,		FALSE,		FALSE,		RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
 	_T("DIFF差分表示(変更)"),				FALSE,		FALSE,		FALSE,		RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
 	_T("DIFF差分表示(削除)"),				FALSE,		FALSE,		FALSE,		RGB(   0,   0,   0 ),	RGB( 255, 251, 240 ),	//@@@ 2002.06.01 MIK
-	_T("対括弧の強調表示"),					FALSE,		TRUE,		FALSE,		RGB( 128,   0,   0 ),	RGB( 255, 251, 240 ),	// 02/09/18 ai
 	_T("ブックマーク"),						TRUE ,		FALSE,		FALSE,		RGB( 255, 251, 240 ),	RGB(   0, 128, 192 ),	// 02/10/16 ai
 };
 

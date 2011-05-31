@@ -3,7 +3,7 @@
 class CEditView;
 
 #include "basis/SakuraBasis.h"
-
+#include "doc/CLayout.h"
 
 class CViewSelect{
 public:
@@ -74,12 +74,23 @@ public:
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void DrawSelectArea() const;		//!< 指定行の選択領域の描画
+	void DrawSelectArea2(HDC) const;		//!< 指定範囲の選択領域の描画
+private:
 	void DrawSelectAreaLine(			//!< 指定行の選択領域の描画
 		HDC					hdc,		//!< [in] 描画領域のDevice Context Handle
 		CLayoutInt			nLineNum,	//!< [in] 描画対象行(レイアウト行)
 		const CLayoutRange&	sRange		//!< [in] 選択範囲(レイアウト単位)
 	) const;
-
+public:
+	void GetSelectAreaLineFromRange(CLayoutRange& ret, CLayoutInt nLineNum, const CLayout* pcLayout, const CLayoutRange& sRange) const;
+	void GetSelectAreaLine(CLayoutRange& ret, CLayoutInt nLineNum, const CLayout* pcLayout) const{
+		GetSelectAreaLineFromRange(ret, nLineNum, pcLayout, m_sSelect);
+	}
+	CLayoutRange GetSelectAreaLine(CLayoutInt nLineNum, const CLayout* pcLayout) const{
+		CLayoutRange ret;
+		GetSelectAreaLineFromRange(ret, nLineNum, pcLayout, m_sSelect);
+		return ret;
+	}
 	//! 選択情報データの作成	2005.07.09 genta
 	void PrintSelectionInfoMsg() const;
 

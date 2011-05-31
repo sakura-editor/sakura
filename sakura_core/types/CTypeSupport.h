@@ -68,6 +68,12 @@ public:
 		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bUnderLine;
 	}
 
+
+	const ColorInfo& GetColorInfo() const
+	{
+		return m_pTypes->m_ColorInfoArr[m_nColorIdx];
+	}
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           •`‰æ                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
