@@ -313,7 +313,7 @@
 #define HLP000248	248 //（選択）半ページダウン
 #define HLP000275	275 //開く（ドロップダウン）
 #define HLP000276	276 //検索（ボックス）
-#define HLP000249	249 //読み取り専用
+#define HLP000249	249 //ビューモード
 #define HLP000250	250 //単語について
 #define HLP000251	251	//DIFF差分表示
 #define HLP000252	252	//次の差分へ
@@ -591,6 +591,15 @@
 #define HIDC_CHECK_UNDERLINE					11412 //下線
 #define HIDC_CHECK_LCPOS						11413 //桁指定１
 #define HIDC_CHECK_LCPOS2						11414 //桁指定２
+#define HIDC_EDIT_BACKIMG_PATH					11420 //背景画像ファイル名
+#define HIDC_BUTTON_BACKIMG_PATH_SEL			11421 //背景画像ボタン
+#define HIDC_COMBO_BACKIMG_POS					11422 //背景画像位置
+#define HIDC_CHECK_BACKIMG_SCR_X				11423 //背景画像ScrollX
+#define HIDC_CHECK_BACKIMG_SCR_Y				11424 //背景画像ScrollY
+#define HIDC_CHECK_BACKIMG_REP_X				11425 //背景画像RepeatX
+#define HIDC_CHECK_BACKIMG_REP_Y				11426 //背景画像RepeatY
+#define HIDC_EDIT_BACKIMG_OFFSET_X				11427 //背景画像OffsetX
+#define HIDC_EDIT_BACKIMG_OFFSET_Y				11428 //背景画像OffsetY
 #define HIDC_COMBO_SET_COLOR					11430 //強調キーワード１セット名
 #define HIDC_COMBO_SET2_COLOR					11431 //強調キーワード２セット名
 #define HIDC_EDIT_BLOCKCOMMENT_FROM				11440 //ブロックコメント１開始
@@ -625,6 +634,10 @@
 #define HIDC_EDIT_TYPEEXTHTMLHELP				11544 //外部HTMLヘルプファイル名	// 2006.08.06 ryoji
 #define HIDC_BUTTON_TYPEOPENEXTHTMLHELP			11545 //外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 #define HIDC_CHECK_TYPEHTMLHELPISSINGLE			11546 //ビューアを複数起動しない	// 2006.08.06 ryoji
+#define HIDC_COMBO_DEFAULT_CODETYPE				14300 //デフォルト文字コード
+#define HIDC_CHECK_PRIOR_CESU8					14301 //自動判別時にCESU-8を優先する
+#define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji
+#define HIDC_CHECK_DEFAULT_BOM					14303 //デフォルトBOM			// 2011.01.24 ryoji
 #define HIDC_BUTTON_REGEX_IMPORT	11600	//インポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_EXPORT	11601	//エクスポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_INS		11602	//挿入			//@@@ 2001.11.17 add MIK
