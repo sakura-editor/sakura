@@ -280,8 +280,8 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 
 /*!
 	CBregexp::MakePattern()の代替。
-	* エスケープされておらず、文字集合の中にもない . を [^\r\n] に置換する。
-	* エスケープされておらず、文字集合の中にもない $ を (?<![\r\n])(?=\r|$) に置換する。
+	* エスケープされておらず、文字集合と \Q...\Eの中にない . を [^\r\n] に置換する。
+	* エスケープされておらず、文字集合と \Q...\Eの中にない $ を (?<![\r\n])(?=\r|$) に置換する。
 	これは「改行」の意味を LF のみ(BREGEXP.DLLの仕様)から、CR, LF, CRLF に拡張するための変更である。
 	また、$ は改行の後ろ、行文字列末尾にマッチしなくなる。最後の一行の場合をのぞいて、
 	正規表現DLLに与えられる文字列の末尾は文書末とはいえず、$ がマッチする必要はないだろう。
@@ -312,51 +312,88 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	strModifiedSearch.reserve( modifiedSearchSize );
 
 	// szSearchを strModifiedSearchへ、ところどころ置換しながら順次コピーしていく。
-	struct Sequence {
-		enum State { None = 0, Escaped, SmallC } state;
-		Sequence() : state( None ) {}
-		bool EatCharacter( const wchar_t ch )
-		{
-			const wchar_t acceptChars[] = { L'\\', L'c', 0 };
-			const wchar_t acceptChar = acceptChars[this->state];
-			if( acceptChar && acceptChar == ch ) {
-				// 特定の文字を食べて次の状態へ。
-				this->state =  State( state + 1 );
-				return true;
-			} else if( this->state == Escaped || this->state == SmallC ) {
-				// 何でも一文字消費して終了。
-				this->state = None;
-				return true;
-			}
-			return false; // 関係ない文字だった。
-		}
-	} seq;
+	enum State {
+		DEF = 0, /* DEFULT 一番外側 */
+		D_E,     /* DEFAULT_ESCAPED 一番外側で \の次 */
+		D_C,     /* DEFAULT_SMALL_C 一番外側で \cの次 */
+		CHA,     /* CHARSET 文字クラスの中 */
+		C_E,     /* CHARSET_ESCAPED 文字クラスの中で \の次 */
+		C_C,     /* CHARSET_SMALL_C 文字クラスの中で \cの次 */
+		QEE,     /* QEESCAPE \Q...\Eの中 */
+		Q_E,     /* QEESCAPE_ESCAPED \Q...\Eの中で \の次 */
+		NUMBER_OF_STATE,
+		_EC = -1, /* ENTER CHARCLASS charsetLevelをインクリメントして CHAへ */
+		_XC = -2, /* EXIT CHARCLASS charsetLevelをデクリメントして CHAか DEFへ */
+		_DT = -3, /* DOT (特殊文字としての)ドットを置き換える */
+		_DL = -4, /* DOLLAR (特殊文字としての)ドルを置き換える */
+	};
+	enum CharClass {
+		OTHER = 0,
+		DOT,    /* . */
+		DOLLAR, /* $ */
+		SMALLC, /* c */
+		LARGEQ, /* Q */
+		LARGEE, /* E */
+		LBRCKT, /* [ */
+		RBRCKT, /* ] */
+		ESCAPE, /* \ */
+		NUMBER_OF_CHARCLASS
+	};
+	static const State state_transition_table[NUMBER_OF_STATE][NUMBER_OF_CHARCLASS] = {
+	/*        OTHER   DOT  DOLLAR  SMALLC LARGEQ LARGEE LBRCKT RBRCKT ESCAPE*/
+	/* DEF */ {DEF,  _DT,   _DL,    DEF,   DEF,   DEF,   _EC,   DEF,   D_E},
+	/* D_E */ {DEF,  DEF,   DEF,    D_C,   QEE,   DEF,   DEF,   DEF,   DEF},
+	/* D_C */ {DEF,  DEF,   DEF,    DEF,   DEF,   DEF,   DEF,   DEF,   D_E},
+	/* CHA */ {CHA,  CHA,   CHA,    CHA,   CHA,   CHA,   _EC,   _XC,   C_E},
+	/* C_E */ {CHA,  CHA,   CHA,    C_C,   CHA,   CHA,   CHA,   CHA,   CHA},
+	/* C_C */ {CHA,  CHA,   CHA,    CHA,   CHA,   CHA,   CHA,   CHA,   C_E},
+	/* QEE */ {QEE,  QEE,   QEE,    QEE,   QEE,   QEE,   QEE,   QEE,   Q_E},
+	/* Q_E */ {QEE,  QEE,   QEE,    QEE,   QEE,   DEF,   QEE,   QEE,   Q_E}
+	};
+	State state = DEF;
 	int charsetLevel = 0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
 	const wchar_t *left = szSearch, *right = szSearch;
 	for( ; *right; ++right ) { // CNativeW::GetSizeOfChar()は使わなくてもいいかな？
-		if( seq.EatCharacter( *right ) ) {
-			// (ブラケットの内外で有効な)エスケープシークエンス( \X, \cX )の一部だった。
-		} else if( *right == L'[' ) { // 鬼車では文字集合の中の [ は POSIXブラケット表現などの意味を持つので、必ずエスケープされている。これはエスケープされていないので、無条件でレベルを増す。
-			++charsetLevel;
-		} else if( *right == L']' ) {
-			if( 0 < charsetLevel ) { // 文字集合の外のエスケープされていない ] は合法なので考慮する。
-				charsetLevel -= nestedBracketIsAllowed ? 1 : charsetLevel;
-			}
-		} else {
-			if( *right == L'.' && charsetLevel == 0 ) {
+		const wchar_t ch = *right;
+		const CharClass charClass =
+			ch == L'.'  ? DOT:
+			ch == L'$'  ? DOLLAR:
+			ch == L'c'  ? SMALLC:
+			ch == L'Q'  ? LARGEQ:
+			ch == L'E'  ? LARGEE:
+			ch == L'['  ? LBRCKT:
+			ch == L']'  ? RBRCKT:
+			ch == L'\\' ? ESCAPE:
+			OTHER;
+		const State nextState = state_transition_table[state][charClass];
+		if(0 <= nextState) {
+			state = nextState;
+		} else switch(nextState) {
+			case _EC: // ENTER CHARSET
+				charsetLevel += 1;
+				state = CHA;
+			break;
+			case _XC: // EXIT CHARSET
+				charsetLevel -= 1;
+				state = 0 < charsetLevel ? CHA : DEF;
+			break;
+			case _DT: // DOT(match anything)
 				strModifiedSearch.append( left, right );
 				left = right + 1;
 				strModifiedSearch.append( szDotAlternative );
-			} else if( *right == L'$' && charsetLevel == 0 ) {
+			break;
+			case _DL: // DOLLAR(match end of line)
 				strModifiedSearch.append( left, right );
 				left = right + 1;
 				strModifiedSearch.append( szDollarAlternative );
-			}
+			break;
+			default: // バグ。enum Stateに見逃しがある。
+			break;
 		}
 	}
 	strModifiedSearch.append( left, right + 1 ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
 
-	return this->MakePatternSub( strModifiedSearch.c_str(), szReplace, L"", nOption );
+	return this->MakePatternSub( strModifiedSearch.data(), szReplace, L"", nOption );
 }
 
 
