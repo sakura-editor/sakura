@@ -263,9 +263,10 @@ private:
 	const char			*m_szTarget;		//!< 対象文字列へのポインタ
 	char				m_szMsg[80];		//!< BREGEXPからのメッセージを保持する
 	struct SyntaxInfo {
-		SyntaxInfo() : lookBehindIsAvailable( false ), nestedRawBracketIsDisallowed( false ) {}
+		SyntaxInfo() : lookBehindIsAvailable( false ), nestedRawBracketIsDisallowed( false ), qeEscapeIsAvailable( false ) {}
 		bool lookBehindIsAvailable; //!< 正規表現ライブラリが戻り読みをサポートするなら真。
 		bool nestedRawBracketIsDisallowed; //!< 正規表現ライブラリが文字集合の中で、POSIXブラケット以外のエスケープされていない [ を禁じていたら真。
+		bool qeEscapeIsAvailable; //!<正規表現ライブラリが \Q...\Eをサポートしていたら真。
 	} m_checkedSyntax;
 	// 静的メンバ変数
 	static const char	m_tmpBuf[2];		//!< ダミー文字列

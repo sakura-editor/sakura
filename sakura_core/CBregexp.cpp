@@ -349,8 +349,8 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 }
 
 /*! @brief CBregexp::MakePattern()の代替。
-	* エスケープされておらず、文字集合の中にもない . を [^\r\n] に置換する。
-	* エスケープされておらず、文字集合の中にもない $ を (?<![\r\n])(?=\r|$) に置換する。
+	* エスケープされておらず、文字集合と \Q...\Eの中にない . を [^\r\n] に置換する。
+	* エスケープされておらず、文字集合と \Q...\Eの中にない $ を (?<![\r\n])(?=\r|$) に置換する。
 	これは「改行」の意味を LF のみ(BREGEXP.DLLの仕様)から、CR, LF, CRLF に拡張するための変更である。
 	また、$ は改行の後ろ、行文字列末尾にマッチしなくなる。最後の一行の場合をのぞいて、
 	正規表現DLLに与えられる文字列の末尾は文書末とはいえず、$ がマッチする必要はないだろう。
@@ -361,6 +361,7 @@ char* CBregexp::MakePatternAlternate( const char* const szSearch, const char* co
 	this->CheckPattern( szSearch );
 
 	const bool nestedRawBracketIsDisallowed = this->m_checkedSyntax.nestedRawBracketIsDisallowed;
+	const bool qeEscapeIsAvailable = this->m_checkedSyntax.qeEscapeIsAvailable;
 	const char szDotAlternative[] = "[^\\r\\n]";
 	const char szDollarAlternative[] = "(?<![\\r\\n])(?=\\r|$)";
 
@@ -381,59 +382,100 @@ char* CBregexp::MakePatternAlternate( const char* const szSearch, const char* co
 	strModifiedSearch.reserve( modifiedSearchSize );
 
 	// szSearchを strModifiedSearchへ、ところどころ置換しながら順次コピーしていく。
-	struct Sequence {
-		enum State { None = 0, Escaped, SmallC } state;
-		Sequence() : state( None ) {}
-		bool EatCharacter( const char ch )
-		{
-			char acceptChars[3];
-			acceptChars[None] = '\\'; acceptChars[Escaped] = 'c'; acceptChars[SmallC] = 0;
-			const char acceptChar = acceptChars[this->state];
-			if( acceptChar && acceptChar == ch ) {
-				// 特定の文字を食べて次の状態へ。
-				this->state =  State( state + 1 );
-				return true;
-			} else if( this->state == Escaped || this->state == SmallC ) {
-				// 何でも一文字消費して終了。
-				this->state = None;
-				return true;
-			}
-			return false; // 関係ない文字だった。
-		}
-	} seq;
+	enum State {
+		DEF = 0, /* DEFULT 一番外側 */
+		D_E,     /* DEFAULT_ESCAPED 一番外側で \の次 */
+		D_C,     /* DEFAULT_SMALL_C 一番外側で \cの次 */
+		CHA,     /* CHARSET 文字クラスの中 */
+		C_E,     /* CHARSET_ESCAPED 文字クラスの中で \の次 */
+		C_C,     /* CHARSET_SMALL_C 文字クラスの中で \cの次 */
+		QEE,     /* QEESCAPE \Q...\Eの中 */
+		Q_E,     /* QEESCAPE_ESCAPED \Q...\Eの中で \の次 */
+		NUMBER_OF_STATE,
+		_EC = -1, /* ENTER CHARCLASS charsetLevelをインクリメントして CHAへ */
+		_XC = -2, /* EXIT CHARCLASS charsetLevelをデクリメントして CHAか DEFへ */
+		_DT = -3, /* DOT (特殊文字としての)ドットを置き換える */
+		_DL = -4, /* DOLLAR (特殊文字としての)ドルを置き換える */
+		_QE = -5  /* ENTER QEESCAPE OR NOT \Q...\Eがサポートされていれば QEEへ、でなければ DEFへ */
+	};
+	enum CharClass {
+		OTHER = 0,
+		DOT,    /* . */
+		DOLLAR, /* $ */
+		SMALLC, /* c */
+		LARGEQ, /* Q */
+		LARGEE, /* E */
+		LBRCKT, /* [ */
+		RBRCKT, /* ] */
+		ESCAPE, /* \ */
+		NUMBER_OF_CHARCLASS
+	};
+	static const State state_transition_table[NUMBER_OF_STATE][NUMBER_OF_CHARCLASS] = {
+	/*        OTHER   DOT  DOLLAR  SMALLC LARGEQ LARGEE LBRCKT RBRCKT ESCAPE*/
+	/* DEF */ {DEF,  _DT,   _DL,    DEF,   DEF,   DEF,   _EC,   DEF,   D_E},
+	/* D_E */ {DEF,  DEF,   DEF,    D_C,   _QE,   DEF,   DEF,   DEF,   DEF},
+	/* D_C */ {DEF,  DEF,   DEF,    DEF,   DEF,   DEF,   DEF,   DEF,   D_E},
+	/* CHA */ {CHA,  CHA,   CHA,    CHA,   CHA,   CHA,   _EC,   _XC,   C_E},
+	/* C_E */ {CHA,  CHA,   CHA,    C_C,   CHA,   CHA,   CHA,   CHA,   CHA},
+	/* C_C */ {CHA,  CHA,   CHA,    CHA,   CHA,   CHA,   CHA,   CHA,   C_E},
+	/* QEE */ {QEE,  QEE,   QEE,    QEE,   QEE,   QEE,   QEE,   QEE,   Q_E},
+	/* Q_E */ {QEE,  QEE,   QEE,    QEE,   QEE,   DEF,   QEE,   QEE,   Q_E}
+	};
+	
+	State state = DEF;
 	int charsetLevel = 0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
 	const char *left = szSearch, *right = szSearch;
 	for( ; *right; right += Charcode::GuessCharLen_sjis( reinterpret_cast<const uchar_t*>( right ) ) ) {
-		if( seq.EatCharacter( *right ) ) {
-			// (ブラケットの内外で有効な)エスケープシークエンス( \X, \cX )の一部だった。
-		} else if( *right == '[' ) {
-			++charsetLevel;
-		} else if( *right == ']' ) {
-			if( 0 < charsetLevel ) { // 文字集合の外のエスケープされていない ] は合法なので考慮する。
+		const char ch = *right;
+		const CharClass charClass =
+			ch == '.'  ? DOT:
+			ch == '$'  ? DOLLAR:
+			ch == 'c'  ? SMALLC:
+			ch == 'Q'  ? LARGEQ:
+			ch == 'E'  ? LARGEE:
+			ch == '['  ? LBRCKT:
+			ch == ']'  ? RBRCKT:
+			ch == '\\' ? ESCAPE:
+			OTHER;
+		const State nextState = state_transition_table[state][charClass];
+		if(0 <= nextState) {
+			state = nextState;
+		} else switch(nextState) {
+			case _EC: // ENTER CHARSET
+				charsetLevel += 1;
+				state = CHA;
+			break;
+			case _XC: // EXIT CHARSET
 				charsetLevel -= nestedRawBracketIsDisallowed ? 1 : charsetLevel;
-			}
-		} else {
-			if( *right == '.' && charsetLevel == 0 ) {
+				state = 0 < charsetLevel ? CHA : DEF;
+			break;
+			case _DT: // DOT(match anything)
 				strModifiedSearch.append( left, right - left );
 				left = right + 1;
 				strModifiedSearch.append( szDotAlternative );
-			} else if( *right == '$' && charsetLevel == 0 ) {
+			break;
+			case _DL: // DOLLAR(match end of line)
 				strModifiedSearch.append( left, right - left );
 				left = right + 1;
 				strModifiedSearch.append( szDollarAlternative );
-			}
+			break;
+			case _QE: // ENTER QEESCAPE OR NOT
+				state = qeEscapeIsAvailable ? QEE : DEF;
+			break;
+			default: // バグ。enum Stateに見逃しがある。
+			break;
 		}
 	}
 	strModifiedSearch.append( left, right + 1 - left ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
 
-	return this->MakePatternSub( strModifiedSearch.c_str(), szReplace, "", nOption );
+	return this->MakePatternSub( strModifiedSearch.data(), szReplace, "", nOption );
 }
 
 //! 正規表現ライブラリがサポートする文法をチェックする。
 void CBregexp::CheckSupportedSyntax()
 {
 	BREGEXP* pBREGEXP = 0;
-	const char szTarget[] = "";
+	const char szTarget[] = "$";
 	char szErrMsg[128] = "";
 
 	// 戻り読みチェック
@@ -445,6 +487,12 @@ void CBregexp::CheckSupportedSyntax()
 	szErrMsg[0] = '\0';
 	const char szNestedRawBracket[] = "m/[[]/";
 	this->m_checkedSyntax.nestedRawBracketIsDisallowed = this->BMatch( szNestedRawBracket, szTarget, szTarget + 1, &pBREGEXP, szErrMsg ) < 0;
+
+	// \Q...\Eが有効か調べる。
+	szErrMsg[0] = '\0';
+	const char szQEEscape[] = "m/\\Q$\\E/";
+	this->m_checkedSyntax.qeEscapeIsAvailable = 0 < this->BMatch( szQEEscape, szTarget, szTarget + 1, &pBREGEXP, szErrMsg )
+		&& pBREGEXP->startp[0] == szTarget;
 
 	if( pBREGEXP ) {
 		this->BRegfree( pBREGEXP );
