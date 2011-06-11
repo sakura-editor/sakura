@@ -408,8 +408,6 @@ void CEditView::DeleteData(
 	CLayoutRect		rcSel;
 	const CLayout*	pcLayout;
 
-	CLayoutPoint ptSelectFrom_Old;
-
 	// テキストの存在しないエリアの削除は、選択範囲のキャンセルとカーソル移動のみとする	// 2008.08.05 ryoji
 	if( GetSelectionInfo().IsTextSelected() ){		// テキストが選択されているか
 		if( IsEmptyArea( GetSelectionInfo().m_sSelect.GetFrom(), GetSelectionInfo().m_sSelect.GetTo(), true, GetSelectionInfo().IsBoxSelecting() ) ){
@@ -450,8 +448,6 @@ void CEditView::DeleteData(
 			m_pcEditDoc->m_cDocEditor.SetModified(true,bRedraw);	//	2002/06/04 YAZAKI 矩形選択を削除したときに変更マークがつかない。
 
 			SetDrawSwitch(false);	// 2002.01.25 hor
-			ptSelectFrom_Old = GetSelectionInfo().m_sSelect.GetFrom();
-
 			/* 選択範囲のデータを取得 */
 			/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 			/* ２点を対角とする矩形を求める */
@@ -514,7 +510,15 @@ void CEditView::DeleteData(
 			}
 			/* 選択エリアの先頭へカーソルを移動 */
 			this->UpdateWindow();
-			GetCaret().MoveCursor( ptSelectFrom_Old, bRedraw );
+			
+			CLayoutPoint caretOld = CLayoutPoint(rcSel.left, rcSel.top);
+			m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
+			if( rcSel.left <= pcLayout->CalcLayoutWidth( m_pcEditDoc->m_cLayoutMgr ) ){
+				// EOLより左なら文字の単位にそろえる
+				CLogicInt nIdxCaret = LineColmnToIndex( pcLayout, rcSel.left );
+				caretOld.SetX( LineIndexToColmn( pcLayout, nIdxCaret ) );
+			}
+			GetCaret().MoveCursor( caretOld, bRedraw );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				CMoveCaretOpe*		pcOpe = new CMoveCaretOpe();
