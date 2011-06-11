@@ -2012,7 +2012,7 @@ void CEditView::CopySelectedAllLines(
 		sSelect.SetToX( pcLayout? pcLayout->GetIndent(): CLayoutInt(0) );
 		GetCaret().GetAdjustCursorPos( sSelect.GetToPointer() );	// EOFs‚ğ’´‚¦‚Ä‚¢‚½‚çÀ•WC³
 
-		GetSelectionInfo().DisableSelectArea( TRUE );
+		GetSelectionInfo().DisableSelectArea( false ); // 2011.06.03 TRUE ¨false
 		GetSelectionInfo().SetSelectArea( sSelect );
 
 		GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), false );
