@@ -325,7 +325,7 @@
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
-#define HLP000302	302 //色設定ファイル
+//#define HLP000302	302 //色設定ファイル
 // note: 303 は 「このファイル名をコピー」が使用
 //#define HLP000304	304 //メタ文字列の仕様 HLP000272
 #define HLP000089	89 //利用可能な正規表現	// 2007.09.30
@@ -745,6 +745,8 @@
 #define HIDC_RADIO_OUTPUT			12106	//標準出力リダイレクト先：アウトプットウィンドウ
 #define HIDC_RADIO_EDITWINDOW		12107	//標準出力リダイレクト先：編集中のウィンドウ
 #define HIDC_CHECK_SENDSTDIN		12108	//標準入力に送る
+#define HIDC_CHECK_UNICODE_GET		12109	//Unicodeで標準出力
+#define HIDC_CHECK_UNICODE_SEND		12110	//Unicodeで標準入力
 
 //アウトライン解析
 #define HIDC_FL_BUTTON_COPY		12200	//コピー
@@ -758,6 +760,7 @@
 #define HIDC_FL_CHECK_bMarkUpBlankLineEnable	12208	//空行を無視する
 #define HIDC_COMBO_nSortType	12209	//順序
 #define HIDC_FL_BUTTON_WINSIZE	12210	//ウィンドウ位置保存	// 2006.08.06 ryoji
+#define HIDC_FL_BUTTON_MENU		12211	//ウィンドウの位置メニュー
 
 //ファイル内容比較
 #define HIDC_CMP_BUTTON1		12300	//上下に表示
@@ -769,13 +772,13 @@
 #define HIDC_CMP_LIST_FILES		12306	//ファイル一覧
 #define HIDC_CMP_STATIC_COMPARESRC	12307	//ソースファイル
 
-//印刷
-#define HIDOK_PP			12400	//OK
-#define HIDCANCEL_PP		12401	//キャンセル
-#define HIDC_PP_EDIT_FROM	12402	//ページから
-#define HIDC_PP_EDIT_TO		12403	//ページまで
-#define HIDC_PP_RADIO_ALL	12404	//すべて
-#define HIDC_PP_RADIO_FROMTO	12405	//指定
+//印刷	del Uchi 2010/4/26
+//#define HIDOK_PP			12400	//OK
+//#define HIDCANCEL_PP		12401	//キャンセル
+//#define HIDC_PP_EDIT_FROM	12402	//ページから
+//#define HIDC_PP_EDIT_TO		12403	//ページまで
+//#define HIDC_PP_RADIO_ALL	12404	//すべて
+//#define HIDC_PP_RADIO_FROMTO	12405	//指定
 
 //印刷設定
 #define HIDC_PS_BUTTON_EDITSETTINGNAME	12500	//設定名変更
@@ -810,7 +813,7 @@
 
 //プロパティ
 #define HIDOK_PROP				12600	//
-#define HIDCANCEL_PROP			12601	//
+//#define HIDCANCEL_PROP			12601	//	del 2008/7/4 Uchi
 #define HIDC_PROP_BUTTON_HELP	12602	//
 #define HIDC_PROP_EDIT1			12603	//
 
@@ -844,7 +847,7 @@
 #define HIDC_JUMP_RADIO_LINENUM_CRLF	12808	//改行単位
 
 //バージョン情報
-#define HIDC_ABOUT_BUTTON_CONTACT	12900	//
+//#define HIDC_ABOUT_BUTTON_CONTACT	12900	//	del 2008/7/4 Uchi
 #define HIDOK_ABOUT					12901	//
 #define HIDC_ABOUT_EDIT_ABOUT		12902	//
 
@@ -918,8 +921,10 @@
 #define	HIDC_LIST_FAVORITE_GREPFILE	13515
 #define	HIDC_LIST_FAVORITE_GREPFOLDER	13516
 #define	HIDC_LIST_FAVORITE_CMD		13517
-#define	HIDC_BUTTON_FAVORITE_CLEAR	13518	//履歴のクリア	// 2006.10.10 ryoji
-
+#define	HIDC_BUTTON_FAVORITE_CLEAR	13518	//履歴の削除	// 2006.10.10 ryoji
+#define	HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE	13519
+#define	HIDC_BUTTON_FAVORITE_DELETE_NOTFOUND	13520
+#define	HIDC_BUTTON_FAVORITE_DELETE_SELECTED	13521
 //タグジャンプリスト
 #define	HIDC_LIST_TAGJUMPLIST		13600
 #define	HIDC_TAGJUMPLIST_IDOK		13601
@@ -941,7 +946,7 @@
 #define	HIDC_EDIT_WY			13802
 #define	HIDC_EDIT_SX			13803
 #define	HIDC_EDIT_SY			13804
-#define	HIDC_CHECK_WINPOS		13805
+//#define	HIDC_CHECK_WINPOS		13805
 #define	HIDC_RADIO_WINSIZE_DEF	13806
 #define	HIDC_RADIO_WINSIZE_SAVE	13807
 #define	HIDC_RADIO_WINSIZE_SET	13808

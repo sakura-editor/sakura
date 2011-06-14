@@ -25,10 +25,14 @@ JISで保存する場合のエスケープシーケンスは次の通りです。<br>
 <img src="images/note.png"><b>注意</b><br>
 JISの半角カタカナは規格違反です。使用しないでください<br>
 </div><br>
-■Unicode/UnicodeBE/UTF-8/UTF-7<br>
+■Unicode/UnicodeBE/UTF-8/UTF-7/CESU-8<br>
 <div class=li200>・制限<br>
+(sakura:1.6.6.0以前)<br>
 サクラエディタの内部コードがSJISのため、SJISに含まれない文字は変になります。<br>
 サロゲートペア(UTF-16)には未対応です。<br>
+(sakura:2.0.0.0以降)<br>
+サクラエディタの内部コードがUnicodeのため、Unicodeに含まれない文字は変になります。<br>
+サロゲートペア(UTF-16)に対応しています。<br>
 </div><br>
 ■UTF-8<br>
 <div class=li200>・制限<br>
