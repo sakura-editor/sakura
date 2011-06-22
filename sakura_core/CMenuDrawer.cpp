@@ -1427,7 +1427,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			if (m_tbMyButton.size() < (size_t)m_pShareData->m_maxTBNum) {
 				// ãÛÇ´ÇãlÇﬂçûÇﬁ
 				SetTBBUTTONVal( &tbb,TOOLBAR_BUTTON_F_PLUGCOMMAND - 1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
-				for (i = m_tbMyButton.size(); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
+				for (i = m_tbMyButton.size(); i < m_pShareData->m_maxTBNum; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
 				}
@@ -1441,5 +1441,8 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			m_tbMyButton.push_back( tbb );
 			m_nMyButtonNum++;
 		}
+	}
+	if (m_pShareData->m_maxTBNum < m_nMyButtonNum) {
+		m_pShareData->m_maxTBNum = m_nMyButtonNum;
 	}
 }
