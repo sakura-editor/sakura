@@ -494,10 +494,10 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 			if( common.m_sHelper.m_ps_kh != 0 ){
 				// DPI変更してもフォントのポイントサイズが変わらないように
 				// ポイント数からピクセル数に変換する
-				common.m_sHelper.m_lf_kh.lfHeight = DpiPointsToPixels( -abs(common.m_sHelper.m_ps_kh) ) / 10;	// 1/10ポイント単位のサイズ
+				common.m_sHelper.m_lf_kh.lfHeight = DpiPointsToPixels( -abs(common.m_sHelper.m_ps_kh), 10 );	// m_ps_kh: 1/10ポイント単位のサイズ
 			}else{
 				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
-				common.m_sHelper.m_ps_kh = DpiPixelsToPoints( abs(common.m_sHelper.m_lf_kh.lfHeight * 10) );
+				common.m_sHelper.m_ps_kh = DpiPixelsToPoints( abs(common.m_sHelper.m_lf_kh.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
 			}
 		}else{
 			auto_sprintf( szKeyData, pszForm,
@@ -955,10 +955,10 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 			if( view.m_nPointSize != 0 ){
 				// DPI変更してもフォントのポイントサイズが変わらないように
 				// ポイント数からピクセル数に変換する
-				view.m_lf.lfHeight = DpiPointsToPixels( -abs(view.m_nPointSize) ) / 10;	// 1/10ポイント単位のサイズ
+				view.m_lf.lfHeight = DpiPointsToPixels( -abs(view.m_nPointSize), 10 );	// m_nPointSize: 1/10ポイント単位のサイズ
 			}else{
 				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
-				view.m_nPointSize = DpiPixelsToPoints( abs(view.m_lf.lfHeight * 10) );
+				view.m_nPointSize = DpiPixelsToPoints( abs(view.m_lf.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
 			}
 		}
 	}else{

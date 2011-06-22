@@ -41,8 +41,8 @@ public:
 		lprc->top = UnscaleY(lprc->top);
 		lprc->bottom = UnscaleY(lprc->bottom);
 	}
-	static int PointsToPixels(int pt){Init(); return ::MulDiv(pt, nDpiY, 72);}
-	static int PixelsToPoints(int pt){Init(); return ::MulDiv(pt, 72, nDpiY);}
+	static int PointsToPixels(int pt, int ptMag = 1){Init(); return ::MulDiv(pt, nDpiY, 72 * ptMag);}	// ptMag: 引数のポイント数にかかっている倍率
+	static int PixelsToPoints(int px, int ptMag = 1){Init(); return ::MulDiv(px * ptMag, 72, nDpiY);}	// ptMag: 戻り値のポイント数にかける倍率
 };
 
 #ifdef COMPILE_WINDOW_STUBS
@@ -57,8 +57,8 @@ inline int DpiUnscaleX(int x){return CDPI::UnscaleX(x);}
 inline int DpiUnscaleY(int y){return CDPI::UnscaleY(y);}
 inline void DpiScaleRect(LPRECT lprc){CDPI::ScaleRect(lprc);}
 inline void DpiUnscaleRect(LPRECT lprc){CDPI::UnscaleRect(lprc);}
-inline int DpiPointsToPixels(int pt){return CDPI::PointsToPixels(pt);}
-inline int DpiPixelsToPoints(int px){return CDPI::PixelsToPoints(px);}
+inline int DpiPointsToPixels(int pt, int ptMag = 1){return CDPI::PointsToPixels(pt, ptMag);}
+inline int DpiPixelsToPoints(int px, int ptMag = 1){return CDPI::PixelsToPoints(px, ptMag);}
 
 SAKURA_CORE_API void ActivateFrameWindow( HWND );	/* アクティブにする */
 
