@@ -1859,7 +1859,7 @@ BEGIN
     EDITTEXT        IDC_MACRONAME,39,176,203,14,ES_AUTOHSCROLL
     LTEXT           "&File",IDC_STATIC,6,194,12,8
     COMBOBOX        IDC_MACROPATH,39,192,203,130,CBS_DROPDOWN | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+                    CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "マクロを実行するたびにファイルを読み込みなおす（&L）",
                     IDC_CHECK_RELOADWHENEXECUTE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,6,211,185,10
