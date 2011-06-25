@@ -289,7 +289,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 						break;
 					}
 					nBgn = i;	//	nBgnは引数の先頭の文字
-					for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
+					//	行末の検出のため，ループ回数を1増やした
+					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
 						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// まだ数値
 //							++i;
 							continue;
