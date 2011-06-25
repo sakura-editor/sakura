@@ -706,7 +706,7 @@ char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFu
 					*p = '\0';
 					break;
 				}
-				*p++;
+				p++;
 			}
 		}
 		//	Jun. 16, 2002 genta NULLÇÃÇ∆Ç´ÇÕâΩÇ‡ÇµÇ»Ç¢ÅD

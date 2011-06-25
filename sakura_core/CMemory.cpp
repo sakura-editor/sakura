@@ -2721,16 +2721,15 @@ void CMemory::SwapHLByte( void ){
 		return;
 	}
 	// çÇë¨âªÇÃÇΩÇﬂ
+	pdwchar = (unsigned int*)pBuf;
 	if( (size_t)pBuf % 2 == 0){
 		if( (size_t)pBuf % 4 == 2 ){
 			ctemp = pBuf[0];
 			pBuf[0]  = pBuf[1];
 			pBuf[1]  = ctemp;
 			pdwchar = (unsigned int*)(pBuf + 2);
-		}else{
-			pdwchar = (unsigned int*)pBuf;
 		}
-		pdw_end = (unsigned int*)(pdwchar + nBufLen / sizeof(int)) - 1;
+		pdw_end = (unsigned int*)(pBuf + nBufLen - sizeof(unsigned int));
 
 		for(; pdwchar <= pdw_end ; ++pdwchar ){
 			pdwchar[0] = ((pdwchar[0] & (unsigned int)0xff00ff00) >> 8) |
