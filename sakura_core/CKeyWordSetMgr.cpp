@@ -83,7 +83,7 @@ void CKeyWordSetMgr::ResetAllKeyWordSet( void )
 		m_nStartIdx[i] = 0;
 	}
 	for( i = 0; i < MAX_SETNUM; i++ ){
-		m_nKeyWordNumArr[MAX_SETNUM] = 0;
+		m_nKeyWordNumArr[i] = 0;
 	}
 }
 

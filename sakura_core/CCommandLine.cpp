@@ -206,42 +206,30 @@ void CCommandLine::ParseCommandLine( void )
 	}
 
 
-	TCHAR	szPath[_MAX_PATH + 1];
-	bool	bFind = false;
+	TCHAR	szPath[_MAX_PATH];
+	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
-	int		i, j;
-//	WIN32_FIND_DATA	w32fd;
-//	HANDLE			hFind;
+	int		i;
 	if( m_pszCmdLineSrc[0] != '-' ){
-		memset( (char*)szPath, 0, sizeof( szPath ) );
-		i = 0;
-		j = 0;
-		for( ; i < sizeof( szPath ) - 1 && i <= (int)lstrlen(m_pszCmdLineSrc); ++i ){
-			if( m_pszCmdLineSrc[i] != ' ' && m_pszCmdLineSrc[i] != '\0' ){
-				szPath[j] = m_pszCmdLineSrc[i];
-				++j;
-				continue;
-			}
-			/* ファイルの存在と、ファイルかどうかをチェック */
-			if( -1 != _access( szPath, 0 ) ){
-//? 2000.01.18 システム属性のファイルが開けない問題
-//?				hFind = ::FindFirstFile( szPath, &w32fd );
-//?				::FindClose( hFind );
-//?				if( w32fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM ||
-//?					w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ){
-//?				}else{
+		for( i = 0; i < sizeof( szPath ); ++i ){
+			if( m_pszCmdLineSrc[i] == _T(' ') || m_pszCmdLineSrc[i] == _T('\0') ){
+				/* ファイルの存在をチェック */
+				szPath[i] = _T('\0');	// 終端文字
+				if( -1 != _access( szPath, 0 ) ){
 					bFind = true;
 					break;
-//?				}
+				}
+				if( m_pszCmdLineSrc[i] == _T('\0') ){
+					break;
+				}
 			}
-			szPath[j] = m_pszCmdLineSrc[i];
-			++j;
+			szPath[i] = m_pszCmdLineSrc[i];
 		}
 	}
 	if( bFind ){
 		strcpy( m_fi.m_szPath, szPath );	/* ファイル名 */
-		nPos = j + 1;
+		nPos = i + 1;
 	}else{
 		nPos = 0;
 	}

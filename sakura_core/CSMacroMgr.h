@@ -95,19 +95,19 @@ public:
 	
 	//!	実行可能か？CShareDataに問い合わせ
 	bool IsEnabled(int idx) const {
-		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
+		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].IsEnabled() : false;
 	}
 	
 	//!	表示する名前の取得
 	const char* GetTitle(int idx) const {
-		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
+		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
 	}
 	
 	//!	表示名の取得
 	const char* GetName(int idx) const {
-		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
+		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].m_szName : NULL;
 	}
 	
@@ -116,7 +116,7 @@ public:
 		@param idx [in] マクロ番号
 	*/
 	const char* GetFile(int idx) const {
-		return ( 0 <= idx || idx < MAX_CUSTMACRO ) ?
+		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].m_szFile : NULL;
 	}
 

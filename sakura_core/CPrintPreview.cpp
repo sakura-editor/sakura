@@ -491,6 +491,7 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 		break;
 	case SB_RIGHT:
 		nMove = si.nMax - nNowPos;
+		break;
 	default:
 		return 0;
 	}
