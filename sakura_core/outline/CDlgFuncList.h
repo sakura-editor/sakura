@@ -46,7 +46,7 @@ public:
 	||  Attributes & Operations
 	*/
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
-	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, bool );/* モードレスダイアログの表示 */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, CLayoutInt, int, int, bool );/* モードレスダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
 	bool IsDocking() { return m_eDockSide > DOCKSIDE_FLOAT; }
 	EDockSide GetDockSide() { return m_eDockSide; }
@@ -64,8 +64,8 @@ public:
 
 	/*! 現在の種別と同じなら
 	*/
-	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nListType; }
-	void Redraw( int nOutLineType, CFuncInfoArr*, CLayoutInt nCurLine, CLayoutInt nCurCol );
+	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nOutlineType; }
+	void Redraw( int nOutLineType, int nListType, CFuncInfoArr*, CLayoutInt nCurLine, CLayoutInt nCurCol );
 	void Refresh( void );
 	bool ChangeLayout( int nId );
 	void OnOutlineNotify( WPARAM wParam, LPARAM lParam );
@@ -78,6 +78,7 @@ public:
 	CLayoutInt		m_nCurCol;			/* 現在桁 */
 	int				m_nSortCol;			/* ソートする列番号 */
 	int				m_nDocType;			/* ドキュメントの種類 */
+	int				m_nOutlineType;		/* アウトライン解析の種別 */
 	int				m_nListType;		/* 一覧の種類 */
 	CNativeW		m_cmemClipText;		/* クリップボードコピー用テキスト */
 	int				m_bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */

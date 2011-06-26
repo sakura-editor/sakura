@@ -247,6 +247,11 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 
 
 /* モードレスダイアログの表示 */
+/*
+ * @note 2011.06.25 syat nOutlineTypeを追加
+ *   nOutlineTypeとnListTypeはほとんどの場合同じ値だが、プラグインの場合は例外で、
+ *   nOutlineTypeはアウトライン解析のID、nListTypeはプラグイン内で指定するリスト形式となる。
+ */
 HWND CDlgFuncList::DoModeless(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
@@ -254,6 +259,7 @@ HWND CDlgFuncList::DoModeless(
 	CFuncInfoArr*	pcFuncInfoArr,
 	CLayoutInt		nCurLine,
 	CLayoutInt		nCurCol,
+	int				nOutlineType,		
 	int				nListType,
 	bool			bLineNumIsCRLF		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 )
@@ -263,6 +269,7 @@ HWND CDlgFuncList::DoModeless(
 	m_pcFuncInfoArr = pcFuncInfoArr;	/* 関数情報配列 */
 	m_nCurLine = nCurLine;				/* 現在行 */
 	m_nCurCol = nCurCol;				/* 現在桁 */
+	m_nOutlineType = nOutlineType;		/* アウトライン解析の種別 */
 	m_nListType = nListType;			/* 一覧の種類 */
 	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
@@ -2053,11 +2060,12 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 /*!
 	@date 2002.10.05 genta
 */
-void CDlgFuncList::Redraw( int nOutLineType, CFuncInfoArr* pcFuncInfoArr, CLayoutInt nCurLine, CLayoutInt nCurCol )
+void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFuncInfoArr, CLayoutInt nCurLine, CLayoutInt nCurCol )
 {
 	SyncColor();
 
-	m_nListType = nOutLineType;
+	m_nOutlineType = nOutLineType;
+	m_nListType = nListType;
 	m_pcFuncInfoArr = pcFuncInfoArr;	/* 関数情報配列 */
 	m_nCurLine = nCurLine;				/* 現在行 */
 	m_nCurCol = nCurCol;				/* 現在桁 */
