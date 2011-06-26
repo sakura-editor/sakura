@@ -4369,6 +4369,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 
 	/* 解析結果データを空にする */
 	cFuncInfoArr.Empty();
+	int		nListType = nOutlineType;			//2011.06.25 syat
 
 	switch( nOutlineType ){
 	case OUTLINE_C:			// C/C++ は MakeFuncList_C
@@ -4406,7 +4407,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 				//プラグイン呼び出し
 				( *plugs.begin() )->Invoke( m_pCommanderView, params );
 
-				nOutlineType = objOutline->m_nListType;			//ダイアログの表示方法をを上書き
+				nListType = objOutline->m_nListType;			//ダイアログの表示方法をを上書き
 				sTitleOverride = objOutline->m_sOutlineTitle;	//ダイアログタイトルを上書き
 
 				objOutline->Release();
@@ -4433,11 +4434,12 @@ BOOL CViewCommander::Command_FUNCLIST(
 			poCaret.GetY2() + CLayoutInt(1),
 			poCaret.GetX2() + CLayoutInt(1),
 			nOutlineType,
+			nListType,
 			GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 		);
 	}else{
 		/* アクティブにする */
-		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
+		GetEditWindow()->m_cDlgFuncList.Redraw( nOutlineType, nListType, &cFuncInfoArr, poCaret.GetY2() + 1, poCaret.GetX2() + 1 );
 		if( bForeground ){
 			::SetFocus( GetEditWindow()->m_cDlgFuncList.GetHwnd() );
 		}
