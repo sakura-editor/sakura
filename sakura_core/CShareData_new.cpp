@@ -1361,7 +1361,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 								*pT = '\0';
 								strcpy( types.m_KeyHelpArr[j].m_szAbout, pH );
 								pH = pT+1;
-								if( NULL != (*pH) ){
+								if( '\0' != (*pH) ){
 									strcpy( types.m_KeyHelpArr[j].m_szPath, pH );
 									types.m_nKeyHelpNum = j+1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
 								}

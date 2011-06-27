@@ -3127,7 +3127,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOp
 	
 	try{
 		// ファイルを開く
-		cfl.FileOpen( filename, nSaveCharCode, NULL );
+		cfl.FileOpen( filename, nSaveCharCode, 0 );
 
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {

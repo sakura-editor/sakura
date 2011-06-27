@@ -1781,8 +1781,8 @@ LRESULT CEditWnd::DispatchEvent(
 			}else{
 				nPane = m_cEditDoc.m_cSplitterWnd.GetLastPane();
 			}
+			m_cEditDoc.SetActivePane( nPane );
 		}
-		m_cEditDoc.SetActivePane( nPane );
 		return 0L;
 
 

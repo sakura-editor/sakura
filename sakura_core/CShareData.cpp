@@ -506,7 +506,7 @@ bool CShareData::Init( void )
 			SPI_GETICONTITLELOGFONT,				// system parameter to query or set
 			sizeof(LOGFONT),						// depends on action to be taken
 			(PVOID)&m_pShareData->m_Common.m_lf_kh,	// depends on action to be taken
-			NULL									// user profile update flag
+			0										// user profile update flag
 		);
 		// ai 02/05/21 Add E
 
