@@ -183,6 +183,11 @@
 				<param name="Local" value="_RESOURCE\HLP000261.html">
 				<param name="ImageNumber" value="9">
 				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="プラグイン">
+				<param name="Local" value="_RESOURCE\HLP000110.html">
+				<param name="ImageNumber" value="9">
+				</OBJECT>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="コマンド概要">
@@ -1354,6 +1359,11 @@
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="折り返し桁数">
 					<param name="Local" value="_RESOURCE\HLP000184.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="文字カウント方法">
+					<param name="Local" value="_RESOURCE\HLP000341.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
