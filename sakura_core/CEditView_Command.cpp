@@ -4607,8 +4607,10 @@ BOOL CEditView::Command_FUNCLIST( int nAction/*nReLoad,bCheckOnly*/, int nOutlin
 	if( nOutlineType == OUTLINE_DEFAULT ){
 		/* タイプ別に設定されたアウトライン解析方法 */
 		nOutlineType = m_pcEditDoc->GetDocumentAttribute().m_nDefaultOutline;
-		if( CheckEXT( m_pcEditDoc->GetFilePath(), "c" ) ){
-			nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
+		if( nOutlineType == OUTLINE_CPP ){
+			if( CheckEXT( m_pcEditDoc->GetFilePath(), _T("c") ) ){
+				nOutlineType = OUTLINE_C;	/* これでC関数一覧リストビューになる */
+			}
 		}
 	}
 
