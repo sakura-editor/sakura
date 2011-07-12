@@ -462,19 +462,24 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			// ここでは、あとで正式に適用されるはずのドキュメントタイプを仮設定して一時描画しておく（ビューの配色切替によるちらつきを抑える）
 			// さらに、タイプを戻して画面を無効化だけしておく（何らかの原因で途中停止した場合にはもとのタイプ色で再描画されるように ← 例えばファイルサイズが大きすぎる警告を出すときなど）
 			// ※ 正攻法とはいえないかもしれないがあちこち手を入れることなく簡潔に済ませられるのでこうしておく
-			CTypeConfig cTypeOld, cTypeNew;
+			CTypeConfig cTypeOld, cTypeNew(-1);
 			cTypeOld = GetDocument().m_cDocType.GetDocumentType();	// 現在のタイプ
 			if( CCommandLine::Instance()->IsDebugMode() )
 				cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( _T("output") );
 			else if( CCommandLine::Instance()->IsGrepMode() )
 				cTypeNew = cTypeOld;
 			else{
-				EditInfo ei;
+				EditInfo ei, mruei;
 				CCommandLine::Instance()->GetEditInfo( &ei );
 				if( ei.m_szDocType[0] != '\0' ){
 					cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( ei.m_szDocType );
 				}else{
-					cTypeNew = CDocTypeManager().GetDocumentTypeOfPath( ei.m_szPath );
+					if( CMRU().GetEditInfo( ei.m_szPath, &mruei ) ){
+						cTypeNew = mruei.m_nType;
+					}
+					if( !cTypeNew.IsValid() ){
+						cTypeNew = CDocTypeManager().GetDocumentTypeOfPath( ei.m_szPath );
+					}
 				}
 			}
 			GetDocument().m_cDocType.SetDocumentType( cTypeNew, true, true );	// 仮設定

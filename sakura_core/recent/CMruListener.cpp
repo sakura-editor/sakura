@@ -35,8 +35,19 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	// 前回のコード -> ePrevCode
 	EditInfo	fi;
 	ECodeType ePrevCode = CODE_NONE;
+	CTypeConfig nPrevType = CTypeConfig(-1);
 	if(CMRU().GetEditInfo( pLoadInfo->cFilePath, &fi )){
 		ePrevCode = fi.m_nCharCode;
+		nPrevType = fi.m_nType;
+	}
+
+	// タイプ別設定
+	if( !pLoadInfo->nType.IsValid() ){
+		if( !nPrevType.IsValid() ){
+			pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfPath( pLoadInfo->cFilePath );
+		}else{
+			pLoadInfo->nType = nPrevType;
+		}
 	}
 
 

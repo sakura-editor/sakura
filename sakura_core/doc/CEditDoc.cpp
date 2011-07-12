@@ -410,6 +410,7 @@ void CEditDoc::GetEditInfo(
 	//各種状態
 	pfi->m_bIsModified = m_cDocEditor.IsModified();			/* 変更フラグ */
 	pfi->m_nCharCode = m_cDocFile.m_sFileInfo.eCharCode;	/* 文字コード種別 */
+	pfi->m_nType = m_cDocType.GetDocumentType();
 
 	//GREPモード
 	pfi->m_bIsGrep = CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode;
