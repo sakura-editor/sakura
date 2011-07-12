@@ -146,6 +146,9 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 	nSize = pShare->m_sHistory.m_nMRUArrNum;
 	for( i = 0; i < nSize; ++i ){
 		pfiWork = &pShare->m_sHistory.m_fiMRUArr[i];
+		if( cProfile.IsReadingMode() ){
+			pfiWork->m_nType = CTypeConfig(-1);
+		}
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nViewTopLine"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nViewTopLine );
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nViewLeftCol"), i );
@@ -160,6 +163,10 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(pfiWork->m_szPath) );
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].szMark"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(pfiWork->m_szMarkLines) );
+		auto_sprintf( szKeyName, LTEXT("MRU[%02d].nType"), i );
+		int nType = pfiWork->m_nType.GetIndex();
+		cProfile.IOProfileData( pszSecName, szKeyName, nType );
+		pfiWork->m_nType = CTypeConfig(nType);
 		//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
 		auto_sprintf( szKeyName, LTEXT("MRU[%02d].bFavorite"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_bMRUArrFavorite[i] );

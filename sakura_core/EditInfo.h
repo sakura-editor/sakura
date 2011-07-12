@@ -1,6 +1,7 @@
 #pragma once
 #include "basis/SakuraBasis.h"
 #include "config/maxdata.h"
+#include "types/CType.h"
 
 
 /*! ファイル情報
@@ -13,6 +14,7 @@ struct EditInfo {
 	TCHAR		m_szPath[_MAX_PATH];					//!< ファイル名
 	ECodeType	m_nCharCode;							//!< 文字コード種別
 	TCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< 文書タイプ
+	CTypeConfig m_nType;								//!< 文書タイプ(MRU)
 
 	//表示域
 	CLayoutInt	m_nViewTopLine;							//!< 表示域の一番上の行(0開始)
@@ -45,6 +47,7 @@ struct EditInfo {
 	EditInfo()
 	: m_nViewTopLine( -1 )
 	, m_nViewLeftCol( -1 )
+	, m_nType( -1 )
 	, m_ptCursor(CLogicInt(-1), CLogicInt(-1))
 	, m_bIsModified( 0 )
 	, m_nCharCode( CODE_AUTODETECT )

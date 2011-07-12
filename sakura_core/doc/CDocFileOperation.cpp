@@ -78,9 +78,6 @@ bool CDocFileOperation::OpenFileDialog(
 bool CDocFileOperation::DoLoadFlow(SLoadInfo* pLoadInfo)
 {
 	ELoadResult eLoadResult = LOADED_FAILURE;
-	if( !pLoadInfo->nType.IsValid() ){	// 明示指定無し？
-		pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfPath( pLoadInfo->cFilePath );
-	}
 
 	try{
 		//ロード前チェック

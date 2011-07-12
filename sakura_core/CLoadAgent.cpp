@@ -31,7 +31,6 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 			return CALLBACK_INTERRUPT; //キャンセルされた場合は中断
 		}
 		*pLoadInfo = sLoadInfo;
-		pLoadInfo->nType = CDocTypeManager().GetDocumentTypeOfPath( pLoadInfo->cFilePath );
 	}
 
 	// 他のウィンドウで既に開かれている場合は、それをアクティブにする
