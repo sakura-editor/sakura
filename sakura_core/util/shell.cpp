@@ -549,7 +549,7 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 			dwData = 1;	// ñ⁄éüÉyÅ[ÉW
 
 		TCHAR buf[256];
-		_stprintf( buf, _T("http://sakura-editor.sourceforge.net/cgi-bin/hid.cgi?%d"), dwData );
+		_stprintf( buf, _T("http://sakura-editor.sourceforge.net/cgi-bin/hid2.cgi?%d"), dwData );
 		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 	}
 
