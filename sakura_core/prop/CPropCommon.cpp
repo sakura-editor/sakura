@@ -351,6 +351,9 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 	case IDD_PROP_TAB:
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_TAB);
 		break;
+	case IDD_PROP_STATUSBAR:
+		nContextID = ::FuncID_To_HelpContextID(F_OPTION_STATUSBAR);
+		break;
 	case IDD_PROP_GREP:
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_GREP);
 		break;

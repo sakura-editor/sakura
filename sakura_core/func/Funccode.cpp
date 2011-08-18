@@ -810,7 +810,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_OPTION_STATUSBAR: return HLP000147;	/* 共通設定『ステータスバー』 */	// 2010/5/6 Uchi
 	case F_OPTION_PLUGIN:	return HLP000151;	/* 共通設定『プラグイン』 */	// 2010/5/6 Uchi
 	case F_OPTION_FNAME:	return HLP000277;	/* 共通設定『ファイル名表示』プロパティ */	// 2002.12.09 Moca Add	//重複回避
-	case F_OPTION_MAINMENU:	return HLP000081;	/* 共通設定『メインメニュー』 */	// 2010/5/6 Uchi
+	case F_OPTION_MAINMENU:	return HLP000152;	/* 共通設定『メインメニュー』 */	// 2010/5/6 Uchi
 	case F_FONT:			return HLP000071;	/* フォント設定 */
 	case F_WRAPWINDOWWIDTH:	return HLP000184;	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更	//Jul. 03, 2001 JEPRO 番号修正
 	case F_FAVORITE:		return HLP000279;	/* 履歴の管理 */	//@@@ 2003.04.08 MIK
