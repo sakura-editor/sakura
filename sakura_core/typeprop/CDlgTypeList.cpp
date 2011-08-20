@@ -63,6 +63,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResu
 {
 	int	nRet;
 	m_nSettingType = psResult->cDocumentType;
+	m_bAlertFileAssociation = true;
 	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, NULL );
 	if( -1 == nRet ){
 		return FALSE;
@@ -188,6 +189,10 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_RMENU && HIWORD(wParam) == BN_CLICKED )
 		{
 			bool checked = ( BtnCtl_GetCheck( hwndRMenu ) == TRUE ? true : false );
+			if( ! AlertFileAssociation() ){		//レジストリ変更確認
+				BtnCtl_SetCheck( hwndRMenu, !checked );
+				break;
+			}
 			TCHAR exts[_countof(types.m_szTypeExts)] = {0};
 			_tcscpy( exts, types.m_szTypeExts );
 			const TCHAR	pszSeps[] = _T(" ;,");	// separator
@@ -222,6 +227,10 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		else if( LOWORD(wParam) == IDC_CHECK_EXT_DBLCLICK && HIWORD(wParam) == BN_CLICKED )
 		{
 			bool checked = ( BtnCtl_GetCheck( hwndDblClick ) == TRUE ? true : false );
+			if( ! AlertFileAssociation() ){		//レジストリ変更確認
+				BtnCtl_SetCheck( hwndDblClick, !checked );
+				break;
+			}
 			TCHAR exts[_countof(types.m_szTypeExts)] = {0};
 			_tcscpy( exts, types.m_szTypeExts );
 			const TCHAR	pszSeps[] = _T(" ;,");	// separator
@@ -741,3 +750,23 @@ int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	return ERROR_SUCCESS;
 }
 
+/*!
+	@brief レジストリ変更の警告メッセージを表示する
+*/
+bool CDlgTypeList::AlertFileAssociation()
+{
+	if( m_bAlertFileAssociation ){
+		if( IDYES == ::MYMESSAGEBOX( 
+						NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST,
+						GSTR_APPNAME,
+						_T("Windowsの関連付け設定を変更しようとしています。\nこの操作は同じ設定を利用する他のソフトにも影響を与える可能性があります。\n実施しますか？"))
+					)
+		{
+			m_bAlertFileAssociation = false;	//「はい」なら最初の一度だけ確認する
+			return true;
+		}else{
+			return false;
+		}
+	}
+	return true;
+}
