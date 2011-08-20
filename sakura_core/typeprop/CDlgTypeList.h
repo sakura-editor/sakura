@@ -49,6 +49,7 @@ protected:
 	bool Import( void );			// 2010/4/12 Uchi
 	bool Export( void );			// 2010/4/12 Uchi
 	bool InitializeType( void );	// 2010/4/12 Uchi
+	bool AlertFileAssociation();	// 2011/8/20 syat
 
 private:
 	CTypeConfig				m_nSettingType;
@@ -56,6 +57,7 @@ private:
 	bool m_bRegistryChecked[ MAX_TYPES ];	//レジストリ確認 未／済
 	bool m_bExtRMenu[ MAX_TYPES ];			//右クリック登録 未／済
 	bool m_bExtDblClick[ MAX_TYPES ];		//ダブルクリック 未／済
+	bool m_bAlertFileAssociation;			//関連付け警告の表示フラグ
 };
 
 
