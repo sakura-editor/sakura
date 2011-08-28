@@ -66,6 +66,20 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#IsPossibleRedo">IsPossibleRedo</a>() :Integer<br>
 ・<a href="#IsCurTypeExt">IsCurTypeExt</a>( str1 :String ) :Integer<br>
 ・<a href="#IsSameTypeExt">IsSameTypeExt</a>( str1 :String, str2 :String ) :Integer<br>
+・<a href="#InputBox">InputBox</a>( str1 :String, str2 :String, int1 :Integer ) :String<br>
+・<a href="#MessageBox">MessageBox</a>( str1 :String, int1 :String ) :Integer<br>
+・<a href="#ErrorMsg">ErrorMsg</a>( str1 :String ) :Integer<br>
+・<a href="#WarnMsg">WarnMsg</a>( str1 :String ) :Integer<br>
+・<a href="#InfoMsg">InfoMsg</a>( str1 :String ) :Integer<br>
+・<a href="#OkCancelBox">OkCancelBox</a>( str1 :String ) :Integer<br>
+・<a href="#YesNoBox">YesNoBox</a>( str1 :String ) :Integer<br>
+・<a href="#FileOpenDialog">FileOpenDialog</a>( str1 :String, str2 :String ) :String<br>
+・<a href="#FileSaveDialog">FileSaveDialog</a>( str1 :String, str2 :String ) :String<br>
+・<a href="#FolderDialog">FolderDialog</a>( str1 :String, str2 :String ) :String<br>
+・<a href="#CompareVersion">CompareVersion</a>( str1 :String, str2 :String ) :Integer<br>
+・<a href="#Sleep">Sleep</a>( int1 :Integer ) :Integer<br>
+・<a href="#GetClipboard">GetClipboard</a>( int1 :Integer ) :String<br>
+・<a href="#SetClipboard">SetClipboard</a>( int1 :Integer, str1 :String ) :Integer<br>
 <hr>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -332,5 +346,171 @@ str2&nbsp;&nbsp;&nbsp;&nbsp;調べる2つめの拡張子を指定します。<br>
 拡張子はピリオドを除いた文字列です。<br>
 </div>
 sakura:1.6.5.0以降<br>
+<br>
+■ function <span id="InputBox">InputBox</span>( str1 :String, str2 :String, int1 :Integer ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;表示メッセージ<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;既定の値<br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;最大入力文字数<br>
+<br>
+<b>戻り値</b><br>
+入力文字列。キャンセル押下時は空文字列<br>
+<b>解説</b><br>
+テキスト入力ダイアログを表示し、入力された文字列を返します。<br>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="MessageBox">MessageBox</span>( str1 :String, int1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;表示メッセージ<br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;メッセージボックス種別<br>
+&nbsp;&nbsp;&nbsp;&nbsp;以下の値を足したものを指定します。
+<table>
+<tr><td rowspan="7">表示するボタン</td>
+    <td>0x0</td><td>OK</td></tr>
+<tr><td>0x1</td><td>OK／キャンセル</td></tr>
+<tr><td>0x2</td><td>中止／再試行／無視</td></tr>
+<tr><td>0x3</td><td>はい／いいえ／キャンセル</td></tr>
+<tr><td>0x4</td><td>はい／いいえ</td></tr>
+<tr><td>0x5</td><td>再試行／キャンセル</td></tr>
+<tr><td>0x6</td><td>キャンセル／再実行／続行</td></tr>
+<tr><td rowspan="4">アイコン</td>
+    <td>0x10</td><td>エラー</td>
+<tr><td>0x20</td><td>確認</td></tr>
+<tr><td>0x30</td><td>警告</td></tr>
+<tr><td>0x40</td><td>情報</td></tr>
+<tr><td rowspan="4">デフォルトボタン</td>
+    <td>0x000</td><td>1番目</td></tr>
+<tr><td>0x100</td><td>2番目</td></tr>
+<tr><td>0x200</td><td>3番目</td></tr>
+<tr><td>0x300</td><td>4番目</td></tr>
+<tr><td rowspan="3">モーダル状態</td>
+    <td>0x0000</td><td>APPLMODAL</td></tr>
+<tr><td>0x1000</td><td>SYSTEMMODAL</td></tr>
+<tr><td>0x2000</td><td>TASKMODAL</td></tr>
+</table>
+<b>戻り値</b><br>
+押されたボタンの番号を返します。
+<table>
+<tr><td>0x1</td><td>OK</td></tr>
+<tr><td>0x2</td><td>キャンセル</td></tr>
+<tr><td>0x3</td><td>中止</td></tr>
+<tr><td>0x4</td><td>再試行</td></tr>
+<tr><td>0x5</td><td>無視</td></tr>
+<tr><td>0x6</td><td>はい</td></tr>
+<tr><td>0x7</td><td>いいえ</td></tr>
+<tr><td>0x10</td><td>再実行</td></tr>
+<tr><td>0x11</td><td>続行</td></tr>
+</table>
+<b>解説</b><br>
+メッセージボックスを表示します。<br>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="ErrorMsg">ErrorMsg</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+■ function <span id="WarnMsg">WarnMsg</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+■ function <span id="InfoMsg">InfoMsg</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+■ function <span id="OkCancelBox">OkCancelBox</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+■ function <span id="YesNoBox">YesNoBox</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>解説</b><br>
+それぞれ以下のMessageBox関数と等価です。
+<table>
+<tr><td>ErrorMsg</td><td>「エラーアイコン」＋「OKボタン」</td></tr>
+<tr><td>WarnMsg</td><td>「警告アイコン」＋「OKボタン」</td></tr>
+<tr><td>InfoMsg</td><td>「情報アイコン」＋「OKボタン」</td></tr>
+<tr><td>OkCancelBox</td><td>「確認アイコン」＋「OK／キャンセルボタン」</td></tr>
+<tr><td>YesNoBox</td><td>「確認アイコン」＋「はい／いいえボタン」</td></tr>
+</table>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="FileOpenDialog">FileOpenDialog</span>( str1 :String, str2 :String ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;既定のファイルまたはフォルダパス<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;フィルタ文字列<br>
+<b>戻り値</b><br>
+選択ファイルパス名。キャンセル押下時は空文字列<br>
+<b>解説</b><br>
+ファイルを開くダイアログを表示します。<br>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="FileSaveDialog">FileSaveDialog</span>( str1 :String, str2 :String ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;既定のファイルまたはフォルダパス<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;フィルタ文字列<br>
+<b>戻り値</b><br>
+選択ファイルパス名。キャンセル押下時は空文字列<br>
+<b>解説</b><br>
+ファイル保存ダイアログを表示します。<br>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="FolderDialog">FolderDialog</span>( str1 :String, str2 :String ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;表示メッセージ<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;既定のファイルまたはフォルダパス<br>
+<b>戻り値</b><br>
+選択ファイルパス名。キャンセル押下時は空文字列<br>
+<b>解説</b><br>
+フォルダを開くダイアログを表示します。<br>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="CompareVersion">CompareVersion</span>( str1 :String, str2 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列1<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列2<br>
+<b>戻り値</b><br>
+0&nbsp;&nbsp;&nbsp;&nbsp;等しい<br>
+0以下&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列1が古い<br>
+0以上&nbsp;&nbsp;&nbsp;&nbsp;バージョン文字列1が新しい<br>
+<b>解説</b><br>
+2つのバージョン文字列を比較します。<br>
+バージョンは4個までの数字を「.」「-」「_」「+」でつなげたものとし、ほかに以下の記号を認識します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;「a」「alpha」 ＜ 「b」「beta」 ＜ 「rc」「RC」 ＜ （記号なし） ＜ 「p」「pl」
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="Sleep">Sleep</span>( int1 :Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;スリープ時間（ミリ秒）<br>
+<b>戻り値</b><br>
+0<br>
+<b>解説</b><br>
+指定した時間だけマクロを止めます。<br>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="GetClipboard">GetClipboard</span>( int1 :Integer ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;予約値。0を指定してください<br>
+<b>戻り値</b><br>
+クリップボード文字列<br>
+<b>解説</b><br>
+クリップボードの文字列を取得します。<br>
+</div>
+sakura:2.0.3.0以降<br>
+<br>
+■ function <span id="SetClipboard">SetClipboard</span>( int1 :Integer, str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;予約値。0を指定してください<br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;設定する文字列<br>
+<b>戻り値</b><br>
+0<br>
+<b>解説</b><br>
+クリップボードに文字列を設定します。<br>
+</div>
+sakura:2.0.3.0以降<br>
 <br>
 </BODY></HTML>

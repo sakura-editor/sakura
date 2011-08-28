@@ -11,6 +11,38 @@
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>変更履歴(2011/02/11～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
+<h3>Aug. 21, 2011 (2.0.3.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>選択範囲色指定 (svn:1921 upatch:3304481 unicode:1560 もか)</li>
+	<li>ダイアログ・クリップボード系マクロ関数の追加 (svn:1917 upatch:3226146 unicode:1516 syat)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>オンラインヘルプは http://sakura-editor.sourceforge.net/htmlhelp2/ を参照する (svn:1943 unicode:1621 ryoji)</li>
+	<li>MRUに適用タイプ別設定を追加 (svn:1939 upatch:3315685 unicode:1582 wiki:Request/111 もか)</li>
+	<li>マウススクロールでも少し滑らかにするオプションを適用 (svn:1916 unicode:1561 もか)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>共通設定画面のヘルプ表示不良 (svn:1942 unicode:1620 ryoji)</li>
+	<li>プラグインアウトライン解析でアクティブ化でも再解析される (svn:1934 upatch:3332866 unicode:1597 syat)</li>
+	<li>共通設定マクロのFileの入力可能文字数が短かい (svn:1929 unicode:1593 もか)</li>
+	<li>次回起動時にフォントサイズが小さくなる (svn:1928 unicode:1591 wiki:BugReport/84 ryoji)</li>
+	<li>プラグインコマンドを途中で追加するとアイコンが表示されないことがある (svn:1927 unicode:1590 もか)</li>
+	<li>矩形削除後カーソル位置が不正なことがある (svn:1925 unicode:1578 もか)</li>
+	<li>「選択範囲内全行コピー」等で、コピー実行時に表示が乱れる (svn:1924 unicode:1577 wiki:BugReport/45 もか)</li>
+	<li>正規表現 \Q...\Eの中に . や $ が含まれていたときに正しく検索できていなかった。 (svn:1923 upatch:3310610 unicode:1571 wiki:BugReport/82 ds14050)</li>
+	<li>タイプ別設定一覧関係のヘルプ設定 (svn:1913 syat)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>関連付け設定の変更時に警告する (svn:1944 data:7405 upatch:3373616 syat)</li>
+</ul>
+
 <h3>Apr. 9, 2011 (2.0.2.0)</h3>
 [バグ修正]<br />
 <ul>
