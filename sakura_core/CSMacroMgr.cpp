@@ -864,7 +864,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_GOFILEEND				://ファイルの最後に移動
 	case F_WORDLEFT					://単語の左端に移動
 	case F_WORDRIGHT				://単語の右端に移動
-//	case F_CURLINECENTER			://カーソル行をウィンドウ中央へ
+	case F_CURLINECENTER			://カーソル行をウィンドウ中央へ
 	case F_JUMPHIST_PREV			://移動履歴: 前へ
 	case F_JUMPHIST_NEXT			://移動履歴: 次へ
 	case F_JUMPHIST_SET				://現在位置を移動履歴に登録
