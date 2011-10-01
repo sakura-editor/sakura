@@ -100,7 +100,7 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 
 		// 2011.3.18 syat ˆø”‚Ì‡˜‚ð³‚µ‚¢‡‚É‚·‚é
 		VARIANTARG rgvargBak[4];
-		memcpy( rgvargBak, Arguments->rgvarg, sizeof(VARIANTARG) * 4 );
+		memcpy( rgvargBak, Arguments->rgvarg, sizeof(VARIANTARG) * ArgCount );
 		for(I = 0; I < ArgCount; I++){
 			Arguments->rgvarg[ArgCount-I-1] = rgvargBak[I];
 		}
