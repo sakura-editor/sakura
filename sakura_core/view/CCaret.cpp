@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "CCaret.h"
 #include <vector>
+#include <algorithm>
+#include "CCaret.h"
 #include "CTextArea.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
@@ -757,138 +758,88 @@ void CCaret::ShowCaretPosInfo()
 CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 {
 	//必要なインターフェース
-	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-//	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
-	CommonSetting* pCommon=&GetDllShareData().m_Common;
+	const CLayoutMgr* const pLayoutMgr = &m_pEditDoc->m_cLayoutMgr;
+	const CommonSetting* const pCommon = &GetDllShareData().m_Common;
+
+	const CLayoutPoint ptCaret = GetCaretLayoutPos();
 
 	bool	bVertLineDoNotOFF = true;	// カーソル位置縦線を消去しない
 	if( bSelect ){
 		bVertLineDoNotOFF = false;		//選択状態ならカーソル位置縦線消去を行う
 	}
 
-	const wchar_t*	pLine;
-	CLogicInt		nLineLen;
-	int				i;
-	CLayoutInt		nLineCols;
-	CLayoutInt		nScrollLines;
-	const CLayout*	pcLayout;
-	nScrollLines = CLayoutInt(0);
-
-	CLayoutPoint		ptPosXY(CLayoutInt(0), GetCaretLayoutPos().GetY());
-
-	if( nMoveLines > 0 ){
-		/* カーソルがテキスト最下端行にあるか */
-		if( GetCaretLayoutPos().GetY() + nMoveLines >= pLayoutMgr->GetLineCount() ){
-			nMoveLines = pLayoutMgr->GetLineCount() - GetCaretLayoutPos().GetY()  - 1;
+	// 現在のキャレットY座標 + nMoveLinesが正しいレイアウト行の範囲内に収まるように nMoveLinesを調整する。
+	if( nMoveLines > 0 ) { // 下移動。
+		const bool existsEOFOnlyLine = pLayoutMgr->GetBottomLayout() && pLayoutMgr->GetBottomLayout()->GetLayoutEol() != EOL_NONE;
+		const CLayoutInt maxLayoutLine = pLayoutMgr->GetLineCount() + (existsEOFOnlyLine ? 1 : 0 ) - 1;
+		// 移動先が EOFのみの行を含めたレイアウト行数未満になるように移動量を規正する。
+		nMoveLines = std::min( nMoveLines,  maxLayoutLine - ptCaret.y );
+		if( ptCaret.y + nMoveLines == maxLayoutLine && existsEOFOnlyLine // 移動先が EOFのみの行
+			&& m_pEditView->GetSelectionInfo().IsBoxSelecting() && 0 != ptCaret.x // かつ矩形選択中なら、
+		) {
+			// EOFのみの行には移動しない。下移動でキャレットの X座標を動かしたくないので。
+			nMoveLines = std::max( CLayoutInt(0), nMoveLines - 1 ); // うっかり上移動しないように 0以上を守る。
 		}
-		if( nMoveLines <= 0 ){
-			pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
-			if( NULL != pLine ){
-				nLineCols = m_pEditView->LineIndexToColmn( pcLayout, nLineLen );
-				/* 改行で終わっているか */
-				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				if( ( EOL_NONE != pcLayout->GetLayoutEol() )
-//				if( ( pLine[ nLineLen - 1 ] == L'\n' || pLine[ nLineLen - 1 ] == L'\r' )
-				 // [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
-				 //|| nLineCols >= pLayoutMgr->GetMaxLineKetas()
-				){
-					if( bSelect ){
-						if( !m_pEditView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-							/* 現在のカーソル位置から選択を開始する */
-							m_pEditView->GetSelectionInfo().BeginSelectArea();
-						}
-					}else{
-						if( m_pEditView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-							/* 現在の選択範囲を非選択状態に戻す */
-							m_pEditView->GetSelectionInfo().DisableSelectArea( TRUE );
-						}
-					}
-					ptPosXY.x = CLayoutInt(0);
-					++ptPosXY.y;
-					bVertLineDoNotOFF = false;
-					nScrollLines = MoveCursor( ptPosXY, m_pEditView->GetDrawSwitch() /* TRUE */ ); // YAZAKI.
-					if( bSelect ){
-						/* 現在のカーソル位置によって選択範囲を変更 */
-						m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptPosXY );
-					}
-				}
+	} else { // 上移動。
+		// 移動先が 0行目より小さくならないように移動量を規制。
+		nMoveLines = std::max( nMoveLines, - GetCaretLayoutPos().GetY() );
+	}
+
+	if( bSelect && ! m_pEditView->GetSelectionInfo().IsTextSelected() ) {
+		/* 現在のカーソル位置から選択を開始する */
+		m_pEditView->GetSelectionInfo().BeginSelectArea();
+	}
+	if( ! bSelect && m_pEditView->GetSelectionInfo().IsTextSelected() ) {
+		/* 現在の選択範囲を非選択状態に戻す */
+		m_pEditView->GetSelectionInfo().DisableSelectArea( TRUE );
+	}
+
+	// (これから求める)キャレットの移動先。
+	CLayoutPoint ptTo( CLayoutInt(0), ptCaret.y + nMoveLines );
+
+	/* 移動先の行のデータを取得 */
+	const CLayout* const pLayout = pLayoutMgr->SearchLineByLayoutY( ptTo.y );
+	const CLogicInt nLineLen = pLayout ? pLayout->GetLengthWithEOL() : CLogicInt(0);
+	int i = 0; ///< 何？
+	if( pLayout ) {
+		CMemoryIterator it( pLayout, pLayoutMgr->GetTabSpace() );
+		while( ! it.end() ){
+			it.scanNext();
+			if ( it.getIndex() + it.getIndexDelta() > pLayout->GetLengthWithoutEOL() ){
+				i = nLineLen;
+				break;
 			}
-			//	Sep. 11, 2004 genta 同期スクロールの関数化
-			//	MoveCursorでスクロール位置調整済み
-			//SyncScrollV( nScrollLines );
-			return nScrollLines;
+			if( it.getColumn() + it.getColumnDelta() > m_nCaretPosX_Prev ){
+				i = it.getIndex();
+				break;
+			}
+			it.addDelta();
 		}
-	}else{
-		/* カーソルがテキスト最上端行にあるか */
-		if( GetCaretLayoutPos().GetY() + nMoveLines < 0 ){
-			nMoveLines = - GetCaretLayoutPos().GetY();
-		}
-		if( nMoveLines >= 0 ){
-			//	Sep. 11, 2004 genta 同期スクロールの関数化
-			m_pEditView->SyncScrollV( nScrollLines );
-			return nScrollLines;
-		}
-	}
-	if( bSelect ){
-		if( !m_pEditView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在のカーソル位置から選択を開始する */
-			m_pEditView->GetSelectionInfo().BeginSelectArea();
-		}
-	}else{
-		if( m_pEditView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在の選択範囲を非選択状態に戻す */
-			m_pEditView->GetSelectionInfo().DisableSelectArea( TRUE );
-		}
-	}
-	/* 次の行のデータを取得 */
-	pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2() + CLayoutInt(nMoveLines), &nLineLen, &pcLayout );
-	CMemoryIterator it( pcLayout, pLayoutMgr->GetTabSpace() );
-	while( !it.end() ){
-		it.scanNext();
-		if ( it.getIndex() + it.getIndexDelta() > pcLayout->GetLengthWithoutEOL() ){
-			i = nLineLen;
-			break;
-		}
-		if( it.getColumn() + it.getColumnDelta() > m_nCaretPosX_Prev ){
+		ptTo.x += it.getColumn();
+		if( it.end() ) {
 			i = it.getIndex();
-			break;
 		}
-		it.addDelta();
 	}
-	ptPosXY.x += it.getColumn();
-	if ( it.end() ){
-		i = it.getIndex();
-	}
-
-	if( i >= nLineLen ){
-		/* フリーカーソルモードか */
+	if( i >= nLineLen ) {
+		/* フリーカーソルモードと矩形選択中は、キャレットの位置を改行や EOFの前に制限しない */
 		if( pCommon->m_sGeneral.m_bIsFreeCursorMode
-		 || m_pEditView->GetSelectionInfo().IsTextSelected() && m_pEditView->GetSelectionInfo().IsBoxSelecting()	/* 矩形範囲選択中 */
-		){
-			if( GetCaretLayoutPos().GetY() + nMoveLines + 1 == pLayoutMgr->GetLineCount()  ){
-				if( NULL != pLine ){
-					if( pLine[nLineLen - 1] == WCODE::CR || pLine[nLineLen - 1] == WCODE::LF ){
-						ptPosXY.x = m_nCaretPosX_Prev;
-					}
-				}
-			}else{
-				ptPosXY.x = m_nCaretPosX_Prev;
-			}
+			|| m_pEditView->GetSelectionInfo().IsBoxSelecting()
+		) {
+			ptTo.x = ptCaret.x;
 		}
 	}
-	if( ptPosXY.x != GetCaretLayoutPos().GetX() ){
+	if( ptTo.x != GetCaretLayoutPos().GetX() ){
 		bVertLineDoNotOFF = false;
 	}
-	nScrollLines = MoveCursor(	CLayoutPoint(ptPosXY.x, GetCaretLayoutPos().GetY() + nMoveLines),
+	const CLayoutInt nScrollLines = MoveCursor(	ptTo,
 								m_pEditView->GetDrawSwitch() /* TRUE */,
 								_CARETMARGINRATE,
 								false,
 								bVertLineDoNotOFF );
-	if( bSelect ){
+	if( bSelect ) {
 		/* 現在のカーソル位置によって選択範囲を変更 */
-		m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( CLayoutPoint(ptPosXY.x, GetCaretLayoutPos().GetY()) );
+		m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaretLayoutPos() );
 	}
-
 	return nScrollLines;
 }
 

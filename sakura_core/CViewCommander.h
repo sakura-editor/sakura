@@ -268,7 +268,7 @@ public:
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
 	void Command_CHGMOD_EOL( enumEOLType );	/* 入力する改行コードを設定 2003.06.23 moca */
-	void Command_CANCEL_MODE( void );	/* 各種モードの取り消し */
+	void Command_CANCEL_MODE( int whereCursorIs = 0 );	/* 各種モードの取り消し */
 
 	/* 設定系 */
 	void Command_SHOWTOOLBAR( void );		/* ツールバーの表示/非表示 */
