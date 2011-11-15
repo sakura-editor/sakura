@@ -276,7 +276,16 @@ void CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText )
 //2002.02.08 hor
 //正規表現で検索したときの速度改善のため、マッチ先頭位置を引数に追加
 //Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-bool CEditView::IsSearchString(
+/*
+	@retval 0
+		(パターン検索時) 指定位置以降にマッチはない。
+		(それ以外) 指定位置は検索文字列の始まりではない。
+	@retval 1,2,3,...
+		(パターン検索時) 指定位置以降にマッチが見つかった。
+		(単語検索時) 指定位置が検索文字列に含まれる何番目の単語の始まりであるか。
+		(それ以外) 指定位置が検索文字列の始まりだった。
+*/
+int CEditView::IsSearchString(
 	const CStringRef&	cStr,
 	/*
 	const wchar_t*	pszData,
@@ -303,46 +312,70 @@ bool CEditView::IsSearchString(
 		if( m_CurRegexp.Match( cStr.GetPtr(), cStr.GetLength(), nPos ) ){
 			*pnSearchStart = m_CurRegexp.GetIndex();	// 2002.02.08 hor
 			*pnSearchEnd = m_CurRegexp.GetLastIndex();
-			return true;
+			return 1;
 		}
 		else{
-			return false;
+			return 0;
 		}
 	}
-	else{
-		nKeyLength = CLogicInt(wcslen( m_szCurSrchKey ));		/* 検索条件 */
+	else if( m_sCurSearchOption.bWordOnly ) { // 単語検索
+		/* 指定位置の単語の範囲を調べる */
+		CLogicInt posWordHead, posWordEnd;
+		if( ! CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, &posWordHead, &posWordEnd, NULL, NULL ) ) {
+			return 0; // 指定位置に単語が見つからなかった。
+ 		}
+		if( nPos != posWordHead ) {
+			return 0; // 指定位置は単語の始まりではなかった。
+		}
+		const CLogicInt wordLength = posWordEnd - posWordHead;
+		const wchar_t *const pWordHead = cStr.GetPtr() + posWordHead;
 
-		// 2001/06/23 単語単位の検索のために追加
-		// 2010.06.30 Moca GetDllShareData() になっていたのを修正
-		if( m_sCurSearchOption.bWordOnly ){	/* 検索／置換  1==単語のみ検索 */
-		
-			/* 現在位置の単語の範囲を調べる */
-			/* 現在位置の単語の範囲を調べる */
-			CLogicInt nIdxFrom, nIdxTo;
-			if( !CWordParse::WhereCurrentWord_2( cStr.GetPtr(), CLogicInt(cStr.GetLength()), nPos, &nIdxFrom, &nIdxTo, NULL, NULL ) ){
-				return false;
-			}
-			if( nPos != nIdxFrom || nKeyLength != nIdxTo - nIdxFrom ){
-				return false;
+		// 比較関数
+		int (*const fcmp)( const wchar_t*, const wchar_t*, size_t ) = m_sCurSearchOption.bLoHiCase ? wcsncmp : wcsnicmp;
+
+		// 検索語を単語に分割しながら指定位置の単語と照合する。
+		int wordIndex = 0;
+		const wchar_t* const searchKeyEnd = m_szCurSrchKey + wcslen( m_szCurSrchKey );
+		for( const wchar_t* p = m_szCurSrchKey; p < searchKeyEnd; ) {
+			CLogicInt begin, end; // 検索語に含まれる単語?の位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
+			if( CWordParse::WhereCurrentWord_2( p, CLogicInt(searchKeyEnd - p), CLogicInt(0), &begin, &end, NULL, NULL )
+				&& begin == 0 && begin < end
+			) {
+				if( ! WCODE::IsWordDelimiter( *p ) ) {
+					++wordIndex;
+					// p...(p + end) が検索語に含まれる wordIndex番目の単語。(wordIndexの最初は 1)
+					if( wordLength == end && 0 == fcmp( p, pWordHead, wordLength ) ) {
+						*pnSearchStart = posWordHead;
+						*pnSearchEnd = posWordEnd;
+						return wordIndex;
+					}
+				}
+				p += end;
+			} else {
+				p += CNativeW::GetSizeOfChar( p, searchKeyEnd - p, 0 );
 			}
 		}
+		return 0; // 指定位置の単語と検索文字列に含まれる単語は一致しなかった。
+	}
+	else {
+		nKeyLength = CLogicInt(wcslen( m_szCurSrchKey ));		/* 検索条件 */
 
 		//検索条件が未定義 または 検索条件の長さより調べるデータが短いときはヒットしない
 		if( 0 == nKeyLength || nKeyLength > cStr.GetLength() - nPos ){
-			return false;
+			return 0;
 		}
 		//英大文字小文字の区別をするかどうか
 		if( m_sCurSearchOption.bLoHiCase ){	/* 1==英大文字小文字の区別 */
 			if( 0 == auto_memcmp( &cStr.GetPtr()[nPos], m_szCurSrchKey, nKeyLength ) ){
 				*pnSearchEnd = nPos + nKeyLength;
-				return true;
+				return 1;
 			}
 		}else{
 			if( 0 == auto_memicmp( &cStr.GetPtr()[nPos], m_szCurSrchKey, nKeyLength ) ){
 				*pnSearchEnd = nPos + nKeyLength;
-				return true;
+				return 1;
 			}
 		}
 	}
-	return false;
+	return 0;
 }

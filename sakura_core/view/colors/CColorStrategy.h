@@ -35,6 +35,10 @@ SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_BRACKET_PAIR,	// 対括弧	  // 02/09/18 ai Add
 	COLORIDX_SELECT,		// 選択範囲
 	COLORIDX_SEARCH,		// 検索文字列
+	COLORIDX_SEARCH2,		// 検索文字列2
+	COLORIDX_SEARCH3,		// 検索文字列3
+	COLORIDX_SEARCH4,		// 検索文字列4
+	COLORIDX_SEARCH5,		// 検索文字列5
 	COLORIDX_COMMENT,		// 行コメント						//Dec. 4, 2000 shifted by MIK
 	COLORIDX_SSTRING,		// シングルクォーテーション文字列	//Dec. 4, 2000 shifted by MIK
 	COLORIDX_WSTRING,		// ダブルクォーテーション文字列		//Dec. 4, 2000 shifted by MIK
@@ -77,6 +81,7 @@ SAKURA_CORE_API enum EColorIndexType {
 
 	// -- -- 別名 -- -- //
 	COLORIDX_DEFAULT		= COLORIDX_TEXT,
+	COLORIDX_SEARCHTAIL		= COLORIDX_SEARCH5,
 };
 //	To Here Sept. 18, 2000
 

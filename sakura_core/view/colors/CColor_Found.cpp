@@ -63,18 +63,33 @@ bool CColor_Select::EndColor(const CStringRef& cStr, int nPos)
 }
 
 
+CColor_Found::CColor_Found()
+: validColorNum( 0 )
+{}
+
 void CColor_Found::OnStartScanLogic()
 {
-	m_bSearchFlg	= true;
+	m_nSearchResult	= 0;
 	m_nSearchStart	= CLogicInt(-1);
 	m_nSearchEnd	= CLogicInt(-1);
+
+	this->validColorNum = 0;
+	const CEditDoc* const pDoc = CEditDoc::GetInstance(0);
+	if( pDoc ) {
+		const STypeConfig& doctype = pDoc->m_cDocType.GetDocumentAttribute();
+		for( int color = COLORIDX_SEARCH; color <= COLORIDX_SEARCHTAIL; ++color ) {
+			if( doctype.m_ColorInfoArr[ color ].m_bDisp ) {
+				this->highlightColors[ this->validColorNum++ ] = EColorIndexType( color );
+			}
+		}
+	}
 }
 
 bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 	const CEditView* pcView = CColorStrategyPool::Instance()->GetCurrentView();
-	if( !pcView->m_bCurSrchKeyMark || !CTypeSupport(pcView,COLORIDX_SEARCH).IsDisp() ){
+	if( !pcView->m_bCurSrchKeyMark || 0 == this->validColorNum ){
 		return false;
 	}
 
@@ -82,8 +97,8 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 	//        検索ヒットフラグ設定 -> bSearchStringMode            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
-	if(!pcView->m_sCurSearchOption.bRegularExp || (m_bSearchFlg && m_nSearchStart < nPos)){
-		m_bSearchFlg = pcView->IsSearchString(
+	if(!pcView->m_sCurSearchOption.bRegularExp || (m_nSearchResult && m_nSearchStart < nPos)){
+		m_nSearchResult = pcView->IsSearchString(
 			cStr,
 			CLogicInt(nPos),
 			&m_nSearchStart,
@@ -91,7 +106,7 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 		);
 	}
 	//マッチ文字列検出
-	if( m_bSearchFlg && m_nSearchStart==nPos){
+	if( m_nSearchResult && m_nSearchStart==nPos){
 		return true;
 	}
 	return false;

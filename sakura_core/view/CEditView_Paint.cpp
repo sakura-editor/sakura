@@ -879,7 +879,6 @@ bool CEditView::DrawLogicLine(
 
 	//サポート
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
-	CTypeSupport cSearchType(this,COLORIDX_SEARCH);
 
 	//正規表現キーワードを使うか	//@@@ 2001.11.17 add MIK
 	if( TypeDataPtr->m_bUseRegexKeyword ){
@@ -926,7 +925,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 {
 	bool bDispEOF = false;
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
-	CTypeSupport cSearchType(this,COLORIDX_SEARCH);
 
 	const CLayout* pcLayout = pInfo->pDispPos->GetLayoutRef(); //m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( pInfo->pDispPos->GetLayoutLineRef() );
 

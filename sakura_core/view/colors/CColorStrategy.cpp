@@ -153,10 +153,7 @@ CColorStrategyPool::~CColorStrategyPool()
 
 CColorStrategy*	CColorStrategyPool::GetStrategyByColor(EColorIndexType eColor) const
 {
-//	if(m_pcSelectStrategy->GetStrategyColor()==eColor){
-//		return m_pcSelectStrategy;
-//	}
-	if(m_pcFoundStrategy->GetStrategyColor()==eColor){
+	if( COLORIDX_SEARCH <= eColor && eColor <= COLORIDX_SEARCHTAIL ){
 		return m_pcFoundStrategy;
 	}
 	for(int i=0;i<(int)m_vStrategies.size();i++){
@@ -239,6 +236,10 @@ const SColorAttributeData g_ColorAttributeArr[] =
 	{_T("BRC"), 0},	//‘ÎŠ‡ŒÊ	// 02/09/18 ai Add
 	{_T("SEL"), 0},
 	{_T("FND"), 0},
+	{_T("FN2"), 0},
+	{_T("FN3"), 0},
+	{_T("FN4"), 0},
+	{_T("FN5"), 0},
 	{_T("CMT"), 0},
 	{_T("SQT"), 0},
 	{_T("WQT"), 0},
