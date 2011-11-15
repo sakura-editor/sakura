@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "CBregexp.h" // ヘッダ依存 CSearchAgent
 
+#include <vector>
+#include <utility>
 #include "CSearchAgent.h"
 #include "doc/CDocLineMgr.h"
 #include "dlg/CDlgCancel.h"
@@ -314,6 +316,23 @@ int CSearchAgent::SearchWord(
 	}
 	//単語のみ検索
 	else if( sSearchOption.bWordOnly ){
+		// 検索語を単語に分割して searchWordsに格納する。
+		std::vector<const std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
+		for( CLogicInt pos = CLogicInt(0); pos < nPatternLen; ) {
+			CLogicInt begin, end; // 検索語に含まれる単語?の posを基準とした相対位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
+			if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), &begin, &end, NULL, NULL )
+				&& begin == 0 && begin < end
+			) {
+				if( ! WCODE::IsWordDelimiter( pszPattern[pos] ) ) {
+					// pszPattern[pos]...pszPattern[pos + end] が検索語に含まれる単語。
+					searchWords.push_back( std::make_pair( pszPattern + pos, end ) );
+				}
+				pos += end;
+			} else {
+				pos += std::max( CLogicInt(1), CNativeW::GetSizeOfChar( pszPattern, nPatternLen, pos ) );
+			}
+		}
+
 		/*
 			2001/06/23 Norio Nakatani
 			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
@@ -333,18 +352,20 @@ int CSearchAgent::SearchWord(
 				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE ) ){
 					nNextWordFrom = nWork;
 					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
-							const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory変更
-							/* 1==大文字小文字の区別 */
-							if( (!sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-								(sSearchOption.bLoHiCase && 0 ==	 auto_memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
-							){
-								pMatchRange->SetFromY(nLinePos);	// マッチ行
-								pMatchRange->SetToY  (nLinePos);	// マッチ行
-								pMatchRange->SetFromX(nNextWordFrom2);						// マッチ位置from
-								pMatchRange->SetToX  (pMatchRange->GetFrom().x + nPatternLen);// マッチ位置to
-								nRetVal = 1;
-								goto end_of_func;
+						for( unsigned iSW = 0; iSW < searchWords.size(); ++iSW ) {
+							if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
+								const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory変更
+								/* 1==大文字小文字の区別 */
+								if( (!sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
+									(sSearchOption.bLoHiCase && 0 ==	 auto_memcmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
+								){
+									pMatchRange->SetFromY(nLinePos);	// マッチ行
+									pMatchRange->SetToY  (nLinePos);	// マッチ行
+									pMatchRange->SetFromX(nNextWordFrom2);						// マッチ位置from
+									pMatchRange->SetToX  (pMatchRange->GetFrom().x + searchWords[iSW].second);// マッチ位置to
+									nRetVal = 1;
+									goto end_of_func;
+								}
 							}
 						}
 						continue;
@@ -372,18 +393,20 @@ int CSearchAgent::SearchWord(
 			nNextWordFrom = ptSerachBegin.GetX2();
 			while( NULL != pDocLine ){
 				if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
-						const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory変更
-						/* 1==大文字小文字の区別 */
-						if( (!sSearchOption.bLoHiCase && 0 ==  auto_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-							(sSearchOption.bLoHiCase && 0 == auto_memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
-						){
-							pMatchRange->SetFromY(nLinePos);	// マッチ行
-							pMatchRange->SetToY  (nLinePos);	// マッチ行
-							pMatchRange->SetFromX(nNextWordFrom2);						// マッチ位置from
-							pMatchRange->SetToX  (pMatchRange->GetFrom().x + nPatternLen);// マッチ位置to
-							nRetVal = 1;
-							goto end_of_func;
+					for( unsigned iSW = 0; iSW < searchWords.size(); ++iSW ) {
+						if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
+							const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory変更
+							/* 1==大文字小文字の区別 */
+							if( (!sSearchOption.bLoHiCase && 0 ==  auto_memicmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
+								(sSearchOption.bLoHiCase && 0 == auto_memcmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
+							){
+								pMatchRange->SetFromY(nLinePos);	// マッチ行
+								pMatchRange->SetToY  (nLinePos);	// マッチ行
+								pMatchRange->SetFromX(nNextWordFrom2);						// マッチ位置from
+								pMatchRange->SetToX  (pMatchRange->GetFrom().x + searchWords[iSW].second);// マッチ位置to
+								nRetVal = 1;
+								goto end_of_func;
+							}
 						}
 					}
 					/* 現在位置の左右の単語の先頭位置を調べる */
