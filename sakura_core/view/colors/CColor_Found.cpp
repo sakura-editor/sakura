@@ -69,7 +69,7 @@ CColor_Found::CColor_Found()
 
 void CColor_Found::OnStartScanLogic()
 {
-	m_nSearchResult	= 0;
+	m_nSearchResult	= 1;
 	m_nSearchStart	= CLogicInt(-1);
 	m_nSearchEnd	= CLogicInt(-1);
 
