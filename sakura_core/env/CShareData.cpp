@@ -387,6 +387,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;		/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
+		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = FALSE;			/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 
 		//[ファイル]タブ
 		{
