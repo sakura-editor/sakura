@@ -409,6 +409,7 @@
 #define HIDC_CHECK_DRAGDROP						10212 //ドラッグ＆ドロップ編集する
 #define HIDC_CHECK_DROPSOURCE					10213 //ドロップ元にする
 #define HIDC_CHECK_bNotOverWriteCRLF			10214 //上書きモード
+#define HIDC_CHECK_CONVERTEOLPASTE				10217 //改行コードを変換して貼り付ける // 2009.02.28 salarm
 #define HIDC_CHECK_EXCVLUSIVE_NO				10310 //ファイルの排他制御（排他制御しない）
 #define HIDC_CHECK_bCheckFileTimeStamp			10311 //更新の監視
 #define HIDC_CHECK_EXCVLUSIVE_WRITE				10312 //ファイルの排他制御（上書き禁止）

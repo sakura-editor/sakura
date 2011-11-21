@@ -473,8 +473,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_COPY:					Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
 	case F_COPY_ADDCRLF:			Command_COPY( false, true );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
 	case F_COPY_CRLF:				Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
-	case F_PASTE:					Command_PASTE();break;					//貼り付け(クリップボードから貼り付け)
-	case F_PASTEBOX:				Command_PASTEBOX();break;				//矩形貼り付け(クリップボードから矩形貼り付け)
+	case F_PASTE:					Command_PASTE( (int)lparam1 );break;				//貼り付け(クリップボードから貼り付け)
+	case F_PASTEBOX:				Command_PASTEBOX( (int)lparam1 );break;				//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSTEXT_W:				Command_INSTEXT( bRedraw, (const wchar_t*)lparam1, CLogicInt(-1), lparam2!=0 );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加(-1は\0終端まで)
 	case F_ADDTAIL_W:				Command_ADDTAIL( (const wchar_t*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
@@ -2226,7 +2226,7 @@ bool CViewCommander::Command_SELECTWORD( void )
 /** 貼り付け(クリップボードから貼り付け)
 	@date 2007.10.04 ryoji MSDEVLineSelect形式の行コピー対応処理を追加（VS2003/2005のエディタと類似の挙動に）
 */
-void CViewCommander::Command_PASTE( void )
+void CViewCommander::Command_PASTE( int option )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -2240,23 +2240,54 @@ void CViewCommander::Command_PASTE( void )
 	CNativeW	cmemClip;
 	bool		bColmnSelect;
 	bool		bLineSelect = false;
-	if( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
+	bool		bLineSelectOption = 
+		((option & 0x04) == 0x04) ? true :
+		((option & 0x08) == 0x08) ? false :
+		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste;
+
+	if( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
 		ErrorBeep();
 		return;
 	}
 
+	// クリップボードデータ取得 -> pszText, nTextLen
+	CLogicInt		nTextLen;
+	const wchar_t*	pszText = cmemClip.GetStringPtr(&nTextLen);
+
+	bool bConvertEol = 
+		((option & 0x01) == 0x01) ? true :
+		((option & 0x02) == 0x02) ? false :
+		GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste;
+
+	bool bAutoColmnPaste = 
+		((option & 0x10) == 0x10) ? true :
+		((option & 0x20) == 0x20) ? false :
+		GetDllShareData().m_Common.m_sEdit.m_bAutoColmnPaste != FALSE;
+
 	// 矩形コピーのテキストは常に矩形貼り付け
-	if( GetDllShareData().m_Common.m_sEdit.m_bAutoColmnPaste ){
+	if( bAutoColmnPaste ){
 		// 矩形コピーのデータなら矩形貼り付け
 		if( bColmnSelect ){
-			Command_PASTEBOX();
+			if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){
+				ErrorBeep();
+				return;
+			}
+			if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){
+				return;
+			}
+			if( bConvertEol ){
+				wchar_t	*pszConvertedText = new wchar_t[nTextLen * 2]; // 全文字\n→\r\n変換で最大の２倍になる
+				CLogicInt nConvertedTextLen = ConvertEol(pszText, nTextLen, pszConvertedText);
+				Command_PASTEBOX(pszConvertedText, nConvertedTextLen);
+				delete [] pszConvertedText;
+			}else{
+				Command_PASTEBOX(pszText, nTextLen);
+			}
+			m_pCommanderView->AdjustScrollBars();
+			m_pCommanderView->Redraw();
 			return;
 		}
 	}
-
-	// クリップボードデータ取得 -> pszText, nTextLen
-	CLogicInt		nTextLen;
-	const wchar_t*	pszText = cmemClip.GetStringPtr( &nTextLen );
 
 	// 2007.10.04 ryoji
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
@@ -2268,11 +2299,42 @@ void CViewCommander::Command_PASTE( void )
 		}
 	}
 
-	// テキストを貼り付け
-	Command_INSTEXT( true, pszText, nTextLen, true, bLineSelect );	// 2010.09.17 ryoji
+	if( bConvertEol ){
+		wchar_t	*pszConvertedText = new wchar_t[nTextLen * 2]; // 全文字\n→\r\n変換で最大の２倍になる
+		CLogicInt nConvertedTextLen = ConvertEol( pszText, nTextLen, pszConvertedText );
+		// テキストを貼り付け
+		Command_INSTEXT( true, pszConvertedText, nConvertedTextLen, true, bLineSelect );	// 2010.09.17 ryoji
+		delete [] pszConvertedText;
+	}else{
+		// テキストを貼り付け
+		Command_INSTEXT( true, pszText, nTextLen, true, bLineSelect );	// 2010.09.17 ryoji
+	}
+
 	return;
 }
 
+CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText)
+{
+	// original by 2009.02.28 salarm
+	CLogicInt nConvertedTextLen;
+	CEol eol = GetDocument()->m_cDocEditor.GetNewLineCode();
+
+	nConvertedTextLen = 0;
+	for( int i = 0; i < nTextLen; i++ ){
+		if( pszText[i] == WCODE::CR || pszText[i] == WCODE::LF ){
+			if( pszText[i] == WCODE::CR ){
+				if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
+					i++;
+				}
+			}
+			wmemcpy( &pszConvertedText[nConvertedTextLen], eol.GetValue2(), eol.GetLen() );
+			nConvertedTextLen += eol.GetLen();
+		} else {
+			pszConvertedText[nConvertedTextLen++] = pszText[i];
+		}
+	}
+	return nConvertedTextLen;
+}
 
 /*! テキストを貼り付け
 	@date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
@@ -2585,7 +2647,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 /* 矩形貼り付け(クリップボードから矩形貼り付け) */
 // 2004.06.29 Moca 未使用だったものを有効にする
 //	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
-void CViewCommander::Command_PASTEBOX( void )
+void CViewCommander::Command_PASTEBOX( int option )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// マウスによる範囲選択中
 	{
@@ -2609,7 +2671,19 @@ void CViewCommander::Command_PASTEBOX( void )
 	int nstrlen;
 	const wchar_t *lptstr = cmemClip.GetStringPtr( &nstrlen );
 
-	Command_PASTEBOX(lptstr, nstrlen);
+	bool bConvertEol = 
+		((option & 0x01) == 0x01) ? true :
+		((option & 0x02) == 0x02) ? false :
+		GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste;
+
+	if( bConvertEol ){
+		wchar_t	*pszConvertedText = new wchar_t[nstrlen * 2]; // 全文字\n→\r\n変換で最大の２倍になる
+		CLogicInt nConvertedTextLen = ConvertEol( lptstr, CLogicInt(nstrlen), pszConvertedText );
+		Command_PASTEBOX(pszConvertedText, nConvertedTextLen);
+		delete [] pszConvertedText;
+	}else{
+		Command_PASTEBOX(lptstr, nstrlen);
+	}
 	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
@@ -6413,7 +6487,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		/* コマンドコードによる処理振り分け */
 		/* テキストを貼り付け */
 		if(nPaste){
-			Command_PASTE();
+			Command_PASTE(0);
 		} else if ( bRegularExp ) { /* 検索／置換  1==正規表現 */
 			// 先読みに対応するために物理行末までを使うように変更 2005/03/27 かろと
 			// 2002/01/19 novice 正規表現による文字列置換
@@ -6671,6 +6745,14 @@ void CViewCommander::Command_REPLACE_ALL()
 			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 			szREPLACEKEY = cmemClip.GetStringPtr( &nREPLACEKEY );
 		}
+	}
+
+	if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
+		wchar_t	*pszConvertedText = new wchar_t[nREPLACEKEY * 2]; // 全文字\n→\r\n変換で最大の２倍になる
+		CLogicInt nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
+		cmemClip.SetString(pszConvertedText, nConvertedTextLen);
+		szREPLACEKEY = cmemClip.GetStringPtr(&nREPLACEKEY);
+		delete [] pszConvertedText;
 	}
 
 	// 取得にステップがかかりそうな変数などを、一時変数化する。

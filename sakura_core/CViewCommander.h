@@ -172,8 +172,8 @@ public:
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
 	void Command_COPY( bool, bool bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
-	void Command_PASTE( void );						/* 貼り付け（クリップボードから貼り付け）*/
-	void Command_PASTEBOX( void );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
+	void Command_PASTE( int option );						/* 貼り付け（クリップボードから貼り付け）*/
+	void Command_PASTEBOX( int option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
 	void Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize );
@@ -354,5 +354,6 @@ public:
 
 private:
 	void DelCharForOverwrite( void );	// 上書き用の一文字削除	// 2009.04.11 ryoji
+	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 
 };
