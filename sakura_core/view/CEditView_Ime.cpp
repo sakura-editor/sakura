@@ -370,6 +370,12 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 			}else{
 				CopyMemory(p, pszReconv, cbReconvLenWithNull - sizeof(wchar_t));
 			}
+			// \0‚ª‚ ‚é‚Æ‰ž“š‚È‚µ‚É‚È‚é‚±‚Æ‚ª‚ ‚é
+			for( DWORD i = 0; i < dwReconvTextInsLen; i++ ){
+				if( p[i] == 0 ){
+					p[i] = L' ';
+				}
+			}
 			p[dwReconvTextInsLen] = L'\0';
 		}else{
 			ACHAR* p = (ACHAR*)(pReconv + 1);
@@ -383,6 +389,12 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 					dwReconvTextLen - dwCompStrOffset);
 			}else{
 				CopyMemory(p, pszReconv, cbReconvLenWithNull - sizeof(char));
+			}
+			// \0‚ª‚ ‚é‚Æ‰ž“š‚È‚µ‚É‚È‚é‚±‚Æ‚ª‚ ‚é
+			for( DWORD i = 0; i < dwReconvTextInsLen; i++ ){
+				if( p[i] == 0 ){
+					p[i] = ' ';
+				}
 			}
 			p[dwReconvTextInsLen]='\0';
 		}
