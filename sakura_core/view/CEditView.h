@@ -625,6 +625,15 @@ public:
 	bool			m_bActivateByMouse;		//!< マウスによるアクティベート	//2007.10.02 nasukoji
 	DWORD			m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
 	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
+	int				m_nWheelDelta;	//!< ホイール変化量
+	enum eWheelScrollType{
+		WHEEL_SCROLL_NONE,
+		WHEEL_SCROLL_HNORMAL,
+		WHEEL_SCROLL_HPAGE,
+		WHEEL_SCROLL_VNORMAL,
+		WHEEL_SCROLL_VPAGE,
+	};
+	eWheelScrollType	m_eWheelScroll; //!< スクロールの種類
 
 	//検索
 	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */
