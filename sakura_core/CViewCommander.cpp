@@ -2904,7 +2904,13 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 
 	// Oct. 6 ,2002 genta バッファに格納する
 	// Aug. 15, 2007 kobake WCHARバッファに変換する
+#ifdef _UNICODE
 	wchar_t szWord[2]={wChar,0};
+#else
+	ACHAR szAnsiWord[3]={(wChar >> 8) & 0xff, wChar & 0xff, 0};
+	const wchar_t* pUniData = to_wchar(szAnsiWord);
+	wchar_t szWord[2]={pUniData[0],0};
+#endif
 	CLogicInt nWord=CLogicInt(1);
 
 	/* テキストが選択されているか */
