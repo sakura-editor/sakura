@@ -450,7 +450,26 @@ LRESULT CEditView::DispatchEvent(
 
 		return 0L;
 	case WM_CHAR:
-		GetCommander().HandleCommand( F_WCHAR, TRUE, tchar_to_wchar((TCHAR)wParam), 0, 0, 0 );
+#ifdef _UNICODE
+		GetCommander().HandleCommand( F_WCHAR, TRUE, WCHAR(wParam), 0, 0, 0 );
+#else
+		// SJIS固有
+		{
+			static BYTE preChar = 0;
+			if( preChar == 0 && ! _IS_SJIS_1((unsigned char)wParam) ){
+				// ASCII , 半角カタカナ
+				GetCommander().HandleCommand( F_WCHAR, TRUE, tchar_to_wchar((TCHAR)wParam), 0, 0, 0 );
+			}else{
+				if( preChar ){
+					WORD wordData = MAKEWORD((BYTE)wParam, preChar);
+					GetCommander().HandleCommand( F_IME_CHAR, TRUE, wordData, 0, 0, 0 );
+					preChar = 0;
+				}else{
+					preChar = (BYTE)wParam;
+				}
+			}
+		}
+#endif
 		return 0L;
 
 	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
@@ -806,6 +825,22 @@ LRESULT CEditView::DispatchEvent(
 		}
 
 		return nRes;
+
+	case EM_GETLIMITTEXT:
+		return INT_MAX;
+	case EM_REPLACESEL:
+	{
+		// wParam RedoUndoフラグは無視する
+		if( lParam ){
+#ifdef _UNICODE
+			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, lParam, TRUE, 0, 0 );
+#else
+			std::wstring text = to_wchar((LPCTSTR)lParam);
+			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)text.c_str(), TRUE, 0, 0 );
+#endif
+		}
+		return 0L; // not use.
+	}
 
 	default:
 // << 20020331 aroka 再変換対応 for 95/NT
