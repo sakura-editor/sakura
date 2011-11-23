@@ -991,7 +991,10 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 
 
 
-/* マウスホイールのメッセージ処理 */
+/* マウスホイールのメッセージ処理
+	2009.01.17 nasukoji	ホイールスクロールを利用したページスクロール・横スクロール対応
+	2011.11.16 Moca スクロール変化量への対応
+*/
 LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 {
 	WORD	fwKeys;
@@ -1001,6 +1004,7 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	int		i;
 	int		nScrollCode;
 	int		nRollLineNum;
+	eWheelScrollType scrollType = WHEEL_SCROLL_NONE;
 
 	fwKeys = LOWORD(wParam);			// key flags
 	zDelta = (short) HIWORD(wParam);	// wheel rotation
@@ -1014,24 +1018,14 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		nScrollCode = SB_LINEDOWN;
 	}
 
-	// 2009.01.17 nasukoji	ホイールスクロールを利用したページスクロール・横スクロール対応
-	if( IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel ) ){				// ページスクロール？
-		if( IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel ) ){		// 横スクロール？
-			CLayoutInt line = GetTextArea().GetViewLeftCol() + ( GetTextArea().m_nViewColNum * (( nScrollCode == SB_LINEUP ) ? -1 : 1 ));
-			SyncScrollH( ScrollAtH( line ) );
+	{
+		// 2009.01.17 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
+		BOOL bHorizontal = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
 
-			// ホイール操作による横スクロールあり
-			m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
-		}else{
-			CLayoutInt line = GetTextArea().GetViewTopLine() + (GetTextArea().m_nViewRowNum * (( nScrollCode == SB_LINEUP ) ? -1 : 1 ));
-			SyncScrollV( ScrollAtV( line ) );
-		}
+		BOOL bKeyPageScroll = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel );
 
-		// ホイール操作によるページスクロールあり
-		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( TRUE );
-	}else{
 		/* マウスホイールによるスクロール行数をレジストリから取得 */
-		nRollLineNum = 6;
+		nRollLineNum = 3;
 
 		/* レジストリの存在チェック */
 		// 2006.06.03 Moca ReadRegistry に書き換え
@@ -1042,35 +1036,65 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 			nRollLineNum = ::_ttoi( szValStr );
 		}
 
-		if( -1 == nRollLineNum ){/* 「1画面分スクロールする」 */
-			nRollLineNum = (Int)GetTextArea().m_nViewRowNum;	// 表示域の行数
+		if( -1 == nRollLineNum || bKeyPageScroll ){
+			/* 「1画面分スクロールする」 */
+			if( bHorizontal ){
+				nRollLineNum = (Int)GetTextArea().m_nViewColNum - 1;	// 表示域の桁数
+			}else{
+				nRollLineNum = (Int)GetTextArea().m_nViewRowNum - 1;	// 表示域の行数
+			}
 		}
 		else{
-			if( nRollLineNum < 1 ){
-				nRollLineNum = 1;
-			}
 			if( nRollLineNum > 30 ){	//@@@ YAZAKI 2001.12.31 10→30へ。
 				nRollLineNum = 30;
 			}
 		}
+		if( nRollLineNum < 1 ){
+			nRollLineNum = 1;
+		}
 
-		// 2009.01.17 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
-		BOOL bHorizontal = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
-		
+		// スクロール操作の種類(通常方法のページするクロールはNORMAL扱い)
+		if( bKeyPageScroll ){
+			if( bHorizontal ){
+				scrollType = WHEEL_SCROLL_HPAGE;
+				// ホイール操作による横スクロールあり
+				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
+			}else{
+				scrollType = WHEEL_SCROLL_VPAGE;
+			}
+			// ホイール操作によるページスクロールあり
+			m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( TRUE );
+		}else{
+			if( bHorizontal ){
+				scrollType = WHEEL_SCROLL_HNORMAL;
+				// ホイール操作による横スクロールあり
+				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
+			}else{
+				scrollType = WHEEL_SCROLL_VNORMAL;
+			}
+		}
+
+		if( scrollType != m_eWheelScroll
+				|| ( zDelta < 0 && 0 < m_nWheelDelta )
+				|| ( 0 < zDelta && m_nWheelDelta < 0 ) ){
+			m_nWheelDelta = 0;
+			m_eWheelScroll = scrollType;
+		}
+		m_nWheelDelta += zDelta;
+
 		// 2011.05.18 APIのスクロール量に従う
-		nRollLineNum = t_abs(zDelta) * nRollLineNum / 120;
+		int nRollNum = abs(m_nWheelDelta) * nRollLineNum / 120;
+		// 次回持越しの変化量(上記式Deltaのあまり。スクロール方向とzDeltaは符号が反対)
+		m_nWheelDelta = (abs(m_nWheelDelta) - nRollNum * 120 / nRollLineNum) * ((nScrollCode == SB_LINEUP) ? 1 : -1);
 		
 		const bool bSmooth = !! GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth;
-		const int nRollActions = bSmooth ? nRollLineNum : 1;
-		const CLayoutInt nCount = CLayoutInt(((nScrollCode == SB_LINEUP) ? -1 : 1) * (bSmooth ? 1 : nRollLineNum) );
+		const int nRollActions = bSmooth ? nRollNum : 1;
+		const CLayoutInt nCount = CLayoutInt(((nScrollCode == SB_LINEUP) ? -1 : 1) * (bSmooth ? 1 : nRollNum) );
 
 		for( i = 0; i < nRollActions; ++i ){
 			//	Sep. 11, 2004 genta 同期スクロール行数
 			if( bHorizontal ){
 				SyncScrollH( ScrollAtH( GetTextArea().GetViewLeftCol() + nCount ) );
-
-				// ホイール操作による横スクロールあり
-				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
 			}else{
 				SyncScrollV( ScrollAtV( GetTextArea().GetViewTopLine() + nCount ) );
 			}

@@ -119,6 +119,8 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , m_cViewSelect(this)
 , m_AT_ImmSetReconvertString(NULL)
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
+, m_nWheelDelta(0)
+, m_eWheelScroll(WHEEL_SCROLL_NONE)
 {
 }
 
