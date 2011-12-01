@@ -29,7 +29,7 @@ struct DLLSHAREDATA;
 //#define MAX_MENUPOS	10
 //	Jul. 2, 2005 genta : マクロをたくさん登録すると上限を超えてしまうので
 //	初期値の300から増やす
-#define MAX_MENUITEMS	400
+// #define MAX_MENUITEMS	400 // 2011.11.23 Moca 上限撤廃
 
 //ツールバーの拡張	//@@@ 2002.06.15 MIK
 #define TBSTYLE_COMBOBOX	((BYTE)0x40)	//ツールバーにコンボボックス
@@ -102,15 +102,18 @@ private:
 	HINSTANCE		m_hInstance;
 	HWND			m_hWndOwner;
 
-	int				m_nMenuItemNum;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 //2009.11.14 syat プラグインコマンド動的追加のためvector化
 	std::vector<TBBUTTON>	m_tbMyButton;	/* ツールバーのボタン */
 	int				m_nMyButtonNum;
-
-	int				m_nMenuItemBitmapIdxArr[MAX_MENUITEMS];
-	int				m_nMenuItemFuncArr[MAX_MENUITEMS];
-	CNativeT		m_cmemMenuItemStrArr[MAX_MENUITEMS];
+	
+	// 2011.11.18 MenuItemのvector化
+	struct MyMenuItemInfo{
+		int				m_nBitmapIdx;
+		int				m_nFuncId;
+		CNativeT		m_cmemLabel;
+	};
+	std::vector<MyMenuItemInfo> m_menuItems;
 	int				m_nMenuHeight;
 	HFONT			m_hFontMenu;
 	HFONT			m_hFontMenuUndelLine;
