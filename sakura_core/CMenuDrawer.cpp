@@ -45,7 +45,6 @@ CMenuDrawer::CMenuDrawer()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
-	m_nMenuItemNum = 0;
 	m_nMenuHeight = 0;
 	m_hFontMenu = NULL;
 	m_hFontMenuUndelLine = NULL;
@@ -722,13 +721,8 @@ void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pc
 
 void CMenuDrawer::ResetContents( void )
 {
-	int		i;
 	LOGFONT	lf;
-	for( i = 0; i < m_nMenuItemNum; ++i ){
-		m_cmemMenuItemStrArr[i].SetString(_T(""));
-		m_nMenuItemFuncArr[i] = 0;
-	}
-	m_nMenuItemNum = 0;
+	m_menuItems.clear();
 
 	NONCLIENTMETRICS	ncm;
 	// 以前のプラットフォームに WINVER >= 0x0600 で定義される構造体のフルサイズを渡すと失敗する	// 2007.12.21 ryoji
@@ -829,20 +823,11 @@ void CMenuDrawer::MyAppendMenu(
 		 );
 
 		/* アイコン用ビットマップを持つものは、オーナードロウにする */
-
-		if( m_nMenuItemNum + 1 > MAX_MENUITEMS ){
-			TopErrorMessage(	NULL,
-				_T("CMenuDrawer::MyAppendMenu()エラー\n")
-				_T("\n")
-				_T("CMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n "),
-				MAX_MENUITEMS
-			);
-		}
-		else{
-
-			m_nMenuItemBitmapIdxArr[m_nMenuItemNum] = -1;
-			m_nMenuItemFuncArr[m_nMenuItemNum] = nFuncId;
-			m_cmemMenuItemStrArr[m_nMenuItemNum].SetString( szLabel, _tcslen( szLabel ) );
+		{
+			MyMenuItemInfo item;
+			item.m_nBitmapIdx = -1;
+			item.m_nFuncId = nFuncId;
+			item.m_cmemLabel.SetString( szLabel );
 //#ifdef _DEBUG
 			/* メニュー項目をオーナー描画にする */
 			/* メニューにアイコンを表示する */
@@ -851,23 +836,14 @@ void CMenuDrawer::MyAppendMenu(
 			}
 //#endif
 			/* 機能のビットマップがあるかどうか調べておく */
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//			for( i = 0; i < m_cShareData.m_nMyButtonNum; ++i ){
-//				if( nFuncId == m_cShareData.m_tbMyButton[i].idCommand ){
-//					/* 機能のビットマップの情報を覚えておく */
-//					m_nMenuItemBitmapIdxArr[m_nMenuItemNum] = m_cShareData.m_tbMyButton[i].iBitmap;
-//					break;
-//				}
-//			}
 			for( i = 0; i < m_nMyButtonNum; ++i ){
-				//if( nFuncId == m_tbMyButton[i].idCommand ){
 				if( nForceIconId == m_tbMyButton[i].idCommand ){	//お気に入り	//@@@ 2003.04.08 MIK
 					/* 機能のビットマップの情報を覚えておく */
-					m_nMenuItemBitmapIdxArr[m_nMenuItemNum] = m_tbMyButton[i].iBitmap;
+					item.m_nBitmapIdx = m_tbMyButton[i].iBitmap;
 					break;
 				}
 			}
-			m_nMenuItemNum++;
+			m_menuItems.push_back( item );
 		}
 	}
 
@@ -929,20 +905,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	nIndentRight = 8;
 	nTextTopMargin = 3;
 
-/*	for( i = 0; i < m_nMenuItemNum; ++i ){
-		if( (int)lpdis->itemID == m_nMenuItemFuncArr[i] ){
-			break;
-		}
-	}
-	if( i >= m_nMenuItemNum ){
-		return;
-	}
-	nItemIndex = i;
-*/
 //@@@ 2002.01.03 YAZAKI 極力メンバ関数を使用するように。
 	nItemIndex = Find( (int)lpdis->itemID );
 	const TCHAR*	pszItemStr;
-	pszItemStr = m_cmemMenuItemStrArr[nItemIndex].GetStringPtr( &nItemStrLen );
+	pszItemStr = m_menuItems[nItemIndex].m_cmemLabel.GetStringPtr( &nItemStrLen );
 
 	hdc = lpdis->hDC;
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontMenu );
@@ -958,7 +924,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	if( lpdis->itemState & ODS_SELECTED ){
 		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 		rc1 = lpdis->rcItem;
-		if( -1 != m_nMenuItemBitmapIdxArr[nItemIndex] || lpdis->itemState & ODS_CHECKED ){
+		if( -1 != m_menuItems[nItemIndex].m_nBitmapIdx || lpdis->itemState & ODS_CHECKED ){
 			rc1.left += (nIndentLeft - 2);
 		}
 		/* 選択ハイライト矩形 */
@@ -1100,7 +1066,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 
 
 	/* 機能の画像が存在するならメニューアイコン?を描画する */
-	if( -1 != m_nMenuItemBitmapIdxArr[nItemIndex] ){
+	if( -1 != m_menuItems[nItemIndex].m_nBitmapIdx ){
 		/* 3D枠を描画する */
 		/* アイテムが選択されている */
 		if( lpdis->itemState & ODS_SELECTED ){
@@ -1127,7 +1093,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 //			COLORREF cOld;
 //			cOld = SetTextColor( hdc, GetSysColor(COLOR_3DSHADOW) );	//Oct. 24, 2000 これは標準ではRGB(128,128,128)と同じ
 //			cOld = SetTextColor( hdc, RGB(132,132,132) );	//Oct. 24, 2000 JEPRO もう少し薄くした
-			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
+			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1,	//	X
 				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
@@ -1148,7 +1114,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}
 */
 			/* 通常のアイコン */
-			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
+			m_pcIcons->Draw( m_menuItems[nItemIndex].m_nBitmapIdx,
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1 + 1,	//	X
 				//@@@ 2002.1.29 YAZAKI Windowsの設定でメニューのフォントを大きくすると表示が崩れる問題に対処
@@ -1233,12 +1199,13 @@ TBBUTTON CMenuDrawer::getButton( int index ) const
 int CMenuDrawer::Find( int nFuncID )
 {
 	int i;
-	for( i = 0; i < m_nMenuItemNum; ++i ){
-		if( (int)nFuncID == m_nMenuItemFuncArr[i] ){
+	int nItemNum = (int)m_menuItems.size();
+	for( i = 0; i < nItemNum; ++i ){
+		if( nFuncID == m_menuItems[i].m_nFuncId ){
 			break;
 		}
 	}
-	if( i >= m_nMenuItemNum ){
+	if( i >= nItemNum ){
 		return -1;
 	}else{
 		return i;
@@ -1252,7 +1219,7 @@ const TCHAR* CMenuDrawer::GetLabel( int nFuncID )
 	if( -1 == ( i = Find( nFuncID ) ) ){
 		return NULL;
 	}
-	return m_cmemMenuItemStrArr[i].GetStringPtr();
+	return m_menuItems[i].m_cmemLabel.GetStringPtr();
 }
 
 TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
@@ -1298,12 +1265,9 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		int				idx;
 		MENUITEMINFO	mii;
 	};
-
-	WorkData vecAccel[100];
-	int nAccelNum;
-	int nAccelSel;
-	nAccelNum = 0;
-	nAccelSel = 99999;
+	// 2011.11.18 vector化
+	std::vector<WorkData> vecAccel;
+	size_t nAccelSel = 99999;
 	for( i = 0; i < ::GetMenuItemCount( hmenu ); i++ ){
 		TCHAR	szText[1024];
 		// メニュー項目に関する情報を取得します。
@@ -1325,23 +1289,24 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			continue;
 		}
 		if( chUser == GetAccelCharFromLabel( pszLabel ) ){
-			vecAccel[nAccelNum].idx = i;
-			vecAccel[nAccelNum].mii = mii;
+			WorkData work;
+			work.idx = i;
+			work.mii = mii;
 			if( /*-1 == nAccelSel ||*/ MFS_HILITE & mii.fState ){
-				nAccelSel = nAccelNum;
+				nAccelSel = vecAccel.size();
 			}
-			nAccelNum++;
+			vecAccel.push_back( work );
 		}
 	}
 //	MYTRACE_A( "%d\n", (int)mapAccel.size() );
-	if( 0 == nAccelNum ){
+	if( 0 == vecAccel.size() ){
 		return  MAKELONG( 0, MNC_IGNORE );
 	}
-	if( 1 == nAccelNum ){
+	if( 1 == vecAccel.size() ){
 		return  MAKELONG( vecAccel[0].idx, MNC_EXECUTE );
 	}
-//	MYTRACE_A( "nAccelSel=%d nAccelNum=%d\n", nAccelSel, nAccelNum );
-	if( nAccelSel + 1 >= nAccelNum ){
+//	MYTRACE_A( "nAccelSel=%d vecAccel.size()=%d\n", nAccelSel, vecAccel.size() );
+	if( nAccelSel + 1 >= vecAccel.size() ){
 //		MYTRACE_A( "vecAccel[0].idx=%d\n", vecAccel[0].idx );
 		return  MAKELONG( vecAccel[0].idx, MNC_SELECT );
 	}else{
