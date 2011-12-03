@@ -111,14 +111,17 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 	for( int i = 0; i < 2; i++ )
 	{
-		// i=0:カーソル位置の括弧,i=1:対括弧
+		// i=0:対括弧,i=1:カーソル位置の括弧
+		// 2011.11.23 ryoji 対括弧 -> カーソル位置の括弧 の順に処理順序を変更
+		//   ＃ { と } が異なる行にある場合に { を BS で消すと } の強調表示が解除されない問題（Wiki BugReport/89）の対策
+		//   ＃ この順序変更によりカーソル位置が括弧でなくなっていても対括弧があれば対括弧側の強調表示は解除される
 
 		CLayoutPoint	ptColLine;
 
 		if( i == 0 ){
-			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketCaretPos_PHY, &ptColLine );
-		}else{
 			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketPairPos_PHY,  &ptColLine );
+		}else{
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketCaretPos_PHY, &ptColLine );
 		}
 
 		if ( ( ptColLine.x >= GetTextArea().GetViewLeftCol() ) && ( ptColLine.x <= GetTextArea().GetRightCol() )
