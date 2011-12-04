@@ -57,6 +57,7 @@ public:
 
 	/* ファイル操作系 */
 	void Command_FILENEW( void );				/* 新規作成 */
+	void Command_FILENEW_NEWWINDOW( void );		/* 新規作成（タブで開く版） */
 	/* ファイルを開く */
 	// Oct. 2, 2001 genta マクロ用に機能拡張
 	// Mar. 30, 2003 genta 引数追加

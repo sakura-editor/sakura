@@ -1389,23 +1389,26 @@ BEGIN
                     WS_TABSTOP,15,40,239,10
     CONTROL         "最後のファイルを閉じたとき(無題)文書を残す(&R)",
                     IDC_CHECK_RetainEmptyWindow,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,24,53,226,12
+                    WS_TABSTOP,24,53,226,10
     CONTROL         "ウィンドウの閉じるボタンは現在のファイルのみ閉じる(&C)",
                     IDC_CHECK_CloseOneWin,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,24,68,226,9
-    GROUPBOX        "動作モード",IDC_STATIC,7,27,280,55
+                    WS_TABSTOP,24,66,226,10
+    CONTROL         "外部から起動するときは新しいウインドウで開く(&O)",
+                    IDC_CHECK_OpenNewWin,"Button",BS_AUTOCHECKBOX |
+					WS_TABSTOP,24,79,160,10
+    GROUPBOX        "動作モード",IDC_STATIC,7,27,280,68
     CONTROL         "アイコン表示(&I)",IDC_CHECK_DispTabIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,15,102,63,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
     CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,102,39,10
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,115,39,10
     CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,15,116,90,10
-    LTEXT           "タイトル(&T)",IDC_STATIC,15,134,40,10
-    EDITTEXT        IDC_TABWND_CAPTION,56,132,226,14,ES_AUTOHSCROLL
-    GROUPBOX        "タブの外観",IDC_STATIC,7,89,280,64,WS_GROUP
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,129,90,10
+    LTEXT           "タイトル(&T)",IDC_STATIC,15,148,40,10
+    EDITTEXT        IDC_TABWND_CAPTION,56,145,226,14,ES_AUTOHSCROLL
+    GROUPBOX        "タブの外観",IDC_STATIC,7,102,280,64,WS_GROUP
     CONTROL         "マウスホイールでタブ切替(&W)",IDC_CHECK_ChgWndByWheel,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,171,107,10
-    GROUPBOX        "その他",IDC_STATIC,7,159,280,28,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,184,107,10
+    GROUPBOX        "その他",IDC_STATIC,7,172,280,28,WS_GROUP
 END
 
 IDD_PROP_STATUSBAR DIALOGEX 0, 0, 293, 240
@@ -2500,6 +2503,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_FILENEW               "新規作成"
+    F_FILENEW_NEWWINDOW		"新規ウインドウを開く"
     F_FILEOPEN              "開く..."
     F_FILESAVE              "上書き保存"
     F_FILESAVEAS_DIALOG     "名前を付けて保存..."

@@ -475,7 +475,7 @@ CCommandLine::CCommandLine(LPTSTR cmd)
 	m_gi.bGrepOutputLine	= false;
 	m_gi.nGrepOutputStyle	= 1;
 	m_bViewMode			= false;
-	m_nGroup				= 0;		// 2007.06.26 ryoji
+	m_nGroup				= -1;		// 2007.06.26 ryoji
 	
 	ParseCommandLine();
 }

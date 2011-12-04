@@ -95,6 +95,7 @@ protected:
 
 public:
 	static bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* 同一グループかどうかを調べる */
+	int GetFreeGroupId( void );											/* 空いているグループ番号を取得する */
 };
 
 

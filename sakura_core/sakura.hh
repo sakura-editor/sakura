@@ -28,6 +28,7 @@
 #define HLP000135	135 //ドラッグ & ドロップ編集
 #define HLP000016	16 //「ファイル(F)」メニューの一覧
 #define HLP000025	25 //新規作成
+#define HLP000339   339 //新規ウィンドウで開く
 #define HLP000015	15 //開く
 #define HLP000020	20 //上書き保存
 #define HLP000021	21 //名前を付けて保存
@@ -551,6 +552,7 @@
 #define HIDC_CHECK_RetainEmptyWindow			11273 //最後のファイルを閉じたとき(無題)文書を残す	// 2007.02.13 ryoji
 #define HIDC_CHECK_CloseOneWin					11274 //ウィンドウの閉じるボタンは現在のファイルのみ閉じる	// 2007.02.13 ryoji
 #define HIDC_CHECK_ChgWndByWheel				11275 //マウスホイールでタブ切替	// 2007.04.03 ryoji
+#define HIDC_CHECK_OpenNewWin					11276 //外部から起動するときは新しいウインドウ開く	// 2009.06.19
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK

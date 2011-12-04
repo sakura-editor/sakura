@@ -14,7 +14,7 @@
 #include "util/shell.h"
 #include "CCommandLine.h"
 
-CEditApp::CEditApp(HINSTANCE hInst)
+CEditApp::CEditApp(HINSTANCE hInst, int nGroupId)
 : m_hInst(hInst)
 {
 	//ヘルパ作成
@@ -39,9 +39,7 @@ CEditApp::CEditApp(HINSTANCE hInst)
 
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
-	m_pcEditWnd->Create(
-		CCommandLine::Instance()->GetGroupId()
-	);
+	m_pcEditWnd->Create( nGroupId );
 
 	//MRU管理
 	m_pcMruListener = new CMruListener();

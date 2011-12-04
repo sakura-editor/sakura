@@ -139,7 +139,13 @@ bool CNormalProcess::InitializeProcess()
 	MY_TRACETIME( cRunningTimer, "After Load Plugins" );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
-	m_pcEditApp = new CEditApp(GetProcessInstance());
+	// グループIDを取得
+	int nGroupId = CCommandLine::Instance()->GetGroupId();
+	if( GetDllShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
+		nGroupId = CAppNodeManager::Instance()->GetFreeGroupId();
+	}
+	// CEditAppを作成
+	m_pcEditApp = new CEditApp(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetWindow();
 	if( NULL == pEditWnd->GetHwnd() ){
 		::ReleaseMutex( hMutex );

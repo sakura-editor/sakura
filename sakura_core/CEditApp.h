@@ -22,7 +22,7 @@ enum EFunctionCode;
 class CEditApp : public TSingleInstance<CEditApp>{
 public:
 	//コンストラクタ・デストラクタ
-	CEditApp(HINSTANCE hInst);
+	CEditApp(HINSTANCE hInst, int);
 	virtual ~CEditApp();
 
 	//モジュール情報
