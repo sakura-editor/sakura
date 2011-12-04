@@ -31,6 +31,7 @@ static const DWORD p_helpids[] = {
 	IDC_CHECK_RetainEmptyWindow,	HIDC_CHECK_RetainEmptyWindow,	//最後のファイルを閉じたとき(無題)文書を残す	// 2007.02.13 ryoji
 	IDC_CHECK_CloseOneWin,			HIDC_CHECK_CloseOneWin,			//ウィンドウの閉じるボタンは現在のファイルのみ閉じる	// 2007.02.13 ryoji
 	IDC_CHECK_ChgWndByWheel,		HIDC_CHECK_ChgWndByWheel,		//マウスホイールでウィンドウ切り替え 2007.04.03 ryoji
+	IDC_CHECK_OpenNewWin,			HIDC_CHECK_OpenNewWin,			//外部から起動するときは新しいウインドウで開く 2009.06.19
 	0, 0
 };
 
@@ -140,6 +141,7 @@ void CPropTab::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RetainEmptyWindow, m_Common.m_sTabBar.m_bTab_RetainEmptyWin );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CloseOneWin, m_Common.m_sTabBar.m_bTab_CloseOneWin );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_ChgWndByWheel, m_Common.m_sTabBar.m_bChgWndByWheel );	// 2007.04.03 ryoji
+	::CheckDlgButton( hwndDlg, IDC_CHECK_OpenNewWin, m_Common.m_sTabBar.m_bNewWindow ); // 2009.06.17
 
 	EnableTabPropInput(hwndDlg);
 	return;
@@ -161,6 +163,7 @@ int CPropTab::GetData( HWND hwndDlg )
 	m_Common.m_sTabBar.m_bTab_RetainEmptyWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RetainEmptyWindow );
 	m_Common.m_sTabBar.m_bTab_CloseOneWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CloseOneWin );
 	m_Common.m_sTabBar.m_bChgWndByWheel = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ChgWndByWheel );	// 2007.04.03 ryoji
+	m_Common.m_sTabBar.m_bNewWindow = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_OpenNewWin );  // 2009.06.17
 
 	return TRUE;
 }
@@ -181,6 +184,7 @@ void CPropTab::EnableTabPropInput(HWND hwndDlg)
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow  ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin        ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), FALSE );	// 2007.04.03 ryoji
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin         ), FALSE );	// 2009.06.17
 	}
 	else
 	{
@@ -194,10 +198,12 @@ void CPropTab::EnableTabPropInput(HWND hwndDlg)
 		{
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow ), TRUE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin       ), TRUE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin        ), TRUE );
 		}
 		else {
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin       ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin        ), FALSE );
 		}
 	}
 }

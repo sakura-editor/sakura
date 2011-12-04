@@ -67,6 +67,7 @@ F_FILECLOSE					= 30105,	//閉じて(無題)						なし
 F_FILECLOSE_OPEN			= 30107,	//閉じて開く						なし
 F_FILEOPEN_DROPDOWN			= 30108,	//開く(ドロップダウン)				const WCHAR* path
 F_FILESAVECLOSE				= 30109,	//保存して閉じる					なし
+F_FILENEW_NEWWINDOW			= 30110,	//新規作成（新しいウインドウで開く）		
 F_FILE_REOPEN_SJIS			= 30111,	//SJISで開き直す					bool bNoConfirm
 F_FILE_REOPEN_JIS			= 30112,	//JISで開き直す						bool bNoConfirm
 F_FILE_REOPEN_EUC			= 30113,	//EUCで開き直す						bool bNoConfirm

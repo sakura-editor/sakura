@@ -657,6 +657,7 @@
 #define IDC_EDIT_BACKIMG_OFFSET_X       1609
 #define IDC_EDIT_BACKIMG_OFFSET_Y       1610
 #define IDC_CHECK_CONVERTEOLPASTE       1611
+#define IDC_CHECK_OpenNewWin            1612
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000

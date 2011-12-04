@@ -110,7 +110,8 @@ void CControlTray::DoGrep()
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	CControlTray::OpenNewEditor( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, sLoadInfo, cCmdLine.c_str());
+	CControlTray::OpenNewEditor( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, sLoadInfo, cCmdLine.c_str(),
+		false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 }
 
 
@@ -656,7 +657,7 @@ LRESULT CControlTray::DispatchEvent(
 				switch( nId ){
 				case F_FILENEW:	/* 新規作成 */
 					/* 新規編集ウィンドウの追加 */
-					OnNewEditor();
+					OnNewEditor( false );
 					break;
 				case F_FILEOPEN:	/* 開く */
 					{
@@ -687,7 +688,8 @@ LRESULT CControlTray::DispatchEvent(
 						}
 						
 						// 新たな編集ウィンドウを起動
-						CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo );
+						CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
+							NULL, false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 					}
 					break;
 				case F_GREP_DIALOG:
@@ -736,7 +738,11 @@ LRESULT CControlTray::DispatchEvent(
 							CControlTray::OpenNewEditor(
 								m_hInstance,
 								GetTrayHwnd(),
-								sLoadInfo
+								sLoadInfo,
+								NULL,
+								false,
+								NULL,
+								m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false
 							);
 
 						}
@@ -773,7 +779,8 @@ LRESULT CControlTray::DispatchEvent(
 						}
 
 						// 新たな編集ウィンドウを起動
-						CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo );
+						CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
+							NULL, false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 					}
 					break;
 				}
@@ -781,7 +788,7 @@ LRESULT CControlTray::DispatchEvent(
 			case WM_LBUTTONDBLCLK:
 				bLDClick = true;		/* 03/02/20 ai */
 				/* 新規編集ウィンドウの追加 */
-				OnNewEditor();
+				OnNewEditor( m_pShareData->m_Common.m_sTabBar.m_bNewWindow == TRUE );
 				// Apr. 1, 2003 genta この後で表示されたメニューは閉じる
 				::PostMessageAny( GetTrayHwnd(), WM_CANCELMODE, 0, 0 );
 				return 0L;
@@ -865,13 +872,21 @@ void CControlTray::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 	@author genta
 	@date 2003.05.30 新規作成
 */
-void CControlTray::OnNewEditor()
+void CControlTray::OnNewEditor( bool bNewWindow )
 {
 
 	const TCHAR* szCurDir = NULL;
 
+	//
+	//  szCurDir を設定
+	//
 	//	最近使ったフォルダを順番にたどる
 	const CMRUFolder mrufolder;
+
+	// 新規ウィンドウで開くオプションは、タブバー＆グループ化を前提とする
+	bNewWindow = bNewWindow
+				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd == TRUE
+				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin == FALSE;
 
 	int nCount = mrufolder.Length();
 	for( int i = 0; i < nCount ; i++ ){
@@ -887,11 +902,12 @@ void CControlTray::OnNewEditor()
 	}
 
 
+	// 編集ウインドウを開く
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, szCurDir );
+	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, szCurDir, bNewWindow );
 }
 
 /*!
@@ -910,7 +926,8 @@ bool CControlTray::OpenNewEditor(
 	const SLoadInfo&	sLoadInfo,			//!< [in]
 	const TCHAR*		szCmdLineOption,	//!< [in] 追加のコマンドラインオプション
 	bool				sync,				//!< [in] trueなら新規エディタの起動まで待機する
-	const TCHAR*		szCurDir			//!< [in] 新規エディタのカレントディレクトリ
+	const TCHAR*		szCurDir,			//!< [in] 新規エディタのカレントディレクトリ
+	bool				bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
 	/* 共有データ構造体のアドレスを返す */
@@ -944,13 +961,18 @@ bool CControlTray::OpenNewEditor(
 	// ビューモード指定
 	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( _T(" -R") );
 
-	// グループID (親ウィンドウから取得)
+	// グループID
+	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
+		// グループIDを親ウィンドウから取得
 	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
 	int nGroup = CAppNodeManager::Instance()->GetEditNode( hwndAncestor )->GetGroup();
 	if( nGroup > 0 ){
 		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup );
 	}
-
+	}else{
+		// 空いているグループIDを使用する
+		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::Instance()->GetFreeGroupId() );
+	}
 
 	// -- -- -- -- プロセス生成 -- -- -- -- //
 
@@ -1080,7 +1102,8 @@ bool CControlTray::OpenNewEditor2(
 	HWND			hWndParent,
 	const EditInfo*	pfi,
 	bool			bViewMode,
-	bool			sync
+	bool			sync,
+	bool			bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
 	DLLSHAREDATA*	pShareData;
@@ -1110,7 +1133,7 @@ bool CControlTray::OpenNewEditor2(
 	sLoadInfo.cFilePath = pfi ? pfi->m_szPath : _T("");
 	sLoadInfo.eCharCode = CODE_AUTODETECT;
 	sLoadInfo.bViewMode = bViewMode;
-	return OpenNewEditor( hInstance, hWndParent, sLoadInfo, cCmdLine.c_str(), sync );
+	return OpenNewEditor( hInstance, hWndParent, sLoadInfo, cCmdLine.c_str(), sync, NULL, bNewWindow );
 }
 //	To Here Oct. 24, 2000 genta
 
