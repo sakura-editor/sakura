@@ -599,27 +599,40 @@ bool InitRegexp(
 	//	To Here 2007.08.12 genta
 
 	EDllResult eDllResult = rRegexp.InitDll(RegexpDll);
-	if( DLL_SUCCESS != eDllResult && bShowMessage ){
-		LPCTSTR pszMsg = _T("");
-		if(eDllResult==DLL_LOADFAILURE){
-			pszMsg =
-				_T("BREGONIG.DLL のロードに失敗しました。\r\n")
-				_T("正規表現を利用するには UNICODE 版の BREGONIG.DLL が必要です。\r\n")
-				_T("入手方法はヘルプを参照してください。");
+	if( DLL_SUCCESS != eDllResult ){
+		if( bShowMessage ){
+			LPCTSTR pszMsg = _T("");
+			if(eDllResult==DLL_LOADFAILURE){
+				pszMsg =
+					_T("bregonig.dll のロードに失敗しました。\r\n")
+#ifdef _M_IA64
+					_T("正規表現を利用するには Unicode/IA64 版の bregonig.dll が必要です。\r\n")
+#elif defined(_M_AMD64)
+					_T("正規表現を利用するには Unicode/x64 版の bregonig.dll が必要です。\r\n")
+#else
+					_T("正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n")
+#endif
+					_T("入手方法はヘルプを参照してください。");
+			}
+			else if(eDllResult==DLL_INITFAILURE){
+				pszMsg =
+					_T("bregonig.dll の利用に失敗しました。\r\n")
+#ifdef _M_IA64
+					_T("正規表現を利用するには Unicode/IA64 版の bregonig.dll が必要です。\r\n")
+#elif defined(_M_AMD64)
+					_T("正規表現を利用するには Unicode/x64 版の bregonig.dll が必要です。\r\n")
+#else
+					_T("正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n")
+#endif
+					_T("入手方法はヘルプを参照してください。");
+			}
+			else{
+				pszMsg =
+					_T("bregonig.dll のロードで予期せぬエラーが発生しました。");
+				assert(0);
+			}
+			::MessageBox( hWnd, pszMsg, _T("情報"), MB_OK | MB_ICONEXCLAMATION );
 		}
-		else if(eDllResult==DLL_INITFAILURE){
-			pszMsg =
-				_T("BREGONIG.DLL の利用に失敗しました。\r\n")
-				_T("正規表現を利用するには UNICODE 版の BREGONIG.DLL が必要です。\r\n")
-				_T("入手方法はヘルプを参照してください。");
-		}
-		else{
-			pszMsg =
-				_T("BREGONIG.DLL のロードで予期せぬエラーが発生しました。");
-			assert(0);
-		}
-		WarningBeep();
-		::MessageBox( hWnd, pszMsg, _T("情報"), MB_OK | MB_ICONEXCLAMATION );
 		return false;
 	}
 	return true;
