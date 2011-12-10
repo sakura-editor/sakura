@@ -3926,7 +3926,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 				auto_sprintf( szMemu, _T("&%tc yGrepz\"%ls%ts\""),
 					c,
 					pszDes,
-					( (int)wcslen( pfi->m_szGrepKey ) > nDesLen ) ? _T("EEE"):_T("")
+					( (int)wcslen( pfi->m_szGrepKey ) > nDesLen ) ? _T("c"):_T("")
 				);
 			}
 			else if( pEditNodeArr[i].GetHwnd() == m_pShareData->m_sHandles.m_hwndDebug ){

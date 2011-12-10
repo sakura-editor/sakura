@@ -21,6 +21,7 @@
 #include "window/CEditWnd.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/shell.h"
+#include "util/string_ex2.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -145,12 +146,24 @@ void CDlgCompare::SetData( void )
 			if (pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd()){
 				continue;
 			}
-			auto_sprintf(
-				szMenu,
-				_T("%ts %ts"),
-				(0 < _tcslen(pfi->m_szPath))?pfi->m_szPath:_T("(–³‘è)"),
-				pfi->m_bIsModified ? _T("*"):_T(" ")
-			);
+			if( pfi->m_bIsGrep && !pfi->m_szPath[0] ){
+				LPCWSTR		pszGrepKey = pfi->m_szGrepKey;
+				int			nLen = (int)wcslen( pszGrepKey );
+				CNativeW	cmemDes;
+				LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
+				auto_sprintf( szMenu, _T("yGrepz%ls%ts %ts"),
+					cmemDes.GetStringPtr(),
+					( nLen > cmemDes.GetStringLength() ) ? _T("...") : _T(""),
+					pfi->m_bIsModified ? _T("*") : _T(" ")
+				);
+			}else{
+				auto_sprintf(
+					szMenu,
+					_T("%ts %ts"),
+					(pfi->m_szPath[0]) ? pfi->m_szPath : _T("(–³‘è)"),
+					pfi->m_bIsModified ? _T("*"):_T(" ")
+				);
+			}
 			// gm_pszCodeNameArr_Bracket ‚©‚çƒRƒs[‚·‚é‚æ‚¤‚É•ÏX
 			if(IsValidCodeTypeExceptSJIS(pfi->m_nCharCode)){
 				_tcscat( szMenu, CCodeTypeName(pfi->m_nCharCode).Bracket() );

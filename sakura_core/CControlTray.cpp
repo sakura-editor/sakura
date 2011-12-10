@@ -1400,7 +1400,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 						dupamp( szFileName, szMenu2 );
 						auto_sprintf( szMemu, _T("&%tc %ts %ts"),
 							((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
-							(0 < _tcslen( szMenu2 ))? szMenu2:_T("i–³‘èj"),
+							(0 < _tcslen( szMenu2 ))? szMenu2:_T("(–³‘è)"),
 							pfi->m_bIsModified ? _T("*"):_T(" ")
 						);
 //		To Here Oct. 4, 2000

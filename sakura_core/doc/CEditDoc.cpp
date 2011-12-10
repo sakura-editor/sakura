@@ -684,18 +684,31 @@ BOOL CEditDoc::OnFileClose()
 	// デバッグモニタモードのときは保存確認しない
 	if(CAppMode::Instance()->IsDebugMode())return TRUE;
 
-	//テキストが変更されていない場合は保存確認しない
-	if(!m_cDocEditor.IsModified())return TRUE;
-
 	//GREPモードで、かつ、「GREPモードで保存確認するか」がOFFだったら、保存確認しない
+	// 2011.11.13 GrepモードでGrep直後は"未編集"状態になっているが保存確認が必要
 	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ){
 		if( !GetDllShareData().m_Common.m_sSearch.m_bGrepExitConfirm ){
 			return TRUE;
 		}
+	}else{
+		//テキストが変更されていない場合は保存確認しない
+		if( !m_cDocEditor.IsModified() ) return TRUE;
 	}
 
 	// -- -- 保存確認 -- -- //
-	
+	TCHAR szGrepTitle[90];
+	LPCTSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : _T("(無題)");
+	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ){
+		LPCWSTR		pszGrepKey = CAppMode::Instance()->m_szGrepKey;
+		int			nLen = (int)wcslen( pszGrepKey );
+		CNativeW	cmemDes;
+		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
+		auto_sprintf( szGrepTitle, _T("【Grep】%ls%ts"),
+			cmemDes.GetStringPtr(),
+			( nLen > cmemDes.GetStringLength() ) ? _T("...") : _T("")
+		);
+		pszTitle = szGrepTitle;
+	}
 	/* ウィンドウをアクティブにする */
 	HWND	hwndMainFrame = CEditWnd::Instance()->GetHwnd();
 	ActivateFrameWindow( hwndMainFrame );
@@ -706,7 +719,7 @@ BOOL CEditDoc::OnFileClose()
 			MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 			GSTR_APPNAME,
 			_T("%ts\nは変更されています。 閉じる前に保存しますか？\n\nビューモードで開いているので、名前を付けて保存すればいいと思います。\n"),
-			m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : _T("（無題）")
+			pszTitle
 		);
 		switch( nRet ){
 		case IDYES:
@@ -726,7 +739,7 @@ BOOL CEditDoc::OnFileClose()
 			MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 			GSTR_APPNAME,
 			_T("%ts\nは変更されています。 閉じる前に保存しますか？"),
-			m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : _T("（無題）")
+			pszTitle
 		);
 		switch( nRet ){
 		case IDYES:
