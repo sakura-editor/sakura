@@ -86,7 +86,7 @@ void CDocLocker::CheckWritable(bool bMsg)
 			TopWarningMessage(
 				CEditWnd::Instance()->GetHwnd(),
 				_T("%ts\nは現在他のプロセスによって書込みが禁止されています。"),
-				cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath() : _T("（無題）")
+				cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath() : _T("(無題)")
 			);
 		}
 	}

@@ -23,6 +23,7 @@
 #include "window/CEditWnd.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
+#include "util/string_ex2.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -242,12 +243,24 @@ void CDlgDiff::SetData( void )
 				}
 
 				/* ファイル名を作成する */
-				auto_sprintf(
-					szName,
-					_T("%ts %ts"),
-					( _tcslen( pFileInfo->m_szPath ) ) ? pFileInfo->m_szPath : _T("(無題)"),
-					pFileInfo->m_bIsModified ? _T("*") : _T(" ")
-				);
+				if( pFileInfo->m_bIsGrep && !pFileInfo->m_szPath[0] ){
+					LPCWSTR		pszGrepKey = pFileInfo->m_szGrepKey;
+					int			nLen = (int)wcslen( pszGrepKey );
+					CNativeW	cmemDes;
+					LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
+					auto_sprintf( szName, _T("【Grep】%ls%ts %ts"),
+						cmemDes.GetStringPtr(),
+						( nLen > cmemDes.GetStringLength() ) ? _T("...") : _T(""),
+						pFileInfo->m_bIsModified ? _T("*") : _T(" ")
+					);
+				}else{
+					auto_sprintf(
+						szName,
+						_T("%ts %ts"),
+						pFileInfo->m_szPath[0] ? pFileInfo->m_szPath : _T("(無題)"),
+						pFileInfo->m_bIsModified ? _T("*") : _T(" ")
+					);
+				}
 
 				// gm_pszCodeNameArr_Bracket からコピーするように変更
 				if(IsValidCodeTypeExceptSJIS(pFileInfo->m_nCharCode)){
