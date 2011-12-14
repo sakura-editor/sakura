@@ -2276,14 +2276,7 @@ void CViewCommander::Command_PASTE( int option )
 			if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){
 				return;
 			}
-			if( bConvertEol ){
-				wchar_t	*pszConvertedText = new wchar_t[nTextLen * 2]; // ‘S•¶Žš\n¨\r\n•ÏŠ·‚ÅÅ‘å‚Ì‚Q”{‚É‚È‚é
-				CLogicInt nConvertedTextLen = ConvertEol(pszText, nTextLen, pszConvertedText);
-				Command_PASTEBOX(pszConvertedText, nConvertedTextLen);
-				delete [] pszConvertedText;
-			}else{
-				Command_PASTEBOX(pszText, nTextLen);
-			}
+			Command_PASTEBOX(pszText, nTextLen);
 			m_pCommanderView->AdjustScrollBars();
 			m_pCommanderView->Redraw();
 			return;
@@ -2600,13 +2593,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 			if(
 				(nPos + 1 < nPasteSize ) &&
-				(
-// 2004.06.30 Moca WORD*‚Å‚Í”ñx86‚Å‹«ŠE•s®—ñ‚Ì‰Â”\«‚ ‚è
-				 ( szPaste[nPos] == L'\n' && szPaste[nPos + 1] == L'\r') ||
 				 ( szPaste[nPos] == L'\r' && szPaste[nPos + 1] == L'\n')
-//				 ((WORD *)(szPaste + nPos))[0] == MAKEWORD('\n', L'\r') ||
-//				 ((WORD *)(szPaste + nPos))[0] == MAKEWORD('\r', L'\n')
-				)
 			  )
 			{
 				nBgn = nPos + 2;
@@ -2672,19 +2659,7 @@ void CViewCommander::Command_PASTEBOX( int option )
 	int nstrlen;
 	const wchar_t *lptstr = cmemClip.GetStringPtr( &nstrlen );
 
-	bool bConvertEol = 
-		((option & 0x01) == 0x01) ? true :
-		((option & 0x02) == 0x02) ? false :
-		GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste;
-
-	if( bConvertEol ){
-		wchar_t	*pszConvertedText = new wchar_t[nstrlen * 2]; // ‘S•¶Žš\n¨\r\n•ÏŠ·‚ÅÅ‘å‚Ì‚Q”{‚É‚È‚é
-		CLogicInt nConvertedTextLen = ConvertEol( lptstr, CLogicInt(nstrlen), pszConvertedText );
-		Command_PASTEBOX(pszConvertedText, nConvertedTextLen);
-		delete [] pszConvertedText;
-	}else{
-		Command_PASTEBOX(lptstr, nstrlen);
-	}
+	Command_PASTEBOX(lptstr, nstrlen);
 	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
