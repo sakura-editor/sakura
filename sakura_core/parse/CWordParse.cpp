@@ -238,15 +238,22 @@ bool CWordParse::SearchNextWordPosition(
 }
 
 
-
-//! wcがSJIS1バイト文字ならcharに変換して0～255を返す。SJIS2バイト文字なら0を返す。
+//! wcがasciiなら0-127のまま返す。それ以外は0を返す。
 uchar_t wc_to_c(wchar_t wc)
 {
+#if 0
+//! wcがSJIS1バイト文字ならcharに変換して0～255を返す。SJIS2バイト文字なら0を返す。
 	char buf[3]={0,0,0};
 	int ret=wctomb(buf,wc);
 	if(ret==-1)return 0;   //エラー
 	if(buf[1]!=0)return 0; //エラー扱い
-	return buf[0];         //1バイトで表せたので、これを返す
+	return buf[0] <= 0x7F ? buf[0]: 0; //1バイトで表せたので、これを返す  2011.12.17 バッファオーバーランの修正
+#endif
+	// 2011.12.15 wctombを使わない版
+	if(wc <= 0x7F){
+		return (uchar_t)wc;
+	}
+	return 0;
 }
 
 //@@@ 2002.01.24 Start by MIK
