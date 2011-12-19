@@ -3391,6 +3391,14 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 			GetCaret().MoveCursor( ptTo, TRUE );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
+	}else{
+		// 2011.12.05 Moca 選択中の未選択状態でもLockの解除と描画が必要
+		if( m_pCommanderView->GetSelectionInfo().IsTextSelecting() ){
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+			m_pCommanderView->DrawBracketPair( false );
+			m_pCommanderView->SetBracketPairPos( true );
+			m_pCommanderView->DrawBracketPair( true );
+		}
 	}
 }
 
