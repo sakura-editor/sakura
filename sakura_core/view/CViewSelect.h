@@ -73,9 +73,9 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void DrawSelectArea() const;		//!< 指定行の選択領域の描画
-	void DrawSelectArea2(HDC) const;		//!< 指定範囲の選択領域の描画
+	void DrawSelectArea();		//!< 指定行の選択領域の描画
 private:
+	void DrawSelectArea2(HDC) const;		//!< 指定範囲の選択領域の描画
 	void DrawSelectAreaLine(			//!< 指定行の選択領域の描画
 		HDC					hdc,		//!< [in] 描画領域のDevice Context Handle
 		CLayoutInt			nLineNum,	//!< [in] 描画対象行(レイアウト行)
@@ -135,7 +135,7 @@ private:
 public:
 
 
-	mutable bool	m_bDrawSelectArea;		// 選択範囲を描画したか	// 02/12/13 ai
+	bool	m_bDrawSelectArea;		// 選択範囲を描画したか	// 02/12/13 ai
 
 	// 選択状態
 	bool	m_bSelectingLock;		// 選択状態のロック

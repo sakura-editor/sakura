@@ -58,13 +58,13 @@ void CViewSelect::DisableSelectArea( bool bDraw )
 
 	m_sSelectOld = m_sSelect;		//範囲選択(Old)
 	m_sSelect.Clear(-1);
+	m_bSelectingLock	 = false;	// 選択状態のロック
 
 	if( bDraw ){
 		DrawSelectArea();
 		m_bDrawSelectArea = false;	// 02/12/13 ai
 	}
 
-	m_bSelectingLock	 = false;	// 選択状態のロック
 	m_sSelectOld.Clear(0);			// 範囲選択(Old)
 	m_bBeginBoxSelect = false;		// 矩形範囲選択中
 	m_bBeginLineSelect = false;		// 行単位選択中
@@ -74,8 +74,6 @@ void CViewSelect::DisableSelectArea( bool bDraw )
 	// 2002.02.16 hor 直前のカーソル位置をリセット
 	pView2->GetCaret().m_nCaretPosX_Prev=pView->GetCaret().GetCaretLayoutPos().GetX();
 
-	// カーソル行アンダーラインのON
-	pView2->GetCaret().m_cUnderLine.CaretUnderLineON( bDraw );
 }
 
 
@@ -156,9 +154,9 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 	@date 2007.09.09 Moca 互換BMPによる画面バッファ
 		画面バッファが有効時、画面と互換BMPの両方の反転処理を行う。
 */
-void CViewSelect::DrawSelectArea() const
+void CViewSelect::DrawSelectArea()
 {
-	const CEditView* pView=GetEditView();
+	CEditView* pView=GetEditView();
 
 	if( !pView->GetDrawSwitch() ){
 		return;
@@ -227,11 +225,11 @@ void CViewSelect::DrawSelectArea() const
 			pView->GetTextArea().GenerateTextAreaRect(&rcArea);
 			RECT rcUpdate;
 			if( ::IntersectRect(&rcUpdate, &rcPx, &rcArea) ){
-				CEditView& view = *const_cast<CEditView*>(pView);
+				CEditView& view = *pView;
 				HDC hdc = view.GetDC();
 				PAINTSTRUCT ps;
 				ps.rcPaint = rcUpdate;
-				// DrawSelectAreaLine2での下線OFFの代わり
+				// DrawSelectAreaLineでの下線OFFの代わり
 				view.GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
 				view.GetCaret().m_cUnderLine.Lock();
 				view.OnPaint(hdc, &ps, false);
@@ -244,9 +242,18 @@ void CViewSelect::DrawSelectArea() const
 	}else{
 		HDC hdc = pView->GetDC();
 		DrawSelectArea2( hdc );
+		// 2011.12.02 選択解除状態での、カーソル位置ライン復帰
+		pView->GetCaret().m_cUnderLine.CaretUnderLineON(true);
 		pView->ReleaseDC( hdc );
 	}
 
+	// 2011.12.02 選択解除状態になると対括弧強調ができなくなるバグ対策
+	if( !IsTextSelecting() ){
+		// ただし選択ロック中はここでは強調表示されない
+		m_bDrawSelectArea = false;
+		pView->SetBracketPairPos( true );
+		pView->DrawBracketPair( true );
+	}
 
 	//	Jul. 9, 2005 genta 選択領域の情報を表示
 	PrintSelectionInfoMsg();

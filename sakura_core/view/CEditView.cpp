@@ -2163,7 +2163,8 @@ void CEditView::CaretUnderLineON( bool bDraw )
 //	ON(作画)→ON(未作画)のパターンなどで、画面上に線が残ったままになるので座標をクリアしてはいけない
 //	m_nOldCursorLineX = -1;
 //	m_nOldUnderLineY  = -1;
-	if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
+	// 2011.12.06 Moca IsTextSelected → IsTextSelecting に変更。ロック中も下線を表示しない
+	if( GetSelectionInfo().IsTextSelecting() ){
 		return;
 	}
 	
