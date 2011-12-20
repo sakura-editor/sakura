@@ -445,10 +445,25 @@ void CMacro::HandleCommand(
 		}
 		break;
 	case F_INSTEXT_W:		//	テキスト挿入
-	case F_ADDTAIL_W:		//	この操作はキーボード操作では存在しないので保存することができない？
 	case F_SET_QUOTESTRING:	// Jan. 29, 2005 genta 追加 テキスト引数1つを取るマクロはここに統合していこう．
+		{
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX(
+				NULL,
+				MB_OK | MB_ICONSTOP | MB_TOPMOST,
+				EXEC_ERROR_TITLE,
+				_T("引数(文字列)が指定されていません．")
+			);
+			break;
+		}
+		{
+			pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0 );	//	標準
+		}
+		}
+		break;
+	case F_ADDTAIL_W:		//	この操作はキーボード操作では存在しないので保存することができない？
+	case F_INSBOXTEXT:
 		//	一つ目の引数が文字列。
-		//	ただし2つ目の引数は文字数。
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
 				NULL,
@@ -880,6 +895,20 @@ void CMacro::HandleCommand(
 	case F_PREVWINDOW:
 		pcEditView->GetDocument()->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWが動作しなかったのを修正
 		break;
+	case F_MOVECURSORLAYOUT:
+	case F_MOVECURSOR:
+		{
+			if( Argument[0] != NULL && Argument[1] != NULL && Argument[2] != NULL ){
+				int lparam1 = _wtoi( Argument[0] ) - 1;
+				int lparam2 = _wtoi( Argument[1] ) - 1;
+				int lparam3 = _wtoi( Argument[2] );
+				pcEditView->GetCommander().HandleCommand( Index, FALSE, lparam1, lparam2, lparam3, 0);
+			}else{
+				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+				_T("数値を指定してください．"));
+			}
+		}
+		break;
 	case F_CHGTABWIDTH:		//  タブサイズを取得、設定する（キーマクロでは取得は無意味）
 	case F_CHGWRAPCOLM:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
 		{
@@ -896,6 +925,17 @@ void CMacro::HandleCommand(
 		pcEditView->GetCommander().HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準
 		break;
 	}
+}
+
+
+inline bool VariantToBStr(Variant& varCopy, const VARIANT& arg)
+{
+	return VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(arg) ), 0, VT_BSTR) == S_OK;
+}
+
+inline bool VariantToI4(Variant& varCopy, const VARIANT& arg)
+{
+	return VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(arg) ), 0, VT_I4) == S_OK;
 }
 
 /**	値を返す関数を処理する
@@ -1412,6 +1452,77 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			Wrap( &Result )->Receive( bRet );
 		}
 		return true;
+
+	case F_LAYOUTTOLOGICLINENUM:
+		// レイアウト→ロジック行
+		{
+			if( ArgSize < 1 ){
+				return false;
+			}
+			if( !VariantToI4(varCopy, Arguments[0]) ){
+				return false;
+			}
+			CLayoutInt nLineNum = CLayoutInt(varCopy.Data.iVal - 1);
+			int ret = 0;
+			if( View->m_pcEditDoc->m_cLayoutMgr.GetLineCount() == nLineNum ){
+				ret = (Int)View->m_pcEditDoc->m_cDocLineMgr.GetLineCount() + 1;
+			}else{
+				const CLayout* pcLayout = View->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(nLineNum);
+				if( pcLayout != NULL ){
+					ret = pcLayout->GetLogicLineNo() + 1;
+				}
+			}
+			Wrap(&Result)->Receive(ret);
+		}
+		return true;
+
+	case F_LINECOLUMNTOINDEX:
+		// レイアウト→ロジック桁
+		{
+			if( ArgSize < 2 ){
+				return false;
+			}
+			if( !VariantToI4(varCopy, Arguments[0]) ){
+				return false;
+			}
+			CLayoutInt nLineNum = CLayoutInt(varCopy.Data.iVal - 1);
+			if( !VariantToI4(varCopy, Arguments[1]) ){
+				return false;
+			}
+			CLayoutInt nLineCol = CLayoutInt(varCopy.Data.iVal - 1);
+
+			CLayoutPoint nLayoutPos(nLineCol, nLineNum);
+			CLogicPoint nLogicPos( CLogicInt(0), CLogicInt(0) );
+			View->m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(nLayoutPos, &nLogicPos);
+			int ret = nLogicPos.GetX() + 1;
+			Wrap(&Result)->Receive(ret);
+		}
+		return true;
+
+	case F_LOGICTOLAYOUTLINENUM:
+	case F_LINEINDEXTOCOLUMN:
+		// ロジック→レイアウト行/桁
+		{
+			if( ArgSize < 2 ){
+				return false;
+			}
+			if( !VariantToI4(varCopy, Arguments[0]) ){
+				return false;
+			}
+			CLogicInt nLineNum = CLogicInt(varCopy.Data.iVal - 1);
+			if( !VariantToI4(varCopy, Arguments[1]) ){
+				return false;
+			}
+			CLogicInt nLineIdx = CLogicInt(varCopy.Data.iVal - 1);
+
+			CLogicPoint nLogicPos(nLineIdx, nLineNum);
+			CLayoutPoint nLayoutPos(CLayoutInt(0),CLayoutInt(0));
+			View->m_pcEditDoc->m_cLayoutMgr.LogicToLayout(nLogicPos, &nLayoutPos);
+			int ret = ((LOWORD(ID) == F_LOGICTOLAYOUTLINENUM) ? (Int)nLayoutPos.GetY2() : (Int)nLayoutPos.GetX2()) + 1;
+			Wrap(&Result)->Receive(ret);
+		}
+		return true;
+
 	default:
 		return false;
 	}

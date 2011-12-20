@@ -395,6 +395,8 @@ BOOL CViewCommander::HandleCommand(
 
 	/* カーソル移動系 */
 	case F_IME_CHAR:		Command_IME_CHAR( (WORD)lparam1 ); break;					//全角文字入力
+	case F_MOVECURSOR:			Command_MOVECURSOR(CLogicPoint(CLogicInt((int)lparam2), CLogicInt((int)lparam1)), (int)lparam3); break;
+	case F_MOVECURSORLAYOUT:	Command_MOVECURSORLAYOUT(CLayoutPoint(CLayoutInt((int)lparam2), CLayoutInt((int)lparam1)), (int)lparam3); break;
 	case F_UP:				Command_UP( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, bRepeat ); break;				//カーソル上移動
 	case F_DOWN:			Command_DOWN( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, bRepeat ); break;			//カーソル下移動
 	case F_LEFT:			Command_LEFT( m_pCommanderView->GetSelectionInfo().m_bSelectingLock, bRepeat ); break;			//カーソル左移動
@@ -476,6 +478,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_COPY_CRLF:				Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE( (int)lparam1 );break;				//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX( (int)lparam1 );break;				//矩形貼り付け(クリップボードから矩形貼り付け)
+	case F_INSBOXTEXT:				Command_INSBOXTEXT((const wchar_t*)lparam1, (int)lparam2 );break;				//矩形テキスト挿入
 	case F_INSTEXT_W:				Command_INSTEXT( bRedraw, (const wchar_t*)lparam1, CLogicInt(-1), lparam2!=0 );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加(-1は\0終端まで)
 	case F_ADDTAIL_W:				Command_ADDTAIL( (const wchar_t*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
@@ -758,6 +761,50 @@ BOOL CViewCommander::HandleCommand(
 	m_pCommanderView->SetUndoBuffer( true );
 
 	return bRet;
+}
+
+
+void CViewCommander::Command_MOVECURSOR(CLogicPoint pos, int option)
+{
+	if( pos.GetX2() < 0 || pos.GetY2() < 0 ){
+		ErrorBeep();
+		return;
+	}
+	CLayoutPoint layoutPos;
+	GetDocument()->m_cLayoutMgr.LogicToLayout(pos, &layoutPos);
+	Command_MOVECURSORLAYOUT(layoutPos, option);
+}
+
+void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
+{
+	if( pos.GetX2() < 0 || pos.GetY2() < 0 ){
+		ErrorBeep();
+		return;
+	}
+
+	bool bSelect = (option & 0x01) == 0x01;
+	bool bBoxSelect = (option & 0x02) == 0x02;
+
+	if( bSelect || bBoxSelect ){
+		if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+			if( bBoxSelect ){
+				Command_BEGIN_BOXSELECT();
+			}else{
+				m_pCommanderView->GetSelectionInfo().BeginSelectArea();
+			}
+		}
+	}else{
+		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		}
+	}
+
+	GetCaret().MoveCursor( pos, TRUE );
+	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+	// 選択
+	if( bSelect || bBoxSelect ){
+		m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+	}
 }
 
 /////////////////////////////////// 以下はコマンド群 (Oct. 17, 2000 jepro note) ///////////////////////////////////////////
@@ -2665,6 +2712,26 @@ void CViewCommander::Command_PASTEBOX( int option )
 }
 
 //>> 2002/03/29 Azumaiya
+
+/*! 矩形文字列挿入
+*/
+void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize )
+{
+	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// マウスによる範囲選択中
+	{
+		ErrorBeep();
+		return;
+	}
+
+	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
+	{
+		return;
+	}
+
+	Command_PASTEBOX(pszPaste, nPasteSize);
+	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
+	m_pCommanderView->Redraw();			// 2002.01.25 hor
+}
 
 /* wchar_t1個分の文字を入力 */
 void CViewCommander::Command_WCHAR( wchar_t wcChar )
