@@ -67,6 +67,10 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] =
 	{F_FOLDERDIALOG,		LTEXT("FolderDialog"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //フォルダを開くダイアログの表示
 	{F_GETCLIPBOARD,		LTEXT("GetClipboard"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //クリップボードの文字列を取得
 	{F_SETCLIPBOARD,		LTEXT("SetClipboard"),			{VT_I4,    VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //クリップボードに文字列を設定
+	{F_LAYOUTTOLOGICLINENUM,LTEXT("LayoutToLogicLineNum"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ロジック行番号取得
+	{F_LOGICTOLAYOUTLINENUM,LTEXT("LogicToLayoutLineNum"),	{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //レイアウト行番号取得
+	{F_LINECOLUMNTOINDEX,	LTEXT("LineColumnToIndex"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ロジック桁番号取得
+	{F_LINEINDEXTOCOLUMN,	LTEXT("LineIndexToColumn"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //レイアウト桁番号取得
 
 	//	終端
 	//	Jun. 27, 2002 genta
@@ -170,6 +174,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_WndScrollUp,			LTEXT("F_WndScrollUp"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //テキストを１行上へスクロール	// 2001/06/20 asa-o
 	{F_GONEXTPARAGRAPH,		LTEXT("GoNextParagraph"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次の段落へ移動
 	{F_GOPREVPARAGRAPH,		LTEXT("GoPrevParagraph"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前の段落へ移動
+	{F_MOVECURSOR,			LTEXT("MoveCursor"),		{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル移動
+	{F_MOVECURSORLAYOUT,	LTEXT("MoveCursorLayout"),	{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //カーソル移動(レイアウト単位)
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
 	{F_SELECTWORD,			LTEXT("SelectWord"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //現在位置の単語選択
@@ -207,6 +213,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_COPY_ADDCRLF,			LTEXT("CopyAddCRLF"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //折り返し位置に改行をつけてコピー
 	{F_COPY_CRLF,				LTEXT("CopyCRLF"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //CRLF改行でコピー(選択範囲を改行コード=CRLFでコピー)
 	{F_PASTEBOX,				LTEXT("PasteBox"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //矩形貼り付け(クリップボードから矩形貼り付け)
+	{F_INSBOXTEXT,				LTEXT("InsBoxText"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 矩形テキスト挿入
 	{F_INSTEXT_W,				LTEXT("InsText"),					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // テキストを貼り付け
 	{F_ADDTAIL_W,				LTEXT("AddTail"),					{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, // 最後にテキストを追加
 	{F_COPYLINES,				LTEXT("CopyLines"),					{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //選択範囲内全行コピー
