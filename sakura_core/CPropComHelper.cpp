@@ -27,11 +27,10 @@
 #include "etc_uty.h"
 #include "CDlgInput1.h"
 #include "global.h"
+#include "sakura.hh"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10600
 	IDC_BUTTON_OPENHELP1,			HIDC_BUTTON_OPENHELP1,			//外部ヘルプファイル参照
 	IDC_BUTTON_OPENEXTHTMLHELP,		HIDC_BUTTON_OPENEXTHTMLHELP,	//外部HTMLファイル参照
@@ -53,28 +52,6 @@ static const DWORD p_helpids[] = {	//10600
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10600
-//	IDC_BUTTON_HOKANFILE_REF,		10600,	//入力補完 単語ファイル参照		//Jul. 05, 2001 JEPRO タイプ別に移動
-//	IDC_BUTTON_KEYWORDHELPFILE_REF,	10601,	//キーワードヘルプファイル参照	//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_BUTTON_OPENHELP1,			10602,	//外部ヘルプファイル参照
-	IDC_BUTTON_OPENEXTHTMLHELP,		10603,	//外部HTMLファイル参照
-//	IDC_CHECK_USEHOKAN,				10610,	//逐次入力補完
-//	IDC_CHECK_HOKANLOHICASE,		10611,	//入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_CHECK_m_bHokanKey_RETURN,	10612,	//候補決定キー（Enter）
-	IDC_CHECK_m_bHokanKey_TAB,		10613,	//候補決定キー（Tab）
-	IDC_CHECK_m_bHokanKey_RIGHT,	10614,	//候補決定キー（→）
-//	IDC_CHECK_m_bHokanKey_SPACE,	10615,	//候補決定キー（Space）
-//	IDC_CHECK_USEKEYWORDHELP,		10616,	//キーワードヘルプ機能			//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_CHECK_HTMLHELPISSINGLE,		10617,	//ビューアの複数起動
-//	IDC_EDIT_HOKANFILE,				10640,	//単語ファイル名				//Jul. 05, 2001 JEPRO タイプ別に移動
-//	IDC_EDIT_KEYWORDHELPFILE,		10641,	//辞書ファイル名				//Jul. 05, 2001 JEPRO タイプ別に移動
-	IDC_EDIT_EXTHELP1,				10642,	//外部ヘルプファイル名
-	IDC_EDIT_EXTHTMLHELP,			10643,	//外部HTMLヘルプファイル名
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -138,68 +115,6 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 			/* ダイアログデータの取得 p10 */
 			GetData_p10( hwndDlg );
 			switch( wID ){
-//	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
-//			case IDC_BUTTON_HOKANFILE_REF:	/* 入力補完 単語ファイルの「参照...」ボタン */
-//				{
-//					CDlgOpenFile	cDlgOpenFile;
-//					char*			pszMRU = NULL;;
-//					char*			pszOPENFOLDER = NULL;;
-//					char			szPath[_MAX_PATH + 1];
-//					strcpy( szPath, m_Common.m_szHokanFile );
-//					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create(
-//						m_hInstance,
-//						hwndDlg,
-//						"*.*",
-//						m_Common.m_szHokanFile,
-//						(const char **)&pszMRU,
-//						(const char **)&pszOPENFOLDER
-//					);
-//					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//						strcpy( m_Common.m_szHokanFile, szPath );
-//						::SetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Common.m_szHokanFile );
-//					}
-//				}
-//				return TRUE;
-//
-//			//	From Here Sept. 12, 2000 JEPRO
-//			case IDC_CHECK_USEKEYWORDHELP:	/* キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする */
-//				::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Common.m_bUseKeyWordHelp );
-//				if( BST_CHECKED == m_Common.m_bUseKeyWordHelp ){
-//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), TRUE );
-//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), TRUE );
-//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), TRUE );
-//				}else{
-//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), FALSE );
-//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), FALSE );
-//					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), FALSE );
-//				}
-//				return TRUE;
-//			//	To Here Sept. 12, 2000
-//
-//			case IDC_BUTTON_KEYWORDHELPFILE_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
-//				{
-//					CDlgOpenFile	cDlgOpenFile;
-//					char*			pszMRU = NULL;;
-//					char*			pszOPENFOLDER = NULL;;
-//					char			szPath[_MAX_PATH + 1];
-//					strcpy( szPath, m_Common.m_szKeyWordHelpFile );
-//					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create(
-//						m_hInstance,
-//						hwndDlg,
-//						"*.*",
-//						m_Common.m_szKeyWordHelpFile,
-//						(const char **)&pszMRU,
-//						(const char **)&pszOPENFOLDER
-//					);
-//					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//						strcpy( m_Common.m_szKeyWordHelpFile, szPath );
-//						::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Common.m_szKeyWordHelpFile );
-//					}
-//				}
-//				return TRUE;
-// 2001/06/14 End
 			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
 					CDlgOpenFile	cDlgOpenFile;
@@ -373,35 +288,6 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 /* ダイアログデータの設定 p10 */
 void CPropCommon::SetData_p10( HWND hwndDlg )
 {
-	/*  入力補完機能を使用する */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_USEHOKAN, m_Common.m_bUseHokan );
-
-//	2001/06/19 Start By:asa-o タイプ別設定に移動したので削除
-	/* 入力補完機能：英大文字小文字を同一視する */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANLOHICASE, m_Common.m_bHokanLoHiCase );
-
-//	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
-	/* 入力補完 単語ファイル */
-//	::SetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Common.m_szHokanFile );
-
-	/* キーワードヘルプを使用する  */
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_USEKEYWORDHELP, m_Common.m_bUseKeyWordHelp );
-//	From Here Sept. 12, 2000 JEPRO キーワードヘルプ機能を使う時だけ辞書ファイル指定と参照ボタンをEnableにする
-//	if( BST_CHECKED == m_Common.m_bUseKeyWordHelp ){
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), TRUE );
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), TRUE );
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), TRUE );
-//	}else{
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_KEYWORDHELPFILE ), FALSE );
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), FALSE );
-//		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYWORDHELPFILE_REF ), FALSE );
-//	}
-//	To Here Sept. 12, 2000
-
-	/* キーワードヘルプ 辞書ファイル */
-//	::SetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Common.m_szKeyWordHelpFile );
-//	2001/06/14 End
-
 	/* 外部ヘルプ１ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp );
 
@@ -428,28 +314,6 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 /* ダイアログデータの取得 p10 */
 int CPropCommon::GetData_p10( HWND hwndDlg )
 {
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = ID_PAGENUM_HELPER;
-
-	/*  入力補完機能を使用する */
-//	m_Common.m_bUseHokan = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEHOKAN );
-
-//	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
-	/* 入力補完機能：英大文字小文字を同一視する */
-//	m_Common.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE );
-
-//	2001/06/14 Start By:asa-o タイプ別設定に移動したので削除
-	/* 入力補完 単語ファイル */
-//	::GetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Common.m_szHokanFile, MAX_PATH - 1 );
-
-
-	/* キーワードヘルプを使用する */
-//	m_Common.m_bUseKeyWordHelp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USEKEYWORDHELP );
-
-	/* キーワードヘルプ 辞書ファイル */
-//	::GetDlgItemText( hwndDlg, IDC_EDIT_KEYWORDHELPFILE, m_Common.m_szKeyWordHelpFile, MAX_PATH - 1 );
-//	2001/06/14 End
-
 	// Oct. 5, 2002 genta サイズ制限方法変更
 	/* 外部ヘルプ１ */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp, sizeof( m_Common.m_szExtHelp ));

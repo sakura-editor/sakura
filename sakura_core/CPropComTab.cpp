@@ -16,8 +16,9 @@
 
 #include "stdafx.h"
 #include "CPropCommon.h"
-
 #include "sakura.hh"
+
+
 static const DWORD p_helpids[] = {
 	IDC_CHECK_DispTabWnd,			HIDC_CHECK_DispTabWnd,			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 	IDC_CHECK_SameTabWidth,			HIDC_CHECK_SameTabWidth,		//等幅	// 2006.08.06 ryoji

@@ -29,11 +29,10 @@
 #include "etc_uty.h"
 #include "CDlgInput1.h"
 #include "global.h"
+#include "sakura.hh"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10800
 	IDC_BUTTON_ADDSET,				HIDC_BUTTON_ADDSET,			//キーワードセット追加
 	IDC_BUTTON_DELSET,				HIDC_BUTTON_DELSET,			//キーワードセット削除
@@ -50,22 +49,6 @@ static const DWORD p_helpids[] = {	//10800
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10800
-	IDC_BUTTON_ADDSET,				10800,	//キーワードセット追加
-	IDC_BUTTON_DELSET,				10801,	//キーワードセット削除
-	IDC_BUTTON_ADDKEYWORD,			10802,	//キーワード追加
-	IDC_BUTTON_EDITKEYWORD,			10803,	//キーワード編集
-	IDC_BUTTON_DELKEYWORD,			10804,	//キーワード削除
-	IDC_BUTTON_IMPORT,				10805,	//インポート
-	IDC_BUTTON_EXPORT,				10806,	//エクスポート
-	IDC_CHECK_KEYWORDCASE,			10810,	//キーワードの英大文字小文字区別
-	IDC_COMBO_SET,					10830,	//強調キーワードセット名
-	IDC_LIST_KEYWORD,				10840,	//キーワード一覧
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta

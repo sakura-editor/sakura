@@ -40,11 +40,10 @@
 #include <stdlib.h>
 // #include <Shlobj.h>
 #include "etc_uty.h" // 2002/04/14 novice
+#include "sakura.hh"
 
 //! Popup Help用ID
 //@@@ 2001.12.22 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//11700
 	IDC_MACRODIRREF,	HIDC_MACRODIRREF,	//マクロディレクトリ参照
 	IDC_MACRO_REG,		HIDC_MACRO_REG,		//マクロ設定
@@ -60,19 +59,6 @@ static const DWORD p_helpids[] = {	//11700
 //	IDC_STATIC,			-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//11700
-	IDC_MACRODIRREF,	11700,	//参照
-	IDC_MACRO_REG,		11701,	//設定
-	IDC_COMBO_MACROID,	11730,	//ID
-	IDC_MACROPATH,		11731,	//パス
-	IDC_MACRONAME,		11740,	//マクロ名
-	IDC_MACROLIST,		11741,	//リスト
-	IDC_MACRODIR,		11750,	//マクロ一覧
-//	IDC_STATIC,			-1,
-	0, 0
-};
-#endif
 //@@@ 2001.12.22 End
 
 /*!
@@ -576,27 +562,6 @@ void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 	}
 }
 
-// 2002/04/14 novice
-#if 0
-/*!
-	フォルダ選択ダイアログボックス用Callback関数
-
-	SHBrowseForFolderの初期ディレクトリを指定するためのコールバック関数
-	
-	@param hwnd [in] ダイアログボックスのウィンドウハンドル
-	@param uMsg [in] 通知種別
-	@param lParam [in] 
-	@param lpData [in] BROWSEINFOで渡された値．
-					ここでは，初期ディレクトリへのポインタ(const char*)がキャストされて入っている．
-*/
-int CALLBACK CPropCommon::DirCallback_Macro( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData )
-{
-	if( uMsg == BFFM_INITIALIZED ){	//	初期化完了
-		::SendMessage( hwnd, BFFM_SETSELECTION, TRUE, lpData);
-	}
-	return 0;
-}
-#endif
 
 /*!
 	マクロファイル指定用コンボボックスのドロップダウンリストが開かれるときに，

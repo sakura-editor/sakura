@@ -19,11 +19,10 @@
 #include "CPropCommon.h"
 #include "etc_uty.h"
 #include "debug.h" // 2002/2/10 aroka
+#include "sakura.hh"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10400
 	IDC_EDIT_DFORM,						HIDC_EDIT_DFORM,		//日付書式
 	IDC_EDIT_TFORM,						HIDC_EDIT_TFORM,		//時刻書式
@@ -38,22 +37,6 @@ static const DWORD p_helpids[] = {	//10400
 //	IDC_STATIC,							-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10400
-	IDC_EDIT_DFORM,						10440,	//日付書式
-	IDC_EDIT_TFORM,						10441,	//時刻書式
-	IDC_EDIT_DFORM_EX,					10442,	//日付書式（表示例）
-	IDC_EDIT_TFORM_EX,					10443,	//時刻書式（表示例）
-	IDC_EDIT_MIDASHIKIGOU,				10444,	//見出し記号
-	IDC_EDIT_INYOUKIGOU,				10445,	//引用符
-	IDC_RADIO_DFORM_0,					10460,	//日付書式（標準）
-	IDC_RADIO_DFORM_1,					10461,	//日付書式（カスタム）
-	IDC_RADIO_TFORM_0,					10462,	//時刻書式（標準）
-	IDC_RADIO_TFORM_1,					10463,	//時刻書式（カスタム）
-//	IDC_STATIC,							-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //@@@ 2002.01.12 add start
@@ -218,52 +201,6 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 
 
 
-
-//			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
-//				{
-//					CDlgOpenFile	cDlgOpenFile;
-//					char*			pszMRU = NULL;;
-//					char*			pszOPENFOLDER = NULL;;
-//					char			szPath[_MAX_PATH + 1];
-//					strcpy( szPath, m_Common.m_szExtHelp1 );
-//					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create(
-//						m_hInstance,
-//						hwndDlg,
-//						"*.hlp",
-//						m_Common.m_szExtHelp1,
-//						(const char **)&pszMRU,
-//						(const char **)&pszOPENFOLDER
-//					);
-//					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//						strcpy( m_Common.m_szExtHelp1, szPath );
-//						::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1 );
-//					}
-//				}
-//				return TRUE;
-//			case IDC_BUTTON_OPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
-//				{
-//					CDlgOpenFile	cDlgOpenFile;
-//					char*			pszMRU = NULL;;
-//					char*			pszOPENFOLDER = NULL;;
-//					char			szPath[_MAX_PATH + 1];
-//					strcpy( szPath, m_Common.m_szExtHtmlHelp );
-//					/* ファイルオープンダイアログの初期化 */
-//					cDlgOpenFile.Create(
-//						m_hInstance,
-//						hwndDlg,
-//						"*.chm;*.col",
-//						m_Common.m_szExtHtmlHelp,
-//						(const char **)&pszMRU,
-//						(const char **)&pszOPENFOLDER
-//					);
-//					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-//						strcpy( m_Common.m_szExtHtmlHelp, szPath );
-//						::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp );
-//					}
-//				}
-//				return TRUE;
-//
 			}
 			break;	/* BN_CLICKED */
 		}

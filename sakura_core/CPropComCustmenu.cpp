@@ -22,6 +22,7 @@
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
 #include "debug.h" // 2002/2/10 aroka
+#include "sakura.hh"
 
 //	From Here Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(27→46)
 #define STR_CUSTMENU_HEAD_LEN 	46
@@ -30,8 +31,6 @@
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10100
 	IDC_BUTTON_DELETE,				HIDC_BUTTON_DELETE,				//メニューから機能削除
 	IDC_BUTTON_INSERTSEPARATOR,		HIDC_BUTTON_INSERTSEPARATOR,	//セパレータ挿入
@@ -55,29 +54,6 @@ static const DWORD p_helpids[] = {	//10100
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10100
-	IDC_BUTTON_DELETE,				10100,	//メニューから機能削除
-	IDC_BUTTON_INSERTSEPARATOR,		10101,	//セパレータ挿入
-	IDC_BUTTON_INSERT,				10102,	//メニューへ機能挿入
-	IDC_BUTTON_ADD,					10103,	//メニューへ機能追加
-	IDC_BUTTON_UP,					10104,	//メニューの機能を上へ移動
-	IDC_BUTTON_DOWN,				10105,	//メニューの機能を下へ移動
-	IDC_BUTTON_IMPORT,				10106,	//インポート
-	IDC_BUTTON_EXPORT,				10107,	//エクスポート
-	IDC_COMBO_FUNCKIND,				10130,	//機能の種別
-	IDC_COMBO_MENU,					10131,	//メニューの種別
-	IDC_LIST_FUNC,					10150,	//機能一覧
-	IDC_LIST_RES,					10151,	//メニュー一覧
-	IDC_LABEL_MENUFUNCKIND,			-1,
-	IDC_LABEL_MENUCHOICE,			-1,
-	IDC_LABEL_MENUFUNC,				-1,
-	IDC_LABEL_MENU,					-1,
-	IDC_LABEL_MENUKEYCHANGE,		-1,
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta

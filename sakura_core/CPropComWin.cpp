@@ -22,9 +22,9 @@
 #include "debug.h" // 2002/2/10 aroka
 #include "global.h"
 #include "CDlgWinSize.h"	//	2004.05.13 Moca
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_DispFUNCKEYWND,		HIDC_CHECK_DispFUNCKEYWND,		//ファンクションキー表示
 	IDC_CHECK_DispSTATUSBAR,		HIDC_CHECK_DispSTATUSBAR,		//ステータスバー表示
@@ -107,26 +107,6 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_nRulerBottomSpace ), EM_LIMITTEXT, (WPARAM)2, 0 );
 
 		return TRUE;
-//****	From Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
-//	case WM_NOTIFY:
-//		idCtrl = (int)wParam;
-//		pNMHDR = (NMHDR*)lParam;
-//		pMNUD  = (NM_UPDOWN*)lParam;
-////		switch( idCtrl ){
-////		default:
-//			switch( pNMHDR->code ){
-//			case PSN_HELP:
-//				OnHelp( hwndDlg, IDD_PROP_WIN );
-//				return TRUE;
-//			case PSN_KILLACTIVE:
-////				MYTRACE( "p1 PSN_KILLACTIVE\n" );
-//				/* ダイアログデータの取得 p1 */
-//				GetData_PROP_WIN( hwndDlg );
-//				return TRUE;
-//			}
-////			break;	//	Sept. 9, 2000 JEPRO この行は下のbreakとダブっていて冗長なので削除してよいはず
-////		}
-//		break;
 
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;

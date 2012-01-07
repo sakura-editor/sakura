@@ -19,11 +19,9 @@
 #include "stdafx.h"
 #include "CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
-
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10210
 	IDC_CHECK_ADDCRLFWHENCOPY,			HIDC_CHECK_ADDCRLFWHENCOPY,				//折り返し行に改行を付けてコピー
 	IDC_CHECK_COPYnDISABLESELECTEDAREA,	HIDC_CHECK_COPYnDISABLESELECTEDAREA,	//コピーしたら選択解除
@@ -37,17 +35,6 @@ static const DWORD p_helpids[] = {	//10210
 //	IDC_STATIC,							-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10210
-	IDC_CHECK_ADDCRLFWHENCOPY,			10210,	//折り返し行に改行を付けてコピー
-	IDC_CHECK_COPYnDISABLESELECTEDAREA,	10211,	//コピーしたら選択解除
-	IDC_CHECK_DRAGDROP,					10212,	//Drag&Drop編集する
-	IDC_CHECK_DROPSOURCE,				10213,	//ドロップ元にする
-	IDC_CHECK_bNotOverWriteCRLF,		10214,	//上書きモード
-//	IDC_STATIC,							-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta

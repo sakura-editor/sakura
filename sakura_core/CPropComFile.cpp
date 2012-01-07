@@ -17,11 +17,10 @@
 #include "stdafx.h"
 #include "CPropCommon.h"
 #include "debug.h" // 2002/2/10 aroka
+#include "sakura.hh"
 
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//01310
 	IDC_CHECK_EXCVLUSIVE_NO,				HIDC_CHECK_EXCVLUSIVE_NO,				//ファイルの排他制御（排他制御しない）
 	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
@@ -45,26 +44,6 @@ static const DWORD p_helpids[] = {	//01310
 //	IDC_STATIC,								-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//01310
-	IDC_CHECK_EXCVLUSIVE_NO,				10310,	//ファイルの排他制御（排他制御しない）
-	IDC_CHECK_bCheckFileTimeStamp,			10311,	//更新の監視
-	IDC_CHECK_EXCVLUSIVE_WRITE,				10312,	//ファイルの排他制御（上書き禁止）
-	IDC_CHECK_EXCVLUSIVE_READWRITE,			10313,	//ファイルお排他制御（読み書き禁止）
-	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	10314,	//無変更でも上書き
-	IDC_CHECK_AUTOSAVE,						10315,	//自動的に保存
-	IDC_CHECK_bDropFileAndClose,			10316,	//閉じて開く
-	IDC_CHECK_RestoreCurPosition,			10317,	//カーソル位置の復元
-	IDC_CHECK_AutoMIMEDecode,				10318,	//MIMEデコード
-	IDC_EDIT_AUTOBACKUP_INTERVAL,			10340,	//自動保存間隔
-	IDC_EDIT_nDropFileNumMax,				10341,	//ファイルドロップ最大数
-	IDC_CHECK_RestoreBookmarks				10342,	// 2002.01.16 hor ブックマークの復元
-	IDC_SPIN_AUTOBACKUP_INTERVAL,			-1,
-	IDC_SPIN_nDropFileNumMax,				-1,
-//	IDC_STATIC,								-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta

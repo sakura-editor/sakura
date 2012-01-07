@@ -17,10 +17,9 @@
 #include "stdafx.h"
 #include "CPropCommon.h"
 #include "CBregexp.h"	// 2007.08/12 genta バージョン取得
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10500
 	IDC_EDIT_REGEXPLIB,				HIDC_EDIT_REGEXPLIB,	//正規表現ライブラリ選択	// 2007.09.02 genta
 	IDC_LABEL_REGEXP,				HIDC_EDIT_REGEXPLIB,
@@ -33,15 +32,6 @@ static const DWORD p_helpids[] = {	//10500
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10500
-	IDC_CHECK_bGrepExitConfirm,		10510,	//GREPの保存確認
-	IDC_CHECK_GTJW_RETURN,			10511,	//タグジャンプ（エンターキー）
-	IDC_CHECK_GTJW_LDBLCLK,			10512,	//タグジャンプ（ダブルクリック）
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta

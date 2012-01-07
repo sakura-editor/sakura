@@ -25,6 +25,7 @@
 #include "KeyCode.h"	/// 2002/2/3 aroka from here
 #include "debug.h" ///
 #include <stdio.h>	/// 2002/2/3 aroka from here
+#include "sakura.hh"
 
 //	From Here Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(21→34)
 #define STR_KEYDATA_HEAD_LEN  34
@@ -38,8 +39,6 @@ const char STR_KEYDATA_HEAD2[] = "// テキストエディタキー設定 Ver2";	//@@@ 2001.
 #define STR_ALT_PLUS          "Alt+"  //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 add MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10700
 	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT_KEYBIND,		//インポート
 	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT_KEYBIND,		//エクスポート
@@ -62,30 +61,6 @@ static const DWORD p_helpids[] = {	//10700
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10700
-	IDC_BUTTON_IMPORT,				10700,	//インポート
-	IDC_BUTTON_EXPORT,				10701,	//エクスポート
-	IDC_BUTTON_ASSIGN,				10702,	//キー割り当て
-	IDC_BUTTON_RELEASE,				10703,	//キー解除
-	IDC_CHECK_SHIFT,				10710,	//Shiftキー
-	IDC_CHECK_CTRL,					10711,	//Ctrlキー
-	IDC_CHECK_ALT,					10712,	//Altキー
-	IDC_COMBO_FUNCKIND,				10730,	//機能の種別
-	IDC_EDIT_KEYSFUNC,				10740,	//キーに割り当てられている機能
-	IDC_LIST_FUNC,					10750,	//機能一覧
-	IDC_LIST_KEY,					10751,	//キー一覧
-	IDC_LIST_ASSIGNEDKEYS,			10752,	//機能に割り当てられているキー
-	IDC_LABEL_MENUFUNCKIND,			-1,
-	IDC_LABEL_MENUFUNC,				-1,
-	IDC_LABEL_KEYKIND,				-1,
-	IDC_LABEL_FUNCtoKEY,			-1,
-	IDC_LABEL_KEYtoFUNC,			-1,
-	IDC_CHECK_ACCELTBL_EACHWIN,		10760,	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta

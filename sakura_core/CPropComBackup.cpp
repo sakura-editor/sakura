@@ -21,10 +21,9 @@
 #include "CPropCommon.h"
 
 #include "etc_uty.h"
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
-#if 1	//@@@ 2002.01.03 MIK
-#include "sakura.hh"
 static const DWORD p_helpids[] = {	//10000
 	IDC_BUTTON_BACKUP_FOLDER_REF,	HIDC_BUTTON_BACKUP_FOLDER_REF,	//バックアップフォルダ参照
 	IDC_CHECK_BACKUP,				HIDC_CHECK_BACKUP,				//バックアップの作成
@@ -53,31 +52,6 @@ static const DWORD p_helpids[] = {	//10000
 //	IDC_STATIC,						-1,
 	0, 0
 };
-#else
-static const DWORD p_helpids[] = {	//10000
-	IDC_BUTTON_BACKUP_FOLDER_REF,	10000,	//バックアップフォルダ参照
-	IDC_CHECK_BACKUP,				10010,	//バックアップの作成
-	IDC_CHECK_BACKUP_YEAR,			10011,	//バックアップファイル名（西暦年）
-	IDC_CHECK_BACKUP_MONTH,			10012,	//バックアップファイル名（月）
-	IDC_CHECK_BACKUP_DAY,			10013,	//バックアップファイル名（日）
-	IDC_CHECK_BACKUP_HOUR,			10014,	//バックアップファイル名（時）
-	IDC_CHECK_BACKUP_MIN,			10015,	//バックアップファイル名（分）
-	IDC_CHECK_BACKUP_SEC,			10016,	//バックアップファイル名（秒）
-	IDC_CHECK_BACKUPDIALOG,			10017,	//作成前に確認
-	IDC_CHECK_BACKUPFOLDER,			10018,	//指定フォルダに作成
-	IDC_CHECK_BACKUP_DUSTBOX,		10019,	//バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
-	IDC_EDIT_BACKUPFOLDER,			10040,	//保存フォルダ名
-	IDC_EDIT_BACKUP_3,				10041,	//世代数
-	IDC_RADIO_BACKUP_TYPE1,			10060,	//バックアップの種類（拡張子）
-//	IDC_RADIO_BACKUP_TYPE2,			10062,	//バックアップの種類（日付・時刻	// Jun.  5, 2004 genta 廃止
-	IDC_RADIO_BACKUP_TYPE3,			10061,	//バックアップの種類（連番）
-	IDC_RADIO_BACKUP_DATETYPE1,		10063,	//付加する日時の種類（作成日時）	//Jul. 05, 2001 JEPRO 追加
-	IDC_RADIO_BACKUP_DATETYPE2,		10064,	//付加する日時の種類（更新日時）	//Jul. 05, 2001 JEPRO 追加
-	IDC_SPIN_BACKUP_GENS,			-1,
-//	IDC_STATIC,						-1,
-	0, 0
-};
-#endif
 //@@@ 2001.02.04 End
 
 //	From Here Jun. 2, 2001 genta
@@ -125,25 +99,6 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 		// 20051107 aroka
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_szBackUpPathAdvanced ) - 1 - 1 ), 0 );
 		return TRUE;
-//****	From Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
-//	case WM_NOTIFY:
-//		idCtrl = (int)wParam;
-//		pNMHDR = (NMHDR*)lParam;
-//		pMNUD  = (NM_UPDOWN*)lParam;
-////		switch( idCtrl ){
-////		default:
-//			switch( pNMHDR->code ){
-//			case PSN_HELP:
-//				OnHelp( hwndDlg, IDD_PROP_BACKUP );
-//				return TRUE;
-//			case PSN_KILLACTIVE:
-//				/* ダイアログデータの取得 p1 */
-//				GetData_PROP_BACKUP( hwndDlg );
-//				return TRUE;
-//			}
-//			break;
-////		}
-//		break;
 
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
