@@ -1383,16 +1383,16 @@ searchnext:;
 									TypeDataPtr->m_ColorInfoArr[nColorIdx].m_bUnderLine
 								)
 							);
-							
+
 							//小文字"o"の下半分を出力
-							rcClip2.top = y + (int)((nLineHeight/2) ) ;
+							rcClip2.top = y + m_nCharHeight/2;
 							rcClip2.bottom = y + nLineHeight;
 							::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
 								&rcClip2, "o", 1, m_pnDx );
-							
+
 							//上半分は普通の空白で出力（"o"の上半分を消す）
 							rcClip2.top = y ;
-							rcClip2.bottom = y + (int)((nLineHeight/2) ) ;
+							rcClip2.bottom = y + m_nCharHeight/2;
 							::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
 								&rcClip2, " ", 1, m_pnDx );
 
