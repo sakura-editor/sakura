@@ -61,7 +61,7 @@ protected:
 
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
-
+	void SetDataFromThisText( bool );	/* 現在編集中ファイルから検索チェックでの設定 */
 };
 
 
