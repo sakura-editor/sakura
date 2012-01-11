@@ -83,7 +83,7 @@ public:
 		bool			bKEYWORDCASE,			//!< [in] 大文字小文字の区別．true:あり, false:無し
 		int				nSize			= -1	//!< [in] 最初に領域を確保するサイズ．
 	);
-	BOOL DelKeyWordSet( int  );	/* ｎ番目のセットを削除 */
+	bool DelKeyWordSet( int  );	/* ｎ番目のセットを削除 */
 	const wchar_t* GetTypeName( int );	/* ｎ番目のセット名を返す */
 	const wchar_t* SetTypeName( int, const wchar_t* );	//!< ｎ番目のセット名を設定する // 2005.01.26 Moca
 	void SetKeyWordCase( int, int );				/* ｎ番目のセットの大文字小文字判断をセットする */	//MIK
