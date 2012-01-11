@@ -124,7 +124,7 @@ bool CKeyWordSetMgr::AddKeyWordSet(
 {
 	if( nSize < 0 ) nSize = nKeyWordSetBlockSize;
 	if( MAX_SETNUM <= m_nKeyWordSetNum ){
-		return FALSE;
+		return false;
 	}
 	int nIdx = m_nKeyWordSetNum;	//追加位置
 	m_nStartIdx[ ++m_nKeyWordSetNum ] = m_nStartIdx[ nIdx ];// サイズ0でセット追加
@@ -141,13 +141,13 @@ bool CKeyWordSetMgr::AddKeyWordSet(
 }
 
 /* ｎ番目のセットを削除 */
-BOOL CKeyWordSetMgr::DelKeyWordSet( int nIdx )
+bool CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 {
 	int		i;
 	if( m_nKeyWordSetNum <= nIdx ||
 		0 > nIdx
 	){
-		return FALSE;
+		return false;
 	}
 	// キーワード領域を開放
 	KeyWordReAlloc( nIdx, 0 );
@@ -169,7 +169,7 @@ BOOL CKeyWordSetMgr::DelKeyWordSet( int nIdx )
 //			m_nCurrentKeyWordSetIdx = 0;
 //		}
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -435,9 +435,9 @@ void CKeyWordSetMgr::SetKeyWordCase( int nIdx, int nCase )
 	//char型(sizeof(char) * セット数 = 1 * 100 = 100)で十分だし
 	//ビット操作してもいい。
 	if(nCase) {
-		m_bKEYWORDCASEArr[nIdx] = TRUE;
+		m_bKEYWORDCASEArr[nIdx] = true;
 	} else {
-		m_bKEYWORDCASEArr[nIdx] = FALSE;
+		m_bKEYWORDCASEArr[nIdx] = false;
 	}
 
 	m_IsSorted[nIdx] = 0;
