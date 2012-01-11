@@ -65,6 +65,7 @@ CDlgGrep::CDlgGrep()
 	strcpy( m_szText, m_pShareData->m_szSEARCHKEYArr[0] );		/* 検索文字列 */
 	strcpy( m_szFile, m_pShareData->m_szGREPFILEArr[0] );		/* 検索ファイル */
 	strcpy( m_szFolder, m_pShareData->m_szGREPFOLDERArr[0] );	/* 検索フォルダ */
+	m_szCurrentFilePath[0] = _T('\0');
 	return;
 }
 
@@ -83,24 +84,12 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 	//2001/06/23 N.Nakatani add
 	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;					/* 単語単位で検索 */
 
-	lstrcpy( m_szCurrentFilePath, pszCurrentFilePath );
+	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
+		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
+	}
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, NULL );
 }
-
-//	/* モードレスダイアログの表示 */
-//	HWND CDlgGrep::DoModeless( HINSTANCE hInstance, HWND hwndParent, const char* pszCurrentFilePath )
-//	{
-//		m_bSubFolder = m_pShareData->m_Common.m_bGrepSubFolder;							/* Grep: サブフォルダも検索 */
-//		m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;							/* 1==正規表現 */
-//		m_nGrepCharSet = m_pShareData->m_Common.m_nGrepCharSet;							/* 文字コードセット */
-//		m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;								/* 1==英大文字小文字の区別 */
-//		m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					/* 行を出力するか該当部分だけ出力するか */
-//		m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					/* Grep: 出力形式 */
-//		lstrcpy( m_szCurrentFilePath, pszCurrentFilePath );
-//
-//		return CDialog::DoModeless( hInstance, hwndParent, IDD_GREP, NULL );
-//	}
 
 //	2007.02.09 bosagami
 LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam);
