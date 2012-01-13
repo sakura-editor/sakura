@@ -43,6 +43,10 @@
 #define SAKURA_CORE_API
 #endif	//SAKURA_NO_DLL
 
+#ifndef _countof
+#define _countof(A) (sizeof(A)/sizeof(A[0]))
+#endif
+
 #if defined(__BORLANDC__)
 #define __forceinline
 #define _itoa itoa

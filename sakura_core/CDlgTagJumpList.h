@@ -86,7 +86,7 @@ protected:
 	//	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理
 	BOOL	OnCbnSelChange( HWND hwndCtl, int wID );
 	BOOL	OnCbnEditChange( HWND hwndCtl, int wID );
-	//BOOL	OnEditChange( HWND hwndCtl, int wID );
+	//BOOL	OnEnChange( HWND hwndCtl, int wID );
 	BOOL	OnTimer( WPARAM wParam );
 	LPVOID	GetHelpIdTable( void );
 	void	StopTimer( void );

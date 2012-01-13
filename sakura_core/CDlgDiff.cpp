@@ -398,7 +398,7 @@ int CDlgDiff::GetData( void )
 	return ret;
 }
 
-BOOL CDlgDiff::OnCbnSelChange( HWND hwndCtl, int wID )
+BOOL CDlgDiff::OnLbnSelChange( HWND hwndCtl, int wID )
 {
 	HWND	hwndList;
 
@@ -412,10 +412,10 @@ BOOL CDlgDiff::OnCbnSelChange( HWND hwndCtl, int wID )
 	}
 
 	/* 基底クラスメンバ */
-	return CDialog::OnCbnSelChange( hwndCtl, wID );
+	return CDialog::OnLbnSelChange( hwndCtl, wID );
 }
 
-BOOL CDlgDiff::OnEditChange( HWND hwndCtl, int wID )
+BOOL CDlgDiff::OnEnChange( HWND hwndCtl, int wID )
 {
 	HWND	hwndEdit;
 
@@ -435,7 +435,7 @@ BOOL CDlgDiff::OnEditChange( HWND hwndCtl, int wID )
 	}
 
 	/* 基底クラスメンバ */
-	return CDialog::OnCbnSelChange( hwndCtl, wID );
+	return CDialog::OnEnChange( hwndCtl, wID );
 }
 
 LPVOID CDlgDiff::GetHelpIdTable( void )

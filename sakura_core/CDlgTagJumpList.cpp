@@ -520,12 +520,12 @@ BOOL CDlgTagJumpList::OnCbnSelChange( HWND hwndCtl, int wID )
 }
 
 #if 0
-BOOL CDlgTagJumpList::OnEditChange( HWND hwndCtl, int wID )
+BOOL CDlgTagJumpList::OnEnChange( HWND hwndCtl, int wID )
 {
 	StartTimer();
 
 	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
-	return CDialog::OnEditChange( hwndCtl, wID );
+	return CDialog::OnEnChange( hwndCtl, wID );
 }
 #endif
 

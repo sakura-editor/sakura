@@ -11,6 +11,7 @@
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -246,11 +247,9 @@ BOOL CDialog::OnDestroy( void )
 BOOL CDialog::OnBnClicked( int wID )
 {
 	switch( wID ){
-	case IDCANCEL:
-		CloseDialog( 0 );
-		return TRUE;
+	case IDCANCEL:	// Fall through.
 	case IDOK:
-		CloseDialog( 0 );
+		CloseDialog( wID );
 		return TRUE;
 	}
 	return FALSE;
@@ -392,23 +391,48 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 	wNotifyCode = HIWORD(wParam);	/* 通知コード */
 	wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 	hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
-	switch( wNotifyCode ){
+	TCHAR	szClass[32];
 
-	/* コンボボックス用メッセージ */
-	case CBN_SELCHANGE:	return OnCbnSelChange( hwndCtl, wID );
-	// @@2005.03.31 MIK タグジャンプDialogで使うので追加
-	case CBN_EDITCHANGE:	return OnCbnEditChange( hwndCtl, wID );
-//	case LBN_SELCHANGE:	return OnLbnSelChange( hwndCtl, wID );
-//	case CBN_DROPDOWN:	return OnDbnDropDown( hwndCtl, wID );
-//	case CBN_CLOSEUP:	return OnDbnCloseUp( hwndCtl, wID );
-	case CBN_SELENDOK:	return OnCbnSelEndOk( hwndCtl, wID );
-	case LBN_DBLCLK:	return OnLbnDblclk( wID );
-
-	case EN_CHANGE:		return OnEditChange( hwndCtl, wID );
-
-	/* ボタン／チェックボックスがクリックされた */
-	case BN_CLICKED:	return OnBnClicked( wID );
+	// IDOK と IDCANCEL はボタンからでなくても同じ扱い
+	// MSDN [Windows Management] "Dialog Box Programming Considerations"
+	if( wID == IDOK || wID == IDCANCEL ){
+		return OnBnClicked( wID );
 	}
+
+	// 通知元がコントロールだった場合の処理
+	if( hwndCtl ){
+		::GetClassName(hwndCtl, szClass, _countof(szClass));
+		if( ::lstrcmpi(szClass, _T("Button")) == 0 ){
+			switch( wNotifyCode ){
+			/* ボタン／チェックボックスがクリックされた */
+			case BN_CLICKED:	return OnBnClicked( wID );
+			}
+		}else if( ::lstrcmpi(szClass, _T("Static")) == 0 ){
+			switch( wNotifyCode ){
+			case STN_CLICKED:	return OnStnClicked( wID );
+			}
+		}else if( ::lstrcmpi(szClass, _T("Edit")) == 0 ){
+			switch( wNotifyCode ){
+			case EN_CHANGE:		return OnEnChange( hwndCtl, wID );
+			}
+		}else if( ::lstrcmpi(szClass, _T("ListBox")) == 0 ){
+			switch( wNotifyCode ){
+			case LBN_SELCHANGE:	return OnLbnSelChange( hwndCtl, wID );
+			case LBN_DBLCLK:	return OnLbnDblclk( wID );
+			}
+		}else if( ::lstrcmpi(szClass, _T("ComboBox")) == 0 ){
+			switch( wNotifyCode ){
+			/* コンボボックス用メッセージ */
+			case CBN_SELCHANGE:	return OnCbnSelChange( hwndCtl, wID );
+			// @@2005.03.31 MIK タグジャンプDialogで使うので追加
+			case CBN_EDITCHANGE:	return OnCbnEditChange( hwndCtl, wID );
+			case CBN_DROPDOWN:	return OnCbnDropDown( hwndCtl, wID );
+		//	case CBN_CLOSEUP:	return OnCbnCloseUp( hwndCtl, wID );
+			case CBN_SELENDOK:	return OnCbnSelEndOk( hwndCtl, wID );
+			}
+		}
+	}
+
 	return FALSE;
 }
 
@@ -462,6 +486,55 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, int wID )
 	::SendMessage( hwndCtl, CB_SETEDITSEL, 0, (LPARAM)MAKELONG( 0, -1 ) );
 	delete[] sBuf;
 
+	return TRUE;
+}
+
+/** コンボボックスのドロップダウン時処理
+
+	コンボボックスがドロップダウンされる時に
+	ドロップダウンリストの幅をアイテム文字列の最大表示幅に合わせる
+
+	@param hwndCtl [in]		コンボボックスのウィンドウハンドル
+	@param wID [in]			コンボボックスのID
+
+	@author ryoji
+	@date 2009.03.29
+*/
+BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
+{
+	HDC hDC;
+	HFONT hFont;
+	LONG nWidth;
+	RECT rc;
+	SIZE sizeText;
+	int nTextLen;
+	int iItem;
+	int nItem;
+	int nMargin = 8;
+
+	hDC = ::GetDC( hwndCtl );
+	if( NULL == hDC )
+		return FALSE;
+	hFont = (HFONT)::SendMessage( hwndCtl, WM_GETFONT, 0, NULL );
+	hFont = (HFONT)::SelectObject( hDC, hFont );
+	nItem = ::SendMessage( hwndCtl, CB_GETCOUNT, 0, NULL );
+	::GetWindowRect( hwndCtl, &rc );
+	nWidth = rc.right - rc.left - nMargin;
+	for( iItem = 0; iItem < nItem; iItem++ ){
+		nTextLen = ::SendMessage( hwndCtl, CB_GETLBTEXTLEN, (WPARAM)iItem, NULL );
+		if( 0 < nTextLen ) {
+			TCHAR* pszText = new TCHAR[nTextLen + 1];
+			::SendMessage( hwndCtl, CB_GETLBTEXT, iItem, (LPARAM)pszText );
+			if( ::GetTextExtentPoint32( hDC, pszText, nTextLen, &sizeText ) ){
+				if ( nWidth < sizeText.cx )
+					nWidth = sizeText.cx;
+			}
+			delete []pszText;
+		}
+	}
+	::SendMessage( hwndCtl, CB_SETDROPPEDWIDTH, (WPARAM)(nWidth + nMargin), NULL );
+	::SelectObject( hDC, hFont );
+	::ReleaseDC( hwndCtl, hDC );
 	return TRUE;
 }
 

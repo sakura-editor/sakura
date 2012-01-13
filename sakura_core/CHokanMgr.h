@@ -62,7 +62,7 @@ public:
 	BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	BOOL OnBnClicked( int wID );
 	BOOL OnKeyDown( WPARAM wParam, LPARAM lParam );
-	BOOL OnCbnSelChange( HWND hwndCtl, int wID );
+	BOOL OnLbnSelChange( HWND hwndCtl, int wID );
 	BOOL OnLbnDblclk( int wID );
 	BOOL OnKillFocus( WPARAM wParam, LPARAM lParam );
 //	int OnVKeyToItem( WPARAM wParam, LPARAM lParam );
