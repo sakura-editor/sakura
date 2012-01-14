@@ -361,6 +361,12 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 				CLayoutPoint ptLast;
 				pView->m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptLast );
 				// 2006.10.01 Moca End
+				// 2011.12.26 EOFのぶら下がり行は反転し、EOFのみの行は反転しない
+				const CLayout* pBottom = pView->m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
+				if( pBottom && pBottom->GetLayoutEol() == EOL_NONE ){
+					ptLast.x = 0;
+					ptLast.y++;
+				}
 				if(m_sSelect.GetFrom().y>=ptLast.y || m_sSelect.GetTo().y>=ptLast.y ||
 					m_sSelectOld.GetFrom().y>=ptLast.y || m_sSelectOld.GetTo().y>=ptLast.y){
 					//	Jan. 24, 2004 genta nLastLenは物理桁なので変換必要
@@ -565,17 +571,10 @@ void CViewSelect::GetSelectAreaLineFromRange(
 			nSelectFrom = sRange.GetFrom().GetX2();
 			nSelectTo   = sRange.GetTo().GetX2();
 			// 2006.09.30 Moca From 矩形選択時[EOF]とその右側は反転しないように修正。処理を追加
-			if( view.m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 <= nLineNum ){
-				CLayoutPoint ptEnd(0, 0);
-				view.m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( &ptEnd );
-				if( ptEnd.y == nLineNum ){
-					if( ptEnd.GetX2() < nSelectFrom ){
-						nSelectFrom = ptEnd.GetX2();
-					}
-					if( ptEnd.GetX2() < nSelectTo ){
-						nSelectTo = ptEnd.GetX2();
-					}
-				}
+			// 2011.12.26 [EOF]単独行以外なら反転する
+			if( view.m_pcEditDoc->m_cLayoutMgr.GetLineCount() <= nLineNum ){
+				nSelectFrom = -1;
+				nSelectTo = -1;
 			}
 			// 2006.09.30 Moca To
 		}
