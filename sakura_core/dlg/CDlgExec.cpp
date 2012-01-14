@@ -182,7 +182,9 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		{
 			CDlgOpenFile	cDlgOpenFile;
 			TCHAR			szPath[_MAX_PATH + 1];
-			_tcscpy( szPath, m_szCommand );
+			int				size = _countof(szPath) - 1;
+			_tcsncpy( szPath, m_szCommand, size);
+			szPath[size] = _T('\0');
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
 				m_hInstance,

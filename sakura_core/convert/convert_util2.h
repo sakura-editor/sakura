@@ -415,7 +415,7 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 template< class CHAR_TYPE >
 bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 {
-	using namespace WCODE;
+//	using namespace WCODE;
 
 	const CHAR_TYPE *pr, *pr_end;
 	CHAR_TYPE *pwstart;
