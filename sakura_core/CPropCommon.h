@@ -30,22 +30,25 @@ class CImageListMgr;
 class CSMacroMgr;
 class CMenuDrawer;// 2002/2/10 aroka to here
 
-#define ID_PAGENUM_ZENPAN	0	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更
-#define ID_PAGENUM_WIN		1	//Oct. 25, 2000 JEPRO  5→ 1 に変更
-#define ID_PAGENUM_TAB		2	//Feb. 11, 2007 genta URLと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
-#define ID_PAGENUM_EDIT		3
-#define ID_PAGENUM_FILE		4
-#define ID_PAGENUM_BACKUP	5
-#define ID_PAGENUM_FORMAT	6	//Oct. 25, 2000 JEPRO  1→ 5 に変更
-#define ID_PAGENUM_GREP		7
-#define ID_PAGENUM_KEYBOARD	8
-#define ID_PAGENUM_CUSTMENU	9	//Oct. 25, 2000 JEPRO 11→ 9 に変更
-#define ID_PAGENUM_TOOLBAR	10	//Oct. 25, 2000 JEPRO  9→10 に変更
-#define ID_PAGENUM_KEYWORD	11	//Oct. 25, 2000 JEPRO 10→11 に変更
-#define ID_PAGENUM_HELPER	12
-#define ID_PAGENUM_MACRO	13	//Oct. 25, 2000 JEPRO 10→11 に変更
-#define ID_PAGENUM_FILENAME	14	// Moca 追加
-
+//	#define -> enum に変更	2008/6/22 Uchi
+//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi
+enum ComPropSheetOrder {
+	ID_PAGENUM_GENERAL = 0,		// 全般
+	ID_PAGENUM_WIN,				// ウィンドウ
+	ID_PAGENUM_TOOLBAR,			// ツールバー
+	ID_PAGENUM_TAB,				// タブバー
+	ID_PAGENUM_EDIT,			// 編集
+	ID_PAGENUM_FILE,			// ファイル
+	ID_PAGENUM_FILENAME,		// ファイル名表示
+	ID_PAGENUM_BACKUP,			// バックアップ
+	ID_PAGENUM_FORMAT,			// 書式
+	ID_PAGENUM_GREP,			// 検索
+	ID_PAGENUM_KEYBOARD,		// キー割り当て
+	ID_PAGENUM_CUSTMENU,		// カスタムメニュー
+	ID_PAGENUM_KEYWORD,			// 強調キーワード
+	ID_PAGENUM_HELPER,			// 支援
+	ID_PAGENUM_MACRO,			// マクロ
+};
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -81,12 +84,12 @@ public:
 	//	Jun. 2, 2001 genta
 	//	ここにあったEvent Handlerはprotectedエリアに移動した．
 
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND			m_hwndThis;		/* このダイアログのハンドル */
-	int				m_nPageNum;
-	DLLSHAREDATA*	m_pShareData;
-	int				m_nSettingType;
+	HINSTANCE			m_hInstance;	/* アプリケーションインスタンスのハンドル */
+	HWND				m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HWND				m_hwndThis;		/* このダイアログのハンドル */
+	ComPropSheetOrder	m_nPageNum;
+	DLLSHAREDATA*		m_pShareData;
+	int					m_nSettingType;
 //	int				m_nActiveItem;
 
 	//	Oct. 16, 2000 genta
