@@ -1320,8 +1320,8 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
 				// 前の画面内容をコピーする
 				::BitBlt( hdcTemp, 0, 0,
-					std::min( nBmpWidthNew,m_nCompatBMPWidth ),
-					std::min( nBmpHeightNew, m_nCompatBMPHeight ),
+					__min( nBmpWidthNew,m_nCompatBMPWidth ),
+					__min( nBmpHeightNew, m_nCompatBMPHeight ),
 					m_hdcCompatDC, 0, 0, SRCCOPY );
 				::SelectObject( hdcTemp, hBitmapOld );
 				::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
@@ -4079,8 +4079,8 @@ BOOL CEditView::IsCurrentPositionURL(
 	*pnUrlLine = nY;
 	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( nY, &nLineLen );
 
-	i = std::max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH（※長い行は精度低下しても性能優先で行頭以外から開始）
-	// nLineLen = std::min(nLineLen, nX + _MAX_PATH);
+	i = __max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH（※長い行は精度低下しても性能優先で行頭以外から開始）
+	// nLineLen = __min(nLineLen, nX + _MAX_PATH);
 	bool bKeyWordTop = (i == 0);
 	while( i <= nX && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword

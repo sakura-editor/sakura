@@ -334,7 +334,7 @@ int CHokanMgr::Search(
 		nX -= nCX - 8;
 	}else{
 		// サイズを調整して右に表示
-		nCX = std::max((int)(rcDesktop.right - nX) , 100);	// 最低サイズを100くらいに
+		nCX = __max((int)(rcDesktop.right - nX) , 100);	// 最低サイズを100くらいに
 	}
 
 //	2001/06/19 End
