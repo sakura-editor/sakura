@@ -8,7 +8,7 @@
 
 void CColor_Select::OnStartScanLogic()
 {
-	m_bSelectFlg	= true;
+	m_nSelectLine	= CLayoutInt(-1);
 	m_nSelectStart	= CLogicInt(-1);
 	m_nSelectEnd	= CLogicInt(-1);
 }
@@ -29,23 +29,28 @@ bool CColor_Select::BeginColorEx(const CStringRef& cStr, int nPos, CLayoutInt nL
 		return false;
 	}
 
+	// 2011.12.27 レイアウト行頭で1回だけ確認してあとはメンバー変数をみる
+	if( m_nSelectLine == nLineNum ){
+		if( m_nSelectStart <= nPos && nPos < m_nSelectEnd ){
+			return true;
+		}
+		return false;
+	}
+	m_nSelectLine = nLineNum;
 	CLayoutRange selectArea = view.GetSelectionInfo().GetSelectAreaLine(nLineNum, pcLayout);
 	CLayoutInt nSelectFrom = selectArea.GetFrom().x;
 	CLayoutInt nSelectTo = selectArea.GetTo().x;
-	if( nSelectFrom == nSelectTo ){
-		return false;
-	}
-	if( -1 == nSelectFrom ){
+	if( nSelectFrom == nSelectTo || -1 == nSelectFrom ){
+		m_nSelectStart = -1;
+		m_nSelectEnd = -1;
 		return false;
 	}
 	CLogicInt nIdxFrom = view.LineColmnToIndex(pcLayout, nSelectFrom) + pcLayout->GetLogicOffset();
-	if( nIdxFrom <= nPos ){
-		CLogicInt nIdxTo = view.LineColmnToIndex(pcLayout, nSelectTo) + pcLayout->GetLogicOffset();
-		if( nPos < nIdxTo ){
-			m_nSelectStart = nIdxFrom;
-			m_nSelectEnd = nIdxTo;
-			return true;
-		}
+	CLogicInt nIdxTo = view.LineColmnToIndex(pcLayout, nSelectTo) + pcLayout->GetLogicOffset();
+	m_nSelectStart = nIdxFrom;
+	m_nSelectEnd = nIdxTo;
+	if( m_nSelectStart <= nPos && nPos < m_nSelectEnd ){
+		return true;
 	}
 	return false;
 }

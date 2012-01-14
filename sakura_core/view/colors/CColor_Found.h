@@ -16,7 +16,7 @@ public:
 	virtual void OnStartScanLogic();
 
 private:
-	bool			m_bSelectFlg;
+	CLayoutInt		m_nSelectLine;
 	CLogicInt		m_nSelectStart;
 	CLogicInt		m_nSelectEnd;
 };
