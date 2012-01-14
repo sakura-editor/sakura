@@ -38,12 +38,11 @@ void CEditView::SetBracketPairPos( bool flag )
 	CLayoutPoint ptColLine;
 
 	if( flag && !GetSelectionInfo().IsTextSelected() && !GetSelectionInfo().m_bDrawSelectArea
-		&& !GetSelectionInfo().IsBoxSelecting() && SearchBracket( GetCaret().GetCaretLayoutPos(), &ptColLine, &mode ) )
+		&& SearchBracket( GetCaret().GetCaretLayoutPos(), &ptColLine, &mode ) )
 	{
 		// 登録指定(flag=true)			&&
 		// テキストが選択されていない	&&
 		// 選択範囲を描画していない		&&
-		// 矩形範囲選択中でない			&&
 		// 対応する括弧が見つかった		場合
 		if ( ( ptColLine.x >= GetTextArea().GetViewLeftCol() ) && ( ptColLine.x <= GetTextArea().GetRightCol() )
 			&& ( ptColLine.y >= GetTextArea().GetViewTopLine() ) && ( ptColLine.y <= GetTextArea().GetBottomLine() ) )
@@ -95,11 +94,10 @@ void CEditView::DrawBracketPair( bool bDraw )
 	// 描画指定(bDraw=true)				かつ
 	// ( テキストが選択されている		又は
 	//   選択範囲を描画している			又は
-	//   矩形範囲選択中					又は
 	//   フォーカスを持っていない		又は
 	//   アクティブなペインではない )	場合は終了
 	if( bDraw
-	 &&( GetSelectionInfo().IsTextSelected() || GetSelectionInfo().m_bDrawSelectArea || GetSelectionInfo().IsBoxSelecting() || !m_bDrawBracketPairFlag
+	 &&( GetSelectionInfo().IsTextSelected() || GetSelectionInfo().m_bDrawSelectArea || !m_bDrawBracketPairFlag
 	 || ( m_pcEditDoc->m_pcEditWnd->m_nActivePaneIndex != m_nMyIndex ) ) ){
 		return;
 	}

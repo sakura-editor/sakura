@@ -51,7 +51,7 @@ void CViewSelect::BeginSelectArea()
 
 
 // 現在の選択範囲を非選択状態に戻す
-void CViewSelect::DisableSelectArea( bool bDraw )
+void CViewSelect::DisableSelectArea( bool bDraw, bool bDrawBracketCursorLine )
 {
 	const CEditView* pView=GetEditView();
 	CEditView* pView2=GetEditView();
@@ -61,9 +61,9 @@ void CViewSelect::DisableSelectArea( bool bDraw )
 	m_bSelectingLock	 = false;	// 選択状態のロック
 
 	if( bDraw ){
-		DrawSelectArea();
-		m_bDrawSelectArea = false;	// 02/12/13 ai
+		DrawSelectArea( bDrawBracketCursorLine );
 	}
+	m_bDrawSelectArea = false;	// 02/12/13 ai // 2011.12.24 bDraw括弧内から移動
 
 	m_sSelectOld.Clear(0);			// 範囲選択(Old)
 	m_bBeginBoxSelect = false;		// 矩形範囲選択中
@@ -91,7 +91,7 @@ void CViewSelect::ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPo
 
 	// 選択領域の描画
 	m_bSelectAreaChanging = true;
-	DrawSelectArea();
+	DrawSelectArea(true);
 	m_bSelectAreaChanging = false;
 }
 
@@ -154,7 +154,7 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 	@date 2007.09.09 Moca 互換BMPによる画面バッファ
 		画面バッファが有効時、画面と互換BMPの両方の反転処理を行う。
 */
-void CViewSelect::DrawSelectArea()
+void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 {
 	CEditView* pView=GetEditView();
 
@@ -235,7 +235,9 @@ void CViewSelect::DrawSelectArea()
 				view.OnPaint(hdc, &ps, false);
 				view.GetCaret().m_cUnderLine.UnLock();
 				// 2010.10.10 0幅選択(解除)状態での、カーソル位置ライン復帰(リージョン外)
-				view.GetCaret().m_cUnderLine.CaretUnderLineON(true);
+				if( bDrawBracketCursorLine ){
+					view.GetCaret().m_cUnderLine.CaretUnderLineON(true);
+				}
 				view.ReleaseDC( hdc );
 			}
 		}
@@ -243,7 +245,9 @@ void CViewSelect::DrawSelectArea()
 		HDC hdc = pView->GetDC();
 		DrawSelectArea2( hdc );
 		// 2011.12.02 選択解除状態での、カーソル位置ライン復帰
-		pView->GetCaret().m_cUnderLine.CaretUnderLineON(true);
+		if( bDrawBracketCursorLine ){
+			pView->GetCaret().m_cUnderLine.CaretUnderLineON(true);
+		}
 		pView->ReleaseDC( hdc );
 	}
 
@@ -251,8 +255,10 @@ void CViewSelect::DrawSelectArea()
 	if( !IsTextSelecting() ){
 		// ただし選択ロック中はここでは強調表示されない
 		m_bDrawSelectArea = false;
-		pView->SetBracketPairPos( true );
-		pView->DrawBracketPair( true );
+		if( bDrawBracketCursorLine ){
+			pView->SetBracketPairPos( true );
+			pView->DrawBracketPair( true );
+		}
 	}
 
 	//	Jul. 9, 2005 genta 選択領域の情報を表示

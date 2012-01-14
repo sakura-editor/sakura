@@ -3049,6 +3049,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	bool		bSelectingLock_Old;
 	bool		bFound = false;
 	bool		bRedo = false;			//	hor
+	bool		bDisableSelect = false;
 	CLayoutInt	nLineNumOld;
 	CLogicInt	nIdxOld;
 	const CLayout* pcLayout = NULL;
@@ -3078,7 +3079,8 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		}
 		else{
 			/* 現在の選択範囲を非選択状態に戻す */
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( bReDraw );
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( bReDraw, false );
+			bDisableSelect = true;
 		}
 	}
 
@@ -3106,7 +3108,12 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	}
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
-	if(!m_pCommanderView->ChangeCurRegexp())return;
+	if(!m_pCommanderView->ChangeCurRegexp()){
+		if( bDisableSelect ){
+			m_pCommanderView->DrawBracketCursorLine(bReDraw);
+		}
+		return;
+	}
 
 	bRedo		=	TRUE;		//	hor
 	nLineNumOld	=	nLineNum;	//	hor
@@ -3143,12 +3150,6 @@ re_do:;							//	hor
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		bFound = TRUE;
 	}else{
-		/* フォーカス移動時の再描画 */
-//		m_pCommanderView->RedrawAll();	hor コメント化
-		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-			/* 現在の選択範囲を非選択状態に戻す */
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( bReDraw );
-		}
 		if( bSelecting ){
 			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 			/* 選択範囲の変更 */
@@ -3160,6 +3161,10 @@ re_do:;							//	hor
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 			/* 選択領域描画 */
 			m_pCommanderView->GetSelectionInfo().DrawSelectArea();
+		}else{
+			if( bDisableSelect ){
+				m_pCommanderView->DrawBracketCursorLine(bReDraw);
+			}
 		}
 	}
 end_of_func:;
@@ -3217,6 +3222,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 	bool		bFlag1;
 	bool		bSelectingLock_Old;
 	bool		bFound = false;
+	bool		bDisableSelect = false;
 	const CLayout* pcLayout;
 	bool b0Match = false;		//!< 長さ０でマッチしているか？フラグ by かろと
 	const wchar_t *pLine;
@@ -3276,7 +3282,8 @@ void CViewCommander::Command_SEARCH_NEXT(
 			}
 
 			/* 現在の選択範囲を非選択状態に戻す */
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( bRedraw );
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( bRedraw, false );
+			bDisableSelect = true;
 		}
 	}
 	nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
@@ -3300,7 +3307,12 @@ void CViewCommander::Command_SEARCH_NEXT(
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
 	// 2004.05.30 Moca CEditViewの現在設定されている検索パターンを使えるように
-	if(bChangeCurRegexp && !m_pCommanderView->ChangeCurRegexp())return;
+	if(bChangeCurRegexp && !m_pCommanderView->ChangeCurRegexp()){
+		if( bDisableSelect ){
+			m_pCommanderView->DrawBracketCursorLine(bRedraw);
+		}
+		return;
+	}
 
 	bool bRedo			= TRUE;		//	hor
 	nLineNumOld = nLineNum;	//	hor
@@ -3371,6 +3383,14 @@ re_do:;
 			if( bRedraw ){
 				/* 選択領域描画 */
 				m_pCommanderView->GetSelectionInfo().DrawSelectArea();
+			}
+		}else{
+			if( bDisableSelect ){
+				// 2011.12.21 ロジックカーソル位置の修正/カーソル線・対括弧の表示
+				CLogicPoint ptLogic;
+				GetDocument()->m_cLayoutMgr.LayoutToLogic(GetCaret().GetCaretLayoutPos(), &ptLogic);
+				GetCaret().SetCaretLogicPos(ptLogic);
+				m_pCommanderView->DrawBracketCursorLine(bRedraw);
 			}
 		}
 	}
@@ -3462,9 +3482,6 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 		// 2011.12.05 Moca 選択中の未選択状態でもLockの解除と描画が必要
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelecting() ){
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
-			m_pCommanderView->DrawBracketPair( false );
-			m_pCommanderView->SetBracketPairPos( true );
-			m_pCommanderView->DrawBracketPair( true );
 		}
 	}
 }
