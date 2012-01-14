@@ -91,6 +91,7 @@ void CLayoutMgr::Init()
 	m_nPrevReferLine = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
 	m_nLines = CLayoutInt(0);			/* 全物理行数 */
+	m_nLineTypeBot = COLORIDX_DEFAULT;
 
 	// EOFレイアウト位置記憶	//2006.10.07 Moca
 	m_nEOFLine = CLayoutInt(-1);

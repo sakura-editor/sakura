@@ -43,6 +43,9 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 			nLineWork--;
 		}
 		nCurrentLineType = pLayoutWork->GetColorTypePrev();
+	}else if( GetLineCount() == pArg->sDelRange.GetFrom().GetY2() ){
+		// 2012.01.05 ÅIs‚ÌRedo/Undo‚Å‚ÌF•ª‚¯‚ª³‚µ‚­‚È‚¢‚Ì‚ğC³
+		nCurrentLineType = m_nLineTypeBot;
 	}
 
 
