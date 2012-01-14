@@ -652,7 +652,7 @@ re_do:;								// hor
 	}else{
 		m_pCommanderView->SendStatusMessage(_T("▽見つかりませんでした"));
 		if(GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			InfoMessage( m_pCommanderView->GetHwnd(), _T("後方(↓) にブックマークが見つかりません。"));
+			InfoMessage( m_pCommanderView->GetHwnd(), _T("前方(↓) にブックマークが見つかりません。"));
 	}
 	return;
 }
@@ -696,7 +696,7 @@ re_do:;								// hor
 	}else{
 		m_pCommanderView->SendStatusMessage(_T("△見つかりませんでした"));
 		if(GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			InfoMessage( m_pCommanderView->GetHwnd(), _T("前方(↑) にブックマークが見つかりません。") );
+			InfoMessage( m_pCommanderView->GetHwnd(), _T("後方(↑) にブックマークが見つかりません。") );
 	}
 	return;
 }
@@ -717,7 +717,8 @@ void CViewCommander::Command_BOOKMARK_RESET(void)
 void CViewCommander::Command_BOOKMARK_PATTERN( void )
 {
 	//検索or置換ダイアログから呼び出された
-	if(!m_pCommanderView->ChangeCurRegexp())return;
+	if( !m_pCommanderView->ChangeCurRegexp(false) ) return;
+	
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).MarkSearchWord(
 		GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0],		// 検索条件
 		GetDllShareData().m_Common.m_sSearch.m_sSearchOption,	// 検索条件

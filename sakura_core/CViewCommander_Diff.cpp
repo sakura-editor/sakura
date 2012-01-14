@@ -136,7 +136,7 @@ re_do:;
 	else{
 		m_pCommanderView->SendStatusMessage( _T("▽見つかりませんでした") );
 		if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			InfoMessage( m_pCommanderView->GetHwnd(), _T("後方(↓) に差分が見つかりません。") );
+			InfoMessage( m_pCommanderView->GetHwnd(), _T("前方(↓) に差分が見つかりません。") );
 	}
 
 	return;
@@ -190,7 +190,7 @@ re_do:;
 	else{
 		m_pCommanderView->SendStatusMessage( _T("△見つかりませんでした") );
 		if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			InfoMessage( m_pCommanderView->GetHwnd(), _T("前方(↑) に差分が見つかりません。") );
+			InfoMessage( m_pCommanderView->GetHwnd(), _T("後方(↑) に差分が見つかりません。") );
 	}
 
 	return;
