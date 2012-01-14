@@ -310,7 +310,7 @@ EColorIndexType CEditView::GetColorIndex(
 	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 
 	/* 論理行データの取得 */
-	DispPos _sPos(0,0);
+	DispPos _sPos(0,0); // 注意：この値はダミー。DoChangeColorでの参照位置は不正確
 	SColorStrategyInfo _sInfo;
 	SColorStrategyInfo* pInfo = &_sInfo;
 	pInfo->pcView = this;
@@ -388,7 +388,7 @@ EColorIndexType CEditView::GetColorIndex(
 									pInfo->nPosInLogic
 								);
 	}
-	eRet = pInfo->GetCurrentColor();
+	eRet = pInfo->GetCurrentColor2();
 	if(ppStrategy) *ppStrategy = pInfo->pStrategy;
 	if(ppStrategyFound) *ppStrategyFound = pInfo->pStrategyFound;
 
