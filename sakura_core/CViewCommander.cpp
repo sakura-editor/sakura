@@ -1007,7 +1007,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 		if( pcLayout )
 		{
 			// キャレット位置のレイアウト行について。
-			const CLayoutInt x_wrap = pcLayout->GetIndent() + pcLayout->CalcLayoutWidth( GetDocument()->m_cLayoutMgr ); // 改行文字、または折り返しの位置。
+			const CLayoutInt x_wrap = pcLayout->CalcLayoutWidth( GetDocument()->m_cLayoutMgr ); // 改行文字、または折り返しの位置。
 			const bool wrapped = EOL_NONE == pcLayout->GetLayoutEol(); // 折り返しているか、改行文字で終わっているか。これにより x_wrapの意味が変わる。
 			const bool nextline_exists = pcLayout->GetNextLayout() || pcLayout->GetLayoutEol() != EOL_NONE; // EOFのみの行も含め、キャレットが移動可能な次行が存在するか。
 
@@ -1324,7 +1324,7 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 	nPosXY.x = CLayoutInt(0);
 	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nPosXY.y );
 	if(pcLayout)
-		nPosXY.x = pcLayout->GetIndent() + pcLayout->CalcLayoutWidth(GetDocument()->m_cLayoutMgr);
+		nPosXY.x = pcLayout->CalcLayoutWidth(GetDocument()->m_cLayoutMgr);
 
 	// キャレット移動
 	GetCaret().MoveCursor( nPosXY, true );
