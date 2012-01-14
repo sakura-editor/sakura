@@ -140,6 +140,7 @@ bool CEditView::ProcessCommand_isearch(
 	@param direction [in] 検索方向 0:後方(上方), 1:前方(下方)
 
 	@author isearch
+	@date 2011.12.15 Moca m_sCurSearchOption/m_sSearchOptionと同期をとる
 */
 void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 {
@@ -166,24 +167,27 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		}
 		switch( mode ) {
 			case 1: // 通常インクリメンタルサーチ
-				m_sCurSearchOption.bRegularExp = FALSE;
-				GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp = false;
+				m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;
+				m_sCurSearchOption.bRegularExp = false;
+				m_sCurSearchOption.bLoHiCase = false;
+				m_sCurSearchOption.bWordOnly = false;
 				//SendStatusMessage(_T("I-Search: "));
 				break;
 			case 2: // 正規表現インクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
-					SendStatusMessage(_T("BREGREP.DLLが使用できません。"));
+					SendStatusMessage(_T("正規表現ライブラリが使用できません。"));
 					return;
 				}
-				m_sCurSearchOption.bRegularExp = TRUE;
-				GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp = TRUE;
+				m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;
+				m_sCurSearchOption.bRegularExp = true;
+				m_sCurSearchOption.bLoHiCase = false;
 				//SendStatusMessage(_T("[RegExp] I-Search: "));
 				break;
 			case 3: // MIGEMOインクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
-					SendStatusMessage(_T("BREGREP.DLLが使用できません。"));
+					SendStatusMessage(_T("正規表現ライブラリが使用できません。"));
 					return;
 				}
 				//migemo dll チェック
@@ -195,9 +199,10 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 					return;
 				}
 				m_pcmigemo->migemo_load_all();
+				m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;
 				if (m_pcmigemo->migemo_is_enable()) {
-					m_sCurSearchOption.bRegularExp = TRUE;
-					GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp = true;
+					m_sCurSearchOption.bRegularExp = true;
+					m_sCurSearchOption.bLoHiCase = false;
 					//SendStatusMessage(_T("[MIGEMO] I-Search: "));
 				}else{
 					WarningBeep();
@@ -242,6 +247,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 void CEditView::ISearchExit()
 {
 	CSearchKeywordManager().AddToSearchKeyArr( m_szCurSrchKey );
+	GetDllShareData().m_Common.m_sSearch.m_sSearchOption = m_sCurSearchOption;
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	
@@ -412,11 +418,7 @@ void CEditView::ISearchExec(bool bNext)
 		nIdx,						// 検索開始データ位置
 		m_szCurSrchKey,				// 検索条件
 		m_nISearchDirection,		// 0==前方検索 1==後方検索
-		SSearchOption(
-			m_sCurSearchOption.bRegularExp,	//正規表現
-			false,							//英大文字小文字の区別
-			false							//単語のみ検索
-		),
+		m_sCurSearchOption,	// 2011.12.15 Moca 色分け「次検索」と同期をとるためm_sCurSearchOptionをそのまま指定
 		&sMatchRange,				// マッチレイアウト範囲
 		&m_CurRegexp
 	);
@@ -510,7 +512,7 @@ void CEditView::ISearchWordMake(void)
 		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
 			return ;
 		}
-		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
+		nFlag |= m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
 		/* 検索パターンのコンパイル */
 		m_CurRegexp.Compile(m_szCurSrchKey , nFlag );
 		break;
@@ -518,7 +520,7 @@ void CEditView::ISearchWordMake(void)
 		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
 			return ;
 		}
-		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
+		nFlag |= m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
 
 		{
 			//migemoで捜す

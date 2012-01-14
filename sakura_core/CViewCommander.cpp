@@ -3190,7 +3190,7 @@ end_of_func:;
 			}
 			InfoMessage(
 				hwndParent,
-				_T("前方(↑) に文字列 '%ls' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
+				_T("後方(↑) に文字列 '%ls' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
 				m_pCommanderView->m_szCurSrchKey
 			);
 		}
@@ -3408,7 +3408,7 @@ end_of_func:;
 			if( NULL == pszNotFoundMessage ){
 				InfoMessage(
 					hwndParent,
-					_T("後方(↓) に文字列 '%ls' が１つも見つかりません。"),
+					_T("前方(↓) に文字列 '%ls' が１つも見つかりません。"),
 					m_pCommanderView->m_szCurSrchKey
 				);
 			}
@@ -8392,7 +8392,8 @@ void CViewCommander::Command_SEARCH_CLEARMARK( void )
 		// 検索オプション設定
 		GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp=false;	//正規表現使わない
 		GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly=false;		//単語で検索しない
-		m_pCommanderView->ChangeCurRegexp(); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
+		// 2010.06.30 Moca ChangeCurRegexpに再描画フラグ追加。2回再描画しないように
+		m_pCommanderView->ChangeCurRegexp(false); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
 
 		// 再描画
 		m_pCommanderView->RedrawAll();

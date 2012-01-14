@@ -348,7 +348,7 @@ void CEditView::AddToCmdArr( const TCHAR* szCmd )
 
 /* 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す) */
 /* 2002.01.16 hor 共通ロジックを関数にしただけ・・・ */
-BOOL CEditView::ChangeCurRegexp(void)
+BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
 	BOOL	bChangeState;
 	if( !m_bCurSrchKeyMark
@@ -377,7 +377,7 @@ BOOL CEditView::ChangeCurRegexp(void)
 		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 	}
 
-	if( bChangeState ){
+	if( bChangeState && bRedrawIfChanged ){
 		/* フォーカス移動時の再描画 */
 		RedrawAll();
 	}
