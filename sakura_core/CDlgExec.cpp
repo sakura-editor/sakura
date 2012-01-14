@@ -175,17 +175,19 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	case IDC_BUTTON_REFERENCE:	/* ファイル名の「参照...」ボタン */
 		{
 			CDlgOpenFile	cDlgOpenFile;
-			char			szPath[_MAX_PATH + 1];
-			strcpy( szPath, m_szCommand );
+			TCHAR			szPath[_MAX_PATH + 1];
+			int				size = _countof(szPath) - 1;
+			_tcsncpy( szPath, m_szCommand, size);
+			szPath[size] = _T('\0');
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
 				m_hInstance,
 				m_hWnd,
-				"*.com;*.exe;*.bat",
+				_T("*.com;*.exe;*.bat"),
 				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-				strcpy( m_szCommand, szPath );
+				_tcscpy( m_szCommand, szPath );
 				::SetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand );
 			}
 		}

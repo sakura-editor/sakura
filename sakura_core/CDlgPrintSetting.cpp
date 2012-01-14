@@ -222,8 +222,10 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		if( FALSE == cDlgInput1.DoModal( m_hInstance, m_hWnd, "İ’è–¼‚Ì•ÏX", "İ’è‚Ì–¼Ì‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B", sizeof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1, szWork ) ){
 			return TRUE;
 		}
-		if( 0 < lstrlen( szWork ) ){
-			strcpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork );
+		if( 0 < _tcslen( szWork ) ){
+			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
+			_tcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
+			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = _T('\0');
 			/* ˆóüİ’è–¼ˆê—— */
 			hwndComboSettingName = ::GetDlgItem( m_hWnd, IDC_COMBO_SETTINGNAME );
 			::SendMessage( hwndComboSettingName, CB_RESETCONTENT, 0, 0 );
