@@ -35,7 +35,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	int			nMode;
-	wchar_t		szFuncName[80];
+	wchar_t		szFuncName[100];
 	CLogicInt	nFuncLine;
 	int			nFuncId;
 	int			nFuncNum;
@@ -131,8 +131,8 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							4 == nFuncOrProc ){
 							++nParseCnt;
 							wcscpy( szFuncName, szWord );
-						}else
-						if( 3 == nFuncOrProc ){
+//						}else
+//						if( 3 == nFuncOrProc ){
 
 						}
 					}else

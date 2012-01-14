@@ -37,7 +37,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	int			nMode;
-	wchar_t		szFuncName[80];
+	wchar_t		szFuncName[100];
 	CLogicInt	nFuncLine = CLogicInt(0);
 	int			nFuncId;
 	int			nFuncNum;

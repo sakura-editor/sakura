@@ -535,18 +535,15 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 
 /*!
 	Macro格納用ディレクトリを選択する
-	
+
 	@param hwndDlg [in] ダイアログボックスのウィンドウハンドル
 */
 void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 {
-
-// 2002/04/14 novice
-//	SelectDir()に分離された部分を削除
-	TCHAR szDir[MAX_PATH + 1]; // 追加する\\用に1足した
+	TCHAR szDir[_MAX_PATH];
 
 	/* 検索フォルダ */
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
+	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _countof(szDir) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -558,7 +555,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 
 	if( SelectDir( hwndDlg, _T("Macroディレクトリの選択"), szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
-		AddLastChar( szDir, _MAX_PATH, _T('\\') );
+		AddLastChar( szDir, _countof(szDir), _T('\\') );
 		::DlgItem_SetText( hwndDlg, IDC_MACRODIR, szDir );
 	}
 }
@@ -575,13 +572,13 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	HANDLE hFind;
 	HWND hCombo = ::GetDlgItem( hwndDlg, IDC_MACROPATH );
 
-	TCHAR path[_MAX_PATH * 2 ];
-	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, path, _MAX_PATH );
+	TCHAR path[_MAX_PATH * 2];
+	::DlgItem_GetText( hwndDlg, IDC_MACRODIR, path, _countof(path) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( path ) ){
-		TCHAR folder[_MAX_PATH];
+		TCHAR folder[_MAX_PATH * 2];
 		_tcscpy( folder, path );
 		GetInidirOrExedir( path, folder );
 	}
@@ -597,7 +594,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 	if (hFind == INVALID_HANDLE_VALUE) {
 		return;
 	}
-	
+
 	do {
 		//	コンボボックスに設定
 		//	でも.と..は勘弁。
