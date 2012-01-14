@@ -43,7 +43,15 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 
 
 
-// Grep実行
+/*! Grep実行
+
+  @param[in] pcmGrepKey 検索パターン
+  @param[in] pcmGrepFile 検索対象ファイルパターン(!で除外指定))
+  @param[in] pcmGrepFolder 検索対象フォルダ
+
+  @date 2008.12.07 nasukoji	ファイル名パターンのバッファオーバラン対策
+  @date 2008.12.13 genta 検索パターンのバッファオーバラン対策
+*/
 DWORD CGrepAgent::DoGrep(
 	CEditView*				pcViewDst,
 	const CNativeW*			pcmGrepKey,
@@ -69,8 +77,6 @@ DWORD CGrepAgent::DoGrep(
 	this->m_bGrepRunning = true;
 
 	int			nHitCount = 0;
-	wchar_t		szKey[_MAX_PATH];
-	TCHAR		szFile[_MAX_PATH];
 	CDlgCancel	cDlgCancel;
 	HWND		hwndCancel;
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
@@ -141,9 +147,10 @@ DWORD CGrepAgent::DoGrep(
 	::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, _T(" ") );	// 2002/09/09 Moca add
 	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView );	// 2003.06.23 Moca
 
-	wcscpy( szKey, pcmGrepKey->GetStringPtr() );
-
-	wcscpy( CAppMode::Instance()->m_szGrepKey, szKey );
+	//	2008.12.13 genta パターンが長すぎる場合は登録しない
+	//	(正規表現が途中で途切れると困るので)
+	//	2011.12.10 Moca 表示の際に...に切り捨てられるので登録するように
+	wcsncpy_s( CAppMode::Instance()->m_szGrepKey, _countof(CAppMode::Instance()->m_szGrepKey), pcmGrepKey->GetStringPtr(), _TRUNCATE );
 	this->m_bGrepMode = true;
 
 	//	2007.07.22 genta
@@ -157,7 +164,7 @@ DWORD CGrepAgent::DoGrep(
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
 		nFlag |= sSearchOption.bLoHiCase ? 0x01 : 0x00;
-		if( !cRegexp.Compile( szKey, nFlag ) ){
+		if( !cRegexp.Compile( pcmGrepKey->GetStringPtr(), nFlag ) ){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
 			return 0;
@@ -165,8 +172,8 @@ DWORD CGrepAgent::DoGrep(
 	}else{
 		/* 検索条件の情報 */
 		CSearchAgent::CreateCharCharsArr(
-			szKey,
-			wcslen( szKey ),
+			pcmGrepKey->GetStringPtr(),
+			pcmGrepKey->GetStringLength(),
 			&pnKey_CharCharsArr
 		);
 	}
@@ -189,16 +196,14 @@ DWORD CGrepAgent::DoGrep(
 	/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
 	AddLastYenFromDirectoryPath( szPath );
 
-	_tcscpy( szFile, pcmGrepFile->GetStringPtr() );
-
-	nWork = wcslen( szKey ); // 2003.06.10 Moca あらかじめ長さを計算しておく
+	nWork = pcmGrepFile->GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
 	/* 最後にテキストを追加 */
 	CNativeW	cmemWork;
 	cmemMessage.AppendString( L"\r\n□検索条件  " );
 	if( 0 < nWork ){
 		CNativeW cmemWork2;
-		cmemWork2.SetString( szKey );
+		cmemWork2.SetNativeData( *pcmGrepKey );
 		if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 			cmemWork2.Replace( L"\\", L"\\\\" );
 			cmemWork2.Replace( L"\'", L"\\\'" );
@@ -218,10 +223,10 @@ DWORD CGrepAgent::DoGrep(
 
 
 	cmemMessage.AppendString( L"検索対象   " );
-	cmemWork.SetStringT( szFile );
 	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
+	cmemWork.SetStringT( pcmGrepFile->GetStringPtr() );
 	cmemMessage += cmemWork;
 
 
@@ -311,9 +316,9 @@ DWORD CGrepAgent::DoGrep(
 		pcViewDst,
 		&cDlgCancel,
 		hwndCancel,
-		szKey,
+		pcmGrepKey->GetStringPtr(),
 		pnKey_CharCharsArr,
-		szFile,
+		pcmGrepFile->GetStringPtr(),
 		szPath,
 		bGrepSubFolder,
 		sSearchOption,
