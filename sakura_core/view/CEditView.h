@@ -253,6 +253,7 @@ public:
 		m_bDrawSWITCH = b;
 	}
 	bool IsDrawCursorVLinePos( int );
+	void DrawBracketCursorLine( bool );
 
 
 

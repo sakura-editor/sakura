@@ -434,3 +434,13 @@ void CEditView::CopyCurLine(
 		ErrorBeep();
 	}
 }
+
+void CEditView::DrawBracketCursorLine(bool bDraw)
+{
+	if( bDraw ){
+		GetCaret().m_cUnderLine.CaretUnderLineON(true);
+		DrawBracketPair(false);
+		SetBracketPairPos(true);
+		DrawBracketPair(true);
+	}
+}

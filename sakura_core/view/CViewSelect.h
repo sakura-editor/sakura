@@ -17,7 +17,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      選択範囲の変更                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void DisableSelectArea( bool bDraw ); //!< 現在の選択範囲を非選択状態に戻す
+	void DisableSelectArea( bool bDraw, bool bDrawBracketCursorLine = true ); //!< 現在の選択範囲を非選択状態に戻す
 
 	void BeginSelectArea();								// 現在のカーソル位置から選択を開始する
 	void ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPos );			// 現在のカーソル位置によって選択範囲を変更
@@ -73,7 +73,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void DrawSelectArea();		//!< 指定行の選択領域の描画
+	void DrawSelectArea(bool bDrawBracketCursorLine = true);		//!< 指定行の選択領域の描画
 private:
 	void DrawSelectArea2(HDC) const;		//!< 指定範囲の選択領域の描画
 	void DrawSelectAreaLine(			//!< 指定行の選択領域の描画
