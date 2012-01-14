@@ -1102,7 +1102,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			pInfo->gr,
 			pInfo->pDispPos->GetLayoutLineRef(),
 			CMyPoint(pInfo->sDispPosBegin.GetDrawPos().x, pInfo->pDispPos->GetDrawPos().y),
-			pcLayout->GetIndent() + pcLayout->CalcLayoutWidth(CEditDoc::GetInstance(0)->m_cLayoutMgr) + CLayoutInt(pcLayout->GetLayoutEol().GetLen()?1:0)
+			pcLayout->CalcLayoutWidth(CEditDoc::GetInstance(0)->m_cLayoutMgr) + CLayoutInt(pcLayout->GetLayoutEol().GetLen()?1:0)
 		);
 	}
 
