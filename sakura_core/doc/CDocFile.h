@@ -25,7 +25,13 @@ public:
 	void			SetBomMode(bool bBomExist)	{ m_sFileInfo.bBomExist = bBomExist; }	//!< 保存時にBOMを付加するかどうかを設定
 	CFileTime		GetDocFileTime() const		{ return m_sFileInfo.cFileTime; }
 	const TCHAR*	GetFileName() const; //!< ファイル名(パスなし)を取得
-	const TCHAR*	GetSaveFilePath(void) const { return (m_szSaveFilePath.IsValidPath())? m_szSaveFilePath: GetFilePath(); }
+	const TCHAR*	GetSaveFilePath(void) const {
+		if (m_szSaveFilePath.IsValidPath()) {
+			return m_szSaveFilePath;
+		} else {
+			return GetFilePath();
+		}
+	}
 	void			SetSaveFilePath(LPCTSTR pszPath){ m_szSaveFilePath.Assign(pszPath); }
 public: //####
 	CEditDoc*	m_pcDocRef;

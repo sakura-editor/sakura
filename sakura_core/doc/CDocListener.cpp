@@ -23,49 +23,49 @@ CDocSubject::~CDocSubject()
 }
 
 
-#define DEF_NOTIFY(NAME) ECallbackResult CDocSubject::Notify##NAME##() \
+#define DEF_NOTIFY(NAME) ECallbackResult CDocSubject::Notify##NAME() \
 { \
 	int n = GetListenerCount(); \
 	for(int i=0;i<n;i++){ \
-		ECallbackResult eRet = GetListener(i)->On##NAME##(); \
+		ECallbackResult eRet = GetListener(i)->On##NAME(); \
 		if(eRet!=CALLBACK_CONTINUE)return eRet; \
 	} \
 	return CALLBACK_CONTINUE; \
 }
 
-#define DEF_NOTIFY2(NAME,ARGTYPE) ECallbackResult CDocSubject::Notify##NAME##(ARGTYPE a) \
+#define DEF_NOTIFY2(NAME,ARGTYPE) ECallbackResult CDocSubject::Notify##NAME(ARGTYPE a) \
 { \
 	int n = GetListenerCount(); \
 	for(int i=0;i<n;i++){ \
-		ECallbackResult eRet = GetListener(i)->On##NAME##(a); \
+		ECallbackResult eRet = GetListener(i)->On##NAME(a); \
 		if(eRet!=CALLBACK_CONTINUE)return eRet; \
 	} \
 	return CALLBACK_CONTINUE; \
 }
 
-#define VOID_NOTIFY(NAME) void CDocSubject::Notify##NAME##() \
+#define VOID_NOTIFY(NAME) void CDocSubject::Notify##NAME() \
 { \
 	int n = GetListenerCount(); \
 	for(int i=0;i<n;i++){ \
-		GetListener(i)->On##NAME##(); \
+		GetListener(i)->On##NAME(); \
 	} \
 }
 
-#define VOID_NOTIFY2(NAME,ARGTYPE) void CDocSubject::Notify##NAME##(ARGTYPE a) \
+#define VOID_NOTIFY2(NAME,ARGTYPE) void CDocSubject::Notify##NAME(ARGTYPE a) \
 { \
 	int n = GetListenerCount(); \
 	for(int i=0;i<n;i++){ \
-		GetListener(i)->On##NAME##(a); \
+		GetListener(i)->On##NAME(a); \
 	} \
 }
 
 //######‰¼
-#define CORE_NOTIFY2(NAME,ARGTYPE) ELoadResult CDocSubject::Notify##NAME##(ARGTYPE a) \
+#define CORE_NOTIFY2(NAME,ARGTYPE) ELoadResult CDocSubject::Notify##NAME(ARGTYPE a) \
 { \
 	int n = GetListenerCount(); \
 	ELoadResult eRet = LOADED_FAILURE; \
 	for(int i=0;i<n;i++){ \
-		ELoadResult e = GetListener(i)->On##NAME##(a); \
+		ELoadResult e = GetListener(i)->On##NAME(a); \
 		if(e==LOADED_NOIMPLEMENT)continue; \
 		if(e==LOADED_FAILURE)return e; \
 		eRet = e; \

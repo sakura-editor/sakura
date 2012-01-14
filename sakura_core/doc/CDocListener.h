@@ -183,5 +183,5 @@ public:
 #include <exception>
 class CFlowInterruption : public std::exception{
 public:
-	const char* what() const{ return "CFlowInterruption"; }
+	const char* what() const throw(){ return "CFlowInterruption"; }
 };
