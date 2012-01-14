@@ -16,12 +16,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropCommon.h"
 #include "CDlgInput1.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
-#include "debug.h" // 2002/2/10 aroka
+#include "Debug.h" // 2002/2/10 aroka
 #include "sakura.hh"
 
 //	From Here Sept. 5, 2000 JEPRO 半角カタカナの全角化に伴い文字長を変更(27→46)

@@ -11,11 +11,11 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CLayoutMgr.h"
 #include "charcode.h"
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include <commctrl.h>
 #include <stdlib.h>
 #include "CLayout.h" // 2002/2/10 aroka
@@ -117,7 +117,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	int	nModifyLayoutLinesOld = 0;
 	CLayout* pLayoutPrev;
 	int nWork;
-	nWork = __max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
+	nWork = std::max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
 //	if( 0 < nWork ){
 //		--nWork;
 //	}

@@ -18,10 +18,10 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CPropCommon.h"
-#include "debug.h"
+#include "Debug.h"
 #include <windows.h>
 #include <commctrl.h>
 #include "CDlgOpenFile.h"
@@ -31,7 +31,7 @@
 #include "CDlgDebug.h"
 #include "CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
-#include "funccode.h"	//Stonee, 2001/05/18
+#include "Funccode.h"	//Stonee, 2001/05/18
 #include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

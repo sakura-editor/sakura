@@ -32,11 +32,11 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPPA.h"
 #include "CEditView.h"
 #include "Funccode.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CMacro.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
 #include "CShareData.h"

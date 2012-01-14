@@ -327,7 +327,7 @@ protected:
 	//	Sept. 9, 2000 JEPRO		次行を追加
 	void EnableWinPropInput( HWND hwndDlg) ;	//	ウィンドウ設定のON/OFF
 	//	Sept. 10, 2000 JEPRO	次行を追加
-	void CPropCommon::EnableFormatPropInput( HWND hwndDlg );	//	書式設定のON/OFF
+	void EnableFormatPropInput( HWND hwndDlg );	//	書式設定のON/OFF
 };
 
 

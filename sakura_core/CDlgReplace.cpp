@@ -15,14 +15,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CDlgReplace.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CEditView.h"
 #include "etc_uty.h"
 #include "global.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "Funccode.h"		// Stonee, 2001/03/12
 #include "CLayout.h"/// 2002/2/3 aroka
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ÉwÉbÉ_êÆóù
 

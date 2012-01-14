@@ -33,11 +33,11 @@
 
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 #include "sakura_rc.h"
 #include "global.h"
-#include "funccode.h"
+#include "Funccode.h"
 #include "mymessage.h"
 #include "CDialog.h"
 #include "CDlgTagJumpList.h"
@@ -45,7 +45,7 @@
 //#include <Shlwapi.h> // 2006.01.08 genta Not used
 #include "CRecent.h"
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include "my_icmp.h"
 #include "charcode.h"  // 2006.06.28 rastiv
 

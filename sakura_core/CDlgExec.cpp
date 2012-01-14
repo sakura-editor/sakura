@@ -16,16 +16,16 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDlgExec.h"
-#include "funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
+#include "Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "sakura_rc.h"
 #include "etc_uty.h"	//Stonee, 2001/03/12
 #include <windows.h>		//Mar. 28, 2001 JEPRO (一応入れたが不要？)
 #include <stdio.h>			//Mar. 28, 2001 JEPRO (一応入れたが不要？)
 #include <commctrl.h>		//Mar. 28, 2001 JEPRO
 #include "CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
-#include "debug.h"// 2002/2/10 aroka ヘッダ整理
+#include "Debug.h"// 2002/2/10 aroka ヘッダ整理
 
 //外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

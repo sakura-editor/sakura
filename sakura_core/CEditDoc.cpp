@@ -22,20 +22,20 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>	// Apr. 03, 2003 genta
 #include <io.h>
-#include <Cderr.h> // Nov. 3, 2005 genta
+#include <cderr.h> // Nov. 3, 2005 genta
 #include "CEditDoc.h"
-#include "debug.h"
-#include "funccode.h"
+#include "Debug.h"
+#include "Funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
 #include "CWaitCursor.h"
-#include <DLGS.H>
+#include <dlgs.h>
 #include "CShareData.h"
 #include "CEditWnd.h"
 #include "sakura_rc.h"
@@ -49,7 +49,7 @@
 #include "CDlgFileUpdateQuery.h"
 #include <assert.h> /// 2002/11/2 frozen
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
-#include "my_sp.h" // 2005/11/22 aroka ’Ç‰Á
+#include "MY_SP.h" // 2005/11/22 aroka ’Ç‰Á
 #include "CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
 #include "CMemoryIterator.h"	// 2007.08.22 ryoji ’Ç‰Á
 

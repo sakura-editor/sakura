@@ -14,10 +14,10 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CSplitterWnd.h"
 #include "CSplitBoxWnd.h"
-#include "debug.h"
+#include "Debug.h"
 #include "mymessage.h"
 #include "CEditWnd.h"
 #include "CEditView.h"

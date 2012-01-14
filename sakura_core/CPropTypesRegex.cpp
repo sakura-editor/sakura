@@ -16,10 +16,10 @@
 
 //@@@ 2001.11.17 add start MIK
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CPropTypes.h"
-#include "debug.h"
+#include "Debug.h"
 #include <windows.h>
 #include <commctrl.h>
 #include "CDlgOpenFile.h"
@@ -27,7 +27,7 @@
 #include "global.h"
 #include "CProfile.h"
 #include "CShareData.h"
-#include "funccode.h"	//Stonee, 2001/05/18
+#include "Funccode.h"	//Stonee, 2001/05/18
 #include <stdio.h>	//@@@ 2001.11.17 add MIK
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 

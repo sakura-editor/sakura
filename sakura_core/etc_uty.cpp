@@ -25,18 +25,18 @@
 // 2006.04.21 ryoji マルチモニタのエミュレーション関数の実体生成のため
 #define COMPILE_MULTIMON_STUBS
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <Shlwapi.h>	// 2006.06.17 ryoji
 #include <HtmlHelp.h>
 #include <io.h>
 #include <memory.h>		// Apr. 03, 2003 genta
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CMemory.h"
-#include "funccode.h"	//Stonee, 2001/02/23
+#include "Funccode.h"	//Stonee, 2001/02/23
 #include "mymessage.h"	// 2007.04.03 ryoji
 
-#include "WINNETWK.H"	//Stonee, 2001/12/21
+#include "WinNetWk.h"	//Stonee, 2001/12/21
 #include "sakura.hh"	//YAZAKI, 2001/12/11
 #include "CEol.h"// 2002/2/3 aroka
 #include "CBregexp.h"// 2002/2/3 aroka

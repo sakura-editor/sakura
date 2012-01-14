@@ -15,7 +15,7 @@
 
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CWSH.h"
 #include "CWSHManager.h"
 #include "CMacroFactory.h"

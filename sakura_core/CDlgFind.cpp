@@ -17,15 +17,15 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDlgFind.h"
-#include "funccode.h"
+#include "Funccode.h"
 #include "sakura_rc.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
 #include "CEditView.h"
 #include "etc_uty.h"	//Stonee, 2001/03/12
-#include "debug.h"// 2002/2/10 aroka ヘッダ整理
+#include "Debug.h"// 2002/2/10 aroka ヘッダ整理
 
 //検索 CDlgFind.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

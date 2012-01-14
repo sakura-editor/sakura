@@ -18,7 +18,7 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <io.h>
@@ -33,7 +33,7 @@
 #include "CWaitCursor.h"
 #include "COsVersionInfo.h"
 #include "mymessage.h"
-#include "debug.h"
+#include "Debug.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	"sakura_diff_"
 

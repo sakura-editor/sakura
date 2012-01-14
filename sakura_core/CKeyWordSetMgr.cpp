@@ -33,7 +33,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CKeyWordSetMgr.h"
 #include <stdlib.h>
 #include <malloc.h>

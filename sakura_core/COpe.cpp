@@ -11,9 +11,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "COpe.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CMemory.h"// 2002/2/10 aroka
 
 

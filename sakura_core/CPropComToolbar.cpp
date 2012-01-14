@@ -16,11 +16,11 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropCommon.h"
 #include "CMenuDrawer.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2005/8/9 aroka
-#include "debug.h" // 2002/2/10 aroka
+#include "Debug.h" // 2002/2/10 aroka
 #include "sakura.hh"
 
 

@@ -21,12 +21,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <io.h>
 #include "CShareData.h"
 #include "CEditApp.h"
 #include "mymessage.h"
-#include "debug.h"
+#include "Debug.h"
 #include "global.h"
 #include "etc_uty.h"
 #include "CRunningTimer.h"
@@ -2336,7 +2336,7 @@ LPCTSTR CShareData::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int nDest
 		if( 0 == _tcsncicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #endif
 		{
-			nCopy = __min( nToLen, nDestLen - j );
+			nCopy = std::min( nToLen, nDestLen - j );
 			memcpy( &pszDest[j], pszTo, nCopy * sizeof( TCHAR ) );
 			j += nCopy;
 			i += nFromLen - 1;

@@ -16,7 +16,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 //	#include <stdlib.h>
 //	#include <malloc.h>
@@ -24,7 +24,7 @@
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
-#include "debug.h"
+#include "Debug.h"
 #include "charcode.h"
 #include "etc_uty.h" // Oct. 5, 2002 genta
 //	#include "global.h"

@@ -21,7 +21,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CSMacroMgr.h"
 #include "CEditView.h"
 #include "CPPAMacroMgr.h"
@@ -29,7 +29,7 @@
 #include "CMacroFactory.h"
 #include <stdio.h>
 #include <assert.h> // ŽŽŒ±—p
-#include "debug.h"
+#include "Debug.h"
 #include "CRunningTimer.h"
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 

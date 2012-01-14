@@ -183,7 +183,7 @@ public:
 	  Fromを含む位置からToの直前を含むデータを削除する
 	  Fromの位置へテキストを挿入する
 	*/
-	void CDocLineMgr::ReplaceData(
+	void ReplaceData(
 		DocLineReplaceArg*
 #if 0
 		int			nDelLineFrom,		/* 削除範囲行  From 改行単位の行番号 0開始) */

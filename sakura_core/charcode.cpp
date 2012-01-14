@@ -28,7 +28,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "global.h"
 #include "charcode.h"
 

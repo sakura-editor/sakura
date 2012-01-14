@@ -34,10 +34,10 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <windows.h>
 #include "CTabWnd.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CEditWnd.h"
 #include "global.h"
 #include "mymessage.h"

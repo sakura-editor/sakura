@@ -35,7 +35,7 @@
 #include "CHokanMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
-#include "CEOL.h"
+#include "CEol.h"
 
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
 class CMemory;///
@@ -643,7 +643,7 @@ protected:
 	void Command_CtrlCode_Dialog(void);		/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
 
 	/* 指定位置の指定長データ削除 */
-	void CEditView::DeleteData2(
+	void DeleteData2(
 		int			nCaretX,
 		int			nCaretY,
 		int			nDelLen,

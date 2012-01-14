@@ -19,7 +19,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CEditView.h"
 #include "CWaitCursor.h"
 #include "charcode.h"
@@ -30,7 +30,7 @@
 #include "CLayout.h"///
 #include "CDocLine.h"///
 #include "mymessage.h"///
-#include "debug.h"///
+#include "Debug.h"///
 #include "etc_uty.h"///
 #include <string>///
 #include <vector> /// 2002/2/3 aroka to here

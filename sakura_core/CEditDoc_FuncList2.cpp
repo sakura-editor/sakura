@@ -29,7 +29,7 @@
 
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <string.h>
 #include "global.h"
 #include <assert.h>

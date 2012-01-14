@@ -22,13 +22,13 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <imagehlp.h>
 #include <stdio.h>
 #include <io.h>
 #include "CShareData.h"
 #include "mymessage.h"
-#include "debug.h"
+#include "Debug.h"
 #include "global.h"
 #include "CRunningTimer.h"
 #include "CProfile.h"

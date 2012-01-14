@@ -20,7 +20,7 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 #include <windows.h>
 #include <winuser.h>
@@ -33,7 +33,7 @@
 #include "sakura_rc.h"
 #include "CEditDoc.h"
 #include "CDocLine.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CDlgAbout.h"
 #include "mymessage.h"
 #include "CShareData.h"
@@ -43,14 +43,14 @@
 #include "global.h"
 #include "CDlgPrintSetting.h"
 #include "CDlgPrintPage.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "Funccode.h"		// Stonee, 2001/03/12
 #include "CPrintPreview.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka
 #include "CCommandLine.h" /// 2003/1/26 aroka
 #include "CSMacroMgr.h" // Jun. 16, 2002 genta
-#include "COsVersioninfo.h"	// Sep. 6, 2003 genta
+#include "COsVersionInfo.h"	// Sep. 6, 2003 genta
 #include "CRunningTimer.h"
-#include "KeyCode.h"
+#include "Keycode.h"
 
 
 #define IDT_EDIT		455  // 20060128 aroka

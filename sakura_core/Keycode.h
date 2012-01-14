@@ -17,7 +17,7 @@
 
 
 #include <windows.h>
-#include "funccode.h"
+#include "Funccode.h"
 
 #define _SHIFT	0x00000001
 #define _CTRL	0x00000002

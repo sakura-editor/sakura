@@ -15,10 +15,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropCommon.h"
 #include "etc_uty.h"
-#include "debug.h" // 2002/2/10 aroka
+#include "Debug.h" // 2002/2/10 aroka
 #include "sakura.hh"
 
 

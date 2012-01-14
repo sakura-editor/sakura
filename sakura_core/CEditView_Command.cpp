@@ -22,14 +22,14 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include <io.h>
 #include <mbstring.h>
 #include "sakura_rc.h"
 #include "CEditView.h"
-#include "debug.h"
-#include "funccode.h"
+#include "Debug.h"
+#include "Funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "CEditApp.h"
@@ -42,8 +42,8 @@
 #include "CDlgProperty.h"
 #include "CDlgCompare.h"
 #include "global.h"
-#include <htmlhelp.h>
-#include "CRunningtimer.h"
+#include <HtmlHelp.h>
+#include "CRunningTimer.h"
 #include "CDlgExec.h"
 #include "CDlgAbout.h"	//Dec. 24, 2000 JEPRO ’Ç‰Á
 #include "COpe.h"/// 2002/2/3 aroka ’Ç‰Á from here

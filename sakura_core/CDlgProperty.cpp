@@ -14,13 +14,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CDlgProperty.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CEditDoc.h"
 #include "etc_uty.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "Funccode.h"		// Stonee, 2001/03/12
 #include "global.h"		// Moca, 2002/05/26
 #include "charcode.h"	// rastiv, 2006/06/28
 

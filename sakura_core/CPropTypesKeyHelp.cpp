@@ -29,11 +29,11 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "global.h"
 #include "sakura_rc.h"
 #include "CPropTypes.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
 #include <stdio.h>	//@@@ 2001.11.17 add MIK

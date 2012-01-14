@@ -12,9 +12,9 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CSplitBoxWnd.h"
-#include "debug.h"
+#include "Debug.h"
 #include "mymessage.h"// 2002/2/3 aroka
 
 CSplitBoxWnd::CSplitBoxWnd()

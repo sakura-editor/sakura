@@ -16,10 +16,10 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDialog.h"
 #include "etc_uty.h"
-#include "debug.h"/// 2002/2/10 aroka ヘッダ整理
+#include "Debug.h"/// 2002/2/10 aroka ヘッダ整理
 
 /* ダイアログプロシージャ */
 INT_PTR CALLBACK MyDialogProc(

@@ -13,10 +13,10 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CDlgInput1.h"
-#include "debug.h"
+#include "Debug.h"
 
 // “ü—Í CDlgInput1.cpp	//@@@ 2002.01.07 add start MIK
 #include "etc_uty.h"

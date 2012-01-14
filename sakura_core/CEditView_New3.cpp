@@ -9,7 +9,7 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #if 0
 
@@ -21,9 +21,9 @@
 #include <time.h>
 #include <io.h>
 #include "CEditView.h"
-#include "debug.h"
-#include "keycode.h"
-#include "funccode.h"
+#include "Debug.h"
+#include "Keycode.h"
+#include "Funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"

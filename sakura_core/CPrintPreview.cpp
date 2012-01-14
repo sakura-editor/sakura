@@ -16,7 +16,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPrintPreview.h"
 #include "CLayout.h"
 #include "CEditWnd.h"

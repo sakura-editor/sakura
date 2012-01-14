@@ -16,10 +16,10 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "charcode.h"
 #include "CDocLineMgr.h"
-#include "debug.h"
+#include "Debug.h"
 #include "charcode.h"
 #include <io.h>
 #include <commctrl.h>

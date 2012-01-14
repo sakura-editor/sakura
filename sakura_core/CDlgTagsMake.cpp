@@ -29,15 +29,15 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <string.h>
 #include "sakura_rc.h"
 #include "CDlgTagsMake.h"
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CEditDoc.h"
 #include "global.h"
-#include "funccode.h"
+#include "Funccode.h"
 #include "mymessage.h"
 
 #include "sakura.hh"

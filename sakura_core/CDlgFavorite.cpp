@@ -31,16 +31,16 @@
 
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 #include "sakura_rc.h"
 #include "global.h"
-#include "funccode.h"
+#include "Funccode.h"
 #include "mymessage.h"
 #include "CDialog.h"
 #include "CDlgFavorite.h"
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include "my_icmp.h"
 
 #include "sakura.hh"

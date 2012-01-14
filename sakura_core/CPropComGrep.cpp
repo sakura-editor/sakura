@@ -14,7 +14,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropCommon.h"
 #include "CBregexp.h"	// 2007.08/12 genta ƒo[ƒWƒ‡ƒ“æ“¾
 #include "sakura.hh"

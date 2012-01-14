@@ -29,9 +29,9 @@
 //#endif
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDocLineMgr.h"
-#include "debug.h"
+#include "Debug.h"
 #include "charcode.h"
 // Oct 6, 2000 ao
 #include <stdio.h>

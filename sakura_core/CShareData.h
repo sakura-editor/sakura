@@ -38,7 +38,7 @@ class CShareData;
 #include "CMRUFolder.h"
 
 //20020129 aroka
-#include "funccode.h"
+#include "Funccode.h"
 #include "CMemory.h"
 
 #include "CMutex.h"	// 2007.07.07 genta

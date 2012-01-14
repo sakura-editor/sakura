@@ -12,11 +12,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include <malloc.h>
 #include "CFuncInfoArr.h"
-#include "debug.h"// 2002/2/10 aroka
+#include "Debug.h"// 2002/2/10 aroka
 
 
 /* CFuncInfoArrÉNÉâÉXç\íz */

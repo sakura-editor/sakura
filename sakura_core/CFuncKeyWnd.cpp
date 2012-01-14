@@ -15,12 +15,12 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CFuncKeyWnd.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CEditWnd.h"
 #include "global.h"
-#include "KeyCode.h"// 2002/2/10 aroka
+#include "Keycode.h"// 2002/2/10 aroka
 #include "etc_uty.h" // novice 2004/10/10
 
 #define IDT_FUNCWND 1248

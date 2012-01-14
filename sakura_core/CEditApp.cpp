@@ -24,12 +24,12 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #define ID_HOTKEY_TRAYMENU	0x1234
 
 #include <windows.h>
 #include <io.h>
-#include "debug.h"
+#include "Debug.h"
 #include "CEditApp.h"
 // #include "CEditView.h"		//Nov. 21, 2000 JEPROtest
 // #include "CEditDoc.h"		//Nov. 21, 2000 JEPROtest
@@ -42,7 +42,7 @@
 #include "global.h"
 #include "etc_uty.h"
 #include "CRunningTimer.h"
-#include <htmlhelp.h>
+#include <HtmlHelp.h>
 
 
 /////////////////////////////////////////////////////////////////////////

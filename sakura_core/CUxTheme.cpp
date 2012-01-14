@@ -30,7 +30,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CUxTheme.h"
 
 CUxTheme CUxTheme::m_cUxTheme;	// Singleton

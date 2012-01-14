@@ -16,12 +16,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <mbstring.h>
 #include "CLayoutMgr.h"
 #include "charcode.h"
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include <commctrl.h>
 #include "CRunningTimer.h"
 #include "CLayout.h"/// 2002/2/10 aroka

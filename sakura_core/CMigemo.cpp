@@ -13,10 +13,10 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <io.h>
 #include "CMigemo.h"
-#include "Csharedata.h"
+#include "CShareData.h"
 #include "etc_uty.h"
 //-----------------------------------------
 //	DLL ‰Šú‰»ŠÖ”

@@ -21,16 +21,16 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <windows.h>
 #include <commctrl.h>
 #include "sakura_rc.h"
 #include "CDlgFuncList.h"
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include "global.h"
 #include "CEditView.h"
-#include "funccode.h"		//Stonee, 2001/03/12
+#include "Funccode.h"		//Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/3 aroka
 #include "mymessage.h"// 2002/2/3 aroka
 #include "Keycode.h"// 2002/2/10 aroka ÉwÉbÉ_êÆóù

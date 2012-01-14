@@ -20,7 +20,7 @@ class CDocLine;
 #ifndef _CDOCLINE_H_
 #define _CDOCLINE_H_
 
-#include "CEOL.h"
+#include "CEol.h"
 #include "CMemory.h"
 
 

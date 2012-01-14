@@ -17,11 +17,11 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDlgAbout.h"
 #include "sakura_rc.h" // 2002/2/10 aroka •œ‹A
 
-#include "CBREGEXP.h"
+#include "CBregexp.h"
 #include "CPPA.h"
 //	Dec. 2, 2002 genta
 #include "etc_uty.h"

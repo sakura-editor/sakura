@@ -23,14 +23,14 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
 #include "CEditView.h"
-#include "debug.h"
-//#include "keycode.h"
-//#include "funccode.h"
+#include "Debug.h"
+//#include "Keycode.h"
+//#include "Funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
@@ -57,7 +57,7 @@
 //#include "CMigemo.h"
 #include <vector> // 2008/02/16 bosagami add
 #include <algorithm> // 2008/02/16 bosagami add
-#include "keycode.h"	// 2009.01.12 nasukoji
+#include "Keycode.h"	// 2009.01.12 nasukoji
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -1320,8 +1320,8 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
 				// 前の画面内容をコピーする
 				::BitBlt( hdcTemp, 0, 0,
-					__min( nBmpWidthNew,m_nCompatBMPWidth ),
-					__min( nBmpHeightNew, m_nCompatBMPHeight ),
+					std::min( nBmpWidthNew,m_nCompatBMPWidth ),
+					std::min( nBmpHeightNew, m_nCompatBMPHeight ),
 					m_hdcCompatDC, 0, 0, SRCCOPY );
 				::SelectObject( hdcTemp, hBitmapOld );
 				::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
@@ -4079,8 +4079,8 @@ BOOL CEditView::IsCurrentPositionURL(
 	*pnUrlLine = nY;
 	pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( nY, &nLineLen );
 
-	i = __max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH（※長い行は精度低下しても性能優先で行頭以外から開始）
-	// nLineLen = __min(nLineLen, nX + _MAX_PATH);
+	i = std::max(0, nX - _MAX_PATH);	// 2009.05.22 ryoji 200->_MAX_PATH（※長い行は精度低下しても性能優先で行頭以外から開始）
+	// nLineLen = std::min(nLineLen, nX + _MAX_PATH);
 	bool bKeyWordTop = (i == 0);
 	while( i <= nX && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword

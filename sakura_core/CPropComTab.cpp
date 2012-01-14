@@ -14,7 +14,7 @@
 	Copyright (C) 2007, genta, ryoji
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropCommon.h"
 #include "sakura.hh"
 

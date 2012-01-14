@@ -16,15 +16,15 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 #include "CDlgPrintSetting.h"
 #include "CPrint.h"
 #include "CDlgInput1.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "Funccode.h"		// Stonee, 2001/03/12
 #include "etc_uty.h"		// Stonee, 2001/03/12
 #include "sakura_rc.h"	// 2002/2/10 aroka
-#include "debug.h"		// 2002/2/10 aroka
+#include "Debug.h"		// 2002/2/10 aroka
 
 // àÛç¸ê›íË CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

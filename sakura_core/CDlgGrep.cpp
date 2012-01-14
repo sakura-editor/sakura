@@ -13,17 +13,17 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <windows.h>
 
 
 #include "sakura_rc.h"
 #include "CDlgGrep.h"
-#include "debug.h"
+#include "Debug.h"
 
 #include "etc_uty.h"
 #include "global.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "Funccode.h"		// Stonee, 2001/03/12
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

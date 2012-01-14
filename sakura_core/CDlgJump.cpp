@@ -15,13 +15,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CDlgJump.h"
 #include "etc_uty.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CEditDoc.h"
-#include "funccode.h"		// Stonee, 2001/03/12
+#include "Funccode.h"		// Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/10 aroka ヘッダ整理
 
 // ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK

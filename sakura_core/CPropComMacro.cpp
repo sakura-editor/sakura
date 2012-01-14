@@ -34,7 +34,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropCommon.h"
 #include <memory.h>
 #include <stdlib.h>
@@ -232,7 +232,7 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		sItem.pszText = m_pShareData->m_MacroTable[index].m_bReloadWhenExecute ? "on" : "off";
+		sItem.pszText = const_cast<TCHAR*>(m_pShareData->m_MacroTable[index].m_bReloadWhenExecute ? _T("on") : _T("off"));
 		ListView_SetItem( hListView, &sItem );
 
 		// 自動実行マクロ	// 2006.09.01 ryoji
@@ -473,7 +473,7 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 	sItem.iItem = index;
 	sItem.mask = LVIF_TEXT;
 	sItem.iSubItem = 3;
-	sItem.pszText = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? "on" : "off";
+	sItem.pszText = const_cast<TCHAR*>(::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? _T("on") : _T("off"));
 	ListView_SetItem( hListView, &sItem );
 
 	// 自動実行マクロ	// 2006.09.01 ryoji

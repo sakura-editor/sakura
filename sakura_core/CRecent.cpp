@@ -35,7 +35,7 @@
 
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "global.h"
 #include "CShareData.h"
 #include "CRecent.h"

@@ -20,10 +20,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CPropTypes.h"
-#include "debug.h"
+#include "Debug.h"
 #include <windows.h>
 #include <commctrl.h>
 #include "CDlgOpenFile.h"
@@ -32,7 +32,7 @@
 #include "global.h"
 #include "CProfile.h"
 #include "CShareData.h"
-#include "funccode.h"	//Stonee, 2001/05/18
+#include "Funccode.h"	//Stonee, 2001/05/18
 #include "CDlgSameColor.h"	// 2006.04.26 ryoji
 
 struct TYPE_NAME {

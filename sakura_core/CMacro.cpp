@@ -20,15 +20,15 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include "funccode.h"
+#include "StdAfx.h"
+#include "Funccode.h"
 #include "CMacro.h"
 #include "CEditApp.h"
 #include "CEditView.h" //2002/2/10 aroka
 #include "CSMacroMgr.h" //2002/2/10 aroka
 #include "etc_uty.h" //2002/2/10 aroka
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ÉwÉbÉ_êÆóù
-#include "debug.h"
+#include "Debug.h"
 #include "OleTypes.h" //2003-02-21 ãS
 
 CMacro::CMacro( int nFuncID )

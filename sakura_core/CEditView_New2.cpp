@@ -19,13 +19,13 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
 #include "CEditView.h"
-#include "debug.h"
-#include "funccode.h"
+#include "Debug.h"
+#include "Funccode.h"
 #include "charcode.h"
 #include "mymessage.h"
 #include "CEditWnd.h"
@@ -33,7 +33,7 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
-#include "Clayout.h" /// 2002/2/3 aroka
+#include "CLayout.h" /// 2002/2/3 aroka
 #include "CDocLine.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka
 #include "my_icmp.h"	//@@@ 2002.01.13 add

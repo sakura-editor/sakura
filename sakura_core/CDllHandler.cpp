@@ -28,7 +28,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDllHandler.h"
 #include "etc_uty.h"
 

@@ -13,12 +13,12 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CEditWnd.h"	// 2008.06.20 ryoji
 #include "CEditView.h"// 2002/2/3 aroka
 #include "CDropTarget.h"
 #include "global.h"
-#include "debug.h"// 2002/2/3 aroka
+#include "Debug.h"// 2002/2/3 aroka
 
 /*
 	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。

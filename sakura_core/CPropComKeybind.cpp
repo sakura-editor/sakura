@@ -17,13 +17,13 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropCommon.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
 #include "CSMacroMgr.h" // 2002/2/10 aroka
-#include "KeyCode.h"	/// 2002/2/3 aroka from here
-#include "debug.h" ///
+#include "Keycode.h"	/// 2002/2/3 aroka from here
+#include "Debug.h" ///
 #include <stdio.h>	/// 2002/2/3 aroka from here
 #include "sakura.hh"
 

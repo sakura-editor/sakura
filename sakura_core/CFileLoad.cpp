@@ -30,15 +30,15 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
-#include <Windows.h>
+#include <windows.h>
 #include "global.h"
 #include "etc_uty.h"
 #include "CMemory.h"
-#include "CEOL.h"
+#include "CEol.h"
 #include "CFileLoad.h"
 #include "charcode.h"
 #ifdef _DEBUG

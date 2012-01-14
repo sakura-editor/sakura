@@ -15,11 +15,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include "CPrint.h"
 #include "global.h"
-#include "debug.h" // 2002/2/10 aroka
+#include "Debug.h" // 2002/2/10 aroka
 #include "CShareData.h"
 #include <winspool.h>
 

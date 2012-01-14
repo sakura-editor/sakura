@@ -20,13 +20,13 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
 #include "CEditView.h"
-#include "debug.h"
-#include "funccode.h"
+#include "Debug.h"
+#include "Funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
 #include "mymessage.h"
@@ -37,7 +37,7 @@
 #include "etc_uty.h"
 #include "CRegexKeyword.h"	//@@@ 2001.11.17 add MIK
 #include "my_icmp.h"	//@@@ 2002.01.13 add
-#include "Clayout.h"// 2002/2/10 aroka
+#include "CLayout.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/2/10 aroka
 
 /*! フォントを選ぶ
@@ -1926,15 +1926,15 @@ void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol,
 	if( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp == FALSE ){
 		return;
 	}
-	nLeftCol = __max( m_nViewLeftCol, nLeftCol );
+	nLeftCol = std::max( m_nViewLeftCol, nLeftCol );
 	const int nWrapWidth  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 	const int nCharWidth  = m_nCharWidth + typeData.m_nColmSpace;
 	if( nRightCol < 0 ){
 		nRightCol = nWrapWidth;
 	}
 	const int nPosXOffset = m_pShareData->m_Common.m_nVertLineOffset + m_nViewAlignLeft;
-	const int nPosXLeft   = __max( m_nViewAlignLeft + (nLeftCol  - m_nViewLeftCol) * nCharWidth, m_nViewAlignLeft );
-	const int nPosXRight  = __min( m_nViewAlignLeft + (nRightCol - m_nViewLeftCol) * nCharWidth, m_nViewCx + m_nViewAlignLeft );
+	const int nPosXLeft   = std::max( m_nViewAlignLeft + (nLeftCol  - m_nViewLeftCol) * nCharWidth, m_nViewAlignLeft );
+	const int nPosXRight  = std::min( m_nViewAlignLeft + (nRightCol - m_nViewLeftCol) * nCharWidth, m_nViewCx + m_nViewAlignLeft );
 	const int nLineHeight = m_nCharHeight + typeData.m_nLineSpace;
 	bool bOddLine = ((((nLineHeight % 2) ? m_nViewTopLine : 0) + m_nViewAlignTop + nTop) % 2 == 1);
 

@@ -13,14 +13,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <windows.h>
 #include <commctrl.h>
 #include "sakura_rc.h"
 #include "CDlgTypeList.h"
 #include "etc_uty.h"
-#include "debug.h"
-#include "funccode.h"	//Stonee, 2001/03/12
+#include "Debug.h"
+#include "Funccode.h"	//Stonee, 2001/03/12
 
 // É^ÉCÉvï ê›íËàÍóó CDlgTypeList.cpp	//@@@ 2002.01.07 add start MIK
 #include "sakura.hh"

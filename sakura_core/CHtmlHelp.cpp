@@ -30,7 +30,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CHtmlHelp.h"
 
 CHtmlHelp::~CHtmlHelp(void)

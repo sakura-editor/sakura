@@ -14,8 +14,8 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
-#include "debug.h"
+#include "StdAfx.h"
+#include "Debug.h"
 #include <tchar.h>
 
 #ifdef _DEBUG

@@ -95,7 +95,7 @@ public:
 					UINT cNames,
 					LCID lcid,
 					DISPID FAR* rgdispid);
-	virtual HRESULT STDMETHODCALLTYPE CInterfaceObject::Invoke(
+	virtual HRESULT STDMETHODCALLTYPE Invoke(
 					DISPID dispidMember,
 					REFIID riid,
 					LCID lcid,

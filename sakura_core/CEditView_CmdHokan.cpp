@@ -15,11 +15,11 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "sakura_rc.h"
 #include "CEditView.h"
 #include "CEditDoc.h"
-#include "debug.h"
+#include "Debug.h"
 #include "etc_uty.h"
 #include "charcode.h"  // 2006.06.28 rastiv
 #include "CDocLineMgr.h"	// 2008.10.29 syat

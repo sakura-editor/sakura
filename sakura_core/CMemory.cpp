@@ -34,7 +34,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 #include <windows.h>
 #include <mbstring.h>
@@ -50,7 +50,7 @@
 
 //#ifdef _DEBUG
 #include "global.h"
-#include "debug.h"
+#include "Debug.h"
 #include "CRunningTimer.h"
 //#endif
 

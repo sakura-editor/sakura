@@ -14,12 +14,12 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CLayoutMgr.h"
 #include "CShareData.h" // 2005.11.20 Moca
 
 #include "charcode.h"
-#include "debug.h"
+#include "Debug.h"
 #include <commctrl.h>
 #include "CRunningTimer.h"
 #include "CLayout.h"/// 2002/2/10 aroka
