@@ -100,7 +100,7 @@ BEGIN
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     EDITTEXT        IDC_EDIT_VER,33,6,204,51,ES_MULTILINE | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           "Copyright (C) 1998-2011  by Norio Nakatani && Collaborators",
+    LTEXT           "Copyright (C) 1998-2012  by Norio Nakatani && Collaborators",
                     IDC_STATIC,33,61,205,8,NOT WS_GROUP
     LTEXT           "å¥çÏé“: ÇΩÇØ(í|ÉpÉìÉ_) Ç≥ÇÒ",IDC_STATIC,33,75,125,8,NOT 
                     WS_GROUP
