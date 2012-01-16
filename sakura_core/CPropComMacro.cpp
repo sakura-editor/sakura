@@ -539,25 +539,22 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 */
 void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 {
-
-// 2002/04/14 novice
-//	SelectDir()に分離された部分を削除
-	TCHAR szDir[MAX_PATH + 1]; // 追加する\\用に1足した
+	TCHAR szDir[_MAX_PATH];
 
 	/* 検索フォルダ */
-	::GetDlgItemText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
+	::GetDlgItemText( hwndDlg, IDC_MACRODIR, szDir, _countof(szDir) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( szDir ) ){
-		char folder[_MAX_PATH];
-		strcpy( folder, szDir );
+		TCHAR folder[_MAX_PATH];
+		_tcscpy( folder, szDir );
 		GetInidirOrExedir( szDir, folder );
 	}
 
-	if( SelectDir( hwndDlg, "Macroディレクトリの選択", szDir, szDir ) ){
+	if( SelectDir( hwndDlg, _T("Macroディレクトリの選択"), szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
-		AddLastChar( szDir, _MAX_PATH, '\\' );
+		AddLastChar( szDir, _countof(szDir), _T('\\') );
 		::SetDlgItemText( hwndDlg, IDC_MACRODIR, szDir );
 	}
 }
@@ -571,26 +568,26 @@ void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 */
 void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
 {
-	char path[_MAX_PATH * 2 ];
-	WIN32_FIND_DATA wf;
 	HANDLE hFind;
 	HWND hCombo = ::GetDlgItem( hwndDlg, IDC_MACROPATH );
 
-	::GetDlgItemText( hwndDlg, IDC_MACRODIR, path, _MAX_PATH );
+	TCHAR path[_MAX_PATH * 2];
+	::GetDlgItemText( hwndDlg, IDC_MACRODIR, path, _countof(path) );
 
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( path ) ){
-		char folder[_MAX_PATH];
-		strcpy( folder, path );
+		TCHAR folder[_MAX_PATH * 2];
+		_tcscpy( folder, path );
 		GetInidirOrExedir( path, folder );
 	}
-	strcat( path, "*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
+	_tcscat( path, _T("*.*") );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	::SendMessage( hCombo, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0 );
 
 	//	ファイルの検索
+	WIN32_FIND_DATA wf;
 	hFind = FindFirstFile(path, &wf);
 
 	if (hFind == INVALID_HANDLE_VALUE) {
@@ -600,7 +597,7 @@ void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
 	do {
 		//	コンボボックスに設定
 		//	でも.と..は勘弁。
-		//if (strcmp( wf.cFileName, "." ) != 0 && strcmp( wf.cFileName, ".." ) != 0){
+		//if (_tcscmp( wf.cFileName, _T(".") ) != 0 && _tcscmp( wf.cFileName, _T("..") ) != 0){
 		if( (wf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 ){	// 2009.02.12 ryoji フォルダを除外
 			int result = ::SendMessage( hCombo, CB_ADDSTRING, (WPARAM)0, (LPARAM)wf.cFileName );
 			if( result == CB_ERR || result == CB_ERRSPACE )

@@ -45,7 +45,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	int			nMode;
-	char		szFuncName[80];
+	char		szFuncName[100];
 	int			nFuncLine = 0;
 	int			nFuncId;
 	int			nFuncNum;

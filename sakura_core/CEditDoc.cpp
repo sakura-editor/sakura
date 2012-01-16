@@ -1987,7 +1987,7 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	int			nMode;
-	char		szFuncName[80];
+	char		szFuncName[100];
 	int			nFuncLine;
 	int			nFuncId;
 	int			nFuncNum;
@@ -2082,8 +2082,8 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							4 == nFuncOrProc ){
 							++nParseCnt;
 							strcpy( szFuncName, szWord );
-						}else
-						if( 3 == nFuncOrProc ){
+//						}else
+//						if( 3 == nFuncOrProc ){
 
 						}
 					}else
