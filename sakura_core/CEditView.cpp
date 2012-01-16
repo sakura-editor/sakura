@@ -53,7 +53,7 @@
 //#include "CDocLine.h"   // 2002.04.09 minfu
 #include "CFileLoad.h" // 2002/08/30 Moca
 #include "CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
-//#include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
+#include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 //#include "CMigemo.h"
 #include <vector> // 2008/02/16 bosagami add
 #include <algorithm> // 2008/02/16 bosagami add
