@@ -4836,22 +4836,22 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 	pShareData->m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
 	pShareData->m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, sizeof(ary)/sizeof(ary[0]), (ary) );
 	
-	PopulateKeyword( "C/C++", TRUE, ppszKeyWordsCPP );			/* セット 0の追加 */
-	PopulateKeyword( "HTML", FALSE, ppszKeyWordsHTML );			/* セット 1の追加 */
-	PopulateKeyword( "PL/SQL", FALSE, ppszKeyWordsPLSQL );		/* セット 2の追加 */
-	PopulateKeyword( "COBOL", TRUE ,ppszKeyWordsCOBOL );		/* セット 3の追加 */
-	PopulateKeyword( "Java", TRUE, ppszKeyWordsJAVA );			/* セット 4の追加 */
-	PopulateKeyword( "CORBA IDL", TRUE, ppszKeyWordsCORBA_IDL );/* セット 5の追加 */
-	PopulateKeyword( "AWK", TRUE, ppszKeyWordsAWK );			/* セット 6の追加 */
-	PopulateKeyword( "MS-DOS batch", FALSE, ppszKeyWordsBAT );	/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
-	PopulateKeyword( "Pascal", FALSE, ppszKeyWordsPASCAL );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
-	PopulateKeyword( "TeX", TRUE, ppszKeyWordsTEX );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
-	PopulateKeyword( "TeX2", TRUE, ppszKeyWordsTEX2 );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
-	PopulateKeyword( "Perl", TRUE, ppszKeyWordsPERL );			/* セット11の追加 */
-	PopulateKeyword( "Perl2", TRUE, ppszKeyWordsPERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
-	PopulateKeyword( "Visual Basic", FALSE, ppszKeyWordsVB );	/* セット13の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( "Visual Basic2", FALSE, ppszKeyWordsVB2 );	/* セット14の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( "リッチテキスト", TRUE, ppszKeyWordsRTF );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( "C/C++", true, ppszKeyWordsCPP );			/* セット 0の追加 */
+	PopulateKeyword( "HTML", false, ppszKeyWordsHTML );			/* セット 1の追加 */
+	PopulateKeyword( "PL/SQL", false, ppszKeyWordsPLSQL );		/* セット 2の追加 */
+	PopulateKeyword( "COBOL", true ,ppszKeyWordsCOBOL );		/* セット 3の追加 */
+	PopulateKeyword( "Java", true, ppszKeyWordsJAVA );			/* セット 4の追加 */
+	PopulateKeyword( "CORBA IDL", true, ppszKeyWordsCORBA_IDL );/* セット 5の追加 */
+	PopulateKeyword( "AWK", true, ppszKeyWordsAWK );			/* セット 6の追加 */
+	PopulateKeyword( "MS-DOS batch", false, ppszKeyWordsBAT );	/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
+	PopulateKeyword( "Pascal", false, ppszKeyWordsPASCAL );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
+	PopulateKeyword( "TeX", true, ppszKeyWordsTEX );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
+	PopulateKeyword( "TeX2", true, ppszKeyWordsTEX2 );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
+	PopulateKeyword( "Perl", true, ppszKeyWordsPERL );			/* セット11の追加 */
+	PopulateKeyword( "Perl2", true, ppszKeyWordsPERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
+	PopulateKeyword( "Visual Basic", false, ppszKeyWordsVB );	/* セット13の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( "Visual Basic2", false, ppszKeyWordsVB2 );	/* セット14の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( "リッチテキスト", true, ppszKeyWordsRTF );	/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 
 #undef PopulateKeyword
 }

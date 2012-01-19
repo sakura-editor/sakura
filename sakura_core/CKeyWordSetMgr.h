@@ -79,12 +79,12 @@ public:
 	
 	//@{
 	///	@name キーワードセット操作
-	BOOL AddKeyWordSet( const char*, BOOL, int nSize = -1 );	//!< セットの追加
-	BOOL DelKeyWordSet( int  );	/* ｎ番目のセットを削除 */
+	bool AddKeyWordSet( const char*, bool, int nSize = -1 );	//!< セットの追加
+	bool DelKeyWordSet( int  );	/* ｎ番目のセットを削除 */
 	const char* GetTypeName( int );	/* ｎ番目のセット名を返す */
 	const char* SetTypeName( int, const char* );	//!< ｎ番目のセット名を設定する // 2005.01.26 Moca
 	void SetKeyWordCase( int, int );				/* ｎ番目のセットの大文字小文字判断をセットする */	//MIK
-	int GetKeyWordCase( int );						/* ｎ番目のセットの大文字小文字判断を取得する */			//MIK
+	bool GetKeyWordCase( int );						/* ｎ番目のセットの大文字小文字判断を取得する */			//MIK
 	void SortKeyWord( int ); /* ｎ番目のセットのキーワードをソートする */  //MIK
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶
@@ -106,7 +106,7 @@ public:
 	//@{
 	///	@name 検索
 	//int SearchKeyWord( int , const char*, int );	/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */
+//	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */
 	int SearchKeyWord2( int , const char*, int );	/* ｎ番目のセットから指定キーワードをバイナリサーチ 無いときは-1を返す */	//MIK
 	//@}
 
@@ -133,8 +133,9 @@ public:
 	int		m_nCurrentKeyWordSetIdx;
 	int		m_nKeyWordSetNum;	/*!< キーワードセット数 */
 	char	m_szSetNameArr[MAX_SETNUM][MAX_SETNAMELEN + 1];/*!< キーワードセット名 */
-	int		m_nKEYWORDCASEArr[MAX_SETNUM];	/*!< キーワードの英大文字小文字区別 */
+	bool	m_bKEYWORDCASEArr[MAX_SETNUM];	/*!< キーワードの英大文字小文字区別 */
 	int		m_nKeyWordNumArr[MAX_SETNUM];	/*!< キーワードセットに登録されているキーワード数 */
+private:
 	/*! キーワード格納領域 */
 	char	m_szKeyWordArr[MAX_KEYWORDNUM][MAX_KEYWORDLEN + 1];	
 	char	m_IsSorted[MAX_SETNUM];	/*!< ソートしたかどうかのフラグ(INI未保存) */  //MIK

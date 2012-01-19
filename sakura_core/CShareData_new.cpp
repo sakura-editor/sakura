@@ -1418,15 +1418,15 @@ void CShareData::ShareData_IO_KeyWords( CProfile& cProfile )
 			char *pszMem = new char[nMemLen];
 			pCKeyWordSetMgr->ResetAllKeyWordSet();
 			for( i = 0; i < nKeyWordSetNum; ++i ){
-				int nKEYWORDCASE = 0;
+				bool bKEYWORDCASE = false;
 				int nKeyWordNum = 0;
 				wsprintf( szKeyName, "szSN[%02d]", i );
 				cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData ));
 				wsprintf( szKeyName, "nCASE[%02d]", i );
-				cProfile.IOProfileData( pszSecName, szKeyName, nKEYWORDCASE );
+				cProfile.IOProfileData( pszSecName, szKeyName, bKEYWORDCASE );
 				wsprintf( szKeyName, "nKWN[%02d]", i );
 				cProfile.IOProfileData( pszSecName, szKeyName, nKeyWordNum );
-				pCKeyWordSetMgr->AddKeyWordSet( szKeyData, nKEYWORDCASE, nKeyWordNum );
+				pCKeyWordSetMgr->AddKeyWordSet( szKeyData, bKEYWORDCASE, nKeyWordNum );
 				// 2004.11.25 Moca szKW[%02d].Size ‚Ìî•ñ‚Í—˜—p‚·‚éˆÓ–¡‚ª‚È‚¢B
 //				wsprintf( szKeyName, "szKW[%02d].Size", i );
 //				cProfile.IOProfileData( pszSecName, szKeyName, nMemLen );
@@ -1445,7 +1445,7 @@ void CShareData::ShareData_IO_KeyWords( CProfile& cProfile )
 				pCKeyWordSetMgr->m_szSetNameArr[i],
 				sizeof( pCKeyWordSetMgr->m_szSetNameArr[0] ));
 			wsprintf( szKeyName, "nCASE[%02d]", i );
-			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_nKEYWORDCASEArr[i] );
+			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_bKEYWORDCASEArr[i] );
 			wsprintf( szKeyName, "nKWN[%02d]", i );
 			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_nKeyWordNumArr[i] );
 			
