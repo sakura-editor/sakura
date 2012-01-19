@@ -276,6 +276,7 @@ struct ARRHEAD {
 	ICON‚ð‚·‚×‚Ä‚ÌƒRƒ}ƒ“ƒh‚É
 */
 
+extern const unsigned int uShareDataVersion;
 const unsigned int uShareDataVersion = 94;
 
 /*

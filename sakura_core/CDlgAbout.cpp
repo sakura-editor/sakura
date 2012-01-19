@@ -17,17 +17,15 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+
 #include "StdAfx.h"
 #include "CDlgAbout.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
-
-#include "CBregexp.h"
-#include "CPPA.h"
 //	Dec. 2, 2002 genta
 #include "etc_uty.h"
+#include "sakura.hh"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12900
 	IDOK,					HIDOK_ABOUT,
 	IDC_EDIT_ABOUT,			HIDC_ABOUT_EDIT_ABOUT,
@@ -41,26 +39,61 @@ const DWORD p_helpids[] = {	//12900
 
 //	From Here Feb. 7, 2002 genta
 // 2006.01.17 Moca COMPILER_VERを追加
+// 2010.04.15 Moca icc/dmcを追加しCPUを分離
+#if defined(_M_IA64)
+#  define TARGET_M_SUFFIX "_I64"
+#elif defined(_M_AMD64)
+#  define TARGET_M_SUFFIX "_A64"
+#else
+#  define TARGET_M_SUFFIX ""
+#endif
+
 #if defined(__BORLANDC__)
 #  define COMPILER_TYPE "B"
 #  define COMPILER_VER  __BORLANDC__ 
 #elif defined(__GNUG__)
 #  define COMPILER_TYPE "G"
 #  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
+#elif __INTEL_COMPILER
+#  define COMPILER_TYPE "I"
+#  define COMPILER_VER __INTEL_COMPILER
+#elif __DMC__
+#  define COMPILER_TYPE "D"
+#  define COMPILER_VER __DMC__
 #elif defined(_MSC_VER)
-#  if defined(_M_IA64)
-#    define COMPILER_TYPE "V_I64"
-#  elif defined(_M_AMD64)
-#    define COMPILER_TYPE "V_A64"
-#  else
-#    define COMPILER_TYPE "V"
-#  endif
+#  define COMPILER_TYPE "V"
 #  define COMPILER_VER _MSC_VER
 #else
 #  define COMPILER_TYPE "U"
 #  define COMPILER_VER 0
 #endif
 //	To Here Feb. 7, 2002 genta
+
+#ifdef _UNICODE
+	#define TARGET_STRING_MODEL "W"
+#else
+	#define TARGET_STRING_MODEL "A"
+#endif
+
+#ifdef _DEBUG
+	#define TARGET_DEBUG_MODE "D"
+#else
+	#define TARGET_DEBUG_MODE "R"
+#endif
+
+#define TSTR_TARGET_MODE _T(TARGET_STRING_MODEL) _T(TARGET_DEBUG_MODE)
+
+#ifdef _WIN32_WINDOWS
+	#define MY_WIN32_WINDOWS _WIN32_WINDOWS
+#else
+	#define MY_WIN32_WINDOWS 0
+#endif
+
+#ifdef _WIN32_WINNT
+	#define MY_WIN32_WINNT _WIN32_WINNT
+#else
+	#define MY_WIN32_WINNT 0
+#endif
 
 //	From Here Nov. 7, 2000 genta
 /*!
@@ -73,6 +106,12 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 	switch( wMsg ){
 	case WM_CTLCOLORDLG:
 	case WM_CTLCOLORSTATIC:
+		// EDITも READONLY か DISABLEの場合 WM_CTLCOLORSTATIC になります
+		if( (HWND)lParam == GetDlgItem(hWnd, IDC_EDIT_ABOUT) ){
+			::SetTextColor( (HDC)wParam, RGB( 102, 102, 102 ) );
+		} else {
+			::SetTextColor( (HDC)wParam, RGB( 0, 0, 0 ) );
+        }
 		return (INT_PTR)GetStockObject( WHITE_BRUSH );
 	}
 	return result;
@@ -85,6 +124,8 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, NULL );
 }
 
+extern const unsigned int uShareDataVersion; 
+
 /*! 初期化処理
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
@@ -92,22 +133,16 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	m_hWnd = hwndDlg;
 
-	char			szMsg[2048];
-	char			szFile[_MAX_PATH];
+	TCHAR			szMsg[2048];
+	TCHAR			szFile[_MAX_PATH];
 	//WIN32_FIND_DATA	wfd;
 	FILETIME		lastTime;
 	SYSTEMTIME		systimeL;
 
 	/* この実行ファイルの情報 */
-	::GetModuleFileName( NULL, szFile, sizeof( szFile ) );
+	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
 	
 	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
-	//	2003.10.04 Moca ハンドルのクローズ忘れ
-	//::ZeroMemory( &wfd, sizeof( wfd ));
-	//HANDLE hFind = ::FindFirstFile( szFile, &wfd );
-	//if( hFind != INVALID_HANDLE_VALUE ){
-	//	FindClose( hFind );
-	//}
 	if( !GetLastWriteTimestamp( szFile, lastTime )){
 		lastTime.dwLowDateTime = lastTime.dwHighDateTime = 0;
 	}
@@ -119,22 +154,46 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
 	//	Feb. 7, 2002 genta コンパイラ情報追加
 	//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
+	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
+
+	// 以下の形式で出力
+	//サクラエディタ   Ver. 2.0.0.0
+	//
+	//      Share Ver: 96
+	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
+	//      Last Modified: 1999/9/9 00:00:00
+	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
+	CMemory cmemMsg;
+	cmemMsg.AppendSz( _T("サクラエディタ   "));
+
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO,
 		&dwVersionMS, &dwVersionLS );
-
-	int ComPiler_ver = COMPILER_VER;
-	wsprintf( szMsg, "Ver. %d.%d.%d.%d (" COMPILER_TYPE " %d)",
+	_stprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
 		HIWORD( dwVersionLS ),
-		LOWORD( dwVersionLS ),
-		ComPiler_ver
+		LOWORD( dwVersionLS )
 	);
-	::SetDlgItemText( m_hWnd, IDC_STATIC_VER, szMsg );
+	cmemMsg.AppendSz( szMsg );
 
-	/* 更新日情報 */
-	wsprintf( szMsg, "Last Modified: %d/%d/%d %02d:%02d:%02d",
+	cmemMsg.AppendSz( _T("\r\n") );
+
+	_stprintf( szMsg, _T("      Share Ver: %3d\r\n"),
+		uShareDataVersion // instead of N_SHAREDATA_VERSION
+	);
+	cmemMsg.AppendSz( szMsg );
+
+	cmemMsg.AppendSz( _T("      Compile Info: ") );
+	int Compiler_ver = COMPILER_VER;
+	_stprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T(" %d  ")
+			TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
+		Compiler_ver,
+		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
+	);
+	cmemMsg.AppendSz( szMsg );
+
+	_stprintf( szMsg, _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
 		systimeL.wYear,
 		systimeL.wMonth,
 		systimeL.wDay,
@@ -142,7 +201,18 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		systimeL.wMinute,
 		systimeL.wSecond
 	);
-	::SetDlgItemText( m_hWnd, IDC_STATIC_UPDATE, szMsg );
+	cmemMsg.AppendSz( szMsg );
+
+// パッチ(かリビジョン)の情報をコンパイル時に渡せるようにする
+#ifdef SKR_PATCH_INFO
+	cmemMsg.AppendSz( _T("      ") );
+	const TCHAR* ptszPatchInfo = SKR_PATCH_INFO;
+	int patchInfoLen = _tcslen(ptszPatchInfo);
+	cmemMsg.Append( ptszPatchInfo, __min(80, patchInfoLen) );
+#endif
+	cmemMsg.AppendSz( _T("\r\n"));
+
+	::SetDlgItemText( m_hWnd, IDC_EDIT_VER, cmemMsg.GetPtr() );
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
@@ -163,7 +233,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	To Here Dec. 2, 2002 genta
 
 	// URLウィンドウをサブクラス化する
-	m_UrlUrWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_UR ) );
+	m_UrlUrWnd.SetSubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_UR ) );
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetDlgItem( m_hWnd, IDC_STATIC_URL_ORG ) );
@@ -173,24 +243,34 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 }
 
 
+BOOL CDlgAbout::OnBnClicked( int wID )
+{
+	switch( wID ){
+	case IDC_BUTTON_COPY:
+		{
+			HWND hwndEditVer = GetDlgItem( m_hWnd, IDC_EDIT_VER );
+			::SendMessage( hwndEditVer, EM_SETSEL, 0, -1 );
+			::SendMessage( hwndEditVer, WM_COPY, 0, 0 );
+			::SendMessage( hwndEditVer, EM_SETSEL, -1, 0 );
+ 		}
+		return TRUE;
+	}
+	return CDialog::OnBnClicked( wID );
+}
+
 BOOL CDlgAbout::OnStnClicked( int wID )
 {
 	switch( wID ){
 	//	2006.07.27 genta 原作者連絡先のボタンを削除 (ヘルプから削除されているため)
 	case IDC_STATIC_URL_UR:
-	case IDC_STATIC_URL_ORG:
+//	case IDC_STATIC_URL_ORG:	del 2008/7/4 Uchi
 		//	Web Browserの起動
 		{
-			char buf[512];
-			::GetWindowText( ::GetDlgItem( m_hWnd, wID ), buf, 512 );
-			ShellExecute( m_hWnd, NULL, buf, NULL, NULL, SW_SHOWNORMAL );
+			TCHAR buf[512];
+			::GetWindowText( ::GetDlgItem( m_hWnd, wID ), buf, _countof(buf) );
+			::ShellExecute( m_hWnd, NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 			return TRUE;
 		}
-//Jan. 12, 2001 JEPRO UR1.2.20.2 (Nov. 7, 2000) から以下のボタンは削除されているのでコメントアウトした
-//	case IDC_BUTTON_DOWNLOAD:
-//		/* 「最新バージョンのダウンロード」のヘルプ  */
-//		::WinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, 112 );
-//		return TRUE;
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnStnClicked( wID );
@@ -202,7 +282,7 @@ LPVOID CDlgAbout::GetHelpIdTable(void)
 	return (LPVOID)p_helpids;
 }
 
-BOOL CUrlWnd::SubclassWindow( HWND hWnd )
+BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 {
 	// STATICウィンドウをサブクラス化する
 	// 元のSTATICは WS_TABSTOP, SS_NOTIFY スタイルのものを使用すること
@@ -301,14 +381,14 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 		// 現在のクライアント矩形、テキスト、フォントを取得する
 		GetClientRect( hWnd, &rc );
-		GetWindowText( hWnd, szText, 512 );
+		GetWindowText( hWnd, szText, _countof(szText) );
 		hFont = (HFONT)SendMessage( hWnd, WM_GETFONT, (WPARAM)0, (LPARAM)0 );
 
 		// テキスト描画
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
 		hOldFont = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
-		TextOut( hdc, 2, 0, szText, lstrlen( szText ) );
+		TextOut( hdc, 2, 0, szText, _tcslen( szText ) );
 		SelectObject( hdc, (HGDIOBJ)hOldFont );
 
 		// フォーカス枠描画

@@ -186,9 +186,9 @@
 #define IDC_BUTTON_FOLDER               1121
 #define IDC_CHK_SUBFOLDER               1122
 #define IDC_STATIC_CURPATH              1123
-#define IDC_CHK_DEFAULTFOLDER           1123
-#define IDC_STATIC_HITCOUNT             1124
-#define IDC_STATIC_VER                  1127
+#define IDC_CHK_DEFAULTFOLDER           1124
+#define IDC_STATIC_HITCOUNT             1125
+#define IDC_EDIT_VER                    1126
 #define IDC_LIST_ASSIGNEDKEYS           1129
 #define IDC_STATIC_MSG                  1130
 #define IDC_RADIO_OUTPUTLINE            1132
@@ -251,7 +251,7 @@
 #define IDC_STATIC_MYICON               1198
 #define IDC_EDIT_HOKANFILE              1201
 #define IDC_BUTTON_HOKANFILE_REF        1203
-#define IDC_STATIC_UPDATE               1204
+//#define IDC_STATIC_UPDATE               1204
 #define IDC_LIST_COLORS                 1211
 #define IDC_CHECK_DISP                  1212
 #define IDC_CHECK_FAT                   1213

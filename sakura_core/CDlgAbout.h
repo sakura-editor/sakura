@@ -29,7 +29,7 @@ class CUrlWnd
 public:
 	CUrlWnd() { m_hWnd = NULL; m_hFont = NULL; m_bHilighted = FALSE; m_pOldProc = NULL; };
 	virtual ~CUrlWnd() { ; };
-	BOOL SubclassWindow( HWND hWnd );
+	BOOL SetSubclassWindow( HWND hWnd );
 protected:
 	static LRESULT CALLBACK UrlWndProc( HWND hWnd, UINT msg, WPARAM wp, LPARAM lp );
 protected:
@@ -47,6 +47,7 @@ public:
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnBnClicked( int );
 	BOOL OnStnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 private:
