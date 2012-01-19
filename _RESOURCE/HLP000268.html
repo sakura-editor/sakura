@@ -23,6 +23,27 @@
 <META NAME="MS-HKWD" CONTENT="IsPossibleRedo">
 <META NAME="MS-HKWD" CONTENT="IsCurTypeExt">
 <META NAME="MS-HKWD" CONTENT="IsSameTypeExt">
+<META NAME="MS-HKWD" CONTENT="MoveCursor">
+<META NAME="MS-HKWD" CONTENT="MoveCursorLayout">
+<META NAME="MS-HKWD" CONTENT="InsBoxText">
+<META NAME="MS-HKWD" CONTENT="InputBox">
+<META NAME="MS-HKWD" CONTENT="MessageBox">
+<META NAME="MS-HKWD" CONTENT="ErrorMsg">
+<META NAME="MS-HKWD" CONTENT="WarnMsg">
+<META NAME="MS-HKWD" CONTENT="InfoMsg">
+<META NAME="MS-HKWD" CONTENT="OkCancelBox">
+<META NAME="MS-HKWD" CONTENT="YesNoBox">
+<META NAME="MS-HKWD" CONTENT="FileOpenDialog">
+<META NAME="MS-HKWD" CONTENT="FileSaveDialog">
+<META NAME="MS-HKWD" CONTENT="FolderDialog">
+<META NAME="MS-HKWD" CONTENT="CompareVersion">
+<META NAME="MS-HKWD" CONTENT="Sleep">
+<META NAME="MS-HKWD" CONTENT="GetClipboard">
+<META NAME="MS-HKWD" CONTENT="SetClipboard">
+<META NAME="MS-HKWD" CONTENT="LayoutToLogicLineNum">
+<META NAME="MS-HKWD" CONTENT="LogicToLayoutLineNum">
+<META NAME="MS-HKWD" CONTENT="LineColumnToIndex">
+<META NAME="MS-HKWD" CONTENT="LineIndexToColumn">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -80,6 +101,10 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#Sleep">Sleep</a>( int1 :Integer ) :Integer<br>
 ・<a href="#GetClipboard">GetClipboard</a>( int1 :Integer ) :String<br>
 ・<a href="#SetClipboard">SetClipboard</a>( int1 :Integer, str1 :String ) :Integer<br>
+・<a href="#LayoutToLogicLineNum">LayoutToLogicLineNum</a>( int1: Integer ) :Integer<br>
+・<a href="#LogicToLayoutLineNum">LogicToLayoutLineNum</a>( int1: Integer, int2: Integer ) :Integer<br>
+・<a href="#LineColumnToIndex">LineColumnToIndex</a>( int1: Integer, int2: Integer ) :Integer<br>
+・<a href="#LineIndexToColumn">LineIndexToColumn</a>( int1: Integer, int2: Integer ) :Integer<br>
 <hr>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -234,28 +259,28 @@ sakura:1.5.5.0以降<br>
 ■ function <span id="GetSelectLineFrom">GetSelectLineFrom</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>戻り値</b><br>
-選択開始行（1から始まる）を返します。<br>
+選択開始行（1から始まる）を返します。レイアウト座標(折り返し単位)です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectColmFrom">GetSelectColmFrom</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>戻り値</b><br>
-選択開始桁（1から始まる）を返します。<br>
+選択開始桁（1から始まる）を返します。レイアウト座標です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectLineTo">GetSelectLineTo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>戻り値</b><br>
-選択終了行（1から始まる）を返します。<br>
+選択終了行（1から始まる）を返します。レイアウト座標です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
 ■ function <span id="GetSelectColmTo">GetSelectColmTo</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>戻り値</b><br>
-選択終了桁（1から始まる）を返します。<br>
+選択終了桁（1から始まる）を返します。レイアウト座標です。<br>
 </div>
 sakura:1.5.5.0以降<br>
 <br>
@@ -513,4 +538,52 @@ str1&nbsp;&nbsp;&nbsp;&nbsp;設定する文字列<br>
 </div>
 sakura:2.0.3.0以降<br>
 <br>
+■ function <span id="LayoutToLogicLineNum">LayoutToLogicLineNum</span>( int1: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;レイアウト(折り返し単位)行番号(1開始)<br>
+<b>戻り値</b><br>
+ロジック(改行単位)行番号(1開始)<br>
+<b>解説</b><br>
+レイアウト行番号からロジック行番号を取得します。<br>
+</div>
+sakura:2.0.4.0以降<br>
+<br>
+■ function <span id="LogicToLayoutLineNum">LogicToLayoutLineNum</span>( int1: Integer, int2: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;ロジック行番号(1開始)<br>
+int2&nbsp;&nbsp;&nbsp;&nbsp;ロジック桁番号(1開始)<br>
+<b>戻り値</b><br>
+レイアウト行番号(1開始)<br>
+<b>解説</b><br>
+ロジック座標からレイアウト行番号を取得します。<br>
+</div>
+sakura:2.0.4.0以降<br>
+<br>
+■ function <span id="LineColumnToIndex">LineColumnToIndex</span>( int1: Integer, int2: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;レイアウト行番号(1開始)<br>
+int2&nbsp;&nbsp;&nbsp;&nbsp;レイアウト桁番号(1開始)<br>
+<b>戻り値</b><br>
+ロジック桁番号(1開始)<br>
+<b>解説</b><br>
+レイアウト座標からロジック桁番号を求めます。<br>
+</div>
+sakura:2.0.4.0以降<br>
+<br>
+■ function <span id="LineIndexToColumn">LineIndexToColumn</span>( int1: Integer, int2: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;ロジック行番号(1開始)<br>
+int2&nbsp;&nbsp;&nbsp;&nbsp;ロジック桁番号(1開始)<br>
+<b>戻り値</b><br>
+レイアウト桁番号(1開始)<br>
+<b>解説</b><br>
+ロジック座標からレイアウト桁番号を求めます。<br>
+</div>
+sakura:2.0.4.0以降<br>
+<br>
+
 </BODY></HTML>

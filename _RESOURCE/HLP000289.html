@@ -8,10 +8,13 @@
 <META NAME="MS-HKWD" CONTENT="カーソル下移動">
 <META NAME="MS-HKWD" CONTENT="カーソル左移動">
 <META NAME="MS-HKWD" CONTENT="カーソル右移動">
+<META NAME="MS-HKWD" CONTENT="カーソル移動">
 <META NAME="MS-HKWD" CONTENT="Up">
 <META NAME="MS-HKWD" CONTENT="Down">
 <META NAME="MS-HKWD" CONTENT="Left">
 <META NAME="MS-HKWD" CONTENT="Right">
+<META NAME="MS-HKWD" CONTENT="MoveCursor">
+<META NAME="MS-HKWD" CONTENT="MoveCursorLayout">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -36,4 +39,30 @@
 カーソル右移動<br>
 ・構文: Right( );<br>
 ・記録:	○<br>
+<br>
+カーソル移動<br>
+・構文: MoveCursor( int1 :Integer, int2; Integer, int3; Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;行番号(1開始)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;桁番号(1開始)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;オプション<br>
+・記録:	×<br>
+・解説<br>
+オプション<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;未選択<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;通常選択<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;矩形選択<br>
+sakura:2.0.4.0以降<br>
+<br>
+カーソル移動(レイアウト)<br>
+・構文: MoveCursorLayout( int1 :Integer, int2; Integer, int3; Integer );<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int1&nbsp;&nbsp;&nbsp;&nbsp;レイアウト行番号(1開始)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;レイアウト桁番号(1開始)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;オプション<br>
+・記録:	×<br>
+・解説<br>
+オプション<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;未選択<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;通常選択<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;矩形選択<br>
+sakura:2.0.4.0以降<br>
 </BODY></HTML>

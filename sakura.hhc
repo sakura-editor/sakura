@@ -207,6 +207,11 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="新規ウィンドウを開く">
+					<param name="Local" value="_RESOURCE\HLP000339.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="開く">
 					<param name="Local" value="_RESOURCE\HLP000015.html">
 					<param name="ImageNumber" value="9">
@@ -1363,7 +1368,7 @@
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="文字カウント方法">
-					<param name="Local" value="_RESOURCE\HLP000341.html">
+					<param name="Local" value="_RESOURCE\HLP000336.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
