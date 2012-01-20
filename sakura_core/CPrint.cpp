@@ -174,10 +174,10 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
 #ifdef _DEBUG
-	MYTRACE_A( " (入力/出力) デバイス ドライバ=[%ls]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE_A( " (入力/出力) デバイス名=[%ls]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE_A( "物理出力メディア (出力ポート) =[%ls]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	MYTRACE_A( "デフォルトのプリンタか=[%d]\n", pDEVNAMES->wDefault );
+	MYTRACE_A( " (入力/出力) デバイス ドライバ=[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE_A( " (入力/出力) デバイス名=[%ts]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE_A( "物理出力メディア (出力ポート) =[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE_A( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
 #endif
 
 	::GlobalUnlock( m_hDevMode );
@@ -228,19 +228,22 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
 	// プリンタドライバ名
-	_tcscpy_s( pMYDEVMODE->m_szPrinterDriverName,
+	_tcscpy_s(
+		pMYDEVMODE->m_szPrinterDriverName,
 		_countof(pMYDEVMODE->m_szPrinterDriverName),
-		(TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
 	);
 	// プリンタデバイス名
-	_tcscpy_s( pMYDEVMODE->m_szPrinterDeviceName,
+	_tcscpy_s(
+		pMYDEVMODE->m_szPrinterDeviceName,
 		_countof(pMYDEVMODE->m_szPrinterDeviceName),
-		(TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
 	);
 	// プリンタポート名
-	_tcscpy_s( pMYDEVMODE->m_szPrinterOutputName,
+	_tcscpy_s(
+		pMYDEVMODE->m_szPrinterOutputName,
 		_countof(pMYDEVMODE->m_szPrinterOutputName),
-		(TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
 	);
 
 	// プリンタから得られた、dmFieldsは変更しない
