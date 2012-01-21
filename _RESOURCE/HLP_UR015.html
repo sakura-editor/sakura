@@ -18,16 +18,45 @@
 	<li>改行コードを変換して貼り付けるオプション (svn:1968 upatch:2648509 unicode:1669 Moca)</li>
 	<li>外部から起動時に新しいウインドウを開くオプション (svn:1976 upatch:2808790 unicode:1667 rastiv)</li>
 	<li>マクロ関数の充実化(座標変換・InsBoxText) (svn:1984 upatch:3324432 Moca)</li>
+	<li>Tablet PC 入力パネル対応 (svn:1971 Moca)</li>
+	<li>OSの最近使ったファイルにも登録 (svn:1979 Moca)</li>
 </ul>
 
 [仕様変更]<br />
 <ul>
-	<li></li>
+	<li>矩形選択中にキャレットが操作と異なる方向に移動しないように (svn:1966 upatch:2889930 unicode:1666 ds14050)</li>
+	<li>タイプ別設定文字色・背景色のアクセスキーをボタンに付与 (svn:1982 Moca)</li>
+	<li>データのあるEOF行の選択描画を変更 (svn:1998 upatch:3465566 Moca)</li>
 </ul>
 
 [バグ修正]<br />
 <ul>
-	<li></li>
+	<li>r1964のバグ。正規表現検索がハイライトされなくなっていた。(svn:1667 ds14050)</li>
+	<li>マウスホイールでのスクロールがおかしい (svn:1969 Moca)</li>
+	<li>ブックマークの一覧表示で応答なしになる (svn:1970 Moca)</li>
+	<li>NUL文字があるとIME2010での変換で応答なしになる (svn:1972 Moca)</li>
+	<li>空ファイルでの下移動でカーソルが0行目に移動する (svn:1973 Moca)</li>
+	<li>括弧を削除したとき別の行にある対括弧の強調表示が解除されない(Wiki BugReport/89) (svn:1975 upatch:3441475 Moca)</li>
+	<li>タイプ別設定-正規表現キーワードで正規表現DLLチェックが正常に働かない (svn:1977 Moca)</li>
+	<li>x64/IA64でのbregonig.dllエラーメッセージの修正 (svn:1977 Moca)</li>
+	<li>「Grepモードで保存確認する」になっていてもGrep結果を編集しないと確認できなくなっていたのを修正 (svn:1978 Moca)</li>
+	<li>保存ダイアログで、Grepウィンドウが「(無題)」と表示されるのを修正 (svn:1978 Moca)</li>
+	<li>Diff/ファイル比較ダイアログで同じくGrepが(無題)と表示されているのを修正 (svn:1978 Moca)</li>
+	<li>矩形選択でのLFCRが１行として扱われてしまう (svn:1980 upatch:3456177 Moca)</li>
+	<li>IsURLで半角カタカナのときバッファオーバーラン (svn:1981 Moca)</li>
+	<li>選択中の未選択時の作画不良 (svn:1983 upatch:3450181 Moca)</li>
+	<li>選択中の未選択状態で選択をキャンセルできない(rev2966-) (svn:1983 upatch:3450181 Moca)</li>
+	<li>isearchの色分け・次検索不一致の解消 (svn:1994 Moca)</li>
+	<li>[A済]Grep時のファイル名パターンのバッファオーバラン対策 (svn:1995 upatch:3456201 nasukoji, gentaro)</li>
+	<li>折り返し行でのCalcLayoutWidth計算ミス (svn:1996 upatch:3465553 Moca)</li>
+	<li>次検索で括弧でないものが対括弧強調表示される (svn:1997 upatch:3465564 Moca)</li>
+	<li>長い行の選択範囲描画が遅い (svn:1999 upatch:3466060 Moca)</li>
+	<li>範囲選択の描画不正 (svn:2000 upatch:3468191 Moca)</li>
+	<li>最終行のRedo/Undoでの色分けが正しくない (svn:2001 upatch:3470595 Moca)</li>
+	<li>iniを読み込むと行間が最大16に制限される (svn:2002 upatch:3470597 Moca)</li>
+	<li>Wiki BugReport/77(1,13,14,15,16,18)対応 (svn:2004 upatch:3471025 novice)</li>
+	<li>Wiki BugReport/74(5)対応 (svn:2009 upatch:3470939 novice)</li>
+	<li>Wiki BugReport/74(4,7,8,9)対応 (svn:2010 upatch:3470358 novice)</li>
 </ul>
 
 <h3>Oct. 16, 2011 (2.0.3.1)</h3>
