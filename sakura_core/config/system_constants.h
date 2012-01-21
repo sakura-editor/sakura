@@ -1,3 +1,29 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+#ifndef SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
+#define SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
+
 //2002.01.08 aroka  コントロールプロセスと起動処理のためにミューテックス名を追加
 //2006.04.10 ryoji  コントロールプロセス初期化完了を示すイベントフラグ名を追加
 //2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
@@ -5,9 +31,6 @@
 //2009.01.17 nasukoji	マウスサイドボタンのキーコード定義追加（_WIN32_WINNTの都合によりシステム側で定義されない為）
 //2009.02.11 ryoji		共有メモリ履歴追加, NUM_TO_STRマクロ追加
 //2010.08.21 Moca		Win64を定数で分離
-
-#pragma once
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       定数命名補助                          //
@@ -507,3 +530,6 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 
 #define	VK_XBUTTON1		0x05	// マウスサイドボタン1（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
 #define	VK_XBUTTON2		0x06    // マウスサイドボタン2（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
+
+#endif /* SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_ */
+/*[EOF]*/

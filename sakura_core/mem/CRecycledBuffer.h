@@ -1,9 +1,33 @@
-#pragma once
-
 //一時的なメモリブロックをローテーションして使いまわすためのモノ
 //Getで取得したメモリブロックは、「ある程度の期間」上書きされないことが保障される。
 //その「期間」とは、Getを呼んでから再度CHAIN_COUNT回、Getを呼び出すまでの間である。
 //取得したメモリブロックはCRecycledBufferの管理下にあるため、解放してはいけない。
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+#ifndef SAKURA_CRECYCLEDBUFFER_865628A4_D60A_4F2E_8021_EA83D0D438819_H_
+#define SAKURA_CRECYCLEDBUFFER_865628A4_D60A_4F2E_8021_EA83D0D438819_H_
+
 class CRecycledBuffer{
 //コンフィグ
 private:
@@ -89,3 +113,6 @@ private:
 	BYTE* m_buf[CHAIN_COUNT];
 	int   m_current;
 };
+
+#endif /* SAKURA_CRECYCLEDBUFFER_865628A4_D60A_4F2E_8021_EA83D0D438819_H_ */
+/*[EOF]*/

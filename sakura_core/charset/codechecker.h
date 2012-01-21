@@ -1,5 +1,3 @@
-#pragma once
-
 /*!	@file
 	@brief 文字コード認識・判別支援関数ライブラリ
 
@@ -33,8 +31,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-
-
+#ifndef SAKURA_CODECHECKER_A8F89832_50E1_4F5F_9306_467062C9E3679_H_
+#define SAKURA_CODECHECKER_A8F89832_50E1_4F5F_9306_467062C9E3679_H_
 
 #include "global.h"
 #include "convert/convert_util2.h"
@@ -444,3 +442,5 @@ int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char*, const int, char **ppNextChar, bool *pbError, const int nOption );
 
+#endif /* SAKURA_CODECHECKER_A8F89832_50E1_4F5F_9306_467062C9E3679_H_ */
+/*[EOF]*/
