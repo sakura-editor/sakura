@@ -4,8 +4,31 @@
 デザインパターン的なモノを置けると良いなぁ。
 ちなみに TSingleInstance はシングルトンパターンとは似て非なるモノですが。
 */
+/*
+	Copyright (C) 2008, kobake
 
-#pragma once
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+#ifndef SAKURA_DESIGN_TEMPLATE_8F7F7545_B66E_47C3_AE3A_0E406B3A0B0B_H_
+#define SAKURA_DESIGN_TEMPLATE_8F7F7545_B66E_47C3_AE3A_0E406B3A0B0B_H_
 
 /*!
 	Singletonパターン
@@ -90,3 +113,6 @@ private:
 	static std::vector<T*> gm_table;
 };
 template <class T> std::vector<T*> TInstanceHolder<T>::gm_table;
+
+#endif /* SAKURA_DESIGN_TEMPLATE_8F7F7545_B66E_47C3_AE3A_0E406B3A0B0B_H_ */
+/*[EOF]*/

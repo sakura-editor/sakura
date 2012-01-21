@@ -1,5 +1,3 @@
-#pragma once
-
 /*!	@file
 	@brief 文字コードの判定調査する時に使う情報入れ
 
@@ -32,6 +30,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_
+#define SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_
 
 class CESI;
 class CEditDoc;
@@ -216,3 +216,6 @@ public:
 	static void GetDebugInfo( const char*, const int, CNativeT* );
 #endif
 };
+
+#endif /* SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_ */
+/*[EOF]*/

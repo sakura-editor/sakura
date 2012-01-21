@@ -1,6 +1,30 @@
-//2007.10.19 kobake
+/*
+	Copyright (C) 2007, kobake
 
-#pragma once
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+#ifndef SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_
+#define SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_
+
+//2007.10.19 kobake
 
 enum maxdata{
 	MAX_EDITWINDOWS				= 256,
@@ -52,3 +76,6 @@ enum maxdata{
 	MAX_MAINMENU_TOP			= 20,	// 登録できるメインメニューの数
 	MAX_MAIN_MENU_NAME_LEN		= 32,	// メインメニュー名文字列長
 };
+
+#endif /* SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_ */
+/*[EOF]*/

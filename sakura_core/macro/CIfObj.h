@@ -28,7 +28,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#pragma once
+#ifndef SAKURA_CIFOBJ_9DB7E463_B156_4A8D_85C7_44259381BBBF9_H_
+#define SAKURA_CIFOBJ_9DB7E463_B156_4A8D_85C7_44259381BBBF9_H_
+
 #include <string>
 #include <vector>
 #include "OleTypes.h"
@@ -136,3 +138,6 @@ private:
 	CMethodInfoList m_Methods;			//メソッド情報リスト
 	ITypeInfo* m_TypeInfo;
 };
+
+#endif /* SAKURA_CIFOBJ_9DB7E463_B156_4A8D_85C7_44259381BBBF9_H_ */
+/*[EOF]*/

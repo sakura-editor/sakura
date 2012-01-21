@@ -1,5 +1,3 @@
-#pragma once
-
 /*!	@file
 	@brief デコーダーのインターフェース
 
@@ -28,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDECODE_D68AE385_FC75_40FC_8BB4_F838CA7A8BB0_H_
+#define SAKURA_CDECODE_D68AE385_FC75_40FC_8BB4_F838CA7A8BB0_H_
 
 class CDecode {
 public:
@@ -49,3 +49,6 @@ public:
 	virtual bool DoDecode( const CNativeW& pcData, CMemory* pDest )=0;
 
 };
+
+#endif /* SAKURA_CDECODE_D68AE385_FC75_40FC_8BB4_F838CA7A8BB0_H_ */
+/*[EOF]*/
