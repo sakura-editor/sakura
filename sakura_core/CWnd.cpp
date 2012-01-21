@@ -46,20 +46,21 @@ LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 	if( NULL != pCWnd ){
 		/* クラスオブジェクトのポインタを使ってメッセージを配送する */
 		return pCWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
-	}else{
+	}
+	else{
 		/* ふつうはここには来ない */
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
 }
 
 
-CWnd::CWnd()
+CWnd::CWnd(const TCHAR* pszInheritanceAppend)
 {
-	strcpy( m_szClassInheritances, "CWnd" );
+	_tcscpy( m_szClassInheritances, _T("CWnd") );
+	_tcscat( m_szClassInheritances, pszInheritanceAppend );
 	m_hInstance = NULL;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd = NULL;			/* このウィンドウのハンドル */
-	return;
 }
 
 CWnd::~CWnd()
@@ -100,35 +101,35 @@ ATOM CWnd::RegisterWC(
 {
 	/* ウィンドウクラスの登録 */
 	WNDCLASSEX wc;
-	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.cbSize = sizeof(wc);
 	//	Apr. 27, 2000 genta
 	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
 	wc.style = CS_DBLCLKS;
-	wc.lpfnWndProc = CWndProc;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 32;
-	wc.hInstance = m_hInstance;
-	wc.hIcon = hIcon;
-	wc.hCursor = hCursor;
+	wc.lpfnWndProc   = CWndProc;
+	wc.cbClsExtra    = 0;
+	wc.cbWndExtra    = 32;
+	wc.hInstance     = m_hInstance;
+	wc.hIcon         = hIcon;
+	wc.hCursor       = hCursor;
 	wc.hbrBackground = hbrBackground;
-	wc.lpszMenuName = lpszMenuName;
+	wc.lpszMenuName  = lpszMenuName;
 	wc.lpszClassName = lpszClassName;
-	wc.hIconSm = hIconSm;
+	wc.hIconSm       = hIconSm;
 	return ::RegisterClassEx( &wc );
 }
 
 /* 作成 */
 HWND CWnd::Create(
 	/* CreateWindowEx()用 */
-	DWORD		dwExStyle, // extended window style
+	DWORD		dwExStyle,		// extended window style
 	LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
-	LPCTSTR		lpWindowName, // pointer to window name
-	DWORD		dwStyle, // window style
-	int			x, // horizontal position of window
-	int			y, // vertical position of window
-	int			nWidth, // window width
-	int			nHeight, // window height
-	HMENU		hMenu // handle to menu, or child-window identifier
+	LPCTSTR		lpWindowName,	// pointer to window name
+	DWORD		dwStyle,		// window style
+	int			x,				// horizontal position of window
+	int			y,				// vertical position of window
+	int			nWidth,			// window width
+	int			nHeight,		// window height
+	HMENU		hMenu			// handle to menu, or child-window identifier
 )
 {
 	/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
@@ -152,7 +153,7 @@ HWND CWnd::Create(
 		(LPVOID)this	// pointer to window-creation data
 	);
 	if( NULL == m_hWnd ){
-		::MessageBox( m_hwndParent, "CWnd::Create()\n\n::CreateWindowEx failed.", "error", MB_OK );
+		::MessageBox( m_hwndParent, _T("CWnd::Create()\n\n::CreateWindowEx failed."), _T("error"), MB_OK );
 		return NULL;
 	}
 
@@ -194,37 +195,11 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 	CALLH( WM_DRAWITEM			, OnDrawItem		);	// 2006.02.01 ryoji
 	CALLH( WM_CAPTURECHANGED	, OnCaptureChanged	);	// 2006.11.30 ryoji
 
-//	CALLH( WM_NCCREATE			, OnNcCreate		);
 	CALLH( WM_NCDESTROY			, OnNcDestroy		);
-//	CALLH( WM_NCCALCSIZE		, OnNcCalcSize		);
-//	CALLH( WM_NCHITTEST			, OnNcHitTest		);
-//	CALLH( WM_NCPAINT			, OnNcPaint			);
-//	CALLH( WM_NCACTIVATE		, OnNcActivate		);
-//	CALLH( WM_NCMOUSEMOVE		, OnNcMouseMove		);
-//	CALLH( WM_NCLBUTTONDOWN		, OnNcLButtonDown	);
-//	CALLH( WM_NCLBUTTONUP		, OnNcLButtonUp		);
-//	CALLH( WM_NCLBUTTONDBLCLK	, OnNcLButtonDblClk	);
-//	CALLH( WM_NCRBUTTONDOWN		, OnNcRButtonDown	);
-//	CALLH( WM_NCRBUTTONUP		, OnNcRButtonUp		);
-//	CALLH( WM_NCRBUTTONDBLCLK	, OnNcRButtonDblClk	);
-//	CALLH( WM_NCMBUTTONDOWN		, OnNcMButtonDown	);
-//	CALLH( WM_NCMBUTTONUP		, OnNcMButtonUp		);
-//	CALLH( WM_NCMBUTTONDBLCLK	, OnNcMButtonDblClk	);
-
 
 	/* MDI用 */
 	CALLH( WM_MDIACTIVATE		, OnMDIActivate		);
-//	CALLH( WM_MDICASCADE		, OnMDICascade		);
-//	CALLH( WM_MDICREATE			, OnMDICreate		);
-//	CALLH( WM_MDIDESTROY		, OnMDIDestroy		);
-//	CALLH( WM_MDIGETACTIVE		, OnMDIGetActive	);
-//	CALLH( WM_MDIICONARRANGE	, OnMDIIconArrange	);
-//	CALLH( WM_MDIMAXIMIZE		, OnMDIMaximize		);
-//	CALLH( WM_MDINEXT			, OnMDINext			);
-//	CALLH( WM_MDIREFRESHMENU	, OnMDIRefreshMenu	);
-//	CALLH( WM_MDIRESTORE		, OnMDIRestore		);
-//	CALLH( WM_MDISETMENU		, OnMDISetMenu		);
-//	CALLH( WM_MDITILE			, OnMDITile			);
+
 	default:
 		if( WM_APP <= msg && msg <= 0xBFFF ){
 			/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */

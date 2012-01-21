@@ -51,16 +51,11 @@ LRESULT CALLBACK CFuncKeyWndProc(
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CFuncKeyWnd::CFuncKeyWnd()
+: CWnd(_T("::CFuncKeyWnd"))
 {
-	strcat( m_szClassInheritances, "::CFuncKeyWnd" );
-
 	int		i;
 	LOGFONT	lf;
-//	m_hInstance = NULL;
-//	m_hwndParent = NULL;
-//	m_hWnd = NULL;
-//	m_pszAppName = "CFuncKeyWnd";
-	m_pszClassName = "CFuncKeyWnd";
+	m_pszClassName = _T("CFuncKeyWnd");
 	m_pCEditDoc = NULL;
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();

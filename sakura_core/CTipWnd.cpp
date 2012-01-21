@@ -22,9 +22,9 @@
 
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
+: CWnd(_T("::CTipWnd"))
 {
-	strcat( m_szClassInheritances, "::CTipWnd" );
-	m_pszClassName = "CTipWnd";
+	m_pszClassName = _T("CTipWnd");
 	m_KeyWasHit = FALSE;	/* キーがヒットしたか */
 	return;
 }

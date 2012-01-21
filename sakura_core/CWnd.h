@@ -40,21 +40,42 @@ class SAKURA_CORE_API CWnd
 {
 public:
 	/* Constructors */
-	CWnd();
+	CWnd(const TCHAR* pszInheritanceAppend = _T(""));
 	virtual ~CWnd();
 	/*
 	||  Attributes & Operations
 	*/
 protected: // 2002/2/10 aroka アクセス権変更
-	char		m_szClassInheritances[1024];
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
 public:
 	HWND		m_hWnd;			/* このダイアログのハンドル */
 
 	void Init( HINSTANCE, HWND );/* 初期化 */
-	ATOM RegisterWC( HICON, HICON, HCURSOR, HBRUSH, LPCTSTR, LPCTSTR );/* ウィンドウクラス作成 */
-	HWND Create( DWORD, LPCTSTR, LPCTSTR, DWORD, int,  int, int, int, HMENU );/* 作成 */
+
+	// ウィンドウクラス登録
+	ATOM RegisterWC(
+		HICON		hIcon,			// Handle to the class icon.
+		HICON		hIconSm,		// Handle to a small icon
+		HCURSOR		hCursor,		// Handle to the class cursor.
+		HBRUSH		hbrBackground,	// Handle to the class background brush.
+		LPCTSTR		lpszMenuName,	// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
+		LPCTSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
+	);
+
+	//ウィンドウ作成
+	HWND Create(
+		DWORD		dwExStyle,		// extended window style
+		LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
+		LPCTSTR		lpWindowName,	// pointer to window name
+		DWORD		dwStyle,		// window style
+		int			x,				// horizontal position of window
+		int			y,				// vertical position of window
+		int			nWidth,			// window width
+		int			nHeight,		// window height
+		HMENU		hMenu			// handle to menu, or child-window identifier
+	);
+
 	virtual LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );/* メッセージ配送 */
 protected:
 	/* 仮想関数 */
@@ -94,41 +115,15 @@ protected:
 	virtual DECLH( OnDrawItem		);	// WM_DRAWITEM	// 2006.02.01 ryoji
 	virtual DECLH( OnCaptureChanged	);	// WM_CAPTURECHANGED	// 2006.11.30 ryoji
 
-//	virtual DECLH( OnNcCreate			);	// WM_NCCREATE
-//	virtual DECLH( OnNcCalcSize			);	// WM_NCCALCSIZE
-//	virtual DECLH( OnNcHitTest			);	// WM_NCHITTEST
-//	virtual DECLH( OnNcPaint			);	// WM_NCPAINT
-//	virtual DECLH( OnNcActivate			);	// WM_NCACTIVATE
-//	virtual DECLH( OnNcMouseMove		);	// WM_NCMOUSEMOVE
-//	virtual DECLH( OnNcLButtonDown		);	// WM_NCLBUTTONDOWN
-//	virtual DECLH( OnNcLButtonUp		);	// WM_NCLBUTTONUP
-//	virtual DECLH( OnNcLButtonDblClk	);	// WM_NCLBUTTONDBLCLK
-//	virtual DECLH( OnNcRButtonDown		);	// WM_NCRBUTTONDOWN
-//	virtual DECLH( OnNcRButtonUp		);	// WM_NCRBUTTONUP
-//	virtual DECLH( OnNcRButtonDblClk	);	// WM_NCRBUTTONDBLCLK
-//	virtual DECLH( OnNcMButtonDown		);	// WM_NCMBUTTONDOWN
-//	virtual DECLH( OnNcMButtonUp		);	// WM_NCMBUTTONUP
-//	virtual DECLH( OnNcMButtonDblClk	);	// WM_NCMBUTTONDBLCLK
-
-
 	/* MDI用 */
 	virtual DECLH( OnMDIActivate	);	// WM_MDIACTIVATE
-//	virtual DECLH( OnMDICascade		);	// WM_MDICASCADE
-//	virtual DECLH( OnMDICreate		);	// WM_MDICREATE
-//	virtual DECLH( OnMDIDestroy		);	// WM_MDIDESTROY
-//	virtual DECLH( OnMDIGetActive	);	// WM_MDIGETACTIVE
-//	virtual DECLH( OnMDIIconArrange	);	// WM_MDIICONARRANGE
-//	virtual DECLH( OnMDIMaximize	);	// WM_MDIMAXIMIZE
-//	virtual DECLH( OnMDINext		);	// WM_MDINEXT
-//	virtual DECLH( OnMDIRefreshMenu	);	// WM_MDIREFRESHMENU
-//	virtual DECLH( OnMDIRestore		);	// WM_MDIRESTORE
-//	virtual DECLH( OnMDISetMenu		);	// WM_MDISETMENU
-//	virtual DECLH( OnMDITile		);	// WM_MDITILE
-
 
 	/* デフォルトメッセージ処理 */
 	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );
 
+
+private: // 2002/2/10 aroka アクセス権変更
+	TCHAR		m_szClassInheritances[1024];
 };
 
 ///////////////////////////////////////////////////////////////////////

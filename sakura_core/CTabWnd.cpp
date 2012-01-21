@@ -601,15 +601,14 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 
 
 CTabWnd::CTabWnd()
-  : m_bVisualStyle( FALSE ),		// 2007.04.01 ryoji
-    m_eDragState( DRAG_NONE ),
-    m_bHovering( FALSE ),	//	2006.02.01 ryoji
-    m_bListBtnHilighted( FALSE ),	//	2006.02.01 ryoji
-    m_bCloseBtnHilighted( FALSE ),	//	2006.10.21 ryoji
-    m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
+: CWnd(_T("::CTabWnd"))
+, m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
+, m_eDragState( DRAG_NONE )
+, m_bHovering( FALSE )	//	2006.02.01 ryoji
+, m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
+, m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
+, m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
 {
-	strcat( m_szClassInheritances, _T("::CTabWnd") );
-
 	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();

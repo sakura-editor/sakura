@@ -18,8 +18,8 @@
 #include "mymessage.h"// 2002/2/3 aroka
 
 CSplitBoxWnd::CSplitBoxWnd()
+: CWnd(_T("::CSplitBoxWnd"))
 {
-	strcat( m_szClassInheritances, "::CSplitBoxWnd" );
 	m_pszClassName = NULL;
 	m_bVertical = TRUE;	/* 垂直分割ボックスか */
 	return;
