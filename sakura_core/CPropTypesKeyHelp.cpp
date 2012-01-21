@@ -62,6 +62,14 @@ static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	0, 0
 };
 
+//SDK‚É‚µ‚©’è‹`‚³‚ê‚Ä‚¢‚È‚¢B
+#ifndef	ListView_SetCheckState
+//#if (_WIN32_IE >= 0x0300)
+#define ListView_SetCheckState(hwndLV, i, fCheck) \
+  ListView_SetItemState(hwndLV, i, INDEXTOSTATEIMAGEMASK((fCheck)?2:1), LVIS_STATEIMAGEMASK)
+//#endif
+#endif
+
 static char* strcnv(char *str);
 static char* GetFileName(const char *fullpath);
 

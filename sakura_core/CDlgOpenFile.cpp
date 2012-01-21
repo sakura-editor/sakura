@@ -50,6 +50,10 @@ static const DWORD p_helpids[] = {	//13100
 	#define OFN_ENABLESIZING	0x00800000
 #endif
 
+#ifndef DWLP_MSGRESULT
+#define DWLP_MSGRESULT  0
+#endif
+
 WNDPROC			m_wpOpenDialogProc;
 
 const char**	m_ppszMRU;

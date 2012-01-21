@@ -36,6 +36,10 @@
 #include "COsVersionInfo.h"
 #include "CCommandLine.h"
 
+#ifndef CSIDL_PROFILE
+#define CSIDL_PROFILE                   0x0028        // USERPROFILE
+#endif
+
 #define STR_COLORDATA_HEAD3		" テキストエディタ色設定 Ver3"	//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 
 
