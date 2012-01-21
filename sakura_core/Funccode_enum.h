@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_
+#define SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_
 
 //このファイルは HeaderMake により Funccode_x.hsrc から生成されたファイルです。
 //直接編集しないでください。
@@ -385,3 +386,6 @@ enum EFunctionCode{
 	F_ISEARCH_ADD_STR = 0xC002,
 	F_ISEARCH_DEL_BACK = 0xC003,
 };
+
+#endif /* SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_ */
+/*[EOF]*/

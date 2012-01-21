@@ -1,6 +1,36 @@
-/*
-	2007.09.30 kobake 作成
+/*!	@file
 
+	@author Project Sakura-Editor
+	@date 2007.09.30 kobake 作成
+	@date 2009.07.06 rastiv #pragma once を除去して #ifndef-#endif 文に変更
+*/
+/*
+	Copyright (C) 2007-2008, kobake
+	Copyright (C) 2009, rastiv
+
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
+/*
 	++ 概要 ++
 
 	enum と define の2種類の定数定義ヘッダを生成するためのモノ
@@ -41,7 +71,7 @@ int usage()
 {
 	printf("HeaderMake -in=<入力ファイル> -out=<出力ファイル> -mode=<モード> [-enum=<enum名>]\n");
 	printf("モード\n");
-	printf("  define  … #define による定数定義ヘッダを生成n");
+	printf("  define  … #define による定数定義ヘッダを生成\n");
 	printf("  enum    … enum による定数定義ヘッダを生成。<enum名>を指定すればそれが列挙型の名前になる\n");
 	return 1;
 }
@@ -119,6 +149,7 @@ int main(int argc,char* argv[])
 	else if(_stricmp(mode_name,"ENUM")==0)mode=MODE_ENUM;
 	else{
 		printf("Error: 不明なモード[%s]です\n",mode_name);
+		return 2;
 	}
 
 
@@ -140,9 +171,26 @@ next:
 	FILE* out=NULL; fopen_s(&out,out_file,"wt");  if(!out){ printf("Error: 出力ファイルを開けません\n"); return 1; }
 
 
+
 	//処理
+
+	if(mode==MODE_DEFINE){
+		fprintf(out,
+			"#ifndef SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_\n"
+			"#define SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_\n"
+			"\n"
+		);	// インクルードガードを挿入（define 用）
+	}else if(mode==MODE_ENUM){
+		fprintf(out,
+			"#ifndef SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_\n"
+			"#define SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_\n"
+			"\n"
+		);	// インクルードガードを挿入（enum 用）
+	}else{
+		; // 何も出力しない
+	}
+
 	char line[1024];
-	fprintf(out,"#pragma once\n\n");
 	fprintf(out,
 		"//このファイルは HeaderMake により %s から生成されたファイルです。\n"
 		"//直接編集しないでください。\n\n",
@@ -186,10 +234,28 @@ next:
 			}
 			else if(mode==MODE_DEFINE){
 				fprintf(out,"#define %s %s\n",id,value);
+			}else{
+				; // mode が不正の場合は何も出力しない
 			}
 		}
 	}
-	if(mode==MODE_ENUM)fprintf(out,"};\n"); //enum終了
+
+	if(mode==MODE_DEFINE){
+		fprintf(out,
+			"\n"
+			"#endif /* SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_ */\n"
+			"/*[EOF]*/\n"
+		);	// インクルードガード終了（define 用）
+	}else if(mode==MODE_ENUM){
+		fprintf(out,
+			"};\n"
+			"\n"
+			"#endif /* SAKURA_HEADERMAKE_2034D8F5_AE65_408D_9F53_D3DEA240C67BI_H_ */\n"
+			"/*[EOF]*/\n"
+		);	// インクルードガード終了（enum 用）
+	}else{
+		; // 何も出力しない
+	}
 
 
 	//後始末
@@ -197,3 +263,4 @@ next:
 	fclose(in);
 	return 0;
 }
+
