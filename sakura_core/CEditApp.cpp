@@ -324,7 +324,7 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 	MY_TRACETIME( cRunningTimer, "Window is created" );
 
 	//	Oct. 16, 2000 genta
-	m_hIcons.Create( m_hInstance, m_hWnd );
+	m_hIcons.Create( m_hInstance );
 	
 	MY_TRACETIME( cRunningTimer, "Icons are created" );
 	

@@ -398,7 +398,7 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();	// 2006.06.19 ryoji コモンコントロールの初期化を CreateToolBar() から移動
 
 
-	m_cIcons.Create( m_hInstance, m_hWnd );	//	CreateImage List
+	m_cIcons.Create( m_hInstance );	//	CreateImage List
 
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
 

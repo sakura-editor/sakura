@@ -10,6 +10,7 @@
 	Copyright (C) 2001, GAE, jepro
 	Copyright (C) 2003, Moca, genta, wmlhq
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2010, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -26,6 +27,14 @@
 //	Oct. 21, 2000 JEPRO 設定
 const int MAX_X = MAX_TOOLBAR_ICON_X;
 const int MAX_Y = MAX_TOOLBAR_ICON_Y;	//2002.01.17
+
+/*! コンストラクタ */
+CImageListMgr::CImageListMgr()
+	: m_cx( 16 ), m_cy( 16 )
+	, m_hIconBitmap( NULL )
+	, m_cTrans( RGB( 0, 0, 0 ))
+{
+}
 
 /*!	領域を指定色で塗りつぶす
 
@@ -58,11 +67,10 @@ CImageListMgr::~CImageListMgr()
 	描画用に保持する．
 	
 	@param hInstance [in] bitmapリソースを持つインスタンス
-	@param hWnd [in] 未使用
 	
 	@date 2003.07.21 genta ImageListの構築は行わない．代わりにbitmapをそのまま保持する．
 */
-bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
+bool CImageListMgr::Create(HINSTANCE hInstance)
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CImageListMgr::Create" );
 	if( m_hIconBitmap != NULL ){	//	既に構築済みなら無視する
@@ -158,6 +166,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	}
 
 	return nRetPos == 0;
+
 }
 
 
@@ -166,6 +175,7 @@ bool CImageListMgr::Create(HINSTANCE hInstance, HWND hWnd)
 	@author Nakatani
 	@date 2003.07.21 genta 以前のCMenuDrawerより移転復活
 	@date 2003.08.27 Moca 背景は透過処理に変更し、colBkColorを削除
+	@date 2010.01.30 syat 透明にする色を引数に移動
 */
 void CImageListMgr::MyBitBlt(
 	HDC drawdc, 
@@ -175,10 +185,10 @@ void CImageListMgr::MyBitBlt(
 	int nHeight, 
 	HBITMAP bmp, 
 	int nXSrc, 
-	int nYSrc
+	int nYSrc,
+	COLORREF colToTransParent	/* BMPの中の透明にする色 */
 ) const
 {
-	COLORREF colToTransParent = m_cTrans;	/* BMPの中の透明にする色 */
 //	HBRUSH	brShadow, brHilight;
 	HDC		hdcMask;
 	HBITMAP bmpMask;
@@ -336,11 +346,11 @@ bool CImageListMgr::Draw(int index, HDC dc, int x, int y, int fstyle ) const
 
 	if( fstyle == ILD_MASK ){
 		DitherBlt2( dc, x, y, cx(), cy(), m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
+			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
 	}
 	else {
 		MyBitBlt( dc, x, y, cx(), cy(), m_hIconBitmap,
-		( index % MAX_X ) * cx(), ( index / MAX_X ) * cy());
+			( index % MAX_X ) * cx(), ( index / MAX_X ) * cy(), m_cTrans );
 	}
 	return true;
 }

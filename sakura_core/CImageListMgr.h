@@ -54,10 +54,10 @@ class SAKURA_CORE_API CImageListMgr {
 public:
 
 	//	constructor
-	CImageListMgr() : m_cx( 16 ), m_cy( 16 ), m_hIconBitmap( NULL ), m_cTrans( RGB( 0, 0, 0 )) {}
+	CImageListMgr();
 	~CImageListMgr();
 
-	bool Create(HINSTANCE hInstance, HWND hWnd);	//	生成
+	bool Create(HINSTANCE hInstance);	//	生成
 	
 	/*! @brief アイコンの描画
 	
@@ -111,7 +111,8 @@ protected:
 	//	オリジナルテキストエディタからの描画関数
 	//	2003.08.27 Moca 背景を透過処理するので背景色の指定は不要に
 	void MyBitBlt( HDC drawdc, int nXDest, int nYDest, 
-		int nWidth, int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
+					int nWidth, int nHeight, HBITMAP bmp,
+					int nXSrc, int nYSrc, COLORREF colToTransParent ) const;
 	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth, 
                         int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
 
