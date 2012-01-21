@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_
+#define SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_
 
 //このファイルは HeaderMake により Funccode_x.hsrc から生成されたファイルです。
 //直接編集しないでください。
@@ -383,3 +384,6 @@
 #define F_ISEARCH_ADD_CHAR 0xC001
 #define F_ISEARCH_ADD_STR 0xC002
 #define F_ISEARCH_DEL_BACK 0xC003
+
+#endif /* SAKURA_HEADERMAKE_98B26AB2_D5C9_4884_8D15_D1F3A2936253_H_ */
+/*[EOF]*/
