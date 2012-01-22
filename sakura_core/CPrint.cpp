@@ -20,57 +20,56 @@
 #include "CPrint.h"
 #include "global.h"
 #include "Debug.h" // 2002/2/10 aroka
-#include "CShareData.h"
 #include <winspool.h>
 
 
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {
 	// 	用紙ID, 幅
-	{DMPAPER_A4,                  2100,  2970, "A4 (210 x 297 mm)"},
-	{DMPAPER_A3,                  2970,  4200, "A3 (297 x 420 mm)"},
-	{DMPAPER_A4SMALL,             2100,  2970, "A4 small(210 x 297 mm)"},
-	{DMPAPER_A5,                  1480,  2100, "A5 (148 x 210 mm)"},
-	{DMPAPER_B4,                  2500,  3540, "B4 (250 x 354 mm)"},
-	{DMPAPER_B5,                  1820,  2570, "B5 (182 x 257 mm)"},
-	{DMPAPER_QUARTO,              2150,  2750, "Quarto(215 x 275 mm)"},
-	{DMPAPER_ENV_DL,              1100,  2200, "DL Envelope(110 x 220 mm)"},
-	{DMPAPER_ENV_C5,              1620,  2290, "C5 Envelope(162 x 229 mm)"},
-	{DMPAPER_ENV_C3,              3240,  4580, "C3 Envelope(324 x 458 mm)"},
-	{DMPAPER_ENV_C4,              2290,  3240, "C4 Envelope(229 x 324 mm)"},
-	{DMPAPER_ENV_C6,              1140,  1620, "C6 Envelope(114 x 162 mm)"},
-	{DMPAPER_ENV_C65,             1140,  2290, "C65 Envelope(114 x 229 mm)"},
-	{DMPAPER_ENV_B4,              2500,  3530, "B4 Envelope(250 x 353 mm)"},
-	{DMPAPER_ENV_B5,              1760,  2500, "B5 Envelope(176 x 250 mm)"},
-	{DMPAPER_ENV_B6,              1760,  1250, "B6 Envelope(176 x 125 mm)"},
-	{DMPAPER_ENV_ITALY,           1100,  2300, "Italy Envelope(110 x 230 mm)"},
-	{DMPAPER_LETTER,              2159,  2794, "Letter (8 1/2 x 11 inch)"},
-	{DMPAPER_LEGAL,               2159,  3556, "Legal  (8 1/2 x 14 inch)"},
-	{DMPAPER_CSHEET,              4318,  5588, "C sheet (17 x 22 inch)"},
-	{DMPAPER_DSHEET,              5588,  8634, "D sheet (22 x 34 inch)"},
-	{DMPAPER_ESHEET,              8634, 11176, "E sheet (34 x 44 inch)"},
-	{DMPAPER_LETTERSMALL,         2159,  2794, "Letter Small (8 1/2 x 11 inch)"},
-	{DMPAPER_TABLOID,             2794,  4318, "Tabloid (11 x 17 inch)"},
-	{DMPAPER_LEDGER,              4318,  2794, "Ledger  (17 x 11 inch)"},
-	{DMPAPER_STATEMENT,           1397,  2159, "Statement (5 1/2 x 8 1/2 inch)"},
-	{DMPAPER_EXECUTIVE,           1841,  2667, "Executive (7 1/4 x 10 1/2 inch)"},
-	{DMPAPER_FOLIO,               2159,  3302, "Folio (8 1/2 x 13 inch)"},
-	{DMPAPER_10X14,               2540,  3556, "10x14 inch sheet"},
-	{DMPAPER_11X17,               2794,  4318, "11x17 inch sheet"},
-	{DMPAPER_NOTE,                2159,  2794, "Note (8 1/2 x 11 inch)"},
-	{DMPAPER_ENV_9,                984,  2254, "#9 Envelope  (3 7/8 x 8 7/8 inch)"},
-	{DMPAPER_ENV_10,              1047,  2413, "#10 Envelope (4 1/8 x 9 1/2 inch)"},
-	{DMPAPER_ENV_11,              1143,  2635, "#11 Envelope (4 1/2 x 10 3/8 inch)"},
-	{DMPAPER_ENV_12,              1206,  2794, "#12 Envelope (4 3/4 x 11 inch)"},
-	{DMPAPER_ENV_14,              1270,  2921, "#14 Envelope (5 x 11 1/2 inch)"},
-	{DMPAPER_ENV_MONARCH,          984,  1905, "Monarch Envelope (3 7/8 x 7 1/2 inch)"},
-	{DMPAPER_ENV_PERSONAL,         920,  1651, "6 3/4 Envelope (3 5/8 x 6 1/2 inch)"},
-	{DMPAPER_FANFOLD_US,          3778,  2794, "US Std Fanfold (14 7/8 x 11 inch)"},
-	{DMPAPER_FANFOLD_STD_GERMAN,  2159,  3048, "German Std Fanfold   (8 1/2 x 12 inch)"},
-	{DMPAPER_FANFOLD_LGL_GERMAN,  2159,  3302, "German Legal Fanfold (8 1/2 x 13 inch)"},
+	{DMPAPER_A4,                  2100,  2970, _T("A4 (210 x 297 mm)")},
+	{DMPAPER_A3,                  2970,  4200, _T("A3 (297 x 420 mm)")},
+	{DMPAPER_A4SMALL,             2100,  2970, _T("A4 small(210 x 297 mm)")},
+	{DMPAPER_A5,                  1480,  2100, _T("A5 (148 x 210 mm)")},
+	{DMPAPER_B4,                  2500,  3540, _T("B4 (250 x 354 mm)")},
+	{DMPAPER_B5,                  1820,  2570, _T("B5 (182 x 257 mm)")},
+	{DMPAPER_QUARTO,              2150,  2750, _T("Quarto(215 x 275 mm)")},
+	{DMPAPER_ENV_DL,              1100,  2200, _T("DL Envelope(110 x 220 mm)")},
+	{DMPAPER_ENV_C5,              1620,  2290, _T("C5 Envelope(162 x 229 mm)")},
+	{DMPAPER_ENV_C3,              3240,  4580, _T("C3 Envelope(324 x 458 mm)")},
+	{DMPAPER_ENV_C4,              2290,  3240, _T("C4 Envelope(229 x 324 mm)")},
+	{DMPAPER_ENV_C6,              1140,  1620, _T("C6 Envelope(114 x 162 mm)")},
+	{DMPAPER_ENV_C65,             1140,  2290, _T("C65 Envelope(114 x 229 mm)")},
+	{DMPAPER_ENV_B4,              2500,  3530, _T("B4 Envelope(250 x 353 mm)")},
+	{DMPAPER_ENV_B5,              1760,  2500, _T("B5 Envelope(176 x 250 mm)")},
+	{DMPAPER_ENV_B6,              1760,  1250, _T("B6 Envelope(176 x 125 mm)")},
+	{DMPAPER_ENV_ITALY,           1100,  2300, _T("Italy Envelope(110 x 230 mm)")},
+	{DMPAPER_LETTER,              2159,  2794, _T("Letter (8 1/2 x 11 inch)")},
+	{DMPAPER_LEGAL,               2159,  3556, _T("Legal  (8 1/2 x 14 inch)")},
+	{DMPAPER_CSHEET,              4318,  5588, _T("C sheet (17 x 22 inch)")},
+	{DMPAPER_DSHEET,              5588,  8634, _T("D sheet (22 x 34 inch)")},
+	{DMPAPER_ESHEET,              8634, 11176, _T("E sheet (34 x 44 inch)")},
+	{DMPAPER_LETTERSMALL,         2159,  2794, _T("Letter Small (8 1/2 x 11 inch)")},
+	{DMPAPER_TABLOID,             2794,  4318, _T("Tabloid (11 x 17 inch)")},
+	{DMPAPER_LEDGER,              4318,  2794, _T("Ledger  (17 x 11 inch)")},
+	{DMPAPER_STATEMENT,           1397,  2159, _T("Statement (5 1/2 x 8 1/2 inch)")},
+	{DMPAPER_EXECUTIVE,           1841,  2667, _T("Executive (7 1/4 x 10 1/2 inch)")},
+	{DMPAPER_FOLIO,               2159,  3302, _T("Folio (8 1/2 x 13 inch)")},
+	{DMPAPER_10X14,               2540,  3556, _T("10x14 inch sheet")},
+	{DMPAPER_11X17,               2794,  4318, _T("11x17 inch sheet")},
+	{DMPAPER_NOTE,                2159,  2794, _T("Note (8 1/2 x 11 inch)")},
+	{DMPAPER_ENV_9,                984,  2254, _T("#9 Envelope  (3 7/8 x 8 7/8 inch)")},
+	{DMPAPER_ENV_10,              1047,  2413, _T("#10 Envelope (4 1/8 x 9 1/2 inch)")},
+	{DMPAPER_ENV_11,              1143,  2635, _T("#11 Envelope (4 1/2 x 10 3/8 inch)")},
+	{DMPAPER_ENV_12,              1206,  2794, _T("#12 Envelope (4 3/4 x 11 inch)")},
+	{DMPAPER_ENV_14,              1270,  2921, _T("#14 Envelope (5 x 11 1/2 inch)")},
+	{DMPAPER_ENV_MONARCH,          984,  1905, _T("Monarch Envelope (3 7/8 x 7 1/2 inch)")},
+	{DMPAPER_ENV_PERSONAL,         920,  1651, _T("6 3/4 Envelope (3 5/8 x 6 1/2 inch)")},
+	{DMPAPER_FANFOLD_US,          3778,  2794, _T("US Std Fanfold (14 7/8 x 11 inch)")},
+	{DMPAPER_FANFOLD_STD_GERMAN,  2159,  3048, _T("German Std Fanfold   (8 1/2 x 12 inch)")},
+	{DMPAPER_FANFOLD_LGL_GERMAN,  2159,  3302, _T("German Legal Fanfold (8 1/2 x 13 inch)")},
 };
 
-const int CPrint::m_nPaperInfoArrNum = sizeof( m_paperInfoArr ) / sizeof( m_paperInfoArr[0] );
+const int CPrint::m_nPaperInfoArrNum = _countof( m_paperInfoArr );
 
 
 
@@ -113,7 +112,7 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 
 	// デフォルトプリンタが選択されていなければ、選択する
 	if ( m_hDevMode == NULL ) {
-		if ( FALSE == GetDefaultPrinter( pMYDEVMODE ) ) {
+		if ( !GetDefaultPrinter( pMYDEVMODE ) ) {
 			return FALSE;
 		}
 	}
@@ -130,10 +129,10 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	::GlobalUnlock( m_hDevMode );
 
 	/* プリンタダイアログを表示して、プリンタを選択 */
-	pPD->lStructSize = sizeof(PRINTDLG);
+	pPD->lStructSize = sizeof(*pPD);
 	pPD->hDevMode = m_hDevMode;
 	pPD->hDevNames = m_hDevNames;
-	if( FALSE == ::PrintDlg( pPD ) ){
+	if( !::PrintDlg( pPD ) ){
 		// プリンタを変更しなかった
 		return FALSE;
 	}
@@ -144,9 +143,21 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
-	strcpy( pMYDEVMODE->m_szPrinterDriverName, (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );	/* プリンタドライバ名 */
-	strcpy( pMYDEVMODE->m_szPrinterDeviceName, (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );	/* プリンタデバイス名 */
-	strcpy( pMYDEVMODE->m_szPrinterOutputName, (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );	/* プリンタポート名 */
+	// プリンタドライバ名
+	_tcscpy(
+		pMYDEVMODE->m_szPrinterDriverName,
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
+	);
+	// プリンタデバイス名
+	_tcscpy(
+		pMYDEVMODE->m_szPrinterDeviceName,
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
+	);
+	// プリンタポート名
+	_tcscpy(
+		pMYDEVMODE->m_szPrinterOutputName,
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
+	);
 
 	// プリンタから得られた、dmFieldsは変更しない
 	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
@@ -160,10 +171,10 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
 #ifdef _DEBUG
-	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE( " (入力/出力) デバイス名=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE( "物理出力メディア (出力ポート) =[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	MYTRACE( "デフォルトのプリンタか=[%d]\n", pDEVNAMES->wDefault );
+	MYTRACE( " (入力/出力) デバイス ドライバ=[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE( " (入力/出力) デバイス名=[%ts]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE( "物理出力メディア (出力ポート) =[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
 #endif
 
 	::GlobalUnlock( m_hDevMode );
@@ -194,17 +205,17 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 		// PRINTDLG構造体を初期化する（ダイアログは表示しないように）
 		// PrintDlg()でデフォルトプリンタのデバイス名などを取得する
 		//
-		memset ( &pd, 0, sizeof(PRINTDLG) );
-		pd.lStructSize	= sizeof(PRINTDLG);
+		memset ( &pd, 0, sizeof(pd) );
+		pd.lStructSize	= sizeof(pd);
 		pd.Flags		= PD_RETURNDEFAULT;
-		if( FALSE == ::PrintDlg( &pd ) ){
+		if( !::PrintDlg( &pd ) ){
 			pMYDEVMODE->m_bPrinterNotFound = TRUE;	/* プリンタがなかったフラグ */
 			return FALSE;
 		}
 		pMYDEVMODE->m_bPrinterNotFound = FALSE;	/* プリンタがなかったフラグ */
 
 		/* 初期化 */
-		memset( (void *)pMYDEVMODE, 0, sizeof(MYDEVMODE) );
+		memset( (void *)pMYDEVMODE, 0, sizeof(*pMYDEVMODE) );
 		m_hDevMode = pd.hDevMode;
 		m_hDevNames = pd.hDevNames;
 	}
@@ -213,9 +224,21 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pDEVMODE = (DEVMODE*)::GlobalLock( m_hDevMode );
 	pDEVNAMES = (DEVNAMES*)::GlobalLock( m_hDevNames );
 
-	strcpy( pMYDEVMODE->m_szPrinterDriverName, (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );	/* プリンタドライバ名 */
-	strcpy( pMYDEVMODE->m_szPrinterDeviceName, (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );	/* プリンタデバイス名 */
-	strcpy( pMYDEVMODE->m_szPrinterOutputName, (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );	/* プリンタポート名 */
+	// プリンタドライバ名
+	_tcscpy(
+		pMYDEVMODE->m_szPrinterDriverName,
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset
+	);
+	// プリンタデバイス名
+	_tcscpy(
+		pMYDEVMODE->m_szPrinterDeviceName,
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset
+	);
+	// プリンタポート名
+	_tcscpy(
+		pMYDEVMODE->m_szPrinterOutputName,
+		(const TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset
+	);
 
 	// プリンタから得られた、dmFieldsは変更しない
 	// プリンタがサポートしないbitをセットすると、プリンタドライバによっては、不安定な動きをする場合がある
@@ -229,10 +252,10 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
 #ifdef _DEBUG
-	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE( " (入力/出力) デバイス名=[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE( "物理出力メディア (出力ポート) =[%s]\n", (char*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	MYTRACE( "デフォルトのプリンタか=[%d]\n", pDEVNAMES->wDefault );
+	MYTRACE( " (入力/出力) デバイス ドライバ=[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE( " (入力/出力) デバイス名=[%ts]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE( "物理出力メディア (出力ポート) =[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
 #endif
 
 	::GlobalUnlock( m_hDevMode );
@@ -245,7 +268,7 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 */
 HDC CPrint::CreateDC(
 	MYDEVMODE*	pMYDEVMODE,
-	char*		pszErrMsg		/* エラーメッセージ格納場所 */
+	TCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	HDC			hdc = NULL;
@@ -260,13 +283,14 @@ HDC CPrint::CreateDC(
 	//
 	// OpenPrinter()で、デバイス名でプリンタハンドルを取得
 	//
-	if( FALSE == ::OpenPrinter(
+	if( !::OpenPrinter(
 		pMYDEVMODE->m_szPrinterDeviceName,		/* プリンタデバイス名 */
 		&hPrinter,					/* プリンタハンドルのポインタ */
-		(PRINTER_DEFAULTS*)NULL
+		NULL
 	) ){
 		wsprintf( pszErrMsg,
-			"OpenPrinter()に失敗。\nプリンタデバイス名=[%s]",
+			_T("OpenPrinter()に失敗。\n")
+			_T("プリンタデバイス名=[%ts]"),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
 		);
 		goto end_of_func;
@@ -291,9 +315,9 @@ HDC CPrint::CreateDC(
 	);
 	/* 指定デバイスに対するデバイス コンテキストを作成します。 */
 	hdc = ::CreateDC(
-		(LPCTSTR)pMYDEVMODE->m_szPrinterDriverName,	/* プリンタドライバ名 */
-		(LPCTSTR)pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
-		(LPCTSTR)pMYDEVMODE->m_szPrinterOutputName,	/* プリンタポート名 */
+		pMYDEVMODE->m_szPrinterDriverName,	/* プリンタドライバ名 */
+		pMYDEVMODE->m_szPrinterDeviceName,	/* プリンタデバイス名 */
+		pMYDEVMODE->m_szPrinterOutputName,	/* プリンタポート名 */
 		pDEVMODE
 	);
 
@@ -326,7 +350,7 @@ BOOL CPrint::GetPrintMetrics(
 	int*		pnPaperHeight,		/* 用紙印刷可能高さ */
 	int*		pnPaperOffsetLeft,	/* 用紙余白左端 */
 	int*		pnPaperOffsetTop,	/* 用紙余白上端 */
-	char*		pszErrMsg		/* エラーメッセージ格納場所 */
+	TCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -334,7 +358,7 @@ BOOL CPrint::GetPrintMetrics(
 	bRet = TRUE;
 
 	/* 現在の設定で、用紙の幅、高さを確定し、CreateDCに渡す */
-	if( FALSE == GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
+	if( !GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
 		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
 
@@ -348,7 +372,7 @@ BOOL CPrint::GetPrintMetrics(
 	}
 
 	/* CreateDC実行によって得られた実際のプリンタの用紙の幅、高さを取得 */
-	if( FALSE == GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
+	if( !GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
 		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
 
@@ -404,9 +428,6 @@ BOOL CPrint::GetPaperSize(
 		}else{
 			// 2001.12.21 hor マウスでクリックしたままリスト外に出るとここにくるけど、
 			//	異常ではないので FALSE を返すことにする
-			//	::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			//	"不明な用紙。処理できません。\nプログラムバグ。\n%s"
-			//	);
 			return FALSE;
 		}
 	}
@@ -441,10 +462,10 @@ BOOL CPrint::GetPaperSize(
 
 /* 印刷 ジョブ開始 */
 BOOL CPrint::PrintOpen(
-	char*		pszJobName,
+	TCHAR*		pszJobName,
 	MYDEVMODE*	pMYDEVMODE,
 	HDC*		phdc,
-	char*		pszErrMsg		/* エラーメッセージ格納場所 */
+	TCHAR*		pszErrMsg		/* エラーメッセージ格納場所 */
 )
 {
 	BOOL		bRet;
@@ -465,15 +486,17 @@ BOOL CPrint::PrintOpen(
 	//
 	//  印刷ジョブ開始
 	//
-	memset( (void *) &di, 0, sizeof( DOCINFO ) );
-	di.cbSize = sizeof(DOCINFO);
+	memset( (void *) &di, 0, sizeof( di ) );
+	di.cbSize = sizeof(di);
 	di.lpszDocName = pszJobName;
 	di.lpszOutput  = NULL;
 	di.lpszDatatype = NULL;
 	di.fwType = 0;
 	if( 0 >= ::StartDoc( hdc, &di ) ){
-		wsprintf( pszErrMsg,
-			"StartDoc()に失敗。\nプリンタデバイス名=[%s]",
+		wsprintf(
+			pszErrMsg,
+			_T("StartDoc()に失敗。\n")
+			_T("プリンタデバイス名=[%ts]"),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
 		);
 		bRet = FALSE;
@@ -518,19 +541,16 @@ void CPrint::PrintClose( HDC hdc )
 
 
 /* 用紙の名前を取得 */
-char* CPrint::GetPaperName( int nPaperSize, char* pszPaperName )
+TCHAR* CPrint::GetPaperName( int nPaperSize, TCHAR* pszPaperName )
 {
 	// 2006.08.14 Moca 用紙情報の統合
 	const PAPER_INFO* paperInfo = FindPaperInfo( nPaperSize );
 	if( NULL != paperInfo ){
-		strcpy( pszPaperName, paperInfo->m_pszName );
+		_tcscpy( pszPaperName, paperInfo->m_pszName );
 	}else{
-		strcpy( pszPaperName, "不明" );
+		_tcscpy( pszPaperName, _T("不明") );
 	}
 	return pszPaperName;
-
-
-
 }
 
 /*!
@@ -555,11 +575,11 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 	@date 2006.08.14 Moca  Initializeから名称変更。初期化単位をShareDate全てからPRINTSETTING単位に変更．
 		本関数からDLLSHAREDATAへアクセスする代わりに，CShareDataからPPRINTSETTING単位で逐一渡してもらう．
 */
-void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const char* settingName )
+void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settingName )
 {
-	strcpy( pPrintSetting.m_szPrintSettingName, settingName );	/* 印刷設定の名前 */
-	strcpy( pPrintSetting.m_szPrintFontFaceHan, "ＭＳ 明朝" );				/* 印刷フォント */
-	strcpy( pPrintSetting.m_szPrintFontFaceZen, "ＭＳ 明朝" );				/* 印刷フォント */
+	_tcscpy( pPrintSetting.m_szPrintSettingName, settingName );	/* 印刷設定の名前 */
+	_tcscpy( pPrintSetting.m_szPrintFontFaceHan, _T("ＭＳ 明朝") );				/* 印刷フォント */
+	_tcscpy( pPrintSetting.m_szPrintFontFaceZen, _T("ＭＳ 明朝") );				/* 印刷フォント */
 	pPrintSetting.m_nPrintFontWidth = 12;  								/* 印刷フォント幅(1/10mm単位) */
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
 	pPrintSetting.m_nPrintDansuu = 1;			/* 段組の段数 */
