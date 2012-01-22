@@ -262,8 +262,8 @@ const int pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List6→List_
 	F_TOHANEI				,	/* 全角英数→半角英数 */
 	F_TOHANKATA				,	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	// To Here 2007.01.24 maru 並び順変更
-	F_HANKATATOZENKAKUKATA	,	/* 半角カタカナ→全角カタカナ */
-	F_HANKATATOZENKAKUHIRA	,	/* 半角カタカナ→全角ひらがな */
+	F_HANKATATOZENKATA		,	/* 半角カタカナ→全角カタカナ */
+	F_HANKATATOZENHIRA		,	/* 半角カタカナ→全角ひらがな */
 	F_TABTOSPACE			,	/* TAB→空白 */
 	F_SPACETOTAB			,	/* 空白→TAB */  //#### Stonee, 2001/05/27
 	F_CODECNV_AUTO2SJIS		,	/* 自動判別→SJISコード変換 */
@@ -365,7 +365,7 @@ const int pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List10→List_M
 	F_EXECEXTMACRO	,	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
-	F_EXECCOMMAND_DIALOG	/* 外部コマンド実行 */
+	F_EXECMD_DIALOG		/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 };

@@ -250,8 +250,8 @@ enum FunctionAttribute {
 #define F_TOHANKATA				30817	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 #define F_TOZENKAKUKATA			30811	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 #define F_TOZENKAKUHIRA			30812	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-#define F_HANKATATOZENKAKUKATA	30813	/* 半角カタカナ→全角カタカナ */
-#define F_HANKATATOZENKAKUHIRA	30814	/* 半角カタカナ→全角ひらがな */
+#define F_HANKATATOZENKATA		30813	/* 半角カタカナ→全角カタカナ */
+#define F_HANKATATOZENHIRA		30814	/* 半角カタカナ→全角ひらがな */
 #define F_TOZENEI				30815	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka
 #define F_TOHANEI				30816	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
 #define F_TABTOSPACE			30830	/* TAB→空白 */
@@ -371,8 +371,8 @@ enum FunctionAttribute {
 #define F_EXECEXTMACRO		31254	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	#define F_EXECCMMAND		31270	/* 外部コマンド実行 */
-#define F_EXECCOMMAND_DIALOG	31270	/* 外部コマンド実行 */
-#define F_EXECCOMMAND		31271	/* 外部コマンド実行 */
+#define F_EXECMD_DIALOG		31270	/* 外部コマンド実行 */
+#define F_EXECMD			31271	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 //	Jul. 4, 2000 genta

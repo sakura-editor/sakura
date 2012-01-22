@@ -218,8 +218,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_TOHANEI,		 			"ToHanEi",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 全角英数→半角英数 */
 	{F_TOZENKAKUKATA,	 		"ToZenKata",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	{F_TOZENKAKUHIRA,	 		"ToZenHira",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	{F_HANKATATOZENKAKUKATA,	"HanKataToZenKata",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角カタカナ */
-	{F_HANKATATOZENKAKUHIRA,	"HanKataToZenHira",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角ひらがな */
+	{F_HANKATATOZENKATA,		"HanKataToZenKata",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角カタカナ */
+	{F_HANKATATOZENHIRA,		"HanKataToZenHira",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 半角カタカナ→全角ひらがな */
 	{F_TABTOSPACE,				"TABToSPACE",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* TAB→空白 */
 	{F_SPACETOTAB,				"SPACEToTAB",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 空白→TAB */ //#### Stonee, 2001/05/27
 	{F_CODECNV_AUTO2SJIS,		"AutoToSJIS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 自動判別→SJISコード変換 */
@@ -294,7 +294,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 
 
 	//	Oct. 9, 2001 genta 追加
-	{F_EXECCOMMAND,				"ExecCommand",		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部コマンド実行 */
+	{F_EXECMD,					"ExecCommand",		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部コマンド実行 */
 
 	/* カスタムメニュー */
 	{F_MENU_RBUTTON,			"RMenu",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 右クリックメニュー */
@@ -945,8 +945,8 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_TOHANEI			 		:/* 全角英数→半角英数 */
 	case F_TOZENKAKUKATA	 		:/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA	 		:/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA		:/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA		:/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA			:/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA			:/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE				:/* TAB→空白 */
 	case F_SPACETOTAB				:/* 空白→TAB */  //#### Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS		:/* 自動判別→SJISコード変換 */
@@ -1023,7 +1023,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_TMPWRAPWINDOW			:// 右端で折り返す（一時設定）		// 2008.05.30 nasukoji
 	case F_TEXTWRAPMETHOD			:// テキストの折り返し方法			// 2008.05.30 nasukoji
 
-	case F_EXECCOMMAND				:/* 外部コマンド実行 */	//@@@2002.2.2 YAZAKI 追加
+	case F_EXECMD					:/* 外部コマンド実行 */	//@@@2002.2.2 YAZAKI 追加
 
 	/* カスタムメニュー */
 //	case F_MENU_RBUTTON				:/* 右クリックメニュー */

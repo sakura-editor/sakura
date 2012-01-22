@@ -2945,8 +2945,8 @@ BEGIN
     F_TOHANKAKU             "全角→半角"
     F_TOZENKAKUKATA         "半角＋全ひら→全角・カタカナ"
     F_TOZENKAKUHIRA         "半角＋全カタ→全角・ひらがな"
-    F_HANKATATOZENKAKUKATA  "半角カタカナ→全角カタカナ"
-    F_HANKATATOZENKAKUHIRA  "半角カタカナ→全角ひらがな"
+    F_HANKATATOZENKATA      "半角カタカナ→全角カタカナ"
+    F_HANKATATOZENHIRA      "半角カタカナ→全角ひらがな"
     F_TOZENEI               "半角英数→全角英数"
 END
 
@@ -3088,8 +3088,8 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_EXECCOMMAND_DIALOG    "外部コマンド実行"
-    F_EXECCOMMAND           "外部コマンド実行"
+    F_EXECMD_DIALOG         "外部コマンド実行"
+    F_EXECMD                "外部コマンド実行"
 END
 
 STRINGTABLE DISCARDABLE 

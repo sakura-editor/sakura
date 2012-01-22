@@ -2090,8 +2090,8 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_TOHANKATA:				return HLP000258;	//全角カタカナ→半角カタカナ
 	case F_TOZENKAKUKATA:			return HLP000050;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			return HLP000051;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA:	return HLP000123;	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA:	return HLP000124;	/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA:		return HLP000123;	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA:		return HLP000124;	/* 半角カタカナ→全角ひらがな */
 	case F_TOZENEI:					return HLP000200;	/* 半角英数→全角英数 */			//July. 30, 2001 Misaka //Stonee, 2001/09/26 番号修正
 	case F_TOHANEI:					return HLP000215;	/* 全角英数→半角英数 */			//@@@ 2002.2.11 YAZAKI
 	case F_TABTOSPACE:				return HLP000182;	/* TAB→空白 */
@@ -2202,7 +2202,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_EXECEXTMACRO:	return HLP000332;	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	case F_EXECCMMAND:		return 103; /* 外部コマンド実行 */
-	case F_EXECCOMMAND_DIALOG:	return HLP000103; /* 外部コマンド実行 */
+	case F_EXECMD_DIALOG:	return HLP000103; /* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 

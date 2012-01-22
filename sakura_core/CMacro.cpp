@@ -64,7 +64,7 @@ void CMacro::AddLParam( LPARAM lParam, CEditView* pcEditView )
 	/*	文字列パラメータを追加 */
 	case F_INSTEXT:
 	case F_FILEOPEN:
-	case F_EXECCOMMAND:
+	case F_EXECMD:
 	case F_EXECEXTMACRO:
 		{
 			AddParam( (const char *)lParam );	//	lParamを追加。
@@ -276,7 +276,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			wsprintf( szLine, "S_%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
-		case F_EXECCOMMAND:
+		case F_EXECMD:
 			//	引数ひとつ分だけ保存
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
@@ -464,7 +464,7 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 		//		0x0020    (編集中のファイルが旧ファイル)
 		//		0x0040    (DIFF差分がないときにメッセージ表示)
 		/* NO BREAK */
-	case F_EXECCOMMAND:
+	case F_EXECMD:
 		//	Argument[0]を実行。オプションはArgument[1]に。
 		//	Argument[1]:
 		//		次の数値の和。

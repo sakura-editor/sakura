@@ -6422,8 +6422,8 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 	case F_TOHANEI: pCMemory->ToHankaku( 0x4 );						/* 2== 英数専用				*/ break;	/* 全角英数→半角英数 */			//July. 30, 2001 Misaka
 	case F_TOZENKAKUKATA: pCMemory->ToZenkaku( 0, 0 );			/* 1== ひらがな 0==カタカナ */ break;	/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA: pCMemory->ToZenkaku( 1, 0 );			/* 1== ひらがな 0==カタカナ */ break;	/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA: pCMemory->ToZenkaku( 0, 1 );	/* 1== ひらがな 0==カタカナ */ break;	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA: pCMemory->ToZenkaku( 1, 1 );	/* 1== ひらがな 0==カタカナ */ break;	/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA: pCMemory->ToZenkaku( 0, 1 );		/* 1== ひらがな 0==カタカナ */ break;	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA: pCMemory->ToZenkaku( 1, 1 );		/* 1== ひらがな 0==カタカナ */ break;	/* 半角カタカナ→全角ひらがな */
 	case F_CODECNV_EMAIL:		pCMemory->JIStoSJIS(); break;		/* E-Mail(JIS→SJIS)コード変換 */
 	case F_CODECNV_EUC2SJIS:	pCMemory->EUCToSJIS(); break;		/* EUC→SJISコード変換 */
 	case F_CODECNV_UNICODE2SJIS:pCMemory->UnicodeToSJIS(); break;	/* Unicode→SJISコード変換 */

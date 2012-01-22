@@ -453,8 +453,8 @@ BOOL CEditView::HandleCommand(
 	case F_TOHANEI:					Command_TOHANEI();break;				/* 半角→全角 */
 	case F_TOZENKAKUKATA:			Command_TOZENKAKUKATA();break;			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			Command_TOZENKAKUHIRA();break;			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKAKUKATA:	Command_HANKATATOZENKAKUKATA();break;	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENKAKUHIRA:	Command_HANKATATOZENKAKUHIRA();break;	/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA:		Command_HANKATATOZENKAKUKATA();break;	/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA:		Command_HANKATATOZENKAKUHIRA();break;	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				Command_TABTOSPACE();break;				/* TAB→空白 */
 	case F_SPACETOTAB:				Command_SPACETOTAB();break;				/* 空白→TAB */  //#### Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		Command_CODECNV_AUTO2SJIS();break;		/* 自動判別→SJISコード変換 */
@@ -574,7 +574,7 @@ BOOL CEditView::HandleCommand(
 		break;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
-	case F_EXECCOMMAND_DIALOG:
+	case F_EXECMD_DIALOG:
 		/* 再帰処理対策 */// 2001/06/23 N.Nakatani
 		if( NULL != m_pcOpeBlk ){	/* 操作ブロック */
 			delete m_pcOpeBlk;
@@ -584,7 +584,7 @@ BOOL CEditView::HandleCommand(
 		Command_EXECCOMMAND_DIALOG();	/* 外部コマンド実行 */	//	引数つかってないみたいなので
 		break;
 	//	To Here Sept. 20, 2000
-	case F_EXECCOMMAND:
+	case F_EXECMD:
 		//Command_EXECCOMMAND((const char*)lparam1);
 		Command_EXECCOMMAND((const char*)lparam1, (int)lparam2);	//	2006.12.03 maru 引数の拡張のため
 		break;
@@ -4425,7 +4425,7 @@ void CEditView::Command_TOZENKAKUHIRA( void )
 void CEditView::Command_HANKATATOZENKAKUKATA( void )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
-	ConvSelectedArea( F_HANKATATOZENKAKUKATA );
+	ConvSelectedArea( F_HANKATATOZENKATA );
 	return;
 }
 
@@ -4436,7 +4436,7 @@ void CEditView::Command_HANKATATOZENKAKUKATA( void )
 void CEditView::Command_HANKATATOZENKAKUHIRA( void )
 {
 	/* 選択エリアのテキストを指定方法で変換 */
-	ConvSelectedArea( F_HANKATATOZENKAKUHIRA );
+	ConvSelectedArea( F_HANKATATOZENHIRA );
 	return;
 }
 
@@ -4461,8 +4461,8 @@ void CEditView::Command_SPACETOTAB( void )
 
 
 
-//#define F_HANKATATOZENKAKUKATA	30557	/* 半角カタカナ→全角カタカナ */
-//#define F_HANKATATOZENKAKUHIRA	30558	/* 半角カタカナ→全角ひらがな */
+//#define F_HANKATATOZENKATA	30557	/* 半角カタカナ→全角カタカナ */
+//#define F_HANKATATOZENHIRA	30558	/* 半角カタカナ→全角ひらがな */
 
 
 
@@ -9429,7 +9429,7 @@ void CEditView::Command_INS_TIME( void )
 /*! 外部コマンド実行ダイアログ表示
 	@date 2002.02.02 YAZAKI.
 	@date 2007.01.02 maru	引数は使っていないようなのでvoidに変更．
-							HandleCommand(F_EXECCOMMAND,,,,,)実行の引数変更
+							HandleCommand(F_EXECMD,,,,,)実行の引数変更
 */
 void CEditView::Command_EXECCOMMAND_DIALOG( void )
 {
@@ -9446,8 +9446,8 @@ void CEditView::Command_EXECCOMMAND_DIALOG( void )
 	AddToCmdArr( cDlgExec.m_szCommand );
 	cmd_string = cDlgExec.m_szCommand;
 
-	//HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
-	HandleCommand( F_EXECCOMMAND, TRUE, (LPARAM)cmd_string, (LPARAM)(m_pShareData->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
+	//HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
+	HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, (LPARAM)(m_pShareData->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
 }
 
 //外部コマンド実行

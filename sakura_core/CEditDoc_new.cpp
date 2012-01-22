@@ -507,8 +507,8 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_TOHANEI:
 	case F_TOZENKAKUKATA:
 	case F_TOZENKAKUHIRA:
-	case F_HANKATATOZENKAKUKATA:
-	case F_HANKATATOZENKAKUHIRA:
+	case F_HANKATATOZENKATA:
+	case F_HANKATATOZENHIRA:
 	case F_TABTOSPACE:
 	case F_SPACETOTAB:  //#### Stonee, 2001/05/27
 	case F_HOKAN:
