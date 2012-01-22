@@ -40,11 +40,6 @@ class CMRU;
 #include "CRecent.h"
 struct FileInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 
-/*	MRUリストに関係するmaxdata	*/
-enum MRU_maxdata{
-	MAX_MRU						=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
-};
-
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRU{
 public:

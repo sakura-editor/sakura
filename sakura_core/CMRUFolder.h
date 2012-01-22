@@ -38,9 +38,6 @@ class CMRUFolder;
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include "CRecent.h"
 
-enum MRUFolder_maxdata{
-	MAX_OPENFOLDER				=  36,	//Sept. 27, 2000 JEPRO 0-9, A-Z で36個になるのでそれに合わせて30→36に変更
-};
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRUFolder {
