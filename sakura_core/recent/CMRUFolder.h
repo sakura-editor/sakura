@@ -37,7 +37,7 @@ class CMRUFolder;
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include "recent/CRecent.h"
-
+class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRUFolder {
@@ -47,7 +47,7 @@ public:
 	~CMRUFolder();
 
 	//	メニューを取得する
-	HMENU CreateMenu( class CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
 	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
 	BOOL DestroyMenu( HMENU hMenu ) const;
 	
@@ -62,7 +62,6 @@ public:
 	const TCHAR* GetPath(int num) const;
 
 protected:
-
 	//	共有メモリアクセス用。
 	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
 
