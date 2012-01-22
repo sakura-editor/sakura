@@ -3113,7 +3113,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOp
 
 	nSaveCharCode = nCharCode;
 	if(nSaveCharCode == CODE_AUTODETECT) {
-		FileInfo		fi;
+		EditInfo		fi;
 		CMRU			cMRU;
 		if ( cMRU.GetFileInfo( filename, &fi ) ){
 				nSaveCharCode = fi.m_nCharCode;

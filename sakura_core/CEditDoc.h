@@ -47,7 +47,7 @@
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka
 class CEditWnd; // Sep. 10, 2002 genta
-struct FileInfo; // 20050705 aroka
+struct EditInfo; // 20050705 aroka
 class CFuncInfoArr;
 struct oneRule; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 
@@ -77,7 +77,7 @@ public:
 	BOOL IsEnableUndo( void );		/* Undo(元に戻す)可能な状態か？ */
 	BOOL IsEnableRedo( void );		/* Redo(やり直し)可能な状態か？ */
 	BOOL IsEnablePaste( void );		/* クリップボードから貼り付け可能か？ */
-	void SetFileInfo( FileInfo* );	/* 編集ファイル情報を格納 */
+	void SetFileInfo( EditInfo* );	/* 編集ファイル情報を格納 */
 
 	/* いろいろ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージディスパッチャ */

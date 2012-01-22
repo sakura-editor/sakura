@@ -213,7 +213,7 @@ void CDlgDiff::SetData( void )
 		HWND		hwndList;
 		int			nRowNum;
 		EditNode	*pEditNode;
-		FileInfo	*pFileInfo;
+		EditInfo	*pFileInfo;
 		int			i;
 		int			nItem;
 		char		szName[_MAX_PATH];
@@ -231,7 +231,7 @@ void CDlgDiff::SetData( void )
 			{
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( pEditNode[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-				pFileInfo = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+				pFileInfo = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 				/* 自分ならスキップ */
 				if ( pEditNode[i].m_hWnd == pCEditDoc->m_hwndParent )
@@ -353,7 +353,7 @@ int CDlgDiff::GetData( void )
 	{
 		HWND		hwndList;
 		int			nItem;
-		FileInfo	*pFileInfo;
+		EditInfo	*pFileInfo;
 
 		/* リストから相手のウインドウハンドルを取得 */
 		hwndList = :: GetDlgItem( m_hWnd, IDC_LIST_DIFF_FILES );
@@ -364,7 +364,7 @@ int CDlgDiff::GetData( void )
 
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
-			pFileInfo = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			pFileInfo = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 			strcpy( m_szFile2, pFileInfo->m_szPath );
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;

@@ -38,7 +38,7 @@ class CMRU;
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include "CRecent.h"
-struct FileInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
+struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRU{
@@ -57,9 +57,9 @@ public:
 	//	アクセス関数
 	int Length(void);	//	アイテムの数。
 	void ClearAll(void);//	アイテムを削除～。
-	BOOL GetFileInfo( int num, FileInfo* pfi );				//	番号で指定したFileInfo（情報をまるごと）
-	BOOL GetFileInfo( const char* pszPath, FileInfo* pfi );	//	ファイル名で指定したFileInfo（情報をまるごと）
-	void Add( FileInfo* pFileInfo );		//	*pFileInfoを追加する。
+	BOOL GetFileInfo( int num, EditInfo* pfi );				//	番号で指定したEditInfo（情報をまるごと）
+	BOOL GetFileInfo( const char* pszPath, EditInfo* pfi );	//	ファイル名で指定したEditInfo（情報をまるごと）
+	void Add( EditInfo* pFileInfo );		//	*pFileInfoを追加する。
 
 protected:
 	//	共有メモリアクセス用。

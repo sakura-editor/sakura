@@ -299,7 +299,7 @@ HWND CEditWnd::Create(
 	}
 
 	/* ウィンドウサイズ指定 */
-	FileInfo fi;
+	EditInfo fi;
 	CCommandLine::Instance()->GetFileInfo(fi);
 	if( fi.m_nWindowSizeX >= 0 ){
 		nWinCX = fi.m_nWindowSizeX;
@@ -1144,7 +1144,7 @@ LRESULT CEditWnd::DispatchEvent(
 	LPNMHDR				pnmh;
 	LPTOOLTIPTEXT		lptip;
 	int					nPane;
-	FileInfo*			pfi;
+	EditInfo*			pfi;
 	int					nCaretPosX;
 	int					nCaretPosY;
 	POINT*				ppoCaret;
@@ -1658,7 +1658,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case MYWM_GETFILEINFO:
 		/* トレイからエディタへの編集ファイル名要求通知 */
-		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+		pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 		/* 編集ファイル情報を格納 */
 		m_cEditDoc.SetFileInfo( pfi );
@@ -2118,7 +2118,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				/* 指定ファイルが開かれているか調べる */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 				CMRU cMRU;
-				FileInfo checkFileInfo;
+				EditInfo checkFileInfo;
 				cMRU.GetFileInfo(wID - IDM_SELMRU, &checkFileInfo);
 				//	Oct.  9, 2004 genta 共通関数化
 				m_cEditDoc.OpenFile( checkFileInfo.m_szPath, checkFileInfo.m_nCharCode);
@@ -3027,7 +3027,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 		char		szFile[_MAX_PATH + 1];
 		char		szWork[_MAX_PATH + 1];
 		BOOL		bOpened;
-		FileInfo*	pfi;
+		EditInfo*	pfi;
 		HWND		hWndOwner;
 
 		::DragQueryPoint( hDrop, &pt );
@@ -3063,7 +3063,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				/* 指定ファイルが開かれているか調べる */
 				if( CShareData::getInstance()->IsPathOpened( szFile, &hWndOwner ) ){
 					::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-					pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+					pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 					/* アクティブにする */
 					ActivateFrameWindow( hWndOwner );
 					/* MRUリストへの登録 */
@@ -5091,7 +5091,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 	int			i;
 	char		szMemu[280];
 //>	EditNode*	pEditNodeArr;
-	FileInfo*	pfi;
+	EditInfo*	pfi;
 
 //>	int	nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){
@@ -5103,7 +5103,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
 ////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
 			char c = ((1 + i%35) <= 9)?('1' + i%35):('A' + i%35 - 9);	// 2009.06.02 ryoji アクセスキーを 1-9,A-Z の範囲で再使用
-			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 			if( pfi->m_bIsGrep ){
 				/* データを指定バイト数以内に切り詰める */
 				CMemory		cmemDes;

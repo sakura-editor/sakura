@@ -6221,7 +6221,7 @@ bool CEditView::TagJumpSub( const char *pszFileName, int nJumpToLine, int nJumpT
 	else
 	{
 		/* êVÇµÇ≠äJÇ≠ */
-		FileInfo	inf;
+		EditInfo	inf;
 		bool		bSuccess;
 
 		strcpy( inf.m_szPath, szJumpToFile );

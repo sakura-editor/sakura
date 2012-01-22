@@ -58,7 +58,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	char	szMemu[300];			//	メニューキャプション
 	int		i;
 	bool	bFavorite;
-	FileInfo	*p;
+	EditInfo	*p;
 
 	CShareData::getInstance()->TransformFileName_MakeCache();
 
@@ -71,7 +71,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		
 		/* MRUリストの中にある開かれていないファイル */
 
-		p = (FileInfo*)m_cRecent.GetItem( i );
+		p = (EditInfo*)m_cRecent.GetItem( i );
 		
 		CShareData::getInstance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
 		//	&を&&に置換。
@@ -147,11 +147,11 @@ void CMRU::ClearAll(void)
 	@retval TRUE データが格納された
 	@retval FALSE 正しくない番号が指定された．データは格納されなかった．
 */
-BOOL CMRU::GetFileInfo( int num, FileInfo* pfi )
+BOOL CMRU::GetFileInfo( int num, EditInfo* pfi )
 {
-	FileInfo	*p;
+	EditInfo	*p;
 
-	p = (FileInfo*)m_cRecent.GetItem( num );
+	p = (EditInfo*)m_cRecent.GetItem( num );
 	if( NULL == p ) return FALSE;
 
 	*pfi = *p;
@@ -170,11 +170,11 @@ BOOL CMRU::GetFileInfo( int num, FileInfo* pfi )
 
 	@date 2001.12.26 CShareData::IsExistInMRUListから移動した。（YAZAKI）
 */
-BOOL CMRU::GetFileInfo( const char* pszPath, FileInfo* pfi )
+BOOL CMRU::GetFileInfo( const char* pszPath, EditInfo* pfi )
 {
-	FileInfo	*p;
+	EditInfo	*p;
 
-	p = (FileInfo*)m_cRecent.GetItem( m_cRecent.FindItem( pszPath ) );
+	p = (EditInfo*)m_cRecent.GetItem( m_cRecent.FindItem( pszPath ) );
 	if( NULL == p ) return FALSE;
 
 	*pfi = *p;
@@ -191,7 +191,7 @@ BOOL CMRU::GetFileInfo( const char* pszPath, FileInfo* pfi )
 	@date 2001.03.29 MIK リムーバブルディスク上のファイルを登録しないようにした。
 	@date 2001.12.26 YAZAKI CShareData::AddMRUListから移動
 */
-void CMRU::Add( FileInfo* pFileInfo )
+void CMRU::Add( EditInfo* pFileInfo )
 {
 	//	ファイル名が無ければ無視
 	if( NULL == pFileInfo

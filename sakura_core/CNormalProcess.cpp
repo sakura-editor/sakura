@@ -68,7 +68,7 @@ bool CNormalProcess::Initialize()
 	bool			bGrepDlg;
 	int				nGroup;	// 2007.06.26 ryoji
 	GrepInfo		gi;
-	FileInfo		fi;
+	EditInfo		fi;
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */

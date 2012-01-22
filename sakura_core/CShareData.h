@@ -104,7 +104,7 @@ enum maxdata{
 	@date 2002.03.07 genta m_szDocType追加
 	@date 2003.01.26 aroka m_nWindowSizeX/Y m_nWindowOriginX/Y追加
 */
-struct FileInfo {
+struct EditInfo {
 	int		m_nViewTopLine;			/*!< 表示域の一番上の行(0開始) */
 	int		m_nViewLeftCol;			/*!< 表示域の一番左の桁(0開始) */
 	int		m_nX;					/*!< カーソル  物理位置(行頭からのバイト数) */
@@ -124,7 +124,7 @@ struct FileInfo {
 	
 	// Mar. 7, 2002 genta
 	// Constructor 確実に初期化するため
-	FileInfo() : m_nViewTopLine( -1 ), m_nViewLeftCol( -1 ),
+	EditInfo() : m_nViewTopLine( -1 ), m_nViewLeftCol( -1 ),
 		m_nX( -1 ), m_nY( -1 ), m_bIsModified( 0 ),
 		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE ), m_bIsDebug( FALSE ),
 		m_nWindowSizeX( -1 ), m_nWindowSizeY( -1 ),
@@ -643,7 +643,7 @@ struct DLLSHAREDATA {
 	unsigned int		m_vStructureVersion;
 	/* 共通作業域(保存しない) */
 	char				m_szWork[32000];
-	FileInfo			m_FileInfo_MYWM_GETFILEINFO;
+	EditInfo			m_FileInfo_MYWM_GETFILEINFO;
 
 	DWORD				m_dwProductVersionMS;
 	DWORD				m_dwProductVersionLS;
@@ -663,7 +663,7 @@ struct DLLSHAREDATA {
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;
-	FileInfo			m_fiMRUArr[MAX_MRU];
+	EditInfo			m_fiMRUArr[MAX_MRU];
 	bool				m_bMRUArrFavorite[MAX_MRU];	//お気に入り	//@@@ 2003.04.08 MIK
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUFolderを経由してください。

@@ -120,7 +120,7 @@ void CDlgCompare::SetData( void )
 	HWND			hwndList;
 	int				nRowNum;
 	EditNode*		pEditNodeArr;
-	FileInfo*		pfi;
+	EditInfo*		pfi;
 	int				i;
 	char			szMenu[512];
 	int				nItem;
@@ -137,7 +137,7 @@ void CDlgCompare::SetData( void )
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
 //			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
@@ -211,14 +211,14 @@ int CDlgCompare::GetData( void )
 	HWND			hwndList;
 	int				nItem;
 //	HWND			hwndCompareFile;
-	FileInfo*		pfi;
+	EditInfo*		pfi;
 	hwndList = :: GetDlgItem( m_hWnd, IDC_LIST_FILES );
 	nItem = ::SendMessage( hwndList, LB_GETCURSEL, 0, 0 );
 	*m_phwndCompareWnd = (HWND)::SendMessage( hwndList, LB_GETITEMDATA, nItem, 0 );
 	/* トレイからエディタへの編集ファイル名要求通知 */
 	::SendMessage( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
-//	pfi = (FileInfo*)m_pShareData->m_szWork;
-	pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+//	pfi = (EditInfo*)m_pShareData->m_szWork;
+	pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 	strcpy( m_pszComparePath, pfi->m_szPath );
 

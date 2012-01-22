@@ -58,7 +58,7 @@ struct ARRHEAD {
 	
 	Version 26:
 	MacroRecに、m_bReloadWhenExecuteを追加 2002/03/11 YAZAKI
-	FileInfoに、m_szDocType追加 Mar. 7, 2002 genta
+	EditInfoに、m_szDocType追加 Mar. 7, 2002 genta
 	
 	Version 27:
 	Typesに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
@@ -1273,7 +1273,7 @@ BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit,
 BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 {
 	int			i;
-	FileInfo*	pfi;
+	EditInfo*	pfi;
 	*phwndOwner = NULL;
 
 	/* 現在の編集ウィンドウの数を調べる */
@@ -1285,7 +1285,7 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
-			pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+			pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 			/* 同一パスのファイルが既に開かれているか */
 			if( 0 == _stricmp( pfi->m_szPath, pszPath ) ){
 				*phwndOwner = m_pShareData->m_pEditArr[i].m_hWnd;
@@ -1317,10 +1317,10 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharCode ){
 
 	if( IsPathOpened( pszPath, phwndOwner ) ){
-		FileInfo*		pfi;
+		EditInfo*		pfi;
 		CMRU			cMRU;
 		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
-		pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+		pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 
 		if(nCharCode != CODE_AUTODETECT){
 			char*	pszCodeNameCur = NULL;

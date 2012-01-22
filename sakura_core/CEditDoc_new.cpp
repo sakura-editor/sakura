@@ -1244,7 +1244,7 @@ void CEditDoc::SetDocumentIcon(void)
 */
 void CEditDoc::AddToMRU(void)
 {
-	FileInfo	fi;
+	EditInfo	fi;
 	CMRU		cMRU;
 
 	SetFileInfo( &fi );

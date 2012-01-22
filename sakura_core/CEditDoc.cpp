@@ -415,8 +415,8 @@ BOOL CEditDoc::FileRead(
 	int				i;
 	HWND			hWndOwner;
 	BOOL			bRet;
-	FileInfo		fi;
-//	FileInfo*		pfi;
+	EditInfo		fi;
+//	EditInfo*		pfi;
 	HWND			hwndProgress;
 	CWaitCursor		cWaitCursor( m_hWnd );
 	BOOL			bIsExistInMRU;
@@ -844,7 +844,7 @@ end_of_func:;
 BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 {
 	BOOL		bRet;
-	FileInfo	fi;
+	EditInfo	fi;
 	HWND		hwndProgress;
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	CMRU		cMRU;
@@ -3901,7 +3901,7 @@ void CEditDoc::OnChangeSetting( void )
 
 
 /* 編集ファイル情報を格納 */
-void CEditDoc::SetFileInfo( FileInfo* pfi )
+void CEditDoc::SetFileInfo( EditInfo* pfi )
 {
 	int		nX;
 	int		nY;

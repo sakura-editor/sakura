@@ -605,9 +605,9 @@ bool CRecent::EasyCreate( int nRecentType )
 			m_pShareData->m_bMRUArrFavorite,
 			MAX_MRU,
 			&(m_pShareData->m_Common.m_nMRUArrNum_MAX),
-			sizeof( FileInfo ),
-			(int)(&((FileInfo*)0)->m_szPath[0]),
-			sizeof( ((FileInfo*)0)->m_szPath ),	//_MAX_PATH
+			sizeof( EditInfo ),
+			(int)(&((EditInfo*)0)->m_szPath[0]),
+			sizeof( ((EditInfo*)0)->m_szPath ),	//_MAX_PATH
 			RECENT_CMP_STRICMP
 		);
 

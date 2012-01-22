@@ -974,7 +974,7 @@ LRESULT CEditApp::DispatchEvent(
 						int				nCharCode;
 						BOOL			bReadOnly;
 						HWND			hWndOwner;
-//						FileInfo*		pfi;
+//						EditInfo*		pfi;
 //						int				i;
 //						int				j;
 						char**			ppszMRU;
@@ -1079,7 +1079,7 @@ LRESULT CEditApp::DispatchEvent(
 						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 						CMRU cMRU;
-						FileInfo openFileInfo;
+						EditInfo openFileInfo;
 						cMRU.GetFileInfo(nId - IDM_SELMRU, &openFileInfo);
 
 						if( m_pShareData->m_Common.GetRestoreCurPosition() ){
@@ -1104,7 +1104,7 @@ LRESULT CEditApp::DispatchEvent(
 							int				nCharCode;
 							BOOL			bReadOnly;
 							HWND			hWndOwner;
-//							FileInfo*		pfi;
+//							EditInfo*		pfi;
 //							int				i;
 //							int				j;
 							char**			ppszMRU;
@@ -1462,7 +1462,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 
 	@date Oct. 24, 2000 genta create.
 */
-bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, const FileInfo* pfi, BOOL bReadOnly, bool sync )
+bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, const EditInfo* pfi, BOOL bReadOnly, bool sync )
 {
 	char			pszCmdLine[1024];
 	DLLSHAREDATA*	pShareData;
@@ -1598,7 +1598,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	RECT		rc;
 //	HWND		hwndDummy;
 	int			nMenuNum;
-	FileInfo*	pfi;
+	EditInfo*	pfi;
 
 	//本当はセマフォにしないとだめ
 	if( m_bUseTrayMenu ) return -1;
@@ -1664,8 +1664,8 @@ int	CEditApp::CreatePopUpMenu_L( void )
 			if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-//				pfi = (FileInfo*)m_pShareData->m_szWork;
-				pfi = (FileInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+//				pfi = (EditInfo*)m_pShareData->m_szWork;
+				pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
 					if( pfi->m_bIsGrep ){
 						/* データを指定バイト数以内に切り詰める */
 						CMemory		cmemDes;

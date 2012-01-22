@@ -245,7 +245,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 	const char* pszSecName = "MRU";
 	int			i;
 	int			nSize;
-	FileInfo*	pfiWork;
+	EditInfo*	pfiWork;
 	char		szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, "_MRU_Counts", m_pShareData->m_nMRUArrNum );
@@ -272,7 +272,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 	}
 	//@@@ 2001.12.26 YAZAKI 残りのm_fiMRUArrを初期化。
 	if ( cProfile.IsReadingMode() ){
-		FileInfo	fiInit;
+		EditInfo	fiInit;
 		//	残りをfiInitで初期化しておく。
 		fiInit.m_nCharCode = 0;
 		fiInit.m_nViewLeftCol = 0;
