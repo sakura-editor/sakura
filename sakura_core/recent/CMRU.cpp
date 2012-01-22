@@ -194,7 +194,7 @@ bool CMRU::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 
 /*!	@brief MRUリストへの登録
 
-	@param pFileInfo [in] 追加するファイルの情報
+	@param pEditInfo [in] 追加するファイルの情報
 
 	該当ファイルがリムーバブルディスク上にある場合にはMRU Listへの登録は行わない。
 
