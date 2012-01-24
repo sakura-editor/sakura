@@ -3115,7 +3115,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOp
 	if(nSaveCharCode == CODE_AUTODETECT) {
 		EditInfo		fi;
 		CMRU			cMRU;
-		if ( cMRU.GetFileInfo( filename, &fi ) ){
+		if ( cMRU.GetEditInfo( filename, &fi ) ){
 				nSaveCharCode = fi.m_nCharCode;
 		} else {
 			nSaveCharCode = m_pcEditDoc->m_nCharCode;

@@ -1080,7 +1080,7 @@ LRESULT CEditApp::DispatchEvent(
 //@@@ 2001.12.26 YAZAKI MRUƒŠƒXƒg‚ÍACMRU‚ÉˆË—Š‚·‚é
 						CMRU cMRU;
 						EditInfo openFileInfo;
-						cMRU.GetFileInfo(nId - IDM_SELMRU, &openFileInfo);
+						cMRU.GetEditInfo(nId - IDM_SELMRU, &openFileInfo);
 
 						if( m_pShareData->m_Common.GetRestoreCurPosition() ){
 							CEditApp::OpenNewEditor2( m_hInstance, m_hWnd, &openFileInfo, FALSE );

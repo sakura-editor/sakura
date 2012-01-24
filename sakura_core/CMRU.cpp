@@ -99,7 +99,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 	return hMenuPopUp;
 }
 
-BOOL CMRU::DestroyMenu( HMENU hMenuPopUp )
+BOOL CMRU::DestroyMenu( HMENU hMenuPopUp ) const
 {
 	return ::DestroyMenu( hMenuPopUp );
 }
@@ -147,16 +147,14 @@ void CMRU::ClearAll(void)
 	@retval TRUE データが格納された
 	@retval FALSE 正しくない番号が指定された．データは格納されなかった．
 */
-BOOL CMRU::GetFileInfo( int num, EditInfo* pfi )
+bool CMRU::GetEditInfo( int num, EditInfo* pfi )
 {
-	EditInfo	*p;
-
-	p = (EditInfo*)m_cRecent.GetItem( num );
-	if( NULL == p ) return FALSE;
+	const EditInfo* p = (EditInfo*)m_cRecent.GetItem( num );
+	if( NULL == p ) return false;
 
 	*pfi = *p;
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -170,41 +168,37 @@ BOOL CMRU::GetFileInfo( int num, EditInfo* pfi )
 
 	@date 2001.12.26 CShareData::IsExistInMRUListから移動した。（YAZAKI）
 */
-BOOL CMRU::GetFileInfo( const char* pszPath, EditInfo* pfi )
+bool CMRU::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi )
 {
-	EditInfo	*p;
-
-	p = (EditInfo*)m_cRecent.GetItem( m_cRecent.FindItem( pszPath ) );
-	if( NULL == p ) return FALSE;
+	const EditInfo* p = (EditInfo*)m_cRecent.GetItem( m_cRecent.FindItem( pszPath ) );
+	if( NULL == p ) return false;
 
 	*pfi = *p;
 
-	return TRUE;
+	return true;
 }
 
 /*!	@brief MRUリストへの登録
 
-	@param pFileInfo [in] 追加するファイルの情報
+	@param pEditInfo [in] 追加するファイルの情報
 
 	該当ファイルがリムーバブルディスク上にある場合にはMRU Listへの登録は行わない。
 
 	@date 2001.03.29 MIK リムーバブルディスク上のファイルを登録しないようにした。
 	@date 2001.12.26 YAZAKI CShareData::AddMRUListから移動
 */
-void CMRU::Add( EditInfo* pFileInfo )
+void CMRU::Add( EditInfo* pEditInfo )
 {
 	//	ファイル名が無ければ無視
-	if( NULL == pFileInfo
-	 || 0 == strlen( pFileInfo->m_szPath ) )
-	{
+	if( NULL == pEditInfo || 0 == _tcslen( pEditInfo->m_szPath ) ){
 		return;
 	}
 
-	char	szDrive[_MAX_DRIVE];
-	char	szDir[_MAX_DIR];
-	char	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダ
+	TCHAR	szDrive[_MAX_DRIVE];
+	TCHAR	szDir[_MAX_DIR];
+	TCHAR	szFolder[_MAX_PATH + 1];	//	ドライブ＋フォルダ
 
-	_splitpath( pFileInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
+	_tsplitpath( pEditInfo->m_szPath, szDrive, szDir, NULL, NULL );	//	ドライブとフォルダを取り出す。
 
 	//	Jan.  10, 2006 genta USBメモリはRemovable mediaと認識されるようなので，
 	//	一応無効化する．
@@ -214,50 +208,14 @@ void CMRU::Add( EditInfo* pFileInfo )
 	//}
 
 	//	szFolder作成
-	strcpy( szFolder, szDrive );
-	strcat( szFolder, szDir );
+	_tcscpy( szFolder, szDrive );
+	_tcscat( szFolder, szDir );
+
 	//	Folderを、CMRUFolderに登録
 	CMRUFolder cMRUFolder;
 	cMRUFolder.Add(szFolder);
 
-	m_cRecent.AppendItem( (char*)pFileInfo );
+	m_cRecent.AppendItem( (char*)pEditInfo );
 }
 
-#if 0
-// etc_uty.cppのIsLocalDrive()へ統合
-
-/*!
-	リムーバブルドライブの判定
-
-	@param pszDrive [in] ドライブ名を含むパス名
-	
-	@retval true リムーバブルドライブ
-	@retval false 固定ドライブ．ネットワークドライブ．
-	
-	@author MIK
-	@date 2001.03.29 新規作成
-	@date 2001.12.23 YAZAKI MRUの別クラス化に伴う関数化
-	@date 2002.01.28 genta 戻り値の型をBOOLからboolに変更．
-*/
-bool CMRU::IsRemovableDrive( const char* pszDrive )
-{
-	char	szDriveType[_MAX_DRIVE+1];	// "A:\"登録用
-	long	lngRet;
-	char	c;
-
-	c = pszDrive[0];
-	if( c >= 'a' && c <= 'z' ){
-		c = c - ('a' - 'A');
-	}
-	if( c >= 'A' && c <= 'Z' ){
-		sprintf( szDriveType, "%c:\\", c );
-		lngRet = GetDriveType( szDriveType );
-		if( DRIVE_REMOVABLE	== lngRet
-		 || DRIVE_CDROM		== lngRet){
-			return true;
-		}
-	}
-	return false;
-}
-#endif
 /*EOF*/

@@ -543,7 +543,7 @@ BOOL CEditDoc::FileRead(
 	
 	/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	if ( cMRU.GetFileInfo( pszPath, &fi ) ){
+	if ( cMRU.GetEditInfo( pszPath, &fi ) ){
 		bIsExistInMRU = TRUE;
 
 		if( -1 == m_nCharCode ){

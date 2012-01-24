@@ -2119,7 +2119,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 //@@@ 2001.12.26 YAZAKI MRUÉäÉXÉgÇÕÅACMRUÇ…àÀóäÇ∑ÇÈ
 				CMRU cMRU;
 				EditInfo checkFileInfo;
-				cMRU.GetFileInfo(wID - IDM_SELMRU, &checkFileInfo);
+				cMRU.GetEditInfo(wID - IDM_SELMRU, &checkFileInfo);
 				//	Oct.  9, 2004 genta ã§í ä÷êîâª
 				m_cEditDoc.OpenFile( checkFileInfo.m_szPath, checkFileInfo.m_nCharCode);
 
