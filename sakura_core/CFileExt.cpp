@@ -30,7 +30,7 @@
 
 #include "StdAfx.h"
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "CFileExt.h"
 #include "my_icmp.h"
 
@@ -42,7 +42,7 @@ CFileExt::CFileExt()
 
 	m_puFileExtInfo = NULL;
 	m_nCount = 0;
-	strcpy( m_szFilter, "" );
+	_tcscpy( m_szFilter, _T("") );
 
 //	//テキストエディタとして、既定でリストに載ってほしい拡張子
 //	AppendExt( "すべてのファイル", "*" );
@@ -56,20 +56,20 @@ CFileExt::~CFileExt()
 	m_nCount = 0;
 }
 
-bool CFileExt::AppendExt( const char *pszName, const char *pszExt )
+bool CFileExt::AppendExt( const TCHAR *pszName, const TCHAR *pszExt )
 {
-	char	szWork[1024];
+	TCHAR	szWork[_countof(m_puFileExtInfo[0].m_szExt) + 10];
 
-	if( false == ConvertTypesExtToDlgExt( pszExt, szWork ) ) return false;
+	if( !ConvertTypesExtToDlgExt( pszExt, szWork ) ) return false;
 	return AppendExtRaw( pszName, szWork );
 }
 
-bool CFileExt::AppendExtRaw( const char *pszName, const char *pszExt )
+bool CFileExt::AppendExtRaw( const TCHAR *pszName, const TCHAR *pszExt )
 {
 	FileExtInfoTag	*p;
 
-	if( NULL == pszName || 0 == strlen( pszName ) ) return false;
-	if( NULL == pszExt  || 0 == strlen( pszExt  ) ) return false;
+	if( NULL == pszName || 0 == _tcslen( pszName ) ) return false;
+	if( NULL == pszExt  || 0 == _tcslen( pszExt  ) ) return false;
 
 	if( NULL == m_puFileExtInfo )
 	{
@@ -83,77 +83,81 @@ bool CFileExt::AppendExtRaw( const char *pszName, const char *pszExt )
 	}
 	m_puFileExtInfo = p;
 
-	strcpy( m_puFileExtInfo[m_nCount].m_szName, pszName );
-	strcpy( m_puFileExtInfo[m_nCount].m_szExt, pszExt );
+	_tcscpy( m_puFileExtInfo[m_nCount].m_szName, pszName );
+	_tcscpy( m_puFileExtInfo[m_nCount].m_szExt, pszExt );
 	m_nCount++;
 
 	return true;
 }
 
-const char *CFileExt::GetName( int nIndex )
+const TCHAR *CFileExt::GetName( int nIndex )
 {
 	if( nIndex < 0 || nIndex >= m_nCount ) return NULL;
 
 	return m_puFileExtInfo[nIndex].m_szName;
 }
 
-const char *CFileExt::GetExt( int nIndex )
+const TCHAR *CFileExt::GetExt( int nIndex )
 {
 	if( nIndex < 0 || nIndex >= m_nCount ) return NULL;
 
 	return m_puFileExtInfo[nIndex].m_szExt;
 }
 
-const char *CFileExt::GetExtFilter( void )
+const TCHAR *CFileExt::GetExtFilter( void )
 {
 	int		i;
-	char	szWork[1024];
+	TCHAR	szWork[_countof(m_puFileExtInfo[0].m_szName) + _countof(m_puFileExtInfo[0].m_szExt)*2 + 10];
 
 	/* 拡張子フィルタの作成 */
-	strcpy( m_szFilter, "" );
+	_tcscpy( m_szFilter, _T("") );
 
 	for( i = 0; i < m_nCount; i++ )
 	{
 		wsprintf( szWork,
-			"%s (%s)|%s|",
+			_T("%ts (%ts)|%ts|"),
 			m_puFileExtInfo[i].m_szName,
 			m_puFileExtInfo[i].m_szExt,
 			m_puFileExtInfo[i].m_szExt );
 
-		strcat( m_szFilter, szWork );
+		_tcscat( m_szFilter, szWork );
 	}
-	strcat( m_szFilter, "|" );
+	_tcscat( m_szFilter, _T("|") );
 
 	//区切りは０なので置き換える。
-	for( i = 0; m_szFilter[i] != '\0'; i++ )
+	for( i = 0; m_szFilter[i] != _T('\0'); i++ )
 	{
-		if( m_szFilter[i] == '|' ) m_szFilter[i] = '\0';
+		if( m_szFilter[i] == _T('|') ) m_szFilter[i] = _T('\0');
 	}
 
 	return m_szFilter;
 }
 
-bool CFileExt::ConvertTypesExtToDlgExt( const char *pszSrcExt, char *pszDstExt )
+/*! タイプ別設定の拡張子リストをダイアログ用リストに変換する
+	@param pszSrcExt [in]  拡張子リスト 例「.c .cpp;.h」
+	@param pszDstExt [out] 拡張子リスト 例「*.c;*.cpp;*.h」
+*/
+bool CFileExt::ConvertTypesExtToDlgExt( const TCHAR *pszSrcExt, TCHAR *pszDstExt )
 {
-	char	*token;
-	char	*p;
+	TCHAR	*token;
+	TCHAR	*p;
 
 	//	2003.08.14 MIK NULLじゃなくてfalse
 	if( NULL == pszSrcExt ) return false;
 	if( NULL == pszDstExt ) return false;
 
-	p = strdup( pszSrcExt );
-	strcpy( pszDstExt, "" );
+	p = _tcsdup( pszSrcExt );
+	_tcscpy( pszDstExt, _T("") );
 
-	token = strtok( p, " ;," );
+	token = _tcstok( p, _T(" ;,") );
 	while( token )
 	{
-		if( '.' == *token ) strcat( pszDstExt, "*" );
-		else                strcat( pszDstExt, "*." );
-		strcat( pszDstExt, token );
+		if( _T('.') == *token ) _tcscat( pszDstExt, _T("*") );
+		else                _tcscat( pszDstExt, _T("*.") );
+		_tcscat( pszDstExt, token );
 
-		token = strtok( NULL, " ;," );
-		if( token ) strcat( pszDstExt, ";" );
+		token = _tcstok( NULL, _T(" ;,") );
+		if( token ) _tcscat( pszDstExt, _T(";") );
 	}
 	free( p );	// 2003.05.20 MIK メモリ解放漏れ
 	return true;
