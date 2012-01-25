@@ -264,14 +264,14 @@ private:
 		CMemory			m_cMemRet;	//!< コールバックからDLLに渡す文字列を保持
 		CEditView*		m_pcEditView;	//	2003.06.01 Moca
 		DLLSHAREDATA*	m_pShareData;	//	2003.06.01 Moca
-		bool				m_bError;		//<! エラーが2回表示されるのを防ぐ	2003.06.01 Moca
-		CMemory			m_cMemDebug;	//<! デバッグ用変数UserErrorMes 2003.06.01 Moca
+		bool				m_bError;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
+		CMemory			m_cMemDebug;	//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
 		/** オプションフラグ
 		
 			CEditView::HandleCommand()にコマンドと一緒に渡すことで
 			コマンドの素性を教える．
 		*/
-		int				m_commandflags;	//<! 
+		int				m_commandflags;	//!< 
 	};
 	//	2007.07.26 genta : 現在実行中のインスタンス
 	static PpaExecInfo* m_CurInstance;

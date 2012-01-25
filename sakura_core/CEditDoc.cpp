@@ -973,10 +973,10 @@ end_of_func:;
 //	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
 BOOL CEditDoc::OpenFileDialog(
 	HWND		hwndParent,
-	const char*	pszOpenFolder,	//<! [in]  NULL以外を指定すると初期フォルダを指定できる
-	char*		pszPath,		//<! [out] 開くファイルのパスを受け取るアドレス
-	int*		pnCharCode,		//<! [out] 指定された文字コード種別を受け取るアドレス
-	BOOL*		pbReadOnly		//<! [out] 読み取り専用か
+	const char*	pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
+	char*		pszPath,		//!< [out] 開くファイルのパスを受け取るアドレス
+	int*		pnCharCode,		//!< [out] 指定された文字コード種別を受け取るアドレス
+	BOOL*		pbReadOnly		//!< [out] 読み取り専用か
 )
 {
 	/* アクティブにする */

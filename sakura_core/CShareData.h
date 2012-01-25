@@ -290,8 +290,8 @@ struct Types {
 
 //! マクロ情報
 struct MacroRec {
-	char	m_szName[MACRONAME_MAX];	//<! 表示名
-	char	m_szFile[_MAX_PATH+1];	//<! ファイル名(ディレクトリを含まない)
+	char	m_szName[MACRONAME_MAX];	//!< 表示名
+	char	m_szFile[_MAX_PATH+1];	//!< ファイル名(ディレクトリを含まない)
 	BOOL	m_bReloadWhenExecute;	//	実行時に読み込みなおすか（デフォルトon）
 	
 	bool IsEnabled() const { return m_szFile[0] != '\0'; }
@@ -302,8 +302,8 @@ struct MacroRec {
 // 2004/06/21 novice タグジャンプ機能追加
 //! タグジャンプ情報
 struct TagJump {
-	HWND	hwndReferer;				//<! 参照元ウィンドウ
-	POINT	point;						//<! ライン, カラム
+	HWND	hwndReferer;				//!< 参照元ウィンドウ
+	POINT	point;						//!< ライン, カラム
 };
 
 //	Aug. 15, 2000 genta
