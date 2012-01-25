@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CTextStream.h"
 #include <vector>
 using namespace std;

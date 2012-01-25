@@ -31,7 +31,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "macro/CWSHIfObj.h"
 #include "macro/CSMacroMgr.h" // MacroFuncInfo
 #include "Funccode_enum.h" // EFunctionCode::FA_FROMMACRO

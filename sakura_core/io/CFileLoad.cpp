@@ -30,7 +30,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdlib.h>
 #include <string.h>
 #include <Windows.h>

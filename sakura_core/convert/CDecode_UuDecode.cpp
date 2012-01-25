@@ -1,5 +1,5 @@
 // ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô‚Ì‚à‚Ì‚Å‚·B
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDecode_UuDecode.h"
 #include "charset/charcode.h"
 #include "convert/convert_util2.h"

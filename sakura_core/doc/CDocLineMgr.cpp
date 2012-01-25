@@ -29,7 +29,7 @@
 //#endif
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "charset/charcode.h"
 #include "doc/CDocLineMgr.h"
 #include "debug/Debug.h"

@@ -15,7 +15,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CProcess.h"
 #include "debug/Debug.h"
 #include "util/module.h"

@@ -2,7 +2,7 @@
 	2008.05.18 kobake CShareData ‚©‚ç•ª—£
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "DLLSHAREDATA.h"
 
 #include "CFileNameManager.h"

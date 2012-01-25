@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "input.h"
 
 // novice 2004/10/10 マウスサイドボタン対応

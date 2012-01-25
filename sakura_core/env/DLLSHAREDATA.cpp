@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "DLLSHAREDATA.h"
 
 //GetDllShareData用グローバル変数

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "types/CType.h"
 
 const wchar_t* g_ppszKeywordsCORBA_IDL[] = {

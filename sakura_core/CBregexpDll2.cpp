@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CBregexpDll2.h"
 
 CBregexpDll2::CBregexpDll2()

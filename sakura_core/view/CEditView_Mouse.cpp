@@ -11,7 +11,7 @@
 //#include "view/colors/CColorStrategy.h"
 #include "CClipboard.h"
 #include "doc/CLayout.h"
-// #include "config/system_constants.h" // stdafx.h
+// #include "config/system_constants.h" // StdAfx.h
 #include "CWaitCursor.h"
 #include "util/input.h"
 #include "util/os.h"

@@ -18,7 +18,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CCommandLine.h"
 #include "mem/CMemory.h"
 #include <tchar.h>

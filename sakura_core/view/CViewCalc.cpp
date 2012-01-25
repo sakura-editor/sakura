@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CViewCalc.h"
 #include "mem/CMemoryIterator.h"
 #include "view/CEditView.h"

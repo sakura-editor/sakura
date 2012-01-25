@@ -1,5 +1,5 @@
 // ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô—p‚Å‚·B
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <map>
 #include "doc/CDocListener.h"
 #include "doc/CEditDoc.h"

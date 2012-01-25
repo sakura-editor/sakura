@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "debug/Debug2.h"
 
 //2007.08.30 kobake ’Ç‰Á

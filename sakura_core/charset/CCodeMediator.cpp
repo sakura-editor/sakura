@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CCodeMediator.h"
 #include "charset/charcode.h"
 #include "charset/CESI.h"

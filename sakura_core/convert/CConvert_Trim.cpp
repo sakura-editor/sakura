@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CConvert_Trim.h"
 #include "convert_util.h"
 #include "CEol.h"

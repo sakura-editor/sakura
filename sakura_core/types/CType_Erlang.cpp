@@ -30,7 +30,7 @@
 
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"
 #include "outline/CFuncInfoArr.h"

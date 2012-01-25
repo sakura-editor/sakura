@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "string_ex.h"
 #include "charset/charcode.h"
 #include "util/std_macro.h"

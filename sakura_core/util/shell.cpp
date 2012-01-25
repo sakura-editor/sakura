@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "shell.h"
 #include <HtmlHelp.h>
 #include <Shlobj.h>

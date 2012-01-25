@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "doc/CDocOutline.h"
 #include "outline/CFuncInfoArr.h"
 #include "doc/CEditDoc.h"

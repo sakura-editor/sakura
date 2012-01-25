@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "doc/CDocListener.h" // eƒNƒ‰ƒX
 #include "CSaveAgent.h"
 #include "doc/CEditDoc.h"

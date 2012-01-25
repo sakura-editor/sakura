@@ -28,7 +28,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDllHandler.h"
 #include "util/module.h"
 

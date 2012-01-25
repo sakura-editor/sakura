@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "tchar_receive.h"
 using namespace std;
 

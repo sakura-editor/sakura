@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CPropertyManager.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"

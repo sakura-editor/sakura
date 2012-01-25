@@ -34,7 +34,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "recent/CRecent.h"
 #include "env/CShareData.h"
 

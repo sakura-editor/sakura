@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDocReader.h"
 #include "CDocLine.h"
 #include "CDocLineMgr.h"

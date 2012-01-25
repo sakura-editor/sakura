@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CEuc.h"
 #include "CShiftJis.h"
 #include "charset/charcode.h"

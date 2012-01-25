@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <mbstring.h>
 #include "CLayoutMgr.h"
 #include "charset/charcode.h"

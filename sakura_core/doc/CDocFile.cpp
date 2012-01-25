@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDocFile.h"
 #include "util/window.h"
 

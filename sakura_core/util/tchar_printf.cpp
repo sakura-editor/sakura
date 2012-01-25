@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "tchar_printf.h"
 #include "util/tchar_template.h"
 

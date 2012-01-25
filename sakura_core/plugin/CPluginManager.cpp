@@ -25,7 +25,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "plugin/CPluginManager.h"
 #include "plugin/CJackManager.h"
 #include "plugin/CWSHPlugin.h"

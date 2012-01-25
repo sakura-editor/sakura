@@ -24,7 +24,7 @@
 #ifndef SAKURA_CTYPESUPPORT_21FC7075_96B4_4572_BA60_A6550E11AC0B9_H_
 #define SAKURA_CTYPESUPPORT_21FC7075_96B4_4572_BA60_A6550E11AC0B9_H_
 
-// #include "CGraphics.h"	// stdafx.héQè∆
+// #include "CGraphics.h"	// StdAfx.héQè∆
 // #include "types/CTypes.h"	// STypeConfig ÇΩÇ‘ÇÒCLayoutMgr.hÇ™include
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"

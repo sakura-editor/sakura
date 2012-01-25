@@ -2,7 +2,7 @@
 	@brief OLEŒ^iVARIANT, BSTR‚È‚Çj‚Ì•ÏŠ·ŠÖ”
 
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "ole_convert.h"
 
 // VARIANT•Ï”‚ğBSTR‚Æ‚İ‚È‚µAwstring‚É•ÏŠ·‚·‚é

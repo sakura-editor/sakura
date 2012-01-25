@@ -39,7 +39,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <string>
 #include <stdio.h>
 #include <string.h>

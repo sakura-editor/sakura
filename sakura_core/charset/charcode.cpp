@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "charset/charcode.h"
 
 #include "env/DLLSHAREDATA.h"

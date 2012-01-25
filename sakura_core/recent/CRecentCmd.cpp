@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CRecentCmd.h"
 #include "config/maxdata.h"
 #include "env/DLLSHAREDATA.h"

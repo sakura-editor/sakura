@@ -28,7 +28,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CEol.h"
 
 /*! 行終端子の配列 */

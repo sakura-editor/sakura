@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CConvert_ZenkataToHankata.h"
 #include "convert_util.h"
 

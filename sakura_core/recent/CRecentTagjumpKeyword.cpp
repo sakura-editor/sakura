@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CRecentTagjumpKeyword.h"
 #include "env/DLLSHAREDATA.h"
 #include <string.h>
