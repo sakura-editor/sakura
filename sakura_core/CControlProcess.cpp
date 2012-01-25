@@ -15,7 +15,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CControlProcess.h"
 #include "CControlTray.h"
 #include "env/DLLSHAREDATA.h"

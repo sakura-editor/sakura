@@ -2,7 +2,7 @@
 2008.05.20 kobake ì¬
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CGraphics.h"
 #include "util/std_macro.h"
 

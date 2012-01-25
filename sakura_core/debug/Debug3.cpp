@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "debug/Debug3.h"
 #include "util/module.h"
 

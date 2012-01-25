@@ -29,7 +29,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "convert/CDecode_Base64Decode.h"
 #include "charset/charcode.h"
 #include "convert/convert_util2.h"

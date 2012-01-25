@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CTextMetrics.h"
 //#include "charset/charcode.h"
 #include "charset/codechecker.h"

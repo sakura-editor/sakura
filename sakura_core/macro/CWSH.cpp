@@ -16,7 +16,7 @@
 
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "macro/CWSH.h"
 #include "macro/CIfObj.h"
 #include "window/CEditWnd.h"

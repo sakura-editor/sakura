@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "DispPos.h"
 #include "doc/CLayout.h"
 

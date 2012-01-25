@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CWriteManager.h"
 #include <list>
 #include "doc/CDocLineMgr.h"

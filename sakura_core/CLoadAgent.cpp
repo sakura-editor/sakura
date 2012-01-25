@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CLoadAgent.h"
 #include "CReadManager.h"
 #include "CControlTray.h"

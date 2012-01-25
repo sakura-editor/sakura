@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CTextDrawer.h"
 #include <vector>
 #include "CTextMetrics.h"

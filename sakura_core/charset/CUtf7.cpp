@@ -1,7 +1,7 @@
 // 2008.11.10 •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CUtf7.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"

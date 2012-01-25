@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "mem/CNativeW.h"
 //#include "charset/charcode.h"
 #include "CEol.h"

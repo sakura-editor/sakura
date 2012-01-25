@@ -19,7 +19,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <windows.h>
 #include <ole2.h>
 #include "CProcessFactory.h"

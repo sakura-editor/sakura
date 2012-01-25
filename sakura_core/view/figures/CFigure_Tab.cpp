@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Tab.h"
 #include "env/CShareData.h"

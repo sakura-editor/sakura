@@ -14,7 +14,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "debug/CRunningTimer.h"
 #include "global.h"
 #include "debug/Debug.h"

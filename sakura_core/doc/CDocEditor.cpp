@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDocEditor.h"
 #include "CClipboard.h"
 #include "env/DLLSHAREDATA.h"

@@ -1,6 +1,6 @@
 // 2008.11.10  •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CJis.h"
 #include "CShiftJis.h"
 #include <mbstring.h>

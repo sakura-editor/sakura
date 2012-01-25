@@ -31,7 +31,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "charset/codechecker.h"
 #include "mem/CMemory.h"
 #include "convert/convert_util2.h"

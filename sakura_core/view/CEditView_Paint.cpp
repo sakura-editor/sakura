@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CEditView_Paint.h"
 #include <vector>
 #include <memory> // auto_ptr

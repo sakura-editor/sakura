@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CAppMode.h"
 #include "window/CEditWnd.h"
 #include "env/CSakuraEnvironment.h"

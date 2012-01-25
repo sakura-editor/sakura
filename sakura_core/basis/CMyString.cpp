@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CMyString.h"
 #include "charset/charcode.h"
 #include "charset/CharPointer.h"

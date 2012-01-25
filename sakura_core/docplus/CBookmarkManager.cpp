@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "docplus/CBookmarkManager.h"
 #include "doc/CDocLineMgr.h"
 #include "CSearchAgent.h"

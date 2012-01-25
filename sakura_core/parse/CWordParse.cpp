@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CWordParse.h"
 #include "charset/charcode.h"
 

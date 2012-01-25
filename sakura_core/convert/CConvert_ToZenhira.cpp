@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CConvert_ToZenhira.h"
 #include "convert_util.h"
 

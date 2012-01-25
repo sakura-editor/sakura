@@ -4,7 +4,7 @@
 // 2000.10.17 JEPRO  F•ª‚¯•\¦‚·‚é‚æ‚¤‚É•ÏX(Å‰‚ÌFALSE¨TRUE)
 // 2008.03.27 kobake ‘å®—
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDocTypeSetting.h"
 
 

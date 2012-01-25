@@ -1,6 +1,6 @@
 // 2008.11.10 •ÏŠ·ƒƒWƒbƒN‚ğ‘‚«’¼‚·
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CUtf8.h"
 #include "charset/codechecker.h"
 

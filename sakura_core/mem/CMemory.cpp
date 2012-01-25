@@ -34,7 +34,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <stdio.h>
 #include <windows.h>
 #include <ctype.h>

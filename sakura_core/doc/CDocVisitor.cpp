@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CDocVisitor.h"
 #include "doc/CEditDoc.h"
 #include "view/CEditView.h"

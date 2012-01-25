@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CViewCommander.h"
 #include <algorithm>		// 2001.12.11 hor    for VC++
 #include <string>///	2002/2/3 aroka 

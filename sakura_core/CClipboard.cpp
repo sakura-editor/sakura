@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <shellapi.h>// HDROP
 #include "CClipboard.h"
 #include "charset/CShiftJis.h"

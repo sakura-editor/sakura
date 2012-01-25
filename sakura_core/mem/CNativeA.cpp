@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "mem/CNativeA.h"
 #include "charset/CShiftJis.h"
 #include <mbstring.h>

@@ -20,7 +20,7 @@
 */
 
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"

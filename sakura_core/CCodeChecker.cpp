@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CCodeChecker.h"
 #include "io/CIoBridge.h"
 

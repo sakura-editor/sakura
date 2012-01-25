@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <string.h>
 #include "CRecentGrepFolder.h"
 #include "env/DLLSHAREDATA.h"

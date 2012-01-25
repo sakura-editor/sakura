@@ -28,7 +28,7 @@
 		   distribution.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CSortedTagJumpList.h"
 
 /*!

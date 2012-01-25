@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CType.h"
 #include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"

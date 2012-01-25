@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CRecentReplace.h"
 #include <string.h>
 #include "env/DLLSHAREDATA.h"
