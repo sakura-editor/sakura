@@ -61,33 +61,33 @@ struct ARRHEAD {
 	EditInfoに、m_szDocType追加 Mar. 7, 2002 genta
 	
 	Version 27:
-	Typesに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
+	STypeConfigに、m_szOutlineRuleFilenameを追加 2002.04.01 YAZAKI 
 	
 	Version 28:
 	PRINTSETTINGに、m_bPrintKinsokuHead、m_bPrintKinsokuTailを追加 2002.04.09 MIK
-	Typesに、m_bKinsokuHead、m_bKinsokuTail、m_szKinsokuHead、m_szKinsokuTailを追加 2002.04.09 MIK
+	STypeConfigに、m_bKinsokuHead、m_bKinsokuTail、m_szKinsokuHead、m_szKinsokuTailを追加 2002.04.09 MIK
 
 	Version 29:
 	PRINTSETTINGに、m_bPrintKinsokuRetを追加 2002.04.13 MIK
-	Typesに、m_bKinsokuRetを追加 2002.04.13 MIK
+	STypeConfigに、m_bKinsokuRetを追加 2002.04.13 MIK
 
 	Version 30:
 	PRINTSETTINGに、m_bPrintKinsokuKutoを追加 2002.04.17 MIK
-	Typesに、m_bKinsokuKutoを追加 2002.04.17 MIK
+	STypeConfigに、m_bKinsokuKutoを追加 2002.04.17 MIK
 
 	Version 31:
 	Commonに、m_bStopsBothEndsWhenSearchParagraphを追加 2002/04/26 YAZAKI
 
 	Version 32:
-	CommonからTypesへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
+	CommonからSTypeConfigへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
 
 	Version 33:
 	Commonに、m_lf_khを追加 2002/05/21 ai
 	m_nDiffFlgOptを追加 2002.05.27 MIK
-	Types-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
+	STypeConfig-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
 
 	Version 34:
-	Typesにm_bUseDocumentIcon 追加． 2002.09.10 genta
+	STypeConfigにm_bUseDocumentIcon 追加． 2002.09.10 genta
 	
 	Version 35:
 	Commonにm_nLineNumRightSpace 追加．2002.09.18 genta
@@ -96,11 +96,11 @@ struct ARRHEAD {
 	Commonのm_bGrepKanjiCode_AutoDetectを削除、m_nGrepCharSetを追加 2002/09/21 Moca
 
 	Version 37:
-	TypesのLineComment関連をm_cLineCommentに変更．  @@@ 2002.09.23 YAZAKI
-	TypesのBlockComment関連をm_cBlockCommentに変更．@@@ 2002.09.23 YAZAKI
+	STypeConfigのLineComment関連をm_cLineCommentに変更．  @@@ 2002.09.23 YAZAKI
+	STypeConfigのBlockComment関連をm_cBlockCommentに変更．@@@ 2002.09.23 YAZAKI
 
 	Version 38:
-	Typesにm_bIndentLayoutを追加. @@@ 2002.09.29 YAZAKI
+	STypeConfigにm_bIndentLayoutを追加. @@@ 2002.09.29 YAZAKI
 	2002.10.01 genta m_nIndentLayoutに名前変更
 
 	Version 39:
@@ -110,11 +110,11 @@ struct ARRHEAD {
 	ファイル名簡易表記関連を追加． 2002/12/08～2003/01/15 Moca
 
 	Version 41:
-	Typesのm_szTabViewStringサイズ拡張
+	STypeConfigのm_szTabViewStringサイズ拡張
 	m_nWindowSizeX/Y m_nWindowOriginX/Y追加 2003.01.26 aroka
 
 	Version 42:
-	Typesに独自TABマークフラグ追加 2003.03.28 MIK
+	STypeConfigに独自TABマークフラグ追加 2003.03.28 MIK
 
 	Version 43:
 	最近使ったファイル・フォルダにお気に入りを追加 2003.04.08 MIK
@@ -129,7 +129,7 @@ struct ARRHEAD {
 	編集ウインドウ数修正、タブウインドウ用情報追加
 
 	Version 47:
-	ファイルからの補完をTypesに追加 2003.06.28 Moca
+	ファイルからの補完をSTypeConfigに追加 2003.06.28 Moca
 
 	Version 48:
 	Grepリアルタイム表示追加 2003.06.28 Moca
@@ -258,7 +258,7 @@ struct ARRHEAD {
 	ホイールスクロールを利用したページスクロール・横スクロール対応 2009.01.12 nasukoji
 
 	Version 89:
-	Typesのm_szTabViewStringサイズ拡張（Version 41）の戻し 2009.02.11 ryoji
+	STypeConfigのm_szTabViewStringサイズ拡張（Version 41）の戻し 2009.02.11 ryoji
 
 	Version 90:
 	自動実行マクロ 2006/08/31 ryoji

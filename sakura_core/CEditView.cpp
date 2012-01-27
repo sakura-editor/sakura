@@ -4042,7 +4042,7 @@ BOOL CEditView::IsCurrentPositionURL(
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
 	BOOL bDispUrl = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp;
 	BOOL bUseRegexKeyword = FALSE;
-	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 	if( TypeDataPtr->m_bUseRegexKeyword ){
 		for( int i = 0; i < MAX_REGEX_KEYWORD; i++ ){
 			if( TypeDataPtr->m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' )
@@ -10764,7 +10764,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 	}
 
 	hdc = ::GetDC( m_hWnd );
-	Types *TypeDataPtr = &( m_pcEditDoc->GetDocumentAttribute() );
+	STypeConfig *TypeDataPtr = &( m_pcEditDoc->GetDocumentAttribute() );
 
 	for( i = 0; i < 2; i++ )
 	{	// i=0:カーソル位置の括弧,i=1:対括弧
@@ -10878,7 +10878,7 @@ int CEditView::GetColorIndex(
 )
 {
 	//	May 9, 2000 genta
-	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
 	const char*				pLine;	//@@@ 2002.09.22 YAZAKI
 	int						nLineLen;

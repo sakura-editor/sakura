@@ -131,7 +131,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	HideCaret_( m_hWnd ); // 2002/07/22 novice
 
 	//	May 9, 2000 genta
-	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
 	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
 	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
@@ -445,7 +445,7 @@ int CEditView::DispLineNew(
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DispLineNew" );
 
 	//	May 9, 2000 genta
-	Types	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
+	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
 	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
 	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
@@ -1922,7 +1922,7 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 */
 void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol, int nRightCol )
 {
-	const Types&	typeData = m_pcEditDoc->GetDocumentAttribute();
+	const STypeConfig&	typeData = m_pcEditDoc->GetDocumentAttribute();
 	if( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp == FALSE ){
 		return;
 	}

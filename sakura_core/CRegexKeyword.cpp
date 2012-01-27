@@ -120,7 +120,7 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 
 	@note タイプ設定が変わったら再ロードしコンパイルする。
 */
-BOOL CRegexKeyword::RegexKeySetTypes( Types *pTypesPtr )
+BOOL CRegexKeyword::RegexKeySetTypes( STypeConfig *pTypesPtr )
 {
 	MYDBGMSG("RegexKeySetTypes")
 	if( pTypesPtr == NULL ) 

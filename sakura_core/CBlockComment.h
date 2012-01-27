@@ -23,7 +23,7 @@
 -----------------------------------------------------------------------*/
 /*! ブロックコメントデリミタを管理する
 
-	@note CBlockCommentは、共有メモリTypesに含まれるので、メンバ変数は常に実体を持っていなければならない。
+	@note CBlockCommentは、共有メモリSTypeConfigに含まれるので、メンバ変数は常に実体を持っていなければならない。
 */
 #define BLOCKCOMMENT_NUM	2
 #define BLOCKCOMMENT_BUFFERSIZE	16

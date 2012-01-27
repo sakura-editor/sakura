@@ -708,8 +708,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_pLayoutMgr_Print->Create( &m_pParentWnd->m_cEditDoc, &m_pParentWnd->m_cEditDoc.m_cDocLineMgr );
 
 	/* 印刷用のレイアウト情報の変更 */
-//	Types& ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
-	Types ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
+//	STypeConfig& ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
+	STypeConfig ref = m_pParentWnd->m_cEditDoc.GetDocumentAttribute();
 	ref.m_nMaxLineSize = 		m_bPreview_EnableColms;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う

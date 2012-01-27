@@ -175,7 +175,7 @@ public:
 	{
 		return m_nSettingType;
 	}
-	Types& GetDocumentAttribute(void) const	//!<	Ý’è‚³‚ê‚½•¶‘î•ñ‚Ö‚ÌŽQÆ‚ð•Ô‚·
+	STypeConfig& GetDocumentAttribute(void) const	//!<	Ý’è‚³‚ê‚½•¶‘î•ñ‚Ö‚ÌŽQÆ‚ð•Ô‚·
 	{
 		return m_pShareData->m_Types[m_nSettingType];
 	}

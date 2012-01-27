@@ -111,8 +111,8 @@ public:
 	KEYDATA			m_pKeyNameArr[100];				/* キー割り当て表 */
 
 	CKeyWordSetMgr	m_CKeyWordSetMgr;
-	//2002/04/25 YAZAKI Types全体を保持する必要はない。
-	//Types			m_Types[MAX_TYPES];
+	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
+	//STypeConfig			m_Types[MAX_TYPES];
 	// 2005.01.13 MIK セット数増加
 	int				m_Types_nKeyWordSetIdx[MAX_TYPES][MAX_KEYWORDSET_PER_TYPE];
 	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。

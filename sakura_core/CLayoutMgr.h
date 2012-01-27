@@ -35,7 +35,7 @@ class CDocLineMgr;// 2002/2/10 aroka
 class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 class CEditDoc;// 2003/07/20 genta
-struct Types;// 2005.11.20 Moca
+struct STypeConfig;// 2005.11.20 Moca
 
 
 
@@ -132,9 +132,9 @@ public:
 	/* レイアウト情報の変更
 		@date Jun. 01, 2001 JEPRO char* (行コメントデリミタ3用)を1つ追加
 		@date 2002.04.13 MIK 禁則,改行文字をぶら下げる,句読点ぶらさげを追加
-		@date 2002/04/27 YAZAKI Typesを渡すように変更。
+		@date 2002/04/27 YAZAKI STypeConfigを渡すように変更。
 	*/
-	void SetLayoutInfo( int, HWND, Types& refType );
+	void SetLayoutInfo( int, HWND, STypeConfig& refType );
 	
 	/* 行内文字削除 */
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去

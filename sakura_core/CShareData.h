@@ -204,7 +204,7 @@ struct KeyHelpInfo {
 //@@@ 2006.04.10 fon ADD-end
 
 //! タイプ別設定
-struct Types {
+struct STypeConfig {
 	int					m_nIdx;
 	char				m_szTypeName[64];				/*!< タイプ属性：名称 */
 	char				m_szTypeExts[64];				/*!< タイプ属性：拡張子リスト */
@@ -286,7 +286,7 @@ struct Types {
 	//	Sep. 10, 2002 genta
 	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */
 
-}; /* Types */
+}; /* STypeConfig */
 
 //! マクロ情報
 struct MacroRec {
@@ -688,7 +688,7 @@ struct DLLSHAREDATA {
 	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */
 
 	/* **** タイプ別設定 **** */
-	Types				m_Types[MAX_TYPES];
+	STypeConfig			m_Types[MAX_TYPES];
 
 	/*	@@@ 2002.1.24 YAZAKI
 		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。

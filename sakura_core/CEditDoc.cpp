@@ -114,11 +114,11 @@ CEditDoc::CEditDoc() :
 	/* レイアウト管理情報の初期化 */
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
 	/* レイアウト情報の変更 */
-//	Types& ref = GetDocumentAttribute();
+//	STypeConfig& ref = GetDocumentAttribute();
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINESIZEで初期化する
 	// 「右端で折り返す」は、この後のOnSize()で再設定される
-	Types ref = GetDocumentAttribute();
+	STypeConfig ref = GetDocumentAttribute();
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
 		ref.m_nMaxLineSize = MAXLINESIZE;
 	
@@ -710,11 +710,11 @@ BOOL CEditDoc::FileRead(
 
 	/* レイアウト情報の変更 */
 	{
-//		Types& ref = GetDocumentAttribute();
+//		STypeConfig& ref = GetDocumentAttribute();
 		// 2008.06.07 nasukoji	折り返し方法の追加に対応
 		// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINESIZEで初期化する
 		// 「右端で折り返す」は、この後のOnSize()で再設定される
-		Types ref = GetDocumentAttribute();
+		STypeConfig ref = GetDocumentAttribute();
 		if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
 			ref.m_nMaxLineSize = MAXLINESIZE;
 
@@ -1177,7 +1177,7 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 	/* プロパティシートの作成 */
 	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
 //		/* 変更されたか？ */
-//		if( 0 == memcmp( &m_pShareData->m_Types[nSettingType], &m_cPropTypes.m_Types, sizeof( Types ) ) ){
+//		if( 0 == memcmp( &m_pShareData->m_Types[nSettingType], &m_cPropTypes.m_Types, sizeof( STypeConfig ) ) ){
 //			/* 無変更 */
 //			return FALSE;
 //		}
@@ -3853,9 +3853,9 @@ void CEditDoc::OnChangeSetting( void )
 	int* posSaveAry = SavePhysPosOfAllView();
 
 	/* レイアウト情報の作成 */
-//	Types& ref = GetDocumentAttribute();
+//	STypeConfig& ref = GetDocumentAttribute();
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
-	Types ref = GetDocumentAttribute();
+	STypeConfig ref = GetDocumentAttribute();
 
 	// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
 	if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod )
@@ -4106,7 +4106,7 @@ void CEditDoc::Init( void )
 
 	/* レイアウト管理情報の初期化 */
 	/* レイアウト情報の変更 */
-	Types& ref = GetDocumentAttribute();
+	STypeConfig& ref = GetDocumentAttribute();
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
 		NULL,/*hwndProgress*/

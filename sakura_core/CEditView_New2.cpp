@@ -735,7 +735,7 @@ void CEditView::DispRuler( HDC hdc )
 		int			nROP_Old;
 		COLORREF	colTextOld;
 		int			nToX;
-		const Types&	typeData = m_pcEditDoc->GetDocumentAttribute();
+		const STypeConfig&	typeData = m_pcEditDoc->GetDocumentAttribute();
 		const int	nMaxLineSize = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
 
 		/* LOGFONT‚Ì‰Šú‰» */

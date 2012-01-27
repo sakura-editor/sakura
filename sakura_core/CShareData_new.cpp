@@ -1044,7 +1044,7 @@ void CShareData::ShareData_IO_Print( CProfile& cProfile )
 }
 
 /*!
-	@brief 共有データのTypesセクションの入出力
+	@brief 共有データのSTypeConfigセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
@@ -1059,7 +1059,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 
 	for( i = 0; i < MAX_TYPES; ++i ){
 		// 2005.04.07 D.S.Koba
-		Types& types = m_pShareData->m_Types[i];
+		STypeConfig& types = m_pShareData->m_Types[i];
 		wsprintf( szKey, "Types(%d)", i );
 		pszSecName = szKey;
 		static const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";	//MIK

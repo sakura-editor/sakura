@@ -113,7 +113,7 @@ CLayoutMgr::~CLayoutMgr()
 void CLayoutMgr::SetLayoutInfo(
 	int		bDoRayout,
 	HWND	hwndProgress,
-	Types&	refType			/* タイプ別設定 */
+	STypeConfig&	refType			/* タイプ別設定 */
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );

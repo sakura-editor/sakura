@@ -106,7 +106,7 @@ INT_PTR CDlgSameColor::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARA
 
 	@date 2006.04.26 ryoji êVãKçÏê¨
 */
-int CDlgSameColor::DoModal( HINSTANCE hInstance, HWND hwndParent, WORD wID, Types* pTypes, COLORREF cr )
+int CDlgSameColor::DoModal( HINSTANCE hInstance, HWND hwndParent, WORD wID, STypeConfig* pTypes, COLORREF cr )
 {
 	m_wID = wID;
 	m_pTypes = pTypes;
