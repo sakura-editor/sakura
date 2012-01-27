@@ -35,6 +35,18 @@ SAKURA_CORE_API int DebugOutDialog( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 	#define MYTRACE Do_not_use_the_MYTRACE_function_if_release_mode
 #endif
 
+//#ifdef _DEBUGÅ`#endifÇ≈àÕÇ‹Ç»Ç≠ÇƒÇ‡ó«Ç¢î≈
+#ifdef _DEBUG
+#define DBPRINT DebugOut
+#else
+#if (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
+#define DBPRINT(...)
+#else
+// Not support C99 variable macro
+inline void DBPRINT( ... ){};
+#endif
+#endif // _DEBUG
+
 //#ifdef _DEBUG
 	#define MYMESSAGEBOX DebugOutDialog
 //#endif
