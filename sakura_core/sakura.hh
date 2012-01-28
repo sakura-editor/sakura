@@ -282,11 +282,11 @@
 #define HLP000109	109 //コマンドラインオプション
 //#define HLP000155	155 //色設定ファイルの仕様について
 #define HLP000204	204 //マクロについて
-#define HLP000266	266 //拡張子
+//#define HLP000266	266 //拡張子
 #define HLP000267	267 //キーボードマクロ
-#define HLP000268	268 //PPA/WSH専用マクロ関数
-#define HLP000269	269 //WSHマクロ
-#define HLP000270	270 //記載例
+#define HLP000268	268 //マクロ専用関数
+#define HLP000269	269 //WSHマクロとPPAマクロ
+#define HLP000270	270 //マクロ記載例
 #define HLP000271	271 //文字コードセットのエンコードについて
 #define HLP000272	272 //メタ文字列の仕様
 
@@ -1017,4 +1017,4 @@
 #define HIDC_BUTTON_TREE_CLEAR				14412	//メニューをクリア
 #define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
 
-#define HIDC_STATIC						19999 //不明
+#define HIDC_STATIC								19999 //不明
