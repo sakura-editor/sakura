@@ -88,7 +88,7 @@ CShareData::~CShareData()
 */
 bool CShareData::InitShareData()
 {
-	MY_RUNNINGTIMER(cRunningTimer,"CShareData::Init" );
+	MY_RUNNINGTIMER(cRunningTimer,"CShareData::InitShareData" );
 
 	if (CShareData::_instance == NULL)	//	Singleton•—
 		CShareData::_instance = this;
