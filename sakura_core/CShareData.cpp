@@ -338,9 +338,9 @@ CShareData::~CShareData()
 	異なる場合は致命的エラーを防ぐためにfalseを返します。CProcess::Initialize()
 	でInit()に失敗するとメッセージを出してエディタの起動を中止します。
 */
-bool CShareData::Init( void )
+bool CShareData::InitShareData()
 {
-	MY_RUNNINGTIMER(cRunningTimer,"CShareData::Init" );
+	MY_RUNNINGTIMER(cRunningTimer,"CShareData::InitShareData" );
 
 	if (CShareData::_instance == NULL)	//	Singleton風
 		CShareData::_instance = this;
@@ -718,7 +718,7 @@ bool CShareData::Init( void )
 		m_pShareData->m_nCmdArrNum = 0;
 
 		InitKeyword( m_pShareData );
-		InitTypeConfig( m_pShareData );
+		InitTypeConfigs( m_pShareData );
 		InitPopupMenu( m_pShareData );
 
 		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
@@ -5210,7 +5210,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	@date 2005.01.30 genta CShareData::Init()から分離．
 */
-void CShareData::InitTypeConfig(DLLSHAREDATA* pShareData)
+void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 {
 
 //キーワード：デフォルトカラー設定

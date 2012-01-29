@@ -752,10 +752,11 @@ public:
 	CShareData();
 	~CShareData();
 
+
 	/*
 	||  Attributes & Operations
 	*/
-	bool Init(void);	/* CShareDataクラスの初期化処理 */
+	bool InitShareData();	/* CShareDataクラスの初期化処理 */
 	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
 	int GetDocumentType( const char* pszFilePath );				/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
 	int GetDocumentTypeExt( const char* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
@@ -785,7 +786,6 @@ public:
 		DLLSHAREDATA*, int, short, char*,
 		short, short, short, short,
 		short, short, short, short );									/* KEYDATA配列にデータをセット */
-//	static void SetKeyNameArrVal( DLLSHAREDATA*, int, short, char* );	/* KEYDATA配列にデータをセット */ // 20050818 aroka 未使用なので削除
 	static LONG MY_RegSetVal(
 		HKEY hKey,				// handle of key to set value for
 		LPCTSTR lpValueName,	// address of value to set
@@ -807,8 +807,6 @@ public:
 	BOOL IsPrivateSettings( void ){ return m_pShareData->m_IniFolder.m_bWritePrivate; }			/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
 	BOOL ShareData_IO_2( bool );	/* 共有データの保存 */
 	static void IO_ColorSet( CProfile* , const char* , ColorInfo* );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
-
-//	int			m_nStdToolBarButtons; 2004.03.30 Moca 未使用
 
 	//@@@ 2002.2.2 YAZAKI
 	//	Jun. 14, 2003 genta 引数追加．書式変更
@@ -868,7 +866,7 @@ protected:
 	void InitKeyword(DLLSHAREDATA*);
 	bool InitKeyAssign(DLLSHAREDATA*); // 2007.11.04 genta 起動中止のため値を返す
 	void InitToolButtons(DLLSHAREDATA*);
-	void InitTypeConfig(DLLSHAREDATA*);
+	void InitTypeConfigs(DLLSHAREDATA*);
 	void InitPopupMenu(DLLSHAREDATA*);
 	
 	// Feb. 12, 2006 D.S.Koba
