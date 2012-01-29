@@ -44,7 +44,7 @@
 	@date 2004.05.13 Moca CEditWnd::Create()に失敗した場合にfalseを返すように．
 	@date 2007.06.26 ryoji グループIDを指定して編集ウィンドウを作成する
 */
-bool CNormalProcess::Initialize()
+bool CNormalProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
 
@@ -52,12 +52,12 @@ bool CNormalProcess::Initialize()
 	HWND			hWnd;
 
 	/* プロセス初期化の目印 */
-	hMutex = GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
+	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
 	if( NULL == hMutex ){
 		return false;
 	}
 
-	if ( CProcess::Initialize() == false ){
+	if ( !CProcess::InitializeProcess() ){
 		return false;
 	}
 
@@ -321,7 +321,7 @@ bool CNormalProcess::MainLoop()
 	@date 2002/01/07
 	こいつはなにもしない。後始末はdtorで。
 */
-void CNormalProcess::Terminate()
+void CNormalProcess::OnExitProcess()
 {
 }
 
@@ -345,13 +345,13 @@ CNormalProcess::~CNormalProcess()
 
 	多数同時に起動するとウィンドウが表に出てこないことがある。
 	
-	@date 2002/2/8 aroka Initializeから移動
+	@date 2002/2/8 aroka InitializeProcessから移動
 	@retval Mutex のハンドルを返す
 	@retval 失敗した時はリリースしてから NULL を返す
 */
-HANDLE CNormalProcess::GetInitializeMutex() const
+HANDLE CNormalProcess::_GetInitializeMutex() const
 {
-	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::GetInitializeMutex" );
+	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::_GetInitializeMutex" );
 	HANDLE hMutex;
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
 	if( NULL == hMutex ){

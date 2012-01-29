@@ -44,9 +44,9 @@
 	@date 2002/02/17 YAZAKI 共有メモリを初期化するのはCProcessに移動。
 	@date 2006/04/10 ryoji 初期化完了イベントの処理を追加、異常時の後始末はデストラクタに任せる
 */
-bool CControlProcess::Initialize()
+bool CControlProcess::InitializeProcess()
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::Initialize" );
+	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
 
 	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
@@ -80,7 +80,7 @@ bool CControlProcess::Initialize()
 	}
 	
 	/* 共有メモリを初期化 */
-	if ( CProcess::Initialize() == false ){
+	if( !CProcess::InitializeProcess() ){
 		return false;
 	}
 
@@ -145,7 +145,7 @@ bool CControlProcess::MainLoop()
 	@date 2002/01/07
 	@date 2006/07/02 ryoji 共有データ保存を CEditApp へ移動
 */
-void CControlProcess::Terminate()
+void CControlProcess::OnExitProcess()
 {
 	m_pShareData->m_hwndTray = NULL;
 }

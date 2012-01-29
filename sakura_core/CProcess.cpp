@@ -40,7 +40,7 @@ CProcess::CProcess(
 
 	共有メモリを初期化する
 */
-bool CProcess::Initialize()
+bool CProcess::InitializeProcess()
 {
 	/* 共有データ構造体のアドレスを返す */
 	if( !m_cShareData.Init() ){
@@ -64,11 +64,12 @@ bool CProcess::Initialize()
 	@author aroka
 	@date 2002/01/16
 */
-bool CProcess::Run(void)
+bool CProcess::Run()
 {
-	if( true == Initialize() ){
+	if( InitializeProcess() )
+	{
 		MainLoop() ;
-		Terminate();
+		OnExitProcess();
 		return true;
 	}
 	return false;

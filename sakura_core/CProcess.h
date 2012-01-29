@@ -30,16 +30,16 @@ public:
 	virtual ~CProcess(){};
 protected:
 	CProcess();
-	virtual bool Initialize();
+	virtual bool InitializeProcess();
 	virtual bool MainLoop() = 0;
-	virtual void Terminate() = 0;
-	
+	virtual void OnExitProcess() = 0;
+
 	HINSTANCE m_hInstance;
 	HWND m_hWnd;
 	LPSTR m_CommandLine;
 	
 	//	—Bˆê‚ÌCShareDate‚Æ‚·‚éBiCProcess‚ªÓ”C‚ğ‚Á‚Änew/delete‚·‚éj
-	CShareData m_cShareData;
+	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;
 
 private:

@@ -45,9 +45,9 @@ public:
 	virtual ~CControlProcess();
 protected:
 	CControlProcess();
-	virtual bool Initialize();
+	virtual bool InitializeProcess();
 	virtual bool MainLoop();
-	virtual void Terminate();
+	virtual void OnExitProcess();
 
 private:
 	HANDLE			m_hMutex;
