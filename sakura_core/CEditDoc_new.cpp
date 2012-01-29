@@ -450,7 +450,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 //
 bool CEditDoc::IsModificationForbidden( int nCommand )
 {
-	if( m_bReadOnly == FALSE &&	//	読みとり専用でも
+	if( m_bReadOnly == FALSE &&	//	読み取り専用でも
 		!( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ) )	//	上書き禁止でもなければ
 		return false;			//	常に書き換え許可
 
@@ -1468,7 +1468,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 	}
 	else {
 		//	Jun.  5, 2004 genta
-		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
+		//	読み取り専用のチェックをCEditDocから上書き保存処理に移動
 		if( m_bReadOnly ){	/* 読み取り専用モード */
 			if( warnbeep ){
 				::MessageBeep( MB_ICONHAND );
@@ -1514,7 +1514,7 @@ BOOL CEditDoc::FileSaveAs_Dialog( void )
 	//	Jul. 26, 2003 ryoji BOMの有無を与えるパラメータ
 	if( SaveFileDialog( szPath, &m_nCharCode, &m_cSaveLineCode, &m_bBomExist ) ){
 		//	Jun.  5, 2004 genta
-		//	読みとり専用のチェックをCEditDocから上書き保存処理に移動
+		//	読み取り専用のチェックをCEditDocから上書き保存処理に移動
 		//	同名で上書きされるのを防ぐ
 		if( m_bReadOnly && strcmp( szPath, GetFilePath()) == 0 ){
 			::MessageBeep( MB_ICONHAND );

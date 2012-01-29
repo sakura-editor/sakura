@@ -1297,7 +1297,7 @@ void CEditApp::OnNewEditor(void)
 	@param hWndParent [in]	親ウィンドウハンドル．エラーメッセージ表示用
 	@param pszPath [in]		新規エディタで開くファイル名とオプション．NULLで新規エディタ作成．
 	@param nCharCode [in]	新規エディタの文字コード
-	@param bReadOnly [in]	FALSEでなければ読みとり専用で開く
+	@param bReadOnly [in]	FALSEでなければ読み取り専用で開く
 	@param sync [in]		trueなら新規エディタの起動まで待機する
 	@param szCurDir [in]	新規エディタのカレントディレクトリ
 

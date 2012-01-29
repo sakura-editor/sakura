@@ -224,7 +224,7 @@ CEditWnd::~CEditWnd()
 	@param nGroup [in] グループID
 	@param pszPath [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
 	@param nCharCode [in] 漢字コード
-	@param bReadOnly [in] 読みとり専用で開くかどうか
+	@param bReadOnly [in] 読み取り専用で開くかどうか
 	@param nDocumentType [in] 文書タイプ．-1のとき強制指定無し．
 	
 	@date 2002.03.07 genta nDocumentType追加
@@ -598,7 +598,7 @@ HWND CEditWnd::Create(
 		/* 設定変更を反映させる */
 		m_cEditDoc.OnChangeSetting();
 	}
-	//	Jun. 4 ,2004 genta ファイル名指定が無くても読みとり専用強制指定を有効にする
+	//	Jun. 4 ,2004 genta ファイル名指定が無くても読み取り専用強制指定を有効にする
 	m_cEditDoc.m_bReadOnly = bReadOnly;
 	m_cEditDoc.SetParentCaption();
 	

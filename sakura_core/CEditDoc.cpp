@@ -4405,6 +4405,7 @@ void CEditDoc::SetImeMode( int mode )
 
 	特殊文字は以下の通り
 	@li $  $自身
+	@li A  アプリ名
 	@li F  開いているファイルのフルパス。名前がなければ(無題)。
 	@li f  開いているファイルの名前（ファイル名+拡張子のみ）
 	@li g  開いているファイルの名前（拡張子除く）
@@ -4427,6 +4428,7 @@ void CEditDoc::SetImeMode( int mode )
 
 	@date 2003.04.03 genta strncpy_ex導入によるfor文の削減
 	@date 2005.09.15 FILE 特殊文字S, M追加
+	@date 2007.09.21 kobake 特殊文字A(アプリ名)を追加
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
@@ -4450,6 +4452,10 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 		switch( *(++p) ){
 		case '$':	//	 $$ -> $
 			*q++ = *p++;
+			break;
+		case 'A':	//アプリ名
+			q = strncpy_ex( q, q_max - q, GSTR_APPNAME, _tcslen(GSTR_APPNAME) );
+			++p;
 			break;
 		case 'F':	//	開いているファイルの名前（フルパス）
 			if ( !IsFilePathAvailable() ){
@@ -4821,7 +4827,7 @@ const char* CEditDoc::ExParam_SkipCond(const char* pszSource, int part)
 int CEditDoc::ExParam_Evaluate( const char* pCond )
 {
 	switch( *pCond ){
-	case 'R': // 読みとり専用
+	case 'R': // 読み取り専用
 		if( m_bReadOnly ){	/* 読み取り専用モード */
 			return 0;
 		}else

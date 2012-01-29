@@ -595,7 +595,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		m_pShareData->m_Common.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		strcpy( m_pShareData->m_Common.m_szTabWndCaption,
-			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
+			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読み取り専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
 		m_pShareData->m_Common.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
@@ -723,12 +723,12 @@ bool CShareData::InitShareData()
 
 		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-		strcpy( m_pShareData->m_Common.m_szWindowCaptionActive, 
-			"${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -"
-			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
-		strcpy( m_pShareData->m_Common.m_szWindowCaptionInactive, 
-			"${w?$h$:アウトプット$:$f$}${U?(更新)$} -"
-			" sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" );
+		_tcscpy( m_pShareData->m_Common.m_szWindowCaptionActive, 
+			_T("${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -")
+			_T(" $A $V ${R?(読み取り専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
+		_tcscpy( m_pShareData->m_Common.m_szWindowCaptionInactive, 
+			_T("${w?$h$:アウトプット$:$f$}${U?(更新)$} -")
+			_T(" $A $V ${R?(読み取り専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
 
 		//	From Here Sep. 14, 2001 genta
 		//	Macro登録の初期化
