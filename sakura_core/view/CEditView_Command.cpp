@@ -174,7 +174,6 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 	return FALSE;
 
 open_c:;
-//To Here Feb. 7, 2001
 
 	TCHAR	szPath[_MAX_PATH];
 	TCHAR	szDrive[_MAX_DRIVE];
@@ -200,7 +199,6 @@ open_c:;
 	if( bCheckOnly ){
 		return TRUE;
 	}
-//To Here Feb. 7, 2001
 
 	/* 指定ファイルが開かれているか調べる */
 	/* 開かれている場合は開いているウィンドウのハンドルも返す */

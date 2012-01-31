@@ -713,7 +713,7 @@ BOOL CEditDoc::OnFileClose()
 	HWND	hwndMainFrame = CEditWnd::Instance()->GetHwnd();
 	ActivateFrameWindow( hwndMainFrame );
 	if( CAppMode::Instance()->IsViewMode() ){	/* ビューモード */
-		::MessageBeep( MB_ICONQUESTION );
+		ConfirmBeep();
 		nRet = ::MYMESSAGEBOX(
 			hwndMainFrame,
 			MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
@@ -733,7 +733,7 @@ BOOL CEditDoc::OnFileClose()
 		}
 	}
 	else{
-		::MessageBeep( MB_ICONQUESTION );
+		ConfirmBeep();
 		nRet = ::MYMESSAGEBOX(
 			hwndMainFrame,
 			MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,

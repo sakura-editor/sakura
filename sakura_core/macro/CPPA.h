@@ -280,7 +280,7 @@ private:
 			CEditView::HandleCommand()にコマンドと一緒に渡すことで
 			コマンドの素性を教える．
 		*/
-		int				m_commandflags;	//<! 
+		int				m_commandflags;	//!< 
 	};
 	//	2007.07.26 genta : 現在実行中のインスタンス
 	static PpaExecInfo* m_CurInstance;

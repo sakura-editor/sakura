@@ -96,7 +96,7 @@ int CBackupAgent::MakeBackUp(
 	//@@@ 2002.03.23 end
 
 	if( bup_setting.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
-		::MessageBeep( MB_ICONQUESTION );
+		ConfirmBeep();
 		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
 				CEditWnd::Instance()->GetHwnd(),
@@ -136,7 +136,6 @@ int CBackupAgent::MakeBackUp(
 		}else if( IDCANCEL == nRet ){
 			return 2;// 保存中断
 		}
-//To Here Feb. 27, 2001
 	}
 
 	//	From Here Aug. 16, 2000 genta
