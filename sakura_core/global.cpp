@@ -84,7 +84,7 @@ const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
 const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 
 /*! 行終端子の配列 */
-const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
+const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_NONE			,	// == 0
 	EOL_CRLF			,	// == 2
 	EOL_LFCR			,	// == 2

@@ -782,7 +782,7 @@ BOOL CEditDoc::FileRead(
 		SetNewLineCode( EOL_CRLF );
 		CDocLine*	pFirstlineinfo = m_cDocLineMgr.GetLineInfo( 0 );
 		if( pFirstlineinfo != NULL ){
-			enumEOLType t = (enumEOLType)pFirstlineinfo->m_cEol;
+			EEolType t = (EEolType)pFirstlineinfo->m_cEol;
 			if( t != EOL_NONE && t != EOL_UNKNOWN ){
 				SetNewLineCode( t );
 			}
@@ -841,7 +841,7 @@ end_of_func:;
 	
 	@date Feb. 9, 2001 genta 改行コード用引数追加
 */
-BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
+BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 {
 	BOOL		bRet;
 	EditInfo	fi;
@@ -849,7 +849,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, enumEOLType cEolType )
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	CMRU		cMRU;
 	//	Feb. 9, 2001 genta
-	CEOL	cEol( cEolType );
+	CEol	cEol( cEolType );
 
 	//	Jun.  5, 2004 genta ここでReadOnlyチェックをすると，ファイル名を変更しても
 	//	保存できなくなってしまうので，チェックを上書き保存処理へ移動．
@@ -1057,7 +1057,7 @@ BOOL CEditDoc::OpenFileDialog(
 	@date 2003.07.20 ryoji	BOMの有無を示す引数追加
 	@date 2006.11.10 ryoji	ユーザー指定の拡張子を状況依存で変化させる
 */
-BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBomExist )
+BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEol* pcEol, BOOL* pbBomExist )
 {
 	char**	ppszMRU;		//	最近のファイル
 	char**	ppszOPENFOLDER;	//	最近のフォルダ

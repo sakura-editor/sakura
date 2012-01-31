@@ -248,7 +248,7 @@ SAKURA_CORE_API enum enumOutlineType {
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
-SAKURA_CORE_API enum enumEOLType {
+SAKURA_CORE_API enum EEolType {
 	EOL_NONE,
 	EOL_CRLF,
 	EOL_LFCR,
@@ -279,7 +279,7 @@ SAKURA_CORE_API enum enumShowDlg {
 #define EOL_TYPE_NUM	5
 
 /* 行終端子の配列 */
-SAKURA_CORE_API extern const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM];
+SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
 /* 選択領域描画用パラメータ */
 SAKURA_CORE_API extern const COLORREF	SELECTEDAREA_RGB;

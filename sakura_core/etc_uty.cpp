@@ -1619,7 +1619,7 @@ const char* GetNextLine(
 	int				nDataLen,
 	int*			pnLineLen,
 	int*			pnBgn,
-	CEOL*			pcEol
+	CEol*			pcEol
 )
 {
 	int		i;

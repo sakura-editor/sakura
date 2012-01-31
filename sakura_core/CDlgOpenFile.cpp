@@ -482,7 +482,7 @@ UINT_PTR CALLBACK OFNHookProc(
 				nIdx = ::SendMessage( hwndComboEOL, CB_GETCURSEL, 0, 0 );
 				lRes = ::SendMessage( hwndComboEOL, CB_GETITEMDATA, nIdx, 0 );
 //			lRes = ::SendMessage( hwndComboCODES, CB_GETCURSEL, 0, 0 );
-				pcDlgOpenFile->m_cEol = (enumEOLType)lRes;	/* 文字コード */
+				pcDlgOpenFile->m_cEol = (EEolType)lRes;	/* 文字コード */
 			}
 			//	From Here Jul. 26, 2003 ryoji
 			//	BOMチェックボックスの状態を取得
@@ -972,7 +972,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 			例）hoge.abc -> hoge.abc.txt
 		自前で補完することでこれを回避する。（実際の処理はフックプロシージャの中）
 */
-BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEOL* pcEol, BOOL* pbBom )
+BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEol* pcEol, BOOL* pbBom )
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 

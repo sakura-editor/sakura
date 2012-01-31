@@ -2521,7 +2521,7 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 //	BOOL		bEOL;
 	int			nPosX;
 	int			nWork;
-	CEOL		cEol;
+	CEol		cEol;
 	nBgn = 0;
 	nPosDes = 0;
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
@@ -2593,7 +2593,7 @@ void CMemory::SPACEToTAB( int nTabSpace )
 	int			i;
 	int			nPosDes;
 	int			nPosX;
-	CEOL		cEol;
+	CEol		cEol;
 
 	BOOL		bSpace = FALSE;	//スペースの処理中かどうか
 	int		j;

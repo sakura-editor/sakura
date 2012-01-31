@@ -44,7 +44,7 @@ public:
 	CDocLine*	m_pPrev;	/*!< 一つ前の要素 */
 	CDocLine*	m_pNext;	/*!< 一つ後の要素 */
 	CMemory*	m_pLine;	/*!< データ */
-	CEOL		m_cEol;		/*!< 行末コード */
+	CEol		m_cEol;		/*!< 行末コード */
 
 	bool		IsModifyed  ( void ) const { return m_bMark.m_bMarkArray.m_bModify ? true : false; }	// 変更フラグの状態を取得する	//@@@ 2002.05.25 MIK
 	void		SetModifyFlg( bool bFlg )  { m_bMark.m_bMarkArray.m_bModify = bFlg ? 1 : 0; }	// 変更フラグの状態を指定する	//@@@ 2002.05.25 MIK

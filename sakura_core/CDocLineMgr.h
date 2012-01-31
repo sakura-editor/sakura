@@ -166,7 +166,7 @@ public:
 	void AddLineStr( CMemory& );	/* 末尾に行を追加 Ver2 */
 #endif
 	//	May 15, 2000 genta
-	void AddLineStrX( const char*, int, CEOL );	/* 末尾に行を追加 Ver1.5 */
+	void AddLineStrX( const char*, int, CEol );	/* 末尾に行を追加 Ver1.5 */
 
 	void DeleteData_CDocLineMgr(
 		int			nLine,
@@ -218,7 +218,7 @@ public:
 	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEOL, BOOL bBomExist = FALSE );
+	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEol, BOOL bBomExist = FALSE );
 	CDocLine* GetLineInfo( int );
 	// 2002/2/10 aroka メンバを private にしてアクセサ追加
 	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }

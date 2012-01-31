@@ -44,7 +44,7 @@
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
-class SAKURA_CORE_API CEOL
+class SAKURA_CORE_API CEol
 {
 	static const char* gm_pszEolDataArr[EOL_TYPE_NUM];
 	static const wchar_t* gm_pszEolUnicodeDataArr[EOL_TYPE_NUM];
@@ -59,15 +59,15 @@ public:
 	//	m_nEOLLen = 2; /* = CR+LF */
 	}
 
-	static enumEOLType GetEOLType( const char* pszData, int nDataLen );
-	static enumEOLType GetEOLTypeUni( const wchar_t* pszData, int nDataLen );
-	static enumEOLType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen );
-	bool SetType( enumEOLType t);	//	Typeの設定
+	static EEolType GetEOLType( const char* pszData, int nDataLen );
+	static EEolType GetEOLTypeUni( const wchar_t* pszData, int nDataLen );
+	static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen );
+	bool SetType( EEolType t);	//	Typeの設定
 	void GetTypeFromString( const char* pszData, int nDataLen )
 		{	SetType( GetEOLType( pszData, nDataLen ) ); }
 
 	//	読み出し関数
-	enumEOLType GetType(void) const { return m_enumEOLType; }	//!<	現在のTypeを取得
+	EEolType GetType(void) const { return m_enumEOLType; }	//!<	現在のTypeを取得
 	int GetLen(void) const
 		{ return gm_pnEolLenArr[ m_enumEOLType ]; }	//!<	現在のEOL長を取得
 	const char* GetName(void) const
@@ -80,24 +80,21 @@ public:
 		{ return reinterpret_cast<const char*>(gm_pszEolUnicodeBEDataArr[m_enumEOLType]); }	//!<	UnicodeBE版のGetValue 2002.05.30 Moca
 
 	//	利便性向上のためのOverload
-	bool operator==( enumEOLType t ) const { return GetType() == t; }
-	bool operator!=( enumEOLType t ) const { return GetType() != t; }
-	const CEOL& operator=( const CEOL& t )
+	bool operator==( EEolType t ) const { return GetType() == t; }
+	bool operator!=( EEolType t ) const { return GetType() != t; }
+	const CEol& operator=( const CEol& t )
 		{ m_enumEOLType = t.m_enumEOLType; return *this; }
-	operator enumEOLType(void) const { return GetType(); }
+	operator EEolType(void) const { return GetType(); }
 
 	//	constructor
-	CEOL(){ Init(); }
-	CEOL( enumEOLType t ){ SetType(t); }
+	CEol(){ Init(); }
+	CEol( EEolType t ){ SetType(t); }
 
 private:
-	enumEOLType		m_enumEOLType;	//!< 改行コードの種類
+	EEolType		m_enumEOLType;	//!< 改行コードの種類
 	//int			m_nEOLLen;		/* 改行コードの長さ */
 };
 
-//	利便性向上のためのOverload
-// inline bool operator==(m_enumEOLType t, const CEOL& c ){ return c == t; }
-// inline bool operator!=(m_enumEOLType t, const CEOL& c ){ return c != t; }
 
 #endif
 

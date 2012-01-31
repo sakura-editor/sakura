@@ -69,8 +69,8 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	CMemory		cmemCurLine;
 	CMemory		cmemNextLine;
 	//	May 15, 2000
-	CEOL cEOLType;
-	CEOL cEOLTypeNext;
+	CEol cEOLType;
+	CEol cEOLTypeNext;
 	CDlgCancel*	pCDlgCancel = NULL;
 	HWND		hwndCancel = NULL;	//	èâä˙âª
 	HWND		hwndProgress = NULL;	//	èâä˙âª

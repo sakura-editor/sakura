@@ -95,7 +95,7 @@ public:
 	BOOL SelectFont( LOGFONT* );
 	BOOL FileRead( /*const*/ char* , BOOL*, int, BOOL, BOOL );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
-	BOOL FileWrite( const char*, enumEOLType cEolType );
+	BOOL FileWrite( const char*, EEolType cEolType );
 	bool SaveFile( const char* path );	//	ファイルの保存（に伴ういろいろ）
 	void OpenFile( const char *filename = NULL, int nCharCode = CODE_AUTODETECT,
 		BOOL bReadOnly = FALSE );	//	Oct. 9, 2004 genta CEditViewより移動
@@ -117,14 +117,14 @@ public:
 	void SetReferer( HWND , int, int );	/* タグジャンプ元など参照元の情報を保持する */
 #endif
 	//	Jul. 26, 2003 ryoji BOMオプション追加
-	BOOL SaveFileDialog( char*, int*, CEOL* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
+	BOOL SaveFileDialog( char*, int*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
 	void CheckFileTimeStamp( void );	/* ファイルのタイムスタンプのチェック処理 */
 	void ReloadCurrentFile( BOOL, BOOL );/* 同一ファイルの再オープン */
 
 	//	May 15, 2000 genta
-	CEOL  GetNewLineCode() const { return m_cNewLineCode; }
-	void  SetNewLineCode(const CEOL& t){ m_cNewLineCode = t; }
+	CEol  GetNewLineCode() const { return m_cNewLineCode; }
+	void  SetNewLineCode(const CEol& t){ m_cNewLineCode = t; }
 
 	//	Aug. 14, 2000 genta
 	bool IsModificationForbidden( int nCommand );
@@ -264,9 +264,9 @@ public: /* テスト用にアクセス属性を変更 */
 
 	//	May 15, 2000 genta
 protected:
-	CEOL 			m_cNewLineCode;				//	Enter押下時に挿入する改行コード種別
+	CEol 			m_cNewLineCode;				//	Enter押下時に挿入する改行コード種別
 public:
-	CEOL			m_cSaveLineCode;			//	保存時の改行コード種別（EOL_NONE:変換なし）
+	CEol			m_cSaveLineCode;			//	保存時の改行コード種別（EOL_NONE:変換なし）
 
 
 	BOOL			m_bReadOnly;				/* 読み取り専用モード */

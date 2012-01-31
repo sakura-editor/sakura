@@ -47,7 +47,7 @@ LPCTSTR CHtmlHelp::GetDllName(LPCTSTR)
 int CHtmlHelp::InitDll(void)
 {
 	if((HtmlHelp = (Proc_HtmlHelp)::GetProcAddress(GetInstance(),
-#ifdef UNICODE
+#ifdef _UNICODE
 	"HtmlHelpW"
 #else
 	"HtmlHelpA"

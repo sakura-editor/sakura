@@ -531,7 +531,7 @@ BOOL CEditView::HandleCommand(
 	case F_CHGMOD_EOL_LF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_LF, 0, 0, 0 );break;	//入力する改行コードをLFに設定
 	case F_CHGMOD_EOL_CR:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_CR, 0, 0, 0 );break;	//入力する改行コードをCRに設定
 	// 2006.09.03 Moca F_CHGMOD_EOLで break 忘れの修正
-	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (enumEOLType)lparam1 );break;	//入力する改行コードを設定
+	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (EEolType)lparam1 );break;	//入力する改行コードを設定
 	// To Here 2003.06.23 Moca
 	case F_CANCEL_MODE:		Command_CANCEL_MODE();break;	//各種モードの取り消し
 
@@ -1572,7 +1572,7 @@ try_again:;
 */
 void CEditView::CopyCurLine(
 	BOOL bAddCRLFWhenCopy,
-	enumEOLType neweol,
+	EEolType neweol,
 	BOOL bEnableLineModePaste
 )
 {
@@ -1591,12 +1591,12 @@ void CEditView::CopyCurLine(
 	if( pcLayout->m_cEol.GetLen() != 0 ){
 		cmemBuf.AppendSz(
 			( neweol == EOL_UNKNOWN ) ?
-				pcLayout->m_cEol.GetValue() : CEOL(neweol).GetValue()
+				pcLayout->m_cEol.GetValue() : CEol(neweol).GetValue()
 		);
 	}else if( bAddCRLFWhenCopy ){	// 2007.10.08 ryoji bAddCRLFWhenCopy対応処理追加
 		cmemBuf.AppendSz(
 			( neweol == EOL_UNKNOWN ) ?
-				CRLF : CEOL(neweol).GetValue()
+				CRLF : CEol(neweol).GetValue()
 		);
 	}
 
@@ -1621,7 +1621,7 @@ void CEditView::CopyCurLine(
 void CEditView::Command_COPY(
 	int bIgnoreLockAndDisable,
 	BOOL bAddCRLFWhenCopy,
-	enumEOLType neweol
+	EEolType neweol
 )
 {
 	CMemory			cmemBuf;
@@ -2819,8 +2819,7 @@ void CEditView::Command_CHAR( char cChar )
 	if( cChar == CR ||
 		cChar == LF ){
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
-		// enumEOLType nWorkEOL;
-		CEOL cWork = m_pcEditDoc->GetNewLineCode();
+		CEol cWork = m_pcEditDoc->GetNewLineCode();
 		cmemData.SetData( cWork.GetValue(), cWork.GetLen() );
 
 		/* テキストが選択されているか */
@@ -4259,7 +4258,7 @@ void CEditView::Command_DUPLICATELINE( void )
 	cmemBuf.SetData( pcLayout->GetPtr(), pcLayout->GetLengthWithoutEOL() + pcLayout->m_cEol.GetLen() );	//	※pcLayout->GetLengthWithEOL()は、EOLの長さを必ず1にするので使えない。
 	if( bAddCRLF ){
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
-		CEOL cWork = m_pcEditDoc->GetNewLineCode();
+		CEol cWork = m_pcEditDoc->GetNewLineCode();
 		cmemBuf.Append( cWork.GetValue(), cWork.GetLen() );
 	}
 

@@ -1651,7 +1651,7 @@ end_of_func:;
 	@date 2001.12.21 YAZAKI 改行記号の描きかたを変更。ペンはこの関数内で作るようにした。
 							矢印の先頭を、sx, syにして描画ルーチン書き直し。
 */
-void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, CEOL cEol, int bBold, COLORREF pColor )
+void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, CEol cEol, int bBold, COLORREF pColor )
 {
 	int sx, sy;	//	矢印の先頭
 	HANDLE	hPen;

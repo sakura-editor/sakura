@@ -52,7 +52,7 @@ public:
 	int				m_nLength;		/*!< このレイアウト行の長さ(ハイト数) */
 	int				m_nIndent;		/*!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI */
 	int				m_nTypePrev;	/*!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
-	CEOL			m_cEol;
+	CEol			m_cEol;
 	int				m_nLayoutWidth;	/*!< このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ） */	// 2009.08.28 nasukoji
 };
 

@@ -1,5 +1,5 @@
 /*!	@file
-	@brief CEOLクラスの実装
+	@brief CEolクラスの実装
 
 	@author genta
 	@date 2000/05/15 新規作成 genta
@@ -35,7 +35,7 @@
 //	固定データ
 //-----------------------------------------------
 /*! 行終端子のデータの配列 */
-const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
+const char* CEol::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 	"",
 	"\x0d\x0a",			// EOL_CRLF
 	"\x0a\x0d",			// EOL_LFCR
@@ -44,7 +44,7 @@ const char* CEOL::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 };
 
 /*! 行終端子のデータの配列(Unicode版) 2000/05/09 Frozen */
-const wchar_t* CEOL::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
+const wchar_t* CEol::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
 	L"",
 	L"\x0d\x0a",		// EOL_CRLF
 	L"\x0a\x0d",		// EOL_LFCR
@@ -53,7 +53,7 @@ const wchar_t* CEOL::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
 };
 
 /*! 行終端子のデータの配列(UnicodeBE版) 2000.05.30 Moca */
-const wchar_t* CEOL::gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
+const wchar_t* CEol::gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
 	L"",
 	(const wchar_t*)"\x00\x0d\x00\x0a\x00",		// EOL_CRLF
 	(const wchar_t*)"\x00\x0a\x00\x0d\x00",		// EOL_LFCR
@@ -62,7 +62,7 @@ const wchar_t* CEOL::gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
 };
 
 /*! 行終端子のデータ長の配列 */
-const int CEOL::gm_pnEolLenArr[EOL_TYPE_NUM] = {
+const int CEol::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 	LEN_EOL_NONE			,	// == 0
 	LEN_EOL_CRLF			,	// == 2
 	LEN_EOL_LFCR			,	// == 2
@@ -72,7 +72,7 @@ const int CEOL::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 };
 
 /* 行終端子の表示名の配列 */
-const char* CEOL::gm_pszEolNameArr[EOL_TYPE_NUM] = {
+const char* CEol::gm_pszEolNameArr[EOL_TYPE_NUM] = {
 	//	May 12, 2000 genta
 	//	文字幅の都合上“無”を漢字に
 	"改行無",
@@ -90,7 +90,7 @@ const char* CEOL::gm_pszEolNameArr[EOL_TYPE_NUM] = {
 	@retval true 正常終了。設定が反映された。
 	@retval false 異常終了。強制的にCRLFに設定。
 */
-bool CEOL::SetType( enumEOLType t )
+bool CEol::SetType( EEolType t )
 {
 	if( t < EOL_NONE || EOL_CR < t ){
 		//	異常値
@@ -108,7 +108,7 @@ bool CEOL::SetType( enumEOLType t )
 	@param nDataLen 調査対象文字列の長さ
 	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
 */
-enumEOLType CEOL::GetEOLType( const char* pszData, int nDataLen )
+EEolType CEol::GetEOLType( const char* pszData, int nDataLen )
 {
 	int	i;
 	/* 改行コードの長さを調べる */
@@ -128,7 +128,7 @@ enumEOLType CEOL::GetEOLType( const char* pszData, int nDataLen )
 	@param nDataLen 調査対象文字列の長さ(wchar_tの長さ)
 	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
 */
-enumEOLType CEOL::GetEOLTypeUni( const wchar_t* pszData, int nDataLen )
+EEolType CEol::GetEOLTypeUni( const wchar_t* pszData, int nDataLen )
 {
 	int	i;
 	/* 改行コードの長さを調べる */
@@ -148,7 +148,7 @@ enumEOLType CEOL::GetEOLTypeUni( const wchar_t* pszData, int nDataLen )
 	@param nDataLen 調査対象文字列の長さ(wchar_tの長さ)
 	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
 */
-enumEOLType CEOL::GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
+EEolType CEol::GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
 {
 	int	i;
 	/* 改行コードの長さを調べる */

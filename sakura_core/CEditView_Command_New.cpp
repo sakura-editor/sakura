@@ -2354,7 +2354,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	int			nBgn;
 	int			i,j;
 	int			nPosDes;
-	CEOL		cEol;
+	CEol		cEol;
 	int			nCharChars;
 
 	nBgn = 0;
@@ -2885,7 +2885,7 @@ void CEditView::Command_Favorite( void )
 	@author moca
 	@date 2003.06.23 新規作成
 */
-void CEditView::Command_CHGMOD_EOL( enumEOLType e ){
+void CEditView::Command_CHGMOD_EOL( EEolType e ){
 	if( EOL_NONE < e && e < EOL_CODEMAX  ){
 		m_pcEditDoc->SetNewLineCode( e );
 		// ステータスバーを更新するため
@@ -3085,7 +3085,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOp
 {
 	CFileLoad	cfl;
 	const char*	pLine;
-	CEOL cEol;
+	CEol cEol;
 	int			nLineLen;
 	int			nLineNum = 0;
 	int			nSaveCharCode;

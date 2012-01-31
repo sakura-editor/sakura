@@ -5853,7 +5853,7 @@ BOOL CEditView::GetSelectedData(
 		BOOL		bWithLineNumber,	/* 行番号を付与する */
 		BOOL		bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 //	Jul. 25, 2000 genta
-		enumEOLType	neweol				//	コピー後の改行コード EOL_NONEはコード保存
+		EEolType	neweol				//	コピー後の改行コード EOL_NONEはコード保存
 )
 {
 	const char*		pLine;
@@ -5867,7 +5867,7 @@ BOOL CEditView::GetSelectedData(
 	char*			pszLineNum;
 	char*			pszSpaces = "                    ";
 	const CLayout*	pcLayout;
-	CEOL			appendEol( neweol );
+	CEol			appendEol( neweol );
 	bool			addnl = false;
 
 	/* 範囲選択がされていない */
@@ -6726,7 +6726,7 @@ void CEditView::DrawCaretPosInfo( void )
 	//	May 12, 2000 genta
 	//	改行コードの表示を追加
 	//	From Here
-	CEOL cNlType = m_pcEditDoc->GetNewLineCode();
+	CEol cNlType = m_pcEditDoc->GetNewLineCode();
 	const char *nNlTypeName = cNlType.GetName();
 	//	To Here
 
@@ -8228,7 +8228,7 @@ int CEditView::DoGrepFile(
 	bOutFileName = FALSE;
 	int		nLineLen;
 	const	char*	pLine;
-	CEOL	cEol;
+	CEol	cEol;
 	int		nEolCodeLen;
 	CFileLoad	cfl;
 	int		nOldPercent = 0;
@@ -9980,15 +9980,6 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 	// To Here 2007.09.09 Moca
 	return;
 }
-
-
-#if 0
-/* 現在、Enterなどで挿入する改行コードの種類を取得 */
-CEOL CEditView::GetCurrentInsertEOL( void )
-{
-	return m_pcEditDoc->GetNewLineCode();
-}
-#endif
 
 /*!	@brief	外部コマンドの実行
 

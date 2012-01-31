@@ -217,7 +217,7 @@ public:
 	bool  ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
 
 // 2002/01/19 novice public属性に変更
-	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	BOOL GetSelectedData( CMemory&, BOOL, const char*, BOOL, BOOL bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	//	Aug. 25, 2002 genta protected->publicに移動
 	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
 	void CreateEditCaret( COLORREF crCaret, COLORREF crBack, int nWidth, int nHeight );		/* キャレットの作成 */	// 2006.12.07 ryoji
@@ -435,8 +435,6 @@ public: /* テスト用にアクセス属性を変更 */
 		m_nCaretWidth = 0;
 	}
 protected:
-//	CEOL GetCurrentInsertEOL( void );					/* 現在、Enterなどで挿入する改行コードの種類を取得 */
-
 	BOOL MyGetClipboardData( CMemory&, BOOL*, BOOL* = NULL );			/* クリップボードからデータを取得 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
 	BOOL MySetClipboardData( const char*, int, BOOL, BOOL = FALSE );	/* クリップボードにデータを設定 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
 	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
@@ -724,9 +722,9 @@ protected:
 //	void Command_GOFILEEND( int );			/* ファイルの最後に移動 */
 
 	/* クリップボード系 */
-	void CopyCurLine( BOOL bAddCRLFWhenCopy, enumEOLType neweol, BOOL bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
+	void CopyCurLine( BOOL bAddCRLFWhenCopy, EEolType neweol, BOOL bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( int, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( int, BOOL bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( void );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( void );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
@@ -853,7 +851,7 @@ void ReplaceData_CEditView(
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
-	void Command_CHGMOD_EOL( enumEOLType );	/* 入力する改行コードを設定 2003.06.23 moca */
+	void Command_CHGMOD_EOL( EEolType );	/* 入力する改行コードを設定 2003.06.23 moca */
 	void Command_CANCEL_MODE( void );	/* 各種モードの取り消し */
 
 	/* 設定系 */
@@ -945,10 +943,8 @@ void ReplaceData_CEditView(
 	//	May 23, 2000 genta
 	//	画面描画補助関数
 //@@@ 2001.12.21 YAZAKI 改行記号の書きかたが変だったので修正
-//	void DrawEOL(HDC hdc, HANDLE hPen, int nPosX, int nPosY, int nWidth, int nHeight,
-//		CEOL cEol, int bBold );
 	void DrawEOL(HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
-		CEOL cEol, int bBold, COLORREF pColor );
+		CEol cEol, int bBold, COLORREF pColor );
 	//タブ矢印描画関数	//@@@ 2003.03.26 MIK
 	void DrawTabArrow( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, int bBold, COLORREF pColor );
 	//	EOF描画関数	//	2004.05.29 genta

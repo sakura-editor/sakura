@@ -258,7 +258,7 @@ void CFileLoad::SeekBegin( void )
 */
 const char* CFileLoad::ReadLine(
 	int*			pnLineLen,	//!< [out]	改行コード長を含む一行のデータ長
-	CEOL*			pcEol		//!< [i/o]
+	CEol*			pcEol		//!< [i/o]
 )
 {
 	const char	*pLine;
@@ -348,7 +348,7 @@ const char* CFileLoad::ReadLine(
 /*
 const wchar_t* CFileLoad::ReadLineW(
 	int*			pnLineLen,	//!< [out] 改行コード長を含む1行のデータバイト数
-	CEOL*			pcEol		//!< [i/o]
+	CEol*			pcEol		//!< [i/o]
 )
 {
 	const char	*pLine;
@@ -556,7 +556,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	int			nDataLen,	//!< [in]	検索文字列のバイト数
 	int*		pnLineLen,	//!< [out]	1行のバイト数を返すただしEOLは含まない
 	int*		pnBgn,		//!< [i/o]	検索文字列のバイト単位のオフセット位置
-	CEOL*		pcEol,		//!< [i/o]	EOL
+	CEol*		pcEol,		//!< [i/o]	EOL
 	int*		pnEolLen	//!< [out]	EOLのバイト数 (Unicodeで困らないように)
 ){
 	const char *pRetStr;
@@ -606,7 +606,7 @@ const wchar_t* CFileLoad::GetNextLineW(
 	int			nDataLen,	//!< [in]	検索文字列の文字数
 	int*		pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
 	int*		pnBgn,		//!< [i/o]	検索文字列のオフセット位置
-	CEOL*		pcEol		//!< [i/o]	EOL
+	CEol*		pcEol		//!< [i/o]	EOL
 )
 {
 	int		i;
@@ -621,7 +621,7 @@ const wchar_t* CFileLoad::GetNextLineW(
 		// 改行コードがあった
 		if( pData[i] == (wchar_t)0x000a || pData[i] == (wchar_t)0x000d ){
 			// 行終端子の種類を調べる
-			pcEol->SetType( CEOL::GetEOLTypeUni( &pData[i], nDataLen - i ) );
+			pcEol->SetType( CEol::GetEOLTypeUni( &pData[i], nDataLen - i ) );
 			break;
 		}
 	}
@@ -640,7 +640,7 @@ const wchar_t* CFileLoad::GetNextLineWB(
 	int			nDataLen,	//!< [in]	検索文字列の文字数
 	int*		pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
 	int*		pnBgn,		//!< [i/o]	検索文字列のオフセット位置
-	CEOL*		pcEol		//!< [i/o]	EOL
+	CEol*		pcEol		//!< [i/o]	EOL
 )
 {
 	int		i;
@@ -655,7 +655,7 @@ const wchar_t* CFileLoad::GetNextLineWB(
 		// 改行コードがあった
 		if( pData[i] == (wchar_t)0x0a00 || pData[i] == (wchar_t)0x0d00 ){
 			// 行終端子の種類を調べる
-			pcEol->SetType( CEOL::GetEOLTypeUniBE( &pData[i], nDataLen - i ) );
+			pcEol->SetType( CEol::GetEOLTypeUniBE( &pData[i], nDataLen - i ) );
 			break;
 		}
 	}

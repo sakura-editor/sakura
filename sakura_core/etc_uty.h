@@ -55,7 +55,7 @@
 
 #include "CHtmlHelp.h"	//	Jul.  6, 2001 genta
 class CMemory;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
-class CEOL;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
+class CEol;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 class CBregexp;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 
 BOOL MyWinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData);	/* WinHelp ‚Ì‚©‚í‚è‚É HtmlHelp ‚ğŒÄ‚Ño‚· */	// 2006.07.22 ryoji
@@ -69,7 +69,7 @@ SAKURA_CORE_API int AddLastChar( char*, int, char );/* 2003.06.24 Moca ÅŒã‚Ì•¶
 SAKURA_CORE_API int LimitStringLengthB( const char*, int, int, CMemory& );/* ƒf[ƒ^‚ğw’èƒoƒCƒg”ˆÈ“à‚ÉØ‚è‹l‚ß‚é */
 SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’è’·ˆÈ‰º‚ÌƒeƒLƒXƒg‚ÉØ‚è•ª‚¯‚é */
 //SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, BOOL*, BOOL );/* CRLF‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·BCRLF‚Ís’·‚É‰Á‚¦‚È‚¢ */
-SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, CEOL* );/* CR0LF0,CRLF,LFCR,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
+SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, CEol* );/* CR0LF0,CRLF,LFCR,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
 SAKURA_CORE_API void GetLineColm( const char*, int*, int* );
 SAKURA_CORE_API bool IsFilePath( const char*, int*, int*, bool = true );
 SAKURA_CORE_API bool IsFileExists(const char* path, bool bFileOnly = false);

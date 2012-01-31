@@ -697,7 +697,7 @@ BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
 	//Ž©•ª‚©H
 	if( NULL == hWnd )
 	{
-		CEOL	cEol( m_pcEditDoc->m_cSaveLineCode );
+		CEol	cEol( m_pcEditDoc->m_cSaveLineCode );
 		FILETIME	filetime;
 		return (BOOL)m_pcEditDoc->m_cDocLineMgr.WriteFile( 
 			filename, 

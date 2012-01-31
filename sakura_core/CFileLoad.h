@@ -72,12 +72,11 @@ public:
 	enumCodeType FileOpen( LPCTSTR, int, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
-	const char* ReadLine( int*, CEOL* );	// 1行データをロードする 順アクセス用
-//	const wcha_t* ReadLineW( int*, CEOL* );	// 1行データをロードする 順アクセス用(Unicode版)
+	const char* ReadLine( int*, CEol* );	// 1行データをロードする 順アクセス用
 
 //	未実装関数郡
-//	cosnt char* ReadAtLine( int, int*, CEOL* ); // 指定行目をロードする
-//	cosnt wchar_t* ReadAtLineW( int, int*, CEOL* ); // 指定行目をロードする(Unicode版)
+//	cosnt char* ReadAtLine( int, int*, CEol* ); // 指定行目をロードする
+//	cosnt wchar_t* ReadAtLineW( int, int*, CEol* ); // 指定行目をロードする(Unicode版)
 //	bool ReadIgnoreLine( void ); // 1行読み飛ばす
 
 
@@ -111,11 +110,11 @@ protected:
 	void ReadBufEmpty( void );	// バッファを空にする
 
 	// GetLextLine の 文字コード考慮版
-	const char* GetNextLineCharCode( const char*, int, int*, int*, CEOL*, int* );
+	const char* GetNextLineCharCode( const char*, int, int*, int*, CEol*, int* );
 
 	/* 実装ヘルパー関数 */
-	static const wchar_t* GetNextLineW(  const wchar_t*, int, int*, int*, CEOL* ); // GetNextLineのwchar_t版
-	static const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEOL* ); // GetNextLineのwchar_t版(ビックエンディアン用)
+	static const wchar_t* GetNextLineW(  const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版
+	static const wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)
 
 	int Read( void*, size_t ); // inline
 	DWORD FilePointer( DWORD, DWORD ); // inline

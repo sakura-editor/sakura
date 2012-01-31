@@ -387,7 +387,7 @@ const char* CDocLineMgr::GetNextLinrStr( int* pnLineLen )
 	@param cEol [in] 行末コード
 
 */
-void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEOL cEol )
+void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEol cEol )
 {
 #ifdef _DEBUG
 //	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::AddLineStrX(const char*, int, int)" );
@@ -447,7 +447,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	int			nRetVal = TRUE;
 	int			nLineNum = 0;
 	//	May 15, 2000 genta
-	CEOL cEol;
+	CEol cEol;
 	CFileLoad cfl; 	//	2002/08/30 Moca Add
 	const char*	pLine;
 	int			nLineLen;
@@ -595,7 +595,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	@note Windows用にコーディングしてある
 	@date 2003.07.26 ryoji BOM引数追加
 */
-int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, CEOL cEol, BOOL bBomExist)
+int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, CEol cEol, BOOL bBomExist)
 {
 	const char*		pLine;
 //	char*			pLineUnicode;
@@ -804,41 +804,6 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 					cmemBuf.Append(cEol.GetValue(),cEol.GetLen());
 			}
 // 2002/05/09 Frozen ここまで
-
-// 2002/05/09 Frozen ここから削除
-
-//			/* 書き込み時の改行コード変換 */
-//			switch( nCharCode ){
-//			case CODE_UNICODE:
-//				/* ASCII+SJIS→Unicode変換 */
-//				//	May 15, 2000 genta
-//				{
-//					CEOL ue( EOL_CRLF_UNICODE );
-//					cmemBuf.Append( ue.GetValue(), ue.GetLen() );
-//				}
-//				break;
-//// 1999.12.20
-////			case CODE_EUC:
-////				cmemBuf.Append( gm_pszEolDataArr[EOL_LF], LEN_EOL_LF );
-////				break;
-//			default:
-//				//	From Here Feb. 8, 2001 genta 改行コード変換処理を追加
-//				if( cEol == EOL_NONE ){
-//// 1999.12.20
-////				/* 改行コードをCRLFに変換 */
-////				cmemBuf.Append( gm_pszEolDataArr[EOL_CRLF], LEN_EOL_CRLF );
-//					/* 改行コードを変換しない */
-//					cmemBuf.Append( pCDocLine->m_cEol.GetValue(), pCDocLine->m_cEol.GetLen() );
-//					break;
-//				}
-//				else {
-//					/* 改行コードを指定されたものに変換 */
-//					cmemBuf.Append( cEol.GetValue(), cEol.GetLen() );
-//				}
-//				//	To Here Feb. 8, 2001 genta
-//			}
-// 2002/05/09 Frozen ここまで削除
-
 		}
 		if( 0 < cmemBuf.GetLength() )//{
 			file.Write(cmemBuf.GetPtr(),sizeof(char)*cmemBuf.GetLength());//2002/05/22 Frozen gotoの次の}までをこの一行で置き換え
@@ -1103,10 +1068,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 	int			nCount;
 
 	//	May 15, 2000 genta
-	CEOL 		cEOLType;
-	CEOL 		cEOLTypeNext;
-	//enumEOLType nEOLType;
-	//enumEOLType nEOLTypeNext;
+	CEol 		cEOLType;
+	CEol 		cEOLTypeNext;
 
 	bool		bBookMarkNext;	// 2001.12.03 hor 挿入によるマーク行の制御
 

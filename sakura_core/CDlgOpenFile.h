@@ -69,7 +69,7 @@ public:
 	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	//	Jul. 26, 2003 ryoji BOM用引数追加
-	BOOL DoModalSaveDlg( char* , int*, CEOL*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModalSaveDlg( char* , int*, CEol*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
 //	INT_PTR DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
@@ -86,7 +86,7 @@ public:
 	int				m_nCharCode;					/* 文字コード */
 //	char			m_szHelpFile[_MAX_PATH + 1];
 //	int				m_nHelpTopicID;
-	CEOL			m_cEol;	//	Feb. 9, 2001 genta
+	CEol			m_cEol;	//	Feb. 9, 2001 genta
 	bool			m_bUseEol;	//	Feb. 9, 2001 genta
 
 	//	Jul. 26, 2003 ryoji BOM

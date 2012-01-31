@@ -1519,7 +1519,6 @@ void CLayoutMgr::CaretPos_Log2Phys(
 	pData = GetLineStr( nCaretPosY, &nDataLen );
 	nX = pcLayout ? pcLayout->GetIndent() : 0;
 checkloop:;
-//	enumEOLType nEOLType;
 	for( i = 0; i < nDataLen; ++i ){
 		if( pData[i] ==	TAB ){
 			// Sep. 23, 2002 genta ƒƒ“ƒo[ŠÖ”‚ðŽg‚¤‚æ‚¤‚É
