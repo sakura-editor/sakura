@@ -883,39 +883,13 @@ LRESULT CEditApp::DispatchEvent(
 							break;
 						}else
 						{
-							::MessageBeep( MB_ICONHAND );
+							ErrorBeep();
 						}
 					}while(IDYES == ::MYMESSAGEBOX( 
 							NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST,
 							GSTR_APPNAME,
 							"外部ヘルプ１が設定されていません。\n今すぐ設定しますか?")
 					);/*do-while*/
-#if 0
-					{
-					retry:;
-						if( 0 == strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
-							::MessageBeep( MB_ICONHAND );
-							if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-								"外部ヘルプ１が設定されていません。\n今すぐ設定しますか?"
-							) ){
-								/* 共通設定 プロパティシート */
-//								if( !m_pcEditDoc->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHELP1*/ ) ){
-//									break;
-//								}
-								goto retry;
-							}
-							else {
-								break;
-							}
-						}
-
-//						CMemory		cmemCurText;
-						/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-//						GetCurrentTextForSearch( cmemCurText );
-//						::WinHelp( m_hwndParent, m_pShareData->m_Common.m_szExtHelp1, HELP_KEY, (ULONG_PTR)(char*)cmemCurText.GetPtr() );
-//						break;
-					}
-#endif
 					break;
 				case F_EXTHTMLHELP:
 					/* 外部HTMLヘルプ */

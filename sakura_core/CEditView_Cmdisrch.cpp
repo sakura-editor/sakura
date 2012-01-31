@@ -18,6 +18,7 @@
 #include "CDocLine.h"
 #include "CMigemo.h"
 #include "etc_uty.h"
+#include "Debug.h"
 
 /*!
 	コマンドコードの変換(ISearch時)及び
@@ -173,7 +174,7 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 				break;
 			case 2: // 正規表現インクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage("BREGREP.DLLが使用できません。");
 					return;
 				}
@@ -183,7 +184,7 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 				break;
 			case 3: // MIGEMOインクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage("BREGREP.DLLが使用できません。");
 					return;
 				}
@@ -191,7 +192,7 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 				//	Jan. 10, 2005 genta 設定変更で使えるようになっている
 				//	可能性があるので，使用可能でなければ一応初期化を試みる
 				if ( ! m_pcmigemo->IsAvailable() && ! m_pcmigemo->Init() ){
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage("MIGEMO.DLLが使用できません。");
 					return;
 				}
@@ -201,7 +202,7 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 					m_pShareData->m_Common.m_bRegularExp = TRUE;
 					//SendStatusMessage("[MIGEMO] I-Search: ");
 				}else{
-					MessageBeep(MB_ICONEXCLAMATION);
+					WarningBeep();
 					SendStatusMessage("MIGEMOは使用できません。 ");
 					return;
 				}
@@ -483,7 +484,7 @@ void CEditView::ISearchBack(void) {
 				m_bCurSrchKeyMark = FALSE;
 
 		}else{
-			MessageBeep(MB_ICONEXCLAMATION);
+			WarningBeep();
 		}
 	}
 	m_nISearchHistoryCount --;

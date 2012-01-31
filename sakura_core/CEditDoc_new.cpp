@@ -1452,7 +1452,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 	 	//	Feb. 28, 2004 genta
 	 	//	保存不要でも警告音を出して欲しくない場合がある
 	 	if( warnbeep ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 		}
 		return TRUE;
 	}
@@ -1471,7 +1471,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 		//	読み取り専用のチェックをCEditDocから上書き保存処理に移動
 		if( m_bReadOnly ){	/* 読み取り専用モード */
 			if( warnbeep ){
-				::MessageBeep( MB_ICONHAND );
+				ErrorBeep();
 				MYMESSAGEBOX(
 					m_hWnd,
 					MB_OK | MB_ICONSTOP | MB_TOPMOST,
@@ -1517,7 +1517,7 @@ BOOL CEditDoc::FileSaveAs_Dialog( void )
 		//	読み取り専用のチェックをCEditDocから上書き保存処理に移動
 		//	同名で上書きされるのを防ぐ
 		if( m_bReadOnly && strcmp( szPath, GetFilePath()) == 0 ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 			MYMESSAGEBOX(
 				m_hWnd,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,

@@ -3043,7 +3043,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 		for( i = 0; i < cFiles; i++ ) {
 				// 2008.07.28 nasukoji	長すぎるパスをドロップされると異常終了することへの対策
 				if( ::DragQueryFile( hDrop, i, NULL, 0 ) >= _MAX_PATH ){
-					::MessageBeep( MB_ICONSTOP );
+					ErrorBeep();
 					MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 								  "ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。",
 								  _MAX_PATH );

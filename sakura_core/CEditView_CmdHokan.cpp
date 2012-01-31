@@ -125,7 +125,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 			m_pcEditDoc->m_cHokanMgr.Hide();
 			m_bHokan = FALSE;
 			// 2003.06.25 Moca 失敗してたら、ビープ音を出して補完終了。
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 		}
 	}
 	else if( bAutoDecided && nKouhoNum == 1){ //	候補1つのみ→確定。
@@ -173,7 +173,7 @@ retry:;
 	if( m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
 		0 == lstrlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile 
 	) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
 			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
 		) ){
@@ -190,7 +190,7 @@ retry:;
 	if( 0 < GetLeftWord( &cmemData, 100 ) ){
 		ShowHokanMgr( cmemData, TRUE );
 	}else{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;

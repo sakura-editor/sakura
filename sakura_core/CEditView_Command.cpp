@@ -143,7 +143,7 @@ BOOL CEditView::HandleCommand(
 	if( pCEditWnd->m_pPrintPreview &&
 		F_PRINT_PREVIEW != nCommand
 	){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return -1;
 	}
 	/* キーリピート状態 */
@@ -240,7 +240,7 @@ BOOL CEditView::HandleCommand(
 			) &&
 			(unsigned char)lparam1 != TAB && (unsigned char)lparam1 != CR && (unsigned char)lparam1 != LF
 		){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 		}else{
 			Command_CHAR( (char)lparam1 );
 		}
@@ -1602,7 +1602,7 @@ void CEditView::CopyCurLine(
 
 	/* クリップボードにデータcmemBufの内容を設定 */
 	if( FALSE == MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE, bEnableLineModePaste ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -1643,13 +1643,13 @@ void CEditView::Command_COPY(
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 		if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, bAddCRLFWhenCopy, neweol ) ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 			return;
 		}
 
 		/* クリップボードにデータcmemBufの内容を設定 */
 		if( FALSE == MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), bBeginBoxSelect, FALSE ) ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 			return;
 		}
 	}
@@ -1681,7 +1681,7 @@ void CEditView::Command_COPY(
 void CEditView::Command_CUT( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -1706,12 +1706,12 @@ void CEditView::Command_CUT( void )
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* クリップボードにデータを設定 */
 	if( FALSE == MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), bBeginBoxSelect ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -1727,7 +1727,7 @@ void CEditView::Command_CUT( void )
 void CEditView::Command_DELETE( void )
 {
 	if( m_bBeginSelect ){		/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -1757,7 +1757,7 @@ void CEditView::Command_DELETE( void )
 void CEditView::Command_DELETE_BACK( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -1820,14 +1820,14 @@ void CEditView::Command_WordDeleteToEnd( void )
 	if( IsTextSelected() ){
 		/* 矩形範囲選択中か */
 		if( m_bBeginBoxSelect ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 			return;
 		}
 	}
 	/* 単語の右端に移動 */
 	CEditView::Command_WORDRIGHT( TRUE );
 	if( !IsTextSelected() ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -1873,14 +1873,14 @@ void CEditView::Command_WordDeleteToStart( void )
 	if( IsTextSelected() ){
 		/* 矩形範囲選択中か */
 		if( m_bBeginBoxSelect ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 			return;
 		}
 	}
 	/* 単語の左端に移動 */
 	CEditView::Command_WORDLEFT( TRUE );
 	if( !IsTextSelected() ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -1970,12 +1970,12 @@ void CEditView::Command_LineCutToStart( void )
 	}
 	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( 0, pCLayout->m_nLinePhysical, &nX, &nY );
 	if( m_nCaretPosX == nX && m_nCaretPosY == nY ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* 選択範囲の変更 */
@@ -2004,7 +2004,7 @@ void CEditView::Command_LineCutToEnd( void )
 	}
 	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
@@ -2016,7 +2016,7 @@ void CEditView::Command_LineCutToEnd( void )
 	if( ( m_nCaretPosX == nX && m_nCaretPosY == nY )
 	 || ( m_nCaretPosX >  nX && m_nCaretPosY == nY )
 	){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* 選択範囲の変更 */
@@ -2044,12 +2044,12 @@ void CEditView::Command_LineDeleteToStart( void )
 	}
 	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( 0, pCLayout->m_nLinePhysical, &nX, &nY );
 	if( m_nCaretPosX == nX && m_nCaretPosY == nY ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* 選択範囲の変更 */
@@ -2077,7 +2077,7 @@ void CEditView::Command_LineDeleteToEnd( void )
 	}
 	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
@@ -2089,7 +2089,7 @@ void CEditView::Command_LineDeleteToEnd( void )
 	if( ( m_nCaretPosX == nX && m_nCaretPosY == nY )
 	 || ( m_nCaretPosX >  nX && m_nCaretPosY == nY )
 	){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* 選択範囲の変更 */
@@ -2109,18 +2109,18 @@ void CEditView::Command_LineDeleteToEnd( void )
 void CEditView::Command_CUT_LINE( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
 	if( IsTextSelected() ){	/* テキストが選択されているか */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
 	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
 	if( NULL == pcLayout ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2137,7 +2137,7 @@ void CEditView::Command_CUT_LINE( void )
 void CEditView::Command_DELETE_LINE( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2146,12 +2146,12 @@ void CEditView::Command_DELETE_LINE( void )
 	COpe*			pcOpe = NULL;
 	const CLayout*	pcLayout;
 	if( IsTextSelected() ){	/* テキストが選択されているか */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
 	if( NULL == pcLayout ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	m_nSelectLineFrom = m_nCaretPosY;		/* 範囲選択開始行 */
@@ -2333,7 +2333,7 @@ bool CEditView::Command_SELECTWORD( void )
 void CEditView::Command_PASTE( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2349,7 +2349,7 @@ void CEditView::Command_PASTE( void )
 	BOOL		bColmnSelect;
 	BOOL		bLineSelect = FALSE;
 	if( FALSE == MyGetClipboardData( cmemClip, &bColmnSelect, m_pShareData->m_Common.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2392,7 +2392,7 @@ void CEditView::Command_PASTE( void )
 void CEditView::Command_INSTEXT( BOOL bRedraw, const char* pszText, int nTextLen, BOOL bNoWaitCursor, BOOL bLinePaste )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2557,7 +2557,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 	/* これらの動作は残しておきたいのだが、呼び出し側で責任を持ってやってもらうことに変更。
 	if( m_bBeginSelect )	// マウスによる範囲選択中
 	{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2763,7 +2763,7 @@ void CEditView::Command_PASTEBOX( void )
 {
 	if( m_bBeginSelect )	// マウスによる範囲選択中
 	{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2776,7 +2776,7 @@ void CEditView::Command_PASTEBOX( void )
 	// クリップボードからデータを取得
 	CMemory			cmemClip;
 	if( FALSE == MyGetClipboardData( cmemClip, NULL ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	// 2004.07.13 Moca \0コピー対策
@@ -2795,7 +2795,7 @@ void CEditView::Command_PASTEBOX( void )
 void CEditView::Command_CHAR( char cChar )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -3005,7 +3005,7 @@ void CEditView::Command_CHAR( char cChar )
 void CEditView::Command_IME_CHAR( WORD wChar )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -3347,7 +3347,7 @@ end_of_func:;
 		SendStatusMessage("△見つかりませんでした");
 //	if( FALSE == bFound ){
 // To Here 2002.01.26 hor
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		if( bReDraw	&&
 			m_pShareData->m_Common.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
 		){
@@ -3609,7 +3609,7 @@ end_of_func:;
 		DrawCaretPosInfo();	// 2002/04/18 YAZAKI
 		SendStatusMessage("▽見つかりませんでした");
 // To Here 2002.01.26 hor
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		if( bRedraw	&&
 			m_pShareData->m_Common.m_bNOTIFYNOTFOUND	/* 検索／置換  見つからないときメッセージを表示 */
 		){
@@ -3805,7 +3805,7 @@ void CEditView::Command_COPYFILENAME( void )
 		pszFile = m_pcEditDoc->GetFileName();
 		MySetClipboardData( pszFile , lstrlen( pszFile ), FALSE );
 	}else{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 	}
 	return;
 }
@@ -3836,7 +3836,7 @@ void CEditView::Command_COPYPATH( void )
 //		::SetClipboardData( CF_OEMTEXT, hgClip );
 //		::CloseClipboard();
 	}else{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 	}
 	return;
 
@@ -3860,7 +3860,7 @@ void CEditView::Command_COPYTAG( void )
 		wsprintf( buf, "%s (%d,%d): ", m_pcEditDoc->GetFilePath(), line+1, col+1 );
 		MySetClipboardData( buf, lstrlen( buf ), FALSE );
 	}else{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 	}
 	return;
 
@@ -3893,22 +3893,9 @@ void CEditView::Command_JUMP( void )
 	int			nCurrentLine;
 	int			nCommentBegin;
 	int			nBgn;
-#if 0
-	2002.2.2 YAZAKI ダイアログ呼び出し部と、コマンド実行部を分離
-//	int			nCharChars;
-//	m_pcEditDoc->m_cDlgJump.Create( m_hInstance, m_hWnd, (void *)m_pcEditDoc );
-	if( !m_pcEditDoc->m_cDlgJump.DoModal(
-		m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-//		m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-//		&m_pcEditDoc->m_hwndActiveDialog						/* アクティブな子ダイアログ */
-	) ){
-//		::MessageBeep( MB_ICONHAND );	//Feb. 20, 2001 JEPRO [キャンセル]時に鳴る警告音の正体はこれ(コメントアウトにした)
-		return;
-	}
-#endif
+
 	if( 0 == m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* 行番号 */
@@ -4212,7 +4199,7 @@ void CEditView::Command_DUPLICATELINE( void )
 
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
 	if( NULL == pcLayout ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -4899,7 +4886,7 @@ void CEditView::Command_EXTHELP1( void )
 retry:;
 	if( CShareData::getInstance()->ExtWinHelpIsSet( m_pcEditDoc->GetDocumentType() ) == false){
 //	if( 0 == strlen( m_pShareData->m_Common.m_szExtHelp1 ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 //From Here Sept. 15, 2000 JEPRO
 //		[Esc]キーと[x]ボタンでも中止できるように変更
 //		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
@@ -4956,7 +4943,7 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 	const char *filename = NULL;
 	if ( helpfile == NULL || helpfile[0] == '\0' ){
 		while( !CShareData::getInstance()->ExtHTMLHelpIsSet( m_pcEditDoc->GetDocumentType()) ){
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
 	//		[Esc]キーと[x]ボタンでも中止できるように変更
 	//		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNO | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
@@ -5605,7 +5592,7 @@ void CEditView::Command_UNINDENT( char cChar )
 	//}
 	/* 矩形範囲選択中か */
 	if( m_bBeginBoxSelect ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 //**********************************************
 //	 箱型逆インデントについては、保留とする (1998.10.22)
 //**********************************************
@@ -6646,15 +6633,6 @@ BOOL CEditView::OPEN_ExtFromtoExt( BOOL bCheckOnly, BOOL bBeepWhenMiss,
 //To Here Feb. 7, 2001
 
 	/* 編集中ファイルの拡張子を調べる */
-//Feb. 7, 2001 JEPRO 原作版をコメントアウト
-//	if( CheckEXT( m_pcEditDoc->GetFilePath(), "h" ) ){
-//	}else{
-//		if( !bCheckOnly ){
-//			::MessageBeep( MB_ICONHAND );
-//		}
-//		return FALSE;
-//	}
-
 //From Here Feb. 7, 2001 JEPRO 追加
 	for( i = 0; i < file_extno; i++ ){
 		if( CheckEXT( m_pcEditDoc->GetFilePath(), file_ext[i] ) ){
@@ -6663,7 +6641,7 @@ BOOL CEditView::OPEN_ExtFromtoExt( BOOL bCheckOnly, BOOL bBeepWhenMiss,
 		}
 	}
 	if( bBeepWhenMiss ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 	}
 	return FALSE;
 
@@ -6678,23 +6656,6 @@ open_c:;
 	HWND	hwndOwner;
 
 	_splitpath( m_pcEditDoc->GetFilePath(), szDrive, szDir, szFname, szExt );
-//Feb. 7, 2001 JEPRO 原作版をコメントアウト
-//	_makepath( szPath, szDrive, szDir, szFname, "c" );
-//	if( -1 == _access( (const char *)szPath, 0 ) ){
-//		_makepath( szPath, szDrive, szDir, szFname, "cpp" );
-//		if( -1 == _access( (const char *)szPath, 0 ) ){
-//			_makepath( szPath, szDrive, szDir, szFname, "cxx" );
-//			if( -1 == _access( (const char *)szPath, 0 ) ){
-//				if( !bCheckOnly ){
-//					::MessageBeep( MB_ICONHAND );
-//				}
-//				return FALSE;
-//			}
-//		}
-//	}
-//	if( bCheckOnly ){
-//		return TRUE;
-//	}
 
 //From Here Feb. 7, 2001 JEPRO 追加
 	for( i = 0; i < open_extno; i++ ){
@@ -6703,7 +6664,7 @@ open_c:;
 			if( i < open_extno - 1 )
 				continue;
 			if( bBeepWhenMiss ){
-				::MessageBeep( MB_ICONHAND );
+				ErrorBeep();
 			}
 			return FALSE;
 		}
@@ -6783,7 +6744,7 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 {
 	if ( Command_OPEN_HHPP( bCheckOnly, FALSE ) )	return TRUE;
 	if ( Command_OPEN_CCPP( bCheckOnly, FALSE ) )	return TRUE;
-	::MessageBeep( MB_ICONHAND );
+	ErrorBeep();
 	return FALSE;
 // 2002/03/24 YAZAKI コードの重複を削減
 // 2003.06.28 Moca コメントとして残っていたコードを削除
@@ -7595,7 +7556,7 @@ void CEditView::Command_REPLACE_ALL()
 		// クリップボードからデータを取得。
 		if ( FALSE == MyGetClipboardData( cmemClip, &bColmnSelect, m_pShareData->m_Common.m_bEnableLineModePaste? &bLineSelect: NULL ) )
 		{
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
 			return;
 		}
 
@@ -7605,7 +7566,7 @@ void CEditView::Command_REPLACE_ALL()
 			// マウスによる範囲選択中
 			if( m_bBeginSelect )
 			{
-				::MessageBeep( MB_ICONHAND );
+				ErrorBeep();
 				return;
 			}
 
@@ -8127,13 +8088,13 @@ void CEditView::Command_BASE64DECODE( void )
 
 	/* テキストが選択されているか */
 	if( !IsTextSelected() ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* Base64デコード */
@@ -8145,14 +8106,14 @@ void CEditView::Command_BASE64DECODE( void )
 		return;
 	}
 	if(HFILE_ERROR == (hFile = _lcreat( szPath, 0 ) ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"ファイルの作成に失敗しました。\n\n%s", szPath
 		);
 		return;
 	}
 	if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"ファイルの書き込みに失敗しました。\n\n%s", szPath
 		);
@@ -8172,13 +8133,13 @@ void CEditView::Command_UUDECODE( void )
 	HFILE		hFile;
 	/* テキストが選択されているか */
 	if( !IsTextSelected() ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	strcpy( szPath, "" );
@@ -8191,14 +8152,14 @@ void CEditView::Command_UUDECODE( void )
 		return;
 	}
 	if(HFILE_ERROR == (hFile = _lcreat( szPath, 0 ) ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"ファイルの作成に失敗しました。\n\n%s", szPath
 		);
 		return;
 	}
 	if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetPtr(), cmemBuf.GetLength() ) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"ファイルの書き込みに失敗しました。\n\n%s", szPath
 		);
@@ -8299,7 +8260,7 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			);
 		}
 	}else{
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		::MYMESSAGEBOX( m_hWnd,
 			 MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			"SQLをファイルに保存しないとOracle SQL*Plusで実行できません。\n"
@@ -8877,7 +8838,7 @@ void CEditView::Command_PRINT_PAGESETUP( void )
 void CEditView::Command_BROWSE( void )
 {
 	if( !m_pcEditDoc->IsFilePathAvailable() ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 //	char	szURL[MAX_PATH + 64];

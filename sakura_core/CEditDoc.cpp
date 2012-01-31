@@ -594,7 +594,7 @@ BOOL CEditDoc::FileRead(
 				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[m_nCharCode];
 			}
 			if( pszCodeName != NULL ){
-				::MessageBeep( MB_ICONQUESTION );
+				ConfirmBeep();
 				nRet = MYMESSAGEBOX(
 					m_hWnd,
 					MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
@@ -677,7 +677,7 @@ BOOL CEditDoc::FileRead(
 
 		//	Oct. 09, 2004 genta フラグに応じて警告を出す（以前の動作）ように
 		if( m_pShareData->m_Common.GetAlertIfFileNotExist() ){
-			::MessageBeep( MB_ICONINFORMATION );
+			InfoBeep();
 
 			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
 			//	ここでステータスメッセージを使っても画面に表示されない．
@@ -1362,18 +1362,7 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	//@@@ 2002.03.23 end
 
 	if( m_pShareData->m_Common.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
-		::MessageBeep( MB_ICONQUESTION );
-//From Here Feb. 27, 2001 JEPROtest キャンセルもできるようにし、メッセージを追加した
-//		if( IDYES != MYMESSAGEBOX(
-//			m_hWnd,
-//			MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-//			"バックアップ作成の確認",
-//			"変更される前に、バックアップファイルを作成します。\nよろしいですか？\n\n%s\n    ↓\n%s\n\n",
-//			IsFilePathAvailable() ? GetFilePath() : "（無題）",
-//			szPath
-//		) ){
-//			return FALSE;
-//		}
+		ConfirmBeep();
 		if( m_pShareData->m_Common.m_bBackUpDustBox && dustflag == false ){	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
 				m_hWnd,
@@ -1401,7 +1390,6 @@ int CEditDoc::MakeBackUp( const char* target_file )
 		}else if( IDCANCEL == nRet ){
 			return 2;// 保存中断
 		}
-//To Here Feb. 27, 2001
 	}
 
 	//	From Here Aug. 16, 2000 genta
@@ -1886,18 +1874,6 @@ void CEditDoc::DoFileLock( void )
 	}
 	/* 書込み禁止かどうか調べる */
 	if( -1 == _access( GetFilePath(), 2 ) ){	/* アクセス権：書き込み許可 */
-#if 0
-		// Apr. 28, 2000 genta: Request from Koda
-
-		::MessageBeep( MB_ICONEXCLAMATION );
-		MYMESSAGEBOX(
-			m_hWnd,
-			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
-			GSTR_APPNAME,
-			"現在\n%s\nは読取専用に設定されています。 または、書き込みのアクセス権がありません。",
-			IsFilePathAvailable() ? GetFilePath() : "（無題）"
-		);
-#endif
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
 		SetParentCaption();
@@ -1908,7 +1884,7 @@ void CEditDoc::DoFileLock( void )
 	m_hLockedFile = ::_lopen( GetFilePath(), OF_READWRITE );
 	_lclose( m_hLockedFile );
 	if( HFILE_ERROR == m_hLockedFile ){
-		::MessageBeep( MB_ICONEXCLAMATION );
+		WarningBeep();
 		MYMESSAGEBOX(
 			m_hWnd,
 			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
@@ -1934,7 +1910,7 @@ void CEditDoc::DoFileLock( void )
 			pszMode = "未定義のモード（問題があります）";
 			break;
 		}
-		::MessageBeep( MB_ICONEXCLAMATION );
+		WarningBeep();
 		MYMESSAGEBOX(
 			m_hWnd,
 			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
@@ -4000,7 +3976,7 @@ BOOL CEditDoc::OnFileClose( void )
 		/* アクティブにする */
 		ActivateFrameWindow( hwndMainFrame );
 		if( m_bReadOnly ){	/* 読み取り専用モード */
-			::MessageBeep( MB_ICONQUESTION );
+			ConfirmBeep();
 			nRet = ::MYMESSAGEBOX(
 				hwndMainFrame,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
@@ -4024,7 +4000,7 @@ BOOL CEditDoc::OnFileClose( void )
 				return FALSE;
 			}
 		}else{
-			::MessageBeep( MB_ICONQUESTION );
+			ConfirmBeep();
 			nRet = ::MYMESSAGEBOX(
 				hwndMainFrame,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,

@@ -300,21 +300,12 @@ BOOL CDlgFind::OnBnClicked( int wID )
 					CloseDialog( 0 );
 				}
 			}
-//From Here Feb. 20, 2001 JEPRO 「置換」ダイアログと同じように警告メッセージを表示するように変更
-//		}else
-//		if( 0 == nRet ){
-//			::MessageBeep( MB_ICONHAND );
-//			CloseDialog( 0 );
-//		}
-//		return TRUE;
-//ここまでコメントアウトし、代わりに以下を追加
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
 				"検索条件を指定してください。"
 			);
 		}
 		return TRUE;
-//To Here Feb. 20, 2001
 	case IDC_BUTTON_SEARCHNEXT:		/* 下検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDOK]→[IDC_BUTTON_SERACHNEXT]に変更
 		/* ダイアログデータの取得 */
 		nRet = GetData();
@@ -351,21 +342,12 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				::SendMessage(m_hWnd,WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(m_hWnd,IDC_COMBO_TEXT ),TRUE);
 				}
 			}
-//From Here Feb. 20, 2001 JEPRO 「置換」ダイアログと同じように警告メッセージを表示するように変更
-//		}else
-//		if( 0 == nRet ){
-//			::MessageBeep( MB_ICONHAND );
-//			CloseDialog( 0 );
-//		}
-//		return TRUE;
-//ここまでコメントアウトし、代わりに以下を追加
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
 				"検索条件を指定してください。"
 			);
 		}
 		return TRUE;
-//To Here Feb. 20, 2001
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
 		if( 0 < GetData() ){
 			if( m_bModal ){		/* モーダルダイアログか */

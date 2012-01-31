@@ -355,7 +355,7 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	HANDLE hMutex;
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
 	if( NULL == hMutex ){
-		::MessageBeep( MB_ICONSTOP );
+		ErrorBeep();
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
 			GSTR_APPNAME, _T("CreateMutex()é∏îsÅB\nèIóπÇµÇ‹Ç∑ÅB") );
 		return NULL;

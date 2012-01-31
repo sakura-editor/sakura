@@ -701,7 +701,7 @@ end_of_func:;
 void CEditView::Command_UNDO( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -923,7 +923,7 @@ void CEditView::Command_UNDO( void )
 void CEditView::Command_REDO( void )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 
@@ -2858,7 +2858,7 @@ void CEditView::Command_JUMP_SRCHSTARTPOS(void)
 	else
 	{
 //		SendStatusMessage( "検索開始位置がありません" );
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 	}
 	return;
 }

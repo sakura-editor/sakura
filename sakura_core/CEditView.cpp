@@ -6171,7 +6171,7 @@ void CEditView::CopySelectedAllLines(
 		bWithLineNumber, /* 行番号を付与する */
 		m_pShareData->m_Common.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
 	) ){
-		::MessageBeep( MB_ICONHAND );
+		ErrorBeep();
 		return;
 	}
 	/* クリップボードにデータを設定 */
@@ -10332,74 +10332,6 @@ void CEditView::SendStatusMessage( const char* msg )
 {
 	m_pcEditDoc->m_pcEditWnd->SendStatusMessage( msg );
 }
-// 使わなくなりました minfu 2002.04.10 
-///*  IMEからの再変換要求に応える minfu 2002.03.27 */
-//LRESULT CEditView::RequestedReconversion(PRECONVERTSTRING pReconv)
-//{
-//	CMemory cmemBuf;
-//	int nlen;
-//	
-//	/* 選択範囲のデータを取得 */
-//	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
-//		::MessageBeep( MB_ICONHAND );
-//		return 0L;
-//	}
-//	
-//	/* pReconv構造体に 値をセット */
-//	nlen =  cmemBuf.GetLength();
-//	if ( pReconv != NULL ) {    
-//		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen + 1;
-//		pReconv->dwVersion = 0;
-//		pReconv->dwStrLen = nlen ;
-//		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
-//		pReconv->dwCompStrLen = nlen;
-//		pReconv->dwCompStrOffset = 0;
-//		pReconv->dwTargetStrLen = nlen;
-//		pReconv->dwTargetStrOffset = 0 ;
-//		
-//		strncpy ( (char *)(pReconv + 1), cmemBuf.GetPtr( NULL ), nlen);
-//	
-//	}/* pReconv がNULLのときはサイズを返すのみ */
-//	
-//	/* RECONVERTSTRING構造体のサイズが戻り値 */
-//	return nlen + sizeof(RECONVERTSTRING);
-//
-//}
-//
-///*  IMEからの再変換要求に応える for 95/NT */ // 20020331 aroka
-//LRESULT CEditView::RequestedReconversionW(PRECONVERTSTRING pReconv)
-//{
-//	CMemory cmemBuf;
-//	int nlen;
-//	
-//	/* 選択範囲のデータを取得 */
-//	if( FALSE == GetSelectedData( cmemBuf, FALSE, NULL, FALSE, FALSE ) ){
-//		::MessageBeep( MB_ICONHAND );
-//		return 0L;
-//	}
-//	
-//	/* cmemBuf を UNICODE に変換 */
-//	cmemBuf.SJISToUnicode();
-//	/* pReconv構造体に 値をセット */
-//	nlen =  cmemBuf.GetLength();
-//	if ( pReconv != NULL ) {
-//		pReconv->dwSize = sizeof(RECONVERTSTRING) + nlen  + sizeof(wchar_t);
-//		pReconv->dwVersion = 0;
-//		pReconv->dwStrLen = nlen/sizeof(wchar_t) ;
-//		pReconv->dwStrOffset = sizeof(RECONVERTSTRING) ;
-//		pReconv->dwCompStrLen = nlen/sizeof(wchar_t);
-//		pReconv->dwCompStrOffset = 0;
-//		pReconv->dwTargetStrLen = nlen/sizeof(wchar_t);
-//		pReconv->dwTargetStrOffset = 0 ;
-//		
-//		wcsncpy ( (wchar_t *)(pReconv + 1), (wchar_t *)cmemBuf.GetPtr(), nlen/sizeof(wchar_t) );
-//	
-//	}/* pReconv がNULLのときはサイズを返すのみ */
-//	
-//	/* RECONVERTSTRING構造体のサイズが戻り値 */
-//	return nlen + sizeof(RECONVERTSTRING);
-//
-//}
 
 //  2002.04.09 minfu from here
 /*再変換用 カーソル位置から前後200byteを取り出してRECONVERTSTRINGを埋める */
@@ -10800,7 +10732,6 @@ void CEditView::DrawBracketPair( bool bDraw )
 						}
 					}else{
 						SetBracketPairPos( false );
-						//::MessageBeep( MB_ICONSTOP );
 						break;
 					}
 				}

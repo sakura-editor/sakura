@@ -1101,7 +1101,7 @@ void CDlgOpenFile::DlgOpenFail(void)
 	default: pszError = "UNKNOWN_ERRORCODE"; break;
 	}
 
-	::MessageBeep( MB_ICONSTOP );
+	ErrorBeep();
 	::MYMESSAGEBOX( m_hwndParent, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 		"ダイアログが開けません。\n\nエラー:%s", pszError
 	);
@@ -1357,7 +1357,7 @@ BOOL CDlgOpenFile::CheckPathLengthOverflow( const char *pszPath, int nLength, BO
 		;
 
 	if( bErrDisp && i >= nLength ){
-		::MessageBeep( MB_ICONSTOP );
+		ErrorBeep();
 		MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 					  "ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。",
 					  nLength );

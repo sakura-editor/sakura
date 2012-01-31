@@ -438,8 +438,8 @@ BOOL CheckSystemResources( const char* pszAppName )
 			pszResourceName = "GDI ";
 		}
 		if( NULL != pszResourceName ){
-			::MessageBeep( MB_ICONHAND );
-			::MessageBeep( MB_ICONHAND );
+			ErrorBeep();
+			ErrorBeep();
 //			if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNO | MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
 			::MYMESSAGEBOX( NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
 				"%sリソースが極端に不足しています。\n\
@@ -2364,7 +2364,7 @@ bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
 
 	if( !rRegexp.Init( RegexpDll ) ){
 		if( bShowMessage ){
-			::MessageBeep( MB_ICONEXCLAMATION );
+			WarningBeep();
 			::MessageBox( hWnd, _T("正規表現ライブラリが見つかりません。\r\n"
 				"正規表現を利用するにはBREGEXP.DLL互換のライブラリが必要です。\r\n"
 				"入手方法はヘルプを参照してください。"),

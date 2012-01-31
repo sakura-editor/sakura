@@ -51,7 +51,7 @@ bool CControlProcess::InitializeProcess()
 	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
 	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
 	if( NULL == m_hMutex ){
-		::MessageBeep( MB_ICONSTOP );
+		ErrorBeep();
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			_T("CreateMutex()失敗。\n終了します。") );
 		return false;
@@ -61,7 +61,7 @@ bool CControlProcess::InitializeProcess()
 	m_hEventCPInitialized = ::CreateEvent( NULL, TRUE, FALSE, GSTR_EVENT_SAKURA_CP_INITIALIZED );
 	if( NULL == m_hEventCPInitialized )
 	{
-		::MessageBeep( MB_ICONSTOP );
+		ErrorBeep();
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			_T("CreateEvent()失敗。\n終了します。") );
 		return false;
@@ -70,7 +70,7 @@ bool CControlProcess::InitializeProcess()
 	/* コントロールプロセスの目印 */
 	m_hMutexCP = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_CP );
 	if( NULL == m_hMutexCP ){
-		::MessageBeep( MB_ICONSTOP );
+		ErrorBeep();
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			_T("CreateMutex()失敗。\n終了します。") );
 		return false;
@@ -105,7 +105,7 @@ bool CControlProcess::InitializeProcess()
 	MY_TRACETIME( cRunningTimer, "After new CEditApp" );
 
 	if( NULL == ( m_hWnd = m_pcEditApp->Create( m_hInstance ) ) ){
-		::MessageBeep( MB_ICONSTOP );
+		ErrorBeep();
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
 			GSTR_APPNAME, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
 		return false;
@@ -114,7 +114,7 @@ bool CControlProcess::InitializeProcess()
 
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
-		::MessageBeep( MB_ICONSTOP );
+		ErrorBeep();
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
 			_T("SetEvent()失敗。\n終了します。") );
 		return false;

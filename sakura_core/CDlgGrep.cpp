@@ -203,7 +203,6 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			char	szWorkFolder[MAX_PATH];
 			::GetCurrentDirectory( sizeof( szWorkFolder ) - 1, szWorkFolder );
 			::SetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, szWorkFolder );
-//			::MessageBeep( MB_ICONEXCLAMATION );
 		}
 		return TRUE;
 
