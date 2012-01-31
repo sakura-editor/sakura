@@ -1219,14 +1219,14 @@ LRESULT CEditWnd::DispatchEvent(
 			if( 0 < nAssignedKeyNum ){
 				for( j = 0; j < nAssignedKeyNum; ++j ){
 					if( j > 0 ){
-						cmemWork.AppendSz( " , " );
+						cmemWork.AppendString( " , " );
 					}
-					cmemWork.Append( ppcAssignedKeyList[j] );
+					cmemWork.AppendNativeData( ppcAssignedKeyList[j] );
 					delete ppcAssignedKeyList[j];
 				}
 				delete [] ppcAssignedKeyList;
 			}
-			pszItemStr = cmemWork.GetPtr();
+			pszItemStr = cmemWork.GetStringPtr();
 
 
 			::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)pszItemStr );
@@ -1532,7 +1532,7 @@ LRESULT CEditWnd::DispatchEvent(
 				if( 0 < nAssignedKeyNum ){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
 						strcat( szLabel, "\n        " );
-						pszKey = ppcAssignedKeyList[j]->GetPtr();
+						pszKey = ppcAssignedKeyList[j]->GetStringPtr();
 						strcat( szLabel, pszKey );
 						delete ppcAssignedKeyList[j];
 					}
@@ -5110,7 +5110,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 				int			nDesLen;
 				const char*	pszDes;
 				LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
-				pszDes = cmemDes.GetPtr();
+				pszDes = cmemDes.GetStringPtr();
 				nDesLen = lstrlen( pszDes );
 				wsprintf( szMemu, "&%c ÅyGrepÅz\"%s%s\"", c,
 					pszDes, ( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? "ÅEÅEÅE":""

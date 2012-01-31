@@ -140,8 +140,8 @@ bool CNormalProcess::InitializeProcess()
 		if( false == bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
 			/* ロングファイル名を取得する */
-			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetPtr(), szWork ) ){
-				gi.cmGrepFolder.SetData( szWork, strlen( szWork ) );
+			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetStringPtr(), szWork ) ){
+				gi.cmGrepFolder.SetString( szWork, strlen( szWork ) );
 			}
 			// 2003.06.23 Moca GREP実行前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
@@ -163,9 +163,9 @@ bool CNormalProcess::InitializeProcess()
 			return true; // 2003.06.23 Moca
 		}else{
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
-			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetPtr() );
-			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetPtr() );
-			CShareData::getInstance()->AddToGrepFolderArr( gi.cmGrepFolder.GetPtr() );
+			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
+			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
+			CShareData::getInstance()->AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
 			m_pShareData->m_Common.m_bGrepSubFolder = gi.bGrepSubFolder;
 			m_pShareData->m_Common.m_bLoHiCase = gi.bGrepNoIgnoreCase;
 			m_pShareData->m_Common.m_bRegularExp = gi.bGrepRegularExp;
@@ -181,9 +181,9 @@ bool CNormalProcess::InitializeProcess()
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetPtr() );		/* 検索文字列 */
-			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetPtr() );		/* 検索ファイル */
-			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetPtr() );	/* 検索フォルダ */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );		/* 検索ファイル */
+			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
 
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった

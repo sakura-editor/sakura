@@ -28,7 +28,7 @@ CFuncInfo::CFuncInfo(
 //	m_nFuncLine = nFuncLine;;
 //	m_cmemFuncName = pszFuncName;
 //	m_cmemFuncName.SetData( pszFuncName, lstrlen( pszFuncName ) );
-	m_cmemFuncName.SetDataSz( pszFuncName );
+	m_cmemFuncName.SetString( pszFuncName );
 
 	m_nInfo = nInfo;
 	return;

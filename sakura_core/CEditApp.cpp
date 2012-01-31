@@ -95,9 +95,9 @@ void CEditApp::DoGrep()
 	pCmdLine = new char[1024];
 	pOpt = new char[64];
 
-	cmWork1.SetDataSz( m_cDlgGrep.m_szText );
-	cmWork2.SetDataSz( m_cDlgGrep.m_szFile );
-	cmWork3.SetDataSz( m_cDlgGrep.m_szFolder );
+	cmWork1.SetString( m_cDlgGrep.m_szText );
+	cmWork2.SetString( m_cDlgGrep.m_szFile );
+	cmWork3.SetString( m_cDlgGrep.m_szFolder );
 	cmWork1.Replace( "\"", "\"\"" );
 	cmWork2.Replace( "\"", "\"\"" );
 	cmWork3.Replace( "\"", "\"\"" );
@@ -106,9 +106,9 @@ void CEditApp::DoGrep()
 	|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 	*/
 	wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
-		cmWork1.GetPtr(),
-		cmWork2.GetPtr(),
-		cmWork3.GetPtr(),
+		cmWork1.GetStringPtr(),
+		cmWork2.GetStringPtr(),
+		cmWork3.GetStringPtr(),
 		m_cDlgGrep.m_nGrepCharSet
 	);
 
@@ -1648,13 +1648,13 @@ int	CEditApp::CreatePopUpMenu_L( void )
 						LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
 						//	Jan. 19, 2002 genta
 						//	メニュー文字列の&を考慮
-						dupamp( cmemDes.GetPtr(), szMenu2 );
+						dupamp( cmemDes.GetStringPtr(), szMenu2 );
 //	From Here Oct. 4, 2000 JEPRO commented out & modified
 //		j >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
 						//	Jan. 19, 2002 genta
 						//	&の重複処理を追加したため継続判定を若干変更
 						wsprintf( szMemu, "&%c 【Grep】\"%s%s\"", ((1 + i) <= 9)?('1' + i):('A' + i - 9),
-							szMenu2, ( (int)lstrlen( pfi->m_szGrepKey ) > cmemDes.GetLength() ) ? "…":""
+							szMenu2, ( (int)lstrlen( pfi->m_szGrepKey ) > cmemDes.GetStringLength() ) ? "…":""
 						);
 					}else{
 						char szFileName[_MAX_PATH];

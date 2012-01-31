@@ -94,7 +94,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 			  * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
 	::ClientToScreen( m_hWnd, &poWin );
 	poWin.x -= (
-		cmemData.GetLength()
+		cmemData.GetStringLength()
 		 * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace )
 	);
 
@@ -113,7 +113,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 		&poWin,
 		m_nCharHeight,
 		m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace,
-		cmemData.GetPtr(),
+		cmemData.GetStringPtr(),
 		m_pcEditDoc->GetDocumentAttribute().m_szHokanFile,
 		m_pcEditDoc->GetDocumentAttribute().m_bHokanLoHiCase,
 		m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile, // 2003.06.22 Moca
@@ -137,7 +137,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 //		pszKouhoWord = cmemHokanWord.GetPtr( &nKouhoWordLen );
 //		pszKouhoWord[nKouhoWordLen] = '\0';
 		Command_WordDeleteToStart();
-		Command_INSTEXT( TRUE, cmemHokanWord.GetPtr(), cmemHokanWord.GetLength(), TRUE );
+		Command_INSTEXT( TRUE, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE );
 	}
 	else {
 		m_bHokan = TRUE;
@@ -304,13 +304,13 @@ int CEditView::HokanSearchByFile(
 					}
 					if( NULL == *ppcmemKouho ){
 						*ppcmemKouho = new CMemory;
-						(*ppcmemKouho)->SetData( word, nWordLen );
-						(*ppcmemKouho)->AppendSz( "\n" );
+						(*ppcmemKouho)->SetString( word, nWordLen );
+						(*ppcmemKouho)->AppendString( "\n" );
 						++nKouhoNum;
 					}else{
 						// d•¡‚µ‚Ä‚¢‚½‚ç’Ç‰Á‚µ‚È‚¢
 						int nLen;
-						const char* ptr = (*ppcmemKouho)->GetPtr( &nLen );
+						const char* ptr = (*ppcmemKouho)->GetStringPtr( &nLen );
 						int nPosKouho;
 						nRet = 1;
 						// 2008.07.23 nasukoji	‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚Ìê‡‚Å‚àŒó•â‚ÌU‚é‚¢—Ž‚Æ‚µ‚ÍŠ®‘Sˆê’v‚ÅŒ©‚é
@@ -336,8 +336,8 @@ int CEditView::HokanSearchByFile(
 						if( 0 == nRet ){
 							continue;
 						}
-						(*ppcmemKouho)->Append( word, nWordLen );
-						(*ppcmemKouho)->Append( "\n", 1 );
+						(*ppcmemKouho)->AppendString( word, nWordLen );
+						(*ppcmemKouho)->AppendString( "\n", 1 );
 						++nKouhoNum;
 					}
 					if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){

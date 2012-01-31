@@ -100,11 +100,11 @@ BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey
 					}
 					//キーワードのセット
 					*ppcmemKey = new CMemory;	// 2006.04.10 fon
-					(*ppcmemKey)->SetDataSz( pszToken );
+					(*ppcmemKey)->SetString( pszToken );
 					//意味のセット
 					*ppcmemMean = new CMemory;
 //					(*ppcmemMean)->SetData( pszWork, lstrlen(pszWork) );
-					(*ppcmemMean)->SetDataSz( pszWork );
+					(*ppcmemMean)->SetString( pszWork );
 
 					fclose( pFile );
 					*pLine = line;	// 2006.04.10 fon
@@ -173,9 +173,9 @@ int CDicMgr::HokanSearch(
 		if( 0 == nRet ){
 			if( NULL == *ppcmemKouho ){
 				*ppcmemKouho = new CMemory;
-				(*ppcmemKouho)->SetDataSz( szLine );
+				(*ppcmemKouho)->SetString( szLine );
 			}else{
-				(*ppcmemKouho)->AppendSz( szLine );
+				(*ppcmemKouho)->AppendString( szLine );
 			}
 			++nKouhoNum;
 			if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){

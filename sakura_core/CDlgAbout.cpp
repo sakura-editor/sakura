@@ -164,7 +164,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//      Last Modified: 1999/9/9 00:00:00
 	//      (あればSKR_PATCH_INFOの文字列がそのまま表示)
 	CMemory cmemMsg;
-	cmemMsg.AppendSz( _T("サクラエディタ   "));
+	cmemMsg.AppendString(_T("サクラエディタ   "));
 
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO,
@@ -175,23 +175,23 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		HIWORD( dwVersionLS ),
 		LOWORD( dwVersionLS )
 	);
-	cmemMsg.AppendSz( szMsg );
+	cmemMsg.AppendString( szMsg );
 
-	cmemMsg.AppendSz( _T("\r\n") );
+	cmemMsg.AppendString( _T("\r\n") );
 
 	_stprintf( szMsg, _T("      Share Ver: %3d\r\n"),
 		uShareDataVersion // instead of N_SHAREDATA_VERSION
 	);
-	cmemMsg.AppendSz( szMsg );
+	cmemMsg.AppendString( szMsg );
 
-	cmemMsg.AppendSz( _T("      Compile Info: ") );
+	cmemMsg.AppendString( _T("      Compile Info: ") );
 	int Compiler_ver = COMPILER_VER;
 	_stprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T(" %d  ")
 			TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
 		Compiler_ver,
 		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
-	cmemMsg.AppendSz( szMsg );
+	cmemMsg.AppendString( szMsg );
 
 	_stprintf( szMsg, _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
 		systimeL.wYear,
@@ -201,18 +201,18 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		systimeL.wMinute,
 		systimeL.wSecond
 	);
-	cmemMsg.AppendSz( szMsg );
+	cmemMsg.AppendString( szMsg );
 
 // パッチ(かリビジョン)の情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
-	cmemMsg.AppendSz( _T("      ") );
+	cmemMsg.AppendString( _T("      ") );
 	const TCHAR* ptszPatchInfo = SKR_PATCH_INFO;
 	int patchInfoLen = _tcslen(ptszPatchInfo);
 	cmemMsg.Append( ptszPatchInfo, __min(80, patchInfoLen) );
 #endif
-	cmemMsg.AppendSz( _T("\r\n"));
+	cmemMsg.AppendString( _T("\r\n"));
 
-	::SetDlgItemText( m_hWnd, IDC_EDIT_VER, cmemMsg.GetPtr() );
+	::SetDlgItemText( m_hWnd, IDC_EDIT_VER, cmemMsg.GetStringPtr() );
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．

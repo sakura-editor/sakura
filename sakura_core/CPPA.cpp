@@ -92,7 +92,7 @@ void CPPA::Execute(CEditView* pcEditView, int flags )
 	info.m_pcEditView = pcEditView;
 	info.m_pShareData = CShareData::getInstance()->GetShareData();
 	info.m_bError = false;			//	2003.06.01 Moca
-	info.m_cMemDebug.SetDataSz("");	//	2003.06.01 Moca
+	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
 	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
 	
 	//	実行前にインスタンスを待避する
@@ -321,11 +321,11 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 		switch(GS_Mode){
 		case omGet:
 //			::MessageBox( m_pcEditView->m_hWnd, m_cMemDebug.GetPtr(), "GetStrObj", MB_OK );
-			*Value = m_CurInstance->m_cMemDebug.GetPtr();
+			*Value = m_CurInstance->m_cMemDebug.GetStringPtr();
 			break;
 		case omSet:
 //			::MessageBox( m_pcEditView->m_hWnd, *Value, "SetStrObj", MB_OK );
-			m_CurInstance->m_cMemDebug.SetDataSz(*Value);
+			m_CurInstance->m_cMemDebug.SetString(*Value);
 			break;
 		}
 		break;
@@ -391,13 +391,13 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	if( IsBadStringPtr( pszErr, 256 )){
 		pszErr = _T("エラー情報が不正");
 	}
-	if( 0 == m_CurInstance->m_cMemDebug.GetLength() ){
+	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
 		::MessageBox( m_CurInstance->m_pcEditView->m_hWnd, pszErr, "PPA実行エラー", MB_OK );
 	}else{
-		char* p = new char [ lstrlen(pszErr) + m_CurInstance->m_cMemDebug.GetLength() + 2 ];
+		char* p = new char [ lstrlen(pszErr) + m_CurInstance->m_cMemDebug.GetStringLength() + 2 ];
 		strcpy( p, pszErr );
 		strcat( p, "\n" );
-		strcat( p, m_CurInstance->m_cMemDebug.GetPtr() );
+		strcat( p, m_CurInstance->m_cMemDebug.GetStringPtr() );
 		::MessageBox( m_CurInstance->m_pcEditView->m_hWnd, p, "PPA実行エラー", MB_OK );
 		delete [] p;
 	}
@@ -485,9 +485,9 @@ void __stdcall CPPA::stdStrFunc(
 			int len;
 			char* buf;
 			Wrap(&Ret.bstrVal)->Get(&buf,&len);
-			m_CurInstance->m_cMemRet.SetData(buf,len); // Mar. 9, 2003 genta
+			m_CurInstance->m_cMemRet.SetString(buf,len); // Mar. 9, 2003 genta
 			delete[] buf;
-			*ResultValue = m_CurInstance->m_cMemRet.GetPtr();
+			*ResultValue = m_CurInstance->m_cMemRet.GetStringPtr();
 			::VariantClear(&Ret);
 			return;
 		}

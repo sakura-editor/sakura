@@ -3598,7 +3598,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 						)? DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cOpeBuf.GetCurrentPointer();
 					m_pcEditDoc->SetDragSourceView( this );
-					CDataObject data( cmemCurText.GetPtr(), cmemCurText.GetLength(), m_bBeginBoxSelect );	// 2008.03.26 ryoji テキスト長、矩形の指定を追加
+					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), m_bBeginBoxSelect );	// 2008.03.26 ryoji テキスト長、矩形の指定を追加
 					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
 					m_pcEditDoc->SetDragSourceView( NULL );
 //					MYTRACE( "dwEffects=%d\n", dwEffects );
@@ -4502,7 +4502,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
 	if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
-		pszWork = cmemCurText.GetPtr();
+		pszWork = cmemCurText.GetStringPtr();
 		nWorkLength	= lstrlen( pszWork );
 		for( i = 0; i < nWorkLength; ++i ){
 			if( pszWork[i] == '\0' ||
@@ -4514,7 +4514,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		char*	pszBuf = new char[i + 1];
 		memcpy( pszBuf, pszWork, i );
 		pszBuf[i] = '\0';
-		cmemCurText.SetData( pszBuf, i );
+		cmemCurText.SetString( pszBuf, i );
 		delete [] pszBuf;
 	}/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
 	else if(m_pShareData->m_Common.m_bUseCaretKeyWord){
@@ -4554,38 +4554,38 @@ BOOL CEditView::KeySearchCore( const CMemory* pcmemCurText )
 
 
 	int nTypeNo = m_pcEditDoc->GetDocumentType();
-	m_cTipWnd.m_cInfo.SetDataSz( "" );	/* tooltipバッファ初期化 */
+	m_cTipWnd.m_cInfo.SetString( "" );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
 	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
-		m_cTipWnd.m_cInfo.AppendSz( "[ " );
-		m_cTipWnd.m_cInfo.AppendSz( pcmemCurText->GetPtr() );
-		m_cTipWnd.m_cInfo.AppendSz( " ]" );
+		m_cTipWnd.m_cInfo.AppendString( "[ " );
+		m_cTipWnd.m_cInfo.AppendString( pcmemCurText->GetStringPtr() );
+		m_cTipWnd.m_cInfo.AppendString( " ]" );
 	}
 	/* 途中まで一致を使う場合 */
 	if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix)
-		nCmpLen = lstrlen( pcmemCurText->GetPtr() );	// 2006.04.10 fon
+		nCmpLen = lstrlen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
 	for(int i=0;i<m_pShareData->m_Types[nTypeNo].m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
 		if( 1 == m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_nUse ){
-			if(m_cDicMgr.Search( pcmemCurText->GetPtr(), nCmpLen, &pcmemRefKey, &pcmemRefText, m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath, &nLine )){	// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)引数を追加
+			if(m_cDicMgr.Search( pcmemCurText->GetStringPtr(), nCmpLen, &pcmemRefKey, &pcmemRefText, m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath, &nLine )){	// 2006.04.10 fon (nCmpLen,pcmemRefKey,nSearchLine)引数を追加
 				/* 該当するキーがある */
-				pszWork = pcmemRefText->GetPtr();
+				pszWork = pcmemRefText->GetStringPtr();
 				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
 				if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
 					/* バッファに前のデータが詰まっていたらseparator挿入 */
-					if(m_cTipWnd.m_cInfo.GetLength() != 0)
-						m_cTipWnd.m_cInfo.AppendSz( "\n--------------------\n■" );
+					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
+						m_cTipWnd.m_cInfo.AppendString( "\n--------------------\n■" );
 					else
-						m_cTipWnd.m_cInfo.AppendSz( "■" );	/* 先頭の場合 */
+						m_cTipWnd.m_cInfo.AppendString( "■" );	/* 先頭の場合 */
 					/* 辞書のパス挿入 */
-					m_cTipWnd.m_cInfo.AppendSz( m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath );
-					m_cTipWnd.m_cInfo.AppendSz( "\n" );
+					m_cTipWnd.m_cInfo.AppendString( m_pShareData->m_Types[nTypeNo].m_KeyHelpArr[i].m_szPath );
+					m_cTipWnd.m_cInfo.AppendString( "\n" );
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
-						m_cTipWnd.m_cInfo.AppendSz( pcmemRefKey->GetPtr() );
-						m_cTipWnd.m_cInfo.AppendSz( " >>\n" );
+						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
+						m_cTipWnd.m_cInfo.AppendString( " >>\n" );
 					}/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendSz( pszWork );
+					m_cTipWnd.m_cInfo.AppendString( pszWork );
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
@@ -4596,14 +4596,14 @@ BOOL CEditView::KeySearchCore( const CMemory* pcmemCurText )
 					}
 				}else{	/* 最初のヒット項目のみ返す場合 */
 					/* キーワードが入っていたらseparator挿入 */
-					if(m_cTipWnd.m_cInfo.GetLength() != 0)
-						m_cTipWnd.m_cInfo.AppendSz( "\n--------------------\n" );
+					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
+						m_cTipWnd.m_cInfo.AppendString( "\n--------------------\n" );
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pcEditDoc->GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
-						m_cTipWnd.m_cInfo.AppendSz( pcmemRefKey->GetPtr() );
-						m_cTipWnd.m_cInfo.AppendSz( " >>\n" );
+						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringPtr() );
+						m_cTipWnd.m_cInfo.AppendString( " >>\n" );
 					}/* 調査した「意味」を挿入 */
-					m_cTipWnd.m_cInfo.AppendSz( pszWork );
+					m_cTipWnd.m_cInfo.AppendString( pszWork );
 					delete pcmemRefText;
 					delete pcmemRefKey;	// 2006.07.02 genta
 					/* タグジャンプ用の情報を残す */
@@ -5892,7 +5892,7 @@ BOOL CEditView::GetSelectedData(
 			m_nSelectColmTo			/* 範囲選択終了桁 */
 		);
 //		cmemBuf.SetData( "", 0 );
-		cmemBuf.SetDataSz( "" );
+		cmemBuf.SetString( "" );
 
 		//<< 2002/04/18 Azumaiya
 		// サイズ分だけ要領をとっておく。
@@ -5906,7 +5906,7 @@ BOOL CEditView::GetSelectedData(
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
 		for(; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->m_pNext)
 		{
-			pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
+			pLine = pcLayout->m_pCDocLine->m_pLine->GetStringPtr() + pcLayout->m_nOffset;
 			nLineLen = pcLayout->m_nLength;
 			if( NULL != pLine )
 			{
@@ -5922,18 +5922,11 @@ BOOL CEditView::GetSelectedData(
 		}
 
 		// 大まかに見た容量を元にサイズをあらかじめ確保しておく。
-		cmemBuf.AllocBuffer(nBufSize);
+		cmemBuf.AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
 		nRowNum = 0;
 		for( nLineNum = rcSel.top; nLineNum <= rcSel.bottom; ++nLineNum ){
-//			if( nRowNum > 0 ){
-//				cmemBuf.AppendSz( CRLF );
-//				if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
-//					break;
-//				}
-//			}
-//			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen );
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -5943,22 +5936,22 @@ BOOL CEditView::GetSelectedData(
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
 					if( pLine[nIdxTo - 1] == '\n' || pLine[nIdxTo - 1] == '\r' ){
-						cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
+						cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
 					}else{
-						cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+						cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 					}
 				}
 			}
 			++nRowNum;
 //			if( nRowNum > 0 ){
-				cmemBuf.AppendSz( CRLF );
+				cmemBuf.AppendString( CRLF );
 				if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
 					break;
 				}
 //			}
 		}
 	}else{
-		cmemBuf.SetDataSz( "" );
+		cmemBuf.SetString( "" );
 
 		//<< 2002/04/18 Azumaiya
 		//  これから貼り付けに使う領域の大まかなサイズを取得する。
@@ -6005,7 +5998,7 @@ BOOL CEditView::GetSelectedData(
 		}
 
 		// 調べた長さ分だけバッファを取っておく。
-		cmemBuf.AllocBuffer(nBufSize);
+		cmemBuf.AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
 		for( nLineNum = m_nSelectLineFrom; nLineNum <= m_nSelectLineTo; ++nLineNum ){
@@ -6041,33 +6034,29 @@ BOOL CEditView::GetSelectedData(
 
 			if( NULL != pszQuote && 0 < lstrlen( pszQuote ) ){	/* 先頭に付ける引用符 */
 //				cmemBuf.Append( pszQuote, lstrlen( pszQuote ) );
-				cmemBuf.AppendSz( pszQuote );
+				cmemBuf.AppendString( pszQuote );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
 				wsprintf( pszLineNum, " %d:" , nLineNum + 1 );
-				cmemBuf.Append( pszSpaces, nLineNumCols - lstrlen( pszLineNum ) );
+				cmemBuf.AppendString( pszSpaces, nLineNumCols - lstrlen( pszLineNum ) );
 //				cmemBuf.Append( pszLineNum, lstrlen( pszLineNum ) );
-				cmemBuf.AppendSz( pszLineNum );
+				cmemBuf.AppendString( pszLineNum );
 			}
 
 
 			if( EOL_NONE != pcLayout->m_cEol ){
-//			if( pLine[nIdxTo - 1] == '\n' || pLine[nIdxTo - 1] == '\r' ){
-//				cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
-//				cmemBuf.AppendSz( CRLF );
-
 				if( nIdxTo >= nLineLen ){
-					cmemBuf.Append( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
+					cmemBuf.AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
 					//	Jul. 25, 2000 genta
-					cmemBuf.AppendSz( ( neweol == EOL_UNKNOWN ) ?
+					cmemBuf.AppendString( ( neweol == EOL_UNKNOWN ) ?
 						(pcLayout->m_cEol).GetValue() :	//	コード保存
 						appendEol.GetValue() );			//	新規改行コード
 				}
 				else {
-					cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+					cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				}
 			}else{
-				cmemBuf.Append( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				if( nIdxTo - nIdxFrom >= nLineLen ){
 					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
 						NULL != pszQuote || /* 先頭に付ける引用符 */
@@ -6075,7 +6064,7 @@ BOOL CEditView::GetSelectedData(
 					){
 //						cmemBuf.Append( CRLF, lstrlen( CRLF ) );
 						//	Jul. 25, 2000 genta
-						cmemBuf.AppendSz(( neweol == EOL_UNKNOWN ) ?
+						cmemBuf.AppendString(( neweol == EOL_UNKNOWN ) ?
 							CRLF :						//	コード保存
 							appendEol.GetValue() );		//	新規改行コード
 					}
@@ -6175,18 +6164,8 @@ void CEditView::CopySelectedAllLines(
 		return;
 	}
 	/* クリップボードにデータを設定 */
-	MySetClipboardData( cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE );
+	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
 
-
-//	/* Windowsクリップボードにコピー */
-//	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, cmemBuf.GetLength() + 1 );
-//	pszClip = (char*)::GlobalLock( hgClip );
-//	memcpy( pszClip, cmemBuf.GetPtr(), cmemBuf.GetLength() + 1 );
-//	::GlobalUnlock( hgClip );
-//	::OpenClipboard( m_hWnd );
-//	::EmptyClipboard();
-//	::SetClipboardData( CF_OEMTEXT, hgClip );
-//	::CloseClipboard();
 	return;
 }
 
@@ -6301,7 +6280,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 //					FALSE,
 //					FALSE
 				);
-				cmemBuf.SetData( pcMemDeleted );
+				cmemBuf.SetNativeData( pcMemDeleted );
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
 						nPosX,
@@ -6330,8 +6309,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				InsertData_CEditView(
 					nPosX,
 					nPosY,
-					cmemBuf.GetPtr(),
-					cmemBuf.GetLength(),
+					cmemBuf.GetStringPtr(),
+					cmemBuf.GetStringLength(),
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
@@ -6377,8 +6356,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			m_nSelectLineTo,		/* 範囲選択終了行 */
 			m_nSelectColmTo,		/* 範囲選択終了桁 */
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
-			cmemBuf.GetPtr(),		/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
-			cmemBuf.GetLength(),		/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
+			cmemBuf.GetStringPtr(),	/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
+			cmemBuf.GetStringLength(),		/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
 			FALSE/*TRUEbRedraw*/
 		);
 
@@ -6638,7 +6617,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
 		if( TRUE == KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
-			pszWork = m_cTipWnd.m_cInfo.GetPtr();
+			pszWork = m_cTipWnd.m_cInfo.GetStringPtr();
 			// 2002.05.25 Moca &の考慮を追加 
 			char*	pszShortOut = new char[160 + 1];
 			if( 80 < lstrlen( pszWork ) ){
@@ -7303,7 +7282,7 @@ DWORD CEditView::DoGrep(
 	/*
 	|| バッファサイズの調整
 	*/
-	cmemMessage.AllocBuffer( 4000 );
+	cmemMessage.AllocStringBuffer( 4000 );
 
 
 
@@ -7348,7 +7327,7 @@ DWORD CEditView::DoGrep(
 	}
 
 	m_bCurSrchKeyMark = TRUE;								/* 検索文字列のマーク */
-	strcpy( m_szCurSrchKey, pcmGrepKey->GetPtr() );	/* 検索文字列 */
+	strcpy( m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
 	m_bCurSrchRegularExp = bGrepRegularExp;					/* 検索／置換  1==正規表現 */
 	m_bCurSrchLoHiCase = bGrepLoHiCase;						/* 検索／置換  1==英大文字小文字の区別 */
 	m_bCurSrchWordOnly = bWordOnly;				// 2010.08.29 追加
@@ -7382,8 +7361,8 @@ DWORD CEditView::DoGrep(
 	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_bGrepRealTimeView );	// 2003.06.23 Moca
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
-	if( pcmGrepKey->GetLength() < sizeof( m_pcEditDoc->m_szGrepKey )){
-		strcpy( m_pcEditDoc->m_szGrepKey, pcmGrepKey->GetPtr() );
+	if( pcmGrepKey->GetStringLength() < sizeof( m_pcEditDoc->m_szGrepKey )){
+		strcpy( m_pcEditDoc->m_szGrepKey, pcmGrepKey->GetStringPtr() );
 	}
 	m_pcEditDoc->m_bGrepMode = TRUE;
 
@@ -7396,14 +7375,14 @@ DWORD CEditView::DoGrep(
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
 		nFlag |= bGrepLoHiCase ? 0x01 : 0x00;
-		if( !cRegexp.Compile( pcmGrepKey->GetPtr(), nFlag ) ){
+		if( !cRegexp.Compile( pcmGrepKey->GetStringPtr(), nFlag ) ){
 			return 0;
 		}
 	}else{
 		/* 検索条件の情報 */
 		CDocLineMgr::CreateCharCharsArr(
-			(const unsigned char *)pcmGrepKey->GetPtr(),
-			pcmGrepKey->GetLength(),
+			(const unsigned char *)pcmGrepKey->GetStringPtr(),
+			pcmGrepKey->GetStringLength(),
 			&pnKey_CharCharsArr
 		);
 	}
@@ -7421,7 +7400,7 @@ DWORD CEditView::DoGrep(
 	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
 	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 
-	pszWork = pcmGrepFolder->GetPtr();
+	pszWork = pcmGrepFolder->GetStringPtr();
 	strcpy( szPath, pszWork );
 	nDummy = lstrlen( szPath );
 	/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
@@ -7431,13 +7410,13 @@ DWORD CEditView::DoGrep(
 		strcat( szPath, "\\" );
 	}
 
-	nWork = pcmGrepKey->GetLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
+	nWork = pcmGrepKey->GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
 	/* 最後にテキストを追加 */
-	cmemMessage.AppendSz( "\r\n□検索条件  " );
+	cmemMessage.AppendString( "\r\n□検索条件  " );
 	if( 0 < nWork ){
 		CMemory cmemWork2;
-		cmemWork2.SetData( pcmGrepKey );
+		cmemWork2.SetNativeData( pcmGrepKey );
 		if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 			cmemWork2.Replace_j( "\\", "\\\\" );
 			cmemWork2.Replace_j( "\'", "\\\'" );
@@ -7446,17 +7425,17 @@ DWORD CEditView::DoGrep(
 			cmemWork2.Replace_j( "\'", "\'\'" );
 			cmemWork2.Replace_j( "\"", "\"\"" );
 		}
-		cmemWork.AppendSz( "\"" );
-		cmemWork.Append( &cmemWork2 );
-		cmemWork.AppendSz( "\"\r\n" );
+		cmemWork.AppendString( "\"" );
+		cmemWork.AppendNativeData( &cmemWork2 );
+		cmemWork.AppendString( "\"\r\n" );
 	}else{
-		cmemWork.AppendSz( "「ファイル検索」\r\n" );
+		cmemWork.AppendString( "「ファイル検索」\r\n" );
 	}
 	cmemMessage += cmemWork;
 
 
 
-	cmemMessage.AppendSz( "検索対象   " );
+	cmemMessage.AppendString( "検索対象   " );
 	if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
@@ -7465,26 +7444,26 @@ DWORD CEditView::DoGrep(
 
 
 
-	cmemMessage.AppendSz( "\r\n" );
-	cmemMessage.AppendSz( "フォルダ   " );
-	cmemWork.SetDataSz( szPath );
+	cmemMessage.AppendString( "\r\n" );
+	cmemMessage.AppendString( "フォルダ   " );
+	cmemWork.SetString( szPath );
 	if( m_pcEditDoc->GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	}else{
 	}
 	cmemMessage += cmemWork;
-	cmemMessage.AppendSz( "\r\n" );
+	cmemMessage.AppendString( "\r\n" );
 
 	if( bGrepSubFolder ){
 		pszWork = "    (サブフォルダも検索)\r\n";
 	}else{
 		pszWork = "    (サブフォルダを検索しない)\r\n";
 	}
-	cmemMessage.AppendSz( pszWork );
+	cmemMessage.AppendString( pszWork );
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
 		if( bWordOnly ){
 		/* 単語単位で探す */
-			cmemMessage.AppendSz( "    (単語単位で探す)\r\n" );
+			cmemMessage.AppendString( "    (単語単位で探す)\r\n" );
 		}
 
 		if( bGrepLoHiCase ){
@@ -7492,22 +7471,22 @@ DWORD CEditView::DoGrep(
 		}else{
 			pszWork = "    (英大文字小文字を区別しない)\r\n";
 		}
-		cmemMessage.AppendSz( pszWork );
+		cmemMessage.AppendString( pszWork );
 
 		if( bGrepRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
-			cmemMessage.AppendSz( "    (正規表現:" );
-			cmemMessage.AppendSz( cRegexp.GetVersion() );
-			cmemMessage.AppendSz( ")\r\n" );
+			cmemMessage.AppendString( "    (正規表現:" );
+			cmemMessage.AppendString( cRegexp.GetVersion() );
+			cmemMessage.AppendString( ")\r\n" );
 		}
 	}
 
 	if( CODE_AUTODETECT == nGrepCharSet ){
-		cmemMessage.AppendSz( "    (文字コードセットの自動判別)\r\n" );
+		cmemMessage.AppendString( "    (文字コードセットの自動判別)\r\n" );
 	}else if( 0 <= nGrepCharSet && nGrepCharSet < CODE_CODEMAX ){
-		cmemMessage.AppendSz( "    (文字コードセット：" );
-		cmemMessage.AppendSz( gm_pszCodeNameArr_1[nGrepCharSet] );
-		cmemMessage.AppendSz( ")\r\n" );
+		cmemMessage.AppendString( "    (文字コードセット：" );
+		cmemMessage.AppendString( gm_pszCodeNameArr_1[nGrepCharSet] );
+		cmemMessage.AppendString( ")\r\n" );
 	}
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
@@ -7517,19 +7496,19 @@ DWORD CEditView::DoGrep(
 		}else{
 			pszWork = "    (一致した箇所のみ出力)\r\n";
 		}
-		cmemMessage.AppendSz( pszWork );
+		cmemMessage.AppendString( pszWork );
 	}
 
 
-	cmemMessage.AppendSz( "\r\n\r\n" );
-	pszWork = cmemMessage.GetPtr( &nWork );
+	cmemMessage.AppendString( "\r\n\r\n" );
+	pszWork = cmemMessage.GetStringPtr( &nWork );
 //@@@ 2002.01.03 YAZAKI Grep直後はカーソルをGrep直前の位置に動かす
 	int tmp_PosY_PHY = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( 0 < nWork ){
 		Command_ADDTAIL( pszWork, nWork );
 	}
-	cmemMessage.SetDataSz("");
-	cmemWork.SetDataSz("");
+	cmemMessage.SetString("");
+	cmemWork.SetString("");
 
 	//	2007.07.22 genta バージョンを取得するために，
 	//	正規表現の初期化を上へ移動
@@ -7543,9 +7522,9 @@ DWORD CEditView::DoGrep(
 
 
 	if( -1 == DoGrepTree(
-		&cDlgCancel, hwndCancel, pcmGrepKey->GetPtr(),
+		&cDlgCancel, hwndCancel, pcmGrepKey->GetStringPtr(),
 		pnKey_CharCharsArr,
-		pcmGrepFile->GetPtr(), szPath, bGrepSubFolder, bGrepLoHiCase,
+		pcmGrepFile->GetStringPtr(), szPath, bGrepSubFolder, bGrepLoHiCase,
 		bGrepRegularExp, nGrepCharSet,
 		bGrepOutputLine, bWordOnly, nGrepOutputStyle, &cRegexp, 0, &nHitCount
 	) ){
@@ -7925,13 +7904,13 @@ int CEditView::DoGrepTree(
 					}
 					if( *pnHitCount - nHitCountOld  >= 10 ){
 						/* 結果出力 */
-						pszWork = cmemMessage.GetPtr( &nWork );
+						pszWork = cmemMessage.GetStringPtr( &nWork );
 						if( 0 < nWork ){
 							Command_ADDTAIL( pszWork, nWork );
 							Command_GOFILEEND( FALSE );
 							m_pcEditDoc->RedrawAllViews( this );
 							/* 結果格納エリアをクリア */
-							cmemMessage.SetDataSz( _T("") );
+							cmemMessage.SetString( _T("") );
 							nWork = 0;
 						}
 						nHitCountOld = *pnHitCount;
@@ -7967,11 +7946,11 @@ int CEditView::DoGrepTree(
 	checked_list_size = 0;
 
 	// 2010.08.25 フォルダ移動前に残りを先に出力
-	if( 0 < cmemMessage.GetLength() ){
-		Command_ADDTAIL( cmemMessage.GetPtr(), cmemMessage.GetLength() );
+	if( 0 < cmemMessage.GetStringLength() ){
+		Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		Command_GOFILEEND( FALSE );
 		m_pcEditDoc->RedrawAllViews( this );
-		cmemMessage.SetDataSz( _T("") );
+		cmemMessage.SetString( _T("") );
 		nWork = 0;
 	}
 
@@ -8044,12 +8023,12 @@ int CEditView::DoGrepTree(
 
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, _T(" ") );	// 2002/09/09 Moca add
 	/* 結果出力 */
-	pszWork = cmemMessage.GetPtr( &nWork );
+	pszWork = cmemMessage.GetStringPtr( &nWork );
 	if( 0 < nWork ){
 		Command_ADDTAIL( pszWork, nWork );
 		Command_GOFILEEND( FALSE );
 		/* 結果格納エリアをクリア */
-		cmemMessage.SetDataSz( _T("") );
+		cmemMessage.SetString( _T("") );
 	}
 
 	return 0;
@@ -8076,13 +8055,13 @@ error_return:;
 	}
 
 	/* 結果出力 */
-	pszWork = cmemMessage.GetPtr( &nWork );
+	pszWork = cmemMessage.GetStringPtr( &nWork );
 	if( 0 < nWork )
 	{
 		Command_ADDTAIL( pszWork, nWork );
 		Command_GOFILEEND( FALSE );
 		/* 結果格納エリアをクリア */
-		cmemMessage.SetDataSz( _T("") );
+		cmemMessage.SetString( _T("") );
 	}
 
 	return -1;
@@ -8262,7 +8241,7 @@ int CEditView::DoGrepFile(
 		/* WZ風 */
 			wsprintf( szWork0, "■\"%s\"%s\r\n", pszFullPath, pszCodeName );
 		}
-		cmemMessage.AppendSz( szWork0 );
+		cmemMessage.AppendString( szWork0 );
 		++(*pnHitCount);
 		::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
 		return 1;
@@ -8359,11 +8338,11 @@ int CEditView::DoGrepFile(
 					if( 2 == nGrepOutputStyle ){
 					/* WZ風 */
 						if( !bOutFileName ){
-							cmemMessage.AppendSz( szWork0 );
+							cmemMessage.AppendString( szWork0 );
 							bOutFileName = TRUE;
 						}
 					}
-					cmemMessage.Append( szWork, nWorkLen );
+					cmemMessage.AppendString( szWork, nWorkLen );
 					++nHitCount;
 					++(*pnHitCount);
 					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
@@ -8421,12 +8400,12 @@ int CEditView::DoGrepFile(
 							if( 2 == nGrepOutputStyle ){
 							/* WZ風 */
 								if( !bOutFileName ){
-									cmemMessage.AppendSz( szWork0 );
+									cmemMessage.AppendString( szWork0 );
 									bOutFileName = TRUE;
 								}
 							}
 
-							cmemMessage.Append( szWork, nWorkLen );
+							cmemMessage.AppendString( szWork, nWorkLen );
 							++nHitCount;
 							++(*pnHitCount);
 							//	May 22, 2000 genta
@@ -8468,12 +8447,12 @@ int CEditView::DoGrepFile(
 					if( 2 == nGrepOutputStyle ){
 					/* WZ風 */
 						if( !bOutFileName ){
-							cmemMessage.AppendSz( szWork0 );
+							cmemMessage.AppendString( szWork0 );
 							bOutFileName = TRUE;
 						}
 					}
 
-					cmemMessage.Append( szWork, nWorkLen );
+					cmemMessage.AppendString( szWork, nWorkLen );
 					++nHitCount;
 					++(*pnHitCount);
 					//	May 22, 2000 genta
@@ -8622,12 +8601,12 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 		nCurLine, nIdx,
 		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, &cmemWord, pcmemWord )
 	){
-		pcmemWord->Append( &pLine[nIdx], nCharChars );
+		pcmemWord->AppendString( &pLine[nIdx], nCharChars );
 //		MYTRACE( "==========\n" );
 //		MYTRACE( "cmemWord=[%s]\n", cmemWord.GetPtr() );
 //		MYTRACE( "pcmemWord=[%s]\n", pcmemWord->GetPtr() );
 
-		return pcmemWord->GetLength();
+		return pcmemWord->GetStringLength();
 	}else{
 		return 0;
 	}
@@ -8862,7 +8841,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 		hglb = ::GetClipboardData( uFormatSakuraClip );
 		if (hglb != NULL) {
 			lptstr = (char*)::GlobalLock(hglb);
-			cmemBuf.SetData( lptstr + sizeof(int), *((int*)lptstr) );
+			cmemBuf.SetString( lptstr + sizeof(int), *((int*)lptstr) );
 			::GlobalUnlock(hglb);
 			::CloseClipboard();
 			return TRUE;
@@ -8892,10 +8871,10 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 			std::vector<string>::iterator pathListItr = pathList.begin();
 			while(pathListItr != pathList.end())
 			{
-				cmemBuf.AppendSz(pathListItr->c_str());
+				cmemBuf.AppendString(pathListItr->c_str());
 				if(pathList.size() > 1)
 				{
-					cmemBuf.AppendSz(sEol);
+					cmemBuf.AppendString(sEol);
 				}
 				pathListItr++;
 			}
@@ -8911,7 +8890,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 			//	一時変数を介した後に\0までを取り出す．
 			CMemory cmemUnicode( lptstr, GlobalSize(lptstr) );
 			cmemUnicode.UnicodeToSJIS();
-			cmemBuf.SetDataSz( cmemUnicode.GetPtr() );
+			cmemBuf.SetString( cmemUnicode.GetStringPtr() );
 			::GlobalUnlock(hglb);
 			::CloseClipboard();
 			return TRUE;
@@ -8921,7 +8900,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 		hglb = ::GetClipboardData( CF_OEMTEXT );
 		if( hglb != NULL ){
 			lptstr = (char*)::GlobalLock(hglb);
-			cmemBuf.SetDataSz( lptstr );
+			cmemBuf.SetString( lptstr );
 			::GlobalUnlock(hglb);
 			::CloseClipboard();
 			return TRUE;
@@ -9215,11 +9194,11 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
 	if( cf == ::RegisterClipboardFormat( _T("SAKURAClip") ) ){
-		cmemBuf.SetData( (char*)pData + sizeof(int), *(int*)pData );
+		cmemBuf.SetString( (char*)pData + sizeof(int), *(int*)pData );
 	}else{
 		CMemory cmemTemp;
-		cmemTemp.SetData( (char*)pData, nSize );	// 安全のため末尾に null 文字を付加
-		cmemBuf.SetDataSz( cmemTemp.GetPtr() );		// 文字列終端までコピー
+		cmemTemp.SetString( (char*)pData, nSize );	// 安全のため末尾に null 文字を付加
+		cmemBuf.SetString( cmemTemp.GetStringPtr() );		// 文字列終端までコピー
 	}
 
 	// アンドゥバッファの準備
@@ -9326,7 +9305,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			}
 		}
 
-		Command_INSTEXT( TRUE, cmemBuf.GetPtr(), cmemBuf.GetLength(), FALSE );
+		Command_INSTEXT( TRUE, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
 
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
@@ -9339,7 +9318,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		// TRUE == bBoxData
 		// FALSE == m_bBeginBoxSelect
 		/* 貼り付け（クリップボードから貼り付け）*/
-		Command_PASTEBOX( cmemBuf.GetPtr(), cmemBuf.GetLength() );
+		Command_PASTEBOX( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength() );
 		AdjustScrollBars(); // 2007.07.22 ryoji
 		Redraw();
 	}
@@ -9555,9 +9534,9 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 				_tsplitpath( szWork, NULL, NULL, szPath, szExt );
 				::lstrcat( szPath, szExt );
 			}
-			cmemBuf.AppendSz( szPath );
+			cmemBuf.AppendString( szPath );
 			if( nFiles > 1 ){
-				cmemBuf.AppendSz( m_pcEditDoc->GetNewLineCode().GetValue() );
+				cmemBuf.AppendString( m_pcEditDoc->GetNewLineCode().GetValue() );
 			}
 		}
 		::DragFinish( hDrop );
@@ -9581,7 +9560,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		}
 
 		// テキスト挿入
-		HandleCommand( F_INSTEXT, TRUE, (LPARAM)cmemBuf.GetPtr(), TRUE, 0, 0 );
+		HandleCommand( F_INSTEXT, TRUE, (LPARAM)cmemBuf.GetStringPtr(), TRUE, 0, 0 );
 
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
@@ -9665,13 +9644,13 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 	int				nColmTo;
 //	const CLayout*	pcLayout;
 
-	cmemCurText.SetDataSz( "" );
+	cmemCurText.SetString( "" );
 	szTopic[0] = '\0';
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 選択範囲のデータを取得 */
 		if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 			/* 検索文字列を現在位置の単語で初期化 */
-			strncpy( szTopic, cmemCurText.GetPtr(), _MAX_PATH - 1 );
+			strncpy( szTopic, cmemCurText.GetStringPtr(), _MAX_PATH - 1 );
 			szTopic[_MAX_PATH - 1] = '\0';
 		}
 	}else{
@@ -9704,7 +9683,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					/* 検索文字列を現在位置の単語で初期化 */
-					strncpy( szTopic, cmemCurText.GetPtr(), MAX_PATH - 1 );
+					strncpy( szTopic, cmemCurText.GetStringPtr(), MAX_PATH - 1 );
 					szTopic[MAX_PATH - 1] = '\0';
 				}
 				/* 現在の選択範囲を非選択状態に戻す */
@@ -9721,7 +9700,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 		}
 	}
 //	cmemCurText.SetData( szTopic, lstrlen( szTopic ) );
-	cmemCurText.SetDataSz( szTopic );
+	cmemCurText.SetString( szTopic );
 	return;
 
 }
@@ -9732,7 +9711,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 */
 void CEditView::GetCurrentTextForSearchDlg( CMemory& cmemCurText )
 {
-	cmemCurText.SetDataSz( "" );
+	cmemCurText.SetString( "" );
 
 	if( IsTextSelected() ){	// テキストが選択されている
 		GetCurrentTextForSearch( cmemCurText );
@@ -9742,7 +9721,7 @@ void CEditView::GetCurrentTextForSearchDlg( CMemory& cmemCurText )
 			GetCurrentTextForSearch( cmemCurText );	// カーソル位置単語を取得
 		}
 		else{
-			cmemCurText.SetDataSz( m_pShareData->m_szSEARCHKEYArr[0] );	// 履歴からとってくる
+			cmemCurText.SetString( m_pShareData->m_szSEARCHKEYArr[0] );	// 履歴からとってくる
 		}
 	}
 }
@@ -10373,7 +10352,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		if (nSelectLineTo != nCurrentLine){
 			//行末までに制限
 			pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(nCurrentLine);
-			nSelectedEndIndex = pcCurDocLine->m_pLine->GetLength();
+			nSelectedEndIndex = pcCurDocLine->m_pLine->GetStringLength();
 		}
 		
 		nSelectedLen = nSelectedEndIndex - nSelectedIndex;
@@ -10389,12 +10368,12 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 	if (NULL == pcCurDocLine )
 		return 0;
 	
-	nLineLen = pcCurDocLine->m_pLine->GetLength() - pcCurDocLine->m_cEol.GetLen() ; //改行コードをのぞいた長さ
+	nLineLen = pcCurDocLine->m_pLine->GetStringLength() - pcCurDocLine->m_cEol.GetLen() ; //改行コードをのぞいた長さ
 	
 	if ( 0 == nLineLen )
 		return 0;
 	
-	pLine = pcCurDocLine->m_pLine->GetPtr();
+	pLine = pcCurDocLine->m_pLine->GetStringPtr();
 
 	//再変換考慮文字列開始
 	nReconvIndex = 0;
@@ -10428,30 +10407,30 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		
 		//考慮文字列の開始から対象文字列の開始まで
 		if( nSelectedIndex - nReconvIndex > 0 ){
-			cmemBuf1.SetData(pszReconv, nSelectedIndex - nReconvIndex);
+			cmemBuf1.SetString(pszReconv, nSelectedIndex - nReconvIndex);
 			cmemBuf1.SJISToUnicode();
-			dwCompStrOffset = cmemBuf1.GetLength();  //Offset はbyte
+			dwCompStrOffset = cmemBuf1.GetStringLength();  //Offset はbyte
 		}else{
 			dwCompStrOffset = 0;
 		}
 		
 		//対象文字列の開始から対象文字列の終了まで
 		if (nSelectedLen > 0 ){
-			cmemBuf1.SetData(pszReconv + nSelectedIndex, nSelectedLen);  
+			cmemBuf1.SetString(pszReconv + nSelectedIndex, nSelectedLen);  
 			cmemBuf1.SJISToUnicode();
-			dwCompStrLen = cmemBuf1.GetLength() / sizeof(wchar_t);
+			dwCompStrLen = cmemBuf1.GetStringLength() / sizeof(wchar_t);
 		}else{
 			dwCompStrLen = 0;
 		}
 		
 		//考慮文字列すべて
-		cmemBuf1.SetData(pszReconv , nReconvLen );
+		cmemBuf1.SetString(pszReconv , nReconvLen );
 		cmemBuf1.SJISToUnicode();
 		
-		dwReconvTextLen =  cmemBuf1.GetLength() / sizeof(wchar_t);
-		nReconvLenWithNull =  cmemBuf1.GetLength()  + sizeof(wchar_t);
+		dwReconvTextLen =  cmemBuf1.GetStringLength() / sizeof(wchar_t);
+		nReconvLenWithNull =  cmemBuf1.GetStringLength()  + sizeof(wchar_t);
 		
-		pszReconv = cmemBuf1.GetPtr();
+		pszReconv = cmemBuf1.GetStringPtr();
 		
 	}else{
 		dwReconvTextLen = nReconvLen;
@@ -10507,20 +10486,20 @@ LRESULT CEditView::SetSelectionFromReonvert(PRECONVERTSTRING pReconv, bool bUnic
 		
 		//考慮文字列の開始から対象文字列の開始まで
 		if( pReconv->dwCompStrOffset > 0){
-			cmemBuf.SetData((const char *)((const wchar_t *)(pReconv + 1)), 
+			cmemBuf.SetString((const char *)((const wchar_t *)(pReconv + 1)), 
 								pReconv->dwCompStrOffset ); 
 			cmemBuf.UnicodeToSJIS();
-			dwOffset = cmemBuf.GetLength();
+			dwOffset = cmemBuf.GetStringLength();
 			
 		}else
 			dwOffset = 0;
 
 		//対象文字列の開始から対象文字列の終了まで
 		if( pReconv->dwCompStrLen > 0 ){
-			cmemBuf.SetData((const char *)(const wchar_t *)(pReconv + 1) + pReconv->dwCompStrOffset , 
+			cmemBuf.SetString((const char *)(const wchar_t *)(pReconv + 1) + pReconv->dwCompStrOffset , 
 								pReconv->dwCompStrLen * sizeof(wchar_t)); 
 			cmemBuf.UnicodeToSJIS();
-			dwLen = cmemBuf.GetLength();
+			dwLen = cmemBuf.GetStringLength();
 			
 		}else
 			dwLen = 0;
@@ -10837,8 +10816,8 @@ int CEditView::GetColorIndex(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength()/* - pcLayout->m_nOffset*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
-		pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr()/* + pcLayout->m_nOffset*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength()/* - pcLayout->m_nOffset*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		pLine = pcLayout->m_pCDocLine->m_pLine->GetStringPtr()/* + pcLayout->m_nOffset*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 
 		// 2005.11.20 Moca 色が正しくないことがある問題に対処
 		const CLayout* pcLayoutLineFirst = pcLayout;

@@ -56,9 +56,9 @@ public:
 	void		SetDiffMark( int type )    { m_bMark.m_bMarkArray.m_bDiffMark = type; }		//差分状態を設定する	//@@@ 2002.05.25 MIK
 
 	bool		IsEmptyLine( void );	//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
-	int			GetLengthWithoutEOL( void ) const { return m_pLine->GetLength() - m_cEol.GetLen(); }
-	char*		GetPtr( void ) const              { return m_pLine->GetPtr(); }
-	int			GetLength( void ) const			  { return m_pLine->GetLength(); }	//	CMemoryIterator用
+	int			GetLengthWithoutEOL( void ) const { return m_pLine->GetStringLength() - m_cEol.GetLen(); }
+	char*		GetPtr( void ) const              { return m_pLine->GetStringPtr(); }
+	int			GetLength( void ) const			  { return m_pLine->GetStringLength(); }	//	CMemoryIterator用
 	int			GetIndent( void ) const			  { return 0; }						//	CMemoryIterator用
 protected:
 	//マーク情報

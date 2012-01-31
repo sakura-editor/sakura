@@ -269,13 +269,13 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 					if( !m_nReady ){
 						break;
 					}
-					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
+					cmemWork.SetString( szLine + nBgn, nEnd - nBgn );
 					cmemWork.Replace( "\\\'", "\'" );
 
 					//	Jun. 16, 2002 genta double quotationもエスケープ解除
 					cmemWork.Replace( "\\\"", "\"" );
 					cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
+					macro->AddParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
 				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
 					// Jun. 16, 2002 genta プロトタイプチェック
@@ -301,12 +301,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 							break;
 						}
 					}
-					cmemWork.SetData( szLine + nBgn, nEnd - nBgn );
+					cmemWork.SetString( szLine + nBgn, nEnd - nBgn );
 					// Jun. 16, 2002 genta
 					//	数字の中にquotationは入っていないよ
 					//cmemWork.Replace( "\\\'", "\'" );
 					//cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetPtr() );	//	引数を文字列として追加
+					macro->AddParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
 				//	Jun. 16, 2002 genta
 				else if( szLine[i] == ')' ){

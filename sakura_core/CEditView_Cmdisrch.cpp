@@ -231,7 +231,7 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 		
 		CMemory msg;
 		ISearchSetStatusMsg(&msg);
-		SendStatusMessage(msg.GetPtr());
+		SendStatusMessage(msg.GetStringPtr());
 		
 		m_bISearchWrap = false;
 		m_bISearchFirst = true;
@@ -346,7 +346,7 @@ void CEditView::ISearchExec(bool bNext)
 		//ステータスの表示
 		CMemory msg;
 		ISearchSetStatusMsg(&msg);
-		SendStatusMessage(msg.GetPtr());		
+		SendStatusMessage(msg.GetStringPtr());		
 		return ;
 	}
 	
@@ -425,8 +425,8 @@ void CEditView::ISearchExec(bool bNext)
 		&m_CurRegexp	) == 0 )
 	{
 		/*検索結果がない*/
-		msg.AppendSz(" (見つかりません)");
-		SendStatusMessage(msg.GetPtr());
+		msg.AppendString(" (見つかりません)");
+		SendStatusMessage(msg.GetStringPtr());
 		
 		if (bNext) 	m_bISearchWrap = true;
 		if (IsTextSelected()){
@@ -458,7 +458,7 @@ void CEditView::ISearchExec(bool bNext)
 	m_bCurSrchKeyMark = TRUE;
 
 	Redraw();	
-	SendStatusMessage(msg.GetPtr());
+	SendStatusMessage(msg.GetStringPtr());
 	return ;
 }
 
@@ -510,7 +510,7 @@ void CEditView::ISearchBack(void) {
 	//ステータス表示
 	CMemory msg;
 	ISearchSetStatusMsg(&msg);
-	SendStatusMessage(msg.GetPtr());
+	SendStatusMessage(msg.GetStringPtr());
 	
 }
 
@@ -562,25 +562,25 @@ void CEditView::ISearchSetStatusMsg(CMemory* msg) const
 
 	switch ( m_nISearchMode){
 		case 1 :
-			msg->SetDataSz("I-Search" );
+			msg->SetString("I-Search" );
 			break;
 		case 2 :
-			msg->SetDataSz("[RegExp] I-Search" );
+			msg->SetString("[RegExp] I-Search" );
 			break;
 		case 3 :
-			msg->SetDataSz("[Migemo] I-Search" );
+			msg->SetString("[Migemo] I-Search" );
 			break;
 		default:
-			msg->SetDataSz("");
+			msg->SetString("");
 			return;
 	}
 	if (m_nISearchDirection == 0){
-		msg->AppendSz(" Backward: ");
+		msg->AppendString(" Backward: ");
 	}else{
-		msg->AppendSz(": ");
+		msg->AppendString(": ");
 	}
 	if(m_nISearchHistoryCount > 0)
-		msg->AppendSz(m_szCurSrchKey);
+		msg->AppendString(m_szCurSrchKey);
 }
 
 /*!

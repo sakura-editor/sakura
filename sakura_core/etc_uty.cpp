@@ -1704,7 +1704,7 @@ int LimitStringLengthB( const char* pszData, int nDataLength, int nLimitLengthB,
 		nDesLen += nCharChars;
 		i += nCharChars;
 	}
-	cmemDes.SetData( pszData, nDesLen );
+	cmemDes.SetString( pszData, nDesLen );
 	return nDesLen;
 }
 

@@ -273,7 +273,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 						pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
 					}
 
-					int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
+					int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength() - pcLayout->m_nOffset;
 					const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
 				}
 			}
@@ -513,8 +513,8 @@ int CEditView::DispLineNew(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetLength() - pcLayout->m_nOffset;
-		pLine = pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
+		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength() - pcLayout->m_nOffset;
+		pLine = pcLayout->m_pCDocLine->m_pLine->GetStringPtr() + pcLayout->m_nOffset;
 
 		nCOMMENTMODE = pcLayout->m_nTypePrev;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 		nCOMMENTEND = 0;

@@ -107,9 +107,9 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 	char*	pszInfo;
 
 	if( NULL != szText ){
-		m_cInfo.SetData( szText, strlen( szText ) );
+		m_cInfo.SetString( szText, strlen( szText ) );
 	}
-	pszInfo = m_cInfo.GetPtr();
+	pszInfo = m_cInfo.GetStringPtr();
 
 	hdc = ::GetDC( m_hWnd );
 
@@ -301,7 +301,7 @@ LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 //	int			nTextLen;
 
 	hdc = ::BeginPaint(	hwnd, &ps );
-	pszText = m_cInfo.GetPtr();
+	pszText = m_cInfo.GetStringPtr();
 	::GetClientRect( hwnd, &rc );
 	/* ウィンドウのテキストを表示 */
 	DrawTipText( hdc, m_hFont, pszText );
@@ -321,7 +321,7 @@ void CTipWnd::GetWindowSize(LPRECT pRect)
 
 	hdc = ::GetDC( m_hWnd );
 
-	pszText = m_cInfo.GetPtr();
+	pszText = m_cInfo.GetStringPtr();
 
 	// ウィンドウのサイズを得る
 	ComputeWindowSize( hdc, m_hFont, pszText , pRect );

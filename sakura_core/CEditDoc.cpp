@@ -4520,7 +4520,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			{
 				CMemory cmemCurText;
 				m_cEditViewArr[m_nActivePaneIndex].GetCurrentTextForSearch( cmemCurText );
-				q = strncpy_ex( q, q_max - q, cmemCurText.GetPtr(), cmemCurText.GetLength());
+				q = strncpy_ex( q, q_max - q, cmemCurText.GetStringPtr(), cmemCurText.GetStringLength());
 				++p;
 			}
 		//	To Here Jan. 15, 2002 hor
@@ -4650,10 +4650,10 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				CMemory		cmemDes;
 				LimitStringLengthB( m_szGrepKey, lstrlen( m_szGrepKey ),
 					(q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
-				if( (int)lstrlen( m_szGrepKey ) > cmemDes.GetLength() ){
-					cmemDes.Append( "...", 3 );
+				if( (int)lstrlen( m_szGrepKey ) > cmemDes.GetStringLength() ){
+					cmemDes.AppendString( "...", 3 );
 				}
-				q = strncpy_ex( q, q_max - q, cmemDes.GetPtr(), cmemDes.GetLength());
+				q = strncpy_ex( q, q_max - q, cmemDes.GetStringPtr(), cmemDes.GetStringLength());
 				++p;
 			}
 			break;

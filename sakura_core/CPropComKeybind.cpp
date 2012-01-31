@@ -352,7 +352,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				if( 0 < nAssignedKeyNum){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
 						/* デバッグモニタに出力 */
-						cpszString = ppcAssignedKeyList[j]->GetPtr();
+						cpszString = ppcAssignedKeyList[j]->GetStringPtr();
 						::SendMessage( hwndAssignedkeyList, LB_ADDSTRING, 0, (LPARAM)cpszString );
 						delete ppcAssignedKeyList[j];
 					}

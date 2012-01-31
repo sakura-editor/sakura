@@ -257,9 +257,9 @@ void CCommandLine::ParseCommandLine( void )
 				//	ファイル名の後ろにあるOptionを解析するため，ループは継続
 				int len = lstrlen( pszToken + 1 );
 				if( len > 0 ){
-					cmWork.SetData( &pszToken[1], len - ( pszToken[len] == '"' ? 1 : 0 ));
+					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == '"' ? 1 : 0 ));
 					cmWork.Replace( "\"\"", "\"" );
-					strncpyWithCheckOverflow(m_fi.m_szPath, sizeof(m_fi.m_szPath), cmWork.GetPtr(), cmWork.GetLength());
+					strncpyWithCheckOverflow(m_fi.m_szPath, sizeof(m_fi.m_szPath), cmWork.GetStringPtr(), cmWork.GetStringLength());
 				}
 				else {
 					m_fi.m_szPath[0] = '\0';
@@ -363,16 +363,16 @@ void CCommandLine::ParseCommandLine( void )
 				break;
 			case CMDLINEOPT_GKEY:	//	GKEY
 				//	前後の""を取り除く
-				m_gi.cmGrepKey.SetData( arg + 1,  lstrlen( arg ) - 2 );
+				m_gi.cmGrepKey.SetString( arg + 1,  lstrlen( arg ) - 2 );
 				m_gi.cmGrepKey.Replace( "\"\"", "\"" );
 				break;
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
-				m_gi.cmGrepFile.SetData( arg + 1,  lstrlen( arg ) - 2 );
+				m_gi.cmGrepFile.SetString( arg + 1,  lstrlen( arg ) - 2 );
 				m_gi.cmGrepFile.Replace( "\"\"", "\"" );
 				break;
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
-				m_gi.cmGrepFolder.SetData( arg + 1,  lstrlen( arg ) - 2 );
+				m_gi.cmGrepFolder.SetString( arg + 1,  lstrlen( arg ) - 2 );
 				m_gi.cmGrepFolder.Replace( "\"\"", "\"" );
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT

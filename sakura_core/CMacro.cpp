@@ -255,10 +255,10 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 			//	引数ひとつ分だけ保存
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
-			cmemWork.SetData( pText, nTextLen );
+			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace_j( "\\", "\\\\" );
 			cmemWork.Replace_j( "\'", "\\\'" );
-			wsprintf( szLine, "S_%s(\'%s\');\t// %s\r\n", szFuncName, cmemWork.GetPtr(), szFuncNameJapanese );
+			wsprintf( szLine, "S_%s(\'%s\');\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
 		case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
@@ -270,41 +270,41 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 		case F_SEARCH_PREV:
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
-			cmemWork.SetData( pText, nTextLen );
+			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace_j( "\\", "\\\\" );
 			cmemWork.Replace_j( "\'", "\\\'" );
-			wsprintf( szLine, "S_%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
+			wsprintf( szLine, "S_%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
 		case F_EXECMD:
 			//	引数ひとつ分だけ保存
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
-			cmemWork.SetData( pText, nTextLen );
+			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace_j( "\\", "\\\\" );
 			cmemWork.Replace_j( "\'", "\\\'" );
-			wsprintf( szLine, "S_%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
+			wsprintf( szLine, "S_%s(\'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), m_pParamTop->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pData) : 0, szFuncNameJapanese );
 			_lwrite( hFile, szLine, strlen( szLine ) );
 			break;
 		case F_REPLACE:
 		case F_REPLACE_ALL:
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
-			cmemWork.SetData( pText, nTextLen );
+			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace_j( "\\", "\\\\" );
 			cmemWork.Replace_j( "\'", "\\\'" );
 			{
 				CMemory cmemWork2(m_pParamTop->m_pNext->m_pData, strlen(m_pParamTop->m_pNext->m_pData));
 				cmemWork2.Replace_j( "\\", "\\\\" );
 				cmemWork2.Replace_j( "\'", "\\\'" );
-				wsprintf( szLine, "S_%s(\'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), cmemWork2.GetPtr(), m_pParamTop->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
+				wsprintf( szLine, "S_%s(\'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), cmemWork2.GetStringPtr(), m_pParamTop->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
 				_lwrite( hFile, szLine, strlen( szLine ) );
 			}
 			break;
 		case F_GREP:
 			pText = m_pParamTop->m_pData;
 			nTextLen = strlen(pText);
-			cmemWork.SetData( pText, nTextLen );
+			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace_j( "\\", "\\\\" );
 			cmemWork.Replace_j( "\'", "\\\'" );
 			{
@@ -315,7 +315,7 @@ void CMacro::Save( HINSTANCE hInstance, HFILE hFile )
 				CMemory cmemWork3(m_pParamTop->m_pNext->m_pNext->m_pData, strlen(m_pParamTop->m_pNext->m_pNext->m_pData));
 				cmemWork3.Replace_j( "\\", "\\\\" );
 				cmemWork3.Replace_j( "\'", "\\\'" );
-				wsprintf( szLine, "S_%s(\'%s\', \'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetPtr(), cmemWork2.GetPtr(), cmemWork3.GetPtr(), m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
+				wsprintf( szLine, "S_%s(\'%s\', \'%s\', \'%s\', %d);\t// %s\r\n", szFuncName, cmemWork.GetStringPtr(), cmemWork2.GetStringPtr(), cmemWork3.GetStringPtr(), m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData ? atoi(m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData) : 0, szFuncNameJapanese );
 				_lwrite( hFile, szLine, strlen( szLine ) );
 			}
 			break;
@@ -624,9 +624,9 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 //			int		nDataLen;
 			int		nCharSet;
 
-			CMemory cmWork1;	cmWork1.SetDataSz( Argument[0] );	cmWork1.Replace_j( "\"", "\"\"" );	//	検索文字列
-			CMemory cmWork2;	cmWork2.SetDataSz( Argument[1] );	cmWork2.Replace_j( "\"", "\"\"" );	//	ファイル名
-			CMemory cmWork3;	cmWork3.SetDataSz( Argument[2] );	cmWork3.Replace_j( "\"", "\"\"" );	//	フォルダ名
+			CMemory cmWork1;	cmWork1.SetString( Argument[0] );	cmWork1.Replace_j( "\"", "\"\"" );	//	検索文字列
+			CMemory cmWork2;	cmWork2.SetString( Argument[1] );	cmWork2.Replace_j( "\"", "\"\"" );	//	ファイル名
+			CMemory cmWork3;	cmWork3.SetString( Argument[2] );	cmWork3.Replace_j( "\"", "\"\"" );	//	フォルダ名
 
 			LPARAM lFlag = Argument[3] != NULL ? atoi(Argument[3]) : 5;
 
@@ -645,9 +645,9 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 			*/
 			wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
-				cmWork1.GetPtr(),
-				cmWork2.GetPtr(),
-				cmWork3.GetPtr(),
+				cmWork1.GetStringPtr(),
+				cmWork2.GetStringPtr(),
+				cmWork3.GetStringPtr(),
 				nCharSet
 			);
 
@@ -863,7 +863,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			{
 				CMemory cMem;
 				if(!View->GetSelectedData(cMem, FALSE, NULL, FALSE, FALSE)) return false;
-				SysString S(cMem.GetPtr(), cMem.GetLength());
+				SysString S(cMem.GetStringPtr(), cMem.GetStringLength());
 				Wrap(&Result)->Receive(S);
 			}
 			else

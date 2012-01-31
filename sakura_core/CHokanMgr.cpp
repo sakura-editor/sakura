@@ -87,7 +87,7 @@ CHokanMgr::CHokanMgr()
 {
 //	m_hFont = NULL;
 //	m_hFontOld = NULL;
-	m_cmemCurWord.SetDataSz( "" );
+	m_cmemCurWord.SetString( "" );
 
 	m_pcmemKouho = NULL;
 	m_nKouhoNum = 0;;
@@ -207,7 +207,7 @@ int CHokanMgr::Search(
 		if(pcmemHokanWord != NULL){
 			m_nCurKouhoIdx = -1;
 			// 2004.05.14 Moca m_pcmemKouhoの末尾には改行コードがあり、それを削除してコピーするするように
-			pcmemHokanWord->SetData( m_pcmemKouho->GetPtr(), m_pcmemKouho->GetLength() - 1 );
+			pcmemHokanWord->SetString( m_pcmemKouho->GetStringPtr(), m_pcmemKouho->GetStringLength() - 1 );
 			return 1;
 		}
 	}
@@ -227,7 +227,7 @@ int CHokanMgr::Search(
 	m_nWinHeight = nWinHeight;
 	m_nColmWidth = nColmWidth;
 //	m_cmemCurWord.SetData( pszCurWord, lstrlen( pszCurWord ) );
-	m_cmemCurWord.SetDataSz( pszCurWord );
+	m_cmemCurWord.SetString( pszCurWord );
 
 
 	m_nCurKouhoIdx = 0;
@@ -250,7 +250,7 @@ int CHokanMgr::Search(
 	char*	pszWork;
 	char*	pszNext;
 	char*	pszTest;
-	pszWork = m_pcmemKouho->GetPtr();
+	pszWork = m_pcmemKouho->GetStringPtr();
 	for( i = 0; i < m_nKouhoNum; ++i ){
 		pszNext = strstr( pszWork, pszCR );
 		if( NULL == pszNext ){
@@ -404,13 +404,13 @@ void CHokanMgr::SetCurKouhoStr( void )
 			return;
 		}
 		if( i == m_nCurKouhoIdx ){
-			pszWork += m_cmemCurWord.GetLength();
+			pszWork += m_cmemCurWord.GetStringLength();
 			m_pszCurKouho = new char[pszNext - pszWork + 1 + lstrlen( szAdd )];
 			memcpy( m_pszCurKouho, pszWork, pszNext - pszWork );
 			m_pszCurKouho[pszNext - pszWork] = '\0';
 			strcat( m_pszCurKouho, szAdd );
 			::MoveWindow( m_hWnd,
-				m_poWin.x - m_nColmWidth/*+ m_cmemCurWord.GetLength() * m_nColmWidth*/,
+				m_poWin.x - m_nColmWidth/*+ m_cmemCurWord.GetStringLength() * m_nColmWidth*/,
 				m_poWin.y + m_nWinHeight,
 //				m_nColmWidth * lstrlen(m_pszCurKouho) + 2,
 //				m_nWinHeight + 2 + 8,
@@ -605,7 +605,6 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 		strcat( szLabel, " " );
 	}
 #endif
-//	pszWork += m_cmemCurWord.GetLength();
 
  	/* テキストを貼り付け */
 	pcEditView = (CEditView*)m_lParam;
@@ -614,7 +613,6 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)(szLabel), TRUE, 0, 0 );
 
 	// Until here
-//	pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)(szLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
 
 	m_pShareData->m_Common.m_bUseHokan = FALSE;	//	補完したら

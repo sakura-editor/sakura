@@ -59,11 +59,11 @@ void CEditView::Command_GREP_DIALOG( void )
 	GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
 
 	/* キーがないなら、履歴からとってくる */
-	if( 0 == cmemCurText.GetLength() ){
+	if( 0 == cmemCurText.GetStringLength() ){
 //		cmemCurText.SetData( m_pShareData->m_szSEARCHKEYArr[0], lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) );
-		cmemCurText.SetDataSz( m_pShareData->m_szSEARCHKEYArr[0] );
+		cmemCurText.SetString( m_pShareData->m_szSEARCHKEYArr[0] );
 	}
-	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetPtr() );
+	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
 
 	/* Grepダイアログの表示 */
 	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
@@ -92,9 +92,9 @@ void CEditView::Command_GREP( void )
 		::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
 		return;
 	}
-	cmWork1.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szText );
-	cmWork2.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFile );
-	cmWork3.SetDataSz( m_pcEditDoc->m_cDlgGrep.m_szFolder );
+	cmWork1.SetString( m_pcEditDoc->m_cDlgGrep.m_szText );
+	cmWork2.SetString( m_pcEditDoc->m_cDlgGrep.m_szFile );
+	cmWork3.SetString( m_pcEditDoc->m_cDlgGrep.m_szFolder );
 
 	/*	今のEditViewにGrep結果を表示する。
 		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
@@ -128,9 +128,9 @@ void CEditView::Command_GREP( void )
 		|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
 		*/
 		wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
-			cmWork1.GetPtr(),
-			cmWork2.GetPtr(),
-			cmWork3.GetPtr(),
+			cmWork1.GetStringPtr(),
+			cmWork2.GetStringPtr(),
+			cmWork3.GetStringPtr(),
 			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet
 		);
 		pOpt[0] = '\0';

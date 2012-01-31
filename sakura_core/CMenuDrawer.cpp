@@ -659,7 +659,7 @@ void CMenuDrawer::ResetContents( void )
 	int		i;
 	LOGFONT	lf;
 	for( i = 0; i < m_nMenuItemNum; ++i ){
-		m_cmemMenuItemStrArr[i].SetData( "", 0 );
+		m_cmemMenuItemStrArr[i].SetString( "", 0 );
 		m_nMenuItemFuncArr[i] = 0;
 	}
 	m_nMenuItemNum = 0;
@@ -762,7 +762,7 @@ void CMenuDrawer::MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const char*
 
 			m_nMenuItemBitmapIdxArr[m_nMenuItemNum] = -1;
 			m_nMenuItemFuncArr[m_nMenuItemNum] = nFuncId;
-			m_cmemMenuItemStrArr[m_nMenuItemNum].SetData( szLabel, strlen( szLabel ) );
+			m_cmemMenuItemStrArr[m_nMenuItemNum].SetString( szLabel, strlen( szLabel ) );
 //#ifdef _DEBUG
 			/* メニュー項目をオーナー描画にする */
 			/* メニューにアイコンを表示する */
@@ -868,7 +868,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 */
 //@@@ 2002.01.03 YAZAKI 極力メンバ関数を使用するように。
 	nItemIndex = Find( (int)lpdis->itemID );
-	pszItemStr = m_cmemMenuItemStrArr[nItemIndex].GetPtr( &nItemStrLen );
+	pszItemStr = m_cmemMenuItemStrArr[nItemIndex].GetStringPtr( &nItemStrLen );
 
 //	hdc = ::GetDC( m_hWndOwner );
 	hdc = lpdis->hDC;
@@ -1165,7 +1165,7 @@ const char* CMenuDrawer::GetLabel( int nFuncID )
 	if( -1 == ( i = Find( nFuncID ) ) ){
 		return NULL;
 	}
-	return m_cmemMenuItemStrArr[i].GetPtr();
+	return m_cmemMenuItemStrArr[i].GetStringPtr();
 }
 
 char CMenuDrawer::GetAccelCharFromLabel( const char* pszLabel )

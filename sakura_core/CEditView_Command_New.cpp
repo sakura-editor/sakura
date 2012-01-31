@@ -107,7 +107,7 @@ void CEditView::InsertData_CEditView(
 
 	nIdxFrom = 0;
 //	cMem.SetData( "", lstrlen( "" ) );
-	cMem.SetDataSz( "" );
+	cMem.SetString( "" );
 	if( NULL != pLine ){
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
@@ -129,17 +129,17 @@ void CEditView::InsertData_CEditView(
 				for( i = 0; i < nX - nLineAllColLen + 1; ++i ){
 					cMem += ' ';
 				}
-				cMem.Append( pData, nDataLen );
+				cMem.AppendString( pData, nDataLen );
 			}else{
 				nIdxFrom = nLineLen;
 				for( i = 0; i < nX - nLineAllColLen; ++i ){
 					cMem += ' ';
 				}
-				cMem.Append( pData, nDataLen );
+				cMem.AppendString( pData, nDataLen );
 				bHintNext = true;	// 更新が次行からになる可能性がある
 			}
 		}else{
-			cMem.Append( pData, nDataLen );
+			cMem.AppendString( pData, nDataLen );
 		}
 	}else{
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
@@ -152,7 +152,7 @@ void CEditView::InsertData_CEditView(
 		for( i = 0; i < nX - nIdxFrom; ++i ){
 			cMem += ' ';
 		}
-		cMem.Append( pData, nDataLen );
+		cMem.AppendString( pData, nDataLen );
 	}
 //	MYTRACE( "nY=%d nIdxFrom=%d nLineAllColLen=%d \n", nY, nIdxFrom, nLineAllColLen );
 
@@ -180,8 +180,8 @@ void CEditView::InsertData_CEditView(
 	m_pcEditDoc->m_cLayoutMgr.InsertData_CLayoutMgr(
 		nY,
 		nIdxFrom,
-		cMem.GetPtr(),
-		cMem.GetLength(),
+		cMem.GetStringPtr(),
+		cMem.GetStringLength(),
 		&nModifyLayoutLinesOld,
 		&nInsLineNum,
 		pnNewLine,			/* 挿入された部分の次の位置の行 */
@@ -301,7 +301,7 @@ void CEditView::InsertData_CEditView(
 			&pcOpe->m_nCaretPosY_PHY_To
 		);
 
-		pcOpe->m_nDataLen = cMem.GetLength();	/* 操作に関連するデータのサイズ */
+		pcOpe->m_nDataLen = cMem.GetStringLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = NULL;				/* 操作に関連するデータ */
 	}
 #ifdef _DEBUG
@@ -378,7 +378,7 @@ void CEditView::DeleteData2(
 	);
 
 	if( !m_bDoing_UndoRedo && NULL != pcOpe ){	/* アンドゥ・リドゥの実行中か */
-		pcOpe->m_nDataLen = pcMem->GetLength();	/* 操作に関連するデータのサイズ */
+		pcOpe->m_nDataLen = pcMem->GetStringLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = pcMem;				/* 操作に関連するデータ */
 	}
 
@@ -813,15 +813,12 @@ void CEditView::Command_UNDO( void )
 				m_nSelectColmTo = -1;
 
 				pcOpe->m_pcmemData = pcMem;
-//				if( 0 == pcMem->GetLength() ){
-//					MYTRACE( "?? ERROR\n" );
-//				}
 
 				}
 				break;
 			case OPE_DELETE:
 				// 2010.08.25 メモリーリーク修正
-				if( 0 < pcOpe->m_pcmemData->GetLength() ){
+				if( 0 < pcOpe->m_pcmemData->GetStringLength() ){
 					/* データ置換 削除&挿入にも使える */
 					ReplaceData_CEditView(
 						nCaretPosY_Before,					/* 範囲選択開始行 */
@@ -829,7 +826,7 @@ void CEditView::Command_UNDO( void )
 						nCaretPosY_Before,					/* 範囲選択終了行 */
 						nCaretPosX_Before,					/* 範囲選択終了桁 */
 						NULL,								// 削除されたデータのコピー(NULL可能)
-						pcOpe->m_pcmemData->GetPtr(),	/* 挿入するデータ */
+						pcOpe->m_pcmemData->GetStringPtr(),	/* 挿入するデータ */
 						pcOpe->m_nDataLen,					/* 挿入するデータの長さ */
 						FALSE								/*再描画するか否か*/
 					);
@@ -988,7 +985,7 @@ void CEditView::Command_REDO( void )
 			switch( pcOpe->m_nOpe ){
 			case OPE_INSERT:
 				// 2010.08.25 メモリーリークの修正
-				if( 0 < pcOpe->m_pcmemData->GetLength() ){
+				if( 0 < pcOpe->m_pcmemData->GetStringLength() ){
 					/* データ置換 削除&挿入にも使える */
 					ReplaceData_CEditView(
 						nCaretPosY_Before,					/* 範囲選択開始行 */
@@ -996,21 +993,10 @@ void CEditView::Command_REDO( void )
 						nCaretPosY_Before,					/* 範囲選択終了行 */
 						nCaretPosX_Before,					/* 範囲選択終了桁 */
 						NULL,								/* 削除されたデータのコピー(NULL可能) */
-						pcOpe->m_pcmemData->GetPtr(),	/* 挿入するデータ */
-						pcOpe->m_pcmemData->GetLength(),	/* 挿入するデータの長さ */
+						pcOpe->m_pcmemData->GetStringPtr(),	/* 挿入するデータ */
+						pcOpe->m_pcmemData->GetStringLength(),	/* 挿入するデータの長さ */
 						FALSE								/*再描画するか否か*/
 					);
-
-//					InsertData_CEditView(
-//						nCaretPosX_Before,
-//						nCaretPosY_Before,
-//						pcOpe->m_pcmemData->GetPtr(),
-//						pcOpe->m_pcmemData->GetLength(),//*pcOpe->m_nDataLen,
-//						&nNewLine,
-//						&nNewPos,
-//						NULL,
-//						FALSE
-//					);
 				}
 				delete pcOpe->m_pcmemData;
 				pcOpe->m_pcmemData = NULL;
@@ -1405,15 +1391,15 @@ void CEditView::ReplaceData_CEditView(
 
 	/* 削除されたデータのコピー(NULL可能) */
 	if( NULL != pcmemCopyOfDeleted 		/* 削除されたデータのコピー(NULL可能) */
-	 && 0 < pcMemDeleted->GetLength()	/* 削除したデータの長さ */
+	 && 0 < pcMemDeleted->GetStringLength()	/* 削除したデータの長さ */
 	){
 		*pcmemCopyOfDeleted = *pcMemDeleted;
 	}
 
 	if( !m_bDoing_UndoRedo /* アンドゥ・リドゥの実行中か */
-	 && 0 < pcMemDeleted->GetLength()	/* 削除したデータの長さ */
+	 && 0 < pcMemDeleted->GetStringLength()	/* 削除したデータの長さ */
 	){
-		pcOpe->m_nDataLen = pcMemDeleted->GetLength();	/* 操作に関連するデータのサイズ */
+		pcOpe->m_nDataLen = pcMemDeleted->GetStringLength();	/* 操作に関連するデータのサイズ */
 		pcOpe->m_pcmemData = pcMemDeleted;				/* 操作に関連するデータ */
 		/* 操作の追加 */
 		m_pcOpeBlk->AppendOpe( pcOpe );
@@ -2360,7 +2346,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	nBgn = 0;
 	nPosDes = 0;
 	/* 変換後に必要なバイト数を調べる */
-	while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
+	while( NULL != ( pLine = GetNextLine( pCMemory->GetStringPtr(), pCMemory->GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 		if( 0 < nLineLen ){
 			nPosDes += nLineLen;
 		}
@@ -2374,7 +2360,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	nPosDes = 0;
 	if( bLeft ){
 	// LTRIM
-		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
+		while( NULL != ( pLine = GetNextLine( pCMemory->GetStringPtr(), pCMemory->GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				for( i = 0; i <= nLineLen; ++i ){
 					if( pLine[i] ==' ' ||
@@ -2397,7 +2383,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 		}
 	}else{
 	// RTRIM
-		while( NULL != ( pLine = GetNextLine( pCMemory->GetPtr(), pCMemory->GetLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
+		while( NULL != ( pLine = GetNextLine( pCMemory->GetStringPtr(), pCMemory->GetStringLength(), &nLineLen, &nBgn, &cEol ) ) ){ // 2002/2/10 aroka CMemory変更
 			if( 0 < nLineLen ){
 				// 2005.10.11 ryoji 右から遡るのではなく左から探すように修正（"ａ@" の右２バイトが全角空白と判定される問題の対処）
 				i = j = 0;
@@ -2424,7 +2410,7 @@ void CEditView::Command_TRIM2( CMemory* pCMemory , BOOL bLeft )
 	}
 	pDes[nPosDes] = '\0';
 
-	pCMemory->SetData( pDes, nPosDes );
+	pCMemory->SetString( pDes, nPosDes );
 	delete [] pDes;
 	pDes = NULL;
 	return;
@@ -2549,12 +2535,12 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	}else{
 		std::stable_sort(sta.begin(), sta.end(), SortByKeyDesc);
 	}
-	cmemBuf.SetDataSz( "" );
+	cmemBuf.SetString( "" );
 	j=(int)sta.size();
 	if( bBeginBoxSelectOld ){
-		for (i=0; i<j; i++) cmemBuf.AppendSz( sta[i]->sKey2.c_str() ); 
+		for (i=0; i<j; i++) cmemBuf.AppendString( sta[i]->sKey2.c_str() ); 
 	}else{
-		for (i=0; i<j; i++) cmemBuf.AppendSz( sta[i]->sKey1.c_str() );
+		for (i=0; i<j; i++) cmemBuf.AppendString( sta[i]->sKey1.c_str() );
 	}
 	//sta.clear(); ←これじゃだめみたい
 	for (i=0; i<j; i++) delete sta[i];
@@ -2572,8 +2558,8 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		nSelectLineToOld,
 		nSelectColToOld,
 		NULL,					/* 削除されたデータのコピー(NULL可能) */
-		cmemBuf.GetPtr(),
-		cmemBuf.GetLength(),
+		cmemBuf.GetStringPtr(),
+		cmemBuf.GetStringLength(),
 		FALSE
 	);
 	//	選択エリアの復元
@@ -2671,12 +2657,12 @@ void CEditView::Command_MERGE(void)
 	}
 
 	pLinew=NULL;
-	cmemBuf.SetDataSz( "" );
+	cmemBuf.SetString( "" );
 	for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
 		pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( i, &nLineLen );
 		if( NULL == pLine ) continue;
 		if( NULL == pLinew || strcmp(pLine,pLinew) ){
-			cmemBuf.AppendSz( pLine );
+			cmemBuf.AppendString( pLine );
 		}
 		pLinew=pLine;
 	}
@@ -2695,8 +2681,8 @@ void CEditView::Command_MERGE(void)
 		nSelectLineToOld,
 		nSelectColToOld,
 		NULL,					/* 削除されたデータのコピー(NULL可能) */
-		cmemBuf.GetPtr(),
-		cmemBuf.GetLength(),
+		cmemBuf.GetStringPtr(),
+		cmemBuf.GetStringLength(),
 		FALSE
 	);
 	j-=m_pcEditDoc->m_cDocLineMgr.GetLineCount();
@@ -3027,7 +3013,7 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const int nCharCode, int 
 				case CODE_SJIS:		/* NO BREAK */
 				default:			break;
 			}
-			if( 0 < cMem.GetLength() ) cfw.Write(cMem.GetPtr(),sizeof(char)*cMem.GetLength());
+			if( 0 < cMem.GetStringLength() ) cfw.Write(cMem.GetStringPtr(),sizeof(char)*cMem.GetStringLength());
 		}
 		catch(CError_FileOpen)
 		{

@@ -117,7 +117,7 @@ CMemory::CMemory( const char* pData, int nDataLen )
 	m_nDataBufSize = 0;
 	m_pData = NULL;
 	m_nDataLen = 0;
-	SetData( pData, nDataLen );
+	SetString( pData, nDataLen );
 	return;
 }
 
@@ -136,7 +136,7 @@ const CMemory& CMemory::operator = ( char cChar )
 	char pszChar[2];
 	pszChar[0] = cChar;
 	pszChar[1] = '\0';
-	SetData( pszChar, 1 );
+	SetString( pszChar, 1 );
 	return *this;
 }
 
@@ -158,31 +158,10 @@ const CMemory& CMemory::operator=( const char* pData, int nDataLen )
 const CMemory& CMemory::operator = ( const CMemory& cMemory )
 {
 	if( this != &cMemory ){
-		SetData( (CMemory*)&(cMemory) );
+		SetNativeData( (CMemory*)&(cMemory) );
 	}
 	return *this;
 }
-
-
-
-
-
-//const CMemory& CMemory::operator += ( const char* pszStr )
-//{
-//	AllocBuffer( m_nDataLen + strlen( pszStr ) );
-//	AddData( pszStr, strlen( pszStr ) );
-//	return *this;
-//}
-
-
-///* データの最後に追加 publicメンバ */
-//void Append( const char* pData, int nDataLen )
-//{
-//	AllocBuffer( m_nDataLen + nDataLen );
-//	AddData( pData, nDataLen );
-//	return;
-//}
-
 
 const CMemory& CMemory::operator += ( const CMemory& cMemory )
 {
@@ -190,12 +169,12 @@ const CMemory& CMemory::operator += ( const CMemory& cMemory )
 	const char*	pData;
 	if( this == &cMemory ){
 		CMemory cm = cMemory;
-		pData = cm.GetPtr( &nDataLen );
-		AllocBuffer( m_nDataLen + nDataLen );
+		pData = cm.GetStringPtr( &nDataLen );
+		AllocStringBuffer( m_nDataLen + nDataLen );
 		AddData( pData, nDataLen );
 	}else{
-		pData = cMemory.GetPtr( &nDataLen );
-		AllocBuffer( m_nDataLen + nDataLen );
+		pData = cMemory.GetStringPtr( &nDataLen );
+		AllocStringBuffer( m_nDataLen + nDataLen );
 		AddData( (const char*)pData, nDataLen );
 	}
 	return *this;
@@ -207,7 +186,7 @@ const CMemory& CMemory::operator += ( char ch )
 	char szChar[2];
 	szChar[0] = ch;
 	szChar[1] = '\0';
-	AllocBuffer( m_nDataLen + sizeof( ch ) );
+	AllocStringBuffer( m_nDataLen + sizeof( ch ) );
 	AddData( szChar, sizeof( ch ) );
 	return *this;
 }
@@ -333,8 +312,8 @@ void CMemory::SJIStoJIS( void )
 
 	/* SJIS→JIS */
 	StrSJIStoJIS( &cMem, (unsigned char *)m_pData, m_nDataLen );
-	pBufJIS = cMem.GetPtr( &nBufJISLen );
-	SetData( pBufJIS, nBufJISLen );
+	pBufJIS = cMem.GetStringPtr( &nBufJISLen );
+	SetString( pBufJIS, nBufJISLen );
 	return;
 }
 
@@ -364,8 +343,8 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 //	#define CHAR_8BITCODE	1	/* 8ビットコード(半角カタカナなど) */
 //	#define CHAR_ZENKAKU	2	/* 全角文字 */
 
-	pcmemDes->SetDataSz( "" );
-	pcmemDes->AllocBuffer( nSrcLen );
+	pcmemDes->SetString( "" );
+	pcmemDes->AllocStringBuffer( nSrcLen );
 //	bSJISKAN  = FALSE;
 	nWorkBgn = 0;
 	for( i = 0;; i++ ){
@@ -399,7 +378,7 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 			switch( nCharKindOld ){
 			case CHAR_ASCII:	/* ASCII文字 */
 				if( 0 < nWorkLen ){
-					pcmemDes->Append( (char *)&(pszSrc[nWorkBgn]), nWorkLen );
+					pcmemDes->AppendString( (char *)&(pszSrc[nWorkBgn]), nWorkLen );
 				}
 				break;
 			case CHAR_8BITCODE:	/* 8ビットコード(半角カタカナなど) */
@@ -410,7 +389,7 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 					for( j = 0; j < nWorkLen; ++j ){
 						pszWork[j] -= (unsigned char)0x80;
 					}
-					pcmemDes->Append( (char *)pszWork, nWorkLen );
+					pcmemDes->AppendString( (char *)pszWork, nWorkLen );
 					delete [] pszWork;
 				}
 				break;
@@ -421,7 +400,7 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 					pszWork[ nWorkLen ] = '\0';
 					// SJIS→JIS変換
 					nWorkLen = MemSJIStoJIS( pszWork, nWorkLen );
-					pcmemDes->Append( (char *)pszWork, nWorkLen );
+					pcmemDes->AppendString( (char *)pszWork, nWorkLen );
 					delete [] pszWork;
 				}
 				break;
@@ -429,20 +408,20 @@ int CMemory::StrSJIStoJIS( CMemory* pcmemDes, unsigned char* pszSrc, int nSrcLen
 			/* 新しい文字種類 */
 			switch( nCharKind ){
 			case CHAR_ASCII:	/* ASCII文字 */
-				pcmemDes->AppendSz( ESC_ASCII );
+				pcmemDes->AppendString( ESC_ASCII );
 				break;
 			case CHAR_NULL:		/* なにもない */
 				if( bChange &&					/* 一回は文字種が変化した */
 					nCharKindOld != CHAR_ASCII	/* 直前がASCII文字ではない */
 				){
-					pcmemDes->AppendSz( ESC_ASCII );
+					pcmemDes->AppendString( ESC_ASCII );
 				}
 				break;
 			case CHAR_8BITCODE:	/* 8ビットコード(半角カタカナなど) */
-				pcmemDes->AppendSz( ESC_8BIT );
+				pcmemDes->AppendString( ESC_8BIT );
 				break;
 			case CHAR_ZENKAKU:	/* 全角文字 */
-				pcmemDes->AppendSz( ESC_JIS );
+				pcmemDes->AppendString( ESC_JIS );
 				break;
 			}
 			nCharKindOld = nCharKind;
@@ -843,12 +822,12 @@ void CMemory::BASE64Decode( void )
 
 			// Base64デコード
 			nDesLen = MemBASE64_Decode( (unsigned char *)pData, nPos - nBgn );
-			cmemBuf.Append( pData, nDesLen );
+			cmemBuf.AppendString( pData, nDesLen );
 			delete [] pData;
 		}
 		nBgn = nPos;
 	}
-	SetData( cmemBuf.GetPtr(), cmemBuf.m_nDataLen );
+	SetString( cmemBuf.GetStringPtr(), cmemBuf.m_nDataLen );
 	return;
 }
 
@@ -935,7 +914,7 @@ void CMemory::UUDECODE( char* pszFileName )
 						}
 						iCharIndex += 4;
 					}
-					cmemBuf.Append( (char*)uchDecode, iByteIndex );
+					cmemBuf.AppendString( (char*)uchDecode, iByteIndex );
 				}
 			}
 			delete [] pBuf;
@@ -945,7 +924,7 @@ void CMemory::UUDECODE( char* pszFileName )
 			nBgn++;
 		}
 	}
-	SetData( cmemBuf.GetPtr(), cmemBuf.m_nDataLen );
+	SetString( cmemBuf.GetStringPtr(), cmemBuf.m_nDataLen );
 	return;
 }
 
@@ -1085,7 +1064,7 @@ void CMemory::EUCToSJIS( void )
 			nPtr++;
 		}
 	}
-	SetData( pszDes, nPtrDes );
+	SetString( pszDes, nPtrDes );
 	delete [] pszDes;
 	return;
 }
@@ -1140,7 +1119,7 @@ void CMemory::SJISToEUC( void )
 			i += nCharChars - 1;
 		}
 	}
-	SetData( (const char *)pDes, nDesIdx );
+	SetString( (const char *)pDes, nDesIdx );
 	delete [] pDes;
 	return;
 }
@@ -1258,7 +1237,7 @@ void CMemory::UTF8ToSJIS( void )
 			break;
 		}
 	}
-	SetData( (const char *)pDes, k );
+	SetString( (const char *)pDes, k );
 	delete [] pDes;
 	return;
 
@@ -1358,7 +1337,7 @@ void CMemory::UnicodeToUTF8( void )
 		}else{
 		}
 	}
-	SetData( (const char *)pDes, k );
+	SetString( (const char *)pDes, k );
 	delete [] pDes;
 	return;
 }
@@ -1426,7 +1405,7 @@ void CMemory::UTF7ToSJIS( void )
 					pszWork[nWorkLen] = '\0';
 					if( 0 == nWorkLen % 2 ){
 						/* Unicodeは2バイト単位 */
-						pcmemWork->SetData( pszWork, nWorkLen );
+						pcmemWork->SetString( pszWork, nWorkLen );
 						/* コード変換 UnicodeBE→SJIS */
 						pcmemWork->UnicodeBEToSJIS();
 						memcpy( &pDes[k], pcmemWork->m_pData, pcmemWork->m_nDataLen );
@@ -1460,7 +1439,7 @@ void CMemory::UTF7ToSJIS( void )
 		}
 	}
 	pDes[k] = '\0';
-	SetData( (const char *)pDes, k );
+	SetString( (const char *)pDes, k );
 	delete [] pDes;
 	delete pcmemWork;
 	return;
@@ -1682,7 +1661,7 @@ void CMemory::UnicodeToUTF7( void )
 		nBase64BufLen = 0;
 		bBASE64 = FALSE;
 	}
-	SetData( (const char *)pDes, k );
+	SetString( (const char *)pDes, k );
 	delete [] pDes;
 	return;
 }
@@ -1874,7 +1853,7 @@ void CMemory::SJISToUnicode( void )
 	char*	pBufUnicode;
 	int		nBufUnicodeLen;
 	nBufUnicodeLen = CMemory::MemSJISToUnicode( &pBufUnicode, m_pData, m_nDataLen );
-	SetData( pBufUnicode, nBufUnicodeLen );
+	SetString( pBufUnicode, nBufUnicodeLen );
 	delete [] pBufUnicode;
 	return;
 }
@@ -1887,7 +1866,7 @@ void CMemory::SJISToUnicodeBE( void )
 	char*	pBufUnicode;
 	int		nBufUnicodeLen;
 	nBufUnicodeLen = CMemory::MemSJISToUnicode( &pBufUnicode, m_pData, m_nDataLen );
-	SetData( pBufUnicode, nBufUnicodeLen );
+	SetString( pBufUnicode, nBufUnicodeLen );
 	delete [] pBufUnicode;
 	SwapHLByte();
 	return;
@@ -1905,7 +1884,7 @@ void CMemory::UnicodeToSJIS( void )
 //	BOMの削除はここではしないように変更
 //	呼び出し側で対処してください 2002/08/30 Moca
 		nBufUnicodeLen = CMemory::MemUnicodeToSJIS( &pBufUnicode, m_pData, m_nDataLen );
-		SetData( pBufUnicode, nBufUnicodeLen );
+		SetString( pBufUnicode, nBufUnicodeLen );
 		delete [] pBufUnicode;
 	return;
 }
@@ -2024,9 +2003,9 @@ void CMemory::Replace( char* pszFrom, char* pszTo )
 	while( nBgn <= m_nDataLen - nFromLen ){
 		if( 0 == memcmp( &m_pData[nBgn], pszFrom, nFromLen ) ){
 			if( 0  < nBgn - nBgnOld ){
-				cmemWork.Append( &m_pData[nBgnOld], nBgn - nBgnOld );
+				cmemWork.AppendString( &m_pData[nBgnOld], nBgn - nBgnOld );
 			}
-			cmemWork.Append( pszTo, nToLen );
+			cmemWork.AppendString( pszTo, nToLen );
 			nBgn = nBgn + nFromLen;
 			nBgnOld = nBgn;
 		}else{
@@ -2034,9 +2013,9 @@ void CMemory::Replace( char* pszFrom, char* pszTo )
 		}
 	}
 	if( 0  < m_nDataLen - nBgnOld ){
-		cmemWork.Append( &m_pData[nBgnOld], m_nDataLen - nBgnOld );
+		cmemWork.AppendString( &m_pData[nBgnOld], m_nDataLen - nBgnOld );
 	}
-	SetData( &cmemWork );
+	SetNativeData( &cmemWork );
 	return;
 }
 
@@ -2053,9 +2032,9 @@ void CMemory::Replace_j( char* pszFrom, char* pszTo )
 	while( nBgn <= m_nDataLen - nFromLen ){
 		if( 0 == memcmp( &m_pData[nBgn], pszFrom, nFromLen ) ){
 			if( 0  < nBgn - nBgnOld ){
-				cmemWork.Append( &m_pData[nBgnOld], nBgn - nBgnOld );
+				cmemWork.AppendString( &m_pData[nBgnOld], nBgn - nBgnOld );
 			}
-			cmemWork.Append( pszTo, nToLen );
+			cmemWork.AppendString( pszTo, nToLen );
 			nBgn = nBgn + nFromLen;
 			nBgnOld = nBgn;
 		}else{
@@ -2064,9 +2043,9 @@ void CMemory::Replace_j( char* pszFrom, char* pszTo )
 		}
 	}
 	if( 0  < m_nDataLen - nBgnOld ){
-		cmemWork.Append( &m_pData[nBgnOld], m_nDataLen - nBgnOld );
+		cmemWork.AppendString( &m_pData[nBgnOld], m_nDataLen - nBgnOld );
 	}
-	SetData( &cmemWork );
+	SetNativeData( &cmemWork );
 	return;
 }
 
@@ -2080,8 +2059,8 @@ int CMemory::IsEqual( CMemory& cmem1, CMemory& cmem2 )
 	int		nLen1;
 	int		nLen2;
 
-	psz1 = cmem1.GetPtr( &nLen1 );
-	psz2 = cmem2.GetPtr( &nLen2 );
+	psz1 = cmem1.GetStringPtr( &nLen1 );
+	psz2 = cmem2.GetStringPtr( &nLen2 );
 	if( nLen1 == nLen2 ){
 		if( 0 == memcmp( psz1, psz2, nLen1 ) ){
 			return TRUE;
@@ -2213,7 +2192,7 @@ void CMemory::ToZenkaku(
 		}
 	}
 	pBufDes[nBufDesLen] = '\0';
-	SetData( (const char *)pBufDes, nBufDesLen );
+	SetString( (const char *)pBufDes, nBufDesLen );
 	delete [] pBufDes;
 
 
@@ -2361,7 +2340,7 @@ void CMemory::ToHankaku(
 		}
 	}
 	pBufDes[nBufDesLen] = '\0';
-	SetData( (const char *)pBufDes, nBufDesLen );
+	SetString( (const char *)pBufDes, nBufDesLen );
 	delete [] pBufDes;
 
 }
@@ -2569,7 +2548,7 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 	}
 	pDes[nPosDes] = '\0';
 
-	SetData( pDes, nPosDes );
+	SetString( pDes, nPosDes );
 	delete [] pDes;
 	pDes = NULL;
 	return;
@@ -2689,7 +2668,7 @@ void CMemory::SPACEToTAB( int nTabSpace )
 	}
 	pDes[nPosDes] = '\0';
 
-	SetData( pDes, nPosDes );
+	SetString( pDes, nPosDes );
 	delete [] pDes;
 	pDes = NULL;
 	return;
@@ -2715,7 +2694,7 @@ void CMemory::SwapHLByte( void ){
 	unsigned char*	pBuf;
 	int			nBufLen;
 
-	pBuf = (unsigned char*)GetPtr( &nBufLen );
+	pBuf = (unsigned char*)GetStringPtr( &nBufLen );
 
 	if( nBufLen < 2){
 		return;
@@ -2747,25 +2726,10 @@ void CMemory::SwapHLByte( void ){
 	return;
 }
 
-
-//	/* バッファの先頭にデータを挿入する */
-//	void CMemory::InsertTop( const char* pData, int nDataLen )
-//	{
-//		AllocBuffer( m_nDataLen + nDataLen );
-//		memmove( m_pData + nDataLen, m_pData, m_nDataLen );
-//		memcpy( m_pData, pData, nDataLen );
-//		m_nDataLen += nDataLen;
-//		m_pData[m_nDataLen] = '\0';
-//	}
-
-
-
-
-
 /*
 || バッファサイズの調整
 */
-void CMemory::AllocBuffer( int nNewDataLen )
+void CMemory::AllocStringBuffer( int nNewDataLen )
 {
 	int		nWorkLen;
 	char*	pWork = NULL;
@@ -2787,7 +2751,7 @@ void CMemory::AllocBuffer( int nNewDataLen )
 
 	if( NULL == pWork ){
 		::MYMESSAGEBOX(	NULL, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
-			"CMemory::AllocBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n", nNewDataLen
+			"CMemory::AllocStringBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n", nNewDataLen
 		);
 		if( NULL != m_pData && 0 != nWorkLen ){
 			/* 古いバッファを解放して初期化 */
@@ -2805,10 +2769,10 @@ void CMemory::AllocBuffer( int nNewDataLen )
 
 
 /* バッファの内容を置き換える */
-void CMemory::SetData( const char* pData, int nDataLen )
+void CMemory::SetString( const char* pData, int nDataLen )
 {
 	Empty();
-	AllocBuffer( nDataLen );
+	AllocStringBuffer( nDataLen );
 	AddData( pData, nDataLen );
 	return;
 }
@@ -2816,53 +2780,53 @@ void CMemory::SetData( const char* pData, int nDataLen )
 
 
 /* バッファの内容を置き換える */
-void CMemory::SetDataSz( const char* pszData )
+void CMemory::SetString( const char* pszData )
 {
 	int		nDataLen;
 	nDataLen = strlen( pszData );
 
 	Empty();
-	AllocBuffer( nDataLen );
+	AllocStringBuffer( nDataLen );
 	AddData( pszData, nDataLen );
 	return;
 }
 
 
 /* バッファの内容を置き換える */
-void CMemory::SetData( const CMemory* pcmemData )
+void CMemory::SetNativeData( const CMemory* pcmemData )
 {
 	char*	pData;
 	int		nDataLen;
-	pData = pcmemData->GetPtr( &nDataLen );
+	pData = pcmemData->GetStringPtr( &nDataLen );
 	Empty();
-	AllocBuffer( nDataLen );
+	AllocStringBuffer( nDataLen );
 	AddData( pData, nDataLen );
 	return;
 }
 
 
 /* バッファの最後にデータを追加する（publicメンバ）*/
-const char* CMemory::Append( const char* pData, int nDataLen )
+const char* CMemory::AppendString( const char* pData, int nDataLen )
 {
-	AllocBuffer( m_nDataLen + nDataLen );
+	AllocStringBuffer( m_nDataLen + nDataLen );
 	AddData( pData, nDataLen );
 	return m_pData;
 }
 /* バッファの最後にデータを追加する（publicメンバ）*/
-void CMemory::AppendSz( const char* pszData )
+void CMemory::AppendString( const char* pszData )
 {
 	int		nDataLen;
 	nDataLen = strlen( pszData );
-	AllocBuffer( m_nDataLen + nDataLen );
+	AllocStringBuffer( m_nDataLen + nDataLen );
 	AddData( pszData, nDataLen );
 }
 /* バッファの最後にデータを追加する（publicメンバ）*/
-void CMemory::Append( const CMemory* pcmemData )
+void CMemory::AppendNativeData( const CMemory* pcmemData )
 {
 	char*	pData;
 	int		nDataLen;
-	pData = pcmemData->GetPtr( &nDataLen );
-	AllocBuffer( m_nDataLen + nDataLen );
+	pData = pcmemData->GetStringPtr( &nDataLen );
+	AllocStringBuffer( m_nDataLen + nDataLen );
 	AddData( pData, nDataLen );
 }
 

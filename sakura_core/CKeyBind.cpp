@@ -162,7 +162,7 @@ int CKeyBind::CreateKeyBindList(
 	nValidKeys = 0;
 //	cMemList = "";
 //	cMemList.SetData( "", strlen( "" ) );
-	cMemList.SetDataSz( "" );
+	cMemList.SetString( "" );
 	char*	pszSHIFT = "Shift+";
 	char*	pszCTRL = "Ctrl+";
 	char*	pszALT = "Alt+";
@@ -173,10 +173,10 @@ int CKeyBind::CreateKeyBindList(
 	char*	pszCR = "\r\n";	//\r=0x0d=CRを追加
 
 
-	cMemList.AppendSz( "キー\t機能名\t関数名\t機能番号\tキーマクロ記録可/不可" );
-	cMemList.AppendSz( pszCR );
-	cMemList.AppendSz( "-----\t-----\t-----\t-----\t-----" );
-	cMemList.AppendSz( pszCR );
+	cMemList.AppendString( "キー\t機能名\t関数名\t機能番号\tキーマクロ記録可/不可" );
+	cMemList.AppendString( pszCR );
+	cMemList.AppendString( "-----\t-----\t-----\t-----\t-----" );
+	cMemList.AppendString( pszCR );
 
 	for( j = 0; j < 8; ++j ){
 		for( i = 0; i < nKeyNameArrNum; ++i ){
@@ -185,17 +185,15 @@ int CKeyBind::CreateKeyBindList(
 			if( 0 != iFunc ){
 				nValidKeys++;
 				if( j & _SHIFT ){
-					cMemList.AppendSz( pszSHIFT );
+					cMemList.AppendString( pszSHIFT );
 				}
 				if( j & _CTRL ){
-					cMemList.AppendSz( pszCTRL );
+					cMemList.AppendString( pszCTRL );
 				}
 				if( j & _ALT ){
-					cMemList.AppendSz( pszALT );
+					cMemList.AppendString( pszALT );
 				}
-				cMemList.AppendSz( pKeyNameArr[i].m_szKeyName );
-//				cMemList.AppendSz( pszEQUAL );
-//				cMemList.AppendSz( pszTAB );
+				cMemList.AppendString( pKeyNameArr[i].m_szKeyName );
 				//	Oct. 31, 2001 genta 
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
@@ -210,8 +208,8 @@ int CKeyBind::CreateKeyBindList(
 //					pKeyNameArr[i].m_nFuncCodeArr[j],
 //					 szFuncNameJapanese, 255
 //				);
-				cMemList.AppendSz( pszTAB );
-				cMemList.AppendSz( szFuncNameJapanese );
+				cMemList.AppendString( pszTAB );
+				cMemList.AppendString( szFuncNameJapanese );
 
 				/* 機能ID→関数名，機能名日本語 */
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -224,27 +222,27 @@ int CKeyBind::CreateKeyBindList(
 				);
 
 				/* 関数名 */
-				cMemList.AppendSz( pszTAB );
-				cMemList.AppendSz( szFuncName );
+				cMemList.AppendString( pszTAB );
+				cMemList.AppendString( szFuncName );
 
 				/* 機能番号 */
-				cMemList.AppendSz( pszTAB );
+				cMemList.AppendString( pszTAB );
 				wsprintf( pszStr, "%d", iFunc );
-				cMemList.AppendSz( pszStr );
+				cMemList.AppendString( pszStr );
 
 				/* キーマクロに記録可能な機能かどうかを調べる */
-				cMemList.AppendSz( pszTAB );
+				cMemList.AppendString( pszTAB );
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 //				if( CMacro::CanFuncIsKeyMacro( pKeyNameArr[i].m_nFuncCodeArr[j] ) ){
 				if( CSMacroMgr::CanFuncIsKeyMacro( iFunc ) ){
-					cMemList.AppendSz( "○" );
+					cMemList.AppendString( "○" );
 				}else{
-					cMemList.AppendSz( "×" );
+					cMemList.AppendString( "×" );
 				}
 
 
 
-				cMemList.AppendSz( pszCR );
+				cMemList.AppendString( pszCR );
 			}
 		}
 	}
@@ -287,15 +285,15 @@ bool CKeyBind::GetKeyStrSub(
 	for( i = nKeyNameArrBegin; i < nKeyNameArrEnd; ++i ){
 		if( nFuncId == GetFuncCodeAt( pKeyNameArr[i], nShiftState, bGetDefFuncCode ) ){
 			if( nShiftState & _SHIFT ){
-				cMemList.AppendSz( pszSHIFT );
+				cMemList.AppendString( pszSHIFT );
 			}
 			if( nShiftState & _CTRL ){
-				cMemList.AppendSz( pszCTRL );
+				cMemList.AppendString( pszCTRL );
 			}
 			if( nShiftState & _ALT ){
-				cMemList.AppendSz( pszALT );
+				cMemList.AppendString( pszALT );
 			}
-			cMemList.AppendSz( pKeyNameArr[i].m_szKeyName );
+			cMemList.AppendString( pKeyNameArr[i].m_szKeyName );
 			nKeyNameArrBegin = i + 1;
 			return true;
 		}
@@ -325,7 +323,7 @@ int CKeyBind::GetKeyStr(
 	char*	pszSHIFT = "Shift+";
 	char*	pszCTRL = "Ctrl+";
 	char*	pszALT = "Alt+";
-	cMemList.SetDataSz( "" );
+	cMemList.SetString( "" );
 
 	//	先にキー部分を調査する
 	for( j = 0; j < 8; ++j ){
@@ -438,7 +436,7 @@ char* CKeyBind::GetMenuLabel(
 			strcat( pszLabel, "\t" );
 		}
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemList, nFuncId, bGetDefFuncCode ) ){
-			strcat( pszLabel, cMemList.GetPtr() );
+			strcat( pszLabel, cMemList.GetStringPtr() );
 		}
 	}
 	return pszLabel;

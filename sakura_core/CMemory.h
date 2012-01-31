@@ -54,16 +54,14 @@ public:
 	/*
 	|| 関数
 	*/
-//  int GetLength() const;
-	int GetLength() const { return m_nDataLen; }
-	void AllocBuffer( int );	/* バッファサイズの調整 */
-	void SetData( const char*, int );	/* バッファの内容を置き換える */
-	void SetDataSz( const char* );	/* バッファの内容を置き換える */
-	void SetData( const CMemory* );	/* バッファの内容を置き換える */
-	const char* Append( const char* pData, int nDataLen );/* バッファの最後にデータを追加する（publicメンバ）*/
-	void AppendSz( const char* pszData );/* バッファの最後にデータを追加する（publicメンバ）*/
-	void Append( const CMemory* );/* バッファの最後にデータを追加する（publicメンバ）*/
-//	void InsertTop( const char*, int );	/* バッファの先頭にデータを挿入する */
+	int GetStringLength() const { return m_nDataLen; }
+	void AllocStringBuffer( int );	/* バッファサイズの調整 */
+	void SetString( const char*, int );	/* バッファの内容を置き換える */
+	void SetString( const char* );	/* バッファの内容を置き換える */
+	void SetNativeData( const CMemory* );	/* バッファの内容を置き換える */
+	const char* AppendString( const char* pData, int nDataLen );/* バッファの最後にデータを追加する（publicメンバ）*/
+	void AppendString( const char* pszData );/* バッファの最後にデータを追加する（publicメンバ）*/
+	void AppendNativeData( const CMemory* );/* バッファの最後にデータを追加する（publicメンバ）*/
 	// 2005-09-02 D.S.Koba
 	static int GetSizeOfChar( const char*, const int, const int );	//!< 指定した位置の文字が何バイト文字かを返す
 
@@ -130,15 +128,15 @@ public:
 	const char operator[](int nIndex) const;
 
 	/* データへのポインタと長さ返す */
-	__forceinline char* GetPtr( int* pnLength ) const
+	__forceinline char* GetStringPtr( int* pnLength ) const
 	{
 		if( NULL != pnLength ){
-			*pnLength = GetLength();
+			*pnLength = GetStringLength();
 		}
 		return (char*)m_pData;
 	}
 
-	__forceinline char* GetPtr( void ) const
+	__forceinline char* GetStringPtr( void ) const
 	{
 		return (char*)m_pData;
 	}

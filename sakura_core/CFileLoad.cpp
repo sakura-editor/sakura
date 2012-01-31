@@ -180,7 +180,6 @@ enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BO
 	
 	// To Here Jun. 13, 2003 Moca BOMの除去
 	m_eMode = FLMODE_REDY;
-//	m_cmemLine.AllocBuffer( 256 );
 	return (enumCodeType)m_CharCode;
 }
 
@@ -191,7 +190,7 @@ enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BO
 void CFileLoad::FileClose( void )
 {
 	ReadBufEmpty();
-	m_cmemLine.SetDataSz( "" );
+	m_cmemLine.SetString( "" );
 	if( NULL != m_hFile ){
 		::CloseHandle( m_hFile );
 		m_hFile = NULL;
@@ -272,7 +271,7 @@ const char* CFileLoad::ReadLine(
 	}
 #endif
 	// 行データクリア。本当はバッファは開放したくない
-	m_cmemLine.SetData( "", 0 );
+	m_cmemLine.SetString( "", 0 );
 
 	// 1行取り出し ReadBuf -> m_memLine
 	//	Oct. 19, 2002 genta while条件を整理
@@ -280,17 +279,17 @@ const char* CFileLoad::ReadLine(
 		&nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
 			// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
 			if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_REDY == m_eMode ){// From Here Jun. 13, 2003 Moca
-				m_cmemLine.Append( pLine, nBufLineLen );
+				m_cmemLine.AppendString( pLine, nBufLineLen );
 				m_nReadBufOffSet -= nEolLen;
 				// バッファロード   File -> ReadBuf
 				Buffering();
 			}else{
-				m_cmemLine.Append( pLine, nBufLineLen );
+				m_cmemLine.AppendString( pLine, nBufLineLen );
 				break;
 			}
 	}
 
-	m_nReadLength += ( nBufLineLen = m_cmemLine.GetLength() );
+	m_nReadLength += ( nBufLineLen = m_cmemLine.GetStringLength() );
 
 	// 文字コード変換
 	switch( m_CharCode ){
@@ -328,12 +327,12 @@ const char* CFileLoad::ReadLine(
 	// データあり
 	if( 0 != nBufLineLen + nEolLen ){
 		// 改行コードを追加
-		m_cmemLine.Append( pcEol->GetValue(), pcEol->GetLen() );
-		return m_cmemLine.GetPtr( pnLineLen );
+		m_cmemLine.AppendString( pcEol->GetValue(), pcEol->GetLen() );
+		return m_cmemLine.GetStringPtr( pnLineLen );
 	}
 	// データがない => 終了
 //	m_cmemLine.Empty(); // protected メンバ
-	m_cmemLine.SetDataSz("");
+	m_cmemLine.SetString("");
 	return NULL;
 }
 
@@ -376,7 +375,7 @@ const wchar_t* CFileLoad::ReadLineW(
 		}
 	}
 
-	m_nReadLength += ( nBufLineLen = m_cmemLine.GetLength() );
+	m_nReadLength += ( nBufLineLen = m_cmemLine.GetStringLength() );
 
 	// 文字コード変換
 	switch( m_CharCode ){

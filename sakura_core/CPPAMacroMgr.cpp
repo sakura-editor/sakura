@@ -35,7 +35,7 @@ CPPAMacroMgr::~CPPAMacroMgr()
 */
 void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 {
-	m_cPPA.SetSource( m_cBuffer.GetPtr() );
+	m_cPPA.SetSource( m_cBuffer.GetStringPtr() );
 	m_cPPA.Execute(pcEditView, flags);
 }
 
@@ -56,11 +56,11 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	char	szLine[LINEREADBUFSIZE];	//	1行がLINEREADBUFSIZE以上だったら無条件にアウト
 	while( NULL != fgets( szLine, sizeof(szLine), hFile ) ){
 		int nLineLen = strlen( szLine );
-		cmemWork.Append(szLine, nLineLen);
+		cmemWork.AppendString(szLine, nLineLen);
 	}
 	fclose( hFile );
 
-	m_cBuffer.SetData( &cmemWork );	//	m_cBufferにコピー
+	m_cBuffer.SetNativeData( &cmemWork );	//	m_cBufferにコピー
 
 	m_nReady = true;
 	return TRUE;
@@ -71,7 +71,7 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 */
 BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode )
 {
-	m_cBuffer.SetData( pszCode, strlen(pszCode) );	//	m_cBufferにコピー
+	m_cBuffer.SetString( pszCode, strlen(pszCode) );	//	m_cBufferにコピー
 
 	m_nReady = true;
 	return TRUE;

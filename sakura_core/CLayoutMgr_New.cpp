@@ -120,7 +120,7 @@ void CLayoutMgr::DoLayout(
 	nMaxLineSize = m_nMaxLineSize;
 
 	while( NULL != pCDocLine ){
-		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
+		pLine = pCDocLine->m_pLine->GetStringPtr( &nLineLen );
 		nPosX = 0;
 		nBgn = 0;
 		nPos = 0;
@@ -491,7 +491,7 @@ int CLayoutMgr::DoLayout_Range(
 	m_nEOFLine = -1;
 
 	while( NULL != pCDocLine ){
-		pLine = pCDocLine->m_pLine->GetPtr( &nLineLen );
+		pLine = pCDocLine->m_pLine->GetStringPtr( &nLineLen );
 		nPosX = 0;
 		nBgn = 0;
 		nPos = 0;
