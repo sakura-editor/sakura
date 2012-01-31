@@ -1190,7 +1190,7 @@ void CViewCommander::Command_Favorite( void )
 	@author moca
 	@date 2003.06.23 新規作成
 */
-void CViewCommander::Command_CHGMOD_EOL( enumEOLType e ){
+void CViewCommander::Command_CHGMOD_EOL( EEolType e ){
 	if( EOL_NONE < e && e < EOL_CODEMAX  ){
 		GetDocument()->m_cDocEditor.SetNewLineCode( e );
 		// ステータスバーを更新するため

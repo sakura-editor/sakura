@@ -198,7 +198,7 @@ public:
 
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( bool, bool bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( bool, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( int option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
@@ -295,7 +295,7 @@ public:
 
 	/* モード切り替え系 */
 	void Command_CHGMOD_INS( void );	/* 挿入／上書きモード切り替え */
-	void Command_CHGMOD_EOL( enumEOLType );	/* 入力する改行コードを設定 2003.06.23 moca */
+	void Command_CHGMOD_EOL( EEolType );	/* 入力する改行コードを設定 2003.06.23 moca */
 	void Command_CANCEL_MODE( int whereCursorIs = 0 );	/* 各種モードの取り消し */
 
 	/* 設定系 */

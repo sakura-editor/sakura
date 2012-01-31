@@ -579,7 +579,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_CHGMOD_EOL_LF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_LF, 0, 0, 0 );break;	//入力する改行コードをLFに設定
 	case F_CHGMOD_EOL_CR:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_CR, 0, 0, 0 );break;	//入力する改行コードをCRに設定
 	// 2006.09.03 Moca F_CHGMOD_EOLで break 忘れの修正
-	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (enumEOLType)lparam1 );break;	//入力する改行コードを設定
+	case F_CHGMOD_EOL:		Command_CHGMOD_EOL( (EEolType)lparam1 );break;	//入力する改行コードを設定
 	// To Here 2003.06.23 Moca
 	case F_CANCEL_MODE:		Command_CANCEL_MODE();break;	//各種モードの取り消し
 
@@ -1555,7 +1555,7 @@ try_again:;
 void CViewCommander::Command_COPY(
 	bool		bIgnoreLockAndDisable,	//!< [in] 選択範囲を解除するか？
 	bool		bAddCRLFWhenCopy,		//!< [in] 折り返し位置に改行コードを挿入するか？
-	enumEOLType	neweol					//!< [in] コピーするときのEOL。
+	EEolType	neweol					//!< [in] コピーするときのEOL。
 )
 {
 	CNativeW	cmemBuf;
@@ -2754,7 +2754,6 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 	cmemDataW2 = wcChar;
 	if( WCODE::IsLineDelimiter(wcChar) ){ 
 		/* 現在、Enterなどで挿入する改行コードの種類を取得 */
-		// enumEOLType nWorkEOL;
 		CEol cWork = GetDocument()->m_cDocEditor.GetNewLineCode();
 		cmemDataW2.SetString( cWork.GetValue2(), cWork.GetLen() );
 

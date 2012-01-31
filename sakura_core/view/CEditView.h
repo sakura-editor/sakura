@@ -165,7 +165,7 @@ public:
 	bool MySetClipboardData( const WCHAR*, int, bool bColmnSelect, bool = false );	/* クリップボードにデータを設定 */
 
 	//利用
-	void CopyCurLine( bool bAddCRLFWhenCopy, enumEOLType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
+	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void CopySelectedAllLines( const wchar_t*, BOOL );			/* 選択範囲内の全行をクリップボードにコピーする */
 
 
@@ -305,7 +305,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	// 2002/01/19 novice public属性に変更
-	bool GetSelectedData( CNativeW*, BOOL, const wchar_t*, BOOL, BOOL bAddCRLFWhenCopy, enumEOLType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( CNativeW*, BOOL, const wchar_t*, BOOL, BOOL bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)

@@ -36,7 +36,7 @@
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
-SAKURA_CORE_API enum enumEOLType {
+SAKURA_CORE_API enum EEolType {
 	EOL_NONE,			//!< 
 	EOL_CRLF,			//!< 0d0a
 	EOL_LF,				//!< 0a
@@ -44,7 +44,6 @@ SAKURA_CORE_API enum enumEOLType {
 	EOL_CODEMAX,		//
 	EOL_UNKNOWN = -1	//
 };
-typedef enumEOLType EEolType;
 
 #define EOL_TYPE_NUM	EOL_CODEMAX // 5
 

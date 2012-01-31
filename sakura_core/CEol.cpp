@@ -32,7 +32,7 @@
 #include "CEol.h"
 
 /*! 行終端子の配列 */
-const enumEOLType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
+const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_NONE			,	// == 0
 	EOL_CRLF			,	// == 2
 	EOL_LF				,	// == 1
@@ -92,7 +92,7 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
 */
 template <class T>
-enumEOLType GetEOLType( const T* pszData, int nDataLen )
+EEolType GetEOLType( const T* pszData, int nDataLen )
 {
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
 		if( g_aEolTable[i].StartsWith(pszData, nDataLen) )
@@ -154,7 +154,7 @@ const wchar_t* CEol::GetValue2() const
 	@retval true 正常終了。設定が反映された。
 	@retval false 異常終了。強制的にCRLFに設定。
 */
-bool CEol::SetType( enumEOLType t )
+bool CEol::SetType( EEolType t )
 {
 	if( t < EOL_NONE || EOL_CR < t ){
 		//	異常値

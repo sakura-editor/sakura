@@ -393,7 +393,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 */
 void CEditView::CopyCurLine(
 	bool			bAddCRLFWhenCopy,		//!< [in] 折り返し位置に改行コードを挿入するか？
-	enumEOLType		neweol,					//!< [in] コピーするときのEOL。
+	EEolType		neweol,					//!< [in] コピーするときのEOL。
 	bool			bEnableLineModePaste	//!< [in] ラインモード貼り付けを可能にする
 )
 {

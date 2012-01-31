@@ -412,7 +412,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			if( pcDlgOpenFile->m_bUseEol ){
 				nIdx = Combo_GetCurSel( hwndComboEOL );
 				lRes = Combo_GetItemData( hwndComboEOL, nIdx );
-				pcDlgOpenFile->m_cEol = (enumEOLType)lRes;	/* 文字コード */
+				pcDlgOpenFile->m_cEol = (EEolType)lRes;	/* 文字コード */
 			}
 			//	From Here Jul. 26, 2003 ryoji
 			//	BOMチェックボックスの状態を取得
