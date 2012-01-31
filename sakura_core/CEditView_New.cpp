@@ -274,7 +274,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 					}
 
 					int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength() - pcLayout->m_nOffset;
-					const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetPtr() + pcLayout->m_nOffset;
+					const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetStringPtr() + pcLayout->m_nOffset;
 				}
 			}
 #endif

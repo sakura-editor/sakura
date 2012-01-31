@@ -2279,7 +2279,7 @@ void CDocLineMgr::DUMP( void )
 
 //		MYTRACE( "\t[%s]\n", (char*)*(pDocLine->m_pLine) );
 		MYTRACE( "\tpDocLine->m_pLine->GetStringLength()=[%d]\n", pDocLine->m_pLine->GetStringLength() );
-		MYTRACE( "\t[%s]\n", pDocLine->m_pLine->GetPtr() );
+		MYTRACE( "\t[%s]\n", pDocLine->m_pLine->GetStringPtr() );
 
 
 		pDocLine = pDocLineNext;

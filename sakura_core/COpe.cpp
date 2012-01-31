@@ -67,7 +67,7 @@ void COpe::DUMP( void )
 	if( NULL == m_pcmemData ){
 		MYTRACE( "\t\tm_pcmemData         = [NULL]\n" );
 	}else{
-		MYTRACE( "\t\tm_pcmemData         = [%s]\n", m_pcmemData->GetPtr() );
+		MYTRACE( "\t\tm_pcmemData         = [%s]\n", m_pcmemData->GetStringPtr() );
 	}
 #endif
 	return;
