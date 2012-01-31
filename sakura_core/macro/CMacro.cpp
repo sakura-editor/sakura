@@ -420,7 +420,7 @@ void CMacro::HandleCommand(
 		//	一つ目の引数が数値。
 		pcEditView->GetCommander().HandleCommand( Index, FALSE, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;
-	case F_CHGMOD_EOL:	//	入力改行コード指定。enumEOLTypeの数値を指定。2003.06.23 Moca
+	case F_CHGMOD_EOL:	//	入力改行コード指定。EEolTypeの数値を指定。2003.06.23 Moca
 		//	Jun. 16, 2002 genta
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX(
