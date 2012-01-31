@@ -30,13 +30,13 @@
 
 
 
-class CDlgFavorite;
-
-#ifndef	_CDLGFAVORITE_H_
-#define	_CDLGFAVORITE_H_
+#ifndef SAKURA_CDLGFAVORITE_H_
+#define SAKURA_CDLGFAVORITE_H_
 
 #include "CDialog.h"
 
+//!「履歴とお気に入りの管理」ダイアログ
+//アクセス方法：[設定] - [履歴の管理]
 class SAKURA_CORE_API CDlgFavorite : public CDialog
 {
 public:
@@ -65,7 +65,7 @@ protected:
 	int		GetData( void );	/* ダイアログデータの取得 */
 
 	bool	RefreshList( void );
-	void	SetDataOne( int nIndex, int CurrentIndex );	/* ダイアログデータの設定 */
+	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ダイアログデータの設定 */
 	bool	RefreshListOne( int nIndex );
 	//void	ChangeSlider( int nIndex );
 
@@ -78,21 +78,26 @@ private:
 	CRecent	m_cRecentGrepFolder;
 	CRecent	m_cRecentCmd;
 
-	typedef struct FavoriteInfoTag {
+	enum {
+		// ! 管理数
+		FAVORITE_INFO_MAX = 8 // 管理数 +1(番兵)
+	};
+
+	struct FavoriteInfo {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
-		char*		m_pszCaption;		//キャプション
+		TCHAR*		m_pszCaption;		//キャプション
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
 		int			m_nViewCount;		//カレントの表示数
-	} FavoriteInfoTag;
+	};
 
-	FavoriteInfoTag	p_favorite_info[8];
+	FavoriteInfo        m_aFavoriteInfo[FAVORITE_INFO_MAX];
 
 	int		m_nCurrentTab;
-	char	m_szMsg[1024];
+	TCHAR	m_szMsg[1024];
 
 };
 
-#endif	//_CDLGFAVORITE_H_
+#endif	//SAKURA_CDLGFAVORITE_H_
 
