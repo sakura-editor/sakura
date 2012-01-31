@@ -77,7 +77,7 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 		if( GetDllShareData().m_Common.m_sFile.m_bQueryIfCodeChange && !pLoadInfo->bRequestReload ){
 			const TCHAR* pszCodeNameOld = CCodeTypeName(ePrevCode).Normal();
 			const TCHAR* pszCodeNameNew = CCodeTypeName(pLoadInfo->eCharCode).Normal();
-			::MessageBeep( MB_ICONQUESTION );
+			ConfirmBeep();
 			int nRet = MYMESSAGEBOX(
 				CEditWnd::Instance()->GetHwnd(),
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
