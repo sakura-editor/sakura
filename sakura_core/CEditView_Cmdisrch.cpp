@@ -586,7 +586,7 @@ void CEditView::ISearchSetStatusMsg(CMemory* msg) const
 /*!
 	ISearch状態をツールバーに反映させる．
 	
-	@sa CEditWnd::IsFuncChecked()
+	@sa CEditWnd::IsISearchEnabled()
 
 	@param nCommand [in] 調べたいコマンドのID
 	@return true:チェック有り / false: チェック無し

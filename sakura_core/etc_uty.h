@@ -104,9 +104,6 @@ SAKURA_CORE_API BOOL ResolveShortcutLink(HWND hwnd, LPCSTR lpszLinkFile, LPSTR l
 */
 SAKURA_CORE_API BOOL BlockingHook( HWND hwndDlgCancel );
 
-/*機能番号に対応したヘルプトピックIDを返す*/
-SAKURA_CORE_API int FuncID_To_HelpContextID( int nFuncID );	//Stonee, 2001/02/23
-
 //	Jun. 26, 2001 genta
 //!	正規表現ライブラリのバージョン取得
 SAKURA_CORE_API bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );

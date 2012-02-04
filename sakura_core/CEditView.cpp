@@ -6602,7 +6602,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 				wsprintf( szLabel2, "%s (&%c)", szLabel, m_pShareData->m_Common.m_nCustMenuItemKeyArr[nMenuIdx][i] );
 			}
 			/* 機能が利用可能か調べる */
-			if( TRUE == CEditWnd::IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
+			if( IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
 				uFlags = MF_STRING | MF_ENABLED;
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;

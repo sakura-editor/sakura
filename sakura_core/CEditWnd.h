@@ -144,9 +144,6 @@ public:
 	/*
 	|| スタティックなメンバ関数
 	*/
-	static int IsFuncEnable( CEditDoc*, DLLSHAREDATA*, int );	/* 機能が利用可能か調べる */
-	static int IsFuncChecked( CEditDoc*, DLLSHAREDATA*, int );	/* 機能がチェック状態か調べる */
-
 	static void OnHelp_MenuItem( HWND, int );	/* メニューアイテムに対応するヘルプを表示 */
 //	static int FuncID_To_HelpContextID( int );	/* 機能IDに対応するメニューコンテキスト番号を返す */
 

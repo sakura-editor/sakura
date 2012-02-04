@@ -413,7 +413,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		m_nTimerCount = 0;
 		/* 機能が利用可能か調べる */
 		for( i = 0; i < sizeof(	m_szFuncNameArr ) / sizeof(	m_szFuncNameArr[0] ); ++i ){
-			if( CEditWnd::IsFuncEnable( (CEditDoc*)m_pCEditDoc, m_pShareData, m_nFuncCodeArr[i]  ) ){
+			if( IsFuncEnable( (CEditDoc*)m_pCEditDoc, m_pShareData, m_nFuncCodeArr[i]  ) ){
 				::EnableWindow( m_hwndButtonArr[i], TRUE );
 			}else{
 				::EnableWindow( m_hwndButtonArr[i], FALSE );

@@ -1125,12 +1125,12 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 /*!
 	キーボードマクロの保存が可能かどうか
 	
-	@retval TRUE 保存可能
-	@retval FALSE 保存不可
+	@retval true 保存可能
+	@retval false 保存不可
 */
-BOOL CSMacroMgr::IsSaveOk(void)
+bool CSMacroMgr::IsSaveOk(void)
 {
-	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == NULL ? FALSE : TRUE;
+	return dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro ) == NULL ? false : true;
 }
 
 /*!
