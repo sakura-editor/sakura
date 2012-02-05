@@ -67,13 +67,13 @@ Root: HKCU; Subkey: "SOFTWARE\Classes\*\shell\sakuraeditor\command"; ValueType: 
 Root: HKCU; Subkey: "SOFTWARE\Classes\Applications\sakura.exe\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\sakura.exe"" ""%1"""; Tasks: proglist; Flags: uninsdeletekey; Check: CheckPrivilege(false)
 
 [Icons]
-Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe"; WorkingDir: "%HOMEDRIVE%%HOMEPATH%"; Components: main; Tasks: startmenu
-Name: "{group}\ヘルプファイル";                                                Filename: "{app}\sakura.chm";                                      Components: help; Tasks: startmenu
-Name: "{group}\設定フォルダ";                                                  Filename: "%APPDATA%\sakura";                                      Components: main; Tasks: startmenu;  Check: isMultiUserEnabled
-Name: "{userdesktop}\サクラエディタ";                                          Filename: "{app}\sakura.exe"; WorkingDir: "%HOMEDRIVE%%HOMEPATH%"; Components: main; Tasks: desktopicon
-Name: "{group}\アンインストール";                                              Filename: "{uninstallexe}";                                                          Tasks: startmenu
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\サクラエディタ"; Filename: "{app}\sakura.exe"; WorkingDir: "%HOMEDRIVE%%HOMEPATH%"; Components: main; Tasks: quicklaunch
-Name: "{userstartup}\サクラエディタ常駐";                                      Filename: "{app}\sakura.exe"; Parameters: "-NOWIN";                Components: main; Tasks: startup
+Name: "{group}\サクラエディタ";                                                Filename: "{app}\sakura.exe";                         Components: main; Tasks: startmenu;
+Name: "{group}\ヘルプファイル";                                                Filename: "{app}\sakura.chm";                         Components: help; Tasks: startmenu;
+Name: "{group}\設定フォルダ";                                                  Filename: "%APPDATA%\sakura";                         Components: main; Check: isMultiUserEnabled; Tasks: startmenu;
+Name: "{userdesktop}\サクラエディタ";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
+Name: "{group}\アンインストール";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\サクラエディタ"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
+Name: "{userstartup}\サクラエディタ常駐";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
 
 [Run]
 FileName: "{app}\sakura.exe"; Description: "今すぐサクラエディタを起動"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);

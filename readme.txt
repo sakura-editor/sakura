@@ -39,7 +39,6 @@ Unicode ”Å Inno Setup ‚È‚çA‰pŒê”Å Windows ‚Ö‚ÌƒCƒ“ƒXƒg[ƒ‹‚Å‚à“ú–{Œê•”•ª‚à•¶Žš‰
 
 Ver 1.6.6.0iANSI”Åj‚ÌƒCƒ“ƒXƒg[ƒ‰‚©‚ç‚Ì•ÏX“_
 EŠÖ˜A•t‚¯ƒc[ƒ‹‚Í–{‘ÌŽæ‚èž‚Ý‚É”º‚Á‚Äíœ
-EƒVƒ‡[ƒgƒJƒbƒg‚Ìì‹Æ—pƒtƒHƒ‹ƒ_‚É "%HOMEDRIVE%%HOMEPATH%" ‚ðÝ’è
 E"Editor with Shortcut" ƒ^ƒCƒv‚Í "Editor Only" ƒ^ƒCƒv‚Æ“¯‚¶‚È‚Ì‚Åíœ
 
 Ver 1.6.6.0 ‚ÌƒCƒ“ƒXƒg[ƒ‰Žd—l:
