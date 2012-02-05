@@ -1,0 +1,25 @@
+// Ruby キーワード定義ファイル 組込み変数／定数
+
+$_
+$1
+$2
+$3
+$4
+$5
+$6
+$7
+$8
+$9
+$$
+$FILENAME$defout$stdin$stdout$stderrTRUEFALSESTDINSTDOUTSTDERRARGV
+ARGFENV
+RUBY_VERSION
+RUBY_PLATFORM
+
+// 擬似変数
+self
+nil
+true
+false
+__FILE__
+__LINE__

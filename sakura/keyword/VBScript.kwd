@@ -1,0 +1,86 @@
+//	VBScript for ASP
+//	Copyright 2001.6.17 ichina (PublicDomain)
+//	mailto:ichina_tko@geocities.co.jp
+
+//	ファイル拡張子		asp,inc,vbs
+//	行指定コメント1		シングルクォーテーション
+//	大文字小文字を区別しない
+
+//	VBScript for ASP（vbs_asp.kwd）を強調キーワード2に設定して併用してください。
+//	※ VBScript for ASP はHTML併用を考え、単独でも機能しますが、予約語とメソッド等との区別はつかなくなります。
+
+
+And
+As
+BOF
+Boolean
+ByRef
+ByVal
+Byte
+Call
+Case
+Class
+Const
+Currency
+Dim
+Do
+Double
+Each
+Else
+ElseIf
+Empty
+End
+EOF
+Error
+Eqv
+Exit
+False
+For
+Function
+Get
+GoTo
+If
+Imp
+Integer
+Is
+Let
+Like
+Long
+Loop
+Me
+Mod
+New
+Next
+Not
+Null
+On
+Option
+Or
+Private
+Public
+RSet
+ReDim
+Rem
+Resume
+Select
+Set
+Single
+Static
+Step
+Stop
+String
+Sub
+Then
+To
+True
+Type
+Wend
+While
+With
+Xor
+In
+Nothing
+Optional
+Until
+LSet
+Variant

@@ -1,0 +1,12 @@
+// テキストエディタ色設定 Ver3
+// ※ 本設定ファイルの最新版は http://www.egroups.co.jp/files/sakura-editor/User/Data/ にあります。
+
+[SakuraColor]
+C[CMT]=0,0,008000,f0fbff,0
+C[SQT]=0,0,808040,f0fbff,0
+C[WQT]=0,0,400080,f0fbff,0
+C[RK1]=1,0,0000ff,f0fbff,0
+C[RK2]=1,0,800080,f0fbff,0
+C[RK3]=1,0,0000ff,f0fbff,0
+C[RK4]=1,0,800000,f0fbff,0
+

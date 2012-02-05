@@ -1,0 +1,133 @@
+キーワードヘルプ 辞書ファイル [Tera Term Pro]
+2002/07/24	すい
+※ このファイルの使い方は、同梱の TTL.KWD を参照して下さい。
+
+※ 拡張子が .KHP になっていますが、これは適当(でたらめ)です。
+　 sakura.exe 本体側で辞書ファイルの拡張子が決定されたら、
+　 それに従って修正するつもりです。
+
+★ システム変数
+inputstr /// システム変数\n文字列取得系のコマンド実行時、ここに文字列が入る。
+param2 /// システム変数\nMACRO 起動時のコマンドラインパラメータの2番目。
+param3 /// システム変数\nMACRO 起動時のコマンドラインパラメータの3番目。
+result /// システム変数\nコマンドの実行結果が入る。\n大概のコマンドでは異状=0/正常=1である\n(例外もあるので注意)
+timeout /// システム変数\nタイムアウトまでの時間(秒)を指定しておく。
+
+★ 通信コマンド
+bplusrecv /// bplusrecv \nB-Plus プロトコルでファイルを受信する。
+bplussend /// bplussend <filename>\nファイル <filename> を B-Plus プロトコルで送信する。
+changedir /// changedir <path>\nTera Term の現在のディレクトリを変更する。
+clearscreen /// clearscreen	<int>\n<int>(=0～2) に応じてウインドウの画面を消去する。
+closett /// closett \nTera Term を終了させ、 MACRO は非リンク状態に入る。
+connect /// connect <command line parameters>\nコマンドラインパラメータを指定して Tera Term を起動する。
+disconnect /// disconnect \nTera Term とホストの間の通信を終了させる。
+enablekeyb /// enablekeyb <flag>\nTera Term のキーボード入力を許可/禁止する。
+flushrecv /// flushrecv \nMACRO の受信バッファーの内容を消す。
+gettitle /// gettitle <strvar>\nTera Term のウィンドウタイトルを文字列変数 <strvar> に格納する。
+kmtfinish /// kmtfinish \nKermit Finish コマンドを実行する。
+kmtget /// kmtget <filename>\nファイル <filename> を Kermit Get コマンドを使用してホストから受信する。
+kmtrecv /// kmtrecv \nKermit プロトコルでファイルを受信する。
+kmtsend /// kmtsend <filename>\nファイル <filename> を Kermit プロトコルで送信する。
+loadkeymap /// loadkeymap <filename>\nキーボード設定ファイル <filename> を Tera Term に読み込ませる。
+logclose /// logclose \nTera Term のログを終了する。
+logopen /// logopen <filename> <binary flag> <append flag>\nTera Term のログを開始する。
+logpause /// logpause \nTera Term のログを一時中断する。
+logstart /// logstart \n中断していた Tera Term のログを再開する。
+logwrite /// logwrite <string>\n文字列 <string> を Tera Term のログファイルに追加して書き込む。
+quickvanrecv /// quickvanrecv \nQuick-VAN プロトコルでファイルを受信する。
+quickvansend /// quickvansend <filename>\nファイル <filename> を Quick-VAN プロトコルで送信する。
+recvln /// recvln \nホストから一行分の文字を受信し、システム変数 inputstr に格納する。
+restoresetup /// restoresetup <filename>\nTera Term 設定ファイル <filename> を Tera Term に読み込ませる。
+send /// send <data1> <data2> ....\n<data> が文字列型の場合、文字列をホストへ送信させる。\n<data> が整数型の場合は、その値の下位バイト(0-255)を ASCII コードと\nみなし、その文字を送信させる。
+sendbreak /// sendbreak \nブレーク信号をホストへ送出する。
+sendfile /// sendfile <filename> <binary flag>\nファイルを送信する。
+sendkcode /// sendkcode <key code> <repeat count>\nあるキーまたはキーの組み合わせを押すことに対して割り当てられた機能を\nTera Term に実行させる。
+sendln /// sendln <data1> <data2> ....\n文字列とそれに続く改行文字をホストへ送信させる。
+setecho /// setecho <echo flag>\nTera Term のローカルエコー (local echo) の状態を変える。\n<echo flag> が0以外ならローカルエコー on 、0なら off になる。
+setsync /// setsync <sync flag>\n<sync flag> が0以外ならば同期通信モードに入る。\n<sync flag> が0ならば非同期通信モードに入る。
+settitle /// settitle <title>\nTera Term のウィンドウタイトルを <title> に変更する。
+showtt /// showtt <show flag>\nTera Term のウインドウを\n<show flag> =-1:VT ウインドウを隠す。\n<show flag> = 0:VT ウインドウを最小化する。\n<show flag> = 1:VT ウインドウを元の大きさに戻す。\n<show flag> = 2:TEK ウインドウを隠す。\n<show flag> = 3:TEK ウインドウを最小化する。\n<show flag> = 4:TEK ウインドウを開く、または元の大きさに戻す。\n<show flag> = 5:TEK ウインドウを閉じる。
+testlink /// testlink \n現在のリンクおよび接続の状態を報告する。
+unlink /// unlink \n現在の Tera Term ウインドウと MACRO の間のリンクを断つ。
+wait /// wait <string1> <string2> ...\n文字列 <string1>, <string2>, ...  のうち一つがホストから送られてくるか、\nタイムアウトが発生するまで MACRO を停止させる。\n文字列は最大10個まで。
+waitevent /// waitevent <events>\n<events> で指定されるイベントが発生するまで MACRO を停止させる。\n<events> = 1:timeout\n<events> = 2:unlink\n<events> = 4:disconnection\n<events> = 8:connection
+waitln /// waitln <string1> <string2> ...\n文字列 <string1>, <string2>, ...  のうち一つを含む行をホストから受信するか、\nタイムアウトが発生するまで MACRO を停止させる。\n文字列は最大10個まで。
+waitrecv /// waitrecv <sub-string> <len> <pos>\n条件を満たす1つの文字列がホストから送られてくるか、\nタイムアウトが発生するまで、 MACRO を停止させる。\n条件：文字列の長さが <len> 文字で、 文字列がその\n<pos> 文字目から始まる副文字列 <sub-string> を含む
+xmodemrecv /// xmodemrecv <filename> <binary flag> <option>\nXMODEM プロトコルでファイル <filename> を受信する。
+xmodemsend /// xmodemsend <filename> <option>\nXMODEM プロトコルでファイル <filename> を送信する。
+zmodemrecv /// zmodemrecv \nZMODEM プロトコルでファイルを受信する。
+zmodemsend /// zmodemsend <filename> <binary flag>\nファイル <filename> を ZMODEM プロトコルで送信する。
+
+★ 制御コマンド
+end /// end \nTTL の実行を終了する。MACRO も終了する。
+include /// include <include file name>\nインクルードファイルに移る。
+exit /// exit \nインクルードファイルから抜け、メインファイルへ戻る。
+execcmnd /// execcmnd <statement>\n文字列 <statement> が表現する TTL コマンド を実行する。
+pause /// pause <time>\nTTL の実行を <time> 秒だけ休止する。
+goto /// goto <label>\n <label> 行の次の行へジャンプする。
+call /// call <label>\n<label> 行から始まるサブルーチンをコールする。
+return /// return \nサブルーチンを抜け、メインルーチンへ戻る。
+if /// - - - - - - - - - - - - - -\n if <int 1> <statement 1>\n- - - - - - - - - - - - - -\n if <int 1> then \n     <statement 1>\n elseif <int 2> then \n     <statement 2>\n else \n     <statement 3>\n endif \n- - - - - - - - - - - - - -\n<int 1> が0以外ならば、コマンド <statement 1> を実行する。\n<int 1> が0で <int 2>が0以外ならば、コマンド <statement 2> を実行する。\n<int 1> が0で <int 2>も0ならば、コマンド <statement 3> を実行する。
+then,elseif,else,endif /// - - - - - - - - - - - - - -\n if <int 1> then \n     <statement 1>\n elseif <int 2> then \n     <statement 2>\n else \n     <statement 3>\n endif \n- - - - - - - - - - - - - -\n<int 1> が0以外ならば、コマンド <statement 1> を実行する。\n<int 1> が0で <int 2>が0以外ならば、コマンド <statement 2> を実行する。\n<int 1> が0で <int 2>も0ならば、コマンド <statement 3> を実行する。
+for,next /// - - - - - - - - - - - - - - -\n for <intvar> <first> <last>\n     ...\n next \n- - - - - - - - - - - - - - -\nfor と next の間のコマンドを、整数変数 <intvar> の値が\n<last> と等しくなるまで、繰りかえす。
+while,endwhile /// - - - - - - - - - - - - - -\n while <int>\n     ...\n endwhile \n- - - - - - - - - - - - - -\nwhile と endwhile の間のコマンドを、 <int> が0以外である限り繰り返す。
+
+★ 文字列操作コマンド
+code2str /// code2str <strvar> <ASCII code>\n整数値 <ASCII code> が 1～255 の場合、ASCII コード に\n対応する文字を文字列変数 <strvar> に格納する。
+int2str /// int2str <strvar> <integer value>\n整数値 <integer value> を10進表現の文字列に変換して\n文字列型変数 <strvar> に代入する。
+str2code /// str2code <intvar> <string>\n文字列 <string> が1文字の場合、その文字の\nASCII コードを整数変数 <intvar> に格納する。
+str2int /// str2int <intvar> <string>\n10進数表現の文字列 <string> を整数値に変換し、\n整数変数 <intvar> に代入する。
+strcompare /// strcompare <string1> <string2>\n2つの文字列 <string1>, <string2> を比較し、\n結果をシステム変数 result に代入する。\n result=-1:<string1> < <string2>\n result= 0:<string1> = <string2>\n result= 1:<string1> > <string2>
+strconcat /// strconcat <strvar> <string>\n文字列変数 <strvar> の文字列値の最後に\n文字列 <string> を継ぎ足す。
+strcopy /// strcopy <string> <pos> <len> <strvar>\n文字列 <string> の <pos> 文字目から <len> 文字分を\n文字列変数 <strvar> にコピーする。
+strlen /// strlen <string>\n文字列 <string> の長さをシステム変数 result に格納する。
+strscan /// strscan <string> <substring>\n文字列 <string> の中に 副文字列 <substring> が\n含まれているかどうか調べる。\n見つかった位置がシステム変数 result に格納される。
+
+★ ファイル操作コマンド
+fileclose /// fileclose <file handle>\nファイルハンドル <file handle> で指定されるファイルをクローズする。
+fileconcat /// fileconcat <file1> <file2>\nファイル <file2> の内容をファイル <file1> の最後に追加する。
+filecopy /// filecopy <file1> <file2>\nファイル <file1> をコピーし、ファイル <file2> を作成する。
+filecreate /// filecreate <file handle> <filename>\nファイル <filename> を新しく作成しオープンする。
+filedelete /// filedelete <filename>\nファイル <filename> を削除する。
+filemarkptr /// filemarkptr <file handle>\n<file handle> で指定されるオープンされているファイルの\n現在のファイルポインタを保存する。\n fileseekback によって呼び戻すことができる。
+fileopen /// fileopen <file handle> <filename> <append flag>\nファイル <filename> をファイルをオープンする。\n<append flag> = 0:ファイルポインタはファイルの先頭\n<append flag>!= 0:ファイルポインタはファイルの末尾
+filereadln /// filereadln <file handle> <strvar>\nファイルハンドル <file handle> で指定されるファイルから一行読む。
+filerename /// filerename <file1> <file2>\nファイル <file1> を <file2> という名前に変更する。
+filesearch /// filesearch <filename>\nファイル <filename> が存在するかどうか調べる。
+fileseek /// fileseek <file handle> <offset> <origin>\nファイルハンドル <file handle> で指定されるファイルの\nファイルポインタを移動する。\n<origin> =0:ファイルの最初から <offset> バイト\n<origin> =1:現在の位置から <offset> バイト\n<origin> =2:ファイルの最後から <offset> バイト
+fileseekback /// fileseekback <file handle>\nファイルハンドル <file handle> で指定されるオープンされているファイルの\nファイルポインタを filemarkptr コマンドによって保存された位置に移動させる。
+filestrseek /// filestrseek <file handle> <string>\nファイルハンドル <file handle> で指定されるファイルに対して\n現在のファイルポインタの位置から文字列 <string> を前方↓\n(ファイルの終わりの方)に向かって検索する。
+filestrseek2 /// filestrseek2 <file handle> <string>\nファイルハンドル <file handle> で指定されるファイルに対して\n現在のファイルポインタの位置から文字列 <string> を後方↑\n(ファイルの始めの方)に向かって検索する。
+filewrite /// filewrite <file handle> <string>\nファイルハンドル <file handle> で指定されるファイルへ、\n文字列 <string> を書き込む。
+filewriteln /// filewriteln <file handle> <string>\nファイルハンドル <file handle> で指定されるファイルへ、\n文字列 <string> と改行文字 (CR+LF) を書き込む。
+findfirst /// - - - - - - - - - - - - - - - - - - - - - - -\n findfirst <dir handle> <file name> <strvar>\n findnext \n findclose \n- - - - - - - - - - - - - - - - - - - - - - -\n ファイル名 <file name> にあう最初のファイルを探す。
+findnext /// - - - - - - - - - - - - - - - - - - - - - - -\n findfirst <dir handle> <file name> <strvar>\n findnext \n findclose \n- - - - - - - - - - - - - - - - - - - - - - -\n findfirst コマンドで指定されたファイル名にあう次のファイルを探す。
+findclose /// - - - - - - - - - - - - - - - - - - - - - - -\n findfirst <dir handle> <file name> <strvar>\n findnext \n findclose \n- - - - - - - - - - - - - - - - - - - - - - -\n findfirst コマンドによって得られたディレクトリハンドル\n<dir handle> を解放する。
+getdir /// getdir <strvar>\n(Tera Term ではなく) MACRO の現在のディレクトリを\n文字列変数 <strvar> に格納する。
+makepath /// makepath <strvar> <dir> <name>\nディレクトリ名 <dir> とファイル名 <name> からフルパス名を作成し、\n文字列変数 <strvar> に格納する。
+setdir /// setdir <dir>\nMACRO の現在のディレクトリを <dir> に変更する。
+
+★ パスワードコマンド
+delpassword /// delpassword <filename> <password name>\nパスワードファイル <filename> 中のパスワード\n<password name> を削除する。
+getpassword /// getpassword <filename> <password name> <strvar>\nパスワードファイル <filename> からパスワード <password name> を読みだす。
+passwordbox /// passwordbox <message> <title>\nパスワードを入力するためのダイアログボックスを開く。
+
+★ その他のコマンド
+beep /// beep \nビープ音を鳴らす
+closesbox /// closesbox \nstatusbox コマンドによって開かれたステータスダイアログボックスを閉じる。
+exec /// exec <command line>\nコマンドライン文字列 <command line> に従い、アプリケーションを起動する。
+getdate /// getdate <strvar>\n現在の日付を"YYYY-MM-DD"形式で文字列変数 <strvar> に格納する。
+getenv /// getenv <envname> <strvar>\n環境変数 <envname> の値を文字列変数 <strvar> に格納する。
+gettime /// gettime <strvar>\n現在の時刻を"HH:MM:SS"形式で文字列変数 <strvar> に格納する。
+inputbox /// inputbox <message> <title>\n文字列入力のダイアログボックスを開く。\n入力文字列はシステム変数inputstrに代入される。
+messagebox /// messagebox <message> <title>\nダイアログボックスを開き、ユーザーにメッセージを知らせる。
+setdate /// setdate <date>\nシステムの日付を <date>("YYYY-MM-DD"形式)に変更する。
+setdlgpos /// setdlgpos <x> <y>\n各ダイアログボックスの位置を変更する。
+setenv /// ※ このコマンドは Tera Term Pro Ver.2.2 で追加され、Ver.2.3 で削除されました。\nsetenv <env name> <env value>\n環境変数 <env name> に文字列値 <env value> を代入する。
+setexitcode /// setexitcode <exit code>\nMACRO の終了コードを <exit code> にする。
+settime /// settime <time>\nシステムの時刻を <time>("HH:MM:SS"形式)に変更する。
+show /// show <show flag>\nMACRO を\n<show flag> = 0:最小化する。\n<show flag> > 0:元の大きさに戻す。\n<show flag> < 0:隠す。
+statusbox /// statusbox <message> <title>\nステータスダイアログボックスのメッセージ,タイトルを変更する。
+yesnobox /// yesnobox <message><title>\nDialog boxを開き、ユーザーに「はい」/「いいえ」を選択させる。
+
+ende.
