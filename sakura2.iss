@@ -85,6 +85,9 @@ FileName: "{app}\sakura.exe"; Description: "今すぐサクラエディタを起動"; Working
 ;Uninstall時に確認無く消されるのでコメントアウト
 ;Type: files; Name: "{app}\sakura.ini"
 
+[Dirs]
+Name: "{userappdata}\sakura"; Components: main; Tasks: startmenu; Check: isMultiUserEnabled
+
 [Code]
 var
   MultiUserPage: TInputOptionWizardPage;
