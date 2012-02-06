@@ -21,6 +21,9 @@ PrivilegesRequired=None
 OutputBaseFilename=sinst2-0-4-0
 VersionInfoVersion=2.0.4.0
 
+; OSƒo[ƒWƒ‡ƒ“§ŒÀ
+MinVersion=0,5.0
+
 [Languages]
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
 

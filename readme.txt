@@ -1,8 +1,13 @@
 
 ¡ƒCƒ“ƒXƒg[ƒ‰
 ƒCƒ“ƒXƒg[ƒ‰ì¬ƒXƒNƒŠƒvƒg: sakura2.iss
+
 ƒCƒ“ƒXƒg[ƒ‰‚Ìì¬‚É‚Í Inno Setup 5 ‚ª•K—v‚Å‚·B
-Unicode ”Å Inno Setup ‚È‚çA‰pŒê”Å Windows ‚Ö‚ÌƒCƒ“ƒXƒg[ƒ‹‚Å‚à“ú–{Œê•”•ª‚à•¶š‰»‚¯‚µ‚Ü‚¹‚ñB
+Unicode ”Å Inno Setup ‚È‚çA‰pŒê”Å Windows ‚Ö‚ÌƒCƒ“ƒXƒg[ƒ‹‚Å‚à
+“ú–{ŒêƒtƒHƒ“ƒgŠÂ‹«‚³‚¦®‚Á‚Ä‚¢‚ê‚Î“ú–{Œê•”•ª‚Í•¶š‰»‚¯‚µ‚È‚¢‚Í‚¸B
+iControl Panel [Regional and Language Options] ‚Ìİ’è‚Í•s—vj
+”‚½‚¾‚µAInno Setup 5.4.3 (u) ‚Å‚Í•s‹ï‡‚ª‚ ‚é‚½‚ßH‚©A
+”ƒJƒXƒ^ƒ€ƒy[ƒW‚¾‚¯‚Í•¶š‚ª SJIS ‚à‚Ç‚«‚É‰»‚¯‚é–Í—lB
 
 ¡g‚¢•û
 
@@ -40,6 +45,7 @@ Unicode ”Å Inno Setup ‚È‚çA‰pŒê”Å Windows ‚Ö‚ÌƒCƒ“ƒXƒg[ƒ‹‚Å‚à“ú–{Œê•”•ª‚à•¶š‰
 Ver 1.6.6.0iANSI”Åj‚ÌƒCƒ“ƒXƒg[ƒ‰‚©‚ç‚Ì•ÏX“_
 EŠÖ˜A•t‚¯ƒc[ƒ‹‚Í–{‘Ìæ‚è‚İ‚É”º‚Á‚Äíœ
 E"Editor with Shortcut" ƒ^ƒCƒv‚Í "Editor Only" ƒ^ƒCƒv‚Æ“¯‚¶‚È‚Ì‚Åíœ
+EOS ƒo[ƒWƒ‡ƒ“§ŒÀiWindows 2000 ˆÈãj‚ğ’Ç‰Á
 
 Ver 1.6.6.0 ‚ÌƒCƒ“ƒXƒg[ƒ‰d—l:
 http://sourceforge.net/apps/trac/sakura-editor/wiki/Installer
