@@ -171,9 +171,9 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
 #ifdef _DEBUG
-	MYTRACE( " (入力/出力) デバイス ドライバ=[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE( " (入力/出力) デバイス名=[%ts]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE( "物理出力メディア (出力ポート) =[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
 	MYTRACE( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
 #endif
 
@@ -252,9 +252,9 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
 #ifdef _DEBUG
-	MYTRACE( " (入力/出力) デバイス ドライバ=[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE( " (入力/出力) デバイス名=[%ts]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE( "物理出力メディア (出力ポート) =[%ts]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
 	MYTRACE( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
 #endif
 
@@ -288,9 +288,10 @@ HDC CPrint::CreateDC(
 		&hPrinter,					/* プリンタハンドルのポインタ */
 		NULL
 	) ){
-		wsprintf( pszErrMsg,
+		wsprintf(
+			pszErrMsg,
 			_T("OpenPrinter()に失敗。\n")
-			_T("プリンタデバイス名=[%ts]"),
+			_T("プリンタデバイス名=[%s]"),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
 		);
 		goto end_of_func;
@@ -496,7 +497,7 @@ BOOL CPrint::PrintOpen(
 		wsprintf(
 			pszErrMsg,
 			_T("StartDoc()に失敗。\n")
-			_T("プリンタデバイス名=[%ts]"),
+			_T("プリンタデバイス名=[%s]"),
 			pMYDEVMODE->m_szPrinterDeviceName	/* プリンタデバイス名 */
 		);
 		bRet = FALSE;
