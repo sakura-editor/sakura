@@ -16,23 +16,34 @@
 #include <windows.h>
 #include "global.h"
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                   メッセージ出力：実装                      //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 SAKURA_CORE_API void AssertError( LPCTSTR pszFile, long nLine, BOOL bIsError );
 SAKURA_CORE_API void DebugOut( LPCTSTR lpFmt, ...);
-//void DebugOutDialog( LPCTSTR lpFmt, ...);
-SAKURA_CORE_API int DebugOutDialog( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 
-//void MYASSERT( LPCTSTR, long, BOOL );
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                 メッセージボックス：実装                    //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+//2007.10.02 kobake メッセージボックスの使用はデバッグ時に限らないので、「Debug～」という名前を廃止
+
+//テキスト整形機能付きMessageBox
+SAKURA_CORE_API int MessageBoxF( HWND, UINT, LPCTSTR, LPCTSTR, ... );
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                 デバッグ用メッセージ出力                    //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 /*
 	MYTRACEはリリースモードではコンパイルエラーとなるようにしてあるので，
 	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
-	
 */
 #ifdef _DEBUG
 	#define MYTRACE DebugOut
 #endif
 #ifndef _DEBUG
-	#define MYTRACE Do_not_use_the_MYTRACE_function_if_release_mode
+	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode
 #endif
 
 //#ifdef _DEBUG～#endifで囲まなくても良い版
@@ -47,19 +58,9 @@ inline void DBPRINT( ... ){};
 #endif
 #endif // _DEBUG
 
-//#ifdef _DEBUG
-	#define MYMESSAGEBOX DebugOutDialog
-//#endif
-//#ifndef _DEBUG
-//	#define MYMESSAGEBOX DebugOutDialog
-//#endif
+#define DEBUG_TRACE DBPRINT
 
-//#ifdef _DEBUG
-	#define MYASSERT AssertError
-//#endif
-//#ifndef _DEBUG
-//	#define MYASSERT raise_compile_error
-//#endif
+#define MYASSERT AssertError
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -67,6 +68,8 @@ inline void DBPRINT( ... ){};
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //$$メモ：Debug.h以外の置き場所を考える
 
+//デバッグ用メッセージボックス
+#define MYMESSAGEBOX MessageBoxF
 
 
 //エラー：赤丸に「×」[OK]

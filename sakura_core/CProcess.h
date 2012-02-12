@@ -25,7 +25,7 @@
 */
 class SAKURA_CORE_API CProcess {
 public:
-	CProcess( HINSTANCE hInstance, LPSTR lpCmdLine );
+	CProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );
 	bool Run();
 	virtual ~CProcess(){};
 protected:
@@ -34,10 +34,10 @@ protected:
 	virtual bool MainLoop() = 0;
 	virtual void OnExitProcess() = 0;
 
-	HINSTANCE m_hInstance;
-	HWND m_hWnd;
-	LPSTR m_CommandLine;
-	
+	HINSTANCE	m_hInstance;
+	HWND		m_hWnd;
+	LPTSTR		m_CommandLine;
+
 	//	—Bˆê‚ÌCShareDate‚Æ‚·‚éBiCProcess‚ªÓ”C‚ğ‚Á‚Änew/delete‚·‚éj
 	CShareData		m_cShareData;
 	DLLSHAREDATA*	m_pShareData;

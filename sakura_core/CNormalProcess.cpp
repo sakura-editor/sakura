@@ -48,15 +48,15 @@ bool CNormalProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
 
-	HANDLE			hMutex;
 	HWND			hWnd;
 
 	/* プロセス初期化の目印 */
-	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
+	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
 	if( NULL == hMutex ){
 		return false;
 	}
 
+	/* 共有メモリを初期化する */
 	if ( !CProcess::InitializeProcess() ){
 		return false;
 	}
@@ -72,8 +72,8 @@ bool CNormalProcess::InitializeProcess()
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
-	CCommandLine::Instance()->GetFileInfo(fi); // 2002/2/8 aroka ここに移動
-	if( 0 < strlen( fi.m_szPath ) ){
+	CCommandLine::Instance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
+	if( 0 < _tcslen( fi.m_szPath ) ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileReadで
 		//	行われるのでここでは必要なし．
@@ -102,8 +102,6 @@ bool CNormalProcess::InitializeProcess()
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
 			return false;
-		}else{
-
 		}
 	}
 
@@ -115,8 +113,8 @@ bool CNormalProcess::InitializeProcess()
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::Instance()->IsDebugMode();
-	bGrepMode = CCommandLine::Instance()->IsGrepMode();
-	bGrepDlg = CCommandLine::Instance()->IsGrepDlg();
+	bGrepMode  = CCommandLine::Instance()->IsGrepMode();
+	bGrepDlg   = CCommandLine::Instance()->IsGrepDlg();
 	nGroup = CCommandLine::Instance()->GetGroupId();	// 2007.06.26 ryoji
 	
 	if( bDebugMode ){
@@ -128,20 +126,20 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeExt("output"), true );
 //	#endif////////////////////////////////////////////////////
-	}else
-	if( bGrepMode ){
+	}
+	else if( bGrepMode ){
+		/* GREP */
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, 0, FALSE );
 		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
 		if( NULL == hWnd ){
 			goto end_of_func;
 		}
-		/* GREP */
-		CCommandLine::Instance()->GetGrepInfo(gi); // 2002/2/8 aroka ここに移動
-		if( false == bGrepDlg ){
+		CCommandLine::Instance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
+		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
 			/* ロングファイル名を取得する */
-			if( FALSE != ::GetLongFileName( gi.cmGrepFolder.GetStringPtr(), szWork ) ){
-				gi.cmGrepFolder.SetString( szWork, strlen( szWork ) );
+			if( ::GetLongFileName( gi.cmGrepFolder.GetStringPtr(), szWork ) ){
+				gi.cmGrepFolder.SetString( szWork, _tcslen( szWork ) );
 			}
 			// 2003.06.23 Moca GREP実行前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
@@ -193,7 +191,8 @@ bool CNormalProcess::InitializeProcess()
 			}
 			return true; // 2003.06.23 Moca
 		}
-	}else{
+	}
+	else{
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
@@ -252,15 +251,6 @@ bool CNormalProcess::InitializeProcess()
 					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
 					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
 						m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
-				// 2004.04.03 Moca 削除
-				// }else{
-				// 	int		i;
-				// 	i = m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() - 1;
-				// 	if( i < 0 ){
-				// 		i = 0;
-				// 	}
-				// 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( 0, i, TRUE );
-				// 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev = 0;
 				}
 			}
 			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();

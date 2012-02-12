@@ -24,6 +24,7 @@
 #include "CProcess.h"
 #include "etc_uty.h"
 #include "CRunningTimer.h"
+#include "Debug.h"
 
 /*!
 	Windows Entry point
@@ -35,22 +36,32 @@
 	コントロールプロセスはCControlProcessクラスのインスタンスを作り、
 	エディタプロセスはCNormalProcessクラスのインスタンスを作る。
 */
-int WINAPI WinMain(
+int WINAPI _tWinMain(
 	HINSTANCE	hInstance,		//!< handle to current instance
 	HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPSTR		lpCmdLine,		//!< pointer to command line
+	LPTSTR		lpCmdLine,		//!< pointer to command line
 	int			nCmdShow		//!< show state of window
 )
 {
+#ifdef USE_LEAK_CHECK_WITH_CRTDBG
+	// 2009.9.10 syat メモリリークチェックを追加
+	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
+#endif
+
 	MY_RUNNINGTIMER(cRunningTimer, "WinMain" );
 	{
 		// 2010.08.28 Moca OleInitialize用に移動
 		CCurrentDirectoryBackupPoint dirBack;
 		ChangeCurrentDirectoryToExeDir();
- 
+
 		::OleInitialize( NULL );	// 2009.01.07 ryoji 追加
 	}
+	
+	//開発情報
+	DEBUG_TRACE(_T("-- -- WinMain -- --\n"));
+	DEBUG_TRACE(_T("sizeof(DLLSHAREDATA) = %d\n"),sizeof(DLLSHAREDATA));
 
+	//プロセスの生成とメッセージループ
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{

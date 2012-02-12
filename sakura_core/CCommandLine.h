@@ -22,6 +22,23 @@
 #include "global.h"
 #include "CShareData.h"	// EditInfo, GrepInfo
 class CMemory;
+/*!	検索オプション
+	20020118 aroka
+*/
+struct GrepInfo {
+	CMemory			cmGrepKey;			//!< 検索キー
+	CMemory			cmGrepFile;			//!< 検索対象ファイル
+	CMemory			cmGrepFolder;		//!< 検索対象フォルダ
+	bool			bGrepWordOnly;		//!< 単語単位で探す
+	bool			bGrepSubFolder;		//!< サブフォルダを検索する
+	bool			bGrepNoIgnoreCase;	//!< 大文字と小文字を区別する
+	bool			bGrepRegularExp;	//!< 正規表現を使用する
+	bool			bGrepOutputLine;	//!< 結果出力で該当行を出力する
+	int				nGrepOutputStyle;	//!< 結果出力形式
+	int				nGrepCharSet;		//!< 文字コードセット
+};
+
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -31,31 +48,30 @@ class CMemory;
 */
 class SAKURA_CORE_API CCommandLine {
 public:
-	static CCommandLine* Instance(LPSTR cmd=NULL);
+	static CCommandLine* Instance(LPTSTR cmd=NULL);
 
 private:
 	// 2005-08-24 D.S.Koba 引数削除
 	void ParseCommandLine( void );
 	
 	static int CheckCommandLine(
-
-		LPSTR  str, //!< [in] 検証する文字列（先頭の-は含まない）
-		int quotelen, //!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
-		char** arg,	//!< [out] 引数がある場合はその先頭へのポインタ
-		int* arglen	//!< [out] 引数の長さ
+		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
+		int quotelen, 		//!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
+		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
+		int*	arglen		//!< [out] 引数の長さ
 	);
 	
 	// 外から作らせない。
 	CCommandLine();
-	CCommandLine(LPSTR cmd);
+	CCommandLine(LPTSTR cmd);
 
 	/*!
 		引用符で囲まれている数値を認識するようにする
 		@date 2002.12.05 genta
 	*/
-	static int AtoiOptionInt(const char* arg){
-		return ( arg[0] == '"' || arg[0] == '\'' ) ?
-			atoi( arg + 1 ) : atoi( arg );
+	static int AtoiOptionInt(const TCHAR* arg){
+		return ( arg[0] == _T('"') || arg[0] == _T('\'') ) ?
+			_ttoi( arg + 1 ) : _ttoi( arg );
 	}
 
 // member accessor method
@@ -66,8 +82,8 @@ public:
 	bool IsGrepDlg() const {return m_bGrepDlg;};
 	bool IsDebugMode() const {return m_bDebugMode;};
 	bool IsReadOnly() const {return m_bReadOnly;};
-	bool GetFileInfo(EditInfo& fi) const {fi = m_fi;return true;};
-	bool GetGrepInfo(GrepInfo& gi) const {gi = m_gi;return true;};
+	bool GetEditInfo(EditInfo* fi) const { *fi = m_fi; return true; }
+	bool GetGrepInfo(GrepInfo* gi) const { *gi = m_gi; return true; }
 	int GetGroupId() const {return m_nGroup;};	// 2007.06.26 ryoji
 	LPCSTR GetMacro() const{ return m_pszMacro; }
 	LPCSTR GetMacroType() const{ return m_pszMacroType; }
@@ -75,7 +91,7 @@ public:
 // member valiables
 private:
 	static CCommandLine* _instance;
-	LPCSTR		m_pszCmdLineSrc;	//! [in]コマンドライン文字列
+	LPCTSTR		m_pszCmdLineSrc;	//! [in]コマンドライン文字列
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		

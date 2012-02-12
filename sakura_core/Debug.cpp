@@ -61,7 +61,7 @@ void DebugOut( LPCTSTR lpFmt, ...)
 	引数で与えられた情報をダイアログボックスで表示する．
 	デバッグ目的以外でも使用できる．
 */
-int DebugOutDialog(
+int MessageBoxF(
 	HWND	hWndParent,
 	UINT	nStyle,
 	LPCTSTR	pszTitle,

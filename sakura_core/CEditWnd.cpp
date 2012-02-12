@@ -300,7 +300,7 @@ HWND CEditWnd::Create(
 
 	/* ウィンドウサイズ指定 */
 	EditInfo fi;
-	CCommandLine::Instance()->GetFileInfo(fi);
+	CCommandLine::Instance()->GetEditInfo(&fi);
 	if( fi.m_nWindowSizeX >= 0 ){
 		nWinCX = fi.m_nWindowSizeX;
 	}
