@@ -100,16 +100,15 @@ void CTipWnd::AfterCreateWindow( void )
 }
 
 /* Tipを表示 */
-void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
+void CTipWnd::Show( int nX, int nY, const TCHAR* szText, RECT* pRect )
 {
 	HDC		hdc;
 	RECT	rc;
-	char*	pszInfo;
 
 	if( NULL != szText ){
-		m_cInfo.SetString( szText, strlen( szText ) );
+		m_cInfo.SetString( szText );
 	}
-	pszInfo = m_cInfo.GetStringPtr();
+	const TCHAR* pszInfo = m_cInfo.GetStringPtr();
 
 	hdc = ::GetDC( m_hWnd );
 
@@ -134,10 +133,10 @@ void CTipWnd::Show( int nX, int nY, char* szText, RECT* pRect )
 
 /* ウィンドウのサイズを決める */
 void CTipWnd::ComputeWindowSize(
-		HDC			hdc,
-		HFONT		hFont,
-		const char*	pszText,
-		RECT*		pRect
+	HDC				hdc,
+	HFONT			hFont,
+	const TCHAR*	pszText,
+	RECT*			pRect
 )
 {
 	int		nTextLength;
@@ -153,23 +152,22 @@ void CTipWnd::ComputeWindowSize(
 
 	nCurMaxWidth = 0;
 	nCurHeight = 0;
-	nTextLength = strlen( pszText );
+	nTextLength = _tcslen( pszText );
 	nBgn = 0;
 	for( i = 0; i <= nTextLength; ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CMemory::GetSizeOfChar( (const char *)pszText, nTextLength, i );
-		if( ( 1 == nCharChars && '\\' == pszText[i] && 'n' == pszText[i + 1]) || '\0' == pszText[i] ){
+		nCharChars = CMemory::GetSizeOfChar( (const TCHAR *)pszText, nTextLength, i );
+		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
 			if( 0 < i - nBgn ){
-				char*	pszWork;
-				pszWork = new char[i - nBgn + 1];
+				TCHAR*	pszWork = new TCHAR[i - nBgn + 1];
 				memcpy( pszWork, &pszText[nBgn], i - nBgn );
-				pszWork[i - nBgn] = '\0';
+				pszWork[i - nBgn] = _T('\0');
 
 				rc.left = 0;
 				rc.top = 0;
 				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
 				rc.bottom = 0;
-				::DrawText( hdc, pszWork, strlen(pszWork), &rc,
+				::DrawText( hdc, pszWork, _tcslen(pszWork), &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 				delete [] pszWork;
@@ -177,7 +175,7 @@ void CTipWnd::ComputeWindowSize(
 					nCurMaxWidth = rc.right;
 				}
 			}else{
-				::DrawText( hdc, " ", 1, &rc,
+				::DrawText( hdc, _T(" "), 1, &rc,
 					DT_CALCRECT | DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}
@@ -205,9 +203,9 @@ void CTipWnd::ComputeWindowSize(
 
 /* ウィンドウのテキストを表示 */
 void CTipWnd::DrawTipText(
-		HDC			hdc,
-		HFONT		hFont,
-		const char*	pszText
+	HDC				hdc,
+	HFONT			hFont,
+	const TCHAR*	pszText
 )
 {
 	int			nTextLength;
@@ -227,24 +225,24 @@ void CTipWnd::DrawTipText(
 
 	nCurMaxWidth = 0;
 	nCurHeight = 0;
-	nTextLength = strlen( pszText );
+	nTextLength = _tcslen( pszText );
 	nBgn = 0;
 	for( i = 0; i <= nTextLength; ++i ){
 //		nCharChars = &pszText[i] - CMemory::MemCharPrev( pszText, nTextLength, &pszText[i] );
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		nCharChars = CMemory::GetSizeOfChar( (const char *)pszText, nTextLength, i );
-		if( ( 1 == nCharChars && '\\' == pszText[i] && 'n' == pszText[i + 1]) || '\0' == pszText[i] ){
+		if( ( 1 == nCharChars && _T('\\') == pszText[i] && _T('n') == pszText[i + 1]) || _T('\0') == pszText[i] ){
 			if( 0 < i - nBgn ){
-				char*	pszWork;
-				pszWork = new char[i - nBgn + 1];
+				TCHAR*	pszWork;
+				pszWork = new TCHAR[i - nBgn + 1];
 				memcpy( pszWork, &pszText[nBgn], i - nBgn );
-				pszWork[i - nBgn] = '\0';
+				pszWork[i - nBgn] = _T('\0');
 
 				rc.left = 4;
 				rc.top = 4 + nCurHeight;
 				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
 				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, pszWork, strlen(pszWork), &rc,
+				nCurHeight += ::DrawText( hdc, pszWork, _tcslen(pszWork), &rc,
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 				delete [] pszWork;
@@ -256,7 +254,7 @@ void CTipWnd::DrawTipText(
 				rc.top = 4 + nCurHeight;
 				rc.right = ::GetSystemMetrics( SM_CXSCREEN );
 				rc.bottom = rc.top + 200;
-				nCurHeight += ::DrawText( hdc, " ", 1, &rc,
+				nCurHeight += ::DrawText( hdc, _T(" "), 1, &rc,
 					DT_EXTERNALLEADING | DT_EXPANDTABS | DT_WORDBREAK /*| DT_TABSTOP | (0x0000ff00 & ( 4 << 8 ))*/
 				);
 			}
@@ -294,32 +292,25 @@ void CTipWnd::Hide( void )
 /* 描画処理 */
 LRESULT CTipWnd::OnPaint( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l_Param )
 {
-	HDC			hdc;
 	PAINTSTRUCT	ps;
 	RECT		rc;
-	char*		pszText;
-//	int			nTextLen;
-
-	hdc = ::BeginPaint(	hwnd, &ps );
-	pszText = m_cInfo.GetStringPtr();
+	HDC			hdc = ::BeginPaint(	hwnd, &ps );
 	::GetClientRect( hwnd, &rc );
+
 	/* ウィンドウのテキストを表示 */
-	DrawTipText( hdc, m_hFont, pszText );
+	DrawTipText( hdc, m_hFont, m_cInfo.GetStringPtr() );
 
 	::EndPaint(	hwnd, &ps );
 	return 0L;
-
-
 }
 
 
 // 2001/06/19 Start by asa-o: ウィンドウのサイズを得る
 void CTipWnd::GetWindowSize(LPRECT pRect)
 {
-	HDC			hdc;
-	const char*	pszText;
+	const TCHAR*	pszText;
 
-	hdc = ::GetDC( m_hWnd );
+	HDC		hdc = ::GetDC( m_hWnd );
 
 	pszText = m_cInfo.GetStringPtr();
 
