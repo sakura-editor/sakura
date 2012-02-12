@@ -42,6 +42,8 @@ class CProfile;
 #include <vector>
 #include <map>
 
+#define tstring string
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -50,11 +52,14 @@ class CProfile;
 */
 class CProfile
 {
-	typedef std::pair< std::basic_string< TCHAR >, std::basic_string< TCHAR > > PAIR_STR_STR;
-	typedef std::map< std::basic_string< TCHAR >, std::basic_string< TCHAR > > MAP_STR_STR;
+	//文字列型
+	typedef std::tstring tstring;
+
+	typedef std::pair< tstring, tstring > PAIR_STR_STR;
+	typedef std::map< tstring, tstring > MAP_STR_STR;
 	struct Section
 	{
-		std::basic_string< TCHAR > strSectionName;
+		tstring     strSectionName;
 		MAP_STR_STR mapEntries;
 	};
 
@@ -66,38 +71,38 @@ public:
 	void SetReadingMode( void ) { m_bRead = true; }
 	void SetWritingMode( void ) { m_bRead = false; }
 	bool ReadProfile( const TCHAR* );
-	bool WriteProfile( const TCHAR*, const TCHAR* );
+	bool WriteProfile( const TCHAR*, const TCHAR* pszComment);
 
 	bool IOProfileData( const TCHAR*, const TCHAR*, bool& );
 	bool IOProfileData( const TCHAR*, const TCHAR*, int& );
 	bool IOProfileData( const TCHAR*, const TCHAR*, WORD& );
 	bool IOProfileData( const TCHAR*, const TCHAR*, TCHAR& );
 	bool IOProfileData( const TCHAR*, const TCHAR*, TCHAR*, const int& );
-	bool IOProfileData( const std::basic_string< TCHAR >&, const std::basic_string< TCHAR >&, std::basic_string< TCHAR >& );
+	bool IOProfileData( const tstring&, const tstring&, tstring& );
 
 	void DUMP( void );
 
 protected:
-	void ReadOneline( const std::basic_string< TCHAR >& line );
-	bool WriteFile( const std::basic_string< TCHAR >&, std::vector< std::basic_string< TCHAR > >& );
+	void ReadOneline( const tstring& line );
+	bool _WriteFile( const tstring& strFilename, std::vector< tstring >& vecLine);
 
 	bool GetProfileData( const TCHAR*, const TCHAR*, bool& );
 	bool GetProfileData( const TCHAR*, const TCHAR*, int& );
 	bool GetProfileData( const TCHAR*, const TCHAR*, WORD& );
 	bool GetProfileData( const TCHAR*, const TCHAR*, TCHAR& );
 	bool GetProfileData( const TCHAR*, const TCHAR*, TCHAR*, const int& );
-	bool GetProfileData( const std::basic_string< TCHAR >&, const std::basic_string< TCHAR >&, std::basic_string< TCHAR >& );
+	bool GetProfileData( const tstring&, const tstring&, tstring& );
 	bool SetProfileData( const TCHAR*, const TCHAR*, const bool& );
 	bool SetProfileData( const TCHAR*, const TCHAR*, const int& );
 	bool SetProfileData( const TCHAR*, const TCHAR*, const WORD& );
 	bool SetProfileData( const TCHAR*, const TCHAR*, const TCHAR& );
 	bool SetProfileData( const TCHAR*, const TCHAR*, const TCHAR*, const int& );
-	bool SetProfileData( const std::basic_string< TCHAR >&, const std::basic_string< TCHAR >&, const std::basic_string< TCHAR >& );
+	bool SetProfileData( const tstring&, const tstring&, const tstring& );
 
 	// メンバ変数
-	std::basic_string< TCHAR > m_strProfileName;//!< 最後に読み書きしたファイル名
-	std::vector< Section > m_ProfileData;
-	bool m_bRead;//!< モード(true=読み込み/false=書き出し)
+	tstring					m_strProfileName;	//!< 最後に読み書きしたファイル名
+	std::vector< Section >	m_ProfileData;
+	bool					m_bRead;			//!< モード(true=読み込み/false=書き出し)
 };
 
 ///////////////////////////////////////////////////////////////////////
