@@ -63,51 +63,6 @@
 #endif
 #endif
 
-//	Sep. 22, 2003 MIK
-//	古いSDK対策．新しいSDKでは不要
-#ifndef _WIN64
-#ifndef DWORD_PTR
-#define DWORD_PTR DWORD
-#endif
-#ifndef ULONG_PTR
-#define ULONG_PTR ULONG
-#endif
-#ifndef LONG_PTR
-#define LONG_PTR LONG
-#endif
-#ifndef UINT_PTR
-#define UINT_PTR UINT
-#endif
-#ifndef INT_PTR
-#define INT_PTR INT
-#endif
-#ifndef SetWindowLongPtr
-#define SetWindowLongPtr SetWindowLong
-#endif
-#ifndef GetWindowLongPtr
-#define GetWindowLongPtr GetWindowLong
-#endif
-#ifndef DWLP_USER
-#define DWLP_USER DWL_USER
-#endif
-#ifndef GWLP_WNDPROC
-#define GWLP_WNDPROC GWL_WNDPROC
-#endif
-#ifndef GWLP_USERDATA
-#define GWLP_USERDATA GWL_USERDATA
-#endif
-#ifndef GWLP_HINSTANCE
-#define GWLP_HINSTANCE GWL_HINSTANCE
-#endif
-#endif  //_WIN64
-
-#ifndef COLOR_MENUHILIGHT
-#define COLOR_MENUHILIGHT 29
-#endif
-#ifndef COLOR_MENUBAR
-#define COLOR_MENUBAR 30
-#endif
-
 
 //Oct. 31, 2000 JEPRO TeX Keyword のために'\'を追加	//Nov. 9, 2000 JEPRO HSP Keyword のために'@'を追加
 //#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))
@@ -402,8 +357,8 @@ SAKURA_CORE_API	enum EBarChangeNotifyType {
 #define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
 
 struct SColorAttributeData{
-	TCHAR* szName;
-	unsigned int fAttribute;
+	TCHAR*			szName;
+	unsigned int	fAttribute;
 };
 SAKURA_CORE_API extern const SColorAttributeData g_ColorAttributeArr[];
 
@@ -475,6 +430,102 @@ typedef int CLogicInt;
 
 //レイアウト単位
 typedef int CLayoutInt;
+
+namespace ApiWrap
+{
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                       よく使う用法                          //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+	//! SHIFTを押しているかどうか
+	inline bool GetKeyState_Shift()
+	{
+		return (::GetKeyState(VK_SHIFT)&0x8000)!=0;
+	}
+
+	//! CTRLを押しているかどうか
+	inline bool GetKeyState_Control()
+	{
+		return (::GetKeyState(VK_CONTROL)&0x8000)!=0;
+	}
+
+	//! ALTを押しているかどうか
+	inline bool GetKeyState_Alt()
+	{
+		return (::GetKeyState(VK_MENU)&0x8000)!=0;
+	}
+
+
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                           定数                              //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+	//	Jun. 29, 2002 こおり
+	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
+	#if defined(_WIN64) || defined(_UNICODE)
+		static const size_t sizeof_old_PROPSHEETHEADER = sizeof(PROPSHEETHEADER);
+	#else
+		static const size_t sizeof_old_PROPSHEETHEADER = 40;
+	#endif
+
+	//	Jan. 29, 2002 genta
+	//	Win95/NTが納得するsizeof( MENUITEMINFO )
+	//	これ以外の値を与えると古いOSでちゃんと動いてくれない．
+	#if defined(_WIN64) || defined(_UNICODE)
+		static const int SIZEOF_MENUITEMINFO = sizeof(MENUITEMINFO);
+	#else
+		static const int SIZEOF_MENUITEMINFO = 44;
+	#endif
+}
+using namespace ApiWrap;
+
+
+
+
+//	Sep. 22, 2003 MIK
+//	古いSDK対策．新しいSDKでは不要
+#ifndef _WIN64
+#ifndef DWORD_PTR
+#define DWORD_PTR DWORD
+#endif
+#ifndef ULONG_PTR
+#define ULONG_PTR ULONG
+#endif
+#ifndef LONG_PTR
+#define LONG_PTR LONG
+#endif
+#ifndef UINT_PTR
+#define UINT_PTR UINT
+#endif
+#ifndef INT_PTR
+#define INT_PTR INT
+#endif
+#ifndef SetWindowLongPtr
+#define SetWindowLongPtr SetWindowLong
+#endif
+#ifndef GetWindowLongPtr
+#define GetWindowLongPtr GetWindowLong
+#endif
+#ifndef DWLP_USER
+#define DWLP_USER DWL_USER
+#endif
+#ifndef GWLP_WNDPROC
+#define GWLP_WNDPROC GWL_WNDPROC
+#endif
+#ifndef GWLP_USERDATA
+#define GWLP_USERDATA GWL_USERDATA
+#endif
+#ifndef GWLP_HINSTANCE
+#define GWLP_HINSTANCE GWL_HINSTANCE
+#endif
+#endif  //_WIN64
+
+#ifndef COLOR_MENUHILIGHT
+#define COLOR_MENUHILIGHT 29
+#endif
+#ifndef COLOR_MENUBAR
+#define COLOR_MENUBAR 30
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _GLOBAL_H_ */

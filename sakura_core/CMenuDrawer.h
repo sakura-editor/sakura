@@ -15,14 +15,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CMenuDrawer;
 
 #ifndef _CMENUDRAWER_H_
 #define _CMENUDRAWER_H_
 
-#include <windows.h>
 #include "CShareData.h" // MAX_TOOLBARBUTTONS
-#include "CMemory.h"// 2002/2/10 aroka
+
+class CMenuDrawer;
+
 class CImageListMgr;// 2002/2/10 aroka
 
 //#define MAX_MENUPOS	10
@@ -76,20 +76,15 @@ public:
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
 
-	enum EButtonIndex{
-		TOOLBAR_BUTTON_F_TOOLBARWRAP = 384,	//ツールバー折返しアイコン（ダミー）
-	};
+	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384;	//ツールバー折返しアイコン（ダミー）
+
 private:
 	int Find( int nFuncID );
-	const char* GetLabel( int nFuncID );
-	char GetAccelCharFromLabel( const char* pszLabel );
-//@@@ 2002.01.03 YAZAKI 不使用のため
-//	static void MyBitBlt( HDC drawdc, int nXDest, int nYDest, int nWidth,
-//							int nHeight, HBITMAP bmp, int nXSrc, int nYSrc, COLORREF, COLORREF);
-//	void DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
-//						int nHeight, HBITMAP bmp, int nXSrc, int nYSrc);
+	const TCHAR* GetLabel( int nFuncID );
+	TCHAR GetAccelCharFromLabel( const TCHAR* pszLabel );
 
 
+private:
 	DLLSHAREDATA*	m_pShareData;
 
 	HINSTANCE		m_hInstance;
@@ -106,10 +101,9 @@ private:
 	int				m_nMenuHeight;
 	HFONT			m_hFontMenu;
 	HFONT			m_hFontMenuUndelLine;
-//@@@ 2002.01.03 YAZAKI 不使用のため
-//	int				m_nMaxTab;
-//	int				m_nMaxTabLen;
 
+public:
+	// 2010.01.30 syat アイコンイメージリストをprivate->public
 	//	Oct. 16, 2000 genta
 	CImageListMgr	*m_pcIcons;	//	Image List
 
