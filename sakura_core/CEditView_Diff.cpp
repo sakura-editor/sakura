@@ -35,7 +35,7 @@
 #include "mymessage.h"
 #include "Debug.h"
 
-#define	SAKURA_DIFF_TEMP_PREFIX	"sakura_diff_"
+#define	SAKURA_DIFF_TEMP_PREFIX	_T("sakura_diff_")
 
 /*!	差分表示
 	@note	HandleCommandからの呼び出し対応(ダイアログなし版)
@@ -135,9 +135,10 @@ void CEditView::Command_Diff_Dialog( void )
 						からも呼ばれる関数。maru
 */
 void CEditView::ViewDiffInfo( 
-	const char	*pszFile1,
-	const char	*pszFile2,
-	int			nFlgOpt )
+	const TCHAR*	pszFile1,
+	const TCHAR*	pszFile2,
+	int				nFlgOpt
+)
 /*
 	bool	bFlgCase,		//大文字小文字同一視
 	bool	bFlgBlank,		//空白無視
@@ -147,15 +148,15 @@ void CEditView::ViewDiffInfo(
 	bool	bFlgFile12,		//編集中のファイルが旧ファイル
 */
 {
-	char	cmdline[1024];
 	HANDLE	hStdOutWrite, hStdOutRead;
-//	CDlgCancel	cDlgCancel;
+
 	CWaitCursor	cWaitCursor( m_hWnd );
 	int		nFlgFile12 = 1;
 
 	/* exeのあるフォルダ */
-	char	szExeFolder[_MAX_PATH + 1];
+	TCHAR	szExeFolder[_MAX_PATH + 1];
 
+	TCHAR	cmdline[1024];
 	GetExedir( cmdline, _T("diff.exe") );
 	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
 
@@ -174,12 +175,12 @@ void CEditView::ViewDiffInfo(
 		//m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
 	PROCESS_INFORMATION	pi;
-	ZeroMemory( &pi, sizeof(PROCESS_INFORMATION) );
+	ZeroMemory( &pi, sizeof(pi) );
 
 	//子プロセスの標準出力と接続するパイプを作成
 	SECURITY_ATTRIBUTES	sa;
-	ZeroMemory( &sa, sizeof(SECURITY_ATTRIBUTES) );
-	sa.nLength              = sizeof(SECURITY_ATTRIBUTES);
+	ZeroMemory( &sa, sizeof(sa) );
+	sa.nLength              = sizeof(sa);
 	sa.bInheritHandle       = TRUE;
 	sa.lpSecurityDescriptor = NULL;
 	hStdOutRead = hStdOutWrite = 0;
@@ -196,8 +197,8 @@ void CEditView::ViewDiffInfo(
 
 	//CreateProcessに渡すSTARTUPINFOを作成
 	STARTUPINFO	sui;
-	ZeroMemory( &sui, sizeof(STARTUPINFO) );
-	sui.cb          = sizeof(STARTUPINFO);
+	ZeroMemory( &sui, sizeof(sui) );
+	sui.cb          = sizeof(sui);
 	sui.dwFlags     = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
 	sui.wShowWindow = SW_HIDE;
 	sui.hStdInput   = GetStdHandle( STD_INPUT_HANDLE );
@@ -205,14 +206,14 @@ void CEditView::ViewDiffInfo(
 	sui.hStdError   = hStdOutWrite;
 
 	//オプションを作成する
-	char	szOption[16];	// "-cwbBt"
-	strcpy( szOption, "-" );
-	if( nFlgOpt & 0x0001 ) strcat( szOption, "i" );	//-i ignore-case         大文字小文字同一視
-	if( nFlgOpt & 0x0002 ) strcat( szOption, "w" );	//-w ignore-all-space    空白無視
-	if( nFlgOpt & 0x0004 ) strcat( szOption, "b" );	//-b ignore-space-change 空白変更無視
-	if( nFlgOpt & 0x0008 ) strcat( szOption, "B" );	//-B ignore-blank-lines  空行無視
-	if( nFlgOpt & 0x0010 ) strcat( szOption, "t" );	//-t expand-tabs         TAB-SPACE変換
-	if( strcmp( szOption, "-" ) == 0 ) strcpy( szOption, "" );	//オプションなし
+	TCHAR	szOption[16];	// "-cwbBt"
+	_tcscpy( szOption, _T("-") );
+	if( nFlgOpt & 0x0001 ) _tcscat( szOption, _T("i") );	//-i ignore-case         大文字小文字同一視
+	if( nFlgOpt & 0x0002 ) _tcscat( szOption, _T("w") );	//-w ignore-all-space    空白無視
+	if( nFlgOpt & 0x0004 ) _tcscat( szOption, _T("b") );	//-b ignore-space-change 空白変更無視
+	if( nFlgOpt & 0x0008 ) _tcscat( szOption, _T("B") );	//-B ignore-blank-lines  空行無視
+	if( nFlgOpt & 0x0010 ) _tcscat( szOption, _T("t") );	//-t expand-tabs         TAB-SPACE変換
+	if( _tcscmp( szOption, _T("-") ) == 0 ) _tcscpy( szOption, _T("") );	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
 
@@ -226,26 +227,30 @@ void CEditView::ViewDiffInfo(
 		COsVersionInfo cOsVer;
 		//コマンドライン文字列作成(MAX:1024)
 		if (cOsVer.IsWin32NT()){
-			::GetSystemDirectory(szCmdDir, sizeof(szCmdDir));
-			wsprintf( cmdline, "\"%s\\cmd.exe\" /C \"\"%s\\%s\" %s \"%s\" \"%s\"\"",
-					szCmdDir,
-					szExeFolder,	//sakura.exeパス
-					"diff.exe",		//diff.exe
-					szOption,		//diffオプション
-					( nFlgFile12 ? pszFile2 : pszFile1 ),
-					( nFlgFile12 ? pszFile1 : pszFile2 )
-				);
+			::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
+			wsprintf(
+				cmdline,
+				_T("\"%s\\cmd.exe\" /C \"\"%s\\%s\" %s \"%s\" \"%s\"\""),
+				szCmdDir,
+				szExeFolder,	//sakura.exeパス
+				_T("diff.exe"),		//diff.exe
+				szOption,		//diffオプション
+				( nFlgFile12 ? pszFile2 : pszFile1 ),
+				( nFlgFile12 ? pszFile1 : pszFile2 )
+			);
 		}
 		else{
-			::GetWindowsDirectory(szCmdDir, sizeof(szCmdDir));
-			wsprintf( cmdline, "\"%s\\command.com\" /C \"%s\\%s\" %s \"%s\" \"%s\"",
-					szCmdDir,
-					szExeFolder,	//sakura.exeパス
-					"diff.exe",		//diff.exe
-					szOption,		//diffオプション
-					( nFlgFile12 ? pszFile2 : pszFile1 ),
-					( nFlgFile12 ? pszFile1 : pszFile2 )
-				);
+			::GetWindowsDirectory(szCmdDir, _countof(szCmdDir));
+			wsprintf(
+				cmdline,
+				_T("\"%s\\command.com\" /C \"%s\\%s\" %s \"%s\" \"%s\""),
+				szCmdDir,
+				szExeFolder,	//sakura.exeパス
+				_T("diff.exe"),		//diff.exe
+				szOption,		//diffオプション
+				( nFlgFile12 ? pszFile2 : pszFile1 ),
+				( nFlgFile12 ? pszFile1 : pszFile2 )
+			);
 		}
 	}
 
@@ -275,22 +280,6 @@ void CEditView::ViewDiffInfo(
 
 		//実行結果の取り込み
 		do {
-			//処理中のユーザー操作を可能にする
-//			if( !::BlockingHook( cDlgCancel.m_hWnd ) )
-//			{
-//				bDiffInfo = false;
-//				break;
-//			}
-
-			//中断ボタン押下チェック
-//			if( cDlgCancel.IsCanceled() )
-//			{
-				//指定されたプロセスと、そのプロセスが持つすべてのスレッドを終了させます。
-//				::TerminateProcess( pi.hProcess, 0 );
-//				bDiffInfo = false;
-//				break;
-//			}
-
 			//プロセスが終了していないか確認
 			// Jul. 04, 2003 genta CPUを100%使い果たすのを防ぐため 200msec休む
 			// Jan. 23, 2004 genta
@@ -308,11 +297,11 @@ void CEditView::ViewDiffInfo(
 			{
 				while( new_cnt > 0 )												//待機中のものがある
 				{
-					if( new_cnt >= sizeof(work) - 2 )							//パイプから読み出す量を調整
+					if( new_cnt >= _countof(work) - 2 )							//パイプから読み出す量を調整
 					{
-						new_cnt = sizeof(work) - 2;
+						new_cnt = _countof(work) - 2;
 					}
-					ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
+					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					if( read_cnt == 0 )
 					{
 						// Jan. 23, 2004 genta while追加のため制御を変更
@@ -409,7 +398,7 @@ void CEditView::ViewDiffInfo(
 	//DIFF差分が見つからなかったときにメッセージ表示
 	if( nFlgOpt & 0x0040 )
 	{
-		if( false == m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
+		if( !m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
 		{
 			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 				"DIFF差分は見つかりませんでした。" );
@@ -439,8 +428,9 @@ finish:
 	@date	2002/05/25
 */
 void CEditView::AnalyzeDiffInfo( 
-	const char	*pszDiffInfo,
-	int		nFlgFile12 )
+	const char*	pszDiffInfo,
+	int			nFlgFile12
+)
 {
 	/*
 	 * 99a99		旧ファイル99行の次行に新ファイル99行が追加された。
@@ -523,15 +513,15 @@ void CEditView::AnalyzeDiffInfo(
 	//抽出したDIFF情報から行番号に差分マークを付ける
 	if( 0 == nFlgFile12 )	//編集中ファイルは旧ファイル
 	{
-		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, s1    , e1     );
-		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, s1 - 1, e1 - 1 );
-		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, s1 - 1, e1 - 1 );
+		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s1    ), CLogicInt(e1    ) );
+		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
+		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s1 - 1), CLogicInt(e1 - 1) );
 	}
 	else	//編集中ファイルは新ファイル
 	{
-		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, s2 - 1, e2 - 1 );
-		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, s2 - 1, e2 - 1 );
-		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, s2    , e2     );
+		if     ( mode == 'a' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_APPEND, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
+		else if( mode == 'c' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_CHANGE, CLogicInt(s2 - 1), CLogicInt(e2 - 1) );
+		else if( mode == 'd' ) m_pcEditDoc->m_cDocLineMgr.SetDiffMarkRange( MARK_DIFF_DELETE, CLogicInt(s2    ), CLogicInt(e2    ) );
 	}
 
 	return;
@@ -674,24 +664,20 @@ void CEditView::Command_Diff_Reset( void )
 	@date	2005/10/29	引数変更const char* → char*
 						一時ファイル名の取得処理もここでおこなう。maru
 */
-BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
+BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 {
 	const char*	pLineData;
 	int		nLineLen;
-	int		y;
 	FILE	*fp;
 
-	char	*pszTmpName;
-	
-	pszTmpName = _tempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
-	if( NULL == pszTmpName )
-	{
+	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
+	if( NULL == pszTmpName ){
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
 			"差分コマンド実行は失敗しました。" );
 		return FALSE;
 	}
 
-	strcpy( filename, pszTmpName );
+	_tcscpy( filename, pszTmpName );
 	free( pszTmpName );
 
 	//自分か？
@@ -717,7 +703,7 @@ BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
 		return FALSE;
 	}
 
-	y = 0;
+	CLogicInt y = CLogicInt(0);
 
 	// 行(改行単位)データの要求
 	if( hWnd )
@@ -725,8 +711,7 @@ BOOL CEditView::MakeDiffTmpFile( char* filename, HWND hWnd )
 		pLineData = m_pShareData->m_szWork;
 		nLineLen = ::SendMessage( hWnd, MYWM_GETLINEDATA, y, 0 );
 	}
-	else
-	{
+	else{
 		pLineData = m_pcEditDoc->m_cDocLineMgr.GetLineStr( y, &nLineLen );
 	}
 

@@ -115,7 +115,7 @@ protected:
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CEditView/* : public CDropTarget*/
+class SAKURA_CORE_API CEditView
 {
 public:
 	/* Constructors */
@@ -146,10 +146,35 @@ public:
 
 	/* メッセージディスパッチャ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );
+	//
+	void OnChangeSetting();										/* 設定変更を反映させる */
+	void OnPaint( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
+	void OnTimer( HWND, UINT, UINT, DWORD );
+	//ウィンドウ
+	void OnSize( int, int );							/* ウィンドウサイズの変更処理 */
 	void OnMove( int, int, int, int );
+	//フォーカス
 	void OnSetFocus( void );
 	void OnKillFocus( void );
-	void OnTimer( HWND, UINT, UINT, DWORD );
+	//スクロール
+	CLayoutInt  OnVScroll( int, int );							/* 垂直スクロールバーメッセージ処理 */
+	CLayoutInt  OnHScroll( int, int );							/* 水平スクロールバーメッセージ処理 */
+	//マウス
+	void OnLBUTTONDOWN( WPARAM, int, int );				/* マウス左ボタン押下 */
+	void OnMOUSEMOVE( WPARAM, int, int );				/* マウス移動のメッセージ処理 */
+	void OnLBUTTONUP( WPARAM, int, int );				/* マウス左ボタン開放のメッセージ処理 */
+	void OnLBUTTONDBLCLK( WPARAM, int , int );			/* マウス左ボタンダブルクリック */
+	void OnRBUTTONDOWN( WPARAM, int, int );				/* マウス右ボタン押下 */
+	void OnRBUTTONUP( WPARAM, int, int );				/* マウス右ボタン開放 */
+	void OnMBUTTONDOWN( WPARAM, int, int );				/* マウス中ボタン押下 */
+	void OnMBUTTONUP( WPARAM, int, int );				/* マウス中ボタン開放 */			// 2009.01.12 nasukoji
+	void OnXLBUTTONDOWN( WPARAM, int, int );			/* マウスサイドボタン1押下 */
+	void OnXLBUTTONUP( WPARAM, int, int );				/* マウスサイドボタン1開放 */		// 2009.01.12 nasukoji
+	void OnXRBUTTONDOWN( WPARAM, int, int );			/* マウスサイドボタン2押下 */
+	void OnXRBUTTONUP( WPARAM, int, int );				/* マウスサイドボタン2開放 */		// 2009.01.12 nasukoji
+	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );				/* マウスホイールのメッセージ処理 */
+	int  IsSpecialScrollMode( int );					/* キー・マウスボタン状態よりスクロールモードを判定する */		// 2009.01.12 nasukoji
+
 	BOOL HandleCommand( int, BOOL, LPARAM, LPARAM, LPARAM, LPARAM );
 	/* コマンド操作 */
 	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
@@ -165,7 +190,6 @@ public:
 	BOOL DetectWidthOfLineNumberArea( BOOL );					/* 行番号表示に必要な幅を設定 */
 	int DetectWidthOfLineNumberArea_calculate( void );			/* 行番号表示に必要な桁数を計算 */
 	void DisableSelectArea( BOOL );								/* 現在の選択範囲を非選択状態に戻す */
-	void OnChangeSetting( void );								/* 設定変更を反映させる */
 	void SetFont( void );										/* フォントの変更 */
 	void RedrawAll( void );										/* フォーカス移動時の再描画 */
 	void Redraw( void );										// 2001/06/21 asa-o 再描画
@@ -447,9 +471,6 @@ protected:
 //	WORD DibNumColors ( VOID FAR * );					/* 情報ブロックのBitCountメンバを参照して、DIBの色数を判断します */
 //	DWORD lread ( int, void*, DWORD );					/* データをすべて読み取る */
 //	void TraceRgn( HRGN );								/* デバッグ用 リージョン矩形のダンプ */
-//	void OnPaintOld( HDC, PAINTSTRUCT *, BOOL );		/* 通常の描画処理 */
-	void OnPaint( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
-//	int DispLine( HDC, int, int, int, const unsigned char*, int, BOOL );/		* 行のテキスト／選択状態の描画 */
 	int DispLineNew( HDC, const CLayout*, int&, int, int&, BOOL, int, BOOL );	/* 行のテキスト／選択状態の描画 */
 	void DispLineNumber( HDC, const CLayout*, int, int );		/* 行番号表示 */
 	void SetCurrentColor( HDC, int );							/* 現在の色を指定 */
@@ -469,25 +490,6 @@ protected:
 	void CopySelectedAllLines( const char*, BOOL );				/* 選択範囲内の全行をクリップボードにコピーする */
 	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
 	void ConvMemory( CMemory*, int );							/* 機能種別によるバッファの変換 */
-	void OnSize( int, int );									/* ウィンドウサイズの変更処理 */
-	int  OnVScroll( int, int );								/* 垂直スクロールバーメッセージ処理 */
-	int  OnHScroll( int, int );								/* 水平スクロールバーメッセージ処理 */
-	void OnLBUTTONDOWN( WPARAM, int, int );						/* マウス左ボタン押下 */
-	void OnMOUSEMOVE( WPARAM, int, int );						/* マウス移動のメッセージ処理 */
-	void OnLBUTTONUP( WPARAM, int, int );						/* マウス左ボタン開放のメッセージ処理 */
-	void OnLBUTTONDBLCLK( WPARAM, int , int );					/* マウス左ボタンダブルクリック */
-	void OnRBUTTONDOWN( WPARAM, int, int );						/* マウス右ボタン押下 */
-	void OnRBUTTONUP( WPARAM, int, int );						/* マウス右ボタン開放 */
-// novice 2004/10/11 マウス中ボタン対応
-	void OnMBUTTONDOWN( WPARAM, int, int );						/* マウス中ボタン押下 */
-	void OnMBUTTONUP( WPARAM, int, int );						/* マウス中ボタン開放 */			// 2009.01.12 nasukoji
-// novice 2004/10/10 マウスサイドボタン対応
-	void OnXLBUTTONDOWN( WPARAM, int, int );					/* マウスサイドボタン1押下 */
-	void OnXLBUTTONUP( WPARAM, int, int );						/* マウスサイドボタン1開放 */		// 2009.01.12 nasukoji
-	void OnXRBUTTONDOWN( WPARAM, int, int );					/* マウスサイドボタン2押下 */
-	void OnXRBUTTONUP( WPARAM, int, int );						/* マウスサイドボタン2開放 */		// 2009.01.12 nasukoji
-	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );						/* マウスホイールのメッセージ処理 */
-	int  IsSpecialScrollMode( int );							/* キー・マウスボタン状態よりスクロールモードを判定する */		// 2009.01.12 nasukoji
 	/*! 選択範囲を指定する(原点未選択)
 
 		@date 2005.06.24 Moca
@@ -540,9 +542,6 @@ protected:
 	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
 	void SendStatusMessage2( const char* msg );					// Jul. 9, 2005 genta
-//  以下の二つはつかわなくなりました。 minfu 2002.04.10
-//	LRESULT RequestedReconversion( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える minfu 2002.03.27 */
-//	LRESULT RequestedReconversionW( PRECONVERTSTRING pReconv);	/*  IMEからの再変換要求に答える for 95/NT 20020331 aroka */
 	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode);	/* 再変換用構造体を設定する 2002.04.09 minfu */
 	LRESULT SetSelectionFromReonvert(PRECONVERTSTRING pReconv, bool bUnicode);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
 
@@ -581,15 +580,6 @@ protected:
 		int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
 	
 	void Command_FILE_REOPEN( int, int );			/* 再オープン */	//Dec. 4, 2002 genta 引数追加
-#if 0
-	2002/04/19 YAZAKI
-	void Command_FILE_REOPEN_SJIS( void );		/* SJISで開き直す */
-	void Command_FILE_REOPEN_JIS( void );		/* JISで開き直す */
-	void Command_FILE_REOPEN_EUC( void );		/* EUCで開き直す */
-	void Command_FILE_REOPEN_UNICODE( void );	/* Unicodeで開き直す */
-	void Command_FILE_REOPEN_UTF8( void );		/* UTF-8で開き直す */
-	void Command_FILE_REOPEN_UTF7( void );		/* UTF-7で開き直す */
-#endif
 	void Command_PRINT( void );					/* 印刷*/
 	void Command_PRINT_PREVIEW( void );			/* 印刷プレビュー*/
 	void Command_PRINT_PAGESETUP( void );		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -705,21 +695,6 @@ protected:
 //	void Command_BOXSELECTALL( void );		/* 矩形ですべて選択 */
 	void Command_BEGIN_BOXSELECT( void );	/* 矩形範囲選択開始 */
 	int Command_UP_BOX( BOOL );				/* (矩形選択)カーソル上移動 */
-//	int Command_DOWN( int, BOOL );			/* カーソル下移動 */
-//	int  Command_LEFT( int, BOOL );			/* カーソル左移動 */
-//	void Command_RIGHT( int, int, BOOL );	/* カーソル右移動 */
-//	void Command_UP2( int );				/* カーソル上移動（２行づつ） */
-//	void Command_DOWN2( int );				/* カーソル下移動（２行づつ） */
-//	void Command_WORDLEFT( int );			/* 単語の左端に移動 */
-//	void Command_WORDRIGHT( int );			/* 単語の右端に移動 */
-//	void Command_GOLINETOP( int, BOOL );	/* 行頭に移動（折り返し単位） */
-//	void Command_GOLINEEND( int, int );		/* 行末に移動（折り返し単位） */
-//	void Command_HalfPageUp( int );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-//	void Command_HalfPageDown( int );		//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-//	void Command_1PageUp( int );			//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
-//	void Command_1PageDown( int );			//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-//	void Command_GOFILETOP( int );			/* ファイルの先頭に移動 */
-//	void Command_GOFILEEND( int );			/* ファイルの最後に移動 */
 
 	/* クリップボード系 */
 	void CopyCurLine( BOOL bAddCRLFWhenCopy, EEolType neweol, BOOL bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
@@ -817,8 +792,6 @@ void ReplaceData_CEditView(
 	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */
 	void Command_JUMP( void );							/* 指定行ヘジャンプ */
 // From Here 2001.12.03 hor
-//	BOOL Command_FUNCLIST( BOOL );						/* アウトライン解析 */
-//	BOOL Command_FUNCLIST( BOOL ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */
 	BOOL Command_FUNCLIST( int ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */ // 20060201 aroka
 // To Here 2001.12.03 hor
 	// Apr. 03, 2003 genta 引数追加
@@ -952,12 +925,13 @@ void ReplaceData_CEditView(
 	//!	指定桁縦線描画関数	// 2005.11.08 Moca
 	void DispVerticalLines( HDC, int, int, int, int );
 
+	void AnalyzeDiffInfo( const char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
+	BOOL MakeDiffTmpFile( TCHAR*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
+	void ViewDiffInfo( const TCHAR*, const TCHAR*, int );		/* DIFF差分表示 */		//2005.10.29 maru
+
 	//	Aug. 31, 2000 genta
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
 
-	void AnalyzeDiffInfo( const char*, int );	/* DIFF情報の解析 */	//@@@ 2002.05.25 MIK
-	BOOL MakeDiffTmpFile( char*, HWND );	/* DIFF一時ファイル作成 */	//@@@ 2002.05.28 MIK	//2005.10.29 maru
-	void ViewDiffInfo( const char*, const char*, int );		/* DIFF差分表示 */		//2005.10.29 maru
 	
 	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const char* [], const char* [], int, int, const char* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
 
