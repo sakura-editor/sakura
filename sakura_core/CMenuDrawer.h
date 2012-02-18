@@ -76,8 +76,9 @@ public:
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
 
-	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384;	//ツールバー折返しアイコン（ダミー）
-
+	enum EButtonIndex{
+		TOOLBAR_BUTTON_F_TOOLBARWRAP = 384,	//ツールバー折返しアイコン（ダミー）
+	};
 private:
 	int Find( int nFuncID );
 	const TCHAR* GetLabel( int nFuncID );
