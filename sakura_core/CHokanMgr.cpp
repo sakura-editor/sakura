@@ -20,35 +20,25 @@
 #include "Debug.h"
 #include "CKeyBind.h"
 #include "Keycode.h"
-#include "CDicMgr.h"
 #include "CEditView.h"
 #include "mymessage.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
 
-	WNDPROC			gm_wpHokanListProc;
+WNDPROC			gm_wpHokanListProc;
 
 
 LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-//#ifdef _DEBUG
-//	MYTRACE( "HokanList_SubclassProc() uMsg == %xh\n", uMsg );
-//#endif
 	// Modified by KEITA for WIN64 2003.9.6
 	CDialog* pCDialog = ( CDialog* )::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
 	CHokanMgr* pCHokanMgr = (CHokanMgr*)::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
-//	WORD vkey;
-//	WORD nCaretPos;
-//	LPARAM hwndLB;
-//	int i;
 	MSG* pMsg;
 	int nVKey;
-//	LPARAM lKeyData;
+
 	switch( uMsg ){
 	case WM_KEYDOWN:
 		nVKey = (int) wParam;	// virtual-key code
-//		lKeyData = lParam;			// key data
-//		MYTRACE( "WM_KEYDOWN nVKey = %xh\n", nVKey );
 		/* キー操作を偽造しよう */
 		if (nVKey == VK_SPACE){	//	Space
 // novice 2004/10/10
@@ -85,18 +75,13 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 CHokanMgr::CHokanMgr()
 {
-//	m_hFont = NULL;
-//	m_hFontOld = NULL;
 	m_cmemCurWord.SetString( "" );
 
 	m_pcmemKouho = NULL;
 	m_nKouhoNum = 0;;
 	m_nCurKouhoIdx = -1;
 	m_pszCurKouho = NULL;
-//	m_pcEditView = NULL;
 	m_bTimerFlag = TRUE;
-//	hm_wpHokanListProc = FALSE;
-	return;
 }
 
 CHokanMgr::~CHokanMgr()
@@ -136,12 +121,11 @@ void CHokanMgr::ChangeView( LPARAM pcEditView )
 
 void CHokanMgr::Hide( void )
 {
-	CEditView* pcEditView;
 
 	::ShowWindow( m_hWnd, SW_HIDE );
 	m_nCurKouhoIdx = -1;
 	/* 入力フォーカスを受け取ったときの処理 */
-	pcEditView = (CEditView*)m_lParam;
+	CEditView* pcEditView = (CEditView*)m_lParam;
 	pcEditView->OnSetFocus();
 	return;
 
@@ -154,15 +138,14 @@ void CHokanMgr::Hide( void )
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 int CHokanMgr::Search(
-//	HFONT		hFont,
-	POINT*		ppoWin,
-	int			nWinHeight,
-	int			nColmWidth,
-	const char*	pszCurWord,
-	const char* pszHokanFile,
-	int			bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
-	BOOL		bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
-	CMemory*	pcmemHokanWord	// 2001/06/19 asa-o
+	POINT*			ppoWin,
+	int				nWinHeight,
+	int				nColmWidth,
+	const char*		pszCurWord,
+	const TCHAR*	pszHokanFile,
+	int				bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+	BOOL			bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
+	CMemory*		pcmemHokanWord	// 2001/06/19 asa-o
 )
 {
 	CEditView* pcEditView = (CEditView*)m_lParam;
@@ -180,7 +163,6 @@ int CHokanMgr::Search(
 	}
 	m_nKouhoNum = CDicMgr::HokanSearch(
 		pszCurWord,
-//		m_pShareData->m_Common.m_bHokanLoHiCase,	/* 入力補完機能：英大文字小文字を同一視する */
 		bHokanLoHiCase,								// 引数からに変更	2001/06/19 asa-o
 		&m_pcmemKouho,
 		0, //Max候補数
@@ -212,10 +194,6 @@ int CHokanMgr::Search(
 		}
 	}
 
-//	LOGFONT		lf;
-//	HDC			hdc;
-//	WNDCLASS	wc;
-//	ATOM		atom;
 	int			i;
 
 	/* 共有データ構造体のアドレスを返す */
@@ -267,23 +245,6 @@ int CHokanMgr::Search(
 		pszWork = pszNext + lstrlen( pszCR );
 	}
 	::SendMessage( hwndList, LB_SETCURSEL, 0, 0 );
-
-
-//? この処理はやらないほうが見やすいかも?
-//?	/* リストの全アイテム数がリストに収まる時は、リストのサイズを小さくする */
-//?	int nItemHeight;
-//?	nItemHeight = ::SendMessage( hwndList, LB_GETITEMHEIGHT, 0, 0 );
-//?	if( ( m_nKouhoNum + 1 ) * nItemHeight < m_nHeight ){
-//?		m_nHeight = ( m_nKouhoNum + 1 ) * nItemHeight;
-//?	}else{
-//?		if( m_nHeight < 1000 ){
-//?			m_nHeight = 1000;
-//?		}
-//?	}
-//?	if( ( m_nKouhoNum + 1 ) * nItemHeight < m_nHeight ){
-//?		m_nHeight = ( m_nKouhoNum + 1 ) * nItemHeight;
-//?	}
-//?
 
 
 //@@	::EnableWindow( ::GetParent( ::GetParent( m_hwndParent ) ), FALSE );
@@ -378,57 +339,6 @@ int CHokanMgr::Search(
 }
 
 
-#if 0
-///// 2003.06.25　未使用のようだ。Moca
-void CHokanMgr::SetCurKouhoStr( void )
-{
-	char*	pszCR = "\n";
-	int		i;
-	char*	pszWork;
-	char*	pszNext;
-	char	szAdd[64];
-
-	if( NULL != m_pszCurKouho ){
-		delete [] m_pszCurKouho;
-		m_pszCurKouho = NULL;
-	}
-	if( m_nCurKouhoIdx >= m_nKouhoNum ){
-		return;
-	}
-	strcpy( szAdd, "" );
-//	sprintf( szAdd, " (%d/%d)", m_nCurKouhoIdx + 1, m_nKouhoNum );
-	pszWork = m_pcmemKouho->GetPtr();
-	for( i = 0; i <= m_nCurKouhoIdx; ++i ){
-		pszNext = strstr( pszWork, pszCR );
-		if( NULL == pszNext ){
-			return;
-		}
-		if( i == m_nCurKouhoIdx ){
-			pszWork += m_cmemCurWord.GetStringLength();
-			m_pszCurKouho = new char[pszNext - pszWork + 1 + lstrlen( szAdd )];
-			memcpy( m_pszCurKouho, pszWork, pszNext - pszWork );
-			m_pszCurKouho[pszNext - pszWork] = '\0';
-			strcat( m_pszCurKouho, szAdd );
-			::MoveWindow( m_hWnd,
-				m_poWin.x - m_nColmWidth/*+ m_cmemCurWord.GetStringLength() * m_nColmWidth*/,
-				m_poWin.y + m_nWinHeight,
-//				m_nColmWidth * lstrlen(m_pszCurKouho) + 2,
-//				m_nWinHeight + 2 + 8,
-				220,
-				180,
-				TRUE
-			);
-			OnSize( 0, 0 );
-
-			return;
-		}
-		pszWork = pszNext + lstrlen( pszCR );
-	}
-	return;
-
-}
-#endif
-
 
 BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -457,7 +367,7 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	int	Controls[] = {
 		IDC_LIST_WORDS
 	};
-	int		nControls = sizeof( Controls ) / sizeof( Controls[0] );
+	int		nControls = _countof( Controls );
 	int		fwSizeType;
 	int		nWidth;
 	int		nHeight;
@@ -582,12 +492,9 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	MYTRACE( "CHokanMgr::DoHokan( nVKey==%xh )\n", nVKey );
 #endif
 	/* 補完候補決定キー */
-	if( VK_RETURN	== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
-	if( VK_TAB		== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    補完決定キーが有効/無効 */
-	if( VK_RIGHT	== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
-#if 0
-	if( VK_SPACE	== nVKey && FALSE == m_pShareData->m_Common.m_bHokanKey_SPACE )		return FALSE;/* VK_SPACE  補完決定キーが有効/無効 */
-#endif
+	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
+	if( VK_TAB		== nVKey && !m_pShareData->m_Common.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    補完決定キーが有効/無効 */
+	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
 
 	HWND hwndList;
 	int nItem;
@@ -599,12 +506,6 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 		return FALSE;
 	}
 	::SendMessage( hwndList, LB_GETTEXT, nItem, (LPARAM)szLabel );
-#if 0
-	/* スペースで候補決定の場合はスペースをつける */
-	if( VK_SPACE == nVKey ){
-		strcat( szLabel, " " );
-	}
-#endif
 
  	/* テキストを貼り付け */
 	pcEditView = (CEditView*)m_lParam;

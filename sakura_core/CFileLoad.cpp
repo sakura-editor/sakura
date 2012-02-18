@@ -96,7 +96,7 @@ CFileLoad::~CFileLoad( void )
 	@date 2003.06.08 Moca CODE_AUTODETECT‚ğw’è‚Å‚«‚é‚æ‚¤‚É•ÏX
 	@date 2003.07.26 ryoji BOMˆø”’Ç‰Á
 */
-enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BOOL* pbBomExist )
+ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BOOL* pbBomExist )
 {
 	HANDLE	hFile;
 	DWORD	FileSize;
@@ -180,7 +180,7 @@ enumCodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BO
 	
 	// To Here Jun. 13, 2003 Moca BOM‚Ìœ‹
 	m_eMode = FLMODE_REDY;
-	return (enumCodeType)m_CharCode;
+	return (ECodeType)m_CharCode;
 }
 
 /*!

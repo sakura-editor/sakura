@@ -7476,7 +7476,7 @@ DWORD CEditView::DoGrep(
 		if( bGrepRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
 			cmemMessage.AppendString( "    (正規表現:" );
-			cmemMessage.AppendString( cRegexp.GetVersion() );
+			cmemMessage.AppendString( cRegexp.GetVersionT() );
 			cmemMessage.AppendString( ")\r\n" );
 		}
 	}

@@ -2358,7 +2358,7 @@ void CMemory::ToHankaku(
 ||	UTF-7		5
 ||	UnicodeBE	6
 ||	エラー		-1
-||	エラー以外は enumCodeType を使う
+||	エラー以外は ECodeType を使う
 */
 int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 {

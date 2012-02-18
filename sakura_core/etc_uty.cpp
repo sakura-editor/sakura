@@ -1997,7 +1997,7 @@ bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMessage )
 		return false;
 	}
 	if( hWnd != NULL ){
-		::SetDlgItemText( hWnd, nCmpId, cRegexp.GetVersion() );
+		::SetDlgItemText( hWnd, nCmpId, cRegexp.GetVersionT() );
 	}
 	return true;
 }

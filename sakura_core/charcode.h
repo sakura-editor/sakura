@@ -42,10 +42,10 @@ typedef long wchar32_t;
 
 
 
-enum enumCodeType;
+enum ECodeType;
 #if 0
 /*! 文字コードセット種別 */
-enum enumCodeType {
+enum ECodeType {
 	CODE_SJIS,				// MS-CP932(Windows-31J), シフトJIS(Shift_JIS)
 	CODE_JIS,				// MS-CP5022x(ISO-2022-JP-MS)
 	CODE_EUC,				// MS-CP51932, eucJP-ms(eucJP-open)
@@ -115,12 +115,12 @@ enum enumJisESCSeqType {
 	文字コード判定情報 構造体群
 */
 typedef struct EncodingInfo_t {
-	enumCodeType eCodeID;	// 文字コード識別番号
+	ECodeType eCodeID;		// 文字コード識別番号
 	int nSpecBytes;			// 特有バイト数
 	int nDiff;				// ポイント数 := 特有バイト数 － 不正バイト数
 } MBCODE_INFO;
 typedef struct WC_EncodingInfo_t {
-	enumCodeType eCodeID;	// 文字コード識別番号
+	ECodeType eCodeID;		// 文字コード識別番号
 	int nCRorLF;			// ワイド文字の改行の個数
 	int nLostBytes;			// 不正バイト数
 } WCCODE_INFO;

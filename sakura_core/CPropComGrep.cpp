@@ -194,7 +194,7 @@ void CPropCommon::SetRegexpVersion( HWND hwndDlg )
 		::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, _T("Р≥ЛKХ\МїВЌОgЧpВ≈ВЂВ№ВєВс") );
 		return;
 	}
-	::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersion() );
+	::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, breg.GetVersionT() );
 }
 
 

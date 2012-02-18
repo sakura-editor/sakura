@@ -100,9 +100,8 @@ public:
 		PAT_LOOKAHEAD = 16		//!< 先読み"(?[=]"
 	};
 
-	const char* GetVersion(){		//!< DLLのバージョン情報を取得
-		return IsAvailable() ? BRegexpVersion() : "";
-	}
+	//! DLLのバージョン情報を取得
+	const TCHAR* GetVersionT(){ return IsAvailable() ? BRegexpVersion() : _T(""); }
 
 	//	CJreエミュレーション関数
 	//!	検索パターンのコンパイル
@@ -126,28 +125,31 @@ public:
 	    検索に一致した文字列の先頭位置を返す(文字列先頭なら0)
 		@retval 検索に一致した文字列の先頭位置
 	*/
-	int GetIndex(void) {
-		return m_pRegExp->startp[0] - m_szTarget;
+	CLogicInt GetIndex(void)
+	{
+		return CLogicInt(m_pRegExp->startp[0] - m_szTarget);
 	}
 	/*!
 	    検索に一致した文字列の次の位置を返す
 		@retval 検索に一致した文字列の次の位置
 	*/
-	int GetLastIndex(void) {
-		return m_pRegExp->endp[0] - m_szTarget;
+	CLogicInt GetLastIndex(void)
+	{
+		return CLogicInt(m_pRegExp->endp[0] - m_szTarget);
 	}
 	/*!
 		検索に一致した文字列の長さを返す
 		@retval 検索に一致した文字列の長さ
 	*/
-	int GetMatchLen(void) {
-		return m_pRegExp->endp[0] - m_pRegExp->startp[0];
+	CLogicInt GetMatchLen(void)
+	{
+		return CLogicInt(m_pRegExp->endp[0] - m_pRegExp->startp[0]);
 	}
 	/*!
 		置換された文字列の長さを返す
 		@retval 置換された文字列の長さ
 	*/
-	int GetStringLen(void) {
+	CLogicInt GetStringLen(void) {
 		// 置換後文字列が０幅なら outp、outendpもNULLになる
 		// NULLポインタの引き算は問題なく０になる。
 		// outendpは '\0'なので、文字列長は +1不要
@@ -155,17 +157,19 @@ public:
 		// Jun. 03, 2005 Karoto
 		//	置換後文字列が0幅の場合にoutpがNULLでもoutendpがNULLでない場合があるので，
 		//	outpのNULLチェックが必要
+
 		if (m_pRegExp->outp == NULL) {
-			return 0;
+			return CLogicInt(0);
 		} else {
-			return m_pRegExp->outendp - m_pRegExp->outp;
+			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
 		}
 	}
 	/*!
 		置換された文字列を返す
 		@retval 置換された文字列へのポインタ
 	*/
-	const char *GetString(void) {
+	const char *GetString(void)
+	{
 		return m_pRegExp->outp;
 	}
 	/*! @} */
@@ -174,7 +178,8 @@ public:
 	/*! BREGEXPメッセージを取得する
 		@retval メッセージへのポインタ
 	*/
-	const char* GetLastMessage(void) const { return m_szMsg; }
+	const TCHAR* GetLastMessage() const { return m_szMsg; }
+
 	/*!	先読みパターンが存在するかを返す
 		この関数は、コンパイル後であることが前提なので、コンパイル前はfalse
 		@retval true 先読みがある
@@ -269,7 +274,7 @@ private:
 		bool qeEscapeIsAvailable; //!<正規表現ライブラリが \Q...\Eをサポートしていたら真。
 	} m_checkedSyntax;
 	// 静的メンバ変数
-	static const char	m_tmpBuf[2];		//!< ダミー文字列
+	static const char	m_tmpBuf[2];	//!< ダミー文字列
 };
 
 //	以下は関数ポインタに読み込まれる関数の解説

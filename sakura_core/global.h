@@ -156,7 +156,7 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 
 
 /* 文字コードセット種別 */
-SAKURA_CORE_API enum enumCodeType {
+SAKURA_CORE_API enum ECodeType {
 	CODE_SJIS,				/* SJIS */
 	CODE_JIS,				/* JIS */
 	CODE_EUC,				/* EUC */
@@ -176,30 +176,6 @@ SAKURA_CORE_API extern const char* gm_pszCodeNameArr_3[];
 SAKURA_CORE_API extern const int gm_nCodeComboValueArr[];
 SAKURA_CORE_API extern const char* const gm_pszCodeComboNameArr[];
 SAKURA_CORE_API extern const int gm_nCodeComboNameArrNum;
-
-/* アウトライン解析の種類 */
-SAKURA_CORE_API enum enumOutlineType {
-	OUTLINE_C,
-	OUTLINE_CPP,
-	OUTLINE_PLSQL,
-	OUTLINE_TEXT,
-	OUTLINE_JAVA,
-	OUTLINE_COBOL,
-	OUTLINE_ASM,
-	OUTLINE_PERL,	//	Sep. 8, 2000 genta
-	OUTLINE_VB,	//	June 23, 2001 N.Nakatani
-	OUTLINE_WZTXT,		// 2003.05.20 zenryaku 階層付テキストアウトライン解析
-	OUTLINE_HTML,		// 2003.05.20 zenryaku HTMLアウトライン解析
-	OUTLINE_TEX,		// 2003.07.20 naoh TeXアウトライン解析
-	OUTLINE_FILE,		//	2002.04.01 YAZAKI ルールファイル用
-	OUTLINE_PYTHON,		//	2007.02.08 genta Pythonアウトライン解析
-	OUTLINE_ERLANG,		//	2009.08.11 genta Erlangアウトライン解析
-	//	新しいアウトライン解析は必ずこの直前へ挿入
-	OUTLINE_CODEMAX,
-	OUTLINE_BOOKMARK,	//	2001.12.03 hor
-	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
-	OUTLINE_UNKNOWN	= 99
-};
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
@@ -241,12 +217,6 @@ SAKURA_CORE_API extern const COLORREF	SELECTEDAREA_RGB;
 SAKURA_CORE_API extern const int		SELECTEDAREA_ROP2;
 
 
-/* スマートインデント種別 */
-SAKURA_CORE_API enum enumSmartIndentType {
-	SMARTINDENT_NONE,
-	SMARTINDENT_CPP
-};
-
 
 
 
@@ -254,7 +224,7 @@ SAKURA_CORE_API enum enumSmartIndentType {
 // ここを変更したときは、global.cpp のg_ColorAttributeArrの定義も変更して下さい。
 //	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
 //	2007.09.09 Moca  中間の定義はお任せに変更
-SAKURA_CORE_API enum enumColorIndexType {
+SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_TEXT = 0,      /* テキスト */
 	COLORIDX_RULER,         /* ルーラー */
 	COLORIDX_CARET,         /* キャレット */    // 2006.12.07 ryoji
