@@ -1,2 +1,0 @@
-Procedure /// ŠÖ”
-Function /// ŠÖ”
