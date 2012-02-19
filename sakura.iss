@@ -44,6 +44,7 @@ Name: quicklaunch; Description: "Quick Launchにアイコン作成(&Q)";     Components
 Name: proglist;    Description: "プログラム一覧に追加(&P)"; Components: main;
 Name: desktopicon; Description: "デスクトップにアイコン作成(&D)";     Components: main; Flags: unchecked;
 Name: fileassoc;   Description: "「SAKURAで開く」メニューの追加(&E)"; Components: main; Flags: unchecked;
+Name: sendto;      Description: "「送る」に追加(&T)";                 Components: main; Flags: unchecked;
 Name: startup;     Description: "起動時に常駐(&B)";                   Components: main; Flags: unchecked;
 
 [Files]
@@ -76,6 +77,7 @@ Name: "{group}\設定フォルダ";                                                  F
 Name: "{userdesktop}\サクラエディタ";                                          Filename: "{app}\sakura.exe";                         Components: main; Tasks: desktopicon;
 Name: "{group}\アンインストール";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\サクラエディタ"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
+Name: "{sendto}\サクラエディタ";                                               Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
 Name: "{userstartup}\サクラエディタ常駐";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
 
 [Run]
