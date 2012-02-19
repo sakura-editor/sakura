@@ -105,7 +105,7 @@ public:
 	 */
 	int GetActualTabSpace(int pos) const { return m_nTabSpace - pos % m_nTabSpace; }
 	//	Aug. 14, 2005 genta
-	int GetMaxLineSize(void) const { return m_nMaxLineSize; }
+	int GetMaxLineSize(void) const { return m_nMaxLineKetas; }
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	bool ChangeLayoutParam( HWND hwndProgress, int nTabSize, int nMaxLineSize );
 	// Jul. 29, 2006 genta
@@ -198,12 +198,14 @@ protected:
 public:
 	CDocLineMgr*	m_pcDocLineMgr;	/* 行バッファ管理マネージャ */
 protected:
+	// 2007.09.07 kobake 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
+
 	CLayout*		m_pLayoutTop;
 	CLayout*		m_pLayoutBot;
 	//	2002.10.07 YAZAKI add
 	int				m_nLineTypeBot;	/*!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 	int				m_nLines;					/* 全物理行数 */
-	int				m_nMaxLineSize;				/* 折り返し文字数 */
+	int				m_nMaxLineKetas;			/* 折り返し文字数 */
 	BOOL			m_bWordWrap;				/* 英文ワードラップをする */
 	BOOL			m_bKinsokuHead;				/* 行頭禁則をする */	//@@@ 2002.04.08 MIK
 	BOOL			m_bKinsokuTail;				/* 行末禁則をする */	//@@@ 2002.04.08 MIK

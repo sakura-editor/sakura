@@ -116,11 +116,11 @@ CEditDoc::CEditDoc() :
 	/* レイアウト情報の変更 */
 //	STypeConfig& ref = GetDocumentAttribute();
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
-	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINESIZEで初期化する
+	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
 	// 「右端で折り返す」は、この後のOnSize()で再設定される
 	STypeConfig ref = GetDocumentAttribute();
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
-		ref.m_nMaxLineSize = MAXLINESIZE;
+		ref.m_nMaxLineKetas = MAXLINEKETAS;
 	
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
@@ -712,11 +712,11 @@ BOOL CEditDoc::FileRead(
 	{
 //		STypeConfig& ref = GetDocumentAttribute();
 		// 2008.06.07 nasukoji	折り返し方法の追加に対応
-		// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINESIZEで初期化する
+		// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
 		// 「右端で折り返す」は、この後のOnSize()で再設定される
 		STypeConfig ref = GetDocumentAttribute();
 		if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
-			ref.m_nMaxLineSize = MAXLINESIZE;
+			ref.m_nMaxLineKetas = MAXLINEKETAS;
 
 		m_cLayoutMgr.SetLayoutInfo(
 			TRUE,
@@ -1186,13 +1186,6 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 		/* 変更された設定値のコピー */
 		int nTextWrapMethodOld = GetDocumentAttribute().m_nTextWrapMethod;
 		m_cPropTypes.GetTypeData( m_pShareData->m_Types[nSettingType] );
-
-//		/* 折り返し桁数が変更された */
-//		if( m_cPropTypes.m_nMaxLineSize_org != m_cPropTypes.m_Types.m_nMaxLineSize){
-//			/*アンドゥ・リドゥバッファのクリア */
-//			/* 全要素のクリア */
-//			m_cOpeBuf.ClearAll();
-//		}
 
 		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
 		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
@@ -3843,12 +3836,12 @@ void CEditDoc::OnChangeSetting( void )
 
 	// 指定桁で折り返す：タイプ別設定を使用
 	// 右端で折り返す：仮に現在の折り返し幅を使用
-	// 上記以外：MAXLINESIZEを使用
+	// 上記以外：MAXLINEKETASを使用
 	if( m_nTextWrapMethodCur != WRAP_SETTING_WIDTH ){
 		if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH )
-			ref.m_nMaxLineSize = m_cLayoutMgr.GetMaxLineSize();	// 現在の折り返し幅
+			ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineSize();	// 現在の折り返し幅
 		else
-			ref.m_nMaxLineSize = MAXLINESIZE;
+			ref.m_nMaxLineKetas = MAXLINEKETAS;
 	}
 
 	m_cLayoutMgr.SetLayoutInfo(

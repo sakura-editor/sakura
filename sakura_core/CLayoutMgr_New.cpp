@@ -97,7 +97,7 @@ void CLayoutMgr::DoLayout(
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
 	//	TABが折り返し幅以上の時はTAB=4としてしまう
 	//	折り返し幅の最小値=10なのでこの値は問題ない
-	if( m_nTabSpace >= m_nMaxLineSize ){
+	if( m_nTabSpace >= m_nMaxLineKetas ){
 		m_nTabSpace = 4;
 	}
 
@@ -115,9 +115,9 @@ void CLayoutMgr::DoLayout(
 
 	/*
 		2004.03.28 Moca TAB計算を正しくするためにインデントを幅で調整することはしない
-		nMaxLineSizeは変更しないので，ここでm_nMaxLineSizeを設定する．
+		nMaxLineSizeは変更しないので，ここでm_nMaxLineKetasを設定する．
 	*/
-	nMaxLineSize = m_nMaxLineSize;
+	nMaxLineSize = m_nMaxLineKetas;
 
 	while( NULL != pCDocLine ){
 		pLine = pCDocLine->m_pLine->GetStringPtr( &nLineLen );
@@ -145,13 +145,10 @@ void CLayoutMgr::DoLayout(
 				//	計算
 				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
 				nIndent = (this->*getIndentOffset)( m_pLayoutBot );
-				// 2004.03.28 Moca nMaxLineSizeを引く方法だと、タブ幅の計算が合わないので、nPosXの初期値をnIndentにする
-				//	nMaxLineSize = m_nMaxLineSize - nIndent;
-				
+
 				//	計算済み
 				pLayoutCalculated = m_pLayoutBot;
 			}
-
 
 			SEARCH_START:;
 			
@@ -455,7 +452,7 @@ int CLayoutMgr::DoLayout_Range(
 	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
 	
 	//	2004.04.09 genta 関数内では値が変化しないのでループの外に出す
-	int			nMaxLineSize= m_nMaxLineSize;
+	int			nMaxLineSize= m_nMaxLineKetas;
 
 	nLineNumWork = 0;
 	*pnExtInsLineNum = 0;
@@ -515,8 +512,7 @@ int CLayoutMgr::DoLayout_Range(
 				//	計算
 				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
 				nIndent = (this->*getIndentOffset)( pLayout );
-				// 2004.03.28 Moca nMaxLineSizeを引く方法だと、タブ幅の計算が合わないので、nPosXの初期値をnIndentにする
-				//	nMaxLineSize = m_nMaxLineSize - nIndent;
+
 				//	計算済み
 				pLayoutCalculated = pLayout;
 			}
@@ -905,7 +901,7 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 			nCalTextWidthLinesFrom = pctwArg->nLineFrom;
 
 			// 最終的に編集された行数（3行削除2行追加なら2行追加）
-			// 　1行がMAXLINESIZEを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
+			// 　1行がMAXLINEKETASを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
 			// 　不要なので計算を省くためこのままとする。
 			int nEditLines = nInsLineNum + ((pctwArg->nDelLines > 0) ? pctwArg->nDelLines : 0);
 			nCalTextWidthLinesTo   = pctwArg->nLineFrom + ((nEditLines > 0) ? nEditLines : 0);
@@ -1317,7 +1313,7 @@ int CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 		it.addDelta();
 	}
 	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
-	if ( m_nMaxLineSize - nIpos < m_nTabSpace + 2 ){
+	if ( m_nMaxLineKetas - nIpos < m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
@@ -1382,7 +1378,7 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		it.addDelta();
 	}
 	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
-	if ( m_nMaxLineSize - nIpos < m_nTabSpace + 2 ){
+	if ( m_nMaxLineKetas - nIpos < m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
@@ -1479,7 +1475,7 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, int nStart, int nEnd )
 			nMaxLineNum = i;		// 最大幅のレイアウト行
 
 			// アプリケーションの最大幅となったら算出は停止
-			if( nMaxLen >= MAXLINESIZE && !bCalLineLen )
+			if( nMaxLen >= MAXLINEKETAS && !bCalLineLen )
 				break;
 		}
 

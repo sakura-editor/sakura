@@ -370,7 +370,7 @@ public: /* テスト用にアクセス属性を変更 */
 	// To Here 2007.09.09 Moca
 
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
-	static int		m_pnDx[MAXLINESIZE + 10];	/* 文字列描画用文字幅配列 */
+	static int		m_pnDx[MAXLINEKETAS + 10];	/* 文字列描画用文字幅配列 */
 	HFONT			m_hFont_HAN;		/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */

@@ -41,7 +41,7 @@ CLayoutMgr::CLayoutMgr()
 : m_cLineComment(), m_cBlockComment(),
 	//	2004.04.03 Moca
 	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する
-	m_nMaxLineSize( 10 ),
+	m_nMaxLineKetas( 10 ),
 	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
 	getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta
 {
@@ -118,7 +118,7 @@ void CLayoutMgr::SetLayoutInfo(
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
 
-	m_nMaxLineSize = refType.m_nMaxLineSize;
+	m_nMaxLineKetas = refType.m_nMaxLineKetas;
 	m_bWordWrap		= refType.m_bWordWrap;		/* 英文ワードラップをする */
 	m_nTabSpace		= refType.m_nTabSpace;
 	m_nStringType	= refType.m_nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
@@ -1557,10 +1557,10 @@ bool CLayoutMgr::ChangeLayoutParam( HWND hwndProgress,
 	int nTabSize, int nMaxLineSize )
 {
 	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
-	if( nMaxLineSize < MINLINESIZE || nMaxLineSize > MAXLINESIZE ){ return false; }
+	if( nMaxLineSize < MINLINEKETAS || nMaxLineSize > MAXLINEKETAS ){ return false; }
 
 	m_nTabSpace = nTabSize;
-	m_nMaxLineSize = nMaxLineSize;
+	m_nMaxLineKetas = nMaxLineSize;
 
 	DoLayout( hwndProgress );
 
@@ -1577,7 +1577,7 @@ void CLayoutMgr::DUMP( void )
 	MYTRACE( "m_nLines=%d\n", m_nLines );
 	MYTRACE( "m_pLayoutTop=%08lxh\n", m_pLayoutTop );
 	MYTRACE( "m_pLayoutBot=%08lxh\n", m_pLayoutBot );
-	MYTRACE( "m_nMaxLineSize=%d\n", m_nMaxLineSize );
+	MYTRACE( "m_nMaxLineKetas=%d\n", m_nMaxLineKetas );
 
 	MYTRACE( "m_nTabSpace=%d\n", m_nTabSpace );
 	CLayout* pLayout;

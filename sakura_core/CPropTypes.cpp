@@ -601,8 +601,6 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	PROPSHEETHEADER	psh;
 	int				nIdx;
 
-	m_nMaxLineSize_org = m_Types.m_nMaxLineSize;
-
 	// 2005.11.30 Moca カスタム色の先頭にテキスト色を設定しておく
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_colBACK;
@@ -883,11 +881,11 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 			if( pMNUD->iDelta > 0 ){
 				--nVal;
 			}
-			if( nVal < MINLINESIZE ){
-				nVal = MINLINESIZE;
+			if( nVal < MINLINEKETAS ){
+				nVal = MINLINEKETAS;
 			}
-			if( nVal > MAXLINESIZE ){
-				nVal = MAXLINESIZE;
+			if( nVal > MAXLINEKETAS ){
+				nVal = MAXLINEKETAS;
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nVal, FALSE );
 			return TRUE;
@@ -961,13 +959,6 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 //				MYTRACE( "p1 PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 p1 */
 				GetData_p1( hwndDlg );
-
-//				if( m_nMaxLineSize_org != m_Types.m_nMaxLineSize ){
-//					if( IDNO == ::MessageBox( hwndDlg, "折り返し桁数を変更すると、アンドゥ・リドゥバッファがクリアされます。\nよろしいですか？", GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) ){
-//						m_Types.m_nMaxLineSize = m_nMaxLineSize_org;
-//						SetData_p1( hwndDlg );
-//					}
-//				}
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -1041,7 +1032,7 @@ void CPropTypes::SetData_p1( HWND hwndDlg )
 	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
 
 	/* 折り返し文字数 */
-	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, m_Types.m_nMaxLineSize, FALSE );
+	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, m_Types.m_nMaxLineKetas, FALSE );
 
 	/* 文字の隙間 */
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Types.m_nColmSpace, FALSE );
@@ -1247,12 +1238,12 @@ int CPropTypes::GetData_p1( HWND hwndDlg )
 	m_Types.m_nTextWrapMethod = WrapMethodArr[nSelPos].nMethod;		// テキストの折り返し方法
 
 	/* 折り返し文字数 */
-	m_Types.m_nMaxLineSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
-	if( m_Types.m_nMaxLineSize < MINLINESIZE ){
-		m_Types.m_nMaxLineSize = MINLINESIZE;
+	m_Types.m_nMaxLineKetas = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
+	if( m_Types.m_nMaxLineKetas < MINLINEKETAS ){
+		m_Types.m_nMaxLineKetas = MINLINEKETAS;
 	}
-	if( m_Types.m_nMaxLineSize > MAXLINESIZE ){
-		m_Types.m_nMaxLineSize = MAXLINESIZE;
+	if( m_Types.m_nMaxLineKetas > MAXLINEKETAS ){
+		m_Types.m_nMaxLineKetas = MAXLINEKETAS;
 	}
 
 	/* 文字の隙間 */
@@ -2620,7 +2611,7 @@ int CPropTypes::GetData_p3_new( HWND hwndDlg )
 				valueEnd = szVertLine[offset] - '0' + valueEnd * 10;
 			}
 			if( valueEnd <= 0 ){
-				valueEnd = MAXLINESIZE;
+				valueEnd = MAXLINEKETAS;
 			}
 			if( szVertLine[offset] != ')' ){
 				break;

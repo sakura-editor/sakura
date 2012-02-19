@@ -3332,7 +3332,7 @@ end_of_func:;
 			bRedo		// Å‰‚ÌŒŸõ
 		){
 			nLineNum=m_pcEditDoc->m_cLayoutMgr.GetLineCount()-1;
-			nIdx=MAXLINESIZE;
+			nIdx=MAXLINEKETAS;
 			bRedo=FALSE;
 			goto re_do;	// ––”ö‚©‚çÄŒŸõ
 		}
@@ -9183,30 +9183,30 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
 	
 	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == ViewColNumToWrapColNum( m_nViewColNum ) ){
 		// a)
-		newWidth = MAXLINESIZE;
+		newWidth = MAXLINEKETAS;
 		return TGWRAP_FULL;
 	}
-	else if( MINLINESIZE > m_nViewColNum - GetWrapOverhang() ){ // 2)
+	else if( MINLINEKETAS > m_nViewColNum - GetWrapOverhang() ){ // 2)
 		// 3)
-		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() != MAXLINESIZE ){
+		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() != MAXLINEKETAS ){
 			// 4)
-			newWidth = MAXLINESIZE;
+			newWidth = MAXLINEKETAS;
 			return TGWRAP_FULL;
 		}
-		else if( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize == MAXLINESIZE ){ // 5)
+		else if( m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas == MAXLINEKETAS ){ // 5)
 			// 6)
 			return TGWRAP_NONE;
 		}
 		else { // 7)
-			newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+			newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas;
 			return TGWRAP_PROP;
 		}
 	}
 	else { // 8)
-		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == MAXLINESIZE && // 9)
-			m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize != MAXLINESIZE ){
+		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == MAXLINEKETAS && // 9)
+			m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas != MAXLINEKETAS ){
 			// a)
-			newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+			newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas;
 			return TGWRAP_PROP;
 			
 		}
@@ -9244,7 +9244,7 @@ void CEditView::Command_WRAPWINDOWWIDTH( void )	//	Oct. 7, 2000 JEPRO WRAPWINDIW
 	m_pcEditDoc->ChangeLayoutParam( true, m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), newWidth );
 
 	//	Aug. 14, 2005 genta ‹¤’Êİ’è‚Ö‚Í”½‰f‚³‚¹‚È‚¢
-//	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize = m_nViewColNum;
+//	m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas = m_nViewColNum;
 
 //	m_pcEditDoc->OnChangeSetting();	/* ƒrƒ…[‚Éİ’è•ÏX‚ğ”½‰f‚³‚¹‚é */
 

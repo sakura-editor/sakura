@@ -1068,7 +1068,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 			if( true == cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
 				sscanf( szKeyData, pszForm,
 					&types.m_nIdx,
-					&types.m_nMaxLineSize,
+					&types.m_nMaxLineKetas,
 					&types.m_nColmSpace,
 					&types.m_nTabSpace,
 					&types.m_nKeyWordSetIdx[0],
@@ -1081,13 +1081,13 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 				 );
 			}
 			// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
-			if( types.m_nMaxLineSize < MINLINESIZE ){
-				types.m_nMaxLineSize = MINLINESIZE;
+			if( types.m_nMaxLineKetas < MINLINEKETAS ){
+				types.m_nMaxLineKetas = MINLINEKETAS;
 			}
 		}else{
 			wsprintf( szKeyData, pszForm,
 				types.m_nIdx,
-				types.m_nMaxLineSize,
+				types.m_nMaxLineKetas,
 				types.m_nColmSpace,
 				types.m_nTabSpace,
 				types.m_nKeyWordSetIdx[0],

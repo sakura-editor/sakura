@@ -5220,7 +5220,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	int nIdx = 0;
 	int i;
 	pShareData->m_Types[nIdx].m_nTextWrapMethod = WRAP_SETTING_WIDTH;	// テキストの折り返し方法		// 2008.05.30 nasukoji
-	pShareData->m_Types[nIdx].m_nMaxLineSize = MAXLINESIZE;				/* 折り返し文字数 */
+	pShareData->m_Types[nIdx].m_nMaxLineKetas = MAXLINEKETAS;			/* 折り返し文字数 */
 	pShareData->m_Types[nIdx].m_nColmSpace = 0;					/* 文字と文字の隙間 */
 	pShareData->m_Types[nIdx].m_nLineSpace = 1;					/* 行間のすきま */
 	pShareData->m_Types[nIdx].m_nTabSpace = 4;					/* TABの文字数 */
@@ -5457,7 +5457,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 
 
 	/* 基本 */
-	pShareData->m_Types[0].m_nMaxLineSize = MAXLINESIZE;				/* 折り返し文字数 */
+	pShareData->m_Types[0].m_nMaxLineKetas = MAXLINEKETAS;			/* 折り返し文字数 */
 //		pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_UNKNOWN;	/* アウトライン解析方法 */	//Jul. 08, 2001 JEPRO 使わないように変更
 	pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
@@ -5477,7 +5477,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 //		nIdx = 0;
 	/* テキスト */
 	//From Here Sept. 20, 2000 JEPRO テキストの規定値を80→120に変更(不具合一覧.txtがある程度読みやすい桁数)
-	pShareData->m_Types[1].m_nMaxLineSize = 120;					/* 折り返し文字数 */
+	pShareData->m_Types[1].m_nMaxLineKetas = 120;					/* 折り返し文字数 */
 	//To Here Sept. 20, 2000
 	pShareData->m_Types[1].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない

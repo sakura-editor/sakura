@@ -102,7 +102,7 @@ VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
 
 
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
-int CEditView::m_pnDx[MAXLINESIZE + 10];
+int CEditView::m_pnDx[MAXLINEKETAS + 10];
 
 
 
@@ -2857,9 +2857,9 @@ int CEditView::ViewColNumToWrapColNum( int nViewColNum ) const
 	// ぶら下げ余白を差し引く
 	int nWidth = nViewColNum - GetWrapOverhang();
 
-	// MINLINESIZE未満の時はMINLINESIZEで折り返しとする
-	if( nWidth < MINLINESIZE )
-		nWidth = MINLINESIZE;		// 折り返し幅の最小桁数に設定
+	// MINLINEKETAS未満の時はMINLINEKETASで折り返しとする
+	if( nWidth < MINLINEKETAS )
+		nWidth = MINLINEKETAS;		// 折り返し幅の最小桁数に設定
 
 	return nWidth;
 }

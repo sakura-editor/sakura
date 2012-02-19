@@ -3194,11 +3194,11 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	switch( nWrapMethod ){
 	case WRAP_NO_TEXT_WRAP:		// 折り返さない
-		nWidth = MAXLINESIZE;	// アプリケーションの最大幅で折り返し
+		nWidth = MAXLINEKETAS;	// アプリケーションの最大幅で折り返し
 		break;
 
 	case WRAP_SETTING_WIDTH:	// 指定桁で折り返す
-		nWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineSize;
+		nWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas;
 		break;
 
 	case WRAP_WINDOW_WIDTH:		// 右端で折り返す

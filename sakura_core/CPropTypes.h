@@ -65,7 +65,6 @@ private:
 	|| ダイアログデータ
 	*/
 	char			m_szHelpFile[_MAX_PATH + 1];
-	int				m_nMaxLineSize_org;					/* 折り返し文字数 */
 	STypeConfig		m_Types;
 	CKeyWordSetMgr*	m_pCKeyWordSetMgr;	// Mar. 31, 2003 genta メモリ削減のためポインタに
 	int				m_nCurrentColorType;		/* 現在選択されている色タイプ */

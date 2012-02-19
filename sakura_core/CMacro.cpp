@@ -1031,7 +1031,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			if( ArgSize != 1 ) return false;
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4‚Æ‚µ‚Ä‰ðŽß
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
-			if( varCopy.Data.iVal < MINLINESIZE || varCopy.Data.iVal > MAXLINESIZE )
+			if( varCopy.Data.iVal < MINLINEKETAS || varCopy.Data.iVal > MAXLINEKETAS )
 				return true;
 			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;
 			View->m_pcEditDoc->m_bTextWrapMethodCurTemp = !( View->m_pcEditDoc->m_nTextWrapMethodCur == View->m_pcEditDoc->GetDocumentAttribute().m_nTextWrapMethod );

@@ -587,60 +587,6 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 		pNMHDR = (NMHDR*)lParam;
 		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( idCtrl ){
-//		case IDC_SPIN_MAXLINELEN:
-//			/* 折り返し文字数 */
-//			MYTRACE( "IDC_SPIN_MAXLINELEN\n" );
-//			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
-//			if( pMNUD->iDelta < 0 ){
-//				++nVal;
-//			}else
-//			if( pMNUD->iDelta > 0 ){
-//				--nVal;
-//			}
-//			if( nVal < MINLINESIZE ){
-//				nVal = MINLINESIZE;
-//			}
-//			if( nVal > MAXLINESIZE ){
-//				nVal = MAXLINESIZE;
-//			}
-//			::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, nVal, FALSE );
-//			return TRUE;
-//		case IDC_SPIN_CHARSPACE:
-//			/* 文字の隙間 */
-//			MYTRACE( "IDC_SPIN_CHARSPACE\n" );
-//			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
-//			if( pMNUD->iDelta < 0 ){
-//				++nVal;
-//			}else
-//			if( pMNUD->iDelta > 0 ){
-//				--nVal;
-//			}
-//			if( nVal < 0 ){
-//				nVal = 0;
-//			}
-//			if( nVal > 16 ){
-//				nVal = 16;
-//			}
-//			::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, nVal, FALSE );
-//			return TRUE;
-//		case IDC_SPIN_LINESPACE:
-//			/* 行の隙間 */
-//			MYTRACE( "IDC_SPIN_LINESPACE\n" );
-//			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
-//			if( pMNUD->iDelta < 0 ){
-//				++nVal;
-//			}else
-//			if( pMNUD->iDelta > 0 ){
-//				--nVal;
-//			}
-//			if( nVal < 0 ){
-//				nVal = 0;
-//			}
-//			if( nVal > 16 ){
-//				nVal = 16;
-//			}
-//			::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, nVal, FALSE );
-//			return TRUE;
 		case IDC_SPIN_REPEATEDSCROLLLINENUM:
 			/* キーリピート時のスクロール行数 */
 //			MYTRACE( "IDC_SPIN_REPEATEDSCROLLLINENUM\n" );

@@ -2774,7 +2774,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						sprintf(
 							szBuf,
 							"折り返し桁数: %d 桁（最大）(&W)",
-							MAXLINESIZE
+							MAXLINEKETAS
 						);
 					}
 					else if( mode == CEditView::TGWRAP_WINDOW ){
@@ -2791,7 +2791,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						sprintf(
 							szBuf,
 							"折り返し桁数: %d 桁（指定）(&W)",
-							m_cEditDoc.GetDocumentAttribute().m_nMaxLineSize
+							m_cEditDoc.GetDocumentAttribute().m_nMaxLineKetas
 						);
 					}
 					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel );
