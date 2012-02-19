@@ -319,7 +319,7 @@ void CDlgFuncList::SetData()
 	int				i;
 	TCHAR			szText[2048];
 	CFuncInfo*		pcFuncInfo;
-	LV_ITEM		item;
+	LV_ITEM			item;
 	HWND			hwndList;
 	HWND			hwndTree;
 	int				bSelected;
@@ -654,8 +654,8 @@ int CDlgFuncList::GetData( void )
 	int				nItem;
 	LV_ITEM			item;
 	HTREEITEM		htiItem;
-	TV_ITEM		tvi;
-	TCHAR		szLabel[32];
+	TV_ITEM			tvi;
+	TCHAR			szLabel[32];
 
 	m_cFuncInfo = NULL;
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
@@ -984,10 +984,10 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 void CDlgFuncList::SetListVB (void)
 {
 	int				i;
-	wchar_t			szType[64];
-	wchar_t			szOption[64];
+	TCHAR			szType[64];
+	TCHAR			szOption[64];
 	CFuncInfo*		pcFuncInfo;
-	LV_ITEM		item;
+	LV_ITEM			item;
 	HWND			hwndList;
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
@@ -1076,56 +1076,56 @@ void CDlgFuncList::SetListVB (void)
 		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			wcscpy(szOption, L"静的 ");
+			_tcscpy(szOption, _T("静的 "));
 		}
 		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
 			case 2  :	// プライベート(Private)
-				wcsncat(szOption, L"プライベート", _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				_tcsncat(szOption, _T("プライベート"), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			case 3  :	// フレンド(Friend)
-				wcsncat(szOption, L"フレンド", _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				_tcsncat(szOption, _T("フレンド"), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 				break;
 
 			default :	// パブリック(Public)
-				wcsncat(szOption, L"パブリック", _countof(szOption) - wcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
+				_tcsncat(szOption, _T("パブリック"), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
 		switch (pcFuncInfo->m_nInfo & 0x0f) {
 			case 1:		// 関数(Function)
-				wcscpy(szType, L"関数");
+				_tcscpy(szType, _T("関数"));
 				break;
 
 			// 2006.12.12 Moca ステータス→プロシージャに変更
 			case 2:		// プロシージャ(Sub)
-				wcscpy(szType, L"プロシージャ");
+				_tcscpy(szType, _T("プロシージャ"));
 				break;
 
 			case 3:		// プロパティ 取得(Property Get)
-				wcscpy(szType, L"プロパティ 取得");
+				_tcscpy(szType, _T("プロパティ 取得"));
 				break;
 
 			case 4:		// プロパティ 設定(Property Let)
-				wcscpy(szType, L"プロパティ 設定");
+				_tcscpy(szType, _T("プロパティ 設定"));
 				break;
 
 			case 5:		// プロパティ 参照(Property Set)
-				wcscpy(szType, L"プロパティ 参照");
+				_tcscpy(szType, _T("プロパティ 参照"));
 				break;
 
 			case 6:		// 定数(Const)
-				wcscpy(szType, L"定数");
+				_tcscpy(szType, _T("定数"));
 				break;
 
 			case 7:		// 列挙型(Enum)
-				wcscpy(szType, L"列挙型");
+				_tcscpy(szType, _T("列挙型"));
 				break;
 
 			case 8:		// ユーザ定義型(Type)
-				wcscpy(szType, L"ユーザ定義型");
+				_tcscpy(szType, _T("ユーザ定義型"));
 				break;
 
 			case 9:		// イベント(Event)
-				wcscpy(szType, L"イベント");
+				_tcscpy(szType, _T("イベント"));
 				break;
 
 			default:	// 未定義なのでクリア
@@ -1134,17 +1134,17 @@ void CDlgFuncList::SetListVB (void)
 		}
 		if ( 2 == ((pcFuncInfo->m_nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
-			wcsncat(szType, L"宣言", _countof(szType) - wcslen(szType));
+			_tcsncat(szType, _T("宣言"), _countof(szType) - _tcslen(szType));
 		}
 
 		TCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
 		if ( 0 == pcFuncInfo->m_nInfo ) {
 			szTypeOption[0] = _T('\0');	//	2006.12.17 genta 全体を0で埋める必要はない
 		} else
-		if ( 0 == wcslen(szOption) ) {
-			auto_sprintf(szTypeOption, _T("%ls"), szType);
+		if ( 0 == _tcslen(szOption) ) {
+			auto_sprintf(szTypeOption, _T("%ts"), szType);
 		} else {
-			auto_sprintf(szTypeOption, _T("%ls（%ls）"), szType, szOption);
+			auto_sprintf(szTypeOption, _T("%ts（%ts）"), szType, szOption);
 		}
 		item.pszText = szTypeOption;
 		item.iItem = i;
