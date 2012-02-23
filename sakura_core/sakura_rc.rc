@@ -13,7 +13,7 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #define APSTUDIO_HIDDEN_SYMBOLS
-#include "windows.h"
+#include <windows.h>
 #undef APSTUDIO_HIDDEN_SYMBOLS
 #include "Funccode.h"
 
@@ -43,7 +43,7 @@ END
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
     "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include ""windows.h""\r\n"
+    "#include <windows.h>\r\n"
     "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "#include ""Funccode.h""\r\n"
     "\0"
@@ -2624,8 +2624,6 @@ END
 //
 
 IDB_MYTOOL              BITMAP  DISCARDABLE     "../resource/mytool.bmp"
-IDB_OPENED              BITMAP  DISCARDABLE     "../resource/opened.bmp"
-IDB_OPENED_THIS         BITMAP  DISCARDABLE     "../resource/opened_this.bmp"
 IDB_PRINTER             BITMAP  DISCARDABLE     "../resource/printer.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2670,10 +2668,10 @@ BEGIN
     F_FILENEW               "新規作成"
     F_FILEOPEN              "開く..."
     F_FILESAVE              "上書き保存"
-    F_FILESAVEAS_DIALOG     "名前を付けて保存"
+    F_FILESAVEAS_DIALOG     "名前を付けて保存..."
     F_FILECLOSE             "閉じて(無題)"
     F_FILECLOSE_OPEN        "閉じて開く..."
-    F_FILEOPEN_DROPDOWN     "開く... (ドロップダウン)"
+    F_FILEOPEN_DROPDOWN     "開く(ドロップダウン)..."
     F_FILESAVECLOSE         "保存して閉じる"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
 END
@@ -2700,7 +2698,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_PRINT                 "印刷..."
-    F_PRINT_PREVIEW         "印刷プレビュー..."
+    F_PRINT_PREVIEW         "印刷プレビュー"
     F_PRINT_PAGESETUP       "印刷ページ設定..."
 END
 
@@ -2906,7 +2904,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_INS_DATE              "日付挿入"
     F_INS_TIME              "時刻挿入"
-    F_CTRL_CODE_DIALOG      "コントロールコード入力"
+    F_CTRL_CODE_DIALOG      "コントロールコード入力..."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2956,32 +2954,32 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_SEARCH_DIALOG         "検索"
+    F_SEARCH_DIALOG         "検索..."
     F_SEARCH_NEXT           "次を検索"
     F_SEARCH_PREV           "前を検索"
-    F_REPLACE_DIALOG        "置換"
+    F_REPLACE_DIALOG        "置換..."
     F_SEARCH_CLEARMARK      "検索マークの切替え"
     F_REPLACE               "置換"
     F_SEARCH_BOX            "検索 (ボックス)"
     F_JUMP_SRCHSTARTPOS     "検索開始位置へ戻る"
-    F_GREP_DIALOG           "Grep"
+    F_GREP_DIALOG           "Grep..."
     F_GREP                  "Grep"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_JUMP_DIALOG           "指定行へジャンプ"
+    F_JUMP_DIALOG           "指定行へジャンプ..."
     F_JUMP                  "指定行へジャンプ"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_OUTLINE               "アウトライン解析"
-    F_OUTLINE_TOGGLE        "アウトライン解析(トグル)"
+    F_OUTLINE               "アウトライン解析..."
+    F_OUTLINE_TOGGLE        "アウトライン解析(トグル)..."
     F_TAGJUMP               "タグジャンプ"
     F_TAGJUMPBACK           "タグジャンプバック"
     F_TAGJUMP_LIST          "ダイレクトタグジャンプ一覧"
-    F_TAGS_MAKE             "タグファイルの作成"
+    F_TAGS_MAKE             "タグファイルの作成..."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2989,12 +2987,12 @@ BEGIN
     F_DIRECT_TAGJUMP        "ダイレクトタグジャンプ"
     F_TAGJUMP_CLOSE         "閉じてタグジャンプ"
     F_TAGJUMP_KEYWORD       "キーワードを指定してタグジャンプ"
-    F_COMPARE               "ファイル内容比較"
+    F_COMPARE               "ファイル内容比較..."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_DIFF_DIALOG           "DIFF差分表示"
+    F_DIFF_DIALOG           "DIFF差分表示..."
     F_DIFF                  "DIFF差分表示"
     F_DIFF_NEXT             "次の差分へ"
     F_DIFF_PREV             "前の差分へ"
@@ -3028,15 +3026,15 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_TYPE_LIST             "タイプ別設定一覧"
-    F_OPTION_TYPE           "タイプ別設定"
-    F_OPTION                "共通設定"
-    F_FAVORITE              "履歴の管理"
+    F_TYPE_LIST             "タイプ別設定一覧..."
+    F_OPTION_TYPE           "タイプ別設定..."
+    F_OPTION                "共通設定..."
+    F_FAVORITE              "履歴の管理..."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_FONT                  "フォント設定"
+    F_FONT                  "フォント設定..."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3054,12 +3052,12 @@ BEGIN
     F_SAVEKEYMACRO          "キーマクロの保存"
     F_LOADKEYMACRO          "キーマクロの読み込み"
     F_EXECKEYMACRO          "キーマクロの実行"
-    F_EXECEXTMACRO          "名前を指定してマクロ実行"
+    F_EXECEXTMACRO          "名前を指定してマクロ実行..."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_EXECMD_DIALOG         "外部コマンド実行"
+    F_EXECMD_DIALOG         "外部コマンド実行..."
     F_EXECMD                "外部コマンド実行"
 END
 
@@ -3076,7 +3074,7 @@ BEGIN
     F_TILE_H                "左右に並べて表示"
     F_BIND_WINDOW           "グループ化"
     F_TOPMOST               "常に手前に表示"
-    F_WINLIST               "ウィンドウ一覧"
+    F_WINLIST               "ウィンドウ一覧..."
     F_NEXTWINDOW            "次のウィンドウ"
     F_PREVWINDOW            "前のウィンドウ"
 END
@@ -3091,7 +3089,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_REDRAW                "再描画"
-    F_WIN_OUTPUT            "アウトプットウィンドウ表示"
+    F_WIN_OUTPUT            "アウトプット"
     F_GROUPCLOSE            "グループを閉じる"
     F_NEXTGROUP             "次のグループ"
     F_PREVGROUP             "前のグループ"
@@ -3174,8 +3172,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_AUTHOR_PAGE         "http://hp.vector.co.jp/authors/VA016528/"
-    IDS_AUTHOR_MAIL         "hippie@mcn.ne.jp"
+    IDS_AUTHOR_PAGE         "http://sakura-editor.sourceforge.net/"
     IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n商用・非商用を問わず無償で利用できますが，ソースコードの著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\n"
 END
 
@@ -3193,3 +3190,4 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+

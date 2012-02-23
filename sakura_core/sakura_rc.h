@@ -32,8 +32,6 @@
 #define IDD_PRINTING                    192
 //#define IDD_PRINTPAGE                   193
 #define IDB_MYTOOL                      200
-#define IDB_OPENED                      201
-#define IDB_OPENED_THIS                 202
 #define IDB_PRINTER                     203
 #define IDD_PROP_MACRO                  217
 #define IDD_PROP_REGEX                  219
@@ -613,7 +611,6 @@
 #define IDC_CHECK_ALERT_IF_LARGEFILE    1554
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
-#define IDS_AUTHOR_MAIL                 4055
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDM_POPLAST2                    4064
 #define ID_IS4072                       4072
