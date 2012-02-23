@@ -40,16 +40,16 @@ public:
 	||  Attributes & Operations
 	*/
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 2007.11.07 ryoji 標準以外のメッセージを捕捉する
-	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, int, int, int );/* モードレスダイアログの表示 */
+	HWND DoModeless( HINSTANCE, HWND, LPARAM, CFuncInfoArr*, CLayoutInt, int, int );/* モードレスダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：検索対象となるビューの変更 */
 	
 	/*! 現在の種別と同じなら
 	*/
 	bool CheckListType( int nOutLineType ) const { return nOutLineType == m_nListType; }
-	void Redraw( int nOutLineType, CFuncInfoArr*, int nCurLine );
+	void Redraw( int nOutLineType, CFuncInfoArr*, CLayoutInt nCurLine );
 
 	CFuncInfoArr*	m_pcFuncInfoArr;	/* 関数情報配列 */
-	int				m_nCurLine;			/* 現在行 */
+	CLayoutInt		m_nCurLine;			/* 現在行 */
 	int				m_nSortCol;			/* ソートする列番号 */
 	int				m_nListType;		/* 一覧の種類 */
 	CMemory			m_cmemClipText;		/* クリップボードコピー用テキスト */
@@ -61,7 +61,7 @@ protected:
 	BOOL OnSize( WPARAM, LPARAM );
 	BOOL OnDestroy(void); // 20060201 aroka
 	BOOL OnCbnSelChange( HWND hwndCtl, int wID ); // 2002/11/1 frozen
-	void SetData( void );	/* ダイアログデータの設定 */
+	void SetData();	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
 
 	/*

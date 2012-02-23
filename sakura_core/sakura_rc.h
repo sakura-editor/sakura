@@ -143,7 +143,7 @@
 #define IDC_RADIO_BACKUP_TYPE3          1090
 #define IDC_CHECK_AUTOSAVE              1091
 #define IDC_CHECK_BACKUP_DUSTBOX        1091
-#define IDC_LIST1                       1092
+#define IDC_LIST_FL                     1092
 #define IDC_CHECK_DispTOOLBAR           1092
 #define IDC_EDIT_AUTOBACKUP_INTERVAL    1092
 #define IDC_BUTTON_OPENHELP1            1096
@@ -197,7 +197,7 @@
 #define IDC_BUTTON_SEARCHNEXT           1137
 #define IDC_LIST_RES                    1138
 #define IDC_BUTTON_SETMARK              1138
-#define IDC_TREE1                       1140
+#define IDC_TREE_FL                     1140
 #define IDC_BUTTON_ADD                  1141
 #define IDC_BUTTON_INSERT               1142
 #define IDC_BUTTON_REGEX_INS            1142
