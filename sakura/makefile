@@ -112,7 +112,6 @@ OBJS =\
 	$(OBJDIR)\CDlgJump.obj \
 	$(OBJDIR)\CDlgKeywordSelect.obj \
 	$(OBJDIR)\CDlgOpenFile.obj \
-	$(OBJDIR)\CDlgPrintPage.obj \
 	$(OBJDIR)\CDlgPrintSetting.obj \
 	$(OBJDIR)\CDlgProperty.obj \
 	$(OBJDIR)\CDlgReplace.obj \

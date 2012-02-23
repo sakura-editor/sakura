@@ -42,7 +42,6 @@
 #include "charcode.h"
 #include "global.h"
 #include "CDlgPrintSetting.h"
-#include "CDlgPrintPage.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "CPrintPreview.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka

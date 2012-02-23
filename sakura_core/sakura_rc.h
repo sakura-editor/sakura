@@ -30,7 +30,7 @@
 #define IDD_EXECCMD_TEST                188
 #define IDD_EXECRUNNING                 191
 #define IDD_PRINTING                    192
-#define IDD_PRINTPAGE                   193
+//#define IDD_PRINTPAGE                   193
 #define IDB_MYTOOL                      200
 #define IDB_OPENED                      201
 #define IDB_OPENED_THIS                 202

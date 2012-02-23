@@ -185,10 +185,6 @@ SOURCE=..\sakura_core\CDlgOpenFile.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CDlgPrintPage.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\sakura_core\CDlgPrintSetting.cpp
 # End Source File
 # Begin Source File
@@ -737,10 +733,6 @@ SOURCE=..\sakura_core\CDlgKeywordSelect.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CDlgOpenFile.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\sakura_core\CDlgPrintPage.h
 # End Source File
 # Begin Source File
 

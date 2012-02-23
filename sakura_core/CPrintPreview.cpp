@@ -21,7 +21,7 @@
 #include "CLayout.h"
 #include "CEditWnd.h"
 #include "charcode.h"
-#include "CDlgPrintPage.h"
+//#include "CDlgPrintPage.h"
 #include "CDlgCancel.h"/// 2002/2/3 aroka from here
 #include "CDlgInput1.h" /// 2007.02.11 Moca
 #include "Debug.h"///
