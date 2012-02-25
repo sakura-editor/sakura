@@ -578,7 +578,7 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 			nCalTextWidthLinesFrom = pctwArg->nLineFrom;
 
 			// 最終的に編集された行数（3行削除2行追加なら2行追加）
-			// 　1行がMAXLINESIZEを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
+			// 　1行がMAXLINEKETASを超える場合行数が合わなくなるが、超える場合はその先の計算自体が
 			// 　不要なので計算を省くためこのままとする。
 			CLayoutInt nEditLines = nInsLineNum + ((pctwArg->nDelLines > 0) ? pctwArg->nDelLines : CLayoutInt(0));
 			nCalTextWidthLinesTo   = pctwArg->nLineFrom + ((nEditLines > 0) ? nEditLines : CLayoutInt(0));

@@ -62,7 +62,7 @@ SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 class SAKURA_CORE_API CEol{
 public:
 	//コンストラクタ・デストラクタ
-	CEol(){ m_eEolType = EOL_NONE;; }
+	CEol(){ m_eEolType = EOL_NONE; }
 	CEol( EEolType t ){ SetType(t); }
 
 	//比較

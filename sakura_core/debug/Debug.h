@@ -80,7 +80,6 @@ SAKURA_CORE_API int MessageBoxF_A ( HWND hwndOwner, UINT uType, LPCSTR  lpCaptio
 inline void DBPRINT_A( ... ){};
 inline void DBPRINT_W( ... ){};
 #endif
- 
 #endif
 
 #ifdef _UNICODE
@@ -94,6 +93,13 @@ inline void DBPRINT_W( ... ){};
 
 //RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
 #define RELPRINT_A DebugOutA
+#define RELPRINT_W DebugOutW
+
+#ifdef _UNICODE
+#define RELPRINT DebugOutW
+#else
+#define RELPRINT DebugOutA
+#endif
 
 #define MYASSERT AssertError
 

@@ -960,8 +960,8 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_TOHANEI			 		:/* 全角英数→半角英数 */
 	case F_TOZENKAKUKATA	 		:/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA	 		:/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKATA		:/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENHIRA		:/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA			:/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA			:/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE				:/* TAB→空白 */
 	case F_SPACETOTAB				:/* 空白→TAB */  //---- Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS		:/* 自動判別→SJISコード変換 */
@@ -1039,7 +1039,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_TEXTWRAPMETHOD			:// テキストの折り返し方法			// 2008.05.30 nasukoji
 	case F_SELECT_COUNT_MODE		:// 文字カウントの方法を取得、設定	// 2009.07.06 syat
 
-	case F_EXECMD				:/* 外部コマンド実行 */	//@@@2002.2.2 YAZAKI 追加
+	case F_EXECMD					:/* 外部コマンド実行 */	//@@@2002.2.2 YAZAKI 追加
 
 	/* カスタムメニュー */
 //	case F_MENU_RBUTTON				:/* 右クリックメニュー */
