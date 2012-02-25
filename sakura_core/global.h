@@ -51,7 +51,6 @@
 #define _itoa itoa
 #define _stricmp stricmp
 #define _memicmp memicmp
-#define __access access
 #endif
 
 
