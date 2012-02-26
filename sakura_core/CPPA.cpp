@@ -62,7 +62,7 @@
 //int				CPPA::m_commandflags = FA_FROMMACRO;
 //	2007.07.26 genta
 CPPA::PpaExecInfo* CPPA::m_CurInstance = NULL;
-bool				CPPA::m_bIsRunning = false;
+bool			CPPA::m_bIsRunning = false;
 
 CPPA::CPPA()
 {
@@ -70,10 +70,6 @@ CPPA::CPPA()
 
 CPPA::~CPPA()
 {
-	//	Apr. 15, 2002 genta cleanup処理追加
-	if( IsAvailable()){
-		DeinitDll();
-	}
 }
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -81,7 +77,7 @@ void CPPA::Execute(CEditView* pcEditView, int flags )
 {
 	//PPAの多重起動禁止 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {
-		::MessageBox( pcEditView->m_hWnd, "PPA実行中に新たにPPAマクロを呼び出すことはできません", "PPA実行エラー", MB_OK );
+		MYMESSAGEBOX( pcEditView->m_hWnd, MB_OK, _T("PPA実行エラー"), _T("PPA実行中に新たにPPAマクロを呼び出すことはできません") );
 		m_fnAbort();
 		CPPA::m_bIsRunning = false;
 		return;
@@ -179,15 +175,15 @@ int CPPA::InitDll()
 	if( ! RegisterEntries(table) )
 		return 1;
 
-	SetIntFunc((void*)CPPA::stdIntFunc);	// 2003.02.24 Moca
-	SetStrFunc((void*)CPPA::stdStrFunc);
-	SetProc((void*)CPPA::stdProc);
+	SetIntFunc(CPPA::stdIntFunc);	// 2003.02.24 Moca
+	SetStrFunc(CPPA::stdStrFunc);
+	SetProc(CPPA::stdProc);
 
 	// 2003.06.01 Moca エラーメッセージを追加
-	SetErrProc((void*)CPPA::stdError);
-	SetStrObj((void*)CPPA::stdStrObj);	// UserErrorMes用
+	SetErrProc(CPPA::stdError);
+	SetStrObj(CPPA::stdStrObj);	// UserErrorMes用
 #if PPADLL_VER >= 123
-	SetFinishProc((void*)CPPA::stdFinishProc);
+	SetFinishProc(CPPA::stdFinishProc);
 #endif
 
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
@@ -298,15 +294,6 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 	return szBuffer;
 }
 
-/*!	
-*/
-int CPPA::DeinitDll( void )
-{
-	// Jun. 01, 2003 Moca m_pszDataを使わなくなったため，
-	//	CSMacroMgr::m_MacroFuncInfoArr[i].m_pszDataの後始末を削除
-
-	return 0;
-}
 
 
 /*! ユーザー定義文字列型オブジェクト
@@ -320,11 +307,9 @@ void __stdcall CPPA::stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int
 	case 2:
 		switch(GS_Mode){
 		case omGet:
-//			::MessageBox( m_pcEditView->m_hWnd, m_cMemDebug.GetPtr(), "GetStrObj", MB_OK );
 			*Value = m_CurInstance->m_cMemDebug.GetStringPtr();
 			break;
 		case omSet:
-//			::MessageBox( m_pcEditView->m_hWnd, *Value, "SetStrObj", MB_OK );
 			m_CurInstance->m_cMemDebug.SetString(*Value);
 			break;
 		}
@@ -389,17 +374,13 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
 	//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
 	if( IsBadStringPtr( pszErr, 256 )){
-		pszErr = _T("エラー情報が不正");
+		pszErr = "エラー情報が不正";
 	}
 	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
-		::MessageBox( m_CurInstance->m_pcEditView->m_hWnd, pszErr, "PPA実行エラー", MB_OK );
-	}else{
-		char* p = new char [ lstrlen(pszErr) + m_CurInstance->m_cMemDebug.GetStringLength() + 2 ];
-		strcpy( p, pszErr );
-		strcat( p, "\n" );
-		strcat( p, m_CurInstance->m_cMemDebug.GetStringPtr() );
-		::MessageBox( m_CurInstance->m_pcEditView->m_hWnd, p, "PPA実行エラー", MB_OK );
-		delete [] p;
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->m_hWnd, MB_OK, _T("PPA実行エラー"), _T("%s"), pszErr );
+	}
+	else{
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->m_hWnd, MB_OK, _T("PPA実行エラー"), _T("%s\n%s"), pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
 	}
 }
 
@@ -411,8 +392,12 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	@date 2007.07.20 genta Indexと一緒にフラグを渡す
 */
 void __stdcall CPPA::stdProc(
-	const char* FuncName, const int Index,
-	const char* Argument[], const int ArgSize, int* Err_CD)
+	const char*		FuncName,
+	const int		Index,
+	const char*		Argument[],
+	const int		ArgSize,
+	int*			Err_CD
+)
 {
 	NEVER_USED_PARAM(FuncName);
 
@@ -474,9 +459,7 @@ void __stdcall CPPA::stdStrFunc(
 	char** ResultValue)
 {
 	NEVER_USED_PARAM(FuncName);
-//	2003.06.01 Moca スタティックメンバに変更
-//	static CMemory cMem; // ANSI文字列でなければならない
-//						// これの管理するポインタをPPAに渡すのでstaticである必要がある。
+
 	VARIANT Ret;
 	::VariantInit(&Ret);
 	*Err_CD = 0;
