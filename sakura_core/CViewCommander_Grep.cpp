@@ -50,9 +50,7 @@ void CViewCommander::Command_GREP( void )
 
 	/* 編集ウィンドウの上限チェック */
 	if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		TCHAR szMsg[128];
-		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-		::MessageBox( m_pCommanderView->GetHwnd(), szMsg, GSTR_APPNAME, MB_OK );
+		OkMessage( m_pCommanderView->GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return;
 	}
 	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_szText );
