@@ -149,7 +149,6 @@ DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 
 
 
-
 CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
 {
 	m_pCEditWnd = pCEditWnd;	// 2008.06.20 ryoji
@@ -201,92 +200,33 @@ STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState,
 #ifdef _DEBUG
 	MYTRACE( "CDropTarget::DragEnter()\n" );
 #endif
-//	if( pDataObject == NULL || pdwEffect == NULL )
-//		return E_INVALIDARG;
-//	if( IsDataAvailable( pDataObject, CF_TEXT ) ){
-//		m_pDataObject = pDataObject;
-//		*pdwEffect = DROPEFFECT_COPY;
-//		::SetFocus( m_hWnd_DropTarget );
-//	}else{
-//		*pdwEffect = DROPEFFECT_NONE;
-//	}
 	if( m_pCEditWnd ){	// 2008.06.20 ryoji
 		return m_pCEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 	}
 	return m_pCEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
-//	return S_OK;
 }
 STDMETHODIMP CDropTarget::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-//	MYTRACE( "CDropTarget::DragOver()\n" );
-//	if( pdwEffect == NULL )
-//		return E_INVALIDARG;
-//	::ScreenToClient( m_hWnd_DropTarget, (LPPOINT)&pt );
-//	DWORD dwIndex = LOWORD( ::SendMessage( m_hWnd_DropTarget, EM_CHARFROMPOS, 0, MAKELPARAM( pt.x, pt.y ) ) );
-//	if( dwIndex != (WORD) -1 ){
-//		::SendMessage( m_hWnd_DropTarget, EM_SETSEL, dwIndex, dwIndex );
-//		::SendMessage( m_hWnd_DropTarget, EM_SCROLLCARET, 0, 0 );
-//	}
-//	*pdwEffect = (m_pDataObject != NULL) ? DROPEFFECT_COPY : DROPEFFECT_NONE;
 	if( m_pCEditWnd ){	// 2008.06.20 ryoji
 		return m_pCEditWnd->DragOver( dwKeyState, pt, pdwEffect );
 	}
 	return m_pCEditView->DragOver( dwKeyState, pt, pdwEffect );
-//	return S_OK;
 }
 STDMETHODIMP CDropTarget::DragLeave( void )
 {
-//	MYTRACE( "CDropTarget::DragLeave()\n" );
-//	m_pDataObject = NULL;
-//	::SetFocus(NULL);
 	if( m_pCEditWnd ){	// 2008.06.20 ryoji
 		return m_pCEditWnd->DragLeave();
 	}
 	return m_pCEditView->DragLeave();
-//	return S_OK;
 }
 
 
 STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-//	MYTRACE( "CDropTarget::Drop()\n" );
-//	if( pDataObject == NULL || pdwEffect == NULL )
-//		return E_INVALIDARG;
-//	*pdwEffect = DROPEFFECT_NONE;
-//	if( IsDataAvailable( pDataObject, CF_TEXT ) ){
-//		HGLOBAL hData = GetGlobalData(pDataObject, CF_TEXT);
-//		if( hData != NULL ){
-//			DWORD nSize = 0;
-//			LPCTSTR lpszSource = (LPCTSTR) ::GlobalLock( hData );
-//			LPCTSTR lpsz = lpszSource;
-//			while( *lpsz != _T('\0') ){
-//				if( *lpsz == _T('\n') && (lpsz == lpszSource || *(lpsz - 1) != _T('\r')) )
-//					++nSize;
-//				++nSize;
-//				++lpsz;
-//			}
-//			lpsz = lpszSource;
-//			LPTSTR lpszDest = (LPTSTR) alloca( (nSize + 1) * sizeof( TCHAR ) );
-//			LPTSTR lpsz2 = lpszDest;
-//			while( *lpsz != _T('\0') ){
-//				if( *lpsz == _T('\n') && (lpsz == lpszSource || *(lpsz - 1) != _T('\r')) )
-//					*lpsz2++ = _T('\r');
-//				*lpsz2++ = *lpsz++;
-//			}
-//			*lpsz2++ = _T('\0');
-//
-//			::SendMessage( m_hWnd_DropTarget, EM_REPLACESEL, 0, (LPARAM) lpszDest );
-//			::GlobalUnlock( hData );
-//			*pdwEffect = DROPEFFECT_COPY;
-//		}
-//	}
-//	m_pDataObject = NULL;
-//	::SetFocus( NULL );
 	if( m_pCEditWnd ){	// 2008.06.20 ryoji
 		return m_pCEditWnd->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 	}
 	return m_pCEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
-//	return S_OK;
 }
 
 
@@ -321,9 +261,8 @@ void CDataObject::SetText( LPCSTR lpszText, int nTextLen, BOOL bColmnSelect )
 	int i;
 	if( m_pData != NULL )
 	{
-		for( i = 0; i < m_nFormat; i++ ){
+		for( i = 0; i < m_nFormat; i++ )
 			delete [](m_pData[i].data);
-		}
 		delete []m_pData;
 		m_pData = NULL;
 		m_nFormat = 0;

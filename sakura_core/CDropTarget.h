@@ -85,8 +85,8 @@ public:
 	||  Attributes & Operations
 	*/
 private: // 2002/2/10 aroka アクセス権変更
-	HWND			m_hWnd_DropTarget;
 	CEditWnd*		m_pCEditWnd;	// 2008.06.20 ryoji
+	HWND			m_hWnd_DropTarget;
 	CEditView*		m_pCEditView;
 //	void*			m_pCEditView;
 	//	static REFIID	m_owniid;
@@ -130,10 +130,12 @@ private:
 	PDATA m_pData;	// フォーマットデータの配列	// 2008.03.26 ryoji
 
 public:
-	CDataObject(LPCSTR lpszText, int nTextLen, BOOL bColmnSelect ):
+	CDataObject (LPCSTR lpszText, int nTextLen, BOOL bColmnSelect ):
 		m_nFormat(0),
 		m_pData(NULL)
-	{SetText( lpszText, nTextLen, bColmnSelect );}
+	{
+		SetText( lpszText, nTextLen, bColmnSelect );
+	}
 	~CDataObject(){SetText( NULL, 0, FALSE );}
 	void	SetText( LPCSTR lpszText, int nTextLen, BOOL bColmnSelect );
 	DWORD	DragDrop( BOOL bLeft, DWORD dwEffects );

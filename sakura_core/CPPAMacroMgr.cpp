@@ -39,10 +39,10 @@ void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 	m_cPPA.Execute(pcEditView, flags);
 }
 
-/*! キーボードマクロをファイルから読み込む
+/*! キーボードマクロの読み込み（ファイルから）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
+BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 {
 	FILE* hFile = fopen( pszPath, "r" );
 	if( NULL == hFile ){
@@ -66,10 +66,10 @@ BOOL CPPAMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const char* pszPath )
 	return TRUE;
 }
 
-/*! キーボードマクロを文字列から読み込む
+/*! キーボードマクロの読み込み（文字列から）
 	エラーメッセージは出しません。呼び出し側でよきにはからってください。
 */
-BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode )
+BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode )
 {
 	m_cBuffer.SetString( pszCode, strlen(pszCode) );	//	m_cBufferにコピー
 
@@ -87,9 +87,9 @@ BOOL CPPAMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode )
 		そのため，過ったオブジェクト生成を行わないために拡張子チェックは必須．
 
 */
-CMacroManagerBase* CPPAMacroMgr::Creator(const char* ext)
+CMacroManagerBase* CPPAMacroMgr::Creator(const TCHAR* ext)
 {
-	if( strcmp( ext, "ppa" ) == 0 ){
+	if( _tcscmp( ext, _T("ppa") ) == 0 ){
 		return new CPPAMacroMgr;
 	}
 	return NULL;
