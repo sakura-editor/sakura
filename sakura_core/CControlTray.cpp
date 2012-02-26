@@ -935,9 +935,7 @@ bool CControlTray::OpenNewEditor(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		TCHAR szMsg[128];
-		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
+		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return false;
 	}
 
@@ -1113,9 +1111,7 @@ bool CControlTray::OpenNewEditor2(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		TCHAR szMsg[128];
-		auto_sprintf( szMsg, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
+		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return false;
 	}
 
