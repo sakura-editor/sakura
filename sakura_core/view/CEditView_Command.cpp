@@ -106,7 +106,7 @@ bool CEditView::TagJumpSub(
 			G_AppInstance(),
 			this->GetHwnd(),
 			&inf,
-			FALSE,	/* ビューモードか */
+			false,	/* ビューモードか */
 			true	//	同期モードで開く
 		);
 
