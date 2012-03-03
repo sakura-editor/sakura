@@ -983,7 +983,7 @@ LRESULT CEditView::DispatchEvent(
 				(int) LOWORD( wParam ), ((int) HIWORD( wParam )) * m_nVScrollRate );
 
 			//	シフトキーが押されていないときだけ同期スクロール
-			if(( ::GetKeyState( VK_SHIFT ) & 0x8000 ) == 0 ){
+			if(!GetKeyState_Shift()){
 				SyncScrollV( Scroll );
 			}
 		}
@@ -998,7 +998,7 @@ LRESULT CEditView::DispatchEvent(
 				(int) LOWORD( wParam ), ((int) HIWORD( wParam )) );
 
 			//	シフトキーが押されていないときだけ同期スクロール
-			if(( ::GetKeyState( VK_SHIFT ) & 0x8000 ) == 0 ){
+			if(!GetKeyState_Shift()){
 				SyncScrollH( Scroll );
 			}
 		}
@@ -3637,7 +3637,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 normal_action:;
 
 	// ALTキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
-	if(( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) )&&( ! tripleClickMode)){
+	if( GetKeyState_Alt() &&( ! tripleClickMode)){
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			DisableSelectArea( TRUE );
@@ -3660,12 +3660,6 @@ normal_action:;
 		m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
 		m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
 
-//		if( m_pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
-//			/* ALTキーが押されていたか */
-//			if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
-//				m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
-//			}
-//		}
 		::SetCapture( m_hWnd );
 		HideCaret_( m_hWnd ); // 2002/07/22 novice
 		/* 現在のカーソル位置から選択を開始する */
@@ -3736,7 +3730,7 @@ normal_action:;
 		}else
 		/* 選択開始処理 */
 		/* SHIFTキーが押されていたか */
-		if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
+		if(GetKeyState_Shift()){
 			if( IsTextSelected() ){			/* テキストが選択されているか */
 				if( m_bBeginBoxSelect ){	/* 矩形範囲選択中 */
 					/* 現在の選択範囲を非選択状態に戻す */
@@ -3799,7 +3793,7 @@ normal_action:;
 
 
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
-		if(( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) )&&( ! tripleClickMode)){
+		if( GetKeyState_Control() &&( ! tripleClickMode)){
 			m_bBeginWordSelect = TRUE;		/* 単語単位選択中 */
 			if( !IsTextSelected() ){
 				/* 現在位置の単語選択 */
@@ -3902,7 +3896,7 @@ normal_action:;
 
 		// 行番号エリアをクリックした
 		// 2007.12.08 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
-		if(( xPos < m_nViewAlignLeft )&&( !((SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ))){
+		if(( xPos < m_nViewAlignLeft )&& !GetKeyState_Shift() ){
 			/* 現在のカーソル位置から選択を開始する */
 //			BeginSelectArea( );
 			m_bBeginLineSelect = TRUE;
@@ -4803,8 +4797,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 		m_nMouseRollPosXOld = xPos;	/* マウス範囲選択前回位置(X座標) */
 		m_nMouseRollPosYOld = yPos;	/* マウス範囲選択前回位置(Y座標) */
 
-		/* CTRLキーが押されていたか */
-//		if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
 		if( !m_bBeginWordSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
@@ -5025,11 +5017,11 @@ BOOL CEditView::IsSpecialScrollMode( int nSelect )
 		break;
 
 	case VK_CONTROL:	// Controlキー
-		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = GetKeyState_Control() ? TRUE : FALSE;
 		break;
 
 	case VK_SHIFT:		// Shiftキー
-		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = GetKeyState_Shift() ? TRUE : FALSE;
 		break;
 
 	default:	// 上記以外（ここには来ない）
@@ -5411,7 +5403,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 
 	if( m_pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		/* ALTキーが押されていたか */
-		if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
+		if(GetKeyState_Alt()){
 			m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
 		}
 	}
@@ -8680,7 +8672,7 @@ int CEditView::IsCurrentPositionSelected(
 		po.x = nCaretPosX;
 		po.y = nCaretPosY;
 		if( IsDragSource() ){
-			if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){ /* Ctrlキーが押されていたか */
+			if(GetKeyState_Control()){ /* Ctrlキーが押されていたか */
 				++rcSel.left;
 			}else{
 				++rcSel.right;
@@ -8710,7 +8702,7 @@ int CEditView::IsCurrentPositionSelected(
 		}
 		if( m_nSelectLineFrom == nCaretPosY ){
 			if( IsDragSource() ){
-				if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){	/* Ctrlキーが押されていたか */
+				if(GetKeyState_Control()){	/* Ctrlキーが押されていたか */
 					if( m_nSelectColmFrom >= nCaretPosX ){
 						return -1;
 					}
@@ -8726,7 +8718,7 @@ int CEditView::IsCurrentPositionSelected(
 		}
 		if( m_nSelectLineTo == nCaretPosY ){
 			if( IsDragSource() ){
-				if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){	/* Ctrlキーが押されていたか */
+				if(GetKeyState_Control()){	/* Ctrlキーが押されていたか */
 					if( m_nSelectColmTo <= nCaretPosX ){
 						return 1;
 					}

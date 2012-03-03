@@ -2650,15 +2650,15 @@ int getCtrlKeyState(void)
 	int nIdx = 0;
 
 	/* Shiftキーが押されているなら */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_SHIFT ) ){
+	if(GetKeyState_Shift()){
 		nIdx |= _SHIFT;
 	}
 	/* Ctrlキーが押されているなら */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_CONTROL ) ){
+	if(GetKeyState_Control()){
 		nIdx |= _CTRL;
 	}
 	/* Altキーが押されているなら */
-	if( (SHORT)0x8000 & ::GetKeyState( VK_MENU ) ){
+	if(GetKeyState_Alt()){
 		nIdx |= _ALT;
 	}
 

@@ -41,7 +41,7 @@ void CEditView::TranslateCommand_grep(
 		if(( lparam1 == CR || lparam1 == LF ) &&
 			m_pShareData->m_Common.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;
-			lparam1 = (((SHORT)0x8000 & ::GetKeyState( VK_CONTROL )) != 0 );
+			lparam1 = GetKeyState_Control();
 		}
 	}
 }
