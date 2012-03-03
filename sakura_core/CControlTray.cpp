@@ -728,7 +728,7 @@ LRESULT CControlTray::DispatchEvent(
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
 
 						if( m_pShareData->m_Common.m_sFile.GetRestoreCurPosition() ){
-							CControlTray::OpenNewEditor2( m_hInstance, GetTrayHwnd(), &openEditInfo, FALSE );
+							CControlTray::OpenNewEditor2( m_hInstance, GetTrayHwnd(), &openEditInfo, false );
 						}
 						else {
 							SLoadInfo sLoadInfo;
@@ -962,11 +962,11 @@ bool CControlTray::OpenNewEditor(
 	// グループID
 	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
 		// グループIDを親ウィンドウから取得
-	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
-	int nGroup = CAppNodeManager::Instance()->GetEditNode( hwndAncestor )->GetGroup();
-	if( nGroup > 0 ){
-		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup );
-	}
+		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
+		int nGroup = CAppNodeManager::Instance()->GetEditNode( hwndAncestor )->GetGroup();
+		if( nGroup > 0 ){
+			cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup );
+		}
 	}else{
 		// 空いているグループIDを使用する
 		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::Instance()->GetFreeGroupId() );
@@ -982,12 +982,6 @@ bool CControlTray::OpenNewEditor(
 	s.lpReserved = NULL;
 	s.lpDesktop = NULL;
 	s.lpTitle = NULL;
-	/*
-	s.dwX = CW_USEDEFAULT;
-	s.dwY = CW_USEDEFAULT;
-	s.dwXSize = CW_USEDEFAULT;
-	s.dwYSize = CW_USEDEFAULT;
-	*/
 
 	s.dwFlags = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
@@ -1094,6 +1088,7 @@ bool CControlTray::OpenNewEditor(
 /*!	新規編集ウィンドウの追加 ver 2:
 
 	@date Oct. 24, 2000 genta create.
+	@date Feb. 25, 2012 novice -CODE/-RはOpenNewEditor側で処理するので削除
 */
 bool CControlTray::OpenNewEditor2(
 	HINSTANCE		hInstance,
@@ -1122,12 +1117,10 @@ bool CControlTray::OpenNewEditor2(
 		if( pfi->m_ptCursor.y >= 0					)cCmdLine.AppendF( _T(" -Y=%d"), pfi->m_ptCursor.y +1 );
 		if( pfi->m_nViewLeftCol >= CLayoutInt(0)	)cCmdLine.AppendF( _T(" -VX=%d"), (Int)pfi->m_nViewLeftCol + 1 );
 		if( pfi->m_nViewTopLine >= CLayoutInt(0)	)cCmdLine.AppendF( _T(" -VY=%d"), (Int)pfi->m_nViewTopLine + 1 );
-		if( IsValidCodeType(pfi->m_nCharCode)		)cCmdLine.AppendF( _T(" -CODE=%d"), pfi->m_nCharCode );
-		if( bViewMode							)cCmdLine.AppendF( _T(" -R") );
 	}
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = pfi ? pfi->m_szPath : _T("");
-	sLoadInfo.eCharCode = CODE_AUTODETECT;
+	sLoadInfo.eCharCode = pfi ? pfi->m_nCharCode : CODE_AUTODETECT;
 	sLoadInfo.bViewMode = bViewMode;
 	return OpenNewEditor( hInstance, hWndParent, sLoadInfo, cCmdLine.c_str(), sync, NULL, bNewWindow );
 }
