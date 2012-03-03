@@ -17,11 +17,11 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
+#ifndef SAKURA_PROP_CPROPCOMMON_H_
+#define SAKURA_PROP_CPROPCOMMON_H_
+
 class CPropCommon;
 
-#ifndef _CPROP1_H_
-#define _CPROP1_H_
-#include <windows.h>
 #include "CShareData.h"
 #include "sakura_rc.h"
 #include "CFuncLookup.h"
@@ -336,7 +336,7 @@ protected:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CPROP1_H_ */
+#endif /* SAKURA_PROP_CPROPCOMMON_H_ */
 
 
 /*[EOF]*/

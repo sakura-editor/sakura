@@ -38,7 +38,6 @@
 #include "CPropCommon.h"
 #include <memory.h>
 #include <stdlib.h>
-// #include <Shlobj.h>
 #include "etc_uty.h" // 2002/04/14 novice
 #include "sakura.hh"
 
@@ -92,7 +91,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
+		/* ダイアログデータの設定 Macro */
 		InitDialog_PROP_Macro( hwndDlg );
 		SetData_PROP_Macro( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
@@ -123,7 +122,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 				OnHelp( hwndDlg, IDD_PROP_MACRO );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
+				/* ダイアログデータの取得 Macro */
 				GetData_PROP_Macro( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -166,7 +165,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 				{
 					TCHAR szDir[_MAX_PATH];
 					::GetDlgItemText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
-					if( 1 == AddLastChar( szDir, _MAX_PATH, '\\' ) ){
+					if( 1 == AddLastChar( szDir, _MAX_PATH, _T('\\') ) ){
 						::SetDlgItemText( hwndDlg, IDC_MACRODIR, szDir );
 					}
 				}
@@ -313,11 +312,11 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		char buf[MAX_PATH];
+		TCHAR buf[MAX_PATH];
 		sItem.pszText = buf;
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
-		if ( strcmp(buf, "on") == 0){
+		if ( strcmp(buf, _T("on")) == 0){
 			m_MacroTable[index].m_bReloadWhenExecute = TRUE;
 		}
 		else {
@@ -331,7 +330,7 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.iSubItem = 4;
 		TCHAR szText[8];
 		sItem.pszText = szText;
-		sItem.cchTextMax = sizeof(szText) / sizeof(TCHAR);
+		sItem.cchTextMax = _countof(szText);
 		ListView_GetItem( hListView, &sItem );
 		int i;
 		int nLen;
@@ -349,9 +348,9 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 
 	//	マクロディレクトリ
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	::GetDlgItemText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_szMACROFOLDER, _MAX_PATH );
+	::GetDlgItemText( hwndDlg, IDC_MACRODIR, m_szMACROFOLDER, _MAX_PATH );
 	// 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
-	AddLastChar( m_szMACROFOLDER, _MAX_PATH, '\\' );
+	AddLastChar( m_szMACROFOLDER, _MAX_PATH, _T('\\') );
 	
 	return TRUE;
 }
@@ -359,27 +358,27 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 {
 	struct ColumnData {
-		char *title;
+		TCHAR *title;
 		int width;
 	} ColumnList[] = {
-		{ "番号", 40 },
-		{ "マクロ名", 150 },
-		{ "ファイル名", 150 },
-		{ "実行時に読み込み", 40 },
-		{ "自動実行", 40 },
+		{ _T("番号"), 40 },
+		{ _T("マクロ名"), 150 },
+		{ _T("ファイル名"), 150 },
+		{ _T("実行時に読み込み"), 40 },
+		{ _T("自動実行"), 40 },
 	};
 
 	//	ListViewの初期化
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
 	if( hListView == NULL ){
-		::MessageBox( hwndDlg, "PropComMacro::InitDlg::NoListView", "バグ報告お願い", MB_OK );
+		::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::NoListView"), _T("バグ報告お願い"), MB_OK );
 		return;	//	よくわからんけど失敗した	
 	}
 
 	LVCOLUMN sColumn;
 	int pos;
 	
-	for( pos = 0; pos < sizeof( ColumnList ) / sizeof( ColumnList[0] ); ++pos ){
+	for( pos = 0; pos < _countof( ColumnList ); ++pos ){
 		
 		memset( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
@@ -389,7 +388,7 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 		sColumn.fmt = LVCFMT_LEFT;
 		
 		if( ListView_InsertColumn( hListView, pos, &sColumn ) < 0 ){
-			::MessageBox( hwndDlg, "PropComMacro::InitDlg::ColumnRegistrationFail", "バグ報告お願い", MB_OK );
+			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::ColumnRegistrationFail"), _T("バグ報告お願い"), MB_OK );
 			return;	//	よくわからんけど失敗した
 		}
 	}
@@ -401,12 +400,12 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 	//	Index部分の登録
 	for( pos = 0; pos < MAX_CUSTMACRO ; ++pos ){
 		LVITEM sItem;
-		char buf[4];
+		TCHAR buf[4];
 		memset( &sItem, 0, sizeof( sItem ));
 		sItem.mask = LVIF_TEXT | LVIF_PARAM;
 		sItem.iItem = pos;
 		sItem.iSubItem = 0;
-		itoa( pos, buf, 10 );
+		_itot( pos, buf, 10 );
 		sItem.pszText = buf;
 		sItem.lParam = pos;
 		ListView_InsertItem( hListView, &sItem );
@@ -419,12 +418,12 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 		wsprintf( buf, "%d", pos );
 		int result = ::SendMessage( hNumCombo, CB_ADDSTRING, (WPARAM)0, (LPARAM)buf );
 		if( result == CB_ERR ){
-			::MessageBox( hwndDlg, "PropComMacro::InitDlg::AddMacroId", "バグ報告お願い", MB_OK );
+			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::AddMacroId"), _T("バグ報告お願い"), MB_OK );
 			return;	//	よくわからんけど失敗した
 		}
 		else if( result == CB_ERRSPACE ){
-			::MessageBox( hwndDlg, "PropComMacro::InitDlg::AddMacroId/InsufficientSpace",
-				"バグ報告お願い", MB_OK );
+			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::AddMacroId/InsufficientSpace"),
+				_T("バグ報告お願い"), MB_OK );
 			return;	//	よくわからんけど失敗した
 		}
 	}
@@ -443,8 +442,8 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 	//	設定先取得
 	index = ::SendMessage( hNum, CB_GETCURSEL, 0, 0 );
 	if( index == CB_ERR ){
-		::MessageBox( hwndDlg, "PropComMacro::SetMacro2List::GetCurSel",
-			"バグ報告お願い", MB_OK );
+		::MessageBox( hwndDlg, _T("PropComMacro::SetMacro2List::GetCurSel"),
+			_T("バグ報告お願い"), MB_OK );
 		return;	//	よくわからんけど失敗した
 	}
 
@@ -488,7 +487,7 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 4;
 		sItem.pszText = szText;
-		sItem.cchTextMax = sizeof(szText) / sizeof(TCHAR);
+		sItem.cchTextMax = _countof(szText);
 		ListView_GetItem( hListView, &sItem );
 		int i;
 		int nLen;
@@ -534,7 +533,7 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 
 /*!
 	Macro格納用ディレクトリを選択する
-	
+
 	@param hwndDlg [in] ダイアログボックスのウィンドウハンドル
 */
 void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
@@ -593,7 +592,7 @@ void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
 	if (hFind == INVALID_HANDLE_VALUE) {
 		return;
 	}
-	
+
 	do {
 		//	コンボボックスに設定
 		//	でも.と..は勘弁。
@@ -624,7 +623,7 @@ void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
 	//	初期値の設定
 	::SendMessage( hNum, CB_SETCURSEL, nLastPos_Macro, 0 );
 	
-	char buf[MAX_PATH + MACRONAME_MAX];	// MAX_PATHとMACRONAME_MAXの両方より大きい値
+	TCHAR buf[MAX_PATH + MACRONAME_MAX];	// MAX_PATHとMACRONAME_MAXの両方より大きい値
 	LVITEM sItem;
 
 	memset( &sItem, 0, sizeof( sItem ));
@@ -654,7 +653,7 @@ void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.pszText = buf;
 	sItem.cchTextMax = MAX_PATH;
 	ListView_GetItem( hListView, &sItem );
-	if ( strcmp(buf, "on") == 0){
+	if ( strcmp(buf, _T("on")) == 0){
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true );
 	}
 	else {
@@ -668,7 +667,7 @@ void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.iSubItem = 4;
 	TCHAR szText[8];
 	sItem.pszText = szText;
-	sItem.cchTextMax = sizeof(szText) / sizeof(TCHAR);
+	sItem.cchTextMax = _countof(szText);
 	ListView_GetItem( hListView, &sItem );
 	int i;
 	int nLen;

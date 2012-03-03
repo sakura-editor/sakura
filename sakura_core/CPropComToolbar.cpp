@@ -82,13 +82,11 @@ int Listbox_INSERTDATA(
 {
 	int nIndex1 = ::SendMessage( hWnd, LB_INSERTSTRING, index, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"), index, nIndex1 );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"), index, nIndex1 );
 		return nIndex1;
 	}
 	else if( ::SendMessage( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: INS: 値の設定に失敗しました。:%d"), nIndex1 );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("Toolbar Dialog: INS: 値の設定に失敗しました。:%d"), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
@@ -111,25 +109,23 @@ int Listbox_INSERTDATA(
 */
 int Listbox_ADDDATA(
 	HWND hWnd,              //!< handle to destination window 
-	int index,          //!< item index
+	int index,          	//!< item index
 	int value
 )
 {
 	int nIndex1 = ::SendMessage( hWnd, LB_ADDSTRING, index, 1 );
 	if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"), index, nIndex1 );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"), index, nIndex1 );
 		return nIndex1;
 	}
 	else if( ::SendMessage( hWnd, LB_SETITEMDATA, nIndex1, value ) == LB_ERR ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"), nIndex1 );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"), nIndex1 );
 		return LB_ERR;
 	}
 	return nIndex1;
 }
 
-/* PROP_TOOLBAR メッセージ処理 */
+/* Toolbar メッセージ処理 */
 INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
@@ -161,7 +157,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 PROP_TOOLBAR */
+		/* ダイアログデータの設定 Toolbar */
 		SetData_PROP_TOOLBAR( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -210,7 +206,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 			return TRUE;
 		case PSN_KILLACTIVE:
 //			MYTRACE( "PROP_TOOLBAR PSN_KILLACTIVE\n" );
-			/* ダイアログデータの取得 PROP_TOOLBAR */
+			/* ダイアログデータの取得 Toolbar */
 			GetData_PROP_TOOLBAR( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -234,55 +230,26 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 		if( hwndCombo == hwndCtl ){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-//				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 
 				::SendMessage( hwndFuncList, LB_RESETCONTENT, 0, 0 );
-//				nNum = ::SendMessage( hwndFuncList, LB_GETCOUNT, 0, 0 );
-//				for( i = 0; i < nNum; ++i ){
-//					::SendMessage( hwndFuncList, LB_DELETESTRING, 0, 0 );
-//				}
+
 				/* 機能一覧に文字列をセット (リストボックス) */
 				//	From Here Oct. 15, 2001 genta Lookupを使うように変更
 				nNum = m_cLookup.GetItemCount( nIndex2 );
 				for( i = 0; i < nNum; ++i ){
 					nIndex1 = m_cLookup.Pos2FuncCode( nIndex2, i );
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//					for( j = 0; j < m_cShareData.m_nMyButtonNum; ++j ){
-//						if( m_cShareData.m_tbMyButton[j].idCommand == nIndex1 ){
-// 2005/8/9 aroka CMenuDrawerのメンバ変数をカプセル化
-//					for( j = 0; j < m_pcMenuDrawer->m_nMyButtonNum; ++j ){
-//						if( m_pcMenuDrawer->m_tbMyButton[j].idCommand == nIndex1 ){	//	jは、nIndex1で指定された機能コードを持つ
-//				//	To Here Oct. 15, 2001 genta Lookupを使うように変更
-//							break;
-//						}
-//					}
 					int nIndex = m_pcMenuDrawer->FindIndexFromCommandId( nIndex1 );
-//jepro note: 次行不要???
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-//					if( j < m_cShareData.m_nMyButtonNum ){
-// 2005/8/9 aroka CMenuDrawerのメンバ変数をカプセル化
-//					if( j < m_pcMenuDrawer->m_nMyButtonNum ){
-					if( nIndex >= 0 ){
 
-//						/* ツールバーボタンの情報をセット (リストボックス) */
-//						for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
-							//	From Here Apr. 13, 2002 genta
-							lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)nIndex );
-							if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
-								break;
-							}
-							//	To Here Apr. 13, 2002 genta
-							lResult = ::SendMessage( hwndFuncList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
-//						}
+					if( nIndex >= 0 ){
+						/* ツールバーボタンの情報をセット (リストボックス) */
+						lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)nIndex );
+						if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
+							break;
+						}
+						lResult = ::SendMessage( hwndFuncList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
 					}
 
-//jeprotest コメントアウトされていた以下の５行のコメントアウトを解除するとエラーが出る
-//					if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[nIndex2])[i], pszLabel, sizeof(pszLabel) ) ){
-//						::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
-//					}else{
-//						::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
-//					}
 				}
 				return TRUE;
 			}
@@ -374,8 +341,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 					//	ここでは i != 0 だとは思うけど、一応保険です。
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-							_T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -396,8 +362,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 - 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-							_T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
 						break;
 					}
 					//	To Here Apr. 13, 2002 genta
@@ -419,8 +384,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 					//	From Here Apr. 13, 2002 genta
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1 + 1, i );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
-						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-							_T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
+						::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("Toolbar Dialog: 要素の追加に失敗しました。:%d"), nIndex1 );
 						break;
 					}
 					::SendMessage( hwndResList, LB_SETCURSEL, nIndex1, 0 );
@@ -495,7 +459,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 
 
 
-/* ダイアログデータの設定 PROP_TOOLBAR */
+/* ダイアログデータの設定 Toolbar */
 void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 {
 	HWND		hwndCombo;
@@ -509,9 +473,6 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 	/* 機能種別一覧に文字列をセット(コンボボックス) */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 15, 2001 genta
-//	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
-//		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
-//	}
 	
 	/* 種別の先頭の項目を選択(コンボボックス) */
 	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
@@ -540,7 +501,7 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 		//	To Here Apr. 13, 2002 genta
 		lResult = ::SendMessage( hwndResList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
 	}
-//	/* ツールバーの先頭の項目を選択(リストボックス)*/
+	/* ツールバーの先頭の項目を選択(リストボックス)*/
 	::SendMessage( hwndResList, LB_SETCURSEL, 0, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 
 	/* フラットツールバーにする／しない  */
@@ -550,7 +511,7 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 PROP_TOOLBAR */
+/* ダイアログデータの取得 Toolbar */
 int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 {
 	HWND	hwndResList;
@@ -635,7 +596,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		}else{
 			// アイコンとテキストを表示する
 			m_pcIcons->Draw( tbb.iBitmap, pDis->hDC, rc.left + 2, rc.top + 2, ILD_NORMAL );
-			m_cLookup.Funccode2Name( tbb.idCommand, szLabel, sizeof( szLabel ) );
+			m_cLookup.Funccode2Name( tbb.idCommand, szLabel, _countof( szLabel ) );
 		}
 		//	To Here Oct. 15, 2001 genta
 

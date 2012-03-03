@@ -75,10 +75,6 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 	LPARAM	lParam 	// second message parameter
 )
 {
-//	WORD		wNotifyCode;
-//	WORD		wID;
-//	HWND		hwndCtl;
-
 // From Here Sept. 9, 2000 JEPRO
 	WORD		wNotifyCode;
 	WORD		wID;
@@ -88,14 +84,12 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
-//	int			nVal;
 	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
-//	LPDRAWITEMSTRUCT pDis;
 
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
+		/* ダイアログデータの設定 Window */
 		SetData_PROP_WIN( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -119,8 +113,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 				OnHelp( hwndDlg, IDD_PROP_WIN );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p1 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p1 */
+//				MYTRACE( "Window PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 Window */
 				GetData_PROP_WIN( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -223,9 +217,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 					rc.bottom = m_Common.m_nWinSizeCY;
 					rc.top    = m_Common.m_nWinPosX;
 					rc.left   = m_Common.m_nWinPosY;
-					cDlgWinSize.DoModal( ::GetModuleHandle(NULL), hwndDlg,
-						m_Common.m_nSaveWindowSize, m_Common.m_nSaveWindowPos,
-						m_Common.m_nWinSizeType, rc
+					cDlgWinSize.DoModal(
+						::GetModuleHandle(NULL),
+						hwndDlg,
+						m_Common.m_nSaveWindowSize,
+						m_Common.m_nSaveWindowPos,
+						m_Common.m_nWinSizeType,
+						rc
 					);
 					m_Common.m_nWinSizeCX = rc.right;
 					m_Common.m_nWinSizeCY = rc.bottom;
@@ -421,9 +419,9 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
 	::GetDlgItemText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_szWindowCaptionActive,
-		sizeof( m_Common.m_szWindowCaptionActive ) );
+		_countof( m_Common.m_szWindowCaptionActive ) );
 	::GetDlgItemText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_szWindowCaptionInactive,
-		sizeof( m_Common.m_szWindowCaptionInactive ) );
+		_countof( m_Common.m_szWindowCaptionInactive ) );
 
 	return TRUE;
 }
@@ -438,7 +436,7 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 void CPropCommon::EnableWinPropInput( HWND hwndDlg )
 {
 	//	ファクションキーを表示するかどうか
-		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND ) ){
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND ) ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_GROUP_FUNCKEYWND_POSITION ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2 ), TRUE );

@@ -34,9 +34,9 @@
 
 const char STR_KEYDATA_HEAD2[] = "// テキストエディタキー設定 Ver2";	//@@@ 2001.11.07 add MIK
 
-#define STR_SHIFT_PLUS        "Shift+"  //@@@ 2001.11.08 add MIK
-#define STR_CTRL_PLUS         "Ctrl+"  //@@@ 2001.11.08 add MIK
-#define STR_ALT_PLUS          "Alt+"  //@@@ 2001.11.08 add MIK
+#define STR_SHIFT_PLUS        _T("Shift+")  //@@@ 2001.11.08 add MIK
+#define STR_CTRL_PLUS         _T("Ctrl+")  //@@@ 2001.11.08 add MIK
+#define STR_ALT_PLUS          _T("Alt+")  //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10700
@@ -99,7 +99,7 @@ LRESULT CALLBACK CPropComKeybindWndProc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 
 
 
-/* p5 メッセージ処理 */
+/* Keybind メッセージ処理 */
 INT_PTR CPropCommon::DispatchEvent_p5(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
@@ -132,15 +132,12 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 	int			nIndex3;
 	int			i;
 	int			j;
-//	int			nNum;
 	int			nFuncCode;
 	static char pszLabel[256];
-//	static char	szKeyState[64];
-//	int			nIndexTop;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p5 */
+		/* ダイアログデータの設定 Keybind */
 		SetData_p5( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -164,9 +161,6 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 //	To Here Oct. 14, 2000
 		::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_FUNCKIND, CBN_SELCHANGE ), (LPARAM)hwndCombo );
 
-//		/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-//		::SendMessage( hwndCombo, CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-
 		::SetTimer( hwndDlg, 1, 300, NULL );	// 2007.11.02 ryoji
 
 		return TRUE;
@@ -181,8 +175,8 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 			OnHelp( hwndDlg, IDD_PROP_KEYBIND );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( "p5 PSN_KILLACTIVE\n" );
-			/* ダイアログデータの取得 p5 */
+//			MYTRACE( "Keybind PSN_KILLACTIVE\n" );
+			/* ダイアログデータの取得 Keybind */
 			GetData_p5( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -216,11 +210,11 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_BUTTON_IMPORT:	/* インポート */
-				/* p5:キー割り当て設定をインポートする */
+				/* Keybind:キー割り当て設定をインポートする */
 				p5_Import_KeySetting( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_EXPORT:	/* エクスポート */
-				/* p5:キー割り当て設定をエクスポートする */
+				/* Keybind:キー割り当て設定をエクスポートする */
 				p5_Export_KeySetting( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_ASSIGN:	/* 割付 */
@@ -231,7 +225,6 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 					return TRUE;
 				}
 				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
-//				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
 				i = 0;
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 					i |= _SHIFT;
@@ -276,34 +269,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 			switch( wNotifyCode ){
 			case BN_CLICKED:
 				p5_ChangeKeyList( hwndDlg );
-// 別関数へ
-#if 0
-				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
-				nIndexTop = ::SendMessage( hwndKeyList, LB_GETTOPINDEX, 0, 0 );
-				strcpy( szKeyState, "" );
-				i = 0;
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
-					i |= _SHIFT;
-					strcat( szKeyState, "Shift+" );
-				}
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
-					i |= _CTRL;
-					strcat( szKeyState, "Ctrl+" );
-				}
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
-					i |= _ALT;
-					strcat( szKeyState, "Alt+" );
-				}
-				/* キー一覧に文字列をセット（リストボックス）*/
-				::SendMessage( hwndKeyList, LB_RESETCONTENT, 0, 0 );
-				for( i = 0; i < m_nKeyNameArrNum; ++i ){
-					wsprintf( pszLabel, "%s%s", szKeyState, m_pKeyNameArr[i].m_szKeyName );
-					::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
-				}
-				::SendMessage( hwndKeyList, LB_SETCURSEL, nIndex, 0 );
-				::SendMessage( hwndKeyList, LB_SETTOPINDEX, nIndexTop, 0 );
-				::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
-#endif
+
 				return TRUE;
 			}
 		}else
@@ -340,7 +306,6 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				nIndex3 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
 				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
-//				nFuncCode = (nsFuncCode::ppnFuncListArr[nIndex2])[nIndex3];
 				/* 機能に対応するキー名の取得(複数) */
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(	/* 機能に対応するキー名の取得(複数) */
 					m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr,
@@ -364,23 +329,9 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 		if( hwndCombo == hwndCtl){
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
-//				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 				nIndex2 = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
 				/* 機能一覧に文字列をセット（リストボックス）*/
 				m_cLookup.SetListItem( hwndFuncList, nIndex2 );	//	Oct. 2, 2001 genta
-#if 0
-				::SendMessage( hwndFuncList, LB_RESETCONTENT, 0, 0 );
-				for( i = 0; i < nsFuncCode::pnFuncListNumArr[nIndex2]; ++i ){
-					if( 0 < ::LoadString( m_hInstance, (nsFuncCode::ppnFuncListArr[nIndex2])[i], pszLabel, 255 ) ){
-						::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
-					}else{
-						::SendMessage( hwndFuncList, LB_ADDSTRING, 0, (LPARAM)"--未定義--" );
-					}
-				}
-#endif
-//	From Here Sept. 7, 2000 JEPRO わかりにくいので選択しないように変更
-//				::SendMessage( hwndFuncList, LB_SETCURSEL, (WPARAM)0, 0 );
-//	To Here Sept. 7, 2000
 				return TRUE;
 			}
 
@@ -391,11 +342,11 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 			case LBN_SELCHANGE:
 			//case LBN_DBLCLK:
 				{
-					char	buff[1024], *p;
+					TCHAR	buff[1024], *p;
 					int	ret;
 
 					nIndex = ::SendMessage( hwndAssignedkeyList, LB_GETCURSEL, 0, 0 );
-					memset(buff, 0, sizeof(buff));
+					memset(buff, 0, _countof(buff));
 					ret = ::SendMessage( hwndAssignedkeyList, LB_GETTEXT, nIndex, (LPARAM)buff);
 					if( ret != LB_ERR )
 					{
@@ -484,7 +435,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 
 
 
-/* ダイアログデータの設定 p5 */
+/* ダイアログデータの設定 Keybind */
 void CPropCommon::SetData_p5( HWND hwndDlg )
 {
 	HWND		hwndCombo;
@@ -494,11 +445,7 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 	/* 機能種別一覧に文字列をセット（コンボボックス）*/
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 2, 2001 genta
-#if 0
-	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)nsFuncCode::ppszFuncKind[i] );
-	}
-#endif
+
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
 	/* キー一覧に文字列をセット（リストボックス）*/
@@ -515,7 +462,7 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 p5 */
+/* ダイアログデータの取得 Keybind */
 int CPropCommon::GetData_p5( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -525,7 +472,8 @@ int CPropCommon::GetData_p5( HWND hwndDlg )
 
 	return TRUE;
 }
-/*! p5: キーリストをチェックボックスの状態に合わせて更新する */
+
+/*! Keybind: キーリストをチェックボックスの状態に合わせて更新する */
 void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 	HWND	hwndKeyList;
 	int 	nIndex;
@@ -554,7 +502,7 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 	/* キー一覧に文字列をセット（リストボックス）*/
 	::SendMessage( hwndKeyList, LB_RESETCONTENT, 0, 0 );
 	for( i = 0; i < m_nKeyNameArrNum; ++i ){
-		wsprintf( pszLabel, "%s%s", szKeyState, m_pKeyNameArr[i].m_szKeyName );
+		wsprintf( pszLabel, _T("%s%s"), szKeyState, m_pKeyNameArr[i].m_szKeyName );
 		::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
 	}
 	::SendMessage( hwndKeyList, LB_SETCURSEL, nIndex, 0 );
@@ -562,7 +510,7 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 }
 
-/* p5:キー割り当て設定をインポートする */
+/* Keybind:キー割り当て設定をインポートする */
 void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
@@ -715,7 +663,7 @@ ToMaster:	//@@@ 2001.11.07 add MIK
 }
 
 
-/* p5:キー割り当て設定をエクスポートする */
+/* Keybind:キー割り当て設定をエクスポートする */
 void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;

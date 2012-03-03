@@ -56,7 +56,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
+		/* ダイアログデータの設定 Tab */
 		SetData_PROP_TAB( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -75,7 +75,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 				OnHelp( hwndDlg, IDD_PROP_TAB );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
+				/* ダイアログデータの取得 Tab */
 				GetData_PROP_TAB( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正

@@ -17,16 +17,13 @@
 */
 
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CPropCommon.h"
-#include "Debug.h"
-#include <windows.h>
-#include <stdio.h>
-#include <commctrl.h>
 #include "CDlgOpenFile.h"
+#include "Debug.h"
 #include "etc_uty.h"
 #include "CDlgInput1.h"
 #include "global.h"
+#include "sakura_rc.h"
 #include "sakura.hh"
 
 
@@ -68,7 +65,7 @@ INT_PTR CALLBACK CPropCommon::DlgProc_PROP_HELPER(
 }
 //	To Here Jun. 2, 2001 genta
 
-/* p10 メッセージ処理 */
+/* Helper メッセージ処理 */
 INT_PTR CPropCommon::DispatchEvent_p10(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
@@ -82,27 +79,19 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
-//	int			nVal;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p10 */
+		/* ダイアログデータの設定 Helper */
 		SetData_p10( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
-
-		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-		/* 入力補完 単語ファイル */
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-		/* キーワードヘルプ 辞書ファイル */
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
 
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* 外部ヘルプ１ */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHELP1 ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
 		/* 外部HTMLヘルプ */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHTMLHELP ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-
 
 		return TRUE;
 	case WM_COMMAND:
@@ -112,7 +101,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
-			/* ダイアログデータの取得 p10 */
+			/* ダイアログデータの取得 Helper */
 			GetData_p10( hwndDlg );
 			switch( wID ){
 			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
@@ -166,14 +155,14 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 			// ai 02/05/21 Add S
 			case IDC_BUTTON_KEYWORDHELPFONT:	/* キーワードヘルプの「フォント」ボタン */
 				{
-					CHOOSEFONT		cf;
-					LOGFONT			lf;
+					CHOOSEFONT	cf;
+					LOGFONT		lf;
 
 					/* LOGFONTの初期化 */
-					memcpy(&lf, &(m_Common.m_lf_kh), sizeof(LOGFONT));
+					memcpy(&lf, &(m_Common.m_lf_kh), sizeof(lf));
 
 					/* CHOOSEFONTの初期化 */
-					memset(&cf, 0, sizeof(CHOOSEFONT));
+					memset(&cf, 0, sizeof(cf));
 					cf.lStructSize = sizeof(cf);
 					cf.hwndOwner = hwndDlg;
 					cf.hDC = NULL;
@@ -182,7 +171,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
 					if(ChooseFont(&cf))
 					{
-						memcpy(&(m_Common.m_lf_kh), &lf, sizeof(LOGFONT));
+						memcpy(&(m_Common.m_lf_kh), &lf, sizeof(lf));
 					}
 				}
 				return TRUE;
@@ -244,8 +233,8 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 				OnHelp( hwndDlg, IDD_PROP_HELPER );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p10 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p10 */
+//				MYTRACE( "Helper PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 Helper */
 				GetData_p10( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -285,7 +274,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 	return FALSE;
 }
 
-/* ダイアログデータの設定 p10 */
+/* ダイアログデータの設定 Helper */
 void CPropCommon::SetData_p10( HWND hwndDlg )
 {
 	/* 外部ヘルプ１ */
@@ -311,7 +300,7 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 }
 
 
-/* ダイアログデータの取得 p10 */
+/* ダイアログデータの取得 Helper */
 int CPropCommon::GetData_p10( HWND hwndDlg )
 {
 	// Oct. 5, 2002 genta サイズ制限方法変更
@@ -329,7 +318,6 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 	m_Common.m_bHokanKey_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN );//VK_RETURN 補完決定キーが有効/無効
 	m_Common.m_bHokanKey_TAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
 	m_Common.m_bHokanKey_RIGHT = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
-//	m_Common.m_bHokanKey_SPACE = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
 
 	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_szMigemoDll, sizeof( m_Common.m_szMigemoDll ));
 	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_szMigemoDict, sizeof( m_Common.m_szMigemoDict ));

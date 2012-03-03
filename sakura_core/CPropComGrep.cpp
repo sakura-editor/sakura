@@ -63,7 +63,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
+		/* ダイアログデータの設定 Grep */
 		SetData_PROP_GREP( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -82,7 +82,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 				OnHelp( hwndDlg, IDD_PROP_GREP );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
+				/* ダイアログデータの取得 Grep */
 				GetData_PROP_GREP( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -126,10 +126,6 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 /* ダイアログデータの設定 */
 void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 {
-//	BOOL	bRet;
-
-//	BOOL	m_bGrepExitConfirm;	/* Grepモードで保存確認するか */
-
 	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_bCaretTextForSearch );
 
@@ -188,7 +184,7 @@ void CPropCommon::SetRegexpVersion( HWND hwndDlg )
 {
 	TCHAR regexp_dll[_MAX_PATH];
 	
-	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, sizeof( regexp_dll ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, regexp_dll, _countof( regexp_dll ));
 	CBregexp breg;
 	if( ! breg.Init( regexp_dll ) ){
 		::SetDlgItemText( hwndDlg, IDC_LABEL_REGEXP_VER, _T("正規表現は使用できません") );

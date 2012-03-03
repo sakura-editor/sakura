@@ -32,9 +32,9 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CPropCommon.h"
 #include "CShareData.h"
+#include "sakura_rc.h"
 #include "sakura.hh"
 
 
@@ -123,11 +123,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_FILENAME( HWND hwndDlg, UINT uMsg, WPARA
 					if( -1 == nIndex ){
 						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_FROM, _T("") );
 						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_TO, _T("") );
-					}else if( nIndex != m_nLastPos_FILENAME ){
+					}
+					else if( nIndex != m_nLastPos_FILENAME ){
 						GetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo );
 						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_FROM, szFrom );
 						::SetDlgItemText( hwndDlg, IDC_EDIT_FNAME_TO, szTo );
-					}else{
+					}
+					else{
 						// nIndex == m_nLastPos_FILENAMEのとき
 						// リスト→エディットボックスにデータをコピーすると[更新]がうまくうまく動作しない
 					}
@@ -275,15 +277,8 @@ void CPropCommon::SetData_PROP_FILENAME( HWND hwndDlg )
 {
 	int nIndex;
 	int i;
-	LVITEM Item;
+	LVITEM lvItem;
 
-	// ファイル名を簡易表示する
-//	if( FALSE != m_bUseTransformFileName ){
-//		CheckDlgButton( hwndDlg, IDC_CHECK_FNAME, BST_CHECKED );
-//	}else{
-//		CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED );
-//	}
-//	EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_FNAME ), FALSE );
 
 	// ファイル名置換リスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_LIST_FNAME );
@@ -293,19 +288,19 @@ void CPropCommon::SetData_PROP_FILENAME( HWND hwndDlg )
 	for( i = 0, nIndex = 0; i < m_nTransformFileNameArrNum; i++ ){
 		if( '\0' == m_szTransformFileNameFrom[i][0] ) continue;
 
-		::ZeroMemory( &Item, sizeof( Item ));
-		Item.mask     = LVIF_TEXT;
-		Item.iItem    = nIndex;
-		Item.iSubItem = 0;
-		Item.pszText  = m_szTransformFileNameFrom[i];
-		ListView_InsertItem( hListView, &Item );
+		::ZeroMemory( &lvItem, sizeof( lvItem ));
+		lvItem.mask     = LVIF_TEXT;
+		lvItem.iItem    = nIndex;
+		lvItem.iSubItem = 0;
+		lvItem.pszText  = m_szTransformFileNameFrom[i];
+		ListView_InsertItem( hListView, &lvItem );
 
-		::ZeroMemory( &Item, sizeof( Item ));
-		Item.mask     = LVIF_TEXT;
-		Item.iItem    = nIndex;
-		Item.iSubItem = 1;
-		Item.pszText  = m_szTransformFileNameTo[i];
-		ListView_SetItem( hListView, &Item );
+		::ZeroMemory( &lvItem, sizeof( lvItem ));
+		lvItem.mask     = LVIF_TEXT;
+		lvItem.iItem    = nIndex;
+		lvItem.iSubItem = 1;
+		lvItem.pszText  = m_szTransformFileNameTo[i];
+		ListView_SetItem( hListView, &lvItem );
 
 		nIndex++;
 	}
@@ -372,7 +367,7 @@ int CPropCommon::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPTSTR sz
 	LV_ITEM	Item;
 	int nCount;
 
-	if( '\0' == szFrom[0] || -1 == nIndex ) return -1;
+	if( _T('\0') == szFrom[0] || -1 == nIndex ) return -1;
 
 	nCount = ListView_GetItemCount( hListView );
 

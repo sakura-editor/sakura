@@ -85,33 +85,33 @@ INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FORMAT(
 
 void CPropCommon::ChangeDateExample( HWND hwndDlg )
 {
-	/* ダイアログデータの取得 p9 */
+	/* ダイアログデータの取得 Format */
 	GetData_p9( hwndDlg );
 
 	/* 日付をフォーマット */
-	char szText[1024];
+	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nDateFormatType, m_Common.m_szDateFormat );
+	CShareData::getInstance()->MyGetDateFormat( systime, szText, _countof( szText ) - 1, m_Common.m_nDateFormatType, m_Common.m_szDateFormat );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_DFORM_EX, szText );
 	return;
 }
 void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 {
-	/* ダイアログデータの取得 p9 */
+	/* ダイアログデータの取得 Format */
 	GetData_p9( hwndDlg );
 
 	/* 時刻をフォーマット */
-	char szText[1024];
+	TCHAR szText[1024];
 	SYSTEMTIME systime;
 	::GetLocalTime( &systime );
-	CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
+	CShareData::getInstance()->MyGetTimeFormat( systime, szText, _countof( szText ) - 1, m_Common.m_nTimeFormatType, m_Common.m_szTimeFormat );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TFORM_EX, szText );
 	return;
 }
 
 
-/* p9 メッセージ処理 */
+/* Format メッセージ処理 */
 INT_PTR CPropCommon::DispatchEvent_p9(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
@@ -129,21 +129,13 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p9 */
+		/* ダイアログデータの設定 Format */
 		SetData_p9( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		ChangeDateExample( hwndDlg );
 		ChangeTimeExample( hwndDlg );
-
-
-		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-//		/* 外部ヘルプ１ */
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHELP1 ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-//		/* 外部HTMLヘルプ */
-//		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_EXTHTMLHELP ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-
 
 		/* 見出し記号 */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_MIDASHIKIGOU ), EM_LIMITTEXT, (WPARAM)(sizeof(m_Common.m_szMidashiKigou) - 1 ), 0 );
@@ -218,8 +210,8 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 				OnHelp( hwndDlg, IDD_PROP_FORMAT );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p9 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p9 */
+//				MYTRACE( "Format PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 Format */
 				GetData_p9( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -263,18 +255,12 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 
 
 
-/* ダイアログデータの設定 p9 */
+/* ダイアログデータの設定 Format */
 void CPropCommon::SetData_p9( HWND hwndDlg )
 {
 
 	/* 見出し記号 */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_MIDASHIKIGOU, m_Common.m_szMidashiKigou );
-
-//	/* 外部ヘルプ１ */
-//	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_szExtHelp1 );
-//
-//	/* 外部HTMLヘルプ */
-//	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_szExtHtmlHelp );
 
 	/* 引用符 */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_INYOUKIGOU, m_Common.m_szInyouKigou );
@@ -310,7 +296,7 @@ void CPropCommon::SetData_p9( HWND hwndDlg )
 
 
 
-/* ダイアログデータの取得 p9 */
+/* ダイアログデータの取得 Format */
 int CPropCommon::GetData_p9( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正

@@ -19,7 +19,6 @@
 */
 #include "StdAfx.h"
 #include "CPropCommon.h"
-
 #include "etc_uty.h"
 #include "sakura.hh"
 
@@ -80,14 +79,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 	int			idCtrl;
 //	int			nVal;
 	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
-	char		szFolder[_MAX_PATH];
 //	int			nDummy;
 //	int			nCharChars;
 
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
+		/* ダイアログデータの設定 Backup */
 		SetData_PROP_BACKUP( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -111,12 +109,12 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 				OnHelp( hwndDlg, IDD_PROP_BACKUP );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				/* ダイアログデータの取得 p1 */
+				/* ダイアログデータの取得 Backup */
 				GetData_PROP_BACKUP( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_BACKUP;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
+				m_nPageNum = ID_PAGENUM_BACKUP;
 				return TRUE;
 			}
 			break;
@@ -169,15 +167,17 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 				EnableBackupInput(hwndDlg);
 				return TRUE;
 			case IDC_BUTTON_BACKUP_FOLDER_REF:	/* フォルダ参照 */
-//				strcpy( szFolder, m_Common.m_szBackUpFolder );
-				/* バックアップを作成するフォルダ */
-				::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, sizeof( szFolder ));
+				{
+					/* バックアップを作成するフォルダ */
+					TCHAR		szFolder[_MAX_PATH];
+					::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, szFolder, _countof( szFolder ));
 
-				if( SelectDir( hwndDlg, "バックアップを作成するフォルダを選んでください", (const char *)szFolder, (char *)szFolder ) ){
-					strcpy( m_Common.m_szBackUpFolder, szFolder );
-					::SetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder );
+					if( SelectDir( hwndDlg, _T("バックアップを作成するフォルダを選んでください"), (const char *)szFolder, (char *)szFolder ) ){
+						strcpy( m_Common.m_szBackUpFolder, szFolder );
+						::SetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_szBackUpFolder );
+					}
+					UpdateBackupFile( hwndDlg );
 				}
-				UpdateBackupFile( hwndDlg );
 				return TRUE;
 			default: // 20051107 aroka Default節 追加
 				GetData_PROP_BACKUP( hwndDlg );
@@ -409,23 +409,9 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 		m_Common.SetBackupTypeAdv(4);	// 前回の保存時刻
 	}
 
-//	int nDummy;
-//	int nCharChars;
-//	nDummy = strlen( m_Common.m_szBackUpFolder );
-//	if( 0 < nDummy ){
-//		/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
-//		nCharChars = &m_Common.m_szBackUpFolder[nDummy] - CMemory::MemCharPrev( m_Common.m_szBackUpFolder, nDummy, &m_Common.m_szBackUpFolder[nDummy] );
-//		if( 1 == nCharChars && m_Common.m_szBackUpFolder[nDummy - 1] == '\\' ){
-//		}else{
-//			strcat( m_Common.m_szBackUpFolder, "\\" );
-//		}
-//	}
-
 	//	From Here Aug. 16, 2000 genta
 	//	世代数の取得
-//	char szNumBuf[6];
 	int	 nN;
-//	char *pDigit;
 	nN = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, NULL, FALSE );	//	Oct. 29, 2001 genta
 
 //	for( nN = 0, pDigit = szNumBuf; *pDigit != '\0'; pDigit++ ){

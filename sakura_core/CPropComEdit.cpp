@@ -71,7 +71,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p1 */
+		/* ダイアログデータの設定 Edit */
 		SetData_PROP_EDIT( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -89,17 +89,10 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 			switch( wID ){
 			case IDC_CHECK_DRAGDROP:	/* タスクトレイを使う */
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP ) ){
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//					::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, TRUE );	/* DropSource */
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), TRUE );
-//	To Here Sept. 9, 2000
-				}else{
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//					::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, FALSE );	/* DropSource */
+				}
+				else{
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
-//	To Here Sept. 9, 2000
 				}
 				return TRUE;
 			}
@@ -111,26 +104,21 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 		pMNUD  = (NM_UPDOWN*)lParam;
-//		switch( idCtrl ){
-//		default:
-			switch( pNMHDR->code ){
-			case PSN_HELP:
-				OnHelp( hwndDlg, IDD_PROP_EDIT );
-				return TRUE;
-			case PSN_KILLACTIVE:
-#ifdef _DEBUG
-				MYTRACE( "p1 PSN_KILLACTIVE\n" );
-#endif
-				/* ダイアログデータの取得 p1 */
-				GetData_PROP_EDIT( hwndDlg );
-				return TRUE;
-//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-			case PSN_SETACTIVE:
-				m_nPageNum = ID_PAGENUM_EDIT;	//Oct. 25, 2000 JEPRO ZENPAN1→ZENPAN に変更(参照しているのはCPropCommon.cppのみの1箇所)
-				return TRUE;
-			}
-//			break;	/* default */
-//		}
+		switch( pNMHDR->code ){
+		case PSN_HELP:
+			OnHelp( hwndDlg, IDD_PROP_EDIT );
+			return TRUE;
+		case PSN_KILLACTIVE:
+			DBPRINT( "Edit PSN_KILLACTIVE\n" );
+
+			/* ダイアログデータの取得 Edit */
+			GetData_PROP_EDIT( hwndDlg );
+			return TRUE;
+
+		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			m_nPageNum = ID_PAGENUM_EDIT;
+			return TRUE;
+		}
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -159,22 +147,13 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 /* ダイアログデータの設定 */
 void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 {
-//	BOOL	bRet;
-
 	/* ドラッグ & ドロップ編集 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_bUseOLE_DragDrop );
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DRAGDROP ) ){
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, TRUE );	/* DropSource */
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), TRUE );
-//	To Here Sept. 9, 2000
-	}else{
-//	From Here Sept. 9, 2000 JEPRO
-//	前のチェック状態が残るように次の行をコメントアウトに変更
-//		::CheckDlgButton( hwndDlg, IDC_CHECK_DROPSOURCE, FALSE );	/* DropSource */
+	}
+	else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
-//	To Here Sept. 9, 2000
 	}
 
 	/* DropSource */

@@ -19,7 +19,6 @@
 */
 
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CPropCommon.h"
 #include "Debug.h"
 #include <windows.h>
@@ -32,6 +31,7 @@
 #include "CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
 #include "Funccode.h"	//Stonee, 2001/05/18
+#include "sakura_rc.h"
 #include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -241,10 +241,9 @@ BOOL CPropCommon::SelectColor( HWND hwndParent, COLORREF* pColor )
 	保持する構造体
 */
 struct ComPropSheetInfo {
-	const char* szTabname;	//!< TABの表示名
-	unsigned int resId;	//!< Property sheetに対応するDialog resource
-	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);
-		//!<  Dialog Procedure
+	const TCHAR* szTabname;									//!< TABの表示名
+	unsigned int resId;										//!< Property sheetに対応するDialog resource
+	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
 };
 //	To Here Jun. 2, 2001 genta
 
@@ -259,9 +258,9 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
-	int				nRet;
-	int				nIdx;
-	int				i;
+	int					nRet;
+	int					nIdx;
+	int					i;
 
 	//	From Here Jun. 2, 2001 genta
 	//	Feb. 11, 2007 genta URLをTABと入れ換え	// 2007.02.13 順序変更（TABをWINの次に）
@@ -276,7 +275,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 
 		{ _T("編集"),				IDD_PROP_EDIT,		DlgProc_PROP_EDIT },
 		{ _T("ファイル"),			IDD_PROP_FILE,		DlgProc_PROP_FILE },
-		{ _T("ファイル名表示"), 	IDD_PROP_FNAME,  	DlgProc_PROP_FILENAME},
+		{ _T("ファイル名表示"),		IDD_PROP_FNAME,		DlgProc_PROP_FILENAME},
 		{ _T("バックアップ"),		IDD_PROP_BACKUP,	DlgProc_PROP_BACKUP },
 		{ _T("書式"),				IDD_PROP_FORMAT,	DlgProc_PROP_FORMAT },
 		{ _T("検索"),				IDD_PROP_GREP,		DlgProc_PROP_GREP },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
@@ -291,8 +290,8 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	for( nIdx = 0, i = 0; i < _countof(ComPropSheetInfoList) && nIdx < 32 ; i++ ){
 		if( ComPropSheetInfoList[i].szTabname != NULL ){
 			PROPSHEETPAGE *p = &psp[nIdx];
-			memset( p, 0, sizeof( PROPSHEETPAGE ) );
-			p->dwSize = sizeof( PROPSHEETPAGE );
+			memset( p, 0, sizeof( *p ) );
+			p->dwSize = sizeof( *p );
 			p->dwFlags = PSP_USETITLE | PSP_HASHELP;
 			p->hInstance = m_hInstance;
 			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
@@ -307,9 +306,10 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//	To Here Jun. 2, 2001 genta
 
 	PROPSHEETHEADER	psh;
-	memset( &psh, 0, sizeof( PROPSHEETHEADER ) );
+	memset( &psh, 0, sizeof( psh ) );
 	psh.dwSize = sizeof_old_PROPSHEETHEADER;
-//	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
+
+	//	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
 	psh.dwFlags = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE;
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance = m_hInstance;
@@ -343,12 +343,21 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 			NULL,
 			::GetLastError(),
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),	// デフォルト言語
-			(LPTSTR) &pszMsgBuf,
+			(LPTSTR)&pszMsgBuf,
 			0,
 			NULL
 		);
-		::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, "作者に教えて欲しいエラー",
-			"CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%s\n", psh.nStartPage, pszMsgBuf
+		::MYMESSAGEBOX(
+			NULL,
+			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
+			_T("作者に教えて欲しいエラー"),
+			_T("CPropCommon::DoPropertySheet()内でエラーが出ました。\n")
+			_T("psh.nStartPage=[%d]\n")
+			_T("::PropertySheet()失敗\n")
+			_T("\n")
+			_T("%s\n"),
+			psh.nStartPage,
+			pszMsgBuf
 		);
 		::LocalFree( pszMsgBuf );
 	}
@@ -364,7 +373,7 @@ void CPropCommon::InitData( void )
 	int i;
 	m_Common = m_pShareData->m_Common;
 	m_nKeyNameArrNum = m_pShareData->m_nKeyNameArrNum;
-	for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
+	for( i = 0; i < _countof( m_pShareData->m_pKeyNameArr ); ++i ){
 		m_pKeyNameArr[i] = m_pShareData->m_pKeyNameArr[i];
 	}
 	m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;

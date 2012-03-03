@@ -19,7 +19,6 @@
 */
 
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CPropCommon.h"
 #include "Debug.h"
 #include <windows.h>
@@ -29,6 +28,7 @@
 #include "etc_uty.h"
 #include "CDlgInput1.h"
 #include "global.h"
+#include "sakura_rc.h"
 #include "sakura.hh"
 
 
@@ -65,7 +65,7 @@ INT_PTR CALLBACK CPropCommon::DlgProc_PROP_KEYWORD(
 }
 //	To Here Jun. 2, 2001 genta
 
-/* p7 メッセージ処理 */
+/* Keyword メッセージ処理 */
 INT_PTR CPropCommon::DispatchEvent_p7(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
@@ -79,20 +79,11 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 	NMHDR*				pNMHDR;
 	NM_UPDOWN*			pMNUD;
 	int					idCtrl;
-//	LPDRAWITEMSTRUCT	pDis;
 	int					nIndex1;
-//	int					nIndex2;
-//	int					nIndex3;
-//	int					nNum;
 	int					i;
-//	int					j;
 	static char			pszLabel[1024];
-//	HDC					hdc;
-//	TEXTMETRIC			tm;
 	static int			nListItemHeight;
-//	LRESULT				lResult;
 	LV_COLUMN			lvc;
-//	LV_ITEM				lvi;
 	LV_ITEM*			plvi;
 	static HWND			hwndCOMBO_SET;
 	static HWND			hwndLIST_KEYWORD;
@@ -105,7 +96,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p7 */
+		/* ダイアログデータの設定 Keyword */
 		SetData_p7( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
@@ -117,7 +108,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 		lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		lvc.fmt = LVCFMT_LEFT;
 		lvc.cx = rc.right - rc.left;
-		lvc.pszText = "";
+		lvc.pszText = _T("");
 		lvc.iSubItem = 0;
 		ListView_InsertColumn( hwndLIST_KEYWORD, 0, &lvc );
 
@@ -143,7 +134,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 			switch( pNMHDR->code ){
 			case NM_DBLCLK:
 //				MYTRACE( "NM_DBLCLK     \n" );
-				/* p7:リスト中で選択されているキーワードを編集する */
+				/* リスト中で選択されているキーワードを編集する */
 				p7_Edit_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 				return TRUE;
 			case LVN_BEGINLABELEDIT:
@@ -178,18 +169,20 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				}
 				if( 0 < strlen( plvi->pszText ) ){
 					if( MAX_KEYWORDLEN < strlen( plvi->pszText ) ){
-						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-							"キーワードの長さは%dバイトまでです。", MAX_KEYWORDLEN
-						);
+						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("キーワードの長さは%dバイトまでです。"), MAX_KEYWORDLEN );
 						return TRUE;
 					}
 					/* ｎ番目のセットにキーワードを編集 */
-					m_CKeyWordSetMgr.UpdateKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, plvi->lParam, plvi->pszText );
+					m_CKeyWordSetMgr.UpdateKeyWord(
+						m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
+						plvi->lParam,
+						plvi->pszText
+					);
 				}else{
 					/* ｎ番目のセットのｍ番目のキーワードを削除 */
 					m_CKeyWordSetMgr.DelKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, plvi->lParam );
 				}
-				/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+				/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 				SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 				ListView_SetItemState( hwndLIST_KEYWORD, plvi->iItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -199,11 +192,11 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 //				MYTRACE( "LVN_KEYDOWN\n" );
 				switch( pnkd->wVKey ){
 				case VK_DELETE:
-					/* p7:リスト中で選択されているキーワードを削除する */
+					/* リスト中で選択されているキーワードを削除する */
 					p7_Delete_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					break;
 				case VK_SPACE:
-					/* p7:リスト中で選択されているキーワードを編集する */
+					/* リスト中で選択されているキーワードを編集する */
 					p7_Edit_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					break;
 				}
@@ -216,9 +209,9 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				return TRUE;
 			case PSN_KILLACTIVE:
 #ifdef _DEBUG
-				MYTRACE( "p7 PSN_KILLACTIVE\n" );
+				MYTRACE( "Keyword PSN_KILLACTIVE\n" );
 #endif
-				/* ダイアログデータの取得 p7 */
+				/* ダイアログデータの取得 Keyword */
 				GetData_p7( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -236,7 +229,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 			switch( wNotifyCode ){
 			case CBN_SELCHANGE:
 				nIndex1 = ::SendMessage( hwndCOMBO_SET, CB_GETCURSEL, 0, 0 );
-				/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+				/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 				SetData_p7_KeyWordSet( hwndDlg, nIndex1 );
 				return TRUE;
 			}
@@ -247,9 +240,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				switch( wID ){
 				case IDC_BUTTON_ADDSET:	/* セット追加 */
 					if( MAX_SETNUM <= m_CKeyWordSetMgr.m_nKeyWordSetNum ){
-						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-							"セットは%d個までしか登録できません。\n", MAX_SETNUM
-						);
+						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("セットは%d個までしか登録できません。\n"), MAX_SETNUM );
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
@@ -264,7 +255,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 
 						m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = m_CKeyWordSetMgr.m_nKeyWordSetNum - 1;
 
-						/* ダイアログデータの設定 p7 */
+						/* ダイアログデータの設定 Keyword */
 						SetData_p7( hwndDlg );
 					}
 					return TRUE;
@@ -274,7 +265,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						return TRUE;
 					}
 					/* 削除対象のセットを使用しているファイルタイプを列挙 */
-					strcpy( pszLabel, "" );
+					strcpy( pszLabel, _T("") );
 					for( i = 0; i < MAX_TYPES; ++i ){
 						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
 						if( nIndex1 == m_Types_nKeyWordSetIdx[i][0]
@@ -287,16 +278,16 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][7]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][8]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][9] ){
-							strcat( pszLabel, "・" );
+							strcat( pszLabel, _T("・") );
 							strcat( pszLabel, m_pShareData->m_Types[i].m_szTypeName );
-							strcat( pszLabel, "（" );
+							strcat( pszLabel, _T("（") );
 							strcat( pszLabel, m_pShareData->m_Types[i].m_szTypeExts );
-							strcat( pszLabel, "）" );
-							strcat( pszLabel, "\n" );
+							strcat( pszLabel, _T("）") );
+							strcat( pszLabel, _T("\n") );
 						}
 					}
 					if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-						"「%s」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%s",
+						_T("「%s」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%s"),
 						m_CKeyWordSetMgr.GetTypeName( nIndex1 ),
 						pszLabel
 					) ){
@@ -316,7 +307,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					/* ｎ番目のセットを削除 */
 					m_CKeyWordSetMgr.DelKeyWordSet( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
-					/* ダイアログデータの設定 p7 */
+					/* ダイアログデータの設定 Keyword */
 					SetData_p7( hwndDlg );
 					return TRUE;
 				case IDC_BUTTON_KEYSETRENAME: // キーワードセットの名称変更
@@ -329,7 +320,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					if( 0 < strlen( szKeyWord ) ){
 						m_CKeyWordSetMgr.SetTypeName( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
 
-						// ダイアログデータの設定 p7
+						// ダイアログデータの設定 Keyword
 						SetData_p7( hwndDlg );
 					}
 					return TRUE;
@@ -340,30 +331,28 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				case IDC_BUTTON_ADDKEYWORD:	/* キーワード追加 */
 					/* ｎ番目のセットのキーワードの数を返す */
 					if( !m_CKeyWordSetMgr.CanAddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
-						::MYMESSAGEBOX(	hwndDlg,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-							"登録できるキーワード数が上限に達しています。\n"
-						);
+						::MYMESSAGEBOX(	hwndDlg,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("登録できるキーワード数が上限に達しています。\n") );
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
 					strcpy( szKeyWord, "" );
-					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "キーワード追加", "キーワードを入力してください。", MAX_KEYWORDLEN, szKeyWord ) ){
+					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
 					if( 0 < strlen( szKeyWord ) ){
 						/* ｎ番目のセットにキーワードを追加 */
 						if( 0 == m_CKeyWordSetMgr.AddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
-							// ダイアログデータの設定 p7 指定キーワードセットの設定
+							// ダイアログデータの設定 Keyword 指定キーワードセットの設定
 							SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 						}
 					}
 					return TRUE;
 				case IDC_BUTTON_EDITKEYWORD:	/* キーワード編集 */
-					/* p7:リスト中で選択されているキーワードを編集する */
+					/* リスト中で選択されているキーワードを編集する */
 					p7_Edit_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					return TRUE;
 				case IDC_BUTTON_DELKEYWORD:	/* キーワード削除 */
-					/* p7:リスト中で選択されているキーワードを削除する */
+					/* リスト中で選択されているキーワードを削除する */
 					p7_Delete_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					return TRUE;
 				// From Here 2005.01.26 Moca
@@ -372,11 +361,11 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					return TRUE;
 				// To Here 2005.01.26 Moca
 				case IDC_BUTTON_IMPORT:	/* インポート */
-					/* p7:リスト中のキーワードをインポートする */
+					/* リスト中のキーワードをインポートする */
 					p7_Import_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					return TRUE;
 				case IDC_BUTTON_EXPORT:	/* エクスポート */
-					/* p7:リスト中のキーワードをエクスポートする */
+					/* リスト中のキーワードをエクスポートする */
 					p7_Export_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					return TRUE;
 				}
@@ -422,7 +411,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 	return FALSE;
 }
 
-/* p7:リスト中で選択されているキーワードを編集する */
+/* リスト中で選択されているキーワードを編集する */
 void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
 	int			nIndex1;
@@ -448,12 +437,16 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	}
 	if( 0 < strlen( szKeyWord ) ){
 		/* ｎ番目のセットにキーワードを編集 */
-		m_CKeyWordSetMgr.UpdateKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam, szKeyWord );
+		m_CKeyWordSetMgr.UpdateKeyWord(
+			m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
+			lvi.lParam,
+			szKeyWord
+		);
 	}else{
 		/* ｎ番目のセットのｍ番目のキーワードを削除 */
 		m_CKeyWordSetMgr.DelKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam );
 	}
-	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 	ListView_SetItemState( hwndLIST_KEYWORD, nIndex1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -462,7 +455,7 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 
 
-/* p7:リスト中で選択されているキーワードを削除する */
+/* リスト中で選択されているキーワードを削除する */
 void CPropCommon::p7_Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
 	int			nIndex1;
@@ -478,7 +471,7 @@ void CPropCommon::p7_Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	ListView_GetItem( hwndLIST_KEYWORD, &lvi );
 	/* ｎ番目のセットのｍ番目のキーワードを削除 */
 	m_CKeyWordSetMgr.DelKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam );
-	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	ListView_SetItemState( hwndLIST_KEYWORD, nIndex1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 
@@ -489,15 +482,9 @@ void CPropCommon::p7_Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 }
 
 
-/* p7:リスト中のキーワードをインポートする */
+/* リスト中のキーワードをインポートする */
 void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
-//	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-//		"ファイルから単語をインポートする機能は、まだ完成していないのです。\n"
-//	);
-//	return;
-
-
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
@@ -564,12 +551,9 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 }
 
 
-/* p7:リスト中のキーワードをエクスポートする */
+/* リスト中のキーワードをエクスポートする */
 void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
-//	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-//		"単語をファイルへエクスポートする機能は、まだ完成していないのです。\n"
-//	);
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
@@ -635,7 +619,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //! キーワードを整頓する
 void CPropCommon::p7_Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
-	if( IDYES == ::MessageBox( hwndDlg, "現在の設定では強調キーワードとして表示できないキーワードを削除しますか？",
+	if( IDYES == ::MessageBox( hwndDlg, _T("現在の設定では強調キーワードとして表示できないキーワードを削除しますか？"),
 			GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) ){	// 2009.03.26 ryoji MB_ICONSTOP->MB_ICONQUESTION
 		if( m_CKeyWordSetMgr.CleanKeyWords( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
 		}
@@ -643,14 +627,11 @@ void CPropCommon::p7_Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	}
 }
 
-/* ダイアログデータの設定 p7 */
+/* ダイアログデータの設定 Keyword */
 void CPropCommon::SetData_p7( HWND hwndDlg )
 {
 	int		i;
-//	LV_ITEM	lvi;
 	HWND	hwndWork;
-//	int		nIdx;
-//	char*	pszWork;
 
 
 	/* セット名コンボボックスの値セット */
@@ -663,10 +644,10 @@ void CPropCommon::SetData_p7( HWND hwndDlg )
 		/* セット名コンボボックスのデフォルト選択 */
 		::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, 0 );
 
-		/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 		SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	}else{
-		/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 		SetData_p7_KeyWordSet( hwndDlg, -1 );
 	}
 
@@ -674,12 +655,11 @@ void CPropCommon::SetData_p7( HWND hwndDlg )
 }
 
 
-/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
+/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 {
 	int		i;
 	int		nNum;
-	char*	pszKeyWord;
 	HWND	hwndList;
 	LV_ITEM	lvi;
 
@@ -726,10 +706,10 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		pszKeyWord =  const_cast<char*>(m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
+		const TCHAR* pszKeyWord =  const_cast<char*>(m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
 
 		lvi.mask = LVIF_TEXT | LVIF_PARAM;
-		lvi.pszText = pszKeyWord;
+		lvi.pszText = const_cast<TCHAR*>(pszKeyWord);
 		lvi.iItem = i;
 		lvi.iSubItem = 0;
 		lvi.lParam	= i;
@@ -749,7 +729,7 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 
 
 
-/* ダイアログデータの取得 p7 */
+/* ダイアログデータの取得 Keyword */
 int CPropCommon::GetData_p7( HWND hwndDlg )
 {
 //	HWND	hwndResList;
@@ -764,7 +744,7 @@ int CPropCommon::GetData_p7( HWND hwndDlg )
 	return TRUE;
 }
 
-/* ダイアログデータの取得 p7 指定キーワードセットの取得 */
+/* ダイアログデータの取得 Keyword 指定キーワードセットの取得 */
 void CPropCommon::GetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 {
 }

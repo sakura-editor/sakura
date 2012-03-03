@@ -20,7 +20,6 @@
 #include "sakura.hh"
 
 
-//@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//01310
 	IDC_CHECK_EXCVLUSIVE_NO,				HIDC_CHECK_EXCVLUSIVE_NO,				//ファイルの排他制御（排他制御しない）
 	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
@@ -44,7 +43,7 @@ static const DWORD p_helpids[] = {	//01310
 //	IDC_STATIC,								-1,
 	0, 0
 };
-//@@@ 2001.02.04 End
+
 
 //	From Here Jun. 2, 2001 genta
 /*!
@@ -80,7 +79,7 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
-		/* ダイアログデータの設定 p2 */
+		/* ダイアログデータの設定 File */
 		SetData_p2( hwndDlg );
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -116,8 +115,8 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 				OnHelp( hwndDlg, IDD_PROP_FILE );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p2 PSN_KILLACTIVE\n" );
-				/* ダイアログデータの取得 p2 */
+//				MYTRACE( "File PSN_KILLACTIVE\n" );
+				/* ダイアログデータの取得 File */
 				GetData_p2( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -244,7 +243,7 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 */
 void CPropCommon::SetData_p2( HWND hwndDlg )
 {
-	/*--- p2 ---*/
+	/*--- File ---*/
 	/* ファイルの排他制御モード */
 	switch( m_Common.m_nFileShareMode ){
 	case OF_SHARE_DENY_WRITE:	/* 書き込み禁止 */
@@ -273,14 +272,14 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	//	自動保存の有効・無効
 	::CheckDlgButton( hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.IsAutoBackupEnabled() );
 
-	char buf[6];
+	TCHAR buf[6];
 	int nN;
 
 	nN = m_Common.GetAutoBackupInterval();
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 35791 ? 35791 : nN;
 
-	wsprintf( buf, "%d", nN);
+	wsprintf( buf, _T("%d"), nN);
 	::SetDlgItemText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
 	//	To Here Aug. 21, 2000 genta
 
@@ -355,15 +354,15 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	m_Common.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) == TRUE );
 
 	//	自動保存間隔の取得
-	char szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
+	TCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
 	int	 nN;
-	char *pDigit;
+	TCHAR *pDigit;
 
 	::GetDlgItemText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6 );	//@@@ 2001.03.21 by MIK
 
-	for( nN = 0, pDigit = szNumBuf; *pDigit != '\0'; pDigit++ ){
-		if( '0' <= *pDigit && *pDigit <= '9' ){
-			nN = nN * 10 + *pDigit - '0';
+	for( nN = 0, pDigit = szNumBuf; *pDigit != _T('\0'); pDigit++ ){
+		if( _T('0') <= *pDigit && *pDigit <= _T('9') ){
+			nN = nN * 10 + *pDigit - _T('0');
 		}
 		else
 			break;
