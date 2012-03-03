@@ -161,7 +161,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			BOOL bEnabled;
 			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_OUTPUT ), bEnabled );
-			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), bEnabled && m_bEditable );	// •ÒW‹Ö~‚ÌğŒ’Ç‰Á	// 2009.02.21 ryoji
+			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), (bEnabled && m_bEditable) ? TRUE : FALSE);	// •ÒW‹Ö~‚ÌğŒ’Ç‰Á	// 2009.02.21 ryoji
 		}	//	To Here 2007.01.02 maru ˆø”‚ğŠg’£‚Ì‚½‚ß
 		break;
 	//	To Here Sept. 12, 2000 ‚¤‚Ü‚­‚¢‚©‚È‚¢‚Ì‚ÅŒ³‚É–ß‚µ‚Ä‚ ‚é

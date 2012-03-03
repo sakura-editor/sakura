@@ -128,6 +128,7 @@ public:
 
 	//	Aug. 14, 2000 genta
 	bool IsModificationForbidden( int nCommand );
+	bool IsEditable() const { return ( m_bReadOnly == FALSE && !( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ) ); }	//!< •ÒW‰Â”\‚©‚Ç‚¤‚©
 
 	//	Aug. 21, 2000 genta
 	CPassiveTimer	m_cAutoSave;	//!<	Ž©“®•Û‘¶ŠÇ—

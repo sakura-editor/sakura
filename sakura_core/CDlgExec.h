@@ -32,7 +32,7 @@ public:
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
 	char	m_szCommand[1024 + 1];	/* コマンドライン */
-	BOOL	m_bEditable;			/* 編集ウィンドウへの入力可能 */	// 2009.02.21 ryoji
+	bool	m_bEditable;			/* 編集ウィンドウへの入力可能 */	// 2009.02.21 ryoji
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 //	BOOL	m_bGetStdout;	// 標準出力を得る
 

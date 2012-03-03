@@ -9982,7 +9982,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	ZeroMemory( &pi, sizeof(PROCESS_INFORMATION) );
 	CDlgCancel				cDlgCancel;
 
-	BOOL bEditable = ( m_pcEditDoc->m_bReadOnly == FALSE && !( 0 != m_pcEditDoc->m_nFileShareModeOld && m_pcEditDoc->m_hLockedFile == NULL ) );	// 編集禁止
+	bool bEditable = m_pcEditDoc->IsEditable();	// 編集禁止
 
 	//	From Here 2006.12.03 maru 引数を拡張のため
 	BOOL	bGetStdout;			//	子プロセスの標準出力を得る
