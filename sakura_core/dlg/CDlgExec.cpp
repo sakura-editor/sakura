@@ -58,7 +58,7 @@ CDlgExec::CDlgExec()
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	m_szCommand[0] = _T('\0');	/* コマンドライン */
-	m_bEditable = ( CEditDoc::GetInstance(0)->IsEditable() );
+	m_bEditable = CEditDoc::GetInstance(0)->IsEditable();
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
 
@@ -157,7 +157,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			BOOL bEnabled;
 			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
 			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), bEnabled );
-			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), bEnabled && m_bEditable );	// ビューモードや上書き禁止の条件追加	// 2009.02.21 ryoji
+			::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), (bEnabled && m_bEditable) ? TRUE : FALSE );	// ビューモードや上書き禁止の条件追加	// 2009.02.21 ryoji
 		}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
