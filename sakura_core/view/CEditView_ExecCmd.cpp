@@ -70,7 +70,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	ZeroMemory( &pi, sizeof(pi) );
 	CDlgCancel				cDlgCancel;
 
-	BOOL bEditable = m_pcEditDoc->IsEditable();
+	bool bEditable = m_pcEditDoc->IsEditable();
 
 	//	From Here 2006.12.03 maru 引数を拡張のため
 	BOOL	bGetStdout		= nFlgOpt & 0x01 ? TRUE : FALSE;	//	子プロセスの標準出力を得る
