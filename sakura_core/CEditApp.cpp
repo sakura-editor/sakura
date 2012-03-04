@@ -1337,12 +1337,6 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 	s.lpReserved = NULL;
 	s.lpDesktop = NULL;
 	s.lpTitle = NULL;
-	/*
-	s.dwX = CW_USEDEFAULT;
-	s.dwY = CW_USEDEFAULT;
-	s.dwXSize = CW_USEDEFAULT;
-	s.dwYSize = CW_USEDEFAULT;
-	*/
 
 	s.dwFlags = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
@@ -1435,6 +1429,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 /*!	新規編集ウィンドウの追加 ver 2:
 
 	@date Oct. 24, 2000 genta create.
+	@date Feb. 25, 2012 novice -CODE/-RはOpenNewEditor側で処理するので削除
 */
 bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, const EditInfo* pfi, BOOL bReadOnly, bool sync )
 {
@@ -1471,16 +1466,13 @@ bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, const EditI
 		if( pfi->m_nViewTopLine >= 0 ){
 			nPos += wsprintf( pszCmdLine + nPos, " -VY=%d", pfi->m_nViewTopLine +1 );
 		}
-		if( pfi->m_nCharCode >= 0 && pfi->m_nCharCode != CODE_AUTODETECT ){
-			nPos += wsprintf( pszCmdLine + nPos, " -CODE=%d", pfi->m_nCharCode );
-		}
-		if( bReadOnly ){
-			nPos += wsprintf( pszCmdLine + nPos, " -R" );
-		}
 //: do error check nPos
 	}
+
+	int nCharCode = pfi ? pfi->m_nCharCode : CODE_AUTODETECT;
+
 	//	::MessageBox( NULL, pszCmdLine, "OpenNewEditor", MB_OK );
-	return OpenNewEditor( hInstance, hWndParent, pszCmdLine, CODE_AUTODETECT, bReadOnly, sync );
+	return OpenNewEditor( hInstance, hWndParent, pszCmdLine, nCharCode, bReadOnly, sync );
 
 }
 //	To Here Oct. 24, 2000 genta
