@@ -71,6 +71,7 @@ SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int
 //SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, BOOL*, BOOL );/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
 SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, CEol* );/* CR0LF0,CRLF,LFCR,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
 SAKURA_CORE_API void GetLineColm( const char*, int*, int* );
+SAKURA_CORE_API bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 SAKURA_CORE_API bool IsFilePath( const char*, int*, int*, bool = true );
 SAKURA_CORE_API bool IsFileExists(const char* path, bool bFileOnly = false);
 SAKURA_CORE_API BOOL IsURL( const char*, int, int* );/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */

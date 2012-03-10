@@ -6657,7 +6657,7 @@ open_c:;
 //From Here Feb. 7, 2001 JEPRO í«â¡
 	for( i = 0; i < open_extno; i++ ){
 		_makepath( szPath, szDrive, szDir, szFname, open_ext[i] );
-		if( -1 == _access( (const char *)szPath, 0 ) ){
+		if( !fexist( (const char *)szPath ) ){
 			if( i < open_extno - 1 )
 				continue;
 			if( bBeepWhenMiss ){
@@ -9330,7 +9330,7 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 */
 void CEditView::Command_FILE_REOPEN( int nCharCode, int bNoConfirm )
 {
-	if( bNoConfirm == 0 && (  -1 != _access( m_pcEditDoc->GetFilePath(), 0 ))
+	if( bNoConfirm == 0 && ( fexist( m_pcEditDoc->GetFilePath() ))
 	 && m_pcEditDoc->IsModified()	/* ïœçXÉtÉâÉO */
 	){
 		if( IDOK != MYMESSAGEBOX( m_hWnd, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,

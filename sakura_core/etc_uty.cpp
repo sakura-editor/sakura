@@ -1304,8 +1304,10 @@ int IsNumber(const char *buf, int offset, int length)
 }
 //@@@ 2001.11.07 End by MIK
 
-
-
+bool fexist(LPCTSTR pszPath)
+{
+	return _taccess(pszPath,0)!=-1;
+}
 
 /**	ファイルの存在チェック
 
@@ -1410,9 +1412,6 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			) &&
 			0 < strlen( szJumpToFile )
 		){
-			//	Jan. 04, 2002 genta
-			//	ファイル存在確認方法変更
-			//if( -1 != _access( (const char *)szJumpToFile, 0 ) )
 			if( IsFileExists(szJumpToFile, bFileOnly))
 			{
 				i--;
@@ -1464,14 +1463,9 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 //	if( i >= nLineLen ){
 //		return FALSE;
 //	}
-	//	Jan. 04, 2002 genta
-	//	ファイル存在確認方法変更
 	if( 0 < strlen( szJumpToFile ) &&
 		IsFileExists(szJumpToFile, bFileOnly))
-	//	-1 != _access( (const char *)szJumpToFile, 0 ) )
 	{
-		//	Jan. 04, 2002 genta
-		//	あまりに変なコーディングなので移動
 		*pnPathLen = strlen( szJumpToFile );
 		return true;
 	}else{
@@ -2351,7 +2345,7 @@ void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/, BOOL bRetExedirIfF
 
 	// INI基準のフルパスが実在すればそのパスを返す
 	GetInidir( szInidir, szFile );
-	if( _taccess(szInidir, 0) != -1 ){
+	if( fexist(szInidir) ){
 		::lstrcpy( pDir, szInidir );
 		return;
 	}
@@ -2359,7 +2353,7 @@ void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/, BOOL bRetExedirIfF
 	// EXE基準のフルパスが実在すればそのパスを返す
 	if( CShareData::getInstance()->IsPrivateSettings() ){	// INIとEXEでパスが異なる場合
 		GetExedir( szExedir, szFile );
-		if( _taccess(szExedir, 0) != -1 ){
+		if( fexist(szExedir) ){
 			::lstrcpy( pDir, szExedir );
 			return;
 		}

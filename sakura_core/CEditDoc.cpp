@@ -432,7 +432,7 @@ BOOL CEditDoc::FileRead(
 
 	/* ファイルの存在チェック */
 	bFileIsExist = FALSE;
-	if( -1 == _access( pszPath, 0 ) ){
+	if( !fexist( pszPath ) ){
 	}else{
 		HANDLE			hFind;
 		WIN32_FIND_DATA	w32fd;
@@ -463,7 +463,7 @@ BOOL CEditDoc::FileRead(
 				}
 				strcpy( pszPath, pszPathNew );
 				delete [] pszPathNew;
-				if( -1 == _access( pszPath, 0 ) ){
+				if( !fexist( pszPath ) ){
 					bFileIsExist = FALSE;
 				}else{
 					bFileIsExist = TRUE;
@@ -479,7 +479,7 @@ BOOL CEditDoc::FileRead(
 	//	より適切なメッセージを出すため，読めないファイルは
 	//	事前に判定・排除する
 	//
-	//	_accessではロックされたファイルの状態を取得できないので
+	//	_taccessではロックされたファイルの状態を取得できないので
 	//	実際にファイルを開いて確認する
 	if( bFileIsExist){
 		HANDLE hTest = 	CreateFile( pszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -630,21 +630,6 @@ BOOL CEditDoc::FileRead(
 	if( -1 == m_nCharCode ){
 		m_nCharCode = 0;
 	}
-
-//		if( (_access( pszPath, 0 )) == -1 ){
-//			::MYMESSAGEBOX(
-//				m_hwndParent,
-//				MB_OK | MB_ICONSTOP | MB_TOPMOST,
-//				GSTR_APPNAME,
-//				"\'%s\'\nファイルは存在しません。 新規に作成します。",
-//				pszPath
-//			);
-//
-//			strcpy( m_szFilePath, pszPath ); /* 現在編集中のファイルのパス */
-//			m_nCharCode = CODE_SJIS;
-//
-//			return TRUE;
-//		}
 
 	//	Nov. 12, 2000 genta ロングファイル名の取得を前方に移動
 	char szWork[MAX_PATH];
@@ -1320,13 +1305,13 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	/* バックアップソースの存在チェック */
 	//	Aug. 21, 2005 genta 書き込みアクセス権がない場合も
 	//	ファイルがない場合と同様に何もしない
-	if( (_access( target_file, 2 )) == -1 ){
+	if( (_taccess( target_file, 2 )) == -1 ){
 		return 0;
 	}
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
-		if( (_access( m_pShareData->m_Common.m_szBackUpFolder, 0 )) == -1 ){
+		if( (!fexist( m_pShareData->m_Common.m_szBackUpFolder ))){
 			if( ::MYMESSAGEBOX(
 				m_hWnd,
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
@@ -1836,7 +1821,7 @@ void CEditDoc::DoFileLock( void )
 	}
 
 	/* ファイルが存在しない */
-	if( -1 == _access( GetFilePath(), 0 ) ){
+	if( !fexist( GetFilePath() ) ){
 		/* ファイルの排他制御モード */
 		m_nFileShareModeOld = 0;
 		return;
@@ -1866,7 +1851,7 @@ void CEditDoc::DoFileLock( void )
 		bCheckOnly = TRUE;
 	}
 	/* 書込み禁止かどうか調べる */
-	if( -1 == _access( GetFilePath(), 2 ) ){	/* アクセス権：書き込み許可 */
+	if( -1 == _taccess( GetFilePath(), 2 ) ){	/* アクセス権：書き込み許可 */
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
 		SetParentCaption();
@@ -4256,7 +4241,7 @@ void CEditDoc::ReloadCurrentFile(
 	BOOL	bReadOnly		/*!< [in] 読み取り専用モード */
 )
 {
-	if( -1 == _access( GetFilePath(), 0 ) ){
+	if( !fexist( GetFilePath() ) ){
 		/* ファイルが存在しない */
 		//	Jul. 26, 2003 ryoji BOMを標準設定に
 		m_nCharCode = nCharCode;

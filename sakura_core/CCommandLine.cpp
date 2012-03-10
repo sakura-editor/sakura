@@ -217,7 +217,7 @@ void CCommandLine::ParseCommandLine( void )
 			if( m_pszCmdLineSrc[i] == _T(' ') || m_pszCmdLineSrc[i] == _T('\0') ){
 				/* ファイルの存在をチェック */
 				szPath[i] = _T('\0');	// 終端文字
-				if( -1 != _access( szPath, 0 ) ){
+				if( fexist(szPath) ){
 					bFind = true;
 					break;
 				}

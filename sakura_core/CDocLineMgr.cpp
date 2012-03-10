@@ -526,7 +526,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	} // try
 	catch( CError_FileOpen ){
 		nRetVal = FALSE;
-		if( -1 == _access( pszPath, 0 )){
+		if( !fexist( pszPath )){
 			// ファイルがない
 			::MYMESSAGEBOX(
 				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -534,7 +534,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 				pszPath
 			 );
 		}
-		else if( -1 == _access( pszPath, 4 )){
+		else if( -1 == _taccess( pszPath, 4 )){
 			// 読み込みアクセス権がない
 			::MYMESSAGEBOX(
 				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
