@@ -1472,40 +1472,14 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	hMenu = ::CreatePopupMenu();
 	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenu, L"TrayR", L"" );
 
-#if 0
-	2002/04/26 YAZAKI 使えないものは表示しない
-
-	/* トレイ右クリックの「オプション」メニュー */
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_TYPE_LIST, _T("タイプ別設定一覧(&L)..."), FALSE );	//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_OPTION_TYPE, _T("タイプ別設定(&Y)..."), FALSE );	//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_OPTION, _T("共通設定(&C)..."), FALSE );				//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_FONT, _T("フォント設定(&F)..."), FALSE );			//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-#endif
-
 	/* トレイ右クリックの「ヘルプ」メニュー */
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
-//	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-//	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_MENU_ALLFUNC , _T("コマンド一覧(&M)"), FALSE );	//Jan. 12, 2001 JEPRO まずコメントアウト第一号 (T_T)
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-
-#if 0
-	2002/04/26 YAZAKI 使えないものは表示しない
-
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_EXTHELP1 , _T("外部ヘルプ１(&E)"), FALSE );			//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_EXTHTMLHELP , _T("外部HTMLヘルプ(&H)"), FALSE );	//Jan. 12, 2001 JEPRO このメニュー項目を無効化した
-	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-#endif
-
-//	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_ABOUT, _T("バージョン情報(&A)"), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
-
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
-//	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_EXITALL, _T("テキストエディタの全終了(&X)"), FALSE );
-//	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T("テキストエディタの全終了(&X)"), FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 	//	Jun. 18, 2001 genta ソフトウェア名改称
-	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );	//De
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, _T(""), _T("X"), FALSE );
 
 	po.x = 0;
 	po.y = 0;
