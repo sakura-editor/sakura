@@ -26,10 +26,6 @@ class CEditApp;
 #ifndef _CEDITAPP_H_
 #define _CEDITAPP_H_
 
-
-
-
-
 #include <windows.h>
 #include "CShareData.h"
 #include "CMenuDrawer.h"
@@ -63,43 +59,34 @@ public:
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
 
-	static bool OpenNewEditor( HINSTANCE, HWND, const char*, int, BOOL, bool sync = false, const char* szCurDir = NULL );		/* 新規編集ウィンドウの追加 ver 0 */
-	static bool OpenNewEditor2( HINSTANCE, HWND , const EditInfo*, BOOL, bool sync = false );	/* 新規編集ウィンドウの追加 ver 1 */
+	//ウィンドウ管理
+	static bool OpenNewEditor(							//!< 新規編集ウィンドウの追加 ver 0
+		HINSTANCE			hInstance,					//!< [in] インスタンスID (実は未使用)
+		HWND				hWndParent,					//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
+		const TCHAR*		pszPath,					//!< [in] 新規エディタで開くファイル名とオプション．NULLで新規エディタ作成．
+		int					nCharCode,					//!< [in] 新規エディタの文字コード
+		BOOL				bReadOnly,					//!< [in] FALSEでなければ読み取り専用で開く
+		bool				sync			= false,	//!< [in] trueなら新規エディタの起動まで待機する
+		const TCHAR*		szCurDir		= NULL		//!< [in] 新規エディタのカレントディレクトリ
+	);
+	static bool OpenNewEditor2(						//!< 新規編集ウィンドウの追加 ver 1
+		HINSTANCE		hInstance,
+		HWND			hWndParent,
+		const EditInfo*	pfi,
+		BOOL			bReadOnly,
+		bool			sync		= false
+	);
 
 	static BOOL CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit, int nGroup );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	static void TerminateApplication( HWND hWndFrom );	/* サクラエディタの全終了 */	// 2006.12.25 ryoji 引数追加
 
-	/*
-	|| メンバ変数
-	*/
-
-private:
-	CMenuDrawer		m_CMenuDrawer;
-	bool			m_bUseTrayMenu;	//トレイメニュー表示中
-	HINSTANCE		m_hInstance;
-	HWND			m_hWnd;
-	char*			m_pszAppName;
-	BOOL			m_bCreatedTrayIcon;	/*!< トレイにアイコンを作った */
-
-	DLLSHAREDATA*	m_pShareData;
-	CDlgGrep		m_cDlgGrep; // Jul. 2, 2001 genta
-
-	CImageListMgr	m_hIcons;
-
-	void	DoGrep();	//Stonee, 2001/03/21
-#if 0
-	//	Apr. 6, 2001 genta コマンドラインオプションの解析
-	static int CheckCommandLine( char *str, char** arg );
-#endif
-	//	Apr. 24, 2001 genta
-	/*!	RegisterMessageで得られるMessage IDの保管場所 */
-	UINT	m_uCreateTaskBarMsg;
 
 	/*
 	|| 実装ヘルパ系
 	*/
 protected:
-	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const char* );	/*!< タスクトレイのアイコンに関する処理 */
+	void	DoGrep();	//Stonee, 2001/03/21
+	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const TCHAR* );	/*!< タスクトレイのアイコンに関する処理 */
 	void OnCommand( WORD , WORD  , HWND );	/*!< WM_COMMANDメッセージ処理 */
 	void OnNewEditor( void ); //!< 2003.05.30 genta 新規ウィンドウ作成処理を切り出し
 
@@ -109,6 +96,24 @@ protected:
 		WPARAM	wParam,		// first message parameter
 		LPARAM	lParam		// second message parameter
 	);
+
+
+	/*
+	|| メンバ変数
+	*/
+private:
+	CMenuDrawer		m_CMenuDrawer;
+	bool			m_bUseTrayMenu;			//トレイメニュー表示中
+	HINSTANCE		m_hInstance;
+	HWND			m_hWnd;
+	BOOL			m_bCreatedTrayIcon;		//!< トレイにアイコンを作った
+
+	DLLSHAREDATA*	m_pShareData;
+	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
+
+	CImageListMgr	m_hIcons;
+
+	UINT			m_uCreateTaskBarMsg;	//!< RegisterMessageで得られるMessage IDの保管場所。Apr. 24, 2001 genta
 };
 
 
