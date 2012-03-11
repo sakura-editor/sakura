@@ -1147,7 +1147,8 @@ bool CImpExpKeyWord::Export( const wstring sFileName, wstring& sErrMsg )
 		return false;
 	}
 	out.WriteF( L"// " );
-	out.WriteF( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_nIdx ) );
+	// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
+	out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_nIdx ) );
 	out.WriteF( WSTR_KEYWORD_HEAD );
 
 	out.WriteF( WSTR_KEYWORD_CASE );
@@ -1160,8 +1161,8 @@ bool CImpExpKeyWord::Export( const wstring sFileName, wstring& sErrMsg )
 	nKeyWordNum = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( m_nIdx );
 	for( i = 0; i < nKeyWordNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_nIdx, i );
-		out.WriteF( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_nIdx, i ) );
+		// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
+		out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_nIdx, i ) );
 		out.WriteF( L"\n" );
 	}
 	out.Close();
