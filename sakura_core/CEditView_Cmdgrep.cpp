@@ -20,6 +20,7 @@
 #include "CEditDoc.h"
 #include "CEditApp.h"
 #include "charcode.h"
+#include "Debug.h"
 
 /*!
 	コマンドコードの変換(grep mode時)
@@ -87,9 +88,8 @@ void CEditView::Command_GREP( void )
 
 	/* 編集ウィンドウの上限チェック */
 	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		char szMsg[512];
-		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
+		::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
+
 		return;
 	}
 	cmWork1.SetString( m_pcEditDoc->m_cDlgGrep.m_szText );

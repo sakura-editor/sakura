@@ -251,11 +251,9 @@ HWND CEditWnd::Create(
 	EditNode*	pEditNode;
 	ATOM		atom;
 	BOOL		bOpened;
-	char szMsg[512];
 
 	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
+		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 		return NULL;
 	}
 
@@ -541,8 +539,7 @@ HWND CEditWnd::Create(
 
 		/* 編集ウィンドウリストへの登録 */
 		if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd, nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
-			wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-			::MessageBox( m_hWnd, szMsg, GSTR_APPNAME, MB_OK );
+			::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 			::DestroyWindow( m_hWnd );
 			m_hWnd = hWnd = NULL;
 			return hWnd;
@@ -3126,9 +3123,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 								}else{
 										/* 編集ウィンドウの上限チェック */
 										if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-												char szMsg[512];
-												wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-												::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
+												::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 												::DragFinish( hDrop );
 												return;
 										}

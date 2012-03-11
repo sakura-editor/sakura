@@ -1294,9 +1294,7 @@ bool CEditApp::OpenNewEditor( HINSTANCE hInstance, HWND hWndParent, const char* 
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		char szMsg[512];
-		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
+		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 		return false;
 	}
 
@@ -1442,9 +1440,7 @@ bool CEditApp::OpenNewEditor2( HINSTANCE hInstance, HWND hWndParent, const EditI
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		char szMsg[512];
-		wsprintf( szMsg, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::MessageBox( NULL, szMsg, GSTR_APPNAME, MB_OK );
+		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
 		return false;
 	}
 
