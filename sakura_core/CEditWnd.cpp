@@ -1862,14 +1862,6 @@ LRESULT CEditWnd::DispatchEvent(
 		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_ADDTAIL, TRUE, (LPARAM)m_pShareData->m_szWork, (LPARAM)lstrlen( m_pShareData->m_szWork ), 0, 0 );
 		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
 		return 0L;
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-	case MYWM_SETREFERER:
-		ppoCaret = (POINT*)m_pShareData->m_szWork;
-
-		m_cEditDoc.SetReferer( (HWND)wParam, ppoCaret->x, ppoCaret->y );
-		return 0L;
-#endif
 
 	//タブウインドウ	//@@@ 2003.05.31 MIK
 	case MYWM_TAB_WINDOW_NOTIFY:
@@ -3094,7 +3086,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 										/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
 										if( m_cEditDoc.OnFileClose() ){
 												/* 既存データのクリア */
-												m_cEditDoc.Init();
+												m_cEditDoc.InitDoc();
 
 												/* 全ビューの初期化 */
 												m_cEditDoc.InitAllView();

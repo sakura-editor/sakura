@@ -43,7 +43,6 @@
 #include "CPropTypes.h"
 #include "CShareData.h"
 #include "CSplitterWnd.h"
-//#include <windows.h>
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka
 class CEditWnd; // Sep. 10, 2002 genta
@@ -66,7 +65,7 @@ public:
 	||  初期化系メンバ関数
 	*/
 	BOOL Create( HINSTANCE, HWND, CImageListMgr* /*, int, int, int, int*/ );
-	void Init( void );	/* 既存データのクリア */
+	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	bool CreateEditViewBySplit( int );	/* ビューの分割分のウィンドウ作成要求 */
 
@@ -112,10 +111,6 @@ public:
 
 	BOOL OpenFileDialog( HWND, const char*, char*, int*, BOOL* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-	void SetReferer( HWND , int, int );	/* タグジャンプ元など参照元の情報を保持する */
-#endif
 	//	Jul. 26, 2003 ryoji BOMオプション追加
 	BOOL SaveFileDialog( char*, int*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 

@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>	// Apr. 03, 2003 genta
+#include <dlgs.h>
 #include <io.h>
 #include <cderr.h> // Nov. 3, 2005 genta
 #include "CEditDoc.h"
@@ -35,10 +36,8 @@
 #include "charcode.h"
 #include "mymessage.h"
 #include "CWaitCursor.h"
-#include <dlgs.h>
 #include "CShareData.h"
 #include "CEditWnd.h"
-#include "sakura_rc.h"
 #include "etc_uty.h"
 #include "global.h"
 #include "CFuncInfoArr.h" /// 2002/2/3 aroka
@@ -52,7 +51,7 @@
 #include "MY_SP.h" // 2005/11/22 aroka 追加
 #include "CLayout.h"	// 2007.08.22 ryoji 追加
 #include "CMemoryIterator.h"	// 2007.08.22 ryoji 追加
-
+#include "sakura_rc.h"
 
 #define IDT_ROLLMOUSE	1
 
@@ -68,12 +67,6 @@ CEditDoc::CEditDoc() :
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //	m_bPrintPreviewMode( FALSE ),	/* 印刷プレビューモードか */
 	m_nCommandExecNum( 0 ),			/* コマンド実行回数 */
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-	m_hwndReferer( NULL ),			/* 参照元ウィンドウ */
-	m_nRefererX( 0 ),				/* 参照元 行頭からのバイト位置桁 */
-	m_nRefererLine( 0 ),			/* 参照元行 折り返し無しの物理行位置 */
-#endif
 	m_bReadOnly( FALSE ),			/* 読み取り専用モード */
 	m_bDebugMode( FALSE ),			/* デバッグモニタモード */
 	m_bGrepMode( FALSE ),			/* Grepモードか */
@@ -202,14 +195,6 @@ BOOL CEditDoc::Create(
 	/* ビュー */
 	m_cEditViewArr[0].Create( m_hInstance, m_cSplitterWnd.m_hWnd, this, 0, /*FALSE,*/ TRUE  );
 	m_nEditViewCount = 1;
-
-#if 0
-	YAZAKI 不要な処理と思われる。
-	m_cEditViewArr[0].OnKillFocus();
-	m_cEditViewArr[1].OnKillFocus();
-	m_cEditViewArr[2].OnKillFocus();
-	m_cEditViewArr[3].OnKillFocus();
-#endif
 
 	m_cEditViewArr[0].OnSetFocus();
 
@@ -899,15 +884,6 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 	}
 	/* 行変更状態をすべてリセット */
 	m_cDocLineMgr.ResetAllModifyFlag();
-	
-#if 0
-	/* ロングファイル名を取得する。（上書き保存のときのみ） */
-	char szWork[MAX_PATH];
-	if( TRUE == ::GetLongFileName( GetFilePath(), szWork ) ){
-		//	Sep. 10, 2002 genta
-		SetFilePath( szWork );
-	}
-#endif
 
 	int	v;
 	for( v = 0; v < GetAllViewCount(); ++v ){
@@ -3897,21 +3873,6 @@ void CEditDoc::SetFileInfo( EditInfo* pfi )
 
 }
 
-
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-/* タグジャンプ元など参照元の情報を保持する */
-void CEditDoc::SetReferer( HWND hwndReferer, int nRefererX, int nRefererLine )
-{
-	m_hwndReferer	= hwndReferer;	/* 参照元ウィンドウ */
-	m_nRefererX		= nRefererX;	/* 参照元  行頭からのバイト位置桁 */
-	m_nRefererLine	= nRefererLine;	/* 参照元行  折り返し無しの物理行位置 */
-	return;
-}
-#endif
-
-
-
 /*! ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行
 
 	@retval TRUE: 終了して良い / FALSE: 終了しない
@@ -4010,7 +3971,7 @@ BOOL CEditDoc::OnFileClose( void )
 
 
 /* 既存データのクリア */
-void CEditDoc::Init( void )
+void CEditDoc::InitDoc()
 {
 //	int types;
 
@@ -4276,7 +4237,7 @@ void CEditDoc::ReloadCurrentFile(
 	AddToMRU();
 
 	/* 既存データのクリア */
-	Init();
+	InitDoc();
 
 	/* 全ビューの初期化 */
 	InitAllView();

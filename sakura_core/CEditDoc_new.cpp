@@ -1381,7 +1381,7 @@ void CEditDoc::FileClose( void )
 		return;
 	}
 	/* 既存データのクリア */
-	Init();
+	InitDoc();
 
 	/* 全ビューの初期化 */
 	InitAllView();
@@ -1421,7 +1421,7 @@ void CEditDoc::FileCloseOpen( const char *filename, int nCharCode, BOOL bReadOnl
 	}
 
 	/* 既存データのクリア */
-	Init();
+	InitDoc();
 
 	/* 全ビューの初期化 */
 	InitAllView();
