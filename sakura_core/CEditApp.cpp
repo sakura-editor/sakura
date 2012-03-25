@@ -1322,7 +1322,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 			if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-				pfi = (EditInfo*)&m_pShareData->m_FileInfo_MYWM_GETFILEINFO;
+				pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 					if( pfi->m_bIsGrep ){
 						/* データを指定バイト数以内に切り詰める */
 						CMemory		cmemDes;

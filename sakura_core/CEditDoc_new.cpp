@@ -1227,9 +1227,9 @@ void CEditDoc::SetDocumentIcon(void)
 		return;
 	
 	if( GetDocumentAttribute().m_bUseDocumentIcon )
-		m_pcEditWnd->GetRelatedIcon( GetFilePath(), hIconBig, hIconSmall );
+		m_pcEditWnd->GetRelatedIcon( GetFilePath(), &hIconBig, &hIconSmall );
 	else
-		m_pcEditWnd->GetDefaultIcon( hIconBig, hIconSmall );
+		m_pcEditWnd->GetDefaultIcon( &hIconBig, &hIconSmall );
 
 	m_pcEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 	m_pcEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );

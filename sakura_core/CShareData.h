@@ -620,7 +620,7 @@ struct DLLSHAREDATA {
 	unsigned int		m_vStructureVersion;
 	/* ã§í çÏã∆àÊ(ï€ë∂ÇµÇ»Ç¢) */
 	char				m_szWork[32000];
-	EditInfo			m_FileInfo_MYWM_GETFILEINFO;
+	EditInfo			m_EditInfo_MYWM_GETFILEINFO;
 
 	DWORD				m_dwProductVersionMS;
 	DWORD				m_dwProductVersionLS;
