@@ -18,12 +18,7 @@
 #include <windows.h>
 #include "CMacroManagerBase.h"
 
-/*
-struct KeyMacroData {
-	int		m_nFuncID;
-	LPARAM	m_lParam1;
-};
-*/
+class CMacro;
 
 //#define MAX_STRLEN			70
 //#define MAX_KEYMACRONUM		10000
@@ -49,31 +44,22 @@ public:
 	void ClearAll( void );				/* キーマクロのバッファをクリアする */
 	void Append( int , LPARAM, class CEditView* pcEditView );		/* キーマクロのバッファにデータ追加 */
 	void Append( class CMacro* macro );		/* キーマクロのバッファにデータ追加 */
-//	int GetMacroNum() { return m_nKeyMacroDataArrNum; };
 	
 	/* キーボードマクロをまとめて取り扱う */
-	BOOL SaveKeyMacro( HINSTANCE hInstance, const char* pszPath) const;	/* CMacroの列を、キーボードマクロに保存 */
+	BOOL SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath) const;	/* CMacroの列を、キーボードマクロに保存 */
 	//@@@2002.2.2 YAZAKI PPA.DLLアリ/ナシ共存のためvirtualに。
 	//	2007.07.20 genta flags追加
 	virtual void ExecKeyMacro( class CEditView* pcEditView, int flags ) const;	/* キーボードマクロの実行 */
-	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const char* pszPath );		/* キーボードマクロをファイルから読み込む */
-	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode );		/* キーボードマクロを文字列から読み込む */
+	virtual BOOL LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath);		/* キーボードマクロをファイルから読み込む */
+	virtual BOOL LoadKeyMacroStr( HINSTANCE hInstance, const TCHAR* pszCode);	/* キーボードマクロを文字列から読み込む */
 	
-	/* キーボードマクロが読み込み済みか確認する */
-	//	Apr. 29, 2002 genta
-	//	IsReadyはCMacroManagerBaseへ移動
-
 	// Apr. 29, 2002 genta
-	static CMacroManagerBase* Creator(const char*);
+	static CMacroManagerBase* Creator(const TCHAR* ext);
 	static void declare(void);
 
 protected:
-//	int				m_nKeyMacroDataArrNum;
-	//	Apr. 29, 2002 genta
-	//	m_nReadyはCMacroManagerBaseへ移動
-
-	class CMacro*	m_pTop;	//	先頭と終端を保持
-	class CMacro*	m_pBot;
+	CMacro*	m_pTop;	//	先頭と終端を保持
+	CMacro*	m_pBot;
 };
 
 
