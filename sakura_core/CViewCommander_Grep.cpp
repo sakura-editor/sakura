@@ -70,7 +70,7 @@ void CViewCommander::Command_GREP( void )
 	){
 		// 2011.01.23 Grepタイプ別適用
 		if( !GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0 ){
-			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( L"grepout" );
+			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( _T("grepout") );
 			GetDocument()->m_cDocType.SetDocumentType( cTypeGrep, false );
 			GetDocument()->m_cDocType.LockDocumentType();
 			GetDocument()->OnChangeType();
