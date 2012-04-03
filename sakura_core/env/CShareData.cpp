@@ -319,7 +319,8 @@ bool CShareData::InitShareData()
 			m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption,
 			L"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
 		);
-		m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
+		// 2010.07.11 Moca m_bSameTabWidthの初期値をTRUEに変更
+		m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth = TRUE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
