@@ -221,10 +221,22 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		break;
 
 	case DRAG_DRAG:
+		// ドラッグモードでTabが移動しているので更新
 		if ( 0 <= nDstTab )	// タブの上でドロップ
 		{
-			// タブの順序変更処理
-			ReorderTab( m_nSrcTab, nDstTab );
+			if( IsReorderTabDragging() )
+			{
+				// タブは移動済み。ほかのウィンドウのみ更新
+				BroadcastRefreshToGroup();
+			}
+			else
+			{
+				// タブの順序変更処理
+				if( ReorderTab( m_nSrcTab, nDstTab ) )
+				{
+					BroadcastRefreshToGroup();
+				}
+			}
 		}
 		else
 		{
@@ -284,10 +296,31 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		lpCursorName = IDC_NO;	// 禁止カーソル
 		if ( 0 <= nDstTab )	// タブの上にカーソルがある
 		{
-			if( m_nSrcTab > nDstTab )
-				lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_LEFT);	// 左へ移動カーソル
-			else if( m_nSrcTab < nDstTab )
-				lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_RIGHT);	// 右へ移動カーソル
+			if( IsReorderTabDragging() )
+			{
+				// ドラッグ中に即時移動
+				if( m_nSrcTab != nDstTab )
+				{
+					lpCursorName = NULL;
+					// 
+					// TABまとめる => 自分だけ更新して後でRefresh通知
+					// TABまとめない場合は、Refresh通知をした方がいいがマウスキャプチャが終了するので、まとめると同じ動きにする
+					ReorderTab( m_nSrcTab, nDstTab );
+					Refresh( FALSE );
+					m_nSrcTab = nDstTab;
+				}
+ 			}
+ 			else
+ 			{
+	 			if( m_nSrcTab > nDstTab )
+	 			{
+	 				lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_LEFT);	// 左へ移動カーソル
+	 			}
+	 			else if( m_nSrcTab < nDstTab )
+	 			{
+	 				lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_RIGHT);	// 右へ移動カーソル
+	 			}
+			}
 		}
 		else
 		{
@@ -307,8 +340,11 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 				}
 			}
 		}
-		hInstance = (lpCursorName == IDC_NO)? NULL: ::GetModuleHandle( NULL );
-		::SetCursor( ::LoadCursor( hInstance, lpCursorName ) );
+		if( lpCursorName )
+		{
+			hInstance = (lpCursorName == IDC_NO)? NULL: ::GetModuleHandle( NULL );
+			::SetCursor( ::LoadCursor( hInstance, lpCursorName ) );
+		}
 		break;
 
 	default:
@@ -323,7 +359,6 @@ LRESULT CTabWnd::OnTabCaptureChanged( WPARAM wParam, LPARAM lParam )
 {
 	if( m_eDragState != DRAG_NONE )
 		m_eDragState = DRAG_NONE;
-
 	return 0L;
 }
 
@@ -381,7 +416,7 @@ LRESULT CTabWnd::OnTabNotify( WPARAM wParam, LPARAM lParam )
 
 	@date 2005.09.01 ryoji 新規作成
 	@date 2007.07.07 genta ウィンドウリスト操作部をCShareData::ReorderTab()へ
-
+	@date 2010.07.11 Moca ブロードキャスト部分を分離
 */
 BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 {
@@ -407,7 +442,11 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 	if( ! CAppNodeManager::Instance()->ReorderTab( hwndSrc, hwndDst ) ){
 		return FALSE;
 	}
+	return TRUE;
+}
 
+void CTabWnd::BroadcastRefreshToGroup()
+{
 	// 再表示メッセージをブロードキャストする。
 	int nGroup = CAppNodeManager::Instance()->GetEditNode( GetParentHwnd() )->GetGroup();
 	CAppNodeGroupHandle(nGroup).PostMessageToAllEditors(
@@ -416,8 +455,6 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 		(LPARAM)FALSE,
 		GetParentHwnd()
 	);
-
-	return TRUE;
 }
 
 /** タブ分離処理
@@ -621,6 +658,16 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 	return 0L;
 }
 
+/*!
+	タブをドラッグ中に並び替えるか
+	@date 2010.07.11 Moca 新規作成
+*/
+bool CTabWnd::IsReorderTabDragging()
+{
+	// 等間隔のときは、「ドラッグ中に並び替える」
+	// 等間隔でない場合は、幅が違う隣り合ったタブを並び替えると都合が悪い
+	return FALSE != m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth;
+}
 
 CTabWnd::CTabWnd()
 : CWnd(_T("::CTabWnd"))
@@ -2679,7 +2726,9 @@ void CTabWnd::MoveRight( void )
 			int nCount = TabCtrl_GetItemCount( m_hwndTab );
 			if( nCount - 1 > nIndex )
 			{
-				ReorderTab( nIndex, nIndex + 1 );
+				if( ReorderTab( nIndex, nIndex + 1 ) ){
+					BroadcastRefreshToGroup();
+				}
 			}
 		}
 	}
@@ -2697,7 +2746,9 @@ void CTabWnd::MoveLeft( void )
 		{
 			if( 0 < nIndex )
 			{
-				ReorderTab( nIndex, nIndex - 1 );
+				if( ReorderTab( nIndex, nIndex - 1 ) ){
+					BroadcastRefreshToGroup();
+				}
 			}
 		}
 	}

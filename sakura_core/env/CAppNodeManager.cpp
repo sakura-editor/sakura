@@ -564,8 +564,8 @@ int CAppNodeManager::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort,
 
 /** ウィンドウの並び替え
 
-	@param[in] hSrcTab 移動するウィンドウ
-	@param[in] hSrcTab 移動先ウィンドウ
+	@param[in] hwndSrc 移動するウィンドウ
+	@param[in] hwndDst 移動先ウィンドウ
 
 	@author ryoji
 	@date 2007.07.07 genta ウィンドウ配列操作部をCTabWndより移動
