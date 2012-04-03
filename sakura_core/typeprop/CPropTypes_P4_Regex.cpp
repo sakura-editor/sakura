@@ -58,17 +58,22 @@ static const DWORD p_helpids[] = {	//11600
 // 2010/4/23 Uchi Importの外出し
 bool CPropRegex::Import(HWND hwndDlg)
 {
-	CImpExpRegex	cImpExpRegex( m_Types, GetDlgItem( hwndDlg, IDC_LIST_REGEX ));
+	CImpExpRegex	cImpExpRegex(m_Types);
 
 	// インポート
-	return cImpExpRegex.ImportUI(m_hInstance, hwndDlg);
+	bool bImport = cImpExpRegex.ImportUI(m_hInstance, hwndDlg);
+	if( bImport ){
+		SetDataKeywordList(hwndDlg);
+	}
+	return bImport;
 }
 
 // Export
 // 2010/4/23 Uchi Exportの外出し
 bool CPropRegex::Export(HWND hwndDlg)
 {
-	CImpExpRegex	cImpExpRegex( m_Types, GetDlgItem( hwndDlg, IDC_LIST_REGEX ));
+	GetData(hwndDlg);
+	CImpExpRegex	cImpExpRegex(m_Types);
 
 	// エクスポート
 	return cImpExpRegex.ExportUI(m_hInstance, hwndDlg);
@@ -600,8 +605,6 @@ void CPropRegex::SetData( HWND hwndDlg )
 {
 	HWND		hwndWork;
 	int			i, j;
-	LV_ITEM		lvi;
-	DWORD		dwStyle;
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), _countof( m_Types.m_RegexKeywordArr[0].m_szKeyword ) - 1 );
@@ -625,17 +628,27 @@ void CPropRegex::SetData( HWND hwndDlg )
 	else
 		CheckDlgButton( hwndDlg, IDC_CHECK_REGEX, BST_UNCHECKED );
 
-	/* リスト */
-	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
-	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
-
 	/* 行選択 */
+	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
+	DWORD		dwStyle;
 	dwStyle = ListView_GetExtendedListViewStyle( hwndWork );
 	dwStyle |= LVS_EX_FULLROWSELECT;
 	ListView_SetExtendedListViewStyle( hwndWork, dwStyle );
 
+	SetDataKeywordList( hwndDlg );
+}
+
+/* ダイアログデータの設定 正規表現キーワードの一覧部分 */
+void CPropRegex::SetDataKeywordList( HWND hwndDlg )
+{
+	LV_ITEM		lvi;
+
+	/* リスト */
+	HWND hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_REGEX );
+	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
+
 	/* データ表示 */
-	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
+	for(int i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
 		if( m_Types.m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' ) break;
 		
@@ -711,43 +724,12 @@ int CPropRegex::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
+/*!
+	@date 2010.07.11 Moca 今のところCRegexKeyword::RegexKeyCheckSyntaxと同一なので、中身を削除して転送関数に変更
+*/
 BOOL CPropRegex::RegexKakomiCheck(const wchar_t *s)
 {
-	const wchar_t	*p;
-	int	length, i;
-	static const wchar_t *kakomi[7 * 2] = {
-		L"/",  L"/k",
-		L"m/", L"/k",
-		L"m#", L"#k",
-		L"/",  L"/ki",
-		L"m/", L"/ki",
-		L"m#", L"#ki",
-		NULL, NULL,
-	};
-
-	length = wcslen(s);
-
-	for(i = 0; kakomi[i] != NULL; i += 2)
-	{
-		//文字長を確かめる
-		if( length > (int)wcslen(kakomi[i]) + (int)wcslen(kakomi[i+1]) )
-		{
-			//始まりを確かめる
-			if( wcsncmp(kakomi[i], s, wcslen(kakomi[i])) == 0 )
-			{
-				//終わりを確かめる
-				p = &s[length - wcslen(kakomi[i+1])];
-				if( wcscmp(p, kakomi[i+1]) == 0 )
-				{
-					//正常
-					return TRUE;
-				}
-			}
-		}
-	}
-
-	return FALSE;
+	return CRegexKeyword::RegexKeyCheckSyntax( s );
 }
-
 //@@@ 2001.11.17 add end MIK
 

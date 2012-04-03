@@ -527,6 +527,9 @@ INT_PTR CPropKeyHelp::DispatchEvent(
 	return FALSE;
 }
 
+void CheckDlgButtonBOOL(HWND hwnd, int id, BOOL bState ){
+	CheckDlgButton( hwnd, id, (bState ? BST_CHECKED : BST_UNCHECKED) );
+}
 
 /*! ダイアログデータの設定 キーワード辞書ファイル設定
 
@@ -541,23 +544,13 @@ void CPropKeyHelp::SetData( HWND hwndDlg )
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), _countof2( m_Types.m_KeyHelpArr[0].m_szPath ) - 1 );
-	/* 使用する・使用しない */
-	if( m_Types.m_bUseKeyWordHelp == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP, BST_UNCHECKED );
-	if( m_Types.m_bUseKeyHelpAllSearch == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH, BST_UNCHECKED );
-	if( m_Types.m_bUseKeyHelpKeyDisp == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, BST_UNCHECKED );
-	if( m_Types.m_bUseKeyHelpPrefix == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, BST_UNCHECKED );
+
+	// 使用する・使用しない
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP, m_Types.m_bUseKeyWordHelp );
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH, m_Types.m_bUseKeyHelpAllSearch );
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, m_Types.m_bUseKeyHelpKeyDisp );
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, m_Types.m_bUseKeyHelpPrefix );
+
 	/* リスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
@@ -567,7 +560,7 @@ void CPropKeyHelp::SetData( HWND hwndDlg )
 	ListView_SetExtendedListViewStyle( hwndWork, dwStyle );
 	/* データ表示 */
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
-		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == '\0' ) break;
+		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == _T('\0') ) break;
 		/* ON-OFF */
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
@@ -611,22 +604,11 @@ int CPropKeyHelp::GetData( HWND hwndDlg )
 //	m_nPageNum = 4;	//自分のページ番号
 
 	/* 使用する・使用しない */
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) )
-		m_Types.m_bUseKeyWordHelp = TRUE;
-	else
-		m_Types.m_bUseKeyWordHelp = FALSE;
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ) )
-		m_Types.m_bUseKeyHelpAllSearch = TRUE;
-	else
-		m_Types.m_bUseKeyHelpAllSearch = FALSE;
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ) )
-		m_Types.m_bUseKeyHelpKeyDisp = TRUE;
-	else
-		m_Types.m_bUseKeyHelpKeyDisp = FALSE;
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ) )
-		m_Types.m_bUseKeyHelpPrefix = TRUE;
-	else
-		m_Types.m_bUseKeyHelpPrefix = FALSE;
+	m_Types.m_bUseKeyWordHelp      = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) );
+	m_Types.m_bUseKeyHelpAllSearch = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ) );
+	m_Types.m_bUseKeyHelpKeyDisp   = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ) );
+	m_Types.m_bUseKeyHelpPrefix    = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ) );
+
 	/* リストに登録されている情報を配列に取り込む */
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	nIndex = ListView_GetItemCount( hwndList );
@@ -658,11 +640,10 @@ int CPropKeyHelp::GetData( HWND hwndDlg )
 */
 bool CPropKeyHelp::Import(HWND hwndDlg)
 {
-	CImpExpKeyHelp	cImpExpKeyHelp( m_Types, GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ) );
-
 	// インポート
 	GetData( hwndDlg );
 
+	CImpExpKeyHelp  cImpExpKeyHelp( m_Types );
 	if (!cImpExpKeyHelp.ImportUI(m_hInstance, hwndDlg)) {
 		// インポートをしていない
 		return false;
@@ -679,7 +660,8 @@ bool CPropKeyHelp::Import(HWND hwndDlg)
 */
 bool CPropKeyHelp::Export(HWND hwndDlg)
 {
-	CImpExpKeyHelp	cImpExpKeyHelp( m_Types, GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ) );
+	GetData(hwndDlg);
+	CImpExpKeyHelp	cImpExpKeyHelp( m_Types );
 
 	// エクスポート
 	return cImpExpKeyHelp.ExportUI(m_hInstance, hwndDlg);
