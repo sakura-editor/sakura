@@ -464,11 +464,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			// ※ 正攻法とはいえないかもしれないがあちこち手を入れることなく簡潔に済ませられるのでこうしておく
 			CTypeConfig cTypeOld, cTypeNew(-1);
 			cTypeOld = GetDocument().m_cDocType.GetDocumentType();	// 現在のタイプ
-			if( CCommandLine::Instance()->IsDebugMode() )
-				cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( _T("output") );
-			else if( CCommandLine::Instance()->IsGrepMode() )
-				cTypeNew = cTypeOld;
-			else{
+			{
 				EditInfo ei, mruei;
 				CCommandLine::Instance()->GetEditInfo( &ei );
 				if( ei.m_szDocType[0] != '\0' ){
@@ -478,7 +474,11 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 						cTypeNew = mruei.m_nType;
 					}
 					if( !cTypeNew.IsValid() ){
-						cTypeNew = CDocTypeManager().GetDocumentTypeOfPath( ei.m_szPath );
+						if( ei.m_szPath[0] ){
+							cTypeNew = CDocTypeManager().GetDocumentTypeOfPath( ei.m_szPath );
+						}else{
+							cTypeNew = cTypeOld;
+						}
 					}
 				}
 			}
@@ -2611,7 +2611,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					/* 新たな編集ウィンドウを起動 */
 					SLoadInfo sLoadInfo;
 					sLoadInfo.cFilePath = szFile;
-					sLoadInfo.eCharCode = CODE_AUTODETECT;
+					sLoadInfo.eCharCode = CODE_NONE;
 					sLoadInfo.bViewMode = false;
 					CControlTray::OpenNewEditor(
 						G_AppInstance(),

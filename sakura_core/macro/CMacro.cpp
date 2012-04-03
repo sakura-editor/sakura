@@ -782,7 +782,7 @@ void CMacro::HandleCommand(
 			/* 新規編集ウィンドウの追加 ver 0 */
 			SLoadInfo sLoadInfo;
 			sLoadInfo.cFilePath = _T("");
-			sLoadInfo.eCharCode = CODE_DEFAULT;
+			sLoadInfo.eCharCode = CODE_NONE;
 			sLoadInfo.bViewMode = false;
 			CControlTray::OpenNewEditor(
 				G_AppInstance(),

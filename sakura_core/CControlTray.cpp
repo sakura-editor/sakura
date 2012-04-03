@@ -1120,7 +1120,7 @@ bool CControlTray::OpenNewEditor2(
 	}
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = pfi ? pfi->m_szPath : _T("");
-	sLoadInfo.eCharCode = pfi ? pfi->m_nCharCode : CODE_AUTODETECT;
+	sLoadInfo.eCharCode = pfi ? pfi->m_nCharCode : CODE_NONE;
 	sLoadInfo.bViewMode = bViewMode;
 	return OpenNewEditor( hInstance, hWndParent, sLoadInfo, cCmdLine.c_str(), sync, NULL, bNewWindow );
 }
