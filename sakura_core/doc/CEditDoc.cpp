@@ -573,6 +573,28 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 	}
 }
 
+/*!	タイプ別設定の適用を変更
+	@date 2011.12.15 CViewCommander::Command_TYPE_LISTから移動
+*/
+void CEditDoc::OnChangeType()
+{
+	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
+	if( !m_cDocFile.GetFilePathClass().IsValidPath() ){
+		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
+			STypeConfig& types = m_cDocType.GetDocumentAttribute();
+			m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( types.m_eDefaultCodetype );
+			m_cDocFile.m_sFileInfo.bBomExist = ( types.m_bDefaultBom != FALSE );
+			m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_eDefaultEoltype );
+		}
+	}
+	/* 設定変更を反映させる */
+	m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
+	OnChangeSetting();
+
+	// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
+	RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnTypeChanged );
+}
+
 /*! ビューに設定変更を反映させる
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．

@@ -89,6 +89,7 @@ public:
 
 	//イベント
 	BOOL HandleCommand( EFunctionCode );
+	void OnChangeType();
 	void OnChangeSetting();		/* ビューに設定変更を反映させる */
 	BOOL OnFileClose();			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 

@@ -159,17 +159,23 @@ bool CNormalProcess::InitializeProcess()
 	bGrepDlg   = CCommandLine::Instance()->IsGrepDlg();
 
 	MY_TRACETIME( cRunningTimer, "CheckFile" );
+
+	// -1: SetDocumentTypeWhenCreate での強制指定なし
+	const CTypeConfig nType = (fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt(fi.m_szDocType));
+
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
 		CAppMode::Instance()->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
-		pEditWnd->GetDocument().m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfExt(_T("output")), true );
 		// 文字コードを有効とする Uchi 2008/6/8
-		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, CTypeConfig(-1));
+		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
+		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 		pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを表示する
 	}
 	else if( bGrepMode ){
 		/* GREP */
+		// 2010.06.16 Moca Grepでもオプション指定を適用
+		pEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 		pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを予め表示しておく
 		HWND hEditWnd = pEditWnd->GetHwnd();
 		if( !::IsIconic( hEditWnd ) && pEditWnd->m_cDlgFuncList.GetHwnd() ){
@@ -239,8 +245,6 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bViewMode = CCommandLine::Instance()->IsViewMode(); // 2002/2/8 aroka ここに移動
-		CTypeConfig nType = fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt( fi.m_szDocType );
-
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(

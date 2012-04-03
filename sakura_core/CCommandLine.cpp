@@ -357,6 +357,9 @@ void CCommandLine::ParseCommandLine( void )
 				break;
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
+				if( _T('\0') == m_fi.m_szDocType[0] ){
+					auto_strcpy( m_fi.m_szDocType , _T("grepout") );
+				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
 				m_bGrepDlg = true;
@@ -414,16 +417,20 @@ void CCommandLine::ParseCommandLine( void )
 				break;
 			case CMDLINEOPT_DEBUGMODE:
 				m_bDebugMode = true;
+				// 2010.06.16 Moca -TYPE=output àµÇ¢Ç∆Ç∑ÇÈ
+				if( _T('\0') == m_fi.m_szDocType[0] ){
+					auto_strcpy( m_fi.m_szDocType , _T("output") );
+				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta Ç±ÇÍà»ç~à¯êîñ≥å¯
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat í«â¡
-				m_cmMacro.SetStringT( arg,  auto_strlen( arg ) );
+				m_cmMacro.SetStringT( arg );
 				m_cmMacro.Replace( L"\"\"", L"\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat í«â¡
-				m_cmMacroType.SetStringT( arg,  auto_strlen( arg ) );
+				m_cmMacroType.SetStringT( arg );
 				break;
 			}
 		}

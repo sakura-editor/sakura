@@ -68,6 +68,14 @@ void CViewCommander::Command_GREP( void )
 		  !CAppMode::Instance()->IsDebugMode()
 		)
 	){
+		// 2011.01.23 Grepタイプ別適用
+		if( !GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0 ){
+			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( L"grepout" );
+			GetDocument()->m_cDocType.SetDocumentType( cTypeGrep, false );
+			GetDocument()->m_cDocType.LockDocumentType();
+			GetDocument()->OnChangeType();
+		}
+		
 		CEditApp::Instance()->m_pcGrepAgent->DoGrep(
 			m_pCommanderView,
 			&cmWork1,
