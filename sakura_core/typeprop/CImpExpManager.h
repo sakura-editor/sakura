@@ -5,7 +5,7 @@
 	@date 2010/4/22 新規作成
 */
 /*
-	Copyright (C) 2010, Uchi
+	Copyright (C) 2010, Uchi, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,8 +28,8 @@
 		   distribution.
 */
 
-#ifndef _CIMPEXPMANAGER_H_
-#define _CIMPEXPMANAGER_H_
+#ifndef SAKURA_CIMPEXPMANAGER_H_
+#define SAKURA_CIMPEXPMANAGER_H_
 
 #include "CDataProfile.h"
 #include "env/DLLSHAREDATA.h"
@@ -41,11 +41,11 @@ class CImpExpManager
 public:
 	bool ImportUI( HINSTANCE, HWND );
 	bool ExportUI( HINSTANCE, HWND );
-	virtual bool ImportAscertain( HINSTANCE, HWND, const wstring, wstring& );
-	virtual bool Import( const wstring, wstring& );
-	virtual bool Export( const wstring, wstring& );
+	virtual bool ImportAscertain( HINSTANCE, HWND, const wstring&, wstring& );
+	virtual bool Import( const wstring&, wstring& ) = 0;
+	virtual bool Export( const wstring&, wstring& ) = 0;
 	// ファイル名の初期値を設定
-	void SetBaseName( wstring sbase );
+	void SetBaseName( const wstring& );
 	// フルパス名を取得
 	inline wstring GetFullPath()
 	{
@@ -69,8 +69,9 @@ protected:
 		_tcscat( GetDllShareData().m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 	}
 
-	// デフォルト拡張子の取得
+	// デフォルト拡張子の取得(「*.txt」形式)
 	virtual const TCHAR* GetDefaultExtension();
+	// デフォルト拡張子の取得(「txt」形式)
 	virtual const wchar_t* GetOriginExtension();
 
 protected:
@@ -92,13 +93,13 @@ public:
 		, m_hwndList( hwndList )
 	{
 		/* 共有データ構造体のアドレスを返す */
-		m_pShareData = CShareData::getInstance()->GetShareData();
+		m_pShareData = &GetDllShareData();
 	}
 
 public:
-	bool ImportAscertain( HINSTANCE, HWND, const wstring, wstring& );
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool ImportAscertain( HINSTANCE, HWND, const wstring&, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -132,8 +133,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -152,15 +153,14 @@ class CImpExpRegex : public CImpExpManager
 {
 public:
 	// Constructor
-	CImpExpRegex( STypeConfig& types, HWND hwndList )
+	CImpExpRegex( STypeConfig& types )
 		: m_Types( types )
-		, m_hwndList( hwndList )
 	{
 	}
 
 public:
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -169,7 +169,6 @@ public:
 
 private:
 	STypeConfig&	m_Types;
-	HWND			m_hwndList;
 };
 
 
@@ -180,15 +179,14 @@ class CImpExpKeyHelp : public CImpExpManager
 {
 public:
 	// Constructor
-	CImpExpKeyHelp( STypeConfig& types, HWND hwndList )
+	CImpExpKeyHelp( STypeConfig& types )
 		: m_Types( types )
-		, m_hwndList( hwndList )
 	{
 	}
 
 public:
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -197,7 +195,6 @@ public:
 
 private:
 	STypeConfig&	m_Types;
-	HWND		m_hwndList;
 };
 
 
@@ -214,8 +211,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -240,8 +237,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -268,8 +265,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -296,8 +293,8 @@ public:
 	}
 
 public:
-	bool Import( const wstring, wstring& );
-	bool Export( const wstring, wstring& );
+	bool Import( const wstring&, wstring& );
+	bool Export( const wstring&, wstring& );
 
 public:
 	// デフォルト拡張子の取得
@@ -310,4 +307,4 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CIMPEXPMANAGER_H_ */
+#endif /* SAKURA_CIMPEXPMANAGER_H_ */

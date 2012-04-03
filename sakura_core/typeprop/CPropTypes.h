@@ -163,12 +163,13 @@ public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
 protected:
 	void SetData( HWND );											//!< ダイアログデータの設定
+	void SetDataKeywordList( HWND );								//!< ダイアログデータの設定リスト部分
 	int  GetData( HWND );											//!< ダイアログデータの取得
 	bool Import( HWND );											//!< インポート
 	bool Export( HWND );											//!< エクスポート
+private:
+	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK
 
-public:
-	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK	to public 2010/4/23 Uchi
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

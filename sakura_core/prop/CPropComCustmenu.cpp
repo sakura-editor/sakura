@@ -695,6 +695,10 @@ void CPropCustmenu::Import( HWND hwndDlg )
 		// インポートをしていない
 		return;
 	}
+	
+	// 画面更新
+	HWND	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
+	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCtrl );
 }
 
 /* カスタムメニュー設定をエクスポートする */

@@ -104,8 +104,9 @@ public:
 	BOOL RegexIsKeyword( const CStringRef& cStr, int nPos, int *nMatchLen, int *nMatchColor );
 	//! タイプ設定
 	BOOL RegexKeySetTypes( STypeConfig *pTypesPtr );
+
 	//! 書式(囲み)チェック
-	BOOL RegexKeyCheckSyntax( const wchar_t *s );
+	static BOOL RegexKeyCheckSyntax( const wchar_t *s );
 
 
 
