@@ -45,6 +45,7 @@
 */
 
 /* 未定義用(ダミーとしても使う) */	//Oct. 17, 2000 jepro noted
+#define F_INVALID		-1	//
 #define F_DISABLE		0	//未使用
 #define F_SEPARATOR		1	//セパレータ
 #define F_TOOLBARWRAP	2	//ツールバー折返

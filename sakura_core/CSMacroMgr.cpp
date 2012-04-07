@@ -34,34 +34,33 @@
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
 {
-	{F_GETFILENAME,	"GetFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
-	{F_GETSAVEFILENAME,	"GetSaveFilename",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //保存時のファイル名を返す 2006.09.04 ryoji
-	//	Oct. 19, 2002 genta
-	{F_GETSELECTED,	"GetSelectedString",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
-	{F_EXPANDPARAMETER,	"ExpandParameter",	{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
-	{F_GETLINESTR, "GetLineStr", {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_BSTR, NULL }, // 指定論理行の取得 2003.06.01 Moca
-	{F_GETLINECOUNT, "GetLineCount", {VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 全論理行数の取得 2003.06.01 Moca
-	{F_CHGTABWIDTH,			"ChangeTabWidth",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},  VT_I4, NULL }, //タブサイズ変更 2004.03.16 zenryaku
-	{F_ISTEXTSELECTED,		"IsTextSelected",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, //テキストが選択されているか 2005.7.30 maru
-	{F_GETSELLINEFROM,		"GetSelectLineFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択開始行の取得 2005.7.30 maru
-	{F_GETSELCOLMFROM,		"GetSelectColmFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択開始桁の取得 2005.7.30 maru
-	{F_GETSELLINETO,		"GetSelectLineTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択終了行の取得 2005.7.30 maru
-	{F_GETSELCOLMTO,		"GetSelectColmTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 選択終了桁の取得 2005.7.30 maru
-	{F_ISINSMODE,			"IsInsMode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 挿入／上書きモードの取得 2005.7.30 maru
-	{F_GETCHARCODE,			"GetCharCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 文字コード取得 2005.07.31 maru
-	{F_GETLINECODE,			"GetLineCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 改行コード取得 2005.08.05 maru
-	{F_ISPOSSIBLEUNDO,		"IsPossibleUndo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // Undo可能か調べる 2005.08.05 maru
-	{F_ISPOSSIBLEREDO,		"IsPossibleRedo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // Redo可能か調べる 2005.08.05 maru
-	{F_CHGWRAPCOLM,			"ChangeWrapColm",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},  VT_I4, NULL }, //折り返し桁変更 2008.06.19 ryoji
-	{F_ISCURTYPEEXT,		"IsCurTypeExt",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
-	{F_ISSAMETYPEEXT,		"IsSameTypeExt",			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY}, VT_I4, NULL }, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_GETFILENAME,			"GetFilename",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
+	{F_GETSAVEFILENAME,		"GetSaveFilename",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //保存時のファイル名を返す	2006.09.04	ryoji
+	{F_GETSELECTED,			"GetSelectedString",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
+	{F_EXPANDPARAMETER,		"ExpandParameter",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
+	{F_GETLINESTR,			"GetLineStr",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, // 指定論理行の取得 2003.06.01 Moca
+	{F_GETLINECOUNT,		"GetLineCount",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 全論理行数の取得 2003.06.01 Moca
+	{F_CHGTABWIDTH,			"ChangeTabWidth",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //タブサイズ変更 2004.03.16 zenryaku
+	{F_ISTEXTSELECTED,		"IsTextSelected",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //テキストが選択されているか 2005.7.30 maru
+	{F_GETSELLINEFROM,		"GetSelectLineFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始行の取得 2005.7.30 maru
+	{F_GETSELCOLMFROM,		"GetSelectColmFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELLINETO,		"GetSelectLineTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了行の取得 2005.7.30 maru
+	{F_GETSELCOLMTO,		"GetSelectColmTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了桁の取得 2005.7.30 maru
+	{F_ISINSMODE,			"IsInsMode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 挿入／上書きモードの取得 2005.7.30 maru
+	{F_GETCHARCODE,			"GetCharCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 文字コード取得 2005.07.31 maru
+	{F_GETLINECODE,			"GetLineCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 改行コード取得 2005.08.05 maru
+	{F_ISPOSSIBLEUNDO,		"IsPossibleUndo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Undo可能か調べる 2005.08.05 maru
+	{F_ISPOSSIBLEREDO,		"IsPossibleRedo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Redo可能か調べる 2005.08.05 maru
+	{F_CHGWRAPCOLM,			"ChangeWrapColm",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //折り返し桁変更 2008.06.19 ryoji
+	{F_ISCURTYPEEXT,		"IsCurTypeExt",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_ISSAMETYPEEXT,		"IsSameTypeExt",			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 
 	
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，
 	//	FuncIDを-1に変更．(0は使われる)
-	{-1,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
+	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
@@ -69,37 +68,37 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 //	機能番号			関数名			引数				作業用バッファ
 
 	/* ファイル操作系 */
-	{F_FILENEW,						"FileNew",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //新規作成
-	{F_FILEOPEN,					"FileOpen",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //開く
-	{F_FILESAVE,					"FileSave",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上書き保存
-	{F_FILESAVEALL,					"FileSaveAll",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //上書き保存
-	{F_FILESAVEAS,					"FileSaveAs",			{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //名前を付けて保存
-	{F_FILECLOSE,					"FileClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
-	{F_FILECLOSE_OPEN,				"FileCloseOpen",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //閉じて開く
-	{F_FILE_REOPEN,					"FileReopen",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す	//Dec. 4, 2002 genta
-	{F_FILE_REOPEN_SJIS,			"FileReopenSJIS",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //SJISで開き直す
-	{F_FILE_REOPEN_JIS,				"FileReopenJIS",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //JISで開き直す
-	{F_FILE_REOPEN_EUC,				"FileReopenEUC",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //EUCで開き直す
-	{F_FILE_REOPEN_UNICODE,			"FileReopenUNICODE",	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //Unicodeで開き直す
-	{F_FILE_REOPEN_UNICODEBE,		"FileReopenUNICODEBE",	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UnicodeBEで開き直す
-	{F_FILE_REOPEN_UTF8,			"FileReopenUTF8",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-8で開き直す
-	{F_FILE_REOPEN_UTF7,			"FileReopenUTF7",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //UTF-7で開き直す
-	{F_PRINT,						"Print",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷
-//	{F_PRINT_DIALOG,				"PrintDialog",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷ダイアログ
-	{F_PRINT_PREVIEW,				"PrintPreview",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷プレビュー
-	{F_PRINT_PAGESETUP,				"PrintPageSetup",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
-	{F_OPEN_HfromtoC,				"OpenHfromtoC",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
-	{F_OPEN_HHPP,					"OpenHHpp",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
-	{F_OPEN_CCPP,					"OpenCCpp",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
-	{F_ACTIVATE_SQLPLUS,			"ActivateSQLPLUS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plusをアクティブ表示 */
-	{F_PLSQL_COMPILE_ON_SQLPLUS,	"ExecSQLPLUS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* Oracle SQL*Plusで実行 */
-	{F_BROWSE,						"Browse",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ブラウズ
-	{F_READONLY,					"ReadOnly",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //読み取り専用
-	{F_PROPERTY_FILE,				"PropertyFile",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //ファイルのプロパティ
-	{F_EXITALLEDITORS,				"ExitAllEditors",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //編集の全終了	// 2007.02.13 ryoji 追加
-	{F_EXITALL,						"ExitAll",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
-	{F_PUTFILE,						"PutFile",				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // 作業中ファイルの一時出力 2006.12.10 maru
-	{F_INSFILE,						"InsFile",				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY,	NULL}, // キャレット位置にファイル挿入 2006.12.10 maru
+	{F_FILENEW,						"FileNew",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //新規作成
+	{F_FILEOPEN,					"FileOpen",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //開く
+	{F_FILESAVE,					"FileSave",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //上書き保存
+	{F_FILESAVEALL,					"FileSaveAll",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //上書き保存
+	{F_FILESAVEAS,					"FileSaveAs",			{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY, NULL}, //名前を付けて保存
+	{F_FILECLOSE,					"FileClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //閉じて(無題)	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
+	{F_FILECLOSE_OPEN,				"FileCloseOpen",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //閉じて開く
+	{F_FILE_REOPEN,					"FileReopen",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //SJISで開き直す	//Dec. 4, 2002 genta
+	{F_FILE_REOPEN_SJIS,			"FileReopenSJIS",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //SJISで開き直す
+	{F_FILE_REOPEN_JIS,				"FileReopenJIS",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //JISで開き直す
+	{F_FILE_REOPEN_EUC,				"FileReopenEUC",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //EUCで開き直す
+	{F_FILE_REOPEN_UNICODE,			"FileReopenUNICODE",	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //Unicodeで開き直す
+	{F_FILE_REOPEN_UNICODEBE,		"FileReopenUNICODEBE",	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //UnicodeBEで開き直す
+	{F_FILE_REOPEN_UTF8,			"FileReopenUTF8",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //UTF-8で開き直す
+	{F_FILE_REOPEN_UTF7,			"FileReopenUTF7",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //UTF-7で開き直す
+	{F_PRINT,						"Print",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //印刷
+//	{F_PRINT_DIALOG,				"PrintDialog",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //印刷ダイアログ
+	{F_PRINT_PREVIEW,				"PrintPreview",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //印刷プレビュー
+	{F_PRINT_PAGESETUP,				"PrintPageSetup",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //印刷ページ設定	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
+	{F_OPEN_HfromtoC,				"OpenHfromtoC",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //同名のC/C++ヘッダ(ソース)を開く	//Feb. 7, 2001 JEPRO 追加
+	{F_OPEN_HHPP,					"OpenHHpp",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //同名のC/C++ヘッダファイルを開く	//Feb. 9, 2001 jepro「.cまたは.cppと同名の.hを開く」から変更
+	{F_OPEN_CCPP,					"OpenCCpp",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //同名のC/C++ソースファイルを開く	//Feb. 9, 2001 jepro「.hと同名の.c(なければ.cpp)を開く」から変更
+	{F_ACTIVATE_SQLPLUS,			"ActivateSQLPLUS",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, /* Oracle SQL*Plusをアクティブ表示 */
+	{F_PLSQL_COMPILE_ON_SQLPLUS,	"ExecSQLPLUS",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, /* Oracle SQL*Plusで実行 */
+	{F_BROWSE,						"Browse",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //ブラウズ
+	{F_READONLY,					"ReadOnly",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //読み取り専用
+	{F_PROPERTY_FILE,				"PropertyFile",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //ファイルのプロパティ
+	{F_EXITALLEDITORS,				"ExitAllEditors",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //編集の全終了	// 2007.02.13 ryoji 追加
+	{F_EXITALL,						"ExitAll",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY, NULL}, //サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
+	{F_PUTFILE,						"PutFile",				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY, NULL}, // 作業中ファイルの一時出力 2006.12.10 maru
+	{F_INSFILE,						"InsFile",				{VT_BSTR,  VT_I4,    VT_I4,    VT_EMPTY},   VT_EMPTY, NULL}, // キャレット位置にファイル挿入 2006.12.10 maru
 
 	/* 編集系 */
 	{F_CHAR,				"Char",					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字入力
@@ -341,7 +340,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_REDRAW,					"ReDraw",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //再描画
 	{F_WIN_OUTPUT,				"ActivateWinOutput",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトプットウィンドウ表示
 	{F_TRACEOUT,				"TraceOut",				{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //マクロ用アウトプットウィンドウに出力	2006.04.26 maru
-	{F_TOPMOST,					"WindowTopMost",	{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //常に手前に表示
+	{F_TOPMOST,					"WindowTopMost",		{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //常に手前に表示
 	{F_GROUPCLOSE,				"GroupClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //グループを閉じる	// 2007.06.20 ryoji
 	{F_NEXTGROUP,				"NextGroup",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //次のグループ	// 2007.06.20 ryoji
 	{F_PREVGROUP,				"PrevGroup",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //前のグループ	// 2007.06.20 ryoji
@@ -368,9 +367,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，
 	//	FuncIDを-1に変更．(0は使われる)
-	{-1,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
+	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
-//int	CSMacroMgr::m_nMacroFuncInfoArrNum = sizeof( CSMacroMgr::m_MacroFuncInfoArr ) / sizeof( CSMacroMgr::m_MacroFuncInfoArr[0] );
+//int	CSMacroMgr::m_nMacroFuncInfoArrNum = _countof( CSMacroMgr::m_MacroFuncInfoArr ) / sizeof( CSMacroMgr::m_MacroFuncInfoArr[0] );
 
 /*!
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -425,14 +424,16 @@ void CSMacroMgr::ClearAll( void )
 
 /*! @briefキーマクロのバッファにデータ追加
 
-	@param nFuncID [in] 機能番号
-	@param lParam1 [in] パラメータ。
 	@param mbuf [in] 読み込み先マクロバッファ
 	
 	@date 2002.06.16 genta キーマクロの多種対応のため変更
-
 */
-int CSMacroMgr::Append( int idx, /*CSMacroMgr::Macro1& mbuf, */ int nFuncID, LPARAM lParam1, CEditView* pcEditView )
+int CSMacroMgr::Append(
+	int				idx,		//!<
+	int				nFuncID,	//!< [in] 機能番号
+	LPARAM			lParam1,	//!< [in] パラメータ。
+	CEditView*		pcEditView	//!<
+)
 {
 	assert( idx == STAND_KEYMACRO );
 	if (idx == STAND_KEYMACRO){
@@ -447,9 +448,6 @@ int CSMacroMgr::Append( int idx, /*CSMacroMgr::Macro1& mbuf, */ int nFuncID, LPA
 		}
 		pKeyMacro->Append( nFuncID, lParam1, pcEditView );
 	}
-//	else {
-		//m_cSavedKeyMacro[idx]->Append( nFuncID, lParam1, pcEditView );
-//	}
 	return TRUE;
 }
 
@@ -503,8 +501,8 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 		//	CShareDataから、マクロファイル名を取得
 		//	Jun. 08, 2003 Moca 呼び出し側でパス名を用意
 		//	Jun. 16, 2003 genta 書式をちょっと変更
-		char ptr[_MAX_PATH * 2];
-		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, sizeof(ptr) );
+		TCHAR ptr[_MAX_PATH * 2];
+		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, _countof(ptr) );
 		if ( n <= 0 ){
 			return FALSE;
 		}
@@ -535,7 +533,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 
 	@author Norio Nakatani, YAZAKI, genta, syat
 */
-BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstance, const char* pszPath, const char* pszType )
+BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const TCHAR* pszType )
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
@@ -548,13 +546,13 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 	delete *ppMacro;
 	*ppMacro = NULL;
 
-	const char *ext;
-	if( pszType == NULL ){		//ファイル指定
+	const TCHAR *ext;
+	if( pszType == NULL ){				//ファイル指定
 		//ファイルの拡張子を取得する
-		ext = strrchr( pszPath, '.');
+		ext = strrchr( pszPath, _T('.'));
 		//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
 		if( ext != NULL ){
-			const char *chk = strrchr( ext, '\\' );
+			const TCHAR *chk = strrchr( ext, _T('\\') );
 			if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
 								//	\が漢字の2バイト目の場合も拡張子ではない。
 				ext = NULL;
@@ -563,20 +561,22 @@ BOOL CSMacroMgr::Load( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstanc
 		if(ext != NULL){
 			++ext;
 		}
-	}else{						//コード指定
+	}else{								//コード指定
 		ext = pszType;
 	}
+
 	*ppMacro = CMacroFactory::Instance()->Create(ext);
 	if( *ppMacro == NULL )
 		return FALSE;
-	//	From Here Jun. 16, 2002 genta
-	//	読み込みエラー時はインスタンス削除
 	BOOL bRet;
 	if( pszType == NULL ){
 		bRet = (*ppMacro)->LoadKeyMacro( hInstance, pszPath );
 	}else{
 		bRet = (*ppMacro)->LoadKeyMacroStr( hInstance, pszPath );
 	}
+
+	//	From Here Jun. 16, 2002 genta
+	//	読み込みエラー時はインスタンス削除
 	if( bRet ){
 		return TRUE;
 	}
@@ -612,7 +612,7 @@ void CSMacroMgr::UnloadAll(void)
 
 	@author YAZAKI
 */
-BOOL CSMacroMgr::Save( int idx/* CSMacroMgr::Macro1& mbuf */, HINSTANCE hInstance, const char* pszPath )
+BOOL CSMacroMgr::Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath )
 {
 	assert( idx == STAND_KEYMACRO );
 	if ( idx == STAND_KEYMACRO ){
@@ -681,10 +681,6 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 /*!
 	機能番号から関数名と機能名日本語を取得
 	
-	@param hInstance [in] リソース取得のためのInstance Handle
-	@param nFuncID [in] 機能番号
-	@param pszFuncName [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
-	@param pszFuncNameJapanese [out] 機能名日本語．この先には256バイトのメモリが必要．
 	@return 成功したときはpszFuncName．見つからなかったときはNULL．
 	
 	@note
@@ -694,7 +690,12 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 	
 	@date 2002.06.16 genta 新設のGetFuncInfoById(int)を内部で使うように．
 */
-char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFuncName, char* pszFuncNameJapanese )
+char* CSMacroMgr::GetFuncInfoByID(
+	HINSTANCE hInstance,			//!< [in] リソース取得のためのInstance Handle
+	int nFuncID,					//!< [in] 機能番号
+	char* pszFuncName,				//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
+	char* pszFuncNameJapanese		//!< [out] 機能名日本語．この先には256バイトのメモリが必要．
+)
 {
 	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
 	if( MacroInfo != NULL ){
@@ -722,9 +723,6 @@ char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFu
 	関数名（S_xxxx）から機能番号と機能名日本語を取得．
 	関数名はS_で始まる場合と始まらない場合の両方に対応．
 
-	@param hInstance [in] リソース取得のためのInstance Handle
-	@param pszFuncName [in] 関数名
-	@param pszFuncNameJapanese [out] 機能名日本語．この先には256バイトのメモリが必要．
 	@return 成功したときは機能番号．見つからなかったときは-1．
 	
 	@note
@@ -733,7 +731,11 @@ char* CSMacroMgr::GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, char* pszFu
 	@date 2002.06.16 genta ループ内の文字列コピーを排除
 	@date 2009.07.19 syat  ChangeTabWidthとChangeWrapColmを許容する
 */
-int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName, char* pszFuncNameJapanese )
+int CSMacroMgr::GetFuncInfoByName(
+	HINSTANCE		hInstance,				//!< [in]  リソース取得のためのInstance Handle
+	const char*		pszFuncName,			//!< [in]  関数名
+	char*			pszFuncNameJapanese		//!< [out] 機能名日本語．この先には256バイトのメモリが必要．
+)
 {
 	int		i;
 	int		nFuncID;
@@ -742,7 +744,7 @@ int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName,
 	
 	//	S_で始まっているか
 	if( pszFuncName == NULL ){
-		return -1;
+		return F_INVALID;
 	}
 	if( pszFuncName[0] == 'S' && pszFuncName[1] == '_' ){
 		normalizedFuncName = pszFuncName + 2;
@@ -750,8 +752,7 @@ int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName,
 	else {
 		normalizedFuncName = pszFuncName;
 	}
-	
-//	char szBuffer[1024] = "S_";
+
 	// コマンド関数を検索
 	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
@@ -762,7 +763,6 @@ int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName,
 			return nFuncID;
 		}
 	}
-
 	// 非コマンド関数を検索
 	for( i = 0; m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; ++i ){
 		if( m_MacroFuncInfoNotCommandArr[i].m_nFuncID != F_CHGTABWIDTH &&
@@ -778,7 +778,7 @@ int CSMacroMgr::GetFuncInfoByName( HINSTANCE hInstance, const char* pszFuncName,
 			return nFuncID;
 		}
 	}
-	return -1;
+	return F_INVALID;
 }
 
 /* キーマクロに記録可能な機能かどうかを調べる */

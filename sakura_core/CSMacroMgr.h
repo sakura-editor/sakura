@@ -39,9 +39,8 @@
 #include "CKeyMacroMgr.h"
 #include "CShareData.h"
 
-//using namespace std;
-
 class CEditView;
+
 
 #define TEMP_KEYMACRO	-2	//	一時マクロ（保存ができない）
 #define STAND_KEYMACRO	-1	//	標準マクロ（保存ができる）
@@ -49,15 +48,14 @@ class CEditView;
 
 const int INVALID_MACRO_IDX	= -2;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
+//マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
-	int  	m_nFuncID;
-	char *	m_pszFuncName;
-//		char *	m_pszFuncParam;
-	VARTYPE	m_varArguments[4]; //引数の型の配列
-//		int		m_ArgumentCount; //引数の数
-	VARTYPE	m_varResult; //戻り値の型 VT_EMPTYならprocedureということで
-	char *	m_pszData;
+	int  			m_nFuncID;
+	char *			m_pszFuncName;
+	VARTYPE			m_varArguments[4];	//!< 引数の型の配列
+	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
+	char *			m_pszData;
 };
 
 /*-----------------------------------------------------------------------
@@ -73,7 +71,7 @@ class CSMacroMgr
 	//	キーマクロに標準マクロ以外のマクロを読み込めるように
 	CMacroManagerBase* m_pKeyMacro;	//	標準の（保存ができる）キーマクロも管理
 
-	//		一時マクロ（名前を指定してマクロ実行）を管理
+	//　一時マクロ（名前を指定してマクロ実行）を管理
 	CMacroManagerBase* m_pTempMacro;
 
 public:
@@ -100,13 +98,15 @@ public:
 	}
 	
 	//!	表示する名前の取得
-	const char* GetTitle(int idx) const {
+	const TCHAR* GetTitle(int idx) const
+	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
 	}
 	
 	//!	表示名の取得
-	const char* GetName(int idx) const {
+	const TCHAR* GetName(int idx) const
+	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].m_szName : NULL;
 	}
@@ -115,14 +115,15 @@ public:
 	
 		@param idx [in] マクロ番号
 	*/
-	const char* GetFile(int idx) const {
+	const TCHAR* GetFile(int idx) const
+	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
 		m_pShareData->m_MacroTable[idx].m_szFile : NULL;
 	}
 
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int idx, HINSTANCE hInstance, const char* pszPath, const char* pszType );
-	BOOL Save( int idx, HINSTANCE hInstance, const char* pszPath );
+	BOOL Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const TCHAR* pszType );
+	BOOL Save( int idx, HINSTANCE hInstance, const TCHAR* pszPath );
 	void UnloadAll(void);
 
 	/*! キーマクロのバッファにデータ追加 */
