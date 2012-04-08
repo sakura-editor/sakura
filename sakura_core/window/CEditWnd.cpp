@@ -764,7 +764,7 @@ void CEditWnd::LayoutMainMenu()
 		cMainMenu = &pcMenu->m_cMainMenuTbl[pcMenu->m_nMenuTopIdx[i]];
 		switch (cMainMenu->m_nType) {
 		case T_NODE:
-			::AppendMenu( hMenu, MF_POPUP | MFT_STRING | (nCount<=1 ? MF_GRAYED : 0), (UINT)CreatePopupMenu(), 
+			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=1 ? MF_GRAYED : 0), (UINT)CreatePopupMenu(), 
 				CKeyBind::MakeMenuLabel( to_tchar(cMainMenu->m_sName), to_tchar(cMainMenu->m_sKey) ) );
 			break;
 		case T_LEAF:
@@ -781,10 +781,10 @@ void CEditWnd::LayoutMainMenu()
 				FALSE) == NULL) {
 				auto_strcpy( szLabel, _T("?") );
 			}
-			::AppendMenu( hMenu, MFT_STRING, cMainMenu->m_nFunc, szLabel );
+			::AppendMenu( hMenu, MF_STRING, cMainMenu->m_nFunc, szLabel );
 			break;
 		case T_SEPARATOR:
-			::AppendMenu( hMenu, MFT_SEPARATOR, 0, NULL );
+			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
 			break;
 		case T_SPECIAL:
 			nCount = 0;
@@ -838,7 +838,7 @@ void CEditWnd::LayoutMainMenu()
 				}
 				break;
 			}
-			::AppendMenu( hMenu, MF_POPUP | MFT_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT)CreatePopupMenu(), 
+			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=0 ? MF_GRAYED : 0), (UINT)CreatePopupMenu(), 
 				CKeyBind::MakeMenuLabel( to_tchar(cMainMenu->m_sName), to_tchar(cMainMenu->m_sKey) ) );
 			break;
 		}
@@ -1145,8 +1145,7 @@ LRESULT CEditWnd::DispatchEvent(
 //			MYTRACE_A( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
-			if( -1 == nItemWidth ){
-			}else{
+			if( 0 < nItemWidth ){
 				lpmis->itemWidth = nItemWidth;
 				lpmis->itemHeight = nItemHeight;
 			}
@@ -1289,9 +1288,10 @@ LRESULT CEditWnd::DispatchEvent(
 		if( NULL != m_cStatusBar.GetStatusHwnd() ){
 			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
 		}
-
+		m_CMenuDrawer.EndDrawMenu();
 		/* メッセージの配送 */
 		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
+
 	case WM_SETFOCUS:
 //		MYTRACE_A( "WM_SETFOCUS\n" );
 

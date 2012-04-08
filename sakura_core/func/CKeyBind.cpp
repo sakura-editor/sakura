@@ -458,39 +458,35 @@ TCHAR* CKeyBind::GetMenuLabel(
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr,
 		int			nFuncId,
-		TCHAR*		pszLabel,
+		TCHAR*      pszLabel,   //!< [in,out] バッファは256以上と仮定
 		const TCHAR*	pszKey,
 		BOOL		bKeyStr,
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	CNativeT		cMemList;
+	const int LABEL_MAX = 256;
 
-
-	if( 0 == _tcslen( pszLabel ) ){
-		::LoadString( hInstance, nFuncId, pszLabel, 255 );
+	if( _T('\0') == pszLabel[0] ){
+		::LoadString( hInstance, nFuncId, pszLabel, LABEL_MAX );
 	}
-	if( 0 == _tcslen( pszLabel ) ){
+	if( _T('\0') == pszLabel[0] ){
 		_tcscpy( pszLabel, _T("-- undefined name --") );
 	}
 	// アクセスキーの追加	2010/5/17 Uchi
-	auto_strcpy_s( pszLabel, 255, MakeMenuLabel( pszLabel, pszKey ) );
-	pszLabel[255] = '\0';
-
+	_tcsncpy_s( pszLabel, LABEL_MAX, MakeMenuLabel( pszLabel, pszKey ), _TRUNCATE );
 
 	/* 機能に対応するキー名を追加するか */
 	if( bKeyStr ){
+		CNativeT    cMemAccessKey;
+		// 2010.07.11 Moca メニューラベルの「\t」の付加条件変更
+		// [ファイル/フォルダ/ウィンドウ一覧以外]から[アクセスキーがあるときのみ]に付加するように変更
 		/* 機能に対応するキー名の取得 */
-		if( ( IDM_SELWINDOW <= nFuncId && nFuncId <= IDM_SELWINDOW + 999 )
-		 || ( IDM_SELMRU <= nFuncId && nFuncId <= IDM_SELMRU + 999 )
-		 || ( IDM_SELOPENFOLDER <= nFuncId && nFuncId <= IDM_SELOPENFOLDER + 999 )
-		 ){
-		}else{
-			_tcscat( pszLabel, _T("\t") );
-		}
-
-		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemList, nFuncId, bGetDefFuncCode ) ){
-			_tcscat( pszLabel, cMemList.GetStringPtr() );
+		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemAccessKey, nFuncId, bGetDefFuncCode ) ){
+			// バッファが足りないときは入れない
+			if( _tcslen( pszLabel ) + cMemAccessKey.GetStringLength() + 1 < LABEL_MAX ){
+				_tcscat( pszLabel, _T("\t") );
+				_tcscat( pszLabel, cMemAccessKey.GetStringPtr() );
+			}
 		}
 	}
 	return pszLabel;

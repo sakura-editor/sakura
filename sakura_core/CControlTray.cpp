@@ -380,14 +380,17 @@ LRESULT CControlTray::DispatchEvent(
 		case ODT_MENU:	/* オーナー描画メニュー */
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
-			if( -1 == nItemWidth ){
-			}else{
+			if( 0 < nItemWidth ){
 				lpmis->itemWidth = nItemWidth;
 				lpmis->itemHeight = nItemHeight;
 			}
 			return TRUE;
 		}
 		return FALSE;
+	case WM_EXITMENULOOP:
+		m_CMenuDrawer.EndDrawMenu();
+		break;
+
 
 	/* タスクトレイ左クリックメニューへのショートカットキー登録 */
 	case WM_HOTKEY:
