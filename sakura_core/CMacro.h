@@ -48,8 +48,8 @@ public:
 	CMacro( int nFuncID );	//	ã@î\IDÇéwíËÇµÇƒèâä˙âª
 	~CMacro();
 
-	void SetNext(CMacro* pNext){ m_pNext = pNext; };
-	CMacro* GetNext(){ return m_pNext;};
+	void SetNext(CMacro* pNext){ m_pNext = pNext; }
+	CMacro* GetNext(){ return m_pNext; }
 	// 2007.07.20 genta : flagsí«â¡
 	void Exec( CEditView* pcEditView, int flags );
 	void Save( HINSTANCE hInstance, HFILE hFile );
@@ -59,7 +59,7 @@ public:
 	void AddParam( const int lParam );
 
 	static void HandleCommand( CEditView* pcEditView, const int Index,	const char* Argument[], const int ArgSize );
-	static bool HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result);
+	static bool HandleFunction( CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result);
 #if 0
 	/*
 	||  Attributes & Operations
