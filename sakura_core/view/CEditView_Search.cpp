@@ -184,7 +184,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 }
 
 /* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
-void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText )
+void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bTrimSpaceTab /* = false */ )
 {
 
 	int				i;
@@ -235,14 +235,34 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText )
 		}
 	}
 
+	wchar_t *pTopic2 = szTopic;
+	if( bTrimSpaceTab ){
+		// 前のスペース・タブを取り除く
+		while( L'\0' != *pTopic2 && ( ' ' == *pTopic2 || '\t' == *pTopic2 ) ){
+			pTopic2++;
+		}
+	}
+	int nTopic2Len = (int)wcslen( pTopic2 );
 	/* 検索文字列は改行まで */
-	for( i = 0; i < (int)wcslen( szTopic ); ++i ){
-		if( szTopic[i] == WCODE::CR || szTopic[i] == WCODE::LF ){
-			szTopic[i] = L'\0';
+	for( i = 0; i < nTopic2Len; ++i ){
+		if( pTopic2[i] == WCODE::CR || pTopic2[i] == WCODE::LF ){
+			pTopic2[i] = L'\0';
 			break;
 		}
 	}
-	cmemCurText.SetString( szTopic );
+	
+	if( bTrimSpaceTab ){
+		// 後ろのスペース・タブを取り除く
+		int m = (int)wcslen( pTopic2 ) - 1;
+		while( 0 <= m &&
+		    ( ' ' == pTopic2[m] || '\t' == pTopic2[m] ) ){
+			m--;
+		}
+		if( 0 <= m ){
+			pTopic2[m + 1] = L'\0';
+		}
+	}
+	cmemCurText.SetString( pTopic2 );
 }
 
 
