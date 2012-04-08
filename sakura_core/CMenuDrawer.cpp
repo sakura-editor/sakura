@@ -80,8 +80,6 @@ CMenuDrawer::CMenuDrawer()
 		int iString;	// ボタンのラベル文字列の 0 から始まるインデックス
 	} TBBUTTON;
 	*/
-	m_tbMyButton.resize( 1 );
-	SetTBBUTTONVal( &m_tbMyButton[0], -1, F_SEPARATOR, 0, TBSTYLE_SEP, 0, 0 );	//セパレータ	// 2007.11.02 ryoji アイコンの未定義化(-1)
 #if 0
 	2002/04/26 無用な汎用性は排除。
 	struct TBUTTONDATA {
@@ -110,7 +108,8 @@ CMenuDrawer::CMenuDrawer()
 //	Oct. 22, 2000 JEPRO アイコンのビットマップリソースの2次元配置が可能になったため根本的に配置転換した
 //	・配置の基本は「コマンド一覧」に入っている機能(コマンド)順	なお「コマンド一覧」自体は「メニューバー」の順におおよそ準拠している
 //	・アイコンビットマップファイルには横32個X15段ある(2010.06.26 13段から拡張)
-//	・メニューに属する系および各系の段との関係は次の通り(Oct. 22, 2000 現在)：
+//	・互換性と新コマンド追加の両立の都合で飛び地あり
+//	・メニューに属する系および各系の段との関係は次の通り(2012.03.10 現在)：
 //		ファイル----- ファイル操作系	(1段目32個: 1-32)
 //		編集--------- 編集系			(2段目32個: 33-64)
 //		移動--------- カーソル移動系	(3段目32個: 65-96)
@@ -122,17 +121,19 @@ CMenuDrawer::CMenuDrawer()
 //		検索--------- 検索系			(8段目32個: 225-256)
 //		ツール------- モード切り替え系	(9段目4個: 257-260)
 //					+ 設定系			(9段目次の16個: 261-276)
-//					+ マクロ系			(9段目最後の12個: 277-288)
-//					+ 外部マクロ		(12段目25個: 353-377/13段目25個: 385-409)
-//					+ カスタムメニュー	(10段目32個: 289-320)
+//					+ マクロ系			(9段目最後の11個: 277-287)
+//					+ 外部マクロ		(12段目32個: 353-384/13段目19個: 385-403)
+//					+ カスタムメニュー	(10段目25個: 289-313)
 //		ウィンドウ--- ウィンドウ系		(11段目22個: 321-342)
+//					+ タブ系			(10段目残りの7個: 314-320/9段目最期の1個: 288)
 //		ヘルプ------- 支援				(11段目残りの10個: 343-352)
 //	注1.「挿入系」はメニューでは「編集」に入っている
 //	注2.「コマンド一覧」に入ってないコマンドもわかっている範囲で位置予約にしておいた
 //  注3. F_DISABLE は未定義用(ダミーとしても使う)
 //	注4. ユーザー用に確保された場所は特にないので各段の空いている後ろの方を使ってください。
+//	注5. アイコンビットマップの有効段数は、CImageListMgr の MAX_Y です。
 
-	int /* TBUTTONDATA */ tbd[] = {
+	const int /* TBUTTONDATA */ tbd[] = {
 /* ファイル操作系(1段目32個: 1-32) */
 /*  1 */		F_FILENEW					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規作成
 /*  2 */		F_FILEOPEN					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く
@@ -519,7 +520,7 @@ CMenuDrawer::CMenuDrawer()
 
 //2002.01.17 hor ｢その他｣のエリアを外部マクロ用に割当て
 /* 外部マクロ(12段目31個: 353-383) */
-/* 353 */		F_USERMACRO_0		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ①
+/* 353 */		F_USERMACRO_0+0		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ①
 /* 354 */		F_USERMACRO_0+1		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ②
 /* 355 */		F_USERMACRO_0+2		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ③
 /* 356 */		F_USERMACRO_0+3		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ④
@@ -551,7 +552,8 @@ CMenuDrawer::CMenuDrawer()
 /* 382 */		F_USERMACRO_0+29	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ30
 /* 383 */		F_USERMACRO_0+30	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ31
 //	2007.10.17 genta 384は折り返しマークとして使用しているのでアイコンとしては使用できない
-/* 384 */		F_TOOLBARWRAP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//折返で予約済みであることを示す仮想アイコン
+//	2010.06.23 アイコン位置のみ追加マクロ用として利用する
+/* 384 */		F_TOOLBARWRAP		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//追加マクロ用icon位置兼、折返ツールバーボタンID
 
 /* 外部マクロ(13段目19個: 385-403) */
 /* 385 */		F_USERMACRO_0+31	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//外部マクロ32
@@ -658,34 +660,42 @@ CMenuDrawer::CMenuDrawer()
 };
 	int tbd_num = _countof( tbd );
 
-	m_tbMyButton.resize( tbd_num + 1 );
 	// m_tbMyButton[0]にはセパレータが入っているため、アイコン番号とボタン番号は１つずれる
-	const int INDEX_GAP = -1;
+	const int INDEX_GAP = 1;
+	const int myButtonEnd = tbd_num + INDEX_GAP;
 	// 定数の整合性確認
-	assert_warning( tbd[INDEX_GAP + TOOLBAR_BUTTON_F_PLUGCOMMAND] == F_PLUGCOMMAND );
-	assert_warning( tbd[INDEX_GAP + TOOLBAR_BUTTON_F_TOOLBARWRAP] == F_TOOLBARWRAP );
+	// アイコン番号
+	assert_warning( tbd[INDEX_GAP + TOOLBAR_ICON_MACRO_INTERNAL] == F_MACRO_EXTRA );
+	assert_warning( tbd[INDEX_GAP + TOOLBAR_ICON_PLUGCOMMAND_DEFAULT] == F_PLUGCOMMAND );
+	// コマンド番号
+	assert_warning( tbd[TOOLBAR_BUTTON_F_TOOLBARWRAP] == F_TOOLBARWRAP );
+	m_tbMyButton.resize( tbd_num + INDEX_GAP );
+	SetTBBUTTONVal( &m_tbMyButton[0], -1, F_SEPARATOR, 0, TBSTYLE_SEP, 0, 0 );	//セパレータ	// 2007.11.02 ryoji アイコンの未定義化(-1)
 
-	for( int i = 0; i < tbd_num; i++ ){
+	// 2010.06.23 Moca ループインデックスの基準をm_tbMyButtonに変更
+	for( int i = INDEX_GAP; i < myButtonEnd; i++ ){
+		const int funcCode = tbd[i-INDEX_GAP];
+		const int imageIndex = i - INDEX_GAP;
 
-		if( tbd[i] == F_TOOLBARWRAP ){
+		if( funcCode == F_TOOLBARWRAP ){
 			// ツールバー改行用の仮想ボタン（実際は表示されない） // 20050809 aroka
 			//	2007.10.12 genta 折り返しボタンが最後のデータと重なっているが，
 			//	インデックスを変更するとsakura.iniが引き継げなくなるので
 			//	重複を承知でそのままにする
+			//	2010.06.23 アイコン位置は外部マクロのデフォルトアイコンとして利用中
+			//	m_tbMyButton[384]自体は、ツールバーの折り返し用
 			SetTBBUTTONVal(
-				&m_tbMyButton[i+1],
+				&m_tbMyButton[i],
 				-1,						// 2007.11.02 ryoji アイコンの未定義化(-1)
-				F_MENU_NOT_USED_FIRST,			//	tbd[i].idCommand,
-				TBSTATE_ENABLED|TBSTATE_WRAP,	//	tbd[i].fsState,
-				TBSTYLE_SEP,			//	tbd[i].fsStyle,
-				0,						//	tbd[i].dwData,
-				0						//	tbd[i].iString
+				F_MENU_NOT_USED_FIRST,
+				TBSTATE_ENABLED|TBSTATE_WRAP,
+				TBSTYLE_SEP, 0, 0
 			);
 			continue;
 		}
 
 		BYTE	style;	//@@@ 2002.06.15 MIK
-		switch( tbd[i] )	//@@@ 2002.06.15 MIK
+		switch( funcCode )	//@@@ 2002.06.15 MIK
 		{
 		case F_FILEOPEN_DROPDOWN:
 			style = TBSTYLE_DROPDOWN;	//ドロップダウン
@@ -700,17 +710,33 @@ CMenuDrawer::CMenuDrawer()
 			break;
 		}
 
-		//	m_tbMyButton[0]にはセパレータが入っているため。
 		SetTBBUTTONVal(
-			&m_tbMyButton[i+1],
-			(tbd[i] == F_DISABLE)? -1: i,	// 2007.11.02 ryoji アイコンの未定義化(-1)
-			tbd[i],
+			&m_tbMyButton[i],
+			(F_DUMMY_MAX_CODE < funcCode)? imageIndex : -1,	// 2007.11.02 ryoji アイコンの未定義化(-1)
+			funcCode,
 			(tbd[i] == F_DISABLE)? 0 : TBSTATE_ENABLED,	// F_DISABLE なら DISABLEに	2010/7/11 Uchi
 			style, 0, 0
 		);
 	}
 
-	m_nMyButtonNum = tbd_num + 1;	//	+ 1は、セパレータの分
+	m_nMyButtonFixSize = m_tbMyButton.size();
+	
+	// 2010.06.25 Moca 専用アイコンのない外部マクロがあれば、同じアイコンを共有して登録
+	if( MAX_CUSTMACRO_ICO < MAX_CUSTMACRO ){
+		const int nAddFuncs = MAX_CUSTMACRO - MAX_CUSTMACRO_ICO;
+		const int nBaseIndex = m_tbMyButton.size();
+		m_tbMyButton.resize( m_tbMyButton.size() + nAddFuncs );
+		for( int k = 0; k < nAddFuncs; k++ ){
+			const int macroFuncCode = F_USERMACRO_0 + MAX_CUSTMACRO_ICO + k;
+			SetTBBUTTONVal(
+				&m_tbMyButton[k + nBaseIndex],
+				TOOLBAR_ICON_MACRO_INTERNAL - INDEX_GAP,
+				macroFuncCode, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0
+			);
+		}
+	}
+	
+	m_nMyButtonNum = m_tbMyButton.size();
 	return;
 }
 
@@ -794,7 +820,6 @@ void CMenuDrawer::MyAppendMenu(
 	TCHAR		szLabel[_MAX_PATH * 2+ 30];
 	TCHAR		szKey[10];
 	int			nFlagAdd = 0;
-	int			i;
 
 	if( nForceIconId == -1 ) nForceIconId = nFuncId;	//お気に入り	//@@@ 2003.04.08 MIK
 
@@ -830,14 +855,8 @@ void CMenuDrawer::MyAppendMenu(
 			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon || !osVer.IsWinVista_or_later() ){
 				nFlagAdd = MF_OWNERDRAW;
 			}
-			/* 機能のビットマップがあるかどうか調べておく */
-			for( i = 0; i < m_nMyButtonNum; ++i ){
-				if( nForceIconId == m_tbMyButton[i].idCommand ){	//お気に入り	//@@@ 2003.04.08 MIK
-					/* 機能のビットマップの情報を覚えておく */
-					item.m_nBitmapIdx = m_tbMyButton[i].iBitmap;
-					break;
-				}
-			}
+			/* 機能のビットマップの情報を覚えておく */
+			item.m_nBitmapIdx = GetIconIdByFuncId( nForceIconId );
 			m_menuItems.push_back( item );
 		}
 	}else{
@@ -880,6 +899,35 @@ void CMenuDrawer::MyAppendMenu(
 	// メニュー内の指定された位置に、新しいメニュー項目を挿入します。
 	::InsertMenuItem( hMenu, 0xFFFFFFFF, TRUE, &mii );
 	return;
+}
+
+
+/*
+	ツールバー番号をボタン配列のindexに変換する
+*/
+inline int CMenuDrawer::ToolbarNoToIndex( int nToolbarNo ) const
+{
+	if( nToolbarNo < 0 ){
+		return -1;
+	}
+	// 固定アクセス分のみ直接番号でアクセスさせる。m_nMyButtonNum は使わない
+	if( 0 <= nToolbarNo && nToolbarNo < m_nMyButtonFixSize ){
+		return nToolbarNo;
+	}
+	int nFuncID = nToolbarNo;
+	return FindIndexFromCommandId( nFuncID, false );
+}
+ 
+/*
+	ツールバー番号からアイコン番号を取得
+*/
+inline int CMenuDrawer::GetIconIdByFuncId( int nFuncID ) const
+{
+	int index = FindIndexFromCommandId( nFuncID, false );
+	if( index < 0 ){
+		return -1;
+	}
+	return m_tbMyButton[index].iBitmap;
 }
 
 
@@ -945,7 +993,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	RECT		rcText;
 	int			nBkModeOld;
 	int			nTxSysColor;
-
 
 	const bool bMenuIconDraw = !!m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 	const int nCxCheck = ::GetSystemMetrics(SM_CXMENUCHECK);
@@ -1404,6 +1451,27 @@ void CMenuDrawer::DeleteCompDC()
 	}
 }
 
+/*
+	ツールバー登録のための番号を返す。
+	プラグインのみボタンのindexのかわりにidCommandをそのまま返す
+	@date 2010.06.24 Moca 新規作成
+	@note この値がiniのツールバーアイテムの記録に使われる
+*/
+int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc ) const
+{
+	// 先に存在確認をする
+	int index = FindIndexFromCommandId( idCommand, bOnlyFunc );
+	if( -1 < index ){
+		// 固定部分以外(プラグインなど)はindexではなくidCommandのままにする
+		if( m_nMyButtonFixSize <= index ){
+			// もし コマンド番号が明らかに小さいと区別がつかない
+			assert_warning( idCommand < m_nMyButtonFixSize );
+			return idCommand;
+		}
+	}
+	return index;
+}
+
 /** コマンドコードからツールバーボタン情報のINDEXを得る
 
 	@param idCommand [in] コマンドコード
@@ -1414,7 +1482,7 @@ void CMenuDrawer::DeleteCompDC()
 	@date 2005.08.09 aroka m_nMyButtonNum隠蔽のため追加
 	@date 2005.11.02 ryoji bOnlyFuncパラメータを追加
  */
-int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc )
+int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc ) const
 {
 	if( bOnlyFunc ){
 		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
@@ -1437,15 +1505,18 @@ int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc )
 
 /** インデックスからボタン情報を得る
 
-	@param index [in] ボタン情報のインデックス
+	@param nToolbarNo [in] ボタン情報のツールバー番号
 	@retval ボタン情報
 
 	@date 2007.11.02 ryoji 範囲外の場合は未定義のボタン情報を返すように
+	@date 2010.06.24 Moca 引数をツールバー番号に変更
  */
-TBBUTTON CMenuDrawer::getButton( int index ) const
+TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 {
-	if( 0 <= index && index < m_nMyButtonNum )
+	int index = ToolbarNoToIndex( nToolbarNo );
+	if( 0 <= index && index < m_nMyButtonNum ){
 		return m_tbMyButton[index];
+	}
 
 	// 範囲外なら未定義のボタン情報を作成して返す
 	// （sakura.iniに範囲外インデックスが指定があった場合など、堅牢性のため）
@@ -1453,6 +1524,7 @@ TBBUTTON CMenuDrawer::getButton( int index ) const
 	SetTBBUTTONVal( &tbb, -1, F_DISABLE, 0, TBSTYLE_BUTTON, 0, 0 );
 	return tbb;
 }
+
 
 int CMenuDrawer::Find( int nFuncID )
 {
@@ -1627,7 +1699,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			if (m_tbMyButton.size() <= (size_t)(int)m_pShareData->m_PlugCmdIcon[iCmdNo]) {
 				// このウィンドウで未登録
 				// 空きを詰め込む
-				SetTBBUTTONVal( &tbb,TOOLBAR_BUTTON_F_PLUGCOMMAND - 1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
+				SetTBBUTTONVal( &tbb,TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
 				for (i = m_tbMyButton.size(); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
@@ -1649,7 +1721,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			// 全体で未登録
 			if (m_tbMyButton.size() < (size_t)m_pShareData->m_maxTBNum) {
 				// 空きを詰め込む
-				SetTBBUTTONVal( &tbb,TOOLBAR_BUTTON_F_PLUGCOMMAND - 1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
+				SetTBBUTTONVal( &tbb, TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
 				for (i = m_tbMyButton.size(); i < m_pShareData->m_maxTBNum; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;

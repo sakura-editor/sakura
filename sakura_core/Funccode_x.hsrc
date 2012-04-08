@@ -29,11 +29,13 @@ F_DEFAULT		= 0,
 F_0				= 0,
 
 // 未定義用(ダミーとしても使う) 	//Oct. 17, 2000 jepro noted
-F_DISABLE		= 0,	//未使用
-F_SEPARATOR		= 1,	//セパレータ
-F_TOOLBARWRAP	= 2,	//ツールバー折返
-F_PLUGCOMMAND	= 3,	//プラグインコマンド（デフォルトアイコン）
-F_NODE			= F_DEFAULT,		// ノード(Main Menu用)
+F_DISABLE			= 0,	//未使用
+F_NODE				= 0,	//ノード(Main Menu用)
+F_SEPARATOR			= 1,	//セパレータ
+F_TOOLBARWRAP		= 2,	//ツールバー折返
+F_MACRO_EXTRA		= 2,	//外部マクロ（50番以上）
+F_PLUGCOMMAND		= 3,	//プラグイン
+F_DUMMY_MAX_CODE    = 10,	//特別10である必要はないけど 10まで予約
 
 //	2007.07.07 genta 状況通知フラグ
 //	コマンドが送られた状況をコマンドと併せて通知する．

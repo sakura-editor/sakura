@@ -55,6 +55,7 @@ enum maxdata{
 		@date 2005.01.30 genta 50に増やした
 	*/
 	MAX_CUSTMACRO				= 50,
+	MAX_CUSTMACRO_ICO			= 50,	// アイコンに専用位置を割り当てている数	// 2010.06.25 Moca 追加
 
 	// 2004/06/21 novice タグジャンプ機能追加
 	MAX_TAGJUMPNUM				= 100,	// タブジャンプ情報最大値

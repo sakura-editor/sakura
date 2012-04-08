@@ -8,10 +8,12 @@
 #define F_DEFAULT 0
 #define F_0 0
 #define F_DISABLE 0
+#define F_NODE 0
 #define F_SEPARATOR 1
 #define F_TOOLBARWRAP 2
+#define F_MACRO_EXTRA 2
 #define F_PLUGCOMMAND 3
-#define F_NODE F_DEFAULT
+#define F_DUMMY_MAX_CODE 10
 #define FA_FROMKEYBOARD 0x00010000
 #define FA_FROMMACRO 0x00020000
 #define FA_NONRECORD 0x00040000

@@ -81,22 +81,26 @@ public:
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	void EndDrawMenu();
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
-	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ); /* ツールバーIndexの取得 */// 20050809 aroka
-	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
-	EFunctionCode GetFunctionCode( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? (EFunctionCode)m_tbMyButton[nIndex].idCommand: F_INVALID; }		// 機能番号を検索	//2010/7/4 Uchi
+	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true )const; // ツールバーNoの取得
+	int GetIconIdByFuncId( int nIndex ) const;
 
-	TBBUTTON getButton( int index ) const; // 20050809 aroka
+	TBBUTTON getButton( int nToolBarNo ) const; // 20050809 aroka
 	void AddToolButton( int iBitmap, int iCommand );	//ツールバーボタンを追加する 2009.11.14 syat
 	
-	static const int TOOLBAR_BUTTON_F_PLUGCOMMAND = 283;	//プラグインコマンド既定アイコン
+	// iBitmapに対応する定数
+	static const int TOOLBAR_ICON_MACRO_INTERNAL = 384;		//外部マクロ既定アイコン
+	static const int TOOLBAR_ICON_PLUGCOMMAND_DEFAULT = 283;//プラグインコマンド既定アイコン
+	// m_tbMyButtonのindexに対応する定数
+	static const int TOOLBAR_BUTTON_F_SEPARATOR = 0;		//セパレータ（ダミー）
 	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384;	//ツールバー折返しアイコン（ダミー）
 
 private:
 	void DeleteCompDC();
+	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ) const;  /* ツールバーIndexの取得 */// 20050809 aroka
 	int Find( int nFuncID );
 	const TCHAR* GetLabel( int nFuncID );
 	TCHAR GetAccelCharFromLabel( const TCHAR* pszLabel );
-
+	int ToolbarNoToIndex( int nToolbarNo ) const;
 
 private:
 	DLLSHAREDATA*	m_pShareData;
@@ -108,6 +112,7 @@ private:
 //2009.11.14 syat プラグインコマンド動的追加のためvector化
 	std::vector<TBBUTTON>	m_tbMyButton;	/* ツールバーのボタン */
 	int				m_nMyButtonNum;
+	int				m_nMyButtonFixSize;	// 固定部分の最大数
 	
 	// 2011.11.18 MenuItemのvector化
 	struct MyMenuItemInfo{

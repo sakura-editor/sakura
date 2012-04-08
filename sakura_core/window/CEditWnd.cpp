@@ -4526,7 +4526,7 @@ void CEditWnd::RegisterPluginCommand()
 //プラグインコマンドをエディタに登録する
 void CEditWnd::RegisterPluginCommand( CPlug* plug )
 {
-	int iBitmap = CMenuDrawer::TOOLBAR_BUTTON_F_PLUGCOMMAND - 1;
+	int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
 	if( !plug->m_sIcon.empty() ){
 		iBitmap = m_CMenuDrawer.m_pcIcons->Add( to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
 	}
