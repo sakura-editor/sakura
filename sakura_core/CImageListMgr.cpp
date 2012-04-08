@@ -199,7 +199,7 @@ void CImageListMgr::MyBitBlt(
 	HBITMAP bmpMem2;
 	HBITMAP bmpMem2Old;
 	// create a monochrome memory DC
-	hdcMask = CreateCompatibleDC(0);
+	hdcMask = CreateCompatibleDC(drawdc);
 	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight);
 	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask);
 	/* 元ビットマップ用DC */
@@ -263,11 +263,11 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	COLORREF colToTransParent = m_cTrans;
 
 	// create a monochrome memory DC
-	hdcMask = CreateCompatibleDC(0);
+	hdcMask = CreateCompatibleDC(drawdc);
 	bmpMask = CreateCompatibleBitmap( hdcMask, nWidth, nHeight);
 	bmpMaskOld = (HBITMAP)SelectObject( hdcMask, bmpMask);
 
-	hdcMem = CreateCompatibleDC(0);
+	hdcMem = CreateCompatibleDC(drawdc);
 	bmpMemOld = (HBITMAP)SelectObject( hdcMem, bmp);
 
 	//	Jul. 21, 2003 genta
@@ -291,11 +291,15 @@ void CImageListMgr::DitherBlt2( HDC drawdc, int nXDest, int nYDest, int nWidth,
 	COLORREF coltxOld = ::SetTextColor( drawdc, RGB(0, 0, 0) );
 	COLORREF colbkOld = ::SetBkColor( drawdc, RGB(255, 255, 255) );
 	::SetBkColor( hdcMem2, RGB(0, 0, 0));
+#if 0
 	::SetTextColor( hdcMem2, ::GetSysColor( COLOR_BTNHILIGHT ) );
 	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
 	::BitBlt( drawdc, nXDest+1, nYDest+1, nWidth, nHeight, hdcMask, 0, 0, SRCAND );
 	::BitBlt( drawdc, nXDest+1, nYDest+1, nWidth, nHeight, hdcMem2, 0, 0, SRCPAINT);
 	::SetTextColor( hdcMem2, ::GetSysColor( COLOR_BTNSHADOW ) );
+#else
+	::SetTextColor( hdcMem2, (::GetSysColor(COLOR_BTNSHADOW) != ::GetSysColor(COLOR_BTNFACE) ? ::GetSysColor(COLOR_3DSHADOW) : ::GetSysColor(COLOR_BTNHILIGHT)) );
+#endif
 	::BitBlt( hdcMem2, 0, 0, nWidth, nHeight, hdcMask, 0, 0, SRCCOPY );
 	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMask, 0, 0, SRCAND );
 	::BitBlt( drawdc, nXDest, nYDest, nWidth, nHeight, hdcMem2, 0, 0, SRCPAINT);

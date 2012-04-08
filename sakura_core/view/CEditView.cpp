@@ -1448,18 +1448,32 @@ int	CEditView::CreatePopUpMenu_R( void )
 
 
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
-	pCEditWnd->GetMenuDrawer().ResetContents();
+	CMenuDrawer& cMenuDrawer = pCEditWnd->GetMenuDrawer();
+	cMenuDrawer.ResetContents();
 
 	/* 右クリックメニューの定義はカスタムメニュー配列の0番目 */
 	nMenuIdx = CUSTMENU_INDEX_FOR_RBUTTONUP;	//マジックナンバー排除	//@@@ 2003.06.13 MIK
 
 	//	Oct. 3, 2001 genta
 	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
+	
+	// Note: CViewCommander::Command_CUSTMENU と大体同じ
 
 	hMenu = ::CreatePopupMenu();
+
+	// 2010.07.24 Moca オーナードロー対応のために前に移動してCMenuDrawer経由で追加する
+	if( !GetSelectionInfo().IsMouseSelecting() ){
+		if( TRUE == KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
+			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_COPYDICINFO, _T("キーワードの説明をクリップボードにコピー"), _T("K") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
+			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_JUMPDICT, _T("キーワード辞書を開く"), _T("L") );	// 2006.04.10 fon
+			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
+		}
+	}
+
 	for( i = 0; i < GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( 0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
-			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
+		if( F_0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
+			// 2010.07.24 メニュー配列に入れる
+			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
 		}else{
 			//	Oct. 3, 2001 genta
 			FuncLookup.Funccode2Name( GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
@@ -1478,20 +1492,13 @@ int	CEditView::CreatePopUpMenu_R( void )
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
-			pCEditWnd->GetMenuDrawer().MyAppendMenu(
+			cMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
 				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel2, L"" );
 
 		}
 	}
 
-	if( !GetSelectionInfo().IsMouseSelecting() ){	/* 範囲選択中 */
-		if( TRUE == KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
-			::InsertMenu( hMenu, 0, MF_BYPOSITION, IDM_COPYDICINFO, _T("キーワードの説明をクリップボードにコピー(&K)") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
-			::InsertMenu( hMenu, 1, MF_BYPOSITION, IDM_JUMPDICT, _T("キーワード辞書を開く(&J)") );	// 2006.04.10 fon
-			::InsertMenu( hMenu, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-		}
-	}
 	po.x = 0;
 	po.y = 0;
 	::GetCursorPos( &po );

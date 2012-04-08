@@ -7583,8 +7583,9 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 	}
 	hMenu = ::CreatePopupMenu();
 	for( i = 0; i < GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( 0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
-			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
+		if( F_0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
+			// 2010.07.24 ƒƒjƒ…[”z—ñ‚É“ü‚ê‚é
+			pCEditWnd->GetMenuDrawer().MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0 , _T("") );
 		}else{
 			//	Oct. 3, 2001 genta
 			WCHAR		szLabel[300];
