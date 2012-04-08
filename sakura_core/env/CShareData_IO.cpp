@@ -809,7 +809,7 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 					toolbar.m_nToolBarButtonIdxArr[i] = -1;		// –¢‰ðŒˆ
 				}
 				else {
-					toolbar.m_nToolBarButtonIdxArr[i] = pcMenuDrawer->FindIndexFromCommandId( eFunc, false );
+					toolbar.m_nToolBarButtonIdxArr[i] = pcMenuDrawer->FindToolbarNoFromCommandId( eFunc, false );
 				}
 			}
 		}
@@ -820,7 +820,7 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 			}
 			else {
 				// Plugin
-				eFunc = pcMenuDrawer->GetFunctionCode(toolbar.m_nToolBarButtonIdxArr[i]);
+				eFunc = (EFunctionCode)toolbar.m_nToolBarButtonIdxArr[i];
 				if (eFunc == F_DEFAULT) {
 					cProfile.IOProfileData( pszSecName, szKeyName, nInvalid );	
 				}
@@ -1795,7 +1795,7 @@ void CShareData_IO::ShareData_IO_Plugin( CDataProfile& cProfile, CMenuDrawer* pc
 		// Command ‰¼Ý’è	// 2010/7/4 Uchi
 		if (pluginrec.m_szId[0] != '\0' && pluginrec.m_nCmdNum >0) {
 			for (j = 1; j <= pluginrec.m_nCmdNum; j++) {
-				pcMenuDrawer->AddToolButton( CMenuDrawer::TOOLBAR_BUTTON_F_PLUGCOMMAND - 1, CPlug::GetPluginFunctionCode(i, j) );
+				pcMenuDrawer->AddToolButton( CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT, CPlug::GetPluginFunctionCode(i, j) );
 			}
 		}
 	}

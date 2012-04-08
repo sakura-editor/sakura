@@ -239,11 +239,11 @@ INT_PTR CPropToolbar::DispatchEvent(
 				nNum = m_cLookup.GetItemCount( nIndex2 );
 				for( i = 0; i < nNum; ++i ){
 					nIndex1 = m_cLookup.Pos2FuncCode( nIndex2, i );
-					int nIndex = m_pcMenuDrawer->FindIndexFromCommandId( nIndex1 );
+					int nbarNo = m_pcMenuDrawer->FindToolbarNoFromCommandId( nIndex1 );
 
-					if( nIndex >= 0 ){
+					if( nbarNo >= 0 ){
 						/* ツールバーボタンの情報をセット (リストボックス) */
-						lResult = ::Listbox_ADDDATA( hwndFuncList, (LPARAM)nIndex );
+						lResult = ::Listbox_ADDDATA( hwndFuncList, (LPARAM)nbarNo );
 						if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
 							break;
 						}
@@ -281,6 +281,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 						nIndex1 = 0;
 					}
 					//	From Here Apr. 13, 2002 genta
+					//	2010.06.25 Moca 折り返しのツールバーのボタン番号定数名を変更。最後ではなく固定値にする
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, CMenuDrawer::TOOLBAR_BUTTON_F_TOOLBARWRAP );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;

@@ -937,6 +937,7 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 		/* ツールバーボタン構造体 */
 //Sept. 16, 2000 JEPRO
 //	CShareData_new2.cppでできるだけ系ごとに集まるようにアイコンの順番を大幅に入れ替えたのに伴い以下の初期設定値を変更
+	// 2010.06.26 Moca 内容は CMenuDrawer::FindToolbarNoFromCommandId の戻り値です
 	static const int DEFAULT_TOOL_BUTTONS[] = {
 		1,	//新規作成
 		25,		//ファイルを開く(DropDown)
