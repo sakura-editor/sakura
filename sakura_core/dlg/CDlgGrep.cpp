@@ -59,10 +59,18 @@ CDlgGrep::CDlgGrep()
 	m_nGrepCharSet = CODE_SJIS;			// 文字コードセット
 	m_bGrepOutputLine = TRUE;			// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = 1;				// Grep: 出力形式
-
-	wcscpy( m_szText, m_pShareData->m_sSearchKeywords.m_aSearchKeys[0] );		/* 検索文字列 */
+	m_szText[0] = 0;
+	m_szFile[0] = 0;
+	m_szFolder[0] = 0;
+	if( m_pShareData->m_sSearchKeywords.m_aSearchKeys.size() ){
+		wcscpy( m_szText, m_pShareData->m_sSearchKeywords.m_aSearchKeys[0] );		/* 検索文字列 */
+	}
+	if( m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 	_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
-	_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
+	}
+	if( m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
+		_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
+	}
 	return;
 }
 

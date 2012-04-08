@@ -634,6 +634,9 @@
 #define IDC_BUTTON_DELETE_NOFAVORATE    1583
 #define IDC_BUTTON_DELETE_NOTFOUND      1584
 #define IDC_BUTTON_DELETE_SELECTED      1585
+#define IDC_BUTTON_PREVTAG              1586
+#define IDC_BUTTON_NEXTTAG              1587
+#define IDC_STATIC_BASEDIR              1588
 #define IDC_TREE_RES                    1589	//
 #define IDC_BUTTON_INSERT_NODE          1590	//
 #define IDC_BUTTON_INSERT_A             1091	//

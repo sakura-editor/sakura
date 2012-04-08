@@ -28,17 +28,18 @@
 
 #include "StdAfx.h"
 #include "func/Funccode.h"
-#include "sakura.hh"
 #include "config/maxdata.h" //MAX_MRU
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "doc/CEditDoc.h"
 #include "CAppMode.h"
 #include "CEditApp.h"
+#include "CGrepAgent.h"
 #include "macro/CSMacroMgr.h"
 #include "window/CEditWnd.h"
 #include "docplus/CDiffManager.h"
 #include "CMarkMgr.h"	// CAutoMarkMgr
+#include "sakura.hh"
 
 //using namespace nsFuncCode;
 
@@ -1128,11 +1129,13 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 			return false;
 	case F_JUMPHIST_SET:	//	現在位置を移動履歴に登録
 		return true;
+	// 20100402 Moca (無題)もダイレクトタグジャンプできるように
 	case F_DIRECT_TAGJUMP:	//ダイレクトタグジャンプ	//@@@ 2003.04.15 MIK
 	case F_TAGJUMP_KEYWORD:	//キーワードを指定してダイレクトタグジャンプ	//@@@ 2005.03.31 MIK
 	//	2003.05.12 MIK タグファイル作成先を選べるようにしたので、常に作成可能とする
 //	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
-		if( pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
+		if( false == CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode
+			&& pcEditDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 			return true;
 		}else{
 			return false;

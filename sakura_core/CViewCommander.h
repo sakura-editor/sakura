@@ -272,6 +272,7 @@ public:
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
 	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
+	bool Command_TagJumpByTagsFileMsg( bool );				//ダイレクトタグジャンプ(通知つき)
 	bool Command_TagJumpByTagsFile( void );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
 
 	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
@@ -383,6 +384,7 @@ public:
 private:
 	void DelCharForOverwrite( void );	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
+	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 
 };
 

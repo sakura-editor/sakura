@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, MIK
+	Copyright (C) 2010, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,23 +34,18 @@
 
 class CDlgTagJumpList;
 
-#ifndef	_CDLGTAGJUMPLIST_H_
-#define	_CDLGTAGJUMPLIST_H_
+#ifndef	SAKURA_CDLGTAGJUMPLIST_H_
+#define	SAKURA_CDLGTAGJUMPLIST_H_
 
 #include "dlg/CDialog.h"
-#include "CSortedTagJumpList.h"
+// #include "CSortedTagJumpList.h"
 
-//	@@ 2005.03.31 MIK
-//編集ボックスがコンボかどうか
-#define TAGJUMP_EDITBOX_IS_COMBO
-
-//キーワードを入力して該当する情報を表示するまでの時間(ミリ秒)
-#define TAGJUMP_TIMER_DELAY 700
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
-#define TAG_FILENAME        L"tags"
-//タグファイルのフォーマット	//	@@ 2005.03.31 MIK 定数化
-//	@@ 2005.04.03 MIK キーワードに空白が含まれる場合の考慮
-#define TAG_FORMAT       _T("%[^\t\r\n]\t%[^\t\r\n]\t%d;\"\t%s\t%s")
+#define TAG_FILENAME_T        _T("tags")
+
+// 2010.07.22 いくつかcppへ移動
+
+class CSortedTagJumpList;
 
 /*!	@brief ダイレクトタグジャンプ候補一覧ダイアログ
 
@@ -62,7 +58,7 @@ public:
 	/*
 	||  Constructors
 	*/
-	CDlgTagJumpList();
+	CDlgTagJumpList(bool bDirectTagJump);
 	~CDlgTagJumpList();
 
 	/*
@@ -71,10 +67,13 @@ public:
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
 	//	@@ 2005.03.31 MIK 階層パラメータを追加
-	bool AddParam( TCHAR *s0, TCHAR *s1, int n2, TCHAR *s3, TCHAR *s4, int depth );	//登録
-	bool GetSelectedParam( TCHAR *s0, TCHAR *s1, int *n2, TCHAR *s3, TCHAR *s4, int *depth );	//取得
+//	bool AddParamA( const ACHAR*, const ACHAR*, int, const ACHAR*, const ACHAR*, int depth, int baseDirId );	//登録
+	bool GetSelectedParam( TCHAR *s0, TCHAR *s1, int *n2, TCHAR *s3, TCHAR *s4, int *depth, TCHAR* fileBase  );	//取得
 	void SetFileName( const TCHAR *pszFileName );
 	void SetKeyword( const wchar_t *pszKeyword );	//	@@ 2005.03.31 MIK
+	int  FindDirectTagJump();
+
+	bool GetSelectedFullPathAndLine( TCHAR* fullPath, int count, int* lineNum, int* depth );
 
 protected:
 	/*
@@ -89,35 +88,70 @@ protected:
 	//BOOL	OnEnChange( HWND hwndCtl, int wID );
 	BOOL	OnTimer( WPARAM wParam );
 	LPVOID	GetHelpIdTable( void );
+
+private:
 	void	StopTimer( void );
-	void	StartTimer( void );
+	void	StartTimer( int );
 
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
-	void	UpdateData( void );	//	@@ 2005.03.31 MIK
+	void	UpdateData( bool );	//	@@ 2005.03.31 MIK
 
 	TCHAR	*GetNameByType( const TCHAR type, const TCHAR *name );	//タイプを名前に変換する。
 	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
 	//	@@ 2005.03.31 MIK
 	const TCHAR *GetFileName( void );
 	const TCHAR *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : _T(""); }
-	void find_key( const wchar_t* keyword );
 	void Empty( void );
+	void SetTextDir();
+	void FindNext( bool );
+	void find_key( const wchar_t* keyword );
+	int find_key_core(int, const wchar_t*, bool, bool, bool, bool, int);
+	
+	bool IsDirectTagJump();
+	
+	void ClearPrevFindInfo();
 
-
+	//! depthから完全パス名(相対パス/絶対パス)を作成する
+	static TCHAR* GetFullPathFromDepth( TCHAR*, int, TCHAR*, const TCHAR*, int );
+	static int CalcMaxUpDirectory( const TCHAR* );
+	static TCHAR* CopyDirDir( TCHAR* dest, const TCHAR* target, const TCHAR* base );
+	static TCHAR* DirUp( TCHAR* dir );
 
 private:
+
+	struct STagFindState{
+		int   m_nDepth;
+		int   m_nMatchAll;
+		int   m_nNextMode;
+		int   m_nLoop;
+		bool  m_bJumpPath;
+		TCHAR m_szCurPath[1024];
+	};
+	
+	bool	m_bDirectTagJump;
 
 	int		m_nIndex;		//!< 選択された要素番号
 	TCHAR	*m_pszFileName;	//!< 編集中のファイル名
 	wchar_t	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
 	int		m_nLoop;		//!< さかのぼれる階層数
-	CSortedTagJumpList	m_cList;	//!< タグジャンプ情報
+	CSortedTagJumpList*	m_pcList;	//!< タグジャンプ情報
 	UINT	m_nTimerId;		//!< タイマ番号
 	BOOL	m_bTagJumpICase;	//!< 大文字小文字を同一視
 	BOOL	m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
+	BOOL	m_bTagJumpExactMatch; //! 完全一致(画面無し)
 
+	int 	m_nTop;			//!< ページめくりの表示の先頭(0開始)
+	bool	m_bNextItem;	//!< まだ次にヒットするものがある
+
+	// 絞り込み検索用
+	STagFindState* m_psFindPrev; //<! 前回の最後に検索した状態
+	STagFindState* m_psFind0Match; //<! 前回の1つもHitしなかった最後のtags
+
+	CNativeW	m_strOldKeyword;	//!< 前回のキーワード
+	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
+	BOOL	m_bOldTagJumpAnyWhere;	//!< 前回の文字列の途中にマッチ
 };
 
-#endif	//_CDLGTAGJUMPLIST_H_
+#endif	//SAKURA_CDLGTAGJUMPLIST_H_
 

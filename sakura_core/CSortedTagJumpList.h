@@ -28,10 +28,8 @@
 		   distribution.
 */
 
-#ifndef _CSORTED_TAGJUMP_LIST_H_
-#define _CSORTED_TAGJUMP_LIST_H_
-
-#include "global.h"
+#ifndef SAKURA_CSORTED_TAGJUMP_LIST_H_
+#define SAKURA_CSORTED_TAGJUMP_LIST_H_
 
 #define MAX_TAG_STRING_LENGTH _MAX_PATH	//管理する文字列の最大長
 
@@ -43,8 +41,9 @@ public:
 	CSortedTagJumpList(int max);
 	~CSortedTagJumpList();
 
-	BOOL AddParam( TCHAR* keyword, TCHAR* filename, int no, TCHAR type, TCHAR* note, int depth );
-	BOOL GetParam( int index, TCHAR* keyword, TCHAR* filename, int* no, TCHAR* type, TCHAR* note, int* depth );
+	int AddBaseDir( const TCHAR* baseDir );
+	BOOL AddParamA( const ACHAR* keyword, const ACHAR* filename, int no, ACHAR type, const ACHAR* note, int depth, const int baseDirId );
+	BOOL GetParam( int index, TCHAR* keyword, TCHAR* filename, int* no, TCHAR* type, TCHAR* note, int* depth, TCHAR* baseDir );
 	int GetCount( void ){ return m_nCount; }
 	void Empty( void );
 	bool IsOverflow( void ){ return m_bOverflow; }
@@ -57,6 +56,7 @@ public:
 		TCHAR	type;		//!< 種類
 		TCHAR*	note;		//!< 備考
 		int		depth;		//!< (さかのぼる)階層
+		int		baseDirId;	//!< ファイル名のベースディレクトリ
 	} TagJumpInfo;
 
 	TagJumpInfo* GetPtr( int index );
@@ -69,6 +69,7 @@ public:
 
 private:
 	TagJumpInfo*	m_pTagjump;	//!< タグジャンプ情報
+	std::vector<std::tstring> m_baseDirArr;	//!< ベースディレクトリ情報
 	int				m_nCount;	//!< 個数
 	bool			m_bOverflow;	//!< オーバーフロー
 	
@@ -78,4 +79,4 @@ private:
 	void Free( TagJumpInfo* item );
 };
 
-#endif	//_CSORTED_TAGJUMP_LIST_H_
+#endif	//SAKURA_CSORTED_TAGJUMP_LIST_H_

@@ -67,6 +67,7 @@
 #include "plugin/COutlineIfObj.h"
 #include "CPropertyManager.h"
 #include "CAppMode.h"
+#include "CGrepAgent.h"
 #include "CWriteManager.h"
 #include "sakura_rc.h"
 
@@ -552,7 +553,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_TAGJUMP_CLOSE:	Command_TAGJUMP(true);break;					/* タグジャンプ(元ウィンドウClose) *///	Apr. 03, 2003 genta
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
 	case F_TAGS_MAKE:		Command_TagsMake();break;						//タグファイルの作成	//@@@ 2003.04.13 MIK
-	case F_DIRECT_TAGJUMP:	Command_TagJumpByTagsFile();break;				/* ダイレクトタグジャンプ機能 */	//@@@ 2003.04.15 MIK
+	case F_DIRECT_TAGJUMP:	Command_TagJumpByTagsFileMsg( true );break;				/* ダイレクトタグジャンプ機能 */	//@@@ 2003.04.15 MIK
 	case F_TAGJUMP_KEYWORD:	Command_TagJumpByTagsFileKeyword( (const wchar_t*)lparam1 );break;	/* @@ 2005.03.31 MIK キーワードを指定してダイレクトタグジャンプ機能 */
 	case F_COMPARE:			Command_COMPARE();break;						/* ファイル内容比較 */
 	case F_DIFF_DIALOG:		Command_Diff_Dialog();break;					/* DIFF差分表示(ダイアログ) */	//@@@ 2002.05.25 MIK
@@ -5575,150 +5576,65 @@ void CViewCommander::Command_TAGJUMPBACK( void )
 }
 
 /*
+	ダイレクトタグジャンプ(メッセージ付)
+
+	@date	2010.07.22	新規作成
+*/
+bool CViewCommander::Command_TagJumpByTagsFileMsg( bool bMsg )
+{
+	bool ret = Command_TagJumpByTagsFile();
+	if( false == ret && bMsg ){
+		m_pCommanderView->SendStatusMessage(_T("タグジャンプできません"));
+	}
+	return ret;
+}
+
+/*
 	ダイレクトタグジャンプ
 
 	@author	MIK
 	@date	2003.04.13	新規作成
 	@date	2003.05.12	フォルダ階層も考慮して探す
+	@date	
 */
 bool CViewCommander::Command_TagJumpByTagsFile( void )
 {
-	CNativeW	cmemKey;
-	int		i;
-	TCHAR	szCurrentPath[1024];	//カレントフォルダ
-	TCHAR	szTagFile[1024];		//タグファイル
-	TCHAR	szLineData[1024];		//行バッファ
-	TCHAR	s[5][1024];
-	int		n2;
-	int		nRet;
-	int		nMatch;						//一致数
-	CDlgTagJumpList	cDlgTagJumpList;	//タグジャンプリスト
-	FILE	*fp;
-	bool	bNoTag = true;
-	int		nLoop;
+	CNativeW	cmemKeyW;
+	m_pCommanderView->GetCurrentTextForSearch( cmemKeyW, true );
+	if( 0 == cmemKeyW.GetStringLength() ){
+		return false;
+	}
+	
+	TCHAR	szDirFile[1024];
+	if( false == Sub_PreProcTagJumpByTagsFile( szDirFile, _countof(szDirFile) ) ){
+		return false;
+	}
+	CDlgTagJumpList	cDlgTagJumpList(true);	//タグジャンプリスト
+	
+	cDlgTagJumpList.SetFileName( szDirFile );
+	cDlgTagJumpList.SetKeyword(cmemKeyW.GetStringPtr());
 
-	//現在カーソル位置のキーを取得する。
-	m_pCommanderView->GetCurrentTextForSearch( cmemKey );
-	if( 0 == cmemKey.GetStringLength() ) return false;	//キーがないなら終わり
+	int nMatchAll = cDlgTagJumpList.FindDirectTagJump();
 
-	if( ! GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ) return false;
-
-	// ファイル名に応じて探索回数を決定する
-	_tcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
-	nLoop = CalcDirectoryDepth( szCurrentPath );
-
-	if( nLoop <  0 ) nLoop =  0;
-	if( nLoop > (_MAX_PATH/2) ) nLoop = (_MAX_PATH/2);	//\A\B\C...のようなとき1フォルダで2文字消費するので...
-
-		//パス名のみ取り出す。
-		cDlgTagJumpList.SetFileName( szCurrentPath );
-		szCurrentPath[ _tcslen( szCurrentPath ) - _tcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = _T('\0');
-
-		for( i = 0; i <= nLoop; i++ )
-		{
-			//タグファイル名を作成する。
-			auto_sprintf( szTagFile, _T("%ts%ls"), szCurrentPath, TAG_FILENAME );
-
-			//タグファイルを開く。
-			fp = _tfopen( szTagFile, _T("r") );
-			if( fp )
-			{
-				bNoTag = false;
-				nMatch = 0;
-				while( _fgetts( szLineData, _countof( szLineData ), fp ) )
-				{
-					if( szLineData[0] <= _T('!') ) goto next_line;	//コメントならスキップ
-					//chop( szLineData );
-
-					s[0][0] = s[1][0] = s[2][0] = s[3][0] = s[4][0] = _T('\0');
-					n2 = 0;
-					//	2004.06.04 Moca ファイル名/パスにスペースが含まれているときに
-					//	ダイレクトタグジャンプに失敗していた
-					//	sscanf の%[^\t\r\n] でスペースを読みとるように変更
-					//	@@ 2005.03.31 MIK TAG_FORMAT定数化
-					nRet = _stscanf(
-						szLineData, 
-						TAG_FORMAT,	//tagsフォーマット
-						s[0], s[1], &n2, s[3], s[4]
-					);
-					if( nRet < 4 ) goto next_line;
-					if( n2 <= 0 ) goto next_line;	//行番号不正(-excmd=nが指定されてないかも)
-
-					if( 0 != wcscmp( to_wchar(s[0]), cmemKey.GetStringPtr() ) ) goto next_line;
-
-					//	@@ 2005.03.31 MIK 階層パラメータ追加
-					cDlgTagJumpList.AddParam( s[0], s[1], n2, s[3], s[4], i );
-					nMatch++;
-					continue;
-
-next_line:
-					if( nMatch ) break;
-				}
-
-				//ファイルを閉じる。
-				fclose( fp );
-
-				//複数あれば選択してもらう。
-				if( nMatch > 1 )
-				{
-					if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ) 
-					{
-						nMatch = 0;
-						return true;	//キャンセル
-					}
-				}
-
-				//タグジャンプする。
-				if( nMatch > 0 )
-				{
-					//	@@ 2005.03.31 MIK 階層パラメータ追加
-					int depth;
-					if( false == cDlgTagJumpList.GetSelectedParam( s[0], s[1], &n2, s[3], s[4], &depth ) )
-					{
-						return false;
-					}
-
-					/*
-					 * s[0] キー
-					 * s[1] ファイル名
-					 * n2   行番号
-					 * s[3] タイプ
-					 * s[4] コメント
-					 * depth (さかのぼる)階層数
-					 */
-
-					//完全パス名を作成する。
-					TCHAR	*p;
-					p = s[1];
-					if( p[0] == _T('\\') )	//ドライブなし絶対パスか？
-					{
-						//	2003.09.20 Moca パスが変
-						if( p[1] == _T('\\') )	//ネットワークパスか？
-						{
-							_tcscpy( szTagFile, p );	//何も加工しない。
-						}
-						else
-						{
-							//ドライブ加工したほうがよい？
-							_tcscpy( szTagFile, p );	//何も加工しない。
-						}
-					}
-					else if( isalpha( p[0] ) && p[1] == L':' )	//絶対パスか？
-					{
-						_tcscpy( szTagFile, p );	//何も加工しない。
-					}
-					else
-					{
-						auto_sprintf( szTagFile, _T("%ts%ls"), szCurrentPath, p );
-					}
-
-					return m_pCommanderView->TagJumpSub( szTagFile, CMyPoint(0, n2) );
-				}
-			}	//fp
-
-			//カレントパスを1階層上へ。
-			_tcscat( szCurrentPath, _T("..\\") );
+	//複数あれば選択してもらう。
+	if( 1 < nMatchAll ){
+		if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ){
+			nMatchAll = 0;
+			return true;	//キャンセル
 		}
+	}
+
+	//タグジャンプする。
+	if( 0 < nMatchAll ){
+		//	@@ 2005.03.31 MIK 階層パラメータ追加
+		TCHAR fileName[1024];
+		int   fileLine;
+
+		if( NULL == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , NULL ) ){
+			return false;
+		}
+		return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine) );
+	}
 
 	return false;
 }
@@ -5743,14 +5659,8 @@ bool CViewCommander::Command_TagsMake( void )
 	}
 	else
 	{
-		TCHAR	szTmp[1024];
-		::GetModuleFileName(
-			NULL,
-			szTmp, _countof( szTmp )
-		);
-		/* ファイルのフルパスを、フォルダとファイル名に分割 */
-		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-		::SplitPath_FolderAndFile( szTmp, szTargetPath, NULL );
+		// 20100722 Moca サクラのフォルダからカレントディレクトリに変更
+		::GetCurrentDirectory( _countof(szTargetPath), szTargetPath );
 	}
 
 	//ダイアログを表示する
@@ -5954,78 +5864,86 @@ finish:
 }
 
 /*!
-	キーワードを指定してタグジャンプ
-
+	キーワードを指定してタグジャンプ(ダイアログ)
+	@param keyword NULL許容
 	@author MIK
 	@date 2005.03.31 新規作成
+	@date 2010.04.02 Moca 無題でも使えるように
 */
 bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 {
-	CMemory	cmemKey;
-	CDlgTagJumpList	cDlgTagJumpList;
-	TCHAR	s[5][1024];
-	int		n2;
-	int depth;
-	TCHAR	szTagFile[1024];		//タグファイル
+	CDlgTagJumpList	cDlgTagJumpList(false);
+	TCHAR	fileName[1024];
+	int		fileLine;	// 行番号
 	TCHAR	szCurrentPath[1024];
 
-	if( ! GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ) return false;
-	_tcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
+	if( false == Sub_PreProcTagJumpByTagsFile( szCurrentPath, _countof(szCurrentPath) ) ){
+		return false;
+	}
 
 	cDlgTagJumpList.SetFileName( szCurrentPath );
 	cDlgTagJumpList.SetKeyword( keyword );
 
-	szCurrentPath[ _tcslen( szCurrentPath ) - _tcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = _T('\0');
-
-	if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)1 ) ) 
+	if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ) 
 	{
 		return true;	//キャンセル
 	}
 
 	//タグジャンプする。
-	if( false == cDlgTagJumpList.GetSelectedParam( s[0], s[1], &n2, s[3], s[4], &depth ) )
+	if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine, NULL ) )
 	{
 		return false;
 	}
 
-	/*
-	 * s[0] キー
-	 * s[1] ファイル名
-	 * n2   行番号
-	 * s[3] タイプ
-	 * s[4] コメント
-	 * depth (さかのぼる)階層数
-	 */
+	return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine) );
+}
 
-	//完全パス名を作成する。
-	TCHAR	*p;
-	p = s[1];
-	if( p[0] == _T('\\') )	//ドライブなし絶対パスか？
-	{
-		if( p[1] == _T('\\') )	//ネットワークパスか？
-		{
-			_tcscpy( szTagFile, p );	//何も加工しない。
-		}
-		else
-		{
-			//ドライブ加工したほうがよい？
-			_tcscpy( szTagFile, p );	//何も加工しない。
-		}
-	}
-	else if( _istalpha( p[0] ) && p[1] == _T(':') )	//絶対パスか？
-	{
-		_tcscpy( szTagFile, p );	//何も加工しない。
-	}
-	else
-	{
-		for( int i = 0; i < depth; i++ )
-		{
-			_tcscat( szCurrentPath, _T("..\\") );
-		}
-		auto_sprintf( szTagFile, _T("%ls%ls"), szCurrentPath, p );
-	}
 
-	return m_pCommanderView->TagJumpSub( szTagFile, CMyPoint(0, n2) );
+/*!
+	タグジャンプの前処理
+	実行可能確認と、基準ファイル名の設定
+*/
+bool CViewCommander::Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count )
+{
+	if( count ) szCurrentPath[0] = _T('\0');
+
+	// 実行可能確認
+	if( ! GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+		// 2010.04.02 (無題)でもタグジャンプできるように
+		// Grep、アウトプットは行番号タグジャンプがあるので無効にする(要検討)
+		if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ||
+		    CAppMode::Instance()->IsDebugMode() ){
+		    return false;
+		}
+	}
+	
+	// 基準ファイル名の設定
+	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+		auto_strcpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
+	}else{
+		if( 0 == ::GetCurrentDirectory( count - _countof(_T("\\dmy")) - MAX_TYPES_EXTS, szCurrentPath ) ){
+			return false;
+		}
+		// (無題)でもファイル名を要求してくるのでダミーをつける
+		// 現在のタイプ別の1番目の拡張子を拝借
+		TCHAR szExts[MAX_TYPES_EXTS];
+		TCHAR* pszExt = szExts;
+		auto_strcpy( szExts, GetDocument()->m_cDocType.GetDocumentAttribute().m_szTypeExts );
+		if( szExts[0] != '\0' ){
+			// strtok 注意
+			pszExt = _tcstok( szExts, _T(" ;,") );
+		}
+		int nExtLen = 0;
+		if( NULL != pszExt ){
+			nExtLen = auto_strlen( pszExt );
+		}
+		_tcscat( szCurrentPath, _T("\\dmy") );
+		if( nExtLen ){
+			_tcscat( szCurrentPath, _T(".") );
+			_tcscat( szCurrentPath, pszExt );
+		}
+	}
+	return true;
 }
 
 
