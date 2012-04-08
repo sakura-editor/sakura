@@ -11,14 +11,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CSplitterWnd;
-
-
-#ifndef _CSPLITTERWND_H_
-#define _CSPLITTERWND_H_
+#ifndef SAKURA_WINDOW_CSPLITTERWND_H_
+#define SAKURA_WINDOW_CSPLITTERWND_H_
 
 #include "CWnd.h"
-#include "CShareData.h"
+
+struct DLLSHAREDATA;
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -44,7 +43,7 @@ private: // 2002/2/3 aroka
 	/*
 	||  Attributes & Operations
 	*/
-	char*			m_pszClassName;			/* クラス名 */
+	TCHAR*			m_pszClassName;			/* クラス名 */
 	DLLSHAREDATA*	m_pShareData;
 	void*			m_pCEditWnd;
 	int				m_nAllSplitRows;		/* 分割行数 */
@@ -97,7 +96,7 @@ protected:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CSPLITTERWND_H_ */
+#endif /* SAKURA_WINDOW_CSPLITTERWND_H_ */
 
 
 /*[EOF]*/

@@ -45,16 +45,17 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 
 	/* ウィンドウクラス作成 */
 	if( bVertical ){
-		m_pszClassName = "VSplitBoxWnd";
+		m_pszClassName = _T("VSplitBoxWnd");
 		hCursor = ::LoadCursor( NULL, IDC_SIZENS );
-	}else{
-		m_pszClassName = "HSplitBoxWnd";
+	}
+	else{
+		m_pszClassName = _T("HSplitBoxWnd");
 		hCursor = ::LoadCursor( NULL, IDC_SIZEWE );
 	}
 	RegisterWC(
 		/* WNDCLASS用 */
-		NULL,// Handle to the class icon.
-		NULL,	//Handle to a small icon
+		NULL,	// Handle to the class icon.
+		NULL,	// Handle to a small icon
 		hCursor,// Handle to the class cursor.
 		(HBRUSH)(COLOR_3DFACE + 1),// Handle to the class background brush.
 		NULL/*MAKEINTRESOURCE( MYDOCUMENT )*/,// Pointer to a null-terminated character string that specifies the resource name of the class menu, as the name appears in the resource file.
@@ -444,7 +445,8 @@ LRESULT CSplitBoxWnd::OnLButtonDblClk( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 
 		/* 親ウィンドウに、メッセージをポストする */
 		::PostMessage( m_hwndParent, MYWM_DOSPLIT, (WPARAM)0, (LPARAM)(rc.bottom / 2) );
-	}else{
+	}
+	else{
 		::GetClientRect( m_hwndParent, &rc );
 		nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );	/* 水平スクロールバーの高さ */
 		rc.bottom -= nCyHScroll;

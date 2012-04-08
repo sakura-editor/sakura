@@ -21,7 +21,6 @@
 #include "mymessage.h"
 #include "CEditWnd.h"
 #include "CEditView.h"
-#include <tchar.h>
 #include <assert.h>
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -82,9 +81,7 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 	if( 0 == atWork ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			_T("SplitterWndクラスの登録に失敗しました。")
-		);
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("SplitterWndクラスの登録に失敗しました。") );
 	}
 
 	/* 基底クラスメンバ呼び出し */
@@ -246,7 +243,10 @@ int CSplitterWnd::HitTestSplitter( int xPos, int yPos )
 	}
 }
 
-/* ウィンドウの分割 */
+/*! ウィンドウの分割
+	@param nHorizontal 水平クライアント座標 1以上で分割 0:分割しない  -1: 前の設定を保持
+	@param nVertical   垂直クライアント座標 1以上で分割 0:分割しない  -1: 前の設定を保持
+*/
 void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 {
 	int					nActivePane;
@@ -273,7 +273,6 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 		// 今のところは分割数に関係なく4つまで一度に作ります。
 		pCEditWnd->m_cEditDoc.CreateEditViewBySplit(2*2);
 	}
-
 	/*
 	|| ファンクションキーを下に表示している場合はサイズボックスを表示しない
 	|| ステータスパーを表示している場合はサイズボックスを表示しない
@@ -293,7 +292,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	}
 	/* メインウィンドウが最大化されている場合はサイズボックスを表示しない */
 	WINDOWPLACEMENT	wp;
-	wp.length = sizeof( WINDOWPLACEMENT );
+	wp.length = sizeof( wp );
 	::GetWindowPlacement( m_hwndParent, &wp );
 	if( SW_SHOWMAXIMIZED == wp.showCmd ){
 		bSizeBox = FALSE;
@@ -420,11 +419,12 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 			}
 			// YAZAKI
 			pcViewArr[2]->m_nViewTopLine = pcViewArr[0]->m_nViewTopLine + pcViewArr[0]->m_nViewRowNum;
-		}else
-		if( nAllSplitRowsOld > 1 && nAllSplitColsOld == 1 ){
-		}else
-		if( nAllSplitRowsOld == 1 && nAllSplitColsOld > 1 ){
-		}else{
+		}
+		else if( nAllSplitRowsOld > 1 && nAllSplitColsOld == 1 ){
+		}
+		else if( nAllSplitRowsOld == 1 && nAllSplitColsOld > 1 ){
+		}
+		else{
 			if( bHUp ){
 				/* ペインの表示状態を他のビューにコピー */
 				if( NULL != pcViewArr[1] && NULL != pcViewArr[0] ){
@@ -464,15 +464,16 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 				if ( pcViewArr[2]->m_nViewTopLine < pcViewArr[2]->m_nCaretPosY ){
 					nActivePane = 2;
 				}
-				else {
+				else{
 					nActivePane = 0;
 				}
 			}
-		}else{
+		}
+		else{
 			nActivePane = 2;
 		}
-	}else
-	if( nVertical == 0 &&  nHorizontal > 0 ){
+	}
+	else if( nVertical == 0 &&  nHorizontal > 0 ){
 		m_nAllSplitRows = 1;	/* 分割行数 */
 		m_nAllSplitCols = 2;	/* 分割桁数 */
 
@@ -582,23 +583,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	if( m_ChildWndArr[nActivePane] != NULL ){
 		::PostMessage( m_ChildWndArr[nActivePane], MYWM_SETACTIVEPANE, 0, 0 );
 	}
-#if 0
-	if( NULL != pcViewArr[0] ){
-		pcViewArr[0]->RedrawAll();	/* フォーカス移動時の再描画 */
-	}
-	if( NULL != pcViewArr[1] ){
-		pcViewArr[1]->RedrawAll();	/* フォーカス移動時の再描画 */
-	}
-	if( NULL != pcViewArr[2] ){
-		pcViewArr[2]->RedrawAll();	/* フォーカス移動時の再描画 */
-	}
-	if( NULL != pcViewArr[3] ){
-		pcViewArr[3]->RedrawAll();	/* フォーカス移動時の再描画 */
-	}
-	if( NULL != pcViewArr[nActivePane] ){
-		pcViewArr[nActivePane]->RedrawAll();	/* フォーカス移動時の再描画 */
-	}
-#endif
+
 	return;
 }
 
@@ -869,7 +854,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	}
 	/* メインウィンドウが最大化されている場合はサイズボックスを表示しない */
 	WINDOWPLACEMENT	wp;
-	wp.length = sizeof( WINDOWPLACEMENT );
+	wp.length = sizeof( wp );
 	::GetWindowPlacement( m_hwndParent, &wp );
 	if( SW_SHOWMAXIMIZED == wp.showCmd ){
 		bSizeBox = FALSE;
