@@ -29,6 +29,40 @@
 class CDocLineMgr;
 struct DocLineReplaceArg;
 
+#define SEARCH_STRING_KMP
+#define SEARCH_STRING_SUNDAY_QUICK
+
+class CSearchStringPattern
+{
+public:
+	CSearchStringPattern( const wchar_t* pszPattern, int nPatternLen, bool bLoHiCase );
+	~CSearchStringPattern();
+	const wchar_t* GetString() const{ return m_pszPatternCase; }
+	int GetLen() const{ return m_nPatternLen; }
+	bool GetIgnoreCase() const{ return m_bIgnoreCase; }
+	bool GetLoHiCase() const{ return !m_bIgnoreCase; }
+
+#ifdef SEARCH_STRING_KMP
+	const int* GetKMPNextTable() const{ return m_pnNextPossArr; }
+#endif
+	static int GetMapIndex( wchar_t c );
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	const int* GetUseCharSkipMap() const{ return m_pnUseCharSkipArr; }
+#endif
+
+private:
+	wchar_t* m_pszPatternCase;
+	int  m_nPatternLen;
+	bool m_bIgnoreCase;
+#ifdef SEARCH_STRING_KMP
+	int* m_pnNextPossArr;
+#endif
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	int* m_pnUseCharSkipArr;
+#endif
+};
+
+
 class CSearchAgent{
 public:
 	// ï∂éöóÒåüçı
@@ -36,10 +70,7 @@ public:
 		const wchar_t*	pLine,
 		int				nLineLen,
 		int				nIdxPos,
-		const wchar_t*	pszPattern,
-		int				nPatternLen,
-		int*			pnCharCharsArr,
-		bool			bLoHiCase
+		const CSearchStringPattern& pattern
 	);
 	
 	// åüçıèåèÇÃèÓïÒ

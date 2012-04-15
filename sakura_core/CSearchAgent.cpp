@@ -9,6 +9,89 @@
 #include "util/string_ex.h"
 #include "sakura_rc.h"
 
+//#define MEASURE_SEARCH_TIME
+#ifdef MEASURE_SEARCH_TIME
+#include "time.h"
+#endif
+
+// CSearchStringPattern
+// @date 2010.06.22 Moca
+inline int CSearchStringPattern::GetMapIndex( wchar_t c )
+{
+	// ASCII    => 0x000 - 0x0ff
+	// それ以外 => 0x100 - 0x1ff
+	return ((c & 0xff00) ? 0x100 : 0 ) | (c & 0xff);
+}
+
+CSearchStringPattern::CSearchStringPattern( const wchar_t* pszPattern, int nPatternLen, bool bLoHiCase ) : 
+#ifdef SEARCH_STRING_KMP
+	m_pnNextPossArr(NULL),
+#endif
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	m_pnUseCharSkipArr(NULL),
+#endif
+	m_pszPatternCase(NULL)
+{
+	m_pszPatternCase = new wchar_t[nPatternLen + 1];
+	m_nPatternLen = nPatternLen;
+	m_bIgnoreCase = !bLoHiCase; // 注: フラグが反対
+	if( m_bIgnoreCase ){
+		//note: 合成文字,サロゲートの「大文字小文字同一視」未対応
+		for( int i = 0; i < m_nPatternLen; i++ ){
+			m_pszPatternCase[i] = towupper(pszPattern[i]);
+		}
+	}else{
+		wmemcpy( m_pszPatternCase, pszPattern, m_nPatternLen );
+	}
+	m_pszPatternCase[nPatternLen] = L'\0';
+	
+#ifdef SEARCH_STRING_KMP
+	// "ABCDE" => {-1, 0, 0, 0, 0}
+	// "AAAAA" => {-1, 0, 1, 2, 3}
+	// "AABAA" => {-1, 0, 0, 0, 0}
+	// "ABABA" => {-1, 0, 0, 2, 0}
+//	if( m_bIgnoreCase ){
+		m_pnNextPossArr = new int[nPatternLen + 1];
+		int* next = m_pnNextPossArr;
+		const wchar_t* key = m_pszPatternCase;
+		for( int i = 0, k = -1; i < nPatternLen; ++i, ++k ){
+			next[i] = k;
+			while( -1 < k && key[i] != key[k] ){
+				k = next[k];
+			}
+		}
+//	}
+#endif
+
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	const int BM_MAPSIZE = 0x1ff + 1;
+	// 64KB も作らないで、ASCII それ以外(包括) の2つの情報のみ記録する
+	// 「あ」と「乂」　「ぅ」と「居」は値を共有している
+	m_pnUseCharSkipArr = new int[BM_MAPSIZE];
+	for( int n = 0; n < BM_MAPSIZE; ++n ){
+		m_pnUseCharSkipArr[n] = nPatternLen + 1;
+	}
+	for( int n = 0; n < nPatternLen; ++n ){
+		const int index = GetMapIndex(m_pszPatternCase[n]);
+		m_pnUseCharSkipArr[index] = nPatternLen - n;
+	}
+#endif
+}
+
+
+CSearchStringPattern::~CSearchStringPattern()
+{
+	delete [] m_pszPatternCase;
+#ifdef SEARCH_STRING_KMP
+	delete [] m_pnNextPossArr;
+#endif
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	delete [] m_pnUseCharSkipArr;
+#endif
+}
+
+#define toLoHiUpper(bLoHiCase, ch) (bLoHiCase? (ch) : towupper(ch))
+
 /*!
 	文字列検索
 	@return 見つかった場所のポインタ。見つからなかったらNULL。
@@ -17,12 +100,16 @@ const wchar_t* CSearchAgent::SearchString(
 	const wchar_t*	pLine,
 	int				nLineLen,
 	int				nIdxPos,
-	const wchar_t*	pszPattern,
-	int				nPatternLen,
-	int*			pnCharCharsArr,
-	bool			bLoHiCase
+	const CSearchStringPattern& pattern
 )
 {
+	const int      nPatternLen = pattern.GetLen();
+	const wchar_t* pszPattern  = pattern.GetString();
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	const int* const useSkipMap = pattern.GetUseCharSkipMap();
+#endif
+	bool bLoHiCase = ! pattern.GetIgnoreCase();
+
 	if( nLineLen < nPatternLen ){
 		return NULL;
 	}
@@ -30,20 +117,55 @@ const wchar_t* CSearchAgent::SearchString(
 		return NULL;
 	}
 
-	int	nPos;
-	int	nCompareTo;
-
 	// 線形探索
-	nCompareTo = nLineLen - nPatternLen;	//	Mar. 4, 2001 genta
+	const int nCompareTo = nLineLen - nPatternLen;	//	Mar. 4, 2001 genta
 
-	for( nPos = nIdxPos; nPos <= nCompareTo; nPos += CNativeW::GetSizeOfChar(pLine, nLineLen, nPos) ){
-		int n = bLoHiCase?
-					wmemcmp( &pLine[nPos], pszPattern, nPatternLen ):
-					wmemicmp( &pLine[nPos], pszPattern, nPatternLen );
-		if( n == 0 ){
-			return &pLine[nPos];
+#ifdef SEARCH_STRING_KMP
+	/* 大文字小文字を区別しない、かつ、検索語が5文字以下の場合は通常の検索を行う
+	 * そうでない場合はKMP＋SUNDAY QUICKアルゴリズムを使った検索を行う */
+	if ( bLoHiCase || nPatternLen > 5 ) {
+		const wchar_t pattern0 = pszPattern[0];
+		const int* const nextTable = pattern.GetKMPNextTable();
+		for( int nPos = nIdxPos; nPos <= nCompareTo; ){
+			if( toLoHiUpper(bLoHiCase, pLine[nPos]) != pattern0 ){
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+				int index = CSearchStringPattern::GetMapIndex(toLoHiUpper( bLoHiCase, pLine[nPos + nPatternLen]) );
+				nPos += useSkipMap[index];
+#else
+				nPos++;
+#endif
+				continue;
+			}
+			// 途中まで一致ならずらして継続(KMP)
+			int i = 1;
+			nPos++;
+			while ( 0 < i ){
+				while( i < nPatternLen && toLoHiUpper( bLoHiCase, pLine[nPos] ) == pszPattern[i] ){
+					i++;
+					nPos++;
+				}
+				if( i >= nPatternLen ){
+					return &pLine[nPos - nPatternLen];
+				}
+				i = nextTable[i];
+			}
+			assert( 0 == i ); // -1チェック
 		}
+	} else {
+#endif
+		// 通常版
+		int	nPos;
+		for( nPos = nIdxPos; nPos <= nCompareTo; nPos += CNativeW::GetSizeOfChar(pLine, nLineLen, nPos) ){
+			int n = bLoHiCase?
+						wmemcmp( &pLine[nPos], pszPattern, nPatternLen ):
+						wmemicmp( &pLine[nPos], pszPattern, nPatternLen );
+			if( n == 0 ){
+				return &pLine[nPos];
+			}
+		}
+#ifdef SEARCH_STRING_KMP
 	}
+#endif
 	return NULL;
 }
 
@@ -215,14 +337,10 @@ int CSearchAgent::SearchWord(
 	//	Jun. 10, 2003 Moca
 	//	lstrlenを毎回呼ばずにnPatternLenを使うようにする
 	const int	nPatternLen = wcslen( pszPattern );	//2001/06/23 N.Nakatani
-
-	// 検索条件の情報 -> pnKey_CharCharsArr
-	int* pnKey_CharCharsArr = NULL;
-	CSearchAgent::CreateCharCharsArr(
-		pszPattern,
-		nPatternLen,
-		&pnKey_CharCharsArr
-	);
+#ifdef MEASURE_SEARCH_TIME
+	long clockStart, clockEnd;
+	clockStart = clock();
+#endif
 
 	//正規表現
 	if( sSearchOption.bRegularExp ){
@@ -426,6 +544,7 @@ int CSearchAgent::SearchWord(
 	}
 	//普通の検索 (正規表現でも単語単位でもない)
 	else{
+		const CSearchStringPattern pattern(pszPattern, nPatternLen, sSearchOption.bLoHiCase);
 		//前方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = ptSerachBegin.GetY2();
@@ -443,10 +562,7 @@ int CSearchAgent::SearchWord(
 						pLine,
 						nLineLen,
 						nIdxPos,
-						pszPattern,
-						nPatternLen,
-						pnKey_CharCharsArr,
-						sSearchOption.bLoHiCase
+						pattern
 					);
 					if( NULL != pszRes ){
 						nHitPos = pszRes - pLine;
@@ -497,10 +613,7 @@ int CSearchAgent::SearchWord(
 					pLine,
 					nLineLen,
 					nIdxPos,
-					pszPattern,
-					nPatternLen,
-					pnKey_CharCharsArr,
-					sSearchOption.bLoHiCase
+					pattern
 				);
 				if( NULL != pszRes ){
 					pMatchRange->SetFromY(nLinePos);	// マッチ行
@@ -519,10 +632,13 @@ int CSearchAgent::SearchWord(
 		}
 	}
 end_of_func:;
-	if( NULL != pnKey_CharCharsArr ){
-		delete [] pnKey_CharCharsArr;
-		pnKey_CharCharsArr = NULL;
-	}
+#ifdef MEASURE_SEARCH_TIME
+	clockEnd = clock();
+	TCHAR buf[100];
+	memset(buf, 0x00, sizeof(buf));
+	wsprintf( buf, _T("%d"), clockEnd - clockStart);
+	::MessageBox( NULL, buf, GSTR_APPNAME, MB_OK );
+#endif
 
 	return nRetVal;
 }

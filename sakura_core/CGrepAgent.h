@@ -51,13 +51,13 @@ public:
 		int						nGrepOutputStyle
 	);
 
+private:
 	// Grep実行
 	int DoGrepTree(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
 		HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
 		const wchar_t*			pszKey,				//!< [in] 検索パターン
-		int*					pnKey_CharCharsArr,	//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
 		const TCHAR*			pszFile,			//!< [in] 検索対象ファイルパターン(!で除外指定)
 		const TCHAR*			pszPath,			//!< [in] 検索対象パス
 		BOOL					bGrepSubFolder,		//!< [in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
@@ -76,7 +76,6 @@ public:
 		CDlgCancel*				pcDlgCancel,
 		HWND					hwndCancel,
 		const wchar_t*			pszKey,
-		int*					pnKey_CharCharsArr,
 		const TCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,
 		ECodeType				nGrepCharSet,
