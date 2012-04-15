@@ -23,7 +23,7 @@ void CDocLocker::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	//‘‚«‚ß‚é‚©ŒŸ¸
-	CheckWritable(true);
+	CheckWritable(!sLoadInfo.bViewMode);
 	if( !m_bIsDocWritable ){
 		return;
 	}
