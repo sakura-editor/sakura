@@ -123,8 +123,6 @@ void CBookmarkManager::MarkSearchWord(
 	CDocLine*	pDocLine;
 	const wchar_t*	pLine;
 	int			nLineLen;
-	const wchar_t*	pszRes;
-	int*		pnKey_CharCharsArr;
 	//	Jun. 10, 2003 Moca
 	//	wcslen‚ð–ˆ‰ñŒÄ‚Î‚¸‚ÉnPatternLen‚ðŽg‚¤‚æ‚¤‚É‚·‚é
 	const int	nPatternLen = wcslen( pszPattern );
@@ -172,34 +170,21 @@ void CBookmarkManager::MarkSearchWord(
 	}
 	else{
 		/* ŒŸõðŒ‚Ìî•ñ */
-		pnKey_CharCharsArr = NULL;
-		CSearchAgent::CreateCharCharsArr(
-			pszPattern,
-			nPatternLen,
-			&pnKey_CharCharsArr
-		);
+		const CSearchStringPattern pattern(pszPattern, nPatternLen, sSearchOption.bLoHiCase);
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
 		while( NULL != pDocLine ){
 			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
 				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				pszRes = CSearchAgent::SearchString(
+				if( CSearchAgent::SearchString(
 					pLine,
 					nLineLen,
 					0,
-					pszPattern,
-					nPatternLen,
-					pnKey_CharCharsArr,
-					sSearchOption.bLoHiCase
-				);
-				if( NULL != pszRes ){
+					pattern
+				) ){
 					CBookmarkSetter(pDocLine).SetBookmark(true);
 				}
 			}
 			pDocLine = pDocLine->GetNextLine();
-		}
-		if( NULL != pnKey_CharCharsArr ){
-			delete [] pnKey_CharCharsArr;
-			pnKey_CharCharsArr = NULL;
 		}
 	}
 }

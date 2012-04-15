@@ -83,8 +83,6 @@ DWORD CGrepAgent::DoGrep(
 	CBregexp	cRegexp;
 	CNativeW	cmemMessage;
 	int			nWork;
-	int*		pnKey_CharCharsArr;
-	pnKey_CharCharsArr = NULL;
 
 	/*
 	|| バッファサイズの調整
@@ -169,13 +167,6 @@ DWORD CGrepAgent::DoGrep(
 			pcViewDst->m_bDoing_UndoRedo = false;
 			return 0;
 		}
-	}else{
-		/* 検索条件の情報 */
-		CSearchAgent::CreateCharCharsArr(
-			pcmGrepKey->GetStringPtr(),
-			pcmGrepKey->GetStringLength(),
-			&pnKey_CharCharsArr
-		);
 	}
 
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
@@ -317,7 +308,6 @@ DWORD CGrepAgent::DoGrep(
 		&cDlgCancel,
 		hwndCancel,
 		pcmGrepKey->GetStringPtr(),
-		pnKey_CharCharsArr,
 		pcmGrepFile->GetStringPtr(),
 		szPath,
 		bGrepSubFolder,
@@ -359,15 +349,6 @@ DWORD CGrepAgent::DoGrep(
 
 	this->m_bGrepRunning = false;
 	pcViewDst->m_bDoing_UndoRedo = false;
-
-	if( NULL != pnKey_CharCharsArr ){
-		delete [] pnKey_CharCharsArr;
-		pnKey_CharCharsArr = NULL;
-	}
-//	if( NULL != pnKey_CharUsedArr ){
-//		delete [] pnKey_CharUsedArr;
-//		pnKey_CharUsedArr = NULL;
-//	}
 
 	/* 表示処理ON/OFF */
 	pCEditWnd->SetDrawSwitchOfAllViews( true );
@@ -441,8 +422,7 @@ int CGrepAgent::DoGrepTree(
 	CEditView*				pcViewDst,
 	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
 	HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
-	const wchar_t*			pszKey,				//!< [in] 検索パターン
-	int*					pnKey_CharCharsArr,	//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
+	const wchar_t*			pszKey,				//!< [in] 検索キー
 	const TCHAR*			pszFile,			//!< [in] 検索対象ファイルパターン(!で除外指定)
 	const TCHAR*			pszPath,			//!< [in] 検索対象パス
 	BOOL					bGrepSubFolder,		//!< [in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
@@ -654,7 +634,6 @@ int CGrepAgent::DoGrepTree(
 						pcDlgCancel,
 						hwndCancel,
 						pszKey,
-						pnKey_CharCharsArr,
 						w32fd.cFileName,
 						sSearchOption,
 						nGrepCharSet,
@@ -770,7 +749,6 @@ int CGrepAgent::DoGrepTree(
 					pcDlgCancel,
 					hwndCancel,
 					pszKey,
-					pnKey_CharCharsArr,
 					pszFile,
 					currentPath.c_str(),
 					bGrepSubFolder,
@@ -924,7 +902,7 @@ void CGrepAgent::SetGrepResult(
 	@param pcDlgCancel		[in] Cancelダイアログへのポインタ
 	@param hwndCancel		[in] Cancelダイアログのウィンドウハンドル
 	@param pszKey			[in] 検索パターン
-	@param pnKey_CharCharsArr	[in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
+	@param pattern			[in] 
 	@param pszFile			[in] 処理対象ファイル名(表示用)
 	@param bGrepLoHiCase	[in] TRUE: 大文字小文字の区別あり / FALSE: 無し
 	@param bGrepRegularExp	[in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
@@ -947,7 +925,6 @@ int CGrepAgent::DoGrepFile(
 	CDlgCancel*				pcDlgCancel,
 	HWND					hwndCancel,
 	const wchar_t*			pszKey,
-	int*					pnKey_CharCharsArr,
 	const TCHAR*			pszFile,
 	const SSearchOption&	sSearchOption,
 	ECodeType				nGrepCharSet,
@@ -1204,6 +1181,7 @@ int CGrepAgent::DoGrepFile(
 			}
 		}
 		else {
+			const CSearchStringPattern pattern(pszKey, nKeyKen, sSearchOption.bLoHiCase);
 			/* 文字列検索 */
 			int nColmPrev = 0;
 			//	Jun. 21, 2003 genta ループ条件見直し
@@ -1215,10 +1193,7 @@ int CGrepAgent::DoGrepFile(
 					pCompareData,
 					nLineLen,
 					0,
-					pszKey,
-					nKeyKen,
-					pnKey_CharCharsArr,
-					sSearchOption.bLoHiCase
+					pattern
 				);
 				if(!pszRes)break;
 
