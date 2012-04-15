@@ -7387,6 +7387,14 @@ void CViewCommander::Command_VIEWMODE( void )
 	//ビューモードを反転
 	CAppMode::Instance()->SetViewMode(!CAppMode::Instance()->IsViewMode());
 
+	// 排他制御の切り替え
+	// ※ビューモード ON 時は排他制御 OFF、ビューモード OFF 時は排他制御 ON の仕様（>>data:5262）を即時反映する
+	GetDocument()->m_cDocFileOperation.DoFileUnlock();	// ファイルの排他ロック解除
+	GetDocument()->m_cDocLocker.CheckWritable(!CAppMode::Instance()->IsViewMode());	// ファイル書込可能のチェック
+	if( GetDocument()->m_cDocLocker.IsDocWritable() ){
+		GetDocument()->m_cDocFileOperation.DoFileLock();	// ファイルの排他ロック
+	}
+
 	// 親ウィンドウのタイトルを更新
 	this->GetEditWindow()->UpdateCaption();
 }

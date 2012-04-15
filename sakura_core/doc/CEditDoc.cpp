@@ -627,7 +627,7 @@ void CEditDoc::OnChangeSetting()
 
 		// ファイル書込可能のチェック処理
 		bool bOld = m_cDocLocker.IsDocWritable();
-		m_cDocLocker.CheckWritable(bOld);	// 書込可から不可に遷移したときだけメッセージを出す（出過ぎると鬱陶しいよね？）
+		m_cDocLocker.CheckWritable(bOld && !CAppMode::Instance()->IsViewMode());	// 書込可から不可に遷移したときだけメッセージを出す（出過ぎると鬱陶しいよね？）
 		if(bOld != m_cDocLocker.IsDocWritable()){
 			pCEditWnd->UpdateCaption();
 		}
