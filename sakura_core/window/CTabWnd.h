@@ -142,8 +142,6 @@ protected:
 		::SystemParametersInfo( SPI_GETNONCLIENTMETRICS, ncm.cbSize, (PVOID)&ncm, 0 );
 		return ::CreateFontIndirect( &ncm.lfMenuFont );
 	}
-	
-	bool IsReorderTabDragging();
 
 protected:
 	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
@@ -166,6 +164,7 @@ private:
 	DragState	m_eDragState;			//!< ドラッグ状態
 	int			m_nSrcTab;				//!< 移動元タブ
 	POINT		m_ptSrcCursor;			//!< ドラッグ開始カーソル位置
+	HCURSOR		m_hDefaultCursor;		//!< ドラッグ開始時のカーソル
 
 	// 2006.01.28 ryoji タブへのアイコン表示を可能に
 	FN_ImageList_Duplicate	m_RealImageList_Duplicate;
@@ -181,6 +180,8 @@ private:
 	BOOL		m_bListBtnHilighted;
 	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
 	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
+	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
+	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
 };
 
 #endif /* SAKURA_WINDOW_CTABWND_H_ */
