@@ -44,8 +44,8 @@
 #define IDC_CURSOR_RVARROW              223
 #define IDC_CURSOR_ISEARCH_F            224
 #define IDC_CURSOR_ISEARCH_B            225
-#define IDC_CURSOR_TAB_LEFT             226
-#define IDC_CURSOR_TAB_RIGHT            227
+//#define IDC_CURSOR_TAB_LEFT             226
+//#define IDC_CURSOR_TAB_RIGHT            227
 #define IDC_CURSOR_TAB_SEPARATE         228
 #define IDC_CURSOR_TAB_JOIN             229
 #define IDC_BUTTON_PRINTERSELECT        1000

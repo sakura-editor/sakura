@@ -106,6 +106,15 @@ static int compTABMENU_DATA( const void *arg1, const void *arg2 )
 
 WNDPROC	gm_pOldWndProc = NULL;
 
+/* 本来の TabWnd ウィンドウプロシージャ呼び出し */
+inline LRESULT CALLBACK DefTabWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	if( gm_pOldWndProc )
+		return ::CallWindowProc( (WNDPROC)gm_pOldWndProc, hwnd, uMsg, wParam, lParam );
+	else
+		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+}
+
 /* TabWndウィンドウメッセージのコールバック関数 */
 LRESULT CALLBACK TabWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -121,10 +130,7 @@ LRESULT CALLBACK TabWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 			return 0L;
 	}
 
-	if( gm_pOldWndProc )
-		return ::CallWindowProc( (WNDPROC)gm_pOldWndProc, hwnd, uMsg, wParam, lParam );
-	else
-		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
+	return DefTabWndProc( hwnd, uMsg, wParam, lParam );
 }
 
 /* メッセージ配送 */
@@ -221,24 +227,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 		break;
 
 	case DRAG_DRAG:
-		// ドラッグモードでTabが移動しているので更新
-		if ( 0 <= nDstTab )	// タブの上でドロップ
-		{
-			if( IsReorderTabDragging() )
-			{
-				// タブは移動済み。ほかのウィンドウのみ更新
-				BroadcastRefreshToGroup();
-			}
-			else
-			{
-				// タブの順序変更処理
-				if( ReorderTab( m_nSrcTab, nDstTab ) )
-				{
-					BroadcastRefreshToGroup();
-				}
-			}
-		}
-		else
+		if ( 0 > nDstTab )	// タブの外でドロップ
 		{
 			// タブの分離処理
 			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
@@ -261,6 +250,15 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 				}
 			}
 		}
+		if ( m_bTabSwapped ) {
+			// タブは移動済み。ほかのウィンドウのみ更新
+			BroadcastRefreshToGroup();
+		}
+		if( m_nTabBorderArray ){
+			delete[] m_nTabBorderArray;
+			m_nTabBorderArray = NULL;
+		}
+		::SendMessageAny( TabCtrl_GetToolTips( m_hwndTab ), TTM_ACTIVATE, (WPARAM)TRUE, (LPARAM)0 );	// ツールチップ有効化
 		break;
 
 	default:
@@ -276,6 +274,8 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 {
 	TCHITTESTINFO	hitinfo;
+	int i;
+	int nTabCount;
 	hitinfo.pt.x = LOWORD( (DWORD)lParam );
 	hitinfo.pt.y = HIWORD( (DWORD)lParam );
 	int nDstTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
@@ -287,6 +287,22 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		if( m_nSrcTab == nDstTab )
 			break;
 		m_eDragState = DRAG_DRAG;
+		m_hDefaultCursor = ::GetCursor();
+		m_bTabSwapped = FALSE;
+
+		// 現在のタブ境界位置を記憶する
+		nTabCount = TabCtrl_GetItemCount(m_hwndTab);
+		if( m_nTabBorderArray ){
+			delete[] m_nTabBorderArray;
+		}
+		m_nTabBorderArray = new LONG[nTabCount];
+		for (i = 0 ; i < nTabCount-1; i++) {
+			RECT rc;
+			TabCtrl_GetItemRect(m_hwndTab, i, &rc);
+			m_nTabBorderArray[ i ] = rc.right;
+		}
+		m_nTabBorderArray[ i ] = 0;		// 最後の要素は番兵
+		::SendMessageAny( TabCtrl_GetToolTips( m_hwndTab ), TTM_ACTIVATE, (WPARAM)FALSE, (LPARAM)0 );	// ツールチップ無効化
 		// ここに来たらドラッグ開始なので break しないでそのまま DRAG_DRAG 処理に入る
 
 	case DRAG_DRAG:
@@ -296,30 +312,36 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		lpCursorName = IDC_NO;	// 禁止カーソル
 		if ( 0 <= nDstTab )	// タブの上にカーソルがある
 		{
-			if( IsReorderTabDragging() )
+			lpCursorName = NULL;	// 開始時カーソル指定
+
+			// ドラッグ開始時のタブ位置で移動先タブを再計算
+			for( nDstTab = 0; m_nTabBorderArray[ nDstTab ] != 0; nDstTab++ ){
+				if( hitinfo.pt.x < m_nTabBorderArray[ nDstTab ] ){
+					break;
+				}
+			}
+
+			// ドラッグ中に即時移動
+			if( m_nSrcTab != nDstTab )
 			{
-				// ドラッグ中に即時移動
-				if( m_nSrcTab != nDstTab )
+				// 微調整：移動先タブの左端が負座標なら移動しない
+				// ※ タブが多数あって左スクロール可能になっているときには、タブバー左端のほうの僅かな隙間に１個手前のタブが密かに存在する。
+				RECT rc;
+				TabCtrl_GetItemRect( m_hwndTab, nDstTab, &rc );
+				if ( rc.left > 0 )
 				{
-					lpCursorName = NULL;
-					// 
 					// TABまとめる => 自分だけ更新して後でRefresh通知
 					// TABまとめない場合は、Refresh通知をした方がいいがマウスキャプチャが終了するので、まとめると同じ動きにする
 					ReorderTab( m_nSrcTab, nDstTab );
 					Refresh( FALSE );
 					m_nSrcTab = nDstTab;
+					m_bTabSwapped = TRUE;
+					::InvalidateRect( GetHwnd(), NULL, TRUE );
+
+					// 今回の WM_MOUSEMOVE が移動後のタブ上で発生したかのように偽装してマウスオーバーハイライトも移動する
+					TabCtrl_GetItemRect(m_hwndTab, nDstTab, &rc);
+					DefTabWndProc( m_hwndTab, WM_MOUSEMOVE, wParam, MAKELPARAM((rc.left + rc.right) / 2, HIWORD(lParam)) );
 				}
- 			}
- 			else
- 			{
-	 			if( m_nSrcTab > nDstTab )
-	 			{
-	 				lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_LEFT);	// 左へ移動カーソル
-	 			}
-	 			else if( m_nSrcTab < nDstTab )
-	 			{
-	 				lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_RIGHT);	// 右へ移動カーソル
-	 			}
 			}
 		}
 		else
@@ -344,6 +366,10 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 		{
 			hInstance = (lpCursorName == IDC_NO)? NULL: ::GetModuleHandle( NULL );
 			::SetCursor( ::LoadCursor( hInstance, lpCursorName ) );
+		}
+		else
+		{
+			::SetCursor( m_hDefaultCursor );
 		}
 		break;
 
@@ -658,17 +684,6 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 	return 0L;
 }
 
-/*!
-	タブをドラッグ中に並び替えるか
-	@date 2010.07.11 Moca 新規作成
-*/
-bool CTabWnd::IsReorderTabDragging()
-{
-	// 等間隔のときは、「ドラッグ中に並び替える」
-	// 等間隔でない場合は、幅が違う隣り合ったタブを並び替えると都合が悪い
-	return FALSE != m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth;
-}
-
 CTabWnd::CTabWnd()
 : CWnd(_T("::CTabWnd"))
 , m_bVisualStyle( FALSE )		// 2007.04.01 ryoji
@@ -677,6 +692,7 @@ CTabWnd::CTabWnd()
 , m_bListBtnHilighted( FALSE )	//	2006.02.01 ryoji
 , m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
 , m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
+, m_nTabBorderArray( NULL )		//  2012.04.22 syat
 {
 	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
