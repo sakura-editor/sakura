@@ -18,7 +18,7 @@
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2011, ryoji
-	Copyright (C) 2012, Moca
+	Copyright (C) 2012, Moca, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -3187,19 +3187,13 @@ end_of_func:;
 		m_pCommanderView->SendStatusMessage(_T("△見つかりませんでした"));
 //	if( !bFound ){
 // To Here 2002.01.26 hor
-		ErrorBeep();
-		if( bReDraw	&&
-			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
-		){
-			if( NULL == hwndParent ){
-				hwndParent = m_pCommanderView->GetHwnd();
-			}
-			InfoMessage(
-				hwndParent,
-				_T("後方(↑) に文字列 '%ls' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
-				m_pCommanderView->m_szCurSrchKey
-			);
-		}
+
+		/* 検索／置換  見つからないときメッセージを表示 */
+		AlertNotFound(
+			hwndParent,
+			_T("後方(↑) に文字列 '%ls' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
+			m_pCommanderView->m_szCurSrchKey
+		);
 	}
 	return;
 }
@@ -3421,21 +3415,15 @@ end_of_func:;
 // To Here 2002.01.26 hor
 
 		/* 検索／置換  見つからないときメッセージを表示 */
-		ErrorBeep();
-		if( bRedraw	&& GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND ){
-			if( NULL == hwndParent ){
-				hwndParent = m_pCommanderView->GetHwnd();
-			}
-			if( NULL == pszNotFoundMessage ){
-				InfoMessage(
-					hwndParent,
-					_T("前方(↓) に文字列 '%ls' が１つも見つかりません。"),
-					m_pCommanderView->m_szCurSrchKey
-				);
-			}
-			else{
-				InfoMessage(hwndParent, _T("%ls"),pszNotFoundMessage);
-			}
+		if( NULL == pszNotFoundMessage ){
+			AlertNotFound(
+				hwndParent,
+				_T("前方(↓) に文字列 '%ls' が１つも見つかりません。"),
+				m_pCommanderView->m_szCurSrchKey
+			);
+		}
+		else{
+			AlertNotFound(hwndParent, _T("%ls"),pszNotFoundMessage);
 		}
 	}
 }
@@ -8980,6 +8968,29 @@ void CViewCommander::Command_TEXTWRAPMETHOD( int nWrapMethod )
 		pcDoc->m_pcEditWnd->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
 	}else{
 		pcDoc->m_cLayoutMgr.ClearLayoutLineWidth();		// 各行のレイアウト行長の記憶をクリアする
+	}
+}
+
+/*!
+	@brief 検索で見つからないときの警告（メッセージボックス／サウンド）
+
+	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
+*/
+void CViewCommander::AlertNotFound(HWND hwnd, PCTSTR format, ...)
+{
+	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
+		&& m_pCommanderView->GetDrawSwitch()	// ← たぶん「全て置換」実行中判定の代用品（もとは Command_SEARCH_NEXT() の中でだけ使用されていた）
+	){
+		if( NULL == hwnd ){
+			hwnd = m_pCommanderView->GetHwnd();
+		}
+		//InfoMessage(hwnd, format, __VA_ARGS__);
+		va_list p;
+		va_start(p, format);
+		VMessageBoxF(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p);
+		va_end(p);
+	}else{
+		DefaultBeep();
 	}
 }
 
