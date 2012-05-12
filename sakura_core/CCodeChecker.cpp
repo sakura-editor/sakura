@@ -10,6 +10,28 @@
 //                     セーブ時チェック                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+//! CDocLineMgrが保持するデータに異なる改行コードが混在しているかどうか判定する
+static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
+{
+	bool bMix = false;
+	if( cEolType == EOL_NONE ){	//改行コード変換なし
+		CEol cEolCheck;	//比較対象EOL
+		CDocLine* pcDocLine = pcDocLineMgr.GetDocLineTop();
+		if( pcDocLine ){
+			cEolCheck = pcDocLine->GetEol();
+		}
+		while( pcDocLine ){
+			CEol cEol = pcDocLine->GetEol();
+			if( cEol != EOL_NONE && cEol != cEolCheck ){
+				bMix = true;
+				break;
+			}
+			pcDocLine = pcDocLine->GetNextLine();
+		}
+	}
+	return bMix;
+}
+
 //! CDocLineMgrが保持するデータを指定文字コードで安全に保存できるかどうか判定する
 static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECodeType eCodeType)
 {
@@ -36,6 +58,28 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
+
+	//改行コードが混在しているかどうか判定
+	bool bTmpResult = _CheckSavingEolcode(
+		pcDoc->m_cDocLineMgr, pSaveInfo->cEol
+	);
+
+	//ユーザ問い合わせ
+	if(bTmpResult){
+		int nDlgResult = MYMESSAGEBOX(
+			CEditWnd::Instance()->GetHwnd(),
+			MB_YESNOCANCEL | MB_ICONWARNING,
+			GSTR_APPNAME,
+			_T("改行コードが混在しています。\r\n")
+			_T("現在の入力改行コード %ts に統一しますか？"),
+			pcDoc->m_cDocEditor.GetNewLineCode().GetName()
+		);
+		switch(nDlgResult){
+		case IDYES:		pSaveInfo->cEol = pcDoc->m_cDocEditor.GetNewLineCode(); break; //統一
+		case IDNO:		break; //続行
+		case IDCANCEL:	return CALLBACK_INTERRUPT; //中断
+		}
+	}
 
 	//指定文字コードで安全に保存できるかどうか判定
 	EConvertResult nTmpResult = _CheckSavingCharcode(
