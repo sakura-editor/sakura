@@ -217,7 +217,7 @@ EConvertResult CUtf8::_UnicodeToUTF8( CMemory* pMem, bool bCesu8Mode )
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/21 Uchi
-EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const bool bCESUMode)
+EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool bCESUMode)
 {
 	CMemory	cBuff;
 	EConvertResult	res;
@@ -226,9 +226,9 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR*
 	unsigned char*	ps;
 	bool			bbinary=false;
 
-	if (CShareData::getInstance()->GetShareData()->m_Common.m_sStatusbar.m_bDispUtf8Codepoint) {
+	if (psStatusbar->m_bDispUtf8Codepoint) {
 		// Unicodeで表示
-		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst);
+		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
 
 	// 1文字データバッファ
@@ -258,10 +258,10 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR*
 	pd = pDst;
 	if( bbinary == false ){
 		for (i = cBuff.GetRawLength(); i >0; i--, ps ++, pd += 2) {
-			auto_sprintf( pd, _T("%02x"), *ps);
+			auto_sprintf( pd, _T("%02X"), *ps);
 		}
 	}else{
-		auto_sprintf( pd, _T("?%02x"), *ps );
+		auto_sprintf( pd, _T("?%02X"), *ps );
 	}
 
 	return RESULT_COMPLETE;

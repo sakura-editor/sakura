@@ -45,6 +45,8 @@
 #include "CGrepAgent.h"
 #include "CAppMode.h"
 #include "CMarkMgr.h"
+#include "doc/CLayout.h"
+#include "charset/CCodeFactory.h"
 #include "sakura_rc.h"
 
 
@@ -94,7 +96,70 @@ static SFuncMenuName	sFuncMenuName[] = {
 	{F_TOGGLE_KEY_SEARCH,	{L"キーワードヘルプ自動表示",		L"キーワードヘルプ自動表示する",	L"キーワードヘルプ自動表示しない"}},
 };
 
+void ShowCodeBox(HWND hWnd)
+{
+	// カーソル位置の文字列を取得
+	const CLayout*	pcLayout;
+	CLogicInt		nLineLen;
+	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
+	const CEditView* pcView = &pcDoc->m_pcEditWnd->GetActiveView();
+	const CCaret* pcCaret = &pcView->GetCaret();
+	const CLayoutMgr* pLayoutMgr=&pcDoc->m_cLayoutMgr;
+	const wchar_t*	pLine = pLayoutMgr->GetLineStr( pcCaret->GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
+	// -- -- -- -- キャレット位置の文字情報 -> szCaretChar -- -- -- -- //
+	//
+	if( pLine ){
+		// 指定された桁に対応する行のデータ内の位置を調べる
+		CLogicInt nIdx = pcView->LineColmnToIndex( pcLayout, pcCaret->GetCaretLayoutPos().GetX2() );
+		if( nIdx < nLineLen ){
+			if( nIdx < nLineLen - (pcLayout->GetLayoutEol().GetLen()?1:0) ){
+				// 一時的に表示方法の設定を変更する
+				CommonSetting_Statusbar sStatusbar;
+				sStatusbar.m_bDispUniInSjis		= false;
+				sStatusbar.m_bDispUniInJis		= false;
+				sStatusbar.m_bDispUniInEuc		= false;
+				sStatusbar.m_bDispUtf8Codepoint	= false;
+				sStatusbar.m_bDispSPCodepoint	= false;
+
+				TCHAR szMsg[128];
+				TCHAR szCode[CODE_CODEMAX][32];
+				wchar_t szChar[3];
+				int nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nIdx );
+				memcpy(szChar, &pLine[nIdx], nCharChars * sizeof(wchar_t));
+				szChar[nCharChars] = L'\0';
+				for( int i = 0; i < CODE_CODEMAX; i++ ){
+					if( i == CODE_SJIS || i == CODE_JIS || i == CODE_EUC || i == CODE_UNICODE || i == CODE_UTF8 || i == CODE_CESU8 ){
+						//auto_sprintf( szCaretChar, _T("%04x"), );
+						//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
+						CCodeBase* pCode = CCodeFactory::CreateCodeBase((ECodeType)i, false);
+						EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCode[i], &sStatusbar);
+						delete pCode;
+						if (ret != RESULT_COMPLETE) {
+							// うまくコードが取れなかった
+							auto_strcpy(szCode[i], _T("-"));
+						}
+					}
+				}
+				// コードポイント部（サロゲートペアも）
+				TCHAR szCodeCP[32];
+				sStatusbar.m_bDispSPCodepoint = true;
+				CCodeBase* pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
+				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCodeCP, &sStatusbar);
+				delete pCode;
+				if (ret != RESULT_COMPLETE) {
+					// うまくコードが取れなかった
+					auto_strcpy(szCodeCP, _T("-"));
+				}
+
+				// メッセージボックス表示
+				auto_sprintf(szMsg, _T("文字:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"),
+					szChar, szCodeCP, szCode[CODE_SJIS], szCode[CODE_JIS], szCode[CODE_EUC], szCode[CODE_UNICODE], szCode[CODE_UTF8], szCode[CODE_CESU8]);
+				::MessageBox( hWnd, szMsg, GSTR_APPNAME, MB_OK );
+			}
+		}
+	}
+}
 
 //	/* メッセージループ */
 //	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
@@ -1329,6 +1394,9 @@ LRESULT CEditWnd::DispatchEvent(
 				}
 				else if( mp->dwItemSpec == 1 ){	//	桁位置→行番号ジャンプ
 					GetDocument().HandleCommand( F_JUMP_DIALOG );
+				}
+				else if( mp->dwItemSpec == 3 ){	//	文字コード→各種コード
+					ShowCodeBox(GetHwnd());
 				}
 			}
 			else if( pnmh->code == NM_RCLICK ){
@@ -2910,7 +2978,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		// 2004-02-28 yasu 文字列を出力時の書式に合わせる
 		// 幅を変えた場合にはCEditView::ShowCaretPosInfo()での表示方法を見直す必要あり．
 		// ※pszLabel[3]: ステータスバー文字コード表示領域は大きめにとっておく
-		const TCHAR*	pszLabel[7] = { _T(""), _T("99999 行 9999 列"), _T("CRLF"), _T("000000000000"), _T("Unicode"), _T("REC"), _T("上書") };	//Oct. 30, 2000 JEPRO 千万行も要らん	文字コード枠を広げる 2008/6/21	Uchi
+		const TCHAR*	pszLabel[7] = { _T(""), _T("99999 行 9999 列"), _T("CRLF"), _T("AAAAAAAAAAAA"), _T("Unicode BOM付"), _T("REC"), _T("上書") };	//Oct. 30, 2000 JEPRO 千万行も要らん	文字コード枠を広げる 2008/6/21	Uchi
 		int			nStArrNum = 7;
 		//	To Here
 		int			nAllWidth = rc.right - rc.left;

@@ -608,11 +608,16 @@ void CCaret::ShowCaretPosInfo()
 
 	// -- -- -- -- 文字コード情報 -> pszCodeName -- -- -- -- //
 	const TCHAR* pszCodeName;
+	CNativeT cmemCodeName;
 	if(!hwndStatusBar){
 		pszCodeName = CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Short();
 	}
 	else{
-		pszCodeName = CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Normal();
+		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Normal() );
+		if(m_pEditDoc->m_cDocFile.IsBomExist()){
+			cmemCodeName.AppendString( _T(" BOM付") );
+		}
+		pszCodeName = (const TCHAR*)cmemCodeName._GetMemory()->GetRawPtr();
 	}
 
 
@@ -656,12 +661,13 @@ void CCaret::ShowCaretPosInfo()
 				//auto_sprintf( szCaretChar, _T("%04x"), );
 				//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 				CCodeBase* pCode = CCodeFactory::CreateCodeBase(m_pEditDoc->GetDocumentEncoding(), false);
-				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar);
+				CommonSetting_Statusbar* psStatusbar = &GetDllShareData().m_Common.m_sStatusbar;
+				EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar, psStatusbar);
 				delete pCode;
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった(Unicodeで表示)
 					pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar);
+					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar, psStatusbar);
 					delete pCode;
 				}
 			}

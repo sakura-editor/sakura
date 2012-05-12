@@ -56,7 +56,7 @@ public:
 	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType)=0;					//!< 改行データ取得
 
 	// 文字コード表示用		2008/6/9 Uchi
-	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst);			//!< UNICODE → Hex 変換
+	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 	// 変換エラー処理（１バイト <-> U+D800 から U+D8FF）
 	static int BinToText( const unsigned char*, const int, unsigned short* );

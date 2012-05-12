@@ -95,7 +95,7 @@ void CDlgProperty::SetData( void )
 	cmemProp.AppendString( CCodeTypeName(pCEditDoc->GetDocumentEncoding()).Normal() );
 	//	From Here  2008/4/27 Uchi
 	if (pCEditDoc->m_cDocFile.IsBomExist()) {
-		cmemProp.AppendString( _T(" with BOM") );
+		cmemProp.AppendString( _T(" BOM•t") );
 	}
 	//	To Here  2008/4/27 Uchi
 	cmemProp.AppendString( _T("\r\n") );
