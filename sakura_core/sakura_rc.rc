@@ -1404,6 +1404,7 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
     CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,115,39,10
+    PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_TABFONT,232,113,51,14
     CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,129,90,10
     LTEXT           "タイトル(&T)",IDC_STATIC,15,148,40,10

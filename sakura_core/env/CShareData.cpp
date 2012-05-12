@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, genta, maru
 	Copyright (C) 2008, ryoji, Uchi, nasukoji
 	Copyright (C) 2009, nasukoji, ryoji
+	Copyright (C) 2012, Moca, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -233,13 +234,15 @@ bool CShareData::InitShareData()
 		InitCharWidthCacheCommon();								// 2008/5/17 Uchi
 
 		// キーワードヘルプのフォント ai 02/05/21 Add S
+		LOGFONT lfIconTitle;	// エクスプローラのファイル名表示に使用されるフォント
 		::SystemParametersInfo(
 			SPI_GETICONTITLELOGFONT,				// system parameter to query or set
 			sizeof(LOGFONT),						// depends on action to be taken
-			(PVOID)&m_pShareData->m_Common.m_sHelper.m_lf_kh,	// depends on action to be taken
+			(PVOID)&lfIconTitle,					// depends on action to be taken
 			0										// user profile update flag
 		);
 		// ai 02/05/21 Add E
+		m_pShareData->m_Common.m_sHelper.m_lf_kh = lfIconTitle;
 		m_pShareData->m_Common.m_sHelper.m_ps_kh = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
 
 //	To Here Sept. 19,2000
@@ -327,6 +330,9 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sTabBar.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bChgWndByWheel = FALSE;		//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bNewWindow = FALSE;			// 外部から起動するときは新しいウインドウで開く
+
+		m_pShareData->m_Common.m_sTabBar.m_tabFont = lfIconTitle;
+		m_pShareData->m_Common.m_sTabBar.m_tabFontPs = 0;
 
 		m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる

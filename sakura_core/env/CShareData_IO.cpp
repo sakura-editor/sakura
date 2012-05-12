@@ -11,6 +11,9 @@
 #include "plugin/CPlugin.h"
 #include "CMenuDrawer.h"
 
+void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
+	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, int& pointSize );
+
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
 {
@@ -476,57 +479,8 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	
 	// ai 02/05/23 Add S
 	{// Keword Help Font
-		const TCHAR*	pszForm = _T("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
-		TCHAR		szKeyData[1024];
-		cProfile.IOProfileData( pszSecName, LTEXT("khps"), common.m_sHelper.m_ps_kh );	// 2009.10.01 ryoji
-		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, LTEXT("khlf"), MakeStringBufferT(szKeyData) ) ){
-				//##########################危険
-				_stscanf( szKeyData, pszForm,
-					&common.m_sHelper.m_lf_kh.lfHeight,
-					&common.m_sHelper.m_lf_kh.lfWidth,
-					&common.m_sHelper.m_lf_kh.lfEscapement,
-					&common.m_sHelper.m_lf_kh.lfOrientation,
-					&common.m_sHelper.m_lf_kh.lfWeight,
-					&common.m_sHelper.m_lf_kh.lfItalic,
-					&common.m_sHelper.m_lf_kh.lfUnderline,
-					&common.m_sHelper.m_lf_kh.lfStrikeOut,
-					&common.m_sHelper.m_lf_kh.lfCharSet,
-					&common.m_sHelper.m_lf_kh.lfOutPrecision,
-					&common.m_sHelper.m_lf_kh.lfClipPrecision,
-					&common.m_sHelper.m_lf_kh.lfQuality,
-					&common.m_sHelper.m_lf_kh.lfPitchAndFamily
-				);
-			}
-			if( common.m_sHelper.m_ps_kh != 0 ){
-				// DPI変更してもフォントのポイントサイズが変わらないように
-				// ポイント数からピクセル数に変換する
-				common.m_sHelper.m_lf_kh.lfHeight = DpiPointsToPixels( -abs(common.m_sHelper.m_ps_kh), 10 );	// m_ps_kh: 1/10ポイント単位のサイズ
-			}else{
-				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
-				common.m_sHelper.m_ps_kh = DpiPixelsToPoints( abs(common.m_sHelper.m_lf_kh.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
-			}
-		}else{
-			auto_sprintf( szKeyData, pszForm,
-				common.m_sHelper.m_lf_kh.lfHeight,
-				common.m_sHelper.m_lf_kh.lfWidth,
-				common.m_sHelper.m_lf_kh.lfEscapement,
-				common.m_sHelper.m_lf_kh.lfOrientation,
-				common.m_sHelper.m_lf_kh.lfWeight,
-				common.m_sHelper.m_lf_kh.lfItalic,
-				common.m_sHelper.m_lf_kh.lfUnderline,
-				common.m_sHelper.m_lf_kh.lfStrikeOut,
-				common.m_sHelper.m_lf_kh.lfCharSet,
-				common.m_sHelper.m_lf_kh.lfOutPrecision,
-				common.m_sHelper.m_lf_kh.lfClipPrecision,
-				common.m_sHelper.m_lf_kh.lfQuality,
-				common.m_sHelper.m_lf_kh.lfPitchAndFamily
-			);
-			cProfile.IOProfileData( pszSecName, LTEXT("khlf"), MakeStringBufferT(szKeyData) );
-		}
-	
-		cProfile.IOProfileData( pszSecName, LTEXT("khlfFaceName")		, MakeStringBufferT(common.m_sHelper.m_lf_kh.lfFaceName) );
-	
+		ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"khlf", L"khps", L"khlfFaceName",
+			common.m_sHelper.m_lf_kh, common.m_sHelper.m_ps_kh );
 	}// Keword Help Font
 	
 	
@@ -552,6 +506,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bChgWndByWheel")		, common.m_sTabBar.m_bChgWndByWheel );	// 2006.03.26 ryoji マウスホイールでウィンドウ切り替え
 	cProfile.IOProfileData( pszSecName, LTEXT("bNewWindow")			, common.m_sTabBar.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
 
+	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lfTabFont", L"lfTabFontPs", L"lfTabFaceName",
+		common.m_sTabBar.m_tabFont, common.m_sTabBar.m_tabFontPs );
+	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndHScroll")	, common.m_sWindow.m_bSplitterWndHScroll );
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndVScroll")	, common.m_sWindow.m_bSplitterWndVScroll );
@@ -939,57 +896,10 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = LTEXT("Font");
-	const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
-	WCHAR		szKeyData[1024];
 	CommonSetting_View& view = pShare->m_Common.m_sView;
-	cProfile.IOProfileData( pszSecName, LTEXT("nPointSize"), view.m_nPointSize );	// 2009.10.01 ryoji
-	if( cProfile.IsReadingMode() ){
-		if( cProfile.IOProfileData( pszSecName, LTEXT("lf"), MakeStringBufferW(szKeyData) ) ){
-			int buf[13];
-			scan_ints( szKeyData, pszForm, buf );
-			view.m_lf.lfHeight			= buf[ 0];
-			view.m_lf.lfWidth			= buf[ 1];
-			view.m_lf.lfEscapement		= buf[ 2];
-			view.m_lf.lfOrientation		= buf[ 3];
-			view.m_lf.lfWeight			= buf[ 4];
-			view.m_lf.lfItalic			= buf[ 5];
-			view.m_lf.lfUnderline		= buf[ 6];
-			view.m_lf.lfStrikeOut		= buf[ 7];
-			view.m_lf.lfCharSet			= buf[ 8];
-			view.m_lf.lfOutPrecision	= buf[ 9];
-			view.m_lf.lfClipPrecision	= buf[10];
-			view.m_lf.lfQuality			= buf[11];
-			view.m_lf.lfPitchAndFamily	= buf[12];
-			if( view.m_nPointSize != 0 ){
-				// DPI変更してもフォントのポイントサイズが変わらないように
-				// ポイント数からピクセル数に変換する
-				view.m_lf.lfHeight = DpiPointsToPixels( -abs(view.m_nPointSize), 10 );	// m_nPointSize: 1/10ポイント単位のサイズ
-			}else{
-				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
-				view.m_nPointSize = DpiPixelsToPoints( abs(view.m_lf.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
-			}
-		}
-	}else{
-		auto_sprintf( szKeyData, pszForm,
-			view.m_lf.lfHeight,
-			view.m_lf.lfWidth,
-			view.m_lf.lfEscapement,
-			view.m_lf.lfOrientation,
-			view.m_lf.lfWeight,
-			view.m_lf.lfItalic,
-			view.m_lf.lfUnderline,
-			view.m_lf.lfStrikeOut,
-			view.m_lf.lfCharSet,
-			view.m_lf.lfOutPrecision,
-			view.m_lf.lfClipPrecision,
-			view.m_lf.lfQuality,
-			view.m_lf.lfPitchAndFamily
-		);
-		cProfile.IOProfileData( pszSecName, LTEXT("lf"), MakeStringBufferW(szKeyData) );
-	}
-	
-	cProfile.IOProfileData( pszSecName, LTEXT("lfFaceName"), MakeStringBufferT(view.m_lf.lfFaceName) );
-	
+	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lf", L"nPointSize", L"lfFaceName",
+		view.m_lf, view.m_nPointSize );
+
 	cProfile.IOProfileData( pszSecName, LTEXT("bFontIs_FIXED_PITCH"), view.m_bFontIs_FIXED_PITCH );
 }
 
@@ -2089,6 +1999,59 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
+	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, int& pointSize )
+{
+	const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
+	WCHAR		szKeyData[1024];
 
+	cProfile.IOProfileData( pszSecName, pszKeyPointSize, pointSize );	// 2009.10.01 ryoji
+	if( cProfile.IsReadingMode() ){
+		if( cProfile.IOProfileData( pszSecName, pszKeyLf, MakeStringBufferW(szKeyData) ) ){
+			int buf[13];
+			scan_ints( szKeyData, pszForm, buf );
+			lf.lfHeight			= buf[ 0];
+			lf.lfWidth			= buf[ 1];
+			lf.lfEscapement		= buf[ 2];
+			lf.lfOrientation	= buf[ 3];
+			lf.lfWeight			= buf[ 4];
+			lf.lfItalic			= buf[ 5];
+			lf.lfUnderline		= buf[ 6];
+			lf.lfStrikeOut		= buf[ 7];
+			lf.lfCharSet		= buf[ 8];
+			lf.lfOutPrecision	= buf[ 9];
+			lf.lfClipPrecision	= buf[10];
+			lf.lfQuality		= buf[11];
+			lf.lfPitchAndFamily	= buf[12];
+			if( pointSize != 0 ){
+				// DPI変更してもフォントのポイントサイズが変わらないように
+				// ポイント数からピクセル数に変換する
+				lf.lfHeight = -DpiPointsToPixels( abs(pointSize), 10 );	// pointSize: 1/10ポイント単位のサイズ
+			}else{
+				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
+				pointSize = DpiPixelsToPoints( abs(lf.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
+			}
+		}
+	}else{
+		auto_sprintf( szKeyData, pszForm,
+			lf.lfHeight,
+			lf.lfWidth,
+			lf.lfEscapement,
+			lf.lfOrientation,
+			lf.lfWeight,
+			lf.lfItalic,
+			lf.lfUnderline,
+			lf.lfStrikeOut,
+			lf.lfCharSet,
+			lf.lfOutPrecision,
+			lf.lfClipPrecision,
+			lf.lfQuality,
+			lf.lfPitchAndFamily
+		);
+		cProfile.IOProfileData( pszSecName, pszKeyLf, MakeStringBufferW(szKeyData) );
+	}
+	
+	cProfile.IOProfileData( pszSecName, pszKeyFaceName, MakeStringBufferT(lf.lfFaceName) );
+}
 
 

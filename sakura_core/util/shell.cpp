@@ -559,10 +559,14 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 
 
 
-//フォント選択ダイアログ
-//2008.04.27 kobake CEditDoc::SelectFont から分離
-// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
-BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner )
+/*フォント選択ダイアログ
+	@param plf [in/out]
+	@param piPointSize [in/out] 1/10ポイント単位
+	
+	2008.04.27 kobake CEditDoc::SelectFont から分離
+	2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
+*/
+BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool FixedFontOnly )
 {
 	// 2004.02.16 Moca CHOOSEFONTをメンバから外す
 	CHOOSEFONT cf;
@@ -571,14 +575,11 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner )
 	cf.lStructSize = sizeof( cf );
 	cf.hwndOwner = hwndDlgOwner;
 	cf.hDC = NULL;
-//	cf.lpLogFont = &(GetDllShareData().m_Common.m_lf);
-	cf.Flags = CF_FIXEDPITCHONLY | CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-
-	//FIXEDフォント以外
-	#ifdef USE_UNFIXED_FONT
-		cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-	#endif
-
+	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+	if( FixedFontOnly ){
+		//FIXEDフォント
+		cf.Flags |= CF_FIXEDPITCHONLY;
+	}
 	cf.lpLogFont = plf;
 	if( !ChooseFont( &cf ) ){
 #ifdef _DEBUG

@@ -12,6 +12,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2012, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -154,24 +155,12 @@ INT_PTR CPropHelper::DispatchEvent(
 			// ai 02/05/21 Add S
 			case IDC_BUTTON_KEYWORDHELPFONT:	/* キーワードヘルプの「フォント」ボタン */
 				{
-					CHOOSEFONT	cf;
-					LOGFONT		lf;
+					LOGFONT   lf = m_Common.m_sHelper.m_lf_kh;
+					INT fontSize = m_Common.m_sHelper.m_ps_kh;
 
-					/* LOGFONTの初期化 */
-					memcpy_raw(&lf, &(m_Common.m_sHelper.m_lf_kh), sizeof(lf));
-
-					/* CHOOSEFONTの初期化 */
-					memset_raw(&cf, 0, sizeof(cf));
-					cf.lStructSize = sizeof(cf);
-					cf.hwndOwner = hwndDlg;
-					cf.hDC = NULL;
-					cf.lpLogFont = &lf;
-//					cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT | CF_EFFECTS;
-					cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-					if(ChooseFont(&cf))
-					{
-						memcpy_raw(&(m_Common.m_sHelper.m_lf_kh), &lf, sizeof(lf));
-						m_Common.m_sHelper.m_ps_kh = cf.iPointSize;	// 2009.10.01 ryoji
+					if( MySelectFont( &lf, &fontSize, hwndDlg, false) ){
+						m_Common.m_sHelper.m_lf_kh = lf;
+						m_Common.m_sHelper.m_ps_kh = fontSize;	// 2009.10.01 ryoji
 					}
 				}
 				return TRUE;

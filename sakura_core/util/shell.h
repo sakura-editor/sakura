@@ -46,7 +46,7 @@ int MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 
 
 
 //!フォント選択ダイアログ
-BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner );	// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
+BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );	// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
 
 #endif /* SAKURA_SHELL_A129670C_6564_4E0D_AF52_E323B0C7CA099_H_ */
 /*[EOF]*/
