@@ -306,6 +306,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	int			nNestPoint_class = 0;	// 外側から何番目の{がクラスの定義を囲む{か？ (一番外側なら1、0なら無し。bVisibleMemberFuncがfalseの時のみ有効。trueでは常に0)
 	// 2002/10/27 frozen　ここまで
 
+	bool bInInitList = false;	// 2010.07.08 ryoji 関数名調査の際、現在位置が初期化リスト（':'以後）に到達したかどうかを示す
+
 	int			nCharChars;			//	多バイト文字を読み飛ばすためのもの
 	wchar_t		szWordPrev[256];	//	1つ前のword
 	wchar_t		szWord[256];		//	現在解読中のwordを入れるところ
@@ -590,9 +592,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
 						szItemName[ nItemNameLenMax - 1 ] = L'\0';
 					}
-					else if( nNestLevel_func == 0 && nMode2 == M2_NORMAL )
+					else if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_FUNC_NAME_END) )	// 2010.07.08 ryoji 関数型マクロ呼出しを関数と誤認することがある問題対策として nMode2 == M2_FUNC_NAME_END 条件を追加し、補正がかかるようにした。
 					{
-						nItemFuncId = 0;
+						if( nMode2 == M2_NORMAL )
+							nItemFuncId = 0;
 						if( wcscmp(szWord,L"class")==0 )
 							nItemFuncId = 3;
 						if( wcscmp(szWord,L"struct")==0 )
@@ -605,14 +608,14 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							nItemFuncId = 6;
 						else if( wcscmp(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
 							nItemFuncId = 8;
-						if( nItemFuncId != 0 )
+						if( nItemFuncId != 0 && nItemFuncId != 2 )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END のときは nItemFuncId == 2 のはず
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
 							nItemLine = nLineCount + CLogicInt(1);
 							wcscpy(szItemName,L"無名");
 						}
 					}
-					else if( nMode2 == M2_FUNC_NAME_END )
+					/*else*/ if( nMode2 == M2_FUNC_NAME_END )	// 2010.07.08 ryoji 上で条件変更したので行頭の else を除去
 					{
 						nMode2 = M2_KR_FUNC;
 					}
@@ -797,25 +800,20 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					//	2007.05.26 genta C++/CLI nMode2 == M2_NAMESPACE_ENDの場合を対象外に
 					//	NAMESPACE_END(class クラス名 :の後ろ)においては()を関数とみなさない．
 					//	TEMPLATE<sizeof(int)> のようなケースでsizeofを関数と誤認する．
-					if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE ) )
+					if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE || nMode2 == M2_KR_FUNC) )	// 2010.07.08 ryoji 関数型マクロ呼出しを関数と誤認することがある問題対策として nMode2 == M2_KR_FUNC 条件を追加し、補正がかかるようにした。
 					{
 						if( wcscmp(szWordPrev, L"__declspec") == 0 ) {continue;}
 						if(nNestLevel_fparam==0)
 						{
-							wcscpy( szItemName, szWordPrev);
-							nItemLine = nLineCount + CLogicInt(1);
+							if( !(nMode2 == M2_KR_FUNC && bInInitList) && !(nMode2 == M2_KR_FUNC && wcscmp(szWordPrev, L"throw") == 0) )	// 2010.07.08 ryoji 初期化リストに入る以前までは後発の名前を優先的に関数名候補とする
+							{
+								wcscpy( szItemName, szWordPrev);
+								nItemLine = nLineCount + CLogicInt(1);
+							}
 						}
 						++ nNestLevel_fparam;
 					}
 					//  2002/10/27 frozen ここまで
-					
-					//	From Here Jan. 30, 2005 genta 
-					if( nNestLevel_func == 0 && nMode2 == M2_KR_FUNC ){
-						//	throwなら (例外の型,...) を読み飛ばす
-						if(nNestLevel_fparam==0)
-							++ nNestLevel_fparam;
-					}
-					//	To Here Jan. 30, 2005 genta 
 					continue;
 				}else
 				if( ')' == pLine[i] ){
@@ -830,6 +828,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						//	2007.05.26 genta C++/CLI Attribute内部ではnMode2の変更は行わない
 						if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE )
 						{
+							if( nMode2 == M2_NORMAL )
+								bInInitList = false;
 							nMode2 = M2_FUNC_NAME_END;
 							nItemFuncId = 2;
 						}
@@ -948,6 +948,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 								wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
 								szItemName[ nItemNameLenMax - 1 ] = L'\0';
 								nMode2 = M2_NAMESPACE_END;
+							}
+							else if( nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC )
+							{
+								bInInitList = true;
 							}
 						}
 
