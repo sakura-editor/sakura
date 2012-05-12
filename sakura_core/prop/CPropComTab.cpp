@@ -12,6 +12,7 @@
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, genta, ryoji
+	Copyright (C) 2012, Moca
 */
 
 #include "StdAfx.h"
@@ -32,6 +33,7 @@ static const DWORD p_helpids[] = {
 	IDC_CHECK_CloseOneWin,			HIDC_CHECK_CloseOneWin,			//ウィンドウの閉じるボタンは現在のファイルのみ閉じる	// 2007.02.13 ryoji
 	IDC_CHECK_ChgWndByWheel,		HIDC_CHECK_ChgWndByWheel,		//マウスホイールでウィンドウ切り替え 2007.04.03 ryoji
 	IDC_CHECK_OpenNewWin,			HIDC_CHECK_OpenNewWin,			//外部から起動するときは新しいウインドウで開く 2009.06.19
+	IDC_BUTTON_TABFONT,				HIDC_BUTTON_TABFONT,			//タブフォント
 	0, 0
 };
 
@@ -94,10 +96,22 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		{
 			WORD wNotifyCode = HIWORD(wParam);	/* 通知コード */
 			WORD wID = LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-			if( wNotifyCode == BN_CLICKED &&
-				(wID == IDC_CHECK_DispTabWnd || wID == IDC_CHECK_DispTabWndMultiWin ) ){
-				
-				EnableTabPropInput( hwndDlg );
+			if( wNotifyCode == BN_CLICKED ){
+				switch( wID ){
+				case IDC_CHECK_DispTabWnd:
+				case IDC_CHECK_DispTabWndMultiWin:
+					EnableTabPropInput( hwndDlg );
+					break;
+				case IDC_BUTTON_TABFONT:
+					LOGFONT   lf = m_Common.m_sTabBar.m_tabFont;
+					INT fontSize = m_Common.m_sTabBar.m_tabFontPs;
+
+					if( MySelectFont( &lf, &fontSize, hwndDlg, false) ){
+						m_Common.m_sTabBar.m_tabFont = lf;
+						m_Common.m_sTabBar.m_tabFontPs = fontSize;
+					}
+					break;
+				}
 			}
 		}
 		break;
@@ -174,37 +188,21 @@ int CPropTab::GetData( HWND hwndDlg )
 */
 void CPropTab::EnableTabPropInput(HWND hwndDlg)
 {
-	if( !::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd ) )
-	{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SameTabWidth       ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabIcon        ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow  ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin        ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), FALSE );	// 2007.04.03 ryoji
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin         ), FALSE );	// 2009.06.17
+	
+	BOOL bTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
+	BOOL bMultiWin = FALSE;
+	if( bTabWnd ){
+		bMultiWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin );
 	}
-	else
-	{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SameTabWidth       ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabIcon        ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), TRUE );	// 2007.04.03 ryoji
-		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin ) )
-		{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin       ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin        ), TRUE );
-		}
-		else {
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin       ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin        ), FALSE );
-		}
-	}
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow  ), bMultiWin );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin        ), bMultiWin );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_OpenNewWin         ), bMultiWin );	// 2009.06.17
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabIcon        ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SameTabWidth       ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_TABFONT           ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), bTabWnd );	// 2007.04.03 ryoji
 }
 

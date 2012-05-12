@@ -18,6 +18,7 @@
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2011, ryoji
+	Copyright (C) 2012, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -3959,7 +3960,12 @@ void CViewCommander::Command_FONT( void )
 	/* フォント設定ダイアログ */
 	LOGFONT cLogfont = GetDllShareData().m_Common.m_sView.m_lf;
 	INT nPointSize;
-	if( MySelectFont( &cLogfont, &nPointSize, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd() )  ){
+#ifdef USE_UNFIXED_FONT
+	bool bFixedFont = false;
+#else
+	bool bFixedFont = true;
+#endif
+	if( MySelectFont( &cLogfont, &nPointSize, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd(), bFixedFont ) ){
 		GetDllShareData().m_Common.m_sView.m_lf = cLogfont;
 		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 

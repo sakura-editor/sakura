@@ -10,6 +10,7 @@
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2012, Moca, syat
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -182,6 +183,7 @@ private:
 	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
+	LOGFONT		m_logfont;				//!< 表示フォントの特性情報
 };
 
 #endif /* SAKURA_WINDOW_CTABWND_H_ */
