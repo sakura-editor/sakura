@@ -99,8 +99,22 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		}
 
 		//先頭文字が見出し記号のいずれかであれば、次へ進む
-		// 2010.09.15 行頭以外が見出しになっていなかったバグの修正(サロゲートペア未対応)
-		if(NULL==wcschr(pszStarts,pLine[i]))continue;
+		int j;
+		int nCharChars;
+		int nCharChars2;
+		nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
+		for( j = 0; j < nStartsLen; j += nCharChars2 ){
+			// 2005-09-02 D.S.Koba GetSizeOfChar
+			nCharChars2 = CNativeW::GetSizeOfChar( pszStarts, nStartsLen, j );
+			if( nCharChars == nCharChars2 ){
+				if( 0 == wmemcmp( &pLine[i], &pszStarts[j], nCharChars ) ){
+					break;
+				}
+			}
+		}
+		if( j >= nStartsLen ){
+			continue;
+		}
 
 		//見出し種類の判別 -> szTitle
 		if( pLine[i] == L'(' ){
@@ -115,8 +129,8 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		else if( IsInRange(pLine[i], L'Ⅰ', L'Ⅹ') ) wcscpy( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ
 		else if( wcschr(L"〇一二三四五六七八九十百零壱弐参伍", pLine[i]) ) wcscpy( szTitle, L"一" ); //漢数字
 		else{
-			szTitle[0]=pLine[i];
-			szTitle[1]=L'\0';
+			wcsncpy( szTitle, &pLine[i], nCharChars );	//	先頭文字をszTitleに保持。
+			szTitle[nCharChars] = L'\0';
 		}
 
 		/*	「見出し記号」に含まれる文字で始まるか、
