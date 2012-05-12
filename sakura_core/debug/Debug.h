@@ -126,6 +126,8 @@ void DBMSG_IMP(const ACHAR* msg); //!< ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ð•\Ž¦BƒLƒƒƒvƒVƒ‡ƒ“‚É‚
 #define MYMESSAGEBOX MessageBoxF
 #define MYMESSAGEBOX_A MessageBoxF_A
 
+//ˆê”Ê‚ÌŒx‰¹
+#define DefaultBeep()   MessageBeep(MB_OK)
 
 //ƒGƒ‰[FÔŠÛ‚Éu~v[OK]
 int ErrorMessage  (HWND hwnd, LPCTSTR format, ...);
