@@ -613,9 +613,9 @@ void CEditView::SyncScrollH( CLayoutInt col )
 */
 CLayoutInt CEditView::GetWrapOverhang( void ) const
 {
-	int nMargin = 0;
+	int nMargin = 1;	// 折り返し記号
 	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuRet )
-		nMargin += 2;	// 改行ぶら下げ
+		nMargin += 1;	// 改行ぶら下げ
 	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto )
 		nMargin += 2;	// 句読点ぶら下げ
 	return CLayoutInt( nMargin );
