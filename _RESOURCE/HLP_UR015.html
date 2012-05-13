@@ -12,6 +12,58 @@
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>変更履歴(2011/02/11～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
+<h3>May 13, 2012 (2.0.5.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>タブバーのフォント指定 (svn:2127 upatch:3450281 Moca)</li>
+	<li>保存時に改行コードの混在を警告する (svn:2129 ryoji)</li>
+	<li>ステータスバーのカーソル位置文字コード表示欄ダブルクリックでエンコード別コード表示ダイアログを出す (svn:2132 ryoji)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>コマンドラインオプションのタイプ別の適用を拡大 (svn:2111 upatch:3030660 unicode:1340 Moca)</li>
+	<li>ドラッグ中にタブ移動 (svn:2114 upatch:3028565 unicode:1341 Moca)</li>
+	<li>メニュー作画処理の見直し (svn:2117 upatch:3028546 unicode:1341 Moca)</li>
+	<li>等幅でなくてもドラッグ中にタブ移動 (svn:2126 upatch:3518802 unicode:1767 syat)</li>
+	<li>検索で見つからないときのビープ音変更（エラー音 -> 一般の警告音） (svn:2128 wiki:Request/367,231 ryoji)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>%ls/%tsの修正 (svn:2023 upatch:3475566 novice)</li>
+	<li>int->bool変更抜け (svn:2024 novice)</li>
+	<li>キーワードに「%」を含む場合にエクスポート結果が不正 (svn:2105 syat)</li>
+	<li>ビューモードで開いたときに他プロセスで使用中の警告が出る (svn:2124 wiki:Request/400 dev:5262 ryoji)</li>
+	<li>テキストアウトライン見出しのサロゲートペア対応 (svn:2133 ryoji)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>インクルードガード変更(*.h) (svn:2030 novice)</li>
+	<li>インクルードガード変更(HeaderMake) (svn:2031 novice)</li>
+	<li>typo修正(rev1255,コメント) (svn:2038 novice)</li>
+	<li>stdafx.h->StdAfx.h (svn:2042 upatch:3478804 novice)</li>
+	<li>%ls/%tsの修正(続) (svn:2043 upatch:3478748 novice)</li>
+	<li>typo修正(Init->InitShareData) (svn:2048 novice)</li>
+	<li>help/trunk2の同名ファイルと同期 (svn:2049 novice)</li>
+	<li>MessageBeep整理 (svn:2058 upatch:3481578 novice)</li>
+	<li>EEolType整理 (svn:2059 upatch:3481577 novice)</li>
+	<li>CDlgFuncList::SetListVB変更 (svn:2082 upatch:3486892 novice)</li>
+	<li>RELPRINT/RELPRINT_Wマクロ追加(for debug) (svn:2090 novice)</li>
+	<li>"編集ウィンドウ数の上限～"のメッセージ処理をOkMessage関数に揃えた (svn:2093 upatch:3493898 novice)</li>
+	<li>IsEditable関数代入先修正 (svn:2097 upatch:3494726 novice)</li>
+	<li>オプション重複設定修正 (svn:2099 upatch:3494009 novice)</li>
+	<li>Delete comment-out code (svn:2103 novice)</li>
+	<li>CImpExpManager周りの修正 (svn:2112 upatch:3030649 unicode:1341 Moca)</li>
+	<li>ANSIビルド対応 (svn:2113 syat)</li>
+	<li>ツールバー番号とmyiconsの位置修正 (svn:2120 upatch:3020183 unicode:1341 Moca)</li>
+	<li>ダイレクトタグジャンプの高速化 (svn:2122 upatch:3002048 unicode:1341 Moca)</li>
+	<li>検索ルーチンの高速化 (svn:2123 upatch:3028557 unicode:1341 Moca, syat)</li>
+	<li>右端で折り返す位置の微調整 (svn:2130 ryoji)</li>
+	<li>c++アウトライン解析の微調整 (svn:2131 ryoji)</li>
+</ul>
+
 <h3>Jan. 15, 2012 (2.0.4.0)</h3>
 [機能追加]<br />
 <ul>

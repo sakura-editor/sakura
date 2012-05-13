@@ -553,6 +553,7 @@
 #define HIDC_CHECK_CloseOneWin					11274 //ウィンドウの閉じるボタンは現在のファイルのみ閉じる	// 2007.02.13 ryoji
 #define HIDC_CHECK_ChgWndByWheel				11275 //マウスホイールでタブ切替	// 2007.04.03 ryoji
 #define HIDC_CHECK_OpenNewWin					11276 //外部から起動するときは新しいウインドウ開く	// 2009.06.19
+#define HIDC_BUTTON_TABFONT						11277 //タブフォント
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK
