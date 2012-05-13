@@ -789,8 +789,8 @@ public:
 
 	BOOL RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, int nGroup, BOOL bCheckConfirm, HWND hWndFrom );
 																/* いくつかのウィンドウへ終了要求を出す */	// 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加	// 2007.06.20 ryoji nGroup引数追加
-	BOOL IsPathOpened( const char*, HWND* );					/* 指定ファイルが開かれているか調べる */
-	BOOL IsPathOpened( const char*, HWND*, int );				/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
+	BOOL IsPathOpened( const TCHAR*, HWND* );					/* 指定ファイルが開かれているか調べる */
+	BOOL IsPathOpened( const TCHAR*, HWND*, int );				/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
 	int GetEditorWindowsNum( int nGroup, bool bExcludeClosing = true );				/* 現在の編集ウィンドウの数を調べる */	// 2007.06.20 ryoji nGroup引数追加	// 2008.04.19 ryoji bExcludeClosing引数追加
 	BOOL PostMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージをポストする */	// 2007.06.20 ryoji nGroup引数追加
 	BOOL SendMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージを送るする */	// 2007.06.20 ryoji nGroup引数追加
@@ -844,9 +844,6 @@ public:
 	const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat );
 	const char* MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat );
 	
-	// 2002.11.24 Moca Add
-//	LPTSTR GetTransformFileList( LPCTSTR*, LPTSTR*, int );
-//	LPTSTR GetTransformFileName( LPCTSTR, LPTSTR, int );
 	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int );
 	int TransformFileName_MakeCache( void );
 	static LPCTSTR GetFilePathFormat( LPCTSTR, LPTSTR, int, LPCTSTR, LPCTSTR );
@@ -863,13 +860,6 @@ protected:
 	HANDLE			m_hFileMap;
 	DLLSHAREDATA*	m_pShareData;
 	HWND			m_hwndTraceOutSource;	// TraceOut()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
-
-//	long GetModuleDir(char* , long );	/* この実行ファイルのあるディレクトリを返します */
-	/* MRUとOPENFOLDERリストの存在チェックなど
-	存在しないファイルやフォルダはMRUやOPENFOLDERリストから削除する
-	 */
-//@@@ 2002.01.03 YAZAKI CMRU、CMRUFolderに移動した。
-//	void CheckMRUandOPENFOLDERList( void );
 
 	// ファイル名簡易表示用キャッシュ
 	int m_nTransformFileNameCount; // 有効数

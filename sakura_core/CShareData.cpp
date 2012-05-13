@@ -318,12 +318,11 @@ CShareData* CShareData::getInstance()
 */
 CShareData::~CShareData()
 {
-	if( NULL != m_pShareData ){
+	if( m_pShareData ){
 		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = NULL;
 	}
-	return;
 }
 
 
@@ -362,8 +361,8 @@ bool CShareData::InitShareData()
 	if( NULL == m_hFileMap ){
 		::MessageBox(
 			NULL,
-			"CreateFileMapping()に失敗しました",
-			"予期せぬエラー",
+			_T("CreateFileMapping()に失敗しました"),
+			_T("予期せぬエラー"),
 			MB_OK | MB_APPLMODAL | MB_ICONSTOP
 		);
 		return false;
@@ -380,14 +379,13 @@ bool CShareData::InitShareData()
 		);
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
-		char	szIniFolder[_MAX_PATH];
+		TCHAR	szIniFolder[_MAX_PATH];
 		m_pShareData->m_IniFolder.m_bInit = false;
 		GetInidir( szIniFolder );
-		AddLastChar( szIniFolder, _MAX_PATH, '\\' );
+		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
-//		m_pShareData->m_CKeyMacroMgr.Clear();			/* キーワードマクロのバッファ */
-		strcpy(m_pShareData->m_szKeyMacroFileName, "");	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
+		strcpy(m_pShareData->m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
@@ -443,8 +441,8 @@ bool CShareData::InitShareData()
 			strcpy( m_pShareData->m_szTransformFileNameFrom[i], "" );
 			strcpy( m_pShareData->m_szTransformFileNameTo[i], "" );
 		}
-		strcpy( m_pShareData->m_szTransformFileNameFrom[0], "%DeskTop%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[0], "デスクトップ\\" );
+		strcpy( m_pShareData->m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
+		strcpy( m_pShareData->m_szTransformFileNameTo[0], _T("デスクトップ\\") );
 		strcpy( m_pShareData->m_szTransformFileNameFrom[1], "%Personal%\\" );
 		strcpy( m_pShareData->m_szTransformFileNameTo[1], "マイドキュメント\\" );
 		strcpy( m_pShareData->m_szTransformFileNameFrom[2], "%Cache%\\Content.IE5\\" );
@@ -467,14 +465,14 @@ bool CShareData::InitShareData()
 			/*
 				2006.08.16 Moca 初期化単位を PRINTSETTINGに変更。CShareDataには依存しない。
 			*/
-			char szSettingName[64];
+			TCHAR szSettingName[64];
 			i = 0;
-			wsprintf( szSettingName, "印刷設定 %d", i + 1 );
+			wsprintf( szSettingName, _T("印刷設定 %d"), i + 1 );
 			CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 		}
 		for( i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 			m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-			wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, "印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+			wsprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, _T("印刷設定 %d"), i + 1 );	/* 印刷設定の名前 */
 		}
 
 		//	Jan. 30, 2005 genta 関数として独立
@@ -522,7 +520,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bBackUp = FALSE;				/* バックアップの作成 */
 		m_pShareData->m_Common.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
 		m_pShareData->m_Common.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
-		m_pShareData->m_Common.m_szBackUpFolder[0] = '\0';		/* バックアップを作成するフォルダ */
+		m_pShareData->m_Common.m_szBackUpFolder[0] = _T('\0');		/* バックアップを作成するフォルダ */
 		m_pShareData->m_Common.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		m_pShareData->m_Common.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;
 																/* バックアップファイル名：日付 */
@@ -534,7 +532,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
 		m_pShareData->m_Common.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 		m_pShareData->m_Common.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-		m_pShareData->m_Common.m_szBackUpPathAdvanced[0] = '\0';	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+		m_pShareData->m_Common.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
 		m_pShareData->m_Common.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
 
@@ -555,11 +553,11 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bWordOnly = 0;					/* 1==単語のみ検索 */
 		m_pShareData->m_Common.m_bConsecutiveAll = 0;			/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 		m_pShareData->m_Common.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
-		m_pShareData->m_Common.m_szExtHelp[0] = '\0';			/* 外部ヘルプ１ */
-		m_pShareData->m_Common.m_szExtHtmlHelp[0] = '\0';		/* 外部HTMLヘルプ */
+		m_pShareData->m_Common.m_szExtHelp[0] = _T('\0');			/* 外部ヘルプ１ */
+		m_pShareData->m_Common.m_szExtHtmlHelp[0] = _T('\0');		/* 外部HTMLヘルプ */
 		
-		m_pShareData->m_Common.m_szMigemoDll[0] = '\0';			/* migemo dll */
-		m_pShareData->m_Common.m_szMigemoDict[0] = '\0';		/* migemo dict */
+		m_pShareData->m_Common.m_szMigemoDll[0] = _T('\0');			/* migemo dll */
+		m_pShareData->m_Common.m_szMigemoDict[0] = _T('\0');		/* migemo dict */
 
 		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
 
@@ -578,7 +576,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_nGrepCharSet = CODE_AUTODETECT;/* Grep: 文字コードセット */
 		m_pShareData->m_Common.m_bGrepRealTimeView = FALSE;				/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
 		m_pShareData->m_Common.m_bCaretTextForSearch = TRUE;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
-		m_pShareData->m_Common.m_szRegexpLib[0] = '\0';	/* 2007.08.12 genta 正規表現DLL */
+		m_pShareData->m_Common.m_szRegexpLib[0] = _T('\0');	/* 2007.08.12 genta 正規表現DLL */
 		m_pShareData->m_Common.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
@@ -608,22 +606,22 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 
 		/* カスタムメニュー情報 */
-		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[0], "右クリックメニュー", i );
+		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[0], _T("右クリックメニュー"), i );
 		for( i = 1; i < MAX_CUSTOM_MENU; ++i ){
-			wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[i], "メニュー%d", i );
+			wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[i], _T("メニュー%d"), i );
 			m_pShareData->m_Common.m_nCustMenuItemNumArr[i] = 0;
 			for( j = 0; j < MAX_CUSTOM_MENU_ITEMS; ++j ){
 				m_pShareData->m_Common.m_nCustMenuItemFuncArr[i][j] = 0;
 				m_pShareData->m_Common.m_nCustMenuItemKeyArr [i][j] = '\0';
 			}
 		}
-		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[CUSTMENU_INDEX_FOR_TABWND], "タブメニュー" );	//@@@ 2003.06.13 MIK
+		wsprintf( m_pShareData->m_Common.m_szCustMenuNameArr[CUSTMENU_INDEX_FOR_TABWND], _T("タブメニュー") );	//@@@ 2003.06.13 MIK
 
 
 		/* 見出し記号 */
-		strcpy( m_pShareData->m_Common.m_szMidashiKigou, "１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
+		strcpy( m_pShareData->m_Common.m_szMidashiKigou, _T("１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍") );
 		/* 引用符 */
-		strcpy( m_pShareData->m_Common.m_szInyouKigou, "> " );		/* 引用符 */
+		strcpy( m_pShareData->m_Common.m_szInyouKigou, _T("> ") );		/* 引用符 */
 		m_pShareData->m_Common.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
 
 		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
@@ -640,7 +638,7 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_Common.m_bUseTaskTray = TRUE;				/* タスクトレイのアイコンを使う */
 		m_pShareData->m_Common.m_bStayTaskTray = TRUE;				/* タスクトレイのアイコンを常駐 */
-		m_pShareData->m_Common.m_wTrayMenuHotKeyCode = 'Z';			/* タスクトレイ左クリックメニュー キー */
+		m_pShareData->m_Common.m_wTrayMenuHotKeyCode = _T('Z');			/* タスクトレイ左クリックメニュー キー */
 		m_pShareData->m_Common.m_wTrayMenuHotKeyMods = HOTKEYF_ALT | HOTKEYF_CONTROL;	/* タスクトレイ左クリックメニュー キー */
 		m_pShareData->m_Common.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
 		m_pShareData->m_Common.m_bUseOLE_DropSource = TRUE;			/* OLEによるドラッグ元にするか */
@@ -688,9 +686,9 @@ bool CShareData::InitShareData()
 		*/
 
 		m_pShareData->m_Common.m_nDateFormatType = 0;	//日付書式のタイプ
-		strcpy( m_pShareData->m_Common.m_szDateFormat, "yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
+		strcpy( m_pShareData->m_Common.m_szDateFormat, _T("yyyy\'年\'M\'月\'d\'日(\'dddd\')\'") );	//日付書式
 		m_pShareData->m_Common.m_nTimeFormatType = 0;	//時刻書式のタイプ
-		strcpy( m_pShareData->m_Common.m_szTimeFormat, "tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
+		strcpy( m_pShareData->m_Common.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
 
 		m_pShareData->m_Common.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 
@@ -755,11 +753,11 @@ bool CShareData::InitShareData()
 		m_pShareData->m_nDiffFlgOpt = 0;	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 
 		m_pShareData->m_nTagsOpt = 0;	/* CTAGS */	//@@@ 2003.05.12 MIK
-		strcpy( m_pShareData->m_szTagsCmdLine, "" );	/* CTAGS */	//@@@ 2003.05.12 MIK
+		strcpy( m_pShareData->m_szTagsCmdLine, _T("") );	/* CTAGS */	//@@@ 2003.05.12 MIK
 		//From Here 2005.04.03 MIK キーワード指定タグジャンプのHistory保管
 		m_pShareData->m_nTagJumpKeywordArrNum = 0;
 		for( i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
-			strcpy( m_pShareData->m_szTagJumpKeywordArr[i], "" );
+			strcpy( m_pShareData->m_szTagJumpKeywordArr[i], _T("") );
 			//m_pShareData->m_bTagJumpKeywordArrFavorite[i] = false;	//お気に入り
 		}
 		m_pShareData->m_bTagJumpICase = FALSE;
@@ -903,40 +901,6 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 */
 BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 {
-//	int		i;
-//	int		j;
-//	/* 同じウィンドウハンドルがある場合は先頭に持ってくる */
-//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-//		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
-//			break;
-//		}
-//	}
-//	if( i < m_pShareData->m_nEditArrNum ){
-//		for( j = i; j > 0; j-- ){
-//			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
-//		}
-//	}else{
-//		if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-//			/* これ以上登録できない */
-//			return FALSE;
-//		}
-//
-//		for( j = MAX_EDITWINDOWS - 1; j > 0; j-- ){
-//			m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j - 1];
-//		}
-//		m_pShareData->m_nEditArrNum++;
-//		if( m_pShareData->m_nEditArrNum > MAX_EDITWINDOWS ){
-//			m_pShareData->m_nEditArrNum = MAX_EDITWINDOWS;
-////#ifdef _DEBUG
-////			/* デバッグモニタに出力 */
-////			TraceOut( "%s(%d): m_nEditArrNum=%d\n", __FILE__, __LINE__, hWnd, m_pShareData->m_nEditArrNum );
-////#endif
-//			/* これ以上登録できない */
-//			return FALSE;
-//		}
-//	}
-//	m_pShareData->m_pEditArr[0].m_hWnd = hWnd;
-
 	int		nSubCommand = TWNT_ADD;
 	int		nIndex;
 	CRecent	cRecentEditNode;
@@ -1019,23 +983,6 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 */
 void CShareData::DeleteEditWndList( HWND hWnd )
 {
-//	int		i;
-//	int		j;
-//
-//	/* ウィンドウハンドルの検索 */
-//	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-//		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd ){
-//			break;
-//		}
-//	}
-//	if( i >= m_pShareData->m_nEditArrNum ){
-//		return;
-//	}
-//	for( j = i; j < m_pShareData->m_nEditArrNum - 1; ++j ){
-//		m_pShareData->m_pEditArr[j] = m_pShareData->m_pEditArr[j + 1];
-//	}
-//	m_pShareData->m_nEditArrNum--;
-
 	int nGroup = GetGroupId( hWnd );
 
 	//ウインドウをリストから削除する。
@@ -1270,7 +1217,7 @@ BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit,
 	@retval	TRUE すでに開いていた
 	@retval	FALSE 開いていなかった
 */
-BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
+BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 {
 	int			i;
 	EditInfo*	pfi;
@@ -1286,6 +1233,7 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner )
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
 			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+
 			/* 同一パスのファイルが既に開かれているか */
 			if( 0 == _stricmp( pfi->m_szPath, pszPath ) ){
 				*phwndOwner = m_pShareData->m_pEditArr[i].m_hWnd;
@@ -1902,7 +1850,7 @@ int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
 		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
 		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
-			char szDir[_MAX_PATH + sizeof( m_pShareData->m_szMACROFOLDER )];
+			TCHAR szDir[_MAX_PATH + sizeof( m_pShareData->m_szMACROFOLDER )];
 			GetInidirOrExedir( szDir, m_pShareData->m_szMACROFOLDER );
 			pszDir = szDir;
 		}else{
@@ -2209,46 +2157,6 @@ const char* CShareData::MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int
 	::GetTimeFormat( LOCALE_USER_DEFAULT, dwFlags, &systime, pszForm, pszDest, nDestLen );
 	return pszDest;
 }
-
-
-
-/*!	共有データの設定に従ってパスを縮小表記に変換する
-	@param pszSrc   [in]  ファイル名
-	@param pszDest  [out] 変換後のファイル名の格納先
-	@param nDestLen [in]  終端のNULLを含むpszDestのTCHAR単位の長さ _MAX_PATH まで
-	@date 2002.11.27 Moca 新規作成
-*/
-/**************** 未使用
-LPTSTR CShareData::GetTransformFileName( LPCTSTR pszSrc, LPTSTR pszDest, int nDestLen )
-{
-	int i;
-	TCHAR pszBuf[ _MAX_PATH + 8 ];
-	TCHAR szFrom[ _MAX_PATH ];
-	bool  bTransform = false;
-
-#ifdef _DEBUG
-	if( _MAX_PATH + 8 < nDestLen ){
-		nDestLen = _MAX_PATH + 8;
-	}
-#endif
-	_tcsncpy( pszBuf, pszSrc, _MAX_PATH + 7 );
-	pszBuf[_MAX_PATH + 7] = '\0';
-	for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; i++ ){
-		if( '\0' != m_pShareData->m_szTransformFileNameFrom[i][0] ){
-			if( ExpandMetaToFolder( m_pShareData->m_szTransformFileNameFrom[i], szFrom, _MAX_PATH ) ){
-				GetFilePathFormat( pszBuf, pszDest, nDestLen, szFrom, m_pShareData->m_szTransformFileNameTo[i] );
-				_tcscpy( pszBuf, pszDest );
-				bTransform = true;
-			}
-		}
-	}
-	if( !bTransform ){
-		_tcsncpy( pszDest, pszBuf, nDestLen - 1 ); // 1回も変換しないときのために
-		pszDest[nDestLen - 1] = '\0';
-	}
-	return pszDest;
-}
-****************/
 
 /*!	共有データの設定に従ってパスを縮小表記に変換する
 	@param pszSrc   [in]  ファイル名
@@ -4856,6 +4764,122 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 #undef PopulateKeyword
 }
 
+//	Sep. 14, 2000 JEPRO
+//	Shift+F1 に「コマンド一覧」, Alt+F1 に「ヘルプ目次」, Shift+Alt+F1 に「キーワード検索」を追加	//Nov. 25, 2000 JEPRO 殺していたのを修正・復活
+//Dec. 25, 2000 JEPRO Shift+Ctrl+F1 に「バージョン情報」を追加
+// 2001.12.03 hor F2にブックマーク関連を割当
+//Sept. 21, 2000 JEPRO	Ctrl+F3 に「検索マークのクリア」を追加
+//Aug. 12, 2002 ai	Ctrl+Shift+F3 に「検索開始位置へ戻る」を追加
+//Oct. 7, 2000 JEPRO	Alt+F4 に「ウィンドウを閉じる」, Shift+Alt+F4 に「すべてのウィンドウを閉じる」を追加
+//	Ctrl+F4に割り当てられていた「縦横に分割」を「閉じて(無題)」に変更し Shift+Ctrl+F4 に「閉じて開く」を追加
+//Jan. 14, 2001 Ctrl+Alt+F4 に「テキストエディタの全終了」を追加
+//Jun. 2001「サクラエディタの全終了」に改称
+//2006.10.21 ryoji Alt+F4 には何も割り当てない（デフォルトのシステムコマンド「閉じる」が実行されるように）
+//2007.02.13 ryoji Shift+Ctrl+F4をF_WIN_CLOSEALLからF_EXITALLEDITORSに変更
+//2007.02.22 ryoji Ctrl+F4 への割り当てを削除（デフォルトのコマンドを実行）
+//	Sep. 20, 2000 JEPRO Ctrl+F5 に「外部コマンド実行」を追加  なおマクロ名はCMMAND からCOMMAND に変更済み
+//Oct. 28, 2000 F5 は「再描画」に変更	//Jan. 14, 2001 Alt+F5 に「uudecodeして保存」, Ctrl+ Alt+F5 に「TAB→空白」を追加
+//	May 28, 2001 genta	S-C-A-F5にSPACE-to-TABを追加
+//Jan. 14, 2001 JEPRO	Ctrl+F6 に「小文字」, Alt+F6 に「Base64デコードして保存」を追加
+// 2007.10.05 nasukoji	トリプルクリック・クアドラプルクリック対応
+//Jan. 14, 2001 JEPRO	Ctrl+F7 に「大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加
+//Nov. 9, 2000 JEPRO	Shift+F8 に「CRLF改行でコピー」を追加
+//Jan. 14, 2001 JEPRO	Ctrl+F8 に「全角→半角」, Alt+F8 に「UTF-8→SJISコード変換」, Shift+Alt+F8 に「SJIS→UTF-8コード変換」, Ctrl+Alt+F8 に「UTF-8で開き直す」を追加
+//Jan. 14, 2001 JEPRO	Ctrl+F9 に「半角＋全ひら→全角・カタカナ」, Alt+F9 に「Unicode→SJISコード変換」, Ctrl+Alt+F9 に「Unicodeで開き直す」を追加
+//Oct. 28, 2000 JEPRO F10 に「SQL*Plusで実行」を追加(F5からの移動)
+//Jan. 14, 2001 JEPRO	Ctrl+F10 に「半角＋全カタ→全角・ひらがな」, Alt+F10 に「EUC→SJISコード変換」, Shift+Alt+F10 に「SJIS→EUCコード変換」, Ctrl+Alt+F10 に「EUCで開き直す」を追加
+//Jan. 14, 2001 JEPRO	Shift+F11 に「SQL*Plusをアクティブ表示」, Ctrl+F11 に「半角カタカナ→全角カタカナ」, Alt+F11 に「E-Mail(JIS→SJIS)コード変換」, Shift+Alt+F11 に「SJIS→JISコード変換」, Ctrl+Alt+F11 に「JISで開き直す」を追加
+//Jan. 14, 2001 JEPRO	Ctrl+F12 に「半角カタカナ→全角ひらがな」, Alt+F12 に「自動判別→SJISコード変換」, Ctrl+Alt+F11 に「SJISで開き直す」を追加
+//Sept. 1, 2000 JEPRO	Alt+Enter に「ファイルのプロパティ」を追加	//Oct. 15, 2000 JEPRO Ctrl+Enter に「ファイル内容比較」を追加
+//Oct. 7, 2000 JEPRO 長いので名称を簡略形に変更(BackSpace→BkSp)
+//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Insert→Ins)
+//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Delete→Del)
+//Jun. 26, 2001 JEPRO	Shift+Del に「切り取り」を追加
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+Alt+↑に「縦方向に最大化」を追加
+//Jun. 27, 2001 JEPRO
+//	Ctrl+↑に割り当てられていた「カーソル上移動(２行ごと)」を「テキストを１行下へスクロール」に変更
+//2001.02.10 by MIK Shift+Ctrl+Alt+→に「横方向に最大化」を追加
+//Sept. 14, 2000 JEPRO
+//	Ctrl+↓に割り当てられていた「右クリックメニュー」を「カーソル下移動(２行ごと)」に変更
+//	それに付随してさらに「右クリックメニュー」をCtrl＋Alt＋↓に変更
+//Jun. 27, 2001 JEPRO
+//	Ctrl+↓に割り当てられていた「カーソル下移動(２行ごと)」を「テキストを１行上へスクロール」に変更
+//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページダウン」, 「(選択)１ページダウン」を追加
+//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollUp→PgDn) //Oct. 10, 2000 JEPRO 名称変更
+//2001.12.03 hor 1Page/HalfPage 入替え
+//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページアップ」, 「(選択)１ページアップ」を追加
+//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollDown→PgUp) //Oct. 10, 2000 JEPRO 名称変更
+//2001.12.03 hor 1Page/HalfPage 入替え
+//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(SpaceBar→Space)
+//Oct. 7, 2000 JEPRO	Ctrl+0 を「タイプ別設定一覧」→「未定義」に変更
+//Jan. 13, 2001 JEPRO	Alt+0 に「カスタムメニュー10」, Shift+Alt+0 に「カスタムメニュー20」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+1 を「タイプ別設定」→「ツールバーの表示」に変更
+//Jan. 13, 2001 JEPRO	Alt+1 に「カスタムメニュー1」, Shift+Alt+1 に「カスタムメニュー11」を追加
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+1 に「カスタムメニュー21」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+2 を「共通設定」→「ファンクションキーの表示」に変更
+//Jan. 13, 2001 JEPRO	Alt+2 を「アウトプット」→「カスタムメニュー2」に変更し「アウトプット」は Alt+O に移動, Shift+Alt+2 に「カスタムメニュー12」を追加
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+2 に「カスタムメニュー22」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+3 を「フォント設定」→「ステータスバーの表示」に変更
+//Jan. 13, 2001 JEPRO	Alt+3 に「カスタムメニュー3」, Shift+Alt+3 に「カスタムメニュー13」を追加
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+3 に「カスタムメニュー23」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+4 を「ツールバーの表示」→「タイプ別設定一覧」に変更
+//Jan. 13, 2001 JEPRO	Alt+4 に「カスタムメニュー4」, Shift+Alt+4 に「カスタムメニュー14」を追加
+//Jan. 19, 2001 JEPRO	Shift+Ctrl+4 に「カスタムメニュー24」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+5 を「ファンクションキーの表示」→「タイプ別設定」に変更
+//Jan. 13, 2001 JEPRO	Alt+5 に「カスタムメニュー5」, Shift+Alt+5 に「カスタムメニュー15」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+6 を「ステータスバーの表示」→「共通設定」に変更
+//Jan. 13, 2001 JEPRO	Alt+6 に「カスタムメニュー6」, Shift+Alt+6 に「カスタムメニュー16」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+7 に「フォント設定」を追加
+//Jan. 13, 2001 JEPRO	Alt+7 に「カスタムメニュー7」, Shift+Alt+7 に「カスタムメニュー17」を追加
+//Jan. 13, 2001 JEPRO	Alt+8 に「カスタムメニュー8」, Shift+Alt+8 に「カスタムメニュー18」を追加
+//Jan. 13, 2001 JEPRO	Alt+9 に「カスタムメニュー9」, Shift+Alt+9 に「カスタムメニュー19」を追加
+//2001.12.06 hor Alt+A を「SORT_ASC」に割当
+//Jan. 13, 2001 JEPRO	Ctrl+B に「ブラウズ」を追加
+//Jan. 16, 2001 JEPRO	SHift+Ctrl+C に「.hと同名の.c(なければ.cpp)を開く」を追加
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
+//Jan. 16, 2001 JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加
+//2001.12.06 hor Alt+D を「SORT_DESC」に割当
+//Oct. 7, 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加
+//Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」, Shift+Ctrl+E に「行削除(折り返し単位)」を追加
+//Oct. 07, 2000 JEPRO	Ctrl+Alt+H に「上下に並べて表示」を追加
+//Jan. 16, 2001 JEPRO	Ctrl+H を「カーソル前を削除」→「カーソル行をウィンドウ中央へ」に変更し	Shift+Ctrl+H に「.cまたは.cppと同名の.hを開く」を追加
+//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
+//Jan. 21, 2001	JEPRO	Ctrl+I に「行の二重化」を追加
+//Jan. 16, 2001	JEPRO	Ctrl+K に「行末まで切り取り(改行単位)」, Shift+Ctrl+E に「行末まで削除(改行単位)」を追加
+//Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「小文字」, Shift+Ctrl+Alt+L に「大文字」を追加
+//Jan. 16, 2001 Ctrl+L を「カーソル行をウィンドウ中央へ」→「キーマクロの読み込み」に変更し「カーソル行をウィンドウ中央へ」は Ctrl+H に移動
+//2001.12.03 hor Alt+L を「LTRIM」に割当
+//Jan. 16, 2001 JEPRO	Ctrl+M に「キーマクロの保存」を追加
+//2001.12.06 hor Alt+M を「MERGE」に割当
+//Oct. 20, 2000 JEPRO	Alt+N に「移動履歴: 次へ」を追加
+//Jan. 13, 2001 JEPRO	Alt+O に「アウトプット」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+P に「印刷」, Shift+Ctrl+P に「印刷プレビュー」, Ctrl+Alt+P に「ページ設定」を追加
+//Oct. 20, 2000 JEPRO	Alt+P に「移動履歴: 前へ」を追加
+//Jan. 24, 2001	JEPRO	Ctrl+Q に「キー割り当て一覧をコピー」を追加
+//2001.12.03 hor Alt+R を「RTRIM」に割当
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+S に「名前を付けて保存」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+Alt+T に「左右に並べて表示」を追加
+//Jan. 21, 2001	JEPRO	Ctrl+T に「タグジャンプ」, Shift+Ctrl+T に「タグジャンプバック」を追加
+//Oct. 7, 2000 JEPRO	Ctrl+Alt+U に「現在のウィンドウ幅で折り返し」を追加
+//Jan. 16, 2001	JEPRO	Ctrl+U に「行頭まで切り取り(改行単位)」, Shift+Ctrl+U に「行頭まで削除(改行単位)」を追加
+//Jan. 13, 2001 JEPRO	Alt+X を「カスタムメニュー1」→「未定義」に変更し「カスタムメニュー1」は Alt+1 に移動
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+- に「上下に分割」を追加
+// 2002.02.08 hor Ctrl+-にファイル名をコピーを追加
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ に「左右に分割」を追加
+//Sept. 20, 2000 JEPRO	Ctrl+@ に「ファイル内容比較」を追加  //Oct. 15, 2000 JEPRO「選択範囲内全行コピー」に変更
+//	Aug. 16, 2000 genta
+//	反対向きの括弧にも括弧検索を追加
+//Oct. 7, 2000 JEPRO	Shift+Ctrl+; に「縦横に分割」を追加	//Jan. 16, 2001	Alt+; に「日付挿入」を追加
+//Sept. 14, 2000 JEPRO	Ctrl+: に「選択範囲内全行行番号付きコピー」を追加	//Jan. 16, 2001	Alt+: に「時刻挿入」を追加
+//Sept. 14, 2000 JEPRO	Ctrl+. に「選択範囲内全行引用符付きコピー」を追加
+//	Nov. 15, 2000 genta PC/ATキーボードに合わせてキーコードを変更
+//	PC98救済のため，従来のキーコードに対応する項目を追加．
+//Oct. 7, 2000 JEPRO	長くて表示しきれない所がでてきてしまうのでアプリケーションキー→アプリキーに短縮
+//2008.05.03 kobake 可読性が著しく低下していたので、書式を整理。
+// 2008.05.30 nasukoji	Ctrl+Alt+S に「指定桁で折り返す」を追加
+// 2008.05.30 nasukoji	Ctrl+Alt+W に「右端で折り返す」を追加
+// 2008.05.30 nasukoji	Ctrl+Alt+X に「折り返さない」を追加
+
 /*!	@brief 共有メモリ初期化/キー割り当て
 
 	デフォルトキー割り当て関連の初期化処理
@@ -4869,257 +4893,137 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/* 共通設定の規定値 */
 	/********************/
 	struct KEYDATAINIT {
-		short			nKeyCode;		/*!< Key Code (0 for non-keybord button) */
-		char*			pszKeyName;		/*!< Key Name (for display) */
-		short			nFuncCode_0;	/*!<                      Key */
-		short			nFuncCode_1;	/*!< Shift +              Key */
-		short			nFuncCode_2;	/*!<         Ctrl +       Key */
-		short			nFuncCode_3;	/*!< Shift + Ctrl +       Key */
-		short			nFuncCode_4;	/*!<                Alt + Key */
-		short			nFuncCode_5;	/*!< Shift +        Alt + Key */
-		short			nFuncCode_6;	/*!<         Ctrl + Alt + Key */
-		short			nFuncCode_7;	/*!< Shift + Ctrl + Alt + Key */
+		short			nKeyCode;		//!< Key Code (0 for non-keybord button)
+		TCHAR*			pszKeyName;		//!< Key Name (for display)
+		short			nFuncCode_0;	//!<                      Key
+		short			nFuncCode_1;	//!< Shift +              Key
+		short			nFuncCode_2;	//!<         Ctrl +       Key
+		short			nFuncCode_3;	//!< Shift + Ctrl +       Key
+		short			nFuncCode_4;	//!<                Alt + Key
+		short			nFuncCode_5;	//!< Shift +        Alt + Key
+		short			nFuncCode_6;	//!<         Ctrl + Alt + Key
+		short			nFuncCode_7;	//!< Shift + Ctrl + Alt + Key
 	};
+#define _SQL_RUN	F_PLSQL_COMPILE_ON_SQLPLUS
+#define _COPYWITHLINENUM	F_COPYLINESWITHLINENUMBER
 	static KEYDATAINIT	KeyDataInit[] = {
 	//Sept. 1, 2000 Jepro note: key binding
 	//Feb. 17, 2001 jepro note 2: 順番は2進で下位3ビット[Alt][Ctrl][Shift]の組合せの順(それに2を加えた値)
 	//		0,		1,		 2(000), 3(001),4(010),	5(011),		6(100),	7(101),		8(110),		9(111)
-	//		keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
-	//
+
 		/* マウスボタン */
-		{ 0, "ダブルクリック",F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD },
-	//Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
-		{ 0, "右クリック",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, 0, 0, 0, 0 },
-	// novice 2004/10/11 マウス中ボタン対応
-		{ 0, "中クリック", 0, 0, 0, 0, 0, 0, 0, 0 },
-	// novice 2004/10/10 マウスサイドボタン対応
-		{ 0, "左サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ 0, "右サイドクリック", 0, 0, 0, 0, 0, 0, 0, 0 },
-	// 2007.10.05 nasukoji	トリプルクリック・クアドラプルクリック対応
-		{ 0, "トリプルクリック", F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE },
-		{ 0, "クアドラプルクリック", F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL },
+		//keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
+		{ 0, _T("ダブルクリック"), F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD, F_SELECTWORD }, //Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
+		{ 0, _T("右クリック"), F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_0, F_0, F_0, F_0 },
+		{ 0, _T("中クリック"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 }, // novice 2004/10/11 マウス中ボタン対応
+		{ 0, _T("左サイドクリック"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 }, // novice 2004/10/10 マウスサイドボタン対応
+		{ 0, _T("右サイドクリック"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ 0, _T("トリプルクリック"), F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE, F_SELECTLINE },
+		{ 0, _T("クアドラプルクリック"), F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL, F_SELECTALL },
+
 		/* ファンクションキー */
-	//	From Here Sept. 14, 2000 JEPRO
-	//	VK_F1,"F1", F_EXTHTMLHELP, 0, F_EXTHELP1, 0, 0, 0, 0, 0,
-	//	Shift+F1 に「コマンド一覧」, Alt+F1 に「ヘルプ目次」, Shift+Alt+F1 に「キーワード検索」を追加	//Nov. 25, 2000 JEPRO 殺していたのを修正・復活
-	//Dec. 25, 2000 JEPRO Shift+Ctrl+F1 に「バージョン情報」を追加
-	//	{ VK_F1,"F1", F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, 0, 0, 0, 0, 0 },
-		{ VK_F1,"F1", F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, F_ABOUT, F_HELP_CONTENTS, F_HELP_SEARCH, 0, 0 },
-	//	To Here Sept. 14, 2000
-	// From Here 2001.12.03 hor F2にブックマーク関連を割当
-	//	{ VK_F2,"F2", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F2,"F2", F_BOOKMARK_NEXT, F_BOOKMARK_PREV, F_BOOKMARK_SET, F_BOOKMARK_RESET, F_BOOKMARK_VIEW, 0, 0, 0 },
-	// To Here 2001.12.03 hor
-		//Sept. 21, 2000 JEPRO	Ctrl+F3 に「検索マークのクリア」を追加
-		//Aug. 12, 2002 ai	Ctrl+Shift+F3 に「検索開始位置へ戻る」を追加
-		{ VK_F3,"F3", F_SEARCH_NEXT, F_SEARCH_PREV, F_SEARCH_CLEARMARK, F_JUMP_SRCHSTARTPOS, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Alt+F4 に「ウィンドウを閉じる」, Shift+Alt+F4 に「すべてのウィンドウを閉じる」を追加
-		//	Ctrl+F4に割り当てられていた「縦横に分割」を「閉じて(無題)」に変更し Shift+Ctrl+F4 に「閉じて開く」を追加
-		//Jan. 14, 2001 Ctrl+Alt+F4 に「テキストエディタの全終了」を追加
-		//Jun. 2001「サクラエディタの全終了」に改称
-		//2006.10.21 ryoji Alt+F4 には何も割り当てない（デフォルトのシステムコマンド「閉じる」が実行されるように）
-		//2007.02.13 ryoji Shift+Ctrl+F4をF_WIN_CLOSEALLからF_EXITALLEDITORSに変更
-		//2007.02.22 ryoji Ctrl+F4 への割り当てを削除（デフォルトのコマンドを実行）
-		{ VK_F4,"F4", F_SPLIT_V, F_SPLIT_H, 0, F_FILECLOSE_OPEN, 0, F_EXITALLEDITORS, F_EXITALL, 0 },
-	//	From Here Sept. 20, 2000 JEPRO Ctrl+F5 に「外部コマンド実行」を追加  なおマクロ名はCMMAND からCOMMAND に変更済み
-	//	{ VK_F5,"F5", F_PLSQL_COMPILE_ON_SQLPLUS, 0, F_EXECMD_DIALOG, 0, 0, 0, 0, 0 },
-	//	To Here Sept. 20, 2000
-		//Oct. 28, 2000 F5 は「再描画」に変更	//Jan. 14, 2001 Alt+F5 に「uudecodeして保存」, Ctrl+ Alt+F5 に「TAB→空白」を追加
-		//	May 28, 2001 genta	S-C-A-F5にSPACE-to-TABを追加
-		{ VK_F5,"F5", F_REDRAW, 0, F_EXECMD_DIALOG, 0, F_UUDECODE, 0, F_TABTOSPACE, F_SPACETOTAB },
-		//Jan. 14, 2001 JEPRO	Ctrl+F6 に「小文字」, Alt+F6 に「Base64デコードして保存」を追加
-		{ VK_F6,"F6", F_BEGIN_SEL, F_BEGIN_BOX, F_TOLOWER, 0, F_BASE64DECODE, 0, 0, 0 },
-		//Jan. 14, 2001 JEPRO	Ctrl+F7 に「大文字」, Alt+F7 に「UTF-7→SJISコード変換」, Shift+Alt+F7 に「SJIS→UTF-7コード変換」, Ctrl+Alt+F7 に「UTF-7で開き直す」を追加
-		{ VK_F7,"F7", F_CUT, 0, F_TOUPPER, 0, F_CODECNV_UTF72SJIS, F_CODECNV_SJIS2UTF7, F_FILE_REOPEN_UTF7, 0 },
-		//Nov. 9, 2000 JEPRO	Shift+F8 に「CRLF改行でコピー」を追加
-		//Jan. 14, 2001 JEPRO	Ctrl+F8 に「全角→半角」, Alt+F8 に「UTF-8→SJISコード変換」, Shift+Alt+F8 に「SJIS→UTF-8コード変換」, Ctrl+Alt+F8 に「UTF-8で開き直す」を追加
-		{ VK_F8,"F8", F_COPY, F_COPY_CRLF, F_TOHANKAKU, 0, F_CODECNV_UTF82SJIS, F_CODECNV_SJIS2UTF8, F_FILE_REOPEN_UTF8, 0 },
-		//Jan. 14, 2001 JEPRO	Ctrl+F9 に「半角＋全ひら→全角・カタカナ」, Alt+F9 に「Unicode→SJISコード変換」, Ctrl+Alt+F9 に「Unicodeで開き直す」を追加
-		{ VK_F9,"F9", F_PASTE, F_PASTEBOX, F_TOZENKAKUKATA, 0, F_CODECNV_UNICODE2SJIS, 0, F_FILE_REOPEN_UNICODE, 0 },
-		//Oct. 28, 2000 JEPRO F10 に「SQL*Plusで実行」を追加(F5からの移動)
-		//Jan. 14, 2001 JEPRO	Ctrl+F10 に「半角＋全カタ→全角・ひらがな」, Alt+F10 に「EUC→SJISコード変換」, Shift+Alt+F10 に「SJIS→EUCコード変換」, Ctrl+Alt+F10 に「EUCで開き直す」を追加
-		{ VK_F10,"F10", F_PLSQL_COMPILE_ON_SQLPLUS, F_DUPLICATELINE, F_TOZENKAKUHIRA, 0, F_CODECNV_EUC2SJIS, F_CODECNV_SJIS2EUC, F_FILE_REOPEN_EUC, 0 },
-		//Jan. 14, 2001 JEPRO	Shift+F11 に「SQL*Plusをアクティブ表示」, Ctrl+F11 に「半角カタカナ→全角カタカナ」, Alt+F11 に「E-Mail(JIS→SJIS)コード変換」, Shift+Alt+F11 に「SJIS→JISコード変換」, Ctrl+Alt+F11 に「JISで開き直す」を追加
-		{ VK_F11,"F11", F_OUTLINE, F_ACTIVATE_SQLPLUS, F_HANKATATOZENKATA, 0, F_CODECNV_EMAIL, F_CODECNV_SJIS2JIS, F_FILE_REOPEN_JIS, 0 },
-		//Jan. 14, 2001 JEPRO	Ctrl+F12 に「半角カタカナ→全角ひらがな」, Alt+F12 に「自動判別→SJISコード変換」, Ctrl+Alt+F11 に「SJISで開き直す」を追加
-		{ VK_F12,"F12", F_TAGJUMP, F_TAGJUMPBACK, F_HANKATATOZENHIRA, 0, F_CODECNV_AUTO2SJIS, 0, F_FILE_REOPEN_SJIS, 0 },
-		{ VK_F13,"F13", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F14,"F14", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F15,"F15", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F16,"F16", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F17,"F17", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F18,"F18", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F19,"F19", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F20,"F20", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F21,"F21", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F22,"F22", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F23,"F23", 0, 0, 0, 0, 0, 0, 0, 0 },
-		{ VK_F24,"F24", 0, 0, 0, 0, 0, 0, 0, 0 },
+		//keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
+		{ VK_F1,_T("F1"), F_EXTHTMLHELP, F_MENU_ALLFUNC, F_EXTHELP1, F_ABOUT, F_HELP_CONTENTS, F_HELP_SEARCH, F_0, F_0 },
+		{ VK_F2,_T("F2"), F_BOOKMARK_NEXT, F_BOOKMARK_PREV, F_BOOKMARK_SET, F_BOOKMARK_RESET, F_BOOKMARK_VIEW, F_0, F_0, F_0 },
+		{ VK_F3,_T("F3"), F_SEARCH_NEXT, F_SEARCH_PREV, F_SEARCH_CLEARMARK, F_JUMP_SRCHSTARTPOS, F_0, F_0, F_0, F_0 },
+		{ VK_F4,_T("F4"), F_SPLIT_V, F_SPLIT_H, F_0, F_FILECLOSE_OPEN, F_0, F_EXITALLEDITORS, F_EXITALL, F_0 },
+		{ VK_F5,_T("F5"), F_REDRAW, F_0, F_EXECMD_DIALOG, F_0, F_UUDECODE, F_0, F_TABTOSPACE, F_SPACETOTAB },
+		{ VK_F6,_T("F6"), F_BEGIN_SEL, F_BEGIN_BOX, F_TOLOWER, F_0, F_BASE64DECODE, F_0, F_0, F_0 },
+		{ VK_F7,_T("F7"), F_CUT, F_0, F_TOUPPER, F_0, F_CODECNV_UTF72SJIS, F_CODECNV_SJIS2UTF7, F_FILE_REOPEN_UTF7, F_0 },
+		{ VK_F8,_T("F8"), F_COPY, F_COPY_CRLF, F_TOHANKAKU, F_0, F_CODECNV_UTF82SJIS, F_CODECNV_SJIS2UTF8, F_FILE_REOPEN_UTF8, F_0 },
+		{ VK_F9,_T("F9"), F_PASTE, F_PASTEBOX, F_TOZENKAKUKATA, F_0, F_CODECNV_UNICODE2SJIS, F_0, F_FILE_REOPEN_UNICODE, F_0 },
+		{ VK_F10,_T("F10"), _SQL_RUN, F_DUPLICATELINE, F_TOZENKAKUHIRA, F_0, F_CODECNV_EUC2SJIS, F_CODECNV_SJIS2EUC, F_FILE_REOPEN_EUC, F_0 },
+		{ VK_F11,_T("F11"), F_OUTLINE, F_ACTIVATE_SQLPLUS, F_HANKATATOZENKATA, F_0, F_CODECNV_EMAIL, F_CODECNV_SJIS2JIS, F_FILE_REOPEN_JIS, F_0 },
+		{ VK_F12,_T("F12"), F_TAGJUMP, F_TAGJUMPBACK, F_HANKATATOZENHIRA, F_0, F_CODECNV_AUTO2SJIS, F_0, F_FILE_REOPEN_SJIS, F_0 },
+		{ VK_F13,_T("F13"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F14,_T("F14"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F15,_T("F15"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F16,_T("F16"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F17,_T("F17"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F18,_T("F18"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F19,_T("F19"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F20,_T("F20"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F21,_T("F21"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F22,_T("F22"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F23,_T("F23"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_F24,_T("F24"), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+
 		/* 特殊キー */
-		{ VK_TAB,"Tab",F_INDENT_TAB, F_UNINDENT_TAB, F_NEXTWINDOW, F_PREVWINDOW, 0, 0, 0, 0 },
-		//Sept. 1, 2000 JEPRO	Alt+Enter に「ファイルのプロパティ」を追加	//Oct. 15, 2000 JEPRO Ctrl+Enter に「ファイル内容比較」を追加
-			{ VK_RETURN,"Enter",0, 0, F_COMPARE, 0, F_PROPERTY_FILE, 0, 0, 0 },
-		{ VK_ESCAPE,"Esc",F_CANCEL_MODE, 0, 0, 0, 0, 0, 0, 0 },
-//			{ VK_BACK,"BackSpace",F_DELETE_BACK, 0, F_WordDeleteToStart, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO 長いので名称を簡略形に変更(BackSpace→BkSp)
-		{ VK_BACK,"BkSp",F_DELETE_BACK, 0, F_WordDeleteToStart, 0, 0, 0, 0, 0 },
-//			{ VK_INSERT,"Insert",F_CHGMOD_INS, F_PASTE, F_COPY, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Insert→Ins)
-		{ VK_INSERT,"Ins",F_CHGMOD_INS, F_PASTE, F_COPY, 0, 0, 0, 0, 0 },
-//			{ VK_DELETE,"Delete",F_DELETE, 0, F_WordDeleteToEnd, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(Delete→Del)
-		//Jun. 26, 2001 JEPRO	Shift+Del に「切り取り」を追加
-		{ VK_DELETE,"Del",F_DELETE, F_CUT, F_WordDeleteToEnd, 0, 0, 0, 0, 0 },
-		{ VK_HOME,"Home",F_GOLINETOP, F_GOLINETOP_SEL, F_GOFILETOP, F_GOFILETOP_SEL, 0, 0, 0, 0 },
-		{ VK_END,"End(Help)",F_GOLINEEND, F_GOLINEEND_SEL, F_GOFILEEND, F_GOFILEEND_SEL, 0, 0, 0, 0 },
-		{ VK_LEFT,"←",F_LEFT, F_LEFT_SEL/*F_GOLINETOP*/, F_WORDLEFT, F_WORDLEFT_SEL, F_BEGIN_BOX, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Shift+Ctrl+Alt+↑に「縦方向に最大化」を追加
-//			{ VK_UP,"↑",F_UP, F_UP_SEL, F_UP2, F_UP2_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_V },
-		//Jun. 27, 2001 JEPRO
-		//	Ctrl+↑に割り当てられていた「カーソル上移動(２行ごと)」を「テキストを１行下へスクロール」に変更
-		{ VK_UP,"↑",F_UP, F_UP_SEL, F_WndScrollDown, F_UP2_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_V },
-		//2001.02.10 by MIK Shift+Ctrl+Alt+→に「横方向に最大化」を追加
-		{ VK_RIGHT,"→",F_RIGHT, F_RIGHT_SEL/*F_GOLINEEND*/, F_WORDRIGHT, F_WORDRIGHT_SEL, F_BEGIN_BOX, 0, 0, F_MAXIMIZE_H },
-		//Sept. 14, 2000 JEPRO
-		//	Ctrl+↓に割り当てられていた「右クリックメニュー」を「カーソル下移動(２行ごと)」に変更
-		//	それに付随してさらに「右クリックメニュー」をCtrl＋Alt＋↓に変更
-//			{ VK_DOWN,"↓",F_DOWN, F_DOWN_SEL, F_DOWN2, F_DOWN2_SEL, F_BEGIN_BOX, 0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
-		//Jun. 27, 2001 JEPRO
-		//	Ctrl+↓に割り当てられていた「カーソル下移動(２行ごと)」を「テキストを１行上へスクロール」に変更
-		{ VK_DOWN,"↓",F_DOWN, F_DOWN_SEL, F_WndScrollUp, F_DOWN2_SEL, F_BEGIN_BOX, 0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
-//			{ VK_PRIOR,"RollDown(PageUp)",F_ROLLDOWN, F_ROLLDOWN_SEL, 0, 0, 0, 0, 0, 0 },
-//			{ VK_NEXT,"RollUp(PageDown)",F_ROLLUP, F_ROLLUP_SEL, 0, 0, 0, 0, 0, 0 },
-		//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページダウン」, 「(選択)１ページダウン」を追加
-		//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollUp→PgDn) //Oct. 10, 2000 JEPRO 名称変更
-		//2001.12.03 hor 1Page/HalfPage 入替え
-		{ VK_NEXT,"PgDn(RollUp)", F_1PageDown, F_1PageDown_Sel,F_HalfPageDown, F_HalfPageDown_Sel, 0, 0, 0, 0 },
-		//Oct. 15, 2000 JEPRO Ctrl+PgUp, Shift+Ctrl+PgDn にそれぞれ「１ページアップ」, 「(選択)１ページアップ」を追加
-		//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に交換(RollDown→PgUp) //Oct. 10, 2000 JEPRO 名称変更
-		//2001.12.03 hor 1Page/HalfPage 入替え
-		{ VK_PRIOR,"PgUp(RollDn)", F_1PageUp, F_1PageUp_Sel,F_HalfPageUp, F_HalfPageUp_Sel, 0, 0, 0, 0 },
-//			{ VK_SPACE,"SpaceBar",F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO 名称をVC++に合わせ簡略形に変更(SpaceBar→Space)
-		{ VK_SPACE,"Space",F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, 0, 0, 0, 0, 0 },
+		//keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
+		{ VK_TAB,_T("Tab"), F_INDENT_TAB, F_UNINDENT_TAB, F_NEXTWINDOW, F_PREVWINDOW, F_0, F_0, F_0, F_0 },
+			{ VK_RETURN,_T("Enter"), F_0, F_0, F_COMPARE, F_0, F_PROPERTY_FILE, F_0, F_0, F_0 },
+		{ VK_ESCAPE,_T("Esc"), F_CANCEL_MODE, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_BACK,_T("BkSp"), F_DELETE_BACK, F_0, F_WordDeleteToStart, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_INSERT,_T("Ins"), F_CHGMOD_INS, F_PASTE, F_COPY, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_DELETE,_T("Del"), F_DELETE, F_CUT, F_WordDeleteToEnd, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_HOME,_T("Home"), F_GOLINETOP, F_GOLINETOP_SEL, F_GOFILETOP, F_GOFILETOP_SEL, F_0, F_0, F_0, F_0 },
+		{ VK_END,_T("End(Help)"), F_GOLINEEND, F_GOLINEEND_SEL, F_GOFILEEND, F_GOFILEEND_SEL, F_0, F_0, F_0, F_0 },
+		{ VK_LEFT,_T("←"), F_LEFT, F_LEFT_SEL, F_WORDLEFT, F_WORDLEFT_SEL, F_BEGIN_BOX, F_0, F_0, F_0 },
+		{ VK_UP,_T("↑"), F_UP, F_UP_SEL, F_WndScrollDown, F_UP2_SEL, F_BEGIN_BOX, F_0, F_0, F_MAXIMIZE_V },
+		{ VK_RIGHT,_T("→"), F_RIGHT, F_RIGHT_SEL, F_WORDRIGHT, F_WORDRIGHT_SEL, F_BEGIN_BOX, F_0, F_0, F_MAXIMIZE_H },
+		{ VK_DOWN,_T("↓"), F_DOWN, F_DOWN_SEL, F_WndScrollUp, F_DOWN2_SEL, F_BEGIN_BOX, F_0, F_MENU_RBUTTON, F_MINIMIZE_ALL },
+		{ VK_NEXT,_T("PgDn(RollUp)"), F_1PageDown, F_1PageDown_Sel, F_HalfPageDown, F_HalfPageDown_Sel, F_0, F_0, F_0, F_0 },
+		{ VK_PRIOR,_T("PgUp(RollDn)"), F_1PageUp, F_1PageUp_Sel, F_HalfPageUp, F_HalfPageUp_Sel, F_0, F_0, F_0, F_0 },
+		{ VK_SPACE,_T("Space"), F_INDENT_SPACE, F_UNINDENT_SPACE, F_HOKAN, F_0, F_0, F_0, F_0, F_0 },
+
 		/* 数字 */
-		//Oct. 7, 2000 JEPRO	Ctrl+0 を「タイプ別設定一覧」→「未定義」に変更
-		//Jan. 13, 2001 JEPRO	Alt+0 に「カスタムメニュー10」, Shift+Alt+0 に「カスタムメニュー20」を追加
-		{ '0', "0",0, 0, 0, 0, F_CUSTMENU_10, F_CUSTMENU_20, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+1 を「タイプ別設定」→「ツールバーの表示」に変更
-		//Jan. 13, 2001 JEPRO	Alt+1 に「カスタムメニュー1」, Shift+Alt+1 に「カスタムメニュー11」を追加
-		//Jan. 19, 2001 JEPRO	Shift+Ctrl+1 に「カスタムメニュー21」を追加
-		{ '1', "1",0, 0, F_SHOWTOOLBAR, F_CUSTMENU_21, F_CUSTMENU_1, F_CUSTMENU_11, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+2 を「共通設定」→「ファンクションキーの表示」に変更
-		//Jan. 13, 2001 JEPRO	Alt+2 を「アウトプット」→「カスタムメニュー2」に変更し「アウトプット」は Alt+O に移動, Shift+Alt+2 に「カスタムメニュー12」を追加
-		//Jan. 19, 2001 JEPRO	Shift+Ctrl+2 に「カスタムメニュー22」を追加
-		{ '2', "2",0, 0, F_SHOWFUNCKEY, F_CUSTMENU_22, F_CUSTMENU_2/*F_WIN_OUTPUT*/, F_CUSTMENU_12, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+3 を「フォント設定」→「ステータスバーの表示」に変更
-		//Jan. 13, 2001 JEPRO	Alt+3 に「カスタムメニュー3」, Shift+Alt+3 に「カスタムメニュー13」を追加
-		//Jan. 19, 2001 JEPRO	Shift+Ctrl+3 に「カスタムメニュー23」を追加
-		{ '3', "3",0, 0, F_SHOWSTATUSBAR, F_CUSTMENU_23, F_CUSTMENU_3, F_CUSTMENU_13, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+4 を「ツールバーの表示」→「タイプ別設定一覧」に変更
-		//Jan. 13, 2001 JEPRO	Alt+4 に「カスタムメニュー4」, Shift+Alt+4 に「カスタムメニュー14」を追加
-		//Jan. 19, 2001 JEPRO	Shift+Ctrl+4 に「カスタムメニュー24」を追加
-		{ '4', "4",0, 0, F_TYPE_LIST, F_CUSTMENU_24, F_CUSTMENU_4, F_CUSTMENU_14, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+5 を「ファンクションキーの表示」→「タイプ別設定」に変更
-		//Jan. 13, 2001 JEPRO	Alt+5 に「カスタムメニュー5」, Shift+Alt+5 に「カスタムメニュー15」を追加
-		{ '5', "5",0, 0, F_OPTION_TYPE, 0, F_CUSTMENU_5, F_CUSTMENU_15, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+6 を「ステータスバーの表示」→「共通設定」に変更
-		//Jan. 13, 2001 JEPRO	Alt+6 に「カスタムメニュー6」, Shift+Alt+6 に「カスタムメニュー16」を追加
-		{ '6', "6",0, 0, F_OPTION, 0, F_CUSTMENU_6, F_CUSTMENU_16, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+7 に「フォント設定」を追加
-		//Jan. 13, 2001 JEPRO	Alt+7 に「カスタムメニュー7」, Shift+Alt+7 に「カスタムメニュー17」を追加
-		{ '7', "7",0, 0, F_FONT, 0, F_CUSTMENU_7, F_CUSTMENU_17, 0, 0 },
-		//Jan. 13, 2001 JEPRO	Alt+8 に「カスタムメニュー8」, Shift+Alt+8 に「カスタムメニュー18」を追加
-		{ '8', "8",0, 0, 0, 0, F_CUSTMENU_8, F_CUSTMENU_18, 0, 0 },
-		//Jan. 13, 2001 JEPRO	Alt+9 に「カスタムメニュー9」, Shift+Alt+9 に「カスタムメニュー19」を追加
-		{ '9', "9",0, 0, 0, 0, F_CUSTMENU_9, F_CUSTMENU_19, 0, 0 },
+		//keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
+		{ '0', _T("0"), F_0, F_0, F_0, F_0, F_CUSTMENU_10, F_CUSTMENU_20, F_0, F_0 },
+		{ '1', _T("1"), F_0, F_0, F_SHOWTOOLBAR, F_CUSTMENU_21, F_CUSTMENU_1, F_CUSTMENU_11, F_0, F_0 },
+		{ '2', _T("2"), F_0, F_0, F_SHOWFUNCKEY, F_CUSTMENU_22, F_CUSTMENU_2, F_CUSTMENU_12, F_0, F_0 },
+		{ '3', _T("3"), F_0, F_0, F_SHOWSTATUSBAR, F_CUSTMENU_23, F_CUSTMENU_3, F_CUSTMENU_13, F_0, F_0 },
+		{ '4', _T("4"), F_0, F_0, F_TYPE_LIST, F_CUSTMENU_24, F_CUSTMENU_4, F_CUSTMENU_14, F_0, F_0 },
+		{ '5', _T("5"), F_0, F_0, F_OPTION_TYPE, F_0, F_CUSTMENU_5, F_CUSTMENU_15, F_0, F_0 },
+		{ '6', _T("6"), F_0, F_0, F_OPTION, F_0, F_CUSTMENU_6, F_CUSTMENU_16, F_0, F_0 },
+		{ '7', _T("7"), F_0, F_0, F_FONT, F_0, F_CUSTMENU_7, F_CUSTMENU_17, F_0, F_0 },
+		{ '8', _T("8"), F_0, F_0, F_0, F_0, F_CUSTMENU_8, F_CUSTMENU_18, F_0, F_0 },
+		{ '9', _T("9"), F_0, F_0, F_0, F_0, F_CUSTMENU_9, F_CUSTMENU_19, F_0, F_0 },
+
 		/* アルファベット */
-		//2001.12.06 hor Alt+A を「SORT_ASC」に割当
-		{ 'A', "A",0, 0, F_SELECTALL, 0, F_SORT_ASC, 0, 0, 0 },
-		//Jan. 13, 2001 JEPRO	Ctrl+B に「ブラウズ」を追加
-		{ 'B', "B",0, 0, F_BROWSE, 0, 0, 0, 0, 0 },
-		//Jan. 16, 2001 JEPRO	SHift+Ctrl+C に「.hと同名の.c(なければ.cpp)を開く」を追加
-		//Feb. 07, 2001 JEPRO	SHift+Ctrl+C を「.hと同名の.c(なければ.cpp)を開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
-		{ 'C', "C",0, 0, F_COPY, F_OPEN_HfromtoC, 0, 0, 0, 0 },
-		//Jan. 16, 2001 JEPRO	Ctrl+D に「単語切り取り」, Shift+Ctrl+D に「単語削除」を追加
-		//2001.12.06 hor Alt+D を「SORT_DESC」に割当
-		{ 'D', "D",0, 0, F_WordCut, F_WordDelete, F_SORT_DESC, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+Alt+E に「重ねて表示」を追加
-		//Jan. 16, 2001	JEPRO	Ctrl+E に「行切り取り(折り返し単位)」, Shift+Ctrl+E に「行削除(折り返し単位)」を追加
-		{ 'E', "E",0, 0, F_CUT_LINE, F_DELETE_LINE, 0, 0, F_CASCADE, 0 },
-		{ 'F', "F",0, 0, F_SEARCH_DIALOG, 0, 0, 0, 0, 0 },
-		{ 'G', "G",0, 0, F_GREP_DIALOG, 0, 0, 0, 0, 0 },
-		//Oct. 07, 2000 JEPRO	Ctrl+Alt+H に「上下に並べて表示」を追加
-		//Jan. 16, 2001 JEPRO	Ctrl+H を「カーソル前を削除」→「カーソル行をウィンドウ中央へ」に変更し	Shift+Ctrl+H に「.cまたは.cppと同名の.hを開く」を追加
-		//Feb. 07, 2001 JEPRO	SHift+Ctrl+H を「.cまたは.cppと同名の.hを開く」→「同名のC/C++ヘッダ(ソース)を開く」に変更
-		{ 'H', "H",0, 0, F_CURLINECENTER, F_OPEN_HfromtoC, 0, 0, F_TILE_V, 0 },
-		//Jan. 21, 2001	JEPRO	Ctrl+I に「行の二重化」を追加
-		{ 'I', "I",0, 0, F_DUPLICATELINE, 0, 0, 0, 0, 0 },
-		{ 'J', "J",0, 0, F_JUMP_DIALOG, 0, 0, 0, 0, 0 },
-		//Jan. 16, 2001	JEPRO	Ctrl+K に「行末まで切り取り(改行単位)」, Shift+Ctrl+E に「行末まで削除(改行単位)」を追加
-		{ 'K', "K",0, 0, F_LineCutToEnd, F_LineDeleteToEnd, 0, 0, 0, 0 },
-		//Jan. 14, 2001 JEPRO	Ctrl+Alt+L に「小文字」, Shift+Ctrl+Alt+L に「大文字」を追加
-		//Jan. 16, 2001 Ctrl+L を「カーソル行をウィンドウ中央へ」→「キーマクロの読み込み」に変更し「カーソル行をウィンドウ中央へ」は Ctrl+H に移動
-		//2001.12.03 hor Alt+L を「LTRIM」に割当
-		{ 'L', "L",0, 0, F_LOADKEYMACRO, F_EXECKEYMACRO, F_LTRIM, 0, F_TOLOWER, F_TOUPPER },
-		//Jan. 16, 2001 JEPRO	Ctrl+M に「キーマクロの保存」を追加
-		//2001.12.06 hor Alt+M を「MERGE」に割当
-		{ 'M', "M",0, 0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MERGE, 0, 0, 0 },
-		//Oct. 20, 2000 JEPRO	Alt+N に「移動履歴: 次へ」を追加
-		{ 'N', "N",0, 0, F_FILENEW, 0, F_JUMPHIST_NEXT, 0, 0, 0 },
-		//Jan. 13, 2001 JEPRO	Alt+O に「アウトプット」を追加
-		{ 'O', "O",0, 0, F_FILEOPEN, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+P に「印刷」, Shift+Ctrl+P に「印刷プレビュー」, Ctrl+Alt+P に「ページ設定」を追加
-		//Oct. 20, 2000 JEPRO	Alt+P に「移動履歴: 前へ」を追加
-		{ 'P', "P",0, 0, F_PRINT, F_PRINT_PREVIEW, F_JUMPHIST_PREV, 0, F_PRINT_PAGESETUP, 0 },
-		//Jan. 24, 2001	JEPRO	Ctrl+Q に「キー割り当て一覧をコピー」を追加
-		{ 'Q', "Q",0, 0, F_CREATEKEYBINDLIST, 0, 0, 0, 0, 0 },
-		//2001.12.03 hor Alt+R を「RTRIM」に割当
-		{ 'R', "R",0, 0, F_REPLACE_DIALOG, 0, F_RTRIM, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Shift+Ctrl+S に「名前を付けて保存」を追加
-		// 2008.05.30 nasukoji	Ctrl+Alt+S に「指定桁で折り返す」を追加
-		{ 'S', "S",0, 0, F_FILESAVE, F_FILESAVEAS_DIALOG, 0, 0, F_TMPWRAPSETTING, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+Alt+T に「左右に並べて表示」を追加
-		//Jan. 21, 2001	JEPRO	Ctrl+T に「タグジャンプ」, Shift+Ctrl+T に「タグジャンプバック」を追加
-		{ 'T', "T",0, 0, F_TAGJUMP, F_TAGJUMPBACK, 0, 0, F_TILE_H, 0 },
-		//Oct. 7, 2000 JEPRO	Ctrl+Alt+U に「現在のウィンドウ幅で折り返し」を追加
-		//Jan. 16, 2001	JEPRO	Ctrl+U に「行頭まで切り取り(改行単位)」, Shift+Ctrl+U に「行頭まで削除(改行単位)」を追加
-		{ 'U', "U",0, 0, F_LineCutToStart, F_LineDeleteToStart, 0, 0, F_WRAPWINDOWWIDTH, 0 },
-		{ 'V', "V",0, 0, F_PASTE, 0, 0, 0, 0, 0 },
-		// 2008.05.30 nasukoji	Ctrl+Alt+W に「右端で折り返す」を追加
-		{ 'W', "W",0, 0, F_SELECTWORD, 0, 0, 0, F_TMPWRAPWINDOW, 0 },
-		//Jan. 13, 2001 JEPRO	Alt+X を「カスタムメニュー1」→「未定義」に変更し「カスタムメニュー1」は Alt+1 に移動
-		// 2008.05.30 nasukoji	Ctrl+Alt+X に「折り返さない」を追加
-		{ 'X', "X",0, 0, F_CUT, 0, 0, 0, F_TMPWRAPNOWRAP, 0 },
-		{ 'Y', "Y",0, 0, F_REDO, 0, 0, 0, 0, 0 },
-		{ 'Z', "Z",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
+		//keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
+		{ 'A', _T("A"), F_0, F_0, F_SELECTALL, F_0, F_SORT_ASC, F_0, F_0, F_0 },
+		{ 'B', _T("B"), F_0, F_0, F_BROWSE, F_0, F_0, F_0, F_0, F_0 },
+		{ 'C', _T("C"), F_0, F_0, F_COPY, F_OPEN_HfromtoC, F_0, F_0, F_0, F_0 },
+		{ 'D', _T("D"), F_0, F_0, F_WordCut, F_WordDelete, F_SORT_DESC, F_0, F_0, F_0 },
+		{ 'E', _T("E"), F_0, F_0, F_CUT_LINE, F_DELETE_LINE, F_0, F_0, F_CASCADE, F_0 },
+		{ 'F', _T("F"), F_0, F_0, F_SEARCH_DIALOG, F_0, F_0, F_0, F_0, F_0 },
+		{ 'G', _T("G"), F_0, F_0, F_GREP_DIALOG, F_0, F_0, F_0, F_0, F_0 },
+		{ 'H', _T("H"), F_0, F_0, F_CURLINECENTER, F_OPEN_HfromtoC, F_0, F_0, F_TILE_V, F_0 },
+		{ 'I', _T("I"), F_0, F_0, F_DUPLICATELINE, F_0, F_0, F_0, F_0, F_0 },
+		{ 'J', _T("J"), F_0, F_0, F_JUMP_DIALOG, F_0, F_0, F_0, F_0, F_0 },
+		{ 'K', _T("K"), F_0, F_0, F_LineCutToEnd, F_LineDeleteToEnd, F_0, F_0, F_0, F_0 },
+		{ 'L', _T("L"), F_0, F_0, F_LOADKEYMACRO, F_EXECKEYMACRO, F_LTRIM, F_0, F_TOLOWER, F_TOUPPER },
+		{ 'M', _T("M"), F_0, F_0, F_SAVEKEYMACRO, F_RECKEYMACRO, F_MERGE, F_0, F_0, F_0 },
+		{ 'N', _T("N"), F_0, F_0, F_FILENEW, F_0, F_JUMPHIST_NEXT, F_0, F_0, F_0 },
+		{ 'O', _T("O"), F_0, F_0, F_FILEOPEN, F_0, F_0, F_0, F_0, F_0 },
+		{ 'P', _T("P"), F_0, F_0, F_PRINT, F_PRINT_PREVIEW, F_JUMPHIST_PREV, F_0, F_PRINT_PAGESETUP, F_0 },
+		{ 'Q', _T("Q"), F_0, F_0, F_CREATEKEYBINDLIST, F_0, F_0, F_0, F_0, F_0 },
+		{ 'R', _T("R"), F_0, F_0, F_REPLACE_DIALOG, F_0, F_RTRIM, F_0, F_0, F_0 },
+		{ 'S', _T("S"), F_0, F_0, F_FILESAVE, F_FILESAVEAS_DIALOG, F_0, F_0, F_TMPWRAPSETTING, F_0 },
+		{ 'T', _T("T"), F_0, F_0, F_TAGJUMP, F_TAGJUMPBACK, F_0, F_0, F_TILE_H, F_0 },
+		{ 'U', _T("U"), F_0, F_0, F_LineCutToStart, F_LineDeleteToStart, F_0, F_0, F_WRAPWINDOWWIDTH, F_0 },
+		{ 'V', _T("V"), F_0, F_0, F_PASTE, F_0, F_0, F_0, F_0, F_0 },
+		{ 'W', _T("W"), F_0, F_0, F_SELECTWORD, F_0, F_0, F_0, F_TMPWRAPWINDOW, F_0 },
+		{ 'X', _T("X"), F_0, F_0, F_CUT, F_0, F_0, F_0, F_TMPWRAPNOWRAP, F_0 },
+		{ 'Y', _T("Y"), F_0, F_0, F_REDO, F_0, F_0, F_0, F_0, F_0 },
+		{ 'Z', _T("Z"), F_0, F_0, F_UNDO, F_0, F_0, F_0, F_0, F_0 },
+
 		/* 記号 */
-		//Oct. 7, 2000 JEPRO	Shift+Ctrl+- に「上下に分割」を追加
-		// 2002.02.08 hor Ctrl+-にファイル名をコピーを追加
-		{ 0x00bd, "-",0, 0, F_COPYFNAME, F_SPLIT_V, 0, 0, 0, 0 },
-		{ 0x00de, "^(英語')",0, 0, F_COPYTAG, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Shift+Ctrl+\ に「左右に分割」を追加
-		{ 0x00dc, "\\",0, 0, F_COPYPATH, F_SPLIT_H, 0, 0, 0, 0 },
-		//Sept. 20, 2000 JEPRO	Ctrl+@ に「ファイル内容比較」を追加  //Oct. 15, 2000 JEPRO「選択範囲内全行コピー」に変更
-		{ 0x00c0, "@(英語`)",0, 0, F_COPYLINES, 0, 0, 0, 0, 0 },
-		//	Aug. 16, 2000 genta
-		//	反対向きの括弧にも括弧検索を追加
-		{ 0x00db, "[",0, 0, F_BRACKETPAIR, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	Shift+Ctrl+; に「縦横に分割」を追加	//Jan. 16, 2001	Alt+; に「日付挿入」を追加
-		{ 0x00bb, ";",0, 0, 0, F_SPLIT_VH, F_INS_DATE, 0, 0, 0 },
-		//Sept. 14, 2000 JEPRO	Ctrl+: に「選択範囲内全行行番号付きコピー」を追加	//Jan. 16, 2001	Alt+: に「時刻挿入」を追加
-		{ 0x00ba, ":",0, 0, F_COPYLINESWITHLINENUMBER, 0, F_INS_TIME, 0, 0, 0 },
-		{ 0x00dd, "]",0, 0, F_BRACKETPAIR, 0, 0, 0, 0, 0 },
-		{ 0x00bc, ",",0, 0, 0, 0, 0, 0, 0, 0 },
-		//Sept. 14, 2000 JEPRO	Ctrl+. に「選択範囲内全行引用符付きコピー」を追加
-		{ 0x00be, ".",0, 0, F_COPYLINESASPASSAGE, 0, 0, 0, 0, 0 },
-		{ 0x00bf, "/",0, 0, F_HOKAN, 0, 0, 0, 0, 0 },
-		//	Nov. 15, 2000 genta PC/ATキーボードに合わせてキーコードを変更
-		//	PC98救済のため，従来のキーコードに対応する項目を追加．
-		{ 0x00e2, "_",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
-		{ 0x00df, "_(PC-98)",0, 0, F_UNDO, 0, 0, 0, 0, 0 },
-		//Oct. 7, 2000 JEPRO	長くて表示しきれない所がでてきてしまうのでアプリケーションキー→アプリキーに短縮
-		{ VK_APPS, "アプリキー",F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON }
+		//keycode, keyname, なし, Shitf+, Ctrl+, Shift+Ctrl+, Alt+, Shit+Alt+, Ctrl+Alt+, Shift+Ctrl+Alt+
+		{ 0x00bd, _T("-"), F_0, F_0, F_COPYFNAME, F_SPLIT_V, F_0, F_0, F_0, F_0 },
+		{ 0x00de, _T("^(英語')"), F_0, F_0, F_COPYTAG, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00dc, _T("\\"), F_0, F_0, F_COPYPATH, F_SPLIT_H, F_0, F_0, F_0, F_0 },
+		{ 0x00c0, _T("@(英語`)"), F_0, F_0, F_COPYLINES, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00db, _T("["), F_0, F_0, F_BRACKETPAIR, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00bb, _T(";"), F_0, F_0, F_0, F_SPLIT_VH, F_INS_DATE, F_0, F_0, F_0 },
+		{ 0x00ba, _T(":"), F_0, F_0, _COPYWITHLINENUM, F_0, F_INS_TIME, F_0, F_0, F_0 },
+		{ 0x00dd, _T("]"), F_0, F_0, F_BRACKETPAIR, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00bc, _T(","), F_0, F_0, F_0, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00be, _T("."), F_0, F_0, F_COPYLINESASPASSAGE, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00bf, _T("/"), F_0, F_0, F_HOKAN, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00e2, _T("_"), F_0, F_0, F_UNDO, F_0, F_0, F_0, F_0, F_0 },
+		{ 0x00df, _T("_(PC-98)"), F_0, F_0, F_UNDO, F_0, F_0, F_0, F_0, F_0 },
+		{ VK_APPS, _T("アプリキー"), F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON }
 	};
 	const int	nKeyDataInitNum = sizeof( KeyDataInit ) / sizeof( KeyDataInit[0] );
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
@@ -5130,7 +5034,9 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	}
 	//	To Here 2007.11.04 genta バッファオーバーラン防止
 	for( int i = 0; i < nKeyDataInitNum; ++i ){
-		SetKeyNameArrVal( pShareData, i,
+		SetKeyNameArrVal(
+			pShareData,
+			i,
 			KeyDataInit[i].nKeyCode,
 			KeyDataInit[i].pszKeyName,
 			KeyDataInit[i].nFuncCode_0,
@@ -5193,13 +5099,17 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 
 	//	ツールバーアイコン数の最大値を超えないためのおまじない
 	//	最大値を超えて定義しようとするとここでコンパイルエラーになります．
-	char dummy[ sizeof(DEFAULT_TOOL_BUTTONS)/sizeof(DEFAULT_TOOL_BUTTONS[0]) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
+	char dummy[ _countof(DEFAULT_TOOL_BUTTONS) < MAX_TOOLBAR_BUTTON_ITEMS ? 1:0 ];
 	dummy[0]=0;
 
-	memcpy( (void*)pShareData->m_Common.m_nToolBarButtonIdxArr, DEFAULT_TOOL_BUTTONS, sizeof(DEFAULT_TOOL_BUTTONS) );
+	memcpy(
+		(void*)pShareData->m_Common.m_nToolBarButtonIdxArr,
+		DEFAULT_TOOL_BUTTONS,
+		sizeof(DEFAULT_TOOL_BUTTONS)
+	);
 
 	/* ツールバーボタンの数 */
-	pShareData->m_Common.m_nToolBarButtonNum = sizeof(DEFAULT_TOOL_BUTTONS)/sizeof(DEFAULT_TOOL_BUTTONS[0]);
+	pShareData->m_Common.m_nToolBarButtonNum = _countof(DEFAULT_TOOL_BUTTONS);
 	pShareData->m_Common.m_bToolBarIsFlat = !IsVisualStyle();			/* フラットツールバーにする／しない */	// 2006.06.23 ryoji ビジュアルスタイルでは初期値をノーマルにする
 	
 }
@@ -5212,7 +5122,6 @@ void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
 */
 void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 {
-
 //キーワード：デフォルトカラー設定
 /************************/
 /* タイプ別設定の規定値 */
@@ -5241,12 +5150,12 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_cBlockComment.CopyTo(1, "", "");	/* ブロックコメントデリミタ2 */
 
 	pShareData->m_Types[nIdx].m_nStringType = 0;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	strcpy( pShareData->m_Types[nIdx].m_szIndentChars, "" );		/* その他のインデント対象文字 */
+	strcpy( pShareData->m_Types[nIdx].m_szIndentChars, _T("") );		/* その他のインデント対象文字 */
 
 	pShareData->m_Types[nIdx].m_nColorInfoArrNum = COLORIDX_LAST;
 
 	// 2001/06/14 Start by asa-o
-	strcpy( pShareData->m_Types[nIdx].m_szHokanFile, "" );		/* 入力補完 単語ファイル */
+	strcpy( pShareData->m_Types[nIdx].m_szHokanFile, _T("") );		/* 入力補完 単語ファイル */
 	// 2001/06/14 End
 
 	// 2001/06/19 asa-o
@@ -5256,8 +5165,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
 
 	//@@@2002.2.4 YAZAKI
-	pShareData->m_Types[nIdx].m_szExtHelp[0] = '\0';
-	pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = '\0';
+	pShareData->m_Types[nIdx].m_szExtHelp[0] = _T('\0');
+	pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = _T('\0');
 	pShareData->m_Types[nIdx].m_bHtmlHelpIsSingle = TRUE;
 
 	pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
@@ -5360,7 +5269,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 //@@@ 2001.11.17 add start MIK
 	for(i = 0; i < 100; i++)
 	{
-		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_szKeyword[0] = '\0';
+		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_szKeyword[0] = _T('\0');
 		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 	}
 	pShareData->m_Types[nIdx].m_bUseRegexKeyword = FALSE;
@@ -5370,8 +5279,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 //@@@ 2006.04.10 fon ADD-start
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_nUse = 0;
-		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = '\0';
-		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = '\0';
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
+		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 	}
 	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;	/* 辞書選択機能の使用可否 */
 	pShareData->m_Types[nIdx].m_nKeyHelpNum = 0;			/* 登録辞書数 */
@@ -5660,7 +5569,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_REDO;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = 'R';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
+	rCommon.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_CUT;
@@ -5675,7 +5584,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_DELETE;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = 'D';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
+	rCommon.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPY_CRLF;	//Nov. 9, 2000 JEPRO 「CRLF改行でコピー」を追加
@@ -5687,14 +5596,14 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_PASTEBOX;	//Nov. 9, 2000 JEPRO 「矩形貼り付け」を復活
 	rCommon.m_nCustMenuItemKeyArr [0][n] = 'X';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
+	rCommon.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_SELECTALL;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = 'A';
 	n++;
 
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
+	rCommon.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
 	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMP;
@@ -5703,7 +5612,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMPBACK;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = 'B';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
+	rCommon.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
 	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPYLINES;
@@ -5712,7 +5621,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPYLINESASPASSAGE;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = '.';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[0][n] = 0;
+	rCommon.m_nCustMenuItemFuncArr[0][n] = F_0;
 	rCommon.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
@@ -5735,7 +5644,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemKeyArr [1][3] = 'L';
 	rCommon.m_nCustMenuItemFuncArr[1][4] = F_TOUPPER;
 	rCommon.m_nCustMenuItemKeyArr [1][4] = 'U';
-	rCommon.m_nCustMenuItemFuncArr[1][5] = 0;
+	rCommon.m_nCustMenuItemFuncArr[1][5] = F_0;
 	rCommon.m_nCustMenuItemKeyArr [1][5] = '\0';
 	rCommon.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
 	rCommon.m_nCustMenuItemKeyArr [1][6] = 'C';
@@ -5760,7 +5669,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_GROUPCLOSE;
@@ -5775,7 +5684,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSERIGHT;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'M';
 	n++;
-	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = 0;
+	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
 	rCommon.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
 	rCommon.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVERIGHT;
