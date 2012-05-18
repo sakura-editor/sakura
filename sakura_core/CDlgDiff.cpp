@@ -18,7 +18,6 @@
 
 #include "StdAfx.h"
 #include <string.h>
-#include "sakura_rc.h"
 #include "CDlgOpenFile.h"
 #include "CDlgDiff.h"
 #include "etc_uty.h"
@@ -27,8 +26,9 @@
 #include "global.h"
 #include "Funccode.h"
 #include "mymessage.h"
-
+#include "sakura_rc.h"
 #include "sakura.hh"
+
 const DWORD p_helpids[] = {	//13200
 	IDC_BUTTON_DIFF_DST,		HIDC_BUTTON_DIFF_DST,
 	IDC_CHECK_DIFF_OPT_BLINE,	HIDC_CHECK_DIFF_OPT_BLINE,
@@ -59,8 +59,8 @@ const DWORD p_helpids[] = {	//13200
 CDlgDiff::CDlgDiff()
 	: m_nIndexSave( 0 )
 {
-	strcpy( m_szFile1, "" );
-	strcpy( m_szFile2, "" );
+	m_szFile1[0] = 0;
+	m_szFile2[0] = 0;
 	//m_nDiffFlgFile12 = 1;
 	m_nDiffFlgOpt    = 0;
 	m_bIsModified    = FALSE;
@@ -71,14 +71,14 @@ CDlgDiff::CDlgDiff()
 
 /* モーダルダイアログの表示 */
 int CDlgDiff::DoModal(
-	HINSTANCE	hInstance,
-	HWND		hwndParent,
-	LPARAM		lParam,
-	const char*	pszPath,		//自ファイル
-	BOOL		bIsModified		//自ファイル編集中？
+	HINSTANCE			hInstance,
+	HWND				hwndParent,
+	LPARAM				lParam,
+	const TCHAR*		pszPath,		//自ファイル
+	BOOL				bIsModified		//自ファイル編集中？
 )
 {
-	strcpy( m_szFile1, pszPath );
+	_tcscpy(m_szFile1, pszPath);
 	m_bIsModified = bIsModified;
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_DIFF, lParam );
@@ -96,18 +96,18 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 	case IDC_BUTTON_DIFF_DST:	/* 参照 */
 		{
 			CDlgOpenFile	cDlgOpenFile;
-			char			szPath[_MAX_PATH];
-			strcpy( szPath, m_szFile2 );
+			TCHAR			szPath[_MAX_PATH];
+			_tcscpy( szPath, m_szFile2 );
 			/* ファイルオープンダイアログの初期化 */
 			cDlgOpenFile.Create(
 				m_hInstance,
 				m_hWnd,
-				"*.*",
+				_T("*.*"),
 				m_szFile1 /*m_szFile2*/
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
 			{
-				strcpy( m_szFile2, szPath );
+				_tcscpy( m_szFile2, szPath );
 				::SetDlgItemText( m_hWnd, IDC_EDIT_DIFF_DST, m_szFile2 );
 				//外部ファイルを選択状態に
 				::CheckDlgButton( m_hWnd, IDC_RADIO_DIFF_DST1, TRUE );
@@ -216,7 +216,7 @@ void CDlgDiff::SetData( void )
 		EditInfo	*pFileInfo;
 		int			i;
 		int			nItem;
-		char		szName[_MAX_PATH];
+		TCHAR		szName[_MAX_PATH];
 		CEditDoc*	pCEditDoc = (CEditDoc*)m_lParam;
 		int			count = 0;
 
@@ -240,38 +240,17 @@ void CDlgDiff::SetData( void )
 				}
 
 				/* ファイル名を作成する */
-				wsprintf( szName, "%s %s",
-					( strlen( pFileInfo->m_szPath ) ) ? pFileInfo->m_szPath : "(無題)",
-					pFileInfo->m_bIsModified ? "*" : " "
+				wsprintf(
+					szName,
+					_T("%s %s"),
+					( strlen( pFileInfo->m_szPath ) ) ? pFileInfo->m_szPath : _T("(無題)"),
+					pFileInfo->m_bIsModified ? _T("*") : _T(" ")
 				);
 
 				// gm_pszCodeNameArr_3 からコピーするように変更
 				if( 0 < pFileInfo->m_nCharCode && pFileInfo->m_nCharCode < CODE_CODEMAX ){
 					strcat( szName, gm_pszCodeNameArr_3[pFileInfo->m_nCharCode] );
 				}
-#if 0
-				/* 文字コードを付与する */
-				switch( pFileInfo->m_nCharCode )
-				{
-				case CODE_JIS:	/* JIS */
-					strcat( szName, "  [JIS]" );
-					break;
-				case CODE_EUC:	/* EUC */
-					strcat( szName, "  [EUC]" );
-					break;
-				case CODE_UNICODE:	/* Unicode */
-					strcat( szName, "  [Unicode]" );
-					break;
-				case CODE_UTF8:	/* UTF-8 */
-					strcat( szName, "  [UTF-8]" );
-					break;
-				case CODE_UTF7:	/* UTF-7 */
-					strcat( szName, "  [UTF-7]" );
-					break;
-				default:	/* SJIS */
-					break;
-				}
-#endif
 
 				/* リストに登録する */
 				nItem = ::SendMessage( hwndList, LB_ADDSTRING, 0, (LPARAM)(char*)szName );
@@ -338,7 +317,7 @@ int CDlgDiff::GetData( void )
 	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
 
 	//相手ファイル名
-	strcpy( m_szFile2, "" );
+	_tcscpy( m_szFile2, _T("") );
 	m_hWnd_Dst = NULL;
 	m_bIsModifiedDst = FALSE;
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
@@ -366,7 +345,7 @@ int CDlgDiff::GetData( void )
 			::SendMessage( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
 			pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
-			strcpy( m_szFile2, pFileInfo->m_szPath );
+			_tcscpy( m_szFile2, pFileInfo->m_szPath );
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;
 		}
 		else
