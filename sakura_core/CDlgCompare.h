@@ -31,14 +31,13 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const char*, BOOL, char*, HWND* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, BOOL, TCHAR*, HWND* );	/* モーダルダイアログの表示 */
 
-	const char*		m_pszPath;
+	const TCHAR*		m_pszPath;
 	BOOL			m_bIsModified;
-	char*			m_pszComparePath;
+	TCHAR*			m_pszComparePath;
 	HWND*			m_phwndCompareWnd;
 	BOOL			m_bCompareAndTileHorz;/* 左右に並べて表示 */
-//	BOOL			m_bCompareAndTileHorz;/* 左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 
 protected:
 	/*
