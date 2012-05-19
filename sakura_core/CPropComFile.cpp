@@ -21,10 +21,8 @@
 
 
 static const DWORD p_helpids[] = {	//01310
-	IDC_CHECK_EXCVLUSIVE_NO,				HIDC_CHECK_EXCVLUSIVE_NO,				//ファイルの排他制御（排他制御しない）
+	IDC_COMBO_FILESHAREMODE,				HIDC_COMBO_FILESHAREMODE,				//排他制御
 	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
-	IDC_CHECK_EXCVLUSIVE_WRITE,				HIDC_CHECK_EXCVLUSIVE_WRITE,			//ファイルの排他制御（上書き禁止）
-	IDC_CHECK_EXCVLUSIVE_READWRITE,			HIDC_CHECK_EXCVLUSIVE_READWRITE,		//ファイルお排他制御（読み書き禁止）
 	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	//無変更でも上書き
 	IDC_CHECK_AUTOSAVE,						HIDC_CHECK_AUTOSAVE,					//自動的に保存
 	IDC_CHECK_bDropFileAndClose,			HIDC_CHECK_bDropFileAndClose,			//閉じて開く
@@ -44,6 +42,14 @@ static const DWORD p_helpids[] = {	//01310
 	0, 0
 };
 
+struct {
+	int		nMethod;
+	TCHAR*		pszName;
+} ShareModeArr[] = {
+	{ 0,	_T("しない") },
+	{ OF_SHARE_DENY_WRITE,		_T("上書きを禁止する") },
+	{ OF_SHARE_EXCLUSIVE,	_T("読み書きを禁止する") },
+};
 
 //	From Here Jun. 2, 2001 genta
 /*!
@@ -190,13 +196,16 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
+
+		if( wID == IDC_COMBO_FILESHAREMODE && wNotifyCode == CBN_SELCHANGE ){	// コンボボックスの選択変更
+			EnableFilePropInput(hwndDlg);
+			break;
+		}
+
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
-			case IDC_CHECK_EXCVLUSIVE_NO:
-			case IDC_CHECK_EXCVLUSIVE_WRITE:
-			case IDC_CHECK_EXCVLUSIVE_READWRITE:
 			case IDC_CHECK_bDropFileAndClose:/* ファイルをドロップしたときは閉じて開く */
 			case IDC_CHECK_AUTOSAVE:
 			case IDC_CHECK_ALERT_IF_LARGEFILE:
@@ -245,18 +254,17 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 {
 	/*--- File ---*/
 	/* ファイルの排他制御モード */
-	switch( m_Common.m_nFileShareMode ){
-	case OF_SHARE_DENY_WRITE:	/* 書き込み禁止 */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE, BST_CHECKED );
-		break;
-	case OF_SHARE_EXCLUSIVE:	/* 読み書き禁止 */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE, BST_CHECKED );
-		break;
-	case 0:	/* 排他なし */
-	default:	/* 排他なし */
-		::CheckDlgButton( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO, BST_CHECKED );
-		break;
+	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
+	::SendMessage(hwndCombo, CB_RESETCONTENT, 0L, 0L);
+	int		nSelPos = 0;
+	for( int i = 0; i < _countof( ShareModeArr ); ++i ){
+		::SendMessage(hwndCombo, CB_INSERTSTRING, (WPARAM)i, (LPARAM)ShareModeArr[i].pszName);
+		if( ShareModeArr[i].nMethod == m_Common.m_nFileShareMode ){
+			nSelPos = i;
+		}
 	}
+	::SendMessage(hwndCombo, CB_SETCURSEL, (WPARAM)nSelPos, 0L);
+
 	/* 更新の監視 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_bCheckFileTimeStamp );
 
@@ -320,18 +328,10 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_FILE;
 
 	/* ファイルの排他制御モード */
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO ) ){	/* 排他なし */
-		m_Common.m_nFileShareMode = 0;
-	}else
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_WRITE ) ){	/* 書き込み禁止 */
-		m_Common.m_nFileShareMode = OF_SHARE_DENY_WRITE	;
-	}else
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_READWRITE ) ){	/* 読み書き禁止 */
-		m_Common.m_nFileShareMode = OF_SHARE_EXCLUSIVE;
-	}else{
-		/* 排他なし */
-		m_Common.m_nFileShareMode = 0;
-	}
+	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
+	int		nSelPos = ::SendMessage(hwndCombo, CB_GETCURSEL, 0L, 0L);
+	m_Common.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
+
 	/* 更新の監視 */
 	m_Common.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
 
@@ -423,7 +423,8 @@ void CPropCommon::EnableFilePropInput(HWND hwndDlg)
 	}
 
 	//	排他するかどうか
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_EXCVLUSIVE_NO ) ){
+	int nSelPos = ::SendMessage(::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE), CB_GETCURSEL, 0L, 0L);
+	if( ShareModeArr[nSelPos].nMethod == 0 ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), FALSE );

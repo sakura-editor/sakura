@@ -266,18 +266,11 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    CONTROL         "排他制御しない(&N)",IDC_CHECK_EXCVLUSIVE_NO,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,8,16,70,10,0,
-                    HIDC_CHECK_EXCVLUSIVE_NO
-    CONTROL         "他プロセスからの上書きを禁止する(&P)",
-                    IDC_CHECK_EXCVLUSIVE_WRITE,"Button",BS_AUTORADIOBUTTON,8,
-                    31,127,10,0,HIDC_CHECK_EXCVLUSIVE_WRITE
-    CONTROL         "他プロセスからの読み書きを禁止する(&R)",
-                    IDC_CHECK_EXCVLUSIVE_READWRITE,"Button",
-                    BS_AUTORADIOBUTTON,8,46,134,10,0,
-                    HIDC_CHECK_EXCVLUSIVE_READWRITE
+    LTEXT           "排他制御(&H)",IDC_STATIC,8,16,48,10,NOT WS_GROUP
+    COMBOBOX        IDC_COMBO_FILESHAREMODE,60,14,84,78,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     CONTROL         "更新の監視(&W)",IDC_CHECK_bCheckFileTimeStamp,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,83,16,60,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,60,31,64,10,0,
                     HIDC_CHECK_bCheckFileTimeStamp
     GROUPBOX        "ファイルの排他制御",IDC_STATIC,3,3,150,57,WS_GROUP
     CONTROL         "無変更でも上書きする(&S)",
