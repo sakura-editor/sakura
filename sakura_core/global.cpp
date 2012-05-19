@@ -83,15 +83,6 @@ const int gm_nCodeComboNameArrNum = sizeof( gm_nCodeComboValueArr ) / sizeof( gm
 const COLORREF	SELECTEDAREA_RGB = RGB( 255, 255, 255 );
 const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 
-/*! 行終端子の配列 */
-const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
-	EOL_NONE			,	// == 0
-	EOL_CRLF			,	// == 2
-	EOL_LFCR			,	// == 2
-	EOL_LF				,	// == 1
-	EOL_CR					// == 1
-};
-
 /*! キーワードキャラクタ */
 const unsigned char gm_keyword_char[256] = {
  /* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F      : 0123456789ABCDEF */

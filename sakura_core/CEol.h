@@ -34,9 +34,34 @@
 
 #include "global.h"
 
-/*-----------------------------------------------------------------------
-クラスの宣言
------------------------------------------------------------------------*/
+// 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
+/* 行終端子の種類 */
+SAKURA_CORE_API enum EEolType {
+	EOL_NONE,			//!<
+	EOL_CRLF,			//!< 0d0a
+	EOL_LFCR,			//!< 0a0d
+	EOL_LF,				//!< 0a
+	EOL_CR,				//!< 0d
+	EOL_CODEMAX,		//
+	EOL_UNKNOWN = -1	//
+};
+
+/* 行終端子のデータ長 */
+SAKURA_CORE_API enum enumEOLLen {
+	LEN_EOL_NONE			= 0,
+	LEN_EOL_CRLF			= 2,
+	LEN_EOL_LFCR			= 2,
+	LEN_EOL_LF				= 1,
+	LEN_EOL_CR				= 1
+//	LEN_EOL_UNKNOWN		0
+};
+
+#define EOL_TYPE_NUM	5
+
+/* 行終端子の配列 */
+SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
+
+
 /*!
 	@brief 行末の改行コードを管理
 

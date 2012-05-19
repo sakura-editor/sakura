@@ -177,28 +177,6 @@ SAKURA_CORE_API extern const int gm_nCodeComboValueArr[];
 SAKURA_CORE_API extern const char* const gm_pszCodeComboNameArr[];
 SAKURA_CORE_API extern const int gm_nCodeComboNameArrNum;
 
-// 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
-/* 行終端子の種類 */
-SAKURA_CORE_API enum EEolType {
-	EOL_NONE,
-	EOL_CRLF,
-	EOL_LFCR,
-	EOL_LF,
-	EOL_CR,
-	EOL_CODEMAX,
-	EOL_UNKNOWN = -1
-};
-
-/* 行終端子のデータ長 */
-SAKURA_CORE_API enum enumEOLLen {
-	LEN_EOL_NONE			= 0,
-	LEN_EOL_CRLF			= 2,
-	LEN_EOL_LFCR			= 2,
-	LEN_EOL_LF				= 1,
-	LEN_EOL_CR				= 1
-//	LEN_EOL_UNKNOWN		0
-};
-
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
 SAKURA_CORE_API enum enumShowDlg {
 	SHOW_NORMAL			= 0,
@@ -206,11 +184,6 @@ SAKURA_CORE_API enum enumShowDlg {
 	SHOW_TOGGLE			= 2,
 };
 
-
-#define EOL_TYPE_NUM	5
-
-/* 行終端子の配列 */
-SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
 /* 選択領域描画用パラメータ */
 SAKURA_CORE_API extern const COLORREF	SELECTEDAREA_RGB;

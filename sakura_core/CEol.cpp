@@ -31,6 +31,16 @@
 #include "StdAfx.h"
 #include "CEol.h"
 
+/*! 行終端子の配列 */
+const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
+	EOL_NONE			,	// == 0
+	EOL_CRLF			,	// == 2
+	EOL_LFCR			,	// == 2
+	EOL_LF				,	// == 1
+	EOL_CR					// == 1
+};
+
+
 //-----------------------------------------------
 //	固定データ
 //-----------------------------------------------
