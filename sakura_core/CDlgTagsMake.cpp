@@ -31,7 +31,6 @@
 
 #include "StdAfx.h"
 #include <string.h>
-#include "sakura_rc.h"
 #include "CDlgTagsMake.h"
 #include "etc_uty.h"
 #include "Debug.h"
@@ -39,8 +38,9 @@
 #include "global.h"
 #include "Funccode.h"
 #include "mymessage.h"
-
+#include "sakura_rc.h"
 #include "sakura.hh"
+
 const DWORD p_helpids[] = {	//13700
 	IDC_EDIT_TAG_MAKE_FOLDER,	HIDC_EDIT_TAG_MAKE_FOLDER,	//タグ作成フォルダ
 	IDC_BUTTON_TAG_MAKE_REF,	HIDC_BUTTON_TAG_MAKE_REF,	//参照
@@ -55,21 +55,21 @@ const DWORD p_helpids[] = {	//13700
 
 CDlgTagsMake::CDlgTagsMake()
 {
-	strcpy( m_szPath, "" );
-	strcpy( m_szTagsCmdLine, "" );
+	_tcscpy( m_szPath, _T("") );
+	_tcscpy( m_szTagsCmdLine, _T("") );
 	m_nTagsOpt = 0;
 	return;
 }
 
 /* モーダルダイアログの表示 */
 int CDlgTagsMake::DoModal(
-	HINSTANCE	hInstance,
-	HWND		hwndParent,
-	LPARAM		lParam,
-	const char*	pszPath		//パス
+	HINSTANCE		hInstance,
+	HWND			hwndParent,
+	LPARAM			lParam,
+	const TCHAR*	pszPath		//パス
 )
 {
-	strcpy( m_szPath, pszPath );
+	_tcscpy( m_szPath, pszPath );
 
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TAG_MAKE, lParam );
 }
@@ -109,19 +109,19 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 */
 void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 {
-	char	szPath[_MAX_PATH + 1];
+	TCHAR	szPath[_MAX_PATH + 1];
 
 	/* フォルダ */
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath, _MAX_PATH );
 
-	if( SelectDir( hwndDlg, "タグ作成フォルダの選択", szPath, szPath ) )
+	if( SelectDir( hwndDlg, _T("タグ作成フォルダの選択"), szPath, szPath ) )
 	{
 		//末尾に\\マークを追加する．
-		int pos = strlen( szPath );
-		if( pos > 0 && szPath[ pos - 1 ] != '\\' )
+		int pos = _tcslen( szPath );
+		if( pos > 0 && szPath[ pos - 1 ] != _T('\\') )
 		{
-			szPath[ pos     ] = '\\';
-			szPath[ pos + 1 ] = '\0';
+			szPath[ pos     ] = _T('\\');
+			szPath[ pos + 1 ] = _T('\0');
 		}
 
 		::SetDlgItemText( hwndDlg, IDC_EDIT_TAG_MAKE_FOLDER, szPath );
@@ -132,7 +132,7 @@ void CDlgTagsMake::SelectFolder( HWND hwndDlg )
 void CDlgTagsMake::SetData( void )
 {
 	//作成フォルダ
-	::SendMessage( ::GetDlgItem( m_hWnd, IDC_EDIT_TAG_MAKE_FOLDER ), CB_LIMITTEXT, (WPARAM)sizeof( m_szPath ), 0 );
+	::SendMessage( ::GetDlgItem( m_hWnd, IDC_EDIT_TAG_MAKE_FOLDER ), CB_LIMITTEXT, (WPARAM)_countof( m_szPath ), 0 );
 	::SetDlgItemText( m_hWnd, IDC_EDIT_TAG_MAKE_FOLDER, m_szPath );
 
 	//オプション
@@ -140,8 +140,8 @@ void CDlgTagsMake::SetData( void )
 	if( m_nTagsOpt & 0x0001 ) ::CheckDlgButton( m_hWnd, IDC_CHECK_TAG_MAKE_RECURSE, TRUE );
 
 	//コマンドライン
-	::SendMessage( ::GetDlgItem( m_hWnd, IDC_EDIT_TAG_MAKE_CMDLINE ), CB_LIMITTEXT, (WPARAM)sizeof( m_pShareData->m_szTagsCmdLine ), 0 );
-	strcpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
+	::SendMessage( ::GetDlgItem( m_hWnd, IDC_EDIT_TAG_MAKE_CMDLINE ), CB_LIMITTEXT, (WPARAM)_countof( m_pShareData->m_szTagsCmdLine ), 0 );
+	_tcscpy( m_szTagsCmdLine, m_pShareData->m_szTagsCmdLine );
 	::SetDlgItemText( m_hWnd, IDC_EDIT_TAG_MAKE_CMDLINE, m_pShareData->m_szTagsCmdLine );
 
 	return;
@@ -152,11 +152,11 @@ void CDlgTagsMake::SetData( void )
 int CDlgTagsMake::GetData( void )
 {
 	//フォルダ
-	::GetDlgItemText( m_hWnd, IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, sizeof( m_szPath ) );
-	int length = strlen( m_szPath );
+	::GetDlgItemText( m_hWnd, IDC_EDIT_TAG_MAKE_FOLDER, m_szPath, _countof( m_szPath ) );
+	int length = _tcslen( m_szPath );
 	if( length > 0 )
 	{
-		if( m_szPath[ length - 1 ] != '\\' ) strcat( m_szPath, "\\" );
+		if( m_szPath[ length - 1 ] != _T('\\') ) _tcscat( m_szPath, _T("\\") );
 	}
 
 	//CTAGSオプション
@@ -165,8 +165,8 @@ int CDlgTagsMake::GetData( void )
 	m_pShareData->m_nTagsOpt = m_nTagsOpt;
 
 	//コマンドライン
-	::GetDlgItemText( m_hWnd, IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, sizeof( m_szTagsCmdLine ) );
-	strcpy( m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine );
+	::GetDlgItemText( m_hWnd, IDC_EDIT_TAG_MAKE_CMDLINE, m_szTagsCmdLine, _countof( m_szTagsCmdLine ) );
+	_tcscpy( m_pShareData->m_szTagsCmdLine, m_szTagsCmdLine );
 
 	return TRUE;
 }
