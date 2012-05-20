@@ -431,13 +431,6 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
 			/* 再描画 */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
-
-			// 2001.12.03 hor
-			//	ダイアログを閉じないとき、IDC_COMBO_TEXT 上で Enter した場合に
-			//	キャレットが表示されなくなるのを回避する
-			::SendMessage(m_hWnd,WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(m_hWnd,IDC_COMBO_TEXT ),TRUE);
-			// To Here 2001.12.03 hor
-               
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
 		}
