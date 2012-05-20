@@ -16,7 +16,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CDlgReplace.h"
 #include "Debug.h"
 #include "CEditView.h"
@@ -25,9 +24,10 @@
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "CLayout.h"/// 2002/2/3 aroka
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 //置換 CDlgReplace.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//11900
 	IDC_BUTTON_SEARCHNEXT,			HIDC_REP_BUTTON_SEARCHNEXT,			//下検索
 	IDC_BUTTON_SEARCHPREV,			HIDC_REP_BUTTON_SEARCHPREV,			//上検索
@@ -58,15 +58,15 @@ const DWORD p_helpids[] = {	//11900
 
 CDlgReplace::CDlgReplace()
 {
-	m_bLoHiCase = FALSE;		/* 英大文字と英小文字を区別する */
-	m_bWordOnly = FALSE;		/* 一致する単語のみ検索する */
-	m_bConsecutiveAll = FALSE;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-	m_bRegularExp = FALSE;		/* 正規表現 */
-	m_bSelectedArea = FALSE;	/* 選択範囲内置換 */
-	m_szText[0] = '\0';			/* 検索文字列 */
-	m_szText2[0] = '\0';		/* 置換後文字列 */
-	m_nReplaceTarget = 0;		/* 置換対象 */		// 2001.12.03 hor
-	m_nPaste = FALSE;			/* 貼り付ける？ */	// 2001.12.03 hor
+	m_bLoHiCase = FALSE;		// 英大文字と英小文字を区別する
+	m_bWordOnly = FALSE;		// 一致する単語のみ検索する
+	m_bConsecutiveAll = FALSE;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+	m_bRegularExp = FALSE;		// 正規表現
+	m_bSelectedArea = FALSE;	// 選択範囲内置換
+	m_szText[0] = _T('\0');		// 検索文字列
+	m_szText2[0] = _T('\0');	// 置換後文字列
+	m_nReplaceTarget = 0;		// 置換対象		// 2001.12.03 hor
+	m_nPaste = FALSE;			// 貼り付ける？ 	// 2001.12.03 hor
 	m_nReplaceCnt = 0;			//すべて置換の実行結果		// 2002.02.08 hor
 	m_bCanceled = false;		//すべて置換を中断したか	// 2002.02.08 hor
 	return;
@@ -75,16 +75,16 @@ CDlgReplace::CDlgReplace()
 /* モードレスダイアログの表示 */
 HWND CDlgReplace::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, BOOL bSelected )
 {
-	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;			/* 1==正規表現 */
-	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				/* 1==英大文字小文字の区別 */
-	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				/* 1==単語のみ検索 */
-	m_bConsecutiveAll = m_pShareData->m_Common.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-	m_bSelectedArea = m_pShareData->m_Common.m_bSelectedArea;		/* 選択範囲内置換 */
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
+	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;			// 1==正規表現
+	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				// 1==英大文字小文字の区別
+	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				// 1==単語のみ検索
+	m_bConsecutiveAll = m_pShareData->m_Common.m_bConsecutiveAll;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+	m_bSelectedArea = m_pShareData->m_Common.m_bSelectedArea;		// 選択範囲内置換
+	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	m_bSelected = bSelected;
-	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	/* 検索/置換開始時のカーソル位置退避	02/07/28 ai */
-	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	/* 検索/置換開始時のカーソル位置退避	02/07/28 ai */
-	((CEditView*)lParam)->m_bSearch = TRUE;							/* 検索/置換開始位置の登録有無			02/07/28 ai */
+	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
+	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
+	((CEditView*)lParam)->m_bSearch = TRUE;							// 検索/置換開始位置の登録有無			02/07/28 ai
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_REPLACE, lParam, SW_SHOW );
 }
 
@@ -103,7 +103,6 @@ void CDlgReplace::SetData( void )
 {
 	int		i;
 	HWND	hwndCombo;
-//	m_hWnd = hwndDlg;	/* このダイアログのハンドル */
 
 	/* 検索文字列 */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
@@ -129,15 +128,6 @@ void CDlgReplace::SetData( void )
 	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	::CheckDlgButton( m_hWnd, IDC_CHECK_CONSECUTIVEALL, m_bConsecutiveAll );
 
-// From Here 2001.12.03 hor
-//	/* 選択範囲内置換 */
-//	if( m_pShareData->m_Common.m_bSelectedArea ){
-//		::CheckDlgButton( m_hWnd, IDC_RADIO_SELECTEDAREA, TRUE );
-//	}else{
-//		::CheckDlgButton( m_hWnd, IDC_RADIO_ALLAREA, TRUE );
-//	}
-// To Here 2001.12.03 hor
-
 	// From Here Jun. 29, 2001 genta
 	// 正規表現ライブラリの差し替えに伴う処理の見直し
 	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
@@ -146,9 +136,6 @@ void CDlgReplace::SetData( void )
 		&& m_bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
-		//	正規表現のときも選択できるように。
-//		::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, 1 );
-//		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_LOHICASE ), FALSE );
 
 		// 2001/06/23 N.Nakatani
 		/* 単語単位で探す */
@@ -197,10 +184,6 @@ void CDlgReplace::SetData( void )
 /* 0==条件未入力  0より大きい==正常   0より小さい==入力エラー */
 int CDlgReplace::GetData( void )
 {
-//	int			i;
-//	int			j;
-//	CMemory*	pcmWork;
-
 	/* 英大文字と英小文字を区別する */
 	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
 
@@ -218,17 +201,17 @@ int CDlgReplace::GetData( void )
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;			/* 1==正規表現 */
-	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;				/* 1==英大文字小文字の区別 */
-	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;				/* 1==単語のみ検索 */
-	m_pShareData->m_Common.m_bConsecutiveAll = m_bConsecutiveAll;	/* 1==「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-	m_pShareData->m_Common.m_bSelectedArea = m_bSelectedArea;		/* 選択範囲内置換 */
-	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	/* 検索／置換  見つからないときメッセージを表示 */
+	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;			// 1==正規表現
+	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;				// 1==英大文字小文字の区別
+	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;				// 1==単語のみ検索
+	m_pShareData->m_Common.m_bConsecutiveAll = m_bConsecutiveAll;	// 1==「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+	m_pShareData->m_Common.m_bSelectedArea = m_bSelectedArea;		// 選択範囲内置換
+	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
-	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, sizeof( m_szText ));
+	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, _countof( m_szText ));
 	/* 置換後文字列 */
-	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT2, m_szText2, sizeof( m_szText2 ));
+	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT2, m_szText2, _countof( m_szText2 ));
 
 	/* 置換 ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_bAutoCloseDlgReplace = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace );
@@ -317,40 +300,13 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 BOOL CDlgReplace::OnBnClicked( int wID )
 {
 	CEditView*	pcEditView = (CEditView*)m_lParam;
-//	int			nNewPos;
-//	int			nReplaceNum;
-//	char		szLabel[64];
-//	int			nAllLineNum;
-//	HWND		hwndProgress;
-//	HWND		hwndStatic;
-//	MSG			msg;
-
-// From Here 2001.12.03 hor
-//	int			colFrom;		//選択範囲開始桁
-//	int			linFrom;		//選択範囲開始行
-//	int			colTo,colToP;	//選択範囲終了桁
-//	int			linTo,linToP;	//選択範囲終了行
-//	int			colDif = 0;		//置換後の桁調整
-//	int			linDif = 0;		//置換後の行調整
-//	int			colOld = 0;		//検索後の選択範囲次桁
-//	int			linOld = 0;		//検索後の行
-//	int			lineCnt;		//置換前の行数
-//	int			linPrev = 0;	//前回の検索行(矩形) @@@2001.12.31 YAZAKI warning退治
-//	int			linNext;		//次回の検索行(矩形)
-//	int			colTmp,linTmp,colLast,linLast;
-//	int			bBeginBoxSelect; // 矩形選択？
-//	const char*	pLine;
-//	int			nLineLen;
-//	const CLayout* pcLayout;
-//	int			bLineOffset=FALSE;
-//	int			bLineChecked=FALSE;
 
 	switch( wID ){
 	case IDC_CHK_PASTE:
 		/* テキストの貼り付け */
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE ) &&
 			!pcEditView->m_pcEditDoc->IsEnablePaste() ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("クリップボードに有効なデータがありません！") );
 			::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
 		}
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE)) );
@@ -457,9 +413,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画 */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
-				"文字列を指定してください。"
-			);
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_SEARCHNEXT:	/* 下検索 */
@@ -485,9 +439,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			// To Here 2001.12.03 hor
                
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
-				"文字列を指定してください。"
-			);
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
 		}
 		return TRUE;
 
@@ -515,9 +467,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画 */
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
-				"文字列を指定してください。"
-			);
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
@@ -536,15 +486,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* アクティブにする */
 			ActivateFrameWindow( m_hWnd );
 
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST, GSTR_APPNAME,
-				"%d箇所を置換しました。", m_nReplaceCnt);
+			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST, GSTR_APPNAME, _T("%d箇所を置換しました。"), m_nReplaceCnt);
 
-//			nNewPos = 100;
-// 			::SendMessage( ::GetDlgItem( m_hWnd, IDC_PROGRESS_REPLACE ), PBM_SETPOS, nNewPos, 0 );
-
-//			::ShowWindow( ::GetDlgItem( m_hWnd, IDC_PROGRESS_REPLACE ), SW_HIDE );
-
-//			if( !cDlgCancel.IsCanceled() ){
 			if( !m_bCanceled ){
 				if( m_bModal ){		/* モーダルダイアログか */
 					/* 置換ダイアログを閉じる */
@@ -558,9 +501,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			}
 			return TRUE;
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
-				"置換条件を指定してください。"
-			);
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("置換条件を指定してください。") );
 		}
 		return TRUE;
 //	case IDCANCEL:
