@@ -23,11 +23,11 @@
 #include "CDlgInput1.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "etc_uty.h"		// Stonee, 2001/03/12
-#include "sakura_rc.h"	// 2002/2/10 aroka
 #include "Debug.h"		// 2002/2/10 aroka
+#include "sakura_rc.h"	// 2002/2/10 aroka
+#include "sakura.hh"
 
 // 印刷設定 CDlgPrintSetting.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12500
 	IDC_BUTTON_EDITSETTINGNAME,		HIDC_PS_BUTTON_EDITSETTINGNAME,	//設定名変更
 	IDOK,							HIDOK_PS,					//OK
@@ -129,10 +129,6 @@ int CDlgPrintSetting::DoModal(
 BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
 	m_hWnd = hwndDlg;
-//	hwndComboSettingName = ::GetDlgItem( m_hWnd, IDC_COMBO_SETTINGNAME );
-
-//	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-//	::SendMessage( ::GetDlgItem( m_hWnd, IDC_EDIT_LINENUM ), EM_LIMITTEXT, (WPARAM)9, 0 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_SETTINGNAME ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
@@ -156,21 +152,11 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 
 BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 {
-//	WORD			wNotifyCode;
-//	WORD			wID;
-//	HWND			hwndCtl;
-//	int				nRet;
-//	int				nIndex;
-//	char*			pszWork;
-//	int				nWorkLine;
-//	HWND			hwndComboSettingName;
 	CDlgInput1		cDlgInput1;
-//	HWND			hwndCtl;
 	NMHDR*			pNMHDR;
 	NM_UPDOWN*		pMNUD;
 	int				idCtrl;
 	BOOL			bSpinDown;
-//	char			szWork[256];
 	idCtrl = (int)wParam;
 	pNMHDR = (NMHDR*)lParam;
 	pMNUD  = (NM_UPDOWN*)lParam;
@@ -208,7 +194,7 @@ BOOL CDlgPrintSetting::OnCbnSelChange( HWND hwndCtl, int wID )
 
 BOOL CDlgPrintSetting::OnBnClicked( int wID )
 {
-	char			szWork[256];
+	TCHAR			szWork[256];
 	CDlgInput1		cDlgInput1;
 	HWND			hwndComboSettingName;
 	switch( wID ){
@@ -218,9 +204,19 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PAGESETUP) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_BUTTON_EDITSETTINGNAME:
-		strcpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
-		if( FALSE == cDlgInput1.DoModal( m_hInstance, m_hWnd, "設定名の変更", "設定の名称を入力してください。", sizeof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1, szWork ) ){
-			return TRUE;
+		_tcscpy( szWork, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName );
+		{
+			BOOL bDlgInputResult=cDlgInput1.DoModal(
+				m_hInstance,
+				m_hWnd,
+				_T("設定名の変更"),
+				_T("設定の名称を入力してください。"),
+				_countof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1,
+				szWork
+				);
+			if( !bDlgInputResult ){
+				return TRUE;
+			}
 		}
 		if( 0 < _tcslen( szWork ) ){
 			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
@@ -307,7 +303,6 @@ void CDlgPrintSetting::SetData( void )
 		}
 	}
 	::SendMessage( hwndComboSettingName, CB_SETCURSEL, nSelectIdx, 0 );
-//	::SendMessage( m_hWnd, WM_COMMAND, MAKELONG( IDC_COMBO_SETTINGNAME, CBN_SELCHANGE ), (LPARAM)hwndComboSettingName );
 
 	/* 設定のタイプが変わった */
 	OnChangeSettingType( FALSE );
@@ -781,7 +776,7 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	dmDummy.dmPaperSize = pPS->m_nPrintPaperSize;
 	dmDummy.dmOrientation = pPS->m_nPrintPaperOrientation;
 	/* 用紙の幅、高さ */
-	if( FALSE == CPrint::GetPaperSize(
+	if( !CPrint::GetPaperSize(
 		&nPaperAllWidth,
 		&nPaperAllHeight,
 		&dmDummy
