@@ -50,6 +50,7 @@ protected:
 //	void AddToSearchKeyArr( const char* );
 	/* オーバーライド? */
 	int GetData( void );		/* ダイアログデータの取得 */
+	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 	void SetData( void );		/* ダイアログデータの設定 */
 	BOOL OnBnClicked( int );
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji

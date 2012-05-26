@@ -83,8 +83,6 @@ void CDlgFind::ChangeView( LPARAM pcEditView )
 void CDlgFind::SetData( void )
 {
 //	MYTRACE( "CDlgFind::SetData()" );
-	int		i;
-	HWND	hwndCombo;
 
 	/*****************************
 	*           初期化           *
@@ -102,12 +100,9 @@ void CDlgFind::SetData( void )
 	*         データ設定         *
 	*****************************/
 	/* 検索文字列 */
-	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
-	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
-	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
-	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
-	}
+	// 検索文字列リストの設定(関数化)	2010/5/28 Uchi
+	SetCombosList();
+
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
 
@@ -149,6 +144,27 @@ void CDlgFind::SetData( void )
 }
 
 
+// 検索文字列リストの設定
+//	2010/5/28 Uchi
+void CDlgFind::SetCombosList( void )
+{
+	int		i;
+	HWND	hwndCombo;
+	TCHAR	szBuff[_MAX_PATH+1];
+
+	/* 検索文字列 */
+	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
+	while (::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) > 0) {
+		::SendMessage(hwndCombo, CB_DELETESTRING, 0L, 0L);
+	}
+	for (i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i) {
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
+	}
+	::GetWindowText( hwndCombo, szBuff, _MAX_PATH );
+	if (_tcscmp( szBuff, m_szText ) != 0) {
+		SetDlgItemText(m_hWnd, IDC_COMBO_TEXT, m_szText);
+	}
+}
 
 
 /* ダイアログデータの取得 */
@@ -200,7 +216,8 @@ int CDlgFind::GetData( void )
 		CShareData::getInstance()->AddToSearchKeyArr( (const char*)m_szText );
 		if( !m_bModal ){
 			/* ダイアログデータの設定 */
-			SetData();
+			//SetData();
+			SetCombosList();		//	コンボのみの初期化	2010/5/28 Uchi
 		}
 		return 1;
 	}else{

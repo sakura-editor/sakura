@@ -101,22 +101,8 @@ void CDlgReplace::ChangeView( LPARAM pcEditView )
 /* ダイアログデータの設定 */
 void CDlgReplace::SetData( void )
 {
-	int		i;
-	HWND	hwndCombo;
-
-	/* 検索文字列 */
-	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
-	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
-	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
-	}
-
-	/* 置換後文字列 */
-	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT2, m_szText2 );
-	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 );
-	for( i = 0; i < m_pShareData->m_nREPLACEKEYArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szREPLACEKEYArr[i] );
-	}
+	// 検索文字列/置換後文字列リストの設定(関数化)	2010/5/26 Uchi
+	SetCombosList();
 
 	/* 英大文字と英小文字を区別する */
 	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
@@ -179,6 +165,41 @@ void CDlgReplace::SetData( void )
 
 
 
+// 検索文字列/置換後文字列リストの設定
+//	2010/5/26 Uchi
+void CDlgReplace::SetCombosList( void )
+{
+	int		i;
+	HWND	hwndCombo;
+	TCHAR	szBuff[_MAX_PATH+1];
+
+	/* 検索文字列 */
+	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
+	while (::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) > 0) {
+		::SendMessage(hwndCombo, CB_DELETESTRING, 0L, 0L);
+	}
+	for (i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i) {
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
+	}
+	::GetWindowText( hwndCombo, szBuff, _MAX_PATH );
+	if (_tcscmp( szBuff, m_szText ) != 0) {
+		::SetDlgItemText(m_hWnd, IDC_COMBO_TEXT, m_szText );
+	}
+
+	/* 置換後文字列 */
+	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 );
+	while (::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) > 0) {
+		::SendMessage(hwndCombo, CB_DELETESTRING, 0L, 0L);
+	}
+	for (i = 0; i < m_pShareData->m_nREPLACEKEYArrNum; ++i) {
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_szREPLACEKEYArr[i] );
+	}
+	::GetWindowText( hwndCombo, szBuff, _MAX_PATH );
+	if (_tcscmp( szBuff, m_szText2 ) != 0) {
+		::SetDlgItemText(m_hWnd, IDC_COMBO_TEXT2, m_szText2 );
+	}
+}
+
 
 /* ダイアログデータの取得 */
 /* 0==条件未入力  0より大きい==正常   0より小さい==入力エラー */
@@ -209,9 +230,9 @@ int CDlgReplace::GetData( void )
 	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
-	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, _countof( m_szText ));
+	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, _countof(m_szText));
 	/* 置換後文字列 */
-	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT2, m_szText2, _countof( m_szText2 ));
+	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT2, m_szText2, _countof(m_szText2));
 
 	/* 置換 ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_bAutoCloseDlgReplace = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace );
@@ -252,6 +273,10 @@ int CDlgReplace::GetData( void )
 		}
 		// To Here 2001.12.03 hor
 
+		// 検索文字列/置換後文字列リストの設定	2010/5/26 Uchi
+		if (!m_bModal) {
+			SetCombosList();
+		}
 		return 1;
 	}else{
 		return 0;
@@ -410,8 +435,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* コマンドコードによる処理振り分け */
 			/* 前を検索 */
 			pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
-			/* 再描画 */
-			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
+			/* 再描画（0文字幅マッチでキャレットを表示するため） */
+			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
 		}
@@ -429,8 +454,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* コマンドコードによる処理振り分け */
 			/* 次を検索 */
 			pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
-			/* 再描画 */
-			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
+			/* 再描画（0文字幅マッチでキャレットを表示するため） */
+			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
 			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
 		}
