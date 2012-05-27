@@ -90,7 +90,7 @@ CSearchStringPattern::~CSearchStringPattern()
 #endif
 }
 
-#define toLoHiUpper(bLoHiCase, ch) (bLoHiCase? (ch) : towupper(ch))
+#define toLoHiUpper(bLoHiCase, ch) (bLoHiCase? (ch) : skr_towupper(ch))
 
 /*!
 	•¶š—ñŒŸõ
