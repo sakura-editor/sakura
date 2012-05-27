@@ -878,7 +878,7 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 		strcpy( szText, m_pShareData->m_Types[i].m_szTypeExts );
 		pszToken = strtok( szText, pszSeps );
 		while( NULL != pszToken ){
-			if( 0 == _stricmp( pszExt, pszToken ) ){
+			if( 0 == my_stricmp( pszExt, pszToken ) ){
 				return i;	//	番号
 			}
 			pszToken = strtok( NULL, pszSeps );
@@ -1235,7 +1235,7 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
 			/* 同一パスのファイルが既に開かれているか */
-			if( 0 == _stricmp( pfi->m_szPath, pszPath ) ){
+			if( 0 == my_stricmp( pfi->m_szPath, pszPath ) ){
 				*phwndOwner = m_pShareData->m_pEditArr[i].m_hWnd;
 				return TRUE;
 			}
@@ -2240,7 +2240,7 @@ LPCTSTR CShareData::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int nDest
 
 	for( i = 0, j = 0; i < nSrcLen && j < nDestLen; i++ ){
 #if defined(_MBCS)
-		if( 0 == strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
+		if( 0 == my_strnicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #else
 		if( 0 == _tcsncicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #endif

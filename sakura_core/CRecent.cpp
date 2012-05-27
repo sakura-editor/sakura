@@ -565,7 +565,7 @@ int CRecent::FindItem( const char *pszItemData )
 		switch( m_nCmpType )
 		{
 		case RECENT_CMP_STRICMP:	//stricmp
-			if( stricmp( p, q ) == 0 ) return i;
+			if( my_stricmp( p, q ) == 0 ) return i;
 			break;
 
 		case RECENT_CMP_STRNCMP:	//strncmp
@@ -573,7 +573,7 @@ int CRecent::FindItem( const char *pszItemData )
 			break;
 
 		case RECENT_CMP_STRNICMP:	//strnicmp
-			if( strnicmp( p, q, m_nCmpSize ) == 0 ) return i;
+			if( my_strnicmp( p, q, m_nCmpSize ) == 0 ) return i;
 			break;
 
 		case RECENT_CMP_MEMCMP:		//memcmp
@@ -581,7 +581,7 @@ int CRecent::FindItem( const char *pszItemData )
 			break;
 
 		case RECENT_CMP_MEMICMP:	//memicmp
-			if( memicmp( p, q, m_nCmpSize ) == 0 ) return i;
+			if( my_memicmp( p, q, m_nCmpSize ) == 0 ) return i;
 			break;
 
 		case RECENT_CMP_STRCMP:		//strcmp

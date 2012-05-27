@@ -238,7 +238,7 @@ BOOL CheckEXT( const char* pszPath, const char* pszExt )
 	if( pszWork[0] == '.' ){
 		pszWork++;
 	}
-	if( 0 == _stricmp( pszExt, pszWork ) ){
+	if( 0 == my_stricmp( pszExt, pszWork ) ){
 		return TRUE;
 	}else{
 		return FALSE;

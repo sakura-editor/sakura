@@ -72,7 +72,7 @@ bool CBlockComment::Match_CommentFrom( int n, int nPos, int nLineLen, const char
 		'\0' != m_szBlockCommentFrom[n][0] &&
 		'\0' != m_szBlockCommentTo[n][0]  &&
 		nPos <= nLineLen - m_nBlockFromLen[n] &&	/* ブロックコメントデリミタ(From) */
-		0 == memicmp( &pLine[nPos], m_szBlockCommentFrom[n], m_nBlockFromLen[n] )
+		0 == my_memicmp( &pLine[nPos], m_szBlockCommentFrom[n], m_nBlockFromLen[n] )
 	){
 		return true;
 	}
@@ -99,7 +99,7 @@ int CBlockComment::Match_CommentTo( int n, int nPos, int nLineLen, const char* p
 		if( 0 == nCharChars_2 ){
 			nCharChars_2 = 1;
 		}
-		if( 0 == memicmp( &pLine[i], m_szBlockCommentTo[n], m_nBlockToLen[n] ) ){
+		if( 0 == my_memicmp( &pLine[i], m_szBlockCommentTo[n], m_nBlockToLen[n] ) ){
 			return i + m_nBlockToLen[n];
 		}
 		if( 2 == nCharChars_2 ){

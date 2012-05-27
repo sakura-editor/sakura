@@ -570,7 +570,7 @@ char *CDlgTagJumpList::GetNameByType( const char type, const char *name )
 		token = strtok( tmp, "," );
 		while( token )
 		{
-			if( stricmp( p, token ) == 0 )
+			if( my_stricmp( p, token ) == 0 )
 			{
 				strcpy( tmp, p_extentions[i+1] );
 				token = strtok( tmp, "," );
@@ -662,9 +662,9 @@ int CDlgTagJumpList::SearchBestTag( void )
 		strcpy( szExtDst,  "" );
 		_splitpath( item->filename, NULL, NULL, szFileDst, szExtDst );
 		
-		if( stricmp( szFileSrc, szFileDst ) == 0 )
+		if( my_stricmp( szFileSrc, szFileDst ) == 0 )
 		{
-			if( stricmp( szExtSrc, szExtDst ) == 0 ) return i;
+			if( my_stricmp( szExtSrc, szExtDst ) == 0 ) return i;
 			if( nMatch == -1 ) nMatch = i;
 		}
 	}
@@ -727,12 +727,12 @@ void CDlgTagJumpList::find_key( const char* keyword )
 
 				if( m_bTagJumpAnyWhere ){
 					if( m_bTagJumpICase )
-						cmp = strstri( s[0], keyword ) != NULL ? 0 : -1;
+						cmp = my_strstri( s[0], keyword ) != NULL ? 0 : -1;
 					else
 						cmp = strstr( s[0], keyword ) != NULL ? 0 : -1;
 				}else{
 					if( m_bTagJumpICase )
-						cmp = strnicmp( s[0], keyword, length );
+						cmp = my_strnicmp( s[0], keyword, length );
 					else
 						cmp = strncmp( s[0], keyword, length );
 				}

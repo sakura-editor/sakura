@@ -617,7 +617,7 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 				return TRUE;
 			}
 		}else{
-			if( 0 == memicmp( &pszData[nPos], m_szCurSrchKey, nKeyLength ) ){
+			if( 0 == my_memicmp( &pszData[nPos], m_szCurSrchKey, nKeyLength ) ){
 				*pnSearchEnd = nPos + nKeyLength;
 				return TRUE;
 			}

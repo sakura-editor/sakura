@@ -494,14 +494,14 @@ void CMemory::JIStoSJIS( bool bMIMEdecode )
 	if( false != bMIMEdecode ){
 		for( i = 0; i < nSrcLen; i++ ){
 			if( i <= nSrcLen - 16 && '=' == pszSrc[i] ){
-				if( 0 == _memicmp( "=?ISO-2022-JP?B?", &pszSrc[i], 16 ) ){
+				if( 0 == my_memicmp( "=?ISO-2022-JP?B?", &pszSrc[i], 16 ) ){
 					nMEME_Selected = MIME_BASE64;
 					bMIME = TRUE;
 					i += 15;
 					nWorkBgn = i + 1;
 					continue;
 				}
-				if( 0 == _memicmp( "=?ISO-2022-JP?Q?", &pszSrc[i], 16 ) ){
+				if( 0 == my_memicmp( "=?ISO-2022-JP?Q?", &pszSrc[i], 16 ) ){
 					nMEME_Selected = MIME_QUOTED;
 					bMIME = TRUE;
 					i += 15;

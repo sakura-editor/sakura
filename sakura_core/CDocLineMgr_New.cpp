@@ -570,7 +570,7 @@ void CDocLineMgr::MarkSearchWord(
 				const char* pData = pDocLine->m_pLine->GetStringPtr(); // 2002/2/10 aroka CMemory•ÏX
 				
 				if(( nPatternLen == nNextWordTo2 - nNextWordFrom2 ) &&
-				   (( FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
+				   (( FALSE == bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
 					( TRUE  == bLoHiCase && 0 ==   memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
 					pDocLine->SetBookMark(true);
 				}else

@@ -1682,7 +1682,7 @@ int CDocLineMgr::SearchWord(
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 							const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
 							/* 1==大文字小文字の区別 */
-							if( (FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+							if( (FALSE == bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 								(TRUE  == bLoHiCase && 0 ==	 memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 							){
 								*pnLineNum = nLinePos;	/* マッチ行 */
@@ -1721,7 +1721,7 @@ int CDocLineMgr::SearchWord(
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 						const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
 						/* 1==大文字小文字の区別 */
-						if( (FALSE == bLoHiCase && 0 == _memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+						if( (FALSE == bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 							(TRUE  == bLoHiCase && 0 ==	  memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 						){
 							*pnLineNum = nLinePos;	/* マッチ行 */

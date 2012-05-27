@@ -89,7 +89,7 @@ BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey
 			/* 最初のトークンを取得します。 */
 			pszToken = strtok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
-				nRes = _strnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
+				nRes = my_strnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
 					for( i = 0; i < (int)lstrlen(pszWork); ++i ){
 						if( pszWork[i] == '\r' ||
@@ -166,7 +166,7 @@ int CDicMgr::HokanSearch(
 			continue;
 		}
 		if( bHokanLoHiCase ){	/* 英大文字小文字を同一視する */
-			nRet = memicmp( pszKey, szLine, nKeyLen );
+			nRet = my_memicmp( pszKey, szLine, nKeyLen );
 		}else{
 			nRet = memcmp( pszKey, szLine, nKeyLen );
 		}

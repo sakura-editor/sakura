@@ -8376,7 +8376,7 @@ int CEditView::DoGrepFile(
 					if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
 						// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
 						/* 1==大文字小文字の区別 */
-						if( (FALSE == bGrepLoHiCase && 0 == _memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
+						if( (FALSE == bGrepLoHiCase && 0 == my_memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
 							(TRUE  == bGrepLoHiCase && 0 ==	  memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
 						){
 							/* Grep結果を、szWorkに格納する */

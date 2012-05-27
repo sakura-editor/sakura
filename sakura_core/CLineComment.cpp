@@ -53,7 +53,7 @@ bool CLineComment::Match( int nPos, int nLineLen, const char* pLine ) const
 		  '\0' != m_pszLineComment[i][0] &&	/* 行コメントデリミタ */
 		  ( m_nLineCommentPos[i] < 0 || nPos == m_nLineCommentPos[i] ) &&	//	位置指定ON.
 		  nPos <= nLineLen - m_nLineCommentLen[i] &&	/* 行コメントデリミタ */
-		  0 == memicmp( &pLine[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )
+		  0 == my_memicmp( &pLine[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )
 		){
 			return true;
 		}

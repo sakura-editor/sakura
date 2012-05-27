@@ -759,7 +759,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	bClass	= false;
 	int filelen = strlen(GetFilePath());
 	if ( 4 < filelen ) {
-		if ( 0 == _stricmp((GetFilePath() + filelen - 4), ".cls") ) {
+		if ( 0 == my_stricmp((GetFilePath() + filelen - 4), ".cls") ) {
 			bClass	= true;
 		}
 	}
@@ -809,29 +809,29 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					// テキストの中は無視します。
 					nMode	= 3;
 				}else{
-					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Public") ) {
+					if ( 0 == nParseCnt && 0 == my_stricmp(szWord, "Public") ) {
 						// パブリック宣言を見つけた！
 						nFuncId |= 0x10;
 					}else
-					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Private") ) {
+					if ( 0 == nParseCnt && 0 == my_stricmp(szWord, "Private") ) {
 						// プライベート宣言を見つけた！
 						nFuncId |= 0x20;
 					}else
-					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Friend") ) {
+					if ( 0 == nParseCnt && 0 == my_stricmp(szWord, "Friend") ) {
 						// フレンド宣言を見つけた！
 						nFuncId |= 0x30;
 					}else
-					if ( 0 == nParseCnt && 0 == stricmp(szWord, "Static") ) {
+					if ( 0 == nParseCnt && 0 == my_stricmp(szWord, "Static") ) {
 						// スタティック宣言を見つけた！
 						nFuncId |= 0x100;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Function" ) ){
-						if ( 0 == stricmp( szWordPrev, "End" ) ){
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Function" ) ){
+						if ( 0 == my_stricmp( szWordPrev, "End" ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != stricmp( szWordPrev, "Exit" ) ){
-							if( 0 == stricmp( szWordPrev, "Declare" ) ){
+						if( 0 != my_stricmp( szWordPrev, "Exit" ) ){
+							if( 0 == my_stricmp( szWordPrev, "Declare" ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -841,13 +841,13 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + 1;
 						}
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Sub" ) ){
-						if ( 0 == stricmp( szWordPrev, "End" ) ){
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Sub" ) ){
+						if ( 0 == my_stricmp( szWordPrev, "End" ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != stricmp( szWordPrev, "Exit" ) ){
-							if( 0 == stricmp( szWordPrev, "Declare" ) ){
+						if( 0 != my_stricmp( szWordPrev, "Exit" ) ){
+							if( 0 == my_stricmp( szWordPrev, "Declare" ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -857,32 +857,32 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + 1;
 						}
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Get" )
-					 && 0 == stricmp( szWordPrev, "Property" )
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Get" )
+					 && 0 == my_stricmp( szWordPrev, "Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId	|= 0x03;		// プロパティ取得
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Let" )
-					 && 0 == stricmp( szWordPrev, "Property" )
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Let" )
+					 && 0 == my_stricmp( szWordPrev, "Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x04;		// プロパティ設定
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Set" )
-					 && 0 == stricmp( szWordPrev, "Property" )
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Set" )
+					 && 0 == my_stricmp( szWordPrev, "Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x05;		// プロパティ参照
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Const" )
-					 && 0 != stricmp( szWordPrev, "#" )
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Const" )
+					 && 0 != my_stricmp( szWordPrev, "#" )
 					){
 						if ( bClass || bProcedure || 0 == ((nFuncId >> 4) & 0x0f) ) {
 							// クラスモジュールでは強制的にPrivate
@@ -895,13 +895,13 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Enum" )
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Enum" )
 					){
 						nFuncId	|= 0x207;		// 列挙型宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Type" )
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Type" )
 					){
 						if ( bClass ) {
 							// クラスモジュールでは強制的にPrivate
@@ -912,14 +912,14 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Event" )
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Event" )
 					){
 						nFuncId	|= 0x209;		// イベント宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == stricmp( szWord, "Property" )
-					 && 0 == stricmp( szWordPrev, "End")
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Property" )
+					 && 0 == my_stricmp( szWordPrev, "End")
 					){
 						bProcedure	= false;	// プロシージャフラグをクリア
 					}else

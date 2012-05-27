@@ -66,62 +66,9 @@
 
 
 
-/* ŠÖ”‚ğÄ’è‹`‚µ‚Ü‚· */
-#define  memicmp(a,b,c)    my_memicmp((a),(b),(c))
-#define  stricmp(a,b)      my_stricmp((a),(b))
-#define  strnicmp(a,b,c)   my_strnicmp((a),(b),(c))
-
-#ifdef   _memicmp
-#undef   _memicmp
-#endif
-#define  _memicmp(a,b,c)   my_memicmp((a),(b),(c))
-
-#ifdef   _stricmp
-#undef   _stricmp
-#endif
-#define  _stricmp(a,b)     my_stricmp((a),(b))
-
-#ifdef   _strnicmp
-#undef   _strnicmp
-#endif
-#define  _strnicmp(a,b,c)  my_strnicmp((a),(b),(c))
-
-#if 0
-#define  _mbsicmp(a,b)     my_stricmp((a),(b))
-#define  _mbsnicmp(a,b,c)    my_strnicmp((a),(b),(c))
-#endif  /* if 0 */
-
-#if 0
-#define  toupper(a)        my_toupper((a))
-#define  tolower(a)        my_tolower((a))
-
-#ifdef  _toupper
-#undef  _toupper
-#endif
-#define  _toupper(a)       my_toupper((a))
-
-#ifdef  _tolower
-#undef  _tolower
-#endif
-#define  _tolower(a)       my_tolower((a))
-#endif  /* if 0 */
-
-#if 0
-#define  setlocale(a,b)    
-#endif  /* if 0 */
-
 #define  MY_INLINE
 //#define  MY_INLINE  inline
 
-// 2005.04.07 MIK strstrŒnŠÖ”’Ç‰Á
-#ifdef strstri
-#  undef strstri
-#endif
-#define strstri(a,b)        my_strstri((a),(b))
-#ifdef strchri
-#  undef strchri
-#endif
-#define strchri(a,b)        my_strchri((a),(b))
 
 
 /*

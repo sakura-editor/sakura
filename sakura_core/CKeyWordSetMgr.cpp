@@ -382,7 +382,7 @@ int CKeyWordSetMgr::SearchKeyWord2( int nIdx, const char* pszKeyWord, int nKeyWo
 		if( wcase ) {
 			ret = strncmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
 		} else {
-			ret = strnicmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
+			ret = my_strnicmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
 		}
 		if( ret == 0 ) {
 			if( (int)strlen( m_szKeyWordArr[pc] ) > nKeyWordLen ) {
@@ -520,7 +520,7 @@ int CKeyWordSetMgr::CleanKeyWords( int nIdx )
 						bDelKey = true;
 					}
 				}else{
-					if( 0 == memicmp( p, r, nKeyWordLen ) ){
+					if( 0 == my_memicmp( p, r, nKeyWordLen ) ){
 						bDelKey = true;
 					}
 				}

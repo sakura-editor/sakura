@@ -1985,23 +1985,23 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						nWordIdx += (nCharChars);
 					}
 				}else{
-					if( 0 == nParseCnt && 0 == _stricmp( szWord, "FUNCTION" ) ){
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "FUNCTION" ) ){
 						nFuncOrProc = 1;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 
 					}else
-					if( 0 == nParseCnt && 0 == _stricmp( szWord, "PROCEDURE" ) ){
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "PROCEDURE" ) ){
 						nFuncOrProc = 2;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 0 == nParseCnt && 0 == _stricmp( szWord, "PACKAGE" ) ){
+					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "PACKAGE" ) ){
 						nFuncOrProc = 3;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
 					}else
-					if( 1 == nParseCnt && 3 == nFuncOrProc && 0 == _stricmp( szWord, "BODY" ) ){
+					if( 1 == nParseCnt && 3 == nFuncOrProc && 0 == my_stricmp( szWord, "BODY" ) ){
 						nFuncOrProc = 4;
 						nParseCnt = 1;
 					}else
@@ -2018,7 +2018,7 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						}
 					}else
 					if( 2 == nParseCnt ){
-						if( 0 == _stricmp( szWord, "IS" ) ){
+						if( 0 == my_stricmp( szWord, "IS" ) ){
 							if( 1 == nFuncOrProc ){
 								nFuncId = 11;	/* ファンクション本体 */
 							}else
@@ -2049,7 +2049,7 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1, szFuncName, nFuncId );
 							nParseCnt = 0;
 						}
-						if( 0 == _stricmp( szWord, "AS" ) ){
+						if( 0 == my_stricmp( szWord, "AS" ) ){
 							if( 3 == nFuncOrProc ){
 								nFuncId = 31;	/* パッケージ仕様部 */
 								++nFuncNum;
@@ -2664,7 +2664,7 @@ void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			nKeyWordLen = lstrlen( pszKeyWord );
 			bDivision = FALSE;
 			for( i = 0; i <= (int)lstrlen( szLabel ) - nKeyWordLen; ++i ){
-				if( 0 == memicmp( &szLabel[i], pszKeyWord, nKeyWordLen ) ){
+				if( 0 == my_memicmp( &szLabel[i], pszKeyWord, nKeyWordLen ) ){
 					szLabel[i + nKeyWordLen] = '\0';
 					strcpy( szDivision, szLabel );
 					bDivision = TRUE;
@@ -3146,7 +3146,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 				while(nDepth>0)
 				{
 					nDepth--;
-					if(!_stricmp(pszStack[nDepth],szTitle))
+					if(!my_stricmp(pszStack[nDepth],szTitle))
 					{
 						break;
 					}
@@ -3154,7 +3154,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 				// 2004.04.20 Moca ツリー中と一致しないときは、この終了タグは無視
 				if( nDepth == 0 )
 				{
-					if(_stricmp(pszStack[nDepth],szTitle))
+					if(my_stricmp(pszStack[nDepth],szTitle))
 					{
 						nDepth = nDepthOrg;
 					}
