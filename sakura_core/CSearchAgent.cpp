@@ -38,7 +38,7 @@ CSearchStringPattern::CSearchStringPattern( const wchar_t* pszPattern, int nPatt
 	if( m_bIgnoreCase ){
 		//note: 合成文字,サロゲートの「大文字小文字同一視」未対応
 		for( int i = 0; i < m_nPatternLen; i++ ){
-			m_pszPatternCase[i] = towupper(pszPattern[i]);
+			m_pszPatternCase[i] = skr_towupper(pszPattern[i]);
 		}
 	}else{
 		wmemcpy( m_pszPatternCase, pszPattern, m_nPatternLen );
