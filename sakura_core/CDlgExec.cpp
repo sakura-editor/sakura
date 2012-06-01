@@ -19,16 +19,14 @@
 #include "StdAfx.h"
 #include "CDlgExec.h"
 #include "Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
-#include "sakura_rc.h"
 #include "etc_uty.h"	//Stonee, 2001/03/12
-#include <windows.h>		//Mar. 28, 2001 JEPRO (一応入れたが不要？)
-#include <stdio.h>			//Mar. 28, 2001 JEPRO (一応入れたが不要？)
-#include <commctrl.h>		//Mar. 28, 2001 JEPRO
 #include "CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
 #include "Debug.h"// 2002/2/10 aroka ヘッダ整理
 
-//外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
+#include "sakura_rc.h"
 #include "sakura.hh"
+
+//外部コマンド CDlgExec.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12100
 	IDC_BUTTON_REFERENCE,			HIDC_EXEC_BUTTON_REFERENCE,		//参照
 	IDOK,							HIDOK_EXEC,						//実行
@@ -45,7 +43,7 @@ const DWORD p_helpids[] = {	//12100
 
 CDlgExec::CDlgExec()
 {
-	m_szCommand[0] = '\0';	/* コマンドライン */
+	m_szCommand[0] = _T('\0');	/* コマンドライン */
 //	m_bGetStdout = /*FALSE*/TRUE;	// 標準出力を得る	//Mar. 21, 2001 JEPRO [得ない]をデフォルトに変更	//Jul. 03, 2001 JEPRO [得る]がデフォルトとなるように戻した
 
 	return;
@@ -57,7 +55,7 @@ CDlgExec::CDlgExec()
 /* モーダルダイアログの表示 */
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_szCommand[0] = '\0';	/* コマンドライン */
+	m_szCommand[0] = _T('\0');	/* コマンドライン */
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
 
@@ -75,7 +73,7 @@ void CDlgExec::SetData( void )
 	*           初期             *
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand ), CB_LIMITTEXT, (WPARAM)sizeof( m_szCommand ) - 1, 0 );
+	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand ), CB_LIMITTEXT, (WPARAM)_countof( m_szCommand ) - 1, 0 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
 
@@ -109,8 +107,7 @@ void CDlgExec::SetData( void )
 	/*****************************
 	*         データ設定         *
 	*****************************/
-//	HWND hwndCombo;
-	strcpy( m_szCommand, m_pShareData->m_szCmdArr[0] );
+	_tcscpy( m_szCommand, m_pShareData->m_szCmdArr[0] );
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand );
 	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szCommand );
@@ -127,7 +124,7 @@ void CDlgExec::SetData( void )
 /* ダイアログデータの取得 */
 int CDlgExec::GetData( void )
 {
-	::GetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand, sizeof( m_szCommand ));
+	::GetDlgItemText( m_hWnd, IDC_COMBO_m_szCommand, m_szCommand, _countof( m_szCommand ));
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
 		int nFlgOpt = 0;
@@ -143,20 +140,8 @@ int CDlgExec::GetData( void )
 
 BOOL CDlgExec::OnBnClicked( int wID )
 {
-//	int	nRet;
-//	CEditView*	pcEditView = (CEditView*)m_lParam;
 	switch( wID ){
-	//	From Here Sept. 12, 2000 jeprotest
 	case IDC_CHECK_GETSTDOUT:
-//@@@ 2002.01.08 YAZAKI GetData()で取得するため
-#if 0
-//		if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
-		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT ) ){
-			 m_pShareData->m_bGetStdout = TRUE;
-		}else{
-			 m_pShareData->m_bGetStdout = FALSE;
-		}
-#endif
 		{	//	From Here 2007.01.02 maru 引数を拡張のため
 			BOOL bEnabled;
 			bEnabled = (BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_GETSTDOUT)) ? TRUE : FALSE;
@@ -164,7 +149,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_RADIO_EDITWINDOW ), (bEnabled && m_bEditable) ? TRUE : FALSE);	// 編集禁止の条件追加	// 2009.02.21 ryoji
 		}	//	To Here 2007.01.02 maru 引数を拡張のため
 		break;
-	//	To Here Sept. 12, 2000 うまくいかないので元に戻してある
+
 	case IDC_BUTTON_HELP:
 		/* 「検索」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
