@@ -31,14 +31,14 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, const char* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, const TCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 
 
 	BOOL		m_bSubFolder;/*!< サブフォルダからも検索する */
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
-	int			m_bLoHiCase;	/*!< 英大文字と小文字を区別する */
-	int			m_bRegularExp;	/*!< 正規表現 */
+	int			m_bLoHiCase;	//!< 英大文字と小文字を区別する
+	int			m_bRegularExp;	//!< 正規表現
 	BOOL		m_bGrepOutputLine;	/*!< 行を出力するか該当部分だけ出力するか */
 
 	//2001/06/23 N.Nakatani add
