@@ -1,0 +1,574 @@
+キーワードヘルプ 辞書ファイル [Hot Soup Processor]
+2002/08/01	すい
+※ このファイルの使い方は、同梱の HSP.KWD を参照して下さい。
+
+※ 拡張子が .KHP になっていますが、これは適当(でたらめ)です。
+　 sakura.exe 本体側で辞書ファイルの拡張子が決定されたら、
+　 それに従って修正するつもりです。
+
+★ ローカルラベル
+@back,@b /// ↑方向の最も近い *@ へ
+@forward,@f /// ↓方向の最も近い *@ へ
+
+★ システム変数
+system /// システム変数\n??
+hspstat /// システム変数\nHSPランタイムの情報を取得する\n以下の情報がすべて合計された値になります。\n  ( デバッグモード = 1 )\n  ( IMEが有効 = 2 )
+hspver /// システム変数\nHSPのバージョン番号\nバージョンコード + マイナーバージョンコードの値になります。\n  (2.5は$0205??になる)
+cnt /// システム変数\nrepeat～loopループのカウンター
+err /// システム変数\nエラーコード
+stat /// システム変数\n色々な命令のステータスなど
+dispx /// システム変数\nディスプレイのX方向 解像度
+dispy /// システム変数\nディスプレイのY方向 解像度
+paluse /// システム変数\nWindowsがパレットモード(256色)の時は1、それ以外の時は0
+mousex /// システム変数\nマウスカーソル-X
+mousey /// システム変数\nマウスカーソル-Y
+rval /// システム変数\nRGBカラーのR(赤)輝度情報
+gval /// システム変数\nRGBカラーのG(緑)輝度情報
+bval /// システム変数\nRGBカラーのB(青)輝度情報
+cmdline /// システム変数\nコマンドラインに渡された引数の文字列
+winx /// システム変数\n現在のウインドゥ描画エリアＸサイズ
+winy /// システム変数\n現在のウインドゥ描画エリアＹサイズ
+strsize /// システム変数\ngetstr命令で読み出したByte数\nexist命令実行結果(ファイルサイズ)\nbload命令実行時の読み込んだデータサイズ
+csrx /// システム変数\nカレントポジションのX座標
+csry /// システム変数\nカレントポジションのY座標
+windir /// システム変数\nWindowsがインストールされているディレクトリパス
+curdir /// システム変数\nカレントディレクトリパス
+exedir /// システム変数\n起動したEXEファイルのあるディレクトリパス
+refstr /// システム変数\ndialog ファイルダイアログで選択されたファイル名\naplsel,aplobj,selfolder,verinfo,ll_call,ipget,fv2str命令の実行結果
+prmx /// システム変数\nginfo命令で取得されるX値
+prmy /// システム変数\nginfo命令で取得されるY値
+looplev /// システム変数\nrepeat～loopのネストレベル
+sublev /// システム変数\nサブルーチン(モジュール)のネストレベル
+wparam /// システム変数\n割り込み時に保存されるWindowsのシステム値(wParam)
+lparam /// システム変数\n割り込み時に保存されるWindowsのシステム値(lParam)
+iparam /// システム変数\n割り込み要因を示す値
+
+★ オブジェクト制御命令
+button /// button "name",*label\n"name" : ボタンの名前\n*label : 押した時にジャンプするラベル名\nカレントポジションにオブジェクトとして押しボタンを配置\nします。ボタンには、"name"で指定された文字列が書かれ、\nマウスでボタンをクリックすると、*labelで指定した場所に\nプログラムの制御が移ります。
+chkbox /// chkbox "strings",p1\n"strings"  : チェックボックスの内容表示文字列\np1=変数    : チェックボックスの状態を保持する変数\nカレントポジションにオブジェクトとしてチェックボッ\nクスを配置します。チェックボックスには、"strings"で\n指定した文字列の左側に、カーソルでON/OFFを切り替える\nことのできるスイッチがついたオブジェクトです。
+clrobj /// clrobj p1,p2\np1=0～(0)  : 消去するオブジェクトID(開始)\np2=0～(-1) : 消去するオブジェクトID(終了)( -1の場合は、最終のIDが指定されます )\nbutton命令やmesbox命令などで出したオブジェクトを消去します。
+combox /// combox p1,p2,p3\np1=変数      : チェックボックスの状態を保持する数値型変数\np2=0～(100)  : 拡張Yサイズ\np3="strings" : チェックボックスの内容を示す文字列\nカレントポジションにオブジェクトとして、コンボボックスを配置します。
+input /// input p1,p2,p3,p4\np1=変数   : 入力のための変数\np2,p3     : メッセージボックスのサイズ（ドット単位）\np4=0～    : 入力できる最大文字数\nカレントポジションにオブジェクトとして入力ボックスを\n配置します。p2,p3で大きさを指定して、場所はカレント\nポジションからになります。p2,p3が省略された場合は、\nobjsizeで指定されたサイズになります。
+listbox /// listbox p1,p2,p3\np1=変数      : リストボックスの状態を保持する数値型変数\np2=0～(100)  : 拡張Yサイズ\np3="strings" : リストボックスの内容を示す文字列\nカレントポジションにオブジェクトとして、リストボックスを配置します。
+mesbox /// mesbox p1,p2,p3,p4,p5\np1=変数   : 表示メッセージが代入された文字列型変数\np2,p3     : メッセージボックスのサイズ（ドット単位）\np4=0～(0) : メッセージボックスのスタイル\np5=0～    : 入力できる最大文字数\nウインドゥ上にオブジェクトとして、メッセージボックス(メッセージ表示用の窓)\nを配置します。p2,p3で大きさを指定して、 場所はカレントポジションからに\nなります。 \nメッセージボックスのスタイルに設定する値(p4)は、以下の通りになります。
+objmode /// objmode p1\np1=0～2(0) : フォント設定モード指定\nbutton,input,mesboxなどのオブジェクト配置命令で使用される\nフォント設定のための命令です。
+objprm /// objprm p1,p2\np1=0～(0) : オブジェクトID指定\np2 : 変更するパラメータの内容\nbutton命令やinput,mesbox命令などで画面上に配置したオブジェクトの\n持つ内容やパラメータを変更します。
+objsel /// objsel p1\np1=0～(0) : オブジェクトID指定\np1で指定したオブジェクトIDに入力フォーカスを合わせます。
+objsend /// objsend p1,p2,p3,p4,p5\np1=0～(0) : オブジェクトID指定\np2=0～(0) : オブジェクトに送るWin32メッセージの種類\np3=0～65535(0) : オブジェクトに送るパラメータ(wParam)\np4=変数 : パラメータの受け渡しに使用する変数名(lParam)\np5=0～(0) : lParamパラメータのタイプ\nbutton命令やinput,mesbox命令などで画面上に配置したオブジェクトに対して、\nWin32メッセージを送ります。
+objsize /// objsize p1,p2,p3\np1=64～(64) : オブジェクトのX方向のサイズ（ドット単位）\np2=8～(24)  : オブジェクトのY方向のサイズ（ドット単位）\np3=0～(0)   : Y方向の最低確保行サイズ (ドット単位)\nボタンや入力ボックスなどのオブジェクトの大きさを設定します。
+
+★ ファイル操作命令
+bcopy /// bcopy "filename1","filename2"\n"filename1" : コピー元ファイル名\n"filename2" : コピー先ファイル名\n"filename1"のファイルを"filename2"というファイル名にコピー\nします。
+bload /// bload "filename",p1,p2,p3\n"filename" : ロードするファイル名\np1=変数    : 変数名\np2=64～    : ロードされるサイズ(Byte単位)\np3=0～(-1): ファイルのオフセット\nファイルの内容をメモリバッファに読み込みます。
+bsave /// bsave "filename",p1,p2,p3\n"filename" : セーブするファイル名\np1=変数    : 変数名\np2=64～    : セーブするサイズ(Byte単位)\np3=0～(-1): ファイルのオフセット\nメモリバッファの内容をファイルに書き出します。
+chdir /// chdir "dirname"\n"dirname" : 移動先ディレクトリ名\n"dirname"で指定した名前のディレクトリに移動します。
+delete /// delete "filename"\n"filename" : 削除するファイル名\n"filename"で指定したファイルを削除します。
+dirlist /// dirlist p1,"filemask",p2\np1=変数    : ディレクトリ一覧を格納する文字列型変数\n"filemask" : 一覧のためのファイルマスク\np2=0～(0)  : ディレクトリ取得モード\nカレントディレクトリのファイル一覧を作成して、変数に代入します。
+exist /// exist "filename"\n"filename" : サイズを調べるファイルの名前\n"filename"で指定したファイルが存在するかをチェックして、\nそのファイルサイズを取得します。exist命令が実行されると、\nシステム変数strsizeに結果が反映されます。
+mkdir /// mkdir "dirname"\n"dirname" : 作成するディレクトリ名\n"dirname"で指定した名前でディレクトリを作成します。
+
+★ プリプロセッサ命令
+#deffunc /// #deffunc p1 p2,p3…\np1=命令名 : 割り当てられる命令の名前\np2～p9    : バラメータタイプ名\nユーザーによる新規命令を指定します。
+#define /// #define 新規名称  元名称\n元名称で指定された命令・数値・記号を新規名称で指定された\n名前でも使えるようにコンパイラに登録をします。
+#fpbit /// #fpbit p1\np1 : 固定小数値の小数部bit数(0～31)\nスクリプト中で固定小数値を記述した場合に変換される\n固定小数部のビット数を設定します。デフォルトは16bitになっています。
+#func /// #func 新規名称  関数名  タイプ\n外部DLLを呼び出すための新しい命令をコンパイラに登録します。
+#global /// #global\nモジュール区間を終了し、以降を通常のプログラム領域に戻します。
+#include /// #include "filename"\n"filename" : 結合するファイル名\nインクルードするファイルを指定します。
+#module /// #module "モジュール名"\n"モジュール名" : 新規モジュール名\n#module以降の区間をモジュールとして別な空間に割り当てます。
+#uselib /// #uselib "filename"\n"filename" : 外部DLLファイル名\nHSPから呼び出す外部DLLのファイル名を指定します。
+
+★ プログラム制御命令
+if,else /// - - - - - - - - - - - - - -\nif p1 :<statement 1> :else <statement 2>\n- - - - - - - - - - - - - -\nif p1 {\n  <statement 1>\n}\nelse {\n  <statement 2>\n}\n- - - - - - - - - - - - - -\np1 : 条件式\np1の条件式が満たされていれば、命令 <statement 1> を実行する。\n満たされていない場合は <statement 2> を実行する。
+repeat,loop /// - - - - - - - - - - - - - -\n repeat p1,p2\n   ～～\n loop\n- - - - - - - - - - - - - -\np1=1～(-1) : ループ回数\np2=0～(0) : システム変数cntのスタート値\nrepeat～loopの間をくり返し実行します。
+await /// await p1\np1 : 待ち時間(1ms単位)\nプログラムの実行を一定時間だけ中断します。
+break /// break\nrepeat～loop間のループから、強制的に抜け出します。
+continue /// continue p1\np1 = 0～ : 繰り返しカウンタ変更値\nrepeat～loop間のループをやり直します。
+end /// end\nHSPのプログラムを終了します。
+exec /// exec "filename",p1,"command"\n"filename" : 対象となるファイル名\np1=0～(0)  : ファイル実行モード\n"command"  : コンテキストメニューの操作名\nexecは"filename"で指定したファイル名のアプリケーションを実行します。
+gosub /// gosub *label\n*label : ラベル名\nサブルーチンジャンプをします。
+goto /// goto *label\n*label : ラベル名\n指定したラベルに無条件でジャンプします。
+onclick /// onclick *label\n*label : ラベル名\nマウスのボタンを押した時に、自動的にジャンプする場所を指定します。
+onexit /// onexit *label\n*label : ラベル名\nクローズボックス(ウインドゥ右上の終了ボタン)を押した時に、\n自動的にジャンプする場所を指定します。
+onkey /// onkey *label\n*label : ラベル名\nキーボードを押した時に、自動的にジャンプする場所を指定します。
+return /// return\ngosub命令で呼び出しされたサブルーチンを終了します。
+run /// run "filename"\n"filename" : 実行するHSPオブジェクトファイル名\n別のファイルに書かれたHSPのプログラムを実行します。
+skiperr /// skiperr p1\np1 : エラースキップモードの設定(0)\nエラースキップモードの設定をします。モードを１にした場合\nには、HSP実行中にエラーが起こっても、エラーメッセージを出\nさずにそのまま実行を続けます。モードを０にすると、解除され\nます。
+stop /// stop\nプログラムの実行を一時中断します。
+wait /// wait p1\np1 : 待ち時間(10ms単位)\nプログラムの実行を一定時間だけ中断します。
+
+★ マルチメディア制御命令
+mci /// mci "strings"\n"strings" : MCIコマンド文字列\nMCI（Multimedia Control Interface）にコマンド文字列を\n送ります。MCIに対応したMIDI再生、ムービー再生などを行なう\nことができます。
+snd /// snd p1\np1=0～255(0) : 再生するバッファの番号\nsndload命令によって読み込まれたサウンドやデータを再生します。
+sndload /// sndload "filename",p1,p2\np1=0～255(0) : 読み込むバッファの番号\np2=0～2(0)   : 読み込みモード\nサウンドデータのファイルを読み込みます。
+sndoff /// sndoff\nsnd命令によって再生中のサウンドを停止させます。
+
+★ メモリ管理命令
+alloc /// alloc p1,p2\np1=変数  : バッファを割り当てる変数名\np2=64～  : バッファのサイズ(Byte単位)\nメモリ上にバッファを作成して配列変数に割り当てます。
+dim /// dim p1,p2...\np1=変数  : 配列を割り当てる変数名\np2=0～   : 要素の最大\n任意の要素を持つ配列変数を作成します。
+memcpy /// memcpy p1,p2,p3,p4,p5\np1 : コピー先の変数\np2 : コピー元の変数\np3 : コピーするサイズ(1byte単位)\np4 : コピー先の変数メモリオフセット(省略時=0)\np5 : コピー元の変数メモリオフセット(省略時=0)\np1で指定された変数に割り当てられているメモリ領域に、\np2で指定された変数に割り当てられているメモリの内容をコピーします。
+memset /// memset p1,p2,p3,p4\np1 : 書き込み先の変数\np2 : クリアする値(1byte)\np3 : クリアするサイズ(1byte単位)\np4 : 書き込み先の変数メモリオフセット(省略時=0)\n1byteの固定値でメモリブロックを埋めます。
+peek /// peek p1,p2,p3\np1=変数    : 内容を読み出す先の変数名\np2=変数    : バッファを割り当てた変数名\np3=0～     : バッファのインデックス(Byte単位)\nメモリ上のバッファの任意の場所にある内容を変数に読み出します。
+poke /// poke p1,p2,p3\np1=変数    : バッファを割り当てた変数名\np2=0～     : バッファのインデックス(Byte単位)\np3=0～255  : バッファに書き込む値 または 文字列(Byte単位)\nメモリ上のバッファの任意の場所に値を書き込みます。
+sdim /// sdim p1,p2,p3...\np1=変数  : 配列を割り当てる変数名\np2=1～   : １つの要素あたりの最大文字数\np3=0～   : 要素の最大\n文字列型の配列変数を作成します。dim命令との違いは、\np2のパラメータは「文字列の最大文字数」、\np3のパラメータ以降に実際の配列要素の最大数を入れる\nところです。
+wpeek /// wpeek p1,p2,p3\np1=変数    : 内容を読み出す先の変数名\np2=変数    : バッファを割り当てた変数名\np3=0～     : バッファのインデックス(Byte単位)\nメモリ上のバッファの任意の場所にある内容を変数に読み出します。
+wpoke /// wpoke p1,p2,p3\np1=変数    : バッファを割り当てた変数名\np2=0～     : バッファのインデックス(Byte単位)\np3=0～65535: バッファに書き込む値 または 文字列(Word単位)\nメモリ上のバッファの任意の場所に値を書き込みます。
+
+★ 画面制御命令
+bgscr /// bgscr p1,p2,p3,p4,p5,p6,p7,p8\np1=0～31(0) : ウインドゥID\np2,p3       : 初期化する画面サイズX,Y（1ドット単位）\np4=0～1     : 初期化する画面モード\np5,p6(0,0)  : ウインドゥの配置X,Y（1ドット単位）\np7,p8       : ウインドゥのサイズX,Y（1ドット単位）\nscreen命令と同じく、指定したウインドゥIDを初期化して使用できるようにします。
+bmpsave /// bmpsave "filename"\n"filename" : セーブするファイル名\n現在の画面イメージをそのままBMP形式の画像ファイルとして\nセーブします。"filename"で指定された名前でファイルが作成\nされます。拡張子も含めてファイル名を指定する必要があります。
+boxf /// boxf p1,p2,p3,p4\np1,p2 : 矩形の左上X,Y座標\np3,p4 : 矩形の右下X,Y座標\n画面上に、(p1,p2)と(p3,p4)を左上、右下の点として、\n矩形(四角形)を塗りつぶします。
+buffer /// buffer p1,p2,p3,p4\np1=0～31(0) : ウインドゥID\np2,p3       : 初期化する画面サイズX,Y（1ドット単位）\np4=0～1     : 初期化する画面モード\nscreen命令と同じく、指定したウインドゥIDを初期化して\n使用できるようにします。初期化する画面サイズと、画面\nモードはscreen命令と変わりませんが、buffer命令では、\nメモリ上に仮想画面が作られるだけで、実際の画面には\n表示されません。これで作成した仮想画面は、通常の画面\nと同じようにprint命令やpicload命令を使用することが\nできます。gcopy命令などで別の画面にコピーするための\nストック場所に使ったり、現在の画面を一時的に残して\nおくための保管場所に使うことができます。
+chgdisp /// chgdisp p1\np1=0～3(0) : 画像解像度の設定\n現在の表示解像度を強制的に変更します。
+color /// color p1,p2,p3\np1,p2,p3=0～255(0) : 色コード（R,G,Bの輝度）\nメッセージ表示、描画などの色を指定した値に設定します。
+font /// font "fontname",p1,p2\np1=1～99(12) : フォントの大きさ\np2=0～(0)   : フォントのスタイル\nmesおよびprint命令などで表示するテキスト書体の設定をします。
+gcopy /// gcopy p1,p2,p3,p4,p5\np1=0～31(0): ウインドゥID\np2,p3 : コピー元の左上X,Y座標\np4,p5 : コピーする大きさX,Y（ドット単位）\ngcopy命令は、指定したウインドゥIDの画面の一部を、\n現在の描画先カレントポジションにコピーします。
+getpal /// getpal p1\np1=0～255(0) : パレットコード\n現在の画面に設定されているパレットの色データを読みだし\nます。指定したパレットコードのRGB輝度が、rval,gval,bval\nの変数に自動的に代入されます。
+gmode /// gmode p1,p2,p3\np1=0～4(0)   : 画面コピーモード\np2,p3        : コピーする大きさX,Y（ドット単位）\np4=0～256(0) : 半透明合成時のブレンド率\ngcopyで使用されるモードおよび、サイズ、ブレンド率などを設定します。
+gsel /// gsel p1,p2\np1=0～31(0) : ウインドゥID\np2=0～1(0)  : ウインドゥアクティブスイッチ\n画面制御命令の描画先を指定したウインドゥIDの画面に変更します。
+gzoom /// gzoom p1,p2,p3,p4,p5,p6,p7\np1,p2 : 画面にコピーする時の大きさX,Y（ドット単位）\np3=0～31(0): ウインドゥID\np4,p5 : コピー元の左上X,Y座標\np6,p7 : コピーする大きさX,Y（ドット単位）\ngzoom命令は、指定したウインドゥIDの画面の一部を、\n現在の描画先カレントポジションに、任意の大きさに変倍してコピーします。
+line /// line p1,p2,p3,p4\np1,p2 : 点１の画面上のX,Y座標\np3,p4 : 点２の画面上のX,Y座標\n画面上に、(p1,p2)と(p3,p4)を結ぶ直線を描画します。
+palcolor /// palcolor p1\np1=0～255(0) : パレットコード\nメッセージ表示、描画などの色を指定した値に設定します。
+palcopy /// palcopy p1\np1=0～31(0): ウインドゥID\np1で指定されたウインドゥIDが使用しているパレットの内容\nをすべて、現在選択されている画面にコピーします。
+palette /// palette p1,p2,p3,p4\np1=0～255(0)       : パレットコード\np2,p3,p4=0～255(0) : 色コード（R,G,Bの輝度）\n現在の画面に設定されているパレットの色データを変更します。
+palfade /// palfade p1,p2,p3\np1=-256～256(0)   : 輝度変更値\np2=   0～255(0)   : スタートパレットコード\np3=   0～255(255) : エンドパレットコード\nパレットの輝度を現在設定してある状態からp1で指定する\n値だけ変更します。
+pget /// pget p1,p2\np1,p2 : 画面上のX,Y座標\n画面上の1ドットの色データを読みだします。
+picload /// picload "filename",p1,p2,p3\n"filename" : ロードするファイル名\np1=0～1(0) : 画像ロードモード\np2,p3 : 新規ウインドゥサイズX,Y\n画像ファイルをロードします。通常は、\n  picload "test.bmp"\nとするだけで、"test.bmp"で指定された画像ファイルが現在の\n画面にロードされ、ウインドゥサイズが自動的に絵のサイズに\n合わせられます。
+pos /// pos p1,p2\np1,p2 : カレントポジションのX,Y座標\nメッセージ表示、オブジェクトの表示などの基本座標となる\nカレントポジションの座標を指定します。
+pset /// pset p1,p2\np1,p2 : 画面上のX,Y座標\n画面上に1ドットの点を描画します。
+redraw /// redraw p1,p2,p3,p4,p5\np1=0～3(3) : 描画モードの設定\np2,p3 : 再描画する左上X,Y座標\np4,p5 : 再描画する大きさX,Y（ドット単位）\n画面の描画モードを指定します。描画モードとは、\n  描画モード０ (２):\n    mes,print,gcopy,gzoomなどの画面制御命令が実行されて\n    も仮想画面を書き換えるだけで、実際の画面には反映され\n    ません。\n  描画モード１ (３):\n    画面制御命令が実行されると、実際の画面にも反映されます。\n  となっています。通常は描画モード１です。\n  描画モード０で画面内に画像をコピーしたり、メッセージ\n  を表示しておいて、最後にモード１にすることで画面の書\n  き換えのちらつきをなくしスムーズに見せることができます。\nモード１を指定した場合は即座に画面の更新を行います。
+screen /// screen p1,p2,p3,p4,p5,p6,p7,p8\np1=0～31(0) : ウインドゥID\np2,p3       : 初期化する画面サイズX,Y（1ドット単位）\np4=0～1     : 初期化する画面モード\np5,p6       : ウインドゥの配置X,Y（1ドット単位）\np7,p8       : クライアントエリアのサイズX,Y（1ドット単位）\n指定したウインドゥIDを初期化して使用できるようにし\nます。HSPの初期状態では、ウインドゥID0の画面しか使用\nされていませんが、ウインドゥID2～31までを自由に使って\nウインドゥやメモリ上の仮想画面を作成することができま\nす。screen命令を使うと、ディスプレイ上に新しいウイン\nドゥが作成されます。このウインドゥはサイズを自由に変\nえられ、スクロールバーを付加し内容をスクロールさせる\nことができます。
+sysfont /// sysfont p1\np1=0～  : フォント種類指定\nシステム標準のフォントを選択します。
+width /// width p1,p2,p3,p4\np1,p2 : クライアントエリアのサイズX,Y（1ドット単位）\np3,p4 : ディスプレイ上でのウインドゥX,Y座標（1ドット単位）\nウインドゥのクライアントサイズ(実際に表示される大きさ)と\nウインドゥ表示位置を変更します。
+
+★ 基本入出力制御命令
+cls /// cls p1\np1=0～4(0) : クリアする時の色\nウインドゥ内の情報をすべてクリアします。
+dialog /// dialog "message",p1,"option"\np1=0～(0) : ダイアログのタイプ設定\nWindowsの標準的な各種ダイアログボックスを画面に表示します。
+getkey /// getkey p1,p2\np1=変数    : 読み込むための変数\np2=1～(1)  : キーコード\nキーボード及びマウスボタンの状態をチェックして変数に\n代入します。指定したボタンが押されていれば、1を代入し、\n押されていなければ0が代入されます。キーコードで指定する\n値の詳細は、以下の通りです。\nキーコード　実際のキー\n- - - - - - - - - - - - - -\n　　　 1　マウスの左ボタン\n　　　 2　マウスの右ボタン\n　　　 3　キャンセル（[CTRL]+[BREAK]）\n　　　 4　３ボタンマウスのまん中のボタン\n　　　 8　[BACKSPACE]（PC98の[BS]）\n　　　 9　[TAB]\n　　　13　[ENTER]\n　　　16　[SHIFT]\n　　　17　[CTRL]\n　　　18　[ALT]（PC98の[GRPH]）\n　　　20　[CAPSLOCK]\n　　　27　[ESC]\n　　　32　スペースキー\n　　　33　[PAGEUP]（PC98の[ROLLDOWN]）\n　　　34　[PAGEDOWN]（PC98の[ROLLUP]）\n　　　35　[END]（PC98の[HELP]）\n　　　36　[HOME]（PC98の[HOMECLR]）\n　　　37　カーソルキー[←]\n　　　38　カーソルキー[↑]\n　　　39　カーソルキー[→]\n　　　40　カーソルキー[↓]\n　48～57　[0]～[9]（メインキーボード）\n　65～90　[A]～[Z]\n 96～105　[0]～[9]（テンキー）\n112～121　ファンクションキー [F1]～[F10]\n- - - - - - - - - - - - - -
+gettime /// gettime p1,p2\np1=変数    : 読み込むための変数\np2=0～(0)  : 取得するパラメータのタイプ\np1で指定した変数に、p2で指定したタイプの日付・時刻\n情報を代入します。
+ginfo /// ginfo p1\np1=0～(0) : 情報タイプ設定\nマウスやウインドゥについての特殊な情報を取得して、システム変数prmx,prmyに代入します。
+logmes /// logmes "message"\n"message" : ログに記録するメッセージ\n実行履歴(ログ)にメッセージを記録します。
+logmode /// logmode p1,p2\np1 : 実行履歴(ログ)記録モード\np2 : 実行履歴(ログ)記録オプション\n実行履歴(ログ)記録の設定を行ないます。
+mes /// mes "strings"\n"strings" : 表示するメッセージ、または変数\nウインドゥ内に、指定されたメッセージを表示します。
+mouse /// mouse p1,p2\np1,p2 : 設定するX,Y座標\nマウスカーソルをp1,p2で指定した座標に変更します。
+print /// print "strings"\n"strings" : 表示するメッセージまたは変数\nウインドゥ内に、指定されたメッセージを表示します。
+randomize /// randomize p1\np1=0～(不定) : 乱数の初期化パラメーター\nrnd命令で発生させる乱数のパターンを初期化します。
+rnd /// rnd p1,p2\np1=変数       : 読み込むための変数\np2=1～32768 : 乱数の最大値\n乱数を発生させて変数に代入します。
+stick /// stick p1,p2,p3\np1=変数    : 読み込むための変数\np2=0～(0)  : 非トリガータイプキー指定\np3=0～1(0) : ウインドゥアクティブチェックON/OFF\nよく使われるキーボード及びマウスボタンの状態をまとめて\nチェックして変数に代入します。
+text /// text p1\np1=0～(0) : メッセージ表示スピード\nmes,print命令で画面に表示する文字のスピードを設定します。
+title /// title "strings",p1\n"strings"   : 指定する文字列\np1=0～(-1) : オブジェクトID指定\np1の指定が省略されている場合には、ウインドゥのタイトルバー\nのキャプションを、"strings"の内容に設定します。
+
+★ 代入命令
+int /// int 変数名\n変数を数値型に設定します。
+str /// str 変数名,p1\n変数名 : 対象となる変数名\np1 : 変換のオプション\n変数を文字列型に設定します。
+val /// val\n変数名の後に「＝（イコール）」をつけて、その後の数式が示す値を\n代入することができます。
+
+★ 特殊代入命令
+dup /// dup 変数名1 , 変数名2\n変数名1 : クローンを作成する変数名\n変数名2 : クローン元の変数名\ndup命令は、変数名1に変数名2で指定した変数の機能をコピーします。
+mref /// mref p1,p2\np1=変数名 : 割り当てられる変数名\np2=0～(0) : リソースID (割り当てるメモリ内容)\np1で指定された変数に、p2で指定したメモリ内容を割り当てます。\n　値　　対応するリソース\n- - - - - - - - - - - - - -\n 0～7　 ローカルパラメータ#1～8(数値)\n　16　　ローカルパラメータ#1(数値型変数)\n　17　　ローカルパラメータ#2(数値型変数)\n　24　　ローカルパラメータ#1(文字列型変数)\n　25　　ローカルパラメータ#2(文字列型変数)\n　32　　ローカルパラメータ#1(255文字以下の文字列)\n　33　　ローカルパラメータ#2(255文字以下の文字列)\n　48　　ローカルパラメータ#1(数値型配列変数)\n　49　　ローカルパラメータ#2(数値型配列変数)\n　56　　ローカルパラメータ#1(文字列型配列変数)\n　57　　ローカルパラメータ#2(文字列型配列変数)\n　64　　システム変数stat\n　65　　システム変数refstr\n　66　　ウインドゥ内画像データ(VRAM)\n　67　　現在のウインドゥ情報(BMSCR構造体)\n96～103 ウインドゥID0～7の情報(BMSCR構造体)\n 1024　 ローカルパラメータ#1情報(PVAL構造体)\n 1025　 ローカルパラメータ#2情報(PVAL構造体)\n- - - - - - - - - - - - - -
+
+★ 文字列操作命令
+getstr /// getstr p1,p2,p3,p4\np1=変数    : 内容を読み出す先の変数名\np2=変数    : バッファを割り当てた変数名\np3=0～     : バッファのインデックス(Byte単位)\np4=0～255  : 区切りキャラクタのASCIIコード\nメモリ上のバッファの任意の場所にある内容を文字列として変数に\n読み出します。文字列は、00というコードか、改行コードがある\nまで読み出されます。改行コードは文字列には含まれません。
+instr /// instr p1,p2,"string",p3\np1=変数名  : 検索の結果が代入される変数名\np2=変数名  : 検索される文字列が格納されている文字列型変数名\n"string"   : 検索する文字列\np3=0～(0)  : 検索を始めるインデックス\np2で指定した文字列型変数の中に、"string"で指定した文字列が\nあるかどうか調べて、p1で指定した変数にインデックスを代入\nします。
+noteadd /// noteadd p1,p2,p3\np1=文字列  : 追加・変更をする文字列または変数名\np2=0～(-1) : 追加するインデックス\np3=0～1(0) : 追加・上書きモード指定\nメモリノートパッドの内容を追加・変更します。
+notedel /// notedel p1\np1=0～ : 削除するインデックス\nメモリノートパッドの指定したインデックスを削除します。
+noteget /// noteget p1,p2\np1=変数    : 読み出し先の変数名\np2=0～(0)  : 読み出すインデックス\nメモリノートパッド内の、p1で指定したインデックスの内容をp1で指定された変数に代入します。
+notemax /// notemax p1\np1=変数名 : 最大行を読み出す先の変数名\n現在、対象となっているメモリノートパッド全体の行数を調べ、p1で指定した変数に代入します。
+notesel /// notesel p1\np1=変数    : バッファを割り当てた変数名\np1で指定した変数をメモリノートパッド命令のバッファに設定します。
+strlen /// strlen p1,p2\np1=変数    : 文字列の長さを読み出す先の変数名\np2=変数    : 文字列の長さを調べたい文字列型の変数名\np2で指定された文字列型変数が持っている文字列の長さをp1に代入します。
+strmid /// strmid p1,p2,p3,p4\np1=変数名  : 取り出した文字列を格納する変数名\np2=変数名  : 取り出すもとの文字列が格納されている変数名\np3=0～(0)  : 取り出し始めのインデックス\np4=0～(0)  : 取り出す文字数\np2で指定した文字列型変数の中から、p3,p4で指定した条件で\n文字を取り出し、p1で指定された変数に代入します。
+
+★ **************************************************
+★ 拡張プラグイン [hgimg]が必要
+
+★ 拡張画面制御命令[hgimg]
+addbg /// addbg val,winsizex,winsizey  [hgimg.dll]\nval      : 作成されたモデルIDが代入される変数名\nwinsizex : ウインドゥに表示するチップの数X\nwinsizey : ウインドゥに表示するチップの数Y\n2DBGマップモデルを作成します。
+addbox /// addbox val  [hgimg.dll]\nval : 作成されたモデルIDが代入される変数名\n箱(BOX)モデルを作成します。
+addmesh /// addmesh val,divx,divy,mode  [hgimg.dll]\nval  : 作成されたモデルIDが代入される変数名\ndivx : メッシュの分割数X\ndivy : メッシュの分割数Y\nmode : 0=透明色抜きなし / 1=透明色抜きあり / 16=繰り返し\n分割された3Dポリゴンを使った板(MESH)を作成します。
+addplate /// addplate val,mode  [hgimg.dll]\nval  : 作成されたモデルIDが代入される変数名\nmode : 0=透明色抜きなし / 1=透明色抜きあり\n3Dの板(PLATE)モデルを作成します。
+addspr /// addspr val,mode  [hgimg.dll]\nval  : 作成されたモデルIDが代入される変数名\nmode : 0=透明色抜きなし / 1=透明色抜きあり\n2Dスプライトモデルを作成します。
+cammode /// cammode mode  [hgimg.dll]\nmode : モード値\nカメラの向きについてのモードを設定します。
+clscolor /// clscolor color  [hgimg.dll]\ncolor : カラーコード\n単色で塗りつぶす背景色を設定します。
+clstex /// clstex id  [hgimg.dll]\nid : テクスチャID\n背景となるテクスチャのIDを指定します。
+copybuf /// copybuf mode  [hgimg.dll]\nmode  : コピーモード\nHGIMGの描画先から別なスクリーンに画面を拡大しながら\nコピーします。modeで、コピーの種類を指定します。
+delobj /// delobj ObjID  [hgimg.dll]\nObjID  : オブジェクトID\n指定されたオブジェクトを削除します。
+evmodel /// evmodel eventID, modelID  [hgimg.dll]\nModelID  : モデルID\neventID  : イベントID\n指定したイベントIDにモデルIDを設定します。
+f2i /// f2i v,x,y,z  [hgimg.dll]\nv       = int値が代入される変数名\n(x,y,z) = 変換元のfloat値(X,Y,Z)\n小数値(X,Y,Z)を整数値に変換して、vで指定された数値型の変数に代入します。
+f2str /// f2str sval,fval  [hgimg.dll]\nsval    = 文字列が代入される変数名\nfval    = 変換元のfloat値\nfvalで指定された小数値を文字列に変換して、valで指定された文字列型の変数に\n結果を返します。
+fadd /// fadd fval,fprm  [hgimg.dll]\nfval    = float値が代入される変数名\nfprm    = 演算に使われる値(float)\nfvalで指定した変数に代入されている小数値に対して、\nfprmで指定された値を加算します。
+fcmp /// fcmp fval,fprm1,fprm2  [hgimg.dll]\nval     = 結果が代入される変数\nfprm1   = 比較値1(float)\nfprm2   = 比較値2(float)\n比較値1と比較値2を比較した結果をvalで指定した変数に代入します。
+fcos /// fcos fval,frot  [hgimg.dll]\nfval    = float値が代入される変数名\nfrot    = 回転角度(float)\nfrotで指定された角度のコサイン値をfvalで指定した変数に代入します。
+fdiv /// fdiv fval,fprm  [hgimg.dll]\nfval    = float値が代入される変数名\nfprm    = 演算に使われる値(float)\nfvalで指定した変数に代入されている小数値に対して、\nfprmで指定された値を除算します。
+findobj /// findobj exmode,group  [hgimg.dll]\nexmode  : 検索を除外するモード\ngroup   : 検索対象グループ値\n指定したグループのオブジェクトだけを検索します。
+fmul /// fmul fval,fprm  [hgimg.dll]\nfval    = float値が代入される変数名\nfprm    = 演算に使われる値(float)\nfvalで指定した変数に代入されている小数値に対して、\nfprmで指定された値を乗算します。
+fprt /// fprt "mes",x,y  [hgimg.dll]\n"mes"  : 表示する文字列\n( x,y ) : 表示する座標\n"mes"の内容を指定されたフォントで画面に表示します。
+froti /// froti fval,rot  [hgimg.dll]\nfval    = float値が代入される変数名\nrot     = 0～1023の角度値(int)\nprmで指定された整数値(0～1023)を角度を示すものとして、\nfvalに-π～+πのラジアン角度値に変換して代入します。
+fsin /// fsin fval,frot  [hgimg.dll]\nfval    = float値が代入される変数名\nfrot    = 回転角度(float)\nfrotで指定された角度のサイン値をfvalで指定した変数に代入します。
+fsqr /// fsqr fval,fprm  [hgimg.dll]\nfval    = float値が代入される変数名\nfprm    = 演算に使われる値(float)\nfprmで指定された値の平方根をfvalで指定した変数に代入します。
+fsub /// fsub fval,fprm  [hgimg.dll]\nfval    = float値が代入される変数名\nfprm    = 演算に使われる値(float)\nfvalで指定した変数に代入されている小数値に対して、\nfprmで指定された値を減算します。
+fv2str /// fv2str fv  [hgimg.dll]\nfv      = FV値が代入されている変数名\nfvで指定された変数に格納されているベクトル(FV値)を文字列に\n変換してシステム変数refstrに結果を返します。
+fvadd /// fvadd fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 計算値(float値)\n(x,y,z)で指定された小数値(X,Y,Z)をFV値に加算する。
+fvdir /// fvdir fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 回転角度(float値)\nfvで指定された変数に格納されているFV値をX,Y,Z角度として、\n小数値(X,Y,Z)で指定されたベクトルを回転させた結果を、変数fvに代入します。
+fvdiv /// fvdiv fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 計算値(float値)\n(x,y,z)で指定された小数値(X,Y,Z)をFV値に並列で除算する。
+fvface /// fvface fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = X,Y,Z座標値(float値)\nfvで指定された変数に格納されているベクトル(FV値)を基点とするX,Y,Z座標から、\n指定されたX,Y,Z座標を直線で見るためのX,Y,Z回転角度を求めて変数fvに代入します。
+fvinner /// fvinner fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 演算するベクトル値(float値)\nfvで指定された変数に格納されているFV値と、\n小数値(X,Y,Z)で指定するベクトルの内積を求めてfv.0に代入します。
+fvmax /// fvmax fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 比較値(float値)\nfvで指定された変数に格納されているFV値と、\n小数値(X,Y,Z)を比較して、値の小さいものを代入します。
+fvmin /// fvmin fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 比較値(float値)\nfvで指定された変数に格納されているFV値と、\n小数値(X,Y,Z)を比較して、値の大きいものを代入します。
+fvmul /// fvmul fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 計算値(float値)\n(x,y,z)で指定された小数値(X,Y,Z)をFV値に並列で乗算する。
+fvouter /// fvouter fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 演算するベクトル値(float値)\nfvで指定された変数に格納されているFV値と、\n小数値(X,Y,Z)で指定するベクトルの外積を求めて代入します。
+fvset /// fvset fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入される変数名\n(x,y,z) = 計算値(float値)\n(x,y,z)で指定された小数値(X,Y,Z)をベクトルとしてFV値に代入する。
+fvseti /// fvseti fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入される変数名\n(x,y,z) = int値(整数値)\n(x,y,z)で指定された整数値をベクトルとしてFV値に代入する。
+fvsub /// fvsub fv,x,y,z  [hgimg.dll]\nfv      = FV値が代入されている変数名\n(x,y,z) = 計算値(float値)\n(x,y,z)で指定された小数値(X,Y,Z)をFV値から減算する。
+fvunit /// fvunit fv  [hgimg.dll]\nfv      = FV値が代入されている変数名\nfvで指定された変数に格納されているベクトル(FV値)を正規化します。
+getbg /// getbg val,modelID  [hgimg.dll]\nval     : クローンが作成される変数名\nmodelID : モデルID\nBGマップに割り当てられたメモリ空間を変数valにクローンで割り当てます。
+getcoli /// getcoli val,id,distance  [hgimg.dll]\nval      : 結果が代入される変数名\nid       : オブジェクトID\ndistance : 衝突を検出する範囲(float値)\n指定したオブジェクトが持つコリジョン情報をもとに、その\nオブジェクトが衝突している別なオブジェクトのIDを調べます。
+getdebug /// getdebug val  [hgimg.dll]\nval : 結果が代入される変数名\nHGIMGのデバッグ情報が代入されます。
+getmtex /// getmtex val, modelid, nodeid  [hgimg.dll]\nval      : 結果が代入される変数名\nModelID  : モデルID\nNodeID   : ノードID\n指定したモデルIDの管理するポリゴン、スプライトなどが\n持つテクスチャID情報を取得します。
+getnode /// getnode val, modelID, nodeID  [hgimg.dll]\nval      : 結果が代入される変数名\nModelID  : モデルID\nNodeID   : ノードID\n指定したモデルIDの持つノード情報を変数の持つメモリにコピーします。
+getsync /// getsync val,mode  [hgimg.dll]\nval  : 情報が代入される変数名\nmode : 取得モード( 0=現在のタイマ / 1=タイマ分解能 )\nmodeで指定した種類の情報を取得してvalで指定した変数に代入します。
+gettex /// gettex val  [hgimg.dll]\nval : テクスチャIDが代入される変数名\n次に登録されるものに割り当てられるテクスチャIDを取得します。
+hgbye /// hgbye  [hgimg.dll]\nHGIMGの解放を行ないます。
+hgdraw /// hgdraw  [hgimg.dll]\n全描画を実行します。
+hgdst /// hgdst mode  [hgimg.dll]\nmode    : 転送モード\n画面拡大モード時に転送する先のウインドゥを指定します。
+hggetreq /// hggetreq val,type  [hgimg.dll]\nval  : 結果が代入される変数名\ntype : 設定タイプ(SYSREQ_???)\nHGIMG.DLLのシステム設定値を取り出してvalで指定した変数に代入します。
+hgini /// hgini yofs,ysize  [hgimg.dll]\nyofs    : 有効スクリーン範囲を縦に+yofsだけずらす\nysize   : 有効スクリーン範囲を縦にysizeとする\nHGIMGの初期化を行ないます。
+hgsetreq /// hgsetreq type,val  [hgimg.dll]\ntype : 設定タイプ(SYSREQ_???)\nval  : 設定する値\nHGIMG.DLLに対して様々なシステム設定を行ないます。
+hgsync /// hgsync val  [hgimg.dll]\nval : 待ち時間\nvalで指定した時間(ms)だけウェイトを取ります。
+mxaconv /// mxaconv val  [hgimg.dll]\nval : ファイルがメモリにロードされている変数名\nMAファイルをアニメーションデータに変換します。
+mxconv /// mxconv val  [hgimg.dll]\nval : モデルIDが代入される変数名\nMXファイルをモデルに変換しますです。
+mxgetname /// mxgetname val,id  [hgimg.dll]\nval : 結果(文字列)が代入される変数名\nid  : ローカルのテクスチャID\n変換されたMXファイルで使用されるテクスチャ名を取得します。
+mxgetpoly /// mxgetpoly val  [hgimg.dll]\nval : 結果が代入される変数名\n変換されたMXファイルのポリゴン数を取得します。
+mxload /// mxload "filename"  [hgimg.dll]\n"filename" : 読み込むモデルファイル(MX形式)\n"filename"で指定したmx形式のファイルをモデルとして読み込みます。
+mxsend /// mxsend val  [hgimg.dll]\nval : ファイルがメモリにロードされている変数名\nMXファイル読み込みを初期化します。
+nextobj /// nextobj val  [hgimg.dll]\nval      : 結果が代入される変数名\nfindobj命令で指定された条件をもとにオブジェクトを検索します。
+objact /// objact ObjID,Anim  [hgimg.dll]\nObjID  : オブジェクトID\nAnim   : アニメーションID\n指定されたオブジェクトのアニメーションを開始します。
+objadd1 /// objadd1 ofs,x  [hgimg.dll]\nofs : MOCのオフセット番号\nx   : 加算する値\nMOC情報に設定されている値にxを加算します。
+objadd2 /// objadd2 ofs,x,y  [hgimg.dll]\nofs : MOCのオフセット番号\nx   : 加算する値\ny   : 加算する値2\nMOC情報に設定されている値にxを加算します。
+objadd3 /// objadd3 x,y,z  [hgimg.dll]\nx   : 加算する値\ny   : 加算する値2\nz   : 加算する値3\nMOC情報に設定されている値にxを加算します。
+objaddf1 /// objaddf1 ofs,fx  [hgimg.dll]\nofs : MOCのオフセット番号\nfx  : 加算する値(float値)\nMOC情報に設定されている値にfxを加算します。
+objaddf2 /// objaddf2 ofs,fx,fy  [hgimg.dll]\nofs : MOCのオフセット番号\nfx  : 加算する値(float値)\nfy  : 加算する値2(float値)\nMOC情報に設定されている値にfxを加算します。
+objaddf3 /// objaddf3 fx,fy,fz  [hgimg.dll]\nfx  : 加算する値(float値)\nfy  : 加算する値2(float値)\nfz  : 加算する値3(float値)\nMOC情報に設定されている値にfxを加算します。
+objaddfv /// objaddfv fv  [hgimg.dll]\nfv      = FV値が代入されている変数名\n変数fvの内容をMOCに加算します。
+objcheck /// objcheck val  [hgimg.dll]\nval : 情報が代入される変数名\nMOCの変化状態(objmovなどで指定するもの)か、停止状態かを取得します。
+objgetfv /// objgetfv fv  [hgimg.dll]\nfv      = FV値が代入される変数名\nMOCに設定されている値を変数fvに代入します。
+objgetstr /// objgetstr sval  [hgimg.dll]\nsval : 結果が代入される文字列型変数名\nMOCに設定されている値を変数svalに文字列で書き出します。
+objgetv /// objgetv v  [hgimg.dll]\nv    : 値が代入される変数名\nMOCに設定されている値を変数vに整数で代入します。
+objmov1 /// objmov1 ofs,times,x  [hgimg.dll]\nofs   : MOCのオフセット番号\ntimes : フレーム数\nx     : 設定する値\nMOC情報を、timesで示したフレーム数後に指定した値に\n変わるように変化情報を設定します。
+objmov2 /// objmov2 ofs,times,x,y  [hgimg.dll]\nofs   : MOCのオフセット番号\ntimes : フレーム数\nx     : 設定する値\ny     : 設定する値2\nMOC情報を、timesで示したフレーム数後に指定した値に\n変わるように変化情報を設定します。
+objmov3 /// objmov3 times,x,y,z  [hgimg.dll]\ntimes : フレーム数\nx     : 設定する値\ny     : 設定する値2\nz     : 設定する値3\nMOC情報を、timesで示したフレーム数後に指定した値に\n変わるように変化情報を設定します。
+objmovf1 /// objmovf1 ofs,times,fx  [hgimg.dll]\nofs : MOCのオフセット番号\ntimes : フレーム数\nfx  : 設定する値(float値)\nMOC情報を、timesで示したフレーム数後に指定した値に\n変わるように変化情報を設定します。
+objmovf2 /// objmovf2 ofs,times,fx,fy  [hgimg.dll]\nofs : MOCのオフセット番号\ntimes : フレーム数\nfx  : 設定する値(float値)\nfy  : 設定する値2(float値)\nMOC情報を、timesで示したフレーム数後に指定した値に\n変わるように変化情報を設定します。
+objmovf3 /// objmovf3 times,fx,fy,fz  [hgimg.dll]\ntimes : フレーム数\nfx  : 設定する値(float値)\nfy  : 設定する値2(float値)\nfz  : 設定する値3(float値)\nMOC情報を、timesで示したフレーム数後に指定した値に\n変わるように変化情報を設定します。
+objmovfv /// objmovfv fv,times  [hgimg.dll]\nfv    : FV値が代入されている変数名\ntimes : フレーム数\ntimesフレーム後に変数fvの内容になるようにMOC変化値を設定します。
+objmovmode /// objmovmode mode  [hgimg.dll]\nmode : 補間モード\nMOCのグループに対してobjmov命令などの変化時に使用される補間モードを設定します。
+objmovopt /// objmovopt ofs,opt  [hgimg.dll]\nofs : MOCオフセット番号\nopt : オプション設定値\nMOCに対して移動オプションを設定します。
+objset1 /// objset1 ofs,x  [hgimg.dll]\nofs : MOCのオフセット番号\nx   : 設定する値\nMOC情報を設定します。
+objset2 /// objset2 ofs,x,y  [hgimg.dll]\nofs : MOCのオフセット番号\nx   : 設定する値\ny   : 設定する値2\nMOC情報を設定します。
+objset3 /// objset3 x,y,z  [hgimg.dll]\nx   : 設定する値\ny   : 設定する値2\nz   : 設定する値3\nMOC情報を設定します。
+objsetf1 /// objsetf1 ofs,fx  [hgimg.dll]\nofs : MOCのオフセット番号\nfx  : 設定する値(float値)\nMOC情報を設定します。
+objsetf2 /// objsetf2 ofs,fx,fy  [hgimg.dll]\nofs : MOCのオフセット番号\nfx  : 設定する値(float値)\nfy  : 設定する値2(float値)\nMOC情報を設定します。
+objsetf3 /// objsetf3 fx,fy,fz  [hgimg.dll]\nfx  : 設定する値(float値)\nfy  : 設定する値2(float値)\nfz  : 設定する値3(float値)\nMOC情報を設定します。
+objsetfv /// objsetfv fv  [hgimg.dll]\nfv      = FV値が代入されている変数名\n変数fvの内容をMOCに設定します。
+objsetv /// objsetv v  [hgimg.dll]\nv    : 値が代入されている変数名\n変数vに整数で代入されている値をMOCに設定します。
+regobj /// regobj val,ModelID, mode  [hgimg.dll]\nval      : 作成されたオブジェクトIDが代入される変数名\nmodelID  : モデルID\nmode     : モード値\n指定されたモデルを表示するためのオブジェクトを作成します。
+selang /// selang id  [hgimg.dll]\nid     : オブジェクトID\nMOC設定命令の対象となるMOCグループをB(回転角度)に設定します\nidは、オブジェクトIDとなります。
+selcam /// selcam mocofs  [hgimg.dll]\nmocofs : MOCのグループ指定\nMOC設定命令の対象となるMOCグループをカメラに設定します。
+selcang /// selcang  [hgimg.dll]\nMOC設定命令の対象となるMOCグループをカメラのB(回転角度)に設定します\ncammodeの設定が注視点を見るモードになっている場合は、カメラ回転角は自動的に設定されます。
+selcint /// selcint  [hgimg.dll]\nMOC設定命令の対象となるMOCグループをC(注視点座標)に設定します\n注視点は、cammodeの設定によって有効になります。
+selcpos /// selcpos  [hgimg.dll]\nMOC設定命令の対象となるMOCグループをカメラのA(移動座標)に設定します
+seldir /// seldir id  [hgimg.dll]\nid     : オブジェクトID\nMOC設定命令の対象となるMOCグループをD(移動量)に設定します\nidは、オブジェクトIDとなります。
+selmoc /// selmoc id, mocofs  [hgimg.dll]\nid     : オブジェクトID\nmocofs : MOCのグループ指定\nMOC設定命令の対象となるMOCグループを指定します。
+selpos /// selpos id  [hgimg.dll]\nid     : オブジェクトID\nMOC設定命令の対象となるMOCグループをA(移動座標)に設定します\nidは、オブジェクトIDとなります。
+selscale /// selscale id  [hgimg.dll]\nid     : オブジェクトID\nMOC設定命令の対象となるMOCグループをC(スケール)に設定します\nidは、オブジェクトIDとなります。
+setbg /// setbg sx,sy,cx,cy  [hgimg.dll]\n(sx,sy) : マップX,Yサイズ\n(cx,cy) : チップX,Yサイズ\nBGマップ表示モデルの登録に使用される\nマップのサイズと、チップサイズを指定します。
+setborder /// setborder fx,fy,fz  [hgimg.dll]\n( fx,fy,fz ) = ボーダー領域の大きさ(float値)\nボーダー領域(オブジェクト有効範囲)を設定します。
+setcoli /// setcoli id,mygroup,enegroup  [hgimg.dll]\nid       : オブジェクトID\nmygroup  : 自分が属するグループ値\nenegroup : 衝突を検出する対象となるグループ値\nオブジェクトに対してコリジョン情報を設定します。
+setfont /// setfont cx,cy,px,sw  [hgimg.dll]\n( cx,cy ) : フォント1つあたりのXYサイズ\n  px      : 1文字表示ごとに右に移動するドット数\n  sw      : 0=透明色抜きなし / 1=透明色抜きあり\nfprt命令で表示するためのフォントを設定します。
+setmap /// setmap modelID,x,y  [hgimg.dll]\n(x,y)   : 左上の座標\nmodelID : モデルID\nBGマップでウインドゥ内に表示される左上のマップ座標を指定します。
+setmode /// setmode ModelID, mode  [hgimg.dll]\nModelID  : モデルID\nmode     : モード値\n指定したモデルIDにデフォルトのモードを付加します。
+setmtex /// setmtex modelid, nodeid, tex  [hgimg.dll]\nModelID  : モデルID\nNodeID   : ノードID\ntex      : テクスチャID\n指定したモデルIDの管理するポリゴン、スプライトなどが\n持つテクスチャID情報を変更します。
+setobjm /// setobjm ObjID,modelID  [hgimg.dll]\nObjID    : オブジェクトID\nmodelID  : モデルID\n指定されたオブジェクトが表示するモデルを変更します。
+setobjmode /// setobjmode ObjID,mode,sw  [hgimg.dll]\nObjID    : オブジェクトID\nmode     : モード値\nsw       : 設定スイッチ\n指定されたオブジェクトのモードを変更します。
+setsizef /// setsizef fsx,fsy  [hgimg.dll]\n(fsx,fsy) : X,Yサイズ(float値)\nモデル登録の際に使用されるサイズ値を指定します。
+settex /// settex x,y,sw  [hgimg.dll]\n(x,y) : テクスチャ登録サイズ\nsw    : テクスチャ登録スイッチ\n        (0=上下補正/1=補正なし)\n現在選択されているウインドゥIDの内容をテクスチャとして登録します。
+settimer /// settimer ModelID, timer  [hgimg.dll]\nModelID  : モデルID\ntimer    : タイマー値\n指定したモデルIDにタイマー値を付加します。
+setuv /// setuv tx0,ty0,tx1,ty1  [hgimg.dll]\n(tx0,ty0) : テクスチャの左上座標\n(tx1,ty1) : テクスチャの右下座標\nモデル登録の際に使用されるUV値を指定します。
+str2f /// str2f fval,"fval"  [hgimg.dll]\nfval    = float値が代入される変数名\n"fval"  = float値が格納された文字列\n"fval"で指定された文字列情報を小数値として読み出し、\nfvalで指定された変数に格納します。
+str2fv /// str2fv fv,"x,y,z"  [hgimg.dll]\nfv      = FV値が代入される変数名\n"x,y,z" = 「,」で区切られたfloat値が格納された文字列\n"x,y,z"で指定された文字列情報を「,」で区切られたX,Y,Z小数値として読み出し、\nfvで指定された変数に格納します。
+sync /// sync val  [hgimg.dll]\nval : 待ち時間\nvalで指定した時間(ms)だけウェイトを取ります。
+texload /// texload "filename"  [hgimg.dll]\n"filename" : 登録するテクスチャとなる画像ファイル\n画像ファイル"filename"の内容をテクスチャとして登録します。
+texloadbg /// texloadbg "filename"  [hgimg.dll]\n"filename" : 登録するテクスチャとなる画像ファイル\n画像ファイル"filename"の内容をテクスチャとして登録します。
+uvanim /// uvanim id, wait, times, sw  [hgimg.dll]\nid       : モデルID\nwait     : 1コマごとの待ち時間\ntimes    : アニメーションコマ数\nsw       : モード(0=繰り返し/1=１回のみ)\n指定したモデルIDにUVアニメーションの設定を付加します。
+
+★ **************************************************
+★ 拡張プラグイン [hspda]が必要
+
+★ 拡張入出力制御命令[hspda]
+csvnote /// csvnote p1,p2  [hspda.dll]\np1 = 結果が代入される文字列型の変数名\np2 = CSVの１行を取り出した文字列\nCSV形式のデータから取り出した１行だけのデータを、\nメモリノートパッド形式の文字列型の変数に展開します。
+csvstr /// csvstr p1,p2  [hspda.dll]\np1 = 結果が代入される文字列型の配列変数名\np2 = CSVの１行を取り出した文字列\nCSV形式のデータから取り出した１行だけのデータを、\n文字列型の配列変数に展開します。
+sortget /// sortget p1,p2  [hspda.dll]\np1 = 結果が代入される変数名\np2 = インデックスNo.\nsortstr,sortval,sortnote命令を実行後の配列において、\n格納されているデータは、ソートする前はどのインデックスに\n置かれていたものかを調べて結果を返します。
+sortnote /// sortnote p1,p2  [hspda.dll]\np1 = メモリノート形式の文字列型の変数名\np2 = 並び順(0=小さい順/1=大きい順)\nメモリノートパッド形式の文字列が格納された変数を、指定\nされた並び順でソート(並び替え)します。
+sortstr /// sortstr p1,p2  [hspda.dll]\np1 = 文字列型の配列変数名\np2 = 並び順(0=小さい順/1=大きい順)\n文字列が格納された配列変数を、指定された並び順でソート\n(並び替え)します。
+sortval /// sortval p1,p2  [hspda.dll]\np1 = 数値型の配列変数名\np2 = 並び順(0=小さい順/1=大きい順)\n数値が格納された配列変数を、指定された並び順でソート\n(並び替え)します。
+xnoteadd /// xnoteadd p1  [hspda.dll]\np1 = 排他メモリノートに追加される文字列\n排他メモリノートに項目を追加します。
+xnotesel /// xnotesel p1,p2  [hspda.dll]\np1 = 対象となる文字列型の変数名\np2 = 項目の最大数(省略時は256)\n排他メモリノートの初期化を行ないます。
+
+★ **************************************************
+★ 拡張プラグイン [hspdx]が必要
+
+★ 拡張画面制御命令[hspdx]
+es_adir /// es_adir p1,p2,p3  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=移動する方向(0～63)\np3=移動スピード(%)\nスプライトを自動的に移動させるための設定をします。
+es_aim /// es_aim p1,p2,p3,p4  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=移動先のX座標\np3=移動先のY座標\np4=移動スピード(%)\nes_aim命令は、es_adir命令と同じく指定した方向にスプライトを\n移動させるためのものです。es_aim命令では、方向の替わりに移動\nする目標となるX,Y座標を指定します。スプライトは、現在の座標\nから、目標となる座標への方向を計算し移動を開始します。
+es_ang /// es_ang p1,p2,p3,p4  [hspdx.dll]\np1=基準点のX座標\np2=基準点のY座標\np3=目的点のX座標\np4=目的点のY座標\nシステム変数statに(p1,p2)から見た(p3,p4)の方向が返ります。
+es_apos /// es_apos p1,p2,p3,p4  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=1フレームにX方向に移動するドット数\np3=1フレームにY方向に移動するドット数\np4=移動スピード(%)\nスプライトを自動的に移動させるための設定をします。
+es_area /// es_area p1,p2,p3,p4  [hspdx.dll]\np1=有効エリアの左上X座標\np2=有効エリアの左上Y座標\np3=有効エリアの右下X座標\np4=有効エリアの右下Y座標\nスプライトの有効エリアを設定します。
+es_boxf /// es_boxf p1,p2,p3,p4  [hspdx.dll]\np1=塗りつぶし左上X座標\np2=塗りつぶし左上Y座標\np3=塗りつぶし右下X座標\np4=塗りつぶし右下Y座標\n(p1,p2)-(p3,p4)の矩形範囲を現在選択されている色で塗りつぶします。
+es_buffer /// es_buffer p1,p2  [hspdx.dll]\np1=オフスクリーンバッファID(0～63)\np2=属性スイッチ(0～2)\np3=透明色(パレットモード時:-1～255、ハイカラー以上:0～$ffffff)\n  属性スイッチ=0 : オフスクリーンバッファをVRAMに取る、\n  失敗した場合は、メインメモリに取る\n  属性スイッチ=1 : オフスクリーンバッファをメインメモリに取る\n  属性スイッチ=2 : オフスクリーンバッファをVRAMに取る\n現在gsel命令で選択されているHSPのバッファ内容を、DirectXのオフ\nスクリーンバッファにすべて転送します。
+es_bye /// es_bye  [hspdx.dll]\nHSPDX.DLLシステムの切り離しをします。
+es_caps /// es_caps p1,p2,p3,p4  [hspdx.dll]\np1=情報が代入される変数名(数値型)\np2=情報ID\np3=情報ビット(1～32)\np4=対象となるレイヤー( 0=HAL / 1=HEL )\nDirectXのドライバが、どのような機能を持っているかを調べて、結果をp1で\n指定する変数に代入します。
+es_check /// es_check p1,p2,p3  [hspdx.dll]\np1=結果が代入される変数名\np2=チェックの対象となるスプライトNo.(0～511)\np3=検索対象となるtype値\nスプライト同士の衝突判定を行ないます。
+es_chr /// es_chr p1,p2  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=キャラクタNo.(0～1023)\np1で指定したスプライトのキャラクタNo.を変更します。
+es_clear /// es_clear p1,p2  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=削除される個数\np1で指定したスプライトNo.以降のスプライトが削除され未登録になり\nます。p2で削除されるスプライトの数を指定することができます。
+es_cls /// es_cls p1,p2,p3  [hspdx.dll]\np1=画面クリア時のR値\np2=画面クリア時のG値\np3=画面クリア時のB値\nこの命令は、画面全体を指定した色でクリアします。
+es_copy /// es_copy p1,p2,p3  [hspdx.dll]\np1=オフスクリーンバッファID(0～63)\np2=コピー元X座標\np3=コピー元Y座標\nes_copy命令では、pos命令で指定した座標に、gmodeで指定したサイズとモードで\np1で指定したIDの(p2,p3)の座標から画像がコピーされます。
+es_draw /// es_draw p1,p2  [hspdx.dll]\np1=描画開始スプライトNo.\np2=描画するスプライトの個数\n登録されているスプライトを画面に描画します。
+es_fill /// es_fill p1,p2,p3  [hspdx.dll]\np1=塗りつぶし左上X座標\np2=塗りつぶし左上Y座標\np3=塗りつぶす色のパレット番号(0～255)\nes_boxf命令と同じく指定した矩形範囲を塗りつぶすための命令です。
+es_find /// es_find p1,p2,p3  [hspdx.dll]\np1=スプライトNo.が代入される変数名\np2=検索対象となるtype値\np3=検索を開始するスプライトNo.(0～511)\n登録されているスプライトの中で指定したtype値を持つもののスプ\nライトNo.を検索します。
+es_flag /// es_flag p1,p2  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=flag値\np1で指定したスプライトのflag値を変更します。
+es_fmes /// es_fmes "str"  [hspdx.dll]\n"str"=表示文字列\nカレントポジション(pos命令で指定されたX,Y座標)から、指定した文字列を\n表示します。文字の色は、現在選択されている色(color命令で指定)になり、\nフォントはfont命令で選択されているものが使用されます。
+es_get /// es_get p1,p2,p3  [hspdx.dll]\np1=情報が代入される変数名\np2=スプライトNo.(0～511)\np3=info number(0～15)\np1で指定した変数名に、p2のスプライトNo.の情報を代入します。
+es_getbuf /// es_getbuf p1  [hspdx.dll]\np1=DirectXバッファID(-2～63)\nDirectXが管理する画像バッファの内容を、HSPのウインドゥに読み出し\nコピーします。読み出しは、現在gsel命令で選択されているHSPの\nウインドゥIDに対して行なわれます。
+es_getfps /// es_getfps p1  [hspdx.dll]\np1=結果が代入される変数名\n1秒間にes_sync命令が実行された回数を、p1で指定した変数に代入します。
+es_ini /// es_ini p1,p2  [hspdx.dll]\np1=スプライトの最大数\np2=キャラクタ定義の最大数\nHSPDX.DLLシステムの初期化を行ないます。
+es_kill /// es_kill p1  [hspdx.dll]\np1=スプライトNo.(0～511)\np1で指定したスプライトNo.を削除します。
+es_link /// es_link p1,p2  [hspdx.dll]\np1=キャラクタNo.(0～1023)\np2=ループアニメーションするキャラクタNo.(0～1023)\nキャラクタのループアニメーションを設定するための命令です。
+es_mes /// es_mes "str"  [hspdx.dll]\n"str"=表示文字列\nカレントポジション(pos命令で指定されたX,Y座標)から、指定した文字列を\n表示します。
+es_new /// es_new p1,p2  [hspdx.dll]\np1=新規No.が代入される変数名\np2=スプライトNo.(0～511)\nスプライトNo.の中で使われていないNo.を検索します。
+es_offset /// es_offset p1,p2  [hspdx.dll]\np1=オフセットX値\np2=オフセットY値\nすべてのスプライトの表示を、オフセット値で指定した数だけずらして\n表示します。この命令で設定したオフセット値は、es_draw命令で描画を\n行なった時に反映されます。
+es_opt /// es_opt p1  [hspdx.dll]\np1=システムオプション値1\n拡張機能のオプション値を設定する命令です。
+es_palfade /// es_palfade p1,p2  [hspdx.dll]\np1=フェード値(-256～256)\np2=フェードするスピード(0～128)\np1で画像の明るさを設定します。p1が0の時が通常(設定パレットのまま)です。
+es_palset /// es_palset p1,p2,p3,p4  [hspdx.dll]\np1=パレット番号(0～255)\np2=設定するR値(0～255)\np3=設定するG値(0～255)\np4=設定するB値(0～255)\nパレットの色を設定します。p1で指定したパレット番号に、p2,p3,p4がそれぞれ\nR,G,Bとなる色を設定します。
+es_pat /// es_pat p1,p2,p3,p4  [hspdx.dll]\np1=キャラクタNo.(0～1023)\np2=キャラクタパターンの左上X座標\np3=キャラクタパターンの左上Y座標\np4=表示フレーム数(0)\nスプライトのキャラクタパターンを定義します。
+es_pos /// es_pos p1,p2,p3  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=スプライトX座標\np3=スプライトY座標\nスプライトの座標を変更します。
+es_put /// es_put p1,p2,p3  [hspdx.dll]\np1=putする左上X座標\np2=putする左上Y座標\np3=putするキャラクタNo.\nスプライト用のキャラクタパターンとして登録されているデータを、指定した座標\nに表示します。この命令は、スプライトとは関係なく画面にキャラクタを転送する\n命令です。
+es_release /// es_release p1  [hspdx.dll]\np1=オフスクリーンバッファID(0～9)\np1で指定されたオフスクリーンバッファを削除します。
+es_screen /// es_screen p1,p2,p3,p4  [hspdx.dll]\np1=DirectX使用時の解像度X\np2=DirectX使用時の解像度Y\np3=DirectX使用時のカラーモード(bpp)\np4=パレット変換モード(0=236色/1=254色/2=256色/3=236色ウィンドウモード)\n画面の解像度を変更し、DirectXが使用可能な状態にします。
+es_set /// es_set p1,p2,p3,p4  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=スプライトX座標\np3=スプライトY座標\np4=キャラクタNo.(0～1023)\nスプライトを登録します。
+es_size /// es_size p1,p2,p3,p4  [hspdx.dll]\np1=キャラクタのXサイズ\np2=キャラクタのYサイズ\np3=ヒットチェック領域(%)\np4=不透明フラグ( 0=透明 / 1=不透明 )\nスプライトのキャラクタパターンを定義する際の、サイズを指定します。
+es_sync /// es_sync p1  [hspdx.dll]\np1=ウェイト時間(ms)\np2=V-BLANK待ちフラグ(0=待つ、1=待たない)\n描画された画面を更新するとともに、以前のes_sync命令実行時から経過した\n時間を測定して、システム変数statに返します。
+es_timer /// es_timer p1  [hspdx.dll]\np1=結果が代入される変数名\nWindowsを起動してからの経過時間をミリ秒単位で、p1に指定した変数に\n代入します。精度は環境に依存します。
+es_type /// es_type p1,p2  [hspdx.dll]\np1=スプライトNo.(0～511)\np2=type値\np1で指定したスプライトのtype値を変更します。
+es_window /// es_window p1,p2,p3,p4  [hspdx.dll]\np1=スプライト表示基点X座標\np2=スプライト表示基点Y座標\np3=スプライトを表示するX方向の範囲\np4=スプライトを表示するY方向の範囲\nこの命令により、スプライトを画面内の限られた範囲内にのみ表示することが可能\nです。指定した範囲内がスプライトの表示エリアになります。
+es_xfer /// es_xfer p1,p2,p3,p4  [hspdx.dll]\np1=転送先DirectXバッファID(-2～63)\np2=転送元DirectXバッファID(-2～63)\np3=コピー元X座標\np4=コピー元Y座標\nes_copy命令と同じく画像イメージのコピーを行ないますが、コピー先を画面上だけ\nではなく、別なバッファなども指定することができます。
+es_zoom /// es_zoom p1,p2,p3  [hspdx.dll]\np1=オフスクリーンバッファID(0～9)\np2=コピー元X座標\np3=コピー元Y座標\nes_zoom命令では、pos命令で指定した座標に、gmodeで指定したサイズとモードで\np1で指定したIDの(p2,p3)の座標から画像がコピーされます。
+
+★ **************************************************
+★ 拡張プラグイン [hspext]が必要
+
+★ OSシステム制御命令[hspext]
+aplact /// aplact  [hspext.dll]\naplsel命令、およびaplobj命令で捕獲したウインドゥをアクティブに\nして、キーボード入力が可能な状態にします。
+apledit /// apledit p1,p2,p3  [hspext.dll]\np1=変数　　: 情報が格納される数値型変数名\np2=0～2　　: 取得情報No.\np3=0～　　 : 行インデックス指定\naplobj命令で選択された"EDIT"タイプのオブジェクトの情報を取得します。
+aplfocus /// aplfocus  [hspext.dll]\nキー送信の対象となるウインドゥをデフォルトに戻します。
+aplget /// aplget p1,p2  [hspext.dll]\np1=変数　　: オブジェクトの文字列を読み出す変数名\np2=0～(64) : 最大文字数\naplobj命令で選択されたオブジェクトに設定された文字列を取得します。
+aplkey /// aplkey p1,p2  [hspext.dll]\np1=0～(0) : キーコード\np2=0～(0) : 特殊キーコード\n  ( 1 = SHIFT / 2 = CTRL / 4 = ALT )\nキーを押した情報を捕獲先のオブジェクトに送信します。
+aplkeyd /// aplkeyd p1,p2  [hspext.dll]\np1=0～(0) : キーコード\np2=0～(0) : 特殊キーコード\n  ( 1 = SHIFT / 2 = CTRL / 4 = ALT )\nキーを押した情報を捕獲先のオブジェクトに送信します。
+aplkeyu /// aplkeyu p1,p2  [hspext.dll]\np1=0～(0) : キーコード\np2=0～(0) : 特殊キーコード\n  ( 1 = SHIFT / 2 = CTRL / 4 = ALT )\nキーを離した情報を捕獲先のオブジェクトに送信します。
+aplobj /// aplobj "object name",p1  [hspext.dll]\n"object name" : 取得するオブジェクトのクラス名\np1=0～(0)　　 : 開始オブジェクトID\naplsel命令で捕獲したウインドゥに属するオブジエクト(コントロール)\nを捕獲して、メッセージを送信する準備をします。
+aplsel /// aplsel "window name",p1  [hspext.dll]\n"window name" : 取得するウインドゥのタイトル名\np1=0～(0)　　 : 開始ID\n指定したウインドゥを捕獲して、メッセージを送信する準備をします。
+aplstr /// aplstr "strings"  [hspext.dll]\n"strings" : キー送信する文字列\n"strings"で指定した文字列を、キーボード入力データとして、\n捕獲先のオブジェクトに送信します。
+clipget /// clipget p1,p2  [hspext.dll]\np1=変数　　: 情報が格納される変数名\np2=0～(64) : 最大文字数\nクリップボードに送られているテキストの内容を読み出し、\np1で指定した文字列型変数に代入します。
+clipset /// clipset "strings"  [hspext.dll]\n"strings" : クリップボードに送る文字列\n"strings"で指定した文字列を、クリップボードに送ります。
+clipsetg /// clipsetg  [hspext.dll]\n現在選択されている画面をビットマップデータとして、クリップボードに送ります。
+getreg /// getreg p1,"section",p2,p3  [hspext.dll]\np1=変数名　: 読み出すための変数名\n"section"　: セクション名指定\np2=0～1(0) : タイプ指定\np3=1～(64) : 読み出しサイズ指定\n指定されたセクションの内容をp1で指定した変数に読み出します。
+regkey /// regkey p1,"key-name",p2  [hspext.dll]\np1=0～(0)　: キーグループ指定\n"key-name" : キー名指定\np2=0～1(0) : 既存のキー(0)・新規作成(1) モードスイッチ\nアクセスするレジストリのキーを指定します。レジストリの読み書きを\nする場合には、最初に必ずregkey命令でキーと読み書きのモードを指定\nしておかなければなりません。
+regkill /// regkill p1,"key-name"  [hspext.dll]\np1=0～(0)　: キーグループ指定\n"key-name" : キー名指定\n指定したレジストリのキーを削除します。
+reglist /// reglist p1,p2  [hspext.dll]\np1=変数名　: 読み出すための変数名\np2=0～1(0) : モード指定\n指定された位置にあるレジストリキーの一覧を取得します。
+setreg /// setreg p1,"section",p2,p3  [hspext.dll]\np1=変数名　: 書き込むための変数名\n"section"　: セクション名指定\np2=0～1(0) : タイプ指定\np3=1～(64) : 書き込みサイズ指定\np1で指定された変数の内容を、指定されたセクションに書き込みます。
+sysexit /// sysexit p1  [hspext.dll]\np1=0～(0) : 終了タイプ指定\n動作中のWindowsシステムを終了させます。
+sysinfo /// sysinfo p1,p2  [hspext.dll]\np1=変数名 : 情報を格納する変数名\np2=0～(0) : 情報のタイプ指定\np2で指定したタイプの情報を、p1で指定された変数に代入します。
+
+★ 拡張ファイル操作命令[hspext]
+fxaget /// fxaget p1,"file"  [hspext.dll]\np1=変数名 : 情報が格納される数値型変数名\n"file"　　: ファイル名指定\n"file"で指定したファイルの属性を読み出し、p1で指定した変数に代入します。
+fxaset /// fxaset "file",p1  [hspext.dll]\n"file"　　: ファイル名指定\np1=0～(0) : 設定する属性\n"file"で指定したファイルに、p1で指定した属性を設定します。
+fxcopy /// fxcopy p1,"dest",p2  [hspext.dll]\np1=変数　　: コピー元のファイル名が格納された文字列型変数名\n"dest"　　 : コピー先のパス名\np2=0,1 (0) : モード指定( 0=コピー / 1=移動 )\n指定したファイルを、別のパスにコピーまたは移動をします。
+fxdir /// fxdir p1,p2  [hspext.dll]\np1=変数名 : 情報が格納される文字列型変数名\np2=0～(0) : 取得するディレクトリ情報の種類\np2で指定した種類のディレクトリ名を、p1で指定した変数に代入します。
+fxinfo /// fxinfo p1,p2,p3  [hspext.dll]\np1=変数　 : 情報が格納される変数名\np2=0～(0) : ドライブ指定\np3=0～(0) : 情報タイプ指定\np2で指定したドライブについての情報をp1で指定した変数に代入します。
+fxlink /// fxlink p1,"path"  [hspext.dll]\np1=変数名 : ショートカット名が格納されている文字列型変数名\n"path"　　: 元になるファイルのフルパス名\np2で指定したファイルへのショートカットを、p1で指定された名前で\nカレントディレクトリに作成します。
+fxren /// fxren p1,"new name"  [hspext.dll]\np1=変数　　: オリジナルのファイル名が格納された文字列型変数名\n"new name" : 新規ファイル名\n指定したファイルを、"new name"で指定したファイル名に変更します。
+fxshort /// fxshort p1,"file"  [hspext.dll]\np1=変数名 : 情報が格納される文字列型変数名\n"file"　　: ファイル名指定\n"file"で指定したファイルをDOSファイルネームに変換して、p1で指定した\n変数に代入します。
+fxtget /// fxtget p1,"file"  [hspext.dll]\np1=変数名 : 情報が格納される数値型の配列変数名\n"file"　　: ファイル名指定\n"file"で指定したファイルのタイムスタンプ情報を取得して、\np1で指定した変数に代入します。
+fxtset /// fxtset p1,"file"  [hspext.dll]\np1=変数名 : 設定する情報が格納されている数値型の配列変数名\n"file"　　: ファイル名指定\n"file"で指定したファイルのタイムスタンプ情報を、\np1で指定した変数のものに変更します。
+lzcopy /// lzcopy "name"  [hspext.dll]\n"name" :圧縮ファイル名\nMicrosoftのcompress.exe形式の圧縮ファイルを解凍しながらコピーを\n行ないます。
+lzdist /// lzdist "path"  [hspext.dll]\n"path" :lzcopy命令の解凍コピー先ディレクトリ\nlzcopy命令の解凍コピー先ディレクトリを指定します。
+selfolder /// selfolder p1,"message"  [hspext.dll]\np1=変数名 : 選択されたパス名が格納される文字列型の変数名\n"message" : ダイアログに表示される文字列\nWindowsのシステムで使用されている、フォルダ選択ダイアログを表示して、\nフォルダ名を取得します。
+
+★ 拡張画面制御命令[hspext]
+gfcopy /// gfcopy p1  [hspext.dll]\np1=0～100(0) : 半透明コピーレート(%)\np1で指定したレートで画面イメージをコピーします。
+gfdec /// gfdec p1,p2,p3  [hspext.dll]\np1,p2,p3=0～255(0) : 色コード（R,G,Bの輝度)\ngfini命令で設定した画面内のすべてのドットに対して、\np1,p2,p3で指定した数値を減算します。
+gfinc /// gfinc p1,p2,p3  [hspext.dll]\np1,p2,p3=0～255(0) : 色コード（R,G,Bの輝度)\ngfini命令で設定した画面内のすべてのドットに対して、\np1,p2,p3で指定した数値を加算します。
+gfini /// gfini p1,p2  [hspext.dll]\np1=0～(0) : 画面操作を行なうXサイズ(dot単位)\np2=0～(0) : 画面操作を行なうYサイズ(dot単位)\nフルカラー画面操作命令を行なう対象の画面を設定します。
+hsvcolor /// hsvcolor p1,p2,p3  [hspext.dll]\np1=0～191(0) : HSV形式 H値\np2=0～255(0) : HSV形式 S値\np3=0～255(0) : HSV形式 V値\n色の指定をHSV形式で行ないます。ここで指定された色は、\nmes,pset,boxf命令などのグラフィック命令で使用されます。
+
+★ 拡張入出力制御命令[hspext]
+ematan /// ematan p1,p2,p3  [hspext.dll]\np1=変数名　: 結果が格納される数値列型変数名\np2=0～　　 : X値\np3=0～　　 : Y値\nY/Xのアークタンジェントを求めて、p1で指定された変数に代入します。
+emath /// emath p1  [hspext.dll]\np1=2～30(8) : 固定小数のビット精度\n簡易数学関数命令セット全体で使われる固定小数の精度を設定します。
+emcnv /// emcnv p1,"val"  [hspext.dll]\np1=変数名　: 固定小数が格納される数値型変数名\n"val"　　　: 固定小数を示す文字列\n"val"で指定した文字列を、固定小数の値に変換して、p1の変数に代入します。
+emcos /// emcos p1,p2  [hspext.dll]\np1=変数名　: 結果が格納される数値列型変数名\np2=0～　　 : 角度(固定小数)\np2で指定した角度のコサイン値を求めて、p1で指定された変数に代入します。
+emint /// emint p1,p2  [hspext.dll]\np1=変数名　: 整数値が格納される数値型変数名\np2=0～　　 : 固定小数の値\n"固定小数の値を、通常の32bit整数に変換し、p1で指定した数値型変数に代入します。
+emsin /// emsin p1,p2  [hspext.dll]\np1=変数名　: 結果が格納される数値列型変数名\np2=0～　　 : 角度(固定小数)\np2で指定した角度のサイン値を求めて、p1で指定された変数に代入します。
+emsqr /// emsqr p1,p2  [hspext.dll]\np1=変数名　: 結果が格納される数値列型変数名\np2=0～　　 : 固定小数\np2で指定した固定小数の平方根(ルート)を求めて、p1で指定された変数に代入します。
+emstr /// emstr p1,p2,p3  [hspext.dll]\np1=変数名　: 文字列が格納される文字列型変数名\np2=0～　　 : 固定小数の値\np3=1～(10) : 変換される文字列の桁数\n固定小数の値を、小数点を含む文字列に変換します。
+pipeexec /// pipeexec p1,"filename",p2  [hspext.dll]\np1=変数    : 標準出力が格納される文字列型変数名\n"filename" : 実行されるファイル名\np2=0～1(0) : ウインドゥ表示スイッチ\n"filename"で指定したファイルを実行します。
+pipeget /// pipeget p1  [hspext.dll]\np1=変数    : 結果が格納される文字列型変数名\npipeexec命令で実行されたプロセスを監視します。
+pipeput /// pipeput p1  [hspext.dll]\np1=0～255(0)  : 送信コード\npipeexec命令で実行中のプロセスに対して、p1で指定したコードを標準入力として送ります。
+
+★ 通信制御命令[hspext]
+comclose /// comclose  [hspext.dll]\nシリアルポートとの通信を終了します。
+comget /// comget p1,p2  [hspext.dll]\np1=文字列型変数 : 受信データが代入される変数名\np2=1～(64)　　　: 受信文字数指定\nシリアルポートから文字列を受信し、p1で指定した変数に代入します。
+comgetc /// comgetc p1  [hspext.dll]\np1=数値型変数 : 受信データが代入される変数名\nシリアルポートから1バイト受信し、p1で指定した変数に代入します。
+comopen /// comopen p1,"protocol"  [hspext.dll]\np1=0～(0)　: COMポート番号\n"protocol" : プロトコル指定文字列\nシリアルポートを初期化して送受信を可能な状態にします。
+comput /// comput "send-string"  [hspext.dll]\n"send-string" : 送出文字列\n"send-string"で指定された文字列をシリアルポートに送出します。
+computc /// computc p1  [hspext.dll]\np1=0～255(0)  : 送信データ(1バイト)\np1で指定された1バイトの数値データをシリアルポートに送出します。
+
+★ **************************************************
+★ 拡張プラグイン [hspsock]が必要
+
+★ 通信制御命令[hspsock]
+ipget /// ipget  [hspsock.dll]\nホストのIPアドレスを取得して、システム変数refstrに代入します。
+sockcheck /// sockcheck p1  [hspsock.dll]\np1=0～31(0)  : ソケットID番号\n指定したソケットにsockget系の命令で取得できるデータが到着\nしているかどうか調べます。
+sockclose /// sockclose p1  [hspsock.dll]\np1=0～31(0)  : ソケットID番号\n接続されているソケットを切断します。
+sockget /// sockget p1,p2,p3  [hspsock.dll]\np1=変数     : 受信内容が格納される変数名\np2=0～(64)  : 受信サイズ(byte単位)\np3=0～31(0)  : ソケットID番号\nソケットからデータを受信し、p1で指定した文字列型の変数に\n内容を代入します。p2で最大受信サイズを指定します。
+sockgetb /// sockgetb p1,p2,p3,p4  [hspsock.dll]\np1=変数     : 受信内容が格納される変数名\np2=0～(0)   : バッファオフセット(byte単位)\np3=0～(64)  : 受信サイズ(byte単位)\np4=0～31(0)  : ソケットID番号\nソケットからデータを受信し、p1で指定した変数バッファに\n内容をバイナリデータとして格納します。
+sockgetc /// sockgetc p1,p2  [hspsock.dll]\np1=変数     : 受信内容が格納される変数名\np2=0～31(0)  : ソケットID番号\nソケットからデータを1byte受信し、p1で指定した数値型の変数に\n内容を代入します。
+sockmake /// sockmake p1,p2  [hspsock.dll]\np1=0～31(0) : ソケットID番号\np2=0～(0)   : ポート番号\nソケットを初期化してサーバーとして使用できるようにします。
+sockopen /// sockopen p1,"url",p2  [hspsock.dll]\np1=0～31(0)  : ソケットID番号\n"url"       : URL指定文字列\np2=0～(0)   : ポート番号\nソケットを初期化して使用できるようにします。
+sockput /// sockput "message",p1  [hspsock.dll]\n"message"   : 送信するメッセージ\np1=0～31(0)  : ソケットID番号\nソケットにデータを送信します。"message"で指定した文字列か、\nまたは文字列型変数の内容をそのまま送信します。
+sockputb /// sockputb p1,p2,p3,p4  [hspsock.dll]\np1=変数     : 送信内容が格納されている変数名\np2=0～(0)   : バッファオフセット(byte単位)\np3=0～(64)  : 送信サイズ(byte単位)\np4=0～31(0)  : ソケットID番号\np1で指定した変数バッファの内容をバイナリデータとしてソケットに\n送信します。
+sockputc /// sockputc p1,p2  [hspsock.dll]\np1=0～255(0) : 送信するメッセージ(1byte)\np2=0～31(0)   : ソケットID番号\nソケットにデータを送信します。p1で指定した数値を1byte送信\nします。
+sockwait /// sockwait p1  [hspsock.dll]\np1=0～31(0) : ソケットID番号\nsockmake命令でサーバーとして準備されたソケットで、クライアント\nの着信を待ちます。sockwait命令は、必ずsockmake命令が正常に終了\nした後に実行される必要があります。
+
+★ **************************************************
+★ 拡張プラグイン [loadlib]が必要
+verinfo /// verinfo "s1",n2  [loadlib.dll]\ns1 : ファイル名\nn2 : 取得するタイプ\ns1で指定したファイルから、バージョン情報を取得します。
+winver /// winver v1  [loadlib.dll]\nv1 : バージョンを受け取るための数値変数\nウィンドウズのバージョンを取得します。
+
+★ OSシステム制御命令[loadlib]
+sendmsg /// sendmsg v1  [loadlib.dll]\nv1 : SendMessageに渡すパラメータが代入された変数\nv1に代入されたパラメータを使用してSendMessageAを呼び出します。
+ss_chgpwd /// ss_chgpwd  [loadlib.dll]\nWindows標準のパスワード変更ダイアログを呼び出します。
+ss_chkpwd /// ss_chkpwd  [loadlib.dll]\nWindows標準のパスワードチェックダイアログを呼び出します。
+ss_running /// ss_running n1  [loadlib.dll]\nn1 : 作動しているか、いないかのフラグ\nスクリーンセーバーが作動しているかシステム(Windows)に知らせます。
+_makewnd /// _makewnd v1, "s2"  [loadlib.dll]\nv1 : CreateWindowに渡すパラメータが代入された変数\ns2 : ウィンドウのクラス名\nv1に代入されたパラメータを使用してCreateWindowAを呼び出します。
+
+★ オブジェクト制御命令[loadlib]
+btnimg /// btnimg n1, n2, n3, n4, n5, n6  [loadlib.dll]\nn1 : イメージを貼りつけるボタンのID(0～63)\nn2 : イメージが描画されているウィンドウのID(0～7)\nn3 : イメージの位置\nn4 : イメージの位置\nn5 : イメージの幅\nn6 : イメージの高さ\nbuttonに画像を貼りつけます。
+getobjsize /// getobjsize v1,n2  [loadlib.dll]\nv1 : オブジェクトのサイズ、位置を取得するための数値変数\nn2 : オブジェクトのID\nオブジェクトのサイズと位置を取得します。
+listadd /// listadd n1,"s2",n3,n4,n5,n6  [loadlib.dll]\nn1 : アイテムの位置\ns2 : アイテムのテキスト\nn3 : 欄の番号\nn4 : アイコン番号\nn5 : アイテムの状態\nn6 : アイテムに持たせる数値\nリストビューのn1番目の位置にアイテムをつけ加えます。
+listaddcl /// listaddcl n1,"s2",n3,n4  [loadlib.dll]\nn1 : 欄のインデックス\ns2 : 欄の名前\nn3 : 欄の幅\nn4 : 欄の名前の位置\n欄を追加します。
+listdel /// listdel n1  [loadlib.dll]\nn1 : アイテムのインデックス\nn1番目のアイテムを消去します。
+listdelcl /// listdelcl n1  [loadlib.dll]\nn1 : 欄のインデックス\nn1番目の欄を消去します。
+listget /// listget v1,n2,n3,n4  [loadlib.dll]\nv1 : 取得したものを入れる変数\nn2 : アイテムのインデックス\nn3 : 取得するもの\nn4 : 取得するアイテムの状態\n主にアイテムのインデックスを取得します。
+listhit /// listhit  [loadlib.dll]\nマウスの下にあるアイテムのインデックスを取得します。
+listicon /// listicon v1,n2,n3  [loadlib.dll]\nv1 : アイコンが入った数値変数(get_iconで取得したもの)\nn2 : アイコンの数\nn3 : セットするアイコンの大小\nリストビューのアイテムのアイコンを設定します。
+listmax /// listmax v1,n2  [loadlib.dll]\nv1 : リストビュー内のアイテムの数を入れる数値変数\nn2 : フラグ\nリストビュー内のアイテムの数を取得します。
+listsel /// listsel n1,n2  [loadlib.dll]\nn1 : アイテムのインデックス\nn2 : 選択状態のタイプ\nn1番目のアイテムを選択します。
+listview /// listview n1,n2,n3  [loadlib.dll]\nn1 : 幅\nn2 : 高さ\nn3 : スタイル\nリストビューを作成します。
+msgdlg /// msgdlg "s1","s2",n3,n4  [loadlib.dll]\ns1 : メッセージが入った文字列変数または文字列\ns2 : タイトルが入った文字列変数または文字列\nn3 : タイプ\nn4 : アイコンタイプ\nHSPのdialog命令の拡張版です。
+multiopen /// multiopen v1,v2,n3,n4  [loadlib.dll]\nv1 : 選択されたファイル名を受け取るための変数\nv2 : 情報\nn3 : フィルタのインデックス(1から)\nn4 : Read Onlyボックスを付ける\nHSPのdialog(type 16,17)で複数のファイルを選択できるようにしたものです。
+objgray /// objgray n1,n2  [loadlib.dll]\nn1 : オブジェクトのID\nn2 : 使用可にするか不可するかのフラグ\nbuttonなどのオブジェクトを使用可にしたり、不可にしたりします。
+progrng /// progrng n1,n2,n3  [loadlib.dll]\nn1 : 最小値\nn2 : 最大値\nn3 : 最大値の拡張フラグ\nプログレスボックスの範囲の設定をします。
+progset /// progset n1,n2  [loadlib.dll]\nn1 : セットする値\nn2 : セットするタイプ\nプログレスボックスの各設定を行います。
+resizeobj /// resizeobj n1,v2,n3  [loadlib.dll]\nn1 : オブジェクトのID\nv2 : サイズ、位置が入った数値変数\nn3 : 位置、サイズを変更しないかどうかのフラグ\nオブジェクトn1のサイズを変更します。
+sel_listview /// sel_listview n1  [loadlib.dll]\nn1 : リストビューのID\nこの命令使用後はn1で指定したリストビューに対して各操作を行います。
+sel_progbox /// sel_progbox n1  [loadlib.dll]\nn1 : プログレスボックスのID\nこの命令使用後はn1で指定したプログレスボックスに対して各操作を行います。
+sel_treebox /// sel_treebox n1  [loadlib.dll]\nn1 : ツリーボックスのID\nこの命令使用後はn1で指定したツリーボックスに対して各操作を行います。
+strtoint /// strtoint s1,n2  [loadlib.dll]\ns1 : 数値に変換する文字列\nn2 : 基数(2～36)\n文字列を数値に変換します。
+tooltip /// tooltip n1,n2,n3  [loadlib.dll]\nn1 :  button,input,treeboxなどのID\nn2 : ツールチップ上に表示する文字列\nn3 : ツールチップの背景色 (IE3.0以上)\nオブジェクトにツールチップを付けます。
+treeadd /// treeadd n1,"s2",n3,n4,n5,n6  [loadlib.dll]\nn1 : 親アイテムのID\ns2 : アイテムのテキスト\nn3 : アイテムの追加の仕方\nn4 : アイテムが収縮している時のアイコン番号\nn5 : アイテムが展開している時のアイコン番号\nn6 : アイテムに持たせる数値\nツリーボックスにn1を親にしてアイテムを加えます。
+treebox /// treebox n1,n2,n3  [loadlib.dll]\nn1 : 幅\nn2 : 高さ\nn3 : スタイル\nツリーボックスを作成します。
+treedel /// treedel n1  [loadlib.dll]\nn1 : アイテムのID\nn1で指定したアイテムを消去します。
+treeget /// treeget v1,n2,n3,n4  [loadlib.dll]\nv1 : 取得したものを入れる変数\nn2 : 取得するタイプ\nn3 : n2によって変わる\nn4 : n2によって変わる\n主にアイテムのIDを取得します。
+treehit /// treehit  [loadlib.dll]\nマウスの下にあるアイテムのIDを取得します。
+treeicon /// treeicon v1,n2  [loadlib.dll]\nv1 : アイコンが入った数値変数(get_iconで取得したもの)\nn2 : アイコンの数\nツリーボックスのアイテムのアイコンを設定します。
+treemax /// treemax v1,n2  [loadlib.dll]\nv1 : ツリーボックス内のアイテムの数を入れる数値変数\nn2 : フラグ\nツリーボックス内のアイテムの数を取得します。
+treesel /// treesel n1,n2  [loadlib.dll]\nn1 : アイテムのID\nn2 : 選択状態のタイプ\nn1で指定したアイテムを選択します。
+treesort /// treesort n1  [loadlib.dll]\nn1 : アイテムのID\nn1で指定したアイテムの子をソートします。
+_clrobj /// _clrobj n1  [loadlib.dll]\nn1 : 消去するオブジェクトのID\nllmodのモジュールで作成したlistview,progbox,trackbox,treebox,udbtn\nなどのオブジェクトを消去します。
+_cls /// _cls n1  [loadlib.dll]\nn1 : clsに渡すパラメータ\nllmodのモジュールで作成したlistview,progbox,trackbox,treebox,udbtn\nなどのオブジェクトとHSP標準命令で作成したオブジェクトを全て消去します。
+_objsel /// _objsel n1  [loadlib.dll]\nn1 : アクティブにするオブジェクトのID\nn1に指定したオブジェクトをアクティブにします。
+
+★ ファイル操作命令[loadlib]
+ll_bin /// ll_bin v1,"s2"  [loadlib.dll]\nv1 : バイナリに変換したものを代入する変数\ns2 : バイナリに変換する文字列\n"01CDBF"などの16進文字列をバイナリに変換して、変数v1に代入します。
+ll_call /// ll_call  [loadlib.dll]\nll_dllでセットしたDLLをロードし、ll_funcで設定した関数呼び出します。
+ll_callfnv /// ll_callfnv n1  [loadlib.dll]\nn1 : 関数のポインタ\nn1で指定した関数を呼び出します。
+ll_callfunc /// ll_callfunc v1,n2,n3  [loadlib.dll]\nv1 : 引数が入った配列変数\nn2 : 引数の数\nn3 : 関数のポインタ\nv1で指定した引数をn2個使い、n3で指定した関数を呼び出します。
+ll_dll /// ll_dll "s1"  [loadlib.dll]\ns1 : DLLの名前が入った文字列変数、又は文字列\n使用するDLLの名前を設定します。この時点ではまだDLLはロードされません。
+ll_free /// ll_free  [loadlib.dll]\nll_callでロードされたDLLを開放します。
+ll_func /// ll_func "s1"  [loadlib.dll]\ns1 : 関数名が入った文字列変数、又は文字列\n関数名を設定します。ll_call命令を使うとここで設定した関数が呼び出されます。
+ll_getproc /// ll_getproc v1,"s2",n3  [loadlib.dll]\nv1 : 関数のポインタを受けるための変数\ns2 : 文字列又は文字列変数\nn3 : ll_libloadで取得したDLLのハンドル\nll_libloadで取得したDLLから関数s2のポインタを取得し、\n変数v1に取得したポインタを代入します。
+ll_getptr /// ll_getptr v1  [loadlib.dll]\nv1 : 変数\n変数v1のポインタを知りたいときに使います。
+ll_libfree /// ll_libfree n1  [loadlib.dll]\nn1 : ll_libloadで取得したDLLのハンドル\nll_libloadを使ってロードしたDLLを開放します。
+ll_libload /// ll_libload v1,"s2"  [loadlib.dll]\nv1 : DLLのハンドルを受けるための変数\ns2 : DLLの名前が入った文字列変数又は文字列\ns2で指定したDLLをロードし、変数v1にDLLのハンドルを代入します。
+ll_n /// ll_n n1,n2  [loadlib.dll]\nn1 : 数値又は数値変数\nn2 : n1が何番目の引数かを表す数字(初めの引数を0番目とする)\n数値型の引数を設定します。関数呼び出しの際にn2番目の引数にn1の値が使われます。
+ll_p /// ll_p v1,n2  [loadlib.dll]\nv1 : 変数\nn2 : v1が何番目の引数かを表す数字(初めの引数を0番目とする)\nポインタ型の引数を設定します。関数呼び出しの際にn2番目の引数にv1に指定した\n変数へのポインタが使われます。
+ll_peek /// ll_peek v1,n2,n3  [loadlib.dll]\nv1 : 読み込み先の変数\nn2 : ポインタ\nn3 : 読み込むバイト数\nn2で指定したポインタから変数v1へn3バイト読み込みます。
+ll_peek1 /// ll_peek1 v1,n2  [loadlib.dll]\nv1 : 読み込み先の変数\nn2 : ポインタ\nn2に指定したポインタから変数v1へ1バイト読み込みます。
+ll_peek2 /// ll_peek2 v1,n2  [loadlib.dll]\nv1 : 読み込み先の変数\nn2 : ポインタ\nn2に指定したポインタから変数v1へ2バイト読み込みます。
+ll_peek4 /// ll_peek4 v1,n2  [loadlib.dll]\nv1 : 読み込み先の変数\nn2 : ポインタ\nn2に指定したポインタから変数v1へ4バイト読み込みます。
+ll_poke /// ll_poke v1,n2,n3  [loadlib.dll]\nv1 : 書き込む内容が入っている変数\nn2 : ポインタ\nn3 : 書き込むバイト数\nn2で指定したポインタへ変数v1の内容をn3バイト書き込みます。
+ll_poke1 /// ll_poke1 n1,n2  [loadlib.dll]\nn1 : 書き込む数値[0～0xff]\nn2 : ポインタ\nn2で指定したポインタへn1で指定した値を1バイト書き込みます。
+ll_poke2 /// ll_poke2 n1,n2,n3  [loadlib.dll]\nn1 : 書き込む数値[0～0xffff]\nn2 : ポインタ\nn3 : オプション\nn2で指定したポインタへn1で指定した値を2バイト書き込みます。
+ll_poke4 /// ll_poke4 n1,n2,n3  [loadlib.dll]\nn1 : 書き込む数値[0～0xffffffff]\nn2 : ポインタ\nn3 : オプション\nn2で指定したポインタへn1で指定した値を4バイト書き込みます。
+ll_ret /// ll_ret v1  [loadlib.dll]\nv1 : 関数の返り値を取得を取得する数値型変数\nll_funcで設定した関数をll_callで呼んだ後、その関数の返り値を取得する\nときにこの命令を使います。
+ll_retset /// ll_retset v1  [loadlib.dll]\nv1 : 関数の返り値を代入する変数\nll_retsetを使用するとll_retで取得する値がv1に指定した変数に\n代入されます。
+ll_s /// ll_s s1,n2  [loadlib.dll]\ns1 : 文字列変数\nn2 : s1が何番目の引数かを表す数字(初めの引数を0番目とする)\n文字列型の引数を設定します。関数呼び出しの際にn2番目の引数にs1に代入され\nている文字列へのポインタが使われます。
+ll_str /// ll_str v1,n2,n3  [loadlib.dll]\nv1 : 16進文字列に変換したものを代入する変数\nn2 : 16進文字列に変換するメモリへのポインタ\nn3 : 変換するバイト数\nn2で指定したポインタ先のメモリの内容をn3バイトだけ16進文字列に変換します。
+ll_type /// ll_type "s1",n2  [loadlib.dll]\ns1 : 引数のタイプを示した文字列変数、又は文字列\nn2 : HSP用プラグインを使うときのオプション\nll_funcで設定する関数の引数のタイプを設定します。
+ll_z /// ll_z n1,n2  [loadlib.dll]\nn1 : 文字列変数は文字列\nn2 : n1が何番目の引数かを表す数字(初めの引数を0番目とする)\n文字列型の引数を設定します。関数呼び出しの際にn2番目の引数にn1に代入され\nている文字列へのポインタが使われます。
+
+★ メモリ管理命令[loadlib]
+getptr /// getptr v1,v2  [loadlib.dll]\nv1 : ポインタを代入する変数\nv2 : ポインタを取得する変数\n変数v2のポインタを取得し、変数v1に代入します。
+
+★ 拡張入出力制御命令[loadlib]
+about /// about "s1","s2"  [loadlib.dll]\ns1 : アプリケーション名が入った文字列変数または文字列\ns2 : 製作者名が入った文字列変数または文字列\nプログラムのバージョンを表示する時などに使われるダイアログを表示します。
+dd_reject /// dd_reject n1,n2  [loadlib.dll]\nn1 : ウィンドウID\nn2 : フラグ\nドラッグ&ドロップをできないようにします。
+dllproc /// dllproc "s1",v2,n3,n4  [loadlib.dll]\ns1 : 関数名\nv2 : 関数に渡すパラメータが代入された変数\nn3 : 関数に渡すパラメータの数\nn4 : dllのインスタンス\nn4に指定したdll内のs1の関数を使用します。
+draw_icon /// draw_icon n1,n2,n3,n4  [loadlib.dll]\nn1 : 描画するアイコン(get_iconで取得したもの)\nn2 : x座標\nn3 : y座標\nn4 : redrawしないかどうかのフラグ\nn1で指定したアイコンを座標(x,y)に描画します。
+get_fileicon /// get_fileicon v1,"s2",n3  [loadlib.dll]\nv1 : 取得したアイコンを入れる変数\ns2 : ファイル名\nn3 : 取得するもの\ns2に指定したファイルに使われるアイコンを取得します。
+get_icon /// get_icon v1,"s2",n3,n4  [loadlib.dll]\nv1 : 取得したアイコンを入れる数値変数\ns2 : アイコンを含むファイル名\nn3 : アイコンの番号\nn4 : 小さいアイコンを取得するかどうかのフラグ\ns2に指定したファイルから、n3番目のアイコンを取得します。
+imeinit /// imeinit v1,n2  [loadlib.dll]\nv1 : IME情報を代入する変数\nn2 : mesboxのID\nIME情報を取得します。
+imeopen /// imeopen v1,n2  [loadlib.dll]\nv1 : imeinitに使用した変数\nn2 : 開くか閉じるかを示すフラグ\nimeinitで取得したIMEを開きます。
+imesend /// imesend v1,n2,n3,n4  [loadlib.dll]\nv1 : imeinitに使用した変数\nn2 : IMEに送るメッセージ\nn3 : パラメータ1\nn4 : パラメータ2\nIMEへメッセージを送ります。
+imestr /// imestr v1,"s2"  [loadlib.dll]\nv1 : imeinitに使用した変数\ns2 : IMEに送る文字列\nIMEに文字列を送ります。
+keybd_event /// keybd_event n1,n2,n3  [loadlib.dll]\nn1 : キーコード\nn2 : キーを放すフラグ\nn3 : オプション\nキーボード操作を行います。
+linesel /// linesel n1.n2  [loadlib.dll]\nn1 : mesboxのID\nn2 : 選択する行\nmesbox n1 内のn2行を選択します。n2は0から数えます。
+mouse_event /// mouse_event n1,n2,n3  [loadlib.dll]\nn1 : 操作タイプ\nn2 : 水平方向の移動量\nn3 : 垂直方向の移動量\nマウス操作を行います。
+progbox /// progbox n1,n2,n3  [loadlib.dll]\nn1 : 幅\nn2 : 高さ\nn3 : スタイル\nプログレスボックスを作成します。
+p_scrwnd /// p_scrwnd v1  [loadlib.dll]\nv1 : スクリーン座標系が入った数値変数\nスクリーン座標系をウィンドウ座標系に変換します。
+p_wndscr /// p_wndscr v1  [loadlib.dll]\nv1 : ウィンドウ座標系が入った数値変数\nウィンドウ座標系をスクリーン座標系に変換します。
+selget /// selget v1,n2  [loadlib.dll]\nv1 : mesbox内の選択されている部分を代入する変数\nn2 : mesboxのID\nmesbox n2 の選択されている部分を取得します。
+
+★ 文字列操作命令[loadlib]
+charlower /// charlower v1  [loadlib.dll]\nv1 : CharLowerに渡す文字列変数\n変数内の英字を小文字に変換します。
+charupper /// charupper v1  [loadlib.dll]\nv1 : CharUpperに渡す文字列変数\n変数内の英字を大文字に変換します。
+from_uni /// from_uni v1,v2,n3  [loadlib.dll]\nv1 : Multibyteを格納する変数\nv2 : Multibyteに変換するUnicode文字列が入っている変数\nn3 : Multibyteに変換するUnicode文字列の長さ\nUNICODEをANSI文字列に変換します。
+to_uni /// to_uni v1,v2,n3  [loadlib.dll]\nv1 : Unicodeを格納する変数\nv2 : Unicodeに変換する文字列変数\nn3 : Unicodeに変換する文字列の長さ\nANSI文字列(SJIS)をUNICODEに変換します。
+
+★ 命令概要[loadlib]
+console /// console\nコンソールウィンドウを作成します。
+console_color /// console_color n1  [loadlib.dll]\nn1 : コンソールの文字列の色\nコンソールに表示する文字列の色を設定します。
+console_end /// console_end  [loadlib.dll]\nコンソールウィンドウを閉じます。
+console_pos /// console_pos n1,n2  [loadlib.dll]\nn1 : x座標\nn2 : y座標\n文字列を表示する座標を設定します。
+dd_accept /// dd_accept v1,v2,n3  [loadlib.dll]\nv1 : ドラッグ&ドロップされたファイル名を入れる変数\nv2 : ドラッグ&ドロップされたファイル数を入れる変数\nn3 : ウィンドウID\nn3で指定したウィンドウにドラッグ&ドロップ(以下D&D)をできるようにします。
+gets /// gets v1,n2  [loadlib.dll]\nv1 : コンソールからの文字列を取得する変数\nn2 : 取得する文字の数\nコンソールから文字列を取得します。
+puts /// puts v1  [loadlib.dll]\nv1 : コンソールに表示する文字列が入った文字列変数\nコンソールに文字列を表示します。
+sel_trackbox /// sel_trackbox n1  [loadlib.dll]\nn1 : トラックボックスのID\nこの命令使用後はn1で指定したトラックボックスに対して各操作を行います。
+sel_udbtn /// sel_udbtn n1  [loadlib.dll]\nn1 : アップダウンボタンのID\nこの命令使用後はn1で指定したアップダウンボタンに対して各操作を行います。
+trackbox /// trackbox n1,n2,n3  [loadlib.dll]\nn1 : 幅\nn2 : 高さ\nn3 : スタイル\nトラックボックスを作成します。
+trackmrk /// trackmrk n1,n2  [loadlib.dll]\nn1 : 目盛りをつける位置\nn2 : フラグ\nトラックボックスの目盛りの位置を設定、取得します。
+trackpos /// trackpos n1,n2  [loadlib.dll]\nn1 : 設定する位置\nn2 : 位置を取得するフラグ\nトラックボックスのつまみの位置を設定します。
+trackrng /// trackrng n1,n2,n3  [loadlib.dll]\nn1 : 最小値\nn2 : 最大値\nn3 : 範囲を取得するフラグ\nトラックボックスの範囲を設定、取得します。
+tracksel /// tracksel n1,n2,n3  [loadlib.dll]\nn1 : 最小値\nn2 : 最大値\nn3 : フラグ\nトラックボックスの選択範囲を設定、取得します。
+udbtn /// udbtn n1,n2,n3,n4  [loadlib.dll]\nn1 : 幅\nn2 : 高さ\nn3 : スタイル\nn4 : アップダウンボタンを付けるオブジェクトのID\nアップダウンボタンを作成します。
+udget /// udget n1  [loadlib.dll]\nn1 : 取得するタイプ\nアップダウンボタンの各種情報を取得します。
+udset /// udset n1,n2,n3  [loadlib.dll]\nn1 : セットするタイプ\nn2 : n1によって変わる\nn3 : n1によって変わる\nアップダウンボタンの設定をします。
+
+

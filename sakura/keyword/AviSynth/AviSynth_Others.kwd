@@ -1,0 +1,14 @@
+// AviSynth その他  キーワード定義ファイル
+bool
+clip
+default
+false
+float
+function
+int
+last
+return
+string
+true
+val
+global

@@ -1,0 +1,98 @@
+//=========================================================
+// RTF Keywords
+//    2001/03/06 ver1.0   Stonee
+//    2001/06/21 ver1.1   Stonee  説明の追記
+//
+// 大文字小文字を区別
+// ファイル拡張子  rtf
+// ブロックコメント  （空欄）
+// ラインコメント1   （空欄）
+// ラインコメント2   （空欄）
+// シングルクォーテーション/ダブルクォーテーションの色分けは共にOFF
+//=========================================================
+\ansi
+\b
+\bin
+\box
+\brdrb
+\brdrbar
+\brdrdb
+\brdrdot
+\brdrl
+\brdrr
+\brdrs
+\brdrsh
+\brdrt
+\brdrth
+\cell
+\cellx
+\cf
+\chftn
+\clmgf
+\clmrg
+\colortbl
+\deff
+\f
+\fi
+\field
+\fldrslt
+\fonttbl
+\footnote
+\fs
+\i
+\intbl
+\keep
+\keepn
+\li
+\line
+\mac
+\page
+\par
+\pard
+\pc
+\pich
+\pichgoal
+\picscalex
+\picscaley
+\pict
+\picw
+\picwgoal
+\plain
+\qc
+\ql
+\qr
+\ri
+\row
+\rtf
+\sa
+\sb
+\scaps
+\sect
+\sl
+\strike
+\tab
+\tqc
+\tqr
+\trgaph
+\trleft
+\trowd
+\trqc
+\trql
+\tx
+\ul
+\uldb
+\v
+\wbitmap
+\wbmbitspixel
+\wbmplanes
+\wbmwidthbytes
+\wmetafile
+
+bmc
+bml
+bmr
+emc
+eml
+emr
+
+//rtf.kwd

@@ -1,0 +1,25 @@
+// AviSynth ClipProperies キーワード定義ファイル
+width
+height
+framecount
+frameratenumerator
+frameratedenominator
+framerate
+audiorate
+audiolengthf
+audiolength
+audiochannels
+audiobits
+isaudiofloat
+isaudioint
+isplanar
+isrgb24
+isrgb32
+isrgb
+isyuv
+isyuy2
+isyv12
+isfieldbased
+isframebased
+isinterleaved
+getparity
