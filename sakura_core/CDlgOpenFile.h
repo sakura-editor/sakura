@@ -18,10 +18,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgOpenFile;
-
 #ifndef _CDLGOPENFILE_H_
 #define _CDLGOPENFILE_H_
+
+class CDlgOpenFile;
 
 #include <windows.h>
 #include "CShareData.h"
@@ -63,34 +63,29 @@ public:
 	void Create( HINSTANCE, HWND, const char*, const char*, const char** = NULL,const char** = NULL);
 	//void Create( HINSTANCE, HWND, const char*, const char* );
 	//	2002/08/21 moca	引数追加
-	BOOL DoModal_GetOpenFileName( char*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
+	BOOL DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
 	//	2002/08/21 30,2002 moca	引数追加
-	BOOL DoModal_GetSaveFileName( char*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
 	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	//	Jul. 26, 2003 ryoji BOM用引数追加
 	BOOL DoModalSaveDlg( char* , int*, CEol*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
-
-//	INT_PTR DispatchEvent(	HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND			m_hWnd;			/* このダイアログのハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
-//	int				m_nSettingType;
 
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
 	int				m_nCharCode;					/* 文字コード */
-//	char			m_szHelpFile[_MAX_PATH + 1];
-//	int				m_nHelpTopicID;
-	CEol			m_cEol;	//	Feb. 9, 2001 genta
+
+	CEol			m_cEol;		//	Feb. 9, 2001 genta
 	bool			m_bUseEol;	//	Feb. 9, 2001 genta
 
-	//	Jul. 26, 2003 ryoji BOM
-	BOOL			m_bBom;	//!< BOMを付けるかどうか
+	BOOL			m_bBom;		//!< BOMを付けるかどうか
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
 
 	TCHAR			m_szPath[_MAX_PATH];	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
@@ -106,7 +101,7 @@ protected:
 	// 2005.11.02 ryoji OS バージョン対応の OPENFILENAME 初期化用関数
 	static COsVersionInfo m_cOsVer;
 	BOOL IsOfnV5( void ) { return ( m_cOsVer.GetVersion() && (m_cOsVer.IsWin2000_or_later() || m_cOsVer.IsWinMe()) ); }
-	void InitOfn( OPENFILENAMEZ& );
+	void InitOfn( OPENFILENAMEZ* );
 
 	// 2005.11.02 ryoji 初期レイアウト設定処理
 	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
@@ -116,9 +111,9 @@ protected:
 
 	// 2006.09.03 Moca ファイルダイアログのエラー回避
 	//! リトライ機能付き GetOpenFileName
-	BOOL GetOpenFileNameRecover( OPENFILENAMEZ& ofn );
+	BOOL _GetOpenFileNameRecover( OPENFILENAMEZ* ofn );
 	//! リトライ機能付き GetOpenFileName
-	BOOL GetSaveFileNameRecover( OPENFILENAMEZ& ofn );
+	BOOL GetSaveFileNameRecover( OPENFILENAMEZ* ofn );
 
 	BOOL CheckPathLengthOverflow( const char *pszPath, int nLength, BOOL bErrDisp = TRUE );	// 2008.11.23 nasukoji	指定のファイルパスのバッファオーバーフローをチェックする
 
