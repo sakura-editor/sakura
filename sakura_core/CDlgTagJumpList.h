@@ -43,8 +43,6 @@ class CDlgTagJumpList;
 //編集ボックスがコンボかどうか
 #define TAGJUMP_EDITBOX_IS_COMBO
 
-//キーワードを入力して該当する情報を表示するまでの時間(ミリ秒)
-#define TAGJUMP_TIMER_DELAY 700
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
 #define TAG_FILENAME        "tags"
 //タグファイルのフォーマット	//	@@ 2005.03.31 MIK 定数化
@@ -89,6 +87,7 @@ protected:
 	//BOOL	OnEnChange( HWND hwndCtl, int wID );
 	BOOL	OnTimer( WPARAM wParam );
 	LPVOID	GetHelpIdTable( void );
+
 	void	StopTimer( void );
 	void	StartTimer( void );
 
@@ -96,11 +95,11 @@ protected:
 	int		GetData( void );	/* ダイアログデータの取得 */
 	void	UpdateData( void );	//	@@ 2005.03.31 MIK
 
-	char	*GetNameByType( const char type, const char *name );	//タイプを名前に変換する。
+	TCHAR	*GetNameByType( const TCHAR type, const TCHAR *name );	//タイプを名前に変換する。
 	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
 	//	@@ 2005.03.31 MIK
-	const char *GetFileName( void );
-	const char *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : ""; }
+	const TCHAR *GetFileName( void );
+	const TCHAR *GetFilePath( void ){ return m_pszFileName != NULL ? m_pszFileName : _T(""); }
 	void find_key( const char* keyword );
 	void Empty( void );
 
@@ -109,7 +108,7 @@ protected:
 private:
 
 	int		m_nIndex;		//!< 選択された要素番号
-	char	*m_pszFileName;	//!< 編集中のファイル名
+	TCHAR	*m_pszFileName;	//!< 編集中のファイル名
 	char	*m_pszKeyword;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
 	int		m_nLoop;		//!< さかのぼれる階層数
 	CSortedTagJumpList	m_cList;	//!< タグジャンプ情報
