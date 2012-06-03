@@ -15,6 +15,8 @@ Unicode 版 Inno Setup なら、英語版 Windows へのインストールでも
 
     ./
         sakura.iss
+        readme.txt  この文書
+        set_time.js  SVNからチェックアウト後、キーワードファイルの更新日時を復元する
     ./instmaterials/
         インストーラで表示する画像ファイルが入っています。 
     ./sakura/
@@ -26,7 +28,7 @@ Unicode 版 Inno Setup なら、英語版 Windows へのインストールでも
             ・bregonig.dll
             ・bsd_license.txt（上の bregonig.dll に添付のもの）
         を含める。
-    ./sakura/Keyword
+    ./sakura/keyword
         キーワードファイル。このフォルダの中にある物は無条件でインストーラに含められる。 
 
 20行目付近にある
@@ -47,6 +49,7 @@ Ver 1.6.6.0（ANSI版）のインストーラからの変更点
 ・"Editor with Shortcut" タイプは "Editor Only" タイプと同じなので削除
 ・OS バージョン制限（Windows 2000 以上）を追加
 ・”「送る」に追加”を追加
+・keyword以下のファイルを再帰的に読み込む設定を追加
 
 Ver 1.6.6.0 のインストーラ仕様:
 http://sourceforge.net/apps/trac/sakura-editor/wiki/Installer
