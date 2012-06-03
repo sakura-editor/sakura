@@ -16,16 +16,16 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CDlgJump.h"
 #include "etc_uty.h"
 #include "Debug.h"
 #include "CEditDoc.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "CFuncInfoArr.h"// 2002/2/10 aroka ヘッダ整理
+#include "sakura_rc.h"
+#include "sakura.hh"
 
 // ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
-#include "sakura.hh"
 const DWORD p_helpids[] = {	//12800
 	IDC_BUTTON_JUMP,				HIDC_JUMP_BUTTON_JUMP,			//ジャンプ
 	IDCANCEL,						HIDCANCEL_JUMP,					//キャンセル
@@ -178,9 +178,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 		if( 0 < GetData() ){
 			CloseDialog( 1 );
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
-				"正しく行番号を入力してください。"
-			);
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("正しく行番号を入力してください。") );
 		}
 //To Here Feb. 20, 2001
 		{	//@@@ 2002.2.2 YAZAKI 指定行へジャンプを、ダイアログを表示するコマンドと、実際にジャンプするコマンドに分離。
@@ -215,7 +213,7 @@ void CDlgJump::SetData( void )
 //From Here Oct. 7, 2000 JEPRO 前回入力した行番号を保持するように下行を変更
 //	::SetDlgItemText( m_hWnd, IDC_EDIT_LINENUM, "" );	/* 行番号 */
 	if( 0 == m_nLineNum ){
-		::SetDlgItemText( m_hWnd, IDC_EDIT_LINENUM, "" );	/* 行番号 */
+		::SetDlgItemText( m_hWnd, IDC_EDIT_LINENUM, _T("") );	/* 行番号 */
 	}else{
 		::SetDlgItemInt( m_hWnd, IDC_EDIT_LINENUM, m_nLineNum, FALSE );	/* 前回の行番号 */
 	}
@@ -235,20 +233,16 @@ void CDlgJump::SetData( void )
 	for( i = 0; i < cFuncInfoArr.GetNum(); ++i ){
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ||
 			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-//			MYTRACE( "cFuncInfoArr.GetAt( i )->m_cmemFuncName=%s(%d)\n",
-//				(char*)(cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetPtr() ),
-//				cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF
-//			);
 		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-				wsprintf( szText, "%d 行  %s  パッケージ仕様部",
+				wsprintf( szText, _T("%d 行  %s  パッケージ仕様部"),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}else{
-				wsprintf( szText, "%d 行  %s  パッケージ仕様部",
+				wsprintf( szText, _T("%d 行  %s  パッケージ仕様部"),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
@@ -257,7 +251,8 @@ void CDlgJump::SetData( void )
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				::SendMessage( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (DWORD)cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF );
-			}else{
+			}
+			else{
 				::SendMessage( hwndCtrl, CB_SETITEMDATA, (WPARAM)nIndex, (LPARAM) (DWORD)cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT );
 			}
 			nPLSQLBlockNum++;
@@ -265,12 +260,12 @@ void CDlgJump::SetData( void )
 		if( 41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 			if( m_pShareData->m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-				wsprintf( szText, "%d 行  %s  パッケージ本体部",
+				wsprintf( szText, _T("%d 行  %s  パッケージ本体部"),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineCRLF,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
 			}else{
-				wsprintf( szText, "%d 行  %s  パッケージ本体部",
+				wsprintf( szText, _T("%d 行  %s  パッケージ本体部"),
 					cFuncInfoArr.GetAt( i )->m_nFuncLineLAYOUT,
 					cFuncInfoArr.GetAt( i )->m_cmemFuncName.GetStringPtr()
 				);
@@ -352,18 +347,18 @@ int CDlgJump::GetData( void )
 	/* PL/SQLソースの有効行か */
 	m_bPLSQL = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PLSQL );
 	m_nPLSQL_E1 = ::GetDlgItemInt( m_hWnd, IDC_EDIT_PLSQL_E1, &pTranslated, FALSE );
-	if( m_nPLSQL_E1 == 0 && FALSE == pTranslated ){
+	if( m_nPLSQL_E1 == 0 && !pTranslated ){
 		m_nPLSQL_E1 = 1;
 	}
 
 //	m_nPLSQL_E2 = ::GetDlgItemInt( m_hWnd, IDC_EDIT_PLSQL_E2, &pTranslated, FALSE );
-//	if( m_nPLSQL_E2 == 0 && FALSE == pTranslated ){
+//	if( m_nPLSQL_E2 == 0 && !pTranslated ){
 //		m_nPLSQL_E2 = 1;
 //	}
 
 	/* 行番号 */
 	m_nLineNum = ::GetDlgItemInt( m_hWnd, IDC_EDIT_LINENUM, &pTranslated, FALSE );
-	if( m_nLineNum == 0 && FALSE == pTranslated ){
+	if( m_nLineNum == 0 && !pTranslated ){
 		return FALSE;
 	}
 	return TRUE;
