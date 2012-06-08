@@ -14,8 +14,8 @@
 */
 class CFuncKeyWnd;
 
-#ifndef _CFUNCKEYWND_H_
-#define _CFUNCKEYWND_H_
+#ifndef SAKURA_CFUNCKEYWND_H_
+#define SAKURA_CFUNCKEYWND_H_
 
 #include "CWnd.h"
 #include "CShareData.h"
@@ -43,7 +43,7 @@ public:
 	*/
 private:
 	// 20060126 aroka すべてPrivateにして、初期化順序に合わせて並べ替え
-	const char*		m_pszClassName;	/*!< クラス名 */
+	const TCHAR*		m_pszClassName;	/*!< クラス名 */
 	CEditDoc*		m_pCEditDoc;
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nCurrentKeyState;
@@ -74,7 +74,7 @@ protected:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CFUNCKEYWND_H_ */
+#endif /* SAKURA_CFUNCKEYWND_H_ */
 
 
 /*[EOF]*/
