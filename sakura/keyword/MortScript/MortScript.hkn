@@ -1,0 +1,572 @@
+// MortScript v4.11b6  入力補完ファイル
+
+ActiveProcess(  )
+ActiveProcess( [ フルパス？ ] ) # str = 
+ActiveWindow(  ) # str = 
+AppData
+Array(  )
+Array( var {, var } ) #  arr = 
+BackupBatteryPercentage(  ) # int = 
+BatteryPercentage(  ) # int = 
+BigMessage(  )
+BigMessage( テキスト [, Titl ])
+Blue(  )
+Blue( 色コード ) # int = 
+CANCEL
+Call サブルーチン名
+Call(  )
+Call( サブルーチン名 {, 引数 } )
+CallFunction(  )
+CallFunction( サブルーチン名, var {, 引数 } )
+CallScript(  )
+CallScript( MortScriptファイル {, 引数 } )
+CallScriptFunction(  )
+CallScriptFunction( MortScriptファイル, var {, 引数 })
+Case(  )
+Case( var {, var })
+Ceil(  )
+Ceil( var ) # int = 
+ChDir(  )
+ChDir(ディレクトリ)
+CharAt(  )
+CharAt( <string>,<position> ) # string = 
+Choice(  )
+Choice( Titl, prompt, デフォルト, タイムアウト, (var, var {, var }| arr )) # int = 
+ChoiceDefault(  )
+ChoiceDefault( Titl,  prompt , デフォルト, タイムアウト, ( var, var {, var }| arr ))
+Clear(  )
+Clear( var )
+ClipText(  ) # str = 
+Close(  )
+Close( WinTitl )
+CloseConnection
+ColorAt(  )
+ColorAt( x, y ) # int = 
+CompareFloat(  )
+CompareFloat( var1, var2, 小数桁 ) # int = 
+Connect(  )
+Connect( Titl, メッセージ )
+Connect( 接続名 )
+Connected(  ) # bool = 
+Copy(  )
+Copy( 元ファイル, 先ファイル [, 上書き？])
+Cos(  )
+Cos( ラジアン値 ) # float = 
+CreateShortcut(  )
+CreateShortcut(ショートカットファイル, ショートカット先ファイル)
+CurrentCursor(  )
+CurrentCursor( [<window>] ) # string = (returns "arrow", "wait", "cross", "help", or "uparrow")
+DelTree(  )
+DelTree( ファイル )
+Delete(  )
+Delete( ファイル )
+DirContents(  )
+DirContents( <directory>, <DC_FILES, DC_DIRS, or DC_ALL> ) # Aarray  = 
+DirExists(  )
+DirExists( ディレクトリ ) # bool = 
+Disconnect
+Documents
+Download(  )
+Download( URL, 先ファイル )
+EULER
+ElementCount(  )
+ElementCount( arr ) # int = 
+Else
+ElseIf(  )
+ElseIf( 条件 )
+EndChoice
+EndForEach
+EndIf
+EndRepeat
+EndSub
+EndSwitch
+EndWhile
+ErrorLevel(  )
+ErrorLevel( エラーレベル )
+Eval(  )
+Eval( str ) # var = 
+Exit
+ExternalPowered(  ) # bool = 
+FALSE
+FileAttribute(  )
+FileAttribute( ファイル, 属性 ) # bool = 
+FileBase(  )
+FileBase( ファイルパス ) # str = 
+FileCreateTime(  )
+FileCreateTime( ファイル ) # int = 
+FileExists(  )
+FileExists( ファイル ) # bool = 
+FileExt(  )
+FileExt( ファイルパス ) # str = 
+FileModifyTime(  )
+FileModifyTime( ファイル ) # int = 
+FilePath(  )
+FilePath( ファイルパス ) # str = 
+FileSize(  )
+FileSize( ファイル ) # int = 
+FileVersion(  )
+FileVersion( ファイル ) # str = 
+Find(  )
+Find( 検索対象文字列 , 検索文字列 [, 検索開始インデックス ]) # int = 
+Floor(  )
+Floor( var ) # int = 
+For
+For var = start to end [ step step ]
+ForEach
+ForEach key, value in array ( arr )
+ForEach key, value in iniKeys ( INIファイル , セクション )
+ForEach value, data in regValues ( ルート, キー )
+ForEach var in array( arr )
+ForEach var in charsOf( str )
+ForEach var in directories( 検索式 )
+ForEach var in files( 検索式 )
+ForEach var in iniSections( INIファイル )
+ForEach var in regSubkeys ( ルート, キー )
+ForEach var in split( str, デリミタ, トリム？)
+ForEach var in values( var1 {, var2 })
+ForEach var{, var } in type ( parameter {, parameter } )
+Format(  )
+Format( var, 小数桁 ) # str = 
+FormatTime(  )
+FormatTime( フォーマット [, タイムスタンプ ]) # str = 
+FreeDiskSpace(  )
+FreeDiskSpace( ディレクトリ) # int = 
+FreeMemory() # int = 
+GetMortScriptVersion(  )
+GetMortScriptVersion( var, var, var, var )
+GetTime(  )
+GetTime( 時, 分, 秒 [ , 日, 月, 年 ] )
+GetVersion(  )
+GetVersion( ファイル, var, var, var, var )
+GetVolume
+GetVolume() # int = 
+GetVolume() (Windows Mobile only) # int = 
+GetWindowPos(  )
+GetWindowPos( WinTitl , left, top, right, bottom )
+Global(  )
+Global( var {, var } )
+Green(  )
+Green( 色コード ) # int = 
+HKCR
+HKCR ：HKEY_CLASSES_ROOT
+HKCU
+HKCU ：HKEY_CURRENT_USER
+HKLM
+HKLM ：HKEY_LOCAL_MACHINE
+HKUS
+HexToNumber(  )
+HexToNumber( str ) # int = 
+HideWaitCursor
+IdleTimerReset
+If(  )
+If( 条件 )
+Include(  )
+Include( <filename> ) (includes Sub/EndSub blocks of other files)
+IniRead(  )
+IniRead( INIファイル, セクション, エントリ ) # str = 
+IniWrite(  )
+IniWrite( INIファイル, セクション, エントリ, value )
+Input(  )
+Input(メッセージ [, Titl [, 数値？ [, 複数行？ [, デフォルト ]]]]) # str = 
+InternetConnected(  )
+InternetConnected( [ URL ] ) # bool = 
+IsEmpty(  )
+IsEmpty( var ) # bool = 
+Kill(  )
+Kill(プロセス名)
+KillScript(  )
+KillScript(スクリプト名)
+Length(  )
+Length( str ) # int = 
+Local(  )
+Local( [ var {, var } ] )
+Log(  )
+Log( <number> ) (based to EULERT / "e") # float = 
+Log( value ) # float = 
+Log10(  )
+Log10( <number> ) (based to 10) # float = 
+Log10( value ) # float = 
+Map(  )
+Map( インデックス, var {, インデックス,  value  } ) #  arr = 
+Max(  )
+Max( <value>, <value> {,<value>} ) # value = 
+MaxIndex(  )
+MaxIndex( arr ) # int = 
+Message(  )
+Message(テキスト [, Titl ])
+MiddleMouseClick(  )
+MiddleMouseClick( [ WinTitl, ] x, y )
+MiddleMouseDblClick(  )
+MiddleMouseDblClick( [ WinTitl, ] x, y )
+MiddleMouseDown(  )
+MiddleMouseDown( [ WinTitl, ] x, y )
+MiddleMouseUp(  )
+MiddleMouseUp( [ WinTitl, ] x, y )
+Min(  )
+Min( <value>, <value> {,<value>} ) # value = 
+Minimize(  )
+Minimize( WinTitl )
+MkDir(  )
+MkDir( ディレクトリ )
+MortScriptType() # str = 
+MortScriptVersion() # str = 
+MouseClick(  )
+MouseClick( [ WinTitl, ] x, y )
+MouseDblClick(  )
+MouseDblClick( [ WinTitl, ] x, y )
+MouseDown(  )
+MouseDown( [ WinTitl, ] x, y )
+MouseUp(  )
+MouseUp( [ WinTitl, ] x, y )
+Move(  )
+Move( 元ファイル, 先ディレクトリ [, 上書き？ [, サブディレクトリ？] ] )
+NO
+NOT
+MOD
+AND
+OR
+New(  )
+New( メニューエントリー )
+Next
+NumberToHex(  )
+NumberToHex( 整数 ) # str = 
+OFF
+ON
+OkCancel
+PC
+PHI
+PI
+PNA
+PPC
+Part(  )
+Part( str  , デリミタ, インデックス [, トリム？ ]) # str = 
+PlaySound(  )
+PlaySound(WAVファイル)
+PostMessage(  )
+PostMessage( [ WinTitl, ] message id, wparam, lparam )
+PowerOff
+ProcExists(  )
+ProcExists(プロセス名) # bool = 
+ProgramFiles
+ProgramsMenu
+Question(  )
+Question(質問, Titl [ , タイプ ] ]) # int = 
+RGB(  )
+RGB( red, green, blue ) # int = 
+ReadFile(  )
+ReadFile( ファイル [, バイト数 [, 文字コード ] ] ) # str = 
+ReadLine
+ReadLine( <file/url> [,<codepage>] )  # string =
+ReadLine( <file/url> [,<codepage>] ) # string = 
+Red(  )
+Red( color ) # int = 
+Red( 色コード ) # int = 
+RedrawToday
+RegDelete(  )
+RegDelete( ルートキー, サブキー, 値名 )
+RegDeleteKey(  )
+RegDeleteKey( ルートキー, サブキー, 値？, サブキー？ )
+RegKeyExists(  )
+RegKeyExists( ルートキー, サブキー ) # bool = 
+RegRead(  )
+RegRead( ルートキー, サブキー, 値名 ) # var = 
+RegValueExists(  )
+RegValueExists( ルートキー, サブキー, 値名 ) # bool = 
+RegWriteBinary(  )
+RegWriteBinary( ルートキー, サブキー, 値名, var )
+RegWriteDWord(  )
+RegWriteDWord( ルートキー, サブキー, 値名, var )
+RegWriteMultiString(  )
+RegWriteMultiString( ルートキー, サブキー, 値名, array )
+RegWriteString(  )
+RegWriteString( ルートキー, サブキー, 値名, value )
+RemoveNotifications(  )
+RemoveNotifications( アプリケーション[, 引数] )
+Rename(  )
+Rename(元ファイル, 先ファイル [, 上書き？])
+Repeat(  )
+Repeat( カウント数 )
+RepeatString(  )
+RepeatString( <string>, <count> ) # string = 
+Replace( 対象文字列, 検索文字列, 置換文字列 ) # str = 
+Reset
+RetryCancel
+Return
+Return( var )
+ReverseFind(  )
+ReverseFind( 検索対象文字列 , 検索文字 ) # int = 
+RightMouseClick(  )
+RightMouseClick( [ WinTitl, ] x, y )
+RightMouseDblClick(  )
+RightMouseDblClick( [ WinTitl, ] x, y )
+RightMouseDown(  )
+RightMouseDown( [ WinTitl, ] x, y )
+RightMouseUp(  )
+RightMouseUp( [ WinTitl, ] x, y )
+RmDir(  )
+RmDir(ディレクトリ)
+Rnd(  ) # float = 
+Rnd( max ) # int = 
+Rotate(  )
+Rotate( 方向 )
+Round(  )
+Round( val ) # int = 
+Run(  )
+Run( アプリケーション[, 引数 ] )
+RunAt(  )
+RunAt( Unix タイムスタンプ, アプリケーション[, 引数] )
+RunAt( 年, 月, 日, 時, 分, アプリケーション[, 引数] )
+RunOnPowerOn(  )
+RunOnPowerOn( アプリケーション[, 引数] )
+RunWait(  )
+RunWait( アプリケーション[, 引数 ] )
+SP
+SQRT2
+Screen(  )
+Screen( タイプ ) # bool = 
+ScreenHeight() # int = 
+ScreenToChars(  )
+ScreenToChars( <x>, <y>, <width>, <height>, <color> [, <background color?> [, <foreg. char> [, <backg. char> ] ] ] ) # array = 
+ScreenWidth() # int = 
+ScriptExe
+ScriptExt
+ScriptName
+ScriptPath
+ScriptProcExists(  )
+ScriptProcExists( スクリプト名 ) # bool = 
+SelectDirectory(  )
+SelectDirectory( Titl, メッセージ [, デフォルト] ) # str = 
+SelectFile(  )
+SelectFile( Titl, 保存？, [フィルター [, メッセージ [, デフォルト]]] ) # str = 
+SendBackspace [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendBackspace(  )
+SendCR [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendCR(  )
+SendCancel [ ( WinTitl ) ]
+SendCancel(  )
+SendCommand(  )
+SendCommand( [ WinTitl, ] command id )
+SendContext [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendContext(  )
+SendCtrlKey(  )
+SendCtrlKey( [ WinTitl, ] キー)
+SendDelete [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendDelete(  )
+SendDown [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendDown(  )
+SendEnd [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendEnd(  )
+SendEsc [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendEsc(  )
+SendHome [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendHome(  )
+SendInsert [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendInsert(  )
+SendKeys(  )
+SendKeys([  WinTitl, ] str)
+SendLeft [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendLeft(  )
+SendLeftSoft [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendLeftSoft(  )
+SendMessage(  )
+SendMessage( [ WinTitl, ] message id, wparam, lparam ) # int = 
+SendNo [ ( WinTitl ) ]
+SendNo(  )
+SendOK [ ( WinTitl ) ]
+SendOK(  )
+SendPageDown [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendPageDown(  )
+SendPageUp [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendPageUp(  )
+SendRight [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendRight(  )
+SendRightSoft [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendRightSoft(  )
+SendSpace [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendSpace(  )
+SendSpecial(  )
+SendSpecial( key name [ , state ] ] )
+SendTab [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendTab(  )
+SendUp [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendUp(  )
+SendWin [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendWin(  )
+SendYes [ ( WinTitl ) ]
+SendYes(  )
+Set(  )
+Set( var, expr )
+SetBacklight(  )
+SetBacklight( バッテリー, ACアダプタ )
+SetChoiceEntryFormat(  )
+SetChoiceEntryFormat( 選択肢サイズ [, フォントサイズ, フォント名 ] )
+SetClipText(  )
+SetClipText( str )
+SetComInfo(  )
+SetComInfo(ポート, タイムアウト [, ボーレート [, パリティ [, ビット [, ストップビット [, コントロール ]]]]])
+SetFileAttribute(  )
+SetFileAttribute( ファイル, 属性, セット？ )
+SetMessageFont(  )
+SetMessageFont( フォントサイズ, フォント名 )
+SetProxy(  )
+SetProxy( プロクシサーバー )
+SetVolume(  )
+SetVolume( value )
+Show(  )
+Show( WinTitl )
+ShowWaitCursor
+Sin(  )
+Sin( ラジアン値 ) # float = 
+Sleep(  )
+Sleep( ミリ秒 )
+SleepMessage(  )
+SleepMessage( 秒, メッセージ [ , Titl [ , OK許可？ [ , 条件 ] ] ])
+Snapshot [ ( WinTitl ) ]
+Snapshot(  )
+Split(  )
+Split( str  , デリミタ, トリム？,  var {, var })
+Split( str , デリミタ [, トリム? ] ) #  arr = 
+Sqrt(  )
+Sqrt( value ) # float = 
+StartMenu
+Startup
+StatusClear() (removes all previous messages)
+StatusHistorySize(  )
+StatusHistorySize( <count> ) (number of entries in list)
+StatusInfo(  )
+StatusInfo( <title> [, <list info> ] ) (title and list info text)
+StatusListEntryFormat(  )
+StatusListEntryFormat( <item height> [, <font size>, <font name> ] )
+StatusMessage(  )
+StatusMessage( <message> [, <style> [, <keepOpen>] [, <allowCancel>  ]]] )
+StatusMessageAppend(  )
+StatusMessageAppend( <message> )  (appends last message)
+StatusRemoveLastMessage()
+StatusShow(  )
+StatusShow() (bring status window to foreground)
+StatusType(  )
+StatusType( ST_HIDDEN|ST_LIST|ST_MESSAGE [, <keepOpen>] [, <allowCancel> ]] )
+Sub
+Sub サブルーチン名
+SubStr(  )
+SubStr( str2 , 開始インデックス [, 長さ ]) # str = 
+SupportsProcHandling(  ) # bool = 
+Switch(  )
+Switch( 条件 )
+SystemPath(  )
+SystemPath( タイプ ) # str = 
+SystemVersion(  )
+SystemVersion( [ 要素 ] ) # val = 
+TRUE
+Tan(  )
+Tan( ラジアン値 ) # float = 
+TimeStamp() # int = 
+TimeStampUTC
+TimeStampUTC() # (UTC time as Unix timestamp) # int = 
+TimeStampUTC() (UTC time as Unix timestamp) # int = 
+TimeZoneBias(  )
+TimeZoneBias() # (offset to UTC in minutes) # int = 
+TimeZoneBias() (offset to UTC in minutes) # int = 
+TimeZoneDST(  )
+TimeZoneDST() # (Daylight Saving Time active?) # bool = 
+TimeZoneDST() (Daylight Saving Time active?) # bool = 
+TimeZoneName(  )
+TimeZoneName() # (Name of current timezone) # string = 
+TimeZoneName() (Name of current timezone) # string = 
+ToLower(  )
+ToLower( str ) # str = 
+ToUpper(  )
+ToUpper( str ) # str = 
+ToggleDisplay(  )
+ToggleDisplay(オン？)
+TotalDiskSpace(  )
+TotalDiskSpace( ディレクトリ ) # int = 
+TotalMemory() # int = 
+UCChar(  )
+UCChar( <unicode value> ) # string = 
+UCValue(  )
+UCValue( <character> ) # string = 
+UnzipAll(  )
+UnzipAll(ZIPファイル, 解凍先ディレクトリ)
+UnzipFile(  )
+UnzipFile(ZIPファイル, アーカイブ内のファイル名, 解凍先ファイル)
+UnzipPath(  )
+UnzipPath(ZIPファイル, アーカイブ内のパス, 解凍先ディレクトリ)
+Vibrate(  )
+Vibrate( ミリ秒 )
+WaitFor(  )
+WaitFor( WinTitl, 秒 )
+WaitForActive(  )
+WaitForActive( WinTitl, 秒 )
+While(  )
+While( 条件 )
+WindowProcess(  )
+WindowProcess( ウィンドウ名 [, フルパス？ ] ) # str = 
+WindowText(  )
+WindowText( x, y ) # str = 
+WndActive(  )
+WndActive( WinTitl ) # bool = 
+WndBottom(  )
+WndBottom( WinTitl ) # int = 
+WndExists(  )
+WndExists( WinTitl ) # bool = 
+WndLeft(  )
+WndLeft( WinTitl ) # int = 
+WndRight(  )
+WndRight( WinTitl ) # int = 
+WndTop(  )
+WndTop( WinTitl ) # int = 
+WriteFile(  )
+WriteFile( ファイル, 内容[, 追記？[, 文字コード ] ] )
+WriteStatusHistory(  )
+WriteStatusHistory( <file name> [, <append> [,<encoding>]] )
+WriteStatusList(  )
+WriteStatusList( file name [, append [, code page ]] )
+XCopy(  )
+XCopy( 元ファイル, 先ディレクトリ [, 上書き？ [, サブディレクトリ？] ] )
+YES
+YesNo
+YesNoCancel
+ZipFile(  )
+ZipFile( 元ファイル, ZIPファイル, アーカイブ内のファイル名 [, 圧縮レート ] )
+ZipFiles(  )
+ZipFiles( 元ファイル（複数）, ZIPファイル [, サブディレクトリ？ [, アーカイブ内のパス [, 圧縮レート ] ] ] )
+archive
+array  = ScreenToChars( <x>, <y>, <width>, <height>, <color> [, <background color?> [, <foreg. char> [, <backg. char> ] ] ] )
+build
+chinesesimp
+chinesetrad
+directory
+gt|ge|lt|le|eq|ne
+hidden
+in array
+in charsOf
+in directories
+in files
+in iniKeys
+in iniSections
+in regSubkeys
+in regValues
+in split
+in values
+jis
+johab
+landscape
+latin1
+latin2
+major
+minor
+platform
+portrait
+qbga
+readonly
+squere
+step
+system
+to
+unicode
+unicode-prefix
+utf8
+utf8-prefix
+vga
+wansung
