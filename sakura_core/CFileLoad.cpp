@@ -62,7 +62,7 @@ CFileLoad::CFileLoad( void ) : m_cmemLine()
 	m_hFile			= NULL;
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
-	m_CharCode		= 0;
+	m_CharCode		= CODE_DEFAULT;
 	m_bBomExist		= FALSE;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
 	m_nReadLength	= 0;
@@ -106,7 +106,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BOOL*
 	// FileCloseを呼んでからにしてください
 	if( NULL != m_hFile ){
 #ifdef _DEBUG
-		::MessageBox( NULL, "CFileLoad::FileOpen\nFileCloseを呼んでからにしてください" , NULL, MB_OK );
+		::MessageBox( NULL, _T("CFileLoad::FileOpen\nFileCloseを呼んでからにしてください") , NULL, MB_OK );
 #endif
 		throw CError_FileOpen();
 	}
@@ -145,13 +145,12 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BOOL*
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定
 	if( 0 > CharCode || CODE_CODEMAX <= CharCode ){
-		CharCode = CODE_SJIS;
+		CharCode = CODE_DEFAULT;
 	}
 	m_CharCode = CharCode;
 	m_nFlag = nFlag;
 
 	// From Here Jun. 08, 2003 Moca BOMの除去
-//-	nBomCode = CMemory::IsUnicodeBom( (const unsigned char*)m_pReadBuf, m_nReadDataLen );
 	nBomCode = Charcode::DetectUnicodeBom( (const char *)m_pReadBuf, m_nReadDataLen );  // 2006.09.22  by rastiv
 	m_nFileDataLen = m_nFileSize;
 	if( nBomCode != 0 && nBomCode == m_CharCode ){
@@ -197,56 +196,13 @@ void CFileLoad::FileClose( void )
 	}
 	m_nFileSize		=  0;
 	m_nFileDataLen	=  0;
-	m_CharCode		=  0;
+	m_CharCode		= CODE_DEFAULT;
 	m_bBomExist		= FALSE; // From Here Jun. 08, 2003
 	m_nFlag 		=  0;
 	m_nReadLength	=  0;
 	m_eMode			= FLMODE_CLOSE;
 	m_nLineIndex	= -1;
 }
-
-/*!
-	ファイルの先頭にポインタを移動する
-	BOMはここで読み飛ばす
-	
-	@date 2003.06.13 Moca 使わないのでコメントアウト
-*/
-/*
-void CFileLoad::SeekBegin( void )
-{
-	DWORD	ReadSize = 0;
-	char	Buf[4];
-	FilePointer( 0, FILE_BEGIN );
-	m_nFileDataLen = m_nFileSize;
-	switch( m_CharCode ){
-	case CODE_UNICODE:
-	case CODE_UNICODEBE:
-		ReadSize = Read( &Buf, 2 );
-		m_nFileDataLen -= 2;
-		break;
-	case CODE_UTF8:
-		ReadSize = Read( &Buf, 3 );
-		m_nFileDataLen -= 3;
-		break;
-//	case CODE_SJIS:
-//	case CODE_EUC:
-//	case CODE_JIS:
-//	case CODE_UTF7:
-//	default:
-//		break;
-	}
-	// もしBOMが付いていなかったらポインタを元に戻す
-	m_bBomExist = FALSE;
-	if( ReadSize != 0 ){
-		if( m_CharCode == CMemory::IsUnicodeBom( (const unsigned char*)Buf, ReadSize ) ){
-			m_bBomExist = TRUE;
-		}else{
-			m_nFileDataLen = m_nFileSize;
-			FilePointer( 0, FILE_BEGIN );
-		}
-	}
-}
-*/
 
 /*!
 	次の論理行を文字コード変換してロードする
@@ -256,8 +212,8 @@ void CFileLoad::SeekBegin( void )
 			NULL		データがなかった
 */
 const char* CFileLoad::ReadLine(
-	int*			pnLineLen,	//!< [out]	改行コード長を含む一行のデータ長
-	CEol*			pcEol		//!< [i/o]
+	int*		pnLineLen,		//!< [out]	改行コード長を含む一行のデータ長
+	CEol*		pcEol			//!< [i/o]
 )
 {
 	const char	*pLine;
@@ -304,7 +260,6 @@ const char* CFileLoad::ReadLine(
 		break;
 	case CODE_UNICODE:
 		m_cmemLine.UnicodeToSJIS();
-//		nEolLen = nEolLen / sizeof(wchar_t);
 		break;
 	case CODE_UTF8:
 		m_cmemLine.UTF8ToSJIS();
@@ -314,16 +269,9 @@ const char* CFileLoad::ReadLine(
 		break;
 	case CODE_UNICODEBE:
 		m_cmemLine.UnicodeBEToSJIS();
-//		nEolLen = nEolLen / sizeof(wchar_t);
 		break;
 	}
 	m_nLineIndex++;
-	// 行数がintの範囲を超えた
-	// ただしファイルサイズがintの範囲内ならまずありえない
-//	if( m_nLineIndex < 0){
-//		throw CError_FileRead();
-//		return NULL;
-//	}
 	// データあり
 	if( 0 != nBufLineLen + nEolLen ){
 		// 改行コードを追加
@@ -331,107 +279,11 @@ const char* CFileLoad::ReadLine(
 		return m_cmemLine.GetStringPtr( pnLineLen );
 	}
 	// データがない => 終了
-//	m_cmemLine.Empty(); // protected メンバ
 	m_cmemLine.SetString("");
 	return NULL;
 }
 
 
-/*!
-	次の論理行を文字コード変換してロードする(Unicode版)
-	順次アクセス専用
-	GetNextLineのような動作をする
-	@return	NULL以外	1行を保持しているデータの先頭アドレスを返す
-			NULL		データがなかった
-*/
-/*
-const wchar_t* CFileLoad::ReadLineW(
-	int*			pnLineLen,	//!< [out] 改行コード長を含む1行のデータバイト数
-	CEol*			pcEol		//!< [i/o]
-)
-{
-	const char	*pLine;
-	int			nRetVal = 1;
-	int			nBufLineLen;
-	int			nEolLen;
-
-	// 行データクリア。本当はバッファは開放したくない
-	m_cmemLine.SetDataSz( "" );
-
-	// 1行取り出し ReadBuf -> m_memLine
-	//	Oct. 19, 2002 genta while条件を整理
-	while( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen,
-		&nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
-			// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
-			if( m_nReadDataLen <= m_nReadBufOffSet && 1 == m_nMode ){
-				m_cmemLine.Append( pLine, nBufLineLen );
-				m_nReadBufOffSet -= nEolLen;
-				// バッファロード   File -> ReadBuf
-				Buffering();
-			}else{
-				m_cmemLine.Append( pLine, nBufLineLen );
-				break;
-			}
-		}
-	}
-
-	m_nReadLength += ( nBufLineLen = m_cmemLine.GetStringLength() );
-
-	// 文字コード変換
-	switch( m_CharCode ){
-	case CODE_SJIS:
-		m_cmemLine.SJISToUnicode();
-//		nEolLen = nEolLen * sizeof(wchar_t);
-		break;
-	case CODE_EUC:
-		m_cmemLine.EUCToSJIS();
-		m_cmemLine.SJISToUnicode();
-//		nEolLen = nEolLen * sizeof(wchar_t);
-		break;
-	case CODE_JIS:
-		// E-Mail(JIS→SJIS)コード変換
-		m_cmemLine.JIStoSJIS( ( m_nFlag & 1 ) == 1 );
-		m_cmemLine.SJISToUnicode();
-//		nEolLen = nEolLen * sizeof(wchar_t);
-		break;
-	case CODE_UNICODE:
-		break;
-	case CODE_UTF8:
-//		m_cmemLine.UTF8ToUnicode();
-		m_cmemLine.UTF8ToSJIS();
-		m_cmemLine.SJISToUnicode();
-//		nEolLen = nEolLen * sizeof(wchar_t);
-		break;
-	case CODE_UTF7:
-//		m_cmemLine.UTF7ToUnicode();
-		m_cmemLine.UTF7ToSJIS();
-		m_cmemLine.SJISToUnicode();
-//		nEolLen = nEolLen * sizeof(wchar_t);
-		break;
-	case CODE_UNICODEBE:
-//		m_cmemLine.UnicodeBEToUnicode();
-		m_cmemLine.SwapHLByte();
-		break;
-	}
-	m_nLineIndex++;
-	// 行数がintの範囲を超えた
-	// ただしファイルサイズがintの範囲内ならまずありえない
-//	if( m_nLineIndex < 0){
-//		throw CError_FileRead();
-//		return NULL;
-//	}
-	// データあり
-	if( 0 != nBufLineLen + nEolLen ){
-		// 改行コードを追加
-		m_cmemLine.Append( pcEol->GetUnicodeValue(), pcEol->GetLen() * sizeof( wchar_t ) );
-		return reinterpret_cast<wchar_t*>( m_cmemLine.GetPtr( pnLineLen ) );
-	}
-	// データがない => 終了
-//	m_cmemLine.Empty(); // protected メンバ
-	m_cmemLine.SetDataSz("");
-	return NULL;
-}
-*/
 
 /*!
 	バッファにデータを読み込む
@@ -491,45 +343,6 @@ void CFileLoad::ReadBufEmpty( void )
 	m_nReadBufOffSet  = 0;
 }
 
-/*!
-	バッファサイズの変更
-	@note ファイルサイズを考慮しない
-		FileOpenより先に呼ぶと確実にバッファサイズを小さくできる
-*/
-/*
-void CFileLoad::SetReadBufAlloc( int nNewSize ){
-	char * pBuf;
-
-	// データが残っている場合は移動させる
-	if( m_nReadBufOffSet + 1 <= m_nReadDataLen ){
-		m_nReadDataLen -= m_nReadBufOffSet;
-		memmove( m_pReadBuf, &m_pReadBuf[m_nReadBufOffSet], m_nReadDataLen );
-		m_nReadBufOffSet = 0;
-	}
-
-	// 現在ロードしてるデータを失わないように
-	if( m_nReadDataLen > nNewSize ){
-		nNewSize = m_nReadDataLen;
-	}
-	// wchar_t の大きさで整頓
-	if( 0 != nNewSize % sizeof(wchar_t) ){
-		nNewSize += sizeof(wchar_t) - ( nNewSize % sizeof(wchar_t) );
-	}
-	if( gm_nBufSizeMin > nNewSize ){
-		nNewSize = gm_nBufSizeMin;
-	}
-
-	// バッファサイズを変更
-	if( m_nReadBufSize != nNewSize ){
-		if( NULL != ( pBuf = (char *)realloc( m_pReadBuf, nNewSize ) ) ){
-			m_pReadBuf = pBuf;
-			m_nReadBufSize = nNewSize;
-		}
-		// メモリー確保に失敗したときは変更はなかったことにする
-	}
-}
-*/
-
 
 /*!
 	 現在の進行率を取得する
@@ -572,7 +385,6 @@ const char* CFileLoad::GetNextLineCharCode(
 		*pnBgn     *= sizeof( wchar_t );
 		*pnEolLen   = pcEol->GetLen() * sizeof( wchar_t );
 		break;
-
 	case CODE_UNICODEBE:
 		*pnBgn /= sizeof( wchar_t );
 		pRetStr = (const char*)CFileLoad::GetNextLineWB(
@@ -585,7 +397,6 @@ const char* CFileLoad::GetNextLineCharCode(
 		*pnBgn     *= sizeof( wchar_t );
 		*pnEolLen   = pcEol->GetLen() * sizeof( wchar_t );
 		break;
-
 	default:
 		pRetStr = GetNextLine( pData, nDataLen, pnLineLen, pnBgn, pcEol );
 		*pnEolLen = pcEol->GetLen();

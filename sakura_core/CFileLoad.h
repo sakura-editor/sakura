@@ -72,15 +72,16 @@ public:
 	ECodeType FileOpen( LPCTSTR, int, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
-	const char* ReadLine( int*, CEol* );	// 1行データをロードする 順アクセス用
+	//! 1行データをロードする 順アクセス用
+	const char* ReadLine(
+		int*		pnLineLen,		//!< [out]	改行コード長を含む一行のデータ長
+		CEol*		pcEol			//!< [i/o]
+	);
 
 //	未実装関数郡
 //	cosnt char* ReadAtLine( int, int*, CEol* ); // 指定行目をロードする
 //	cosnt wchar_t* ReadAtLineW( int, int*, CEol* ); // 指定行目をロードする(Unicode版)
 //	bool ReadIgnoreLine( void ); // 1行読み飛ばす
-
-
-//	void SetReadBufAlloc( int );	// バッファサイズの変更
 
 	//! ファイルの日時を取得する
 	BOOL GetFileTime( FILETIME*, FILETIME*, FILETIME* ); // inline
@@ -161,7 +162,7 @@ inline BOOL CFileLoad::GetFileTime( FILETIME* pftCreate, FILETIME* pftLastAccess
 inline int CFileLoad::Read( void* pBuf, size_t nSize )
 {
 	DWORD ReadSize;
-	if( FALSE == ::ReadFile( m_hFile, pBuf, nSize, &ReadSize, NULL ) )
+	if( !::ReadFile( m_hFile, pBuf, nSize, &ReadSize, NULL ) )
 		throw CError_FileRead();
 	return (int)ReadSize;
 }
