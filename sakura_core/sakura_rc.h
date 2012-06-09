@@ -118,7 +118,7 @@
 #define IDC_CHECK_BACKUPDIALOG          1084
 #define IDC_CHECK_BACKUPFOLDER          1085
 #define IDC_CHECK_UNDERLINE             1085
-#define IDC_EDIT1                       1086
+#define IDC_EDIT_INPUT1                 1086
 #define IDC_EDIT_PROPERTY               1086
 #define IDC_EDIT_BACKUPFOLDER           1086
 #define IDC_EDIT_EXTHELP1               1086

@@ -34,7 +34,7 @@ public:
 	*/
 	CDlgInput1();
 	~CDlgInput1();
-	BOOL DoModal( HINSTANCE , HWND , const char* , const char* , int , char*  );	/* モードレスダイアログの表示 */
+	BOOL DoModal( HINSTANCE , HWND , const TCHAR* , const TCHAR* , int , TCHAR*  );	/* モードレスダイアログの表示 */
 	/*
 	||  Attributes & Operations
 	*/
@@ -44,8 +44,8 @@ public:
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND		m_hWnd;			/* このダイアログのハンドル */
 
-	const char*	m_pszTitle;		/* ダイアログタイトル */
-	const char*	m_pszMessage;	/* メッセージ */
+	const TCHAR*	m_pszTitle;		/* ダイアログタイトル */
+	const TCHAR*	m_pszMessage;	/* メッセージ */
 	int			m_nMaxTextLen;	/* 入力サイズ上限 */
 //	char*		m_pszText;		/* テキスト */
 	CMemory		m_cmemText;		/* テキスト */
