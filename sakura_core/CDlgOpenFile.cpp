@@ -161,7 +161,6 @@ UINT_PTR CALLBACK OFNHookProc(
 	LRESULT					lRes;
 	const int				nExtraSize = 100;
 	const int				nControls = 9;
-	char					szWork[_MAX_PATH + 1];
 	WORD					wNotifyCode;
 	WORD					wID;
 	HWND					hwndCtl;
@@ -365,7 +364,8 @@ UINT_PTR CALLBACK OFNHookProc(
 				}
 				else{
 					_tsplitpath( pOf->lpstrFile, NULL, NULL, NULL, szDefExt );
-					if( szDefExt[0] == _T('.') && szDefExt[1] != _T('\0') ){	// Šù‚ÉŠg’£Žq‚ª‚Â‚¢‚Ä‚¢‚é
+					if( szDefExt[0] == _T('.') /* && szDefExt[1] != _T('\0') */ ){	// Šù‚ÉŠg’£Žq‚ª‚Â‚¢‚Ä‚¢‚é
+						// .‚Ì‚Ý‚Ìê‡‚É‚àŠg’£Žq•t‚«‚Æ‚Ý‚È‚·B
 						lstrcpyn(pcDlgOpenFile->m_szPath, pOf->lpstrFile, _MAX_PATH);
 					}
 					else{
@@ -435,7 +435,7 @@ UINT_PTR CALLBACK OFNHookProc(
 
 		case CDN_FOLDERCHANGE  :
 //			MYTRACE( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
-			lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, sizeof( szFolder ), (LPARAM)szFolder );
+			lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, _countof( szFolder ), (LPARAM)szFolder );
 //			MYTRACE( "\tlRes=%d\tszFolder=[%s]\n", lRes, szFolder );
 
 			break;
@@ -484,6 +484,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			case IDC_COMBO_MRU:
 			case IDC_COMBO_OPENFOLDER:
 				{
+					TCHAR	szWork[_MAX_PATH + 1];
 					nIdx = ::SendMessage( (HWND) lParam, CB_GETCURSEL, 0, 0 );
 
 					if( CB_ERR != ::SendMessage( (HWND) lParam, CB_GETLBTEXT, nIdx, (LPARAM) (LPCSTR)szWork ) ){
