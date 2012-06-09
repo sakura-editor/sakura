@@ -1,79 +1,100 @@
-// MortScript v4.11b6  入力補完ファイル
+// MortScript v4.2  入力補完ファイル
 
+AND
 ActiveProcess(  )
-ActiveProcess( [ フルパス？ ] ) # str = 
-ActiveWindow(  ) # str = 
+ActiveProcess( [ フルパス？ ] ) # string =
+ActiveWindow() # string =
 AppData
 Array(  )
-Array( var {, var } ) #  arr = 
-BackupBatteryPercentage(  ) # int = 
-BatteryPercentage(  ) # int = 
+Array( 値 {, 値 } ) # array =
+Backspace
+BackupBatteryPercentage() # int =
+BatteryPercentage() # int =
 BigMessage(  )
 BigMessage( テキスト [, Titl ])
 Blue(  )
-Blue( 色コード ) # int = 
+Blue( 色コード ) # int =
+BYTES
+KB
+MB
+GB
 CANCEL
+CR
 Call サブルーチン名
 Call(  )
 Call( サブルーチン名 {, 引数 } )
 CallFunction(  )
-CallFunction( サブルーチン名, var {, 引数 } )
+CallFunction( サブルーチン名, 値 {, 引数 } )
 CallScript(  )
 CallScript( MortScriptファイル {, 引数 } )
 CallScriptFunction(  )
-CallScriptFunction( MortScriptファイル, var {, 引数 })
+CallScriptFunction( MortScriptファイル, 値 {, 引数 })
 Case(  )
-Case( var {, var })
+Case( 値 {, 値 })
 Ceil(  )
-Ceil( var ) # int = 
+Ceil( 値[, 桁] ) # int/float =
 ChDir(  )
-ChDir(ディレクトリ)
+ChDir(ディレクトリ) # PC version only!
 CharAt(  )
-CharAt( <string>,<position> ) # string = 
+CharAt( 文字列, 位置 ) # string =
 Choice(  )
-Choice( Titl, prompt, デフォルト, タイムアウト, (var, var {, var }| arr )) # int = 
+Choice( タイトル, プロンプト, デフォルト, タイムアウト, 値, 値 {, 値 } ) # int =
+Choice( タイトル, プロンプト, デフォルト, タイムアウト, 配列 ) # int =
 ChoiceDefault(  )
-ChoiceDefault( Titl,  prompt , デフォルト, タイムアウト, ( var, var {, var }| arr ))
+ChoiceDefault( タイトル, プロンプト, デフォルト, タイムアウト, 値, 値 {, 値 } )
+ChoiceDefault( タイトル, プロンプト, デフォルト, タイムアウト, 配列 )
 Clear(  )
-Clear( var )
-ClipText(  ) # str = 
+Clear( 変数 )
+ClipText() # string =
 Close(  )
-Close( WinTitl )
+Close( ウィンドウタイトル )
 CloseConnection
 ColorAt(  )
-ColorAt( x, y ) # int = 
+ColorAt( <x>,<y> ) # int =
 CompareFloat(  )
-CompareFloat( var1, var2, 小数桁 ) # int = 
+CompareFloat( 値1, 値2, 小数桁 ) # int =
+Connect
+Connect                        for default http connection
 Connect(  )
-Connect( Titl, メッセージ )
+Connect( タイトル, メッセージ )
 Connect( 接続名 )
-Connected(  ) # bool = 
+Connected() # bool =
+Context
 Copy(  )
 Copy( 元ファイル, 先ファイル [, 上書き？])
 Cos(  )
-Cos( ラジアン値 ) # float = 
+Cos( ラジアン値 ) # float =
 CreateShortcut(  )
-CreateShortcut(ショートカットファイル, ショートカット先ファイル)
+CreateShortcut( ショートカットファイル, ショートカット先ファイル [, 上書き？ ])
+Ctrl
 CurrentCursor(  )
-CurrentCursor( [<window>] ) # string = (returns "arrow", "wait", "cross", "help", or "uparrow")
+CurrentCursor( [ウィンドウ名] ) # string =
+DC_ALL
+DC_DIRS
+DC_FILES
 DelTree(  )
 DelTree( ファイル )
+Delete
 Delete(  )
 Delete( ファイル )
 DirContents(  )
-DirContents( <directory>, <DC_FILES, DC_DIRS, or DC_ALL> ) # Aarray  = 
+DirContents( ファイル, タイプ ) # Aarray =
 DirExists(  )
-DirExists( ディレクトリ ) # bool = 
+DirExists( ディレクトリ ) # bool =
 Disconnect
+Disconnect                     closes all connections (GPRS, ActiveSync, ...)
 Documents
+Down
 Download(  )
 Download( URL, 先ファイル )
+ESC
 EULER
 ElementCount(  )
-ElementCount( arr ) # int = 
+ElementCount( 配列 ) # int =
 Else
 ElseIf(  )
 ElseIf( 条件 )
+End
 EndChoice
 EndForEach
 EndIf
@@ -82,204 +103,213 @@ EndSub
 EndSwitch
 EndWhile
 ErrorLevel(  )
+ErrorLevel( "off"|"critical"|"syntax"|"error"|"warn" )
 ErrorLevel( エラーレベル )
 Eval(  )
-Eval( str ) # var = 
+Eval( 文字列 ) # var =
 Exit
-ExternalPowered(  ) # bool = 
+ExternalPowered() # bool =
 FALSE
 FileAttribute(  )
-FileAttribute( ファイル, 属性 ) # bool = 
+FileAttribute( ファイル, 属性 ) # bool =
 FileBase(  )
-FileBase( ファイルパス ) # str = 
+FileBase( ファイルパス ) # string =
 FileCreateTime(  )
-FileCreateTime( ファイル ) # int = 
+FileCreateTime( ファイル ) # int =
 FileExists(  )
-FileExists( ファイル ) # bool = 
+FileExists( ファイル ) # bool =
 FileExt(  )
-FileExt( ファイルパス ) # str = 
+FileExt( ファイルパス ) # string =
 FileModifyTime(  )
-FileModifyTime( ファイル ) # int = 
+FileModifyTime( ファイル ) # int =
 FilePath(  )
-FilePath( ファイルパス ) # str = 
+FilePath( ファイルパス ) # string =
 FileSize(  )
-FileSize( ファイル ) # int = 
+FileSize( ファイル[,  BYTES|KB|MB|GB (単位) ] ) # int =
 FileVersion(  )
-FileVersion( ファイル ) # str = 
+FileVersion( ファイル ) # string =
 Find(  )
-Find( 検索対象文字列 , 検索文字列 [, 検索開始インデックス ]) # int = 
+Find( 検索対象文字列 , 検索文字列 [, 検索開始インデックス ]) # int =
 Floor(  )
-Floor( var ) # int = 
+Floor( 値[, 桁] ) # int/float =
 For
-For var = start to end [ step step ]
+For 変数 = start to end [ step step ]
 ForEach
-ForEach key, value in array ( arr )
+ForEach key, value in array ( 配列 )
 ForEach key, value in iniKeys ( INIファイル , セクション )
 ForEach value, data in regValues ( ルート, キー )
-ForEach var in array( arr )
-ForEach var in charsOf( str )
-ForEach var in directories( 検索式 )
-ForEach var in files( 検索式 )
-ForEach var in iniSections( INIファイル )
-ForEach var in regSubkeys ( ルート, キー )
-ForEach var in split( str, デリミタ, トリム？)
-ForEach var in values( var1 {, var2 })
-ForEach var{, var } in type ( parameter {, parameter } )
+ForEach 変数 in array ( 配列 )
+ForEach 変数 in charsOf ( 文字列 )
+ForEach 変数 in files ( 検索式 )
+ForEach 変数 in iniSections ( INIファイル )
+ForEach 変数 in regSubkeys ( ルート, キー )
+ForEach 変数 in split ( 値, デリミタ, トリム？ )
+ForEach 変数 in values ( 値 {, 値} )
 Format(  )
-Format( var, 小数桁 ) # str = 
+Format( <number>, <digits after decimal point> [, <min. digits before decimal point> ] ) # string =
+Format( var, 小数桁 ) # string =
 FormatTime(  )
-FormatTime( フォーマット [, タイムスタンプ ]) # str = 
+FormatTime( フォーマット [, タイムスタンプ ]) # string =
 FreeDiskSpace(  )
-FreeDiskSpace( ディレクトリ) # int = 
-FreeMemory() # int = 
+FreeDiskSpace( <directory> [, BYTES|KB|MB|GB] ) (max. 2147483647) # int =
+FreeDiskSpace( ディレクトリ[, BYTES|KB|MB|GB (単位) ] ) # int =
+FreeMemory( [ BYTES|KB|MB|GB (単位) ] )  (max. 2147483647) # int =
+FreeMemory() # int =
+GetClipText() # string =
 GetMortScriptVersion(  )
-GetMortScriptVersion( var, var, var, var )
+GetMortScriptVersion( 変数, 変数, 変数, 変数 )
 GetTime(  )
 GetTime( 時, 分, 秒 [ , 日, 月, 年 ] )
 GetVersion(  )
-GetVersion( ファイル, var, var, var, var )
-GetVolume
-GetVolume() # int = 
-GetVolume() (Windows Mobile only) # int = 
+GetVersion( ファイル, 変数, 変数, 変数, 変数 )
 GetWindowPos(  )
-GetWindowPos( WinTitl , left, top, right, bottom )
+GetWindowPos( ウィンドウタイトル, left, top, right, bottom )
 Global(  )
-Global( var {, var } )
+Global( 変数 {, 変数 } ) 
 Green(  )
-Green( 色コード ) # int = 
+Green( <color> ) # int =
+Green( 色コード ) # int =
 HKCR
-HKCR ：HKEY_CLASSES_ROOT
+HKCR (HKEY_CLASSES_ROOT)
 HKCU
-HKCU ：HKEY_CURRENT_USER
+HKCU (HKEY_CURRENT_USER)
 HKLM
-HKLM ：HKEY_LOCAL_MACHINE
+HKLM (HKEY_LOCAL_MACHINE)
 HKUS
+HKUS (HKEY_USERS)
 HexToNumber(  )
-HexToNumber( str ) # int = 
+HexToNumber( 16進文字列 ) # int =
+HexToNumber( <string with hex number> ) # int =
 HideWaitCursor
+Home
 IdleTimerReset
+IdleTimerReset (Windows Mobile only)
 If(  )
 If( 条件 )
 Include(  )
-Include( <filename> ) (includes Sub/EndSub blocks of other files)
+Include( MortScriptファイル )
 IniRead(  )
-IniRead( INIファイル, セクション, エントリ ) # str = 
+IniRead( INIファイル, セクション, エントリ ) # string =
 IniWrite(  )
-IniWrite( INIファイル, セクション, エントリ, value )
+IniWrite( INIファイル, セクション, エントリ, 値 )
 Input(  )
-Input(メッセージ [, Titl [, 数値？ [, 複数行？ [, デフォルト ]]]]) # str = 
+Input( メッセージ [, タイトル [, 数値？ [, 複数行？ [, デフォルト ]]]] ) # string =
+Insert
 InternetConnected(  )
-InternetConnected( [ URL ] ) # bool = 
+InternetConnected( [ URL ] ) # bool =
 IsEmpty(  )
-IsEmpty( var ) # bool = 
+IsEmpty( 変数 ) # bool =
 Kill(  )
 Kill(プロセス名)
 KillScript(  )
 KillScript(スクリプト名)
+Left
+LeftSoft
 Length(  )
-Length( str ) # int = 
+Length( 文字列 ) # int =
 Local(  )
-Local( [ var {, var } ] )
+Local( [ 変数 {, 変数 } ] )
 Log(  )
-Log( <number> ) (based to EULERT / "e") # float = 
-Log( value ) # float = 
+Log( 値 ) # float =
 Log10(  )
-Log10( <number> ) (based to 10) # float = 
-Log10( value ) # float = 
+Log10( 値 ) # float =
+MOD
+MakeTimeStamp(  )
+MakeTimeStamp( 年,月, 日 [, 時[, 分[, 秒 ]]] )
 Map(  )
-Map( インデックス, var {, インデックス,  value  } ) #  arr = 
+Map( インデックス, 値 {, インデックス, 値 } ) # array =
 Max(  )
-Max( <value>, <value> {,<value>} ) # value = 
+Max( 値, 値{, 値 } ) # value =
 MaxIndex(  )
-MaxIndex( arr ) # int = 
+MaxIndex( 配列 ) # int =
 Message(  )
-Message(テキスト [, Titl ])
+Message( テキスト [, タイトル ] )
 MiddleMouseClick(  )
-MiddleMouseClick( [ WinTitl, ] x, y )
+MiddleMouseClick( [ ウィンドウタイトル, ] x, y )
 MiddleMouseDblClick(  )
-MiddleMouseDblClick( [ WinTitl, ] x, y )
+MiddleMouseDblClick( [ ウィンドウタイトル, ] x, y )
 MiddleMouseDown(  )
-MiddleMouseDown( [ WinTitl, ] x, y )
+MiddleMouseDown( [ ウィンドウタイトル, ] x, y )
 MiddleMouseUp(  )
-MiddleMouseUp( [ WinTitl, ] x, y )
+MiddleMouseUp( [ ウィンドウタイトル, ] x, y )
 Min(  )
-Min( <value>, <value> {,<value>} ) # value = 
+Min( 値, 値{, 値 } ) # value =
 Minimize(  )
-Minimize( WinTitl )
+Minimize( ウィンドウタイトル )
 MkDir(  )
 MkDir( ディレクトリ )
-MortScriptType() # str = 
-MortScriptVersion() # str = 
+MortScriptType()
+MortScriptVersion() # (similar to FileVersion) # string =
 MouseClick(  )
-MouseClick( [ WinTitl, ] x, y )
+MouseClick( [ ウィンドウタイトル, ] x, y )
 MouseDblClick(  )
-MouseDblClick( [ WinTitl, ] x, y )
+MouseDblClick( [ ウィンドウタイトル, ] x, y )
 MouseDown(  )
-MouseDown( [ WinTitl, ] x, y )
+MouseDown( [ ウィンドウタイトル, ] x, y )
 MouseUp(  )
-MouseUp( [ WinTitl, ] x, y )
+MouseUp( [ ウィンドウタイトル, ] x, y )
 Move(  )
 Move( 元ファイル, 先ディレクトリ [, 上書き？ [, サブディレクトリ？] ] )
 NO
 NOT
-MOD
-AND
-OR
 New(  )
-New( メニューエントリー )
+New( メニューエントリー ) (Windows Mobile only)
 Next
 NumberToHex(  )
-NumberToHex( 整数 ) # str = 
+NumberToHex( 整数 ) # string =
 OFF
 ON
+OR
 OkCancel
 PC
 PHI
 PI
 PNA
 PPC
+PageDown
+PageUp
 Part(  )
-Part( str  , デリミタ, インデックス [, トリム？ ]) # str = 
+Part( str  , デリミタ, インデックス [, トリム？ ]) # string =
 PlaySound(  )
 PlaySound(WAVファイル)
 PostMessage(  )
-PostMessage( [ WinTitl, ] message id, wparam, lparam )
+PostMessage( [ ウィンドウタイトル, ] メッセージID, wParam, lParam )
 PowerOff
 ProcExists(  )
-ProcExists(プロセス名) # bool = 
+ProcExists(プロセス名) # bool =
 ProgramFiles
 ProgramsMenu
 Question(  )
-Question(質問, Titl [ , タイプ ] ]) # int = 
+Question( 質問 [, タイトル [, タイプ ] ] ) # int =
 RGB(  )
-RGB( red, green, blue ) # int = 
+RGB( <red>,<green>,<blue> ) # int =
+Rand(  ) # float =
+Rand( max ) # int =
 ReadFile(  )
-ReadFile( ファイル [, バイト数 [, 文字コード ] ] ) # str = 
+ReadFile( ファイル [, バイト数 [, 文字コード ] ] ) # string =
 ReadLine
-ReadLine( <file/url> [,<codepage>] )  # string =
-ReadLine( <file/url> [,<codepage>] ) # string = 
+ReadLine( ファイル [, 文字コード ] ) # string =
 Red(  )
-Red( color ) # int = 
-Red( 色コード ) # int = 
+Red( 色コード ) # int =
 RedrawToday
 RegDelete(  )
 RegDelete( ルートキー, サブキー, 値名 )
 RegDeleteKey(  )
 RegDeleteKey( ルートキー, サブキー, 値？, サブキー？ )
 RegKeyExists(  )
-RegKeyExists( ルートキー, サブキー ) # bool = 
+RegKeyExists( ルートキー, サブキー ) # bool =
 RegRead(  )
-RegRead( ルートキー, サブキー, 値名 ) # var = 
+RegRead( ルートキー, サブキー, 値名 ) # var =
 RegValueExists(  )
-RegValueExists( ルートキー, サブキー, 値名 ) # bool = 
+RegValueExists( ルートキー, サブキー, 値名 ) # bool =
 RegWriteBinary(  )
-RegWriteBinary( ルートキー, サブキー, 値名, var )
+RegWriteBinary( ルートキー, サブキー, 値名, 値 )
 RegWriteDWord(  )
-RegWriteDWord( ルートキー, サブキー, 値名, var )
+RegWriteDWord( ルートキー, サブキー, 値名, 値 )
 RegWriteMultiString(  )
-RegWriteMultiString( ルートキー, サブキー, 値名, array )
+RegWriteMultiString( ルートキー, サブキー, 値名, 配列 )
 RegWriteString(  )
-RegWriteString( ルートキー, サブキー, 値名, value )
+RegWriteString( ルートキー, サブキー, 値名, 値 )
 RemoveNotifications(  )
 RemoveNotifications( アプリケーション[, 引数] )
 Rename(  )
@@ -287,30 +317,33 @@ Rename(元ファイル, 先ファイル [, 上書き？])
 Repeat(  )
 Repeat( カウント数 )
 RepeatString(  )
-RepeatString( <string>, <count> ) # string = 
-Replace( 対象文字列, 検索文字列, 置換文字列 ) # str = 
+RepeatString( 文字列, 繰り返し回数 ) # string =
+Replace( 対象文字列, 検索文字列, 置換文字列 ) # string =
 Reset
+Reset (Windows Mobile only)
 RetryCancel
 Return
-Return( var )
+Return( 値 )
 ReverseFind(  )
-ReverseFind( 検索対象文字列 , 検索文字 ) # int = 
+ReverseFind( 検索対象文字列 , 検索文字 ) # int =
+Right
 RightMouseClick(  )
-RightMouseClick( [ WinTitl, ] x, y )
+RightMouseClick( [ ウィンドウタイトル, ] x, y )
 RightMouseDblClick(  )
-RightMouseDblClick( [ WinTitl, ] x, y )
+RightMouseDblClick( [ ウィンドウタイトル, ] x, y )
 RightMouseDown(  )
-RightMouseDown( [ WinTitl, ] x, y )
+RightMouseDown( [ ウィンドウタイトル, ] x, y )
 RightMouseUp(  )
-RightMouseUp( [ WinTitl, ] x, y )
+RightMouseUp( [ ウィンドウタイトル, ] x, y )
+RightSoft
 RmDir(  )
-RmDir(ディレクトリ)
-Rnd(  ) # float = 
-Rnd( max ) # int = 
+RmDir( <directory> )
+RmDir( ディレクトリ )
 Rotate(  )
+Rotate( 0|90|180|270 ) (only Windows Mobile 2003 SE or higher)
 Rotate( 方向 )
 Round(  )
-Round( val ) # int = 
+Round( 値[, 桁] ) # int/float =
 Run(  )
 Run( アプリケーション[, 引数 ] )
 RunAt(  )
@@ -322,206 +355,236 @@ RunWait(  )
 RunWait( アプリケーション[, 引数 ] )
 SP
 SQRT2
+ST_HIDDEN
+ST_LIST
+ST_MESSAGE
 Screen(  )
-Screen( タイプ ) # bool = 
-ScreenHeight() # int = 
+Screen( "landscape"|"portrait"|"square"|"vga"|"qvga" ) # bool =
+Screen( タイプ ) # bool =
+ScreenHeight() # int =
 ScreenToChars(  )
-ScreenToChars( <x>, <y>, <width>, <height>, <color> [, <background color?> [, <foreg. char> [, <backg. char> ] ] ] ) # array = 
-ScreenWidth() # int = 
+ScreenToChars( x, y, 幅, 高さ, 色コード[, 背景色? [, 前景用文字[, 背景用文字 ]]] ) # array =
+ScreenWidth() # int =
 ScriptExe
 ScriptExt
 ScriptName
 ScriptPath
 ScriptProcExists(  )
-ScriptProcExists( スクリプト名 ) # bool = 
+ScriptProcExists( スクリプト名 ) # bool =
 SelectDirectory(  )
-SelectDirectory( Titl, メッセージ [, デフォルト] ) # str = 
+SelectDirectory( タイトル, メッセージ [, デフォルト] ) # string =
 SelectFile(  )
-SelectFile( Titl, 保存？, [フィルター [, メッセージ [, デフォルト]]] ) # str = 
-SendBackspace [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SelectFile( タイトル, 保存？, [フィルター [, メッセージ [, デフォルト]]] ) # string =
+SendBackspace [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendBackspace(  )
-SendCR [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendCR [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendCR(  )
-SendCancel [ ( WinTitl ) ]
+SendCancel [ ( ウィンドウタイトル ) ]
 SendCancel(  )
 SendCommand(  )
-SendCommand( [ WinTitl, ] command id )
-SendContext [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendCommand( [ ウィンドウタイトル, ] コマンドID )
+SendContext [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendContext(  )
+SendContext( [<window title>,]<string> )
 SendCtrlKey(  )
-SendCtrlKey( [ WinTitl, ] キー)
-SendDelete [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendCtrlKey( [ ウィンドウタイトル, ] キー )
+SendDelete [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendDelete(  )
-SendDown [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendDown [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendDown(  )
-SendEnd [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendEnd [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendEnd(  )
-SendEsc [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendEsc [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendEsc(  )
-SendHome [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendHome [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendHome(  )
-SendInsert [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendInsert [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendInsert(  )
 SendKeys(  )
-SendKeys([  WinTitl, ] str)
-SendLeft [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendKeys([  <window title>, ] str)
+SendLeft [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendLeft(  )
-SendLeftSoft [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendLeftSoft [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendLeftSoft(  )
 SendMessage(  )
-SendMessage( [ WinTitl, ] message id, wparam, lparam ) # int = 
-SendNo [ ( WinTitl ) ]
+SendMessage( [ ウィンドウタイトル, ] メッセージID, wParam, lParam )
+SendNo [ ( ウィンドウタイトル ) ]
 SendNo(  )
-SendOK [ ( WinTitl ) ]
+SendOK [ ( ウィンドウタイトル ) ]
 SendOK(  )
-SendPageDown [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendPageDown [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendPageDown(  )
-SendPageUp [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendPageUp [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendPageUp(  )
-SendRight [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendRight [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendRight(  )
-SendRightSoft [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendRightSoft [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendRightSoft(  )
-SendSpace [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendSpace [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendSpace(  )
 SendSpecial(  )
-SendSpecial( key name [ , state ] ] )
-SendTab [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendSpecial( キー名 [ , 状態 ] )
+SendTab [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendTab(  )
-SendUp [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendUp [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendUp(  )
-SendWin [ ( WinTitl [ , Ctrl?, Shift? [, Alt? ] ] ) ]
+SendWin [ ( <window title> [ , Ctrl?, Shift? [, Alt? ] ] ) ]
 SendWin(  )
-SendYes [ ( WinTitl ) ]
+SendYes [ ( <window title> ) ]
+SendYes [ ( ウィンドウタイトル ) ]
 SendYes(  )
 Set(  )
-Set( var, expr )
+Set( 変数, 式 )
 SetBacklight(  )
 SetBacklight( バッテリー, ACアダプタ )
 SetChoiceEntryFormat(  )
 SetChoiceEntryFormat( 選択肢サイズ [, フォントサイズ, フォント名 ] )
 SetClipText(  )
-SetClipText( str )
+SetClipText( テキスト )
 SetComInfo(  )
 SetComInfo(ポート, タイムアウト [, ボーレート [, パリティ [, ビット [, ストップビット [, コントロール ]]]]])
+SetDate(  )
+SetDate( 日, 月, 年 )
+SetFileAttribs(  )
+SetFileAttribs( ファイル, 読み取り専用？ [, 隠しファイル？ [, アーカイブ？ ]] )
 SetFileAttribute(  )
 SetFileAttribute( ファイル, 属性, セット？ )
 SetMessageFont(  )
 SetMessageFont( フォントサイズ, フォント名 )
 SetProxy(  )
 SetProxy( プロクシサーバー )
+SetTime(  )
+SetTime( 時, 分, 秒, [日, 月, 年] )
 SetVolume(  )
-SetVolume( value )
+SetVolume( 値 )
+Shift
 Show(  )
-Show( WinTitl )
+Show( <window title> )
+Show( ウィンドウタイトル )
 ShowWaitCursor
 Sin(  )
-Sin( ラジアン値 ) # float = 
+Sin( ラジアン値 ) # (radians = degree*PI/180) float =
 Sleep(  )
 Sleep( ミリ秒 )
 SleepMessage(  )
 SleepMessage( 秒, メッセージ [ , Titl [ , OK許可？ [ , 条件 ] ] ])
-Snapshot [ ( WinTitl ) ]
+Snapshot
+Snapshot [ ( ウィンドウタイトル ) ]
 Snapshot(  )
+Space
 Split(  )
-Split( str  , デリミタ, トリム？,  var {, var })
-Split( str , デリミタ [, トリム? ] ) #  arr = 
+Split( 文字列 , デリミタ, トリム？, 変数{, 変数 })
+Split( 文字列, デリミタ [, トリム? ] ) # array =
 Sqrt(  )
-Sqrt( value ) # float = 
+Sqrt( 値 )
 StartMenu
 Startup
+StatusClear()
 StatusClear() (removes all previous messages)
 StatusHistorySize(  )
-StatusHistorySize( <count> ) (number of entries in list)
+StatusHistorySize( 表示数 )
 StatusInfo(  )
-StatusInfo( <title> [, <list info> ] ) (title and list info text)
+StatusInfo( タイトル [, 但し書き ] )
 StatusListEntryFormat(  )
-StatusListEntryFormat( <item height> [, <font size>, <font name> ] )
+StatusListEntryFormat( 選択肢サイズ [, フォントサイズ, フォント名 ] )
 StatusMessage(  )
-StatusMessage( <message> [, <style> [, <keepOpen>] [, <allowCancel>  ]]] )
+StatusMessage( メッセージ [, スタイル [, 表示継続? [, キャンセルボタン? ]]] )
 StatusMessageAppend(  )
-StatusMessageAppend( <message> )  (appends last message)
+StatusMessageAppend( テキスト )
 StatusRemoveLastMessage()
 StatusShow(  )
 StatusShow() (bring status window to foreground)
 StatusType(  )
 StatusType( ST_HIDDEN|ST_LIST|ST_MESSAGE [, <keepOpen>] [, <allowCancel> ]] )
+StatusType( スタイル [, 表示継続? [, キャンセルボタン? ] ] )
 Sub
 Sub サブルーチン名
 SubStr(  )
-SubStr( str2 , 開始インデックス [, 長さ ]) # str = 
-SupportsProcHandling(  ) # bool = 
+SubStr( 文字列 , 開始インデックス [, 長さ ] ) # string =
+SupportsProcHandling(  ) # bool =
+SupportsProcHandling()  (For PNAs, check if ProcExists and Kill will work) # bool =
+Switch ( <value> )
 Switch(  )
 Switch( 条件 )
 SystemPath(  )
-SystemPath( タイプ ) # str = 
+SystemPath( タイプ ) # string =
 SystemVersion(  )
-SystemVersion( [ 要素 ] ) # val = 
+SystemVersion( [ 要素 ] ) # val =
 TRUE
+Tab
 Tan(  )
-Tan( ラジアン値 ) # float = 
-TimeStamp() # int = 
-TimeStampUTC
-TimeStampUTC() # (UTC time as Unix timestamp) # int = 
-TimeStampUTC() (UTC time as Unix timestamp) # int = 
-TimeZoneBias(  )
-TimeZoneBias() # (offset to UTC in minutes) # int = 
-TimeZoneBias() (offset to UTC in minutes) # int = 
-TimeZoneDST(  )
-TimeZoneDST() # (Daylight Saving Time active?) # bool = 
-TimeZoneDST() (Daylight Saving Time active?) # bool = 
-TimeZoneName(  )
-TimeZoneName() # (Name of current timezone) # string = 
-TimeZoneName() (Name of current timezone) # string = 
+Tan( ラジアン値 ) # float =
+TimeStamp()      (local time as Unix timestamp) # int =
+TimeStamp() # int =
+TimeStampUTC()
+TimeStampUTC() # (UTC time as Unix timestamp) # int =
+TimeZoneBias()
+TimeZoneBias() # (offset to UTC in minutes) # int =
+TimeZoneDST()
+TimeZoneDST() # (Daylight Saving Time active?) # bool =
+TimeZoneName()
+TimeZoneName() # (Name of current timezone) # string =
 ToLower(  )
-ToLower( str ) # str = 
+ToLower( <string> ) # string =
 ToUpper(  )
-ToUpper( str ) # str = 
+ToUpper( 文字列 ) # string =
 ToggleDisplay(  )
 ToggleDisplay(オン？)
 TotalDiskSpace(  )
-TotalDiskSpace( ディレクトリ ) # int = 
-TotalMemory() # int = 
-UCChar(  )
-UCChar( <unicode value> ) # string = 
-UCValue(  )
-UCValue( <character> ) # string = 
+TotalDiskSpace( ディレクトリ[, BYTES|KB|MB|GB (単位) ] ) ) # int =
+TotalMemory( [BYTES|KB|MB|GB] (単位) ) (max. 2147483647) # int =
+TotalMemory() # int =
+UcChar(  )
+UcChar( ユニコード値 ) # string =
+UcValue(  )
+UcValue( 文字 ) # string =
 UnzipAll(  )
 UnzipAll(ZIPファイル, 解凍先ディレクトリ)
 UnzipFile(  )
 UnzipFile(ZIPファイル, アーカイブ内のファイル名, 解凍先ファイル)
 UnzipPath(  )
 UnzipPath(ZIPファイル, アーカイブ内のパス, 解凍先ディレクトリ)
+Up
+VAR_ARRAY
+VAR_EMPTY
+VAR_FLOAT
+VAR_INT
+VAR_STRING
+VarType(  )
+VarType( <variable> ) - returns VAR_EMPTY, VAR_INT, VAR_FLOAT, VAR_STRING, or VAR_ARRAY # int =
+VarType( 変数 ) # int =
 Vibrate(  )
 Vibrate( ミリ秒 )
+Volume
+Volume() # (Windows Mobile only)  int =
 WaitFor(  )
-WaitFor( WinTitl, 秒 )
+WaitFor( ウィンドウタイトル, 秒 )
 WaitForActive(  )
-WaitForActive( WinTitl, 秒 )
+WaitForActive( ウィンドウタイトル, 秒 )
+While ( <condition> )
 While(  )
 While( 条件 )
+Win
 WindowProcess(  )
-WindowProcess( ウィンドウ名 [, フルパス？ ] ) # str = 
+WindowProcess( ウィンドウタイトル [, フルパス？ ] ) # string =
 WindowText(  )
-WindowText( x, y ) # str = 
+WindowText( <x>, <y> ) # string =
 WndActive(  )
-WndActive( WinTitl ) # bool = 
+WndActive( ウィンドウタイトル ) # bool =
 WndBottom(  )
-WndBottom( WinTitl ) # int = 
+WndBottom( ウィンドウタイトル ) # int =
 WndExists(  )
-WndExists( WinTitl ) # bool = 
+WndExists( ウィンドウタイトル ) # bool =
 WndLeft(  )
-WndLeft( WinTitl ) # int = 
+WndLeft( ウィンドウタイトル ) # int =
 WndRight(  )
-WndRight( WinTitl ) # int = 
+WndRight( ウィンドウタイトル ) # int =
 WndTop(  )
-WndTop( WinTitl ) # int = 
+WndTop( ウィンドウタイトル ) # int =
 WriteFile(  )
 WriteFile( ファイル, 内容[, 追記？[, 文字コード ] ] )
 WriteStatusHistory(  )
-WriteStatusHistory( <file name> [, <append> [,<encoding>]] )
-WriteStatusList(  )
-WriteStatusList( file name [, append [, code page ]] )
+WriteStatusHistory( ファイル [, 追記? [, 文字コード ] ] )
 XCopy(  )
 XCopy( 元ファイル, 先ディレクトリ [, 上書き？ [, サブディレクトリ？] ] )
 YES
@@ -532,11 +595,14 @@ ZipFile( 元ファイル, ZIPファイル, アーカイブ内のファイル名 [, 圧縮レート ] )
 ZipFiles(  )
 ZipFiles( 元ファイル（複数）, ZIPファイル [, サブディレクトリ？ [, アーカイブ内のパス [, 圧縮レート ] ] ] )
 archive
-array  = ScreenToChars( <x>, <y>, <width>, <height>, <color> [, <background color?> [, <foreg. char> [, <backg. char> ] ] ] )
 build
 chinesesimp
 chinesetrad
+compressed
 directory
+eq
+ge
+gt
 gt|ge|lt|le|eq|ne
 hidden
 in array
@@ -554,12 +620,16 @@ johab
 landscape
 latin1
 latin2
+le
+lt
 major
 minor
+ne
 platform
 portrait
 qbga
 readonly
+romfile
 squere
 step
 system

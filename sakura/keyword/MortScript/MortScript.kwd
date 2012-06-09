@@ -1,4 +1,4 @@
-// MortScript v4.11b6 キーワード定義ファイル (フロー制御構造)
+// MortScript v4.2 キーワード定義ファイル (フロー制御構造)
 
 Call
 CallFunction
@@ -20,6 +20,7 @@ Exit
 For
 ForEach
 If
+Include
 Next
 Repeat
 Return

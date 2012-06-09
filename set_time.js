@@ -11,7 +11,7 @@
 var sh = new ActiveXObject('Shell.Application');
 
 // SVN初回登録日より後のファイルはSVNの時刻を使用する
-var limit = new Date('2012/06/03 17:00');
+//var limit = new Date('2012/06/03 17:00');
 
 var message = '';
 
@@ -19,20 +19,20 @@ function touch(path, date) {
 	var d = sh.NameSpace(path.replace(/\\[^\\]+$/, ""));
 	var fn = path.replace(/.*\\/, "")
 	var f = d.ParseName(fn);
-	if (f.ModifyDate > limit) {
-		message += (fn + ' 日付が新しいため変更しません\n');
-	} else {
+//	if (f.ModifyDate > limit) {
+//		message += (fn + ' 日付が新しいため変更しません\n');
+//	} else {
 		f.ModifyDate = date;
-	}
+//	}
 }
 
 // ファイル名とタイムスタンプのマップ
 var dates = {
 	'ABAP\\ABAP4.kwd': '2003/03/10 23:29:10',
 	'ActionScript\\ActionScript.kwd': '2007/10/19 21:42:08',
-	'AHK\\AHK.col': '2005/07/22 16:12:06',
-	'AHK\\AHK.khp': '2005/07/22 16:43:20',
-	'AHK\\AHK.rkw': '2005/07/22 16:12:28',
+	'AutoHotKey\\AHK.col': '2005/07/22 16:12:06',
+	'AutoHotKey\\AHK.khp': '2005/07/22 16:43:20',
+	'AutoHotKey\\AHK.rkw': '2005/07/22 16:12:28',
 	'AviSynth\\AviSynth.col': '2006/05/10 23:29:08',
 	'AviSynth\\AviSynth.kwd': '2007/10/19 22:03:16',
 	'AviSynth\\AviSynth_Others.kwd': '2006/05/10 23:28:28',
@@ -45,6 +45,7 @@ var dates = {
 	'Batch\\batch.kwd': '2001/11/15 09:08:56',
 	'Batch\\bat_win2k.khp': '2003/08/07 16:46:46',
 	'C#\\csharp.kwd': '2010/03/06 12:02:00',
+	'C#\\csharp-context.kwd': '2012/06/09 14:27:14',
 	'C++\\cpp.kwd': '2003/10/13 01:36:46',
 	'COBOL\\COBOL.kwd': '2001/11/09 19:54:20',
 	'CORBA\\corba.kwd': '1999/10/05 08:56:48',
@@ -60,12 +61,21 @@ var dates = {
 	'HSP\\HSP.otl': '2005/05/23 18:31:48',
 	'HSP\\HSP.rkw': '2005/05/23 18:31:30',
 	'HSP\\HSP.RL': '2002/08/01 09:05:26',
-	'HTML\\html.kwd': '2001/12/27 20:57:22',
+	'HTML\\html.kwd': '2012/06/09 19:28:55',
+	'HTML\\html5.kwd': '2012/06/09 19:29:07',
 	'HTML\\mathml2.kwd': '2002/12/04 04:59:22',
 	'Java\\java.kwd': '2003/03/08 23:33:36',
 	'JavaScript\\ecmascript.kwd': '2005/02/17 00:04:56',
 	'JavaScript\\JavaScript.kwd': '2004/09/03 18:34:48',
 	'Macro\\S_MAC.KWD': '2002/09/24 18:38:30',
+	'MortScript\\MortScript-readme.txt': '2009/03/31 15:06:46',
+	'MortScript\\MortScript.col': '2009/04/25 7:36:38',
+	'MortScript\\MortScript.hkn': '2009/04/10 2:53:16',
+	'MortScript\\MortScript.khp': '2009/04/04 16:49:50',
+	'MortScript\\MortScript.kwd': '2009/03/28 10:29:46',
+	'MortScript\\MortScript.rkw': '2009/04/10 2:53:04',
+	'MortScript\\MortScript.rule': '2009/03/28 10:28:14',
+	'MortScript\\MortScript2.kwd': '2009/03/31 14:33:42',
 	'MovableType\\movabletype.kwd': '2007/10/19 21:56:42',
 	'OPTIMA\\optima-readme.txt': '2007/09/20 20:45:38',
 	'OPTIMA\\optima.rkw': '2007/09/20 20:30:14',

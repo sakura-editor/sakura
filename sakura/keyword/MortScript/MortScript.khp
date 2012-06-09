@@ -1,4 +1,4 @@
-// MortScript v4.11b6 キーワードヘルプ辞書ファイル
+// MortScript v4.2 キーワードヘルプ辞書ファイル
 
 AND /// 論理積「and」
 ActiveProcess /// アクティブなウィンドウのプロセス名
@@ -10,6 +10,7 @@ BigMessage /// スクロールバー付きの大きなメッセージ
 CANCEL /// "2" で初期化されています。
 CallScript,CallScriptFunction /// 他のスクリプトをサブルーチンとして呼び出す
 ChDir /// ディレクトリを移動する
+CharAt /// 文字列中の指定位置の一文字を返す
 Choice /// リストからの選択
 Choice,ChoiceDefault /// 選択ダイアログによる分岐
 Clear /// 変数や配列を取り除く
@@ -22,9 +23,11 @@ Connect /// 接続を確立する
 Connected,InternetConnected /// 接続をチェックする
 Copy /// ひとつのファイルを複製する
 CreateShortcut /// ショートカットを作成する
+CurrentCursor /// 現在のカーソルの種類を取得する
 DelTree /// サブディレクトリ以下のものを含む複数のファイルを消去する
 Delete /// デリートキー送信
 Delete /// 複数のファイルを消去する
+DirContents /// ディレクトリ中のファイル／フォルダ名を取得する
 Documents /// 「My Documents」。PPC2002機では働きません。
 Download /// ダウンロード
 EULER /// "2.7182818284590452353602874713527"（e） で初期化されています。
@@ -34,7 +37,7 @@ Eval /// 文字列を式として扱う
 Exit /// スクリプトを中止する
 ExternalPowered /// 外部電源使用中かどうかチェックする
 FALSE,OFF,NO /// "0" で初期化されています。
-FileAttribs /// ファイル属性を取得する
+FileAttribute /// ファイル属性を取得する
 FileCreateTime /// ファイル作成日時を取得する
 FileExists,DirExists /// ファイル／ディレクトリが存在するかチェック
 FileModifyTime /// ファイル更新日時を取得する
@@ -55,6 +58,7 @@ HKCU /// HKEY_CURRENT_USER
 HKLM /// HKEY_LOCAL_MACHINE
 IdleTimerReset /// 自動電源オフを回避する
 If /// 単純分岐
+Include /// 他のスクリプトのサブルーチンをインクルードする
 IniRead /// INIファイルの値を読み込む
 IniWrite /// INIファイルに値を書き込む
 Input /// 自由に文を入力する
@@ -63,9 +67,10 @@ Kill /// 起動中のプロセスを強制終了する
 KillScript /// 起動中のスクリプトを終了させる
 Length /// 文字列の長さを取得する
 Local,Global /// 変数スコープ
-Log,Log1 /// 対数
+Log,Log10 /// 対数
 MOD /// 乗算、除算、除算の余り
 Map /// 文字列インデックス付きの配列を生成する
+Max,Min /// 最大／最小値を取得する
 MaxIndex /// 最大インデックスを取得する
 Message /// メッセージ
 Minimize /// ウィンドウを最小化する／隠す
@@ -94,7 +99,7 @@ ProgramFiles /// 「Program Files」。PPC2002機では働きません。
 ProgramsMenu /// スタートメニューの「プログラム」
 Question /// シンプルな質問
 RGB /// RGB値から色コードを生成する
-ReadFile /// テキストファイルを読み込む
+ReadFile,ReadLine /// テキストファイルを読み込む
 Red,Green,Blue /// 色コードから赤／緑／青の値を取得する
 RedrawTday /// Todayスクリーンを再表示する
 RegDelete /// レジストリの値を削除する
@@ -106,6 +111,7 @@ RegWriteString,RegWriteDWord,RegWriteBinary,RegWriteMultiString /// レジストリに
 RemoveNotifications /// 「Notification Queue」からアプリケーションを取り除く
 Rename /// ひとつのファイルの名前を変更する／移動する
 Repeat /// 固定数による繰り返し
+RepeatString /// 文字列を繰り返し回数の数だけ連接したものを取得する
 Replace /// 文字列を置換する
 Reset /// デバイスを再起動する
 RetryCancel /// 「再試行」と「キャンセル」を表示
@@ -121,8 +127,12 @@ RunOnPowerOn /// パワーオン時にアプリケーションを実行する
 RunWait /// アプリケーション／文書を開いて実行終了まで待機する
 SP /// スマートフォン
 SQRT2 /// "1.4142135623730950488016887242097" （√2）で初期化されています。
+ST_HIDDEN /// ステイタスウィンドウを非表示:0
+ST_LIST /// リスト形式でメッセージ行を表示:1
+ST_MESSAGE /// 最新のメッセージ行のみを表示:2
 Screen /// スクリーンの状態（方向／解像度）をチェックする
-ScreenWidth,ScreenHight /// スクリーンのサイズを取得する
+ScreenToChars /// スクリーンの一部を文字列に変換する
+ScreenWidth,ScreenHeight /// スクリーンのサイズを取得する
 ScriptExe /// 「MortScript.exe」へのディレクトリパス。ファイル名は含みません。スマートフォンでは働きません。
 ScriptExt /// 現在のスクリプトの拡張子（".mscr"）。
 ScriptName /// 現在のスクリプト名。パスと拡張子は含みません。
@@ -159,10 +169,13 @@ SetChoiceEntryFormat /// Choice ダイアログの選択肢欄のサイズとフォントを設定する
 SetClipText /// テキストをクリップボードにコピーする
 SetComInfo /// シリアルポートにアクセスする
 SetFileAttribute,SetFileAttribs /// ファイル属性を設定する
+SetInput /// インプットパネルの種類を設定する
 SetMessageFont /// BigMessage 等のフォントを指定する
 SetProxy /// プロクシを設定する
+SetTime,SetDate /// 現在の日時を設定する
 SetVolume /// システム音量を変更する
 Show /// ウィンドウをアクティブにして前面に出す
+ShowInput,HideInput /// インプットパネルを表示する／隠す
 ShowWaitCursor,HideWaitCursor /// 処理中カーソルを表示する／隠す
 Sin,Cos,Tan /// 三角関数
 Sleep /// 一定ミリ秒待機する
@@ -173,6 +186,13 @@ Split /// 文字列を複数の変数／配列要素に分割する
 Sqrt /// ２乗根
 StartMenu /// 「スタート メニュー」。スマートフォンでは利用できません。
 Startup /// 「スタートアップ」
+StatusHistorySize /// リスト形式の表示数を設定する
+StatusInfo /// ウィンドウタイトルと但し書きを設定する
+StatusListEntryFormat /// リスト形式の表示を設定する
+StatusMessage,StatusMessageAppend /// ステイタスメッセージを追加する
+StatusRemoveLastMessage,StatusClear /// ステイタスメッセージを消去する
+StatusShow /// ステイタスウィンドウを可視化する
+StatusType /// 表示タイプを設定する
 Sub,Call,CallFunction /// サブルーチン（Sub, Call/CallFunction)
 SubStr /// 文字列から或る範囲の文字列を抽出する
 SupportsProcHandling /// プロセス用関数が利用可能かどうか？
@@ -180,14 +200,25 @@ Switch /// 値による分岐
 SystemPath /// システムパスを取得する
 SystemVersion /// システムのバージョンを取得する
 TRUE,ON,YES /// "1" で初期化されています。
-TimeStamp /// Unix タイムスタンプ
+TimeStamp,MakeTimeStamp /// Unix タイムスタンプ
+TimeStampUTC /// 協定世界時(UTC)（≒グリニッヂ標準時(GMT)）
+TimeZoneBias /// 協定世界時(UTC)とローカルタイムの時差（分単位）
+TimeZoneDST /// 夏時間(サマータイム)か？論理値
+TimeZoneName /// タイムゾーン名（日本版Windowsでは「東京（標準時）」）
 ToUpper,ToLower /// 大文字／小文字に変換する
 ToggleDisplay /// ディスプレイをオン／オフする
 TotalDiskSpace /// ディスクサイズをチェックする
 TotalMemory /// メインメモリの合計
+UcChar,UcValue /// 文字とユニコード値を相互に変換する
 UnzipAll /// アーカイブ全体を解凍する
 UnzipFile /// 単一のファイルを解凍する
 UnzipPath /// アーカイブ内のパスを解凍する
+VAR_ARRAY /// 配列:4
+VAR_EMPTY /// 空:0
+VAR_FLOAT /// 実数:2
+VAR_INT /// 整数:1
+VAR_STRING /// 文字列:3
+VarType /// 変数のタイプを取得する
 Vibrate /// バイブレート
 WaitFor /// ウィンドウが存在するまで待機する
 WaitFor,WaitForActive /// ウィンドウを待機
@@ -198,6 +229,7 @@ WindowText /// ウィンドウのタイトル／要素の内容を取得する
 WndActive /// ウィンドウがアクティブかどうかチェックする
 WndExists /// ウィンドウが存在するかどうかチェックする
 WriteFile /// テキストファイルに書き込む
+WriteStatusHistory /// ステイタスメッセージをファイルに書き出す
 XCopy /// 複数のファイルを複製する
 YesNo /// 「はい」と「いいえ」（デフォルト）を表示
 YesNoCancel /// 「はい」「いいえ」「キャンセル」を表示

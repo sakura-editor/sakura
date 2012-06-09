@@ -1,4 +1,4 @@
-// MortScript2 v4.11b6 キーワード定義ファイル２ (コマンドと関数)
+// MortScript2 v4.2 キーワード定義ファイル２ (コマンドと関数)
 
 ActiveProcess
 ActiveWindow
@@ -9,6 +9,7 @@ BigMessage
 Blue
 Ceil
 ChDir
+CharAt
 Clear
 ClipText
 Close
@@ -20,8 +21,10 @@ Connected
 Copy
 Cos
 CreateShortcut
+CurrentCursor
 DelTree
 Delete
+DirContents
 DirExists
 Disconnect
 Download
@@ -53,6 +56,7 @@ Green
 HexToNumber
 HideWaitCursor
 IdleTimerReset
+Include
 IniRead
 IniWrite
 Input
@@ -64,13 +68,16 @@ Length
 Local
 Log
 Log10
+MakeTimeStamp
 Map
+Max
 MaxIndex
 Message
 MiddleMouseClick
 MiddleMouseDblClick
 MiddleMouseDown
 MiddleMouseUp
+Min
 Minimize
 MkDir
 MortScriptType
@@ -89,7 +96,9 @@ PowerOff
 ProcExists
 Question
 RGB
+Rand
 ReadFile
+ReadLine
 Red
 RedrawToday
 RegDelete
@@ -111,7 +120,6 @@ RightMouseDblClick
 RightMouseDown
 RightMouseUp
 RmDir
-Rnd
 Rotate
 Round
 Run
@@ -120,6 +128,7 @@ RunOnPowerOn
 RunWait
 Screen
 ScreenHeight
+ScreenToChars
 ScreenWidth
 ScriptProcExists
 SelectDirectory
@@ -157,12 +166,16 @@ SetBacklight
 SetChoiceEntryFormat
 SetClipText
 SetComInfo
+SetDate
 SetFileAttribs
 SetFileAttribute
+SetInput
 SetMessageFont
 SetProxy
+SetTime
 SetVolume
 Show
+ShowInput
 ShowWaitCursor
 Sin
 Sleep
@@ -170,6 +183,15 @@ SleepMessage
 Snapshot
 Split
 Sqrt
+StatusClear
+StatusHistorySize
+StatusInfo
+StatusListEntryFormat
+StatusMessage
+StatusMessageAppend
+StatusRemoveLastMessage
+StatusShow
+StatusType
 SubStr
 SupportsProcHandling
 SystemPath
@@ -181,10 +203,13 @@ ToUpper
 ToggleDisplay
 TotalDiskSpace
 TotalMemory
+UcChar
+UcValue
 UnzipAll
 UnzipFile
 UnzipPath
 Vibrate
+Volume
 WaitFor
 WaitForActive
 WindowProcess
@@ -196,6 +221,7 @@ WndLeft
 WndRight
 WndTop
 WriteFile
+WriteStatusHistory
 XCopy
 ZipFile
 ZipFiles
