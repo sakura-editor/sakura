@@ -226,7 +226,7 @@ namespace Charcode
 	// --- JIS エスケープシーケンス検出
 	int DetectJisESCSeq( const uchar_t* pS, const int nLen, int* pnEscType );
 	// --- ユニコード BOM 検出器
-	int DetectUnicodeBom( const char*, const int );
+	ECodeType DetectUnicodeBom( const char*, const int );
 	
 	/*
 	|| 文字列の文字コード情報を得る．

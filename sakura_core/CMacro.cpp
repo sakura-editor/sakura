@@ -709,11 +709,11 @@ void CMacro::HandleCommand( CEditView* pcEditView, const int Index,	const char* 
 			/* デフォルト値 */
 			//	Sep. 11, 2004 genta 初期値を「変更しない」に
 			//	0だとSJIS指定となってしまうため
-			int nCharCode = CODE_AUTODETECT;
+			ECodeType nCharCode = CODE_AUTODETECT;
 			int nSaveLineCode = 0;
 			
 			if (Argument[1] != NULL){
-				nCharCode = atoi( Argument[1] );
+				nCharCode = (ECodeType)atoi( Argument[1] );
 			}
 			if (Argument[2] != NULL){
 				nSaveLineCode = atoi( Argument[2] );

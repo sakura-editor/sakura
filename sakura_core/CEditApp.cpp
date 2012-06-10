@@ -678,7 +678,7 @@ LRESULT CEditApp::DispatchEvent(
 					{
 						CDlgOpenFile	cDlgOpenFile;
 						char			szPath[_MAX_PATH + 1];
-						int				nCharCode;
+						ECodeType		nCharCode;
 						BOOL			bReadOnly;
 						HWND			hWndOwner;
 						char**			ppszMRU;
@@ -802,7 +802,7 @@ LRESULT CEditApp::DispatchEvent(
 
 						/* ファイルオープンダイアログの初期化 */
 						strcpy( szPath, "" );
-						int nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
+						ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 						int bReadOnly = FALSE;
 						cDlgOpenFile.Create(
 							m_hInstance,

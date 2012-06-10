@@ -70,7 +70,7 @@ CEditDoc::CEditDoc() :
 	m_bReadOnly( FALSE ),			/* 読み取り専用モード */
 	m_bDebugMode( FALSE ),			/* デバッグモニタモード */
 	m_bGrepMode( FALSE ),			/* Grepモードか */
-	m_nCharCode( 0 ),				/* 文字コード種別 */
+	m_nCharCode( CODE_DEFAULT ),	/* 文字コード種別 */
 	m_bBomExist( FALSE ),			//	Jul. 26, 2003 ryoji BOM
 	m_nActivePaneIndex( 0 ),
 //@@@ 2002.01.14 YAZAKI 不使用のため
@@ -392,7 +392,7 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 BOOL CEditDoc::FileRead(
 	char*	pszPath,	//!< [in/out]
 	BOOL*	pbOpened,	//!< [out] すでに開かれていたか
-	int		nCharCode,			/*!< [in] 文字コード種別 */
+	ECodeType	nCharCode,		/*!< [in] 文字コード種別 */
 	BOOL	bReadOnly,			/*!< [in] 読み取り専用か */
 	BOOL	bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
 )
@@ -533,15 +533,15 @@ BOOL CEditDoc::FileRead(
 
 		if( -1 == m_nCharCode ){
 			/* 前回に指定された文字コード種別に変更する */
-			m_nCharCode = fi.m_nCharCode;
+			m_nCharCode = (ECodeType)fi.m_nCharCode;
 		}
 		
 		if( !bConfirmCodeChange && ( CODE_AUTODETECT == m_nCharCode ) ){	// 文字コード指定の再オープンなら前回を無視
-			m_nCharCode = fi.m_nCharCode;
+			m_nCharCode = (ECodeType)fi.m_nCharCode;
 		}
 		if( (FALSE == bFileIsExist) && (CODE_AUTODETECT == m_nCharCode) ){
 			/* 存在しないファイルの文字コード指定なしなら前回を継承 */
-			m_nCharCode = fi.m_nCharCode;
+			m_nCharCode = (ECodeType)fi.m_nCharCode;
 		}
 	} else {
 		bIsExistInMRU = FALSE;
@@ -550,7 +550,7 @@ BOOL CEditDoc::FileRead(
 	/* 文字コード自動判別 */
 	if( CODE_AUTODETECT == m_nCharCode ) {
 		if( FALSE == bFileIsExist ){	/* ファイルが存在しない */
-			m_nCharCode = 0;
+			m_nCharCode = CODE_DEFAULT;
 		} else {
 			m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
 			if( -1 == m_nCharCode ){
@@ -589,10 +589,10 @@ BOOL CEditDoc::FileRead(
 				);
 				if( IDYES == nRet ){
 					/* 前回に指定された文字コード種別に変更する */
-					m_nCharCode = fi.m_nCharCode;
+					m_nCharCode = (ECodeType)fi.m_nCharCode;
 				}else
 				if( IDCANCEL == nRet ){
-					m_nCharCode = 0;
+					m_nCharCode = CODE_DEFAULT;
 					//	Sep. 10, 2002 genta
 					SetFilePath( "" );
 					bRet = FALSE;
@@ -613,7 +613,7 @@ BOOL CEditDoc::FileRead(
 		}
 	}
 	if( -1 == m_nCharCode ){
-		m_nCharCode = 0;
+		m_nCharCode = CODE_DEFAULT;
 	}
 
 	//	Nov. 12, 2000 genta ロングファイル名の取得を前方に移動
@@ -936,7 +936,7 @@ BOOL CEditDoc::OpenFileDialog(
 	HWND		hwndParent,
 	const char*	pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
 	char*		pszPath,		//!< [out] 開くファイルのパスを受け取るアドレス
-	int*		pnCharCode,		//!< [out] 指定された文字コード種別を受け取るアドレス
+	ECodeType*	pnCharCode,		//!< [out] 指定された文字コード種別を受け取るアドレス
 	BOOL*		pbReadOnly		//!< [out] 読み取り専用か
 )
 {
@@ -1018,7 +1018,7 @@ BOOL CEditDoc::OpenFileDialog(
 	@date 2003.07.20 ryoji	BOMの有無を示す引数追加
 	@date 2006.11.10 ryoji	ユーザー指定の拡張子を状況依存で変化させる
 */
-BOOL CEditDoc::SaveFileDialog( char* pszPath, int* pnCharCode, CEol* pcEol, BOOL* pbBomExist )
+BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, BOOL* pbBomExist )
 {
 	char**	ppszMRU;		//	最近のファイル
 	char**	ppszOPENFOLDER;	//	最近のフォルダ
@@ -4033,7 +4033,7 @@ void CEditDoc::InitDoc()
 	SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	m_nCharCode = 0;
+	m_nCharCode = CODE_DEFAULT;
 	m_bBomExist = FALSE;	//	Jul. 26, 2003 ryoji
 
 	//	May 12, 2000
@@ -4198,7 +4198,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 
 /*! 同一ファイルの再オープン */
 void CEditDoc::ReloadCurrentFile(
-	BOOL	nCharCode,		/*!< [in] 文字コード種別 */
+	ECodeType	nCharCode,		/*!< [in] 文字コード種別 */
 	BOOL	bReadOnly		/*!< [in] 読み取り専用モード */
 )
 {

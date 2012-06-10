@@ -2747,10 +2747,10 @@ void CEditView::Command_TRACEOUT( const char* outputstr, int nFlgOpt )
 	@author	maru
 	@date	2006.12.10 maru V‹Kì¬
 */
-BOOL CEditView::Command_PUTFILE( const char* filename, const int nCharCode, int nFlgOpt )
+BOOL CEditView::Command_PUTFILE( const char* filename, const ECodeType nCharCode, int nFlgOpt )
 {
 	BOOL	bResult = TRUE;
-	int		nSaveCharCode;
+	ECodeType	nSaveCharCode;
 	nSaveCharCode = nCharCode;
 	if(filename[0] == '\0') {
 		return FALSE;
@@ -2855,14 +2855,14 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const int nCharCode, int 
 	@author	maru
 	@date	2006.12.10 maru V‹Kì¬
 */
-BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOpt )
+BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int nFlgOpt )
 {
 	CFileLoad	cfl;
 	const char*	pLine;
 	CEol cEol;
 	int			nLineLen;
 	int			nLineNum = 0;
-	int			nSaveCharCode;
+	ECodeType	nSaveCharCode;
 
 	CDlgCancel*	pcDlgCancel = NULL;
 	HWND		hwndCancel = NULL;
@@ -2890,7 +2890,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, int nCharCode, int nFlgOp
 		EditInfo		fi;
 		CMRU			cMRU;
 		if ( cMRU.GetEditInfo( filename, &fi ) ){
-				nSaveCharCode = fi.m_nCharCode;
+				nSaveCharCode = (ECodeType)fi.m_nCharCode;
 		} else {
 			nSaveCharCode = m_pcEditDoc->m_nCharCode;
 		}

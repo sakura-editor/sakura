@@ -2360,19 +2360,19 @@ void CMemory::ToHankaku(
 ||	エラー		-1
 ||	エラー以外は ECodeType を使う
 */
-int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
+ECodeType CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 {
 	HFILE					hFile;
 	HGLOBAL					hgData;
 	const unsigned char*	pBuf;
 	int						nBufLen;
-	int						nCodeType;
+	ECodeType				nCodeType;
 
 	/* メモリ確保 & ファイル読み込み */
 	hgData = NULL;
 	hFile = _lopen( pszFile, OF_READ );
 	if( HFILE_ERROR == hFile ){
-		return -1;
+		return CODE_ERROR;
 	}
 	nBufLen = _llseek( hFile, 0, FILE_END );
 	_llseek( hFile, 0, FILE_BEGIN );
@@ -2388,7 +2388,7 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 	hgData = ::GlobalAlloc( GHND, nBufLen + 1 );
 	if( NULL == hgData ){
 		_lclose( hFile );
-		return -1;
+		return CODE_ERROR;
 	}
 	pBuf = (const unsigned char*)::GlobalLock( hgData );
 	_lread( hFile, (void *)pBuf, nBufLen );
@@ -2426,7 +2426,7 @@ int CMemory::CheckKanjiCodeOfFile( const char* pszFile )
 */
 
 // 2006.12.16  rastiv   アルゴリズムを改定．
-int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
+ECodeType CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 {
 	CESI cesi;
 	WCCODE_INFO wci;
@@ -2459,7 +2459,7 @@ int CMemory::CheckKanjiCode( const unsigned char* pBuf, int nBufLen )
 /* 自動判別→SJISコード変換 */
 void CMemory::AUTOToSJIS( void )
 {
-	int	nCodeType;
+	ECodeType	nCodeType;
 	/*
 	|| 日本語コードセット判別
 	||

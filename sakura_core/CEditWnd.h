@@ -70,7 +70,7 @@ public:
 	*/
 	//	Mar. 7, 2002 genta 文書タイプ用引数追加
 	// 2007.06.26 ryoji グループ指定引数追加
-	HWND Create( HINSTANCE, HWND, int nGroup, const char*, int, BOOL, int = -1 );	/* 作成 */
+	HWND Create( HINSTANCE, HWND, int nGroup, const char*, ECodeType, BOOL, int = -1 );	/* 作成 */
 
 
 	void MessageLoop( void );								/* メッセージループ */

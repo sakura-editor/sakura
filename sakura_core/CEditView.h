@@ -196,12 +196,12 @@ public:
 	void RedrawLineNumber( void );								/* 行番号再描画 */	// 2009.03.26 ryoji
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
-	DWORD DoGrep( const CMemory*, const CMemory*, const CMemory*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int );	/* Grep実行 */
+	DWORD DoGrep( const CMemory*, const CMemory*, const CMemory*, BOOL, BOOL, BOOL, ECodeType, BOOL, BOOL, int );	/* Grep実行 */
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, int, BOOL, BOOL, int, CBregexp*, int, int* );
+	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, ECodeType, BOOL, BOOL, int, CBregexp*, int, int* );
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	//	Mar. 28, 2004 genta 不要な引数を削除
-	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, BOOL, BOOL, int, BOOL, BOOL, int, CBregexp*, int*, const char*, CMemory& );
+	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, BOOL, BOOL, ECodeType, BOOL, BOOL, int, CBregexp*, int*, const char*, CMemory& );
 	/* Grep結果をpszWorkに格納 */
 	void SetGrepResult(
 		/* データ格納先 */
@@ -566,7 +566,7 @@ protected:
 	// Oct. 2, 2001 genta マクロ用に機能拡張
 	// Mar. 30, 2003 genta 引数追加
 	void Command_FILEOPEN( const char *filename = NULL,
-		int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+		ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
 	
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
 	BOOL Command_FILESAVE( bool warnbeep = true, bool askname = true );	
@@ -577,9 +577,9 @@ protected:
 	/* 閉じて開く*/
 	// Mar. 30, 2003 genta 引数追加
 	void Command_FILECLOSE_OPEN( const char *filename = NULL,
-		int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+		ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
 	
-	void Command_FILE_REOPEN( int, int );			/* 再オープン */	//Dec. 4, 2002 genta 引数追加
+	void Command_FILE_REOPEN( ECodeType, int );	/* 再オープン */	//Dec. 4, 2002 genta 引数追加
 	void Command_PRINT( void );					/* 印刷*/
 	void Command_PRINT_PREVIEW( void );			/* 印刷プレビュー*/
 	void Command_PRINT_PAGESETUP( void );		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -593,8 +593,8 @@ protected:
 	void Command_PROPERTY_FILE( void );			/* ファイルのプロパティ */
 	void Command_EXITALLEDITORS( void );		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
-	BOOL Command_PUTFILE( const char*, int, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */
-	BOOL Command_INSFILE( const char*, int, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
+	BOOL Command_PUTFILE( const char*, ECodeType, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */
+	BOOL Command_INSFILE( const char*, ECodeType, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
 	void Command_TEXTWRAPMETHOD( int );			/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
 
 	/* 編集系 */

@@ -420,7 +420,7 @@ void CCommandLine::ParseCommandLine( void )
 				break;
 			// 2002/09/21 Moca Grepでの文字コードセット 追加
 			case CMDLINEOPT_GCODE:
-				m_gi.nGrepCharSet = AtoiOptionInt( arg );	break;
+				m_gi.nGrepCharSet = (ECodeType)AtoiOptionInt( arg );	break;
 			case CMDLINEOPT_GROUP:	// GROUP	// 2007.06.26 ryoji
 				m_nGroup = AtoiOptionInt( arg );
 				break;

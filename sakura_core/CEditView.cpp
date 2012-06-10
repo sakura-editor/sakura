@@ -7239,7 +7239,7 @@ DWORD CEditView::DoGrep(
 	BOOL		bGrepSubFolder,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
-	int			nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
+	ECodeType	nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle
@@ -7660,7 +7660,7 @@ int CEditView::DoGrepTree(
 	BOOL		bGrepSubFolder,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
-	int			nGrepCharSet,
+	ECodeType	nGrepCharSet,
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle,
@@ -8173,7 +8173,7 @@ int CEditView::DoGrepFile(
 	const char*	pszFile,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
-	int			nGrepCharSet,
+	ECodeType	nGrepCharSet,
 	BOOL		bGrepOutputLine,
 	BOOL		bWordOnly,
 	int			nGrepOutputStyle,
@@ -8191,7 +8191,7 @@ int CEditView::DoGrepFile(
 	int		nLine;
 	int		nWorkLen;
 	const char*	pszRes; // 2002/08/29 const付加
-	int		nCharCode;
+	ECodeType	nCharCode;
 	const char*	pCompareData; // 2002/08/29 const付加
 	const char*	pszCodeName; // 2002/08/29 const付加
 	int		nColm;

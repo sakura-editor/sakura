@@ -105,9 +105,9 @@ public:
 	void ToHankaku( int nMode );	/* 全角→半角 */
 
 	/* ファイルの日本語コードセット判別 */
-	static int CheckKanjiCodeOfFile( const char* );
+	static ECodeType CheckKanjiCodeOfFile( const char* );
 	/* 日本語コードセット判別 */
-	static int CheckKanjiCode( const unsigned char*, int );
+	static ECodeType CheckKanjiCode( const unsigned char*, int );
 
 
 	/*

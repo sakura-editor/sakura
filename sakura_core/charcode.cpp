@@ -1184,12 +1184,12 @@ namespace Charcode
 		@retval	4	(CODE_UTF8)		UTF-8
 		@retval	6	(CODE_UNICODEBE) UnicodeBE
 	*/
-	int DetectUnicodeBom( const char* pS, int nLen )
+	ECodeType DetectUnicodeBom( const char* pS, int nLen )
 	{
 		const uchar_t* pBuf = reinterpret_cast<const uchar_t *>(pS);
 
 		if( NULL == pS ){
-			return 0;
+			return CODE_DEFAULT;
 		}
 		if( 2 <= nLen ){
 			if( pBuf[0] == 0xff && pBuf[1] == 0xfe ){
@@ -1204,7 +1204,7 @@ namespace Charcode
 				}
 			}
 		}
-		return 0;
+		return CODE_DEFAULT;
 	}
 
 } // ends namespace Charcode.

@@ -118,7 +118,7 @@ bool CNormalProcess::InitializeProcess()
 	nGroup = CCommandLine::Instance()->GetGroupId();	// 2007.06.26 ryoji
 	
 	if( bDebugMode ){
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, 0, FALSE );
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, CODE_DEFAULT, FALSE );
 
 //	#ifdef _DEBUG/////////////////////////////////////////////
 		/* デバッグモニタモードに設定 */
@@ -129,7 +129,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 	else if( bGrepMode ){
 		/* GREP */
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, 0, FALSE );
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, CODE_DEFAULT, FALSE );
 		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
 		if( NULL == hWnd ){
 			goto end_of_func;
@@ -199,7 +199,7 @@ bool CNormalProcess::InitializeProcess()
 		if( 0 < strlen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
-							fi.m_szPath, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
+							fi.m_szPath, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
 							fi.m_szDocType[0] == '\0' ? -1 :
 								m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
 				 );
@@ -257,7 +257,7 @@ bool CNormalProcess::InitializeProcess()
 		}else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
-										NULL, fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
+										NULL, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
 										fi.m_szDocType[0] == '\0' ? -1 :
 										m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
 									);

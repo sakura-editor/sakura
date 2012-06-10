@@ -72,7 +72,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 {
 	m_bSubFolder = m_pShareData->m_Common.m_bGrepSubFolder;							// Grep: サブフォルダも検索
 	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;							// 1==正規表現
-	m_nGrepCharSet = m_pShareData->m_Common.m_nGrepCharSet;							// 文字コードセット
+	m_nGrepCharSet = (ECodeType)m_pShareData->m_Common.m_nGrepCharSet;				// 文字コードセット
 	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;								// 1==大文字小文字の区別
 	m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					// Grep: 出力形式
@@ -464,7 +464,7 @@ int CDlgGrep::GetData( void )
 		int		nIdx;
 		HWND	hWndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_CHARSET );
 		nIdx = ::SendMessage( hWndCombo, CB_GETCURSEL, 0, 0 );
-		m_nGrepCharSet = ::SendMessage( hWndCombo, CB_GETITEMDATA, nIdx, 0 );
+		m_nGrepCharSet = (ECodeType)::SendMessage( hWndCombo, CB_GETITEMDATA, nIdx, 0 );
 	}
 
 

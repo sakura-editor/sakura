@@ -96,12 +96,12 @@ CFileLoad::~CFileLoad( void )
 	@date 2003.06.08 Moca CODE_AUTODETECT‚ğw’è‚Å‚«‚é‚æ‚¤‚É•ÏX
 	@date 2003.07.26 ryoji BOMˆø”’Ç‰Á
 */
-ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BOOL* pbBomExist )
+ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag, BOOL* pbBomExist )
 {
 	HANDLE	hFile;
 	DWORD	FileSize;
 	DWORD	FileSizeHigh;
-	int		nBomCode;
+	ECodeType	nBomCode;
 
 	// FileClose‚ğŒÄ‚ñ‚Å‚©‚ç‚É‚µ‚Ä‚­‚¾‚³‚¢
 	if( NULL != m_hFile ){
@@ -179,7 +179,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, int CharCode, int nFlag, BOOL*
 	
 	// To Here Jun. 13, 2003 Moca BOM‚Ìœ‹
 	m_eMode = FLMODE_REDY;
-	return (ECodeType)m_CharCode;
+	return m_CharCode;
 }
 
 /*!

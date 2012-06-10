@@ -273,8 +273,8 @@ BOOL CEditView::HandleCommand(
 	case F_PROPERTY_FILE:		Command_PROPERTY_FILE();break;		/* ファイルのプロパティ */
 	case F_EXITALLEDITORS:		Command_EXITALLEDITORS();break;		/* 編集の全終了 */	// 2007.02.13 ryoji 追加
 	case F_EXITALL:				Command_EXITALL();break;			/* サクラエディタの全終了 */	//Dec. 26, 2000 JEPRO 追加
-	case F_PUTFILE:				Command_PUTFILE((const char*)lparam1, (int)lparam2, (int)lparam3);break;	/* 作業中ファイルの一時出力 */ //maru 2006.12.10
-	case F_INSFILE:				Command_INSFILE((const char*)lparam1, (int)lparam2, (int)lparam3);break;	/* キャレット位置にファイル挿入 */ //maru 2006.12.10
+	case F_PUTFILE:				Command_PUTFILE((const char*)lparam1, (ECodeType)lparam2, (int)lparam3);break;	/* 作業中ファイルの一時出力 */ //maru 2006.12.10
+	case F_INSFILE:				Command_INSFILE((const char*)lparam1, (ECodeType)lparam2, (int)lparam3);break;	/* キャレット位置にファイル挿入 */ //maru 2006.12.10
 
 	/* 編集系 */
 	case F_UNDO:				Command_UNDO();break;				/* 元に戻す(Undo) */
@@ -3540,7 +3540,7 @@ void CEditView::Command_FILENEW( void )
 	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
 	@date 2004.10.09 genta 実装をCEditDocへ移動
 */
-void CEditView::Command_FILEOPEN( const char *filename, int nCharCode, BOOL bReadOnly )
+void CEditView::Command_FILEOPEN( const char *filename, ECodeType nCharCode, BOOL bReadOnly )
 {
 	m_pcEditDoc->OpenFile( filename, nCharCode, bReadOnly );
 }
@@ -3562,7 +3562,7 @@ void CEditView::Command_FILECLOSE( void )
 	@date 2003.03.30 genta 開くダイアログでキャンセルしたとき元のファイルが残るように。
 				ついでにFILEOPENと同じように引数を追加しておく
 */
-void CEditView::Command_FILECLOSE_OPEN( const char *filename, int nCharCode, BOOL bReadOnly )
+void CEditView::Command_FILECLOSE_OPEN( const char *filename, ECodeType nCharCode, BOOL bReadOnly )
 {
 	m_pcEditDoc->FileCloseOpen( filename, nCharCode, bReadOnly );
 }
@@ -8701,7 +8701,7 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 
 //! ファイルの再オープン
 void CEditView::Command_FILE_REOPEN(
-	int 		nCharCode,	//!< [in] 開き直す際の文字コード
+	ECodeType	nCharCode,	//!< [in] 開き直す際の文字コード
 	int 		bNoConfirm	//!< [in] ファイルが更新された場合に確認を行うか．0: 確認する, !0: 確認しない
 )
 {

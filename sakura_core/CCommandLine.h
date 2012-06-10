@@ -35,7 +35,7 @@ struct GrepInfo {
 	bool			bGrepRegularExp;	//!< 正規表現を使用する
 	bool			bGrepOutputLine;	//!< 結果出力で該当行を出力する
 	int				nGrepOutputStyle;	//!< 結果出力形式
-	int				nGrepCharSet;		//!< 文字コードセット
+	ECodeType		nGrepCharSet;		//!< 文字コードセット
 };
 
 

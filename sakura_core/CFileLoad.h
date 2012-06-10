@@ -69,7 +69,7 @@ public:
 	~CFileLoad( void );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	ECodeType FileOpen( LPCTSTR, int, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
+	ECodeType FileOpen( LPCTSTR, ECodeType, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	//! 1行データをロードする 順アクセス用
@@ -129,7 +129,7 @@ protected:
 	int		m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
 	int		m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
-	int		m_CharCode;		// 文字コード
+	ECodeType	m_CharCode;		// 文字コード
 	BOOL	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca

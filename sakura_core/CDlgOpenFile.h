@@ -66,10 +66,10 @@ public:
 	BOOL DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
 	//	2002/08/21 30,2002 moca	引数追加
 	BOOL DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
-	BOOL DoModalOpenDlg( char* , int*, BOOL* );	/* 開くダイアグ モーダルダイアログの表示 */
+	BOOL DoModalOpenDlg( char* , ECodeType*, BOOL* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	//	Jul. 26, 2003 ryoji BOM用引数追加
-	BOOL DoModalSaveDlg( char* , int*, CEol*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModalSaveDlg( char* , ECodeType*, CEol*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
@@ -80,7 +80,7 @@ public:
 	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
-	int				m_nCharCode;					/* 文字コード */
+	ECodeType		m_nCharCode;					/* 文字コード */
 
 	CEol			m_cEol;		//	Feb. 9, 2001 genta
 	bool			m_bUseEol;	//	Feb. 9, 2001 genta

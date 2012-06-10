@@ -414,7 +414,7 @@ UINT_PTR CALLBACK OFNHookProc(
 			/* 文字コード選択コンボボックス 値を取得 */
 			nIdx = ::SendMessage( hwndComboCODES, CB_GETCURSEL, 0, 0 );
 			lRes = ::SendMessage( hwndComboCODES, CB_GETITEMDATA, nIdx, 0 );
-			pcDlgOpenFile->m_nCharCode = lRes;	/* 文字コード */
+			pcDlgOpenFile->m_nCharCode = (ECodeType)lRes;	/* 文字コード */
 			//	Feb. 9, 2001 genta
 			if( pcDlgOpenFile->m_bUseEol ){
 				nIdx = ::SendMessage( hwndComboEOL, CB_GETCURSEL, 0, 0 );
@@ -793,7 +793,7 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
-BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadOnly )
+BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, BOOL* pbReadOnly )
 {
 	m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 
@@ -869,7 +869,7 @@ BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, int* pnCharCode, BOOL* pbReadO
 			例）hoge.abc -> hoge.abc.txt
 		自前で補完することでこれを回避する。（実際の処理はフックプロシージャの中）
 */
-BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, int* pnCharCode, CEol* pcEol, BOOL* pbBom )
+BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, BOOL* pbBom )
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 

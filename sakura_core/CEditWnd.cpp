@@ -223,7 +223,7 @@ HWND CEditWnd::Create(
 	HWND		hwndParent,
 	int			nGroup,
 	const char*	pszPath,
-	int			nCharCode,
+	ECodeType	nCharCode,
 	BOOL		bReadOnly,
 	int			nDocumentType
 )
@@ -2096,7 +2096,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				CMRU cMRU;
 				EditInfo checkEditInfo;
 				cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
-				m_cEditDoc.OpenFile( checkEditInfo.m_szPath, checkEditInfo.m_nCharCode);
+				m_cEditDoc.OpenFile( checkEditInfo.m_szPath, (ECodeType)checkEditInfo.m_nCharCode);
 			}
 			else if( wID - IDM_SELOPENFOLDER >= 0 && wID - IDM_SELOPENFOLDER < 999){
 				{
@@ -2106,7 +2106,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 					NetConnect( cMRUFolder.GetPath( wID - IDM_SELOPENFOLDER ) );
 
 					/* 「ファイルを開く」ダイアログ */
-					int nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
+					ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 					BOOL bReadOnly = FALSE;
 					char		szPath[_MAX_PATH + 3];
 					szPath[0] = '\0';

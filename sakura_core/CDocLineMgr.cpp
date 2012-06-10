@@ -438,7 +438,7 @@ void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEol cEol )
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
 	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
-int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, int nFlags, BOOL* pbBomExist)
+int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, ECodeType nCharCode, FILETIME* pFileTime, int nFlags, BOOL* pbBomExist)
 {
 #ifdef _DEBUG
 	MYTRACE( "pszPath=[%s]\n", pszPath );

@@ -215,7 +215,7 @@ public:
 
 	//	Nov. 12, 2000 genta 引数追加
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	int ReadFile( const char*, HWND, HWND, int, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
+	int ReadFile( const char*, HWND, HWND, ECodeType, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)
 	//	Jul. 26, 2003 ryoji BOM引数追加
 	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEol, BOOL bBomExist = FALSE );

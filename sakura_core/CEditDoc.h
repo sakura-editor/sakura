@@ -92,14 +92,14 @@ public:
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
 	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
 	BOOL SelectFont( LOGFONT* );
-	BOOL FileRead( /*const*/ char* , BOOL*, int, BOOL, BOOL );	/* ファイルを開く */
+	BOOL FileRead( /*const*/ char* , BOOL*, ECodeType, BOOL, BOOL );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
 	BOOL FileWrite( const char*, EEolType cEolType );
 	bool SaveFile( const char* path );	//	ファイルの保存（に伴ういろいろ）
-	void OpenFile( const char *filename = NULL, int nCharCode = CODE_AUTODETECT,
+	void OpenFile( const char *filename = NULL, ECodeType nCharCode = CODE_AUTODETECT,
 		BOOL bReadOnly = FALSE );	//	Oct. 9, 2004 genta CEditViewより移動
 	void FileClose( void );	/* 閉じて(無題) */	// 2006.12.30 ryoji
-	void FileCloseOpen( const char *filename = NULL, int nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );	/* 閉じて開く */	// 2006.12.30 ryoji
+	void FileCloseOpen( const char *filename = NULL, ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );	/* 閉じて開く */	// 2006.12.30 ryoji
 	BOOL FileSave( bool warnbeep = true, bool askname = true );	/* 上書き保存 */	// 2006.12.30 ryoji
 	BOOL FileSaveAs_Dialog( void );				/* 名前を付けて保存ダイアログ */	// 2006.12.30 ryoji
 	BOOL FileSaveAs( const char *filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
@@ -109,13 +109,13 @@ public:
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
-	BOOL OpenFileDialog( HWND, const char*, char*, int*, BOOL* );	/* 「ファイルを開く」ダイアログ */
+	BOOL OpenFileDialog( HWND, const char*, char*, ECodeType*, BOOL* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
 	//	Jul. 26, 2003 ryoji BOMオプション追加
-	BOOL SaveFileDialog( char*, int*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
+	BOOL SaveFileDialog( char*, ECodeType*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
 	void CheckFileTimeStamp( void );	/* ファイルのタイムスタンプのチェック処理 */
-	void ReloadCurrentFile( BOOL, BOOL );/* 同一ファイルの再オープン */
+	void ReloadCurrentFile( ECodeType, BOOL );/* 同一ファイルの再オープン */
 
 	//	May 15, 2000 genta
 	CEol  GetNewLineCode() const { return m_cNewLineCode; }
@@ -254,7 +254,7 @@ public: /* テスト用にアクセス属性を変更 */
 	FILETIME		m_FileTime;					/* ファイルの最終更新日付 */
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
-	int				m_nCharCode;				/* 文字コード種別 */
+	ECodeType		m_nCharCode;				/* 文字コード種別 */
 	BOOL			m_bBomExist;	//!< 保存時にBOMを付けるかどうか Jul. 26, 2003 ryoji 
 	bool			m_bInsMode;		//!< 挿入・上書きモード Oct. 2, 2005 genta
 
