@@ -45,10 +45,6 @@ public:
 	//デバッグ
 	void DUMP();									//!< 編集操作要素ブロックのダンプ
 
-protected:
-	//実装補助
-	void _Empty();
-
 private:
 	//メンバ変数
 	std::vector<COpe*>	m_ppCOpeArr;	//!< 操作の配列
