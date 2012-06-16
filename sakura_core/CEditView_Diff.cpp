@@ -45,17 +45,16 @@
 void CEditView::Command_Diff( const char *szTmpFile2, int nFlgOpt )
 {
 	bool	bTmpFile1 = false;
-	char	szTmpFile1[_MAX_PATH * 2];
+	TCHAR	szTmpFile1[_MAX_PATH * 2];
 
 	if( -1 == ::GetFileAttributes( szTmpFile2 ) )
 	{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			_T( "差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。" ) );
+		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。") );
 		return;
 	}
 
 	//自ファイル
-	if (m_pcEditDoc->IsModified() == FALSE ) strcpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	if (!m_pcEditDoc->IsModified()) _tcscpy( szTmpFile1, m_pcEditDoc->GetFilePath());
 	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
 	else return;
 
@@ -63,7 +62,7 @@ void CEditView::Command_Diff( const char *szTmpFile2, int nFlgOpt )
 	ViewDiffInfo(szTmpFile1, szTmpFile2, nFlgOpt);
 
 	//一時ファイルを削除する
-	if( bTmpFile1 ) unlink( szTmpFile1 );
+	if( bTmpFile1 ) _tunlink( szTmpFile1 );
 
 	return;
 
@@ -80,28 +79,32 @@ void CEditView::Command_Diff_Dialog( void )
 {
 	CDlgDiff	cDlgDiff;
 	bool	bTmpFile1 = false, bTmpFile2 = false;
-	char	szTmpFile1[_MAX_PATH * 2];
-	char	szTmpFile2[_MAX_PATH * 2];
 
 	//DIFF差分表示ダイアログを表示する
-	if( FALSE == cDlgDiff.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc,
+	int nDiffDlgResult = cDlgDiff.DoModal(
+		m_hInstance,
+		m_hWnd,
+		(LPARAM)m_pcEditDoc,
 		m_pcEditDoc->GetFilePath(),
-		m_pcEditDoc->IsModified() ) )
-	{
+		m_pcEditDoc->IsModified()
+	);
+	if( !nDiffDlgResult ){
 		return;
 	}
 	
 	//自ファイル
-	if (m_pcEditDoc->IsModified() == FALSE ) strcpy( szTmpFile1, m_pcEditDoc->GetFilePath());
+	TCHAR	szTmpFile1[_MAX_PATH * 2];
+	if (!m_pcEditDoc->IsModified()) _tcscpy( szTmpFile1, m_pcEditDoc->GetFilePath());
 	else if (MakeDiffTmpFile ( szTmpFile1, NULL )) bTmpFile1 = true;
 	else return;
 		
 	//相手ファイル
-	if (cDlgDiff.m_bIsModifiedDst == FALSE ) strcpy( szTmpFile2, cDlgDiff.m_szFile2);
+	TCHAR	szTmpFile2[_MAX_PATH * 2];
+	if (!cDlgDiff.m_bIsModifiedDst) _tcscpy( szTmpFile2, cDlgDiff.m_szFile2);
 	else if (MakeDiffTmpFile ( szTmpFile2, cDlgDiff.m_hWnd_Dst )) bTmpFile2 = true;
 	else 
 	{
-		if( bTmpFile1 ) unlink( szTmpFile1 );
+		if( bTmpFile1 ) _tunlink( szTmpFile1 );
 		return;
 	}
 	
@@ -110,8 +113,8 @@ void CEditView::Command_Diff_Dialog( void )
 	
 	
 	//一時ファイルを削除する
-	if( bTmpFile1 ) unlink( szTmpFile1 );
-	if( bTmpFile2 ) unlink( szTmpFile2 );
+	if( bTmpFile1 ) _tunlink( szTmpFile1 );
+	if( bTmpFile2 ) _tunlink( szTmpFile2 );
 
 	return;
 }
@@ -164,8 +167,7 @@ void CEditView::ViewDiffInfo(
 	//	diff.exeの存在チェック
 	if( -1 == ::GetFileAttributes( cmdline ) )
 	{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			_T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
+		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
 		return;
 	}
 
@@ -258,8 +260,7 @@ void CEditView::ViewDiffInfo(
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
 	{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"差分コマンド実行は失敗しました。\n\n%s", cmdline );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n%s"), cmdline );
 		goto finish;
 	}
 
@@ -315,8 +316,7 @@ void CEditView::ViewDiffInfo(
 						bFirst = false;
 						if( strncmp( work, "Binary files ", strlen( "Binary files " ) ) == 0 )
 						{
-							::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-								"DIFF差分を行おうとしたファイルはバイナリファイルです。" );
+							::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("DIFF差分を行おうとしたファイルはバイナリファイルです。") );
 							goto finish;
 						}
 					}
@@ -400,8 +400,7 @@ void CEditView::ViewDiffInfo(
 	{
 		if( !m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
 		{
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-				"DIFF差分は見つかりませんでした。" );
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("DIFF差分は見つかりませんでした。") );
 		}
 	}
 
@@ -545,41 +544,35 @@ re_do:;
 	{
 		bFound = TRUE;
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
-		if( m_bSelectingLock )
-		{
+		if( m_bSelectingLock ){
 			if( !IsTextSelected() ) BeginSelectArea();
 		}
-		else
-		{
+		else{
 			if( IsTextSelected() ) DisableSelectArea( TRUE );
 		}
 		MoveCursor( nX, nY, TRUE );
-		if( m_bSelectingLock )
-		{
+		if( m_bSelectingLock ){
 			ChangeSelectAreaByCurrentCursor( nX, nY );
 		}
 	}
 
-	if( m_pShareData->m_Common.m_bSearchAll )
-	{
-		if( !bFound		// 見つからなかった
-		 && bRedo )		// 最初の検索
-		{
-			nY = 0 - 1;	/* 1個手前を指定 */
+
+	if( m_pShareData->m_Common.m_bSearchAll ){
+		// 見つからなかった。かつ、最初の検索
+		if( !bFound	&& bRedo ){
+			nY = 0 - 1;	// 1個手前を指定
 			bRedo = FALSE;
 			goto re_do;		// 先頭から再検索
 		}
 	}
-	if( bFound )
-	{
-		if( nYOld >= nY ) SendStatusMessage( "▼先頭から再検索しました" );
+
+	if( bFound ){
+		if( nYOld >= nY ) SendStatusMessage( _T("▼先頭から再検索しました") );
 	}
-	else
-	{
-		SendStatusMessage( "▽見つかりませんでした" );
+	else{
+		SendStatusMessage( _T("▽見つかりませんでした") );
 		if( m_pShareData->m_Common.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-				"後方(↓) に差分が見つかりません。" );
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("後方(↓) に差分が見つかりません。") );
 	}
 
 	return;
@@ -601,45 +594,38 @@ void CEditView::Command_Diff_Prev( void )
 	nYOld = nY;
 
 re_do:;
-	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, 0 /* 前方検索 */, &nY ) )
-	{
+	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, 0 /* 前方検索 */, &nY ) ){
 		bFound = TRUE;
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
-		if( m_bSelectingLock )
-		{
+		if( m_bSelectingLock ){
 			if( !IsTextSelected() ) BeginSelectArea();
 		}
-		else
-		{
+		else{
 			if( IsTextSelected() ) DisableSelectArea( TRUE );
 		}
+
 		MoveCursor( nX, nY, TRUE );
-		if( m_bSelectingLock )
-		{
+		if( m_bSelectingLock ){
 			ChangeSelectAreaByCurrentCursor( nX, nY );
 		}
 	}
 
-	if( m_pShareData->m_Common.m_bSearchAll )
-	{
-		if( !bFound	// 見つからなかった
-		 && bRedo )	// 最初の検索
-		{
-			nY = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 + 1;	/* 1個手前を指定 */
+	if( m_pShareData->m_Common.m_bSearchAll ){
+		// 見つからなかった、かつ、最初の検索
+		if( !bFound	&& bRedo ){
+			nY = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 + 1;	// 1個手前を指定
 			bRedo = FALSE;
 			goto re_do;	// 末尾から再検索
 		}
 	}
-	if( bFound )
-	{
+
+	if( bFound ){
 		if( nYOld <= nY ) SendStatusMessage( "▲末尾から再検索しました" );
 	}
-	else
-	{
-		SendStatusMessage( "△見つかりませんでした" );
+	else{
+		SendStatusMessage( _T("△見つかりませんでした") );
 		if( m_pShareData->m_Common.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-				"前方(↑) に差分が見つかりません。" );
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("前方(↑) に差分が見つかりません。") );
 	}
 
 	return;
@@ -672,8 +658,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 
 	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			"差分コマンド実行は失敗しました。" );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。") );
 		return FALSE;
 	}
 
@@ -687,7 +672,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 		FILETIME	filetime;
 		return (BOOL)m_pcEditDoc->m_cDocLineMgr.WriteFile( 
 			filename, 
-			m_pcEditDoc->m_hWnd, 
+			m_pcEditDoc->m_hWnd,
 			NULL,
 			m_pcEditDoc->m_nCharCode,
 			&filetime,
@@ -696,18 +681,15 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 	}
 
 	fp = fopen( filename, "wb" );
-	if( NULL == fp )
-	{
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-			"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
+	if( NULL == fp ){
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
 		return FALSE;
 	}
 
 	CLogicInt y = CLogicInt(0);
 
 	// 行(改行単位)データの要求
-	if( hWnd )
-	{
+	if( hWnd ){
 		pLineData = m_pShareData->m_szWork;
 		nLineLen = ::SendMessage( hWnd, MYWM_GETLINEDATA, y, 0 );
 	}
@@ -715,26 +697,21 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 		pLineData = m_pcEditDoc->m_cDocLineMgr.GetLineStr( y, &nLineLen );
 	}
 
-	while( 1 )
-	{
+	while(1){
 		if( 0 == nLineLen || NULL == pLineData ) break;
 
-		if( hWnd && nLineLen > sizeof( m_pShareData->m_szWork ) )
-		{
+		if( hWnd && nLineLen > sizeof( m_pShareData->m_szWork ) ){
 			// 一時バッファを超えている
 			fclose( fp );
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"差分コマンド実行は失敗しました。\n\n行が長すぎます。" );
-			unlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+			_tunlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n行が長すぎます。") );
 			return FALSE;
 		}
 
-		if( 1 != fwrite( pLineData, nLineLen, 1, fp ) )
-		{
+		if( 1 != fwrite( pLineData, nLineLen, 1, fp ) ){
 			fclose( fp );
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。" );
-			unlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+			_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
 			return FALSE;
 		}
 
