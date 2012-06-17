@@ -30,24 +30,25 @@ CBlockComment::CBlockComment()
 
 /*!
 	ブロックコメントデリミタをコピーする
-	@param n [in]         コピー対象のコメント番号
-	@param pszFrom [in]   コメント開始文字列
-	@param pszTo [in]     コメント終了文字列
 */
-void CBlockComment::CopyTo( const int n, const char* pszFrom, const char* pszTo )
+void CBlockComment::CopyTo(
+	const int	n,			//!< [in] コピー対象のコメント番号
+	const char*	pszFrom,	//!< [in] コメント開始文字列
+	const char*	pszTo		//!< [in] コメント終了文字列
+)
 {
-	int nStrLen = strlen( pszFrom );
+	int nStrLen = _tcslen( pszFrom );
 	if( 0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE ){
-		strcpy( m_szBlockCommentFrom[n], pszFrom );
+		_tcscpy( m_szBlockCommentFrom[n], pszFrom );
 		m_nBlockFromLen[ n ] = nStrLen;
 	}
 	else {
 		m_szBlockCommentFrom[n][0] = '\0';
 		m_nBlockFromLen[n] = 0;
 	}
-	nStrLen = strlen( pszTo );
+	nStrLen = _tcslen( pszTo );
 	if( 0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE ){
-		strcpy( m_szBlockCommentTo[n], pszTo );
+		_tcscpy( m_szBlockCommentTo[n], pszTo );
 		m_nBlockToLen[ n ] = nStrLen;
 	}
 	else {
@@ -58,15 +59,16 @@ void CBlockComment::CopyTo( const int n, const char* pszFrom, const char* pszTo 
 
 /*!
 	n番目のブロックコメントの、nPosからの文字列が開始文字列(From)に当てはまるか確認する。
-	@param n [in]         検査対象のコメント番号
-	@param nPos [in]      探索開始位置
-	@param nLineLen [in]  pLineの長さ
-	@param pLine [in]     探索行の先頭．探索開始位置のポインタではないことに注意
 
-	@retval true 一致した
+	@retval true  一致した
 	@retval false 一致しなかった
 */
-bool CBlockComment::Match_CommentFrom( int n, int nPos, int nLineLen, const char* pLine ) const
+bool CBlockComment::Match_CommentFrom(
+	int			n,				//!< [in] 検査対象のコメント番号
+	int			nPos,			//!< [in] 探索開始位置
+	int			nLineLen,		//!< [in] pLineの長さ
+	const char*	pLine			//!< [in] 探索行の先頭．探索開始位置のポインタではないことに注意
+) const
 {
 	if (
 		'\0' != m_szBlockCommentFrom[n][0] &&
@@ -82,15 +84,14 @@ bool CBlockComment::Match_CommentFrom( int n, int nPos, int nLineLen, const char
 /*!
 	n番目のブロックコメントの、後者(To)に当てはまる文字列をnPos以降から探す
 
-
-	@param n [in]         検査対象のコメント番号
-	@param nPos [in]      探索開始位置
-	@param nLineLen [in]  pLineの長さ
-	@param pLine [in]     探索行の先頭．探索開始位置のポインタではないことに注意
-
 	@return 当てはまった位置を返すが、当てはまらなかったときは、nLineLenをそのまま返す。
 */
-int CBlockComment::Match_CommentTo( int n, int nPos, int nLineLen, const char* pLine ) const
+int CBlockComment::Match_CommentTo(
+	int			n,			//!< [in] 検査対象のコメント番号
+	int			nPos,		//!< [in] 探索開始位置
+	int			nLineLen,	//!< [in] pLineの長さ
+	const char*	pLine		//!< [in] 探索行の先頭．探索開始位置のポインタではないことに注意
+) const
 {
 	int i;
 	for( i = nPos; i <= nLineLen - m_nBlockToLen[n]; ++i ){

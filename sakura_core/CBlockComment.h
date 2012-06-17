@@ -28,8 +28,8 @@
 #define BLOCKCOMMENT_NUM	2
 #define BLOCKCOMMENT_BUFFERSIZE	16
 
-class SAKURA_CORE_API CBlockComment
-{
+//	2005.11.10 Moca アクセス関数追加
+class SAKURA_CORE_API CBlockComment{
 	char	m_szBlockCommentFrom[BLOCKCOMMENT_NUM][BLOCKCOMMENT_BUFFERSIZE];		/*!< ブロックコメントデリミタ(From) */
 	char	m_szBlockCommentTo[BLOCKCOMMENT_NUM][BLOCKCOMMENT_BUFFERSIZE];			/*!< ブロックコメントデリミタ(To) */	int		m_nBlockFromLen[BLOCKCOMMENT_NUM];
 	int		m_nBlockToLen[BLOCKCOMMENT_NUM];
@@ -44,21 +44,12 @@ public:
 	bool Match_CommentFrom( int n, int nPos, int nLineLen, const char* pLine ) const;	//	行コメントに値するか確認する	
 	int Match_CommentTo( int n, int nPos, int nLineLen, const char* pLine ) const;	//	行コメントに値するか確認する
 
-	const char* getBlockCommentFrom( const int n ){
-		return m_szBlockCommentFrom[n];
-	};
-	const char* getBlockCommentTo( const int n ){
-		return m_szBlockCommentTo[n];
-	};
-	//	2005.11.10 Moca アクセス関数追加
-	int getBlockFromLen( int n ) const {
-		return m_nBlockFromLen[n];
-	};
-	int getBlockToLen( int n ) const {
-		return m_nBlockToLen[n];
-	};
-};
+	const char* getBlockCommentFrom( const int n ){ return m_szBlockCommentFrom[n]; }
+	const char* getBlockCommentTo( const int n ){ return m_szBlockCommentTo[n];	}
 
+	int getBlockFromLen( int n ) const { return m_nBlockFromLen[n];	}
+	int getBlockToLen( int n ) const { return m_nBlockToLen[n]; }
+};
 
 ///////////////////////////////////////////////////////////////////////
 #endif /* _CBLOCKCOMMENT_H_ */
