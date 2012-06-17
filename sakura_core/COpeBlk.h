@@ -30,23 +30,23 @@ class COpeBlk;
 	COpe を複数束ねるためのもの。Undo, Redoはこのブロック単位で行われる。
 */
 class COpeBlk {
-	public:
-		COpeBlk();	/* COpeBlkクラス構築 */
-		~COpeBlk();	/* COpeBlkクラス消滅 */
+public:
+	//コンストラクタ・デストラクタ
+	COpeBlk();
+	~COpeBlk();
 
-		int GetNum( void ){ return m_nCOpeArrNum; };	/* 操作の数を返す */
-//		int AppendOpe( COpe*, CLayoutMgr* );	/* 操作の追加 */
-		int AppendOpe( COpe* );	/* 操作の追加 */
-		COpe* GetOpe( int );	/* 操作を返す */
+	//インターフェース
+	int GetNum() const{ return m_nCOpeArrNum; };	//!< 操作の数を返す
+	int AppendOpe( COpe* pcOpe );							//!< 操作の追加
+	COpe* GetOpe( int nIndex );								//!< 操作を返す
 
-		void DUMP( void );	/* 編集操作要素ブロックのダンプ */
-	private:
-		void Init( void );
-		void Empty( void );
+	//デバッグ
+	void DUMP();									//!< 編集操作要素ブロックのダンプ
 
-		/* データ */
-		int		m_nCOpeArrNum;	/* 操作の数 */
-		COpe**	m_ppCOpeArr;	/* 操作の配列 */
+private:
+	//メンバ変数
+	int m_nCOpeArrNum;	//!< 操作の数
+	COpe**	m_ppCOpeArr;	//!< 操作の配列
 };
 
 
