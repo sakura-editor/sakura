@@ -32,9 +32,9 @@ CLineComment::CLineComment()
 */
 void CLineComment::CopyTo( const int n, const char* buffer, int nCommentPos )
 {
-	int nStrLen = lstrlen( buffer );
+	int nStrLen = _tcslen( buffer );
 	if( 0 < nStrLen && nStrLen < COMMENT_DELIMITER_BUFFERSIZE ){
-		strcpy( m_pszLineComment[n], buffer );
+		_tcscpy( m_pszLineComment[n], buffer );
 		m_nLineCommentPos[n] = nCommentPos;
 		m_nLineCommentLen[n] = nStrLen;
 	}
@@ -50,14 +50,15 @@ bool CLineComment::Match( int nPos, int nLineLen, const char* pLine ) const
 	int i;
 	for ( i=0; i<COMMENT_DELIMITER_NUM; i++ ){
 		if (
-		  '\0' != m_pszLineComment[i][0] &&	/* 行コメントデリミタ */
-		  ( m_nLineCommentPos[i] < 0 || nPos == m_nLineCommentPos[i] ) &&	//	位置指定ON.
-		  nPos <= nLineLen - m_nLineCommentLen[i] &&	/* 行コメントデリミタ */
-		  0 == my_memicmp( &pLine[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )
+			'\0' != m_pszLineComment[i][0] &&	/* 行コメントデリミタ */
+			( m_nLineCommentPos[i] < 0 || nPos == m_nLineCommentPos[i] ) &&	//	位置指定ON.
+			nPos <= nLineLen - m_nLineCommentLen[i] &&	/* 行コメントデリミタ */
+			0 == my_memicmp( &pLine[nPos], m_pszLineComment[i], m_nLineCommentLen[i] )
 		){
 			return true;
 		}
 	}
 	return false;
 }
+
 /*[EOF]*/

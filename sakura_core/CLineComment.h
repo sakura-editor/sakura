@@ -29,10 +29,6 @@
 */
 class SAKURA_CORE_API CLineComment
 {
-	char	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	/* 行コメントデリミタ */
-	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< 行コメントの開始位置(負数は指定無し)
-	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
-
 public:
 	/*
 	||  Constructors：コンパイラ標準を使用。
@@ -48,6 +44,11 @@ public:
 	int getLineCommentPos( const int n ) const {
 		return m_nLineCommentPos[n];
 	};
+
+private:
+	char	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	/* 行コメントデリミタ */
+	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< 行コメントの開始位置(負数は指定無し)
+	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
 };
 
 
