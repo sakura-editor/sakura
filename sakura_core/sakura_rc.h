@@ -2,7 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by sakura_rc.rc
 //
-#define IDOK2                           3
 #define IDC_BUTTON_PRINTERSELECT        3
 #define IDR_MENU1                       102
 #define IDD_PROP1P1                     107
