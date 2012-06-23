@@ -2609,7 +2609,7 @@ void CEditView::Command_CtrlCode_Dialog( void )
 	if( cDlgCtrlCode.DoModal( m_hInstance, m_hWnd, (LPARAM)m_pcEditDoc ) )
 	{
 		//コントロールコードを入力する
-		Command_CHAR( cDlgCtrlCode.m_nCode );
+		Command_CHAR( cDlgCtrlCode.GetCharCode() );
 	}
 }
 

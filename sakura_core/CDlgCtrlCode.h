@@ -37,6 +37,7 @@ class CDlgCtrlCode;
 /*!
 	@brief コントロールコード入力ダイアログボックス
 */
+//2007.10.18 kobake GetCharCode()を作成。
 class CDlgCtrlCode : public CDialog
 {
 public:
@@ -50,9 +51,9 @@ public:
 	*/
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
-	int		m_nCode;				/* コード */
+	int GetCharCode() const{ return m_nCode; } //!< 選択された文字コードを取得
 
-protected:
+private:
 	/*
 	||  実装ヘルパ関数
 	*/
@@ -63,6 +64,9 @@ protected:
 
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
+
+private:
+	int		m_nCode;	// コード
 };
 
 
