@@ -1310,7 +1310,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	/* 現在開いている編集窓のリストをメニューにする */
 	j = 0;
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			++j;
 		}
 	}
@@ -1319,7 +1319,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 		j = 0;
 		for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-			if( CShareData::IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+			if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
 				pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;

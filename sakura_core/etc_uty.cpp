@@ -529,7 +529,7 @@ void ActivateFrameWindow( HWND hwnd )
 	DLLSHAREDATA* pShareData = NULL;
 	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
 		if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ) {
-			if( pInstance->IsEditWnd( hwnd ) ){
+			if( IsSakuraMainWindow( hwnd ) ){
 				if( pShareData->m_bEditWndChanging )
 					return;	// 切替の最中(busy)は要求を無視する
 				pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji

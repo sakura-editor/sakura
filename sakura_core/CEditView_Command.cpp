@@ -5513,7 +5513,7 @@ void CEditView::Command_TAGJUMPBACK( void )
 	TagJump tagJump;
 
 	/* タグジャンプ情報の参照 */
-	if( !CShareData::getInstance()->PopTagJump(&tagJump) || !CShareData::IsEditWnd(tagJump.hwndReferer) ){
+	if( !CShareData::getInstance()->PopTagJump(&tagJump) || !IsSakuraMainWindow(tagJump.hwndReferer) ){
 		SendStatusMessage(_T("タグジャンプバックできません"));
 		// 2004.07.10 Moca m_TagJumpNumを0にしなくてもいいと思う
 		// m_pShareData->m_TagJumpNum = 0;
@@ -6642,7 +6642,7 @@ void CEditView::Command_MINIMIZE_ALL( void )
 		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
 	}
 	for( i = 0; i < j; ++i ){
-		if( CShareData::IsEditWnd( phWndArr[i] ) )
+		if( IsSakuraMainWindow( phWndArr[i] ) )
 		{
 			if( ::IsWindowVisible( phWndArr[i] ) )
 				::ShowWindow( phWndArr[i], SW_MINIMIZE );
@@ -7773,7 +7773,7 @@ void CEditView::Command_WINCLOSE( void )
 void CEditView::Command_WIN_OUTPUT( void )
 {
 	if( NULL == m_pShareData->m_hwndDebug
-		|| !CShareData::IsEditWnd( m_pShareData->m_hwndDebug )
+		|| !IsSakuraMainWindow( m_pShareData->m_hwndDebug )
 	){
 		CEditApp::OpenNewEditor( NULL, m_hWnd, "-DEBUGMODE", CODE_SJIS, FALSE, true );
 	}else{

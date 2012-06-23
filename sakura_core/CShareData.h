@@ -795,7 +795,6 @@ public:
 	BOOL PostMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージをポストする */	// 2007.06.20 ryoji nGroup引数追加
 	BOOL SendMessageToAllEditors( UINT uMsg, WPARAM wParam, LPARAM lParam, HWND hWndLast, int nGroup = 0 );	/* 全編集ウィンドウへメッセージを送るする */	// 2007.06.20 ryoji nGroup引数追加
 	int GetOpenedWindowArr( EditNode** , BOOL, BOOL bGSort = FALSE );				/* 現在開いている編集ウィンドウの配列を返す */
-	static BOOL IsEditWnd( HWND );								/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 	static void SetKeyNameArrVal(
 		DLLSHAREDATA*, int, short, char*,
 		short, short, short, short,
@@ -894,6 +893,8 @@ protected:
 	int GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
 };
 
+/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
+BOOL IsSakuraMainWindow( HWND hWnd );
 
 
 ///////////////////////////////////////////////////////////////////////

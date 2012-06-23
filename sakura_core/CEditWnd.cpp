@@ -1929,7 +1929,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_NCACTIVATE:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（１）	// 2007.04.03 ryoji
 		// 前面にいるのが編集ウィンドウならアクティブ状態を保持する
-		if( m_pShareData->m_bEditWndChanging && CShareData::IsEditWnd(::GetForegroundWindow()) ){
+		if( m_pShareData->m_bEditWndChanging && IsSakuraMainWindow(::GetForegroundWindow()) ){
 			wParam = TRUE;	// アクティブ
 		}
 		lRes = DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -3268,7 +3268,7 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 	void CEditWnd::SetDebugModeON( void )
 	{
 		if( NULL != m_pShareData->m_hwndDebug ){
-			if( CShareData::IsEditWnd( m_pShareData->m_hwndDebug ) ){
+			if( IsSakuraMainWindow( m_pShareData->m_hwndDebug ) ){
 				return;
 			}
 		}
@@ -4483,7 +4483,7 @@ void CEditWnd::WindowTopMost( int top )
 		int i;
 		for( i = 0, hwndInsertAfter = m_hWnd; i < m_pShareData->m_nEditArrNum; i++ ){
 			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
-			if( hwnd != m_hWnd && CShareData::getInstance()->IsEditWnd( hwnd ) ){
+			if( hwnd != m_hWnd && IsSakuraMainWindow( hwnd ) ){
 				if( !CShareData::getInstance()->IsSameGroup( m_hWnd, hwnd ) )
 					continue;
 				::SetWindowPos( hwnd, hwndInsertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );

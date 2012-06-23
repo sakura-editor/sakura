@@ -235,7 +235,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 					tcitem.lParam = 0;
 					TabCtrl_GetItem( m_hwndTab, m_nSrcTab, &tcitem );
 					HWND hwndSrc = (HWND)tcitem.lParam;
-					HWND hwndDst = CShareData::getInstance()->IsEditWnd( hwndAncestor )? hwndAncestor: NULL;
+					HWND hwndDst = IsSakuraMainWindow( hwndAncestor )? hwndAncestor: NULL;
 
 					SeparateGroup( hwndSrc, hwndDst, m_ptSrcCursor, ptCursor );
 				}
@@ -292,7 +292,7 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 				hwndAncestor = MyGetAncestor( ::WindowFromPoint( ptCursor ), GA_ROOT );
 				if( hwndAncestor != m_hwndParent )	// 自画面の外にカーソルがある
 				{
-					if( CShareData::getInstance()->IsEditWnd( hwndAncestor ) )
+					if( IsSakuraMainWindow( hwndAncestor ) )
 						lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_JOIN);	// 結合カーソル
 					else
 						lpCursorName = MAKEINTRESOURCE(IDC_CURSOR_TAB_SEPARATE);	// 分離カーソル
@@ -1837,7 +1837,7 @@ void CTabWnd::HideOtherWindows( HWND hwndExclude )
 		for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
 		{
 			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
-			if( CShareData::getInstance()->IsEditWnd( hwnd ) )
+			if( IsSakuraMainWindow( hwnd ) )
 			{
 				if( !CShareData::getInstance()->IsSameGroup( hwndExclude, hwnd ) )
 					continue;

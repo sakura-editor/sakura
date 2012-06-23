@@ -819,23 +819,6 @@ void CShareData::SetKeyNameArrVal(
  	return;
  }
 
-
-/* KEYDATA配列にデータをセット */
-/*void CShareData::SetKeyNameArrVal(  // 20050818 aroka 未使用なので削除
-	DLLSHAREDATA*	pShareData,
-	int				nIdx,
-	short			nKeyCode,
-	char*			pszKeyName
- )
-{
-	pShareData->m_pKeyNameArr[nIdx].m_nKeyCode = nKeyCode;
-	strcpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
-	return;
- }
-*/
-
-
-
 /*!
 	ファイル名から、ドキュメントタイプ（数値）を取得する
 	
@@ -1012,7 +995,7 @@ void CShareData::ResetGroupId( void )
 	nGroup = ++m_pShareData->m_nGroupSequences;
 	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
 	{
-		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) )
+		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) )
 		{
 			m_pShareData->m_pEditArr[i].m_nGroup = nGroup;
 		}
@@ -1034,7 +1017,7 @@ EditNode* CShareData::GetEditNode( HWND hWnd )
 	{
 		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd )
 		{
-			if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) )
+			if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) )
 				return &m_pShareData->m_pEditArr[i];
 		}
 	}
@@ -1095,7 +1078,7 @@ EditNode* CShareData::GetEditNodeAt( int nGroup, int nIndex )
 	{
 		if( nGroup == 0 || nGroup == m_pShareData->m_pEditArr[i].m_nGroup )
 		{
-			if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) )
+			if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) )
 			{
 				if( iIndex == nIndex )
 					return &m_pShareData->m_pEditArr[i];
@@ -1195,7 +1178,7 @@ BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit,
 		if( pWndArr[i].m_hWnd == NULL )continue;
 
 		if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
-			if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+			if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
 				/* アクティブにする */
 				ActivateFrameWindow( pWndArr[i].m_hWnd );
 				/* トレイからエディタへの終了要求 */
@@ -1229,7 +1212,7 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 	}
 	
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
 			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
@@ -1330,7 +1313,7 @@ int CShareData::GetEditorWindowsNum( int nGroup, bool bExcludeClosing/* = true *
 
 	j = 0;
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( IsEditWnd( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
 			if( nGroup != 0 && nGroup != GetGroupId( m_pShareData->m_pEditArr[i].m_hWnd ) )
 				continue;
 			if( bExcludeClosing && m_pShareData->m_pEditArr[i].m_bClosing )
@@ -1372,7 +1355,7 @@ BOOL CShareData::PostMessageToAllEditors(
 		//	Jan. 24, 2005 genta hWndLast == NULLのときにメッセージが送られるように
 		if( hWndLast == NULL || hWndLast != pWndArr[i].m_hWnd ){
 			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
-				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
 					/* メッセージをポスト */
 					::PostMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
@@ -1384,7 +1367,7 @@ BOOL CShareData::PostMessageToAllEditors(
 	for( i = 0; i < n; ++i ){
 		if( hWndLast == pWndArr[i].m_hWnd ){
 			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
-				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
 					/* メッセージをポスト */
 					::PostMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
@@ -1426,7 +1409,7 @@ BOOL CShareData::SendMessageToAllEditors(
 		//	Jan. 24, 2005 genta hWndLast == NULLのときにメッセージが送られるように
 		if( hWndLast == NULL || hWndLast != pWndArr[i].m_hWnd ){
 			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
-				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
 					/* メッセージを送る */
 					::SendMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
@@ -1438,7 +1421,7 @@ BOOL CShareData::SendMessageToAllEditors(
 	for( i = 0; i < n; ++i ){
 		if( hWndLast == pWndArr[i].m_hWnd ){
 			if( nGroup == 0 || nGroup == pWndArr[i].m_nGroup ){
-				if( IsEditWnd( pWndArr[i].m_hWnd ) ){
+				if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
 					/* メッセージを送る */
 					::SendMessage( pWndArr[i].m_hWnd, uMsg, wParam, lParam );
 				}
@@ -1448,28 +1431,6 @@ BOOL CShareData::SendMessageToAllEditors(
 
 	delete []pWndArr;
 	return TRUE;
-}
-
-
-/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
-BOOL CShareData::IsEditWnd( HWND hWnd )
-{
-	char	szClassName[64];
-	if( hWnd == NULL ){	// 2007.06.20 ryoji 条件追加
-		return FALSE;
-	}
-	if( !::IsWindow( hWnd ) ){
-		return FALSE;
-	}
-	if( 0 == ::GetClassName( hWnd, szClassName, sizeof(szClassName) - 1 ) ){
-		return FALSE;
-	}
-	if(0 == strcmp( GSTR_EDITWINDOWNAME, szClassName ) ){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
-
 }
 
 // GetOpenedWindowArr用静的変数／構造体
@@ -1575,7 +1536,7 @@ int CShareData::GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL 
 	nRowNum = 0;
 	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
 	{
-		if( IsEditWnd( m_pShareData->m_pEditArr[ i ].m_hWnd ) )
+		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[ i ].m_hWnd ) )
 		{
 			pNode[ nRowNum ].p = &m_pShareData->m_pEditArr[ i ];	// ポインタ格納
 			pNode[ nRowNum ].nGroupMru = -1;	// グループ単位のMRU番号初期化
@@ -1761,7 +1722,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 {
 
 	if( NULL == m_pShareData->m_hwndDebug
-	|| !IsEditWnd( m_pShareData->m_hwndDebug )
+	|| !IsSakuraMainWindow( m_pShareData->m_hwndDebug )
 	){
 		// 2007.06.26 ryoji
 		// アウトプットウィンドウを作成元と同じグループに作成するために m_hwndTraceOutSource を使っています
@@ -5704,4 +5665,25 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 	n++;
 	rCommon.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
 }
+
+/* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
+BOOL IsSakuraMainWindow( HWND hWnd )
+{
+	TCHAR	szClassName[64];
+	if( hWnd == NULL ){	// 2007.06.20 ryoji 条件追加
+		return FALSE;
+	}
+	if( !::IsWindow( hWnd ) ){
+		return FALSE;
+	}
+	if( 0 == ::GetClassName( hWnd, szClassName, _countof(szClassName) - 1 ) ){
+		return FALSE;
+	}
+	if(0 == strcmp( GSTR_EDITWINDOWNAME, szClassName ) ){
+		return TRUE;
+	}else{
+		return FALSE;
+	}
+}
+
 /*[EOF]*/
