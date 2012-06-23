@@ -198,7 +198,7 @@ void CEditView::InsertData_CEditView(
 	}
 
 	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-	if( *pnNewPos >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+	if( *pnNewPos >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
 		if( m_pcEditDoc->GetDocumentAttribute().m_bKinsokuRet
 		 || m_pcEditDoc->GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 		{
@@ -2110,7 +2110,7 @@ void CEditView::Command_TRIM(
 		m_nSelectColmFrom = 0;
 		m_nSelectLineTo   = m_nCaretPosY; 
 		//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-		m_nSelectColmTo   = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+		m_nSelectColmTo   = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 		bBeDisableSelectArea = true;
 	}
 
@@ -2263,7 +2263,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=¸‡,FALSE=~‡
 		nCTO = m_nSelectColmTo;
 		if( m_nSelectColmFrom==m_nSelectColmTo ){
 			//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-			m_nSelectColmTo=m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+			m_nSelectColmTo=m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 		}
 		if(m_nSelectColmFrom<m_nSelectColmTo){
 			nCF=m_nSelectColmFrom;

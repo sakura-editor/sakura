@@ -645,7 +645,7 @@ void CLayoutMgr::GetEndLayoutPos(int& lX, int& lY)
 		lX = it.getColumn();
 		lY = GetLineCount() - 1;
 		// 2006.10.01 Moca Start [EOF]のみのレイアウト行処理が抜けていたバグを修正
-		if( GetMaxLineSize() <= lX ){
+		if( GetMaxLineKetas() <= lX ){
 			lX = 0;
 			lY++;
 		}

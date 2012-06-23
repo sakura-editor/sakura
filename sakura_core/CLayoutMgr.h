@@ -105,7 +105,8 @@ public:
 	 */
 	int GetActualTabSpace(int pos) const { return m_nTabSpace - pos % m_nTabSpace; }
 	//	Aug. 14, 2005 genta
-	int GetMaxLineSize(void) const { return m_nMaxLineKetas; }
+	// Sep. 07, 2007 kobake ŠÖ”–¼•ÏX GetMaxLineSize¨GetMaxLineKetas
+	int GetMaxLineKetas(void) const { return m_nMaxLineKetas; }
 	// 2005.11.21 Moca ˆø—p•„‚ÌF•ª‚¯î•ñ‚ğˆø”‚©‚çœ‹
 	bool ChangeLayoutParam( HWND hwndProgress, int nTabSize, int nMaxLineSize );
 	// Jul. 29, 2006 genta

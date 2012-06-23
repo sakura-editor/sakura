@@ -937,7 +937,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 			View->m_pcEditDoc->ChangeLayoutParam( false, 
-				varCopy.Data.iVal, View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
+				varCopy.Data.iVal, View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() );
 
 			// 2009.08.28 nasukoji	「折り返さない」選択時にTAB幅が変更されたらテキスト最大幅の再算出が必要
 			if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP && varCopy.Data.iVal ){
@@ -1030,7 +1030,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 		{
 			if( ArgSize != 1 ) return false;
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
-			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() );
+			Wrap( &Result )->Receive( View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() );
 			if( varCopy.Data.iVal < MINLINEKETAS || varCopy.Data.iVal > MAXLINEKETAS )
 				return true;
 			View->m_pcEditDoc->m_nTextWrapMethodCur = WRAP_SETTING_WIDTH;

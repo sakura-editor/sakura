@@ -994,7 +994,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 				}
 				//	キャレット位置が折り返し位置より右側だった場合の処理
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				if( nPosX >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+				if( nPosX >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
 					nPosX = pcLayout->m_pNext ? pcLayout->m_pNext->GetIndent() : 0;
 					++nPosY;
 				}
@@ -4901,7 +4901,7 @@ void CEditView::Command_INDENT( char cChar )
 	/* SPACEorTABインンデントで矩形選択桁がゼロの時は選択範囲を最大にする */
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	if((cChar==SPACE || cChar==TAB) && m_bBeginBoxSelect && m_nSelectColmFrom==m_nSelectColmTo ){
-		m_nSelectColmTo=m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+		m_nSelectColmTo=m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 		RedrawAll();
 		return;
 	}
@@ -5070,8 +5070,8 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 	// From Here 2001.12.03 hor 
 		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 		rcSel.right += m_nCaretPosX-rcSel.left;
-		if( rcSel.right>m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
-			rcSel.right=m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+		if( rcSel.right>m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
+			rcSel.right=m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 		}
 	// To Here 2001.12.03 hor
 		rcSel.left = m_nCaretPosX;
@@ -8564,14 +8564,14 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
 		c)　└→ウィンドウ幅
 	*/
 	
-	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == ViewColNumToWrapColNum( m_nViewColNum ) ){
+	if (m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() == ViewColNumToWrapColNum( m_nViewColNum ) ){
 		// a)
 		newWidth = MAXLINEKETAS;
 		return TGWRAP_FULL;
 	}
 	else if( MINLINEKETAS > m_nViewColNum - GetWrapOverhang() ){ // 2)
 		// 3)
-		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() != MAXLINEKETAS ){
+		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() != MAXLINEKETAS ){
 			// 4)
 			newWidth = MAXLINEKETAS;
 			return TGWRAP_FULL;
@@ -8586,7 +8586,7 @@ CEditView::TOGGLE_WRAP_ACTION CEditView::GetWrapMode( int& newWidth )
 		}
 	}
 	else { // 8)
-		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() == MAXLINEKETAS && // 9)
+		if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() == MAXLINEKETAS && // 9)
 			m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas != MAXLINEKETAS ){
 			// a)
 			newWidth = m_pcEditDoc->GetDocumentAttribute().m_nMaxLineKetas;

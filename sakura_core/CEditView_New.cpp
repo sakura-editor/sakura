@@ -134,7 +134,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
 	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 
 	int				i;
 	HFONT			hFontOld;
@@ -448,7 +448,7 @@ int CEditView::DispLineNew(
 	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 
 	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+	const int nWrapWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 
 	int						nLineNumOrg = nLineNum;
 	const char*				pLine;	//@@@ 2002.09.22 YAZAKI
@@ -1927,7 +1927,7 @@ void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol,
 		return;
 	}
 	nLeftCol = __max( m_nViewLeftCol, nLeftCol );
-	const int nWrapWidth  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+	const int nWrapWidth  = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 	const int nCharWidth  = m_nCharWidth + typeData.m_nColmSpace;
 	if( nRightCol < 0 ){
 		nRightCol = nWrapWidth;

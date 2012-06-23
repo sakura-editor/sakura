@@ -1766,7 +1766,7 @@ int CEditView::OnHScroll( int nScrollCode, int nPos )
 		break;
 	case SB_RIGHT:
 		//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-		nScrollVal = ScrollAtH( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() - m_nViewColNum );
+		nScrollVal = ScrollAtH( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() - m_nViewColNum );
 		break;
 	}
 	return nScrollVal;
@@ -2889,7 +2889,7 @@ int CEditView::ViewColNumToWrapColNum( int nViewColNum ) const
 int CEditView::GetRightEdgeForScrollBar( void )
 {
 	// 折り返し桁以後のぶら下げ余白計算
-	int nWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() + GetWrapOverhang();
+	int nWidth = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() + GetWrapOverhang();
 	
 	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 		int nRightEdge = m_pcEditDoc->m_cLayoutMgr.GetMaxTextWidth();	// テキストの最大幅
@@ -3036,7 +3036,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, i
 	nScrollMarginRight = SCROLLMARGIN_RIGHT;
 	nScrollMarginLeft = SCROLLMARGIN_LEFT;
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() > m_nViewColNum &&
+	if( m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() > m_nViewColNum &&
 		nWk_CaretPosX > m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ){
 		nScrollColNum =
 			( m_nViewLeftCol + m_nViewColNum - nScrollMarginRight ) - nWk_CaretPosX;
@@ -3293,7 +3293,7 @@ BOOL CEditView::GetAdjustCursorPos( int* pnPosX, int* pnPosY ){
 				nPosX2 = LineIndexToColmn( pcLayout, pcLayout->GetLength() );
 				// EOFだけ折り返されているか
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				if( nPosX2 >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){
+				if( nPosX2 >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
 					nPosY2++;
 					nPosX2 = 0;
 				}
@@ -3455,8 +3455,8 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCare
 					if( nPosX < 0 ){
 						nPosX = 0;
 					}else
-					if( nPosX > m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize() ){	/* 折り返し文字数 */
-						nPosX = m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize();
+					if( nPosX > m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){	/* 折り返し文字数 */
+						nPosX = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 					}
 //				}
 			}
@@ -5451,7 +5451,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 				if( ( EOL_NONE != pcLayout->m_cEol )
 //				if( ( pLine[ nLineLen - 1 ] == '\n' || pLine[ nLineLen - 1 ] == '\r' )
-				 || nLineCols >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineSize()
+				 || nLineCols >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas()
 				){
 					if( bSelect ){
 						if( !IsTextSelected() ){	/* テキストが選択されているか */

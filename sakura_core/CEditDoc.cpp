@@ -3478,7 +3478,7 @@ BOOL CEditDoc::WrapWindowWidth( int nPane )
 {
 	// 右端で折り返す
 	int nWidth = m_cEditViewArr[nPane].ViewColNumToWrapColNum( m_cEditViewArr[nPane].m_nViewColNum );
-	if( m_cLayoutMgr.GetMaxLineSize() != nWidth ){
+	if( m_cLayoutMgr.GetMaxLineKetas() != nWidth ){
 		ChangeLayoutParam( false, m_cLayoutMgr.GetTabSpace(), nWidth );
 		return TRUE;
 	}
@@ -3800,7 +3800,7 @@ void CEditDoc::OnChangeSetting( void )
 	// 上記以外：MAXLINEKETASを使用
 	if( m_nTextWrapMethodCur != WRAP_SETTING_WIDTH ){
 		if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH )
-			ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineSize();	// 現在の折り返し幅
+			ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
 		else
 			ref.m_nMaxLineKetas = MAXLINEKETAS;
 	}
