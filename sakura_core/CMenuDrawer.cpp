@@ -1190,7 +1190,7 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	chUser = (TCHAR) LOWORD(wParam);	// character code
 	fuFlag = (UINT) HIWORD(wParam);		// menu flag
 	hmenu = (HMENU) lParam;				// handle to menu
-//	MYTRACE( "::GetMenuItemCount( %xh )==%d\n", hmenu, ::GetMenuItemCount( hmenu ) );
+//	MYTRACE_A( "::GetMenuItemCount( %xh )==%d\n", hmenu, ::GetMenuItemCount( hmenu ) );
 
 	//	Oct. 27, 2000 genta
 	if( 0 <= chUser && chUser < ' '){
@@ -1238,19 +1238,19 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			nAccelNum++;
 		}
 	}
-//	MYTRACE( "%d\n", (int)mapAccel.size() );
+//	MYTRACE_A( "%d\n", (int)mapAccel.size() );
 	if( 0 == nAccelNum ){
 		return  MAKELONG( 0, MNC_IGNORE );
 	}
 	if( 1 == nAccelNum ){
 		return  MAKELONG( vecAccel[0].idx, MNC_EXECUTE );
 	}
-//	MYTRACE( "nAccelSel=%d nAccelNum=%d\n", nAccelSel, nAccelNum );
+//	MYTRACE_A( "nAccelSel=%d nAccelNum=%d\n", nAccelSel, nAccelNum );
 	if( nAccelSel + 1 >= nAccelNum ){
-//		MYTRACE( "vecAccel[0].idx=%d\n", vecAccel[0].idx );
+//		MYTRACE_A( "vecAccel[0].idx=%d\n", vecAccel[0].idx );
 		return  MAKELONG( vecAccel[0].idx, MNC_SELECT );
 	}else{
-//		MYTRACE( "vecAccel[nAccelSel + 1].idx=%d\n", vecAccel[nAccelSel + 1].idx );
+//		MYTRACE_A( "vecAccel[nAccelSel + 1].idx=%d\n", vecAccel[nAccelSel + 1].idx );
 		return  MAKELONG( vecAccel[nAccelSel + 1].idx, MNC_SELECT );
 	}
 }

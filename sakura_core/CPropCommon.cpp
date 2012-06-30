@@ -518,7 +518,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 
 #if 0
 				case IDC_CHECK_INDENT:	/* オートインデント */
-//				MYTRACE( "IDC_CHECK_INDENT\n" );
+//				MYTRACE_A( "IDC_CHECK_INDENT\n" );
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ){
 					/* 日本語空白もインデント */
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), TRUE );
@@ -598,7 +598,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 		switch( idCtrl ){
 		case IDC_SPIN_REPEATEDSCROLLLINENUM:
 			/* キーリピート時のスクロール行数 */
-//			MYTRACE( "IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
+//			MYTRACE_A( "IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -616,7 +616,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FILE:
 			/* ファイルの履歴MAX */
-//			MYTRACE( "IDC_SPIN_MAX_MRU_FILE\n" );
+//			MYTRACE_A( "IDC_SPIN_MAX_MRU_FILE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -634,7 +634,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FOLDER:
 			/* フォルダの履歴MAX */
-//			MYTRACE( "IDC_SPIN_MAX_MRU_FOLDER\n" );
+//			MYTRACE_A( "IDC_SPIN_MAX_MRU_FOLDER\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -656,7 +656,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 				OnHelp( hwndDlg, IDD_PROP1P1 );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p1 PSN_KILLACTIVE\n" );
+//				MYTRACE_A( "p1 PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 p1 */
 				GetData_p1( hwndDlg );
 				return TRUE;
@@ -668,11 +668,11 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 			break;
 		}
 
-//		MYTRACE( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
-//		MYTRACE( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
-//		MYTRACE( "pNMHDR->code    =%xh\n", pNMHDR->code );
-//		MYTRACE( "pMNUD->iPos    =%d\n", pMNUD->iPos );
-//		MYTRACE( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
+//		MYTRACE_A( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
+//		MYTRACE_A( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
+//		MYTRACE_A( "pNMHDR->code    =%xh\n", pNMHDR->code );
+//		MYTRACE_A( "pMNUD->iPos    =%d\n", pMNUD->iPos );
+//		MYTRACE_A( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

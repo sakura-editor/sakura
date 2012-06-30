@@ -539,7 +539,7 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 
 	if( ppMacro == NULL ){
 #ifdef _DEBUG
-	MYTRACE( "CSMacroMgr::Load() Out of range: idx=%d Path=%s\n", idx, pszPath);
+	MYTRACE_A( "CSMacroMgr::Load() Out of range: idx=%d Path=%s\n", idx, pszPath);
 #endif
 	}
 	//	バッファクリア
@@ -1116,7 +1116,7 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 	}
 
 #ifdef _DEBUG
-	MYTRACE( "CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n", idx);
+	MYTRACE_A( "CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n", idx);
 #endif
 
 	return NULL;

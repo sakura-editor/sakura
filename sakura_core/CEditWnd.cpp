@@ -1266,7 +1266,7 @@ LRESULT CEditWnd::DispatchEvent(
 //			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
 
 
-//			MYTRACE( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
+//			MYTRACE_A( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
 			if( -1 == nItemWidth ){
@@ -1346,7 +1346,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_SIZE:
-//		MYTRACE( "WM_SIZE\n" );
+//		MYTRACE_A( "WM_SIZE\n" );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
 			m_cEditDoc.SetParentCaption();
@@ -1401,7 +1401,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_EXITMENULOOP:
-//		MYTRACE( "WM_EXITMENULOOP\n" );
+//		MYTRACE_A( "WM_EXITMENULOOP\n" );
 		if( NULL != m_hwndStatusBar ){
 			::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)_T(""));
 		}
@@ -1409,7 +1409,7 @@ LRESULT CEditWnd::DispatchEvent(
 		/* メッセージの配送 */
 		return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
 	case WM_SETFOCUS:
-//		MYTRACE( "WM_SETFOCUS\n" );
+//		MYTRACE_A( "WM_SETFOCUS\n" );
 
 		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
 		m_nTimerCount = 9;
@@ -1858,7 +1858,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 	case MYWM_ADDSTRING:
-//		MYTRACE( "MYWM_ADDSTRING[%s]\n", m_pShareData->m_szWork );
+//		MYTRACE_A( "MYWM_ADDSTRING[%s]\n", m_pShareData->m_szWork );
 		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_ADDTAIL, TRUE, (LPARAM)m_pShareData->m_szWork, (LPARAM)lstrlen( m_pShareData->m_szWork ), 0, 0 );
 		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
 		return 0L;
@@ -2042,7 +2042,7 @@ int	CEditWnd::OnClose()
 
 void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
-//	MYTRACE( "CEditWnd::OnCommand()\n" );
+//	MYTRACE_A( "CEditWnd::OnCommand()\n" );
 
 	int				nFuncCode;
 	HWND			hwndWork;
@@ -2142,7 +2142,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			m_pShareData->m_nKeyNameArrNum,
 			m_pShareData->m_pKeyNameArr
 		);
-//		MYTRACE( "CEditWnd::OnCommand()  nFuncCode=%d\n", nFuncCode );
+//		MYTRACE_A( "CEditWnd::OnCommand()  nFuncCode=%d\n", nFuncCode );
 		m_cEditDoc.HandleCommand( nFuncCode | FA_FROMKEYBOARD );
 		break;
 
@@ -2206,7 +2206,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 	if( fSystemMenu ){
 	}else{
-//		MYTRACE( "hMenu=%08xh uPos=%d, fSystemMenu=%s\n", hMenu, uPos, fSystemMenu ? "TRUE":"FALSE" );
+//		MYTRACE_A( "hMenu=%08xh uPos=%d, fSystemMenu=%s\n", hMenu, uPos, fSystemMenu ? "TRUE":"FALSE" );
 		switch( uPos ){
 		case 0:
 			/* 「ファイル」メニュー */

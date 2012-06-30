@@ -87,7 +87,7 @@ int CALLBACK SetData_EnumFontFamProc(
 
 	/* LOGFONT */
 	if( FIXED_PITCH & pelf->elfLogFont.lfPitchAndFamily ){
-//		MYTRACE( pelf->elfLogFont.lfFaceName, "%s\n\n", pelf->elfLogFont.lfFaceName );
+//		MYTRACE_A( pelf->elfLogFont.lfFaceName, "%s\n\n", pelf->elfLogFont.lfFaceName );
 		::SendMessage( hwndComboFontHan, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)pelf->elfLogFont.lfFaceName  );
 		::SendMessage( hwndComboFontZen, CB_ADDSTRING, 0, (LPARAM)(LPCTSTR)pelf->elfLogFont.lfFaceName  );
 	}

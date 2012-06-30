@@ -351,7 +351,7 @@ CLayout* CLayoutMgr::Search( int nLineNum )
 	if( 0 > nLineNum || nLineNum >= m_nLines ){
 #ifdef _DEBUG
 		if( 0 > nLineNum ){
-			MYTRACE( "CLayoutMgr::Search() nLineNum = %d\n", nLineNum );
+			MYTRACE_A( "CLayoutMgr::Search() nLineNum = %d\n", nLineNum );
 		}
 #endif
 		return NULL;
@@ -824,7 +824,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	int			nAddInsLineNum;
 	int			nLineWork;
 
-//	MYTRACE( "CLayoutMgr::InsertData()\n" );
+//	MYTRACE_A( "CLayoutMgr::InsertData()\n" );
 
 	/* 現在行のデータを取得 */
 	pLine = GetLineStr( nLineNum, &nLineLen );
@@ -900,7 +900,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		&nNewLine,
 		&nNewPos
 	);
-//	MYTRACE( "nNewLine=%d nNewPos=%d \n", nNewLine, nNewPos );
+//	MYTRACE_A( "nNewLine=%d nNewPos=%d \n", nNewLine, nNewPos );
 
 
 	/*--- 変更された行のレイアウト情報を再生成 ---*/
@@ -1061,7 +1061,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 
 #ifdef _DEBUG
 		if( m_pLayoutPrevRefer == pLayout ){
-			MYTRACE( "バグバグ\n" );
+			MYTRACE_A( "バグバグ\n" );
 		}
 #endif
 		delete pLayout;
@@ -1072,7 +1072,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 		}
 		pLayout = pLayoutNext;
 	}
-//	MYTRACE( "(*pnDeleteLines)=%d\n", (*pnDeleteLines) );
+//	MYTRACE_A( "(*pnDeleteLines)=%d\n", (*pnDeleteLines) );
 
 	return pLayoutWork;
 }
@@ -1448,7 +1448,7 @@ void CLayoutMgr::CaretPos_Phys2Log(
 	*pnCaretPosX = pLayout ? nCaretPosX : 0;
 	*pnCaretPosY = nCaretPosY;
 //#ifdef _DEBUG
-//	MYTRACE( "\t\tnCaretPosY - nY = %d\n", nCaretPosY - nY );
+//	MYTRACE_A( "\t\tnCaretPosY - nY = %d\n", nCaretPosY - nY );
 //#endif
 	return;
 }
@@ -1573,33 +1573,33 @@ void CLayoutMgr::DUMP( void )
 #ifdef _DEBUG
 	const char* pData;
 	int nDataLen;
-	MYTRACE( "------------------------\n" );
-	MYTRACE( "m_nLines=%d\n", m_nLines );
-	MYTRACE( "m_pLayoutTop=%08lxh\n", m_pLayoutTop );
-	MYTRACE( "m_pLayoutBot=%08lxh\n", m_pLayoutBot );
-	MYTRACE( "m_nMaxLineKetas=%d\n", m_nMaxLineKetas );
+	MYTRACE_A( "------------------------\n" );
+	MYTRACE_A( "m_nLines=%d\n", m_nLines );
+	MYTRACE_A( "m_pLayoutTop=%08lxh\n", m_pLayoutTop );
+	MYTRACE_A( "m_pLayoutBot=%08lxh\n", m_pLayoutBot );
+	MYTRACE_A( "m_nMaxLineKetas=%d\n", m_nMaxLineKetas );
 
-	MYTRACE( "m_nTabSpace=%d\n", m_nTabSpace );
+	MYTRACE_A( "m_nTabSpace=%d\n", m_nTabSpace );
 	CLayout* pLayout;
 	CLayout* pLayoutNext;
 	pLayout = m_pLayoutTop;
 	while( NULL != pLayout ){
 		pLayoutNext = pLayout->m_pNext;
-		MYTRACE( "\t-------\n" );
-		MYTRACE( "\tthis=%08lxh\n", pLayout );
-		MYTRACE( "\tm_pPrev =%08lxh\n",		pLayout->m_pPrev );
-		MYTRACE( "\tm_pNext =%08lxh\n",		pLayout->m_pNext );
-		MYTRACE( "\tm_nLinePhysical=%d\n",	pLayout->m_nLinePhysical );
-		MYTRACE( "\tm_nOffset=%d\n",		pLayout->m_nOffset );
-		MYTRACE( "\tm_nLength=%d\n",		pLayout->m_nLength );
-		MYTRACE( "\tm_enumEOLType =%s\n",	pLayout->m_cEol.GetName() );
-		MYTRACE( "\tm_nEOLLen =%d\n",		pLayout->m_cEol.GetLen() );
-		MYTRACE( "\tm_nTypePrev=%d\n",		pLayout->m_nTypePrev );
+		MYTRACE_A( "\t-------\n" );
+		MYTRACE_A( "\tthis=%08lxh\n", pLayout );
+		MYTRACE_A( "\tm_pPrev =%08lxh\n",		pLayout->m_pPrev );
+		MYTRACE_A( "\tm_pNext =%08lxh\n",		pLayout->m_pNext );
+		MYTRACE_A( "\tm_nLinePhysical=%d\n",	pLayout->m_nLinePhysical );
+		MYTRACE_A( "\tm_nOffset=%d\n",		pLayout->m_nOffset );
+		MYTRACE_A( "\tm_nLength=%d\n",		pLayout->m_nLength );
+		MYTRACE_A( "\tm_enumEOLType =%s\n",	pLayout->m_cEol.GetName() );
+		MYTRACE_A( "\tm_nEOLLen =%d\n",		pLayout->m_cEol.GetLen() );
+		MYTRACE_A( "\tm_nTypePrev=%d\n",		pLayout->m_nTypePrev );
 		pData = m_pcDocLineMgr->GetLineStr( pLayout->m_nLinePhysical, &nDataLen );
-		MYTRACE( "\t[%s]\n", pData );
+		MYTRACE_A( "\t[%s]\n", pData );
 		pLayout = pLayoutNext;
 	}
-	MYTRACE( "------------------------\n" );
+	MYTRACE_A( "------------------------\n" );
 #endif
 	return;
 }

@@ -133,36 +133,36 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 		if( hwndLIST_KEYWORD == pNMHDR->hwndFrom ){
 			switch( pNMHDR->code ){
 			case NM_DBLCLK:
-//				MYTRACE( "NM_DBLCLK     \n" );
+//				MYTRACE_A( "NM_DBLCLK     \n" );
 				/* リスト中で選択されているキーワードを編集する */
 				p7_Edit_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 				return TRUE;
 			case LVN_BEGINLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE( "LVN_BEGINLABELEDIT\n" );
-												MYTRACE( "	plvi->mask =[%xh]\n", plvi->mask );
-												MYTRACE( "	plvi->iItem =[%d]\n", plvi->iItem );
-												MYTRACE( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE( "	plvi->state =[%xf]\n", plvi->state );
-												MYTRACE( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( "	plvi->pszText =[%s]\n", plvi->pszText );
-												MYTRACE( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE( "	plvi->iImage=[%d]\n", plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+				MYTRACE_A( "LVN_BEGINLABELEDIT\n" );
+												MYTRACE_A( "	plvi->mask =[%xh]\n", plvi->mask );
+												MYTRACE_A( "	plvi->iItem =[%d]\n", plvi->iItem );
+												MYTRACE_A( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE_A( "	plvi->state =[%xf]\n", plvi->state );
+												MYTRACE_A( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE_A( "	plvi->pszText =[%s]\n", plvi->pszText );
+												MYTRACE_A( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE_A( "	plvi->iImage=[%d]\n", plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE_A( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
 #endif
 				return TRUE;
 			case LVN_ENDLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE( "LVN_ENDLABELEDIT\n" );
-												MYTRACE( "	plvi->mask =[%xh]\n", plvi->mask );
-												MYTRACE( "	plvi->iItem =[%d]\n", plvi->iItem );
-												MYTRACE( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE( "	plvi->state =[%xf]\n", plvi->state );
-												MYTRACE( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( "	plvi->pszText =[%s]\n", plvi->pszText  );
-												MYTRACE( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE( "	plvi->iImage=[%d]\n", plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+				MYTRACE_A( "LVN_ENDLABELEDIT\n" );
+												MYTRACE_A( "	plvi->mask =[%xh]\n", plvi->mask );
+												MYTRACE_A( "	plvi->iItem =[%d]\n", plvi->iItem );
+												MYTRACE_A( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE_A( "	plvi->state =[%xf]\n", plvi->state );
+												MYTRACE_A( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE_A( "	plvi->pszText =[%s]\n", plvi->pszText  );
+												MYTRACE_A( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE_A( "	plvi->iImage=[%d]\n", plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE_A( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
 #endif
 				if( NULL == plvi->pszText ){
 					return TRUE;
@@ -189,7 +189,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 
 				return TRUE;
 			case LVN_KEYDOWN:
-//				MYTRACE( "LVN_KEYDOWN\n" );
+//				MYTRACE_A( "LVN_KEYDOWN\n" );
 				switch( pnkd->wVKey ){
 				case VK_DELETE:
 					/* リスト中で選択されているキーワードを削除する */
@@ -209,7 +209,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				return TRUE;
 			case PSN_KILLACTIVE:
 #ifdef _DEBUG
-				MYTRACE( "Keyword PSN_KILLACTIVE\n" );
+				MYTRACE_A( "Keyword PSN_KILLACTIVE\n" );
 #endif
 				/* ダイアログデータの取得 Keyword */
 				GetData_p7( hwndDlg );
@@ -519,7 +519,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		return;
 	}
 	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
-//		MYTRACE( szLine );
+//		MYTRACE_A( szLine );
 		if( 2 < strlen( szLine ) && 0 == memcmp( szLine, "//", 2 )  ){
 		}else{
 			if( 0 < (int)strlen( szLine ) ){
@@ -575,7 +575,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;
 	}
-//	MYTRACE( "%s\n", szPath );
+//	MYTRACE_A( "%s\n", szPath );
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );

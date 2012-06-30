@@ -91,7 +91,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		/* 「開く」ダイアログのサイズと位置 */
 		pShareData = CShareData::getInstance()->GetShareData();
 		::GetWindowRect( hwnd, &pShareData->m_Common.m_rcOpenDialog );
-//		MYTRACE( "WM_MOVE 1\n" );
+//		MYTRACE_A( "WM_MOVE 1\n" );
 		break;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	// notification code
@@ -116,10 +116,10 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	case WM_NOTIFY:
 		idCtrl = (int) wParam;
 		pofn = (OFNOTIFY*) lParam;
-//		MYTRACE( "=========WM_NOTIFY=========\n" );
-//		MYTRACE( "pofn->hdr.hwndFrom=%xh\n", pofn->hdr.hwndFrom );
-//		MYTRACE( "pofn->hdr.idFrom=%xh(%d)\n", pofn->hdr.idFrom, pofn->hdr.idFrom );
-//		MYTRACE( "pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
+//		MYTRACE_A( "=========WM_NOTIFY=========\n" );
+//		MYTRACE_A( "pofn->hdr.hwndFrom=%xh\n", pofn->hdr.hwndFrom );
+//		MYTRACE_A( "pofn->hdr.idFrom=%xh(%d)\n", pofn->hdr.idFrom, pofn->hdr.idFrom );
+//		MYTRACE_A( "pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
 		break;
 	}
 //	return ::CallWindowProc( (int (__stdcall *)( void ))(WNDPROC)m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
@@ -202,7 +202,7 @@ UINT_PTR CALLBACK OFNHookProc(
 
 	switch( uiMsg ){
 	case WM_MOVE:
-//		MYTRACE( "WM_MOVE 2\n" );
+//		MYTRACE_A( "WM_MOVE 2\n" );
 		break;
 	case WM_SIZE:
 		fwSizeType = wParam;		// resizing flag
@@ -341,10 +341,10 @@ UINT_PTR CALLBACK OFNHookProc(
 	case WM_NOTIFY:
 		idCtrl = (int) wParam;
 		pofn = (OFNOTIFY*) lParam;
-//		MYTRACE( "=========WM_NOTIFY=========\n" );
-//		MYTRACE( "pofn->hdr.hwndFrom=%xh\n", pofn->hdr.hwndFrom );
-//		MYTRACE( "pofn->hdr.idFrom=%xh(%d)\n", pofn->hdr.idFrom, pofn->hdr.idFrom );
-//		MYTRACE( "pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
+//		MYTRACE_A( "=========WM_NOTIFY=========\n" );
+//		MYTRACE_A( "pofn->hdr.hwndFrom=%xh\n", pofn->hdr.hwndFrom );
+//		MYTRACE_A( "pofn->hdr.idFrom=%xh(%d)\n", pofn->hdr.idFrom, pofn->hdr.idFrom );
+//		MYTRACE_A( "pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
 
 		switch( pofn->hdr.code ){
 		case CDN_FILEOK:
@@ -429,26 +429,26 @@ UINT_PTR CALLBACK OFNHookProc(
 			}
 			//	To Here Jul. 26, 2003 ryoji
 
-//			MYTRACE( "文字コード  lRes=%d\n", lRes );
-//			MYTRACE( "pofn->hdr.code=CDN_FILEOK        \n" );break;
+//			MYTRACE_A( "文字コード  lRes=%d\n", lRes );
+//			MYTRACE_A( "pofn->hdr.code=CDN_FILEOK        \n" );break;
 			break;	/* CDN_FILEOK */
 
 		case CDN_FOLDERCHANGE  :
-//			MYTRACE( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
+//			MYTRACE_A( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
 			lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, _countof( szFolder ), (LPARAM)szFolder );
-//			MYTRACE( "\tlRes=%d\tszFolder=[%s]\n", lRes, szFolder );
+//			MYTRACE_A( "\tlRes=%d\tszFolder=[%s]\n", lRes, szFolder );
 
 			break;
-//		case CDN_HELP			:	MYTRACE( "pofn->hdr.code=CDN_HELP          \n" );break;
-//		case CDN_INITDONE		:	MYTRACE( "pofn->hdr.code=CDN_INITDONE      \n" );break;
-//		case CDN_SELCHANGE		:	MYTRACE( "pofn->hdr.code=CDN_SELCHANGE     \n" );break;
-//		case CDN_SHAREVIOLATION	:	MYTRACE( "pofn->hdr.code=CDN_SHAREVIOLATION\n" );break;
-//		case CDN_TYPECHANGE		:	MYTRACE( "pofn->hdr.code=CDN_TYPECHANGE    \n" );break;
-//		default:					MYTRACE( "pofn->hdr.code=???\n" );break;
+//		case CDN_HELP			:	MYTRACE_A( "pofn->hdr.code=CDN_HELP          \n" );break;
+//		case CDN_INITDONE		:	MYTRACE_A( "pofn->hdr.code=CDN_INITDONE      \n" );break;
+//		case CDN_SELCHANGE		:	MYTRACE_A( "pofn->hdr.code=CDN_SELCHANGE     \n" );break;
+//		case CDN_SHAREVIOLATION	:	MYTRACE_A( "pofn->hdr.code=CDN_SHAREVIOLATION\n" );break;
+//		case CDN_TYPECHANGE		:	MYTRACE_A( "pofn->hdr.code=CDN_TYPECHANGE    \n" );break;
+//		default:					MYTRACE_A( "pofn->hdr.code=???\n" );break;
 
 		}
 
-//		MYTRACE( "=======================\n" );
+//		MYTRACE_A( "=======================\n" );
 		break;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	// notification code

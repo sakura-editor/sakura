@@ -171,10 +171,10 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
 #ifdef _DEBUG
-	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	MYTRACE( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
+	MYTRACE_A( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE_A( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE_A( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE_A( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
 #endif
 
 	::GlobalUnlock( m_hDevMode );
@@ -252,10 +252,10 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
 #ifdef _DEBUG
-	MYTRACE( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	MYTRACE( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
+	MYTRACE_A( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	MYTRACE_A( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	MYTRACE_A( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	MYTRACE_A( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
 #endif
 
 	::GlobalUnlock( m_hDevMode );

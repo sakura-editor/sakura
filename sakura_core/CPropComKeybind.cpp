@@ -175,7 +175,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 			OnHelp( hwndDlg, IDD_PROP_KEYBIND );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE( "Keybind PSN_KILLACTIVE\n" );
+//			MYTRACE_A( "Keybind PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 Keybind */
 			GetData_p5( hwndDlg );
 			return TRUE;

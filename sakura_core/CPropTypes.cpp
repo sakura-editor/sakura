@@ -441,7 +441,7 @@ BOOL CPropTypes::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustCol
 /* 色ボタンの描画 */
 void CPropTypes::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
-//	MYTRACE( "pDis->itemAction = " );
+//	MYTRACE_A( "pDis->itemAction = " );
 
 	COLORREF	cBtnHiLight		= (COLORREF)::GetSysColor(COLOR_3DHILIGHT);
 	COLORREF	cBtnShadow		= (COLORREF)::GetSysColor(COLOR_3DSHADOW);
@@ -873,7 +873,7 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 		switch( idCtrl ){
 		case IDC_SPIN_MAXLINELEN:
 			/* 折り返し文字数 */
-//			MYTRACE( "IDC_SPIN_MAXLINELEN\n" );
+//			MYTRACE_A( "IDC_SPIN_MAXLINELEN\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -891,7 +891,7 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 			return TRUE;
 		case IDC_SPIN_CHARSPACE:
 			/* 文字の隙間 */
-//			MYTRACE( "IDC_SPIN_CHARSPACE\n" );
+//			MYTRACE_A( "IDC_SPIN_CHARSPACE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -909,7 +909,7 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 			return TRUE;
 		case IDC_SPIN_LINESPACE:
 			/* 行の隙間 */
-//			MYTRACE( "IDC_SPIN_LINESPACE\n" );
+//			MYTRACE_A( "IDC_SPIN_LINESPACE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -933,7 +933,7 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 		case IDC_SPIN_TABSPACE:
 			//	Sep. 22, 2002 genta
 			/* TAB幅 */
-//			MYTRACE( "IDC_SPIN_CHARSPACE\n" );
+//			MYTRACE_A( "IDC_SPIN_CHARSPACE\n" );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -956,7 +956,7 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 				OnHelp( hwndDlg, IDD_PROPTYPESP1 );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p1 PSN_KILLACTIVE\n" );
+//				MYTRACE_A( "p1 PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 p1 */
 				GetData_p1( hwndDlg );
 				return TRUE;
@@ -968,11 +968,11 @@ INT_PTR CPropTypes::DispatchEvent_p1(
 			break;
 		}
 
-//		MYTRACE( "pNMHDR->hwndFrom	=%xh\n",	pNMHDR->hwndFrom );
-//		MYTRACE( "pNMHDR->idFrom	=%xh\n",	pNMHDR->idFrom );
-//		MYTRACE( "pNMHDR->code		=%xh\n",	pNMHDR->code );
-//		MYTRACE( "pMNUD->iPos		=%d\n",		pMNUD->iPos );
-//		MYTRACE( "pMNUD->iDelta		=%d\n",		pMNUD->iDelta );
+//		MYTRACE_A( "pNMHDR->hwndFrom	=%xh\n",	pNMHDR->hwndFrom );
+//		MYTRACE_A( "pNMHDR->idFrom	=%xh\n",	pNMHDR->idFrom );
+//		MYTRACE_A( "pNMHDR->code		=%xh\n",	pNMHDR->code );
+//		MYTRACE_A( "pMNUD->iPos		=%d\n",		pMNUD->iPos );
+//		MYTRACE_A( "pMNUD->iDelta		=%d\n",		pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -1850,11 +1850,11 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		xPos = LOWORD(lParam);	// horizontal position of cursor
 		yPos = HIWORD(lParam);	// vertical position of cursor
 //		nIndex = ::SendMessage( hwnd, LB_GETCURSEL, 0, 0 );
-//		MYTRACE( "fwKeys=%d\n", fwKeys );
-//		MYTRACE( "xPos  =%d\n", xPos );
-//		MYTRACE( "yPos  =%d\n", yPos );
-//		MYTRACE( "nIndex=%d\n", nIndex );
-//		MYTRACE( "\n" );
+//		MYTRACE_A( "fwKeys=%d\n", fwKeys );
+//		MYTRACE_A( "xPos  =%d\n", xPos );
+//		MYTRACE_A( "yPos  =%d\n", yPos );
+//		MYTRACE_A( "nIndex=%d\n", nIndex );
+//		MYTRACE_A( "\n" );
 		poMouse.x = xPos;
 		poMouse.y = yPos;
 		nItemNum = ::SendMessage( hwnd, LB_GETCOUNT, 0, 0 );
@@ -1862,8 +1862,8 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		for( i = 0; i < nItemNum; ++i ){
 			::SendMessage( hwnd, LB_GETITEMRECT, i, (LPARAM)&rcItem );
 			if( ::PtInRect( &rcItem, poMouse ) ){
-//				MYTRACE( "hit at i==%d\n", i );
-//				MYTRACE( "\n" );
+//				MYTRACE_A( "hit at i==%d\n", i );
+//				MYTRACE_A( "\n" );
 				nIndex = i;
 				break;
 			}
@@ -2260,7 +2260,7 @@ INT_PTR CPropTypes::DispatchEvent_p3_new(
 				OnHelp( hwndDlg, IDD_PROP_COLOR );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE( "p3 PSN_KILLACTIVE\n" );
+//				MYTRACE_A( "p3 PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 p3 */
 				GetData_p3_new( hwndDlg );
 				return TRUE;

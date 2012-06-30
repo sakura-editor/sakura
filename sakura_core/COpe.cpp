@@ -58,16 +58,16 @@ COpe::~COpe()
 void COpe::DUMP( void )
 {
 #ifdef _DEBUG
-	MYTRACE( "\t\tm_nOpe              = [%d]\n", m_nOpe               );
-	MYTRACE( "\t\tm_nCaretPosX_PHY_Before  = [%d]\n", m_nCaretPosX_PHY_Before   );
-	MYTRACE( "\t\tm_nCaretPosY_PHY_Before  = [%d]\n", m_nCaretPosY_PHY_Before   );
-	MYTRACE( "\t\tm_nCaretPosX_PHY_After;  = [%d]\n", m_nCaretPosX_PHY_After   );
-	MYTRACE( "\t\tm_nCaretPosY_PHY_After;  = [%d]\n", m_nCaretPosY_PHY_After   );
-	MYTRACE( "\t\tm_nDataLen          = [%d]\n", m_nDataLen           );
+	MYTRACE_A( "\t\tm_nOpe              = [%d]\n", m_nOpe               );
+	MYTRACE_A( "\t\tm_nCaretPosX_PHY_Before  = [%d]\n", m_nCaretPosX_PHY_Before   );
+	MYTRACE_A( "\t\tm_nCaretPosY_PHY_Before  = [%d]\n", m_nCaretPosY_PHY_Before   );
+	MYTRACE_A( "\t\tm_nCaretPosX_PHY_After;  = [%d]\n", m_nCaretPosX_PHY_After   );
+	MYTRACE_A( "\t\tm_nCaretPosY_PHY_After;  = [%d]\n", m_nCaretPosY_PHY_After   );
+	MYTRACE_A( "\t\tm_nDataLen          = [%d]\n", m_nDataLen           );
 	if( NULL == m_pcmemData ){
-		MYTRACE( "\t\tm_pcmemData         = [NULL]\n" );
+		MYTRACE_A( "\t\tm_pcmemData         = [NULL]\n" );
 	}else{
-		MYTRACE( "\t\tm_pcmemData         = [%s]\n", m_pcmemData->GetStringPtr() );
+		MYTRACE_A( "\t\tm_pcmemData         = [%s]\n", m_pcmemData->GetStringPtr() );
 	}
 #endif
 	return;

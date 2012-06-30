@@ -361,7 +361,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			}
 		}
 	}
-//	MYTRACE( "\n" );
+//	MYTRACE_A( "\n" );
 	m_nCurrentKeyState = nIdx;
 	return 0;
 }

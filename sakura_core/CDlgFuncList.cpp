@@ -1268,7 +1268,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	if( hwndList == pnmh->hwndFrom ){
 		switch( pnmh->code ){
 		case LVN_COLUMNCLICK:
-//				MYTRACE( "LVN_COLUMNCLICK\n" );
+//				MYTRACE_A( "LVN_COLUMNCLICK\n" );
 			m_nSortCol =  pnlv->iSubItem;
 			//	Apr. 23, 2005 genta ŠÖ”‚Æ‚µ‚Ä“Æ—§‚³‚¹‚½
 			SortListView( hwndList, m_nSortCol );

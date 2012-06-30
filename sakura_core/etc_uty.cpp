@@ -173,11 +173,11 @@ int CALLBACK MYBrowseCallbackProc(
 {
 	switch( uMsg ){
 	case BFFM_INITIALIZED:
-//		MYTRACE( "BFFM_INITIALIZED (char*)lpData = [%s]\n", (char*)lpData );
+//		MYTRACE_A( "BFFM_INITIALIZED (char*)lpData = [%s]\n", (char*)lpData );
 		::SendMessage( hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)lpData );
 		break;
 	case BFFM_SELCHANGED:
-//		MYTRACE( "BFFM_SELCHANGED\n" );
+//		MYTRACE_A( "BFFM_SELCHANGED\n" );
 		break;
 	}
 	return 0;
@@ -424,9 +424,9 @@ BOOL CheckSystemResources( const char* pszAppName )
 	char*	pszResourceName;
 	/* システムリソースの取得 */
 	if( GetSystemResources( &nSystemResources, &nUserResources,	&nGDIResources ) ){
-//		MYTRACE( "nSystemResources=%d\n", nSystemResources );
-//		MYTRACE( "nUserResources=%d\n", nUserResources );
-//		MYTRACE( "nGDIResources=%d\n", nGDIResources );
+//		MYTRACE_A( "nSystemResources=%d\n", nSystemResources );
+//		MYTRACE_A( "nUserResources=%d\n", nUserResources );
+//		MYTRACE_A( "nGDIResources=%d\n", nGDIResources );
 		pszResourceName = NULL;
 		if( nSystemResources <= 5 ){
 			pszResourceName = "システム ";

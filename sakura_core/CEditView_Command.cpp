@@ -2570,7 +2570,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 
 			if( bAddLastCR )
 			{
-//				MYTRACE( " カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n" );
+//				MYTRACE_A( " カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n" );
 				nInsPosX = LineIndexToColmn( pcLayout, nLineLen );
 				if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 				{
@@ -7706,10 +7706,10 @@ void CEditView::Command_PROPERTY_FILE( void )
 		CRunningTimer cRunningTimer( "CEditView::Command_PROPERTY_FILE 全行データを返すテスト" );
 		cRunningTimer.Reset();
 		pDataAll = m_pcEditDoc->m_cDocLineMgr.GetAllData( &nDataAllLen );
-//		MYTRACE( "全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE_A( "全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 		free( pDataAll );
 		pDataAll = NULL;
-//		MYTRACE( "全データ取得のメモリ開放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE_A( "全データ取得のメモリ開放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
 	}
 #endif
 

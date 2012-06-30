@@ -23,10 +23,6 @@
 #endif
 
 
-//#ifdef _DEBUG
-//#undef THIS_FILE
-//static char THIS_FILE[] = __FILE__;
-//#endif
 
 
 /*! @brief 書式付きデバッガ出力
@@ -35,9 +31,9 @@
 
 	引数で与えられた情報をDebugStringとして出力する．
 */
-void DebugOut( LPCTSTR lpFmt, ...)
+void DebugOutA( LPCSTR lpFmt, ...)
 {
-	static TCHAR szText[16000];
+	static CHAR szText[16000];
 	va_list argList;
 	va_start(argList, lpFmt);
 	::wvsprintf( szText, lpFmt, argList );
@@ -51,21 +47,17 @@ void DebugOut( LPCTSTR lpFmt, ...)
 
 
 
-/*! @brief 書式付きメッセージボックス
-
-	@param[in] hWndParent 親ウィンドウのハンドル
-	@param[in] nStyle メッセージボックスの形式(アイコン，ボタンなどをMB_xx定数の論理和で与える)
-	@param[in] pszTitle ダイアログボックスのタイトル
-	@param[in] lpFmt printfの書式指定文字列
+/*!
+	書式付きメッセージボックス
 
 	引数で与えられた情報をダイアログボックスで表示する．
 	デバッグ目的以外でも使用できる．
 */
 int MessageBoxF(
-	HWND	hWndParent,
-	UINT	nStyle,
-	LPCTSTR	pszTitle,
-	LPCTSTR lpFmt,
+	HWND	hWndParent,	//!< [in] 親ウィンドウのハンドル
+	UINT	nStyle,		//!< [in] メッセージボックスの形式(アイコン，ボタンなどをMB_xx定数の論理和で与える)
+	LPCTSTR	pszTitle,	//!< [in] ダイアログボックスのタイトル
+	LPCTSTR lpFmt,		//!< [in] printfの書式指定文字列
 	...
 )
 {
@@ -80,11 +72,6 @@ int MessageBoxF(
 }
 
 
-//void MYASSERT( LPCTSTR pszFile, long nLine, BOOL bIsError )
-//{
-//	AssertError( bIsError, pszFile, nLine );
-//	return;
-//}
 
 
 void AssertError( LPCTSTR pszFile, long nLine, BOOL bIsError )

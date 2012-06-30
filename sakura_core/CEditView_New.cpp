@@ -87,7 +87,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 
 	//@@@
 #ifdef _DEBUG
-	::MYTRACE( "OnPaint(%d,%d)-(%d,%d) : %d\n",
+	::MYTRACE_A( "OnPaint(%d,%d)-(%d,%d) : %d\n",
 		pPs->rcPaint.left,
 		pPs->rcPaint.top,
 		pPs->rcPaint.right,
@@ -552,9 +552,9 @@ int CEditView::DispLineNew(
 
 		y -= nLineHeight;
 		nLineNum--;
-//		MYTRACE( "\n\n=======================================" );
+//		MYTRACE_A( "\n\n=======================================" );
 		while( nPos < nLineLen ){
-//			MYTRACE( "nLineNum = %d\n", nLineNum );
+//			MYTRACE_A( "nLineNum = %d\n", nLineNum );
 
 			y += nLineHeight;
 			nLineNum++;
@@ -1624,7 +1624,7 @@ end_of_line:;
 
 end_of_func:;
 //	2002/05/08 YAZAKI アンダーラインの再描画は不要でした
-//	MYTRACE( "m_nOldUnderLineY=%d\n", m_nOldUnderLineY );
+//	MYTRACE_A( "m_nOldUnderLineY=%d\n", m_nOldUnderLineY );
 //	if( -1 != m_nOldUnderLineY ){
 //		/* カーソル行アンダーラインのON */
 //		CaretUnderLineON( TRUE );

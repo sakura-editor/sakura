@@ -190,7 +190,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 
 	GetIniFileName( szIniFileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
-//	MYTRACE( "Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE_A( "Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
 
 	if( bRead ){
@@ -204,7 +204,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 #endif
 
 	}
-//	MYTRACE( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 	
 	// Feb. 12, 2006 D.S.Koba
 	ShareData_IO_Mru( cProfile );
@@ -228,8 +228,8 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		cProfile.WriteProfile( szIniFileName, " sakura.ini テキストエディタ設定ファイル" );
 	}
 
-//	MYTRACE( "Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
-//	MYTRACE( "Iniファイル処理 所要時間(ミリ秒) = %d\n", cRunningTimerStart.Read() );
+//	MYTRACE_A( "Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE_A( "Iniファイル処理 所要時間(ミリ秒) = %d\n", cRunningTimerStart.Read() );
 
 	return TRUE;
 }

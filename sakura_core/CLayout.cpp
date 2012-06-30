@@ -41,12 +41,12 @@ CLayout::~CLayout()
 void CLayout::DUMP( void )
 {
 #ifdef _DEBUG
-	MYTRACE( "\n\n■CLayout::DUMP()======================\n" );
-	MYTRACE( "m_nLinePhysical=%d\t\t対応する論理行番号\n", m_nLinePhysical );
-	MYTRACE( "m_nOffset=%d\t\t対応する論理行の先頭からのオフセット\n", m_nOffset );
-	MYTRACE( "m_nLength=%d\t\t対応する論理行のハイト数\n", m_nLength );
-	MYTRACE( "m_nTypePrev=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 \n", m_nTypePrev );
-	MYTRACE( "======================\n" );
+	MYTRACE_A( "\n\n■CLayout::DUMP()======================\n" );
+	MYTRACE_A( "m_nLinePhysical=%d\t\t対応する論理行番号\n", m_nLinePhysical );
+	MYTRACE_A( "m_nOffset=%d\t\t対応する論理行の先頭からのオフセット\n", m_nOffset );
+	MYTRACE_A( "m_nLength=%d\t\t対応する論理行のハイト数\n", m_nLength );
+	MYTRACE_A( "m_nTypePrev=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 \n", m_nTypePrev );
+	MYTRACE_A( "======================\n" );
 #endif
 	return;
 }

@@ -199,16 +199,16 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	pArg->nModLineTo += ( pArg->nModLineFrom - 1 ) ;	/* 再描画ヒント 変更されたレイアウト行To */
 
 #ifdef _DEBUG
-//	MYTRACE( "削除した行の総数( DLRArg.nDeletedLineNum ) == %d \n" , DLRArg.nDeletedLineNum );/* 削除した行の総数 */
-//	MYTRACE( "挿入によって増えた行の数( DLRArg.nInsLineNum ) == %d \n" , DLRArg.nInsLineNum );/* 挿入によって増えた行の数 */
-//	MYTRACE( "挿入された部分の次の位置の行( nNewLine ) == %d \n" , nNewLine );/* 挿入された部分の次の位置の行 */
-//	MYTRACE( "挿入された部分の次の位置のデータ位置( nNewPos ) == %d \n" , nNewPos );/* 挿入された部分の次の位置のデータ位置 */
-//	MYTRACE( "nModifyLayoutLinesOld == %d \n" , nModifyLayoutLinesOld );
+//	MYTRACE_A( "削除した行の総数( DLRArg.nDeletedLineNum ) == %d \n" , DLRArg.nDeletedLineNum );/* 削除した行の総数 */
+//	MYTRACE_A( "挿入によって増えた行の数( DLRArg.nInsLineNum ) == %d \n" , DLRArg.nInsLineNum );/* 挿入によって増えた行の数 */
+//	MYTRACE_A( "挿入された部分の次の位置の行( nNewLine ) == %d \n" , nNewLine );/* 挿入された部分の次の位置の行 */
+//	MYTRACE_A( "挿入された部分の次の位置のデータ位置( nNewPos ) == %d \n" , nNewPos );/* 挿入された部分の次の位置のデータ位置 */
+//	MYTRACE_A( "nModifyLayoutLinesOld == %d \n" , nModifyLayoutLinesOld );
 
-//	MYTRACE( "\n\n■■■■■■■■■■■■■■\n" );
-//	MYTRACE( "再描画ヒント レイアウト行の増減(pArg->nAddLineNum) == %d \n" , pArg->nAddLineNum );
-//	MYTRACE( "再描画ヒント 変更されたレイアウト行From(pArg->nModLineFrom) == %d \n" , pArg->nModLineFrom );
-//	MYTRACE( "再描画ヒント 変更されたレイアウト行To(pArg->nModLineTo) == %d \n" , pArg->nModLineTo );
+//	MYTRACE_A( "\n\n■■■■■■■■■■■■■■\n" );
+//	MYTRACE_A( "再描画ヒント レイアウト行の増減(pArg->nAddLineNum) == %d \n" , pArg->nAddLineNum );
+//	MYTRACE_A( "再描画ヒント 変更されたレイアウト行From(pArg->nModLineFrom) == %d \n" , pArg->nModLineFrom );
+//	MYTRACE_A( "再描画ヒント 変更されたレイアウト行To(pArg->nModLineTo) == %d \n" , pArg->nModLineTo );
 #endif
 
 //	DoLayout( NULL, bDispSSTRING, bDispWSTRING );

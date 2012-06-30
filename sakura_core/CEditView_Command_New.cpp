@@ -610,7 +610,7 @@ void CEditView::DeleteData(
 
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		nCurIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
-//		MYTRACE("nLineLen=%d nCurIdx=%d \n", nLineLen, nCurIdx);
+//		MYTRACE_A("nLineLen=%d nCurIdx=%d \n", nLineLen, nCurIdx);
 		if( nCurIdx == nLineLen && bLastLine ){	/* 全テキストの最後 */
 			goto end_of_func;
 //			return;
@@ -1470,7 +1470,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 					if( 0 < k && '\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && '\'' == pLine2[k + 1]
 					){
-//						MYTRACE( "▼[%s]\n", pLine2 );
+//						MYTRACE_A( "▼[%s]\n", pLine2 );
 					}else{
 						//同じ行の場合
 						if( j == m_nCaretPosY_PHY ){
@@ -1494,7 +1494,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 					if( 0 < k && '\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && '\'' == pLine2[k + 1]
 					){
-//						MYTRACE( "▼[%s]\n", pLine2 );
+//						MYTRACE_A( "▼[%s]\n", pLine2 );
 					}else{
 						//同じ行の場合
 						if( j == m_nCaretPosY_PHY ){

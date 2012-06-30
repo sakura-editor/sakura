@@ -56,7 +56,7 @@ INT_PTR CALLBACK MyDialogProc(
 */
 CDialog::CDialog()
 {
-//	MYTRACE( "CDialog::CDialog()\n" );
+//	MYTRACE_A( "CDialog::CDialog()\n" );
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
@@ -79,7 +79,7 @@ CDialog::CDialog()
 }
 CDialog::~CDialog()
 {
-//	MYTRACE( "CDialog::~CDialog()\n" );
+//	MYTRACE_A( "CDialog::~CDialog()\n" );
 	CloseDialog( 0 );
 	return;
 }
@@ -158,7 +158,7 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if( -1 != m_xPos && -1 != m_yPos ){
 		::SetWindowPos( m_hWnd, NULL, m_xPos, m_yPos, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 #ifdef _DEBUG
-		MYTRACE( "CDialog::OnInitDialog() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
+		MYTRACE_A( "CDialog::OnInitDialog() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 #endif
 	}
 	if( -1 != m_nWidth && -1 != m_nHeight ){
@@ -318,7 +318,7 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 	m_nWidth = rc.right - rc.left;
 	m_nHeight = rc.bottom - rc.top;
 #ifdef _DEBUG
-		MYTRACE( "CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
+		MYTRACE_A( "CDialog::OnMove() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
 #endif
 	return TRUE;
 
@@ -356,7 +356,7 @@ void CDialog::CreateSizeBox( void )
 INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 //#ifdef _DEBUG
-//	MYTRACE( "CDialog::DispatchEvent() uMsg == %xh\n", uMsg );
+//	MYTRACE_A( "CDialog::DispatchEvent() uMsg == %xh\n", uMsg );
 //#endif
 	switch( uMsg ){
 	case WM_INITDIALOG:	return OnInitDialog( hwndDlg, wParam, lParam );

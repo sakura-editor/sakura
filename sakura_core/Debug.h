@@ -20,7 +20,12 @@
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 SAKURA_CORE_API void AssertError( LPCTSTR pszFile, long nLine, BOOL bIsError );
-SAKURA_CORE_API void DebugOut( LPCTSTR lpFmt, ...);
+SAKURA_CORE_API void DebugOutA( LPCSTR lpFmt, ...);
+#ifdef _UNICODE
+#define DebugOut DebugOutW
+#else
+#define DebugOut DebugOutA
+#endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
@@ -41,6 +46,7 @@ SAKURA_CORE_API int MessageBoxF( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 */
 #ifdef _DEBUG
 	#define MYTRACE DebugOut
+	#define MYTRACE_A DebugOutA
 #endif
 #ifndef _DEBUG
 	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode

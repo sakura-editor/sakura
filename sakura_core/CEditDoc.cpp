@@ -120,7 +120,7 @@ CEditDoc::CEditDoc() :
 		NULL,/*hwndProgress*/
 		ref
 	);
-//	MYTRACE( "CEditDoc::CEditDoc()‚¨‚í‚è\n" );
+//	MYTRACE_A( "CEditDoc::CEditDoc()‚¨‚í‚è\n" );
 
 	//	Aug, 21, 2000 genta
 	//	Ž©“®•Û‘¶‚ÌÝ’è
@@ -292,69 +292,69 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 		DWORD nErr;
 		nErr = CommDlgExtendedError();
 		switch( nErr ){
-		case CDERR_FINDRESFAILURE:	MYTRACE( "CDERR_FINDRESFAILURE \n" );	break;
-		case CDERR_INITIALIZATION:	MYTRACE( "CDERR_INITIALIZATION \n" );	break;
-		case CDERR_LOCKRESFAILURE:	MYTRACE( "CDERR_LOCKRESFAILURE \n" );	break;
-		case CDERR_LOADRESFAILURE:	MYTRACE( "CDERR_LOADRESFAILURE \n" );	break;
-		case CDERR_LOADSTRFAILURE:	MYTRACE( "CDERR_LOADSTRFAILURE \n" );	break;
-		case CDERR_MEMALLOCFAILURE:	MYTRACE( "CDERR_MEMALLOCFAILURE\n" );	break;
-		case CDERR_MEMLOCKFAILURE:	MYTRACE( "CDERR_MEMLOCKFAILURE \n" );	break;
-		case CDERR_NOHINSTANCE:		MYTRACE( "CDERR_NOHINSTANCE \n" );		break;
-		case CDERR_NOHOOK:			MYTRACE( "CDERR_NOHOOK \n" );			break;
-		case CDERR_NOTEMPLATE:		MYTRACE( "CDERR_NOTEMPLATE \n" );		break;
-		case CDERR_STRUCTSIZE:		MYTRACE( "CDERR_STRUCTSIZE \n" );		break;
-		case CFERR_MAXLESSTHANMIN:	MYTRACE( "CFERR_MAXLESSTHANMIN \n" );	break;
-		case CFERR_NOFONTS:			MYTRACE( "CFERR_NOFONTS \n" );			break;
+		case CDERR_FINDRESFAILURE:	MYTRACE_A( "CDERR_FINDRESFAILURE \n" );	break;
+		case CDERR_INITIALIZATION:	MYTRACE_A( "CDERR_INITIALIZATION \n" );	break;
+		case CDERR_LOCKRESFAILURE:	MYTRACE_A( "CDERR_LOCKRESFAILURE \n" );	break;
+		case CDERR_LOADRESFAILURE:	MYTRACE_A( "CDERR_LOADRESFAILURE \n" );	break;
+		case CDERR_LOADSTRFAILURE:	MYTRACE_A( "CDERR_LOADSTRFAILURE \n" );	break;
+		case CDERR_MEMALLOCFAILURE:	MYTRACE_A( "CDERR_MEMALLOCFAILURE\n" );	break;
+		case CDERR_MEMLOCKFAILURE:	MYTRACE_A( "CDERR_MEMLOCKFAILURE \n" );	break;
+		case CDERR_NOHINSTANCE:		MYTRACE_A( "CDERR_NOHINSTANCE \n" );		break;
+		case CDERR_NOHOOK:			MYTRACE_A( "CDERR_NOHOOK \n" );			break;
+		case CDERR_NOTEMPLATE:		MYTRACE_A( "CDERR_NOTEMPLATE \n" );		break;
+		case CDERR_STRUCTSIZE:		MYTRACE_A( "CDERR_STRUCTSIZE \n" );		break;
+		case CFERR_MAXLESSTHANMIN:	MYTRACE_A( "CFERR_MAXLESSTHANMIN \n" );	break;
+		case CFERR_NOFONTS:			MYTRACE_A( "CFERR_NOFONTS \n" );			break;
 		}
 #endif
 		return FALSE;
 	}else{
-//		MYTRACE( "LOGFONT.lfPitchAndFamily = " );
+//		MYTRACE_A( "LOGFONT.lfPitchAndFamily = " );
 //		if( plf->lfPitchAndFamily & DEFAULT_PITCH ){
-//			MYTRACE( "DEFAULT_PITCH " );
+//			MYTRACE_A( "DEFAULT_PITCH " );
 //		}
 //		if( plf->lfPitchAndFamily & FIXED_PITCH ){
-//			MYTRACE( "FIXED_PITCH " );
+//			MYTRACE_A( "FIXED_PITCH " );
 //		}
 //		if( plf->lfPitchAndFamily & VARIABLE_PITCH ){
-//			MYTRACE( "VARIABLE_PITCH " );
+//			MYTRACE_A( "VARIABLE_PITCH " );
 //		}
 //		if( plf->lfPitchAndFamily & FF_DECORATIVE  ){
-//			MYTRACE( "FF_DECORATIVE " );
+//			MYTRACE_A( "FF_DECORATIVE " );
 //		}
 //		if( plf->lfPitchAndFamily & FF_DONTCARE ){
-//			MYTRACE( "FF_DONTCARE " );
+//			MYTRACE_A( "FF_DONTCARE " );
 //		}
 //		if( plf->lfPitchAndFamily & FF_MODERN ){
-//			MYTRACE( "FF_MODERN " );
+//			MYTRACE_A( "FF_MODERN " );
 //		}
 //		if( plf->lfPitchAndFamily & FF_ROMAN ){
-//			MYTRACE( "FF_ROMAN " );
+//			MYTRACE_A( "FF_ROMAN " );
 //		}
 //		if( plf->lfPitchAndFamily & FF_SCRIPT ){
-//			MYTRACE( "FF_SCRIPT " );
+//			MYTRACE_A( "FF_SCRIPT " );
 //		}
 //		if( plf->lfPitchAndFamily & FF_SWISS ){
-//			MYTRACE( "FF_SWISS " );
+//			MYTRACE_A( "FF_SWISS " );
 //		}
-//		MYTRACE( "\n" );
+//		MYTRACE_A( "\n" );
 
-//		MYTRACE( "/* LOGFONT‚Ì‰Šú‰» */\n" );
-//		MYTRACE( "memset( &m_pShareData->m_Common.m_lf, 0, sizeof(LOGFONT) );\n" );
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfHeight			= %d;\n", m_pShareData->m_Common.m_lf.lfHeight			);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfWidth			= %d;\n", m_pShareData->m_Common.m_lf.lfWidth			);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfEscapement		= %d;\n", m_pShareData->m_Common.m_lf.lfEscapement		);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfOrientation		= %d;\n", m_pShareData->m_Common.m_lf.lfOrientation		);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfWeight			= %d;\n", m_pShareData->m_Common.m_lf.lfWeight			);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfItalic			= %d;\n", m_pShareData->m_Common.m_lf.lfItalic			);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfUnderline		= %d;\n", m_pShareData->m_Common.m_lf.lfUnderline		);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfStrikeOut		= %d;\n", m_pShareData->m_Common.m_lf.lfStrikeOut		);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfCharSet			= %d;\n", m_pShareData->m_Common.m_lf.lfCharSet			);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfOutPrecision	= %d;\n", m_pShareData->m_Common.m_lf.lfOutPrecision	);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfClipPrecision	= %d;\n", m_pShareData->m_Common.m_lf.lfClipPrecision	);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfQuality			= %d;\n", m_pShareData->m_Common.m_lf.lfQuality			);
-//		MYTRACE( "m_pShareData->m_Common.m_lf.lfPitchAndFamily	= %d;\n", m_pShareData->m_Common.m_lf.lfPitchAndFamily	);
-//		MYTRACE( "strcpy( m_pShareData->m_Common.m_lf.lfFaceName, \"%s\" );\n", m_pShareData->m_Common.m_lf.lfFaceName	);
+//		MYTRACE_A( "/* LOGFONT‚Ì‰Šú‰» */\n" );
+//		MYTRACE_A( "memset( &m_pShareData->m_Common.m_lf, 0, sizeof(LOGFONT) );\n" );
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfHeight			= %d;\n", m_pShareData->m_Common.m_lf.lfHeight			);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfWidth			= %d;\n", m_pShareData->m_Common.m_lf.lfWidth			);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfEscapement		= %d;\n", m_pShareData->m_Common.m_lf.lfEscapement		);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfOrientation		= %d;\n", m_pShareData->m_Common.m_lf.lfOrientation		);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfWeight			= %d;\n", m_pShareData->m_Common.m_lf.lfWeight			);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfItalic			= %d;\n", m_pShareData->m_Common.m_lf.lfItalic			);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfUnderline		= %d;\n", m_pShareData->m_Common.m_lf.lfUnderline		);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfStrikeOut		= %d;\n", m_pShareData->m_Common.m_lf.lfStrikeOut		);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfCharSet			= %d;\n", m_pShareData->m_Common.m_lf.lfCharSet			);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfOutPrecision	= %d;\n", m_pShareData->m_Common.m_lf.lfOutPrecision	);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfClipPrecision	= %d;\n", m_pShareData->m_Common.m_lf.lfClipPrecision	);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfQuality			= %d;\n", m_pShareData->m_Common.m_lf.lfQuality			);
+//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfPitchAndFamily	= %d;\n", m_pShareData->m_Common.m_lf.lfPitchAndFamily	);
+//		MYTRACE_A( "strcpy( m_pShareData->m_Common.m_lf.lfFaceName, \"%s\" );\n", m_pShareData->m_Common.m_lf.lfFaceName	);
 
 	}
 
@@ -2656,7 +2656,7 @@ void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 				}
 			}
 			szLabel[k] = '\0';
-//			MYTRACE( "szLabel=[%s]\n", szLabel );
+//			MYTRACE_A( "szLabel=[%s]\n", szLabel );
 
 
 

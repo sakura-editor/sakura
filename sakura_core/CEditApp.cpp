@@ -585,7 +585,7 @@ LRESULT CEditApp::DispatchEvent(
 			return 0L;
 
 		case MYWM_NOTIFYICON:
-//			MYTRACE( "MYWM_NOTIFYICON\n" );
+//			MYTRACE_A( "MYWM_NOTIFYICON\n" );
 			switch (lParam){
 //キーワード：トレイ右クリックメニュー設定
 //	From Here Oct. 12, 2000 JEPRO 左右とも同一処理になっていたのを別々に処理するように変更
@@ -658,7 +658,7 @@ LRESULT CEditApp::DispatchEvent(
 				bLDClick = false;
 				return 0L;
 			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UPに変更
-//				MYTRACE( "WM_LBUTTONDOWN\n" );
+//				MYTRACE_A( "WM_LBUTTONDOWN\n" );
 				/* 03/02/20 左ダブルクリック後はメニューを表示しない ai Start */
 				if( bLDClick ){
 					bLDClick = false;
@@ -1401,7 +1401,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	);
 	::PostMessage( m_hWnd, WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE( "nId=%d\n", nId );
+//	MYTRACE_A( "nId=%d\n", nId );
 
 	m_bUseTrayMenu = false;
 
@@ -1471,7 +1471,7 @@ int	CEditApp::CreatePopUpMenu_R( void )
 	);
 	::PostMessage( m_hWnd, WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE( "nId=%d\n", nId );
+//	MYTRACE_A( "nId=%d\n", nId );
 
 	m_bUseTrayMenu = false;
 

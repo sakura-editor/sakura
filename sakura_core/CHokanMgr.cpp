@@ -62,10 +62,10 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	case WM_GETDLGCODE:
 		pMsg = (MSG*) lParam; // pointer to an MSG structure
 		if( NULL == pMsg ){
-//			MYTRACE( "WM_GETDLGCODE  pMsg==NULL\n" );
+//			MYTRACE_A( "WM_GETDLGCODE  pMsg==NULL\n" );
 			return 0;
 		}
-//		MYTRACE( "WM_GETDLGCODE  pMsg->message = %xh\n", pMsg->message );
+//		MYTRACE_A( "WM_GETDLGCODE  pMsg->message = %xh\n", pMsg->message );
 		return DLGC_WANTALLKEYS;/* すべてのキーストロークを私に下さい */	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	}
 	return CallWindowProc( (WNDPROC)gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
@@ -489,7 +489,7 @@ BOOL CHokanMgr::OnKillFocus( WPARAM wParam, LPARAM lParam )
 BOOL CHokanMgr::DoHokan( int nVKey )
 {
 #ifdef _DEBUG
-	MYTRACE( "CHokanMgr::DoHokan( nVKey==%xh )\n", nVKey );
+	MYTRACE_A( "CHokanMgr::DoHokan( nVKey==%xh )\n", nVKey );
 #endif
 	/* 補完候補決定キー */
 	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
@@ -560,7 +560,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //	//	switch( vkey ){
 //	//	}
 //
-//		MYTRACE( "CHokanMgr::OnCharToItem vkey=%xh\n", vkey );
+//		MYTRACE_A( "CHokanMgr::OnCharToItem vkey=%xh\n", vkey );
 //		return -1;
 //	}
 
@@ -572,7 +572,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	vkey = LOWORD(wParam);		// virtual-key code
 	nCaretPos = HIWORD(wParam);	// caret position
 	hwndLB = lParam;			// handle to list box
-//	MYTRACE( "CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );
+//	MYTRACE_A( "CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );
 	switch( vkey ){
 	case VK_HOME:
 	case VK_END:
