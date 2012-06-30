@@ -1393,7 +1393,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	cProfile.IOProfileData( pszSecName, LTEXT("szExtHelp")			, types.m_szExtHelp );
 
 	cProfile.IOProfileData( pszSecName, LTEXT("szExtHtmlHelp")		, types.m_szExtHtmlHelp );
-	cProfile.IOProfileData( pszSecName, LTEXT("bHtmlHelpIsSingle")	, types.m_bHokanLoHiCase );
+	cProfile.IOProfileData( pszSecName, LTEXT("bHtmlHelpIsSingle")	, types. ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
 
 	cProfile.IOProfileData( pszSecName, LTEXT("bPriorCesu8")		, types.m_bPriorCesu8 );
 	cProfile.IOProfileData( pszSecName, LTEXT("eDefaultCodetype")	, types.m_eDefaultCodetype );
