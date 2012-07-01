@@ -143,32 +143,25 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	if(msg == WM_DROPFILES) 
 	do {
 		//	From Here 2007.09.02 genta 
-		char sPath[MAX_PATH + 1];
-		char szWork[MAX_PATH + 1];
+		TCHAR sPath[MAX_PATH + 1];
 		if( DragQueryFile((HDROP)wparam, 0, NULL, 0 ) > sizeof(sPath) - 1 ){
 			// skip if the length of the path exceeds buffer capacity
 			break;
 		}
 		DragQueryFile((HDROP)wparam, 0, sPath, sizeof(sPath) - 1);
 
-		/* ショートカット(.lnk)の解決 */
-		//	ショートカットの先は別のディレクトリかもしれないので
-		//	ファイル名を切り捨てる前に変換する
-		if( TRUE == ResolveShortcutLink( NULL, sPath, szWork ) ){
-			_tcscpy( sPath, szWork );
-		}
-		
+		//ファイルパスの解決
+		ResolvePath(sPath);
+
 		//	ファイルがドロップされた場合はフォルダを切り出す
 		//	フォルダの場合は最後が失われるのでsplitしてはいけない．
 		if( IsFileExists( sPath, true )){	//	第2引数がtrueだとディレクトリは対象外
+			TCHAR szWork[MAX_PATH + 1];
 			SplitPath_FolderAndFile( sPath, szWork, NULL );
 			_tcscpy( sPath, szWork );
 		}
-		/* ロングファイル名を取得する */
-		if( TRUE == ::GetLongFileName( sPath, szWork ) ){
-			_tcscpy( sPath, szWork );
-		}
-		SetWindowText(hwnd, szWork);
+
+		SetWindowText(hwnd, sPath);
 	}
 	while(0);
 

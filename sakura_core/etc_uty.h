@@ -98,6 +98,7 @@ SAKURA_CORE_API BOOL SelectDir(HWND, const char*, const char*, char* );	/* ƒtƒHƒ
 //SAKURA_CORE_API ITEMIDLIST* CreateItemIDList( const char* );	/* ƒpƒX–¼‚É‘Î‚·‚éƒAƒCƒeƒ€‚h‚cƒŠƒXƒg‚ğæ“¾‚·‚é */
 //SAKURA_CORE_API BOOL DeleteItemIDList( ITEMIDLIST* );/* ƒAƒCƒeƒ€‚h‚cƒŠƒXƒg‚ğíœ‚·‚é */
 SAKURA_CORE_API BOOL ResolveShortcutLink(HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath);/* ƒVƒ‡[ƒgƒJƒbƒg(.lnk)‚Ì‰ğŒˆ */
+SAKURA_CORE_API void ResolvePath(TCHAR* pszPath); //!< ƒVƒ‡[ƒgƒJƒbƒg‚Ì‰ğŒˆ‚Æƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚Ö•ÏŠ·‚ğs‚¤B
 
 /*
 ||	ˆ—’†‚Ìƒ†[ƒU[‘€ì‚ğ‰Â”\‚É‚·‚é

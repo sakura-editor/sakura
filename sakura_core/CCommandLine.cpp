@@ -452,17 +452,8 @@ void CCommandLine::ParseCommandLine( void )
 
 	/* ファイル名 */
 	if( _T('\0') != m_fi.m_szPath[0] ){
-		/* ショートカット(.lnk)の解決 */
-		if( TRUE == ResolveShortcutLink( NULL, m_fi.m_szPath, szPath ) ){
-			strcpy( m_fi.m_szPath, szPath );
-		}
-		/* ロングファイル名を取得する */
-		if( TRUE == ::GetLongFileName( m_fi.m_szPath, szPath ) ){
-			strcpy( m_fi.m_szPath, szPath );
-		}
-
-		/* MRUから情報取得 */
-
+		//ファイルパスの解決
+		ResolvePath(m_fi.m_szPath);
 	}
 
 	return;

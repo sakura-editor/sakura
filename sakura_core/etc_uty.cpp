@@ -1866,6 +1866,32 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 
 
 
+void ResolvePath(TCHAR* pszPath)
+{
+	// pszPath -> pSrc
+	TCHAR* pSrc = pszPath;
+
+	// ショートカット(.lnk)の解決: pSrc -> szBuf -> pSrc
+	TCHAR szBuf[_MAX_PATH];
+	if( ResolveShortcutLink( NULL, pSrc, szBuf ) ){
+		pSrc = szBuf;
+	}
+
+	// ロングファイル名を取得する: pSrc -> szBuf2 -> pSrc
+	TCHAR szBuf2[_MAX_PATH];
+	if( ::GetLongFileName( pSrc, szBuf2 ) ){
+		pSrc = szBuf2;
+	}
+
+	// pSrc -> pszPath
+	if(pSrc != pszPath){
+		_tcscpy(pszPath, pSrc);
+	}
+}
+
+
+
+
 /*!
 	処理中のユーザー操作を可能にする
 	ブロッキングフック(?)（メッセージ配送

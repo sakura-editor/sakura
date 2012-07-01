@@ -2981,8 +2981,6 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 {
 	POINT		pt;
 	WORD		cFiles, i;
-	char		szFile[_MAX_PATH + 1];
-	char		szWork[_MAX_PATH + 1];
 	BOOL		bOpened;
 	EditInfo*	pfi;
 	HWND		hWndOwner;
@@ -2997,7 +2995,9 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 	if( cFiles > m_pShareData->m_Common.m_nDropFileNumMax ){
 		cFiles = m_pShareData->m_Common.m_nDropFileNumMax;
 	}
+
 	for( i = 0; i < cFiles; i++ ) {
+		TCHAR		szFile[_MAX_PATH + 1];
 		// 2008.07.28 nasukoji	長すぎるパスをドロップされると異常終了することへの対策
 		if( ::DragQueryFile( hDrop, i, NULL, 0 ) >= _MAX_PATH ){
 			ErrorBeep();
@@ -3008,14 +3008,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 		}
 
 		::DragQueryFile( hDrop, i, szFile, sizeof(szFile) );
-		/* ショートカット(.lnk)の解決 */
-		if( TRUE == ResolveShortcutLink( NULL, szFile, szWork ) ){
-			strcpy( szFile, szWork );
-		}
-		/* ロングファイル名を取得する */
-		if( TRUE == ::GetLongFileName( szFile, szWork ) ){
-				strcpy( szFile, szWork );
-		}
+		ResolvePath(szFile);
 
 		/* 指定ファイルが開かれているか調べる */
 		if( CShareData::getInstance()->IsPathOpened( szFile, &hWndOwner ) ){
