@@ -31,21 +31,18 @@
 
 #include "StdAfx.h"
 #include "global.h"
-#include "sakura_rc.h"
 #include "CPropTypes.h"
 #include "Debug.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
-#include <stdio.h>	//@@@ 2001.11.17 add MIK
 #include "charcode.h"
-
+#include "sakura_rc.h"
 #include "sakura.hh"
+
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDC_CHECK_KEYHELP,				HIDC_CHECK_KEYHELP,				//キーワードヘルプ機能を使う
-//	IDC_FRAME_KEYHELP,				HIDC_LIST_KEYHELP,				//辞書ファイル一覧(&L)		
 	IDC_LIST_KEYHELP,				HIDC_LIST_KEYHELP,				//SysListView32
 	IDC_BUTTON_KEYHELP_UPD,			HIDC_BUTTON_KEYHELP_UPD,		//更新(&E)
-//	IDC_LABEL_KEYHELP_KEYWORD,		HIDC_EDIT_KEYHELP,				//辞書ファイル
 	IDC_EDIT_KEYHELP,				HIDC_EDIT_KEYHELP,				//EDITTEXT
 	IDC_BUTTON_KEYHELP_REF,			HIDC_BUTTON_KEYHELP_REF,		//参照(&O)...
 	IDC_BUTTON_KEYHELP_TOP,			HIDC_BUTTON_KEYHELP_TOP,		//先頭(&T)
@@ -125,8 +122,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 	static int	nPrevIndex = -1;	//更新時におかしくなるバグ修正 @@@ 2003.03.26 MIK
 
 	BOOL	bUse;						/* 辞書を 使用する/しない */
-	char	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
-	char	szPath[_MAX_PATH];			/* ファイルパス */
+	TCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
+	TCHAR	szPath[_MAX_PATH];			/* ファイルパス */
 	DWORD	dwStyle;
 
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
@@ -144,31 +141,34 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 25 / 100;
-		col.pszText  = "   辞書ファイル";	/* 指定辞書ファイルの使用可否 */
+		col.pszText  = _T("   辞書ファイル");	/* 指定辞書ファイルの使用可否 */
 		col.iSubItem = 0;
 		ListView_InsertColumn( hwndList, 0, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 55 / 100;
-		col.pszText  = "辞書の説明";		/* 指定辞書の１行目を取得 */
+		col.pszText  = _T("辞書の説明");		/* 指定辞書の１行目を取得 */
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = (rc.right - rc.left) * 18 / 100;
-		col.pszText  = "パス";				/* 指定辞書ファイルパス */
+		col.pszText  = _T("パス");				/* 指定辞書ファイルパス */
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
 		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
 		SetData_KeyHelp( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
+
 		/* リストがあれば先頭をフォーカスする */
 		if(ListView_GetItemCount(hwndList) > 0){
 			ListView_SetItemState( hwndList, 0, LVIS_SELECTED /*| LVIS_FOCUSED*/, LVIS_SELECTED /*| LVIS_FOCUSED*/ );
-		}else{
-		/* リストがなければ初期値として用途を表示 */
-			::SetDlgItemText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, "辞書ファイルの１行目の文字列" );
-			::SetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, "キーワード辞書ファイル パス" );
 		}
+		/* リストがなければ初期値として用途を表示 */
+		else{
+			::SetDlgItemText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, _T("辞書ファイルの１行目の文字列") );
+			::SetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, _T("キーワード辞書ファイル パス") );
+		}
+
 		/* 初期状態を設定 */
 		SendMessage(hwndDlg, WM_COMMAND, (WPARAM)MAKELONG(IDC_CHECK_KEYHELP,BN_CLICKED), 0 );
 
@@ -185,7 +185,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 			switch( wID ){
 			case IDC_CHECK_KEYHELP:	/* キーワードヘルプ機能を使う */
-				if( FALSE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ){
+				if( !IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ){
 					//EnableWindow( GetDlgItem( hwndDlg, IDC_CHECK_KEYHELP ), FALSE );			//キーワードヘルプ機能を使う(&K)
 					EnableWindow( GetDlgItem( hwndDlg, IDC_FRAME_KEYHELP ), FALSE );		  	//辞書ファイル一覧(&L)
 					EnableWindow( GetDlgItem( hwndDlg, IDC_LIST_KEYHELP ), FALSE );         	//SysListView32
@@ -238,7 +238,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 				if(wID == IDC_BUTTON_KEYHELP_INS){	/* 挿入 */
 					if( nIndex2 >= MAX_KEYHELP_FILE ){
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "これ以上登録できません。");
+						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("これ以上登録できません。"));
 						return FALSE;
 					}if( -1 == nIndex ){
 						/* 選択中でなければ最後にする。 */
@@ -248,39 +248,43 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 					}
 				}else{								/* 更新 */
 					if( -1 == nIndex ){
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "更新する辞書をリストから選択してください。");
+						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("更新する辞書をリストから選択してください。"));
 						return FALSE;
 					}
 				}
 				/* 更新するキー情報を取得する。 */
-				memset(szPath, 0, sizeof(szPath));
-				::GetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, szPath, sizeof(szPath) );
-				if( szPath[0] == '\0' ) return FALSE;
+				memset(szPath, 0, _countof(szPath));
+				::GetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, szPath, _countof(szPath) );
+				if( szPath[0] == _T('\0') ) return FALSE;
 				/* 重複検査 */
 				nIndex2 = ListView_GetItemCount(hwndList);
-				char szPath2[_MAX_PATH];
+				TCHAR szPath2[_MAX_PATH];
 				int i;
 				for(i = 0; i < nIndex2; i++){
-					memset(szPath2, 0, sizeof(szPath2));
-					ListView_GetItemText(hwndList, i, 2, szPath2, sizeof(szPath2));
-					if( strcmp(szPath, szPath2) == 0 ){
+					memset(szPath2, 0, _countof(szPath2));
+					ListView_GetItemText(hwndList, i, 2, szPath2, _countof(szPath2));
+					if( _tcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */
 						}else{
-							::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "既に登録済みの辞書です。");
+							::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("既に登録済みの辞書です。"));
 							return FALSE;
 						}
 					}
 				}
+
 				/* 指定したパスに辞書があるかチェックする */
-				FILE* fp;
-				if( (fp=_tfopen_absini(szPath,"r")) == NULL ){	// 2006.02.01 genta 本体からの相対パスを受け付ける	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
-					return FALSE;
+				{
+					FILE* fp;
+					if( (fp=_tfopen_absini(szPath,"r")) == NULL ){	// 2006.02.01 genta 本体からの相対パスを受け付ける	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), szPath );
+						return FALSE;
+					}
+					// 開けたなら1行目を取得してから閉じる
+					fgets( szAbout, _countof(szAbout), fp );
+					fclose( fp );
 				}
-				/* 開けたなら1行目を取得してから閉じる */
-				fgets( szAbout, sizeof(szAbout), fp );
-				fclose( fp );
 				strcnv(szAbout);
+
 				/* ついでに辞書の説明を更新 */
 				::SetDlgItemText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書ファイルの概要 */
 				
@@ -310,6 +314,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				
 				/* デフォルトでチェックON */
 				ListView_SetCheckState(hwndList, nIndex, TRUE);
+
 				/* 更新したキーを選択する。 */
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData_KeyHelp( hwndDlg );
@@ -323,8 +328,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				ListView_DeleteItem( hwndList, nIndex );
 				/* リストがなくなったら初期値として用途を表示 */
 				if(ListView_GetItemCount(hwndList) == 0){
-					::SetDlgItemText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, "辞書ファイルの１行目の文字列" );
-					::SetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, "キーワード辞書ファイル パス" );
+					::SetDlgItemText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, _T("辞書ファイルの１行目の文字列") );
+					::SetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, _T("キーワード辞書ファイル パス") );
 				}/* リストの最後を削除した場合は、削除後のリストの最後を選択する。 */
 				else if(nIndex > ListView_GetItemCount(hwndList)-1){
 					ListView_SetItemState( hwndList, ListView_GetItemCount(hwndList)-1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -342,8 +347,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				if( 0 == nIndex ) return TRUE;	/* すでに先頭にある。 */
 				nIndex2 = 0;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, sizeof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, sizeof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
@@ -375,8 +380,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 - 1 == nIndex ) return TRUE;	/* すでに最終にある。 */
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, sizeof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, sizeof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
 				/* キーを追加する。 */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
@@ -411,8 +416,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex - 1;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, sizeof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, sizeof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
 				/* キーを追加する。 */
 				/* ON-OFF */
@@ -447,8 +452,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				if( nIndex2 <= 1 ) return TRUE;
 				nIndex2 = nIndex + 2;
 				bUse = ListView_GetCheckState(hwndList, nIndex);
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, sizeof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, sizeof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
 				/* キーを追加する。 */
 				/* ON-OFF */
 				lvi.mask     = LVIF_TEXT;
@@ -476,7 +481,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
-				{	CDlgOpenFile	cDlgOpenFile;
+				{
+					CDlgOpenFile	cDlgOpenFile;
 					/* ファイルオープンダイアログの初期化 */
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 					TCHAR szWk[_MAX_PATH];
@@ -486,11 +492,12 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 					}else{
 						::lstrcpy( szPath, szWk );
 					}
-					cDlgOpenFile.Create( m_hInstance, hwndDlg, "*.khp", szPath );
+					cDlgOpenFile.Create( m_hInstance, hwndDlg, _T("*.khp"), szPath );
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 						::SetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, szPath );
 					}
-				}return TRUE;
+				}
+				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_IMPORT:	/* インポート */
 				Import_KeyHelp(hwndDlg);
@@ -530,8 +537,8 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 					nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_FOCUSED );
 					return FALSE;
 				}
-				ListView_GetItemText(hwndList, nIndex, 1, szAbout, sizeof(szAbout));
-				ListView_GetItemText(hwndList, nIndex, 2, szPath, sizeof(szPath));
+				ListView_GetItemText(hwndList, nIndex, 1, szAbout, _countof(szAbout));
+				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
 				::SetDlgItemText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書の説明 */
 				::SetDlgItemText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ファイルパス */
 				nPrevIndex = nIndex;
@@ -566,7 +573,8 @@ void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_KeyHelpArr[0].m_szPath ) - 1 ), (LPARAM)0 );
-	/* 使用する・使用しない */
+
+	// 使用する・使用しない
 	if( m_Types.m_bUseKeyWordHelp == TRUE )
 		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP, BST_CHECKED );
 	else
@@ -592,7 +600,7 @@ void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
 	::SendMessage( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, dwStyle );
 	/* データ表示 */
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
-		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == '\0' ) break;
+		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == _T('\0') ) break;
 		/* ON-OFF */
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
@@ -614,7 +622,8 @@ void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
 		/* ON/OFFを取得してチェックボックスにセット（とりあえず応急処置） */
 		if(1 == m_Types.m_KeyHelpArr[i].m_nUse){	// ON
 			ListView_SetCheckState(hwndWork, i, TRUE);
-		}else{
+		}
+		else{
 			ListView_SetCheckState(hwndWork, i, FALSE);
 		}
 	}
@@ -631,8 +640,8 @@ int CPropTypes::GetData_KeyHelp( HWND hwndDlg )
 	HWND	hwndList;
 	int	nIndex, i;
 	int		nUse;						/* 辞書ON(1)/OFF(0) */
-	char	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
-	char	szPath[_MAX_PATH];			/* ファイルパス */
+	TCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
+	TCHAR	szPath[_MAX_PATH];			/* ファイルパス */
 //	m_nPageNum = 4;	//自分のページ番号
 
 	/* 使用する・使用しない */
@@ -657,19 +666,19 @@ int CPropTypes::GetData_KeyHelp( HWND hwndDlg )
 	nIndex = ListView_GetItemCount( hwndList );
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( i < nIndex ){
-			nUse	= 0;	/* OFF */
-			szAbout[0]	= '\0';
-			szPath[0]	= '\0';
+			nUse	= 0;	/* 辞書ON(1)/OFF(0) */
+			szAbout[0]	= _T('\0');
+			szPath[0]	= _T('\0');
 			/* チェックボックス状態を取得してnUseにセット */
 			if(ListView_GetCheckState(hwndList, i))
 				nUse = 1;
-			ListView_GetItemText( hwndList, i, 1, szAbout, sizeof(szAbout) );
-			ListView_GetItemText( hwndList, i, 2, szPath, sizeof(szPath) );
+			ListView_GetItemText( hwndList, i, 1, szAbout, _countof(szAbout) );
+			ListView_GetItemText( hwndList, i, 2, szPath, _countof(szPath) );
 			m_Types.m_KeyHelpArr[i].m_nUse = nUse;
-			strcpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
-			strcpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
+			_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
+			_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
 		}else{	/* 未登録部分はクリアする */
-			m_Types.m_KeyHelpArr[i].m_szPath[0] = '\0';
+			m_Types.m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 		}
 	}
 	/* 辞書の冊数を取得 */
@@ -689,10 +698,10 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 	CDlgOpenFile	cDlgOpenFile;
 	char	szPath[_MAX_PATH + 1];
 	char	szInitDir[_MAX_PATH + 1];
-	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szPath, _T("") );
+	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create( m_hInstance, hwndDlg, "*.txt", szInitDir );
+	cDlgOpenFile.Create( m_hInstance, hwndDlg, _T("*.txt"), szInitDir );
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
 		return FALSE;
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
@@ -701,7 +710,7 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 
 	FILE		*fp;
 	if( (fp = fopen(szPath, "r")) == NULL ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
+		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), szPath );
 		return FALSE;
 	}
 	/* LIST内のデータ全削除 */
@@ -780,8 +789,8 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_nUse = b_enable_flag;	// 2007.02.03 genta
-		strcpy(m_Types.m_KeyHelpArr[i].m_szAbout, p2);
-		strcpy(m_Types.m_KeyHelpArr[i].m_szPath, p3);
+		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, p2);
+		_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath, p3);
 		i++;
 	}
 	fclose(fp);
@@ -808,8 +817,8 @@ BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 	CDlgOpenFile	cDlgOpenFile;
 	char	szXPath[_MAX_PATH + 1];
 	char	szInitDir[_MAX_PATH + 1];
-	strcpy( szXPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szXPath, "" );
+	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create( m_hInstance, hwndDlg, "*.txt", szInitDir );
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szXPath ) ){
@@ -852,19 +861,19 @@ BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 
 	@date 2006.04.10 fon 新規作成
 */
-static char* strcnv(char *str)
+static TCHAR* strcnv(TCHAR *str)
 {
-	char* p=str;
+	TCHAR* p=str;
 	/* 改行コードの削除 */
-	if( NULL != (p=strchr(p,'\n')) )
-		*p='\0';
+	if( NULL != (p=_tcschr(p,_T('\n'))) )
+		*p=_T('\0');
 	p=str;
-	if( NULL != (p=strchr(p,'\r')) )
-		*p='\0';
+	if( NULL != (p=_tcschr(p,_T('\r'))) )
+		*p=_T('\0');
 	/* カンマの置換 */
 	p=str;
-	for(; (p=strchr(p,',')) != NULL; ){
-		*p='.';
+	for(; (p=_tcschr(p,_T(','))) != NULL; ){
+		*p=_T('.');
 	}
 	return str;
 }
@@ -874,21 +883,21 @@ static char* strcnv(char *str)
 	@date 2006.04.10 fon 新規作成
 	@date 2006.09.14 genta ディレクトリがない場合に最初の1文字が切れないように
 */
-static char* GetFileName(const char *fullpath)
+static TCHAR* GetFileName(const TCHAR* fullpath)
 {
-	char *p, *pszName;
-	pszName = p = (char *)fullpath;
-	while( *p != '\0'  ){
+	const TCHAR *p, *pszName;
+	pszName = p = fullpath;
+	while( *p != _T('\0')  ){
 		if( _IS_SJIS_1( (unsigned char)*p ) && _IS_SJIS_2( (unsigned char)p[1] ) ){
 			p+=2;
-		}else if( *p == '\\' ){
+		}else if( *p == _T('\\') ){
 			pszName = p + 1;
 			p++;
 		}else{
 			p++;
 		}
 	}
-	return pszName;
+	return const_cast<TCHAR*>(pszName);
 }
 
 /*[EOF]*/
