@@ -17,10 +17,11 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 
+#ifndef SAKURA_TYPES_CPROPTYPES_H_
+#define SAKURA_TYPES_CPROPTYPES_H_
+
 class CPropTypes;
 
-#ifndef _CPROPTYPES_H_
-#define _CPROPTYPES_H_
 
 #include <windows.h>
 #include "CShareData.h"
@@ -33,15 +34,15 @@ class CPropTypes;
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CPropTypes
-{
+class SAKURA_CORE_API CPropTypes{
+
 public:
 	/*
 	||  Constructors
 	*/
 	CPropTypes();
 	~CPropTypes();
-	void Create( HINSTANCE, HWND );	/* 初期化 */
+	void Create( HINSTANCE, HWND );	//!< 初期化
 
 	/*
 	||  Attributes & Operations
@@ -125,7 +126,7 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CPROPTYPES_H_ */
+#endif /* SAKURA_TYPES_CPROPTYPES_H_ */
 
 
 /*[EOF]*/
