@@ -18,13 +18,6 @@ class COpeBuf;
 #ifndef _COPEBUF_H_
 #define _COPEBUF_H_
 
-/* アンドゥバッファ用 操作コード */
-enum enumOPECODE {
-	OPE_INSERT		= 1,
-	OPE_DELETE		= 2,
-	OPE_MOVECARET	= 3,
-};
-
 
 #include "global.h"
 class COpeBlk;/// 2002/2/10 aroka
