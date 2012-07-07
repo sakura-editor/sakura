@@ -104,11 +104,11 @@ bool CEol::SetType( EEolType t )
 {
 	if( t < EOL_NONE || EOL_CR < t ){
 		//	ˆÙí’l
-		m_enumEOLType = EOL_CRLF;
+		m_eEolType = EOL_CRLF;
 		return false;
 	}
 	//	³‚µ‚¢’l
-	m_enumEOLType = t;
+	m_eEolType = t;
 	return true;
 }
 
