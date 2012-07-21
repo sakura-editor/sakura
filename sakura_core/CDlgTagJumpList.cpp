@@ -385,9 +385,9 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	ListView_InsertColumn( hwndList, 5, &col );
 
 	/* çsëIë */
-	lngStyle = ::SendMessage( hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	lngStyle = ListView_GetExtendedListViewStyle( hwndList );
 	lngStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessage( hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+	ListView_SetExtendedListViewStyle( hwndList, lngStyle );
 
 	HWND hwndKey = ::GetDlgItem( m_hWnd, IDC_KEYWORD );
 	if( m_lParam == 0 ){

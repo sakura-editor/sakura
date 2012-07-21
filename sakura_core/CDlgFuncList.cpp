@@ -1110,8 +1110,8 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	LV_COLUMN	col;
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_FL );
 	// 2005.10.21 zenryaku 1çsëIë
-	SendMessage(hwndList, LVM_SETEXTENDEDLISTVIEWSTYLE, 0,
-		SendMessage(hwndList, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0) | LVS_EX_FULLROWSELECT);
+	ListView_SetExtendedListViewStyle(hwndList,
+		ListView_GetExtendedListViewStyle(hwndList) | LVS_EX_FULLROWSELECT);
 
 	::GetWindowRect( hwndList, &rc );
 	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );

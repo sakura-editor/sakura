@@ -123,9 +123,9 @@ void CDlgCtrlCode::SetData( void )
 	ListView_DeleteAllItems( hwndWork );  /* リストを空にする */
 
 	/* 行選択 */
-	lngStyle = ::SendMessage( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	lngStyle = ListView_GetExtendedListViewStyle( hwndWork );
 	lngStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessage( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, lngStyle );
+	ListView_SetExtendedListViewStyle( hwndWork, lngStyle );
 
 	/* データ表示 */
 	TCHAR	tmp[10];

@@ -595,9 +595,9 @@ void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
 	/* 行選択 */
-	dwStyle = (DWORD)::SendMessage( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	dwStyle = ListView_GetExtendedListViewStyle( hwndWork );
 	dwStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessage( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, dwStyle );
+	ListView_SetExtendedListViewStyle( hwndWork, dwStyle );
 	/* データ表示 */
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == _T('\0') ) break;

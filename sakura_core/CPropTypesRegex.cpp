@@ -814,9 +814,9 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
 
 	/* 行選択 */
-	dwStyle = (DWORD)::SendMessage( hwndWork, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0 );
+	dwStyle = ListView_GetExtendedListViewStyle( hwndWork );
 	dwStyle |= LVS_EX_FULLROWSELECT;
-	::SendMessage( hwndWork, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, dwStyle );
+	ListView_SetExtendedListViewStyle( hwndWork, dwStyle );
 
 	/* データ表示 */
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
