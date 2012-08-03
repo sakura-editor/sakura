@@ -54,37 +54,7 @@ static const DWORD p_helpids[] = {	//11600
 	0, 0
 };
 
-
-/* 正規表現キーワード ダイアログプロシージャ */
-INT_PTR CALLBACK CPropTypes::PropTypesRegex(
-	HWND	hwndDlg,	// handle to dialog box
-	UINT	uMsg,		// message
-	WPARAM	wParam,		// first message parameter
-	LPARAM	lParam 		// second message parameter
-)
-{
-	PROPSHEETPAGE*	pPsp;
-	CPropTypes* pCPropTypes;
-	switch( uMsg ){
-	case WM_INITDIALOG:
-		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropTypes* )(pPsp->lParam);
-		if( NULL != pCPropTypes ){
-			return pCPropTypes->DispatchEvent_Regex( hwndDlg, uMsg, wParam, pPsp->lParam );
-		}
-		break;
-	default:
-		// Modified by KEITA for WIN64 2003.9.6
-		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCPropTypes ){
-			return pCPropTypes->DispatchEvent_Regex( hwndDlg, uMsg, wParam, lParam );
-		}
-		break;
-	}
-	return FALSE;
-}
-
-BOOL CPropTypes::Import_Regex(HWND hwndDlg)
+bool CPropRegex::Import(HWND hwndDlg)
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char		szPath[_MAX_PATH + 1];
@@ -108,7 +78,7 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-		return FALSE;
+		return false;
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
@@ -118,7 +88,7 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 	if( (fp = fopen(szPath, "r")) == NULL )
 	{
 		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
-		return FALSE;
+		return false;
 	}
 
 	j = 0;
@@ -185,10 +155,10 @@ BOOL CPropTypes::Import_Regex(HWND hwndDlg)
 	}
 	ListView_SetItemState( hwndWork, 0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 
-	return TRUE;
+	return true;
 }
 
-BOOL CPropTypes::Export_Regex(HWND hwndDlg)
+bool CPropRegex::Export(HWND hwndDlg)
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char		szPath[_MAX_PATH + 1];
@@ -209,7 +179,7 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
-		return FALSE;
+		return false;
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
@@ -219,7 +189,7 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 	if( (fp = fopen(szPath, "w")) == NULL )
 	{
 		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
-		return FALSE;
+		return false;
 	}
 
 	fprintf(fp, "// 正規表現キーワード Ver1\n");
@@ -252,11 +222,11 @@ BOOL CPropTypes::Export_Regex(HWND hwndDlg)
 		"ファイルへエクスポートしました。\n\n%s", szPath
 	);
 
-	return TRUE;
+	return true;
 }
 
 /* 正規表現キーワード メッセージ処理 */
-INT_PTR CPropTypes::DispatchEvent_Regex(
+INT_PTR CPropRegex::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -303,7 +273,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 		ListView_InsertColumn( hwndList, 1, &col );
 
 		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
-		SetData_Regex( hwndDlg );	/* ダイアログデータの設定 正規表現キーワード */
+		SetData( hwndDlg );	/* ダイアログデータの設定 正規表現キーワード */
 		if( CheckRegexpVersion( hwndDlg, IDC_LABEL_REGEX_VERSION, false ) == false )	//@@@ 2001.11.17 add MIK
 		{
 			::SetDlgItemText( hwndDlg, IDC_LABEL_REGEX_VERSION, _T("正規表現キーワードは使えません。") );
@@ -427,7 +397,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				ListView_SetItem( hwndList, &lvi );
 				//挿入したキーを選択する。
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_ADD:	/* 追加 */
@@ -457,11 +427,11 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				if( !RegexKakomiCheck(szKeyWord) )	//囲みをチェックする。
 				{
 					::MYMESSAGEBOX(
-							hwndDlg,
-							MB_OK | MB_ICONSTOP | MB_TOPMOST,
-							GSTR_APPNAME,
-							_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
-							_T("正規表現キーワード")
+						hwndDlg,
+						MB_OK | MB_ICONSTOP | MB_TOPMOST,
+						GSTR_APPNAME,
+						_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
+						_T("正規表現キーワード")
 					);
 					return FALSE;
 				}
@@ -492,7 +462,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				ListView_SetItem( hwndList, &lvi );
 				//追加したキーを選択する。
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_UPD:	/* 更新 */
@@ -561,7 +531,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 
 				//更新したキーを選択する。
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_DEL:	/* 削除 */
@@ -572,7 +542,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				ListView_DeleteItem( hwndList, nIndex );
 				//同じ位置のキーを選択状態にする。
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_TOP:	/* 先頭 */
@@ -598,7 +568,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				ListView_SetItem( hwndList, &lvi );
 				//移動したキーを選択状態にする。
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_LAST:	/* 最終 */
@@ -623,7 +593,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				//移動したキーを選択状態にする。
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_UP:	/* 上へ */
@@ -650,7 +620,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				ListView_SetItem( hwndList, &lvi );
 				//移動したキーを選択状態にする。
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_DOWN:	/* 下へ */
@@ -677,16 +647,16 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 				//移動したキーを選択状態にする。
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
-				GetData_Regex( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_IMPORT:	/* インポート */
-				Import_Regex(hwndDlg);
+				Import(hwndDlg);
 				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_EXPORT:	/* エクスポート */
-				Export_Regex(hwndDlg);
+				Export(hwndDlg);
 				return TRUE;
 			}
 			break;
@@ -702,7 +672,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 			return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 正規表現キーワード */
-			GetData_Regex( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -780,7 +750,7 @@ INT_PTR CPropTypes::DispatchEvent_Regex(
 }
 
 /* ダイアログデータの設定 正規表現キーワード */
-void CPropTypes::SetData_Regex( HWND hwndDlg )
+void CPropRegex::SetData( HWND hwndDlg )
 {
 	HWND		hwndWork;
 	int			i, j;
@@ -841,7 +811,7 @@ void CPropTypes::SetData_Regex( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 正規表現キーワード */
-int CPropTypes::GetData_Regex( HWND hwndDlg )
+int CPropRegex::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i, j;
@@ -895,7 +865,7 @@ int CPropTypes::GetData_Regex( HWND hwndDlg )
 	return TRUE;
 }
 
-BOOL CPropTypes::RegexKakomiCheck(const char *s)
+BOOL CPropRegex::RegexKakomiCheck(const char *s)
 {
 	const char	*p;
 	int	length, i;

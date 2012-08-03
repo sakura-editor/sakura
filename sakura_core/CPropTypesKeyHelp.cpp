@@ -67,43 +67,14 @@ static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 //#endif
 #endif
 
-static char* strcnv(char *str);
-static char* GetFileName(const char *fullpath);
-
-/*! キーワード辞書ファイル設定 ダイアログプロシージャ
-
-	@date 2006.04.10 fon 新規作成
-*/
-INT_PTR CALLBACK CPropTypes::PropTypesKeyHelp(
-	HWND	hwndDlg,	// handle to dialog box
-	UINT	uMsg,		// message
-	WPARAM	wParam,		// first message parameter
-	LPARAM	lParam 		// second message parameter
-)
-{
-	PROPSHEETPAGE*	pPsp;
-	CPropTypes* pCPropTypes;
-	switch( uMsg ){
-	case WM_INITDIALOG:
-		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropTypes* )(pPsp->lParam);
-		if( NULL != pCPropTypes ){
-			return pCPropTypes->DispatchEvent_KeyHelp( hwndDlg, uMsg, wParam, pPsp->lParam );
-		}break;
-	default:
-		pCPropTypes = ( CPropTypes* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCPropTypes ){
-			return pCPropTypes->DispatchEvent_KeyHelp( hwndDlg, uMsg, wParam, lParam );
-		}break;
-	}
-	return FALSE;
-}
+static TCHAR* strcnv(TCHAR *str);
+static TCHAR* GetFileName(const TCHAR *fullpath);
 
 /*! キーワード辞書ファイル設定 メッセージ処理
 
 	@date 2006.04.10 fon 新規作成
 */
-INT_PTR CPropTypes::DispatchEvent_KeyHelp(
+INT_PTR CPropKeyHelp::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -157,7 +128,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
 		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
-		SetData_KeyHelp( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
+		SetData( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
 
 		/* リストがあれば先頭をフォーカスする */
 		if(ListView_GetItemCount(hwndList) > 0){
@@ -317,7 +288,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 				/* 更新したキーを選択する。 */
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_DEL:	/* 削除 */
@@ -337,7 +308,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				else{
 					ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				}
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_TOP:	/* 先頭 */
@@ -371,7 +342,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_LAST:	/* 最終 */
@@ -405,7 +376,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_UP:	/* 上へ */
@@ -441,7 +412,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				ListView_SetCheckState(hwndList, nIndex2, bUse);
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_DOWN:	/* 下へ */
@@ -477,7 +448,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				/* 移動したキーを選択状態にする。 */
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				ListView_DeleteItem(hwndList, nIndex);	/* 古いキーを削除 */
-				GetData_KeyHelp( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_REF:	/* キーワードヘルプ 辞書ファイルの「参照...」ボタン */
@@ -500,12 +471,12 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_IMPORT:	/* インポート */
-				Import_KeyHelp(hwndDlg);
+				Import(hwndDlg);
 				m_Types.m_nKeyHelpNum = ListView_GetItemCount( hwndList );
 				return TRUE;
 
 			case IDC_BUTTON_KEYHELP_EXPORT:	/* エクスポート */
-				Export_KeyHelp(hwndDlg);
+				Export(hwndDlg);
 				return TRUE;
 			}
 			break;
@@ -523,7 +494,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 辞書ファイルリスト */
-			GetData_KeyHelp( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 
 		case PSN_SETACTIVE:
@@ -564,7 +535,7 @@ INT_PTR CPropTypes::DispatchEvent_KeyHelp(
 
 	@date 2006.04.10 fon 新規作成
 */
-void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
+void CPropKeyHelp::SetData( HWND hwndDlg )
 {
 	HWND	hwndWork;
 	int		i;
@@ -635,7 +606,7 @@ void CPropTypes::SetData_KeyHelp( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-int CPropTypes::GetData_KeyHelp( HWND hwndDlg )
+int CPropKeyHelp::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i;
@@ -690,7 +661,7 @@ int CPropTypes::GetData_KeyHelp( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
+bool CPropKeyHelp::Import(HWND hwndDlg)
 {
 	int		i, j;
 	char	buff[sizeof(int)+DICT_ABOUT_LEN+_MAX_PATH+sizeof("KDct[99]=,,\r\n")];
@@ -703,7 +674,7 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create( m_hInstance, hwndDlg, _T("*.txt"), szInitDir );
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
-		return FALSE;
+		return false;
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
 	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
@@ -711,12 +682,12 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 	FILE		*fp;
 	if( (fp = fopen(szPath, "r")) == NULL ){
 		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), szPath );
-		return FALSE;
+		return false;
 	}
 	/* LIST内のデータ全削除 */
 	HWND hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
-	GetData_KeyHelp(hwndDlg);
+	GetData(hwndDlg);
 	
 	int invalid_record = 0; // 不正な行
 	/* データ取得 */
@@ -795,14 +766,14 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 	}
 	fclose(fp);
 	/*データのセット*/
-	SetData_KeyHelp(hwndDlg);
+	SetData(hwndDlg);
 	// 2007.02.03 genta 失敗したら警告する
 	if( invalid_record > 0 ){
 		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONWARNING, GSTR_APPNAME,
 		"一部のデータが読み込めませんでした\n不正な行数: %d",
 		invalid_record );
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -810,7 +781,7 @@ BOOL CPropTypes::Import_KeyHelp(HWND hwndDlg)
 
 	@date 2006.04.10 fon 新規作成
 */
-BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
+bool CPropKeyHelp::Export(HWND hwndDlg)
 {
 	int		i, j;
 
@@ -820,22 +791,22 @@ BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 	_tcscpy( szXPath, "" );
 	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
-	cDlgOpenFile.Create( m_hInstance, hwndDlg, "*.txt", szInitDir );
+	cDlgOpenFile.Create( m_hInstance, hwndDlg, _T("*.txt"), szInitDir );
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szXPath ) ){
-		return FALSE;
+		return false;
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szXPath, m_pShareData->m_szIMPORTFOLDER, NULL );
 	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
 	FILE		*fp;
 	if( (fp = fopen(szXPath, "w")) == NULL ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szXPath );
-		return FALSE;
+		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), szXPath );
+		return false;
 	}
 
 	fprintf(fp, "// キーワード辞書設定 Ver1\n");
 
-	GetData_KeyHelp(hwndDlg);
+	GetData(hwndDlg);
 	HWND hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	j = ListView_GetItemCount(hwndList);
 
@@ -851,9 +822,9 @@ BOOL CPropTypes::Export_KeyHelp(HWND hwndDlg)
 	fclose(fp);
 
 	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-		"ファイルへエクスポートしました。\n\n%s", szXPath
+		_T("ファイルへエクスポートしました。\n\n%s"), szXPath
 	);
-	return TRUE;
+	return true;
 }
 
 

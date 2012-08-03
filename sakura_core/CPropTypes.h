@@ -23,7 +23,6 @@
 class CPropTypes;
 
 
-#include <windows.h>
 #include "CShareData.h"
 
 /*-----------------------------------------------------------------------
@@ -37,90 +36,134 @@ class CPropTypes;
 class SAKURA_CORE_API CPropTypes{
 
 public:
-	/*
-	||  Constructors
-	*/
+	//生成と破棄
 	CPropTypes();
 	~CPropTypes();
 	void Create( HINSTANCE, HWND );	//!< 初期化
+	int DoPropertySheet( int );		//!< プロパティシートの作成
 
-	/*
-	||  Attributes & Operations
-	*/
-	int DoPropertySheet( int );	/* プロパティシートの作成 */
-	INT_PTR DispatchEvent_p1( HWND, UINT, WPARAM, LPARAM );	/* p1 メッセージ処理 */
-	INT_PTR DispatchEvent_p2( HWND, UINT, WPARAM, LPARAM );	/* p2 メッセージ処理 支援タブ */ // 2001/06/14 asa-o
-	INT_PTR DispatchEvent_p3( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
-	INT_PTR DispatchEvent_p3_new( HWND, UINT, WPARAM, LPARAM );	/* p3 メッセージ処理 */
-	static BOOL SelectColor( HWND , COLORREF*, DWORD* );	/* 色選択ダイアログ */
-	INT_PTR DispatchEvent_Regex( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 正規表現キーワード */	//@@@ 2001.11.17 add MIK
-	INT_PTR DispatchEvent_KeyHelp( HWND, UINT, WPARAM, LPARAM );	/* メッセージ処理 キーワード辞書選択 */	//@@@ 2006.04.10 fon
-
-private:
-	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
-	HWND		m_hwndThis;		/* このダイアログのハンドル */
-	int			m_nPageNum;
-
-	/*
-	|| ダイアログデータ
-	*/
-	char			m_szHelpFile[_MAX_PATH + 1];
-	STypeConfig		m_Types;
-	CKeyWordSetMgr*	m_pCKeyWordSetMgr;	// Mar. 31, 2003 genta メモリ削減のためポインタに
-	int				m_nCurrentColorType;		/* 現在選択されている色タイプ */
-	DLLSHAREDATA*	m_pShareData;
-	int		m_nSet[ MAX_KEYWORDSET_PER_TYPE ];	//	2005.01.13 MIK keyword set index
-
-	// フォントDialogカスタムパレット
-	DWORD			m_dwCustColors[16];
+	//インターフェース	
+	void SetTypeData( const STypeConfig& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta
+	void GetTypeData( STypeConfig& t ) const { t = m_Types; }	//!< タイプ別設定データの取得  Jan. 23, 2005 genta
 
 protected:
-	/*
-	||  実装ヘルパ関数
-	*/
-	void OnHelp( HWND , int );	/* ヘルプ */
-	//void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */// 20050809 aroka 未使用
-	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );	/* 色ボタンの描画 */
-	void SetData_p1( HWND );	/* ダイアログデータの設定 p1 */
-	int  GetData_p1( HWND );	/* ダイアログデータの取得 p1 */
+	//イベント
+	void OnHelp( HWND , int );	//!< ヘルプ
 
-	// 2001/06/14 asa-o
-	void SetData_p2( HWND );	/* ダイアログデータの設定 p2 支援タブ */
-	int  GetData_p2( HWND );	/* ダイアログデータの取得 p2 支援タブ */
+protected:
+	//各種参照
+	HINSTANCE	m_hInstance;	//!< アプリケーションインスタンスのハンドル
+	HWND		m_hwndParent;	//!< オーナーウィンドウのハンドル
+	HWND		m_hwndThis;		//!< このダイアログのハンドル
+	char		m_szHelpFile[_MAX_PATH + 1];
+	DLLSHAREDATA*	m_pShareData;
 
-	void SetData_p3( HWND );	/* ダイアログデータの設定 p3 */
-	int  GetData_p3( HWND );	/* ダイアログデータの取得 p3 */
-	void SetData_p3_new( HWND );	/* ダイアログデータの設定 p3 */
-	int  GetData_p3_new( HWND );	/* ダイアログデータの取得 p3 */
-	void p3_Import_Colors( HWND );	/* 色の設定をインポート */
-	void p3_Export_Colors( HWND );	/* 色の設定をエクスポート */
-	void DrawColorListItem( DRAWITEMSTRUCT*);	/* 色種別リスト オーナー描画 */
+	//ダイアログデータ
+	int			m_nPageNum;
+	STypeConfig		m_Types;
 
-	//	Sept. 10, 2000 JEPRO 次行を追加
-	void EnableTypesPropInput( HWND hwndDlg );	//	タイプ別設定のカラー設定のON/OFF
+	// カラー用データ
+	DWORD			m_dwCustColors[16];						//!< フォントDialogカスタムパレット
+	int				m_nSet[ MAX_KEYWORDSET_PER_TYPE ];		//!< keyword set index  2005.01.13 MIK
+	int				m_nCurrentColorType;					//!< 現在選択されている色タイプ
+	CKeyWordSetMgr*	m_pCKeyWordSetMgr;						//!< メモリ削減のためポインタに  Mar. 31, 2003 genta
 
-	void SetData_Regex( HWND );	/* ダイアログデータの設定 正規表現キーワード */	//@@@ 2001.11.17 add MIK
-	int  GetData_Regex( HWND );	/* ダイアログデータの取得 正規表現キーワード */	//@@@ 2001.11.17 add MIK
-	BOOL Import_Regex( HWND );	//@@@ 2001.11.17 add MIK
-	BOOL Export_Regex( HWND );	//@@@ 2001.11.17 add MIK
-	static INT_PTR CALLBACK PropTypesRegex( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );	//@@@ 2001.11.17 add MIK
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//                      各プロパティページ                     //
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
+};
+
+
+/*!
+	@brief タイプ別設定プロパティページクラス
+
+	プロパティページ毎に定義
+	変数の定義はCPropTypesで行う
+*/
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        スクリーン                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropScreen : CPropTypes
+{
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+};
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          カラー                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropColor : CPropTypes
+{
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
+
+protected:
+	void DrawColorListItem( DRAWITEMSTRUCT* );				//!< 色種別リスト オーナー描画
+	void EnableTypesPropInput( HWND hwndDlg );				//!< タイプ別設定のカラー設定のON/OFF
+	void RearrangeKeywordSet( HWND );						//!< キーワードセット再配置  Jan. 23, 2005 genta
+	void DrawColorButton( DRAWITEMSTRUCT* , COLORREF );		//!< 色ボタンの描画
+public:
+	static BOOL SelectColor( HWND , COLORREF*, DWORD* );	//!< 色選択ダイアログ
+private:
+};
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           支援                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropSupport : CPropTypes
+{
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+};
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                    正規表現キーワード                       //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropRegex : CPropTypes
+{
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	void SetDataKeywordList( HWND );								//!< ダイアログデータの設定リスト部分
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
+private:
 	BOOL RegexKakomiCheck(const char *s);	//@@@ 2001.11.17 add MIK
 
-	void RearrangeKeywordSet( HWND );	// Jan. 23, 2005 genta キーワードセット再配置
+};
 
-	// 2006.04.10 fon
-	void SetData_KeyHelp( HWND );	/* ダイアログデータの設定 キーワード辞書選択 */
-	int  GetData_KeyHelp( HWND );	/* ダイアログデータの取得 キーワード辞書選択 */
-	BOOL Import_KeyHelp( HWND );	//@@@ 2006.04.10 fon
-	BOOL Export_KeyHelp( HWND );	//@@@ 2006.04.10 fon
-	static INT_PTR CALLBACK PropTypesKeyHelp( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     キーワードヘルプ                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropKeyHelp : CPropTypes
+{
 public:
-	//	Jan. 23, 2005 genta
-	//	タイプ別設定データの設定・取得
-	void SetTypeData( const STypeConfig& t ){ m_Types = t; }
-	void GetTypeData( STypeConfig& t ) const { t = m_Types; }
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+	bool Import( HWND );											//!< インポート
+	bool Export( HWND );											//!< エクスポート
 };
 
 
