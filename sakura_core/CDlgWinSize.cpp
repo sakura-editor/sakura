@@ -30,9 +30,9 @@
 */
 
 #include "StdAfx.h"
+#include "CDlgWinSize.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
-#include "CDlgWinSize.h"
 
 static const DWORD p_helpids[] = {	// 2006.10.10 ryoji
 	IDOK,						HIDOK_WINSIZE,				// 閉じる
@@ -63,14 +63,15 @@ CDlgWinSize::~CDlgWinSize()
 }
 
 
-/* !モーダルダイアログの表示
-	@param nSaveWinSize [in/out] ウィンドウ位置継承
-	@param nSaveWinPos  [in/out] ウィンドウサイズ継承
-	@param nWinSizeType [in/out] ウィンドウの実行時の大きさ
-	@param rc [in/out] 幅、高さ、左、上
-*/
-int CDlgWinSize::DoModal( HINSTANCE hInstance, HWND hwndParent,
-	int &nSaveWinSize, int &nSaveWinPos, int &nWinSizeType, RECT &rc )
+// !モーダルダイアログの表示
+int CDlgWinSize::DoModal(
+	HINSTANCE		hInstance,
+	HWND			hwndParent,
+	int&			nSaveWinSize,	//!< [in/out] ウィンドウ位置継承
+	int&			nSaveWinPos,	//!< [in/out] ウィンドウサイズ継承
+	int&			nWinSizeType,	//!< [in/out] ウィンドウの実行時の大きさ
+	RECT&			rc				//!< [in/out] 幅、高さ、左、上
+)
 {
 	m_nSaveWinSize = nSaveWinSize;
 	m_nSaveWinPos  = nSaveWinPos;
@@ -178,23 +179,23 @@ void CDlgWinSize::SetData( void )
 int CDlgWinSize::GetData( void )
 {
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINSIZE_DEF ) ){
-		m_nSaveWinSize = 0;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINSIZE_SAVE ) ){
-		m_nSaveWinSize = 1;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINSIZE_SET ) ){
-		m_nSaveWinSize = 2;
+		m_nSaveWinSize = WINSIZEMODE_DEF;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINSIZE_SAVE ) ){
+		m_nSaveWinSize = WINSIZEMODE_SAVE;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINSIZE_SET ) ){
+		m_nSaveWinSize = WINSIZEMODE_SET;
 	}
 	
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINPOS_DEF ) ){
-		m_nSaveWinPos = 0;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINPOS_SAVE ) ){
-		m_nSaveWinPos = 1;
-	}else
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINPOS_SET ) ){
-		m_nSaveWinPos = 2;
+		m_nSaveWinPos = WINSIZEMODE_DEF;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINPOS_SAVE ) ){
+		m_nSaveWinPos = WINSIZEMODE_SAVE;
+	}
+	else if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_WINPOS_SET ) ){
+		m_nSaveWinPos = WINSIZEMODE_SET;
 	}
 
 	int nCurIdx;
