@@ -69,7 +69,7 @@ CDlgDebug::~CDlgDebug()
 
 
 /* モーダルダイアログの表示 */
-int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, CMemory& cmemDebugInfo )
+int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, const CMemory& cmemDebugInfo )
 {
 	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */

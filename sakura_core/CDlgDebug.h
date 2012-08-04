@@ -17,9 +17,6 @@ class CDlgDebug;
 #include <windows.h>
 #include "CMemory.h"
 
-//#define MAX_SRCHTXT 1024
-//#define MAX_TEXTARR 32
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -36,12 +33,13 @@ public:
 	||  Attributes & Operations
 	*/
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
-	int DoModal( HINSTANCE, HWND, CMemory& );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, const CMemory& );	/* モーダルダイアログの表示 */
 
 	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND		m_hWnd;		/* このダイアログのハンドル */
 
+private:
 	CMemory		m_cmemDebugInfo;
 
 
