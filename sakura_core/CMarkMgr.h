@@ -63,32 +63,21 @@ public:
 	class CMark {
 	public:
 		//	constructor
-		CMark( int x, int y ) : m_pos(x), m_line(y) /* , m_extra(0) */ {}
-//		CMark( void ) : m_extra(-1) {}
-
-		//	type converter
-//		const char *GetNameStr(void) const { return m_name.c_str(); }
-//		void SetNameStr(const char* newstr) { m_name = newstr; }
+		CMark( int x, int y ) : m_pos(x), m_line(y) { }
 
 		int GetLine(void) const { return m_line; }
 		int GetPos(void) const { return m_pos; }
 		void SetPosition(int x, int y) { m_pos = x; m_line = y; }
 
-//		int GetExtra(void) const { return m_extra; }
-//		void SetExtra(int l) { m_extra = l; }
 
 		bool IsValid(void) const { return true; }
-//		bool IsValid(void) const { return m_extra != -1; }
-//		void Invalidate(void){ m_extra = -1; }
 
 		bool operator==(CMark &r) const { return m_line == r.m_line; }
 		bool operator!=(CMark &r) const { return m_line != r.m_line; }
 
 	private:
-//		string m_name;	//!<	要素名
 		int	m_line;		//!<	該当行番号: 行番号は論理行で数える
 		int m_pos;		//!<	該当桁位置
-//		int m_extra;	//!<	サブクラスで使える予備領域。
 	};
 
 	// GENERATE_FACTORY(CMark,CMarkFactory);	//	CMark用Factory class
