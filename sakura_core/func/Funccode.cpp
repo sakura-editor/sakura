@@ -270,8 +270,8 @@ const EFunctionCode pnFuncList_Convert[] = {	//Oct. 16, 2000 JEPRO 変数名変更(Li
 	F_TOHANEI				,	/* 全角英数→半角英数 */
 	F_TOHANKATA				,	/* 全角カタカナ→半角カタカナ */	//Aug. 29, 2002 ai
 	// To Here 2007.01.24 maru 並び順変更
-	F_HANKATATOZENKATA	,	/* 半角カタカナ→全角カタカナ */
-	F_HANKATATOZENHIRA	,	/* 半角カタカナ→全角ひらがな */
+	F_HANKATATOZENKATA		,	/* 半角カタカナ→全角カタカナ */
+	F_HANKATATOZENHIRA		,	/* 半角カタカナ→全角ひらがな */
 	F_TABTOSPACE			,	/* TAB→空白 */
 	F_SPACETOTAB			,	/* 空白→TAB */  //---- Stonee, 2001/05/27
 	F_CODECNV_AUTO2SJIS		,	/* 自動判別→SJISコード変換 */
@@ -374,7 +374,7 @@ const EFunctionCode pnFuncList_Macro[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List
 	F_EXECEXTMACRO	,	/* 名前を指定してマクロ実行 */
 //	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 //	F_EXECCMMAND		/* 外部コマンド実行 */
-	F_EXECMD_DIALOG	/* 外部コマンド実行 */
+	F_EXECMD_DIALOG		/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 
 };
@@ -690,7 +690,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_COPY_CRLF:		return HLP000163;			//CRLF改行でコピー(選択範囲をクリップボードにコピー)	//Feb. 23, 2001 JEPRO 抜けていたので追加
 	case F_PASTE:			return HLP000039;			//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:		return HLP000040;			//矩形貼り付け(クリップボードから矩形貼り付け)
-//	case F_INSTEXT_W:			return ;			// テキストを貼り付け
+//	case F_INSTEXT_W:		return ;					// テキストを貼り付け
 	case F_COPYLINES:				return HLP000036;	//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		return HLP000037;	//選択範囲内全行引用符付きコピー
 	case F_COPYLINESWITHLINENUMBER:	return HLP000038;	//選択範囲内全行行番号付きコピー
@@ -1076,8 +1076,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 	case F_TOHANEI:					/* 全角英数→半角英数 */
 	case F_TOZENKAKUKATA:			/* 半角＋全ひら→全角・カタカナ */	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 	case F_TOZENKAKUHIRA:			/* 半角＋全カタ→全角・ひらがな */	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-	case F_HANKATATOZENKATA:	/* 半角カタカナ→全角カタカナ */
-	case F_HANKATATOZENHIRA:	/* 半角カタカナ→全角ひらがな */
+	case F_HANKATATOZENKATA:		/* 半角カタカナ→全角カタカナ */
+	case F_HANKATATOZENHIRA:		/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				/* TAB→空白 */
 	case F_SPACETOTAB:				/* 空白→TAB */  //---- Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		/* 自動判別→SJISコード変換 */
