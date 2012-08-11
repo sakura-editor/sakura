@@ -320,7 +320,7 @@ int CSearchAgent::SearchWord(
 	ESearchDirection		eDirection,		//!< 検索方向
 	const SSearchOption&	sSearchOption,	//!< 検索オプション
 	CLogicRange*			pMatchRange,	//!< [out] マッチ範囲。ロジック単位。
-	CBregexp*				pRegexp			//!< [in]  正規表現コンパイルデータ。既にコンパイルされている必要がある */
+	CBregexp*				pRegexp			//!< [in]  正規表現コンパイルデータ。既にコンパイルされている必要がある
 )
 {
 	CDocLine*	pDocLine;

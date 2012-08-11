@@ -55,11 +55,11 @@ struct LayoutReplaceArg {
 
 // 編集時のテキスト最大幅算出用		// 2009.08.28 nasukoji
 struct CalTextWidthArg {
-	CLayoutInt		nLineFrom;		//!< 編集開始行 */
-	CLayoutInt		nColmFrom;		//!< 編集開始桁 */
-	CLayoutInt		nDelLines;		//!< 削除に関係する行数 - 1（負数の時削除なし） */
-	CLayoutInt		nAllLinesOld;	//!< 編集前のテキスト行数 */
-	BOOL			bInsData;		//!< 追加文字列あり */
+	CLayoutInt		nLineFrom;		//!< 編集開始行
+	CLayoutInt		nColmFrom;		//!< 編集開始桁
+	CLayoutInt		nDelLines;		//!< 削除に関係する行数 - 1（負数の時削除なし）
+	CLayoutInt		nAllLinesOld;	//!< 編集前のテキスト行数
+	BOOL			bInsData;		//!< 追加文字列あり
 };
 
 
