@@ -107,8 +107,8 @@ public:
 public:
 	// -- -- staticインターフェース -- -- //
 	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
-	static const char* GetCharNext( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します */
-	static const char* GetCharPrev( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ポインタで示した文字の直前にある文字の位置を返します */
+	static const char* GetCharNext( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ポインタで示した文字の次にある文字の位置を返します
+	static const char* GetCharPrev( const char* pData, int nDataLen, const char* pDataCurrent ); //!< ポインタで示した文字の直前にある文字の位置を返します
 };
 
 #endif /* SAKURA_CNATIVEA_B88E7301_8CD3_4DF8_8750_2FF92F357FA09_H_ */
