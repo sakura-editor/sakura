@@ -143,7 +143,7 @@ bool CEditView::ProcessCommand_isearch(
 
 	@author isearch
 */
-void CEditView::ISearchEnter( int mode  ,int direction)
+void CEditView::ISearchEnter( int mode, int direction)
 {
 
 	if (m_nISearchMode == mode ) {
@@ -170,40 +170,40 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 			case 1: // 通常インクリメンタルサーチ
 				m_bCurSrchRegularExp = FALSE;
 				m_pShareData->m_Common.m_bRegularExp = FALSE;
-				//SendStatusMessage("I-Search: ");
+				//SendStatusMessage(_T("I-Search: "));
 				break;
 			case 2: // 正規表現インクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
-					SendStatusMessage("BREGREP.DLLが使用できません。");
+					SendStatusMessage(_T("BREGREP.DLLが使用できません。"));
 					return;
 				}
 				m_bCurSrchRegularExp = TRUE;
 				m_pShareData->m_Common.m_bRegularExp = TRUE;
-				//SendStatusMessage("[RegExp] I-Search: ");
+				//SendStatusMessage(_T("[RegExp] I-Search: "));
 				break;
 			case 3: // MIGEMOインクリメンタルサーチ
 				if (!m_CurRegexp.IsAvailable()){
 					WarningBeep();
-					SendStatusMessage("BREGREP.DLLが使用できません。");
+					SendStatusMessage(_T("BREGREP.DLLが使用できません。"));
 					return;
 				}
 				//migemo dll チェック
 				//	Jan. 10, 2005 genta 設定変更で使えるようになっている
 				//	可能性があるので，使用可能でなければ一応初期化を試みる
-				if ( ! m_pcmigemo->IsAvailable() && ! m_pcmigemo->Init() ){
+				if ( !m_pcmigemo->IsAvailable() && !m_pcmigemo->Init() ){
 					WarningBeep();
-					SendStatusMessage("MIGEMO.DLLが使用できません。");
+					SendStatusMessage(_T("MIGEMO.DLLが使用できません。"));
 					return;
 				}
 				m_pcmigemo->migemo_load_all();
 				if (m_pcmigemo->migemo_is_enable()) {
 					m_bCurSrchRegularExp = TRUE;
 					m_pShareData->m_Common.m_bRegularExp = TRUE;
-					//SendStatusMessage("[MIGEMO] I-Search: ");
+					//SendStatusMessage(_T("[MIGEMO] I-Search: "));
 				}else{
 					WarningBeep();
-					SendStatusMessage("MIGEMOは使用できません。 ");
+					SendStatusMessage(_T("MIGEMOは使用できません。 "));
 					return;
 				}
 				break;
@@ -216,7 +216,6 @@ void CEditView::ISearchEnter( int mode  ,int direction)
 			m_nSrchStartPosY_PHY = m_nCaretPosY_PHY;
 		}
 		
-		//m_szCurSrchKey[0] = '\0';
 		m_bCurSrchKeyMark = FALSE;
 		m_nISearchDirection = direction;
 		m_nISearchMode = mode;
@@ -262,7 +261,7 @@ void CEditView::ISearchExit()
 	OnMOUSEMOVE(0,point1.x,point1.y);
 
 	//ステータス表示エリアをクリア
-	SendStatusMessage("");
+	SendStatusMessage(_T(""));
 
 }
 
@@ -288,18 +287,18 @@ void CEditView::ISearchExec(WORD wChar)
 		m_bISearchFirst = false;
 		l = 0 ;
 	}else	
-		l = strlen(m_szCurSrchKey) ;
+		l = _tcslen(m_szCurSrchKey) ;
 
-	if (wChar <= 255 ) {
-		if ( l < sizeof(m_szCurSrchKey) - 1) {
+	if( wChar <= 255 ){
+		if( l < _countof(m_szCurSrchKey) - 1 ){
 			m_szCurSrchKey[l] =(char)wChar;
-			m_szCurSrchKey[l+1] = '\0';				
+			m_szCurSrchKey[l+1] = '\0';
 		}
 	}else{
-		if ( l < sizeof(m_szCurSrchKey) - 2) {
-			m_szCurSrchKey[l]   =(char)(wChar>>8);
-			m_szCurSrchKey[l+1] =(char)wChar;
-			m_szCurSrchKey[l+2] = '\0';				
+		if( l < _countof(m_szCurSrchKey) - 2 ){
+			m_szCurSrchKey[l]   = (char)(wChar>>8);
+			m_szCurSrchKey[l+1] = (char)wChar;
+			m_szCurSrchKey[l+2] = '\0';
 		}
 	}
 
@@ -321,11 +320,12 @@ void CEditView::ISearchExec(const char* pszText)
 	p = pszText;
 	
 	while(*p!='\0'){
-		if (IsDBCSLeadByte(*p)){
-			c =( ((WORD)*p) * 256) | (unsigned char)*(p+1);
+		if(IsDBCSLeadByte(*p) ){
+			c = ( ((WORD)*p) * 256) | (unsigned char)*(p+1);
 			p++;
-		}else
-			c =*p;
+		}else{
+			c = *p;
+		}
 		ISearchExec(c);
 		p++;
 	}
@@ -346,13 +346,14 @@ void CEditView::ISearchExec(bool bNext)
 		//ステータスの表示
 		CMemory msg;
 		ISearchSetStatusMsg(&msg);
-		SendStatusMessage(msg.GetStringPtr());		
+		SendStatusMessage(msg.GetStringPtr());
 		return ;
 	}
 	
 	ISearchWordMake();
 	
-	int nLine, nIdx,nIdx1;
+	int nLine;
+	int nIdx1;
 	
 	if ( bNext && m_bISearchWrap ) {
 		switch (m_nISearchDirection)
@@ -363,7 +364,8 @@ void CEditView::ISearchExec(bool bNext)
 			break;
 		case 0:
 			//最後から検索
-			int nLineP, nIdxP;
+			int nLineP;
+			int nIdxP;
 			nLineP =  m_pcEditDoc->m_cDocLineMgr.GetLineCount() -1 ;
 			CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( nLineP );
 			nIdxP = pDocLine->GetLength() -1;
@@ -391,7 +393,7 @@ void CEditView::ISearchExec(bool bNext)
 
 	//桁位置からindexに変換
 	CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLine );
-	nIdx = LineColmnToIndex( pCLayout, nIdx1 );
+	int nIdx = LineColmnToIndex( pCLayout, nIdx1 );
 
 	m_nISearchHistoryCount ++ ;
 
@@ -411,17 +413,17 @@ void CEditView::ISearchExec(bool bNext)
 	m_bISearchFlagHistory[m_nISearchHistoryCount] = bNext;
 
 	if (m_pcEditDoc->m_cLayoutMgr.SearchWord(
-		nLine, 									/* 検索開始行 */
-		nIdx, 									/* 検索開始位置 */
-		m_szCurSrchKey,							/* 検索条件 */
-		m_nISearchDirection,					/* 0==前方検索 1==後方検索 */
-		m_bCurSrchRegularExp,					/* 1==正規表現 */
-		FALSE,									/* 1==英大文字小文字の区別 */
-		FALSE,									/* 1==単語のみ検索 */
-		&nLineFrom,								/* マッチレイアウト行from */
-		&nColmFrom, 							/* マッチレイアウト位置from */
-		&nLineTo, 								/* マッチレイアウト行to */
-		&nColmTo, 								/* マッチレイアウト位置to */
+		nLine, 									// 検索開始行
+		nIdx, 									// 検索開始位置
+		m_szCurSrchKey,							// 検索条件
+		m_nISearchDirection,					// 0==前方検索 1==後方検索
+		m_bCurSrchRegularExp,					// 1==正規表現
+		FALSE,									// 1==英大文字小文字の区別
+		FALSE,									// 1==単語のみ検索
+		&nLineFrom,								// マッチレイアウト行from
+		&nColmFrom, 							// マッチレイアウト位置from
+		&nLineTo, 								// マッチレイアウト行to
+		&nColmTo, 								// マッチレイアウト位置to
 		&m_CurRegexp	) == 0 )
 	{
 		/*検索結果がない*/
@@ -452,7 +454,6 @@ void CEditView::ISearchExec(bool bNext)
 		m_nISearchY1History[m_nISearchHistoryCount] = nLineFrom;
 		m_nISearchX2History[m_nISearchHistoryCount] = nColmTo;
 		m_nISearchY2History[m_nISearchHistoryCount] = nLineTo;
-
 	}
 
 	m_bCurSrchKeyMark = TRUE;
@@ -471,7 +472,7 @@ void CEditView::ISearchBack(void) {
 		m_bISearchFirst = true;
 	}else if( m_bISearchFlagHistory[m_nISearchHistoryCount] == false){
 		//検索文字をへらす
-		long l = strlen(m_szCurSrchKey);
+		long l = _tcslen(m_szCurSrchKey);
 		if (l > 0 ){
 			//最後の文字の一つ前
 			char* p = CharPrev(m_szCurSrchKey,&m_szCurSrchKey[l]);
@@ -515,25 +516,27 @@ void CEditView::ISearchBack(void) {
 }
 
 //!	入力文字から、検索文字を生成する。
-void CEditView::ISearchWordMake(void) {
+void CEditView::ISearchWordMake(void)
+{
 	int nFlag = 0x00;
 	switch ( m_nISearchMode ) {
-		case 1: // 通常インクリメンタルサーチ
-			break;
-		case 2: // 正規表現インクリメンタルサーチ
-			if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
-				return ;
-			}
-			nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
-			/* 検索パターンのコンパイル */
-			m_CurRegexp.Compile(m_szCurSrchKey , nFlag );
-			break;
-		case 3: // MIGEMOインクリメンタルサーチ
-			if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
-				return ;
-			}
-			nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
+	case 1: // 通常インクリメンタルサーチ
+		break;
+	case 2: // 正規表現インクリメンタルサーチ
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+			return ;
+		}
+		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
+		/* 検索パターンのコンパイル */
+		m_CurRegexp.Compile(m_szCurSrchKey , nFlag );
+		break;
+	case 3: // MIGEMOインクリメンタルサーチ
+		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+			return ;
+		}
+		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
 
+		{
 			//migemoで捜す
 			m_pszMigemoWord = (char*)m_pcmigemo->migemo_query((unsigned char*)m_szCurSrchKey);
 			
@@ -541,8 +544,8 @@ void CEditView::ISearchWordMake(void) {
 			m_CurRegexp.Compile(m_pszMigemoWord , nFlag );
 
 			m_pcmigemo->migemo_release((unsigned char*)m_pszMigemoWord);
-			break;
-
+		}
+		break;
 	}
 }
 
@@ -561,24 +564,26 @@ void CEditView::ISearchSetStatusMsg(CMemory* msg) const
 {
 
 	switch ( m_nISearchMode){
-		case 1 :
-			msg->SetString("I-Search" );
-			break;
-		case 2 :
-			msg->SetString("[RegExp] I-Search" );
-			break;
-		case 3 :
-			msg->SetString("[Migemo] I-Search" );
-			break;
-		default:
-			msg->SetString("");
-			return;
+	case 1 :
+		msg->SetString(_T("I-Search") );
+		break;
+	case 2 :
+		msg->SetString(_T("[RegExp] I-Search") );
+		break;
+	case 3 :
+		msg->SetString(_T("[Migemo] I-Search") );
+		break;
+	default:
+		msg->SetString(_T(""));
+		return;
 	}
 	if (m_nISearchDirection == 0){
-		msg->AppendString(" Backward: ");
-	}else{
-		msg->AppendString(": ");
+		msg->AppendString(_T(" Backward: "));
 	}
+	else{
+		msg->AppendString(_T(": "));
+	}
+
 	if(m_nISearchHistoryCount > 0)
 		msg->AppendString(m_szCurSrchKey);
 }

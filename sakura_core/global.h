@@ -382,6 +382,13 @@ enum WRAP_TEXT_WRAP_METHOD {
 	WRAP_WINDOW_WIDTH,					// 右端で折り返す
 };
 
+//2007.09.06 kobake 追加
+//!検索方向
+enum ESearchDirection{
+	SEARCH_BACKWARD = 0, //前方検索 (前を検索)
+	SEARCH_FORWARD  = 1, //後方検索 (次を検索) (普通)
+};
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      １次元型の定義                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
