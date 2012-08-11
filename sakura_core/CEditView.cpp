@@ -3590,7 +3590,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 					return;
 				}
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
 					DWORD dwEffectsSrc = (
 							m_pcEditDoc->IsReadOnly()	// 読み取り専用
@@ -4495,7 +4495,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		_T("CEditView::KeyWordHelpSearchDict\nnID=%d") );
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-	if( GetSelectedData( cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 		pszWork = cmemCurText.GetStringPtr();
 		nWorkLength	= lstrlen( pszWork );
 		for( i = 0; i < nWorkLength; ++i ){
@@ -5839,7 +5839,7 @@ void CEditView::SyncScrollH( int col )
 /* 選択範囲のデータを取得 */
 /* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
 BOOL CEditView::GetSelectedData(
-		CMemory&	cmemBuf,
+		CMemory*	cmemBuf,
 		BOOL		bLineOnly,
 		const char*	pszQuote,			/* 先頭に付ける引用符 */
 		BOOL		bWithLineNumber,	/* 行番号を付与する */
@@ -5884,7 +5884,7 @@ BOOL CEditView::GetSelectedData(
 			m_nSelectColmTo			/* 範囲選択終了桁 */
 		);
 //		cmemBuf.SetData( "", 0 );
-		cmemBuf.SetString( "" );
+		cmemBuf->SetString( "" );
 
 		//<< 2002/04/18 Azumaiya
 		// サイズ分だけ要領をとっておく。
@@ -5914,7 +5914,7 @@ BOOL CEditView::GetSelectedData(
 		}
 
 		// 大まかに見た容量を元にサイズをあらかじめ確保しておく。
-		cmemBuf.AllocStringBuffer(nBufSize);
+		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
 		nRowNum = 0;
@@ -5928,22 +5928,22 @@ BOOL CEditView::GetSelectedData(
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
 					if( pLine[nIdxTo - 1] == '\n' || pLine[nIdxTo - 1] == '\r' ){
-						cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
+						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
 					}else{
-						cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 					}
 				}
 			}
 			++nRowNum;
 //			if( nRowNum > 0 ){
-				cmemBuf.AppendString( CRLF );
+				cmemBuf->AppendString( CRLF );
 				if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
 					break;
 				}
 //			}
 		}
 	}else{
-		cmemBuf.SetString( "" );
+		cmemBuf->SetString( "" );
 
 		//<< 2002/04/18 Azumaiya
 		//  これから貼り付けに使う領域の大まかなサイズを取得する。
@@ -5990,7 +5990,7 @@ BOOL CEditView::GetSelectedData(
 		}
 
 		// 調べた長さ分だけバッファを取っておく。
-		cmemBuf.AllocStringBuffer(nBufSize);
+		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
 		for( nLineNum = m_nSelectLineFrom; nLineNum <= m_nSelectLineTo; ++nLineNum ){
@@ -6025,38 +6025,38 @@ BOOL CEditView::GetSelectedData(
 #endif
 
 			if( NULL != pszQuote && 0 < lstrlen( pszQuote ) ){	/* 先頭に付ける引用符 */
-//				cmemBuf.Append( pszQuote, lstrlen( pszQuote ) );
-				cmemBuf.AppendString( pszQuote );
+//				cmemBuf->Append( pszQuote, lstrlen( pszQuote ) );
+				cmemBuf->AppendString( pszQuote );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
 				wsprintf( pszLineNum, " %d:" , nLineNum + 1 );
-				cmemBuf.AppendString( pszSpaces, nLineNumCols - lstrlen( pszLineNum ) );
-//				cmemBuf.Append( pszLineNum, lstrlen( pszLineNum ) );
-				cmemBuf.AppendString( pszLineNum );
+				cmemBuf->AppendString( pszSpaces, nLineNumCols - lstrlen( pszLineNum ) );
+//				cmemBuf->Append( pszLineNum, lstrlen( pszLineNum ) );
+				cmemBuf->AppendString( pszLineNum );
 			}
 
 
 			if( EOL_NONE != pcLayout->m_cEol ){
 				if( nIdxTo >= nLineLen ){
-					cmemBuf.AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
+					cmemBuf->AppendString( &pLine[nIdxFrom], nLineLen - 1 - nIdxFrom );
 					//	Jul. 25, 2000 genta
-					cmemBuf.AppendString( ( neweol == EOL_UNKNOWN ) ?
+					cmemBuf->AppendString( ( neweol == EOL_UNKNOWN ) ?
 						(pcLayout->m_cEol).GetValue() :	//	コード保存
 						appendEol.GetValue() );			//	新規改行コード
 				}
 				else {
-					cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+					cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				}
 			}else{
-				cmemBuf.AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
+				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
 				if( nIdxTo - nIdxFrom >= nLineLen ){
 					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
 						NULL != pszQuote || /* 先頭に付ける引用符 */
 						bWithLineNumber 	/* 行番号を付与する */
 					){
-//						cmemBuf.Append( CRLF, lstrlen( CRLF ) );
+//						cmemBuf->Append( CRLF, lstrlen( CRLF ) );
 						//	Jul. 25, 2000 genta
-						cmemBuf.AppendString(( neweol == EOL_UNKNOWN ) ?
+						cmemBuf->AppendString(( neweol == EOL_UNKNOWN ) ?
 							CRLF :						//	コード保存
 							appendEol.GetValue() );		//	新規改行コード
 					}
@@ -6146,7 +6146,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
 	if( FALSE == GetSelectedData(
-		cmemBuf,
+		&cmemBuf,
 		FALSE,
 		pszQuote, /* 引用符 */
 		bWithLineNumber, /* 行番号を付与する */
@@ -6336,7 +6336,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	}else{
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		GetSelectedData( cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );
+		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );
 
 		/* 機能種別によるバッファの変換 */
 		ConvMemory( &cmemBuf, nFuncCode );
@@ -9640,7 +9640,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 	szTopic[0] = '\0';
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 選択範囲のデータを取得 */
-		if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+		if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 			/* 検索文字列を現在位置の単語で初期化 */
 			strncpy( szTopic, cmemCurText.GetStringPtr(), _MAX_PATH - 1 );
 			szTopic[_MAX_PATH - 1] = '\0';
@@ -9673,7 +9673,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 				m_nSelectLineTo = nLineTo;
 				m_nSelectColmTo = nColmTo;
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
 					/* 検索文字列を現在位置の単語で初期化 */
 					strncpy( szTopic, cmemCurText.GetStringPtr(), MAX_PATH - 1 );
 					szTopic[MAX_PATH - 1] = '\0';
