@@ -294,7 +294,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					//	Jun. 16, 2002 genta double quotationもエスケープ解除
 					cmemWork.Replace( "\\\"", "\"" );
 					cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
+					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
 				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
 					// Jun. 16, 2002 genta プロトタイプチェック
@@ -334,7 +334,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					//	数字の中にquotationは入っていないよ
 					//cmemWork.Replace( "\\\'", "\'" );
 					//cmemWork.Replace( "\\\\", "\\" );
-					macro->AddParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
+					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
 				//	Jun. 16, 2002 genta
 				else if( szLine[i] == ')' ){

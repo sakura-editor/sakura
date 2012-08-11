@@ -20,7 +20,6 @@ class CMacro;
 #define _CMACRO_H_
 
 #include <windows.h>
-//#include "oleauto.h" //2003-02-21 鬼
 
 class CEditView;
 
@@ -51,12 +50,12 @@ public:
 	void SetNext(CMacro* pNext){ m_pNext = pNext; }
 	CMacro* GetNext(){ return m_pNext; }
 	// 2007.07.20 genta : flags追加
-	void Exec( CEditView* pcEditView, int flags );
-	void Save( HINSTANCE hInstance, HFILE hFile );
+	void Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake const追加
+	void Save( HINSTANCE hInstance, HFILE hFile ) const; //2007.09.30 kobake const追加
 	
-	void AddLParam( LPARAM lParam, CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewも渡す
-	void AddParam( const char* lParam );
-	void AddParam( const int lParam );
+	void AddLParam( LPARAM lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewも渡す
+	void AddStringParam( const char* lParam );
+	void AddIntParam( const int lParam );
 
 	static void HandleCommand( CEditView* pcEditView, const int Index,	const char* Argument[], const int ArgSize );
 	static bool HandleFunction( CEditView *View, int ID, VARIANT *Arguments, int ArgSize, VARIANT &Result);
@@ -70,16 +69,18 @@ public:
 #endif
 
 protected:
+	struct CMacroParam{
+		char* 			m_pData;
+		CMacroParam*	m_pNext;
+	};
+
 	/*
 	||  実装ヘルパ関数
 	*/
-	int		m_nFuncID;	//	機能ID
-	struct CMacroParam{
-		char* m_pData;
-		CMacroParam* m_pNext;
-	} *m_pParamTop, *m_pParamBot;			//	パラメータ
-	CMacro* m_pNext;	//	次のマクロへのポインタ
-//	CMacro* m_pPrev;	前のマクロに戻ることは無い？
+	int				m_nFuncID;		//	機能ID
+	CMacroParam*	m_pParamTop;	//	パラメータ
+	CMacroParam*	m_pParamBot;
+	CMacro*			m_pNext;		//	次のマクロへのポインタ
 };
 
 
