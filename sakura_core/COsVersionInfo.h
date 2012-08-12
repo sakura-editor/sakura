@@ -140,7 +140,8 @@ public:
 
 		@date 2007.05.19 ryoji
 	*/
-	BOOL IsWinVista_or_later(){
+	bool IsWinVista_or_later()
+	{
 		return ( 6 <= m_cOsVersionInfo.dwMajorVersion );
 	}
 
