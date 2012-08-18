@@ -10,7 +10,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, aroka
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, genta
+	Copyright (C) 2007, genta, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

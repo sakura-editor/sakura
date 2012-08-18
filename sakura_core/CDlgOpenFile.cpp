@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
-	Copyright (C) 2008, nasukoji
+	Copyright (C) 2008, nasukoji, ryoji, novice
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

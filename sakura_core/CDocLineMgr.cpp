@@ -15,6 +15,8 @@
 	Copyright (C) 2003, Moca, ryoji, genta, ‚©‚ë‚Æ
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, ryoji, ‚©‚ë‚Æ
+	Copyright (C) 2008, syat
+	Copyright (C) 2010, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

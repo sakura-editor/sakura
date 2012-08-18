@@ -12,6 +12,7 @@
 	Copyright (C) 2003, genta, Moca, ‚©‚ë‚Æ
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, Moca, D.S.Koba
+	Copyright (C) 2006, rastiv
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, YAZAKI, genta
+	Copyright (C) 2007, genta
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

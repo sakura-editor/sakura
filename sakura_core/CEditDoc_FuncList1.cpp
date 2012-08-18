@@ -11,6 +11,7 @@
 	Copyright (C) 2002, frozen
 	Copyright (C) 2003, zenryaku
 	Copyright (C) 2005, genta, D.S.Koba, ‚¶‚ã‚¤‚¶
+	Copyright (C) 2007, genta, ‚¶‚ã‚¤‚¶
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

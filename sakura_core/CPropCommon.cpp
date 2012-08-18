@@ -11,7 +11,8 @@
 	Copyright (C) 2002, YAZAKI, aroka, MIK, Moca, ‚±‚¨‚è
 	Copyright (C) 2003, MIK, KEITA
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, genta, ryoji
+	Copyright (C) 2007, genta, ryoji, Moca, nasukoji
+	Copyright (C) 2008, Uchi
 	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.

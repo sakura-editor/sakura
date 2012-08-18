@@ -10,7 +10,9 @@
 	Copyright (C) 2003, genta, ‚©‚ë‚Æ, ‚¨‚«‚½, KEITA
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2006, ryoji, Moca
-	Copyright (C) 2008, nasukoji
+	Copyright (C) 2007, Moca
+	Copyright (C) 2008, nasukoji, genta
+	Copyright (C) 2009, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

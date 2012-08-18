@@ -12,6 +12,7 @@
 	Copyright (C) 2002, genta, Moca
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, Moca, genta
+	Copyright (C) 2007, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

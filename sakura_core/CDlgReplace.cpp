@@ -11,6 +11,7 @@
 	Copyright (C) 2006, ‚©‚ë‚Æ, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

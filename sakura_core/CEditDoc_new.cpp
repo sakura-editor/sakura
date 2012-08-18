@@ -13,7 +13,10 @@
 	Copyright (C) 2003, MIK, zenryaku, genta, little YOSHI
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, genta, D.S.Koba, ryoji
+	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, maru, Moca, genta
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2002, aroka êVãKçÏê¨
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

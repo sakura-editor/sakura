@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2004, genta, Moca
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, ryoji, novice
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

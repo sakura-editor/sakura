@@ -13,8 +13,9 @@
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, Moca, genta, aroka
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2007, ryoji, maru, genta, Moca
 	Copyright (C) 2008, ryoji, nasukoji
+	Copyright (C) 2009, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

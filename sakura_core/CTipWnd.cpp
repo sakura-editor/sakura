@@ -10,6 +10,8 @@
 	Copyright (C) 2002, GAE
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2006, ryoji, genta
+	Copyright (C) 2007, kobake
+	Copyright (C) 2010, kobake
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

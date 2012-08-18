@@ -12,7 +12,7 @@
 	Copyright (C) 2003, Moca, ai, ‚©‚ë‚Æ
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, genta, MIK, Moca, ‚©‚ë‚Æ, ryoji, zenryaku, D.S.Koba
-	Copyright (C) 2006, Moca, ryoji
+	Copyright (C) 2006, Moca, ryoji, fon
 	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.

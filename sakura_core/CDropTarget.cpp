@@ -6,6 +6,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani, Yebisuya Sugoroku
 	Copyright (C) 2002, aroka
+	Copyright (C) 2006, Moca
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
 

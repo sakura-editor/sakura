@@ -12,6 +12,7 @@
 	Copyright (C) 2005, MIK, Moca, aroka
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, genta, ryoji
+	Copyright (C) 2008, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

@@ -5,8 +5,8 @@
 	@date 2006/04/10 êVãKçÏê¨
 */
 /*
-	Copyright (C) 2006, fon, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2006, fon, ryoji, genta
+	Copyright (C) 2007, ryoji, genta
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

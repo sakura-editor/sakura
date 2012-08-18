@@ -10,7 +10,7 @@
 	Copyright (C) 2004, Moca, MIK, genta, Kazika
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, ryoji, fon
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, genta
 	Copyright (C) 2009, ryoji
 
 	This software is provided 'as-is', without any express or implied

@@ -12,7 +12,8 @@
 	Copyright (C) 2003, MIK, ryoji, ‚©‚ë‚Æ
 	Copyright (C) 2004, genta, Moca, MIK
 	Copyright (C) 2005, genta, Moca, MIK, D.S.Koba
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2006, Moca
+	Copyright (C) 2007, ryoji, Moca
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
 

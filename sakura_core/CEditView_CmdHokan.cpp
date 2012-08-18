@@ -11,6 +11,9 @@
 	Copyright (C) 2003, Moca
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
+	Copyright (C) 2006, rastiv
+	Copyright (C) 2008, syat, nasukoji
+	Copyright (C) 2010, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

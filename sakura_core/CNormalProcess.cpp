@@ -11,7 +11,9 @@
 	Copyright (C) 2002, YAZAKI, Moca, genta
 	Copyright (C) 2003, genta, Moca, MIK
 	Copyright (C) 2004, Moca, naoh
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2006, ryoji
+	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2008, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

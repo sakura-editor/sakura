@@ -11,6 +11,7 @@
 	Copyright (C) 2003, D.S.Koba
 	Copyright (C) 2004, D.S.Koba, MIK, genta
 	Copyright (C) 2006, D.S.Koba, ryoji
+	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
 
 	This software is provided 'as-is', without any express or implied

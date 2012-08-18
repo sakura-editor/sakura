@@ -12,9 +12,9 @@
 	Copyright (C) 2004, genta, Moca, yasu, MIK, novice, Kazika
 	Copyright (C) 2005, genta, MIK, Moca, aroka, ryoji
 	Copyright (C) 2006, genta, ryoji, aroka, fon, yukihane
-	Copyright (C) 2007, ryoji
-	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, ryoji, nasukoji, Hidetaka Sakai
+	Copyright (C) 2007, ryoji, maru, genta, Moca
+	Copyright (C) 2008, ryoji, nasukoji, novice, syat
+	Copyright (C) 2009, ryoji, nasukoji, Hidetaka Sakai, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

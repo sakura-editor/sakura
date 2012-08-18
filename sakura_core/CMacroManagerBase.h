@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2002, genta
+	Copyright (C) 2007, genta
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

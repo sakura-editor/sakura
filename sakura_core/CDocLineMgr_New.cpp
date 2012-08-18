@@ -11,7 +11,7 @@
 	Copyright (C) 2002, hor, aroka, MIK, Moca, genta
 	Copyright (C) 2003, Moca, genta
 	Copyright (C) 2005, ‚©‚ë‚Æ
-	Copyright (C) 2008, ryoji
+	Copyright (C) 2008, ryoji, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

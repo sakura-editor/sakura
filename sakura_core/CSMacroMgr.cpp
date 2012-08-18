@@ -14,9 +14,11 @@
 	Copyright (C) 2003, MIK, genta, Moca
 	Copyright (C) 2004, genta, zenryaku
 	Copyright (C) 2005, MIK, genta, maru, FILE
-	Copyright (C) 2006, ‚©‚ë‚Æ, fon, ryoji
-	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2006, ‚©‚ë‚Æ, fon, ryoji, maru
+	Copyright (C) 2007, ryoji, maru, genta, nasukoji
 	Copyright (C) 2008, nasukoji, ryoji
+	Copyright (C) 2009, syat
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

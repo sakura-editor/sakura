@@ -1,6 +1,7 @@
 ////
 //	RcCvt		: convert MSVC type resource file to Brc32 type.
-//		20010820 aroka
+//		2001.08.20 aroka
+//		2006.11.14 ryoji
 
 #include <stdio.h>
 #include <stdlib.h>

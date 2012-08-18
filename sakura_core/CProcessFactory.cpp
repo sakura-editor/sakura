@@ -10,7 +10,9 @@
 	Copyright (C) 2000-2001, genta
 	Copyright (C) 2001, masami shoji
 	Copyright (C) 2002, aroka WinMain‚æ‚è•ª—£
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, ryoji, ‚©‚ë‚Æ
+	Copyright (C) 2007, ryoji, kobake
+	Copyright (C) 2008, novice
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

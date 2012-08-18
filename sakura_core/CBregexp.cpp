@@ -16,7 +16,7 @@
 	Copyright (C) 2003, ‚©‚ë‚Æ
 	Copyright (C) 2005, ‚©‚ë‚Æ
 	Copyright (C) 2006, ‚©‚ë‚Æ
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, genta
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages

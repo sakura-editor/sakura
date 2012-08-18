@@ -10,8 +10,9 @@
 	Copyright (C) 2002, aroka CEditApp‚æ‚è•ª—£
 	Copyright (C) 2002, genta, Moca
 	Copyright (C) 2005, D.S.Koba, genta, susu
-	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2006, ryoji, rastiv
+	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2009, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

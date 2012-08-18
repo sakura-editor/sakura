@@ -12,11 +12,11 @@
 	Copyright (C) 2003, MIK, genta, ‚©‚ë‚Æ, zenryaku, Moca, ryoji, naoh, KEITA, ‚¶‚ã‚¤‚¶
 	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, ‚Ý‚¿‚Î‚È, Kazika
 	Copyright (C) 2005, genta, novice, ‚©‚ë‚Æ, MIK, Moca, D.S.Koba, aroka, ryoji, maru
-	Copyright (C) 2006, genta, aroka, ryoji, ‚©‚ë‚Æ, fon, yukihane, Moca
-	Copyright (C) 2007, ryoji, maru
-	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, ryoji
-	Copyright (C) 2010, ryoji
+	Copyright (C) 2006, genta, aroka, ryoji, ‚©‚ë‚Æ, fon, yukihane, Moca, maru
+	Copyright (C) 2007, ryoji, maru, genta, nasukoji
+	Copyright (C) 2008, ryoji, nasukoji, novice, syat
+	Copyright (C) 2009, ryoji, syat, genta
+	Copyright (C) 2010, ryoji, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

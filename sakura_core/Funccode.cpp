@@ -12,8 +12,9 @@
 	Copyright (C) 2004, genta, isearch
 	Copyright (C) 2005, genta, MIK
 	Copyright (C) 2006, aroka, ryoji, fon
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2007, ryoji, maru, genta, Moca, nasukoji
 	Copyright (C) 2008, nasukoji
+	Copyright (C) 2009, ryoji, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

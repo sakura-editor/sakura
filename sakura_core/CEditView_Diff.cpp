@@ -13,6 +13,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, maru
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2010, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

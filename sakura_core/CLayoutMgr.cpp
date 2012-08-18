@@ -9,6 +9,7 @@
 	Copyright (C) 2003, genta, Moca
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, Moca
+	Copyright (C) 2006, genta, Moca
 	Copyright (C) 2009, ryoji, nasukoji
 
 	This source code is designed for sakura editor.

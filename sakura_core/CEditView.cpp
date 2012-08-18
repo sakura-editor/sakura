@@ -13,11 +13,11 @@
 	Copyright (C) 2003, MIK, ai, ryoji, Moca, wmlhq, genta
 	Copyright (C) 2004, genta, Moca, novice, naoh, isearch, fotomo
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, ‚©‚ë‚Æ, Moca
-	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
-	Copyright (C) 2007, ryoji, ‚¶‚ã‚¤‚¶, maru
-	Copyright (C) 2008, ryoji, nasukoji, bosagami
-	Copyright (C) 2009, nasukoji, ryoji
-	Copyright (C) 2010, ryoji
+	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta, maru
+	Copyright (C) 2007, ryoji, ‚¶‚ã‚¤‚¶, maru, genta, Moca, nasukoji, D.S.Koba
+	Copyright (C) 2008, ryoji, nasukoji, bosagami, Moca, genta
+	Copyright (C) 2009, nasukoji, ryoji, syat
+	Copyright (C) 2010, ryoji, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

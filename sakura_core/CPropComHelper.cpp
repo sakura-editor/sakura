@@ -9,8 +9,8 @@
 	Copyright (C) 2001, genta, MIK, jepro, asa-o
 	Copyright (C) 2002, YAZAKI, MIK, genta
 	Copyright (C) 2003, Moca, KEITA
-	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2006, ryoji, fon
+	Copyright (C) 2007, ryoji, genta
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

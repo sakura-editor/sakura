@@ -13,6 +13,8 @@
 	Copyright (C) 2002, MIK, aroka, genta, YAZAKI
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, Moca, genta, D.S.Koba
+	Copyright (C) 2006, genta, Moca
+	Copyright (C) 2007, kobake
 	Copyright (C) 2009, ryoji, nasukoji
 
 	This source code is designed for sakura editor.

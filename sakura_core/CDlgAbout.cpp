@@ -12,7 +12,9 @@
 	Copyright (C) 2003, Moca
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
-	Copyright (C) 2006, Moca
+	Copyright (C) 2006, Moca, genta
+	Copyright (C) 2008, novice, Uchi
+	Copyright (C) 2010, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

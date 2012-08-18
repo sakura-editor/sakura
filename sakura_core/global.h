@@ -11,8 +11,8 @@
 	Copyright (C) 2003, MIK, genta, zenryaku, naoh
 	Copyright (C) 2004, Kazika
 	Copyright (C) 2005, MIK, Moca, genta
-	Copyright (C) 2006, aroka, ryoji
-	Copyright (C) 2007, ryoji
+	Copyright (C) 2006, aroka, ryoji, Moca
+	Copyright (C) 2007, ryoji, kobake, Moca, genta
 	Copyright (C) 2008, nasukoji
 
 	This source code is designed for sakura editor.

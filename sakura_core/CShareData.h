@@ -12,10 +12,11 @@
 	Copyright (C) 2003, Moca, aroka, MIK, genta
 	Copyright (C) 2004, Moca, novice, genta
 	Copyright (C) 2005, MIK, genta, ryoji, aroka, Moca
-	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
-	Copyright (C) 2007, ryoji, maru
+	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon, maru
+	Copyright (C) 2007, ryoji, maru, genta, Moca, nasukoji, kobake
 	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, nasukoji
+	Copyright (C) 2009, nasukoji, ryoji, genta
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

@@ -13,9 +13,9 @@
 	Copyright (C) 2003, MIK, genta, wmlhq
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta, Moca
-	Copyright (C) 2006, ryoji, aroka, fon, yukihane
+	Copyright (C) 2006, ryoji, aroka, fon, yukihane. Moca
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2008, nasukoji
+	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2009, nasukoji
 
 	This source code is designed for sakura editor.

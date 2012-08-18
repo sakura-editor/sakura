@@ -12,7 +12,8 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, genta
 	Copyright (C) 2002, aroka
-	Copyright (C) 2009, ryoji
+	Copyright (C) 2009, ryoji, syat
+	Copyright (C) 2010, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.

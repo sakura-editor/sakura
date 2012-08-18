@@ -8,7 +8,8 @@
 	Copyright (C) 2000, genta
 	Copyright (C) 2001, Stonee
 	Copyright (C) 2002, Moca, MIK, YAZAKI
-	Copyright (C) 2006, ryoji
+	Copyright (C) 2006, ryoji, rastiv
+	Copyright (C) 2008, Uchi
 	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.

@@ -5,6 +5,7 @@
 	@date 2007.02.24 V‹Kì¬
 */
 /*
+	Copyright (C) 2006, genta
 	Copyright (C) 2007, genta
 
 	This software is provided 'as-is', without any express or implied
