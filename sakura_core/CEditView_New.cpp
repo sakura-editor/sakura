@@ -1234,7 +1234,7 @@ searchnext:;
 							rcClip2.bottom = y + nLineHeight;
 							/* TABを表示するか？ */
 							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bDisp
-							 && 0 == TypeDataPtr->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
+							 && !TypeDataPtr->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
 								if( bSearchStringMode ){
 									nColorIdx = COLORIDX_SEARCH;
 								}else{
@@ -1275,7 +1275,7 @@ searchnext:;
 								
 								//タブ矢印表示	//@@@ 2003.03.26 MIK
 								if( TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bDisp
-								 && 0 != TypeDataPtr->m_bTabArrow
+								 && TypeDataPtr->m_bTabArrow
 								 && rcClip2.left <= x + nX * nCharWidth ) // Apr. 1, 2003 MIK 行番号と重なる
 								{
 									DrawTabArrow( hdc, x + nX * ( nCharWidth ), y, m_nCharWidth, m_nCharHeight,
