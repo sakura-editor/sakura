@@ -281,7 +281,7 @@ void CEditView::InsertData_CEditView(
 
 			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
 			if( bLineModifiedChange ){	// 無変更だった行が変更された
-				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.Search( nStartLine );
+				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nStartLine );
 				if( pcLayoutWk && pcLayoutWk->m_nOffset ){	// 折り返しレイアウト行か？
 					RedrawLineNumber();
 				}
@@ -362,7 +362,7 @@ void CEditView::DeleteData2(
 		&nModifyLayoutLinesOld,
 		&nModifyLayoutLinesNew,
 		&nDeleteLayoutLines,
-		*pcMem
+		pcMem
 	);
 
 	if( !m_bDoing_UndoRedo && NULL != pcOpe ){	/* アンドゥ・リドゥの実行中か */
@@ -1228,7 +1228,7 @@ void CEditView::ReplaceData_CEditView(
 
 			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
 			if( bLineModifiedChange ){	// 無変更だった行が変更された
-				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.Search( LRArg.nModLineFrom );
+				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
 				if( pcLayoutWk && pcLayoutWk->m_nOffset ){	// 折り返しレイアウト行か？
 					RedrawLineNumber();
 				}
@@ -2442,7 +2442,7 @@ void CEditView::Command_MERGE(void)
 	// カーソル位置が行頭じゃない ＆ 選択範囲の終端に改行コードがある場合は
 	// その行も選択範囲に加える
 	if ( nSelectColToOld > 0 ) {
-		const CLayout* pcLayout=m_pcEditDoc->m_cLayoutMgr.Search(nSelectLineToOld);
+		const CLayout* pcLayout=m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(nSelectLineToOld);
 		if( NULL != pcLayout && EOL_NONE != pcLayout->m_cEol ){
 			++nSelectLineToOld;
 		}

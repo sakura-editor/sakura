@@ -2489,7 +2489,7 @@ void CEditView::DrawSelectAreaLine(
 	}else{
 		// 2006.03.29 Moca 行末までの長さを求める位置を上からここに移動
 		int nPosX = 0;
-		const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+		const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 		CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 		while( !it.end() ){
 			it.scanNext();
@@ -3288,7 +3288,7 @@ BOOL CEditView::GetAdjustCursorPos( int* pnPosX, int* pnPosY ){
 	if( nPosY2 >= nLayoutLineCount ){
 		if( 0 < nLayoutLineCount ){
 			nPosY2 = nLayoutLineCount - 1;
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nPosY2 );
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nPosY2 );
 			if( pcLayout->m_cEol == EOL_NONE ){
 				nPosX2 = LineIndexToColmn( pcLayout, pcLayout->GetLength() );
 				// EOFだけ折り返されているか
@@ -3906,7 +3906,7 @@ normal_action:;
 			BOOL bDrawSwitchOld = m_bDrawSWITCH;
 			BOOL bDrawAfter = FALSE;
 			if( bDrawSwitchOld ){
-				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 				if( pcLayout ){
 					int nColumn = LineIndexToColmn( pcLayout, pcLayout->GetLengthWithoutEOL() );
 					bDrawAfter = (nColumn + SCROLLMARGIN_RIGHT >= m_nViewColNum);
@@ -8621,7 +8621,7 @@ BOOL CEditView::GetCurrentWord(
 	int				nLineTo;
 	int				nColmTo;
 	int				nIdx;
-	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		return false;	/* 単語選択に失敗 */
 	}

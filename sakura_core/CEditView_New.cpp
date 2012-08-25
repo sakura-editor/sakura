@@ -234,9 +234,9 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 
 	int nMaxRollBackLineNum = 260 / nWrapWidth + 1;
 	int nRollBackLineNum = 0;
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
 	while( nRollBackLineNum < nMaxRollBackLineNum ){
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
 		if( NULL == pcLayout ){
 			break;
 		}
@@ -254,7 +254,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	bSelected = IsTextSelected();
 	if( pPs->rcPaint.right <= m_nViewAlignLeft ){	// 2009.03.26 ryoji 行番号のみ描画を通常の行描画と分離（効率化）
 		for( ; i <= nLineTo; ){
-			pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+			pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
 			if( NULL == pcLayout )
 				break;
 			DispLineNumber( hdc, pcLayout, i, nY );
@@ -263,7 +263,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 		}
 	}else{
 		for( ; i <= nLineTo; ){
-			pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+			pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
 #ifdef _DEBUG
 			{
 				if( NULL != pcLayout ){
@@ -566,7 +566,7 @@ int CEditView::DispLineNew(
 			if( nLineTo < nLineNum ){
 				goto end_of_func;
 			}
-			pcLayout2 = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+			pcLayout2 = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 			if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 				/* 行番号表示 */
 				DispLineNumber( hdc, pcLayout2, nLineNum, y );

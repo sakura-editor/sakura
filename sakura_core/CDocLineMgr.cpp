@@ -897,7 +897,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 			int*		pnModLineOldTo,		/* 影響のあった変更前の行(to) */
 			int*		pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
 			int*		pnDelLineOldNum,	/* 削除された行数 */
-			CMemory&	cmemDeleted			/* 削除されたデータ */
+			CMemory*	cmemDeleted			/* 削除されたデータ */
 //			int			bUndo				/* Undo操作かどうか */
 )
 {
@@ -917,7 +917,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 	*pnDelLineOldFrom = 0;		/* 削除された変更前論理行(from) */
 	*pnDelLineOldNum = 0;		/* 削除された行数 */
 //	cmemDeleted.SetData( "", lstrlen( "" ) );
-	cmemDeleted.SetString( "" );
+	cmemDeleted->SetString( "" );
 
 	pDocLine = GetLineInfo( nLine );
 	if( NULL == pDocLine ){
@@ -942,7 +942,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 		nDeleteLength = nLineLen - nDelPos;
 
 		/* 削除されるデータ */
-		cmemDeleted.SetString( &pLine[nDelPos], nDeleteLength );
+		cmemDeleted->SetString( &pLine[nDelPos], nDeleteLength );
 
 		/* 次の行の情報 */
 		if( NULL == ( pDocLine2 = pDocLine->m_pNext ) ){
@@ -1006,7 +1006,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 		nDeleteLength = nDelLen;
 
 		/* 削除されるデータ */
-		cmemDeleted.SetString( &pLine[nDelPos], nDeleteLength );
+		cmemDeleted->SetString( &pLine[nDelPos], nDeleteLength );
 
 		pData = new char[nLineLen + 1];
 		if( nDelPos > 0 ){

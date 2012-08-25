@@ -811,11 +811,11 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 			}
 		}
 		/* 現在行のデータを取得 */
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 		/* カーソルが左端にある */
 		if( m_nCaretPosX == (pcLayout ? pcLayout->GetIndent() : 0)){
 			if( m_nCaretPosY > 0 ){
-				pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY - 1 );
+				pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY - 1 );
 				CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 				while( !it.end() ){
 					it.scanNext();
@@ -932,7 +932,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 		}
 //		2003.06.28 Moca [EOF]のみの行にカーソルがあるときに右を押しても選択を解除できない問題に対応
 		/* 現在行のデータを取得 */
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 		//	2004.04.02 EOF以降にカーソルがあったときに右を押しても何も起きなかったのを、EOFに移動するように
 		if( pcLayout )
 		{
@@ -1186,7 +1186,7 @@ void CEditView::Command_GOLINETOP(
 		);
 	}
 	else{
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 		nCaretPosX = pcLayout ? pcLayout->GetIndent() : 0;
 		nCaretPosY = m_nCaretPosY;
 	}
@@ -1266,7 +1266,7 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 	}
 
 	/* 現在行のデータを取得 */
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 	while( !it.end() ){
 		it.scanNext();
@@ -1360,7 +1360,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 	}
 
 	const CLayout* pcLayout;
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		bIsFreeCursorModeOld = m_pShareData->m_Common.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;
@@ -1376,7 +1376,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 	if( m_pcEditDoc->m_cLayoutMgr.PrevWord( m_nCaretPosY, nIdx, &nLineNew, &nColmNew, m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord ) ){
 		/* 行が変わった */
 		if( nLineNew != m_nCaretPosY ){
-			pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNew );
+			pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNew );
 			if( NULL == pcLayout ){
 				return;
 			}
@@ -1426,7 +1426,7 @@ void CEditView::Command_WORDRIGHT( int bSelect )
 try_again:;
 	nCurLine = m_nCaretPosY;
 	const CLayout* pcLayout;
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nCurLine );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nCurLine );
 	if( NULL == pcLayout ){
 		return;
 	}
@@ -1443,7 +1443,7 @@ try_again:;
 	if( m_pcEditDoc->m_cLayoutMgr.NextWord( nCurLine, nIdx, &nLineNew, &nColmNew, m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord ) ){
 		/* 行が変わった */
 		if( nLineNew != nCurLine ){
-			pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNew );
+			pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNew );
 			if( NULL == pcLayout ){
 				return;
 			}
@@ -1491,7 +1491,7 @@ void CEditView::CopyCurLine(
 		return;
 	}
 
-	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		return;
 	}
@@ -1650,7 +1650,7 @@ void CEditView::Command_DELETE( void )
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		// 2008.08.03 nasukoji	選択範囲なしでDELETEを実行した場合、カーソル位置まで半角スペースを挿入した後改行を削除して次行と連結する
 		if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() > m_nCaretPosY ){
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 			if( pcLayout ){
 				int nLineLen;
 				LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
@@ -1692,7 +1692,7 @@ void CEditView::Command_DELETE_BACK( void )
 		bBool = Command_LEFT( FALSE, FALSE );
 		// 2008.08.03 nasukoji	改行より右側でのBACKSPACEでもUndoデータを作成しない
 		if( bBool ){
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 			if( pcLayout ){
 				int nLineLen;
 				int nIdx = LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
@@ -1861,7 +1861,7 @@ void CEditView::Command_LineCutToStart( void )
 		Command_CUT();
 		return;
 	}
-	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
+	pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
 		ErrorBeep();
 		return;
@@ -1895,7 +1895,7 @@ void CEditView::Command_LineCutToEnd( void )
 		Command_CUT();
 		return;
 	}
-	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
+	pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
 		ErrorBeep();
 		return;
@@ -1935,7 +1935,7 @@ void CEditView::Command_LineDeleteToStart( void )
 		DeleteData( TRUE );
 		return;
 	}
-	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
+	pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
 		ErrorBeep();
 		return;
@@ -1968,7 +1968,7 @@ void CEditView::Command_LineDeleteToEnd( void )
 		DeleteData( TRUE );
 		return;
 	}
-	pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
+	pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
 	if( NULL == pCLayout ){
 		ErrorBeep();
 		return;
@@ -2010,7 +2010,7 @@ void CEditView::Command_CUT_LINE( void )
 		return;
 	}
 
-	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		ErrorBeep();
 		return;
@@ -2045,7 +2045,7 @@ void CEditView::Command_DELETE_LINE( void )
 		ErrorBeep();
 		return;
 	}
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		ErrorBeep();
 		return;
@@ -2059,7 +2059,7 @@ void CEditView::Command_DELETE_LINE( void )
 	nCaretPosY_OLD = m_nCaretPosY;
 
 	Command_DELETE();
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL != pcLayout ){
 		// 2003-04-30 かろと
 		// 行削除した後、フリーカーソルでないのにカーソル位置が行端より右になる不具合対応
@@ -2188,7 +2188,7 @@ bool CEditView::Command_SELECTWORD( void )
 		/* 現在の選択範囲を非選択状態に戻す */
 		DisableSelectArea( TRUE );
 	}
-	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		return false;	//	単語選択に失敗
 	}
@@ -2201,9 +2201,9 @@ bool CEditView::Command_SELECTWORD( void )
 		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL ) ){
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineFrom );
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineFrom );
 		nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineTo );
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineTo );
 		nColmTo = LineIndexToColmn( pcLayout, nColmTo );
 
 		/* 選択範囲の変更 */
@@ -3099,7 +3099,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	}
 
 	nLineNum = m_nCaretPosY;
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 
 
 	if( NULL == pcLayout ){
@@ -3109,12 +3109,12 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		if( nLineNum < 0 ){
 			goto end_of_func;
 		}
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 		if( NULL == pcLayout ){
 			goto end_of_func;
 		}
 		// カーソル左移動はやめて nIdxは行の長さとしないと[EOF]から改行を前検索した時に最後の改行を検索できない 2003.05.04 かろと
-		CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+		CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 		nIdx = pCLayout->m_pCDocLine->m_pLine->GetStringLength() + 1;		// 行末のヌル文字(\0)にマッチさせるために+1 2003.05.16 かろと
 	} else {
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -3996,7 +3996,7 @@ void CEditView::Command_DUPLICATELINE( void )
 		DisableSelectArea( TRUE );
 	}
 
-	pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		ErrorBeep();
 		return;
@@ -4991,7 +4991,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		// To Here 2001.12.03 hor
 
 		for( nLineNum = rcSel.top; nLineNum < rcSel.bottom + 1; nLineNum++ ){
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( nLineNum );
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 			//	Nov. 6, 2002 genta NULLチェック追加
 			//	これがないとEOF行を含む矩形選択中の文字列入力で落ちる
 			const char* pLine;
@@ -5111,7 +5111,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 
 		for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
 			int nLineCountPrev = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
 			if( NULL == pcLayout ||						//	テキストが無いEOLの行は無視
 				pcLayout->m_nOffset > 0 ||				//	折り返し行は無視
 				pcLayout->GetLengthWithoutEOL() == 0 ){	//	改行のみの行は無視する。
@@ -6790,7 +6790,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			}
 
 			// 物理行、物理行長、物理行での検索マッチ位置
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search(m_nSelectLineFrom);
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(m_nSelectLineFrom);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
 			int nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom ) + pcLayout->m_nOffset;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
@@ -7245,7 +7245,7 @@ void CEditView::Command_REPLACE_ALL()
 		else if( bRegularExp ) /* 検索／置換  1==正規表現 */
 		{
 			// 物理行、物理行長、物理行での検索マッチ位置
-			const CLayout* pcLayout = rLayoutMgr.Search(m_nSelectLineFrom);
+			const CLayout* pcLayout = rLayoutMgr.SearchLineByLayoutY(m_nSelectLineFrom);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
 			int nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom ) + pcLayout->m_nOffset;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
@@ -9047,7 +9047,7 @@ void CEditView::DelCharForOverwrite( void )
 {
 	bool bEol = false;
 	BOOL bDelete = TRUE;
-	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( m_nCaretPosY );
+	const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL != pcLayout ){
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		int nIdxTo = LineColmnToIndex( pcLayout, m_nCaretPosX );

@@ -1181,7 +1181,7 @@ void CPrintPreview::DrawPageText(
 			*/
 //			int nLineNum = nPageNum * ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ) + m_bPreview_EnableLines * nDan + i;
 			const int nLineNum = (nPageNum * m_pPrintSetting->m_nPrintDansuu + nDan) * m_bPreview_EnableLines + i;
-			const CLayout*	pcLayout = m_pLayoutMgr_Print->Search( nLineNum );
+			const CLayout*	pcLayout = m_pLayoutMgr_Print->SearchLineByLayoutY( nLineNum );
 			if( NULL == pcLayout ){
 				break;
 			}

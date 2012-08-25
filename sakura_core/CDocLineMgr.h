@@ -176,7 +176,7 @@ public:
 		int*		pnModLineOldTo,		/* 影響のあった変更前の行(to) */
 		int*		pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
 		int*		pnDelLineOldNum,	/* 削除された行数 */
-		CMemory&	cmemDeleted			/* 削除されたデータ */
+		CMemory*	cmemDeleted			/* 削除されたデータ */
 	);
 
 	/* 指定範囲のデータを置換(削除 & データを挿入)

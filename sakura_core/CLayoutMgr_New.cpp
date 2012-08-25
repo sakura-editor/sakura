@@ -49,7 +49,7 @@
 		nPosXがインデントを含む幅を保持するように変更．nMaxLineSizeは
 		固定値となったが，既存コードの置き換えは避けて最初に値を代入するようにした．
 */
-void CLayoutMgr::DoLayout(
+void CLayoutMgr::_DoLayout(
 		HWND	hwndProgress
 )
 {
@@ -91,7 +91,7 @@ void CLayoutMgr::DoLayout(
 		}
 	}
 
-	Empty();
+	_Empty();
 	Init();
 	nLineNum = 0;
 	
@@ -146,7 +146,7 @@ void CLayoutMgr::DoLayout(
 				 nBgn ){
 				//	計算
 				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
-				nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+				nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
 
 				//	計算済み
 				pLayoutCalculated = m_pLayoutBot;
@@ -170,7 +170,7 @@ void CLayoutMgr::DoLayout(
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+							nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
 							pLayoutCalculated = m_pLayoutBot;
 						}
 					}
@@ -222,7 +222,7 @@ void CLayoutMgr::DoLayout(
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+							nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
 							pLayoutCalculated = m_pLayoutBot;
 //?							continue;
 						}
@@ -277,7 +277,7 @@ void CLayoutMgr::DoLayout(
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
 						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+						nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
 						pLayoutCalculated = m_pLayoutBot;
 					}
 				}
@@ -304,7 +304,7 @@ void CLayoutMgr::DoLayout(
 						nCOMMENTMODE_Prev = nCOMMENTMODE;
 						nBgn = nPos;
 						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+						nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
 						pLayoutCalculated = m_pLayoutBot;
 					}
 				}
@@ -325,7 +325,7 @@ void CLayoutMgr::DoLayout(
 					nCOMMENTMODE_Prev = nCOMMENTMODE;
 					nBgn = nPos;
 					// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-					nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+					nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
 					pLayoutCalculated = m_pLayoutBot;
 					continue;
 				}
@@ -349,7 +349,7 @@ void CLayoutMgr::DoLayout(
 							nCOMMENTMODE_Prev = nCOMMENTMODE;
 							nBgn = nPos;
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*getIndentOffset)( m_pLayoutBot );
+							nPosX = nIndent = (this->*m_getIndentOffset)( m_pLayoutBot );
 							pLayoutCalculated = m_pLayoutBot;
 							continue;
 						}	//@@@ 2002.04.14 MIK
@@ -513,7 +513,7 @@ int CLayoutMgr::DoLayout_Range(
 				 pLayout != pLayoutCalculated ){
 				//	計算
 				//	Oct, 1, 2002 genta Indentサイズを取得するように変更
-				nIndent = (this->*getIndentOffset)( pLayout );
+				nIndent = (this->*m_getIndentOffset)( pLayout );
 
 				//	計算済み
 				pLayoutCalculated = pLayout;
@@ -545,7 +545,7 @@ int CLayoutMgr::DoLayout_Range(
 
 							nBgn = nPos;
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 							pLayoutCalculated = pLayout;
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
@@ -609,7 +609,7 @@ int CLayoutMgr::DoLayout_Range(
 
 							nBgn = nPos;
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 							pLayoutCalculated = pLayout;
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
@@ -672,7 +672,7 @@ int CLayoutMgr::DoLayout_Range(
 
 						nBgn = nPos;
 						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+						nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 						pLayoutCalculated = pLayout;
 						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 							( nDelLogicalLineFrom < nCurLine )
@@ -712,7 +712,7 @@ int CLayoutMgr::DoLayout_Range(
 
 						nBgn = nPos;
 						// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-						nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+						nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 						pLayoutCalculated = pLayout;
 						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 							( nDelLogicalLineFrom < nCurLine )
@@ -747,7 +747,7 @@ int CLayoutMgr::DoLayout_Range(
 
 					nBgn = nPos;
 					// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-					nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+					nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 					pLayoutCalculated = pLayout;
 					if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 						( nDelLogicalLineFrom < nCurLine )
@@ -782,7 +782,7 @@ int CLayoutMgr::DoLayout_Range(
 
 							nBgn = nPos;
 							// 2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
-							nPosX = nIndent = (this->*getIndentOffset)( pLayout );
+							nPosX = nIndent = (this->*m_getIndentOffset)( pLayout );
 							pLayoutCalculated = pLayout;
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
@@ -988,46 +988,11 @@ bool CLayoutMgr::IsKinsokuTail( const char *pLine, int length )
 	return false;
 }
 
-#if 0
-/*!
-	句読点か
-
-	@param[in] c1 調べる文字1バイト目
-	@param[in] c2 調べる文字2バイト目
-	@retval true 句読点である
-	@retval false 句読点でない
-*/
-
-bool CLayoutMgr::IsKutoTen( unsigned char c1, unsigned char c2 )
-{
-	static const char	*KUTOTEN_1 = "｡､,.";
-	static const char	*KUTOTEN_2 = "。、，．";
-	unsigned const char	*p;
-
-	if( c2 )	//全角
-	{
-		for( p = (const unsigned char *)KUTOTEN_2; *p; p += 2 )
-		{
-			if( *p == c1 && *(p + 1) == c2 ) return true;
-		}
-	}
-	else		//半角
-	{
-		for( p = (const unsigned char *)KUTOTEN_1; *p; p++ )
-		{
-			if( *p == c1 ) return true;
-		}
-	}
-
-	return false;
-}
-#endif
-
 /*!
 	禁則対象句読点に該当するかを調べる．
 
-	@param[in] pLine 調べる文字へのポインタ
-	@param[in] length 当該箇所の文字サイズ
+	@param [in] pLine 調べる文字へのポインタ
+	@param [in] length 当該箇所の文字サイズ
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
@@ -1049,36 +1014,14 @@ bool CLayoutMgr::IsKinsokuKuto( const char *pLine, int length )
 	return false;
 }
 
-///*!
-//	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離	
-//*/
-//bool CLayoutMgr::IsKinsokuPosKuto(const int nMaxLineSize, const int nPosX, const int nCharChars)
-//{
-//	switch( nMaxLineSize - nPosX )
-//	{
-//	case 1:	// 1文字前
-//		if( nCharChars == 2 ){
-//			return true;
-//		}
-//		break;
-//	case 0:	// 
-//		if( nCharChars == 1 || nCharChars == 2 ){
-//			return true;
-//		}
-//		break;
-//	}
-//	return false;
-//}
-
 /*!
-	@param[in] nRest 行の残り文字数
-	@param[in] nCharChars 現在位置の文字サイズ
-	@param[in] nCharChars2 現在位置の次の文字サイズ
-
-	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離
+	@date 2005-08-20 D.S.Koba _DoLayout()とDoLayout_Range()から分離
 */
-bool CLayoutMgr::IsKinsokuPosHead(const int nRest,
-								  const int nCharChars, const int nCharChars2)
+bool CLayoutMgr::IsKinsokuPosHead(
+	const int nRest,		//!< [in] 行の残り文字数
+	const int nCharKetas,	//!< [in] 現在位置の文字サイズ
+	const int nCharKetas2	//!< [in] 現在位置の次の文字サイズ
+)
 {
 	switch( nRest )
 	{
@@ -1092,20 +1035,20 @@ bool CLayoutMgr::IsKinsokuPosHead(const int nRest,
 	//↑何文字前か？
 	// ※ただし、"るZ"部分が禁則なら処理しない。
 	case 3:	// 3文字前
-		if( nCharChars == 2 && nCharChars2 == 2 ){
+		if( nCharKetas == 2 && nCharKetas2 == 2 ){
 			return true;
 		}
 		break;
 	case 2:	// 2文字前
-		if( nCharChars == 2 /*&& nCharChars2 > 0*/ ){
+		if( nCharKetas == 2 ){
 			return true;
 		}
-		else if( nCharChars == 1 && nCharChars2 == 2 ){
+		else if( nCharKetas == 1 && nCharKetas2 == 2 ){
 			return true;
 		}
 		break;
 	case 1:	// 1文字前
-		if( nCharChars == 1 /*&& nCharChars2 > 0*/ ){
+		if( nCharKetas == 1 ){
 			return true;
 		}
 		break;
@@ -1114,34 +1057,34 @@ bool CLayoutMgr::IsKinsokuPosHead(const int nRest,
 }
 
 /*!
-	@param[in] nRest 行の残り文字数
-	@param[in] nCharChars 現在位置の文字サイズ
-	@param[in] nCharChars2 現在位置の次の文字サイズ
-
 	@date 2005-08-20 D.S.Koba DoLayout()とDoLayout_Range()から分離
 */
-bool CLayoutMgr::IsKinsokuPosTail(const int nRest,
-								  const int nCharChars, const int nCharChars2)
+bool CLayoutMgr::IsKinsokuPosTail(
+	const int nRest,		//!< [in] 行の残り文字数
+	const int nCharKetas,	//!< [in] 現在位置の文字サイズ
+	const int nCharKetas2	//!< [in] 現在位置の次の文字サイズ
+)
 {
 	switch( nRest )
 	{
 	case 3:	// 3文字前
-		if( nCharChars == 2 && nCharChars2 == 2){
+		if( nCharKetas == 2 && nCharKetas2 == 2){
 			// "（あ": "あ"の2バイト目で折り返しのとき
 			return true;
 		}
 		break;
 	case 2:	// 2文字前
-		if( nCharChars == 2 ){
+		if( nCharKetas == 2 ){
 			// "（あ": "あ"で折り返しのとき
 			return true;
-		}else if( nCharChars == 1 && nCharChars2 == 2){
+		}
+		else if( nCharKetas == 1 && nCharKetas2 == 2){
 			// "(あ": "あ"の2バイト目で折り返しのとき
 			return true;
 		}
 		break;
 	case 1:	// 1文字前
-		if( nCharChars == 1 ){
+		if( nCharKetas == 1 ){
 			// "(あ": "あ"で折り返しのとき
 			return true;
 		}
@@ -1161,14 +1104,14 @@ int CLayoutMgr::Match_Quote( char szQuote, int nPos, int nLineLen, const char* p
 			nCharChars = 1;
 		}
 		if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-			if( 1 == nCharChars && pLine[i] == '\\' ){
+			if( 1 == nCharChars && pLine[i] == _T('\\') ){
 				++i;
 			}else
 			if( 1 == nCharChars && pLine[i] == szQuote ){
 				return i + 1;
 			}
-		}else
-		if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+		}
+		else if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 			if( 1 == nCharChars && pLine[i] == szQuote ){
 				if( i + 1 < nLineLen && pLine[i + 1] == szQuote ){
 					++i;
@@ -1361,10 +1304,10 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 			//	インデントのカウントを継続する
 		}
 		//	Jul. 20, 2003 genta インデント対象文字
-		else if( szSpecialIndentChar[0] != '\0' ){
+		else if( szSpecialIndentChar[0] != _T('\0') ){
 			unsigned char buf[3]; // 文字の長さは1 or 2
 			memcpy( buf, it.getCurrentPos(), it.getIndexDelta() );
-			buf[ it.getIndexDelta() ] = '\0';
+			buf[ it.getIndexDelta() ] = _T('\0');
 			if( NULL != _mbsstr( (const unsigned char*)szSpecialIndentChar, buf )){
 				//	インデントのカウントを継続する
 			}
