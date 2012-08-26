@@ -346,7 +346,7 @@ enum eWINSIZEMODE{
 
 
 //! 共通設定
-struct Common {
+struct CommonSetting {
 
 	//	Jul. 3, 2000 genta
 	//	アクセス関数(簡易)
@@ -689,7 +689,7 @@ struct DLLSHAREDATA {
 	IniFolder			m_IniFolder;
 
 	/**** 共通設定 ****/
-	Common				m_Common;
+	CommonSetting		m_Common;
 
 	/* キー割り当て */
 	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */

@@ -476,7 +476,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 {
 	const char* pszSecName = "Common";
 	// 2005.04.07 D.S.Koba
-	Common& common = m_pShareData->m_Common;
+	CommonSetting& common = m_pShareData->m_Common;
 
 	cProfile.IOProfileData( pszSecName, "nCaretType"				, common.m_nCaretType );
 	//	Oct. 2, 2005 genta
@@ -776,7 +776,7 @@ void CShareData::ShareData_IO_Toolbar( CProfile& cProfile )
 	const char* pszSecName = "Toolbar";
 	int		i;
 	char	szKeyName[64];
-	Common& common = m_pShareData->m_Common;
+	CommonSetting& common = m_pShareData->m_Common;
 
 	cProfile.IOProfileData( pszSecName, "nToolBarButtonNum", common.m_nToolBarButtonNum );
 	cProfile.IOProfileData( pszSecName, "bToolBarIsFlat", common.m_bToolBarIsFlat );
@@ -804,7 +804,7 @@ void CShareData::ShareData_IO_CustMenu( CProfile& cProfile )
 	const char* pszSecName = "CustMenu";
 	int		i, j;
 	char	szKeyName[64];
-	Common& common = m_pShareData->m_Common;
+	CommonSetting& common = m_pShareData->m_Common;
 
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		wsprintf( szKeyName, "szCMN[%02d]", i );
@@ -832,7 +832,7 @@ void CShareData::ShareData_IO_Font( CProfile& cProfile )
 	const char* pszSecName = "Font";
 	const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
 	char		szKeyData[1024];
-	Common& common = m_pShareData->m_Common;
+	CommonSetting& common = m_pShareData->m_Common;
 	if( cProfile.IsReadingMode() ){
 		if( true == cProfile.IOProfileData( pszSecName, "lf", szKeyData, sizeof( szKeyData )) ){
 			sscanf( szKeyData, pszForm,

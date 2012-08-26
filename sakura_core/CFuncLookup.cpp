@@ -36,16 +36,15 @@
 #include "StdAfx.h"
 #include "CFuncLookup.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
-#include <stdio.h>
 
 //	オフセット値
 const int LUOFFSET_MACRO = 0;
 const int LUOFFSET_CUSTMENU = 1;
 
 //! 動的に内容が変わる分類の名前
-const char *DynCategory[] = {
-	"外部マクロ",
-	"カスタムメニュー"
+const TCHAR *DynCategory[] = {
+	_T("外部マクロ"),
+	_T("カスタムメニュー")
 };
 
 /*!	@brief 分類中の位置に対応する機能番号を返す．
@@ -81,23 +80,22 @@ int CFuncLookup::Pos2FuncCode( int category, int position, bool bGetUnavailable 
 		else if( position < MAX_CUSTOM_MENU )
 			return F_CUSTMENU_BASE + position;
 	}
-
-	return F_DISABLE;	// F_DISABLE == 0
+	return F_DISABLE;
 }
 
 /*!	@brief 分類中の位置に対応する機能名称を返す．
-
-	@param category [in] 分類番号 (0-)
-	@param position [in] 分類中のindex (0-)
-	@param ptr [out] 文字列を格納するバッファの先頭
-	@param bufsize [in] 文字列を格納するバッファのサイズ
 
 	@retval true 指定された機能番号は定義されている
 	@retval false 指定された機能番号は未定義
 
 	@date 2007.11.02 ryoji 処理を簡素化
 */
-bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsize ) const
+bool CFuncLookup::Pos2FuncName(
+	int		category,		//!< [in] 分類番号 (0-)
+	int		position,		//!< [in] 分類中のindex (0-)
+	TCHAR*	ptr,			//!< [out] 文字列を格納するバッファの先頭
+	int		bufsize			//!< [in] 文字列を格納するバッファのサイズ
+) const
 {
 	int funccode = Pos2FuncCode( category, position );
 	return Funccode2Name( funccode, ptr, bufsize );
@@ -114,28 +112,28 @@ bool CFuncLookup::Pos2FuncName( int category, int position, char *ptr, int bufsi
 
 	@date 2007.11.02 ryoji 未登録マクロも文字列を格納．戻り値の意味を変更（文字列は必ず格納）．
 */
-bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
+bool CFuncLookup::Funccode2Name( int funccode, TCHAR* ptr, int bufsize ) const
 {
 	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
 		if( m_pMacroRec[position].IsEnabled() ){
-			const char *p = m_pMacroRec[position].GetTitle();
+			const TCHAR *p = m_pMacroRec[position].GetTitle();
 			strncpy( ptr, p, bufsize - 1 );
-			ptr[ bufsize - 1 ] = '\0';
+			ptr[ bufsize - 1 ] = _T('\0');
 		}else{
-			_snprintf( ptr, bufsize, "マクロ %d (未登録)", position );
-			ptr[ bufsize - 1 ] = '\0';
+			_snprintf( ptr, bufsize, _T("マクロ %d (未登録)"), position );
+			ptr[ bufsize - 1 ] = _T('\0');
 		}
 		return true;
 	}
 	else if( funccode == F_MENU_RBUTTON ){
 		strncpy( ptr, m_pCommon->m_szCustMenuNameArr[0], bufsize );
-		ptr[bufsize-1] = '\0';
+		ptr[bufsize-1] = _T('\0');
 		return true;
 	}
 	else if( F_CUSTMENU_1 <= funccode && funccode < F_CUSTMENU_BASE + MAX_CUSTOM_MENU ){	// MAX_CUSTMACRO->MAX_CUSTOM_MENU	2010/6/9 Uchi
 		strncpy( ptr, m_pCommon->m_szCustMenuNameArr[ funccode - F_CUSTMENU_BASE ], bufsize );
-		ptr[bufsize-1] = '\0';
+		ptr[bufsize-1] = _T('\0');
 		return true;
 	}
 	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
@@ -148,7 +146,7 @@ bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 	if( ::LoadString( m_hInstance, F_DISABLE, ptr, bufsize ) > 0 ){
 		return false;
 	}
-	ptr[0] = '\0';
+	ptr[0] = _T('\0');
 	return false;
 }
 
@@ -158,7 +156,7 @@ bool CFuncLookup::Funccode2Name( int funccode, char *ptr, int bufsize ) const
 	
 	@return NULL 分類名称．取得に失敗したらNULL．
 */
-const char* CFuncLookup::Category2Name( int category ) const
+const TCHAR* CFuncLookup::Category2Name( int category ) const
 {
 	if( category < 0 )
 		return NULL;
@@ -206,7 +204,7 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 */
 void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 {
-	char pszLabel[256];
+	TCHAR pszLabel[256];
 	int n;
 	int i;
 
@@ -217,7 +215,7 @@ void CFuncLookup::SetListItem( HWND hListBox, int category ) const
 	for( i = 0; i < n; i++ ){
 		if( Pos2FuncCode( category, i ) == F_DISABLE )
 			continue;
-		Pos2FuncName( category, i, pszLabel, sizeof(pszLabel) );
+		Pos2FuncName( category, i, pszLabel, _countof(pszLabel) );
 		::SendMessage( hListBox, LB_ADDSTRING, 0, (LPARAM)pszLabel );
 	}
 }

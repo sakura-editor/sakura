@@ -5521,7 +5521,7 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 {
 	/* カスタムメニュー 規定値 */
 	
-	Common& rCommon = m_pShareData->m_Common;
+	CommonSetting& rCommon = m_pShareData->m_Common;
 
 	/* 右クリックメニュー */
 	int n = 0;

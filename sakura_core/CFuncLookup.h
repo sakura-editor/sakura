@@ -39,7 +39,7 @@
 #include "global.h"
 #include "Funccode.h"
 struct MacroRec;// 2007.11.02 ryoji
-struct Common;// 2002/2/10 aroka
+struct CommonSetting;// 2002/2/10 aroka
 
 /*!
 	@brief 表示用文字列等の取得
@@ -51,20 +51,20 @@ class SAKURA_CORE_API CFuncLookup {
 public:
 	//	Oct. 15, 2001 genta 引数追加
 	// 2007.11.02 ryoji 引数変更（CSMacroMgr->MacroRec）
-	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, Common* pCom )
-		: m_pMacroRec( pMacroRec ), m_hInstance( hInst ), m_pCommon( pCom ) {}
+//	CFuncLookup( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom )
+//		: m_pMacroRec( pMacroRec ), m_hInstance( hInst ), m_pCommon( pCom ) {}
 	CFuncLookup() : m_pMacroRec( NULL ), m_hInstance( NULL ) {}
 
-	void Init( HINSTANCE hInst, MacroRec* pMacroRec, Common* pCom ){
+	void Init( HINSTANCE hInst, MacroRec* pMacroRec, CommonSetting* pCom ){
 		m_pMacroRec = pMacroRec;
 		m_hInstance = hInst;
 		m_pCommon = pCom;
 	}
 
 	int Pos2FuncCode( int category, int position, bool bGetUnavailable = true ) const;	// 2007.10.31 ryoji bGetUnavailableパラメータ追加
-	bool Pos2FuncName( int category, int position, char *ptr, int bufsize ) const;
-	bool Funccode2Name( int funccode, char *ptr, int bufsize ) const ;
-	const char* Category2Name( int category ) const;
+	bool Pos2FuncName( int category, int position, TCHAR* ptr, int bufsize ) const;
+	bool Funccode2Name( int funccode, TCHAR* ptr, int bufsize ) const ;
+	const TCHAR* Category2Name( int category ) const;
 
 	void SetCategory2Combo( HWND hComboBox ) const ;
 	void SetListItem( HWND hListBox, int category ) const;
@@ -80,7 +80,7 @@ private:
 	HINSTANCE m_hInstance;	//!< 文字列リソースを持つインスタンス
 	MacroRec* m_pMacroRec;	//!< マクロ情報	// 2007.11.02 ryoji メンバ変更（CSMacroMgr->MacroRec）
 	
-	Common* m_pCommon;	//! 共通設定データ領域へのポインタ
+	CommonSetting* m_pCommon;	//! 共通設定データ領域へのポインタ
 
 };
 
