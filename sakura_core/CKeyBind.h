@@ -24,20 +24,20 @@ class CMemory;// 2002/2/10 aroka
 struct KEYDATA {
 	/*! キーコード	*/
 	short			m_nKeyCode;
-//	char*			m_pszKeyName;
 	
 	/*!	キーの名前	*/
-	char			m_szKeyName[64];
+	TCHAR			m_szKeyName[64];
 	
 	/*!	対応する機能番号
 
 		SHIFT, CTRL, ALTの３つのシフト状態のそれぞれに対して
 		機能を割り当てるため、配列になっている。
 	*/
-	/*short*/int	m_nFuncCodeArr[8];
+	int	m_nFuncCodeArr[8];
 };
 
 class CFuncLookup;
+
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -68,25 +68,13 @@ public:
 	static int CreateKeyBindList( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CMemory& cMemList, CFuncLookup* pcFuncLookup, BOOL bGetDefFuncCode = TRUE );
 	static int GetKeyStr( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, CMemory& cMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* 機能に対応するキー名の取得 */
 	static int GetKeyStrList( HINSTANCE	hInstance, int nKeyNameArrNum,KEYDATA* pKeyNameArr, CMemory*** pppcMemList, int nFuncId, BOOL bGetDefFuncCode = TRUE );	/* 機能に対応するキー名の取得(複数) */
-	static char* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, char* pszLabel, BOOL bKeyStr, BOOL bGetDefFuncCode = TRUE );	/* メニューラベルの作成 */
-
-	/*
-	||  更新系メンバ関数
-	*/
+	static TCHAR* GetMenuLabel( HINSTANCE hInstance, int nKeyNameArrNum, KEYDATA* pKeyNameArr, int nFuncId, TCHAR* pszLabel, BOOL bKeyStr, BOOL bGetDefFuncCode = TRUE );	/* メニューラベルの作成 */
 
 
 protected:
 	/*
-	||  メンバ変数
-	*/
-//	HINSTANCE	m_hInstance;
-//	CKeyData*	m_pKeyNameArr;
-//	int			m_nKeyNameArrNum;
-
-	/*
 	||  実装ヘルパ関数
 	*/
-
 	static bool GetKeyStrSub(int& nKeyNameArrBegin, int nKeyNameArrEnd, KEYDATA* pKeyNameArr,
 			int nShiftState, CMemory& cMemList, int nFuncId, BOOL bGetDefFuncCode );
 };

@@ -26,13 +26,11 @@
 
 CKeyBind::CKeyBind()
 {
-	return;
 }
 
 
 CKeyBind::~CKeyBind()
 {
-	return;
 }
 
 
@@ -47,12 +45,11 @@ HACCEL CKeyBind::CreateAccerelator(
 )
 {
 	ACCEL*	pAccelArr;
-	int		nAccelArrNum;
 	HACCEL	hAccel;
 	int		i, j, k;
 
-	/* 機能が割り当てられているキーの数をカウント */
-	nAccelArrNum = 0;
+	// 機能が割り当てられているキーの数をカウント
+	int nAccelArrNum = 0;
 	for( i = 0; i < nKeyNameArrNum; ++i ){
 		if( 0 != pKeyNameArr[i].m_nKeyCode ){
 			for( j = 0; j < 8; ++j ){
@@ -122,7 +119,7 @@ int CKeyBind::GetFuncCode(
 			return GetFuncCodeAt( pKeyNameArr[i], nSts, bGetDefFuncCode );
 		}
 	}
-	return 0;
+	return F_DEFAULT;
 }
 
 
@@ -131,51 +128,44 @@ int CKeyBind::GetFuncCode(
 
 
 /*!
-	@param hInstance [in] インスタンスハンドル
-	@param nKeyNameArrNum [in] 
-	@param pKeyNameArr [out] 
-	@param cMemList
-	@param pcFuncLookup [in] 機能番号→名前の対応を取る
-	@param bGetDefFuncCode [in] ON:デフォルト機能割り当てを使う/OFF:使わない
-
 	@return 機能が割り当てられているキーストロークの数
 	
 	@date Oct. 31, 2001 genta 動的な機能名に対応するため引数追加
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 */
 int CKeyBind::CreateKeyBindList(
-		HINSTANCE	hInstance,
-		int			nKeyNameArrNum,
-		KEYDATA*	pKeyNameArr,
-		CMemory&	cMemList,
-		CFuncLookup* pcFuncLookup,
-		BOOL		bGetDefFuncCode /* = TRUE */
+	HINSTANCE		hInstance,		//!< [in] インスタンスハンドル
+	int				nKeyNameArrNum,	//!< [in]
+	KEYDATA*		pKeyNameArr,	//!< [out]
+	CMemory&		cMemList,		//!<
+	CFuncLookup*	pcFuncLookup,	//!< [in] 機能番号→名前の対応を取る
+	BOOL			bGetDefFuncCode //!< [in] ON:デフォルト機能割り当てを使う/OFF:使わない デフォルト:TRUE
 )
 {
 	int		i;
 	int		j;
 	int		nValidKeys;
-	char	pszStr[256];
-	char	szFuncName[256];
-	char	szFuncNameJapanese[256];
+	TCHAR	pszStr[256];
+	TCHAR	szFuncName[256];
+	TCHAR	szFuncNameJapanese[256];
 
 	nValidKeys = 0;
 //	cMemList = "";
 //	cMemList.SetData( "", strlen( "" ) );
-	cMemList.SetString( "" );
-	char*	pszSHIFT = "Shift+";
-	char*	pszCTRL = "Ctrl+";
-	char*	pszALT = "Alt+";
+	cMemList.SetString(_T(""));
+	const TCHAR*	pszSHIFT = _T("Shift+");
+	const TCHAR*	pszCTRL = _T("Ctrl+");
+	const TCHAR*	pszALT = _T("Alt+");
 //	char*	pszEQUAL = " = ";
-	char*	pszTAB = "\t";
+	const TCHAR*	pszTAB = _T("\t");
 
 //	char*	pszCR = "\n";	//Feb. 17, 2001 JEPRO \n=0x0a=LFが行末コードになってしまうので
-	char*	pszCR = "\r\n";	//\r=0x0d=CRを追加
+	const TCHAR*	pszCR = _T("\r\n");	//\r=0x0d=CRを追加
 
 
-	cMemList.AppendString( "キー\t機能名\t関数名\t機能番号\tキーマクロ記録可/不可" );
+	cMemList.AppendString( _T("キー\t機能名\t関数名\t機能番号\tキーマクロ記録可/不可") );
 	cMemList.AppendString( pszCR );
-	cMemList.AppendString( "-----\t-----\t-----\t-----\t-----" );
+	cMemList.AppendString( _T("-----\t-----\t-----\t-----\t-----") );
 	cMemList.AppendString( pszCR );
 
 	for( j = 0; j < 8; ++j ){
@@ -198,9 +188,9 @@ int CKeyBind::CreateKeyBindList(
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
 					szFuncNameJapanese, 255 )){
-					strcpy( szFuncNameJapanese, "---名前が定義されていない-----" );
+					strcpy( szFuncNameJapanese, _T("---名前が定義されていない-----") );
 				}
-				strcpy( szFuncName, ""/*"---unknown()--"*/ );
+				strcpy( szFuncName, _T("")/*"---unknown()--"*/ );
 
 //				/* 機能名日本語 */
 //				::LoadString(
@@ -227,7 +217,7 @@ int CKeyBind::CreateKeyBindList(
 
 				/* 機能番号 */
 				cMemList.AppendString( pszTAB );
-				wsprintf( pszStr, "%d", iFunc );
+				wsprintf( pszStr, _T("%d"), iFunc );
 				cMemList.AppendString( pszStr );
 
 				/* キーマクロに記録可能な機能かどうかを調べる */
@@ -235,9 +225,9 @@ int CKeyBind::CreateKeyBindList(
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 //				if( CMacro::CanFuncIsKeyMacro( pKeyNameArr[i].m_nFuncCodeArr[j] ) ){
 				if( CSMacroMgr::CanFuncIsKeyMacro( iFunc ) ){
-					cMemList.AppendString( "○" );
+					cMemList.AppendString( _T("○") );
 				}else{
-					cMemList.AppendString( "×" );
+					cMemList.AppendString( _T("×") );
 				}
 
 
@@ -277,9 +267,9 @@ bool CKeyBind::GetKeyStrSub(
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	const char pszSHIFT[] = "Shift+";
-	const char pszCTRL[] = "Ctrl+";
-	const char pszALT[] = "Alt+";
+	const TCHAR*	pszSHIFT = _T("Shift+");
+	const TCHAR*	pszCTRL  = _T("Ctrl+");
+	const TCHAR*	pszALT   = _T("Alt+");
 
 	int i;
 	for( i = nKeyNameArrBegin; i < nKeyNameArrEnd; ++i ){
@@ -304,7 +294,6 @@ bool CKeyBind::GetKeyStrSub(
 
 
 /** 機能に対応するキー名の取得
-
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 	@date 2007.11.04 genta マウスクリックよりキー割り当ての優先度を上げる
 	@date 2007.11.04 genta 共通機能のサブルーチン化
@@ -320,10 +309,10 @@ int CKeyBind::GetKeyStr(
 {
 	int		i;
 	int		j;
-	char*	pszSHIFT = "Shift+";
-	char*	pszCTRL = "Ctrl+";
-	char*	pszALT = "Alt+";
-	cMemList.SetString( "" );
+	const TCHAR*	pszSHIFT = _T("Shift+");
+	const TCHAR*	pszCTRL = _T("Ctrl+");
+	const TCHAR*	pszALT = _T("Alt+");
+	cMemList.SetString(_T(""));
 
 	//	先にキー部分を調査する
 	for( j = 0; j < 8; ++j ){
@@ -347,24 +336,23 @@ int CKeyBind::GetKeyStr(
 
 
 /** 機能に対応するキー名の取得(複数)
-
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 	@date 2007.11.04 genta 共通機能のサブルーチン化
 */
 int CKeyBind::GetKeyStrList(
-		HINSTANCE	hInstance,
-		int			nKeyNameArrNum,
-		KEYDATA*	pKeyNameArr,
-		CMemory***	pppcMemList,
-		int			nFuncId,
-		BOOL		bGetDefFuncCode /* = TRUE */
+	HINSTANCE	hInstance,
+	int			nKeyNameArrNum,
+	KEYDATA*	pKeyNameArr,
+	CMemory***	pppcMemList,
+	int			nFuncId,
+	BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
 	int		i;
 	int		j;
-	char*	pszSHIFT = "Shift+";
-	char*	pszCTRL = "Ctrl+";
-	char*	pszALT = "Alt+";
+	const TCHAR*	pszSHIFT = _T("Shift+");
+	const TCHAR*	pszCTRL = _T("Ctrl+");
+	const TCHAR*	pszALT = _T("Alt+");
 	int		nAssignedKeysNum;
 
 	nAssignedKeysNum = 0;
@@ -405,22 +393,20 @@ int CKeyBind::GetKeyStrList(
 /*! メニューラベルの作成
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
 */
-char* CKeyBind::GetMenuLabel(
+TCHAR* CKeyBind::GetMenuLabel(
 		HINSTANCE	hInstance,
 		int			nKeyNameArrNum,
 		KEYDATA*	pKeyNameArr,
 		int			nFuncId,
-		char*		pszLabel,
+		TCHAR*		pszLabel,
 		BOOL		bKeyStr,
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
 	CMemory		cMemList;
-//	int			i;
 
-
-	if( 0 == strlen( pszLabel ) ){
-		strcpy( pszLabel, "-- undefined name --" );
+	if( 0 == _tcslen( pszLabel ) ){
+		_tcscpy( pszLabel, _T("-- undefined name --") );
 		::LoadString( hInstance, nFuncId, pszLabel, 255 );
 	}
 
@@ -433,10 +419,10 @@ char* CKeyBind::GetMenuLabel(
 		 || ( IDM_SELOPENFOLDER <= nFuncId && nFuncId <= IDM_SELOPENFOLDER + 999 )
 		 ){
 		}else{
-			strcat( pszLabel, "\t" );
+			_tcscat( pszLabel, _T("\t") );
 		}
 		if( GetKeyStr( hInstance, nKeyNameArrNum, pKeyNameArr, cMemList, nFuncId, bGetDefFuncCode ) ){
-			strcat( pszLabel, cMemList.GetStringPtr() );
+			_tcscat( pszLabel, cMemList.GetStringPtr() );
 		}
 	}
 	return pszLabel;
@@ -456,16 +442,17 @@ int CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 {
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
 	if( pShareData == NULL )
-		return 0;
+		return F_DEFAULT;
 
-	int nDefFuncCode = 0;
+	int nDefFuncCode = F_DEFAULT;
 	if( nKeyCode == VK_F4 ){
 		if( nState == _CTRL ){
 			nDefFuncCode = F_FILECLOSE;	// 閉じて(無題)
 			if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ){
 				nDefFuncCode = F_WINCLOSE;	// 閉じる
 			}
-		}else if( nState == _ALT ){
+		}
+		else if( nState == _ALT ){
 			nDefFuncCode = F_WINCLOSE;	// 閉じる
 			if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ){
 				if( !pShareData->m_Common.m_bTab_CloseOneWin ){
@@ -494,7 +481,7 @@ int CKeyBind::GetFuncCodeAt( KEYDATA& KeyData, int nState, BOOL bGetDefFuncCode 
 		return KeyData.m_nFuncCodeArr[nState];
 	if( bGetDefFuncCode )
 		return GetDefFuncCode( KeyData.m_nKeyCode, nState );
-	return 0;
+	return F_DEFAULT;
 };
 
 
