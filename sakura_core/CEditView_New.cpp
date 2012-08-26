@@ -271,7 +271,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 						m_pcEditDoc->m_cDocLineMgr.DUMP();
 						m_pcEditDoc->m_cLayoutMgr.DUMP();
 
-						pcLayout = m_pcEditDoc->m_cLayoutMgr.Search( i );
+						pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
 					}
 
 					int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength() - pcLayout->m_nOffset;
