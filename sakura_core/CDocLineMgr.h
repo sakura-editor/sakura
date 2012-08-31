@@ -123,7 +123,7 @@ public:
 		BOOL		bStopsBothEnds	//	単語の両端で止まる
 	);
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int SearchWord( int , int , const char* , int , int , int , int , int* , int* , int*, CBregexp* ); /* 単語検索 */
+	int SearchWord( int , int , const char* , ESearchDirection , int , int , int , int* , int* , int*, CBregexp* ); /* 単語検索 */
 //	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int*, int ); /* 文字列検索 */
 	static char* SearchString( const unsigned char*, int, int , const unsigned char* , int, int*, int ); /* 文字列検索 */
 	static void CreateCharCharsArr( const unsigned char*, int, int** );	/* 検索条件の情報 */
@@ -138,12 +138,12 @@ public:
 
 // From Here 2001.12.03 hor
 	void ResetAllBookMark( void );			/* ブックマークの全解除 */
-	int SearchBookMark( int , int , int* ); /* ブックマーク検索 */
+	int SearchBookMark( int , ESearchDirection , int* ); /* ブックマーク検索 */
 // To Here 2001.12.03 hor
 
 	//@@@ 2002.05.25 MIK
 	void ResetAllDiffMark( void );			/* 差分表示の全解除 */
-	int SearchDiffMark( int , int , int* ); /* 差分検索 */
+	int SearchDiffMark( int , ESearchDirection , int* ); /* 差分検索 */
 	void SetDiffMarkRange( int nMode, int nStartLine, int nEndLine );	/* 差分範囲の登録 */
 	bool IsDiffUse( void ) const { return m_bIsDiffUse; }	/* DIFF使用中 */
 

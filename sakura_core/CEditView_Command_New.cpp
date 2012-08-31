@@ -1997,7 +1997,7 @@ void CEditView::Command_BOOKMARK_NEXT(void)
 	nY=m_nCaretPosY_PHY;
 	nYOld=nY;						// hor
 re_do:;								// hor
-	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, 1 /* Œã•ûŒŸõ */, &nY)){
+	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, SEARCH_FORWARD, &nY)){
 		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
 		//	2006.07.09 genta V‹KŠÖ”‚É‚Ü‚Æ‚ß‚½
@@ -2037,7 +2037,7 @@ void CEditView::Command_BOOKMARK_PREV(void)
 	nY=m_nCaretPosY_PHY;
 	nYOld=nY;						// hor
 re_do:;								// hor
-	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, 0 /* ‘O•ûŒŸõ */, &nY)){
+	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, SEARCH_BACKWARD, &nY)){
 		bFound = TRUE;				// hor
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nX,nY,&nX,&nY);
 		//	2006.07.09 genta V‹KŠÖ”‚É‚Ü‚Æ‚ß‚½

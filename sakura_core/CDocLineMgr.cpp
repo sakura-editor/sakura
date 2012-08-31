@@ -1523,18 +1523,17 @@ int CDocLineMgr::PrevOrNextWord(
 */
 /* 見つからない場合は０を返す */
 int CDocLineMgr::SearchWord(
-	int			nLineNum,		/* 検索開始行 */
-	int			nIdx, 			/* 検索開始位置 */
-	const char*	pszPattern,		/* 検索条件 */
-	int			bPrevOrNext,	/* 0==前方検索 1==後方検索 */
-	int			bRegularExp,	/* 1==正規表現 */
-	int			bLoHiCase,		/* 1==英大文字小文字の区別 */
-	int			bWordOnly,		/* 1==単語のみ検索 */
-	int*		pnLineNum, 		/* マッチ行 */
-	int*		pnIdxFrom, 		/* マッチ位置from */
-	int*		pnIdxTo,  		/* マッチ位置to */
-	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	CBregexp*	pRegexp			/*!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある */
+	int					nLineNum,		//!< 検索開始行
+	int					nIdx, 			//!< 検索開始位置
+	const char*			pszPattern,		//!< 検索条件
+	ESearchDirection	eDirection,		//!< 検索方向
+	int					bRegularExp,	//!< 1==正規表現
+	int					bLoHiCase,		//!< 1==英大文字小文字の区別
+	int					bWordOnly,		//!< 1==単語のみ検索
+	int*				pnLineNum, 		//!< マッチ行
+	int*				pnIdxFrom, 		//!< マッチ位置from
+	int*				pnIdxTo,  		//!< マッチ位置to
+	CBregexp*			pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 )
 {
 //#ifdef _DEBUG
@@ -1564,20 +1563,13 @@ int CDocLineMgr::SearchWord(
 		nPatternLen,
 		&pnKey_CharCharsArr
 	);
-//	/* 検索条件の情報(キー文字列の使用文字表)作成 */
-//	CDocLineMgr::CreateCharUsedArr(
-//		(const unsigned char *)pszPattern,
-//		lstrlen( pszPattern ),
-//		pnKey_CharCharsArr,
-//		&pnKey_CharUsedArr
-//	);
 
 	/* 1==正規表現 */
 	if( bRegularExp ){
 		nLinePos = nLineNum;		// 検索行＝検索開始行
 		pDocLine = GetLineInfo( nLinePos );
 		/* 0==前方検索 1==後方検索 */
-		if( 0 == bPrevOrNext ){
+		if( eDirection == SEARCH_BACKWARD ){
 			//
 			// 前方(↑)検索(正規表現)
 			//
@@ -1667,7 +1659,7 @@ int CDocLineMgr::SearchWord(
 		*/
 
 		/* 0==前方検索 1==後方検索 */
-		if( 0 == bPrevOrNext ){
+		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = nLineNum;
 			pDocLine = GetLineInfo( nLinePos );
 			int nNextWordFrom;
@@ -1749,7 +1741,7 @@ int CDocLineMgr::SearchWord(
 		goto end_of_func;
 	}else{
 		/* 0==前方検索 1==後方検索 */
-		if( 0 == bPrevOrNext ){
+		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = nLineNum;
 			nHitTo = nIdx;
 

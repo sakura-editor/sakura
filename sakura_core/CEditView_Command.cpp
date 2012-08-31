@@ -3135,7 +3135,7 @@ re_do:;							//	hor
 		nLineNum,								// 検索開始行
 		nIdx,									// 検索開始位置
 		m_szCurSrchKey,							// 検索条件
-		FALSE,									// 0==前方検索 1==後方検索
+		SEARCH_BACKWARD,						// 0==前方検索 1==後方検索
 		m_bCurSrchRegularExp,					// 1==正規表現
 		m_bCurSrchLoHiCase,						// 1==大文字小文字の区別
 		m_bCurSrchWordOnly,						// 1==単語のみ検索
@@ -3352,7 +3352,7 @@ re_do:;
 		nLineNum, 								// 検索開始行
 		nIdx, 									// 検索開始位置
 		m_szCurSrchKey,							// 検索条件
-		TRUE,									// 0==前方検索 1==後方検索
+		SEARCH_FORWARD,							// 0==前方検索 1==後方検索
 		m_bCurSrchRegularExp,					// 1==正規表現
 		m_bCurSrchLoHiCase,						// 1==英大文字小文字の区別
 		m_bCurSrchWordOnly,						// 1==単語のみ検索

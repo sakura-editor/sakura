@@ -960,7 +960,7 @@ private:
 	/* インクリメンタルサーチ */ 
 	//2004.10.24 isearch migemo
 	CMigemo* m_pcmigemo;
-	void ISearchEnter( int mode  ,int direction);
+	void ISearchEnter( int mode, ESearchDirection direction);
 	void ISearchExit();
 	void ISearchExec(WORD wChar);
 	void ISearchExec(const char* pszText);
@@ -969,7 +969,7 @@ private:
 	void ISearchWordMake(void);
 	void ISearchSetStatusMsg(CMemory* msg) const;
 	char* m_pszMigemoWord;
-	int m_nISearchDirection;
+	ESearchDirection m_nISearchDirection;
 	int m_nISearchMode;
 	bool m_bISearchWrap;
 	int m_nISearchX1History[256];

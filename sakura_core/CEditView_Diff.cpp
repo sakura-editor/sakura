@@ -541,7 +541,7 @@ void CEditView::Command_Diff_Next( void )
 	nYOld = nY;
 
 re_do:;	
-	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, 1 /* Œã•ûŒŸõ */, &nY ) )
+	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, SEARCH_FORWARD, &nY ) )
 	{
 		bFound = TRUE;
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
@@ -595,7 +595,7 @@ void CEditView::Command_Diff_Prev( void )
 	nYOld = nY;
 
 re_do:;
-	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, 0 /* ‘O•ûŒŸõ */, &nY ) ){
+	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, SEARCH_BACKWARD, &nY ) ){
 		bFound = TRUE;
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
 		if( m_bSelectingLock ){

@@ -114,22 +114,22 @@ bool CEditView::ProcessCommand_isearch(
 
 		//	検索モードへの移行
 		case F_ISEARCH_NEXT:
-			ISearchEnter(1,1);	//前方インクリメンタルサーチ //2004.10.13 isearch
+			ISearchEnter(1,SEARCH_FORWARD);	//前方インクリメンタルサーチ //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_PREV:
-			ISearchEnter(1,0);	//後方インクリメンタルサーチ //2004.10.13 isearch
+			ISearchEnter(1,SEARCH_BACKWARD);	//後方インクリメンタルサーチ //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_REGEXP_NEXT:
-			ISearchEnter(2,1);	//前方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+			ISearchEnter(2,SEARCH_FORWARD);	//前方正規表現インクリメンタルサーチ  //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_REGEXP_PREV:
-			ISearchEnter(2,0);	//後方正規表現インクリメンタルサーチ  //2004.10.13 isearch
+			ISearchEnter(2,SEARCH_BACKWARD);	//後方正規表現インクリメンタルサーチ  //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_MIGEMO_NEXT:
-			ISearchEnter(3,1);	//前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+			ISearchEnter(3,SEARCH_FORWARD);	//前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_MIGEMO_PREV:
-			ISearchEnter(3,0);	//後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+			ISearchEnter(3,SEARCH_BACKWARD);	//後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 			return true;
 	}
 	return false;
@@ -143,7 +143,7 @@ bool CEditView::ProcessCommand_isearch(
 
 	@author isearch
 */
-void CEditView::ISearchEnter( int mode, int direction)
+void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 {
 
 	if (m_nISearchMode == mode ) {
@@ -248,7 +248,7 @@ void CEditView::ISearchEnter( int mode, int direction)
 void CEditView::ISearchExit()
 {
 	CShareData::getInstance()->AddToSearchKeyArr( m_szCurSrchKey );
-	m_nISearchDirection = 0;
+	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	
 	if (m_nISearchHistoryCount == 0){

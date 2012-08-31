@@ -486,16 +486,16 @@ void CDocLineMgr::ResetAllBookMark( void )
 	@date 2001.12.03 hor
 */
 int CDocLineMgr::SearchBookMark(
-	int			nLineNum,		/* 検索開始行 */
-	int			bPrevOrNext,	/* 0==前方検索 1==後方検索 */
-	int*		pnLineNum 		/* マッチ行 */
+	int					nLineNum,		/* 検索開始行 */
+	ESearchDirection	bPrevOrNext,	/* 0==前方検索 1==後方検索 */
+	int*				pnLineNum 		/* マッチ行 */
 )
 {
 	CDocLine*	pDocLine;
 	int			nLinePos=nLineNum;
 
 	/* 0==前方検索 1==後方検索 */
-	if( 0 == bPrevOrNext ){
+	if( bPrevOrNext == SEARCH_BACKWARD ){
 		nLinePos--;
 		pDocLine = GetLineInfo( nLinePos );
 		while( NULL != pDocLine ){
@@ -688,16 +688,16 @@ void CDocLineMgr::ResetAllDiffMark( void )
 	@date	2002.05.25
 */
 int CDocLineMgr::SearchDiffMark(
-	int			nLineNum,		/* 検索開始行 */
-	int			bPrevOrNext,	/* 0==前方検索 1==後方検索 */
-	int*		pnLineNum 		/* マッチ行 */
+	int					nLineNum,		//!< 検索開始行
+	ESearchDirection	bPrevOrNext,	//!< 0==前方検索 1==後方検索
+	int*				pnLineNum 		//!< マッチ行
 )
 {
 	CDocLine*	pDocLine;
 	int			nLinePos = nLineNum;
 
 	/* 0==前方検索 1==後方検索 */
-	if( 0 == bPrevOrNext )
+	if( bPrevOrNext == SEARCH_BACKWARD )
 	{
 		nLinePos--;
 		pDocLine = GetLineInfo( nLinePos );
