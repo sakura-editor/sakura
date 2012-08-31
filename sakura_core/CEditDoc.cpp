@@ -56,40 +56,39 @@
 #define IDT_ROLLMOUSE	1
 
 /*!
-	May 12, 2000 genta 初期化方法変更
+	@note
+		m_pcEditWnd はコンストラクタ内では使用しないこと．
+
+	@date 2000.05.12 genta 初期化方法変更
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-	@note m_pcEditWnd はコンストラクタ内では使用しないこと．
+	@date 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
+	@date 2004.06.21 novice タグジャンプ機能追加
 */
-CEditDoc::CEditDoc() :
-	m_cNewLineCode( EOL_CRLF ),		//	New Line Type
-	m_cSaveLineCode( EOL_NONE ),		//	保存時のLine Type
-	m_bGrepRunning( FALSE ),		/* Grep処理中 */
-//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-//	m_bPrintPreviewMode( FALSE ),	/* 印刷プレビューモードか */
-	m_nCommandExecNum( 0 ),			/* コマンド実行回数 */
-	m_bReadOnly( FALSE ),			/* 読み取り専用モード */
-	m_bDebugMode( FALSE ),			/* デバッグモニタモード */
-	m_bGrepMode( FALSE ),			/* Grepモードか */
-	m_nCharCode( CODE_DEFAULT ),	/* 文字コード種別 */
-	m_bBomExist( FALSE ),			//	Jul. 26, 2003 ryoji BOM
-	m_nActivePaneIndex( 0 ),
-//@@@ 2002.01.14 YAZAKI 不使用のため
-//	m_pcOpeBlk( NULL ),				/* 操作ブロック */
-	m_bDoing_UndoRedo( FALSE ),		/* アンドゥ・リドゥの実行中か */
-	m_nFileShareModeOld( 0 ),		/* ファイルの排他制御モード */
-	m_hLockedFile( NULL ),			/* ロックしているファイルのハンドル */
-	m_pszAppName( "EditorClient" ),
-	m_hInstance( NULL ),
-	m_hWnd( NULL ),
-	m_eWatchUpdate( CEditDoc::WU_QUERY ),
-	m_nSettingTypeLocked( false ),	//	設定値変更可能フラグ
-	m_nSettingType( 0 ),	// Sep. 11, 2002 genta
-	m_bInsMode( true ),	// Oct. 2, 2005 genta
-	m_bIsModified( false ),	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
-	m_pcDragSourceView( NULL )
+CEditDoc::CEditDoc()
+: m_cNewLineCode( EOL_CRLF )		//	New Line Type
+, m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
+, m_bGrepRunning( FALSE )		/* Grep処理中 */
+, m_nCommandExecNum( 0 )			/* コマンド実行回数 */
+, m_bReadOnly( FALSE )			/* 読み取り専用モード */
+, m_bDebugMode( FALSE )			/* デバッグモニタモード */
+, m_bGrepMode( FALSE )			/* Grepモードか */
+, m_nCharCode( CODE_DEFAULT )	/* 文字コード種別 */
+, m_bBomExist( FALSE )			//	Jul. 26, 2003 ryoji BOM
+, m_nActivePaneIndex( 0 )
+, m_bDoing_UndoRedo( FALSE )		/* アンドゥ・リドゥの実行中か */
+, m_nFileShareModeOld( 0 )		/* ファイルの排他制御モード */
+, m_hLockedFile( NULL )			/* ロックしているファイルのハンドル */
+, m_pszAppName( "EditorClient" )
+, m_hInstance( NULL )
+, m_hWnd( NULL )
+, m_eWatchUpdate( CEditDoc::WU_QUERY )
+, m_nSettingTypeLocked( false )	//	設定値変更可能フラグ
+, m_nSettingType( 0 )	// Sep. 11, 2002 genta
+, m_bInsMode( true )	// Oct. 2, 2005 genta
+, m_bIsModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
+, m_pcDragSourceView( NULL )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
-//	m_pcDlgTest = new CDlgTest;
 
 	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
 	m_szSaveFilePath[0] = '\0';			/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
@@ -97,39 +96,31 @@ CEditDoc::CEditDoc() :
 	/* 共有データ構造体のアドレスを返す */
 
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	//	Sep. 11, 2002 genta 削除
-	//	SetDocumentTypeはコンストラクタ中では使わない．
-	//int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
-	//SetDocumentType( doctype, true );
 
 	m_nEditViewCount = 0;
 
 	/* レイアウト管理情報の初期化 */
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
-	/* レイアウト情報の変更 */
-//	STypeConfig& ref = GetDocumentAttribute();
+	// レイアウト情報の変更
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	// 「指定桁で折り返す」以外の時は折り返し幅をMAXLINEKETASで初期化する
 	// 「右端で折り返す」は、この後のOnSize()で再設定される
 	STypeConfig ref = GetDocumentAttribute();
-	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
+	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH ){
 		ref.m_nMaxLineKetas = MAXLINEKETAS;
-	
+	}	
 	m_cLayoutMgr.SetLayoutInfo(
 		TRUE,
-		NULL,/*hwndProgress*/
+		NULL,
 		ref
 	);
-//	MYTRACE_A( "CEditDoc::CEditDoc()おわり\n" );
 
-	//	Aug, 21, 2000 genta
-	//	自動保存の設定
+	//	自動保存の設定	//	Aug, 21, 2000 genta
 	ReloadAutoSaveParam();
 
 	//	Sep, 29, 2001 genta
 	//	マクロ
 	m_pcSMacroMgr = new CSMacroMgr;
-	//strcpy(m_pszCaption, "sakura");	//@@@	YAZAKI
 	
 	//	m_FileTimeの初期化
 	m_FileTime.dwLowDateTime = 0;
@@ -141,23 +132,17 @@ CEditDoc::CEditDoc() :
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
-
-	return;
 }
 
 
 CEditDoc::~CEditDoc()
 {
-//	delete (CDialog*)m_pcDlgTest;
-//	m_pcDlgTest = NULL;
-
 	if( m_hWnd != NULL ){
 		DestroyWindow( m_hWnd );
 	}
 	/* ファイルの排他ロック解除 */
 	delete m_pcSMacroMgr;
 	DoFileUnLock();
-	return;
 }
 
 
@@ -1480,28 +1465,28 @@ int CEditDoc::MakeBackUp( const char* target_file )
 
 /*! バックアップの作成
 
-	@param[out] szNewPath バックアップ先パス名
-	@param[in]  dwSize    バックアップ先パス名のバッファサイズ
-	@param[in]  target_file バックアップ元パス名
-
 	@author aroka
 	@date 2005.11.29 aroka
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
 	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
 	@date 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
 
-	@retval true
-	@retval false	作成したファイルパスの長さがdwSizeより大きかった
+	@retval true  成功
+	@retval false	バッファ不足
 	
 	@todo Advanced modeでの世代管理
 */
-bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* target_file )
+bool CEditDoc::FormatBackUpPath(
+	TCHAR*			szNewPath,		//!< [out] バックアップ先パス名
+	DWORD 			newPathCount,	//!< [in]  szNewPathのサイズ
+	const TCHAR*	target_file		//!< [in]  バックアップ元パス名
+)
 {
-	char	szDrive[_MAX_DIR];
-	char	szDir[_MAX_DIR];
-	char	szFname[_MAX_FNAME];
-	char	szExt[_MAX_EXT];
-	char	szTempPath[1024];		// パス名作成用の一時バッファ（_MAX_PATHよりある程度大きいこと）
+	TCHAR	szDrive[_MAX_DIR];
+	TCHAR	szDir[_MAX_DIR];
+	TCHAR	szFname[_MAX_FNAME];
+	TCHAR	szExt[_MAX_EXT];
+	TCHAR	szTempPath[1024];		// パス名作成用の一時バッファ（_MAX_PATHよりある程度大きいこと）
 
 	bool	bOverflow = false;		// バッファオーバーフロー
 
@@ -1509,31 +1494,31 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 	_splitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
-		strcpy( szTempPath, m_pShareData->m_Common.m_szBackUpFolder );
+		_tcscpy( szTempPath, m_pShareData->m_Common.m_szBackUpFolder );
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szTempPath );
 	}
 	else{
-		wsprintf( szTempPath, "%s%s", szDrive, szDir );
+		wsprintf( szTempPath, _T("%s%s"), szDrive, szDir );
 	}
 
 	/* 相対フォルダを挿入 */
 	if( !m_pShareData->m_Common.m_bBackUpPathAdvanced ){
 		time_t	ltime;
 		struct	tm *today, *gmt;
-		char	szTime[64];
-		char	szForm[64];
-		char*	pBase;
+		TCHAR	szTime[64];
+		TCHAR	szForm[64];
+		TCHAR*	pBase;
 
-		pBase = szTempPath + strlen( szTempPath );
+		pBase = szTempPath + _tcslen( szTempPath );
 
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		switch( m_pShareData->m_Common.GetBackupType() ){
 		case 1:
-			wsprintf( pBase, "%s.bak", szFname );
+			wsprintf( pBase, _T("%s.bak"), szFname );
 			break;
 		case 5: //	Jun.  5, 2005 genta 1の拡張子を残す版
-			wsprintf( pBase, "%s%s.bak", szFname, szExt );
+			wsprintf( pBase, _T("%s%s.bak"), szFname, szExt );
 			break;
 		case 2:	//	日付，時刻
 			_tzset();
@@ -1542,7 +1527,7 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 			gmt = gmtime( &ltime );		/* 万国標準時に変換する */
 			today = localtime( &ltime );/* 現地時間に変換する */
 
-			strcpy( szForm, "" );
+			_tcscpy( szForm, _T("") );
 			if( m_pShareData->m_Common.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
 				strcat( szForm, "%Y" );
 			}
@@ -1562,8 +1547,8 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 				strcat( szForm, "%S" );
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
-			strftime( szTime, sizeof( szTime ) - 1, szForm, today );
-			wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
+			strftime( szTime, _countof( szTime ) - 1, szForm, today );
+			wsprintf( pBase, _T("%s_%s%s"), szFname, szTime, szExt );
 			break;
 	//	2001/06/12 Start by asa-o: ファイルに付ける日付を前回の保存時(更新日時)にする
 		case 4:	//	日付，時刻
@@ -1579,26 +1564,26 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
 				::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
 
-				strcpy( szTime, "" );
+				_tcscpy( szTime, _T("") );
 				if( m_pShareData->m_Common.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-					wsprintf(szTime,"%d",SystemTime.wYear);
+					wsprintf(szTime,_T("%d"),SystemTime.wYear);
 				}
 				if( m_pShareData->m_Common.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-					wsprintf(szTime,"%s%02d",szTime,SystemTime.wMonth);
+					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wMonth);
 				}
 				if( m_pShareData->m_Common.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-					wsprintf(szTime,"%s%02d",szTime,SystemTime.wDay);
+					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wDay);
 				}
 				if( m_pShareData->m_Common.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-					wsprintf(szTime,"%s%02d",szTime,SystemTime.wHour);
+					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wHour);
 				}
 				if( m_pShareData->m_Common.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-					wsprintf(szTime,"%s%02d",szTime,SystemTime.wMinute);
+					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wMinute);
 				}
 				if( m_pShareData->m_Common.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-					wsprintf(szTime,"%s%02d",szTime,SystemTime.wSecond);
+					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wSecond);
 				}
-				wsprintf( pBase, "%s_%s%s", szFname, szTime, szExt );
+				wsprintf( pBase, _T("%s_%s%s"), szFname, szTime, szExt );
 			}
 			break;
 	// 2001/06/12 End
@@ -1610,25 +1595,25 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 			//	ファイル名のRotationは確認ダイアログの後で行う．
 			{
 				//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
-				char* ptr;
+				TCHAR* ptr;
 				if( m_pShareData->m_Common.GetBackupType() == 3 ){
 					ptr = szExt;
 				}
 				else {
-					ptr = szExt + strlen( szExt );
+					ptr = szExt + _tcslen( szExt );
 				}
-				*ptr   = '.';
+				*ptr   = _T('.');
 				*++ptr = m_pShareData->m_Common.GetBackupExtChar();
-				*++ptr = '0';
-				*++ptr = '0';
-				*++ptr = '\0';
+				*++ptr = _T('0');
+				*++ptr = _T('0');
+				*++ptr = _T('\0');
 			}
-			wsprintf( pBase, "%s%s", szFname, szExt );
+			wsprintf( pBase, _T("%s%s"), szFname, szExt );
 			break;
 		}
 
 	}else{ // 詳細設定使用する
-		char szFormat[1024];
+		TCHAR szFormat[1024];
 
 		switch( m_pShareData->m_Common.GetBackupTypeAdv() ){
 		case 4:	//	ファイルの日付，時刻
@@ -1638,7 +1623,7 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 				SYSTEMTIME	SystemTime;
 
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
-				if( ! GetLastWriteTimestamp( target_file, LastWriteTime )){
+				if( !GetLastWriteTimestamp( target_file, LastWriteTime )){
 					LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
 				}
 				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
@@ -1657,7 +1642,7 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 				today = localtime( &ltime );/* 現地時間に変換する */
 
 				/* YYYYMMDD時分秒 形式に変換 */
-				strftime( szFormat, sizeof( szFormat ) - 1, m_pShareData->m_Common.m_szBackUpPathAdvanced , today );
+				_tcsftime( szFormat, _countof( szFormat ) - 1, m_pShareData->m_Common.m_szBackUpPathAdvanced , today );
 			}
 			break;
 		}
@@ -1665,25 +1650,25 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 		{
 			// make keys
 			// $0-$9に対応するフォルダ名を切り出し
-			char keybuff[1024];
-			strcpy( keybuff, szDir );
+			TCHAR keybuff[1024];
+			_tcscpy( keybuff, szDir );
 			CutLastYenFromDirectoryPath( keybuff );
 
-			const char *folders[10];
+			TCHAR *folders[10];
 			{
 				//	Jan. 9, 2006 genta VC6対策
 				int idx;
 				for( idx=0; idx<10; ++idx ){
-					folders[idx] = "";		// 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
+					folders[idx] = _T("");		// 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
 				}
 				folders[0] = szFname;
 
 				for( idx=1; idx<10; ++idx ){
-					char *cp;
-					cp =sjis_strrchr2((unsigned char*)keybuff, '\\', '\\');
+					TCHAR *cp;
+					cp = sjis_strrchr2((unsigned char*)keybuff, _T('\\'), _T('\\'));
 					if( cp != NULL ){
 						folders[idx] = cp+1;
-						*cp = '\0';
+						*cp = _T('\0');
 					}
 					else{
 						break;
@@ -1692,33 +1677,33 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 			}
 			{
 				// $0-$9を置換
-				//strcpy( szNewPath, "" );
-				char *q= szFormat;
-				const char *q2 = szFormat;
+				//_tcscpy( szNewPath, _T("") );
+				TCHAR *q= szFormat;
+				TCHAR *q2 = szFormat;
 				while( *q ){
-					if( *q=='$' ){
+					if( *q==_T('$') ){
 						++q;
 						if( isdigit(*q) ){
-							q[-1] = '\0';
+							q[-1] = _T('\0');
 
 							// 2008.11.25 nasukoji	バッファオーバーフローチェック
-							if( strlen( szTempPath ) + strlen( q2 ) + strlen( folders[*q-'0'] ) >= dwSize ){
+							if( _tcslen( szTempPath ) + _tcslen( q2 ) + _tcslen( folders[*q-_T('0')] ) >= newPathCount ){
 								bOverflow = true;
 								break;
 							}
 
-							if( '\\' == *q2 ){
+							if( _T('\\') == *q2 ){
 								// 2010.04.13 Moca \の重複チェック C:\backup\\dirになるのを先に防ぐ
 								// ただしネットワークパスを取り除くと困るので、3文字以上
 								int nTempPathLen = strlen( szTempPath );
-								if( 3 <= nTempPathLen && *::CharPrev( szTempPath, &szTempPath[nTempPathLen] ) == '\\' ){
+								if( 3 <= nTempPathLen && *::CharPrev( szTempPath, &szTempPath[nTempPathLen] ) == _T('\\') ){
 									q2 +=1; // \を飛ばす
 								}
 							}
 
 							strcat( szTempPath, q2 );
 							//if( folders[*q-'0'] != 0 ){	// 2009.10.10 aroka	バグ対応でチェック不要になった
-							strcat( szTempPath, folders[*q-'0'] );
+							strcat( szTempPath, folders[*q-_T('0')] );
 							//}
 							q2 = q+1;
 						}
@@ -1728,7 +1713,7 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 
 				// 2008.11.25 nasukoji	バッファオーバーフローチェック
 				if( !bOverflow ){
-					if( strlen( szTempPath ) + strlen( q2 ) >= dwSize ){
+					if( _tcslen( szTempPath ) + _tcslen( q2 ) >= newPathCount ){
 						bOverflow = true;
 					}else{
 						strcat( szTempPath, q2 );
@@ -1738,46 +1723,42 @@ bool CEditDoc::FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* targ
 		}
 
 		if( !bOverflow ){
-			char temp[1024];
-			char *cp;
+			TCHAR temp[1024];
+			TCHAR *cp;
 			//	2006.03.25 Aroka szExt[0] == '\0'のときのオーバラン問題を修正
-			char *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
+			TCHAR *ep = (szExt[0]!=0) ? &szExt[1] : &szExt[0];
 
-			while( strchr( szTempPath, '*' ) ){
-				strcpy( temp, szTempPath );
-				cp = strchr( temp, '*' );
+			while( strchr( szTempPath, _T('*') ) ){
+				_tcscpy( temp, szTempPath );
+				cp = strchr( temp, _T('*') );
 				*cp = 0;
 
 				// 2008.11.25 nasukoji	バッファオーバーフローチェック
-				if( cp - temp + strlen( ep ) + strlen( cp + 1 ) >= dwSize ){
+				if( cp - temp + _tcslen( ep ) + _tcslen( cp + 1 ) >= newPathCount ){
 					bOverflow = true;
 					break;
 				}
 
-				wsprintf( szTempPath, "%s%s%s", temp, ep, cp+1 );
+				wsprintf( szTempPath, _T("%s%s%s"), temp, ep, cp+1 );
 			}
 
 			if( !bOverflow ){
 				//	??はバックアップ連番にしたいところではあるが，
 				//	連番処理は末尾の2桁にしか対応していないので
 				//	使用できない文字?を_に変換してお茶を濁す
-				while(( cp = strchr( szTempPath, '?' ) ) != NULL){
-					*cp = '_';
-//					strcpy( temp, szNewPath );
-//					cp = strchr( temp, '?' );
-//					*cp = 0;
-//					wsprintf( szNewPath, "%s00%s", temp, cp+2 );
+				while(( cp = strchr( szTempPath, _T('?') ) ) != NULL){
+					*cp = _T('_');
 				}
 			}
 		}
 	}
 
 	// 作成したパスがszNewPathに収まらなければエラー
-	if( bOverflow || strlen( szTempPath ) >= dwSize ){
+	if( bOverflow || _tcslen( szTempPath ) >= newPathCount ){
 		return false;
 	}
 
-	strcpy( szNewPath, szTempPath );	// 作成したパスをコピー
+	_tcscpy( szNewPath, szTempPath );	// 作成したパスをコピー
 
 	return true;
 }

@@ -82,7 +82,7 @@ public:
 	/* いろいろ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージディスパッチャ */
 	void OnMove( int , int , int , int );
-	BOOL OnFileClose( void );	/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
+	BOOL OnFileClose();			/* ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行 */
 	BOOL HandleCommand( int );
 	void SetActivePane( int );	/* アクティブなペインを設定 */
 	int GetActivePane( void );	/* アクティブなペインを取得 */
@@ -111,7 +111,7 @@ public:
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
 	BOOL OpenFileDialog( HWND, const char*, char*, ECodeType*, BOOL* );	/* 「ファイルを開く」ダイアログ */
-	void OnChangeSetting( void );	/* ビューに設定変更を反映させる */
+	void OnChangeSetting();	/* ビューに設定変更を反映させる */
 	//	Jul. 26, 2003 ryoji BOMオプション追加
 	BOOL SaveFileDialog( char*, ECodeType*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
@@ -225,7 +225,7 @@ public:
 	bool IsInsMode() const { return m_bInsMode; }
 	void SetInsMode(bool mode) { m_bInsMode = mode; }
 
-	void RunAutoMacro( int idx, const char *pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
+	void RunAutoMacro( int idx, LPCTSTR pszSaveFilePath = NULL );	// 2006.09.01 ryoji マクロ自動実行
 
 	// 2007.09.09 Moca 互換BMPによる画面バッファ 
 	void DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
