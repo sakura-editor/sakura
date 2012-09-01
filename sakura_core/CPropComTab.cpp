@@ -131,7 +131,7 @@ void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SortTabList, m_Common.m_bSortTabList );			//@@@ 2006.03.23 fon
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWndMultiWin, ! m_Common.m_bDispTabWndMultiWin ); //@@@ 2003.05.31 MIK
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szTabWndCaption ) - 1 ), (LPARAM)0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), EM_LIMITTEXT, (WPARAM)(_countof( m_Common.m_szTabWndCaption ) - 1 ), (LPARAM)0 );
 	::SetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption );
 
 	//	Feb. 11, 2007 genta êVãKçÏê¨
@@ -153,7 +153,7 @@ int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
 	m_Common.m_bSortTabList = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SortTabList );		// 2006.03.23 fon
 	m_Common.m_bDispTabWndMultiWin =
 		( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin ) == BST_CHECKED ) ? FALSE : TRUE;
-	::GetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption, sizeof( m_Common.m_szTabWndCaption ) );
+	::GetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption, _countof( m_Common.m_szTabWndCaption ) );
 
 	//	Feb. 11, 2007 genta êVãKçÏê¨
 	m_Common.m_bTab_RetainEmptyWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RetainEmptyWindow );
@@ -169,34 +169,19 @@ int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
 */
 void CPropCommon::EnableTabPropInput(HWND hwndDlg)
 {
-	if( !::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd ) )
-	{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SameTabWidth       ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabIcon        ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow  ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin        ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), FALSE );	// 2007.04.03 ryoji
+
+	BOOL bTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
+	BOOL bMultiWin = FALSE;
+	if( bTabWnd ){
+		bMultiWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin );
 	}
-	else
-	{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SameTabWidth       ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabIcon        ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), TRUE );	// 2007.04.03 ryoji
-		if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin ) )
-		{
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow ), TRUE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin       ), TRUE );
-		}
-		else {
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow ), FALSE );
-			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin       ), FALSE );
-		}
-	}
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabWndMultiWin ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_RetainEmptyWindow  ), bMultiWin );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_CloseOneWin        ), bMultiWin );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabIcon        ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SameTabWidth       ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_SortTabList        ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION           ), bTabWnd );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_ChgWndByWheel      ), bTabWnd );	// 2007.04.03 ryoji
 }
 /*[EOF]*/
