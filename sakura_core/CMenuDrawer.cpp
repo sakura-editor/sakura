@@ -1097,7 +1097,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	@date 2005.08.09 aroka m_nMyButtonNum隠蔽のため追加
 	@date 2005.11.02 ryoji bOnlyFuncパラメータを追加
  */
-int CMenuDrawer::FindIndexFromCommandId( int idCommand, bool bOnlyFunc )
+int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc )
 {
 	if( bOnlyFunc ){
 		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する

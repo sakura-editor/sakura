@@ -72,14 +72,13 @@ public:
 	int MeasureItem( int, int* );	/* メニューアイテムの描画サイズを計算 */
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
-	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ); /* ツールバーIndexの取得 */// 20050809 aroka
+	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true ); /* ツールバーIndexの取得 */// 20050809 aroka
 	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
 
-	enum EButtonIndex{
-		TOOLBAR_BUTTON_F_TOOLBARWRAP = 384,	//ツールバー折返しアイコン（ダミー）
-	};
+	static const int TOOLBAR_BUTTON_F_TOOLBARWRAP = 384;	//ツールバー折返しアイコン（ダミー）
+
 private:
 	int Find( int nFuncID );
 	const TCHAR* GetLabel( int nFuncID );

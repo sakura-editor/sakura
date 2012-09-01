@@ -239,11 +239,11 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 				nNum = m_cLookup.GetItemCount( nIndex2 );
 				for( i = 0; i < nNum; ++i ){
 					nIndex1 = m_cLookup.Pos2FuncCode( nIndex2, i );
-					int nIndex = m_pcMenuDrawer->FindIndexFromCommandId( nIndex1 );
+					int nbarNo = m_pcMenuDrawer->FindToolbarNoFromCommandId( nIndex1 );
 
-					if( nIndex >= 0 ){
+					if( nbarNo >= 0 ){
 						/* ツールバーボタンの情報をセット (リストボックス) */
-						lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)nIndex );
+						lResult = ::Listbox_ADDDATA( hwndFuncList, 0, (LPARAM)nbarNo );
 						if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
 							break;
 						}
@@ -281,6 +281,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 						nIndex1 = 0;
 					}
 					//	From Here Apr. 13, 2002 genta
+					//	2010.06.25 Moca 折り返しのツールバーのボタン番号定数名を変更。最後ではなく固定値にする
 					nIndex1 = ::Listbox_INSERTDATA( hwndResList, nIndex1, CMenuDrawer::TOOLBAR_BUTTON_F_TOOLBARWRAP );
 					if( nIndex1 == LB_ERR || nIndex1 == LB_ERRSPACE ){
 						break;
@@ -499,7 +500,7 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 			break;
 		}
 		//	To Here Apr. 13, 2002 genta
-		lResult = ::SendMessage( hwndResList, LB_SETITEMHEIGHT , lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
+		lResult = ::SendMessage( hwndResList, LB_SETITEMHEIGHT, lResult, (LPARAM)MAKELPARAM(nListItemHeight, 0) );
 	}
 	/* ツールバーの先頭の項目を選択(リストボックス)*/
 	::SendMessage( hwndResList, LB_SETCURSEL, 0, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
@@ -552,7 +553,6 @@ int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 */
 void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
-	char		szLabel[256];
 	TBBUTTON	tbb;
 	HBRUSH		hBrush;
 	RECT		rc;
@@ -581,12 +581,13 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 		tbb = m_pcMenuDrawer->getButton(pDis->itemData);
 
 		// ボタンとセパレータとで処理を分ける	2007.11.02 ryoji
+		char	szLabel[256];
 		if( tbb.fsStyle & TBSTYLE_SEP ){
 			// テキストだけ表示する
 			if( tbb.idCommand == F_DISABLE ){
 				strcpy( szLabel, "───────────" );	// nLength 未使用 2003/01/09 Moca
 			}else if( tbb.idCommand == F_MENU_NOT_USED_FIRST ){
-				if( ::LoadString( m_hInstance, tbb.idCommand, szLabel, sizeof( szLabel ) ) <= 0 ){
+				if( ::LoadString( m_hInstance, tbb.idCommand, szLabel, _countof( szLabel ) ) <= 0 ){
 					strcpy( szLabel, "――ツールバー折返――" );
 				}
 			}else{
@@ -618,7 +619,7 @@ void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 //		::DeleteObject( hBrush );
 
 		::SetBkMode( pDis->hDC, TRANSPARENT );
-		::TextOut( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, strlen( szLabel ) );
+		::TextOut( pDis->hDC, rc1.left + 4, rc1.top + 2, szLabel, _tcslen( szLabel ) );
 
 	}
 
