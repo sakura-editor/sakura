@@ -51,8 +51,11 @@ struct EditInfo; // 20050705 aroka
 class CFuncInfoArr;
 struct oneRule; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
 
-//! 文書関連情報の管理
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+/*!
+	文書関連情報の管理
+
+	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
+*/
 class SAKURA_CORE_API CEditDoc
 {
 public:
@@ -65,7 +68,7 @@ public:
 	/*
 	||  初期化系メンバ関数
 	*/
-	BOOL Create( HINSTANCE, HWND, CImageListMgr* /*, int, int, int, int*/ );
+	BOOL Create( HINSTANCE, HWND, CImageListMgr* );
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
 	bool CreateEditViewBySplit( int );	/* ビューの分割分のウィンドウ作成要求 */
@@ -105,7 +108,7 @@ public:
 	BOOL FileSaveAs_Dialog( void );				/* 名前を付けて保存ダイアログ */	// 2006.12.30 ryoji
 	BOOL FileSaveAs( const char *filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
 
-	int MakeBackUp( const char* target_file );	/* バックアップの作成 */
+	int MakeBackUp( const TCHAR* target_file );	/* バックアップの作成 */
 	void SetParentCaption( void );	/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
@@ -331,13 +334,6 @@ public:
 	int				m_nFileShareModeOld;	/* ファイルの排他制御モード */
 	HFILE			m_hLockedFile;			/* ロックしているファイルのハンドル */
 
-// 2004/06/21 novice タグジャンプ機能追加
-#if 0
-	HWND			m_hwndReferer;	/* 参照元ウィンドウ */
-	int				m_nRefererX;	/* 参照元 行頭からのバイト位置桁 */
-	int				m_nRefererLine;	/* 参照元行 折り返し無しの物理行位置 */
-#endif
-	
 	//	Sep. 29, 2001 genta
 	CSMacroMgr*		m_pcSMacroMgr;	//!< マクロ
 //@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一。

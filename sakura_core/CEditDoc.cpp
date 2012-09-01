@@ -1257,11 +1257,11 @@ void CEditDoc::SetParentCaption( void )
 	
 	@todo Advanced modeでの世代管理
 */
-int CEditDoc::MakeBackUp( const char* target_file )
+int CEditDoc::MakeBackUp(
+	const TCHAR* target_file
+)
 {
-	char	szPath[_MAX_PATH];
 	int		nRet;
-	char*	pBase;
 
 	/* バックアップソースの存在チェック */
 	//	Aug. 21, 2005 genta 書き込みアクセス権がない場合も
@@ -1289,7 +1289,8 @@ int CEditDoc::MakeBackUp( const char* target_file )
 		}
 	}
 
-	if( !FormatBackUpPath( szPath, sizeof(szPath), target_file ) ){
+	TCHAR	szPath[_MAX_PATH];
+	if( !FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
 		return 4;	// 作成すべきバックアップファイルのパスが長すぎる
 	}
 
@@ -1302,23 +1303,35 @@ int CEditDoc::MakeBackUp( const char* target_file )
 
 	if( m_pShareData->m_Common.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
 		ConfirmBeep();
-		if( m_pShareData->m_Common.m_bBackUpDustBox && dustflag == false ){	//@@@ 2001.12.11 add start MIK	//2002.03.23
+		if( m_pShareData->m_Common.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
 				m_hWnd,
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
-				"バックアップ作成の確認",
-				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n作成したバックアップファイルをごみ箱に放り込みます。\n",
+				_T("バックアップ作成の確認"),
+				_T("変更される前に、バックアップファイルを作成します。\n")
+				_T("よろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n")
+				_T("\n")
+				_T("%s\n")
+				_T("    ↓\n")
+				_T("%s\n")
+				_T("\n")
+				_T("作成したバックアップファイルをごみ箱に放り込みます。\n"),
 				target_file,
 				szPath
 			);
-		}else{	//@@@ 2001.12.11 add end MIK
+		}
+		else{	//@@@ 2001.12.11 add end MIK
 			nRet = ::MYMESSAGEBOX(
 				m_hWnd,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-				"バックアップ作成の確認",
-				"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n",
-				//IsFilePathAvailable() ? GetFilePath() : "（無題）",
-				//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
+				_T("バックアップ作成の確認"),
+				_T("変更される前に、バックアップファイルを作成します。\n")
+				_T("よろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n")
+				_T("\n")
+				_T("%s\n")
+				_T("    ↓\n")
+				_T("%s\n")
+				_T("\n"),
 				target_file,
 				szPath
 			);	//Jul. 06, 2001 jepro [名前を付けて保存] の場合もあるのでメッセージを修正
@@ -1342,14 +1355,13 @@ int CEditDoc::MakeBackUp( const char* target_file )
 		HANDLE			hFind;
 		WIN32_FIND_DATA	fData;
 
-		pBase = szPath + strlen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
-		//::MessageBox( NULL, pBase, "書き換え場所", MB_OK );
+		TCHAR*	pBase = szPath + _tcslen( szPath ) - 2;	//	2: 拡張子の最後の2桁の意味
 
 		//------------------------------------------------------------------
 		//	1. 該当ディレクトリ中のbackupファイルを1つずつ探す
 		for( i = 0; i <= 99; i++ ){	//	最大値に関わらず，99（2桁の最大値）まで探す
 			//	ファイル名をセット
-			wsprintf( pBase, "%02d", i );
+			wsprintf( pBase, _T("%02d"), i );
 
 			hFind = ::FindFirstFile( szPath, &fData );
 			if( hFind == INVALID_HANDLE_VALUE ){
@@ -1371,9 +1383,9 @@ int CEditDoc::MakeBackUp( const char* target_file )
 
 		for( ; i >= boundary; --i ){
 			//	ファイル名をセット
-			wsprintf( pBase, "%02d", i );
+			wsprintf( pBase, _T("%02d"), i );
 			if( ::DeleteFile( szPath ) == 0 ){
-				::MessageBox( m_hWnd, szPath, "削除失敗", MB_OK );
+				::MessageBox( m_hWnd, szPath, _T("削除失敗"), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
 				//	失敗しても保存は継続
 				return 0;
@@ -1385,22 +1397,22 @@ int CEditDoc::MakeBackUp( const char* target_file )
 		//	この位置でiは存在するバックアップファイルの最大番号を表している．
 
 		//	3. そこから0番まではコピーしながら移動
-		char szNewPath[MAX_PATH];
-		char *pNewNrBase;
+		TCHAR szNewPath[MAX_PATH];
+		TCHAR *pNewNrBase;
 
-		strcpy( szNewPath, szPath );
-		pNewNrBase = szNewPath + strlen( szNewPath ) - 2;
+		_tcscpy( szNewPath, szPath );
+		pNewNrBase = szNewPath + _tcslen( szNewPath ) - 2;
 
 		for( ; i >= 0; --i ){
 			//	ファイル名をセット
-			wsprintf( pBase, "%02d", i );
-			wsprintf( pNewNrBase, "%02d", i + 1 );
+			wsprintf( pBase, _T("%02d"), i );
+			wsprintf( pNewNrBase, _T("%02d"), i + 1 );
 
 			//	ファイルの移動
 			if( ::MoveFile( szPath, szNewPath ) == 0 ){
 				//	失敗した場合
 				//	後で考える
-				::MessageBox( m_hWnd, szPath, "移動失敗", MB_OK );
+				::MessageBox( m_hWnd, szPath, _T("移動失敗"), MB_OK );
 				//	Jun.  5, 2005 genta 戻り値変更
 				//	失敗しても保存は継続
 				return 0;
@@ -1412,13 +1424,13 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	//::MessageBox( NULL, szPath, "直前のバックアップファイル", MB_OK );
 	/* バックアップの作成 */
 	//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
-	char	szDrive[_MAX_DIR];
-	char	szDir[_MAX_DIR];
-	char	szFname[_MAX_FNAME];
-	char	szExt[_MAX_EXT];
+	TCHAR	szDrive[_MAX_DIR];
+	TCHAR	szDir[_MAX_DIR];
+	TCHAR	szFname[_MAX_FNAME];
+	TCHAR	szExt[_MAX_EXT];
 	_splitpath( szPath, szDrive, szDir, szFname, szExt );
-	char szPath2[MAX_PATH];
-	wsprintf( szPath2, "%s%s", szDrive, szDir );
+	TCHAR szPath2[MAX_PATH];
+	wsprintf( szPath2, _T("%s%s"), szDrive, szDir );
 		HANDLE			hFind;
 		WIN32_FIND_DATA	fData;
 
@@ -1432,18 +1444,16 @@ int CEditDoc::MakeBackUp( const char* target_file )
 	if( ::CopyFile( target_file, szPath, FALSE ) ){
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
-		if( m_pShareData->m_Common.m_bBackUpDustBox && dustflag == false ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
-			char	szDustPath[_MAX_PATH+1];
-			strcpy(szDustPath, szPath);
-			szDustPath[strlen(szDustPath) + 1] = '\0';
+		if( m_pShareData->m_Common.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
+			TCHAR	szDustPath[_MAX_PATH+1];
+			_tcscpy(szDustPath, szPath);
+			szDustPath[_tcslen(szDustPath) + 1] = _T('\0');
 			SHFILEOPSTRUCT	fos;
 			fos.hwnd   = m_hWnd;
 			fos.wFunc  = FO_DELETE;
 			fos.pFrom  = szDustPath;
 			fos.pTo    = NULL;
 			fos.fFlags = FOF_ALLOWUNDO | FOF_SIMPLEPROGRESS | FOF_NOCONFIRMATION;	//ダイアログなし
-			//fos.fFlags = FOF_ALLOWUNDO | FOF_FILESONLY;
-			//fos.fFlags = FOF_ALLOWUNDO;	//ダイアログが表示される。
 			fos.fAnyOperationsAborted = true; //false;
 			fos.hNameMappings = NULL;
 			fos.lpszProgressTitle = NULL; //"バックアップファイルをごみ箱に移動しています...";
