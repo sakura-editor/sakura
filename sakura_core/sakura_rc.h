@@ -407,7 +407,6 @@
 #define IDC_LABEL_KEYtoFUNC             1353
 #define IDC_TAB2                        1355
 #define IDC_LABEL_LINETERMCHAR          1356
-#define IDC_GROUP_FUNCKEYWND_POSITION   1357
 #define IDC_LABEL_DFORM                 1358
 #define IDC_LABEL_TFORM                 1359
 #define IDC_LABEL_FROM                  1360

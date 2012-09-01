@@ -18,9 +18,9 @@
 */
 
 #include "StdAfx.h"
-#include "CPropCommon.h"
-#include "Debug.h" // 2002/2/10 aroka
 #include "global.h"
+#include "Debug.h" // 2002/2/10 aroka
+#include "CPropCommon.h"
 #include "CDlgWinSize.h"	//	2004.05.13 Moca
 #include "sakura.hh"
 
@@ -319,8 +319,8 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	//	2001/06/20 End
 
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szWindowCaptionActive   ) - 1 ), (LPARAM)0 );	//@@@ 2003.06.13 MIK
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Common.m_szWindowCaptionInactive ) - 1 ), (LPARAM)0 );	//@@@ 2003.06.13 MIK
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_ACTIVE   ), EM_LIMITTEXT, (WPARAM)(_countof( m_Common.m_szWindowCaptionActive   ) - 1 ), (LPARAM)0 );	//@@@ 2003.06.13 MIK
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_WINCAPTION_INACTIVE ), EM_LIMITTEXT, (WPARAM)(_countof( m_Common.m_szWindowCaptionInactive ) - 1 ), (LPARAM)0 );	//@@@ 2003.06.13 MIK
 	::SetDlgItemText( hwndDlg, IDC_WINCAPTION_ACTIVE, m_Common.m_szWindowCaptionActive );
 	::SetDlgItemText( hwndDlg, IDC_WINCAPTION_INACTIVE, m_Common.m_szWindowCaptionInactive );
 
@@ -437,11 +437,11 @@ void CPropCommon::EnableWinPropInput( HWND hwndDlg )
 {
 	//	ファクションキーを表示するかどうか
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND ) ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_GROUP_FUNCKEYWND_POSITION ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM ), TRUE );	// IDC_GROUP_FUNCKEYWND_POSITION->IDC_EDIT_FUNCKEYWND_GROUPNUM 2008/7/4 Uchi
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1 ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2 ), TRUE );
 	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_GROUP_FUNCKEYWND_POSITION ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FUNCKEYWND_GROUPNUM ), FALSE );	// IDC_GROUP_FUNCKEYWND_POSITION->IDC_EDIT_FUNCKEYWND_GROUPNUM 2008/7/4 Uchi
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE1 ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_RADIO_FUNCKEYWND_PLACE2 ), FALSE );
 	}
