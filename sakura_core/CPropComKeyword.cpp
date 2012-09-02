@@ -81,7 +81,6 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 	int					idCtrl;
 	int					nIndex1;
 	int					i;
-	static char			pszLabel[1024];
 	static int			nListItemHeight;
 	LV_COLUMN			lvc;
 	LV_ITEM*			plvi;
@@ -167,8 +166,8 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				if( NULL == plvi->pszText ){
 					return TRUE;
 				}
-				if( 0 < strlen( plvi->pszText ) ){
-					if( MAX_KEYWORDLEN < strlen( plvi->pszText ) ){
+				if( 0 < _tcslen( plvi->pszText ) ){
+					if( MAX_KEYWORDLEN < _tcslen( plvi->pszText ) ){
 						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("キーワードの長さは%dバイトまでです。"), MAX_KEYWORDLEN );
 						return TRUE;
 					}
@@ -244,12 +243,20 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
-					strcpy( szKeyWord, "" );
+					_tcscpy( szKeyWord, _T("") );
 					//	Oct. 5, 2002 genta 長さ制限の設定を修正．バッファオーバーランしていた．
-					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "キーワードのセット追加", "セット名を入力してください。", MAX_SETNAMELEN, szKeyWord ) ){
+					if( !cDlgInput1.DoModal(
+						m_hInstance,
+						hwndDlg,
+						_T("キーワードのセット追加"),
+						_T("セット名を入力してください。"),
+						MAX_SETNAMELEN,
+						szKeyWord
+						)
+					){
 						return TRUE;
 					}
-					if( 0 < strlen( szKeyWord ) ){
+					if( 0 < _tcslen( szKeyWord ) ){
 						/* セットの追加 */
 						m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, false );
 
@@ -265,7 +272,8 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						return TRUE;
 					}
 					/* 削除対象のセットを使用しているファイルタイプを列挙 */
-					strcpy( pszLabel, _T("") );
+					static TCHAR		pszLabel[1024];
+					_tcscpy( pszLabel, _T("") );
 					for( i = 0; i < MAX_TYPES; ++i ){
 						// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
 						if( nIndex1 == m_Types_nKeyWordSetIdx[i][0]
@@ -278,12 +286,12 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][7]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][8]
 						||  nIndex1 == m_Types_nKeyWordSetIdx[i][9] ){
-							strcat( pszLabel, _T("・") );
-							strcat( pszLabel, m_pShareData->m_Types[i].m_szTypeName );
-							strcat( pszLabel, _T("（") );
-							strcat( pszLabel, m_pShareData->m_Types[i].m_szTypeExts );
-							strcat( pszLabel, _T("）") );
-							strcat( pszLabel, _T("\n") );
+							_tcscat( pszLabel, _T("・") );
+							_tcscat( pszLabel, m_pShareData->m_Types[i].m_szTypeName );
+							_tcscat( pszLabel, _T("（") );
+							_tcscat( pszLabel, m_pShareData->m_Types[i].m_szTypeExts );
+							_tcscat( pszLabel, _T("）") );
+							_tcscat( pszLabel, _T("\n") );
 						}
 					}
 					if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
@@ -312,12 +320,21 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					return TRUE;
 				case IDC_BUTTON_KEYSETRENAME: // キーワードセットの名称変更
 					// モードレスダイアログの表示
-					strcpy( szKeyWord, m_CKeyWordSetMgr.GetTypeName( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
-					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "セットの名称変更",
-							"セット名を入力してください。", MAX_SETNAMELEN, szKeyWord ) ){
-						return TRUE;
+					_tcscpy( szKeyWord, m_CKeyWordSetMgr.GetTypeName( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
+					{
+						BOOL bDlgInputResult = cDlgInput1.DoModal(
+							m_hInstance,
+							hwndDlg,
+							_T("セットの名称変更"),
+							_T("セット名を入力してください。"),
+							MAX_SETNAMELEN,
+							szKeyWord
+						);
+						if( !bDlgInputResult ){
+							return TRUE;
+						}
 					}
-					if( 0 < strlen( szKeyWord ) ){
+					if( 0 < _tcslen( szKeyWord ) ){
 						m_CKeyWordSetMgr.SetTypeName( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
 
 						// ダイアログデータの設定 Keyword
@@ -331,15 +348,15 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				case IDC_BUTTON_ADDKEYWORD:	/* キーワード追加 */
 					/* ｎ番目のセットのキーワードの数を返す */
 					if( !m_CKeyWordSetMgr.CanAddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
-						::MYMESSAGEBOX(	hwndDlg,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("登録できるキーワード数が上限に達しています。\n") );
+						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("登録できるキーワード数が上限に達しています。\n") );
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
-					strcpy( szKeyWord, "" );
-					if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
+					_tcscpy( szKeyWord, _T("") );
+					if( !cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
-					if( 0 < strlen( szKeyWord ) ){
+					if( 0 < _tcslen( szKeyWord ) ){
 						/* ｎ番目のセットにキーワードを追加 */
 						if( 0 == m_CKeyWordSetMgr.AddKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
 							// ダイアログデータの設定 Keyword 指定キーワードセットの設定
@@ -416,7 +433,7 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
 	int			nIndex1;
 	LV_ITEM		lvi;
-	char		szKeyWord[MAX_KEYWORDLEN + 1];
+	TCHAR		szKeyWord[MAX_KEYWORDLEN + 1];
 	CDlgInput1	cDlgInput1;
 
 	nIndex1 = ListView_GetNextItem( hwndLIST_KEYWORD, -1, LVNI_ALL | LVNI_SELECTED );
@@ -429,13 +446,13 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	ListView_GetItem( hwndLIST_KEYWORD, &lvi );
 
 	/* ｎ番目のセットのｍ番目のキーワードを返す */
-	strcpy( szKeyWord, m_CKeyWordSetMgr.GetKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
+	_tcscpy( szKeyWord, m_CKeyWordSetMgr.GetKeyWord( m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
 
 	/* モードレスダイアログの表示 */
-	if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "キーワード編集", "キーワードを編集してください。", MAX_KEYWORDLEN, szKeyWord ) ){
+	if( !cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
-	if( 0 < strlen( szKeyWord ) ){
+	if( 0 < _tcslen( szKeyWord ) ){
 		/* ｎ番目のセットにキーワードを編集 */
 		m_CKeyWordSetMgr.UpdateKeyWord(
 			m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
@@ -500,7 +517,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.kwd",
+		_T("*.kwd"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -514,12 +531,11 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	pFile = fopen( szPath, "r" );
 	if( NULL == pFile ){
 		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", szPath
+			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
 	}
 	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
-//		MYTRACE_A( szLine );
 		if( 2 < strlen( szLine ) && 0 == memcmp( szLine, "//", 2 )  ){
 		}else{
 			if( 0 < (int)strlen( szLine ) ){
@@ -542,7 +558,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	fclose( pFile );
 	if( bAddError ){
 		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。"
+			_T("キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。")
 		);
 	}
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
@@ -558,7 +574,6 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
 	FILE*			pFile;
-//	char			szLine[1024];
 	int				i;
 	int				nKeyWordNum;
 
@@ -569,7 +584,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.kwd",
+		_T("*.kwd"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
@@ -584,7 +599,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	pFile = fopen( szPath, "w" );
 	if( NULL == pFile ){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", szPath
+			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
 	}
@@ -609,7 +624,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	SetData_p7_KeyWordSet( hwndDlg, m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-		"ファイルへエクスポートしました。\n\n%s", szPath
+		_T("ファイルへエクスポートしました。\n\n%s"), szPath
 	);
 
 	return;
