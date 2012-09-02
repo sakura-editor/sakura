@@ -122,10 +122,8 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 	static HWND	hwndAssignedkeyList;
 //	static HWND hwndLIST_KEYSFUNC;
 	static HWND hwndEDIT_KEYSFUNC;
-	CMemory**	ppcAssignedKeyList;
 //	int			nLength;
 	int			nAssignedKeyNum;
-	const char*	cpszString;
 
 	int			nIndex;
 	int			nIndex2;
@@ -133,7 +131,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 	int			i;
 	int			j;
 	int			nFuncCode;
-	static char pszLabel[256];
+	static TCHAR pszLabel[256];
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -244,7 +242,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				if( nIndex == LB_ERR ){
 					return TRUE;
 				}
-				nFuncCode = 0;
+				nFuncCode = F_DEFAULT;
 				i = 0;
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 					i |= _SHIFT;
@@ -291,7 +289,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				// Oct. 2, 2001 genta
 				// 2007.11.02 ryoji F_DISABLEなら未割付
 				if( nFuncCode == F_DISABLE ){
-					strcpy( pszLabel, "未割付" );
+					strcpy( pszLabel, _T("未割付") );
 				}else{
 					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );
 				}
@@ -307,6 +305,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				nIndex3 = ::SendMessage( hwndFuncList, LB_GETCURSEL, 0, 0 );
 				nFuncCode = m_cLookup.Pos2FuncCode( nIndex2, nIndex3 );	// Oct. 2, 2001 genta
 				/* 機能に対応するキー名の取得(複数) */
+				CMemory**	ppcAssignedKeyList;
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(	/* 機能に対応するキー名の取得(複数) */
 					m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr,
 					&ppcAssignedKeyList, nFuncCode,
@@ -317,7 +316,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				if( 0 < nAssignedKeyNum){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
 						/* デバッグモニタに出力 */
-						cpszString = ppcAssignedKeyList[j]->GetStringPtr();
+						const TCHAR* cpszString = ppcAssignedKeyList[j]->GetStringPtr();
 						::SendMessage( hwndAssignedkeyList, LB_ADDSTRING, 0, (LPARAM)cpszString );
 						delete ppcAssignedKeyList[j];
 					}
@@ -353,23 +352,23 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 						i = 0;
 						p = buff;
 						//SHIFT
-						if( memcmp(p, STR_SHIFT_PLUS, strlen(STR_SHIFT_PLUS)) == 0 ){
-							p += strlen(STR_SHIFT_PLUS);
+						if( memcmp(p, STR_SHIFT_PLUS, _tcslen(STR_SHIFT_PLUS)) == 0 ){
+							p += _tcslen(STR_SHIFT_PLUS);
 							i |= _SHIFT;
 						}
 						//CTRL
-						if( memcmp(p, STR_CTRL_PLUS, strlen(STR_CTRL_PLUS)) == 0 ){
-							p += strlen(STR_CTRL_PLUS);
+						if( memcmp(p, STR_CTRL_PLUS, _tcslen(STR_CTRL_PLUS)) == 0 ){
+							p += _tcslen(STR_CTRL_PLUS);
 							i |= _CTRL;
 						}
 						//ALT
-						if( memcmp(p, STR_ALT_PLUS, strlen(STR_ALT_PLUS)) == 0 ){
-							p += strlen(STR_ALT_PLUS);
+						if( memcmp(p, STR_ALT_PLUS, _tcslen(STR_ALT_PLUS)) == 0 ){
+							p += _tcslen(STR_ALT_PLUS);
 							i |= _ALT;
 						}
 						for(j = 0; j < m_nKeyNameArrNum; j++)
 						{
-							if( strcmp(m_pKeyNameArr[j].m_szKeyName, p) == 0 )
+							if( _tcscmp(m_pKeyNameArr[j].m_szKeyName, p) == 0 )
 							{
 								::SendMessage( hwndKeyList, LB_SETCURSEL, (WPARAM)j, (LPARAM)0);
 								if( i & _SHIFT ) ::CheckDlgButton( hwndDlg, IDC_CHECK_SHIFT, BST_CHECKED );  //チェック
@@ -448,6 +447,7 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 	::SendMessage( hwndCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );	//Oct. 14, 2000 JEPRO JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
+
 	/* キー一覧に文字列をセット（リストボックス）*/
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	for( i = 0; i < m_nKeyNameArrNum; ++i ){
@@ -479,29 +479,29 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 	int 	nIndex;
 	int 	nIndexTop;
 	int 	i;
-	char	pszLabel[256];
-	char	szKeyState[64];
+	TCHAR	szKeyState[64];
 	
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
 	nIndexTop = ::SendMessage( hwndKeyList, LB_GETTOPINDEX, 0, 0 );
-	strcpy( szKeyState, "" );
+	_tcscpy( szKeyState, _T("") );
 	i = 0;
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 		i |= _SHIFT;
-		strcat( szKeyState, "Shift+" );
+		_tcscat( szKeyState, _T("Shift+") );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
 		i |= _CTRL;
-		strcat( szKeyState, "Ctrl+" );
+		_tcscat( szKeyState, _T("Ctrl+") );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 		i |= _ALT;
-		strcat( szKeyState, "Alt+" );
+		_tcscat( szKeyState, _T("Alt+") );
 	}
 	/* キー一覧に文字列をセット（リストボックス）*/
 	::SendMessage( hwndKeyList, LB_RESETCONTENT, 0, 0 );
 	for( i = 0; i < m_nKeyNameArrNum; ++i ){
+		TCHAR	pszLabel[256];
 		wsprintf( pszLabel, _T("%s%s"), szKeyState, m_pKeyNameArr[i].m_szKeyName );
 		::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
 	}
@@ -516,8 +516,6 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
-//	char			szLine[1024];
-//	int				i;
 
 	char			pHeader[STR_KEYDATA_HEAD_LEN + 1];
 	short			nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
@@ -531,7 +529,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.key",
+		_T("*.key"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -545,7 +543,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 	hFile = _lopen( szPath, OF_READ );
 	if( HFILE_ERROR == hFile ){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", szPath
+			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
 	}
@@ -565,7 +563,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 			if( (fp = fopen( szPath, "r" )) == NULL )
 			{
 				::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-					"ファイルを開けませんでした。\n\n%s", szPath
+					_T("ファイルを開けませんでした。\n\n%s"), szPath
 				);
 				return;
 			}
@@ -636,7 +634,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 //@@@ 2001.11.07 add end MIK
 
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"キー設定ファイルの形式が違います。\n\n%s", szPath
+			_T("キー設定ファイルの形式が違います。\n\n%s"), szPath
 		);
 		return;
 	}
@@ -651,15 +649,12 @@ ToMaster:	//@@@ 2001.11.07 add MIK
 
 
 //	/* ダイアログデータの設定 p5 */
-//	SetData_p5( hwndDlg );
-//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
+	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
-//@@@ 2001.11.07 modify end MIK
-
-	return;
+	//@@@ 2001.11.07 modify end MIK
 }
 
 
@@ -668,12 +663,6 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
-//	HFILE			hFile;	//@@@ 2001.11.07 del MIK
-//	char			szLine[1024];
-//	int				i;
-//	char			pHeader[STR_KEYDATA_HEAD_LEN + 1];
-//	short			nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
-//	KEYDATA			pKeyNameArr[100];				/* キー割り当て表 */
 	char			szInitDir[_MAX_PATH + 1];
 
 	strcpy( szPath, "" );
@@ -682,7 +671,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.key",
+		_T("*.key"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
@@ -693,26 +682,6 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
 	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
 
-#if 0  //@@@ 2001.11.07 del start MIK
-	hFile = _lcreat( szPath, 0 );
-	if( HFILE_ERROR == hFile ){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", szPath
-		);
-		return;
-	}
-	if( STR_KEYDATA_HEAD_LEN		!= _lwrite( hFile, (LPCSTR)STR_KEYDATA_HEAD, STR_KEYDATA_HEAD_LEN ) ||
-		sizeof( m_nKeyNameArrNum )	!= _lwrite( hFile, (LPCSTR)&m_nKeyNameArrNum, sizeof( m_nKeyNameArrNum ) ) ||
-		sizeof( m_pKeyNameArr )		!= _lwrite( hFile, (LPCSTR) m_pKeyNameArr,    sizeof( m_pKeyNameArr ) )
-	){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルの書き込みに失敗しました。\n\n%s", szPath
-		);
-		_lclose( hFile );	//@@@ 2001.11.09 add MIK
-		return;
-	}
-	_lclose( hFile );
-#endif  //@@@ 2001.11.07 del end MIK
 //@@@ 2001.11.07 add start MIK: テキスト形式で保存
 	{
 		FILE	*fp;
@@ -722,7 +691,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		if( (fp = fopen( szPath, "w" )) == NULL )
 		{
 			::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-				"ファイルを開けませんでした。\n\n%s", szPath
+				_T("ファイルを開けませんでした。\n\n%s"), szPath
 			);
 			return;
 		}
@@ -753,8 +722,6 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		fclose(fp);
 	}
 //@@@ 2001.11.07 add end MIK
-
-	return;
 }
 
 
