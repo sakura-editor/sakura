@@ -44,15 +44,13 @@ struct TYPE_NAME {
 };
 
 TYPE_NAME SpecialScrollModeArr[] = {
-	{ 0,						"組み合わせなし" },
-	{ MOUSEFUNCTION_CENTER,		"マウス中ボタン" },
-	{ MOUSEFUNCTION_LEFTSIDE,	"マウスサイドボタン1" },
-	{ MOUSEFUNCTION_RIGHTSIDE,	"マウスサイドボタン2" },
-	{ VK_CONTROL,				"CONTROLキー" },
-	{ VK_SHIFT,					"SHIFTキー" },
+	{ 0,						_T("組み合わせなし") },
+	{ MOUSEFUNCTION_CENTER,		_T("マウス中ボタン") },
+	{ MOUSEFUNCTION_LEFTSIDE,	_T("マウスサイドボタン1") },
+	{ MOUSEFUNCTION_RIGHTSIDE,	_T("マウスサイドボタン2") },
+	{ VK_CONTROL,				_T("CONTROLキー") },
+	{ VK_SHIFT,					_T("SHIFTキー") },
 };
-
-const int	nSpecialScrollModeArrNum = sizeof( SpecialScrollModeArr ) / sizeof( SpecialScrollModeArr[0] );
 
 static const DWORD p_helpids[] = {	//10900
 	IDC_BUTTON_CLEAR_MRU_FILE,		HIDC_BUTTON_CLEAR_MRU_FILE,			//履歴をクリア（ファイル）
@@ -77,7 +75,7 @@ static const DWORD p_helpids[] = {	//10900
 	IDC_SPIN_REPEATEDSCROLLLINENUM,	HIDC_EDIT_REPEATEDSCROLLLINENUM,
 	IDC_SPIN_MAX_MRU_FILE,			HIDC_EDIT_MAX_MRU_FILE,
 	IDC_SPIN_MAX_MRU_FOLDER,		HIDC_EDIT_MAX_MRU_FOLDER,
-	IDC_CHECK_MEMDC,				HIDC_CHECK_MEMDC,			//画面キャッシュを使う
+	IDC_CHECK_MEMDC,				HIDC_CHECK_MEMDC,					//画面キャッシュを使う
 	IDC_COMBO_WHEEL_PAGESCROLL,		HIDC_COMBO_WHEEL_PAGESCROLL,		// 組み合わせてホイール操作した時ページスクロールする		// 2009.01.12 nasukoji
 	IDC_COMBO_WHEEL_HSCROLL,		HIDC_COMBO_WHEEL_HSCROLL,			// 組み合わせてホイール操作した時横スクロールする			// 2009.01.12 nasukoji
 //	IDC_STATIC,						-1,
@@ -287,36 +285,39 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ _T("マクロ"),				IDD_PROP_MACRO,		DlgProc_PROP_MACRO },
 	};
 
-	PROPSHEETPAGE	psp[32];
+	PROPSHEETPAGE		psp[32];
 	for( nIdx = 0, i = 0; i < _countof(ComPropSheetInfoList) && nIdx < 32 ; i++ ){
 		if( ComPropSheetInfoList[i].szTabname != NULL ){
 			PROPSHEETPAGE *p = &psp[nIdx];
 			memset( p, 0, sizeof( *p ) );
-			p->dwSize = sizeof( *p );
-			p->dwFlags = PSP_USETITLE | PSP_HASHELP;
-			p->hInstance = m_hInstance;
+			p->dwSize      = sizeof( *p );
+			p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
+			p->hInstance   = m_hInstance;
 			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
-			p->pszIcon = NULL;
-			p->pfnDlgProc = (DLGPROC)(ComPropSheetInfoList[i].DProc);
-			p->pszTitle = ComPropSheetInfoList[i].szTabname;
-			p->lParam = (LPARAM)this;
+			p->pszIcon     = NULL;
+			p->pfnDlgProc  = (DLGPROC)(ComPropSheetInfoList[i].DProc);
+			p->pszTitle    = ComPropSheetInfoList[i].szTabname;
+			p->lParam      = (LPARAM)this;
 			p->pfnCallback = NULL;
 			nIdx++;
 		}
 	}
 	//	To Here Jun. 2, 2001 genta
 
-	PROPSHEETHEADER	psh;
+	PROPSHEETHEADER		psh;
 	memset( &psh, 0, sizeof( psh ) );
+	
+	//	Jun. 29, 2002 こおり
+	//	Windows 95対策．Property SheetのサイズをWindows95が認識できる物に固定する．
 	psh.dwSize = sizeof_old_PROPSHEETHEADER;
 
 	//	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
-	psh.dwFlags = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE;
+	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE;
 	psh.hwndParent = m_hwndParent;
-	psh.hInstance = m_hInstance;
-	psh.pszIcon = NULL;
+	psh.hInstance  = m_hInstance;
+	psh.pszIcon    = NULL;
 	psh.pszCaption = _T("共通設定");
-	psh.nPages = nIdx;
+	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
 	if( -1 == nPageNum ){
@@ -488,10 +489,6 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
-//	/* タスクトレイを使う */
-//	m_Common.m_bUseTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON );
-//	/* タスクトレイに常駐 */
-//	m_Common.m_bStayTaskTray = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY );
 
 			case IDC_CHECK_USETRAYICON:	/* タスクトレイを使う */
 			// From Here 2001.12.03 hor
@@ -500,39 +497,18 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), TRUE );
 				}else{
-			//		::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STAYTASKTRAY ), FALSE );
 				}
-			//	if(!::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETRAYICON ) ){
-			//		::CheckDlgButton( hwndDlg, IDC_CHECK_STAYTASKTRAY, FALSE );	/* タスクトレイに常駐 */
-			//	}
 			// To Here 2001.12.03 hor
 				return TRUE;
 
 			case IDC_CHECK_STAYTASKTRAY:	/* タスクトレイに常駐 */
-			//@@@ YAZAKI 2001.12.31 制御しない。
-			//	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_STAYTASKTRAY ) ){
-			//		::CheckDlgButton( hwndDlg, IDC_CHECK_USETRAYICON, TRUE );	/* タスクトレイを使う */
-			//	}else{
-			//	}
 				return TRUE;
 
-#if 0
-				case IDC_CHECK_INDENT:	/* オートインデント */
-//				MYTRACE_A( "IDC_CHECK_INDENT\n" );
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INDENT ) ){
-					/* 日本語空白もインデント */
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), TRUE );
-				}else{
-					/* 日本語空白もインデント */
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_INDENT_WSPACE ), FALSE );
-				}
-				return TRUE;
-#endif
 			case IDC_BUTTON_CLEAR_MRU_FILE:
 				/* ファイルの履歴をクリア */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-					"最近使ったファイルの履歴を削除します。\nよろしいですか？\n" ) ){
+					_T("最近使ったファイルの履歴を削除します。\nよろしいですか？\n") ) ){
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -542,13 +518,13 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					cMRU.ClearAll();
 				}
 				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					"最近使ったファイルの履歴を削除しました。\n"
+					_T("最近使ったファイルの履歴を削除しました。\n")
 				);
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
 				/* フォルダの履歴をクリア */
 				if( IDCANCEL == ::MYMESSAGEBOX( hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-					"最近使ったフォルダの履歴を削除します。\nよろしいですか？\n" ) ){
+					_T("最近使ったフォルダの履歴を削除します。\nよろしいですか？\n") ) ){
 					return TRUE;
 				}
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
@@ -558,7 +534,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					cMRUFolder.ClearAll();
 				}
 				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					"最近使ったフォルダの履歴を削除しました。\n"
+					_T("最近使ったフォルダの履歴を削除しました。\n")
 				);
 				return TRUE;
 
@@ -753,9 +729,9 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
 	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
 	nSelPos = 0;
-	for( i = 0; i < nSpecialScrollModeArrNum; ++i ){
+	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
 		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SpecialScrollModeArr[i].pszName );
-		if( SpecialScrollModeArr[i].nMethod == m_Common.m_nPageScrollByWheel ){		// ページスクロールとする組み合わせ操作
+		if( SpecialScrollModeArr[i].nMethod == m_Common.m_nPageScrollByWheel ){	// ページスクロールとする組み合わせ操作
 			nSelPos = i;
 		}
 	}
@@ -765,9 +741,9 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_HSCROLL );
 	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
 	nSelPos = 0;
-	for( i = 0; i < nSpecialScrollModeArrNum; ++i ){
+	for( i = 0; i < _countof( SpecialScrollModeArr ); ++i ){
 		::SendMessage( hwndCombo, CB_INSERTSTRING, i, (LPARAM)SpecialScrollModeArr[i].pszName );
-		if( SpecialScrollModeArr[i].nMethod == m_Common.m_nHorizontalScrollByWheel ){		// 横スクロールとする組み合わせ操作
+		if( SpecialScrollModeArr[i].nMethod == m_Common.m_nHorizontalScrollByWheel ){	// 横スクロールとする組み合わせ操作
 			nSelPos = i;
 		}
 	}
