@@ -98,9 +98,6 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 	int			nIdx4;
 	char		szLabel[300];
 	char		szLabel2[300];
-	TCHAR		szKey[2];
-	int			nFunc;
-	char		cKey;
 	CDlgInput1	cDlgInput1;
 
 	switch( uMsg ){
@@ -245,9 +242,20 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 
 //			idListBox = (int) LOWORD(wParam);	// identifier of list box
 //			hwndListBox = (HWND) lParam;		// handle of list box
+				TCHAR		szKey[2];
 				wsprintf( szKey, _T("%c"), m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
-				if( FALSE == cDlgInput1.DoModal( m_hInstance, hwndDlg, "メニューアイテムのアクセスキー設定", "キーを入力してください。", 1, szKey ) ){
-					return TRUE;
+				{
+					BOOL bDlgInputResult = cDlgInput1.DoModal(
+						m_hInstance,
+						hwndDlg,
+						_T("メニューアイテムのアクセスキー設定"),
+						_T("キーを入力してください。"),
+						1,
+						szKey
+					);
+					if( !bDlgInputResult ){
+						return TRUE;
+					}
 				}
 				//	Oct. 3, 2001 genta
 				m_cLookup.Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
@@ -330,7 +338,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						m_Common.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_nCustMenuItemFuncArr[nIdx1][i - 1];
 						m_Common.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = 0;
+					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = F_0;
 					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
 					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
 
@@ -473,12 +481,12 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 
 					{
-						nFunc = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1];
-						cKey = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1];
+						int nFunc = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1];
+						char key = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1];
 						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1] = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
 						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1]  = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
 						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] =	nFunc;
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = cKey;
+						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
 					}
 
 					::SendMessage( hwndLIST_RES, LB_GETTEXT, nIdx2, (LPARAM)szLabel );
@@ -505,14 +513,13 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 
 					{
-						nFunc = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1];
-						cKey = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1];
+						int nFunc = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1];
+						char key = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1];
 						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1] = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
 						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1]  = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
 						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] =	nFunc;
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = cKey;
+						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
 					}
-				
 					::SendMessage( hwndLIST_RES, LB_GETTEXT, nIdx2, (LPARAM)szLabel );
 					::SendMessage( hwndLIST_RES, LB_DELETESTRING, nIdx2, 0 );
 					::SendMessage( hwndLIST_RES, LB_INSERTSTRING, nIdx2 + 1, (LPARAM)szLabel );
@@ -679,13 +686,8 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
-//	char			szLine[1024];
-//	int				i;
 
 	char			pHeader[STR_CUSTMENU_HEAD_LEN + 1];
-//	short			nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
-//	KEYDATA			pKeyNameArr[100];			/* キー割り当て表 */
-	HWND			hwndCtrl;
 	char			szInitDir[_MAX_PATH + 1];
 
 	strcpy( szPath, "" );
@@ -694,7 +696,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.mnu",
+		_T("*.mnu"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -708,7 +710,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 	hFile = _lopen( szPath, OF_READ );
 	if( HFILE_ERROR == hFile ){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", szPath
+			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
 	}
@@ -720,16 +722,15 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 		0 != memcmp( pHeader, STR_CUSTMENU_HEAD, STR_CUSTMENU_HEAD_LEN )
 	){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"カスタムメニュー設定ファイルの形式が違います。\n\n%s", szPath
+			_T("カスタムメニュー設定ファイルの形式が違います。\n\n%s"), szPath
 		);
 		return;
 	}
 	_lclose( hFile );
 
-	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
+	// 画面更新
+	HWND	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_COMBO_MENU, CBN_SELCHANGE ), (LPARAM)hwndCtrl );
-
-	return;
 }
 
 /* カスタムメニュー設定をエクスポートする */
@@ -738,8 +739,6 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
-//	char			szLine[1024];
-//	int				i;
 	char			szInitDir[_MAX_PATH + 1];
 
 	strcpy( szPath, "" );
@@ -748,7 +747,7 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 	cDlgOpenFile.Create(
 		m_hInstance,
 		hwndDlg,
-		"*.mnu",
+		_T("*.mnu"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
@@ -762,15 +761,10 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 	hFile = _lcreat( szPath, 0 );
 	if( HFILE_ERROR == hFile ){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルを開けませんでした。\n\n%s", szPath
+			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
 	}
-//	/* カスタムメニュー情報 */
-//	char				m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
-//	int					m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
-//	int					m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
-//	char				m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
 
 	if( STR_CUSTMENU_HEAD_LEN						!= _lwrite( hFile, (LPCSTR)STR_CUSTMENU_HEAD, STR_CUSTMENU_HEAD_LEN ) ||
 		sizeof( m_Common.m_szCustMenuNameArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_szCustMenuNameArr   , sizeof( m_Common.m_szCustMenuNameArr    ) ) ||
@@ -779,14 +773,11 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 		sizeof( m_Common.m_nCustMenuItemKeyArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_nCustMenuItemKeyArr , sizeof( m_Common.m_nCustMenuItemKeyArr  ) )
 	){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
-			"ファイルの書き込みに失敗しました。\n\n%s", szPath
+			_T("ファイルの書き込みに失敗しました。\n\n%s"), szPath
 		);
 		return;
 	}
 	_lclose( hFile );
-
-	return;
-
 }
 
 
