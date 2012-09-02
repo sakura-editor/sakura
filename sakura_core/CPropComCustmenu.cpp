@@ -181,7 +181,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 			case IDC_BUTTON_MENUNAME:
 				//	ÉÅÉjÉÖÅ[ï∂éöóÒÇÃê›íË
 				nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-				if( LB_ERR == nIdx1 ){
+				if( CB_ERR == nIdx1 ){
 					break;
 				}
 				::GetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME,
@@ -231,7 +231,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 			switch( wNotifyCode ){
 			case LBN_DBLCLK:
 				nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-				if( LB_ERR == nIdx1 ){
+				if( CB_ERR == nIdx1 ){
 					break;
 				}
 				nIdx2 = ::SendMessage( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
@@ -267,7 +267,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 				break;
 			case LBN_SELCHANGE:
 				nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-				if( LB_ERR == nIdx1 ){
+				if( CB_ERR == nIdx1 ){
 					break;
 				}
 
@@ -307,7 +307,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 				switch( wID ){
 				case IDC_BUTTON_INSERTSEPARATOR:
 					nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx1 ){
+					if( CB_ERR == nIdx1 ){
 						break;
 					}
 
@@ -338,7 +338,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					break;
 				case IDC_BUTTON_DELETE:
 					nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx1 ){
+					if( CB_ERR == nIdx1 ){
 						break;
 					}
 
@@ -374,7 +374,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 
 				case IDC_BUTTON_INSERT:
 					nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx1 ){
+					if( CB_ERR == nIdx1 ){
 						break;
 					}
 
@@ -387,7 +387,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						nIdx2 = 0;
 					}
 					nIdx3 = ::SendMessage( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx3 ){
+					if( CB_ERR == nIdx3 ){
 						break;
 					}
 					nIdx4 = ::SendMessage( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
@@ -416,7 +416,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 
 				case IDC_BUTTON_ADD:
 					nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx1 ){
+					if( CB_ERR == nIdx1 ){
 						break;
 					}
 
@@ -433,7 +433,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						nIdx2 = 0;
 					}
 					nIdx3 = ::SendMessage( hwndCOMBO_FUNCKIND, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx3 ){
+					if( CB_ERR == nIdx3 ){
 						break;
 					}
 					nIdx4 = ::SendMessage( hwndLIST_FUNC, LB_GETCURSEL, 0, 0 );
@@ -461,7 +461,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 
 				case IDC_BUTTON_UP:
 					nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx1 ){
+					if( CB_ERR == nIdx1 ){
 						break;
 					}
 					nIdx2 = ::SendMessage( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
@@ -489,7 +489,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 
 				case IDC_BUTTON_DOWN:
 					nIdx1 = ::SendMessage( hwndCOMBO_MENU, CB_GETCURSEL, 0, 0 );
-					if( LB_ERR == nIdx1 ){
+					if( CB_ERR == nIdx1 ){
 						break;
 					}
 					nIdx2 = ::SendMessage( hwndLIST_RES, LB_GETCURSEL, 0, 0 );
@@ -563,7 +563,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
 		}
-		if( LB_ERR != nIdx3 && LB_ERR != nIdx4 &&
+		if( CB_ERR != nIdx3 && LB_ERR != nIdx4 &&
 		 	m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0
 		){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
