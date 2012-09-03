@@ -50,14 +50,6 @@
 #define omGet (0)
 #define omSet (1)
 
-//	2007.07.26 初期化はコンストラクタへ移動
-//CNativeA		CPPA::m_cMemRet;
-//CNativeA		CPPA::m_cMemDebug;
-//CEditView*		CPPA::m_pcEditView = NULL;
-//DLLSHAREDATA*	CPPA::m_pShareData = NULL;
-//bool			CPPA::m_bError = false;
-//	2007.07.22 genta
-//int				CPPA::m_commandflags = FA_FROMMACRO;
 //	2007.07.26 genta
 CPPA::PpaExecInfo* CPPA::m_CurInstance = NULL;
 bool			CPPA::m_bIsRunning = false;
