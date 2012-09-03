@@ -35,10 +35,6 @@
 
 CFileExt::CFileExt()
 {
-//	/* 共有データ構造体のアドレスを返す */
-//	m_pShareData = CShareData::getInstance()->GetShareData();
-//	m_Types = m_pShareData->m_Types;
-
 	m_puFileExtInfo = NULL;
 	m_nCount = 0;
 	_tcscpy( m_szFilter, _T("") );
