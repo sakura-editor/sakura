@@ -93,8 +93,8 @@ CEditDoc::CEditDoc()
 	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
 	m_szSaveFilePath[0] = '\0';			/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 	strcpy( m_szGrepKey, "" );
-	/* 共有データ構造体のアドレスを返す */
 
+	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_nEditViewCount = 0;
@@ -609,8 +609,6 @@ BOOL CEditDoc::FileRead(
 		SetFilePath( szWork );
 	}
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
 	doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, true );
 
@@ -3765,8 +3763,6 @@ void CEditDoc::OnChangeSetting( void )
 		/* ファイルの排他ロック */
 		DoFileLock();
 	}
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
 	CShareData::getInstance()->TransformFileName_MakeCache();
 	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, false );
@@ -4005,8 +4001,6 @@ void CEditDoc::InitDoc()
 	m_FileTime.dwHighDateTime = 0;
 
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
 	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
 	SetDocumentType( doctype, true );
 

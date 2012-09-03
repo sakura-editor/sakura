@@ -280,13 +280,10 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 void CDlgGrep::SetData( void )
 {
 	int		i;
-	HWND	hwndCombo;
-
-	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 検索文字列 */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
-	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
+	HWND	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
 	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
 	}
@@ -432,7 +429,6 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 /* TRUE==正常  FALSE==入力エラー  */
 int CDlgGrep::GetData( void )
 {
-	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	/* サブフォルダからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_SUBFOLDER );

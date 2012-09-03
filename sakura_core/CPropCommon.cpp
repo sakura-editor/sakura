@@ -252,11 +252,6 @@ struct ComPropSheetInfo {
 */
 int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 {
-//	m_nActiveItem = nActiveItem;
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
-
 	int					nRet;
 	int					nIdx;
 	int					i;

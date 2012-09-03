@@ -76,8 +76,6 @@ void CDlgProperty::SetData( void )
 	HANDLE			nFind;
 	WIN32_FIND_DATA	wfd;
 	SYSTEMTIME		systimeL;
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	//	Aug. 16, 2000 genta	全角化
 	cmemProp.AppendString( _T("ファイル名  ") );

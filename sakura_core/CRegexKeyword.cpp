@@ -77,7 +77,6 @@ CRegexKeyword::~CRegexKeyword()
 
 	m_nTypeIndex = -1;
 	m_pTypes     = NULL;
-//	m_pShareData = NULL;
 }
 
 //!	正規表現キーワード初期化処理
