@@ -671,7 +671,7 @@ searchnext:;
 							if( bSearchStringMode ){
 								nColorIdx = COLORIDX_SEARCH;
 							}else{
-								nColorIdx = COLORIDX_CRLF;
+								nColorIdx = COLORIDX_EOL;
 							}
 							HFONT	hFontOld;
 							/* フォントを選ぶ */
@@ -687,7 +687,7 @@ searchnext:;
 							::ExtTextOut( hdc, x + nX * ( nCharWidth ), y, fuOptions,
 								&rcClip2, (const char *)"  ", 2, m_pnDx );
 							/* 改行記号の表示 */
-							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_CRLF].m_bDisp ){
+							if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOL].m_bDisp ){
 								nPosX = x + nX * ( nCharWidth );
 								nPosY = y;
 								//	From Here 2003.08.17 ryoji 改行文字が欠けないように

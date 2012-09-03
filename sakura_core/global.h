@@ -228,7 +228,7 @@ SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_SPACE,         // 半角空白 //2002.04.28 Add by KK 以降全て+1
 	COLORIDX_ZENSPACE,      // 日本語空白
 	COLORIDX_CTRLCODE,      // コントロールコード
-	COLORIDX_CRLF,          // 改行記号
+	COLORIDX_EOL,           // 改行記号
 	COLORIDX_WRAP,          // 折り返し記号
 	COLORIDX_VERTLINE,      // 指定桁縦線    // 2005.11.08 Moca
 	COLORIDX_EOF,           // EOF記号
