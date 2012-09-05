@@ -647,25 +647,17 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bUseHokan"				, common.m_bUseHokan );
 	// 2002/09/21 Moca bGrepKanjiCode_AutoDetect は bGrepCharSetに統合したので削除
 	// 2001/06/19 asa-o タイプ別に移動したので削除：1行
-	cProfile.IOProfileData( pszSecName, "bSaveWindowSize"		, common.m_nSaveWindowSize );
+	cProfile.IOProfileData( pszSecName, "bSaveWindowSize"		, (int&)common.m_eSaveWindowSize );
 	cProfile.IOProfileData( pszSecName, "nWinSizeType"			, common.m_nWinSizeType );
 	cProfile.IOProfileData( pszSecName, "nWinSizeCX"				, common.m_nWinSizeCX );
 	cProfile.IOProfileData( pszSecName, "nWinSizeCY"				, common.m_nWinSizeCY );
 	// 2004.03.30 Moca *nWinPos*を追加
-	cProfile.IOProfileData( pszSecName, "nSaveWindowPos"			, common.m_nSaveWindowPos );
+	cProfile.IOProfileData( pszSecName, "nSaveWindowPos"			, (int&)common.m_eSaveWindowPos );
 	cProfile.IOProfileData( pszSecName, "nWinPosX"				, common.m_nWinPosX );
 	cProfile.IOProfileData( pszSecName, "nWinPosY"				, common.m_nWinPosY );
 	cProfile.IOProfileData( pszSecName, "bTaskTrayUse"			, common.m_bUseTaskTray );
 	cProfile.IOProfileData( pszSecName, "bTaskTrayStay"			, common.m_bStayTaskTray );
-//@@@ 2002.01.08 YAZAKI タスクトレイを「使わない」にしても常駐がチェックが残っていると再起動で「使う・常駐」になるバグ修正
-#if 0
-	if( bRead ){
-		/* タスクトレイに常駐するときは、必ずタスクトレイアイコンを使う */
-		if( common.m_bStayTaskTray ){
-			common.m_bUseTaskTray = TRUE;
-		}
-	}
-#endif
+
 	cProfile.IOProfileData( pszSecName, "wTrayMenuHotKeyCode"		, common.m_wTrayMenuHotKeyCode );
 	cProfile.IOProfileData( pszSecName, "wTrayMenuHotKeyMods"		, common.m_wTrayMenuHotKeyMods );
 	cProfile.IOProfileData( pszSecName, "bUseOLE_DragDrop"			, common.m_bUseOLE_DragDrop );

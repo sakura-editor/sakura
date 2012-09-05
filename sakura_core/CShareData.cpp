@@ -627,13 +627,13 @@ bool CShareData::InitShareData()
 
 		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
 		//	2004.05.13 Moca ウィンドウサイズ固定指定追加に伴う指定方法変更
-		m_pShareData->m_Common.m_nSaveWindowSize = WINSIZEMODE_SAVE;	// ウィンドウサイズ継承
+		m_pShareData->m_Common.m_eSaveWindowSize = WINSIZEMODE_SAVE;	// ウィンドウサイズ継承
 		m_pShareData->m_Common.m_nWinSizeType = SIZE_RESTORED;
 		m_pShareData->m_Common.m_nWinSizeCX = CW_USEDEFAULT;
 		m_pShareData->m_Common.m_nWinSizeCY = 0;
 		
 		//	2004.05.13 Moca ウィンドウ位置
-		m_pShareData->m_Common.m_nSaveWindowPos = WINSIZEMODE_DEF;		// ウィンドウ位置固定・継承
+		m_pShareData->m_Common.m_eSaveWindowPos = WINSIZEMODE_DEF;		// ウィンドウ位置固定・継承
 		m_pShareData->m_Common.m_nWinPosX = CW_USEDEFAULT;
 		m_pShareData->m_Common.m_nWinPosY = 0;
 

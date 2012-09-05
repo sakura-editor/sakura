@@ -220,8 +220,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 					cDlgWinSize.DoModal(
 						::GetModuleHandle(NULL),
 						hwndDlg,
-						m_Common.m_nSaveWindowSize,
-						m_Common.m_nSaveWindowPos,
+						m_Common.m_eSaveWindowSize,
+						m_Common.m_eSaveWindowPos,
 						m_Common.m_nWinSizeType,
 						rc
 					);

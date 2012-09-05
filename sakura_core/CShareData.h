@@ -338,7 +338,7 @@ const int MAX_CAPTION_CONF_LEN = 256;
 
 //	2004.05.13 Moca
 //! ウィンドウサイズ・位置の制御方法
-enum eWINSIZEMODE{
+enum EWinSizeMode{
 	WINSIZEMODE_DEF = 0, //!< 指定なし
 	WINSIZEMODE_SAVE = 1, //!< 継承(保存)
 	WINSIZEMODE_SET = 2   //!< 直接指定(固定)
@@ -506,11 +506,11 @@ struct CommonSetting {
 	char				m_szInyouKigou[32];				/* 引用符 */
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
 
-	int					m_nSaveWindowSize;	// 2004.05.13 Moca ウィンドウサイズ継承・固定 eWINSIZEMODEに順ずる
+	EWinSizeMode		m_eSaveWindowSize;	// 2004.05.13 Moca ウィンドウサイズ継承・固定 EWinSizeModeに順ずる
 	int					m_nWinSizeType;
 	int					m_nWinSizeCX;
 	int					m_nWinSizeCY;
-	int					m_nSaveWindowPos;	// 2004.05.13 Moca ウィンドウ位置継承・固定 eWINSIZEMODEに順ずる
+	EWinSizeMode		m_eSaveWindowPos;	// 2004.05.13 Moca ウィンドウ位置継承・固定 EWinSizeModeに順ずる
 	int					m_nWinPosX;
 	int					m_nWinPosY;
 

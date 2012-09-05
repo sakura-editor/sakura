@@ -274,8 +274,8 @@ HWND CEditWnd::Create(
 
 	/* ウィンドウサイズ継承 */
 	int	nWinCX, nWinCY;
-	//	2004.05.13 Moca m_Common.m_nSaveWindowSizeをBOOLからenumに変えたため
-	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowSize ){
+	//	2004.05.13 Moca m_Common.m_eSaveWindowSizeをBOOLからenumに変えたため
+	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_eSaveWindowSize ){
 		nWinCX = m_pShareData->m_Common.m_nWinSizeCX;
 		nWinCY = m_pShareData->m_Common.m_nWinSizeCY;
 	}else{
@@ -299,7 +299,7 @@ HWND CEditWnd::Create(
 	nWinOY = 0;
 	// ウィンドウ位置固定
 	//	2004.05.13 Moca 保存したウィンドウ位置を使う場合は共有メモリからセット
-	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowPos ){
+	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_eSaveWindowPos ){
 		nWinOX =  m_pShareData->m_Common.m_nWinPosX;
 		nWinOY =  m_pShareData->m_Common.m_nWinPosY;
 	}
@@ -490,12 +490,12 @@ HWND CEditWnd::Create(
 		);
 
 		/* ウィンドウサイズ継承 */
-		if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_nSaveWindowSize &&
+		if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_eSaveWindowSize &&
 			m_pShareData->m_Common.m_nWinSizeType == SIZE_MAXIMIZED ){
 			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
 		}else
 		// 2004.05.14 Moca ウィンドウサイズを直接指定する場合は、最小化表示を受け入れる
-		if( WINSIZEMODE_SET == m_pShareData->m_Common.m_nSaveWindowSize &&
+		if( WINSIZEMODE_SET == m_pShareData->m_Common.m_eSaveWindowSize &&
 			m_pShareData->m_Common.m_nWinSizeType == SIZE_MINIMIZED ){
 			::ShowWindow( m_hWnd, SW_SHOWMINIMIZED );
 		}
@@ -1357,7 +1357,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_MOVE:
 		// From Here 2004.05.13 Moca ウィンドウ位置継承
 		//	最後の位置を復元するため，移動されるたびに共有メモリに位置を保存する．
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowPos ){
+		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_eSaveWindowPos ){
 			if( !::IsZoomed( m_hWnd ) && !::IsIconic( m_hWnd ) ){
 				// 2005.11.23 Moca ワークエリア座標だとずれるのでスクリーン座標に変更
 				RECT rcWin;
@@ -3415,8 +3415,8 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 
 	/* ウィンドウサイズ継承 */
 	if( wParam != SIZE_MINIMIZED ){						/* 最小化は継承しない */
-		//	2004.05.13 Moca m_nSaveWindowSizeの解釈追加のため
-		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_nSaveWindowSize ){		/* ウィンドウサイズ継承をするか */
+		//	2004.05.13 Moca m_eSaveWindowSizeの解釈追加のため
+		if( WINSIZEMODE_SAVE == m_pShareData->m_Common.m_eSaveWindowSize ){		/* ウィンドウサイズ継承をするか */
 			if( wParam == SIZE_MAXIMIZED ){					/* 最大化はサイズを記録しない */
 				if( m_pShareData->m_Common.m_nWinSizeType != (int)wParam ){
 					m_pShareData->m_Common.m_nWinSizeType = wParam;
