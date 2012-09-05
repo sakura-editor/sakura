@@ -36,6 +36,7 @@
 #include "StdAfx.h"
 #include "CFuncLookup.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
+#include <stdio.h>
 
 //	オフセット値
 const int LUOFFSET_MACRO = 0;
