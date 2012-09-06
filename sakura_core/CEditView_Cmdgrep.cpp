@@ -15,12 +15,12 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CEditView.h"
 #include "CEditDoc.h"
 #include "CEditApp.h"
 #include "charcode.h"
 #include "Debug.h"
+#include "sakura_rc.h"
 
 /*!
 	コマンドコードの変換(grep mode時)
@@ -39,8 +39,7 @@ void CEditView::TranslateCommand_grep(
 
 	if( nCommand == F_CHAR ){
 		//	Jan. 23, 2005 genta 文字判定忘れ
-		if(( lparam1 == CR || lparam1 == LF ) &&
-			m_pShareData->m_Common.m_bGTJW_RETURN ){
+		if(( lparam1 == CR || lparam1 == LF ) && m_pShareData->m_Common.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;
 			lparam1 = GetKeyState_Control();
 		}
@@ -64,12 +63,12 @@ void CEditView::Command_GREP_DIALOG( void )
 //		cmemCurText.SetData( m_pShareData->m_szSEARCHKEYArr[0], lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) );
 		cmemCurText.SetString( m_pShareData->m_szSEARCHKEYArr[0] );
 	}
-	strcpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
+	_tcscpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
 
 	/* Grepダイアログの表示 */
 	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
 //	MYTRACE_A( "nRet=%d\n", nRet );
-	if( FALSE == nRet ){
+	if( !nRet ){
 		return;
 	}
 	HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);	//	GREPコマンドの発行
@@ -88,7 +87,7 @@ void CEditView::Command_GREP( void )
 
 	/* 編集ウィンドウの上限チェック */
 	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
+		::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 
 		return;
 	}
@@ -100,8 +99,13 @@ void CEditView::Command_GREP( void )
 		Grepモードのとき。または、変更フラグがオフで、ファイルを読み込んでいない場合。
 		Grep中とアウトプットウィンドウも除外する
 	*/
-	if( (  m_pcEditDoc->m_bGrepMode && !m_pcEditDoc->m_bGrepRunning ) ||
-	    ( !m_pcEditDoc->m_bGrepMode && !m_pcEditDoc->IsModified() && !m_pcEditDoc->IsFilePathAvailable() && !m_pcEditDoc->m_bDebugMode )
+	if( (  m_pcEditDoc->m_bGrepMode &&
+		   !m_pcEditDoc->m_bGrepRunning ) ||
+	    ( !m_pcEditDoc->m_bGrepMode &&
+		   !m_pcEditDoc->IsModified() &&
+		   !m_pcEditDoc->IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
+		   !m_pcEditDoc->m_bDebugMode
+		)
 	){
 		DoGrep(
 			&cmWork1,
@@ -115,57 +119,39 @@ void CEditView::Command_GREP( void )
 			m_pcEditDoc->m_cDlgGrep.m_bWordOnly,
 			m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle
 		);
-	}else{
+	}
+	else{
 		/*======= Grepの実行 =============*/
 		/* Grep結果ウィンドウの表示 */
 		char*	pCmdLine = new char[1024];
 		char*	pOpt = new char[64];
-//		int		nDataLen;
 		cmWork1.Replace( "\"", "\"\"" );
-		cmWork2.Replace( "\"", "\"\"" );
-		cmWork3.Replace( "\"", "\"\"" );
-		/*
-		|| -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-		*/
-		wsprintf( pCmdLine, "-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d",
+		cmWork2.Replace( _T("\""), _T("\"\"") );
+		cmWork3.Replace( _T("\""), _T("\"\"") );
+
+		// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
+		wsprintf( pCmdLine,
+			_T("-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d"),
 			cmWork1.GetStringPtr(),
 			cmWork2.GetStringPtr(),
 			cmWork3.GetStringPtr(),
 			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet
 		);
-		pOpt[0] = '\0';
-		if( m_pcEditDoc->m_cDlgGrep.m_bSubFolder ){	/* サブフォルダからも検索する */
-			strcat( pOpt, "S" );
+
+		//GOPTオプション
+		pOpt[0] = _T('\0');
+		if( m_pcEditDoc->m_cDlgGrep.m_bSubFolder            )_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
+		if( m_pcEditDoc->m_cDlgGrep.m_bWordOnly             )_tcscat( pOpt, _T("W") );	// 単語単位で探す
+		if( m_pcEditDoc->m_cDlgGrep.m_bLoHiCase             )_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
+		if( m_pcEditDoc->m_cDlgGrep.m_bRegularExp           )_tcscat( pOpt, _T("R") );	// 正規表現
+		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine       )_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
+		if( 1 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle )_tcscat( pOpt, _T("1") );	// Grep: 出力形式
+		if( 2 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle )_tcscat( pOpt, _T("2") );	// Grep: 出力形式
+		if( 0 < _tcslen( pOpt ) ){
+			_tcscat( pCmdLine, _T(" -GOPT=") );
+			_tcscat( pCmdLine, pOpt );
 		}
-	//	if( m_bFromThisText ){	/* この編集中のテキストから検索する */
-	//
-	//	}
-		if( m_pcEditDoc->m_cDlgGrep.m_bWordOnly ){	/* 単語単位で探す */
-			strcat( pOpt, "W" );
-		}
-		if( m_pcEditDoc->m_cDlgGrep.m_bLoHiCase ){	/* 英大文字と英小文字を区別する */
-			strcat( pOpt, "L" );
-		}
-		if( m_pcEditDoc->m_cDlgGrep.m_bRegularExp ){	/* 正規表現 */
-			strcat( pOpt, "R" );
-		}
-//	2002/09/20 Moca 文字コードセットオプションに統合
-//		if( m_pcEditDoc->m_cDlgGrep.m_KanjiCode_AutoDetect ){	/* 文字コード自動判別 */
-//			strcat( pOpt, "K" );
-//		}
-		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine ){	/* 行を出力するか該当部分だけ出力するか */
-			strcat( pOpt, "P" );
-		}
-		if( 1 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
-			strcat( pOpt, "1" );
-		}
-		if( 2 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle ){	/* Grep: 出力形式 */
-			strcat( pOpt, "2" );
-		}
-		if( 0 < lstrlen( pOpt ) ){
-			strcat( pCmdLine, " -GOPT=" );
-			strcat( pCmdLine, pOpt );
-		}
+
 //		MYTRACE_A( "pCmdLine=[%s]\n", pCmdLine );
 		/* 新規編集ウィンドウの追加 ver 0 */
 		CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pCmdLine, 0, FALSE );
