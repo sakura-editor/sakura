@@ -13,7 +13,7 @@ CRecentReplace::CRecentReplace()
 	Create(
 		GetShareData()->m_sSearchKeywords.m_aReplaceKeys.dataPtr(),
 		&GetShareData()->m_sSearchKeywords.m_aReplaceKeys._GetSizeRef(),
-		NULL /*GetShareData()->m_bREPLACEKEYArrFavorite*/,
+		NULL,
 		MAX_REPLACEKEY,
 		NULL
 	);

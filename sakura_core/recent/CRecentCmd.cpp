@@ -14,7 +14,7 @@ CRecentCmd::CRecentCmd()
 	Create(
 		GetShareData()->m_sHistory.m_aCommands.dataPtr(),
 		&GetShareData()->m_sHistory.m_aCommands._GetSizeRef(),
-		NULL /*GetShareData()->m_bCmdArrFavorite*/,
+		NULL,
 		MAX_CMDARR,
 		NULL
 	);
