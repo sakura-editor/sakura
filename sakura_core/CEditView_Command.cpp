@@ -2999,7 +2999,7 @@ void CEditView::Command_SEARCH_DIALOG( void )
 
 /* 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す) */
 /* 2002.01.16 hor 共通ロジックを関数にしただけ・・・ */
-BOOL CEditView::ChangeCurRegexp(void)
+BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
 	BOOL	bChangeState;
 	if( FALSE == m_bCurSrchKeyMark
@@ -3032,7 +3032,7 @@ BOOL CEditView::ChangeCurRegexp(void)
 		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 	}
 
-	if( bChangeState ){
+	if( bChangeState && bRedrawIfChanged ){
 		/* フォーカス移動時の再描画 */
 		RedrawAll();
 	}
@@ -3218,7 +3218,7 @@ end_of_func:;
 			::MYMESSAGEBOX(
 				hwndParent,
 				 MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-				_T("前方(↑) に文字列 '%s' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
+				_T("後方(↑) に文字列 '%s' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
 				m_szCurSrchKey
 			);
 		}
@@ -3452,7 +3452,7 @@ end_of_func:;
 				::MYMESSAGEBOX(
 					hwndParent,
 					MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					_T("後方(↓) に文字列 '%s' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
+					_T("前方(↓) に文字列 '%s' が１つも見つかりません。"),
 					m_szCurSrchKey
 				);
 			}else{
@@ -8680,7 +8680,8 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 		m_pShareData->m_Common.m_bRegularExp=0;	//正規表現使わない
 		m_pShareData->m_Common.m_bWordOnly=0;	//単語で検索しない
 //		m_bCurSrchKeyMark=TRUE;
-		ChangeCurRegexp(); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
+		// 2010.06.30 Moca ChangeCurRegexpに再描画フラグ追加。2回再描画しないように
+		ChangeCurRegexp(false); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
 
 		// 再描画
 		RedrawAll();

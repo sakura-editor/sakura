@@ -539,7 +539,7 @@ protected:
 	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );		/* フォントを選ぶ */
 	void ExecCmd(const char*, const int);						// 子プロセスの標準出力をリダイレクトする	//2006.12.03 maru 引数の拡張
 	void AddToCmdArr( const char* );
-	BOOL ChangeCurRegexp(void);									// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
+	BOOL ChangeCurRegexp(bool bRedrawIfChanged= true);			// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
 	void SendStatusMessage2( const char* msg );					// Jul. 9, 2005 genta
 	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode);	/* 再変換用構造体を設定する 2002.04.09 minfu */

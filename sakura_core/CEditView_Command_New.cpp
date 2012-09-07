@@ -2018,8 +2018,7 @@ re_do:;								// hor
 	}else{
 		SendStatusMessage("▽見つかりませんでした");
 		if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-				"後方(↓) にブックマークが見つかりません。" );
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("前方(↓) にブックマークが見つかりません。"));
 	}
 	return;
 }
@@ -2058,7 +2057,7 @@ re_do:;								// hor
 	}else{
 		SendStatusMessage(_T("△見つかりませんでした"));
 		if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("前方(↑) にブックマークが見つかりません。") );
+			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("後方(↑) にブックマークが見つかりません。") );
 	}
 	return;
 }
@@ -2079,7 +2078,7 @@ void CEditView::Command_BOOKMARK_RESET(void)
 void CEditView::Command_BOOKMARK_PATTERN( void )
 {
 	//検索or置換ダイアログから呼び出された
-	if(!ChangeCurRegexp()) return;
+	if( !ChangeCurRegexp(false) ) return;
 
 	m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
 		m_pShareData->m_szSEARCHKEYArr[0],		// 検索条件
