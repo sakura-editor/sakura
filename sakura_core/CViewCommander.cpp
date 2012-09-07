@@ -8427,7 +8427,6 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt)
 	CSakuraEnvironment::ExpandParameter(cmd_string, buf, bufmax);
 	
 	// 子プロセスの標準出力をリダイレクトする
-	//ExecCmd( buf, GetDllShareData().m_bGetStdout );	//	2006.12.03 maru マクロからの呼び出しではオプションを保存させないため
 	m_pCommanderView->ExecCmd( to_tchar(buf), nFlgOpt );
 	//	To Here Aug. 21, 2001 genta
 	return;

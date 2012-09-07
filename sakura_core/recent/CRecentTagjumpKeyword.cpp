@@ -13,7 +13,7 @@ CRecentTagjumpKeyword::CRecentTagjumpKeyword()
 	Create(
 		GetShareData()->m_sTagJump.m_aTagJumpKeywords.dataPtr(),
 		&GetShareData()->m_sTagJump.m_aTagJumpKeywords._GetSizeRef(),
-		NULL /*GetShareData()->m_bTagJumpKeywordArrFavorite*/,
+		NULL,
 		MAX_TAGJUMP_KEYWORD,
 		NULL
 	);
