@@ -361,21 +361,15 @@ struct CommonSetting {
 	void	SetBackupType(int n){ m_nBackUpType = n; }
 
 	bool	GetBackupOpt(int flag) const { return ( flag & m_nBackUpType_Opt1 ) == flag; }
-	void	SetBackupOpt(int flag, bool value){
-		m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 );
-	}
+	void	SetBackupOpt(int flag, bool value){ m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 ); }
 
 	//	バックアップ数
 	int		GetBackupCount(void) const { return m_nBackUpType_Opt2 & 0xffff; }
-	void	SetBackupCount(int value){
-		m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xffff0000) | ( value & 0xffff );
-	}
+	void	SetBackupCount(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xffff0000) | ( value & 0xffff ); }
 
 	//	バックアップの拡張子先頭文字(1文字)
 	int		GetBackupExtChar(void) const { return ( m_nBackUpType_Opt2 >> 16 ) & 0xff ; }
-	void	SetBackupExtChar(int value){
-		m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 );
-	}
+	void	SetBackupExtChar(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 ); }
 
 	//	Aug. 21, 2000 genta
 	//	自動Backup
@@ -585,8 +579,6 @@ struct CommonSetting {
 	char				m_szMigemoDll[_MAX_PATH];		/* migemo dll */
 	char				m_szMigemoDict[_MAX_PATH];		/* migemo dict */
 
-//	int					m_nTagDepth;	//ダイレクトタグジャンプ階層
-
 	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
 	int					m_bRememberOutlineWindowPos;
 	int					m_widthOutlineWindow;
@@ -634,9 +626,6 @@ struct DLLSHAREDATA {
 	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
 
-	//From Here 2003.05.31 MIK
-	//WINDOWPLACEMENT		m_TabWndWndpl;					//タブウインドウ時のウインドウ情報
-	//To Here 2003.05.31 MIK
 	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
@@ -655,16 +644,12 @@ struct DLLSHAREDATA {
 
 	int					m_nSEARCHKEYArrNum;
 	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
-//	bool				m_bSEARCHKEYArrFavorite[MAX_SEARCHKEY];	//お気に入り	//@@@ 2003.04.08 MIK
 	int					m_nREPLACEKEYArrNum;
 	char				m_szREPLACEKEYArr[MAX_REPLACEKEY][_MAX_PATH];
-//	bool				m_bREPLACEKEYArrFavorite[MAX_REPLACEKEY];	//お気に入り	//@@@ 2003.04.08 MIK
 	int					m_nGREPFILEArrNum;
 	char				m_szGREPFILEArr[MAX_GREPFILE][_MAX_PATH];
-//	bool				m_bGREPFILEArrFavorite[MAX_GREPFILE];	//お気に入り	//@@@ 2003.04.08 MIK
 	int					m_nGREPFOLDERArrNum;
 	char				m_szGREPFOLDERArr[MAX_GREPFOLDER][_MAX_PATH];
-//	bool				m_bGREPFOLDERArrFavorite[MAX_GREPFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
 
 	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
 	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
@@ -680,10 +665,8 @@ struct DLLSHAREDATA {
 	int					m_TagJumpTop;					//!< スタックの一番上の位置
 	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
 
-//	MRU_ExtCmd			m_MRU_ExtCmd;	/* MRU 外部コマンド */
 	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
 	int					m_nCmdArrNum;
-//	bool				m_bCmdArrFavorite[MAX_CMDARR];	//お気に入り	//@@@ 2003.04.08 MIK
 
 	/**** iniフォルダ設定 ****/
 	IniFolder			m_IniFolder;
@@ -715,7 +698,6 @@ struct DLLSHAREDATA {
 
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 	/* **** その他のダイアログ **** */
-//	BOOL				m_bGetStdout;		/* 外部コマンド実行の「標準出力を得る」 */
 	int					m_nExecFlgOpt;		/* 外部コマンド実行オプション */	//	2006.12.03 maru オプションの拡張のため
 	BOOL				m_bLineNumIsCRLF;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 
@@ -726,7 +708,6 @@ struct DLLSHAREDATA {
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
 	int					m_nTagJumpKeywordArrNum;
 	char				m_szTagJumpKeywordArr[MAX_TAGJUMP_KEYWORD][_MAX_PATH];
-//	bool				m_bTagJumpKeywordArrFavorite[MAX_TAGJUMPKEYWORD];	//お気に入り
 	BOOL				m_bTagJumpICase;	//!< 大文字小文字を同一視
 	BOOL				m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
 	//To Here 2005.04.03 MIK

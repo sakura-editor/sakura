@@ -414,26 +414,21 @@ bool CShareData::InitShareData()
 		m_pShareData->m_nSEARCHKEYArrNum = 0;
 		for( i = 0; i < MAX_SEARCHKEY; ++i ){
 			strcpy( m_pShareData->m_szSEARCHKEYArr[i], "" );
-			//m_pShareData->m_bSEARCHKEYArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nREPLACEKEYArrNum = 0;
 		for( i = 0; i < MAX_REPLACEKEY; ++i ){
 			strcpy( m_pShareData->m_szREPLACEKEYArr[i], "" );
-			//m_pShareData->m_bREPLACEKEYArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nGREPFILEArrNum = 0;
 		for( i = 0; i < MAX_GREPFILE; ++i ){
 			strcpy( m_pShareData->m_szGREPFILEArr[i], "" );
-			//m_pShareData->m_bGREPFILEArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nGREPFILEArrNum = 1;
 		strcpy( m_pShareData->m_szGREPFILEArr[0], "*.*" );
-		//m_pShareData->m_bSEARCHKEYArrFavorite[0] = true;	//お気に入り	//@@@ 2003.04.08 MIK
 
 		m_pShareData->m_nGREPFOLDERArrNum = 0;
 		for( i = 0; i < MAX_GREPFOLDER; ++i ){
 			strcpy( m_pShareData->m_szGREPFOLDERArr[i], "" );
-			//m_pShareData->m_bGREPFOLDERArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		strcpy( m_pShareData->m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
 		strcpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
@@ -712,7 +707,6 @@ bool CShareData::InitShareData()
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */
 			m_pShareData->m_szCmdArr[i][0] = '\0';
-			//m_pShareData->m_bCmdArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 		m_pShareData->m_nCmdArrNum = 0;
 
@@ -759,7 +753,6 @@ bool CShareData::InitShareData()
 		m_pShareData->m_nTagJumpKeywordArrNum = 0;
 		for( i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
 			strcpy( m_pShareData->m_szTagJumpKeywordArr[i], _T("") );
-			//m_pShareData->m_bTagJumpKeywordArrFavorite[i] = false;	//お気に入り
 		}
 		m_pShareData->m_bTagJumpICase = FALSE;
 		m_pShareData->m_bTagJumpAnyWhere = FALSE;
@@ -872,9 +865,6 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 }
 
 
-
-
-
 /** 編集ウィンドウリストへの登録
 
 	@param hWnd [in] 登録する編集ウィンドウのハンドル
@@ -888,18 +878,20 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 	int		nSubCommand = TWNT_ADD;
 	int		nIndex;
 	CRecent	cRecentEditNode;
-	EditNode	MyEditNode;
+	EditNode	sMyEditNode;
 	EditNode	*p;
 
-	memset( &MyEditNode, 0, sizeof( MyEditNode ) );
-	MyEditNode.m_hWnd = hWnd;
+	memset( &sMyEditNode, 0, sizeof( sMyEditNode ) );
+	sMyEditNode.m_hWnd = hWnd;
 
 	{	// 2007.07.07 genta Lock領域
 	LockGuard<CMutex> guard( g_cEditArrMutex );
+
 	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 
 	//登録済みか？
-	if( -1 != (nIndex = cRecentEditNode.FindItem( (const char*)&hWnd ) ) )
+	nIndex = cRecentEditNode.FindItem( (const char*)&hWnd );
+	if( -1 != nIndex )
 	{
 		//もうこれ以上登録できないか？
 		if( cRecentEditNode.GetItemCount() >= cRecentEditNode.GetArrayCount() )
@@ -913,7 +905,7 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 		p = (EditNode*)cRecentEditNode.GetItem( nIndex );
 		if( p )
 		{
-			memcpy( &MyEditNode, p, sizeof( MyEditNode ) );
+			memcpy( &sMyEditNode, p, sizeof( sMyEditNode ) );
 		}
 	}
 
@@ -925,28 +917,28 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 		::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)m_pShareData->m_nSequences );
 
 		//連番を更新する。
-		MyEditNode.m_nIndex = m_pShareData->m_nSequences;
+		sMyEditNode.m_nIndex = m_pShareData->m_nSequences;
 
 		/* タブグループ連番 */
 		if( nGroup > 0 )
 		{
-			MyEditNode.m_nGroup = nGroup;	// 指定のグループ
+			sMyEditNode.m_nGroup = nGroup;	// 指定のグループ
 		}
 		else
 		{
 			p = (EditNode*)cRecentEditNode.GetItem( 0 );
 			if( NULL == p )
-				MyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+				sMyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
 			else
-				MyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
+				sMyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
 		}
 
-		MyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
-		MyEditNode.m_bClosing = FALSE;
+		sMyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
+		sMyEditNode.m_bClosing = FALSE;
 	}
 
 	//追加または先頭に移動する。
-	cRecentEditNode.AppendItem( (const char*)&MyEditNode );
+	cRecentEditNode.AppendItem( (const char*)&sMyEditNode );
 	cRecentEditNode.Terminate();
 	}	// 2007.07.07 genta Lock領域終わり
 
@@ -955,9 +947,6 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 
 	return TRUE;
 }
-
-
-
 
 
 /** 編集ウィンドウリストからの削除
@@ -980,8 +969,6 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 
 	//ウインドウ削除メッセージをブロードキャストする。
 	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_DEL, (LPARAM)hWnd, hWnd, nGroup );
-
-	return;
 }
 
 /** グループをIDリセットする
@@ -1380,10 +1367,7 @@ BOOL CShareData::PostMessageToAllEditors(
 	return TRUE;
 }
 
-
 /** 全編集ウィンドウへメッセージを送る
-
-	@param nGroup [in] グループ指定（0:全グループ）
 
 	@date 2005.01.24 genta m_hWndLast == NULLのとき全くメッセージが送られなかった
 	@date 2007.06.22 ryoji nGroup引数を追加、グループ単位で順番に送る
@@ -1393,8 +1377,8 @@ BOOL CShareData::SendMessageToAllEditors(
 	WPARAM		wParam,		/* 第1メッセージ パラメータ */
 	LPARAM		lParam,		/* 第2メッセージ パラメータ */
 	HWND		hWndLast,	/* 最後に送りたいウィンドウ */
-	int			nGroup/* = 0*/	/*!< 送りたいグループ */
- )
+	int			nGroup		/*!< [in] グループ指定（0:全グループ） */
+)
 {
 	EditNode*	pWndArr;
 	int		i;
@@ -1472,6 +1456,8 @@ static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
 	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
 }
 
+
+
 /** 現在開いている編集ウィンドウの配列を返す
 
 	@param[out] ppEditNode 配列を受け取るポインタ
@@ -1510,7 +1496,7 @@ int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort, BOOL bGSo
 int CShareData::GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
 {
 	//編集ウインドウ数を取得する。
-	EditNodeEx *pNode;	// ソート処理用の拡張リスト
+	EditNodeEx* pNode;	// ソート処理用の拡張リスト
 	int		nRowNum;	//編集ウインドウ数
 	int		i;
 
