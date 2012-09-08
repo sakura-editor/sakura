@@ -29,6 +29,7 @@
 #include "Debug.h"///
 #include "etc_uty.h"///
 #include <stdio.h>/// 2002/2/3 aroka to here
+#include "CEditApp.h"
 
 #define MIN_PREVIEW_ZOOM 10
 #define MAX_PREVIEW_ZOOM 400
@@ -1685,7 +1686,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	WORD				wID;
 	HWND				hwndCtl;
 	CMemory				cMemBuf;
-	char				szHelpFile[_MAX_PATH];
+	LPCTSTR				pszHelpFile;
 
 
 
@@ -1757,10 +1758,10 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 			//To Here 2007.02.11 Moca
 			case IDC_BUTTON_HELP:
 				/* ヘルプファイルのフルパスを返す */
-				::GetHelpFilePath( szHelpFile );
+				pszHelpFile = CEditApp::GetHelpFilePath();
 				/* 印刷プレビューのヘルプ */
 				//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-				MyWinHelp( hwndDlg, szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PREVIEW) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+				MyWinHelp( hwndDlg, pszHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PREVIEW) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 				break;
 			case IDOK:
 				/* 印刷実行 */

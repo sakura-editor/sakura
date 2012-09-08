@@ -1294,7 +1294,7 @@ LRESULT CEditWnd::DispatchEvent(
 		lphi = (LPHELPINFO) lParam;
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
-			OnHelp_MenuItem( hwnd, lphi->iCtrlId );
+			CEditApp::ShowFuncHelp( hwnd, lphi->iCtrlId );
 			break;
 		}
 		return TRUE;
@@ -2060,20 +2060,18 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		case F_HELP_CONTENTS:
 			/* ヘルプ目次 */
 			{
-				char	szHelp[_MAX_PATH + 1];
 				/* ヘルプファイルのフルパスを返す */
-				::GetHelpFilePath( szHelp );
-				ShowWinHelpContents( m_hWnd, szHelp );	//	目次を表示する
+				LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
+				ShowWinHelpContents( m_hWnd, pszHelp );	//	目次を表示する
 			}
 			break;
 
 		case F_HELP_SEARCH:
 			/* ヘルプキーワード検索 */
 			{
-				char	szHelp[_MAX_PATH + 1];
 				/* ヘルプファイルのフルパスを返す */
-				::GetHelpFilePath( szHelp );
-				MyWinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+				LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
+				MyWinHelp( m_hWnd, pszHelp, HELP_KEY, (ULONG_PTR)"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 			}
 			break;
 
@@ -3286,26 +3284,6 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 		}
 	}
 //#endif
-
-
-
-/* メニューアイテムに対応するヘルプを表示 */
-void CEditWnd::OnHelp_MenuItem( HWND hwndParent, int nFuncID )
-{
-	char	szHelpFile[_MAX_PATH + 1];
-	int		nHelpContextID;
-
-	/* ヘルプファイルのフルパスを返す */
-	::GetHelpFilePath( szHelpFile );
-
-	/* 機能IDに対応するヘルプコンテキスト番号を返す */
-	nHelpContextID = FuncID_To_HelpContextID( nFuncID );
-	if( 0 != nHelpContextID ){
-		MyWinHelp( hwndParent, szHelpFile, HELP_CONTEXT, nHelpContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-	}
-	return;
-}
-
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 

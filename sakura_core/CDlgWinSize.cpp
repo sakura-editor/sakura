@@ -111,7 +111,7 @@ BOOL CDlgWinSize::OnBnClicked( int wID )
 {
 	switch( wID ){
 	case IDC_BUTTON_HELP:	// 2006/09/09 novice id修正
-		MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXT, HLP000286 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( m_hWnd, m_pszHelpFile, HELP_CONTEXT, HLP000286 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	case IDC_RADIO_WINPOS_DEF:
 	case IDC_RADIO_WINPOS_SAVE:

@@ -15,8 +15,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CDlgInput1.h"
+#include "CEditApp.h"
+#include "sakura_rc.h"
 #include "Debug.h"
 #include "etc_uty.h"
 #include "sakura.hh"
@@ -25,7 +26,7 @@
 static const DWORD p_helpids[] = {	//13000
 	IDOK,					HIDOK_DLG1,
 	IDCANCEL,				HIDCANCEL_DLG1,
-	IDC_EDIT_INPUT1,				HIDC_DLG1_EDIT1,	//入力フィールド	IDC_EDIT1->IDC_EDIT_INPUT1	2008/7/3 Uchi
+	IDC_EDIT_INPUT1,		HIDC_DLG1_EDIT1,	//入力フィールド	IDC_EDIT1->IDC_EDIT_INPUT1	2008/7/3 Uchi
 	IDC_STATIC_MSG,			HIDC_DLG1_EDIT1,	//メッセージ
 //	IDC_STATIC,				-1,
 	0, 0
@@ -65,7 +66,7 @@ INT_PTR CALLBACK CDlgInput1Proc(
 CDlgInput1::CDlgInput1()
 {
 	/* ヘルプファイルのフルパスを返す */
-	::GetHelpFilePath( m_szHelpFile );	//@@@ 2002.01.07 add
+	 m_pszHelpFile = CEditApp::GetHelpFilePath();	//@@@ 2002.01.07 add
 
 	return;
 }
@@ -158,13 +159,13 @@ INT_PTR CDlgInput1::DispatchEvent(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+			MyWinHelp( (HWND)p->hItemHandle, m_pszHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hwndDlg, m_pszHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	//@@@ 2002.01.07 add end
 	}

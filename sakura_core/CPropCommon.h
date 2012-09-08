@@ -106,7 +106,7 @@ public:
 	/*
 	|| ダイアログデータ
 	*/
-	char			m_szHelpFile[_MAX_PATH + 1];
+	LPCTSTR			m_pszHelpFile;
 	CommonSetting	m_Common;
 	short			m_nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
 	KEYDATA			m_pKeyNameArr[100];				/* キー割り当て表 */

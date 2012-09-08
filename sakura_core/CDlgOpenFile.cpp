@@ -26,6 +26,7 @@
 #include "Funccode.h"	//Stonee, 2001/05/18
 #include "MY_SP.h"	// Jun. 23, 2002 genta
 #include "CFileExt.h"
+#include "CEditApp.h"
 #include "my_icmp.h"
 #include <dlgs.h>    // stc3,...
 #include <cderr.h>   // FNERR...,CDERR...
@@ -58,7 +59,7 @@ WNDPROC			m_wpOpenDialogProc;
 
 const char**	m_ppszMRU;
 const char**	m_ppszOPENFOLDER;
-char			m_szHelpFile[_MAX_PATH + 1];
+LPCTSTR			m_pszHelpFile;
 int				m_nHelpTopicID;
 BOOL			m_bReadOnly;		/* 読み取り専用か */
 BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
@@ -104,7 +105,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			switch( wID ){
 			case pshHelp:
 				/* ヘルプ */
-				MyWinHelp( hwnd, m_szHelpFile, HELP_CONTEXT, m_nHelpTopicID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+				MyWinHelp( hwnd, m_pszHelpFile, HELP_CONTEXT, m_nHelpTopicID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 				break;
 			case chx1:	// The read-only check box
 				m_bReadOnly = ::IsDlgButtonChecked( hwnd , chx1 );
@@ -517,13 +518,13 @@ UINT_PTR CALLBACK OFNHookProc(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+			MyWinHelp( (HWND)p->hItemHandle, m_pszHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hdlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hdlg, m_pszHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	//@@@ 2002.01.08 add end
 
@@ -576,7 +577,7 @@ CDlgOpenFile::CDlgOpenFile()
 	_tcscpy( m_szDefaultWildCard, _T("*.*") );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	/* ヘルプファイルのフルパスを返す */
-	::GetHelpFilePath( m_szHelpFile );
+	m_pszHelpFile = CEditApp::GetHelpFilePath();
 	m_nHelpTopicID = 0;
 
 	return;

@@ -90,7 +90,6 @@ SAKURA_CORE_API void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* ƒŠƒ
 SAKURA_CORE_API void SplitPath_FolderAndFile( const char*, char*, char* );	/* ƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğAƒtƒHƒ‹ƒ_‚Æƒtƒ@ƒCƒ‹–¼‚É•ªŠ„ */
 SAKURA_CORE_API BOOL GetAbsolutePath( const char*, char*, BOOL );	/* ‘Š‘ÎƒpƒX¨â‘ÎƒpƒX */
 SAKURA_CORE_API BOOL GetLongFileName( const char*, char* );	/* ƒƒ“ƒOƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é */
-SAKURA_CORE_API LPTSTR GetHelpFilePath( LPTSTR , unsigned int nMaxLen = _MAX_PATH );	/* ƒwƒ‹ƒvƒtƒ@ƒCƒ‹‚Ìƒtƒ‹ƒpƒX‚ğ•Ô‚· */// 20020119 aroka
 SAKURA_CORE_API BOOL CheckEXT( const char*, const char* );	/* Šg’£q‚ğ’²‚×‚é */
 SAKURA_CORE_API char* my_strtok( char*, int, int*, const char* );
 /* Shell InterfaceŒn(?) */

@@ -285,33 +285,6 @@ TCHAR* my_strtok( TCHAR* pBuffer, int nLen, int* pnOffset, const TCHAR* pDelimit
 	return p;
 }
 
-
-
-
-/*! ヘルプファイルのフルパスを返す
- 
-    @param pszHelpFile [in] パスを格納するバッファ
-    @param nMaxLen [in] バッファに格納可能な文字数：デフォルト値＝_MAX_PATH
-    
-    @return パスを格納したバッファのポインタ
- 
-    @note 実行ファイルと同じ位置の sakura.chm ファイルを返す。
-        パスが UNC のときは _MAX_PATH に収まらない可能性がある。
-        
- 
-    @date 2002/01/19 aroka ；nMaxLen 引数追加
-*/
-LPTSTR GetHelpFilePath( LPTSTR pszHelpFile, unsigned int nMaxLen )
-{
-//	int		i;
-	TCHAR	szHelpFile[_MAX_PATH];
-
-	/* ヘルプファイルのファイルパス */
-	GetExedir( szHelpFile, _T("sakura.chm") );
-	::lstrcpyn( pszHelpFile, szHelpFile, nMaxLen );
-	return pszHelpFile;
-}
-
 /*! ロングファイル名を取得する 
 
 	@param[in] pszFilePathSrc 変換元パス名

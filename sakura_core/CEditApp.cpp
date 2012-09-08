@@ -528,7 +528,7 @@ LRESULT CEditApp::DispatchEvent(
 		lphi = (LPHELPINFO) lParam;
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
-			CEditWnd::OnHelp_MenuItem( hwnd, lphi->iCtrlId );
+			CEditApp::ShowFuncHelp( hwnd, lphi->iCtrlId );
 			break;
 		}
 		return TRUE;
@@ -598,19 +598,17 @@ LRESULT CEditApp::DispatchEvent(
 				case F_HELP_CONTENTS:
 					/* ヘルプ目次 */
 					{
-						char	szHelp[_MAX_PATH + 1];
 						/* ヘルプファイルのフルパスを返す */
-						::GetHelpFilePath( szHelp );
-						ShowWinHelpContents( m_hWnd, szHelp );	//	目次を表示する
+						LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
+						ShowWinHelpContents( m_hWnd, pszHelp );	//	目次を表示する
 					}
 					break;
 				case F_HELP_SEARCH:
 					/* ヘルプキーワード検索 */
 					{
-						char	szHelp[_MAX_PATH + 1];
 						/* ヘルプファイルのフルパスを返す */
-						::GetHelpFilePath( szHelp );
-						MyWinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+						LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
+						MyWinHelp( m_hWnd, pszHelp, HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 					}
 					break;
 				case F_EXTHELP1:
@@ -1550,4 +1548,43 @@ INT_PTR CALLBACK CEditApp::ExitingDlgProc(
 	}
 	return FALSE;
 }
+
+/*! ヘルプファイルのフルパスを返す
+ 
+    @return パスを格納したバッファのポインタ
+ 
+    @note 実行ファイルと同じ位置の sakura.chm ファイルを返す。
+        パスが UNC のときは _MAX_PATH に収まらない可能性がある。
+ 
+    @date 2002/01/19 aroka ；nMaxLen 引数追加
+	@date 2007/10/23 kobake 引数説明の誤りを修正(in→out)
+	@date 2007/10/23 kobake CEditAppのメンバ関数に変更
+	@date 2007/10/23 kobake シグニチャ変更。constポインタを返すだけのインターフェースにしました。
+*/
+LPCTSTR CEditApp::GetHelpFilePath()
+{
+	static TCHAR szHelpFile[_MAX_PATH] = _T("");
+	if(szHelpFile[0]==_T('\0')){
+		GetExedir( szHelpFile, _T("sakura.chm") );
+	}
+	return szHelpFile;
+}
+
+
+/* メニューアイテムに対応するヘルプを表示 */
+void CEditApp::ShowFuncHelp( HWND hwndParent, int nFuncID )
+{
+	/* 機能IDに対応するヘルプコンテキスト番号を返す */
+	int		nHelpContextID = FuncID_To_HelpContextID( nFuncID );
+	if( 0 != nHelpContextID ){
+		// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp(
+			hwndParent,
+			GetHelpFilePath(),
+			HELP_CONTEXT,
+			nHelpContextID
+		);
+	}
+}
+
 /*[EOF]*/

@@ -4494,10 +4494,9 @@ void CEditView::Command_SPLIT_VH( void )
 /* ヘルプ目次 */
 void CEditView::Command_HELP_CONTENTS( void )
 {
-	char	szHelp[_MAX_PATH + 1];
 	/* ヘルプファイルのフルパスを返す */
-	::GetHelpFilePath( szHelp );
-	ShowWinHelpContents( m_hWnd, szHelp );	//	目次を表示する
+	LPCTSTR pszHelp = CEditApp::GetHelpFilePath();
+	ShowWinHelpContents( m_hWnd, pszHelp );	//	目次を表示する
 	return;
 }
 
@@ -4507,10 +4506,9 @@ void CEditView::Command_HELP_CONTENTS( void )
 /* ヘルプキーワード検索 */
 void CEditView::Command_HELP_SEARCH( void )
 {
-	char	szHelp[_MAX_PATH + 1];
 	/* ヘルプファイルのフルパスを返す */
-	::GetHelpFilePath( szHelp );
-	MyWinHelp( m_hWnd, szHelp, HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
+	MyWinHelp( m_hWnd, pszHelp, HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 //To Here Nov. 25, 2000

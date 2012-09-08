@@ -162,11 +162,6 @@ public:
 	int	CreateFileDropDownMenu( HWND );	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
 
-	/*
-	|| スタティックなメンバ関数
-	*/
-	static void OnHelp_MenuItem( HWND, int );	/* メニューアイテムに対応するヘルプを表示 */
-
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
 	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragOver( DWORD, POINTL, LPDWORD );

@@ -32,6 +32,7 @@
 #include "CSplitBoxWnd.h"
 #include "CMenuDrawer.h"
 #include "Funccode.h"	//Stonee, 2001/05/18
+#include "CEditApp.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -167,7 +168,7 @@ CPropCommon::CPropCommon()
 	m_nPageNum = ID_PAGENUM_GENERAL;
 
 	/* ヘルプファイルのフルパスを返す */
-	::GetHelpFilePath( m_szHelpFile );
+	m_pszHelpFile = CEditApp::GetHelpFilePath();
 
 	return;
 }
@@ -651,7 +652,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 	case WM_HELP:
 		{
 			HELPINFO *p = (HELPINFO *)lParam;
-			MyWinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+			MyWinHelp( (HWND)p->hItemHandle, m_pszHelpFile, HELP_WM_HELP, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		}
 		return TRUE;
 		/*NOTREACHED*/
@@ -661,7 +662,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 //@@@ 2001.12.22 Start by MIK: Context Menu Help
 	//Context Menu
 	case WM_CONTEXTMENU:
-		MyWinHelp( hwndDlg, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hwndDlg, m_pszHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)(LPVOID)p_helpids );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //@@@ 2001.12.22 End
 
@@ -949,7 +950,7 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 		break;
 	}
 	if( -1 != nContextID ){
-		MyWinHelp( hwndParent, m_szHelpFile, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hwndParent, m_pszHelpFile, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 	return;
 }
