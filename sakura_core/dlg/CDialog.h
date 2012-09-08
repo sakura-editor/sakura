@@ -107,7 +107,7 @@ public:
 	int				m_xPos;
 	int				m_yPos;
 //	void*			m_pcEditView;
-	SFilePath		m_szHelpFile;
+	LPCTSTR			m_pszHelpFile;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 

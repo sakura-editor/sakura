@@ -350,7 +350,7 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_HELP:
 		/* ƒwƒ‹ƒv */
-		MyWinHelp( GetHwnd(), m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_OPTION_PLUGIN ) );	// ??? 
+		MyWinHelp( GetHwnd(), m_pszHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID( F_OPTION_PLUGIN ) );	// ??? 
 		return TRUE;
 
 	case IDOK:

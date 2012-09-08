@@ -67,7 +67,7 @@ protected:
 	HINSTANCE	m_hInstance;	//!< アプリケーションインスタンスのハンドル
 	HWND		m_hwndParent;	//!< オーナーウィンドウのハンドル
 	HWND		m_hwndThis;		//!< このダイアログのハンドル
-	SFilePath	m_szHelpFile;
+	LPCTSTR		m_pszHelpFile;
 
 	//ダイアログデータ
 	int			m_nPageNum;

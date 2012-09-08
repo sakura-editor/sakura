@@ -108,7 +108,7 @@ public:
 	/*
 	|| ダイアログデータ
 	*/
-	SFilePath		m_szHelpFile;
+	LPCTSTR			m_pszHelpFile;
 	CommonSetting	m_Common;
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
