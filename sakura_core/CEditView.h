@@ -968,7 +968,6 @@ private:
 	void ISearchBack(void) ;
 	void ISearchWordMake(void);
 	void ISearchSetStatusMsg(CMemory* msg) const;
-	char* m_pszMigemoWord;
 	ESearchDirection m_nISearchDirection;
 	int m_nISearchMode;
 	bool m_bISearchWrap;

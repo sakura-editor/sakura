@@ -419,22 +419,23 @@ void CEditView::ISearchExec(bool bNext)
 	}
 	m_bISearchFlagHistory[m_nISearchHistoryCount] = bNext;
 
-	if (m_pcEditDoc->m_cLayoutMgr.SearchWord(
-		nLine, 									// 検索開始行
-		nIdx, 									// 検索開始位置
-		m_szCurSrchKey,							// 検索条件
-		m_nISearchDirection,					// 0==前方検索 1==後方検索
-		m_bCurSrchRegularExp,					// 1==正規表現
-		m_bCurSrchLoHiCase,						// 1==英大文字小文字の区別
-		m_bCurSrchWordOnly,						// 1==単語のみ検索
-		&nLineFrom,								// マッチレイアウト行from
-		&nColmFrom, 							// マッチレイアウト位置from
-		&nLineTo, 								// マッチレイアウト行to
-		&nColmTo, 								// マッチレイアウト位置to
-		&m_CurRegexp	) == 0 )
-	{
+	int nSearchResult = m_pcEditDoc->m_cLayoutMgr.SearchWord(
+		nLine,						// 検索開始行
+		nIdx,						// 検索開始位置
+		m_szCurSrchKey,				// 検索条件
+		m_nISearchDirection,		// 0==前方検索 1==後方検索
+		m_bCurSrchRegularExp,		// 1==正規表現
+		m_bCurSrchLoHiCase,			// 1==英大文字小文字の区別
+		m_bCurSrchWordOnly,			// 1==単語のみ検索
+		&nLineFrom,					// マッチレイアウト行from
+		&nColmFrom, 				// マッチレイアウト位置from
+		&nLineTo, 					// マッチレイアウト行to
+		&nColmTo, 					// マッチレイアウト位置to
+		&m_CurRegexp
+	);
+	if( nSearchResult == 0 ){
 		/*検索結果がない*/
-		msg.AppendString(" (見つかりません)");
+		msg.AppendString(_T(" (見つかりません)"));
 		SendStatusMessage(msg.GetStringPtr());
 		
 		if (bNext) 	m_bISearchWrap = true;
@@ -545,12 +546,12 @@ void CEditView::ISearchWordMake(void)
 
 		{
 			//migemoで捜す
-			m_pszMigemoWord = (char*)m_pcmigemo->migemo_query((unsigned char*)m_szCurSrchKey);
+			unsigned char* pszMigemoWord = m_pcmigemo->migemo_query((unsigned char*)m_szCurSrchKey);
 			
 			/* 検索パターンのコンパイル */
-			m_CurRegexp.Compile(m_pszMigemoWord , nFlag );
+			m_CurRegexp.Compile((char*)pszMigemoWord , nFlag );
 
-			m_pcmigemo->migemo_release((unsigned char*)m_pszMigemoWord);
+			m_pcmigemo->migemo_release(pszMigemoWord);
 		}
 		break;
 	}
@@ -598,7 +599,7 @@ void CEditView::ISearchSetStatusMsg(CMemory* msg) const
 /*!
 	ISearch状態をツールバーに反映させる．
 	
-	@sa CEditWnd::IsISearchEnabled()
+	@sa CEditWnd::IsFuncChecked()
 
 	@param nCommand [in] 調べたいコマンドのID
 	@return true:チェック有り / false: チェック無し
