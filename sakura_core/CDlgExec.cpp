@@ -44,8 +44,6 @@ const DWORD p_helpids[] = {	//12100
 CDlgExec::CDlgExec()
 {
 	m_szCommand[0] = _T('\0');	/* コマンドライン */
-//	m_bGetStdout = /*FALSE*/TRUE;	// 標準出力を得る	//Mar. 21, 2001 JEPRO [得ない]をデフォルトに変更	//Jul. 03, 2001 JEPRO [得る]がデフォルトとなるように戻した
-
 	return;
 }
 
@@ -76,14 +74,6 @@ void CDlgExec::SetData( void )
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand ), CB_LIMITTEXT, (WPARAM)_countof( m_szCommand ) - 1, 0 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	::SendMessage( ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand ), CB_SETEXTENDEDUI, (WPARAM) (BOOL) TRUE, 0 );
-
-
-	// 標準出力を得る
-//	From Here Sept. 12, 2000 jeprotest
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-//	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, m_pShareData->m_bGetStdout/*m_bGetStdout*/ ? BST_CHECKED : BST_UNCHECKED );
-//	::CheckDlgButton( m_hWnd, IDC_CHECK_GETSTDOUT, TRUE );
-//	To Here Sept. 12, 2000 	うまくいかないので元に戻してある
 
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で

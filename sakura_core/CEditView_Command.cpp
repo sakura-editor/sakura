@@ -8797,7 +8797,6 @@ void CEditView::Command_EXECCOMMAND( const char *cmd_string, const int nFlgOpt)	
 	m_pcEditDoc->ExpandParameter(cmd_string, buf, bufmax);
 	
 	// 子プロセスの標準出力をリダイレクトする
-	//ExecCmd( buf, m_pShareData->m_bGetStdout );	//	2006.12.03 maru マクロからの呼び出しではオプションを保存させないため
 	ExecCmd( buf, nFlgOpt );
 	//	To Here Aug. 21, 2001 genta
 	return;

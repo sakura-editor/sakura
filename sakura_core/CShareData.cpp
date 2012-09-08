@@ -740,8 +740,6 @@ bool CShareData::InitShareData()
 		m_pShareData->m_TagJumpNum = 0;
 		// 2004.06.22 Moca タグジャンプの先頭
 		m_pShareData->m_TagJumpTop = 0;
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-//		m_pShareData->m_bGetStdout = TRUE;	/* 外部コマンド実行の「標準出力を得る」 */
 		m_pShareData->m_nExecFlgOpt = 1;	/* 外部コマンド実行の「標準出力を得る」 */	// 2006.12.03 maru オプションの拡張のため
 		m_pShareData->m_bLineNumIsCRLF = TRUE;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 
