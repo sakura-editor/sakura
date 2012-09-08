@@ -95,7 +95,7 @@ CPropTypes::CPropTypes()
 	}
 	
 	/* ヘルプファイルのフルパスを返す */
-	m_szHelpFile = CEditApp::Instance()->GetHelpFilePath();
+	m_pszHelpFile = CEditApp::Instance()->GetHelpFilePath();
 
 	((CPropScreen*)(this))->CPropTypes_Screen();
 }
@@ -275,6 +275,6 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 	default:				nContextID = -1;												break;
 	}
 	if( -1 != nContextID ){
-		MyWinHelp( hwndParent, m_szHelpFile, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hwndParent, m_pszHelpFile, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 }

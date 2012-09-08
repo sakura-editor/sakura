@@ -99,7 +99,7 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「タイプ別設定一覧」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		MyWinHelp( GetHwnd(), m_szHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TYPE_LIST) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( GetHwnd(), m_pszHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TYPE_LIST) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 	//	Nov. 29, 2000	From Here	genta
 	//	適用する型の一時的変更

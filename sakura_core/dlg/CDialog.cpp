@@ -76,7 +76,7 @@ CDialog::CDialog()
 	m_nHeight = -1;
 
 	/* ヘルプファイルのフルパスを返す */
-	m_szHelpFile = CEditApp::Instance()->GetHelpFilePath();
+	m_pszHelpFile = CEditApp::Instance()->GetHelpFilePath();
 
 	return;
 
@@ -465,13 +465,13 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 BOOL CDialog::OnPopupHelp( WPARAM wPara, LPARAM lParam )
 {
 	HELPINFO *p = (HELPINFO *)lParam;
-	MyWinHelp( (HWND)p->hItemHandle, m_szHelpFile, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( (HWND)p->hItemHandle, m_pszHelpFile, HELP_WM_HELP, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
 }
 
 BOOL CDialog::OnContextMenu( WPARAM wPara, LPARAM lParam )
 {
-	MyWinHelp( m_hWnd, m_szHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( m_hWnd, m_pszHelpFile, HELP_CONTEXTMENU, (ULONG_PTR)GetHelpIdTable() );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return TRUE;
 }
 
