@@ -1103,21 +1103,13 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, "nKeywordSelect10", types.m_nKeyWordSetIdx[9] );
 
 		/* çsä‘ÇÃÇ∑Ç´Ç‹ */
-		if( !cProfile.IsReadingMode() ){
-			if( types.m_nLineSpace < /* 1 */ 0 ){
-				types.m_nLineSpace = /* 1 */ 0;
-			}
-			if( types.m_nLineSpace > LINESPACE_MAX ){ // Feb. 18, 2003 genta ç≈ëÂílÇÃíËêîâª
-				types.m_nLineSpace = LINESPACE_MAX;
-			}
-		}
 		cProfile.IOProfileData( pszSecName, "nLineSpace", types.m_nLineSpace );
 		if( cProfile.IsReadingMode() ){
 			if( types.m_nLineSpace < /* 1 */ 0 ){
 				types.m_nLineSpace = /* 1 */ 0;
 			}
-			if( types.m_nLineSpace > 16 ){
-				types.m_nLineSpace = 16;
+			if( types.m_nLineSpace > LINESPACE_MAX ){
+				types.m_nLineSpace = LINESPACE_MAX;
 			}
 		}
 
