@@ -1150,7 +1150,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 				buffer[0], BLOCKCOMMENT_BUFFERSIZE );			
 			bRet2 = cProfile.IOProfileData( pszSecName, "szBlockCommentTo"	,
 				buffer[1], BLOCKCOMMENT_BUFFERSIZE );
-			if( bRet1 && bRet2 ) types.m_cBlockComment.CopyTo( 0, buffer[0], buffer[1] );
+			if( bRet1 && bRet2 ) types.m_cBlockComments[0].SetBlockCommentRule(buffer[0], buffer[1] );
 
 			//@@@ 2001.03.10 by MIK
 			buffer[0][0] = buffer[1][0] = '\0';
@@ -1158,7 +1158,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 				buffer[0], BLOCKCOMMENT_BUFFERSIZE );
 			bRet2 = cProfile.IOProfileData( pszSecName, "szBlockCommentTo2"	,
 				buffer[1], BLOCKCOMMENT_BUFFERSIZE );
-			if( bRet1 && bRet2 ) types.m_cBlockComment.CopyTo( 1, buffer[0], buffer[1] );
+			if( bRet1 && bRet2 ) types.m_cBlockComments[1].SetBlockCommentRule(buffer[0], buffer[1] );
 			
 			//	Line Comment
 			char lbuf[ COMMENT_DELIMITER_BUFFERSIZE ];
@@ -1185,15 +1185,15 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 		else { // write
 			//	Block Comment
 			cProfile.IOProfileData( pszSecName, "szBlockCommentFrom"	,
-				const_cast<char*>(types.m_cBlockComment.getBlockCommentFrom( 0 )), 0 );
+				const_cast<char*>(types.m_cBlockComments[0].getBlockCommentFrom()), 0 );
 			cProfile.IOProfileData( pszSecName, "szBlockCommentTo"	,
-				const_cast<char*>(types.m_cBlockComment.getBlockCommentTo( 0 )), 0 );
+				const_cast<char*>(types.m_cBlockComments[0].getBlockCommentTo()), 0 );
 
 			//@@@ 2001.03.10 by MIK
 			cProfile.IOProfileData( pszSecName, "szBlockCommentFrom2",
-				const_cast<char*>(types.m_cBlockComment.getBlockCommentFrom( 1 )), 0 );
+				const_cast<char*>(types.m_cBlockComments[1].getBlockCommentFrom()), 0 );
 			cProfile.IOProfileData( pszSecName, "szBlockCommentTo2"	,
-				const_cast<char*>(types.m_cBlockComment.getBlockCommentTo(1)), 0 );
+				const_cast<char*>(types.m_cBlockComments[1].getBlockCommentTo()), 0 );
 
 			//	Line Comment
 		cProfile.IOProfileData( pszSecName, "szLineComment"		,

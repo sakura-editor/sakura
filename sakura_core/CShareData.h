@@ -235,7 +235,7 @@ struct STypeConfig {
 	int					m_nKeyWordSetIdx[MAX_KEYWORDSET_PER_TYPE];	/*!< キーワードセット */
 
 	CLineComment		m_cLineComment;					/*!< 行コメントデリミタ */			//@@@ 2002.09.22 YAZAKI
-	CBlockComment		m_cBlockComment;				/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	CBlockComment		m_cBlockComments[2];			/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
 	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	char				m_szIndentChars[64];			/*!< その他のインデント対象文字 */

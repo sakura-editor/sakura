@@ -275,10 +275,13 @@ struct ARRHEAD {
 
 	Version 94:
 	ICONをすべてのコマンドに
+
+	Version 95:
+	CBlockComment変更
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 94;
+const unsigned int uShareDataVersion = 95;
 
 /*
 ||	Singleton風
@@ -5092,8 +5095,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(0, "", -1);	/* 行コメントデリミタ */
 	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(1, "", -1);	/* 行コメントデリミタ2 */
 	pShareData->m_Types[nIdx].m_cLineComment.CopyTo(2, "", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	pShareData->m_Types[nIdx].m_cBlockComment.CopyTo(0, "", "");	/* ブロックコメントデリミタ */
-	pShareData->m_Types[nIdx].m_cBlockComment.CopyTo(1, "", "");	/* ブロックコメントデリミタ2 */
+	pShareData->m_Types[nIdx].m_cBlockComments[0].SetBlockCommentRule("", "");	/* ブロックコメントデリミタ */
+	pShareData->m_Types[nIdx].m_cBlockComments[1].SetBlockCommentRule("", "");	/* ブロックコメントデリミタ2 */
 
 	pShareData->m_Types[nIdx].m_nStringType = 0;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 	strcpy( pShareData->m_Types[nIdx].m_szIndentChars, _T("") );		/* その他のインデント対象文字 */
@@ -5352,8 +5355,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	// nIdx = 1;
 	/* C/C++ */
 	pShareData->m_Types[2].m_cLineComment.CopyTo( 0, "//", -1 );			/* 行コメントデリミタ */
-	pShareData->m_Types[2].m_cBlockComment.CopyTo( 0, "/*", "*/" );		/* ブロックコメントデリミタ */
-	pShareData->m_Types[2].m_cBlockComment.CopyTo( 1, "#if 0", "#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
+	pShareData->m_Types[2].m_cBlockComments[0].SetBlockCommentRule("/*", "*/" );		/* ブロックコメントデリミタ */
+	pShareData->m_Types[2].m_cBlockComments[1].SetBlockCommentRule("#if 0", "#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
 	pShareData->m_Types[2].m_nKeyWordSetIdx[0] = 0;						/* キーワードセット */
 	pShareData->m_Types[2].m_nDefaultOutline = OUTLINE_CPP;			/* アウトライン解析方法 */
 	pShareData->m_Types[2].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
@@ -5365,7 +5368,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[2].m_bUseHokanByFile = TRUE;			/*! 入力補完 開いているファイル内から候補を探す */
 
 	/* HTML */
-	pShareData->m_Types[3].m_cBlockComment.CopyTo( 0, "<!--", "-->" );	/* ブロックコメントデリミタ */
+	pShareData->m_Types[3].m_cBlockComments[0].SetBlockCommentRule("<!--", "-->" );	/* ブロックコメントデリミタ */
 	pShareData->m_Types[3].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	pShareData->m_Types[3].m_nKeyWordSetIdx[0] = 1;						/* キーワードセット */
 	pShareData->m_Types[3].m_nDefaultOutline = OUTLINE_HTML;			/* アウトライン解析方法 */
@@ -5375,7 +5378,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	// nIdx = 3;
 	/* PL/SQL */
 	pShareData->m_Types[4].m_cLineComment.CopyTo( 0, "--", -1 );		/* 行コメントデリミタ */
-	pShareData->m_Types[4].m_cBlockComment.CopyTo( 0, "/*", "*/" );	/* ブロックコメントデリミタ */
+	pShareData->m_Types[4].m_cBlockComments[0].SetBlockCommentRule("/*", "*/" );	/* ブロックコメントデリミタ */
 	pShareData->m_Types[4].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	strcpy( pShareData->m_Types[4].m_szIndentChars, "|★" );			/* その他のインデント対象文字 */
 	pShareData->m_Types[4].m_nKeyWordSetIdx[0] = 2;						/* キーワードセット */
@@ -5399,7 +5402,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 
 	/* Java */
 	pShareData->m_Types[6].m_cLineComment.CopyTo( 0, "//", -1 );		/* 行コメントデリミタ */
-	pShareData->m_Types[6].m_cBlockComment.CopyTo( 0, "/*", "*/" );	/* ブロックコメントデリミタ */
+	pShareData->m_Types[6].m_cBlockComments[0].SetBlockCommentRule("/*", "*/" );	/* ブロックコメントデリミタ */
 	pShareData->m_Types[6].m_nKeyWordSetIdx[0] = 4;						/* キーワードセット */
 	pShareData->m_Types[6].m_nDefaultOutline = OUTLINE_JAVA;			/* アウトライン解析方法 */
 	pShareData->m_Types[6].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
@@ -5427,8 +5430,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 
 	/* Pascal */
 	pShareData->m_Types[10].m_cLineComment.CopyTo( 0, "//", -1 );		/* 行コメントデリミタ */		//Nov. 5, 2000 JEPRO 追加
-	pShareData->m_Types[10].m_cBlockComment.CopyTo( 0, "{", "}" );	/* ブロックコメントデリミタ */	//Nov. 5, 2000 JEPRO 追加
-	pShareData->m_Types[10].m_cBlockComment.CopyTo( 1, "(*", "*)" );	/* ブロックコメントデリミタ2 */	//@@@ 2001.03.10 by MIK
+	pShareData->m_Types[10].m_cBlockComments[0].SetBlockCommentRule("{", "}" );	/* ブロックコメントデリミタ */	//Nov. 5, 2000 JEPRO 追加
+	pShareData->m_Types[10].m_cBlockComments[1].SetBlockCommentRule("(*", "*)" );	/* ブロックコメントデリミタ2 */	//@@@ 2001.03.10 by MIK
 	pShareData->m_Types[10].m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
 	pShareData->m_Types[10].m_nKeyWordSetIdx[0] = 8;						/* キーワードセット */
 	//Mar. 10, 2001 JEPRO	半角数値を色分け表示

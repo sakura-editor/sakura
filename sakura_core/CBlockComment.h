@@ -30,25 +30,28 @@
 
 //	2005.11.10 Moca アクセス関数追加
 class SAKURA_CORE_API CBlockComment{
-	char	m_szBlockCommentFrom[BLOCKCOMMENT_NUM][BLOCKCOMMENT_BUFFERSIZE];		/*!< ブロックコメントデリミタ(From) */
-	char	m_szBlockCommentTo[BLOCKCOMMENT_NUM][BLOCKCOMMENT_BUFFERSIZE];			/*!< ブロックコメントデリミタ(To) */	int		m_nBlockFromLen[BLOCKCOMMENT_NUM];
-	int		m_nBlockToLen[BLOCKCOMMENT_NUM];
-
 public:
-	/*
-	||  Constructors
-	*/
+	//生成と破棄
 	CBlockComment();
 
-	void CopyTo( const int n, const char* pszFrom, const char* pszTo );	//	行コメントデリミタをコピーする
-	bool Match_CommentFrom( int n, int nPos, int nLineLen, const char* pLine ) const;	//	行コメントに値するか確認する	
-	int Match_CommentTo( int n, int nPos, int nLineLen, const char* pLine ) const;	//	行コメントに値するか確認する
+	//設定
+	void SetBlockCommentRule( const TCHAR* pszFrom, const TCHAR* pszTo );	//	行コメントデリミタをコピーする
 
-	const char* getBlockCommentFrom( const int n ){ return m_szBlockCommentFrom[n]; }
-	const char* getBlockCommentTo( const int n ){ return m_szBlockCommentTo[n];	}
+	//判定
+	bool Match_CommentFrom( int nPos, int nLineLen, const char* pLine ) const;	//	行コメントに値するか確認する	
+	int Match_CommentTo( int nPos, int nLineLen, const char* pLine ) const;	//	行コメントに値するか確認する
 
-	int getBlockFromLen( int n ) const { return m_nBlockFromLen[n];	}
-	int getBlockToLen( int n ) const { return m_nBlockToLen[n]; }
+	//取得
+	const TCHAR* getBlockCommentFrom() const{ return m_szBlockCommentFrom; }
+	const TCHAR* getBlockCommentTo() const{ return m_szBlockCommentTo; }
+	int getBlockFromLen() const { return m_nBlockFromLen; }
+	int getBlockToLen() const { return m_nBlockToLen; }
+
+private:
+	TCHAR	m_szBlockCommentFrom[BLOCKCOMMENT_BUFFERSIZE];	//!< ブロックコメントデリミタ(From)
+	TCHAR	m_szBlockCommentTo[BLOCKCOMMENT_BUFFERSIZE];	//!< ブロックコメントデリミタ(To)
+	int		m_nBlockFromLen;
+	int		m_nBlockToLen;
 };
 
 ///////////////////////////////////////////////////////////////////////

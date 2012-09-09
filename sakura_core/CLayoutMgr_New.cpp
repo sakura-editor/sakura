@@ -1135,16 +1135,16 @@ bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, 
 		if( m_bDispComment && m_cLineComment.Match( nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
 		}else
-		if( m_bDispComment && m_cBlockComment.Match_CommentFrom( 0, nPos, nLineLen, pLine ) ){
+		if( m_bDispComment && m_cBlockComments[0].Match_CommentFrom(nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 0, nPos + m_cBlockComment.getBlockFromLen(0), nLineLen, pLine );
+			nCOMMENTEND = m_cBlockComments[0].Match_CommentTo(nPos + m_cBlockComments[0].getBlockFromLen(), nLineLen, pLine );
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 		}else
-		if( m_bDispComment &&  m_cBlockComment.Match_CommentFrom( 1, nPos, nLineLen, pLine ) ){
+		if( m_bDispComment &&  m_cBlockComments[1].Match_CommentFrom(nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 1, nPos + m_cBlockComment.getBlockFromLen(1), nLineLen, pLine );
+			nCOMMENTEND = m_cBlockComments[1].Match_CommentTo(nPos + m_cBlockComments[1].getBlockFromLen(), nLineLen, pLine );
 //#endif
 		}else
 		if( m_bDispSString && /* シングルクォーテーション文字列を表示する */
@@ -1167,7 +1167,7 @@ bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, 
 	case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
 		if( 0 == nCOMMENTEND ){
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 0, nPos, nLineLen, pLine );
+			nCOMMENTEND = m_cBlockComments[0].Match_CommentTo(nPos, nLineLen, pLine );
 		}else
 		if( nPos == nCOMMENTEND ){
 			nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
@@ -1178,7 +1178,7 @@ bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, 
 	case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 		if( 0 == nCOMMENTEND ){
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComment.Match_CommentTo( 1, nPos, nLineLen, pLine );
+			nCOMMENTEND = m_cBlockComments[1].Match_CommentTo(nPos, nLineLen, pLine );
 		}else
 		if( nPos == nCOMMENTEND ){
 			nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice

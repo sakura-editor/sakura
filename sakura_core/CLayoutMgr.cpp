@@ -31,7 +31,7 @@
 #include "CEditDoc.h"		// 2009.08.28 nasukoji
 
 CLayoutMgr::CLayoutMgr()
-: m_cLineComment(), m_cBlockComment(),
+: m_cLineComment(), m_cBlockComments(),
 	//	2004.04.03 Moca
 	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する
 	m_nMaxLineKetas( 10 ),
@@ -113,7 +113,8 @@ void CLayoutMgr::SetLayoutInfo(
 	m_nStringType	= refType.m_nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 
 	m_cLineComment = refType.m_cLineComment;	/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-	m_cBlockComment = refType.m_cBlockComment;	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	m_cBlockComments[0] = refType.m_cBlockComments[0];	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
+	m_cBlockComments[1] = refType.m_cBlockComments[1];	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
 	// 2005.11.21 Moca 色分けフラグをメンバで持つ
 	m_bDispComment = refType.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp;

@@ -722,8 +722,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_cLineComment.CopyTo(0, "", -1);	/* 行コメントデリミタ */
 	ref.m_cLineComment.CopyTo(1, "", -1);	/* 行コメントデリミタ2 */
 	ref.m_cLineComment.CopyTo(2, "", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	ref.m_cBlockComment.CopyTo(0, "", "");	/* ブロックコメントデリミタ */
-	ref.m_cBlockComment.CopyTo(1, "", "");	/* ブロックコメントデリミタ2 */
+	ref.m_cBlockComments[0].SetBlockCommentRule("", "");	/* ブロックコメントデリミタ */
+	ref.m_cBlockComments[1].SetBlockCommentRule("", "");	/* ブロックコメントデリミタ2 */
 
 	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = FALSE;

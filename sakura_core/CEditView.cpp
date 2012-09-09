@@ -10920,7 +10920,7 @@ searchnext:;
 					}else
 					//	Mar. 15, 2000 genta
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 0, nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
+						TypeDataPtr->m_cBlockComments[0].Match_CommentFrom(nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
 					){
 						nBgn = nPos;
 						nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
@@ -10931,12 +10931,12 @@ searchnext:;
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, nPos + (int)lstrlen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(0) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
+						nCOMMENTEND = TypeDataPtr->m_cBlockComments[0].Match_CommentTo(nPos + (int)lstrlen( TypeDataPtr->m_cBlockComments[0].getBlockCommentFrom() ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
 
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 					}else
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-						TypeDataPtr->m_cBlockComment.Match_CommentFrom( 1, nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
+						TypeDataPtr->m_cBlockComments[1].Match_CommentFrom(nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
 					){
 						nBgn = nPos;
 						nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
@@ -10946,7 +10946,7 @@ searchnext:;
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, nPos + (int)lstrlen( TypeDataPtr->m_cBlockComment.getBlockCommentFrom(1) ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
+						nCOMMENTEND = TypeDataPtr->m_cBlockComments[1].Match_CommentTo(nPos + (int)lstrlen( TypeDataPtr->m_cBlockComments[1].getBlockCommentFrom() ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
 //#endif
 					}else
 					if( pLine[nPos] == '\'' &&
@@ -11173,7 +11173,7 @@ searchnext:;
 				case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 0, nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
+						nCOMMENTEND = TypeDataPtr->m_cBlockComments[0].Match_CommentTo(nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
 					}else
 					if( nPos == nCOMMENTEND ){
 						nBgn = nPos;
@@ -11189,7 +11189,7 @@ searchnext:;
 				case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* この物理行にブロックコメントの終端があるか */
-						nCOMMENTEND = TypeDataPtr->m_cBlockComment.Match_CommentTo( 1, nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
+						nCOMMENTEND = TypeDataPtr->m_cBlockComments[1].Match_CommentTo(nPos, nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
 					}else
 					if( nPos == nCOMMENTEND ){
 						nBgn = nPos;

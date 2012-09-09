@@ -19,41 +19,37 @@
 
 CBlockComment::CBlockComment()
 {
-	int i;
-	for ( i=0; i<BLOCKCOMMENT_NUM; i++ ){
-		m_szBlockCommentFrom[ i ][ 0 ] = '\0';
-		m_szBlockCommentTo[ i ][ 0 ] = '\0';
-		m_nBlockFromLen[ i ] = 0;
-		m_nBlockToLen[ i ] = 0;
-	}
+	m_szBlockCommentFrom[ 0 ] = '\0';
+	m_szBlockCommentTo[ 0 ] = '\0';
+	m_nBlockFromLen = 0;
+	m_nBlockToLen = 0;
 }
 
 /*!
 	ブロックコメントデリミタをコピーする
 */
-void CBlockComment::CopyTo(
-	const int	n,			//!< [in] コピー対象のコメント番号
-	const char*	pszFrom,	//!< [in] コメント開始文字列
-	const char*	pszTo		//!< [in] コメント終了文字列
+void CBlockComment::SetBlockCommentRule(
+	const TCHAR*	pszFrom,	//!< [in] コメント開始文字列
+	const TCHAR*	pszTo		//!< [in] コメント終了文字列
 )
 {
 	int nStrLen = _tcslen( pszFrom );
 	if( 0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE ){
-		_tcscpy( m_szBlockCommentFrom[n], pszFrom );
-		m_nBlockFromLen[ n ] = nStrLen;
+		_tcscpy( m_szBlockCommentFrom, pszFrom );
+		m_nBlockFromLen = nStrLen;
 	}
 	else {
-		m_szBlockCommentFrom[n][0] = '\0';
-		m_nBlockFromLen[n] = 0;
+		m_szBlockCommentFrom[0] = '\0';
+		m_nBlockFromLen = 0;
 	}
 	nStrLen = _tcslen( pszTo );
 	if( 0 < nStrLen && nStrLen < BLOCKCOMMENT_BUFFERSIZE ){
-		_tcscpy( m_szBlockCommentTo[n], pszTo );
-		m_nBlockToLen[ n ] = nStrLen;
+		_tcscpy( m_szBlockCommentTo, pszTo );
+		m_nBlockToLen = nStrLen;
 	}
 	else {
-		m_szBlockCommentTo[n][0] = '\0';
-		m_nBlockToLen[n] = 0;
+		m_szBlockCommentTo[0] = '\0';
+		m_nBlockToLen = 0;
 	}
 }
 
@@ -64,17 +60,16 @@ void CBlockComment::CopyTo(
 	@retval false 一致しなかった
 */
 bool CBlockComment::Match_CommentFrom(
-	int			n,				//!< [in] 検査対象のコメント番号
-	int			nPos,			//!< [in] 探索開始位置
-	int			nLineLen,		//!< [in] pLineの長さ
-	const char*	pLine			//!< [in] 探索行の先頭．探索開始位置のポインタではないことに注意
+	int				nPos,		//!< [in] 探索開始位置
+	int				nLineLen,	//!< [in] pLineの長さ
+	const TCHAR*	pLine		//!< [in] 探索行の先頭．探索開始位置のポインタではないことに注意
 ) const
 {
 	if (
-		'\0' != m_szBlockCommentFrom[n][0] &&
-		'\0' != m_szBlockCommentTo[n][0]  &&
-		nPos <= nLineLen - m_nBlockFromLen[n] &&	/* ブロックコメントデリミタ(From) */
-		0 == my_memicmp( &pLine[nPos], m_szBlockCommentFrom[n], m_nBlockFromLen[n] )
+		_T('\0') != m_szBlockCommentFrom[0] &&
+		_T('\0') != m_szBlockCommentTo[0]  &&
+		nPos <= nLineLen - m_nBlockFromLen &&	/* ブロックコメントデリミタ(From) */
+		0 == my_memicmp( &pLine[nPos], m_szBlockCommentFrom, m_nBlockFromLen )
 	){
 		return true;
 	}
@@ -87,21 +82,20 @@ bool CBlockComment::Match_CommentFrom(
 	@return 当てはまった位置を返すが、当てはまらなかったときは、nLineLenをそのまま返す。
 */
 int CBlockComment::Match_CommentTo(
-	int			n,			//!< [in] 検査対象のコメント番号
-	int			nPos,		//!< [in] 探索開始位置
-	int			nLineLen,	//!< [in] pLineの長さ
-	const char*	pLine		//!< [in] 探索行の先頭．探索開始位置のポインタではないことに注意
+	int				nPos,		//!< [in] 探索開始位置
+	int				nLineLen,	//!< [in] pLineの長さ
+	const TCHAR*	pLine		//!< [in] 探索行の先頭．探索開始位置のポインタではないことに注意
 ) const
 {
 	int i;
-	for( i = nPos; i <= nLineLen - m_nBlockToLen[n]; ++i ){
+	for( i = nPos; i <= nLineLen - m_nBlockToLen; ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		int nCharChars_2 = CMemory::GetSizeOfChar( (const char *)pLine, nLineLen, i );
 		if( 0 == nCharChars_2 ){
 			nCharChars_2 = 1;
 		}
-		if( 0 == my_memicmp( &pLine[i], m_szBlockCommentTo[n], m_nBlockToLen[n] ) ){
-			return i + m_nBlockToLen[n];
+		if( 0 == my_memicmp( &pLine[i], m_szBlockCommentTo, m_nBlockToLen ) ){
+			return i + m_nBlockToLen;
 		}
 		if( 2 == nCharChars_2 ){
 			++i;
