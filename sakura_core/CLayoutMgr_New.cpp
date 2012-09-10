@@ -472,7 +472,7 @@ int CLayoutMgr::DoLayout_Range(
 	nCOMMENTMODE_Prev = nCOMMENTMODE;
 
 //	pLine = m_pcDocLineMgr->GetLineStr( nCurLine, &nLineLen );
-	pCDocLine = m_pcDocLineMgr->GetLineInfo( nCurLine );
+	pCDocLine = m_pcDocLineMgr->GetLine( nCurLine );
 
 
 

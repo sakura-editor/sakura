@@ -2732,7 +2732,7 @@ void CEditView::Command_CHAR( char cChar )
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pCLayout );
 			if( NULL != pCLayout ){
 				const CDocLine* pcDocLine;
-				pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( pCLayout->m_nLinePhysical );
+				pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( pCLayout->m_nLinePhysical );
 				pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( pCLayout->m_nLinePhysical, &nLineLen );
 				if( NULL != pLine ){
 					/*
@@ -7176,7 +7176,7 @@ void CEditView::Command_REPLACE_ALL()
 				);
 
 				// 置換前の行の長さ(改行は１文字と数える)を保存しておいて、置換前後で行位置が変わった場合に使用
-				linOldLen = rDocLineMgr.GetLineInfo(linOld)->GetLengthWithoutEOL() + 1;
+				linOldLen = rDocLineMgr.GetLine(linOld)->GetLengthWithoutEOL() + 1;
 
 				// 行は範囲内？
 				// 2007.01.19 ryoji 条件追加: 選択終点が行頭(colToP == 0)になっている場合は前の行の行末までを選択範囲とみなす

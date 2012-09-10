@@ -156,7 +156,7 @@ void CEditView::DispLineNumber(
 
 	nColorIndex = COLORIDX_GYOU;	/* 行番号 */
 	if( NULL != pcLayout ){
-//		pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( pcLayout->m_nLinePhysical );
+//		pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( pcLayout->m_nLinePhysical );
 		pCDocLine = pcLayout->m_pCDocLine;
 
 		if( m_pcEditDoc->IsModified()	/* ドキュメントが無変更の状態か */
@@ -1062,7 +1062,7 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( PosY );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;
@@ -1151,7 +1151,7 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( PosY );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;
@@ -1240,7 +1240,7 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( PosY );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;
@@ -1327,7 +1327,7 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 	//	初期位置の設定
 	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
-	ci = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( PosY );
+	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;

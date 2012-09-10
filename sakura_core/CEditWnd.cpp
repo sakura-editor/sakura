@@ -1813,7 +1813,7 @@ LRESULT CEditWnd::DispatchEvent(
 			//       2007.08.22現在ではアウトライン解析ダイアログから桁位置0で呼び出される
 			//       パターンしかないので実用上特に問題は無い。
 			if( !bSelect ){
-				const CDocLine *pTmpDocLine = m_cEditDoc.m_cDocLineMgr.GetLineInfo( ppoCaret->y );
+				const CDocLine *pTmpDocLine = m_cEditDoc.m_cDocLineMgr.GetLine( ppoCaret->y );
 				if( pTmpDocLine ){
 					if( pTmpDocLine->GetLengthWithoutEOL() < ppoCaret->x ) nCaretPosX--;
 				}

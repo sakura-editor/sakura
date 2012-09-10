@@ -709,7 +709,7 @@ BOOL CEditDoc::FileRead(
 			m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol = fi.m_nViewLeftCol; // 2001/10/20 novice
 			// From Here Mar. 28, 2003 MIK
 			// 改行の真ん中にカーソルが来ないように。
-			const CDocLine *pTmpDocLine = m_cDocLineMgr.GetLineInfo( fi.m_nY );	// 2008.08.22 ryoji 改行単位の行番号を渡すように修正
+			const CDocLine *pTmpDocLine = m_cDocLineMgr.GetLine( fi.m_nY );	// 2008.08.22 ryoji 改行単位の行番号を渡すように修正
 			if( pTmpDocLine ){
 				if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nCaretPosX--;
 			}
@@ -733,7 +733,7 @@ BOOL CEditDoc::FileRead(
 	//	改行コードの設定
 	{
 		SetNewLineCode( EOL_CRLF );
-		CDocLine*	pFirstlineinfo = m_cDocLineMgr.GetLineInfo( 0 );
+		CDocLine*	pFirstlineinfo = m_cDocLineMgr.GetLine( 0 );
 		if( pFirstlineinfo != NULL ){
 			EEolType t = (EEolType)pFirstlineinfo->m_cEol;
 			if( t != EOL_NONE && t != EOL_UNKNOWN ){

@@ -10343,7 +10343,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		//‘I‘ð”ÍˆÍ‚ª•¡”s‚ÌŽž‚Í
 		if (nSelectLineTo != nCurrentLine){
 			//s––‚Ü‚Å‚É§ŒÀ
-			pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(nCurrentLine);
+			pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(nCurrentLine);
 			nSelectedEndIndex = pcCurDocLine->m_pLine->GetStringLength();
 		}
 		
@@ -10355,7 +10355,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		nSelectedLen = 0;
 	}
 	
-	pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo(nCurrentLine);
+	pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(nCurrentLine);
 	
 	if (NULL == pcCurDocLine )
 		return 0;

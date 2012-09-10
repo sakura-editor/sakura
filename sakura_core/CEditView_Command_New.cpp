@@ -1374,7 +1374,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 			nXTo = 0;
 			nYTo = m_nCaretPosY_PHY;
 		}else{
-			pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY );
+			pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY );
 
 
 			//	nWorkに処理の基準桁位置を設定する
@@ -1807,7 +1807,7 @@ void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
 	
 	bool nFirstLineIsEmptyLine = false;
 	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
-	if ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ){
+	if ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY + nCaretPointer ) ){
 		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
 		nCaretPointer++;
 	}
@@ -1817,7 +1817,7 @@ void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
 	}
 
 	/* 次に、nFirstLineIsEmptyLineと異なるところまで読み飛ばす */
-	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY + nCaretPointer ) ) {
 		if ( pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine ){
 			nCaretPointer++;
 		}
@@ -1838,7 +1838,7 @@ void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
 		}
 		else {
 			/* 仕上げに、空行じゃないところまで進む */
-			while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+			while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY + nCaretPointer ) ) {
 				if ( pcDocLine->IsEmptyLine() ){
 					nCaretPointer++;
 				}
@@ -1883,7 +1883,7 @@ void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
 
 	bool nFirstLineIsEmptyLine = false;
 	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
-	if ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ){
+	if ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY + nCaretPointer ) ){
 		nFirstLineIsEmptyLine = pcDocLine->IsEmptyLine();
 		nCaretPointer--;
 	}
@@ -1893,7 +1893,7 @@ void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
 	}
 
 	/* 次に、nFirstLineIsEmptyLineと異なるところまで読み飛ばす */
-	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+	while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY + nCaretPointer ) ) {
 		if ( pcDocLine->IsEmptyLine() == nFirstLineIsEmptyLine ){
 			nCaretPointer--;
 		}
@@ -1912,7 +1912,7 @@ void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
 		}
 		else {
 			/* 仕上げに、空行じゃないところまで進む */
-			while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY + nCaretPointer ) ) {
+			while ( pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY + nCaretPointer ) ) {
 				if ( pcDocLine->IsEmptyLine() ){
 					break;
 				}
@@ -1970,11 +1970,11 @@ void CEditView::Command_BOOKMARK_SET(void)
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(nX,nYfrom,&nX,&nYfrom);
 		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(nX,nYto,&nX,&nYto);
 		for(nY=nYfrom;nY<=nYto;nY++){
-			pCDocLine=m_pcEditDoc->m_cDocLineMgr.GetLineInfo( nY );
+			pCDocLine=m_pcEditDoc->m_cDocLineMgr.GetLine( nY );
 			if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookMarked());
 		}
 	}else{
-		pCDocLine=m_pcEditDoc->m_cDocLineMgr.GetLineInfo( m_nCaretPosY_PHY );
+		pCDocLine=m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY );
 		if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookMarked());
 	}
 	// 2002.01.16 hor 分割したビューも更新
@@ -2291,7 +2291,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		// その行も選択範囲に加える
 		if ( nSelectColToOld > 0 ) {
 			// 2006.03.31 Moca nSelectLineToOldは、物理行なのでLayout系からDocLine系に修正
-			const CDocLine* pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( nSelectLineToOld );
+			const CDocLine* pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( nSelectLineToOld );
 			if( NULL != pcDocLine && EOL_NONE != pcDocLine->m_cEol ){
 				++nSelectLineToOld;
 			}
@@ -2306,7 +2306,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	}
 
 	for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
-		const CDocLine* pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLineInfo( i );
+		const CDocLine* pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( i );
 		pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( i, &nLineLen );
 		if( NULL == pLine ) continue;
 		SORTTABLE pst = new SORTDATA;

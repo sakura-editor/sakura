@@ -93,7 +93,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	}
 
 	// From Here Feb. 08, 2008 genta 削除バッファをあらかじめ確保する
-	pCDocLine = GetLineInfo( pArg->nDelLineFrom );
+	pCDocLine = GetLine( pArg->nDelLineFrom );
 	nWorkLen = 0;
 	for( i = pArg->nDelLineFrom; i <= pArg->nDelLineTo && NULL != pCDocLine; i++ ){
 		nWorkLen += pCDocLine->m_pLine->GetStringLength();
@@ -105,7 +105,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	// 削除データの取得のループ
 	/* 前から処理していく */
 	/* 現在行の情報を得る */
-	pCDocLine = GetLineInfo( pArg->nDelLineFrom );
+	pCDocLine = GetLine( pArg->nDelLineFrom );
 	for( i = pArg->nDelLineFrom; i <= pArg->nDelLineTo && NULL != pCDocLine; i++ ){
 		pLine = pCDocLine->m_pLine->GetStringPtr(); // 2002/2/10 aroka CMemory変更
 		nLineLen = pCDocLine->m_pLine->GetStringLength(); // 2002/2/10 aroka CMemory変更
@@ -171,10 +171,10 @@ next_line:;
 
 
 	/* 現在行の情報を得る */
-	pCDocLine = GetLineInfo( pArg->nDelLineTo );
+	pCDocLine = GetLine( pArg->nDelLineTo );
 	i = pArg->nDelLineTo;
 	if( 0 < pArg->nDelLineTo && NULL == pCDocLine ){
-		pCDocLine = GetLineInfo( pArg->nDelLineTo - 1 );
+		pCDocLine = GetLine( pArg->nDelLineTo - 1 );
 		i--;
 	}
 	/* 後ろから処理していく */
@@ -291,7 +291,7 @@ prev_line:;
 	/* 挿入データを行終端で区切った行数カウンタ */
 	nCount = 0;
 	pArg->nInsLineNum = 0;
-	pCDocLine = GetLineInfo( pArg->nDelLineFrom );
+	pCDocLine = GetLine( pArg->nDelLineFrom );
 
 
 
@@ -497,7 +497,7 @@ int CDocLineMgr::SearchBookMark(
 	/* 0==前方検索 1==後方検索 */
 	if( bPrevOrNext == SEARCH_BACKWARD ){
 		nLinePos--;
-		pDocLine = GetLineInfo( nLinePos );
+		pDocLine = GetLine( nLinePos );
 		while( NULL != pDocLine ){
 			if(pDocLine->IsBookMarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
@@ -508,7 +508,7 @@ int CDocLineMgr::SearchBookMark(
 		}
 	}else{
 		nLinePos++;
-		pDocLine = GetLineInfo( nLinePos );
+		pDocLine = GetLine( nLinePos );
 		while( NULL != pDocLine ){
 			if(pDocLine->IsBookMarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
@@ -545,7 +545,7 @@ void CDocLineMgr::MarkSearchWord(
 
 	/* 1==正規表現 */
 	if( bRegularExp ){
-		pDocLine = GetLineInfo( 0 );
+		pDocLine = GetLine( 0 );
 		while( NULL != pDocLine ){
 			if(!pDocLine->IsBookMarked()){
 				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
@@ -559,7 +559,7 @@ void CDocLineMgr::MarkSearchWord(
 	}else
 	/* 1==単語のみ検索 */
 	if( bWordOnly ){
-		pDocLine = GetLineInfo( 0 );
+		pDocLine = GetLine( 0 );
 		int nLinePos = 0;
 		int nNextWordFrom = 0;
 		int nNextWordFrom2;
@@ -591,7 +591,7 @@ void CDocLineMgr::MarkSearchWord(
 			nPatternLen,
 			&pnKey_CharCharsArr
 		);
-		pDocLine = GetLineInfo( 0 );
+		pDocLine = GetLine( 0 );
 		while( NULL != pDocLine ){
 			if(!pDocLine->IsBookMarked()){
 				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
@@ -631,7 +631,7 @@ void CDocLineMgr::SetBookMarks( char* pMarkLines )
 	p = pMarkLines;
 	while(strtok(p, delim) != NULL) {
 		while(strchr(delim, *p) != NULL)p++;
-		pCDocLine=GetLineInfo( atol(p) );
+		pCDocLine=GetLine( atol(p) );
 		if(NULL!=pCDocLine)pCDocLine->SetBookMark(true);
 		p += strlen(p) + 1;
 	}
@@ -649,7 +649,7 @@ char* CDocLineMgr::GetBookMarks( void )
 	static char szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta staticに
 	char szBuff[10];
 	int	nLinePos=0;
-	pCDocLine = GetLineInfo( nLinePos );
+	pCDocLine = GetLine( nLinePos );
 	strcpy( szText, "" );
 	while( NULL != pCDocLine ){
 		if(pCDocLine->IsBookMarked()){
@@ -700,7 +700,7 @@ int CDocLineMgr::SearchDiffMark(
 	if( bPrevOrNext == SEARCH_BACKWARD )
 	{
 		nLinePos--;
-		pDocLine = GetLineInfo( nLinePos );
+		pDocLine = GetLine( nLinePos );
 		while( NULL != pDocLine )
 		{
 			if( pDocLine->IsDiffMarked() )
@@ -715,7 +715,7 @@ int CDocLineMgr::SearchDiffMark(
 	else
 	{
 		nLinePos++;
-		pDocLine = GetLineInfo( nLinePos );
+		pDocLine = GetLine( nLinePos );
 		while( NULL != pDocLine )
 		{
 			if( pDocLine->IsDiffMarked() )
@@ -749,14 +749,14 @@ void CDocLineMgr::SetDiffMarkRange( int nMode, int nStartLine, int nEndLine )
 	if( nLines <= nEndLine )
 	{
 		nEndLine = nLines - 1;
-		pCDocLine = GetLineInfo( nEndLine );
+		pCDocLine = GetLine( nEndLine );
 		if( NULL != pCDocLine ) pCDocLine->SetDiffMark( MARK_DIFF_DEL_EX );
 	}
 
 	//行範囲にマークをつける
 	for( i = nStartLine; i <= nEndLine; i++ )
 	{
-		pCDocLine = GetLineInfo( i );
+		pCDocLine = GetLine( i );
 		if( NULL != pCDocLine ) pCDocLine->SetDiffMark( nMode );
 	}
 

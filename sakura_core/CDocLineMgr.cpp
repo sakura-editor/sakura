@@ -113,7 +113,7 @@ void CDocLineMgr::Empty()
 const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 {
 	CDocLine* pDocLine;
-	pDocLine = GetLineInfo( nLine );
+	pDocLine = GetLine( nLine );
 	if( NULL == pDocLine ){
 		*pnLineLen = 0;
 		return NULL;
@@ -132,7 +132,7 @@ const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 */
 const char* CDocLineMgr::GetLineStrWithoutEOL( int nLine, int* pnLineLen )
 {
-	const CDocLine* pDocLine = GetLineInfo( nLine );
+	const CDocLine* pDocLine = GetLine( nLine );
 	if( NULL == pDocLine ){
 		*pnLineLen = 0;
 		return NULL;
@@ -147,7 +147,7 @@ const char* CDocLineMgr::GetLineStrWithoutEOL( int nLine, int* pnLineLen )
 	@param nLine [in] 行番号
 	@return 行オブジェクトへのポインタ。該当行がない場合はNULL。
 */
-CDocLine* CDocLineMgr::GetLineInfo( int nLine )
+CDocLine* CDocLineMgr::GetLine( int nLine )
 {
 	int nCounter;
 	CDocLine* pDocLine;
@@ -165,30 +165,13 @@ CDocLine* CDocLineMgr::GetLineInfo( int nLine )
 	  || m_nLines - nLine < nPrevToLineNumDiff
 	){
 		if( m_pCodePrevRefer == NULL ){
-			MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::GetLineInfo() 	m_pCodePrevRefer == NULL" );
+			MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL" );
 		}
 
-
-
-
-#if 0 /////////	1999.12.22
-		nCounter = 0;
-		pDocLine = m_pDocLineTop;
-		do{
-			if( nLine == nCounter ){
-				m_nPrevReferLine = nLine;
-				m_pCodePrevRefer = pDocLine;
-				m_pDocLineCurrent = pDocLine->m_pNext;
-				return pDocLine;
-			}
-			pDocLine = pDocLine->m_pNext;
-			++nCounter;
-		}while( NULL != pDocLine );
-#endif ///////////////
 		if( nLine < (m_nLines / 2) ){
 			nCounter = 0;
 			pDocLine = m_pDocLineTop;
-			while( NULL != pDocLine ){
+			while( pDocLine ){
 				if( nLine == nCounter ){
 					m_nPrevReferLine = nLine;
 					m_pCodePrevRefer = pDocLine;
@@ -198,7 +181,8 @@ CDocLine* CDocLineMgr::GetLineInfo( int nLine )
 				pDocLine = pDocLine->m_pNext;
 				nCounter++;
 			}
-		}else{
+		}
+		else{
 			nCounter = m_nLines - 1;
 			pDocLine = m_pDocLineBot;
 			while( NULL != pDocLine ){
@@ -213,13 +197,14 @@ CDocLine* CDocLineMgr::GetLineInfo( int nLine )
 			}
 		}
 
-	}else{
+	}
+	else{
 		if( nLine == m_nPrevReferLine ){
 			m_nPrevReferLine = nLine;
 			m_pDocLineCurrent = m_pCodePrevRefer->m_pNext;
 			return m_pCodePrevRefer;
-		}else
-		if( nLine > m_nPrevReferLine ){
+		}
+		else if( nLine > m_nPrevReferLine ){
 			nCounter = m_nPrevReferLine + 1;
 			pDocLine = m_pCodePrevRefer->m_pNext;
 			while( NULL != pDocLine ){
@@ -232,7 +217,8 @@ CDocLine* CDocLineMgr::GetLineInfo( int nLine )
 				pDocLine = pDocLine->m_pNext;
 				++nCounter;
 			}
-		}else{
+		}
+		else{
 			nCounter = m_nPrevReferLine - 1;
 			pDocLine = m_pCodePrevRefer->m_pPrev;
 			while( NULL != pDocLine ){
@@ -919,7 +905,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 //	cmemDeleted.SetData( "", lstrlen( "" ) );
 	cmemDeleted->SetString( "" );
 
-	pDocLine = GetLineInfo( nLine );
+	pDocLine = GetLine( nLine );
 	if( NULL == pDocLine ){
 		return;
 	}
@@ -1076,7 +1062,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 	/* 挿入データを行終端で区切った行数カウンタ */
 	nCount = 0;
 	*pnInsLineNum = 0;
-	pDocLine = GetLineInfo( nLine );
+	pDocLine = GetLine( nLine );
 	if( NULL == pDocLine ){
 		/* ここでNULLが帰ってくるということは、*/
 		/* 全テキストの最後の次の行を追加しようとしていることを示す */
@@ -1274,7 +1260,7 @@ int	CDocLineMgr::WhereCurrentWord(
 	int			nLineLen;
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
-	pDocLine = GetLineInfo( nLineNum );
+	pDocLine = GetLine( nLineNum );
 	if( NULL == pDocLine ){
 		return FALSE;
 	}
@@ -1320,7 +1306,7 @@ int	CDocLineMgr::WhereCurrentWord_2(
 	int			nCharChars;
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
-//	pDocLine = GetLineInfo( nLineNum );
+//	pDocLine = GetLine( nLineNum );
 //	if( NULL == pDocLine ){
 //		return FALSE;
 //	}
@@ -1447,7 +1433,7 @@ int CDocLineMgr::PrevOrNextWord(
 	int			nIdxNextPrev;
 	int			nCharChars;
 	int			nCount;
-	pDocLine = GetLineInfo( nLineNum );
+	pDocLine = GetLine( nLineNum );
 	if( NULL == pDocLine ){
 		return FALSE;
 	}
@@ -1567,7 +1553,7 @@ int CDocLineMgr::SearchWord(
 	/* 1==正規表現 */
 	if( bRegularExp ){
 		nLinePos = nLineNum;		// 検索行＝検索開始行
-		pDocLine = GetLineInfo( nLinePos );
+		pDocLine = GetLine( nLinePos );
 		/* 0==前方検索 1==後方検索 */
 		if( eDirection == SEARCH_BACKWARD ){
 			//
@@ -1661,7 +1647,7 @@ int CDocLineMgr::SearchWord(
 		/* 0==前方検索 1==後方検索 */
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = nLineNum;
-			pDocLine = GetLineInfo( nLinePos );
+			pDocLine = GetLine( nLinePos );
 			int nNextWordFrom;
 			int nNextWordFrom2;
 			int nNextWordTo2;
@@ -1701,7 +1687,7 @@ int CDocLineMgr::SearchWord(
 			}
 		}else{
 			nLinePos = nLineNum;
-			pDocLine = GetLineInfo( nLinePos );
+			pDocLine = GetLine( nLinePos );
 			int nNextWordFrom;
 
 			int nNextWordFrom2;
@@ -1746,7 +1732,7 @@ int CDocLineMgr::SearchWord(
 			nHitTo = nIdx;
 
 			nIdxPos = 0;
-			pDocLine = GetLineInfo( nLinePos );
+			pDocLine = GetLine( nLinePos );
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
 				nHitPos = -1;
@@ -1802,7 +1788,7 @@ int CDocLineMgr::SearchWord(
 		}else{
 			nIdxPos = nIdx;
 			nLinePos = nLineNum;
-			pDocLine = GetLineInfo( nLinePos );
+			pDocLine = GetLine( nLinePos );
 			while( NULL != pDocLine ){
 				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
 				pszRes = SearchString(
