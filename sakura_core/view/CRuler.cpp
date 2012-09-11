@@ -23,7 +23,7 @@ void CRuler::_DrawRulerCaret( CGraphics& gr, int nCaretDrawPosX, int nCaretWidth
 {
 	//•`‰æ—Ìˆæ -> hRgn
 	RECT rc;
-	rc.left = nCaretDrawPosX; //m_pEditView->GetTextArea().GetAreaLeft() + ( cCaretPosTmp.GetX() - m_pEditView->GetTextArea().GetViewLeftCol() ) * m_pEditView->GetTextMetrics().GetHankakuDx() + 1;
+	rc.left = nCaretDrawPosX + 1;	// 2012.07.27 Moca 1px‰E‚ÉC³
 	rc.right = rc.left + m_pEditView->GetTextMetrics().GetHankakuDx() - 1;
 	rc.top = 0;
 	rc.bottom = m_pEditView->GetTextArea().GetAreaTop() - m_pEditView->GetTextArea().GetTopYohaku() - 1;
