@@ -2056,23 +2056,15 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			/* サクラエディタの全終了 */
 			CEditApp::TerminateApplication( m_hWnd );	// 2006.12.25 ryoji 引数追加
 			break;
-//Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行を修正・復活
+
 		case F_HELP_CONTENTS:
 			/* ヘルプ目次 */
-			{
-				/* ヘルプファイルのフルパスを返す */
-				LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
-				ShowWinHelpContents( m_hWnd, pszHelp );	//	目次を表示する
-			}
+			ShowWinHelpContents( m_hWnd, CEditApp::GetHelpFilePath() );	//	目次を表示する
 			break;
 
 		case F_HELP_SEARCH:
 			/* ヘルプキーワード検索 */
-			{
-				/* ヘルプファイルのフルパスを返す */
-				LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
-				MyWinHelp( m_hWnd, pszHelp, HELP_KEY, (ULONG_PTR)"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-			}
+			MyWinHelp( m_hWnd, CEditApp::GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 			break;
 
 		case F_ABOUT:	//Dec. 25, 2000 JEPRO F_に変更

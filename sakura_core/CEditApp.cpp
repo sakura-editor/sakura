@@ -597,19 +597,11 @@ LRESULT CEditApp::DispatchEvent(
 				switch( nId ){
 				case F_HELP_CONTENTS:
 					/* ヘルプ目次 */
-					{
-						/* ヘルプファイルのフルパスを返す */
-						LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
-						ShowWinHelpContents( m_hWnd, pszHelp );	//	目次を表示する
-					}
+					ShowWinHelpContents( m_hWnd, CEditApp::GetHelpFilePath() );	//	目次を表示する
 					break;
 				case F_HELP_SEARCH:
 					/* ヘルプキーワード検索 */
-					{
-						/* ヘルプファイルのフルパスを返す */
-						LPCTSTR	pszHelp = CEditApp::GetHelpFilePath();
-						MyWinHelp( m_hWnd, pszHelp, HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-					}
+					MyWinHelp( m_hWnd, CEditApp::GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 					break;
 				case F_EXTHELP1:
 					/* 外部ヘルプ１ */
