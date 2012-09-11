@@ -591,15 +591,11 @@ LRESULT CControlTray::DispatchEvent(
 				switch( nId ){
 				case F_HELP_CONTENTS:
 					/* ヘルプ目次 */
-					{
-						ShowWinHelpContents( GetTrayHwnd(), CEditApp::Instance()->GetHelpFilePath() );	//	目次を表示する
-					}
+					ShowWinHelpContents( GetTrayHwnd(), CEditApp::Instance()->GetHelpFilePath() );	//	目次を表示する
 					break;
 				case F_HELP_SEARCH:
 					/* ヘルプキーワード検索 */
-					{
-						MyWinHelp( GetTrayHwnd(), CEditApp::Instance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-					}
+					MyWinHelp( GetTrayHwnd(), CEditApp::Instance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 					break;
 				case F_EXTHELP1:
 					/* 外部ヘルプ１ */
