@@ -2279,6 +2279,9 @@ void CEditView::DrawSelectArea( void )
 		if( rcOld.top < m_nViewTopLine ){
 			rcOld.top = m_nViewTopLine;
 		}
+		if( rcOld.bottom < m_nViewTopLine - 1 ){	// 2010.11.02 ryoji 追加（画面上端よりも上にある矩形選択を解除するとルーラーが反転表示になる問題の修正）
+			rcOld.bottom = m_nViewTopLine - 1;
+		}
 		if( rcOld.bottom > m_nViewTopLine + m_nViewRowNum ){
 			rcOld.bottom = m_nViewTopLine + m_nViewRowNum;
 		}
@@ -2307,6 +2310,9 @@ void CEditView::DrawSelectArea( void )
 		}
 		if( rcNew.top < m_nViewTopLine ){
 			rcNew.top = m_nViewTopLine;
+		}
+		if( rcNew.bottom < m_nViewTopLine - 1 ){	// 2010.11.02 ryoji 追加（画面上端よりも上にある矩形選択を解除するとルーラーが反転表示になる問題の修正）
+			rcNew.bottom = m_nViewTopLine - 1;
 		}
 		if( rcNew.bottom > m_nViewTopLine + m_nViewRowNum ){
 			rcNew.bottom = m_nViewTopLine + m_nViewRowNum;
