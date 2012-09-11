@@ -77,8 +77,8 @@ struct CommonSetting_General
 	//タスクトレイ
 	BOOL	m_bUseTaskTray;					// タスクトレイのアイコンを使う
 	BOOL	m_bStayTaskTray;				// タスクトレイのアイコンを常駐
-	WORD	m_wTrayMenuHotKeyCode;			// タスクトレイ左クリックメニュー キー */
-	WORD	m_wTrayMenuHotKeyMods;			// タスクトレイ左クリックメニュー キー */
+	WORD	m_wTrayMenuHotKeyCode;			// タスクトレイ左クリックメニュー キー
+	WORD	m_wTrayMenuHotKeyMods;			// タスクトレイ左クリックメニュー キー
 
 	//履歴
 	int		m_nMRUArrNum_MAX;				// ファイルの履歴MAX
