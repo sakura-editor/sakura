@@ -15,6 +15,11 @@
 #include "COpeBlk.h"// 2002/2/10 aroka
 #include "Debug.h"
 
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//               コンストラクタ・デストラクタ                  //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 /* COpeBufクラス構築 */
 COpeBuf::COpeBuf()
 {
@@ -22,13 +27,7 @@ COpeBuf::COpeBuf()
 	m_ppCOpeBlkArr = NULL;	/* 操作ブロックの配列 */
 	m_nCurrentPointer = 0;	/* 現在位置 */
 	m_nNoModifiedIndex = 0;	/* 無変更な状態になった位置 */
-
-	return;
-
 }
-
-
-
 
 /* COpeBufクラス消滅 */
 COpeBuf::~COpeBuf()
@@ -47,18 +46,42 @@ COpeBuf::~COpeBuf()
 	free( m_ppCOpeBlkArr );
 	m_ppCOpeBlkArr = NULL;
 	m_nCOpeBlkArrNum = 0;
-	return;
+}
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           状態                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+/* Undo可能な状態か */
+int COpeBuf::IsEnableUndo()
+{
+	if( 0 < m_nCOpeBlkArrNum && 0 < m_nCurrentPointer ){
+		return TRUE;
+	}else{
+		return FALSE;
+	}
+}
+
+/* Redo可能な状態か */
+int	COpeBuf::IsEnableRedo()
+{
+	if( 0 < m_nCOpeBlkArrNum && m_nCurrentPointer < m_nCOpeBlkArrNum ){
+		return TRUE;
+	}else{
+		return FALSE;
+	}
 }
 
 
 
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           操作                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 操作の追加 */
 int COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 {
 	int i;
-//	pcOpeBlk->DUMP();
 	/* 現在位置より後ろ（アンドゥ対象）がある場合は、消去 */
 	if( m_nCurrentPointer < m_nCOpeBlkArrNum ){
 		for( i = m_nCurrentPointer; i < m_nCOpeBlkArrNum; ++i ){
@@ -90,37 +113,36 @@ int COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 	return TRUE;
 }
 
-
-
-
-
-/* Undo可能な状態か */
-int COpeBuf::IsEnableUndo( void )
+/* 全要素のクリア */
+void COpeBuf::ClearAll()
 {
-	if( 0 < m_nCOpeBlkArrNum && 0 < m_nCurrentPointer ){
-		return TRUE;
-	}else{
-		return FALSE;
+	int		i;
+	/* 操作ブロックの配列を削除する */
+	if( 0 < m_nCOpeBlkArrNum && NULL != m_ppCOpeBlkArr ){
+		for( i = 0; i < m_nCOpeBlkArrNum; ++i ){
+			if( NULL != m_ppCOpeBlkArr[i] ){
+				delete m_ppCOpeBlkArr[i];
+				m_ppCOpeBlkArr[i] = NULL;
+			}
+		}
+		free( m_ppCOpeBlkArr );
+		m_ppCOpeBlkArr = NULL;
+		m_nCOpeBlkArrNum = 0;
 	}
+	m_nCurrentPointer = 0;	/* 現在位置 */
+	m_nNoModifiedIndex = 0;	/* 無変更な状態になった位置 */
+}
+
+/* 現在位置で無変更な状態になったことを通知 */
+void COpeBuf::SetNoModified()
+{
+	m_nNoModifiedIndex = m_nCurrentPointer;	/* 無変更な状態になった位置 */
 }
 
 
-
-
-
-/* Redo可能な状態か */
-int	COpeBuf::IsEnableRedo( void )
-{
-	if( 0 < m_nCOpeBlkArrNum && m_nCurrentPointer < m_nCOpeBlkArrNum ){
-		return TRUE;
-	}else{
-		return FALSE;
-	}
-}
-
-
-
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           使用                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* 現在のUndo対象の操作ブロックを返す */
 COpeBlk* COpeBuf::DoUndo( int* pbModified )
@@ -137,10 +159,6 @@ COpeBlk* COpeBuf::DoUndo( int* pbModified )
 	}
 	return m_ppCOpeBlkArr[m_nCurrentPointer];
 }
-
-
-
-
 
 /* 現在のRedo対象の操作ブロックを返す */
 COpeBlk* COpeBuf::DoRedo( int* pbModified )
@@ -162,16 +180,12 @@ COpeBlk* COpeBuf::DoRedo( int* pbModified )
 
 
 
-/* 現在位置で無変更な状態になったことを通知 */
-void COpeBuf::SetNoModified( void )
-{
-	m_nNoModifiedIndex = m_nCurrentPointer;	/* 無変更な状態になった位置 */
-	return;
-}
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         デバッグ                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* アンドゥ・リドゥバッファのダンプ */
-void COpeBuf::DUMP( void )
+void COpeBuf::DUMP()
 {
 #ifdef _DEBUG
 	int i;
@@ -182,30 +196,8 @@ void COpeBuf::DUMP( void )
 	}
 	MYTRACE_A( "COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
 #endif
-	return;
 }
 
-
-/* 全要素のクリア */
-void COpeBuf::ClearAll( void )
-{
-	int		i;
-	/* 操作ブロックの配列を削除する */
-	if( 0 < m_nCOpeBlkArrNum && NULL != m_ppCOpeBlkArr ){
-		for( i = 0; i < m_nCOpeBlkArrNum; ++i ){
-			if( NULL != m_ppCOpeBlkArr[i] ){
-				delete m_ppCOpeBlkArr[i];
-				m_ppCOpeBlkArr[i] = NULL;
-			}
-		}
-		free( m_ppCOpeBlkArr );
-		m_ppCOpeBlkArr = NULL;
-		m_nCOpeBlkArrNum = 0;
-	}
-	m_nCurrentPointer = 0;	/* 現在位置 */
-	m_nNoModifiedIndex = 0;	/* 無変更な状態になった位置 */
-	return;
-}
 
 
 /*[EOF]*/
