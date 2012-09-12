@@ -21,13 +21,9 @@
 #include "CShareData.h"
 #include "Debug.h"
 #include "CEditApp.h"
-#include "CMemory.h"
 #include "etc_uty.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
-#include <io.h>
-#include <tchar.h>
 #include "CRunningTimer.h"
-
+#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
 
 
 //-------------------------------------------------
@@ -49,11 +45,10 @@ bool CControlProcess::InitializeProcess()
 	MY_RUNNINGTIMER( cRunningTimer, "CControlProcess::InitializeProcess" );
 
 	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA );
+	m_hMutex = ::CreateMutex( NULL, FALSE, GSTR_MUTEX_SAKURA_OLD );
 	if( NULL == m_hMutex ){
 		ErrorBeep();
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateMutex()失敗。\n終了します。") );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("CreateMutex()失敗。\n終了します。") );
 		return false;
 	}
 
@@ -62,8 +57,7 @@ bool CControlProcess::InitializeProcess()
 	if( NULL == m_hEventCPInitialized )
 	{
 		ErrorBeep();
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateEvent()失敗。\n終了します。") );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("CreateEvent()失敗。\n終了します。") );
 		return false;
 	}
 
@@ -71,8 +65,7 @@ bool CControlProcess::InitializeProcess()
 	m_hMutexCP = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_CP );
 	if( NULL == m_hMutexCP ){
 		ErrorBeep();
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("CreateMutex()失敗。\n終了します。") );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("CreateMutex()失敗。\n終了します。") );
 		return false;
 	}
 	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
@@ -104,7 +97,8 @@ bool CControlProcess::InitializeProcess()
 
 	MY_TRACETIME( cRunningTimer, "After new CEditApp" );
 
-	if( NULL == ( m_hWnd = m_pcEditApp->Create( m_hInstance ) ) ){
+	m_hWnd = m_pcEditApp->Create( m_hInstance );
+	if( !m_hWnd ){
 		ErrorBeep();
 		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
 			GSTR_APPNAME, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
@@ -115,8 +109,7 @@ bool CControlProcess::InitializeProcess()
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
 		ErrorBeep();
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			_T("SetEvent()失敗。\n終了します。") );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("SetEvent()失敗。\n終了します。") );
 		return false;
 	}
 
@@ -131,7 +124,7 @@ bool CControlProcess::InitializeProcess()
 */
 bool CControlProcess::MainLoop()
 {
-	if( NULL != m_pcEditApp && NULL != m_hWnd ){
+	if( m_pcEditApp && m_hWnd ){
 		m_pcEditApp->MessageLoop();	/* メッセージループ */
 		return true;
 	}
