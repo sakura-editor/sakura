@@ -30,13 +30,8 @@ class CEditWnd;
 class SAKURA_CORE_API CNormalProcess : public CProcess {
 public:
 	//コンストラクタ・デストラクタ
-	CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine ) : 
-		m_pcEditWnd( 0 ),
-		CProcess( hInstance, lpCmdLine ){}
+	CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );
 	virtual ~CNormalProcess();
-
-	//migemo
-	CMigemo m_cMigemo;
 
 protected:
 	//プロセスハンドラ
@@ -50,6 +45,7 @@ protected:
 
 private:
 	CEditWnd*	m_pcEditWnd;
+	CMigemo		m_cMigemo;		//migemo
 };
 
 

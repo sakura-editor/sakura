@@ -24,15 +24,35 @@
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CEditApp.h"
-#include "CShareData.h"
-#include "Debug.h"
-#include "etc_uty.h"
 #include "CEditWnd.h" // 2002/2/3 aroka
-#include "mymessage.h" // 2002/2/3 aroka
+#include "CShareData.h"
 #include "CDocLine.h" // 2003/03/28 MIK
-#include <tchar.h>
+#include "etc_uty.h"
+#include "mymessage.h" // 2002/2/3 aroka
+#include "Debug.h"
 #include "CRunningTimer.h"
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//               コンストラクタ・デストラクタ                  //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine )
+: m_pcEditWnd( 0 )
+, CProcess( hInstance, lpCmdLine )
+{
+}
+
+CNormalProcess::~CNormalProcess()
+{
+	if( m_pcEditWnd ){
+		delete m_pcEditWnd;
+	}
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     プロセスハンドラ                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
 	@brief エディタプロセスを初期化する
@@ -118,16 +138,14 @@ bool CNormalProcess::InitializeProcess()
 	bGrepMode  = CCommandLine::Instance()->IsGrepMode();
 	bGrepDlg   = CCommandLine::Instance()->IsGrepDlg();
 	nGroup = CCommandLine::Instance()->GetGroupId();	// 2007.06.26 ryoji
-	
+
 	if( bDebugMode ){
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, CODE_DEFAULT, FALSE );
 
-//	#ifdef _DEBUG/////////////////////////////////////////////
 		/* デバッグモニタモードに設定 */
 		m_pcEditWnd->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeExt("output"), true );
-//	#endif////////////////////////////////////////////////////
 	}
 	else if( bGrepMode ){
 		/* GREP */
@@ -161,7 +179,8 @@ bool CNormalProcess::InitializeProcess()
 				gi.nGrepOutputStyle
 			);
 			return true; // 2003.06.23 Moca
-		}else{
+		}
+		else{
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
 			CShareData::getInstance()->AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
 			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
@@ -181,9 +200,9 @@ bool CNormalProcess::InitializeProcess()
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
-			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );		/* 検索ファイル */
-			lstrcpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
+			_tcscpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
+			_tcscpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );		/* 検索ファイル */
+			_tcscpy( m_pcEditWnd->m_cEditDoc.m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
 
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
@@ -198,7 +217,7 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
-		if( 0 < strlen( fi.m_szPath ) ){
+		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
 							fi.m_szPath, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
@@ -239,30 +258,29 @@ bool CNormalProcess::InitializeProcess()
 					&nPosX,
 					&nPosY
 				);
+
 				// 2004.04.03 Moca EOFだけの行で終わっていると、EOFの一つ上の行に移動してしまうバグ修正
 				// MoveCursorが補正するのである程度行わなくて良くなった
-//				if( nPosY < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() )
-				{
-					// From Here Mar. 28, 2003 MIK
-					//改行の真ん中にカーソルが来ないように。
-					const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_nY );	// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
-					if( pTmpDocLine ){
-						if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
-					}
-					// To Here Mar. 28, 2003 MIK
-					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
-					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
-						m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
+				// From Here Mar. 28, 2003 MIK
+				// 改行の真ん中にカーソルが来ないように。
+				const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_nY );	// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
+				if( pTmpDocLine ){
+					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
 				}
+				// To Here Mar. 28, 2003 MIK
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
+					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
 			}
 			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();
-		}else{
+		}
+		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
 										NULL, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
 										fi.m_szDocType[0] == '\0' ? -1 :
 										m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
-									);
+			);
 		}
 	}
 	MY_TRACETIME( cRunningTimer, "EditDoc->Create() End" );
@@ -299,7 +317,7 @@ end_of_func:
 */
 bool CNormalProcess::MainLoop()
 {
-	if( NULL != m_pcEditWnd && NULL != m_hWnd ){
+	if( m_pcEditWnd && m_hWnd ){
 		m_pcEditWnd->MessageLoop();	/* メッセージループ */
 		return true;
 	}
@@ -319,18 +337,9 @@ void CNormalProcess::OnExitProcess()
 
 
 
-/*!
-	デストラクタ
-	
-	@date 2002/2/3 aroka ヘッダから移動
-*/
-CNormalProcess::~CNormalProcess()
-{
-	if( m_pcEditWnd ){
-		delete m_pcEditWnd;
-	}
-};
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         実装補助                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /*!
 	@brief Mutex(プロセス初期化の目印)を取得する
@@ -348,15 +357,13 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
 	if( NULL == hMutex ){
 		ErrorBeep();
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST,
-			GSTR_APPNAME, _T("CreateMutex()失敗。\n終了します。") );
+		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("CreateMutex()失敗。\n終了します。") );
 		return NULL;
 	}
 	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
 		DWORD dwRet = ::WaitForSingleObject( hMutex, 15000 );	// 2002/2/8 aroka 少し長くした
 		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-				_T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
+			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
 			::CloseHandle( hMutex );
 			return NULL;
 		}
