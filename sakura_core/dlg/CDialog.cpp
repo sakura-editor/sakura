@@ -357,7 +357,7 @@ void CDialog::CreateSizeBox( void )
 	/* サイズボックス */
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT,								/* no extended styles */
-		_T("SCROLLBAR"),										/* scroll bar control class */
+		_T("SCROLLBAR"),									/* scroll bar control class */
 		NULL,												/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 		0,													/* horizontal position */
