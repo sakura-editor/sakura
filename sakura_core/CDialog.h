@@ -19,10 +19,8 @@ class CDialog;
 #ifndef _CDIALOG_H_
 #define _CDIALOG_H_
 
-#include <windows.h>
-#include <dbt.h>
-#include "CShareData.h"
 #include "global.h"
+#include "CShareData.h"
 #include "etc_uty.h"
 
 
@@ -78,15 +76,9 @@ public:
 	virtual BOOL OnActivate( WPARAM wParam, LPARAM lParam ){return FALSE;}	//@@@ 2003.04.08 MIK
 	virtual int OnVKeyToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
 	virtual LRESULT OnCharToItem( WPARAM wParam, LPARAM lParam ){ return -1; }
-//	virtual BOOL OnNextDlgCtl( WPARAM wParam, LPARAM lParam ){ return 1; }
 	virtual BOOL OnPopupHelp( WPARAM, LPARAM );	//@@@ 2002.01.18 add
 	virtual BOOL OnContextMenu( WPARAM, LPARAM );	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
-
-
-//	virtual BOOL OnLbnSelChange( HWND, int );
-
-
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
@@ -103,7 +95,6 @@ public:
 	LPCTSTR			m_pszHelpFile;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
-
 
 protected:
 	void CreateSizeBox( void );

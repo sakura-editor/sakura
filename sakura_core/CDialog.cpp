@@ -211,7 +211,7 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		m_nHeight = rc.bottom - rc.top;
 
 		WINDOWPLACEMENT cWindowPlacement;
-		cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
+		cWindowPlacement.length = sizeof( cWindowPlacement );
 		cWindowPlacement.showCmd = m_nShowCmd;	//	最大化・最小化
 		cWindowPlacement.rcNormalPosition.left = m_xPos;
 		cWindowPlacement.rcNormalPosition.top = m_yPos;
@@ -227,7 +227,7 @@ BOOL CDialog::OnDestroy( void )
 {
 	/* ウィンドウ位置・サイズを記憶 */
 	WINDOWPLACEMENT cWindowPlacement;
-	cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
+	cWindowPlacement.length = sizeof( cWindowPlacement );
 	if (::GetWindowPlacement( m_hWnd, &cWindowPlacement )){
 		m_nShowCmd = cWindowPlacement.showCmd;	//	最大化・最小化
 		m_xPos = cWindowPlacement.rcNormalPosition.left;
@@ -307,7 +307,7 @@ BOOL CDialog::OnMove( WPARAM wParam, LPARAM lParam )
 {
 
 	/* ダイアログの位置の記憶 */
-	if( FALSE == m_bInited ){
+	if( !m_bInited ){
 		return TRUE;
 	}
 	RECT	rc;
@@ -332,7 +332,7 @@ void CDialog::CreateSizeBox( void )
 	/* サイズボックス */
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT,								/* no extended styles */
-		"SCROLLBAR",										/* scroll bar control class */
+		_T("SCROLLBAR"),									/* scroll bar control class */
 		(LPSTR) NULL,										/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 		0,													/* horizontal position */
@@ -377,7 +377,6 @@ INT_PTR CDialog::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_ACTIVATE:	return OnActivate( wParam, lParam );	//@@@ 2003.04.08 MIK
 	case WM_VKEYTOITEM:	return OnVKeyToItem( wParam, lParam );
 	case WM_CHARTOITEM:	return OnCharToItem( wParam, lParam );
-//	case WM_NEXTDLGCTL:	return OnNextDlgCtl( wParam, lParam );
 	case WM_HELP:		return OnPopupHelp( wParam, lParam );	//@@@ 2002.01.18 add
 	case WM_CONTEXTMENU:return OnContextMenu( wParam, lParam );	//@@@ 2002.01.18 add
 	}

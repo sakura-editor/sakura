@@ -65,7 +65,6 @@ public:
 	BOOL OnKillFocus( WPARAM wParam, LPARAM lParam );
 //	int OnVKeyToItem( WPARAM wParam, LPARAM lParam );
 //	int OnCharToItem( WPARAM wParam, LPARAM lParam );
-//	BOOL OnNextDlgCtl( WPARAM, LPARAM );
 
 	int KeyProc( WPARAM, LPARAM );
 

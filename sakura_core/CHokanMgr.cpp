@@ -602,14 +602,6 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	return -2;
 }
 
-//BOOL CHokanMgr::OnNextDlgCtl( WPARAM wParam, LPARAM lParam )
-//{
-//	/* 補完実行 */
-//	DoHokan();
-//	return 0;
-//}
-
-
 //	2001/06/18 Start by asa-o: 補完ウィンドウで選択中の単語にキーワードヘルプを表示
 void CHokanMgr::ShowTip()
 {
