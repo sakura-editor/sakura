@@ -389,7 +389,7 @@ bool CShareData::InitShareData()
 		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
-		strcpy(m_pShareData->m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
+		_tcscpy(m_pShareData->m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
@@ -416,44 +416,44 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_nSEARCHKEYArrNum = 0;
 		for( i = 0; i < MAX_SEARCHKEY; ++i ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[i], "" );
+			_tcscpy( m_pShareData->m_szSEARCHKEYArr[i], _T("") );
 		}
 		m_pShareData->m_nREPLACEKEYArrNum = 0;
 		for( i = 0; i < MAX_REPLACEKEY; ++i ){
-			strcpy( m_pShareData->m_szREPLACEKEYArr[i], "" );
+			_tcscpy( m_pShareData->m_szREPLACEKEYArr[i], _T("") );
 		}
 		m_pShareData->m_nGREPFILEArrNum = 0;
 		for( i = 0; i < MAX_GREPFILE; ++i ){
-			strcpy( m_pShareData->m_szGREPFILEArr[i], "" );
+			_tcscpy( m_pShareData->m_szGREPFILEArr[i], _T("") );
 		}
 		m_pShareData->m_nGREPFILEArrNum = 1;
-		strcpy( m_pShareData->m_szGREPFILEArr[0], "*.*" );
+		_tcscpy( m_pShareData->m_szGREPFILEArr[0], _T("*.*") );
 
 		m_pShareData->m_nGREPFOLDERArrNum = 0;
 		for( i = 0; i < MAX_GREPFOLDER; ++i ){
-			strcpy( m_pShareData->m_szGREPFOLDERArr[i], "" );
+			_tcscpy( m_pShareData->m_szGREPFOLDERArr[i], _T("") );
 		}
-		strcpy( m_pShareData->m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
-		strcpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
+		_tcscpy( m_pShareData->m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
+		_tcscpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
 
 		for( i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
-			strcpy( m_pShareData->m_szTransformFileNameFrom[i], "" );
-			strcpy( m_pShareData->m_szTransformFileNameTo[i], "" );
+			_tcscpy( m_pShareData->m_szTransformFileNameFrom[i], _T("") );
+			_tcscpy( m_pShareData->m_szTransformFileNameTo[i], _T("") );
 		}
-		strcpy( m_pShareData->m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
-		strcpy( m_pShareData->m_szTransformFileNameTo[0], _T("デスクトップ\\") );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[1], "%Personal%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[1], "マイドキュメント\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[2], "%Cache%\\Content.IE5\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[2], "IEキャッシュ\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[3], "%TEMP%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[3],   "TEMP\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[4], "%Common DeskTop%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[4],   "共有デスクトップ\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[5], "%Common Documents%\\" );
-		strcpy( m_pShareData->m_szTransformFileNameTo[5], "共有ドキュメント\\" );
-		strcpy( m_pShareData->m_szTransformFileNameFrom[6], "%AppData%\\" );	// 2007.05.19 ryoji 追加
-		strcpy( m_pShareData->m_szTransformFileNameTo[6], "アプリデータ\\" );	// 2007.05.19 ryoji 追加
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[0], _T("デスクトップ\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[1], _T("%Personal%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[1], _T("マイドキュメント\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[2], _T("%Cache%\\Content.IE5\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[2], _T("IEキャッシュ\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[3], _T("%TEMP%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[3],   _T("TEMP\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[4], _T("%Common DeskTop%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[4],   _T("共有デスクトップ\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[5], _T("%Common Documents%\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[5], _T("共有ドキュメント\\") );
+		_tcscpy( m_pShareData->m_szTransformFileNameFrom[6], _T("%AppData%\\") );	// 2007.05.19 ryoji 追加
+		_tcscpy( m_pShareData->m_szTransformFileNameTo[6], _T("アプリデータ\\") );	// 2007.05.19 ryoji 追加
 		m_pShareData->m_nTransformFileNameArrNum = 7;
 		
 		/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
@@ -483,7 +483,7 @@ bool CShareData::InitShareData()
 //	From Here Sept. 19, 2000 JEPRO コメントアウトになっていた初めのブロックを復活しその下をコメントアウト
 //	MS ゴシック標準スタイル10ptに設定
 //		/* LOGFONTの初期化 */
-		memset( &m_pShareData->m_Common.m_lf, 0, sizeof( LOGFONT ) );
+		memset( &m_pShareData->m_Common.m_lf, 0, sizeof( m_pShareData->m_Common.m_lf ) );
 		m_pShareData->m_Common.m_lf.lfHeight			= -13;
 		m_pShareData->m_Common.m_lf.lfWidth				= 0;
 		m_pShareData->m_Common.m_lf.lfEscapement		= 0;
@@ -497,7 +497,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_lf.lfClipPrecision		= 0x2;
 		m_pShareData->m_Common.m_lf.lfQuality			= 0x1;
 		m_pShareData->m_Common.m_lf.lfPitchAndFamily	= 0x31;
-		strcpy( m_pShareData->m_Common.m_lf.lfFaceName, "ＭＳ ゴシック" );
+		_tcscpy( m_pShareData->m_Common.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
 
 		// キーワードヘルプのフォント ai 02/05/21 Add S
 		::SystemParametersInfo(
@@ -519,10 +519,9 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bBackUp = FALSE;				/* バックアップの作成 */
 		m_pShareData->m_Common.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
 		m_pShareData->m_Common.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
-		m_pShareData->m_Common.m_szBackUpFolder[0] = _T('\0');		/* バックアップを作成するフォルダ */
+		m_pShareData->m_Common.m_szBackUpFolder[0] = _T('\0');	/* バックアップを作成するフォルダ */
 		m_pShareData->m_Common.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-		m_pShareData->m_Common.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;
-																/* バックアップファイル名：日付 */
+		m_pShareData->m_Common.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
 		m_pShareData->m_Common.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
 																/* バックアップファイル名：連番の数と先頭文字 */
 		m_pShareData->m_Common.m_nBackUpType_Opt3 = 5;			/* バックアップファイル名：Option3 */
@@ -552,11 +551,11 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bWordOnly = 0;					/* 1==単語のみ検索 */
 		m_pShareData->m_Common.m_bConsecutiveAll = 0;			/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 		m_pShareData->m_Common.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
-		m_pShareData->m_Common.m_szExtHelp[0] = _T('\0');			/* 外部ヘルプ１ */
-		m_pShareData->m_Common.m_szExtHtmlHelp[0] = _T('\0');		/* 外部HTMLヘルプ */
+		m_pShareData->m_Common.m_szExtHelp[0] = _T('\0');		/* 外部ヘルプ１ */
+		m_pShareData->m_Common.m_szExtHtmlHelp[0] = _T('\0');	/* 外部HTMLヘルプ */
 		
-		m_pShareData->m_Common.m_szMigemoDll[0] = _T('\0');			/* migemo dll */
-		m_pShareData->m_Common.m_szMigemoDict[0] = _T('\0');		/* migemo dict */
+		m_pShareData->m_Common.m_szMigemoDll[0] = _T('\0');		/* migemo dll */
+		m_pShareData->m_Common.m_szMigemoDict[0] = _T('\0');	/* migemo dict */
 
 		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
 
@@ -573,9 +572,9 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
 		m_pShareData->m_Common.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
 		m_pShareData->m_Common.m_nGrepCharSet = CODE_AUTODETECT;/* Grep: 文字コードセット */
-		m_pShareData->m_Common.m_bGrepRealTimeView = FALSE;				/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
-		m_pShareData->m_Common.m_bCaretTextForSearch = TRUE;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
-		m_pShareData->m_Common.m_szRegexpLib[0] = _T('\0');	/* 2007.08.12 genta 正規表現DLL */
+		m_pShareData->m_Common.m_bGrepRealTimeView = FALSE;		/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
+		m_pShareData->m_Common.m_bCaretTextForSearch = TRUE;	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+		m_pShareData->m_Common.m_szRegexpLib[0] = _T('\0');		/* 2007.08.12 genta 正規表現DLL */
 		m_pShareData->m_Common.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
@@ -591,8 +590,10 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_Common.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		m_pShareData->m_Common.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
-		strcpy( m_pShareData->m_Common.m_szTabWndCaption,
-			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読み取り専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}" );	//@@@ 2003.06.13 MIK
+		_tcscpy(	//@@@ 2003.06.13 MIK
+			m_pShareData->m_Common.m_szTabWndCaption,
+			_T("${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読み取り専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}")
+		);
 		m_pShareData->m_Common.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
@@ -618,9 +619,9 @@ bool CShareData::InitShareData()
 
 
 		/* 見出し記号 */
-		strcpy( m_pShareData->m_Common.m_szMidashiKigou, _T("１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍") );
+		_tcscpy( m_pShareData->m_Common.m_szMidashiKigou, _T("１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍") );
 		/* 引用符 */
-		strcpy( m_pShareData->m_Common.m_szInyouKigou, _T("> ") );		/* 引用符 */
+		_tcscpy( m_pShareData->m_Common.m_szInyouKigou, _T("> ") );		/* 引用符 */
 		m_pShareData->m_Common.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
 
 		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
@@ -685,9 +686,9 @@ bool CShareData::InitShareData()
 		*/
 
 		m_pShareData->m_Common.m_nDateFormatType = 0;	//日付書式のタイプ
-		strcpy( m_pShareData->m_Common.m_szDateFormat, _T("yyyy\'年\'M\'月\'d\'日(\'dddd\')\'") );	//日付書式
+		_tcscpy( m_pShareData->m_Common.m_szDateFormat, _T("yyyy\'年\'M\'月\'d\'日(\'dddd\')\'") );	//日付書式
 		m_pShareData->m_Common.m_nTimeFormatType = 0;	//時刻書式のタイプ
-		strcpy( m_pShareData->m_Common.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
+		_tcscpy( m_pShareData->m_Common.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
 
 		m_pShareData->m_Common.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 
@@ -749,11 +750,11 @@ bool CShareData::InitShareData()
 		m_pShareData->m_nDiffFlgOpt = 0;	/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 
 		m_pShareData->m_nTagsOpt = 0;	/* CTAGS */	//@@@ 2003.05.12 MIK
-		strcpy( m_pShareData->m_szTagsCmdLine, _T("") );	/* CTAGS */	//@@@ 2003.05.12 MIK
+		_tcscpy( m_pShareData->m_szTagsCmdLine, _T("") );	/* CTAGS */	//@@@ 2003.05.12 MIK
 		//From Here 2005.04.03 MIK キーワード指定タグジャンプのHistory保管
 		m_pShareData->m_nTagJumpKeywordArrNum = 0;
 		for( i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
-			strcpy( m_pShareData->m_szTagJumpKeywordArr[i], _T("") );
+			_tcscpy( m_pShareData->m_szTagJumpKeywordArr[i], _T("") );
 		}
 		m_pShareData->m_bTagJumpICase = FALSE;
 		m_pShareData->m_bTagJumpAnyWhere = FALSE;
@@ -799,10 +800,10 @@ void CShareData::SetKeyNameArrVal(
 	short			nFuncCode_5,
 	short			nFuncCode_6,
 	short			nFuncCode_7
- )
- {
+)
+{
 	pShareData->m_pKeyNameArr[nIdx].m_nKeyCode = nKeyCode;
-	strcpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
+	_tcscpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[0] = nFuncCode_0;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[1] = nFuncCode_1;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[2] = nFuncCode_2;
@@ -811,8 +812,7 @@ void CShareData::SetKeyNameArrVal(
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[5] = nFuncCode_5;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[6] = nFuncCode_6;
 	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[7] = nFuncCode_7;
- 	return;
- }
+}
 
 /*!
 	ファイル名から、ドキュメントタイプ（数値）を取得する
@@ -874,7 +874,7 @@ int CShareData::GetDocumentTypeExt( const char* pszExt )
 	@date 2003.06.28 MIK CRecent利用で書き換え
 	@date 2007.06.20 ryoji 新規ウィンドウにはグループIDを付与する
 */
-BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
+BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 {
 	int		nSubCommand = TWNT_ADD;
 	int		nIndex;
@@ -886,61 +886,61 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup/* = 0*/ )
 	sMyEditNode.m_hWnd = hWnd;
 
 	{	// 2007.07.07 genta Lock領域
-	LockGuard<CMutex> guard( g_cEditArrMutex );
+		LockGuard<CMutex> guard( g_cEditArrMutex );
 
-	cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
+		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 
-	//登録済みか？
-	nIndex = cRecentEditNode.FindItem( (const char*)&hWnd );
-	if( -1 != nIndex )
-	{
-		//もうこれ以上登録できないか？
-		if( cRecentEditNode.GetItemCount() >= cRecentEditNode.GetArrayCount() )
+		//登録済みか？
+		nIndex = cRecentEditNode.FindItem( (const char*)&hWnd );
+		if( -1 != nIndex )
 		{
-			cRecentEditNode.Terminate();
-			return FALSE;
+			//もうこれ以上登録できないか？
+			if( cRecentEditNode.GetItemCount() >= cRecentEditNode.GetArrayCount() )
+			{
+				cRecentEditNode.Terminate();
+				return FALSE;
+			}
+			nSubCommand = TWNT_ORDER;
+
+			//以前の情報をコピーする。
+			p = (EditNode*)cRecentEditNode.GetItem( nIndex );
+			if( p )
+			{
+				memcpy( &sMyEditNode, p, sizeof( sMyEditNode ) );
+			}
 		}
-		nSubCommand = TWNT_ORDER;
 
-		//以前の情報をコピーする。
-		p = (EditNode*)cRecentEditNode.GetItem( nIndex );
-		if( p )
+		/* ウィンドウ連番 */
+
+		if( 0 == ::GetWindowLongPtr( hWnd, sizeof(LONG_PTR) ) )
 		{
-			memcpy( &sMyEditNode, p, sizeof( sMyEditNode ) );
-		}
-	}
+			m_pShareData->m_nSequences++;
+			::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)m_pShareData->m_nSequences );
 
-	/* ウィンドウ連番 */
+			//連番を更新する。
+			sMyEditNode.m_nIndex = m_pShareData->m_nSequences;
 
-	if( 0 == ::GetWindowLongPtr( hWnd, sizeof(LONG_PTR) ) )
-	{
-		m_pShareData->m_nSequences++;
-		::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)m_pShareData->m_nSequences );
-
-		//連番を更新する。
-		sMyEditNode.m_nIndex = m_pShareData->m_nSequences;
-
-		/* タブグループ連番 */
-		if( nGroup > 0 )
-		{
-			sMyEditNode.m_nGroup = nGroup;	// 指定のグループ
-		}
-		else
-		{
-			p = (EditNode*)cRecentEditNode.GetItem( 0 );
-			if( NULL == p )
-				sMyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+			/* タブグループ連番 */
+			if( nGroup > 0 )
+			{
+				sMyEditNode.m_nGroup = nGroup;	// 指定のグループ
+			}
 			else
-				sMyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
+			{
+				p = (EditNode*)cRecentEditNode.GetItem( 0 );
+				if( NULL == p )
+					sMyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+				else
+					sMyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
+			}
+
+			sMyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
+			sMyEditNode.m_bClosing = FALSE;
 		}
 
-		sMyEditNode.m_showCmdRestore = ::IsZoomed(hWnd)? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
-		sMyEditNode.m_bClosing = FALSE;
-	}
-
-	//追加または先頭に移動する。
-	cRecentEditNode.AppendItem( (const char*)&sMyEditNode );
-	cRecentEditNode.Terminate();
+		//追加または先頭に移動する。
+		cRecentEditNode.AppendItem( (const char*)&sMyEditNode );
+		cRecentEditNode.Terminate();
 	}	// 2007.07.07 genta Lock領域終わり
 
 	//ウインドウ登録メッセージをブロードキャストする。
@@ -962,6 +962,7 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 	//ウインドウをリストから削除する。
 	{	// 2007.07.07 genta Lock領域
 		LockGuard<CMutex> guard( g_cEditArrMutex );
+
 		CRecent	cRecentEditNode;
 		cRecentEditNode.EasyCreate( RECENT_FOR_EDITNODE );
 		cRecentEditNode.DeleteItem( (const char*)&hWnd );
@@ -1195,18 +1196,18 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 	EditInfo*	pfi;
 	*phwndOwner = NULL;
 
-	/* 現在の編集ウィンドウの数を調べる */
+	// 現在の編集ウィンドウの数を調べる
 	if( 0 ==  GetEditorWindowsNum( 0 ) ){
 		return FALSE;
 	}
 	
 	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
 		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
-			/* トレイからエディタへの編集ファイル名要求通知 */
+			// トレイからエディタへの編集ファイル名要求通知
 			::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
 			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
-			/* 同一パスのファイルが既に開かれているか */
+			// 同一パスのファイルが既に開かれているか
 			if( 0 == my_stricmp( pfi->m_szPath, pszPath ) ){
 				*phwndOwner = m_pShareData->m_pEditArr[i].m_hWnd;
 				return TRUE;
@@ -1234,14 +1235,13 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 
 	@date 2007.03.12 maru 新規作成
 */
-BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharCode ){
-
+BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, int nCharCode )
+{
 	if( IsPathOpened( pszPath, phwndOwner ) ){
 		EditInfo*		pfi;
 		CMRU			cMRU;
 		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
 		pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
-
 		if(nCharCode != CODE_AUTODETECT){
 			char*	pszCodeNameCur = NULL;
 			char*	pszCodeNameNew = NULL;
@@ -1252,11 +1252,18 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharC
 				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
 			}
 
-			if(NULL != pszCodeNameCur && NULL != pszCodeNameNew){
+			if(NULL != pszCodeNameCur && pszCodeNameNew){
 				if(nCharCode != pfi->m_nCharCode){
-					::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-						"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\nファイルメニューから「開き直す」を使用してください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]",
-						pszPath, pszCodeNameCur, pszCodeNameNew
+					::MYMESSAGEBOX( *phwndOwner,
+						MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+						_T("%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n")
+						_T("ファイルメニューから「開き直す」を使用してください。\n")
+						_T("\n")
+						_T("現在の文字コードセット=[%s]\n")
+						_T("新しい文字コードセット=[%s]"),
+						pszPath,
+						pszCodeNameCur,
+						pszCodeNameNew
 					);
 				}
 			}
@@ -1269,12 +1276,11 @@ BOOL CShareData::IsPathOpened( const char* pszPath, HWND* phwndOwner, int nCharC
 				);
 			}
 		}
-		
-		/* 開いているウィンドウをアクティブにする */
-		/* アクティブにする */
+
+		// 開いているウィンドウをアクティブにする
 		ActivateFrameWindow( *phwndOwner );
 
-		/* MRUリストへの登録 */
+		// MRUリストへの登録
 		cMRU.Add( pfi );
 		return TRUE;
 	}
@@ -1488,13 +1494,13 @@ int CShareData::GetOpenedWindowArr( EditNode** ppEditNode, BOOL bSort, BOOL bGSo
 	int nRet;
 
 	LockGuard<CMutex> guard( g_cEditArrMutex );
-	nRet = GetOpenedWindowArrCore( ppEditNode, bSort, bGSort );
+	nRet = _GetOpenedWindowArrCore( ppEditNode, bSort, bGSort );
 
 	return nRet;
 }
 
 // GetOpenedWindowArr関数コア処理部
-int CShareData::GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
+int CShareData::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL bGSort/* = FALSE */ )
 {
 	//編集ウインドウ数を取得する。
 	EditNodeEx* pNode;	// ソート処理用の拡張リスト
@@ -1587,8 +1593,8 @@ int CShareData::GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL 
 
 /** ウィンドウの並び替え
 
-	@param[in] hSrcTab 移動するウィンドウ
-	@param[in] hSrcTab 移動先ウィンドウ
+	@param[in] hwndSrc 移動するウィンドウ
+	@param[in] hwndDst 移動先ウィンドウ
 
 	@author ryoji
 	@date 2007.07.07 genta ウィンドウ配列操作部をCTabWndより移動
@@ -1602,7 +1608,7 @@ bool CShareData::ReorderTab( HWND hwndSrc, HWND hwndDst )
 	int nSrcTab = -1;
 	int nDstTab = -1;
 	LockGuard<CMutex> guard( g_cEditArrMutex );
-	nCount = GetOpenedWindowArrCore( &p, TRUE );	// ロックは自分でやっているので直接コア部呼び出し
+	nCount = _GetOpenedWindowArrCore( &p, TRUE );	// ロックは自分でやっているので直接コア部呼び出し
 	for( i = 0; i < nCount; i++ )
 	{
 		if( hwndSrc == p[i].m_hWnd )
@@ -1760,41 +1766,40 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 	
 	@note idxは正確なものでなければならない。(内部で正当性チェックを行っていない)
 */
-int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
+int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 {
 	if( -1 != idx && !m_pShareData->m_MacroTable[idx].IsEnabled() )
 		return 0;
-//	char fbuf[_MAX_PATH * 2];
-	char *ptr;
-	char *pszFile;
+	TCHAR *ptr;
+	TCHAR *pszFile;
 
 	if( -1 == idx ){
-		pszFile = "RecKey.mac";
+		pszFile = _T("RecKey.mac");
 	}else{
 		pszFile = m_pShareData->m_MacroTable[idx].m_szFile;
 	}
-	if( pszFile[0] == '\0' ){	//	ファイル名が無い
+	if( pszFile[0] == _T('\0') ){	//	ファイル名が無い
 		if( pszPath != NULL ){
-			pszPath[0] = '\0';
+			pszPath[0] = _T('\0');
 		}
 		return 0;
 	}
 	ptr = pszFile;
-	int nLen = strlen( ptr ); // Jul. 21, 2003 genta strlen対象が誤っていたためマクロ実行ができない
+	int nLen = _tcslen( ptr ); // Jul. 21, 2003 genta strlen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
-		|| m_pShareData->m_szMACROFOLDER[0] == '\0' ){	//	フォルダ指定なし
+		|| m_pShareData->m_szMACROFOLDER[0] == _T('\0') ){	//	フォルダ指定なし
 		if( pszPath == NULL || nBufLen <= nLen ){
 			return -nLen;
 		}
-		strcpy( pszPath, pszFile );
+		_tcscpy( pszPath, pszFile );
 		return nLen;
 	}
 	else {	//	フォルダ指定あり
 		//	相対パス→絶対パス
-		int nFolderSep = AddLastChar( m_pShareData->m_szMACROFOLDER, sizeof(m_pShareData->m_szMACROFOLDER), '\\' );
+		int nFolderSep = AddLastChar( m_pShareData->m_szMACROFOLDER, sizeof(m_pShareData->m_szMACROFOLDER), _T('\\') );
 		int nAllLen;
-		char *pszDir;
+		TCHAR *pszDir;
 
 		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
 		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -1806,18 +1811,18 @@ int CShareData::GetMacroFilename( int idx, char *pszPath, int nBufLen )
 			pszDir = m_pShareData->m_szMACROFOLDER;
 		}
 
-		int nDirLen = strlen( pszDir );
+		int nDirLen = _tcslen( pszDir );
 		nAllLen = nDirLen + nLen + ( -1 == nFolderSep ? 1 : 0 );
 		if( pszPath == NULL || nBufLen <= nAllLen ){
 			return -nAllLen;
 		}
 
-		strcpy( pszPath, pszDir );
+		_tcscpy( pszPath, pszDir );
 		ptr = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
-			*ptr++ = '\\';
+			*ptr++ = _T('\\');
 		}
-		strcpy( ptr, pszFile );
+		_tcscpy( ptr, pszFile );
 		return nAllLen;
 	}
 
@@ -1840,37 +1845,10 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 */
 void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 {
-/*
-	CMemory	pcmWork( pszSearchKey, lstrlen( pszSearchKey ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-		if( 0 == strcmp( pszSearchKey, m_pShareData->m_szSEARCHKEYArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nSEARCHKEYArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
-		}
-		++m_pShareData->m_nSEARCHKEYArrNum;
-		if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
-			m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
-		}
-	}
-	strcpy( m_pShareData->m_szSEARCHKEYArr[0], pcmWork.GetPtr() );
-*/
 	CRecent	cRecentSearchKey;
-
 	cRecentSearchKey.EasyCreate( RECENT_FOR_SEARCH );
 	cRecentSearchKey.AppendItem( pszSearchKey );
 	cRecentSearchKey.Terminate();
-
-	return;
 }
 
 /*!	m_szREPLACEKEYArrにpszReplaceKeyを追加する
@@ -1878,32 +1856,7 @@ void CShareData::AddToSearchKeyArr( const char* pszSearchKey )
 */
 void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 {
-/*
-	CMemory pcmWork( pszReplaceKey, lstrlen( pszReplaceKey ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nREPLACEKEYArrNum; ++i ){
-		if( 0 == strcmp( pszReplaceKey, m_pShareData->m_szREPLACEKEYArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nREPLACEKEYArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_REPLACEKEY - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szREPLACEKEYArr[j], m_pShareData->m_szREPLACEKEYArr[j - 1] );
-		}
-		++m_pShareData->m_nREPLACEKEYArrNum;
-		if( m_pShareData->m_nREPLACEKEYArrNum > MAX_REPLACEKEY ){
-			m_pShareData->m_nREPLACEKEYArrNum = MAX_REPLACEKEY;
-		}
-	}
-	strcpy( m_pShareData->m_szREPLACEKEYArr[0], pcmWork.GetPtr() );
-*/
 	CRecent	cRecentReplaceKey;
-
 	cRecentReplaceKey.EasyCreate( RECENT_FOR_REPLACE );
 	cRecentReplaceKey.AppendItem( pszReplaceKey );
 	cRecentReplaceKey.Terminate();
@@ -1916,37 +1869,10 @@ void CShareData::AddToReplaceKeyArr( const char* pszReplaceKey )
 */
 void CShareData::AddToGrepFileArr( const char* pszGrepFile )
 {
-/*
-	CMemory pcmWork( pszGrepFile, lstrlen( pszGrepFile ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nGREPFILEArrNum; ++i ){
-		if( 0 == strcmp( pszGrepFile, m_pShareData->m_szGREPFILEArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nGREPFILEArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_GREPFILE - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFILEArr[j], m_pShareData->m_szGREPFILEArr[j - 1] );
-		}
-		++m_pShareData->m_nGREPFILEArrNum;
-		if( m_pShareData->m_nGREPFILEArrNum > MAX_GREPFILE ){
-			m_pShareData->m_nGREPFILEArrNum = MAX_GREPFILE;
-		}
-	}
-	strcpy( m_pShareData->m_szGREPFILEArr[0], pcmWork.GetPtr() );
-*/
 	CRecent	cRecentGrepFile;
-
 	cRecentGrepFile.EasyCreate( RECENT_FOR_GREP_FILE );
 	cRecentGrepFile.AppendItem( pszGrepFile );
 	cRecentGrepFile.Terminate();
-
-	return;
 }
 
 /*!	m_nGREPFOLDERArrNumにpszGrepFolderを追加する
@@ -1954,37 +1880,10 @@ void CShareData::AddToGrepFileArr( const char* pszGrepFile )
 */
 void CShareData::AddToGrepFolderArr( const char* pszGrepFolder )
 {
-/*
-	CMemory pcmWork( pszGrepFolder, lstrlen( pszGrepFolder ) );
-	int		i;
-	int		j;
-	for( i = 0; i < m_pShareData->m_nGREPFOLDERArrNum; ++i ){
-		if( 0 == strcmp( pszGrepFolder, m_pShareData->m_szGREPFOLDERArr[i] ) ){
-			break;
-		}
-	}
-	if( i < m_pShareData->m_nGREPFOLDERArrNum ){
-		for( j = i; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
-		}
-	}else{
-		for( j = MAX_GREPFOLDER - 1; j > 0; j-- ){
-			strcpy( m_pShareData->m_szGREPFOLDERArr[j], m_pShareData->m_szGREPFOLDERArr[j - 1] );
-		}
-		++m_pShareData->m_nGREPFOLDERArrNum;
-		if( m_pShareData->m_nGREPFOLDERArrNum > MAX_GREPFOLDER ){
-			m_pShareData->m_nGREPFOLDERArrNum = MAX_GREPFOLDER;
-		}
-	}
-	strcpy( m_pShareData->m_szGREPFOLDERArr[0], pcmWork.GetPtr() );
-*/
 	CRecent	cRecentGrepFolder;
-
 	cRecentGrepFolder.EasyCreate( RECENT_FOR_GREP_FOLDER );
 	cRecentGrepFolder.AppendItem( pszGrepFolder );
 	cRecentGrepFolder.Terminate();
-
-	return;
 }
 
 /*!	外部Winヘルプが設定されているか確認。
@@ -4691,7 +4590,7 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 
 #define PopulateKeyword(name,case_sensitive,ary) \
 	pShareData->m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
-	pShareData->m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, sizeof(ary)/sizeof(ary[0]), (ary) );
+	pShareData->m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, _countof(ary), (ary) );
 	
 	PopulateKeyword( "C/C++", true, ppszKeyWordsCPP );			/* セット 0の追加 */
 	PopulateKeyword( "HTML", false, ppszKeyWordsHTML );			/* セット 1の追加 */
@@ -5104,7 +5003,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_nColorInfoArrNum = COLORIDX_LAST;
 
 	// 2001/06/14 Start by asa-o
-	strcpy( pShareData->m_Types[nIdx].m_szHokanFile, _T("") );		/* 入力補完 単語ファイル */
+	_tcscpy( pShareData->m_Types[nIdx].m_szHokanFile, _T("") );		/* 入力補完 単語ファイル */
 	// 2001/06/14 End
 
 	// 2001/06/19 asa-o

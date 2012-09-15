@@ -54,6 +54,7 @@ enum maxdata{
 	MAX_GREPFILE				=  30,
 	MAX_GREPFOLDER				=  30,
 	MAX_TYPES					=  30,	//Jul. 12, 2001 JEPRO タイプ別設定の最大設定数を16から増やした	// 2007.12.13 ryoji 20→30
+	MAX_TYPES_EXTS				=  64,
 	MAX_TOOLBAR_BUTTON_ITEMS	= 384,	//ツールバーに登録可能なボタン最大数	
 	MAX_TOOLBAR_ICON_X			=  32,	//アイコンBMPの桁数
 	MAX_TOOLBAR_ICON_Y			=  13,	//アイコンBMPの段数
@@ -222,7 +223,7 @@ struct STypeConfig {
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int					m_nIdx;
 	char				m_szTypeName[64];				/*!< タイプ属性：名称 */
-	char				m_szTypeExts[64];				/*!< タイプ属性：拡張子リスト */
+	char				m_szTypeExts[MAX_TYPES_EXTS];	/*!< タイプ属性：拡張子リスト */
 	int					m_nTextWrapMethod;				/*!< テキストの折り返し方法 */		// 2008.05.30 nasukoji
 	int					m_nMaxLineKetas;				/*!< 折り返し文字数 */
 	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
@@ -805,7 +806,7 @@ public:
 
 	//@@@ 2002.2.2 YAZAKI
 	//	Jun. 14, 2003 genta 引数追加．書式変更
-	int		GetMacroFilename( int idx, char* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する
+	int			GetMacroFilename( int idx, TCHAR* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する
 	bool		BeReloadWhenExecuteMacro( int idx );	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 	void		AddToSearchKeyArr( const char* pszSearchKey );	//	m_szSEARCHKEYArrにpszSearchKeyを追加する
 	void		AddToReplaceKeyArr( const char* pszReplaceKey );	//	m_szREPLACEKEYArrにpszReplaceKeyを追加する
@@ -872,7 +873,7 @@ protected:
 	void ShareData_IO_Macro( CProfile& );
 	void ShareData_IO_Other( CProfile& );
 
-	int GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
+	int _GetOpenedWindowArrCore( EditNode** , BOOL, BOOL bGSort = FALSE );			/* 現在開いている編集ウィンドウの配列を返す（コア処理部） */
 };
 
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
