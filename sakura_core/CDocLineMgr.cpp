@@ -65,9 +65,6 @@ CDocLineMgr::CDocLineMgr()
 	Init();
 }
 
-
-
-
 CDocLineMgr::~CDocLineMgr()
 {
 	Empty();
@@ -88,26 +85,18 @@ void CDocLineMgr::Init()
 	return;
 }
 
-/*!
-	データのクリア
-
-	全ての行を削除する
-*/
+//! 全ての行を削除する
 void CDocLineMgr::Empty()
 {
 	CDocLine* pDocLine;
 	CDocLine* pDocLineNext;
 	pDocLine = m_pDocLineTop;
-	while( NULL != pDocLine ){
+	while( pDocLine ){
 		pDocLineNext = pDocLine->m_pNext;
 		delete pDocLine;
 		pDocLine = pDocLineNext;
 	}
-	return;
 }
-
-
-
 
 
 const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
@@ -120,9 +109,8 @@ const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 	}
 	// 2002/2/10 aroka CMemory のメンバ変数に直接アクセスしない(inline化されているので速度的な問題はない)
 	return pDocLine->m_pLine->GetStringPtr( pnLineLen );
-//	*pnLineLen = pDocLine->m_pLine->m_nDataLen;
-//	return pDocLine->m_pLine->m_pData;
 }
+
 
 /*!
 	指定された行番号の文字列と改行コードを除く長さを取得
@@ -239,7 +227,6 @@ CDocLine* CDocLineMgr::GetLine( int nLine )
 
 
 
-
 /*! 順アクセスモード：先頭行を得る
 
 	@param pnLineLen [out] 行の長さが返る。
@@ -287,84 +274,6 @@ const char* CDocLineMgr::GetNextLinrStr( int* pnLineLen )
 	return (const char*)pszLine;
 }
 
-
-
-
-#if 0
-	/* 末尾に行を追加 Ver0 */
-	void CDocLineMgr::AddLineStrSz( const char* pszStr )
-	{
-	#ifdef _DEBUG
-		CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::AddLineStrSz" );
-	#endif
-		CDocLine* pDocLine;
-		if( 0 == m_nLines ){
-			m_pDocLineBot = m_pDocLineTop = new CDocLine;
-			m_pDocLineTop->m_pPrev = NULL;
-			m_pDocLineTop->m_pNext = NULL;
-			m_pDocLineTop->m_pLine = new CMemory( pszStr, lstrlen( pszStr ) );
-		}else{
-			pDocLine = new CDocLine;
-			pDocLine->m_pPrev = m_pDocLineBot;
-			pDocLine->m_pNext = NULL;
-			pDocLine->m_pLine = new CMemory( pszStr, lstrlen( pszStr ) );
-			m_pDocLineBot->m_pNext = pDocLine;
-			m_pDocLineBot = pDocLine;
-		}
-		++m_nLines;
-	}
-	/* 末尾に行を追加 Ver1 */
-	void CDocLineMgr::AddLineStr( const char* pData, int nDataLen )
-	{
-	#ifdef _DEBUG
-		CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::AddLineStr(const char*, int)" );
-	#endif
-		CDocLine* pDocLine;
-		if( 0 == m_nLines ){
-			m_pDocLineBot = m_pDocLineTop = new CDocLine;
-			m_pDocLineTop->m_pPrev = NULL;
-			m_pDocLineTop->m_pNext = NULL;
-			m_pDocLineTop->m_pLine = new CMemory( pData, nDataLen );
-		}else{
-			pDocLine = new CDocLine;
-			pDocLine->m_pPrev = m_pDocLineBot;
-			pDocLine->m_pNext = NULL;
-			pDocLine->m_pLine = new CMemory( pData, nDataLen );
-			m_pDocLineBot->m_pNext = pDocLine;
-			m_pDocLineBot = pDocLine;
-		}
-		++m_nLines;
-	}
-	/* 末尾に行を追加 Ver2 */
-	void CDocLineMgr::AddLineStr( CMemory& cmemData )
-	{
-	//#ifdef _DEBUG
-	//	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::AddLineStr(CMemory&)" );
-	//#endif
-		char*	pData;
-		int		nDataLen;
-		pData = cmemData.GetPtr( &nDataLen );
-	//	AddLineStr( pData, nDataLen );
-
-		CDocLine* pDocLine;
-		if( 0 == m_nLines ){
-			m_pDocLineBot = m_pDocLineTop = new CDocLine;
-			m_pDocLineTop->m_pPrev = NULL;
-			m_pDocLineTop->m_pNext = NULL;
-			m_pDocLineTop->m_pLine = new CMemory( pData, nDataLen );
-		}else{
-			pDocLine = new CDocLine;
-			pDocLine->m_pPrev = m_pDocLineBot;
-			pDocLine->m_pNext = NULL;
-			pDocLine->m_pLine = new CMemory( pData, nDataLen );
-			m_pDocLineBot->m_pNext = pDocLine;
-			m_pDocLineBot = pDocLine;
-		}
-		++m_nLines;
-		return;
-	}
-#endif
-
 /*!
 	末尾に行を追加
 
@@ -377,41 +286,25 @@ const char* CDocLineMgr::GetNextLinrStr( int* pnLineLen )
 */
 void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEol cEol )
 {
-#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::AddLineStrX(const char*, int, int)" );
-#endif
 	CDocLine* pDocLine;
 	if( 0 == m_nLines ){
 		m_pDocLineBot = m_pDocLineTop = new CDocLine;
 		m_pDocLineTop->m_pPrev = NULL;
 		m_pDocLineTop->m_pNext = NULL;
-//		if( bCRLF ){
 
-//		if( EOL_NONE != nEOLType ){
-//			m_pDocLineTop->m_pLine->m_pData[nDataLen] = '\r';
-//			m_pDocLineTop->m_pLine->m_pData[nDataLen + 1] = '\0';
-//			++m_pDocLineTop->m_pLine->m_nDataLen;
-//		}
 		m_pDocLineTop->m_cEol = cEol;	/* 改行コードの種類 */
-		m_pDocLineTop->m_pLine = new CMemory( pData, nDataLen/* - m_pDocLineTop->m_nEOLLen*/ );
+		m_pDocLineTop->m_pLine = new CMemory( pData, nDataLen );
 	}else{
 		pDocLine = new CDocLine;
 		pDocLine->m_pPrev = m_pDocLineBot;
 		pDocLine->m_pNext = NULL;
-//		if( bCRLF ){
 
-//		if( EOL_NONE != nEOLType ){
-//			pDocLine->m_pLine->m_pData[nDataLen] = '\r';
-//			pDocLine->m_pLine->m_pData[nDataLen + 1] = '\0';
-//			++pDocLine->m_pLine->m_nDataLen;
-//		}
 		pDocLine->m_cEol = cEol;	/* 改行コードの種類 */
-		pDocLine->m_pLine = new CMemory( pData, nDataLen/* - pDocLine->m_nEOLLen*/ );
+		pDocLine->m_pLine = new CMemory( pData, nDataLen );
 		m_pDocLineBot->m_pNext = pDocLine;
 		m_pDocLineBot = pDocLine;
 	}
 	++m_nLines;
-	return;
 }
 
 /*!
@@ -457,21 +350,8 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 
 	/* ファイル時刻の取得 */
 	FILETIME	FileTime;
-	if( FALSE != cfl.GetFileTime( NULL, NULL, &FileTime ) ){
+	if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
 		*pFileTime = FileTime;
-//		SYSTEMTIME	systimeL;
-//		::FileTimeToLocalFileTime( &FileTime, &FileTime );
-//		::FileTimeToSystemTime( &FileTime, &systimeL );
-//		MYTRACE_A( "Last Update: %d/%d/%d %02d:%02d:%02d\n",
-//			systimeL.wYear,
-//			systimeL.wMonth,
-//			systimeL.wDay,
-//			systimeL.wHour,
-//			systimeL.wMinute,
-//			systimeL.wSecond
-//		);
-	}else{
-//		MYTRACE_A( "GetFileTime() error.\n" );
 	}
 
 	// ファイルサイズチェック(ANSI版)
@@ -577,25 +457,24 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 
 /*! バッファ内容をファイルに書き出す (テスト用)
 
-	@param cEol [in]		使用する改行コード
-	@param bBomExist [in]	ファイル先頭にBOMを付けるか
-
 	@note Windows用にコーディングしてある
 	@date 2003.07.26 ryoji BOM引数追加
 */
-int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, int nCharCode, FILETIME* pFileTime, CEol cEol, BOOL bBomExist)
+int CDocLineMgr::WriteFile(
+	const char* pszPath,
+	HWND hWndParent,
+	HWND hwndProgress,
+	int nCharCode,
+	FILETIME* pFileTime,
+	CEol cEol,				//!< [in]	使用する改行コード
+	BOOL bBomExist			//!< [in]	ファイル先頭にBOMを付けるか
+)
 {
 	const char*		pLine;
-//	char*			pLineUnicode;
 	int				nLineLen;
 	int				nRetVal;
 	int				nLineNumber;
-//	int				i;
 	int				nWriteLen;
-//	int				bCRLF;
-//	int				nLineUnicodeLen;
-//	char*			pszCRLF_UNICODE = "\x0d\x0\x0a\x0";
-//	char*			pszCRLF_LF = "\x0a";
 	CMemory			cmemBuf;
 	CDocLine*		pCDocLine;
 
@@ -604,22 +483,6 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 	*/
 	cmemBuf.AllocStringBuffer( 32000 );
 
-//#ifdef _DEBUG
-//		if( IDYES != MYMESSAGEBOX(
-//			hWndParent,
-//			MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-//			"_DEBUG テスト機能",
-//			"改行コードを LFCR にして保存します。\nよろしいですか？"
-//		) ){
-//			return FALSE;
-//		}
-//#endif
-//	int				nCharCode = CODE_SJIS;
-//	int				nCharCode = CODE_EUC;
-//	int				nCharCode = CODE_JIS;
-//	int				nCharCode = CODE_UNICODE;
-
-
 	if( NULL != hwndProgress ){
 		::PostMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
 		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
@@ -627,204 +490,116 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 
 	nRetVal = TRUE;
 
-// 2002/05/22 Frozen　ここから削除（CFileWrite_Cのコンストラクタへ移動）----
-// CFileWriteクラスで代用
-//
-//	//<< 2002/04/13 Azumaiya
-//	//  WriteFile を直に使ってしまうと、書き込み速度が劇的に遅くなるので、やはり、
-//	// WriteFile をラッピングしてある標準関数に戻す。
-//	// ファイル属性を取得する。
-//	DWORD dwFileAttribute;
-//	dwFileAttribute = ::GetFileAttributes(pszPath);
-//	if ( dwFileAttribute != (DWORD)-1 )
-//	{
-//		// 読取専用属性だけ残す(ノーマル属性が付いていたらそれも残す)。
-//		BOOL bRes = ::SetFileAttributes(pszPath, dwFileAttribute & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_NORMAL));
-//	}
-//	else
-//	{
-//		dwFileAttribute = FILE_ATTRIBUTE_NORMAL;	//@@@ 2002.04.15 MIK
-//	}
-//	//>> 2002/04/13 Azumaiya
-//
-//
-//
-//	///* ファイルを書き込み用にオープンする */
-//// Oct 6, 2000 ao
-///* ファイル出力にstream を使うようにする */
-//	// 改行コードを勝手に制御されない様、バイナリモードで開く
-//	FILE *sFile= fopen(pszPath,"wb"); /*add*/
-//
-//	2002/05/22 Frozen ここまで削除-----------------------------
-
 	try
 	{
-	{//この括弧に対応する閉じ括弧でfileのデストラクタが呼び出され、ファイルが閉じられます。 
-		CFileWrite file(pszPath);// 2002/05/22 Frozen
+		{//この括弧に対応する閉じ括弧でfileのデストラクタが呼び出され、ファイルが閉じられます。 
+			CFileWrite file(pszPath);// 2002/05/22 Frozen
 
-	///* ファイルを書き込み用にオープンする */
-//-	hFile = _lopen( pszPath, OF_WRITE );
-//-	if( HFILE_ERROR == hFile ){
-//-	}else{
-//-		_lclose( hFile );
-//-	}
-//-	hFile = _lcreat(pszPath, 0);
-//-	if( HFILE_ERROR == hFile ){
-
-
-
-//	2002/05/22 Frozen ファイルのオープンに失敗した場合は例外が起きるようにしたためここから削除----
-//	代わりにここにかかれている文の一部をcatch節へ移動
-//
-//	if( !sFile ){ /*add*/
-////		MYTRACE_A( "file create error %s\n", pszPath );
-//		::MYMESSAGEBOX(
-//			hWndParent,
-//			MB_OK | MB_ICONSTOP,
-//			GSTR_APPNAME,
-//			"\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。",
-//			pszPath
-//		 );
-//		nRetVal = FALSE;
-//		//<< 2002/04/13 Azumaiya
-//		if ( dwFileAttribute != (DWORD)-1 )
-//		{
-//			// ファイル属性を元に戻す。
-//			::SetFileAttributes(pszPath, dwFileAttribute);
-//		}
-//		//>> 2002/04/13 Azumaiya
-//		goto _RETURN_;
-//	}
-//
-//　2002/05/22 Frozen ここまで削除
-
-	//	Jul. 26, 2003 ryoji bBomExitによってBOMを付けるかどうかを決める
-	if (bBomExist) {
-		switch( nCharCode ){
-		case CODE_UNICODE:
-			file.Write("\xff\xfe",sizeof(char)*2);
-			break;
-		case CODE_UNICODEBE:
-			file.Write( "\xfe\xff", sizeof(char) * 2 );
-			break;
-		case CODE_UTF8: // 2003.05.04 Moca BOMの間違いを訂正
-			file.Write( "\xef\xbb\xbf", sizeof(char) * 3 );
-			break;
-		default:
-			//	genta ここに来るのはバグだ
-			;
-		}
-	}
-
-	nLineNumber = 0;
-//	pLine = GetFirstLinrStr( &nLineLen );
-	pCDocLine = m_pDocLineTop;
-
-//	while( NULL != pLine ){
-	while( NULL != pCDocLine ){
-		++nLineNumber;
-		pLine = pCDocLine->m_pLine->GetStringPtr( &nLineLen );
-
-
-		if( NULL != hwndProgress && 0 < m_nLines && 0 == ( nLineNumber % 1024 ) ){
-			::PostMessage( hwndProgress, PBM_SETPOS, nLineNumber * 100 / m_nLines , 0 );
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( NULL ) ){
-				return FALSE;
+			//	Jul. 26, 2003 ryoji bBomExitによってBOMを付けるかどうかを決める
+			if (bBomExist) {
+				switch( nCharCode ){
+				case CODE_UNICODE:
+					file.Write("\xff\xfe",sizeof(char)*2);
+					break;
+				case CODE_UNICODEBE:
+					file.Write( "\xfe\xff", sizeof(char) * 2 );
+					break;
+				case CODE_UTF8: // 2003.05.04 Moca BOMの間違いを訂正
+					file.Write( "\xef\xbb\xbf", sizeof(char) * 3 );
+					break;
+				default:
+					//	genta ここに来るのはバグだ
+					;
+				}
 			}
-		}
 
-		nWriteLen = nLineLen - pCDocLine->m_cEol.GetLen();
-		cmemBuf.SetString( "" );
-		if( 0 < nWriteLen ){
-			cmemBuf.SetString( pLine, nWriteLen );
+			nLineNumber = 0;
+			pCDocLine = m_pDocLineTop;
 
-			/* 書き込み時のコード変換 */
-			switch( nCharCode ){
-			case CODE_UNICODE:
-				/* SJIS→Unicodeコード変換 */
-				cmemBuf.SJISToUnicode();
-				break;
-			case CODE_UTF8:	/* UTF-8 */
-				/* SJIS→UTF-8コード変換 */
-				cmemBuf.SJISToUTF8();
-				break;
-			case CODE_UTF7:	/* UTF-7 */
-				/* SJIS→UTF-7コード変換 */
-				cmemBuf.SJISToUTF7();
-				break;
-			case CODE_EUC:
-				/* SJIS→EUCコード変換 */
-				cmemBuf.SJISToEUC();
-				break;
-			case CODE_JIS:
-				/* SJIS→JISコード変換 */
-				cmemBuf.SJIStoJIS();
-				break;
-			case CODE_UNICODEBE:
-				/* SJIS→UnicodeBEコード変換 */
-				cmemBuf.SJISToUnicodeBE();
-				break;
-			case CODE_SJIS:
-			default:
-				break;
-			}
-		}
-//		if( bCRLF ){
-		if( EOL_NONE != pCDocLine->m_cEol ){
+			while( NULL != pCDocLine ){
+				++nLineNumber;
+				pLine = pCDocLine->m_pLine->GetStringPtr( &nLineLen );
+
+
+				if( NULL != hwndProgress && 0 < m_nLines && 0 == ( nLineNumber % 1024 ) ){
+					::PostMessage( hwndProgress, PBM_SETPOS, nLineNumber * 100 / m_nLines , 0 );
+					// 処理中のユーザー操作を可能にする
+					if( !::BlockingHook( NULL ) ){
+						return FALSE;
+					}
+				}
+
+				nWriteLen = nLineLen - pCDocLine->m_cEol.GetLen();
+				cmemBuf.SetString( "" );
+				if( 0 < nWriteLen ){
+					cmemBuf.SetString( pLine, nWriteLen );
+
+					// 書き込み時のコード変換
+					switch( nCharCode ){
+					case CODE_UNICODE:
+						/* SJIS→Unicodeコード変換 */
+						cmemBuf.SJISToUnicode();
+						break;
+					case CODE_UTF8:	/* UTF-8 */
+						/* SJIS→UTF-8コード変換 */
+						cmemBuf.SJISToUTF8();
+						break;
+					case CODE_UTF7:	/* UTF-7 */
+						/* SJIS→UTF-7コード変換 */
+						cmemBuf.SJISToUTF7();
+						break;
+					case CODE_EUC:
+						/* SJIS→EUCコード変換 */
+						cmemBuf.SJISToEUC();
+						break;
+					case CODE_JIS:
+						/* SJIS→JISコード変換 */
+						cmemBuf.SJIStoJIS();
+						break;
+					case CODE_UNICODEBE:
+						/* SJIS→UnicodeBEコード変換 */
+						cmemBuf.SJISToUnicodeBE();
+						break;
+					case CODE_SJIS:
+					default:
+						break;
+					}
+				}
+				if( EOL_NONE != pCDocLine->m_cEol ){
 
 // 2002/05/09 Frozen ここから
-			if( nCharCode == CODE_UNICODE ){
-				if( cEol==EOL_NONE )
-					cmemBuf.AppendString( pCDocLine->m_cEol.GetUnicodeValue(), pCDocLine->m_cEol.GetLen()*sizeof(wchar_t));
-				else
-					cmemBuf.AppendString( cEol.GetUnicodeValue(), cEol.GetLen()*sizeof(wchar_t));
-			}else if( nCharCode == CODE_UNICODEBE ){
-				/* UnicodeBE の改行コード設定 Moca, 2002/05/26 */
-				if( cEol == EOL_NONE ) /*  */
-					cmemBuf.AppendString( pCDocLine->m_cEol.GetUnicodeBEValue(), pCDocLine->m_cEol.GetLen()*sizeof(wchar_t) );
-				else
-					cmemBuf.AppendString( cEol.GetUnicodeBEValue(), cEol.GetLen()*sizeof(wchar_t) );
-			}else{
-				if( cEol == EOL_NONE )
-					cmemBuf.AppendString(pCDocLine->m_cEol.GetValue(),pCDocLine->m_cEol.GetLen());
-				else
-					cmemBuf.AppendString(cEol.GetValue(),cEol.GetLen());
-			}
+					if( nCharCode == CODE_UNICODE ){
+						if( cEol==EOL_NONE )
+							cmemBuf.AppendString( pCDocLine->m_cEol.GetUnicodeValue(), pCDocLine->m_cEol.GetLen()*sizeof(wchar_t));
+						else
+							cmemBuf.AppendString( cEol.GetUnicodeValue(), cEol.GetLen()*sizeof(wchar_t));
+					}else if( nCharCode == CODE_UNICODEBE ){
+						/* UnicodeBE の改行コード設定 Moca, 2002/05/26 */
+						if( cEol == EOL_NONE ) /*  */
+							cmemBuf.AppendString( pCDocLine->m_cEol.GetUnicodeBEValue(), pCDocLine->m_cEol.GetLen()*sizeof(wchar_t) );
+						else
+							cmemBuf.AppendString( cEol.GetUnicodeBEValue(), cEol.GetLen()*sizeof(wchar_t) );
+					}else{
+						if( cEol == EOL_NONE )
+							cmemBuf.AppendString(pCDocLine->m_cEol.GetValue(),pCDocLine->m_cEol.GetLen());
+						else
+							cmemBuf.AppendString(cEol.GetValue(),cEol.GetLen());
+					}
 // 2002/05/09 Frozen ここまで
-		}
-		if( 0 < cmemBuf.GetStringLength() )
-			file.Write(cmemBuf.GetStringPtr(),sizeof(char)*cmemBuf.GetStringLength());//2002/05/22 Frozen gotoの次の}までをこの一行で置き換え
+				}
+				if( 0 < cmemBuf.GetStringLength() )
+					file.Write(cmemBuf.GetStringPtr(),sizeof(char)*cmemBuf.GetStringLength());//2002/05/22 Frozen gotoの次の}までをこの一行で置き換え
 
 
-//		pLine = GetNextLinrStr( &nLineLen );
-		pCDocLine = pCDocLine->m_pNext;
+				pCDocLine = pCDocLine->m_pNext;
 
-	}
-	}//この括弧でCFileWriteのデストラクタが呼び出され、ファイルが閉じられます。
+			}
+		}//この括弧でCFileWriteのデストラクタが呼び出され、ファイルが閉じられます。
 
-// 2002/05/22 Frozen ここから削除（同様の処理はCFileWriteのデストラクタで代わりに行っています）------
-//
-//_CLOSEFILE_:;
-////-	_lclose( hFile );
-//	fflush( sFile );/* add */
-//	fclose( sFile );/* add */
-//	//<< 2002/04/13 Azumaiya
-//	// ファイル属性を元に戻す。
-//	::SetFileAttributes(pszPath, dwFileAttribute);
-//	//>> 2002/04/13 Azumaiya
-//
-// Oct 6, 2000 ao end
-/* ファイル出力に関する変更はここまで。
-	この後変更後のファイル情報を開くためにファイルアクセスしているが、ここまで無理に変更する必要はないでしょう。*/
-
-// 2002/05/22 Frozen　ここまで削除---------------------------------------------------------
-
-
-	/* 更新後のファイル時刻の取得
-	 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新
-	 * されないことがある。
-	 */
+		/* 更新後のファイル時刻の取得
+		 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新
+		 * されないことがある。
+		 */
 
 		// 2005.10.20 ryoji FindFirstFileを使うように変更（ファイルがロックされていてもタイムスタンプ取得可能）
 		FILETIME ftime;
@@ -833,22 +608,21 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 		}
 
 	}
-	catch(CError_FileOpen)
-	{
+	catch(CError_FileOpen){
 		::MYMESSAGEBOX(
 			hWndParent,
 			MB_OK | MB_ICONSTOP,
 			GSTR_APPNAME,
-			"\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。",
-			pszPath);
+			_T("\'%s\'\nファイルを保存できません。\n")
+			_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
+			pszPath
+		);
 		nRetVal = FALSE;
 	}
-	catch(CError_FileWrite)
-	{
+	catch(CError_FileWrite){
 		nRetVal = FALSE;
 	}
 
-//_RETURN_:; 2002/05/22 Frozen 削除（例外処理を使用するのでgoto用のラベルは使用しない）
 	if( NULL != hwndProgress ){
 		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 		/* 処理中のユーザー操作を可能にする */
@@ -857,12 +631,8 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 		}
 	}
 
-	/* 行変更状態をすべてリセット */
-//	if ( nRetVal ) ResetAllModifyFlag();	// ここでむじょうけんにリセットしてはいけません。2002/04/28 YAZAKI
-
 	return nRetVal;
 }
-
 
 
 
@@ -876,19 +646,18 @@ int CDocLineMgr::WriteFile( const char* pszPath, HWND hWndParent, HWND hwndProgr
 	@date 2002/03/24 YAZAKI bUndo削除
 */
 void CDocLineMgr::DeleteData_CDocLineMgr(
-			int			nLine,
-			int			nDelPos,
-			int			nDelLen,
-			int*		pnModLineOldFrom,	/* 影響のあった変更前の行(from) */
-			int*		pnModLineOldTo,		/* 影響のあった変更前の行(to) */
-			int*		pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
-			int*		pnDelLineOldNum,	/* 削除された行数 */
-			CMemory*	cmemDeleted			/* 削除されたデータ */
-//			int			bUndo				/* Undo操作かどうか */
+	int			nLine,
+	int			nDelPos,
+	int			nDelLen,
+	int*		pnModLineOldFrom,	//!< 影響のあった変更前の行(from)
+	int*		pnModLineOldTo,		//!< 影響のあった変更前の行(to)
+	int*		pnDelLineOldFrom,	//!< 削除された変更前論理行(from)
+	int*		pnDelLineOldNum,	//!< 削除された行数
+	CMemory*	cmemDeleted			//!< [out] 削除されたデータ
 )
 {
 #ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::DeleteData" );
+	CRunningTimer cRunningTimer( "CDocLineMgr::DeleteData" );
 #endif
 	CDocLine*	pDocLine;
 	CDocLine*	pDocLine2;
@@ -898,6 +667,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 	int			nLineLen;
 	char*		pLine2;
 	int			nLineLen2;
+
 	*pnModLineOldFrom = nLine;	/* 影響のあった変更前の行(from) */
 	*pnModLineOldTo = nLine;	/* 影響のあった変更前の行(to) */
 	*pnDelLineOldFrom = 0;		/* 削除された変更前論理行(from) */
@@ -931,7 +701,8 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 		cmemDeleted->SetString( &pLine[nDelPos], nDeleteLength );
 
 		/* 次の行の情報 */
-		if( NULL == ( pDocLine2 = pDocLine->m_pNext ) ){
+		pDocLine2 = pDocLine->m_pNext;
+		if( !pDocLine2 ){
 			pData = new char[nLineLen + 1];
 			if( nDelPos > 0 ){
 				memcpy( pData, pLine, nDelPos );
@@ -958,7 +729,8 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 				*pnDelLineOldNum = 1;		/* 削除された行数 */
 			}
 			delete [] pData;
-		}else{
+		}
+		else{
 			*pnModLineOldTo = nLine + 1;	/* 影響のあった変更前の行(to) */
 			pLine2 = pDocLine2->m_pLine->GetStringPtr( &nLineLen2 );
 			pData = new char[nLineLen + nLineLen2 + 1];
@@ -987,7 +759,8 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 			*pnDelLineOldNum = 1;			/* 削除された行数 */
 			delete [] pData;
 		}
-	}else{
+	}
+	else{
 		/* 実際に削除するバイト数 */
 		nDeleteLength = nDelLen;
 
@@ -1008,12 +781,9 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 		pData[ nLineLen - nDeleteLength ] = '\0';
 		if( 0 < nLineLen - nDeleteLength ){
 			pDocLine->m_pLine->SetString( pData, nLineLen - nDeleteLength );
-		}else{
 		}
 		delete [] pData;
 	}
-//	DUMP();
-	return;
 }
 
 
@@ -1025,22 +795,19 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 	@date 2002/03/24 YAZAKI bUndo削除
 */
 void CDocLineMgr::InsertData_CDocLineMgr(
-			int			nLine,
-			int			nInsPos,
-			const char*	pInsData,
-			int			nInsDataLen,
-			int*		pnInsLineNum,	/* 挿入によって増えた行の数 */
-			int*		pnNewLine,		/* 挿入された部分の次の位置の行 */
-			int*		pnNewPos		/* 挿入された部分の次の位置のデータ位置 */
-//			int			bUndo			/* Undo操作かどうか */
+	int			nLine,
+	int			nInsPos,
+	const char*	pInsData,
+	int			nInsDataLen,
+	int*		pnInsLineNum,	// 挿入によって増えた行の数
+	int*		pnNewLine,		// 挿入された部分の次の位置の行
+	int*		pnNewPos		// 挿入された部分の次の位置のデータ位置
 )
 {
 	CDocLine*	pDocLine;
 	CDocLine*	pDocLineNew;
 	char*		pLine;
 	int			nLineLen;
-	int			nBgn;
-	int			nPos;
 	CMemory		cmemPrevLine;
 	CMemory		cmemCurLine;
 	CMemory		cmemNextLine;
@@ -1063,14 +830,15 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 	nCount = 0;
 	*pnInsLineNum = 0;
 	pDocLine = GetLine( nLine );
-	if( NULL == pDocLine ){
+	if( !pDocLine ){
 		/* ここでNULLが帰ってくるということは、*/
 		/* 全テキストの最後の次の行を追加しようとしていることを示す */
 		cmemPrevLine.SetString( "" );
 		cmemNextLine.SetString( "" );
 		cEOLTypeNext.SetType( EOL_NONE );
 		bBookMarkNext=false;	// 2001.12.03 hor
-	}else{
+	}
+	else{
 		pDocLine->SetModifyFlg(true);		/* 変更フラグ */
 
 		pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
@@ -1080,8 +848,9 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		cEOLTypeNext = pDocLine->m_cEol;
 		bBookMarkNext= pDocLine->IsBookMarked();	// 2001.12.03 hor
 	}
-	nBgn = 0;
-	nPos = 0;
+
+	int	nBgn = 0;
+	int	nPos = 0;
 	for( nPos = 0; nPos < nInsDataLen; ){
 		if( pInsData[nPos] == '\n' || pInsData[nPos] == '\r' ){
 			/* 行終端子の種類を調べる */
@@ -1109,8 +878,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 					*(pDocLineNew->m_pLine) += cmemCurLine;
 
 					pDocLineNew->m_cEol = cEOLType;							/* 改行コードの種類 */
-					// pDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];	/* 改行コードの長さ */
-				}else{
+				}
+				else{
 					if( NULL != m_pDocLineBot ){
 						m_pDocLineBot->m_pNext = pDocLineNew;
 					}
@@ -1120,30 +889,31 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 					pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
 
 					pDocLineNew->m_cEol = cEOLType;							/* 改行コードの種類 */
-					// pDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];	/* 改行コードの長さ */
 				}
 				pDocLine = NULL;
 				++m_nLines;
-			}else{
+			}
+			else{
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount ){
 					pDocLine->m_pLine->SetNativeData( &cmemPrevLine );
 					*(pDocLine->m_pLine) += cmemCurLine;
 
 					pDocLine->m_cEol = cEOLType;						/* 改行コードの種類 */
-					// pDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLType];	/* 改行コードの長さ */
 
 					// 2001.12.13 hor
 					// 行頭で改行したら元の行のマークを新しい行に移動する
 					// それ以外なら元の行のマークを維持して新しい行にはマークを付けない
 					if(nInsPos==0){
 						pDocLine->SetBookMark(false);
-					}else{
+					}
+					else{
 						bBookMarkNext=false;
 					}
 
 					pDocLine = pDocLine->m_pNext;
-				}else{
+				}
+				else{
 					pDocLineNew = new CDocLine;
 					pDocLineNew->m_pLine = new CMemory;
 					pDocLineNew->m_pPrev = pDocLine->m_pPrev;
@@ -1151,10 +921,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 					pDocLine->m_pPrev->m_pNext = pDocLineNew;
 					pDocLine->m_pPrev = pDocLineNew;
 					pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
-
 					pDocLineNew->m_cEol = cEOLType;							/* 改行コードの種類 */
-					// pDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLType];	/* 改行コードの長さ */
-
 					++m_nLines;
 				}
 			}
@@ -1162,11 +929,12 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 			/* 挿入データを行終端で区切った行数カウンタ */
 			++nCount;
 			++(*pnNewLine);	/* 挿入された部分の次の位置の行 */
-		}else{
+		}
+		else{
 			++nPos;
 		}
 	}
-//	nEOLType = EOL_NONE;
+
 	if( 0 < nPos - nBgn || 0 < cmemNextLine.GetStringLength() ){
 		cmemCurLine.SetString( &pInsData[nBgn], nPos - nBgn );
 		cmemCurLine += cmemNextLine;
@@ -1188,9 +956,9 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 				*(pDocLineNew->m_pLine) += cmemCurLine;
 
 				pDocLineNew->m_cEol = cEOLTypeNext;							/* 改行コードの種類 */
-				// pDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];	/* 改行コードの長さ */
 
-			}else{
+			}
+			else{
 				if( NULL != m_pDocLineBot ){
 					m_pDocLineBot->m_pNext = pDocLineNew;
 				}
@@ -1200,24 +968,24 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 				pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
 
 				pDocLineNew->m_cEol = cEOLTypeNext;							/* 改行コードの種類 */
-				// pDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];	/* 改行コードの長さ */
 
 			}
 			pDocLine = NULL;
 			++m_nLines;
 			*pnNewPos = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
-		}else{
+		}
+		else{
 			/* 挿入データを行終端で区切った行数カウンタ */
 			if( 0 == nCount ){
 				pDocLine->m_pLine->SetNativeData( &cmemPrevLine );
 				*(pDocLine->m_pLine) += cmemCurLine;
 
 				pDocLine->m_cEol = cEOLTypeNext;						/* 改行コードの種類 */
-				// pDocLine->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];	/* 改行コードの長さ */
 
 				pDocLine = pDocLine->m_pNext;
 				*pnNewPos = cmemPrevLine.GetStringLength() + nPos - nBgn;		/* 挿入された部分の次の位置のデータ位置 */
-			}else{
+			}
+			else{
 				pDocLineNew = new CDocLine;
 				pDocLineNew->m_pLine = new CMemory;
 				pDocLineNew->m_pPrev = pDocLine->m_pPrev;
@@ -1227,7 +995,6 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 				pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
 
 				pDocLineNew->m_cEol = cEOLTypeNext;							/* 改行コードの種類 */
-				// pDocLineNew->m_nEOLLen = gm_pnEolLenArr[nEOLTypeNext];	/* 改行コードの長さ */
 				pDocLineNew->SetBookMark(bBookMarkNext);	// 2001.12.03 hor ブックマークを復元
 
 
@@ -1237,12 +1004,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		}
 	}
 	*pnInsLineNum = m_nLines - nAllLinesOld;
-	return;
 }
-
-//nEOLType nEOLType nEOLTypeNext
-
-
 
 /* 現在位置の単語の範囲を調べる */
 // 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
@@ -1255,19 +1017,18 @@ int	CDocLineMgr::WhereCurrentWord(
 	CMemory*	pcmcmWordLeft
 )
 {
-	CDocLine*	pDocLine;
-	char*		pLine;
-	int			nLineLen;
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
-	pDocLine = GetLine( nLineNum );
+	CDocLine*	pDocLine = GetLine( nLineNum );
 	if( NULL == pDocLine ){
 		return FALSE;
 	}
-	pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+
+	int			nLineLen;
+	const char*	pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+
 	/* 現在位置の単語の範囲を調べる */
 	return CDocLineMgr::WhereCurrentWord_2( pLine, nLineLen, nIdx, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
-
 }
 
 
@@ -1275,61 +1036,46 @@ int	CDocLineMgr::WhereCurrentWord(
 //@@@ 2001.06.23 N.Nakatani
 /*!
 	@brief 現在位置の単語の範囲を調べる staticメンバ
-
 	@author N.Nakatani
-
-	@param pLine [in] 調べるメモリ全体の先頭アドレス
-	@param nLineLen [in] 調べるメモリ全体の有効長
-	@param nIdx [out] 調査開始地点:pLineからの相対的な位置
-	@param pnIdxFrom [out]		単語が見つかった場合は、単語の先頭インデックスを返す。
-	@param pnIdxTo [out]		単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
-	@param pcmcmWord [out]		単語が見つかった場合は、現在単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
-	@param pcmcmWordLeft [out]	単語が見つかった場合は、現在単語の左に位置する単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
-
 	@retval true	成功 現在位置のデータは「単語」と認識する。
 	@retval false	失敗 現在位置のデータは「単語」とは言いきれない気がする。
 */
 int	CDocLineMgr::WhereCurrentWord_2(
-	const char* pLine,
-	int			nLineLen,
-	int			nIdx,
-	int*		pnIdxFrom,
-	int*		pnIdxTo,
-	CMemory*	pcmcmWord,
-	CMemory*	pcmcmWordLeft
+	const char*	pLine,			//!< [in]  調べるメモリ全体の先頭アドレス
+	int			nLineLen,		//!< [in]  調べるメモリ全体の有効長
+	int			nIdx,			//!< [out] 調査開始地点:pLineからの相対的な位置
+	int*		pnIdxFrom,		//!< [out] 単語が見つかった場合は、単語の先頭インデックスを返す。
+	int*		pnIdxTo,		//!< [out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
+	CMemory*	pcmcmWord,		//!< [out] 単語が見つかった場合は、現在単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
+	CMemory*	pcmcmWordLeft	//!< [out] 単語が見つかった場合は、現在単語の左に位置する単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
 )
 {
-	int			nCharKind;
-	int			nCharKindNext;
-	int			nIdxNext;
-	int			nIdxNextPrev;
-	int			nCharChars;
 	*pnIdxFrom = nIdx;
 	*pnIdxTo = nIdx;
-//	pDocLine = GetLine( nLineNum );
-//	if( NULL == pDocLine ){
-//		return FALSE;
-//	}
-//	pLine = pDocLine->m_pLine->GetPtr( &nLineLen );
+
 	if( NULL == pLine ){
 		return FALSE;
 	}
 	if( nIdx >= nLineLen ){
 		return FALSE;
 	}
-	/* 現在位置の文字の種類によっては選択不能 */
+
+	// 現在位置の文字の種類によっては選択不能
 	if( pLine[nIdx] == CR || pLine[nIdx] == LF ){
 		return FALSE;
 	}
-	/* 現在位置の文字の種類を調べる */
-	nCharKind = WhatKindOfChar( (char*)pLine, nLineLen, nIdx );
-	/* 文字種類が変わるまで前方へサーチ */
-	nIdxNext = nIdx;
-	nCharChars = &pLine[nIdxNext] - CMemory::MemCharPrev( pLine, nLineLen, &pLine[nIdxNext] );
+
+	// 現在位置の文字の種類を調べる
+	int	nCharKind = WhatKindOfChar( (char*)pLine, nLineLen, nIdx );
+
+	// 文字種類が変わるまで前方へサーチ
+	int	nIdxNext = nIdx;
+	int	nCharChars = &pLine[nIdxNext] - CMemory::MemCharPrev( pLine, nLineLen, &pLine[nIdxNext] );
 	while( nCharChars > 0 ){
-		nIdxNextPrev = nIdxNext;
+		int	nIdxNextPrev = nIdxNext;
 		nIdxNext -= nCharChars;
-		nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
+		int	nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
+
 		int nCharKindMerge = WhatKindOfTwoChars( nCharKindNext, nCharKind );
 		if( nCharKindMerge == CK_NULL ){
 			nIdxNext = nIdxNextPrev;
@@ -1344,20 +1090,19 @@ int	CDocLineMgr::WhereCurrentWord_2(
 		pcmcmWordLeft->SetString( &pLine[*pnIdxFrom], nIdx - *pnIdxFrom );
 	}
 
-	/* 文字種類が変わるまで後方へサーチ */
+	// 文字種類が変わるまで後方へサーチ
 	nIdxNext = nIdx;
-	// 2005-09-02 D.S.Koba GetSizeOfChar
-	nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
+	nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext ); // 2005-09-02 D.S.Koba GetSizeOfChar
 	while( nCharChars > 0 ){
 		nIdxNext += nCharChars;
-		nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
+		int	nCharKindNext = WhatKindOfChar( (char*)pLine, nLineLen, nIdxNext );
+
 		int nCharKindMerge = WhatKindOfTwoChars( nCharKindNext, nCharKind );
 		if( nCharKindMerge == CK_NULL ){
 			break;
 		}
 		nCharKind = nCharKindMerge;
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext );
+		nCharChars = CMemory::GetSizeOfChar( pLine, nLineLen, nIdxNext ); // 2005-09-02 D.S.Koba GetSizeOfChar
 	}
 	*pnIdxTo = nIdxNext;
 
@@ -1415,18 +1160,19 @@ int CDocLineMgr::SearchNextWordPosition(
 	return FALSE;
 }
 
-/* 現在位置の左右の単語の先頭位置を調べる */
+
+
+
+// 現在位置の左右の単語の先頭位置を調べる
 int CDocLineMgr::PrevOrNextWord(
-	int			nLineNum,	//	行数
-	int			nIdx,		//	桁数
-	int*		pnColmNew,	//	見つかった位置
-	BOOL		bLEFT,		//	TRUE:前方（左）へ向かう。FALSE:後方（右）へ向かう。
+	int			nLineNum,		//	行数
+	int			nIdx,			//	桁数
+	int*		pnColmNew,		//	見つかった位置
+	BOOL		bLEFT,			//	TRUE:前方（左）へ向かう。FALSE:後方（右）へ向かう。
 	BOOL		bStopsBothEnds	//	単語の両端で止まる
 )
 {
 	CDocLine*	pDocLine;
-	char*		pLine;
-	int			nLineLen;
 	int			nCharKind;
 	int			nCharKindNext;
 	int			nIdxNext;
@@ -1437,19 +1183,20 @@ int CDocLineMgr::PrevOrNextWord(
 	if( NULL == pDocLine ){
 		return FALSE;
 	}
-	pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+
+	int			nLineLen;
+	const char*		pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
 
 	// ABC D[EOF]となっていたときに、Dの後ろにカーソルを合わせ、単語の左端に移動すると、Aにカーソルがあうバグ修正。YAZAKI
 	if( nIdx >= nLineLen ){
 		if (bLEFT && nIdx == nLineLen){
-
 		}
 		else {
 			nIdx = nLineLen - 1;
 		}
 	}
 	/* 現在位置の文字の種類によっては選択不能 */
-	if( FALSE == bLEFT && ( pLine[nIdx] == CR || pLine[nIdx] == LF ) ){
+	if( !bLEFT && ( pLine[nIdx] == CR || pLine[nIdx] == LF ) ){
 		return FALSE;
 	}
 	/* 前の単語か？後ろの単語か？ */
@@ -1459,6 +1206,7 @@ int CDocLineMgr::PrevOrNextWord(
 		if( nIdx == 0 ){
 			return FALSE;
 		}
+
 		/* 文字種類が変わるまで前方へサーチ */
 		/* 空白とタブは無視する */
 		nCount = 0;
@@ -1501,7 +1249,6 @@ int CDocLineMgr::PrevOrNextWord(
 
 
 
-
 /*! 単語検索
 
 	@date 2003.05.22 かろと 行頭処理など見直し
@@ -1522,9 +1269,6 @@ int CDocLineMgr::SearchWord(
 	CBregexp*			pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 )
 {
-//#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::SearchWord" );
-//#endif
 	CDocLine*	pDocLine;
 	int			nLinePos;
 	int			nIdxPos;
@@ -1541,8 +1285,6 @@ int CDocLineMgr::SearchWord(
 	//	lstrlenを毎回呼ばずにnPatternLenを使うようにする
 	const int	nPatternLen = lstrlen( pszPattern );	//2001/06/23 N.Nakatani
 	pnKey_CharCharsArr = NULL;
-//	int*		pnKey_CharUsedArr;
-//	pnKey_CharUsedArr = NULL;
 	/* 検索条件の情報 */
 	CDocLineMgr::CreateCharCharsArr(
 		(const unsigned char *)pszPattern,
@@ -1550,11 +1292,11 @@ int CDocLineMgr::SearchWord(
 		&pnKey_CharCharsArr
 	);
 
-	/* 1==正規表現 */
+	//正規表現
 	if( bRegularExp ){
 		nLinePos = nLineNum;		// 検索行＝検索開始行
 		pDocLine = GetLine( nLinePos );
-		/* 0==前方検索 1==後方検索 */
+		//前方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			//
 			// 前方(↑)検索(正規表現)
@@ -1588,10 +1330,11 @@ int CDocLineMgr::SearchWord(
 						break;
 					}
 				}
+
 				if ( -1 != nHitPosOld ) {
 					// この行でマッチした位置が存在するので、この行で検索終了
-					*pnIdxFrom = nHitPosOld;			/* マッチ位置from */
-					*pnIdxTo = nIdxPosOld;				/* マッチ位置to */
+					*pnIdxFrom = nHitPosOld;			// マッチ位置from
+					*pnIdxTo = nIdxPosOld;				// マッチ位置to
 					break;
 				} else {
 					// この行でマッチした位置が存在しないので、前の行を検索へ
@@ -1603,7 +1346,9 @@ int CDocLineMgr::SearchWord(
 					}
 				}
 			}
-		} else {
+		}
+		//後方検索
+		else {
 			//
 			// 後方検索(正規表現)
 			//
@@ -1613,8 +1358,8 @@ int CDocLineMgr::SearchWord(
 				if(		nIdxPos <= pDocLine->GetLengthWithoutEOL() 
 					&&	pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
 					// マッチした
-					*pnIdxFrom = pRegexp->GetIndex();					/* マッチ位置from */
-					*pnIdxTo = pRegexp->GetLastIndex();					/* マッチ位置to */
+					*pnIdxFrom = pRegexp->GetIndex();					// マッチ位置from
+					*pnIdxTo = pRegexp->GetLastIndex();					// マッチ位置to
 					break;
 				}
 				++nLinePos;
@@ -1626,7 +1371,7 @@ int CDocLineMgr::SearchWord(
 		// 正規表現検索の後処理
 		if ( pDocLine != NULL ) {
 			// マッチした行がある
-			*pnLineNum = nLinePos;				/* マッチ行 */
+			*pnLineNum = nLinePos;				// マッチ行
 			nRetVal = 1;
 			// レイアウト行では改行文字内の位置を表現できないため、マッチ開始位置を補正
 			if (*pnIdxFrom > pDocLine->GetLengthWithoutEOL()) {
@@ -1635,39 +1380,37 @@ int CDocLineMgr::SearchWord(
 				*pnIdxFrom = pDocLine->GetLengthWithoutEOL();
 			}
 		}
-	}else
-	/* 1==単語のみ検索 */
-	if( bWordOnly ){
+	}
+	//単語のみ検索
+	else if( bWordOnly ){
 		/*
 			2001/06/23 Norio Nakatani
 			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
 			英単語やC/C++識別子などの検索条件ならヒットします。
 		*/
 
-		/* 0==前方検索 1==後方検索 */
+		// 前方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = nLineNum;
 			pDocLine = GetLine( nLinePos );
 			int nNextWordFrom;
 			int nNextWordFrom2;
 			int nNextWordTo2;
-//			int bState;
 			int nWork;
-//			CMemory cmemTest;
 			nNextWordFrom = nIdx;
 			while( NULL != pDocLine ){
-				if( TRUE == PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE ) ){
+				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE ) ){
 					nNextWordFrom = nWork;
 					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 							const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
 							/* 1==大文字小文字の区別 */
-							if( (FALSE == bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-								(TRUE  == bLoHiCase && 0 ==	 memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+							if( (!bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+								(bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 							){
-								*pnLineNum = nLinePos;	/* マッチ行 */
-								*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
-								*pnIdxTo = *pnIdxFrom + nPatternLen;	/* マッチ位置to */
+								*pnLineNum = nLinePos;	// マッチ行
+								*pnIdxFrom = nNextWordFrom2;	// マッチ位置from
+								*pnIdxTo = *pnIdxFrom + nPatternLen;	// マッチ位置to
 								nRetVal = 1;
 								goto end_of_func;
 							}
@@ -1685,28 +1428,27 @@ int CDocLineMgr::SearchWord(
 					}
 				}
 			}
-		}else{
+		}
+		// 後方検索
+		else{
 			nLinePos = nLineNum;
 			pDocLine = GetLine( nLinePos );
 			int nNextWordFrom;
 
 			int nNextWordFrom2;
 			int nNextWordTo2;
-//			int bState;
 			nNextWordFrom = nIdx;
 			while( NULL != pDocLine ){
-				if( TRUE ==
-					WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
-				){
+				if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 						const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
 						/* 1==大文字小文字の区別 */
-						if( (FALSE == bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-							(TRUE  == bLoHiCase && 0 ==	  memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+						if( (!bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+							(bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 						){
-							*pnLineNum = nLinePos;	/* マッチ行 */
-							*pnIdxFrom = nNextWordFrom2;	/* マッチ位置from */
-							*pnIdxTo = *pnIdxFrom + nPatternLen;	/* マッチ位置to */
+							*pnLineNum = nLinePos;	// マッチ行
+							*pnIdxFrom = nNextWordFrom2;	// マッチ位置from
+							*pnIdxTo = *pnIdxFrom + nPatternLen;	// マッチ位置to
 							nRetVal = 1;
 							goto end_of_func;
 						}
@@ -1725,8 +1467,10 @@ int CDocLineMgr::SearchWord(
 
 		nRetVal = 0;
 		goto end_of_func;
-	}else{
-		/* 0==前方検索 1==後方検索 */
+	}
+	//普通の検索 (正規表現でも単語単位でもない)
+	else{
+		//前方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = nLineNum;
 			nHitTo = nIdx;
@@ -1746,7 +1490,6 @@ int CDocLineMgr::SearchWord(
 						(const unsigned char *)pszPattern,
 						nPatternLen,
 						pnKey_CharCharsArr,
-//						pnKey_CharUsedArr,
 						bLoHiCase
 					);
 					if( NULL != pszRes ){
@@ -1754,9 +1497,9 @@ int CDocLineMgr::SearchWord(
 						nIdxPos = nHitPos + nPatternLen;	// マッチ文字列長進めるように変更 2005.10.28 Karoto
 						if( nHitPos >= nHitTo ){
 							if( -1 != nHitPosOld ){
-								*pnLineNum = nLinePos;							/* マッチ行 */
-								*pnIdxFrom = nHitPosOld;						/* マッチ位置from */
- 								*pnIdxTo = nIdxPosOld;							/* マッチ位置to */
+								*pnLineNum = nLinePos;							// マッチ行
+								*pnIdxFrom = nHitPosOld;						// マッチ位置from
+ 								*pnIdxTo = nIdxPosOld;							// マッチ位置to/
 								nRetVal = 1;
 								goto end_of_func;
 							}else{
@@ -1765,9 +1508,9 @@ int CDocLineMgr::SearchWord(
 						}
 					}else{
 						if( -1 != nHitPosOld ){
-							*pnLineNum = nLinePos;							/* マッチ行 */
-							*pnIdxFrom = nHitPosOld;						/* マッチ位置from */
-							*pnIdxTo = nIdxPosOld;							/* マッチ位置to */
+							*pnLineNum = nLinePos;							// マッチ行
+							*pnIdxFrom = nHitPosOld;						// マッチ位置from
+							*pnIdxTo = nIdxPosOld;							// マッチ位置to
 							nRetVal = 1;
 							goto end_of_func;
 						}else{
@@ -1779,13 +1522,14 @@ int CDocLineMgr::SearchWord(
 				pDocLine = pDocLine->m_pPrev;
 				nIdxPos = 0;
 				if( NULL != pDocLine ){
-//					nHitTo = lstrlen( pDocLine->m_pLine->GetPtr() );
 					nHitTo = pDocLine->m_pLine->GetStringLength();
 				}
 			}
 			nRetVal = 0;
 			goto end_of_func;
-		}else{
+		}
+		//後方検索
+		else{
 			nIdxPos = nIdx;
 			nLinePos = nLineNum;
 			pDocLine = GetLine( nLinePos );
@@ -1798,13 +1542,12 @@ int CDocLineMgr::SearchWord(
 					(const unsigned char *)pszPattern,
 					nPatternLen,
 					pnKey_CharCharsArr,
-//					pnKey_CharUsedArr,
 					bLoHiCase
 				);
 				if( NULL != pszRes ){
-					*pnLineNum = nLinePos;							/* マッチ行 */
-					*pnIdxFrom = pszRes - pLine;					/* マッチ位置from */
-					*pnIdxTo = *pnIdxFrom + nPatternLen;	/* マッチ位置to */
+					*pnLineNum = nLinePos;							// マッチ行
+					*pnIdxFrom = pszRes - pLine;					// マッチ位置from
+					*pnIdxTo = *pnIdxFrom + nPatternLen;	// マッチ位置to
 					nRetVal = 1;
 					goto end_of_func;
 				}
@@ -1821,12 +1564,8 @@ end_of_func:;
 		delete [] pnKey_CharCharsArr;
 		pnKey_CharCharsArr = NULL;
 	}
-//	if( NULL != pnKey_CharUsedArr ){
-//		delete [] pnKey_CharUsedArr;
-//		pnKey_CharUsedArr = NULL;
-//	}
-	return nRetVal;
 
+	return nRetVal;
 }
 
 /* 検索条件の情報(キー文字列の全角か半角かの配列)作成 */
@@ -1855,41 +1594,6 @@ void CDocLineMgr::CreateCharCharsArr(
 }
 
 
-//	/* 検索条件の情報(キー文字列の使用文字表)作成 */
-//	void CDocLineMgr::CreateCharUsedArr(
-//		const unsigned char*	pszPattern,
-//		int						nSrcLen,
-//		const int*				pnCharCharsArr,
-//		int**					ppnCharUsedArr
-//	)
-//	{
-//		int		i;
-//		int*	pnCharUsedArr;
-//		int		nCharCode;
-//		pnCharUsedArr = new int[0x0000ffff];
-//
-//		i = 0xffff;//TEST
-//
-//		for( i = 0; i < 0x0000ffff; ++i ){
-//			pnCharUsedArr[i] = nSrcLen;
-//		}
-//		for( i = 0; i < nSrcLen; /*i++*/ ){
-//			if( 2 == pnCharCharsArr[i] ){
-//	//			nCharCode = *((WORD*)(&pszPattern[i]));
-//				nCharCode = MAKEWORD( pszPattern[i + 1], pszPattern[i] );
-//			}else{
-//				nCharCode = (int)pszPattern[i];
-//			}
-//			if( nSrcLen == pnCharUsedArr[nCharCode] ){
-//				pnCharUsedArr[nCharCode] = i;
-//			}
-//			i+= pnCharCharsArr[i];
-//		}
-//		*ppnCharUsedArr = pnCharUsedArr;
-//		return;
-//	}
-
-
 /* 文字列検索 */
 char* CDocLineMgr::SearchString(
 		const unsigned char*	pLine,
@@ -1902,9 +1606,6 @@ char* CDocLineMgr::SearchString(
 		int						bLoHiCase
 )
 {
-//#ifdef _DEBUG
-//	CRunningTimer cRunningTimer( (const char*)"CDocLineMgr::SearchString" );
-//#endif
 	if( nDesLen < nSrcLen ){
 		return NULL;
 	}
@@ -1921,142 +1622,70 @@ char* CDocLineMgr::SearchString(
 	int	nCharChars2;
 	int	nCompareTo;
 
-//	Mar. 4, 2001 genta
-#if 0
-	if( !bLoHiCase ){
-		nCompareTo = nDesLen - nSrcLen;
-		for( nPos = nIdxPos; nPos <= nCompareTo; /*nPos++*/ ){
-			nCharChars = CMemory::MemCharNext( (const char *)pLine, nDesLen, (const char *)&pLine[nPos] ) - (const char *)&pLine[nPos];
-			nCharChars1 = nCharChars;
-			for( i = 0; i < nSrcLen; /*i++*/ ){
-				if( NULL != pnCharCharsArr ){
-					nCharChars2 = pnCharCharsArr[i];
-				}else{
-					nCharChars2 = CMemory::MemCharNext( (const char *)pszPattern, nSrcLen, (const char *)&pszPattern[i] ) - (const char *)&pszPattern[i];
-				}
-				if( nCharChars1 != nCharChars2 ){
+	/* 線形探索 */
+	nCompareTo = nDesLen - nSrcLen;	//	Mar. 4, 2001 genta
+	for( nPos = nIdxPos; nPos <= nCompareTo; /*nPos++*/ ){
+		// 2005-09-02 D.S.Koba GetSizeOfChar
+		nCharChars = CMemory::GetSizeOfChar( (const char *)pLine, nDesLen, nPos );
+		nCharChars1 = nCharChars;
+		for( i = 0; i < nSrcLen; /*i++*/ ){
+			if( NULL != pnCharCharsArr ){
+				nCharChars2 = pnCharCharsArr[i];
+			}else{
+				// 2005-09-02 D.S.Koba GetSizeOfChar
+				nCharChars2 = CMemory::GetSizeOfChar( (const char *)pszPattern, nSrcLen, i );
+			}
+			if( nCharChars1 != nCharChars2 ){
+				break;
+			}
+			if( 0 == nCharChars1 ){
+				nWork =1;
+			}else{
+				nWork = nCharChars1;
+			}
+			//	From Here Mar. 4, 2001 genta
+			if( !bLoHiCase && nWork == 1 ){	//	英大小文字の同一視
+				if( toupper( pLine[nPos + i] ) != toupper( pszPattern[i] ) )
 					break;
-				}
-				if( 0 == nCharChars1 ){
-					nWork =1;
-				}else{
-					nWork = nCharChars1;
-				}
-
+			}
+			else {
 				for( j = 0; j < nWork; ++j ){
-					if( islower( pLine[nPos + i + j] ) ){
-						if( islower( pszPattern[i + j] ) ){
-							if( toupper( pLine[nPos + i + j] ) != toupper( pszPattern[i + j] ) ){
-								break;
-							}
-						}else{
-							if( toupper( pLine[nPos + i + j] ) != pszPattern[i + j] ){
-								break;
-							}
-						}
-					}else{
-						if( islower( pszPattern[i + j] ) ){
-							if( pLine[nPos + i + j] != toupper( pszPattern[i + j] ) ){
-								break;
-							}
-						}else{
-							if( pLine[nPos + i + j] != pszPattern[i + j] ){
-								break;
-							}
-						}
+					if( pLine[nPos + i + j] != pszPattern[i + j] ){
+						break;
 					}
 				}
 				if( j < nWork ){
 					break;
 				}
-				if( 0 == nCharChars2 ){
-					++i;
-				}else{
-					i+= nCharChars2;
-				}
-				nCharChars1 = CMemory::MemCharNext( (const char *)pLine, nDesLen, (const char *)&pLine[nPos + i] ) - (const char *)&pLine[nPos + i];
 			}
-			if( i >= nSrcLen ){
-				return (char *)&pLine[nPos];
-			}
-			if( 0 == nCharChars ){
-				++nPos;
+			//	To Here
+			if( 0 == nCharChars2 ){
+				++i;
 			}else{
-				nPos+= nCharChars;
+				i+= nCharChars2;
 			}
-		}
-		return NULL;
-	}else{
-//	Mar. 4, 2001 genta
-#endif
-		/* 線形探索 */
-		nCompareTo = nDesLen - nSrcLen;	//	Mar. 4, 2001 genta
-		for( nPos = nIdxPos; nPos <= nCompareTo; /*nPos++*/ ){
 			// 2005-09-02 D.S.Koba GetSizeOfChar
-			nCharChars = CMemory::GetSizeOfChar( (const char *)pLine, nDesLen, nPos );
-			nCharChars1 = nCharChars;
-			for( i = 0; i < nSrcLen; /*i++*/ ){
-				if( NULL != pnCharCharsArr ){
-					nCharChars2 = pnCharCharsArr[i];
-				}else{
-					// 2005-09-02 D.S.Koba GetSizeOfChar
-					nCharChars2 = CMemory::GetSizeOfChar( (const char *)pszPattern, nSrcLen, i );
-				}
-				if( nCharChars1 != nCharChars2 ){
-					break;
-				}
-				if( 0 == nCharChars1 ){
-					nWork =1;
-				}else{
-					nWork = nCharChars1;
-				}
-				//	From Here Mar. 4, 2001 genta
-				if( !bLoHiCase && nWork == 1 ){	//	英大小文字の同一視
-					if( toupper( pLine[nPos + i] ) != toupper( pszPattern[i] ) )
-						break;
-				}
-				else {
-					for( j = 0; j < nWork; ++j ){
-						if( pLine[nPos + i + j] != pszPattern[i + j] ){
-							break;
-						}
-					}
-					if( j < nWork ){
-						break;
-					}
-				}
-				//	To Here
-				if( 0 == nCharChars2 ){
-					++i;
-				}else{
-					i+= nCharChars2;
-				}
-				// 2005-09-02 D.S.Koba GetSizeOfChar
-				nCharChars1 = CMemory::GetSizeOfChar( (const char *)pLine, nDesLen, nPos + i );
-			}
-			if( i >= nSrcLen ){
-				return (char *)&pLine[nPos];
-			}
-			if( 0 == nCharChars ){
-				++nPos;
-			}else{
-				nPos+= nCharChars;
-			}
+			nCharChars1 = CMemory::GetSizeOfChar( (const char *)pLine, nDesLen, nPos + i );
 		}
-		return NULL;
-	//	Mar. 4, 2001 genta	: comment out
-#if 0
+		if( i >= nSrcLen ){
+			return (char *)&pLine[nPos];
+		}
+		if( 0 == nCharChars ){
+			++nPos;
+		}else{
+			nPos+= nCharChars;
+		}
 	}
-#endif
+	return NULL;
 }
 
 
 
-/* 現在位置の文字の種類を調べる */
+//! 現在位置の文字の種類を調べる
 int	CDocLineMgr::WhatKindOfChar(
-		const char*	pData,
-		int		pDataLen,
-		int		nIdx
+	const char*	pData,
+	int		pDataLen,
+	int		nIdx
 )
 {
 	int		nCharChars;
@@ -2065,8 +1694,8 @@ int	CDocLineMgr::WhatKindOfChar(
 	nCharChars = CMemory::GetSizeOfChar( pData, pDataLen, nIdx );
 	if( nCharChars == 0 ){
 		return CK_NULL;	/* NULL 0x0<=c<=0x0 */
-	}else
-	if( nCharChars == 1 ){	/* 半角文字 */
+	}
+	else if( nCharChars == 1 ){	/* 半角文字 */
 		if( pData[nIdx] == CR ){
 			return CK_CR;	/* CR = 0x0d */
 		}
@@ -2087,8 +1716,8 @@ int	CDocLineMgr::WhatKindOfChar(
 		}
 		return CK_ETC;	/* 半角のその他 */
 
-	}else
-	if( nCharChars == 2 ){	/* 全角文字 */
+	}
+	else if( nCharChars == 2 ){	/* 全角文字 */
 		//<< 2002/03/28 Azumaiya
 		// 判定条件部分の比較回数を少なくして最適化。
 		wChar =  MAKEWORD(pData[nIdx + 1], pData[nIdx]);
@@ -2154,13 +1783,15 @@ int	CDocLineMgr::WhatKindOfChar(
 		}
 		return CK_MBC_ETC;	/* 2バイトのその他(漢字など) */
 		//>> 2002/03/28 Azumaiya
-	}else{
+	}
+	else{
 		return CK_NULL;	/* NULL 0x0<=c<=0x0 */
 	}
 }
 
 
-/* 二つの文字を結合したものの種類を調べる */
+
+//! 二つの文字を結合したものの種類を調べる
 int CDocLineMgr::WhatKindOfTwoChars( int kindPre, int kindCur )
 {
 	if( kindPre == kindCur )return kindCur;			// 同種ならその種別を返す
@@ -2184,7 +1815,7 @@ int CDocLineMgr::WhatKindOfTwoChars( int kindPre, int kindCur )
 		要素を指しているかの検証機能を追加．
 
 */
-void CDocLineMgr::DUMP( void )
+void CDocLineMgr::DUMP()
 {
 #ifdef _DEBUG
 	MYTRACE_A( "------------------------\n" );
@@ -2271,7 +1902,6 @@ void CDocLineMgr::DUMP( void )
 
 /* 行変更状態をすべてリセット */
 /*
-
   ・変更フラグCDocLineオブジェクト作成時にはTRUEである
   ・変更回数はCDocLineオブジェクト作成時には1である
 
@@ -2283,13 +1913,8 @@ void CDocLineMgr::DUMP( void )
 
   変更回数はUndoしたときに-1される
   変更回数が0になった場合は変更フラグをFALSEにする
-
-
-
 */
 void CDocLineMgr::ResetAllModifyFlag( void )
-//		BOOL bResetModifyCount /* 変更回数を0にするかどうか */
-//)
 {
 	CDocLine* pDocLine;
 	CDocLine* pDocLineNext;
@@ -2297,13 +1922,8 @@ void CDocLineMgr::ResetAllModifyFlag( void )
 	while( NULL != pDocLine ){
 		pDocLineNext = pDocLine->m_pNext;
 		pDocLine->SetModifyFlg(false);		/* 変更フラグ */
-//		if( bResetModifyCount ){			/* 変更回数を0にするかどうか */
-//			pDocLine->m_nModifyCount = 0;	/* 変更回数 */
-//		}
-
 		pDocLine = pDocLineNext;
 	}
-	return;
 }
 
 
