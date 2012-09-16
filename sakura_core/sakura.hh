@@ -732,13 +732,13 @@
 #define HIDC_CMP_LIST_FILES		12306	//ファイル一覧
 #define HIDC_CMP_STATIC_COMPARESRC	12307	//ソースファイル
 
-//印刷
-#define HIDOK_PP			12400	//OK
-#define HIDCANCEL_PP		12401	//キャンセル
-#define HIDC_PP_EDIT_FROM	12402	//ページから
-#define HIDC_PP_EDIT_TO		12403	//ページまで
-#define HIDC_PP_RADIO_ALL	12404	//すべて
-#define HIDC_PP_RADIO_FROMTO	12405	//指定
+//印刷	del Uchi 2010/4/26
+//#define HIDOK_PP			12400	//OK
+//#define HIDCANCEL_PP		12401	//キャンセル
+//#define HIDC_PP_EDIT_FROM	12402	//ページから
+//#define HIDC_PP_EDIT_TO		12403	//ページまで
+//#define HIDC_PP_RADIO_ALL	12404	//すべて
+//#define HIDC_PP_RADIO_FROMTO	12405	//指定
 
 //印刷設定
 #define HIDC_PS_BUTTON_EDITSETTINGNAME	12500	//設定名変更
