@@ -23,7 +23,6 @@
 #include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
 
-
 CDicMgr::CDicMgr()
 {
 	return;
@@ -43,26 +42,22 @@ CDicMgr::~CDicMgr()
 /*!
 	キーワードの検索
 	最初に見つかったキーワードの意味を返す
-	
-	@param[in] pszKey 検索キーワード
-	@param[in] nCmpLen 検索キーワードの長さ
-	@param[out] ppcmemKey 見つかったキーワード．呼び出し元の責任で解放する．
-	@param[out] ppcmemMean 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
-	@param[in] pszKeyWordHelpFile キーワードヘルプファイルのパス名
-	@param[out] pLine 見つかったキーワードのキーワードヘルプファイル内での行番号
 
 	@date 2006.04.10 fon 検索ヒット行を返す引数pLineを追加
 */
-BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey, CMemory** ppcmemMean, const char* pszKeyWordHelpFile, int *pLine )
+BOOL CDicMgr::Search(
+	const char*			pszKey,				//!< 検索キーワード
+	const int			nCmpLen,			//!< 検索キーワードの長さ
+	CMemory**			ppcmemKey,			//!< 見つかったキーワード．呼び出し元の責任で解放する．
+	CMemory**			ppcmemMean,			//!< 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
+	const TCHAR*		pszKeyWordHelpFile,	//!< キーワードヘルプファイルのパス名
+	int*				pLine				//!< 見つかったキーワードのキーワードヘルプファイル内での行番号
+)
 {
 #ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CDicMgr::Search" );
+	CRunningTimer cRunningTimer( "CDicMgr::Search" );
 #endif
-//	char	szDir[_MAX_PATH];
-//	long	lPathLen;
 	long	i;
-	FILE*	pFile;
-	char	szLine[LINEREADBUFSIZE];
 	char*	pszDelimit = " /// ";
 	char*	pszWork;
 	int		nRes;
@@ -71,27 +66,29 @@ BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey
 
 
 	/* 辞書ファイル */
-	if( 0 >= lstrlen( pszKeyWordHelpFile ) ){
+	if( 0 >= _tcslen( pszKeyWordHelpFile ) ){
 		return FALSE;
 	}
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	pFile = _tfopen_absini( pszKeyWordHelpFile, "r" );
-	if( NULL == pFile ){
+	FILE* pFile = _tfopen_absini( pszKeyWordHelpFile, _T("r") );
+	if(!pFile){
 		return FALSE;
 	}
-	for(int line=1 ;NULL != fgets( szLine, sizeof(szLine), pFile ); line++ ){	// 2006.04.10 fon
+
+	char	szLine[LINEREADBUFSIZE];
+	for(int line=1 ;NULL != fgets( szLine, _countof(szLine), pFile ); line++ ){	// 2006.04.10 fon
 		pszWork = strstr( szLine, pszDelimit );
 		if( NULL != pszWork && szLine[0] != ';' ){
 			*pszWork = '\0';
-			pszWork += lstrlen( pszDelimit );
+			pszWork += _tcslen( pszDelimit );
 
 			/* 最初のトークンを取得します。 */
 			pszToken = strtok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
 				nRes = my_strnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
-					for( i = 0; i < (int)lstrlen(pszWork); ++i ){
+					for( i = 0; i < (int)_tcslen(pszWork); ++i ){
 						if( pszWork[i] == '\r' ||
 							pszWork[i] == '\n' ){
 							pszWork[i] = '\0';
@@ -103,7 +100,6 @@ BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey
 					(*ppcmemKey)->SetString( pszToken );
 					//意味のセット
 					*ppcmemMean = new CMemory;
-//					(*ppcmemMean)->SetData( pszWork, lstrlen(pszWork) );
 					(*ppcmemMean)->SetString( pszWork );
 
 					fclose( pFile );
@@ -131,31 +127,31 @@ BOOL CDicMgr::Search( const char* pszKey, const int nCmpLen, CMemory** ppcmemKey
 ||
 */
 int CDicMgr::HokanSearch(
-			const char* pszKey,
-			BOOL		bHokanLoHiCase,	/*英大文字小文字を同一視する*/
-			CMemory**	ppcmemKouho,
-			int			nMaxKouho,	//Max候補数(0==無制限)
-			const char* pszKeyWordFile
+	const char* 	pszKey,
+	BOOL			bHokanLoHiCase,	//!< 英大文字小文字を同一視する
+	CMemory**		ppcmemKouho,
+	int				nMaxKouho,		//!< Max候補数(0==無制限)
+	const TCHAR*	pszKeyWordFile
 )
 {
-	FILE*	pFile;
-	char	szLine[1024];
 	int		nKeyLen;
 	int		nKouhoNum;
 	int		nRet;
 	*ppcmemKouho = NULL;
-	if( 0 >= lstrlen( pszKeyWordFile ) ){
+	if( 0 >= _tcslen( pszKeyWordFile ) ){
 		return 0;
 	}
+
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	pFile = _tfopen_absini( pszKeyWordFile, "r" );
-	if( NULL == pFile ){
+	FILE* pFile = _tfopen_absini( pszKeyWordFile, _T("r") );
+	if(!pFile){
 		return 0;
 	}
 	nKouhoNum = 0;
-	nKeyLen = lstrlen( pszKey );
-	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
+	nKeyLen = _tcslen( pszKey );
+	char	szLine[1024];
+	while( NULL != fgets( szLine, _countof(szLine), pFile ) ){
 		if( nKeyLen > (int)lstrlen( szLine ) ){
 			continue;
 		}
@@ -165,6 +161,7 @@ int CDicMgr::HokanSearch(
 		if( szLine[nKeyLen] == '\r' || szLine[nKeyLen] == '\n' ){
 			continue;
 		}
+
 		if( bHokanLoHiCase ){	/* 英大文字小文字を同一視する */
 			nRet = my_memicmp( pszKey, szLine, nKeyLen );
 		}else{
