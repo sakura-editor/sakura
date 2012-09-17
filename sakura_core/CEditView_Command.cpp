@@ -6148,8 +6148,8 @@ BOOL CEditView::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 	@date 2008.04.09 ryoji ˆ—‘ÎÛ(file_ext)‚ÆŠJ‚­‘ÎÛ(open_ext)‚Ìˆµ‚¢‚ª‹t‚É‚È‚Á‚Ä‚¢‚½‚Ì‚ğC³
 */
 BOOL CEditView::OPEN_ExtFromtoExt( BOOL bCheckOnly, BOOL bBeepWhenMiss,
-	const char* file_ext[], const char* open_ext[], int file_extno, int open_extno,
-	const char* errmes )
+	const TCHAR* file_ext[], const TCHAR* open_ext[], int file_extno, int open_extno,
+	const TCHAR* errmes )
 {
 //From Here Feb. 7, 2001 JEPRO ’Ç‰Á
 	int		i;

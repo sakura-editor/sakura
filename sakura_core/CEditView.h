@@ -32,7 +32,6 @@
 #include "CShareData.h"
 #include "CTipWnd.h"
 #include "CDicMgr.h"
-#include "CHokanMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
 #include "CEol.h"
@@ -82,23 +81,28 @@ class CEditView;
 class SAKURA_CORE_API CCaretUnderLine
 {
 public:
-	CCaretUnderLine(){
+	CCaretUnderLine()
+	{
 		m_nLockCounter = 0;
-	};
-	void Lock(){	//	表示非表示を切り替えられないようにする
+	}
+	//	表示非表示を切り替えられないようにする
+	void Lock()
+	{
 		m_nLockCounter++;
 	}
-	void UnLock(){	//	表示非表示を切り替えられるようにする
+	//	表示非表示を切り替えられるようにする
+	void UnLock()
+	{
 		m_nLockCounter--;
 		if (m_nLockCounter < 0){
 			m_nLockCounter = 0;
-		};
+		}
 	}
-	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
-	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
+	void CaretUnderLineON( BOOL );								// カーソル行アンダーラインのON
+	void CaretUnderLineOFF( BOOL );								// カーソル行アンダーラインのOFF
 	void SetView( CEditView* pcEditView ){
 		m_pcEditView = pcEditView;
-	};
+	}
 protected:
 	/* ロックカウンタ。0のときは、ロックされていない。UnLockが呼ばれすぎても負にはならない */
 	int m_nLockCounter;
@@ -122,7 +126,13 @@ public:
 	CEditView();
 	~CEditView();
 	/* 初期化系メンバ関数 */
-	BOOL Create( HINSTANCE, HWND, CEditDoc*, int,/* BOOL,*/ BOOL );
+	BOOL Create(
+		HINSTANCE	hInstance,
+		HWND		hwndParent,	//!< 親
+		CEditDoc*	pcEditDoc,	//!< 参照するドキュメント
+		int			nMyIndex,	//!< ビューのインデックス
+		BOOL		bShow		//!< 作成時に表示するかどうか
+	);
 	BOOL CreateScrollBar( void );		/* スクロールバー作成 */	// 2006.12.19 ryoji
 	void DestroyScrollBar( void );		/* スクロールバー破棄 */	// 2006.12.19 ryoji
 	/* 状態 */
@@ -133,12 +143,12 @@ public:
 		// すべてを or 演算した後に、ビット反転して最上位ビット(符号フラグ)を返す。
 		/* すなわち、いずれかがひとつでも-1(0xFFFF)なら、FALSEを返す？ */
 		return ~((DWORD)(m_nSelectLineFrom|m_nSelectLineTo|m_nSelectColmFrom|m_nSelectColmTo)) >> 31;
-	};
+	}
 	BOOL IsTextSelecting( void )	/* テキストの選択中か */
 	{
 		// ジャンプ回数を減らして、一気に判定。
 		return m_bSelectingLock|IsTextSelected();
-	};
+	}
 	//>> 2002/03/29 Azumaiya
 	//	Oct. 2, 2005 genta 挿入モードの設定・取得
 	bool IsInsMode() const;
@@ -297,8 +307,6 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_bCurSrchWordOnly;			/* 検索／置換  1==単語のみ検索 */
 
 	BOOL	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
-//	BOOL	m_bGrepRunning;
-//	HANDLE	m_hThreadGrep;	@@@ 2002.01.03 YAZAKI 使用していないため
 	HWND	m_hWnd;				/* 編集ウィンドウハンドル */
 	int		m_nViewTopLine;		/* 表示域の一番上の行(0開始) */
 	int		m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
@@ -344,7 +352,6 @@ public: /* テスト用にアクセス属性を変更 */
 	HWND			m_hwndParent;	/* 親ウィンドウハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
-//	int				m_nSettingType;
 
 	CEditDoc*		m_pcEditDoc;		/* ドキュメント */
 	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
@@ -355,12 +362,6 @@ public: /* テスト用にアクセス属性を変更 */
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
 	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
-	//	Dec. 4, 2002 genta
-	//	メニューバーへのメッセージ表示機能はCEditWndへ移管
-	//HFONT			m_hFontCaretPosInfo;/* キャレットの行桁位置表示用フォント */
-	//int			m_nCaretPosInfoCharWidth;
-	//int			m_nCaretPosInfoCharHeight;
-	//int			m_pnCaretPosInfoDx[64];	/* 文字列描画用文字幅配列 */
 	HDC				m_hdcCompatDC;		/* 再描画用コンパチブルＤＣ */
 	HBITMAP			m_hbmpCompatBMP;	/* 再描画用メモリＢＭＰ */
 	HBITMAP			m_hbmpCompatBMPOld;	/* 再描画用メモリＢＭＰ(OLD) */
@@ -375,8 +376,6 @@ public: /* テスト用にアクセス属性を変更 */
 	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */
 	HFONT			m_hFont_HAN_FAT_UL;	/* 現在のフォントハンドル */
-//	2004.02.14 Moca m_hFont_ZENは、未使用につき削除
-//	HFONT			m_hFont_ZEN;		/* 現在のフォントハンドル */
 	HFONT			m_hFontOld;
 	BOOL			m_bCommandRunning;	/* コマンドの実行中 */
 	/* 分割状態 */
@@ -540,10 +539,10 @@ protected:
 	void ExecCmd(const char*, const int);						// 子プロセスの標準出力をリダイレクトする	//2006.12.03 maru 引数の拡張
 	void AddToCmdArr( const char* );
 	BOOL ChangeCurRegexp(bool bRedrawIfChanged= true);			// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
-	void SendStatusMessage( const char* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
-	void SendStatusMessage2( const char* msg );					// Jul. 9, 2005 genta
+	void SendStatusMessage( const TCHAR* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
+	void SendStatusMessage2( const TCHAR* msg );					// Jul. 9, 2005 genta
 	LRESULT SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode);	/* 再変換用構造体を設定する 2002.04.09 minfu */
-	LRESULT SetSelectionFromReonvert(PRECONVERTSTRING pReconv, bool bUnicode);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
+	LRESULT SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool bUnicode);				/* 再変換用構造体の情報を元に選択範囲を変更する 2002.04.09 minfu */
 
 public: /* テスト用にアクセス属性を変更 */
 	/* IDropTarget実装 */
@@ -556,22 +555,22 @@ public: /* テスト用にアクセス属性を変更 */
 	CLIPFORMAT GetAvailableClipFormat( LPDATAOBJECT pDataObject );
 	DWORD TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect );
 	bool IsDragSource( void );
-protected:
-//	LPDATAOBJECT	m_pDataObject;
-//	REFIID			m_owniid;
 
 	/* ファイル操作系 */
 	void Command_FILENEW( void );				/* 新規作成 */
 	/* ファイルを開く */
 	// Oct. 2, 2001 genta マクロ用に機能拡張
 	// Mar. 30, 2003 genta 引数追加
-	void Command_FILEOPEN( const char *filename = NULL,
-		ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+	void Command_FILEOPEN(
+		const char *filename = NULL,
+		ECodeType nCharCode = CODE_AUTODETECT,
+		BOOL bReadOnly = FALSE
+	);
 	
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
 	BOOL Command_FILESAVE( bool warnbeep = true, bool askname = true );	
-	BOOL Command_FILESAVEAS_DIALOG();			/* 名前を付けて保存 */
-	BOOL Command_FILESAVEAS( const char *filename );			/* 名前を付けて保存 */
+	BOOL Command_FILESAVEAS_DIALOG();							/* 名前を付けて保存 */
+	BOOL Command_FILESAVEAS( const char* filename );			/* 名前を付けて保存 */
 	BOOL Command_FILESAVEALL( void );	/* 全て上書き保存 */ // Jan. 23, 2005 genta
 	void Command_FILECLOSE( void );				/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
 	/* 閉じて開く*/
@@ -579,7 +578,8 @@ protected:
 	void Command_FILECLOSE_OPEN( const char *filename = NULL,
 		ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
 	
-	void Command_FILE_REOPEN( ECodeType, int );	/* 再オープン */	//Dec. 4, 2002 genta 引数追加
+	void Command_FILE_REOPEN( ECodeType nCharCode, int bNoConfirm );	/* 再オープン */	//Dec. 4, 2002 genta 引数追加
+
 	void Command_PRINT( void );					/* 印刷*/
 	void Command_PRINT_PREVIEW( void );			/* 印刷プレビュー*/
 	void Command_PRINT_PAGESETUP( void );		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -637,10 +637,11 @@ protected:
 		int			nDelLen,
 		CMemory*	pcMem,
 		COpe*		pcOpe		/* 編集操作要素 COpe */
-//		BOOL		bRedraw,
-//		BOOL		bRedraw2
 	);
-	void DeleteData( BOOL bRedraw );/* 現在位置のデータ削除 */
+
+	/* 現在位置のデータ削除 */
+	void DeleteData( BOOL bRedraw );
+
 	/* 現在位置にデータを挿入 */
 	void InsertData_CEditView(
 		int			nX,
@@ -657,25 +658,25 @@ protected:
 
 	/* カーソル移動系 */
 	//	Oct. 24, 2001 genta 機能拡張のため引数追加
-	int Command_UP( int, BOOL, int line = 0 );			/* カーソル上移動 */
-	int Command_DOWN( int, BOOL );			/* カーソル下移動 */
+	int Command_UP( int bSelect, BOOL bRepeat, int line = 0 );			/* カーソル上移動 */
+	int Command_DOWN( int bSelect, BOOL bRepeat );						/* カーソル下移動 */
 	int  Command_LEFT( int, BOOL );			/* カーソル左移動 */
 	void Command_RIGHT( int, int, BOOL );	/* カーソル右移動 */
-	void Command_UP2( int );				/* カーソル上移動（２行づつ） */
-	void Command_DOWN2( int );				/* カーソル下移動（２行づつ） */
-	void Command_WORDLEFT( int );			/* 単語の左端に移動 */
-	void Command_WORDRIGHT( int );			/* 単語の右端に移動 */
+	void Command_UP2( int bSelect );				/* カーソル上移動（２行づつ） */
+	void Command_DOWN2( int bSelect );				/* カーソル下移動（２行づつ） */
+	void Command_WORDLEFT( int bSelect );			/* 単語の左端に移動 */
+	void Command_WORDRIGHT( int bSelect );			/* 単語の右端に移動 */
 	//	Oct. 29, 2001 genta マクロ向け機能拡張
 	void Command_GOLINETOP( int bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
-	void Command_GOLINEEND( int, int );		/* 行末に移動（折り返し単位） */
+	void Command_GOLINEEND( int bSelect, int );		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */
-	void Command_HalfPageUp( int );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	void Command_HalfPageDown( int );		//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	void Command_1PageUp( int );			//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
-	void Command_1PageDown( int );			//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-	void Command_GOFILETOP( int );			/* ファイルの先頭に移動 */
-	void Command_GOFILEEND( int );			/* ファイルの最後に移動 */
+	void Command_HalfPageUp( int bSelect );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	void Command_HalfPageDown( int bSelect );		//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	void Command_1PageUp( int bSelect );			//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	void Command_1PageDown( int bSelect );			//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	void Command_GOFILETOP( int bSelect );			/* ファイルの先頭に移動 */
+	void Command_GOFILEEND( int bSelect );			/* ファイルの最後に移動 */
 	void Command_CURLINECENTER( void );		/* カーソル行をウィンドウ中央へ */
 	void Command_JUMPHIST_PREV(void);		// 移動履歴: 前へ
 	void Command_JUMPHIST_NEXT(void);		// 移動履歴: 次へ
@@ -709,7 +710,7 @@ protected:
 //	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
 	//void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
 	void Command_INSTEXT( BOOL, const char*, int, BOOL, BOOL bLinePaste = FALSE ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
-	void Command_ADDTAIL( const char*, int );		/* 最後にテキストを追加 */
+	void Command_ADDTAIL( const char* pszData, int nDataLen );		/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
 	void Command_COPYTAG( void );					/* このファイルのパス名とカーソル位置をコピー */
@@ -720,28 +721,16 @@ protected:
 
 
 	/* データ置換 削除&挿入にも使える */
-void ReplaceData_CEditView(
-	int			nDelLineFrom,		/* 削除範囲行  From レイアウト行番号 */
-	int			nDelColmFrom,		/* 削除範囲位置From レイアウト行桁位置 */
-	int			nDelLineTo,			/* 削除範囲行  To   レイアウト行番号 */
-	int			nDelColmTo,			/* 削除範囲位置To   レイアウト行桁位置 */
-	CMemory*	pcmemCopyOfDeleted,	/* 削除されたデータのコピー(NULL可能) */
-	const char*	pInsData,			/* 挿入するデータ */
-	int			nInsDataLen,		/* 挿入するデータの長さ */
-//	int*		pnAddLineNum,		/* 再描画ヒント レイアウト行の増減 */
-//	int*		pnModLineFrom,		/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-//	int*		pnModLineTo,		/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
-//	BOOL		bDispSSTRING,		/* シングルクォーテーション文字列を表示する */
-//	BOOL		bDispWSTRING,		/* ダブルクォーテーション文字列を表示する */
-//	int			nX,
-//	int			nY,
-//	const char*	pData,
-//	int			nDataLen,
-//	int*		pnNewLine,	/* 挿入された部分の次の位置の行 */
-//	int*		pnNewPos,	/* 挿入された部分の次の位置のデータ位置 */
-//	COpe*		pcOpe,		/* 編集操作要素 COpe */
-	BOOL		bRedraw
-);
+	void ReplaceData_CEditView(
+		int			nDelLineFrom,		// 削除範囲行  From レイアウト行番号
+		int			nDelColmFrom,		// 削除範囲位置From レイアウト行桁位置
+		int			nDelLineTo,			// 削除範囲行  To   レイアウト行番号
+		int			nDelColmTo,			// 削除範囲位置To   レイアウト行桁位置
+		CMemory*	pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
+		const char*	pInsData,			// 挿入するデータ
+		int			nInsDataLen,		// 挿入するデータの長さ
+		BOOL		bRedraw
+	);
 
 	/* 挿入系 */
 	void Command_INS_DATE( void );	//日付挿入
@@ -778,7 +767,7 @@ void ReplaceData_CEditView(
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
 	void Command_SEARCH_NEXT( bool, BOOL, HWND, const char* );/* 次を検索 */
-	void Command_SEARCH_PREV( BOOL, HWND );				/* 前を検索 */
+	void Command_SEARCH_PREV( BOOL bReDraw, HWND );		/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
 	void Command_REPLACE_ALL();							/* すべて置換(実行) */
@@ -792,7 +781,7 @@ void ReplaceData_CEditView(
 	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */
 	void Command_JUMP( void );							/* 指定行ヘジャンプ */
 // From Here 2001.12.03 hor
-	BOOL Command_FUNCLIST( int ,int=OUTLINE_DEFAULT );	/* アウトライン解析 */ // 20060201 aroka
+	BOOL Command_FUNCLIST( int nAction ,int nOutlineType = OUTLINE_DEFAULT );	/* アウトライン解析 */ // 20060201 aroka
 // To Here 2001.12.03 hor
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
@@ -933,7 +922,7 @@ void ReplaceData_CEditView(
 	void AddCurrentLineToHistory(void);	//現在行を履歴に追加する
 
 	
-	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const char* [], const char* [], int, int, const char* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
+	BOOL OPEN_ExtFromtoExt( BOOL, BOOL, const TCHAR* [], const TCHAR* [], int, int, const TCHAR* ); // 指定拡張子のファイルに対応するファイルを開く補助関数 // 2003.08.12 Moca
 
 // 2002/07/22 novice
 	void ShowCaret_( HWND hwnd );
@@ -952,7 +941,7 @@ private:
 
 	//ATOK専用再変換のAPI
 	HMODULE m_hAtokModule;
-	BOOL (WINAPI *AT_ImmSetReconvertString)( HIMC , int ,PRECONVERTSTRING , DWORD  );
+	BOOL (WINAPI *m_AT_ImmSetReconvertString)( HIMC , int ,PRECONVERTSTRING , DWORD  );
 	
 	bool	m_bUnderLineON;
 	bool	m_bCaretShowFlag;

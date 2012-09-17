@@ -2546,7 +2546,7 @@ void CEditView::Command_Reconvert(void)
 		// ATOK‚ªŽg‚¦‚é‚©‚Ç‚¤‚©
 		TCHAR sz[256];
 		ImmGetDescription(GetKeyboardLayout(0),sz,_countof(sz));
-		if ( (strncmp(sz,_T("ATOK"),4) == 0) && (NULL != AT_ImmSetReconvertString) ){
+		if ( (strncmp(sz,_T("ATOK"),4) == 0) && (NULL != m_AT_ImmSetReconvertString) ){
 			bUseUnicodeATOK = true;
 		}else{
 			//‘Î‰žIME‚È‚µ
@@ -2576,7 +2576,7 @@ void CEditView::Command_Reconvert(void)
 	
 	//•ÏŠ·”ÍˆÍ‚Ì’²®
 	if(bUseUnicodeATOK){
-		(*AT_ImmSetReconvertString)(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize);
+		(*m_AT_ImmSetReconvertString)(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_QUERYRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 	}
@@ -2586,7 +2586,7 @@ void CEditView::Command_Reconvert(void)
 	
 	//Ä•ÏŠ·ŽÀs
 	if(bUseUnicodeATOK){
-		(*AT_ImmSetReconvertString)(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize);
+		(*m_AT_ImmSetReconvertString)(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize);
 	}else{
 		::ImmSetCompositionString(hIMC, SCS_SETRECONVERTSTRING, pReconv, pReconv->dwSize, NULL,0);
 	}
