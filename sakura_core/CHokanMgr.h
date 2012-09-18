@@ -77,7 +77,6 @@ public:
 	int				m_nKouhoNum;
 
 	int				m_nCurKouhoIdx;
-	char*			m_pszCurKouho;
 
 	POINT			m_poWin;
 	int				m_nWinHeight;
