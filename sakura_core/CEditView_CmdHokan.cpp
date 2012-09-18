@@ -19,7 +19,6 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "CEditView.h"
 #include "CEditDoc.h"
 #include "Debug.h"
@@ -27,6 +26,7 @@
 #include "charcode.h"  // 2006.06.28 rastiv
 #include "CDocLineMgr.h"	// 2008.10.29 syat
 #include "my_icmp.h"		// 2008.10.29 syat
+#include "sakura_rc.h"
 
 /*!
 	@brief コマンド受信前補完処理
@@ -57,9 +57,7 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 */
 void CEditView::PostprocessCommand_hokan(void)
 {
-	if( m_pShareData->m_Common.m_bUseHokan
- 	 && FALSE == m_bExecutingKeyMacro	/* キーボードマクロの実行中 */
-	){
+	if( m_pShareData->m_Common.m_bUseHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
 		CMemory	cmemData;
 
 		/* カーソル直前の単語を取得 */
@@ -137,8 +135,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 			m_bHokan = FALSE;
 		}
 		// 2004.05.14 Moca CHokanMgr::Search側で改行を削除するようにし、直接書き換えるのをやめた
-//		pszKouhoWord = cmemHokanWord.GetPtr( &nKouhoWordLen );
-//		pszKouhoWord[nKouhoWordLen] = '\0';
+
 		Command_WordDeleteToStart();
 		Command_INSTEXT( TRUE, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE );
 	}
@@ -167,18 +164,18 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 */
 void CEditView::Command_HOKAN( void )
 {
-	if (m_pShareData->m_Common.m_bUseHokan == FALSE){
+	if(!m_pShareData->m_Common.m_bUseHokan){
 		m_pShareData->m_Common.m_bUseHokan = TRUE;
 	}
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
 	if( m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
-		0 == lstrlen( m_pcEditDoc->GetDocumentAttribute().m_szHokanFile 
-	) ){
-		ErrorBeep();
+		_T('\0') == m_pcEditDoc->GetDocumentAttribute().m_szHokanFile[0]
+	){
+		ConfirmBeep();
 		if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNOCANCEL | MB_ICONEXCLAMATION | MB_APPLMODAL | MB_TOPMOST, GSTR_APPNAME,
-			"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
+			_T("補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* タイプ別設定 プロパティシート */
 			if( !m_pcEditDoc->OpenPropertySheetTypes( 2, m_pcEditDoc->GetDocumentType() ) ){
@@ -193,7 +190,8 @@ retry:;
 	if( 0 < GetLeftWord( &cmemData, 100 ) ){
 		ShowHokanMgr( cmemData, TRUE );
 	}else{
-		ErrorBeep();
+		InfoBeep(); //2010.04.03 Error→Info
+		SendStatusMessage(_T("補完対象がありません")); // 2010.05.29 ステータスで表示
 		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;
@@ -209,23 +207,25 @@ retry:;
 	@author Moca
 	@date 2003.06.25
 
-	@date 2005/01/10 genta CEditView_Commandから移動
+	@date 2005/01/10 genta  CEditView_Commandから移動
+	@date 2007/10/17 kobake 読みやすいようにネストを浅くしました。
 */
 int CEditView::HokanSearchByFile(
-		const char* pszKey,
-		BOOL		bHokanLoHiCase,	//!< 英大文字小文字を同一視する
-		CMemory**	ppcmemKouho,	//!< [IN/OUT] 候補
-		int			nKouhoNum,		//!< ppcmemKouhoのすでに入っている数
-		int			nMaxKouho		//!< Max候補数(0==無制限)
+	const char* 	pszKey,			//!< [in]
+	BOOL			bHokanLoHiCase,	//!< [in] 英大文字小文字を同一視する
+	CMemory**		ppcmemKouho,	//!< [in,out] 候補
+	int				nKouhoNum,		//!< [in] ppcmemKouhoのすでに入っている数
+	int				nMaxKouho		//!< [in] Max候補数(0==無制限)
 ){
 	const int nKeyLen = lstrlen( pszKey );
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	int i, j, nWordLen, nLineLen, nRet, nCharSize, nWordEnd;
-	int nCurX, nCurY; // 物理カーソル位置
+
 	const char* pszLine;
 	const char* word;
-	nCurX = m_nCaretPosX_PHY;
-	nCurY = m_nCaretPosY_PHY;
+
+	int nCurX = m_nCaretPosX_PHY;	//物理カーソル位置
+	int nCurY = m_nCaretPosY_PHY;	//物理カーソル位置
 	bool bKeyStartWithMark;			//キーが記号で始まるか
 	bool bWordStartWithMark;		//候補が記号で始まるか
 
@@ -267,7 +267,6 @@ int CEditView::HokanSearchByFile(
 
 				// 文字種類取得
 				int kindCur = CDocLineMgr::WhatKindOfChar( pszLine, nLineLen, j );
-
 				// 全角記号は候補に含めない（ただしヽヾゝゞ仝々〆〇ー濁点は許可）
 				if ( kindCur == CK_MBC_SPACE || kindCur == CK_MBC_KIGO || kindCur == CK_MBC_SKIGO ){
 					break;
@@ -291,62 +290,66 @@ int CEditView::HokanSearchByFile(
 			}
 			if( j >= nLineLen ) nWordEnd = nLineLen;
 
-			if( nWordLen > 1020 ){ // CDicMgr等の制限により長すぎる単語は無視する
+			// CDicMgr等の制限により長すぎる単語は無視する
+			if( nWordLen > 1020 ){
 				continue;
 			}
-			if( nKeyLen <= nWordLen ){
-				if( bHokanLoHiCase ){
-					nRet = my_memicmp( pszKey, word, nKeyLen );		// 2008.10.29 syat memicmpがマルチバイト文字に対し不正な結果をかえすため修正
-				}else{
-					nRet = memcmp( pszKey, word, nKeyLen );
-				}
-				if( 0 == nRet ){
-					// カーソル位置の単語は候補からはずす
-					if( nCurY == i && nCurX <= nWordEnd && nWordEnd - nWordLen <= nCurX ){	// 2010.02.20 syat 修正// 2008.11.09 syat 修正
-						continue;
-					}
-					if( NULL == *ppcmemKouho ){
-						*ppcmemKouho = new CMemory;
-						(*ppcmemKouho)->SetString( word, nWordLen );
-						(*ppcmemKouho)->AppendString( "\n" );
-						++nKouhoNum;
+			if( nKeyLen > nWordLen ) continue;
+
+			// キーと比較する
+			if( bHokanLoHiCase ){
+				nRet = my_memicmp( pszKey, word, nKeyLen );		// 2008.10.29 syat memicmpがマルチバイト文字に対し不正な結果をかえすため修正
+			}else{
+				nRet = memcmp( pszKey, word, nKeyLen );
+			}
+			if( 0 != nRet ) continue;
+
+			// カーソル位置の単語は候補からはずす
+			if( nCurY == i && nCurX <= nWordEnd && nWordEnd - nWordLen <= nCurX ){	// 2010.02.20 syat 修正// 2008.11.09 syat 修正
+				continue;
+			}
+
+			if( NULL == *ppcmemKouho ){
+				*ppcmemKouho = new CMemory;
+				(*ppcmemKouho)->SetString( word, nWordLen );
+				(*ppcmemKouho)->AppendString( "\n" );
+				++nKouhoNum;
+			}
+			else{
+				// 重複していたら追加しない
+				int nLen;
+				const char* ptr = (*ppcmemKouho)->GetStringPtr( &nLen );
+				int nPosKouho;
+				nRet = 1;
+				// 2008.07.23 nasukoji	大文字小文字を同一視の場合でも候補の振るい落としは完全一致で見る
+				if( nWordLen < nLen ){
+					if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
+						nRet = 0;
 					}else{
-						// 重複していたら追加しない
-						int nLen;
-						const char* ptr = (*ppcmemKouho)->GetStringPtr( &nLen );
-						int nPosKouho;
-						nRet = 1;
-						// 2008.07.23 nasukoji	大文字小文字を同一視の場合でも候補の振るい落としは完全一致で見る
-						if( nWordLen < nLen ){
-							if( '\n' == ptr[nWordLen] && 0 == memcmp( ptr, word, nWordLen )  ){
-								nRet = 0;
-							}else{
-								int nPosKouhoMax = nLen - nWordLen - 1;
-								for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-									if( ptr[nPosKouho] == '\n' ){
-										if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
-											if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-												nRet = 0;
-												break;
-											}else{
-												nPosKouho += nWordLen;
-											}
-										}
+						const int nPosKouhoMax = nLen - nWordLen - 1;
+						for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
+							if( ptr[nPosKouho] == '\n' ){
+								if( ptr[nPosKouho + nWordLen + 1] == '\n' ){
+									if( 0 == memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
+										nRet = 0;
+										break;
+									}else{
+										nPosKouho += nWordLen;
 									}
 								}
 							}
 						}
-						if( 0 == nRet ){
-							continue;
-						}
-						(*ppcmemKouho)->AppendString( word, nWordLen );
-						(*ppcmemKouho)->AppendString( "\n", 1 );
-						++nKouhoNum;
-					}
-					if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
-						return nKouhoNum;
 					}
 				}
+				if( 0 == nRet ){
+					continue;
+				}
+				(*ppcmemKouho)->AppendString( word, nWordLen );
+				(*ppcmemKouho)->AppendString( "\n", 1 );
+				++nKouhoNum;
+			}
+			if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
+				return nKouhoNum;
 			}
 		}
 	}
