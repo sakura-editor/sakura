@@ -80,7 +80,6 @@ CHokanMgr::CHokanMgr()
 	m_pcmemKouho = NULL;
 	m_nKouhoNum = 0;;
 	m_nCurKouhoIdx = -1;
-	m_pszCurKouho = NULL;
 	m_bTimerFlag = TRUE;
 }
 
@@ -91,11 +90,6 @@ CHokanMgr::~CHokanMgr()
 		m_pcmemKouho = NULL;
 	}
 	m_nKouhoNum = 0;;
-	if( NULL != m_pszCurKouho ){
-		delete [] m_pszCurKouho;
-		m_pszCurKouho = NULL;
-	}
-
 }
 
 /* モードレスダイアログの表示 */
