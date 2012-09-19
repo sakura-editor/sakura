@@ -51,14 +51,14 @@ public:
 		m_nLockCounter--;
 		if (m_nLockCounter < 0){
 			m_nLockCounter = 0;
-		};
+		}
 	}
 	void CaretUnderLineON( bool );	// カーソル行アンダーラインのON
 	void CaretUnderLineOFF( bool );	// カーソル行アンダーラインのOFF
-	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; };
-	void SetVertLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bVertLineDoNotOFF = flag; };
-	inline bool GetUnderLineDoNotOFF( )const { return m_bUnderLineDoNotOFF; };
-	inline bool GetVertLineDoNotOFF( )const { return m_bVertLineDoNotOFF; };
+	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; }
+	void SetVertLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bVertLineDoNotOFF = flag; }
+	inline bool GetUnderLineDoNotOFF( )const { return m_bUnderLineDoNotOFF; }
+	inline bool GetVertLineDoNotOFF( )const { return m_bVertLineDoNotOFF; }
 private:
 	/* ロックカウンタ。0のときは、ロックされていない。UnLockが呼ばれすぎても負にはならない */
 	int m_nLockCounter;

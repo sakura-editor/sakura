@@ -905,7 +905,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 //		case 7: _tcscat( pFuncName, _T(" 名前空間") );break;
 		
 		case 8: _tcscat( pFuncName, _T(" インターフェース") );break; // 2007.05.26 genta : "__interface"
-		};
+		}
 //		}
 		/* 該当クラス名のアイテムの子として、メソッドのアイテムを登録 */
 		tvis.hParent = htiClass;
@@ -1961,7 +1961,7 @@ BOOL CDlgFuncList::OnCbnSelChange( HWND hwndCtl, int wID )
 			SortTree(::GetDlgItem( GetHwnd() , IDC_TREE_FL),TVI_ROOT);
 		}
 		return TRUE;
-	};
+	}
 	return FALSE;
 
 }

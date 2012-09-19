@@ -150,7 +150,7 @@ public:
 			{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 		};
 		return macroFuncInfoNotCommandArr;
-	};
+	}
 	//ä÷êîÇèàóùÇ∑ÇÈ
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{

@@ -224,7 +224,7 @@ public:
 	//操作
 public:
 	virtual int AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* icon, bool doRegister );//コマンドを追加する
-	int 	GetCommandCount()	{ return m_nCommandCount; };			// コマンド数を返す	2010/7/4 Uchi
+	int 	GetCommandCount()	{ return m_nCommandCount; }			// コマンド数を返す	2010/7/4 Uchi
 
 protected:
 	bool ReadPluginDefCommon( CDataProfile *cProfile );					//プラグイン定義ファイルのCommonセクションを読み込む

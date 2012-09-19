@@ -46,7 +46,7 @@ public:
 			::DeleteObject( m_hFont );
 		}
 		m_hFont = ::CreateFontIndirect( lf );
-	};
+	}
 
 protected: // 2002/2/10 aroka アクセス権変更
 	TCHAR*		m_pszClassName;	/* Mutex作成用・ウィンドウクラス名 */
