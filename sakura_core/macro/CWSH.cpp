@@ -78,7 +78,7 @@ public:
 		cout << "GetLCID" << endl;
 #endif
 		return E_NOTIMPL; //システムデフォルトを使用
-	};
+	}
 
 	virtual HRESULT STDMETHODCALLTYPE GetItemInfo( 
 	    /* [in] */ LPCOLESTR pstrName,
@@ -109,7 +109,7 @@ public:
 			}
 		}
 		return TYPE_E_ELEMENTNOTFOUND;
-	};
+	}
 
 	virtual HRESULT STDMETHODCALLTYPE GetDocVersionString( 
 	    /* [out] */ BSTR *pbstrVersion) 
@@ -118,7 +118,7 @@ public:
 		cout << "GetDocVersionString" << endl;
 #endif
 		return E_NOTIMPL; 
-	};
+	}
 
 	virtual HRESULT STDMETHODCALLTYPE OnScriptTerminate( 
 	    /* [in] */ const VARIANT *pvarResult,
@@ -128,7 +128,7 @@ public:
 		cout << "OnScriptTerminate" << endl;
 #endif
 		return S_OK; 
-	};
+	}
 
 	virtual HRESULT STDMETHODCALLTYPE OnStateChange( 
 	    /* [in] */ SCRIPTSTATE ssScriptState) 
@@ -137,7 +137,7 @@ public:
 		cout << "OnStateChange" << endl;
 #endif
 		return S_OK; 
-	};
+	}
 
 	//	Nov. 3, 2002 鬼
 	//	エラー行番号表示対応
@@ -165,21 +165,21 @@ public:
 			SysFreeString(Info.bstrHelpFile);
 		}
 		return S_OK;
-	};
+	}
 
 	virtual HRESULT STDMETHODCALLTYPE OnEnterScript() {
 #ifdef TEST
 		cout << "OnEnterScript" << endl;
 #endif
 		return S_OK; 
-	};
+	}
 
 	virtual HRESULT STDMETHODCALLTYPE OnLeaveScript() {
 #ifdef TEST
 		cout << "OnLeaveScript" << endl;
 #endif
 		return S_OK; 
-	};
+	}
 
 	//	Sep. 15, 2005 FILE IActiveScriptSiteWindow実装
 	virtual HRESULT __stdcall GetWindow(
@@ -194,7 +194,7 @@ public:
 	    /* [in] */ BOOL fEnable)
 	{
 		return S_OK;
-	};
+	}
 };
 
 //implementation

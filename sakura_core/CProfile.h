@@ -62,7 +62,7 @@ class CProfile
 
 public:
 	CProfile() {}
-	~CProfile() {};
+	~CProfile() {}
 	void Init( void );
 	bool IsReadingMode( void ) { return m_bRead; }
 	void SetReadingMode( void ) { m_bRead = true; }

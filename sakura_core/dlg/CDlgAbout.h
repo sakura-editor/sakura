@@ -27,8 +27,8 @@
 class CUrlWnd
 {
 public:
-	CUrlWnd() { m_hWnd = NULL; m_hFont = NULL; m_bHilighted = FALSE; m_pOldProc = NULL; };
-	virtual ~CUrlWnd() { ; };
+	CUrlWnd() { m_hWnd = NULL; m_hFont = NULL; m_bHilighted = FALSE; m_pOldProc = NULL; }
+	virtual ~CUrlWnd() { ; }
 	BOOL SetSubclassWindow( HWND hWnd );
 	HWND GetHwnd() const{ return m_hWnd; }
 protected:

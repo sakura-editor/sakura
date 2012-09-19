@@ -210,7 +210,7 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...){         va_lis
 int TopCustomMessage_A(HWND hwnd, UINT uType, LPCSTR format, ...){        va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, uType | MB_TOPMOST      , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 
 //作者に教えて欲しいエラー
-int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("sakuraw: 作者に教えて欲しいエラー"), format, p);va_end(p);return n;};
+int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("sakuraw: 作者に教えて欲しいエラー"), format, p);va_end(p);return n;}
 
 
 

@@ -98,16 +98,16 @@ public:
 		m_nIndex += m_nIndex_Delta;
 	}	//	ポインタをずらす
 	
-	CLogicInt	getIndex()			const {	return m_nIndex;	};
-	CLayoutInt	getColumn()			const {	return m_nColumn;	};
-	CLogicInt	getIndexDelta()		const {	return m_nIndex_Delta;	};
-	CLayoutInt	getColumnDelta()	const {	return m_nColumn_Delta;	};
+	CLogicInt	getIndex()			const {	return m_nIndex;	}
+	CLayoutInt	getColumn()			const {	return m_nColumn;	}
+	CLogicInt	getIndexDelta()		const {	return m_nIndex_Delta;	}
+	CLayoutInt	getColumnDelta()	const {	return m_nColumn_Delta;	}
 
 	//	2002.10.07 YAZAKI
-	const wchar_t getCurrentChar(){	return m_pLine[m_nIndex];	};
+	const wchar_t getCurrentChar(){	return m_pLine[m_nIndex];	}
 	//	Jul. 20, 2003 genta 追加
 	//	memcpyをするのにポインタがとれないと面倒
-	const wchar_t* getCurrentPos(){	return m_pLine + m_nIndex;	};
+	const wchar_t* getCurrentPos(){	return m_pLine + m_nIndex;	}
 
 
 private:

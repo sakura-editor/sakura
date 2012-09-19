@@ -36,7 +36,7 @@ public:
 	~COpeBlk();
 
 	//インターフェース
-	int GetNum() const{ return (int)m_ppCOpeArr.size(); };	//!< 操作の数を返す
+	int GetNum() const{ return (int)m_ppCOpeArr.size(); }	//!< 操作の数を返す
 	bool AppendOpe( COpe* pcOpe );							//!< 操作の追加
 	COpe* GetOpe( int nIndex );								//!< 操作を返す
 	void AddRef() { m_refCount++; }	//!< 参照カウンタ増加

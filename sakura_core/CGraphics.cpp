@@ -9,7 +9,7 @@
 class CGDIStock
 {
 public:
-	CGDIStock(){};
+	CGDIStock(){}
 	~CGDIStock()
 	{
 		while(!m_vObjects.empty()){

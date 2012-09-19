@@ -61,7 +61,7 @@ public:
 	//ƒRƒ}ƒ“ƒhî•ñ‚ğæ“¾‚·‚é
 	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoArr; }
 	//ŠÖ”î•ñ‚ğæ“¾‚·‚é
-	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoNotCommandArr; };
+	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoNotCommandArr; }
 	//ŠÖ”‚ğˆ—‚·‚é
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
