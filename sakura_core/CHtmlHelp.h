@@ -42,7 +42,7 @@
 */
 class SAKURA_CORE_API CHtmlHelp : public CDllHandler {
 public:
-	CHtmlHelp(){};
+	CHtmlHelp(){}
 	virtual ~CHtmlHelp();
 
 	//	HtmlHelp ‚ÌEntry Point

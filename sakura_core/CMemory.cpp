@@ -2481,7 +2481,7 @@ void CMemory::AUTOToSJIS( void )
 	case CODE_UTF8:			UTF8ToSJIS();break;		/* UTF-8→SJISコード変換 */
 	case CODE_UTF7:			UTF7ToSJIS();break;		/* UTF-7→SJISコード変換 */
 	case CODE_UNICODEBE:	UnicodeBEToSJIS();break;/* UnicodeBE→SJISコード変換 */
-	};
+	}
 	return;
 }
 

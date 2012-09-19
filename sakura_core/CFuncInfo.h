@@ -36,7 +36,7 @@ class CFuncInfo {
 		//	2003.06.27 Moca
 		inline bool IsAddClipText( void ){
 			return ( FUNCINFO_NOCLIPTEXT != ( m_nInfo & FUNCINFO_NOCLIPTEXT ) );
-		};
+		}
 
 //	private:
 		int			m_nFuncLineCRLF;	/*!< ŠÖ”‚Ì‚ ‚és(CRLF’PˆÊ) */

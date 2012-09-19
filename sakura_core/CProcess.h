@@ -27,7 +27,7 @@ class SAKURA_CORE_API CProcess {
 public:
 	CProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );
 	bool Run();
-	virtual ~CProcess(){};
+	virtual ~CProcess(){}
 protected:
 	CProcess();
 	virtual bool InitializeProcess();

@@ -40,10 +40,10 @@ public:
 
 	const char* getLineComment( const int n ){
 		return m_pszLineComment[n];
-	};
+	}
 	int getLineCommentPos( const int n ) const {
 		return m_nLineCommentPos[n];
-	};
+	}
 
 private:
 	char	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	/* 行コメントデリミタ */

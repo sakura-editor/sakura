@@ -80,7 +80,7 @@ public:
 protected:
 	/* 仮想関数 */
 	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
-	virtual void PreviCreateWindow( void ){return;};/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
+	virtual void PreviCreateWindow( void ){return;}/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
 	virtual void AfterCreateWindow( void ){::ShowWindow( m_hWnd, SW_SHOW );}/* ウィンドウ作成後の処理 ( virtual )*/
 
 	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */

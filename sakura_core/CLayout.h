@@ -37,11 +37,11 @@ public:
 	void DUMP( void );
 	
 	/* m_nOffsetで補正したあとの文字列を得る */
-	char*	GetPtr( void ) const {	return m_pCDocLine->m_pLine->GetStringPtr() + m_nOffset;	};
-	int		GetLengthWithEOL( void ) const {	return m_nLength;	};	//	ただしEOLは常に1文字とカウント？？
-	int		GetLengthWithoutEOL( void ) const {	return m_nLength - (m_cEol.GetLen() ? 1 : 0);	};
-	int		GetLength( void ) const {	return m_nLength;	};	//	CMemoryIterator用（EOL含む）
-	int		GetIndent( void ) const {	return m_nIndent;	};	//	CMemoryIterator用
+	char*	GetPtr( void ) const {	return m_pCDocLine->m_pLine->GetStringPtr() + m_nOffset;	}
+	int		GetLengthWithEOL( void ) const {	return m_nLength;	}	//	ただしEOLは常に1文字とカウント？？
+	int		GetLengthWithoutEOL( void ) const {	return m_nLength - (m_cEol.GetLen() ? 1 : 0);	}
+	int		GetLength( void ) const {	return m_nLength;	}	//	CMemoryIterator用（EOL含む）
+	int		GetIndent( void ) const {	return m_nIndent;	}	//	CMemoryIterator用
 
 public:
 	CLayout*		m_pPrev;

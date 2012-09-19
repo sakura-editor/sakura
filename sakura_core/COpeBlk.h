@@ -36,7 +36,7 @@ public:
 	~COpeBlk();
 
 	//インターフェース
-	int GetNum() const{ return m_nCOpeArrNum; };	//!< 操作の数を返す
+	int GetNum() const{ return m_nCOpeArrNum; }	//!< 操作の数を返す
 	int AppendOpe( COpe* pcOpe );							//!< 操作の追加
 	COpe* GetOpe( int nIndex );								//!< 操作を返す
 

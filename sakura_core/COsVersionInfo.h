@@ -44,7 +44,7 @@ public:
 		memset( (void *)&m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
 		m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
 		m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
-	};
+	}
 	
 	/* OsVersionが取得できたか？ */
 	BOOL GetVersion(){
@@ -54,7 +54,7 @@ public:
 	/* 使用しているOS（Windows）が、動作対象か確認する */
 	BOOL OsIsEnableVersion(){
 		return !( m_cOsVersionInfo.dwMajorVersion < 4 );
-	};
+	}
 	
 	
 	// From Here Jul. 5, 2001 shoji masami

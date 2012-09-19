@@ -76,15 +76,15 @@ private:
 
 // member accessor method
 public:
-	bool IsNoWindow() const {return m_bNoWindow;};
-	bool IsWriteQuit() const {return m_bWriteQuit;};	// 2007.05.19 ryoji sakuext—p‚É’Ç‰Á
-	bool IsGrepMode() const {return m_bGrepMode;};
-	bool IsGrepDlg() const {return m_bGrepDlg;};
-	bool IsDebugMode() const {return m_bDebugMode;};
-	bool IsReadOnly() const {return m_bReadOnly;};
+	bool IsNoWindow() const {return m_bNoWindow;}
+	bool IsWriteQuit() const {return m_bWriteQuit;}	// 2007.05.19 ryoji sakuext—p‚É’Ç‰Á
+	bool IsGrepMode() const {return m_bGrepMode;}
+	bool IsGrepDlg() const {return m_bGrepDlg;}
+	bool IsDebugMode() const {return m_bDebugMode;}
+	bool IsReadOnly() const {return m_bReadOnly;}
 	bool GetEditInfo(EditInfo* fi) const { *fi = m_fi; return true; }
 	bool GetGrepInfo(GrepInfo* gi) const { *gi = m_gi; return true; }
-	int GetGroupId() const {return m_nGroup;};	// 2007.06.26 ryoji
+	int GetGroupId() const {return m_nGroup;}	// 2007.06.26 ryoji
 	LPCSTR GetMacro() const{ return m_pszMacro; }
 	LPCSTR GetMacroType() const{ return m_pszMacroType; }
 

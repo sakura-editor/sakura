@@ -9762,7 +9762,7 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 			ReleaseDC( m_hWnd, hdc );
 		}
 		m_nOldCursorLineX = -1;
-	};
+	}
 	// To Here 2007.09.09 Moca
 	return;
 }

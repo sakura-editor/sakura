@@ -45,7 +45,7 @@ public:
 		  m_nIndent( pcT ? pcT->GetIndent() : 0 )
 	{
 		first();
-	};
+	}
 
 	/*! 桁位置を行の先頭にセット  */
 	void first(){
@@ -53,14 +53,14 @@ public:
 		m_nColumn = m_nIndent;
 		m_nIndex_Delta = 0;
 		m_nColumn_Delta = 0;
-	};
+	}
 	
 	/*! 行末かどうか
 		@return true: 行末, false: 行末ではない
 	 */
 	bool end() const {
 		return (m_nLineLen <= m_nIndex);
-	};
+	}
 	void scanNext(){	//	次の文字を確認して次の文字との差を求める
 		if (m_pLine[m_nIndex] == TAB){
 			m_nIndex_Delta = 1;
@@ -74,7 +74,7 @@ public:
 			}
 			m_nColumn_Delta = m_nIndex_Delta;
 		}
-	};
+	}
 	
 	/*! 予め計算した差分を桁位置に加える．
 		@sa scanNext()
@@ -82,18 +82,18 @@ public:
 	void addDelta(){
 		m_nColumn += m_nColumn_Delta;
 		m_nIndex += m_nIndex_Delta;
-	};	//	ポインタをずらす
+	}	//	ポインタをずらす
 	
-	int getIndex() const {	return m_nIndex;	};
-	int getColumn() const {	return m_nColumn;	};
-	int getIndexDelta() const {	return m_nIndex_Delta;	};
-	int getColumnDelta() const {	return m_nColumn_Delta;	};
+	int getIndex() const {	return m_nIndex;	}
+	int getColumn() const {	return m_nColumn;	}
+	int getIndexDelta() const {	return m_nIndex_Delta;	}
+	int getColumnDelta() const {	return m_nColumn_Delta;	}
 
 	//	2002.10.07 YAZAKI
-	const char getCurrentChar(){	return m_pLine[m_nIndex];	};
+	const char getCurrentChar(){	return m_pLine[m_nIndex];	}
 	//	Jul. 20, 2003 genta 追加
 	//	memcpyをするのにポインタがとれないと面倒
-	const char* getCurrentPos(){	return m_pLine + m_nIndex;	};
+	const char* getCurrentPos(){	return m_pLine + m_nIndex;	}
 };
 
 

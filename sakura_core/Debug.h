@@ -61,7 +61,7 @@ SAKURA_CORE_API int MessageBoxF( HWND, UINT, LPCTSTR, LPCTSTR, ... );
 #define DBPRINT(...)
 #else
 // Not support C99 variable macro
-inline void DBPRINT( ... ){};
+inline void DBPRINT( ... ){}
 #endif
 #endif // _DEBUG
 

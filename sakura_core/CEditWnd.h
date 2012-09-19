@@ -122,15 +122,15 @@ public:
 	void SetWindowIcon( HICON, int);	//	Sep. 10, 2002 genta
 	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
 	bool GetRelatedIcon(const TCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
-	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; };	// ホイール操作による横スクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
+	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; }	// ホイール操作による横スクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
 	void ClearMouseState( void );		// 2009.01.12 nasukoji	マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
 	//! 自アプリがアクティブかどうか	// 2007.03.08 ryoji
-	BOOL IsActiveApp() const { return m_bIsActiveApp; };
+	BOOL IsActiveApp() const { return m_bIsActiveApp; }
 
 
 
-	BOOL IsPageScrollByWheel() const { return m_bPageScrollByWheel; };		// ホイール操作によるページスクロール有無	// 2009.01.12 nasukoji
-	BOOL IsHScrollByWheel() const { return m_bHorizontalScrollByWheel; };	// ホイール操作による横スクロール有無		// 2009.01.12 nasukoji
+	BOOL IsPageScrollByWheel() const { return m_bPageScrollByWheel; }		// ホイール操作によるページスクロール有無	// 2009.01.12 nasukoji
+	BOOL IsHScrollByWheel() const { return m_bHorizontalScrollByWheel; }	// ホイール操作による横スクロール有無		// 2009.01.12 nasukoji
 
 	void PrintMenubarMessage( const TCHAR* msg );
 	void SendStatusMessage( const TCHAR* msg );		//	Dec. 4, 2002 genta 実体をCEditViewから移動
@@ -240,7 +240,7 @@ private:
 	int m_nTimerCount; //!< OnTimer用 2003.08.29 wmlhq
 
 public:
-	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; };	// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
+	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }	// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
 
 };
 

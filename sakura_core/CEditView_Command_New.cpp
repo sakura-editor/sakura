@@ -1824,7 +1824,7 @@ void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
 		else {
 			break;
 		}
-	};
+	}
 
 	/*	nFirstLineIsEmptyLineが空行だったら、今見ているところは非空行。すなわちおしまい。
 		nFirstLineIsEmptyLineが非空行だったら、今見ているところは空行。
@@ -1845,7 +1845,7 @@ void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
 				else {
 					break;
 				}
-			};
+			}
 		}
 	}
 
@@ -1900,7 +1900,7 @@ void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
 		else {
 			break;
 		}
-	};
+	}
 
 	/*	nFirstLineIsEmptyLineが空行だったら、今見ているところは非空行。すなわちおしまい。
 		nFirstLineIsEmptyLineが非空行だったら、今見ているところは空行。
@@ -1919,7 +1919,7 @@ void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
 				else {
 					nCaretPointer--;
 				}
-			};
+			}
 			nCaretPointer++;	//	空行の最上行（段落の末端の次の行）で止まる。
 		}
 	}

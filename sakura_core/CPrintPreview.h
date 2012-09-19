@@ -115,7 +115,7 @@ public:
 	||	アクセサ
 	*/
 	void SetPrintSetting( PRINTSETTING* pPrintSetting ){ m_pPrintSetting = pPrintSetting; }
-	BOOL GetDefaultPrinterInfo(){ return m_cPrint.GetDefaultPrinter( &m_pPrintSetting->m_mdmDevMode ); };
+	BOOL GetDefaultPrinterInfo(){ return m_cPrint.GetDefaultPrinter( &m_pPrintSetting->m_mdmDevMode ); }
 	int  GetCurPageNum(){ return m_nCurPageNum; }	/* 現在のページ */
 	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
 
