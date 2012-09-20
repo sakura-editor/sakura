@@ -144,7 +144,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	Buffering();
 
 	if( CharCode == CODE_AUTODETECT ){
-		CEditDoc& ref_cEditDoc = CEditWnd::Instance()->GetDocument();
+		CEditDoc& ref_cEditDoc = CEditWnd::getInstance()->GetDocument();
 		CharCode = CCodeMediator(ref_cEditDoc).CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
 	}
 	// To Here Jun. 08, 2003

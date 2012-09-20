@@ -111,7 +111,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 		return 0;
 
 	// 2010.04.06 ビューモードでは何もしない
-	if( CAppMode::Instance()->IsViewMode() ){
+	if( CAppMode::getInstance()->IsViewMode() ){
 		return 0;
 	}
 	

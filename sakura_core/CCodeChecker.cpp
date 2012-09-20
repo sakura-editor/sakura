@@ -67,7 +67,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 	//ユーザ問い合わせ
 	if(bTmpResult){
 		int nDlgResult = MYMESSAGEBOX(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			MB_YESNOCANCEL | MB_ICONWARNING,
 			GSTR_APPNAME,
 			_T("改行コードが混在しています。\r\n")
@@ -89,7 +89,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 	//ユーザ問い合わせ
 	if(nTmpResult==RESULT_LOSESOME){
 		int nDlgResult = MYMESSAGEBOX(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			MB_YESNO | MB_ICONWARNING,
 			GSTR_APPNAME,
 			_T("文字エンコード %ts で保存しようとしていますが、\r\n")
@@ -110,7 +110,7 @@ void CCodeChecker::OnFinalSave(ESaveResult eSaveResult)
 {
 	//カキコ結果
 	if(eSaveResult==SAVED_LOSESOME){
-		ErrorMessage(CEditWnd::Instance()->GetHwnd(), _T("一部の文字情報が、セーブ時の変換により失われました"));
+		ErrorMessage(CEditWnd::getInstance()->GetHwnd(), _T("一部の文字情報が、セーブ時の変換により失われました"));
 	}
 }
 
@@ -122,7 +122,7 @@ void CCodeChecker::OnFinalLoad(ELoadResult eLoadResult)
 {
 	if(eLoadResult==LOADED_LOSESOME){
 		ErrorMessage(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			_T("一部の文字情報が、ロード時の変換により失われました")
 		);
 	}

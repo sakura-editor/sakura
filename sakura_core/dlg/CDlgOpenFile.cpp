@@ -573,7 +573,7 @@ CDlgOpenFile::CDlgOpenFile()
 	_tcscpy( m_szDefaultWildCard, _T("*.*") );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 
 	/* ヘルプファイルのフルパスを返す */
-	m_pszHelpFile = CEditApp::Instance()->GetHelpFilePath();
+	m_pszHelpFile = CEditApp::getInstance()->GetHelpFilePath();
 	m_nHelpTopicID = 0;
 
 	return;

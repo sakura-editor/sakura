@@ -24,9 +24,9 @@ ECallbackResult CGrepAgent::OnBeforeClose()
 	//GREP処理中は終了できない
 	if( m_bGrepRunning ){
 		// アクティブにする
-		ActivateFrameWindow( CEditWnd::Instance()->GetHwnd() );	//@@@ 2003.06.25 MIK
+		ActivateFrameWindow( CEditWnd::getInstance()->GetHwnd() );	//@@@ 2003.06.25 MIK
 		TopInfoMessage(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			_T("Grepの処理中です。\n")
 		);
 		return CALLBACK_INTERRUPT;
@@ -38,7 +38,7 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 {
 	// 名前を付けて保存から再ロードが除去された分の不足処理を追加（ANSI版との差異）	// 2009.08.12 ryoji
 	m_bGrepMode = false;	// grepウィンドウは通常ウィンドウ化
-	wcscpy( CAppMode::Instance()->m_szGrepKey, L"" );
+	wcscpy( CAppMode::getInstance()->m_szGrepKey, L"" );
 }
 
 
@@ -148,7 +148,7 @@ DWORD CGrepAgent::DoGrep(
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
 	//	2011.12.10 Moca 表示の際に...に切り捨てられるので登録するように
-	wcsncpy_s( CAppMode::Instance()->m_szGrepKey, _countof(CAppMode::Instance()->m_szGrepKey), pcmGrepKey->GetStringPtr(), _TRUNCATE );
+	wcsncpy_s( CAppMode::getInstance()->m_szGrepKey, _countof(CAppMode::getInstance()->m_szGrepKey), pcmGrepKey->GetStringPtr(), _TRUNCATE );
 	this->m_bGrepMode = true;
 
 	//	2007.07.22 genta
@@ -177,7 +177,7 @@ DWORD CGrepAgent::DoGrep(
 
 	//	Sep. 10, 2002 genta
 	//	CEditWndに新設した関数を使うように
-	CEditWnd*	pCEditWnd = CEditWnd::Instance();	//	Sep. 10, 2002 genta
+	CEditWnd*	pCEditWnd = CEditWnd::getInstance();	//	Sep. 10, 2002 genta
 	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
 	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 
@@ -298,8 +298,8 @@ DWORD CGrepAgent::DoGrep(
 	// 2003.06.23 Moca 共通設定で変更できるように
 	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
 //	SetDrawSwitch(false);
-	if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新
-		CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+	if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
+		CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 	pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
 
 
@@ -337,7 +337,7 @@ DWORD CGrepAgent::DoGrep(
 	cDlgCancel.CloseDialog( 0 );
 
 	/* アクティブにする */
-	ActivateFrameWindow( CEditWnd::Instance()->GetHwnd() );
+	ActivateFrameWindow( CEditWnd::getInstance()->GetHwnd() );
 
 
 	/* アンドゥバッファの処理 */
@@ -569,7 +569,7 @@ int CGrepAgent::DoGrepTree(
 			}
 
 			/* 表示設定をチェック */
-			CEditWnd::Instance()->SetDrawSwitchOfAllViews(
+			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
 				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
 			);
 
@@ -663,8 +663,8 @@ int CGrepAgent::DoGrepTree(
 						if( 0 < cmemMessage.GetStringLength() ){
 							pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 							pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-							if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-								CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+							if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+								CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 							cmemMessage.Clear();
 						}
 						nWork = 0;
@@ -702,8 +702,8 @@ int CGrepAgent::DoGrepTree(
 	if( 0 < cmemMessage.GetStringLength() ){
 		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-		if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新
-			CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
+			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 		cmemMessage.Clear();
 	}
 
@@ -730,7 +730,7 @@ int CGrepAgent::DoGrepTree(
 				goto cancel_return;
 			}
 			/* 表示設定をチェック */
-			CEditWnd::Instance()->SetDrawSwitchOfAllViews(
+			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
 				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
 			);
 
@@ -805,8 +805,8 @@ error_return:;
 	if( 0 < cmemMessage.GetStringLength() ){
 		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
-		if( !CEditWnd::Instance()->UpdateTextWrap() )	// 折り返し方法関連の更新
-			CEditWnd::Instance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
+		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
+			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 		cmemMessage.Clear();
 	}
 
@@ -969,7 +969,7 @@ int CGrepAgent::DoGrepFile(
 			// 2003.06.10 Moca コード判別処理をここに移動．
 			// 判別エラーでもファイル数にカウントするため
 			// ファイルの日本語コードセット判別
-			CCodeMediator cmediator( CEditWnd::Instance()->GetDocument() );
+			CCodeMediator cmediator( CEditWnd::getInstance()->GetDocument() );
 			nCharCode = cmediator.CheckKanjiCodeOfFile( pszFullPath );
 			if( !IsValidCodeType(nCharCode) ){
 				pszCodeName = _T("  [(DetectError)]");
@@ -1034,7 +1034,7 @@ int CGrepAgent::DoGrepFile(
 				return -1;
 			}
 			//	2003.06.23 Moca 表示設定をチェック
-			CEditWnd::Instance()->SetDrawSwitchOfAllViews(
+			CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
 				0 != ::IsDlgButtonChecked( pcDlgCancel->GetHwnd(), IDC_CHECK_REALTIMEVIEW )
 			);
 			// 2002/08/30 Moca 進行状態を表示する(5MB以上)

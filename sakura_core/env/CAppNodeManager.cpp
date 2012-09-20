@@ -276,7 +276,7 @@ int CAppNodeGroupHandle::GetEditorWindowsNum( bool bExcludeClosing/* = true */ )
 	j = 0;
 	for( i = 0; i < pShare->m_sNodes.m_nEditArrNum; ++i ){
 		if( IsSakuraMainWindow( pShare->m_sNodes.m_pEditArr[i].m_hWnd ) ){
-			if( m_nGroup != 0 && m_nGroup != CAppNodeManager::Instance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup() )
+			if( m_nGroup != 0 && m_nGroup != CAppNodeManager::getInstance()->GetEditNode( pShare->m_sNodes.m_pEditArr[i].m_hWnd )->GetGroup() )
 				continue;
 			if( bExcludeClosing && pShare->m_sNodes.m_pEditArr[i].m_bClosing )
 				continue;
@@ -304,7 +304,7 @@ BOOL CAppNodeGroupHandle::PostMessageToAllEditors(
 	int		i;
 	int		n;
 
-	n = CAppNodeManager::Instance()->GetOpenedWindowArr( &pWndArr, FALSE );
+	n = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pWndArr, FALSE );
 	if( 0 == n ){
 		return TRUE;
 	}
@@ -354,7 +354,7 @@ BOOL CAppNodeGroupHandle::SendMessageToAllEditors(
 	int		i;
 	int		n;
 
-	n = CAppNodeManager::Instance()->GetOpenedWindowArr( &pWndArr, FALSE );
+	n = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pWndArr, FALSE );
 	if( 0 == n ){
 		return TRUE;
 	}
@@ -699,8 +699,8 @@ bool CAppNodeManager::IsSameGroup( HWND hWnd1, HWND hWnd2 )
 	if( hWnd1 == hWnd2 )
 		return true;
 
-	CAppNodeGroupHandle cGroup1 = CAppNodeManager::Instance()->GetEditNode(hWnd1)->GetGroup();
-	CAppNodeGroupHandle cGroup2 = CAppNodeManager::Instance()->GetEditNode(hWnd2)->GetGroup();
+	CAppNodeGroupHandle cGroup1 = CAppNodeManager::getInstance()->GetEditNode(hWnd1)->GetGroup();
+	CAppNodeGroupHandle cGroup2 = CAppNodeManager::getInstance()->GetEditNode(hWnd2)->GetGroup();
 	if(cGroup1.IsValidGroup() && cGroup1==cGroup2){
 		return true;
 	}

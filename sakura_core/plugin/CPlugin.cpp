@@ -83,7 +83,7 @@ bool CPlugin::ReadPluginDefCommon( CDataProfile *cProfile )
 bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile )
 {
 	unsigned int i;
-	std::vector<JackDef> jacks = CJackManager::Instance()->GetJackDef();
+	std::vector<JackDef> jacks = CJackManager::getInstance()->GetJackDef();
 	wstring sKey;
 	wstring sHandler;
 	wstring sLabel;
@@ -207,7 +207,7 @@ int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* 
 	m_plugs.push_back( newPlug );
 
 	if( doRegister ){
-		CJackManager::Instance()->RegisterPlug( PP_COMMAND_STR, newPlug );
+		CJackManager::getInstance()->RegisterPlug( PP_COMMAND_STR, newPlug );
 	}
 	return newPlug->GetFunctionCode();
 }

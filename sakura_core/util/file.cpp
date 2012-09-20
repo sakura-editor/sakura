@@ -477,7 +477,7 @@ void GetInidir(
 	
 	TCHAR	szPath[_MAX_PATH];
 	// sakura.ini ‚ÌƒpƒX‚ðŽæ“¾
-	CFileNameManager::Instance()->GetIniFileName( szPath );
+	CFileNameManager::getInstance()->GetIniFileName( szPath );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}

@@ -779,7 +779,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	int i;
 
 	ECodeType ecode_result;
-	CESI cesi( CEditWnd::Instance()->GetDocument() );
+	CESI cesi( CEditWnd::getInstance()->GetDocument() );
 
 	// テスト実行
 	cesi.SetInformation( pS, nLen/*, CODE_SJIS*/ );

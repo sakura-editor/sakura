@@ -48,7 +48,7 @@ class CProcess;
 */
 CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPTSTR lpCmdLine )
 {
-	CCommandLine::Instance(lpCmdLine);
+	CCommandLine::getInstance(lpCmdLine);
 	
 	CProcess* process = 0;
 	if( !IsValidVersion() ){
@@ -130,7 +130,7 @@ bool CProcessFactory::IsValidVersion()
 */
 bool CProcessFactory::IsStartingControlProcess()
 {
-	return CCommandLine::Instance()->IsNoWindow();
+	return CCommandLine::getInstance()->IsNoWindow();
 }
 
 /*!
@@ -295,10 +295,10 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 */
 bool CProcessFactory::TestWriteQuit()
 {
-	if( CCommandLine::Instance()->IsWriteQuit() ){
+	if( CCommandLine::getInstance()->IsWriteQuit() ){
 		TCHAR szIniFileIn[_MAX_PATH];
 		TCHAR szIniFileOut[_MAX_PATH];
-		CFileNameManager::Instance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut );
+		CFileNameManager::getInstance()->GetIniFileNameDirect( szIniFileIn, szIniFileOut );
 		if( szIniFileIn[0] != _T('\0') ){	// マルチユーザ用設定か
 			// 既にマルチユーザ用のiniファイルがあればEXE基準のiniファイルに上書き更新して終了
 			if( fexist(szIniFileIn) ){

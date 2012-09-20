@@ -134,7 +134,7 @@ bool CFile::FileLock( EShareMode eShareMode, bool bMsg )
 		default:						pszMode = _T("未定義のモード（問題があります）"); break;
 		}
 		TopWarningMessage(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			_T("%ts\nを%tsでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
 			GetFilePathClass().IsValidPath() ? GetFilePath() : _T("(無題)"),
 			pszMode

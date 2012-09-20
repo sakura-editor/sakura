@@ -37,7 +37,7 @@ void CMainStatusBar::CreateStatusBar()
 		13,
 		m_hwndStatusBar,
 		NULL,
-		CEditApp::Instance()->GetAppInstance(),
+		CEditApp::getInstance()->GetAppInstance(),
 		0
 	);
 

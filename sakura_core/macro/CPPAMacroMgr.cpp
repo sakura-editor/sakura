@@ -106,7 +106,7 @@ CMacroManagerBase* CPPAMacroMgr::Creator(const TCHAR* ext)
 void CPPAMacroMgr::declare (void)
 {
 	if( DLL_SUCCESS == m_cPPA.InitDll() ){
-		CMacroFactory::Instance()->RegisterCreator( Creator );
+		CMacroFactory::getInstance()->RegisterCreator( Creator );
 	}
 }
 //	To Here Apr. 29, 2002 genta

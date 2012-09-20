@@ -68,11 +68,11 @@ void CVisualProgress::_Begin()
 {
 	//砂時計
 	if(!m_pcWaitCursor){
-		m_pcWaitCursor = new CWaitCursor( CEditWnd::Instance()->GetHwnd() );
+		m_pcWaitCursor = new CWaitCursor( CEditWnd::getInstance()->GetHwnd() );
 	}
 
 	//プログレスバー
-	HWND hwndProgress = CEditWnd::Instance()->m_cStatusBar.GetProgressHwnd();
+	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_SHOW );
 		//範囲設定・リセット
@@ -84,7 +84,7 @@ void CVisualProgress::_Begin()
 void CVisualProgress::_Doing(int nPer)
 {
 	//プログレスバー更新
-	HWND hwndProgress = CEditWnd::Instance()->m_cStatusBar.GetProgressHwnd();
+	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if(hwndProgress)
 		Progress_SetPos( hwndProgress, nPer );
 }
@@ -92,7 +92,7 @@ void CVisualProgress::_Doing(int nPer)
 void CVisualProgress::_End()
 {
 	//プログレスバー
-	HWND hwndProgress = CEditWnd::Instance()->m_cStatusBar.GetProgressHwnd();
+	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	if( hwndProgress ){
 		Progress_SetPos( hwndProgress, 0);
 		::ShowWindow( hwndProgress, SW_HIDE );

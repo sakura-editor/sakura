@@ -66,7 +66,7 @@ bool CAutoReloadAgent::_ToDoChecking() const
 	if(setting.m_nFileShareMode!=SHAREMODE_NOT_EXCLUSIVE)return false; // ファイルの排他制御モード
 	HWND hwndActive = ::GetActiveWindow();
 	if(hwndActive==NULL)return false;	/* アクティブ？ */
-	if(hwndActive!=CEditWnd::Instance()->GetHwnd())return false;
+	if(hwndActive!=CEditWnd::getInstance()->GetHwnd())return false;
 	if(!GetListeningDoc()->m_cDocFile.GetFilePathClass().IsValidPath())return false;
 	if(GetListeningDoc()->m_cDocFile.GetDocFileTime().IsZero()) return false;	/* 現在編集中のファイルのタイムスタンプ */
 	return true;
@@ -117,7 +117,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			CDlgFileUpdateQuery dlg( pcDoc->m_cDocFile.GetFilePath(), pcDoc->m_cDocEditor.IsModified() );
 			int result = dlg.DoModal(
 				G_AppInstance(),
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				IDD_FILEUPDATEQUERY,
 				0
 			);

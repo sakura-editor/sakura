@@ -110,7 +110,7 @@ void CMainToolBar::CreateToolBar( void )
 			0, 0, 0, 0,
 			m_pOwner->GetHwnd(),
 			NULL,
-			CEditApp::Instance()->GetAppInstance(),
+			CEditApp::getInstance()->GetAppInstance(),
 			NULL
 		);
 
@@ -146,7 +146,7 @@ void CMainToolBar::CreateToolBar( void )
 		0, 0,
 		m_pOwner->GetHwnd(),
 		(HMENU)ID_TOOLBAR,
-		CEditApp::Instance()->GetAppInstance(),
+		CEditApp::getInstance()->GetAppInstance(),
 		NULL
 	);
 	if( NULL == m_hwndToolBar ){
@@ -168,7 +168,7 @@ void CMainToolBar::CreateToolBar( void )
 		Toolbar_ButtonStructSize( m_hwndToolBar, sizeof(TBBUTTON) );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
-		CEditApp::Instance()->GetIcons().SetToolBarImages( m_hwndToolBar );
+		CEditApp::getInstance()->GetIcons().SetToolBarImages( m_hwndToolBar );
 		/* ツールバーにボタンを追加 */
 		int count = 0;	//@@@ 2002.06.15 MIK
 		int nToolBarButtonNum = 0;// 2005/8/29 aroka
@@ -252,7 +252,7 @@ void CMainToolBar::CreateToolBar( void )
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top + 1, rc.right - rc.left, (rc.bottom - rc.top) * 10,
-								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, CEditApp::Instance()->GetAppInstance(), NULL );
+								m_hwndToolBar, (HMENU)(INT_PTR)tbb.idCommand, CEditApp::getInstance()->GetAppInstance(), NULL );
 						if( m_hwndSearchBox )
 						{
 							m_pOwner->SetCurrentFocus(0);
@@ -416,12 +416,12 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 			// コマンド番号（pnmh->dwItemSpec）からアイコン番号を取得する	// 2007.11.02 ryoji
 			int nIconId = Toolbar_GetBitmap( pnmh->hdr.hwndFrom, (WPARAM)pnmh->dwItemSpec );
 
-			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - CEditApp::Instance()->GetIcons().cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
+			int offset = ((pnmh->rc.bottom - pnmh->rc.top) - CEditApp::getInstance()->GetIcons().cy()) / 2;		// アイテム矩形からの画像のオフセット	// 2007.03.25 ryoji
 			int shift = pnmh->uItemState & ( CDIS_SELECTED | CDIS_CHECKED ) ? 1 : 0;	//	Aug. 30, 2003 genta ボタンを押されたらちょっと画像をずらす
 			int color = pnmh->uItemState & CDIS_CHECKED ? COLOR_3DHILIGHT : COLOR_3DFACE;
 
 			//	Sep. 6, 2003 genta 押下時は右だけでなく下にもずらす
-			CEditApp::Instance()->GetIcons().Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
+			CEditApp::getInstance()->GetIcons().Draw( nIconId, pnmh->hdc, pnmh->rc.left + offset + shift, pnmh->rc.top + offset + shift,
 				(pnmh->uItemState & CDIS_DISABLED ) ? ILD_MASK : ILD_NORMAL
 			);
 		}

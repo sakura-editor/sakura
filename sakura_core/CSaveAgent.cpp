@@ -24,9 +24,9 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 	//	Jun.  5, 2004 genta
 	//	ビューモードのチェックをCEditDocから上書き保存処理に移動
 	//	同名で上書きされるのを防ぐ
-	if( CAppMode::Instance()->IsViewMode() && pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
+	if( CAppMode::getInstance()->IsViewMode() && pSaveInfo->IsSamePath(pcDoc->m_cDocFile.GetFilePath()) ){
 		ErrorBeep();
-		TopErrorMessage( CEditWnd::Instance()->GetHwnd(), _T("ビューモードでは同一ファイルへの保存はできません。") );
+		TopErrorMessage( CEditWnd::getInstance()->GetHwnd(), _T("ビューモードでは同一ファイルへの保存はできません。") );
 		return CALLBACK_INTERRUPT;
 	}
 
@@ -35,7 +35,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 		HWND hwndOwner;
 		if( CShareData::getInstance()->IsPathOpened( pSaveInfo->cFilePath, &hwndOwner ) ){
 			ErrorMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("\'%ts\'\n")
 				_T("ファイルを保存できません。\n")
 				_T("他のウィンドウで使用中です。"),
@@ -63,7 +63,7 @@ ECallbackResult CSaveAgent::OnCheckSave(SSaveInfo* pSaveInfo)
 			// ※ たとえ上書き保存の場合でもここでの失敗では書込み禁止へは遷移しない
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("\'%ts\'\n")
 				_T("ファイルを保存できません。\n")
 				_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
@@ -93,7 +93,7 @@ void CSaveAgent::OnSave(const SSaveInfo& sSaveInfo)
 
 	//カキコ
 	CWriteManager cWriter;
-	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&cWriter);
+	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&cWriter);
 	EConvertResult eSaveResult = cWriter.WriteFile_From_CDocLineMgr(
 		pcDoc->m_cDocLineMgr,
 		sSaveInfo

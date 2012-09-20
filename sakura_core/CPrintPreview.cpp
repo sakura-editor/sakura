@@ -569,7 +569,7 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 {
 	/* 手カーソル */
-	::SetCursor( ::LoadCursor( CEditApp::Instance()->GetAppInstance(), MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
+	::SetCursor( ::LoadCursor( CEditApp::getInstance()->GetAppInstance(), MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
 	if( !m_pParentWnd->GetDragMode() ){
 		return 0;
 	}
@@ -825,7 +825,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	auto_sprintf( szPageNum, _T("%d"), m_nCurPageNum + 1 );
 
 	BOOL bDlgInputPageResult=cDlgInputPage.DoModal(
-		CEditApp::Instance()->GetAppInstance(),
+		CEditApp::getInstance()->GetAppInstance(),
 		m_hwndPrintPreviewBar, 
 		_T("プレビューページ指定"),
 		szMessage,
@@ -1014,7 +1014,7 @@ void CPrintPreview::OnPrint( void )
 
 	/* 印刷過程を表示して、キャンセルするためのダイアログを作成 */
 	CDlgCancel	cDlgPrinting;
-	cDlgPrinting.DoModeless( CEditApp::Instance()->GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
+	cDlgPrinting.DoModeless( CEditApp::getInstance()->GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
 	::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_JOBNAME, szJobName );
 
 	/* 親ウィンドウを無効化 */
@@ -1624,7 +1624,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 
 	/* 印刷プレビュー 操作バー */
 	m_hwndPrintPreviewBar = ::CreateDialogParam(
-		CEditApp::Instance()->GetAppInstance(),				// handle to application instance
+		CEditApp::getInstance()->GetAppInstance(),				// handle to application instance
 		MAKEINTRESOURCE( IDD_PRINTPREVIEWBAR ),				// identifies dialog box template name
 		m_pParentWnd->GetHwnd(),							// handle to owner window
 		(DLGPROC)CPrintPreview::PrintPreviewBar_DlgProc,	// pointer to dialog box procedure
@@ -1643,7 +1643,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,						/* default height				*/
 		m_pParentWnd->GetHwnd(),								/* handle of main window		*/
 		(HMENU) NULL,						/* no menu for a scroll bar		*/
-		CEditApp::Instance()->GetAppInstance(),						/* instance owning this window	*/
+		CEditApp::getInstance()->GetAppInstance(),						/* instance owning this window	*/
 		(LPVOID) NULL						/* pointer not needed			*/
 	);
 	SCROLLINFO	si;
@@ -1669,7 +1669,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,						/* default height				*/
 		m_pParentWnd->GetHwnd(),								/* handle of main window		*/
 		(HMENU) NULL,						/* no menu for a scroll bar		*/
-		CEditApp::Instance()->GetAppInstance(),						/* instance owning this window	*/
+		CEditApp::getInstance()->GetAppInstance(),						/* instance owning this window	*/
 		(LPVOID) NULL						/* pointer not needed			*/
 	);
 	si.cbSize = sizeof( si );
@@ -1694,7 +1694,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CW_USEDEFAULT,										/* default height				*/
 		m_pParentWnd->GetHwnd(), 											/* handle of main window		*/
 		(HMENU) NULL,										/* no menu for a scroll bar 	*/
-		CEditApp::Instance()->GetAppInstance(),										/* instance owning this window	*/
+		CEditApp::getInstance()->GetAppInstance(),										/* instance owning this window	*/
 		(LPVOID) NULL										/* pointer not needed			*/
 	);
 	::ShowWindow( m_hwndPrintPreviewBar, SW_SHOW );
@@ -1859,7 +1859,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 			case IDC_BUTTON_HELP:
 				/* 印刷プレビューのヘルプ */
 				//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-				MyWinHelp( hwndDlg, CEditApp::Instance()->GetHelpFilePath(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PREVIEW) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+				MyWinHelp( hwndDlg, CEditApp::getInstance()->GetHelpFilePath(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_PRINT_PREVIEW) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 				break;
 			case IDOK:
 				/* 印刷実行 */

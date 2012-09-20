@@ -140,7 +140,7 @@ CMacroManagerBase* CWSHMacroManager::Creator(const TCHAR* FileExt)
 void CWSHMacroManager::declare()
 {
 	//暫定
-	CMacroFactory::Instance()->RegisterCreator(Creator);
+	CMacroFactory::getInstance()->RegisterCreator(Creator);
 }
 
 //インタフェースオブジェクトを追加する

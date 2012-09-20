@@ -39,7 +39,7 @@ template <class T>
 class TSingleton{
 public:
 	//公開インターフェース
-	static T* Instance()
+	static T* getInstance()
 	{
 		if(!gm_instance)
 			gm_instance = new T;
@@ -68,7 +68,7 @@ template <class T>
 class TSingleInstance{
 public:
 	//公開インターフェース
-	static T* Instance(){ return gm_instance; } //!< 作成済みのインスタンスを返す。インスタンスが存在しなければ NULL。
+	static T* getInstance(){ return gm_instance; } //!< 作成済みのインスタンスを返す。インスタンスが存在しなければ NULL。
 
 protected:
 	//※2個以上のインスタンスは想定していません。assertが破綻を検出します。

@@ -94,7 +94,7 @@ void CEditView::ViewDiffInfo(
 	cmdline[0] = _T('\0');
 
 	//今あるDIFF差分を消去する。
-	if( CDiffManager::Instance()->IsDiffUse() )
+	if( CDiffManager::getInstance()->IsDiffUse() )
 		GetCommander().Command_Diff_Reset();
 		//m_pcEditDoc->m_cDocLineMgr.ResetAllDiffMark();
 
@@ -320,7 +320,7 @@ void CEditView::ViewDiffInfo(
 	//DIFF差分が見つからなかったときにメッセージ表示
 	if( nFlgOpt & 0x0040 )
 	{
-		if( !CDiffManager::Instance()->IsDiffUse() )
+		if( !CDiffManager::getInstance()->IsDiffUse() )
 		{
 			InfoMessage( this->GetHwnd(), _T("DIFF差分は見つかりませんでした。") );
 		}

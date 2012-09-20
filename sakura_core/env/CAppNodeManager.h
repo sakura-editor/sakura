@@ -129,7 +129,7 @@ inline bool EditNode::IsTopInGroup() const{ return this && (CAppNodeGroupHandle(
 
 inline CAppNodeHandle::CAppNodeHandle(HWND hwnd)
 {
-	m_pNodeRef = CAppNodeManager::Instance()->GetEditNode(hwnd);
+	m_pNodeRef = CAppNodeManager::getInstance()->GetEditNode(hwnd);
 }
 
 #endif /* SAKURA_CAPPNODEMANAGER_3F3F3625_BEB8_4EA6_86AD_9497B1D7B061_H_ */

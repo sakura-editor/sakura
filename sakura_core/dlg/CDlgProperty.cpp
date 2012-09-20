@@ -104,7 +104,7 @@ void CDlgProperty::SetData( void )
 	auto_sprintf( szWork, _T("レイアウト行数  %d行\r\n"), pCEditDoc->m_cLayoutMgr.GetLineCount() );
 	cmemProp.AppendString( szWork );
 
-	if( CAppMode::Instance()->IsViewMode() ){
+	if( CAppMode::getInstance()->IsViewMode() ){
 		cmemProp.AppendString( _T("ビューモードで開いています。\r\n") );	// 2009.04.11 ryoji 「上書き禁止モード」→「ビューモード」
 	}
 	if( pCEditDoc->m_cDocEditor.IsModified() ){

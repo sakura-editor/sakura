@@ -76,7 +76,7 @@ CDialog::CDialog()
 	m_nHeight = -1;
 
 	/* ヘルプファイルのフルパスを返す */
-	m_pszHelpFile = CEditApp::Instance()->GetHelpFilePath();
+	m_pszHelpFile = CEditApp::getInstance()->GetHelpFilePath();
 
 	return;
 

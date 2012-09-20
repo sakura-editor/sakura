@@ -35,7 +35,7 @@ CEditApp::CEditApp(HINSTANCE hInst, int nGroupId)
 	m_pcGrepAgent = new CGrepAgent();
 
 	//編集モード
-	CAppMode::Instance();	//ウィンドウよりも前にイベントを受け取るためにここでインスタンス作成
+	CAppMode::getInstance();	//ウィンドウよりも前にイベントを受け取るためにここでインスタンス作成
 
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
@@ -96,7 +96,7 @@ void CEditApp::ShowFuncHelp( HWND hwndParent, EFunctionCode nFuncID ) const
 		// 2006.10.10 ryoji MyWinHelpに変更に変更
 		MyWinHelp(
 			hwndParent,
-			CEditApp::Instance()->GetHelpFilePath(),
+			CEditApp::getInstance()->GetHelpFilePath(),
 			HELP_CONTEXT,
 			nHelpContextID
 		);

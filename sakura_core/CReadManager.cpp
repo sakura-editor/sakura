@@ -27,7 +27,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	// 文字コード種別
 	pFileInfo->eCharCode = sLoadInfo.eCharCode;
 	if( CODE_AUTODETECT==pFileInfo->eCharCode) {
-		CCodeMediator cmediator( CEditWnd::Instance()->GetDocument() );
+		CCodeMediator cmediator( CEditWnd::getInstance()->GetDocument() );
 		pFileInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
 	}
 	STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
@@ -101,7 +101,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		if( !fexist( pszPath )){
 			// ファイルがない
 			ErrorMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("%ls\nというファイルを開けません。\nファイルが存在しません。"),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			);
@@ -109,14 +109,14 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		else if( -1 == _taccess( pszPath, 4 )){
 			// 読み込みアクセス権がない
 			ErrorMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("\'%ts\'\nというファイルを開けません。\n読み込みアクセス権がありません。"),
 				pszPath
 			 );
 		}
 		else{
 			ErrorMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("\'%ts\'\nというファイルを開けません。\n他のアプリケーションで使用されている可能性があります。"),
 				pszPath
 			 );
@@ -125,7 +125,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	catch( CError_FileRead ){
 		eRet = RESULT_FAILURE;
 		ErrorMessage(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			_T("\'%ts\'というファイルの読み込み中にエラーが発生しました。\nファイルの読み込みを中止します。"),
 			pszPath
 		 );

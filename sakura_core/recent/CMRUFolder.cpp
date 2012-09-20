@@ -70,13 +70,13 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 	int		i;
 	bool	bFavorite;
 
-	CFileNameManager::Instance()->TransformFileName_MakeCache();
+	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
 
-		CFileNameManager::Instance()->GetTransformFileNameFast( m_cRecentFolder.GetItemText( i ), szMemu, _MAX_PATH );
+		CFileNameManager::getInstance()->GetTransformFileNameFast( m_cRecentFolder.GetItemText( i ), szMemu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
 		dupamp( szMemu, szFolder2 );

@@ -76,7 +76,7 @@ HMENU CMRU::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 	bool	bFavorite;
 	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 
-	CFileNameManager::Instance()->TransformFileName_MakeCache();
+	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
 	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
 	{
@@ -87,7 +87,7 @@ HMENU CMRU::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 
 		const EditInfo	*p = m_cRecentFile.GetItem( i );
 		
-		CFileNameManager::Instance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
+		CFileNameManager::getInstance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
 		//	&Ç&&Ç…íuä∑ÅB
 		//	Jan. 19, 2002 genta
 		dupamp( szMemu, szFile2 );

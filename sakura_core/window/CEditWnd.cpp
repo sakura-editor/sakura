@@ -304,7 +304,7 @@ void CEditWnd::UpdateCaption()
 	//@@@ From Here 2003.06.13 MIK
 	//タブウインドウのファイル名を通知
 	CSakuraEnvironment::ExpandParameter( GetDllShareData().m_Common.m_sTabBar.m_szTabWndCaption, pszCap, _countof( pszCap ));
-	this->ChangeFileNameNotify( to_tchar(pszCap), GetListeningDoc()->m_cDocFile.GetFilePath(), CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
+	this->ChangeFileNameNotify( to_tchar(pszCap), GetListeningDoc()->m_cDocFile.GetFilePath(), CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	//@@@ To Here 2003.06.13 MIK
 }
 
@@ -326,7 +326,7 @@ void CEditWnd::_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGr
 
 	/* ウィンドウサイズ指定 */
 	EditInfo fi;
-	CCommandLine::Instance()->GetEditInfo(&fi);
+	CCommandLine::getInstance()->GetEditInfo(&fi);
 	if( fi.m_nWindowSizeX >= 0 ){
 		nWinCX = fi.m_nWindowSizeX;
 	}
@@ -531,7 +531,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			cTypeOld = GetDocument().m_cDocType.GetDocumentType();	// 現在のタイプ
 			{
 				EditInfo ei, mruei;
-				CCommandLine::Instance()->GetEditInfo( &ei );
+				CCommandLine::getInstance()->GetEditInfo( &ei );
 				if( ei.m_szDocType[0] != '\0' ){
 					cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( ei.m_szDocType );
 				}else{
@@ -650,7 +650,7 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();
 
 	//イメージ、ヘルパなどの作成
-	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), &CEditApp::Instance()->GetIcons() );
+	m_CMenuDrawer.Create( G_AppInstance(), GetHwnd(), &CEditApp::getInstance()->GetIcons() );
 
 	// プラグインコマンドを登録する
 	RegisterPluginCommand();
@@ -798,7 +798,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 	}
 
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもビューモード強制指定を有効にする
-	CAppMode::Instance()->SetViewMode(bViewMode);
+	CAppMode::getInstance()->SetViewMode(bViewMode);
 
 	if( nDocumentType.IsValid() ){
 		/* 設定変更を反映させる */
@@ -856,7 +856,7 @@ void CEditWnd::LayoutMainMenu()
 			switch (cMainMenu->m_nFunc) {
 			case F_WINDOW_LIST:				// ウィンドウリスト
 				EditNode*	pEditNodeArr;
-				nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+				nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 				delete [] pEditNodeArr;
 				break;
 			case F_FILE_USED_RECENTLY:		// 最近使ったファイル
@@ -894,7 +894,7 @@ void CEditWnd::LayoutMainMenu()
 			case F_PLUGIN_LIST:				// プラグインコマンドリスト
 				//プラグインコマンドを提供するプラグインを列挙する
 				{
-					const CJackManager* pcJackManager = CJackManager::Instance();
+					const CJackManager* pcJackManager = CJackManager::getInstance();
 
 					CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
 					for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
@@ -1234,7 +1234,7 @@ LRESULT CEditWnd::DispatchEvent(
 		lphi = (LPHELPINFO) lParam;
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
-			CEditApp::Instance()->ShowFuncHelp( hwnd, (EFunctionCode)lphi->iCtrlId );
+			CEditApp::getInstance()->ShowFuncHelp( hwnd, (EFunctionCode)lphi->iCtrlId );
 			break;
 		}
 		return TRUE;
@@ -1552,9 +1552,9 @@ LRESULT CEditWnd::DispatchEvent(
 					m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin
 					){
 					// 自グループ内の残ウィンドウ数を調べる	// 2007.06.20 ryoji
-					int nGroup = CAppNodeManager::Instance()->GetEditNode( GetHwnd() )->GetGroup();
+					int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->GetGroup();
 					if( 1 == CAppNodeGroupHandle(nGroup).GetEditorWindowsNum() ){
-						EditNode* pEditNode = CAppNodeManager::Instance()->GetEditNode( GetHwnd() );
+						EditNode* pEditNode = CAppNodeManager::getInstance()->GetEditNode( GetHwnd() );
 						if( pEditNode )
 							pEditNode->m_bClosing = TRUE;	// 自分はタブ表示してもらわなくていい
 						SLoadInfo sLoadInfo;
@@ -1663,7 +1663,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
-			if( CAppNodeManager::Instance()->GetEditNode( GetHwnd() )->IsTopInGroup() )
+			if( CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->IsTopInGroup() )
 			{
 				if( !::IsWindowVisible( GetHwnd() ) )
 				{
@@ -1951,7 +1951,7 @@ int	CEditWnd::OnClose()
 	{
 		int i, j;
 		EditNode*	p = NULL;
-		int nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &p, FALSE );
+		int nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &p, FALSE );
 		if( nCount > 1 )
 		{
 			for( i = 0; i < nCount; i++ )
@@ -2041,12 +2041,12 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 		case F_HELP_CONTENTS:
 			/* ヘルプ目次 */
-			ShowWinHelpContents( GetHwnd(), CEditApp::Instance()->GetHelpFilePath() );	//	目次を表示する
+			ShowWinHelpContents( GetHwnd(), CEditApp::getInstance()->GetHelpFilePath() );	//	目次を表示する
 			break;
 
 		case F_HELP_SEARCH:
 			/* ヘルプキーワード検索 */
-			MyWinHelp( GetHwnd(), CEditApp::Instance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+			MyWinHelp( GetHwnd(), CEditApp::getInstance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 			break;
 
 		case F_ABOUT:	//Dec. 25, 2000 JEPRO F_に変更
@@ -2236,7 +2236,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				}
 				// プラグインコマンド
 				if (cMainMenu->m_nFunc >= F_PLUGCOMMAND_FIRST && cMainMenu->m_nFunc < F_PLUGCOMMAND_LAST) {
-					const CJackManager* pcJackManager = CJackManager::Instance();
+					const CJackManager* pcJackManager = CJackManager::getInstance();
 					const CPlugin* prevPlugin = NULL;
 
 					CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
@@ -2364,7 +2364,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				switch (cMainMenu->m_nFunc) {
 				case F_WINDOW_LIST:				// ウィンドウリスト
 					EditNode*	pEditNodeArr;
-					nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+					nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 					WinListMenu(hMenu, pEditNodeArr, nRowNum, false);
 					bInList = (nRowNum > 0);
 					delete [] pEditNodeArr;
@@ -2420,7 +2420,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				case F_PLUGIN_LIST:				// プラグインコマンドリスト
 					//プラグインコマンドを提供するプラグインを列挙する
 					{
-						const CJackManager* pcJackManager = CJackManager::Instance();
+						const CJackManager* pcJackManager = CJackManager::getInstance();
 						const CPlugin* prevPlugin = NULL;
 						HMENU hMenuPlugin;
 
@@ -2930,7 +2930,7 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 		}
 
 		// 元に戻すときのサイズ種別を記憶	// 2007.06.20 ryoji
-		EditNode *p = CAppNodeManager::Instance()->GetEditNode( GetHwnd() );
+		EditNode *p = CAppNodeManager::getInstance()->GetEditNode( GetHwnd() );
 		if( p != NULL ){
 			p->m_showCmdRestore = ::IsZoomed( p->GetHwnd() )? SW_SHOWMAXIMIZED: SW_SHOWNORMAL;
 		}
@@ -3325,7 +3325,7 @@ BOOL CEditWnd::DoMouseWheel( WPARAM wParam, LPARAM lParam )
 			{
 				// 現在開いている編集窓のリストを得る
 				EditNode* pEditNodeArr;
-				int nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+				int nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 				if(  nRowNum > 0 )
 				{
 					// 自分のウィンドウを調べる
@@ -3825,7 +3825,7 @@ void CEditWnd::ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* _p
 	cRecentEditNode.Terminate();
 
 	//ファイル名変更通知をブロードキャストする。
-	int nGroup = CAppNodeManager::Instance()->GetEditNode( GetHwnd() )->GetGroup();
+	int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->GetGroup();
 	CAppNodeGroupHandle(nGroup).PostMessageToAllEditors(
 		MYWM_TAB_WINDOW_NOTIFY,
 		(WPARAM)TWNT_FILE,
@@ -3937,7 +3937,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 		m_CMenuDrawer.ResetContents();	// 2009.06.02 ryoji 追加
 		EditNode*	pEditNodeArr;
 		HMENU hMenu = ::CreatePopupMenu();	// 2006.03.23 fon
-		int nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+		int nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 		WinListMenu( hMenu, pEditNodeArr, nRowNum, TRUE );
 		// メニューを表示する
 		RECT rcWork;
@@ -3969,7 +3969,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 	if( nRowNum > 0 ){
 //>		/* セパレータ */
 //>		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
-		CFileNameManager::Instance()->TransformFileName_MakeCache();
+		CFileNameManager::getInstance()->TransformFileName_MakeCache();
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
@@ -4003,7 +4003,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 					_tcscpy( szFile2, _T("(無題)") );
 				}else{
 					TCHAR buf[_MAX_PATH];
-					CFileNameManager::Instance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
+					CFileNameManager::getInstance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
 					
 					dupamp( buf, szFile2 );
 				}
@@ -4554,11 +4554,11 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPoint* pptPosArray/*int* posary*/ 
 
 CEditDoc& CEditWnd::GetDocument()
 {
-	return CEditApp::Instance()->GetDocument();
+	return CEditApp::getInstance()->GetDocument();
 }
 const CEditDoc& CEditWnd::GetDocument() const
 {
-	return CEditApp::Instance()->GetDocument();
+	return CEditApp::getInstance()->GetDocument();
 }
 
 /*!
@@ -4578,14 +4578,14 @@ void CEditWnd::ClearMouseState( void )
 //プラグインコマンドをエディタに登録する
 void CEditWnd::RegisterPluginCommand( int idCommand )
 {
-	CPlug* plug = CJackManager::Instance()->GetCommandById( idCommand );
+	CPlug* plug = CJackManager::getInstance()->GetCommandById( idCommand );
 	RegisterPluginCommand( plug );
 }
 
 //プラグインコマンドをエディタに登録する（一括）
 void CEditWnd::RegisterPluginCommand()
 {
-	const CPlug::Array& plugs = CJackManager::Instance()->GetPlugs( PP_COMMAND );
+	const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
 	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
 		RegisterPluginCommand( *it );
 	}

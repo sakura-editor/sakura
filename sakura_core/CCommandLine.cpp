@@ -450,7 +450,7 @@ void CCommandLine::ParseCommandLine( void )
 /*! 
 	シングルトン：プロセスで唯一のインスタンス
 */
-CCommandLine* CCommandLine::Instance(LPTSTR cmd)
+CCommandLine* CCommandLine::getInstance(LPTSTR cmd)
 {
 	if( !_instance ){
 		_instance = new CCommandLine(cmd);

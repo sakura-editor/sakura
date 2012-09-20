@@ -9,7 +9,7 @@
 //! 改行コードを統一する
 void CDocVisitor::SetAllEol(CEol cEol)
 {
-	CEditView* pcView = &CEditWnd::Instance()->GetActiveView();
+	CEditView* pcView = &CEditWnd::getInstance()->GetActiveView();
 
 	//アンドゥ記録開始
 	COpeBlk* pcOpeBlk = NULL;

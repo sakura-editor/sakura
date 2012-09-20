@@ -335,7 +335,7 @@ EColorIndexType CEditView::GetColorIndex(
 		pInfo->nPosInLogic = pcLayoutLineFirst->GetLogicOffset();
 
 		//CColorStrategyPool‰Šú‰»
-		CColorStrategyPool* pool = CColorStrategyPool::Instance();
+		CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 		pool->NotifyOnStartScanLogic();
 
 
@@ -369,7 +369,7 @@ EColorIndexType CEditView::GetColorIndex(
 	CStringRef cLineStr(pcDocLine->GetPtr(),pcDocLine->GetLengthWithEOL());
 
 	//color strategy
-	CColorStrategyPool* pool = CColorStrategyPool::Instance();
+	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pInfo->pStrategy = pool->GetStrategyByColor(eRet);
 	if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
 
@@ -843,7 +843,7 @@ bool CEditView::DrawLogicLine(
 //	}
 
 	//CColorStrategyPool‰Šú‰»
-	CColorStrategyPool* pool = CColorStrategyPool::Instance();
+	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->NotifyOnStartScanLogic();
 
 	//DispPos‚ð•Û‘¶‚µ‚Ä‚¨‚­
@@ -942,7 +942,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	//color strategy
 	if(pcLayout && pcLayout->GetLogicOffset()==0){
-		CColorStrategyPool* pool = CColorStrategyPool::Instance();
+		CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 		pInfo->pStrategy = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
 		if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
 		pInfo->ChangeColor(pcLayout->GetColorTypePrev());
@@ -1011,7 +1011,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			pInfo->DoChangeColor(cLineStr);
 
 			//1•¶Žšî•ñŽæ“¾ $$‚‘¬‰»‰Â”\
-			CFigure& cFigure = CFigureManager::Instance()->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
+			CFigure& cFigure = CFigureManager::getInstance()->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
 
 			//1•¶Žš•`‰æ
 			CLogicInt nPosOld = pInfo->nPosInLogic;

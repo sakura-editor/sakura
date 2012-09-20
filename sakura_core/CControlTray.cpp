@@ -470,7 +470,7 @@ LRESULT CControlTray::DispatchEvent(
 		// タスクトレイのアイコンを常駐しない、または、トレイにアイコンを作っていない
 		if( !(m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray && m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray) || !m_bCreatedTrayIcon ){
 			// 現在開いている編集窓のリスト
-			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if( 0 < nRowNum ){
 				delete [] pEditNodeArr;
 			}
@@ -523,7 +523,7 @@ LRESULT CControlTray::DispatchEvent(
 		lphi = (LPHELPINFO) lParam;
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
-			CEditApp::Instance()->ShowFuncHelp( hwnd, (EFunctionCode)lphi->iCtrlId );
+			CEditApp::getInstance()->ShowFuncHelp( hwnd, (EFunctionCode)lphi->iCtrlId );
 			break;
 		}
 		return TRUE;
@@ -591,11 +591,11 @@ LRESULT CControlTray::DispatchEvent(
 				switch( nId ){
 				case F_HELP_CONTENTS:
 					/* ヘルプ目次 */
-					ShowWinHelpContents( GetTrayHwnd(), CEditApp::Instance()->GetHelpFilePath() );	//	目次を表示する
+					ShowWinHelpContents( GetTrayHwnd(), CEditApp::getInstance()->GetHelpFilePath() );	//	目次を表示する
 					break;
 				case F_HELP_SEARCH:
 					/* ヘルプキーワード検索 */
-					MyWinHelp( GetTrayHwnd(), CEditApp::Instance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+					MyWinHelp( GetTrayHwnd(), CEditApp::getInstance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 					break;
 				case F_EXTHELP1:
 					/* 外部ヘルプ１ */
@@ -962,13 +962,13 @@ bool CControlTray::OpenNewEditor(
 	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
 		// グループIDを親ウィンドウから取得
 		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
-		int nGroup = CAppNodeManager::Instance()->GetEditNode( hwndAncestor )->GetGroup();
+		int nGroup = CAppNodeManager::getInstance()->GetEditNode( hwndAncestor )->GetGroup();
 		if( nGroup > 0 ){
 			cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup );
 		}
 	}else{
 		// 空いているグループIDを使用する
-		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::Instance()->GetFreeGroupId() );
+		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::getInstance()->GetFreeGroupId() );
 	}
 
 	// -- -- -- -- プロセス生成 -- -- -- -- //
@@ -1131,13 +1131,13 @@ void CControlTray::ActiveNextWindow()
 {
 	/* 現在開いている編集窓のリストを得る */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	int			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if(  nRowNum > 0 ){
 		/* 自分のウィンドウを調べる */
 		int				nGroup = 0;
 		int				i;
 		for( i = 0; i < nRowNum; ++i ){
-			if( CEditWnd::Instance()->GetHwnd() == pEditNodeArr[i].GetHwnd() )
+			if( CEditWnd::getInstance()->GetHwnd() == pEditNodeArr[i].GetHwnd() )
 			{
 				nGroup = pEditNodeArr[i].m_nGroup;
 				break;
@@ -1170,13 +1170,13 @@ void CControlTray::ActivePrevWindow()
 {
 	/* 現在開いている編集窓のリストを得る */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	int			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if(  nRowNum > 0 ){
 		/* 自分のウィンドウを調べる */
 		int				nGroup = 0;
 		int				i;
 		for( i = 0; i < nRowNum; ++i ){
-			if( CEditWnd::Instance()->GetHwnd() == pEditNodeArr[i].GetHwnd() ){
+			if( CEditWnd::getInstance()->GetHwnd() == pEditNodeArr[i].GetHwnd() ){
 				nGroup = pEditNodeArr[i].m_nGroup;
 				break;
 			}
@@ -1259,7 +1259,7 @@ BOOL CControlTray::CloseAllEditor(
 	EditNode*	pWndArr;
 	int		n;
 
-	n = CAppNodeManager::Instance()->GetOpenedWindowArr( &pWndArr, FALSE );
+	n = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pWndArr, FALSE );
 	if( 0 == n ){
 		return TRUE;
 	}
@@ -1294,7 +1294,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	m_bUseTrayMenu = true;
 
 	m_CMenuDrawer.ResetContents();
-	CFileNameManager::Instance()->TransformFileName_MakeCache();
+	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
 	// リソースを使わないように
 	hMenuTop = ::CreatePopupMenu();
@@ -1379,7 +1379,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 						// 2003/01/27 Moca ファイル名の簡易表示
 						// pfi->m_szPath → szFileName
 						TCHAR szFileName[_MAX_PATH];
-						CFileNameManager::Instance()->GetTransformFileNameFast( pfi->m_szPath, szFileName, MAX_PATH );
+						CFileNameManager::getInstance()->GetTransformFileNameFast( pfi->m_szPath, szFileName, MAX_PATH );
 
 						// szFileName → szMenu2
 						//	Jan. 19, 2002 genta

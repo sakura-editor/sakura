@@ -93,7 +93,7 @@ CPropCommon::CPropCommon()
 	m_nPageNum = ID_PAGENUM_GENERAL;
 
 	/* ヘルプファイルのフルパスを返す */
-	m_pszHelpFile = CEditApp::Instance()->GetHelpFilePath();
+	m_pszHelpFile = CEditApp::getInstance()->GetHelpFilePath();
 
 	return;
 }
