@@ -109,10 +109,10 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_cAutoSaveAgent.ReloadAutoSaveParam();
 
 	//$$ CModifyManager インスタンスを生成
-	CModifyManager::Instance();
+	CModifyManager::getInstance();
 
 	//$$ CCodeChecker インスタンスを生成
-	CCodeChecker::Instance();
+	CCodeChecker::getInstance();
 
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
@@ -175,16 +175,16 @@ void CEditDoc::Clear()
 /* 既存データのクリア */
 void CEditDoc::InitDoc()
 {
-	CAppMode::Instance()->SetViewMode(false);	// ビューモード $$ 今後OnClearDocを用意したい
-	wcscpy( CAppMode::Instance()->m_szGrepKey, L"" );	//$$
+	CAppMode::getInstance()->SetViewMode(false);	// ビューモード $$ 今後OnClearDocを用意したい
+	wcscpy( CAppMode::getInstance()->m_szGrepKey, L"" );	//$$
 
-	CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode = false;	/* Grepモード */	//$$同上
+	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = false;	/* Grepモード */	//$$同上
 	m_cAutoReloadAgent.m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法 $$
 
 	// 2005.06.24 Moca バグ修正
 	//	アウトプットウィンドウで「閉じて(無題)」を行ってもアウトプットウィンドウのまま
-	if( CAppMode::Instance()->IsDebugMode() ){
-		CAppMode::Instance()->SetDebugModeOFF();
+	if( CAppMode::getInstance()->IsDebugMode() ){
+		CAppMode::getInstance()->SetDebugModeOFF();
 	}
 
 //	Sep. 10, 2002 genta
@@ -413,11 +413,11 @@ void CEditDoc::GetEditInfo(
 	pfi->m_nType = m_cDocType.GetDocumentType();
 
 	//GREPモード
-	pfi->m_bIsGrep = CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode;
-	wcscpy( pfi->m_szGrepKey, CAppMode::Instance()->m_szGrepKey );
+	pfi->m_bIsGrep = CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode;
+	wcscpy( pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey );
 
 	//デバッグモニタ (アウトプットウインドウ) モード
-	pfi->m_bIsDebug = CAppMode::Instance()->IsDebugMode();
+	pfi->m_bIsDebug = CAppMode::getInstance()->IsDebugMode();
 }
 
 
@@ -522,8 +522,8 @@ bool CEditDoc::IsAcceptLoad() const
 {
 	if(m_cDocEditor.IsModified())return false;
 	if(m_cDocFile.GetFilePathClass().IsValidPath())return false;
-	if(CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode)return false;
-	if(CAppMode::Instance()->IsDebugMode())return false;
+	if(CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode)return false;
+	if(CAppMode::getInstance()->IsDebugMode())return false;
 	return true;
 }
 
@@ -627,7 +627,7 @@ void CEditDoc::OnChangeSetting()
 
 		// ファイル書込可能のチェック処理
 		bool bOld = m_cDocLocker.IsDocWritable();
-		m_cDocLocker.CheckWritable(bOld && !CAppMode::Instance()->IsViewMode());	// 書込可から不可に遷移したときだけメッセージを出す（出過ぎると鬱陶しいよね？）
+		m_cDocLocker.CheckWritable(bOld && !CAppMode::getInstance()->IsViewMode());	// 書込可から不可に遷移したときだけメッセージを出す（出過ぎると鬱陶しいよね？）
 		if(bOld != m_cDocLocker.IsDocWritable()){
 			pCEditWnd->UpdateCaption();
 		}
@@ -639,7 +639,7 @@ void CEditDoc::OnChangeSetting()
 	}
 
 	/* 共有データ構造体のアドレスを返す */
-	CFileNameManager::Instance()->TransformFileName_MakeCache();
+	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
 	// 文書種別
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), false );
@@ -668,9 +668,9 @@ void CEditDoc::OnChangeSetting()
 				ref.m_nMaxLineKetas = MAXLINEKETAS;
 		}
 	}
-	CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
+	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
 	m_cLayoutMgr.SetLayoutInfo(true,ref);
-	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
+	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
@@ -704,11 +704,11 @@ BOOL CEditDoc::OnFileClose()
 
 
 	// デバッグモニタモードのときは保存確認しない
-	if(CAppMode::Instance()->IsDebugMode())return TRUE;
+	if(CAppMode::getInstance()->IsDebugMode())return TRUE;
 
 	//GREPモードで、かつ、「GREPモードで保存確認するか」がOFFだったら、保存確認しない
 	// 2011.11.13 GrepモードでGrep直後は"未編集"状態になっているが保存確認が必要
-	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ){
+	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
 		if( !GetDllShareData().m_Common.m_sSearch.m_bGrepExitConfirm ){
 			return TRUE;
 		}
@@ -720,8 +720,8 @@ BOOL CEditDoc::OnFileClose()
 	// -- -- 保存確認 -- -- //
 	TCHAR szGrepTitle[90];
 	LPCTSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : _T("(無題)");
-	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ){
-		LPCWSTR		pszGrepKey = CAppMode::Instance()->m_szGrepKey;
+	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
+		LPCWSTR		pszGrepKey = CAppMode::getInstance()->m_szGrepKey;
 		int			nLen = (int)wcslen( pszGrepKey );
 		CNativeW	cmemDes;
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
@@ -732,9 +732,9 @@ BOOL CEditDoc::OnFileClose()
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */
-	HWND	hwndMainFrame = CEditWnd::Instance()->GetHwnd();
+	HWND	hwndMainFrame = CEditWnd::getInstance()->GetHwnd();
 	ActivateFrameWindow( hwndMainFrame );
-	if( CAppMode::Instance()->IsViewMode() ){	/* ビューモード */
+	if( CAppMode::getInstance()->IsViewMode() ){	/* ビューモード */
 		ConfirmBeep();
 		nRet = ::MYMESSAGEBOX(
 			hwndMainFrame,
@@ -803,7 +803,7 @@ void CEditDoc::RunAutoMacro( int idx, LPCTSTR pszSaveFilePath )
 		return;	// 再入り実行はしない
 
 	bRunning = true;
-	if( CEditApp::Instance()->m_pcSMacroMgr->IsEnabled(idx) ){
+	if( CEditApp::getInstance()->m_pcSMacroMgr->IsEnabled(idx) ){
 		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
 			if( NULL != pszSaveFilePath )
 				m_cDocFile.SetSaveFilePath(pszSaveFilePath);

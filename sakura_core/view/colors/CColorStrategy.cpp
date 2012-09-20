@@ -38,7 +38,7 @@ const CLayout* SColorStrategyInfo::GetLayout() const
 
 void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 {
-	CColorStrategyPool* pool = CColorStrategyPool::Instance();
+	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(this->pcView);
 	CColor_Found*  pcFound  = pool->GetFoundStrategy();
 	CColor_Select* pcSelect = pool->GetSelectStrategy();
@@ -119,7 +119,7 @@ EColorIndexType SColorStrategyInfo::GetCurrentColor2() const
 
 CColorStrategyPool::CColorStrategyPool()
 {
-	m_pcView = &(CEditWnd::Instance()->GetView(0));
+	m_pcView = &(CEditWnd::getInstance()->GetView(0));
 	m_pcSelectStrategy = new CColor_Select();
 	m_pcFoundStrategy = new CColor_Found();
 //	m_vStrategies.push_back(new CColor_Found);				// ƒ}ƒbƒ`•¶Žš—ñ

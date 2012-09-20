@@ -83,7 +83,7 @@ EFunctionCode CFuncLookup::Pos2FuncCode( int category, int position, bool bGetUn
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN ){
 		//	プラグイン
-		return CJackManager::Instance()->GetCommandCode( position );
+		return CJackManager::getInstance()->GetCommandCode( position );
 	}
 	return F_DISABLE;
 }
@@ -147,7 +147,7 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		}
 	}
 	else if( F_PLUGCOMMAND_FIRST <= funccode && funccode < F_PLUGCOMMAND_LAST ){
-		if( CJackManager::Instance()->GetCommandName( funccode, ptr, bufsize ) > 0 ){
+		if( CJackManager::getInstance()->GetCommandName( funccode, ptr, bufsize ) > 0 ){
 			return true;	// プラグインコマンド
 		}
 	}
@@ -258,7 +258,7 @@ int CFuncLookup::GetItemCount(int category) const
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN ){
 		//	プラグインコマンド
-		return CJackManager::Instance()->GetCommandCount();
+		return CJackManager::getInstance()->GetCommandCount();
 	}
 	return 0;
 }

@@ -250,7 +250,7 @@ SEARCH_START:;
 		}
 
 		//@@@ 2002.09.22 YAZAKI
-		bool bGotoSEARCH_START = CColorStrategyPool::Instance()->CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
+		bool bGotoSEARCH_START = CColorStrategyPool::getInstance()->CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 		if ( bGotoSEARCH_START )
 			goto SEARCH_START;
 		
@@ -460,7 +460,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	SLayoutWork _sWork;
 	SLayoutWork* pWork = &_sWork;
 	pWork->pLayout					= pLayoutPrev;
-	pWork->pcColorStrategy			= CColorStrategyPool::Instance()->GetStrategyByColor(nCurrentLineType);
+	pWork->pcColorStrategy			= CColorStrategyPool::getInstance()->GetStrategyByColor(nCurrentLineType);
 	pWork->pcColorStrategy_Prev		= pWork->pcColorStrategy;
 	pWork->bNeedChangeCOMMENTMODE	= false;
 	if( NULL == pWork->pLayout ){

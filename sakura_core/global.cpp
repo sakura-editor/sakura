@@ -34,8 +34,8 @@ const int		SELECTEDAREA_ROP2 = R2_XORPEN;
 
 HWND G_GetProgressBar()
 {
-	if(CEditWnd::Instance()){
-		return CEditWnd::Instance()->m_cStatusBar.GetProgressHwnd();
+	if(CEditWnd::getInstance()){
+		return CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
 	}
 	else{
 		return NULL;
@@ -44,5 +44,5 @@ HWND G_GetProgressBar()
 
 HINSTANCE G_AppInstance()
 {
-	return CProcess::Instance()->GetProcessInstance();
+	return CProcess::getInstance()->GetProcessInstance();
 }

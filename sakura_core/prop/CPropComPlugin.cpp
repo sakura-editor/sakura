@@ -96,7 +96,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 ){
-						CPlugin* plugin = CPluginManager::Instance()->GetPlugin(sel);
+						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						if( plugin != NULL ){
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Description ), to_tchar(plugin->m_sDescription.c_str()) );
 							::SetWindowText( ::GetDlgItem( hwndDlg, IDC_LABEL_PLUGIN_Author ), to_tchar(plugin->m_sAuthor.c_str()) );
@@ -143,7 +143,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_PLUGIN_SearchNew:		// 新規プラグインを追加
-				CPluginManager::Instance()->SearchNewPlugin( m_Common, hwndDlg );
+				CPluginManager::getInstance()->SearchNewPlugin( m_Common, hwndDlg );
 				SetData_LIST( hwndDlg );	//リストの再構築
 				break;
 			case IDC_CHECK_PluginEnable:	// プラグインを有効にする
@@ -155,7 +155,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 ){
 						if( MYMESSAGEBOX( hwndDlg, MB_YESNO, GSTR_APPNAME, to_tchar((m_Common.m_sPlugin.m_PluginTable[sel].m_szName + std::wstring(L" を削除しますか")).c_str()) ) == IDYES ){
-							CPluginManager::Instance()->UninstallPlugin( m_Common, sel );
+							CPluginManager::getInstance()->UninstallPlugin( m_Common, sel );
 							SetData_LIST( hwndDlg );
 						}
 					}
@@ -167,7 +167,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					if( sel >= 0 && m_Common.m_sPlugin.m_PluginTable[sel].m_state == PLS_LOADED ){
 						// 2010.08.21 プラグイン名(フォルダ名)の同一性の確認
-						CPlugin* plugin = CPluginManager::Instance()->GetPlugin(sel);
+						CPlugin* plugin = CPluginManager::getInstance()->GetPlugin(sel);
 						wstring sDirName = to_wchar(plugin->GetFolderName().c_str());
 						if( plugin && 0 == auto_stricmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
@@ -256,7 +256,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 
 	for( index = 0; index < MAX_PLUGIN; ++index ){
 		std::basic_string<TCHAR> sDirName;	//CPlugin.GetDirName()の結果保持変数
-		CPlugin* plugin = CPluginManager::Instance()->GetPlugin( index );
+		CPlugin* plugin = CPluginManager::getInstance()->GetPlugin( index );
 
 		//番号
 		TCHAR buf[4];

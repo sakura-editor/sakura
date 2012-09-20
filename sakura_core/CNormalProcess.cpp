@@ -93,7 +93,7 @@ bool CNormalProcess::InitializeProcess()
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
-	CCommandLine::Instance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
+	CCommandLine::getInstance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
 	if( 0 < _tcslen( fi.m_szPath ) ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
@@ -130,19 +130,19 @@ bool CNormalProcess::InitializeProcess()
 	// プラグイン読み込み
 	MY_TRACETIME( cRunningTimer, "Before Init Jack" );
 	/* ジャック初期化 */
-	CJackManager::Instance();
+	CJackManager::getInstance();
 	MY_TRACETIME( cRunningTimer, "After Init Jack" );
 
 	MY_TRACETIME( cRunningTimer, "Before Load Plugins" );
 	/* プラグイン読み込み */
-	CPluginManager::Instance()->LoadAllPlugin();
+	CPluginManager::getInstance()->LoadAllPlugin();
 	MY_TRACETIME( cRunningTimer, "After Load Plugins" );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	// グループIDを取得
-	int nGroupId = CCommandLine::Instance()->GetGroupId();
+	int nGroupId = CCommandLine::getInstance()->GetGroupId();
 	if( GetDllShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
-		nGroupId = CAppNodeManager::Instance()->GetFreeGroupId();
+		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
 	}
 	// CEditAppを作成
 	m_pcEditApp = new CEditApp(GetProcessInstance(), nGroupId);
@@ -154,9 +154,9 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
-	bDebugMode = CCommandLine::Instance()->IsDebugMode();
-	bGrepMode  = CCommandLine::Instance()->IsGrepMode();
-	bGrepDlg   = CCommandLine::Instance()->IsGrepDlg();
+	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
+	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
+	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
 
 	MY_TRACETIME( cRunningTimer, "CheckFile" );
 
@@ -165,7 +165,7 @@ bool CNormalProcess::InitializeProcess()
 
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
-		CAppMode::Instance()->SetDebugModeON();
+		CAppMode::getInstance()->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
 		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
@@ -183,7 +183,7 @@ bool CNormalProcess::InitializeProcess()
 			::GetClientRect( hEditWnd, &rc );
 			::SendMessageAny( hEditWnd, WM_SIZE, ::IsZoomed( hEditWnd )? SIZE_MAXIMIZED: SIZE_RESTORED, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		}
-		CCommandLine::Instance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
+		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
 			/* ロングファイル名を取得する */
@@ -244,7 +244,7 @@ bool CNormalProcess::InitializeProcess()
 	else{
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
-		bViewMode = CCommandLine::Instance()->IsViewMode(); // 2002/2/8 aroka ここに移動
+		bViewMode = CCommandLine::getInstance()->IsViewMode(); // 2002/2/8 aroka ここに移動
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(
@@ -348,7 +348,7 @@ bool CNormalProcess::InitializeProcess()
 	//プラグイン：EditorStartイベント実行
 	CPlug::Array plugs;
 	CWSHIfObj::List params;
-	CJackManager::Instance()->GetUsablePlug(
+	CJackManager::getInstance()->GetUsablePlug(
 			PP_EDITOR_START,
 			0,
 			&plugs
@@ -362,9 +362,9 @@ bool CNormalProcess::InitializeProcess()
 		pEditWnd->GetDocument().RunAutoMacro( GetDllShareData().m_Common.m_sMacro.m_nMacroOnOpened );
 
 	// 起動時マクロオプション
-	LPCWSTR pszMacro = CCommandLine::Instance()->GetMacro();
+	LPCWSTR pszMacro = CCommandLine::getInstance()->GetMacro();
 	if( pEditWnd->GetHwnd()  &&  pszMacro  &&  pszMacro[0] != L'\0' ){
-		LPCWSTR pszMacroType = CCommandLine::Instance()->GetMacroType();
+		LPCWSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
 		if( pszMacroType == NULL || pszMacroType[0] == L'\0' || wcsicmp(pszMacroType, L"file") == 0 ){
 			pszMacroType = NULL;
 		}
@@ -401,7 +401,7 @@ void CNormalProcess::OnExitProcess()
 {
 	/* プラグイン解放 */
 	SAFE_DELETE(m_pcEditApp);
-	CPluginManager::Instance()->UnloadAllPlugin();		// Mpve here	2010/7/11 Uchi
+	CPluginManager::getInstance()->UnloadAllPlugin();		// Mpve here	2010/7/11 Uchi
 }
 
 

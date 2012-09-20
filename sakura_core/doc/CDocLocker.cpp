@@ -84,7 +84,7 @@ void CDocLocker::CheckWritable(bool bMsg)
 		// その他の原因（ファイルシステムのセキュリティ設定など）では読み取り専用と同様にメッセージを出さない
 		if( ::GetLastError() == ERROR_SHARING_VIOLATION ){
 			TopWarningMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("%ts\nは現在他のプロセスによって書込みが禁止されています。"),
 				cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath() : _T("(無題)")
 			);

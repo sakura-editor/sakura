@@ -12,7 +12,7 @@ bool CColor_RegexKeyword::BeginColor(const CStringRef& cStr, int nPos)
 	int		nMatchLen;
 	int		nMatchColor;
 
-	const CEditView* pcView = CColorStrategyPool::Instance()->GetCurrentView();
+	const CEditView* pcView = CColorStrategyPool::getInstance()->GetCurrentView();
 
 	//正規表現キーワード
 	if( TypeDataPtr->m_bUseRegexKeyword

@@ -64,7 +64,7 @@ INT_PTR CALLBACK CDlgInput1Proc(
 CDlgInput1::CDlgInput1()
 {
 	/* ヘルプファイルのフルパスを返す */
-	m_pszHelpFile = CEditApp::Instance()->GetHelpFilePath();	//@@@ 2002.01.07 add
+	m_pszHelpFile = CEditApp::getInstance()->GetHelpFilePath();	//@@@ 2002.01.07 add
 
 	return;
 }

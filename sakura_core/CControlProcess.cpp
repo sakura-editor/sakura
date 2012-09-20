@@ -81,11 +81,11 @@ bool CControlProcess::InitializeProcess()
 	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
 	TCHAR szIniFile[_MAX_PATH];
 	CShareData_IO::LoadShareData();
-	CFileNameManager::Instance()->GetIniFileName( szIniFile );	// 出力iniファイル名
-	if( !fexist(szIniFile) || CCommandLine::Instance()->IsWriteQuit() ){
+	CFileNameManager::getInstance()->GetIniFileName( szIniFile );	// 出力iniファイル名
+	if( !fexist(szIniFile) || CCommandLine::getInstance()->IsWriteQuit() ){
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
-		if( CCommandLine::Instance()->IsWriteQuit() ){
+		if( CCommandLine::getInstance()->IsWriteQuit() ){
 			return false;
 		}
 	}

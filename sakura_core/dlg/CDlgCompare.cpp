@@ -129,7 +129,7 @@ void CDlgCompare::SetData( void )
 //	setlocale ( LC_ALL, "C" );
 
 	/* 現在開いている編集窓のリストをメニューにする */
-	nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){
 		// 水平スクロール幅は実際に表示する文字列の幅を計測して決める	// 2009.09.26 ryoji
 		HDC hDC = ::GetDC( hwndList );
@@ -143,7 +143,7 @@ void CDlgCompare::SetData( void )
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
 //			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
-			if (pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd()){
+			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()){
 				continue;
 			}
 			if( pfi->m_bIsGrep && !pfi->m_szPath[0] ){

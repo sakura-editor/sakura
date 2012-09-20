@@ -17,7 +17,7 @@
 
 CEditWnd* CSakuraEnvironment::GetMainWindow()
 {
-	return CEditWnd::Instance();
+	return CEditWnd::getInstance();
 }
 
 /*!	$xの展開
@@ -154,7 +154,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			else {
 				TCHAR szText[1024];
-				CFileNameManager::Instance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023 );
+				CFileNameManager::getInstance()->GetTransformFileNameFast( pcDoc->m_cDocFile.GetFilePath(), szText, 1023 );
 				q = wcs_pushT( q, q_max - q, szText);
 				++p;
 			}
@@ -294,8 +294,8 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			{
 				CNativeW	cmemDes;
 				// m_szGrepKey → cmemDes
-				LimitStringLengthW( CAppMode::Instance()->m_szGrepKey, wcslen( CAppMode::Instance()->m_szGrepKey ), (q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
-				if( (int)wcslen( CAppMode::Instance()->m_szGrepKey ) > cmemDes.GetStringLength() ){
+				LimitStringLengthW( CAppMode::getInstance()->m_szGrepKey, wcslen( CAppMode::getInstance()->m_szGrepKey ), (q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
+				if( (int)wcslen( CAppMode::getInstance()->m_szGrepKey ) > cmemDes.GetStringLength() ){
 					cmemDes.AppendString(L"...");
 				}
 				q = wcs_pushW( q, q_max - q, cmemDes.GetStringPtr(), cmemDes.GetStringLength());
@@ -316,7 +316,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			//	iniファイルのフルパス
 			{
 				TCHAR	szPath[_MAX_PATH + 1];
-				CFileNameManager::Instance()->GetIniFileName( szPath );
+				CFileNameManager::getInstance()->GetIniFileName( szPath );
 				q = wcs_pushT( q, q_max - q, szPath );
 				++p;
 			}
@@ -325,7 +325,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			//	現在実行しているマクロファイルパスの取得
 			{
 				// 実行中マクロのインデックス番号 (INVALID_MACRO_IDX:無効 / STAND_KEYMACRO:標準マクロ)
-				switch( CEditApp::Instance()->m_pcSMacroMgr->GetCurrentIdx() ){
+				switch( CEditApp::getInstance()->m_pcSMacroMgr->GetCurrentIdx() ){
 				case INVALID_MACRO_IDX:
 					break;
 				case STAND_KEYMACRO:
@@ -337,7 +337,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				default:
 					{
 						TCHAR szMacroFilePath[_MAX_PATH * 2];
-						int n = CShareData::getInstance()->GetMacroFilename( CEditApp::Instance()->m_pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, _countof(szMacroFilePath) );
+						int n = CShareData::getInstance()->GetMacroFilename( CEditApp::getInstance()->m_pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, _countof(szMacroFilePath) );
 						if ( 0 < n ){
 							q = wcs_pushT( q, q_max - q, szMacroFilePath );
 						}
@@ -452,7 +452,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 
 	switch( *pCond ){
 	case L'R': // $R ビューモードおよび読み取り専用属性
-		if( CAppMode::Instance()->IsViewMode() ){
+		if( CAppMode::getInstance()->IsViewMode() ){
 			return 0; // ビューモード
 		}
 		else if( !CEditDoc::GetInstance(0)->m_cDocLocker.IsDocWritable() ){
@@ -462,15 +462,15 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 2; // 上記以外
 		}
 	case L'w': // $w Grepモード/Output Mode
-		if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ){
+		if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
 			return 0;
-		}else if( CAppMode::Instance()->IsDebugMode() ){
+		}else if( CAppMode::getInstance()->IsDebugMode() ){
 			return 1;
 		}else {
 			return 2;
 		}
 	case L'M': // $M キーボードマクロの記録中
-		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==CEditWnd::Instance()->GetHwnd() ){ /* ウィンドウ */
+		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==CEditWnd::getInstance()->GetHwnd() ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
@@ -483,7 +483,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 			return 1;
 		}
 	case L'I': // $I アイコン化されているか
-		if( ::IsIconic( CEditWnd::Instance()->GetHwnd() )){
+		if( ::IsIconic( CEditWnd::getInstance()->GetHwnd() )){
 			return 0;
 		} else {
  			return 1;

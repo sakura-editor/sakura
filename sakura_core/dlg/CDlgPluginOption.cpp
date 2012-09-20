@@ -80,7 +80,7 @@ int CDlgPluginOption::DoModal(
 {
 	// プラグイン番号（エディタがふる番号）
 	m_ID = ID;
-	m_cPlugin = CPluginManager::Instance()->GetPlugin( m_ID );
+	m_cPlugin = CPluginManager::getInstance()->GetPlugin( m_ID );
 
 	if( m_cPlugin == NULL ){
 		::ErrorMessage( hwndParent, _T("プラグインがロードされていません。") );

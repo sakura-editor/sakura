@@ -467,7 +467,7 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 	hwndDst = (HWND)tcitem.lParam;
 
 	//	2007.07.07 genta CShareData::ReorderTabとして独立
-	if( ! CAppNodeManager::Instance()->ReorderTab( hwndSrc, hwndDst ) ){
+	if( ! CAppNodeManager::getInstance()->ReorderTab( hwndSrc, hwndDst ) ){
 		return FALSE;
 	}
 	return TRUE;
@@ -476,7 +476,7 @@ BOOL CTabWnd::ReorderTab( int nSrcTab, int nDstTab )
 void CTabWnd::BroadcastRefreshToGroup()
 {
 	// 再表示メッセージをブロードキャストする。
-	int nGroup = CAppNodeManager::Instance()->GetEditNode( GetParentHwnd() )->GetGroup();
+	int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetParentHwnd() )->GetGroup();
 	CAppNodeGroupHandle(nGroup).PostMessageToAllEditors(
 		MYWM_TAB_WINDOW_NOTIFY,
 		(WPARAM)TWNT_REFRESH,
@@ -501,20 +501,20 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 		return FALSE;
 	if( hWnd != pTopEditNode->m_hWnd || hWnd != ::GetForegroundWindow() )
 		return FALSE;
-	if(	hWnd != CAppNodeManager::Instance()->GetEditNode(hwndSrc)->GetGroup().GetTopEditNode()->GetHwnd() )
+	if(	hWnd != CAppNodeManager::getInstance()->GetEditNode(hwndSrc)->GetGroup().GetTopEditNode()->GetHwnd() )
 		return FALSE;
-	if( hwndDst != NULL && hwndDst != CAppNodeManager::Instance()->GetEditNode(hwndDst)->GetGroup().GetTopEditNode()->GetHwnd() )
+	if( hwndDst != NULL && hwndDst != CAppNodeManager::getInstance()->GetEditNode(hwndDst)->GetGroup().GetTopEditNode()->GetHwnd() )
 		return FALSE;
 	if( hwndSrc == hwndDst )
 		return TRUE;
 
-	EditNode* pSrcEditNode = CAppNodeManager::Instance()->GetEditNode( hwndSrc );
-	EditNode* pDstEditNode = CAppNodeManager::Instance()->GetEditNode( hwndDst );
+	EditNode* pSrcEditNode = CAppNodeManager::getInstance()->GetEditNode( hwndSrc );
+	EditNode* pDstEditNode = CAppNodeManager::getInstance()->GetEditNode( hwndDst );
 	int showCmdRestore = pDstEditNode? pDstEditNode->m_showCmdRestore: SW_SHOWNA;
 
 	// グループ変更するウィンドウが先頭ウィンドウなら次のウィンドウを可視にする（手前には出さない）
 	// そうでなければ新規グループになる場合に別ウィンドウよりは手前に表示されるよう不可視のまま先頭ウィンドウのすぐ後ろにもってきておく
-	HWND hwndTop = CAppNodeManager::Instance()->GetEditNode(hwndSrc)->GetGroup().GetTopEditNode()->GetHwnd();
+	HWND hwndTop = CAppNodeManager::getInstance()->GetEditNode(hwndSrc)->GetGroup().GetTopEditNode()->GetHwnd();
 	bool bSrcIsTop = ( hwndSrc == hwndTop );
 	if( bSrcIsTop )
 	{
@@ -533,7 +533,7 @@ BOOL CTabWnd::SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptD
 
 	//	2007.07.07 genta 内部的なグループ移動の操作をCShareDataへ移動
 	int notifygroups[2];
-	hwndDst = CAppNodeManager::Instance()->SeparateGroup( hwndSrc, hwndDst, bSrcIsTop, notifygroups );
+	hwndDst = CAppNodeManager::getInstance()->SeparateGroup( hwndSrc, hwndDst, bSrcIsTop, notifygroups );
 
 	WINDOWPLACEMENT wp;
 	RECT rcDstWork;
@@ -1402,7 +1402,7 @@ LRESULT CTabWnd::OnNotify( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 			if( TabCtrl_GetItem( m_hwndTab, pnmh->idFrom, &tcitem ) )
 			{
 				EditNode* pEditNode;
-				pEditNode = CAppNodeManager::Instance()->GetEditNode( (HWND)tcitem.lParam );
+				pEditNode = CAppNodeManager::getInstance()->GetEditNode( (HWND)tcitem.lParam );
 				GetTabName( pEditNode, TRUE, FALSE, m_szTextTip, _countof(m_szTextTip) );
 				((NMTTDISPINFO*)pnmh)->lpszText = m_szTextTip;	// NMTTDISPINFO::szText[80]では短い
 				((NMTTDISPINFO*)pnmh)->hinst = NULL;
@@ -1458,7 +1458,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			nIndex = nCount;
 		}
 
-		if( CAppNodeManager::Instance()->GetEditNode( GetParentHwnd() )->IsTopInGroup() )
+		if( CAppNodeManager::getInstance()->GetEditNode( GetParentHwnd() )->IsTopInGroup() )
 		{
 			//自分ならアクティブに
 			if( !::IsWindowVisible( GetParentHwnd() ) )
@@ -1479,7 +1479,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		nIndex = FindTabIndexByHWND( (HWND)lParam );
 		if( -1 != nIndex )
 		{
-			if( CAppNodeManager::Instance()->GetEditNode( GetParentHwnd() )->IsTopInGroup() )
+			if( CAppNodeManager::getInstance()->GetEditNode( GetParentHwnd() )->IsTopInGroup() )
 			{
 				if( !::IsWindowVisible( GetParentHwnd() ) )
 				{
@@ -1506,7 +1506,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 		nIndex = FindTabIndexByHWND( (HWND)lParam );
 		if( -1 != nIndex )
 		{
-			if( CAppNodeManager::Instance()->GetEditNode(GetParentHwnd())->IsTopInGroup() )
+			if( CAppNodeManager::getInstance()->GetEditNode(GetParentHwnd())->IsTopInGroup() )
 			{
 				//自分ならアクティブに
 				if( !::IsWindowVisible( GetParentHwnd() ) )
@@ -1544,7 +1544,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 			TCHAR	szName[1024];
 			//	Jun. 19, 2004 genta
 			EditNode	*p;
-			p = CAppNodeManager::Instance()->GetEditNode( (HWND)lParam );
+			p = CAppNodeManager::getInstance()->GetEditNode( (HWND)lParam );
 			GetTabName( p, FALSE, TRUE, szName, _countof(szName) );
 
 			tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
@@ -1573,7 +1573,7 @@ void CTabWnd::TabWindowNotify( WPARAM wParam, LPARAM lParam )
 	//タブモード有効になった場合、まとめられる側のウィンドウは隠れる
 	case TWNT_MODE_ENABLE:
 		Refresh();
-		if( CAppNodeManager::Instance()->GetEditNode( GetParentHwnd() )->IsTopInGroup() )
+		if( CAppNodeManager::getInstance()->GetEditNode( GetParentHwnd() )->IsTopInGroup() )
 		{
 			if( !::IsWindowVisible( GetParentHwnd() ) )
 			{
@@ -1670,7 +1670,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 	if( NULL == m_hwndTab ) return;
 
 	pEditNode = NULL;
-	nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
+	nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 
 	// 自ウィンドウのグループ番号を調べる
 	for( i = 0; i < nCount; i++ )
@@ -1810,7 +1810,7 @@ void CTabWnd::AdjustWindowPlacement( void )
 			// ウィンドウを背後に配置する
 			// Note. WS_EX_TOPMOST については hwndInsertAfter ウィンドウの状態が引き継がれる
 			EditNode* pEditNode;
-			pEditNode = CAppNodeManager::Instance()->GetEditNode(hwnd)->GetGroup().GetTopEditNode();
+			pEditNode = CAppNodeManager::getInstance()->GetEditNode(hwnd)->GetGroup().GetTopEditNode();
 			if( pEditNode == NULL )
 			{
 				::ShowWindow( hwnd, SW_SHOWNA );
@@ -2421,7 +2421,7 @@ void CTabWnd::GetTabName( EditNode* pEditNode, BOOL bFull, BOOL bDupamp, LPTSTR 
 	else
 	{
 		// フルパス名を簡易名に変換する
-		CFileNameManager::Instance()->GetTransformFileNameFast( pEditNode->m_szFilePath, pszText, nLen );
+		CFileNameManager::getInstance()->GetTransformFileNameFast( pEditNode->m_szFilePath, pszText, nLen );
 	}
 
 	if( bDupamp )
@@ -2472,7 +2472,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 		int nCount;
 		
 		// タブメニュー用の情報を取得する
-		nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		if( 0 >= nCount )
 			return 0L;
 
@@ -2623,7 +2623,7 @@ HWND CTabWnd::GetNextGroupWnd( void )
 		int j;
 		int n;
 
-		n = CAppNodeManager::Instance()->GetOpenedWindowArr( &pWndArr, FALSE, TRUE );	// グループ番号順ソート
+		n = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pWndArr, FALSE, TRUE );	// グループ番号順ソート
 		if( 0 == n )
 			return NULL;
 		for( i = 0; i < n; i++ )
@@ -2637,7 +2637,7 @@ HWND CTabWnd::GetNextGroupWnd( void )
 			{
 				if( pWndArr[j].m_nGroup != pWndArr[i].m_nGroup )
 				{
-					hwndRet = CAppNodeManager::Instance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
+					hwndRet = CAppNodeManager::getInstance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
 					break;
 				}
 			}
@@ -2647,7 +2647,7 @@ HWND CTabWnd::GetNextGroupWnd( void )
 				{
 					if( pWndArr[j].m_nGroup != pWndArr[i].m_nGroup )
 					{
-						hwndRet = CAppNodeManager::Instance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
+						hwndRet = CAppNodeManager::getInstance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
 						break;
 					}
 				}
@@ -2672,7 +2672,7 @@ HWND CTabWnd::GetPrevGroupWnd( void )
 		int j;
 		int n;
 
-		n = CAppNodeManager::Instance()->GetOpenedWindowArr( &pWndArr, FALSE, TRUE );	// グループ番号順ソート
+		n = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pWndArr, FALSE, TRUE );	// グループ番号順ソート
 		if( 0 == n )
 			return NULL;
 		for( i = 0; i < n; i++ )
@@ -2686,7 +2686,7 @@ HWND CTabWnd::GetPrevGroupWnd( void )
 			{
 				if( pWndArr[j].m_nGroup != pWndArr[i].m_nGroup )
 				{
-					hwndRet = CAppNodeManager::Instance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
+					hwndRet = CAppNodeManager::getInstance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
 					break;
 				}
 			}
@@ -2696,7 +2696,7 @@ HWND CTabWnd::GetPrevGroupWnd( void )
 				{
 					if( pWndArr[j].m_nGroup != pWndArr[i].m_nGroup )
 					{
-						hwndRet = CAppNodeManager::Instance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
+						hwndRet = CAppNodeManager::getInstance()->GetEditNode(pWndArr[j].m_hWnd)->GetGroup().GetTopEditNode()->GetHwnd();
 						break;
 					}
 				}

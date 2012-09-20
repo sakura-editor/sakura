@@ -23,7 +23,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	if( IsDirectory(pLoadInfo->cFilePath) ){
 		SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			pLoadInfo->cFilePath,	//指定されたフォルダ
 			&sLoadInfo
 		);
@@ -44,7 +44,7 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 	if(!pcDoc->IsAcceptLoad()){
 		CControlTray::OpenNewEditor(
 			G_AppInstance(),
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			*pLoadInfo
 		);
 		return CALLBACK_INTERRUPT;
@@ -58,7 +58,7 @@ next:
 			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
 			//	ここでステータスメッセージを使っても画面に表示されない．
 			TopInfoMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("%ts\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"),	//Mar. 24, 2001 jepro 若干修正
 				pLoadInfo->cFilePath.GetBufferPointer()
 			);
@@ -81,7 +81,7 @@ next:
 		if(!cFile.IsFileReadable()){
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				_T("\'%ls\'\n")
 				_T("というファイルを開けません。\n")
 				_T("読み込みアクセス権がありません。"),
@@ -104,7 +104,7 @@ next:
 			nFileSize.LowPart = wfd.nFileSizeLow;
 			// GetDllShareData().m_Common.m_sFile.m_nAlertFileSize はMB単位
 			if( (nFileSize.QuadPart>>20) >= (GetDllShareData().m_Common.m_sFile.m_nAlertFileSize) ){
-				int nRet = MYMESSAGEBOX( CEditWnd::Instance()->GetHwnd(),
+				int nRet = MYMESSAGEBOX( CEditWnd::getInstance()->GetHwnd(),
 					MB_ICONQUESTION | MB_YESNO | MB_TOPMOST,
 					GSTR_APPNAME,
 					_T("ファイルサイズが%dMB以上あります。開きますか？"),
@@ -153,7 +153,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	if(fexist(sLoadInfo.cFilePath)){
 		//CDocLineMgrの構成
 		CReadManager cReader;
-		CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&cReader);
+		CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&cReader);
 		EConvertResult eReadResult = cReader.ReadFile_To_CDocLineMgr(
 			&pcDoc->m_cDocLineMgr,
 			sLoadInfo,
@@ -162,7 +162,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		if(eReadResult==RESULT_LOSESOME){
 			eRet = LOADED_LOSESOME;
 		}
-		CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
+		CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 	}
 	else{
 		// 存在しないときもドキュメントに文字コードを反映する
@@ -184,9 +184,9 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
 		ref.m_nMaxLineKetas = MAXLINEKETAS;
 
-	CProgressSubject* pOld = CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
+	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
 	pcDoc->m_cLayoutMgr.SetLayoutInfo(true, ref);
-	CEditApp::Instance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
+	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
 	return eRet;
 }
@@ -223,15 +223,15 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 		if(pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODE || pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODEBE)pcDoc->m_cDocFile.m_sFileInfo.bBomExist = true;
 	}
 	if(eLoadResult==LOADED_LOSESOME){
-		CAppMode::Instance()->SetViewMode(true);
+		CAppMode::getInstance()->SetViewMode(true);
 	}
 
 	//再描画 $$不足
-	CEditWnd::Instance()->GetActiveView().SetDrawSwitch(true);
-	CEditWnd::Instance()->Views_RedrawAll(); //ビュー再描画
-	InvalidateRect( CEditWnd::Instance()->GetHwnd(), NULL, TRUE );
+	CEditWnd::getInstance()->GetActiveView().SetDrawSwitch(true);
+	CEditWnd::getInstance()->Views_RedrawAll(); //ビュー再描画
+	InvalidateRect( CEditWnd::getInstance()->GetHwnd(), NULL, TRUE );
 	//m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
-	CCaret& cCaret = CEditWnd::Instance()->GetActiveView().GetCaret();
+	CCaret& cCaret = CEditWnd::getInstance()->GetActiveView().GetCaret();
 	cCaret.MoveCursor(cCaret.GetCaretLayoutPos(),true);
-	CEditWnd::Instance()->GetActiveView().AdjustScrollBars();
+	CEditWnd::getInstance()->GetActiveView().AdjustScrollBars();
 }

@@ -244,7 +244,7 @@ BOOL CViewCommander::HandleCommand(
 		){
 			/* キーマクロのバッファにデータ追加 */
 			//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
-			CEditApp::Instance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, m_pCommanderView );
+			CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, m_pCommanderView );
 		}
 	}
 
@@ -262,13 +262,13 @@ BOOL CViewCommander::HandleCommand(
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !CEditApp::Instance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
+		if( !CEditApp::getInstance()->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
 			nCommandFrom & FA_NONRECORD )){
 			InfoMessage(
 				this->m_pCommanderView->m_hwndParent,
 				_T("マクロ %d (%ts) の実行に失敗しました。"),
 				nCommand - F_USERMACRO_0,
-				CEditApp::Instance()->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+				CEditApp::getInstance()->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
 		}
 		return TRUE;
@@ -742,7 +742,7 @@ BOOL CViewCommander::HandleCommand(
 		//プラグインコマンドを実行する
 		{
 			CPlug::Array plugs;
-			CJackManager::Instance()->GetUsablePlug( PP_COMMAND, nCommand, &plugs );
+			CJackManager::getInstance()->GetUsablePlug( PP_COMMAND, nCommand, &plugs );
 
 			if( plugs.size() > 0 ){
 				assert_warning( 1 == plugs.size() );
@@ -2881,7 +2881,7 @@ end_of_for:;
 		//プラグインから検索する
 		{
 			CPlug::Array plugs;
-			CJackManager::Instance()->GetUsablePlug( PP_SMARTINDENT, nSIndentType, &plugs );
+			CJackManager::getInstance()->GetUsablePlug( PP_SMARTINDENT, nSIndentType, &plugs );
 
 			if( plugs.size() > 0 ){
 				assert_warning( 1 == plugs.size() );
@@ -3566,7 +3566,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
-			CEditWnd::Instance()->GetHwnd(),	//[in]  オーナーウィンドウ
+			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
 			NULL,								//[in]  フォルダ
 			&sLoadInfo							//[out] ロード情報受け取り
 		);
@@ -3630,9 +3630,9 @@ bool CViewCommander::Command_FILESAVE( bool warnbeep, bool askname )
 	sSaveInfo.bOverwriteMode = true; //上書き要求
 
 	//上書き処理
-	if(!warnbeep)CEditApp::Instance()->m_cSoundSet.MuteOn();
+	if(!warnbeep)CEditApp::getInstance()->m_cSoundSet.MuteOn();
 	bool bRet = pcDoc->m_cDocFileOperation.DoSaveFlow(&sSaveInfo);
-	if(!warnbeep)CEditApp::Instance()->m_cSoundSet.MuteOff();
+	if(!warnbeep)CEditApp::getInstance()->m_cSoundSet.MuteOff();
 
 	return bRet;
 }
@@ -3953,7 +3953,7 @@ void CViewCommander::Command_FONT( void )
 #else
 	bool bFixedFont = true;
 #endif
-	if( MySelectFont( &cLogfont, &nPointSize, CEditWnd::Instance()->m_cSplitterWnd.GetHwnd(), bFixedFont ) ){
+	if( MySelectFont( &cLogfont, &nPointSize, CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), bFixedFont ) ){
 		GetDllShareData().m_Common.m_sView.m_lf = cLogfont;
 		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 
@@ -3994,7 +3994,7 @@ void CViewCommander::Command_FONT( void )
 void CViewCommander::Command_OPTION( void )
 {
 	/* 設定プロパティシート テスト用 */
-	CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheet( -1/*, -1*/ );
+	CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheet( -1/*, -1*/ );
 }
 
 
@@ -4003,7 +4003,7 @@ void CViewCommander::Command_OPTION( void )
 /* タイプ別設定 */
 void CViewCommander::Command_OPTION_TYPE( void )
 {
-	CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheetTypes( -1, GetDocument()->m_cDocType.GetDocumentType() );
+	CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheetTypes( -1, GetDocument()->m_cDocType.GetDocumentType() );
 }
 
 
@@ -4025,7 +4025,7 @@ void CViewCommander::Command_TYPE_LIST( void )
 		}
 		else{
 			/* タイプ別設定 */
-			CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheetTypes( -1, sResult.cDocumentType );
+			CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheetTypes( -1, sResult.cDocumentType );
 		}
 	}
 	return;
@@ -4482,7 +4482,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 		//プラグインから検索する
 		{
 			CPlug::Array plugs;
-			CJackManager::Instance()->GetUsablePlug( PP_OUTLINE, nOutlineType, &plugs );
+			CJackManager::getInstance()->GetUsablePlug( PP_OUTLINE, nOutlineType, &plugs );
 
 			if( plugs.size() > 0 ){
 				assert_warning( 1 == plugs.size() );
@@ -4578,7 +4578,7 @@ void CViewCommander::Command_SPLIT_VH( void )
 /* ヘルプ目次 */
 void CViewCommander::Command_HELP_CONTENTS( void )
 {
-	ShowWinHelpContents( m_pCommanderView->GetHwnd(), CEditApp::Instance()->GetHelpFilePath() );	//	目次を表示する
+	ShowWinHelpContents( m_pCommanderView->GetHwnd(), CEditApp::getInstance()->GetHelpFilePath() );	//	目次を表示する
 	return;
 }
 
@@ -4588,7 +4588,7 @@ void CViewCommander::Command_HELP_CONTENTS( void )
 /* ヘルプキーワード検索 */
 void CViewCommander::Command_HELP_SEARCH( void )
 {
-	MyWinHelp( m_pCommanderView->GetHwnd(), CEditApp::Instance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( m_pCommanderView->GetHwnd(), CEditApp::getInstance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 //To Here Nov. 25, 2000
@@ -4706,7 +4706,7 @@ retry:;
 			_T("外部ヘルプ１が設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* 共通設定 プロパティシート */
-			if( !CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHELP1*/ ) ){
+			if( !CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHELP1*/ ) ){
 				return;
 			}
 			goto retry;
@@ -4767,7 +4767,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 				return;
 			}
 			/* 共通設定 プロパティシート */
-			if( !CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHTMLHELP*/ ) ){
+			if( !CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheet( ID_PAGENUM_HELPER/*, IDC_EDIT_EXTHTMLHELP*/ ) ){
 				return;
 			}
 		}
@@ -5905,8 +5905,8 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int cou
 	if( ! GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		// 2010.04.02 (無題)でもタグジャンプできるように
 		// Grep、アウトプットは行番号タグジャンプがあるので無効にする(要検討)
-		if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode ||
-		    CAppMode::Instance()->IsDebugMode() ){
+		if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ||
+		    CAppMode::getInstance()->IsDebugMode() ){
 		    return false;
 		}
 	}
@@ -6013,7 +6013,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 
 		//Start 2004.08.27 Kazika 変更
 		//タブウィンドウの設定を変更をブロードキャストする
-		CAppNodeManager::Instance()->ResetGroupId();
+		CAppNodeManager::getInstance()->ResetGroupId();
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
 			(WPARAM)((GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
@@ -6040,7 +6040,7 @@ void CViewCommander::Command_CASCADE( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
+	int			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		struct WNDARR {
@@ -6067,7 +6067,7 @@ void CViewCommander::Command_CASCADE( void )
 			}
 			//	Mar. 20, 2004 genta
 			//	現在のウィンドウを末尾に持っていくためここではスキップ
-			if( pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() ){
 				current_win_index = i;
 				continue;
 			}
@@ -6181,7 +6181,7 @@ void CViewCommander::Command_TILE_H( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
+	int			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -6199,9 +6199,9 @@ void CViewCommander::Command_TILE_H( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = CEditWnd::Instance()->GetHwnd();
+				phwndArr[0] = CEditWnd::getInstance()->GetHwnd();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -6237,7 +6237,7 @@ void CViewCommander::Command_TILE_V( void )
 
 	/* 現在開いている編集窓のリストを取得する */
 	EditNode*	pEditNodeArr;
-	int			nRowNum = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
+	int			nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE/*FALSE*/, TRUE );
 
 	if( nRowNum > 0 ){
 		HWND*	phwndArr = new HWND[nRowNum];
@@ -6255,9 +6255,9 @@ void CViewCommander::Command_TILE_V( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == CEditWnd::Instance()->GetHwnd() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = CEditWnd::Instance()->GetHwnd();
+				phwndArr[0] = CEditWnd::getInstance()->GetHwnd();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -7379,12 +7379,12 @@ void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 void CViewCommander::Command_VIEWMODE( void )
 {
 	//ビューモードを反転
-	CAppMode::Instance()->SetViewMode(!CAppMode::Instance()->IsViewMode());
+	CAppMode::getInstance()->SetViewMode(!CAppMode::getInstance()->IsViewMode());
 
 	// 排他制御の切り替え
 	// ※ビューモード ON 時は排他制御 OFF、ビューモード OFF 時は排他制御 ON の仕様（>>data:5262）を即時反映する
 	GetDocument()->m_cDocFileOperation.DoFileUnlock();	// ファイルの排他ロック解除
-	GetDocument()->m_cDocLocker.CheckWritable(!CAppMode::Instance()->IsViewMode());	// ファイル書込可能のチェック
+	GetDocument()->m_cDocLocker.CheckWritable(!CAppMode::getInstance()->IsViewMode());	// ファイル書込可能のチェック
 	if( GetDocument()->m_cDocLocker.IsDocWritable() ){
 		GetDocument()->m_cDocFileOperation.DoFileLock();	// ファイルの排他ロック
 	}
@@ -7442,7 +7442,7 @@ void CViewCommander::Command_EXITALL( void )
 void CViewCommander::Command_GROUPCLOSE( void )
 {
 	if( GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
-		int nGroup = CAppNodeManager::Instance()->GetEditNode( GetMainWindow() )->GetGroup();
+		int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() )->GetGroup();
 		CControlTray::CloseAllEditor( TRUE, GetMainWindow(), TRUE, nGroup );
 	}
 	return;
@@ -7451,7 +7451,7 @@ void CViewCommander::Command_GROUPCLOSE( void )
 /* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 void CViewCommander::Command_FILECLOSEALL( void )
 {
-	int nGroup = CAppNodeManager::Instance()->GetEditNode( GetMainWindow() )->GetGroup();
+	int nGroup = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() )->GetGroup();
 	CControlTray::CloseAllEditor( TRUE, GetMainWindow(), FALSE, nGroup );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	return;
 }
@@ -7616,7 +7616,7 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 
 	// Windowsクリップボードにコピー
 	//2004.02.17 Moca 関数化
-	SetClipboardText( CEditWnd::Instance()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
+	SetClipboardText( CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
 }
 
 /* ファイル内容比較 */
@@ -7880,7 +7880,7 @@ void CViewCommander::Command_SHOWTAB( void )
 	}
 
 	//全ウインドウに変更を通知する。
-	CAppNodeManager::Instance()->ResetGroupId();
+	CAppNodeManager::getInstance()->ResetGroupId();
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_BAR_CHANGE_NOTIFY,
 		(WPARAM)MYBCN_TAB,
@@ -7987,7 +7987,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 			_tcscpy( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
 		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		int nSaveResult=CEditApp::Instance()->m_pcSMacroMgr->Save(
+		int nSaveResult=CEditApp::getInstance()->m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
 			G_AppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
@@ -8001,7 +8001,7 @@ void CViewCommander::Command_RECKEYMACRO( void )
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		CEditApp::Instance()->m_pcSMacroMgr->Clear(STAND_KEYMACRO);
+		CEditApp::getInstance()->m_pcSMacroMgr->Clear(STAND_KEYMACRO);
 //		GetDocument()->m_CKeyMacroMgr.ClearAll();
 //		GetDllShareData().m_CKeyMacroMgr.Clear();
 	}
@@ -8022,7 +8022,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	//	Jun. 16, 2002 genta
-	if( !CEditApp::Instance()->m_pcSMacroMgr->IsSaveOk() ){
+	if( !CEditApp::getInstance()->m_pcSMacroMgr->IsSaveOk() ){
 		//	保存不可
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("保存可能なマクロがありません．キーボードマクロ以外は保存できません．") );
 	}
@@ -8056,7 +8056,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 	//@@@ 2002.1.24 YAZAKI
-	if ( !CEditApp::Instance()->m_pcSMacroMgr->Save( STAND_KEYMACRO, G_AppInstance(), szPath ) ){
+	if ( !CEditApp::getInstance()->m_pcSMacroMgr->Save( STAND_KEYMACRO, G_AppInstance(), szPath ) ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロファイルを作成できませんでした。\n\n%ts"), szPath );
 	}
 	return;
@@ -8080,7 +8080,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 	if ( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		BOOL bLoadResult = CEditApp::Instance()->m_pcSMacroMgr->Load(
+		BOOL bLoadResult = CEditApp::getInstance()->m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
 			G_AppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName,
@@ -8091,7 +8091,7 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
-			CEditApp::Instance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView, 0 );
+			CEditApp::getInstance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView, 0 );
 		}
 	}
 
@@ -8196,7 +8196,7 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
 	){
-		CEditApp::Instance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, (LPARAM)pszPath, m_pCommanderView );
+		CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, (LPARAM)pszPath, m_pCommanderView );
 
 		//キーマクロの記録を一時停止する
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
@@ -8205,9 +8205,9 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 	}
 
 	//古い一時マクロの退避
-	CMacroManagerBase* oldMacro = CEditApp::Instance()->m_pcSMacroMgr->SetTempMacro( NULL );
+	CMacroManagerBase* oldMacro = CEditApp::getInstance()->m_pcSMacroMgr->SetTempMacro( NULL );
 
-	BOOL bLoadResult = CEditApp::Instance()->m_pcSMacroMgr->Load(
+	BOOL bLoadResult = CEditApp::getInstance()->m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
 		G_AppInstance(),
 		pszPath,
@@ -8217,13 +8217,13 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		ErrorMessage( m_pCommanderView->GetHwnd(), _T("マクロの読み込みに失敗しました。\n\n%ts"), pszPath );
 	}
 	else {
-		CEditApp::Instance()->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
+		CEditApp::getInstance()->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );
 	}
 
 	// 終わったら開放
-	CEditApp::Instance()->m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
+	CEditApp::getInstance()->m_pcSMacroMgr->Clear( TEMP_KEYMACRO );
 	if ( oldMacro != NULL ) {
-		CEditApp::Instance()->m_pcSMacroMgr->SetTempMacro( oldMacro );
+		CEditApp::getInstance()->m_pcSMacroMgr->SetTempMacro( oldMacro );
 	}
 
 	// キーマクロ記録中だった場合は再開する
@@ -8586,7 +8586,7 @@ void CViewCommander::Command_TAB_CLOSEOTHER( void )
 
 	// ウィンドウ一覧を取得する
 	EditNode* pEditNode;
-	int nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
+	int nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 	if( 0 >= nCount )return;
 
 	for( int i = 0; i < nCount; i++ ){
@@ -8610,7 +8610,7 @@ void CViewCommander::Command_TAB_CLOSELEFT( void )
 
 		// ウィンドウ一覧を取得する
 		EditNode* pEditNode;
-		int nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		int nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		BOOL bSelfFound = FALSE;
 		if( 0 >= nCount )return;
 
@@ -8639,7 +8639,7 @@ void CViewCommander::Command_TAB_CLOSERIGHT( void )
 
 		// ウィンドウ一覧を取得する
 		EditNode* pEditNode;
-		int nCount = CAppNodeManager::Instance()->GetOpenedWindowArr( &pEditNode, TRUE );
+		int nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		BOOL bSelfFound = FALSE;
 		if( 0 >= nCount )return;
 

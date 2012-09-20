@@ -34,7 +34,7 @@ retry:;
 			_T("補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?")
 		) ){
 			/* タイプ別設定 プロパティシート */
-			if( !CEditApp::Instance()->m_pcPropertyManager->OpenPropertySheetTypes( 2, GetDocument()->m_cDocType.GetDocumentType() ) ){
+			if( !CEditApp::getInstance()->m_pcPropertyManager->OpenPropertySheetTypes( 2, GetDocument()->m_cDocType.GetDocumentType() ) ){
 				return;
 			}
 			goto retry;

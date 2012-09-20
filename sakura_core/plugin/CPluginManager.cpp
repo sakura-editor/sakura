@@ -292,7 +292,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 //ƒvƒ‰ƒOƒCƒ“‚ðCJackManager‚É“o˜^‚·‚é
 bool CPluginManager::RegisterPlugin( CPlugin* plugin )
 {
-	CJackManager* pJackMgr = CJackManager::Instance();
+	CJackManager* pJackMgr = CJackManager::getInstance();
 	CPlug::Array plugs = plugin->GetPlugs();
 
 	for( CPlug::ArrayIter plug = plugs.begin() ; plug != plugs.end(); plug++ ){

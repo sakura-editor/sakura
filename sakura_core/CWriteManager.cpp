@@ -87,7 +87,7 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 	}
 	catch(CError_FileOpen){ //########### 現時点では、この例外が発生した場合は正常に動作できない
 		ErrorMessage(
-			CEditWnd::Instance()->GetHwnd(),
+			CEditWnd::getInstance()->GetHwnd(),
 			_T("\'%ts\'\n")
 			_T("ファイルを保存できません。\n")
 			_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),

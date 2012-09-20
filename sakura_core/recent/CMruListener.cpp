@@ -79,7 +79,7 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 			const TCHAR* pszCodeNameNew = CCodeTypeName(pLoadInfo->eCharCode).Normal();
 			ConfirmBeep();
 			int nRet = MYMESSAGEBOX(
-				CEditWnd::Instance()->GetHwnd(),
+				CEditWnd::getInstance()->GetHwnd(),
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
 				_T("ХґОЪГRБ[ГhПоХс"),
 				_T("%ts\n")

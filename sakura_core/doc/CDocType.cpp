@@ -36,7 +36,7 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 */
 void CDocType::SetDocumentIcon()
 {
-	if( CEditApp::Instance()->m_pcGrepAgent->m_bGrepMode )	// Grepモードの時はアイコンを変更しない
+	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode )	// Grepモードの時はアイコンを変更しない
 		return;
 	
 	HICON	hIconBig, hIconSmall;

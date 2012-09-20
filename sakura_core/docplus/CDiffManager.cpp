@@ -18,7 +18,7 @@ EDiffMark CDiffLineGetter::GetLineDiffMark() const{ return (EDiffMark)m_pcDocLin
 bool CDiffLineGetter::GetDiffColor(EColorIndexType* pnColorIndex) const
 {
 	EDiffMark type = GetLineDiffMark();
-	CEditView* pView = &CEditWnd::Instance()->GetActiveView();
+	CEditView* pView = &CEditWnd::getInstance()->GetActiveView();
 
 	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
 	if( type ){
@@ -128,7 +128,7 @@ void CDiffLineMgr::ResetAllDiffMark()
 		pDocLine = pDocLine->GetNextLine();
 	}
 
-	CDiffManager::Instance()->SetDiffUse(false);
+	CDiffManager::getInstance()->SetDiffUse(false);
 }
 
 /*! 差分検索
@@ -184,7 +184,7 @@ bool CDiffLineMgr::SearchDiffMark(
 */
 void CDiffLineMgr::SetDiffMarkRange( EDiffMark nMode, CLogicInt nStartLine, CLogicInt nEndLine )
 {
-	CDiffManager::Instance()->SetDiffUse(true);
+	CDiffManager::getInstance()->SetDiffUse(true);
 
 	if( nStartLine < CLogicInt(0) ) nStartLine = CLogicInt(0);
 

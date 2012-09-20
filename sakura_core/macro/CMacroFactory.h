@@ -64,7 +64,7 @@ public:
 
 	CMacroManagerBase* Create(const TCHAR* ext);
 	
-	static CMacroFactory* Instance();
+	static CMacroFactory* getInstance();
 
 private:
 	CMacroFactory();

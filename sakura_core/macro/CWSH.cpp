@@ -185,7 +185,7 @@ public:
 	virtual HRESULT __stdcall GetWindow(
 	    /* [out] */ HWND *phwnd)
 	{
-		*phwnd = CEditWnd::Instance()->m_cSplitterWnd.GetHwnd();
+		*phwnd = CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd();
 		return S_OK;
 	}
 

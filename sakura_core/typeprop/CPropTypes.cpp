@@ -95,7 +95,7 @@ CPropTypes::CPropTypes()
 	}
 	
 	/* ヘルプファイルのフルパスを返す */
-	m_pszHelpFile = CEditApp::Instance()->GetHelpFilePath();
+	m_pszHelpFile = CEditApp::getInstance()->GetHelpFilePath();
 
 	((CPropScreen*)(this))->CPropTypes_Screen();
 }
