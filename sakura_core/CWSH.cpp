@@ -792,7 +792,7 @@ CMacroManagerBase* CWSHMacroManager::Creator(char const *FileExt)
 void CWSHMacroManager::declare()
 {
 	//Žb’è
-	CMacroFactory::Instance()->RegisterCreator(Creator);
+	CMacroFactory::getInstance()->RegisterCreator(Creator);
 }
 
 #if 0

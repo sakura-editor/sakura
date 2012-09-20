@@ -146,7 +146,7 @@ void CShareData::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE*/ )
 		if( m_pShareData->m_IniFolder.m_szPrivateIniFile[0] != _T('\0') ){
 			m_pShareData->m_IniFolder.m_bReadPrivate = true;
 			m_pShareData->m_IniFolder.m_bWritePrivate = true;
-			if( CCommandLine::Instance()->IsNoWindow() && CCommandLine::Instance()->IsWriteQuit() )
+			if( CCommandLine::getInstance()->IsNoWindow() && CCommandLine::getInstance()->IsWriteQuit() )
 				m_pShareData->m_IniFolder.m_bWritePrivate = false;
 
 			// マルチユーザ用のiniフォルダを作成しておく

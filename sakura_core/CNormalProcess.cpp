@@ -94,7 +94,7 @@ bool CNormalProcess::InitializeProcess()
 	
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
-	CCommandLine::Instance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
+	CCommandLine::getInstance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
 	if( 0 < _tcslen( fi.m_szPath ) ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileReadで
@@ -134,10 +134,10 @@ bool CNormalProcess::InitializeProcess()
 	MY_TRACETIME( cRunningTimer, "CEditWnd Created" );
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
-	bDebugMode = CCommandLine::Instance()->IsDebugMode();
-	bGrepMode  = CCommandLine::Instance()->IsGrepMode();
-	bGrepDlg   = CCommandLine::Instance()->IsGrepDlg();
-	nGroup = CCommandLine::Instance()->GetGroupId();	// 2007.06.26 ryoji
+	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
+	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
+	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
+	nGroup = CCommandLine::getInstance()->GetGroupId();	// 2007.06.26 ryoji
 
 	if( bDebugMode ){
 		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, CODE_DEFAULT, FALSE );
@@ -154,7 +154,7 @@ bool CNormalProcess::InitializeProcess()
 		if( NULL == hWnd ){
 			goto end_of_func;
 		}
-		CCommandLine::Instance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
+		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
 			/* ロングファイル名を取得する */
@@ -216,7 +216,7 @@ bool CNormalProcess::InitializeProcess()
 	else{
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
-		bReadOnly = CCommandLine::Instance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
+		bReadOnly = CCommandLine::getInstance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
@@ -296,9 +296,9 @@ end_of_func:
 
 
 	// 起動時マクロオプション
-	LPCSTR pszMacro = CCommandLine::Instance()->GetMacro();
+	LPCSTR pszMacro = CCommandLine::getInstance()->GetMacro();
 	if( hWnd  &&  pszMacro  &&  pszMacro[0] != '\0' ){
-		LPCSTR pszMacroType = CCommandLine::Instance()->GetMacroType();
+		LPCSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
 		if( pszMacroType == NULL || pszMacroType == "" || strcmpi(pszMacroType, "file") == 0 ){
 			pszMacroType = NULL;
 		}

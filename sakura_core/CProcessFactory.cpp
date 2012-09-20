@@ -49,7 +49,7 @@ class CProcess;
 */
 CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPTSTR lpCmdLine )
 {
-	CCommandLine::Instance(lpCmdLine);
+	CCommandLine::getInstance(lpCmdLine);
 	
 	CProcess* process = 0;
 	if( !IsValidVersion() ){
@@ -131,7 +131,7 @@ bool CProcessFactory::IsValidVersion()
 */
 bool CProcessFactory::IsStartingControlProcess()
 {
-	return CCommandLine::Instance()->IsNoWindow();
+	return CCommandLine::getInstance()->IsNoWindow();
 }
 
 /*!
@@ -296,7 +296,7 @@ bool CProcessFactory::WaitForInitializedControlProcess()
 */
 bool CProcessFactory::TestWriteQuit()
 {
-	if( CCommandLine::Instance()->IsWriteQuit() ){
+	if( CCommandLine::getInstance()->IsWriteQuit() ){
 		TCHAR szIniFileIn[_MAX_PATH];
 		TCHAR szIniFileOut[_MAX_PATH];
 		CShareData::GetIniFileNameDirect( szIniFileIn, szIniFileOut );

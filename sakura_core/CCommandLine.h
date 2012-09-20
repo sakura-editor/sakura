@@ -48,7 +48,7 @@ struct GrepInfo {
 */
 class SAKURA_CORE_API CCommandLine {
 public:
-	static CCommandLine* Instance(LPTSTR cmd=NULL);
+	static CCommandLine* getInstance(LPTSTR cmd=NULL);
 
 private:
 	// 2005-08-24 D.S.Koba ˆø”íœ

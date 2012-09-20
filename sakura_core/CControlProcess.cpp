@@ -82,10 +82,10 @@ bool CControlProcess::InitializeProcess()
 	TCHAR szIniFile[_MAX_PATH];
 	m_cShareData.LoadShareData();
 	m_cShareData.GetIniFileName( szIniFile );	// 出力iniファイル名
-	if( !fexist(szIniFile) || CCommandLine::Instance()->IsWriteQuit() ){
+	if( !fexist(szIniFile) || CCommandLine::getInstance()->IsWriteQuit() ){
 		/* レジストリ項目 作成 */
 		m_cShareData.SaveShareData();
-		if( CCommandLine::Instance()->IsWriteQuit() ){
+		if( CCommandLine::getInstance()->IsWriteQuit() ){
 			return false;
 		}
 	}

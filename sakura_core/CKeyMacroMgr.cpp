@@ -432,7 +432,7 @@ CMacroManagerBase* CKeyMacroMgr::Creator(const TCHAR* ext)
 void CKeyMacroMgr::declare (void)
 {
 	//	í‚ÉŽÀs
-	CMacroFactory::Instance()->RegisterCreator( Creator );
+	CMacroFactory::getInstance()->RegisterCreator( Creator );
 }
 //	To Here Apr. 29, 2002 genta
 

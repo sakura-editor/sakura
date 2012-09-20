@@ -141,7 +141,7 @@ CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
 	
 	Scott Meyers‚ÌSingleton
 */
-CMacroFactory* CMacroFactory::Instance(void)
+CMacroFactory* CMacroFactory::getInstance(void)
 {
 	static CMacroFactory factory;
 	return &factory;
