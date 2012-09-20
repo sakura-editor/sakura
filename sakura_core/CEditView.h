@@ -537,7 +537,7 @@ protected:
 	BOOL IsSearchString( const char*, int, int, int*, int* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );		/* フォントを選ぶ */
 	void ExecCmd(const char*, const int);						// 子プロセスの標準出力をリダイレクトする	//2006.12.03 maru 引数の拡張
-	void AddToCmdArr( const char* );
+	void AddToCmdArr( const TCHAR* );
 	BOOL ChangeCurRegexp(bool bRedrawIfChanged= true);			// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
 	void SendStatusMessage( const TCHAR* msg );					// 2002.01.26 hor 検索／置換／ブックマーク検索時の状態をステータスバーに表示する
 	void SendStatusMessage2( const TCHAR* msg );					// Jul. 9, 2005 genta
