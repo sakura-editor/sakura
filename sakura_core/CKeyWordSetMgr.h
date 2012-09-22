@@ -78,9 +78,12 @@ public:
 	CKeyWordSetMgr();
 	~CKeyWordSetMgr();
 	
-	//@{
 	///	@name キーワードセット操作
-	bool AddKeyWordSet( const char*, bool, int nSize = -1 );	//!< セットの追加
+	bool AddKeyWordSet(					//!< セットの追加
+		const char*		pszSetName,		//!< [in] セット名		
+		bool			bKEYWORDCASE,	//!< [in] 大文字小文字の区別．true:あり, false:無し
+		int				nSize = -1		//!< [in] 最初に領域を確保するサイズ．
+	);
 	bool DelKeyWordSet( int  );	/* ｎ番目のセットを削除 */
 	const char* GetTypeName( int );	/* ｎ番目のセット名を返す */
 	const char* SetTypeName( int, const char* );	//!< ｎ番目のセット名を設定する // 2005.01.26 Moca
@@ -90,7 +93,11 @@ public:
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶
 	int SetKeyWordArr( int, int, const char* );	//!< iniからキーワードを設定する
-	int SetKeyWordArr( int, int, const char* const* );	//!< キーワードの配列から設定する
+	int SetKeyWordArr(						//!< キーワードの配列から設定する
+		int			nIdx,			//!< [in] キーワードセット番号
+		int			nSize,			//!< [in] ppszKeyWordArrの要素数
+		const char*	pszKeyWordArr[]	//!< [in] キーワードの配列(重複・長さ制限等、考慮済みであること)
+	);
 	// To Here 2004.07.29 Moca
 	//@}
 
@@ -108,7 +115,7 @@ public:
 	///	@name 検索
 	//int SearchKeyWord( int , const char*, int );	/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
 //	BOOL IsModify( CKeyWordSetMgr&, BOOL* pnModifyFlagArr );	/* 変更状況を調査 */
-	int SearchKeyWord2( int , const char*, int );	/* ｎ番目のセットから指定キーワードをバイナリサーチ 無いときは-1を返す */	//MIK
+	int SearchKeyWord2( int nIdx , const char* pszKeyWord, int nKeyWordLen );	/* ｎ番目のセットから指定キーワードをバイナリサーチ 無いときは-1を返す */	//MIK
 	//@}
 
 	// From Here 2004.07.29 Moca 追加 可変長記憶

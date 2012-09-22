@@ -2304,7 +2304,7 @@ bool CShareData::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nDesLen 
 	return true;
 }
 
-static const char* const	ppszKeyWordsCPP[] = {
+static const char* ppszKeyWordsCPP[] = {
 	"#define",
 	"#elif",
 	"#else",
@@ -2395,7 +2395,7 @@ static const char* const	ppszKeyWordsCPP[] = {
 	"while"
 };
 
-static const char* const	ppszKeyWordsHTML[] = {
+static const char* ppszKeyWordsHTML[] = {
 	"_blank",
 	"_parent",
 	"_self",
@@ -2650,7 +2650,7 @@ static const char* const	ppszKeyWordsHTML[] = {
 	"XMP"
 };
 
-static const char* const	ppszKeyWordsPLSQL[] = {
+static const char* ppszKeyWordsPLSQL[] = {
 	"AND",
 	"AS",
 	"BEGIN",
@@ -2734,7 +2734,7 @@ static const char* const	ppszKeyWordsPLSQL[] = {
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char* const	ppszKeyWordsCOBOL[] = {
+static const char* ppszKeyWordsCOBOL[] = {
 	"ACCEPT",
 	"ADD",
 	"ADVANCING",
@@ -2839,7 +2839,7 @@ static const char* const	ppszKeyWordsCOBOL[] = {
 	"ZERO"
 };
 
-static const char*	ppszKeyWordsJAVA[] = {
+static const char* ppszKeyWordsJAVA[] = {
 	"abstract",
 	"assert",	// Mar. 8, 2003 genta
 	"boolean",
@@ -2891,7 +2891,7 @@ static const char*	ppszKeyWordsJAVA[] = {
 	"while"
 };
 
-static const char* const	ppszKeyWordsCORBA_IDL[] = {
+static const char* ppszKeyWordsCORBA_IDL[] = {
 	"any",
 	"attribute",
 	"boolean",
@@ -2931,7 +2931,7 @@ static const char* const	ppszKeyWordsCORBA_IDL[] = {
 	"wstring"
 };
 
-static const char* const	ppszKeyWordsAWK[] = {
+static const char* ppszKeyWordsAWK[] = {
 	"BEGIN",
 	"END",
 	"next",
@@ -3020,7 +3020,7 @@ static const char* const	ppszKeyWordsAWK[] = {
 	"systime"
 };
 
-static const char*	ppszKeyWordsBAT[] = {
+static const char* ppszKeyWordsBAT[] = {
 	"PATH",
 	"PROMPT",
 	"TEMP",
@@ -3095,7 +3095,7 @@ static const char*	ppszKeyWordsBAT[] = {
 	"CONFIG$"
 };
 
-static const char*	ppszKeyWordsPASCAL[] = {
+static const char* ppszKeyWordsPASCAL[] = {
 	"and",
 	"exports",
 	"mod",
@@ -3168,7 +3168,7 @@ static const char*	ppszKeyWordsPASCAL[] = {
 	"override"
 };
 
-static const char*	ppszKeyWordsTEX[] = {
+static const char* ppszKeyWordsTEX[] = {
 //Nov. 20, 2000 JEPRO	大幅追加 & 若干修正・削除 --ほとんどコマンドのみ
 	"error",
 	"Warning",
@@ -3702,7 +3702,7 @@ static const char*	ppszKeyWordsTEX[] = {
 };
 
 //Jan. 19, 2001 JEPRO	TeX のキーワード2として新規追加 & 一部復活 --環境コマンドとオプション名が中心
-static const char*	ppszKeyWordsTEX2[] = {
+static const char* ppszKeyWordsTEX2[] = {
 	//	環境コマンド
 	//Jan. 19, 2001 JEPRO 本当は{}付きでキーワードにしたかったが単語として認識してくれないので止めた
 	"abstract",
@@ -3824,7 +3824,7 @@ static const char*	ppszKeyWordsTEX2[] = {
 //		"zw"
 };
 
-static const char*	ppszKeyWordsPERL[] = {
+static const char* ppszKeyWordsPERL[] = {
 	//Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
 	"break",
 	"continue",
@@ -4059,7 +4059,7 @@ static const char*	ppszKeyWordsPERL[] = {
 
 //Jul. 10, 2001 JEPRO	変数を第２強調キーワードとして分離した
 // 2008/05/05 novice 重複文字列削除
-static const char*	ppszKeyWordsPERL2[] = {
+static const char* ppszKeyWordsPERL2[] = {
 	"$ARGV",
 	"$_",
 	"$1",
@@ -4164,7 +4164,7 @@ static const char*	ppszKeyWordsPERL2[] = {
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char*	ppszKeyWordsVB[] = {
+static const char* ppszKeyWordsVB[] = {
 	"And",
 	"As",
 	"Attribute",
@@ -4289,7 +4289,7 @@ static const char*	ppszKeyWordsVB[] = {
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char*	ppszKeyWordsVB2[] = {
+static const char* ppszKeyWordsVB2[] = {
 	"AppActivate",
 	"Beep",
 	"BeginTrans",
@@ -4488,7 +4488,7 @@ static const char*	ppszKeyWordsVB2[] = {
 };
 
 //Jul. 10, 2001 JEPRO 追加
-static const char*	ppszKeyWordsRTF[] = {
+static const char* ppszKeyWordsRTF[] = {
 	"\\ansi",
 	"\\b",
 	"\\bin",
