@@ -14,7 +14,7 @@ BOOL CEditView::CreateScrollBar()
 	/* スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles */
-		_T("SCROLLBAR"),						/* scroll bar control class */
+		_T("SCROLLBAR"),					/* scroll bar control class */
 		NULL,								/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_VERT,	/* scroll bar styles */
 		0,									/* horizontal position */
@@ -41,7 +41,7 @@ BOOL CEditView::CreateScrollBar()
 	if( GetDllShareData().m_Common.m_sWindow.m_bScrollBarHorz ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
-			_T("SCROLLBAR"),						/* scroll bar control class */
+			_T("SCROLLBAR"),					/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_VISIBLE | WS_CHILD | SBS_HORZ,	/* scroll bar styles */
 			0,									/* horizontal position */
@@ -69,7 +69,7 @@ BOOL CEditView::CreateScrollBar()
 	if( GetDllShareData().m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 		m_hwndSizeBox = ::CreateWindowEx(
 			WS_EX_CONTROLPARENT/*0L*/, 			/* no extended styles */
-			_T("SCROLLBAR"),						/* scroll bar control class */
+			_T("SCROLLBAR"),					/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,									/* horizontal position */
