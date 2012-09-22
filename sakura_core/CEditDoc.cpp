@@ -1566,7 +1566,7 @@ bool CEditDoc::FormatBackUpPath(
 				SYSTEMTIME	SystemTime;
 
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
-				if( ! GetLastWriteTimestamp( target_file, LastWriteTime )){
+				if( ! GetLastWriteTimestamp( target_file, &LastWriteTime )){
 					LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
 				}
 				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
@@ -1631,7 +1631,7 @@ bool CEditDoc::FormatBackUpPath(
 				SYSTEMTIME	SystemTime;
 
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
-				if( !GetLastWriteTimestamp( target_file, LastWriteTime )){
+				if( !GetLastWriteTimestamp( target_file, &LastWriteTime )){
 					LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
 				}
 				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
@@ -4114,7 +4114,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 
 		// 2005.10.20 ryoji FindFirstFileを使うように変更（ファイルがロックされていてもタイムスタンプ取得可能）
 		FILETIME ftime;
-		if( GetLastWriteTimestamp( GetFilePath(), ftime )){
+		if( GetLastWriteTimestamp( GetFilePath(), &ftime )){
 			if( 0 != ::CompareFileTime( &m_FileTime, &ftime ) )	//	Aug. 13, 2003 wmlhq タイムスタンプが古く変更されている場合も検出対象とする
 			{
 				bUpdate = TRUE;

@@ -603,7 +603,7 @@ int CDocLineMgr::WriteFile(
 
 		// 2005.10.20 ryoji FindFirstFileを使うように変更（ファイルがロックされていてもタイムスタンプ取得可能）
 		FILETIME ftime;
-		if( GetLastWriteTimestamp( pszPath, ftime )){
+		if( GetLastWriteTimestamp( pszPath, &ftime )){
 			*pFileTime = ftime;
 		}
 

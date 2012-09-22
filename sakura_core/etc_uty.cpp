@@ -94,9 +94,9 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 			int nCtrlID;	// 対象コントロールの ID
 			DWORD* pHelpIDs;	// コントロール ID とヘルプ ID の対応表へのポインタ
 
-			memset(&hp, 0, sizeof(HH_POPUP));	// 構造体をゼロクリア
-			hp.cbStruct = sizeof(HH_POPUP);
-			hp.pszFont = TEXT("ＭＳ Ｐゴシック, 9");
+			memset(&hp, 0, sizeof(hp));	// 構造体をゼロクリア
+			hp.cbStruct = sizeof(hp);
+			hp.pszFont = _T("ＭＳ Ｐゴシック, 9");
 			hp.clrForeground = hp.clrBackground = -1;
 			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
 			if( uCommandOrg == HELP_CONTEXTMENU ){
@@ -151,19 +151,12 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 			dwData = 1;	// 目次ページ
 
 		TCHAR buf[256];
-		_stprintf( buf, TEXT("http://sakura-editor.sourceforge.net/cgi-bin/hid.cgi?%d"), dwData );
+		_stprintf( buf, _T("http://sakura-editor.sourceforge.net/cgi-bin/hid.cgi?%d"), dwData );
 		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 	}
 
 	return TRUE;
 }
-
-//	CShareDataへ移動
-/* 日付をフォーマット */
-//const char* MyGetDateFormat( char* pszDest, int nDestLen, int nDateFormatType, const char* pszDateFormat )
-
-/* 時刻をフォーマット */
-//const char* MyGetTimeFormat( char* pszDest, int nDestLen, int nTimeFormatType, const char* pszTimeFormat )
 
 int CALLBACK MYBrowseCallbackProc(
 	HWND hwnd,
@@ -174,11 +167,9 @@ int CALLBACK MYBrowseCallbackProc(
 {
 	switch( uMsg ){
 	case BFFM_INITIALIZED:
-//		MYTRACE_A( "BFFM_INITIALIZED (char*)lpData = [%s]\n", (char*)lpData );
 		::SendMessage( hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)lpData );
 		break;
 	case BFFM_SELCHANGED:
-//		MYTRACE_A( "BFFM_SELCHANGED\n" );
 		break;
 	}
 	return 0;
@@ -186,15 +177,13 @@ int CALLBACK MYBrowseCallbackProc(
 }
 
 
-
-
 /* フォルダ選択ダイアログ */
-BOOL SelectDir( HWND hWnd, const char* pszTitle, const char* pszInitFolder, char* strFolderName )
+BOOL SelectDir( HWND hWnd, const TCHAR* pszTitle, const TCHAR* pszInitFolder, TCHAR* strFolderName )
 {
 	BOOL	bRes;
-	char	szInitFolder[MAX_PATH];
+	TCHAR	szInitFolder[MAX_PATH];
 
-	strcpy( szInitFolder, pszInitFolder );
+	_tcscpy( szInitFolder, pszInitFolder );
 	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 	CutLastYenFromDirectoryPath( szInitFolder );
 
@@ -214,7 +203,7 @@ BOOL SelectDir( HWND hWnd, const char* pszTitle, const char* pszInitFolder, char
 	bi.iImage = 0;
 	// アイテムＩＤリストを返す
 	// ITEMIDLISTはアイテムの一意を表す構造体
-	ITEMIDLIST* pList = ::SHBrowseForFolder(&bi);
+	LPITEMIDLIST pList = ::SHBrowseForFolder(&bi);
 	if( NULL != pList ){
 		// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
 		bRes = ::SHGetPathFromIDList( pList, strFolderName );
@@ -230,13 +219,13 @@ BOOL SelectDir( HWND hWnd, const char* pszTitle, const char* pszInitFolder, char
 }
 
 /* 拡張子を調べる */
-BOOL CheckEXT( const char* pszPath, const char* pszExt )
+BOOL CheckEXT( const TCHAR* pszPath, const TCHAR* pszExt )
 {
-	char	szExt[_MAX_EXT];
-	char*	pszWork;
-	_splitpath( pszPath, NULL, NULL, NULL, szExt );
+	TCHAR	szExt[_MAX_EXT];
+	TCHAR*	pszWork;
+	_tsplitpath( pszPath, NULL, NULL, NULL, szExt );
 	pszWork = szExt;
-	if( pszWork[0] == '.' ){
+	if( pszWork[0] == _T('.') ){
 		pszWork++;
 	}
 	if( 0 == my_stricmp( pszExt, pszWork ) ){
@@ -294,7 +283,7 @@ TCHAR* my_strtok( TCHAR* pBuffer, int nLen, int* pnOffset, const TCHAR* pDelimit
 	@date Oct. 4, 2005 genta 相対パスが絶対パスに直されなかった
 	@date Oct. 5, 2005 Moca  相対パスを絶対パスに変換するように
 */
-BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
+BOOL GetLongFileName( const TCHAR* pszFilePathSrc, TCHAR* pszFilePathDes )
 {
 	TCHAR* name;
 	TCHAR szBuf[_MAX_PATH + 1];
@@ -308,37 +297,37 @@ BOOL GetLongFileName( const char* pszFilePathSrc, char* pszFilePathDes )
 	}
 	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
 	if( len <= 0 || _MAX_PATH < len ){
-		lstrcpy( pszFilePathDes, szBuf );
+		_tcscpy( pszFilePathDes, szBuf );
 	}
 	return TRUE;
 }
 
 /* ファイルのフルパスを、フォルダとファイル名に分割 */
 /* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-void SplitPath_FolderAndFile( const char* pszFilePath, char* pszFolder, char* pszFile )
+void SplitPath_FolderAndFile( const TCHAR* pszFilePath, TCHAR* pszFolder, TCHAR* pszFile )
 {
-	char	szDrive[_MAX_DRIVE];
-	char	szDir[_MAX_DIR];
-	char	szFname[_MAX_FNAME];
-	char	szExt[_MAX_EXT];
+	TCHAR	szDrive[_MAX_DRIVE];
+	TCHAR	szDir[_MAX_DIR];
+	TCHAR	szFname[_MAX_FNAME];
+	TCHAR	szExt[_MAX_EXT];
 	int		nFolderLen;
 	int		nCharChars;
-	_splitpath( pszFilePath, szDrive, szDir, szFname, szExt );
+	_tsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( NULL != pszFolder ){
-		strcpy( pszFolder, szDrive );
-		strcat( pszFolder, szDir );
+		_tcscpy( pszFolder, szDrive );
+		_tcscat( pszFolder, szDir );
 		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
-		nFolderLen = strlen( pszFolder );
+		nFolderLen = _tcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = &pszFolder[nFolderLen] - CMemory::MemCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && '\\' == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = '\0';
+			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
+				pszFolder[nFolderLen - 1] = _T('\0');
 			}
 		}
 	}
 	if( NULL != pszFile ){
-		strcpy( pszFile, szFname );
-		strcat( pszFile, szExt );
+		_tcscpy( pszFile, szFname );
+		_tcscat( pszFile, szExt );
 	}
 	return;
 }
@@ -365,7 +354,7 @@ BOOL GetSystemResources(
 	HINSTANCE	hlib;
 	int (CALLBACK *GetFreeSystemResources)( int );
 
-	hlib = LoadLibraryExedir( "RSRC32.dll" );
+	hlib = ::LoadLibraryExedir( _T("RSRC32.dll") );
 	if( (int)hlib > 32 ){
 		GetFreeSystemResources = (int (CALLBACK *)( int ))GetProcAddress(
 			hlib,
@@ -390,12 +379,12 @@ BOOL GetSystemResources(
 
 
 /* システムリソースのチェック */
-BOOL CheckSystemResources( const char* pszAppName )
+BOOL CheckSystemResources( const TCHAR* pszAppName )
 {
 	int		nSystemResources;
 	int		nUserResources;
 	int		nGDIResources;
-	char*	pszResourceName;
+	TCHAR*	pszResourceName;
 	/* システムリソースの取得 */
 	if( GetSystemResources( &nSystemResources, &nUserResources,	&nGDIResources ) ){
 //		MYTRACE_A( "nSystemResources=%d\n", nSystemResources );
@@ -403,26 +392,25 @@ BOOL CheckSystemResources( const char* pszAppName )
 //		MYTRACE_A( "nGDIResources=%d\n", nGDIResources );
 		pszResourceName = NULL;
 		if( nSystemResources <= 5 ){
-			pszResourceName = "システム ";
+			pszResourceName = _T("システム ");
 		}else
 		if( nUserResources <= 5 ){
-			pszResourceName = "ユーザー ";
+			pszResourceName = _T("ユーザー ");
 		}else
 		if( nGDIResources <= 5 ){
-			pszResourceName = "GDI ";
+			pszResourceName = _T("GDI ");
 		}
 		if( NULL != pszResourceName ){
 			ErrorBeep();
 			ErrorBeep();
-//			if( IDYES == ::MYMESSAGEBOX( NULL, MB_YESNO | MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
 			::MYMESSAGEBOX( NULL, MB_OK | /*MB_YESNO | */ MB_ICONSTOP | MB_APPLMODAL | MB_TOPMOST, pszAppName,
-				"%sリソースが極端に不足しています。\n\
-このまま%sを起動すると、正常に動作しない可能性があります。\n\
-新しい%sの起動を中断します。\n\
-\n\
-システム リソース\t残り  %d%%\n\
-User リソース\t残り  %d%%\n\
-GDI リソース\t残り  %d%%\n\n",
+				_T("%sリソースが極端に不足しています。\n")
+				_T("このまま%sを起動すると、正常に動作しない可能性があります。\n")
+				_T("新しい%sの起動を中断します。\n")
+				_T("\n")
+				_T("システム リソース\t残り  %d%%\n")
+				_T("User リソース\t残り  %d%%\n")
+				_T("GDI リソース\t残り  %d%%\n\n"),
 				pszResourceName,
 				pszAppName,
 				pszAppName,
@@ -510,8 +498,15 @@ void ActivateFrameWindow( HWND hwnd )
 
 				// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
 				DWORD_PTR dwResult;
-				::SendMessageTimeout( hwnd, MYWM_TAB_WINDOW_NOTIFY, TWNT_WNDPL_ADJUST, (LPARAM)NULL,
-					SMTO_ABORTIFHUNG | SMTO_BLOCK, 10000, &dwResult );
+				::SendMessageTimeout(
+					hwnd,
+					MYWM_TAB_WINDOW_NOTIFY,
+					TWNT_WNDPL_ADJUST,
+					(LPARAM)NULL,
+					SMTO_ABORTIFHUNG | SMTO_BLOCK,
+					10000,
+					&dwResult
+				);
 			}
 		}
 	}
@@ -544,10 +539,6 @@ void ActivateFrameWindow( HWND hwnd )
 /*!
 	文字列がURLかどうかを検査する。
 	
-	@param pszLine [in] 文字列
-	@param nLineLen [in] 文字列の長さ
-	@param pnMatchLen [out] URLの長さ
-	
 	@retval TRUE URLである
 	@retval FALSE URLでない
 	
@@ -556,7 +547,11 @@ void ActivateFrameWindow( HWND hwnd )
 		新しい URL を追加する場合は #define 値を修正してください。
 		url_table は頭文字がアルファベット順になるように並べてください。
 */
-BOOL IsURL( const char *pszLine, int nLineLen, int *pnMatchLen )
+BOOL IsURL(
+	const char*	pszLine,	//!< [in] 文字列
+	int			nLineLen,	//!< [in] 文字列の長さ
+	int*		pnMatchLen	//!< [out] URLの長さ
+)
 {
 	struct _url_table_t {
 		char	name[12];
@@ -639,29 +634,15 @@ BOOL IsURL( const char *pszLine, int nLineLen, int *pnMatchLen )
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
 BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
 {
-//	int		i;
 	int		j;
-//	int		wk_nBegin;
-//	int		wk_nEnd;
-//	int		nAtPos;
 	int		nDotCount;
-//	int		nAlphaCount;
 	int		nBgn;
-//	int		nLoop;
-//	BOOL bDot = FALSE;
 
 
 	j = 0;
 	if( (pszBuf[j] >= 'a' && pszBuf[j] <= 'z')
 	 || (pszBuf[j] >= 'A' && pszBuf[j] <= 'Z')
 	 || (pszBuf[j] >= '0' && pszBuf[j] <= '9')
-//	 || (pszBuf[j] == '.')
-//	 || (pszBuf[j] == '-')
-//	 || (pszBuf[j] == '_')
-//	 || (pszBuf[j] == '=')
-//	 || (pszBuf[j] == '%')
-//	 || (pszBuf[j] == '$')
-//	   )
 	){
 		j++;
 	}else{
@@ -675,9 +656,6 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
 	 || (pszBuf[j] == '.')
 	 || (pszBuf[j] == '-')
 	 || (pszBuf[j] == '_')
-//	 || (pszBuf[j] == '=')
-//	 || (pszBuf[j] == '%')
-//	 || (pszBuf[j] == '$')
 		)
 	){
 		j++;
@@ -701,12 +679,8 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
 			(pszBuf[j] >= 'a' && pszBuf[j] <= 'z')
 		 || (pszBuf[j] >= 'A' && pszBuf[j] <= 'Z')
 		 || (pszBuf[j] >= '0' && pszBuf[j] <= '9')
-//		 || (pszBuf[j] == '.')
 		 || (pszBuf[j] == '-')
 		 || (pszBuf[j] == '_')
-		//	 || (pszBuf[j] == '=')
-		//	 || (pszBuf[j] == '%')
-		//	 || (pszBuf[j] == '$')
 			)
 		){
 			j++;
@@ -762,7 +736,8 @@ BOOL IsMailAddress( const char* pszBuf, int nBufLen, int* pnAddressLenfth )
  */
 int IsNumber(const char *buf, int offset, int length)
 {
-	register const char *p, *q;
+	register const char *p;
+	register const char *q;
 	register int i = 0;
 	register int d = 0;
 	register int f = 0;
@@ -1296,29 +1271,22 @@ bool fexist(LPCTSTR pszPath)
 	@author genta
 	@date 2002.01.04 新規作成
 */
-bool IsFileExists(const char* path, bool bFileOnly)
+bool IsFileExists(const TCHAR* path, bool bFileOnly)
 {
 	WIN32_FIND_DATA fd;
-	::ZeroMemory( &fd, sizeof(fd));
-
 	HANDLE hFind = ::FindFirstFile( path, &fd );
 	if( hFind != INVALID_HANDLE_VALUE ){
 		::FindClose( hFind );
-		if( bFileOnly == false ||
-			( fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == 0 )
+		if( bFileOnly == false || ( fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) == 0 )
 			return true;
 	}
 	return false;
 }
+
 /**	ファイル名の切り出し
 
 	指定文字列からファイル名と認識される文字列を取り出し、
 	先頭Offset及び長さを返す。
-	
-	@param pLine [in] 探査対象文字列
-	@param pnBgn [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
-	@param pnPathLen [out] ファイル名の長さ
-	@param bFileOnly [in] true: ファイルのみ対象 / false: ディレクトリも対象
 	
 	@retval true ファイル名発見
 	@retval false ファイル名は見つからなかった
@@ -1331,34 +1299,31 @@ bool IsFileExists(const char* path, bool bFileOnly)
 	@date 2005.01.23 genta 警告抑制のため，gotoをreturnに変更
 	
 */
-bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
+bool IsFilePath(
+	const char* pLine,		//!< [in] 探査対象文字列
+	int* pnBgn,				//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
+	int* pnPathLen,			//!< [out] ファイル名の長さ
+	bool bFileOnly			//!< [in] true: ファイルのみ対象 / false: ディレクトリも対象
+)
 {
-	int		i;
-	int		nLineLen;
 	char	szJumpToFile[1024];
-	memset( szJumpToFile, 0, sizeof( szJumpToFile ) );
+	memset( szJumpToFile, 0, _countof( szJumpToFile ) );
 
-	nLineLen = strlen( pLine );
+	int nLineLen = strlen( pLine );
 
 	//先頭の空白を読み飛ばす
+	int		i;
 	for( i = 0; i < nLineLen; ++i ){
-		if( ' ' != pLine[i] &&
-			'\t' != pLine[i] &&
-			'\"' != pLine[i]
-		){
+		if( ' ' != pLine[i] && '\t' != pLine[i] && '\"' != pLine[i] ){
 			break;
 		}
 	}
 
 	//	#include <ファイル名>の考慮
 	//	#で始まるときは"または<まで読み飛ばす
-	if( i < nLineLen &&
-		'#' == pLine[i]
-	){
+	if( i < nLineLen && '#' == pLine[i] ){
 		for( ; i < nLineLen; ++i ){
-			if( '<'  == pLine[i] ||
-				'\"' == pLine[i]
-			){
+			if( '<'  == pLine[i] || '\"' == pLine[i] ){
 				++i;
 				break;
 			}
@@ -1369,9 +1334,10 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 	if( i >= nLineLen ){
 		return false;
 	}
+
 	*pnBgn = i;
 	int cur_pos = 0;
-	for( ; i <= nLineLen && cur_pos + 1 < sizeof(szJumpToFile); ++i ){
+	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
 		if( ( i == nLineLen    ||
 			  pLine[i] == ' '  ||
 			  pLine[i] == '\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
@@ -1396,25 +1362,7 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 			pLine[i] == '\n' ){
 			break;
 		}
-//	From Here Sept. 27, 2000 JEPRO タグジャンプできないのは以下の文字が1バイトコードで現れるときのみとした。
-//	(SJIS2バイトコードの2バイト目に現れる場合はパス名使用禁止文字とは認識しないで無視するように変更)
-//		if( /*pLine[i] == '/' ||*/
-//			pLine[i] == '<' ||
-//			pLine[i] == '>' ||
-//			pLine[i] == '?' ||
-//			pLine[i] == '"' ||
-//			pLine[i] == '|' ||
-//			pLine[i] == '*'
-//		){
-//			return false;
-//		}
-//
-//		szJumpToFile[cur_pos] = pLine[i];
-//		cur_pos++;
-//	}
-//  To Here comment out
-//	From Here Sept. 27, 2000 JEPRO added
-//			  Oct. 3, 2000 JEPRO corrected
+
 		if( ( /*pLine[i] == '/' ||*/
 			 pLine[i] == '<' ||	//	0x3C
 			 pLine[i] == '>' ||	//	0x3E
@@ -1433,23 +1381,13 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 		cur_pos++;
 		}
 	}
-//	To Here Sept. 27, 2000
-//	if( i >= nLineLen ){
-//		return FALSE;
-//	}
-	if( 0 < strlen( szJumpToFile ) &&
-		IsFileExists(szJumpToFile, bFileOnly))
-	{
+
+	if( 0 < strlen( szJumpToFile ) && IsFileExists(szJumpToFile, bFileOnly)){
 		*pnPathLen = strlen( szJumpToFile );
 		return true;
-	}else{
-//#ifdef _DEBUG
-//		m_cShareData.TraceOut( "ファイルが存在しない。szJumpToFile=[%s]\n", szJumpToFile );
-//#endif
 	}
 
 	return false;
-
 }
 
 /*!
@@ -1468,13 +1406,13 @@ bool IsFilePath( const char* pLine, int* pnBgn, int* pnPathLen, bool bFileOnly )
 	@date 2006.01.08 genta CMRU::IsRemovableDriveとCEditDoc::IsLocalDriveが
 		実質的に同じものだった
 */
-bool IsLocalDrive( const char* pszDrive )
+bool IsLocalDrive( const TCHAR* pszDrive )
 {
-	char	szDriveType[_MAX_DRIVE+1];	// "A:\ "登録用
+	TCHAR	szDriveType[_MAX_DRIVE+1];	// "A:\ "登録用
 	long	lngRet;
 
 	if( isalpha(pszDrive[0]) ){
-		sprintf(szDriveType, "%c:\\", toupper(pszDrive[0]));
+		sprintf(szDriveType, _T("%c:\\"), toupper(pszDrive[0]));
 		lngRet = GetDriveType( szDriveType );
 		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
 		{
@@ -1498,7 +1436,7 @@ void GetLineColm( const char* pLine, int* pnJumpToLine, int* pnJumpToColm )
 			break;
 		}
 	}
-	memset( szNumber, 0, sizeof( szNumber ) );
+	memset( szNumber, 0, _countof( szNumber ) );
 	if( i >= nLineLen ){
 	}else{
 		/* 行位置 改行単位行番号(1起点)の抽出 */
@@ -1539,49 +1477,7 @@ void GetLineColm( const char* pLine, int* pnJumpToLine, int* pnJumpToColm )
 
 
 
-//	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
-//	/* bLFisOK→LFだけでも改行とみなす */
-//	const char* GetNextLine( const char* pText, int nTextLen, int* pnLineLen, int* pnBgn, BOOL* pbEOL, BOOL bLFisOK )
-//	{
-//		int		i;
-//		int		nBgn;
-//		nBgn = *pnBgn;
-//		if( nBgn >= nTextLen ){
-//			return NULL;
-//		}
-//		if( NULL != pbEOL ){
-//			*pbEOL = TRUE;
-//		}
-//		for( i = *pnBgn; i < nTextLen; ++i ){
-//			if( bLFisOK &&
-//				'\n' == pText[i]
-//			){
-//				*pnBgn = i + 1;
-//				break;
-//			}
-//			if( '\r' == pText[i]
-//			 && i + 1 < nTextLen
-//			 && '\n' == pText[i + 1]
-//			){
-//				*pnBgn = i + 2;
-//				break;
-//			}
-//		}
-//		if( i >= nTextLen ){
-//			*pnBgn = i;
-//			if( NULL != pbEOL ){
-//				*pbEOL = FALSE;
-//			}
-//		}
-//		*pnLineLen = i - nBgn;
-//		return &pText[nBgn];
-//	}
-//
-
-
-
-
-/* CR0LF0,CRLF,LFCR,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
+/* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
 const char* GetNextLine(
 	const char*		pData,
 	int				nDataLen,
@@ -1680,22 +1576,22 @@ int LimitStringLengthB( const char* pszData, int nDataLength, int nLimitLengthB,
 
 
 /* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
-void CutLastYenFromDirectoryPath( char* pszFolder )
+void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
 {
-	if( 3 == strlen( pszFolder )
-	 && pszFolder[1] == ':'
-	 && pszFolder[2] == '\\'
+	if( 3 == _tcslen( pszFolder )
+	 && pszFolder[1] == _T(':')
+	 && pszFolder[2] == _T('\\')
 	){
 		/* ドライブ名:\ */
 	}else{
 		/* フォルダの最後が半角かつ'\\'の場合は、取り除く */
 		int	nFolderLen;
 		int	nCharChars;
-		nFolderLen = strlen( pszFolder );
+		nFolderLen = _tcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = &pszFolder[nFolderLen] - CMemory::MemCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && '\\' == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = '\0';
+			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
+				pszFolder[nFolderLen - 1] = _T('\0');
 			}
 		}
 	}
@@ -1706,24 +1602,24 @@ void CutLastYenFromDirectoryPath( char* pszFolder )
 
 
 /* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-void AddLastYenFromDirectoryPath( char* pszFolder )
+void AddLastYenFromDirectoryPath( TCHAR* pszFolder )
 {
-	if( 3 == strlen( pszFolder )
-	 && pszFolder[1] == ':'
-	 && pszFolder[2] == '\\'
+	if( 3 == _tcslen( pszFolder )
+	 && pszFolder[1] == _T(':')
+	 && pszFolder[2] == _T('\\')
 	){
 		/* ドライブ名:\ */
 	}else{
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		int	nFolderLen;
 		int	nCharChars;
-		nFolderLen = strlen( pszFolder );
+		nFolderLen = _tcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = &pszFolder[nFolderLen] - CMemory::MemCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && '\\' == pszFolder[nFolderLen - 1] ){
+			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
 			}else{
-				pszFolder[nFolderLen] = '\\';
-				pszFolder[nFolderLen + 1] = '\0';
+				pszFolder[nFolderLen] = _T('\\');
+				pszFolder[nFolderLen + 1] = _T('\0');
 			}
 		}
 	}
@@ -1742,15 +1638,15 @@ void AddLastYenFromDirectoryPath( char* pszFolder )
 	@retval -1 バッファが足りず、\を付加できなかった
 	@date 2003.06.24 Moca 新規作成
 */
-int AddLastChar( char* pszPath, int nMaxLen, char c ){
-	int pos = strlen( pszPath );
+int AddLastChar( TCHAR* pszPath, int nMaxLen, TCHAR c ){
+	int pos = _tcslen( pszPath );
 	// 何もないときは\を付加
 	if( 0 == pos ){
 		if( nMaxLen <= pos + 1 ){
 			return -1;
 		}
 		pszPath[0] = c;
-		pszPath[1] = '\0';
+		pszPath[1] = _T('\0');
 		return 1;
 	}
 	// 最後が\でないときも\を付加(日本語を考慮)
@@ -1759,7 +1655,7 @@ int AddLastChar( char* pszPath, int nMaxLen, char c ){
 			return -1;
 		}
 		pszPath[pos] = c;
-		pszPath[pos + 1] = '\0';
+		pszPath[pos + 1] = _T('\0');
 		return 1;
 	}
 	return 0;
@@ -1769,22 +1665,18 @@ int AddLastChar( char* pszPath, int nMaxLen, char c ){
 /*! ショートカット(.lnk)の解決
 	@date 2009.01.08 ryoji CoInitialize/CoUninitializeを削除（WinMainにOleInitialize/OleUninitializeを追加）
 */
-BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
+BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 {
 	BOOL			bRes;
 	HRESULT			hRes;
 	IShellLink*		pIShellLink;
 	IPersistFile*	pIPersistFile;
-	char			szGotPath[MAX_PATH];
-	char			szDescription[MAX_PATH];
 	WIN32_FIND_DATA	wfd;
-	WCHAR			wsz[MAX_PATH];
 	/* 初期化 */
 	pIShellLink = NULL;
 	pIPersistFile = NULL;
 	*lpszPath = 0; // assume failure
 	bRes = FALSE;
-	szGotPath[0] = '\0';
 
 // 2009.01.08 ryoji CoInitializeを削除（WinMainにOleInitialize追加）
 
@@ -1798,23 +1690,27 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCSTR lpszLinkFile, LPSTR lpszPath )
 	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
 	CCurrentDirectoryBackupPoint dirBack;
 	ChangeCurrentDirectoryToExeDir();
+
 	if( SUCCEEDED( hRes = ::CoCreateInstance( CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID *)&pIShellLink ) ) ){
-		
 		// Get a pointer to the IPersistFile interface.
 		if( SUCCEEDED(hRes = pIShellLink->QueryInterface( IID_IPersistFile, (void**)&pIPersistFile ) ) ){
 			// Ensure that the string is Unicode.
+			WCHAR wsz[MAX_PATH];
 			MultiByteToWideChar( CP_ACP, 0, szAbsLongPath, -1, wsz, MAX_PATH );
 			// Load the shortcut.
 			if( SUCCEEDED(hRes = pIPersistFile->Load( wsz, STGM_READ ) ) ){
 				// Resolve the link.
 				if( SUCCEEDED( hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH ) ) ){
 					// Get the path to the link target.
+					TCHAR szGotPath[MAX_PATH];
+					szGotPath[0] = _T('\0');
 					if( SUCCEEDED( hRes = pIShellLink->GetPath(szGotPath, MAX_PATH, (WIN32_FIND_DATA *)&wfd, SLGP_SHORTPATH ) ) ){
 						// Get the description of the target.
+						TCHAR szDescription[MAX_PATH];
 						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
-							if( '\0' != szGotPath[0] ){
+							if( _T('\0') != szGotPath[0] ){
 								/* 正常終了 */
-								lstrcpy( lpszPath, szGotPath );
+								_tcscpy( lpszPath, szGotPath );
 								bRes = TRUE;
 							}
 						}
@@ -1899,12 +1795,12 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
 	@date 2004.02.17 Moca 各所のソースを統合
 */
-SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int length )
+SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int nLength )
 {
 	HGLOBAL		hgClip;
 	char*		pszClip;
 
-	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, length + 1 );
+	hgClip = ::GlobalAlloc( GMEM_MOVEABLE | GMEM_DDESHARE, nLength + 1 );
 	if( NULL == hgClip ){
 		return false;
 	}
@@ -1913,10 +1809,10 @@ SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int lengt
 		::GlobalFree( hgClip );
 		return false;
 	}
-	memcpy( pszClip, pszText, length );
-	pszClip[length] = 0;
+	memcpy( pszClip, pszText, nLength );
+	pszClip[nLength] = 0;
 	::GlobalUnlock( hgClip );
-	if( FALSE == ::OpenClipboard( hwnd ) ){
+	if( !::OpenClipboard( hwnd ) ){
 		::GlobalFree( hgClip );
 		return false;
 	}
@@ -1927,22 +1823,20 @@ SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int lengt
 	return true;
 }
 
-//	From Here Jun. 26, 2001 genta
 /*!
 	与えられた正規表現ライブラリの初期化を行う．
 	メッセージフラグがONで初期化に失敗したときはメッセージを表示する．
-
-	@param hWnd [in] ダイアログボックスのウィンドウハンドル。
-			バージョン番号の設定が不要であればNULL。
-	@param rRegexp [in] チェックに利用するCBregexpクラスへの参照
-	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
 
 	@retval true 初期化成功
 	@retval false 初期化に失敗
 
 	@date 2007.08.12 genta 共通設定からDLL名を取得する
 */
-bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
+bool InitRegexp(
+	HWND		hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
+	CBregexp&	rRegexp,		//!< [in] チェックに利用するCBregexpクラスへの参照
+	bool		bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+)
 {
 	//	From Here 2007.08.12 genta
 	CShareData* pInstance = NULL;
@@ -1972,21 +1866,20 @@ bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage )
 	正規表現ライブラリの存在を確認し、あればバージョン情報を指定コンポーネントにセットする。
 	失敗した場合には空文字列をセットする。
 
-	@param hWnd [in] ダイアログボックスのウィンドウハンドル。
-			バージョン番号の設定が不要であればNULL。
-	@param nCmpId [in] バージョン文字列を設定するコンポーネントID
-	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
-
 	@retval true バージョン番号の設定に成功
 	@retval false 正規表現ライブラリの初期化に失敗
 */
-bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMessage )
+bool CheckRegexpVersion(
+	HWND	hWnd,			//!< [in] ダイアログボックスのウィンドウハンドル。バージョン番号の設定が不要であればNULL。
+	int		nCmpId,			//!< [in] バージョン文字列を設定するコンポーネントID
+	bool	bShowMessage	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+)
 {
 	CBregexp cRegexp;
 
 	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		if( hWnd != NULL ){
-			::SetDlgItemText( hWnd, nCmpId, " ");
+			::SetDlgItemText( hWnd, nCmpId, _T(" "));
 		}
 		return false;
 	}
@@ -1999,15 +1892,15 @@ bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMessage )
 /*!
 	正規表現が規則に従っているかをチェックする。
 
-	@param szPattern [in] チェックする正規表現
-	@param hWnd [in] メッセージボックスの親ウィンドウ
-	@param bShowMessage [in] 初期化失敗時にエラーメッセージを出すフラグ
-	@param nOption [in] 大文字と小文字を無視して比較するフラグ // 2002/2/1 hor追加
-
 	@retval true 正規表現は規則通り
 	@retval false 文法に誤りがある。または、ライブラリが使用できない。
 */
-bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption )
+bool CheckRegexpSyntax(
+	const char*	szPattern,		//!< [in] チェックする正規表現
+	HWND		hWnd,			//!< [in] メッセージボックスの親ウィンドウ
+	bool		bShowMessage,	//!< [in] 初期化失敗時にエラーメッセージを出すフラグ
+	int			nOption			//!< [in] 大文字と小文字を無視して比較するフラグ // 2002/2/1 hor追加
+)
 {
 	CBregexp cRegexp;
 
@@ -2017,14 +1910,12 @@ bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int
 	if( !cRegexp.Compile( szPattern, nOption ) ){	// 2002/2/1 hor追加
 		if( bShowMessage ){
 			::MessageBox( hWnd, cRegexp.GetLastMessage(),
-				"正規表現エラー", MB_OK | MB_ICONEXCLAMATION );
+				_T("正規表現エラー"), MB_OK | MB_ICONEXCLAMATION );
 		}
 		return false;
 	}
 	return true;
 }
-//	To Here Jun. 26, 2001 genta
-
 
 //	From Here Jun. 26, 2001 genta
 /*!
@@ -2037,28 +1928,30 @@ CHtmlHelp g_cHtmlHelp;
 
 /*!
 	HTML Helpを開く
-
 	HTML Helpが利用可能であれば引数をそのまま渡し、そうでなければメッセージを表示する。
-
-	@param hWnd [in] 呼び出し元ウィンドウのウィンドウハンドル
-	@param szFile [in] HTML Helpのファイル名。
-				不等号に続けてウィンドウタイプ名を指定可能。
-	@param uCmd [in] HTML Help に渡すコマンド
-	@param data [in] コマンドに応じたデータ
-	@param msgflag [in] エラーメッセージを表示するか。省略時はtrue。
 
 	@return 開いたヘルプウィンドウのウィンドウハンドル。開けなかったときはNULL。
 */
 
-HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD_PTR data, bool msgflag )
+HWND OpenHtmlHelp(
+	HWND		hWnd,		//!< [in] 呼び出し元ウィンドウのウィンドウハンドル
+	LPCTSTR		szFile,		//!< [in] HTML Helpのファイル名。不等号に続けてウィンドウタイプ名を指定可能。
+	UINT		uCmd,		//!< [in] HTML Help に渡すコマンド
+	DWORD_PTR	data,		//!< [in] コマンドに応じたデータ
+	bool		msgflag		//!< [in] エラーメッセージを表示するか。省略時はtrue。
+)
 {
 	if( g_cHtmlHelp.Init() ){
 		return g_cHtmlHelp.HtmlHelp( hWnd, szFile, uCmd, data );
 	}
 	if( msgflag ){
-		::MessageBox( hWnd, "HHCTRL.OCXが見つかりません。\r\n"
-			"HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n",
-			"情報", MB_OK | MB_ICONEXCLAMATION );
+		::MessageBox(
+			hWnd,
+			_T("HHCTRL.OCXが見つかりません。\r\n")
+			_T("HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n"),
+			_T("情報"),
+			MB_OK | MB_ICONEXCLAMATION
+		);
 	}
 	return NULL;
 }
@@ -2072,36 +1965,29 @@ HWND OpenHtmlHelp( HWND hWnd, LPCSTR szFile, UINT uCmd, DWORD_PTR data, bool msg
 // NetWork上のリソースに接続するためのダイアログを出現させる
 // NO_ERROR:成功 ERROR_CANCELLED:キャンセル それ以外:失敗
 // プロジェクトの設定でリンクモジュールにMpr.libを追加のこと
-DWORD NetConnect ( const char strNetWorkPass[] )
+DWORD NetConnect ( const TCHAR strNetWorkPass[] )
 {
-	NETRESOURCE nr;
 	//char sPassWord[] = "\0";	//パスワード
 	//char sUser[] = "\0";		//ユーザー名
 	DWORD dwRet;				//戻り値　エラーコードはWINERROR.Hを参照
-	char sTemp[256];
-	char sDrive[] = "";
+	TCHAR sTemp[256];
+	TCHAR sDrive[] = _T("");
     int i;
 
-	if (strlen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNCではない。
-	if (strNetWorkPass[0] != '\\' && strNetWorkPass[1] != '\\')	return ERROR_BAD_NET_NAME;  //UNCではない。
+	if (_tcslen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNCではない。
+	if (strNetWorkPass[0] != _T('\\') && strNetWorkPass[1] != _T('\\'))	return ERROR_BAD_NET_NAME;  //UNCではない。
 
 	//3文字目から数えて最初の\の直前までを切り出す
-	sTemp[0] = '\\';
-	sTemp[1] = '\\';
-	for (i = 2; strNetWorkPass[i] != '\0'; i++) {
-		if (strNetWorkPass[i] == '\\') break;
+	sTemp[0] = _T('\\');
+	sTemp[1] = _T('\\');
+	for (i = 2; strNetWorkPass[i] != _T('\0'); i++) {
+		if (strNetWorkPass[i] == _T('\\')) break;
 		sTemp[i] = strNetWorkPass[i];
 	}
-	sTemp[i] = '\0';	//終端
+	sTemp[i] = _T('\0');	//終端
 
-/*
-	MYMESSAGEBOX(
-		0,
-		MB_YESNO | MB_ICONEXCLAMATION | MB_TOPMOST,
-		"！！",
-		sTemp
-	);
-*/
+	//NETRESOURCE作成
+	NETRESOURCE nr;
 	ZeroMemory( &nr, sizeof( nr ) );
 	nr.dwScope = RESOURCE_GLOBALNET;
 	nr.dwType = RESOURCETYPE_DISK;
@@ -2240,7 +2126,7 @@ SAKURA_CORE_API const char* GetColorNameByIndex( int index )
 	@author 鬼
 	@date 2002.09.10 genta CWSH.cppから移動
 */
-bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, unsigned BufferSize)
+bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer, unsigned BufferSize)
 {
 	bool Result = false;
 	
@@ -2262,23 +2148,22 @@ bool ReadRegistry(HKEY Hive, char const *Path, char const *Item, char *Buffer, u
 /*!
 	@brief exeファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
 	
-	@param pDir [out] EXEファイルのあるディレクトリを返す場所．
-		予め_MAX_PATHのバッファを用意しておくこと．
-	@param szFile [in] ディレクトリ名に結合するファイル名．
-	
 	@author genta
 	@date 2002.12.02 genta
 	@date 2007.05.20 ryoji 関数名変更（旧：GetExecutableDir）、汎用テキストマッピング化
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
-void GetExedir( LPTSTR pDir, LPCTSTR szFile )
+void GetExedir(
+	LPTSTR pDir,		//!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPCTSTR szFile		//!< [in] ディレクトリ名に結合するファイル名．  
+)
 {
 	if( pDir == NULL )
 		return;
 	
 	TCHAR	szPath[_MAX_PATH];
 	// sakura.exe のパスを取得
-	::GetModuleFileName( NULL, szPath, sizeof(szPath) );
+	::GetModuleFileName( NULL, szPath, _countof(szPath) );
 	if( szFile == NULL ){
 		SplitPath_FolderAndFile( szPath, pDir, NULL );
 	}
@@ -2293,14 +2178,13 @@ void GetExedir( LPTSTR pDir, LPCTSTR szFile )
 /*!
 	@brief INIファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す．
 	
-	@param pDir [out] INIファイルのあるディレクトリを返す場所．
-		予め_MAX_PATHのバッファを用意しておくこと．
-	@param szFile [in] ディレクトリ名に結合するファイル名．
-	
 	@author ryoji
 	@date 2007.05.19 新規作成（GetExedirベース）
 */
-void GetInidir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/ )
+void GetInidir(
+	LPTSTR pDir,				//!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPCTSTR szFile	/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
+)
 {
 	if( pDir == NULL )
 		return;
@@ -2323,15 +2207,15 @@ void GetInidir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/ )
 /*!
 	@brief INIファイルまたはEXEファイルのあるディレクトリ，または指定されたファイル名のフルパスを返す（INIを優先）．
 	
-	@param pDir [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
-		予め_MAX_PATHのバッファを用意しておくこと．
-	@param szFile [in] ディレクトリ名に結合するファイル名．
-	@param bRetExedirIfFileEmpty [in] ファイル名の指定が空の場合はEXEファイルのフルパスを返す．
-	
 	@author ryoji
 	@date 2007.05.22 新規作成
 */
-void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/, BOOL bRetExedirIfFileEmpty/*=FALSE*/ )
+void GetInidirOrExedir(
+	LPTSTR pDir,							//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
+											//         予め_MAX_PATHのバッファを用意しておくこと．
+	LPCTSTR szFile				/*=NULL*/,	//!< [in] ディレクトリ名に結合するファイル名．
+	BOOL bRetExedirIfFileEmpty	/*=FALSE*/	//!< [in] ファイル名の指定が空の場合はEXEファイルのフルパスを返す．	
+)
 {
 	TCHAR	szInidir[_MAX_PATH];
 	TCHAR	szExedir[_MAX_PATH];
@@ -2381,7 +2265,7 @@ void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile/*=NULL*/, BOOL bRetExedirIfF
 	@data 2007.05.20 ryoji iniファイルパスを優先
 	@author genta
 */
-HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmall )
+HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall )
 {
 	// サイズの設定
 	int size = ( bSmall ? 16 : 32 );
@@ -2392,15 +2276,27 @@ HICON GetAppIcon( HINSTANCE hInst, int nResource, const char* szFile, bool bSmal
 	// ファイルからの読み込みをまず試みる
 	GetInidirOrExedir( szPath, szFile );
 
-	hIcon = (HICON)::LoadImage( NULL, szPath, IMAGE_ICON, size, size,
-			LR_SHARED | LR_LOADFROMFILE );
+	hIcon = (HICON)::LoadImage(
+		NULL,
+		szPath,
+		IMAGE_ICON,
+		size,
+		size,
+		LR_SHARED | LR_LOADFROMFILE
+	);
 	if( hIcon != NULL ){
 		return hIcon;
 	}
 
 	//	ファイルからの読み込みに失敗したらリソースから取得
-	hIcon = (HICON)::LoadImage( hInst, MAKEINTRESOURCE(nResource),
-		IMAGE_ICON, size, size, LR_SHARED );
+	hIcon = (HICON)::LoadImage(
+		hInst,
+		MAKEINTRESOURCE(nResource),
+		IMAGE_ICON,
+		size,
+		size,
+		LR_SHARED
+	);
 	
 	return hIcon;
 }
@@ -2470,27 +2366,27 @@ char *strncpy_ex(char *dst, size_t dst_count, const char* src, size_t src_count)
 	パスの区切りは\．ルートディレクトリが深さ0で，サブディレクトリ毎に
 	深さが1ずつ上がっていく．
  
-	@param path [in] 深さを調べたいファイル/ディレクトリのフルパス
-
 	@date 2003.04.30 genta 新規作成
 */
-int CalcDirectoryDepth(const char* path)
+int CalcDirectoryDepth(
+	const TCHAR* path	//!< [in] 深さを調べたいファイル/ディレクトリのフルパス
+)
 {
 	int depth = 0;
  
 	//	とりあえず\の数を数える
-	for( const char *p = path; *p != '\0'; ++p ){
+	for( const char *p = path; *p != _T('\0'); ++p ){
 		//	2バイト文字は区切りではない
 		if( _IS_SJIS_1(*(unsigned const char*)p)){ // unsignedにcastしないと判定を誤る
 			++p;
 			if( *p == '\0' )
 				break;
 		}
-		else if( *p == '\\' ){
+		else if( *p == _T('\\') ){
 			++depth;
 			//	フルパスには入っていないはずだが念のため
 			//	.\はカレントディレクトリなので，深さに関係ない．
-			while( p[1] == '.' && p[2] == '\\' ){
+			while( p[1] == _T('.') && p[2] == _T('\\') ){
 				p += 2;
 			}
 		}
@@ -2498,13 +2394,12 @@ int CalcDirectoryDepth(const char* path)
  
 	//	補正
 	//	ドライブ名はパスの深さに数えない
-	if(( 'A' <= (path[0] & ~0x20)) && ((path[0] & ~0x20) <= 'Z' ) &&
-		path[1] == ':' && path[2] == '\\' ){
+	if(( _T('A') <= (path[0] & ~0x20)) && ((path[0] & ~0x20) <= _T('Z') ) && path[1] == _T(':') && path[2] == _T('\\') ){
 		//フルパス
 		--depth; // C:\ の \ はルートの記号なので階層深さではない
 	}
-	else if( path[0] == '\\' ){
-		if( path[1] == '\\' ){
+	else if( path[0] == _T('\\') ){
+		if( path[1] == _T('\\') ){
 			//	ネットワークパス
 			//	先頭の2つはネットワークを表し，その次はホスト名なので
 			//	ディレクトリ階層とは無関係
@@ -2639,7 +2534,7 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 	@retval nIdx Shift,Ctrl,Altキー状態
 	@date 2004.10.10 関数化
 */
-int getCtrlKeyState(void)
+int getCtrlKeyState()
 {
 	int nIdx = 0;
 
@@ -2648,11 +2543,11 @@ int getCtrlKeyState(void)
 		nIdx |= _SHIFT;
 	}
 	/* Ctrlキーが押されているなら */
-	if(GetKeyState_Control()){
+	if( GetKeyState_Control() ){
 		nIdx |= _CTRL;
 	}
 	/* Altキーが押されているなら */
-	if(GetKeyState_Alt()){
+	if( GetKeyState_Alt() ){
 		nIdx |= _ALT;
 	}
 
@@ -2661,8 +2556,6 @@ int getCtrlKeyState(void)
 
 /*!	ファイルの更新日時を取得
 
-	@param[in] filename ファイルのパス
-	@param[out] ftime 更新日時を返す場所
 	@return true: 成功, false: FindFirstFile失敗
 
 	@author genta by assitance with ryoji
@@ -2673,16 +2566,19 @@ int getCtrlKeyState(void)
 	FindFirstFileを使うことでファイルのロック状態に影響されずにタイムスタンプを
 	取得できる．(ryoji)
 */
-bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime )
+bool GetLastWriteTimestamp(
+	const TCHAR*	pszFileName,	//!< [in] ファイルのパス
+	FILETIME*		pcFileTime		//!< [out] 更新日時を返す場所
+)
 {
 	HANDLE hFindFile;
 	WIN32_FIND_DATA ffd;
 
-	hFindFile = ::FindFirstFile( filename, &ffd );
+	hFindFile = ::FindFirstFile( pszFileName, &ffd );
 	if( INVALID_HANDLE_VALUE != hFindFile )
 	{
 		::FindClose( hFindFile );
-		ftime = ffd.ftLastWriteTime;
+		*pcFileTime = ffd.ftLastWriteTime;
 		return true;
 	}
 	//	ファイルが見つからなかった
@@ -2707,45 +2603,45 @@ bool GetLastWriteTimestamp( const TCHAR* filename, FILETIME& ftime )
 */
 bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime )
 {
-	char szTime[10];
-	const char *p = format;
-	char *q = szResult;
+	TCHAR szTime[10];
+	const TCHAR *p = format;
+	TCHAR *q = szResult;
 	int len;
 	
 	while( *p ){
-		if( *p == '%' ){
+		if( *p == _T('%') ){
 			++p;
 			switch(*p){
-			case 'Y':
-				len = wsprintf(szTime,"%d",systime.wYear);
-				strcpy( q, szTime );
+			case _T('Y'):
+				len = wsprintf(szTime,_T("%d"),systime.wYear);
+				_tcscpy( q, szTime );
 				break;
-			case 'y':
-				len = wsprintf(szTime,"%02d",(systime.wYear%100));
-				strcpy( q, szTime );
+			case _T('y'):
+				len = wsprintf(szTime,_T("%02d"),(systime.wYear%100));
+				_tcscpy( q, szTime );
 				break;
-			case 'm':
-				len = wsprintf(szTime,"%02d",systime.wMonth);
-				strcpy( q, szTime );
+			case _T('m'):
+				len = wsprintf(szTime,_T("%02d"),systime.wMonth);
+				_tcscpy( q, szTime );
 				break;
-			case 'd':
-				len = wsprintf(szTime,"%02d",systime.wDay);
-				strcpy( q, szTime );
+			case _T('d'):
+				len = wsprintf(szTime,_T("%02d"),systime.wDay);
+				_tcscpy( q, szTime );
 				break;
-			case 'H':
-				len = wsprintf(szTime,"%02d",systime.wHour);
-				strcpy( q, szTime );
+			case _T('H'):
+				len = wsprintf(szTime,_T("%02d"),systime.wHour);
+				_tcscpy( q, szTime );
 				break;
-			case 'M':
-				len = wsprintf(szTime,"%02d",systime.wMinute);
-				strcpy( q, szTime );
+			case _T('M'):
+				len = wsprintf(szTime,_T("%02d"),systime.wMinute);
+				_tcscpy( q, szTime );
 				break;
-			case 'S':
-				len = wsprintf(szTime,"%02d",systime.wSecond);
-				strcpy( q, szTime );
+			case _T('S'):
+				len = wsprintf(szTime,_T("%02d"),systime.wSecond);
+				_tcscpy( q, szTime );
 				break;
 				// A Z
-			case '%':
+			case _T('%'):
 			default:
 				*q = *p;
 				len = 1;
@@ -2874,7 +2770,7 @@ void MyInitCommonControls()
 		*(FARPROC*)&pfnInitCommonControlsEx = ::GetProcAddress( hDll, "InitCommonControlsEx" );
 		if( NULL != pfnInitCommonControlsEx ){
 			INITCOMMONCONTROLSEX icex;
-			icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+			icex.dwSize = sizeof(icex);
 			icex.dwICC = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
 			bInit = pfnInitCommonControlsEx( &icex );
 		}
@@ -2917,8 +2813,8 @@ BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath )
 //kobake
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {
-	int n = ::GetCurrentDirectory(sizeof(m_szCurDir), m_szCurDir);
-	if( n > 0 && n < (sizeof(m_szCurDir)/sizeof(m_szCurDir[0]))){
+	int n = ::GetCurrentDirectory(_countof(m_szCurDir), m_szCurDir);
+	if( n > 0 && n < _countof(m_szCurDir)){
 		//ok
 	}
 	else{
@@ -3045,8 +2941,8 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 #endif
 						if( SUCCEEDED(pDesktopFolder->ParseDisplayName(NULL, NULL, pwszDisplayName, NULL, &pIDL, NULL)) ){
 							SHELLEXECUTEINFO si;
-							::ZeroMemory( &si, sizeof(SHELLEXECUTEINFO) );
-							si.cbSize = sizeof(SHELLEXECUTEINFO);
+							::ZeroMemory( &si, sizeof(si) );
+							si.cbSize = sizeof(si);
 							si.fMask = SEE_MASK_IDLIST;
 							si.lpVerb = _T("open");
 							si.lpIDList = pIDL;
@@ -3060,8 +2956,14 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				}
 				break;
 			case 101:	// インポート／エクスポートの起点リセット（起点を設定フォルダにする）
-				if( IDOK == MYMESSAGEBOX( hwnd, MB_OKCANCEL | MB_ICONINFORMATION, GSTR_APPNAME,
-						_T("各種設定のインポート／エクスポート用ファイル選択画面の\n初期表示フォルダを設定フォルダに戻します。") ) )
+				int nMsgResult = MYMESSAGEBOX(
+					hwnd,
+					MB_OKCANCEL | MB_ICONINFORMATION,
+					GSTR_APPNAME,
+					_T("各種設定のインポート／エクスポート用ファイル選択画面の\n")
+					_T("初期表示フォルダを設定フォルダに戻します。")
+				);
+				if( IDOK == nMsgResult )
 				{
 					DLLSHAREDATA *pShareData = CShareData::getInstance()->GetShareData();
 					GetInidir( pShareData->m_szIMPORTFOLDER );

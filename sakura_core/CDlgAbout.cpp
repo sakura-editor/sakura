@@ -145,7 +145,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
 	
 	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
-	if( !GetLastWriteTimestamp( szFile, lastTime )){
+	if( !GetLastWriteTimestamp( szFile, &lastTime )){
 		lastTime.dwLowDateTime = lastTime.dwHighDateTime = 0;
 	}
 
