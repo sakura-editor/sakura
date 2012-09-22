@@ -3366,7 +3366,8 @@ void CEditView::Command_SEARCH_NEXT(
 re_do:;
 	 /* 現在位置より後ろの位置を検索する */
 	// 2004.05.30 Moca 引数をm_pShareDataからメンバ変数に変更。他のプロセス/スレッドに書き換えられてしまわないように。
-	int nSearchResult = m_pcEditDoc->m_cLayoutMgr.SearchWord(
+	int nSearchResult;
+	nSearchResult = m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLineNum, 								// 検索開始行
 		nIdx, 									// 検索開始位置
 		m_szCurSrchKey,							// 検索条件
