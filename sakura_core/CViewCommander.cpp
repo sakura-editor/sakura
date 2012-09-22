@@ -1548,9 +1548,6 @@ try_again:;
 
 
 /**	選択範囲をクリップボードにコピー
- 	@param bIgnoreLockAndDisable [in] 選択範囲を解除するか？
- 	@param bAddCRLFWhenCopy [in] 折り返し位置に改行コードを挿入するか？
- 	@param neweol [in] コピーするときのEOL。
 
 	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
 */
@@ -3073,7 +3070,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		sSelect_Old = GetSelect();
 		
 		bSelectingLock_Old = m_pCommanderView->GetSelectionInfo().m_bSelectingLock;
-		
+
 		/* 矩形範囲選択中か */
 		if( !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && TRUE == m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){	/* 選択状態のロック */
 			bSelecting = TRUE;
@@ -3316,7 +3313,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 re_do:;
 	 /* 現在位置より後ろの位置を検索する */
 	// 2004.05.30 Moca 引数をGetShareData()からメンバ変数に変更。他のプロセス/スレッドに書き換えられてしまわないように。
-	int nSearchResult=GetDocument()->m_cLayoutMgr.SearchWord(
+	int nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
 		nLineNum,						// 検索開始レイアウト行
 		nIdx,							// 検索開始データ位置
 		m_pCommanderView->m_szCurSrchKey,					// 検索条件
@@ -5202,7 +5199,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			sSelectOld.GetToPointer()->y++;
 		}
 
-		// 現在の選択範囲を非選択状態に戻す */
+		// 現在の選択範囲を非選択状態に戻す
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( FALSE );
 
 		for( CLayoutInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().GetY2(); i++ ){
@@ -5756,7 +5753,7 @@ bool CViewCommander::Command_TagsMake( void )
 		NULL, cmdline, NULL, NULL, TRUE,
 		CREATE_NEW_CONSOLE, NULL, cDlgTagsMake.m_szPath, &sui, &pi
 	);
-	if( !bProcessResult)
+	if( !bProcessResult )
 	{
 		WarningMessage( m_pCommanderView->GetHwnd(), _T("タグ作成コマンド実行は失敗しました。\n\n%ts"), cmdline );
 		goto finish;
@@ -8503,12 +8500,11 @@ void CViewCommander::Command_JUMPHIST_NEXT( void )
 		if( ! m_pCommanderView->m_cHistory->NextValid() ){
 			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("NextValid"), MB_OK );
 		}
-
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
 			CLogicPoint(m_pCommanderView->m_cHistory->GetCurrent().GetPos(), m_pCommanderView->m_cHistory->GetCurrent().GetLineNo()),
-			&pt );
-
+			&pt
+		);
 		//	2006.07.09 genta 選択を考慮
 		m_pCommanderView->MoveCursorSelecting( pt, m_pCommanderView->GetSelectionInfo().m_bSelectingLock );
 	}

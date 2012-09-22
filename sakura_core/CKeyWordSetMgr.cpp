@@ -454,19 +454,15 @@ bool CKeyWordSetMgr::GetKeyWordCase( int nIdx )
 // From Here 2004.07.29 Moca 可変長記憶
 /*!	@brief \\0またはTABで区切られた文字列からキーワードを設定
 
-	@param nIdx [in] キーワードセット番号
-	@param nSize [in] キーワード数
-	@param pszKeyWordArr [in]「key\\tword\\t\\0」又は「key\\0word\\0\\0」の形式
-	
 	@return 登録に成功したキーワード数
 	
 	@author Moca
 	@date 2004.07.29 Moca CShareData::ShareData_IO_2内のコードを元に移築・作成
 */
 int CKeyWordSetMgr::SetKeyWordArr(
-	int nIdx,
-	int nSize,
-	const wchar_t* pszKeyWordArr
+	int				nIdx,			//!< [in] キーワードセット番号
+	int				nSize,			//!< [in] キーワード数
+	const wchar_t*	pszKeyWordArr	//!< [in]「key\\tword\\t\\0」又は「key\\0word\\0\\0」の形式
 )
 {
 	if( !KeyWordReAlloc( nIdx, nSize ) ){
@@ -491,10 +487,6 @@ int CKeyWordSetMgr::SetKeyWordArr(
 
 /*!
 	キーワードリストを設定
-
-	@param [in] nSize 
-	@param [in] ppszKeyWordArr 
-	@param nIdx 
 
 	@return 登録したキーワード数．0は失敗．
 */
