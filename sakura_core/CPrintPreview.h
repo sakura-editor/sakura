@@ -86,9 +86,9 @@ protected:
 	||	また、DrawXXXXX()から抜けてきたときは、半角フォントに設定されていることを期待してよい。
 	||	フォントは、半角フォントと全角フォントしかないことも期待してよい。
 	*/
-	void DrawHeader( HDC hdc, RECT& rect, HFONT hFontZen );
+	void DrawHeader( HDC hdc, const RECT& rect, HFONT hFontZen );
 	void DrawPageText( HDC, int, int, int, HFONT hFontZen, class CDlgCancel* );
-	void DrawFooter( HDC hdc, RECT& rect, HFONT hFontZen );
+	void DrawFooter( HDC hdc, const RECT& rect, HFONT hFontZen );
 
 	/* 印刷／プレビュー 行描画 */
 	void Print_DrawLine(
@@ -97,7 +97,7 @@ protected:
 		int			y,
 		const char*	pLine,
 		int			nLineLen,
-		int			nIndent, // 折り返しインデント桁数 // 2006.08.14 Moca
+		int			nIndent, //!< 折り返しインデント桁数 // 2006.08.14 Moca
 		HFONT		hFontZen
 	);
 
@@ -127,8 +127,8 @@ public:
 	void SetFooter(char* pszWork[]);	//	&p/&Pなどを登録
 
 protected:
-	void SetPreviewFontHan( LOGFONT* lf );
-	void SetPreviewFontZen( LOGFONT* lf );
+	void SetPreviewFontHan( const LOGFONT* lf );
+	void SetPreviewFontZen( const LOGFONT* lf );
 
 /* メンバ変数宣言 */
 public:
