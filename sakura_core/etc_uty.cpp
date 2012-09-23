@@ -2581,8 +2581,11 @@ bool GetLastWriteTimestamp(
 		*pcFileTime = ffd.ftLastWriteTime;
 		return true;
 	}
-	//	ファイルが見つからなかった
-	return false;
+	else{
+		//	ファイルが見つからなかった
+		pcFileTime->dwLowDateTime = pcFileTime->dwHighDateTime = 0;
+		return false;
+	}
 }
 
 

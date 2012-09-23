@@ -22,9 +22,8 @@
 
 #include "StdAfx.h"
 #include "CDlgAbout.h"
-#include "sakura_rc.h" // 2002/2/10 aroka 復帰
-//	Dec. 2, 2002 genta
 #include "etc_uty.h"
+#include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "sakura.hh"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
@@ -126,31 +125,23 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, NULL );
 }
 
-extern const unsigned int uShareDataVersion; 
-
 /*! 初期化処理
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	extern const unsigned int uShareDataVersion;
+
 	m_hWnd = hwndDlg;
 
 	TCHAR			szMsg[2048];
 	TCHAR			szFile[_MAX_PATH];
-	//WIN32_FIND_DATA	wfd;
-	FILETIME		lastTime;
-	SYSTEMTIME		systimeL;
 
 	/* この実行ファイルの情報 */
 	::GetModuleFileName( NULL, szFile, _countof( szFile ) );
 	
 	//	Oct. 22, 2005 genta タイムスタンプ取得の共通関数利用
-	if( !GetLastWriteTimestamp( szFile, &lastTime )){
-		lastTime.dwLowDateTime = lastTime.dwHighDateTime = 0;
-	}
 
-	::FileTimeToLocalFileTime( &lastTime, &lastTime );
-	::FileTimeToSystemTime( &lastTime, &systimeL );
 	/* バージョン情報 */
 	//	Nov. 6, 2000 genta	Unofficial Releaseのバージョンとして設定
 	//	Jun. 8, 2001 genta	GPL化に伴い、OfficialなReleaseとしての道を歩み始める
@@ -195,6 +186,12 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( szMsg );
 
+	/* 更新日情報 */
+	FILETIME		lastTime;
+	SYSTEMTIME		systimeL;
+	GetLastWriteTimestamp( szFile, &lastTime );
+	::FileTimeToLocalFileTime( &lastTime, &lastTime );
+	::FileTimeToSystemTime( &lastTime, &systimeL );
 	_stprintf( szMsg, _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
 		systimeL.wYear,
 		systimeL.wMonth,

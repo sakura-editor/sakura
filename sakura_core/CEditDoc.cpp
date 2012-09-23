@@ -1499,7 +1499,7 @@ bool CEditDoc::FormatBackUpPath(
 	bool	bOverflow = false;		// バッファオーバーフロー
 
 	/* パスの分解 */
-	_splitpath( target_file, szDrive, szDir, szFname, szExt );
+	_tsplitpath( target_file, szDrive, szDir, szFname, szExt );
 
 	if( m_pShareData->m_Common.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		_tcscpy( szTempPath, m_pShareData->m_Common.m_szBackUpFolder );
@@ -1566,9 +1566,7 @@ bool CEditDoc::FormatBackUpPath(
 				SYSTEMTIME	SystemTime;
 
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
-				if( ! GetLastWriteTimestamp( target_file, &LastWriteTime )){
-					LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
-				}
+				GetLastWriteTimestamp( target_file, &LastWriteTime );
 				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
 				::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
 
@@ -1631,9 +1629,7 @@ bool CEditDoc::FormatBackUpPath(
 				SYSTEMTIME	SystemTime;
 
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
-				if( !GetLastWriteTimestamp( target_file, &LastWriteTime )){
-					LastWriteTime.dwHighDateTime = LastWriteTime.dwLowDateTime = 0;
-				}
+				GetLastWriteTimestamp( target_file, &LastWriteTime );
 				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
 				::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
 
@@ -4128,7 +4124,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 		switch( m_eWatchUpdate ){
 		case WU_NOTIFY:
 			{
-				char szText[40];
+				TCHAR szText[40];
 				//	現在時刻の取得
 				SYSTEMTIME st;
 				FILETIME lft;
@@ -4141,7 +4137,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 					//	現在時刻でごまかす
 					::GetLocalTime( &st );
 				}
-				wsprintf( szText, "★ファイル更新 %02d:%02d:%02d", st.wHour, st.wMinute, st.wSecond );
+				wsprintf( szText, _T("★ファイル更新 %02d:%02d:%02d"), st.wHour, st.wMinute, st.wSecond );
 				m_pcEditWnd->SendStatusMessage( szText );
 			}	
 			break;
@@ -4150,7 +4146,12 @@ void CEditDoc::CheckFileTimeStamp( void )
 				m_eWatchUpdate = WU_NONE; // 更新監視の抑制
 
 				CDlgFileUpdateQuery dlg( GetFilePath(), IsModified() );
-				int result = dlg.DoModal( m_hInstance, m_hWnd, IDD_FILEUPDATEQUERY, 0 );
+				int result = dlg.DoModal(
+					m_hInstance,
+					m_hWnd,
+					IDD_FILEUPDATEQUERY,
+					0
+				);
 
 				switch( result ){
 				case 1:	// 再読込
@@ -4174,7 +4175,6 @@ void CEditDoc::CheckFileTimeStamp( void )
 		}
 	}
 	//	To Here Dec. 4, 2002 genta
-	return;
 }
 
 
