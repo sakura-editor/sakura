@@ -12,6 +12,7 @@
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji, genta
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2010, aroka
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -81,8 +82,9 @@ typedef struct {
 
 /*!	タブ一覧メニュー用データの qsort() コールバック処理
 	@date 2006.02.01 ryoji 新規作成
+	@date 2010.11.20 aroka __cdecl追加
 */
-static int compTABMENU_DATA( const void *arg1, const void *arg2 )
+static int __cdecl compTABMENU_DATA( const void *arg1, const void *arg2 )
 {
 	int ret;
 
