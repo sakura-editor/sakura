@@ -48,7 +48,7 @@ bool CProcess::InitializeProcess()
 			GSTR_APPNAME, _T("異なるバージョンのエディタを同時に起動することはできません。") );
 		return false;
 	}
-//	m_pShareData = m_cShareData.GetShareData();
+	m_pShareData = m_cShareData.GetShareData();
 
 	/* リソースから製品バージョンの取得 */
 	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
