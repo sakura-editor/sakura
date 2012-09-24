@@ -1382,6 +1382,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	//	Oct. 5, 2002 genta _countof()で誤ってポインタのサイズを取得していたのを修正
 	cProfile.IOProfileData( pszSecName, LTEXT("szHokanFile")		, types.m_szHokanFile );		//	補完ファイル
 	//	2001/06/14 End
+	cProfile.IOProfileData( pszSecName, LTEXT("nHokanType")			, types.m_nHokanType );		//	補完種別
 
 	//	2001/06/19 asa-o
 	cProfile.IOProfileData( pszSecName, LTEXT("bHokanLoHiCase")		, types.m_bHokanLoHiCase );

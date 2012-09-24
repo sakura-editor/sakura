@@ -14,6 +14,7 @@
 
 static const DWORD p_helpids3[] = {	//11500
 	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//入力補完 単語ファイル参照
+	IDC_COMBO_HOKAN_TYPE,			HIDC_COMBO_HOKAN_TYPE,				//入力補完タイプ
 	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
 	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//現在のファイルから入力補完
 	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
@@ -64,6 +65,18 @@ static const EEolType aeEolType[] = {
 	EOL_LF,
 	EOL_CR,
 };
+
+struct SHokanMethod{
+	int nMethod;
+	std::wstring name;
+};
+
+static std::vector<SHokanMethod>* GetHokanMethodList()
+{
+	static std::vector<SHokanMethod> methodList;
+	return &methodList;
+}
+
 
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
@@ -245,6 +258,19 @@ void CPropSupport::SetData( HWND hwndDlg )
 	/* 入力補完 単語ファイル */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
 
+	{
+		HWND hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_HOKAN_TYPE );
+		std::vector<SHokanMethod>* pMedothList = GetHokanMethodList();
+		ApiWrap::Combo_AddString( hCombo, L"なし" );
+		Combo_SetCurSel( hCombo, 0 );
+		for( size_t i = 0; i < pMedothList->size(); i++ ){
+			ApiWrap::Combo_AddString( hCombo, (*pMedothList)[i].name.c_str() );
+			if( m_Types.m_nHokanType == (*pMedothList)[i].nMethod ){
+				Combo_SetCurSel( hCombo, i + 1 );
+			}
+		}
+	}
+
 //	2001/06/19 asa-o
 	/* 入力補完機能：英大文字小文字を同一視する */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANLOHICASE, m_Types.m_bHokanLoHiCase );
@@ -318,6 +344,17 @@ int CPropSupport::GetData( HWND hwndDlg )
 	/* 入力補完 単語ファイル */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _countof2( m_Types.m_szHokanFile ));
 
+	// 入力補完種別
+	{
+		HWND hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_HOKAN_TYPE );
+		int i = Combo_GetCurSel( hCombo );
+		if( 0 == i ){
+			m_Types.m_nHokanType = 0;
+		}else if( CB_ERR != i ){
+			m_Types.m_nHokanType = (*GetHokanMethodList())[i - 1].nMethod;
+		}
+	}
+
 	//@@@ 2002.2.2 YAZAKI
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _countof2( m_Types.m_szExtHelp ));
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
@@ -354,4 +391,12 @@ int CPropSupport::GetData( HWND hwndDlg )
 }
 
 // 2001/06/13 End
+
+/*! 補完種別の追加
+/*/
+void CPropSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
+{
+	SHokanMethod item = { nMethod, std::wstring(szName) };
+	GetHokanMethodList()->push_back(item);
+}
 

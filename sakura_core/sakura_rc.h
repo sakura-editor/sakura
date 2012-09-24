@@ -234,6 +234,7 @@
 #define IDC_STATIC_MYICON               1184
 #define IDC_EDIT_HOKANFILE              1185
 #define IDC_BUTTON_HOKANFILE_REF        1186
+#define IDC_COMBO_HOKAN_TYPE            1187
 #define IDC_LIST_COLORS                 1188
 #define IDC_CHECK_DISP                  1189
 #define IDC_CHECK_FAT                   1190

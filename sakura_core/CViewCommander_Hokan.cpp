@@ -23,6 +23,8 @@ void CViewCommander::Command_HOKAN( void )
 	if(!GetDllShareData().m_Common.m_sHelper.m_bUseHokan){
 		GetDllShareData().m_Common.m_sHelper.m_bUseHokan = TRUE;
 	}
+#if 0
+// 2011.06.24 Moca Plugin導入に従い未設定の確認をやめる
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
@@ -40,7 +42,7 @@ retry:;
 			goto retry;
 		}
 	}
-
+#endif
 	CNativeW	cmemData;
 	/* カーソル直前の単語を取得 */
 	if( 0 < m_pCommanderView->GetParser().GetLeftWord( &cmemData, 100 ) ){

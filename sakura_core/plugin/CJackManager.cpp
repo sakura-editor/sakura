@@ -50,6 +50,8 @@ CJackManager::CJackManager()
 		{ PP_EDITOR_END				, L"EditorEnd"			},
 		{ PP_OUTLINE				, L"Outline"			},
 		{ PP_SMARTINDENT			, L"SmartIndent"		},
+		{ PP_COMPLEMENT				, L"Complement"			},
+		{ PP_COMPLEMENTGLOBAL		, L"ComplementGlobal"	},
 	};
 
 	m_pShareData = &GetDllShareData();
@@ -108,6 +110,12 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 //			int nMethod = (ESmartIndentType)( plug->m_cPlugin.m_id * 100 + F_PLUGCOMMAND_FIRST );
 			int nMethod = CPlug::GetSmartIndentType( plug->m_cPlugin.m_id );	// 2010/5/1 Uchi ŠÖ”‰»
 			CPropScreen::AddSIndentMethod( nMethod, plug->m_sLabel.c_str() );
+		}
+		break;
+	case PP_COMPLEMENT:
+		{
+			int nMethod = CPlug::GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );
+			CPropSupport::AddHokanMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
 	}
