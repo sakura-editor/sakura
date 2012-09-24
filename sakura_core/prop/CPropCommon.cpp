@@ -140,7 +140,7 @@ void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pM
 	保持する構造体
 */
 struct ComPropSheetInfo {
-	const TCHAR* szTabname;								//!< TABの表示名
+	const TCHAR* szTabname;									//!< TABの表示名
 	unsigned int resId;										//!< Property sheetに対応するDialog resource
 	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
 };
@@ -247,7 +247,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 			NULL
 		);
 		::MYMESSAGEBOX(
-			NULL, 
+			NULL,
 			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
 			_T("作者に教えて欲しいエラー"),
 			_T("CPropCommon::DoPropertySheet()内でエラーが出ました。\n")
