@@ -31,7 +31,6 @@ CProcess::CProcess(
 	LPTSTR		lpCmdLine		//!< pointer to command line
 )
 : m_hInstance( hInstance )
-, m_CommandLine( lpCmdLine )
 , m_hWnd( 0 )
 , m_pfnMiniDumpWriteDump(NULL)
 {
