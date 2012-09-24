@@ -130,7 +130,7 @@ BOOL CRegexKeyword::RegexKeySetTypes( STypeConfig *pTypesPtr )
 		return FALSE;
 	}
 
-	if( pTypesPtr->m_bUseRegexKeyword == FALSE )
+	if( !pTypesPtr->m_bUseRegexKeyword )
 	{
 		//OFFになったのにまだONならOFFにする。
 		if( m_bUseRegexKeyword )
@@ -295,9 +295,7 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 	MYDBGMSG("RegexKeyLineStart")
 
 	//動作に必要なチェックをする。
-	if( ( m_bUseRegexKeyword == FALSE )
-	 || ( ! IsAvailable() )
-	 || ( m_pTypes == NULL ) )
+	if( !m_bUseRegexKeyword ||  !IsAvailable() || m_pTypes == NULL )
 	{
 		return FALSE;
 	}
@@ -328,28 +326,27 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 
 	正規表現キーワードを検索する。
 
-	@param pLine [in] １行のデータ
-	@param nPos [in] 検索開始オフセット
-	@param nLineLen [in] １行の長さ
-	@param nMatchLen [out] マッチした長さ
-	@param nMatchColor [out] マッチした色番号
-
 	@retval TRUE 一致
 	@retval FALSE 不一致
 
 	@note RegexKeyLineStart関数によって初期化されていること。
 */
-BOOL CRegexKeyword::RegexIsKeyword( const char *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor )
+BOOL CRegexKeyword::RegexIsKeyword(
+	const char*	pLine,		//!< [in] １行のデータ
+	int			nPos,		//!< [in] 検索開始オフセット
+	int			nLineLen,	//!< [in] １行の長さ
+	int*		nMatchLen,	//!< [out] マッチした長さ
+	int*		nMatchColor	//!< [out] マッチした色番号
+)
 {
 	int	i, matched;
 
 	MYDBGMSG("RegexIsKeyword")
 
 	//動作に必要なチェックをする。
-	if( ( m_bUseRegexKeyword == FALSE )
-	 || ( ! IsAvailable() )
+	if( !m_bUseRegexKeyword || !IsAvailable()
 #ifdef USE_PARENT
-	 || ( m_pTypes == NULL )
+	 || m_pTypes == NULL
 #endif
 	 /* || ( pLine == NULL ) */ )
 	{

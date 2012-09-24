@@ -96,11 +96,10 @@ public:
 	BOOL RegexIsKeyword( const char *pLine, int nPos, int nLineLen, int *nMatchLen, int *nMatchColor );
 	//! タイプ設定
 	BOOL RegexKeySetTypes( STypeConfig *pTypesPtr );
-	//! 書式(囲み)チェック
-	BOOL RegexKeyCheckSyntax( const char *s );
 
-	int		m_nTypeIndex;		//現在のタイプ設定番号
-	BOOL		m_bUseRegexKeyword;	//正規表現キーワードを使用する・しない
+	//! 書式(囲み)チェック
+	static BOOL RegexKeyCheckSyntax( const char *s );
+
 
 
 protected:
@@ -110,12 +109,16 @@ protected:
 	BOOL RegexKeyInit( void );
 
 
+public:
+	int		m_nTypeIndex;						//!< 現在のタイプ設定番号
+	BOOL	m_bUseRegexKeyword;					//!< 正規表現キーワードを使用する・しない
+
 private:
-	STypeConfig		*m_pTypes;		//タイプ設定へのポインタ(呼び出し側が持っているもの)
-	int		m_nCompiledMagicNumber;	//コンパイル済みか？
-	int		m_nRegexKeyCount;	//現在のキーワード数
-	REGEX_INFO	m_sInfo[MAX_REGEX_KEYWORD];	//キーワード一覧(BREGEXPコンパイル対象)
-	char		m_szMsg[256];		//!< BREGEXPからのメッセージを保持する
+	STypeConfig*	m_pTypes;					//!< タイプ設定へのポインタ(呼び出し側が持っているもの)
+	int				m_nCompiledMagicNumber;		//!< コンパイル済みか？
+	int				m_nRegexKeyCount;			//!< 現在のキーワード数
+	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
+	char			m_szMsg[256];				//!< BREGEXPからのメッセージを保持する
 };
 
 #endif	//_REGEX_KEYWORD_H_
