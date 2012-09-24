@@ -36,11 +36,10 @@ protected:
 
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
-	LPTSTR		m_CommandLine;
 
 	//	—Bˆê‚ÌCShareDate‚Æ‚·‚éBiCProcess‚ªÓ”C‚ğ‚Á‚Änew/delete‚·‚éj
 	CShareData		m_cShareData;
-	DLLSHAREDATA*	m_pShareData;
+//	DLLSHAREDATA*	m_pShareData;
 
 private:
 };
