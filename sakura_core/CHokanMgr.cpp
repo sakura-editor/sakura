@@ -19,6 +19,8 @@
 #include "CHokanMgr.h"
 #include "env/CShareData.h"
 #include "view/CEditView.h"
+#include "plugin/CJackManager.h"
+#include "plugin/CComplementIfObj.h"
 #include "util/input.h"
 #include "util/os.h"
 #include "sakura_rc.h"
@@ -137,6 +139,7 @@ int CHokanMgr::Search(
 	const TCHAR*	pszHokanFile,
 	int				bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
 	BOOL			bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
+	int				nHokanType,
 	CNativeW*		pcmemHokanWord	// 2001/06/19 asa-o
 )
 {
@@ -171,6 +174,37 @@ int CHokanMgr::Search(
 			1024 // 編集中データからなので数を制限しておく
 		);
 	}
+
+	{
+		int nOption = (
+			  (bHokanLoHiCase ? 0x01 : 0)
+			  | (bHokanByFile ? 0x02 : 0)
+			);
+		
+		CPlug::Array plugs;
+		CPlug::Array plugType;
+		CJackManager::getInstance()->GetUsablePlug( PP_COMPLEMENTGLOBAL, 0, &plugs );
+		if( nHokanType != 0 ){
+			CJackManager::getInstance()->GetUsablePlug( PP_COMPLEMENT, nHokanType, &plugType );
+			if( 0 < plugType.size() ){
+				plugs.push_back( plugType[0] );
+			}
+		}
+
+		for( CPlug::Array::iterator it = plugs.begin(); it != plugs.end(); ++it ){
+			//インタフェースオブジェクト準備
+			CWSHIfObj::List params;
+			std::wstring curWord = pszCurWord;
+			CComplementIfObj* objComp = new CComplementIfObj( curWord , this, nOption );
+			objComp->AddRef();
+			params.push_back( objComp );
+			//プラグイン呼び出し
+			(*it)->Invoke( pcEditView, params );
+
+			objComp->Release();
+		}
+	}
+
 	if( 0 == m_nKouhoNum ){
 		m_nCurKouhoIdx = -1;
 		return 0;

@@ -152,6 +152,8 @@ public:
 protected:
 	void SetData( HWND );											//!< ダイアログデータの設定
 	int  GetData( HWND );											//!< ダイアログデータの取得
+public:
+	static void AddHokanMethod(int nMethod, const WCHAR* szName);	//!<補完種別の追加
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

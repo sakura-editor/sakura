@@ -3109,6 +3109,10 @@
 				Name="plugin"
 				>
 				<File
+					RelativePath="..\sakura_core\plugin\CComplementIfObj.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\plugin\CDllPlugin.cpp"
 					>
 				</File>

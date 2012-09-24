@@ -148,10 +148,11 @@ struct STypeConfig{
 
 	//	2001/06/14 asa-o 補完のタイプ別設定
 	SFilePath			m_szHokanFile;					/*!< 入力補完 単語ファイル */
+	int					m_nHokanType;					/*!< 入力補完 種別(プラグイン) */
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	int					m_bUseHokanByFile;				/*!< 入力補完 開いているファイル内から候補を探す */
+	BOOL				m_bUseHokanByFile;				/*!< 入力補完 開いているファイル内から候補を探す */
 	//	2001/06/19 asa-o
-	int					m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
+	BOOL				m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
 
 	SFilePath			m_szExtHelp;					/* 外部ヘルプ１ */
 	SFilePath			m_szExtHtmlHelp;				/* 外部HTMLヘルプ */
