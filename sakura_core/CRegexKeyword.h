@@ -118,14 +118,14 @@ protected:
 
 
 public:
-	int				m_nTypeIndex;				//現在のタイプ設定番号
-	bool			m_bUseRegexKeyword;			//正規表現キーワードを使用する・しない
+	int				m_nTypeIndex;				//!< 現在のタイプ設定番号
+	bool			m_bUseRegexKeyword;			//!< 正規表現キーワードを使用する・しない
 
 private:
-	STypeConfig*	m_pTypes;					//タイプ設定へのポインタ(呼び出し側が持っているもの)
-	int				m_nCompiledMagicNumber;		//コンパイル済みか？
-	int				m_nRegexKeyCount;			//現在のキーワード数
-	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//キーワード一覧(BREGEXPコンパイル対象)
+	STypeConfig*	m_pTypes;					//!< タイプ設定へのポインタ(呼び出し側が持っているもの)
+	int				m_nCompiledMagicNumber;		//!< コンパイル済みか？
+	int				m_nRegexKeyCount;			//!< 現在のキーワード数
+	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
 	wchar_t			m_szMsg[256];				//!< BREGEXP_Wからのメッセージを保持する
 };
 

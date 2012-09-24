@@ -254,7 +254,7 @@ public:
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
 	void Command_SEARCH_NEXT( bool, bool, HWND, const WCHAR* );/* 次を検索 */
-	void Command_SEARCH_PREV( bool bRedraw, HWND );				/* 前を検索 */
+	void Command_SEARCH_PREV( bool bReDraw, HWND );		/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
 	void Command_REPLACE_ALL();							/* すべて置換(実行) */

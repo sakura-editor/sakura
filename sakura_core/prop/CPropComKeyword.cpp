@@ -429,7 +429,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
 	int			nIndex1;
-	LV_ITEM	lvi;
+	LV_ITEM		lvi;
 	wchar_t		szKeyWord[MAX_KEYWORDLEN + 1];
 	CDlgInput1	cDlgInput1;
 
