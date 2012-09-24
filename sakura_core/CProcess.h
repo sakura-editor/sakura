@@ -48,7 +48,6 @@ public:
 private:
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
-	LPTSTR		m_CommandLine;
 	BOOL (WINAPI *m_pfnMiniDumpWriteDump)(
 		HANDLE hProcess,
 		DWORD ProcessId,
