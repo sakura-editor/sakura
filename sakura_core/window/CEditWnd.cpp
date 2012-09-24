@@ -2081,9 +2081,15 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				//「ファイルを開く」ダイアログ
 				SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
 				CDocFileOperation& cDocOp = GetDocument().m_cDocFileOperation;
-				if( cDocOp.OpenFileDialog(GetHwnd(), pszFolderPath, &sLoadInfo) ){
+				std::vector<std::tstring> files;
+				if( cDocOp.OpenFileDialog(GetHwnd(), pszFolderPath, &sLoadInfo, files) ){
+					sLoadInfo.cFilePath = files[0].c_str();
 					//開く
 					cDocOp.FileLoad( &sLoadInfo );
+					for( size_t f = 1; f < files.size(); f++ ){
+						sLoadInfo.cFilePath = files[f].c_str();
+						CControlTray::OpenNewEditor( G_AppInstance(), GetHwnd(), sLoadInfo, NULL, true );
+					}
 				}
 			}
 			//その他コマンド

@@ -679,7 +679,8 @@ LRESULT CControlTray::DispatchEvent(
 							vMRU,
 							CMRUFolder().GetPathList()	// OPENFOLDERリストのファイルのリスト
 						);
-						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo ) ){
+						std::vector<std::tstring> files;
+						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo, &files ) ){
 							break;
 						}
 						if( NULL == GetTrayHwnd() ){
@@ -687,8 +688,11 @@ LRESULT CControlTray::DispatchEvent(
 						}
 						
 						// 新たな編集ウィンドウを起動
-						CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
-							NULL, false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
+						for( size_t f = 0; f < files.size(); f++ ){
+							sLoadInfo.cFilePath = files[f].c_str();
+							CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
+								NULL, true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
+						}
 					}
 					break;
 				case F_GREP_DIALOG:
@@ -770,7 +774,8 @@ LRESULT CControlTray::DispatchEvent(
 							vOPENFOLDER
 						);
 						SLoadInfo sLoadInfo( _T(""), CODE_AUTODETECT, false);
-						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo ) ){
+						std::vector<std::tstring> files;
+						if( !cDlgOpenFile.DoModalOpenDlg( &sLoadInfo, &files ) ){
 							break;
 						}
 						if( NULL == GetTrayHwnd() ){
@@ -778,8 +783,11 @@ LRESULT CControlTray::DispatchEvent(
 						}
 
 						// 新たな編集ウィンドウを起動
-						CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
-							NULL, false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
+						for( size_t f = 0; f < files.size(); f++ ){
+							sLoadInfo.cFilePath = files[f].c_str();
+							CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
+								NULL, true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
+						}
 					}
 					break;
 				}

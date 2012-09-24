@@ -53,7 +53,8 @@ void CDocFileOperation::DoFileUnlock()
 bool CDocFileOperation::OpenFileDialog(
 	HWND				hwndParent,		//!< [in]
 	const TCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダを指定できる
-	SLoadInfo*			pLoadInfo		//!< [in/out] ロード情報
+	SLoadInfo*			pLoadInfo,		//!< [in/out] ロード情報
+	std::vector<std::tstring>&	files
 )
 {
 	/* アクティブにする */
@@ -68,7 +69,7 @@ bool CDocFileOperation::OpenFileDialog(
 		CMRU().GetPathList(),															// MRUリストのファイルのリスト
 		CMRUFolder().GetPathList()														// OPENFOLDERリストのファイルのリスト
 	);
-	return m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.DoModalOpenDlg( pLoadInfo );
+	return m_pcDocRef->m_pcEditWnd->m_cDlgOpenFile.DoModalOpenDlg( pLoadInfo, &files );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -469,8 +470,22 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	//ファイル名指定が無い場合はダイアログで入力させる
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
-		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), NULL, &sLoadInfo ) ){
+		std::vector<std::tstring> files;
+		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), NULL, &sLoadInfo, files ) ){
 			return;
+		}
+		sLoadInfo.cFilePath = files[0].c_str();
+		// 他のファイルは新規ウィンドウ
+		for( size_t i = 1; i < files.size(); i++ ){
+			SLoadInfo sFilesLoadInfo = sLoadInfo;
+			sFilesLoadInfo.cFilePath = files[i].c_str();
+			CControlTray::OpenNewEditor(
+				G_AppInstance(),
+				CEditWnd::getInstance()->GetHwnd(),
+				sFilesLoadInfo,
+				NULL,
+				true
+			);
 		}
 	}
 

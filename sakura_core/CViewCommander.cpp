@@ -3559,15 +3559,31 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 {
 	//ロード情報
 	SLoadInfo sLoadInfo(filename?to_tchar(filename):_T(""), nCharCode, bViewMode);
+	std::vector<std::tstring> files;
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
 			NULL,								//[in]  フォルダ
-			&sLoadInfo							//[out] ロード情報受け取り
+			&sLoadInfo,							//[out] ロード情報受け取り
+			files								//[out] ファイル名
 		);
 		if(!bDlgResult)return;
+
+		sLoadInfo.cFilePath = files[0].c_str();
+		// 他のファイルは新規ウィンドウ
+		for( size_t i = 1; i < files.size(); i++ ){
+			SLoadInfo sFilesLoadInfo = sLoadInfo;
+			sFilesLoadInfo.cFilePath = files[i].c_str();
+			CControlTray::OpenNewEditor(
+				G_AppInstance(),
+				CEditWnd::getInstance()->GetHwnd(),
+				sFilesLoadInfo,
+				NULL,
+				true
+			);
+		}
 	}
 
 	//開く
