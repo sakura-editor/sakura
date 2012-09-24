@@ -21,14 +21,31 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 
 	//フォルダが指定された場合は「ファイルを開く」ダイアログを表示し、実際のファイル入力を促す
 	if( IsDirectory(pLoadInfo->cFilePath) ){
+		std::vector<std::tstring> files;
 		SLoadInfo sLoadInfo(_T(""), CODE_AUTODETECT, false);
 		bool bDlgResult = pcDoc->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),
 			pLoadInfo->cFilePath,	//指定されたフォルダ
-			&sLoadInfo
+			&sLoadInfo,
+			files
 		);
 		if( !bDlgResult ){
 			return CALLBACK_INTERRUPT; //キャンセルされた場合は中断
+		}
+		if( 0 < files.size() ){
+			sLoadInfo.cFilePath = files[0].c_str();
+			// 他のファイルは新規ウィンドウ
+			for( size_t i = 1; i < files.size(); i++ ){
+				SLoadInfo sFilesLoadInfo = sLoadInfo;
+				sFilesLoadInfo.cFilePath = files[i].c_str();
+				CControlTray::OpenNewEditor(
+					G_AppInstance(),
+					CEditWnd::getInstance()->GetHwnd(),
+					sFilesLoadInfo,
+					NULL,
+					true
+				);
+			}
 		}
 		*pLoadInfo = sLoadInfo;
 	}
