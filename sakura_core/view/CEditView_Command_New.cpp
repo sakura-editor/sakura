@@ -176,9 +176,6 @@ void CEditView::InsertData_CEditView(
 		pptNewPos
 	);
 
-	// メモリが再確保されてアドレスが無効になるので、再度、行データを求める
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.GetY2(), &nLineLen );
-
 	// 指定された行のデータ内の位置に対応する桁の位置を調べる
 	const wchar_t*	pLine2;
 	CLogicInt		nLineLen2;
@@ -223,6 +220,18 @@ void CEditView::InsertData_CEditView(
 
 		if( bRedraw ){
 			CLayoutInt nStartLine(ptInsertPos.y);
+			// 2011.12.26 正規表現キーワード・検索文字列などは、ロジック行頭までさかのぼって更新する必要がある
+			{
+				const CLayout* pcLayoutLineFirst = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptInsertPos.GetY2() );
+				while( pcLayoutLineFirst && 0 != pcLayoutLineFirst->GetLogicOffset() ){
+					pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
+					if( bHintPrev ){
+						bHintPrev = false;
+					}
+					nStartLine--;
+					nModifyLayoutLinesOld++;
+				}
+			}
 			if( 0 < nInsLineNum ){
 				// スクロールバーの状態を更新する
 				AdjustScrollBars();
@@ -775,13 +784,13 @@ void CEditView::ReplaceData_CEditView(
 
 				/* 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う) */
 				ps.rcPaint.top = GetTextArea().GetAreaTop() + (Int)(LRArg.nModLineFrom - GetTextArea().GetViewTopLine())* GetTextMetrics().GetHankakuDy();
-				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bWordWrap
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuHead	//@@@ 2002.04.19 MIK
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuTail	//@@@ 2002.04.19 MIK
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuRet	//@@@ 2002.04.19 MIK
-				 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.19 MIK
+				// 2011.12.26 正規表現キーワード・検索文字列などは、ロジック行頭までさかのぼって更新する必要がある
 				{
-					ps.rcPaint.top -= GetTextMetrics().GetHankakuDy();
+					const CLayout* pcLayoutLineFirst = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
+					while( pcLayoutLineFirst && 0 != pcLayoutLineFirst->GetLogicOffset() ){
+						pcLayoutLineFirst = pcLayoutLineFirst->GetPrevLayout();
+						ps.rcPaint.top -= GetTextMetrics().GetHankakuDy();
+					}
 				}
 				if( ps.rcPaint.top < 0 ){
 					ps.rcPaint.top = 0;
