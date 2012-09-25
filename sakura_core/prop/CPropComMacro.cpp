@@ -57,6 +57,7 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_CHECK_MacroOnOpened,		HIDC_CHECK_MacroOnOpened,		//オープン後自動実行マクロ	// 2006.09.01 ryoji
 	IDC_CHECK_MacroOnTypeChanged,	HIDC_CHECK_MacroOnTypeChanged,	//タイプ変更後自動実行マクロ	// 2006.09.01 ryoji
 	IDC_CHECK_MacroOnSave,			HIDC_CHECK_MacroOnSave,			//保存前自動実行マクロ	// 2006.09.01 ryoji
+	IDC_MACROCANCELTIMER,			HIDC_MACROCANCELTIMER,			//マクロ停止ダイアログ表示待ち時間	// 2011.08.04 syat
 //	IDC_STATIC,			-1,
 	0, 0
 };
@@ -265,6 +266,10 @@ void CPropMacro::SetData( HWND hwndDlg )
 	dwStyle = ListView_GetExtendedListViewStyle( hListView );
 	dwStyle |= LVS_EX_FULLROWSELECT;
 	ListView_SetExtendedListViewStyle( hListView, dwStyle );
+	
+	//	マクロ停止ダイアログ表示待ち時間
+	TCHAR szCancelTimer[16] = {0};
+	::DlgItem_SetText( hwndDlg, IDC_MACROCANCELTIMER, _itot(m_Common.m_sMacro.m_nMacroCancelTimer, szCancelTimer, 10) );
 
 	return;
 }
@@ -354,6 +359,11 @@ int CPropMacro::GetData( HWND hwndDlg )
 	// 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
 	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, _T('\\') );
 	
+	//	マクロ停止ダイアログ表示待ち時間
+	TCHAR szCancelTimer[16] = {0};
+	::DlgItem_GetText( hwndDlg, IDC_MACROCANCELTIMER, szCancelTimer, _countof(szCancelTimer) );
+	m_Common.m_sMacro.m_nMacroCancelTimer = _ttoi(szCancelTimer);
+
 	return TRUE;
 }
 
