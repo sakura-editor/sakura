@@ -177,7 +177,8 @@ int CCommandLine::CheckCommandLine(
 		オプションが""で囲まれた場合に対応する．
 		そうすると-で始まるファイル名を指定できなくなるので，
 		それ以降オプション解析をしないという "--" オプションを新設する．
-	
+	@date 2012.02.25 novice 複数ファイル読み込み
+
 	@note
 	これが呼び出された時点では共有メモリの初期化が完了していないため，
 	共有メモリにアクセスしてはならない．
@@ -227,9 +228,11 @@ void CCommandLine::ParseCommandLine( void )
 		}
 	}
 	if( bFind ){
+		CSakuraEnvironment::ResolvePath(szPath);
 		_tcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
 		nPos = i + 1;
 	}else{
+		m_fi.m_szPath[0] = _T('\0');
 		nPos = 0;
 	}
 
@@ -242,9 +245,9 @@ void CCommandLine::ParseCommandLine( void )
 		DBPRINT( _T("OPT=[%ts]\n"), pszToken );
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
-		if( !bFind && ( bParseOptDisabled ||
+		if( ( bParseOptDisabled ||
 			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
-				
+
 			if( pszToken[0] == _T('\"') ){
 				CNativeT cmWork;
 				//	Nov. 3, 2005 genta
@@ -260,38 +263,47 @@ void CCommandLine::ParseCommandLine( void )
 				if( len > 0 ){
 					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == _T('"') ? 1 : 0 ));
 					cmWork.Replace( _T("\"\""), _T("\"") );
-					_tcscpy_s( m_fi.m_szPath, _countof(m_fi.m_szPath), cmWork.GetStringPtr() );	/* ファイル名 */
+					_tcscpy_s( szPath, _countof(szPath), cmWork.GetStringPtr() );	/* ファイル名 */
 				}
 				else {
-					m_fi.m_szPath[0] = _T('\0');
+					szPath[0] = _T('\0');
 				}
 			}
 			else{
-				_tcscpy_s( m_fi.m_szPath, _countof(m_fi.m_szPath), pszToken );		/* ファイル名 */
+				_tcscpy_s( szPath, _countof(szPath), pszToken );		/* ファイル名 */
 			}
 
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (_tcsncmp_literal(m_fi.m_szPath, _T("file:///"))==0) {
-				_tcscpy(m_fi.m_szPath, &(m_fi.m_szPath[8]));
+			if (_tcsncmp_literal(szPath, _T("file:///"))==0) {
+				_tcscpy(szPath, &(szPath[8]));
 			}
-			int len = _tcslen(m_fi.m_szPath);
+			int len = _tcslen(szPath);
 			for (int i = 0; i < len ; i ++) {
-				if ( !TCODE::IsValidFilenameChar(m_fi.m_szPath,i) ){
+				if ( !TCODE::IsValidFilenameChar(szPath,i) ){
 					TCHAR msg_str[_MAX_PATH + 1];
 					_stprintf(
 						msg_str,
 						_T("%ls\r\n")
 						_T("上記のファイル名は不正です。ファイル名に \\ / : * ? \" < > | の文字は使えません。 "),
-						m_fi.m_szPath
+						szPath
 					);
 					MessageBox( NULL, msg_str, _T("FileNameError"), MB_OK);
-					m_fi.m_szPath[0] = _T('\0');
+					szPath[0] = _T('\0');
 					break;
 				}
 			}
 
+			if (szPath[0] != _T('\0')) {
+				CSakuraEnvironment::ResolvePath(szPath);
+				if (m_fi.m_szPath[0] == _T('\0')) {
+					_tcscpy(m_fi.m_szPath, szPath );
+				}
+				else {
+					m_vFiles.push_back( szPath );
+				}
+			}
 		}
 		else{
 			int nQuoteLen = 0;
@@ -437,12 +449,6 @@ void CCommandLine::ParseCommandLine( void )
 		pszToken = my_strtok<TCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
 	}
 	delete [] pszCmdLineWork;
-
-	/* ファイル名 */
-	if( _T('\0') != m_fi.m_szPath[0] ){
-		//ファイルパスの解決
-		CSakuraEnvironment::ResolvePath(m_fi.m_szPath);
-	}
 
 	return;
 }
