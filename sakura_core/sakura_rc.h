@@ -33,6 +33,7 @@
 #define IDD_OPERATIONRUNNING            135
 #define IDD_DIFF                        136
 #define IDD_CTRLCODE                    137
+#define IDD_MACRORUNNING                138
 #define IDB_MYTOOL                      200
 #define IDI_ICON_STD                    210
 #define IDI_ICON_DEBUG                  211
@@ -663,6 +664,7 @@
 #define IDC_CHECK_CONVERTEOLPASTE       1611
 #define IDC_CHECK_OpenNewWin            1612
 #define IDC_BUTTON_TABFONT              1613
+#define IDC_MACROCANCELTIMER            1614
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
