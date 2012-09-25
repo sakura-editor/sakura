@@ -67,6 +67,7 @@ CNormalProcess::~CNormalProcess()
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 2004.05.13 Moca CEditWnd::Create()に失敗した場合にfalseを返すように．
 	@date 2007.06.26 ryoji グループIDを指定して編集ウィンドウを作成する
+	@date 2012.02.25 novice 複数ファイル読み込み
 */
 bool CNormalProcess::InitializeProcess()
 {
@@ -370,6 +371,28 @@ bool CNormalProcess::InitializeProcess()
 		}
 		CEditView& view = pEditWnd->GetActiveView();
 		view.GetCommander().HandleCommand( F_EXECEXTMACRO, TRUE, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
+	}
+
+	// 複数ファイル読み込み
+	int fileNumMax = CCommandLine::getInstance()->GetFileNum();
+	if( fileNumMax > 0 ){
+		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
+		// ファイルドロップ数の上限に合わせる
+		if( fileNumMax > nDropFileNumMax ){
+			fileNumMax = nDropFileNumMax;
+		}
+		EditInfo openFileInfo = fi;
+		int i;
+		for( i = 0; i < fileNumMax; i++ ){
+			// ファイル名差し替え
+			_tcscpy(openFileInfo.m_szPath, CCommandLine::getInstance()->GetFileName(i));
+			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), pEditWnd->GetHwnd(), &openFileInfo, bViewMode );
+			if( ret == false ){
+				break;
+			}
+		}
+		// 用済みなので削除
+		CCommandLine::getInstance()->ClearFile();
 	}
 
 	return pEditWnd->GetHwnd() ? true : false;
