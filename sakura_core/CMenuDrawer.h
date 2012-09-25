@@ -68,11 +68,11 @@ public:
 	*/
 	void ResetContents( void );
 	//void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE );	/* メニュー項目を追加 */
-	void MyAppendMenu( HMENU , int , int , const char*, BOOL = TRUE, int = -1 );	/* メニュー項目を追加 */	//お気に入り	//@@@ 2003.04.08 MIK
+	void MyAppendMenu( HMENU hMenu, int nFlag, int nFuncId, const TCHAR*, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 );	/* メニュー項目を追加 */	//お気に入り	//@@@ 2003.04.08 MIK
 	int MeasureItem( int, int* );	/* メニューアイテムの描画サイズを計算 */
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
-	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true ); /* ツールバーIndexの取得 */// 20050809 aroka
+	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true )const; // ツールバーIndexの取得 // 20050809 aroka
 	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka

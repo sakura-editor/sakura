@@ -28,6 +28,7 @@
 #include "CEditWnd.h"
 #include "etc_uty.h"
 
+#if 0 // 未使用
 void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 {
 //	ASSERT_VALID(this);
@@ -38,6 +39,7 @@ void FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORREF clr)
 	::SetRect( &rect, x, y, x + cx, y + cy );
 	::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL );
 }
+#endif
 
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -117,7 +119,7 @@ CMenuDrawer::CMenuDrawer()
 //  注5. F_DISABLE は未定義用(ダミーとしても使う)
 //	注6. ユーザー用に確保された場所は特にないので各段の空いている後ろの方を使ってください。
 
-	int /* TBUTTONDATA */ tbd[] = {
+	const int /* TBUTTONDATA */ tbd[] = {
 /* ファイル操作系(1段目32個: 1-32) */
 /*  1 */		F_FILENEW					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規作成
 /*  2 */		F_FILEOPEN					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く
@@ -148,7 +150,7 @@ CMenuDrawer::CMenuDrawer()
 /* 27 */		F_EXITALL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//サクラエディタの全終了	//Dec. 27, 2000 JEPRO 追加
 /* 28 */		F_FILESAVECLOSE				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//保存して閉じる Feb. 28, 2004 genta
 /* 29 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 30 */		F_FILESAVEALL					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全て上書き保存 Jan. 24, 2005 genta
+/* 30 */		F_FILESAVEALL				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全て上書き保存 Jan. 24, 2005 genta
 /* 31 */		F_EXITALLEDITORS			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//編集の全終了	// 2007.02.13 ryoji 追加
 /* 32 */		F_DISABLE					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
@@ -787,12 +789,8 @@ void CMenuDrawer::MyAppendMenu(
 	MENUITEMINFO mii;
 	memset( &mii, 0, sizeof( mii ) );
 	//	Aug. 31, 2001 genta
-#ifdef _WIN64
-	mii.cbSize = sizeof( MENUITEMINFO ); // 64bit版ではサイズ違う
-#else
-	//mii.cbSize = sizeof( MENUITEMINFO ); // 本当はこちらの書き方が正しいが，
-	mii.cbSize = SIZEOF_MENUITEMINFO; // サイズが大きいとWin95で動かないので，Win95が納得する値を決め打ち
-#endif
+	mii.cbSize = SIZEOF_MENUITEMINFO; //Win95対策済みのsizeof(MENUITEMINFO)値
+
 	mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 	mii.fType = 0;
 	if( MF_OWNERDRAW	& ( nFlag | nFlagAdd ) ) mii.fType |= MFT_OWNERDRAW;
@@ -827,8 +825,6 @@ void CMenuDrawer::MyAppendMenu(
 */
 void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 {
-
-//	int			i;
 	int			j;
 	int			nItemIndex;
 	HDC			hdc;
@@ -837,7 +833,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	int			nIndentLeft;
 	int			nIndentRight;
 	int			nTextTopMargin;
-	RECT		rc1;
 	HBRUSH		hBrush;
 	RECT		rcText;
 	int			nBkModeOld;
@@ -864,22 +859,22 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
 		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
-		rc1 = lpdis->rcItem;
+		RECT rc1 = lpdis->rcItem;
 		if( -1 != m_nMenuItemBitmapIdxArr[nItemIndex] || lpdis->itemState & ODS_CHECKED ){
 			rc1.left += (nIndentLeft - 2);
 		}
 		/* 選択ハイライト矩形 */
 		::FillRect( hdc, &rc1, hBrush );
 
-		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED ){
+			// アイテムが使用不可
 			::SetTextColor( hdc, ::GetSysColor( COLOR_MENU/*COLOR_3DSHADOW*/ ) );
 		}else{
 			::SetTextColor( hdc, ::GetSysColor( COLOR_HIGHLIGHTTEXT/*COLOR_MENUTEXT*//*COLOR_3DHIGHLIGHT*/ ) );
 		}
 	}else{
-		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED ){
+			// アイテムが使用不可
 			::SetTextColor( hdc, ::GetSysColor( COLOR_3DSHADOW ) );
 		}else{
 			::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
@@ -887,6 +882,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}
 
 #ifdef _DEBUG
+	// デバッグ用：メニュー項目に対して、ヘルプがない場合に背景色を青くする
 	TCHAR	szText[1024];
 	MENUITEMINFO mii;
 	// メニュー項目に関する情報を取得します。
@@ -993,15 +989,12 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		/* アイテムが選択されていない場合は3D枠の中を明るく塗りつぶす */
 		if( lpdis->itemState & ODS_SELECTED ){
 		}else{
-//			HBRUSH hbr = ::CreateSolidBrush( ::GetSysColor( COLOR_3DHILIGHT ) );
-//			HBRUSH hbr = ::CreateSolidBrush( ::GetSysColor( COLOR_3DLIGHT ) );
 			HBRUSH hbr = ::GetSysColorBrush( COLOR_3DLIGHT );
 			HBRUSH hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
 			RECT rc;
 			::SetRect( &rc, lpdis->rcItem.left + 1 + 1, lpdis->rcItem.top + 1, lpdis->rcItem.left + 1 + 1 + 16 + 2, lpdis->rcItem.top + 1+ 15 + 2 );
 			::FillRect( hdc, &rc, hbr );
 			::SelectObject( hdc, hbrOld );
-//			::DeleteObject( hbr );
 		}
 	}
 
@@ -1016,7 +1009,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			}else{
 				if( lpdis->itemState & ODS_CHECKED ){
 				}else{
-					/* アイコンを囲む枠 */
+					// アイコンを囲む枠
 					CSplitBoxWnd::Draw3dRect(
 						hdc, lpdis->rcItem.left + 1, lpdis->rcItem.top,
 						2 + 16 + 2, lpdis->rcItem.bottom - lpdis->rcItem.top,
@@ -1030,10 +1023,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		/* アイテムが使用不可 */
 		if( lpdis->itemState & ODS_DISABLED ){
 			/* 淡色アイコン */
-			// 2003.09.04 Moca SetTextColorする必要は無い
-//			COLORREF cOld;
-//			cOld = SetTextColor( hdc, GetSysColor(COLOR_3DSHADOW) );	//Oct. 24, 2000 これは標準ではRGB(128,128,128)と同じ
-//			cOld = SetTextColor( hdc, RGB(132,132,132) );	//Oct. 24, 2000 JEPRO もう少し薄くした
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
 				lpdis->rcItem.left + 1,	//	X
@@ -1042,18 +1031,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				lpdis->rcItem.top + GetSystemMetrics(SM_CYMENU)/2 - 8,	//	Y
 				ILD_MASK
 			);
-//			SetTextColor( hdc, cOld );
 
 		}else{
-/*
-			COLORREF colBk;
-			if( lpdis->itemState & ODS_CHECKED && !( lpdis->itemState & ODS_SELECTED ) ){
-				colBk = ::GetSysColor( COLOR_3DLIGHT );
-//				colBk = ::GetSysColor( COLOR_3DHILIGHT );
-			}else{
-				colBk = ::GetSysColor( COLOR_MENU );
-			}
-*/
 			/* 通常のアイコン */
 			m_pcIcons->Draw( m_nMenuItemBitmapIdxArr[nItemIndex],
 				hdc,	//	Target DC
@@ -1097,7 +1076,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	@date 2005.08.09 aroka m_nMyButtonNum隠蔽のため追加
 	@date 2005.11.02 ryoji bOnlyFuncパラメータを追加
  */
-int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc )
+int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc ) const
 {
 	if( bOnlyFunc ){
 		// 機能の範囲外（セパレータや折り返しなど特別なもの）は除外する
@@ -1126,8 +1105,9 @@ int CMenuDrawer::FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc )
  */
 TBBUTTON CMenuDrawer::getButton( int index ) const
 {
-	if( 0 <= index && index < m_nMyButtonNum )
+	if( 0 <= index && index < m_nMyButtonNum ){
 		return m_tbMyButton[index];
+	}
 
 	// 範囲外なら未定義のボタン情報を作成して返す
 	// （sakura.iniに範囲外インデックスが指定があった場合など、堅牢性のため）
@@ -1135,6 +1115,7 @@ TBBUTTON CMenuDrawer::getButton( int index ) const
 	SetTBBUTTONVal( &tbb, -1, F_DISABLE, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
 	return tbb;
 }
+
 
 int CMenuDrawer::Find( int nFuncID )
 {
@@ -1207,10 +1188,8 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	};
 
 	WorkData vecAccel[100];
-	int nAccelNum;
-	int nAccelSel;
-	nAccelNum = 0;
-	nAccelSel = 99999;
+	int nAccelNum = 0;
+	int nAccelSel = 99999;
 	for( i = 0; i < ::GetMenuItemCount( hmenu ); i++ ){
 		TCHAR	szText[1024];
 		// メニュー項目に関する情報を取得します。
