@@ -342,6 +342,9 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	wchar_t	szKeyName[64];
 	wchar_t	szKeyData[1024];
 	int		nIdx;
+	int		nPlug;
+	int		nDataLen;
+	wchar_t* pSlashPos;
 	wchar_t	szFileName[_MAX_PATH+1];
 	bool	bCase;
 	wstring	sErrMag;
@@ -385,30 +388,44 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	//  アウトライン解析方法
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
 	if (m_cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId, MakeStringBufferW( szKeyData ))) {
+		nDataLen = wcslen( szKeyData );
+		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
-			if (auto_strcmp(szKeyData, plugin.m_PluginTable[i].m_szId) == 0) {
+			if (auto_strncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
 				nIdx = i;
+				if (pSlashPos) {	// スラッシュの後ろのプラグIDを取得
+					nPlug = _wtoi( pSlashPos + 1 );
+				} else {
+					nPlug = 0;
+				}
 				break;
 			}
 		}
 		// 2010.08.21 0が範囲から漏れていた
 		if (nIdx >= 0) {
-			m_Types.m_eDefaultOutline = CPlug::GetOutlineType( nIdx );
+			m_Types.m_eDefaultOutline = CPlug::GetOutlineType( CPlug::GetPluginFunctionCode(nIdx, nPlug) );
 		}
 	}
 	//  スマートインデント
 	if (m_cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId, MakeStringBufferW( szKeyData ))) {
+		nDataLen = wcslen( szKeyData );
+		pSlashPos = wcschr( szKeyData, L'/' );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
-			if (auto_strcmp(szKeyData, plugin.m_PluginTable[i].m_szId) == 0) {
+			if (auto_strncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
 				nIdx = i;
+				if (pSlashPos) {	// スラッシュの後ろのプラグIDを取得
+					nPlug = _wtoi( pSlashPos + 1 );
+				} else {
+					nPlug = 0;
+				}
 				break;
 			}
 		}
 		// 2010.08.21 0が範囲から漏れていた
 		if (nIdx >= 0) {
-			m_Types.m_eSmartIndent = CPlug::GetSmartIndentType( nIdx );
+			m_Types.m_eSmartIndent = CPlug::GetSmartIndentType( CPlug::GetPluginFunctionCode(nIdx, nPlug) );
 		}
 	}
 
@@ -471,14 +488,28 @@ bool CImpExpType::Export( const wstring& sFileName, wstring& sErrMsg )
 	//  アウトライン解析方法
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
 	int		nPIdx;
+	int		nPlug;
+	wchar_t szId[ MAX_PLUGIN_ID + 1 + 2 ];
 	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) >= 0) {
 		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineName, MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
-		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId,   MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szId));
+		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, _countof(szId) );
+		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
+			wchar_t szPlug[8];
+			wsprintf( szPlug, L"/%d", nPlug );
+			wcscat( szId, szPlug );
+		}
+		cProfile.IOProfileData( szSecTypeEx, szKeyPluginOutlineId,   MakeStringBufferW(szId) );
 	}
 	//  スマートインデント
 	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) >= 0) {
 		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentName, MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
-		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId,   MakeStringBufferW(plugin.m_PluginTable[nPIdx].m_szId));
+		wcscpyn( szId, plugin.m_PluginTable[nPIdx].m_szId, _countof(szId) );
+		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
+			wchar_t szPlug[8];
+			wsprintf( szPlug, L"/%d", nPlug );
+			wcscat( szId, szPlug );
+		}
+		cProfile.IOProfileData( szSecTypeEx, szKeyPluginSmartIndentId,   MakeStringBufferW(szId) );
 	}
 
 	// Version

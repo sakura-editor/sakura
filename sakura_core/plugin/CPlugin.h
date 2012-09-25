@@ -102,37 +102,56 @@ public:
 public:
 	// Plug Function番号の計算(クラス外でも使えるバージョン)
 	// 2010/4/19 Uchi
+	// 2011/8/20 syat 関数コードの割り当て直し
 	static inline EFunctionCode GetPluginFunctionCode( PluginId nPluginId, PlugId nPlugId )
 	{
-		return static_cast<EFunctionCode>( nPluginId * MAX_PLUG_CMD + nPlugId + F_PLUGCOMMAND_FIRST );
+		return static_cast<EFunctionCode>( (nPluginId%20 * 100) + (nPluginId/20 * 50) + nPlugId + F_PLUGCOMMAND_FIRST );
 	}
 
 	// PluginId番号の計算(クラス外でも使えるバージョン)
 	// 2010/4/19 Uchi
+	// 2011/8/20 syat 関数コードの割り当て直し
 	static inline PluginId GetPluginId( EFunctionCode nFunctionCode )
 	{
 		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
-			return PluginId( (nFunctionCode - F_PLUGCOMMAND_FIRST) / MAX_PLUG_CMD );
+			return PluginId( (nFunctionCode - F_PLUGCOMMAND_FIRST)/100 + (nFunctionCode%100/50 * 20) );
 		}
 		return PluginId(-1);
 	}
 
 	// PluginNo番号の計算(クラス外でも使えるバージョン)
 	// 2010/6/24 Uchi
+	// 2011/8/20 syat 関数コードの割り当て直し
 	static inline PlugId GetPlugId( EFunctionCode nFunctionCode )
 	{
 		if (nFunctionCode >= F_PLUGCOMMAND_FIRST && nFunctionCode < F_PLUGCOMMAND_LAST) {
-			return PlugId( (nFunctionCode - F_PLUGCOMMAND_FIRST) % MAX_PLUG_CMD );
+			return PlugId( nFunctionCode%100 - (nFunctionCode%100/50 * 50) );
 		}
 		return PlugId(-1);
 	}
-	
-	static EOutlineType GetOutlineType( PluginId nPluginId ){
-		return static_cast<EOutlineType>(GetPluginFunctionCode(nPluginId, 0));
+
+	/* PluginId, PlugId と 関数コードのマッピング *****************************
+	 *   PluginId … プラグインの番号 0～39
+	 *     PlugId … プラグイン内のプラグの番号 0～49
+	 *
+	 *   関数コード 20000～21999   ()内は(PluginId, PlugId)を表す
+	 *   +------------+------------+----+------------+
+	 *   |20000(0,0)  |20100(1,0)  |    |21900(19,0) |
+	 *   |  :         |  :         | … |  :         |
+	 *   |20049(0,49) |20149(1,49) |    |21949(19,49)| 
+	 *   +------------+------------+----+------------+
+	 *   |20050(20,0) |20150(21,0) |    |21950(39,0) |
+	 *   |  :         |  :         | … |  :         |
+	 *   |20099(20,49)|20199(21,49)|    |21999(39,49)| 
+	 *   +------------+------------+----+------------+
+	 *   もし足りなければ、22000～23999を払い出して食いつぶす
+	 *************************************************************************/
+	static EOutlineType GetOutlineType( EFunctionCode nFunctionCode ){
+		return static_cast<EOutlineType>(nFunctionCode);
 	}
 
-	static ESmartIndentType GetSmartIndentType( PluginId nPluginId ){
-		return static_cast<ESmartIndentType>(GetPluginFunctionCode(nPluginId, 0));
+	static ESmartIndentType GetSmartIndentType( EFunctionCode nFunctionCode ){
+		return static_cast<ESmartIndentType>(nFunctionCode);
 	}
 
 	//メンバ変数
