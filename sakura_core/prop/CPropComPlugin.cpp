@@ -40,7 +40,8 @@ static const DWORD p_helpids[] = {	//11700
 	IDC_CHECK_PluginEnable,	HIDC_CHECK_PluginEnable,	//プラグインを有効にする
 	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//プラグインリスト
 	IDC_PLUGIN_SearchNew,	HIDC_PLUGIN_SearchNew,		//新規プラグインを追加
-	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//新規プラグインを追加
+	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//フォルダを開く
+	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//プラグインを削除
 	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//プラグイン設定	// 2010/3/22 Uchi
 //	IDC_STATIC,			-1,
 	0, 0
@@ -110,7 +111,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						EPluginState state = m_Common.m_sPlugin.m_PluginTable[sel].m_state;
 						BOOL bEdit = (state != PLS_DELETED && state != PLS_NONE);
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove ), bEdit );
-						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), state == PLS_LOADED && plugin );
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), state == PLS_LOADED && plugin && plugin->m_options.size() > 0 );
 					}
 				}
 				break;
@@ -176,6 +177,17 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 							WarningMessage( hwndDlg, _T("プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません") );
 						}
 					}
+				}
+				break;
+			case IDC_PLUGIN_OpenFolder:			// フォルダを開く
+				{
+					std::wstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + L".";
+					if( ! IsDirectory(sBaseDir.c_str()) ){
+						if( ::CreateDirectory(sBaseDir.c_str(), NULL) == 0 ){
+							break;
+						}
+					}
+					::ShellExecute( NULL, _T("open"), sBaseDir.c_str(), NULL, NULL, SW_SHOW );
 				}
 				break;
 			}

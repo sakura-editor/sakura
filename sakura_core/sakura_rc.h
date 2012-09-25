@@ -665,6 +665,7 @@
 #define IDC_CHECK_OpenNewWin            1612
 #define IDC_BUTTON_TABFONT              1613
 #define IDC_MACROCANCELTIMER            1614
+#define IDC_PLUGIN_OpenFolder           1615
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
