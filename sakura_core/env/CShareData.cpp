@@ -49,11 +49,6 @@ const unsigned int uShareDataVersion = N_SHAREDATA_VERSION;
 */
 CShareData* CShareData::_instance = NULL;
 
-CShareData* CShareData::getInstance()
-{
-	return _instance;
-}
-
 //	CShareData_new2.cpp‚Æ“‡
 //@@@ 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®
 CShareData::CShareData()
