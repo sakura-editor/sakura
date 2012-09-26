@@ -1037,8 +1037,14 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			} else if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode ) {
 				// フリーカーソルモードでは折り返し位置だけをみて、改行文字の位置はみない。
 				if( wrapped ) {
-					x_max = x_wrap;
-					on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
+					if( nextline_exists ){
+						x_max = x_wrap;
+						on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
+					}else{
+						// データのあるEOF行は折り返しではない
+						x_max = std::max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+						on_x_max = STOP;
+					}
 				} else {
 					if( x_wrap < GetDocument()->m_cLayoutMgr.GetMaxLineKetas() ) {
 						x_max = GetDocument()->m_cLayoutMgr.GetMaxLineKetas();

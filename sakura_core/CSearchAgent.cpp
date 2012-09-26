@@ -251,7 +251,9 @@ bool CSearchAgent::PrevOrNextWord(
 		if (bLEFT && nIdx == nLineLen){
 		}
 		else {
-			nIdx = nLineLen - CLogicInt(1);
+			// 2011.12.26 EOFより右へ行こうとするときもfalseを返すように
+			// nIdx = nLineLen - CLogicInt(1);
+			return false;
 		}
 	}
 	/* 現在位置の文字の種類によっては選択不能 */
