@@ -311,11 +311,6 @@ CShareData* CShareData::_instance = NULL;
 */
 CMutex CShareData::g_cEditArrMutex( FALSE, GSTR_MUTEX_SAKURA_EDITARR );
 
-CShareData* CShareData::getInstance()
-{
-	return _instance;
-}
-
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
 	すでにマップされているファイル ビューをアンマップする。

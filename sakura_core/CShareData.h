@@ -736,7 +736,10 @@ public:
 	/*
 	||	Singleton•—
 	*/
-	static CShareData* getInstance();
+	static CShareData* getInstance()
+	{
+		return _instance;
+	}
 
 protected:
 	static CShareData* _instance;
