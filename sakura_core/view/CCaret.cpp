@@ -981,6 +981,17 @@ CLayoutInt CCaret::MoveCursorProperly(
 		ptNewXY.y = CLayoutInt(0);
 	}
 	
+	// 2011.12.26 EOF以下の行だった場合で矩形のときは、最終レイアウト行へ移動する
+	if( ptNewXY.y >= m_pEditDoc->m_cLayoutMgr.GetLineCount()
+	 && (m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting()) ){
+		const CLayout* layoutEnd = m_pEditDoc->m_cLayoutMgr.GetBottomLayout();
+		bool bEofOnly = (layoutEnd && layoutEnd->GetLayoutEol() != EOL_NONE) || NULL == layoutEnd;
+	 	// 2012.01.09 ぴったり[EOF]位置にある場合は位置を維持(1つ上の行にしない)
+	 	if( bEofOnly && ptNewXY.y == m_pEditDoc->m_cLayoutMgr.GetLineCount() && ptNewXY.x == 0 ){
+	 	}else{
+			ptNewXY.y = std::max(CLayoutInt(0), m_pEditDoc->m_cLayoutMgr.GetLineCount() - 1);
+		}
+	}
 	/* カーソルがテキスト最下端行にあるか */
 	if( ptNewXY.y >= m_pEditDoc->m_cLayoutMgr.GetLineCount() ){
 		// 2004.04.03 Moca EOFより後ろの座標調整は、MoveCursor内でやってもらうので、削除
@@ -1020,12 +1031,9 @@ CLayoutInt CCaret::MoveCursorProperly(
 		}
 
 		if( i >= nLineLen ){
-			if( ptNewXY.y +1 == m_pEditDoc->m_cLayoutMgr.GetLineCount() &&
-				EOL_NONE == pcLayout->GetLayoutEol().GetLen() ){
-				nPosX = m_pEditView->LineIndexToColmn( pcLayout, nLineLen );
-			}
+			// 2011.12.26 フリーカーソル/矩形でデータ付きEOFの右側へ移動できるように
 			/* フリーカーソルモードか */
-			else if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode
+			if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode
 			  || ( m_pEditView->GetSelectionInfo().IsMouseSelecting() && m_pEditView->GetSelectionInfo().IsBoxSelecting() )	/* マウス範囲選択中 && 矩形範囲選択中 */
 			  || ( m_pEditView->m_bDragMode && m_pEditView->m_bDragBoxData ) /* OLE DropTarget && 矩形データ */
 			){
