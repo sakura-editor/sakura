@@ -44,14 +44,10 @@ struct GrepInfo {
 /*!
 	@brief コマンドラインパーサ クラス
 */
-class SAKURA_CORE_API CCommandLine {
+class SAKURA_CORE_API CCommandLine  : public TSingleton<CCommandLine> {
 public:
-	static CCommandLine* getInstance(LPTSTR cmd=NULL);
-
+	friend class TSingleton<CCommandLine>;
 private:
-	// 2005-08-24 D.S.Koba 引数削除
-	void ParseCommandLine( void );
-	
 	static int CheckCommandLine(
 		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
 		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
@@ -60,7 +56,6 @@ private:
 	
 	// 外から作らせない。
 	CCommandLine();
-	CCommandLine(LPTSTR cmd);
 
 	/*!
 		引用符で囲まれている数値を認識するようにする
@@ -87,11 +82,10 @@ public:
 	int GetFileNum(void) { return m_vFiles.size(); }
 	const TCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void ClearFile(void) { return m_vFiles.clear(); }
+	void ParseCommandLine( LPCTSTR pszCmdLineSrc = NULL );
 
 // member valiables
 private:
-	static CCommandLine* _instance;
-	LPCTSTR		m_pszCmdLineSrc;	//! [in]コマンドライン文字列
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		
