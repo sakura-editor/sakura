@@ -48,12 +48,13 @@ struct GrepInfo {
 */
 class SAKURA_CORE_API CCommandLine {
 public:
-	static CCommandLine* getInstance(LPTSTR cmd=NULL);
+	static CCommandLine* getInstance(){
+		static CCommandLine instance;
+
+		return &instance;
+	}
 
 private:
-	// 2005-08-24 D.S.Koba 引数削除
-	void ParseCommandLine( void );
-	
 	static int CheckCommandLine(
 		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
 		int quotelen, 		//!< [in] オプション末尾の引用符の長さ．オプション全体が引用符で囲まれている場合の考慮．
@@ -63,7 +64,8 @@ private:
 	
 	// 外から作らせない。
 	CCommandLine();
-	CCommandLine(LPTSTR cmd);
+	CCommandLine(CCommandLine const&);
+	void operator=(CCommandLine const&);
 
 	/*!
 		引用符で囲まれている数値を認識するようにする
@@ -87,11 +89,10 @@ public:
 	int GetGroupId() const {return m_nGroup;}	// 2007.06.26 ryoji
 	LPCSTR GetMacro() const{ return m_pszMacro; }
 	LPCSTR GetMacroType() const{ return m_pszMacroType; }
+	void ParseCommandLine( LPCTSTR pszCmdLineSrc = NULL );
 
 // member valiables
 private:
-	static CCommandLine* _instance;
-	LPCTSTR		m_pszCmdLineSrc;	//! [in]コマンドライン文字列
 	bool		m_bGrepMode;		//! [out] TRUE: Grep Mode
 	bool		m_bGrepDlg;			//  Grepダイアログ
 	bool		m_bDebugMode;		

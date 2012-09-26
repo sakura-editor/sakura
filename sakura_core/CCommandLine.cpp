@@ -32,8 +32,6 @@
 #include "charcode.h"  // 2006.06.28 rastiv
 #include "Debug.h"
 
-CCommandLine* CCommandLine::_instance = NULL;
-
 /* コマンドラインオプション用定数 */
 #define CMDLINEOPT_R			1002
 #define CMDLINEOPT_NOWIN		1003
@@ -181,12 +179,12 @@ void strncpyWithCheckOverflow(char *dest, int destCount, char *src, int srcCount
 		オプションが""で囲まれた場合に対応する．
 		そうすると-で始まるファイル名を指定できなくなるので，
 		それ以降オプション解析をしないという "--" オプションを新設する．
-	
+
 	@note
 	これが呼び出された時点では共有メモリの初期化が完了していないため，
 	共有メモリにアクセスしてはならない．
 */
-void CCommandLine::ParseCommandLine( void )
+void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
 
@@ -213,20 +211,20 @@ void CCommandLine::ParseCommandLine( void )
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
 	int		i;
-	if( m_pszCmdLineSrc[0] != '-' ){
+	if( pszCmdLineSrc[0] != _T('-') ){
 		for( i = 0; i < _countof( szPath ); ++i ){
-			if( m_pszCmdLineSrc[i] == _T(' ') || m_pszCmdLineSrc[i] == _T('\0') ){
+			if( pszCmdLineSrc[i] == _T(' ') || pszCmdLineSrc[i] == _T('\0') ){
 				/* ファイルの存在をチェック */
 				szPath[i] = _T('\0');	// 終端文字
 				if( fexist(szPath) ){
 					bFind = true;
 					break;
 				}
-				if( m_pszCmdLineSrc[i] == _T('\0') ){
+				if( pszCmdLineSrc[i] == _T('\0') ){
 					break;
 				}
 			}
-			szPath[i] = m_pszCmdLineSrc[i];
+			szPath[i] = pszCmdLineSrc[i];
 		}
 	}
 	if( bFind ){
@@ -236,8 +234,8 @@ void CCommandLine::ParseCommandLine( void )
 		nPos = 0;
 	}
 
-	LPTSTR pszCmdLineWork = new TCHAR[lstrlen( m_pszCmdLineSrc ) + 1];
-	_tcscpy( pszCmdLineWork, m_pszCmdLineSrc );
+	LPTSTR pszCmdLineWork = new TCHAR[lstrlen( pszCmdLineSrc ) + 1];
+	_tcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
 	LPTSTR pszToken = my_strtok( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
 	while( pszToken != NULL )
@@ -461,23 +459,11 @@ void CCommandLine::ParseCommandLine( void )
 }
 
 /*! 
-	シングルトン：プロセスで唯一のインスタンス
-*/
-CCommandLine* CCommandLine::getInstance(LPTSTR cmd)
-{
-	if( !_instance ){
-		_instance = new CCommandLine(cmd);
-	}
-	return _instance;
-}
-
-/*! 
 	コンストラクタ
 	
 	@date 2005-08-24 D.S.Koba ParseCommandLine()変更によりメンバ変数に初期値代入
 */
-CCommandLine::CCommandLine(LPTSTR cmd)
-: m_pszCmdLineSrc(cmd)
+CCommandLine::CCommandLine()
 {
 	m_bGrepMode				= false;
 	m_bGrepDlg				= false;
@@ -495,7 +481,5 @@ CCommandLine::CCommandLine(LPTSTR cmd)
 	m_nGroup				= 0;		// 2007.06.26 ryoji
 	m_pszMacro				= NULL;		// 2009.07.19 syat
 	m_pszMacroType			= NULL;		// 2009.07.19 syat
-	
-	ParseCommandLine();
 }
 /*[EOF]*/
