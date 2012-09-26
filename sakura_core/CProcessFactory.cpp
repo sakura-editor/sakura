@@ -48,8 +48,8 @@ class CProcess;
 */
 CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPTSTR lpCmdLine )
 {
-	CCommandLine::getInstance(lpCmdLine);
-	
+	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
+
 	CProcess* process = 0;
 	if( !IsValidVersion() ){
 		return 0;
