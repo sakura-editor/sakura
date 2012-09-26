@@ -832,7 +832,7 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 		if( pCommon->m_sGeneral.m_bIsFreeCursorMode
 			|| m_pEditView->GetSelectionInfo().IsBoxSelecting()
 		) {
-			ptTo.x = ptCaret.x;
+			ptTo.x = m_nCaretPosX_Prev;
 		}
 	}
 	if( ptTo.x != GetCaretLayoutPos().GetX() ){
