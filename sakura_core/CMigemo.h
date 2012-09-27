@@ -50,14 +50,13 @@ typedef struct _migemo migemo;
 
 #include "CDllHandler.h"
 
-class SAKURA_CORE_API CMigemo : public CDllImp {
-
-
+class SAKURA_CORE_API CMigemo : public TSingleton<CMigemo>, public CDllImp {
 public:
-	CMigemo() ;
+	friend class TSingleton<CMigemo>;
+private:
+	CMigemo(){}
+public:
 	virtual ~CMigemo();
-	static CMigemo* _instance;
-	static CMigemo* getInstance();
 
 	//	Entry Point
 protected:
