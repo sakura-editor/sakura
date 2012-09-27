@@ -45,7 +45,6 @@ protected:
 
 private:
 	CEditWnd*	m_pcEditWnd;
-	CMigemo		m_cMigemo;		//migemo
 };
 
 

@@ -47,13 +47,21 @@ typedef struct _migemo migemo;
 #include "CDllHandler.h"
 
 class SAKURA_CORE_API CMigemo : public CDllHandler {
+public:
+	static inline CMigemo* getInstance()
+	{
+		static CMigemo instance;
 
+		return &instance;
+	}
+
+private:
+	CMigemo(){}
+	CMigemo(CMigemo const&);
+	void operator=(CMigemo const&);
 
 public:
-	CMigemo() ;
 	virtual ~CMigemo();
-	static CMigemo* _instance;
-	static CMigemo* getInstance();
 
 	//	Entry Point
 protected:

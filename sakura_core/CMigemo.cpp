@@ -21,17 +21,6 @@
 //-----------------------------------------
 //	DLL ‰Šú‰»ŠÖ”
 //-----------------------------------------
-CMigemo* CMigemo::_instance;
-
-CMigemo* CMigemo::getInstance(){
-	return _instance;
-}
-
-CMigemo::CMigemo() {
-	_instance = this;
-}
-
-
 int CMigemo::InitDll(void)
 {
 	//	static‚É‚µ‚Ä‚Í‚¢‚¯‚È‚¢‚ç‚µ‚¢
