@@ -1242,7 +1242,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, "szExtHtmlHelp"		,
 			types.m_szExtHtmlHelp,
 			sizeof( types.m_szExtHtmlHelp ));
-		cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHokanLoHiCase );
+		cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
 
 		cProfile.IOProfileData( pszSecName, "bAutoIndent"			, types.m_bAutoIndent );
 		cProfile.IOProfileData( pszSecName, "bAutoIndent_ZENSPACE"	, types.m_bAutoIndent_ZENSPACE );
