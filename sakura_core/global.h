@@ -141,10 +141,6 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 	#define ICON_DEFAULT_GREP IDI_ICON_GREP
 #endif
 
-//#ifndef	GSTR_REG_ROOTPATH
-//#define	GSTR_REG_ROOTPATH "Software\\BugSoft\\sakura"
-//#endif
-
 
 /* ウィンドウのID */
 #define IDW_STATUSBAR 123
@@ -490,6 +486,9 @@ using namespace ApiWrap;
 #endif
 #ifndef GWLP_HINSTANCE
 #define GWLP_HINSTANCE GWL_HINSTANCE
+#endif
+#ifndef DWLP_MSGRESULT
+#define DWLP_MSGRESULT DWL_MSGRESULT
 #endif
 #endif  //_WIN64
 
