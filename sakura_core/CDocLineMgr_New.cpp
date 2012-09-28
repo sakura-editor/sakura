@@ -39,7 +39,7 @@
 */
 void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::ReplaceData()" );
+//	MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::ReplaceData()" );
 
 	/* 挿入によって増えた行の数 */
 	pArg->nInsLineNum = 0;
@@ -54,11 +54,8 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	CDocLine* pCDocLineNew;
 	int nWorkPos;
 	int nWorkLen;
-	char* pLine;
+	const char* pLine;
 	int nLineLen;
-// 2002/2/10 aroka 未使用
-//	char* pLine2;
-//	int nLineLen2;
 	int i;
 	int			nBgn;
 	int			nPos;
@@ -79,10 +76,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 	pArg->nNewPos =  pArg->nDelPosFrom;
 
 	/* 大量のデータを操作するとき */
-	if( 3000 < pArg->nDelLineTo - pArg->nDelLineFrom
-	 || 1024000 < pArg->nInsDataLen
-	){
-
+	if( 3000 < pArg->nDelLineTo - pArg->nDelLineFrom || 1024000 < pArg->nInsDataLen ){
 		/* 進捗ダイアログの表示 */
 		pCDlgCancel = new CDlgCancel;
 		if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
@@ -128,8 +122,14 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 			goto next_line;
 		}
 		if( 0 > nWorkLen ){
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
-				"CDocLineMgr::ReplaceData()\n\n0 > nWorkLen\nnWorkLen=%d\ni=%d\npArg->nDelLineTo=%d", nWorkLen, i, pArg->nDelLineTo
+			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION,
+				_T("作者に教えて欲しいエラー"),
+				_T("CDocLineMgr::ReplaceData()\n")
+				_T("\n")
+				_T("0 > nWorkLen\nnWorkLen=%d\n")
+				_T("i=%d\n")
+				_T("pArg->nDelLineTo=%d"),
+				nWorkLen, i, pArg->nDelLineTo
 			);
 		}
 
@@ -143,16 +143,25 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 		/* 削除されたデータを保存 */
 		// 2002/2/10 aroka from here CMemory変更 念のため。
 		if( pLine != pCDocLine->m_pLine->GetStringPtr() ){
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION, "作者に教えて欲しいエラー",
-				"CDocLineMgr::ReplaceData()\n\npLine != pCDocLine->m_pLine->GetPtr() =%d\ni=%d\npArg->nDelLineTo=%d", pLine, i, pArg->nDelLineTo
+			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION,
+				_T("作者に教えて欲しいエラー"),
+				_T("CDocLineMgr::ReplaceData()\n")
+				_T("\n")
+				_T("pLine != pCDocLine->m_pLine->GetPtr() =%d\n")
+				_T("i=%d\n")
+				_T("pArg->nDelLineTo=%d"),
+				pLine,
+				i,
+				pArg->nDelLineTo
 			);
 		}
-		// 2002/2/10 aroka to here CMemory変更
+
 		if( NULL == pArg->pcmemDeleted->AppendString( &pLine[nWorkPos], nWorkLen ) ){
 			/* メモリ確保に失敗した */
 			pArg->pcmemDeleted->SetString( "" );
 			break;
 		}
+
 next_line:;
 		/* 次の行のオブジェクトのポインタ */
 		pCDocLine = pCDocLineNext;
@@ -216,9 +225,9 @@ next_line:;
 			/* 行オブジェクトの削除、リスト変更、行数-- */
 			DeleteNode( pCDocLine );
 			pCDocLine = NULL;
-		}else
+		}
 		/* 次の行と連結するような削除 */
-		if( nWorkPos + nWorkLen >= nLineLen ){ // 2002/2/10 aroka CMemory変更
+		else if( nWorkPos + nWorkLen >= nLineLen ){ // 2002/2/10 aroka CMemory変更
 
 			/* 行内データ削除 */
 			{// 20020119 aroka ブロック内に pWork を閉じ込めた
@@ -229,18 +238,15 @@ next_line:;
 			}
 
 			/* 次の行がある */
-			if( NULL != pCDocLineNext ){
+			if( pCDocLineNext ){
 				/* 改行コードの情報を更新 (次の行からもらう) */
 				pCDocLine->m_cEol = pCDocLineNext->m_cEol;	/* 改行コードの種類 */
-
-				/* 次の行のデータを最後に追加 */
-				// 2002/2/10 aroka 直接 CMemory を Append
-				//pLine2 = pCDocLineNext->m_pLine->GetPtr();
-				//nLineLen2 = pCDocLineNext->m_pLine->GetStringLength();
 				pCDocLine->m_pLine->AppendNativeData( pCDocLineNext->m_pLine );
+
 				/* 次の行 行オブジェクトの削除 */
 				DeleteNode( pCDocLineNext );
 				pCDocLineNext = NULL;
+
 				/* 削除した行の総数 */
 				++(pArg->nDeletedLineNum);
 			}else{
@@ -248,7 +254,8 @@ next_line:;
 				pCDocLine->m_cEol.SetType( EOL_NONE );
 			}
 			pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
-		}else{
+		}
+		else{
 		/* 行内だけの削除 */
 			{// 20020119 aroka ブロック内に pWork を閉じ込めた
 				// 2002/2/10 aroka CMemory変更 何度も GetStringLength,GetPtr をよばない。
@@ -301,7 +308,6 @@ prev_line:;
 		cmemPrevLine.SetString( "" );
 		cmemNextLine.SetString( "" );
 		cEOLTypeNext.SetType( EOL_NONE );
-		// ::MessageBox( NULL, "pDocLine==NULL","Warning",MB_OK);
 	}else{
 		pCDocLine->SetModifyFlg(true);	/* 変更フラグ */
 
@@ -340,7 +346,8 @@ prev_line:;
 					*(pCDocLineNew->m_pLine) += cmemCurLine;
 
 					pCDocLineNew->m_cEol = cEOLType;	/* 改行コードの種類 */
-				}else{
+				}
+				else{
 					if( NULL != m_pDocLineBot ){
 						m_pDocLineBot->m_pNext = pCDocLineNew;
 					}
@@ -353,7 +360,8 @@ prev_line:;
 				}
 				pCDocLine = NULL;
 				++m_nLines;
-			}else{
+			}
+			else{
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount ){
 					pCDocLine->m_pLine->SetNativeData( &cmemPrevLine );
@@ -361,7 +369,8 @@ prev_line:;
 
 					pCDocLine->m_cEol = cEOLType;	/* 改行コードの種類 */
 					pCDocLine = pCDocLine->m_pNext;
-				}else{
+				}
+				else{
 					pCDocLineNew = new CDocLine;
 					pCDocLineNew->m_pLine = new CMemory;
 					pCDocLineNew->m_pPrev = pCDocLine->m_pPrev;
@@ -412,7 +421,8 @@ prev_line:;
 
 				pCDocLineNew->m_cEol = cEOLTypeNext;	/* 改行コードの種類 */
 
-			}else{
+			}
+			else{
 				if( NULL != m_pDocLineBot ){
 					m_pDocLineBot->m_pNext = pCDocLineNew;
 				}
@@ -426,7 +436,8 @@ prev_line:;
 			pCDocLine = NULL;
 			++m_nLines;
 			pArg->nNewPos = nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
-		}else{
+		}
+		else{
 			/* 挿入データを行終端で区切った行数カウンタ */
 			if( 0 == nCount ){
 				pCDocLine->m_pLine->SetNativeData( &cmemPrevLine );
@@ -436,7 +447,8 @@ prev_line:;
 
 				pCDocLine = pCDocLine->m_pNext;
 				pArg->nNewPos = cmemPrevLine.GetStringLength() + nPos - nBgn;	/* 挿入された部分の次の位置のデータ位置 */
-			}else{
+			}
+			else{
 				pCDocLineNew = new CDocLine;
 				pCDocLineNew->m_pLine = new CMemory;
 				pCDocLineNew->m_pPrev = pCDocLine->m_pPrev;
@@ -471,13 +483,11 @@ end_of_func:;
 */
 void CDocLineMgr::ResetAllBookMark( void )
 {
-	CDocLine* pDocLine;
-	pDocLine = m_pDocLineTop;
-	while( NULL != pDocLine ){
+	CDocLine* pDocLine = m_pDocLineTop;
+	while( pDocLine ){
 		pDocLine->SetBookMark(false);
 		pDocLine = pDocLine->m_pNext;
 	}
-	return;
 }
 
 
@@ -494,11 +504,11 @@ int CDocLineMgr::SearchBookMark(
 	CDocLine*	pDocLine;
 	int			nLinePos=nLineNum;
 
-	/* 0==前方検索 1==後方検索 */
+	//前方検索
 	if( bPrevOrNext == SEARCH_BACKWARD ){
 		nLinePos--;
 		pDocLine = GetLine( nLinePos );
-		while( NULL != pDocLine ){
+		while( pDocLine ){
 			if(pDocLine->IsBookMarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
 				return TRUE;
@@ -506,7 +516,9 @@ int CDocLineMgr::SearchBookMark(
 			nLinePos--;
 			pDocLine = pDocLine->m_pPrev;
 		}
-	}else{
+	}
+	//後方検索
+	else{
 		nLinePos++;
 		pDocLine = GetLine( nLinePos );
 		while( NULL != pDocLine ){
@@ -521,17 +533,62 @@ int CDocLineMgr::SearchBookMark(
 	return FALSE;
 }
 
+//! 物理行番号のリストからまとめて行マーク
+/*
+	@date 2002.01.16 hor
+*/
+void CDocLineMgr::SetBookMarks( char* pMarkLines )
+{
+	CDocLine*	pCDocLine;
+	char *p;
+	char delim[] = ", ";
+	p = pMarkLines;
+	while(strtok(p, delim) != NULL) {
+		while(strchr(delim, *p) != NULL)p++;
+		pCDocLine=GetLine( atol(p) );
+		if(pCDocLine)pCDocLine->SetBookMark(true);
+		p += strlen(p) + 1;
+	}
+}
+
+
+//! 行マークされてる物理行番号のリストを作る
+/*
+	@date 2002.01.16 hor
+*/
+char* CDocLineMgr::GetBookMarks( void )
+{
+	CDocLine*	pCDocLine;
+	static char szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta staticに
+	char szBuff[10];
+	int	nLinePos=0;
+	pCDocLine = GetLine( nLinePos );
+	strcpy( szText, "" );
+	while( pCDocLine ){
+		if(pCDocLine->IsBookMarked()){
+			wsprintf( szBuff, "%d,",nLinePos );
+			if(lstrlen(szBuff)+lstrlen(szText)>MAX_MARKLINES_LEN)break;	//2002.01.17
+			strcat( szText, szBuff);
+		}
+		nLinePos++;
+		pCDocLine = pCDocLine->m_pNext;
+	}
+	return szText; // Feb. 17, 2003 genta
+}
+
+
+
 
 //! 検索条件に該当する行にブックマークをセットする
 /*
 	@date 2002.01.16 hor
 */
 void CDocLineMgr::MarkSearchWord(
-	const char*	pszPattern,		/* 検索条件 */
-	int			bRegularExp,	/* 1==正規表現 */
-	int			bLoHiCase,		/* 1==英大文字小文字の区別 */
-	int			bWordOnly,		/* 1==単語のみ検索 */
-	CBregexp*	pRegexp			/*!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある */
+	const char*	pszPattern,		//!< 検索条件
+	int			bRegularExp,	//!< 1==正規表現
+	int			bLoHiCase,		//!< 1==英大文字小文字の区別
+	int			bWordOnly,		//!< 1==単語のみ検索
+	CBregexp*	pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 )
 {
 	CDocLine*	pDocLine;
@@ -546,7 +603,7 @@ void CDocLineMgr::MarkSearchWord(
 	/* 1==正規表現 */
 	if( bRegularExp ){
 		pDocLine = GetLine( 0 );
-		while( NULL != pDocLine ){
+		while( pDocLine ){
 			if(!pDocLine->IsBookMarked()){
 				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
 				// 2005.03.19 かろと 前方一致サポートのためのメソッド変更
@@ -556,9 +613,9 @@ void CDocLineMgr::MarkSearchWord(
 			}
 			pDocLine = pDocLine->m_pNext;
 		}
-	}else
+	}
 	/* 1==単語のみ検索 */
-	if( bWordOnly ){
+	else if( bWordOnly ){
 		pDocLine = GetLine( 0 );
 		int nLinePos = 0;
 		int nNextWordFrom = 0;
@@ -583,7 +640,8 @@ void CDocLineMgr::MarkSearchWord(
 			pDocLine = pDocLine->m_pNext;
 			nNextWordFrom = 0;
 		}
-	}else{
+	}
+	else{
 		/* 検索条件の情報 */
 		pnKey_CharCharsArr = NULL;
 		CDocLineMgr::CreateCharCharsArr(
@@ -619,50 +677,6 @@ void CDocLineMgr::MarkSearchWord(
 
 }
 
-//! 物理行番号のリストからまとめて行マーク
-/*
-	@date 2002.01.16 hor
-*/
-void CDocLineMgr::SetBookMarks( char* pMarkLines )
-{
-	CDocLine*	pCDocLine;
-	char *p;
-	char delim[] = ", ";
-	p = pMarkLines;
-	while(strtok(p, delim) != NULL) {
-		while(strchr(delim, *p) != NULL)p++;
-		pCDocLine=GetLine( atol(p) );
-		if(NULL!=pCDocLine)pCDocLine->SetBookMark(true);
-		p += strlen(p) + 1;
-	}
-	return;
-}
-
-
-//! 行マークされてる物理行番号のリストを作る
-/*
-	@date 2002.01.16 hor
-*/
-char* CDocLineMgr::GetBookMarks( void )
-{
-	CDocLine*	pCDocLine;
-	static char szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta staticに
-	char szBuff[10];
-	int	nLinePos=0;
-	pCDocLine = GetLine( nLinePos );
-	strcpy( szText, "" );
-	while( NULL != pCDocLine ){
-		if(pCDocLine->IsBookMarked()){
-			wsprintf( szBuff, "%d,",nLinePos );
-			if(lstrlen(szBuff)+lstrlen(szText)>MAX_MARKLINES_LEN)break;	//2002.01.17
-			strcat( szText, szBuff);
-		}
-		nLinePos++;
-		pCDocLine = pCDocLine->m_pNext;
-	}
-	return szText; // Feb. 17, 2003 genta
-}
-
 /*!	差分表示の全解除
 	@author	MIK
 	@date	2002.05.25
@@ -672,15 +686,13 @@ void CDocLineMgr::ResetAllDiffMark( void )
 	CDocLine* pDocLine;
 
 	pDocLine = m_pDocLineTop;
-	while( NULL != pDocLine )
+	while( pDocLine )
 	{
 		pDocLine->SetDiffMark( 0 );
 		pDocLine = pDocLine->m_pNext;
 	}
 
 	m_bIsDiffUse = false;
-
-	return;
 }
 
 /*! 差分検索
@@ -696,12 +708,12 @@ int CDocLineMgr::SearchDiffMark(
 	CDocLine*	pDocLine;
 	int			nLinePos = nLineNum;
 
-	/* 0==前方検索 1==後方検索 */
+	//前方検索
 	if( bPrevOrNext == SEARCH_BACKWARD )
 	{
 		nLinePos--;
 		pDocLine = GetLine( nLinePos );
-		while( NULL != pDocLine )
+		while( pDocLine )
 		{
 			if( pDocLine->IsDiffMarked() )
 			{
@@ -712,11 +724,12 @@ int CDocLineMgr::SearchDiffMark(
 			pDocLine = pDocLine->m_pPrev;
 		}
 	}
+	//後方検索
 	else
 	{
 		nLinePos++;
 		pDocLine = GetLine( nLinePos );
-		while( NULL != pDocLine )
+		while( pDocLine )
 		{
 			if( pDocLine->IsDiffMarked() )
 			{
@@ -737,7 +750,6 @@ int CDocLineMgr::SearchDiffMark(
 void CDocLineMgr::SetDiffMarkRange( int nMode, int nStartLine, int nEndLine )
 {
 	int	i;
-	int	nLines;
 	CDocLine	*pCDocLine;
 
 	m_bIsDiffUse = true;
@@ -745,19 +757,19 @@ void CDocLineMgr::SetDiffMarkRange( int nMode, int nStartLine, int nEndLine )
 	if( nStartLine < 0 ) nStartLine = 0;
 
 	//最終行より後に削除行あり
-	nLines = GetLineCount();
+	int	nLines = GetLineCount();
 	if( nLines <= nEndLine )
 	{
 		nEndLine = nLines - 1;
 		pCDocLine = GetLine( nEndLine );
-		if( NULL != pCDocLine ) pCDocLine->SetDiffMark( MARK_DIFF_DEL_EX );
+		if( pCDocLine ) pCDocLine->SetDiffMark( MARK_DIFF_DEL_EX );
 	}
 
 	//行範囲にマークをつける
 	for( i = nStartLine; i <= nEndLine; i++ )
 	{
 		pCDocLine = GetLine( i );
-		if( NULL != pCDocLine ) pCDocLine->SetDiffMark( nMode );
+		if( pCDocLine ) pCDocLine->SetDiffMark( nMode );
 	}
 
 	return;

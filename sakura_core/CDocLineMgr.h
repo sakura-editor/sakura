@@ -142,9 +142,9 @@ public:
 	bool IsDiffUse( void ) const { return m_bIsDiffUse; }	/* DIFF使用中 */
 
 // From Here 2002.01.16 hor
-	void MarkSearchWord( const char* , int , int , int , CBregexp* ); /* 検索条件に該当する行にブックマークをセットする */
 	void SetBookMarks( char* ); /* 物理行番号のリストからまとめて行マーク */
 	char* GetBookMarks( void ); /* 行マークされてる物理行番号のリストを作る */
+	void MarkSearchWord( const char* , int , int , int , CBregexp* ); /* 検索条件に該当する行にブックマークをセットする */
 // To Here 2001.01.16 hor
 
 	/*
