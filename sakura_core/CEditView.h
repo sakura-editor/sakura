@@ -36,6 +36,8 @@
 #include "CBregexp.h"
 #include "CEol.h"
 
+class CEditView;
+
 class CDropTarget; /// 2002/2/3 aroka ヘッダ軽量化
 class CMemory;///
 class COpe;///
@@ -72,8 +74,6 @@ typedef struct tagRECONVERTSTRING {
 ///	マウスからコマンドが実行された場合の上位ビット
 ///	@date 2006.05.19 genta
 const int CMD_FROM_MOUSE = 2;
-
-class CEditView;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -133,8 +133,8 @@ public:
 		int			nMyIndex,	//!< ビューのインデックス
 		BOOL		bShow		//!< 作成時に表示するかどうか
 	);
-	BOOL CreateScrollBar( void );		/* スクロールバー作成 */	// 2006.12.19 ryoji
-	void DestroyScrollBar( void );		/* スクロールバー破棄 */	// 2006.12.19 ryoji
+	BOOL CreateScrollBar();		/* スクロールバー作成 */	// 2006.12.19 ryoji
+	void DestroyScrollBar();	/* スクロールバー破棄 */	// 2006.12.19 ryoji
 	/* 状態 */
 	//<< 2002/03/29 Azumaiya インライン関数化
 	BOOL IsTextSelected( void )		/* テキストが選択されているか */

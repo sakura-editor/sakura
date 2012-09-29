@@ -533,14 +533,14 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
 */
-BOOL CEditView::CreateScrollBar( void )
+BOOL CEditView::CreateScrollBar()
 {
 	SCROLLINFO	si;
 
 	/* スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles */
-		"SCROLLBAR",						/* scroll bar control class */
+		_T("SCROLLBAR"),					/* scroll bar control class */
 		(LPSTR) NULL,						/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_VERT,	/* scroll bar styles */
 		0,									/* horizontal position */
@@ -567,7 +567,7 @@ BOOL CEditView::CreateScrollBar( void )
 	if( m_pShareData->m_Common.m_bScrollBarHorz ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
-			"SCROLLBAR",						/* scroll bar control class */
+			_T("SCROLLBAR"),					/* scroll bar control class */
 			(LPSTR) NULL,						/* text for window title bar */
 			WS_VISIBLE | WS_CHILD | SBS_HORZ,	/* scroll bar styles */
 			0,									/* horizontal position */
@@ -595,7 +595,7 @@ BOOL CEditView::CreateScrollBar( void )
 	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 		m_hwndSizeBox = ::CreateWindowEx(
 			WS_EX_CONTROLPARENT/*0L*/, 			/* no extended styles */
-			"SCROLLBAR",						/* scroll bar control class */
+			_T("SCROLLBAR"),					/* scroll bar control class */
 			(LPSTR) NULL,						/* text for window title bar */
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,									/* horizontal position */
@@ -610,7 +610,7 @@ BOOL CEditView::CreateScrollBar( void )
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 								/* no extended styles */
-			"STATIC",							/* scroll bar control class */
+			_T("STATIC"),						/* scroll bar control class */
 			(LPSTR) NULL,						/* text for window title bar */
 			WS_VISIBLE | WS_CHILD/* | SBS_SIZEBOX | SBS_SIZEGRIP*/, /* scroll bar styles */
 			0,									/* horizontal position */
@@ -631,7 +631,7 @@ BOOL CEditView::CreateScrollBar( void )
 /*! スクロールバー破棄
 	@date 2006.12.19 ryoji 新規作成
 */
-void CEditView::DestroyScrollBar( void )
+void CEditView::DestroyScrollBar()
 {
 	if( m_hwndVScrollBar )
 	{
@@ -3352,7 +3352,6 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		ISearchExit();
 	}
 
-//	DWORD	nKeyBoardSpeed;
 	int			nCaretPosY_Old;
 	CMemory		cmemCurText;
 	const char*	pLine;
@@ -3379,7 +3378,8 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 		/* 辞書Tipを消す */
 		m_cTipWnd.Hide();
 		m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
-	}else{
+	}
+	else{
 		m_dwTipTimer = ::GetTickCount();		/* 辞書Tip起動タイマー */
 	}
 
@@ -3399,7 +3399,6 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	/* 現在のマウスカーソル位置→レイアウト位置 */
 	int nNewX = m_nViewLeftCol + (xPos - m_nViewAlignLeft) / ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	int nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
-//	MYTRACE_A( "OnLBUTTONDOWN() nNewX=%d nNewY=%d\n", nNewX, nNewY );
 
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.11.30 nasukoji	トリプルクリック時はドラッグを開始しない
@@ -3498,8 +3497,8 @@ normal_action:;
 				return;
 			}
 		}
-		m_nMouseRollPosXOld = xPos;		/* マウス範囲選択前回位置(X座標) */
-		m_nMouseRollPosYOld = yPos;		/* マウス範囲選択前回位置(Y座標) */
+		m_nMouseRollPosXOld = xPos;		// マウス範囲選択前回位置(X座標)
+		m_nMouseRollPosYOld = yPos;		// マウス範囲選択前回位置(Y座標)
 		/* 範囲選択開始 & マウスキャプチャー */
 		m_bBeginSelect = TRUE;			/* 範囲選択中 */
 		m_bBeginBoxSelect = TRUE;		/* 矩形範囲選択中 */
@@ -3516,7 +3515,8 @@ normal_action:;
 			/* カーソル下移動 */
 			Command_DOWN( TRUE, FALSE );
 		}
-	}else{
+	}
+	else{
 		/* カーソル移動 */
 		if( yPos >= m_nViewAlignTop && yPos < m_nViewAlignTop  + m_nViewCy ){
 			if( xPos >= m_nViewAlignLeft && xPos < m_nViewAlignLeft + m_nViewCx ){
@@ -3526,8 +3526,7 @@ normal_action:;
 				return;
 			}
 		}
-		else
-		if( yPos < m_nViewAlignTop ){
+		else if( yPos < m_nViewAlignTop ){
 			//	ルーラクリック
 			return;
 		}
@@ -3540,7 +3539,6 @@ normal_action:;
 		m_nMouseRollPosYOld = yPos;		/* マウス範囲選択前回位置(Y座標) */
 		/* 範囲選択開始 & マウスキャプチャー */
 		m_bBeginSelect = TRUE;			/* 範囲選択中 */
-//		m_bBeginBoxSelect = FALSE;		/* 矩形範囲選択中でない */
 		m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
 		m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
 		::SetCapture( m_hWnd );
@@ -3583,9 +3581,11 @@ normal_action:;
 					DisableSelectArea( TRUE );
 					/* 現在のカーソル位置から選択を開始する */
 					BeginSelectArea( );
-				}else{
 				}
-			}else{
+				else{
+				}
+			}
+			else{
 				/* 現在のカーソル位置から選択を開始する */
 				BeginSelectArea( );
 			}
@@ -3599,7 +3599,8 @@ normal_action:;
 					MoveCursorToPoint( m_nViewAlignLeft - m_nViewLeftCol * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ), yPos );
 				}
 			}
-		}else{
+		}
+		else{
 			if( IsTextSelected() ){	/* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
 				DisableSelectArea( TRUE );
@@ -3620,9 +3621,7 @@ normal_action:;
 
 		/******* この時点で必ず true == IsTextSelected() の状態になる ****:*/
 		if( !IsTextSelected() ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"バグってる"
-			);
+			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("バグってる") );
 			return;
 		}
 
@@ -3631,7 +3630,6 @@ normal_action:;
 			m_nCaretPosX,	// カーソル位置X
 			m_nCaretPosY	// カーソル位置Y
 		);
-//		MYTRACE_A( "◆◆◆nWorkRel = %d\n", nWorkRel );
 
 
 		/* 現在のカーソル位置によって選択範囲を変更 */
@@ -3685,13 +3683,6 @@ normal_action:;
 								m_nSelectColmBgnTo = nColmTo;		/* 範囲選択開始桁(原点) */
 							}
 						}
-	//					if( 1 == IsCurrentPositionSelected(
-	//						nColmTo,	// カーソル位置X
-	//						nLineTo		// カーソル位置Y
-	//					) ){
-	//						m_nSelectLineFrom = nLineTo;
-	//						m_nSelectColmFrom = nColmTo;
-	//					}
 					}
 				}
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen, &pcLayout );
@@ -3702,7 +3693,7 @@ normal_action:;
 						m_nSelectLineTo, nIdx,
 						&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 					){
-						/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
+						// 指定された行のデータ内の位置に対応する桁の位置を調べる
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
 						nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
@@ -3739,12 +3730,10 @@ normal_action:;
 				DrawSelectArea();
 			}
 		}
-
 		// 行番号エリアをクリックした
 		// 2007.12.08 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
 		if(( xPos < m_nViewAlignLeft )&& !GetKeyState_Shift() ){
 			/* 現在のカーソル位置から選択を開始する */
-//			BeginSelectArea( );
 			m_bBeginLineSelect = TRUE;
 
 			// 2002.10.07 YAZAKI 折り返し行をインデントしているときに選択がおかしいバグの対策
@@ -3781,18 +3770,15 @@ normal_action:;
 				m_nSelectLineBgnTo = m_nSelectLineTo;	/* 範囲選択開始行(原点) */
 				m_nSelectColmBgnTo = m_nSelectColmTo;	/* 範囲選択開始桁(原点) */
 			}
-		}else{
-//			/* 現在のカーソル位置から選択を開始する */
-//			BeginSelectArea( );
-//			m_bBeginLineSelect = FALSE;
-
+		}
+		else{
 			/* URLがクリックされたら選択するか */
 			if( TRUE == m_pShareData->m_Common.m_bSelectClickedURL ){
 
 				int			nUrlLine;	// URLの行(折り返し単位)
 				int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
 				int			nUrlLen;	// URLの長さ(バイト数)
-				/* カーソル位置にURLが有る場合のその範囲を調べる */
+				// カーソル位置にURLが有る場合のその範囲を調べる
 				if( IsCurrentPositionURL(
 					m_nCaretPosX,	// カーソル位置X
 					m_nCaretPosY,	// カーソル位置Y
@@ -3805,19 +3791,6 @@ normal_action:;
 					/* 現在の選択範囲を非選択状態に戻す */
 					DisableSelectArea( TRUE );
 
-					/* 選択範囲の変更 */
-#if 0
-					2002/04/03 YAZAKI 不要な処理でした。
-					m_nSelectLineBgnFrom = nUrlLine;			/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnFrom = nUrlIdxBgn;			/* 範囲選択開始桁(原点) */
-					m_nSelectLineBgnTo = nUrlLine;				/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnTo = nUrlIdxBgn + nUrlLen;	/* 範囲選択開始桁(原点) */
-
-					m_nSelectLineFrom =	nUrlLine;
-					m_nSelectColmFrom = nUrlIdxBgn;
-					m_nSelectLineTo = nUrlLine;
-					m_nSelectColmTo = nUrlIdxBgn + nUrlLen;
-#endif
 					/*
 					  カーソル位置変換
 					  物理位置(行頭からのバイト数、折り返し無し行位置)
@@ -3844,12 +3817,6 @@ normal_action:;
 			}
 		}
 	}
-//	/* キーボードの現在のリピート間隔を取得 */
-//	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &nKeyBoardSpeed, 0 );
-//	nKeyBoardSpeed *= 3;
-//	/* タイマー起動 */
-//	::SetTimer( m_hWnd, IDT_ROLLMOUSE, nKeyBoardSpeed, (TIMERPROC)EditViewTimerProc );
-	return;
 }
 
 /*	指定カーソル位置にURLが有る場合のその範囲を調べる
@@ -4466,10 +4433,6 @@ BOOL CEditView::KeySearchCore( const CMemory* pcmemCurText )
 /* マウス移動のメッセージ処理 */
 void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 {
-//#ifdef _DEBUG
-//	gm_ProfileOutput = 1;
-//	CRunningTimer cRunningTimer( (const char*)"CEditView::OnMOUSEMOVE" );
-//#endif
 	int			nScrollRowNum;
 	POINT		po;
 	const char*	pLine;
@@ -4533,7 +4496,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 				/* 座標指定によるカーソル移動 */
 				nScrollRowNum = MoveCursorToPoint( xPos , yPos );
 			}
-		}else{
+		}
+		else{
 			/* 行選択エリア? */
 			if( xPos < m_nViewAlignLeft || yPos < m_nViewAlignTop ){	//	2002/2/10 aroka
 				/* 矢印カーソル */
@@ -4552,16 +4516,16 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			){
 				/* 矢印カーソル */
 				::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
-			}else
+			}
 			/* カーソル位置にURLが有る場合 */
-			if(
+			else if(
 				IsCurrentPositionURL(
 				nNewX,			// カーソル位置X
 				nNewY,			// カーソル位置Y
 				&nUrlLine,		// URLの行(改行単位)
 				&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
 				&nUrlLen,		// URLの長さ(バイト数)
-				NULL/*&pszURL*/	// URL受け取り先
+				NULL			// URL受け取り先
 			) ){
 				/* 手カーソル */
 				::SetCursor( ::LoadCursor( m_hInstance, MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
@@ -4588,7 +4552,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
 		m_nMouseRollPosXOld = xPos;	/* マウス範囲選択前回位置(X座標) */
 		m_nMouseRollPosYOld = yPos;	/* マウス範囲選択前回位置(Y座標) */
-	}else{
+	}
+	else{
 		/* 座標指定によるカーソル移動 */
 		if(( xPos < m_nViewAlignLeft || m_dwTripleClickCheck )&& m_bBeginLineSelect ){		// 2007.10.02 nasukoji	行単位選択中
 			// 2007.10.13 nasukoji	上方向の行選択時もマウスカーソルの位置の行が選択されるようにする
@@ -4700,23 +4665,22 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 						(int)nSelectLineTo,
 						(int)nSelectColmTo
 					);
-//					MYTRACE_A( "nWorkF=%d nWorkT=%d\n", nWorkF, nWorkT );
 					if( -1 == nWorkF/* || 0 == nWorkF*/ ){
 						/* 始点が前方に移動。現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmFrom, nLineFrom );
-					}else
-					if( /*0 == nWorkT ||*/ 1 == nWorkT ){
+					}
+					else if( /*0 == nWorkT ||*/ 1 == nWorkT ){
 						/* 終点が後方に移動。現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
-					}else
-					if( nSelectLineFrom_Old == nSelectLineFrom
+					}
+					else if( nSelectLineFrom_Old == nSelectLineFrom
 					 && nSelectColmFrom_Old == nSelectColmFrom
 					){
 						/* 始点が無変更＝前方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
-					}else
-					if( nSelectLineTo_Old == nSelectLineTo
+					}
+					else if( nSelectLineTo_Old == nSelectLineTo
 					 && nSelectColmTo_Old == nSelectColmTo
 					){
 						/* 終点が無変更＝後方に縮小された */
@@ -4740,7 +4704,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 
 
-/* マウスホイールのメッセージ処理 */
+/* マウスホイールのメッセージ処理
+*/
 LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 {
 	WORD	fwKeys;
@@ -4756,6 +4721,7 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
 	yPos = (short) HIWORD(lParam);		// vertical position of pointer
 //	MYTRACE_A( "CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n", fwKeys, zDelta, xPos, yPos );
+
 	if( 0 < zDelta ){
 		nScrollCode = SB_LINEUP;
 	}else{
@@ -4777,7 +4743,6 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 			int line = m_nViewTopLine + (( nScrollCode == SB_LINEUP ) ? -m_nViewRowNum : m_nViewRowNum );
 			SyncScrollV( ScrollAtV( line ) );
 		}
-
 		// ホイール操作によるページスクロールあり
 		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( TRUE );
 	}else{
@@ -4807,8 +4772,6 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		int nCount = ( nScrollCode == SB_LINEUP ) ? -1 : 1;		// スクロール数
 
 		for( i = 0; i < nRollLineNum; ++i ){
-//			::PostMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
-//			::SendMessage( m_hWnd, WM_VSCROLL, MAKELONG( nScrollCode, 0 ), (WPARAM)m_hwndVScrollBar );
 
 			//	Sep. 11, 2004 genta 同期スクロール行数
 			if( bHorizontal ){
@@ -4821,7 +4784,6 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 			}
 		}
 	}
-
 	return 0;
 }
 
@@ -5066,23 +5028,20 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 		::ReleaseCapture();
 		ShowCaret_( m_hWnd ); // 2002/07/22 novice
 
-//		/* タイマー終了 */
-//		::KillTimer( m_hWnd, IDT_ROLLMOUSE );
 		m_bBeginSelect = FALSE;
 
-//		if( !IsTextSelected() ){	/* テキストが選択されているか */
-			if( m_nSelectLineFrom == m_nSelectLineTo &&
-				m_nSelectColmFrom == m_nSelectColmTo
-			){
-				/* 現在の選択範囲を非選択状態に戻す */
-				DisableSelectArea( TRUE );
+		if( m_nSelectLineFrom == m_nSelectLineTo &&
+			m_nSelectColmFrom == m_nSelectColmTo
+		){
+			/* 現在の選択範囲を非選択状態に戻す */
+			DisableSelectArea( TRUE );
 
-				// 対括弧の強調表示	// 2007.10.18 ryoji
-				DrawBracketPair( false );
-				SetBracketPairPos( true );
-				DrawBracketPair( true );
-			}
-//		}
+			// 対括弧の強調表示	// 2007.10.18 ryoji
+			DrawBracketPair( false );
+			SetBracketPairPos( true );
+			DrawBracketPair( true );
+		}
+
 		m_cUnderLine.UnLock();
 	}
 	return;
@@ -5094,7 +5053,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 /*   CreateThreadにてスレッドが生成されているため、Cランタイム関数は使用できない */
 DWORD WINAPI ShellExecuteProc( LPVOID lpParameter )
 {
-	::ShellExecute( NULL, "open", (char*)lpParameter, NULL, NULL, SW_SHOW );
+	::ShellExecute( NULL, _T("open"), (char*)lpParameter, NULL, NULL, SW_SHOW );
 	::GlobalFree( lpParameter );
 	return 0;
 }
@@ -5104,8 +5063,6 @@ DWORD WINAPI ShellExecuteProc( LPVOID lpParameter )
 /* マウス左ボタンダブルクリック */
 void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 {
-//	MYTRACE_A( "OnLBUTTONDBLCLK()\n" );
-
 	int			nIdx;
 	int			nFuncID;
 	int			nUrlLine;	// URLの行(折り返し単位)
@@ -5192,6 +5149,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
+
 	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[?]に入っている 2007.10.06 nasukoji */
 	nFuncID = m_pShareData->m_pKeyNameArr[
 		m_dwTripleClickCheck ? MOUSEFUNCTION_QUADCLICK : MOUSEFUNCTION_DOUBLECLICK
@@ -5215,7 +5173,6 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
-//		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ),  (LPARAM)NULL );
 		::SendMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
 	}
 
@@ -5230,8 +5187,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	m_dwTripleClickCheck = ::GetTickCount();
 
 	// ダブルクリック位置として記憶
-	m_nMouseRollPosXOld = xPos;			/* マウス範囲選択前回位置(X座標) */
-	m_nMouseRollPosYOld = yPos;			/* マウス範囲選択前回位置(Y座標) */
+	m_nMouseRollPosXOld = xPos;			// マウス範囲選択前回位置(X座標)
+	m_nMouseRollPosYOld = yPos;			// マウス範囲選択前回位置(Y座標)
 
 	/*	2007.07.09 maru 機能コードの判定を追加
 		ダブルクリックからのドラッグでは単語単位の範囲選択(エディタの一般的動作)になるが
@@ -5253,7 +5210,6 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 			m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
 		}
 	}
-
 	::SetCapture( m_hWnd );
 	HideCaret_( m_hWnd ); // 2002/07/22 novice
 	if( IsTextSelected() ){
@@ -8981,7 +8937,6 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	int			nSelectColFrom_Old;
 	int			nSelectLineTo_Old;
 	int			nSelectColTo_Old;
-//	MYTRACE_A( "CEditView::Drop()\n" );
 
 	/* 選択テキストのドラッグ中か */
 	m_bDragMode = FALSE;
