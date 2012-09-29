@@ -311,6 +311,15 @@ CShareData* CShareData::_instance = NULL;
 */
 CMutex CShareData::g_cEditArrMutex( FALSE, GSTR_MUTEX_SAKURA_EDITARR );
 
+//	CShareData_new2.cppと統合
+//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
+CShareData::CShareData()
+{
+	m_hFileMap   = NULL;
+	m_pShareData = NULL;
+	m_nTransformFileNameCount = -1;
+}
+
 /*!
 	共有メモリ領域がある場合はプロセスのアドレス空間から､
 	すでにマップされているファイル ビューをアンマップする。

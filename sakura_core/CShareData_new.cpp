@@ -44,21 +44,6 @@
 
 
 
-//	CShareData_new2.cppと統合
-CShareData::CShareData()
-{
-//	m_pszAppName = GSTR_CSHAREDATA;
-	m_hFileMap   = NULL;
-	m_pShareData = NULL;
-//@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
-	m_nTransformFileNameCount = -1;
-	return;
-}
-
-// レジストリは使わない。
-// 未使用の２関数を削除 2002/2/3 aroka
-
-
 /**
 	構成設定ファイルからiniファイル名を取得する
 
@@ -81,7 +66,7 @@ void CShareData::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFi
 
 	::GetModuleFileName(
 		NULL,
-		szPath, sizeof(szPath)
+		szPath, _countof(szPath)
 	);
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
 	_snprintf( pszIniFile, _MAX_PATH - 1, _T("%s%s%s%s"), szDrive, szDir, szFname, _T(".ini") );
@@ -176,9 +161,8 @@ void CShareData::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE*/ )
 */
 BOOL CShareData::ShareData_IO_2( bool bRead )
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CShareData::ShareData_IO_2" );
+	//MY_RUNNINGTIMER( cRunningTimer, "CShareData::ShareData_IO_2" );
 
-	char		szIniFileName[_MAX_PATH + 1];
 	CProfile	cProfile;
 
 	// Feb. 12, 2006 D.S.Koba
@@ -188,21 +172,17 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
+	TCHAR		szIniFileName[_MAX_PATH + 1];
 	GetIniFileName( szIniFileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
 //	MYTRACE_A( "Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 
 
 	if( bRead ){
-		if( false == cProfile.ReadProfile( szIniFileName ) ){
+		if( !cProfile.ReadProfile( szIniFileName ) ){
 			/* 設定ファイルが存在しない */
 			return FALSE;
 		}
-#ifdef _DEBUG
-//@@@ 2001.12.26 YAZAKI デバッグ版が正常に起動しないため。
-//		cProfile.DUMP();
-#endif
-
 	}
 //	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 	
@@ -225,7 +205,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 	ShareData_IO_Other( cProfile );
 	
 	if( !bRead ){
-		cProfile.WriteProfile( szIniFileName, " sakura.ini テキストエディタ設定ファイル" );
+		cProfile.WriteProfile( szIniFileName, _T(" sakura.ini テキストエディタ設定ファイル") );
 	}
 
 //	MYTRACE_A( "Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
@@ -279,7 +259,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 		fiInit.m_nViewTopLine = 0;
 		fiInit.m_nX = 0;
 		fiInit.m_nY = 0;
-		strcpy( fiInit.m_szPath, "" );
+		_tcscpy( fiInit.m_szPath, _T("") );
 		strcpy( fiInit.m_szMarkLines, "" );	// 2002.01.16 hor
 		for( ; i < MAX_MRU; ++i){
 			m_pShareData->m_fiMRUArr[i] = fiInit;
@@ -526,12 +506,12 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	if( !cProfile.IsReadingMode() ){
 		int	nDummy;
 		int	nCharChars;
-		nDummy = strlen( common.m_szBackUpFolder );
+		nDummy = _tcslen( common.m_szBackUpFolder );
 		/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
 		nCharChars = &common.m_szBackUpFolder[nDummy] - CMemory::MemCharPrev( common.m_szBackUpFolder, nDummy, &common.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			strcat( common.m_szBackUpFolder, "\\" );
+			_tcscat( common.m_szBackUpFolder, _T("\\") );
 		}
 	}
 	cProfile.IOProfileData( pszSecName, "szBackUpFolder",
@@ -539,12 +519,12 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	if( cProfile.IsReadingMode() ){
 		int	nDummy;
 		int	nCharChars;
-		nDummy = strlen( common.m_szBackUpFolder );
+		nDummy = _tcslen( common.m_szBackUpFolder );
 		/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
 		nCharChars = &common.m_szBackUpFolder[nDummy] - CMemory::MemCharPrev( common.m_szBackUpFolder, nDummy, &common.m_szBackUpFolder[nDummy] );
 		if( 1 == nCharChars && common.m_szBackUpFolder[nDummy - 1] == '\\' ){
 		}else{
-			strcat( common.m_szBackUpFolder, "\\" );
+			_tcscat( common.m_szBackUpFolder, _T("\\") );
 		}
 	}
 	
@@ -574,7 +554,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 		const char*	pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
 		char		szKeyData[1024];
 		if( cProfile.IsReadingMode() ){
-			if( true == cProfile.IOProfileData( pszSecName, "khlf", szKeyData, sizeof( szKeyData )) ){
+			if( cProfile.IOProfileData( pszSecName, "khlf", szKeyData, sizeof( szKeyData )) ){
 				sscanf( szKeyData, pszForm,
 					&common.m_lf_kh.lfHeight,
 					&common.m_lf_kh.lfWidth,
@@ -614,8 +594,6 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 	}// Keword Help Font
 	// ai 02/05/23 Add S
-//	cProfile.IOProfileData( pszSecName, "bClickKeySearch"		, common.m_bUseCaretKeyWord );	// 2006.03.24 fon sakura起動ごとFALSEとし、初期化しない
-	
 	
 	cProfile.IOProfileData( pszSecName, "nMRUArrNum_MAX"			, common.m_nMRUArrNum_MAX );
 	cProfile.IOProfileData( pszSecName, "nOPENFOLDERArrNum_MAX"	, common.m_nOPENFOLDERArrNum_MAX );
@@ -717,7 +695,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	const char* pszForm = "%d,%d,%d,%d";
 	char		szKeyData[1024];
 	if( cProfile.IsReadingMode() ){
-		if( true == cProfile.IOProfileData( pszSecName, pszKeyName, szKeyData, sizeof( szKeyData )) ){
+		if( cProfile.IOProfileData( pszSecName, pszKeyName, szKeyData, sizeof( szKeyData )) ){
 			sscanf( szKeyData, pszForm,
 				&common.m_rcOpenDialog.left,
 				&common.m_rcOpenDialog.top,
@@ -726,7 +704,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 			);
 		}
 	}else{
-		wsprintf( szKeyData, pszForm,
+		wsprintf(
+			szKeyData,
+			pszForm,
 			common.m_rcOpenDialog.left,
 			common.m_rcOpenDialog.top,
 			common.m_rcOpenDialog.right,
@@ -826,7 +806,7 @@ void CShareData::ShareData_IO_Font( CProfile& cProfile )
 	char		szKeyData[1024];
 	CommonSetting& common = m_pShareData->m_Common;
 	if( cProfile.IsReadingMode() ){
-		if( true == cProfile.IOProfileData( pszSecName, "lf", szKeyData, sizeof( szKeyData )) ){
+		if( cProfile.IOProfileData( pszSecName, "lf", szKeyData, sizeof( szKeyData )) ){
 			sscanf( szKeyData, pszForm,
 				&common.m_lf.lfHeight,
 				&common.m_lf.lfWidth,
@@ -887,7 +867,7 @@ void CShareData::ShareData_IO_KeyBind( CProfile& cProfile )
 		strcpy( szKeyName, keydata.m_szKeyName );
 		
 		if( cProfile.IsReadingMode() ){
-			if( true == cProfile.IOProfileData( pszSecName, szKeyName,
+			if( cProfile.IOProfileData( pszSecName, szKeyName,
 				szKeyData, sizeof( szKeyData )) ){
 				sscanf( szKeyData, "%d,%d,%d,%d,%d,%d,%d,%d",
 					&keydata.m_nFuncCodeArr[0],
@@ -934,7 +914,7 @@ void CShareData::ShareData_IO_Print( CProfile& cProfile )
 		wsprintf( szKeyName, "PS[%02d].nInts", i );
 		static const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
 		if( cProfile.IsReadingMode() ){
-			if( true == cProfile.IOProfileData( pszSecName, szKeyName,
+			if( cProfile.IOProfileData( pszSecName, szKeyName,
 				szKeyData, sizeof( szKeyData ) ) ){
 				sscanf( szKeyData, pszForm,
 					&printsetting.m_nPrintFontWidth		,
@@ -1057,7 +1037,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 		static const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";	//MIK
 		strcpy( szKeyName, "nInts" );
 		if( cProfile.IsReadingMode() ){
-			if( true == cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
+			if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
 				sscanf( szKeyData, pszForm,
 					&types.m_nIdx,
 					&types.m_nMaxLineKetas,
@@ -1076,7 +1056,8 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 			if( types.m_nMaxLineKetas < MINLINEKETAS ){
 				types.m_nMaxLineKetas = MINLINEKETAS;
 			}
-		}else{
+		}
+		else{
 			wsprintf( szKeyData, pszForm,
 				types.m_nIdx,
 				types.m_nMaxLineKetas,
@@ -1272,7 +1253,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 				{
 					types.m_RegexKeywordArr[j].m_szKeyword[0] = '\0';
 					types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
-					if( true == cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) )
+					if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) )
 					{
 						p = strchr(szKeyData, ',');
 						if( p )
@@ -1291,13 +1272,9 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 						}
 					}
 				}
-				else
 				// 2002.02.08 hor 未定義値を無視
-				if(lstrlen(types.m_RegexKeywordArr[j].m_szKeyword))
+				else if(lstrlen(types.m_RegexKeywordArr[j].m_szKeyword))
 				{
-					//wsprintf( szKeyData, "%d,%s",
-					//	types.m_RegexKeywordArr[j].m_nColorIndex,
-					//	types.m_RegexKeywordArr[j].m_szKeyword);
 					wsprintf( szKeyData, "%s,%s",
 						GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
 						types.m_RegexKeywordArr[j].m_szKeyword);
@@ -1339,7 +1316,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 					types.m_KeyHelpArr[j].m_nUse = 0;
 					types.m_KeyHelpArr[j].m_szAbout[0] = '\0';
 					types.m_KeyHelpArr[j].m_szPath[0] = '\0';
-					if( true == cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
+					if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
 						pH = szKeyData;
 						if( NULL != (pT=strchr(pH, ',')) ){
 							*pT = '\0';
@@ -1358,7 +1335,7 @@ void CShareData::ShareData_IO_Types( CProfile& cProfile )
 					}
 				}/* 書き込み */
 				else{
-					if(lstrlen(types.m_KeyHelpArr[j].m_szPath)){
+					if(_tcslen(types.m_KeyHelpArr[j].m_szPath)){
 						wsprintf( szKeyData, pszForm,
 							types.m_KeyHelpArr[j].m_nUse,
 							types.m_KeyHelpArr[j].m_szAbout,
@@ -1408,18 +1385,18 @@ void CShareData::ShareData_IO_KeyWords( CProfile& cProfile )
 			for( i = 0; i < nKeyWordSetNum; ++i ){
 				bool bKEYWORDCASE = false;
 				int nKeyWordNum = 0;
+				//値の取得
 				wsprintf( szKeyName, "szSN[%02d]", i );
 				cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData ));
 				wsprintf( szKeyName, "nCASE[%02d]", i );
 				cProfile.IOProfileData( pszSecName, szKeyName, bKEYWORDCASE );
 				wsprintf( szKeyName, "nKWN[%02d]", i );
 				cProfile.IOProfileData( pszSecName, szKeyName, nKeyWordNum );
+
+				//追加
 				pCKeyWordSetMgr->AddKeyWordSet( szKeyData, bKEYWORDCASE, nKeyWordNum );
-				// 2004.11.25 Moca szKW[%02d].Size の情報は利用する意味がない。
-//				wsprintf( szKeyName, "szKW[%02d].Size", i );
-//				cProfile.IOProfileData( pszSecName, szKeyName, nMemLen );
 				wsprintf( szKeyName, "szKW[%02d]", i );
-				if( true == cProfile.IOProfileData( pszSecName, szKeyName, pszMem, nMemLen ) ){
+				if( cProfile.IOProfileData( pszSecName, szKeyName, pszMem, nMemLen ) ){
 					pCKeyWordSetMgr->SetKeyWordArr( i, nKeyWordNum, pszMem );
 				}
 			}
@@ -1477,7 +1454,7 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 		MacroRec& macrorec = m_pShareData->m_MacroTable[i];
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
-		if( !cProfile.IsReadingMode() && !lstrlen(macrorec.m_szName) && !lstrlen(macrorec.m_szFile) ) continue;
+		if( !cProfile.IsReadingMode() && !_tcslen(macrorec.m_szName) && !_tcslen(macrorec.m_szFile) ) continue;
 		wsprintf( szKeyName, "Name[%03d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_szName, MACRONAME_MAX - 1 );
 		wsprintf( szKeyName, "File[%03d]", i );
@@ -1504,7 +1481,7 @@ void CShareData::ShareData_IO_Other( CProfile& cProfile )
 
 	/* **** その他のダイアログ **** */
 	/* 外部コマンド実行の「標準出力を得る」 */
-	if(true != cProfile.IOProfileData( pszSecName, "nExecFlgOpt"	, m_pShareData->m_nExecFlgOpt ) ){ //	2006.12.03 maru オプション拡張
+	if(!cProfile.IOProfileData( pszSecName, "nExecFlgOpt"	, m_pShareData->m_nExecFlgOpt ) ){ //	2006.12.03 maru オプション拡張
 		cProfile.IOProfileData( pszSecName, "bGetStdout"		, m_pShareData->m_nExecFlgOpt );
 	}
 
@@ -1567,7 +1544,7 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 		wsprintf( szKeyName, "C[%s]", g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
 #endif
 		if( pcProfile->IsReadingMode() ){
-			if( true == pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
+			if( pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
 				pColorInfoArr[j].m_bUnderLine = FALSE;
 				sscanf( szKeyData, pszForm,
 					&pColorInfoArr[j].m_bDisp,
@@ -1576,7 +1553,8 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 					&pColorInfoArr[j].m_colBACK,
 					&pColorInfoArr[j].m_bUnderLine
 				 );
-			}else{
+			}
+			else{
 				// 2006.12.07 ryoji
 				// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
 				// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
@@ -1592,7 +1570,8 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 				pColorInfoArr[j].m_bFatFont = FALSE;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
 				pColorInfoArr[j].m_bUnderLine = FALSE;
-		}else{
+		}
+		else{
 			wsprintf( szKeyData, pszForm,
 				pColorInfoArr[j].m_bDisp,
 				pColorInfoArr[j].m_bFatFont,
@@ -1603,7 +1582,6 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 			pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
 		}
 	}
-	return;
 }
 
 
