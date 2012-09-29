@@ -40,14 +40,14 @@
 
 	UxTheme コンポーネントの動的ロードをサポートするクラス
 */
-class SAKURA_CORE_API CUxTheme : public CDllImp {
-protected:
-	static CUxTheme m_cUxTheme;	// Singleton
+class SAKURA_CORE_API CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
+public:
+	friend class TSingleton<CUxTheme>;
+private:
 	CUxTheme();
 
 public:
 	virtual ~CUxTheme();
-	static CUxTheme& getInstance( void ) { return m_cUxTheme; }
 
 protected:
 	bool m_bInitialized;
