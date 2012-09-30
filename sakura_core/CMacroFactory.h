@@ -58,6 +58,12 @@ class CMacroManagerBase;
 */
 class CMacroFactory {
 public:
+	static CMacroFactory* getInstance()
+	{
+		static CMacroFactory instance;
+
+		return &instance;
+	}
 	typedef CMacroManagerBase* (*Creator)(const TCHAR*);
 
 	bool RegisterCreator( Creator );
@@ -67,11 +73,11 @@ public:
 	bool Unregister( Creator );
 
 	CMacroManagerBase* Create(const TCHAR* ext);
-	
-	static CMacroFactory* getInstance();
 
 private:
 	CMacroFactory();
+	CMacroFactory(CMacroFactory const&);
+	void operator=(CMacroFactory const&);
 	std::tstring Ext2Key(const TCHAR *ext);
 
 	// Jan. 31, 2004 genta
