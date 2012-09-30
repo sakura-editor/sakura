@@ -41,13 +41,21 @@
 	UxTheme コンポーネントの動的ロードをサポートするクラス
 */
 class SAKURA_CORE_API CUxTheme : public CDllHandler {
-protected:
-	static CUxTheme m_cUxTheme;	// Singleton
+public:
+	static CUxTheme* getInstance()
+	{
+		static CUxTheme instance;
+
+		return &instance;
+	}
+
+private:
 	CUxTheme();
+	CUxTheme(CUxTheme const&);
+	void operator=(CUxTheme const&);
 
 public:
 	virtual ~CUxTheme();
-	static CUxTheme& getInstance( void ) { return m_cUxTheme; }
 
 protected:
 	bool m_bInitialized;

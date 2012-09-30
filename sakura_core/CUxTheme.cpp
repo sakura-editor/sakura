@@ -33,8 +33,6 @@
 #include "StdAfx.h"
 #include "CUxTheme.h"
 
-CUxTheme CUxTheme::m_cUxTheme;	// Singleton
-
 CUxTheme::CUxTheme()
  : m_bInitialized(false)
 {
