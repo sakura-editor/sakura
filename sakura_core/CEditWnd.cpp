@@ -869,13 +869,8 @@ void CEditWnd::CreateToolBar( void )
 							//拡張インタフェース
 							//::SendMessage( m_hwndSearchBox, CB_SETEXTENDEDUI, (WPARAM)(BOOL)TRUE, 0 );
 
-							//検索ボックスを更新
-							::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-							for( my_i = 0; my_i < m_pShareData->m_nSEARCHKEYArrNum; my_i++ )
-							{
-								::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[my_i] );
-							}
-							::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
+							//検索ボックスを更新	// 関数化 2010/6/6 Uchi
+							AcceptSharedSearchKey();
 						}
 						break;
 
@@ -1425,16 +1420,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 
 		//検索ボックスを更新
-		if( m_hwndSearchBox )
-		{
-			int	i;
-			::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-			for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; i++ )
-			{
-				::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
-			}
-			::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
-		}
+		AcceptSharedSearchKey();
 		
 		return lRes;
 
@@ -2111,6 +2097,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				//ビューにフォーカスを移動しておく
 				if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
 					::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+					//検索ボックスを更新	// 2010/6/6 Uchi
+					AcceptSharedSearchKey();
 				}
 
 				// コマンドコードによる処理振り分け
@@ -3202,6 +3190,21 @@ void CEditWnd::UpdateToolbar( void )
 	}
 }
 
+//検索ボックスを更新
+void CEditWnd::AcceptSharedSearchKey()
+{
+	if( m_hwndSearchBox )
+	{
+		int	i;
+		::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
+		for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; i++ )
+		{
+			::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
+		}
+		::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
+	}
+}
+
 /*! キャプション更新用タイマーの処理
 	@date 2007.04.03 ryoji 新規
 */
@@ -4074,6 +4077,9 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 			{
 				//検索キーを登録
 				CShareData::getInstance()->AddToSearchKeyArr( (const char*)szText );
+
+				//検索ボックスを更新	// 2010/6/6 Uchi
+				AcceptSharedSearchKey();
 
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
 				::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
