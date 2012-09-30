@@ -135,14 +135,3 @@ CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
 	
 	return NULL;
 }
-
-/*!
-	Singleton‚Ì‚½‚ß‚ÌInstanceæ“¾ŠÖ”B
-	
-	Scott Meyers‚ÌSingleton
-*/
-CMacroFactory* CMacroFactory::getInstance(void)
-{
-	static CMacroFactory factory;
-	return &factory;
-}
