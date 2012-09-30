@@ -52,8 +52,9 @@ class CMacroManagerBase;
 
 	Singleton
 */
-class CMacroFactory {
+class CMacroFactory : public TSingleton<CMacroFactory> {
 public:
+	friend class TSingleton<CMacroFactory>;
 	typedef CMacroManagerBase* (*Creator)(const TCHAR*);
 
 	bool RegisterCreator( Creator );
@@ -63,8 +64,6 @@ public:
 	bool Unregister( Creator );
 
 	CMacroManagerBase* Create(const TCHAR* ext);
-	
-	static CMacroFactory* getInstance();
 
 private:
 	CMacroFactory();
