@@ -181,7 +181,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				break;
 			case IDC_PLUGIN_OpenFolder:			// フォルダを開く
 				{
-					std::wstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + L".";
+					std::tstring sBaseDir = CPluginManager::getInstance()->GetBaseDir() + _T(".");
 					if( ! IsDirectory(sBaseDir.c_str()) ){
 						if( ::CreateDirectory(sBaseDir.c_str(), NULL) == 0 ){
 							break;
