@@ -96,7 +96,7 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile )
 			if( nCount == 0 ){
 				szIndex[0] = L'\0';
 			}else{
-				wsprintf(szIndex, L"[%d]", nCount);
+				swprintf(szIndex, L"[%d]", nCount);
 			}
 			if( cProfile->IOProfileData( PII_PLUG, (sKey + szIndex).c_str(), sHandler ) ){
 				//ƒ‰ƒxƒ‹‚ÌŽæ“¾

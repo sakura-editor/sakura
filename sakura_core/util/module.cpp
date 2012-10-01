@@ -7,7 +7,8 @@
 /*! 
 	カレントディレクトリを実行ファイルの場所に移動
 	@date 2010.08.28 Moca 新規作成
-*/void ChangeCurrentDirectoryToExeDir()
+*/
+void ChangeCurrentDirectoryToExeDir()
 {
 	TCHAR szExeDir[_MAX_PATH];
 	szExeDir[0] = _T('\0');
