@@ -111,8 +111,8 @@
 #define HLP000056	56 //このファイルのパス名をコピー
 #define HLP000175	175 //このファイルのパス名とカーソル位置をコピー
 #define HLP000057	57 //キー割り当て一覧をコピー
-#define HLP000176	176 //「移動(O)」メニューの一覧
-#define HLP000177	177 //「選択(S)」メニューの一覧
+//#define HLP000176	176 //「移動(O)」メニューの一覧
+//#define HLP000177	177 //「選択(S)」メニューの一覧
 #define HLP000210	210 //左(先頭)の空白を削除
 #define HLP000211	211 //右(末尾)の空白を削除
 #define HLP000212	212 //選択行の昇順ソート
@@ -319,7 +319,7 @@
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
-#define HLP000302	302 //色設定ファイル
+//#define HLP000302	302 //色設定ファイル
 // note: 303 は 「このファイル名をコピー」が使用
 //#define HLP000304	304 //メタ文字列の仕様 HLP000272
 #define HLP000089	89 //利用可能な正規表現	// 2007.09.30
@@ -371,6 +371,7 @@
 #define HIDC_CHECK_BACKUP_ADVANCED				10066 //詳細設定	// 2006.08.06 ryoji
 #define HIDC_RADIO_BACKUP_DATETYPE1A			10067 //付加する日時の種類（作成日時）※詳細設定ON用	// 2009.02.20 ryoji
 #define HIDC_RADIO_BACKUP_DATETYPE2A			10068 //付加する日時の種類（更新日時）※詳細設定ON用	// 2009.02.20 ryoji
+
 #define HIDC_BUTTON_DELETE						10100 //メニューから機能削除
 #define HIDC_BUTTON_INSERTSEPARATOR				10101 //セパレータ挿入
 #define HIDC_BUTTON_INSERT						10102 //メニューへ機能挿入
@@ -773,7 +774,7 @@
 
 //プロパティ
 #define HIDOK_PROP				12600	//
-#define HIDCANCEL_PROP			12601	//
+//#define HIDCANCEL_PROP			12601	//	del 2008/7/4 Uchi
 #define HIDC_PROP_BUTTON_HELP	12602	//
 #define HIDC_PROP_EDIT1			12603	//
 
@@ -796,7 +797,7 @@
 #define HIDC_JUMP_RADIO_LINENUM_CRLF	12808	//改行単位
 
 //バージョン情報
-#define HIDC_ABOUT_BUTTON_CONTACT	12900	//
+//#define HIDC_ABOUT_BUTTON_CONTACT	12900	//	del 2008/7/4 Uchi
 #define HIDOK_ABOUT					12901	//
 #define HIDC_ABOUT_EDIT_ABOUT		12902	//
 
@@ -893,7 +894,7 @@
 #define	HIDC_EDIT_WY			13802
 #define	HIDC_EDIT_SX			13803
 #define	HIDC_EDIT_SY			13804
-#define	HIDC_CHECK_WINPOS		13805
+//#define	HIDC_CHECK_WINPOS		13805
 #define	HIDC_RADIO_WINSIZE_DEF	13806
 #define	HIDC_RADIO_WINSIZE_SAVE	13807
 #define	HIDC_RADIO_WINSIZE_SET	13808
