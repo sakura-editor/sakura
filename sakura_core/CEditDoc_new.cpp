@@ -34,6 +34,17 @@
 #include "mymessage.h"	//	Oct. 9, 2004 genta
 #include "CEditApp.h"	//	Oct. 9, 2004 genta
 
+/* Java解析モード */
+enum EFuncListJavaMode {
+	FL_JAVA_MODE_NORMAL = 0,
+	FL_JAVA_MODE_WORD = 1,
+	FL_JAVA_MODE_SYMBOL = 2,
+	FL_JAVA_MODE_COMMENT = 8,
+	FL_JAVA_MODE_SINGLE_QUOTE = 20,
+	FL_JAVA_MODE_DOUBLE_QUOTE = 21,
+	FL_JAVA_MODE_TOO_LONG_WORD = 999
+};
+
 /* Java関数リスト作成 */
 void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 {
@@ -61,7 +72,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	nNestLevel = 0;
 	szWordPrev[0] = '\0';
 	szWord[nWordIdx] = '\0';
-	nMode = 0;
+	nMode = FL_JAVA_MODE_NORMAL;
 	nNestLevel2Arr[0] = 0;
 	nFuncNum = 0;
 	szClass[0] = '\0';
@@ -82,32 +93,32 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				++i;
 			}else
 			/* シングルクォーテーション文字列読み込み中 */
-			if( 20 == nMode ){
+			if( FL_JAVA_MODE_SINGLE_QUOTE == nMode ){
 				if( '\'' == pLine[i] ){
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else{
 				}
 			}else
 			/* ダブルクォーテーション文字列読み込み中 */
-			if( 21 == nMode ){
+			if( FL_JAVA_MODE_DOUBLE_QUOTE == nMode ){
 				if( '"' == pLine[i] ){
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else{
 				}
 			}else
 			/* コメント読み込み中 */
-			if( 8 == nMode ){
+			if( FL_JAVA_MODE_COMMENT == nMode ){
 				if( i < nLineLen - 1 && '*' == pLine[i] &&  '/' == pLine[i + 1] ){
 					++i;
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else{
 				}
-			}else
+			}
 			/* 単語読み込み中 */
-			if( 1 == nMode ){
+			else if( FL_JAVA_MODE_WORD == nMode ){
 				if( '_' == pLine[i] ||
 					':' == pLine[i] ||
 					'~' == pLine[i] ||
@@ -118,7 +129,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				){
 					++nWordIdx;
 					if( nWordIdx >= nMaxWordLeng ){
-						nMode = 999;
+						nMode = FL_JAVA_MODE_TOO_LONG_WORD;
 						continue;
 					}else{
 						szWord[nWordIdx] = pLine[i];
@@ -136,9 +147,6 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							strcat( szClass, "\\" );
 						}
 						strcat( szClass, szWord );
-
-
-
 
 						nFuncId = 0;
 						++nFuncNum;
@@ -162,17 +170,13 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 
 					}
 
-
-//					strcpy( szWordPrev, szWord );
-//					nWordIdx = 0;
-//					szWord[0] = '\0';
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					i--;
 					continue;
 				}
 			}else
 			/* 記号列読み込み中 */
-			if( 2 == nMode ){
+			if( FL_JAVA_MODE_SYMBOL == nMode ){
 				if( '_' == pLine[i] ||
 					':' == pLine[i] ||
 					'~' == pLine[i] ||
@@ -193,26 +197,26 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					'/' == pLine[i] ||
 					'.' == pLine[i]
 				){
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					i--;
 					continue;
 				}else{
 				}
 			}else
 			/* 長過ぎる単語無視中 */
-			if( 999 == nMode ){
+			if( FL_JAVA_MODE_TOO_LONG_WORD == nMode ){
 				/* 空白やタブ記号等を飛ばす */
 				if( '\t' == pLine[i] ||
 					' ' == pLine[i] ||
 					CR == pLine[i] ||
 					LF == pLine[i]
 				){
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}
 			}else
 			/* ノーマルモード */
-			if( 0 == nMode ){
+			if( FL_JAVA_MODE_NORMAL == nMode ){
 				/* 空白やタブ記号等を飛ばす */
 				if( '\t' == pLine[i] ||
 					' ' == pLine[i] ||
@@ -226,15 +230,15 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				}else
 				if( i < nLineLen - 1 && '/' == pLine[i] &&  '*' == pLine[i + 1] ){
 					++i;
-					nMode = 8;
+					nMode = FL_JAVA_MODE_COMMENT;
 					continue;
 				}else
 				if( '\'' == pLine[i] ){
-					nMode = 20;
+					nMode = FL_JAVA_MODE_SINGLE_QUOTE;
 					continue;
 				}else
 				if( '"' == pLine[i] ){
-					nMode = 21;
+					nMode = FL_JAVA_MODE_DOUBLE_QUOTE;
 					continue;
 				}else
 				if( '{' == pLine[i] ){
@@ -277,7 +281,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						nNestLevel2Arr[nClassNestArrNum - 1] = 0;
 					}
 					++nNestLevel;
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
 				if( '}' == pLine[i] ){
@@ -301,7 +305,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						}
 						szClass[k] = '\0';
 					}
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
 				if( '(' == pLine[i] ){
@@ -314,7 +318,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							nNestLevel2Arr[nClassNestArrNum - 1] = 1;
 						}
 					}
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
 				if( ')' == pLine[i] ){
@@ -362,7 +366,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						}
 					}else{
 						//	Oct. 10, 2002 genta
-						//	abscract にも対応
+						//	abstract にも対応
 						if( pLine2[k] == '{' || pLine2[k] == ';' ||
 							__iscsym( pLine2[k] ) ){
 							if( 0 < nClassNestArrNum ){
@@ -376,7 +380,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							}
 						}
 					}
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
 				if( ';' == pLine[i] ){
@@ -417,7 +421,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					if( 0 < nClassNestArrNum ){
 						nNestLevel2Arr[nClassNestArrNum - 1] = 0;
 					}
-					nMode = 0;
+					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else{
 					if( '_' == pLine[i] ||
@@ -432,9 +436,9 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						nWordIdx = 0;
 						szWord[nWordIdx] = pLine[i];
 						szWord[nWordIdx + 1] = '\0';
-						nMode = 1;
+						nMode = FL_JAVA_MODE_WORD;
 					}else{
-						nMode = 0;
+						nMode = FL_JAVA_MODE_NORMAL;
 					}
 				}
 			}
@@ -453,9 +457,9 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 //
 bool CEditDoc::IsModificationForbidden( int nCommand )
 {
-	if( m_bReadOnly == FALSE &&	//	読み取り専用でも
-		!( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ) )	//	上書き禁止でもなければ
-		return false;			//	常に書き換え許可
+	//	編集可能の場合
+	if( IsEditable() )
+		return false; // 常に書き換え許可
 
 	//	上書き禁止モードの場合
 	//	暫定Case文: 実際にはもっと効率の良い方法を使うべき
@@ -523,7 +527,6 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_MERGE:		// 2001.12.11 hor
 	case F_UNDO:		// 2007.10.12 genta
 	case F_REDO:		// 2007.10.12 genta
-//		::MessageBox( m_hWnd, "Operation is forbidden.", "DEBUG", MB_OK | MB_ICONEXCLAMATION );
 		return true;
 	}
 	return false;	//	デフォルトで書き換え許可
@@ -539,7 +542,6 @@ void CEditDoc::CheckAutoSave(void)
 	if( m_cAutoSave.CheckAction() ){
 		//	上書き保存
 
-		bool en;
 		if( !IsModified() )	//	変更無しなら何もしない
 			return;				//	ここでは，「無変更でも保存」は無視する
 
@@ -547,7 +549,7 @@ void CEditDoc::CheckAutoSave(void)
 		if( !IsFilePathAvailable() )	//	まだファイル名が設定されていなければ保存しない
 			return;
 
-		en = m_cAutoSave.IsEnabled();
+		bool en = m_cAutoSave.IsEnabled();
 		m_cAutoSave.Enable(false);	//	2重呼び出しを防ぐため
 		SaveFile( GetFilePath() );	//	保存（m_nCharCode, m_cSaveLineCodeを変更しない）
 		m_cAutoSave.Enable(en);
@@ -703,7 +705,7 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 						&nPosY
 					);
 					//	Mar. 9, 2001
-					pcFuncInfoArr->AppendData( nLineCount + 1/*nFuncLine*/, nPosY + 1, szWord, 0 );
+					pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1, szWord, 0 );
 
 					break;
 				}
@@ -760,7 +762,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 	// 調べるファイルがクラスモジュールのときはType、Constの挙動が異なるのでフラグを立てる
 	bClass	= false;
-	int filelen = strlen(GetFilePath());
+	int filelen = _tcslen(GetFilePath());
 	if ( 4 < filelen ) {
 		if ( 0 == my_stricmp((GetFilePath() + filelen - 4), ".cls") ) {
 			bClass	= true;
@@ -843,8 +845,8 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nParseCnt = 1;
 							nFuncLine = nLineCount + 1;
 						}
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Sub" ) ){
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Sub" ) ){
 						if ( 0 == my_stricmp( szWordPrev, "End" ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
@@ -859,32 +861,32 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nParseCnt = 1;
 							nFuncLine = nLineCount + 1;
 						}
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Get" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Get" )
 					 && 0 == my_stricmp( szWordPrev, "Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId	|= 0x03;		// プロパティ取得
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Let" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Let" )
 					 && 0 == my_stricmp( szWordPrev, "Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x04;		// プロパティ設定
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Set" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Set" )
 					 && 0 == my_stricmp( szWordPrev, "Property" )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x05;		// プロパティ参照
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Const" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Const" )
 					 && 0 != my_stricmp( szWordPrev, "#" )
 					){
 						if ( bClass || bProcedure || 0 == ((nFuncId >> 4) & 0x0f) ) {
@@ -897,14 +899,14 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nFuncId	|= 0x06;		// 定数
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Enum" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Enum" )
 					){
 						nFuncId	|= 0x207;		// 列挙型宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Type" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Type" )
 					){
 						if ( bClass ) {
 							// クラスモジュールでは強制的にPrivate
@@ -914,19 +916,19 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nFuncId	|= 0x208;		// ユーザ定義型宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Event" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Event" )
 					){
 						nFuncId	|= 0x209;		// イベント宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + 1;
-					}else
-					if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Property" )
+					}
+					else if( 0 == nParseCnt && 0 == my_stricmp( szWord, "Property" )
 					 && 0 == my_stricmp( szWordPrev, "End")
 					){
 						bProcedure	= false;	// プロシージャフラグをクリア
-					}else
-					if( 1 == nParseCnt ){
+					}
+					else if( 1 == nParseCnt ){
 						strcpy( szFuncName, szWord );
 						/*
 						  カーソル位置変換
@@ -948,9 +950,9 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					i--;
 					continue;
 				}
-			}else
+			}
 			/* 記号列読み込み中 */
-			if( 2 == nMode ){
+			else if( 2 == nMode ){
 				// Jul 10, 2003  little YOSHI
 				// 「#Const」と「Const」を区別するために、「#」も識別するように変更
 				if( '_' == pLine[i] ||
@@ -1290,8 +1292,8 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, BOOL bReadOn
 		//	同一ファイルを複数開くことがある．
 		if( ! GetLongFileName( filename, pszPath )){
 			//	ファイル名の変換に失敗
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,
-				"ファイル名の変換に失敗しました [%s]", filename );
+			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, 
+				_T("ファイル名の変換に失敗しました [%s]"), filename );
 			return;
 		}
 	}
@@ -1479,9 +1481,9 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 					m_hWnd,
 					MB_OK | MB_ICONSTOP | MB_TOPMOST,
 					GSTR_APPNAME,
-					"%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n"
-					"名前を付けて保存をすればいいと思います。",
-					IsFilePathAvailable() ? GetFilePath() : "（無題）"
+					_T("%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n")
+					_T("名前を付けて保存をすればいいと思います。"),
+					IsFilePathAvailable() ? GetFilePath() : _T("（無題）")
 				);
 			}
 			return FALSE;
@@ -1525,7 +1527,7 @@ BOOL CEditDoc::FileSaveAs_Dialog( void )
 				m_hWnd,
 				MB_OK | MB_ICONSTOP | MB_TOPMOST,
 				GSTR_APPNAME,
-				"読み取り専用モードでは同一ファイルへの上書き保存はできません。"
+				_T("読み取り専用モードでは同一ファイルへの上書き保存はできません。")
 			);
 		}
 		else {
