@@ -20,7 +20,6 @@
 #include "CShareData.h" // 2005.11.20 Moca
 #include "charcode.h"
 #include "Debug.h"
-#include <commctrl.h>
 #include "CRunningTimer.h"
 #include "CLayout.h"/// 2002/2/10 aroka
 #include "CDocLine.h"/// 2002/2/10 aroka
@@ -94,6 +93,45 @@ CLayoutMgr::~CLayoutMgr()
 }
 
 
+/*
+||
+|| 行データ管理クラスのポインタを初期化します
+||
+*/
+void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
+{
+	Init();
+	//	Jun. 20, 2003 genta EditDocへのポインタ追加
+	m_pcEditDoc = pcEditDoc;
+	m_pcDocLineMgr = pcDocLineMgr;
+}
+
+void CLayoutMgr::Init()
+{
+	m_pLayoutTop = NULL;
+	m_pLayoutBot = NULL;
+	m_nPrevReferLine = 0;
+	m_pLayoutPrevRefer = NULL;
+	m_nLines = 0;			/* 全物理行数 */
+
+	// EOFレイアウト位置記憶	//2006.10.07 Moca
+	m_nEOFLine = -1;
+	m_nEOFColumn = -1;
+}
+
+
+
+void CLayoutMgr::_Empty()
+{
+	CLayout* pLayout = m_pLayoutTop;
+	while( pLayout ){
+		CLayout* pLayoutNext = pLayout->m_pNext;
+		delete pLayout;
+		pLayout = pLayoutNext;
+	}
+}
+
+
 
 
 /*
@@ -124,18 +162,18 @@ void CLayoutMgr::SetLayoutInfo(
 	//	Oct. 1, 2002 genta タイプによって処理関数を変更する
 	//	数が増えてきたらテーブルにすべき
 	switch ( refType.m_nIndentLayout ){	/* 折り返しは2行目以降を字下げ表示 */	//@@@ 2002.09.29 YAZAKI
-		case 1:
-			//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
-			m_getIndentOffset = &CLayoutMgr::getIndentOffset_Tx2x;
-			break;
-		case 2:
-			m_getIndentOffset = &CLayoutMgr::getIndentOffset_LeftSpace;
-			break;
-		default:
-			m_getIndentOffset = &CLayoutMgr::getIndentOffset_Normal;
-			break;
+	case 1:
+		//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
+		m_getIndentOffset = &CLayoutMgr::getIndentOffset_Tx2x;
+		break;
+	case 2:
+		m_getIndentOffset = &CLayoutMgr::getIndentOffset_LeftSpace;
+		break;
+	default:
+		m_getIndentOffset = &CLayoutMgr::getIndentOffset_Normal;
+		break;
 	}
-	
+
 	{	//@@@ 2002.04.08 MIK start
 		unsigned char	*p, *q1, *q2;
 		int	length;
@@ -260,60 +298,14 @@ void CLayoutMgr::SetLayoutInfo(
 		}
 
 		m_bKinsokuRet = refType.m_bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-
 	}	//@@@ 2002.04.08 MIK end
 
 	if( bDoRayout ){
 		_DoLayout( hwndProgress );
 	}
-
-	return;
 }
 
 
-/*
-||
-|| 行データ管理クラスのポインタを初期化します
-||
-*/
-void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
-{
-	Init();
-	//	Jun. 20, 2003 genta EditDocへのポインタ追加
-	m_pcEditDoc = pcEditDoc;
-	m_pcDocLineMgr = pcDocLineMgr;
-	return;
-}
-
-
-
-void CLayoutMgr::Init()
-{
-	m_pLayoutTop = NULL;
-	m_pLayoutBot = NULL;
-	m_nPrevReferLine = 0;
-	m_pLayoutPrevRefer = NULL;
-	m_nLines = 0;			/* 全物理行数 */
-	// 2006.10.07 Moca EOFレイアウト位置記憶
-	m_nEOFLine = -1;
-	m_nEOFColumn = -1;
-	return;
-}
-
-
-
-void CLayoutMgr::_Empty()
-{
-	CLayout* pLayout;
-	CLayout* pLayoutNext;
-	pLayout = m_pLayoutTop;
-	while( NULL != pLayout ){
-		pLayoutNext = pLayout->m_pNext;
-		delete pLayout;
-		pLayout = pLayoutNext;
-	}
-	return;
-}
 
 
 /*!
@@ -492,13 +484,13 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 	@date 2009.08.28 nasukoji	レイアウト長を引数に追加
 */
 CLayout* CLayoutMgr::CreateLayout(
-	CDocLine* pCDocLine,
-	int nLine,
-	int nOffset,
-	int nLength,
-	int nTypePrev,
-	int nIndent,
-	int nPosX
+	CDocLine*	pCDocLine,
+	int			nLine,
+	int			nOffset,
+	int			nLength,
+	int			nTypePrev,
+	int			nIndent,
+	int			nPosX
 )
 {
 	CLayout* pLayout = new CLayout;
@@ -570,7 +562,7 @@ bool CLayoutMgr::IsEndOfLine(
 	int nPos
 )
 {
-	CLayout* pLayout;
+	const CLayout* pLayout;
 
 	if( NULL == ( pLayout = SearchLineByLayoutY( nLine )	) )
 	{
@@ -658,7 +650,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 )
 {
 #ifdef _DEBUG
-	CRunningTimer cRunningTimer( (const char*)"CLayoutMgr::DeleteData_CLayoutMgr" );
+	CRunningTimer cRunningTimer( "CLayoutMgr::DeleteData_CLayoutMgr" );
 #endif
 	const char*	pLine;
 	int			nLineLen;
@@ -956,13 +948,13 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 /* 論理行の指定範囲に該当するレイアウト情報を削除して */
 /* 削除した範囲の直前のレイアウト情報のポインタを返す */
 CLayout* CLayoutMgr::DeleteLayoutAsLogical(
-	CLayout* pLayoutInThisArea,
-	int		nLineOf_pLayoutInThisArea,
-	int		nLineFrom,
-	int		nLineTo,
-	int		nDelLogicalLineFrom,
-	int		nDelLogicalColFrom,
-	int*	pnDeleteLines
+	CLayout*	pLayoutInThisArea,
+	int			nLineOf_pLayoutInThisArea,
+	int			nLineFrom,
+	int			nLineTo,
+	int			nDelLogicalLineFrom,
+	int			nDelLogicalColFrom,
+	int*		pnDeleteLines
 )
 {
 	CLayout* pLayout;
@@ -1083,8 +1075,8 @@ int CLayoutMgr::WhereCurrentWord(
 	int*		pnIdxFrom,
 	int*		pnLineTo,
 	int*		pnIdxTo,
-	CMemory*	pcmcmWord,
-	CMemory*	pcmcmWordLeft
+	CMemory*	pcmcmWord,		//!< [out]
+	CMemory*	pcmcmWordLeft	//!< [out]
 )
 {
 	CLayout* pLayout = SearchLineByLayoutY( nLineNum );
@@ -1117,12 +1109,12 @@ int CLayoutMgr::WhereCurrentWord(
 
 /* 現在位置の左右の単語の先頭位置を調べる */
 int CLayoutMgr::PrevOrNextWord(
-		int		nLineNum,
-		int		nIdx,
-		int*	pnLineNew,
-		int*	pnColmNew,
-		BOOL	bLEFT,
-		BOOL	bStopsBothEnds
+	int		nLineNum,
+	int		nIdx,
+	int*	pnLineNew,
+	int*	pnColmNew,
+	BOOL	bLEFT,
+	BOOL	bStopsBothEnds
 )
 {
 	CLayout*  pLayout = SearchLineByLayoutY( nLineNum );
@@ -1163,7 +1155,7 @@ int CLayoutMgr::PrevOrNextWord(
 */
 int CLayoutMgr::SearchWord(
 	int					nLineNum, 			//!< [in] 検索開始行
-	int					nIdx, 				//!< [in] 検索開始位置
+	int					nIdx,				//!< [in] 検索開始位置
 	const char*			pszPattern,			//!< [in] 検索条件
 	ESearchDirection	eSearchDirection,	//!< [in] 検索方向
 	int					bRegularExp,		//!< [in] 1==正規表現
@@ -1323,12 +1315,9 @@ void CLayoutMgr::LogicToLayout(
 	int*	pnCaretPosY		//!< [out] 論理位置Y
 )
 {
-	const CLayout*	pLayout;
-	int				nCaretPosX;
+	int				nCaretPosX = 0;
 	int				nCaretPosY;
-	const char*		pData;
-	int				nDataLen;
-	int				i;
+	const CLayout*	pLayout;
 	int				nCharChars;
 
 	*pnCaretPosX = 0;
@@ -1346,15 +1335,16 @@ void CLayoutMgr::LogicToLayout(
 	nCaretPosY = nY;
 
 	//	Layoutを１つずつ先に進めながらnYが物理行に一致するLayoutを探す
-	nCaretPosX = 0;
 	do{
 		if( nY == pLayout->m_nLinePhysical ){
 			//	2004.06.16 Moca インデント表示の際に位置がずれる(TAB位置ずれによる)
 			//	TAB幅を正確に計算するには当初からインデント分を加えておく必要がある．
 			nCaretPosX = pLayout->GetIndent();
+			const char*		pData;
 			pData = pLayout->m_pCDocLine->m_pLine->GetStringPtr() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory変更
-			nDataLen = pLayout->m_nLength;
+			int	nDataLen = pLayout->m_nLength;
 
+			int i;
 			for( i = 0; i < nDataLen; ++i ){
 				if( pLayout->m_nOffset + i >= nX ){
 					break;
@@ -1370,7 +1360,9 @@ void CLayoutMgr::LogicToLayout(
 				if( nCharChars == 0 ){
 					nCharChars = 1;
 				}
+
 				nCaretPosX += nCharChars;
+
 				if( pData[i] ==	TAB ){
 					nCharChars = 1;
 				}
@@ -1380,7 +1372,8 @@ void CLayoutMgr::LogicToLayout(
 				//	nX, nYがこの行の中に見つかったらループ打ち切り
 				break;
 			}
-			if( NULL == pLayout->m_pNext ){
+
+			if( !pLayout->m_pNext ){
 				//	当該位置に達していなくても，レイアウト末尾ならデータ末尾を返す．
 				nCaretPosX += ( nDataLen - i );
 				break;
@@ -1424,14 +1417,7 @@ void CLayoutMgr::LayoutToLogic(
 	int*	pnY				//!< [out] 物理位置Y
 )
 {
-	int				nX;
-	const CLayout*	pcLayout;
-	int				i;
-	const char*		pData;
-	int				nDataLen;
 	int				nCharKetas;
-	BOOL			bEOF;
-	bEOF = FALSE;
 
 	*pnX = 0;
 	*pnY = 0;
@@ -1440,8 +1426,14 @@ void CLayoutMgr::LayoutToLogic(
 		*pnY = m_nLines;
 		return;
 	}
-	pcLayout = SearchLineByLayoutY( nCaretPosY );
-	if( NULL == pcLayout ){
+
+	int				nDataLen;
+	const char*		pData;
+
+	BOOL			bEOF = FALSE;
+	int				nX;
+	const CLayout*	pcLayout = SearchLineByLayoutY( nCaretPosY );
+	if( !pcLayout ){
 		if( 0 < nCaretPosY ){
 			pcLayout = SearchLineByLayoutY( nCaretPosY - 1 );
 			if( NULL == pcLayout ){
@@ -1476,6 +1468,7 @@ void CLayoutMgr::LayoutToLogic(
 	pData = GetLineStr( nCaretPosY, &nDataLen );
 	nX = pcLayout ? pcLayout->GetIndent() : 0;
 checkloop:;
+	int			i;
 	for( i = 0; i < nDataLen; ++i )
 	{
 		if( pData[i] ==	TAB ){
@@ -1495,6 +1488,7 @@ checkloop:;
 		if( nX > nCaretPosX && !bEOF ){
 			break;
 		}
+
 		if( pData[i] ==	TAB ){
 			nCharKetas = 1;
 		}
