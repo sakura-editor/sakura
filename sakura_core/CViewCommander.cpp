@@ -288,9 +288,7 @@ BOOL CViewCommander::HandleCommand(
 	//	ここより前ではUndoバッファの準備ができていないので
 	//	文書の操作を行ってはいけない
 	//@@@ 2002.2.2 YAZAKI HandleCommand内でHandleCommandを呼び出せない問題に対処（何か副作用がある？）
-	if( NULL == GetOpeBlk() ){	/* 操作ブロック */
-		SetOpeBlk(new COpeBlk);
-	}
+	SetOpeBlk(new COpeBlk);
 	GetOpeBlk()->AddRef();	//参照カウンタ増加
 	
 	//	Jan. 10, 2005 genta コメント
@@ -530,9 +528,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_SEARCH_PREV:			Command_SEARCH_PREV( bRedraw, (HWND)lparam1 );break;						//前を検索
 	case F_REPLACE_DIALOG:	//置換(置換ダイアログ)
 		/* 再帰処理対策 */
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		Command_REPLACE_DIALOG();	//@@@ 2002.2.2 YAZAKI ダイアログ呼び出しと、実行を分離
 		break;
 	case F_REPLACE:				Command_REPLACE( (HWND)lparam1 );break;			//置換実行 @@@ 2002.2.2 YAZAKI
@@ -540,9 +536,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_SEARCH_CLEARMARK:	Command_SEARCH_CLEARMARK();break;	//検索マークのクリア
 	case F_GREP_DIALOG:	//Grepダイアログの表示
 		/* 再帰処理対策 */
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		Command_GREP_DIALOG();
 		break;
 	case F_GREP:			Command_GREP();break;							//Grep
@@ -610,15 +604,11 @@ BOOL CViewCommander::HandleCommand(
 	case F_LOADKEYMACRO:	Command_LOADKEYMACRO();break;	/* キーマクロの読み込み */
 	case F_EXECKEYMACRO:									/* キーマクロの実行 */
 		/* 再帰処理対策 */
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		Command_EXECKEYMACRO();break;
 	case F_EXECEXTMACRO:
 		/* 再帰処理対策 */
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		/* 名前を指定してマクロ実行 */
 		Command_EXECEXTMACRO( (const WCHAR*)lparam1, (const WCHAR*)lparam2 );
 		break;
@@ -626,9 +616,7 @@ BOOL CViewCommander::HandleCommand(
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
 	case F_EXECMD_DIALOG:
 		/* 再帰処理対策 */// 2001/06/23 N.Nakatani
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		//Command_EXECCOMMAND_DIALOG((const char*)lparam1);	/* 外部コマンド実行 */
 		Command_EXECCOMMAND_DIALOG();	/* 外部コマンド実行 */	//	引数つかってないみたいなので
 		break;
@@ -641,9 +629,7 @@ BOOL CViewCommander::HandleCommand(
 	/* カスタムメニュー */
 	case F_MENU_RBUTTON:	/* 右クリックメニュー */
 		/* 再帰処理対策 */
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		Command_MENU_RBUTTON();
 		break;
 	case F_CUSTMENU_1:  /* カスタムメニュー1 */
@@ -671,9 +657,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_CUSTMENU_23: /* カスタムメニュー23 */
 	case F_CUSTMENU_24: /* カスタムメニュー24 */
 		/* 再帰処理対策 */
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		nFuncID = Command_CUSTMENU( nCommand - F_CUSTMENU_1 + 1 );
 		if( 0 != nFuncID ){
 			/* コマンドコードによる処理振り分け */
@@ -722,9 +706,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_TOGGLE_KEY_SEARCH:	Command_ToggleKeySearch();break;	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 	case F_MENU_ALLFUNC:									/* コマンド一覧 */
 		/* 再帰処理対策 */
-		if( NULL != GetOpeBlk() ){	/* 操作ブロック */
-			ClearOpeBlk();
-		}
+		ClearOpeBlk();
 		Command_MENU_ALLFUNC();break;
 	case F_EXTHELP1:	Command_EXTHELP1();break;		/* 外部ヘルプ１ */
 	case F_EXTHTMLHELP:	/* 外部HTMLヘルプ */
