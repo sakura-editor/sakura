@@ -66,30 +66,21 @@ CLayoutMgr::~CLayoutMgr()
 {
 	_Empty();
 
-	if( NULL != m_pszKinsokuHead_1 ){	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-		delete [] m_pszKinsokuHead_1;
-		m_pszKinsokuHead_1 = NULL;
-	}
-	if( NULL != m_pszKinsokuHead_2 ){	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-		delete [] m_pszKinsokuHead_2;
-		m_pszKinsokuHead_2 = NULL;
-	}
-	if( NULL != m_pszKinsokuTail_1 ){	/* 行末禁則 */	//@@@ 2002.04.08 MIK
-		delete [] m_pszKinsokuTail_1;
-		m_pszKinsokuTail_1 = NULL;
-	}
-	if( NULL != m_pszKinsokuTail_2 ){	/* 行末禁則 */	//@@@ 2002.04.08 MIK
-		delete [] m_pszKinsokuTail_2;
-		m_pszKinsokuTail_2 = NULL;
-	}
-	if( NULL != m_pszKinsokuKuto_1 ){	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-		delete [] m_pszKinsokuKuto_1;
-		m_pszKinsokuKuto_1 = NULL;
-	}
-	if( NULL != m_pszKinsokuKuto_2 ){	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-		delete [] m_pszKinsokuKuto_2;
-		m_pszKinsokuKuto_2 = NULL;
-	}
+	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
+	delete [] m_pszKinsokuHead_1;
+	m_pszKinsokuHead_1 = NULL;
+	delete [] m_pszKinsokuHead_2;
+	m_pszKinsokuHead_2 = NULL;
+	/* 行末禁則 */	//@@@ 2002.04.08 MIK
+	delete [] m_pszKinsokuTail_1;
+	m_pszKinsokuTail_1 = NULL;
+	delete [] m_pszKinsokuTail_2;
+	m_pszKinsokuTail_2 = NULL;
+	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+	delete [] m_pszKinsokuKuto_1;
+	m_pszKinsokuKuto_1 = NULL;
+	delete [] m_pszKinsokuKuto_2;
+	m_pszKinsokuKuto_2 = NULL;
 }
 
 
@@ -180,16 +171,10 @@ void CLayoutMgr::SetLayoutInfo(
 
 		//句読点のぶらさげ
 		m_bKinsokuKuto = refType.m_bKinsokuKuto;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-		if( NULL != m_pszKinsokuKuto_1 )
-		{
-			delete [] m_pszKinsokuKuto_1;
-			m_pszKinsokuKuto_1 = NULL;
-		}
-		if( NULL != m_pszKinsokuKuto_2 )
-		{
-			delete [] m_pszKinsokuKuto_2;
-			m_pszKinsokuKuto_2 = NULL;
-		}
+		delete [] m_pszKinsokuKuto_1;
+		m_pszKinsokuKuto_1 = NULL;
+		delete [] m_pszKinsokuKuto_2;
+		m_pszKinsokuKuto_2 = NULL;
 		length = strlen( refType.m_szKinsokuKuto ) + 1;
 		m_pszKinsokuKuto_1 = new char[ length ];
 		m_pszKinsokuKuto_2 = new char[ length ];
@@ -217,16 +202,8 @@ void CLayoutMgr::SetLayoutInfo(
 
 		//行頭禁則文字の1,2バイト文字を分けて管理する。
 		m_bKinsokuHead = refType.m_bKinsokuHead;
-		if( NULL != m_pszKinsokuHead_1 )
-		{
-			delete [] m_pszKinsokuHead_1;
-			m_pszKinsokuHead_1 = NULL;
-		}
-		if( NULL != m_pszKinsokuHead_2 )
-		{
-			delete [] m_pszKinsokuHead_2;
-			m_pszKinsokuHead_2 = NULL;
-		}
+		delete [] m_pszKinsokuHead_1;
+		delete [] m_pszKinsokuHead_2;
 		length = strlen( refType.m_szKinsokuHead ) + 1;
 		m_pszKinsokuHead_1 = new char[ length ];
 		m_pszKinsokuHead_2 = new char[ length ];
@@ -265,16 +242,8 @@ void CLayoutMgr::SetLayoutInfo(
 
 		//行末禁則文字の1,2バイト文字を分けて管理する。
 		m_bKinsokuTail = refType.m_bKinsokuTail;
-		if( NULL != m_pszKinsokuTail_1 )
-		{
-			delete [] m_pszKinsokuTail_1;
-			m_pszKinsokuTail_1 = NULL;
-		}
-		if( NULL != m_pszKinsokuTail_2 )
-		{
-			delete [] m_pszKinsokuTail_2;
-			m_pszKinsokuTail_2 = NULL;
-		}
+		delete [] m_pszKinsokuTail_1;
+		delete [] m_pszKinsokuTail_2;
 		length = strlen( refType.m_szKinsokuTail ) + 1;
 		m_pszKinsokuTail_1 = new char[ length ];
 		m_pszKinsokuTail_2 = new char[ length ];
