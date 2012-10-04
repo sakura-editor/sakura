@@ -318,8 +318,6 @@ public:
 
 	DLLSHAREDATA*	m_pShareData;
 
-//@@@ 2002.01.14 YAZAKI 不使用のため
-//	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
 	BOOL			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 	CDlgOpenFile	m_cDlgOpenFile;	/* ファイルオープンダイアログ */
 //	2004.03.28 Moca 未使用変数削除
