@@ -288,7 +288,9 @@ BOOL CViewCommander::HandleCommand(
 	//	ここより前ではUndoバッファの準備ができていないので
 	//	文書の操作を行ってはいけない
 	//@@@ 2002.2.2 YAZAKI HandleCommand内でHandleCommandを呼び出せない問題に対処（何か副作用がある？）
-	SetOpeBlk(new COpeBlk);
+	if( NULL == GetOpeBlk() ){	/* 操作ブロック */
+		SetOpeBlk(new COpeBlk);
+	}
 	GetOpeBlk()->AddRef();	//参照カウンタ増加
 	
 	//	Jan. 10, 2005 genta コメント
