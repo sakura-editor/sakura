@@ -57,8 +57,8 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置) →
 	||  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	CaretPos_Log2Phys( pArg->nDelColmFrom, pArg->nDelLineFrom, &nxFrom, &nyFrom );
-	CaretPos_Log2Phys( pArg->nDelColmTo, pArg->nDelLineTo, &nxTo, &nyTo );
+	LayoutToLogic( pArg->nDelColmFrom, pArg->nDelLineFrom, &nxFrom, &nyFrom );
+	LayoutToLogic( pArg->nDelColmTo, pArg->nDelLineTo, &nxTo, &nyTo );
 
 	/* 指定範囲のデータを置換(削除 & データを挿入)
 	  Fromを含む位置からToの直前を含むデータを削除する
@@ -160,7 +160,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	pArg->nModLineTo += ( pArg->nModLineFrom - 1 ) ;	/* 再描画ヒント 変更されたレイアウト行To */
 
 	/* レイアウト位置への変換 */
-	CaretPos_Phys2Log( pArg->nNewPos, pArg->nNewLine, &pArg->nNewPos, &pArg->nNewLine );
+	LogicToLayout( pArg->nNewPos, pArg->nNewLine, &pArg->nNewPos, &pArg->nNewLine );
 }
 
 

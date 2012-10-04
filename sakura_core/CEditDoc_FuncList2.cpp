@@ -539,7 +539,7 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			*/
 			int		nPosX;
 			int		nPosY;
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LayoutToLogic(
 				0,
 				nLineCount/*nFuncLine - 1*/,
 				&nPosX,

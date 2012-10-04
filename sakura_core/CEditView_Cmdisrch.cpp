@@ -376,7 +376,7 @@ void CEditView::ISearchExec(bool bNext)
 			nLineP =  m_pcEditDoc->m_cDocLineMgr.GetLineCount() -1 ;
 			CDocLine* pDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( nLineP );
 			nIdxP = pDocLine->GetLength() -1;
-			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(nIdxP,nLineP,&nIdx1,&nLine);
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(nIdxP,nLineP,&nIdx1,&nLine);
 		}
 	}else if (IsTextSelected()){
 		switch( m_nISearchDirection * 2 + (bNext ? 1: 0)){

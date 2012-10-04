@@ -1179,7 +1179,7 @@ void CEditView::Command_GOLINETOP(
 
 	if ( lparam & 8 ){
 		/* 改行単位指定の場合は、物理行頭位置から目的論理位置を求める */
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			0,
 			m_nCaretPosY_PHY,
 			&nCaretPosX,
@@ -1717,7 +1717,7 @@ void CEditView::Command_DELETE_BACK( void )
 						if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 							pcOpe = new COpe;
 							pcOpe->m_nOpe = OPE_MOVECARET;				/* 操作種別 */
-							m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+							m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 								nPosX,
 								nPosY,
 								&pcOpe->m_nCaretPosX_PHY_Before,
@@ -1763,7 +1763,7 @@ void CEditView::Command_WordDeleteToEnd( void )
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe = new COpe;
 		pcOpe->m_nOpe = OPE_MOVECARET;							/* 操作種別 */
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			m_nSelectColmFrom,
 			m_nSelectLineFrom,
 			&pcOpe->m_nCaretPosX_PHY_Before,
@@ -1804,7 +1804,7 @@ void CEditView::Command_WordDeleteToStart( void )
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe = new COpe;
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			m_nSelectColmTo,
 			m_nSelectLineTo,
 			&pcOpe->m_nCaretPosX_PHY_Before,
@@ -1881,7 +1881,7 @@ void CEditView::Command_LineCutToStart( void )
 		return;
 	}
 
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( 0, pCLayout->m_nLinePhysical, &nX, &nY );
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, pCLayout->m_nLinePhysical, &nX, &nY );
 	if( m_nCaretPosX == nX && m_nCaretPosY == nY ){
 		ErrorBeep();
 		return;
@@ -1916,10 +1916,10 @@ void CEditView::Command_LineCutToEnd( void )
 	}
 
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
 	}
 	else{
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
 	}
 	if( ( m_nCaretPosX == nX && m_nCaretPosY == nY )
 	 || ( m_nCaretPosX >  nX && m_nCaretPosY == nY )
@@ -1955,7 +1955,7 @@ void CEditView::Command_LineDeleteToStart( void )
 		return;
 	}
 
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( 0, pCLayout->m_nLinePhysical, &nX, &nY );
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, pCLayout->m_nLinePhysical, &nX, &nY );
 	if( m_nCaretPosX == nX && m_nCaretPosY == nY ){
 		ErrorBeep();
 		return;
@@ -1989,9 +1989,9 @@ void CEditView::Command_LineDeleteToEnd( void )
 	}
 
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
 	}else{
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( pCLayout->m_pCDocLine->m_pLine->GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
 	}
 	if( ( m_nCaretPosX == nX && m_nCaretPosY == nY )
 	 || ( m_nCaretPosX >  nX && m_nCaretPosY == nY )
@@ -2158,7 +2158,7 @@ void CEditView::Command_SELECTLINE( int lparam )
 	// 最下行（物理行）でない
 	if( m_nCaretPosY_PHY < m_pcEditDoc->m_cDocLineMgr.GetLineCount() ){
 		// 1行先の物理行からレイアウト行を求める
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( 0, m_nCaretPosY_PHY + 1, &nCaretPosX, &nCaretPosY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, m_nCaretPosY_PHY + 1, &nCaretPosX, &nCaretPosY );
 
 		// カーソルを次の物理行頭へ移動する
 		MoveCursorSelecting( nCaretPosX, nCaretPosY, TRUE );
@@ -2429,7 +2429,7 @@ void CEditView::Command_INSTEXT(
 			}
 			int nPosX;
 			int nPosY;
-			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 				m_nCaretPosX_PHY + nPosX_PHY_Delta,
 				m_nCaretPosY_PHY,
 				&nPosX,
@@ -2525,7 +2525,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 			if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 			{
 				pcOpe = new COpe;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 												nCurXOld,
 												nCurYOld + nCount,
 												&pcOpe->m_nCaretPosX_PHY_Before,
@@ -2548,7 +2548,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 			}
 
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 												nNewPos,
 												nNewLine,
 												&pcOpe->m_nCaretPosX_PHY_After,
@@ -2591,7 +2591,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 				if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 				{
 					pcOpe = new COpe;
-					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 														nInsPosX,
 														m_nCaretPosY,
 														&pcOpe->m_nCaretPosX_PHY_Before,
@@ -2612,7 +2612,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 
 				if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
 				{
-					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 													nNewPos,
 													nNewLine,
 													&pcOpe->m_nCaretPosX_PHY_After,
@@ -2758,7 +2758,7 @@ void CEditView::Command_CHAR( char cChar )
 					*/
 					int		nX;
 					int		nY;
-					m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 						m_nCaretPosX,
 						m_nCaretPosY,
 						&nX,
@@ -3683,7 +3683,7 @@ void CEditView::Command_COPYTAG( void )
 		int		line, col;
 
 		//	論理行番号を得る
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys( m_nCaretPosX, m_nCaretPosY, &col, &line );
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( m_nCaretPosX, m_nCaretPosY, &col, &line );
 
 		/* クリップボードにデータを設定 */
 		wsprintf( buf, "%s (%d,%d): ", m_pcEditDoc->GetFilePath(), line+1, col+1 );
@@ -3743,7 +3743,7 @@ void CEditView::Command_JUMP( void )
 			*/
 			int		nPosX;
 			int		nPosY;
-			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 				0,
 				nLineNum - 1,
 				&nPosX,
@@ -3783,7 +3783,7 @@ void CEditView::Command_JUMP( void )
 		  物理位置(行頭からのバイト数、折り返し無し行位置)
 		*/
 		int nPosX,nPosY;
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			0,
 			nLineCount,
 			(int*)&nPosX,
@@ -3899,7 +3899,7 @@ void CEditView::Command_JUMP( void )
 	*/
 	int		nPosX;
 	int		nPosY;
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 		0,
 		nLineCount,
 		&nPosX,
@@ -4099,7 +4099,7 @@ void CEditView::Command_DUPLICATELINE( void )
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			nNewPos,
 			nNewLine,
 			&pcOpe->m_nCaretPosX_PHY_After,
@@ -5040,7 +5040,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			nPosY = nLineNum;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					nPosX,
 					nPosY,
 					&pcOpe->m_nCaretPosX_PHY_Before,
@@ -5141,7 +5141,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					0,
 					i,
 					&pcOpe->m_nCaretPosX_PHY_Before,
@@ -5289,7 +5289,7 @@ void CEditView::Command_UNINDENT( char cChar )
 			m_nCaretPosX_Prev = m_nCaretPosX;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					0,
 					i,
 					&pcOpe->m_nCaretPosX_PHY_Before,
@@ -5308,7 +5308,7 @@ void CEditView::Command_UNINDENT( char cChar )
 				pcOpe				/* 編集操作要素 COpe */
 			);
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+				m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 					0,
 					i,
 					&pcOpe->m_nCaretPosX_PHY_After,
@@ -5423,7 +5423,7 @@ bool CEditView::Command_TAGJUMP( bool bClose )
 	*/
 	int		nX;
 	int		nY;
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 		m_nCaretPosX,
 		m_nCaretPosY,
 		&nX,
@@ -5745,7 +5745,7 @@ bool CEditView::TagJumpSub(
 // その前で保存するように変更。
 
 	/* カーソル位置変換 */
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 		m_nCaretPosX,
 		m_nCaretPosY,
 		(int*)&tagJump.point.x,
@@ -6253,7 +6253,7 @@ open_c:;
 	  →
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 		m_nCaretPosX,
 		m_nCaretPosY,
 		(int*)&tagJump.point.x,
@@ -6825,7 +6825,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					}
 					// 無限置換しないように、１文字増やしたので１文字選択に変更
 					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-					rLayoutMgr.CaretPos_Phys2Log( nIdxTo, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 行位置も取得する
+					rLayoutMgr.LogicToLayout( nIdxTo, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 行位置も取得する
 				}
 				// 行末から検索文字列末尾までの文字数
 				int colDiff = nLen - nIdxTo;
@@ -6834,7 +6834,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
 					// 改行にかかっていたら、行全体をINSTEXTする。
 					colDiff = 0;
-					rLayoutMgr.CaretPos_Phys2Log( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 追加
+					rLayoutMgr.LogicToLayout( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 追加
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
 				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
@@ -6969,7 +6969,7 @@ void CEditView::Command_REPLACE_ALL()
 		}
 		//	To Here 2007.09.20 genta 矩形範囲の選択置換ができない
 
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 			colTo,
 			linTo,
 			&colToP,
@@ -7168,7 +7168,7 @@ void CEditView::Command_REPLACE_ALL()
 				lineCnt = rDocLineMgr.GetLineCount();
 
 				// 検索後の範囲終端
-				rLayoutMgr.CaretPos_Log2Phys(
+				rLayoutMgr.LayoutToLogic(
 					m_nSelectColmTo,
 					m_nSelectLineTo,
 					&colOld,
@@ -7255,7 +7255,7 @@ void CEditView::Command_REPLACE_ALL()
 				if( bSelectedArea ){
 					if( bBeginBoxSelect ){	// 矩形選択
 						int wk;
-						rLayoutMgr.CaretPos_Log2Phys(
+						rLayoutMgr.LayoutToLogic(
 							colTo,
 							linOld,
 							&colToP,
@@ -7282,7 +7282,7 @@ void CEditView::Command_REPLACE_ALL()
 				if ( !bConsecutiveAll ) { // 2006.04.01 かろと	// 2007.01.16 ryoji
 					// 行単位での置換処理
 					// 選択範囲を物理行末までにのばす
-					rLayoutMgr.CaretPos_Phys2Log( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );
+					rLayoutMgr.LogicToLayout( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );
 				} else {
 				    // From Here Jun. 6, 2005 かろと
 				    // 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
@@ -7298,7 +7298,7 @@ void CEditView::Command_REPLACE_ALL()
 					    }
 					    // 無限置換しないように、１文字増やしたので１文字選択に変更
 					    // 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-						rLayoutMgr.CaretPos_Phys2Log( nIdxTo, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 行位置も取得する
+						rLayoutMgr.LogicToLayout( nIdxTo, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 行位置も取得する
 				    }
 				    // 行末から検索文字列末尾までの文字数
 					colDiff =  nLen - nIdxTo;
@@ -7308,7 +7308,7 @@ void CEditView::Command_REPLACE_ALL()
 				    if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
 					    // 改行にかかっていたら、行全体をINSTEXTする。
 					    colDiff = 0;
-						rLayoutMgr.CaretPos_Phys2Log( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 追加
+						rLayoutMgr.LogicToLayout( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 追加
 						colOld = pcLayout->m_pCDocLine->GetLengthWithoutEOL() + 1;	// 2007.01.19 ryoji 追加
 				    }
 				}
@@ -7333,7 +7333,7 @@ void CEditView::Command_REPLACE_ALL()
 			m_nCaretPosY+=linTmp;
 			if (!bBeginBoxSelect)
 			{
-				rLayoutMgr.CaretPos_Log2Phys(
+				rLayoutMgr.LayoutToLogic(
 					m_nCaretPosX,
 					m_nCaretPosY,
 					&m_nCaretPosX_PHY,
@@ -7431,7 +7431,7 @@ void CEditView::Command_REPLACE_ALL()
 			if(colToP<0)colToP=0;
 			linToP+=linDif;
 			if(linToP<0)linToP=0;
-			m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 				colToP,
 				linToP,
 				&colTo,
@@ -7967,7 +7967,7 @@ void CEditView::Command_COMPARE( void )
 	  →
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys(
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 		m_nCaretPosX,
 		m_nCaretPosY,
 		(int*)&poSrc.x,
@@ -8879,7 +8879,7 @@ void CEditView::Command_JUMPHIST_PREV( void )
 		if( ! m_cHistory->PrevValid() ){
 			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("PrevValid"), MB_OK );
 		}
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			m_cHistory->GetCurrent().GetPos(),
 			m_cHistory->GetCurrent().GetLine(),
 			&x, &y
@@ -8897,7 +8897,7 @@ void CEditView::Command_JUMPHIST_NEXT( void )
 		if( ! m_cHistory->NextValid() ){
 			::MessageBox( NULL, _T("Inconsistent Implementation"), _T("NextValid"), MB_OK );
 		}
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log(
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			m_cHistory->GetCurrent().GetPos(),
 			m_cHistory->GetCurrent().GetLine(),
 			&x, &y

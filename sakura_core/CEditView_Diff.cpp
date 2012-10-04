@@ -544,7 +544,7 @@ re_do:;
 	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, SEARCH_FORWARD, &nY ) )
 	{
 		bFound = TRUE;
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nX, nY, &nX, &nY );
 		if( m_bSelectingLock ){
 			if( !IsTextSelected() ) BeginSelectArea();
 		}
@@ -597,7 +597,7 @@ void CEditView::Command_Diff_Prev( void )
 re_do:;
 	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, SEARCH_BACKWARD, &nY ) ){
 		bFound = TRUE;
-		m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( nX, nY, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nX, nY, &nX, &nY );
 		if( m_bSelectingLock ){
 			if( !IsTextSelected() ) BeginSelectArea();
 		}

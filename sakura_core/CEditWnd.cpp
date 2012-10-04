@@ -1759,7 +1759,7 @@ LRESULT CEditWnd::DispatchEvent(
 			→
 			 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 			*/
-			m_cEditDoc.m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cEditDoc.m_cLayoutMgr.LogicToLayout(
 				ppoCaret->x,
 				ppoCaret->y,
 				&nCaretPosX,
@@ -1793,7 +1793,7 @@ LRESULT CEditWnd::DispatchEvent(
 		物理位置(行頭からのバイト数、折り返し無し行位置)
 		*/
 		{
-			m_cEditDoc.m_cLayoutMgr.CaretPos_Log2Phys(
+			m_cEditDoc.m_cLayoutMgr.LayoutToLogic(
 				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX,
 				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY,
 				(int*)&ppoCaret->x,

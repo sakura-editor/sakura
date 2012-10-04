@@ -923,7 +923,7 @@ bool CEditView::SearchBracket( int LayoutX, int LayoutY, int* NewX, int* NewY, i
 	int nCharSize;	//	（メモリ上の）文字幅
 	int PosX, PosY;	//	物理位置
 
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys( LayoutX, LayoutY, &PosX, &PosY );
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( LayoutX, LayoutY, &PosX, &PosY );
 	const char *cline = m_pcEditDoc->m_cDocLineMgr.GetLineStr( PosY, &len );
 
 	//	Jun. 19, 2000 genta
@@ -1060,7 +1060,7 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 //	char buf[50];	Debug用
 
 	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
@@ -1085,7 +1085,7 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 
 			if( level == 0 ){	//	見つかった！
 				PosX = cPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, NewX, NewY );
+				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
 //				wsprintf( buf, "Layout: %d, %d\nPhys: %d, %d", *NewX, *NewY, PosX, PosY );
 //				::MessageBox( NULL, buf, "Bracket", MB_OK );
 				return true;
@@ -1149,7 +1149,7 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 //	char buf[50];	Debug用
 
 	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
@@ -1174,7 +1174,7 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 
 			if( level == 0 ){	//	見つかった！
 				PosX = pPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, NewX, NewY );
+				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
 //				wsprintf( buf, "Layout: %d, %d\nPhys: %d, %d", *NewX, *NewY, PosX, PosY );
 //				::MessageBox( NULL, buf, "Bracket", MB_OK );
 				return true;
@@ -1238,7 +1238,7 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 	int			nCol, nLine, nSearchNum;	// 02/09/19 ai
 
 	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
@@ -1262,7 +1262,7 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 
 			if( level == 0 ){	//	見つかった！
 				PosX = cPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, NewX, NewY );
+				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
 				return true;
 			}
 			cPos = nPos;	//	次の文字へ
@@ -1325,7 +1325,7 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 	int	nCol, nLine, nSearchNum;	// 02/09/19 ai
 
 	//	初期位置の設定
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
 	cline = ci->m_pLine->GetStringPtr( &len );
@@ -1349,7 +1349,7 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 
 			if( level == 0 ){	//	見つかった！
 				PosX = pPos - cline;
-				m_pcEditDoc->m_cLayoutMgr.CaretPos_Phys2Log( PosX, PosY, NewX, NewY );
+				m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, NewX, NewY );
 				return true;
 			}
 			cPos = pPos;	//	次の文字へ
@@ -1434,7 +1434,7 @@ void CEditView::AddCurrentLineToHistory( void )
 {
 	int PosX, PosY;	//	物理位置（改行単位の計算）
 
-	m_pcEditDoc->m_cLayoutMgr.CaretPos_Log2Phys( m_nCaretPosX, m_nCaretPosY, &PosX, &PosY );
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( m_nCaretPosX, m_nCaretPosY, &PosX, &PosY );
 
 	CMarkMgr::CMark m( PosX, PosY );
 	m_cHistory->Add( m );

@@ -442,7 +442,7 @@ void CEditDoc::MakeFuncList_Erlang( CFuncInfoArr* pcFuncInfoArr )
 			*/
 			int		nPosX;
 			int		nPosY;
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LogicToLayout(
 				0,
 				erl_state_machine.GetFuncLine()/*nFuncLine - 1*/,
 				&nPosX,

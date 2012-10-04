@@ -1202,13 +1202,13 @@ int CLayoutMgr::SearchWord(
 	// 論理位置→レイアウト位置変換
 	if( nRetCode ){
 		nLogLine = *pnLineFrom;
-		CaretPos_Phys2Log(
+		LogicToLayout(
 			*pnIdxFrom,
 			nLogLine,
 			pnIdxFrom,
 			pnLineFrom
 		);
-		CaretPos_Phys2Log(
+		LogicToLayout(
 			*pnIdxTo,
 			nLogLine,
 			pnIdxTo,
@@ -1307,23 +1307,20 @@ void CLayoutMgr::XYLogicalToLayout(
 }
 
 
-/*! @brief カーソル位置変換 物理→レイアウト
+/*!
+	@brief カーソル位置変換 物理→レイアウト
 
-  物理位置(行頭からのバイト数、折り返し無し行位置)
-  →レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-
-	@param nX [in] 物理位置X
-	@param nY [in] 物理位置Y
-	@param pnCaretPosX [out] 論理位置X
-	@param pnCaretPosY [out] 論理位置Y
+	物理位置(行頭からのバイト数、折り返し無し行位置)
+	→レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 
 	@date 2004.06.16 Moca インデント表示の際のTABを含む行の座標ずれ修正
+	@date 2007.09.06 kobake 関数名をCaretPos_Phys2LogからLogicToLayoutに変更
 */
-void CLayoutMgr::CaretPos_Phys2Log(
-	int		nX,
-	int		nY,
-	int*	pnCaretPosX,
-	int*	pnCaretPosY
+void CLayoutMgr::LogicToLayout(
+	int		nX,				//!< [in] 物理位置X
+	int		nY,				//!< [in] 物理位置Y
+	int*	pnCaretPosX,	//!< [out] 論理位置X
+	int*	pnCaretPosY		//!< [out] 論理位置Y
 )
 {
 	const CLayout*	pLayout;
@@ -1412,17 +1409,19 @@ void CLayoutMgr::CaretPos_Phys2Log(
 	*pnCaretPosY = nCaretPosY;
 }
 
-/*
-  カーソル位置変換
-  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-  →
-  物理位置(行頭からのバイト数、折り返し無し行位置)
+/*!
+	@brief カーソル位置変換  レイアウト→物理
+
+	レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+	→物理位置(行頭からのバイト数、折り返し無し行位置)
+
+	@date 2007.09.06 kobake 関数名をCaretPos_Log2Phys→LayoutToLogicに変更
 */
-void CLayoutMgr::CaretPos_Log2Phys(
-	int		nCaretPosX,
-	int		nCaretPosY,
-	int*	pnX,
-	int*	pnY
+void CLayoutMgr::LayoutToLogic(
+	int		nCaretPosX,		//!< [in] 論理位置X
+	int		nCaretPosY,		//!< [in] 論理位置Y
+	int*	pnX,			//!< [out] 物理位置X
+	int*	pnY				//!< [out] 物理位置Y
 )
 {
 	int				nX;

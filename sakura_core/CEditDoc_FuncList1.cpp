@@ -741,7 +741,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						*/
 						int		nPosX;
 						int		nPosY;
-						m_cLayoutMgr.CaretPos_Phys2Log(
+						m_cLayoutMgr.LogicToLayout(
 							0,
 							nItemLine - 1,
 							&nPosX,
@@ -876,7 +876,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 //							*/
 //							int		nPosX;
 //							int		nPosY;
-//							m_cLayoutMgr.CaretPos_Phys2Log(
+//							m_cLayoutMgr.LogicToLayout(
 //								0,
 //								nFuncLine - 1,
 //								&nPosX,
@@ -920,7 +920,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 						*/
 						int		nPosX;
 						int		nPosY;
-						m_cLayoutMgr.CaretPos_Phys2Log(
+						m_cLayoutMgr.LogicToLayout(
 							0,
 							nItemLine - 1,
 							&nPosX,
@@ -949,7 +949,7 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 //								*/
 //								int		nPosX;
 //								int		nPosY;
-//								m_cLayoutMgr.CaretPos_Phys2Log(
+//								m_cLayoutMgr.LogicToLayout(
 //									0,
 //									nFuncLine - 1,
 //									&nPosX,

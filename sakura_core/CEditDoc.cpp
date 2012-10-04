@@ -694,7 +694,7 @@ BOOL CEditDoc::FileRead(
 		*/
 		int		nCaretPosX;
 		int		nCaretPosY;
-		m_cLayoutMgr.CaretPos_Phys2Log(
+		m_cLayoutMgr.LogicToLayout(
 			fi.m_nX,
 			fi.m_nY,
 			&nCaretPosX,
@@ -2025,7 +2025,7 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							*/
 							int		nPosX;
 							int		nPosY;
-							m_cLayoutMgr.CaretPos_Phys2Log(
+							m_cLayoutMgr.LogicToLayout(
 								0,
 								nFuncLine - 1,
 								&nPosX,
@@ -2046,7 +2046,7 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 								*/
 								int		nPosX;
 								int		nPosY;
-								m_cLayoutMgr.CaretPos_Phys2Log(
+								m_cLayoutMgr.LogicToLayout(
 									0,
 									nFuncLine - 1,
 									&nPosX,
@@ -2066,7 +2066,7 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 								*/
 								int		nPosX;
 								int		nPosY;
-								m_cLayoutMgr.CaretPos_Phys2Log(
+								m_cLayoutMgr.LogicToLayout(
 									0,
 									nFuncLine - 1,
 									&nPosX,
@@ -2175,7 +2175,7 @@ void CEditDoc::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						*/
 						int		nPosX;
 						int		nPosY;
-						m_cLayoutMgr.CaretPos_Phys2Log(
+						m_cLayoutMgr.LogicToLayout(
 							0,
 							nFuncLine - 1,
 							&nPosX,
@@ -2360,7 +2360,7 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		*/
 		int		nPosX;
 		int		nPosY;
-		m_cLayoutMgr.CaretPos_Phys2Log(
+		m_cLayoutMgr.LogicToLayout(
 			0,
 			nLineCount,
 			&nPosX,
@@ -2542,7 +2542,7 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		*/
 		int		nPosX;
 		int		nPosY;
-		m_cLayoutMgr.CaretPos_Phys2Log(
+		m_cLayoutMgr.LogicToLayout(
 			0,
 			nLineCount,
 			&nPosX,
@@ -2669,7 +2669,7 @@ void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			int		nPosX;
 			int		nPosY;
 			char	szWork[1024];
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LogicToLayout(
 				0,
 				nLineCount,
 				&nPosX,
@@ -2776,7 +2776,7 @@ void CEditDoc::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 				*/
 				int		nPosX;
 				int		nPosY;
-				m_cLayoutMgr.CaretPos_Phys2Log(
+				m_cLayoutMgr.LogicToLayout(
 					0,
 					nLineCount/*nFuncLine - 1*/,
 					&nPosX,
@@ -2828,7 +2828,7 @@ void CEditDoc::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 
 			int	nPosX;
 			int	nPosY;
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LogicToLayout(
 				0,
 				nLineCount,
 				&nPosX,
@@ -3068,7 +3068,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 					int		nPosX;
 					int		nPosY;
 
-					m_cLayoutMgr.CaretPos_Phys2Log(
+					m_cLayoutMgr.LogicToLayout(
 						i,
 						nLineCount,
 						&nPosX,
@@ -3254,7 +3254,7 @@ void CEditDoc::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 				TCHAR tmpstr[256];
 				TCHAR secstr[4];
 
-				m_cLayoutMgr.CaretPos_Phys2Log(
+				m_cLayoutMgr.LogicToLayout(
 					i,
 					nLineCount,
 					&nPosX,
@@ -3626,14 +3626,14 @@ int* CEditDoc::SavePhysPosOfAllView(void)
 	int* posary = new int[ NUM_OF_VIEW * NUM_OF_POS * XY ];
 	
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
-		m_cLayoutMgr.CaretPos_Log2Phys(
+		m_cLayoutMgr.LayoutToLogic(
 			m_cEditViewArr[i].m_nCaretPosX,
 			m_cEditViewArr[i].m_nCaretPosY,
 			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
 			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ]
 		);
 		if( m_cEditViewArr[i].m_nSelectLineBgnFrom >= 0 ){
-			m_cLayoutMgr.CaretPos_Log2Phys(
+			m_cLayoutMgr.LayoutToLogic(
 				m_cEditViewArr[i].m_nSelectColmBgnFrom,
 				m_cEditViewArr[i].m_nSelectLineBgnFrom,
 				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
@@ -3641,7 +3641,7 @@ int* CEditDoc::SavePhysPosOfAllView(void)
 			);
 		}
 		if( m_cEditViewArr[i].m_nSelectLineBgnTo >= 0 ){
-			m_cLayoutMgr.CaretPos_Log2Phys(
+			m_cLayoutMgr.LayoutToLogic(
 				m_cEditViewArr[i].m_nSelectColmBgnTo,
 				m_cEditViewArr[i].m_nSelectLineBgnTo,
 				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
@@ -3649,7 +3649,7 @@ int* CEditDoc::SavePhysPosOfAllView(void)
 			);
 		}
 		if( m_cEditViewArr[i].m_nSelectLineFrom >= 0 ){
-			m_cLayoutMgr.CaretPos_Log2Phys(
+			m_cLayoutMgr.LayoutToLogic(
 				m_cEditViewArr[i].m_nSelectColmFrom,
 				m_cEditViewArr[i].m_nSelectLineFrom,
 				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
@@ -3657,7 +3657,7 @@ int* CEditDoc::SavePhysPosOfAllView(void)
 			);
 		}
 		if( m_cEditViewArr[i].m_nSelectLineTo >= 0 ){
-			m_cLayoutMgr.CaretPos_Log2Phys(
+			m_cLayoutMgr.LayoutToLogic(
 				m_cEditViewArr[i].m_nSelectColmTo,
 				m_cEditViewArr[i].m_nSelectLineTo,
 				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
@@ -3683,7 +3683,7 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		int		nPosX;
 		int		nPosY;
-		m_cLayoutMgr.CaretPos_Phys2Log(
+		m_cLayoutMgr.LogicToLayout(
 			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
 			posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ],
 			&nPosX,
@@ -3693,7 +3693,7 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 		m_cEditViewArr[i].m_nCaretPosX_Prev = m_cEditViewArr[i].m_nCaretPosX;
 
 		if( m_cEditViewArr[i].m_nSelectLineBgnFrom >= 0 ){
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ],
 				&m_cEditViewArr[i].m_nSelectColmBgnFrom,
@@ -3701,7 +3701,7 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 			);
 		}
 		if( m_cEditViewArr[i].m_nSelectLineBgnTo >= 0 ){
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ],
 				&m_cEditViewArr[i].m_nSelectColmBgnTo,
@@ -3709,7 +3709,7 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 			);
 		}
 		if( m_cEditViewArr[i].m_nSelectLineFrom >= 0 ){
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ],
 				&m_cEditViewArr[i].m_nSelectColmFrom,
@@ -3717,7 +3717,7 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 			);
 		}
 		if( m_cEditViewArr[i].m_nSelectLineTo >= 0 ){
-			m_cLayoutMgr.CaretPos_Phys2Log(
+			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ],
 				&m_cEditViewArr[i].m_nSelectColmTo,
@@ -3831,7 +3831,7 @@ void CEditDoc::SetFileInfo( EditInfo* pfi )
 	  →
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	m_cLayoutMgr.CaretPos_Log2Phys(
+	m_cLayoutMgr.LayoutToLogic(
 		m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX,	/* ビュー左端からのカーソル桁位置(０開始) */
 		m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY,	/* ビュー上端からのカーソル行位置(０開始) */
 		&nX,

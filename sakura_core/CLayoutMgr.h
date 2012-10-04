@@ -125,8 +125,8 @@ public:
 	int NextWord( int nLineNum, int nIdx, int* pnLineNew, int* pnColmNew, BOOL bStopsBothEnds ){ return PrevOrNextWord(nLineNum, nIdx, pnLineNew, pnColmNew, FALSE, bStopsBothEnds); }	/* 現在位置の左右の単語の先頭位置を調べる */
 
 	int SearchWord( int	, int , const char* , ESearchDirection , int , int , int , int* , int* , int* , int*, CBregexp* );	/* 単語検索 */
-	void CaretPos_Phys2Log( int, int, int*, int* );
-	void CaretPos_Log2Phys( int, int, int*, int* );
+	void LogicToLayout( int, int, int*, int* );
+	void LayoutToLogic( int, int, int*, int* );
 public:
 	void DUMP();	/* テスト用にレイアウト情報をダンプ */
 

@@ -158,7 +158,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						*/
 						int		nPosX;
 						int		nPosY;
-						m_cLayoutMgr.CaretPos_Phys2Log(
+						m_cLayoutMgr.LogicToLayout(
 							0,
 							nLineCount/*nFuncLine - 1*/,
 							&nPosX,
@@ -266,7 +266,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							*/
 							int		nPosX;
 							int		nPosY;
-							m_cLayoutMgr.CaretPos_Phys2Log(
+							m_cLayoutMgr.LogicToLayout(
 								0,
 								nFuncLine - 1,
 								&nPosX,
@@ -407,7 +407,7 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							*/
 							int		nPosX;
 							int		nPosY;
-							m_cLayoutMgr.CaretPos_Phys2Log(
+							m_cLayoutMgr.LogicToLayout(
 								0,
 								nFuncLine - 1,
 								&nPosX,
@@ -698,7 +698,7 @@ void CEditDoc::MakeFuncList_Perl( CFuncInfoArr* pcFuncInfoArr )
 					*/
 					int		nPosX;
 					int		nPosY;
-					m_cLayoutMgr.CaretPos_Phys2Log(
+					m_cLayoutMgr.LogicToLayout(
 						0,
 						nLineCount/*nFuncLine - 1*/,
 						&nPosX,
@@ -937,7 +937,7 @@ void CEditDoc::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						*/
 						int		nPosX;
 						int		nPosY;
-						m_cLayoutMgr.CaretPos_Phys2Log(	0, nFuncLine - 1, &nPosX, &nPosY );
+						m_cLayoutMgr.LogicToLayout(	0, nFuncLine - 1, &nPosX, &nPosY );
 						pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1 , szFuncName, nFuncId );
 						nParseCnt = 0;
 						nFuncId	= 0;	// Jul 10, 2003  little YOSHI  論理和を使用するため、必ず初期化
@@ -1145,7 +1145,7 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 		pszText = new char[nLineLen + 1];
 		memcpy( pszText, (const char *)&pLine[leftspace], nLineLen );
 		pszText[nLineLen] = '\0';
-		m_cLayoutMgr.CaretPos_Phys2Log(	0, nLineCount, &nX, &nY );
+		m_cLayoutMgr.LogicToLayout(	0, nLineCount, &nX, &nY );
 		pcFuncInfoArr->AppendData( nLineCount+1, nY+1 , (char *)pszText, 0 );
 		delete [] pszText;
 	}

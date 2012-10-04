@@ -252,7 +252,7 @@ bool CNormalProcess::InitializeProcess()
 				*/
 				int		nPosX;
 				int		nPosY;
-				m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.CaretPos_Phys2Log(
+				m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.LogicToLayout(
 					fi.m_nX,
 					fi.m_nY,
 					&nPosX,
