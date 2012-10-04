@@ -522,17 +522,17 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 #endif
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
-	CLayout*	pLayout;
-	CLayout*	pLayoutPrev;
-	CLayout*	pLayoutWork;
-	CLogicInt	nModLineOldFrom;	/* 影響のあった変更前の行(from) */
-	CLogicInt	nModLineOldTo;		/* 影響のあった変更前の行(to) */
-	CLogicInt	nDelLineOldFrom;	/* 削除された変更前論理行(from) */
-	CLogicInt	nDelLineOldNum;		/* 削除された行数 */
-	CLogicInt	nRowNum;
-	CLogicInt	nDelStartLogicalLine;
-	CLogicInt			nDelStartLogicalPos;
-	EColorIndexType		nCurrentLineType;
+	CLayout*		pLayout;
+	CLayout*		pLayoutPrev;
+	CLayout*		pLayoutWork;
+	CLogicInt		nModLineOldFrom;	/* 影響のあった変更前の行(from) */
+	CLogicInt		nModLineOldTo;		/* 影響のあった変更前の行(to) */
+	CLogicInt		nDelLineOldFrom;	/* 削除された変更前論理行(from) */
+	CLogicInt		nDelLineOldNum;		/* 削除された行数 */
+	CLogicInt		nRowNum;
+	CLogicInt		nDelStartLogicalLine;
+	CLogicInt		nDelStartLogicalPos;
+	EColorIndexType	nCurrentLineType;
 	CLayoutInt		nLineWork;
 
 	/* 現在行のデータを取得 */
@@ -646,14 +646,14 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	CLayoutPoint*	pptNewLayout			// 挿入された部分の次の位置
 )
 {
-	CLayout*	pLayout;
-	CLayout*	pLayoutPrev;
-	CLayout*	pLayoutWork;
-	CLogicInt	nInsStartLogicalLine;
-	CLogicInt	nInsStartLogicalPos;
-	CLogicInt	nInsLineNum;
-	CLogicInt	nRowNum;
-	EColorIndexType		nCurrentLineType;
+	CLayout*		pLayout;
+	CLayout*		pLayoutPrev;
+	CLayout*		pLayoutWork;
+	CLogicInt		nInsStartLogicalLine;
+	CLogicInt		nInsStartLogicalPos;
+	CLogicInt		nInsLineNum;
+	CLogicInt		nRowNum;
+	EColorIndexType	nCurrentLineType;
 	CLayoutInt		nLineWork;
 
 
@@ -980,7 +980,7 @@ bool CLayoutMgr::WhereCurrentWord(
 		pcmcmWord,
 		pcmcmWordLeft
 	);
-	
+
 	if( nRetCode ){
 		/* 論理位置→レイアウト位置変換 */
 		CLayoutPoint ptFrom;
@@ -1089,18 +1089,14 @@ int CLayoutMgr::SearchWord(
 //                        単位の変換                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-/*! @brief カーソル位置変換 物理→レイアウト
+/*!
+	@brief カーソル位置変換 物理→レイアウト
 
-  物理位置(行頭からのバイト数、折り返し無し行位置)
-  →レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-
-	@param nX [in] 物理位置X
-	@param nY [in] 物理位置Y
-	@param pnCaretPosX [out] 論理位置X
-	@param pnCaretPosY [out] 論理位置Y
+	物理位置(行頭からのバイト数、折り返し無し行位置)
+	→レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 
 	@date 2004.06.16 Moca インデント表示の際のTABを含む行の座標ずれ修正
-	@date 2007.09.06 kobake 関数名をLogicToLayoutからLogicToLayoutに変更
+	@date 2007.09.06 kobake 関数名をCaretPos_Phys2LogからLogicToLayoutに変更
 */
 void CLayoutMgr::LogicToLayout(
 	const CLogicPoint&	ptLogic,	//!< [in]  ロジック位置
@@ -1232,16 +1228,17 @@ void CLayoutMgr::LogicToLayout(
 	);
 }
 
-/*
-  カーソル位置変換
-  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-  →
-  物理位置(行頭からのバイト数、折り返し無し行位置)
+/*!
+	@brief カーソル位置変換  レイアウト→物理
+
+	レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+	→物理位置(行頭からのバイト数、折り返し無し行位置)
+
+	@date 2007.09.06 kobake 関数名をCaretPos_Log2Phys→LayoutToLogicに変更
 */
-//2007.09.06 kobake 関数名をLayoutToLogic→LayoutToLogicに変更
 void CLayoutMgr::LayoutToLogic(
-	const CLayoutPoint&	ptLayout,	//!< [in]
-	CLogicPoint*		pptLogic	//!< [out]
+	const CLayoutPoint&	ptLayout,	//!< [in]  レイアウト位置
+	CLogicPoint*		pptLogic	//!< [out] ロジック位置
 ) const
 {
 	pptLogic->Set(CLogicInt(0), CLogicInt(0));
