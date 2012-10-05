@@ -1331,12 +1331,13 @@ void CEditView::SmartIndent_CPP( char cChar )
 	int			nCPY;
 	COpe*		pcOpe = NULL;
 	int			nWork;
-	int			nCaretPosX_PHY;
 	CDocLine*	pCDocLine = NULL;
 	int			nCharChars;
 	int			nSrcLen;
 	char		pszSrc[1024];
 	BOOL		bChange;
+
+	int			nCaretPosX_PHY;
 
 
 	switch( cChar ){
@@ -1357,10 +1358,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 	case ')':
 	case '{':
 	case '(':
-		/* インデント調整可能か */
-//		if( 0 >= m_nCaretPosY_PHY ){
-//			return;
-//		}
+
 		nCaretPosX_PHY = m_nCaretPosX_PHY;
 
 		pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( m_nCaretPosY_PHY, &nLineLen );
@@ -1442,7 +1440,6 @@ void CEditView::SmartIndent_CPP( char cChar )
 
 		/* 対応する括弧をさがす */
 		nLevel = 0;	/* {}の入れ子レベル */
-//		bString = FALSE;
 
 
 		nDataLen = 0;
@@ -1477,12 +1474,10 @@ void CEditView::SmartIndent_CPP( char cChar )
 							if( '{' == cChar && '}' == pLine2[k] ){
 								cChar = '}';
 								nLevel--;	/* {}の入れ子レベル */
-//								return;
 							}
 							if( '(' == cChar && ')' == pLine2[k] ){
 								cChar = ')';
 								nLevel--;	/* {}の入れ子レベル */
-//								return;
 							}
 						}
 
@@ -1535,10 +1530,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 			nCharChars = (m_pcEditDoc->GetDocumentAttribute().m_bInsSpace)? m_pcEditDoc->m_cLayoutMgr.GetTabSpace(): 1;
 			pszData = new char[nDataLen + nCharChars + 1];
 			memcpy( pszData, pLine2, nDataLen );
-			if( CR  == cChar
-			 || '{' == cChar
-			 || '(' == cChar
-			){
+			if( CR  == cChar || '{' == cChar || '(' == cChar ){
 				// 2005.10.11 ryoji TABキーがSPACE挿入の設定なら追加インデントもSPACEにする
 				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
 				if( m_pcEditDoc->GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
@@ -1583,7 +1575,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 		nCPY = m_nCaretPosY_PHY;
 
 		nSrcLen = nXTo - nXFm;
-		if( nSrcLen >= sizeof( pszSrc ) - 1 ){
+		if( nSrcLen >= _countof( pszSrc ) - 1 ){
 			//	Sep. 18, 2002 genta メモリリーク対策
 			delete [] pszData;
 			return;
@@ -1617,7 +1609,6 @@ void CEditView::SmartIndent_CPP( char cChar )
 				pszData,	/* 挿入するデータ */
 				nDataLen,	/* 挿入するデータの長さ */
 				TRUE
-			//	BOOL		bUndo			/* Undo操作かどうか */
 			);
 		}
 
@@ -1645,7 +1636,6 @@ void CEditView::SmartIndent_CPP( char cChar )
 		delete [] pszData;
 		pszData = NULL;
 	}
-	return;
 }
 
 

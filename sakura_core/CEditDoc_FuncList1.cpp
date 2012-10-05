@@ -97,7 +97,7 @@ static bool C_IsLineEsc(const char *s, int len)
 		} else if ( len == 2 ) {
 			if ( CMemory::GetSizeOfChar( s, 2 , 0 ) == 1 )
 				return(true);
-		} else {				/* 残り３バイト以上	*/
+		} else { //残り３バイト以上
 			if ( CMemory::GetSizeOfChar( s, len , len-2 ) == 1 )
 				return(true);
 			if ( CMemory::GetSizeOfChar( s, len , len-3 ) == 2 )
@@ -106,6 +106,8 @@ static bool C_IsLineEsc(const char *s, int len)
 	}
 	return(false);
 }
+
+
 
 /*!
 	Cプリプロセッサの #if/ifdef/ifndef - #else - #endif状態管理クラス
@@ -287,7 +289,6 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 {
 	const char*	pLine;
 	int			nLineLen;
-	int			nLineCount;
 	int			i;
 
 	// 2002/10/27 frozen　ここから
@@ -337,7 +338,6 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 		M2_KR_FUNC			= 0x16,	//!< K&Rスタイルの関数定義を調査する。
 		M2_AFTER_ITEM		= 0x10,
 	} nMode2 = M2_NORMAL;
-//	char		szFuncName[256];	//	関数名
 
 	const int	nNamespaceNestMax	= 32;			//!< ネスト可能なネームスペース、クラス等の最大数
 	int			nNamespaceLen[nNamespaceNestMax+1];	//!< ネームスペース全体の長さ
@@ -358,14 +358,6 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 	int			nItemLine;			//!< すぐ前の 関数 or クラス or 構造体 or 共用体 or 列挙体 or ネームスペースのある行
 	int			nItemFuncId;
 
-//	int			nFuncLine;
-//	int			nFuncId;
-	
-//	int			nFuncNum;			// 使っていないようなので削除
-	// 2002/10/27 frozen　ここまで
-
-	//	Mar. 4, 2001 genta
-//	bool		bCppInitSkip;		//	C++のメンバー変数、親クラスの初期化子をSKIP // 2002/10/27 frozen nMode2の機能で代用
 	szWordPrev[0] = '\0';
 	szWord[nWordIdx] = '\0';
 	szNamespace[0] = '\0';	// 2002/10/27 frozen
@@ -375,11 +367,8 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 	//	Aug. 10, 2004 genta プリプロセス処理クラス
 	CCppPreprocessMng cCppPMng;
 	
-//	FuncNum = 0;
-//	bCppInitSkip = false;
-//	for( nLineCount = 0; nLineCount <  m_cLayoutMgr.GetLineCount(); ++nLineCount ){
+	int			nLineCount;
 	for( nLineCount = 0; nLineCount <  m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-//		pLine = m_cLayoutMgr.GetLineStr( nLineCount, &nLineLen );
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 
 		//	From Here Aug. 10, 2004 genta
@@ -417,41 +406,41 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 					continue;
 				}else{
 				}
-			}else
+			}
 			/* ラインコメント読み込み中 */
 			// 2003/06/24 zenryaku
-			if( 10 == nMode)
+			else if( 10 == nMode)
 			{
 				if(!C_IsLineEsc(pLine, nLineLen)){
 					nMode = 0;
 				}
 				i = nLineLen;
 				continue;
-			}else
-/* add start 2005/12/6 じゅうじ	*/
+			}
+			/* add start 2005/12/6 じゅうじ	*/
 			/* エスケープシーケンスは常に取り除く */
-			if( '\\' == pLine[i] ){
+			else if( '\\' == pLine[i] ){
 				++i;
-			}else
+			}
 			/* シングルクォーテーション文字列読み込み中 */
-			if( 20 == nMode ){
+			else if( 20 == nMode ){
 				if( '\'' == pLine[i] ){
 					nMode = 0;
 					continue;
 				}else{
 				}
-			}else
+			}
 			/* ダブルクォーテーション文字列読み込み中 */
-			if( 21 == nMode ){
+			else if( 21 == nMode ){
 				if( '"' == pLine[i] ){
 					nMode = 0;
 					continue;
 				}else{
 				}
-			}else
-/* add end 2005/12/6 じゅうじ	*/
+			}
+			/* add end 2005/12/6 じゅうじ	*/
 			/* 単語読み込み中 */
-			if( 1 == nMode ){
+			else if( 1 == nMode ){
 				if( C_IsWordChar( pLine[i] ) ){
 					++nWordIdx;
 					if( nWordIdx >= nMaxWordLeng ){
@@ -863,30 +852,6 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 				// To Here 2007.05.26 genta C++/CLI Attributeの取り扱い
 				if( ';' == pLine[i] ){
 					//  2002/10/27 frozen ここから
-//					if( 2 == nNestLevel2 ){
-//						//	閉じ括弧')'の後の';' すなわち関数宣言
-//						if( 0 != strcmp( "sizeof", szFuncName ) ){
-//							nFuncId = 1;
-//							++nFuncNum;
-//							/*
-//							  カーソル位置変換
-//							  物理位置(行頭からのバイト数、折り返し無し行位置)
-//							  →
-//							  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-//							*/
-//							int		nPosX;
-//							int		nPosY;
-//							m_cLayoutMgr.LogicToLayout(
-//								0,
-//								nFuncLine - 1,
-//								&nPosX,
-//								&nPosY
-//							);
-//							pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1, szFuncName, nFuncId);
-////						pcFuncInfoArr->AppendData( nFuncLine, szFuncName, nFuncId );
-//						}
-//					}
-//					nNestLevel2 = 0;
 					if( nMode2 == M2_KR_FUNC )
 					{
 						//	Jan. 30, 2005 genta 関数後の const, throwの後ろの
@@ -935,35 +900,6 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 				}else if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE ){
 					// 2007.05.26 genta C++/CLI Attribute内部では関数名処理は一切行わない
 					if( C_IsWordChar( pLine[i] ) ){
-						//  2002/10/27 frozen ここから削除
-//						if( 2 == nNestLevel2 ){
-//							//	閉じ括弧が無いけどとりあえず登録しちゃう
-//							if( 0 != strcmp( "sizeof", szFuncName ) ){
-//								nFuncId = 2;
-//								++nFuncNum;
-//								/*
-//								  カーソル位置変換
-//								  物理位置(行頭からのバイト数、折り返し無し行位置)
-//								  →
-//								  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-//								*/
-//								int		nPosX;
-//								int		nPosY;
-//								m_cLayoutMgr.LogicToLayout(
-//									0,
-//									nFuncLine - 1,
-//									&nPosX,
-//									&nPosY
-//								);
-//								pcFuncInfoArr->AppendData( nFuncLine, nPosY + 1 , szFuncName, nFuncId );
-//							}
-//							nNestLevel2 = 0;
-//							//	Mar 4, 2001 genta	初期化子だったときはそれ以降の登録を制限する
-//							if( pLine[i] == ':' )
-//								bCppInitSkip = true;
-//						}
-						//  2002/10/27 frozen ここまで削除
-
 						//	//	Mar. 15, 2000 genta
 						//	From Here
 						//	直前のwordの最後が::か，あるいは直後のwordの先頭が::なら
@@ -1073,5 +1009,4 @@ void CEditDoc::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberF
 			}
 		}
 	}
-	return;
 }

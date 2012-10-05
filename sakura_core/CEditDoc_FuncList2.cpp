@@ -512,8 +512,8 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			int len = w_end - col;
 			
 			if( len > 0 ){
-				if( len > sizeof( szWord ) - 1){
-					len = sizeof( szWord ) - 1;
+				if( len > _countof( szWord ) - 1){
+					len = _countof( szWord ) - 1;
 				}
 				strncpy( szWord, pLine + col, len );
 				szWord[ len ] = '\0';
@@ -523,9 +523,9 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				len = 8;
 			}
 			if( nItemFuncId == 4  ){
-				if( sizeof( szWord ) - 8  < len ){
+				if( _countof( szWord ) - 8  < len ){
 					//	後ろを削って入れる
-					len = sizeof( szWord ) - 8;
+					len = _countof( szWord ) - 8;
 				}
 				// class
 				strcpy( szWord + len, " クラス" );
@@ -541,13 +541,21 @@ void CEditDoc::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			int		nPosY;
 			m_cLayoutMgr.LayoutToLogic(
 				0,
-				nLineCount/*nFuncLine - 1*/,
+				nLineCount,
 				&nPosX,
 				&nPosY
 			);
-			pcFuncInfoArr->AppendData( nLineCount + 1, nPosY + 1, szWord, nItemFuncId, depth_index );
+			pcFuncInfoArr->AppendData(
+				nLineCount + 1,
+				nPosY + 1,
+				szWord,
+				nItemFuncId,
+				depth_index
+			);
 			col = w_end; // クラス・関数定義の続きはここから
 		}
 		python_analyze_state.DoScanLine( pLine, nLineLen, col );
 	}
 }
+
+
