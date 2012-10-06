@@ -404,7 +404,7 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 		sColumn.fmt = LVCFMT_LEFT;
 		
 		if( ListView_InsertColumn( hListView, pos, &sColumn ) < 0 ){
-			::MessageBox( hwndDlg, _T("PropComMacro::InitDlg::ColumnRegistrationFail"), _T("ƒoƒO•ñ‚¨Šè‚¢"), MB_OK );
+			PleaseReportToAuthor( hwndDlg, _T("PropComMacro::InitDlg::ColumnRegistrationFail") );
 			return;	//	‚æ‚­‚í‚©‚ç‚ñ‚¯‚ÇŽ¸”s‚µ‚½
 		}
 	}

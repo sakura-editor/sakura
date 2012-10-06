@@ -736,8 +736,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 			goto next_line;
 		}
 		if( 0 > nWorkLen ){
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION,
-				_T("作者に教えて欲しいエラー"),
+			PleaseReportToAuthor(
+				NULL,
 				_T("CDocLineMgr::ReplaceData()\n")
 				_T("\n")
 				_T("0 > nWorkLen\nnWorkLen=%d\n")
@@ -757,8 +757,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		/* 削除されたデータを保存 */
 		// 2002/2/10 aroka from here CMemory変更 念のため。
 		if( pLine != pCDocLine->GetPtr() ){
-			::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION,
-				_T("作者に教えて欲しいエラー"),
+			PleaseReportToAuthor(
+				NULL,
 				_T("CDocLineMgr::ReplaceData()\n")
 				_T("\n")
 				_T("pLine != pCDocLine->m_cLine.GetPtr() =%d\n")
