@@ -823,11 +823,10 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		{ 0x00df,	_T("_(PC-98)"),		F_0,			F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 },
 		{ VK_APPS,	_T("アプリキー"),	F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }
 	};
-	const int	nKeyDataInitNum = sizeof( KeyDataInit ) / sizeof( KeyDataInit[0] );
+	const int	nKeyDataInitNum = _countof( KeyDataInit );
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
-	if( nKeyDataInitNum > sizeof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) / sizeof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[0])) {
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, _T("作者に教えて欲しいエラー"),
-			_T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
+	if( nKeyDataInitNum > _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr )) {
+		PleaseReportToAuthor( NULL, _T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
 		return false;
 	}
 	//	To Here 2007.11.04 genta バッファオーバーラン防止
