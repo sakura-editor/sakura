@@ -345,10 +345,8 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 			0,
 			NULL
 		);
-		::MYMESSAGEBOX(
+		PleaseReportToAuthor(
 			NULL,
-			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-			_T("作者に教えて欲しいエラー"),
 			_T("CPropCommon::DoPropertySheet()内でエラーが出ました。\n")
 			_T("psh.nStartPage=[%d]\n")
 			_T("::PropertySheet()失敗\n")

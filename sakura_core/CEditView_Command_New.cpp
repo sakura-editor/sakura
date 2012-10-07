@@ -2769,9 +2769,7 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const ECodeType nCharCode
 				default:
 					//	genta ここに来るのはバグだ
 					//	2007.09.08 genta 追加
-					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("作者に教えて欲しいエラー"),
-					_T("CEditView::Command_PUTFILE/BOM Error\nSaveCharCode=%d"), nSaveCharCode );
-					;
+					PleaseReportToAuthor( NULL, _T("CEditView::Command_PUTFILE/BOM Error\nSaveCharCode=%d"), nSaveCharCode );
 				}
 			}
 

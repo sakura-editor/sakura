@@ -251,7 +251,7 @@ const char* COutlineErlang::ScanArgs( const char* end, const char* p )
 					case ']': op = '['; break;
 					case '}': op = '{'; break;
 					default:
-						::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, _T("作者に教えて欲しいエラー"), _T("COutlineErlang::ScanArgs 未知の括弧"));
+						PleaseReportToAuthor( NULL, _T("COutlineErlang::ScanArgs 未知の括弧") );
 						break;
 				}
 				// level down
@@ -373,7 +373,7 @@ bool COutlineErlang::parse( const char* buf, int linelen, int linenum )
 			case STATE_FUNC_ARGS_FIN:
 				pos = EnterCond( end, pos ); break;
 			default:
-				::MYMESSAGEBOX(	NULL, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, _T("作者に教えて欲しいエラー"), _T("COutlineErlang::parse Unknown State: %d"), m_state );
+				PleaseReportToAuthor( NULL, _T("COutlineErlang::parse Unknown State: %d"), m_state );
 				break;
 		}
 		if( m_state == STATE_FUNC_FOUND ){
