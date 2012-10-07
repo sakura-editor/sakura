@@ -175,39 +175,30 @@ SAKURA_CORE_API int MessageBoxF_A( HWND hwndOwner, UINT uType, LPCSTR lpCaption,
 
 //エラー：赤丸に「×」[OK]
 int ErrorMessage  (HWND hwnd, LPCTSTR format, ...){       va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP                     , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int ErrorMessage_A(HWND hwnd, LPCSTR  format, ...){       va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, MB_OK | MB_ICONSTOP                     , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 //(TOPMOST)
 int TopErrorMessage  (HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST        , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int TopErrorMessage_A(HWND hwnd, LPCSTR format, ...){     va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST        , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 
 //警告：三角に「i」
 int WarningMessage   (HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONEXCLAMATION              , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int WarningMessage_A (HWND hwnd, LPCSTR  format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, MB_OK | MB_ICONEXCLAMATION              , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 int TopWarningMessage(HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST , GSTR_APPNAME,   format, p);va_end(p);return n;}
 
 //情報：青丸に「i」
 int InfoMessage   (HWND hwnd, LPCTSTR format, ...){       va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONINFORMATION              , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int InfoMessage_A (HWND hwnd, LPCSTR  format, ...){       va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, MB_OK | MB_ICONINFORMATION              , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 int TopInfoMessage(HWND hwnd, LPCTSTR format, ...){       va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST , GSTR_APPNAME,   format, p);va_end(p);return n;}
 
 //確認：吹き出しの「？」 戻り値:ID_YES,ID_NO
 int ConfirmMessage   (HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_YESNO | MB_ICONQUESTION              , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int ConfirmMessage_A (HWND hwnd, LPCSTR  format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, MB_YESNO | MB_ICONQUESTION              , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 int TopConfirmMessage(HWND hwnd, LPCTSTR format, ...){    va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_YESNO | MB_ICONQUESTION | MB_TOPMOST , GSTR_APPNAME,   format, p);va_end(p);return n;}
 
 //その他メッセージ表示用ボックス
 int OkMessage(HWND hwnd, LPCTSTR format, ...){            va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK                                   , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int OkMessage_A(HWND hwnd, LPCSTR format, ...){           va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, MB_OK                                   , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 //(TOPMOST)
 int TopOkMessage(HWND hwnd, LPCTSTR format, ...){         va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_TOPMOST                      , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int TopOkMessage_A(HWND hwnd, LPCSTR format, ...){        va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, MB_OK | MB_TOPMOST                      , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 
 //タイプ指定メッセージ表示用ボックス
 int CustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...){            va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, uType                   , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int CustomMessage_A(HWND hwnd, UINT uType, LPCSTR format, ...){           va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, uType                   , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 //(TOPMOST)
 int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...){         va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, uType | MB_TOPMOST      , GSTR_APPNAME,   format, p);va_end(p);return n;}
-int TopCustomMessage_A(HWND hwnd, UINT uType, LPCSTR format, ...){        va_list p;va_start(p, format);int n=VMessageBoxF_A(hwnd, uType | MB_TOPMOST      , GSTR_APPNAME_A, format, p);va_end(p);return n;}
 
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("sakuraw: 作者に教えて欲しいエラー"), format, p);va_end(p);return n;}
