@@ -124,49 +124,39 @@ void DBMSG_IMP(const ACHAR* msg); //!< ƒƒbƒZ[ƒWƒ{ƒbƒNƒX‚ð•\Ž¦BƒLƒƒƒvƒVƒ‡ƒ“‚É‚
 
 //ƒfƒoƒbƒO—pƒƒbƒZ[ƒWƒ{ƒbƒNƒX
 #define MYMESSAGEBOX MessageBoxF
-#define MYMESSAGEBOX_A MessageBoxF_A
 
 //ˆê”Ê‚ÌŒx‰¹
 #define DefaultBeep()   MessageBeep(MB_OK)
 
 //ƒGƒ‰[FÔŠÛ‚Éu~v[OK]
 int ErrorMessage  (HWND hwnd, LPCTSTR format, ...);
-int ErrorMessage_A(HWND hwnd, LPCSTR  format, ...);
 //(TOPMOST)
 int TopErrorMessage  (HWND hwnd, LPCTSTR format, ...);
-int TopErrorMessage_A(HWND hwnd, LPCSTR format, ...);
 #define ErrorBeep()     MessageBeep(MB_ICONSTOP)
 
 //ŒxFŽOŠp‚ÉuIv[OK]
 int WarningMessage   (HWND hwnd, LPCTSTR format, ...);
-int WarningMessage_A (HWND hwnd, LPCSTR  format, ...);
 int TopWarningMessage(HWND hwnd, LPCTSTR format, ...);
 #define WarningBeep()   MessageBeep(MB_ICONEXCLAMATION)
 
 //î•ñFÂŠÛ‚Éuiv[OK]
 int InfoMessage   (HWND hwnd, LPCTSTR format, ...);
-int InfoMessage_A (HWND hwnd, LPCSTR  format, ...);
 int TopInfoMessage(HWND hwnd, LPCTSTR format, ...);
 #define InfoBeep()      MessageBeep(MB_ICONINFORMATION)
 
 //Šm”FF‚«o‚µ‚ÌuHv [‚Í‚¢][‚¢‚¢‚¦] –ß‚è’l:IDYES,IDNO
 int ConfirmMessage   (HWND hwnd, LPCTSTR format, ...);
-int ConfirmMessage_A (HWND hwnd, LPCSTR  format, ...);
 int TopConfirmMessage(HWND hwnd, LPCTSTR format, ...);
 #define ConfirmBeep()   MessageBeep(MB_ICONQUESTION)
 
 //‚»‚Ì‘¼ƒƒbƒZ[ƒW•\Ž¦—pƒ{ƒbƒNƒX[OK]
 int OkMessage  (HWND hwnd, LPCTSTR format, ...);
-int OkMessage_A(HWND hwnd, LPCSTR  format, ...);
 int TopOkMessage  (HWND hwnd, LPCTSTR format, ...);
-int TopOkMessage_A(HWND hwnd, LPCSTR format, ...);
 
 //ƒ^ƒCƒvŽw’èƒƒbƒZ[ƒW•\Ž¦—pƒ{ƒbƒNƒX
 int CustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);
-int CustomMessage_A(HWND hwnd, UINT uType, LPCSTR format, ...);
 //(TOPMOST)
 int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);
-int TopCustomMessage_A(HWND hwnd, UINT uType, LPCSTR format, ...);
 
 //ìŽÒ‚É‹³‚¦‚Ä—~‚µ‚¢ƒGƒ‰[
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...);
