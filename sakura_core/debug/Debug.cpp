@@ -119,55 +119,31 @@ HWND GetMessageBoxOwner(HWND hwndOwner)
 	引数で与えられた情報をダイアログボックスで表示する．
 	デバッグ目的以外でも使用できる．
 */
-SAKURA_CORE_API int VMessageBoxF_W(
+SAKURA_CORE_API int VMessageBoxF(
 	HWND		hwndOwner,	//!< [in] オーナーウィンドウのハンドル
 	UINT		uType,		//!< [in] メッセージボックスのスタイル (MessageBoxと同じ形式)
-	LPCWSTR		lpCaption,	//!< [in] メッセージボックスのタイトル
-	LPCWSTR		lpText,		//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
+	LPCTSTR		lpCaption,	//!< [in] メッセージボックスのタイトル
+	LPCTSTR		lpText,		//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
 	va_list&	v			//!< [in/out] 引数リスト
 )
 {
 	hwndOwner=GetMessageBoxOwner(hwndOwner);
 	//整形
-	static WCHAR szBuf[16000];
-	tchar_vsnwprintf_s(szBuf,_countof(szBuf),lpText,v);
-	//API呼び出し
+	static TCHAR szBuf[16000];
 #ifdef _UNICODE
-	return ::MessageBoxW( hwndOwner, szBuf, lpCaption, uType);
+	tchar_vsnwprintf_s(szBuf,_countof(szBuf),lpText,v);
 #else
-	return ::MessageBoxA( hwndOwner, to_achar(szBuf), to_achar(lpCaption), uType);
-#endif
-}
-
-SAKURA_CORE_API int VMessageBoxF_A(
-	HWND		hwndOwner,	//!< [in] オーナーウィンドウのハンドル
-	UINT		uType,		//!< [in] メッセージボックスのスタイル (MessageBoxと同じ形式)
-	LPCSTR		lpCaption,	//!< [in] メッセージボックスのタイトル
-	LPCSTR		lpText,		//!< [in] 表示するテキスト。printf仕様の書式指定が可能。
-	va_list&	v			//!< [in/out] 引数リスト
-)
-{
-	hwndOwner=GetMessageBoxOwner(hwndOwner);
-	//整形
-	static ACHAR szBuf[16000];
 	tchar_vsnprintf_s(szBuf,_countof(szBuf),lpText,v);
+#endif
 	//API呼び出し
-	return ::MessageBoxA( hwndOwner, szBuf, lpCaption, uType);
+	return ::MessageBox( hwndOwner, szBuf, lpCaption, uType);
 }
 
-SAKURA_CORE_API int MessageBoxF_W( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, ... )
+SAKURA_CORE_API int MessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... )
 {
 	va_list v;
 	va_start(v,lpText);
-	int nRet = VMessageBoxF_W(hwndOwner, uType, lpCaption, lpText, v);
-	va_end(v);
-	return nRet;
-}
-SAKURA_CORE_API int MessageBoxF_A( HWND hwndOwner, UINT uType, LPCSTR lpCaption, LPCSTR lpText, ... )
-{
-	va_list v;
-	va_start(v,lpText);
-	int nRet = VMessageBoxF_A(hwndOwner, uType, lpCaption, lpText, v);
+	int nRet = VMessageBoxF(hwndOwner, uType, lpCaption, lpText, v);
 	va_end(v);
 	return nRet;
 }
