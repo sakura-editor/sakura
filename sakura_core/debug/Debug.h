@@ -35,19 +35,8 @@ SAKURA_CORE_API void DebugOutA( LPCSTR lpFmt, ...);
 //2007.10.02 kobake メッセージボックスの使用はデバッグ時に限らないので、「Debug～」という名前を廃止
 
 //テキスト整形機能付きMessageBox
-SAKURA_CORE_API int VMessageBoxF_W( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, va_list& v );
-SAKURA_CORE_API int VMessageBoxF_A( HWND hwndOwner, UINT uType, LPCSTR  lpCaption, LPCSTR  lpText, va_list& v );
-SAKURA_CORE_API int MessageBoxF_W ( HWND hwndOwner, UINT uType, LPCWSTR lpCaption, LPCWSTR lpText, ... );
-SAKURA_CORE_API int MessageBoxF_A ( HWND hwndOwner, UINT uType, LPCSTR  lpCaption, LPCSTR  lpText, ... );
-
-//TCHAR
-#ifdef _UNICODE
-	#define VMessageBoxF VMessageBoxF_W
-	#define MessageBoxF  MessageBoxF_W
-#else
-	#define VMessageBoxF VMessageBoxF_A
-	#define MessageBoxF  MessageBoxF_A
-#endif
+SAKURA_CORE_API int VMessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, va_list& v );
+SAKURA_CORE_API int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... );
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 デバッグ用メッセージ出力                    //
