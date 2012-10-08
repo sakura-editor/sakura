@@ -68,8 +68,6 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 
 	/* 基底クラスメンバ呼び出し */
 	return CWnd::Create(
-		/* 初期化 */
-		hInstance,
 		hwndParent,
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.

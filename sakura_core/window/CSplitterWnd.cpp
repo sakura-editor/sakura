@@ -85,7 +85,6 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 
 	/* 基底クラスメンバ呼び出し */
 	return CWnd::Create(
-		hInstance,
 		hwndParent,
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
