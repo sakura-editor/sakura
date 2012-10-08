@@ -152,7 +152,6 @@ ATOM CWnd::RegisterWC(
 /* 作成 */
 HWND CWnd::Create(
 	/* CreateWindowEx()用 */
-	HINSTANCE	hInstance,
 	HWND		hwndParent,
 	DWORD		dwExStyle,		// extended window style
 	LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
@@ -165,7 +164,6 @@ HWND CWnd::Create(
 	HMENU		hMenu			// handle to menu, or child-window identifier
 )
 {
-	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
 
 	/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/

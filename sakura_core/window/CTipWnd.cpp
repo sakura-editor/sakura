@@ -64,7 +64,6 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	// 2006.01.09 ryoji ‰Šúó‘Ô‚ğ•s‰Â‹‚É‚·‚é
 	//	À¿“I‚É‚ÍŒ©‚¦‚È‚¢CTipWnd‚ªÅ‘O–Ê‚É‚ ‚é‚Æ”»’f‚³‚ê‚Ä‚µ‚Ü‚¤ê‡‚ª‚ ‚é‚½‚ß
 	CWnd::Create(
-		hInstance,
 		hwndParent,
 		WS_EX_TOOLWINDOW, // extended window style	// 2002/2/3 GAE
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.

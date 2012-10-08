@@ -48,7 +48,7 @@ public:
 	*/
 
 	void Init( HINSTANCE, HWND );/* 初期化 */
-	
+
 	// ウィンドウクラス登録
 	ATOM RegisterWC(
 		HINSTANCE	hInstance,
@@ -62,7 +62,6 @@ public:
 
 	//ウィンドウ作成
 	HWND Create(
-		HINSTANCE	hInstance,
 		HWND		hwndParent,
 		DWORD		dwExStyle,		// extended window style
 		LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
