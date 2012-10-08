@@ -112,10 +112,6 @@ CFuncKeyWnd::~CFuncKeyWnd()
 /* ウィンドウ オープン */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, BOOL bSizeBox )
 {
-	/* 初期化 */
-	m_hInstance = hInstance;
-	m_hwndParent = hwndParent;
-
 	m_pCEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
 	m_hwndSizeBox = NULL;
@@ -129,6 +125,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
+		hInstance,
 		NULL,// Handle to the class icon.
 		NULL,	//Handle to a small icon
 		::LoadCursor( NULL, IDC_ARROW ),// Handle to the class cursor.
@@ -139,6 +136,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 
 	/* 基底クラスメンバ呼び出し */
 	CWnd::Create(
+		hwndParent,
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name

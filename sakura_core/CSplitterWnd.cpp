@@ -63,14 +63,12 @@ CSplitterWnd::~CSplitterWnd()
 HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd )
 {
 	/* 初期化 */
-	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_pCEditWnd	= pCEditWnd;
 
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
 	atWork = RegisterWC(
-		/* WNDCLASS用 */
+		hInstance,
 		NULL,// Handle to the class icon.
 		NULL,	//Handle to a small icon
 		NULL,// Handle to the class cursor.
@@ -86,7 +84,7 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 
 	/* 基底クラスメンバ呼び出し */
 	return CWnd::Create(
-		/* CreateWindowEx()用 */
+		hwndParent,
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name

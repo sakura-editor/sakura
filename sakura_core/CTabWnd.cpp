@@ -630,8 +630,6 @@ CTabWnd::CTabWnd()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
-	m_hInstance  = NULL;
-	m_hwndParent = NULL;
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
@@ -655,8 +653,6 @@ CTabWnd::~CTabWnd()
 HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 {
 	/* 初期化 */
-	m_hInstance  = hInstance;
-	m_hwndParent = hwndParent;
 	m_hwndTab    = NULL;
 	m_hFont      = NULL;
 	gm_pOldWndProc = NULL;
@@ -670,7 +666,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(
-		/* WNDCLASS用 */
+		hInstance,
 		NULL,								// Handle to the class icon.
 		NULL,								//Handle to a small icon
 		::LoadCursor( NULL, IDC_ARROW ),	// Handle to the class cursor.
@@ -683,7 +679,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 
 	/* 基底クラスメンバ呼び出し */
 	CWnd::Create(
-		/* CreateWindowEx()用 */
+		hwndParent,
 		0,									// extended window style
 		m_pszClassName,						// Pointer to a null-terminated string or is an atom.
 		m_pszClassName,						// pointer to window name
@@ -833,13 +829,14 @@ void CTabWnd::Close( void )
 //WM_SIZE処理
 LRESULT CTabWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	RECT	rcParent;
+	RECT	rcWnd;
 
 	if( NULL == m_hWnd || NULL == m_hwndTab ) return 0L;
 
-	::GetWindowRect( m_hWnd, &rcParent );
+	int nHeight = TAB_WINDOW_HEIGHT;
+	::GetWindowRect( m_hWnd, &rcWnd );
 
-	::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcParent.right - rcParent.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), TAB_WINDOW_HEIGHT, TRUE );	// 2005.01.30 ryoji
+	::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), nHeight, TRUE );	// 2005.01.30 ryoji
 
 	LayoutTab();	// 2006.01.28 ryoji タブのレイアウト調整処理
 

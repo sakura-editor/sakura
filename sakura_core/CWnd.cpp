@@ -28,7 +28,7 @@ CWnd* gm_pCWnd = NULL;
 LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	CWnd* pCWnd;
-//	CREATESTRUCT* lpcs;
+
 	if( NULL != gm_pCWnd
 	 && NULL == ::GetWindowLongPtr( hwnd, GWLP_USERDATA ) // Modified by KEITA for WIN64 2003.9.6
 	){
@@ -43,7 +43,7 @@ LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		// Modified by KEITA for WIN64 2003.9.6
 		pCWnd = (CWnd*)::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 	}
-	if( NULL != pCWnd ){
+	if( pCWnd ){
 		/* クラスオブジェクトのポインタを使ってメッセージを配送する */
 		return pCWnd->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	}
@@ -91,6 +91,7 @@ void CWnd::Init(
 /* ウィンドウクラス作成 */
 ATOM CWnd::RegisterWC(
 	/* WNDCLASS用 */
+	HINSTANCE	hInstance,
 	HICON		hIcon,			// Handle to the class icon.
 	HICON		hIconSm,		// Handle to a small icon
 	HCURSOR		hCursor,		// Handle to the class cursor.
@@ -99,6 +100,8 @@ ATOM CWnd::RegisterWC(
 	LPCTSTR		lpszClassName	// Pointer to a null-terminated string or is an atom.
 )
 {
+	m_hInstance = hInstance;
+
 	/* ウィンドウクラスの登録 */
 	WNDCLASSEX wc;
 	wc.cbSize = sizeof(wc);
@@ -121,6 +124,7 @@ ATOM CWnd::RegisterWC(
 /* 作成 */
 HWND CWnd::Create(
 	/* CreateWindowEx()用 */
+	HWND		hwndParent,
 	DWORD		dwExStyle,		// extended window style
 	LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
 	LPCTSTR		lpWindowName,	// pointer to window name
@@ -132,6 +136,8 @@ HWND CWnd::Create(
 	HMENU		hMenu			// handle to menu, or child-window identifier
 )
 {
+	m_hwndParent = hwndParent;
+
 	/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
 	PreviCreateWindow();
 

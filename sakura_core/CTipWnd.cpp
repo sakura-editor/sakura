@@ -48,14 +48,10 @@ CTipWnd::~CTipWnd()
 /* 初期化 */
 void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 {
-
-	/* 初期化 */
-	m_hInstance = hInstance;	/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
-
 	/* ウィンドウクラス作成 */
 	ATOM atWork;
 	atWork = RegisterWC(
+		hInstance,
 		/* WNDCLASS用 */
 		NULL,// Handle to the class icon.
 		NULL,	//Handle to a small icon
@@ -69,7 +65,7 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 	// 2006.01.09 ryoji 初期状態を不可視にする
 	//	実質的には見えないCTipWndが最前面にあると判断されてしまう場合があるため
 	CWnd::Create(
-		/* CreateWindowEx()用 */
+		hwndParent,
 		WS_EX_TOOLWINDOW, // extended window style	// 2002/2/3 GAE
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name

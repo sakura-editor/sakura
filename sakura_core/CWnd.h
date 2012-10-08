@@ -38,6 +38,8 @@ extern CWnd* gm_pCWnd;
 */
 class SAKURA_CORE_API CWnd
 {
+protected:
+	friend LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 public:
 	/* Constructors */
 	CWnd(const TCHAR* pszInheritanceAppend = _T(""));
@@ -46,15 +48,16 @@ public:
 	||  Attributes & Operations
 	*/
 protected: // 2002/2/10 aroka アクセス権変更
-	HINSTANCE	m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND		m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HINSTANCE	m_hInstance;	// アプリケーションインスタンスのハンドル
+	HWND		m_hwndParent;	// オーナーウィンドウのハンドル
 public:
-	HWND		m_hWnd;			/* このダイアログのハンドル */
+	HWND		m_hWnd;			// このダイアログのハンドル
 
 	void Init( HINSTANCE, HWND );/* 初期化 */
 
 	// ウィンドウクラス登録
 	ATOM RegisterWC(
+		HINSTANCE	hInstance,
 		HICON		hIcon,			// Handle to the class icon.
 		HICON		hIconSm,		// Handle to a small icon
 		HCURSOR		hCursor,		// Handle to the class cursor.
@@ -65,6 +68,7 @@ public:
 
 	//ウィンドウ作成
 	HWND Create(
+		HWND		hwndParent,
 		DWORD		dwExStyle,		// extended window style
 		LPCTSTR		lpszClassName,	// Pointer to a null-terminated string or is an atom.
 		LPCTSTR		lpWindowName,	// pointer to window name

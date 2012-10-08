@@ -39,10 +39,6 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 	RECT		rc;
 	HCURSOR		hCursor;
 
-	/* 初期化 */
-	m_hInstance = hInstance;
-	m_hwndParent = hwndParent;
-
 	/* ウィンドウクラス作成 */
 	if( bVertical ){
 		m_pszClassName = _T("VSplitBoxWnd");
@@ -53,7 +49,7 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 		hCursor = ::LoadCursor( NULL, IDC_SIZEWE );
 	}
 	RegisterWC(
-		/* WNDCLASS用 */
+		hInstance,
 		NULL,	// Handle to the class icon.
 		NULL,	// Handle to a small icon
 		hCursor,// Handle to the class cursor.
@@ -72,7 +68,7 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 
 	/* 基底クラスメンバ呼び出し */
 	return CWnd::Create(
-		/* CreateWindowEx()用 */
+		hwndParent,
 		0, // extended window style
 		m_pszClassName,	// Pointer to a null-terminated string or is an atom.
 		m_pszClassName, // pointer to window name
