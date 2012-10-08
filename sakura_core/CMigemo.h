@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 2004, isearch
 	Copyright (C) 2005, aroka
+	Copyright (C) 2010, aroka
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -35,8 +36,10 @@
 #define MIGEMO_OPINDEX_NEWLINE		5
 
 /* see: rxgen.h */
-typedef int (*MIGEMO_PROC_CHAR2INT)(unsigned char*, unsigned int*);
-typedef int (*MIGEMO_PROC_INT2CHAR)(unsigned int, unsigned char*);
+//	2010.11.20 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
+//	影響を受けないようにする．
+typedef int (__cdecl *MIGEMO_PROC_CHAR2INT)(unsigned char*, unsigned int*);
+typedef int (__cdecl *MIGEMO_PROC_INT2CHAR)(unsigned int, unsigned char*);
 
 /**
  * Migemoオブジェクト。migemo_open()で作成され、migemo_closeで破棄される。
@@ -65,7 +68,7 @@ public:
 
 	//	Entry Point
 protected:
-	//	Aug. 20, 2005 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
+	//	2005.08.20 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても
 	//	影響を受けないようにする．
 	typedef migemo* (__cdecl *Proc_migemo_open)(char* dict);
 	typedef void (__cdecl *Proc_migemo_close)(migemo* object);
