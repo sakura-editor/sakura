@@ -899,41 +899,27 @@ void CGrepAgent::SetGrepResult(
 /*!
 	Grep実行 (CFileLoadを使ったテスト版)
 
-	@param pcDlgCancel		[in] Cancelダイアログへのポインタ
-	@param hwndCancel		[in] Cancelダイアログのウィンドウハンドル
-	@param pszKey			[in] 検索パターン
-	@param pattern			[in] 
-	@param pszFile			[in] 処理対象ファイル名(表示用)
-	@param bGrepLoHiCase	[in] TRUE: 大文字小文字の区別あり / FALSE: 無し
-	@param bGrepRegularExp	[in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
-	@param nGrepCharSet		[in] 文字コードセット (0:自動認識)～
-	@param bGrepOutputLine	[in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
-	@param bWordOnly		[in] TRUE: 単語単位で一致を判断 / FALSE: 部分にも一致する
-	@param nGrepOutputStyle	[in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
-	@param pRegexp			[in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	@param pnHitCount		[i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
-	@param pszFullPath		[in] 処理対象ファイルパス
-
 	@retval -1 GREPのキャンセル
 	@retval それ以外 ヒット数(ファイル検索時はファイル数)
 
+	@date 2001/06/27 genta	正規表現ライブラリの差し替え
 	@date 2002/08/30 Moca CFileLoadを使ったテスト版
 	@date 2004/03/28 genta 不要な引数nNest, bGrepSubFolder, pszPathを削除
 */
 int CGrepAgent::DoGrepFile(
-	CEditView*				pcViewDst,
-	CDlgCancel*				pcDlgCancel,
-	HWND					hwndCancel,
-	const wchar_t*			pszKey,
-	const TCHAR*			pszFile,
-	const SSearchOption&	sSearchOption,
-	ECodeType				nGrepCharSet,
-	BOOL					bGrepOutputLine,
-	int						nGrepOutputStyle,
-	CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	int*					pnHitCount,
-	const TCHAR*			pszFullPath,
-	CNativeW&				cmemMessage
+	CEditView*				pcViewDst,			//!< 
+	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
+	HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
+	const wchar_t*			pszKey,				//!< [in] 検索パターン
+	const TCHAR*			pszFile,			//!< [in] 処理対象ファイル名(表示用)
+	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
+	ECodeType				nGrepCharSet,		//!< [in] 文字コードセット (0:自動認識)～
+	BOOL					bGrepOutputLine,	//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
+	int						nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
+	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	int*					pnHitCount,			//!< [i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
+	const TCHAR*			pszFullPath,		//!< [in] 処理対象ファイルパス
+	CNativeW&				cmemMessage			//!< 
 )
 {
 	int		nHitCount;
