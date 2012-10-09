@@ -208,7 +208,7 @@ public:
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
 	DWORD DoGrep( const CMemory*, const CMemory*, const CMemory*, BOOL, BOOL, BOOL, ECodeType, BOOL, BOOL, int );	/* Grep実行 */
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const char*, const char*, BOOL, BOOL, BOOL, ECodeType, BOOL, BOOL, int, CBregexp*, int, int* );
+	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const TCHAR*, const TCHAR*, BOOL, BOOL, BOOL, ECodeType, BOOL, BOOL, int, CBregexp*, int, int* );
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	//	Mar. 28, 2004 genta 不要な引数を削除
 	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, BOOL, BOOL, ECodeType, BOOL, BOOL, int, CBregexp*, int*, const char*, CMemory& );
@@ -218,8 +218,8 @@ public:
 		char*		pWork,
 		int*		pnWorkLen,
 		/* マッチしたファイルの情報 */
-		const char*		pszFullPath,	//	フルパス
-		const char*		pszCodeName,	//	文字コード情報"[SJIS]"とか
+		const TCHAR*		pszFullPath,	//	フルパス
+		const TCHAR*		pszCodeName,	//	文字コード情報"[SJIS]"とか
 		/* マッチした行の情報 */
 		int			nLine,			//	マッチした行番号
 		int			nColm,			//	マッチした桁番号

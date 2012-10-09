@@ -7034,16 +7034,16 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
   @date 2008.12.13 genta 検索パターンのバッファオーバラン対策
 */
 DWORD CEditView::DoGrep(
-	const CMemory*	pcmGrepKey,
-	const CMemory*	pcmGrepFile,
-	const CMemory*	pcmGrepFolder,
-	BOOL		bGrepSubFolder,
-	BOOL		bGrepLoHiCase,
-	BOOL		bGrepRegularExp,
-	ECodeType	nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
-	BOOL		bGrepOutputLine,
-	BOOL		bWordOnly,
-	int			nGrepOutputStyle
+	const CMemory*			pcmGrepKey,
+	const CMemory*			pcmGrepFile,
+	const CMemory*			pcmGrepFolder,
+	BOOL					bGrepSubFolder,
+	BOOL					bGrepLoHiCase,
+	BOOL					bGrepRegularExp,
+	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
+	BOOL					bGrepOutputLine,
+	BOOL					bWordOnly,
+	int						nGrepOutputStyle
 )
 {
 #ifdef _DEBUG
@@ -7056,9 +7056,6 @@ DWORD CEditView::DoGrep(
 	int			nDummy;
 	int			nHitCount = 0;
 	char		szPath[_MAX_PATH];
-//	int			nNewLine;		/* 挿入された部分の次の位置の行 */
-//	int			nNewPos;		/* 挿入された部分の次の位置のデータ位置 */
-//	COpe*		pcOpe = NULL;
 	CDlgCancel	cDlgCancel;
 	HWND		hwndCancel;
 	char*		pszWork;
@@ -7069,41 +7066,12 @@ DWORD CEditView::DoGrep(
 	CMemory		cmemMessage;
 	CMemory		cmemWork;
 	int			nWork;
-	int*		pnKey_CharCharsArr;
-	pnKey_CharCharsArr = NULL;
+	int*		pnKey_CharCharsArr = NULL;
 
 	/*
 	|| バッファサイズの調整
 	*/
 	cmemMessage.AllocStringBuffer( 4000 );
-
-
-
-//	int*				pnKey_CharUsedArr;
-//	pnKey_CharUsedArr		= NULL;
-//	GrepParam*			pGrepParam;
-
-//	CEditView*			pCEditView;
-//	CMemory				cmGrepKey;
-//	CMemory				cmGrepFile;
-//	CMemory				cmGrepFolder;
-//	BOOL				bGrepSubFolder;
-//	BOOL				bGrepLoHiCase;
-//	BOOL				bGrepRegularExp;
-//	int					nGrepCharSet;
-//	BOOL				bGrepOutputLine;
-
-//	pGrepParam				= (GrepParam*)dwGrepParam;
-
-//	pCEditView				= (CEditView*)pGrepParam->pCEditView;
-//	cmGrepKey				= *pGrepParam->pcmGrepKey;
-//	cmGrepFile				= *pGrepParam->pcmGrepFile;
-//	cmGrepFolder			= *pGrepParam->pcmGrepFolder;
-//	bGrepSubFolder			= pGrepParam->bGrepSubFolder;
-//	bGrepLoHiCase			= pGrepParam->bGrepLoHiCase;
-//	bGrepRegularExp			= pGrepParam->bGrepRegularExp;
-//	nGrepCharSet			= pGrepParam->nGrepCharSet;
-//	bGrepOutputLine			= pGrepParam->bGrepOutputLine;
 
 	m_bDoing_UndoRedo		= TRUE;
 
@@ -7180,7 +7148,6 @@ DWORD CEditView::DoGrep(
 		);
 	}
 
-//	::SendMessage( ::GetParent( m_hwndParent ), WM_SETICON, ICON_BIG, (LPARAM)::LoadIcon( m_hInstance, IDI_QUESTION ) );
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
 	HICON	hIconBig, hIconSmall;
 	//	Dec, 2, 2002 genta アイコン読み込み方法変更
@@ -7306,6 +7273,7 @@ DWORD CEditView::DoGrep(
 	//	2007.07.22 genta バージョンを取得するために，
 	//	正規表現の初期化を上へ移動
 
+
 	/* 表示処理ON/OFF */
 	// 2003.06.23 Moca 共通設定で変更できるように
 	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
@@ -7315,23 +7283,34 @@ DWORD CEditView::DoGrep(
 
 
 	if( -1 == DoGrepTree(
-		&cDlgCancel, hwndCancel, pcmGrepKey->GetStringPtr(),
+		&cDlgCancel,
+		hwndCancel,
+		pcmGrepKey->GetStringPtr(),
 		pnKey_CharCharsArr,
-		pcmGrepFile->GetStringPtr(), szPath, bGrepSubFolder, bGrepLoHiCase,
-		bGrepRegularExp, nGrepCharSet,
-		bGrepOutputLine, bWordOnly, nGrepOutputStyle, &cRegexp, 0, &nHitCount
+		pcmGrepFile->GetStringPtr(),
+		szPath,
+		bGrepSubFolder,
+		bGrepLoHiCase,
+		bGrepRegularExp,
+		nGrepCharSet,
+		bGrepOutputLine,
+		bWordOnly,
+		nGrepOutputStyle,
+		&cRegexp,
+		0,
+		&nHitCount
 	) ){
 		wsprintf( szPath, "中断しました。\r\n", nHitCount );
 		Command_ADDTAIL( szPath, lstrlen( szPath ) );
 	}
-	wsprintf( szPath, "%d 個が検索されました。\r\n", nHitCount );
-	Command_ADDTAIL( szPath, lstrlen( szPath ) );
-//	Command_GOFILEEND( FALSE );
+	{
+		wsprintf( szPath, "%d 個が検索されました。\r\n", nHitCount );
+		Command_ADDTAIL( szPath, lstrlen( szPath ) );
 #ifdef _DEBUG
-	wsprintf( szPath, "処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
-	Command_ADDTAIL( szPath, lstrlen( szPath ) );
-//	Command_GOFILEEND( FALSE );
+		wsprintf( szPath, "処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
+		Command_ADDTAIL( szPath, lstrlen( szPath ) );
 #endif
+	}
 	MoveCursor( 0, tmp_PosY_PHY, TRUE );	//	カーソルをGrep直前の位置に戻す
 
 	cDlgCancel.CloseDialog( 0 );
@@ -7364,10 +7343,6 @@ DWORD CEditView::DoGrep(
 		delete [] pnKey_CharCharsArr;
 		pnKey_CharCharsArr = NULL;
 	}
-//	if( NULL != pnKey_CharUsedArr ){
-//		delete [] pnKey_CharUsedArr;
-//		pnKey_CharUsedArr = NULL;
-//	}
 
 	/* 表示処理ON/OFF */
 	m_pcEditDoc->SetDrawSwitchOfAllViews( TRUE );
@@ -7378,6 +7353,8 @@ DWORD CEditView::DoGrep(
 
 	return nHitCount;
 }
+
+
 
 /*
  * SORTED_LIST_BSEARCH
@@ -7429,46 +7406,29 @@ int grep_compare_sp(const void* a, const void* b)
 
 /*! @brief Grep実行 
 
-	@param pcDlgCancel		[in] Cancelダイアログへのポインタ
-	@param hwndCancel		[in] Cancelダイアログのウィンドウハンドル
-	@param pszKey			[in] 検索パターン
-	@param pnKey_CharCharsArr	[in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
-	@param pszFile			[in] 検索対象ファイルパターン(!で除外指定)
-	@param pszPath			[in] 検索対象パス
-	@param bGrepSubFolder	[in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
-	@param bGrepLoHiCase	[in] TRUE: 大文字小文字の区別あり / FALSE: 無し
-	@param bGrepRegularExp	[in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
-	@param nGrepCharSet		[in] 文字コードセット (0:自動認識)～
-	@param bGrepOutputLine	[in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
-	@param bWordOnly		[in] TRUE: 単語単位で一致を判断 / FALSE: 部分にも一致する
-	@param nGrepOutputStyle	[in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
-	@param pRegexp			[in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	@param nNest			[in] ネストレベル
-	@param pnHitCount		[i/o] ヒット数の合計
-	
+	@date 2001.06.27 genta	正規表現ライブラリの差し替え
 	@date 2003.06.23 Moca サブフォルダ→ファイルだったのをファイル→サブフォルダの順に変更
 	@date 2003.06.23 Moca ファイル名から""を取り除くように
 	@date 2003.03.27 みく 除外ファイル指定の導入と重複検索防止の追加．
 		大部分が変更されたため，個別の変更点記入は無し．
 */
 int CEditView::DoGrepTree(
-	CDlgCancel* pcDlgCancel,
-	HWND		hwndCancel,
-	const char*	pszKey,
-	int*		pnKey_CharCharsArr,
-	const char*	pszFile,
-	const char*	pszPath,
-	BOOL		bGrepSubFolder,
-	BOOL		bGrepLoHiCase,
-	BOOL		bGrepRegularExp,
-	ECodeType	nGrepCharSet,
-	BOOL		bGrepOutputLine,
-	BOOL		bWordOnly,
-	int			nGrepOutputStyle,
-	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	CBregexp*	pRegexp,
-	int			nNest,
-	int*		pnHitCount
+	CDlgCancel* 	pcDlgCancel,			//!< [in] Cancelダイアログへのポインタ
+	HWND			hwndCancel,				//!< [in] Cancelダイアログのウィンドウハンドル
+	const char*		pszKey,					//!< [in] 検索パターン
+	int*			pnKey_CharCharsArr,		//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
+	const TCHAR*	pszFile,				//!< [in] 検索対象ファイルパターン(!で除外指定)
+	const TCHAR*	pszPath,				//!< [in] 検索対象パス
+	BOOL			bGrepSubFolder,			//!< [in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
+	BOOL			bGrepLoHiCase,			//!< [in] TRUE: 大文字小文字の区別あり / FALSE: 無し
+	BOOL			bGrepRegularExp,		//!< [in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
+	ECodeType		nGrepCharSet,			//!< [in] 文字コードセット (0:自動認識)～
+	BOOL			bGrepOutputLine,		//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
+	BOOL			bWordOnly,				//!< [in] TRUE: 単語単位で一致を判断 / FALSE: 部分にも一致する
+	int				nGrepOutputStyle,		//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
+	CBregexp*		pRegexp,				//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	int				nNest,					//!< [in] ネストレベル
+	int*			pnHitCount				//!< [i/o] ヒット数の合計
 )
 {
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, pszPath );
@@ -7479,7 +7439,6 @@ int CEditView::DoGrepTree(
 
 	int		nWildCardLen;
 	int		nPos;
-	TCHAR*	token;
 	BOOL	result;
 	int		i;
 	WIN32_FIND_DATA w32fd;
@@ -7512,6 +7471,7 @@ int CEditView::DoGrepTree(
 	pWildCard = _tcsdup( pszFile );
 	if( ! pWildCard ) goto error_return;	//メモリ確保失敗
 	nWildCardLen = _tcslen( pWildCard );
+	TCHAR*	token;
 	while( NULL != (token = my_strtok( pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER )) )	//トークン毎に繰り返す。
 	{
 		//除外ファイル指定でないか？
@@ -7527,13 +7487,14 @@ int CEditView::DoGrepTree(
 			p++;
 		}
 		*q = _T('\0');
-		currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-		if( ! currentPath ) goto error_return;	//メモリ確保失敗
-		_tcscpy( currentPath, pszPath );
-		_tcscat( currentPath, token );
-
-		//ファイルの羅列を開始する。
-		handle = FindFirstFile( currentPath, &w32fd );
+		{
+			currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
+			if( ! currentPath ) goto error_return;	//メモリ確保失敗
+			_tcscpy( currentPath, pszPath );
+			_tcscat( currentPath, token );
+			//ファイルの羅列を開始する。
+			handle = FindFirstFile( currentPath, &w32fd );
+		}
 		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
 		{
@@ -7588,12 +7549,13 @@ int CEditView::DoGrepTree(
 			p++;
 		}
 		*q = _T('\0');
-		currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-		if( ! currentPath ) goto error_return;
-		_tcscpy( currentPath, pszPath );
-		_tcscat( currentPath, token );
-
-		//ファイルの羅列を開始する。
+		{
+			currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
+			if( ! currentPath ) goto error_return;
+			_tcscpy( currentPath, pszPath );
+			_tcscat( currentPath, token );
+			//ファイルの羅列を開始する。
+		}
 #ifdef SORTED_LIST
 		//ソート
 		qsort( checked_list, checked_list_count, sizeof( TCHAR* ), (COMP)grep_compare_pp );
@@ -7611,6 +7573,7 @@ int CEditView::DoGrepTree(
 			if( pcDlgCancel->IsCanceled() ){
 				goto cancel_return;
 			}
+
 			/* 表示設定をチェック */
 			m_pcEditDoc->SetDrawSwitchOfAllViews(
 				::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
@@ -7673,13 +7636,21 @@ int CEditView::DoGrepTree(
 					_tcscat( currentFile, w32fd.cFileName );
 					/* ファイル内の検索 */
 					int nRet = DoGrepFile(
-						pcDlgCancel, hwndCancel, pszKey,
+						pcDlgCancel,
+						hwndCancel,
+						pszKey,
 						pnKey_CharCharsArr,
 						w32fd.cFileName,
 						bGrepLoHiCase,
-						bGrepRegularExp, nGrepCharSet,
-						bGrepOutputLine, bWordOnly, nGrepOutputStyle,
-						pRegexp, pnHitCount, currentFile, cmemMessage
+						bGrepRegularExp,
+						nGrepCharSet,
+						bGrepOutputLine,
+						bWordOnly,
+						nGrepOutputStyle,
+						pRegexp,
+						pnHitCount,
+						currentFile,
+						cmemMessage
 					);
 					delete currentFile;
 					currentFile = NULL;
@@ -7751,11 +7722,13 @@ int CEditView::DoGrepTree(
 	 * サブフォルダを検索する。
 	 */
 	if( bGrepSubFolder ){
-		subPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( WILDCARD_ANY ) + 1 ];
-		if( ! subPath ) goto error_return;	//メモリ確保失敗
-		_tcscpy( subPath, pszPath );
-		_tcscat( subPath, WILDCARD_ANY );
-		handle = FindFirstFile( subPath, &w32fd );
+		{
+			subPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( WILDCARD_ANY ) + 1 ];
+			if( ! subPath ) goto error_return;	//メモリ確保失敗
+			_tcscpy( subPath, pszPath );
+			_tcscat( subPath, WILDCARD_ANY );
+			handle = FindFirstFile( subPath, &w32fd );
+		}
 		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
 		{
@@ -7784,15 +7757,24 @@ int CEditView::DoGrepTree(
 				_tcscat( currentPath, w32fd.cFileName );
 				_tcscat( currentPath, _T("\\") );
 
-				if( -1 == DoGrepTree(
+				int nGrepTreeResult = DoGrepTree(
 					pcDlgCancel, hwndCancel,
 					pszKey,
 					pnKey_CharCharsArr,
-					pszFile, currentPath,
-					bGrepSubFolder, bGrepLoHiCase,
-					bGrepRegularExp, nGrepCharSet,
-					bGrepOutputLine, bWordOnly, nGrepOutputStyle, pRegexp, nNest + 1, pnHitCount
-				) ){
+					pszFile,
+					currentPath,
+					bGrepSubFolder,
+					bGrepLoHiCase,
+					bGrepRegularExp,
+					nGrepCharSet,
+					bGrepOutputLine,
+					bWordOnly,
+					nGrepOutputStyle,
+					pRegexp,
+					nNest + 1,
+					pnHitCount
+				);
+				if( -1 == nGrepTreeResult ){
 					goto cancel_return;
 				}
 				::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダから戻ってきたら...
@@ -7862,6 +7844,7 @@ error_return:;
 
 
 
+
 /*!	@brief Grep結果を構築する
 
 	@param pWork [out] Grep出力文字列．充分なメモリ領域を予め確保しておくこと．
@@ -7877,8 +7860,8 @@ void CEditView::SetGrepResult(
 	char*		pWork,
 	int*		pnWorkLen,			/*!< [out] Grep出力文字列の長さ */
 	/* マッチしたファイルの情報 */
-	const char*		pszFullPath,	/*!< [in] フルパス */
-	const char*		pszCodeName,	/*!< [in] 文字コード情報．" [SJIS]"とか */
+	const TCHAR*		pszFullPath,	/*!< [in] フルパス */
+	const TCHAR*		pszCodeName,	/*!< [in] 文字コード情報．" [SJIS]"とか */
 	/* マッチした行の情報 */
 	int			nLine,				/*!< [in] マッチした行番号(1～) */
 	int			nColm,				/*!< [in] マッチした桁番号(1～) */
@@ -7900,26 +7883,27 @@ void CEditView::SetGrepResult(
 	bool bEOL = true;
 	int nMaxOutStr;
 
-	if( 1 == nGrepOutputStyle ){
 	/* ノーマル */
+	if( 1 == nGrepOutputStyle ){
 		nWorkLen = ::wsprintf( pWork, "%s(%d,%d)%s: ", pszFullPath, nLine, nColm, pszCodeName );
 		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
-	}else
-	if( 2 == nGrepOutputStyle ){
+	}
 	/* WZ風 */
+	else if( 2 == nGrepOutputStyle ){
 		nWorkLen = ::wsprintf( pWork, "・(%6d,%-5d): ", nLine, nColm );
 		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
 	}
 
-	if( bGrepOutputLine ){
 	/* 該当行 */
+	if( bGrepOutputLine ){
 		pDispData = pCompareData;
 		k = nLineLen - nEolCodeLen;
 		if( nMaxOutStr < k ){
 			k = nMaxOutStr; // 2003.06.10 Moca 最大長変更
 		}
-	}else{
+	}
 	/* 該当部分 */
+	else{
 		pDispData = pMatchData;
 		k = nMatchLen;
 		if( nMaxOutStr < k ){
@@ -7970,7 +7954,6 @@ int CEditView::DoGrepFile(
 	HWND		hwndCancel,
 	const char*	pszKey,
 	int*		pnKey_CharCharsArr,
-//	int*		pnKey_CharUsedArr,
 	const char*	pszFile,
 	BOOL		bGrepLoHiCase,
 	BOOL		bGrepRegularExp,
@@ -7994,7 +7977,6 @@ int CEditView::DoGrepFile(
 	const char*	pszRes; // 2002/08/29 const付加
 	ECodeType	nCharCode;
 	const char*	pCompareData; // 2002/08/29 const付加
-	const char*	pszCodeName; // 2002/08/29 const付加
 	int		nColm;
 	BOOL	bOutFileName;
 	bOutFileName = FALSE;
@@ -8009,7 +7991,8 @@ int CEditView::DoGrepFile(
 
 	//	ここでは正規表現コンパイルデータの初期化は不要
 
-	pszCodeName = "";
+	const TCHAR*	pszCodeName; // 2002/08/29 const付加
+	pszCodeName = _T("");
 	nHitCount = 0;
 	nLine = 0;
 
@@ -8099,6 +8082,7 @@ int CEditView::DoGrepFile(
 #ifdef _DEBUG
 			int nIndexPrev = -1;
 #endif
+
 			//	Jun. 21, 2003 genta ループ条件見直し
 			//	マッチ箇所を1行から複数検出するケースを標準に，
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
@@ -8155,9 +8139,9 @@ int CEditView::DoGrepFile(
 					}
 					nIndex += matchlen;
 			}
-		}else
+		}
 		/* 単語のみ検索 */
-		if( bWordOnly ){
+		else if( bWordOnly ){
 			/*
 				2002/02/23 Norio Nakatani
 				単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
@@ -8171,9 +8155,7 @@ int CEditView::DoGrepFile(
 			int nNextWordFrom2;
 			int nNextWordTo2;
 			// Jun. 26, 2003 genta 無駄なwhileは削除
-			while( TRUE ==
-					CDocLineMgr::WhereCurrentWord_2( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )
-				){
+			while( TRUE == CDocLineMgr::WhereCurrentWord_2( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
 					if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
 						// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
 						/* 1==大文字小文字の区別 */
