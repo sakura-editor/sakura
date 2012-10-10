@@ -5879,58 +5879,40 @@ BOOL CEditView::GetSelectedData(
 
 /* 選択範囲内の全行をクリップボードにコピーする */
 void CEditView::CopySelectedAllLines(
-	const char*	pszQuote,		/* 先頭に付ける引用符 */
-	BOOL		bWithLineNumber	/* 行番号を付与する */
+	const char*	pszQuote,		//!< 先頭に付ける引用符
+	BOOL		bWithLineNumber	//!< 行番号を付与する
 )
 {
 	HDC			hdc;
 	PAINTSTRUCT	ps;
-	int			nSelectLineFromOld;	/* 範囲選択開始行 */
-	int			nSelectColFromOld; 	/* 範囲選択開始桁 */
-	int			nSelectLineToOld;	/* 範囲選択終了行 */
-	int			nSelectColToOld;	/* 範囲選択終了桁 */
-	RECT		rcSel;
+	int			nSelectLineFrom;	/* 範囲選択開始行 */
+	int			nSelectColmFrom;	/* 範囲選択開始桁 */
+	int			nSelectLineTo;		/* 範囲選択終了行 */
+	int			nSelectColmTo;		/* 範囲選択終了桁 */
 	CMemory		cmemBuf;
-//	HGLOBAL		hgClip;
-//	char*		pszClip;
-//	const char*	pLine;
-//	int			nLineLen;
+
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
-	/* 矩形範囲選択中か */
-	if( m_bBeginBoxSelect ){
-		/* 2点を対角とする矩形を求める */
-		TwoPointToRect(
-			&rcSel,
-			m_nSelectLineFrom,					/* 範囲選択開始行 */
-			m_nSelectColmFrom,					/* 範囲選択開始桁 */
-			m_nSelectLineTo,					/* 範囲選択終了行 */
-			m_nSelectColmTo						/* 範囲選択終了桁 */
-		);
-		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
-//		/* 挿入データの先頭位置へカーソルを移動 */
-//		MoveCursor( rcSel.left, rcSel.top, FALSE );
-		m_nSelectLineFrom = rcSel.top;			/* 範囲選択開始行 */
-		m_nSelectColmFrom = 0;					/* 範囲選択開始桁 */
-		m_nSelectLineTo = rcSel.bottom + 1;		/* 範囲選択終了行 */
-		m_nSelectColmTo = 0;					/* 範囲選択終了桁 */
-//		m_bBeginBoxSelect = FALSE;	2004.06.22 Moca 上のDisableSelectAreaでクリア済み
-	}else{
-		nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
-		nSelectColFromOld = 0;					/* 範囲選択開始桁 */
-		nSelectLineToOld = m_nSelectLineTo;		/* 範囲選択終了行 */
-		if( m_nSelectColmTo > 0 ){
-			++nSelectLineToOld;					/* 範囲選択終了行 */
+	{	// 選択範囲内の全行を選択状態にする
+		nSelectLineFrom = m_nSelectLineFrom;	/* 範囲選択開始行 */
+		nSelectLineTo = m_nSelectLineTo;		/* 範囲選択終了行 */
+		const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nSelectLineFrom );
+		if( !pcLayout ) return;
+		nSelectColmFrom = pcLayout->GetIndent();	/* 範囲選択開始桁 */
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nSelectLineTo );
+		if( pcLayout && (m_bBeginBoxSelect || m_nSelectColmTo > pcLayout->GetIndent()) ){
+			// 選択範囲を次行頭まで拡大する
+			nSelectLineTo++;
+			pcLayout = pcLayout->m_pNext;
 		}
-		nSelectColToOld = 0;					/* 範囲選択終了桁 */
+		nSelectColmTo = pcLayout? pcLayout->GetIndent(): 0;	/* 範囲選択終了桁 */
+		GetAdjustCursorPos( &nSelectColmTo, &nSelectLineTo );	// EOF行を超えていたら座標修正
 		/* 現在の選択範囲を非選択状態に戻す */
 		DisableSelectArea( TRUE );
-		m_nSelectLineFrom = nSelectLineFromOld;	/* 範囲選択開始行 */
-		m_nSelectColmFrom = nSelectColFromOld; 	/* 範囲選択開始桁 */
-		m_nSelectLineTo = nSelectLineToOld;		/* 範囲選択終了行 */
-		m_nSelectColmTo = nSelectColToOld;		/* 範囲選択終了桁 */
+		SetSelectArea( nSelectLineFrom, nSelectColmFrom, nSelectLineTo, nSelectColmTo );
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, FALSE );
+		ShowEditCaret();
 	}
 	/* 再描画 */
 	//	::UpdateWindow();
@@ -5946,7 +5928,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	if( FALSE == GetSelectedData(
+	if( !GetSelectedData(
 		&cmemBuf,
 		FALSE,
 		pszQuote, /* 引用符 */
@@ -5958,8 +5940,6 @@ void CEditView::CopySelectedAllLines(
 	}
 	/* クリップボードにデータを設定 */
 	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
-
-	return;
 }
 
 /* 選択エリアのテキストを指定方法で変換 */
