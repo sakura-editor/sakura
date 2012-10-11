@@ -5908,9 +5908,10 @@ void CEditView::CopySelectedAllLines(
 		}
 		nSelectColmTo = pcLayout? pcLayout->GetIndent(): 0;	/* 範囲選択終了桁 */
 		GetAdjustCursorPos( &nSelectColmTo, &nSelectLineTo );	// EOF行を超えていたら座標修正
-		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+
+		DisableSelectArea( FALSE ); // 2011.06.03 TRUE →FALSE
 		SetSelectArea( nSelectLineFrom, nSelectColmFrom, nSelectLineTo, nSelectColmTo );
+
 		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, FALSE );
 		ShowEditCaret();
 	}
