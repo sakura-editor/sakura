@@ -29,10 +29,8 @@ struct GrepInfo {
 	CMemory			cmGrepKey;			//!< 検索キー
 	CMemory			cmGrepFile;			//!< 検索対象ファイル
 	CMemory			cmGrepFolder;		//!< 検索対象フォルダ
-	bool			bGrepWordOnly;		//!< 単語単位で探す
+	SSearchOption	sGrepSearchOption;	//!< 検索オプション
 	bool			bGrepSubFolder;		//!< サブフォルダを検索する
-	bool			bGrepNoIgnoreCase;	//!< 大文字と小文字を区別する
-	bool			bGrepRegularExp;	//!< 正規表現を使用する
 	bool			bGrepOutputLine;	//!< 結果出力で該当行を出力する
 	int				nGrepOutputStyle;	//!< 結果出力形式
 	ECodeType		nGrepCharSet;		//!< 文字コードセット

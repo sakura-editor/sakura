@@ -1123,18 +1123,16 @@ int CLayoutMgr::PrevOrNextWord(
 	@retval 0 見つからない
 */
 int CLayoutMgr::SearchWord(
-	int					nLineNum, 			//!< [in] 検索開始行
-	int					nIdx,				//!< [in] 検索開始位置
-	const char*			pszPattern,			//!< [in] 検索条件
-	ESearchDirection	eSearchDirection,	//!< [in] 検索方向
-	int					bRegularExp,		//!< [in] 1==正規表現
-	int					bLoHiCase,			//!< [in] 1==大文字小文字の区別
-	int					bWordOnly,			//!< [in] 1==単語のみ検索
-	int*				pnLineFrom, 		//!< [out] マッチレイアウト行from
-	int*				pnIdxFrom, 			//!< [out] マッチレイアウト位置from
-	int*				pnLineTo, 			//!< [out] マッチレイアウト行to
-	int*				pnIdxTo,  			//!< [out] マッチレイアウト位置to
-	CBregexp*			pRegexp				//!< [in] 正規表現コンパイルデータ	Jun. 26, 2001 genta
+	int						nLineNum, 			//!< [in] 検索開始行
+	int						nIdx, 				//!< [in] 検索開始位置
+	const char*				pszPattern,			//!< [in] 検索条件
+	ESearchDirection		eSearchDirection,	//!< [in] 検索方向
+	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
+	int*					pnLineFrom, 		//!< [out] マッチレイアウト行from
+	int*					pnIdxFrom, 			//!< [out] マッチレイアウト位置from
+	int*					pnLineTo, 			//!< [out] マッチレイアウト行to
+	int*					pnIdxTo,  			//!< [out] マッチレイアウト位置to
+	CBregexp*				pRegexp				//!< [in] 正規表現コンパイルデータ	Jun. 26, 2001 genta
 )
 {
 	int			nRetCode;
@@ -1151,9 +1149,7 @@ int CLayoutMgr::SearchWord(
 		pLayout->m_nOffset + nIdx,
 		pszPattern,
 		eSearchDirection,
-		bRegularExp,
-		bLoHiCase,
-		bWordOnly,
+		sSearchOption,
 		pnLineFrom,
 		pnIdxFrom,
 		pnIdxTo,

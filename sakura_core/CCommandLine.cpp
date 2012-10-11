@@ -394,10 +394,10 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 						m_gi.bGrepSubFolder = true;	break;
 					case 'L':
 						// 英大文字と英小文字を区別する
-						m_gi.bGrepNoIgnoreCase = true;	break;
+						m_gi.sGrepSearchOption.bLoHiCase = true;	break;
 					case 'R':
 						// 正規表現
-						m_gi.bGrepRegularExp = true;	break;
+						m_gi.sGrepSearchOption.bRegularExp = true;	break;
 					case 'K':
 						// 文字コード自動判別
 						// 2002/09/21 Moca 互換性保持のための処理
@@ -407,7 +407,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 						m_gi.bGrepOutputLine = true;	break;
 					case 'W':
 						// 単語単位で探す
-						m_gi.bGrepWordOnly = true;	break;
+						m_gi.sGrepSearchOption.bWordOnly = true;	break;
 					case '1':
 						// Grep: 出力形式
 						m_gi.nGrepOutputStyle = 1;	break;
@@ -471,11 +471,14 @@ CCommandLine::CCommandLine()
 	m_bNoWindow				= false;
 	m_bWriteQuit			= false;
 	m_gi.bGrepSubFolder		= false;
+	m_gi.sGrepSearchOption.Reset();
+	/*
 	m_gi.bGrepNoIgnoreCase	= false;
 	m_gi.bGrepRegularExp	= false;
+	m_gi.bGrepWordOnly		= false;
+	*/
 	m_gi.nGrepCharSet		= CODE_SJIS;
 	m_gi.bGrepOutputLine	= false;
-	m_gi.bGrepWordOnly		= false;
 	m_gi.nGrepOutputStyle	= 1;
 	m_bReadOnly				= false;
 	m_nGroup				= 0;		// 2007.06.26 ryoji

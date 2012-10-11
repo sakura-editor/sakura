@@ -599,7 +599,7 @@ int CEditView::DispLineNew(
 				 && TypeDataPtr->m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
 searchnext:;
 				// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
-					if(!bSearchStringMode && (!m_bCurSrchRegularExp || (bSearchFlg && nSearchStart < nPos))){
+					if(!bSearchStringMode && (!m_sCurSearchOption.bRegularExp || (bSearchFlg && nSearchStart < nPos))){
 						bSearchFlg=IsSearchString( pLine, nLineLen, nPos, &nSearchStart, &nSearchEnd );
 					}
 					if( !bSearchStringMode && bSearchFlg && nSearchStart==nPos

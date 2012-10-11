@@ -570,7 +570,7 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 	//	From Here Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	*pnSearchStart = nPos;	// 2002.02.08 hor
 
-	if( m_bCurSrchRegularExp ){
+	if( m_sCurSearchOption.bRegularExp ){
 		/* 行頭ではない? */
 		/* 行頭検索チェックは、CBregexpクラス内部で実施するので不要 2003.11.01 かろと */
 
@@ -594,7 +594,7 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 
 		// 2001/06/23 単語単位の検索のために追加
 		// 2010.10.04 単語単位のフラグをm_pShareDataからviewごとに修正
-		if( m_bCurSrchWordOnly ){	/* 検索／置換  1==単語のみ検索 */
+		if( m_sCurSearchOption.bWordOnly ){	/* 検索／置換  1==単語のみ検索 */
 			/* 現在位置の単語の範囲を調べる */
 			/* 現在位置の単語の範囲を調べる */
 			int nIdxFrom, nIdxTo;
@@ -611,7 +611,7 @@ BOOL CEditView::IsSearchString( const char* pszData, int nDataLen, int nPos, int
 			return FALSE;
 		}
 		//英大文字小文字の区別をするかどうか
-		if( m_bCurSrchLoHiCase ){	/* 1==英大文字小文字の区別 */
+		if( m_sCurSearchOption.bLoHiCase ){	/* 1==英大文字小文字の区別 */
 			if( 0 == memcmp( &pszData[nPos], m_szCurSrchKey, nKeyLength ) ){
 				*pnSearchEnd = nPos + nKeyLength;
 				return TRUE;

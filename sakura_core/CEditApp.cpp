@@ -96,13 +96,13 @@ void CEditApp::DoGrep()
 
 	//GOPTオプション
 	pOpt[0] = _T('\0');
-	if( m_cDlgGrep.m_bSubFolder				)strcat( pOpt, _T("S") );	// サブフォルダからも検索する
-	if( m_cDlgGrep.m_bLoHiCase 				)strcat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
-	if( m_cDlgGrep.m_bRegularExp			)strcat( pOpt, _T("R") );	// 正規表現
-	if( m_cDlgGrep.m_bGrepOutputLine		)strcat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
-	if( m_cDlgGrep.m_bWordOnly				)strcat( pOpt, _T("W") );	// 単語単位で探す
-	if( 1 == m_cDlgGrep.m_nGrepOutputStyle	)strcat( pOpt, _T("1") );	// Grep: 出力形式
-	if( 2 == m_cDlgGrep.m_nGrepOutputStyle	)strcat( pOpt, _T("2") );	// Grep: 出力形式
+	if( m_cDlgGrep.m_bSubFolder					)strcat( pOpt, _T("S") );	// サブフォルダからも検索する
+	if( m_cDlgGrep.m_sSearchOption.bLoHiCase	)strcat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
+	if( m_cDlgGrep.m_sSearchOption.bRegularExp	)strcat( pOpt, _T("R") );	// 正規表現
+	if( m_cDlgGrep.m_bGrepOutputLine			)strcat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
+	if( m_cDlgGrep.m_sSearchOption.bWordOnly	)strcat( pOpt, _T("W") );	// 単語単位で探す
+	if( 1 == m_cDlgGrep.m_nGrepOutputStyle		)strcat( pOpt, _T("1") );	// Grep: 出力形式
+	if( 2 == m_cDlgGrep.m_nGrepOutputStyle		)strcat( pOpt, _T("2") );	// Grep: 出力形式
 	if( 0 < lstrlen( pOpt ) ){
 		strcat( pCmdLine, _T(" -GOPT=") );
 		strcat( pCmdLine, pOpt );

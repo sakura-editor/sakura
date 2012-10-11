@@ -171,11 +171,9 @@ bool CNormalProcess::InitializeProcess()
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
 				gi.bGrepSubFolder,
-				gi.bGrepNoIgnoreCase,
-				gi.bGrepRegularExp,
+				gi.sGrepSearchOption,
 				gi.nGrepCharSet,	//	2002/09/21 Moca
 				gi.bGrepOutputLine,
-				gi.bGrepWordOnly,	//	Jun. 26, 2001 genta
 				gi.nGrepOutputStyle
 			);
 			return true; // 2003.06.23 Moca
@@ -186,11 +184,9 @@ bool CNormalProcess::InitializeProcess()
 			CShareData::getInstance()->AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
 			CShareData::getInstance()->AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
 			m_pShareData->m_Common.m_bGrepSubFolder = gi.bGrepSubFolder;
-			m_pShareData->m_Common.m_bLoHiCase = gi.bGrepNoIgnoreCase;
-			m_pShareData->m_Common.m_bRegularExp = gi.bGrepRegularExp;
+			m_pShareData->m_Common.m_sSearchOption = gi.sGrepSearchOption;
 			m_pShareData->m_Common.m_nGrepCharSet = gi.nGrepCharSet;
 			m_pShareData->m_Common.m_bGrepOutputLine = gi.bGrepOutputLine;
-			m_pShareData->m_Common.m_bWordOnly = gi.bGrepWordOnly;
 			m_pShareData->m_Common.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを開放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない

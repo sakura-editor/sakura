@@ -477,9 +477,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "nHorizontalScrollByWheel"	, common.m_nHorizontalScrollByWheel );	// 2009.01.12 nasukoji
 	cProfile.IOProfileData( pszSecName, "bCloseAllConfirm"		, common.m_bCloseAllConfirm );	/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 	cProfile.IOProfileData( pszSecName, "bExitConfirm"			, common.m_bExitConfirm );
-	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_bRegularExp );
-	cProfile.IOProfileData( pszSecName, "bSearchLoHiCase"		, common.m_bLoHiCase );
-	cProfile.IOProfileData( pszSecName, "bSearchWordOnly"		, common.m_bWordOnly );
+	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_sSearchOption.bRegularExp );
+	cProfile.IOProfileData( pszSecName, "bSearchLoHiCase"		, common.m_sSearchOption.bLoHiCase );
+	cProfile.IOProfileData( pszSecName, "bSearchWordOnly"		, common.m_sSearchOption.bWordOnly );
 	cProfile.IOProfileData( pszSecName, "bSearchConsecutiveAll"		, common.m_bConsecutiveAll );	// 2007.01.16 ryoji
 	cProfile.IOProfileData( pszSecName, "bSearchNOTIFYNOTFOUND"	, common.m_bNOTIFYNOTFOUND );
 	// 2002.01.26 hor

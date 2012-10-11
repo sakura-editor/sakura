@@ -3004,9 +3004,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 	BOOL	bChangeState;
 	if( !m_bCurSrchKeyMark
 	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] )
-	 || m_bCurSrchRegularExp != m_pShareData->m_Common.m_bRegularExp
-	 || m_bCurSrchLoHiCase != m_pShareData->m_Common.m_bLoHiCase
-	 || m_bCurSrchWordOnly != m_pShareData->m_Common.m_bWordOnly
+	 || m_sCurSearchOption != m_pShareData->m_Common.m_sSearchOption
 	){
 		bChangeState = TRUE;
 	}else{
@@ -3015,11 +3013,9 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 
 	m_bCurSrchKeyMark = TRUE;									/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] );/* 検索文字列 */
-	m_bCurSrchRegularExp = m_pShareData->m_Common.m_bRegularExp;/* 検索／置換  1==正規表現 */
-	m_bCurSrchLoHiCase = m_pShareData->m_Common.m_bLoHiCase;	/* 検索／置換  1==大文字小文字の区別 */
-	m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
+	m_sCurSearchOption = m_pShareData->m_Common.m_sSearchOption;// 検索／置換  オプション
 	/* 正規表現 */
-	if( m_bCurSrchRegularExp
+	if( m_sCurSearchOption.bRegularExp
 	 && bChangeState
 	){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
@@ -3027,7 +3023,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 			return FALSE;
 		}
 		int nFlag = 0x00;
-		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
+		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
 		/* 検索パターンのコンパイル */
 		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 	}
@@ -3133,9 +3129,7 @@ re_do:;							//	hor
 		nIdx,									// 検索開始位置
 		m_szCurSrchKey,							// 検索条件
 		SEARCH_BACKWARD,						// 0==前方検索 1==後方検索
-		m_bCurSrchRegularExp,					// 1==正規表現
-		m_bCurSrchLoHiCase,						// 1==大文字小文字の区別
-		m_bCurSrchWordOnly,						// 1==単語のみ検索
+		m_sCurSearchOption,						// 検索オプション
 		&nLineFrom,								// マッチレイアウト行from
 		&nColmFrom, 							// マッチレイアウト位置from
 		&nLineTo, 								// マッチレイアウト行to
@@ -3356,9 +3350,7 @@ re_do:;
 		nIdx, 									// 検索開始位置
 		m_szCurSrchKey,							// 検索条件
 		SEARCH_FORWARD,							// 0==前方検索 1==後方検索
-		m_bCurSrchRegularExp,					// 1==正規表現
-		m_bCurSrchLoHiCase,						// 1==英大文字小文字の区別
-		m_bCurSrchWordOnly,						// 1==単語のみ検索
+		m_sCurSearchOption,						// 検索オプション
 		&nLineFrom,								// マッチレイアウト行from
 		&nColmFrom, 							// マッチレイアウト位置from
 		&nLineTo, 								// マッチレイアウト行to
@@ -6690,8 +6682,8 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 	//2002.02.10 hor
 	int nPaste			=	m_pcEditDoc->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	=	m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
-	int	bRegularExp		=	m_pShareData->m_Common.m_bRegularExp;
-	int nFlag			=	m_pShareData->m_Common.m_bLoHiCase ? 0x01 : 0x00;
+	int	bRegularExp		=	m_pShareData->m_Common.m_sSearchOption.bRegularExp;
+	int nFlag			=	m_pShareData->m_Common.m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !m_pcEditDoc->IsEnablePaste()){
@@ -6874,7 +6866,7 @@ void CEditView::Command_REPLACE_ALL()
 	//2002.02.10 hor
 	int nPaste			= m_pcEditDoc->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	= m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
-	int	bRegularExp		= m_pShareData->m_Common.m_bRegularExp;
+	int	bRegularExp		= m_pShareData->m_Common.m_sSearchOption.bRegularExp;
 	int bSelectedArea	= m_pShareData->m_Common.m_bSelectedArea;
 	int bConsecutiveAll	= m_pShareData->m_Common.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 
@@ -7071,7 +7063,7 @@ void CEditView::Command_REPLACE_ALL()
 			cMemRepKey2 = cMemRepKey;
 		}
 		// 正規表現オプションの設定2006.04.01 かろと
-		int nFlag = (m_pShareData->m_Common.m_bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
+		int nFlag = (m_pShareData->m_Common.m_sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
 		nFlag |= (bConsecutiveAll ? CBregexp::optNothing : CBregexp::optGlobal);	// 2007.01.16 ryoji
 		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetStringPtr(), nFlag);
 	}
@@ -8671,8 +8663,8 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 		strcpy( m_pShareData->m_szSEARCHKEYArr[0], cmemCurText.GetStringPtr() );
 
 		// 検索オプション設定
-		m_pShareData->m_Common.m_bRegularExp=0;	//正規表現使わない
-		m_pShareData->m_Common.m_bWordOnly=0;	//単語で検索しない
+		m_pShareData->m_Common.m_sSearchOption.bRegularExp=false;	//正規表現使わない
+		m_pShareData->m_Common.m_sSearchOption.bWordOnly=false;		//単語で検索しない
 		// 2010.06.30 Moca ChangeCurRegexpに再描画フラグ追加。2回再描画しないように
 		ChangeCurRegexp(false); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
 

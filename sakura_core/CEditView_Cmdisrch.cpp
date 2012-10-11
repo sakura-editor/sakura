@@ -117,7 +117,7 @@ bool CEditView::ProcessCommand_isearch(
 			ISearchEnter(1,SEARCH_FORWARD);	//前方インクリメンタルサーチ //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_PREV:
-			ISearchEnter(1,SEARCH_BACKWARD);	//後方インクリメンタルサーチ //2004.10.13 isearch
+			ISearchEnter(1,SEARCH_BACKWARD); //後方インクリメンタルサーチ //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_REGEXP_NEXT:
 			ISearchEnter(2,SEARCH_FORWARD);	//前方正規表現インクリメンタルサーチ  //2004.10.13 isearch
@@ -129,7 +129,7 @@ bool CEditView::ProcessCommand_isearch(
 			ISearchEnter(3,SEARCH_FORWARD);	//前方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 			return true;
 		case F_ISEARCH_MIGEMO_PREV:
-			ISearchEnter(3,SEARCH_BACKWARD);	//後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
+			ISearchEnter(3,SEARCH_BACKWARD); //後方MIGEMOインクリメンタルサーチ    //2004.10.13 isearch
 			return true;
 	}
 	return false;
@@ -143,6 +143,8 @@ bool CEditView::ProcessCommand_isearch(
 
 	@author isearch
 	@date 2011.12.15 Moca m_sCurSearchOption/m_sSearchOptionと同期をとる
+	@date 2012.10.11 novice m_sCurSearchOption/m_sSearchOptionの同期をswitchの前に変更
+	@date 2012.10.11 novice MIGEMOの処理をcase内に移動
 */
 void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 {
@@ -162,16 +164,13 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		//選択範囲の解除
 		if(IsTextSelected())	
 			DisableSelectArea( TRUE );
-		
-		if(m_pcmigemo==NULL){
-			m_pcmigemo = CMigemo::getInstance();
-			m_pcmigemo->Init();
-		}
+
+		m_sCurSearchOption = m_pShareData->m_Common.m_sSearchOption;
 		switch( mode ) {
 			case 1: // 通常インクリメンタルサーチ
-				m_bCurSrchRegularExp = FALSE;
-				m_bCurSrchLoHiCase = FALSE;
-				m_bCurSrchWordOnly = FALSE;
+				m_sCurSearchOption.bRegularExp = false;
+				m_sCurSearchOption.bLoHiCase = false;
+				m_sCurSearchOption.bWordOnly = false;
 				//SendStatusMessage(_T("I-Search: "));
 				break;
 			case 2: // 正規表現インクリメンタルサーチ
@@ -180,9 +179,8 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 					SendStatusMessage(_T("正規表現ライブラリが使用できません。"));
 					return;
 				}
-				m_bCurSrchRegularExp = TRUE;
-				m_bCurSrchLoHiCase = FALSE;
-				m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;
+				m_sCurSearchOption.bRegularExp = true;
+				m_sCurSearchOption.bLoHiCase = false;
 				//SendStatusMessage(_T("[RegExp] I-Search: "));
 				break;
 			case 3: // MIGEMOインクリメンタルサーチ
@@ -190,6 +188,10 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 					WarningBeep();
 					SendStatusMessage(_T("正規表現ライブラリが使用できません。"));
 					return;
+				}
+				if(m_pcmigemo==NULL){
+					m_pcmigemo = CMigemo::getInstance();
+					m_pcmigemo->Init();
 				}
 				//migemo dll チェック
 				//	Jan. 10, 2005 genta 設定変更で使えるようになっている
@@ -201,9 +203,8 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 				}
 				m_pcmigemo->migemo_load_all();
 				if (m_pcmigemo->migemo_is_enable()) {
-					m_bCurSrchRegularExp = TRUE;
-					m_bCurSrchLoHiCase = FALSE;
-					m_bCurSrchWordOnly = m_pShareData->m_Common.m_bWordOnly;
+					m_sCurSearchOption.bRegularExp = true;
+					m_sCurSearchOption.bLoHiCase = false;
 					//SendStatusMessage(_T("[MIGEMO] I-Search: "));
 				}else{
 					WarningBeep();
@@ -252,9 +253,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 void CEditView::ISearchExit()
 {
 	CShareData::getInstance()->AddToSearchKeyArr( m_szCurSrchKey );
-	m_pShareData->m_Common.m_bRegularExp = m_bCurSrchRegularExp;
-	m_pShareData->m_Common.m_bLoHiCase = m_bCurSrchLoHiCase;
-	m_pShareData->m_Common.m_bWordOnly = m_bCurSrchWordOnly;
+	m_pShareData->m_Common.m_sSearchOption = m_sCurSearchOption;
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	
@@ -424,9 +423,7 @@ void CEditView::ISearchExec(bool bNext)
 		nIdx,						// 検索開始位置
 		m_szCurSrchKey,				// 検索条件
 		m_nISearchDirection,		// 0==前方検索 1==後方検索
-		m_bCurSrchRegularExp,		// 1==正規表現
-		m_bCurSrchLoHiCase,			// 1==英大文字小文字の区別
-		m_bCurSrchWordOnly,			// 1==単語のみ検索
+		m_sCurSearchOption,			// 2011.12.15 Moca 色分け「次検索」と同期をとるためm_sCurSearchOptionをそのまま指定
 		&nLineFrom,					// マッチレイアウト行from
 		&nColmFrom, 				// マッチレイアウト位置from
 		&nLineTo, 					// マッチレイアウト行to
@@ -534,7 +531,7 @@ void CEditView::ISearchWordMake(void)
 		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			return ;
 		}
-		nFlag |= m_bCurSrchLoHiCase ? CBregexp::optCaseSensitive : 0;
+		nFlag |= m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
 		/* 検索パターンのコンパイル */
 		m_CurRegexp.Compile(m_szCurSrchKey , nFlag );
 		break;
@@ -542,7 +539,7 @@ void CEditView::ISearchWordMake(void)
 		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			return ;
 		}
-		nFlag |= m_bCurSrchLoHiCase ? CBregexp::optCaseSensitive : 0;
+		nFlag |= m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
 
 		{
 			//migemoで捜す

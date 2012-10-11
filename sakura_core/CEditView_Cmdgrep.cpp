@@ -112,11 +112,9 @@ void CEditView::Command_GREP( void )
 			&cmWork2,
 			&cmWork3,
 			m_pcEditDoc->m_cDlgGrep.m_bSubFolder,
-			m_pcEditDoc->m_cDlgGrep.m_bLoHiCase,
-			m_pcEditDoc->m_cDlgGrep.m_bRegularExp,
+			m_pcEditDoc->m_cDlgGrep.m_sSearchOption,
 			m_pcEditDoc->m_cDlgGrep.m_nGrepCharSet,
 			m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine,
-			m_pcEditDoc->m_cDlgGrep.m_bWordOnly,
 			m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle
 		);
 	}
@@ -140,13 +138,13 @@ void CEditView::Command_GREP( void )
 
 		//GOPTオプション
 		pOpt[0] = _T('\0');
-		if( m_pcEditDoc->m_cDlgGrep.m_bSubFolder            )_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
-		if( m_pcEditDoc->m_cDlgGrep.m_bWordOnly             )_tcscat( pOpt, _T("W") );	// 単語単位で探す
-		if( m_pcEditDoc->m_cDlgGrep.m_bLoHiCase             )_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
-		if( m_pcEditDoc->m_cDlgGrep.m_bRegularExp           )_tcscat( pOpt, _T("R") );	// 正規表現
-		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine       )_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
-		if( 1 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle )_tcscat( pOpt, _T("1") );	// Grep: 出力形式
-		if( 2 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle )_tcscat( pOpt, _T("2") );	// Grep: 出力形式
+		if( m_pcEditDoc->m_cDlgGrep.m_bSubFolder				)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
+		if( m_pcEditDoc->m_cDlgGrep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
+		if( m_pcEditDoc->m_cDlgGrep.m_sSearchOption.bLoHiCase	)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
+		if( m_pcEditDoc->m_cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
+		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine			)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
+		if( 1 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
+		if( 2 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
 		if( 0 < _tcslen( pOpt ) ){
 			_tcscat( pCmdLine, _T(" -GOPT=") );
 			_tcscat( pCmdLine, pOpt );

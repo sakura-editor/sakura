@@ -54,8 +54,7 @@ CDlgGrep::CDlgGrep()
 {
 	m_bSubFolder = FALSE;				// サブフォルダからも検索する
 	m_bFromThisText = FALSE;			// この編集中のテキストから検索する
-	m_bLoHiCase = FALSE;				// 英大文字と英小文字を区別する
-	m_bRegularExp = FALSE;				// 正規表現
+	m_sSearchOption.Reset();			// 検索オプション
 	m_nGrepCharSet = CODE_SJIS;			// 文字コードセット
 	m_bGrepOutputLine = TRUE;			// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = 1;				// Grep: 出力形式
@@ -73,14 +72,10 @@ CDlgGrep::CDlgGrep()
 int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurrentFilePath )
 {
 	m_bSubFolder = m_pShareData->m_Common.m_bGrepSubFolder;							// Grep: サブフォルダも検索
-	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;							// 1==正規表現
+	m_sSearchOption = m_pShareData->m_Common.m_sSearchOption;						// 検索オプション
 	m_nGrepCharSet = (ECodeType)m_pShareData->m_Common.m_nGrepCharSet;				// 文字コードセット
-	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;								// 1==大文字小文字の区別
 	m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					// Grep: 出力形式
-
-	//2001/06/23 N.Nakatani add
-	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;					/* 単語単位で検索 */
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
@@ -320,12 +315,12 @@ void CDlgGrep::SetData( void )
 	SetDataFromThisText( m_bFromThisText != FALSE );
 
 	/* 英大文字と英小文字を区別する */
-	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
+	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
 
 	// 2001/06/23 N.Nakatani 現時点ではGrepでは単語単位の検索はサポートできていません
 	// 2002/03/07 テストサポート
 	/* 一致する単語のみ検索する */
-	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
+	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_sSearchOption.bWordOnly );
 //	::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_WORD ) , false );	//チェックボックスを使用不可にすも
 
 
@@ -369,7 +364,7 @@ void CDlgGrep::SetData( void )
 	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
 	// 無関係にCheckRegexpVersionを通過するようにした。
 	if( CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )
-		&& m_bRegularExp){
+		&& m_sSearchOption.bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
 		//	正規表現のときも選択できるように。
@@ -438,14 +433,14 @@ int CDlgGrep::GetData( void )
 	/* この編集中のテキストから検索する */
 	m_bFromThisText = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_FROMTHISTEXT );
 	/* 英大文字と英小文字を区別する */
-	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
+	m_sSearchOption.bLoHiCase = (0!=::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE ));
 
 	//2001/06/23 N.Nakatani
 	/* 単語単位で検索 */
-	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
+	m_sSearchOption.bWordOnly = (0!=::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD ));
 
 	/* 正規表現 */
-	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
+	m_sSearchOption.bRegularExp = (0!=::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ));
 
 	/* 文字コード自動判別 */
 //	m_bKanjiCode_AutoDetect = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_KANJICODEAUTODETECT );
@@ -479,13 +474,10 @@ int CDlgGrep::GetData( void )
 	/* 検索フォルダ */
 	::GetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, m_szFolder, _MAX_PATH - 1 );
 
-	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;							// 1==正規表現
+	m_pShareData->m_Common.m_sSearchOption = m_sSearchOption;						// 検索オプション
 	m_pShareData->m_Common.m_nGrepCharSet = m_nGrepCharSet;							// 文字コード自動判別
-	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;								// 1==英大文字小文字の区別
 	m_pShareData->m_Common.m_bGrepOutputLine = m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
 	m_pShareData->m_Common.m_nGrepOutputStyle = m_nGrepOutputStyle;					// Grep: 出力形式
-	//2001/06/23 N.Nakatani add
-	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;		/* 1==単語のみ検索 */
 
 
 //やめました
@@ -524,8 +516,8 @@ int CDlgGrep::GetData( void )
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
 		int nFlag = 0;
-		nFlag |= m_bLoHiCase ? 0x01 : 0x00;
-		if( m_bRegularExp  && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag) ){
+		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
+		if( m_sSearchOption.bRegularExp  && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag) ){
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え

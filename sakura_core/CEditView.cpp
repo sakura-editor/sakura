@@ -172,9 +172,7 @@ CEditView::CEditView() :
 	m_bCurSrchKeyMark = FALSE;				/* 検索文字列 */
 	//	Jun. 27, 2001 genta
 	m_szCurSrchKey[0] = '\0';
-	m_bCurSrchRegularExp = 0;				/* 検索／置換  1==正規表現 */
-	m_bCurSrchLoHiCase = 0;					/* 検索／置換  1==英大文字小文字の区別 */
-	m_bCurSrchWordOnly = 0;					/* 検索／置換  1==単語のみ検索 */
+	m_sCurSearchOption.Reset();				// 検索／置換 オプション
 
 	m_bPrevCommand = 0;
 	m_nMyIndex = 0;
@@ -7019,11 +7017,9 @@ DWORD CEditView::DoGrep(
 	const CMemory*			pcmGrepFile,
 	const CMemory*			pcmGrepFolder,
 	BOOL					bGrepSubFolder,
-	BOOL					bGrepLoHiCase,
-	BOOL					bGrepRegularExp,
+	const SSearchOption&	sSearchOption,
 	ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
 	BOOL					bGrepOutputLine,
-	BOOL					bWordOnly,
 	int						nGrepOutputStyle
 )
 {
@@ -7070,9 +7066,9 @@ DWORD CEditView::DoGrep(
 
 	m_bCurSrchKeyMark = TRUE;								/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
-	m_bCurSrchRegularExp = bGrepRegularExp;					/* 検索／置換  1==正規表現 */
-	m_bCurSrchLoHiCase = bGrepLoHiCase;						/* 検索／置換  1==英大文字小文字の区別 */
-	m_bCurSrchWordOnly = bWordOnly;				// 2010.08.29 追加
+	m_sCurSearchOption.bRegularExp = sSearchOption.bRegularExp;		/* 検索／置換  1==正規表現 */
+	m_sCurSearchOption.bLoHiCase = sSearchOption.bLoHiCase;			/* 検索／置換  1==英大文字小文字の区別 */
+	m_sCurSearchOption.bWordOnly = sSearchOption.bWordOnly;			// 2010.08.29 追加
 	/* 正規表現 */
 
 	//	From Here Jun. 27 genta
@@ -7083,7 +7079,7 @@ DWORD CEditView::DoGrep(
 		Note: ここで強調するのは最後の検索文字列であって
 		Grep対象パターンではないことに注意
 	*/
-	if( m_bCurSrchRegularExp ){
+	if( m_sCurSearchOption.bRegularExp ){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
 			return 0;
@@ -7091,7 +7087,7 @@ DWORD CEditView::DoGrep(
 
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
-		nFlag |= m_bCurSrchLoHiCase ? 0x01 : 0x00;
+		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
 		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
 	}
 	//	To Here Jun. 27 genta
@@ -7110,13 +7106,13 @@ DWORD CEditView::DoGrep(
 
 	//	2007.07.22 genta
 	//	バージョン番号取得のため，処理を前の方へ移動した
-	if( bGrepRegularExp ){
+	if( m_sCurSearchOption.bRegularExp ){
 		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
-		nFlag |= bGrepLoHiCase ? 0x01 : 0x00;
+		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if( !cRegexp.Compile( pcmGrepKey->GetStringPtr(), nFlag ) ){
 			return 0;
 		}
@@ -7202,19 +7198,19 @@ DWORD CEditView::DoGrep(
 	cmemMessage.AppendString( pszWork );
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
-		if( bWordOnly ){
+		if( m_sCurSearchOption.bWordOnly ){
 		/* 単語単位で探す */
 			cmemMessage.AppendString( "    (単語単位で探す)\r\n" );
 		}
 
-		if( bGrepLoHiCase ){
+		if( m_sCurSearchOption.bLoHiCase ){
 			pszWork = "    (英大文字小文字を区別する)\r\n";
 		}else{
 			pszWork = "    (英大文字小文字を区別しない)\r\n";
 		}
 		cmemMessage.AppendString( pszWork );
 
-		if( bGrepRegularExp ){
+		if( m_sCurSearchOption.bRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
 			cmemMessage.AppendString( "    (正規表現:" );
 			cmemMessage.AppendString( cRegexp.GetVersionT() );
@@ -7271,11 +7267,9 @@ DWORD CEditView::DoGrep(
 		pcmGrepFile->GetStringPtr(),
 		szPath,
 		bGrepSubFolder,
-		bGrepLoHiCase,
-		bGrepRegularExp,
+		m_sCurSearchOption,
 		nGrepCharSet,
 		bGrepOutputLine,
-		bWordOnly,
 		nGrepOutputStyle,
 		&cRegexp,
 		0,
@@ -7394,22 +7388,20 @@ int grep_compare_sp(const void* a, const void* b)
 		大部分が変更されたため，個別の変更点記入は無し．
 */
 int CEditView::DoGrepTree(
-	CDlgCancel* 	pcDlgCancel,			//!< [in] Cancelダイアログへのポインタ
-	HWND			hwndCancel,				//!< [in] Cancelダイアログのウィンドウハンドル
-	const char*		pszKey,					//!< [in] 検索パターン
-	int*			pnKey_CharCharsArr,		//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
-	const TCHAR*	pszFile,				//!< [in] 検索対象ファイルパターン(!で除外指定)
-	const TCHAR*	pszPath,				//!< [in] 検索対象パス
-	BOOL			bGrepSubFolder,			//!< [in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
-	BOOL			bGrepLoHiCase,			//!< [in] TRUE: 大文字小文字の区別あり / FALSE: 無し
-	BOOL			bGrepRegularExp,		//!< [in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
-	ECodeType		nGrepCharSet,			//!< [in] 文字コードセット (0:自動認識)～
-	BOOL			bGrepOutputLine,		//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
-	BOOL			bWordOnly,				//!< [in] TRUE: 単語単位で一致を判断 / FALSE: 部分にも一致する
-	int				nGrepOutputStyle,		//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
-	CBregexp*		pRegexp,				//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	int				nNest,					//!< [in] ネストレベル
-	int*			pnHitCount				//!< [i/o] ヒット数の合計
+	CDlgCancel* 			pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
+	HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
+	const char*				pszKey,				//!< [in] 検索パターン
+	int*					pnKey_CharCharsArr,	//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
+	const TCHAR*			pszFile,			//!< [in] 検索対象ファイルパターン(!で除外指定)
+	const TCHAR*			pszPath,			//!< [in] 検索対象パス
+	BOOL					bGrepSubFolder,		//!< [in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
+	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
+	ECodeType				nGrepCharSet,		//!< [in] 文字コードセット (0:自動認識)～
+	BOOL					bGrepOutputLine,	//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
+	int						nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
+	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	int						nNest,				//!< [in] ネストレベル
+	int*					pnHitCount			//!< [i/o] ヒット数の合計
 )
 {
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, pszPath );
@@ -7622,11 +7614,9 @@ int CEditView::DoGrepTree(
 						pszKey,
 						pnKey_CharCharsArr,
 						w32fd.cFileName,
-						bGrepLoHiCase,
-						bGrepRegularExp,
+						sSearchOption,
 						nGrepCharSet,
 						bGrepOutputLine,
-						bWordOnly,
 						nGrepOutputStyle,
 						pRegexp,
 						pnHitCount,
@@ -7739,17 +7729,16 @@ int CEditView::DoGrepTree(
 				_tcscat( currentPath, _T("\\") );
 
 				int nGrepTreeResult = DoGrepTree(
-					pcDlgCancel, hwndCancel,
+					pcDlgCancel,
+					hwndCancel,
 					pszKey,
 					pnKey_CharCharsArr,
 					pszFile,
 					currentPath,
 					bGrepSubFolder,
-					bGrepLoHiCase,
-					bGrepRegularExp,
+					sSearchOption,
 					nGrepCharSet,
 					bGrepOutputLine,
-					bWordOnly,
 					nGrepOutputStyle,
 					pRegexp,
 					nNest + 1,
@@ -7909,44 +7898,27 @@ void CEditView::SetGrepResult(
 /*!
 	Grep実行 (CFileLoadを使ったテスト版)
 
-	@param pcDlgCancel		[in] Cancelダイアログへのポインタ
-	@param hwndCancel		[in] Cancelダイアログのウィンドウハンドル
-	@param pszKey			[in] 検索パターン
-	@param pnKey_CharCharsArr	[in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
-	@param pszFile			[in] 処理対象ファイル名(表示用)
-	@param bGrepLoHiCase	[in] TRUE: 大文字小文字の区別あり / FALSE: 無し
-	@param bGrepRegularExp	[in] TRUE: 検索パターンは正規表現 / FALSE: 文字列
-	@param nGrepCharSet		[in] 文字コードセット (0:自動認識)～
-	@param bGrepOutputLine	[in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
-	@param bWordOnly		[in] TRUE: 単語単位で一致を判断 / FALSE: 部分にも一致する
-	@param nGrepOutputStyle	[in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
-	@param pRegexp			[in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
-	@param pnHitCount		[i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
-	@param pszFullPath		[in] 処理対象ファイルパス
-
 	@retval -1 GREPのキャンセル
 	@retval それ以外 ヒット数(ファイル検索時はファイル数)
 
+	@date 2001/06/27 genta	正規表現ライブラリの差し替え
 	@date 2002/08/30 Moca CFileLoadを使ったテスト版
 	@date 2004/03/28 genta 不要な引数nNest, bGrepSubFolder, pszPathを削除
 */
 int CEditView::DoGrepFile(
-	CDlgCancel* pcDlgCancel,
-	HWND		hwndCancel,
-	const char*	pszKey,
-	int*		pnKey_CharCharsArr,
-	const char*	pszFile,
-	BOOL		bGrepLoHiCase,
-	BOOL		bGrepRegularExp,
-	ECodeType	nGrepCharSet,
-	BOOL		bGrepOutputLine,
-	BOOL		bWordOnly,
-	int			nGrepOutputStyle,
-	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-	CBregexp*	pRegexp,
-	int*		pnHitCount,
-	const char*	pszFullPath,
-	CMemory&	cmemMessage
+	CDlgCancel* 			pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
+	HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
+	const char*				pszKey,				//!< [in] 検索パターン
+	int*					pnKey_CharCharsArr,	//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
+	const char*				pszFile,			//!< [in] 処理対象ファイル名(表示用)
+	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
+	ECodeType				nGrepCharSet,		//!< [in] 文字コードセット (0:自動認識)～
+	BOOL					bGrepOutputLine,	//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
+	int						nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
+	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	int*					pnHitCount,			//!< [i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
+	const char*				pszFullPath,		//!< [in] 処理対象ファイルパス
+	CMemory&				cmemMessage			//!< 
 )
 {
 	int		nHitCount;
@@ -8058,7 +8030,7 @@ int CEditView::DoGrepFile(
 		}
 
 		/* 正規表現検索 */
-		if( bGrepRegularExp ){
+		if( sSearchOption.bRegularExp ){
 			int nIndex = 0;
 #ifdef _DEBUG
 			int nIndexPrev = -1;
@@ -8122,7 +8094,7 @@ int CEditView::DoGrepFile(
 			}
 		}
 		/* 単語のみ検索 */
-		else if( bWordOnly ){
+		else if( sSearchOption.bWordOnly ){
 			/*
 				2002/02/23 Norio Nakatani
 				単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
@@ -8140,8 +8112,8 @@ int CEditView::DoGrepFile(
 					if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
 						// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
 						/* 1==大文字小文字の区別 */
-						if( (FALSE == bGrepLoHiCase && 0 == my_memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
-							(TRUE  == bGrepLoHiCase && 0 ==	  memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
+						if( (!sSearchOption.bLoHiCase && 0 == my_memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
+							(sSearchOption.bLoHiCase && 0 ==	  memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
 						){
 							/* Grep結果を、szWorkに格納する */
 							SetGrepResult(
@@ -8188,7 +8160,7 @@ int CEditView::DoGrepFile(
 					0,
 					(const unsigned char *)pszKey, nKeyKen,
 					pnKey_CharCharsArr,
-					bGrepLoHiCase
+					sSearchOption.bLoHiCase
 				) ) ){
 					nColm = pszRes - pCompareData + 1;
 
@@ -10555,7 +10527,7 @@ int CEditView::GetColorIndex(
 				 && TypeDataPtr->m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
 searchnext:;
 				// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
-					if(!bSearchStringMode && (!m_bCurSrchRegularExp || (bSearchFlg && nSearchStart < nPos))){
+					if(!bSearchStringMode && (!m_sCurSearchOption.bRegularExp || (bSearchFlg && nSearchStart < nPos))){
 						bSearchFlg=IsSearchString( pLine, nLineLen, nPos, &nSearchStart, &nSearchEnd );
 					}
 					if( !bSearchStringMode && bSearchFlg && nSearchStart==nPos

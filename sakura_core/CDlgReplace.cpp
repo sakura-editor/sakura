@@ -59,15 +59,18 @@ const DWORD p_helpids[] = {	//11900
 
 CDlgReplace::CDlgReplace()
 {
+	m_sSearchOption.Reset();	// 検索オプション
+	/*
 	m_bLoHiCase = FALSE;		// 英大文字と英小文字を区別する
 	m_bWordOnly = FALSE;		// 一致する単語のみ検索する
-	m_bConsecutiveAll = FALSE;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	m_bRegularExp = FALSE;		// 正規表現
+	*/
+	m_bConsecutiveAll = FALSE;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	m_bSelectedArea = FALSE;	// 選択範囲内置換
 	m_szText[0] = _T('\0');		// 検索文字列
 	m_szText2[0] = _T('\0');	// 置換後文字列
 	m_nReplaceTarget = 0;		// 置換対象		// 2001.12.03 hor
-	m_nPaste = FALSE;			// 貼り付ける？ 	// 2001.12.03 hor
+	m_nPaste = FALSE;			// 貼り付ける？	// 2001.12.03 hor
 	m_nReplaceCnt = 0;			//すべて置換の実行結果		// 2002.02.08 hor
 	m_bCanceled = false;		//すべて置換を中断したか	// 2002.02.08 hor
 	return;
@@ -76,9 +79,7 @@ CDlgReplace::CDlgReplace()
 /* モードレスダイアログの表示 */
 HWND CDlgReplace::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, BOOL bSelected )
 {
-	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;			// 1==正規表現
-	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				// 1==英大文字小文字の区別
-	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				// 1==単語のみ検索
+	m_sSearchOption = m_pShareData->m_Common.m_sSearchOption;		// 検索オプション
 	m_bConsecutiveAll = m_pShareData->m_Common.m_bConsecutiveAll;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	m_bSelectedArea = m_pShareData->m_Common.m_bSelectedArea;		// 選択範囲内置換
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
@@ -106,11 +107,11 @@ void CDlgReplace::SetData( void )
 	SetCombosList();
 
 	/* 英大文字と英小文字を区別する */
-	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
+	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
 
 	// 2001/06/23 N.Nakatani
 	/* 単語単位で探す */
-	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
+	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_sSearchOption.bWordOnly );
 
 	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	::CheckDlgButton( m_hWnd, IDC_CHECK_CONSECUTIVEALL, m_bConsecutiveAll );
@@ -120,7 +121,7 @@ void CDlgReplace::SetData( void )
 	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
 	// 無関係にCheckRegexpVersionを通過するようにした。
 	if( CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )
-		&& m_bRegularExp){
+		&& m_sSearchOption.bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
 
@@ -207,25 +208,23 @@ void CDlgReplace::SetCombosList( void )
 int CDlgReplace::GetData( void )
 {
 	/* 英大文字と英小文字を区別する */
-	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
+	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE ));
 
 	// 2001/06/23 N.Nakatani
 	/* 単語単位で探す */
-	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
+	m_sSearchOption.bWordOnly = (0!=IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD ));
 
 	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	m_bConsecutiveAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_CONSECUTIVEALL );
 
 	/* 正規表現 */
-	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
+	m_sSearchOption.bRegularExp = (0!=IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ));
 	/* 選択範囲内置換 */
 	m_bSelectedArea = ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_SELECTEDAREA );
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;			// 1==正規表現
-	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;				// 1==英大文字小文字の区別
-	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;				// 1==単語のみ検索
+	m_pShareData->m_Common.m_sSearchOption = m_sSearchOption;		// 検索オプション
 	m_pShareData->m_Common.m_bConsecutiveAll = m_bConsecutiveAll;	// 1==「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	m_pShareData->m_Common.m_bSelectedArea = m_bSelectedArea;		// 選択範囲内置換
 	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
@@ -246,8 +245,8 @@ int CDlgReplace::GetData( void )
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
 		int nFlag = 0x00;
-		nFlag |= m_bLoHiCase ? 0x01 : 0x00;
-		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag ) ){
+		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
+		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え

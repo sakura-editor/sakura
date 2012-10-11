@@ -388,6 +388,45 @@ enum ESearchDirection{
 	SEARCH_FORWARD  = 1, //Œã•ûŒŸõ (Ÿ‚ğŒŸõ) (•’Ê)
 };
 
+//2007.09.06 kobake ’Ç‰Á
+struct SSearchOption{
+//	ESearchDirection	eDirection;
+//	bool	bPrevOrNext;	//!< false==‘O•ûŒŸõ true==Œã•ûŒŸõ
+	bool	bRegularExp;	//!< true==³‹K•\Œ»
+	bool	bLoHiCase;		//!< true==‰p‘å•¶š¬•¶š‚Ì‹æ•Ê
+	bool	bWordOnly;		//!< true==’PŒê‚Ì‚İŒŸõ
+
+	SSearchOption() : bRegularExp(false), bLoHiCase(false), bWordOnly(false) { }
+	SSearchOption(
+		bool _bRegularExp,
+		bool _bLoHiCase,
+		bool _bWordOnly
+	)
+	: bRegularExp(_bRegularExp)
+	, bLoHiCase(_bLoHiCase)
+	, bWordOnly(_bWordOnly)
+	{
+	}
+	void Reset()
+	{
+		bRegularExp = false;
+		bLoHiCase   = false;
+		bWordOnly   = false;
+	}
+
+	//‰‰Zq
+	bool operator == (const SSearchOption& rhs) const
+	{
+		//‚Æ‚è‚ ‚¦‚¸memcmp‚Å‚¢‚¢‚â
+		return memcmp(this,&rhs,sizeof(*this))==0;
+	}
+	bool operator != (const SSearchOption& rhs) const
+	{
+		return !operator==(rhs);
+	}
+
+};
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ‚PŸŒ³Œ^‚Ì’è‹`                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -278,6 +278,7 @@ struct ARRHEAD {
 
 	Version 95:
 	CBlockComment変更
+	検索／置換情報SSearchOptionにまとめた
 */
 
 extern const unsigned int uShareDataVersion;
@@ -550,9 +551,7 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_Common.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
 
-		m_pShareData->m_Common.m_bRegularExp = 0;				/* 1==正規表現 */
-		m_pShareData->m_Common.m_bLoHiCase = 0;					/* 1==英大文字小文字の区別 */
-		m_pShareData->m_Common.m_bWordOnly = 0;					/* 1==単語のみ検索 */
+		m_pShareData->m_Common.m_sSearchOption.Reset();			// 検索オプション
 		m_pShareData->m_Common.m_bConsecutiveAll = 0;			/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 		m_pShareData->m_Common.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
 		m_pShareData->m_Common.m_szExtHelp[0] = _T('\0');		/* 外部ヘルプ１ */

@@ -50,9 +50,7 @@ const DWORD p_helpids[] = {	//11800
 
 CDlgFind::CDlgFind()
 {
-	m_bLoHiCase = FALSE;	/* 英大文字と英小文字を区別する */
-	m_bWordOnly = FALSE;	/* 一致する単語のみ検索する */
-	m_bRegularExp = FALSE;	/* 正規表現 */
+	m_sSearchOption.Reset();
 	m_szText[0] = '\0';		/* 検索文字列 */
 	return;
 }
@@ -61,9 +59,7 @@ CDlgFind::CDlgFind()
 /* モードレスダイアログの表示 */
 HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_bRegularExp = m_pShareData->m_Common.m_bRegularExp;			// 1==正規表現
-	m_bLoHiCase = m_pShareData->m_Common.m_bLoHiCase;				// 1==英大文字小文字の区別
-	m_bWordOnly = m_pShareData->m_Common.m_bWordOnly;				// 1==単語のみ検索
+	m_sSearchOption = m_pShareData->m_Common.m_sSearchOption;		// 検索オプション
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	// 検索開始時のカーソル位置退避	02/07/28 ai
 	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	// 検索開始時のカーソル位置退避	02/07/28 ai
@@ -105,11 +101,11 @@ void CDlgFind::SetData( void )
 	SetCombosList();
 
 	/* 英大文字と英小文字を区別する */
-	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_bLoHiCase );
+	::CheckDlgButton( m_hWnd, IDC_CHK_LOHICASE, m_sSearchOption.bLoHiCase );
 
 	// 2001/06/23 Norio Nakatani
 	/* 単語単位で検索 */
-	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_bWordOnly );
+	::CheckDlgButton( m_hWnd, IDC_CHK_WORD, m_sSearchOption.bWordOnly );
 
 	/* 検索／置換  見つからないときメッセージを表示 */
 	::CheckDlgButton( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND, m_bNOTIFYNOTFOUND );
@@ -119,7 +115,7 @@ void CDlgFind::SetData( void )
 	// 処理フロー及び判定条件の見直し。必ず正規表現のチェックと
 	// 無関係にCheckRegexpVersionを通過するようにした。
 	if( CheckRegexpVersion( m_hWnd, IDC_STATIC_JRE32VER, false )
-		&& m_bRegularExp){
+		&& m_sSearchOption.bRegularExp){
 		/* 英大文字と英小文字を区別する */
 		::CheckDlgButton( m_hWnd, IDC_CHK_REGULAREXP, 1 );
 //正規表現がONでも、大文字小文字を区別する／しないを選択できるように。
@@ -174,22 +170,20 @@ int CDlgFind::GetData( void )
 //	MYTRACE_A( "CDlgFind::GetData()" );
 
 	/* 英大文字と英小文字を区別する */
-	m_bLoHiCase = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE );
+	m_sSearchOption.bLoHiCase = (0!=IsDlgButtonChecked( m_hWnd, IDC_CHK_LOHICASE ));
 
 	// 2001/06/23 Norio Nakatani
 	/* 単語単位で検索 */
-	m_bWordOnly = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD );
+	m_sSearchOption.bWordOnly = (0!=IsDlgButtonChecked( m_hWnd, IDC_CHK_WORD ));
 
 	/* 一致する単語のみ検索する */
 	/* 正規表現 */
-	m_bRegularExp = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP );
+	m_sSearchOption.bRegularExp = (0!=IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ));
 
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_bRegularExp = m_bRegularExp;			// 1==正規表現
-	m_pShareData->m_Common.m_bLoHiCase = m_bLoHiCase;				// 1==英大文字小文字の区別
-	m_pShareData->m_Common.m_bWordOnly = m_bWordOnly;				// 1==単語のみ検索
+	m_pShareData->m_Common.m_sSearchOption = m_sSearchOption;		// 検索オプション
 	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
@@ -206,8 +200,8 @@ int CDlgFind::GetData( void )
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
 		int nFlag = 0x00;
-		nFlag |= m_bLoHiCase ? 0x01 : 0x00;
-		if( m_bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag ) ){
+		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
+		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_szText, m_hWnd, true, nFlag ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え

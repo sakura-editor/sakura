@@ -1256,17 +1256,15 @@ int CDocLineMgr::PrevOrNextWord(
 */
 /* 見つからない場合は０を返す */
 int CDocLineMgr::SearchWord(
-	int					nLineNum,		//!< 検索開始行
-	int					nIdx, 			//!< 検索開始位置
-	const char*			pszPattern,		//!< 検索条件
-	ESearchDirection	eDirection,		//!< 検索方向
-	int					bRegularExp,	//!< 1==正規表現
-	int					bLoHiCase,		//!< 1==英大文字小文字の区別
-	int					bWordOnly,		//!< 1==単語のみ検索
-	int*				pnLineNum, 		//!< マッチ行
-	int*				pnIdxFrom, 		//!< マッチ位置from
-	int*				pnIdxTo,  		//!< マッチ位置to
-	CBregexp*			pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	int						nLineNum,		//!< 検索開始行
+	int						nIdx, 			//!< 検索開始位置
+	const char*				pszPattern,		//!< 検索条件
+	ESearchDirection		eDirection,		//!< 検索方向
+	const SSearchOption&	sSearchOption,	//!< 検索オプション
+	int*					pnLineNum, 		//!< マッチ行
+	int*					pnIdxFrom, 		//!< マッチ位置from
+	int*					pnIdxTo,  		//!< マッチ位置to
+	CBregexp*				pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 )
 {
 	CDocLine*	pDocLine;
@@ -1293,7 +1291,7 @@ int CDocLineMgr::SearchWord(
 	);
 
 	//正規表現
-	if( bRegularExp ){
+	if( sSearchOption.bRegularExp ){
 		nLinePos = nLineNum;		// 検索行＝検索開始行
 		pDocLine = GetLine( nLinePos );
 		//前方検索
@@ -1382,7 +1380,7 @@ int CDocLineMgr::SearchWord(
 		}
 	}
 	//単語のみ検索
-	else if( bWordOnly ){
+	else if( sSearchOption.bWordOnly ){
 		/*
 			2001/06/23 Norio Nakatani
 			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
@@ -1405,8 +1403,8 @@ int CDocLineMgr::SearchWord(
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 							const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
 							/* 1==大文字小文字の区別 */
-							if( (!bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-								(bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+							if( (!sSearchOption.bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+								(sSearchOption.bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 							){
 								*pnLineNum = nLinePos;	// マッチ行
 								*pnIdxFrom = nNextWordFrom2;	// マッチ位置from
@@ -1443,8 +1441,8 @@ int CDocLineMgr::SearchWord(
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
 						const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
 						/* 1==大文字小文字の区別 */
-						if( (!bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
-							(bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
+						if( (!sSearchOption.bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
+							(sSearchOption.bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
 						){
 							*pnLineNum = nLinePos;	// マッチ行
 							*pnIdxFrom = nNextWordFrom2;	// マッチ位置from
@@ -1490,7 +1488,7 @@ int CDocLineMgr::SearchWord(
 						(const unsigned char *)pszPattern,
 						nPatternLen,
 						pnKey_CharCharsArr,
-						bLoHiCase
+						sSearchOption.bLoHiCase
 					);
 					if( NULL != pszRes ){
 						nHitPos = pszRes - pLine;
@@ -1542,7 +1540,7 @@ int CDocLineMgr::SearchWord(
 					(const unsigned char *)pszPattern,
 					nPatternLen,
 					pnKey_CharCharsArr,
-					bLoHiCase
+					sSearchOption.bLoHiCase
 				);
 				if( NULL != pszRes ){
 					*pnLineNum = nLinePos;							// マッチ行

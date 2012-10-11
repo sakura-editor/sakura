@@ -584,11 +584,9 @@ char* CDocLineMgr::GetBookMarks( void )
 	@date 2002.01.16 hor
 */
 void CDocLineMgr::MarkSearchWord(
-	const char*	pszPattern,		//!< 検索条件
-	int			bRegularExp,	//!< 1==正規表現
-	int			bLoHiCase,		//!< 1==英大文字小文字の区別
-	int			bWordOnly,		//!< 1==単語のみ検索
-	CBregexp*	pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	const char*				pszPattern,		//!< 検索条件
+	const SSearchOption&	sSearchOption,	//!< 検索オプション
+	CBregexp*				pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 )
 {
 	CDocLine*	pDocLine;
@@ -601,7 +599,7 @@ void CDocLineMgr::MarkSearchWord(
 	const int	nPatternLen = lstrlen( pszPattern );
 
 	/* 1==正規表現 */
-	if( bRegularExp ){
+	if( sSearchOption.bRegularExp ){
 		pDocLine = GetLine( 0 );
 		while( pDocLine ){
 			if(!pDocLine->IsBookMarked()){
@@ -615,7 +613,7 @@ void CDocLineMgr::MarkSearchWord(
 		}
 	}
 	/* 1==単語のみ検索 */
-	else if( bWordOnly ){
+	else if( sSearchOption.bWordOnly ){
 		pDocLine = GetLine( 0 );
 		int nLinePos = 0;
 		int nNextWordFrom = 0;
@@ -627,11 +625,11 @@ void CDocLineMgr::MarkSearchWord(
 				const char* pData = pDocLine->m_pLine->GetStringPtr(); // 2002/2/10 aroka CMemory変更
 				
 				if(( nPatternLen == nNextWordTo2 - nNextWordFrom2 ) &&
-				   (( FALSE == bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
-					( TRUE  == bLoHiCase && 0 ==   memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
+				   (( !sSearchOption.bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
+					( sSearchOption.bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
 					pDocLine->SetBookMark(true);
-				}else
-				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE, FALSE) ){
+				}
+				else if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE, FALSE) ){
 					continue;
 				}
 			}
@@ -660,7 +658,7 @@ void CDocLineMgr::MarkSearchWord(
 					(const unsigned char *)pszPattern,
 					nPatternLen,
 					pnKey_CharCharsArr,
-					bLoHiCase
+					sSearchOption.bLoHiCase
 				);
 				if( NULL != pszRes ){
 					pDocLine->SetBookMark(true);

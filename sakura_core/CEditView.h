@@ -206,12 +206,12 @@ public:
 	void RedrawLineNumber( void );								/* 行番号再描画 */	// 2009.03.26 ryoji
 	void CopyViewStatus( CEditView* );							/* 自分の表示状態を他のビューにコピー */
 	void SplitBoxOnOff( BOOL, BOOL, BOOL );						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
-	DWORD DoGrep( const CMemory*, const CMemory*, const CMemory*, BOOL, BOOL, BOOL, ECodeType, BOOL, BOOL, int );	/* Grep実行 */
+	DWORD DoGrep( const CMemory*, const CMemory*, const CMemory*, BOOL, const SSearchOption&, ECodeType, BOOL, int );	/* Grep実行 */
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const TCHAR*, const TCHAR*, BOOL, BOOL, BOOL, ECodeType, BOOL, BOOL, int, CBregexp*, int, int* );
+	int DoGrepTree( CDlgCancel*, HWND, const char*, int*, const TCHAR*, const TCHAR*, BOOL, const SSearchOption&, ECodeType, BOOL, int, CBregexp*, int, int* );
 	/* Grep実行 */	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	//	Mar. 28, 2004 genta 不要な引数を削除
-	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, BOOL, BOOL, ECodeType, BOOL, BOOL, int, CBregexp*, int*, const char*, CMemory& );
+	int DoGrepFile( CDlgCancel*, HWND, const char*, int*, const char*, const SSearchOption&, ECodeType, BOOL, int, CBregexp*, int*, const char*, CMemory& );
 	/* Grep結果をpszWorkに格納 */
 	void SetGrepResult(
 		/* データ格納先 */
@@ -302,9 +302,7 @@ public: /* テスト用にアクセス属性を変更 */
 	CBregexp	m_CurRegexp;			/*!< コンパイルデータ */
 	BOOL	m_bCurSrchKeyMark;			/* 検索文字列のマーク */
 	char	m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
-	int		m_bCurSrchRegularExp;		/* 検索／置換  1==正規表現 */
-	int		m_bCurSrchLoHiCase;			/* 検索／置換  1==英大文字小文字の区別 */
-	int		m_bCurSrchWordOnly;			/* 検索／置換  1==単語のみ検索 */
+	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
 
 	BOOL	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
 	HWND	m_hWnd;				/* 編集ウィンドウハンドル */

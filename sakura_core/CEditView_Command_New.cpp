@@ -2072,9 +2072,7 @@ void CEditView::Command_BOOKMARK_PATTERN( void )
 
 	m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
 		m_pShareData->m_szSEARCHKEYArr[0],		// 検索条件
-		m_pShareData->m_Common.m_bRegularExp,	// 1==正規表現
-		m_pShareData->m_Common.m_bLoHiCase,		// 1==英大文字小文字の区別
-		m_pShareData->m_Common.m_bWordOnly,		// 1==単語のみ検索
+		m_pShareData->m_Common.m_sSearchOption,	// 検索条件
 		&m_CurRegexp							// 正規表現コンパイルデータ
 	);
 	// 2002.01.16 hor 分割したビューも更新
