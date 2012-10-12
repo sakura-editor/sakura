@@ -4,8 +4,6 @@
 #include "charset/CESI.h"
 #include "io/CBinaryStream.h"
 
-// 非依存推奨
-#include "doc/CEditDoc.h"
 
 
 
@@ -142,7 +140,7 @@ ECodeType CCodeMediator::CheckKanjiCode( CESI* pcesi )
 	}
 
 	// デフォルト文字コードを返す
-	return pcesi->m_pcEditDoc->GetDefaultDocumentEncoding();
+	return pcesi->m_pEncodingConfig->m_eDefaultCodetype;
 }
 
 
@@ -160,7 +158,7 @@ ECodeType CCodeMediator::CheckKanjiCode( CESI* pcesi )
 */
 ECodeType CCodeMediator::CheckKanjiCode( const char* pBuf, int nBufLen )
 {
-	CESI cesi(*m_pcEditDoc);
+	CESI cesi(*m_pEncodingConfig);
 
 	/*
 		判定状況は、
@@ -201,9 +199,9 @@ ECodeType CCodeMediator::CheckKanjiCodeOfFile( const TCHAR* pszFile )
 		nBufLen = CheckKanjiCode_MAXREADLENGTH;
 	}
 
-	// 0バイトならSJIS扱い
+	// 0バイトならタイプ別のデフォルト設定
 	if( 0 == nBufLen ){
-		return m_pcEditDoc->GetDefaultDocumentEncoding();
+		return m_pEncodingConfig->m_eDefaultCodetype;
 	}
 
 	// データ確保

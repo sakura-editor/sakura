@@ -55,11 +55,9 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	if( CODE_AUTODETECT == pLoadInfo->eCharCode ){
 		if( fexist(pLoadInfo->cFilePath) ){
 			// デフォルト文字コード認識のために一時的に読み込み対象ファイルのファイルタイプを適用する
-			CTypeConfig nTypeOld = pcDoc->m_cDocType.GetDocumentType();
-			pcDoc->m_cDocType.SetDocumentType(pLoadInfo->nType, true, true);
-			CCodeMediator cmediator( *pcDoc );
+			const STypeConfig& type = CDocTypeManager().GetTypeSetting(pLoadInfo->nType);
+			CCodeMediator cmediator( type.m_encoding );
 			pLoadInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pLoadInfo->cFilePath );
-			pcDoc->m_cDocType.SetDocumentType(nTypeOld, true, true);	// 戻し
 		}
 		else{
 			pLoadInfo->eCharCode = ePrevCode;
@@ -69,7 +67,7 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 		pLoadInfo->eCharCode = ePrevCode;
 	}
 	if(CODE_NONE==pLoadInfo->eCharCode)
-		pLoadInfo->eCharCode = static_cast<ECodeType>( pLoadInfo->nType.GetTypeConfig()->m_eDefaultCodetype );	//無効値の回避	// 2011.01.24 ryoji CODE_DEFAULT -> m_eDefaultCodetype
+		pLoadInfo->eCharCode = pLoadInfo->nType.GetTypeConfig()->m_encoding.m_eDefaultCodetype;	//無効値の回避	// 2011.01.24 ryoji CODE_DEFAULT -> m_eDefaultCodetype
 
 	//食い違う場合
 	if(IsValidCodeType(ePrevCode) && pLoadInfo->eCharCode!=ePrevCode){

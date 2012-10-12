@@ -61,8 +61,10 @@ const int CFileLoad::gm_nBufSizeDef = 32768;
 // const int gm_nBufSizeMin = 1024;
 
 /*! コンストラクタ */
-CFileLoad::CFileLoad( void )
+CFileLoad::CFileLoad( SEncodingConfig& encode )
 {
+	m_pEencoding = &encode;
+
 	m_hFile			= NULL;
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
@@ -144,8 +146,8 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	Buffering();
 
 	if( CharCode == CODE_AUTODETECT ){
-		CEditDoc& ref_cEditDoc = CEditWnd::getInstance()->GetDocument();
-		CharCode = CCodeMediator(ref_cEditDoc).CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
+		CCodeMediator mediator(*m_pEencoding);
+		CharCode = mediator.CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
 	}
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定

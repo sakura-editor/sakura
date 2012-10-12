@@ -53,7 +53,7 @@ class SAKURA_CORE_API CFileLoad
 {
 public:
 
-	CFileLoad( void );
+	CFileLoad( SEncodingConfig& encode );
 	~CFileLoad( void );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
@@ -105,6 +105,7 @@ protected:
 	DWORD FilePointer( DWORD, DWORD ); // inline
 
 	/* メンバオブジェクト */
+	SEncodingConfig* m_pEencoding;
 
 //	LPTSTR	m_pszFileName;	// ファイル名
 	HANDLE	m_hFile;		// ファイルハンドル

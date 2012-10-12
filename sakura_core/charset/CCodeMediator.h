@@ -35,7 +35,7 @@ protected:
 
 public:
 
-	explicit CCodeMediator( CEditDoc &ref ) : m_pcEditDoc(&ref) { }
+	explicit CCodeMediator( const SEncodingConfig &ref ) : m_pEncodingConfig(&ref) { }
 
 	static ECodeType DetectUnicodeBom( const char* pS, const int nLen );
 
@@ -47,7 +47,7 @@ public:
 	static ECodeType CheckKanjiCode( CESI* );  // CESI 構造体（？）を外部で構築した場合に使用
 
 private:
-	CEditDoc* m_pcEditDoc;
+	const SEncodingConfig* m_pEncodingConfig;
 };
 
 #include "CEuc.h"

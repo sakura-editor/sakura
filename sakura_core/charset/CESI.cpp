@@ -740,10 +740,8 @@ void CESI::GuessEucOrSjis( void )
 */
 void CESI::GuessUtf8OrCesu8( void )
 {
-	int ntype = m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex();
-
 	if( IsAmbiguousUtf8AndCesu8()
-	 && CShareData::getInstance()->GetShareData()->m_Types[ntype].m_bPriorCesu8 ){
+	 && m_pEncodingConfig->m_bPriorCesu8 ){
 		int i;
 		for( i = 0; i < 2; ++i ){
 			if( m_apMbcInfo[i]->eCodeID == CODE_CESU8 ){
@@ -778,8 +776,9 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	int v1, v2, v3, v4;
 	int i;
 
+	CEditDoc& doc = CEditWnd::getInstance()->GetDocument();
 	ECodeType ecode_result;
-	CESI cesi( CEditWnd::getInstance()->GetDocument() );
+	CESI cesi( doc.m_cDocType.GetDocumentAttribute().m_encoding );
 
 	// テスト実行
 	cesi.SetInformation( pS, nLen/*, CODE_SJIS*/ );
@@ -809,16 +808,14 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeT* pcmtxtOut )
 	pcmtxtOut->AppendString( _T("文書種別\r\n") );
 
 
-	CTypeConfig ctypeconf( cesi.m_pcEditDoc->m_cDocType.GetDocumentType().GetIndex() );
-	STypeConfig& type = CDocTypeManager().GetTypeSetting(ctypeconf);
-	auto_sprintf( szWork, _T("\t%s\r\n"), type.m_szTypeName );
+	auto_sprintf( szWork, _T("\t%s\r\n"), doc.m_cDocType.GetDocumentAttribute().m_szTypeName );
 	pcmtxtOut->AppendString( szWork );
 
 
 	pcmtxtOut->AppendString( _T("デフォルト文字コード\r\n") );
 
 
-	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(cesi.m_pcEditDoc->GetDefaultDocumentEncoding()).Normal() );
+	auto_sprintf( szWork, _T("\t%ts\r\n"), CCodeTypeName(doc.m_cDocType.GetDocumentAttribute().m_encoding.m_eDefaultCodetype).Normal() );
 	pcmtxtOut->AppendString( szWork );
 
 

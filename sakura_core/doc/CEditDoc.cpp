@@ -119,9 +119,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 
 	// 文字コード種別を初期化
-	m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultCodetype );
-	m_cDocFile.m_sFileInfo.bBomExist = ( CShareData::getInstance()->GetShareData()->m_Types[0].m_bDefaultBom != FALSE );
-	m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultEoltype );
+	m_cDocFile.m_sFileInfo.eCharCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultCodetype;
+	m_cDocFile.m_sFileInfo.bBomExist = ( GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom != FALSE );
+	m_cDocEditor.m_cNewLineCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultEoltype;
 
 	// 排他制御オプションを初期化
 	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
@@ -196,9 +196,9 @@ void CEditDoc::InitDoc()
 	m_cDocEditor.SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultCodetype );
-	m_cDocFile.m_sFileInfo.bBomExist = ( CShareData::getInstance()->GetShareData()->m_Types[0].m_bDefaultBom != FALSE );
-	m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( CShareData::getInstance()->GetShareData()->m_Types[0].m_eDefaultEoltype );
+	m_cDocFile.m_sFileInfo.eCharCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultCodetype;
+	m_cDocFile.m_sFileInfo.bBomExist = ( GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom != FALSE );
+	m_cDocEditor.m_cNewLineCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultEoltype;
 
 	//	Oct. 2, 2005 genta 挿入モード
 	m_cDocEditor.SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
@@ -374,12 +374,6 @@ void CEditDoc::SetDocumentEncoding(ECodeType eCharCode)
 	m_cDocFile.m_sFileInfo.eCharCode = eCharCode;
 }
 
-//! ドキュメントのデフォルト文字コードを取得
-ECodeType CEditDoc::GetDefaultDocumentEncoding() const
-{
-	int ntype = m_cDocType.GetDocumentType().GetIndex();
-	return static_cast<ECodeType>( CShareData::getInstance()->GetShareData()->m_Types[ntype].m_eDefaultCodetype );
-}
 
 
 
@@ -582,9 +576,9 @@ void CEditDoc::OnChangeType()
 	if( !m_cDocFile.GetFilePathClass().IsValidPath() ){
 		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
 			STypeConfig& types = m_cDocType.GetDocumentAttribute();
-			m_cDocFile.m_sFileInfo.eCharCode = static_cast<ECodeType>( types.m_eDefaultCodetype );
-			m_cDocFile.m_sFileInfo.bBomExist = ( types.m_bDefaultBom != FALSE );
-			m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_eDefaultEoltype );
+			m_cDocFile.m_sFileInfo.eCharCode = types.m_encoding.m_eDefaultCodetype;
+			m_cDocFile.m_sFileInfo.bBomExist = ( types.m_encoding.m_bDefaultBom != FALSE );
+			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
 		}
 	}
 	/* 設定変更を反映させる */

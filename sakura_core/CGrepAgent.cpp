@@ -936,7 +936,7 @@ int CGrepAgent::DoGrepFile(
 	bOutFileName = FALSE;
 	CEol	cEol;
 	int		nEolCodeLen;
-	CFileLoad	cfl;
+	CFileLoad	cfl( pcViewDst->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding );
 	int		nOldPercent = 0;
 
 	int	nKeyKen = wcslen( pszKey );
@@ -955,7 +955,7 @@ int CGrepAgent::DoGrepFile(
 			// 2003.06.10 Moca コード判別処理をここに移動．
 			// 判別エラーでもファイル数にカウントするため
 			// ファイルの日本語コードセット判別
-			CCodeMediator cmediator( CEditWnd::getInstance()->GetDocument() );
+			CCodeMediator cmediator( pcViewDst->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding );
 			nCharCode = cmediator.CheckKanjiCodeOfFile( pszFullPath );
 			if( !IsValidCodeType(nCharCode) ){
 				pszCodeName = _T("  [(DetectError)]");
@@ -981,7 +981,7 @@ int CGrepAgent::DoGrepFile(
 	// ファイルを開く
 	// FileCloseで明示的に閉じるが、閉じていないときはデストラクタで閉じる
 	// 2003.06.10 Moca 文字コード判定処理もFileOpenで行う
-	nCharCode = cfl.FileOpen( pszFullPath, nGrepCharSet, 0 );
+	nCharCode = cfl.FileOpen( pszFullPath, nGrepCharSet, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode() );
 	if( CODE_AUTODETECT == nGrepCharSet ){
 		pszCodeName = CCodeTypeName(nCharCode).Bracket();
 	}

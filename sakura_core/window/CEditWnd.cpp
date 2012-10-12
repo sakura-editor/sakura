@@ -782,14 +782,14 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 	// 文字コードの指定	2008/6/14 Uchi
 	if( IsValidCodeType( nCharCode ) || nDocumentType.IsValid() ){
 		STypeConfig& types = GetDocument().m_cDocType.GetDocumentAttribute();
-		ECodeType eDefaultCharCode = static_cast<ECodeType>( types.m_eDefaultCodetype );
+		ECodeType eDefaultCharCode = types.m_encoding.m_eDefaultCodetype;
 		if( !IsValidCodeType( nCharCode ) ){
 			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用
 		}
 		GetDocument().SetDocumentEncoding( nCharCode );
 		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
-			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = ( types.m_bDefaultBom != FALSE );
-			GetDocument().m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_eDefaultEoltype );
+			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = ( types.m_encoding.m_bDefaultBom != FALSE );
+			GetDocument().m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_encoding.m_eDefaultEoltype );
 		}
 		else{
 			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = ( nCharCode == CODE_UNICODE || nCharCode == CODE_UNICODEBE );

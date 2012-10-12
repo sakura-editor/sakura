@@ -288,8 +288,8 @@ void CPropSupport::SetData( HWND hwndDlg )
 		int i;
 		HWND hCombo;
 
-		// 「自動認識時にCESU-8を優先」m_Types.m_bPriorCesu8 をチェック
-		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_bPriorCesu8 );
+		// 「自動認識時にCESU-8を優先」m_Types.m_encoding.m_bPriorCesu8 をチェック
+		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_encoding.m_bPriorCesu8 );
 
 		// デフォルトコードタイプのコンボボックス設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
@@ -297,7 +297,7 @@ void CPropSupport::SetData( HWND hwndDlg )
 			ApiWrap::Combo_AddString( hCombo, aszCodeStr[i] );
 		}
 		for( i = 0; i < _countof(aeCodeType); ++i ){
-			if( m_Types.m_eDefaultCodetype == aeCodeType[i] ){
+			if( m_Types.m_encoding.m_eDefaultCodetype == aeCodeType[i] ){
 				break;
 			}
 		}
@@ -308,8 +308,8 @@ void CPropSupport::SetData( HWND hwndDlg )
 
 		// BOM チェックボックス設定
 		if( !abBomEnable[i] )
-			m_Types.m_bDefaultBom = FALSE;
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, m_Types.m_bDefaultBom );
+			m_Types.m_encoding.m_bDefaultBom = FALSE;
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, m_Types.m_encoding.m_bDefaultBom );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
 
 		// デフォルト改行タイプのコンボボックス設定
@@ -318,7 +318,7 @@ void CPropSupport::SetData( HWND hwndDlg )
 			ApiWrap::Combo_AddString( hCombo, aszEolStr[i] );
 		}
 		for( i = 0; i < _countof(aeEolType); ++i ){
-			if( m_Types.m_eDefaultEoltype == aeEolType[i] ){
+			if( m_Types.m_encoding.m_eDefaultEoltype == aeEolType[i] ){
 				break;
 			}
 		}
@@ -366,23 +366,23 @@ int CPropSupport::GetData( HWND hwndDlg )
 		HWND hCombo;
 
 		// m_Types.m_bPriorCesu8 を設定
-		m_Types.m_bPriorCesu8 = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PRIOR_CESU8 );
+		m_Types.m_encoding.m_bPriorCesu8 = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PRIOR_CESU8 );
 
 		// m_Types.eDefaultCodetype を設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
 		i = Combo_GetCurSel( hCombo );
 		if( CB_ERR != i ){
-			m_Types.m_eDefaultCodetype = aeCodeType[i];
+			m_Types.m_encoding.m_eDefaultCodetype = aeCodeType[i];
 		}
 
 		// m_Types.m_bDefaultBom を設定
-		m_Types.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM );
+		m_Types.m_encoding.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM );
 
 		// m_Types.eDefaultEoltype を設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
 		i = Combo_GetCurSel( hCombo );
 		if( CB_ERR != i ){
-			m_Types.m_eDefaultEoltype = aeEolType[i];
+			m_Types.m_encoding.m_eDefaultEoltype = aeEolType[i];
 		}
 	}
 
