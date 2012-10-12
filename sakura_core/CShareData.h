@@ -870,6 +870,7 @@ protected:
 	void ShareData_IO_KeyBind( CProfile& );
 	void ShareData_IO_Print( CProfile& );
 	void ShareData_IO_Types( CProfile& );
+	void ShareData_IO_Type_One( CProfile& cProfile, int nType, const char* pszSecName);
 	void ShareData_IO_KeyWords( CProfile& );
 	void ShareData_IO_Macro( CProfile& );
 	void ShareData_IO_Other( CProfile& );

@@ -42,6 +42,8 @@
 
 #define STR_COLORDATA_HEAD3		" テキストエディタ色設定 Ver3"	//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 
+void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
+	const char* pszKeyLf, const char* pszKeyFaceName, LOGFONT& lf );
 
 
 /**
@@ -69,6 +71,7 @@ void CShareData::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFi
 		szPath, _countof(szPath)
 	);
 	_tsplitpath( szPath, szDrive, szDir, szFname, szExt );
+
 	_snprintf( pszIniFile, _MAX_PATH - 1, _T("%s%s%s%s"), szDrive, szDir, szFname, _T(".ini") );
 	pszIniFile[_MAX_PATH - 1] = _T('\0');
 
@@ -551,49 +554,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 	// ai 02/05/23 Add S
 	{// Keword Help Font
-		const char*	pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
-		char		szKeyData[1024];
-		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, "khlf", szKeyData, sizeof( szKeyData )) ){
-				sscanf( szKeyData, pszForm,
-					&common.m_lf_kh.lfHeight,
-					&common.m_lf_kh.lfWidth,
-					&common.m_lf_kh.lfEscapement,
-					&common.m_lf_kh.lfOrientation,
-					&common.m_lf_kh.lfWeight,
-					&common.m_lf_kh.lfItalic,
-					&common.m_lf_kh.lfUnderline,
-					&common.m_lf_kh.lfStrikeOut,
-					&common.m_lf_kh.lfCharSet,
-					&common.m_lf_kh.lfOutPrecision,
-					&common.m_lf_kh.lfClipPrecision,
-					&common.m_lf_kh.lfQuality,
-					&common.m_lf_kh.lfPitchAndFamily
-				);
-			}
-		}else{
-			wsprintf( szKeyData, pszForm,
-				common.m_lf_kh.lfHeight,
-				common.m_lf_kh.lfWidth,
-				common.m_lf_kh.lfEscapement,
-				common.m_lf_kh.lfOrientation,
-				common.m_lf_kh.lfWeight,
-				common.m_lf_kh.lfItalic,
-				common.m_lf_kh.lfUnderline,
-				common.m_lf_kh.lfStrikeOut,
-				common.m_lf_kh.lfCharSet,
-				common.m_lf_kh.lfOutPrecision,
-				common.m_lf_kh.lfClipPrecision,
-				common.m_lf_kh.lfQuality,
-				common.m_lf_kh.lfPitchAndFamily
-			);
-			cProfile.IOProfileData( pszSecName, "khlf", szKeyData, 0 );
-		}
-	
-		cProfile.IOProfileData( pszSecName, "khlfFaceName"		, common.m_lf_kh.lfFaceName, 0 );
-	
+		ShareData_IO_Sub_LogFont( cProfile, pszSecName, "khlf", "khlfFaceName",
+			common.m_lf_kh );
 	}// Keword Help Font
-	// ai 02/05/23 Add S
 	
 	cProfile.IOProfileData( pszSecName, "nMRUArrNum_MAX"			, common.m_nMRUArrNum_MAX );
 	cProfile.IOProfileData( pszSecName, "nOPENFOLDERArrNum_MAX"	, common.m_nOPENFOLDERArrNum_MAX );
@@ -802,49 +765,10 @@ void CShareData::ShareData_IO_CustMenu( CProfile& cProfile )
 void CShareData::ShareData_IO_Font( CProfile& cProfile )
 {
 	const char* pszSecName = "Font";
-	const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
-	char		szKeyData[1024];
 	CommonSetting& common = m_pShareData->m_Common;
-	if( cProfile.IsReadingMode() ){
-		if( cProfile.IOProfileData( pszSecName, "lf", szKeyData, sizeof( szKeyData )) ){
-			sscanf( szKeyData, pszForm,
-				&common.m_lf.lfHeight,
-				&common.m_lf.lfWidth,
-				&common.m_lf.lfEscapement,
-				&common.m_lf.lfOrientation,
-				&common.m_lf.lfWeight,
-				&common.m_lf.lfItalic,
-				&common.m_lf.lfUnderline,
-				&common.m_lf.lfStrikeOut,
-				&common.m_lf.lfCharSet,
-				&common.m_lf.lfOutPrecision,
-				&common.m_lf.lfClipPrecision,
-				&common.m_lf.lfQuality,
-				&common.m_lf.lfPitchAndFamily
-			);
-		}
-	}else{
-		wsprintf( szKeyData, pszForm,
-			common.m_lf.lfHeight,
-			common.m_lf.lfWidth,
-			common.m_lf.lfEscapement,
-			common.m_lf.lfOrientation,
-			common.m_lf.lfWeight,
-			common.m_lf.lfItalic,
-			common.m_lf.lfUnderline,
-			common.m_lf.lfStrikeOut,
-			common.m_lf.lfCharSet,
-			common.m_lf.lfOutPrecision,
-			common.m_lf.lfClipPrecision,
-			common.m_lf.lfQuality,
-			common.m_lf.lfPitchAndFamily
-		);
-		cProfile.IOProfileData( pszSecName, "lf", szKeyData, 0 );
-	}
-	
-	cProfile.IOProfileData( pszSecName, "lfFaceName",
-		common.m_lf.lfFaceName, sizeof( common.m_lf.lfFaceName ));
-	
+	ShareData_IO_Sub_LogFont( cProfile, pszSecName, "lf", "lfFaceName",
+		common.m_lf );
+
 	cProfile.IOProfileData( pszSecName, "bFontIs_FIXED_PITCH", common.m_bFontIs_FIXED_PITCH );
 }
 
@@ -1020,340 +944,353 @@ void CShareData::ShareData_IO_Print( CProfile& cProfile )
 	@param[in,out]	cProfile	INIファイル入出力クラス
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
+	@date 2010/04/17 Uchi ループ内をShareData_IO_Type_Oneに分離。
 */
 void CShareData::ShareData_IO_Types( CProfile& cProfile )
 {
-	const char* pszSecName;
-	int		i, j;
-	char	szKey[256];
+	int		i;
+	char	szKey[32];
+
+	for( i = 0; i < MAX_TYPES; ++i ){
+		wsprintf( szKey, "Types(%d)", i );
+		ShareData_IO_Type_One( cProfile, i, szKey);
+	}
+}
+
+/*!
+@brief 共有データのSTypeConfigセクションの入出力(１個分)
+	@param[in,out]	cProfile	INIファイル入出力クラス
+	@param[in]		nType		STypeConfigセクション番号
+	@param[in]		pszSecName	セクション名
+
+	@date 2010/04/17 Uchi ShareData_IO_TypesOneから分離。
+*/
+void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const char* pszSecName)
+{
+	int		j;
 	char	szKeyName[64];
 	char	szKeyData[1024];
 
-	for( i = 0; i < MAX_TYPES; ++i ){
-		// 2005.04.07 D.S.Koba
-		STypeConfig& types = m_pShareData->m_Types[i];
-		wsprintf( szKey, "Types(%d)", i );
-		pszSecName = szKey;
-		static const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";	//MIK
-		strcpy( szKeyName, "nInts" );
-		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
-				sscanf( szKeyData, pszForm,
-					&types.m_nIdx,
-					&types.m_nMaxLineKetas,
-					&types.m_nColmSpace,
-					&types.m_nTabSpace,
-					&types.m_nKeyWordSetIdx[0],
-					&types.m_nKeyWordSetIdx[1],	//MIK
-					&types.m_nStringType,
-					&types.m_bLineNumIsCRLF,
-					&types.m_nLineTermType,
-					&types.m_bWordWrap,
-					&types.m_nCurrentPrintSetting
-				 );
-			}
-			// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
-			if( types.m_nMaxLineKetas < MINLINEKETAS ){
-				types.m_nMaxLineKetas = MINLINEKETAS;
-			}
+	// 2005.04.07 D.S.Koba
+	STypeConfig& types = m_pShareData->m_Types[nType];
+	static const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";	//MIK
+	strcpy( szKeyName, "nInts" );
+	if( cProfile.IsReadingMode() ){
+		if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
+			sscanf( szKeyData, pszForm,
+				&types.m_nIdx,
+				&types.m_nMaxLineKetas,
+				&types.m_nColmSpace,
+				&types.m_nTabSpace,
+				&types.m_nKeyWordSetIdx[0],
+				&types.m_nKeyWordSetIdx[1],	//MIK
+				&types.m_nStringType,
+				&types.m_bLineNumIsCRLF,
+				&types.m_nLineTermType,
+				&types.m_bWordWrap,
+				&types.m_nCurrentPrintSetting
+			 );
 		}
-		else{
-			wsprintf( szKeyData, pszForm,
-				types.m_nIdx,
-				types.m_nMaxLineKetas,
-				types.m_nColmSpace,
-				types.m_nTabSpace,
-				types.m_nKeyWordSetIdx[0],
-				types.m_nKeyWordSetIdx[1],	//MIK
-				types.m_nStringType,
-				types.m_bLineNumIsCRLF,
-				types.m_nLineTermType,
-				types.m_bWordWrap,
-				types.m_nCurrentPrintSetting
-			);
-			cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
+		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
+		if( types.m_nMaxLineKetas < MINLINEKETAS ){
+			types.m_nMaxLineKetas = MINLINEKETAS;
 		}
-		// 2005.01.13 MIK Keywordset 3-10
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect3",  types.m_nKeyWordSetIdx[2] );
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect4",  types.m_nKeyWordSetIdx[3] );
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect5",  types.m_nKeyWordSetIdx[4] );
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect6",  types.m_nKeyWordSetIdx[5] );
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect7",  types.m_nKeyWordSetIdx[6] );
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect8",  types.m_nKeyWordSetIdx[7] );
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect9",  types.m_nKeyWordSetIdx[8] );
-		cProfile.IOProfileData( pszSecName, "nKeywordSelect10", types.m_nKeyWordSetIdx[9] );
+	}
+	else{
+		wsprintf( szKeyData, pszForm,
+			types.m_nIdx,
+			types.m_nMaxLineKetas,
+			types.m_nColmSpace,
+			types.m_nTabSpace,
+			types.m_nKeyWordSetIdx[0],
+			types.m_nKeyWordSetIdx[1],	//MIK
+			types.m_nStringType,
+			types.m_bLineNumIsCRLF,
+			types.m_nLineTermType,
+			types.m_bWordWrap,
+			types.m_nCurrentPrintSetting
+		);
+		cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
+	}
+	// 2005.01.13 MIK Keywordset 3-10
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect3",  types.m_nKeyWordSetIdx[2] );
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect4",  types.m_nKeyWordSetIdx[3] );
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect5",  types.m_nKeyWordSetIdx[4] );
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect6",  types.m_nKeyWordSetIdx[5] );
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect7",  types.m_nKeyWordSetIdx[6] );
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect8",  types.m_nKeyWordSetIdx[7] );
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect9",  types.m_nKeyWordSetIdx[8] );
+	cProfile.IOProfileData( pszSecName, "nKeywordSelect10", types.m_nKeyWordSetIdx[9] );
 
-		/* 行間のすきま */
-		cProfile.IOProfileData( pszSecName, "nLineSpace", types.m_nLineSpace );
-		if( cProfile.IsReadingMode() ){
-			if( types.m_nLineSpace < /* 1 */ 0 ){
-				types.m_nLineSpace = /* 1 */ 0;
-			}
-			if( types.m_nLineSpace > LINESPACE_MAX ){
-				types.m_nLineSpace = LINESPACE_MAX;
-			}
+	/* 行間のすきま */
+	cProfile.IOProfileData( pszSecName, "nLineSpace", types.m_nLineSpace );
+	if( cProfile.IsReadingMode() ){
+		if( types.m_nLineSpace < /* 1 */ 0 ){
+			types.m_nLineSpace = /* 1 */ 0;
 		}
+		if( types.m_nLineSpace > LINESPACE_MAX ){
+			types.m_nLineSpace = LINESPACE_MAX;
+		}
+	}
 
 
-		cProfile.IOProfileData( pszSecName, "szTypeName",
-			types.m_szTypeName,
-			sizeof( m_pShareData->m_Types[0].m_szTypeName ));
-		cProfile.IOProfileData( pszSecName, "szTypeExts",
-			types.m_szTypeExts,
-			sizeof( m_pShareData->m_Types[0].m_szTypeExts ));
+	cProfile.IOProfileData( pszSecName, "szTypeName",
+		types.m_szTypeName,
+		sizeof( m_pShareData->m_Types[0].m_szTypeName ));
+	cProfile.IOProfileData( pszSecName, "szTypeExts",
+		types.m_szTypeExts,
+		sizeof( m_pShareData->m_Types[0].m_szTypeExts ));
 //#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
-		cProfile.IOProfileData( pszSecName, "szTabViewString",
+	cProfile.IOProfileData( pszSecName, "szTabViewString",
 		/*&*/types.m_szTabViewString,
 		sizeof( types.m_szTabViewString ));
 //#endif
-		cProfile.IOProfileData( pszSecName, "bTabArrow"			, types.m_bTabArrow );	//@@@ 2003.03.26 MIK
-		cProfile.IOProfileData( pszSecName, "bInsSpace"			, types.m_bInsSpace );	// 2001.12.03 hor
+	cProfile.IOProfileData( pszSecName, "bTabArrow"			, types.m_bTabArrow );	//@@@ 2003.03.26 MIK
+	cProfile.IOProfileData( pszSecName, "bInsSpace"			, types.m_bInsSpace );	// 2001.12.03 hor
 
-		cProfile.IOProfileData( pszSecName, "nTextWrapMethod", types.m_nTextWrapMethod );		// 2008.05.30 nasukoji
+	cProfile.IOProfileData( pszSecName, "nTextWrapMethod", types.m_nTextWrapMethod );		// 2008.05.30 nasukoji
 
-		// From Here Sep. 28, 2002 genta / YAZAKI
-		if( cProfile.IsReadingMode() ){
-			//	Block Comment
-			char buffer[2][ BLOCKCOMMENT_BUFFERSIZE ];
-			//	2004.10.02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
-			//	ブロックコメントの始まりと終わり．行コメントの記号と桁位置
-			bool bRet1, bRet2;
-			buffer[0][0] = buffer[1][0] = '\0';
-			bRet1 = cProfile.IOProfileData( pszSecName, "szBlockCommentFrom"	,
-				buffer[0], BLOCKCOMMENT_BUFFERSIZE );			
-			bRet2 = cProfile.IOProfileData( pszSecName, "szBlockCommentTo"	,
-				buffer[1], BLOCKCOMMENT_BUFFERSIZE );
-			if( bRet1 && bRet2 ) types.m_cBlockComments[0].SetBlockCommentRule(buffer[0], buffer[1] );
+	// From Here Sep. 28, 2002 genta / YAZAKI
+	if( cProfile.IsReadingMode() ){
+		//	Block Comment
+		char buffer[2][ BLOCKCOMMENT_BUFFERSIZE ];
+		//	2004.10.02 Moca 対になるコメント設定がともに読み込まれたときだけ有効な設定と見なす．
+		//	ブロックコメントの始まりと終わり．行コメントの記号と桁位置
+		bool bRet1, bRet2;
+		buffer[0][0] = buffer[1][0] = '\0';
+		bRet1 = cProfile.IOProfileData( pszSecName, "szBlockCommentFrom"	,
+			buffer[0], BLOCKCOMMENT_BUFFERSIZE );			
+		bRet2 = cProfile.IOProfileData( pszSecName, "szBlockCommentTo"	,
+			buffer[1], BLOCKCOMMENT_BUFFERSIZE );
+		if( bRet1 && bRet2 ) types.m_cBlockComments[0].SetBlockCommentRule(buffer[0], buffer[1] );
 
-			//@@@ 2001.03.10 by MIK
-			buffer[0][0] = buffer[1][0] = '\0';
-			bRet1 = cProfile.IOProfileData( pszSecName, "szBlockCommentFrom2",
-				buffer[0], BLOCKCOMMENT_BUFFERSIZE );
-			bRet2 = cProfile.IOProfileData( pszSecName, "szBlockCommentTo2"	,
-				buffer[1], BLOCKCOMMENT_BUFFERSIZE );
-			if( bRet1 && bRet2 ) types.m_cBlockComments[1].SetBlockCommentRule(buffer[0], buffer[1] );
-			
-			//	Line Comment
-			char lbuf[ COMMENT_DELIMITER_BUFFERSIZE ];
-			int  pos;
+		//@@@ 2001.03.10 by MIK
+		buffer[0][0] = buffer[1][0] = '\0';
+		bRet1 = cProfile.IOProfileData( pszSecName, "szBlockCommentFrom2",
+			buffer[0], BLOCKCOMMENT_BUFFERSIZE );
+		bRet2 = cProfile.IOProfileData( pszSecName, "szBlockCommentTo2"	,
+			buffer[1], BLOCKCOMMENT_BUFFERSIZE );
+		if( bRet1 && bRet2 ) types.m_cBlockComments[1].SetBlockCommentRule(buffer[0], buffer[1] );
+		
+		//	Line Comment
+		char lbuf[ COMMENT_DELIMITER_BUFFERSIZE ];
+		int  pos;
 
-			lbuf[0] = '\0'; pos = -1;
-			bRet1 = cProfile.IOProfileData( pszSecName, "szLineComment"		,
-				lbuf, COMMENT_DELIMITER_BUFFERSIZE );
-			bRet2 = cProfile.IOProfileData( pszSecName, "nLineCommentColumn"	, pos );
-			if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 0, lbuf, pos );
+		lbuf[0] = '\0'; pos = -1;
+		bRet1 = cProfile.IOProfileData( pszSecName, "szLineComment"		,
+			lbuf, COMMENT_DELIMITER_BUFFERSIZE );
+		bRet2 = cProfile.IOProfileData( pszSecName, "nLineCommentColumn"	, pos );
+		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 0, lbuf, pos );
 
-			lbuf[0] = '\0'; pos = -1;
-			bRet1 = cProfile.IOProfileData( pszSecName, "szLineComment2"		,
-				lbuf, COMMENT_DELIMITER_BUFFERSIZE );
-			bRet2 = cProfile.IOProfileData( pszSecName, "nLineCommentColumn2", pos );
-			if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 1, lbuf, pos );
+		lbuf[0] = '\0'; pos = -1;
+		bRet1 = cProfile.IOProfileData( pszSecName, "szLineComment2"		,
+			lbuf, COMMENT_DELIMITER_BUFFERSIZE );
+		bRet2 = cProfile.IOProfileData( pszSecName, "nLineCommentColumn2", pos );
+		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 1, lbuf, pos );
 
-			lbuf[0] = '\0'; pos = -1;
-			bRet1 = cProfile.IOProfileData( pszSecName, "szLineComment3"		,
-				lbuf, COMMENT_DELIMITER_BUFFERSIZE );	//Jun. 01, 2001 JEPRO 追加
-			bRet2 = cProfile.IOProfileData( pszSecName, "nLineCommentColumn3", pos );	//Jun. 01, 2001 JEPRO 追加
-			if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 2, lbuf, pos );
+		lbuf[0] = '\0'; pos = -1;
+		bRet1 = cProfile.IOProfileData( pszSecName, "szLineComment3"		,
+			lbuf, COMMENT_DELIMITER_BUFFERSIZE );	//Jun. 01, 2001 JEPRO 追加
+		bRet2 = cProfile.IOProfileData( pszSecName, "nLineCommentColumn3", pos );	//Jun. 01, 2001 JEPRO 追加
+		if( bRet1 && bRet2 ) types.m_cLineComment.CopyTo( 2, lbuf, pos );
+	}
+	else { // write
+		//	Block Comment
+		cProfile.IOProfileData( pszSecName, "szBlockCommentFrom"	,
+			const_cast<char*>(types.m_cBlockComments[0].getBlockCommentFrom()), 0 );
+		cProfile.IOProfileData( pszSecName, "szBlockCommentTo"	,
+			const_cast<char*>(types.m_cBlockComments[0].getBlockCommentTo()), 0 );
+
+		//@@@ 2001.03.10 by MIK
+		cProfile.IOProfileData( pszSecName, "szBlockCommentFrom2",
+			const_cast<char*>(types.m_cBlockComments[1].getBlockCommentFrom()), 0 );
+		cProfile.IOProfileData( pszSecName, "szBlockCommentTo2"	,
+			const_cast<char*>(types.m_cBlockComments[1].getBlockCommentTo()), 0 );
+
+		//	Line Comment
+	cProfile.IOProfileData( pszSecName, "szLineComment"		,
+		const_cast<char*>(types.m_cLineComment.getLineComment( 0 )), 0 );
+	cProfile.IOProfileData( pszSecName, "szLineComment2"		,
+		const_cast<char*>(types.m_cLineComment.getLineComment( 1 )), 0 );
+	cProfile.IOProfileData( pszSecName, "szLineComment3"		,
+		const_cast<char*>(types.m_cLineComment.getLineComment( 2 )), 0 );	//Jun. 01, 2001 JEPRO 追加
+
+	//	From here May 12, 2001 genta
+	int pos;
+	pos = types.m_cLineComment.getLineCommentPos( 0 );
+	cProfile.IOProfileData( pszSecName, "nLineCommentColumn"	, pos );
+	pos = types.m_cLineComment.getLineCommentPos( 1 );
+	cProfile.IOProfileData( pszSecName, "nLineCommentColumn2", pos );
+	pos = types.m_cLineComment.getLineCommentPos( 2 );
+	cProfile.IOProfileData( pszSecName, "nLineCommentColumn3", pos );	//Jun. 01, 2001 JEPRO 追加
+	//	To here May 12, 2001 genta
+
+	}
+	// To Here Sep. 28, 2002 genta / YAZAKI
+
+	cProfile.IOProfileData( pszSecName, "szIndentChars"		,
+		types.m_szIndentChars,
+		sizeof( m_pShareData->m_Types[0].m_szIndentChars ));
+	cProfile.IOProfileData( pszSecName, "cLineTermChar"		, types.m_cLineTermChar );
+
+	cProfile.IOProfileData( pszSecName, "nDefaultOutline"	, types.m_nDefaultOutline );/* アウトライン解析方法 */
+	cProfile.IOProfileData( pszSecName, "szOutlineRuleFilename"	,
+		types.m_szOutlineRuleFilename,
+		sizeof( m_pShareData->m_Types[0].m_szOutlineRuleFilename ));/* アウトライン解析ルールファイル */
+	cProfile.IOProfileData( pszSecName, "nSmartIndent"		, types.m_nSmartIndent );/* スマートインデント種別 */
+	//	Nov. 20, 2000 genta
+	cProfile.IOProfileData( pszSecName, "nImeState"			, types.m_nImeState );	//	IME制御
+
+	//	2001/06/14 Start By asa-o: タイプ別の補完ファイル
+	//	Oct. 5, 2002 genta sizeof()で誤ってポインタのサイズを取得していたのを修正
+	cProfile.IOProfileData( pszSecName, "szHokanFile"		,
+		types.m_szHokanFile,
+		sizeof( m_pShareData->m_Types[0].m_szHokanFile ));		//	補完ファイル
+	//	2001/06/14 End
+
+	//	2001/06/19 asa-o
+	cProfile.IOProfileData( pszSecName, "bHokanLoHiCase"		, types.m_bHokanLoHiCase );
+
+	//	2003.06.23 Moca ファイル内からの入力補完機能
+	cProfile.IOProfileData( pszSecName, "bUseHokanByFile"		, types.m_bUseHokanByFile );
+
+	//@@@ 2002.2.4 YAZAKI
+	cProfile.IOProfileData( pszSecName, "szExtHelp"			,
+		types.m_szExtHelp,
+		sizeof( m_pShareData->m_Types[0].m_szExtHelp ));
+		
+	cProfile.IOProfileData( pszSecName, "szExtHtmlHelp"		,
+		types.m_szExtHtmlHelp,
+		sizeof( types.m_szExtHtmlHelp ));
+	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
+
+	cProfile.IOProfileData( pszSecName, "bAutoIndent"			, types.m_bAutoIndent );
+	cProfile.IOProfileData( pszSecName, "bAutoIndent_ZENSPACE"	, types.m_bAutoIndent_ZENSPACE );
+	cProfile.IOProfileData( pszSecName, "bRTrimPrevLine"			, types.m_bRTrimPrevLine );			// 2005.10.08 ryoji
+	cProfile.IOProfileData( pszSecName, "nIndentLayout"			, types.m_nIndentLayout );
+
+	/* 色設定 I/O */
+	IO_ColorSet( &cProfile, pszSecName, types.m_ColorInfoArr  );
+
+	// 2005.11.08 Moca 指定桁縦線
+	for(j = 0; j < MAX_VERTLINES; j++ ){
+		wsprintf( szKeyName, "nVertLineIdx%d", j + 1 );
+		cProfile.IOProfileData( pszSecName, szKeyName, types.m_nVertLineIdx[j] );
+		if( types.m_nVertLineIdx[j] == 0 ){
+			break;
 		}
-		else { // write
-			//	Block Comment
-			cProfile.IOProfileData( pszSecName, "szBlockCommentFrom"	,
-				const_cast<char*>(types.m_cBlockComments[0].getBlockCommentFrom()), 0 );
-			cProfile.IOProfileData( pszSecName, "szBlockCommentTo"	,
-				const_cast<char*>(types.m_cBlockComments[0].getBlockCommentTo()), 0 );
-
-			//@@@ 2001.03.10 by MIK
-			cProfile.IOProfileData( pszSecName, "szBlockCommentFrom2",
-				const_cast<char*>(types.m_cBlockComments[1].getBlockCommentFrom()), 0 );
-			cProfile.IOProfileData( pszSecName, "szBlockCommentTo2"	,
-				const_cast<char*>(types.m_cBlockComments[1].getBlockCommentTo()), 0 );
-
-			//	Line Comment
-		cProfile.IOProfileData( pszSecName, "szLineComment"		,
-			const_cast<char*>(types.m_cLineComment.getLineComment( 0 )), 0 );
-		cProfile.IOProfileData( pszSecName, "szLineComment2"		,
-			const_cast<char*>(types.m_cLineComment.getLineComment( 1 )), 0 );
-		cProfile.IOProfileData( pszSecName, "szLineComment3"		,
-			const_cast<char*>(types.m_cLineComment.getLineComment( 2 )), 0 );	//Jun. 01, 2001 JEPRO 追加
-
-		//	From here May 12, 2001 genta
-		int pos;
-		pos = types.m_cLineComment.getLineCommentPos( 0 );
-		cProfile.IOProfileData( pszSecName, "nLineCommentColumn"	, pos );
-		pos = types.m_cLineComment.getLineCommentPos( 1 );
-		cProfile.IOProfileData( pszSecName, "nLineCommentColumn2", pos );
-		pos = types.m_cLineComment.getLineCommentPos( 2 );
-		cProfile.IOProfileData( pszSecName, "nLineCommentColumn3", pos );	//Jun. 01, 2001 JEPRO 追加
-		//	To here May 12, 2001 genta
-
-		}
-		// To Here Sep. 28, 2002 genta / YAZAKI
-
-		cProfile.IOProfileData( pszSecName, "szIndentChars"		,
-			types.m_szIndentChars,
-			sizeof( m_pShareData->m_Types[0].m_szIndentChars ));
-		cProfile.IOProfileData( pszSecName, "cLineTermChar"		, types.m_cLineTermChar );
-
-		cProfile.IOProfileData( pszSecName, "nDefaultOutline"	, types.m_nDefaultOutline );/* アウトライン解析方法 */
-		cProfile.IOProfileData( pszSecName, "szOutlineRuleFilename"	,
-			types.m_szOutlineRuleFilename,
-			sizeof( m_pShareData->m_Types[0].m_szOutlineRuleFilename ));/* アウトライン解析ルールファイル */
-		cProfile.IOProfileData( pszSecName, "nSmartIndent"		, types.m_nSmartIndent );/* スマートインデント種別 */
-		//	Nov. 20, 2000 genta
-		cProfile.IOProfileData( pszSecName, "nImeState"			, types.m_nImeState );	//	IME制御
-
-		//	2001/06/14 Start By asa-o: タイプ別の補完ファイル
-		//	Oct. 5, 2002 genta sizeof()で誤ってポインタのサイズを取得していたのを修正
-		cProfile.IOProfileData( pszSecName, "szHokanFile"		,
-			types.m_szHokanFile,
-			sizeof( m_pShareData->m_Types[0].m_szHokanFile ));		//	補完ファイル
-		//	2001/06/14 End
-
-		//	2001/06/19 asa-o
-		cProfile.IOProfileData( pszSecName, "bHokanLoHiCase"		, types.m_bHokanLoHiCase );
-
-		//	2003.06.23 Moca ファイル内からの入力補完機能
-		cProfile.IOProfileData( pszSecName, "bUseHokanByFile"		, types.m_bUseHokanByFile );
-
-		//@@@ 2002.2.4 YAZAKI
-		cProfile.IOProfileData( pszSecName, "szExtHelp"			,
-			types.m_szExtHelp,
-			sizeof( m_pShareData->m_Types[0].m_szExtHelp ));
-			
-		cProfile.IOProfileData( pszSecName, "szExtHtmlHelp"		,
-			types.m_szExtHtmlHelp,
-			sizeof( types.m_szExtHtmlHelp ));
-		cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
-
-		cProfile.IOProfileData( pszSecName, "bAutoIndent"			, types.m_bAutoIndent );
-		cProfile.IOProfileData( pszSecName, "bAutoIndent_ZENSPACE"	, types.m_bAutoIndent_ZENSPACE );
-		cProfile.IOProfileData( pszSecName, "bRTrimPrevLine"			, types.m_bRTrimPrevLine );			// 2005.10.08 ryoji
-		cProfile.IOProfileData( pszSecName, "nIndentLayout"			, types.m_nIndentLayout );
-
-		/* 色設定 I/O */
-		IO_ColorSet( &cProfile, pszSecName, types.m_ColorInfoArr  );
-
-		// 2005.11.08 Moca 指定桁縦線
-		for(j = 0; j < MAX_VERTLINES; j++ ){
-			wsprintf( szKeyName, "nVertLineIdx%d", j + 1 );
-			cProfile.IOProfileData( pszSecName, szKeyName, types.m_nVertLineIdx[j] );
-			if( types.m_nVertLineIdx[j] == 0 ){
-				break;
-			}
-		}
+	}
 
 //@@@ 2001.11.17 add start MIK
-		{	//正規表現キーワード
-			char	*p;
-			cProfile.IOProfileData( pszSecName, "bUseRegexKeyword", types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
-			for(j = 0; j < 100; j++)
+	{	//正規表現キーワード
+		char	*p;
+		cProfile.IOProfileData( pszSecName, "bUseRegexKeyword", types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
+		for(j = 0; j < 100; j++)
+		{
+			wsprintf( szKeyName, "RxKey[%03d]", j );
+			if( cProfile.IsReadingMode() )
 			{
-				wsprintf( szKeyName, "RxKey[%03d]", j );
-				if( cProfile.IsReadingMode() )
+				types.m_RegexKeywordArr[j].m_szKeyword[0] = '\0';
+				types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
+				if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) )
 				{
-					types.m_RegexKeywordArr[j].m_szKeyword[0] = '\0';
-					types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
-					if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) )
+					p = strchr(szKeyData, ',');
+					if( p )
 					{
-						p = strchr(szKeyData, ',');
-						if( p )
+						*p = '\0';
+						types.m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName(szKeyData);	//@@@ 2002.04.30
+						if( types.m_RegexKeywordArr[j].m_nColorIndex == -1 )	//名前でない
+							types.m_RegexKeywordArr[j].m_nColorIndex = atoi(szKeyData);
+						p++;
+						strcpy(types.m_RegexKeywordArr[j].m_szKeyword, p);
+						if( types.m_RegexKeywordArr[j].m_nColorIndex < 0
+						 || types.m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST )
 						{
-							*p = '\0';
-							types.m_RegexKeywordArr[j].m_nColorIndex = GetColorIndexByName(szKeyData);	//@@@ 2002.04.30
-							if( types.m_RegexKeywordArr[j].m_nColorIndex == -1 )	//名前でない
-								types.m_RegexKeywordArr[j].m_nColorIndex = atoi(szKeyData);
-							p++;
-							strcpy(types.m_RegexKeywordArr[j].m_szKeyword, p);
-							if( types.m_RegexKeywordArr[j].m_nColorIndex < 0
-							 || types.m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST )
-							{
-								types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
+							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
+						}
+					}
+				}
+			}
+			// 2002.02.08 hor 未定義値を無視
+			else if(lstrlen(types.m_RegexKeywordArr[j].m_szKeyword))
+			{
+				wsprintf( szKeyData, "%s,%s",
+					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
+					types.m_RegexKeywordArr[j].m_szKeyword);
+				cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
+			}
+		}
+	}
+//@@@ 2001.11.17 add end MIK
+
+	/* 禁則 */
+	cProfile.IOProfileData( pszSecName, "bKinsokuHead"	, types.m_bKinsokuHead );
+	cProfile.IOProfileData( pszSecName, "bKinsokuTail"	, types.m_bKinsokuTail );
+	cProfile.IOProfileData( pszSecName, "bKinsokuRet"	, types.m_bKinsokuRet );	//@@@ 2002.04.13 MIK
+	cProfile.IOProfileData( pszSecName, "bKinsokuKuto"	, types.m_bKinsokuKuto );	//@@@ 2002.04.17 MIK
+	cProfile.IOProfileData( pszSecName, "szKinsokuHead"	,
+		types.m_szKinsokuHead,
+		sizeof( m_pShareData->m_Types[0].m_szKinsokuHead ));
+	cProfile.IOProfileData( pszSecName, "szKinsokuTail"	,
+		types.m_szKinsokuTail,
+		sizeof( m_pShareData->m_Types[0].m_szKinsokuTail ));
+	cProfile.IOProfileData( pszSecName, "szKinsokuKuto"	,
+		types.m_szKinsokuKuto,
+		sizeof( m_pShareData->m_Types[0].m_szKinsokuKuto ));	// 2009.08.07 ryoji
+	cProfile.IOProfileData( pszSecName, "bUseDocumentIcon"	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta 変数名誤り修正
+
+//@@@ 2006.04.10 fon ADD-start
+	{	/* キーワード辞書 */
+		static const char* pszForm = "%d,%s,%s";
+		char	*pH, *pT;	/* <pH>keyword<pT> */
+		cProfile.IOProfileData( pszSecName, "bUseKeyWordHelp", types.m_bUseKeyWordHelp );	/* キーワード辞書選択を使用するか？ */
+//		cProfile.IOProfileData( pszSecName, "nKeyHelpNum", types.m_nKeyHelpNum );				/* 登録辞書数 */
+		cProfile.IOProfileData( pszSecName, "bUseKeyHelpAllSearch", types.m_bUseKeyHelpAllSearch );	/* ヒットした次の辞書も検索(&A) */
+		cProfile.IOProfileData( pszSecName, "bUseKeyHelpKeyDisp", types.m_bUseKeyHelpKeyDisp );		/* 1行目にキーワードも表示する(&W) */
+		cProfile.IOProfileData( pszSecName, "bUseKeyHelpPrefix", types.m_bUseKeyHelpPrefix );		/* 選択範囲で前方一致検索(&P) */
+		for(j = 0; j < MAX_KEYHELP_FILE; j++){
+			wsprintf( szKeyName, "KDct[%02d]", j );
+			/* 読み出し */
+			if( cProfile.IsReadingMode() ){
+				types.m_KeyHelpArr[j].m_nUse = 0;
+				types.m_KeyHelpArr[j].m_szAbout[0] = '\0';
+				types.m_KeyHelpArr[j].m_szPath[0] = '\0';
+				if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
+					pH = szKeyData;
+					if( NULL != (pT=strchr(pH, ',')) ){
+						*pT = '\0';
+						types.m_KeyHelpArr[j].m_nUse = atoi( pH );
+						pH = pT+1;
+						if( NULL != (pT=strchr(pH, ',')) ){
+							*pT = '\0';
+							strcpy( types.m_KeyHelpArr[j].m_szAbout, pH );
+							pH = pT+1;
+							if( '\0' != (*pH) ){
+								strcpy( types.m_KeyHelpArr[j].m_szPath, pH );
+								types.m_nKeyHelpNum = j+1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
 							}
 						}
 					}
 				}
-				// 2002.02.08 hor 未定義値を無視
-				else if(lstrlen(types.m_RegexKeywordArr[j].m_szKeyword))
-				{
-					wsprintf( szKeyData, "%s,%s",
-						GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
-						types.m_RegexKeywordArr[j].m_szKeyword);
+			}/* 書き込み */
+			else{
+				if(_tcslen(types.m_KeyHelpArr[j].m_szPath)){
+					wsprintf( szKeyData, pszForm,
+						types.m_KeyHelpArr[j].m_nUse,
+						types.m_KeyHelpArr[j].m_szAbout,
+						types.m_KeyHelpArr[j].m_szPath
+					);
 					cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
 				}
 			}
 		}
-//@@@ 2001.11.17 add end MIK
-
-		/* 禁則 */
-		cProfile.IOProfileData( pszSecName, "bKinsokuHead"	, types.m_bKinsokuHead );
-		cProfile.IOProfileData( pszSecName, "bKinsokuTail"	, types.m_bKinsokuTail );
-		cProfile.IOProfileData( pszSecName, "bKinsokuRet"	, types.m_bKinsokuRet );	//@@@ 2002.04.13 MIK
-		cProfile.IOProfileData( pszSecName, "bKinsokuKuto"	, types.m_bKinsokuKuto );	//@@@ 2002.04.17 MIK
-		cProfile.IOProfileData( pszSecName, "szKinsokuHead"	,
-			types.m_szKinsokuHead,
-			sizeof( m_pShareData->m_Types[0].m_szKinsokuHead ));
-		cProfile.IOProfileData( pszSecName, "szKinsokuTail"	,
-			types.m_szKinsokuTail,
-			sizeof( m_pShareData->m_Types[0].m_szKinsokuTail ));
-		cProfile.IOProfileData( pszSecName, "szKinsokuKuto"	,
-			types.m_szKinsokuKuto,
-			sizeof( m_pShareData->m_Types[0].m_szKinsokuKuto ));	// 2009.08.07 ryoji
-		cProfile.IOProfileData( pszSecName, "bUseDocumentIcon"	, types.m_bUseDocumentIcon );	// Sep. 19 ,2002 genta 変数名誤り修正
-
-//@@@ 2006.04.10 fon ADD-start
-		{	/* キーワード辞書 */
-			static const char* pszForm = "%d,%s,%s";
-			char	*pH, *pT;	/* <pH>keyword<pT> */
-			cProfile.IOProfileData( pszSecName, "bUseKeyWordHelp", types.m_bUseKeyWordHelp );	/* キーワード辞書選択を使用するか？ */
-//			cProfile.IOProfileData( pszSecName, "nKeyHelpNum", types.m_nKeyHelpNum );				/* 登録辞書数 */
-			cProfile.IOProfileData( pszSecName, "bUseKeyHelpAllSearch", types.m_bUseKeyHelpAllSearch );	/* ヒットした次の辞書も検索(&A) */
-			cProfile.IOProfileData( pszSecName, "bUseKeyHelpKeyDisp", types.m_bUseKeyHelpKeyDisp );		/* 1行目にキーワードも表示する(&W) */
-			cProfile.IOProfileData( pszSecName, "bUseKeyHelpPrefix", types.m_bUseKeyHelpPrefix );		/* 選択範囲で前方一致検索(&P) */
-			for(j = 0; j < MAX_KEYHELP_FILE; j++){
-				wsprintf( szKeyName, "KDct[%02d]", j );
-				/* 読み出し */
-				if( cProfile.IsReadingMode() ){
-					types.m_KeyHelpArr[j].m_nUse = 0;
-					types.m_KeyHelpArr[j].m_szAbout[0] = '\0';
-					types.m_KeyHelpArr[j].m_szPath[0] = '\0';
-					if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
-						pH = szKeyData;
-						if( NULL != (pT=strchr(pH, ',')) ){
-							*pT = '\0';
-							types.m_KeyHelpArr[j].m_nUse = atoi( pH );
-							pH = pT+1;
-							if( NULL != (pT=strchr(pH, ',')) ){
-								*pT = '\0';
-								strcpy( types.m_KeyHelpArr[j].m_szAbout, pH );
-								pH = pT+1;
-								if( '\0' != (*pH) ){
-									strcpy( types.m_KeyHelpArr[j].m_szPath, pH );
-									types.m_nKeyHelpNum = j+1;	// iniに保存せずに、読み出せたファイル分を辞書数とする
-								}
-							}
-						}
-					}
-				}/* 書き込み */
-				else{
-					if(_tcslen(types.m_KeyHelpArr[j].m_szPath)){
-						wsprintf( szKeyData, pszForm,
-							types.m_KeyHelpArr[j].m_nUse,
-							types.m_KeyHelpArr[j].m_szAbout,
-							types.m_KeyHelpArr[j].m_szPath
-						);
-						cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
-					}
-				}
-			}
-			/* 旧バージョンiniファイルの読み出しサポート */
-			if( cProfile.IsReadingMode() ){
-				cProfile.IOProfileData( pszSecName, "szKeyWordHelpFile",
-				types.m_KeyHelpArr[0].m_szPath, sizeof( types.m_KeyHelpArr[0].m_szPath ) );
-			}
+		/* 旧バージョンiniファイルの読み出しサポート */
+		if( cProfile.IsReadingMode() ){
+			cProfile.IOProfileData( pszSecName, "szKeyWordHelpFile",
+			types.m_KeyHelpArr[0].m_szPath, sizeof( types.m_KeyHelpArr[0].m_szPath ) );
 		}
+	}
 //@@@ 2006.04.10 fon ADD-end
-
-	}/* for */
 }
 
 /*!
@@ -1636,5 +1573,49 @@ bool CShareData::PopTagJump(TagJump *pTagJump)
 	return false;
 }
 
+void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
+	const char* pszKeyLf, const char* pszKeyFaceName, LOGFONT& lf )
+{
+	const TCHAR* pszForm = _T("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
+	TCHAR		szKeyData[1024];
+	if( cProfile.IsReadingMode() ){
+		if( cProfile.IOProfileData( pszSecName, pszKeyLf, szKeyData, sizeof(szKeyData) ) ){
+			sscanf( szKeyData, pszForm,
+				&lf.lfHeight,
+				&lf.lfWidth,
+				&lf.lfEscapement,
+				&lf.lfOrientation,
+				&lf.lfWeight,
+				&lf.lfItalic,
+				&lf.lfUnderline,
+				&lf.lfStrikeOut,
+				&lf.lfCharSet,
+				&lf.lfOutPrecision,
+				&lf.lfClipPrecision,
+				&lf.lfQuality,
+				&lf.lfPitchAndFamily
+			);
+		}
+	}else{
+		wsprintf( szKeyData, pszForm,
+			lf.lfHeight,
+			lf.lfWidth,
+			lf.lfEscapement,
+			lf.lfOrientation,
+			lf.lfWeight,
+			lf.lfItalic,
+			lf.lfUnderline,
+			lf.lfStrikeOut,
+			lf.lfCharSet,
+			lf.lfOutPrecision,
+			lf.lfClipPrecision,
+			lf.lfQuality,
+			lf.lfPitchAndFamily
+		);
+		cProfile.IOProfileData( pszSecName, pszKeyLf, szKeyData, 0 );
+	}
+	
+	cProfile.IOProfileData( pszSecName, pszKeyFaceName, lf.lfFaceName, sizeof(lf.lfFaceName) );
+}
 
 /*[EOF]*/
