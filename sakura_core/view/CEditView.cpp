@@ -451,14 +451,23 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 	case WM_CHAR:
 #ifdef _UNICODE
-		GetCommander().HandleCommand( F_WCHAR, TRUE, WCHAR(wParam), 0, 0, 0 );
+		// コントロールコード入力禁止
+		if( WCODE::IsControlCode((wchar_t)wParam) ){
+			ErrorBeep();
+		}else{
+			GetCommander().HandleCommand( F_WCHAR, TRUE, WCHAR(wParam), 0, 0, 0 );
+		}
 #else
 		// SJIS固有
 		{
 			static BYTE preChar = 0;
 			if( preChar == 0 && ! _IS_SJIS_1((unsigned char)wParam) ){
 				// ASCII , 半角カタカナ
-				GetCommander().HandleCommand( F_WCHAR, TRUE, tchar_to_wchar((TCHAR)wParam), 0, 0, 0 );
+				if( ACODE::IsControlCode((char)wParam) ){
+					ErrorBeep();
+				}else{
+					GetCommander().HandleCommand( F_WCHAR, TRUE, tchar_to_wchar((ACHAR)wParam), 0, 0, 0 );
+				}
 			}else{
 				if( preChar ){
 					WORD wordData = MAKEWORD((BYTE)wParam, preChar);

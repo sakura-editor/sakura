@@ -290,7 +290,7 @@ namespace ACODE
 		if(c==CR )return false;
 		if(c==LF )return false;
 		if(n<=0x1F)return true;
-		if(n>=0x7F && n<=0xA0)return true;
+		if(n>=0x7F && n<=0x9F)return true;
 		if(n>=0xE0)return true;
 		return false;
 	}
