@@ -156,14 +156,10 @@ VOID CALLBACK EditViewTimerProc(
 
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-CEditView::CEditView() :
-	m_cHistory( new CAutoMarkMgr ),
-	m_bActivateByMouse( FALSE ),	// 2007.10.02 nasukoji
-	m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
-// 20020331 aroka 再変換対応 for 95/NT
-// 2002.04.09 コンストラクタのなかに移動しました。 minfu
-//	m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ),
-//	m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
+CEditView::CEditView()
+: m_cHistory( new CAutoMarkMgr )
+, m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
+, m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
 {
 
 	m_bDrawSWITCH = TRUE;
@@ -7032,7 +7028,6 @@ DWORD CEditView::DoGrep(
 
 	int			nDummy;
 	int			nHitCount = 0;
-	char		szPath[_MAX_PATH];
 	CDlgCancel	cDlgCancel;
 	HWND		hwndCancel;
 	char*		pszWork;
@@ -7137,8 +7132,8 @@ DWORD CEditView::DoGrep(
 	pCEditWnd->SetWindowIcon( hIconSmall, ICON_SMALL );
 	pCEditWnd->SetWindowIcon( hIconBig, ICON_BIG );
 
-	pszWork = pcmGrepFolder->GetStringPtr();
-	strcpy( szPath, pszWork );
+	TCHAR szPath[_MAX_PATH];
+	_tcscpy( szPath, pcmGrepFolder->GetStringPtr() );
 	nDummy = lstrlen( szPath );
 	/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
 	nCharChars = &szPath[nDummy] - CMemory::MemCharPrev( szPath, nDummy, &szPath[nDummy] );
@@ -7259,7 +7254,7 @@ DWORD CEditView::DoGrep(
 	m_pcEditDoc->SetDrawSwitchOfAllViews( m_pShareData->m_Common.m_bGrepRealTimeView );
 
 
-	if( -1 == DoGrepTree(
+	int nGrepTreeResult = DoGrepTree(
 		&cDlgCancel,
 		hwndCancel,
 		pcmGrepKey->GetStringPtr(),
@@ -7274,7 +7269,8 @@ DWORD CEditView::DoGrep(
 		&cRegexp,
 		0,
 		&nHitCount
-	) ){
+	);
+	if( -1 == nGrepTreeResult ){
 		wsprintf( szPath, "中断しました。\r\n", nHitCount );
 		Command_ADDTAIL( szPath, lstrlen( szPath ) );
 	}
@@ -7379,16 +7375,16 @@ int grep_compare_sp(const void* a, const void* b)
 }
 #endif
 
-/*! @brief Grep実行 
+/*! @brief Grep実行
 
 	@date 2001.06.27 genta	正規表現ライブラリの差し替え
-	@date 2003.06.23 Moca サブフォルダ→ファイルだったのをファイル→サブフォルダの順に変更
-	@date 2003.06.23 Moca ファイル名から""を取り除くように
-	@date 2003.03.27 みく 除外ファイル指定の導入と重複検索防止の追加．
+	@date 2003.06.23 Moca   サブフォルダ→ファイルだったのをファイル→サブフォルダの順に変更
+	@date 2003.06.23 Moca   ファイル名から""を取り除くように
+	@date 2003.03.27 みく   除外ファイル指定の導入と重複検索防止の追加．
 		大部分が変更されたため，個別の変更点記入は無し．
 */
 int CEditView::DoGrepTree(
-	CDlgCancel* 			pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
+	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
 	HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
 	const char*				pszKey,				//!< [in] 検索パターン
 	int*					pnKey_CharCharsArr,	//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
@@ -7422,7 +7418,6 @@ int CEditView::DoGrepTree(
 	nHitCountOld = -100;
 
 	//解放の対象
-	TCHAR* pWildCard   = NULL;	//ワイルドカードリスト作業用
 	TCHAR* currentPath = NULL;	//現在探索中のパス
 	TCHAR* subPath     = NULL;
 	HANDLE handle      = INVALID_HANDLE_VALUE;
@@ -7441,7 +7436,7 @@ int CEditView::DoGrepTree(
 	 * 除外ファイルを登録する。
 	 */
 	nPos = 0;
-	pWildCard = _tcsdup( pszFile );
+	TCHAR* pWildCard = _tcsdup( pszFile );	//ワイルドカードリスト作業用
 	if( ! pWildCard ) goto error_return;	//メモリ確保失敗
 	nWildCardLen = _tcslen( pWildCard );
 	TCHAR*	token;
@@ -7906,7 +7901,7 @@ void CEditView::SetGrepResult(
 	@date 2004/03/28 genta 不要な引数nNest, bGrepSubFolder, pszPathを削除
 */
 int CEditView::DoGrepFile(
-	CDlgCancel* 			pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
+	CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
 	HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
 	const char*				pszKey,				//!< [in] 検索パターン
 	int*					pnKey_CharCharsArr,	//!< [in] 文字種配列(2byte/1byte)．単純文字列検索で使用．
@@ -7917,7 +7912,7 @@ int CEditView::DoGrepFile(
 	int						nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
 	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 	int*					pnHitCount,			//!< [i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
-	const char*				pszFullPath,		//!< [in] 処理対象ファイルパス
+	const TCHAR*			pszFullPath,		//!< [in] 処理対象ファイルパス
 	CMemory&				cmemMessage			//!< 
 )
 {
@@ -8058,11 +8053,19 @@ int CEditView::DoGrepFile(
 
 					/* Grep結果を、szWorkに格納する */
 					SetGrepResult(
-						szWork, &nWorkLen,
-						pszFullPath, pszCodeName,
-						nLine, nIndex + 1, pLine, nLineLen, nEolCodeLen,
-						pLine + nIndex, matchlen,
-						bGrepOutputLine, nGrepOutputStyle
+						szWork,
+						&nWorkLen,
+						pszFullPath,
+						pszCodeName,
+						nLine,
+						nIndex + 1,
+						pLine,
+						nLineLen,
+						nEolCodeLen,
+						pLine + nIndex,
+						matchlen,
+						bGrepOutputLine,
+						nGrepOutputStyle
 					);
 					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
 					if( 2 == nGrepOutputStyle ){
@@ -8108,45 +8111,45 @@ int CEditView::DoGrepFile(
 			int nNextWordFrom2;
 			int nNextWordTo2;
 			// Jun. 26, 2003 genta 無駄なwhileは削除
-			while( TRUE == CDocLineMgr::WhereCurrentWord_2( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-					if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
-						// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
-						/* 1==大文字小文字の区別 */
-						if( (!sSearchOption.bLoHiCase && 0 == my_memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
-							(sSearchOption.bLoHiCase && 0 ==	  memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
-						){
-							/* Grep結果を、szWorkに格納する */
-							SetGrepResult(
-								szWork, &nWorkLen,
-								pszFullPath, pszCodeName,
-								//	Jun. 25, 2002 genta
-								//	桁位置は1始まりなので1を足す必要がある
-								nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
-								&(pCompareData[nNextWordFrom2]), nKeyKen,
-								bGrepOutputLine, nGrepOutputStyle
-							);
-							if( 2 == nGrepOutputStyle ){
-							/* WZ風 */
-								if( !bOutFileName ){
-									cmemMessage.AppendString( szWork0 );
-									bOutFileName = TRUE;
-								}
-							}
-
-							cmemMessage.AppendString( szWork, nWorkLen );
-							++nHitCount;
-							++(*pnHitCount);
-							//	May 22, 2000 genta
-							if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-								::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+			while( CDocLineMgr::WhereCurrentWord_2( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
+				if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
+					// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
+					/* 1==大文字小文字の区別 */
+					if( (!sSearchOption.bLoHiCase && 0 == my_memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
+						(sSearchOption.bLoHiCase && 0 ==	 memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
+					){
+						/* Grep結果を、szWorkに格納する */
+						SetGrepResult(
+							szWork, &nWorkLen,
+							pszFullPath, pszCodeName,
+							//	Jun. 25, 2002 genta
+							//	桁位置は1始まりなので1を足す必要がある
+							nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
+							&(pCompareData[nNextWordFrom2]), nKeyKen,
+							bGrepOutputLine, nGrepOutputStyle
+						);
+						if( 2 == nGrepOutputStyle ){
+						/* WZ風 */
+							if( !bOutFileName ){
+								cmemMessage.AppendString( szWork0 );
+								bOutFileName = TRUE;
 							}
 						}
-					}
-					/* 現在位置の左右の単語の先頭位置を調べる */
-					if( !CDocLineMgr::SearchNextWordPosition( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom, FALSE ) ){
-						break;	//	次の単語が無い。
+
+						cmemMessage.AppendString( szWork, nWorkLen );
+						++nHitCount;
+						++(*pnHitCount);
+						//	May 22, 2000 genta
+						if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
+							::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+						}
 					}
 				}
+				/* 現在位置の左右の単語の先頭位置を調べる */
+				if( !CDocLineMgr::SearchNextWordPosition( pCompareData, nLineLen, nNextWordFrom, &nNextWordFrom, FALSE ) ){
+					break;	//	次の単語が無い。
+				}
+			}
 		}
 		else {
 			/* 文字列検索 */
@@ -8155,51 +8158,56 @@ int CEditView::DoGrepFile(
 			//	マッチ箇所を1行から複数検出するケースを標準に，
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
 			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-			while( NULL != ( pszRes = CDocLineMgr::SearchString(
-					(const unsigned char *)pCompareData, nLineLen,
+			while(1){
+				pszRes = CDocLineMgr::SearchString(
+					(const unsigned char *)pCompareData,
+					nLineLen,
 					0,
-					(const unsigned char *)pszKey, nKeyKen,
+					(const unsigned char *)pszKey,
+					nKeyKen,
 					pnKey_CharCharsArr,
 					sSearchOption.bLoHiCase
-				) ) ){
-					nColm = pszRes - pCompareData + 1;
+				);
+				if(!pszRes)break;
 
-					/* Grep結果を、szWorkに格納する */
-					SetGrepResult(
-						szWork, &nWorkLen,
-						pszFullPath, pszCodeName,
-						nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
-						pszRes, nKeyKen,
-						bGrepOutputLine, nGrepOutputStyle
-					);
-					if( 2 == nGrepOutputStyle ){
-					/* WZ風 */
-						if( !bOutFileName ){
-							cmemMessage.AppendString( szWork0 );
-							bOutFileName = TRUE;
-						}
-					}
+				nColm = pszRes - pCompareData + 1;
 
-					cmemMessage.AppendString( szWork, nWorkLen );
-					++nHitCount;
-					++(*pnHitCount);
-					//	May 22, 2000 genta
-					if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-						::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				/* Grep結果を、szWorkに格納する */
+				SetGrepResult(
+					szWork, &nWorkLen,
+					pszFullPath, pszCodeName,
+					nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
+					pszRes, nKeyKen,
+					bGrepOutputLine, nGrepOutputStyle
+				);
+				if( 2 == nGrepOutputStyle ){
+				/* WZ風 */
+					if( !bOutFileName ){
+						cmemMessage.AppendString( szWork0 );
+						bOutFileName = TRUE;
 					}
-					
-					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-					if ( bGrepOutputLine ) {
-						break;
-					}
-					//	探し始める位置を補正
-					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	nClom : マッチ位置
-					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColm += nKeyKen - 1;
-					pCompareData += nPosDiff;
-					nLineLen -= nPosDiff;
-					nColmPrev += nPosDiff;
+				}
+
+				cmemMessage.AppendString( szWork, nWorkLen );
+				++nHitCount;
+				++(*pnHitCount);
+				//	May 22, 2000 genta
+				if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
+					::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				}
+				
+				//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
+				if ( bGrepOutputLine ) {
+					break;
+				}
+				//	探し始める位置を補正
+				//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
+				//	nClom : マッチ位置
+				//	matchlen : マッチした文字列の長さ
+				int nPosDiff = nColm += nKeyKen - 1;
+				pCompareData += nPosDiff;
+				nLineLen -= nPosDiff;
+				nColmPrev += nPosDiff;
 			}
 		}
 	}
