@@ -469,7 +469,12 @@ void CCaret::ShowEditCaret()
 	if( 0 == pCommon->m_sGeneral.GetCaretType() ){
 		nCaretHeight = GetHankakuHeight();					/* キャレットの高さ */
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			nCaretWidth = 2;
+			nCaretWidth = 2; //2px
+			// 2011.12.22 システムの設定に従う(けど2px以上)
+			DWORD dwWidth;
+			if( ::SystemParametersInfo(SPI_GETCARETWIDTH, 0, &dwWidth, 0) && 2 < dwWidth){
+				nCaretWidth = std::min((int)dwWidth, GetHankakuDx());
+			}
 		}
 		else{
 			nCaretWidth = GetHankakuDx();
@@ -481,7 +486,7 @@ void CCaret::ShowEditCaret()
 
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = m_pEditView->LineColmnToIndex( pcLayout, GetCaretLayoutPos().GetX2() );
+				nIdxFrom = GetCaretLogicPos().GetX() - pcLayout->GetLogicOffset();
 				if( nIdxFrom >= nLineLen ||
 					pLine[nIdxFrom] == CR || pLine[nIdxFrom] == LF ||
 					pLine[nIdxFrom] == TAB ){
@@ -655,7 +660,7 @@ void CCaret::ShowCaretPosInfo()
 	TCHAR szCaretChar[32]=_T("");
 	if( pLine ){
 		// 指定された桁に対応する行のデータ内の位置を調べる
-		CLogicInt nIdx = m_pEditView->LineColmnToIndex( pcLayout, GetCaretLayoutPos().GetX2() );
+		CLogicInt nIdx = GetCaretLogicPos().GetX2() - pcLayout->GetLogicOffset();
 		if( nIdx < nLineLen ){
 			if( nIdx < nLineLen - (pcLayout->GetLayoutEol().GetLen()?1:0) ){
 				//auto_sprintf( szCaretChar, _T("%04x"), );
