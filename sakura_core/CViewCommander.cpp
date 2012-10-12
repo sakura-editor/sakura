@@ -301,12 +301,7 @@ BOOL CViewCommander::HandleCommand(
 	switch( nCommand ){
 	case F_WCHAR:	/* 文字入力 */
 		{
-			/* コントロールコード入力禁止 */
-			if(WCODE::IsControlCode((wchar_t)lparam1)){
-				ErrorBeep();
-			}else{
-				Command_WCHAR( (wchar_t)lparam1 );
-			}
+			Command_WCHAR( (wchar_t)lparam1 );
 		}
 		break;
 
