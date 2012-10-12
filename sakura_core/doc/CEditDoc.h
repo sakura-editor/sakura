@@ -78,7 +78,6 @@ public:
 	//属性
 	ECodeType	GetDocumentEncoding() const;				//!< ドキュメントの文字コードを取得
 	void		SetDocumentEncoding(ECodeType eCharCode);	//!< ドキュメントの文字コードを設定
-	ECodeType	GetDefaultDocumentEncoding() const;			//!< 各文書種別で設定するデフォルト文字コードを取得
 	bool IsModificationForbidden( EFunctionCode nCommand );	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
 	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< 編集可能かどうか
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得

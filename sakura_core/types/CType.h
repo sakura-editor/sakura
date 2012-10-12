@@ -24,6 +24,7 @@
 #ifndef SAKURA_CTYPE_BF915633_AE38_4C73_8E5B_0411063A1AD89_H_
 #define SAKURA_CTYPE_BF915633_AE38_4C73_8E5B_0411063A1AD89_H_
 
+#include "CEol.h"
 #include "env/CommonSetting.h"
 #include "doc/CDocTypeSetting.h"
 #include "doc/CLineComment.h"
@@ -76,6 +77,13 @@ enum EBackgroundImagePos {
 	BGIMAGE_BOTTOM_CENTER,
 	BGIMAGE_CENTER_LEFT,
 	BGIMAGE_CENTER_RIGHT
+};
+
+struct SEncodingConfig{
+	BOOL				m_bPriorCesu8;					/* 自動判別時に CESU-8 を優先するかどうか */
+	ECodeType			m_eDefaultCodetype;				/* デフォルト文字コード */
+	EEolType			m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
+	BOOL				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -158,11 +166,7 @@ struct STypeConfig{
 	SFilePath			m_szExtHtmlHelp;				/* 外部HTMLヘルプ */
 	BOOL				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
 
-	BOOL				m_bPriorCesu8;					/* 自動判別時に CESU-8 を優先するかどうか */
-	int					m_eDefaultCodetype;				/* デフォルト文字コード */
-	int					m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
-	BOOL				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
-
+	SEncodingConfig		m_encoding;			//!< エンコードオプション
 
 
 //@@@ 2001.11.17 add start MIK

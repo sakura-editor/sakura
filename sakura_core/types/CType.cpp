@@ -174,10 +174,10 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
 
 	// 文字コード設定
-	pType->m_bPriorCesu8 = FALSE;
-	pType->m_eDefaultCodetype = CODE_SJIS;
-	pType->m_eDefaultEoltype = EOL_CRLF;
-	pType->m_bDefaultBom = FALSE;
+	pType->m_encoding.m_bPriorCesu8 = FALSE;
+	pType->m_encoding.m_eDefaultCodetype = CODE_SJIS;
+	pType->m_encoding.m_eDefaultEoltype = EOL_CRLF;
+	pType->m_encoding.m_bDefaultBom = FALSE;
 
 	//@@@2002.2.4 YAZAKI
 	pType->m_szExtHelp[0] = L'\0';

@@ -1396,10 +1396,10 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	cProfile.IOProfileData( pszSecName, LTEXT("szExtHtmlHelp")		, types.m_szExtHtmlHelp );
 	cProfile.IOProfileData( pszSecName, LTEXT("bTypeHtmlHelpIsSingle"), types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
 
-	cProfile.IOProfileData( pszSecName, LTEXT("bPriorCesu8")		, types.m_bPriorCesu8 );
-	cProfile.IOProfileData( pszSecName, LTEXT("eDefaultCodetype")	, types.m_eDefaultCodetype );
-	cProfile.IOProfileData( pszSecName, LTEXT("eDefaultEoltype")	, types.m_eDefaultEoltype );
-	cProfile.IOProfileData( pszSecName, LTEXT("bDefaultBom")		, types.m_bDefaultBom );
+	cProfile.IOProfileData( pszSecName, LTEXT("bPriorCesu8")		, types.m_encoding.m_bPriorCesu8 );
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eDefaultCodetype")	, types.m_encoding.m_eDefaultCodetype );
+	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("eDefaultEoltype")	, types.m_encoding.m_eDefaultEoltype );
+	cProfile.IOProfileData( pszSecName, LTEXT("bDefaultBom")		, types.m_encoding.m_bDefaultBom );
 
 	cProfile.IOProfileData( pszSecName, LTEXT("bAutoIndent")			, types.m_bAutoIndent );
 	cProfile.IOProfileData( pszSecName, LTEXT("bAutoIndent_ZENSPACE")	, types.m_bAutoIndent_ZENSPACE );

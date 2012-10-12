@@ -34,7 +34,7 @@
 #define SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_
 
 class CESI;
-class CEditDoc;
+struct SEncodingConfig;
 //class CNativeT;
 
 #include "global.h"
@@ -92,7 +92,7 @@ class CESI {
 public:
 
 	virtual ~CESI() { ; }
-	explicit CESI( CEditDoc& ref ) : m_pcEditDoc(&ref) {
+	explicit CESI( const SEncodingConfig& ref ) : m_pEncodingConfig(&ref) {
 		m_dwStatus = ESI_NOINFORMATION;
 		m_nTargetDataLen = -1;
 	}
@@ -209,7 +209,7 @@ protected:
 
 
 public:
-	CEditDoc*   m_pcEditDoc;
+	const SEncodingConfig* m_pEncodingConfig;
 
 #ifdef _DEBUG
 public:
