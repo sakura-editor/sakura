@@ -1055,14 +1055,14 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			cTextType.FillBack(pInfo->gr,rcClip);
 		}
 		CTypeSupport cSelectType(this, COLORIDX_SELECT);
-		if( GetSelectionInfo().IsTextSelected() && GetSelectionInfo().IsBoxSelecting() && cSelectType.IsDisp() ){
+		if( GetSelectionInfo().IsTextSelected() && cSelectType.IsDisp() ){
 			// 選択範囲の指定色：必要ならテキストのない部分の矩形選択を作画
 			const CEditView& view = *pInfo->pcView;
 			CLayoutRange selectArea = GetSelectionInfo().GetSelectAreaLine(pInfo->pDispPos->GetLayoutLineRef(), pcLayout);
 			// 2010.10.04 スクロール分の足し忘れ
 			int nSelectFromPx = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetFrom().x - view.GetTextArea().GetViewLeftCol());
 			int nSelectToPx   = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetTo().x - view.GetTextArea().GetViewLeftCol());
-			if( nSelectFromPx != nSelectToPx ){
+			if( nSelectFromPx < nSelectToPx && selectArea.GetTo().x != INT_MAX ){
 				const int nCharWidth = view.GetTextMetrics().GetHankakuDx();
 				RECT rcSelect; // Pixel
 				rcSelect.top    = pInfo->pDispPos->GetDrawPos().y;
