@@ -191,12 +191,12 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 					// GetToÇÃçsÇ™ëŒè€
 					rc.top = rc.bottom = m_sSelect.GetTo().GetY2();
 					drawLeft  = t_min(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x);
-					drawRight = t_max(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x);
+					drawRight = t_max(m_sSelect.GetTo().x, m_sSelectOld.GetTo().x) + 1;
 				}else if(m_sSelect.GetTo() == m_sSelectOld.GetTo() && m_sSelect.GetFrom().x != m_sSelectOld.GetFrom().x){
 					// GetFromÇÃçsÇ™ëŒè€
 					rc.top = rc.bottom = m_sSelect.GetFrom().GetY2();
 					drawLeft  = t_min(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x);
-					drawRight = t_max(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x);
+					drawRight = t_max(m_sSelectOld.GetFrom().x, m_sSelect.GetFrom().x) + 1;
 				}else{
 					rc.UnionStrictRect(rcOld, rcNew);
 				}
