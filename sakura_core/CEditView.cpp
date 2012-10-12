@@ -7106,13 +7106,13 @@ DWORD CEditView::DoGrep(
 
 	//	2007.07.22 genta
 	//	バージョン番号取得のため，処理を前の方へ移動した
-	if( m_sCurSearchOption.bRegularExp ){
+	if( sSearchOption.bRegularExp ){
 		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
-		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
+		nFlag |= sSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if( !cRegexp.Compile( pcmGrepKey->GetStringPtr(), nFlag ) ){
 			return 0;
 		}
@@ -7198,19 +7198,19 @@ DWORD CEditView::DoGrep(
 	cmemMessage.AppendString( pszWork );
 
 	if( 0 < nWork ){ // 2003.06.10 Moca ファイル検索の場合は表示しない // 2004.09.26 条件誤り修正
-		if( m_sCurSearchOption.bWordOnly ){
+		if( sSearchOption.bWordOnly ){
 		/* 単語単位で探す */
 			cmemMessage.AppendString( "    (単語単位で探す)\r\n" );
 		}
 
-		if( m_sCurSearchOption.bLoHiCase ){
+		if( sSearchOption.bLoHiCase ){
 			pszWork = "    (英大文字小文字を区別する)\r\n";
 		}else{
 			pszWork = "    (英大文字小文字を区別しない)\r\n";
 		}
 		cmemMessage.AppendString( pszWork );
 
-		if( m_sCurSearchOption.bRegularExp ){
+		if( sSearchOption.bRegularExp ){
 			//	2007.07.22 genta : 正規表現ライブラリのバージョンも出力する
 			cmemMessage.AppendString( "    (正規表現:" );
 			cmemMessage.AppendString( cRegexp.GetVersionT() );
@@ -7267,7 +7267,7 @@ DWORD CEditView::DoGrep(
 		pcmGrepFile->GetStringPtr(),
 		szPath,
 		bGrepSubFolder,
-		m_sCurSearchOption,
+		sSearchOption,
 		nGrepCharSet,
 		bGrepOutputLine,
 		nGrepOutputStyle,
