@@ -60,10 +60,13 @@ public:
 	}
 
 	//!要素を追加。ただし重複した要素は弾く。
-	void push_back_unique(const T& t)
+	bool push_back_unique(const T& t)
 	{
-		if(!exist(t))
+		if(!exist(t)){
 			push_back(t);
+			return true;
+		}
+		return false;
 	}
 };
 

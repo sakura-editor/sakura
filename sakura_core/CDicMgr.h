@@ -17,6 +17,7 @@ class CDicMgr;
 #define _CDICMGR_H_
 
 #include <windows.h>
+#include "util/container.h"
 #include "global.h"
 
 class CMemory;
@@ -38,7 +39,7 @@ public:
 	*/
 //	BOOL Open( char* );
 	static BOOL Search( const wchar_t*, const int, CNativeW**, CNativeW**, const TCHAR*, int * );	// 2006.04.10 fon (const int,CMemory**,int*)à¯êîÇí«â¡
-	static int HokanSearch( const wchar_t* , BOOL, CNativeW** , int, const TCHAR* );
+	static int HokanSearch( const wchar_t* , BOOL, vector_ex<std::wstring>&, int, const TCHAR* );
 //	BOOL Close( char* );
 
 

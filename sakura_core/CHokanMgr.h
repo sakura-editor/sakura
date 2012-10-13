@@ -20,6 +20,7 @@ class CHokanMgr;
 #include "dlg/CDialog.h"
 #include <windows.h>
 #include "mem/CMemory.h"
+#include "util/container.h"
 
 class CEditView;
 
@@ -72,9 +73,10 @@ public:
 //	2001/06/18 asa-o
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
 
+	static bool AddKouhoUnique(vector_ex<std::wstring>&, const std::wstring&);
 
 	CNativeW		m_cmemCurWord;
-	CNativeW*		m_pcmemKouho;
+	vector_ex<std::wstring>	m_vKouho;
 	int				m_nKouhoNum;
 
 	int				m_nCurKouhoIdx;

@@ -181,8 +181,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 int CEditView::HokanSearchByFile(
 	const wchar_t*	pszKey,			//!< [in]
 	BOOL			bHokanLoHiCase,	//!< [in] 英大文字小文字を同一視する
-	CNativeW**		ppcmemKouho,	//!< [in,out] 候補
-	int				nKouhoNum,		//!< [in] ppcmemKouhoのすでに入っている数
+	vector_ex<std::wstring>& 	vKouho,	//!< [in,out] 候補
 	int				nMaxKouho		//!< [in] Max候補数(0==無制限)
 ){
 	const int nKeyLen = wcslen( pszKey );
@@ -285,52 +284,16 @@ int CEditView::HokanSearchByFile(
 				continue;
 			}
 
-			if( NULL == *ppcmemKouho ){
-				*ppcmemKouho = new CNativeW;
-				(*ppcmemKouho)->SetString( word, nWordLen );
-				(*ppcmemKouho)->AppendString( L"\n" );
-				++nKouhoNum;
+			// 候補を追加(重複は除く)
+			{
+				std::wstring strWord = std::wstring(word, nWordLen);
+				CHokanMgr::AddKouhoUnique(vKouho, strWord);
 			}
-			else{
-				// 重複していたら追加しない
-				int nLen;
-				const wchar_t* ptr = (*ppcmemKouho)->GetStringPtr( &nLen );
-				int nPosKouho;
-				nRet = 1;
-				// 2008.07.25 nasukoji	大文字小文字を同一視の場合でも候補の振るい落としは完全一致で見る
-				if( nWordLen < nLen ){
-					if( L'\n' == ptr[nWordLen] && 0 == auto_memcmp( ptr, word, nWordLen )  ){
-						nRet = 0;
-					}else{
-						const int nPosKouhoMax = nLen - nWordLen - 1;
-						for( nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-							if( ptr[nPosKouho] == L'\n' ){
-								if( ptr[nPosKouho + nWordLen + 1] == L'\n' ){
-									if( 0 == auto_memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-										nRet = 0;
-										break;
-									}else{
-										nPosKouho += nWordLen;
-									}
-								}
-							}
-						}
-					}
-				}
-				if( 0 == nRet ){
-					continue;
-				}
-				//2007.10.17 kobake メモリリークしてました。修正。
-				(*ppcmemKouho)->AppendString( word, nWordLen );
-				(*ppcmemKouho)->AppendString( L"\n" );
-				++nKouhoNum;
+			if( 0 != nMaxKouho && nMaxKouho <= (int)vKouho.size() ){
+				return vKouho.size();
 			}
-			if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
-				return nKouhoNum;
-			}
-			
 		}
 	}
-	return nKouhoNum;
+	return vKouho.size();
 }
 
