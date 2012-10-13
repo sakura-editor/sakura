@@ -51,6 +51,7 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 
   @date 2008.12.07 nasukoji	ファイル名パターンのバッファオーバラン対策
   @date 2008.12.13 genta 検索パターンのバッファオーバラン対策
+  @date 2012.10.13 novice 検索オプションをクラスごと代入
 */
 DWORD CGrepAgent::DoGrep(
 	CEditView*				pcViewDst,
@@ -105,10 +106,7 @@ DWORD CGrepAgent::DoGrep(
 
 	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
 	wcscpy( pcViewDst->m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
-	pcViewDst->m_sCurSearchOption.bRegularExp = sSearchOption.bRegularExp;		/* 検索／置換  1==正規表現 */
-	pcViewDst->m_sCurSearchOption.bLoHiCase   = sSearchOption.bLoHiCase;			/* 検索／置換  1==英大文字小文字の区別 */
-	// 2010.08.21 単語単位の適用漏れ
-	pcViewDst->m_sCurSearchOption.bWordOnly   = sSearchOption.bWordOnly;
+	pcViewDst->m_sCurSearchOption = sSearchOption;						// 検索オプション
 
 	/* 正規表現 */
 
