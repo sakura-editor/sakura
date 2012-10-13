@@ -2833,12 +2833,9 @@ void CMemory::AppendNativeData( const CMemory* pcmemData )
 
 void CMemory::Empty( void )
 {
-	if( m_pData != NULL ){
-		free( m_pData );
-		m_pData = NULL;
-	}
-	m_nDataBufSize = 0;
+	free( m_pData );
 	m_pData = NULL;
+	m_nDataBufSize = 0;
 	m_nDataLen = 0;
 	return;
 }
