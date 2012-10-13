@@ -81,7 +81,7 @@ public:
 	LPCWSTR GetMacroType() const{ return m_cmMacroType.GetStringPtr(); }
 	int GetFileNum(void) { return m_vFiles.size(); }
 	const TCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
-	void ClearFile(void) { return m_vFiles.clear(); }
+	void ClearFile(void) { m_vFiles.clear(); }
 	void ParseCommandLine( LPCTSTR pszCmdLineSrc = NULL );
 
 // member valiables
