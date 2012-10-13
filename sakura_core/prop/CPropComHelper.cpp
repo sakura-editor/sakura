@@ -119,7 +119,7 @@ INT_PTR CPropHelper::DispatchEvent(
 					cDlgOpenFile.Create(
 						G_AppInstance(),
 						hwndDlg,
-						_T("*.hlp"),
+						_T("*.hlp;*.chm;*.col"),
 						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
