@@ -4691,7 +4691,9 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 
 
 
-/* 外部ヘルプ１ */
+/* 外部ヘルプ１
+	@date 2012.09.26 Moca HTMLHELP対応
+*/
 void CViewCommander::Command_EXTHELP1( void )
 {
 retry:;
@@ -4721,15 +4723,22 @@ retry:;
 
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	m_pCommanderView->GetCurrentTextForSearch( cmemCurText );
+	TCHAR path[_MAX_PATH];
 	if( _IS_REL_PATH( helpfile ) ){
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-		TCHAR path[_MAX_PATH];
 		GetInidirOrExedir( path, helpfile );
-		::WinHelp( m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );
-		return;
+	}else{
+		auto_strcpy( path, helpfile );
 	}
-	::WinHelp( m_pCommanderView->m_hwndParent, helpfile , HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );
+	// 2012.09.26 Moca HTMLHELP対応
+	TCHAR	szExt[_MAX_EXT];
+	_tsplitpath( path, NULL, NULL, NULL, szExt );
+	if( 0 == _tcsicmp(szExt, _T(".chi")) || 0 == _tcsicmp(szExt, _T(".chm")) || 0 == _tcsicmp(szExt, _T(".col")) ){
+		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
+	}else{
+		::WinHelp( m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );
+	}
 	return;
 }
 
