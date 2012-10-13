@@ -126,7 +126,6 @@ BOOL CDicMgr::Search(
 /*
 ||  入力補完キーワードの検索
 ||
-||  ・見つかった候補をすべて返す(改行で区切って返す) -> ppcmemKouho
 ||  ・指定された候補の最大数を超えると処理を中断する
 ||  ・見つかった数を返す
 ||
@@ -134,7 +133,7 @@ BOOL CDicMgr::Search(
 int CDicMgr::HokanSearch(
 	const wchar_t*	pszKey,
 	BOOL			bHokanLoHiCase,	//!< 英大文字小文字を同一視する
-	CNativeW**		ppcmemKouho,	//!< [out] 候補リスト。改行(\n)区切り。
+	vector_ex<std::wstring>&		vKouho,	//!< [out] 候補リスト
 	int				nMaxKouho,		//!< Max候補数(0==無制限)
 	const TCHAR*	pszKeyWordFile
 )
@@ -142,7 +141,6 @@ int CDicMgr::HokanSearch(
 	int		nKeyLen;
 	int		nKouhoNum;
 	int		nRet;
-	*ppcmemKouho = NULL;
 	if( 0 >= _tcslen( pszKeyWordFile ) ){
 		return 0;
 	}
@@ -155,7 +153,7 @@ int CDicMgr::HokanSearch(
 	nKeyLen = wcslen( pszKey );
 	wstring szLine;
 	while( in ){
-		szLine = in.ReadLineW(); // NULL != fgetws( szLine, _countof(szLine), pFile ) ){
+		szLine = in.ReadLineW();
 		if( nKeyLen > (int)szLine.length() ){
 			continue;
 		}
@@ -164,7 +162,7 @@ int CDicMgr::HokanSearch(
 		if( szLine[0] == L';' )continue;
 
 		//空行無視
-		if( szLine[0] == L'\0' )continue;
+		if( szLine.length() == 0 )continue;
 
 		if( bHokanLoHiCase ){	/* 英大文字小文字を同一視する */
 			nRet = auto_memicmp( pszKey, szLine.c_str(), nKeyLen );
@@ -172,19 +170,14 @@ int CDicMgr::HokanSearch(
 			nRet = auto_memcmp( pszKey, szLine.c_str(), nKeyLen );
 		}
 		if( 0 == nRet ){
-			if( NULL == *ppcmemKouho ){
-				*ppcmemKouho = new CNativeW;
-			}
-			(*ppcmemKouho)->AppendString( szLine.c_str() );
-			(*ppcmemKouho)->AppendString( L"\n" );
-			++nKouhoNum;
-			if( 0 != nMaxKouho && nMaxKouho <= nKouhoNum ){
+			vKouho.push_back( szLine );
+			if( 0 != nMaxKouho && nMaxKouho <= (int)vKouho.size() ){
 				break;
 			}
 		}
 	}
 	in.Close();
-	return nKouhoNum;
+	return (int)vKouho.size();
 }
 
 

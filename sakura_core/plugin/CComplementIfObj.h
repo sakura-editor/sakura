@@ -84,45 +84,14 @@ public:
 			{
 				std::wstring keyword;
 				if( variant_to_wstr( Arguments[0], keyword ) != true) return false;
-
 				const wchar_t* word = keyword.c_str();
 				int nWordLen = keyword.length();
-				Wrap( &Result )->Receive( -1 );
-				if( NULL == m_pHokanMgr->m_pcmemKouho ){
-					m_pHokanMgr->m_pcmemKouho = new CNativeW;
-					m_pHokanMgr->m_pcmemKouho->SetString( word, nWordLen );
-					m_pHokanMgr->m_pcmemKouho->AppendString( L"\n" );
-					m_pHokanMgr->m_nKouhoNum++;
-					Wrap( &Result )->Receive( m_pHokanMgr->m_nKouhoNum );
+				if( nWordLen <= 0 ) return false;
+				std::wstring strWord = std::wstring(word, nWordLen);
+				if( CHokanMgr::AddKouhoUnique( m_pHokanMgr->m_vKouho, strWord ) ){
+					Wrap( &Result )->Receive( m_pHokanMgr->m_vKouho.size() );
 				}else{
-					int nLen;
-					const wchar_t* ptr = m_pHokanMgr->m_pcmemKouho->GetStringPtr( &nLen );
-					bool ret = true;
-					if( nWordLen < nLen ){
-						if( L'\n' == ptr[nWordLen] && 0 == auto_memcmp( ptr, word, nWordLen ) ){
-							ret = false;
-						}else{
-							const int nPosKouhoMax = nLen - nWordLen - 1;
-							for( int nPosKouho = 1; nPosKouho < nPosKouhoMax; nPosKouho++ ){
-								if( ptr[nPosKouho] == L'\n' ){
-									if( ptr[nPosKouho + nWordLen + 1] == L'\n' ){
-										if( 0 == auto_memcmp( &ptr[nPosKouho + 1], word, nWordLen) ){
-											ret = false;
-											break;
-										}else{
-											nPosKouho += nWordLen;
-										}
-									}
-								}
-							}
-						}
-					}
-					if( ret ){
-						m_pHokanMgr->m_pcmemKouho->AppendString( word, nWordLen );
-						m_pHokanMgr->m_pcmemKouho->AppendString( L"\n" );
-						m_pHokanMgr->m_nKouhoNum++;
-						Wrap( &Result )->Receive( m_pHokanMgr->m_nKouhoNum );
-					}
+					Wrap( &Result )->Receive( -1 );
 				}
 				return true;
 			}
