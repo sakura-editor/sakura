@@ -524,12 +524,11 @@ void CEditView::ISearchWordMake(void)
 
 		{
 			//migemoで捜す
-			unsigned char* pszMigemoWord = m_pcmigemo->migemo_query((unsigned char*)to_achar(m_szCurSrchKey));
+			std::wstring strMigemoWord = m_pcmigemo->migemo_query_w(m_szCurSrchKey);
 			
 			/* 検索パターンのコンパイル */
-			m_CurRegexp.Compile(to_wchar((char*)pszMigemoWord), nFlag );
+			m_CurRegexp.Compile(strMigemoWord.c_str(), nFlag );
 
-			m_pcmigemo->migemo_release(pszMigemoWord);
 		}
 		break;
 	}
