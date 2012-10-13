@@ -372,12 +372,9 @@ void CMemory::AppendRawData( const CMemory* pcmemData )
 
 void CMemory::_Empty( void )
 {
-	if( m_pRawData != NULL ){
-		free( m_pRawData );
-		m_pRawData = NULL;
-	}
-	m_nDataBufSize = 0;
+	free( m_pRawData );
 	m_pRawData = NULL;
+	m_nDataBufSize = 0;
 	m_nRawLen = 0;
 	return;
 }
