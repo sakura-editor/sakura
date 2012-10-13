@@ -18,8 +18,8 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sinst2-0-4-0
-VersionInfoVersion=2.0.4.0
+OutputBaseFilename=sinst2-0-5-0
+VersionInfoVersion=2.0.5.0
 
 ; OSバージョン制限
 MinVersion=0,5.0
@@ -45,6 +45,7 @@ Name: proglist;    Description: "プログラム一覧に追加(&P)"; Components: main;
 Name: desktopicon; Description: "デスクトップにアイコン作成(&D)";     Components: main; Flags: unchecked;
 Name: fileassoc;   Description: "「SAKURAで開く」メニューの追加(&E)"; Components: main; Flags: unchecked;
 Name: startup;     Description: "起動時に常駐(&B)";                   Components: main; Flags: unchecked;
+Name: sendto;      Description: "送るに追加(&T)";                     Components: main; Flags: unchecked;
 
 [Files]
 Source: "sakura\sakura.exe";           DestDir: "{app}";         Components: main; Flags: ignoreversion;
@@ -77,6 +78,7 @@ Name: "{userdesktop}\サクラエディタ";                                          F
 Name: "{group}\アンインストール";                                              Filename: "{uninstallexe}";                           Tasks: startmenu;
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\サクラエディタ"; Filename: "{app}\sakura.exe";                         Components: main; Tasks: quicklaunch;
 Name: "{userstartup}\サクラエディタ常駐";                                      Filename: "{app}\sakura.exe";   Parameters: "-NOWIN"; Components: main; Tasks: startup;
+Name: "{sendto}\サクラエディタ";                                               Filename: "{app}\sakura.exe";                         Components: main; Tasks: sendto;
 
 [Run]
 FileName: "{app}\sakura.exe"; Description: "今すぐサクラエディタを起動"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent; Check: CheckPrivilege(false);
