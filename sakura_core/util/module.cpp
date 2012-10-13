@@ -184,11 +184,11 @@ void GetAppVersionInfo(
 	){
 		*pdwProductVersionMS = pVVIH->Value.dwProductVersionMS;
 		*pdwProductVersionLS = pVVIH->Value.dwProductVersionLS;
-		dwVersionMS = pVVIH->Value.dwProductVersionMS;
-		dwVersionLS = pVVIH->Value.dwProductVersionLS;
-	}
-	if( hInstance == NULL ){
-		bLoad = true;
+		if( hInstance == NULL ){
+			dwVersionMS = pVVIH->Value.dwProductVersionMS;
+			dwVersionLS = pVVIH->Value.dwProductVersionLS;
+			bLoad = true;
+		}
 	}
 	return;
 
