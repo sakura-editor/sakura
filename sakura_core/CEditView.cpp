@@ -6433,7 +6433,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 */
 void CEditView::SetParentCaption( void )
 {
-	m_pcEditDoc->SetParentCaption();
+	m_pcEditDoc->UpdateCaption();
 	return;
 }
 

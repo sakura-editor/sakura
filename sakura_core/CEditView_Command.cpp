@@ -7658,7 +7658,7 @@ void CEditView::Command_READONLY( void )
 	m_pcEditDoc->m_bReadOnly ^= 1;
 
 	// 親ウィンドウのタイトルを更新
-	m_pcEditDoc->SetParentCaption();
+	m_pcEditDoc->UpdateCaption();
 }
 
 /* ファイルのプロパティ */

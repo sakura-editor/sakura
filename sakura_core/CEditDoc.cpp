@@ -890,7 +890,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 	m_bReadOnly = FALSE;	/* 読み取り専用モード */
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
+	UpdateCaption();
 end_of_func:;
 
 	if( IsFilePathAvailable() &&
@@ -1192,45 +1192,29 @@ BOOL CEditDoc::IsEnablePaste( void )
 
 	@date 2007.03.08 ryoji bKillFocusパラメータを除去
 */
-void CEditDoc::SetParentCaption( void )
+void CEditDoc::UpdateCaption()
 {
-	if( NULL == m_hWnd ){
-		return;
-	}
-	if( !m_cEditViewArr[m_nActivePaneIndex].m_bDrawSWITCH ){
-		return;
-	}
+	if( !m_cEditViewArr[m_nActivePaneIndex].m_bDrawSWITCH )return;
 
-	char	pszCap[1024];	//	Nov. 6, 2000 genta オーバーヘッド軽減のためHeap→Stackに変更
+	//キャプション文字列の生成 -> pszCap
+	char	pszCap[1024];
+	const char* pszFormat = NULL;
+	if( !m_pcEditWnd->IsActiveApp() )	pszFormat = m_pShareData->m_Common.m_szWindowCaptionInactive;
+	else								pszFormat = m_pShareData->m_Common.m_szWindowCaptionActive;
+	ExpandParameter(
+		pszFormat,
+		pszCap,
+		_countof( pszCap )
+	);
 
-//	/* アイコン化されていない時はフルパス */
-//	/* アイコン化されている時はファイル名のみ */
-//	if( ::IsIconic( m_hWnd ) ){
-//		bKillFocus = TRUE;
-//	}else{
-//		bKillFocus = FALSE;
-//	}
-
-	// From Here Apr. 04, 2003 genta / Apr.05 ShareDataのパラメータ利用に
-	if( !m_pcEditWnd->IsActiveApp() ){	// 2007.03.08 ryoji bKillFocusをIsActiveApp()に変更
-		ExpandParameter( m_pShareData->m_Common.m_szWindowCaptionInactive,
-			pszCap, sizeof( pszCap ));
-	}
-	else {
-		ExpandParameter( m_pShareData->m_Common.m_szWindowCaptionActive,
-			pszCap, sizeof( pszCap ));
-	}
-	// To Here Apr. 04, 2003 genta
-
+	//キャプション更新
 	::SetWindowText( m_hwndParent, pszCap );
 
 	//@@@ From Here 2003.06.13 MIK
 	//タブウインドウのファイル名を通知
-	ExpandParameter( m_pShareData->m_Common.m_szTabWndCaption, pszCap, sizeof( pszCap ));
+	ExpandParameter( m_pShareData->m_Common.m_szTabWndCaption, pszCap, _countof( pszCap ));
 	m_pcEditWnd->ChangeFileNameNotify( pszCap, m_szFilePath, m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	//@@@ To Here 2003.06.13 MIK
-
-	return;
 }
 
 
@@ -1815,7 +1799,7 @@ void CEditDoc::DoFileLock( void )
 	if( -1 == _taccess( GetFilePath(), 2 ) ){	/* アクセス権：書き込み許可 */
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
-		SetParentCaption();
+		UpdateCaption();
 		return;
 	}
 
@@ -1833,7 +1817,7 @@ void CEditDoc::DoFileLock( void )
 		);
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
-		SetParentCaption();
+		UpdateCaption();
 		return;
 	}
 	m_hLockedFile = ::_lopen( GetFilePath(), nAccessMode | m_pShareData->m_Common.m_nFileShareMode );
@@ -1859,7 +1843,7 @@ void CEditDoc::DoFileLock( void )
 			pszMode
 		);
 		/* 親ウィンドウのタイトルを更新 */
-		SetParentCaption();
+		UpdateCaption();
 		return;
 	}
 	/* 排他制御しないけどロックされているかのチェックは行う場合 */
@@ -4228,7 +4212,7 @@ void CEditDoc::ReloadCurrentFile(
 	InitAllView();
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
+	UpdateCaption();
 
 	/* ファイル読み込み */
 	FileRead(

@@ -109,7 +109,7 @@ public:
 	BOOL FileSaveAs( const char *filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
 
 	int MakeBackUp( const TCHAR* target_file );	/* バックアップの作成 */
-	void SetParentCaption( void );	/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
+	void UpdateCaption();	/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 

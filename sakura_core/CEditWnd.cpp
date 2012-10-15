@@ -582,7 +582,7 @@ HWND CEditWnd::Create(
 	}
 	//	Jun. 4 ,2004 genta ファイル名指定が無くても読み取り専用強制指定を有効にする
 	m_cEditDoc.m_bReadOnly = bReadOnly;
-	m_cEditDoc.SetParentCaption();
+	m_cEditDoc.UpdateCaption();
 	
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
@@ -1286,7 +1286,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 
 		// キャプション設定、タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動
-		m_cEditDoc.SetParentCaption();
+		m_cEditDoc.UpdateCaption();
 		m_CFuncKeyWnd.Timer_ONOFF( m_bIsActiveApp ); // 20060126 aroka
 		this->Timer_ONOFF( m_bIsActiveApp ); // 20060128 aroka
 
@@ -1324,7 +1324,7 @@ LRESULT CEditWnd::DispatchEvent(
 //		MYTRACE_A( "WM_SIZE\n" );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
-			m_cEditDoc.SetParentCaption();
+			m_cEditDoc.UpdateCaption();
 		}
 		return OnSize( wParam, lParam );
 
@@ -2994,7 +2994,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						m_cEditDoc.InitAllView();
 
 						/* 親ウィンドウのタイトルを更新 */
-						m_cEditDoc.SetParentCaption();
+						m_cEditDoc.UpdateCaption();
 
 						/* ファイル読み込み */
 							m_cEditDoc.FileRead(
@@ -3225,7 +3225,7 @@ void CEditWnd::SetDebugModeON()
 // 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
 	m_cEditDoc.m_bReadOnly = FALSE;		/* 読み取り専用モード */
 	/* 親ウィンドウのタイトルを更新 */
-	m_cEditDoc.SetParentCaption();
+	m_cEditDoc.UpdateCaption();
 }
 
 // 2005.06.24 Moca
@@ -3235,7 +3235,7 @@ void CEditWnd::SetDebugModeOFF()
 	if( m_pShareData->m_hwndDebug == m_hWnd ){
 		m_pShareData->m_hwndDebug = NULL;
 		m_cEditDoc.m_bDebugMode = FALSE;
-		m_cEditDoc.SetParentCaption();
+		m_cEditDoc.UpdateCaption();
 	}
 }
 
