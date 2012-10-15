@@ -1933,61 +1933,55 @@ int	CEditWnd::OnClose()
 	if( !nRet ) return nRet;
 
 	// 2005.09.01 ryoji タブまとめ表示の場合は次のウィンドウを前面に（終了時のウィンドウちらつきを抑制）
-
-	// 2007.07.07 ryoji
-	// Note. タブまとめでない場合にも以下の処理を通しているのは、以前、タブまとめ設定を同期していなかったときの名残です。
-	//       （タブまとめ解除しても非表示のままになっているウィンドウを表示に戻す必要があった）
-	//       同期にしている現在では、同期に不具合があって非表示になっている場合でも表示に戻す、という保険的な意味しかありません。
-
-	int i, j;
-	EditNode*	p = NULL;
-	int nCount = CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
-	if( nCount > 1 )
+	if( m_pShareData->m_Common.m_bDispTabWnd
+		&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
 	{
-		for( i = 0; i < nCount; i++ )
+		int i, j;
+		EditNode*	p = NULL;
+		int nCount = CShareData::getInstance()->GetOpenedWindowArr( &p, FALSE );
+		if( nCount > 1 )
 		{
-			if( p[ i ].m_hWnd == m_hWnd )
-				break;
-		}
-		if( i < nCount )
-		{
-			for( j = i + 1; j < nCount; j++ )
+			for( i = 0; i < nCount; i++ )
 			{
-				if( p[ j ].m_nGroup == p[ i ].m_nGroup )
+				if( p[ i ].m_hWnd == m_hWnd )
 					break;
 			}
-			if( j >= nCount )
+			if( i < nCount )
 			{
-				for( j = 0; j < i; j++ )
+				for( j = i + 1; j < nCount; j++ )
 				{
 					if( p[ j ].m_nGroup == p[ i ].m_nGroup )
 						break;
 				}
-			}
-			if( j != i )
-			{
-				HWND hwnd = p[ j ].m_hWnd;
+				if( j >= nCount )
 				{
-					// 2006.01.28 ryoji
-					// タブまとめ表示でこの画面が非表示から表示に変わってすぐ閉じる場合(タブの中クリック時等)、
-					// 以前のウィンドウが消えるよりも先に一気にここまで処理が進んでしまうと
-					// あとで画面がちらつくので、以前のウィンドウが消えるのをちょっとだけ待つ
-					if( m_pShareData->m_Common.m_bDispTabWnd
-						&& !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+					for( j = 0; j < i; j++ )
 					{
+						if( p[ j ].m_nGroup == p[ i ].m_nGroup )
+							break;
+					}
+				}
+				if( j != i )
+				{
+					HWND hwnd = p[ j ].m_hWnd;
+					{
+						// 2006.01.28 ryoji
+						// タブまとめ表示でこの画面が非表示から表示に変わってすぐ閉じる場合(タブの中クリック時等)、
+						// 以前のウィンドウが消えるよりも先に一気にここまで処理が進んでしまうと
+						// あとで画面がちらつくので、以前のウィンドウが消えるのをちょっとだけ待つ
 						int iWait = 0;
 						while( ::IsWindowVisible( hwnd ) && iWait++ < 20 )
 							::Sleep(1);
 					}
-				}
-				if( !::IsWindowVisible( hwnd ) )
-				{
-					ActivateFrameWindow( hwnd );
+					if( !::IsWindowVisible( hwnd ) )
+					{
+						ActivateFrameWindow( hwnd );
+					}
 				}
 			}
 		}
+		if( p ) delete []p;
 	}
-	if( p ) delete []p;
 
 	return nRet;
 }
