@@ -155,7 +155,7 @@ void CDlgCompare::SetData( void )
 				pfi->m_bIsModified ? _T("*") : _T(" ")
 			);
 			// gm_pszCodeNameArr_3 からコピーするように変更
-			if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+			if( IsValidCodeTypeExceptSJIS(pfi->m_nCharCode) ){
 				strcat( szMenu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
 			}
 			nItem = ::SendMessage( hwndList, LB_ADDSTRING, 0, (LPARAM)(char*)szMenu );

@@ -7215,7 +7215,7 @@ DWORD CEditView::DoGrep(
 
 	if( CODE_AUTODETECT == nGrepCharSet ){
 		cmemMessage.AppendString( "    (文字コードセットの自動判別)\r\n" );
-	}else if( 0 <= nGrepCharSet && nGrepCharSet < CODE_CODEMAX ){
+	}else if(IsValidCodeType(nGrepCharSet)){
 		cmemMessage.AppendString( "    (文字コードセット：" );
 		cmemMessage.AppendString( gm_pszCodeNameArr_1[nGrepCharSet] );
 		cmemMessage.AppendString( ")\r\n" );
@@ -7952,7 +7952,7 @@ int CEditView::DoGrepFile(
 			// 判別エラーでもファイル数にカウントするため
 			// ファイルの日本語コードセット判別
 			nCharCode = CMemory::CheckKanjiCodeOfFile( pszFullPath );
-			if( -1 == nCharCode ){
+			if( CODE_NONE == nCharCode ){
 				pszCodeName = "  [(DetectError)]";
 			}else{
 				pszCodeName = gm_pszCodeNameArr_3[nCharCode];

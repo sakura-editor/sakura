@@ -198,8 +198,9 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 
 		for( TCHAR *p = exename + len - 1; p > exename; p-- ){
 			if( *p == _T('.') ){
-				if( _T('0') <= p[-1] && p[-1] <= _T('6') )
-					m_fi.m_nCharCode = p[-1] - _T('0');
+				int n = p[-1] - _T('0');
+				if(IsValidCodeType(n))
+					m_fi.m_nCharCode = n;
 				break;
 			}
 		}

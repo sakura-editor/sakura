@@ -1343,7 +1343,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 						);
 //		To Here Oct. 4, 2000
 						// gm_pszCodeNameArr_3 からコピーするように変更
-						if( 0 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+						if( IsValidCodeTypeExceptSJIS(pfi->m_nCharCode) ){
 							strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
 						}
 					}

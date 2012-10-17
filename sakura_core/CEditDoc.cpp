@@ -508,7 +508,7 @@ BOOL CEditDoc::FileRead(
 	//	-1以上CODE_MAX未満のみ受け付ける
 	//	Oct. 26, 2000 genta
 	//	CODE_AUTODETECTはこの範囲から外れているから個別にチェック
-	if( ( -1 <= nCharCode && nCharCode < CODE_CODEMAX ) || nCharCode == CODE_AUTODETECT )
+	if( nCharCode == CODE_NONE || IsValidCodeType(nCharCode) || nCharCode == CODE_AUTODETECT )
 		m_nCharCode = nCharCode;
 	
 	/* MRUリストに存在するか調べる  存在するならばファイル情報を返す */
@@ -516,7 +516,7 @@ BOOL CEditDoc::FileRead(
 	if ( cMRU.GetEditInfo( pszPath, &fi ) ){
 		bIsExistInMRU = TRUE;
 
-		if( -1 == m_nCharCode ){
+		if( CODE_NONE == m_nCharCode ){
 			/* 前回に指定された文字コード種別に変更する */
 			m_nCharCode = (ECodeType)fi.m_nCharCode;
 		}
@@ -538,7 +538,7 @@ BOOL CEditDoc::FileRead(
 			m_nCharCode = CODE_DEFAULT;
 		} else {
 			m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
-			if( -1 == m_nCharCode ){
+			if( CODE_NONE == m_nCharCode ){
 				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 					"%s\n文字コードの判別処理でエラーが発生しました。",
 					pszPath
@@ -557,10 +557,10 @@ BOOL CEditDoc::FileRead(
 			char*	pszCodeNameNew = NULL;
 
 			// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
-			if( -1 < fi.m_nCharCode && fi.m_nCharCode < CODE_CODEMAX ){
+			if( IsValidCodeType(fi.m_nCharCode) ){
 				pszCodeName = (char*)gm_pszCodeNameArr_1[fi.m_nCharCode];
 			}
-			if( -1 < m_nCharCode && m_nCharCode < CODE_CODEMAX ){
+			if( IsValidCodeType(m_nCharCode) ){
 				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[m_nCharCode];
 			}
 			if( pszCodeName != NULL ){
@@ -597,7 +597,7 @@ BOOL CEditDoc::FileRead(
 			}
 		}
 	}
-	if( -1 == m_nCharCode ){
+	if( CODE_NONE == m_nCharCode ){
 		m_nCharCode = CODE_DEFAULT;
 	}
 

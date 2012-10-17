@@ -87,8 +87,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer )
 
 		//	ファイル名のみ必要。
 		//	文字コード表記
-		if( 0 <  p->m_nCharCode  &&
-				 p->m_nCharCode  < CODE_CODEMAX ){
+		if( IsValidCodeTypeExceptSJIS(p->m_nCharCode) ){
 			strcat( szMemu, gm_pszCodeNameArr_3[ p->m_nCharCode ] );
 		}
 

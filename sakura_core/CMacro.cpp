@@ -689,7 +689,7 @@ void CMacro::HandleCommand(
 					nCharSet = CODE_AUTODETECT;
 				}
 				int nCode = (lFlag >> 8) & 0xff; // 下から 7-15 ビット目(0開始)を使う
-				if( ( 0 < nCode && nCode < CODE_CODEMAX ) || CODE_AUTODETECT == nCode ){
+				if( IsValidCodeTypeExceptSJIS(nCode) || CODE_AUTODETECT == nCode ){
 					nCharSet = nCode;
 				}
 			}
@@ -757,8 +757,7 @@ void CMacro::HandleCommand(
 			}
 			// 文字コードセット
 			//	Sep. 11, 2004 genta 文字コード設定の範囲チェック
-			if(	0 <= nCharCode && nCharCode < CODE_CODEMAX &&
-				nCharCode != pcEditView->m_pcEditDoc->m_nCharCode ){
+			if(	IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->m_nCharCode ){
 				pcEditView->m_pcEditDoc->m_nCharCode = nCharCode;
 				//	From Here Jul. 26, 2003 ryoji BOM状態を初期化
 				switch( pcEditView->m_pcEditDoc->m_nCharCode ){

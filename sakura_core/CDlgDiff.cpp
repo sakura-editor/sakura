@@ -254,7 +254,7 @@ void CDlgDiff::SetData( void )
 				);
 
 				// gm_pszCodeNameArr_3 からコピーするように変更
-				if( 0 < pFileInfo->m_nCharCode && pFileInfo->m_nCharCode < CODE_CODEMAX ){
+				if( IsValidCodeTypeExceptSJIS(pFileInfo->m_nCharCode) ){
 					strcat( szName, gm_pszCodeNameArr_3[pFileInfo->m_nCharCode] );
 				}
 

@@ -1248,10 +1248,10 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, int nChar
 		if(nCharCode != CODE_AUTODETECT){
 			char*	pszCodeNameCur = NULL;
 			char*	pszCodeNameNew = NULL;
-			if(-1 < nCharCode && nCharCode < CODE_CODEMAX){
+			if( IsValidCodeType(nCharCode) ){
 				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
 			}
-			if(-1 < pfi->m_nCharCode && pfi->m_nCharCode < CODE_CODEMAX ){
+			if( IsValidCodeType(pfi->m_nCharCode) ){
 				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
 			}
 

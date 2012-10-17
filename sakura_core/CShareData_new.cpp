@@ -257,7 +257,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 	if ( cProfile.IsReadingMode() ){
 		EditInfo	fiInit;
 		//	c‚è‚ğfiInit‚Å‰Šú‰»‚µ‚Ä‚¨‚­B
-		fiInit.m_nCharCode = 0;
+		fiInit.m_nCharCode = CODE_DEFAULT;
 		fiInit.m_nViewLeftCol = 0;
 		fiInit.m_nViewTopLine = 0;
 		fiInit.m_nX = 0;

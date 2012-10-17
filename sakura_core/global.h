@@ -182,6 +182,20 @@ SAKURA_CORE_API enum ECodeType {
 	*/
 };
 
+//2007.08.14 kobake 追加
+//!有効な文字コードセットならtrue
+inline bool IsValidCodeType(int code)
+{
+	return code>=0 && code<CODE_CODEMAX;
+}
+
+//2007.08.14 kobake 追加
+//!有効な文字コードセットならtrue。ただし、SJISは除く(意図は不明)
+inline bool IsValidCodeTypeExceptSJIS(int code)
+{
+	return IsValidCodeType(code) && code!=CODE_SJIS;
+}
+
 SAKURA_CORE_API extern const char* gm_pszCodeNameArr_1[];
 SAKURA_CORE_API extern const char* gm_pszCodeNameArr_2[];
 SAKURA_CORE_API extern const char* gm_pszCodeNameArr_3[];
