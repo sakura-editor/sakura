@@ -50,6 +50,7 @@
 #include <vector> // 2008/02/16 bosagami add
 #include <algorithm> // 2008/02/16 bosagami add
 #include "Keycode.h"	// 2009.01.12 nasukoji
+#include <assert.h>
 
 #ifndef WM_MOUSEWHEEL
 	#define WM_MOUSEWHEEL	0x020A
@@ -7006,6 +7007,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 
   @date 2008.12.07 nasukoji	ファイル名パターンのバッファオーバラン対策
   @date 2008.12.13 genta 検索パターンのバッファオーバラン対策
+  @date 2012.10.13 novice 検索オプションをクラスごと代入
 */
 DWORD CEditView::DoGrep(
 	const CMemory*			pcmGrepKey,
@@ -7022,20 +7024,21 @@ DWORD CEditView::DoGrep(
 	CRunningTimer cRunningTimer( "CEditView::DoGrep" );
 #endif
 
+	// 再入不可
+	if( m_pcEditDoc->m_bGrepRunning ){
+		assert( false == m_pcEditDoc->m_bGrepRunning );
+		return 0xffffffff;
+	}
+
 	m_pcEditDoc->m_bGrepRunning = TRUE;
 
-
-	int			nDummy;
 	int			nHitCount = 0;
 	CDlgCancel	cDlgCancel;
 	HWND		hwndCancel;
-	char*		pszWork;
 	HWND		hwndMainFrame;
-	int			nCharChars;
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	CBregexp	cRegexp;
 	CMemory		cmemMessage;
-	CMemory		cmemWork;
 	int			nWork;
 	int*		pnKey_CharCharsArr = NULL;
 
@@ -7060,9 +7063,8 @@ DWORD CEditView::DoGrep(
 
 	m_bCurSrchKeyMark = TRUE;								/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
-	m_sCurSearchOption.bRegularExp = sSearchOption.bRegularExp;		/* 検索／置換  1==正規表現 */
-	m_sCurSearchOption.bLoHiCase = sSearchOption.bLoHiCase;			/* 検索／置換  1==英大文字小文字の区別 */
-	m_sCurSearchOption.bWordOnly = sSearchOption.bWordOnly;			// 2010.08.29 追加
+	m_sCurSearchOption = sSearchOption;						// 検索オプション
+
 	/* 正規表現 */
 
 	//	From Here Jun. 27 genta
@@ -7076,6 +7078,8 @@ DWORD CEditView::DoGrep(
 	if( m_sCurSearchOption.bRegularExp ){
 		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		if( !InitRegexp( m_hWnd, m_CurRegexp, true ) ){
+			m_pcEditDoc->m_bGrepRunning = FALSE;
+			m_bDoing_UndoRedo = FALSE;
 			return 0;
 		}
 
@@ -7091,6 +7095,7 @@ DWORD CEditView::DoGrep(
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, " " );	// 2002/09/09 Moca add
 	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_bGrepRealTimeView );	// 2003.06.23 Moca
+
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
 	if( pcmGrepKey->GetStringLength() < sizeof( m_pcEditDoc->m_szGrepKey )){
@@ -7102,12 +7107,16 @@ DWORD CEditView::DoGrep(
 	//	バージョン番号取得のため，処理を前の方へ移動した
 	if( sSearchOption.bRegularExp ){
 		if( !InitRegexp( m_hWnd, cRegexp, true ) ){
+			m_pcEditDoc->m_bGrepRunning = FALSE;
+			m_bDoing_UndoRedo = FALSE;
 			return 0;
 		}
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
 		nFlag |= sSearchOption.bLoHiCase ? 0x01 : 0x00;
 		if( !cRegexp.Compile( pcmGrepKey->GetStringPtr(), nFlag ) ){
+			m_pcEditDoc->m_bGrepRunning = FALSE;
+			m_bDoing_UndoRedo = FALSE;
 			return 0;
 		}
 	}else{
@@ -7133,17 +7142,14 @@ DWORD CEditView::DoGrep(
 
 	TCHAR szPath[_MAX_PATH];
 	_tcscpy( szPath, pcmGrepFolder->GetStringPtr() );
-	nDummy = lstrlen( szPath );
+
 	/* フォルダの最後が「半角かつ'\\'」でない場合は、付加する */
-	nCharChars = &szPath[nDummy] - CMemory::MemCharPrev( szPath, nDummy, &szPath[nDummy] );
-	if( 1 == nCharChars && szPath[nDummy - 1] == '\\' ){
-	}else{
-		strcat( szPath, "\\" );
-	}
+	AddLastYenFromDirectoryPath( szPath );
 
 	nWork = pcmGrepKey->GetStringLength(); // 2003.06.10 Moca あらかじめ長さを計算しておく
 
 	/* 最後にテキストを追加 */
+	CMemory		cmemWork;
 	cmemMessage.AppendString( "\r\n□検索条件  " );
 	if( 0 < nWork ){
 		CMemory cmemWork2;
@@ -7184,6 +7190,7 @@ DWORD CEditView::DoGrep(
 	cmemMessage += cmemWork;
 	cmemMessage.AppendString( "\r\n" );
 
+	const char*	pszWork;
 	if( bGrepSubFolder ){
 		pszWork = "    (サブフォルダも検索)\r\n";
 	}else{
@@ -7249,7 +7256,8 @@ DWORD CEditView::DoGrep(
 	// 2003.06.23 Moca 共通設定で変更できるように
 	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
 //	m_bDrawSWITCH = FALSE;
-	m_pcEditDoc->RedrawAllViews( this );	// ここまでの分を他ビューにも表示
+	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
+		m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 	m_pcEditDoc->SetDrawSwitchOfAllViews( m_pShareData->m_Common.m_bGrepRealTimeView );
 
 
@@ -7274,10 +7282,11 @@ DWORD CEditView::DoGrep(
 		Command_ADDTAIL( szPath, lstrlen( szPath ) );
 	}
 	{
-		wsprintf( szPath, "%d 個が検索されました。\r\n", nHitCount );
-		Command_ADDTAIL( szPath, lstrlen( szPath ) );
+		TCHAR  szBuffer[128];
+		wsprintf( szBuffer, "%d 個が検索されました。\r\n", nHitCount );
+		Command_ADDTAIL( szBuffer, lstrlen( szBuffer ) );
 #ifdef _DEBUG
-		wsprintf( szPath, "処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
+		wsprintf( szBuffer, "処理時間: %dミリ秒\r\n", cRunningTimer.Read() );
 		Command_ADDTAIL( szPath, lstrlen( szPath ) );
 #endif
 	}
@@ -7412,13 +7421,10 @@ int CEditView::DoGrepTree(
 	WIN32_FIND_DATA w32fd;
 	CMemory			cmemMessage;
 	int				nHitCountOld;
-	char*			pszWork;
 	int				nWork = 0;
 	nHitCountOld = -100;
 
 	//解放の対象
-	TCHAR* currentPath = NULL;	//現在探索中のパス
-	TCHAR* subPath     = NULL;
 	HANDLE handle      = INVALID_HANDLE_VALUE;
 
 
@@ -7455,12 +7461,10 @@ int CEditView::DoGrepTree(
 		}
 		*q = _T('\0');
 		{
-			currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-			if( ! currentPath ) goto error_return;	//メモリ確保失敗
-			_tcscpy( currentPath, pszPath );
-			_tcscat( currentPath, token );
+			std::tstring currentPath = pszPath;	//現在探索中のパス
+			currentPath += token;
 			//ファイルの羅列を開始する。
-			handle = FindFirstFile( currentPath, &w32fd );
+			handle = FindFirstFile( currentPath.c_str(), &w32fd );
 		}
 		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
@@ -7488,8 +7492,6 @@ int CEditView::DoGrepTree(
 			FindClose( handle );
 			handle = INVALID_HANDLE_VALUE;
 		}
-		delete [] currentPath;
-		currentPath = NULL;
 	}
 	free( pWildCard );
 	pWildCard = NULL;
@@ -7517,19 +7519,17 @@ int CEditView::DoGrepTree(
 		}
 		*q = _T('\0');
 		{
-			currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( token ) + 1 ];
-			if( ! currentPath ) goto error_return;
-			_tcscpy( currentPath, pszPath );
-			_tcscat( currentPath, token );
+			std::tstring currentPath = pszPath;	//現在探索中のパス
+			currentPath += token;
 			//ファイルの羅列を開始する。
+			handle = FindFirstFile( currentPath.c_str(), &w32fd );
 		}
+		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 #ifdef SORTED_LIST
 		//ソート
 		qsort( checked_list, checked_list_count, sizeof( TCHAR* ), (COMP)grep_compare_pp );
 #endif
 		int current_checked_list_count = checked_list_count;	//前回までのリストの数
-		handle = FindFirstFile( currentPath, &w32fd );
-		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
 		{
 			/* 処理中のユーザー操作を可能にする */
@@ -7633,15 +7633,14 @@ int CEditView::DoGrepTree(
 					}
 					if( *pnHitCount - nHitCountOld  >= 10 ){
 						/* 結果出力 */
-						pszWork = cmemMessage.GetStringPtr( &nWork );
-						if( 0 < nWork ){
-							Command_ADDTAIL( pszWork, nWork );
+						if( 0 < cmemMessage.GetStringLength() ){
+							Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 							Command_GOFILEEND( FALSE );
-							m_pcEditDoc->RedrawAllViews( this );
-							/* 結果格納エリアをクリア */
+							if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+								m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 							cmemMessage.SetString( _T("") );
-							nWork = 0;
 						}
+						nWork = 0;
 						nHitCountOld = *pnHitCount;
 					}
 					if( -1 == nRet ){
@@ -7659,8 +7658,6 @@ int CEditView::DoGrepTree(
 			FindClose( handle );
 			handle = INVALID_HANDLE_VALUE;
 		}
-		delete [] currentPath;
-		currentPath = NULL;
 	}
 	free( pWildCard );
 	pWildCard = NULL;
@@ -7678,21 +7675,20 @@ int CEditView::DoGrepTree(
 	if( 0 < cmemMessage.GetStringLength() ){
 		Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		Command_GOFILEEND( FALSE );
-		m_pcEditDoc->RedrawAllViews( this );
+		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
+			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 		cmemMessage.SetString( _T("") );
-		nWork = 0;
 	}
 
 	/*
 	 * サブフォルダを検索する。
 	 */
 	if( bGrepSubFolder ){
+		// 2010.08.01 キャンセルでのメモリーリーク修正
 		{
-			subPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( WILDCARD_ANY ) + 1 ];
-			if( ! subPath ) goto error_return;	//メモリ確保失敗
-			_tcscpy( subPath, pszPath );
-			_tcscat( subPath, WILDCARD_ANY );
-			handle = FindFirstFile( subPath, &w32fd );
+			std::tstring subPath = pszPath;
+			subPath += WILDCARD_ANY;
+			handle = FindFirstFile( subPath.c_str(), &w32fd );
 		}
 		result = (INVALID_HANDLE_VALUE != handle) ? TRUE : FALSE;
 		while( result )
@@ -7716,11 +7712,10 @@ int CEditView::DoGrepTree(
 			 && 0 != _tcscmp( w32fd.cFileName, _T("..")) )
 			{
 				//フォルダ名を作成する。
-				currentPath = new TCHAR[ _tcslen( pszPath ) + _tcslen( w32fd.cFileName ) + 2 ];
-				if( ! currentPath ) goto error_return;	//メモリ確保失敗
-				_tcscpy( currentPath, pszPath );
-				_tcscat( currentPath, w32fd.cFileName );
-				_tcscat( currentPath, _T("\\") );
+				// 2010.08.01 キャンセルでメモリーリークしてました
+				std::tstring currentPath  = pszPath;
+				currentPath += w32fd.cFileName;
+				currentPath += _T("\\");
 
 				int nGrepTreeResult = DoGrepTree(
 					pcDlgCancel,
@@ -7728,7 +7723,7 @@ int CEditView::DoGrepTree(
 					pszKey,
 					pnKey_CharCharsArr,
 					pszFile,
-					currentPath,
+					currentPath.c_str(),
 					bGrepSubFolder,
 					sSearchOption,
 					nGrepCharSet,
@@ -7743,8 +7738,6 @@ int CEditView::DoGrepTree(
 				}
 				::SetDlgItemText( hwndCancel, IDC_STATIC_CURPATH, pszPath );	//@@@ 2002.01.10 add サブフォルダから戻ってきたら...
 
-				delete [] currentPath;
-				currentPath = NULL;
 			}
 
 			//次のファイルを羅列する。
@@ -7756,19 +7749,9 @@ int CEditView::DoGrepTree(
 			FindClose( handle );
 			handle = INVALID_HANDLE_VALUE;
 		}
-		delete [] subPath;
-		subPath = NULL;
 	}
 
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, _T(" ") );	// 2002/09/09 Moca add
-	/* 結果出力 */
-	pszWork = cmemMessage.GetStringPtr( &nWork );
-	if( 0 < nWork ){
-		Command_ADDTAIL( pszWork, nWork );
-		Command_GOFILEEND( FALSE );
-		/* 結果格納エリアをクリア */
-		cmemMessage.SetString( _T("") );
-	}
 
 	return 0;
 
@@ -7781,8 +7764,6 @@ error_return:;
 	if( INVALID_HANDLE_VALUE != handle ) FindClose( handle );
 
 	if( pWildCard ) free( pWildCard );
-	if( currentPath ) delete [] currentPath;
-	if( subPath ) delete [] subPath;
 
 	if( checked_list )
 	{
@@ -7794,12 +7775,11 @@ error_return:;
 	}
 
 	/* 結果出力 */
-	pszWork = cmemMessage.GetStringPtr( &nWork );
-	if( 0 < nWork )
-	{
-		Command_ADDTAIL( pszWork, nWork );
+	if( 0 < cmemMessage.GetStringLength() ){
+		Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
 		Command_GOFILEEND( FALSE );
-		/* 結果格納エリアをクリア */
+		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
+			cmemMessage.GetStringPtr( &nWork );	//	他のペインの表示を更新
 		cmemMessage.SetString( _T("") );
 	}
 
@@ -8141,6 +8121,11 @@ int CEditView::DoGrepFile(
 						//	May 22, 2000 genta
 						if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
 							::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+						}
+
+						// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
+						if ( bGrepOutputLine ) {
+							break;
 						}
 					}
 				}
