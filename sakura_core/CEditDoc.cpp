@@ -78,7 +78,6 @@ CEditDoc::CEditDoc()
 , m_bDoing_UndoRedo( FALSE )		/* アンドゥ・リドゥの実行中か */
 , m_nFileShareModeOld( 0 )		/* ファイルの排他制御モード */
 , m_hLockedFile( NULL )			/* ロックしているファイルのハンドル */
-, m_pszAppName( "EditorClient" )
 , m_hInstance( NULL )
 , m_hWnd( NULL )
 , m_eWatchUpdate( CEditDoc::WU_QUERY )

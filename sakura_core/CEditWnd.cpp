@@ -133,7 +133,6 @@ CEditWnd::CEditWnd()
 , m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ) // 20020331 aroka 再変換対応 for 95/NT
 , m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
-, m_pszAppName( GSTR_EDITWINDOWNAME )
 , m_pszLastCaption( NULL )
 , m_hwndSearchBox( NULL )
 , m_fontSearchBox( NULL )
@@ -258,7 +257,7 @@ HWND CEditWnd::Create(
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
 	wc.lpszMenuName		= MAKEINTRESOURCE( IDR_MENU1 );
-	wc.lpszClassName	= m_pszAppName;
+	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
 
 	//	Dec. 6, 2002 genta
 	//	small icon指定のため RegisterClassExに変更
@@ -347,8 +346,8 @@ HWND CEditWnd::Create(
 		0 	// extended window style
 //		| WS_EX_CLIENTEDGE
 		,
-		m_pszAppName,		// pointer to registered class name
-		m_pszAppName,		// pointer to window name
+		GSTR_EDITWINDOWNAME,		// pointer to registered class name
+		GSTR_EDITWINDOWNAME,		// pointer to window name
 //		WS_VISIBLE |
 		WS_OVERLAPPEDWINDOW |
 		WS_CLIPCHILDREN	|

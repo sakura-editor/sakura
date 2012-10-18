@@ -183,7 +183,6 @@ CEditView::CEditView()
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 	m_pcsbwVSplitBox = NULL;	/* 垂直分割ボックス */
 	m_pcsbwHSplitBox = NULL;	/* 水平分割ボックス */
-	m_pszAppName = "EditorClient";
 	m_hInstance = NULL;
 	m_hWnd = NULL;
 	m_hwndVScrollBar = NULL;
@@ -415,7 +414,7 @@ BOOL CEditView::Create(
 	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_IBEAM )*/;
 	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_WINDOW + 1)*/;
 	wc.lpszMenuName		= NULL;
-	wc.lpszClassName	= m_pszAppName;
+	wc.lpszClassName	= GSTR_VIEWNAME;
 	if( 0 == ::RegisterClass( &wc ) ){
 	}
 
@@ -423,8 +422,8 @@ BOOL CEditView::Create(
 	g_m_pcEditView = this;
 	m_hWnd = ::CreateWindowEx(
 		WS_EX_STATICEDGE,	// extended window style
-		m_pszAppName,			// pointer to registered class name
-		m_pszAppName,			// pointer to window name
+		GSTR_VIEWNAME,			// pointer to registered class name
+		GSTR_VIEWNAME,			// pointer to window name
 		0						// window style
 		| WS_VISIBLE
 		| WS_CHILD

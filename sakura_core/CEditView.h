@@ -345,7 +345,6 @@ public: /* テスト用にアクセス属性を変更 */
 	/*
 	||  メンバ変数
 	*/
-	char*			m_pszAppName;	/* Mutex作成用・ウィンドウクラス名 */
 	HINSTANCE		m_hInstance;	/* インスタンスハンドル */
 	HWND			m_hwndParent;	/* 親ウィンドウハンドル */
 

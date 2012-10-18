@@ -84,6 +84,8 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 	#endif
 #endif
 
+#define	GSTR_VIEWNAME (_T("EditorClient"))
+
 //20020108 aroka コントロールプロセスと起動処理のためにミューテックス名を追加
 // 2006.04.10 ryoji コントロールプロセス初期化完了を示すイベントフラグ名を追加
 #ifdef _DEBUG

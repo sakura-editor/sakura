@@ -175,7 +175,6 @@ public:
 	*/
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;
-	char*			m_pszAppName;
 	CEditDoc		m_cEditDoc;
 	HWND			m_hwndParent;
     HWND			m_hwndReBar;	// Rebar ウィンドウ	//@@@ 2006.06.17 ryoji

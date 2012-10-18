@@ -312,7 +312,6 @@ public:
 	/*
 	||  メンバ変数
 	*/
-	char*			m_pszAppName;		/* Mutex作成用・ウィンドウクラス名 */
 	HINSTANCE		m_hInstance;		/* インスタンスハンドル */
 	HWND			m_hwndParent;		/* 親ウィンドウ（CEditWndが管理）ハンドル */
 
