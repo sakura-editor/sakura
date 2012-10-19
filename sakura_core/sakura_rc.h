@@ -50,8 +50,8 @@
 #define IDC_CURSOR_ISEARCH_B            242
 #define IDD_DIALOG_KEYWORD_SELECT       243
 #define IDD_SAMECOLOR                   244
-#define IDC_CURSOR_TAB_LEFT             245
-#define IDC_CURSOR_TAB_RIGHT            246
+//#define IDC_CURSOR_TAB_LEFT             245
+//#define IDC_CURSOR_TAB_RIGHT            246
 #define IDC_CURSOR_TAB_SEPARATE         247
 #define IDC_CURSOR_TAB_JOIN             248
 #define IDC_HIDE                        1000
