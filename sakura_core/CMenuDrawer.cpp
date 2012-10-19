@@ -346,8 +346,8 @@ CMenuDrawer::CMenuDrawer()
 /* 195 */		F_TOHANKAKU				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//全角→半角
 /* 196 */		F_TOZENKAKUKATA			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角＋全ひら→全角・カタカナ	//Sept. 17, 2000 jepro 説明を「半角→全角カタカナ」から変更
 /* 197 */		F_TOZENKAKUHIRA			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角＋全カタ→全角・ひらがな	//Sept. 17, 2000 jepro 説明を「半角→全角ひらがな」から変更
-/* 198 */		F_HANKATATOZENKATA	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角カタカナ→全角カタカナ	//Sept. 18, 2000 JEPRO 追加
-/* 199 */		F_HANKATATOZENHIRA	/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角カタカナ→全角ひらがな	//Sept. 18, 2000 JEPRO 追加
+/* 198 */		F_HANKATATOZENKATA		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角カタカナ→全角カタカナ	//Sept. 18, 2000 JEPRO 追加
+/* 199 */		F_HANKATATOZENHIRA		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//半角カタカナ→全角ひらがな	//Sept. 18, 2000 JEPRO 追加
 /* 200 */		F_TABTOSPACE			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//TAB→空白	//Sept. 20, 2000 JEPRO 追加
 /* 201 */		F_CODECNV_AUTO2SJIS		/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//自動判別→SJISコード変換
 /* 202 */		F_CODECNV_EMAIL			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//E-Mail(JIS→SIJIS)コード変換
