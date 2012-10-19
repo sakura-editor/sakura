@@ -187,7 +187,7 @@ const wchar_t* COutlineErlang::EnterArgs( const wchar_t* end, const wchar_t* p )
 */
 const wchar_t* COutlineErlang::ScanArgs1( const wchar_t* end, const wchar_t* p )
 {
-	assert( m_state = STATE_FUNC_ARGS1 );
+	assert( m_state == STATE_FUNC_ARGS1 );
 	
 	while( IS_SPACE( *p ) && p < end )
 		p++;
@@ -222,7 +222,7 @@ const wchar_t* COutlineErlang::ScanArgs1( const wchar_t* end, const wchar_t* p )
 */
 const wchar_t* COutlineErlang::ScanArgs( const wchar_t* end, const wchar_t* p )
 {
-	assert( m_state = STATE_FUNC_ARGS );
+	assert( m_state == STATE_FUNC_ARGS );
 
 	const int parptr_max = sizeof( m_parenthesis ) / sizeof( m_parenthesis[0] );
 	wchar_t quote = L'\0'; // æ“ªˆÊ’u‚ð•Û‘¶
