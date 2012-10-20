@@ -50,12 +50,6 @@ CEditApp*	g_m_pCEditApp;
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
 void CEditApp::DoGrep()
 {
-	char*			pCmdLine;
-	char*			pOpt;
-	CMemory			cmWork1;
-	CMemory			cmWork2;
-	CMemory			cmWork3;
-
 	//Stonee, 2001/06/30
 	//前回のダイアログがあれば前面に (suggested by genta)
 	if ( ::IsWindow(m_cDlgGrep.m_hWnd) ){
@@ -64,7 +58,7 @@ void CEditApp::DoGrep()
 		return;
 	}
 
-	strcpy( m_cDlgGrep.m_szText, m_pShareData->m_szSEARCHKEYArr[0] );
+	_tcscpy( m_cDlgGrep.m_szText, m_pShareData->m_szSEARCHKEYArr[0] );
 
 	/* Grepダイアログの表示 */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );
@@ -76,9 +70,9 @@ void CEditApp::DoGrep()
 	/*======= Grepの実行 =============*/
 	/* Grep結果ウィンドウの表示 */
 
-	pCmdLine = new char[1024];
-	pOpt = new char[64];
-
+	CMemory			cmWork1;
+	CMemory			cmWork2;
+	CMemory			cmWork3;
 	cmWork1.SetString( m_cDlgGrep.m_szText );
 	cmWork2.SetString( m_cDlgGrep.m_szFile );
 	cmWork3.SetString( m_cDlgGrep.m_szFolder );
@@ -87,6 +81,7 @@ void CEditApp::DoGrep()
 	cmWork3.Replace( _T("\""), _T("\"\"") );
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
+	TCHAR* pCmdLine = new char[1024];
 	wsprintf( pCmdLine, _T("-GREPMODE -GKEY=\"%s\" -GFILE=\"%s\" -GFOLDER=\"%s\" -GCODE=%d"),
 		cmWork1.GetStringPtr(),
 		cmWork2.GetStringPtr(),
@@ -95,24 +90,23 @@ void CEditApp::DoGrep()
 	);
 
 	//GOPTオプション
-	pOpt[0] = _T('\0');
-	if( m_cDlgGrep.m_bSubFolder					)strcat( pOpt, _T("S") );	// サブフォルダからも検索する
-	if( m_cDlgGrep.m_sSearchOption.bLoHiCase	)strcat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
-	if( m_cDlgGrep.m_sSearchOption.bRegularExp	)strcat( pOpt, _T("R") );	// 正規表現
-	if( m_cDlgGrep.m_bGrepOutputLine			)strcat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
-	if( m_cDlgGrep.m_sSearchOption.bWordOnly	)strcat( pOpt, _T("W") );	// 単語単位で探す
-	if( 1 == m_cDlgGrep.m_nGrepOutputStyle		)strcat( pOpt, _T("1") );	// Grep: 出力形式
-	if( 2 == m_cDlgGrep.m_nGrepOutputStyle		)strcat( pOpt, _T("2") );	// Grep: 出力形式
-	if( 0 < lstrlen( pOpt ) ){
-		strcat( pCmdLine, _T(" -GOPT=") );
-		strcat( pCmdLine, pOpt );
+	TCHAR pOpt[64] = _T("");
+	if( m_cDlgGrep.m_bSubFolder					)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
+	if( m_cDlgGrep.m_sSearchOption.bLoHiCase	)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
+	if( m_cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
+	if( m_cDlgGrep.m_bGrepOutputLine			)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
+	if( m_cDlgGrep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
+	if( 1 == m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
+	if( 2 == m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
+	if( 0 < _tcslen( pOpt ) ){
+		_tcscat( pCmdLine, _T(" -GOPT=") );
+		_tcscat( pCmdLine, pOpt );
 	}
 
 	/* 新規編集ウィンドウの追加 ver 0 */
 	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE );
 
 	delete [] pCmdLine;
-	delete [] pOpt;
 }
 
 
@@ -195,8 +189,6 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditApp::Create" );
 
-	WNDCLASS	wc;
-
 	//同名同クラスのウィンドウが既に存在していたら、失敗
 	m_hInstance = hInstance;
 	HWND hwndWork = ::FindWindow( GSTR_CEDITAPP, GSTR_CEDITAPP );
@@ -204,8 +196,8 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 		return NULL;
 	}
 
-
-
+	//ウィンドウクラス登録
+	WNDCLASS	wc;
 	{
 		wc.style			=	CS_HREDRAW |
 								CS_VREDRAW |
@@ -250,7 +242,7 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
 	MY_TRACETIME( cRunningTimer, "Icons are created" );
 	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_hIcons );
-	if( NULL != m_hWnd ){
+	if( m_hWnd ){
 		CreateTrayIcon( m_hWnd );
 	}
 
@@ -261,7 +253,7 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 bool CEditApp::CreateTrayIcon( HWND hWnd )
 {
 	// タスクトレイのアイコンを作る
-	if( TRUE == m_pShareData->m_Common.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
+	if( m_pShareData->m_Common.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
 		//	Dec. 02, 2002 genta
 		HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 //From Here Jan. 12, 2001 JEPRO トレイアイコンにポイントするとバージョンno.が表示されるように修正
@@ -341,6 +333,7 @@ BOOL CEditApp::TrayMessage( HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, c
 
 
 /* メッセージ処理 */
+//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 LRESULT CEditApp::DispatchEvent(
 	HWND	hwnd,	// handle of window
 	UINT	uMsg,	// message identifier
@@ -383,8 +376,7 @@ LRESULT CEditApp::DispatchEvent(
 		case ODT_MENU:	/* オーナー描画メニュー */
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
-			if( -1 == nItemWidth ){
-			}else{
+			if( 0 < nItemWidth ){
 				lpmis->itemWidth = nItemWidth;
 				lpmis->itemHeight = nItemHeight;
 			}
@@ -405,7 +397,7 @@ LRESULT CEditApp::DispatchEvent(
 			szClassName[0] = '\0';
 			::GetClassName( hwndWork, szClassName, _countof( szClassName ) - 1 );
 			::GetWindowText( hwndWork, szText, _countof( szText ) - 1 );
-			if( 0 == strcmp( szText, _T("共通設定") ) ){
+			if( 0 == _tcscmp( szText, _T("共通設定") ) ){
 				return -1;
 			}
 
@@ -427,16 +419,12 @@ LRESULT CEditApp::DispatchEvent(
 
 	case MYWM_HTMLHELP:
 		{
-			char		szHtmlHelpFile[1024];
-			int			nLen;
-			int			nLenKey;
-			char*		pszKey;
-			strcpy( szHtmlHelpFile, m_pShareData->m_szWork );
-			nLen = lstrlen( szHtmlHelpFile );
-			nLenKey = lstrlen( &m_pShareData->m_szWork[nLen + 1] );
-			pszKey = new char[ nLenKey + 1 ];
-			strcpy( pszKey, &m_pShareData->m_szWork[nLen + 1] );
+			TCHAR* pWork = m_pShareData->m_szWork;
 
+			//szHtmlFile取得
+			TCHAR	szHtmlHelpFile[1024];
+			_tcscpy( szHtmlHelpFile, pWork );
+			int		nLen = _tcslen( szHtmlHelpFile );
 
 			//	Jul. 6, 2001 genta HtmlHelpの呼び出し方法変更
 			hwndHtmlHelp = OpenHtmlHelp(
@@ -450,7 +438,7 @@ LRESULT CEditApp::DispatchEvent(
 			HH_AKLINK	link;
 			link.cbStruct		= sizeof(link);
 			link.fReserved		= FALSE;
-			link.pszKeywords	= (char*)pszKey;
+			link.pszKeywords	= &pWork[nLen+1];
 			link.pszUrl			= NULL;
 			link.pszMsgText		= NULL;
 			link.pszMsgTitle	= NULL;
@@ -465,7 +453,6 @@ LRESULT CEditApp::DispatchEvent(
 				(DWORD_PTR)&link,
 				false
 			);
-			delete [] pszKey;
 		}
 		return (LRESULT)hwndHtmlHelp;;
 
@@ -666,28 +653,24 @@ LRESULT CEditApp::DispatchEvent(
 					break;
 				case F_FILEOPEN:	/* 開く */
 					{
-						CDlgOpenFile	cDlgOpenFile;
-						char			szPath[_MAX_PATH + 1];
-						ECodeType		nCharCode;
-						BOOL			bReadOnly;
 						HWND			hWndOwner;
-						char**			ppszMRU;
-						char**			ppszOPENFOLDER;
 
 						// MRUリストのファイルのリスト
 						CMRU cMRU;
-						ppszMRU = new char*[ cMRU.Length() + 1 ];
+						char** ppszMRU = new char*[ cMRU.Length() + 1 ];
 						cMRU.GetPathList(ppszMRU);
 
 						/* OPENFOLDERリストのファイルのリスト */
 						CMRUFolder cMRUFolder;
-						ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
+						char** ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
 						cMRUFolder.GetPathList(ppszOPENFOLDER);
 
 						// ファイルオープンダイアログの初期化
-						strcpy( szPath, _T("") );
-						nCharCode = CODE_AUTODETECT;	// 文字コード自動判別
-						bReadOnly = FALSE;
+						TCHAR szPath[_MAX_PATH + 1];
+						_tcscpy( szPath, _T("") );
+						ECodeType nCharCode = CODE_AUTODETECT;	// 文字コード自動判別
+						BOOL bReadOnly = FALSE;
+						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
 							m_hInstance,
 							NULL,
@@ -773,8 +756,6 @@ LRESULT CEditApp::DispatchEvent(
 						//	To Here Oct. 27, 2000 genta
 					}
 					else if( nId - IDM_SELOPENFOLDER  >= 0 && nId - IDM_SELOPENFOLDER  < 999 ){
-						CDlgOpenFile	cDlgOpenFile;
-						char			szPath[_MAX_PATH + 1];
 						HWND			hWndOwner;
 
 						/* MRUリストのファイルのリスト */
@@ -791,9 +772,11 @@ LRESULT CEditApp::DispatchEvent(
 						NetConnect( cMRUFolder.GetPath( nId - IDM_SELOPENFOLDER ) );
 
 						/* ファイルオープンダイアログの初期化 */
-						strcpy( szPath, "" );
+						TCHAR szPath[_MAX_PATH + 1];
+						_tcscpy( szPath, _T("") );
 						ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
 						int bReadOnly = FALSE;
+						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
 							m_hInstance,
 							NULL,
@@ -823,6 +806,7 @@ LRESULT CEditApp::DispatchEvent(
 								wsprintf( szFile2, "\"%s\"", szPath );
 								strcpy( szPath, szFile2 );
 							}
+
 							// 新たな編集ウィンドウを起動
 							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly );
 						}
@@ -966,13 +950,8 @@ bool CEditApp::OpenNewEditor(
 	const TCHAR*		szCurDir			//!< [in] 新規エディタのカレントディレクトリ
 )
 {
-	DLLSHAREDATA*	pShareData;
-	char szCmdLineBuf[1024];	//	コマンドライン
-	char szEXE[MAX_PATH + 1];	//	アプリケーションパス名
-	int nPos = 0;				//	コマンドライン構築用ポインタ
-
 	/* 共有データ構造体のアドレスを返す */
-	pShareData = CShareData::getInstance()->GetShareData();
+	DLLSHAREDATA*	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
@@ -980,24 +959,25 @@ bool CEditApp::OpenNewEditor(
 		return false;
 	}
 
-	::GetModuleFileName( NULL, szEXE, sizeof( szEXE ) );
+	TCHAR szCmdLineBuf[1024];	//	コマンドライン
+	int nPos = 0;				//	コマンドライン構築用ポインタ
+
+	//アプリケーションパス
+	TCHAR szEXE[MAX_PATH + 1];
+	::GetModuleFileName( NULL, szEXE, _countof( szEXE ) );
 	nPos += wsprintf( szCmdLineBuf + nPos, _T("\"%s\""), szEXE );
 
-	//	ファイル名が指定されている場合
-	//	コマンドライン引数が指定されているので，全体を""で囲んではいけない
-	if( pszPath != NULL ){
-		nPos += wsprintf( szCmdLineBuf + nPos, _T(" %s"), pszPath );
-	}
-	//	コード指定がある場合
-	if( nCharCode != CODE_AUTODETECT ){
-		nPos += wsprintf( szCmdLineBuf + nPos, _T(" -CODE=%d"), nCharCode );
-	}
-	//	読み取り専用指定がある場合		//From Here Feb. 26, 2001 JEPRO 追加 (direcited by genta)
-	if( bReadOnly ){
-		nPos += wsprintf( szCmdLineBuf + nPos, _T(" -R") );
-	}		//To Here Feb. 26, 2001
+	// ファイル名
+	if( pszPath ) nPos += wsprintf( szCmdLineBuf + nPos, _T(" %s"), pszPath );
 
-	// 親ウィンドウからグループIDを取得する
+	// コード指定
+	if( nCharCode != CODE_AUTODETECT )	nPos += wsprintf( szCmdLineBuf + nPos, _T(" -CODE=%d"), nCharCode );
+
+	//	読み取り専用指定
+	if( bReadOnly )		nPos += wsprintf( szCmdLineBuf + nPos, _T(" -R") );
+
+	// グループID
+	// グループIDを親ウィンドウから取得
 	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
 	int nGroup = CShareData::getInstance()->GetGroupId( hwndAncestor );
 	if( nGroup > 0 ){
@@ -1021,8 +1001,21 @@ bool CEditApp::OpenNewEditor(
 	s.lpReserved2 = NULL;
 
 	//	May 30, 2003 genta カレントディレクトリ指定を可能に
-	if( CreateProcess( szEXE, szCmdLineBuf, NULL, NULL, FALSE,
-		CREATE_DEFAULT_ERROR_MODE, NULL, szCurDir, &s, &p ) == 0 ){
+	//エディタプロセスを起動
+	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
+	BOOL bCreateResult = CreateProcess(
+		szEXE,					// 実行可能モジュールの名前
+		szCmdLineBuf,			// コマンドラインの文字列
+		NULL,					// セキュリティ記述子
+		NULL,					// セキュリティ記述子
+		FALSE,					// ハンドルの継承オプション
+		dwCreationFlag,			// 作成のフラグ
+		NULL,					// 新しい環境ブロック
+		szCurDir,				// カレントディレクトリの名前
+		&s,						// スタートアップ情報
+		&p						// プロセス情報
+	);
+	if( !bCreateResult ){
 		//	失敗
 		TCHAR* pMsg;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -1148,12 +1141,10 @@ bool CEditApp::OpenNewEditor2(
 		if( pfi->m_nViewTopLine >= 0 ){
 			nPos += wsprintf( pszCmdLine + nPos, _T(" -VY=%d"), pfi->m_nViewTopLine +1 );
 		}
-//: do error check nPos
 	}
 
 	int nCharCode = pfi ? pfi->m_nCharCode : CODE_AUTODETECT;
 
-	//	::MessageBox( NULL, pszCmdLine, "OpenNewEditor", MB_OK );
 	return OpenNewEditor( hInstance, hWndParent, pszCmdLine, nCharCode, bReadOnly, sync );
 
 }
@@ -1215,7 +1206,6 @@ BOOL CEditApp::CloseAllEditor(
 {
 	EditNode*	pWndArr;
 	int		n;
-	BOOL	ret;
 
 	n = CShareData::getInstance()->GetOpenedWindowArr( &pWndArr, FALSE );
 	if( 0 == n ){
@@ -1223,7 +1213,7 @@ BOOL CEditApp::CloseAllEditor(
 	}
 
 	/* 全編集ウィンドウへ終了要求を出す */
-	ret = CShareData::getInstance()->RequestCloseEditor( pWndArr, n, bExit, nGroup, bCheckConfirm, hWndFrom );	// 2007.02.13 ryoji bExitを引き継ぐ
+	BOOL ret = CShareData::getInstance()->RequestCloseEditor( pWndArr, n, bExit, nGroup, bCheckConfirm, hWndFrom );	// 2007.02.13 ryoji bExitを引き継ぐ
 
 	delete[] pWndArr;
 	return ret;
@@ -1333,18 +1323,20 @@ int	CEditApp::CreatePopUpMenu_L( void )
 						// 2003/01/27 Moca ファイル名の簡易表示
 						TCHAR szFileName[_MAX_PATH];
 						CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, szFileName, MAX_PATH );
+
+						// szFileName → szMenu2
 						//	Jan. 19, 2002 genta
 						//	メニュー文字列の&を考慮
 						dupamp( szFileName, szMenu2 );
 						wsprintf( szMemu, _T("&%c %s %s"),
 							((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
-							(0 < lstrlen( szMenu2 ))? szMenu2:_T("（無題）"),
+							(0 < _tcslen( szMenu2 ))? szMenu2:_T("(無題)"),
 							pfi->m_bIsModified ? _T("*"):_T(" ")
 						);
 //		To Here Oct. 4, 2000
 						// gm_pszCodeNameArr_3 からコピーするように変更
-						if( IsValidCodeTypeExceptSJIS(pfi->m_nCharCode) ){
-							strcat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+						if(IsValidCodeTypeExceptSJIS(pfi->m_nCharCode)){
+							_tcscat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
 						}
 					}
 
@@ -1505,7 +1497,7 @@ void CEditApp::OnDestroy()
 	CShareData::getInstance()->SaveShareData();
 
 	/* 終了ダイアログを表示する */
-	if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
+	if( m_pShareData->m_Common.m_bDispExitingDialog ){
 		/* 終了中ダイアログの破棄 */
 		::DestroyWindow( hwndExitingDlg );
 	}
