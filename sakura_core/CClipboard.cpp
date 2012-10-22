@@ -258,10 +258,11 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 
 			for(int nLoop = 0; nLoop < nMaxCnt; nLoop++){
 				DragQueryFile(hDrop, nLoop, sTmpPath, _countof(sTmpPath) - 1);
-				if(nLoop > 0){
+				// 2012.10.05 Moca ANSI版に合わせて最終行にも改行コードをつける
+				cmemBuf->AppendStringT(sTmpPath);
+				if(nMaxCnt > 1){
 					cmemBuf->AppendStringT(_TEXT("\r\n"));
 				}
-				cmemBuf->AppendStringT(sTmpPath);
 			}
 			return true;
 		}
