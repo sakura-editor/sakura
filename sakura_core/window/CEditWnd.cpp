@@ -4430,7 +4430,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 	}
 
 	//	座標の保存
-	CLogicPoint* posSave = SavePhysPosOfAllView();
+	CLogicPointEx* posSave = SavePhysPosOfAllView();
 
 	//	レイアウトの更新
 	GetDocument().m_cLayoutMgr.ChangeLayoutParam( nTabSize, nMaxLineKetas );
@@ -4467,39 +4467,40 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 
 	@date 2005.08.11 genta  新規作成
 	@date 2007.09.06 kobake 戻り値をCLogicPoint*に変更
+	@date 2011.12.28 CLogicPointをCLogicPointExに変更。改行より右側でも復帰できるように
 */
-CLogicPoint* CEditWnd::SavePhysPosOfAllView()
+CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 {
 	const int NUM_OF_VIEW = GetAllViewCount();
 	const int NUM_OF_POS = 5;
 	
-	CLogicPoint* pptPosArray = new CLogicPoint[NUM_OF_VIEW * NUM_OF_POS];
+	CLogicPointEx* pptPosArray = new CLogicPointEx[NUM_OF_VIEW * NUM_OF_POS];
 	
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
-		GetDocument().m_cLayoutMgr.LayoutToLogic(
+		GetDocument().m_cLayoutMgr.LayoutToLogicEx(
 			this->GetView(i).GetCaret().GetCaretLayoutPos(),
 			&pptPosArray[i * NUM_OF_POS + 0]
 		);
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogic(
+			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom(),
 				&pptPosArray[i * NUM_OF_POS + 1]
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogic(
+			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo(),
 				&pptPosArray[i * NUM_OF_POS + 2]
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogic(
+			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom(),
 				&pptPosArray[i * NUM_OF_POS + 3]
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LayoutToLogic(
+			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetTo(),
 				&pptPosArray[i * NUM_OF_POS + 4]
 			);
@@ -4515,15 +4516,16 @@ CLogicPoint* CEditWnd::SavePhysPosOfAllView()
 
 	@date 2005.08.11 genta  新規作成
 	@date 2007.09.06 kobake 引数をCLogicPoint*に変更
+	@date 2011.12.28 CLogicPointをCLogicPointExに変更。改行より右側でも復帰できるように
 */
-void CEditWnd::RestorePhysPosOfAllView( CLogicPoint* pptPosArray/*int* posary*/ )
+void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 {
 	const int NUM_OF_VIEW = GetAllViewCount();
 	const int NUM_OF_POS = 5;
 
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		CLayoutPoint ptPosXY;
-		GetDocument().m_cLayoutMgr.LogicToLayout(
+		GetDocument().m_cLayoutMgr.LogicToLayoutEx(
 			pptPosArray[i * NUM_OF_POS + 0],
 			&ptPosXY
 		);
@@ -4531,25 +4533,25 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPoint* pptPosArray/*int* posary*/ 
 		this->GetView(i).GetCaret().m_nCaretPosX_Prev = this->GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
 
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayout(
+			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 1],
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFromPointer()
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayout(
+			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 2],
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetToPointer()
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetFrom().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayout(
+			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 3],
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetFromPointer()
 			);
 		}
 		if( this->GetView(i).GetSelectionInfo().m_sSelect.GetTo().y >= 0 ){
-			GetDocument().m_cLayoutMgr.LogicToLayout(
+			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
 				pptPosArray[i * NUM_OF_POS + 4],
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetToPointer()
 			);

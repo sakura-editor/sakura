@@ -244,8 +244,8 @@ public:
 	//	Aug. 14, 2005 genta TAB幅と折り返し位置の更新
 	void ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayoutInt nMaxLineKetas );
 	//	Aug. 14, 2005 genta
-	CLogicPoint* SavePhysPosOfAllView();
-	void RestorePhysPosOfAllView( CLogicPoint* pptPosArray );
+	CLogicPointEx* SavePhysPosOfAllView();
+	void RestorePhysPosOfAllView( CLogicPointEx* pptPosArray );
 	// 互換BMPによる画面バッファ 2007.09.09 Moca
 	void Views_DeleteCompatibleBitmap(); //!< CEditViewの画面バッファを削除
 

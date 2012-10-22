@@ -62,6 +62,10 @@ struct CalTextWidthArg {
 	BOOL			bInsData;		//!< 追加文字列あり
 };
 
+class CLogicPointEx: public CLogicPoint{
+public:
+	CLayoutInt ext;
+};
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -154,6 +158,11 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//!ロジック→レイアウト
+	void LogicToLayoutEx( const CLogicPointEx& ptLogicEx, CLayoutPoint* pptLayout, CLayoutInt nLineHint = CLayoutInt(0) )
+	{
+		LogicToLayout( ptLogicEx, pptLayout, nLineHint );
+		pptLayout->x += ptLogicEx.ext;
+	}
 	void LogicToLayout( const CLogicPoint& ptLogic, CLayoutPoint* pptLayout, CLayoutInt nLineHint = CLayoutInt(0) );
 	void LogicToLayout( const CLogicRange& rangeLogic, CLayoutRange* prangeLayout )
 	{
@@ -162,6 +171,7 @@ public:
 	}
 
 	//!レイアウト→ロジック変換
+	void LayoutToLogicEx( const CLayoutPoint& ptLayout, CLogicPointEx* pptLogicEx ) const;
 	void LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLogic ) const;
 	void LayoutToLogic( const CLayoutRange& rangeLayout, CLogicRange* prangeLogic ) const
 	{
