@@ -638,7 +638,7 @@ void CEditDoc::OnChangeSetting()
 	// 文書種別
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), false );
 
-	CLogicPoint* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
+	CLogicPointEx* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
 
 	/* レイアウト情報の作成 */
 	STypeConfig ref = m_cDocType.GetDocumentAttribute();

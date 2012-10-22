@@ -1236,12 +1236,13 @@ void CLayoutMgr::LogicToLayout(
 
 	@date 2007.09.06 kobake 関数名をCaretPos_Log2Phys→LayoutToLogicに変更
 */
-void CLayoutMgr::LayoutToLogic(
+void CLayoutMgr::LayoutToLogicEx(
 	const CLayoutPoint&	ptLayout,	//!< [in]  レイアウト位置
-	CLogicPoint*		pptLogic	//!< [out] ロジック位置
+	CLogicPointEx*		pptLogic	//!< [out] ロジック位置
 ) const
 {
 	pptLogic->Set(CLogicInt(0), CLogicInt(0));
+	pptLogic->ext = 0;
 	if( ptLayout.GetY2() > m_nLines ){
 		//2007.10.11 kobake Y値が間違っていたので修正
 		//pptLogic->Set(0, m_nLines);
@@ -1274,7 +1275,8 @@ void CLayoutMgr::LayoutToLogic(
 				else{
 					pptLogic->y = m_pcDocLineMgr->GetLineCount() - 1; // 2002/2/10 aroka CDocLineMgr変更
 					bEOF = TRUE;
-					nX = CLayoutInt(MAXLINEKETAS);
+					// nX = CLayoutInt(MAXLINEKETAS);
+					nX = pcLayout->GetIndent();
 					goto checkloop;
 
 				}
@@ -1318,10 +1320,10 @@ checkloop:;
 //			nCharKetas = CLayoutInt(1);
 
 		//レイアウト加算
-		nX += nCharKetas;
-		if( nX > ptLayout.GetX2() && !bEOF ){
+		if( nX + nCharKetas > ptLayout.GetX2() && !bEOF ){
 			break;
 		}
+		nX += nCharKetas;
 
 		//ロジック加算
 		if( pData[i] ==	WCODE::TAB ){
@@ -1331,10 +1333,17 @@ checkloop:;
 	}
 	i += pcLayout->GetLogicOffset();
 	pptLogic->x = i;
+	pptLogic->ext = ptLayout.GetX2() - nX;
 	return;
 }
 
 
+void CLayoutMgr::LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLogic ) const
+{
+	CLogicPointEx ptEx;
+	LayoutToLogicEx( ptLayout, &ptEx );
+	*pptLogic = ptEx;
+}
 
 
 
