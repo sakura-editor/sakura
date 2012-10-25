@@ -66,6 +66,7 @@ const int nsFuncCode::nFuncKindNum = _countof(nsFuncCode::ppszFuncKind);
 /* ファイル操作系 */
 const int pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5→List_File)
 	F_FILENEW			,	//新規作成
+	F_FILENEW_NEWWINDOW	,	//新規ウインドウを開く
 	F_FILEOPEN			,	//開く
 	F_FILEOPEN_DROPDOWN	,	//開く(ドロップダウン)
 	F_FILESAVE			,	//上書き保存
@@ -532,6 +533,7 @@ int FuncID_To_HelpContextID( int nFuncID )
 
 	/* ファイル操作系 */
 	case F_FILENEW:				return HLP000025;			//新規作成
+	case F_FILENEW_NEWWINDOW:	return HLP000339;			//新規ウインドウで開く
 	case F_FILEOPEN:			return HLP000015;			//開く
 	case F_FILEOPEN_DROPDOWN:	return HLP000015;			//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 	case F_FILESAVE:			return HLP000020;			//上書き保存
@@ -1148,6 +1150,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_TAB_SEPARATE:	// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTNEXT:	// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji 追加
+	case F_FILENEW_NEWWINDOW:	// 2011.11.15 syat 追加
 		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin );
 	}
 	return true;

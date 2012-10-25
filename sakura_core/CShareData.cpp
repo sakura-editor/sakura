@@ -279,6 +279,7 @@ struct ARRHEAD {
 	Version 95:
 	CBlockComment変更
 	検索／置換情報SSearchOptionにまとめた
+	外部から起動時に新しいウインドウを開く
 */
 
 extern const unsigned int uShareDataVersion;
@@ -604,6 +605,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
 		m_pShareData->m_Common.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 		m_pShareData->m_Common.m_bChgWndByWheel = FALSE;		//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
+		m_pShareData->m_Common.m_bNewWindow = FALSE;			// 外部から起動するときは新しいウインドウで開く
 
 		m_pShareData->m_Common.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
@@ -1057,6 +1059,14 @@ bool CShareData::IsSameGroup( HWND hWnd1, HWND hWnd2 )
 	return ( nGroup1 == nGroup2 );
 }
 
+/* 空いているグループ番号を取得する */
+int CShareData::GetFreeGroupId( void )
+{
+	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+
+	return ++pShareData->m_nGroupSequences;	// 新規グループ
+}
+
 /** 指定位置の編集ウィンドウ情報を取得する
 
 	@date 2007.06.20 ryoji
@@ -1159,7 +1169,7 @@ BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit,
 				hWndFrom,
 				MB_YESNO | MB_APPLMODAL | MB_ICONQUESTION,
 				GSTR_APPNAME,
-				"同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?"
+				_T("同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?")
 			) ){
 				return FALSE;
 			}
@@ -1323,7 +1333,6 @@ int CShareData::GetEditorWindowsNum( int nGroup, bool bExcludeClosing/* = true *
 }
 
 
-
 /** 全編集ウィンドウへメッセージをポストする
 
 	@param nGroup [in] グループ指定（0:全グループ）
@@ -1337,7 +1346,7 @@ BOOL CShareData::PostMessageToAllEditors(
 	LPARAM		lParam,		/*!< 第2メッセージ パラメータ */
 	HWND		hWndLast,	/*!< 最後に送りたいウィンドウ */
 	int			nGroup/* = 0*/	/*!< 送りたいグループ */
- )
+)
 {
 	EditNode*	pWndArr;
 	int		i;

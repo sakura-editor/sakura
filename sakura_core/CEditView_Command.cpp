@@ -229,6 +229,7 @@ BOOL CEditView::HandleCommand(
 
 	/* ファイル操作系 */
 	case F_FILENEW:				Command_FILENEW();break;			/* 新規作成 */
+	case F_FILENEW_NEWWINDOW:	Command_FILENEW_NEWWINDOW();break;
 	//	Oct. 2, 2001 genta マクロ用機能拡張
 	case F_FILEOPEN:			Command_FILEOPEN((const char*)lparam1);break;			/* ファイルを開く */
 	case F_FILEOPEN_DROPDOWN:	Command_FILEOPEN((const char*)lparam1);break;			/* ファイルを開く(ドロップダウン) */	//@@@ 2002.06.15 MIK
@@ -3525,10 +3526,21 @@ void CEditView::Command_BEGIN_BOXSELECT( void )
 void CEditView::Command_FILENEW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
-	CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE );
+	CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, false, NULL, false );
 	return;
 }
 
+/* 新規作成（新しいウインドウで開く） */
+void CEditView::Command_FILENEW_NEWWINDOW( void )
+{
+	/* 新たな編集ウィンドウを起動 */
+	CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE,
+		false,
+		NULL,
+		true
+	);
+	return;
+}
 
 
 /*! @brief ファイルを開く

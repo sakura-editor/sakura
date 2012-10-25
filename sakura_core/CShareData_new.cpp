@@ -558,6 +558,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 			common.m_lf_kh );
 	}// Keword Help Font
 	
+
 	cProfile.IOProfileData( pszSecName, "nMRUArrNum_MAX"			, common.m_nMRUArrNum_MAX );
 	cProfile.IOProfileData( pszSecName, "nOPENFOLDERArrNum_MAX"	, common.m_nOPENFOLDERArrNum_MAX );
 	cProfile.IOProfileData( pszSecName, "bDispTOOLBAR"			, common.m_bDispTOOLBAR );
@@ -576,6 +577,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bTab_CloseOneWin"	, common.m_bTab_CloseOneWin );	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
 	cProfile.IOProfileData( pszSecName, "bTab_ListFull"			, common.m_bTab_ListFull );	// タブ一覧をフルパス表示する	// 2007.02.28 ryoji
 	cProfile.IOProfileData( pszSecName, "bChgWndByWheel"		, common.m_bChgWndByWheel );	// 2006.03.26 ryoji マウスホイールでウィンドウ切り替え
+	cProfile.IOProfileData( pszSecName, "bNewWindow"			, common.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
 	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_bSplitterWndHScroll );

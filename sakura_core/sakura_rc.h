@@ -609,6 +609,8 @@
 #define IDC_SPIN_ALERT_FILESIZE         1552
 #define IDC_EDIT_ALERT_FILESIZE         1553
 #define IDC_CHECK_ALERT_IF_LARGEFILE    1554
+#define IDC_CHECK_OpenNewWin            1612
+
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056

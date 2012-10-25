@@ -104,6 +104,7 @@ BEGIN
     POPUP "トレイ左ボタンポップアップメニュー"
     BEGIN
         MENUITEM "新規作成(&N)",                F_FILENEW
+        MENUITEM "新規ウインドウを開く(&M)",    F_FILENEW_NEWWINDOW
         MENUITEM "開く(&O)...",                 F_FILEOPEN
         MENUITEM "&Grep...",                    F_GREP_DIALOG
         MENUITEM SEPARATOR
@@ -1604,27 +1605,30 @@ BEGIN
                     WS_TABSTOP,15,40,239,10,0,HIDC_CHECK_DispTabWndMultiWin
     CONTROL         "最後のファイルを閉じたとき(無題)文書を残す(&R)",
                     IDC_CHECK_RetainEmptyWindow,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,24,53,226,12
+                    WS_TABSTOP,24,53,226,10
     CONTROL         "ウィンドウの閉じるボタンは現在のファイルのみ閉じる(&C)",
                     IDC_CHECK_CloseOneWin,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,24,68,226,9
-    GROUPBOX        "動作モード",IDC_STATIC,7,27,258,55
+                    WS_TABSTOP,24,66,226,10
+    CONTROL         "外部から起動するときは新しいウインドウで開く(&O)",
+                    IDC_CHECK_OpenNewWin,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,24,79,160,10
+    GROUPBOX        "動作モード",IDC_STATIC,7,27,258,68
     CONTROL         "アイコン表示(&I)",IDC_CHECK_DispTabIcon,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,15,102,63,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10,0,
                     HIDC_CHECK_DispTabIcon
     CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,102,39,10,0,
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,115,39,10,0,
                     HIDC_CHECK_SameTabWidth
     CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,15,116,90,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,129,90,10,0,
                     HIDC_CHECK_SortTabList
-    LTEXT           "タイトル(&T)",IDC_STATIC,15,134,40,10
-    EDITTEXT        IDC_TABWND_CAPTION,56,132,203,14,ES_AUTOHSCROLL,0,
+    LTEXT           "タイトル(&T)",IDC_STATIC,15,148,40,10
+    EDITTEXT        IDC_TABWND_CAPTION,56,145,203,14,ES_AUTOHSCROLL,0,
                     HIDC_TABWND_CAPTION
-    GROUPBOX        "タブの外観",IDC_STATIC,8,89,257,64,WS_GROUP
+    GROUPBOX        "タブの外観",IDC_STATIC,7,102,257,64,WS_GROUP
     CONTROL         "マウスホイールでタブ切替(&W)",IDC_CHECK_ChgWndByWheel,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,171,107,10
-    GROUPBOX        "その他",IDC_STATIC,8,159,257,28,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,184,107,10
+    GROUPBOX        "その他",IDC_STATIC,7,172,257,28,WS_GROUP
 END
 
 IDD_PROP_EDIT DIALOGEX 0, 0, 271, 211
@@ -2657,6 +2661,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_FILENEW               "新規作成"
+    F_FILENEW_NEWWINDOW     "新規ウインドウを開く"
     F_FILEOPEN              "開く..."
     F_FILESAVE              "上書き保存"
     F_FILESAVEAS_DIALOG     "名前を付けて保存..."

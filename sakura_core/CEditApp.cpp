@@ -104,7 +104,8 @@ void CEditApp::DoGrep()
 	}
 
 	/* 新規編集ウィンドウの追加 ver 0 */
-	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE );
+	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE,
+		false, NULL, m_pShareData->m_Common.m_bNewWindow? true : false );
 
 	delete [] pCmdLine;
 }
@@ -649,7 +650,7 @@ LRESULT CEditApp::DispatchEvent(
 				switch( nId ){
 				case F_FILENEW:	/* 新規作成 */
 					/* 新規編集ウィンドウの追加 */
-					OnNewEditor();
+					OnNewEditor( false );
 					break;
 				case F_FILEOPEN:	/* 開く */
 					{
@@ -701,7 +702,8 @@ LRESULT CEditApp::DispatchEvent(
 								strcpy( szPath, szFile2 );
 							}
 							// 新たな編集ウィンドウを起動
-							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly );
+							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
+								true, NULL, m_pShareData->m_Common.m_bNewWindow? true : false );
 						}
 					}
 					break;
@@ -749,7 +751,10 @@ LRESULT CEditApp::DispatchEvent(
 								m_hWnd,
 								openEditInfo.m_szPath,
 								openEditInfo.m_nCharCode,
-								FALSE
+								FALSE,
+								false,
+								NULL,
+								m_pShareData->m_Common.m_bNewWindow? true : false
 							);
 
 						}
@@ -808,7 +813,8 @@ LRESULT CEditApp::DispatchEvent(
 							}
 
 							// 新たな編集ウィンドウを起動
-							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly );
+							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
+								true, NULL, m_pShareData->m_Common.m_bNewWindow? true : false );
 						}
 					}
 					break;
@@ -817,7 +823,7 @@ LRESULT CEditApp::DispatchEvent(
 			case WM_LBUTTONDBLCLK:
 				bLDClick = true;		/* 03/02/20 ai */
 				/* 新規編集ウィンドウの追加 */
-				OnNewEditor();
+				OnNewEditor( m_pShareData->m_Common.m_bNewWindow == TRUE  );
 				// Apr. 1, 2003 genta この後で表示されたメニューは閉じる
 				::PostMessage( m_hWnd, WM_CANCELMODE, 0, 0 );
 				return 0L;
@@ -901,7 +907,7 @@ void CEditApp::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 	@author genta
 	@date 2003.05.30 新規作成
 */
-void CEditApp::OnNewEditor(void)
+void CEditApp::OnNewEditor( bool bNewWindow )
 {
 
 	const TCHAR* szCurDir = NULL;
@@ -911,6 +917,11 @@ void CEditApp::OnNewEditor(void)
 	//
 	//	最近使ったフォルダを順番にたどる
 	CMRUFolder mrufolder;
+
+	// 新規ウィンドウで開くオプションは、タブバー＆グループ化を前提とする
+	bNewWindow = bNewWindow
+				 && m_pShareData->m_Common.m_bDispTabWnd == TRUE
+				 && m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE;
 
 	int nCount = mrufolder.Length();
 	for( int i = 0; i < nCount ; i++ ){
@@ -927,7 +938,7 @@ void CEditApp::OnNewEditor(void)
 
 
 	// 編集ウインドウを開く
-	OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, false, szCurDir );
+	OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, false, szCurDir, bNewWindow );
 }
 
 /*!
@@ -947,7 +958,8 @@ bool CEditApp::OpenNewEditor(
 	int					nCharCode,			//!< [in] 新規エディタの文字コード
 	BOOL				bReadOnly,			//!< [in] FALSEでなければ読み取り専用で開く
 	bool				sync,				//!< [in] trueなら新規エディタの起動まで待機する
-	const TCHAR*		szCurDir			//!< [in] 新規エディタのカレントディレクトリ
+	const TCHAR*		szCurDir,			//!< [in] 新規エディタのカレントディレクトリ
+	bool				bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
 	/* 共有データ構造体のアドレスを返す */
@@ -977,11 +989,16 @@ bool CEditApp::OpenNewEditor(
 	if( bReadOnly )		nPos += wsprintf( szCmdLineBuf + nPos, _T(" -R") );
 
 	// グループID
-	// グループIDを親ウィンドウから取得
-	HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
-	int nGroup = CShareData::getInstance()->GetGroupId( hwndAncestor );
-	if( nGroup > 0 ){
-		nPos += wsprintf( szCmdLineBuf + nPos, _T(" -GROUP=%d"), nGroup );
+	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
+		// グループIDを親ウィンドウから取得
+		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
+		int nGroup = CShareData::getInstance()->GetGroupId( hwndAncestor );
+		if( nGroup > 0 ){
+			nPos += wsprintf( szCmdLineBuf + nPos, _T(" -GROUP=%d"), nGroup );
+		}
+	}else{
+		// 空いているグループIDを使用する
+		nPos += wsprintf( szCmdLineBuf + nPos, _T(" -GROUP=%d"), CShareData::getInstance()->GetFreeGroupId() );
 	}
 
 	// -- -- -- -- プロセス生成 -- -- -- -- //
@@ -1107,7 +1124,8 @@ bool CEditApp::OpenNewEditor2(
 	HWND			hWndParent,
 	const EditInfo*	pfi,
 	BOOL			bReadOnly,
-	bool			sync
+	bool			sync,
+	bool			bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
 	char			pszCmdLine[1024];
@@ -1145,7 +1163,7 @@ bool CEditApp::OpenNewEditor2(
 
 	int nCharCode = pfi ? pfi->m_nCharCode : CODE_AUTODETECT;
 
-	return OpenNewEditor( hInstance, hWndParent, pszCmdLine, nCharCode, bReadOnly, sync );
+	return OpenNewEditor( hInstance, hWndParent, pszCmdLine, nCharCode, bReadOnly, sync, NULL, bNewWindow );
 
 }
 //	To Here Oct. 24, 2000 genta

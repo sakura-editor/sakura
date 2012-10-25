@@ -88,7 +88,6 @@ bool CNormalProcess::InitializeProcess()
 	bool			bDebugMode;
 	bool			bGrepMode;
 	bool			bGrepDlg;
-	int				nGroup;	// 2007.06.26 ryoji
 	GrepInfo		gi;
 	EditInfo		fi;
 	
@@ -128,7 +127,13 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	MY_TRACETIME( cRunningTimer, "CheckFile" );
-//複数プロセス版
+
+	// グループIDを取得
+	int nGroupId = CCommandLine::getInstance()->GetGroupId();
+	if( m_pShareData->m_Common.m_bNewWindow && nGroupId == -1 ){
+		nGroupId = CShareData::getInstance()->GetFreeGroupId();
+	}
+
 	/* エディタウィンドウオブジェクトを作成 */
 	m_pcEditWnd = new CEditWnd;
 	MY_TRACETIME( cRunningTimer, "CEditWnd Created" );
@@ -137,10 +142,9 @@ bool CNormalProcess::InitializeProcess()
 	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
 	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
 	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
-	nGroup = CCommandLine::getInstance()->GetGroupId();	// 2007.06.26 ryoji
 
 	if( bDebugMode ){
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, CODE_DEFAULT, FALSE );
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId, NULL, CODE_DEFAULT, FALSE );
 
 		/* デバッグモニタモードに設定 */
 		m_pcEditWnd->SetDebugModeON();
@@ -149,7 +153,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 	else if( bGrepMode ){
 		/* GREP */
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup, NULL, CODE_DEFAULT, FALSE );
+		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId, NULL, CODE_DEFAULT, FALSE );
 		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
 		if( NULL == hWnd ){
 			goto end_of_func;
@@ -215,7 +219,7 @@ bool CNormalProcess::InitializeProcess()
 		bReadOnly = CCommandLine::getInstance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
-			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
+			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId,
 							fi.m_szPath, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
 							fi.m_szDocType[0] == '\0' ? -1 :
 								m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
@@ -264,6 +268,7 @@ bool CNormalProcess::InitializeProcess()
 					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
 				}
 				// To Here Mar. 28, 2003 MIK
+
 				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
 				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
 					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
@@ -272,10 +277,10 @@ bool CNormalProcess::InitializeProcess()
 		}
 		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
-			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroup,
-										NULL, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
-										fi.m_szDocType[0] == '\0' ? -1 :
-										m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
+			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId,
+				NULL, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
+				fi.m_szDocType[0] == '\0' ? -1 :
+				m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
 			);
 		}
 	}

@@ -478,7 +478,8 @@ struct CommonSetting {
 	BOOL				m_bDispTabWnd;					//タブウインドウ表示する	//@@@ 2003.05.31 MIK
 	BOOL				m_bDispTabWndMultiWin;			//タブをまとめない	//@@@ 2003.05.31 MIK
 	BOOL				m_bTab_RetainEmptyWin;			//!< 最後の文書が閉じられたとき(無題)を残す
-	BOOL				m_bTab_CloseOneWin;		//!< タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる
+	BOOL				m_bTab_CloseOneWin;				//!< タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる
+	BOOL				m_bNewWindow;					//!< 外部から起動するときは新しいウインドウで開く
 
 	char				m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//タブウインドウキャプション	//@@@ 2003.06.13 MIK
 	BOOL				m_bSameTabWidth;				//タブを等幅にする			//@@@ 2006.01.28 ryoji
@@ -764,6 +765,7 @@ public:
 	EditNode* GetEditNode( HWND hWnd );							/* 編集ウィンドウ情報を取得する */
 	int GetGroupId( HWND hWnd );								/* グループIDを取得する */
 	bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* 同一グループかどうかを調べる */
+	int GetFreeGroupId( void );									/* 空いているグループ番号を取得する */
 	bool ReorderTab( HWND hSrcTab, HWND hDstTab );				/* タブ移動に伴うウィンドウの並び替え 2007.07.07 genta */
 	HWND SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int notifygroups[] );/* タブ分離に伴うウィンドウ処理 2007.07.07 genta */
 	EditNode* GetEditNodeAt( int nGroup, int nIndex );			/* 指定位置の編集ウィンドウ情報を取得する */

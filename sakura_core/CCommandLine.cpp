@@ -482,7 +482,7 @@ CCommandLine::CCommandLine()
 	m_gi.bGrepOutputLine	= false;
 	m_gi.nGrepOutputStyle	= 1;
 	m_bReadOnly				= false;
-	m_nGroup				= 0;		// 2007.06.26 ryoji
+	m_nGroup				= -1;		// 2007.06.26 ryoji
 	m_pszMacro				= NULL;		// 2009.07.19 syat
 	m_pszMacroType			= NULL;		// 2009.07.19 syat
 }

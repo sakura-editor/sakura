@@ -73,6 +73,7 @@ enum FunctionAttribute {
 #define F_FILECLOSE_OPEN			30107	//閉じて開く
 #define F_FILEOPEN_DROPDOWN			30108	//開く(ドロップダウン)
 #define F_FILESAVECLOSE				30109	//保存して閉じる Feb. 28, 2004 genta
+#define F_FILENEW_NEWWINDOW         30110	//新規ウインドウを開く
 #define F_FILESAVEALL				30120	//上書き保存 //	Jan. 24, 2005 genta
 #define F_FILESAVE_QUIET			30121	//上書き保存(限定動作) //	Jan. 24, 2005 genta
 //	Dec. 4, 2002 genta
