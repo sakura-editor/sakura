@@ -84,11 +84,6 @@ static const DWORD p_helpids[] = {	//10900
 };
 //@@@ 2001.02.04 End
 
-
-
-
-
-
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {
 	int i;
@@ -100,9 +95,6 @@ int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 	return -1;
 }
 
-//	From Here Jun. 2, 2001 genta
-//	Dialog procedureの処理を共通化し、各ページのDialog Procedureでは
-//	真の処理メソッドを指定して共通関数を呼ぶだけにした．
 /*!
 	@param hwndDlg ダイアログボックスのWindow Handle
 	@param uMsg メッセージ
@@ -511,9 +503,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					CMRU cMRU;
 					cMRU.ClearAll();
 				}
-				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					_T("最近使ったファイルの履歴を削除しました。\n")
-				);
+				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("最近使ったファイルの履歴を削除しました。\n") );
 				return TRUE;
 			case IDC_BUTTON_CLEAR_MRU_FOLDER:
 				/* フォルダの履歴をクリア */
@@ -527,9 +517,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 					CMRUFolder cMRUFolder;	//	MRUリストの初期化。ラベル内だと問題あり？
 					cMRUFolder.ClearAll();
 				}
-				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					_T("最近使ったフォルダの履歴を削除しました。\n")
-				);
+				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("最近使ったフォルダの履歴を削除しました。\n") );
 				return TRUE;
 
 			}
@@ -711,10 +699,6 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 	/* キーリピート時のスクロールを滑らかにするか */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH, m_Common.m_nRepeatedScroll_Smooth );
 
-	// 2007.09.09 Moca 画面キャッシュ設定追加
-	// 画面キャッシュを使う
-	::CheckDlgButton( hwndDlg, IDC_CHECK_MEMDC, m_Common.m_bUseCompotibleBMP );
-
 	// 2009.01.12 nasukoji	組み合わせてホイール操作した時ページスクロールする
 	HWND	hwndCombo;
 	int		nSelPos;
@@ -742,6 +726,10 @@ void CPropCommon::SetData_p1( HWND hwndDlg )
 		}
 	}
 	::SendMessage( hwndCombo, CB_SETCURSEL, nSelPos, 0 );
+
+	// 2007.09.09 Moca 画面キャッシュ設定追加
+	// 画面キャッシュを使う
+	::CheckDlgButton( hwndDlg, IDC_CHECK_MEMDC, m_Common.m_bUseCompotibleBMP );
 
 	/* ファイルの履歴MAX */
 	bRet = ::SetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, m_Common.m_nMRUArrNum_MAX, FALSE );
@@ -812,13 +800,13 @@ int CPropCommon::GetData_p1( HWND hwndDlg )
 	/* キーリピート時のスクロールを滑らかにするか */
 	m_Common.m_nRepeatedScroll_Smooth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_REPEATEDSCROLLSMOOTH );
 
-	// 2007.09.09 Moca 画面キャッシュ設定追加
-	// 画面キャッシュを使う
-	m_Common.m_bUseCompotibleBMP = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MEMDC );
-
 	// 2009.01.12 nasukoji	組み合わせてホイール操作した時ページスクロールする
 	HWND	hwndCombo;
 	int		nSelPos;
+
+	// 2007.09.09 Moca 画面キャッシュ設定追加
+	// 画面キャッシュを使う
+	m_Common.m_bUseCompotibleBMP = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_MEMDC );
 
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_WHEEL_PAGESCROLL );
 	nSelPos = ::SendMessage( hwndCombo, CB_GETCURSEL, 0, 0 );
