@@ -5232,15 +5232,6 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
 	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
 	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
-	//Jun. 2, 2009 syat     クリッカブルパス用正規表現キーワード
-	pShareData->m_Types[0].m_bUseRegexKeyword = TRUE;							// 正規表現キーワードを使うか
-	pShareData->m_Types[0].m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	strcpy(pShareData->m_Types[0].m_RegexKeywordArr[0].m_szKeyword,				// 正規表現キーワード
-		   "/\\b[a-zA-Z]:\\\\[\\w\\-_\\.\\\\\\/\\$%~]*/k");						//   C:\～にマッチするパターン
-	pShareData->m_Types[0].m_bUseRegexKeyword = TRUE;							// 正規表現キーワードを使うか
-	pShareData->m_Types[0].m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	strcpy(pShareData->m_Types[0].m_RegexKeywordArr[1].m_szKeyword,				// 正規表現キーワード
-		   "/\\B\\\\\\\\[\\w\\-_\\.\\\\\\/\\$%~]+/k");						//   C:\～にマッチするパターン
 
 //		nIdx = 0;
 	/* テキスト */
@@ -5260,6 +5251,14 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	strcpy( pShareData->m_Types[1].m_szKinsokuHead, "!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK
 	strcpy( pShareData->m_Types[1].m_szKinsokuTail, "$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	// pShareData->m_Types[1].m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji
+	//Jun. 2, 2009 syat     クリッカブルパス用正規表現キーワード //Jan.17, 2012 syat 基本からテキストに移動
+	pShareData->m_Types[1].m_bUseRegexKeyword = TRUE;							// 正規表現キーワードを使うか
+	pShareData->m_Types[1].m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
+	strcpy(pShareData->m_Types[1].m_RegexKeywordArr[0].m_szKeyword,				// 正規表現キーワード
+		   "/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k");					// ""で挟まれた C:\～, \\～ にマッチするパターン
+	pShareData->m_Types[1].m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
+	strcpy(pShareData->m_Types[1].m_RegexKeywordArr[1].m_szKeyword,				// 正規表現キーワード
+		   "/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k");			// C:\～, \\～ にマッチするパターン
 
 
 	// nIdx = 1;
