@@ -6922,11 +6922,8 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 			m_pcsbwVSplitBox->Create( m_hInstance, m_hWnd, TRUE );
 		}
 	}else{
-		if( NULL != m_pcsbwVSplitBox ){	/* 垂直分割ボックス */
-			delete m_pcsbwVSplitBox;
-			m_pcsbwVSplitBox = NULL;
-		}else{
-		}
+		delete m_pcsbwVSplitBox;	/* 垂直分割ボックス */
+		m_pcsbwVSplitBox = NULL;
 	}
 	if( bHorz ){
 		if( NULL != m_pcsbwHSplitBox ){	/* 水平分割ボックス */
@@ -6935,11 +6932,8 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 			m_pcsbwHSplitBox->Create( m_hInstance, m_hWnd, FALSE );
 		}
 	}else{
-		if( NULL != m_pcsbwHSplitBox ){	/* 水平分割ボックス */
-			delete m_pcsbwHSplitBox;
-			m_pcsbwHSplitBox = NULL;
-		}else{
-		}
+		delete m_pcsbwHSplitBox;	/* 水平分割ボックス */
+		m_pcsbwHSplitBox = NULL;
 	}
 
 	if( bSizeBox ){
