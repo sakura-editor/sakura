@@ -139,15 +139,21 @@ struct EditInfo {
 	}
 };
 
+//! 編集ウィンドウノード
 struct EditNode {
 	int				m_nIndex;
-	int				m_nGroup;					/*!< グループID */							//@@@ 2007.06.20 ryoji
+	int				m_nGroup;					//!< グループID 							//@@@ 2007.06.20 ryoji
 	HWND			m_hWnd;
-	char			m_szTabCaption[_MAX_PATH];	/*!< タブウインドウ用：キャプション名 */	//@@@ 2003.05.31 MIK
-	char			m_szFilePath[_MAX_PATH];	/*!< タブウインドウ用：ファイル名 */		//@@@ 2006.01.28 ryoji
-	BOOL			m_bIsGrep;					/*!< Grepのウィンドウか */					//@@@ 2006.01.28 ryoji
-	UINT			m_showCmdRestore;			/*!< 元のサイズに戻すときのサイズ種別 */	//@@@ 2007.06.20 ryoji
-	BOOL			m_bClosing;					/*!< 終了中か（「最後のファイルを閉じても(無題)を残す」用） */	//@@@ 2007.06.20 ryoji
+	char			m_szTabCaption[_MAX_PATH];	//!< タブウインドウ用：キャプション名 	//@@@ 2003.05.31 MIK
+	char			m_szFilePath[_MAX_PATH];	//!< タブウインドウ用：ファイル名 		//@@@ 2006.01.28 ryoji
+	BOOL			m_bIsGrep;					//!< Grepのウィンドウか 					//@@@ 2006.01.28 ryoji
+	UINT			m_showCmdRestore;			//!< 元のサイズに戻すときのサイズ種別 	//@@@ 2007.06.20 ryoji
+	BOOL			m_bClosing;					//!< 終了中か（「最後のファイルを閉じても(無題)を残す」用） 	//@@@ 2007.06.20 ryoji
+};
+
+struct EditNodeEx{	// 拡張構造体
+	EditNode* p;	// 編集ウィンドウ配列要素へのポインタ
+	int nGroupMru;	// グループ単位のMRU番号
 };
 
 //! 色設定
@@ -742,7 +748,6 @@ public:
 
 protected:
 	static CShareData* _instance;
-	static CMutex g_cEditArrMutex;
 
 public:
 	/*

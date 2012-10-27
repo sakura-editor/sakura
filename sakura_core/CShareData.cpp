@@ -290,6 +290,10 @@ const unsigned int uShareDataVersion = 95;
 */
 CShareData* CShareData::_instance = NULL;
 
+// GetOpenedWindowArr用静的変数／構造体
+static BOOL s_bSort;	// ソート指定
+static BOOL s_bGSort;	// グループ指定
+
 /*! @brief CShareData::m_pEditArr保護用Mutex
 
 	複数のエディタが非同期に一斉動作しているときでも、CShareData::m_pEditArrを
@@ -311,7 +315,39 @@ CShareData* CShareData::_instance = NULL;
 	@date 2007.07.05 ryoji 新規導入
 	@date 2007.07.07 genta CShareDataのメンバへ移動
 */
-CMutex CShareData::g_cEditArrMutex( FALSE, GSTR_MUTEX_SAKURA_EDITARR );
+static CMutex g_cEditArrMutex( FALSE, GSTR_MUTEX_SAKURA_EDITARR );
+
+// GetOpenedWindowArr用ソート関数
+static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
+{
+	// 異なるグループのときはグループ比較する
+	int nGroup1;
+	int nGroup2;
+
+	if( s_bGSort )
+	{
+		// オリジナルのグループ番号のほうを見る
+		nGroup1 = ((EditNodeEx*)e1)->p->m_nGroup;
+		nGroup2 = ((EditNodeEx*)e2)->p->m_nGroup;
+	}
+	else
+	{
+		// グループのMRU番号のほうを見る
+		nGroup1 = ((EditNodeEx*)e1)->nGroupMru;
+		nGroup2 = ((EditNodeEx*)e2)->nGroupMru;
+	}
+	if( nGroup1 != nGroup2 )
+	{
+		return nGroup1 - nGroup2;	// グループ比較
+	}
+
+	// グループ比較が行われなかったときはウィンドウ比較する
+	if( s_bSort )
+		return ( ((EditNodeEx*)e1)->p->m_nIndex - ((EditNodeEx*)e2)->p->m_nIndex );	// ウィンドウ番号比較
+	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
+}
+
+
 
 //	CShareData_new2.cppと統合
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動
@@ -1282,7 +1318,7 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, int nChar
 			}
 			else{
 				::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-					"%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n\n現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]",
+					_T("%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n\n現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"),
 					pszPath,
 					pfi->m_nCharCode, NULL==pszCodeNameCur?"不明":pszCodeNameCur,
 					nCharCode,        NULL==pszCodeNameNew?"不明":pszCodeNameNew
@@ -1335,8 +1371,6 @@ int CShareData::GetEditorWindowsNum( int nGroup, bool bExcludeClosing/* = true *
 
 /** 全編集ウィンドウへメッセージをポストする
 
-	@param nGroup [in] グループ指定（0:全グループ）
-
 	@date 2005.01.24 genta hWndLast == NULLのとき全くメッセージが送られなかった
 	@date 2007.06.22 ryoji nGroup引数を追加、グループ単位で順番に送る
 */
@@ -1345,7 +1379,7 @@ BOOL CShareData::PostMessageToAllEditors(
 	WPARAM		wParam,		/*!< 第1メッセージ パラメータ */
 	LPARAM		lParam,		/*!< 第2メッセージ パラメータ */
 	HWND		hWndLast,	/*!< 最後に送りたいウィンドウ */
-	int			nGroup/* = 0*/	/*!< 送りたいグループ */
+	int			nGroup/* = 0*/	/*!< 送りたいグループ(0:全グループ) */
 )
 {
 	EditNode*	pWndArr;
@@ -1436,46 +1470,6 @@ BOOL CShareData::SendMessageToAllEditors(
 	delete []pWndArr;
 	return TRUE;
 }
-
-// GetOpenedWindowArr用静的変数／構造体
-static BOOL s_bSort;	// ソート指定
-static BOOL s_bGSort;	// グループ指定
-struct EditNodeEx{	// 拡張構造体
-	EditNode* p;	// 編集ウィンドウ配列要素へのポインタ
-	int nGroupMru;	// グループ単位のMRU番号
-};
-
-// GetOpenedWindowArr用ソート関数
-static int __cdecl cmpGetOpenedWindowArr(const void *e1, const void *e2)
-{
-	// 異なるグループのときはグループ比較する
-	int nGroup1;
-	int nGroup2;
-
-	if( s_bGSort )
-	{
-		// オリジナルのグループ番号のほうを見る
-		nGroup1 = ((EditNodeEx*)e1)->p->m_nGroup;
-		nGroup2 = ((EditNodeEx*)e2)->p->m_nGroup;
-	}
-	else
-	{
-		// グループのMRU番号のほうを見る
-		nGroup1 = ((EditNodeEx*)e1)->nGroupMru;
-		nGroup2 = ((EditNodeEx*)e2)->nGroupMru;
-	}
-	if( nGroup1 != nGroup2 )
-	{
-		return nGroup1 - nGroup2;	// グループ比較
-	}
-
-	// グループ比較が行われなかったときはウィンドウ比較する
-	if( s_bSort )
-		return ( ((EditNodeEx*)e1)->p->m_nIndex - ((EditNodeEx*)e2)->p->m_nIndex );	// ウィンドウ番号比較
-	return ( ((EditNodeEx*)e1)->p - ((EditNodeEx*)e2)->p );	// ウィンドウMRU比較（ソートしない）
-}
-
-
 
 /** 現在開いている編集ウィンドウの配列を返す
 
