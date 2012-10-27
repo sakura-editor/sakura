@@ -742,16 +742,8 @@ LRESULT CEditView::DispatchEvent(
 			DestroyWindow( m_hwndSizeBox );
 			m_hwndSizeBox = NULL;
 		}
-		if( NULL != m_pcsbwVSplitBox ){	/* 垂直分割ボックス */
-			delete m_pcsbwVSplitBox;
-			m_pcsbwVSplitBox = NULL;
-		}
-
-		if( NULL != m_pcsbwHSplitBox ){	/* 垂直分割ボックス */
-			delete m_pcsbwHSplitBox;
-			m_pcsbwHSplitBox = NULL;
-		}
-
+		SAFE_DELETE(m_pcsbwVSplitBox);	/* 垂直分割ボックス */
+		SAFE_DELETE(m_pcsbwHSplitBox);	/* 水平分割ボックス */
 
 		SetHwnd(NULL);
 		return 0L;
