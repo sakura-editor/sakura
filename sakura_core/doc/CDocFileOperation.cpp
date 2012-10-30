@@ -3,6 +3,8 @@
 #include "CDocVisitor.h"
 #include "CEditDoc.h"
 
+#include "recent/CMRU.h"
+#include "recent/CMRUFolder.h"
 #include "CAppMode.h" 
 #include "CEditApp.h"
 #include "window/CEditWnd.h"

@@ -44,17 +44,18 @@
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
 #include "doc/CDocReader.h"	//  Command_PROPERTY_FILE for _DEBUG
+#include "doc/CDocLine.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "COpeBlk.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "outline/CFuncInfoArr.h"
 #include "CMarkMgr.h"/// 2002/2/3 aroka ’Ç‰Á
-#include "doc/CDocLine.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "CPrintPreview.h"
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 #include "convert/CDecode_Base64Decode.h"
 #include "convert/CDecode_UuDecode.h"
 #include "io/CBinaryStream.h"
 #include "CEditApp.h"
+#include "recent/CMRU.h"
 #include "util/window.h"
 #include "util/module.h"
 #include "util/shell.h"

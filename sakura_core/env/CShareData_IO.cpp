@@ -208,6 +208,20 @@ void CShareData_IO::ShareData_IO_Mru( CDataProfile& cProfile )
 			pShare->m_sHistory.m_bOPENFOLDERArrFavorite[i] = false;	//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
 		}
 	}
+	
+	cProfile.IOProfileData( pszSecName, LTEXT("_ExceptMRU_Counts"), pShare->m_sHistory.m_aExceptMRU._GetSizeRef() );
+	pShare->m_sHistory.m_aExceptMRU.SetSizeLimit();
+	nSize = pShare->m_sHistory.m_aExceptMRU.size();
+	for( i = 0; i < nSize; ++i ){
+		auto_sprintf( szKeyName, LTEXT("ExceptMRU[%02d]"), i );
+		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aExceptMRU[i] );
+	}
+	//“Ç‚İ‚İ‚Íc‚è‚ğ‰Šú‰»
+	if ( cProfile.IsReadingMode() ){
+		for (; i< pShare->m_sHistory.m_aExceptMRU.max_size(); ++i){
+			pShare->m_sHistory.m_aExceptMRU[i][0] = _T('\0');
+		}
+	}
 }
 
 /*!

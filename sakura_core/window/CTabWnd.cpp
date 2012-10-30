@@ -44,6 +44,7 @@
 #include "charset/charcode.h"
 
 #include "env/CShareData.h"
+#include "recent/CRecentEditNode.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"

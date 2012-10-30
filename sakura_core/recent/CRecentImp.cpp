@@ -218,6 +218,46 @@ reconfigure:
 }
 
 
+template <class T, class S>
+bool CRecentImp<T, S>::AppendItemText( LPCTSTR pText )
+{
+	DataType data;
+	ReceiveType receiveData;
+	if( !TextToDataType( &data, pText ) ){
+		return false;
+	}
+	if( !DataToReceiveType( &receiveData, &data ) ){
+		return false;
+	}
+	int findIndex = FindItem( receiveData );
+	if( -1 != findIndex ){
+		return false;
+	}
+	return AppendItem( receiveData );
+}
+
+template <class T, class S>
+bool CRecentImp<T, S>::EditItemText( int nIndex, LPCTSTR pText )
+{
+	DataType data;
+	ReceiveType receiveData;
+	memcpy_raw( &data, GetItemPointer( nIndex ), sizeof(data) );
+	if( !TextToDataType( &data, pText ) ){
+		return false;
+	}
+	if( !DataToReceiveType( &receiveData, &data ) ){
+		return false;
+	}
+	int findIndex = FindItem( receiveData );
+	if( -1 != findIndex && nIndex != findIndex ){
+		// 重複不可。ただし同じ場合は大文字小文字の変更かもしれないのでOK
+		return false;
+	}
+	CopyItem( GetItemPointer(nIndex), receiveData );
+	return true;
+}
+
+
 /*
 	アイテムをゼロクリアする。
 */
@@ -502,6 +542,7 @@ template class CRecentImp<CCmdString, LPCTSTR>;
 template class CRecentImp<EditNode>;
 template class CRecentImp<EditInfo>;
 template class CRecentImp<CPathString, LPCTSTR>;
+template class CRecentImp<CMetaPath, LPCTSTR>;
 template class CRecentImp<CGrepFileString, LPCTSTR>;
 template class CRecentImp<CGrepFolderString, LPCTSTR>;
 template class CRecentImp<CReplaceString, LPCWSTR>;

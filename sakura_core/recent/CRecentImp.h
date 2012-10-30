@@ -72,6 +72,8 @@ public:
 
 	//アイテム制御
 	bool AppendItem( ReceiveType pItemData );	//アイテムを先頭に追加
+	bool AppendItemText( LPCTSTR pszText );
+	bool EditItemText( int nIndex, LPCTSTR pszText );
 	bool DeleteItem( int nIndex );				//アイテムをクリア
 	bool DeleteItem( ReceiveType pItemData )
 	{
@@ -90,7 +92,8 @@ public:
 	//オーバーライド用インターフェース
 	virtual int  CompareItem( const DataType* p1, ReceiveType p2 ) const = 0;
 	virtual void CopyItem( DataType* dst, ReceiveType src ) const = 0;
-
+	virtual bool DataToReceiveType( ReceiveType* dst, const DataType* src ) const = 0;
+	virtual bool TextToDataType( DataType* dst, LPCTSTR pszText ) const = 0;
 
 	//実装補助
 private:
@@ -112,10 +115,9 @@ protected:
 	int*		m_pnUserViewCount;		//!< 表示個数 (NULL許可)
 };
 
-
-
-#include "recent/CRecentFile.h"
+#include "CRecentFile.h"
 #include "CRecentFolder.h"
+#include "CRecentExceptMru.h"
 #include "CRecentSearch.h"
 #include "CRecentReplace.h"
 #include "CRecentGrepFile.h"

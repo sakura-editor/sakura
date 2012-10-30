@@ -33,6 +33,17 @@ const TCHAR* CRecentEditNode::GetItemText( int nIndex ) const
 	return _T("WIN"); //※テキスト情報は無い (GetWindowTextしてあげても良いけど、この関数は実行されないので、意味は無い)
 }
 
+bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* src ) const
+{
+	*dst = src;
+	return true;
+}
+
+bool CRecentEditNode::TextToDataType( EditNode* dst, LPCTSTR pszText ) const
+{
+	return false;
+}
+
 int CRecentEditNode::CompareItem( const EditNode* p1, const EditNode* p2 ) const
 {
 	return p1->m_hWnd - p2->m_hWnd;

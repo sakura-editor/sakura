@@ -20,6 +20,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
+#include "recent/CMRUFolder.h"
 #include "CMenuDrawer.h"	//	これでいいのか？
 #include "window/CEditWnd.h"
 #include "util/string_ex2.h"
@@ -206,6 +207,14 @@ void CMRU::Add( EditInfo* pEditInfo )
 	//	ファイル名が無ければ無視
 	if( NULL == pEditInfo || 0 == _tcslen( pEditInfo->m_szPath ) ){
 		return;
+	}
+	
+	for( int i = 0 ; i < m_pShareData->m_sHistory.m_aExceptMRU.size(); i++ ){
+		TCHAR szExceptMRU[_MAX_PATH];
+		CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
+		if( NULL != _tcsistr( pEditInfo->m_szPath,  szExceptMRU) ){
+			return;
+		}
 	}
 
 	TCHAR	szDrive[_MAX_DRIVE];

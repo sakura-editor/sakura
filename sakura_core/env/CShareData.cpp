@@ -29,6 +29,8 @@
 #include "doc/CDocListener.h" // SLoadInfo
 #include "CControlTray.h"
 #include "debug/CRunningTimer.h"
+#include "recent/CMRU.h"
+#include "recent/CMRUFolder.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
@@ -152,6 +154,7 @@ bool CShareData::InitShareData()
 //@@@ 2001.12.26 YAZAKI OPENFOLDERƒŠƒXƒg‚ÍACMRUFolder‚É‚·‚×‚ÄˆË—Š‚·‚é
 		CMRUFolder cMRUFolder;
 		cMRUFolder.ClearAll();
+		m_pShareData->m_sHistory.m_aExceptMRU.clear();
 
 		m_pShareData->m_sSearchKeywords.m_aSearchKeys.clear();
 		m_pShareData->m_sSearchKeywords.m_aReplaceKeys.clear();

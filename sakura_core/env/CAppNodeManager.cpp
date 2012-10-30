@@ -3,6 +3,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "recent/CRecentEditNode.h"
 #include "util/window.h"
 #include "CMutex.h"
 

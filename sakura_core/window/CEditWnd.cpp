@@ -36,6 +36,8 @@
 #include "debug/CRunningTimer.h"
 #include "charset/CharPointer.h"
 #include "CEditApp.h"
+#include "recent/CMRU.h"
+#include "recent/CMRUFolder.h"
 #include "util/module.h"
 #include "util/os.h"		//WM_MOUSEWHEEL,WM_THEMECHANGED
 #include "util/window.h"

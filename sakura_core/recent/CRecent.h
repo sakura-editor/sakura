@@ -51,10 +51,14 @@ public:
 
 	//アイテム
 	virtual const TCHAR*	GetItemText( int nIndex ) const = 0;
+	virtual int				GetArrayCount() const = 0;
 	virtual int				GetItemCount() const = 0;
 	virtual void			DeleteAllItem() = 0;
 	virtual bool			DeleteItemsNoFavorite() = 0;
 	virtual bool			DeleteItem( int nIndex ) = 0;	//!< アイテムをクリア
+	virtual bool			AppendItemText(const TCHAR* pszText) = 0;
+	virtual bool			EditItemText( int nIndex, const TCHAR* pszText) = 0;
+
 	int FindItemByText(const TCHAR* pszText) const
 	{
 		int n = GetItemCount();

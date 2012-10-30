@@ -39,6 +39,8 @@ public:
 	int				CompareItem( const CSearchString* p1, LPCWSTR p2 ) const;
 	void			CopyItem( CSearchString* dst, LPCWSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;
+	bool			DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) const;
+	bool			TextToDataType( CSearchString* dst, LPCTSTR pszText ) const;
 };
 
 #endif /* SAKURA_CRECENTSEARCH_23B8363C_C92F_4506_8803_90ABB9EC0370_H_ */

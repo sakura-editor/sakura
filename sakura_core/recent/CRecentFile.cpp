@@ -32,7 +32,20 @@ CRecentFile::CRecentFile()
 	);
 }
 
+bool CRecentFile::DataToReceiveType( const EditInfo** dst, const EditInfo* src ) const
+{
+	*dst = src;
+	return true;
+}
 
+bool CRecentFile::TextToDataType( EditInfo* dst, LPCTSTR pszText ) const
+{
+	if( _countof(dst->m_szPath) < auto_strlen(pszText) + 1 ){
+		return false;
+	}
+	_tcscpy(dst->m_szPath, pszText);
+	return true;
+}
 
 int CRecentFile::CompareItem( const EditInfo* p1, const EditInfo* p2 ) const
 {
