@@ -27,6 +27,7 @@
 #include "debug/CRunningTimer.h"
 // 関数をマクロ再定義するので my_icmp.h は最後に置く	// 2006.10.25 ryoji
 #include "charset/charcode.h"  // 2006.06.28 rastiv
+#include "io/CTextStream.h"
 #include "util/shell.h"
 #include "util/file.h"
 #include "debug/Debug.h"
@@ -40,6 +41,7 @@
 #define CMDLINEOPT_GREPDLG		1101
 #define CMDLINEOPT_DEBUGMODE	1999
 #define CMDLINEOPT_NOMOREOPT	1998
+#define CMDLINEOPT_AT			11
 #define CMDLINEOPT_X			1
 #define CMDLINEOPT_Y			2
 #define CMDLINEOPT_VX			3
@@ -105,6 +107,7 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取るもの
 	*/
 	static const _CmdLineOpt _COptWithA[] = {
+		{_T("@"),		1,			CMDLINEOPT_AT},
 		{_T("X"),		1,			CMDLINEOPT_X},
 		{_T("Y"),		1,			CMDLINEOPT_Y},
 		{_T("VX"),		2,			CMDLINEOPT_VX},
@@ -181,7 +184,7 @@ int CCommandLine::CheckCommandLine(
 	これが呼び出された時点では共有メモリの初期化が完了していないため，
 	共有メモリにアクセスしてはならない．
 */
-void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
+void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CCommandLine::Parse" );
 
@@ -234,6 +237,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 		nPos = 0;
 	}
 
+	CNativeT cmResponseFile = _T("");
 	LPTSTR pszCmdLineWork = new TCHAR[lstrlen( pszCmdLineSrc ) + 1];
 	_tcscpy( pszCmdLineWork, pszCmdLineSrc );
 	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
@@ -317,6 +321,9 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 			TCHAR *arg = NULL;
 			int nArgLen;
 			switch( CheckCommandLine( pszToken, &arg, &nArgLen ) ){
+			case CMDLINEOPT_AT:
+				cmResponseFile.SetStringT( arg, nArgLen );
+				break;
 			case CMDLINEOPT_X: //	X
 				/* 行桁指定を1開始にした */
 				m_fi.m_ptCursor.x = AtoiOptionInt( arg ) - 1;
@@ -447,6 +454,19 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 		pszToken = my_strtok<TCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
 	}
 	delete [] pszCmdLineWork;
+
+	// レスポンスファイル解析
+	if( cmResponseFile.GetStringLength() && bResponse ){
+		CTextInputStream input(cmResponseFile.GetStringPtr());
+		if( !input.Good() ){
+			return;
+		}
+		std::tstring responseData;
+		while(input){
+			responseData += to_tchar(input.ReadLineW().c_str());
+		}
+		ParseCommandLine( responseData.c_str(), false );
+	}
 
 	return;
 }

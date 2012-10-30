@@ -17,6 +17,7 @@ void CSearchKeywordManager::AddToSearchKeyArr( const wchar_t* pszSearchKey )
 	CRecentSearch	cRecentSearchKey;
 	cRecentSearchKey.AppendItem( pszSearchKey );
 	cRecentSearchKey.Terminate();
+	GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence++;
 }
 
 /*!	m_aReplaceKeys‚ÉpszReplaceKey‚ð’Ç‰Á‚·‚é
@@ -27,6 +28,7 @@ void CSearchKeywordManager::AddToReplaceKeyArr( const wchar_t* pszReplaceKey )
 	CRecentReplace	cRecentReplaceKey;
 	cRecentReplaceKey.AppendItem( pszReplaceKey );
 	cRecentReplaceKey.Terminate();
+	GetDllShareData().m_Common.m_sSearch.m_nReplaceKeySequence++;
 
 	return;
 }

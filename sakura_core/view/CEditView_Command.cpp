@@ -336,23 +336,27 @@ void CEditView::AddToCmdArr( const TCHAR* szCmd )
 }
 
 
-/* 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す) */
-/* 2002.01.16 hor 共通ロジックを関数にしただけ・・・ */
+/*! 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)
+	@date 2002.01.16 hor 共通ロジックを関数にしただけ・・・
+	@date 2011.12.18 Moca シーケンス導入。viewの検索文字列長の撤廃。他のビューの検索条件を引き継ぐフラグを追加
+*/
 BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
-	BOOL	bChangeState;
-	if( !m_bCurSrchKeyMark
-	 || 0 != wcscmp( m_szCurSrchKey, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] )
-	 || m_sCurSearchOption != GetDllShareData().m_Common.m_sSearch.m_sSearchOption
-	){
-		bChangeState = TRUE;
-	}else{
-		bChangeState = FALSE;
-	}
+	bool	bChangeState = false;
 
 	m_bCurSrchKeyMark = true;									// 検索文字列のマーク
-	wcscpy( m_szCurSrchKey, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );// 検索文字列
-	m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
+	if( GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
+			&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
+		|| 0 == m_strCurSearchKey.size() ){
+		// 履歴の検索キーに更新
+		m_strCurSearchKey = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];		// 検索文字列
+		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
+		m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+		bChangeState = true;
+	}else if( m_bCurSearchUpdate ){
+		bChangeState = true;
+	}
+	m_bCurSearchUpdate = false;
 	/* 正規表現 */
 	if( m_sCurSearchOption.bRegularExp
 	 && bChangeState
@@ -364,7 +368,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 		int nFlag = 0x00;
 		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
 		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile( m_szCurSrchKey, nFlag );
+		m_CurRegexp.Compile( m_strCurSearchKey.c_str(), nFlag );
 	}
 
 	if( bChangeState && bRedrawIfChanged ){

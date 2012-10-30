@@ -1703,23 +1703,26 @@ BEGIN
     CONTROL         "カーソル位置の文字列をデフォルトの検索文字列にする(&C)",
                     IDC_CHECK_bCaretTextForSearch,"Button",BS_AUTOCHECKBOX | 
                     BS_TOP | WS_GROUP | WS_TABSTOP,8,21,204,10
-    LTEXT           "正規表現ライブラリ指定(&L)",IDC_LABEL_REGEXP,8,36,93,10
-    LTEXT           "",IDC_LABEL_REGEXP_VER,8,48,275,14
-    EDITTEXT        IDC_EDIT_REGEXPLIB,110,33,162,13,ES_AUTOHSCROLL
-    GROUPBOX        "検索／置換／Grep",IDC_STATIC,3,7,285,56,WS_GROUP
+    CONTROL         "次・前検索で他のビューでの検索条件変更を引き継ぐ(&I)",
+                    IDC_CHECK_INHERIT_KEY_OTHER_VIEW,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,35,204,10
+    LTEXT           "正規表現ライブラリ指定(&L)",IDC_LABEL_REGEXP,8,50,93,10
+    LTEXT           "",IDC_LABEL_REGEXP_VER,8,62,275,14
+    EDITTEXT        IDC_EDIT_REGEXPLIB,110,47,162,13,ES_AUTOHSCROLL
+    GROUPBOX        "検索／置換／Grep",IDC_STATIC,3,7,285,70,WS_GROUP
     CONTROL         "Grepモードで保存確認する(&V)",
                     IDC_CHECK_bGrepExitConfirm,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,78,110,10
+                    WS_GROUP | WS_TABSTOP,8,94,110,10
     CONTROL         "リアルタイムで表示する(&R)",IDC_CHECK_GREPREALTIME,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,92,101,10
-    GROUPBOX        "Grep",IDC_STATIC,3,66,285,42,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,106,101,10
+    GROUPBOX        "Grep",IDC_STATIC,3,80,285,42,WS_GROUP
     CONTROL         "エンターキーでタグジャンプ(&E)",IDC_CHECK_GTJW_RETURN,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,128,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,142,
                     109,10
     CONTROL         "ダブルクリックでタグジャンプ(&W)",
                     IDC_CHECK_GTJW_LDBLCLK,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,140,115,10
-    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,113,285,46,
+                    WS_TABSTOP,8,154,115,10
+    GROUPBOX        "Grep結果からのタグジャンプ",IDC_STATIC,3,127,285,46,
                     WS_GROUP
 END
 

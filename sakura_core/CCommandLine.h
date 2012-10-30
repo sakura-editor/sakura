@@ -82,7 +82,7 @@ public:
 	int GetFileNum(void) { return m_vFiles.size(); }
 	const TCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
 	void ClearFile(void) { m_vFiles.clear(); }
-	void ParseCommandLine( LPCTSTR pszCmdLineSrc = NULL );
+	void ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse = true );
 
 // member valiables
 private:

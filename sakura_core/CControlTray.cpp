@@ -33,6 +33,7 @@
 #include "debug/CRunningTimer.h"
 #include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
+#include "io/CTextStream.h"
 #include "util/module.h"
 #include "util/shell.h"
 #include "util/window.h"
@@ -61,14 +62,22 @@ void CControlTray::DoGrep()
 		return;
 	}
 
-	wcscpy( m_cDlgGrep.m_szText, m_pShareData->m_sSearchKeywords.m_aSearchKeys[0] );
+	if( 0 < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size()
+		&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence ){
+		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
+	}
 
 	/* Grepダイアログの表示 */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );
 	if( !nRet || GetTrayHwnd() == NULL ){
 		return;
 	}
+	m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+	DoGrepCreateWindow(m_hInstance, GetDllShareData().m_sHandles.m_hwndTray, m_cDlgGrep);
+}
 
+void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep& cDlgGrep)
+{
 
 	/*======= Grepの実行 =============*/
 	/* Grep結果ウィンドウの表示 */
@@ -76,33 +85,38 @@ void CControlTray::DoGrep()
 	CNativeW		cmWork1;
 	CNativeT		cmWork2;
 	CNativeT		cmWork3;
-	cmWork1.SetString( m_cDlgGrep.m_szText );
-	cmWork2.SetString( m_cDlgGrep.m_szFile );
-	cmWork3.SetString( m_cDlgGrep.m_szFolder );
+	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
+	cmWork2.SetString( cDlgGrep.m_szFile );
+	cmWork3.SetString( cDlgGrep.m_szFolder );
 	cmWork1.Replace( L"\"", L"\"\"" );
 	cmWork2.Replace( _T("\""), _T("\"\"") );
 	cmWork3.Replace( _T("\""), _T("\"\"") );
 
 	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-	CCommandLineString cCmdLine;
-	cCmdLine.AppendF( _T("-GREPMODE -GKEY=\"%ls\" -GFILE=\"%ts\" -GFOLDER=\"%ts\" -GCODE=%d"),
-		cmWork1.GetStringPtr(),
-		cmWork2.GetStringPtr(),
-		cmWork3.GetStringPtr(),
-		m_cDlgGrep.m_nGrepCharSet
-	);
+	CNativeT cCmdLine;
+	TCHAR szTemp[20];
+	cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
+	cCmdLine.AppendStringW(cmWork1.GetStringPtr());
+	cCmdLine.AppendString(_T("\" -GFILE=\""));
+	cCmdLine.AppendString(cmWork2.GetStringPtr());
+	cCmdLine.AppendString(_T("\" -GFOLDER=\""));
+	cCmdLine.AppendString(cmWork3.GetStringPtr());
+	cCmdLine.AppendString(_T("\" -GCODE="));
+	auto_sprintf( szTemp, _T("%d"), cDlgGrep.m_nGrepCharSet );
+	cCmdLine.AppendString(szTemp);
 
 	//GOPTオプション
 	TCHAR pOpt[64] = _T("");
-	if( m_cDlgGrep.m_bSubFolder					)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
-	if( m_cDlgGrep.m_sSearchOption.bLoHiCase	)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
-	if( m_cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
-	if( m_cDlgGrep.m_bGrepOutputLine			)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
-	if( m_cDlgGrep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
-	if( 1 == m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
-	if( 2 == m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
+	if( cDlgGrep.m_bSubFolder					)_tcscat( pOpt, _T("S") );	// サブフォルダからも検索する
+	if( cDlgGrep.m_sSearchOption.bLoHiCase		)_tcscat( pOpt, _T("L") );	// 英大文字と英小文字を区別する
+	if( cDlgGrep.m_sSearchOption.bRegularExp	)_tcscat( pOpt, _T("R") );	// 正規表現
+	if( cDlgGrep.m_bGrepOutputLine				)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
+	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, _T("W") );	// 単語単位で探す
+	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
+	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
 	if( 0 < _tcslen( pOpt ) ){
-		cCmdLine.AppendF( _T(" -GOPT=%ts"), pOpt );
+		cCmdLine.AppendString( _T(" -GOPT=") );
+		cCmdLine.AppendString( pOpt );
 	}
 
 	/* 新規編集ウィンドウの追加 ver 0 */
@@ -110,8 +124,8 @@ void CControlTray::DoGrep()
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	CControlTray::OpenNewEditor( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, sLoadInfo, cCmdLine.c_str(),
-		false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
+	OpenNewEditor( hinst, msgParent, sLoadInfo, cCmdLine.GetStringPtr(),
+		false, NULL, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 }
 
 
@@ -151,6 +165,7 @@ CControlTray::CControlTray()
 , m_bCreatedTrayIcon( FALSE )	//トレイにアイコンを作った
 , m_hInstance( NULL )
 , m_hWnd( NULL )
+, m_nCurSearchKeySequence(-1)
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
@@ -957,9 +972,6 @@ bool CControlTray::OpenNewEditor(
 	// ファイル名
 	if( _tcslen(sLoadInfo.cFilePath.c_str()) )	cCmdLineBuf.AppendF( _T(" \"%ts\""), sLoadInfo.cFilePath.c_str() );
 
-	// 追加のコマンドラインオプション
-	if(szCmdLineOption)cCmdLineBuf.AppendF(_T(" %ts"), szCmdLineOption);
-
 	// コード指定
 	if( IsValidCodeType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );
 
@@ -979,6 +991,46 @@ bool CControlTray::OpenNewEditor(
 		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), CAppNodeManager::getInstance()->GetFreeGroupId() );
 	}
 
+	// 追加のコマンドラインオプション
+	TCHAR szResponseFile[_MAX_PATH] = _T("");
+	struct CResponsefileDeleter{
+		LPCTSTR fileName;
+		CResponsefileDeleter(): fileName(NULL){}
+		~CResponsefileDeleter(){
+			if( fileName && fileName[0] ){
+				::DeleteFile( fileName );
+				fileName = NULL;
+			}
+		}
+	};
+	CResponsefileDeleter respDeleter;
+	if( szCmdLineOption ){
+		// Grepなどで入りきらない場合はレスポンスファイルを利用する
+		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + auto_strlen(szCmdLineOption) ){
+			TCHAR szIniDir[_MAX_PATH];
+			GetInidir(szIniDir);
+			LPTSTR pszTempFile = _ttempnam(szIniDir, _T("skr_resp"));
+			if( !pszTempFile ){
+				ErrorMessage(hWndParent, _T("レスポンスファイルの作成に失敗しました。"));
+				return false;
+			}
+			auto_strcpy(szResponseFile, pszTempFile);
+			free(pszTempFile);
+			CTextOutputStream output(szResponseFile);
+			if( !output ){
+				ErrorMessage(hWndParent, _T("レスポンスファイルの作成に失敗しました。"));
+				return false;
+			}
+			respDeleter.fileName = szResponseFile;
+			// 出力
+			output.WriteString(to_wchar(szCmdLineOption));
+			output.Close();
+			sync = true;
+			cCmdLineBuf.AppendF(_T(" -@=\"%ts\""), szResponseFile);
+		}else{
+			cCmdLineBuf.AppendF(_T(" %ts"), szCmdLineOption);
+		}
+	}
 	// -- -- -- -- プロセス生成 -- -- -- -- //
 
 	//	プロセスの起動

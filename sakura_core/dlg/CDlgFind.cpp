@@ -46,7 +46,6 @@ const DWORD p_helpids[] = {	//11800
 CDlgFind::CDlgFind()
 {
 	m_sSearchOption.Reset();
-	m_szText[0] = L'\0';		/* 検索文字列 */
 	return;
 }
 
@@ -82,7 +81,8 @@ void CDlgFind::SetData( void )
 	// 正規表現ライブラリの差し替えに伴う処理の見直しによりjre.dll判定を削除
 
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	// 2011.12.18 長さ制限撤廃
+	// Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
 
@@ -141,7 +141,6 @@ void CDlgFind::SetCombosList( void )
 {
 	int		i;
 	HWND	hwndCombo;
-	TCHAR	szBuff[_MAX_PATH+1];
 
 	/* 検索文字列 */
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
@@ -151,9 +150,11 @@ void CDlgFind::SetCombosList( void )
 	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i) {
 		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 	}
-	Combo_GetText( hwndCombo, szBuff, _MAX_PATH );
-	if (auto_strcmp( to_wchar(szBuff), m_szText ) != 0) {
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
+	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
+	std::vector<TCHAR> vText(nBufferSize);
+	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
+	if (auto_strcmp( to_wchar(&vText[0]), m_strText.c_str() ) != 0) {
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}
 }
 
@@ -177,11 +178,13 @@ int CDlgFind::GetData( void )
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_szText, _countof( m_szText ));
+	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
+	std::vector<TCHAR> vText(nBufferSize);
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
+	m_strText = to_wchar(&vText[0]);
 
 	/* 検索ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgFind );
@@ -189,20 +192,31 @@ int CDlgFind::GetData( void )
 	/* 先頭（末尾）から再検索 2002.01.26 hor */
 	m_pShareData->m_Common.m_sSearch.m_bSearchAll = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL );
 
-	if( 0 < wcslen( m_szText ) ){
+	if( 0 < m_strText.length() ){
 		/* 正規表現？ */
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
 		int nFlag = 0x00;
 		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
-		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_szText, GetHwnd(), true, nFlag ) ){
+		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareDataに移動
-		CSearchKeywordManager().AddToSearchKeyArr( m_szText );
+		if( m_strText.size() < _MAX_PATH ){
+			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+		}
+		CEditView*	pcEditView = (CEditView*)m_lParam;
+		if( pcEditView->m_strCurSearchKey == m_strText && pcEditView->m_sCurSearchOption == m_sSearchOption ){
+		}else{
+			pcEditView->m_strCurSearchKey = m_strText;
+			pcEditView->m_sCurSearchOption = m_sSearchOption;
+			pcEditView->m_bCurSearchUpdate = true;
+		}
+		pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 		if( !m_bModal ){
 			/* ダイアログデータの設定 */
 			//SetData();

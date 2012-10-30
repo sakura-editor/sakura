@@ -212,9 +212,15 @@ bool CNormalProcess::InitializeProcess()
 		}
 		else{
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
-			CSearchKeywordManager().AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
-			CSearchKeywordManager().AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
-			CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
+			if( gi.cmGrepKey.GetStringLength() < _MAX_PATH ){
+				CSearchKeywordManager().AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
+			}
+			if( gi.cmGrepFile.GetStringLength() < _MAX_PATH ){
+				CSearchKeywordManager().AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
+			}
+			if( gi.cmGrepFolder.GetStringLength() < _MAX_PATH ){
+				CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
+			}
 			GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder = gi.bGrepSubFolder;
 			GetDllShareData().m_Common.m_sSearch.m_sSearchOption = gi.sGrepSearchOption;
 			GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet = gi.nGrepCharSet;
@@ -228,9 +234,13 @@ bool CNormalProcess::InitializeProcess()
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
-			wcscpy( pEditWnd->m_cDlgGrep.m_szText, gi.cmGrepKey.GetStringPtr() );		/* 検索文字列 */
-			_tcscpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr() );	/* 検索ファイル */
-			_tcscpy( pEditWnd->m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr() );	/* 検索フォルダ */
+			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
+			int nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFile);
+			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
+			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = _T('\0');
+			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
+			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
+			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = _T('\0');
 
 			
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった

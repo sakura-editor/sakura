@@ -340,8 +340,10 @@ struct CommonSetting_Format
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Search
 {
+	int				m_nSearchKeySequence;			// 検索シーケンス(未保存)
 	SSearchOption	m_sSearchOption;			// 検索／置換  条件
 
+	int				m_nReplaceKeySequence;		// 置換後シーケンス(未保存)
 	int				m_bConsecutiveAll;			// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	int				m_bNOTIFYNOTFOUND;			// 検索／置換  見つからないときメッセージを表示
 	int				m_bSelectedArea;			// 置換  選択範囲内置換
@@ -352,10 +354,11 @@ struct CommonSetting_Search
 	int				m_bGrepDefaultFolder;		// Grep: フォルダの初期値をカレントフォルダにする
 	ECodeType		m_nGrepCharSet;				// Grep: 文字コードセット // 2002/09/20 Moca Add
 
-	//Grep - Grep
 	BOOL			m_bCaretTextForSearch;		// カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
+	bool			m_bInheritKeyOtherView;	// 次・前検索で他のビューの検索条件を引き継ぐ
 	TCHAR			m_szRegexpLib[_MAX_PATH];	// 使用する正規表現DLL  2007.08.22 genta
 
+	//Grep
 	BOOL			m_bGrepExitConfirm;			// Grepモードで保存確認するか
 	int				m_bGrepRealTimeView;		// Grep結果のリアルタイム表示 2003.06.16 Moca
 

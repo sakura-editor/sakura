@@ -2023,6 +2023,9 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			{
 				//åüçıÉLÅ[Çìoò^
 				CSearchKeywordManager().AddToSearchKeyArr( szText );
+				GetActiveView().m_strCurSearchKey = szText;
+				GetActiveView().m_bCurSearchUpdate = true;
+				GetActiveView().ChangeCurRegexp();
 			}
 			break;
 		}

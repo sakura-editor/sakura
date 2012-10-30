@@ -62,8 +62,6 @@ CDlgReplace::CDlgReplace()
 	*/
 	m_bConsecutiveAll = FALSE;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	m_bSelectedArea = FALSE;	// 選択範囲内置換
-	m_szText[0] = L'\0';			// 検索文字列
-	m_szText2[0] = L'\0';		// 置換後文字列
 	m_nReplaceTarget = 0;		// 置換対象		// 2001.12.03 hor
 	m_nPaste = FALSE;			// 貼り付ける？	// 2001.12.03 hor
 	m_nReplaceCnt = 0;			//すべて置換の実行結果		// 2002.02.08 hor
@@ -167,7 +165,6 @@ void CDlgReplace::SetCombosList( void )
 {
 	int		i;
 	HWND	hwndCombo;
-	TCHAR	szBuff[_MAX_PATH+1];
 
 	/* 検索文字列 */
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
@@ -177,9 +174,12 @@ void CDlgReplace::SetCombosList( void )
 	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i) {
 		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 	}
-	Combo_GetText( hwndCombo, szBuff, _MAX_PATH );
-	if (auto_strcmp( to_wchar(szBuff), m_szText ) != 0) {
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
+	int nBufferSize = ::GetWindowTextLength( hwndCombo ) + 1;
+	std::vector<TCHAR> vText;
+	vText.resize( nBufferSize );
+	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
+	if (auto_strcmp( to_wchar(&vText[0]), m_strText.c_str() ) != 0) {
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}
 
 	/* 置換後文字列 */
@@ -190,9 +190,11 @@ void CDlgReplace::SetCombosList( void )
 	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i) {
 		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
 	}
-	Combo_GetText( hwndCombo, szBuff, _MAX_PATH );
-	if (auto_strcmp( to_wchar(szBuff), m_szText2 ) != 0) {
-		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_szText2 );
+	nBufferSize = ::GetWindowTextLength( hwndCombo ) + 1;
+	vText.resize( nBufferSize );
+	Combo_GetText( hwndCombo, &vText[0], nBufferSize );
+	if (auto_strcmp( to_wchar(&vText[0]), m_strText2.c_str() ) != 0) {
+		::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT2, m_strText2.c_str() );
 	}
 }
 
@@ -218,15 +220,20 @@ int CDlgReplace::GetData( void )
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 	m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = m_bConsecutiveAll;	// 1==「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	m_pShareData->m_Common.m_sSearch.m_bSelectedArea = m_bSelectedArea;		// 選択範囲内置換
 	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_szText, _countof(m_szText));
+	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
+	std::vector<TCHAR> vText(nBufferSize);
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
+	m_strText = to_wchar(&vText[0]);
 	/* 置換後文字列 */
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, m_szText2, _countof(m_szText2));
+	nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
+	vText.resize(nBufferSize);
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
+	m_strText2 = to_wchar(&vText[0]);
 
 	/* 置換 ダイアログを自動的に閉じる */
 	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_bAutoCloseDlgReplace );
@@ -234,24 +241,39 @@ int CDlgReplace::GetData( void )
 	/* 先頭（末尾）から再検索 2002.01.26 hor */
 	m_pShareData->m_Common.m_sSearch.m_bSearchAll = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SEARCHALL );
 
-	if( 0 < wcslen( m_szText ) ){
+	if( 0 < m_strText.size() ){
 		/* 正規表現？ */
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
 		int nFlag = 0x00;
 		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
-		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_szText, GetHwnd(), true, nFlag ) ){
+		if( m_sSearchOption.bRegularExp && !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag ) ){
 			return -1;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
 
 		/* 検索文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
-		CSearchKeywordManager().AddToSearchKeyArr( m_szText );
+		if( m_strText.size() < _MAX_PATH ){
+			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+		}
+		// 2011.12.18 viewに直接設定
+		CEditView*	pcEditView = (CEditView*)m_lParam;
+		if( pcEditView->m_strCurSearchKey == m_strText && pcEditView->m_sCurSearchOption == m_sSearchOption ){
+		}else{
+			pcEditView->m_strCurSearchKey = m_strText;
+			pcEditView->m_sCurSearchOption = m_sSearchOption;
+			pcEditView->m_bCurSearchUpdate = true;
+		}
+		pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 
 		/* 置換後文字列 */
 		//@@@ 2002.2.2 YAZAKI CShareData.AddToReplaceKeyArr()追加に伴う変更
-		CSearchKeywordManager().AddToReplaceKeyArr( m_szText2 );
+		if( m_strText2.size() < _MAX_PATH ){
+			CSearchKeywordManager().AddToReplaceKeyArr( m_strText2.c_str() );
+		}
+		m_nReplaceKeySequence = GetDllShareData().m_Common.m_sSearch.m_nReplaceKeySequence;
 
 		// From Here 2001.12.03 hor
 		// クリップボードから貼り付ける？
@@ -288,8 +310,8 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	他との一貫性を保つため削除
 
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), _MAX_PATH - 1 );
+	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ), _MAX_PATH - 1 );
 
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );

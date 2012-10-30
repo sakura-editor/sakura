@@ -277,7 +277,15 @@ SAKURA_CORE_API int LimitStringLengthW(
 )
 {
 	int n=nDataLength;
-	if(n>nLimitLength)n=nLimitLength;
+	if(n>nLimitLength){
+		int i = 0;
+		int charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
+		for(; i + charSize <= nLimitLength;){
+			i += charSize;
+			charSize = CNativeW::GetSizeOfChar(pszData, nDataLength, i);
+		}
+		n = i;
+	}
 	cmemDes.SetString(pszData,n);
 	return n;
 }

@@ -147,6 +147,14 @@ public:
 	{
 		return m_szCmdLine;
 	}
+	size_t size() const
+	{
+		return m_pHead - m_szCmdLine;
+	}
+	size_t max_size() const
+	{
+		return _countof(m_szCmdLine) - 1;
+	}
 private:
 	TCHAR	m_szCmdLine[1024];
 	TCHAR*	m_pHead;
