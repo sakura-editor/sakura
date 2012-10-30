@@ -1,20 +1,23 @@
-#include "StdAfx.h"
-#include "CRecentGrepFile.h"
+#include "stdafx.h"
+#include "CRecentExceptMRU.h"
 #include <string.h>
 #include "env/DLLSHAREDATA.h"
+
+
+
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           生成                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CRecentGrepFile::CRecentGrepFile()
+CRecentExceptMRU::CRecentExceptMRU()
 {
 	Create(
-		GetShareData()->m_sSearchKeywords.m_aGrepFiles.dataPtr(),
-		&GetShareData()->m_sSearchKeywords.m_aGrepFiles._GetSizeRef(),
+		GetShareData()->m_sHistory.m_aExceptMRU.dataPtr(),
+		&GetShareData()->m_sHistory.m_aExceptMRU._GetSizeRef(),
 		NULL,
-		MAX_GREPFILE,
+		MAX_MRU,
 		NULL
 	);
 }
@@ -28,29 +31,29 @@ CRecentGrepFile::CRecentGrepFile()
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const TCHAR* CRecentGrepFile::GetItemText( int nIndex ) const
+const TCHAR* CRecentExceptMRU::GetItemText( int nIndex ) const
 {
 	return *GetItem(nIndex);
 }
 
-bool CRecentGrepFile::DataToReceiveType( LPCTSTR* dst, const CGrepFileString* src ) const
+bool CRecentExceptMRU::DataToReceiveType( LPCTSTR* dst, const CMetaPath* src ) const
 {
 	*dst = *src;
 	return true;
 }
 
-bool CRecentGrepFile::TextToDataType( CGrepFileString* dst, LPCTSTR pszText ) const
+bool CRecentExceptMRU::TextToDataType( CMetaPath* dst, LPCTSTR pszText ) const
 {
 	CopyItem(dst, pszText);
 	return true;
 }
 
-int CRecentGrepFile::CompareItem( const CGrepFileString* p1, LPCTSTR p2 ) const
+int CRecentExceptMRU::CompareItem( const CMetaPath* p1, LPCTSTR p2 ) const
 {
 	return _tcsicmp(*p1,p2);
 }
 
-void CRecentGrepFile::CopyItem( CGrepFileString* dst, LPCTSTR src ) const
+void CRecentExceptMRU::CopyItem( CMetaPath* dst, LPCTSTR src ) const
 {
 	_tcscpy(*dst,src);
 }

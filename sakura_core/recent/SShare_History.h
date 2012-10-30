@@ -38,6 +38,9 @@ struct SShare_History{
 	StaticString<TCHAR,_MAX_PATH>	m_szOPENFOLDERArr[MAX_OPENFOLDER];
 	bool							m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
 
+	//MRU除外リスト一覧
+	StaticVector< StaticString<TCHAR, _MAX_PATH>, MAX_MRU,  const TCHAR* >	m_aExceptMRU;
+
 	//MRU以外の情報
 	SFilePath													m_szIMPORTFOLDER;	// インポートディレクトリの履歴
 	StaticVector< StaticString<TCHAR, MAX_CMDLEN>, MAX_CMDARR > m_aCommands;		// 外部コマンド実行履歴

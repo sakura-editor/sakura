@@ -39,6 +39,8 @@ public:
 	int				CompareItem( const CGrepFolderString* p1, LPCTSTR p2 ) const;
 	void			CopyItem( CGrepFolderString* dst, LPCTSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;
+	bool			DataToReceiveType( LPCTSTR* dst, const CGrepFolderString* src ) const;
+	bool			TextToDataType( CGrepFolderString* dst, LPCTSTR pszText ) const;
 };
 
 #endif /* SAKURA_CRECENTGREPFOLDER_6162D952_F009_44DB_9C13_80E73507D8E7_H_ */

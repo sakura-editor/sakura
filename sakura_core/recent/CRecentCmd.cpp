@@ -34,6 +34,18 @@ const TCHAR* CRecentCmd::GetItemText( int nIndex ) const
 	return *GetItem(nIndex);
 }
 
+bool CRecentCmd::DataToReceiveType( LPCTSTR* dst, const CCmdString* src ) const
+{
+	*dst = *src;
+	return true;
+}
+
+bool CRecentCmd::TextToDataType( CCmdString* dst, LPCTSTR pszText ) const
+{
+	CopyItem(dst, pszText);
+	return true;
+}
+
 int CRecentCmd::CompareItem( const CCmdString* p1, LPCTSTR p2 ) const
 {
 	return _tcscmp(*p1,p2);

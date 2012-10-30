@@ -56,8 +56,8 @@ DLLSHAREDATA& GetDllShareData();
 
 #ifndef SAKURA_EXCLUDE_OPTIONAL_INCLUDE
 //@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
-#include "recent/CMRU.h"
-#include "recent/CMRUFolder.h"
+// #include "recent/CMRU.h"
+// #include "recent/CMRUFolder.h"
 
 #include "env/CFormatManager.h"
 #include "env/CHelpManager.h"

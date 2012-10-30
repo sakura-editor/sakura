@@ -33,6 +33,18 @@ const TCHAR* CRecentGrepFolder::GetItemText( int nIndex ) const
 	return *GetItem(nIndex);
 }
 
+bool CRecentGrepFolder::DataToReceiveType( LPCTSTR* dst, const CGrepFolderString* src ) const
+{
+	*dst = *src;
+	return true;
+}
+
+bool CRecentGrepFolder::TextToDataType( CGrepFolderString* dst, LPCTSTR pszText ) const
+{
+	CopyItem(dst, pszText);
+	return true;
+}
+
 int CRecentGrepFolder::CompareItem( const CGrepFolderString* p1, LPCTSTR p2 ) const
 {
 	return _tcsicmp(*p1,p2);

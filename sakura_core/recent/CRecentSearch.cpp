@@ -37,6 +37,18 @@ const TCHAR* CRecentSearch::GetItemText( int nIndex ) const
 	return to_tchar(*GetItem(nIndex));
 }
 
+bool CRecentSearch::DataToReceiveType( LPCWSTR* dst, const CSearchString* src ) const
+{
+	*dst = *src;
+	return true;
+}
+
+bool CRecentSearch::TextToDataType( CSearchString* dst, LPCTSTR pszText ) const
+{
+	CopyItem(dst, to_wchar(pszText));
+	return true;
+}
+
 int CRecentSearch::CompareItem( const CSearchString* p1, LPCWSTR p2 ) const
 {
 	return wcscmp(*p1,p2);

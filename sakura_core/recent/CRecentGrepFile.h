@@ -39,6 +39,8 @@ public:
 	int				CompareItem( const CGrepFileString* p1, LPCTSTR p2 ) const;
 	void			CopyItem( CGrepFileString* dst, LPCTSTR src ) const;
 	const TCHAR*	GetItemText( int nIndex ) const;
+	bool			DataToReceiveType( LPCTSTR* dst, const CGrepFileString* src ) const;
+	bool			TextToDataType( CGrepFileString* dst, LPCTSTR pszText ) const;
 };
 
 #endif /* SAKURA_CRECENTGREPFILE_6DFF8FB2_B7D0_4828_8191_744A9580C467_H_ */

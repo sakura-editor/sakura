@@ -35,6 +35,7 @@
 #include "StdAfx.h"
 #include <algorithm>
 #include "CDlgFavorite.h"
+#include "dlg/CDlgInput1.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
 #include "util/window.h"
@@ -46,6 +47,7 @@ const DWORD p_helpids[] = {
 	IDC_TAB_FAVORITE,				HIDC_TAB_FAVORITE,				//タブ
 	IDC_LIST_FAVORITE_FILE,			HIDC_LIST_FAVORITE_FILE,		//ファイル
 	IDC_LIST_FAVORITE_FOLDER,		HIDC_LIST_FAVORITE_FOLDER,		//フォルダ
+	IDC_LIST_FAVORITE_EXCEPTMRU,	HIDC_LIST_FAVORITE_EXCEPTMRU,	//MRU除外
 	IDC_LIST_FAVORITE_SEARCH,		HIDC_LIST_FAVORITE_SEARCH,		//検索
 	IDC_LIST_FAVORITE_REPLACE,		HIDC_LIST_FAVORITE_REPLACE,		//置換
 	IDC_LIST_FAVORITE_GREP_FILE,	HIDC_LIST_FAVORITE_GREPFILE,	//GREPファイル
@@ -55,6 +57,7 @@ const DWORD p_helpids[] = {
 	IDC_BUTTON_DELETE_NOFAVORATE,   HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE,  //お気に入り以外
 	IDC_BUTTON_DELETE_NOTFOUND,		HIDC_BUTTON_FAVORITE_DELETE_NOTFOUND		,  //存在しない項目
 	IDC_BUTTON_DELETE_SELECTED,     HIDC_BUTTON_FAVORITE_DELETE_SELECTED,    //選択項目
+	IDC_BUTTON_ADD_FAVORITE,        HIDC_BUTTON_ADD_FAVORITE,		// 追加
 	IDOK,							HIDC_FAVORITE_IDOK,				//閉じる
 //	IDCANCEL,						HIDC_FAVORITE_IDCANCEL,			//キャンセル
 	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ヘルプ
@@ -110,6 +113,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = true;
+		m_aFavoriteInfo[i].m_bEditable  = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentFolder;
@@ -118,6 +122,16 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = true;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = true;
+		m_aFavoriteInfo[i].m_bEditable  = false;
+
+		i++;
+		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentExceptMRU;
+		m_aFavoriteInfo[i].m_pszCaption = _T("ファイル・フォルダ除外");
+		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_EXCEPTMRU;
+		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bFilePath  = false;
+		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentSearch;
@@ -126,6 +140,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentReplace;
@@ -134,6 +149,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFile;
@@ -142,6 +158,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFolder;
@@ -150,6 +167,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentCmd;
@@ -158,6 +176,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = NULL;
@@ -166,6 +185,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveFavorite = false;
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = false;
 
 		/* これ以上増やすときはテーブルサイズも書き換えてね */
 		assert( i < _countof(m_aFavoriteInfo) );
@@ -206,6 +226,8 @@ void CDlgFavorite::SetData( void )
 	}
 
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
+
+	UpdateUIState();
 
 	return;
 }
@@ -444,6 +466,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 				if( IDYES == nRet ){
 					pRecent->DeleteAllItem();
 					RefreshListOne( m_nCurrentTab );
+					UpdateUIState();
 				}
 			}
 		}
@@ -462,6 +485,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 					pRecent->DeleteItemsNoFavorite();
 					pRecent->UpdateView();
 					RefreshListOne( m_nCurrentTab );
+					UpdateUIState();
 				}
 			}
 		}
@@ -489,6 +513,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 					}
 					pRecent->UpdateView();
 					RefreshListOne( m_nCurrentTab );
+					UpdateUIState();
 				}
 			}
 		}
@@ -497,6 +522,11 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	case IDC_BUTTON_DELETE_SELECTED:
 		{
 			DeleteSelected();
+		}
+		return TRUE;
+	case IDC_BUTTON_ADD_FAVORITE:
+		{
+			AddItem();
 		}
 		return TRUE;
 	}
@@ -531,16 +561,11 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 				hwndList = GetDlgItem( GetHwnd(), m_aFavoriteInfo[m_nCurrentTab].m_nId );
 				::ShowWindow( hwndList, SW_HIDE );
 
-				// お気に入り以外削除の有効・無効化
-				DlgItem_Enable( GetHwnd(), IDC_BUTTON_DELETE_NOFAVORATE,
-					m_aFavoriteInfo[nIndex].m_bHaveFavorite );
-
-				DlgItem_Enable( GetHwnd(), IDC_BUTTON_DELETE_NOTFOUND,
-					m_aFavoriteInfo[nIndex].m_bFilePath );
-
 				::SetFocus( hwndList );
 
 				m_nCurrentTab = nIndex;
+
+				UpdateUIState();
 
 				//ChangeSlider( nIndex );
 			}
@@ -554,6 +579,10 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 			NM_LISTVIEW* pnlv = (NM_LISTVIEW*)lParam;
 			switch( lpnmhdr->code )
 			{
+			case NM_DBLCLK:
+				EditItem();
+				return TRUE;
+
 			// ListViewヘッダクリック:ソートする
 			case LVN_COLUMNCLICK:
 				ListViewSort(
@@ -772,10 +801,83 @@ int CDlgFavorite::DeleteSelected()
 						}
 					}
 				}
+				UpdateUIState();
 			}
 		}
 	}
 	return nDelItemCount;
+}
+
+void CDlgFavorite::UpdateUIState()
+{
+	CRecent& recent = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
+
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_ADD_FAVORITE,
+		m_aFavoriteInfo[m_nCurrentTab].m_bEditable && recent.GetItemCount() <= recent.GetArrayCount() );
+
+	// 削除の有効・無効化
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_CLEAR,
+		0 < recent.GetItemCount() );
+
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_DELETE_NOFAVORATE,
+		m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite && 0 < recent.GetItemCount() );
+
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_DELETE_NOTFOUND,
+		m_aFavoriteInfo[m_nCurrentTab].m_bFilePath && 0 < recent.GetItemCount() );
+
+	DlgItem_Enable( GetHwnd(), IDC_BUTTON_DELETE_SELECTED,
+		0 < recent.GetItemCount() );
+}
+
+void CDlgFavorite::AddItem()
+{
+	if( !m_aFavoriteInfo[m_nCurrentTab].m_bEditable ){
+		return;
+	}
+	TCHAR szAddText[_MAX_PATH];
+	int max_size = _MAX_PATH;
+	_tcscpy( szAddText, _T("") );
+
+	CDlgInput1	cDlgInput1;
+	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), _T("追加"), _T("追加する文字列を入力してください。"), max_size, szAddText ) ){
+		return;
+	}
+
+	CRecent& recent = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
+	GetFavorite(m_nCurrentTab);
+	if( recent.AppendItemText(szAddText) ){
+		SetDataOne(m_nCurrentTab, -1);
+		UpdateUIState();
+	}
+}
+
+void CDlgFavorite::EditItem()
+{
+	if( !m_aFavoriteInfo[m_nCurrentTab].m_bEditable ){
+		return;
+	}
+	HWND hwndList = m_aListViewInfo[m_nCurrentTab].hListView;
+	int nSelectedCount = ListView_GetSelectedCount(hwndList);
+	if( 0 < nSelectedCount ){
+		int nLvItem = -1;
+		nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED);
+		if( -1 != nLvItem ) {
+			int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
+			CRecent& recent = *(m_aFavoriteInfo[m_nCurrentTab].m_pRecent);
+			TCHAR szText[_MAX_PATH];
+			int max_size = _MAX_PATH;
+			_tcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
+			CDlgInput1	cDlgInput1;
+			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), _T("編集"), _T("編集する文字列を入力してください。"), max_size, szText) ){
+				return;
+			}
+			GetFavorite(m_nCurrentTab);
+			if( recent.EditItemText(nRecIndex, szText) ){
+				SetDataOne(m_nCurrentTab, nRecIndex);
+				UpdateUIState();
+			}
+		}
+	}
 }
 
 int FormatFavoriteColm(TCHAR* buf, int size, int index, bool view)

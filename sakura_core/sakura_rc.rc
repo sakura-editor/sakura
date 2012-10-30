@@ -627,10 +627,13 @@ FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     CONTROL         "List1",IDC_LIST_FAVORITE_FILE,"SysListView32",
                     LVS_REPORT | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
-                    7,22,366,202
+                    3,17,373,213
     CONTROL         "List1",IDC_LIST_FAVORITE_FOLDER,"SysListView32",
                     LVS_REPORT | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
                     25,39,243,79
+    CONTROL         "List1",IDC_LIST_FAVORITE_EXCEPTMRU,"SysListView32",
+                    LVS_REPORT | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
+                    27,42,243,79
     CONTROL         "List1",IDC_LIST_FAVORITE_SEARCH,"SysListView32",
                     LVS_REPORT | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
                     18,54,243,79
@@ -645,17 +648,18 @@ BEGIN
                     18,115,243,79
     CONTROL         "List1",IDC_LIST_FAVORITE_CMD,"SysListView32",LVS_REPORT | 
                     LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,25,127,243,79
-    LTEXT           " 履歴の削除：",IDC_STATIC_BUTTONS,7,224,366,21,
+    PUSHBUTTON      "追加(&I)",IDC_BUTTON_ADD_FAVORITE,5,237,50,14
+    LTEXT           " 履歴の削除：",IDC_STATIC_BUTTONS,65,234,70,21,
                     SS_CENTERIMAGE
-    PUSHBUTTON      "すべて(&A)...",IDC_BUTTON_CLEAR,54,227,50,14
-    PUSHBUTTON      "お気に入り以外(&F)...",IDC_BUTTON_DELETE_NOFAVORATE,112,
-                    227,75,14
-    PUSHBUTTON      "存在しない項目(&N)...",IDC_BUTTON_DELETE_NOTFOUND,194,227,
+    PUSHBUTTON      "すべて(&A)...",IDC_BUTTON_CLEAR,111,237,50,14
+    PUSHBUTTON      "お気に入り以外(&F)...",IDC_BUTTON_DELETE_NOFAVORATE,163,
+                    237,75,14
+    PUSHBUTTON      "存在しない項目(&N)...",IDC_BUTTON_DELETE_NOTFOUND,241,237,
                     72,14
-    PUSHBUTTON      "選択項目(&D)",IDC_BUTTON_DELETE_SELECTED,290,227,60,14
+    PUSHBUTTON      "選択項目(&D)",IDC_BUTTON_DELETE_SELECTED,315,237,58,14
     DEFPUSHBUTTON   "閉じる(&C)",IDOK,260,255,50,14
     CONTROL         "Tab1",IDC_TAB_FAVORITE,"SysTabControl32",WS_TABSTOP,3,4,
-                    374,247
+                    374,15
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,323,255,50,14
     LTEXT           "Message",IDC_STATIC_FAVORITE_MSG,4,254,250,19
 END

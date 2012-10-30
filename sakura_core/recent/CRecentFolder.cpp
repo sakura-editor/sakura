@@ -36,6 +36,18 @@ const TCHAR* CRecentFolder::GetItemText( int nIndex ) const
 	return *GetItem(nIndex);
 }
 
+bool CRecentFolder::DataToReceiveType( LPCTSTR* dst, const CPathString* src ) const
+{
+	*dst = *src;
+	return true;
+}
+
+bool CRecentFolder::TextToDataType( CPathString* dst, LPCTSTR pszText ) const
+{
+	CopyItem(dst, pszText);
+	return true;
+}
+
 int CRecentFolder::CompareItem( const CPathString* p1, LPCTSTR p2 ) const
 {
 	return _tcsicmp(*p1,p2);

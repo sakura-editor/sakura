@@ -2301,6 +2301,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\recent\CRecentExceptMru.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\recent\CRecentExceptMru.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\recent\CRecentFile.cpp"
 					>
 				</File>

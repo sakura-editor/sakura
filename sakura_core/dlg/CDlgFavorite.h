@@ -70,13 +70,17 @@ protected:
 	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ダイアログデータの設定 */
 	bool	RefreshListOne( int nIndex );
 	//void	ChangeSlider( int nIndex );
+	void	UpdateUIState();
 	
 	void    GetFavorite( int nIndex );
 	int     DeleteSelected();
+	void	AddItem();
+	void	EditItem();
 
 private:
 	CRecentFile			m_cRecentFile;
 	CRecentFolder		m_cRecentFolder;
+	CRecentExceptMRU	m_cRecentExceptMRU;
 	CRecentSearch		m_cRecentSearch;
 	CRecentReplace		m_cRecentReplace;
 	CRecentGrepFile		m_cRecentGrepFile;
@@ -85,7 +89,7 @@ private:
 
 	enum {
 		// ! 管理数
-		FAVORITE_INFO_MAX = 8 // 管理数 +1(番兵)
+		FAVORITE_INFO_MAX = 9 // 管理数 +1(番兵)
 	};
 
 	struct FavoriteInfo {
@@ -95,6 +99,7 @@ private:
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
 		bool		m_bFilePath;		//ファイル/フォルダか？
+		bool		m_bEditable;		//編集可能
 		int			m_nViewCount;		//カレントの表示数
 	};
 

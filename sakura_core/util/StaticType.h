@@ -37,6 +37,7 @@ public:
 public:
 	//属性
 	int size() const{ return m_nCount; }
+	int max_size() const{ return MAX_SIZE; }
 
 	//要素アクセス
 	ElementType&       operator[](int nIndex)      { assert(nIndex<MAX_SIZE); assert_warning(nIndex<m_nCount); return m_aElements[nIndex]; }
