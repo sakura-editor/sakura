@@ -44,7 +44,7 @@ public:
 	int		m_bRegularExp;	// 正規表現
 	*/
 	int		m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-	wchar_t	m_szText[_MAX_PATH + 1];	// 検索文字列
+	std::wstring	m_strText;	// 検索文字列
 
 	CLogicPoint	m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 

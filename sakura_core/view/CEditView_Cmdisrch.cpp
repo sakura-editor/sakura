@@ -246,13 +246,17 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 //!	インクリメンタルサーチモードから抜ける
 void CEditView::ISearchExit()
 {
-	CSearchKeywordManager().AddToSearchKeyArr( m_szCurSrchKey );
+	// シーケンスを上書きして現在の検索キーを維持する
+	if( m_strCurSearchKey.size() < _MAX_PATH ){
+		CSearchKeywordManager().AddToSearchKeyArr( m_strCurSearchKey.c_str() );
+	}
+	m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	GetDllShareData().m_Common.m_sSearch.m_sSearchOption = m_sCurSearchOption;
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	
 	if (m_nISearchHistoryCount == 0){
-		m_szCurSrchKey[0] = '\0';
+		m_strCurSearchKey.clear();
 	}
 
 	//マウスカーソルを元に戻す
@@ -286,20 +290,15 @@ void CEditView::ISearchExec(DWORD wChar)
 	if (m_bISearchFirst){
 		m_bISearchFirst = false;
 		l = 0 ;
+		m_strCurSearchKey.clear();
 	}else	
-		l = wcslen(m_szCurSrchKey) ;
+		l = (int)m_strCurSearchKey.size() ;
 
 	if( wChar <= 0xffff ){
-		if( l < _countof(m_szCurSrchKey) - 1 ){
-			m_szCurSrchKey[l] = (WCHAR)wChar;
-			m_szCurSrchKey[l+1] = L'\0';
-		}
+		m_strCurSearchKey.append(1, (WCHAR)wChar);
 	}else{
-		if( l < _countof(m_szCurSrchKey) - 2 ){
-			m_szCurSrchKey[l]   = (WCHAR)(wChar>>16);
-			m_szCurSrchKey[l+1] = (WCHAR)wChar;
-			m_szCurSrchKey[l+2] = L'\0';
-		}
+		m_strCurSearchKey.append(1, (WCHAR)(wChar>>16));
+		m_strCurSearchKey.append(1, (WCHAR)wChar);
 	}
 
 	ISearchExec(false);
@@ -341,7 +340,7 @@ void CEditView::ISearchExec(bool bNext)
 {
 	//検索を実行する.
 
-	if ( (m_szCurSrchKey[0] == L'\0') || (m_nISearchMode == 0)){
+	if ( (m_strCurSearchKey.size() == 0) || (m_nISearchMode == 0)){
 		//ステータスの表示
 		CNativeT msg;
 		ISearchSetStatusMsg(&msg);
@@ -416,7 +415,7 @@ void CEditView::ISearchExec(bool bNext)
 	int nSearchResult = m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLine,						// 検索開始レイアウト行
 		nIdx,						// 検索開始データ位置
-		m_szCurSrchKey,				// 検索条件
+		m_strCurSearchKey.c_str(),	// 検索条件
 		m_nISearchDirection,		// 0==前方検索 1==後方検索
 		m_sCurSearchOption,			// 2011.12.15 Moca 色分け「次検索」と同期をとるためm_sCurSearchOptionをそのまま指定
 		&sMatchRange,				// マッチレイアウト範囲
@@ -461,14 +460,15 @@ void CEditView::ISearchBack(void) {
 		m_bISearchFirst = true;
 	}else if( m_bISearchFlagHistory[m_nISearchHistoryCount] == false){
 		//検索文字をへらす
-		long l = wcslen(m_szCurSrchKey);
+		size_t l = m_strCurSearchKey.size();
 		if (l > 0 ){
 			//最後の文字の一つ前
-			wchar_t* p = (wchar_t*)CNativeW::GetCharPrev( m_szCurSrchKey, l, &m_szCurSrchKey[l] );
-			*p = L'\0';
+			wchar_t* p = (wchar_t*)CNativeW::GetCharPrev( m_strCurSearchKey.c_str(), l, &m_strCurSearchKey.c_str()[l] );
+			size_t new_len = p - m_strCurSearchKey.c_str();
+			m_strCurSearchKey.resize( new_len );
 			//m_szCurSrchKey[l-1] = '\0';
 
-			if ( (p - m_szCurSrchKey) > 0 ) 
+			if ( new_len > 0 ) 
 				ISearchWordMake();
 			else
 				m_bCurSrchKeyMark = false;
@@ -514,7 +514,7 @@ void CEditView::ISearchWordMake(void)
 		}
 		nFlag |= m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
 		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile(m_szCurSrchKey , nFlag );
+		m_CurRegexp.Compile(m_strCurSearchKey.c_str() , nFlag );
 		break;
 	case 3: // MIGEMOインクリメンタルサーチ
 		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
@@ -524,7 +524,7 @@ void CEditView::ISearchWordMake(void)
 
 		{
 			//migemoで捜す
-			std::wstring strMigemoWord = m_pcmigemo->migemo_query_w(m_szCurSrchKey);
+			std::wstring strMigemoWord = m_pcmigemo->migemo_query_w(m_strCurSearchKey.c_str());
 			
 			/* 検索パターンのコンパイル */
 			m_CurRegexp.Compile(strMigemoWord.c_str(), nFlag );
@@ -570,7 +570,7 @@ void CEditView::ISearchSetStatusMsg(CNativeT* msg) const
 	}
 
 	if(m_nISearchHistoryCount > 0)
-		msg->AppendString(to_tchar(m_szCurSrchKey));
+		msg->AppendString(to_tchar(m_strCurSearchKey.c_str()));
 }
 
 /*!

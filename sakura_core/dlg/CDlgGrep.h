@@ -50,7 +50,7 @@ public:
 	ECodeType	m_nGrepCharSet;		/*!< 文字コードセット */
 
 	int			m_nGrepOutputStyle;			/*!< Grep: 出力形式 */
-	EDIT_CHAR	m_szText[_MAX_PATH + 1];	/*!< 検索文字列 */
+	std::wstring	m_strText;				/*!< 検索文字列 */
 	SFilePath	m_szFile;					/*!< 検索ファイル */
 	SFilePath	m_szFolder;					/*!< 検索フォルダ */
 	SFilePath	m_szCurrentFilePath;

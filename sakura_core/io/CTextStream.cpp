@@ -20,8 +20,9 @@ CTextInputStream::CTextInputStream(const TCHAR* tszPath)
 		//BOM確認 -> m_bIsUtf8
 		static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
 		BYTE buf[3];
-		fread(&buf,1,sizeof(UTF8_BOM),GetFp());
-		m_bIsUtf8 = (memcmp(buf,UTF8_BOM,sizeof(UTF8_BOM))==0);
+		if( sizeof(UTF8_BOM) == fread(&buf,1,sizeof(UTF8_BOM),GetFp()) ){
+			m_bIsUtf8 = (memcmp(buf,UTF8_BOM,sizeof(UTF8_BOM))==0);
+		}
 
 		//UTF-8じゃなければ、ファイルポインタを元に戻す
 		if(!m_bIsUtf8){

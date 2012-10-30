@@ -105,8 +105,9 @@ DWORD CGrepAgent::DoGrep(
 	}
 
 	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
-	wcscpy( pcViewDst->m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
+	pcViewDst->m_strCurSearchKey = pcmGrepKey->GetStringPtr();				/* 検索文字列 */
 	pcViewDst->m_sCurSearchOption = sSearchOption;						// 検索オプション
+	pcViewDst->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 
 	/* 正規表現 */
 
@@ -129,7 +130,7 @@ DWORD CGrepAgent::DoGrep(
 		/* 検索パターンのコンパイル */
 		int nFlag = 0x00;
 		nFlag |= pcViewDst->m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
-		pcViewDst->m_CurRegexp.Compile( pcViewDst->m_szCurSrchKey, nFlag );
+		pcViewDst->m_CurRegexp.Compile( pcViewDst->m_strCurSearchKey.c_str(), nFlag );
 	}
 	//	To Here Jun. 27 genta
 

@@ -91,6 +91,7 @@ public:
 	/*
 	|| 実装ヘルパ系
 	*/
+	static void DoGrepCreateWindow(HINSTANCE hinst, HWND, CDlgGrep& cDlgGrep);
 protected:
 	void	DoGrep();	//Stonee, 2001/03/21
 	BOOL TrayMessage(HWND , DWORD , UINT , HICON , const TCHAR* );	/*!< タスクトレイのアイコンに関する処理 */
@@ -117,6 +118,7 @@ private:
 
 	DLLSHAREDATA*	m_pShareData;
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
+	int				m_nCurSearchKeySequence;
 
 	CImageListMgr	m_hIcons;
 

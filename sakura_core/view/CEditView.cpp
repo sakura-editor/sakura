@@ -146,9 +146,10 @@ BOOL CEditView::Create(
 	_SetDragMode(FALSE);					/* 選択テキストのドラッグ中か */
 	m_bCurSrchKeyMark = false;				/* 検索文字列 */
 	//	Jun. 27, 2001 genta
-	m_szCurSrchKey[0] = L'\0';
-
+	m_strCurSearchKey.clear();
 	m_sCurSearchOption.Reset();				// 検索／置換 オプション
+	m_bCurSearchUpdate = false;
+	m_nCurSearchKeySequence = -1;
 
 	m_nMyIndex = 0;
 

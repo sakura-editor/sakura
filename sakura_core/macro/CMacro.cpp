@@ -95,12 +95,12 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
 		{
-			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp	? 0x04 : 0x00;
+			lFlag |= pcEditView->m_sCurSearchOption.bWordOnly		? 0x01 : 0x00;
+			lFlag |= pcEditView->m_sCurSearchOption.bLoHiCase		? 0x02 : 0x00;
+			lFlag |= pcEditView->m_sCurSearchOption.bRegularExp		? 0x04 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
@@ -110,13 +110,13 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 	case F_REPLACE:
 	case F_REPLACE_ALL:
 		{
-			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );	//	lParamを追加。
-			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_strCurSearchKey.c_str() );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace.m_strText2.c_str() );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp	? 0x04 : 0x00;
+			lFlag |= pcEditView->m_sCurSearchOption.bWordOnly		? 0x01 : 0x00;
+			lFlag |= pcEditView->m_sCurSearchOption.bLoHiCase		? 0x02 : 0x00;
+			lFlag |= pcEditView->m_sCurSearchOption.bRegularExp	? 0x04 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
@@ -129,15 +129,15 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 		break;
 	case F_GREP:
 		{
-			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgGrep.m_strText.c_str() );	//	lParamを追加。
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFiles[0] );	//	lParamを追加。
 			AddStringParam( GetDllShareData().m_sSearchKeywords.m_aGrepFolders[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder				? 0x01 : 0x00;
 			//			この編集中のテキストから検索する(0x02.未実装)
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase						? 0x04 : 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp					? 0x08 : 0x00;
+			lFlag |= pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgGrep.m_sSearchOption.bLoHiCase		? 0x04 : 0x00;
+			lFlag |= pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgGrep.m_sSearchOption.bRegularExp	? 0x08 : 0x00;
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
@@ -294,10 +294,9 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
 			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			out.WriteF(
-				LTEXT("S_%ls(\'%ls\', %d);\t// %ls\r\n"),
-				szFuncName,
-				cmemWork.GetStringPtr(),
+			out.WriteF( L"S_%ls(\'", szFuncName );
+			out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
+			out.WriteF( L"', %d);\t// %ls\r\n",
 				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
 				szFuncNameJapanese
 			);
@@ -328,11 +327,11 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				CNativeW cmemWork2(m_pParamTop->m_pNext->m_pData);
 				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
 				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
-				out.WriteF(
-					LTEXT("S_%ls(\'%ls\', \'%ls\', %d);\t// %ls\r\n"),
-					szFuncName,
-					cmemWork.GetStringPtr(),
-					cmemWork2.GetStringPtr(),
+				out.WriteF( L"S_%ls(\'", szFuncName );
+				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
+				out.WriteF( L"\', \'" );
+				out.WriteString( cmemWork2.GetStringPtr(), cmemWork2.GetStringLength() );
+				out.WriteF( L"\', %d);\t// %ls\r\n",
 					m_pParamTop->m_pNext->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pNext->m_pData) : 0,
 					szFuncNameJapanese
 				);
@@ -352,10 +351,10 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				CNativeW cmemWork3(m_pParamTop->m_pNext->m_pNext->m_pData);
 				cmemWork3.Replace( LTEXT("\\"), LTEXT("\\\\") );
 				cmemWork3.Replace( LTEXT("\'"), LTEXT("\\\'") );
+				out.WriteF( L"S_%ls(\'", szFuncName );
+				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
 				out.WriteF(
-					LTEXT("S_%ls(\'%ls\', \'%ls\', \'%ls\', %d);\t// %ls\r\n"),
-					szFuncName,
-					cmemWork.GetStringPtr(),
+					L"\', \'%ls\', \'%ls\', %d);\t// %ls\r\n",
 					cmemWork2.GetStringPtr(),
 					cmemWork3.GetStringPtr(),
 					m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData) : 0,
@@ -527,9 +526,16 @@ void CMacro::HandleCommand(
 		//		0x08	見つからないときにメッセージを表示
 		//		0x10	検索ダイアログを自動的に閉じる
 		//		0x20	先頭（末尾）から再検索する
+		//		0x800	(マクロ専用)検索キーを履歴に登録しない
 		{
 			LPARAM lFlag = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
-			if( 0 < wcslen( Argument[0] ) ){
+			SSearchOption sSearchOption;
+			sSearchOption.bWordOnly			= (0 != (lFlag & 0x01));
+			sSearchOption.bLoHiCase			= (0 != (lFlag & 0x02));
+			sSearchOption.bRegularExp		= (0 != (lFlag & 0x04));
+			bool bAddHistory = (0 == (lFlag & 0x800));
+			int nLen = wcslen( Argument[0] );
+			if( 0 < nLen ){
 				/* 正規表現 */
 				if( lFlag & 0x04
 					&& !CheckRegexpSyntax( Argument[0], NULL, true )
@@ -539,19 +545,22 @@ void CMacro::HandleCommand(
 				}
 
 				/* 検索文字列 */
-				CSearchKeywordManager().AddToSearchKeyArr( Argument[0] );
+				if( nLen < _MAX_PATH && bAddHistory ){
+					CSearchKeywordManager().AddToSearchKeyArr( Argument[0] );
+					GetDllShareData().m_Common.m_sSearch.m_sSearchOption = sSearchOption;
+				}
+				pcEditView->m_strCurSearchKey = Argument[0];
+				pcEditView->m_sCurSearchOption = sSearchOption;
+				pcEditView->m_bCurSearchUpdate = true;
+				pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 			}
 			//	設定値バックアップ
 			//	マクロパラメータ→設定値変換
-			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly			= lFlag & 0x01 ? 1 : 0;
-			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase			= lFlag & 0x02 ? 1 : 0;
-			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 
 			//	コマンド発行
-		//	pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
 			pcEditView->GetCommander().HandleCommand( Index, FALSE, 0, 0, 0, 0);
 		}
 		break;
@@ -649,7 +658,8 @@ void CMacro::HandleCommand(
 		//		0x200	見つかった文字列の後に追加
 		//		**********************************
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
-		if( Argument[0] == NULL || 0 == wcslen( Argument[0] ) ){
+		//		0x800	(マクロ専用)検索キーを履歴に登録しない
+		if( Argument[0] == NULL || Argument[0] == L'\0' ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("置換元パターンが指定されていません．"));
 			break;
@@ -660,8 +670,13 @@ void CMacro::HandleCommand(
 			break;
 		}
 		{
+			CDlgReplace& cDlgReplace = pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace;
 			LPARAM lFlag = Argument[2] != NULL ? _wtoi(Argument[2]) : 0;
-
+			SSearchOption sSearchOption;
+			sSearchOption.bWordOnly			= (0 != (lFlag & 0x01));
+			sSearchOption.bLoHiCase			= (0 != (lFlag & 0x02));
+			sSearchOption.bRegularExp		= (0 != (lFlag & 0x04));
+			bool bAddHistory = (0 == (lFlag & 0x800));
 			/* 正規表現 */
 			if( lFlag & 0x04
 				&& !CheckRegexpSyntax( Argument[0], NULL, true )
@@ -671,29 +686,39 @@ void CMacro::HandleCommand(
 			}
 
 			/* 検索文字列 */
-			CSearchKeywordManager().AddToSearchKeyArr( Argument[0] );
+			if( wcslen(Argument[0]) < _MAX_PATH && bAddHistory ){
+				CSearchKeywordManager().AddToSearchKeyArr( Argument[0] );
+				GetDllShareData().m_Common.m_sSearch.m_sSearchOption = sSearchOption;
+			}
+			pcEditView->m_strCurSearchKey = Argument[0];
+			pcEditView->m_sCurSearchOption = sSearchOption;
+			pcEditView->m_bCurSearchUpdate = true;
+			pcEditView->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 
-			/* 検索文字列 */
-			CSearchKeywordManager().AddToReplaceKeyArr( Argument[1] );
+			/* 置換後文字列 */
+			if( wcslen(Argument[1]) < _MAX_PATH && bAddHistory ){
+				CSearchKeywordManager().AddToReplaceKeyArr( Argument[1] );
+			}
+			cDlgReplace.m_strText2 = Argument[1];
 
-			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly			= lFlag & 0x01 ? 1 : 0;
-			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bLoHiCase			= lFlag & 0x02 ? 1 : 0;
-			GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
 			GetDllShareData().m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
-			pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
-//			GetDllShareData().m_Common.m_sSearch.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
-			GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
+			cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
+			cDlgReplace.m_bConsecutiveAll = lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
 			if (LOWORD(Index) == F_REPLACE) {	// 2007.07.08 genta コマンドは下位ワード
 				//	置換する時は選べない
-				GetDllShareData().m_Common.m_sSearch.m_bSelectedArea	= 0;
+				cDlgReplace.m_bSelectedArea = 0;
 			}
 			else if (LOWORD(Index) == F_REPLACE_ALL) {	// 2007.07.08 genta コマンドは下位ワード
 				//	全置換の時は選べる？
-				GetDllShareData().m_Common.m_sSearch.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
+				cDlgReplace.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}
-			pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
+			cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
+			if( bAddHistory ){
+				GetDllShareData().m_Common.m_sSearch.m_bConsecutiveAll = cDlgReplace.m_bConsecutiveAll;
+				GetDllShareData().m_Common.m_sSearch.m_bSelectedArea = cDlgReplace.m_bSelectedArea;
+			}
 			//	コマンド発行
 			pcEditView->GetCommander().HandleCommand( Index, FALSE, 0, 0, 0, 0);
 		}
@@ -737,7 +762,7 @@ void CMacro::HandleCommand(
 			//	常に外部ウィンドウに。
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
-			CNativeT cmWork1;	cmWork1.SetStringW( Argument[0] );	cmWork1.Replace( _T("\""), _T("\"\"") );	//	検索文字列
+			CNativeW cmWork1;	cmWork1.SetString( Argument[0] );	cmWork1.Replace( L"\"", L"\"\"" );	//	検索文字列
 			CNativeT cmWork2;	cmWork2.SetStringW( Argument[1] );	cmWork2.Replace( _T("\""), _T("\"\"") );	//	ファイル名
 			CNativeT cmWork3;	cmWork3.SetStringW( Argument[2] );	cmWork3.Replace( _T("\""), _T("\"\"") );	//	フォルダ名
 
@@ -757,15 +782,18 @@ void CMacro::HandleCommand(
 			}
 
 			// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-			CCommandLineString cCmdLine;
+			CNativeT cCmdLine;
+			TCHAR	szTemp[20];
 			TCHAR	pOpt[64];
-			cCmdLine.AppendF(
-				_T("-GREPMODE -GKEY=\"%ls\" -GFILE=\"%ls\" -GFOLDER=\"%ls\" -GCODE=%d"),
-				cmWork1.GetStringPtr(),
-				cmWork2.GetStringPtr(),
-				cmWork3.GetStringPtr(),
-				nCharSet
-			);
+			cCmdLine.AppendString(_T("-GREPMODE -GKEY=\""));
+			cCmdLine.AppendStringW(cmWork1.GetStringPtr());
+			cCmdLine.AppendString(_T("\" -GFILE=\""));
+			cCmdLine.AppendString(cmWork2.GetStringPtr());
+			cCmdLine.AppendString(_T("\" -GFOLDER=\""));
+			cCmdLine.AppendString(cmWork3.GetStringPtr());
+			cCmdLine.AppendString(_T("\" -GCODE="));
+			auto_sprintf( szTemp, _T("%d"), nCharSet );
+			cCmdLine.AppendString(szTemp);
 
 			//GOPTオプション
 			pOpt[0] = '\0';
@@ -776,7 +804,8 @@ void CMacro::HandleCommand(
 			if( lFlag & 0x40 )_tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
 			else _tcscat( pOpt, _T("1") );
 			if( 0 < _tcslen( pOpt ) ){
-				cCmdLine.AppendF( _T(" -GOPT=%ts"), pOpt );
+				auto_sprintf( szTemp, _T(" -GOPT=%ts"), pOpt );
+				cCmdLine.AppendString(szTemp);
 			}
 
 			/* 新規編集ウィンドウの追加 ver 0 */
@@ -788,7 +817,7 @@ void CMacro::HandleCommand(
 				G_AppInstance(),
 				pcEditView->GetHwnd(),
 				sLoadInfo,
-				cCmdLine.c_str()
+				cCmdLine.GetStringPtr()
 			);
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */

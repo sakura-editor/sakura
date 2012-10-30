@@ -26,11 +26,14 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 			//検索キーワードを取得
 			wchar_t	szText[_MAX_PATH];
 			wmemset( szText, 0, _countof(szText) );
-			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
+			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH, (LPARAM)szText );
 			if( szText[0] )	//キー文字列がある
 			{
 				//検索キーを登録
 				CSearchKeywordManager().AddToSearchKeyArr( szText );
+				m_pOwner->GetActiveView().m_strCurSearchKey = szText;
+				m_pOwner->GetActiveView().m_bCurSearchUpdate = true;
+				m_pOwner->GetActiveView().ChangeCurRegexp();
 
 				//検索ボックスを更新	// 2010/6/6 Uchi
 				AcceptSharedSearchKey();

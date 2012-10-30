@@ -59,11 +59,10 @@ CDlgGrep::CDlgGrep()
 	m_nGrepCharSet = CODE_SJIS;			// 文字コードセット
 	m_bGrepOutputLine = TRUE;			// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = 1;				// Grep: 出力形式
-	m_szText[0] = 0;
 	m_szFile[0] = 0;
 	m_szFolder[0] = 0;
 	if( m_pShareData->m_sSearchKeywords.m_aSearchKeys.size() ){
-		wcscpy( m_szText, m_pShareData->m_sSearchKeywords.m_aSearchKeys[0] );		/* 検索文字列 */
+		m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];	/* 検索文字列 */
 	}
 	if( m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 	_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
@@ -101,7 +100,7 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	_SetHwnd( hwndDlg );
 
 	/* ユーザーがコンボボックスのエディット コントロールに入力できるテキストの長さを制限する */
-	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
+	//	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE ), _MAX_PATH - 1 );
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER ), _MAX_PATH - 1 );
 
@@ -285,7 +284,7 @@ void CDlgGrep::SetData( void )
 {
 
 	/* 検索文字列 */
-	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szText );
+	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	HWND	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
 	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
 		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
@@ -478,13 +477,15 @@ int CDlgGrep::GetData( void )
 
 
 	/* 検索文字列 */
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_szText, _countof(m_szText) );
+	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
+	std::vector<TCHAR> vText(nBufferSize);
+	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
+	m_strText = to_wchar(&vText[0]);
 	/* 検索ファイル */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
 	/* 検索フォルダ */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder, _countof2(m_szFolder) );
 
-	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
 	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;			// 文字コード自動判別
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine = m_bGrepOutputLine;	// 行を出力するか該当部分だけ出力するか
 	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;	// Grep: 出力形式
@@ -521,16 +522,19 @@ int CDlgGrep::GetData( void )
 
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
 	/* 検索文字列 */
-	if( 0 < wcslen( m_szText ) ){
+	if( 0 < m_strText.size() ){
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
 		int nFlag = 0;
 		nFlag |= m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
-		if( m_sSearchOption.bRegularExp  && !CheckRegexpSyntax( m_szText, GetHwnd(), true, nFlag) ){
+		if( m_sSearchOption.bRegularExp  && !CheckRegexpSyntax( m_strText.c_str(), GetHwnd(), true, nFlag) ){
 			return FALSE;
 		}
 		// To Here Jun. 26, 2001 genta 正規表現ライブラリ差し替え
-		CSearchKeywordManager().AddToSearchKeyArr( m_szText );
+		if( m_strText.size() < _MAX_PATH ){
+			CSearchKeywordManager().AddToSearchKeyArr( m_strText.c_str() );
+			m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+		}
 	}
 
 	// この編集中のテキストから検索する場合、履歴に残さない	Uchi 2008/5/23
