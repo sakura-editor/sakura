@@ -8701,6 +8701,17 @@ BOOL CViewCommander::Command_PUTFILE(
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
 	std::auto_ptr<CCodeBase> pcSaveCode( CCodeFactory::CreateCodeBase(nSaveCharCode,0) );
+
+	bool bBom = false;
+	switch( nSaveCharCode ){
+		case CODE_UNICODE:
+		case CODE_UNICODEBE:
+		case CODE_UTF8:
+		case CODE_CESU8:
+		case CODE_UTF7:
+			bBom = GetDocument()->m_cDocFile.IsBomExist();;
+			break;
+	}
 	
 	if(nFlgOpt & 0x01)
 	{	/* ‘I‘ð”ÍˆÍ‚ðo—Í */
@@ -8709,7 +8720,7 @@ BOOL CViewCommander::Command_PUTFILE(
 			CBinaryOutputStream out(to_tchar(filename),true);
 
 			//BOMo—Í
-			if ( GetDocument()->m_cDocFile.IsBomExist() ) {
+			if( bBom ){
 				CMemory cmemBom;
 				pcSaveCode->GetBom(&cmemBom);
 				if(cmemBom.GetRawLength()>0)
@@ -8770,7 +8781,7 @@ BOOL CViewCommander::Command_PUTFILE(
 				to_tchar(filename),
 				nSaveCharCode,
 				EOL_NONE,
-				GetDocument()->m_cDocFile.IsBomExist()
+				bBom
 			)
 		);
 		bResult = (eRet != RESULT_FAILURE);
