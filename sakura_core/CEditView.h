@@ -485,7 +485,7 @@ protected:
 	int  LineIndexToColmn( const CDocLine* pcLayout, int nIndex );		/* 指定された行のデータ内の位置に対応する桁の位置を調べる */	// @@@ 2002.09.28 YAZAKI
 	void CopySelectedAllLines( const char*, BOOL );				/* 選択範囲内の全行をクリップボードにコピーする */
 	void ConvSelectedArea( int );								/* 選択エリアのテキストを指定方法で変換 */
-	void ConvMemory( CMemory*, int );							/* 機能種別によるバッファの変換 */
+	void ConvMemory( CMemory*, int, int nStartColumn );							/* 機能種別によるバッファの変換 */
 	/*! 選択範囲を指定する(原点未選択)
 
 		@date 2005.06.24 Moca

@@ -91,8 +91,8 @@ public:
 	void SJISToUTF7( void );	/* SJIS→UTF-7コード変換  */
 	void UnicodeToUTF8( void );	/* Unicode→UTF-8コード変換 */
 	void UnicodeToUTF7( void );	/* Unicode→UTF-7コード変換 */
-	void TABToSPACE( int );	/* TAB→空白 */
-	void SPACEToTAB( int );	/* 空白→TAB */  //#### Stonee, 2001/05/27
+	void TABToSPACE( int nTabWidth, int nStartColumn );	/* TAB→空白 */
+	void SPACEToTAB( int nTabWidth, int nStartColumn );	/* 空白→TAB */  //#### Stonee, 2001/05/27
 	void SwapHLByte( void ); /* Byteを交換する */
 
 	void BASE64Decode( void );	// Base64デコード

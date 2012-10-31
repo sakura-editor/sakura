@@ -2490,7 +2490,7 @@ void CMemory::AUTOToSJIS( void )
 
 
 /* TAB→空白 */
-void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
+void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */, int nStartColumn )
 {
 	const char*	pLine;
 	int			nLineLen;
@@ -2507,7 +2507,9 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
 	while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
-			nPosX = 0;
+//			nPosX = 0;
+            // 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？） 
+	        nPosX = (m_pData == pLine)? nStartColumn: 0;   // 処理中のiに対応する表示桁位置 
 			for( i = 0; i < nLineLen; ++i ){
 				if( TAB == pLine[i]	){
 					nWork = nTabSpace - ( nPosX % nTabSpace );
@@ -2530,7 +2532,9 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
 	while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
-			nPosX = 0;
+//			nPosX = 0;
+            // 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？） 
+	        nPosX = (m_pData == pLine)? nStartColumn: 0;   // 処理中のiに対応する表示桁位置 
 			for( i = 0; i < nLineLen; ++i ){
 				if( TAB == pLine[i]	){
 					nWork = nTabSpace - ( nPosX % nTabSpace );
@@ -2564,7 +2568,7 @@ void CMemory::TABToSPACE( int nTabSpace	/* TABの文字数 */ )
 	@author Stonee
 	@date 2001/5/27
 */
-void CMemory::SPACEToTAB( int nTabSpace )
+void CMemory::SPACEToTAB( int nTabSpace, int nStartColumn	 )
 {
 	const char*	pLine;
 	int			nLineLen;
@@ -2597,7 +2601,9 @@ void CMemory::SPACEToTAB( int nTabSpace )
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
 	while( NULL != ( pLine = GetNextLine( m_pData, m_nDataLen, &nLineLen, &nBgn, &cEol ) ) ){
 		if( 0 < nLineLen ){
-			nPosX = 0;	// 処理中のiに対応する表示桁位置
+//			nPosX = 0;	// 処理中のiに対応する表示桁位置
+            // 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？） 
+	        nPosX = (m_pData == pLine)? nStartColumn: 0;   // 処理中のiに対応する表示桁位置 
 			bSpace = FALSE;	//直前がスペースか
 			nStartPos = 0;	// スペースの先頭
 			for( i = 0; i < nLineLen; ++i ){

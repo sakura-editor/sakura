@@ -6057,7 +6057,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					pcMemDeleted = NULL;
 				}
 				/* 機能種別によるバッファの変換 */
-				ConvMemory( &cmemBuf, nFuncCode );
+				ConvMemory( &cmemBuf, nFuncCode, rcSel.left );
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					pcOpe = new COpe;
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
@@ -6109,7 +6109,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );
 
 		/* 機能種別によるバッファの変換 */
-		ConvMemory( &cmemBuf, nFuncCode );
+		ConvMemory( &cmemBuf, nFuncCode, m_nSelectColmFrom );
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
@@ -6152,7 +6152,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 
 
 /* 機能種別によるバッファの変換 */
-void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
+void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode, int nStartColumn )
 {
 	switch( nFuncCode ){
 	case F_TOLOWER: pCMemory->ToLower(); break;						/* 小文字 */
@@ -6179,12 +6179,14 @@ void CEditView::ConvMemory( CMemory* pCMemory, int nFuncCode )
 	case F_TABTOSPACE:
 		pCMemory->TABToSPACE(
 			//	Sep. 23, 2002 genta LayoutMgrの値を使う
-			m_pcEditDoc->m_cLayoutMgr.GetTabSpace()
+			m_pcEditDoc->m_cLayoutMgr.GetTabSpace(), 
+			nStartColumn
 		);break;	/* TAB→空白 */
 	case F_SPACETOTAB:	//#### Stonee, 2001/05/27
 		pCMemory->SPACEToTAB(
 			//	Sep. 23, 2002 genta LayoutMgrの値を使う
-			m_pcEditDoc->m_cLayoutMgr.GetTabSpace()
+			m_pcEditDoc->m_cLayoutMgr.GetTabSpace(),
+			nStartColumn
 		);
 		break;		/* 空白→TAB */
 	case F_LTRIM:	Command_TRIM2( pCMemory , TRUE  );break;	// 2001.12.03 hor
