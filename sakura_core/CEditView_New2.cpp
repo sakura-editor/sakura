@@ -1063,7 +1063,7 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
-	cline = ci->m_pLine->GetStringPtr( &len );
+	cline = ci->m_cLine.GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;
 
@@ -1109,7 +1109,7 @@ bool CEditView::SearchBracketForward( int PosX, int PosY, int* NewX, int* NewY,
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_pLine->GetStringPtr( &len );
+		cline = ci->m_cLine.GetStringPtr( &len );
 		cPos = cline;
 		lineend = cline + len;
 	}while( cline != NULL );
@@ -1152,7 +1152,7 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
-	cline = ci->m_pLine->GetStringPtr( &len );
+	cline = ci->m_cLine.GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;
 
@@ -1198,7 +1198,7 @@ bool CEditView::SearchBracketBackward( int PosX, int PosY, int* NewX, int* NewY,
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_pLine->GetStringPtr( &len );
+		cline = ci->m_cLine.GetStringPtr( &len );
 		cPos = cline + len;
 	}while( cline != NULL );
 
@@ -1241,7 +1241,7 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = ( m_nViewTopLine + m_nViewRowNum ) - nLine;					// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
-	cline = ci->m_pLine->GetStringPtr( &len );
+	cline = ci->m_cLine.GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;
 
@@ -1283,7 +1283,7 @@ bool CEditView::SearchBracketForward2(  int		PosX,	int		PosY,
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_pLine->GetStringPtr( &len );
+		cline = ci->m_cLine.GetStringPtr( &len );
 		cPos = cline;
 		lineend = cline + len;
 	}while( cline != NULL );
@@ -1328,7 +1328,7 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( PosX, PosY, &nCol, &nLine );	// 02/09/19 ai
 	nSearchNum = nLine - m_nViewTopLine;										// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( PosY );
-	cline = ci->m_pLine->GetStringPtr( &len );
+	cline = ci->m_cLine.GetStringPtr( &len );
 	lineend = cline + len;
 	cPos = cline + PosX;
 
@@ -1370,7 +1370,7 @@ bool CEditView::SearchBracketBackward2( int   PosX,   int   PosY,
 		if( ci == NULL )
 			break;	//	終わりに達した
 
-		cline = ci->m_pLine->GetStringPtr( &len );
+		cline = ci->m_cLine.GetStringPtr( &len );
 		cPos = cline + len;
 	}while( cline != NULL );
 

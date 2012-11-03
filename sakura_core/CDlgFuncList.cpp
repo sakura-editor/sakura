@@ -1083,9 +1083,9 @@ void CDlgFuncList::SetTree(bool tagjump)
 			}
 			text.AppendString(_T(" "), 1 );
 			
-			text.AppendNativeData( &pcFuncInfo->m_cmemFuncName );
+			text.AppendNativeData( pcFuncInfo->m_cmemFuncName );
 			text.AppendString( _T("\r\n"), 2 );
-			m_cmemClipText.AppendNativeData( &text );	/* クリップボードコピー用テキスト */
+			m_cmemClipText.AppendNativeData( text );	/* クリップボードコピー用テキスト */
 		}
 	}
 

@@ -264,21 +264,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	}else{
 		for( ; i <= nLineTo; ){
 			pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
-#ifdef _DEBUG
-			{
-				if( NULL != pcLayout ){
-					if( (void*)0xdddddddd == (void*)pcLayout->m_pCDocLine->m_pLine ){
-						m_pcEditDoc->m_cDocLineMgr.DUMP();
-						m_pcEditDoc->m_cLayoutMgr.DUMP();
-
-						pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
-					}
-
-					int nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength() - pcLayout->m_nOffset;
-					const char * pLine = (const char *)pcLayout->m_pCDocLine->m_pLine->GetStringPtr() + pcLayout->m_nOffset;
-				}
-			}
-#endif
 			if( DispLineNew(
 				hdc,
 				pcLayout,
@@ -514,8 +499,8 @@ int CEditView::DispLineNew(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength() - pcLayout->m_nOffset;
-		pLine = pcLayout->m_pCDocLine->m_pLine->GetStringPtr() + pcLayout->m_nOffset;
+		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength() - pcLayout->m_nOffset;
+		pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr() + pcLayout->m_nOffset;
 
 		nCOMMENTMODE = pcLayout->m_nTypePrev;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 		nCOMMENTEND = 0;

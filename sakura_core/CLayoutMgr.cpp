@@ -475,7 +475,7 @@ CLayout* CLayoutMgr::CreateLayout(
 		pLayout->m_cEol.SetType( EOL_NONE );/* 改行コードの種類 */
 	}else{
 		if( pLayout->m_nOffset + pLayout->m_nLength >
-			pCDocLine->m_pLine->GetStringLength() - pCDocLine->m_cEol.GetLen()
+			pCDocLine->m_cLine.GetStringLength() - pCDocLine->m_cEol.GetLen()
 		){
 			pLayout->m_cEol = pCDocLine->m_cEol;/* 改行コードの種類 */
 		}else{
@@ -506,7 +506,7 @@ const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen )
 		return NULL;
 	}
 	*pnLineLen = pLayout->m_nLength;
-	return pLayout->m_pCDocLine->m_pLine->GetStringPtr() + pLayout->m_nOffset;
+	return pLayout->m_pCDocLine->m_cLine.GetStringPtr() + pLayout->m_nOffset;
 }
 
 /*!	指定された物理行のデータへのポインタとその長さを返す Ver1
@@ -518,7 +518,7 @@ const char* CLayoutMgr::GetLineStr( int nLine, int* pnLineLen, const CLayout** p
 		return NULL;
 	}
 	*pnLineLen = (*ppcLayoutDes)->m_nLength;
-	return (*ppcLayoutDes)->m_pCDocLine->m_pLine->GetStringPtr() + (*ppcLayoutDes)->m_nOffset;
+	return (*ppcLayoutDes)->m_pCDocLine->m_cLine.GetStringPtr() + (*ppcLayoutDes)->m_nOffset;
 }
 
 /*
@@ -1306,7 +1306,7 @@ void CLayoutMgr::LogicToLayout(
 			//	TAB幅を正確に計算するには当初からインデント分を加えておく必要がある．
 			nCaretPosX = pLayout->GetIndent();
 			const char*		pData;
-			pData = pLayout->m_pCDocLine->m_pLine->GetStringPtr() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory変更
+			pData = pLayout->m_pCDocLine->m_cLine.GetStringPtr() + pLayout->m_nOffset; // 2002/2/10 aroka CMemory変更
 			int	nDataLen = pLayout->m_nLength;
 
 			int i;

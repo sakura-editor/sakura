@@ -2828,11 +2828,11 @@ void CMemory::AppendString( const char* pszData )
 	AddData( pszData, nDataLen );
 }
 /* バッファの最後にデータを追加する（publicメンバ）*/
-void CMemory::AppendNativeData( const CMemory* pcmemData )
+void CMemory::AppendNativeData( const CMemory& pcmemData )
 {
 	char*	pData;
 	int		nDataLen;
-	pData = pcmemData->GetStringPtr( &nDataLen );
+	pData = pcmemData.GetStringPtr( &nDataLen );
 	AllocStringBuffer( m_nDataLen + nDataLen );
 	AddData( pData, nDataLen );
 }

@@ -5687,7 +5687,7 @@ BOOL CEditView::GetSelectedData(
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
 		for(; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->m_pNext)
 		{
-			pLine = pcLayout->m_pCDocLine->m_pLine->GetStringPtr() + pcLayout->m_nOffset;
+			pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr() + pcLayout->m_nOffset;
 			nLineLen = pcLayout->m_nLength;
 			if( NULL != pLine )
 			{
@@ -7153,7 +7153,7 @@ DWORD CEditView::DoGrep(
 			cmemWork2.Replace_j( "\"", "\"\"" );
 		}
 		cmemWork.AppendString( "\"" );
-		cmemWork.AppendNativeData( &cmemWork2 );
+		cmemWork.AppendNativeData( cmemWork2 );
 		cmemWork.AppendString( "\"\r\n" );
 	}else{
 		cmemWork.AppendString( "「ファイル検索」\r\n" );
@@ -10026,7 +10026,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		if (nSelectLineTo != nCurrentLine){
 			//行末までに制限
 			pcCurDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine(nCurrentLine);
-			nSelectedEndIndex = pcCurDocLine->m_pLine->GetStringLength();
+			nSelectedEndIndex = pcCurDocLine->m_cLine.GetStringLength();
 		}
 		
 		nSelectedLen = nSelectedEndIndex - nSelectedIndex;
@@ -10041,11 +10041,11 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 	if (NULL == pcCurDocLine )
 		return 0;
 	
-	const int nLineLen = pcCurDocLine->m_pLine->GetStringLength() - pcCurDocLine->m_cEol.GetLen() ; //改行コードをのぞいた長さ
+	const int nLineLen = pcCurDocLine->m_cLine.GetStringLength() - pcCurDocLine->m_cEol.GetLen() ; //改行コードをのぞいた長さ
 	if ( 0 == nLineLen )
 		return 0;
 	
-	pLine = pcCurDocLine->m_pLine->GetStringPtr();
+	pLine = pcCurDocLine->m_cLine.GetStringPtr();
 
 	//再変換考慮文字列開始
 	nReconvIndex = 0;
@@ -10459,8 +10459,8 @@ int CEditView::GetColorIndex(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_pLine->GetStringLength()/* - pcLayout->m_nOffset*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
-		pLine = pcLayout->m_pCDocLine->m_pLine->GetStringPtr()/* + pcLayout->m_nOffset*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength()/* - pcLayout->m_nOffset*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr()/* + pcLayout->m_nOffset*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 
 		// 2005.11.20 Moca 色が正しくないことがある問題に対処
 		const CLayout* pcLayoutLineFirst = pcLayout;

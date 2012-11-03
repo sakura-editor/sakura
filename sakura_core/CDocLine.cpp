@@ -17,7 +17,7 @@
 #include "CMemory.h"
 
 CDocLine::CDocLine()
-	: m_pPrev( NULL ), m_pNext( NULL ), m_pLine( NULL )
+	: m_pPrev( NULL ), m_pNext( NULL )
 {
 //	m_bMark.m_bAllMark  = 0;
 	m_bMark.m_bMarkArray.m_bModify   = 1;	//true
@@ -27,8 +27,6 @@ CDocLine::CDocLine()
 
 CDocLine::~CDocLine()
 {
-	//	deleteはNULLを単純に無視するのでNULL判定は不要
-	delete m_pLine;
 }
 
 /* 空行（スペース、タブ、改行記号のみの行）かどうかを取得する

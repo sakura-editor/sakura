@@ -108,7 +108,7 @@ const char* CDocLineMgr::GetLineStr( int nLine, int* pnLineLen )
 		return NULL;
 	}
 	// 2002/2/10 aroka CMemory のメンバ変数に直接アクセスしない(inline化されているので速度的な問題はない)
-	return pDocLine->m_pLine->GetStringPtr( pnLineLen );
+	return pDocLine->m_cLine.GetStringPtr( pnLineLen );
 }
 
 
@@ -126,7 +126,7 @@ const char* CDocLineMgr::GetLineStrWithoutEOL( int nLine, int* pnLineLen )
 		return NULL;
 	}
 	*pnLineLen = pDocLine->GetLengthWithoutEOL();
-	return pDocLine->m_pLine->GetStringPtr();
+	return pDocLine->m_cLine.GetStringPtr();
 }
 
 /*!
@@ -241,7 +241,7 @@ const char* CDocLineMgr::GetFirstLinrStr( int* pnLineLen )
 		pszLine = NULL;
 		*pnLineLen = 0;
 	}else{
-		pszLine = m_pDocLineTop->m_pLine->GetStringPtr( pnLineLen );
+		pszLine = m_pDocLineTop->m_cLine.GetStringPtr( pnLineLen );
 
 		m_pDocLineCurrent = m_pDocLineTop->m_pNext;
 	}
@@ -267,7 +267,7 @@ const char* CDocLineMgr::GetNextLinrStr( int* pnLineLen )
 		pszLine = NULL;
 		*pnLineLen = 0;
 	}else{
-		pszLine = m_pDocLineCurrent->m_pLine->GetStringPtr( pnLineLen );
+		pszLine = m_pDocLineCurrent->m_cLine.GetStringPtr( pnLineLen );
 
 		m_pDocLineCurrent = m_pDocLineCurrent->m_pNext;
 	}
@@ -293,14 +293,14 @@ void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEol cEol )
 		m_pDocLineTop->m_pNext = NULL;
 
 		m_pDocLineTop->m_cEol = cEol;	/* 改行コードの種類 */
-		m_pDocLineTop->m_pLine = new CMemory( pData, nDataLen );
+		m_pDocLineTop->m_cLine.SetString( pData, nDataLen );
 	}else{
 		pDocLine = new CDocLine;
 		pDocLine->m_pPrev = m_pDocLineBot;
 		pDocLine->m_pNext = NULL;
 
 		pDocLine->m_cEol = cEol;	/* 改行コードの種類 */
-		pDocLine->m_pLine = new CMemory( pData, nDataLen );
+		pDocLine->m_cLine.SetString( pData, nDataLen );
 		m_pDocLineBot->m_pNext = pDocLine;
 		m_pDocLineBot = pDocLine;
 	}
@@ -518,7 +518,7 @@ int CDocLineMgr::WriteFile(
 
 			while( NULL != pCDocLine ){
 				++nLineNumber;
-				pLine = pCDocLine->m_pLine->GetStringPtr( &nLineLen );
+				pLine = pCDocLine->m_cLine.GetStringPtr( &nLineLen );
 
 
 				if( NULL != hwndProgress && 0 < m_nLines && 0 == ( nLineNumber % 1024 ) ){
@@ -682,7 +682,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 
 	pDocLine->SetModifyFlg(true);		/* 変更フラグ */
 
-	pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+	pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 
 	if( nDelPos >= nLineLen ){
 		return;
@@ -719,7 +719,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 			pDocLine->m_cEol.SetType( EOL_NONE );
 
 			if( 0 < nLineLen - nDeleteLength ){
-				pDocLine->m_pLine->SetString( pData, nLineLen - nDeleteLength );
+				pDocLine->m_cLine.SetString( pData, nLineLen - nDeleteLength );
 			}else{
 				// 行の削除
 				// 2004.03.18 Moca 関数を使う
@@ -732,7 +732,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 		}
 		else{
 			*pnModLineOldTo = nLine + 1;	/* 影響のあった変更前の行(to) */
-			pLine2 = pDocLine2->m_pLine->GetStringPtr( &nLineLen2 );
+			pLine2 = pDocLine2->m_cLine.GetStringPtr( &nLineLen2 );
 			pData = new char[nLineLen + nLineLen2 + 1];
 			if( nDelPos > 0 ){
 				memcpy( pData, pLine, nDelPos );
@@ -747,7 +747,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 			/* 次の行のデータを連結 */
 			memcpy( pData + (nLineLen - nDeleteLength), pLine2, nLineLen2 );
 			pData[ nLineLen - nDeleteLength + nLineLen2 ] = '\0';
-			pDocLine->m_pLine->SetString( pData, nLineLen - nDeleteLength + nLineLen2 );
+			pDocLine->m_cLine.SetString( pData, nLineLen - nDeleteLength + nLineLen2 );
 			/* 改行コードの情報を更新 */
 			pDocLine->m_cEol = pDocLine2->m_cEol;
 
@@ -780,7 +780,7 @@ void CDocLineMgr::DeleteData_CDocLineMgr(
 		}
 		pData[ nLineLen - nDeleteLength ] = '\0';
 		if( 0 < nLineLen - nDeleteLength ){
-			pDocLine->m_pLine->SetString( pData, nLineLen - nDeleteLength );
+			pDocLine->m_cLine.SetString( pData, nLineLen - nDeleteLength );
 		}
 		delete [] pData;
 	}
@@ -841,7 +841,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 	else{
 		pDocLine->SetModifyFlg(true);		/* 変更フラグ */
 
-		pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+		pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 		cmemPrevLine.SetString( pLine, nInsPos );
 		cmemNextLine.SetString( &pLine[nInsPos], nLineLen - nInsPos );
 
@@ -862,7 +862,6 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 			if( NULL == pDocLine ){
 				pDocLineNew = new CDocLine;
 
-				pDocLineNew->m_pLine = new CMemory;
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount ){
 					if( NULL == m_pDocLineTop ){
@@ -874,8 +873,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 					}
 					m_pDocLineBot = pDocLineNew;
 					pDocLineNew->m_pNext = NULL;
-					pDocLineNew->m_pLine->SetNativeData( &cmemPrevLine );
-					*(pDocLineNew->m_pLine) += cmemCurLine;
+					pDocLineNew->m_cLine.SetNativeData( &cmemPrevLine );
+					pDocLineNew->m_cLine += cmemCurLine;
 
 					pDocLineNew->m_cEol = cEOLType;							/* 改行コードの種類 */
 				}
@@ -886,7 +885,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 					pDocLineNew->m_pPrev = m_pDocLineBot;
 					m_pDocLineBot = pDocLineNew;
 					pDocLineNew->m_pNext = NULL;
-					pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
+					pDocLineNew->m_cLine.SetNativeData( &cmemCurLine );
 
 					pDocLineNew->m_cEol = cEOLType;							/* 改行コードの種類 */
 				}
@@ -896,8 +895,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 			else{
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount ){
-					pDocLine->m_pLine->SetNativeData( &cmemPrevLine );
-					*(pDocLine->m_pLine) += cmemCurLine;
+					pDocLine->m_cLine.SetNativeData( &cmemPrevLine );
+					pDocLine->m_cLine += cmemCurLine;
 
 					pDocLine->m_cEol = cEOLType;						/* 改行コードの種類 */
 
@@ -915,12 +914,11 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 				}
 				else{
 					pDocLineNew = new CDocLine;
-					pDocLineNew->m_pLine = new CMemory;
 					pDocLineNew->m_pPrev = pDocLine->m_pPrev;
 					pDocLineNew->m_pNext = pDocLine;
 					pDocLine->m_pPrev->m_pNext = pDocLineNew;
 					pDocLine->m_pPrev = pDocLineNew;
-					pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
+					pDocLineNew->m_cLine.SetNativeData( &cmemCurLine );
 					pDocLineNew->m_cEol = cEOLType;							/* 改行コードの種類 */
 					++m_nLines;
 				}
@@ -940,7 +938,6 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		cmemCurLine += cmemNextLine;
 		if( NULL == pDocLine ){
 			pDocLineNew = new CDocLine;
-			pDocLineNew->m_pLine = new CMemory;
 			/* 挿入データを行終端で区切った行数カウンタ */
 			if( 0 == nCount ){
 				if( NULL == m_pDocLineTop ){
@@ -952,8 +949,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 				}
 				m_pDocLineBot = pDocLineNew;
 				pDocLineNew->m_pNext = NULL;
-				pDocLineNew->m_pLine->SetNativeData( &cmemPrevLine );
-				*(pDocLineNew->m_pLine) += cmemCurLine;
+				pDocLineNew->m_cLine.SetNativeData( &cmemPrevLine );
+				pDocLineNew->m_cLine += cmemCurLine;
 
 				pDocLineNew->m_cEol = cEOLTypeNext;							/* 改行コードの種類 */
 
@@ -965,7 +962,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 				pDocLineNew->m_pPrev = m_pDocLineBot;
 				m_pDocLineBot = pDocLineNew;
 				pDocLineNew->m_pNext = NULL;
-				pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
+				pDocLineNew->m_cLine.SetNativeData( &cmemCurLine );
 
 				pDocLineNew->m_cEol = cEOLTypeNext;							/* 改行コードの種類 */
 
@@ -977,8 +974,8 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		else{
 			/* 挿入データを行終端で区切った行数カウンタ */
 			if( 0 == nCount ){
-				pDocLine->m_pLine->SetNativeData( &cmemPrevLine );
-				*(pDocLine->m_pLine) += cmemCurLine;
+				pDocLine->m_cLine.SetNativeData( &cmemPrevLine );
+				pDocLine->m_cLine += cmemCurLine;
 
 				pDocLine->m_cEol = cEOLTypeNext;						/* 改行コードの種類 */
 
@@ -987,12 +984,11 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 			}
 			else{
 				pDocLineNew = new CDocLine;
-				pDocLineNew->m_pLine = new CMemory;
 				pDocLineNew->m_pPrev = pDocLine->m_pPrev;
 				pDocLineNew->m_pNext = pDocLine;
 				pDocLine->m_pPrev->m_pNext = pDocLineNew;
 				pDocLine->m_pPrev = pDocLineNew;
-				pDocLineNew->m_pLine->SetNativeData( &cmemCurLine );
+				pDocLineNew->m_cLine.SetNativeData( &cmemCurLine );
 
 				pDocLineNew->m_cEol = cEOLTypeNext;							/* 改行コードの種類 */
 				pDocLineNew->SetBookMark(bBookMarkNext);	// 2001.12.03 hor ブックマークを復元
@@ -1025,7 +1021,7 @@ int	CDocLineMgr::WhereCurrentWord(
 	}
 
 	int			nLineLen;
-	const char*	pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+	const char*	pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 
 	/* 現在位置の単語の範囲を調べる */
 	return CDocLineMgr::WhereCurrentWord_2( pLine, nLineLen, nIdx, pnIdxFrom, pnIdxTo, pcmcmWord, pcmcmWordLeft );
@@ -1185,7 +1181,7 @@ int CDocLineMgr::PrevOrNextWord(
 	}
 
 	int			nLineLen;
-	const char*		pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+	const char*		pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 
 	// ABC D[EOF]となっていたときに、Dの後ろにカーソルを合わせ、単語の左端に移動すると、Aにカーソルがあうバグ修正。YAZAKI
 	if( nIdx >= nLineLen ){
@@ -1302,7 +1298,7 @@ int CDocLineMgr::SearchWord(
 			nHitTo = nIdx;				// 検索開始位置
 			nIdxPos = 0;
 			while( NULL != pDocLine ){
-				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+				pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 				nHitPos		= -1;	// -1:この行でマッチ位置なし
 				while( 1 ){
 					nHitPosOld = nHitPos;
@@ -1340,7 +1336,7 @@ int CDocLineMgr::SearchWord(
 					pDocLine = pDocLine->m_pPrev;
 					nIdxPos = 0;
 					if( NULL != pDocLine ){
-						nHitTo = pDocLine->m_pLine->GetStringLength() + 1;		// 前の行のNULL文字(\0)にもマッチさせるために+1 2003.05.16 かろと 
+						nHitTo = pDocLine->m_cLine.GetStringLength() + 1;		// 前の行のNULL文字(\0)にもマッチさせるために+1 2003.05.16 かろと 
 					}
 				}
 			}
@@ -1352,7 +1348,7 @@ int CDocLineMgr::SearchWord(
 			//
 			nIdxPos = nIdx;
 			while( NULL != pDocLine ){
-				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+				pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 				if(		nIdxPos <= pDocLine->GetLengthWithoutEOL() 
 					&&	pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
 					// マッチした
@@ -1401,7 +1397,7 @@ int CDocLineMgr::SearchWord(
 					nNextWordFrom = nWork;
 					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
 						if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
-							const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
+							const char* pData = pDocLine->m_cLine.GetStringPtr();	// 2002/2/10 aroka CMemory変更
 							/* 1==大文字小文字の区別 */
 							if( (!sSearchOption.bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 								(sSearchOption.bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
@@ -1420,7 +1416,7 @@ int CDocLineMgr::SearchWord(
 				nLinePos--;
 				pDocLine = pDocLine->m_pPrev;
 				if( NULL != pDocLine ){
-					nNextWordFrom = pDocLine->m_pLine->GetStringLength() - pDocLine->m_cEol.GetLen();
+					nNextWordFrom = pDocLine->m_cLine.GetStringLength() - pDocLine->m_cEol.GetLen();
 					if( 0 > nNextWordFrom ){
 						nNextWordFrom = 0;
 					}
@@ -1439,7 +1435,7 @@ int CDocLineMgr::SearchWord(
 			while( NULL != pDocLine ){
 				if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
 					if( nPatternLen == nNextWordTo2 - nNextWordFrom2 ){
-						const char* pData = pDocLine->m_pLine->GetStringPtr();	// 2002/2/10 aroka CMemory変更
+						const char* pData = pDocLine->m_cLine.GetStringPtr();	// 2002/2/10 aroka CMemory変更
 						/* 1==大文字小文字の区別 */
 						if( (!sSearchOption.bLoHiCase && 0 == my_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) ) ||
 							(sSearchOption.bLoHiCase && 0 == memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen ) )
@@ -1476,7 +1472,7 @@ int CDocLineMgr::SearchWord(
 			nIdxPos = 0;
 			pDocLine = GetLine( nLinePos );
 			while( NULL != pDocLine ){
-				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+				pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 				nHitPos = -1;
 				while( 1 ){
 					nHitPosOld = nHitPos;
@@ -1520,7 +1516,7 @@ int CDocLineMgr::SearchWord(
 				pDocLine = pDocLine->m_pPrev;
 				nIdxPos = 0;
 				if( NULL != pDocLine ){
-					nHitTo = pDocLine->m_pLine->GetStringLength();
+					nHitTo = pDocLine->m_cLine.GetStringLength();
 				}
 			}
 			nRetVal = 0;
@@ -1532,7 +1528,7 @@ int CDocLineMgr::SearchWord(
 			nLinePos = nLineNum;
 			pDocLine = GetLine( nLinePos );
 			while( NULL != pDocLine ){
-				pLine = pDocLine->m_pLine->GetStringPtr( &nLineLen );
+				pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 				pszRes = SearchString(
 					(const unsigned char *)pLine,
 					nLineLen,
@@ -1887,8 +1883,8 @@ void CDocLineMgr::DUMP()
 
 
 //		MYTRACE_A( "\t[%s]\n", (char*)*(pDocLine->m_pLine) );
-		MYTRACE_A( "\tpDocLine->m_pLine->GetStringLength()=[%d]\n", pDocLine->m_pLine->GetStringLength() );
-		MYTRACE_A( "\t[%s]\n", pDocLine->m_pLine->GetStringPtr() );
+		MYTRACE_A( "\tpDocLine->m_cLine.GetStringLength()=[%d]\n", pDocLine->m_cLine.GetStringLength() );
+		MYTRACE_A( "\t[%s]\n", pDocLine->m_cLine.GetStringPtr() );
 
 
 		pDocLine = pDocLineNext;
@@ -1962,7 +1958,7 @@ char* CDocLineMgr::GetAllData( int*	pnDataLen )
 		//	Oct. 7, 2002 YAZAKI
 		nLineLen = pDocLine->GetLengthWithoutEOL();
 		if( 0 < nLineLen ){
-			pLine = pDocLine->m_pLine->GetStringPtr();
+			pLine = pDocLine->m_cLine.GetStringPtr();
 			memcpy( &pData[nDataLen], pLine, nLineLen );
 			nDataLen += nLineLen;
 		}

@@ -1154,7 +1154,7 @@ LRESULT CEditWnd::DispatchEvent(
 					if( j > 0 ){
 						cmemWork.AppendString(_T(" , "));
 					}
-					cmemWork.AppendNativeData( ppcAssignedKeyList[j] );
+					cmemWork.AppendNativeData( *ppcAssignedKeyList[j] );
 					delete ppcAssignedKeyList[j];
 				}
 				delete [] ppcAssignedKeyList;

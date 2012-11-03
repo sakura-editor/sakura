@@ -1901,10 +1901,10 @@ void CEditView::Command_LineCutToEnd( void )
 	}
 
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
 	}
 	else{
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
 	}
 	if( ( m_nCaretPosX == nX && m_nCaretPosY == nY )
 	 || ( m_nCaretPosX >  nX && m_nCaretPosY == nY )
@@ -1974,9 +1974,9 @@ void CEditView::Command_LineDeleteToEnd( void )
 	}
 
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
 	}else{
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_pLine->GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
 	}
 	if( ( m_nCaretPosX == nX && m_nCaretPosY == nY )
 	 || ( m_nCaretPosX >  nX && m_nCaretPosY == nY )
@@ -3109,7 +3109,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 		}
 		// カーソル左移動はやめて nIdxは行の長さとしないと[EOF]から改行を前検索した時に最後の改行を検索できない 2003.05.04 かろと
 		CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
-		nIdx = pCLayout->m_pCDocLine->m_pLine->GetStringLength() + 1;		// 行末のヌル文字(\0)にマッチさせるために+1 2003.05.16 かろと
+		nIdx = pCLayout->m_pCDocLine->m_cLine.GetStringLength() + 1;		// 行末のヌル文字(\0)にマッチさせるために+1 2003.05.16 かろと
 	} else {
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );

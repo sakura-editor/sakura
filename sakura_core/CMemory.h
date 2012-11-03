@@ -61,7 +61,7 @@ public:
 	void SetNativeData( const CMemory* );	/* バッファの内容を置き換える */
 	const char* AppendString( const char* pData, int nDataLen );/* バッファの最後にデータを追加する（publicメンバ）*/
 	void AppendString( const char* pszData );/* バッファの最後にデータを追加する（publicメンバ）*/
-	void AppendNativeData( const CMemory* );/* バッファの最後にデータを追加する（publicメンバ）*/
+	void AppendNativeData( const CMemory& );/* バッファの最後にデータを追加する（publicメンバ）*/
 	// 2005-09-02 D.S.Koba
 	static int GetSizeOfChar( const char*, const int, const int );	//!< 指定した位置の文字が何バイト文字かを返す
 
