@@ -545,7 +545,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	TV_ITEM			tvi;
 	int				nClassNest;
 	int				nDummylParam = -64000;	// 2002.11.10 Moca クラス名のダミーlParam ソートのため
-	TCHAR			szClassArr[MAX_JAVA_TREE_NEST][64];	// Jan. 04, 2001 genta クラス名エリアの拡大
+	TCHAR			szClassArr[MAX_JAVA_TREE_NEST][64];	// Jan. 04, 2001 genta クラス名エリアの拡大 //2009.9.21 syat ネストが深すぎる際のBOF対策
 
 	::EnableWindow( ::GetDlgItem( m_hWnd , IDC_BUTTON_COPY ), TRUE );
 
@@ -568,6 +568,11 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 			m = 0;
 			nWorkLen = _tcslen( pWork );
 			for( k = 0; k < nWorkLen; ++k ){
+				//2009.9.21 syat ネストが深すぎる際のBOF対策
+				if( nClassNest == MAX_JAVA_TREE_NEST ){
+					k = nWorkLen;
+					break;
+				}
 				// 2005-09-02 D.S.Koba GetSizeOfChar
 				nCharChars = CMemory::GetSizeOfChar( pWork, nWorkLen, k );
 				if( 1 == nCharChars && _T(':') == pWork[k] ){
