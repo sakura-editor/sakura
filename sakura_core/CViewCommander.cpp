@@ -4738,7 +4738,8 @@ retry:;
 	TCHAR	szExt[_MAX_EXT];
 	_tsplitpath( path, NULL, NULL, NULL, szExt );
 	if( 0 == _tcsicmp(szExt, _T(".chi")) || 0 == _tcsicmp(szExt, _T(".chm")) || 0 == _tcsicmp(szExt, _T(".col")) ){
-		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
+		std::wstring pathw = to_wchar(path);
+		Command_EXTHTMLHELP( pathw.c_str(), cmemCurText.GetStringPtr() );
 	}else{
 		::WinHelp( m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );
 	}
