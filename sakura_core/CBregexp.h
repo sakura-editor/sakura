@@ -212,7 +212,6 @@ protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
 	virtual LPCTSTR GetDllNameInOrder(LPCTSTR, int);
 	virtual int InitDll(void);
-	virtual int DeinitDll(void);
 
 	//	DLL Interfaceの受け皿
 	//	Aug. 20, 2005 Aroka : 最適化オプションでデフォルトを__fastcallに変更しても

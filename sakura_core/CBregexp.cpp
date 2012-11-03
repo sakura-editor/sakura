@@ -44,15 +44,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "CBregexp.h"
-#include "etc_uty.h"
 #include "charcode.h"
-#undef TAB
-#undef SPACE
-#undef CRLF
-#undef LFCR
-#undef CR
-#undef LF
-#undef ESC
+#include "etc_uty.h"
 
 //	2007.07.22 genta : DLL判別用
 const static TCHAR P_BREG[] = _T("BREGEXP.DLL");
@@ -61,17 +54,21 @@ const static TCHAR P_ONIG[] = _T("bregonig.dll");
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
 const char CBregexp::m_tmpBuf[2] = "\0";
 
-CBregexp::CBregexp() : m_pRegExp( NULL ),
-	m_ePatType( PAT_NORMAL )	//	Jul, 25, 2002 genta
+
+
+
+
+CBregexp::CBregexp()
+: m_pRegExp( NULL )
+, m_ePatType( PAT_NORMAL )	//	Jul, 25, 2002 genta
 {
+	m_szMsg[0] = '\0';
 }
 
 CBregexp::~CBregexp()
 {
-	//<< 2002/03/27 Azumaiya
-	// 一応、クラスの終了時にコンパイルバッファを解放。
-	DeinitDll();
-	//>> 2002/03/27 Azumaiya
+	//コンパイルバッファを解放
+	ReleaseCompileBuffer();
 }
 
 /*!
@@ -129,15 +126,6 @@ int CBregexp::InitDll(void)
 	return 0;
 }
 
-/*!
-	BREGEXP構造体の解放
-*/
-int CBregexp::DeinitDll( void )
-{
-	ReleaseCompileBuffer();
-	return 0;
-}
-
 /*! @brief 検索パターンが特定の検索パターンかチェックする
 **
 ** @param[in] szPattern 検索パターン
@@ -146,7 +134,7 @@ int CBregexp::DeinitDll( void )
 ** 
 ** @date 2005.03.20 かろと 関数に切り出し
 */
-int CBregexp::CheckPattern(const char *szPattern)
+int CBregexp::CheckPattern(const char* szPattern)
 {
 	static const char TOP_MATCH[] = "/^\\(*\\^/k";							//!< 行頭パターンのチェック用パターン
 	static const char DOL_MATCH[] = "/\\\\\\$$/k";							//!< \$(行末パターンでない)チェック用パターン
@@ -204,17 +192,17 @@ int CBregexp::CheckPattern(const char *szPattern)
 **
 ** @note szPattern2: == NULL:検索 != NULL:置換
 ** 
-** @param[in] szPattern 検索パターン
-** @param[in] szPattern2 置換パターン(NULLなら検索)
-** @param[in] szAdd2	置換パターンの後ろに付け加えるパターン($1など) 
-** @param[in] nOption	検索オプション
-**
 ** @retval ライブラリに渡す検索パターンへのポインタを返す
 ** @note 返すポインタは、呼び出し側で delete すること
 ** 
 ** @date 2003.05.03 かろと 関数に切り出し
 */
-char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, const char* szAdd2, int nOption ) 
+char* CBregexp::MakePatternSub(
+	const char* szPattern,		//!< 検索パターン
+	const char* szPattern2,		//!< 置換パターン(NULLなら検索)
+	const char* szAdd2,			//!< 置換パターンの後ろに付け加えるパターン($1など) 
+	int nOption					//!< 検索オプション
+) 
 {
 	static const char DELIMITER = '\xFF';		//!< デリミタ
 	int nLen;									//!< szPatternの長さ
@@ -230,7 +218,8 @@ char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, c
 		szNPattern = new char[ nLen + 15 ];	//	15：「s///option」が余裕ではいるように。
 		pPat = szNPattern;
 		*pPat++ = 'm';
-	} else {
+	}
+	else {
 		// 置換(BSubst)時
 		nLen2 = strlen(szPattern2) + strlen(szAdd2);
 		szNPattern = new char[ nLen + nLen2 + 15 ];
@@ -281,10 +270,10 @@ char* CBregexp::MakePatternSub( const char* szPattern, const char* szPattern2, c
 */
 char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int nOption ) 
 {
-	static const char CRLF[] = "\r\n";			//!< 復帰・改行
-	static const char CR[] = "\r";				//!< 復帰
-	static const char LF[] = "\n";				//!< 改行
-	static const char LFCR[] = "\n\r";			//!< 改行・復帰
+	static const char szCRLF[] = CRLF;			//!< 復帰・改行
+	static const char szCR[] = {CR,0};			//!< 復帰
+	static const char szLF[] = {LF,0};			//!< 改行
+	static const char szLFCR[] = "\n\r";		//!< 改行・復帰
 	static const char BOT_SUBST[] = "s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< 行末パターンの置換用パターン
 	int nLen;									//!< szPatternの長さ
 	BREGEXP*	sReg = NULL;					//!< コンパイル構造体
@@ -297,16 +286,16 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 	if( (m_ePatType & PAT_BOTTOM) != 0 ) {
 		bool bJustDollar = false;			// 行末指定の$のみであるフラグ($の前に \r\nが指定されていない)
 		szNPattern = MakePatternSub(szPattern, NULL, NULL, nOption);
-		int matched = BMatch( szNPattern, CRLF, CRLF+sizeof(CRLF)-1, &sReg, szMsg );
+		int matched = BMatch( szNPattern, szCRLF, szCRLF+sizeof(szCRLF)-1, &sReg, szMsg );
 		if( matched >= 0 ) {
 			// szNPatternが不正なパターン等のエラーでなかった
 			// エラー時には sRegがNULLのままなので、sReg->nparensへのアクセスは不正
 			nParens = sReg->nparens;			// オリジナルの検索文字列中の()の数を記憶
 			if( matched > 0 ) {
-				if( sReg->startp[0] == &CRLF[1] && sReg->endp[0] == &CRLF[1] ) {
-					if( BMatch( NULL, CR, CR+sizeof(CR)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &CR[1] && sReg->endp[0] == &CR[1] ) {
-						if( BMatch( NULL, LF, LF+sizeof(LF)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &LF[0] && sReg->endp[0] == &LF[0] ) {
-							if( BMatch( NULL, LFCR, LFCR+sizeof(LFCR)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &LFCR[0] && sReg->endp[0] == &LFCR[0] ) {
+				if( sReg->startp[0] == &szCRLF[1] && sReg->endp[0] == &szCRLF[1] ) {
+					if( BMatch( NULL, szCR, szCR+sizeof(szCR)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &szCR[1] && sReg->endp[0] == &szCR[1] ) {
+						if( BMatch( NULL, szLF, szLF+sizeof(szLF)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &szLF[0] && sReg->endp[0] == &szLF[0] ) {
+							if( BMatch( NULL, szLFCR, szLFCR+sizeof(szLFCR)-1, &sReg, szMsg ) > 0 && sReg->startp[0] == &szLFCR[0] && sReg->endp[0] == &szLFCR[0] ) {
 								// 検索文字列は 行末($)のみだった
 								bJustDollar = true;
 							}
@@ -314,9 +303,9 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 					}
 				}
 			} else {
-				if( BMatch( NULL, CR, CR+sizeof(CR)-1, &sReg, szMsg ) <= 0 ) {
-					if( BMatch( NULL, LF, LF+sizeof(LF)-1, &sReg, szMsg ) <= 0 ) {
-						if( BMatch( NULL, LFCR, LFCR+sizeof(LFCR)-1, &sReg, szMsg ) <= 0 ) {
+				if( BMatch( NULL, szCR, szCR+sizeof(szCR)-1, &sReg, szMsg ) <= 0 ) {
+					if( BMatch( NULL, szLF, szLF+sizeof(szLF)-1, &sReg, szMsg ) <= 0 ) {
+						if( BMatch( NULL, szLFCR, szLFCR+sizeof(szLFCR)-1, &sReg, szMsg ) <= 0 ) {
 							// 検索文字列は、文字＋行末($)だった
 							bJustDollar = true;
 						}
@@ -348,7 +337,9 @@ char* CBregexp::MakePattern( const char* szPattern, const char* szPattern2, int 
 	return szNPattern;
 }
 
-/*! @brief CBregexp::MakePattern()の代替。
+
+/*!
+	CBregexp::MakePattern()の代替。
 	* エスケープされておらず、文字集合と \Q...\Eの中にない . を [^\r\n] に置換する。
 	* エスケープされておらず、文字集合と \Q...\Eの中にない $ を (?<![\r\n])(?=\r|$) に置換する。
 	これは「改行」の意味を LF のみ(BREGEXP.DLLの仕様)から、CR, LF, CRLF に拡張するための変更である。
@@ -421,7 +412,6 @@ char* CBregexp::MakePatternAlternate( const char* const szSearch, const char* co
 	/* QEE */ {QEE,  QEE,   QEE,    QEE,   QEE,   QEE,   QEE,   QEE,   Q_E},
 	/* Q_E */ {QEE,  QEE,   QEE,    QEE,   QEE,   DEF,   QEE,   QEE,   Q_E}
 	};
-	
 	State state = DEF;
 	int charsetLevel = 0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
 	const char *left = szSearch, *right = szSearch;
@@ -569,7 +559,7 @@ bool CBregexp::Match( const char* target, int len, int nStart )
 
 	m_szMsg[0] = '\0';		//!< エラー解除
 	// 拡張関数がない場合は、行の先頭("^")の検索時の特別処理 by かろと
-	if (BMatchEx == NULL) {
+	if (!BMatchEx) {
 		/*
 		** 行頭(^)とマッチするのは、nStart=0の時だけなので、それ以外は false
 		*/
@@ -636,7 +626,7 @@ int CBregexp::Replace(const char *szTarget, int nLen, int nStart)
 	//	To Here 2003.05.03 かろと
 
 	m_szMsg[0] = '\0';		//!< エラー解除
-	if (BSubstEx == NULL) {
+	if (!BSubstEx) {
 		result = BSubst( NULL, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg );
 	} else {
 		result = BSubstEx( NULL, szTarget, szTarget + nStart, szTarget + nLen, &m_pRegExp, m_szMsg );
