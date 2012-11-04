@@ -309,9 +309,6 @@ int CKeyBind::GetKeyStr(
 {
 	int		i;
 	int		j;
-	const TCHAR*	pszSHIFT = _T("Shift+");
-	const TCHAR*	pszCTRL = _T("Ctrl+");
-	const TCHAR*	pszALT = _T("Alt+");
 	cMemList.SetString(_T(""));
 
 	//	æ‚ÉƒL[•”•ª‚ğ’²¸‚·‚é
