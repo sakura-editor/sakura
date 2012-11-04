@@ -5838,7 +5838,8 @@ BOOL CEditView::GetSelectedData(
 				}
 			}else{
 				cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );
-				if( nIdxTo - nIdxFrom >= nLineLen ){
+					//if( nIdxTo - nIdxFrom >= nLineLen ){ // 2010.11.06 ryoji 行頭以外からの選択時に[折り返し位置に改行を付けてコピー]で最初の折り返しに改行が付くように
+					if( nIdxTo >= nLineLen ){
 					if( bAddCRLFWhenCopy ||  /* 折り返し行に改行を付けてコピー */
 						NULL != pszQuote || /* 先頭に付ける引用符 */
 						bWithLineNumber 	/* 行番号を付与する */
