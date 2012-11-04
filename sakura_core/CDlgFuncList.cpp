@@ -366,23 +366,28 @@ void CDlgFuncList::SetData()
 				// 検出結果の種類(関数,,,)があるとき
 				wsprintf(
 					szText,
-					_T("%s(%d): %s(%s)\r\n"),
+					_T("%s(%d): "),
 					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-					pcFuncInfo->m_cmemFuncName.GetStringPtr(),	/* 検出結果 */
-					item.pszText								/* 検出結果の種類 */
+					pcFuncInfo->m_nFuncLineCRLF					/* 検出行番号 */
 				);
+				m_cmemClipText.AppendString(szText);
+				// "%ts(%ts)\r\n"
+				m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+				m_cmemClipText.AppendString("(");
+				m_cmemClipText.AppendString(item.pszText);
+				m_cmemClipText.AppendString(")\r\n");
 			}else{
 				// 検出結果の種類(関数,,,)がないとき
 				wsprintf(
 					szText,
-					_T("%s(%d): %s\r\n"),
+					_T("%s(%d): "),
 					m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-					pcFuncInfo->m_cmemFuncName.GetStringPtr()	/* 検出結果 */
+					pcFuncInfo->m_nFuncLineCRLF					/* 検出行番号 */
 				);
+				m_cmemClipText.AppendString(szText);
+				m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+				m_cmemClipText.AppendString("\r\n");
 			}
-			m_cmemClipText.AppendString( (const char *)szText );					/* クリップボードコピー用テキスト */
 		}
 		//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
 		::ShowWindow( hwndList, SW_SHOW );
@@ -744,13 +749,14 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		char szText[2048];
 		wsprintf(
 			szText,
-			"%s(%d): %s %s\r\n",
+			"%s(%d): ",
 			m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-			pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-			pcFuncInfo->m_cmemFuncName.GetStringPtr(), 	/* 検出結果 */
-			( 1 == pcFuncInfo->m_nInfo ? "(宣言)" : "" ) 	//	Jan. 04, 2001 genta C++で使用
+			pcFuncInfo->m_nFuncLineCRLF					/* 検出行番号 */
 		);
 		m_cmemClipText.AppendString( (const char *)szText ); /* クリップボードコピー用テキスト */
+		// "%ts%ls\r\n"
+		m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+		m_cmemClipText.AppendString(1 == pcFuncInfo->m_nInfo ? " (宣言)\r\n" : "\r\n"); 	//	Jan. 04, 2001 genta C++で使用
 		delete [] pFuncName;
 
 		/* 現在カーソル位置のメソッドかどうか調べる */
@@ -953,23 +959,29 @@ void CDlgFuncList::SetListVB (void)
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
 			wsprintf(
 				szText,
-				_T("%s(%d): %s(%s)\r\n"),
+				_T("%s(%d): "),
 				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-				pcFuncInfo->m_cmemFuncName.GetStringPtr(),	/* 検出結果 */
-				item.pszText								/* 検出結果の種類 */
+				pcFuncInfo->m_nFuncLineCRLF					/* 検出行番号 */
 			);
+			m_cmemClipText.AppendString(szText);
+			// "%ts(%ts)\r\n"
+			m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+			m_cmemClipText.AppendString("(");
+			m_cmemClipText.AppendString(item.pszText);
+			m_cmemClipText.AppendString(")\r\n");
 		}else{
 			// 検出結果の種類(関数,,,)がないとき
 			wsprintf(
 				szText,
-				_T("%s(%d): %s\r\n"),
+				_T("%s(%d): "),
 				m_pcFuncInfoArr->m_szFilePath,				/* 解析対象ファイル名 */
-				pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
-				pcFuncInfo->m_cmemFuncName.GetStringPtr()	/* 検出結果 */
+				pcFuncInfo->m_nFuncLineCRLF					/* 検出行番号 */
 			);
+			m_cmemClipText.AppendString(szText);
+			// "%ts\r\n"
+			m_cmemClipText.AppendString(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+			m_cmemClipText.AppendString("\r\n");
 		}
-		m_cmemClipText.AppendString( szText );	/* クリップボードコピー用テキスト */
 	}
 
 	//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
