@@ -177,13 +177,13 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 			}
 		}
 		nBgn = i;
+		//	Jun. 16, 2002 genta 空行を無視する
+		if( nBgn == nLineLen || szLine[nBgn] == LTEXT('\0') ){
+			continue;
+		}
 		// コメント行の検出
 		//# パフォーマンス：'/'のときだけ２文字目をテスト
 		if( szLine[nBgn] == LTEXT('/') && nBgn + 1 < nLineLen && szLine[nBgn + 1] == LTEXT('/') ){
-			continue;
-		}
-		//	Jun. 16, 2002 genta 空行を無視する
-		if( szLine[nBgn] == LTEXT('\0') ){
 			continue;
 		}
 
