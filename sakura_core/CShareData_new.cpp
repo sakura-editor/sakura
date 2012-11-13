@@ -795,7 +795,7 @@ void CShareData::ShareData_IO_KeyBind( CProfile& cProfile )
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData( pszSecName, szKeyName,
 				szKeyData, sizeof( szKeyData )) ){
-				sscanf( szKeyData, "%d,%d,%d,%d,%d,%d,%d,%d",
+				sscanf( szKeyData, "%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hd",
 					&keydata.m_nFuncCodeArr[0],
 					&keydata.m_nFuncCodeArr[1],
 					&keydata.m_nFuncCodeArr[2],

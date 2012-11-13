@@ -519,7 +519,8 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 
 	char			pHeader[STR_KEYDATA_HEAD_LEN + 1];
 	short			nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
-	KEYDATA			pKeyNameArr[100];				/* キー割り当て表 */
+	const int		KEYNAME_SIZE = _countof(m_pKeyNameArr);
+	KEYDATA			pKeyNameArr[KEYNAME_SIZE];				/* キー割り当て表 */
 	HWND			hwndCtrl;
 	char			szInitDir[_MAX_PATH + 1];
 
@@ -574,9 +575,9 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 			{
 				cnt = sscanf(buff, "Count=%d", &an);
 				nKeyNameArrNum = an;
-				if( cnt == 1 && an >= 0 && an <= 100 )
+				if( cnt == 1 && an >= 0 && an <= KEYNAME_SIZE )
 				{
-					for(i = 0; i < 100; i++)
+					for(i = 0; i < an; i++)
 					{
 						name[0] = '\0';
 						if( fgets(buff, sizeof(buff), fp) == NULL ) break;
@@ -622,7 +623,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 
 						strcpy(pKeyNameArr[i].m_szKeyName, p);
 					}
-					if( i == 100 )
+					if( i == an )
 					{
 						fclose(fp);
 						goto ToMaster;
@@ -664,6 +665,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
+	const int KEYNAME_SIZE = _countof(m_pKeyNameArr);
 
 	strcpy( szPath, "" );
 	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
@@ -699,7 +701,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		fprintf(fp, "%s\n", STR_KEYDATA_HEAD2);
 		fprintf(fp, "Count=%d\n", m_nKeyNameArrNum);
 		
-		for(i = 0; i < 100; i++)
+		for(i = 0; i < KEYNAME_SIZE; i++)
 		{
 			fprintf(fp, "KeyBind[%03d]=%04x", i, m_pKeyNameArr[i].m_nKeyCode);
 

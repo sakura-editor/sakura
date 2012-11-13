@@ -33,7 +33,7 @@ struct KEYDATA {
 		SHIFT, CTRL, ALTの３つのシフト状態のそれぞれに対して
 		機能を割り当てるため、配列になっている。
 	*/
-	int	m_nFuncCodeArr[8];
+	short	m_nFuncCodeArr[8]; // 2012.11.8 aroka KEYDATAINITとサイズを合わせる
 };
 
 class CFuncLookup;

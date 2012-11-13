@@ -280,10 +280,13 @@ struct ARRHEAD {
 	CBlockComment変更
 	検索／置換情報SSearchOptionにまとめた
 	外部から起動時に新しいウインドウを開く
+
+	Version 96:
+	KEYDATAのサイズ変更 2012.11.04 aroka
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 95;
+const unsigned int uShareDataVersion = 96;
 
 /*
 ||	Singleton風
