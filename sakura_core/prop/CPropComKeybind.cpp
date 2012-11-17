@@ -513,10 +513,10 @@ void CPropKeybind::Import( HWND hwndDlg )
 	}
 
 	// ダイアログデータの設定 Keybind
-	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
+	// 2012.11.18 aroka キー一覧の更新は全アイテムを更新する。
+	ChangeKeyList( hwndDlg );
+	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキーを更新する。// 2012.11.18 aroka コメント修正
 	HWND			hwndCtrl;
-	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
-	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	//@@@ 2001.11.07 modify end MIK
