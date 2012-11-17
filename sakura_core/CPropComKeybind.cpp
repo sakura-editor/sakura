@@ -650,9 +650,9 @@ ToMaster:	//@@@ 2001.11.07 add MIK
 
 
 //	/* ダイアログデータの設定 p5 */
-	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキー一覧を更新する。
-	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
-	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
+	// 2012.11.18 aroka キー一覧の更新は全アイテムを更新する。
+	p5_ChangeKeyList( hwndDlg );
+	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキーを更新する。// 2012.11.18 aroka コメント修正
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	//@@@ 2001.11.07 modify end MIK
