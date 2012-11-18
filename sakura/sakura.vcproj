@@ -3161,6 +3161,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\plugin\CSmartIndentIfObj.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\plugin\CWSHPlugin.cpp"
 					>
 				</File>
