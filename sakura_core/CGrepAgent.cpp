@@ -356,6 +356,9 @@ DWORD CGrepAgent::DoGrep(
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 		pCEditWnd->RedrawAllViews( NULL );
 
+	// 現行フォルダを検索したフォルダに変更
+	::SetCurrentDirectory( pcmGrepFolder->GetStringPtr() );
+
 	return nHitCount;
 }
 

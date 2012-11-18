@@ -45,11 +45,6 @@ void CViewCommander::Command_GREP( void )
 	CNativeT		cmWork2;
 	CNativeT		cmWork3;
 
-	/* 編集ウィンドウの上限チェック */
-	if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		OkMessage( m_pCommanderView->GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-		return;
-	}
 	cmWork1.SetString( GetEditWindow()->m_cDlgGrep.m_strText.c_str() );
 	cmWork2.SetString( GetEditWindow()->m_cDlgGrep.m_szFile );
 	cmWork3.SetString( GetEditWindow()->m_cDlgGrep.m_szFolder );
@@ -86,6 +81,12 @@ void CViewCommander::Command_GREP( void )
 		);
 	}
 	else{
+		// 編集ウィンドウの上限チェック
+		if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+			OkMessage( m_pCommanderView->GetHwnd(), _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+			return;
+		}
+
 		/*======= Grepの実行 =============*/
 		/* Grep結果ウィンドウの表示 */
 		CControlTray::DoGrepCreateWindow(G_AppInstance(), m_pCommanderView->GetHwnd(), GetEditWindow()->m_cDlgGrep);
