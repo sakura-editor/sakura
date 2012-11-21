@@ -145,9 +145,8 @@ void CControlProcess::OnExitProcess()
 
 CControlProcess::~CControlProcess()
 {
-	if( m_pcEditApp ){
-		delete m_pcEditApp;
-	}
+	delete m_pcEditApp;
+
 	if( m_hEventCPInitialized ){
 		::ResetEvent( m_hEventCPInitialized );
 	}
