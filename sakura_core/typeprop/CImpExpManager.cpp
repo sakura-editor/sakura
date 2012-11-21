@@ -847,6 +847,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	const tstring	strPath = to_tchar( sFileName.c_str() );
 	const int KEYNAME_SIZE = _countof(m_Common.m_sKeyBind.m_pKeyNameArr);
 	KEYDATA		pKeyNameArr[KEYNAME_SIZE];				/* キー割り当て表 */
+	CommonSetting_KeyBind sKeyBind = m_Common.m_sKeyBind;
 
 	//オープン
 	CDataProfile in;
@@ -871,7 +872,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", nKeyNameArrNum);
 		if (nKeyNameArrNum < 0 || nKeyNameArrNum > KEYNAME_SIZE)	bVer3=false; //範囲チェック
 
-		CShareData_IO::IO_KeyBind(in, nKeyNameArrNum, pKeyNameArr, true);	// 2008/5/25 Uchi
+		CShareData_IO::IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
 	}
 
 	if (!bVer3) {
@@ -980,7 +981,7 @@ bool CImpExpKeybind::Export( const wstring& sFileName, wstring& sErrMsg )
 	cProfile.IOProfileData_WrapInt( szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
 	//内容
-	CShareData_IO::IO_KeyBind(cProfile, m_Common.m_sKeyBind.m_nKeyNameArrNum, m_Common.m_sKeyBind.m_pKeyNameArr, true);
+	CShareData_IO::IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
 
 	// 書き込み
 	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_KEYBIND_HEAD)) {

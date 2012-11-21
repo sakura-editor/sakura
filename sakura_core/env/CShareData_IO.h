@@ -71,7 +71,7 @@ public:
 
 public:
 	static void IO_CustMenu( CDataProfile&, CommonSetting_CustomMenu&, bool );
-	static void IO_KeyBind( CDataProfile&, int, KEYDATA[], bool);
+	static void IO_KeyBind( CDataProfile&, CommonSetting_KeyBind&, bool);		// 2012.11.22 aroka
 	static void IO_MainMenu( CDataProfile&, CommonSetting_MainMenu&, bool );		// 2010/5/15 Uchi
 	static void IO_ColorSet( CDataProfile* , const WCHAR* , ColorInfo* );	/* êFê›íË I/O */ // Feb. 12, 2006 D.S.Koba
 };
