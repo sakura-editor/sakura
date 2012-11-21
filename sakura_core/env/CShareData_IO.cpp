@@ -924,7 +924,7 @@ void CShareData_IO::ShareData_IO_Font( CDataProfile& cProfile )
 void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
 {
 	DLLSHAREDATA* pShare = &GetDllShareData();
-	IO_KeyBind( cProfile, pShare->m_Common.m_sKeyBind.m_nKeyNameArrNum, pShare->m_Common.m_sKeyBind.m_pKeyNameArr, false );	// add Parameter 2008/5/24
+	IO_KeyBind( cProfile, pShare->m_Common.m_sKeyBind, false );	// add Parameter 2008/5/24
 }
 
 /*!
@@ -934,7 +934,7 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 	@date 2010.08.21 Moca ShareData_IO_KeyBindをIO_KeyBindに名称変更
 */
-void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, int nSize, KEYDATA ppKeyNameArr[], bool bOutCmdName)
+void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName)
 {
 	const WCHAR*	szSecName = L"KeyBind";
 	int		i;
@@ -945,7 +945,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, int nSize, KEYDATA ppKey
 	bool	bOldVer = false;
 
 	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
-	cProfile.IOProfileData( szSecName, LTEXT("bCreateAccelTblEachWin"), GetDllShareData().m_Common.m_sKeyBind.m_bCreateAccelTblEachWin );
+	cProfile.IOProfileData( szSecName, LTEXT("bCreateAccelTblEachWin"), sKeyBind.m_bCreateAccelTblEachWin );
 
 	if( cProfile.IsReadingMode() ){ 
 		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {
@@ -953,10 +953,10 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, int nSize, KEYDATA ppKey
 		}
 	}
 
-	for( i = 0; i < nSize; ++i ){
+	for( i = 0; i < sKeyBind.m_nKeyNameArrNum; ++i ){
 		// 2005.04.07 D.S.Koba
 		//KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
-		KEYDATA& keydata = ppKeyNameArr[i];
+		KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
 		
 		if( cProfile.IsReadingMode() ){
 			if (bOldVer) {
