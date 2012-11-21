@@ -145,9 +145,8 @@ void CControlProcess::OnExitProcess()
 
 CControlProcess::~CControlProcess()
 {
-	if( m_pcTray ){
-		delete m_pcTray;
-	}
+	delete m_pcTray;
+
 	if( m_hEventCPInitialized ){
 		::ResetEvent( m_hEventCPInitialized );
 	}
