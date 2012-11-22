@@ -203,8 +203,8 @@ SAKURA_CORE_API enum EOutlineType {
 	OUTLINE_JAVA,
 	OUTLINE_COBOL,
 	OUTLINE_ASM,
-	OUTLINE_PERL,	//	Sep. 8, 2000 genta
-	OUTLINE_VB,	//	June 23, 2001 N.Nakatani
+	OUTLINE_PERL,		//	Sep. 8, 2000 genta
+	OUTLINE_VB,			//	June 23, 2001 N.Nakatani
 	OUTLINE_WZTXT,		// 2003.05.20 zenryaku 階層付テキストアウトライン解析
 	OUTLINE_HTML,		// 2003.05.20 zenryaku HTMLアウトライン解析
 	OUTLINE_TEX,		// 2003.07.20 naoh TeXアウトライン解析
@@ -215,7 +215,10 @@ SAKURA_CORE_API enum EOutlineType {
 	OUTLINE_CODEMAX,
 	OUTLINE_BOOKMARK,	//	2001.12.03 hor
 	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
-	OUTLINE_UNKNOWN	= 99
+	OUTLINE_UNKNOWN	= 99,
+	OUTLINE_TREE = 100,		// 汎用ツリー 2010.03.28 syat
+	OUTLINE_CLSTREE = 200,	// 汎用ツリー(クラス) 2010.03.28 syat
+	OUTLINE_LIST = 300,		// 汎用リスト 2010.03.28 syat
 };
 
 /* スマートインデント種別 */
@@ -279,7 +282,7 @@ struct STypeConfig {
 	//	2001/06/19 asa-o
 	int					m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
 
-	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
+	char				m_szExtHelp[_MAX_PATH];			/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
 	BOOL				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
 	

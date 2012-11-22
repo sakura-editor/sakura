@@ -85,19 +85,32 @@ void CFuncInfoArr::AppendData( CFuncInfo* pcFuncInfo )
 	@date 2002.04.01 YAZAKI 深さ導入
 */
 void CFuncInfoArr::AppendData(
-	int				nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
-	int				nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
+	CLogicInt		nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
+	CLogicInt		nFuncColCRLF,		//!< 関数のある桁(CRLF単位)
+	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
+	CLayoutInt		nFuncColLAYOUT,		//!< 関数のある桁(折り返し単位)
 	const TCHAR*	pszFuncName,		//!< 関数名
 	int				nInfo,				//!< 付加情報
 	int				nDepth				//!< 深さ
 )
 {
-	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncLineLAYOUT, pszFuncName, nInfo );
+	CFuncInfo* pcFuncInfo = new CFuncInfo( nFuncLineCRLF, nFuncColCRLF, nFuncLineLAYOUT, nFuncColLAYOUT, pszFuncName, nInfo );
 	pcFuncInfo->m_nDepth = nDepth;
 	AppendData( pcFuncInfo );
 	return;
 }
 
+void CFuncInfoArr::AppendData(
+	CLogicInt		nFuncLineCRLF,		//!< 関数のある行(CRLF単位)
+	CLayoutInt		nFuncLineLAYOUT,	//!< 関数のある行(折り返し単位)
+	const TCHAR*	pszFuncName,		//!< 関数名
+	int				nInfo,				//!< 付加情報
+	int				nDepth				//!< 深さ
+)
+{
+	AppendData(nFuncLineCRLF, 1, nFuncLineLAYOUT, 1, pszFuncName, nInfo, nDepth );
+	return;
+}
 
 void CFuncInfoArr::DUMP( void )
 {

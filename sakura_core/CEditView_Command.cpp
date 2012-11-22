@@ -4456,12 +4456,13 @@ BOOL CEditView::Command_FUNCLIST(
 			(LPARAM)this,
 			&cFuncInfoArr,
 			m_nCaretPosY + 1,
+			m_nCaretPosX + 1,
 			nOutlineType,
 			m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 		);
 	}else{
 		/* アクティブにする */
-		m_pcEditDoc->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, m_nCaretPosY + 1 );
+		m_pcEditDoc->m_cDlgFuncList.Redraw( nOutlineType, &cFuncInfoArr, m_nCaretPosY + 1, m_nCaretPosX + 1 );
 		ActivateFrameWindow( m_pcEditDoc->m_cDlgFuncList.m_hWnd );
 	}
 
