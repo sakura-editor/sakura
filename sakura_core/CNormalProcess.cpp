@@ -70,8 +70,6 @@ bool CNormalProcess::InitializeProcess()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "NormalProcess::Init" );
 
-	HWND			hWnd;
-
 	/* プロセス初期化の目印 */
 	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
 	if( NULL == hMutex ){
@@ -133,31 +131,34 @@ bool CNormalProcess::InitializeProcess()
 	if( m_pShareData->m_Common.m_bNewWindow && nGroupId == -1 ){
 		nGroupId = CShareData::getInstance()->GetFreeGroupId();
 	}
-
-	/* エディタウィンドウオブジェクトを作成 */
+	// CEditWndを作成
 	m_pcEditWnd = new CEditWnd;
-	MY_TRACETIME( cRunningTimer, "CEditWnd Created" );
+	HWND hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId );
+	if( NULL == hWnd ){
+		::ReleaseMutex( hMutex );
+		::CloseHandle( hMutex );
+		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
+	}
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
 	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
 	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
 
-	if( bDebugMode ){
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId, NULL, CODE_DEFAULT, FALSE );
+	// -1: SetDocumentTypeWhenCreate での強制指定なし
+	const int nType = (fi.m_szDocType[0] == '\0' ? -1 : m_cShareData.GetDocumentTypeExt( fi.m_szDocType ));
 
+	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
 		m_pcEditWnd->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeExt("output"), true );
+		// 文字コードを有効とする Uchi 2008/6/8
+		m_pcEditWnd->SetDocumentTypeWhenCreate( (ECodeType)fi.m_nCharCode, FALSE, nType );
 	}
 	else if( bGrepMode ){
 		/* GREP */
-		hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId, NULL, CODE_DEFAULT, FALSE );
-		// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
-		if( NULL == hWnd ){
-			goto end_of_func;
-		}
+		m_pcEditWnd->SetDocumentTypeWhenCreate( (ECodeType)fi.m_nCharCode, FALSE, nType );
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
@@ -219,15 +220,11 @@ bool CNormalProcess::InitializeProcess()
 		bReadOnly = CCommandLine::getInstance()->IsReadOnly(); // 2002/2/8 aroka ここに移動
 		if( 0 < _tcslen( fi.m_szPath ) ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
-			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId,
-							fi.m_szPath, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
-							fi.m_szDocType[0] == '\0' ? -1 :
-								m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
-				 );
-			// 2004.05.13 Moca CEditWnd::Create()に失敗した場合の考慮を追加
-			if( NULL == hWnd ){
-				goto end_of_func;
-			}
+			m_pcEditWnd->OpenDocumentWhenStart(
+				fi.m_szPath,
+				(ECodeType)fi.m_nCharCode,
+				bReadOnly
+			);
 			//	Nov. 6, 2000 genta
 			//	キャレット位置の復元のため
 			//	オプション指定がないときは画面移動を行わないようにする
@@ -263,7 +260,8 @@ bool CNormalProcess::InitializeProcess()
 				// MoveCursorが補正するのである程度行わなくて良くなった
 				// From Here Mar. 28, 2003 MIK
 				// 改行の真ん中にカーソルが来ないように。
-				const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_nY );	// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
+				// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
+				const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_nY );
 				if( pTmpDocLine ){
 					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
 				}
@@ -277,17 +275,25 @@ bool CNormalProcess::InitializeProcess()
 		}
 		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
-			hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId,
-				NULL, (ECodeType)fi.m_nCharCode, bReadOnly/* 読み取り専用か */,
-				fi.m_szDocType[0] == '\0' ? -1 :
-				m_cShareData.GetDocumentTypeExt( fi.m_szDocType )
+			m_pcEditWnd->SetDocumentTypeWhenCreate(
+				(ECodeType)fi.m_nCharCode,
+				bReadOnly,	// 読み取り専用か
+				nType
 			);
 		}
 	}
-	MY_TRACETIME( cRunningTimer, "EditDoc->Create() End" );
 
-end_of_func:
 	m_hWnd = hWnd;
+
+	//ウィンドウキャプション更新
+	m_pcEditWnd->m_cEditDoc.UpdateCaption();
+	
+	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
+	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+
+	//再描画
+	::InvalidateRect( m_pcEditWnd->m_hWnd, NULL, TRUE );
+
 	::ReleaseMutex( hMutex );
 	::CloseHandle( hMutex );
 

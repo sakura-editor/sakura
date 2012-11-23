@@ -211,11 +211,7 @@ CEditWnd::~CEditWnd()
 HWND CEditWnd::Create(
 	HINSTANCE	hInstance,		//!< [in] Instance Handle
 	HWND		hwndParent,		//!< [in] 親ウィンドウのハンドル
-	int			nGroup,			//!< [in] グループID
-	const char*	pszPath,		//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
-	ECodeType	nCharCode,		//!< [in] 漢字コード
-	BOOL		bReadOnly,		//!< [in] 読み取り専用で開くかどうか
-	int			nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
+	int			nGroup			//!< [in] グループID
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
@@ -226,7 +222,6 @@ HWND CEditWnd::Create(
 	HWND		hwndTop;
 	WINDOWPLACEMENT	wpTop;
 	ATOM		atom;
-	BOOL		bOpened;
 
 	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
@@ -522,34 +517,47 @@ HWND CEditWnd::Create(
 	// ツールバーのタイマーを分離した 20060128 aroka
 	Timer_ONOFF( TRUE );
 
-	::InvalidateRect( m_hWnd, NULL, TRUE );
+	//デフォルトのIMEモード設定
+	m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
+
+	return m_hWnd;
+}
+
+
+
+//! 起動時のファイルオープン処理
+void CEditWnd::OpenDocumentWhenStart(
+	const char*	pszPath,		//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
+	ECodeType	nCharCode,		//!< [in] 漢字コード
+	BOOL		bReadOnly		//!< [in] 読み取り専用で開くかどうか
+)
+{
 	if( pszPath ){
 		char*	pszPathNew = new char[_MAX_PATH];
 		strcpy( pszPathNew, pszPath );
 		::ShowWindow( m_hWnd, SW_SHOW );
 		//	Oct. 03, 2004 genta コード確認は設定に依存
+		BOOL		bOpened;
 		BOOL		bReadResult = m_cEditDoc.FileRead( pszPathNew, &bOpened, nCharCode, bReadOnly, m_pShareData->m_Common.m_bQueryIfCodeChange );
 		if( !bReadResult ){
 			/* ファイルが既に開かれている */
 			if( bOpened ){
 				::PostMessage( m_hWnd, WM_CLOSE, 0, 0 );
-				delete [] pszPathNew;
 				// 2004.07.12 Moca return NULLだと、メッセージループを通らずにそのまま破棄されてしまい、タブの終了処理が抜ける
 				//	この後は正常ルートでメッセージループに入った後WM_CLOSEを受信して直ちにCLOSE & DESTROYとなる．
 				//	その中で編集ウィンドウの削除が行われる．
-				return m_hWnd;
-			}
-			else {
-				//	Nov. 20, 2000 genta
-				m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
 			}
 		}
 		delete [] pszPathNew;
 	}
-	else {
-		//	Nov. 20, 2000 genta
-		m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
-	}
+}
+
+void CEditWnd::SetDocumentTypeWhenCreate(
+	ECodeType		nCharCode,		//!< [in] 漢字コード
+	BOOL			bReadOnly,		//!< [in] 読み取り専用で開くかどうか
+	int				nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
+)
+{
 	//	Mar. 7, 2002 genta 文書タイプの強制指定
 	//	Jun. 4 ,2004 genta ファイル名指定が無くてもタイプ強制指定を有効にする
 	if( nDocumentType >= 0 ){
@@ -561,11 +569,6 @@ HWND CEditWnd::Create(
 	}
 	//	Jun. 4 ,2004 genta ファイル名指定が無くても読み取り専用強制指定を有効にする
 	m_cEditDoc.m_bReadOnly = bReadOnly;
-	m_cEditDoc.UpdateCaption();
-	
-	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
-	m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
-	return m_hWnd;
 }
 
 
