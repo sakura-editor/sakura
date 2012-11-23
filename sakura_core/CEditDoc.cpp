@@ -145,6 +145,106 @@ CEditDoc::~CEditDoc()
 }
 
 
+void CEditDoc::Clear()
+{
+	// ファイルの排他ロック解除
+	DoFileUnLock();
+
+	// ファイルの排他制御モード
+	m_nFileShareModeOld = 0;
+
+	// アンドゥ・リドゥバッファのクリア
+	m_cOpeBuf.ClearAll();
+
+	// テキストデータのクリア
+	m_cDocLineMgr.Empty();
+	m_cDocLineMgr.Init();
+
+	// ファイルパスとアイコンのクリア
+	SetFilePathAndIcon( _T("") );
+
+	// ファイルのタイムスタンプのクリア
+	m_FileTime.dwLowDateTime = 0;
+	m_FileTime.dwHighDateTime = 0;
+
+	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
+	SetDocumentType( doctype, true );
+
+	// レイアウト管理情報の初期化
+	STypeConfig& ref = GetDocumentAttribute();
+	m_cLayoutMgr.SetLayoutInfo(
+		TRUE,
+		NULL,
+		ref
+	);
+}
+
+/* 既存データのクリア */
+void CEditDoc::InitDoc()
+{
+	m_bReadOnly = FALSE;	// 読み取り専用モード
+	strcpy( m_szGrepKey, "" );
+
+	m_bGrepMode = FALSE;	/* Grepモード */
+	m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法
+
+	// 2005.06.24 Moca バグ修正
+	//	アウトプットウィンドウで「閉じて(無題)」を行ってもアウトプットウィンドウのまま
+	if( m_bDebugMode ){
+		m_pcEditWnd->SetDebugModeOFF();
+	}
+
+//	Sep. 10, 2002 genta
+//	アイコン設定はファイル名設定と一体化のためここからは削除
+
+	Clear();
+
+	/* 変更フラグ */
+	SetModified(false,false);	//	Jan. 22, 2002 genta
+
+	/* 文字コード種別 */
+	m_nCharCode = CODE_DEFAULT;
+	m_bBomExist = FALSE;	//	Jul. 26, 2003 ryoji
+	m_cNewLineCode.SetType( EOL_CRLF );
+	
+	//	Oct. 2, 2005 genta 挿入モード
+	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
+}
+
+
+/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
+void CEditDoc::InitAllView( void )
+{
+	int		i;
+
+	m_nCommandExecNum = 0;	/* コマンド実行回数 */
+
+	// 2008.05.30 nasukoji	テキストの折り返し方法を初期化
+	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
+	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+
+	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
+	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
+		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+	else
+		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
+
+	/* 先頭へカーソルを移動 */
+	for( i = 0; i < GetAllViewCount(); ++i ){
+		//	Apr. 1, 2001 genta
+		// 移動履歴の消去
+		m_cEditViewArr[i].m_cHistory->Flush();
+
+		/* 現在の選択範囲を非選択状態に戻す */
+		m_cEditViewArr[i].DisableSelectArea( FALSE );
+
+		m_cEditViewArr[i].OnChangeSetting();
+		m_cEditViewArr[i].MoveCursor( 0, 0, TRUE );
+		m_cEditViewArr[i].m_nCaretPosX_Prev = 0;
+	}
+
+	return;
+}
 
 
 
@@ -292,54 +392,6 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 		}
 #endif
 		return FALSE;
-	}else{
-//		MYTRACE_A( "LOGFONT.lfPitchAndFamily = " );
-//		if( plf->lfPitchAndFamily & DEFAULT_PITCH ){
-//			MYTRACE_A( "DEFAULT_PITCH " );
-//		}
-//		if( plf->lfPitchAndFamily & FIXED_PITCH ){
-//			MYTRACE_A( "FIXED_PITCH " );
-//		}
-//		if( plf->lfPitchAndFamily & VARIABLE_PITCH ){
-//			MYTRACE_A( "VARIABLE_PITCH " );
-//		}
-//		if( plf->lfPitchAndFamily & FF_DECORATIVE  ){
-//			MYTRACE_A( "FF_DECORATIVE " );
-//		}
-//		if( plf->lfPitchAndFamily & FF_DONTCARE ){
-//			MYTRACE_A( "FF_DONTCARE " );
-//		}
-//		if( plf->lfPitchAndFamily & FF_MODERN ){
-//			MYTRACE_A( "FF_MODERN " );
-//		}
-//		if( plf->lfPitchAndFamily & FF_ROMAN ){
-//			MYTRACE_A( "FF_ROMAN " );
-//		}
-//		if( plf->lfPitchAndFamily & FF_SCRIPT ){
-//			MYTRACE_A( "FF_SCRIPT " );
-//		}
-//		if( plf->lfPitchAndFamily & FF_SWISS ){
-//			MYTRACE_A( "FF_SWISS " );
-//		}
-//		MYTRACE_A( "\n" );
-
-//		MYTRACE_A( "/* LOGFONTの初期化 */\n" );
-//		MYTRACE_A( "memset( &m_pShareData->m_Common.m_lf, 0, sizeof(LOGFONT) );\n" );
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfHeight			= %d;\n", m_pShareData->m_Common.m_lf.lfHeight			);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfWidth			= %d;\n", m_pShareData->m_Common.m_lf.lfWidth			);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfEscapement		= %d;\n", m_pShareData->m_Common.m_lf.lfEscapement		);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfOrientation		= %d;\n", m_pShareData->m_Common.m_lf.lfOrientation		);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfWeight			= %d;\n", m_pShareData->m_Common.m_lf.lfWeight			);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfItalic			= %d;\n", m_pShareData->m_Common.m_lf.lfItalic			);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfUnderline		= %d;\n", m_pShareData->m_Common.m_lf.lfUnderline		);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfStrikeOut		= %d;\n", m_pShareData->m_Common.m_lf.lfStrikeOut		);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfCharSet			= %d;\n", m_pShareData->m_Common.m_lf.lfCharSet			);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfOutPrecision	= %d;\n", m_pShareData->m_Common.m_lf.lfOutPrecision	);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfClipPrecision	= %d;\n", m_pShareData->m_Common.m_lf.lfClipPrecision	);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfQuality			= %d;\n", m_pShareData->m_Common.m_lf.lfQuality			);
-//		MYTRACE_A( "m_pShareData->m_Common.m_lf.lfPitchAndFamily	= %d;\n", m_pShareData->m_Common.m_lf.lfPitchAndFamily	);
-//		MYTRACE_A( "strcpy( m_pShareData->m_Common.m_lf.lfFaceName, \"%s\" );\n", m_pShareData->m_Common.m_lf.lfFaceName	);
-
 	}
 
 	return TRUE;
@@ -498,7 +550,7 @@ BOOL CEditDoc::FileRead(
 	}
 
 	//	Sep. 10, 2002 genta
-	SetFilePath( pszPath ); /* 現在編集中のファイルのパス */
+	SetFilePathAndIcon( pszPath ); /* 現在編集中のファイルのパス */
 
 
 	/* 指定された文字コード種別に変更する */
@@ -543,7 +595,7 @@ BOOL CEditDoc::FileRead(
 					pszPath
 				);
 				//	Sep. 10, 2002 genta
-				SetFilePath( "" );
+				SetFilePathAndIcon( _T("") );
 				bRet = FALSE;
 				goto end_of_func;
 			}
@@ -578,7 +630,7 @@ BOOL CEditDoc::FileRead(
 				if( IDCANCEL == nRet ){
 					m_nCharCode = CODE_DEFAULT;
 					//	Sep. 10, 2002 genta
-					SetFilePath( "" );
+					SetFilePathAndIcon( _T("") );
 					bRet = FALSE;
 					goto end_of_func;
 				}
@@ -590,7 +642,7 @@ BOOL CEditDoc::FileRead(
 					"【対処】エラーの出た状況を作者に連絡してください。"
 				);
 				//	Sep. 10, 2002 genta
-				SetFilePath( "" );
+				SetFilePathAndIcon( _T("") );
 				bRet = FALSE;
 				goto end_of_func;
 			}
@@ -605,7 +657,7 @@ BOOL CEditDoc::FileRead(
 	/* ロングファイル名を取得する */
 	if( TRUE == ::GetLongFileName( pszPath, szWork ) ){
 		//	Sep. 10, 2002 genta
-		SetFilePath( szWork );
+		SetFilePathAndIcon( szWork );
 	}
 
 	doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
@@ -650,7 +702,7 @@ BOOL CEditDoc::FileRead(
 		if( FALSE == m_cDocLineMgr.ReadFile( GetFilePath(), m_hWnd, hwndProgress,
 			m_nCharCode, &m_FileTime, m_pShareData->m_Common.GetAutoMIMEdecode(), &m_bBomExist ) ){
 			//	Sep. 10, 2002 genta
-			SetFilePath( "" );
+			SetFilePathAndIcon( _T("") );
 			bRet = FALSE;
 			goto end_of_func;
 		}
@@ -876,7 +928,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 	m_cEditViewArr[m_nActivePaneIndex].RedrawAll();
 
 	//	Sep. 10, 2002 genta
-	SetFilePath( pszPath ); /* 現在編集中のファイルのパス */
+	SetFilePathAndIcon( pszPath ); /* 現在編集中のファイルのパス */
 
 	SetModified(false,false);	//	Jan. 22, 2002 genta 関数化 更新フラグのクリア
 
@@ -1812,7 +1864,7 @@ void CEditDoc::DoFileLock( void )
 			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
 			GSTR_APPNAME,
 			"%s\nは現在他のプロセスによって書込みが禁止されています。",
-			IsFilePathAvailable() ? GetFilePath() : "（無題）"
+			IsFilePathAvailable() ? GetFilePath() : "(無題)"
 		);
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
@@ -1838,7 +1890,7 @@ void CEditDoc::DoFileLock( void )
 			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
 			GSTR_APPNAME,
 			"%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。",
-			IsFilePathAvailable() ? GetFilePath() : "（無題）",
+			IsFilePathAvailable() ? GetFilePath() : "(無題)",
 			pszMode
 		);
 		/* 親ウィンドウのタイトルを更新 */
@@ -3843,7 +3895,7 @@ void CEditDoc::SetFileInfo( EditInfo* pfi )
 
 	@retval TRUE: 終了して良い / FALSE: 終了しない
 */
-BOOL CEditDoc::OnFileClose( void )
+BOOL CEditDoc::OnFileClose()
 {
 	int			nRet;
 	int			nBool;
@@ -3886,17 +3938,12 @@ BOOL CEditDoc::OnFileClose( void )
 				hwndMainFrame,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
-				"%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n",
-				IsFilePathAvailable() ? GetFilePath() : "（無題）"
+				_T("%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"),
+				IsFilePathAvailable() ? GetFilePath() : "(無題)"
 			);
 			switch( nRet ){
 			case IDYES:
-//				if( IsFilePathAvailable() ){
-//					nBool = HandleCommand( F_FILESAVE );
-//				}else{
-					//nBool = HandleCommand( F_FILESAVEAS_DIALOG );
-					nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
-//				}
+				nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
 				return nBool;
 			case IDNO:
 				return TRUE;
@@ -3904,22 +3951,22 @@ BOOL CEditDoc::OnFileClose( void )
 			default:
 				return FALSE;
 			}
-		}else{
+		}
+		else{
 			ConfirmBeep();
 			nRet = ::MYMESSAGEBOX(
 				hwndMainFrame,
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
-				"%s\nは変更されています。 閉じる前に保存しますか？",
-				IsFilePathAvailable() ? GetFilePath() : "（無題）"
+				_T("%s\nは変更されています。 閉じる前に保存しますか？"),
+				IsFilePathAvailable() ? GetFilePath() : "(無題)"
 			);
 			switch( nRet ){
 			case IDYES:
 				if( IsFilePathAvailable() ){
-					//nBool = HandleCommand( F_FILESAVE );
 					nBool = FileSave();	// 2006.12.30 ryoji
-				}else{
-					//nBool = HandleCommand( F_FILESAVEAS_DIALOG );
+				}
+				else{
 					nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
 				}
 				return nBool;
@@ -3933,114 +3980,6 @@ BOOL CEditDoc::OnFileClose( void )
 	}else{
 		return TRUE;
 	}
-}
-
-
-/* 既存データのクリア */
-void CEditDoc::InitDoc()
-{
-//	int types;
-
-	m_bReadOnly = FALSE;	/* 読み取り専用モード */
-	strcpy( m_szGrepKey, "" );
-	m_bGrepMode = FALSE;	/* Grepモード */
-	m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法
-
-	// 2005.06.24 Moca バグ修正
-	//	アウトプットウィンドウで「閉じて(無題)」を行ってもアウトプットウィンドウのまま
-	if( m_bDebugMode ){
-		m_pcEditWnd->SetDebugModeOFF();
-	}
-
-//	Sep. 10, 2002 genta
-//	アイコン設定はファイル名設定と一体化のためここからは削除
-
-	/* ファイルの排他ロック解除 */
-	DoFileUnLock();
-
-	/* ファイルの排他制御モード */
-	m_nFileShareModeOld = 0;
-
-
-	/*アンドゥ・リドゥバッファのクリア */
-	/* 全要素のクリア */
-	m_cOpeBuf.ClearAll();
-
-	/* テキストデータのクリア */
-	m_cDocLineMgr.Empty();
-	m_cDocLineMgr.Init();
-
-	/* 現在編集中のファイルのパス */
-	//	Sep. 10, 2002 genta
-	//	アイコンも同時に初期化される
-	SetFilePath( "" );
-
-	/* 現在編集中のファイルのタイムスタンプ */
-	m_FileTime.dwLowDateTime = 0;
-	m_FileTime.dwHighDateTime = 0;
-
-
-	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
-	SetDocumentType( doctype, true );
-
-	/* レイアウト管理情報の初期化 */
-	/* レイアウト情報の変更 */
-	STypeConfig& ref = GetDocumentAttribute();
-	m_cLayoutMgr.SetLayoutInfo(
-		TRUE,
-		NULL,/*hwndProgress*/
-		ref
-	);
-
-
-	/* 変更フラグ */
-	SetModified(false,false);	//	Jan. 22, 2002 genta
-
-	/* 文字コード種別 */
-	m_nCharCode = CODE_DEFAULT;
-	m_bBomExist = FALSE;	//	Jul. 26, 2003 ryoji
-
-	//	May 12, 2000
-	m_cNewLineCode.SetType( EOL_CRLF );
-	
-	//	Oct. 2, 2005 genta 挿入モード
-	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
-
-	return;
-}
-
-/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
-void CEditDoc::InitAllView( void )
-{
-	int		i;
-
-	m_nCommandExecNum = 0;	/* コマンド実行回数 */
-
-	// 2008.05.30 nasukoji	テキストの折り返し方法を初期化
-	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
-	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
-
-	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
-	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
-		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
-	else
-		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
-
-	/* 先頭へカーソルを移動 */
-	for( i = 0; i < GetAllViewCount(); ++i ){
-		//	Apr. 1, 2001 genta
-		// 移動履歴の消去
-		m_cEditViewArr[i].m_cHistory->Flush();
-
-		/* 現在の選択範囲を非選択状態に戻す */
-		m_cEditViewArr[i].DisableSelectArea( FALSE );
-
-		m_cEditViewArr[i].OnChangeSetting();
-		m_cEditViewArr[i].MoveCursor( 0, 0, TRUE );
-		m_cEditViewArr[i].m_nCaretPosX_Prev = 0;
-	}
-
-	return;
 }
 
 
@@ -4768,7 +4707,6 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 void CEditDoc::RunAutoMacro( int idx, const char *pszSaveFilePath )
 {
 	static bool bRunning = false;
-
 	if( bRunning )
 		return;	// 再入り実行はしない
 

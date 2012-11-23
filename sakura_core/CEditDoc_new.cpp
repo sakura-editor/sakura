@@ -1183,15 +1183,10 @@ void CEditDoc::SetModified( bool flag, bool redraw)
 	@author genta
 	@date 2002.09.09
 */
-void CEditDoc::SetFilePath(const char* szFile)
+void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
 {
 	strcpy( m_szFilePath, szFile );
 	SetDocumentIcon();
-
-	//@@@ From Here 2003.05.31 MIK
-	//タブウインドウ	//SetParentCaptionで実施
-	//m_pcEditWnd->ChangeFileNameNotify( szFile );
-	//@@@ To Here 2003.05.31 MIK
 }
 
 /*! ファイル名(パスなし)を取得する
@@ -1483,7 +1478,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 					GSTR_APPNAME,
 					_T("%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n")
 					_T("名前を付けて保存をすればいいと思います。"),
-					IsFilePathAvailable() ? GetFilePath() : _T("（無題）")
+					IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
 				);
 			}
 			return FALSE;

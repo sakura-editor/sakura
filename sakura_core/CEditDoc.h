@@ -71,6 +71,7 @@ public:
 	BOOL Create( HINSTANCE, HWND, CImageListMgr* );
 	void InitDoc();	/* 既存データのクリア */
 	void InitAllView();	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
+	void Clear();
 	bool CreateEditViewBySplit( int );	/* ビューの分割分のウィンドウ作成要求 */
 
 	/*
@@ -246,7 +247,7 @@ protected:
 	char			m_szFilePath[_MAX_PATH];	/* 現在編集中のファイルのパス */
 	char			m_szSaveFilePath[_MAX_PATH];	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
 	
-	void SetFilePath(const char*);	// Sep. 9, 2002 genta
+	void SetFilePathAndIcon(const TCHAR*);	// Sep. 9, 2002 genta
 	
 public: /* テスト用にアクセス属性を変更 */
 	/* 入力補完 */
