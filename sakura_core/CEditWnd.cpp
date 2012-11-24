@@ -564,11 +564,33 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 		m_cEditDoc.SetDocumentType( nDocumentType, true );
 		//	2002/05/07 YAZAKI タイプ別設定一覧の一時適用のコードを流用
 		m_cEditDoc.LockDocumentType();
+	}
+
+	// 文字コードの指定	2008/6/14 Uchi
+	if( IsValidCodeType( nCharCode ) || nDocumentType >= 0 ){
+		STypeConfig& types = m_cEditDoc.GetDocumentAttribute();
+		ECodeType eDefaultCharCode = static_cast<ECodeType>(types.m_eDefaultCodetype);
+		if( !IsValidCodeType( nCharCode ) ){
+			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用
+		}
+		m_cEditDoc.m_nCharCode = nCharCode;
+		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
+			m_cEditDoc.m_bBomExist = ( types.m_bDefaultBom != FALSE );
+			m_cEditDoc.SetNewLineCode( static_cast<EEolType>( types.m_eDefaultEoltype ) );
+		}
+		else{
+			m_cEditDoc.m_bBomExist = ( nCharCode == CODE_UNICODE || nCharCode == CODE_UNICODEBE );
+			m_cEditDoc.SetNewLineCode( EOL_CRLF );
+		}
+	}
+
+	//	Jun. 4 ,2004 genta ファイル名指定が無くても読み取り専用強制指定を有効にする
+	m_cEditDoc.m_bReadOnly = bReadOnly;
+
+	if( nDocumentType >= 0 ){
 		/* 設定変更を反映させる */
 		m_cEditDoc.OnChangeSetting();
 	}
-	//	Jun. 4 ,2004 genta ファイル名指定が無くても読み取り専用強制指定を有効にする
-	m_cEditDoc.m_bReadOnly = bReadOnly;
 }
 
 

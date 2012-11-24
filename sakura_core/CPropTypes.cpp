@@ -218,10 +218,45 @@ static const DWORD p_helpids3[] = {	//11500
 	IDC_EDIT_TYPEEXTHTMLHELP,		HIDC_EDIT_TYPEEXTHTMLHELP,			//外部HTMLヘルプファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_TYPEOPENEXTHTMLHELP,	HIDC_BUTTON_TYPEOPENEXTHTMLHELP,	//外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_CHECK_TYPEHTMLHELPISSINGLE,	HIDC_CHECK_TYPEHTMLHELPISSINGLE,	//ビューアを複数起動しない	// 2006.08.06 ryoji
+	IDC_COMBO_DEFAULT_CODETYPE,		HIDC_COMBO_DEFAULT_CODETYPE,		//デフォルト文字コード
+	IDC_COMBO_DEFAULT_EOLTYPE,		HIDC_COMBO_DEFAULT_EOLTYPE,			//デフォルト改行コード	// 2011.01.24 ryoji
+	IDC_CHECK_DEFAULT_BOM,			HIDC_CHECK_DEFAULT_BOM,				//デフォルトBOM	// 2011.01.24 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };
 //To Here Jul. 05, 2001
+
+static const TCHAR* aszCodeStr[] = {
+	_T("SJIS"),
+	_T("EUC"),
+	_T("UTF-8"),
+	_T("Unicode"),
+	_T("UnicodeBE")
+};
+static const ECodeType aeCodeType[] = {
+	CODE_SJIS,
+	CODE_EUC,
+	CODE_UTF8,
+	CODE_UNICODE,
+	CODE_UNICODEBE
+};
+static const BOOL abBomEnable[] = {
+	FALSE,
+	FALSE,
+	TRUE,
+	TRUE,
+	TRUE
+};
+static const TCHAR* aszEolStr[] = {
+	_T("CR+LF"),
+	_T("LF (UNIX)"),
+	_T("CR (Mac)"),
+};
+static const EEolType aeEolType[] = {
+	EOL_CRLF,
+	EOL_LF,
+	EOL_CR,
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //
@@ -1217,6 +1252,27 @@ INT_PTR CPropSupport::DispatchEvent(
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 //		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
+		case CBN_SELCHANGE:
+			{
+				int i;
+				switch( wID ){
+				case IDC_COMBO_DEFAULT_CODETYPE:
+					// 文字コードの変更をBOMチェックボックスに反映
+					i = ::SendMessage((HWND) lParam, CB_GETCURSEL, 0L, 0L);
+					if( CB_ERR != i ){
+						int nCheck = BST_UNCHECKED;
+						if( abBomEnable[i] ){
+							if( (aeCodeType[i] == CODE_UNICODE || aeCodeType[i] == CODE_UNICODEBE) )
+								nCheck = BST_CHECKED;
+						}
+						::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, nCheck );
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
+					}
+					break;
+				}
+			}
+			break;
+
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			/* ダイアログデータの取得 p2 */
@@ -1356,6 +1412,48 @@ void CPropSupport::SetData( HWND hwndDlg )
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE, m_Types.m_bHtmlHelpIsSingle );
+
+	/* 「文字コード」グループの設定 */
+	{
+		int i;
+		HWND hCombo;
+
+		// デフォルトコードタイプのコンボボックス設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
+		for( i = 0; i < _countof(aszCodeStr); ++i ){
+			::SendMessage( hCombo, CB_ADDSTRING, 0, (LPARAM)aszCodeStr[i] );
+		}
+		for( i = 0; i < _countof(aeCodeType); ++i ){
+			if( m_Types.m_eDefaultCodetype == aeCodeType[i] ){
+				break;
+			}
+		}
+		if( i == _countof(aeCodeType) ){
+			i = 0;
+		}
+		::SendMessage(hCombo, CB_SETCURSEL, (WPARAM)i, 0L);
+
+		// BOM チェックボックス設定
+		if( !abBomEnable[i] )
+			m_Types.m_bDefaultBom = FALSE;
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, m_Types.m_bDefaultBom );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
+
+		// デフォルト改行タイプのコンボボックス設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
+		for( i = 0; i < _countof(aszEolStr); ++i ){
+			::SendMessage( hCombo, CB_ADDSTRING, 0, (LPARAM)aszEolStr[i] );
+		}
+		for( i = 0; i < _countof(aeEolType); ++i ){
+			if( m_Types.m_eDefaultEoltype == aeEolType[i] ){
+				break;
+			}
+		}
+		if( i == _countof(aeEolType) ){
+			i = 0;
+		}
+		::SendMessage(hCombo, CB_SETCURSEL, (WPARAM)i, 0L);
+	}
 }
 
 /* ダイアログデータの取得 */
@@ -1377,6 +1475,31 @@ int CPropSupport::GetData( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, sizeof( m_Types.m_szExtHelp ));
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, sizeof( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE );
+
+	/* 「文字コード」グループの設定 */
+	{
+		int i;
+		HWND hCombo;
+
+		// m_Types.eDefaultCodetype を設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
+		i = ::SendMessage(hCombo, CB_GETCURSEL, 0L, 0L);
+		if( CB_ERR != i ){
+			m_Types.m_eDefaultCodetype = aeCodeType[i];
+		}
+
+		// m_Types.m_bDefaultBom を設定
+		m_Types.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM );
+
+		// m_Types.eDefaultEoltype を設定
+		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
+		i = ::SendMessage(hCombo, CB_GETCURSEL, 0L, 0L);
+		if( CB_ERR != i ){
+			m_Types.m_eDefaultEoltype = aeEolType[i];
+		}
+	}
+
+
 	return TRUE;
 }
 

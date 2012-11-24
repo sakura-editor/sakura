@@ -1166,9 +1166,13 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 		sizeof( types.m_szExtHtmlHelp ));
 	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
 
+	cProfile.IOProfileData( pszSecName, "eDefaultCodetype"		, types.m_eDefaultCodetype );
+	cProfile.IOProfileData( pszSecName, "eDefaultEoltype"		, types.m_eDefaultEoltype );
+	cProfile.IOProfileData( pszSecName, "bDefaultBom"			, types.m_bDefaultBom );
+
 	cProfile.IOProfileData( pszSecName, "bAutoIndent"			, types.m_bAutoIndent );
 	cProfile.IOProfileData( pszSecName, "bAutoIndent_ZENSPACE"	, types.m_bAutoIndent_ZENSPACE );
-	cProfile.IOProfileData( pszSecName, "bRTrimPrevLine"			, types.m_bRTrimPrevLine );			// 2005.10.08 ryoji
+	cProfile.IOProfileData( pszSecName, "bRTrimPrevLine"		, types.m_bRTrimPrevLine );			// 2005.10.08 ryoji
 	cProfile.IOProfileData( pszSecName, "nIndentLayout"			, types.m_nIndentLayout );
 
 	/* êFê›íË I/O */

@@ -609,6 +609,9 @@
 #define IDC_SPIN_ALERT_FILESIZE         1552
 #define IDC_EDIT_ALERT_FILESIZE         1553
 #define IDC_CHECK_ALERT_IF_LARGEFILE    1554
+#define IDC_COMBO_DEFAULT_CODETYPE      1557
+#define IDC_COMBO_DEFAULT_EOLTYPE       1600
+#define IDC_CHECK_DEFAULT_BOM           1601
 #define IDC_CHECK_OpenNewWin            1612
 
 #define IDM_POPLAST                     4047

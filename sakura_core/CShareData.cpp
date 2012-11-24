@@ -34,6 +34,7 @@
 #include "my_icmp.h" // 2002/11/30 Moca 追加
 #include "my_tchar.h" // 2003/01/06 Moca
 #include "charcode.h"  // 2006/06/28 rastiv
+#include "CEol.h"  // 2006/06/28 rastiv
 
 struct ARRHEAD {
 	int		nLength;
@@ -283,6 +284,7 @@ struct ARRHEAD {
 
 	Version 96:
 	KEYDATAのサイズ変更 2012.11.04 aroka
+	デフォルトの文字コード/デフォルト改行コード/デフォルトBOM
 */
 
 extern const unsigned int uShareDataVersion;
@@ -5019,6 +5021,11 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	pShareData->m_Types[nIdx].m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
+
+	// 文字コード設定
+	pShareData->m_Types[nIdx].m_eDefaultCodetype = CODE_SJIS;
+	pShareData->m_Types[nIdx].m_eDefaultEoltype = EOL_CRLF;
+	pShareData->m_Types[nIdx].m_bDefaultBom = FALSE;
 
 	//@@@2002.2.4 YAZAKI
 	pShareData->m_Types[nIdx].m_szExtHelp[0] = _T('\0');

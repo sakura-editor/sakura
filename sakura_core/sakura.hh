@@ -610,6 +610,9 @@
 #define HIDC_EDIT_TYPEEXTHTMLHELP				11544 //外部HTMLヘルプファイル名	// 2006.08.06 ryoji
 #define HIDC_BUTTON_TYPEOPENEXTHTMLHELP			11545 //外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 #define HIDC_CHECK_TYPEHTMLHELPISSINGLE			11546 //ビューアを複数起動しない	// 2006.08.06 ryoji
+#define HIDC_COMBO_DEFAULT_CODETYPE				14300 //デフォルト文字コード
+#define HIDC_COMBO_DEFAULT_EOLTYPE				14302 //デフォルト改行コード	// 2011.01.24 ryoji
+#define HIDC_CHECK_DEFAULT_BOM					14303 //デフォルトBOM			// 2011.01.24 ryoji
 #define HIDC_BUTTON_REGEX_IMPORT	11600	//インポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_EXPORT	11601	//エクスポート	//@@@ 2001.11.17 add MIK
 #define HIDC_BUTTON_REGEX_INS		11602	//挿入			//@@@ 2001.11.17 add MIK

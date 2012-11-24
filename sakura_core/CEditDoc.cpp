@@ -17,6 +17,7 @@
 	Copyright (C) 2008, ryoji, nasukoji, bosagami, novice, aroka
 	Copyright (C) 2009, nasukoji, syat, aroka
 	Copyright (C) 2010, ryoji, Moca
+	Copyright (C) 2011, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -65,15 +66,12 @@
 	@date 2004.06.21 novice タグジャンプ機能追加
 */
 CEditDoc::CEditDoc()
-: m_cNewLineCode( EOL_CRLF )		//	New Line Type
-, m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
+: m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
 , m_bGrepRunning( FALSE )		/* Grep処理中 */
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_bReadOnly( FALSE )			/* 読み取り専用モード */
 , m_bDebugMode( FALSE )			/* デバッグモニタモード */
 , m_bGrepMode( FALSE )			/* Grepモードか */
-, m_nCharCode( CODE_DEFAULT )	/* 文字コード種別 */
-, m_bBomExist( FALSE )			//	Jul. 26, 2003 ryoji BOM
 , m_nActivePaneIndex( 0 )
 , m_bDoing_UndoRedo( FALSE )		/* アンドゥ・リドゥの実行中か */
 , m_nFileShareModeOld( 0 )		/* ファイルの排他制御モード */
@@ -131,6 +129,11 @@ CEditDoc::CEditDoc()
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+
+	// 文字コード種別を初期化
+	m_nCharCode = (ECodeType)( m_pShareData->m_Types[0].m_eDefaultCodetype );
+	m_bBomExist = ( m_pShareData->m_Types[0].m_bDefaultBom != FALSE );
+	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
 }
 
 
@@ -203,10 +206,10 @@ void CEditDoc::InitDoc()
 	SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	m_nCharCode = CODE_DEFAULT;
-	m_bBomExist = FALSE;	//	Jul. 26, 2003 ryoji
-	m_cNewLineCode.SetType( EOL_CRLF );
-	
+	m_nCharCode = (ECodeType)( m_pShareData->m_Types[0].m_eDefaultCodetype );
+	m_bBomExist = ( m_pShareData->m_Types[0].m_bDefaultBom != FALSE );
+	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
+
 	//	Oct. 2, 2005 genta 挿入モード
 	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
 }
@@ -676,8 +679,25 @@ BOOL CEditDoc::FileRead(
 	}
 	//	To Here Jul. 26, 2003 ryoji BOMの有無の初期状態を設定
 
-	/* ファイルが存在しない */
-	if( FALSE == bFileIsExist ){
+	//ファイルが存在する場合はファイルを読む
+	if( bFileIsExist ){
+		/* ファイルを読む */
+		if( NULL != hwndProgress ){
+			::ShowWindow( hwndProgress, SW_SHOW );
+		}
+		//	Jul. 26, 2003 ryoji BOM引数追加
+		if( FALSE == m_cDocLineMgr.ReadFile( GetFilePath(), m_hWnd, hwndProgress,
+			m_nCharCode, &m_FileTime, m_pShareData->m_Common.GetAutoMIMEdecode(), &m_bBomExist ) ){
+			//	Sep. 10, 2002 genta
+			SetFilePathAndIcon( _T("") );
+			bRet = FALSE;
+			goto end_of_func;
+		}
+	}else{
+		// 存在しないときもドキュメントに文字コードを反映する
+		const STypeConfig& type = GetDocumentAttribute();
+		m_nCharCode = (ECodeType)( type.m_eDefaultCodetype );
+		m_bBomExist = ( type.m_bDefaultBom != FALSE );
 
 		//	Oct. 09, 2004 genta フラグに応じて警告を出す（以前の動作）ように
 		if( m_pShareData->m_Common.GetAlertIfFileNotExist() ){
@@ -693,23 +713,6 @@ BOOL CEditDoc::FileRead(
 				pszPath
 			);
 		}
-	}else{
-		/* ファイルを読む */
-		if( NULL != hwndProgress ){
-			::ShowWindow( hwndProgress, SW_SHOW );
-		}
-		//	Jul. 26, 2003 ryoji BOM引数追加
-		if( FALSE == m_cDocLineMgr.ReadFile( GetFilePath(), m_hWnd, hwndProgress,
-			m_nCharCode, &m_FileTime, m_pShareData->m_Common.GetAutoMIMEdecode(), &m_bBomExist ) ){
-			//	Sep. 10, 2002 genta
-			SetFilePathAndIcon( _T("") );
-			bRet = FALSE;
-			goto end_of_func;
-		}
-//#ifdef _DEBUG
-//		m_cDocLineMgr.DUMP();
-//#endif
-
 	}
 
 	/* レイアウト情報の変更 */
@@ -783,7 +786,13 @@ BOOL CEditDoc::FileRead(
 	//	May 12, 2000 genta
 	//	改行コードの設定
 	{
-		SetNewLineCode( EOL_CRLF );
+		const STypeConfig& type = GetDocumentAttribute();
+		if ( m_nCharCode == type.m_eDefaultCodetype ){
+			SetNewLineCode( static_cast<EEolType>(type.m_eDefaultEoltype) );	// 2011.01.24 ryoji デフォルトEOL
+		}
+		else{
+			SetNewLineCode( EOL_CRLF );
+		}
 		CDocLine*	pFirstlineinfo = m_cDocLineMgr.GetLine( 0 );
 		if( pFirstlineinfo != NULL ){
 			EEolType t = (EEolType)pFirstlineinfo->m_cEol;

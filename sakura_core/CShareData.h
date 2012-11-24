@@ -285,8 +285,11 @@ struct STypeConfig {
 	char				m_szExtHelp[_MAX_PATH];			/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
 	BOOL				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
-	
-	
+
+	int					m_eDefaultCodetype;				/* デフォルト文字コード */
+	int					m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
+	BOOL				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
+
 //@@@ 2001.11.17 add start MIK
 	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/
 	int	m_nRegexKeyMagicNumber;	/* 正規表現キーワード更新マジックナンバー */
