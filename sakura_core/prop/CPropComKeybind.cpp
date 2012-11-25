@@ -520,6 +520,8 @@ void CPropKeybind::Import( HWND hwndDlg )
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
 	//@@@ 2001.11.07 modify end MIK
+	// 2012.11.25 aroka	設定の更新（ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)）
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ACCELTBL_EACHWIN, m_Common.m_sKeyBind.m_bCreateAccelTblEachWin );
 }
 
 
