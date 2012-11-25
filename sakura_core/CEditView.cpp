@@ -8500,6 +8500,7 @@ int CEditView::IsCurrentPositionSelectedTEST(
 /*! クリップボードからデータを取得
 	@date 2005/05/29 novice UNICODE TEXT 対応処理を追加
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
+	@date 2010.11.17 ryoji VS2010の行コピー対応処理を追加
 */
 BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL* pbLineSelect /*= NULL*/ )
 {
@@ -8516,7 +8517,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 
 	UINT uFormatSakuraClip;
 	UINT uFormat;
-	uFormatSakuraClip = ::RegisterClipboardFormat( "SAKURAClip" );
+	uFormatSakuraClip = ::RegisterClipboardFormat( _T("SAKURAClip") );
 
 	// 2008/02/16 クリップボードからのファイルパス貼り付け対応	bosagami	zlib/libpng license
 	if( !::IsClipboardFormatAvailable( CF_OEMTEXT )
@@ -8531,17 +8532,21 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 
 	char	szFormatName[128];
 
-	if( NULL != pbColmnSelect || NULL != pbColmnSelect ){
+	if( NULL != pbColmnSelect || NULL != pbLineSelect ){
 		/* 矩形選択や行選択のテキストデータがクリップボードにあるか */
 		uFormat = 0;
 		while( 0 != ( uFormat = ::EnumClipboardFormats( uFormat ) ) ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			if( ::GetClipboardFormatName( uFormat, szFormatName, sizeof(szFormatName) - 1 ) ){
-				if( NULL != pbColmnSelect && 0 == lstrcmp( "MSDEVColumnSelect", szFormatName ) ){
+				if( NULL != pbColmnSelect && 0 == lstrcmpi( _T("MSDEVColumnSelect"), szFormatName ) ){
 					*pbColmnSelect = TRUE;
 					break;
 				}
-				if( NULL != pbLineSelect && 0 == lstrcmp( "MSDEVLineSelect", szFormatName ) ){
+				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("MSDEVLineSelect"), szFormatName ) ){
+					*pbLineSelect = TRUE;
+					break;
+				}
+				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag"), szFormatName ) ){
 					*pbLineSelect = TRUE;
 					break;
 				}
@@ -8624,13 +8629,15 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
+	@date 2010.11.17 ryoji VS2010の行コピー対応処理を追加
  */
 BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bColmnSelect, BOOL bLineSelect /*= FALSE*/ )
 {
-	HGLOBAL		hgClipText;
-	HGLOBAL		hgClipSakura;
-	HGLOBAL		hgClipMSDEVColm;
-	HGLOBAL		hgClipMSDEVLine;
+	HGLOBAL		hgClipText = NULL;
+	HGLOBAL		hgClipSakura = NULL;
+	HGLOBAL		hgClipMSDEVColm = NULL;
+	HGLOBAL		hgClipMSDEVLine = NULL;
+	HGLOBAL		hgClipMSDEVLine2 = NULL;
 
 	char*		pszClip;
 	UINT		uFormat;
@@ -8675,7 +8682,6 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 		}
 	}
 
-
 	/* 矩形選択を示すダミーデータ */
 	if( bColmnSelect ){
 		uFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
@@ -8708,17 +8714,29 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 				::SetClipboardData( uFormat, hgClipMSDEVLine );
 			}
 		}
+		uFormat = ::RegisterClipboardFormat( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag") );
+		if( 0 != uFormat ){
+			hgClipMSDEVLine2 = ::GlobalAlloc(
+				GMEM_MOVEABLE | GMEM_DDESHARE,
+				1
+			);
+			if( hgClipMSDEVLine2 ){
+				pszClip = (char*)::GlobalLock( hgClipMSDEVLine2 );
+				pszClip[0] = (char)0x01;	// ※ ClipSpy で調べるとデータはこれとは違うが内容には無関係に動くっぽい
+				::GlobalUnlock( hgClipMSDEVLine2 );
+				::SetClipboardData( uFormat, hgClipMSDEVLine2 );
+			}
+		}
 	}
 	::CloseClipboard();
 
 	if( bColmnSelect && !hgClipMSDEVColm ){
 		return FALSE;
 	}
-	if( bLineSelect && !hgClipMSDEVLine ){
+	if( bLineSelect && !(hgClipMSDEVLine && hgClipMSDEVLine2) ){
 		return FALSE;
 	}
-	
-	if( !hgClipText && !hgClipSakura ){
+	if( !(hgClipText && hgClipSakura) ){
 		return FALSE;
 	}
 	return TRUE;
