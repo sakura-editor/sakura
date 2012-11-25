@@ -144,14 +144,14 @@ CEditDoc::~CEditDoc()
 	}
 	/* ファイルの排他ロック解除 */
 	delete m_pcSMacroMgr;
-	DoFileUnLock();
+	DoFileUnlock();
 }
 
 
 void CEditDoc::Clear()
 {
 	// ファイルの排他ロック解除
-	DoFileUnLock();
+	DoFileUnlock();
 
 	// ファイルの排他制御モード
 	m_nFileShareModeOld = 0;
@@ -886,7 +886,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 
 
 	/* ファイルの排他ロック解除 */
-	DoFileUnLock();
+	DoFileUnlock();
 
 	if( m_pShareData->m_Common.m_bBackUp ){	/* バックアップの作成 */
 		//	Jun.  5, 2004 genta ファイル名を与えるように．戻り値に応じた処理を追加．
@@ -1909,7 +1909,7 @@ void CEditDoc::DoFileLock( void )
 	/* 排他制御しないけどロックされているかのチェックは行う場合 */
 	if( bCheckOnly ){
 		/* ロックを解除する */
-		DoFileUnLock();
+		DoFileUnlock();
 
 	}
 	return;
@@ -1917,7 +1917,7 @@ void CEditDoc::DoFileLock( void )
 
 
 /* ファイルの排他ロック解除 */
-void CEditDoc::DoFileUnLock( void )
+void CEditDoc::DoFileUnlock( void )
 {
 	if( NULL != m_hLockedFile ){
 		/* ロック解除 */
@@ -3799,7 +3799,7 @@ void CEditDoc::OnChangeSetting( void )
 	/* ファイルの排他モード変更 */
 	if( m_nFileShareModeOld != m_pShareData->m_Common.m_nFileShareMode ){
 		/* ファイルの排他ロック解除 */
-		DoFileUnLock();
+		DoFileUnlock();
 		/* ファイルの排他ロック */
 		DoFileLock();
 	}

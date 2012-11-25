@@ -363,7 +363,7 @@ public:
 	void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);	//	pszSourceを展開して、pszBufferにコピー。
 protected:
 	void DoFileLock( void );	/* ファイルの排他ロック */
-	void DoFileUnLock( void );	/* ファイルの排他ロック解除 */
+	void DoFileUnlock( void );	/* ファイルの排他ロック解除 */
 	//char			m_pszCaption[1024];	//@@@ YAZAKI
 	
 	//	Aug. 14, 2005 genta
