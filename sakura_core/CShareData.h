@@ -768,8 +768,8 @@ public:
 	*/
 	bool InitShareData();	/* CShareDataクラスの初期化処理 */
 	DLLSHAREDATA* GetShareData(){ return m_pShareData; }		/* 共有データ構造体のアドレスを返す */
-	int GetDocumentType( const char* pszFilePath );				/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
-	int GetDocumentTypeExt( const char* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
+	int GetDocumentTypeOfPath( const char* pszFilePath );		/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
+	int GetDocumentTypeOfExt( const char* pszExt );				/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	BOOL AddEditWndList( HWND, int nGroup = 0 );				/* 編集ウィンドウの登録 */	// 2007.06.26 ryoji nGroup引数追加
 	void DeleteEditWndList( HWND );								/* 編集ウィンドウリストからの削除 */
 	void ResetGroupId( void );									/* グループをIDリセットする */

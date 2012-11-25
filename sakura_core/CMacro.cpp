@@ -1084,7 +1084,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
-			int nType2 = CShareData::getInstance()->GetDocumentTypeExt(Source);	// 指定拡張子のタイプ
+			int nType2 = CShareData::getInstance()->GetDocumentTypeOfExt(Source);	// 指定拡張子のタイプ
 			delete[] Source;
 
 			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// タイプ別設定の一致／不一致
@@ -1100,12 +1100,12 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
-			int nType1 = CShareData::getInstance()->GetDocumentTypeExt(Source);	// 拡張子１のタイプ
+			int nType1 = CShareData::getInstance()->GetDocumentTypeOfExt(Source);	// 拡張子１のタイプ
 			delete[] Source;
 
 			if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
-			int nType2 = CShareData::getInstance()->GetDocumentTypeExt(Source);	// 拡張子２のタイプ
+			int nType2 = CShareData::getInstance()->GetDocumentTypeOfExt(Source);	// 拡張子２のタイプ
 			delete[] Source;
 
 			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// タイプ別設定の一致／不一致

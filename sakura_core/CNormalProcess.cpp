@@ -146,13 +146,13 @@ bool CNormalProcess::InitializeProcess()
 	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
 
 	// -1: SetDocumentTypeWhenCreate での強制指定なし
-	const int nType = (fi.m_szDocType[0] == '\0' ? -1 : m_cShareData.GetDocumentTypeExt( fi.m_szDocType ));
+	const int nType = (fi.m_szDocType[0] == '\0' ? -1 : m_cShareData.GetDocumentTypeOfExt(fi.m_szDocType));
 
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
 		m_pcEditWnd->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
-		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeExt("output"), true );
+		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeOfExt("output"), true );
 		// 文字コードを有効とする Uchi 2008/6/8
 		m_pcEditWnd->SetDocumentTypeWhenCreate( (ECodeType)fi.m_nCharCode, FALSE, nType );
 	}

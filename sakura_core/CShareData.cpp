@@ -865,18 +865,18 @@ void CShareData::SetKeyNameArrVal(
 	
 	@param pszFilePath [in] ファイル名
 	
-	拡張子を切り出して GetDocumentTypeExt に渡すだけ．
+	拡張子を切り出して GetDocumentTypeOfExt に渡すだけ．
 */
-int CShareData::GetDocumentType( const char* pszFilePath )
+int CShareData::GetDocumentTypeOfPath( const char* pszFilePath )
 {
 	char	szExt[_MAX_EXT];
 
 	if( NULL != pszFilePath && 0 < (int)strlen( pszFilePath ) ){
 		_splitpath( pszFilePath, NULL, NULL, NULL, szExt );
 		if( szExt[0] == '.' )
-			return GetDocumentTypeExt( szExt + 1 );
+			return GetDocumentTypeOfExt( szExt + 1 );
 		else
-			return GetDocumentTypeExt( szExt );
+			return GetDocumentTypeOfExt( szExt );
 	}
 	return 0;
 }
@@ -890,7 +890,7 @@ int CShareData::GetDocumentType( const char* pszFilePath )
 	とりあえず今のところはタイプは拡張子のみに依存すると仮定している．
 	ファイル全体の形式に対応させるときは，また考え直す．
 */
-int CShareData::GetDocumentTypeExt( const char* pszExt )
+int CShareData::GetDocumentTypeOfExt( const char* pszExt )
 {
 	const char	pszSeps[] = " ;,";	// separator
 

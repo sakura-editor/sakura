@@ -170,7 +170,7 @@ void CEditDoc::Clear()
 	m_FileTime.dwLowDateTime = 0;
 	m_FileTime.dwHighDateTime = 0;
 
-	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
+	int doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
 	SetDocumentType( doctype, true );
 
 	// レイアウト管理情報の初期化
@@ -663,7 +663,7 @@ BOOL CEditDoc::FileRead(
 		SetFilePathAndIcon( szWork );
 	}
 
-	doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
+	doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
 	SetDocumentType( doctype, true );
 
 	//	From Here Jul. 26, 2003 ryoji BOMの有無の初期状態を設定
@@ -3804,7 +3804,7 @@ void CEditDoc::OnChangeSetting( void )
 		DoFileLock();
 	}
 	CShareData::getInstance()->TransformFileName_MakeCache();
-	int doctype = CShareData::getInstance()->GetDocumentType( GetFilePath() );
+	int doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
 	SetDocumentType( doctype, false );
 
 	int* posSaveAry = SavePhysPosOfAllView();
