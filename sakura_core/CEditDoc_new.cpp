@@ -1293,7 +1293,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, BOOL bReadOn
 		}
 	}
 	/* 指定ファイルが開かれているか調べる */
-	if( CShareData::getInstance()->IsPathOpened(pszPath, &hWndOwner, nCharCode) ){		// 開いていればアクティブにする
+	if( CShareData::getInstance()->ActiveAlreadyOpenedWindow(pszPath, &hWndOwner, nCharCode) ){		// 開いていればアクティブにする
 		/* 2007.03.12 maru 開いていたときの処理はCShareData::IsPathOpenedに移動 */
 	}else{
 		/* ファイルが開かれていない */

@@ -100,7 +100,7 @@ bool CNormalProcess::InitializeProcess()
 		HWND hwndOwner;
 		/* 指定ファイルが開かれているか調べる */
 		// 2007.03.13 maru 文字コードが異なるときはワーニングを出すように
-		if( FALSE != m_cShareData.IsPathOpened( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
+		if( m_cShareData.ActiveAlreadyOpenedWindow( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_nY >= 0 ){	//	行の指定があるか

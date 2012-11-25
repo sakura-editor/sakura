@@ -1289,7 +1289,7 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 
 	@date 2007.03.12 maru êVãKçÏê¨
 */
-BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner, int nCharCode )
+BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, int nCharCode )
 {
 	if( IsPathOpened( pszPath, phwndOwner ) ){
 		EditInfo*		pfi;

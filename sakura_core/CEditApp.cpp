@@ -693,7 +693,7 @@ LRESULT CEditApp::DispatchEvent(
 						delete [] ppszMRU;
 						delete [] ppszOPENFOLDER;
 						/* 指定ファイルが開かれているか調べる */
-						if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner, nCharCode )){
+						if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
 							// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
 						}else{
 							if( strchr( szPath, ' ' ) ){
@@ -803,7 +803,7 @@ LRESULT CEditApp::DispatchEvent(
 						delete [] ppszMRU;
 						delete [] ppszOPENFOLDER;
 						/* 指定ファイルが開かれているか調べる */
-						if( CShareData::getInstance()->IsPathOpened( szPath, &hWndOwner, nCharCode )){
+						if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
 							// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
 						} else {
 							if( strchr( szPath, ' ' ) ){

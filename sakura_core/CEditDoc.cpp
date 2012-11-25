@@ -540,7 +540,7 @@ BOOL CEditDoc::FileRead(
 		return FALSE;
 	}
 	/* 指定ファイルが開かれているか調べる */
-	if( CShareData::getInstance()->IsPathOpened(pszPath, &hWndOwner, nCharCode) ){	/* 2007.03.12 maru 多重オープン処理はIsPathOpenedにまとめる */
+	if( CShareData::getInstance()->ActiveAlreadyOpenedWindow(pszPath, &hWndOwner, nCharCode) ){	/* 2007.03.12 maru 多重オープン処理はIsPathOpenedにまとめる */
 		*pbOpened = TRUE;
 		bRet = FALSE;
 		goto end_of_func;
