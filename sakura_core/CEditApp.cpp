@@ -657,7 +657,7 @@ LRESULT CEditApp::DispatchEvent(
 						HWND			hWndOwner;
 
 						// MRUリストのファイルのリスト
-						CMRU cMRU;
+						CMRUFile cMRU;
 						char** ppszMRU = new char*[ cMRU.Length() + 1 ];
 						cMRU.GetPathList(ppszMRU);
 
@@ -738,7 +738,7 @@ LRESULT CEditApp::DispatchEvent(
 
 						/* 新しい編集ウィンドウを開く */
 						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
-						CMRU cMRU;
+						CMRUFile cMRU;
 						EditInfo openEditInfo;
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
 
@@ -764,7 +764,7 @@ LRESULT CEditApp::DispatchEvent(
 						HWND			hWndOwner;
 
 						/* MRUリストのファイルのリスト */
-						CMRU cMRU;
+						CMRUFile cMRU;
 						char** ppszMRU = NULL;
 						ppszMRU = new char*[ cMRU.Length() + 1 ];
 						cMRU.GetPathList(ppszMRU);
@@ -1278,7 +1278,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 
 	/* MRUリストのファイルのリストをメニューにする */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRU cMRU;
+	CMRUFile cMRU;
 	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
 	if ( cMRU.Length() > 0 ){
 		//	アクティブ

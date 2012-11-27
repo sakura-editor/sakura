@@ -500,7 +500,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 //				m_pShareData->m_nMRUArrNum = 0;
 				{
-					CMRU cMRU;
+					CMRUFile cMRU;
 					cMRU.ClearAll();
 				}
 				::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("最近使ったファイルの履歴を削除しました。\n") );

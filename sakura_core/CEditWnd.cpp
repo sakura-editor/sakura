@@ -2036,7 +2036,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//最近使ったファイル
 			else if( wID - IDM_SELMRU >= 0 && wID - IDM_SELMRU < 999){
 				/* 指定ファイルが開かれているか調べる */
-				CMRU cMRU;
+				CMRUFile cMRU;
 				EditInfo checkEditInfo;
 				cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
 				m_cEditDoc.OpenFile( checkEditInfo.m_szPath, (ECodeType)checkEditInfo.m_nCharCode);
@@ -2204,7 +2204,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* MRUリストのファイルのリストをメニューにする */
 			{
 				//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-				CMRU cMRU;
+				CMRUFile cMRU;
 				hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
 				if ( cMRU.Length() > 0 ){
 					//	アクティブ
@@ -2957,7 +2957,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 			/* アクティブにする */
 			ActivateFrameWindow( hWndOwner );
 			/* MRUリストへの登録 */
-			CMRU cMRU;
+			CMRUFile cMRU;
 			cMRU.Add( pfi );
 		}
 		else{
@@ -3978,7 +3978,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	m_CMenuDrawer.ResetContents();
 
 	/* MRUリストのファイルのリストをメニューにする */
-	CMRU cMRU;
+	CMRUFile cMRU;
 	hMenu = cMRU.CreateMenu( &m_CMenuDrawer );
 	if( cMRU.Length() > 0 )
 	{

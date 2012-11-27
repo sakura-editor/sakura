@@ -1245,7 +1245,7 @@ void CEditDoc::SetDocumentIcon(void)
 void CEditDoc::AddToMRU(void)
 {
 	EditInfo	fi;
-	CMRU		cMRU;
+	CMRUFile	cMRU;
 
 	SetFileInfo( &fi );
 	strcpy( fi.m_szMarkLines, m_cDocLineMgr.GetBookMarks() );

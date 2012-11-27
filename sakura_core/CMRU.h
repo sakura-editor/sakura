@@ -31,7 +31,7 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-class CMRU;
+class CMRUFile;
 
 #ifndef _CMRU_H_
 #define _CMRU_H_
@@ -42,11 +42,11 @@ struct EditInfo; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class CMRU{
+class CMRUFile{
 public:
 	//	コンストラクタ
-	CMRU();
-	~CMRU();
+	CMRUFile();
+	~CMRUFile();
 
 	//	メニューを取得する
 	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer );	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。

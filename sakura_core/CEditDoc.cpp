@@ -452,7 +452,7 @@ BOOL CEditDoc::FileRead(
 	m_bReadOnly = bReadOnly;	/* 読み取り専用モード */
 
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRU			cMRU;
+	CMRUFile			cMRU;
 
 	/* ファイルの存在チェック */
 	bFileIsExist = FALSE;
@@ -860,7 +860,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 	EditInfo	fi;
 	HWND		hwndProgress;
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRU		cMRU;
+	CMRUFile	cMRU;
 	//	Feb. 9, 2001 genta
 	CEol	cEol( cEolType );
 
@@ -994,7 +994,7 @@ BOOL CEditDoc::OpenFileDialog(
 
 	/* MRUリストのファイルのリスト */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRU cMRU;
+	CMRUFile cMRU;
 	ppszMRU = NULL;
 	ppszMRU = new char*[ cMRU.Length() + 1 ];
 	cMRU.GetPathList(ppszMRU);
@@ -1072,7 +1072,7 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 	BOOL	bret;
 
 	/* MRUリストのファイルのリスト */
-	CMRU cMRU;
+	CMRUFile cMRU;
 	ppszMRU = NULL;
 	ppszMRU = new char*[ cMRU.Length() + 1 ];
 	cMRU.GetPathList(ppszMRU);
