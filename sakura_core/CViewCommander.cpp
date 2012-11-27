@@ -8774,7 +8774,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	ECodeType	nSaveCharCode = nCharCode;
 	if(nSaveCharCode == CODE_AUTODETECT) {
 		EditInfo    fi;
-		const CMRU  cMRU;
+		const CMRUFile  cMRU;
 		if ( cMRU.GetEditInfo( to_tchar(filename), &fi ) ){
 				nSaveCharCode = fi.m_nCharCode;
 		} else {

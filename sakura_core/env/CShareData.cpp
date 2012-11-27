@@ -148,7 +148,7 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-		CMRU cMRU;
+		CMRUFile cMRU;
 		cMRU.ClearAll();
 		m_pShareData->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX = 15;	/* フォルダの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
@@ -673,7 +673,7 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 		ActivateFrameWindow( *phwndOwner );
 
 		// MRUリストへの登録
-		CMRU().Add( pfi );
+		CMRUFile().Add( pfi );
 		return TRUE;
 	}
 	else {
