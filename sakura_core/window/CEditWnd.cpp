@@ -537,7 +537,7 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 				if( ei.m_szDocType[0] != '\0' ){
 					cTypeNew = CDocTypeManager().GetDocumentTypeOfExt( ei.m_szDocType );
 				}else{
-					if( CMRU().GetEditInfo( ei.m_szPath, &mruei ) ){
+					if( CMRUFile().GetEditInfo( ei.m_szPath, &mruei ) ){
 						cTypeNew = mruei.m_nType;
 					}
 					if( !cTypeNew.IsValid() ){
@@ -2069,7 +2069,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//最近使ったファイル
 			else if( wID - IDM_SELMRU >= 0 && wID - IDM_SELMRU < 999){
 				/* 指定ファイルが開かれているか調べる */
-				const CMRU cMRU;
+				const CMRUFile cMRU;
 				EditInfo checkEditInfo;
 				cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
 				GetDocument().m_cDocFileOperation.FileLoad( &SLoadInfo(checkEditInfo.m_szPath, checkEditInfo.m_nCharCode, false) );	//	Oct.  9, 2004 genta 共通関数化
@@ -2384,7 +2384,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 					/* MRUリストのファイルのリストをメニューにする */
 					{
 						//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-						const CMRU cMRU;
+						const CMRUFile cMRU;
 						hMenuPopUp = cMRU.CreateMenu( hMenu, &m_CMenuDrawer );	//	ファイルメニュー
 						bInList = (cMRU.MenuLength() > 0);
 					}
@@ -2662,7 +2662,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 			/* アクティブにする */
 			ActivateFrameWindow( hWndOwner );
 			/* MRUリストへの登録 */
-			CMRU cMRU;
+			CMRUFile cMRU;
 			cMRU.Add( pfi );
 		}
 		else{
@@ -3552,7 +3552,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	m_CMenuDrawer.ResetContents();
 
 	/* MRUリストのファイルのリストをメニューにする */
-	const CMRU cMRU;
+	const CMRUFile cMRU;
 	hMenu = cMRU.CreateMenu( &m_CMenuDrawer );
 	if( cMRU.MenuLength() > 0 )
 	{

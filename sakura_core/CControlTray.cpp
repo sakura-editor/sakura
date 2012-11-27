@@ -680,7 +680,7 @@ LRESULT CControlTray::DispatchEvent(
 						CDlgOpenFile	cDlgOpenFile;
 
 						// MRUリストのファイルのリスト
-						const CMRU cMRU;
+						const CMRUFile cMRU;
 						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
 
 						// ファイルオープンダイアログの初期化
@@ -743,7 +743,7 @@ LRESULT CControlTray::DispatchEvent(
 
 						/* 新しい編集ウィンドウを開く */
 						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
-						const CMRU cMRU;
+						const CMRUFile cMRU;
 						EditInfo openEditInfo;
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
 
@@ -770,7 +770,7 @@ LRESULT CControlTray::DispatchEvent(
 					}
 					else if( nId - IDM_SELOPENFOLDER  >= 0 && nId - IDM_SELOPENFOLDER  < 999 ){
 						/* MRUリストのファイルのリスト */
-						const CMRU cMRU;
+						const CMRUFile cMRU;
 						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
 
 						/* OPENFOLDERリストのファイルのリスト */
@@ -1371,7 +1371,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 
 	/* MRUリストのファイルのリストをメニューにする */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	const CMRU cMRU;
+	const CMRUFile cMRU;
 	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
 	if ( cMRU.MenuLength() > 0 ){
 		//	アクティブ

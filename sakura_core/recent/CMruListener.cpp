@@ -37,7 +37,7 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	EditInfo	fi;
 	ECodeType ePrevCode = CODE_NONE;
 	CTypeConfig nPrevType = CTypeConfig(-1);
-	if(CMRU().GetEditInfo( pLoadInfo->cFilePath, &fi )){
+	if(CMRUFile().GetEditInfo( pLoadInfo->cFilePath, &fi )){
 		ePrevCode = fi.m_nCharCode;
 		nPrevType = fi.m_nType;
 	}
@@ -123,7 +123,7 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
 
-	CMRU		cMRU;
+	CMRUFile		cMRU;
 
 	EditInfo	eiOld;
 	bool bIsExistInMRU = cMRU.GetEditInfo(pcDoc->m_cDocFile.GetFilePath(),&eiOld);
@@ -209,7 +209,7 @@ void CMruListener::_HoldBookmarks_And_AddToMRU()
 	wcscpy( fi.m_szMarkLines, CBookmarkManager(&pcDoc->m_cDocLineMgr).GetBookMarks() );
 
 	//MRUƒŠƒXƒg‚É“o˜^
-	CMRU	cMRU;
+	CMRUFile	cMRU;
 	cMRU.Add( &fi );
 }
 

@@ -28,14 +28,14 @@
 /*!	コンストラクタ
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-CMRU::CMRU()
+CMRUFile::CMRUFile()
 {
 	//	初期化。
 	m_pShareData = CShareData::getInstance()->GetShareData();
 }
 
 /*	デストラクタ	*/
-CMRU::~CMRU()
+CMRUFile::~CMRUFile()
 {
 	m_cRecentFile.Terminate();
 }
@@ -50,7 +50,7 @@ CMRU::~CMRU()
 
 	2010/5/21 Uchi 組み直し
 */
-HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
+HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
 	HMENU	hMenuPopUp;
 
@@ -69,7 +69,7 @@ HMENU CMRU::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 
 	2010/5/21 Uchi 組み直し
 */
-HMENU CMRU::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
+HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
 	TCHAR	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
 	TCHAR	szMemu[_MAX_PATH * 2 + 10];				//	メニューキャプション
@@ -116,7 +116,7 @@ HMENU CMRU::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 	return hMenuPopUp;
 }
 
-BOOL CMRU::DestroyMenu( HMENU hMenuPopUp ) const
+BOOL CMRUFile::DestroyMenu( HMENU hMenuPopUp ) const
 {
 	return ::DestroyMenu( hMenuPopUp );
 }
@@ -128,7 +128,7 @@ BOOL CMRU::DestroyMenu( HMENU hMenuPopUp ) const
 	最後の要素の次にはNULLが入る．
 	予め呼び出す側で最大値+1の領域を確保しておくこと．
 */
-std::vector<LPCTSTR> CMRU::GetPathList() const
+std::vector<LPCTSTR> CMRUFile::GetPathList() const
 {
 	std::vector<LPCTSTR> ret;
 	for( int i = 0; i < m_cRecentFile.GetItemCount(); ++i ){
@@ -140,7 +140,7 @@ std::vector<LPCTSTR> CMRU::GetPathList() const
 }
 
 /*! アイテム数を返す */
-int CMRU::Length(void) const
+int CMRUFile::Length(void) const
 {
 	return m_cRecentFile.GetItemCount();
 }
@@ -148,7 +148,7 @@ int CMRU::Length(void) const
 /*!
 	ファイル履歴のクリア
 */
-void CMRU::ClearAll(void)
+void CMRUFile::ClearAll(void)
 {
 	m_cRecentFile.DeleteAllItem();
 }
@@ -162,7 +162,7 @@ void CMRU::ClearAll(void)
 	@retval TRUE データが格納された
 	@retval FALSE 正しくない番号が指定された．データは格納されなかった．
 */
-bool CMRU::GetEditInfo( int num, EditInfo* pfi ) const
+bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 {
 	const EditInfo*	p = m_cRecentFile.GetItem( num );
 	if( NULL == p ) return false;
@@ -183,7 +183,7 @@ bool CMRU::GetEditInfo( int num, EditInfo* pfi ) const
 
 	@date 2001.12.26 CShareData::IsExistInMRUListから移動した。（YAZAKI）
 */
-bool CMRU::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
+bool CMRUFile::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 {
 	const EditInfo*	p = m_cRecentFile.GetItem( m_cRecentFile.FindItemByPath( pszPath ) );
 	if( NULL == p ) return false;
@@ -202,7 +202,7 @@ bool CMRU::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 	@date 2001.03.29 MIK リムーバブルディスク上のファイルを登録しないようにした。
 	@date 2001.12.26 YAZAKI CShareData::AddMRUListから移動
 */
-void CMRU::Add( EditInfo* pEditInfo )
+void CMRUFile::Add( EditInfo* pEditInfo )
 {
 	//	ファイル名が無ければ無視
 	if( NULL == pEditInfo || 0 == _tcslen( pEditInfo->m_szPath ) ){
