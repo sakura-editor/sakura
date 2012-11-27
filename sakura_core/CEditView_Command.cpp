@@ -2432,9 +2432,8 @@ void CEditView::Command_INSTEXT(
 	}
 
 end_of_func:
-	if( NULL != pcWaitCursor ){
-		delete pcWaitCursor;
-	}
+	delete pcWaitCursor;
+
 	return;
 }
 

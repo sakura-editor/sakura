@@ -2933,9 +2933,8 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 		bResult = FALSE;
 	} // —áŠOˆ—I‚í‚è
 
-	if( NULL != pcDlgCancel ){
-		delete pcDlgCancel;
-	}
+	delete pcDlgCancel;
+
 	if (bBeforeTextSelected){	// ‘}“ü‚³‚ê‚½•”•ª‚ğ‘I‘ğó‘Ô‚É
 		SetSelectArea( nLineFrom, nColmFrom, m_nCaretPosY, m_nCaretPosX );
 		DrawSelectArea();
