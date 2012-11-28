@@ -639,15 +639,15 @@
 #define IDC_BUTTON_PREVTAG              1586
 #define IDC_BUTTON_NEXTTAG              1587
 #define IDC_STATIC_BASEDIR              1588
-#define IDC_TREE_RES                    1589	//
-#define IDC_BUTTON_INSERT_NODE          1590	//
-#define IDC_BUTTON_INSERT_A             1091	//
-#define IDC_BUTTON_RIGHT                1592	//
-#define IDC_BUTTON_LEFT                 1593	//
-#define IDC_CHECK_KEY_PARENTHESES       1594	//
-#define IDC_BUTTON_EXPAND               1595	//
-#define IDC_BUTTON_COLLAPSE             1596	//
-#define IDC_BUTTON_CHECK                1597	//
+#define IDC_TREE_RES                    1589
+#define IDC_BUTTON_INSERT_NODE          1590
+#define IDC_BUTTON_INSERT_A             1091
+#define IDC_BUTTON_RIGHT                1592
+#define IDC_BUTTON_LEFT                 1593
+#define IDC_CHECK_KEY_PARENTHESES       1594
+#define IDC_BUTTON_EXPAND               1595
+#define IDC_BUTTON_COLLAPSE             1596
+#define IDC_BUTTON_CHECK                1597
 #define IDC_CHECK_EXT_RMENU             1598
 #define IDC_CHECK_EXT_DBLCLICK          1599
 #define IDC_COMBO_DEFAULT_EOLTYPE       1600
@@ -669,6 +669,10 @@
 #define IDC_CHECK_INHERIT_KEY_OTHER_VIEW 1616
 #define IDC_LIST_FAVORITE_EXCEPTMRU     1617
 #define IDC_BUTTON_ADD_FAVORITE         1618
+#define IDC_BTN_AUTOLOAD                1619
+#define IDC_LABEL_AUTOLOAD_DELAY        1620
+#define IDC_EDIT_AUTOLOAD_DELAY         1621
+#define IDC_SPIN_AUTOLOAD_DELAY         1622
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -697,7 +701,7 @@
 #define IDD_PROP_HELPER                 5214
 #define IDD_PROP_MACRO                  5215
 #define IDD_PROP_PLUGIN                 5216
-#define IDD_PROP_MAINMENU               5217	//
+#define IDD_PROP_MAINMENU               5217
 #define IDD_WINPOSSIZE                  5220
 #define IDD_PLUGIN_OPTION               5221
 #define IDC_STATIC                      -1
@@ -708,7 +712,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1619
+#define _APS_NEXT_CONTROL_VALUE         1623
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

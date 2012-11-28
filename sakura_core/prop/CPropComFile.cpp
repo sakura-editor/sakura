@@ -27,6 +27,8 @@
 static const DWORD p_helpids[] = {	//01310
 	IDC_COMBO_FILESHAREMODE,				HIDC_COMBO_FILESHAREMODE,				//排他制御
 	IDC_CHECK_bCheckFileTimeStamp,			HIDC_CHECK_bCheckFileTimeStamp,			//更新の監視
+	IDC_EDIT_AUTOLOAD_DELAY,				HIDC_EDIT_AUTOLOAD_DELAY,				//自動読込時遅延
+	IDC_SPIN_AUTOLOAD_DELAY,				HIDC_EDIT_AUTOLOAD_DELAY,
 	IDC_CHECK_bUneditableIfUnwritable,		HIDC_CHECK_bUneditableIfUnwritable,		//上書き禁止検出時は編集禁止にする
 	IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	HIDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,	//無変更でも上書き
 	IDC_CHECK_AUTOSAVE,						HIDC_CHECK_AUTOSAVE,					//自動的に保存
@@ -132,7 +134,21 @@ INT_PTR CPropFile::DispatchEvent(
 				m_nPageNum = ID_PAGENUM_FILE;
 				return TRUE;
 			}
-		break;
+			break;
+		case IDC_SPIN_AUTOLOAD_DELAY:
+			// 自動読込時遅延
+			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, NULL, FALSE );
+			if( pMNUD->iDelta < 0 ){
+				++nVal;
+			}else
+			if( pMNUD->iDelta > 0 ){
+				--nVal;
+			}
+			if( nVal < 0 ){
+				nVal = 0;
+			}
+			::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, nVal, FALSE );
+			return TRUE;
 		case IDC_SPIN_nDropFileNumMax:
 			/* 一度にドロップ可能なファイル数 */
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
@@ -208,6 +224,7 @@ INT_PTR CPropFile::DispatchEvent(
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
+			case IDC_CHECK_bCheckFileTimeStamp:	// 更新の監視
 			case IDC_CHECK_bDropFileAndClose:/* ファイルをドロップしたときは閉じて開く */
 			case IDC_CHECK_AUTOSAVE:
 			case IDC_CHECK_ALERT_IF_LARGEFILE:
@@ -269,6 +286,9 @@ void CPropFile::SetData( HWND hwndDlg )
 
 	/* 更新の監視 */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
+
+	// 自動読込時遅延
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, m_Common.m_sFile.m_nAutoloadDelay, FALSE );
 
 	/* 上書き禁止検出時は編集禁止にする */
 	::CheckDlgButtonBool( hwndDlg, IDC_CHECK_bUneditableIfUnwritable, m_Common.m_sFile.m_bUneditableIfUnwritable );
@@ -339,6 +359,9 @@ int CPropFile::GetData( HWND hwndDlg )
 
 	/* 更新の監視 */
 	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
+
+	// 自動読込時遅延
+	m_Common.m_sFile.m_nAutoloadDelay = ::GetDlgItemInt( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY, NULL, FALSE );
 
 	/* 上書き禁止検出時は編集禁止にする */
 	m_Common.m_sFile.m_bUneditableIfUnwritable = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bUneditableIfUnwritable );
@@ -434,8 +457,21 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 	int nSelPos = Combo_GetCurSel( ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE ) );
 	if( ShareModeArr[nSelPos].nMethod == SHAREMODE_NOT_EXCLUSIVE ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), TRUE );
+		if( ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ) ) {
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOLOAD_DELAY ), TRUE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY ),  TRUE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_AUTOLOAD_DELAY ),  TRUE );
+		}
+		else {
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOLOAD_DELAY ), FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY ),  FALSE );
+			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_AUTOLOAD_DELAY ),  FALSE );
+		}
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_AUTOLOAD_DELAY ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_AUTOLOAD_DELAY ),  FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_SPIN_AUTOLOAD_DELAY ),  FALSE );
 	}
 
 	//	自動保存

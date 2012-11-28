@@ -62,11 +62,14 @@ BOOL CDlgFileUpdateQuery::OnBnClicked(int id)
 	case IDC_BTN_NOSUPERVISION: // 以後更新を監視しない
 		result = 3;
 		break;
+	case IDC_BTN_AUTOLOAD:		// 以後未編集で再ロード
+		result = 4;
+		break;
 	default:
 		result = 0;
 		break;
 	}
 	CloseDialog( result );
-	
+
 	return 0;
 }
