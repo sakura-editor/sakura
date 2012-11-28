@@ -30,7 +30,8 @@
 enum WatchUpdate {
 	WU_QUERY,	//!< 再読込を行うかどうかダイアログボックスで問い合わせる
 	WU_NOTIFY,	//!< 更新されたことをステータスバーで通知
-	WU_NONE		//!< 更新監視を行わない
+	WU_NONE,	//!< 更新監視を行わない
+	WU_AUTOLOAD,//!< 更新され未編集の場合に再ロード
 };
 
 class CAutoReloadAgent : public CDocListenerEx{
@@ -54,7 +55,8 @@ public:
 	WatchUpdate		m_eWatchUpdate;	//!< 更新監視方法
 
 private:
-	int m_nPauseCount; //これが1以上の場合は監視をしない
+	int m_nPauseCount;	//これが1以上の場合は監視をしない
+	int m_nDelayCount;	//未編集で再ロード時の遅延カウンタ
 };
 
 #endif /* SAKURA_CAUTORELOADAGENT_5B64C473_C8AB_4660_AAA9_3A999953008B_H_ */

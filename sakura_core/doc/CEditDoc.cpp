@@ -43,7 +43,6 @@
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
 #include "debug/Debug.h"
-#include "dlg/CDlgFileUpdateQuery.h"
 #include "doc/CDocLine.h" /// 2002/2/3 aroka
 #include "doc/CEditDoc.h"
 #include "doc/CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á

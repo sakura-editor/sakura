@@ -608,6 +608,7 @@ FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     PUSHBUTTON      "再読込(&R)",IDC_BTN_RELOAD,7,63,50,14
     DEFPUSHBUTTON   "閉じる(&C)",IDC_BTN_CLOSE,59,63,50,14
+    PUSHBUTTON      "以後未編集で再読込(&L)",IDC_BTN_AUTOLOAD, 114,63,102,14
     PUSHBUTTON      "以後通知メッセージのみ(&M)",IDC_BTN_NOTIFYONLY,7,81,102,
                     14
     PUSHBUTTON      "以後更新を監視しない(&N)",IDC_BTN_NOSUPERVISION, 114,81,
@@ -1505,23 +1506,26 @@ BEGIN
     COMBOBOX        IDC_COMBO_FILESHAREMODE,60,14,84,78,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "更新の監視(&W)",IDC_CHECK_bCheckFileTimeStamp,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,60,31,64,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,31,60,10
+    LTEXT           "自動読込時遅延(&A)", IDC_LABEL_AUTOLOAD_DELAY,70,32,62,10
+    EDITTEXT        IDC_EDIT_AUTOLOAD_DELAY,130,30,30,12
+    CONTROL         "Spin1",IDC_SPIN_AUTOLOAD_DELAY,"msctls_updown32",
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,150,30,9,12
     CONTROL         "上書き禁止検出時は編集禁止にする(&N)",
                     IDC_CHECK_bUneditableIfUnwritable,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,46,144,10
-    GROUPBOX        "ファイルの排他制御",IDC_STATIC,3,3,153,57,WS_GROUP
+    GROUPBOX        "ファイルの排他制御",IDC_STATIC,3,3,163,57,WS_GROUP
     CONTROL         "無変更でも上書きする(&S)",
                     IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,165,16,96,10
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,175,16,96,10
     CONTROL         "自動的に保存する(&U)",IDC_CHECK_AUTOSAVE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,165,31,84,10
-    LTEXT           "間隔は(&I)",IDC_LABEL_AUTOSAVE,176,47,31,8,NOT WS_GROUP
-    EDITTEXT        IDC_EDIT_AUTOBACKUP_INTERVAL,209,45,30,12
+                    BS_AUTOCHECKBOX | WS_TABSTOP,175,31,84,10
+    LTEXT           "間隔は(&I)",IDC_LABEL_AUTOSAVE,186,47,31,8,NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_AUTOBACKUP_INTERVAL,219,45,30,12
     CONTROL         "Spin1",IDC_SPIN_AUTOBACKUP_INTERVAL,"msctls_updown32",
-                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,256,45,9,
-                    12
-    LTEXT           "分ごと",IDC_LABEL_AUTOSAVE2,240,47,21,8,NOT WS_GROUP
-    GROUPBOX        "ファイルの保存",IDC_STATIC,160,3,128,57,WS_GROUP
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,266,45,9,12
+    LTEXT           "分ごと",IDC_LABEL_AUTOSAVE2,250,47,21,8,NOT WS_GROUP
+    GROUPBOX        "ファイルの保存",IDC_STATIC,170,3,118,57,WS_GROUP
     CONTROL         "新規から保存時は全ファイル表示(&O)",
                     IDC_CHECK_NoFilterSaveNew,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,77,133,10
