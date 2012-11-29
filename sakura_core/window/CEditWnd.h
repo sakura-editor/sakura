@@ -292,16 +292,17 @@ protected:
 	void CheckFreeSubMenu( HWND, HMENU, UINT );		// メニューバーの無効化を検査	2010/6/18 Uchi
 	void CheckFreeSubMenuSub( HMENU, int );			// メニューバーの無効化を検査	2010/6/18 Uchi
 
-public:
+//public:
 	//! 周期内でm_nTimerCountをインクリメント
 	void IncrementTimerCount(int nInterval)
 	{
 		m_nTimerCount++;
-		if( nInterval < m_nTimerCount ){
+		if( nInterval <= m_nTimerCount ){ // 2012.11.29 aroka 呼び出し間隔のバグ修正
 			m_nTimerCount = 0;
 		}
 	}
 
+public:
 	//D&Dフラグ管理
 	void SetDragPosOrg(CMyPoint ptDragPosOrg){ m_ptDragPosOrg=ptDragPosOrg; }
 	void SetDragMode(bool bDragMode){ m_bDragMode = bDragMode; }
@@ -369,7 +370,9 @@ private:
 	bool			m_bIsActiveApp;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPTSTR			m_pszLastCaption;
 	LPTSTR			m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
+public:
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
+private:
 	int				m_nCurrentFocus;	//!< 現在のフォーカス情報
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
 	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
