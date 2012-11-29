@@ -442,11 +442,12 @@ LPARAM CMainToolBar::ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh )
 	@date 2006.01.28 aroka OnTimerから分離
 	@date 2007.04.03 ryoji パラメータ無しにした
 	@date 2008.10.05 nasukoji ツールバー更新部分を外に出した
+	@date 2012.11.29 aroka OnTimerから分離したときのバグ修正
 */
 void CMainToolBar::OnToolbarTimer( void )
 {
-	m_pOwner->IncrementTimerCount(10);
-
+	// 2012.11.29 aroka ここではカウントアップ不要
+	//m_pOwner->IncrementTimerCount(10);
 	UpdateToolbar();	// 2008.09.23 nasukoji	ツールバーの表示を更新する
 }
 
