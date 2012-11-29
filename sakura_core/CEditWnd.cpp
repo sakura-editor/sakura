@@ -3082,13 +3082,14 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
 	@date 2006.01.28 aroka ツールバー更新を OnToolbarTimerに移動した
 	@date 2007.04.03 ryoji パラメータ無しにした
+	@date 2012.11.29 aroka 呼び出し間隔のバグ修正
 */
 void CEditWnd::OnEditTimer( void )
 {
 	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
 	// タイマーの呼び出し間隔を 500msに変更。300*10→500*6にする。 20060128 aroka
 	m_nTimerCount++;
-	if( 6 < m_nTimerCount ){
+	if( 6 <= m_nTimerCount ){	// 2012.11.29 aroka 呼び出し間隔のバグ修正
 		m_nTimerCount = 0;
 	}
 
@@ -3110,13 +3111,15 @@ void CEditWnd::OnEditTimer( void )
 	@date 2006.01.28 aroka OnTimerから分離
 	@date 2007.04.03 ryoji パラメータ無しにした
 	@date 2008.09.23 nasukoji ツールバー更新部分を外に出した
+	@date 2012.11.29 aroka OnTimerから分離したときのバグ修正
 */
 void CEditWnd::OnToolbarTimer( void )
 {
-	m_nTimerCount++;
-	if( 10 < m_nTimerCount ){
-		m_nTimerCount = 0;
-	}
+	// 2012.11.29 aroka ここではカウントアップ不要
+	//m_nTimerCount++;
+	//if( 10 < m_nTimerCount ){
+	//	m_nTimerCount = 0;
+	//}
 
 	UpdateToolbar();	// 2008.09.23 nasukoji	ツールバーの表示を更新する
 
