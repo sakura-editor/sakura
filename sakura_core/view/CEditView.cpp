@@ -41,7 +41,7 @@
 
 CEditView*	g_m_pcEditView;
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
-VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT, DWORD );
+VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
 
 #define IDT_ROLLMOUSE	1
 
@@ -92,7 +92,7 @@ LRESULT CALLBACK EditViewWndProc(
 VOID CALLBACK EditViewTimerProc(
 	HWND hwnd,		// handle of window for timer messages
 	UINT uMsg,		// WM_TIMER message
-	UINT idEvent,	// timer identifier
+	UINT_PTR idEvent,	// timer identifier
 	DWORD dwTime 	// current system time
 )
 {
@@ -270,7 +270,7 @@ BOOL CEditView::Create(
 	//	Apr. 27, 2000 genta
 	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
-	wc.lpfnWndProc		= (WNDPROC)EditViewWndProc;
+	wc.lpfnWndProc		= EditViewWndProc;
 	wc.cbClsExtra		= 0;
 	wc.cbWndExtra		= sizeof( LONG_PTR );
 	wc.hInstance		= G_AppInstance();
@@ -342,7 +342,7 @@ BOOL CEditView::Create(
 	SystemParametersInfo( SPI_GETKEYBOARDSPEED, 0, &nKeyBoardSpeed, 0 );
 
 	/* タイマー起動 */
-	if( 0 == ::SetTimer( GetHwnd(), IDT_ROLLMOUSE, nKeyBoardSpeed, (TIMERPROC)EditViewTimerProc ) ){
+	if( 0 == ::SetTimer( GetHwnd(), IDT_ROLLMOUSE, nKeyBoardSpeed, EditViewTimerProc ) ){
 		WarningMessage( GetHwnd(), _T("CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 
@@ -1232,7 +1232,7 @@ bool CEditView::IsCurrentPositionURL(
 VOID CEditView::OnTimer(
 	HWND hwnd,		// handle of window for timer messages
 	UINT uMsg,		// WM_TIMER message
-	UINT idEvent,	// timer identifier
+	UINT_PTR idEvent,	// timer identifier
 	DWORD dwTime 	// current system time
 	)
 {
