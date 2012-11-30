@@ -999,6 +999,11 @@ int CGrepAgent::DoGrepFile(
 
 	/* 検索条件が長さゼロの場合はファイル名だけ返す */
 	// 2002/08/29 ファイルオープンの手前へ移動
+	
+	std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
+	if( sSearchOption.bWordOnly ){
+		CSearchAgent::CreateWordList( searchWords, pszKey, nKeyKen );
+	}
 
 	// 注意 : cfl.ReadLine が throw する可能性がある
 	CNativeW cUnicodeBuffer;
@@ -1119,52 +1124,40 @@ int CGrepAgent::DoGrepFile(
 				Grepにも試験導入。
 				WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
 			*/
-			CLogicInt nNextWordFrom = CLogicInt(0);
-			CLogicInt nNextWordFrom2;
-			CLogicInt nNextWordTo2;
+			int nMatchLen;
+			int nIdx = 0;
 			// Jun. 26, 2003 genta 無駄なwhileは削除
-			while( CWordParse::WhereCurrentWord_2( pCompareData, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-				if( nKeyKen == nNextWordTo2 - nNextWordFrom2 ){
-					// const char* pData = pCompareData;	// 2002/2/10 aroka CMemory変更 , 2002/08/29 Moca pCompareDataのconst化により不要?
-					/* 1==大文字小文字の区別 */
-					if( (!sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) ) ||
-						(sSearchOption.bLoHiCase && 0 ==	 auto_memcmp( &(pCompareData[nNextWordFrom2]) , pszKey, nKeyKen ) )
-					){
-						/* Grep結果を、szWorkに格納する */
-						SetGrepResult(
-							szWork, &nWorkLen,
-							pszFullPath, pszCodeName,
-							//	Jun. 25, 2002 genta
-							//	桁位置は1始まりなので1を足す必要がある
-							nLine, nNextWordFrom2 + 1, pCompareData, nLineLen, nEolCodeLen,
-							&(pCompareData[nNextWordFrom2]), nKeyKen,
-							bGrepOutputLine, nGrepOutputStyle
-						);
-						if( 2 == nGrepOutputStyle ){
-						/* WZ風 */
-							if( !bOutFileName ){
-								cmemMessage.AppendString( szWork0 );
-								bOutFileName = TRUE;
-							}
-						}
-
-						cmemMessage.AppendString( szWork, nWorkLen );
-						++nHitCount;
-						++(*pnHitCount);
-						//	May 22, 2000 genta
-						if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
-							::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
-						}
-
-						// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
-						if ( bGrepOutputLine ) {
-							break;
-						}
+			while( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
+				nIdx = pszRes - pLine + nMatchLen;
+				/* Grep結果を、szWorkに格納する */
+				SetGrepResult(
+					szWork, &nWorkLen,
+					pszFullPath, pszCodeName,
+					//	Jun. 25, 2002 genta
+					//	桁位置は1始まりなので1を足す必要がある
+					nLine, pszRes - pLine + 1, pLine, nLineLen, nEolCodeLen,
+					pszRes, nMatchLen,
+					bGrepOutputLine, nGrepOutputStyle
+				);
+				if( 2 == nGrepOutputStyle ){
+				/* WZ風 */
+					if( !bOutFileName ){
+						cmemMessage.AppendString( szWork0 );
+						bOutFileName = TRUE;
 					}
 				}
-				/* 現在位置の左右の単語の先頭位置を調べる */
-				if( !CWordParse::SearchNextWordPosition( pCompareData, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom, FALSE ) ){
-					break;	//	次の単語が無い。
+
+				cmemMessage.AppendString( szWork, nWorkLen );
+				++nHitCount;
+				++(*pnHitCount);
+				//	May 22, 2000 genta
+				if( 0 == ( (*pnHitCount) % 16 ) || *pnHitCount < 16 ){
+					::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, *pnHitCount, FALSE );
+				}
+
+				// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
+				if ( bGrepOutputLine ) {
+					break;
 				}
 			}
 		}

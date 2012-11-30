@@ -143,29 +143,21 @@ void CBookmarkManager::MarkSearchWord(
 	}
 	/* 1==単語のみ検索 */
 	else if( sSearchOption.bWordOnly ){
+		// 検索語を単語に分割して searchWordsに格納する。
+		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
+		CSearchAgent::CreateWordList(searchWords, pszPattern, nPatternLen);
+
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
-		CLogicInt nLinePos = CLogicInt(0);
-		CLogicInt nNextWordFrom = CLogicInt(0);
-		CLogicInt nNextWordFrom2;
-		CLogicInt nNextWordTo2;
 		while( pDocLine ){
-			if(!CBookmarkGetter(pDocLine).IsBookmarked() &&
-				CSearchAgent(m_pcDocLineMgr).WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )) {
-				const wchar_t* pData = pDocLine->GetPtr(); // 2002/2/10 aroka CMemory変更
-				
-				if(( nPatternLen == nNextWordTo2 - nNextWordFrom2 ) &&
-				   (( !sSearchOption.bLoHiCase && 0 == auto_memicmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )) ||
-					( sSearchOption.bLoHiCase && 0 == auto_memcmp( &(pData[nNextWordFrom2]) , pszPattern, nPatternLen )))){
+			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
+				pLine = pDocLine->GetDocLineStrWithEOL(&nLineLen);
+				int nMatchLen;
+				if( CSearchAgent::SearchStringWord(pLine, nLineLen, 0, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
 					CBookmarkSetter(pDocLine).SetBookmark(true);
-				}
-				else if( CSearchAgent(m_pcDocLineMgr).PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE, FALSE) ){
-					continue;
 				}
 			}
 			/* 次の行を見に行く */
-			nLinePos++;
 			pDocLine = pDocLine->GetNextLine();
-			nNextWordFrom = CLogicInt(0);
 		}
 	}
 	else{

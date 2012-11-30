@@ -72,12 +72,28 @@ public:
 		int				nIdxPos,
 		const CSearchStringPattern& pattern
 	);
+	// ’PŒê’PˆÊ‚Å•¶š—ñŒŸõ
+	static const wchar_t* SearchStringWord(
+		const wchar_t*	pLine,
+		int				nLineLen,
+		int				nIdxPos,
+		const std::vector<std::pair<const wchar_t*, CLogicInt> >& searchWords,
+		bool	bLoHiCase,
+		int*	pnMatchLen
+	);
+
 	
 	// ŒŸõğŒ‚Ìî•ñ
 	static void CreateCharCharsArr(
 		const wchar_t*	pszPattern,
 		int				nSrcLen,
 		int**			ppnCharCharsArr
+	);
+	
+	static void CreateWordList(
+		std::vector<std::pair<const wchar_t*, CLogicInt> >&	searchWords,
+		const wchar_t*	pszPattern,
+		int	nPatternLen
 	);
 
 public:
