@@ -194,6 +194,64 @@ void CSearchAgent::CreateCharCharsArr(
 	return;
 }
 
+/*!	単語単位の単語リスト作成
+*/
+void CSearchAgent::CreateWordList(
+	std::vector<std::pair<const wchar_t*, CLogicInt> >&	searchWords,
+	const wchar_t*	pszPattern,
+	int	nPatternLen
+)
+{
+	for( CLogicInt pos = CLogicInt(0); pos < nPatternLen; ) {
+		CLogicInt begin, end; // 検索語に含まれる単語?の posを基準とした相対位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
+		if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), &begin, &end, NULL, NULL )
+			&& begin == 0 && begin < end
+		) {
+			if( ! WCODE::IsWordDelimiter( pszPattern[pos] ) ) {
+				// pszPattern[pos]...pszPattern[pos + end] が検索語に含まれる単語。
+				searchWords.push_back( std::make_pair( pszPattern + pos, end ) );
+			}
+			pos += end;
+		} else {
+			pos += std::max( CLogicInt(1), CNativeW::GetSizeOfChar( pszPattern, nPatternLen, pos ) );
+		}
+	}
+}
+
+
+/*!	単語単位検索
+*/
+const wchar_t* CSearchAgent::SearchStringWord(
+	const wchar_t*	pLine,
+	int				nLineLen,
+	int				nIdxPos,
+	const std::vector<std::pair<const wchar_t*, CLogicInt> >& searchWords,
+	bool	bLoHiCase,
+	int*	pnMatchLen
+)
+{
+	CLogicInt nNextWordFrom = CLogicInt(nIdxPos);
+	CLogicInt nNextWordFrom2;
+	CLogicInt nNextWordTo2;
+	while( CWordParse::WhereCurrentWord_2( pLine, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom2, &nNextWordTo2, NULL, NULL ) ){
+		for( unsigned iSW = 0; iSW < searchWords.size(); ++iSW ) {
+			if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
+				/* 1==大文字小文字の区別 */
+				if( (!bLoHiCase && 0 == auto_memicmp( &(pLine[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
+					(bLoHiCase && 0 == auto_memcmp( &(pLine[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
+				){
+					*pnMatchLen = searchWords[iSW].second;
+					return &pLine[nNextWordFrom2];
+				}
+			}
+		}
+		if( !CWordParse::SearchNextWordPosition( pLine, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom, FALSE ) ){
+			break;	//	次の単語が無い。
+		}
+	}
+	*pnMatchLen = 0;
+	return NULL;
+}
 
 
 
@@ -437,22 +495,8 @@ int CSearchAgent::SearchWord(
 	//単語のみ検索
 	else if( sSearchOption.bWordOnly ){
 		// 検索語を単語に分割して searchWordsに格納する。
-		std::vector<const std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
-		for( CLogicInt pos = CLogicInt(0); pos < nPatternLen; ) {
-			CLogicInt begin, end; // 検索語に含まれる単語?の posを基準とした相対位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
-			if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), &begin, &end, NULL, NULL )
-				&& begin == 0 && begin < end
-			) {
-				if( ! WCODE::IsWordDelimiter( pszPattern[pos] ) ) {
-					// pszPattern[pos]...pszPattern[pos + end] が検索語に含まれる単語。
-					searchWords.push_back( std::make_pair( pszPattern + pos, end ) );
-				}
-				pos += end;
-			} else {
-				pos += std::max( CLogicInt(1), CNativeW::GetSizeOfChar( pszPattern, nPatternLen, pos ) );
-			}
-		}
-
+		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
+		CreateWordList( searchWords, pszPattern, nPatternLen );
 		/*
 			2001/06/23 Norio Nakatani
 			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
@@ -506,33 +550,18 @@ int CSearchAgent::SearchWord(
 		else{
 			nLinePos = ptSerachBegin.GetY2();
 			pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-			CLogicInt nNextWordFrom;
-
-			CLogicInt nNextWordFrom2;
-			CLogicInt nNextWordTo2;
-			nNextWordFrom = ptSerachBegin.GetX2();
+			CLogicInt	nNextWordFrom = ptSerachBegin.GetX2();
 			while( NULL != pDocLine ){
-				if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-					for( unsigned iSW = 0; iSW < searchWords.size(); ++iSW ) {
-						if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
-							const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory変更
-							/* 1==大文字小文字の区別 */
-							if( (!sSearchOption.bLoHiCase && 0 ==  auto_memicmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
-								(sSearchOption.bLoHiCase && 0 == auto_memcmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
-							){
-								pMatchRange->SetFromY(nLinePos);	// マッチ行
-								pMatchRange->SetToY  (nLinePos);	// マッチ行
-								pMatchRange->SetFromX(nNextWordFrom2);						// マッチ位置from
-								pMatchRange->SetToX  (pMatchRange->GetFrom().x + searchWords[iSW].second);// マッチ位置to
-								nRetVal = 1;
-								goto end_of_func;
-							}
-						}
-					}
-					/* 現在位置の左右の単語の先頭位置を調べる */
-					if( PrevOrNextWord( nLinePos, nNextWordFrom, &nNextWordFrom, FALSE, FALSE ) ){
-						continue;
-					}
+				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
+				int nMatchLen;
+				pszRes = SearchStringWord(pLine, nLineLen, nNextWordFrom, searchWords, sSearchOption.bLoHiCase, &nMatchLen);
+				if( NULL != pszRes ){
+					pMatchRange->SetFromY(nLinePos);	// マッチ行
+					pMatchRange->SetToY  (nLinePos);	// マッチ行
+					pMatchRange->SetFromX(CLogicInt(pszRes - pLine));						// マッチ位置from
+					pMatchRange->SetToX  (pMatchRange->GetFrom().x + nMatchLen);// マッチ位置to
+					nRetVal = 1;
+					goto end_of_func;
 				}
 				/* 次の行を見に行く */
 				nLinePos++;

@@ -13,7 +13,7 @@
 bool CWordParse::WhereCurrentWord_2(
 	const wchar_t*	pLine,			//!< [in]  調べるメモリ全体の先頭アドレス
 	CLogicInt		nLineLen,		//!< [in]  調べるメモリ全体の有効長
-	CLogicInt		nIdx,			//!< [out] 調査開始地点:pLineからの相対的な位置
+	CLogicInt		nIdx,			//!< [in]  調査開始地点:pLineからの相対的な位置
 	CLogicInt*		pnIdxFrom,		//!< [out] 単語が見つかった場合は、単語の先頭インデックスを返す。
 	CLogicInt*		pnIdxTo,		//!< [out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
 	CNativeW*		pcmcmWord,		//!< [out] 単語が見つかった場合は、現在単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
