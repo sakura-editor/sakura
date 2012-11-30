@@ -223,7 +223,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 		break;
 	}
 
-	return ::CallWindowProc( (WNDPROC)s_pOldPropSheetWndProc, hwnd, uMsg, wParam, lParam );
+	return ::CallWindowProc( s_pOldPropSheetWndProc, hwnd, uMsg, wParam, lParam );
 }
 
 /*!	独自拡張プロパティシートのコールバック関数

@@ -111,7 +111,7 @@ int CDlgPrintSetting::DoModal(
 //		m_hInstance,
 //		MAKEINTRESOURCE( IDD_PRINTSETTING ),
 //		m_hwndParent,
-//		(DLGPROC)PrintSettingDialogProc,
+//		PrintSettingDialogProc,
 //		(LPARAM)this
 //	);
 	if( TRUE == nRet ){

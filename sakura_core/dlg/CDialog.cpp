@@ -104,7 +104,7 @@ INT_PTR CDialog::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 		m_hInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
-		(DLGPROC)MyDialogProc,
+		MyDialogProc,
 		(LPARAM)this
 	);
 }
@@ -125,7 +125,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete
 		m_hInstance,
 		MAKEINTRESOURCE( nDlgTemplete ),
 		m_hwndParent,
-		(DLGPROC)MyDialogProc,
+		MyDialogProc,
 		(LPARAM)this
 	);
 	if( NULL != m_hWnd ){
@@ -145,7 +145,7 @@ HWND CDialog::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPCDLGTEMPLATE l
 		m_hInstance,
 		lpTemplate,
 		m_hwndParent,
-		(DLGPROC)MyDialogProc,
+		MyDialogProc,
 		(LPARAM)this
 	);
 	if( NULL != m_hWnd ){

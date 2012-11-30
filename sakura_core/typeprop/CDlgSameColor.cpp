@@ -427,7 +427,7 @@ LRESULT CALLBACK CDlgSameColor::ColorStatic_SubclassProc( HWND hwnd, UINT uMsg, 
 		break;
 	}
 
-	return CallWindowProc( (WNDPROC)pCDlgSameColor->m_wpColorStaticProc, hwnd, uMsg, wParam, lParam );
+	return CallWindowProc( pCDlgSameColor->m_wpColorStaticProc, hwnd, uMsg, wParam, lParam );
 }
 
 /*! サブクラス化された色選択リストのウィンドウプロシージャ
@@ -490,7 +490,7 @@ LRESULT CALLBACK CDlgSameColor::ColorList_SubclassProc( HWND hwnd, UINT uMsg, WP
 		break;
 	}
 
-	return ::CallWindowProc( (WNDPROC)pCDlgSameColor->m_wpColorListProc, hwnd, uMsg, wParam, lParam );
+	return ::CallWindowProc( pCDlgSameColor->m_wpColorListProc, hwnd, uMsg, wParam, lParam );
 }
 
 
