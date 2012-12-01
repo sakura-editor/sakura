@@ -40,16 +40,20 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	//※""で挟まれる設定を複製してちょっと修正すれば、<>や[]に挟まれたものにも対応できる（ユーザに任せる）
 
 	//正規表現キーワード
+	int keywordPos = 0;
+	wchar_t* pKeyword = pType->m_RegexKeywordList;
 	pType->m_bUseRegexKeyword = true;							// 正規表現キーワードを使うか
-	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	wcscpyn( pType->m_RegexKeywordArr[0].m_szKeyword,			// 正規表現キーワード
-		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""で挟まれた C:\～, \\～ にマッチするパターン
-		sizeof(pType->m_RegexKeywordArr[0].m_szKeyword) );
 	pType->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
-	wcscpyn( pType->m_RegexKeywordArr[1].m_szKeyword,			// 正規表現キーワード
+	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
+		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""で挟まれた C:\～, \\～ にマッチするパターン
+		_countof(pType->m_RegexKeywordList) - 1 );
+	keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
+	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
+	wcscpyn( &pKeyword[keywordPos],			// 正規表現キーワード
 		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\～, \\～ にマッチするパターン
-		sizeof(pType->m_RegexKeywordArr[1].m_szKeyword) );
-	
+		_countof(pType->m_RegexKeywordList) - keywordPos - 1 );
+	keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
+	pKeyword[keywordPos] = L'\0';
 }
 
 

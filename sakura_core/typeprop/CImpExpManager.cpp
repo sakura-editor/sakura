@@ -38,6 +38,7 @@
 #include "plugin/CPlugin.h"
 #include "view/CEditView.h"
 #include "view/colors/CColorStrategy.h"
+#include "util/other_util.h"
 
 /*-----------------------------------------------------------------------
 定数
@@ -611,7 +612,10 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 	}
 
 	RegexKeywordInfo	regexKeyArr[MAX_REGEX_KEYWORD];
-	TCHAR				buff[1024];
+	auto_array_ptr<wchar_t> szKeyWordList(new wchar_t [ MAX_REGEX_KEYWORDLISTLEN ]);
+	wchar_t*	pKeyword = &szKeyWordList[0];
+	int	keywordPos = 0;
+	TCHAR				buff[MAX_REGEX_KEYWORDLEN + 20];
 	int count = 0;
 	while(in)
 	{
@@ -619,7 +623,10 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 		wstring line=in.ReadLineW();
 		_wcstotcs(buff,line.c_str(),_countof(buff));
 
-		if(count >= MAX_REGEX_KEYWORD) break;
+		if(count >= MAX_REGEX_KEYWORD){
+			sErrMsg = L"キーワード数が上限に達したため切り捨てました。";
+			break;
+		}
 
 		//RxKey[999]=ColorName,RegexKeyword
 		if( auto_strlen(buff) < 12 ) continue;
@@ -635,37 +642,41 @@ bool CImpExpRegex::Import( const wstring& sFileName, wstring& sErrMsg )
 			{
 				//色指定名に対応する番号を探す
 				int k = GetColorIndexByName( &buff[11] );	//@@@ 2002.04.30
-				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
-				{
-					regexKeyArr[count].m_nColorIndex = k;
-					_tcstowcs(regexKeyArr[count].m_szKeyword, p, _countof(regexKeyArr[0].m_szKeyword));
-					count++;
-				}
-				else
-				{	/* 日本語名からインデックス番号に変換する */
-					for(int i = 0; i < COLORIDX_LAST; i++)
-					{
-						if( auto_strcmp(m_Types.m_ColorInfoArr[i].m_szName, &buff[11]) == 0 )
-						{
-							regexKeyArr[count].m_nColorIndex = i;
-							_tcstowcs(regexKeyArr[count].m_szKeyword, p, _countof(regexKeyArr[0].m_szKeyword));
-							count++;
+				if( k == -1 ){
+					/* 日本語名からインデックス番号に変換する */
+					for(int m = 0; m < COLORIDX_LAST; m++){
+						if( auto_strcmp(m_Types.m_ColorInfoArr[m].m_szName, &buff[11]) == 0 ){
+							k = m;
 							break;
 						}
 					}
 				}
+				if( k != -1 )	/* 3文字カラー名からインデックス番号に変換 */
+				{
+					if( 0 < MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1 ){
+						regexKeyArr[count].m_nColorIndex = k;
+						_tcstowcs(&pKeyword[keywordPos], p, std::min<int>(MAX_REGEX_KEYWORDLEN, MAX_REGEX_KEYWORDLISTLEN - keywordPos - 1));
+						count++;
+						keywordPos += auto_strlen(&pKeyword[keywordPos]) + 1;
+					}else{
+						sErrMsg = L"キーワード領域がいっぱいなため切り捨てました。";
+					}
+				}
+			}else{
+				sErrMsg = L"不正なキーワードを無視しました。";
 			}
 		}
 	}
+	pKeyword[keywordPos] = L'\0';
+
 	in.Close();
 
 	
 	for(int i = 0; i < count; i++ ){
 		m_Types.m_RegexKeywordArr[i] = regexKeyArr[i];
 	}
-	// 番兵の設定
-	if( count < MAX_REGEX_KEYWORD ){
-		m_Types.m_RegexKeywordArr[count].m_szKeyword[0] = L'\0';
+	for( int i = 0; i <= keywordPos; i++ ){
+		m_Types.m_RegexKeywordList[i] = pKeyword[i];
 	}
 
 	return true;
@@ -682,13 +693,16 @@ bool CImpExpRegex::Export( const wstring& sFileName, wstring& sErrMsg )
 
 	out.WriteF( WSTR_REGEXKW_HEAD );
 
+	const wchar_t* regex = m_Types.m_RegexKeywordList;
 	for (int i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		if( m_Types.m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' ) break;
+		if( regex[0] == L'\0' ) break;
 		
 		const TCHAR* name  = GetColorNameByIndex(m_Types.m_RegexKeywordArr[i].m_nColorIndex);
-		const WCHAR* regex = m_Types.m_RegexKeywordArr[i].m_szKeyword;
 		out.WriteF( L"RxKey[%03d]=%ts,%ls\n", i, name, regex);
+
+		for(; *regex != '\0'; regex++ ){}
+		regex++;
 	}
 
 	out.Close();

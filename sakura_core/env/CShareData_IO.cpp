@@ -1209,7 +1209,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 {
 	int		j;
 	WCHAR	szKeyName[64];
-	WCHAR	szKeyData[1024];
+	WCHAR	szKeyData[MAX_REGEX_KEYWORDLEN + 20];
+	assert( 100 < MAX_REGEX_KEYWORDLEN + 20 );
 
 	// 2005.04.07 D.S.Koba
 	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nType));
@@ -1447,12 +1448,14 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	{	//正規表現キーワード
 		WCHAR	*p;
 		cProfile.IOProfileData( pszSecName, LTEXT("bUseRegexKeyword"), types.m_bUseRegexKeyword );/* 正規表現キーワード使用するか？ */
+		wchar_t* pKeyword = types.m_RegexKeywordList;
+		int nPos = 0;
+		int nKeywordSize = _countof(types.m_RegexKeywordList);
 		for(j = 0; j < _countof(types.m_RegexKeywordArr); j++)
 		{
 			auto_sprintf( szKeyName, LTEXT("RxKey[%03d]"), j );
 			if( cProfile.IsReadingMode() )
 			{
-				types.m_RegexKeywordArr[j].m_szKeyword[0] = L'\0';
 				types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
 				if( cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData)) )
 				{
@@ -1464,11 +1467,16 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 						if( types.m_RegexKeywordArr[j].m_nColorIndex == -1 )	//名前でない
 							types.m_RegexKeywordArr[j].m_nColorIndex = _wtoi(szKeyData);
 						p++;
-						wcscpy(types.m_RegexKeywordArr[j].m_szKeyword, p);
+						if( 0 < nKeywordSize - nPos - 1 ){
+							wcscpyn(&pKeyword[nPos], p, nKeywordSize - nPos - 1 );
+						}
 						if( types.m_RegexKeywordArr[j].m_nColorIndex < 0
 						 || types.m_RegexKeywordArr[j].m_nColorIndex >= COLORIDX_LAST )
 						{
 							types.m_RegexKeywordArr[j].m_nColorIndex = COLORIDX_REGEX1;
+						}
+						if( pKeyword[nPos] ){
+							nPos += auto_strlen(&pKeyword[nPos]) + 1;
 						}
 					}
 				}else{
@@ -1477,13 +1485,17 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 				}
 			}
 			// 2002.02.08 hor 未定義値を無視
-			else if(wcslen(types.m_RegexKeywordArr[j].m_szKeyword))
+			else if(pKeyword[nPos])
 			{
 				auto_sprintf( szKeyData, LTEXT("%ls,%ls"),
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
-					types.m_RegexKeywordArr[j].m_szKeyword);
+					&pKeyword[nPos]);
 				cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
+				nPos += auto_strlen(&pKeyword[nPos]) + 1;
 			}
+		}
+		if( cProfile.IsReadingMode() ){
+			pKeyword[nPos] = L'\0';
 		}
 	}
 //@@@ 2001.11.17 add end MIK
