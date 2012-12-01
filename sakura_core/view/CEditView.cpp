@@ -1156,15 +1156,18 @@ bool CEditView::IsCurrentPositionURL(
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
 	bool bDispUrl = CTypeSupport(this,COLORIDX_URL).IsDisp();
 	bool bUseRegexKeyword = false;
-	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
+	const STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 	if( TypeDataPtr->m_bUseRegexKeyword ){
+		const wchar_t* pKeyword = TypeDataPtr->m_RegexKeywordList;
 		for( int i = 0; i < MAX_REGEX_KEYWORD; i++ ){
-			if( TypeDataPtr->m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' )
+			if( *pKeyword == L'\0' )
 				break;
 			if( TypeDataPtr->m_RegexKeywordArr[i].m_nColorIndex == COLORIDX_URL ){
 				bUseRegexKeyword = true;	// URL色指定の正規表現キーワードがある
 				break;
 			}
+			for(; *pKeyword != '\0'; pKeyword++ ){}
+			pKeyword++;
 		}
 	}
 	if( !bDispUrl && !bUseRegexKeyword ){

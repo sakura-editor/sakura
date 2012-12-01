@@ -36,6 +36,40 @@
 #define	MYDBGMSG(a)
 #endif
 
+/*
+ * パラメータ宣言
+ */
+#define RK_EMPTY          0      //初期状態
+#define RK_CLOSE          1      //BREGEXPクローズ
+#define RK_OPEN           2      //BREGEXPオープン
+#define RK_ACTIVE         3      //コンパイル済み
+#define RK_ERROR          9      //コンパイルエラー
+
+#define RK_MATCH          4      //マッチする
+#define RK_NOMATCH        5      //この行ではマッチしない
+
+#define RK_SIZE           100    //最大登録可能数
+
+//#define RK_HEAD_CHAR      '^'    //行先頭の正規表現
+#define RK_HEAD_STR1      L"/^"   //BREGEXP
+#define RK_HEAD_STR1_LEN  2
+#define RK_HEAD_STR2      L"m#^"  //BREGEXP
+#define RK_HEAD_STR2_LEN  3
+#define RK_HEAD_STR3      L"m/^"  //BREGEXP
+#define RK_HEAD_STR3_LEN  3
+//#define RK_HEAD_STR4      "#^"   //BREGEXP
+//#define RK_HEAD_STR4_LEN  2
+
+#define RK_KAKOMI_1_START "/"
+#define RK_KAKOMI_1_END   "/k"
+#define RK_KAKOMI_2_START "m#"
+#define RK_KAKOMI_2_END   "#k"
+#define RK_KAKOMI_3_START "m/"
+#define RK_KAKOMI_3_END   "/k"
+//#define RK_KAKOMI_4_START "#"
+//#define RK_KAKOMI_4_END   "#k"
+
+
 //!	コンストラクタ
 /*!	@brief コンストラクタ
 
@@ -100,10 +134,13 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 		m_sInfo[i].pBregexp = NULL;
 #ifdef USE_PARENT
 #else
-		m_sInfo[i].sRegexKey.m_szKeyword[0] = L'\0';
 		m_sInfo[i].sRegexKey.m_nColorIndex = COLORIDX_REGEX1;
 #endif
 	}
+#ifdef USE_PARENT
+#else
+	wmemset( m_keywordList, _countof(m_keywordList), L'\0' );
+#endif
 
 	return TRUE;
 }
@@ -185,15 +222,21 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 
 	//コンパイルパターンを内部変数に移す。
 	m_nRegexKeyCount = 0;
-	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
-	{
-		if( m_pTypes->m_RegexKeywordArr[i].m_szKeyword[0] == L'\0' ) break;
+	const wchar_t * pKeyword = &m_pTypes->m_RegexKeywordList[0];
 #ifdef USE_PARENT
 #else
-		strcpy(m_sInfo[i].sRegexKey.m_szKeyword, m_pTypes->m_RegexKeywordArr[i].m_szKeyword);
+	wmemcpy( m_keywordList,  m_pTypes->m_RegexKeywordList, _countof(m_RegexKeywordList) );
+#endif
+	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
+	{
+		if( pKeyword[0] == L'\0' ) break;
+#ifdef USE_PARENT
+#else
 		m_sInfo[i].sRegexKey.m_nColorIndex = m_pTypes->m_RegexKeywordArr[i].m_nColorIndex;
 #endif
 		m_nRegexKeyCount++;
+		for(; *pKeyword != '\0'; pKeyword++ ){}
+		pKeyword++;
 	}
 
 	m_nTypeIndex = m_pTypes->m_nIdx;
@@ -207,6 +250,11 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 		return FALSE;
 	}
 
+#ifdef USE_PARENT
+	pKeyword = &m_pTypes->m_RegexKeywordList[0];
+#else
+	pKeyword = &m_keywordList[0];
+#endif
 	//パターンをコンパイルする。
 	for(i = 0; i < m_nRegexKeyCount; i++)
 	{
@@ -216,17 +264,17 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 		rp = &m_sInfo[i].sRegexKey;
 #endif
 
-		if( RegexKeyCheckSyntax( rp->m_szKeyword ) == TRUE )
+		if( RegexKeyCheckSyntax( pKeyword ) == TRUE )
 		{
 			m_szMsg[0] = '\0';
-			matched = BMatch(rp->m_szKeyword, dummy, dummy+1, &m_sInfo[i].pBregexp, m_szMsg);
+			matched = BMatch(pKeyword, dummy, dummy+1, &m_sInfo[i].pBregexp, m_szMsg);
 
 			if( m_szMsg[0] == '\0' )	//エラーがないかチェックする
 			{
 				//先頭以外は検索しなくてよい
-				if( wcsncmp( RK_HEAD_STR1, rp->m_szKeyword, RK_HEAD_STR1_LEN ) == 0
-				 || wcsncmp( RK_HEAD_STR2, rp->m_szKeyword, RK_HEAD_STR2_LEN ) == 0
-				 || wcsncmp( RK_HEAD_STR3, rp->m_szKeyword, RK_HEAD_STR3_LEN ) == 0
+				if( wcsncmp( RK_HEAD_STR1, pKeyword, RK_HEAD_STR1_LEN ) == 0
+				 || wcsncmp( RK_HEAD_STR2, pKeyword, RK_HEAD_STR2_LEN ) == 0
+				 || wcsncmp( RK_HEAD_STR3, pKeyword, RK_HEAD_STR3_LEN ) == 0
 				)
 				{
 					m_sInfo[i].nHead = 1;
@@ -268,7 +316,8 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 			//書式エラーなので検索対象からはずす
 			m_sInfo[i].nFlag = RK_NOMATCH;
 		}
-
+		for(; *pKeyword != '\0'; pKeyword++ ){}
+		pKeyword++;
 	}
 
 	m_nCompiledMagicNumber = m_pTypes->m_nRegexKeyMagicNumber;	//Compiled.
@@ -373,12 +422,12 @@ BOOL CRegexKeyword::RegexIsKeyword(
 			{
 #ifdef USE_PARENT
 				matched = ExistBMatchEx()
-					? BMatchEx(m_pTypes->m_RegexKeywordArr[i].m_szKeyword, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg)
-					: BMatch(m_pTypes->m_RegexKeywordArr[i].m_szKeyword,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
+					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg)
+					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
 #else
 				matched = ExistBMatchEx()
-					? BMatchEx(m_sInfo[i].sRegexKey.m_szKeyword, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
-					: BMatch(m_sInfo[i].sRegexKey.m_szKeyword,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
+					? BMatchEx(NULL, cStr.GetPtr(), cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
+					: BMatch(NULL,                  cStr.GetPtr()+nPos, cStr.GetPtr()+cStr.GetLength(), &m_sInfo[i].pBregexp, m_szMsg);
 #endif
 				if( matched )
 				{

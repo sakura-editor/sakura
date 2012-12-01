@@ -235,9 +235,9 @@ void _DefaultConfig(STypeConfig* pType)
 //@@@ 2001.11.17 add start MIK
 	for(int i = 0; i < _countof(pType->m_RegexKeywordArr); i++)
 	{
-		pType->m_RegexKeywordArr[i].m_szKeyword[0] = L'\0';
 		pType->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 	}
+	pType->m_RegexKeywordList[0] = L'\0';
 	pType->m_bUseRegexKeyword = false;
 //		pType->m_nRegexKeyMagicNumber = 1;
 //@@@ 2001.11.17 add end MIK
