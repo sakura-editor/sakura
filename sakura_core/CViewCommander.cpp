@@ -709,6 +709,8 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 	}else{
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
 	}
 
@@ -815,12 +817,15 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			/* 現在のカーソル位置から選択を開始する */
 			m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 		}
-		if( ! bSelect && m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {
-			this->Command_CANCEL_MODE( 1 );
-			nRes = 1;
-			continue; // 選択のキャンセルで左移動を 1消費。この後の移動処理はスキップする。
+		if( ! bSelect ){
+			if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {
+				this->Command_CANCEL_MODE( 1 );
+				nRes = 1;
+				continue; // 選択のキャンセルで左移動を 1消費。この後の移動処理はスキップする。
+			}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+				m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
+			}
 		}
-
 		// (これから求める)カーソルの移動先。
 		CLayoutPoint ptPos(CLayoutInt(0), GetCaret().GetCaretLayoutPos().GetY2());
 
@@ -903,9 +908,13 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 				/* 現在のカーソル位置から選択を開始する */
 				m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 			}
-			if( ! bSelect && m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {
-				this->Command_CANCEL_MODE( 2 );
-				continue; // 選択のキャンセルで右移動を 1消費。この後の移動処理はスキップする。
+			if( ! bSelect ){
+				if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {
+					this->Command_CANCEL_MODE( 2 );
+					continue; // 選択のキャンセルで右移動を 1消費。この後の移動処理はスキップする。
+				}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+					m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
+				}
 			}
 		}
 //		2003.06.28 Moca [EOF]のみの行にカーソルがあるときに右を押しても選択を解除できない問題に対応
@@ -1234,6 +1243,8 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 			if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
 				m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+			}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+				m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 			}
 		}
 	}
@@ -1279,7 +1290,13 @@ void CViewCommander::Command_GOFILETOP( bool bSelect )
 void CViewCommander::Command_GOFILEEND( bool bSelect )
 {
 // 2001.12.13 hor BOX選択中にファイルの最後にジャンプすると[EOF]の行が反転したままになるの修正
-	if( !bSelect && m_pCommanderView->GetSelectionInfo().IsTextSelected() ) m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );	// 2001.12.21 hor Add
+	if( !bSelect ){
+		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);	// 2001.12.21 hor Add
+		}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
+		}
+	}
 	m_pCommanderView->AddCurrentLineToHistory();
 	GetCaret().Cursor_UPDOWN( GetDocument()->m_cLayoutMgr.GetLineCount() , bSelect );
 	Command_DOWN( bSelect, TRUE );
@@ -1320,6 +1337,8 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){		/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
 	}
 
@@ -1399,6 +1418,8 @@ void CViewCommander::Command_WORDRIGHT( bool bSelect )
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
 	}
 	bool	bTryAgain = false;
@@ -1514,6 +1535,10 @@ void CViewCommander::Command_COPY(
 		/* 選択状態のロック */
 		if( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
 			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = FALSE;
+			m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
+			if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
+				GetCaret().m_cUnderLine.CaretUnderLineON(true);
+			}
 		}
 	}
 	if( GetDllShareData().m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
@@ -3385,8 +3410,11 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 		}
 	}else{
 		// 2011.12.05 Moca 選択中の未選択状態でもLockの解除と描画が必要
-		if( m_pCommanderView->GetSelectionInfo().IsTextSelecting() ){
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		if( m_pCommanderView->GetSelectionInfo().IsTextSelecting()
+				|| m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
+			GetCaret().m_cUnderLine.CaretUnderLineON(true);
+			m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
 		}
 	}
 }
@@ -3409,6 +3437,10 @@ void CViewCommander::Command_BEGIN_SELECT( void )
 	else {
 		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = TRUE;	/* 選択状態のロック */
 	}
+	if( GetSelect().IsOne() ){
+		GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
+	}
+	m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
 	return;
 }
 
@@ -3433,6 +3465,9 @@ void CViewCommander::Command_BEGIN_BOXSELECT( void )
 
 	m_pCommanderView->GetSelectionInfo().m_bSelectingLock = true;	/* 選択状態のロック */
 	m_pCommanderView->GetSelectionInfo().SetBoxSelect(true);	/* 矩形範囲選択中 */
+
+	m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
+	GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
 	return;
 }
 

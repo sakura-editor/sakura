@@ -801,9 +801,13 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 		/* 現在のカーソル位置から選択を開始する */
 		m_pEditView->GetSelectionInfo().BeginSelectArea();
 	}
-	if( ! bSelect && m_pEditView->GetSelectionInfo().IsTextSelected() ) {
-		/* 現在の選択範囲を非選択状態に戻す */
-		m_pEditView->GetSelectionInfo().DisableSelectArea( TRUE );
+	if( ! bSelect ){
+		if( m_pEditView->GetSelectionInfo().IsTextSelected() ) {
+			/* 現在の選択範囲を非選択状態に戻す */
+			m_pEditView->GetSelectionInfo().DisableSelectArea(true);
+		}else if( m_pEditView->GetSelectionInfo().IsBoxSelecting() ){
+			m_pEditView->GetSelectionInfo().SetBoxSelect(false);
+		}
 	}
 
 	// (これから求める)キャレットの移動先。

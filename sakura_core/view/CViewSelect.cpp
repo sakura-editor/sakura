@@ -224,8 +224,8 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 			CMyRect rcArea;
 			pView->GetTextArea().GenerateTextAreaRect(&rcArea);
 			RECT rcUpdate;
+			CEditView& view = *pView;
 			if( ::IntersectRect(&rcUpdate, &rcPx, &rcArea) ){
-				CEditView& view = *pView;
 				HDC hdc = view.GetDC();
 				PAINTSTRUCT ps;
 				ps.rcPaint = rcUpdate;
@@ -234,11 +234,11 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 				view.GetCaret().m_cUnderLine.Lock();
 				view.OnPaint(hdc, &ps, false);
 				view.GetCaret().m_cUnderLine.UnLock();
-				// 2010.10.10 0幅選択(解除)状態での、カーソル位置ライン復帰(リージョン外)
-				if( bDrawBracketCursorLine ){
-					view.GetCaret().m_cUnderLine.CaretUnderLineON(true);
-				}
 				view.ReleaseDC( hdc );
+			}
+			// 2010.10.10 0幅選択(解除)状態での、カーソル位置ライン復帰(リージョン外)
+			if( bDrawBracketCursorLine ){
+				view.GetCaret().m_cUnderLine.CaretUnderLineON(true);
 			}
 		}
 	}else{
@@ -627,18 +627,20 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	if( ! pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2IsEffective() )
 		return;
 
-	if( ! IsTextSelected() ){
-		pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
+	CLayoutInt nLineCount = pView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
+	if( ! IsTextSelected() || m_sSelect.GetFrom().y >= nLineCount ){ // 先頭行が実在しない
+		if( IsBoxSelecting() ){
+			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("box selecting") );
+		}else if( m_bSelectingLock ){
+			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("selecting") );
+		}else{
+			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
+		}
 		return;
 	}
 
 	TCHAR msg[128];
 	//	From here 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策
-	CLayoutInt nLineCount = pView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-	if( m_sSelect.GetFrom().y >= nLineCount ){	// 先頭行が実在しない
-		pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("") );
-		return;
-	}
 
 	CLayoutInt select_line;
 	if( m_sSelect.GetTo().y >= nLineCount ){	// 最終行が実在しない
