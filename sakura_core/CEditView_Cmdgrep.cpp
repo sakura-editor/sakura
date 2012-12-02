@@ -107,6 +107,14 @@ void CEditView::Command_GREP( void )
 		   !m_pcEditDoc->m_bDebugMode
 		)
 	){
+		// 2011.01.23 Grepタイプ別適用
+		if( !m_pcEditDoc->IsModified() && m_pcEditDoc->m_cLayoutMgr.GetLineCount() == 0 ){
+			int cTypeGrep = CShareData::getInstance()->GetDocumentTypeOfExt( _T("grepout") );
+			m_pcEditDoc->SetDocumentType( cTypeGrep, false );
+			m_pcEditDoc->LockDocumentType();
+			m_pcEditDoc->OnChangeType();
+		}
+
 		DoGrep(
 			&cmWork1,
 			&cmWork2,

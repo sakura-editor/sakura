@@ -3033,7 +3033,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						m_hInstance,
 						m_hWnd,
 						szFile,
-						CODE_AUTODETECT,	/* 文字コード自動判別 */
+						CODE_NONE,
 						FALSE				/* 読み取り専用か */
 					);
 				}

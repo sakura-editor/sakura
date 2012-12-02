@@ -152,12 +152,13 @@ bool CNormalProcess::InitializeProcess()
 		/* デバッグモニタモードに設定 */
 		m_pcEditWnd->SetDebugModeON();
 		// 2004.09.20 naoh アウトプット用タイプ別設定
-		m_pcEditWnd->m_cEditDoc.SetDocumentType( m_cShareData.GetDocumentTypeOfExt("output"), true );
 		// 文字コードを有効とする Uchi 2008/6/8
+		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
 		m_pcEditWnd->SetDocumentTypeWhenCreate( (ECodeType)fi.m_nCharCode, FALSE, nType );
 	}
 	else if( bGrepMode ){
 		/* GREP */
+		// 2010.06.16 Moca Grepでもオプション指定を適用
 		m_pcEditWnd->SetDocumentTypeWhenCreate( (ECodeType)fi.m_nCharCode, FALSE, nType );
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){

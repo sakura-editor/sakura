@@ -450,88 +450,6 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 
-//	From Here Aug. 14, 2000 genta
-//
-//	書き換えが禁止されているかどうか
-//	戻り値: true: 禁止 / false: 許可
-//
-bool CEditDoc::IsModificationForbidden( int nCommand )
-{
-	//	編集可能の場合
-	if( IsEditable() )
-		return false; // 常に書き換え許可
-
-	//	上書き禁止モードの場合
-	//	暫定Case文: 実際にはもっと効率の良い方法を使うべき
-	switch( nCommand ){
-	//	ファイルを書き換えるコマンドは使用禁止
-	case F_CHAR:
-	case F_IME_CHAR:
-	case F_DELETE:
-	case F_DELETE_BACK:
-	case F_WordDeleteToEnd:
-	case F_WordDeleteToStart:
-	case F_WordDelete:
-	case F_WordCut:
-	case F_LineDeleteToStart:
-	case F_LineDeleteToEnd:
-	case F_LineCutToStart:
-	case F_LineCutToEnd:
-	case F_DELETE_LINE:
-	case F_CUT_LINE:
-	case F_DUPLICATELINE:
-	case F_INDENT_TAB:
-	case F_UNINDENT_TAB:
-	case F_INDENT_SPACE:
-	case F_UNINDENT_SPACE:
-	case F_CUT:
-	case F_PASTE:
-	case F_INS_DATE:
-	case F_INS_TIME:
-	case F_CTRL_CODE_DIALOG:	//@@@ 2002.06.02 MIK
-	case F_INSTEXT:
-	case F_ADDTAIL:
-	case F_PASTEBOX:
-	case F_REPLACE_DIALOG:
-	case F_REPLACE:
-	case F_REPLACE_ALL:
-	case F_CODECNV_EMAIL:
-	case F_CODECNV_EUC2SJIS:
-	case F_CODECNV_UNICODE2SJIS:
-	case F_CODECNV_UNICODEBE2SJIS:
-	case F_CODECNV_SJIS2JIS:
-	case F_CODECNV_SJIS2EUC:
-	case F_CODECNV_UTF82SJIS:
-	case F_CODECNV_UTF72SJIS:
-	case F_CODECNV_SJIS2UTF7:
-	case F_CODECNV_SJIS2UTF8:
-	case F_CODECNV_AUTO2SJIS:
-	case F_TOLOWER:
-	case F_TOUPPER:
-	case F_TOHANKAKU:
-	case F_TOHANKATA:				// 2002/08/29 ai
-	case F_TOZENEI:					// 2001/07/30 Misaka
-	case F_TOHANEI:
-	case F_TOZENKAKUKATA:
-	case F_TOZENKAKUHIRA:
-	case F_HANKATATOZENKATA:
-	case F_HANKATATOZENHIRA:
-	case F_TABTOSPACE:
-	case F_SPACETOTAB:  //#### Stonee, 2001/05/27
-	case F_HOKAN:
-	case F_CHGMOD_INS:
-	case F_LTRIM:		// 2001.12.03 hor
-	case F_RTRIM:		// 2001.12.03 hor
-	case F_SORT_ASC:	// 2001.12.11 hor
-	case F_SORT_DESC:	// 2001.12.11 hor
-	case F_MERGE:		// 2001.12.11 hor
-	case F_UNDO:		// 2007.10.12 genta
-	case F_REDO:		// 2007.10.12 genta
-		return true;
-	}
-	return false;	//	デフォルトで書き換え許可
-}
-//	To Here Aug. 14, 2000 genta
 
 //	From Here Aug. 21, 2000 genta
 //
@@ -1172,22 +1090,6 @@ void CEditDoc::SetModified( bool flag, bool redraw)
 		UpdateCaption();
 }
 // From Here Jan. 22, 2002 genta
-
-/*!
-	ファイル名の設定
-	
-	ファイル名を設定すると同時に，ウィンドウアイコンを適切に設定する．
-	
-	@param szFile [in] ファイルのパス名
-	
-	@author genta
-	@date 2002.09.09
-*/
-void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
-{
-	strcpy( m_szFilePath, szFile );
-	SetDocumentIcon();
-}
 
 /*! ファイル名(パスなし)を取得する
 	@author Moca

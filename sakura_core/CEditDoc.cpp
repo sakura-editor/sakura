@@ -311,6 +311,444 @@ BOOL CEditDoc::Create(
 
 
 
+/*!
+	ファイル名の設定
+	
+	ファイル名を設定すると同時に，ウィンドウアイコンを適切に設定する．
+	
+	@param szFile [in] ファイルのパス名
+	
+	@author genta
+	@date 2002.09.09
+*/
+void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
+{
+	strcpy( m_szFilePath, szFile );
+	SetDocumentIcon();
+}
+
+
+//	From Here Aug. 14, 2000 genta
+//
+//	書き換えが禁止されているかどうか
+//	戻り値: true: 禁止 / false: 許可
+//
+bool CEditDoc::IsModificationForbidden( int nCommand )
+{
+	//	編集可能の場合
+	if( IsEditable() )
+		return false; // 常に書き換え許可
+
+	//	上書き禁止モードの場合
+	//	暫定Case文: 実際にはもっと効率の良い方法を使うべき
+	switch( nCommand ){
+	//	ファイルを書き換えるコマンドは使用禁止
+	case F_CHAR:
+	case F_IME_CHAR:
+	case F_DELETE:
+	case F_DELETE_BACK:
+	case F_WordDeleteToEnd:
+	case F_WordDeleteToStart:
+	case F_WordDelete:
+	case F_WordCut:
+	case F_LineDeleteToStart:
+	case F_LineDeleteToEnd:
+	case F_LineCutToStart:
+	case F_LineCutToEnd:
+	case F_DELETE_LINE:
+	case F_CUT_LINE:
+	case F_DUPLICATELINE:
+	case F_INDENT_TAB:
+	case F_UNINDENT_TAB:
+	case F_INDENT_SPACE:
+	case F_UNINDENT_SPACE:
+	case F_CUT:
+	case F_PASTE:
+	case F_INS_DATE:
+	case F_INS_TIME:
+	case F_CTRL_CODE_DIALOG:	//@@@ 2002.06.02 MIK
+	case F_INSTEXT:
+	case F_ADDTAIL:
+	case F_PASTEBOX:
+	case F_REPLACE_DIALOG:
+	case F_REPLACE:
+	case F_REPLACE_ALL:
+	case F_CODECNV_EMAIL:
+	case F_CODECNV_EUC2SJIS:
+	case F_CODECNV_UNICODE2SJIS:
+	case F_CODECNV_UNICODEBE2SJIS:
+	case F_CODECNV_SJIS2JIS:
+	case F_CODECNV_SJIS2EUC:
+	case F_CODECNV_UTF82SJIS:
+	case F_CODECNV_UTF72SJIS:
+	case F_CODECNV_SJIS2UTF7:
+	case F_CODECNV_SJIS2UTF8:
+	case F_CODECNV_AUTO2SJIS:
+	case F_TOLOWER:
+	case F_TOUPPER:
+	case F_TOHANKAKU:
+	case F_TOHANKATA:				// 2002/08/29 ai
+	case F_TOZENEI:					// 2001/07/30 Misaka
+	case F_TOHANEI:
+	case F_TOZENKAKUKATA:
+	case F_TOZENKAKUHIRA:
+	case F_HANKATATOZENKATA:
+	case F_HANKATATOZENHIRA:
+	case F_TABTOSPACE:
+	case F_SPACETOTAB:  //#### Stonee, 2001/05/27
+	case F_HOKAN:
+	case F_CHGMOD_INS:
+	case F_LTRIM:		// 2001.12.03 hor
+	case F_RTRIM:		// 2001.12.03 hor
+	case F_SORT_ASC:	// 2001.12.11 hor
+	case F_SORT_DESC:	// 2001.12.11 hor
+	case F_MERGE:		// 2001.12.11 hor
+	case F_UNDO:		// 2007.10.12 genta
+	case F_REDO:		// 2007.10.12 genta
+		return true;
+	}
+	return false;	//	デフォルトで書き換え許可
+}
+//	To Here Aug. 14, 2000 genta
+
+/*! コマンドコードによる処理振り分け
+
+	@param[in] nCommand MAKELONG( コマンドコード，送信元識別子 )
+
+	@date 2006.05.19 genta 上位16bitに送信元の識別子が入るように変更
+	@date 2007.06.20 ryoji グループ内で巡回するように変更
+*/
+BOOL CEditDoc::HandleCommand( int nCommand )
+{
+	int				i;
+	int				j;
+	int				nGroup;
+	int				nRowNum;
+	int				nPane;
+	HWND			hwndWork;
+	EditNode*		pEditNodeArr;
+
+	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
+	//	下位16ビットのみを取り出す
+	switch( LOWORD( nCommand )){
+	case F_PREVWINDOW:	//前のウィンドウ
+		nPane = m_cSplitterWnd.GetPrevPane();
+		if( -1 != nPane ){
+			SetActivePane( nPane );
+		}else{
+			/* 現在開いている編集窓のリストを得る */
+			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			if(  nRowNum > 0 ){
+				/* 自分のウィンドウを調べる */
+				nGroup = 0;
+				for( i = 0; i < nRowNum; ++i )
+				{
+					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
+					{
+						nGroup = pEditNodeArr[i].m_nGroup;
+						break;
+					}
+				}
+				if( i < nRowNum )
+				{
+					// 前のウィンドウ
+					for( j = i - 1; j >= 0; --j )
+					{
+						if( nGroup == pEditNodeArr[j].m_nGroup )
+							break;
+					}
+					if( j < 0 )
+					{
+						for( j = nRowNum - 1; j > i; --j )
+						{
+							if( nGroup == pEditNodeArr[j].m_nGroup )
+								break;
+						}
+					}
+					/* 前のウィンドウをアクティブにする */
+					hwndWork = pEditNodeArr[j].m_hWnd;
+					/* アクティブにする */
+					ActivateFrameWindow( hwndWork );
+					/* 最後のペインをアクティブにする */
+					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
+				}
+				delete [] pEditNodeArr;
+			}
+		}
+		return TRUE;
+	case F_NEXTWINDOW:	//次のウィンドウ
+		nPane = m_cSplitterWnd.GetNextPane();
+		if( -1 != nPane ){
+			SetActivePane( nPane );
+		}else{
+			/* 現在開いている編集窓のリストを得る */
+			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			if(  nRowNum > 0 ){
+				/* 自分のウィンドウを調べる */
+				nGroup = 0;
+				for( i = 0; i < nRowNum; ++i )
+				{
+					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
+					{
+						nGroup = pEditNodeArr[i].m_nGroup;
+						break;
+					}
+				}
+				if( i < nRowNum )
+				{
+					// 次のウィンドウ
+					for( j = i + 1; j < nRowNum; ++j )
+					{
+						if( nGroup == pEditNodeArr[j].m_nGroup )
+							break;
+					}
+					if( j >= nRowNum )
+					{
+						for( j = 0; j < i; ++j )
+						{
+							if( nGroup == pEditNodeArr[j].m_nGroup )
+								break;
+						}
+					}
+					/* 次のウィンドウをアクティブにする */
+					hwndWork = pEditNodeArr[j].m_hWnd;
+					/* アクティブにする */
+					ActivateFrameWindow( hwndWork );
+					/* 最初のペインをアクティブにする */
+					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
+				}
+				delete [] pEditNodeArr;
+			}
+		}
+		return TRUE;
+	default:
+		return m_cEditViewArr[m_nActivePaneIndex].HandleCommand( nCommand, TRUE, 0, 0, 0, 0 );
+	}
+}
+
+/*!	タイプ別設定の適用を変更
+	@date 2011.12.15 CEditView::Command_TYPE_LISTから移動
+*/
+void CEditDoc::OnChangeType()
+{
+	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
+	if( !IsFilePathAvailable() ){
+		if( !IsModified()  && m_cDocLineMgr.GetLineCount() == 0 ){
+			STypeConfig& types = GetDocumentAttribute();
+			m_nCharCode = (ECodeType)( types.m_eDefaultCodetype );
+			m_bBomExist = ( types.m_bDefaultBom != FALSE );
+			SetNewLineCode( static_cast<EEolType>(types.m_eDefaultEoltype) );
+		}
+	}
+	/* 設定変更を反映させる */
+	m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
+	OnChangeSetting();
+
+	// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
+	RunAutoMacro( m_pShareData->m_nMacroOnTypeChanged );
+}
+
+/*! ビューに設定変更を反映させる
+
+	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
+	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
+*/
+void CEditDoc::OnChangeSetting()
+{
+	int			i;
+	HWND		hwndProgress = NULL;
+
+	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
+
+	//pCEditWnd->m_CFuncKeyWnd.Timer_ONOFF( FALSE ); // 20060126 aroka
+
+	if( NULL != pCEditWnd ){
+		hwndProgress = pCEditWnd->m_hwndProgressBar;
+		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_SHOW );
+	}
+
+	/* ファイルの排他モード変更 */
+	if( m_nFileShareModeOld != m_pShareData->m_Common.m_nFileShareMode ){
+		/* ファイルの排他ロック解除 */
+		DoFileUnlock();
+		/* ファイルの排他ロック */
+		DoFileLock();
+	}
+	CShareData::getInstance()->TransformFileName_MakeCache();
+	int doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
+	SetDocumentType( doctype, false );
+
+	int* posSaveAry = SavePhysPosOfAllView();
+
+	/* レイアウト情報の作成 */
+	STypeConfig ref = GetDocumentAttribute();
+	{
+		// 2008.06.07 nasukoji	折り返し方法の追加に対応
+		// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
+		if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod )
+			m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
+
+		// 一時設定適用中でなければ折り返し方法変更
+		if( !m_bTextWrapMethodCurTemp )
+			m_nTextWrapMethodCur = ref.m_nTextWrapMethod;	// 折り返し方法
+
+		// 指定桁で折り返す：タイプ別設定を使用
+		// 右端で折り返す：仮に現在の折り返し幅を使用
+		// 上記以外：MAXLINEKETASを使用
+		if( m_nTextWrapMethodCur != WRAP_SETTING_WIDTH ){
+			if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH )
+				ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
+			else
+				ref.m_nMaxLineKetas = MAXLINEKETAS;
+		}
+	}
+
+	m_cLayoutMgr.SetLayoutInfo(
+		TRUE,
+		hwndProgress,
+		ref
+	); /* レイアウト情報の変更 */
+
+	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
+	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
+		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
+	else
+		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
+
+	/* ビューに設定変更を反映させる */
+	int viewCount = GetAllViewCount();
+	for( i = 0; i < viewCount; ++i ){
+		m_cEditViewArr[i].OnChangeSetting();
+	}
+	RestorePhysPosOfAllView( posSaveAry );
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_HIDE );
+	}
+}
+
+/*! ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行
+
+	@retval TRUE: 終了して良い / FALSE: 終了しない
+*/
+BOOL CEditDoc::OnFileClose()
+{
+	int			nRet;
+	int			nBool;
+	HWND		hwndMainFrame;
+	hwndMainFrame = ::GetParent( m_hWnd );
+
+	//	Mar. 30, 2003 genta サブルーチンにまとめた
+	AddToMRU();
+
+	if( m_bGrepRunning ){		/* Grep処理中 */
+		/* アクティブにする */
+		ActivateFrameWindow( hwndMainFrame );	//@@@ 2003.06.25 MIK
+		::MYMESSAGEBOX(
+			hwndMainFrame,
+			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
+			GSTR_APPNAME,
+			"Grepの処理中です。\n"
+		);
+		return FALSE;
+	}
+
+
+	/* テキストが変更されている場合 */
+	if( IsModified()
+	&& FALSE == m_bDebugMode	/* デバッグモニタモードのときは保存確認しない */
+//	&& FALSE == m_bReadOnly		/* 読み取り専用モード */
+	){
+		if( TRUE == m_bGrepMode ){	/* Grepモードのとき */
+			/* Grepモードで保存確認するか */
+			if( FALSE == m_pShareData->m_Common.m_bGrepExitConfirm ){
+				return TRUE;
+			}
+		}
+		/* ウィンドウをアクティブにする */
+		/* アクティブにする */
+		ActivateFrameWindow( hwndMainFrame );
+		if( m_bReadOnly ){	/* 読み取り専用モード */
+			ConfirmBeep();
+			nRet = ::MYMESSAGEBOX(
+				hwndMainFrame,
+				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
+				GSTR_APPNAME,
+				_T("%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"),
+				IsFilePathAvailable() ? GetFilePath() : "(無題)"
+			);
+			switch( nRet ){
+			case IDYES:
+				nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
+				return nBool;
+			case IDNO:
+				return TRUE;
+			case IDCANCEL:
+			default:
+				return FALSE;
+			}
+		}
+		else{
+			ConfirmBeep();
+			nRet = ::MYMESSAGEBOX(
+				hwndMainFrame,
+				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
+				GSTR_APPNAME,
+				_T("%s\nは変更されています。 閉じる前に保存しますか？"),
+				IsFilePathAvailable() ? GetFilePath() : "(無題)"
+			);
+			switch( nRet ){
+			case IDYES:
+				if( IsFilePathAvailable() ){
+					nBool = FileSave();	// 2006.12.30 ryoji
+				}
+				else{
+					nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
+				}
+				return nBool;
+			case IDNO:
+				return TRUE;
+			case IDCANCEL:
+			default:
+				return FALSE;
+			}
+		}
+	}else{
+		return TRUE;
+	}
+}
+
+/*!	@brief マクロ自動実行
+
+	@param type [in] 自動実行マクロ番号
+	@return
+
+	@author ryoji
+	@date 2006.09.01 ryoji 作成
+	@date 2007.07.20 genta HandleCommandに追加情報を渡す．
+		自動実行マクロで発行したコマンドはキーマクロに保存しない
+*/
+void CEditDoc::RunAutoMacro( int idx, const char *pszSaveFilePath )
+{
+	static bool bRunning = false;
+	if( bRunning )
+		return;	// 再入り実行はしない
+
+	bRunning = true;
+	if( m_pcSMacroMgr->IsEnabled(idx) ){
+		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
+			if( NULL != pszSaveFilePath )
+				strcpy( m_szSaveFilePath, pszSaveFilePath );
+			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
+			HandleCommand(( F_USERMACRO_0 + idx ) | FA_NONRECORD );
+			m_szSaveFilePath[0] = '\0';
+		}
+	}
+	bRunning = false;
+}
 
 /*
 || メッセージディスパッチャ
@@ -3535,121 +3973,6 @@ BOOL CEditDoc::UpdateTextWrap( void )
 	return FALSE;	// 画面更新しなかった
 }
 
-/*! コマンドコードによる処理振り分け
-
-	@param[in] nCommand MAKELONG( コマンドコード，送信元識別子 )
-
-	@date 2006.05.19 genta 上位16bitに送信元の識別子が入るように変更
-	@date 2007.06.20 ryoji グループ内で巡回するように変更
-*/
-BOOL CEditDoc::HandleCommand( int nCommand )
-{
-	int				i;
-	int				j;
-	int				nGroup;
-	int				nRowNum;
-	int				nPane;
-	HWND			hwndWork;
-	EditNode*		pEditNodeArr;
-
-	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
-	//	下位16ビットのみを取り出す
-	switch( LOWORD( nCommand )){
-	case F_PREVWINDOW:	//前のウィンドウ
-		nPane = m_cSplitterWnd.GetPrevPane();
-		if( -1 != nPane ){
-			SetActivePane( nPane );
-		}else{
-			/* 現在開いている編集窓のリストを得る */
-			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-			if(  nRowNum > 0 ){
-				/* 自分のウィンドウを調べる */
-				nGroup = 0;
-				for( i = 0; i < nRowNum; ++i )
-				{
-					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
-					{
-						nGroup = pEditNodeArr[i].m_nGroup;
-						break;
-					}
-				}
-				if( i < nRowNum )
-				{
-					// 前のウィンドウ
-					for( j = i - 1; j >= 0; --j )
-					{
-						if( nGroup == pEditNodeArr[j].m_nGroup )
-							break;
-					}
-					if( j < 0 )
-					{
-						for( j = nRowNum - 1; j > i; --j )
-						{
-							if( nGroup == pEditNodeArr[j].m_nGroup )
-								break;
-						}
-					}
-					/* 前のウィンドウをアクティブにする */
-					hwndWork = pEditNodeArr[j].m_hWnd;
-					/* アクティブにする */
-					ActivateFrameWindow( hwndWork );
-					/* 最後のペインをアクティブにする */
-					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
-				}
-				delete [] pEditNodeArr;
-			}
-		}
-		return TRUE;
-	case F_NEXTWINDOW:	//次のウィンドウ
-		nPane = m_cSplitterWnd.GetNextPane();
-		if( -1 != nPane ){
-			SetActivePane( nPane );
-		}else{
-			/* 現在開いている編集窓のリストを得る */
-			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-			if(  nRowNum > 0 ){
-				/* 自分のウィンドウを調べる */
-				nGroup = 0;
-				for( i = 0; i < nRowNum; ++i )
-				{
-					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
-					{
-						nGroup = pEditNodeArr[i].m_nGroup;
-						break;
-					}
-				}
-				if( i < nRowNum )
-				{
-					// 次のウィンドウ
-					for( j = i + 1; j < nRowNum; ++j )
-					{
-						if( nGroup == pEditNodeArr[j].m_nGroup )
-							break;
-					}
-					if( j >= nRowNum )
-					{
-						for( j = 0; j < i; ++j )
-						{
-							if( nGroup == pEditNodeArr[j].m_nGroup )
-								break;
-						}
-					}
-					/* 次のウィンドウをアクティブにする */
-					hwndWork = pEditNodeArr[j].m_hWnd;
-					/* アクティブにする */
-					ActivateFrameWindow( hwndWork );
-					/* 最初のペインをアクティブにする */
-					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
-				}
-				delete [] pEditNodeArr;
-			}
-		}
-		return TRUE;
-
-	default:
-		return m_cEditViewArr[m_nActivePaneIndex].HandleCommand( nCommand, TRUE, 0, 0, 0, 0 );
-	}
-}
 
 /*!
 	レイアウトの変更に先立って，全てのViewの座標を物理座標に変換して保存する．
@@ -3772,91 +4095,6 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 	delete[] posary;
 }
 
-/*! ビューに設定変更を反映させる
-
-	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
-	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
-*/
-void CEditDoc::OnChangeSetting( void )
-{
-//	return;
-	int			i;
-	HWND		hwndProgress = NULL;
-
-	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
-
-	//pCEditWnd->m_CFuncKeyWnd.Timer_ONOFF( FALSE ); // 20060126 aroka
-
-	if( NULL != pCEditWnd ){
-		hwndProgress = pCEditWnd->m_hwndProgressBar;
-		//	Status Barが表示されていないときはm_hwndProgressBar == NULL
-	}
-
-	if( hwndProgress ){
-		::ShowWindow( hwndProgress, SW_SHOW );
-	}
-
-	/* ファイルの排他モード変更 */
-	if( m_nFileShareModeOld != m_pShareData->m_Common.m_nFileShareMode ){
-		/* ファイルの排他ロック解除 */
-		DoFileUnlock();
-		/* ファイルの排他ロック */
-		DoFileLock();
-	}
-	CShareData::getInstance()->TransformFileName_MakeCache();
-	int doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
-	SetDocumentType( doctype, false );
-
-	int* posSaveAry = SavePhysPosOfAllView();
-
-	/* レイアウト情報の作成 */
-//	STypeConfig& ref = GetDocumentAttribute();
-	// 2008.06.07 nasukoji	折り返し方法の追加に対応
-	STypeConfig ref = GetDocumentAttribute();
-
-	// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
-	if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod )
-		m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
-
-	// 一時設定適用中でなければ折り返し方法変更
-	if( !m_bTextWrapMethodCurTemp )
-		m_nTextWrapMethodCur = ref.m_nTextWrapMethod;	// 折り返し方法
-
-	// 指定桁で折り返す：タイプ別設定を使用
-	// 右端で折り返す：仮に現在の折り返し幅を使用
-	// 上記以外：MAXLINEKETASを使用
-	if( m_nTextWrapMethodCur != WRAP_SETTING_WIDTH ){
-		if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH )
-			ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
-		else
-			ref.m_nMaxLineKetas = MAXLINEKETAS;
-	}
-
-	m_cLayoutMgr.SetLayoutInfo(
-		TRUE,
-		hwndProgress,
-		ref
-	); /* レイアウト情報の変更 */
-
-	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
-	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
-		m_cLayoutMgr.CalculateTextWidth();		// テキスト最大幅を算出する
-	else
-		m_cLayoutMgr.ClearLayoutLineWidth();	// 各行のレイアウト行長の記憶をクリアする
-
-	/* ビューに設定変更を反映させる */
-	for( i = 0; i < GetAllViewCount(); ++i ){
-		m_cEditViewArr[i].OnChangeSetting();
-	}
-	RestorePhysPosOfAllView( posSaveAry );
-	if( hwndProgress ){
-		::ShowWindow( hwndProgress, SW_HIDE );
-	}
-}
-
-
-
-
 /* 編集ファイル情報を格納 */
 void CEditDoc::SetFileInfo( EditInfo* pfi )
 {
@@ -3898,97 +4136,6 @@ void CEditDoc::SetFileInfo( EditInfo* pfi )
 
 	return;
 
-}
-
-/*! ファイルを閉じるときのMRU登録 & 保存確認 ＆ 保存実行
-
-	@retval TRUE: 終了して良い / FALSE: 終了しない
-*/
-BOOL CEditDoc::OnFileClose()
-{
-	int			nRet;
-	int			nBool;
-	HWND		hwndMainFrame;
-	hwndMainFrame = ::GetParent( m_hWnd );
-
-	//	Mar. 30, 2003 genta サブルーチンにまとめた
-	AddToMRU();
-
-	if( m_bGrepRunning ){		/* Grep処理中 */
-		/* アクティブにする */
-		ActivateFrameWindow( hwndMainFrame );	//@@@ 2003.06.25 MIK
-		::MYMESSAGEBOX(
-			hwndMainFrame,
-			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-			GSTR_APPNAME,
-			"Grepの処理中です。\n"
-		);
-		return FALSE;
-	}
-
-
-	/* テキストが変更されている場合 */
-	if( IsModified()
-	&& FALSE == m_bDebugMode	/* デバッグモニタモードのときは保存確認しない */
-//	&& FALSE == m_bReadOnly		/* 読み取り専用モード */
-	){
-		if( TRUE == m_bGrepMode ){	/* Grepモードのとき */
-			/* Grepモードで保存確認するか */
-			if( FALSE == m_pShareData->m_Common.m_bGrepExitConfirm ){
-				return TRUE;
-			}
-		}
-		/* ウィンドウをアクティブにする */
-		/* アクティブにする */
-		ActivateFrameWindow( hwndMainFrame );
-		if( m_bReadOnly ){	/* 読み取り専用モード */
-			ConfirmBeep();
-			nRet = ::MYMESSAGEBOX(
-				hwndMainFrame,
-				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-				GSTR_APPNAME,
-				_T("%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"),
-				IsFilePathAvailable() ? GetFilePath() : "(無題)"
-			);
-			switch( nRet ){
-			case IDYES:
-				nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
-				return nBool;
-			case IDNO:
-				return TRUE;
-			case IDCANCEL:
-			default:
-				return FALSE;
-			}
-		}
-		else{
-			ConfirmBeep();
-			nRet = ::MYMESSAGEBOX(
-				hwndMainFrame,
-				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-				GSTR_APPNAME,
-				_T("%s\nは変更されています。 閉じる前に保存しますか？"),
-				IsFilePathAvailable() ? GetFilePath() : "(無題)"
-			);
-			switch( nRet ){
-			case IDYES:
-				if( IsFilePathAvailable() ){
-					nBool = FileSave();	// 2006.12.30 ryoji
-				}
-				else{
-					nBool = FileSaveAs_Dialog();	// 2006.12.30 ryoji
-				}
-				return nBool;
-			case IDNO:
-				return TRUE;
-			case IDCANCEL:
-			default:
-				return FALSE;
-			}
-		}
-	}else{
-		return TRUE;
-	}
 }
 
 
@@ -4703,33 +4850,5 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 	return 0;
 }
 
-/*!	@brief マクロ自動実行
-
-	@param type [in] 自動実行マクロ番号
-	@return
-
-	@author ryoji
-	@date 2006.09.01 ryoji 作成
-	@date 2007.07.20 genta HandleCommandに追加情報を渡す．
-		自動実行マクロで発行したコマンドはキーマクロに保存しない
-*/
-void CEditDoc::RunAutoMacro( int idx, const char *pszSaveFilePath )
-{
-	static bool bRunning = false;
-	if( bRunning )
-		return;	// 再入り実行はしない
-
-	bRunning = true;
-	if( m_pcSMacroMgr->IsEnabled(idx) ){
-		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
-			if( NULL != pszSaveFilePath )
-				strcpy( m_szSaveFilePath, pszSaveFilePath );
-			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
-			HandleCommand(( F_USERMACRO_0 + idx ) | FA_NONRECORD );
-			m_szSaveFilePath[0] = '\0';
-		}
-	}
-	bRunning = false;
-}
 
 /*[EOF]*/

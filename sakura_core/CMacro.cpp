@@ -719,7 +719,7 @@ void CMacro::HandleCommand(
 			}
 
 			/* 新規編集ウィンドウの追加 ver 0 */
-			CEditApp::OpenNewEditor( pcEditView->m_hInstance, pcEditView->m_hWnd, pCmdLine, 0, FALSE );
+			CEditApp::OpenNewEditor( pcEditView->m_hInstance, pcEditView->m_hWnd, pCmdLine, CODE_NONE, FALSE );
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
 		}

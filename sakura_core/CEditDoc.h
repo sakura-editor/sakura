@@ -115,6 +115,7 @@ public:
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
 	BOOL OpenFileDialog( HWND, const char*, char*, ECodeType*, BOOL* );	/* 「ファイルを開く」ダイアログ */
+	void OnChangeType();
 	void OnChangeSetting();	/* ビューに設定変更を反映させる */
 	//	Jul. 26, 2003 ryoji BOMオプション追加
 	BOOL SaveFileDialog( char*, ECodeType*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */

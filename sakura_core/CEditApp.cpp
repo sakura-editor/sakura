@@ -1161,7 +1161,7 @@ bool CEditApp::OpenNewEditor2(
 		}
 	}
 
-	int nCharCode = pfi ? pfi->m_nCharCode : CODE_AUTODETECT;
+	int nCharCode = pfi ? pfi->m_nCharCode : CODE_NONE;
 
 	return OpenNewEditor( hInstance, hWndParent, pszCmdLine, nCharCode, bReadOnly, sync, NULL, bNewWindow );
 

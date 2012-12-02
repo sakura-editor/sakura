@@ -369,6 +369,9 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 				break;
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
+				if( _T('\0') == m_fi.m_szDocType[0] ){
+					_tcscpy( m_fi.m_szDocType , _T("grepout") );
+				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
 				m_bGrepDlg = true;
@@ -426,6 +429,10 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 				break;
 			case CMDLINEOPT_DEBUGMODE:
 				m_bDebugMode = true;
+				// 2010.06.16 Moca -TYPE=output àµÇ¢Ç∆Ç∑ÇÈ
+				if( _T('\0') == m_fi.m_szDocType[0] ){
+					_tcscpy( m_fi.m_szDocType , _T("output") );
+				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta Ç±ÇÍà»ç~à¯êîñ≥å¯
 				bParseOptDisabled = true;

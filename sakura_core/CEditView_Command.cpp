@@ -3972,19 +3972,7 @@ void CEditView::Command_TYPE_LIST( void )
 		if( nSettingType & PROP_TEMPCHANGE_FLAG ){
 			m_pcEditDoc->SetDocumentType( nSettingType & ~PROP_TEMPCHANGE_FLAG, true );
 			m_pcEditDoc->LockDocumentType();
-			// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
-			if( !m_pcEditDoc->IsFilePathAvailable() && !m_pcEditDoc->IsModified() ){
-				STypeConfig& ref = m_pcEditDoc->GetDocumentAttribute();
-				m_pcEditDoc->m_nCharCode = (ECodeType)( ref.m_eDefaultCodetype );
-				m_pcEditDoc->m_bBomExist = ( ref.m_bDefaultBom != FALSE );
-				m_pcEditDoc->SetNewLineCode( static_cast<EEolType>(ref.m_eDefaultEoltype) );
-			}
-			/* 設定変更を反映させる */
-			m_pcEditDoc->m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
-			m_pcEditDoc->OnChangeSetting();
-
-			// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
-			m_pcEditDoc->RunAutoMacro( m_pShareData->m_nMacroOnTypeChanged );
+			m_pcEditDoc->OnChangeType();
 		}
 		else{
 			/* タイプ別設定 */
