@@ -43,6 +43,7 @@
 #include "charset/CCodeMediator.h"
 #include "convert/convert_util2.h"
 #include "charset/charcode.h"
+#include "charset/codeutil.h"
 
 // îÒàÀë∂êÑèß
 #include "window/CEditWnd.h"
@@ -233,6 +234,9 @@ void CESI::GetEncodingInfo_sjis( const char* pS, const int nLen )
 		if( echarset != CHARSET_BINARY ){
 			if( echarset == CHARSET_JIS_ZENKAKU ){
 				num_of_sjis_encoded_bytes += nret;
+				if( 0 == MyMultiByteToWideChar_JP(reinterpret_cast<const unsigned char*>(pr), pr_end-pr, NULL) ){
+					nillbytes += nret;
+				}
 			}
 			if( echarset == CHARSET_JIS_HANKATA ){
 				num_of_sjis_encoded_bytes += nret;
@@ -341,6 +345,13 @@ void CESI::GetEncodingInfo_eucjp( const char* pS, const int nLen )
 				num_of_euc_zen += nret;
 				if( IsEucZen_hirakata(pr) ){
 					num_of_euc_zen_hirakata += 2;
+				}else{
+					bool bRet;
+					unsigned short wc[4];
+					CEuc::_EucjpToUni_char(reinterpret_cast<const unsigned char*>(pr), wc, echarset, NULL, &bRet);
+					if( bRet ){
+						nillbytes += nret;
+					}
 				}
 			}
 		}else{

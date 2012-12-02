@@ -42,10 +42,11 @@ public:
 	static EConvertResult EUCToUnicode(CMemory* pMem);		// EUC       → Unicodeコード変換  //2007.08.13 kobake 追加
 	static EConvertResult UnicodeToEUC(CMemory* pMem);		// Unicode   → EUCコード変換
 
-protected:
+public:
 	// 実装
 	// 2008.11.10 変換ロジックを書き直す
-	inline static int _EucjpToUni_char( const unsigned char*, unsigned short*, const ECharSet, bool* pbError );
+	inline static int _EucjpToUni_char( const unsigned char*, unsigned short*, const ECharSet, bool* pbError, bool* pbHex );
+protected:
 	static int EucjpToUni( const char*, const int, wchar_t*, bool* pbError );
 	inline static int _UniToEucjp_char( const unsigned short*, unsigned char*, const ECharSet, bool* pbError );
 	static int UniToEucjp( const wchar_t*, const int, char*, bool* pbError );
@@ -60,12 +61,13 @@ protected:
 
 	高速化のため、インライン化
 */
-inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError )
+inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex = NULL )
 {
 	int nret;
 	unsigned char czenkaku[2];
 	unsigned int ctemp;
 	bool berror=false;
+	bool hex = false;
 
 	switch( eCharset ){
 	case CHARSET_JIS_HANKATA:
@@ -92,22 +94,28 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 			nret = MyMultiByteToWideChar_JP( &czenkaku[0], 2, pDst );
 			if( nret < 1 ){
 				nret = BinToText( pSrc, 2, pDst );
+				hex = true;
 			}
 		}else{
 			// JIS -> SJIS の変換エラー
 			// エラー処理関数を使う
 			nret = BinToText( pSrc, 2, pDst );
+			hex = true;
 		}
 		break;
 	default:
 		// 保護コード
 		berror = true;
+		hex = true;
 		pDst[0] = '?';
 		nret = 1;
 	}
 
 	if( pbError ){
 		*pbError = berror;
+	}
+	if( pbHex ){
+		*pbHex = hex;
 	}
 
 	return nret;
