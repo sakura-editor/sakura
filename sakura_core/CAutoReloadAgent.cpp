@@ -92,7 +92,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 {
 	// –¢•ÒW‚ÅÄƒ[ƒh‚Ì’x‰„
 	if (m_eWatchUpdate == WU_AUTOLOAD) {
-		if (++m_nDelayCount <= GetDllShareData().m_Common.m_sFile.m_nAutoloadDelay*2)	return;
+		if (++m_nDelayCount <= GetDllShareData().m_Common.m_sFile.m_nAutoloadDelay)	return;
 		m_nDelayCount = 0;
 	}
 
