@@ -60,7 +60,6 @@ void CEditView::Command_GREP_DIALOG( void )
 
 	/* キーがないなら、履歴からとってくる */
 	if( 0 == cmemCurText.GetStringLength() ){
-//		cmemCurText.SetData( m_pShareData->m_szSEARCHKEYArr[0], lstrlen( m_pShareData->m_szSEARCHKEYArr[0] ) );
 		cmemCurText.SetString( m_pShareData->m_szSEARCHKEYArr[0] );
 	}
 	_tcscpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
@@ -83,14 +82,7 @@ void CEditView::Command_GREP( void )
 	CMemory		cmWork1;
 	CMemory		cmWork2;
 	CMemory		cmWork3;
-	CMemory		cmemCurText;
 
-	/* 編集ウィンドウの上限チェック */
-	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-
-		return;
-	}
 	cmWork1.SetString( m_pcEditDoc->m_cDlgGrep.m_szText );
 	cmWork2.SetString( m_pcEditDoc->m_cDlgGrep.m_szFile );
 	cmWork3.SetString( m_pcEditDoc->m_cDlgGrep.m_szFolder );
@@ -127,6 +119,12 @@ void CEditView::Command_GREP( void )
 		);
 	}
 	else{
+		// 編集ウィンドウの上限チェック
+		if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+			::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+			return;
+		}
+
 		/*======= Grepの実行 =============*/
 		/* Grep結果ウィンドウの表示 */
 		char*	pCmdLine = new char[1024];
