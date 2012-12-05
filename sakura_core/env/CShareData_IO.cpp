@@ -930,9 +930,12 @@ void CShareData_IO::ShareData_IO_KeyBind( CDataProfile& cProfile )
 /*!
 	@brief KeyBindセクションの入出力
 	@param[in,out]	cProfile	INIファイル入出力クラス
+	@param[in,out]	sKeyBind	キー割り当て設定
 
 	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
 	@date 2010.08.21 Moca ShareData_IO_KeyBindをIO_KeyBindに名称変更
+	@date 2012.11.20 aroka 引数を CommonSetting_KeyBind に変更
+	@date 2012.11.25 aroka マウスコードの固定と重複排除
 */
 void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& sKeyBind, bool bOutCmdName)
 {
@@ -943,6 +946,8 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 //	int		nSize = m_pShareData->m_nKeyNameArrNum;
 	WCHAR	szWork[MAX_PLUGIN_ID+20+4];
 	bool	bOldVer = false;
+	const int KEYNAME_SIZE = _countof(sKeyBind.m_pKeyNameArr)-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 
 	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 	cProfile.IOProfileData( szSecName, LTEXT("bCreateAccelTblEachWin"), sKeyBind.m_bCreateAccelTblEachWin );
@@ -951,15 +956,21 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 		if (!cProfile.IOProfileData( szSecName, L"KeyBind[000]", MakeStringBufferW(szKeyData) ) ) {
 			bOldVer = true;
 		}
+		else {
+			// 新スタイルのImportは割り当て表サイズぎりぎりまで読み込む
+			// 旧スタイルは初期値と一致しないKeyNameは捨てるのでデータ数に変化なし
+			sKeyBind.m_nKeyNameArrNum = KEYNAME_SIZE;
+		}
 	}
 
 	for( i = 0; i < sKeyBind.m_nKeyNameArrNum; ++i ){
 		// 2005.04.07 D.S.Koba
 		//KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
-		KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
+		//KEYDATA& keydata = sKeyBind.ppKeyNameArr[i];
 		
 		if( cProfile.IsReadingMode() ){
 			if (bOldVer) {
+				KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
 				_tcstowcs( szKeyName, keydata.m_szKeyName, _countof(szKeyName) );
 				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 					int buf[8];
@@ -975,6 +986,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 				}
 			}
 			else {		// 新バージョン(キー割り当てのImport,export の合わせた)	2008/5/25 Uchi
+				KEYDATA tmpKeydata;
 				auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
 				if( cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) ) ){
 					wchar_t	*p;
@@ -989,7 +1001,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					*pn = 0;
 					nRes = scan_ints(p, L"%04x", &keycode);
 					if (nRes!=1)	continue;
-					keydata.m_nKeyCode = keycode;	
+					tmpKeydata.m_nKeyCode = keycode;	
 					p = pn+1;
 
 					//後に続くトークン 
@@ -1013,11 +1025,32 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 						if( n == F_INVALID ) {
 							n = F_DEFAULT;
 						}
-						keydata.m_nFuncCodeArr[j] = n;
+						tmpKeydata.m_nFuncCodeArr[j] = n;
 						p = pn+1;
 					}
 					// KeyName
-					auto_strcpy(keydata.m_szKeyName, to_tchar(p));
+					auto_strcpy(tmpKeydata.m_szKeyName, to_tchar(p));
+
+					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
+						for( int im=0; im< MOUSEFUNCTION_KEYBEGIN; im++ ){
+							if( _tcscmp( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName ) == 0 ){
+								sKeyBind.m_pKeyNameArr[im] = tmpKeydata;
+							}
+						}
+					}
+					else{
+						// 割り当て済みキーコードは上書き
+						int idx = sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode];
+						if( idx != KEYNAME_SIZE ){
+							sKeyBind.m_pKeyNameArr[idx] = tmpKeydata;
+						}else{// 未割り当てキーコードは末尾に追加
+							if( nKeyNameArrUsed >= KEYNAME_SIZE ){}
+							else{
+								sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = tmpKeydata;
+								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = nKeyNameArrUsed++;
+							}
+						}
+					}
 				}
 			}
 		}else{
@@ -1034,6 +1067,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 		//	cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 
 // start 新バージョン	2008/5/25 Uchi
+			KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
 			auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
 			auto_sprintf(szKeyData, L"%04x", keydata.m_nKeyCode);
 			for(int j = 0; j < 8; j++)
@@ -1072,6 +1106,10 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 			cProfile.IOProfileData( szSecName, szKeyName, MakeStringBufferW(szKeyData) );
 //
 		}
+	}
+
+	if( cProfile.IsReadingMode() ){
+		sKeyBind.m_nKeyNameArrNum = nKeyNameArrUsed;
 	}
 }
 

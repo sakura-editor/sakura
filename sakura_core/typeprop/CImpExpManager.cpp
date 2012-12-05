@@ -859,8 +859,7 @@ bool CImpExpKeyHelp::Export( const wstring& sFileName, wstring& sErrMsg )
 bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 {
 	const tstring	strPath = to_tchar( sFileName.c_str() );
-	const int KEYNAME_SIZE = _countof(m_Common.m_sKeyBind.m_pKeyNameArr);
-	KEYDATA		pKeyNameArr[KEYNAME_SIZE];				/* キー割り当て表 */
+	const int KEYNAME_SIZE = _countof(m_Common.m_sKeyBind.m_pKeyNameArr)-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	CommonSetting_KeyBind sKeyBind = m_Common.m_sKeyBind;
 
 	//オープン
@@ -880,11 +879,11 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", MakeStringBufferW(szHeader));
 	if(wcscmp(szHeader,WSTR_KEYBIND_HEAD)!=0)	bVer3=false;
 
-	int	nKeyNameArrNum;			// キー割り当て表の有効データ数
+	//int	nKeyNameArrNum;			// キー割り当て表の有効データ数
 	if ( bVer3 ) {
 		//Count取得 -> nKeyNameArrNum
-		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", nKeyNameArrNum);
-		if (nKeyNameArrNum < 0 || nKeyNameArrNum > KEYNAME_SIZE)	bVer3=false; //範囲チェック
+		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", sKeyBind.m_nKeyNameArrNum);
+		if (sKeyBind.m_nKeyNameArrNum < 0 || sKeyBind.m_nKeyNameArrNum > KEYNAME_SIZE)	bVer3=false; //範囲チェック
 
 		CShareData_IO::IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
 	}
@@ -910,7 +909,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 				bVer2 = false;
 			}
 			else {
-				nKeyNameArrNum = an;
+				sKeyBind.m_nKeyNameArrNum = an;
 			}
 		}
 		if ( bVer2 ) {
@@ -926,7 +925,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 												&n,   &kc, &nc);
 				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
 				if( i != n ) break;
-				pKeyNameArr[i].m_nKeyCode = kc;
+				sKeyBind.m_pKeyNameArr[i].m_nKeyCode = kc;
 				wchar_t* p = szData + nc;
 
 				//後に続くトークン
@@ -950,11 +949,11 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 							n = F_DEFAULT;
 						}
 					}
-					pKeyNameArr[i].m_nFuncCodeArr[j] = n;
+					sKeyBind.m_pKeyNameArr[i].m_nFuncCodeArr[j] = n;
 					p = q + 1;
 				}
 
-				auto_strcpy(pKeyNameArr[i].m_szKeyName, to_tchar(p));
+				auto_strcpy(sKeyBind.m_pKeyNameArr[i].m_szKeyName, to_tchar(p));
 			}
 		}
 	}
@@ -963,9 +962,38 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 		return false;
 	}
 
-	// データのコピー
-	m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrNum;
-	memcpy_raw( m_Common.m_sKeyBind.m_pKeyNameArr, pKeyNameArr, sizeof_raw( pKeyNameArr ) );
+	// データのコピー 	// マウスコードの固定と重複排除 2012.11.19 aroka
+	//m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrNum;
+	//memcpy_raw( m_Common.m_sKeyBind.m_pKeyNameArr, pKeyNameArr, sizeof_raw( pKeyNameArr ) );
+	int nKeyNameArrUsed = m_Common.m_sKeyBind.m_nKeyNameArrNum; // 使用済み領域
+	for( int j=sKeyBind.m_nKeyNameArrNum-1; j>=0; j-- ){
+		if( sKeyBind.m_pKeyNameArr[j].m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
+			for( int im=0; im< MOUSEFUNCTION_KEYBEGIN; im++ ){
+				if( _tcscmp( sKeyBind.m_pKeyNameArr[j].m_szKeyName, m_Common.m_sKeyBind.m_pKeyNameArr[im].m_szKeyName ) == 0 ){
+					m_Common.m_sKeyBind.m_pKeyNameArr[im] = sKeyBind.m_pKeyNameArr[j];
+				}
+			}
+		}
+		else{
+			// 割り当て済みキーコードは上書き
+			int idx = sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j].m_nKeyCode];
+			if( idx != KEYNAME_SIZE ){
+				m_Common.m_sKeyBind.m_pKeyNameArr[idx] = sKeyBind.m_pKeyNameArr[j];
+			}
+		}
+	}
+	// 未割り当てのキーコードは空き領域が一杯になるまで追加
+	for( int j2=0; j2<sKeyBind.m_nKeyNameArrNum; j2++ ){
+		int idx = sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode];
+		if( idx == KEYNAME_SIZE ){// not assigned
+			if( nKeyNameArrUsed >= KEYNAME_SIZE ) continue;
+			m_Common.m_sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = sKeyBind.m_pKeyNameArr[j2];
+			sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode] = nKeyNameArrUsed++;
+		}
+	}
+	m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrUsed;
+	m_Common.m_sKeyBind.m_bCreateAccelTblEachWin = sKeyBind.m_bCreateAccelTblEachWin;
+	memcpy_raw( m_Common.m_sKeyBind.m_VKeyToKeyNameArr, sKeyBind.m_VKeyToKeyNameArr, sizeof_raw(sKeyBind.m_VKeyToKeyNameArr) );
 
 	return true;
 }

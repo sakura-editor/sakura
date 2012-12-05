@@ -821,12 +821,31 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		{ VK_APPS,	_T("アプリキー"),	F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }
 	};
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
+	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
-	if( nKeyDataInitNum > _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr )) {
+	if( nKeyDataInitNum > KEYNAME_SIZE ) {
 		PleaseReportToAuthor( NULL, _T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
 		return false;
 	}
 	//	To Here 2007.11.04 genta バッファオーバーラン防止
+
+	// マウスコードの固定と重複排除 2012.11.25 aroka
+	SetKeyNameArrVal( // インデックス用ダミー作成
+		pShareData,
+		KEYNAME_SIZE,
+		0,
+		_T(""),
+		F_0,		F_0,		F_0,		F_0,
+		F_0,		F_0,		F_0,		F_0
+	);
+	// インデックス作成 重複した場合は先頭にあるものを優先
+	for( int ii = 0; ii< 256; ii++ ){
+		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[ii] = KEYNAME_SIZE;
+	}
+	for( int i=nKeyDataInitNum-1; i>=0; i-- ){
+		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[KeyDataInit[i].nKeyCode] = i;
+	}
+
 	for( int i = 0; i < nKeyDataInitNum; ++i ){
 		SetKeyNameArrVal(
 			pShareData,
@@ -841,7 +860,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 			KeyDataInit[i].nFuncCode_5,
 			KeyDataInit[i].nFuncCode_6,
 			KeyDataInit[i].nFuncCode_7
-		 );
+		);
 	}
 	pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyDataInitNum;
 	return true;

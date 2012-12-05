@@ -341,7 +341,7 @@ struct CommonSetting_Format
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 struct CommonSetting_Search
 {
-	int				m_nSearchKeySequence;			// 検索シーケンス(未保存)
+	int				m_nSearchKeySequence;		// 検索シーケンス(未保存)
 	SSearchOption	m_sSearchOption;			// 検索／置換  条件
 
 	int				m_nReplaceKeySequence;		// 置換後シーケンス(未保存)
@@ -356,7 +356,7 @@ struct CommonSetting_Search
 	ECodeType		m_nGrepCharSet;				// Grep: 文字コードセット // 2002/09/20 Moca Add
 
 	BOOL			m_bCaretTextForSearch;		// カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
-	bool			m_bInheritKeyOtherView;	// 次・前検索で他のビューの検索条件を引き継ぐ
+	bool			m_bInheritKeyOtherView;		// 次・前検索で他のビューの検索条件を引き継ぐ
 	TCHAR			m_szRegexpLib[_MAX_PATH];	// 使用する正規表現DLL  2007.08.22 genta
 
 	//Grep
@@ -382,7 +382,8 @@ struct CommonSetting_Search
 struct CommonSetting_KeyBind{
 	/* キー割り当て */
 	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
-	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
+	KEYDATA				m_pKeyNameArr[100+1];		/* キー割り当て表 */ // 未割り当てキーコード用にダミーを追加
+	BYTE				m_VKeyToKeyNameArr[256];	// キーコード→割り当て表インデックス // 2012.11.25 aroka
 	BOOL				m_bCreateAccelTblEachWin;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 };
 
