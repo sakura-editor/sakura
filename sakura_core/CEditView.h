@@ -699,8 +699,8 @@ public: /* テスト用にアクセス属性を変更 */
 	void CopyCurLine( BOOL bAddCRLFWhenCopy, EEolType neweol, BOOL bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
 	void Command_COPY( int, BOOL bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
-	void Command_PASTE( void );						/* 貼り付け（クリップボードから貼り付け）*/
-	void Command_PASTEBOX( void );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
+	void Command_PASTE( int option );				/* 貼り付け（クリップボードから貼り付け）*/
+	void Command_PASTEBOX( int option );			/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
 	void Command_PASTEBOX( const char *szPaste, int nPasteSize );
@@ -974,6 +974,7 @@ private:
 
 private:
 	void DelCharForOverwrite( void );	// 上書き用の一文字削除	// 2009.04.11 ryoji
+	int ConvertEol(const char* pszText, int nTextLen, char* pszConvertedText);
 };
 
 

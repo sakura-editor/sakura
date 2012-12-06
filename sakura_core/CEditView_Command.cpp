@@ -15,7 +15,7 @@
 	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca, maru
 	Copyright (C) 2007, ryoji, maru, genta, nasukoji
 	Copyright (C) 2008, ryoji, nasukoji, novice, syat
-	Copyright (C) 2009, ryoji, syat, genta
+	Copyright (C) 2009, ryoji, syat, genta, salarm
 	Copyright (C) 2010, ryoji, Moca
 
 	This source code is designed for sakura editor.
@@ -396,8 +396,8 @@ BOOL CEditView::HandleCommand(
 	case F_COPY:					Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
 	case F_COPY_ADDCRLF:			Command_COPY( FALSE, TRUE );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
 	case F_COPY_CRLF:				Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
-	case F_PASTE:					Command_PASTE();break;					//貼り付け(クリップボードから貼り付け)
-	case F_PASTEBOX:				Command_PASTEBOX();break;				//矩形貼り付け(クリップボードから矩形貼り付け)
+	case F_PASTE:					Command_PASTE( (int)lparam1 );break;	//貼り付け(クリップボードから貼り付け)
+	case F_PASTEBOX:				Command_PASTEBOX( (int)lparam1 );break;	//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSTEXT:					Command_INSTEXT( bRedraw, (const char*)lparam1, -1, (BOOL)lparam2 );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加(-1は\0終端まで)
 	case F_ADDTAIL:					Command_ADDTAIL( (const char*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
@@ -2223,36 +2223,68 @@ bool CEditView::Command_SELECTWORD( void )
 /** 貼り付け(クリップボードから貼り付け)
 	@date 2007.10.04 ryoji MSDEVLineSelect形式の行コピー対応処理を追加（VS2003/2005のエディタと類似の挙動に）
 */
-void CEditView::Command_PASTE( void )
+void CEditView::Command_PASTE( int option )
 {
 	if( m_bBeginSelect ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
 		return;
 	}
 
-	char*		pszText;
 	COpe*		pcOpe = NULL;
 	CWaitCursor cWaitCursor( m_hWnd );
-	int			nTextLen;
 
 	// クリップボードからデータを取得
 	CMemory		cmemClip;
 	BOOL		bColmnSelect;
 	BOOL		bLineSelect = FALSE;
-	if( !MyGetClipboardData( cmemClip, &bColmnSelect, m_pShareData->m_Common.m_bEnableLineModePaste? &bLineSelect: NULL ) ){
+	BOOL		bLineSelectOption = 
+		((option & 0x04) == 0x04) ? TRUE :
+		((option & 0x08) == 0x08) ? FALSE :
+		m_pShareData->m_Common.m_bEnableLineModePaste;
+
+	if( !MyGetClipboardData( cmemClip, &bColmnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
 		ErrorBeep();
 		return;
 	}
 
+	// クリップボードデータ取得 -> pszText, nTextLen
+	int			nTextLen;
+	char*		pszText = cmemClip.GetStringPtr(&nTextLen);;
+
+	BOOL bConvertEol = 
+		((option & 0x01) == 0x01) ? TRUE :
+		((option & 0x02) == 0x02) ? FALSE :
+		m_pShareData->m_Common.m_bConvertEOLPaste;
+
+	BOOL bAutoColmnPaste = 
+		((option & 0x10) == 0x10) ? FALSE :
+		((option & 0x20) == 0x20) ? FALSE :
+		m_pShareData->m_Common.m_bAutoColmnPaste != FALSE;
+
 	/* 矩形コピーのテキストは常に矩形貼り付け */
-	if( m_pShareData->m_Common.m_bAutoColmnPaste ){
+	if( bAutoColmnPaste ){
 		/* 矩形コピーのデータなら矩形貼り付け */
 		if( bColmnSelect ){
-			Command_PASTEBOX();
+			if( m_bBeginBoxSelect ){
+				::MessageBeep( MB_ICONHAND );
+				return;
+			}
+			if( !m_pShareData->m_Common.m_bFontIs_FIXED_PITCH ){
+				return;
+			}
+			if( bConvertEol ){
+				char	*pszConvertedText = new char[nTextLen * 2]; // 全文字\n→\r\n変換で最大の２倍になる
+				int nConvertedTextLen = ConvertEol(pszText, nTextLen, pszConvertedText);
+				Command_PASTEBOX(pszConvertedText, nConvertedTextLen);
+				delete [] pszConvertedText;
+			}else{
+				Command_PASTEBOX(pszText, nTextLen);
+			}
+			AdjustScrollBars();
+			Redraw();
 			return;
 		}
 	}
-	pszText = cmemClip.GetStringPtr( &nTextLen );
 
 	// 2007.10.04 ryoji
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
@@ -2266,10 +2298,47 @@ void CEditView::Command_PASTE( void )
 	}
 
 	// テキストを貼り付け
-	Command_INSTEXT( TRUE, pszText, nTextLen, TRUE, bLineSelect );	// 2010.09.17 ryoji
+	if( bConvertEol ){
+		char	*pszConvertedText = new char[nTextLen * 2]; // 全文字\n→\r\n変換で最大の２倍になる
+		int nConvertedTextLen = ConvertEol( pszText, nTextLen, pszConvertedText );
+		// テキストを貼り付け
+		Command_INSTEXT( TRUE, pszConvertedText, nConvertedTextLen, TRUE, bLineSelect );	// 2010.09.17 ryoji
+		delete [] pszConvertedText;
+	}else{
+		// テキストを貼り付け
+		Command_INSTEXT( TRUE, pszText, nTextLen, TRUE, bLineSelect );	// 2010.09.17 ryoji
+	}
+
 	return;
 }
 
+int CEditView::ConvertEol(const char* pszText, int nTextLen, char* pszConvertedText)
+{
+	// original by 2009.02.28 salarm
+	int nConvertedTextLen;
+	CEol eol = m_pcEditDoc->GetNewLineCode();
+
+	nConvertedTextLen = 0;
+	for( int i = 0; i < nTextLen; i++ ){
+		if( pszText[i] == CR || pszText[i] == LF ){
+			if( pszText[i] == CR ){
+				if( i + 1 < nTextLen && pszText[i + 1] == LF ){
+					i++;
+				}
+			}else{
+				// LF+CRの場合 ※UNICODE版との差分
+				if( i + 1 < nTextLen && pszText[i + 1] == CR ){
+					i++;
+				}
+			}
+			memcpy( &pszConvertedText[nConvertedTextLen], eol.GetValue(), eol.GetLen() );
+			nConvertedTextLen += eol.GetLen();
+		} else {
+			pszConvertedText[nConvertedTextLen++] = pszText[i];
+		}
+	}
+	return nConvertedTextLen;
+}
 
 
 
@@ -2658,7 +2727,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 /* 矩形貼り付け(クリップボードから矩形貼り付け) */
 // 2004.06.29 Moca 未使用だったものを有効にする
 //	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
-void CEditView::Command_PASTEBOX( void )
+void CEditView::Command_PASTEBOX( int option )
 {
 	if( m_bBeginSelect )	// マウスによる範囲選択中
 	{
@@ -6759,7 +6828,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 		/* コマンドコードによる処理振り分け */
 		/* テキストを貼り付け */
 		if(nPaste){
-			Command_PASTE();
+			Command_PASTE(0);
 		} else if ( bRegularExp ) { /* 検索／置換  1==正規表現 */
 			// 先読みに対応するために物理行末までを使うように変更 2005/03/27 かろと
 			// 2002/01/19 novice 正規表現による文字列置換
@@ -7034,6 +7103,14 @@ void CEditView::Command_REPLACE_ALL()
 			cmemClip.AppendString(m_pcEditDoc->GetNewLineCode().GetValue());
 			szREPLACEKEY = cmemClip.GetStringPtr( &nREPLACEKEY );
 		}
+	}
+
+	if( m_pShareData->m_Common.m_bConvertEOLPaste ){
+		char *pszConvertedText = new char[nREPLACEKEY * 2]; // 全文字\n→\r\n変換で最大の２倍になる
+		int nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
+		cmemClip.SetString(pszConvertedText, nConvertedTextLen);
+		szREPLACEKEY = cmemClip.GetStringPtr(&nREPLACEKEY);
+		delete [] pszConvertedText;
 	}
 
 	// 取得にステップがかかりそうな変数などを、一時変数化する。

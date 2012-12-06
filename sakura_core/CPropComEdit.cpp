@@ -11,6 +11,7 @@
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, genta, ryoji
+	Copyright (C) 2009, salarm
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -32,6 +33,7 @@ static const DWORD p_helpids[] = {	//10210
 	IDC_CHECK_bNotOverWriteCRLF,		HIDC_CHECK_bNotOverWriteCRLF,			//上書きモード
 	//	2007.02.11 genta クリッカブルURLをこのページに移動
 	IDC_CHECK_bSelectClickedURL,	HIDC_CHECK_bSelectClickedURL,	//クリッカブルURL
+	IDC_CHECK_CONVERTEOLPASTE,			HIDC_CHECK_CONVERTEOLPASTE,			//改行コードを変換して貼り付ける
 //	IDC_STATIC,							-1,
 	0, 0
 };
@@ -176,6 +178,9 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 
 	//	URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_bSelectClickedURL );
+
+	/*	改行コードを変換して貼り付ける */	// 2009.02.28 salarm
+	::CheckDlgButton( hwndDlg, IDC_CHECK_CONVERTEOLPASTE, m_Common.m_bConvertEOLPaste );
 	return;
 }
 
@@ -211,6 +216,9 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 
 	/* URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
 	m_Common.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );
+
+	//	改行コードを変換して貼り付ける */	// 2009.02.28 salarm
+	m_Common.m_bConvertEOLPaste = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CONVERTEOLPASTE ));
 	return TRUE;
 }
 

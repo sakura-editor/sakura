@@ -15,7 +15,7 @@
 	Copyright (C) 2006, aroka, ryoji, genta, fon, rastiv, Moca, maru
 	Copyright (C) 2007, ryoji, genta, maru, Moca, nasukoji
 	Copyright (C) 2008, ryoji, nasukoji, kobake, novice
-	Copyright (C) 2009, nasukoji, ryoji, syat
+	Copyright (C) 2009, nasukoji, ryoji, syat, salarm
 	Copyright (C) 2010, Moca
 
 	This source code is designed for sakura editor.
@@ -285,10 +285,13 @@ struct ARRHEAD {
 	Version 96:
 	KEYDATAのサイズ変更 2012.11.04 aroka
 	デフォルトの文字コード/デフォルト改行コード/デフォルトBOM
+
+	Version 97:
+	改行コードを変換して貼り付ける
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 96;
+const unsigned int uShareDataVersion = 97;
 
 /*
 ||	Singleton風
@@ -705,6 +708,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 		m_pShareData->m_Common.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
+		m_pShareData->m_Common.m_bConvertEOLPaste = FALSE;	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 		/* 1999.11.15 */
 		m_pShareData->m_Common.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
 		m_pShareData->m_Common.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */

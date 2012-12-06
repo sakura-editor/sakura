@@ -16,7 +16,7 @@
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon, maru
 	Copyright (C) 2007, ryoji, genta, maru, Moca, nasukoji
 	Copyright (C) 2008, nasukoji, novice
-	Copyright (C) 2009, nasukoji, ryoji
+	Copyright (C) 2009, nasukoji, ryoji, salarm
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -620,6 +620,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bCopyAndDisablSelection"	, common.m_bCopyAndDisablSelection );/* コピーしたら選択解除 */
 	cProfile.IOProfileData( pszSecName, "bEnableNoSelectCopy"		, common.m_bEnableNoSelectCopy );/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 	cProfile.IOProfileData( pszSecName, "bEnableLineModePaste"		, common.m_bEnableLineModePaste );/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+	cProfile.IOProfileData( pszSecName, "bConvertEOLPaste"			, common.m_bConvertEOLPaste );	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"			, common.m_bHtmlHelpIsSingle );/* HtmlHelpビューアはひとつ */
 	cProfile.IOProfileData( pszSecName, "bCompareAndTileHorz"		, common.m_bCompareAndTileHorz );/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 	cProfile.IOProfileData( pszSecName, "bDropFileAndClose"			, common.m_bDropFileAndClose );/* ファイルをドロップしたときは閉じて開く */

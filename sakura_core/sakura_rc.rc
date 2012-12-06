@@ -1660,19 +1660,22 @@ BEGIN
     CONTROL         "ラインモード貼り付けを可能にする(&L)",
                     IDC_CHECK_bEnableLineModePaste,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,63,126,10
-    GROUPBOX        "コピー",IDC_STATIC,3,3,134,78,WS_GROUP
+    CONTROL         "改行コードを変換して貼り付ける(&P)",
+                    IDC_CHECK_CONVERTEOLPASTE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,78,143,10
+    GROUPBOX        "コピー",IDC_STATIC,3,3,134,93,WS_GROUP
     CONTROL         "ドラッグ && ドロップ編集する(&D)",IDC_CHECK_DRAGDROP,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,102,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,117,
                     107,10,0,HIDC_CHECK_DRAGDROP
     CONTROL         "ドロップ元にする(&S)",IDC_CHECK_DROPSOURCE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,8,117,72,10,0,
+                    BS_AUTOCHECKBOX | WS_TABSTOP,8,132,72,10,0,
                     HIDC_CHECK_DROPSOURCE
-    GROUPBOX        "ドラッグ && ドロップ",IDC_STATIC,3,87,134,50,WS_GROUP
+    GROUPBOX        "ドラッグ && ドロップ",IDC_STATIC,3,102,134,50,WS_GROUP
     CONTROL         "改行コードは上書きしない(&N)",
                     IDC_CHECK_bNotOverWriteCRLF,"Button",BS_AUTOCHECKBOX | 
-                    WS_GROUP | WS_TABSTOP,8,157,104,10,0,
+                    WS_GROUP | WS_TABSTOP,8,172,104,10,0,
                     HIDC_CHECK_bNotOverWriteCRLF
-    GROUPBOX        "上書きモード",IDC_STATIC,3,142,134,35,WS_GROUP
+    GROUPBOX        "上書きモード",IDC_STATIC,3,157,134,35,WS_GROUP
     CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,147,18,91,10,0,
                     HIDC_CHECK_bSelectClickedURL

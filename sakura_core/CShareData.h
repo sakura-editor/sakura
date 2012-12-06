@@ -15,7 +15,7 @@
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon, maru
 	Copyright (C) 2007, ryoji, maru, genta, Moca, nasukoji, kobake
 	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, nasukoji, ryoji, genta
+	Copyright (C) 2009, nasukoji, ryoji, genta, salarm
 	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
@@ -547,6 +547,7 @@ struct CommonSetting {
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
 	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 	BOOL				m_bEnableLineModePaste;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+	BOOL				m_bConvertEOLPaste;			/* 改行コードを変換して貼り付ける */	// 2009.2.28 salarm
 	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
 	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */
 	BOOL				m_bDropFileAndClose;		/* ファイルをドロップしたときは閉じて開く */
