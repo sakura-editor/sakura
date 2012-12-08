@@ -1052,10 +1052,6 @@ SOURCE=..\sakura_core\global.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\Keycode.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\sakura_core\my_icmp.h
 # End Source File
 # Begin Source File

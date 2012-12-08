@@ -20,7 +20,7 @@
 #include "Debug.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
 #include "CFuncLookup.h"
-#include "Keycode.h"// 2002/2/10 aroka
+#include "mymessage.h"
 #include "CMemory.h"// 2002/2/10 aroka
 
 

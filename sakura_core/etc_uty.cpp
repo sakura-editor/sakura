@@ -48,7 +48,6 @@
 #include "CShareData.h"
 #include "CMRU.h"
 #include "CMRUFolder.h"
-#include "Keycode.h"// novice 2004/10/10
 #include "CUxTheme.h"	// 2007.04.01 ryoji
 
 /*!	WinHelp ‚Ì‚©‚í‚è‚É HtmlHelp ‚ğŒÄ‚Ño‚·

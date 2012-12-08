@@ -19,7 +19,6 @@
 #include "CHokanMgr.h"
 #include "Debug.h"
 #include "CKeyBind.h"
-#include "Keycode.h"
 #include "CEditView.h"
 #include "mymessage.h"
 #include "sakura_rc.h"

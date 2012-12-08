@@ -49,7 +49,6 @@
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á
 #include <vector> // 2008/02/16 bosagami add
 #include <algorithm> // 2008/02/16 bosagami add
-#include "Keycode.h"	// 2009.01.12 nasukoji
 #include <assert.h>
 
 #ifndef WM_MOUSEWHEEL

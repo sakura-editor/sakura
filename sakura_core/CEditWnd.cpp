@@ -47,7 +47,6 @@
 #include "CCommandLine.h" /// 2003/1/26 aroka
 #include "CSMacroMgr.h" // Jun. 16, 2002 genta
 #include "COsVersionInfo.h"	// Sep. 6, 2003 genta
-#include "Keycode.h"
 #include "sakura_rc.h"
 
 

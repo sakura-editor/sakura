@@ -17,38 +17,29 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef _MYMESSAGE_H_
+#define _MYMESSAGE_H_
+
 #include <windows.h>
+
+
+#define _SHIFT	0x00000001
+#define _CTRL	0x00000002
+#define _ALT	0x00000004
 
 #define MYWM_DOSPLIT        (WM_APP+1500)
 #define MYWM_SETACTIVEPANE  (WM_APP+1510)
-#define MYWM_CHANGESETTING  (WM_APP+1520)	/* 設定が変更されたことの通知メッセージ */
 
-/*! タスクトレイからの通知メッセージ */
+//!設定が変更されたことの通知メッセージ
+#define MYWM_CHANGESETTING  (WM_APP+1520)
+
+//! タスクトレイからの通知メッセージ
 #define MYWM_NOTIFYICON		(WM_APP+100)
-
-
-
-
-//	/* エディタからトレイへの自己登録要求 */
-//	#define	MYWM_ADD_EDITOR	(WM_APP+101)
-
-//	/* エディタからトレイへの自己削除要求 */
-//	#define	MYWM_DEL_EDITOR	(WM_APP+102)
-
-//	/* エディタからトレイへのアクセラレータ解読要求 */
-//	#define	MYWM_GETACCELFUNC	(WM_APP+103)
-
 
 
 
 /*! トレイからエディタへの終了要求 */
 #define	MYWM_CLOSE			(WM_APP+200)
-
-//	/* トレイからエディタへのアクセラレータテーブル更新通知 */
-//	#define	MYWM_SETACCEL		(WM_APP+201)
-
-///* トレイからエディタへの設定変更通知 */
-//#define	MYWM_SETOPTION		(WM_APP+202)
 
 /*! トレイからエディタへの編集ファイル情報 要求通知 */
 #define	MYWM_GETFILEINFO	(WM_APP+203)
@@ -65,7 +56,7 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 /*! カーソル位置取得要求 */
 #define	MYWM_GETCARETPOS	(WM_APP+205)
 
-/*! テキスト追加通知(共有データ経由) */
+//! テキスト追加通知(共有データ経由)
 #define	MYWM_ADDSTRING		(WM_APP+206)
 
 /*! タグジャンプ元通知 */
@@ -81,21 +72,8 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 /*! 新しい編集ウィンドウの作成依頼(コマンドラインを渡す) */
 #define	MYWM_OPENNEWEDITOR	(WM_APP+210)
 
-//* 編集ウィンドウオブジェクトからのアクティブ要求 */
-//#define	MYWM_ACTIVATE_ME		(WM_APP+211)
-
+//ヘルプっぽい何か
 #define	MYWM_HTMLHELP			(WM_APP+212)
-
-///* あんたぐれっぷ? */
-//#define	MYWM_AREYOUGREP			(WM_APP+212)
-
-
-//	/* エディタからトレイへの編集ファイル情報 設定通知 */
-//	#define	MYWM_SETFILEINFO	(WM_APP+204)
-
-
-//	/* トレイ管理ウィンドウからの全終了メッセージ */
-//	#define	MYWM_CLOSEALL		(WM_APP+900)
 
 /*! タブウインドウ用メッセージ */
 #define	MYWM_TAB_WINDOW_NOTIFY	(WM_APP+213)	//@@@ 2003.05.31 MIK
@@ -124,4 +102,8 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 #define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
 #define RWM_RECONVERT TEXT("MSIMEReconvert")
 
+#define	VK_XBUTTON1		0x05	// マウスサイドボタン1（Windows2000以降で使用可能）	// 2009.01.12 nasukoji
+#define	VK_XBUTTON2		0x06    // マウスサイドボタン2（Windows2000以降で使用可能）	// 2009.01.12 nasukoji
+
+#endif /* _MYMESSAGE_H_ */
 /*[EOF]*/

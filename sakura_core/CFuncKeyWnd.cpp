@@ -20,7 +20,7 @@
 #include "CFuncKeyWnd.h"
 #include "Debug.h"
 #include "CEditWnd.h"
-#include "Keycode.h"// 2002/2/10 aroka
+#include "mymessage.h"
 #include "etc_uty.h" // novice 2004/10/10
 
 #define IDT_FUNCWND 1248

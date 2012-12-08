@@ -22,7 +22,7 @@
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
 #include "CSMacroMgr.h" // 2002/2/10 aroka
-#include "Keycode.h"	/// 2002/2/3 aroka from here
+#include "mymessage.h"
 #include "Debug.h" ///
 #include <stdio.h>	/// 2002/2/3 aroka from here
 #include "sakura.hh"
