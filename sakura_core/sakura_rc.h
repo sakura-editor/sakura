@@ -641,7 +641,7 @@
 #define IDC_STATIC_BASEDIR              1588
 #define IDC_TREE_RES                    1589
 #define IDC_BUTTON_INSERT_NODE          1590
-#define IDC_BUTTON_INSERT_A             1091
+#define IDC_BUTTON_INSERT_A             1591
 #define IDC_BUTTON_RIGHT                1592
 #define IDC_BUTTON_LEFT                 1593
 #define IDC_CHECK_KEY_PARENTHESES       1594
@@ -673,6 +673,7 @@
 #define IDC_LABEL_AUTOLOAD_DELAY        1620
 #define IDC_EDIT_AUTOLOAD_DELAY         1621
 #define IDC_SPIN_AUTOLOAD_DELAY         1622
+#define IDC_CHECK_KINSOKUHIDE           1623
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000

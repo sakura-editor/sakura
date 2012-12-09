@@ -591,11 +591,11 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settin
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
 	pPrintSetting.m_nPrintDansuu = 1;			/* 段組の段数 */
 	pPrintSetting.m_nPrintDanSpace = 70; 		/* 段と段の隙間(1/10mm) */
-	pPrintSetting.m_bPrintWordWrap = TRUE;		/* 英文ワードラップする */
-	pPrintSetting.m_bPrintKinsokuHead = FALSE;		/* 行頭禁則する */	//@@@ 2002.04.09 MIK
-	pPrintSetting.m_bPrintKinsokuTail = FALSE;		/* 行末禁則する */	//@@@ 2002.04.09 MIK
-	pPrintSetting.m_bPrintKinsokuRet = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	pPrintSetting.m_bPrintKinsokuKuto = FALSE;		// 2006.08.14 Moca 初期化ミス
+	pPrintSetting.m_bPrintWordWrap = true;		// 英文ワードラップする
+	pPrintSetting.m_bPrintKinsokuHead = false;	// 行頭禁則する			//@@@ 2002.04.09 MIK
+	pPrintSetting.m_bPrintKinsokuTail = false;	// 行末禁則する			//@@@ 2002.04.09 MIK
+	pPrintSetting.m_bPrintKinsokuRet  = false;	// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+	pPrintSetting.m_bPrintKinsokuKuto = false;	// 2006.08.14 Moca 初期化ミス
 	pPrintSetting.m_bPrintLineNumber = FALSE;	/* 行番号を印刷する */
 	pPrintSetting.m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
 	pPrintSetting.m_nPrintMarginTY = 100;		/* 印刷用紙マージン 上(1/10mm単位) */

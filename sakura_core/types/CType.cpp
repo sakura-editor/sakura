@@ -168,25 +168,25 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_nHokanType = 0;
 
 	// 2001/06/19 asa-o
-	pType->m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
+	pType->m_bHokanLoHiCase = false;			// 入力補完機能：英大文字小文字を同一視する
 
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	pType->m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
+	pType->m_bUseHokanByFile = false;			//! 入力補完 開いているファイル内から候補を探す
 
 	// 文字コード設定
-	pType->m_encoding.m_bPriorCesu8 = FALSE;
+	pType->m_encoding.m_bPriorCesu8 = false;
 	pType->m_encoding.m_eDefaultCodetype = CODE_SJIS;
 	pType->m_encoding.m_eDefaultEoltype = EOL_CRLF;
-	pType->m_encoding.m_bDefaultBom = FALSE;
+	pType->m_encoding.m_bDefaultBom = false;
 
 	//@@@2002.2.4 YAZAKI
 	pType->m_szExtHelp[0] = L'\0';
 	pType->m_szExtHtmlHelp[0] = L'\0';
-	pType->m_bHtmlHelpIsSingle = TRUE;
+	pType->m_bHtmlHelpIsSingle = true;
 
 	pType->m_bAutoIndent = true;			/* オートインデント */
 	pType->m_bAutoIndent_ZENSPACE = true;	/* 日本語空白もインデント */
-	pType->m_bRTrimPrevLine = FALSE;			/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
+	pType->m_bRTrimPrevLine = false;		// 2005.10.11 ryoji 改行時に末尾の空白を削除
 
 	pType->m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
@@ -204,13 +204,13 @@ void _DefaultConfig(STypeConfig* pType)
 		POINT pt ={0,0};
 		pType->m_backImgPosOffset = pt;
 	}
-	pType->m_bLineNumIsCRLF = true;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	pType->m_nLineTermType = 1;					/* 行番号区切り 0=なし 1=縦線 2=任意 */
-	pType->m_cLineTermChar = L':';					/* 行番号区切り文字 */
-	pType->m_bWordWrap = FALSE;					/* 英文ワードラップをする */
-	pType->m_nCurrentPrintSetting = 0;				/* 現在選択している印刷設定 */
-	pType->m_bOutlineDockDisp = FALSE;				/* アウトライン解析表示の有無 */
-	pType->m_eOutlineDockSide = DOCKSIDE_FLOAT;		/* アウトライン解析ドッキング配置 */
+	pType->m_bLineNumIsCRLF = true;					// 行番号の表示 FALSE=折り返し単位／TRUE=改行単位
+	pType->m_nLineTermType = 1;						// 行番号区切り 0=なし 1=縦線 2=任意
+	pType->m_cLineTermChar = L':';					// 行番号区切り文字
+	pType->m_bWordWrap = false;						// 英文ワードラップをする
+	pType->m_nCurrentPrintSetting = 0;				// 現在選択している印刷設定
+	pType->m_bOutlineDockDisp = false;				// アウトライン解析表示の有無
+	pType->m_eOutlineDockSide = DOCKSIDE_FLOAT;		// アウトライン解析ドッキング配置
 	pType->m_cxOutlineDockLeft = 0;					// アウトラインの左ドッキング幅
 	pType->m_cyOutlineDockTop = 0;					// アウトラインの上ドッキング高
 	pType->m_cxOutlineDockRight = 0;				// アウトラインの右ドッキング幅
@@ -221,16 +221,16 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_eSmartIndent = SMARTINDENT_NONE;		/* スマートインデント種別 */
 	pType->m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
-	pType->m_szOutlineRuleFilename[0] = L'\0';	//Dec. 4, 2000 MIK
-	pType->m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	pType->m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	pType->m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	pType->m_bKinsokuKuto = FALSE;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	wcscpy( pType->m_szKinsokuHead, L"" );		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	wcscpy( pType->m_szKinsokuTail, L"" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	wcscpy( pType->m_szKinsokuKuto, L"、。，．､｡,." );	/* 句読点ぶら下げ文字 */	// 2009.08.07 ryoji
+	pType->m_szOutlineRuleFilename[0] = L'\0';		//Dec. 4, 2000 MIK
+	pType->m_bKinsokuHead = false;					// 行頭禁則				//@@@ 2002.04.08 MIK
+	pType->m_bKinsokuTail = false;					// 行末禁則				//@@@ 2002.04.08 MIK
+	pType->m_bKinsokuRet  = false;					// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+	pType->m_bKinsokuKuto = false;					// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	wcscpy( pType->m_szKinsokuHead, L"" );			// 行頭禁則				//@@@ 2002.04.08 MIK
+	wcscpy( pType->m_szKinsokuTail, L"" );			// 行末禁則				//@@@ 2002.04.08 MIK
+	wcscpy( pType->m_szKinsokuKuto, L"、。，．､｡,." );	// 句読点ぶら下げ文字	// 2009.08.07 ryoji
 
-	pType->m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
+	pType->m_bUseDocumentIcon = false;				// 文書に関連づけられたアイコンを使う
 
 //@@@ 2001.11.17 add start MIK
 	for(int i = 0; i < _countof(pType->m_RegexKeywordArr); i++)
@@ -248,11 +248,11 @@ void _DefaultConfig(STypeConfig* pType)
 		pType->m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
 		pType->m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 	}
-	pType->m_bUseKeyWordHelp = FALSE;	/* 辞書選択機能の使用可否 */
-	pType->m_nKeyHelpNum = 0;			/* 登録辞書数 */
-	pType->m_bUseKeyHelpAllSearch = FALSE;	/* ヒットした次の辞書も検索(&A) */
-	pType->m_bUseKeyHelpKeyDisp = FALSE;		/* 1行目にキーワードも表示する(&W) */
-	pType->m_bUseKeyHelpPrefix = FALSE;		/* 選択範囲で前方一致検索(&P) */
+	pType->m_bUseKeyWordHelp = false;		// 辞書選択機能の使用可否
+	pType->m_nKeyHelpNum = 0;				// 登録辞書数
+	pType->m_bUseKeyHelpAllSearch = false;	// ヒットした次の辞書も検索(&A)
+	pType->m_bUseKeyHelpKeyDisp = false;	// 1行目にキーワードも表示する(&W)
+	pType->m_bUseKeyHelpPrefix = false;		// 選択範囲で前方一致検索(&P)
 //@@@ 2006.04.10 fon ADD-end
 
 	// 2005.11.08 Moca 指定位置縦線の設定

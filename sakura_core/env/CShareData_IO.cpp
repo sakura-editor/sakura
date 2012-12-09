@@ -1147,7 +1147,7 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 				printsetting.m_nPrintMarginRX			= buf[ 8];
 				printsetting.m_nPrintPaperOrientation	= buf[ 9];
 				printsetting.m_nPrintPaperSize			= buf[10];
-				printsetting.m_bPrintWordWrap			= buf[11];
+				printsetting.m_bPrintWordWrap			= (buf[11]!=0);
 				printsetting.m_bPrintLineNumber			= buf[12];
 				printsetting.m_bHeaderUse[0]			= buf[13];
 				printsetting.m_bHeaderUse[1]			= buf[14];
@@ -1267,7 +1267,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 			types.m_nStringType				= buf[ 6];
 			types.m_bLineNumIsCRLF			= (buf[ 7]!=0);
 			types.m_nLineTermType			= buf[ 8];
-			types.m_bWordWrap				= buf[ 9];
+			types.m_bWordWrap				= (buf[ 9]!=0);
 			types.m_nCurrentPrintSetting	= buf[10];
 		}
 		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
@@ -1543,6 +1543,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuTail")	, types.m_bKinsokuTail );
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuRet")	, types.m_bKinsokuRet );	//@@@ 2002.04.13 MIK
 	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuKuto")	, types.m_bKinsokuKuto );	//@@@ 2002.04.17 MIK
+	cProfile.IOProfileData( pszSecName, LTEXT("bKinsokuHide")	, types.m_bKinsokuHide );	//2012/11/30 Uchi
 	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuHead")	, MakeStringBufferW(types.m_szKinsokuHead) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuTail")	, MakeStringBufferW(types.m_szKinsokuTail) );
 	cProfile.IOProfileData( pszSecName, LTEXT("szKinsokuKuto")	, MakeStringBufferW(types.m_szKinsokuKuto) );	// 2009.08.07 ryoji

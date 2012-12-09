@@ -39,13 +39,13 @@ CLayoutMgr::CLayoutMgr()
 : m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
 {
 	m_pcDocLineMgr = NULL;
-	m_sTypeConfig.m_bWordWrap = TRUE;				/* 英文ワードラップをする */
+	m_sTypeConfig.m_bWordWrap = true;				// 英文ワードラップをする
 	m_sTypeConfig.m_nTabSpace = CLayoutInt(8);		/* TAB文字スペース */
 	m_sTypeConfig.m_nStringType = 0;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	m_sTypeConfig.m_bKinsokuHead = FALSE;			/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_sTypeConfig.m_bKinsokuTail = FALSE;			/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	m_sTypeConfig.m_bKinsokuRet  = FALSE;			/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	m_sTypeConfig.m_bKinsokuKuto = FALSE;			/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+	m_sTypeConfig.m_bKinsokuHead = false;			// 行頭禁則				//@@@ 2002.04.08 MIK
+	m_sTypeConfig.m_bKinsokuTail = false;			// 行末禁則				//@@@ 2002.04.08 MIK
+	m_sTypeConfig.m_bKinsokuRet  = false;			// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+	m_sTypeConfig.m_bKinsokuKuto = false;			// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	m_pszKinsokuHead_1.clear();						/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuTail_1.clear();						/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuKuto_1.clear();						/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
