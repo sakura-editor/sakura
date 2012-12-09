@@ -12,6 +12,7 @@
 	Copyright (C) 2005, zenryaku
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2012, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -85,6 +86,8 @@ void CDlgFind::SetData( void )
 	// Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), _MAX_PATH - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ), TRUE );
+	// フォント設定	2012/11/27 Uchi
+	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ) );
 
 
 	/*****************************

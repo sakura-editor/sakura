@@ -9,6 +9,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2012, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -112,6 +113,9 @@ protected:
 	BOOL OnCommand( WPARAM, LPARAM );
 
 	HWND GetItemHwnd(int nID){ return ::GetDlgItem( GetHwnd(), nID ); }
+
+	// コントロールに画面のフォントを設定	2012/11/27 Uchi
+	void SetMainFont( HWND hTarget );
 };
 
 
