@@ -1,3 +1,29 @@
+/*
+	Copyright (C) 2007, kobake, ryoji
+	Copyright (C) 2008, kobake
+	Copyright (C) 2010, Uchi, Moca
+	Copyright (C) 2012, aroka, Uchi
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include <WindowsX.h>
 #include "CMainToolBar.h"
@@ -269,12 +295,12 @@ void CMainToolBar::CreateToolBar( void )
 							lf.lfItalic			= FALSE;
 							lf.lfUnderline		= FALSE;
 							lf.lfStrikeOut		= FALSE;
-							lf.lfCharSet		= SHIFTJIS_CHARSET;
-							lf.lfOutPrecision	= OUT_DEFAULT_PRECIS;
-							lf.lfClipPrecision	= CLIP_DEFAULT_PRECIS;
-							lf.lfQuality		= DEFAULT_QUALITY;
-							lf.lfPitchAndFamily	= FF_MODERN | DEFAULT_PITCH;
-							_tcscpy( lf.lfFaceName, _T("ÇlÇr ÇoÉSÉVÉbÉN") );
+							lf.lfCharSet		= GetDllShareData().m_Common.m_sView.m_lf.lfCharSet;
+							lf.lfOutPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfOutPrecision;
+							lf.lfClipPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfClipPrecision;
+							lf.lfQuality		= GetDllShareData().m_Common.m_sView.m_lf.lfQuality;
+							lf.lfPitchAndFamily	= GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily;
+							_tcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// âÊñ ÇÃÉtÉHÉìÉgÇ…ê›íË	2012/11/27 Uchi
 							m_fontSearchBox = ::CreateFontIndirect( &lf );
 							if( m_fontSearchBox )
 							{

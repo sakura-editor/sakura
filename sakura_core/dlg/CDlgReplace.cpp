@@ -11,6 +11,7 @@
 	Copyright (C) 2006, かろと, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2012, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -95,6 +96,10 @@ void CDlgReplace::ChangeView( LPARAM pcEditView )
 /* ダイアログデータの設定 */
 void CDlgReplace::SetData( void )
 {
+	// フォント設定	2012/11/27 Uchi
+	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ) );
+	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 ));
+
 	// 検索文字列/置換後文字列リストの設定(関数化)	2010/5/26 Uchi
 	SetCombosList();
 

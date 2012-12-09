@@ -12,6 +12,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2012, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -604,3 +605,38 @@ BOOL CDialog::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool re
 	return FALSE;
 }
 
+// コントロールに画面のフォントを設定	2012/11/27 Uchi
+void	CDialog::SetMainFont( HWND hTarget )
+{
+	if (hTarget == NULL)	return;
+
+	HFONT	hFont;
+    LOGFONT	lf;
+
+	// 設定するフォントの高さを取得
+	hFont = (HFONT)SendMessage(hTarget, WM_GETFONT, 0, 0);
+	GetObject(hFont, sizeof(lf), &lf);
+	LONG nfHeight = lf.lfHeight;
+
+	// LOGFONTの作成
+	memset_raw( &lf, 0, sizeof(lf) );
+	lf.lfHeight			= nfHeight;
+	lf.lfWidth			= 0;
+	lf.lfEscapement		= 0;
+	lf.lfOrientation	= 0;
+	lf.lfWeight			= FW_NORMAL;
+	lf.lfItalic			= FALSE;
+	lf.lfUnderline		= FALSE;
+	lf.lfStrikeOut		= FALSE;
+	lf.lfCharSet		= m_pShareData->m_Common.m_sView.m_lf.lfCharSet;
+	lf.lfOutPrecision	= m_pShareData->m_Common.m_sView.m_lf.lfOutPrecision;
+	lf.lfClipPrecision	= m_pShareData->m_Common.m_sView.m_lf.lfClipPrecision;
+	lf.lfQuality		= m_pShareData->m_Common.m_sView.m_lf.lfQuality;
+	lf.lfPitchAndFamily	= m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily;
+	_tcsncpy( lf.lfFaceName, m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
+
+	// フォントを作成
+	hFont = CreateFontIndirect(&lf);
+	// フォントの設定
+	::SendMessage(hTarget, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
+}

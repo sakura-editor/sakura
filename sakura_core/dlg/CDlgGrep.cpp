@@ -10,6 +10,7 @@
 	Copyright (C) 2003, Moca
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
+	Copyright (C) 2012, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -282,6 +283,8 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 /* ダイアログデータの設定 */
 void CDlgGrep::SetData( void )
 {
+	// フォント設定	2012/11/27 Uchi
+	SetMainFont( ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT ) );
 
 	/* 検索文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
