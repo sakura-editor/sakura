@@ -684,6 +684,7 @@
 #define HIDC_MACROCANCELTIMER		11763	//マクロ停止ダイアログ表示待ち時間	// 2011.08.04 syat
 #define HIDC_PLUGIN_OpenFolder		11764	//プラグインフォルダを開く
 #define HIDC_EDIT_AUTOLOAD_DELAY	11765	//自動読込時遅延
+#define HIDC_CHECK_KINSOKUHIDE		11766	//ぶら下げを隠す			// 2012.11.30 Uchi
 
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索

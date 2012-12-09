@@ -27,10 +27,10 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_eDefaultOutline = OUTLINE_TEXT;					/* アウトライン解析方法 */
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
 	pType->m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
-	pType->m_bKinsokuHead = FALSE;								/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	pType->m_bKinsokuTail = FALSE;								/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	pType->m_bKinsokuRet  = FALSE;								/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	pType->m_bKinsokuKuto = FALSE;								/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
+	pType->m_bKinsokuHead = false;								// 行頭禁則				//@@@ 2002.04.08 MIK
+	pType->m_bKinsokuTail = false;								// 行末禁則				//@@@ 2002.04.08 MIK
+	pType->m_bKinsokuRet  = false;								// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+	pType->m_bKinsokuKuto = false;								// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	wcscpy( pType->m_szKinsokuHead, L"!%),.:;?]}￠°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
 	wcscpy( pType->m_szKinsokuTail, L"$([{￡\\‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
 	// pType->m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji 

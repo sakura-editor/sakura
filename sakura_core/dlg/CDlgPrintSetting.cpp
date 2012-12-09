@@ -442,29 +442,17 @@ int CDlgPrintSetting::GetData( void )
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
 	//行頭禁則	//@@@ 2002.04.09 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKUHEAD ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead =
+		( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKUHEAD ) );
 	//行末禁則	//@@@ 2002.04.09 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKUTAIL ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail =
+		( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKUTAIL ) );
 	//改行文字をぶら下げる	//@@@ 2002.04.13 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKURET ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet =
+		( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKURET ) );
 	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKUKUTO ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto =
+		( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_PS_KINSOKUKUTO ) );
 
 	return TRUE;
 }
