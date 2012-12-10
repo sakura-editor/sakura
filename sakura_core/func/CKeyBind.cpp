@@ -127,12 +127,18 @@ EFunctionCode CKeyBind::GetFuncCode(
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	int nCmd = (int)( nAccelCmd & 0x00ff );
-	int nSts = (int)( ( nAccelCmd & 0xff00 ) >> 8 );
-	for( int i = 0; i < nKeyNameArrNum; ++i ){
-		if( nCmd == pKeyNameArr[i].m_nKeyCode ){
-			return GetFuncCodeAt( pKeyNameArr[i], nSts, bGetDefFuncCode );
+	int nCmd = (int)LOBYTE(nAccelCmd);
+	int nSts = (int)HIBYTE(nAccelCmd);
+	if( nCmd == 0 ){ // mouse command
+		for( int i = 0; i < nKeyNameArrNum; ++i ){
+			if( nCmd == pKeyNameArr[i].m_nKeyCode ){
+				return GetFuncCodeAt( pKeyNameArr[i], nSts, bGetDefFuncCode );
+			}
 		}
+	}else{
+		// 2012.12.10 aroka キーコード検索時のループを除去
+		DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+		return GetFuncCodeAt( pKeyNameArr[pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[nCmd]], nSts, bGetDefFuncCode );
 	}
 	return F_DEFAULT;
 }
