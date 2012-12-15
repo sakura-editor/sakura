@@ -874,30 +874,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\sakura_core\CViewCommander.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CViewCommander.h"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CViewCommander_Diff.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CViewCommander_Grep.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CViewCommander_Hokan.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\sakura_core\CViewCommander_New.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\sakura_core\CVisualProgress.cpp"
 				>
 			</File>
@@ -3182,6 +3158,34 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\mfclike\CMyWnd.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="cmd"
+				>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander.h"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Diff.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Grep.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Hokan.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_New.cpp"
 					>
 				</File>
 			</Filter>
