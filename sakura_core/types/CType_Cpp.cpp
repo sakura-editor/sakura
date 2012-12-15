@@ -125,12 +125,16 @@ static bool C_IsLineEsc(const wchar_t *s, int len)
 	Cプリプロセッサの #if/ifdef/ifndef - #else - #endif状態管理クラス
 
 	ネストレベルは32レベル=(sizeof(int) * 8)まで
+	
+	@date 2007.12.15 genta : m_enablebufの初期値が悪さをすることがあるので0に
 */
 
 class CCppPreprocessMng {
 public:
 	CCppPreprocessMng(void) :
-		m_stackptr( 0 ), m_bitpattern( 1 ), m_enablebuf( 0 ), m_maxnestlevel( 32 ), m_ismultiline( false )
+		// 2007.12.15 genta : m_bitpatternを0にしないと，
+		// いきなり#elseが現れたときにパターンがおかしくなる
+		m_stackptr( 0 ), m_bitpattern( 0 ), m_enablebuf( 0 ), m_maxnestlevel( 32 ), m_ismultiline( false )
 	{}
 
 	CLogicInt ScanLine(const wchar_t*, CLogicInt);
@@ -174,6 +178,7 @@ private:
 	@author genta
 	@date 2004.08.10 新規作成
 	@date 2004.08.13 zenryaku 複数行のディレクティブに対応
+	@date 2007.12.13 じゅうじ : ifの直後にスペースがない場合の対応
 
 */
 CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
@@ -217,10 +222,12 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		//	if 0は最初が無効部分とみなす．
 		//	それ以外のif/ifdef/ifndefは最初が有効部分と見なす
 		//	最初の条件によってこの時点ではp < lastptrなので判定省略
-		if( C_IsSpace( *p ) ){
+		// 2007/12/13 じゅうじ : #if(0)とスペースを空けない場合の対応
+		if( C_IsSpace( *p ) || *p == L'(' ){
 			//	if 0 チェック
 			//	skip whitespace
-			for( ; C_IsSpace( *p ) && p < lastptr ; ++p )
+			//	2007.12.15 genta
+			for( ; ( C_IsSpace( *p ) || *p == L'(' ) && p < lastptr ; ++p )
 				;
 			if( *p == L'0' ){
 				enable = 1;
@@ -245,7 +252,8 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		}
 	}
 	else if( p + 4 < lastptr && wcsncmp_literal( p, L"else" ) == 0 ){
-		if( m_stackptr < m_maxnestlevel ){
+		//	2007.12.14 genta : #ifが無く#elseが出たときのガード追加
+		if( 0 < m_stackptr && m_stackptr < m_maxnestlevel ){
 			m_enablebuf ^= m_bitpattern;
 		}
 	}
