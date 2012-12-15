@@ -40,7 +40,7 @@
 #include "CCaret.h"
 #include "CRuler.h"
 #include "CViewCalc.h" // parent
-#include "CViewCommander.h"
+#include "cmd/CViewCommander.h"
 #include "CViewParser.h"
 #include "CViewSelect.h"
 #include "basis/SakuraBasis.h"
