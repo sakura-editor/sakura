@@ -227,7 +227,9 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 	if ( (nReconvLen + nReconvIndex - ptSelect.x) > nReconvMaxLen ){
 		const wchar_t* pszWork = pLine + ptSelect.x;
 		nReconvLen = ptSelect.x - nReconvIndex;
-		while( ( nReconvLen + nReconvIndex - ptSelect.x) <= nReconvMaxLen ){
+		while( ( nReconvLen + nReconvIndex - ptSelect.x) <= nReconvMaxLen
+			&& pszWork[0] // IME‚É‚Í NUL•¶Žš‚©‚çŒã‚ë‚ð“n‚³‚È‚¢B
+		){
 			pszWork = ::CharNextW_AnyBuild( pszWork);
 			nReconvLen = pszWork - (pLine + nReconvIndex) ;
 		}
