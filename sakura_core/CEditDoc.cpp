@@ -560,8 +560,6 @@ void CEditDoc::OnChangeSetting()
 
 	CEditWnd*	pCEditWnd = m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	//pCEditWnd->m_CFuncKeyWnd.Timer_ONOFF( FALSE ); // 20060126 aroka
-
 	if( NULL != pCEditWnd ){
 		hwndProgress = pCEditWnd->m_hwndProgressBar;
 		//	Status Bar‚ª•\Ž¦‚³‚ê‚Ä‚¢‚È‚¢‚Æ‚«‚Ím_hwndProgressBar == NULL

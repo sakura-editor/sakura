@@ -136,7 +136,7 @@ CEditWnd::CEditWnd()
 , m_hwndSearchBox( NULL )
 , m_fontSearchBox( NULL )
 , m_nCurrentFocus( 0 )
-, m_bIsActiveApp( FALSE )
+, m_bIsActiveApp( false )
 , m_IconClicked(icNone) //by 鬼(2)
 , m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 {
@@ -514,7 +514,7 @@ HWND CEditWnd::Create(
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 	// ツールバーのタイマーを分離した 20060128 aroka
-	Timer_ONOFF( TRUE );
+	Timer_ONOFF( true );
 
 	//デフォルトのIMEモード設定
 	m_cEditDoc.SetImeMode( m_pShareData->m_Types[0].m_nImeState );
@@ -1270,7 +1270,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return TRUE;
 
 	case WM_ACTIVATEAPP:
-		m_bIsActiveApp = (BOOL)wParam;	// 自アプリがアクティブかどうか
+		m_bIsActiveApp = (wParam != 0);	// 自アプリがアクティブかどうか
 
 		// アクティブ化なら編集ウィンドウリストの先頭に移動する		// 2007.04.08 ryoji WM_SETFOCUS から移動
 		if( m_bIsActiveApp ){
@@ -4441,7 +4441,7 @@ void CEditWnd::SetFocusSearchBox( void ) const
 // ツールバー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときにウィンドウからON/OFFを
 //	呼び出してもらうことにより、余計な負荷を停止したい。
-void CEditWnd::Timer_ONOFF( BOOL bStart )
+void CEditWnd::Timer_ONOFF( bool bStart )
 {
 	if( NULL != m_hWnd ){
 		if( bStart ){

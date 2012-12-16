@@ -170,7 +170,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	/* ボタンの生成 */
 	CreateButtons();
 
-	Timer_ONOFF( TRUE ); // 20060126 aroka
+	Timer_ONOFF( true ); // 20060126 aroka
 	OnTimer( m_hWnd, WM_TIMER, IDT_FUNCWND, ::GetTickCount() );	// 初回更新	// 2006.12.20 ryoji
 
 	return m_hWnd;
@@ -370,7 +370,7 @@ LRESULT CFuncKeyWnd::OnDestroy( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	int i;
 
 	/* タイマーを削除 */
-	Timer_ONOFF( FALSE ); // 20060126 aroka
+	Timer_ONOFF( false ); // 20060126 aroka
 
 	/* ボタンを削除 */
 	for( i = 0; i < _countof( m_hwndButtonArr ); ++i ){
@@ -510,7 +510,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 // ファンクションキー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときに親ウィンドウからON/OFFを
 //	呼び出してもらうことにより、余計な負荷を停止したい。
-void CFuncKeyWnd::Timer_ONOFF( BOOL bStart )
+void CFuncKeyWnd::Timer_ONOFF( bool bStart )
 {
 	if( NULL != m_hWnd ){
 		if( bStart ){

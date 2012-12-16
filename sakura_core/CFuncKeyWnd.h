@@ -12,13 +12,12 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CFuncKeyWnd;
-
 #ifndef SAKURA_CFUNCKEYWND_H_
 #define SAKURA_CFUNCKEYWND_H_
 
 #include "CWnd.h"
 #include "CShareData.h"
+
 class CEditDoc; // 2002/2/10 aroka
 
 //! ファンクションキーウィンドウ
@@ -37,7 +36,7 @@ public:
 	HWND Open( HINSTANCE, HWND, CEditDoc*, bool );	/* ウィンドウ オープン */
 	void Close( void );	/* ウィンドウ クローズ */
 	void SizeBox_ONOFF( bool );	/* サイズボックスの表示／非表示切り替え */
-	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060126 aroka */
+	void Timer_ONOFF( bool ); /* 更新の開始／停止 20060126 aroka */
 	/*
 	|| メンバ変数
 	*/

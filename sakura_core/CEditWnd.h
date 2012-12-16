@@ -128,7 +128,7 @@ public:
 	void SetHScrollByWheel( BOOL bState ) { m_bHorizontalScrollByWheel = bState; }	// ホイール操作による横スクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.12 nasukoji
 	void ClearMouseState( void );		// 2009.01.12 nasukoji	マウスの状態をクリアする（ホイールスクロール有無状態をクリア）
 	//! 自アプリがアクティブかどうか	// 2007.03.08 ryoji
-	BOOL IsActiveApp() const { return m_bIsActiveApp; }
+	bool IsActiveApp() const { return m_bIsActiveApp; }
 
 
 
@@ -163,7 +163,7 @@ public:
 		icDoubleClicked
 	};
 	int	CreateFileDropDownMenu( HWND );	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
-	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
+	void Timer_ONOFF( bool ); /* 更新の開始／停止 20060128 aroka */
 
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
 	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
@@ -221,7 +221,7 @@ private:
 	HFONT	m_fontSearchBox;
 	void	ProcSearchBox( MSG* );	//検索(ボックス)
 	int		m_nCurrentFocus;
-	BOOL	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
+	bool	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	BOOL	m_bPageScrollByWheel;		// ホイール操作によるページスクロールあり	// 2009.01.12 nasukoji
 	BOOL	m_bHorizontalScrollByWheel;	// ホイール操作による横スクロールあり		// 2009.01.12 nasukoji
