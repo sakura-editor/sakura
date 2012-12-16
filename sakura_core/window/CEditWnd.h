@@ -199,7 +199,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//! 自アプリがアクティブかどうか	// 2007.03.08 ryoji
-	BOOL IsActiveApp() const { return m_bIsActiveApp; }
+	bool IsActiveApp() const { return m_bIsActiveApp; }
 
 	//!ツールチップのテキストを取得。2007.09.08 kobake 追加
 	void GetTooltipText(TCHAR* wszBuf, size_t nBufCount, int nID) const;
@@ -286,7 +286,7 @@ protected:
 	int	CreateFileDropDownMenu( HWND );	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 
 	//タイマー
-	void Timer_ONOFF( BOOL ); /* 更新の開始／停止 20060128 aroka */
+	void Timer_ONOFF( bool ); /* 更新の開始／停止 20060128 aroka */
 
 	// メニュー
 	void CheckFreeSubMenu( HWND, HMENU, UINT );		// メニューバーの無効化を検査	2010/6/18 Uchi
