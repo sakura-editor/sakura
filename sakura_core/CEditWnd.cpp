@@ -624,7 +624,7 @@ void CEditWnd::CreateStatusBar( void )
 	);
 
 	if( NULL != m_CFuncKeyWnd.m_hWnd ){
-		m_CFuncKeyWnd.SizeBox_ONOFF( FALSE );
+		m_CFuncKeyWnd.SizeBox_ONOFF( false );
 	}
 
 	//スプリッターの、サイズボックスの位置を変更
@@ -643,16 +643,16 @@ void CEditWnd::DestroyStatusBar( void )
 	m_hwndStatusBar = NULL;
 
 	if( NULL != m_CFuncKeyWnd.m_hWnd ){
-		BOOL bSizeBox;
+		bool bSizeBox;
 		if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 			/* サイズボックスの表示／非表示切り替え */
-			bSizeBox = FALSE;
+			bSizeBox = false;
 		}
 		else{
-			bSizeBox = TRUE;
+			bSizeBox = true;
 			/* ステータスパーを表示している場合はサイズボックスを表示しない */
 			if( NULL != m_hwndStatusBar ){
-				bSizeBox = FALSE;
+				bSizeBox = false;
 			}
 		}
 		m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
@@ -984,14 +984,14 @@ void CEditWnd::LayoutFuncKey( void )
 {
 	if( m_pShareData->m_Common.m_bDispFUNCKEYWND ){	/* ファンクションキーを表示する */
 		if( NULL == m_CFuncKeyWnd.m_hWnd ){
-			BOOL	bSizeBox;
+			bool	bSizeBox;
 			if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
-				bSizeBox = FALSE;
+				bSizeBox = false;
 			}else{
-				bSizeBox = TRUE;
+				bSizeBox = true;
 				/* ステータスバーがあるときはサイズボックスを表示しない */
 				if( m_hwndStatusBar ){
-					bSizeBox = FALSE;
+					bSizeBox = false;
 				}
 			}
 			m_CFuncKeyWnd.Open( m_hInstance, m_hWnd, &m_cEditDoc, bSizeBox );
@@ -3500,12 +3500,12 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 				nFuncKeyWndHeight, TRUE
 			);
 
-			BOOL	bSizeBox = TRUE;
+			bool	bSizeBox = true;
 			if( NULL != m_hwndStatusBar ){
-				bSizeBox = FALSE;
+				bSizeBox = false;
 			}
 			if( wParam == SIZE_MAXIMIZED ){
-				bSizeBox = FALSE;
+				bSizeBox = false;
 			}
 			m_CFuncKeyWnd.SizeBox_ONOFF( bSizeBox );
 		}

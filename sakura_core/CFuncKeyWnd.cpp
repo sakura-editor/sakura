@@ -89,7 +89,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	_tcscpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
 	m_hFont = ::CreateFontIndirect( &lf );
 
-	m_bSizeBox = FALSE;
+	m_bSizeBox = false;
 	m_hwndSizeBox = NULL;
 	m_nTimerCount = 0;
 
@@ -110,7 +110,7 @@ CFuncKeyWnd::~CFuncKeyWnd()
 
 
 /* ウィンドウ オープン */
-HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, BOOL bSizeBox )
+HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
 {
 	m_pCEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
@@ -312,7 +312,6 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	int			nIdx;
 //	int			nFuncId;
 	int			i;
-	int			nFuncCode;
 
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
@@ -324,7 +323,7 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		/* ファンクションキーの機能名を取得 */
 		for( i = 0; i < _countof( m_szFuncNameArr ); ++i ){
 			// 2007.02.22 ryoji CKeyBind::GetFuncCode()を使う
-			nFuncCode = CKeyBind::GetFuncCode(
+			int	nFuncCode = CKeyBind::GetFuncCode(
 					(((VK_F1 + i) | ((WORD)((BYTE)(nIdx))) << 8)),
 					m_pShareData->m_nKeyNameArrNum,
 					m_pShareData->m_pKeyNameArr
@@ -470,7 +469,7 @@ void CFuncKeyWnd::CreateButtons( void )
 
 
 /*! サイズボックスの表示／非表示切り替え */
-void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
+void CFuncKeyWnd::SizeBox_ONOFF( bool bSizeBox )
 {
 
 	RECT		rc;
@@ -481,7 +480,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 	if( m_bSizeBox ){
 		::DestroyWindow( m_hwndSizeBox );
 		m_hwndSizeBox = NULL;
-		m_bSizeBox = FALSE;
+		m_bSizeBox = false;
 		OnSize( NULL, 0, 0, 0 );
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
@@ -499,7 +498,7 @@ void CFuncKeyWnd::SizeBox_ONOFF( BOOL bSizeBox )
 			(LPVOID) NULL			/* pointer not needed				*/
 		);
 		::ShowWindow( m_hwndSizeBox, SW_SHOW );
-		m_bSizeBox = TRUE;
+		m_bSizeBox = true;
 		OnSize( NULL, 0, 0, 0 );
 	}
 	return;
