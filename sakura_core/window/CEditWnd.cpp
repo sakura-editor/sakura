@@ -735,7 +735,7 @@ HWND CEditWnd::Create(
 		WarningMessage( GetHwnd(), _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 	// ツールバーのタイマーを分離した 20060128 aroka
-	Timer_ONOFF( TRUE );
+	Timer_ONOFF( true );
 
 	//デフォルトのIMEモード設定
 	GetDocument().m_cDocEditor.SetImeMode( CDocTypeManager().GetTypeSetting(CTypeConfig(0)).m_nImeState );
@@ -3897,7 +3897,7 @@ void CEditWnd::WindowTopMost( int top )
 // ツールバー表示はタイマーにより更新しているが、
 // アプリのフォーカスが外れたときにウィンドウからON/OFFを
 //	呼び出してもらうことにより、余計な負荷を停止したい。
-void CEditWnd::Timer_ONOFF( BOOL bStart )
+void CEditWnd::Timer_ONOFF( bool bStart )
 {
 	if( NULL != GetHwnd() ){
 		if( bStart ){
