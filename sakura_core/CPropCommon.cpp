@@ -189,7 +189,7 @@ void CPropCommon::Create( HINSTANCE hInstApp, HWND hwndParent, CImageListMgr* cI
 	// 2007.11.02 ryoji マクロ設定を変更したあと、画面を閉じないでカスタムメニュー、ツールバー、
 	//                  キー割り当ての画面に切り替えた時に各画面でマクロ設定の変更が反映されるよう、
 	//                  m_MacroTable（ローカルメンバ）でm_cLookupを初期化する
-	m_cLookup.Init( m_hInstance, m_MacroTable, &m_Common );	//	機能名・番号resolveクラス．
+	m_cLookup.Init( m_hInstance, m_Common.m_MacroTable, &m_Common );	//	機能名・番号resolveクラス．
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	m_pcMenuDrawer = pMenuDrawer;
@@ -360,11 +360,11 @@ void CPropCommon::InitData( void )
 {
 	int i;
 	m_Common = m_pShareData->m_Common;
-	m_nKeyNameArrNum = m_pShareData->m_nKeyNameArrNum;
-	for( i = 0; i < _countof( m_pShareData->m_pKeyNameArr ); ++i ){
-		m_pKeyNameArr[i] = m_pShareData->m_pKeyNameArr[i];
-	}
-	m_CKeyWordSetMgr = m_pShareData->m_CKeyWordSetMgr;
+	//m_Common.m_nKeyNameArrNum = m_pShareData->m_Common.m_nKeyNameArrNum;
+	//for( i = 0; i < _countof( m_pShareData->m_Common.m_pKeyNameArr ); ++i ){
+	//	m_Common.m_pKeyNameArr[i] = m_pShareData->m_Common.m_pKeyNameArr[i];
+	//}
+	//m_Common.m_CKeyWordSetMgr = m_pShareData->m_Common.m_CKeyWordSetMgr;
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	for( i = 0; i < MAX_TYPES; ++i ){
@@ -372,23 +372,23 @@ void CPropCommon::InitData( void )
 			m_Types_nKeyWordSetIdx[i][j] = m_pShareData->m_Types[i].m_nKeyWordSetIdx[j];
 		}
 	}
-	/* マクロ関係
-	@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	*/
-	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		m_MacroTable[i] = m_pShareData->m_MacroTable[i];
-	}
-	memcpy( m_szMACROFOLDER, m_pShareData->m_szMACROFOLDER, sizeof( m_pShareData->m_szMACROFOLDER ) );
-	m_nMacroOnOpened = m_pShareData->m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	m_nMacroOnTypeChanged = m_pShareData->m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	m_nMacroOnSave = m_pShareData->m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	///* マクロ関係
+	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+	//*/
+	//for( i = 0; i < MAX_CUSTMACRO; ++i ){
+	//	m_Common.m_MacroTable[i] = m_pShareData->m_Common.m_MacroTable[i];
+	//}
+	//memcpy( m_Common.m_szMACROFOLDER, m_pShareData->m_Common.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_szMACROFOLDER ) );
+	//m_Common.m_nMacroOnOpened = m_pShareData->m_Common.m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	//m_Common.m_nMacroOnTypeChanged = m_pShareData->m_Common.m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	//m_Common.m_nMacroOnSave = m_pShareData->m_Common.m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
-	// ファイル名簡易表示関係
-	memcpy( m_szTransformFileNameFrom, m_pShareData->m_szTransformFileNameFrom,
-		sizeof( m_pShareData->m_szTransformFileNameFrom ) );
-	memcpy( m_szTransformFileNameTo, m_pShareData->m_szTransformFileNameTo,
-		sizeof( m_pShareData->m_szTransformFileNameTo ) );
-	m_nTransformFileNameArrNum = m_pShareData->m_nTransformFileNameArrNum;
+	//// ファイル名簡易表示関係
+	//memcpy( m_Common.m_szTransformFileNameFrom, m_pShareData->m_Common.m_szTransformFileNameFrom,
+	//	sizeof( m_pShareData->m_Common.m_szTransformFileNameFrom ) );
+	//memcpy( m_Common.m_szTransformFileNameTo, m_pShareData->m_Common.m_szTransformFileNameTo,
+	//	sizeof( m_pShareData->m_Common.m_szTransformFileNameTo ) );
+	//m_Common.m_nTransformFileNameArrNum = m_pShareData->m_Common.m_nTransformFileNameArrNum;
 
 }
 
@@ -400,10 +400,10 @@ void CPropCommon::ApplyData( void )
 {
 	int i;
 
-	for( i = 0; i < sizeof( m_pShareData->m_pKeyNameArr ) / sizeof( m_pShareData->m_pKeyNameArr[0] ); ++i ){
-		m_pShareData->m_pKeyNameArr[i] = m_pKeyNameArr[i];
-	}
-	m_pShareData->m_CKeyWordSetMgr = m_CKeyWordSetMgr;
+	//for( i = 0; i < sizeof( m_pShareData->m_Common.m_pKeyNameArr ) / sizeof( m_pShareData->m_Common.m_pKeyNameArr[0] ); ++i ){
+	//	m_pShareData->m_Common.m_pKeyNameArr[i] = m_Common.m_pKeyNameArr[i];
+	//}
+	//m_pShareData->m_Common.m_CKeyWordSetMgr = m_Common.m_CKeyWordSetMgr;
 
 	m_pShareData->m_Common = m_Common;
 
@@ -415,24 +415,24 @@ void CPropCommon::ApplyData( void )
 		}
 	}
 
-	/* マクロ関係 */
-	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		m_pShareData->m_MacroTable[i] = m_MacroTable[i];
-	}
-	memcpy( m_pShareData->m_szMACROFOLDER, m_szMACROFOLDER, sizeof( m_pShareData->m_szMACROFOLDER ) );
-	m_pShareData->m_nMacroOnOpened = m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	m_pShareData->m_nMacroOnTypeChanged = m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	m_pShareData->m_nMacroOnSave = m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	///* マクロ関係 */
+	//for( i = 0; i < MAX_CUSTMACRO; ++i ){
+	//	m_pShareData->m_Common.m_MacroTable[i] = m_Common.m_MacroTable[i];
+	//}
+	//memcpy( m_pShareData->m_Common.m_szMACROFOLDER, m_Common.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_szMACROFOLDER ) );
+	//m_pShareData->m_Common.m_nMacroOnOpened = m_Common.m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	//m_pShareData->m_Common.m_nMacroOnTypeChanged = m_Common.m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	//m_pShareData->m_Common.m_nMacroOnSave = m_Common.m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
-	// ファイル名簡易表示関係
-	// 念のため，書き換える前に 0 を設定しておく
-	m_pShareData->m_nTransformFileNameArrNum = 0;
-	memcpy( m_pShareData->m_szTransformFileNameFrom, m_szTransformFileNameFrom,
-		sizeof( m_pShareData->m_szTransformFileNameFrom ) );
-	memcpy( m_pShareData->m_szTransformFileNameTo, m_szTransformFileNameTo,
-		sizeof( m_pShareData->m_szTransformFileNameTo ) );
+	//// ファイル名簡易表示関係
+	//// 念のため，書き換える前に 0 を設定しておく
+	//m_pShareData->m_Common.m_nTransformFileNameArrNum = 0;
+	//memcpy( m_pShareData->m_Common.m_szTransformFileNameFrom, m_Common.m_szTransformFileNameFrom,
+	//	sizeof( m_pShareData->m_Common.m_szTransformFileNameFrom ) );
+	//memcpy( m_pShareData->m_Common.m_szTransformFileNameTo, m_Common.m_szTransformFileNameTo,
+	//	sizeof( m_pShareData->m_Common.m_szTransformFileNameTo ) );
 
-	m_pShareData->m_nTransformFileNameArrNum = m_nTransformFileNameArrNum;
+	//m_pShareData->m_Common.m_nTransformFileNameArrNum = m_Common.m_nTransformFileNameArrNum;
 
 }
 

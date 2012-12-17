@@ -233,7 +233,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 					i |= _ALT;
 				}
-				m_pKeyNameArr[nIndex].m_nFuncCodeArr[i] = nFuncCode;
+				m_Common.m_pKeyNameArr[nIndex].m_nFuncCodeArr[i] = nFuncCode;
 				::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 				::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndFuncList );
 				return TRUE;
@@ -253,7 +253,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 					i |= _ALT;
 				}
-				m_pKeyNameArr[nIndex].m_nFuncCodeArr[i] = nFuncCode;
+				m_Common.m_pKeyNameArr[nIndex].m_nFuncCodeArr[i] = nFuncCode;
 				::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 				::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndFuncList );
 				return TRUE;
@@ -285,7 +285,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 					i |= _ALT;
 				}
-				nFuncCode = m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
+				nFuncCode = m_Common.m_pKeyNameArr[nIndex].m_nFuncCodeArr[i];
 				// Oct. 2, 2001 genta
 				// 2007.11.02 ryoji F_DISABLEなら未割付
 				if( nFuncCode == F_DISABLE ){
@@ -307,7 +307,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 				/* 機能に対応するキー名の取得(複数) */
 				CMemory**	ppcAssignedKeyList;
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(	/* 機能に対応するキー名の取得(複数) */
-					m_hInstance, m_nKeyNameArrNum, (KEYDATA*)m_pKeyNameArr,
+					m_hInstance, m_Common.m_nKeyNameArrNum, (KEYDATA*)m_Common.m_pKeyNameArr,
 					&ppcAssignedKeyList, nFuncCode,
 					FALSE	// 2007.02.22 ryoji デフォルト機能は取得しない
 				);	
@@ -366,9 +366,9 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 							p += _tcslen(STR_ALT_PLUS);
 							i |= _ALT;
 						}
-						for(j = 0; j < m_nKeyNameArrNum; j++)
+						for(j = 0; j < m_Common.m_nKeyNameArrNum; j++)
 						{
-							if( _tcscmp(m_pKeyNameArr[j].m_szKeyName, p) == 0 )
+							if( _tcscmp(m_Common.m_pKeyNameArr[j].m_szKeyName, p) == 0 )
 							{
 								::SendMessage( hwndKeyList, LB_SETCURSEL, (WPARAM)j, (LPARAM)0);
 								if( i & _SHIFT ) ::CheckDlgButton( hwndDlg, IDC_CHECK_SHIFT, BST_CHECKED );  //チェック
@@ -450,8 +450,8 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 
 	/* キー一覧に文字列をセット（リストボックス）*/
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
-	for( i = 0; i < m_nKeyNameArrNum; ++i ){
-			::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)m_pKeyNameArr[i].m_szKeyName );
+	for( i = 0; i < m_Common.m_nKeyNameArrNum; ++i ){
+			::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)m_Common.m_pKeyNameArr[i].m_szKeyName );
 	}
 
 	// 2009.08.15 nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
@@ -500,9 +500,9 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 	}
 	/* キー一覧に文字列をセット（リストボックス）*/
 	::SendMessage( hwndKeyList, LB_RESETCONTENT, 0, 0 );
-	for( i = 0; i < m_nKeyNameArrNum; ++i ){
+	for( i = 0; i < m_Common.m_nKeyNameArrNum; ++i ){
 		TCHAR	pszLabel[256];
-		wsprintf( pszLabel, _T("%s%s"), szKeyState, m_pKeyNameArr[i].m_szKeyName );
+		wsprintf( pszLabel, _T("%s%s"), szKeyState, m_Common.m_pKeyNameArr[i].m_szKeyName );
 		::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)pszLabel );
 	}
 	::SendMessage( hwndKeyList, LB_SETCURSEL, nIndex, 0 );
@@ -519,7 +519,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 
 	char			pHeader[STR_KEYDATA_HEAD_LEN + 1];
 	short			nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
-	const int		KEYNAME_SIZE = _countof(m_pKeyNameArr);
+	const int		KEYNAME_SIZE = _countof(m_Common.m_pKeyNameArr);
 	KEYDATA			pKeyNameArr[KEYNAME_SIZE];				/* キー割り当て表 */
 	HWND			hwndCtrl;
 	char			szInitDir[_MAX_PATH + 1];
@@ -643,8 +643,8 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 
 ToMaster:	//@@@ 2001.11.07 add MIK
 	/* データのコピー */
-	m_nKeyNameArrNum = nKeyNameArrNum;
-	memcpy( m_pKeyNameArr, pKeyNameArr, sizeof( pKeyNameArr ) );
+	m_Common.m_nKeyNameArrNum = nKeyNameArrNum;
+	memcpy( m_Common.m_pKeyNameArr, pKeyNameArr, sizeof( pKeyNameArr ) );
 
 //	CShareData::SetKeyNames( m_pShareData );	/* キー名称のセット */
 
@@ -665,7 +665,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
-	const int KEYNAME_SIZE = _countof(m_pKeyNameArr);
+	const int KEYNAME_SIZE = _countof(m_Common.m_pKeyNameArr);
 
 	strcpy( szPath, "" );
 	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
@@ -699,26 +699,26 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		}
 		
 		fprintf(fp, "%s\n", STR_KEYDATA_HEAD2);
-		fprintf(fp, "Count=%d\n", m_nKeyNameArrNum);
+		fprintf(fp, "Count=%d\n", m_Common.m_nKeyNameArrNum);
 		
 		for(i = 0; i < KEYNAME_SIZE; i++)
 		{
-			fprintf(fp, "KeyBind[%03d]=%04x", i, m_pKeyNameArr[i].m_nKeyCode);
+			fprintf(fp, "KeyBind[%03d]=%04x", i, m_Common.m_pKeyNameArr[i].m_nKeyCode);
 
 			for(j = 0; j < 8; j++)
 			{
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-//				p = CMacro::GetFuncInfoByID(m_hInstance, m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
-				p = CSMacroMgr::GetFuncInfoByID(m_hInstance, m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
+//				p = CMacro::GetFuncInfoByID(m_hInstance, m_Common.m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
+				p = CSMacroMgr::GetFuncInfoByID(m_hInstance, m_Common.m_pKeyNameArr[i].m_nFuncCodeArr[j], szFuncName, szFuncNameJapanese);
 				if( p ) {
 					fprintf(fp, ",%s", p);
 				}
 				else {
-					fprintf(fp, ",%d", m_pKeyNameArr[i].m_nFuncCodeArr[j]);
+					fprintf(fp, ",%d", m_Common.m_pKeyNameArr[i].m_nFuncCodeArr[j]);
 				}
 			}
 			
-			fprintf(fp, ",%s\n", m_pKeyNameArr[i].m_szKeyName);
+			fprintf(fp, ",%s\n", m_Common.m_pKeyNameArr[i].m_szKeyName);
 		}
 		
 		fclose(fp);

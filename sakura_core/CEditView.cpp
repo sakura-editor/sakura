@@ -3375,7 +3375,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 	if(tripleClickMode){
 		// マウス左トリプルクリックに対応する機能コードはm_Common.m_pKeyNameArr[5]に入っている
-		nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK].m_nFuncCodeArr[getCtrlKeyState()];
+		nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK].m_nFuncCodeArr[getCtrlKeyState()];
 		if( 0 == nFuncID ){
 			tripleClickMode = 0;	// 割り当て機能無しの時はトリプルクリック OFF
 		}
@@ -3999,7 +3999,7 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
+	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4061,7 +4061,7 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウス中ボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
+	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4120,7 +4120,7 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウスサイドボタン1に対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
+	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4182,7 +4182,7 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 	/* マウスサイドボタン2に対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
-	nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
+	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -5137,7 +5137,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	nIdx = getCtrlKeyState();
 
 	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[?]に入っている 2007.10.06 nasukoji */
-	nFuncID = m_pShareData->m_pKeyNameArr[
+	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[
 		m_dwTripleClickCheck ? MOUSEFUNCTION_QUADCLICK : MOUSEFUNCTION_DOUBLECLICK
 		].m_nFuncCodeArr[nIdx];
 	if(m_dwTripleClickCheck){
@@ -5151,7 +5151,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 
 		if(! nFuncID){
 			m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
-			nFuncID = m_pShareData->m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
+			nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
 			OnLBUTTONDOWN( fwKeys, xPos , yPos );	// カーソルをクリック位置へ移動する
 		}
 	}
@@ -10747,7 +10747,7 @@ searchnext:;
 						/* キーワードが登録単語ならば、色を変える */
 						j = i - nPos;
 						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-						nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
+						nIdx = m_pShareData->m_Common.m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
 							TypeDataPtr->m_nKeyWordSetIdx[0],
 							&pLine[nPos],
 							j
@@ -10769,7 +10769,7 @@ searchnext:;
 									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
 								{																							//MIK
 									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-									nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
+									nIdx = m_pShareData->m_Common.m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
 										TypeDataPtr->m_nKeyWordSetIdx[my_i] ,													//MIK
 										&pLine[nPos],																		//MIK
 										j																					//MIK

@@ -749,8 +749,8 @@ void CMenuDrawer::MyAppendMenu(
 		/* ƒƒjƒ…[ƒ‰ƒxƒ‹‚Ìì¬ */
 		CKeyBind::GetMenuLabel(
 			m_hInstance,
-			m_pShareData->m_nKeyNameArrNum,
-			m_pShareData->m_pKeyNameArr,
+			m_pShareData->m_Common.m_nKeyNameArrNum,
+			m_pShareData->m_Common.m_pKeyNameArr,
 			nFuncId,
 			szLabel,
 			bAddKeyStr

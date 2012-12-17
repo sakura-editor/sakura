@@ -157,8 +157,8 @@ CEditWnd::CEditWnd()
 	// 2009.08.15 Hidetaka Sakai, nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
 	if( m_pShareData->m_Common.m_bCreateAccelTblEachWin ){
 		m_hAccel = CKeyBind::CreateAccerelator(
-						m_pShareData->m_nKeyNameArrNum,
-						m_pShareData->m_pKeyNameArr
+						m_pShareData->m_Common.m_nKeyNameArrNum,
+						m_pShareData->m_Common.m_pKeyNameArr
 		);
 
 		if( NULL == m_hAccel ){
@@ -1168,8 +1168,8 @@ LRESULT CEditWnd::DispatchEvent(
 			int			j;
 			nAssignedKeyNum = CKeyBind::GetKeyStrList(
 				m_hInstance,
-				m_pShareData->m_nKeyNameArrNum,
-				(KEYDATA*)m_pShareData->m_pKeyNameArr,
+				m_pShareData->m_Common.m_nKeyNameArrNum,
+				(KEYDATA*)m_pShareData->m_Common.m_pKeyNameArr,
 				&ppcAssignedKeyList,
 				uItem
 			);
@@ -1472,8 +1472,8 @@ LRESULT CEditWnd::DispatchEvent(
 				// To Here Oct. 15, 2001 genta
 				/* 機能に対応するキー名の取得(複数) */
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(
-					m_hInstance, m_pShareData->m_nKeyNameArrNum,
-					(KEYDATA*)m_pShareData->m_pKeyNameArr, &ppcAssignedKeyList, lptip->hdr.idFrom
+					m_hInstance, m_pShareData->m_Common.m_nKeyNameArrNum,
+					(KEYDATA*)m_pShareData->m_Common.m_pKeyNameArr, &ppcAssignedKeyList, lptip->hdr.idFrom
 				);
 				if( 0 < nAssignedKeyNum ){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
@@ -1671,8 +1671,8 @@ LRESULT CEditWnd::DispatchEvent(
 
 		if( m_pShareData->m_Common.m_bCreateAccelTblEachWin ){		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
 			m_hAccel = CKeyBind::CreateAccerelator(
-				m_pShareData->m_nKeyNameArrNum,
-				m_pShareData->m_pKeyNameArr
+				m_pShareData->m_Common.m_nKeyNameArrNum,
+				m_pShareData->m_Common.m_pKeyNameArr
 			);
 
 			if( NULL == m_hAccel ){
@@ -2086,8 +2086,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 			int nFuncCode = CKeyBind::GetFuncCode(
 				wID,
-				m_pShareData->m_nKeyNameArrNum,
-				m_pShareData->m_pKeyNameArr
+				m_pShareData->m_Common.m_nKeyNameArrNum,
+				m_pShareData->m_Common.m_pKeyNameArr
 			);
 			m_cEditDoc.HandleCommand( nFuncCode | FA_FROMKEYBOARD );
 		}
@@ -2527,7 +2527,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 			
 			for( i = 0; i < MAX_CUSTMACRO; ++i ){
-				MacroRec *mp = &m_pShareData->m_MacroTable[i];
+				MacroRec *mp = &m_pShareData->m_Common.m_MacroTable[i];
 				if( mp->IsEnabled() ){
 					if(  mp->m_szName[0] ){
 						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + i, mp->m_szName );
@@ -2980,7 +2980,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 
 				// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 				// 2007.06.27 maru すでに編集ウィンドウは開いているのでFileReadがキャンセルされたときは開くマクロを実行する必要なし
-				if(TRUE==bRet) m_cEditDoc.RunAutoMacro( m_pShareData->m_nMacroOnOpened );
+				if(TRUE==bRet) m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_nMacroOnOpened );
 			}
 			else{
 				/* ファイルをドロップしたときは閉じて開く */
@@ -3011,7 +3011,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						ActivateFrameWindow( hWndOwner );
 
 						// 2006.09.01 ryoji オープン後自動実行マクロを実行する
-						m_cEditDoc.RunAutoMacro( m_pShareData->m_nMacroOnOpened );
+						m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_nMacroOnOpened );
 					}
 					goto end_of_drop_query;
 				}

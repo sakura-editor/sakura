@@ -292,10 +292,13 @@ struct ARRHEAD {
 	Version 98:
 	CommonSetting構造体整理開始
 
+	Version 99:
+	CommonSetting構造体整理:キー割り当て、強調キーワード、マクロ、ファイル名表示の移動
+
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 98;
+const unsigned int uShareDataVersion = 99;
 
 /*
 ||	Singleton風
@@ -443,7 +446,7 @@ bool CShareData::InitShareData()
 		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
-		_tcscpy(m_pShareData->m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
+		_tcscpy(m_pShareData->m_Common.m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
 		m_pShareData->m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
 		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
@@ -487,28 +490,28 @@ bool CShareData::InitShareData()
 		for( i = 0; i < MAX_GREPFOLDER; ++i ){
 			_tcscpy( m_pShareData->m_szGREPFOLDERArr[i], _T("") );
 		}
-		_tcscpy( m_pShareData->m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
+		_tcscpy( m_pShareData->m_Common.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
 		_tcscpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
 
 		for( i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
-			_tcscpy( m_pShareData->m_szTransformFileNameFrom[i], _T("") );
-			_tcscpy( m_pShareData->m_szTransformFileNameTo[i], _T("") );
+			_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[i], _T("") );
+			_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[i], _T("") );
 		}
-		_tcscpy( m_pShareData->m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameTo[0], _T("デスクトップ\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameFrom[1], _T("%Personal%\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameTo[1], _T("マイドキュメント\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameFrom[2], _T("%Cache%\\Content.IE5\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameTo[2], _T("IEキャッシュ\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameFrom[3], _T("%TEMP%\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameTo[3],   _T("TEMP\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameFrom[4], _T("%Common DeskTop%\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameTo[4],   _T("共有デスクトップ\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameFrom[5], _T("%Common Documents%\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameTo[5], _T("共有ドキュメント\\") );
-		_tcscpy( m_pShareData->m_szTransformFileNameFrom[6], _T("%AppData%\\") );	// 2007.05.19 ryoji 追加
-		_tcscpy( m_pShareData->m_szTransformFileNameTo[6], _T("アプリデータ\\") );	// 2007.05.19 ryoji 追加
-		m_pShareData->m_nTransformFileNameArrNum = 7;
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[0], _T("デスクトップ\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[1], _T("%Personal%\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[1], _T("マイドキュメント\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[2], _T("%Cache%\\Content.IE5\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[2], _T("IEキャッシュ\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[3], _T("%TEMP%\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[3],   _T("TEMP\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[4], _T("%Common DeskTop%\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[4],   _T("共有デスクトップ\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[5], _T("%Common Documents%\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[5], _T("共有ドキュメント\\") );
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameFrom[6], _T("%AppData%\\") );	// 2007.05.19 ryoji 追加
+		_tcscpy( m_pShareData->m_Common.m_szTransformFileNameTo[6], _T("アプリデータ\\") );	// 2007.05.19 ryoji 追加
+		m_pShareData->m_Common.m_nTransformFileNameArrNum = 7;
 		
 		/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
 			必要になるまで遅らせるために、CPrintに、CShareDataを操作する権限を与える。
@@ -783,16 +786,16 @@ bool CShareData::InitShareData()
 
 		//	From Here Sep. 14, 2001 genta
 		//	Macro登録の初期化
-		MacroRec *mptr = m_pShareData->m_MacroTable;
+		MacroRec *mptr = m_pShareData->m_Common.m_MacroTable;
 		for( i = 0; i < MAX_CUSTMACRO; ++i, ++mptr ){
 			mptr->m_szName[0] = '\0';
 			mptr->m_szFile[0] = '\0';
 			mptr->m_bReloadWhenExecute = FALSE;
 		}
 		//	To Here Sep. 14, 2001 genta
-		m_pShareData->m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-		m_pShareData->m_nMacroOnTypeChanged = -1;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-		m_pShareData->m_nMacroOnSave = -1;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+		m_pShareData->m_Common.m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+		m_pShareData->m_Common.m_nMacroOnTypeChanged = -1;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+		m_pShareData->m_Common.m_nMacroOnSave = -1;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 		// 2004/06/21 novice タグジャンプ機能追加
 		m_pShareData->m_TagJumpNum = 0;
@@ -856,16 +859,16 @@ void CShareData::SetKeyNameArrVal(
 	short			nFuncCode_7
 )
 {
-	pShareData->m_pKeyNameArr[nIdx].m_nKeyCode = nKeyCode;
-	_tcscpy( pShareData->m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[0] = nFuncCode_0;
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[1] = nFuncCode_1;
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[2] = nFuncCode_2;
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[3] = nFuncCode_3;
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[4] = nFuncCode_4;
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[5] = nFuncCode_5;
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[6] = nFuncCode_6;
-	pShareData->m_pKeyNameArr[nIdx].m_nFuncCodeArr[7] = nFuncCode_7;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nKeyCode = nKeyCode;
+	_tcscpy( pShareData->m_Common.m_pKeyNameArr[nIdx].m_szKeyName, pszKeyName );
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[0] = nFuncCode_0;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[1] = nFuncCode_1;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[2] = nFuncCode_2;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[3] = nFuncCode_3;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[4] = nFuncCode_4;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[5] = nFuncCode_5;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[6] = nFuncCode_6;
+	pShareData->m_Common.m_pKeyNameArr[nIdx].m_nFuncCodeArr[7] = nFuncCode_7;
 }
 
 /*!
@@ -1787,7 +1790,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 */
 int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 {
-	if( -1 != idx && !m_pShareData->m_MacroTable[idx].IsEnabled() )
+	if( -1 != idx && !m_pShareData->m_Common.m_MacroTable[idx].IsEnabled() )
 		return 0;
 	TCHAR *ptr;
 	TCHAR *pszFile;
@@ -1795,7 +1798,7 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 	if( -1 == idx ){
 		pszFile = _T("RecKey.mac");
 	}else{
-		pszFile = m_pShareData->m_MacroTable[idx].m_szFile;
+		pszFile = m_pShareData->m_Common.m_MacroTable[idx].m_szFile;
 	}
 	if( pszFile[0] == _T('\0') ){	//	ファイル名が無い
 		if( pszPath != NULL ){
@@ -1807,7 +1810,7 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 	int nLen = _tcslen( ptr ); // Jul. 21, 2003 genta strlen対象が誤っていたためマクロ実行ができない
 
 	if( !_IS_REL_PATH( pszFile )	// 絶対パス
-		|| m_pShareData->m_szMACROFOLDER[0] == _T('\0') ){	//	フォルダ指定なし
+		|| m_pShareData->m_Common.m_szMACROFOLDER[0] == _T('\0') ){	//	フォルダ指定なし
 		if( pszPath == NULL || nBufLen <= nLen ){
 			return -nLen;
 		}
@@ -1816,18 +1819,18 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 	}
 	else {	//	フォルダ指定あり
 		//	相対パス→絶対パス
-		int nFolderSep = AddLastChar( m_pShareData->m_szMACROFOLDER, sizeof(m_pShareData->m_szMACROFOLDER), _T('\\') );
+		int nFolderSep = AddLastChar( m_pShareData->m_Common.m_szMACROFOLDER, sizeof(m_pShareData->m_Common.m_szMACROFOLDER), _T('\\') );
 		int nAllLen;
 		TCHAR *pszDir;
 
 		 // 2003.06.24 Moca フォルダも相対パスなら実行ファイルからのパス
 		// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-		if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
-			TCHAR szDir[_MAX_PATH + sizeof( m_pShareData->m_szMACROFOLDER )];
-			GetInidirOrExedir( szDir, m_pShareData->m_szMACROFOLDER );
+		if( _IS_REL_PATH( m_pShareData->m_Common.m_szMACROFOLDER ) ){
+			TCHAR szDir[_MAX_PATH + sizeof( m_pShareData->m_Common.m_szMACROFOLDER )];
+			GetInidirOrExedir( szDir, m_pShareData->m_Common.m_szMACROFOLDER );
 			pszDir = szDir;
 		}else{
-			pszDir = m_pShareData->m_szMACROFOLDER;
+			pszDir = m_pShareData->m_Common.m_szMACROFOLDER;
 		}
 
 		int nDirLen = _tcslen( pszDir );
@@ -1853,10 +1856,10 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 */
 bool CShareData::BeReloadWhenExecuteMacro( int idx )
 {
-	if( !m_pShareData->m_MacroTable[idx].IsEnabled() )
+	if( !m_pShareData->m_Common.m_MacroTable[idx].IsEnabled() )
 		return false;
 
-	return ( m_pShareData->m_MacroTable[idx].m_bReloadWhenExecute == TRUE );
+	return ( m_pShareData->m_Common.m_MacroTable[idx].m_bReloadWhenExecute == TRUE );
 }
 
 /*!	m_szSEARCHKEYArrにpszSearchKeyを追加する。
@@ -2044,12 +2047,12 @@ LPTSTR CShareData::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int
 	if( 0 < m_nTransformFileNameCount ){
 		GetFilePathFormat( pszSrc, pszDest, nDestLen,
 			m_szTransformFileNameFromExp[0],
-			m_pShareData->m_szTransformFileNameTo[m_nTransformFileNameOrgId[0]] );
+			m_pShareData->m_Common.m_szTransformFileNameTo[m_nTransformFileNameOrgId[0]] );
 		for( i = 1; i < m_nTransformFileNameCount; i++ ){
 			_tcscpy( szBuf, pszDest );
 			GetFilePathFormat( szBuf, pszDest, nDestLen,
 				m_szTransformFileNameFromExp[i],
-				m_pShareData->m_szTransformFileNameTo[m_nTransformFileNameOrgId[i]] );
+				m_pShareData->m_Common.m_szTransformFileNameTo[m_nTransformFileNameOrgId[i]] );
 		}
 	}else{
 		// 変換する必要がない コピーだけする
@@ -2068,9 +2071,9 @@ LPTSTR CShareData::GetTransformFileNameFast( LPCTSTR pszSrc, LPTSTR pszDest, int
 int CShareData::TransformFileName_MakeCache( void ){
 	int i;
 	int nCount = 0;
-	for( i = 0; i < m_pShareData->m_nTransformFileNameArrNum; i++ ){
-		if( '\0' != m_pShareData->m_szTransformFileNameFrom[i][0] ){
-			if( ExpandMetaToFolder( m_pShareData->m_szTransformFileNameFrom[i],
+	for( i = 0; i < m_pShareData->m_Common.m_nTransformFileNameArrNum; i++ ){
+		if( '\0' != m_pShareData->m_Common.m_szTransformFileNameFrom[i][0] ){
+			if( ExpandMetaToFolder( m_pShareData->m_Common.m_szTransformFileNameFrom[i],
 			 m_szTransformFileNameFromExp[nCount], _MAX_PATH ) ){
 				// m_szTransformFileNameToとm_szTransformFileNameFromExpの番号がずれることがあるので記録しておく
 				m_nTransformFileNameOrgId[nCount] = i;
@@ -4603,13 +4606,13 @@ static const char* ppszKeyWordsRTF[] = {
 void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 {
 	/* 強調キーワードのテストデータ */
-	pShareData->m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = 0;
+	pShareData->m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = 0;
 
 	int nSetCount = -1;
 
 #define PopulateKeyword(name,case_sensitive,ary) \
-	pShareData->m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
-	pShareData->m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, _countof(ary), (ary) );
+	pShareData->m_Common.m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
+	pShareData->m_Common.m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, _countof(ary), (ary) );
 	
 	PopulateKeyword( "C/C++", true, ppszKeyWordsCPP );			/* セット 0の追加 */
 	PopulateKeyword( "HTML", false, ppszKeyWordsHTML );			/* セット 1の追加 */
@@ -4894,7 +4897,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	};
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
-	if( nKeyDataInitNum > _countof( pShareData->m_pKeyNameArr ) ) {
+	if( nKeyDataInitNum > _countof( pShareData->m_Common.m_pKeyNameArr ) ) {
 		PleaseReportToAuthor( NULL, _T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
 		return false;
 	}
@@ -4915,7 +4918,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 			KeyDataInit[i].nFuncCode_7
 		 );
 	}
-	pShareData->m_nKeyNameArrNum = nKeyDataInitNum;
+	pShareData->m_Common.m_nKeyNameArrNum = nKeyDataInitNum;
 	return true;
 }
 

@@ -1683,8 +1683,8 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	int nIdx = getCtrlKeyState();
 	int nFuncCode=CKeyBind::GetFuncCode(
 			((WORD)(((BYTE)(KeyCode)) | ((WORD)((BYTE)(nIdx))) << 8)),
-			m_pShareData->m_nKeyNameArrNum,
-			m_pShareData->m_pKeyNameArr
+			m_pShareData->m_Common.m_nKeyNameArrNum,
+			m_pShareData->m_Common.m_pKeyNameArr
 	);
 	switch( nFuncCode ){
 	case F_REDRAW:

@@ -938,7 +938,7 @@ searchnext:;
 						/* キーワードが登録単語ならば、色を変える */
 						j = i - nPos;
 						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-						nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
+						nIdx = m_pShareData->m_Common.m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
 							TypeDataPtr->m_nKeyWordSetIdx[0],
 							&pLine[nPos],
 							j
@@ -964,7 +964,7 @@ searchnext:;
 									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
 								{																							//MIK
 									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-									nIdx = m_pShareData->m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
+									nIdx = m_pShareData->m_Common.m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
 										TypeDataPtr->m_nKeyWordSetIdx[ my_i ] ,													//MIK
 										&pLine[nPos],																		//MIK
 										j																					//MIK

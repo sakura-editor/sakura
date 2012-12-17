@@ -7963,8 +7963,8 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 
 	CKeyBind::CreateKeyBindList(
 		m_hInstance,
-		m_pShareData->m_nKeyNameArrNum,
-		m_pShareData->m_pKeyNameArr,
+		m_pShareData->m_Common.m_nKeyNameArrNum,
+		m_pShareData->m_Common.m_pKeyNameArr,
 		cMemKeyList,
 		&m_pcEditDoc->m_cFuncLookup,	//	Oct. 31, 2001 genta 追加
 		FALSE	// 2007.02.22 ryoji 追加
@@ -8341,16 +8341,16 @@ void CEditView::Command_RECKEYMACRO( void )
 			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"), nRet );
 			return;
 		}else{
-			_tcscpy( m_pShareData->m_szKeyMacroFileName, szInitDir );
+			_tcscpy( m_pShareData->m_Common.m_szKeyMacroFileName, szInitDir );
 		}
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		int nSaveResult=m_pcEditDoc->m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
 			m_hInstance,
-			m_pShareData->m_szKeyMacroFileName
+			m_pShareData->m_Common.m_szKeyMacroFileName
 		);
 		if ( !nSaveResult ){
-			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("マクロファイルを作成できませんでした。\n\n%s"), m_pShareData->m_szKeyMacroFileName );
+			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("マクロファイルを作成できませんでした。\n\n%s"), m_pShareData->m_Common.m_szKeyMacroFileName );
 		}
 	}else{
 		m_pShareData->m_bRecordingKeyMacro = TRUE;
@@ -8390,10 +8390,10 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	_tcscpy( szPath, _T("") );
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	if( _IS_REL_PATH( m_pShareData->m_szMACROFOLDER ) ){
-		GetInidirOrExedir( szInitDir, m_pShareData->m_szMACROFOLDER );
+	if( _IS_REL_PATH( m_pShareData->m_Common.m_szMACROFOLDER ) ){
+		GetInidirOrExedir( szInitDir, m_pShareData->m_Common.m_szMACROFOLDER );
 	}else{
-		_tcscpy( szInitDir, m_pShareData->m_szMACROFOLDER );	/* マクロ用フォルダ */
+		_tcscpy( szInitDir, m_pShareData->m_Common.m_szMACROFOLDER );	/* マクロ用フォルダ */
 	}
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -8407,8 +8407,8 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szMACROFOLDER, NULL );
-//	strcat( m_pShareData->m_szMACROFOLDER, "\\" );
+//	::SplitPath_FolderAndFile( szPath, m_pShareData->m_Common.m_szMACROFOLDER, NULL );
+//	strcat( m_pShareData->m_Common.m_szMACROFOLDER, "\\" );
 
 	/* キーボードマクロの保存 */
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -8434,17 +8434,17 @@ void CEditView::Command_EXECKEYMACRO( void )
 
 	/* キーボードマクロの実行 */
 	//@@@ 2002.1.24 YAZAKI
-	if ( m_pShareData->m_szKeyMacroFileName[0] ){
+	if ( m_pShareData->m_Common.m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		BOOL bLoadResult = m_pcEditDoc->m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
 			m_hInstance,
-			m_pShareData->m_szKeyMacroFileName,
+			m_pShareData->m_Common.m_szKeyMacroFileName,
 			NULL
 		);
 		if ( !bLoadResult ){
-			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), m_pShareData->m_szKeyMacroFileName );
+			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), m_pShareData->m_Common.m_szKeyMacroFileName );
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
@@ -8474,7 +8474,7 @@ void CEditView::Command_LOADKEYMACRO( void )
 	TCHAR			szInitDir[_MAX_PATH + 1];
 	const TCHAR*		pszFolder;
 	_tcscpy( szPath, _T("") );
-	pszFolder = m_pShareData->m_szMACROFOLDER;
+	pszFolder = m_pShareData->m_Common.m_szMACROFOLDER;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( pszFolder ) ){
@@ -8497,7 +8497,7 @@ void CEditView::Command_LOADKEYMACRO( void )
 
 	/* キーボードマクロの読み込み */
 	//@@@ 2002.1.24 YAZAKI 読み込みといいつつも、ファイル名をコピーするだけ。実行直前に読み込む
-	_tcscpy(m_pShareData->m_szKeyMacroFileName, szPath);
+	_tcscpy(m_pShareData->m_Common.m_szKeyMacroFileName, szPath);
 //	m_pShareData->m_CKeyMacroMgr.LoadKeyMacro( m_hInstance, m_hWnd, szPath );
 	return;
 }
@@ -8521,7 +8521,7 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 
 	if( pszType == NULL && pszPath == NULL ) {
 		// ファイルが指定されていない場合、ダイアログを表示する
-		pszFolder = m_pShareData->m_szMACROFOLDER;
+		pszFolder = m_pShareData->m_Common.m_szMACROFOLDER;
 
 		if( _IS_REL_PATH( pszFolder ) ){
 			GetInidirOrExedir( szInitDir, pszFolder );

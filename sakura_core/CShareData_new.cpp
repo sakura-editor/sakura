@@ -385,7 +385,7 @@ void CShareData::ShareData_IO_Folders( CProfile& cProfile )
 	const char* pszSecName = "Folders";
 	/* マクロ用フォルダ */
 	cProfile.IOProfileData( pszSecName, "szMACROFOLDER",
-		m_pShareData->m_szMACROFOLDER, sizeof( m_pShareData->m_szMACROFOLDER ));
+		m_pShareData->m_Common.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_szMACROFOLDER ));
 	/* 設定インポート用フォルダ */
 	cProfile.IOProfileData( pszSecName, "szIMPORTFOLDER",
 		m_pShareData->m_szIMPORTFOLDER, sizeof( m_pShareData->m_szIMPORTFOLDER ));
@@ -430,21 +430,21 @@ void CShareData::ShareData_IO_Nickname( CProfile& cProfile )
 	int		i;
 	char	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, "ArrNum", m_pShareData->m_nTransformFileNameArrNum );
-	int nSize = m_pShareData->m_nTransformFileNameArrNum;
+	cProfile.IOProfileData( pszSecName, "ArrNum", m_pShareData->m_Common.m_nTransformFileNameArrNum );
+	int nSize = m_pShareData->m_Common.m_nTransformFileNameArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "From%02d", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szTransformFileNameFrom[i], sizeof( m_pShareData->m_szTransformFileNameFrom[0] ));
+			m_pShareData->m_Common.m_szTransformFileNameFrom[i], sizeof( m_pShareData->m_Common.m_szTransformFileNameFrom[0] ));
 		wsprintf( szKeyName, "To%02d", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szTransformFileNameTo[i], sizeof( m_pShareData->m_szTransformFileNameTo[0] ));
+			m_pShareData->m_Common.m_szTransformFileNameTo[i], sizeof( m_pShareData->m_Common.m_szTransformFileNameTo[0] ));
 	}
 	// 読み込み時，残りをNULLで再初期化
 	if( cProfile.IsReadingMode() ){
 		for( ; i < MAX_TRANSFORM_FILENAME; i++ ){
-			m_pShareData->m_szTransformFileNameFrom[i][0] = '\0';
-			m_pShareData->m_szTransformFileNameTo[i][0]   = '\0';
+			m_pShareData->m_Common.m_szTransformFileNameFrom[i][0] = '\0';
+			m_pShareData->m_Common.m_szTransformFileNameTo[i][0]   = '\0';
 		}
 	}
 }
@@ -787,10 +787,10 @@ void CShareData::ShareData_IO_KeyBind( CProfile& cProfile )
 	int		i;
 	char	szKeyName[64];
 	char	szKeyData[1024];
-	int		nSize = m_pShareData->m_nKeyNameArrNum;
+	int		nSize = m_pShareData->m_Common.m_nKeyNameArrNum;
 	for( i = 0; i < nSize; ++i ){
 		// 2005.04.07 D.S.Koba
-		KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
+		KEYDATA& keydata = m_pShareData->m_Common.m_pKeyNameArr[i];
 		strcpy( szKeyName, keydata.m_szKeyName );
 		
 		if( cProfile.IsReadingMode() ){
@@ -1313,7 +1313,7 @@ void CShareData::ShareData_IO_KeyWords( CProfile& cProfile )
 	int				i, j;
 	char			szKeyName[64];
 	char			szKeyData[1024];
-	CKeyWordSetMgr*	pCKeyWordSetMgr = &m_pShareData->m_CKeyWordSetMgr;
+	CKeyWordSetMgr*	pCKeyWordSetMgr = &m_pShareData->m_Common.m_CKeyWordSetMgr;
 	int				nKeyWordSetNum = pCKeyWordSetMgr->m_nKeyWordSetNum;
 
 	cProfile.IOProfileData( pszSecName, "nCurrentKeyWordSetIdx"	, pCKeyWordSetMgr->m_nCurrentKeyWordSetIdx );
@@ -1395,7 +1395,7 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 	int		i;	
 	char	szKeyName[64];
 	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		MacroRec& macrorec = m_pShareData->m_MacroTable[i];
+		MacroRec& macrorec = m_pShareData->m_Common.m_MacroTable[i];
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
 		if( !cProfile.IsReadingMode() && !_tcslen(macrorec.m_szName) && !_tcslen(macrorec.m_szFile) ) continue;
@@ -1406,9 +1406,9 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 		wsprintf( szKeyName, "ReloadWhenExecute[%03d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_bReloadWhenExecute );
 	}
-	cProfile.IOProfileData( pszSecName, "nMacroOnOpened", m_pShareData->m_nMacroOnOpened );	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, "nMacroOnTypeChanged", m_pShareData->m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, "nMacroOnSave", m_pShareData->m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnOpened", m_pShareData->m_Common.m_nMacroOnOpened );	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnTypeChanged", m_pShareData->m_Common.m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnSave", m_pShareData->m_Common.m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 }
 
 /*!

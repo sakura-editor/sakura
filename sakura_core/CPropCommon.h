@@ -108,25 +108,25 @@ public:
 	*/
 	LPCTSTR			m_pszHelpFile;
 	CommonSetting	m_Common;
-	short			m_nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
-	KEYDATA			m_pKeyNameArr[100];				/* キー割り当て表 */
+	//short			m_nKeyNameArrNum;				/* キー割り当て表の有効データ数 */
+	//KEYDATA			m_pKeyNameArr[100];				/* キー割り当て表 */
 
-	CKeyWordSetMgr	m_CKeyWordSetMgr;
+	//CKeyWordSetMgr	m_CKeyWordSetMgr;
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	//STypeConfig			m_Types[MAX_TYPES];
 	// 2005.01.13 MIK セット数増加
 	int				m_Types_nKeyWordSetIdx[MAX_TYPES][MAX_KEYWORDSET_PER_TYPE];
-	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
-	char			m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
-	int				m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	int				m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	int				m_nMacroOnSave;		/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	////@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
+	//MacroRec		m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
+	//char			m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
+	//int				m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	//int				m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	//int				m_nMacroOnSave;		/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
-	//! ファイル名簡易表示
-	int		m_nTransformFileNameArrNum;
-	char	m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
-	char	m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+	////! ファイル名簡易表示
+	//int		m_nTransformFileNameArrNum;
+	//char	m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+	//char	m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 
 protected:
 	/*

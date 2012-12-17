@@ -633,6 +633,10 @@ struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       キー割り当て                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	/* キー割り当て */
+	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
+	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
+
 	BOOL				m_bCreateAccelTblEachWin;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -655,6 +659,8 @@ struct CommonSetting {
 //                      強調キーワード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	/* 強調キーワード設定 */
+	CKeyWordSetMgr		m_CKeyWordSetMgr;					/* 強調キーワード */
+	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
@@ -685,10 +691,19 @@ struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          マクロ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	char				m_szKeyMacroFileName[MAX_PATH];	/* キーボードマクロのファイル名 */
+	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル	//	Sep. 14, 2001 genta
+	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
+	int					m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int					m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	int					m_nMacroOnSave;				/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名表示                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	int					m_nTransformFileNameArrNum;
+	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
+	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//お気に入り	//@@@ 2003.04.08 MIK
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       アウトライン                          //
@@ -782,10 +797,6 @@ struct DLLSHAREDATA {
 	char				m_szOPENFOLDERArr[MAX_OPENFOLDER][_MAX_PATH];
 	bool				m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
 
-	int					m_nTransformFileNameArrNum;
-	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
-	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//お気に入り	//@@@ 2003.04.08 MIK
-
 	int					m_nSEARCHKEYArrNum;
 	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
 	int					m_nREPLACEKEYArrNum;
@@ -795,15 +806,8 @@ struct DLLSHAREDATA {
 	int					m_nGREPFOLDERArrNum;
 	char				m_szGREPFOLDERArr[MAX_GREPFOLDER][_MAX_PATH];
 
-	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
 	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
 	
-	//	Sep. 14, 2001 genta
-	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル
-	int					m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	int					m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	int					m_nMacroOnSave;				/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-
 	// 2004/06/21 タグジャンプ機能追加
 	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
 	int					m_TagJumpTop;					//!< スタックの一番上の位置
@@ -818,16 +822,8 @@ struct DLLSHAREDATA {
 	/**** 共通設定 ****/
 	CommonSetting		m_Common;
 
-	/* キー割り当て */
-	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
-	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
-
 	/**** 印刷ページ設定 ****/
 	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
-
-	/* 強調キーワード設定 */
-	CKeyWordSetMgr		m_CKeyWordSetMgr;					/* 強調キーワード */
-	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */
 
 	/* **** タイプ別設定 **** */
 	STypeConfig			m_Types[MAX_TYPES];
@@ -838,7 +834,6 @@ struct DLLSHAREDATA {
 	*/
 	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */
 	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
-	char				m_szKeyMacroFileName[MAX_PATH];	/* キーボードマクロのファイル名 */
 
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 	/* **** その他のダイアログ **** */

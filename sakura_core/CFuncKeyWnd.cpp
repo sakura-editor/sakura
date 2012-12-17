@@ -325,8 +325,8 @@ LRESULT CFuncKeyWnd::OnTimer( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			// 2007.02.22 ryoji CKeyBind::GetFuncCode()‚ðŽg‚¤
 			int	nFuncCode = CKeyBind::GetFuncCode(
 					(((VK_F1 + i) | ((WORD)((BYTE)(nIdx))) << 8)),
-					m_pShareData->m_nKeyNameArrNum,
-					m_pShareData->m_pKeyNameArr
+					m_pShareData->m_Common.m_nKeyNameArrNum,
+					m_pShareData->m_Common.m_pKeyNameArr
 			);
 			if( nFuncCode != m_nFuncCodeArr[i] ){
 				m_nFuncCodeArr[i] = nFuncCode;

@@ -294,7 +294,7 @@ BOOL CEditDoc::Create(
 	MY_TRACETIME( cRunningTimer, "View created" );
 
 	//	Oct. 2, 2001 genta
-	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_MacroTable, &m_pShareData->m_Common );
+	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_Common.m_MacroTable, &m_pShareData->m_Common );
 
 	/* 設定プロパティシートの初期化１ */
 	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, m_pcSMacroMgr, &(pCEditWnd->m_CMenuDrawer) );
@@ -545,7 +545,7 @@ void CEditDoc::OnChangeType()
 	OnChangeSetting();
 
 	// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
-	RunAutoMacro( m_pShareData->m_nMacroOnTypeChanged );
+	RunAutoMacro( m_pShareData->m_Common.m_nMacroOnTypeChanged );
 }
 
 /*! ビューに設定変更を反映させる
@@ -4326,7 +4326,7 @@ void CEditDoc::ReloadCurrentFile(
 	m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 
 	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
-	RunAutoMacro( m_pShareData->m_nMacroOnOpened );
+	RunAutoMacro( m_pShareData->m_Common.m_nMacroOnOpened );
 }
 
 //	From Here Nov. 20, 2000 genta
@@ -4686,7 +4686,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 					break;
 				case STAND_KEYMACRO:
 					{
-						char* pszMacroFilePath = CShareData::getInstance()->GetShareData()->m_szKeyMacroFileName;
+						char* pszMacroFilePath = CShareData::getInstance()->GetShareData()->m_Common.m_szKeyMacroFileName;
 						q = strncpy_ex( q, q_max - q, pszMacroFilePath, strlen(pszMacroFilePath) );
 					}
 					break;
