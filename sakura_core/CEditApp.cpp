@@ -105,7 +105,7 @@ void CEditApp::DoGrep()
 
 	/* 新規編集ウィンドウの追加 ver 0 */
 	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE,
-		false, NULL, m_pShareData->m_Common.m_bNewWindow? true : false );
+		false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 
 	delete [] pCmdLine;
 }
@@ -254,7 +254,7 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 bool CEditApp::CreateTrayIcon( HWND hWnd )
 {
 	// タスクトレイのアイコンを作る
-	if( m_pShareData->m_Common.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
+	if( m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
 		//	Dec. 02, 2002 genta
 		HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 //From Here Jan. 12, 2001 JEPRO トレイアイコンにポイントするとバージョンno.が表示されるように修正
@@ -461,7 +461,7 @@ LRESULT CEditApp::DispatchEvent(
 	/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 	case MYWM_DELETE_ME:
 		// タスクトレイのアイコンを常駐しない、または、トレイにアイコンを作っていない
-		if( !m_pShareData->m_Common.m_bStayTaskTray || !m_bCreatedTrayIcon ){
+		if( !m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray || !m_bCreatedTrayIcon ){
 			// 現在開いている編集窓のリスト
 			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 			if( 0 < nRowNum ){
@@ -482,16 +482,16 @@ LRESULT CEditApp::DispatchEvent(
 
 		/* タスクトレイ左クリックメニューへのショートカットキー登録 */
 		wHotKeyMods = 0;
-		if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_wTrayMenuHotKeyMods ){
+		if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 			wHotKeyMods |= MOD_SHIFT;
 		}
-		if( HOTKEYF_CONTROL & m_pShareData->m_Common.m_wTrayMenuHotKeyMods ){
+		if( HOTKEYF_CONTROL & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 			wHotKeyMods |= MOD_CONTROL;
 		}
-		if( HOTKEYF_ALT & m_pShareData->m_Common.m_wTrayMenuHotKeyMods ){
+		if( HOTKEYF_ALT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 			wHotKeyMods |= MOD_ALT;
 		}
-		wHotKeyCode = m_pShareData->m_Common.m_wTrayMenuHotKeyCode;
+		wHotKeyCode = m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
 		::RegisterHotKey(
 			m_hWnd,
 			ID_HOTKEY_TRAYMENU,
@@ -530,16 +530,16 @@ LRESULT CEditApp::DispatchEvent(
 			::UnregisterHotKey( m_hWnd, ID_HOTKEY_TRAYMENU );
 			/* タスクトレイ左クリックメニューへのショートカットキー登録 */
 			wHotKeyMods = 0;
-			if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_wTrayMenuHotKeyMods ){
+			if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 				wHotKeyMods |= MOD_SHIFT;
 			}
-			if( HOTKEYF_CONTROL & m_pShareData->m_Common.m_wTrayMenuHotKeyMods ){
+			if( HOTKEYF_CONTROL & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 				wHotKeyMods |= MOD_CONTROL;
 			}
-			if( HOTKEYF_ALT & m_pShareData->m_Common.m_wTrayMenuHotKeyMods ){
+			if( HOTKEYF_ALT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
 				wHotKeyMods |= MOD_ALT;
 			}
-			wHotKeyCode = m_pShareData->m_Common.m_wTrayMenuHotKeyCode;
+			wHotKeyCode = m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
 			::RegisterHotKey(
 				m_hWnd,
 				ID_HOTKEY_TRAYMENU,
@@ -703,7 +703,7 @@ LRESULT CEditApp::DispatchEvent(
 							}
 							// 新たな編集ウィンドウを起動
 							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
-								true, NULL, m_pShareData->m_Common.m_bNewWindow? true : false );
+								true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 						}
 					}
 					break;
@@ -754,7 +754,7 @@ LRESULT CEditApp::DispatchEvent(
 								FALSE,
 								false,
 								NULL,
-								m_pShareData->m_Common.m_bNewWindow? true : false
+								m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false
 							);
 
 						}
@@ -814,7 +814,7 @@ LRESULT CEditApp::DispatchEvent(
 
 							// 新たな編集ウィンドウを起動
 							CEditApp::OpenNewEditor( m_hInstance, m_hWnd, szPath, nCharCode, bReadOnly,
-								true, NULL, m_pShareData->m_Common.m_bNewWindow? true : false );
+								true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 						}
 					}
 					break;
@@ -823,7 +823,7 @@ LRESULT CEditApp::DispatchEvent(
 			case WM_LBUTTONDBLCLK:
 				bLDClick = true;		/* 03/02/20 ai */
 				/* 新規編集ウィンドウの追加 */
-				OnNewEditor( m_pShareData->m_Common.m_bNewWindow == TRUE  );
+				OnNewEditor( m_pShareData->m_Common.m_sTabBar.m_bNewWindow == TRUE  );
 				// Apr. 1, 2003 genta この後で表示されたメニューは閉じる
 				::PostMessage( m_hWnd, WM_CANCELMODE, 0, 0 );
 				return 0L;
@@ -920,8 +920,8 @@ void CEditApp::OnNewEditor( bool bNewWindow )
 
 	// 新規ウィンドウで開くオプションは、タブバー＆グループ化を前提とする
 	bNewWindow = bNewWindow
-				 && m_pShareData->m_Common.m_bDispTabWnd == TRUE
-				 && m_pShareData->m_Common.m_bDispTabWndMultiWin == FALSE;
+				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd == TRUE
+				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin == FALSE;
 
 	int nCount = mrufolder.Length();
 	for( int i = 0; i < nCount ; i++ ){
@@ -1074,7 +1074,7 @@ bool CEditApp::OpenNewEditor(
 	}
 	else{
 		// タブまとめ時は起動したプロセスが立ち上がるまでしばらくタイトルバーをアクティブに保つ	// 2007.02.03 ryoji
-		if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ){
+		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 			WaitForInputIdle( p.hProcess, 3000 );
 			sync = true;
 		}
@@ -1184,7 +1184,7 @@ void CEditApp::TerminateApplication(
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();	/* 共有データ構造体のアドレスを返す */
 
 	/* 現在の編集ウィンドウの数を調べる */
-	if( pShareData->m_Common.m_bExitConfirm ){	//終了時の確認
+	if( pShareData->m_Common.m_sGeneral.m_bExitConfirm ){	//終了時の確認
 		if( 0 < CShareData::getInstance()->GetEditorWindowsNum( 0 ) ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
@@ -1197,7 +1197,7 @@ void CEditApp::TerminateApplication(
 		}
 	}
 	/* 「すべてのウィンドウを閉じる」要求 */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
-	BOOL bCheckConfirm = (pShareData->m_Common.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
+	BOOL bCheckConfirm = (pShareData->m_Common.m_sGeneral.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
 	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 		::PostMessage( pShareData->m_hwndTray, WM_CLOSE, 0, 0 );
 	}
@@ -1500,7 +1500,7 @@ void CEditApp::OnDestroy()
 	//
 
 	/* 終了ダイアログを表示する */
-	if( TRUE == m_pShareData->m_Common.m_bDispExitingDialog ){
+	if( TRUE == m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog ){
 		/* 終了中ダイアログの表示 */
 		hwndExitingDlg = ::CreateDialog(
 			m_hInstance,
@@ -1515,7 +1515,7 @@ void CEditApp::OnDestroy()
 	CShareData::getInstance()->SaveShareData();
 
 	/* 終了ダイアログを表示する */
-	if( m_pShareData->m_Common.m_bDispExitingDialog ){
+	if( m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog ){
 		/* 終了中ダイアログの破棄 */
 		::DestroyWindow( hwndExitingDlg );
 	}

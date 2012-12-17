@@ -201,7 +201,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 		rc.left = 0;
 		rc.top = m_nViewAlignTop - m_nTopYohaku;
 		//	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
-		rc.right = m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace;
+		rc.right = m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace;
 		rc.bottom = m_nViewAlignTop;
 		hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK );
 		::FillRect( hdc, &rc, hBrush );
@@ -1904,7 +1904,7 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 	@date 2005.11.08 Moca 新規作成
 	@date 2006.04.29 Moca 太線・点線のサポート。選択中の反転対策に行ごとに作画するように変更
 	    縦線の色がテキストの背景色と同じ場合は、縦線の背景色をEXORで作画する
-	@note Common::m_nVertLineOffsetにより、指定桁の前の文字の上に作画されることがある。
+	@note Common::m_sWindow::m_nVertLineOffsetにより、指定桁の前の文字の上に作画されることがある。
 */
 void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol, int nRightCol )
 {
@@ -1918,7 +1918,7 @@ void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol,
 	if( nRightCol < 0 ){
 		nRightCol = nWrapWidth;
 	}
-	const int nPosXOffset = m_pShareData->m_Common.m_nVertLineOffset + m_nViewAlignLeft;
+	const int nPosXOffset = m_pShareData->m_Common.m_sWindow.m_nVertLineOffset + m_nViewAlignLeft;
 	const int nPosXLeft   = __max( m_nViewAlignLeft + (nLeftCol  - m_nViewLeftCol) * nCharWidth, m_nViewAlignLeft );
 	const int nPosXRight  = __min( m_nViewAlignLeft + (nRightCol - m_nViewLeftCol) * nCharWidth, m_nViewCx + m_nViewAlignLeft );
 	const int nLineHeight = m_nCharHeight + typeData.m_nLineSpace;

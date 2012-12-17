@@ -118,7 +118,7 @@ HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDo
 	m_nCurrentKeyState = -1;
 
 	// 2002.11.04 Moca •ÏX‚Å‚«‚é‚æ‚¤‚É
-	m_nButtonGroupNum = m_pShareData->m_Common.m_nFUNCKEYWND_GroupNum;
+	m_nButtonGroupNum = m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum;
 	if( 1 > m_nButtonGroupNum || 12 < m_nButtonGroupNum ){
 		m_nButtonGroupNum = 4;
 	}

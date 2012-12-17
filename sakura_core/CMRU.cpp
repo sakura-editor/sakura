@@ -82,7 +82,7 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		//	j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
 		wsprintf( szMemu, "&%c %s%s", 
 			(i < 10) ? ('0' + i) : ('A' + i - 10), 
-			(FALSE == m_pShareData->m_Common.m_bMenuIcon && bFavorite) ? "★ " : "",
+			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? "★ " : "",
 			szFile2 );
 
 		//	ファイル名のみ必要。

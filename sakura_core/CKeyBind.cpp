@@ -445,14 +445,14 @@ int CKeyBind::GetDefFuncCode( int nKeyCode, int nState )
 	if( nKeyCode == VK_F4 ){
 		if( nState == _CTRL ){
 			nDefFuncCode = F_FILECLOSE;	// •Â‚¶‚Ä(–³‘è)
-			if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ){
+			if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 				nDefFuncCode = F_WINCLOSE;	// •Â‚¶‚é
 			}
 		}
 		else if( nState == _ALT ){
 			nDefFuncCode = F_WINCLOSE;	// •Â‚¶‚é
-			if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ){
-				if( !pShareData->m_Common.m_bTab_CloseOneWin ){
+			if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
+				if( !pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin ){
 					nDefFuncCode = F_GROUPCLOSE;	// ƒOƒ‹[ƒv‚ğ•Â‚¶‚é	// 2007.06.20 ryoji
 				}
 			}

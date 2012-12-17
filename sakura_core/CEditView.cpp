@@ -234,11 +234,11 @@ CEditView::CEditView()
 	m_nSelectColmToOld = 0;		/* 範囲選択終了桁 */
 	m_nViewAlignLeft = 0;		/* 表示域の左端座標 */
 	m_nViewAlignLeftCols = 0;	/* 行番号域の桁数 */
-	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
+	m_nTopYohaku = m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
 	m_nViewAlignTop = m_nTopYohaku;		/* 表示域の上端座標 */
 
 	/* ルーラー表示 */
-	m_nViewAlignTop += m_pShareData->m_Common.m_nRulerHeight;	/* ルーラー高さ */
+	m_nViewAlignTop += m_pShareData->m_Common.m_sWindow.m_nRulerHeight;	/* ルーラー高さ */
 	m_nOldCaretPosX = 0;	// 前回描画したルーラーのキャレット位置 2002.02.25 Add By KK
 	m_nOldCaretWidth = 0;	// 前回描画したルーラーのキャレット幅   2002.02.25 Add By KK
 	m_bRedrawRuler = true;	// ルーラー全体を描き直す時=true   2002.02.25 Add By KK
@@ -394,11 +394,11 @@ BOOL CEditView::Create(
 	m_cRegexKeyword = new CRegexKeyword( m_pShareData->m_Common.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
 
-	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
+	m_nTopYohaku = m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
 	m_nViewAlignTop = m_nTopYohaku;								/* 表示域の上端座標 */
 	/* ルーラー表示 */
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
-		m_nViewAlignTop += m_pShareData->m_Common.m_nRulerHeight;	/* ルーラー高さ */
+		m_nViewAlignTop += m_pShareData->m_Common.m_sWindow.m_nRulerHeight;	/* ルーラー高さ */
 	}
 
 
@@ -450,7 +450,7 @@ BOOL CEditView::Create(
 	/* 再描画用コンパチブルＤＣ */
 	// 2007.09.09 Moca 互換BMPによる画面バッファ
 	// 2007.09.30 genta 関数化
-	UseCompatibleDC( m_pShareData->m_Common.m_bUseCompotibleBMP );
+	UseCompatibleDC( m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP );
 
 	/* 垂直分割ボックス */
 	m_pcsbwVSplitBox = new CSplitBoxWnd;
@@ -557,7 +557,7 @@ BOOL CEditView::CreateScrollBar()
 
 	/* スクロールバーの作成 */
 	m_hwndHScrollBar = NULL;
-	if( m_pShareData->m_Common.m_bScrollBarHorz ){	/* 水平スクロールバーを使う */
+	if( m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
 			_T("SCROLLBAR"),					/* scroll bar control class */
@@ -585,7 +585,7 @@ BOOL CEditView::CreateScrollBar()
 
 
 	/* サイズボックス */
-	if( m_pShareData->m_Common.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
+	if( m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place == 0 ){	/* ファンクションキー表示位置／0:上 1:下 */
 		m_hwndSizeBox = ::CreateWindowEx(
 			WS_EX_CONTROLPARENT/*0L*/, 			/* no extended styles */
 			_T("SCROLLBAR"),					/* scroll bar control class */
@@ -1005,7 +1005,7 @@ LRESULT CEditView::DispatchEvent(
 
 		// マウスクリックによりバックグラウンドウィンドウがアクティベートされた
 		//	2007.10.08 genta オプション追加
-		if( m_pShareData->m_Common.m_bNoCaretMoveByActivation &&
+		if( m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation &&
 		   (! m_pcEditDoc->m_pcEditWnd->IsActiveApp()))
 		{
 			m_bActivateByMouse = TRUE;		// マウスによるアクティベート
@@ -1371,7 +1371,7 @@ void CEditView::ShowEditCaret( void )
 	}
 
 	/* キャレットの幅、高さを決定 */
-	if( 0 == m_pShareData->m_Common.GetCaretType() ){	/* カーソルのタイプ 0=win 1=dos */
+	if( 0 == m_pShareData->m_Common.m_sGeneral.GetCaretType() ){	/* カーソルのタイプ 0=win 1=dos */
 		nCaretHeight = m_nCharHeight;					/* キャレットの高さ */
 		if( IsInsMode() /* Oct. 2, 2005 genta */ ){
 			nCaretWidth = 2;
@@ -1396,7 +1396,7 @@ void CEditView::ShowEditCaret( void )
 			}
 		}
 	}else
-	if( 1 == m_pShareData->m_Common.GetCaretType() ){	/* カーソルのタイプ 0=win 1=dos */
+	if( 1 == m_pShareData->m_Common.m_sGeneral.GetCaretType() ){	/* カーソルのタイプ 0=win 1=dos */
 		if( IsInsMode() /* Oct. 2, 2005 genta */ ){
 			nCaretHeight = m_nCharHeight / 2;			/* キャレットの高さ */
 		}else{
@@ -1579,13 +1579,13 @@ int CEditView::OnVScroll( int nScrollCode, int nPos )
 //		for( i = 0; i < 4; ++i ){
 //			ScrollAtV( m_nViewTopLine + 1 );
 //		}
-		nScrollVal = ScrollAtV( m_nViewTopLine + m_pShareData->m_Common.m_nRepeatedScrollLineNum );
+		nScrollVal = ScrollAtV( m_nViewTopLine + m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum );
 		break;
 	case SB_LINEUP:
 //		for( i = 0; i < 4; ++i ){
 //			ScrollAtV( m_nViewTopLine - 1 );
 //		}
-		nScrollVal = ScrollAtV( m_nViewTopLine - m_pShareData->m_Common.m_nRepeatedScrollLineNum );
+		nScrollVal = ScrollAtV( m_nViewTopLine - m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum );
 		break;
 	case SB_PAGEDOWN:
 		nScrollVal = ScrollAtV( m_nViewTopLine + m_nViewRowNum );
@@ -2550,7 +2550,7 @@ BOOL CEditView::DetectWidthOfLineNumberArea( BOOL bRedraw )
 		m_nViewAlignLeftCols = 0;
 	}
 	//	Sep 18, 2002 genta
-	m_nViewAlignLeftNew += m_pShareData->m_Common.m_nLineNumRightSpace;
+	m_nViewAlignLeftNew += m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace;
 	if( m_nViewAlignLeftNew != m_nViewAlignLeft ){
 		m_nViewAlignLeft = m_nViewAlignLeftNew;
 		::GetClientRect( m_hWnd, &rc );
@@ -2740,7 +2740,7 @@ int CEditView::GetRightEdgeForScrollBar( void )
 		}
 
 		// フリーカーソルモード かつ キャレット位置がテキストの幅より右側
-		if( m_pShareData->m_Common.m_bIsFreeCursorMode && nRightEdge < m_nCaretPosX )
+		if( m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode && nRightEdge < m_nCaretPosX )
 			nRightEdge = m_nCaretPosX;
 
 		// 右マージン分（3桁）を考慮しつつnWidthを超えないようにする
@@ -3038,7 +3038,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, i
 		// 2009.08.28 nasukoji	「折り返さない」（スクロールバーをテキスト幅に合わせる）
 		if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 			// AdjustScrollBars()で移動後のキャレット位置が必要なため、ここでコピー
-			if( IsTextSelected() || m_pShareData->m_Common.m_bIsFreeCursorMode ){
+			if( IsTextSelected() || m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode ){
 				m_nCaretPosX = nWk_CaretPosX;
 				m_nCaretPosY = nWk_CaretPosY;
 			}
@@ -3271,7 +3271,7 @@ int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCare
 			}else
 // To 2001.12.21 hor
 			/* フリーカーソルモードか */
-			if( m_pShareData->m_Common.m_bIsFreeCursorMode
+			if( m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode
 			  || ( m_bBeginSelect && m_bBeginBoxSelect )	/* マウス範囲選択中 && 矩形範囲選択中 */
 //			  || m_bDragMode /* OLE DropTarget */
 			  || ( m_bDragMode && m_bDragBoxData ) /* OLE DropTarget && 矩形データ */
@@ -4042,7 +4042,7 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	int		nFuncID;
 
 	// ホイール操作によるページスクロールあり
-	if( m_pShareData->m_Common.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER &&
+	if( m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_CENTER &&
 	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
 	{
 		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
@@ -4050,7 +4050,7 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	}
 
 	// ホイール操作によるページスクロールあり
-	if( m_pShareData->m_Common.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER &&
+	if( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_CENTER &&
 	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
 	{
 		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
@@ -4102,7 +4102,7 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	int		nFuncID;
 
 	// ホイール操作によるページスクロールあり
-	if( m_pShareData->m_Common.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
+	if( m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
 	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
 	{
 		m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( FALSE );
@@ -4110,7 +4110,7 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	}
 
 	// ホイール操作によるページスクロールあり
-	if( m_pShareData->m_Common.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
+	if( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_LEFTSIDE &&
 	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
 	{
 		m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( FALSE );
@@ -4162,7 +4162,7 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	int		nFuncID;
 
 	// ホイール操作によるページスクロールあり
-	if( m_pShareData->m_Common.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
+	if( m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
 	    m_pcEditDoc->m_pcEditWnd->IsPageScrollByWheel() )
 	{
 		// ホイール操作によるページスクロールありをOFF
@@ -4171,7 +4171,7 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	}
 
 	// ホイール操作によるページスクロールあり
-	if( m_pShareData->m_Common.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
+	if( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel == MOUSEFUNCTION_RIGHTSIDE &&
 	    m_pcEditDoc->m_pcEditWnd->IsHScrollByWheel() )
 	{
 		// ホイール操作による横スクロールありをOFF
@@ -4718,8 +4718,8 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 
 
 	// 2009.01.12 nasukoji	ホイールスクロールを利用したページスクロール・横スクロール対応
-	if( IsSpecialScrollMode( m_pShareData->m_Common.m_nPageScrollByWheel ) ){				// ページスクロール？
-		if( IsSpecialScrollMode( m_pShareData->m_Common.m_nHorizontalScrollByWheel ) ){		// 横スクロール？
+	if( IsSpecialScrollMode( m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel ) ){				// ページスクロール？
+		if( IsSpecialScrollMode( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel ) ){		// 横スクロール？
 			int line = m_nViewLeftCol + (( nScrollCode == SB_LINEUP ) ? -m_nViewColNum : m_nViewColNum );
 			SyncScrollH( ScrollAtH( line ) );
 
@@ -4754,7 +4754,7 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		}
 
 		// 2009.01.12 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
-		BOOL bHorizontal = IsSpecialScrollMode( m_pShareData->m_Common.m_nHorizontalScrollByWheel );
+		BOOL bHorizontal = IsSpecialScrollMode( m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
 		int nCount = ( nScrollCode == SB_LINEUP ) ? -1 : 1;		// スクロール数
 
 		for( i = 0; i < nRollLineNum; ++i ){
@@ -5310,7 +5310,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 
 	if( i >= nLineLen ){
 		/* フリーカーソルモードか */
-		if( m_pShareData->m_Common.m_bIsFreeCursorMode
+		if( m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode
 		 || IsTextSelected() && m_bBeginBoxSelect	/* 矩形範囲選択中 */
 		){
 			if( m_nCaretPosY + nMoveLines + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount()  ){
@@ -5579,7 +5579,7 @@ int CEditView::ScrollAtH( int nPos )
 */
 void CEditView::SyncScrollV( int line )
 {
-	if( m_pShareData->m_Common.m_bSplitterWndVScroll && line != 0
+	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0
 		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x01)
 	) {
 		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
@@ -5606,7 +5606,7 @@ void CEditView::SyncScrollV( int line )
 */
 void CEditView::SyncScrollH( int col )
 {
-	if( m_pShareData->m_Common.m_bSplitterWndHScroll && col != 0
+	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
 		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x02)
 	) {
 		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
@@ -6717,12 +6717,12 @@ void CEditView::OnChangeSetting( void )
 	RECT		rc;
 	LOGFONT		lf;
 
-	m_nTopYohaku = m_pShareData->m_Common.m_nRulerBottomSpace; 		/* ルーラーとテキストの隙間 */
+	m_nTopYohaku = m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace; 		/* ルーラーとテキストの隙間 */
 	m_nViewAlignTop = m_nTopYohaku;									/* 表示域の上端座標 */
 
 	/* ルーラー表示 */
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
-		m_nViewAlignTop += m_pShareData->m_Common.m_nRulerHeight;	/* ルーラー高さ */
+		m_nViewAlignTop += m_pShareData->m_Common.m_sWindow.m_nRulerHeight;	/* ルーラー高さ */
 	}
 
 	/* フォント作成 */
@@ -6767,7 +6767,7 @@ void CEditView::OnChangeSetting( void )
 	AdjustScrollBars();
 	
 	//	2007.09.30 genta 画面キャッシュ用CompatibleDCを用意する
-	UseCompatibleDC( m_pShareData->m_Common.m_bUseCompotibleBMP );
+	UseCompatibleDC( m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP );
 
 	/* ウィンドウサイズの変更処理 */
 	::GetClientRect( m_hWnd, &rc );
@@ -9500,7 +9500,7 @@ void CEditView::CaretUnderLineON( BOOL bDraw )
 
 	if( bDraw
 	 && m_bDrawSWITCH
-	 && m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace < m_nOldCursorLineX
+	 && m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
 	 && m_nOldCursorLineX <= m_nViewAlignLeft + m_nViewCx
 	 && m_bDoing_UndoRedo == FALSE
 	){
@@ -9516,7 +9516,7 @@ void CEditView::CaretUnderLineON( BOOL bDraw )
 		::LineTo(   hdc, m_nOldCursorLineX, m_nViewCy + m_nViewAlignTop );
 		// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
 		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont &&
-			m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
+			m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
 			::MoveToEx( hdc, m_nOldCursorLineX - 1, m_nViewAlignTop, NULL );
 			::LineTo(   hdc, m_nOldCursorLineX - 1, m_nViewCy + m_nViewAlignTop );
 		}
@@ -9617,7 +9617,7 @@ void CEditView::CaretUnderLineOFF( BOOL bDraw )
 	if( -1 != m_nOldCursorLineX ){
 		if( bDraw
 		 && m_bDrawSWITCH
-		 && m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace < m_nOldCursorLineX
+		 && m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX
 		 && m_nOldCursorLineX <= m_nViewAlignLeft + m_nViewCx
 		 && m_bDoing_UndoRedo == FALSE
 		){

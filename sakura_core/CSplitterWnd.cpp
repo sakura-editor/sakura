@@ -277,7 +277,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 	*/
 	if( NULL == pCEditWnd
 	 ||( NULL != pCEditWnd->m_CFuncKeyWnd.m_hWnd
-	  && 1 == m_pShareData->m_Common.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
+	  && 1 == m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
 	  )
 	){
 		bSizeBox = FALSE;
@@ -839,7 +839,7 @@ LRESULT CSplitterWnd::OnSize( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 	*/
 	if( NULL == pCEditWnd
 	 ||( NULL != pCEditWnd->m_CFuncKeyWnd.m_hWnd
-	  && 1 == m_pShareData->m_Common.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
+	  && 1 == m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place	/* ファンクションキー表示位置／0:上 1:下 */
 	  )
 	){
 		bSizeBox = FALSE;

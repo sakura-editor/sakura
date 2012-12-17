@@ -128,7 +128,7 @@ bool CNormalProcess::InitializeProcess()
 
 	// ƒOƒ‹[ƒvID‚ğæ“¾
 	int nGroupId = CCommandLine::getInstance()->GetGroupId();
-	if( m_pShareData->m_Common.m_bNewWindow && nGroupId == -1 ){
+	if( m_pShareData->m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
 		nGroupId = CShareData::getInstance()->GetFreeGroupId();
 	}
 	// CEditWnd‚ğì¬

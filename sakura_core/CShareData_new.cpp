@@ -461,25 +461,25 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	// 2005.04.07 D.S.Koba
 	CommonSetting& common = m_pShareData->m_Common;
 
-	cProfile.IOProfileData( pszSecName, "nCaretType"				, common.m_nCaretType );
+	cProfile.IOProfileData( pszSecName, "nCaretType"				, common.m_sGeneral.m_nCaretType );
 	//	Oct. 2, 2005 genta
 	//	初期値を挿入モードに固定するため，設定の読み書きをやめる
-	//cProfile.IOProfileData( pszSecName, "bIsINSMode"				, common.m_bIsINSMode );
-	cProfile.IOProfileData( pszSecName, "bIsFreeCursorMode"		, common.m_bIsFreeCursorMode );
+	//cProfile.IOProfileData( pszSecName, "bIsINSMode"				, common.m_sGeneral.m_bIsINSMode );
+	cProfile.IOProfileData( pszSecName, "bIsFreeCursorMode"		, common.m_sGeneral.m_bIsFreeCursorMode );
 	
-	cProfile.IOProfileData( pszSecName, "bStopsBothEndsWhenSearchWord"	, common.m_bStopsBothEndsWhenSearchWord );
-	cProfile.IOProfileData( pszSecName, "bStopsBothEndsWhenSearchParagraph"	, common.m_bStopsBothEndsWhenSearchParagraph );
+	cProfile.IOProfileData( pszSecName, "bStopsBothEndsWhenSearchWord"	, common.m_sGeneral.m_bStopsBothEndsWhenSearchWord );
+	cProfile.IOProfileData( pszSecName, "bStopsBothEndsWhenSearchParagraph"	, common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph );
 	//	Oct. 27, 2000 genta
 	cProfile.IOProfileData( pszSecName, "m_bRestoreCurPosition"	, common.m_bRestoreCurPosition );
 	// 2002.01.16 hor
 	cProfile.IOProfileData( pszSecName, "m_bRestoreBookmarks"	, common.m_bRestoreBookmarks );
 	cProfile.IOProfileData( pszSecName, "bAddCRLFWhenCopy"		, common.m_bAddCRLFWhenCopy );
-	cProfile.IOProfileData( pszSecName, "nRepeatedScrollLineNum"	, common.m_nRepeatedScrollLineNum );
-	cProfile.IOProfileData( pszSecName, "nRepeatedScroll_Smooth"	, common.m_nRepeatedScroll_Smooth );
-	cProfile.IOProfileData( pszSecName, "nPageScrollByWheel"	, common.m_nPageScrollByWheel );	// 2009.01.12 nasukoji
-	cProfile.IOProfileData( pszSecName, "nHorizontalScrollByWheel"	, common.m_nHorizontalScrollByWheel );	// 2009.01.12 nasukoji
-	cProfile.IOProfileData( pszSecName, "bCloseAllConfirm"		, common.m_bCloseAllConfirm );	/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
-	cProfile.IOProfileData( pszSecName, "bExitConfirm"			, common.m_bExitConfirm );
+	cProfile.IOProfileData( pszSecName, "nRepeatedScrollLineNum"	, common.m_sGeneral.m_nRepeatedScrollLineNum );
+	cProfile.IOProfileData( pszSecName, "nRepeatedScroll_Smooth"	, common.m_sGeneral.m_nRepeatedScroll_Smooth );
+	cProfile.IOProfileData( pszSecName, "nPageScrollByWheel"	, common.m_sGeneral.m_nPageScrollByWheel );	// 2009.01.12 nasukoji
+	cProfile.IOProfileData( pszSecName, "nHorizontalScrollByWheel"	, common.m_sGeneral.m_nHorizontalScrollByWheel );	// 2009.01.12 nasukoji
+	cProfile.IOProfileData( pszSecName, "bCloseAllConfirm"		, common.m_sGeneral.m_bCloseAllConfirm );	/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
+	cProfile.IOProfileData( pszSecName, "bExitConfirm"			, common.m_sGeneral.m_bExitConfirm );
 	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_sSearchOption.bRegularExp );
 	cProfile.IOProfileData( pszSecName, "bSearchLoHiCase"		, common.m_sSearchOption.bLoHiCase );
 	cProfile.IOProfileData( pszSecName, "bSearchWordOnly"		, common.m_sSearchOption.bWordOnly );
@@ -559,29 +559,29 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	}// Keword Help Font
 	
 
-	cProfile.IOProfileData( pszSecName, "nMRUArrNum_MAX"			, common.m_nMRUArrNum_MAX );
-	cProfile.IOProfileData( pszSecName, "nOPENFOLDERArrNum_MAX"	, common.m_nOPENFOLDERArrNum_MAX );
-	cProfile.IOProfileData( pszSecName, "bDispTOOLBAR"			, common.m_bDispTOOLBAR );
-	cProfile.IOProfileData( pszSecName, "bDispSTATUSBAR"			, common.m_bDispSTATUSBAR );
-	cProfile.IOProfileData( pszSecName, "bDispFUNCKEYWND"		, common.m_bDispFUNCKEYWND );
-	cProfile.IOProfileData( pszSecName, "nFUNCKEYWND_Place"		, common.m_nFUNCKEYWND_Place );
-	cProfile.IOProfileData( pszSecName, "nFUNCKEYWND_GroupNum"	, common.m_nFUNCKEYWND_GroupNum );		// 2002/11/04 Moca ファンクションキーのグループボタン数
+	cProfile.IOProfileData( pszSecName, "nMRUArrNum_MAX"			, common.m_sGeneral.m_nMRUArrNum_MAX );
+	cProfile.IOProfileData( pszSecName, "nOPENFOLDERArrNum_MAX"	, common.m_sGeneral.m_nOPENFOLDERArrNum_MAX );
+	cProfile.IOProfileData( pszSecName, "bDispTOOLBAR"			, common.m_sWindow.m_bDispTOOLBAR );
+	cProfile.IOProfileData( pszSecName, "bDispSTATUSBAR"			, common.m_sWindow.m_bDispSTATUSBAR );
+	cProfile.IOProfileData( pszSecName, "bDispFUNCKEYWND"		, common.m_sWindow.m_bDispFUNCKEYWND );
+	cProfile.IOProfileData( pszSecName, "nFUNCKEYWND_Place"		, common.m_sWindow.m_nFUNCKEYWND_Place );
+	cProfile.IOProfileData( pszSecName, "nFUNCKEYWND_GroupNum"	, common.m_sWindow.m_nFUNCKEYWND_GroupNum );		// 2002/11/04 Moca ファンクションキーのグループボタン数
 	
-	cProfile.IOProfileData( pszSecName, "bDispTabWnd"			, common.m_bDispTabWnd );	//タブウインドウ	//@@@ 2003.05.31 MIK
-	cProfile.IOProfileData( pszSecName, "bDispTabWndMultiWin"	, common.m_bDispTabWndMultiWin );	//タブウインドウ	//@@@ 2003.05.31 MIK
-	cProfile.IOProfileData( pszSecName, "szTabWndCaption"		, common.m_szTabWndCaption		, MAX_CAPTION_CONF_LEN );	//@@@ 2003.06.13 MIK
-	cProfile.IOProfileData( pszSecName, "bSameTabWidth"			, common.m_bSameTabWidth );	// 2006.01.28 ryoji タブを等幅にする
-	cProfile.IOProfileData( pszSecName, "bDispTabIcon"			, common.m_bDispTabIcon );	// 2006.01.28 ryoji タブにアイコンを表示する
-	cProfile.IOProfileData( pszSecName, "bSortTabList"			, common.m_bSortTabList );	// 2006.05.10 ryoji タブ一覧をソートする
-	cProfile.IOProfileData( pszSecName, "bTab_RetainEmptyWin"	, common.m_bTab_RetainEmptyWin );	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
-	cProfile.IOProfileData( pszSecName, "bTab_CloseOneWin"	, common.m_bTab_CloseOneWin );	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
-	cProfile.IOProfileData( pszSecName, "bTab_ListFull"			, common.m_bTab_ListFull );	// タブ一覧をフルパス表示する	// 2007.02.28 ryoji
-	cProfile.IOProfileData( pszSecName, "bChgWndByWheel"		, common.m_bChgWndByWheel );	// 2006.03.26 ryoji マウスホイールでウィンドウ切り替え
-	cProfile.IOProfileData( pszSecName, "bNewWindow"			, common.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
+	cProfile.IOProfileData( pszSecName, "bDispTabWnd"			, common.m_sTabBar.m_bDispTabWnd );	//タブウインドウ	//@@@ 2003.05.31 MIK
+	cProfile.IOProfileData( pszSecName, "bDispTabWndMultiWin"	, common.m_sTabBar.m_bDispTabWndMultiWin );	//タブウインドウ	//@@@ 2003.05.31 MIK
+	cProfile.IOProfileData( pszSecName, "szTabWndCaption"		, common.m_sTabBar.m_szTabWndCaption		, MAX_CAPTION_CONF_LEN );	//@@@ 2003.06.13 MIK
+	cProfile.IOProfileData( pszSecName, "bSameTabWidth"			, common.m_sTabBar.m_bSameTabWidth );	// 2006.01.28 ryoji タブを等幅にする
+	cProfile.IOProfileData( pszSecName, "bDispTabIcon"			, common.m_sTabBar.m_bDispTabIcon );	// 2006.01.28 ryoji タブにアイコンを表示する
+	cProfile.IOProfileData( pszSecName, "bSortTabList"			, common.m_sTabBar.m_bSortTabList );	// 2006.05.10 ryoji タブ一覧をソートする
+	cProfile.IOProfileData( pszSecName, "bTab_RetainEmptyWin"	, common.m_sTabBar.m_bTab_RetainEmptyWin );	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
+	cProfile.IOProfileData( pszSecName, "bTab_CloseOneWin"		, common.m_sTabBar.m_bTab_CloseOneWin );	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
+	cProfile.IOProfileData( pszSecName, "bTab_ListFull"			, common.m_sTabBar.m_bTab_ListFull );	// タブ一覧をフルパス表示する	// 2007.02.28 ryoji
+	cProfile.IOProfileData( pszSecName, "bChgWndByWheel"		, common.m_sTabBar.m_bChgWndByWheel );	// 2006.03.26 ryoji マウスホイールでウィンドウ切り替え
+	cProfile.IOProfileData( pszSecName, "bNewWindow"			, common.m_sTabBar.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
 	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
-	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_bSplitterWndHScroll );
-	cProfile.IOProfileData( pszSecName, "bSplitterWndVScroll"	, common.m_bSplitterWndVScroll );
+	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_sWindow.m_bSplitterWndHScroll );
+	cProfile.IOProfileData( pszSecName, "bSplitterWndVScroll"	, common.m_sWindow.m_bSplitterWndVScroll );
 	
 	cProfile.IOProfileData( pszSecName, "szMidashiKigou"			, common.m_szMidashiKigou, 0 );
 	cProfile.IOProfileData( pszSecName, "szInyouKigou"			, common.m_szInyouKigou, 0 );
@@ -590,33 +590,33 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bUseHokan"				, common.m_bUseHokan );
 	// 2002/09/21 Moca bGrepKanjiCode_AutoDetect は bGrepCharSetに統合したので削除
 	// 2001/06/19 asa-o タイプ別に移動したので削除：1行
-	cProfile.IOProfileData( pszSecName, "bSaveWindowSize"		, (int&)common.m_eSaveWindowSize );
-	cProfile.IOProfileData( pszSecName, "nWinSizeType"			, common.m_nWinSizeType );
-	cProfile.IOProfileData( pszSecName, "nWinSizeCX"				, common.m_nWinSizeCX );
-	cProfile.IOProfileData( pszSecName, "nWinSizeCY"				, common.m_nWinSizeCY );
+	cProfile.IOProfileData( pszSecName, "bSaveWindowSize"		, (int&)common.m_sWindow.m_eSaveWindowSize );
+	cProfile.IOProfileData( pszSecName, "nWinSizeType"			, common.m_sWindow.m_nWinSizeType );
+	cProfile.IOProfileData( pszSecName, "nWinSizeCX"				, common.m_sWindow.m_nWinSizeCX );
+	cProfile.IOProfileData( pszSecName, "nWinSizeCY"				, common.m_sWindow.m_nWinSizeCY );
 	// 2004.03.30 Moca *nWinPos*を追加
-	cProfile.IOProfileData( pszSecName, "nSaveWindowPos"			, (int&)common.m_eSaveWindowPos );
-	cProfile.IOProfileData( pszSecName, "nWinPosX"				, common.m_nWinPosX );
-	cProfile.IOProfileData( pszSecName, "nWinPosY"				, common.m_nWinPosY );
-	cProfile.IOProfileData( pszSecName, "bTaskTrayUse"			, common.m_bUseTaskTray );
-	cProfile.IOProfileData( pszSecName, "bTaskTrayStay"			, common.m_bStayTaskTray );
+	cProfile.IOProfileData( pszSecName, "nSaveWindowPos"			, (int&)common.m_sWindow.m_eSaveWindowPos );
+	cProfile.IOProfileData( pszSecName, "nWinPosX"				, common.m_sWindow.m_nWinPosX );
+	cProfile.IOProfileData( pszSecName, "nWinPosY"				, common.m_sWindow.m_nWinPosY );
+	cProfile.IOProfileData( pszSecName, "bTaskTrayUse"			, common.m_sGeneral.m_bUseTaskTray );
+	cProfile.IOProfileData( pszSecName, "bTaskTrayStay"			, common.m_sGeneral.m_bStayTaskTray );
 
-	cProfile.IOProfileData( pszSecName, "wTrayMenuHotKeyCode"		, common.m_wTrayMenuHotKeyCode );
-	cProfile.IOProfileData( pszSecName, "wTrayMenuHotKeyMods"		, common.m_wTrayMenuHotKeyMods );
+	cProfile.IOProfileData( pszSecName, "wTrayMenuHotKeyCode"		, common.m_sGeneral.m_wTrayMenuHotKeyCode );
+	cProfile.IOProfileData( pszSecName, "wTrayMenuHotKeyMods"		, common.m_sGeneral.m_wTrayMenuHotKeyMods );
 	cProfile.IOProfileData( pszSecName, "bUseOLE_DragDrop"			, common.m_bUseOLE_DragDrop );
 	cProfile.IOProfileData( pszSecName, "bUseOLE_DropSource"			, common.m_bUseOLE_DropSource );
-	cProfile.IOProfileData( pszSecName, "bDispExitingDialog"			, common.m_bDispExitingDialog );
+	cProfile.IOProfileData( pszSecName, "bDispExitingDialog"			, common.m_sGeneral.m_bDispExitingDialog );
 	cProfile.IOProfileData( pszSecName, "bEnableUnmodifiedOverwrite"	, common.m_bEnableUnmodifiedOverwrite );
 	cProfile.IOProfileData( pszSecName, "bSelectClickedURL"			, common.m_bSelectClickedURL );
 	cProfile.IOProfileData( pszSecName, "bGrepExitConfirm"			, common.m_bGrepExitConfirm );/* Grepモードで保存確認するか */
 //	cProfile.IOProfileData( pszSecName, "bRulerDisp"					, common.m_bRulerDisp );/* ルーラー表示 */
-	cProfile.IOProfileData( pszSecName, "nRulerHeight"				, common.m_nRulerHeight );/* ルーラー高さ */
-	cProfile.IOProfileData( pszSecName, "nRulerBottomSpace"			, common.m_nRulerBottomSpace );/* ルーラーとテキストの隙間 */
-	cProfile.IOProfileData( pszSecName, "nRulerType"					, common.m_nRulerType );/* ルーラーのタイプ */
+	cProfile.IOProfileData( pszSecName, "nRulerHeight"				, common.m_sWindow.m_nRulerHeight );/* ルーラー高さ */
+	cProfile.IOProfileData( pszSecName, "nRulerBottomSpace"			, common.m_sWindow.m_nRulerBottomSpace );/* ルーラーとテキストの隙間 */
+	cProfile.IOProfileData( pszSecName, "nRulerType"					, common.m_sWindow.m_nRulerType );/* ルーラーのタイプ */
 	//	Sep. 18, 2002 genta 追加
-	cProfile.IOProfileData( pszSecName, "nLineNumberRightSpace"		, common.m_nLineNumRightSpace );/* 行番号の右側の隙間 */
-	cProfile.IOProfileData( pszSecName, "nVertLineOffset"			, common.m_nVertLineOffset ); // 2005.11.10 Moca
-	cProfile.IOProfileData( pszSecName, "bUseCompotibleBMP"			, common.m_bUseCompotibleBMP ); // 2007.09.09 Moca
+	cProfile.IOProfileData( pszSecName, "nLineNumberRightSpace"		, common.m_sWindow.m_nLineNumRightSpace );/* 行番号の右側の隙間 */
+	cProfile.IOProfileData( pszSecName, "nVertLineOffset"			, common.m_sWindow.m_nVertLineOffset ); // 2005.11.10 Moca
+	cProfile.IOProfileData( pszSecName, "bUseCompotibleBMP"			, common.m_sWindow.m_bUseCompotibleBMP ); // 2007.09.09 Moca
 	cProfile.IOProfileData( pszSecName, "bCopyAndDisablSelection"	, common.m_bCopyAndDisablSelection );/* コピーしたら選択解除 */
 	cProfile.IOProfileData( pszSecName, "bEnableNoSelectCopy"		, common.m_bEnableNoSelectCopy );/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 	cProfile.IOProfileData( pszSecName, "bEnableLineModePaste"		, common.m_bEnableLineModePaste );/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
@@ -631,8 +631,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFuncList"		, common.m_bAutoCloseDlgFuncList );/* アウトライン ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgReplace"		, common.m_bAutoCloseDlgReplace );/* 置換 ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoColmnPaste"			, common.m_bAutoColmnPaste );/* 矩形コピーのテキストは常に矩形貼り付け */
-	cProfile.IOProfileData( pszSecName, "NoCaretMoveByActivation"	, common.m_bNoCaretMoveByActivation );/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
-	cProfile.IOProfileData( pszSecName, "bScrollBarHorz"				, common.m_bScrollBarHorz );/* 水平スクロールバーを使う */
+	cProfile.IOProfileData( pszSecName, "NoCaretMoveByActivation"	, common.m_sGeneral.m_bNoCaretMoveByActivation );/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
+	cProfile.IOProfileData( pszSecName, "bScrollBarHorz"				, common.m_sWindow.m_bScrollBarHorz );/* 水平スクロールバーを使う */
 	
 	cProfile.IOProfileData( pszSecName, "bHokanKey_RETURN"			, common.m_bHokanKey_RETURN );/* VK_RETURN 補完決定キーが有効/無効 */
 	cProfile.IOProfileData( pszSecName, "bHokanKey_TAB"				, common.m_bHokanKey_TAB );/* VK_TAB    補完決定キーが有効/無効 */
@@ -644,7 +644,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "nTimeFormatType"			, common.m_nTimeFormatType );/* 時刻書式のタイプ */
 	cProfile.IOProfileData( pszSecName, "szTimeFormat"				, common.m_szTimeFormat, 0 );//時刻書式
 	
-	cProfile.IOProfileData( pszSecName, "bMenuIcon"					, common.m_bMenuIcon );//メニューにアイコンを表示する
+	cProfile.IOProfileData( pszSecName, "bMenuIcon"					, common.m_sWindow.m_bMenuIcon );//メニューにアイコンを表示する
 	cProfile.IOProfileData( pszSecName, "bAutoMIMEdecode"			, common.m_bAutoMIMEdecode );//ファイル読み込み時にMIMEのdecodeを行うか
 	cProfile.IOProfileData( pszSecName, "bQueryIfCodeChange"			, common.m_bQueryIfCodeChange );//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うか
 	cProfile.IOProfileData( pszSecName, "bAlertIfFileNotExist"		, common.m_bAlertIfFileNotExist );// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
@@ -687,9 +687,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
 	cProfile.IOProfileData( pszSecName, "szWinCaptionActive"
-		, common.m_szWindowCaptionActive, MAX_CAPTION_CONF_LEN );
+		, common.m_sWindow.m_szWindowCaptionActive, MAX_CAPTION_CONF_LEN );
 	cProfile.IOProfileData( pszSecName, "szWinCaptionInactive"
-		, common.m_szWindowCaptionInactive, MAX_CAPTION_CONF_LEN );
+		, common.m_sWindow.m_szWindowCaptionInactive, MAX_CAPTION_CONF_LEN );
 	
 	// アウトライン/トピックリスト の位置とサイズを記憶  20060201 aroka
 	cProfile.IOProfileData( pszSecName, "bRememberOutlineWindowPos", common.m_bRememberOutlineWindowPos);

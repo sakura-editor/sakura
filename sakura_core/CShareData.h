@@ -357,74 +357,21 @@ enum EWinSizeMode{
 	WINSIZEMODE_SET = 2   //!< 直接指定(固定)
 };
 
+//	注意: 設定ファイルからの読み込み時にINTとして扱うため，bool型を使ってはいけない．
+//	sizeof(int) != sizeof(bool)だとデータを破壊してしまう．
 
-//! 共通設定
-struct CommonSetting {
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           全般                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_General
+{
 	//	Jul. 3, 2000 genta
 	//	アクセス関数(簡易)
 	//	intをビット単位に分割して使う
 	//	下4bitをCaretTypeに当てておく(将来の予約で多めに取っておく)
 	int		GetCaretType(void) const { return m_nCaretType & 0xf; }
 	void	SetCaretType(const int f){ m_nCaretType &= ~0xf; m_nCaretType |= f & 0xf; }
-
-	//	Aug. 15, 2000 genta
-	//	Backup設定のアクセス関数
-	int		GetBackupType(void) const { return m_nBackUpType; }
-	void	SetBackupType(int n){ m_nBackUpType = n; }
-
-	bool	GetBackupOpt(int flag) const { return ( flag & m_nBackUpType_Opt1 ) == flag; }
-	void	SetBackupOpt(int flag, bool value){ m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 ); }
-
-	//	バックアップ数
-	int		GetBackupCount(void) const { return m_nBackUpType_Opt2 & 0xffff; }
-	void	SetBackupCount(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xffff0000) | ( value & 0xffff ); }
-
-	//	バックアップの拡張子先頭文字(1文字)
-	int		GetBackupExtChar(void) const { return ( m_nBackUpType_Opt2 >> 16 ) & 0xff ; }
-	void	SetBackupExtChar(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 ); }
-
-	//	Aug. 21, 2000 genta
-	//	自動Backup
-	bool	IsAutoBackupEnabled(void) const { return GetBackupOpt( BKUP_AUTO ); }
-	void	EnableAutoBackup(bool flag){ SetBackupOpt( BKUP_AUTO, flag ); }
-
-	int		GetAutoBackupInterval(void) const { return m_nBackUpType_Opt3; }
-	void	SetAutoBackupInterval(int i){ m_nBackUpType_Opt3 = i; }
-
-	//	Backup詳細設定のアクセス関数
-	int		GetBackupTypeAdv(void) const { return m_nBackUpType_Opt4; }
-	void	SetBackupTypeAdv(int n){ m_nBackUpType_Opt4 = n; }
-
-	//	Oct. 27, 2000 genta
-	//	カーソル位置を復元するかどうか
-	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition != 0; }
-	void	SetRestoreCurPosition(bool i){ m_bRestoreCurPosition = i; }
-
-	// 2002.01.16 hor ブックマークを復元するかどうか
-	bool	GetRestoreBookmarks(void) const { return m_bRestoreBookmarks != 0; }
-	void	SetRestoreBookmarks(bool i){ m_bRestoreBookmarks = i; }
-
-	//	Nov. 12, 2000 genta
-	//	ファイル読み込み時にMIMEのdecodeを行うか
-	bool	GetAutoMIMEdecode(void) const { return m_bAutoMIMEdecode != 0; }
-	void	SetAutoMIMEdecode(bool i){ m_bAutoMIMEdecode = i; }
-
-	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
-	bool	GetQueryIfCodeChange(void) const { return m_bQueryIfCodeChange != 0; }
-	void	SetQueryIfCodeChange(bool i){ m_bQueryIfCodeChange = i; }
-	
-	// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
-	bool	GetAlertIfFileNotExist(void) const { return m_bAlertIfFileNotExist != 0; }
-	void	SetAlertIfFileNotExist(bool i){ m_bAlertIfFileNotExist = i; }
-	
-
-	//	注意: 設定ファイルからの読み込み時にINTとして扱うため，bool型を使ってはいけない．
-	//	sizeof(int) != sizeof(bool)だとデータを破壊してしまう．
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           全般                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//カーソル
 	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
@@ -453,11 +400,16 @@ struct CommonSetting {
 	//ノーカテゴリ
 	BOOL				m_bCloseAllConfirm;				/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 	BOOL				m_bExitConfirm;					/* 終了時の確認をする */
+
+	//INI内設定のみ
 	BOOL				m_bDispExitingDialog;			/* 終了ダイアログを表示する */
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ウィンドウ                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Window
+{
 	//基本設定
 	BOOL				m_bDispTOOLBAR;					/* 次回ウィンドウを開いたときツールバーを表示する */
 	BOOL				m_bDispSTATUSBAR;				/* 次回ウィンドウを開いたときステータスバーを表示する */
@@ -496,10 +448,13 @@ struct CommonSetting {
 
 	//INI内設定のみ
 	int					m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         タブバー                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_TabBar
+{
 	BOOL				m_bDispTabWnd;					//タブウインドウ表示する	//@@@ 2003.05.31 MIK
 	BOOL				m_bDispTabWndMultiWin;			//タブをまとめない	//@@@ 2003.05.31 MIK
 	BOOL				m_bTab_RetainEmptyWin;			//!< 最後の文書が閉じられたとき(無題)を残す
@@ -513,6 +468,10 @@ struct CommonSetting {
 	BOOL				m_bTab_ListFull;				//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 	BOOL				m_bChgWndByWheel;				//マウスホイールでウィンドウ切り替え	//@@@ 2006.03.26 ryoji
 
+};
+
+//! 共通設定
+struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           編集                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -540,6 +499,28 @@ struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         ファイル                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//	Oct. 27, 2000 genta
+	//	カーソル位置を復元するかどうか
+	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition != 0; }
+	void	SetRestoreCurPosition(bool i){ m_bRestoreCurPosition = i; }
+
+	// 2002.01.16 hor ブックマークを復元するかどうか
+	bool	GetRestoreBookmarks(void) const { return m_bRestoreBookmarks != 0; }
+	void	SetRestoreBookmarks(bool i){ m_bRestoreBookmarks = i; }
+
+	//	Nov. 12, 2000 genta
+	//	ファイル読み込み時にMIMEのdecodeを行うか
+	bool	GetAutoMIMEdecode(void) const { return m_bAutoMIMEdecode != 0; }
+	void	SetAutoMIMEdecode(bool i){ m_bAutoMIMEdecode = i; }
+
+	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
+	bool	GetQueryIfCodeChange(void) const { return m_bQueryIfCodeChange != 0; }
+	void	SetQueryIfCodeChange(bool i){ m_bQueryIfCodeChange = i; }
+	
+	// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
+	bool	GetAlertIfFileNotExist(void) const { return m_bAlertIfFileNotExist != 0; }
+	void	SetAlertIfFileNotExist(bool i){ m_bAlertIfFileNotExist = i; }
+	
 	//ファイルの排他制御モード
 	int					m_nFileShareMode;				/* ファイルの排他制御モード */
 	BOOL				m_bCheckFileTimeStamp;		/* 更新の監視 */
@@ -566,6 +547,34 @@ struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       バックアップ                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//	Aug. 15, 2000 genta
+	//	Backup設定のアクセス関数
+	int		GetBackupType(void) const { return m_nBackUpType; }
+	void	SetBackupType(int n){ m_nBackUpType = n; }
+
+	bool	GetBackupOpt(int flag) const { return ( flag & m_nBackUpType_Opt1 ) == flag; }
+	void	SetBackupOpt(int flag, bool value){ m_nBackUpType_Opt1 = value ? ( flag | m_nBackUpType_Opt1) :  ((~flag) & m_nBackUpType_Opt1 ); }
+
+	//	バックアップ数
+	int		GetBackupCount(void) const { return m_nBackUpType_Opt2 & 0xffff; }
+	void	SetBackupCount(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xffff0000) | ( value & 0xffff ); }
+
+	//	バックアップの拡張子先頭文字(1文字)
+	int		GetBackupExtChar(void) const { return ( m_nBackUpType_Opt2 >> 16 ) & 0xff ; }
+	void	SetBackupExtChar(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 ); }
+
+	//	Aug. 21, 2000 genta
+	//	自動Backup
+	bool	IsAutoBackupEnabled(void) const { return GetBackupOpt( BKUP_AUTO ); }
+	void	EnableAutoBackup(bool flag){ SetBackupOpt( BKUP_AUTO, flag ); }
+
+	int		GetAutoBackupInterval(void) const { return m_nBackUpType_Opt3; }
+	void	SetAutoBackupInterval(int i){ m_nBackUpType_Opt3 = i; }
+
+	//	Backup詳細設定のアクセス関数
+	int		GetBackupTypeAdv(void) const { return m_nBackUpType_Opt4; }
+	void	SetBackupTypeAdv(int n){ m_nBackUpType_Opt4 = n; }
+
 	BOOL				m_bBackUp;						/* バックアップの作成 */
 	BOOL				m_bBackUpDialog;				/* バックアップの作成前に確認 */
 	BOOL				m_bBackUpFolder;				/* 指定フォルダにバックアップを作成する */
@@ -750,6 +759,10 @@ struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        メインメニュー                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	CommonSetting_General			m_sGeneral;			// 全般
+	CommonSetting_Window			m_sWindow;			// ウィンドウ
+	CommonSetting_TabBar			m_sTabBar;			// タブバー
+
 }; /* Common */
 
 

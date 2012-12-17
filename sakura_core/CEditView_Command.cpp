@@ -681,11 +681,11 @@ int CEditView::Command_UP( int bSelect, BOOL bRepeat, int lines )
 	int		nRepeat = 0;
 
 	/* キーリピート時のスクロールを滑らかにするか */
-	if( !m_pShareData->m_Common.m_nRepeatedScroll_Smooth ){
+	if( !m_pShareData->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth ){
 		if( !bRepeat ){
 			i = -1;
 		}else{
-			i = -1 * m_pShareData->m_Common.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
+			i = -1 * m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
 		}
 		Cursor_UPDOWN( i, bSelect );
 		nRepeat = -1 * i;
@@ -693,7 +693,7 @@ int CEditView::Command_UP( int bSelect, BOOL bRepeat, int lines )
 	else{
 		++nRepeat;
 		if( Cursor_UPDOWN( -1, bSelect ) && bRepeat ){
-			for( i = 0; i < m_pShareData->m_Common.m_nRepeatedScrollLineNum - 1; ++i ){		/* キーリピート時のスクロール行数 */
+			for( i = 0; i < m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1; ++i ){		/* キーリピート時のスクロール行数 */
 				::UpdateWindow( m_hWnd );	//	YAZAKI
 				Cursor_UPDOWN( -1, bSelect );
 				++nRepeat;
@@ -713,18 +713,18 @@ int CEditView::Command_DOWN( int bSelect, BOOL bRepeat )
 	int		nRepeat;
 	nRepeat = 0;
 	/* キーリピート時のスクロールを滑らかにするか */
-	if( !m_pShareData->m_Common.m_nRepeatedScroll_Smooth ){
+	if( !m_pShareData->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth ){
 		if( !bRepeat ){
 			i = 1;
 		}else{
-			i = m_pShareData->m_Common.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
+			i = m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
 		}
 		Cursor_UPDOWN( i, bSelect );
 		nRepeat = i;
 	}else{
 		++nRepeat;
 		if( Cursor_UPDOWN( 1, bSelect ) && bRepeat ){
-			for( i = 0; i < m_pShareData->m_Common.m_nRepeatedScrollLineNum - 1; ++i ){	/* キーリピート時のスクロール行数 */
+			for( i = 0; i < m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum - 1; ++i ){	/* キーリピート時のスクロール行数 */
 				//	ここで再描画。
 				::UpdateWindow( m_hWnd );	//	YAZAKI
 				Cursor_UPDOWN( 1, bSelect );
@@ -940,7 +940,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 			if( nIndex >= pcLayout->GetLengthWithEOL() ){
 				/* フリーカーソルモードか */
 				if( (
-					m_pShareData->m_Common.m_bIsFreeCursorMode
+					m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode
 				 || IsTextSelected() && m_bBeginBoxSelect	/* 矩形範囲選択中 */
 					)
 				 &&
@@ -1349,11 +1349,11 @@ void CEditView::Command_WORDLEFT( int bSelect )
 	const CLayout* pcLayout;
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
-		bIsFreeCursorModeOld = m_pShareData->m_Common.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;
+		bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;
 		/* カーソル左移動 */
 		Command_LEFT( bSelect, FALSE );
-		m_pShareData->m_Common.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 		return;
 	}
 
@@ -1366,7 +1366,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 		nIdx,
 		&nLineNew,
 		&nColmNew,
-		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord
+		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
 	);
 	if( nResult ){
 		/* 行が変わった */
@@ -1387,11 +1387,11 @@ void CEditView::Command_WORDLEFT( int bSelect )
 			ChangeSelectAreaByCurrentCursor( nColmNew, nLineNew );
 		}
 	}else{
-		bIsFreeCursorModeOld = m_pShareData->m_Common.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;
+		bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;
 		/* カーソル左移動 */
 		Command_LEFT( bSelect, FALSE );
-		m_pShareData->m_Common.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 	}
 	return;
 }
@@ -1440,7 +1440,7 @@ try_again:;
 		nIdx,
 		&nLineNew,
 		&nColmNew,
-		m_pShareData->m_Common.m_bStopsBothEndsWhenSearchWord
+		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord
 	);
 	if( nResult ){
 		/* 行が変わった */
@@ -1461,11 +1461,11 @@ try_again:;
 		}
 	}
 	else{
-		BOOL	bIsFreeCursorModeOld = m_pShareData->m_Common.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		m_pShareData->m_Common.m_bIsFreeCursorMode = FALSE;
+		BOOL	bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;
 		/* カーソル右移動 */
 		Command_RIGHT( bSelect, FALSE, FALSE );
-		m_pShareData->m_Common.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 		if( !bTryAgain ){
 			bTryAgain = TRUE;
 			goto try_again;
@@ -2063,7 +2063,7 @@ void CEditView::Command_DELETE_LINE( void )
 		// 2003-04-30 かろと
 		// 行削除した後、フリーカーソルでないのにカーソル位置が行端より右になる不具合対応
 		// フリーカーソルモードでない場合は、カーソル位置を調整する
-		if( !m_pShareData->m_Common.m_bIsFreeCursorMode ) {
+		if( !m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode ) {
 			int nIndex;
 			nIndex = LineColmnToIndex2( pcLayout, nCaretPosX_OLD, nCaretPosX_OLD );
 
@@ -6344,13 +6344,13 @@ BOOL CEditView::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 void CEditView::Command_BIND_WINDOW( void )
 {
 	//タブモードであるならば
-	if (m_pShareData->m_Common.m_bDispTabWnd)
+	if (m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd)
 	{
 		//タブウィンドウの設定を変更
-		m_pShareData->m_Common.m_bDispTabWndMultiWin = !m_pShareData->m_Common.m_bDispTabWndMultiWin;
+		m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin = !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin;
 
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
-		if( !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+		if( !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
 			m_pcEditDoc->m_pcEditWnd->WindowTopMost(
 				( (DWORD)::GetWindowLongPtr( m_pcEditDoc->m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
@@ -6362,7 +6362,7 @@ void CEditView::Command_BIND_WINDOW( void )
 		CShareData::getInstance()->ResetGroupId();
 		CShareData::getInstance()->PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
-			(WPARAM)((m_pShareData->m_Common.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
+			(WPARAM)((m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
 			(LPARAM)m_pcEditDoc->m_pcEditWnd->m_hWnd,	//CEditWndのウィンドウハンドル
 			m_hWnd);									//自分自身
 		//End 2004.08.27 Kazika
@@ -7793,7 +7793,7 @@ void CEditView::Command_EXITALL( void )
 /* グループを閉じる */	// 2007.06.20 ryoji 追加
 void CEditView::Command_GROUPCLOSE( void )
 {
-	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ){
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 		int nGroup = CShareData::getInstance()->GetGroupId( ::GetParent(m_hwndParent) );
 		CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE, nGroup );
 	}
@@ -8009,8 +8009,8 @@ void CEditView::Command_COMPARE( void )
 	m_pShareData->m_Common.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
-	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	if( TRUE  == m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+	 && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		hwndMsgBox = m_hWnd;
 		m_pShareData->m_Common.m_bCompareAndTileHorz = FALSE;
@@ -8151,7 +8151,7 @@ void CEditView::Command_SHOWTOOLBAR( void )
 {
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	m_pShareData->m_Common.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_hwndToolBar)? TRUE: FALSE);	/* ツールバー表示 */
+	m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR = ((NULL == pCEditWnd->m_hwndToolBar)? TRUE: FALSE);	/* ツールバー表示 */
 	pCEditWnd->LayoutToolBar();
 	pCEditWnd->EndLayoutBars();
 
@@ -8175,7 +8175,7 @@ void CEditView::Command_SHOWSTATUSBAR( void )
 {
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	m_pShareData->m_Common.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_hwndStatusBar)? TRUE: FALSE);	/* ステータスバー表示 */
+	m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR = ((NULL == pCEditWnd->m_hwndStatusBar)? TRUE: FALSE);	/* ステータスバー表示 */
 	pCEditWnd->LayoutStatusBar();
 	pCEditWnd->EndLayoutBars();
 
@@ -8199,7 +8199,7 @@ void CEditView::Command_SHOWFUNCKEY( void )
 {
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	m_pShareData->m_Common.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.m_hWnd)? TRUE: FALSE);	/* ファンクションキー表示 */
+	m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = ((NULL == pCEditWnd->m_CFuncKeyWnd.m_hWnd)? TRUE: FALSE);	/* ファンクションキー表示 */
 	pCEditWnd->LayoutFuncKey();
 	pCEditWnd->EndLayoutBars();
 
@@ -8224,12 +8224,12 @@ void CEditView::Command_SHOWTAB( void )
 {
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
-	m_pShareData->m_Common.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.m_hWnd)? TRUE: FALSE);	/* タブバー表示 */
+	m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = ((NULL == pCEditWnd->m_cTabWnd.m_hWnd)? TRUE: FALSE);	/* タブバー表示 */
 	pCEditWnd->LayoutTabBar();
 	pCEditWnd->EndLayoutBars();
 
 	// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
-	if( m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		m_pcEditDoc->m_pcEditWnd->WindowTopMost(
 			( (DWORD)::GetWindowLongPtr( m_pcEditDoc->m_pcEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
@@ -9058,7 +9058,7 @@ void CEditView::Command_TAB_CLOSEOTHER( void )
 /* 左をすべて閉じる */		// 2009.07.20 syat
 void CEditView::Command_TAB_CLOSELEFT( void )
 {
-	if( m_pShareData->m_Common.m_bDispTabWnd ){
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){
 		int nGroup = 0;
 
 		// ウィンドウ一覧を取得する
@@ -9087,7 +9087,7 @@ void CEditView::Command_TAB_CLOSELEFT( void )
 /* 右をすべて閉じる */		// 2009.07.20 syat
 void CEditView::Command_TAB_CLOSERIGHT( void )
 {
-	if( m_pShareData->m_Common.m_bDispTabWnd ){
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){
 		int nGroup = 0;
 
 		// ウィンドウ一覧を取得する

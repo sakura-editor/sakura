@@ -604,7 +604,7 @@ bool CRecent::EasyCreate( int nRecentType )
 			&m_pShareData->m_nMRUArrNum,
 			m_pShareData->m_bMRUArrFavorite,
 			MAX_MRU,
-			&(m_pShareData->m_Common.m_nMRUArrNum_MAX),
+			&(m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX),
 			sizeof( EditInfo ),
 			(int)(&((EditInfo*)0)->m_szPath[0]),
 			sizeof( ((EditInfo*)0)->m_szPath ),	//_MAX_PATH
@@ -617,7 +617,7 @@ bool CRecent::EasyCreate( int nRecentType )
 			&m_pShareData->m_nOPENFOLDERArrNum,
 			m_pShareData->m_bOPENFOLDERArrFavorite,
 			MAX_OPENFOLDER,
-			&(m_pShareData->m_Common.m_nOPENFOLDERArrNum_MAX),
+			&(m_pShareData->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX),
 			sizeof( m_pShareData->m_szOPENFOLDERArr[0] ),	//_MAX_PATH
 			0,
 			0,	//AppendItem‚Ìƒf[ƒ^‚Í•¶Žš—ñ

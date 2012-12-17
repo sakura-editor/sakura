@@ -1142,16 +1142,16 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_TAB_CLOSELEFT:	// 2009.12.26 syat 追加
 	case F_TAB_CLOSERIGHT:	// 2009.12.26 syat 追加
 		//非タブモード時はウィンドウを結合して表示できない
-		return pShareData->m_Common.m_bDispTabWnd != FALSE;
+		return pShareData->m_Common.m_sTabBar.m_bDispTabWnd != FALSE;
 	case F_GROUPCLOSE:		// 2007.06.20 ryoji 追加
 	case F_NEXTGROUP:		// 2007.06.20 ryoji 追加
 	case F_PREVGROUP:		// 2007.06.20 ryoji 追加
-		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin );
+		return ( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin );
 	case F_TAB_SEPARATE:	// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTNEXT:	// 2007.06.20 ryoji 追加
 	case F_TAB_JOINTPREV:	// 2007.06.20 ryoji 追加
 	case F_FILENEW_NEWWINDOW:	// 2011.11.15 syat 追加
-		return ( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin );
+		return ( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin );
 	}
 	return true;
 }
@@ -1201,7 +1201,7 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
 	//	2003.07.21 genta
 	case F_CHGMOD_INS:				return (pcEditDoc->IsInsMode()) ? true : false; //	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
 	case F_TOGGLE_KEY_SEARCH:		return (pShareData->m_Common.m_bUseCaretKeyWord) ? true : false;	//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
-	case F_BIND_WINDOW:				return ((pShareData->m_Common.m_bDispTabWnd) && !(pShareData->m_Common.m_bDispTabWndMultiWin));
+	case F_BIND_WINDOW:				return ((pShareData->m_Common.m_sTabBar.m_bDispTabWnd) && !(pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin));
 	case F_TOPMOST:					return ((DWORD)::GetWindowLongPtr( pCEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST) ? true : false;
 	// Jan. 10, 2004 genta インクリメンタルサーチ
 	case F_ISEARCH_NEXT:

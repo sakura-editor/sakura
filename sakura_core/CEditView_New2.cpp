@@ -301,7 +301,7 @@ void CEditView::DispLineNumber(
 	}else{
 		rcClip.left = 0;
 		//	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
-		rcClip.right = m_nViewAlignLeft - m_pShareData->m_Common.m_nLineNumRightSpace;
+		rcClip.right = m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace;
 		rcClip.top = y;
 		rcClip.bottom = y + nLineHeight;
 //		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_colorBACK );
@@ -740,7 +740,7 @@ void CEditView::DispRuler( HDC hdc )
 
 		/* LOGFONTの初期化 */
 		memset( &lf, 0, sizeof(LOGFONT) );
-		lf.lfHeight			= 1 - m_pShareData->m_Common.m_nRulerHeight;	//	2002/05/13 ai
+		lf.lfHeight			= 1 - m_pShareData->m_Common.m_sWindow.m_nRulerHeight;	//	2002/05/13 ai
 		lf.lfWidth			= 5/*0*/;
 		lf.lfEscapement		= 0;
 		lf.lfOrientation	= 0;

@@ -183,8 +183,8 @@ void CDlgCompare::SetData( void )
 	/* 左右に並べて表示 */
 	//@@@ 2003.06.12 MIK
 	// TAB 1ウィンドウ表示のときは並べて比較できなくする
-	if( TRUE  == m_pShareData->m_Common.m_bDispTabWnd
-	 && !m_pShareData->m_Common.m_bDispTabWndMultiWin )
+	if( TRUE  == m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
+	 && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		m_bCompareAndTileHorz = FALSE;
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_TILE_H ), FALSE );

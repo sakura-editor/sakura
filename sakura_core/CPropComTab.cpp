@@ -127,19 +127,19 @@ void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
 {
 
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
-	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_SortTabList, m_Common.m_bSortTabList );			//@@@ 2006.03.23 fon
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWndMultiWin, ! m_Common.m_bDispTabWndMultiWin ); //@@@ 2003.05.31 MIK
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), EM_LIMITTEXT, (WPARAM)(_countof( m_Common.m_szTabWndCaption ) - 1 ), (LPARAM)0 );
-	::SetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_sTabBar.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
+	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_sTabBar.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_sTabBar.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
+	::CheckDlgButton( hwndDlg, IDC_CHECK_SortTabList, m_Common.m_sTabBar.m_bSortTabList );			//@@@ 2006.03.23 fon
+	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWndMultiWin, ! m_Common.m_sTabBar.m_bDispTabWndMultiWin ); //@@@ 2003.05.31 MIK
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), EM_LIMITTEXT, (WPARAM)(_countof( m_Common.m_sTabBar.m_szTabWndCaption ) - 1 ), (LPARAM)0 );
+	::SetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption );
 
 	//	Feb. 11, 2007 genta 新規作成
-	::CheckDlgButton( hwndDlg, IDC_CHECK_RetainEmptyWindow, m_Common.m_bTab_RetainEmptyWin );
-	::CheckDlgButton( hwndDlg, IDC_CHECK_CloseOneWin, m_Common.m_bTab_CloseOneWin );
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ChgWndByWheel, m_Common.m_bChgWndByWheel );	// 2007.04.03 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_OpenNewWin, m_Common.m_bNewWindow );			// 2009.06.17
+	::CheckDlgButton( hwndDlg, IDC_CHECK_RetainEmptyWindow, m_Common.m_sTabBar.m_bTab_RetainEmptyWin );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_CloseOneWin, m_Common.m_sTabBar.m_bTab_CloseOneWin );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ChgWndByWheel, m_Common.m_sTabBar.m_bChgWndByWheel );	// 2007.04.03 ryoji
+	::CheckDlgButton( hwndDlg, IDC_CHECK_OpenNewWin, m_Common.m_sTabBar.m_bNewWindow );			// 2009.06.17
 
 	EnableTabPropInput(hwndDlg);
 	return;
@@ -149,19 +149,19 @@ void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
 int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
 {
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
-	m_Common.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
-	m_Common.m_bSameTabWidth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SameTabWidth );		// 2006.01.28 ryoji
-	m_Common.m_bDispTabIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabIcon );		// 2006.01.28 ryoji
-	m_Common.m_bSortTabList = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SortTabList );		// 2006.03.23 fon
-	m_Common.m_bDispTabWndMultiWin =
+	m_Common.m_sTabBar.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
+	m_Common.m_sTabBar.m_bSameTabWidth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SameTabWidth );		// 2006.01.28 ryoji
+	m_Common.m_sTabBar.m_bDispTabIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabIcon );		// 2006.01.28 ryoji
+	m_Common.m_sTabBar.m_bSortTabList = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SortTabList );		// 2006.03.23 fon
+	m_Common.m_sTabBar.m_bDispTabWndMultiWin =
 		( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin ) == BST_CHECKED ) ? FALSE : TRUE;
-	::GetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_szTabWndCaption, _countof( m_Common.m_szTabWndCaption ) );
+	::GetDlgItemText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption, _countof( m_Common.m_sTabBar.m_szTabWndCaption ) );
 
 	//	Feb. 11, 2007 genta 新規作成
-	m_Common.m_bTab_RetainEmptyWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RetainEmptyWindow );
-	m_Common.m_bTab_CloseOneWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CloseOneWin );
-	m_Common.m_bChgWndByWheel = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ChgWndByWheel );	// 2007.04.03 ryoji
-	m_Common.m_bNewWindow = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_OpenNewWin );			// 2009.06.17
+	m_Common.m_sTabBar.m_bTab_RetainEmptyWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RetainEmptyWindow );
+	m_Common.m_sTabBar.m_bTab_CloseOneWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CloseOneWin );
+	m_Common.m_sTabBar.m_bChgWndByWheel = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ChgWndByWheel );	// 2007.04.03 ryoji
+	m_Common.m_sTabBar.m_bNewWindow = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_OpenNewWin );			// 2009.06.17
 
 	return TRUE;
 }

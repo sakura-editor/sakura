@@ -124,7 +124,7 @@ CEditDoc::CEditDoc()
 	m_FileTime.dwHighDateTime = 0;
 
 	//	Oct. 2, 2005 genta 挿入モード
-	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
+	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode != FALSE );
 
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
@@ -211,7 +211,7 @@ void CEditDoc::InitDoc()
 	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
 
 	//	Oct. 2, 2005 genta 挿入モード
-	SetInsMode( m_pShareData->m_Common.m_bIsINSMode != FALSE );
+	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode != FALSE );
 }
 
 
@@ -1581,10 +1581,10 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		// 2002.12.11 Moca この部分で行われていたデータのコピーをCPropCommonに移動・関数化
 		// ShareData に 設定を適用・コピーする
 		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする
-		BOOL bGroup = (m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin);
+		BOOL bGroup = (m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin);
 		m_cPropCommon.ApplyData();
 		m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
-		if( bGroup != (m_pShareData->m_Common.m_bDispTabWnd && !m_pShareData->m_Common.m_bDispTabWndMultiWin ) ){
+		if( bGroup != (m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) ){
 			CShareData::getInstance()->ResetGroupId();
 		}
 
@@ -1695,8 +1695,8 @@ void CEditDoc::UpdateCaption()
 	//キャプション文字列の生成 -> pszCap
 	char	pszCap[1024];
 	const char* pszFormat = NULL;
-	if( !m_pcEditWnd->IsActiveApp() )	pszFormat = m_pShareData->m_Common.m_szWindowCaptionInactive;
-	else								pszFormat = m_pShareData->m_Common.m_szWindowCaptionActive;
+	if( !m_pcEditWnd->IsActiveApp() )	pszFormat = m_pShareData->m_Common.m_sWindow.m_szWindowCaptionInactive;
+	else								pszFormat = m_pShareData->m_Common.m_sWindow.m_szWindowCaptionActive;
 	ExpandParameter(
 		pszFormat,
 		pszCap,
@@ -1708,7 +1708,7 @@ void CEditDoc::UpdateCaption()
 
 	//@@@ From Here 2003.06.13 MIK
 	//タブウインドウのファイル名を通知
-	ExpandParameter( m_pShareData->m_Common.m_szTabWndCaption, pszCap, _countof( pszCap ));
+	ExpandParameter( m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption, pszCap, _countof( pszCap ));
 	m_pcEditWnd->ChangeFileNameNotify( pszCap, m_szFilePath, m_bGrepMode );	// 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	//@@@ To Here 2003.06.13 MIK
 }

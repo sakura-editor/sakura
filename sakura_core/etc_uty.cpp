@@ -489,7 +489,7 @@ void ActivateFrameWindow( HWND hwnd )
 	CShareData* pInstance = NULL;
 	DLLSHAREDATA* pShareData = NULL;
 	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
-		if( pShareData->m_Common.m_bDispTabWnd && !pShareData->m_Common.m_bDispTabWndMultiWin ) {
+		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
 			if( IsSakuraMainWindow( hwnd ) ){
 				if( pShareData->m_bEditWndChanging )
 					return;	// Ø‘Ö‚ÌÅ’†(busy)‚Í—v‹‚ğ–³‹‚·‚é

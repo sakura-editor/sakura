@@ -770,7 +770,7 @@ void CMenuDrawer::MyAppendMenu(
 //#ifdef _DEBUG
 			/* メニュー項目をオーナー描画にする */
 			/* メニューにアイコンを表示する */
-			if( m_pShareData->m_Common.m_bMenuIcon ){
+			if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
 				nFlagAdd = MF_OWNERDRAW;
 			}
 //#endif
