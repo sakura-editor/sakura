@@ -422,71 +422,84 @@ struct CommonSetting {
 	//	注意: 設定ファイルからの読み込み時にINTとして扱うため，bool型を使ってはいけない．
 	//	sizeof(int) != sizeof(bool)だとデータを破壊してしまう．
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           全般                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+	//カーソル
 	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
 	int					m_bIsINSMode;					/* 挿入／上書きモード */
 	int					m_bIsFreeCursorMode;			/* フリーカーソルモードか */
 	BOOL				m_bStopsBothEndsWhenSearchWord;	/* 単語単位で移動するときに、単語の両端で止まるか */
 	BOOL				m_bStopsBothEndsWhenSearchParagraph;	/* 段落単位で移動するときに、段落の両端で止まるか */
+	BOOL				m_bNoCaretMoveByActivation;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 
-	BOOL				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
-	BOOL				m_bRestoreBookmarks;			// 2002.01.16 hor ブックマークを復元するかどうか
-
-	int					m_bAddCRLFWhenCopy;				/* 折り返し行に改行を付けてコピー */
+	//スクロール
 	int					m_nRepeatedScrollLineNum;		/* キーリピート時のスクロール行数 */
 	BOOL				m_nRepeatedScroll_Smooth;		/* キーリピート時のスクロールを滑らかにするか */
 	int					m_nPageScrollByWheel;			// キー/マウスボタン + ホイールスクロールでページUP/DOWNする	// 2009.01.12 nasukoji
 	int					m_nHorizontalScrollByWheel;		// キー/マウスボタン + ホイールスクロールで横スクロールする		// 2009.01.12 nasukoji
-	BOOL				m_bCloseAllConfirm;				/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
-	BOOL				m_bExitConfirm;					/* 終了時の確認をする */
-	SSearchOption		m_sSearchOption;				// 検索／置換  条件
-	int					m_bConsecutiveAll;				/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-	int					m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
-	int					m_bSelectedArea;				/* 置換  選択範囲内置換 */
-	int					m_bGrepSubFolder;				/* Grep: サブフォルダも検索 */
-	BOOL				m_bGrepOutputLine;				/* Grep: 行を出力するか該当部分だけ出力するか */
-	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */
-	int					m_bGrepDefaultFolder;			/* Grep: フォルダの初期値をカレントフォルダにする */
-	int					m_nGrepCharSet;					/* Grep: 文字コードセット */ // 2002/09/20 Moca Add
-	int					m_bGrepRealTimeView;			/* 2003.06.16 Moca Grep結果のリアルタイム表示 */
-	BOOL				m_bCaretTextForSearch;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
-	char				m_szRegexpLib[_MAX_PATH];		/* 使用する正規表現DLL */ // 2007.08.22 genta
 
-	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
-	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */
-	LOGFONT				m_lf;							/* 現在のフォント情報 */
-	BOOL				m_bFontIs_FIXED_PITCH;			/* 現在のフォントは固定幅フォントである */
-	BOOL				m_bBackUp;						/* バックアップの作成 */
-	BOOL				m_bBackUpDialog;				/* バックアップの作成前に確認 */
-	BOOL				m_bBackUpFolder;				/* 指定フォルダにバックアップを作成する */
-	char				m_szBackUpFolder[_MAX_PATH];	/* バックアップを作成するフォルダ */
-	int 				m_nBackUpType;					/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-	int 				m_nBackUpType_Opt1;				/* バックアップファイル名：オプション1 */
-	int 				m_nBackUpType_Opt2;				/* バックアップファイル名：オプション2 */
-	int 				m_nBackUpType_Opt3;				/* バックアップファイル名：オプション3 */
-	int 				m_nBackUpType_Opt4;				/* バックアップファイル名：オプション4 */
-	int 				m_nBackUpType_Opt5;				/* バックアップファイル名：オプション5 */
-	int 				m_nBackUpType_Opt6;				/* バックアップファイル名：オプション6 */
-	BOOL				m_bBackUpDustBox;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-	BOOL				m_bBackUpPathAdvanced;				/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-	char				m_szBackUpPathAdvanced[_MAX_PATH];	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
-	int					m_nFileShareMode;				/* ファイルの排他制御モード */
-	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
-	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
-	LOGFONT				m_lf_kh;						/* キーワードヘルプのフォント情報 */		// ai 02/05/21 Add
-	BOOL				m_bUseCaretKeyWord;				/* キャレット位置の単語を辞書検索 */		// 2006.03.24 fon
+	//タスクトレイ
+	BOOL				m_bUseTaskTray;				/* タスクトレイのアイコンを使う */
+	BOOL				m_bStayTaskTray;			/* タスクトレイのアイコンを常駐 */
+	WORD				m_wTrayMenuHotKeyCode;		/* タスクトレイ左クリックメニュー キー */
+	WORD				m_wTrayMenuHotKeyMods;		/* タスクトレイ左クリックメニュー キー */
 
-	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
-	int					m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	/* ツールバーボタン構造体 */
-	int					m_bToolBarIsFlat;				/* フラットツールバーにする／しない */
+	//履歴
 	int					m_nMRUArrNum_MAX;
 	int					m_nOPENFOLDERArrNum_MAX;
+
+	//ノーカテゴリ
+	BOOL				m_bCloseAllConfirm;				/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
+	BOOL				m_bExitConfirm;					/* 終了時の確認をする */
+	BOOL				m_bDispExitingDialog;			/* 終了ダイアログを表示する */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        ウィンドウ                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//基本設定
 	BOOL				m_bDispTOOLBAR;					/* 次回ウィンドウを開いたときツールバーを表示する */
 	BOOL				m_bDispSTATUSBAR;				/* 次回ウィンドウを開いたときステータスバーを表示する */
-
 	BOOL				m_bDispFUNCKEYWND;				/* 次回ウィンドウを開いたときファンクションキーを表示する */
+	BOOL				m_bMenuIcon;		/* メニューにアイコンを表示する */
+
+	BOOL				m_bScrollBarHorz;			/* 水平スクロールバーを使う */
+	BOOL				m_bUseCompotibleBMP;		// 再作画用互換ビットマップを使う 2007.09.09 Moca
+
+	//位置と大きさの設定
+	EWinSizeMode		m_eSaveWindowSize;	// 2004.05.13 Moca ウィンドウサイズ継承・固定 EWinSizeModeに順ずる
+	int					m_nWinSizeType;
+	int					m_nWinSizeCX;
+	int					m_nWinSizeCY;
+	EWinSizeMode		m_eSaveWindowPos;	// 2004.05.13 Moca ウィンドウ位置継承・固定 EWinSizeModeに順ずる
+	int					m_nWinPosX;
+	int					m_nWinPosY;
+
+	//ファンクションキー
 	int					m_nFUNCKEYWND_Place;			/* ファンクションキー表示位置／0:上 1:下 */
 	int					m_nFUNCKEYWND_GroupNum;			// 2002/11/04 Moca ファンクションキーのグループボタン数
 
+	//ルーラー・行番号
+	int					m_nRulerHeight;				/* ルーラー高さ */
+	int					m_nRulerBottomSpace;		/* ルーラーとテキストの隙間 */
+	int					m_nRulerType;				/* ルーラーのタイプ */
+	int					m_nLineNumRightSpace;		// 行番号の右のスペース Sep. 18, 2002 genta
+
+	//分割ウィンドウ
+	BOOL				m_bSplitterWndHScroll;			// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
+	BOOL				m_bSplitterWndVScroll;			// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
+
+	//タイトルバー
+	char				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];
+	char				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];
+
+	//INI内設定のみ
+	int					m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         タブバー                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	BOOL				m_bDispTabWnd;					//タブウインドウ表示する	//@@@ 2003.05.31 MIK
 	BOOL				m_bDispTabWndMultiWin;			//タブをまとめない	//@@@ 2003.05.31 MIK
 	BOOL				m_bTab_RetainEmptyWin;			//!< 最後の文書が閉じられたとき(無題)を残す
@@ -500,98 +513,186 @@ struct CommonSetting {
 	BOOL				m_bTab_ListFull;				//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 	BOOL				m_bChgWndByWheel;				//マウスホイールでウィンドウ切り替え	//@@@ 2006.03.26 ryoji
 
-	BOOL				m_bSplitterWndHScroll;			// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
-	BOOL				m_bSplitterWndVScroll;			// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           編集                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//コピー
+	int					m_bAddCRLFWhenCopy;				/* 折り返し行に改行を付けてコピー */
+	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
+	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
+	BOOL				m_bEnableLineModePaste;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+	BOOL				m_bConvertEOLPaste;			/* 改行コードを変換して貼り付ける */	// 2009.2.28 salarm
 
-	/* カスタムメニュー情報 */
-	char				m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
-	int					m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
-	int					m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
-	char				m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
-	char				m_szMidashiKigou[256];			/* 見出し記号 */
-	char				m_szInyouKigou[32];				/* 引用符 */
-	int					m_bUseHokan;					/* 入力補完機能を使用する */
-
-	EWinSizeMode		m_eSaveWindowSize;	// 2004.05.13 Moca ウィンドウサイズ継承・固定 EWinSizeModeに順ずる
-	int					m_nWinSizeType;
-	int					m_nWinSizeCX;
-	int					m_nWinSizeCY;
-	EWinSizeMode		m_eSaveWindowPos;	// 2004.05.13 Moca ウィンドウ位置継承・固定 EWinSizeModeに順ずる
-	int					m_nWinPosX;
-	int					m_nWinPosY;
-
-	BOOL				m_bUseTaskTray;				/* タスクトレイのアイコンを使う */
-	BOOL				m_bStayTaskTray;			/* タスクトレイのアイコンを常駐 */
-
-	WORD				m_wTrayMenuHotKeyCode;		/* タスクトレイ左クリックメニュー キー */
-	WORD				m_wTrayMenuHotKeyMods;		/* タスクトレイ左クリックメニュー キー */
-
+	//ドラッグ＆ドロップ
 	BOOL				m_bUseOLE_DragDrop;			/* OLEによるドラッグ & ドロップを使う */
 	BOOL				m_bUseOLE_DropSource;		/* OLEによるドラッグ元にするか */
 
+	//上書きモード
+	BOOL				m_bNotOverWriteCRLF;		/* 改行は上書きしない */
 
-	BOOL				m_bDispExitingDialog;			/* 終了ダイアログを表示する */
-	BOOL				m_bEnableUnmodifiedOverwrite;	/* 無変更でも上書きするか */
+	//クリッカブルURL
 	BOOL				m_bJumpSingleClickURL;			/* URLのシングルクリックでJump */
 	BOOL				m_bSelectClickedURL;			/* URLがクリックされたら選択するか */
-	BOOL				m_bGrepExitConfirm;				/* Grepモードで保存確認するか */
 
-	int					m_nRulerHeight;				/* ルーラー高さ */
-	int					m_nRulerBottomSpace;		/* ルーラーとテキストの隙間 */
-	int					m_nRulerType;				/* ルーラーのタイプ */
-	int					m_nLineNumRightSpace;		// 行番号の右のスペース Sep. 18, 2002 genta
-	int					m_nVertLineOffset;			// 縦線の描画座標オフセット 2005.11.10 Moca
-	BOOL				m_bUseCompotibleBMP;		// 再作画用互換ビットマップを使う 2007.09.09 Moca
+	// (ダイアログ項目無し)
+	BOOL				m_bAutoColmnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         ファイル                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//ファイルの排他制御モード
+	int					m_nFileShareMode;				/* ファイルの排他制御モード */
+	BOOL				m_bCheckFileTimeStamp;		/* 更新の監視 */
 
-	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
-	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
-	BOOL				m_bEnableLineModePaste;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
-	BOOL				m_bConvertEOLPaste;			/* 改行コードを変換して貼り付ける */	// 2009.2.28 salarm
-	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
-	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */
+	//ファイルの保存
+	BOOL				m_bEnableUnmodifiedOverwrite;	/* 無変更でも上書きするか */
+
+	//「名前を付けて保存」でファイルの種類が[ユーザー指定]のときのファイル一覧表示
+	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+	BOOL				m_bNoFilterSaveNew;		// 新規から保存時は全ファイル表示
+	BOOL				m_bNoFilterSaveFile;	// 新規以外から保存時は全ファイル表示
+
+	//ファイルオープン
 	BOOL				m_bDropFileAndClose;		/* ファイルをドロップしたときは閉じて開く */
 	int					m_nDropFileNumMax;			/* 一度にドロップ可能なファイル数 */
-	BOOL				m_bCheckFileTimeStamp;		/* 更新の監視 */
-	BOOL				m_bNotOverWriteCRLF;		/* 改行は上書きしない */
-	RECT				m_rcOpenDialog;				/* 「開く」ダイアログのサイズと位置 */
-	BOOL				m_bAutoCloseDlgFind;		/* 検索ダイアログを自動的に閉じる */
-	BOOL				m_bScrollBarHorz;			/* 水平スクロールバーを使う */
-	BOOL				m_bAutoCloseDlgFuncList;	/* アウトライン ダイアログを自動的に閉じる */
-	BOOL				m_bAutoCloseDlgReplace;		/* 置換 ダイアログを自動的に閉じる */
-	BOOL				m_bSearchAll;				/* 先頭（末尾）から再検索 2002.01.26 hor */
-	BOOL				m_bAutoColmnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
-	BOOL				m_bNoCaretMoveByActivation;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
-
-	BOOL				m_bHokanKey_RETURN;	/* VK_RETURN	補完決定キーが有効/無効 */
-	BOOL				m_bHokanKey_TAB;	/* VK_TAB		補完決定キーが有効/無効 */
-	BOOL				m_bHokanKey_RIGHT;	/* VK_RIGHT		補完決定キーが有効/無効 */
-	BOOL				m_bHokanKey_SPACE;	/* VK_SPACE		補完決定キーが有効/無効 */
-
-
-	int					m_nDateFormatType;						//日付書式のタイプ
-	char				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];//日付書式
-	int					m_nTimeFormatType;						//時刻書式のタイプ
-	char				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];//時刻書式
-
-	BOOL				m_bMenuIcon;		/* メニューにアイコンを表示する */
+	BOOL				m_bRestoreCurPosition;			//	ファイルを開いたときカーソル位置を復元するか
+	BOOL				m_bRestoreBookmarks;			// 2002.01.16 hor ブックマークを復元するかどうか
 	BOOL				m_bAutoMIMEdecode;	// ファイル読み込み時にMIMEのdecodeを行うか
 	BOOL				m_bQueryIfCodeChange;	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
 	BOOL				m_bAlertIfFileNotExist;	// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 	bool				m_bAlertIfLargeFile;    // 開こうとしたファイルサイズが大きいバイイに警告する
 	int 				m_nAlertFileSize;       // 警告を始めるファイルサイズ(MB)
 
-	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
-	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                       バックアップ                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	BOOL				m_bBackUp;						/* バックアップの作成 */
+	BOOL				m_bBackUpDialog;				/* バックアップの作成前に確認 */
+	BOOL				m_bBackUpFolder;				/* 指定フォルダにバックアップを作成する */
 
-	// Apr. 5, 2003 genta
-	char				m_szWindowCaptionActive[MAX_CAPTION_CONF_LEN];
-	char				m_szWindowCaptionInactive[MAX_CAPTION_CONF_LEN];
+	char				m_szBackUpFolder[_MAX_PATH];	/* バックアップを作成するフォルダ */
+	int 				m_nBackUpType;					/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+	int 				m_nBackUpType_Opt1;				/* バックアップファイル名：オプション1 */
+	int 				m_nBackUpType_Opt2;				/* バックアップファイル名：オプション2 */
+	int 				m_nBackUpType_Opt3;				/* バックアップファイル名：オプション3 */
+	int 				m_nBackUpType_Opt4;				/* バックアップファイル名：オプション4 */
+	int 				m_nBackUpType_Opt5;				/* バックアップファイル名：オプション5 */
+	int 				m_nBackUpType_Opt6;				/* バックアップファイル名：オプション6 */
+	BOOL				m_bBackUpDustBox;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+	BOOL				m_bBackUpPathAdvanced;				/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+	char				m_szBackUpPathAdvanced[_MAX_PATH];	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
-	//2004.10.28
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           書式                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//日付書式
+	int					m_nDateFormatType;						//日付書式のタイプ
+	char				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];//日付書式
+
+	//時刻書式
+	int					m_nTimeFormatType;						//時刻書式のタイプ
+	char				m_szTimeFormat[MAX_DATETIMEFOREMAT_LEN];//時刻書式
+
+	//見出し記号
+	char				m_szMidashiKigou[256];			/* 見出し記号 */
+
+	//引用符
+	char				m_szInyouKigou[32];				/* 引用符 */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           検索                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	SSearchOption		m_sSearchOption;				// 検索／置換  条件
+	int					m_bConsecutiveAll;				/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
+	int					m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
+	int					m_bSelectedArea;				/* 置換  選択範囲内置換 */
+	int					m_bGrepSubFolder;				/* Grep: サブフォルダも検索 */
+	BOOL				m_bGrepOutputLine;				/* Grep: 行を出力するか該当部分だけ出力するか */
+	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */
+	int					m_bGrepDefaultFolder;			/* Grep: フォルダの初期値をカレントフォルダにする */
+	int					m_nGrepCharSet;					/* Grep: 文字コードセット */ // 2002/09/20 Moca Add
+
+	BOOL				m_bCaretTextForSearch;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+	char				m_szRegexpLib[_MAX_PATH];		/* 使用する正規表現DLL */ // 2007.08.22 genta
+
+	//Grep
+	BOOL				m_bGrepExitConfirm;				/* Grepモードで保存確認するか */
+	int					m_bGrepRealTimeView;			/* 2003.06.16 Moca Grep結果のリアルタイム表示 */
+
+	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
+	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */
+
+	//検索・置換ダイアログ
+	BOOL				m_bAutoCloseDlgFind;		/* 検索ダイアログを自動的に閉じる */
+	BOOL				m_bAutoCloseDlgReplace;		/* 置換 ダイアログを自動的に閉じる */
+	BOOL				m_bSearchAll;				/* 先頭（末尾）から再検索 2002.01.26 hor */
+
+	//INI内設定のみ
+	BOOL				m_bUseCaretKeyWord;				/* キャレット位置の単語を辞書検索 */		// 2006.03.24 fon
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                       キー割り当て                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	BOOL				m_bCreateAccelTblEachWin;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     カスタムメニュー                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	/* カスタムメニュー情報 */
+	char				m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
+	int					m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
+	int					m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
+	char				m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        ツールバー                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
+	int					m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	/* ツールバーボタン構造体 */
+	int					m_bToolBarIsFlat;				/* フラットツールバーにする／しない */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      強調キーワード                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	/* 強調キーワード設定 */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           支援                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//入力補完機能
+	BOOL				m_bHokanKey_RETURN;	/* VK_RETURN	補完決定キーが有効/無効 */
+	BOOL				m_bHokanKey_TAB;	/* VK_TAB		補完決定キーが有効/無効 */
+	BOOL				m_bHokanKey_RIGHT;	/* VK_RIGHT		補完決定キーが有効/無効 */
+	BOOL				m_bHokanKey_SPACE;	/* VK_SPACE		補完決定キーが有効/無効 */
+
+	//外部ヘルプの設定
+	char				m_szExtHelp[_MAX_PATH];		/* 外部ヘルプ１ */
+
+	//外部HTMLヘルプの設定
+	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
+	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
+
+	//migemo設定
 	char				m_szMigemoDll[_MAX_PATH];		/* migemo dll */
 	char				m_szMigemoDict[_MAX_PATH];		/* migemo dict */
 
+	//キーワードヘルプ
+	LOGFONT				m_lf_kh;						/* キーワードヘルプのフォント情報 */		// ai 02/05/21 Add
+
+	//INI内設定のみ
+	int					m_bUseHokan;					/* 入力補完機能を使用する */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          マクロ                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      ファイル名表示                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                       アウトライン                          //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
 	int					m_bRememberOutlineWindowPos;
 	int					m_widthOutlineWindow;
@@ -599,11 +700,41 @@ struct CommonSetting {
 	int					m_xOutlineWindowPos;
 	int					m_yOutlineWindowPos;
 
-	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	BOOL				m_bNoFilterSaveNew;		// 新規から保存時は全ファイル表示
-	BOOL				m_bNoFilterSaveFile;	// 新規以外から保存時は全ファイル表示
+	//IDD_FUNCLIST (ツール - アウトライン解析)
+	BOOL				m_bAutoCloseDlgFuncList;	/* アウトライン ダイアログを自動的に閉じる */
+	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor
+	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
 
-	BOOL				m_bCreateAccelTblEachWin;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     ファイル内容比較                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//ファイル内容比較ダイアログ
+	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          ビュー                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//INI内設定のみ
+	LOGFONT				m_lf;							/* 現在のフォント情報 */
+	BOOL				m_bFontIs_FIXED_PITCH;			/* 現在のフォントは固定幅フォントである */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          その他                             //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//INI内設定のみ
+	RECT				m_rcOpenDialog;				/* 「開く」ダイアログのサイズと位置 */
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          ステータスバー                     //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        プラグイン                           //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                        メインメニュー                       //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 }; /* Common */
 
 

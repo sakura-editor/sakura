@@ -288,10 +288,14 @@ struct ARRHEAD {
 
 	Version 97:
 	改行コードを変換して貼り付ける
+
+	Version 98:
+	CommonSetting構造体整理開始
+
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 97;
+const unsigned int uShareDataVersion = 98;
 
 /*
 ||	Singleton風
