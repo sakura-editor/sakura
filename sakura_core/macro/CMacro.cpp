@@ -24,12 +24,12 @@
 #include "StdAfx.h"
 #include "func/Funccode.h"
 #include "CMacro.h"
-#include "CControlTray.h"
+#include "_main/CControlTray.h"
 #include "view/CEditView.h" //2002/2/10 aroka
 #include "macro/CSMacroMgr.h" //2002/2/10 aroka
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ÉwÉbÉ_êÆóù
 #include "debug/Debug.h"
-#include "OleTypes.h" //2003-02-21 ãS
+#include "_os/OleTypes.h" //2003-02-21 ãS
 #include "io/CTextStream.h"
 #include "window/CEditWnd.h"
 #include "env/CSakuraEnvironment.h"

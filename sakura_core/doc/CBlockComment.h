@@ -16,7 +16,7 @@
 #define _CBLOCKCOMMENT_H_
 
 //	sakura
-#include "global.h"
+#include "_main/global.h"
 
 enum ECommentType{
 	COMMENT_TYPE_0	= 0,

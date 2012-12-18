@@ -16,7 +16,7 @@
 #define _CMEMORYITERATOR_H_
 
 //	sakura
-#include "global.h"
+#include "_main/global.h"
 #include "charset/charcode.h"
 
 /*-----------------------------------------------------------------------

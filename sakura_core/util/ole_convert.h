@@ -6,7 +6,7 @@
 #define SAKURA_OLE_CONVERT_208FE8C1_C742_4ED8_9C9C_25841915706BD_H_
 
 #include <string>
-#include "OleTypes.h"
+#include "_os/OleTypes.h"
 
 bool variant_to_wstr( VARIANT v, std::wstring& wstr );	// VARIANT•Ï”‚ğBSTR‚Æ‚İ‚È‚µAwstring‚É•ÏŠ·‚·‚é
 bool variant_to_int( VARIANT v, int& n );	// VARIANT•Ï”‚ğ®”‚Æ‚İ‚È‚µAint‚É•ÏŠ·‚·‚é

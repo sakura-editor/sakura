@@ -14,7 +14,7 @@
 #define _DEBUG_H_
 
 #include <windows.h>
-#include "global.h"
+#include "_main/global.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //

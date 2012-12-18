@@ -38,7 +38,7 @@ class CMemory;
 /*! ファイル文字コードセット判別時の先読み最大サイズ */
 #define CheckKanjiCode_MAXREADLENGTH 16384
 
-#include "global.h"
+#include "_main/global.h"
 
 //! メモリバッファクラス
 class SAKURA_CORE_API CMemory

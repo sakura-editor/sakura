@@ -36,21 +36,19 @@
 */
 
 #include "StdAfx.h"
-//#include <windows.h>
 #include "CTabWnd.h"
 #include "debug/Debug.h"
 #include "window/CEditWnd.h"
-#include "global.h"
+#include "_main/global.h"
 #include "charset/charcode.h"
 
 #include "env/CShareData.h"
+#include "env/CSakuraEnvironment.h"
 #include "recent/CRecentEditNode.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
-//#include "env/CAppNodeManager.h"
-#include "env/CSakuraEnvironment.h"
 #include "sakura_rc.h"
 
 

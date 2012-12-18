@@ -22,21 +22,21 @@
 #include "StdAfx.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "sakura_rc.h"
-#include "global.h"
+#include "view/CEditView.h"
+#include "_main/global.h"
 #include "dlg/CDlgDiff.h"
 #include "doc/CEditDoc.h"
-#include "view/CEditView.h"
 #include "doc/CDocLine.h"
 #include "doc/CDocLineMgr.h"
 #include "CWaitCursor.h"
-#include "COsVersionInfo.h"
+#include "_os/COsVersionInfo.h"
 #include "debug/Debug.h"
 #include "util/module.h"
 #include "util/file.h"
 #include "window/CEditWnd.h"
 #include "io/CTextStream.h"
 #include "CWriteManager.h"
+#include "sakura_rc.h"
 
 #define	SAKURA_DIFF_TEMP_PREFIX	_T("sakura_diff_")
 

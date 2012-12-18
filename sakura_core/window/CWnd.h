@@ -19,7 +19,7 @@ class CWnd;
 #define _CWND_H_
 
 #include <windows.h>
-#include "global.h"
+#include "_main/global.h"
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

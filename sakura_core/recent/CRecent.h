@@ -36,7 +36,7 @@
 #ifndef SAKURA_CRECENT_E523D9BB_0DBF_4642_846A_990A2B5122CF9_H_
 #define SAKURA_CRECENT_E523D9BB_0DBF_4642_846A_990A2B5122CF9_H_
 
-#include "global.h"
+#include "_main/global.h"
 
 
 

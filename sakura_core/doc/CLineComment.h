@@ -15,7 +15,7 @@
 #define _CLINECOMMENT_H_
 
 //	sakura
-#include "global.h"
+#include "_main/global.h"
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

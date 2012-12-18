@@ -30,7 +30,7 @@
 #ifndef __CAUTOSAVE_H_
 #define __CAUTOSAVE_H_
 #include <windows.h>
-#include "global.h"
+#include "_main/global.h"
 #include "doc/CDocListener.h"
 
 //! •ª¨ƒ~ƒŠ•b‚É•ÏŠ·‚·‚é‚½‚ß‚ÌŒW”

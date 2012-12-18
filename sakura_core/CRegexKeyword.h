@@ -21,7 +21,7 @@
 #ifndef	_REGEX_KEYWORD_H_
 #define	_REGEX_KEYWORD_H_
 
-#include "global.h"
+#include "_main/global.h"
 #include "CBregexp.h"
 #include "config/maxdata.h" //MAX_REGEX_KEYWORD
 

@@ -34,7 +34,7 @@
 #ifndef SAKURA_CODECHECKER_A8F89832_50E1_4F5F_9306_467062C9E3679_H_
 #define SAKURA_CODECHECKER_A8F89832_50E1_4F5F_9306_467062C9E3679_H_
 
-#include "global.h"
+#include "_main/global.h"
 #include "convert/convert_util2.h"
 #include "charset/codeutil.h"
 

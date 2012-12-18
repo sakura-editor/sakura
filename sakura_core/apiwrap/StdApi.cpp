@@ -2,7 +2,7 @@
 #include "StdApi.h"
 #include <vector>
 #include "charset/charcode.h"
-#include "COsVersionInfo.h"
+#include "_os/COsVersionInfo.h"
 using namespace std;
 
 //デバッグ用。

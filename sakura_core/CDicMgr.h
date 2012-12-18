@@ -18,7 +18,7 @@ class CDicMgr;
 
 #include <windows.h>
 #include "util/container.h"
-#include "global.h"
+#include "_main/global.h"
 
 class CMemory;
 

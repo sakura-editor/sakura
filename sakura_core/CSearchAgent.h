@@ -24,7 +24,7 @@
 #ifndef SAKURA_CSEARCHAGENT_FC5366A0_91D4_438B_80C6_DDA9791B50009_H_
 #define SAKURA_CSEARCHAGENT_FC5366A0_91D4_438B_80C6_DDA9791B50009_H_
 
-#include "global.h"
+#include "_main/global.h"
 
 class CDocLineMgr;
 struct DocLineReplaceArg;

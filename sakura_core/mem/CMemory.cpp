@@ -40,13 +40,13 @@
 #include <ctype.h>
 #include <locale.h>
 #include <limits.h>
+#include <vector>
+#include <mbstring.h>
 #include "mem/CMemory.h"
 #include "CEol.h"// 2002/2/3 aroka
 #include "charset/charcode.h"
-#include <vector>
 #include "charset/CShiftJis.h"
-#include <mbstring.h>
-#include "global.h"
+#include "_main/global.h"
 #include "debug/debug.h"
 #include "debug/CRunningTimer.h"
 
