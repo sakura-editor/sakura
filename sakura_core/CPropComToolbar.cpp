@@ -493,9 +493,9 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 //	nListItemHeight+=2;
 
 	/* ツールバーボタンの情報をセット(リストボックス)*/
-	for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
+	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
 		//	From Here Apr. 13, 2002 genta
-		lResult = ::Listbox_ADDDATA( hwndResList, 0, (LPARAM)m_Common.m_nToolBarButtonIdxArr[i] );
+		lResult = ::Listbox_ADDDATA( hwndResList, 0, (LPARAM)m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i] );
 		if( lResult == LB_ERR || lResult == LB_ERRSPACE ){
 			break;
 		}
@@ -506,7 +506,7 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 	::SendMessage( hwndResList, LB_SETCURSEL, 0, 0 );	//Oct. 14, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 
 	/* フラットツールバーにする／しない  */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_TOOLBARISFLAT, m_Common.m_bToolBarIsFlat );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_TOOLBARISFLAT, m_Common.m_sToolBar.m_bToolBarIsFlat );
 	return;
 }
 
@@ -527,21 +527,21 @@ int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 	hwndResList = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 
 	/* ツールバーボタンの数 */
-	m_Common.m_nToolBarButtonNum = ::SendMessage( hwndResList, LB_GETCOUNT, 0, 0 );
+	m_Common.m_sToolBar.m_nToolBarButtonNum = ::SendMessage( hwndResList, LB_GETCOUNT, 0, 0 );
 
 	/* ツールバーボタンの情報を取得 */
 	k = 0;
-	for( i = 0; i < m_Common.m_nToolBarButtonNum; ++i ){
+	for( i = 0; i < m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
 		j = ::SendMessage( hwndResList, LB_GETITEMDATA, i, 0 );
 		if( LB_ERR != j ){
-			m_Common.m_nToolBarButtonIdxArr[k] = j;
+			m_Common.m_sToolBar.m_nToolBarButtonIdxArr[k] = j;
 			k++;
 		}
 	}
-	m_Common.m_nToolBarButtonNum = k;
+	m_Common.m_sToolBar.m_nToolBarButtonNum = k;
 
 	/* フラットツールバーにする／しない  */
-	m_Common.m_bToolBarIsFlat = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TOOLBARISFLAT );
+	m_Common.m_sToolBar.m_bToolBarIsFlat = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TOOLBARISFLAT );
 
 	return TRUE;
 }

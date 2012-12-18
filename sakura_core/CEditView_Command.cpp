@@ -3073,7 +3073,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 	BOOL	bChangeState;
 	if( !m_bCurSrchKeyMark
 	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] )
-	 || m_sCurSearchOption != m_pShareData->m_Common.m_sSearchOption
+	 || m_sCurSearchOption != m_pShareData->m_Common.m_sSearch.m_sSearchOption
 	){
 		bChangeState = TRUE;
 	}else{
@@ -3082,7 +3082,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 
 	m_bCurSrchKeyMark = TRUE;									/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] );/* 検索文字列 */
-	m_sCurSearchOption = m_pShareData->m_Common.m_sSearchOption;// 検索／置換  オプション
+	m_sCurSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
 	/* 正規表現 */
 	if( m_sCurSearchOption.bRegularExp
 	 && bChangeState
@@ -3251,7 +3251,7 @@ re_do:;							//	hor
 	}
 end_of_func:;
 // From Here 2002.01.26 hor 先頭（末尾）から再検索
-	if(m_pShareData->m_Common.m_bSearchAll){
+	if(m_pShareData->m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&	// 見つからなかった
 			bRedo		// 最初の検索
 		){
@@ -3270,7 +3270,7 @@ end_of_func:;
 // To Here 2002.01.26 hor
 		ErrorBeep();
 		if( bReDraw	&&
-			m_pShareData->m_Common.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
+			m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
 		){
 			if( NULL == hwndParent ){
 				hwndParent = m_hWnd;
@@ -3484,7 +3484,7 @@ re_do:;
 
 end_of_func:;
 // From Here 2002.01.26 hor 先頭（末尾）から再検索
-	if(m_pShareData->m_Common.m_bSearchAll){
+	if(m_pShareData->m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&		// 見つからなかった
 			bRedo	&&		// 最初の検索
 			m_bDrawSWITCH	// 全て置換の実行中じゃない
@@ -3507,7 +3507,7 @@ end_of_func:;
 // To Here 2002.01.26 hor
 		ErrorBeep();
 		if( bRedraw	&&
-			m_pShareData->m_Common.m_bNOTIFYNOTFOUND	/* 検索／置換  見つからないときメッセージを表示 */
+			m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND	/* 検索／置換  見つからないときメッセージを表示 */
 		){
 			if( NULL == hwndParent ){
 				hwndParent = m_hWnd;
@@ -4593,10 +4593,10 @@ void CEditView::Command_HELP_SEARCH( void )
 */
 void CEditView::Command_ToggleKeySearch( void )
 {	/* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
-	if(TRUE == m_pShareData->m_Common.m_bUseCaretKeyWord ){
-		m_pShareData->m_Common.m_bUseCaretKeyWord = FALSE;
+	if(TRUE == m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord ){
+		m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
 	}else{
-		m_pShareData->m_Common.m_bUseCaretKeyWord = TRUE;
+		m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
 	}
 }
 
@@ -6758,8 +6758,8 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 	//2002.02.10 hor
 	int nPaste			=	m_pcEditDoc->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	=	m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
-	int	bRegularExp		=	m_pShareData->m_Common.m_sSearchOption.bRegularExp;
-	int nFlag			=	m_pShareData->m_Common.m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
+	int	bRegularExp		=	m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp;
+	int nFlag			=	m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? 0x01 : 0x00;
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !m_pcEditDoc->IsEnablePaste()){
@@ -6942,9 +6942,9 @@ void CEditView::Command_REPLACE_ALL()
 	//2002.02.10 hor
 	int nPaste			= m_pcEditDoc->m_cDlgReplace.m_nPaste;
 	int nReplaceTarget	= m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget;
-	int	bRegularExp		= m_pShareData->m_Common.m_sSearchOption.bRegularExp;
-	int bSelectedArea	= m_pShareData->m_Common.m_bSelectedArea;
-	int bConsecutiveAll	= m_pShareData->m_Common.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
+	int	bRegularExp		= m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp;
+	int bSelectedArea	= m_pShareData->m_Common.m_sSearch.m_bSelectedArea;
+	int bConsecutiveAll	= m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 
 	m_pcEditDoc->m_cDlgReplace.m_bCanceled=false;
 	m_pcEditDoc->m_cDlgReplace.m_nReplaceCnt=0;
@@ -7147,7 +7147,7 @@ void CEditView::Command_REPLACE_ALL()
 			cMemRepKey2 = cMemRepKey;
 		}
 		// 正規表現オプションの設定2006.04.01 かろと
-		int nFlag = (m_pShareData->m_Common.m_sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
+		int nFlag = (m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
 		nFlag |= (bConsecutiveAll ? CBregexp::optNothing : CBregexp::optGlobal);	// 2007.01.16 ryoji
 		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetStringPtr(), nFlag);
 	}
@@ -7857,35 +7857,35 @@ int CEditView::Command_CUSTMENU( int nMenuIdx )
 	if( nMenuIdx < 0 || MAX_CUSTOM_MENU <= nMenuIdx ){
 		return 0;
 	}
-	if( 0 == m_pShareData->m_Common.m_nCustMenuItemNumArr[nMenuIdx] ){
+	if( 0 == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx] ){
 		return 0;
 	}
 	hMenu = ::CreatePopupMenu();
-	for( i = 0; i < m_pShareData->m_Common.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( F_0 == m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
+	for( i = 0; i < m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
+		if( F_0 == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
 			::AppendMenu( hMenu, MF_SEPARATOR, F_0, NULL );
 		}else{
 			//	Oct. 3, 2001 genta
-			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
-//			::LoadString( m_hInstance, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+//			::LoadString( m_hInstance, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* キー */
-			if( '\0' == m_pShareData->m_Common.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
+			if( '\0' == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
 				strcpy( szLabel2, szLabel );
 			}else{
 				wsprintf( szLabel2, "%s (&%c)",
 					szLabel,
-					m_pShareData->m_Common.m_nCustMenuItemKeyArr[nMenuIdx][i]
+					m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
 				);
 			}
 			/* 機能が利用可能か調べる */
-			if( IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
+			if( IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
 				uFlags = MF_STRING | MF_ENABLED;
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
 			pCEditWnd->m_CMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
+				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
 		}
 	}
 	po.x = 0;
@@ -7932,7 +7932,7 @@ void CEditView::Command_COPYLINESASPASSAGE( void )
 {
 	/* 選択範囲内の全行をクリップボードにコピーする */
 	CopySelectedAllLines(
-		m_pShareData->m_Common.m_szInyouKigou,	/* 引用符 */
+		m_pShareData->m_Common.m_sFormat.m_szInyouKigou,	/* 引用符 */
 		FALSE 									/* 行番号を付与する */
 	);
 	return;
@@ -7963,8 +7963,8 @@ void CEditView::Command_CREATEKEYBINDLIST( void )
 
 	CKeyBind::CreateKeyBindList(
 		m_hInstance,
-		m_pShareData->m_Common.m_nKeyNameArrNum,
-		m_pShareData->m_Common.m_pKeyNameArr,
+		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 		cMemKeyList,
 		&m_pcEditDoc->m_cFuncLookup,	//	Oct. 31, 2001 genta 追加
 		FALSE	// 2007.02.22 ryoji 追加
@@ -8747,8 +8747,8 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 		strcpy( m_pShareData->m_szSEARCHKEYArr[0], cmemCurText.GetStringPtr() );
 
 		// 検索オプション設定
-		m_pShareData->m_Common.m_sSearchOption.bRegularExp=false;	//正規表現使わない
-		m_pShareData->m_Common.m_sSearchOption.bWordOnly=false;		//単語で検索しない
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp=false;	//正規表現使わない
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly=false;		//単語で検索しない
 		// 2010.06.30 Moca ChangeCurRegexpに再描画フラグ追加。2回再描画しないように
 		ChangeCurRegexp(false); // 2002.11.11 Moca 正規表現で検索した後，色分けができていなかった
 

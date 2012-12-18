@@ -364,7 +364,7 @@ void CPropCommon::InitData( void )
 	//for( i = 0; i < _countof( m_pShareData->m_Common.m_pKeyNameArr ); ++i ){
 	//	m_Common.m_pKeyNameArr[i] = m_pShareData->m_Common.m_pKeyNameArr[i];
 	//}
-	//m_Common.m_CKeyWordSetMgr = m_pShareData->m_Common.m_CKeyWordSetMgr;
+	//m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	for( i = 0; i < MAX_TYPES; ++i ){
@@ -403,7 +403,7 @@ void CPropCommon::ApplyData( void )
 	//for( i = 0; i < sizeof( m_pShareData->m_Common.m_pKeyNameArr ) / sizeof( m_pShareData->m_Common.m_pKeyNameArr[0] ); ++i ){
 	//	m_pShareData->m_Common.m_pKeyNameArr[i] = m_Common.m_pKeyNameArr[i];
 	//}
-	//m_pShareData->m_Common.m_CKeyWordSetMgr = m_Common.m_CKeyWordSetMgr;
+	//m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	m_pShareData->m_Common = m_Common;
 

@@ -79,10 +79,10 @@ CDlgReplace::CDlgReplace()
 /* モードレスダイアログの表示 */
 HWND CDlgReplace::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, BOOL bSelected )
 {
-	m_sSearchOption = m_pShareData->m_Common.m_sSearchOption;		// 検索オプション
-	m_bConsecutiveAll = m_pShareData->m_Common.m_bConsecutiveAll;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
-	m_bSelectedArea = m_pShareData->m_Common.m_bSelectedArea;		// 選択範囲内置換
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
+	m_bConsecutiveAll = m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+	m_bSelectedArea = m_pShareData->m_Common.m_sSearch.m_bSelectedArea;		// 選択範囲内置換
+	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	m_bSelected = bSelected;
 	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
 	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
@@ -142,10 +142,10 @@ void CDlgReplace::SetData( void )
 
 
 	/* 置換 ダイアログを自動的に閉じる */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace, m_pShareData->m_Common.m_bAutoCloseDlgReplace );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace, m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace );
 
 	/* 先頭（末尾）から再検索 2002.01.26 hor */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_bSearchAll );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_sSearch.m_bSearchAll );
 
 	// From Here 2001.12.03 hor
 	// クリップボードから貼り付ける？
@@ -224,10 +224,10 @@ int CDlgReplace::GetData( void )
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_sSearchOption = m_sSearchOption;		// 検索オプション
-	m_pShareData->m_Common.m_bConsecutiveAll = m_bConsecutiveAll;	// 1==「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
-	m_pShareData->m_Common.m_bSelectedArea = m_bSelectedArea;		// 選択範囲内置換
-	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+	m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = m_bConsecutiveAll;	// 1==「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+	m_pShareData->m_Common.m_sSearch.m_bSelectedArea = m_bSelectedArea;		// 選択範囲内置換
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
 	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, _countof(m_szText));
@@ -235,10 +235,10 @@ int CDlgReplace::GetData( void )
 	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT2, m_szText2, _countof(m_szText2));
 
 	/* 置換 ダイアログを自動的に閉じる */
-	m_pShareData->m_Common.m_bAutoCloseDlgReplace = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace );
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgReplace );
 
 	/* 先頭（末尾）から再検索 2002.01.26 hor */
-	m_pShareData->m_Common.m_bSearchAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SEARCHALL );
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SEARCHALL );
 
 	if( 0 < lstrlen( m_szText ) ){
 		/* 正規表現？ */
@@ -512,7 +512,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 					::EndDialog( m_hWnd, 0 );
 				}else{
 					/* 置換 ダイアログを自動的に閉じる */
-					if( m_pShareData->m_Common.m_bAutoCloseDlgReplace ){
+					if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace ){
 						::DestroyWindow( m_hWnd );
 					}
 				}

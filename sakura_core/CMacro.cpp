@@ -91,12 +91,12 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 			AddStringParam( pcEditView->m_pShareData->m_szSEARCHKEYArr[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bRegularExp		? 0x04 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bAutoCloseDlgFind				? 0x10 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bSearchAll					? 0x20 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp		? 0x04 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -107,16 +107,16 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 			AddStringParam( pcEditView->m_pShareData->m_szREPLACEKEYArr[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bRegularExp		? 0x04 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bAutoCloseDlgFind				? 0x10 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bSearchAll					? 0x20 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x02 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp		? 0x04 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND				? 0x08 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind				? 0x10 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll					? 0x20 : 0x00;
 			lFlag |= pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste					? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bSelectedArea					? 0x80 : 0x00;	//	置換する時は選べない
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea					? 0x80 : 0x00;	//	置換する時は選べない
 			lFlag |= pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget << 8;	//	8bitシフト（0x100で掛け算）
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bConsecutiveAll	? 0x0400: 0x00;	// 2007.01.16 ryoji
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll	? 0x0400: 0x00;	// 2007.01.16 ryoji
 			AddIntParam( lFlag );
 		}
 		break;
@@ -127,14 +127,14 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 			AddStringParam( pcEditView->m_pShareData->m_szGREPFOLDERArr[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bGrepSubFolder				? 0x01 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder				? 0x01 : 0x00;
 			//			この編集中のテキストから検索する(0x02.未実装)
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bLoHiCase		? 0x04 : 0x00;
-			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearchOption.bRegularExp		? 0x08 : 0x00;
-			lFlag |= (pcEditView->m_pShareData->m_Common.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
-			lFlag |= pcEditView->m_pShareData->m_Common.m_bGrepOutputLine				? 0x20 : 0x00;
-			lFlag |= (pcEditView->m_pShareData->m_Common.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
-			lFlag |= pcEditView->m_pShareData->m_Common.m_nGrepCharSet << 8;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase		? 0x04 : 0x00;
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp		? 0x08 : 0x00;
+			lFlag |= (pcEditView->m_pShareData->m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
+			lFlag |= (pcEditView->m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
+			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_nGrepCharSet << 8;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -484,12 +484,12 @@ void CMacro::HandleCommand(
 			}
 			//	設定値バックアップ
 			//	マクロパラメータ→設定値変換
-			pcEditView->m_pShareData->m_Common.m_sSearchOption.bWordOnly	= lFlag & 0x01 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearchOption.bLoHiCase	= lFlag & 0x02 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearchOption.bRegularExp	= lFlag & 0x04 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly	= lFlag & 0x01 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase	= lFlag & 0x02 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp	= lFlag & 0x04 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 
 			//	コマンド発行
 		//	pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
@@ -616,22 +616,22 @@ void CMacro::HandleCommand(
 			/* 検索文字列 */
 			CShareData::getInstance()->AddToReplaceKeyArr( (const char*)Argument[1] );
 
-			pcEditView->m_pShareData->m_Common.m_sSearchOption.bWordOnly		= lFlag & 0x01 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearchOption.bLoHiCase		= lFlag & 0x02 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly		= lFlag & 0x01 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase		= lFlag & 0x02 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp		= lFlag & 0x04 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND	= lFlag & 0x08 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind	= lFlag & 0x10 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nPaste			= lFlag & 0x40 ? 1 : 0;	//	CShareDataに入れなくていいの？
-//			pcEditView->m_pShareData->m_Common.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
-			pcEditView->m_pShareData->m_Common.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
+//			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea		= 0;	//	lFlag & 0x80 ? 1 : 0;
+			pcEditView->m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll	= lFlag & 0x0400 ? 1 : 0;	// 2007.01.16 ryoji
 			if (LOWORD(Index) == F_REPLACE) {	// 2007.07.08 genta コマンドは下位ワード
 				//	置換する時は選べない
-				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= 0;
+				pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea	= 0;
 			}
 			else if (LOWORD(Index) == F_REPLACE_ALL) {	// 2007.07.08 genta コマンドは下位ワード
 				//	全置換の時は選べる？
-				pcEditView->m_pShareData->m_Common.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
+				pcEditView->m_pShareData->m_Common.m_sSearch.m_bSelectedArea	= lFlag & 0x80 ? 1 : 0;
 			}
 			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
 			//	コマンド発行

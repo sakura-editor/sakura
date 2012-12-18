@@ -662,7 +662,7 @@ BOOL CEditDoc::OnFileClose()
 	){
 		if( TRUE == m_bGrepMode ){	/* Grepモードのとき */
 			/* Grepモードで保存確認するか */
-			if( FALSE == m_pShareData->m_Common.m_bGrepExitConfirm ){
+			if( FALSE == m_pShareData->m_Common.m_sSearch.m_bGrepExitConfirm ){
 				return TRUE;
 			}
 		}
@@ -2730,7 +2730,7 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	char*					pszText;
 
 
-	pszStarts = m_pShareData->m_Common.m_szMidashiKigou; 	/* 見出し記号 */
+	pszStarts = m_pShareData->m_Common.m_sFormat.m_szMidashiKigou; 	/* 見出し記号 */
 	nStartsLen = lstrlen( pszStarts );
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダは、最長32文字まで区別

@@ -155,8 +155,8 @@ CEditApp::CEditApp()
 	}
 	m_pShareData->m_hAccel =
 		CKeyBind::CreateAccerelator(
-			m_pShareData->m_Common.m_nKeyNameArrNum,
-			m_pShareData->m_Common.m_pKeyNameArr
+			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 		);
 	if( NULL == m_pShareData->m_hAccel ){
 		::MessageBox(
@@ -557,8 +557,8 @@ LRESULT CEditApp::DispatchEvent(
 			}
 			m_pShareData->m_hAccel =
 				CKeyBind::CreateAccerelator(
-					m_pShareData->m_Common.m_nKeyNameArrNum,
-					m_pShareData->m_Common.m_pKeyNameArr
+					m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+					m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 				);
 			if( NULL == m_pShareData->m_hAccel ){
 				::MessageBox(

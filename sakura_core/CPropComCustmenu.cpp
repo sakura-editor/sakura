@@ -182,11 +182,11 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					break;
 				}
 				::GetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME,
-					m_Common.m_szCustMenuNameArr[nIdx1], MAX_CUSTOM_MENU_NAME_LEN );
+					m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1], MAX_CUSTOM_MENU_NAME_LEN );
 				//	Combo Boxも変更 削除＆再登録
 				::SendMessage( hwndCOMBO_MENU, CB_DELETESTRING, nIdx1, 0 );
 				::SendMessage( hwndCOMBO_MENU, CB_INSERTSTRING, nIdx1,
-					(LPARAM)m_Common.m_szCustMenuNameArr[nIdx1] );
+					(LPARAM)m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1] );
 				// 削除すると選択が解除されるので，元に戻す
 				::SendMessage( hwndCOMBO_MENU, CB_SETCURSEL, nIdx1, 0 );
 				return TRUE;
@@ -203,23 +203,23 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 				}
 				/* メニュー項目一覧に文字列をセット（リストボックス）*/
 				::SendMessage( hwndLIST_RES, LB_RESETCONTENT, 0, 0 );
-				for( i = 0; i < m_Common.m_nCustMenuItemNumArr[nIdx1]; ++i ){
-					if( 0 == m_Common.m_nCustMenuItemFuncArr[nIdx1][i] ){
+				for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; ++i ){
+					if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] ){
 						strcpy( szLabel2, " ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 					}else{
 						//	Oct. 3, 2001 genta
-						m_cLookup.Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
+						m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
 						/* キー */
-						if( '\0' == m_Common.m_nCustMenuItemKeyArr[nIdx1][i] ){
+						if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] ){
 							strcpy( szLabel2, szLabel );
 						}else{
-							wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_nCustMenuItemKeyArr[nIdx1][i] );
+							wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] );
 						}
 					}
 					::SendMessage( hwndLIST_RES, LB_ADDSTRING, 0, (LPARAM)szLabel2 );
 				}
 				//	Oct. 15, 2001 genta メニュー名を設定
-				::SetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_szCustMenuNameArr[nIdx1] );
+				::SetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1] );
 				
 				break;	/* CBN_SELCHANGE */
 			}
@@ -236,14 +236,14 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					break;
 				}
 
-				if( 0 == m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] ){
+				if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] ){
 					break;
 				}
 
 //			idListBox = (int) LOWORD(wParam);	// identifier of list box
 //			hwndListBox = (HWND) lParam;		// handle of list box
 				TCHAR		szKey[2];
-				wsprintf( szKey, _T("%c"), m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+				wsprintf( szKey, _T("%c"), m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
 				{
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
 						m_hInstance,
@@ -258,12 +258,12 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 				}
 				//	Oct. 3, 2001 genta
-				m_cLookup.Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
-				//::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
-					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = szKey[0];
+				m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
+				//::LoadString( m_hInstance, m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
+					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = szKey[0];
 //@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
-				if (m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
-					wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
+					wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
 				}
 				else {
 					wsprintf( szLabel2, "%s", szLabel );
@@ -279,7 +279,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					break;
 				}
 
-				if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_nCustMenuItemNumArr[nIdx1] ){
+				if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
 					break;
 				}
 
@@ -289,8 +289,8 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 				}
 
 				/* キー */
-				if( '\0' == m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] ||
-					' '  == m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] ){
+				if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] ||
+					' '  == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] ){
 				}else{
 				}
 				break;	/* LBN_SELCHANGE */
@@ -319,7 +319,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						break;
 					}
 
-					if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_nCustMenuItemNumArr[nIdx1] ){
+					if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
 						break;
 					}
 
@@ -334,13 +334,13 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					::SendMessage( hwndLIST_RES, LB_SETCURSEL, nIdx2, 0 );
 
 
-					for( i = m_Common.m_nCustMenuItemNumArr[nIdx1]; i > nIdx2; i--){
-						m_Common.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_nCustMenuItemFuncArr[nIdx1][i - 1];
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_nCustMenuItemKeyArr[nIdx1][i - 1];
+					for( i = m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; i > nIdx2; i--){
+						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i - 1];
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = F_0;
-					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
-					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
+					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = F_0;
+					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
+					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
 //					::SetWindowText( hwndEDIT_KEY, "" );
 					break;
@@ -350,7 +350,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						break;
 					}
 
-					if( 0 == m_Common.m_nCustMenuItemNumArr[nIdx1] ){
+					if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
 						break;
 					}
 
@@ -363,11 +363,11 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						break;
 					}
 
-					for( i = nIdx2; i < m_Common.m_nCustMenuItemNumArr[nIdx1]; ++i ){
-						m_Common.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_nCustMenuItemFuncArr[nIdx1][i + 1];
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_nCustMenuItemKeyArr[nIdx1][i + 1];
+					for( i = nIdx2; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; ++i ){
+						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i + 1];
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i + 1];
 					}
-					m_Common.m_nCustMenuItemNumArr[nIdx1]--;
+					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]--;
 
 					if( nNum2 > 0 ){
 						if( nNum2 <= nIdx2 ){
@@ -386,7 +386,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						break;
 					}
 
-					if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_nCustMenuItemNumArr[nIdx1] ){
+					if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
 						break;
 					}
 
@@ -404,14 +404,14 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 					::SendMessage( hwndLIST_FUNC, LB_GETTEXT, nIdx4, (LPARAM)szLabel );
 
-					for( i = m_Common.m_nCustMenuItemNumArr[nIdx1]; i > nIdx2; i-- ){
-						m_Common.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_nCustMenuItemFuncArr[nIdx1][i - 1];
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_nCustMenuItemKeyArr[nIdx1][i - 1];
+					for( i = m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; i > nIdx2; i-- ){
+						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i - 1];
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
 					//	Oct. 3, 2001 genta
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
-					m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
-					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
+					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
+					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
+					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
 					nIdx2 = ::SendMessage( hwndLIST_RES, LB_INSERTSTRING, nIdx2, (LPARAM)szLabel );
 					if( LB_ERR == nIdx2 || LB_ERRSPACE == nIdx2 ){
@@ -428,7 +428,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 						break;
 					}
 
-					if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_nCustMenuItemNumArr[nIdx1] ){
+					if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
 						break;
 					}
 
@@ -455,9 +455,9 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					::SendMessage( hwndLIST_FUNC, LB_GETTEXT, nIdx4, (LPARAM)szLabel );
 
 					//	Oct. 3, 2001 genta
-					m_Common.m_nCustMenuItemFuncArr[nIdx1][nNum2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
-					m_Common.m_nCustMenuItemKeyArr[nIdx1][nNum2] = '\0';
-					m_Common.m_nCustMenuItemNumArr[nIdx1]++;
+					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nNum2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
+					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nNum2] = '\0';
+					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
 					nIdx2 = ::SendMessage( hwndLIST_RES, LB_ADDSTRING, nIdx2, (LPARAM)szLabel );
 					if( LB_ERR == nIdx2 || LB_ERRSPACE == nIdx2 ){
@@ -481,12 +481,12 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 
 					{
-						int nFunc = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1];
-						char key = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1];
-						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1] = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1]  = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
-						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] =	nFunc;
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
+						int nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1];
+						char key = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1];
+						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 - 1] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 - 1]  = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
+						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] =	nFunc;
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
 					}
 
 					::SendMessage( hwndLIST_RES, LB_GETTEXT, nIdx2, (LPARAM)szLabel );
@@ -513,12 +513,12 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 					}
 
 					{
-						int nFunc = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1];
-						char key = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1];
-						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1] = m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1]  = m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
-						m_Common.m_nCustMenuItemFuncArr[nIdx1][nIdx2] =	nFunc;
-						m_Common.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
+						int nFunc = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1];
+						char key = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1];
+						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2 + 1] = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2];
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2 + 1]  = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2];
+						m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] =	nFunc;
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]  = key;
 					}
 					::SendMessage( hwndLIST_RES, LB_GETTEXT, nIdx2, (LPARAM)szLabel );
 					::SendMessage( hwndLIST_RES, LB_DELETESTRING, nIdx2, 0 );
@@ -565,7 +565,7 @@ INT_PTR CPropCommon::DispatchEvent_p8(
 		}else{
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), TRUE );
 		}
-		if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_nCustMenuItemNumArr[nIdx1] ){
+		if( MAX_CUSTOM_MENU_ITEMS <= m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1] ){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERTSEPARATOR ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
@@ -627,7 +627,7 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 	/* メニュー一覧に文字列をセット（コンボボックス）*/
 	hwndCOMBO_MENU = ::GetDlgItem( hwndDlg, IDC_COMBO_MENU );
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
-		::SendMessage( hwndCOMBO_MENU, CB_ADDSTRING, 0, (LPARAM)m_Common.m_szCustMenuNameArr[i] );
+		::SendMessage( hwndCOMBO_MENU, CB_ADDSTRING, 0, (LPARAM)m_Common.m_sCustomMenu.m_szCustMenuNameArr[i] );
 	}
 	/* メニュー一覧の先頭の項目を選択（コンボボックス）*/
 	::SendMessage( hwndCOMBO_MENU, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
@@ -637,28 +637,28 @@ void CPropCommon::SetData_p8( HWND hwndDlg )
 //	hwndEDIT_KEY = ::GetDlgItem( hwndDlg, IDC_EDIT_KEY );
 	::SendMessage( hwndLIST_RES, LB_RESETCONTENT, 0, 0 );
 	nIdx = 0;
-	for( i = 0; i < m_Common.m_nCustMenuItemNumArr[nIdx]; ++i ){
-		if( 0 == m_Common.m_nCustMenuItemFuncArr[nIdx][i] ){
+	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
+		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
 			strcpy( szLabel, " ─────────────" );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 		}else{
 			//	Oct. 3, 2001 genta
-			m_cLookup.Funccode2Name( m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
-			//::LoadString( m_hInstance, m_Common.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
+			m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
+			//::LoadString( m_hInstance, m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
 		}
 		/* キー */
-		if( '\0' == m_Common.m_nCustMenuItemKeyArr[nIdx][i] ){
+		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
 			strcpy( szLabel2, szLabel );
 		}else{
 			wsprintf( szLabel2, "%s(%c)",
 				szLabel,
-				m_Common.m_nCustMenuItemKeyArr[nIdx][i]
+				m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]
 			);
 		}
 		::SendMessage( hwndLIST_RES, LB_ADDSTRING, 0, (LPARAM)szLabel2 );
 	}
 	
 	//	Oct. 15, 2001 genta メニュー名を設定
-	::SetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_szCustMenuNameArr[0] );
+	::SetDlgItemText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[0] );
 	
 //	/* カスタムメニューの先頭の項目を選択（リストボックス）*/	//Oct. 8, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
 	::SendMessage( hwndLIST_RES, LB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
@@ -715,10 +715,10 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 		return;
 	}
 	if( STR_CUSTMENU_HEAD_LEN						!= _lread( hFile, (LPVOID)pHeader, STR_CUSTMENU_HEAD_LEN ) ||
-		sizeof( m_Common.m_szCustMenuNameArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_szCustMenuNameArr   , sizeof( m_Common.m_szCustMenuNameArr    ) ) ||
-		sizeof( m_Common.m_nCustMenuItemNumArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_nCustMenuItemNumArr , sizeof( m_Common.m_nCustMenuItemNumArr  ) ) ||
-		sizeof( m_Common.m_nCustMenuItemFuncArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_nCustMenuItemFuncArr, sizeof( m_Common.m_nCustMenuItemFuncArr ) ) ||
-		sizeof( m_Common.m_nCustMenuItemKeyArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_nCustMenuItemKeyArr , sizeof( m_Common.m_nCustMenuItemKeyArr  ) ) ||
+		sizeof( m_Common.m_sCustomMenu.m_szCustMenuNameArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_sCustomMenu.m_szCustMenuNameArr   , sizeof( m_Common.m_sCustomMenu.m_szCustMenuNameArr    ) ) ||
+		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemNumArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_sCustomMenu.m_nCustMenuItemNumArr , sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemNumArr  ) ) ||
+		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr, sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr ) ) ||
+		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr , sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr  ) ) ||
 		0 != memcmp( pHeader, STR_CUSTMENU_HEAD, STR_CUSTMENU_HEAD_LEN )
 	){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
@@ -767,10 +767,10 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 	}
 
 	if( STR_CUSTMENU_HEAD_LEN						!= _lwrite( hFile, (LPCSTR)STR_CUSTMENU_HEAD, STR_CUSTMENU_HEAD_LEN ) ||
-		sizeof( m_Common.m_szCustMenuNameArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_szCustMenuNameArr   , sizeof( m_Common.m_szCustMenuNameArr    ) ) ||
-		sizeof( m_Common.m_nCustMenuItemNumArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_nCustMenuItemNumArr , sizeof( m_Common.m_nCustMenuItemNumArr  ) ) ||
-		sizeof( m_Common.m_nCustMenuItemFuncArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_nCustMenuItemFuncArr, sizeof( m_Common.m_nCustMenuItemFuncArr ) ) ||
-		sizeof( m_Common.m_nCustMenuItemKeyArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_nCustMenuItemKeyArr , sizeof( m_Common.m_nCustMenuItemKeyArr  ) )
+		sizeof( m_Common.m_sCustomMenu.m_szCustMenuNameArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_sCustomMenu.m_szCustMenuNameArr   , sizeof( m_Common.m_sCustomMenu.m_szCustMenuNameArr    ) ) ||
+		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemNumArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_sCustomMenu.m_nCustMenuItemNumArr , sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemNumArr  ) ) ||
+		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr, sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr ) ) ||
+		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr , sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr  ) )
 	){
 		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
 			_T("ファイルの書き込みに失敗しました。\n\n%s"), szPath

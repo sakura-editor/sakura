@@ -599,11 +599,11 @@ struct CommonSetting_Backup
 	char				m_szBackUpPathAdvanced[_MAX_PATH];	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 };
 
-//! 共通設定
-struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           書式                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Format
+{
 	//日付書式
 	int					m_nDateFormatType;						//日付書式のタイプ
 	char				m_szDateFormat[MAX_DATETIMEFOREMAT_LEN];//日付書式
@@ -617,10 +617,13 @@ struct CommonSetting {
 
 	//引用符
 	char				m_szInyouKigou[32];				/* 引用符 */
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           検索                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Search
+{
 	SSearchOption		m_sSearchOption;				// 検索／置換  条件
 	int					m_bConsecutiveAll;				/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	int					m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
@@ -648,39 +651,54 @@ struct CommonSetting {
 
 	//INI内設定のみ
 	BOOL				m_bUseCaretKeyWord;				/* キャレット位置の単語を辞書検索 */		// 2006.03.24 fon
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       キー割り当て                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_KeyBind
+{
 	/* キー割り当て */
 	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
 	KEYDATA				m_pKeyNameArr[100];			/* キー割り当て表 */
 
 	BOOL				m_bCreateAccelTblEachWin;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     カスタムメニュー                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_CustomMenu
+{
 	/* カスタムメニュー情報 */
 	char				m_szCustMenuNameArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_NAME_LEN + 1];
 	int					m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
 	int					m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
 	char				m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        ツールバー                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_ToolBar
+{
 	int					m_nToolBarButtonNum;			/* ツールバーボタンの数 */
 	int					m_nToolBarButtonIdxArr[MAX_TOOLBAR_BUTTON_ITEMS];	/* ツールバーボタン構造体 */
 	int					m_bToolBarIsFlat;				/* フラットツールバーにする／しない */
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      強調キーワード                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_SpecialKeyword
+{
 	/* 強調キーワード設定 */
 	CKeyWordSetMgr		m_CKeyWordSetMgr;					/* 強調キーワード */
-	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */
+	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */ //未使用
+};
 
+//! 共通設定
+struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -775,6 +793,13 @@ struct CommonSetting {
 	CommonSetting_Edit				m_sEdit;			// 編集
 	CommonSetting_File				m_sFile;			// ファイル
 	CommonSetting_Backup			m_sBackup;			// バックアップ
+	CommonSetting_Format			m_sFormat;			// 書式
+	CommonSetting_Search			m_sSearch;			// 検索
+	CommonSetting_KeyBind			m_sKeyBind;			// キー割り当て
+	//
+	CommonSetting_CustomMenu		m_sCustomMenu;		// カスタムメニュー
+	CommonSetting_ToolBar			m_sToolBar;			// ツールバー
+	CommonSetting_SpecialKeyword	m_sSpecialKeyword;	// 強調キーワード
 
 }; /* Common */
 

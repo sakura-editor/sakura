@@ -1994,7 +1994,7 @@ re_do:;								// hor
 		MoveCursorSelecting( nX, nY, m_bSelectingLock );
 	}
     // 2002.01.26 hor
-	if(m_pShareData->m_Common.m_bSearchAll){
+	if(m_pShareData->m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&		// 見つからなかった
 			bRedo			// 最初の検索
 		){
@@ -2007,7 +2007,7 @@ re_do:;								// hor
 		if(nYOld >= nY)SendStatusMessage("▼先頭から再検索しました");
 	}else{
 		SendStatusMessage("▽見つかりませんでした");
-		if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
+		if(m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
 			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("前方(↓) にブックマークが見つかりません。"));
 	}
 	return;
@@ -2033,7 +2033,7 @@ re_do:;								// hor
 		MoveCursorSelecting( nX, nY, m_bSelectingLock );
 	}
     // 2002.01.26 hor
-	if(m_pShareData->m_Common.m_bSearchAll){
+	if(m_pShareData->m_Common.m_sSearch.m_bSearchAll){
 		if(!bFound	&&	// 見つからなかった
 			bRedo		// 最初の検索
 		){
@@ -2046,7 +2046,7 @@ re_do:;								// hor
 		if(nYOld <= nY)SendStatusMessage(_T("▲末尾から再検索しました"));
 	}else{
 		SendStatusMessage(_T("△見つかりませんでした"));
-		if(m_pShareData->m_Common.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
+		if(m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
 			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("後方(↑) にブックマークが見つかりません。") );
 	}
 	return;
@@ -2072,7 +2072,7 @@ void CEditView::Command_BOOKMARK_PATTERN( void )
 
 	m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
 		m_pShareData->m_szSEARCHKEYArr[0],		// 検索条件
-		m_pShareData->m_Common.m_sSearchOption,	// 検索条件
+		m_pShareData->m_Common.m_sSearch.m_sSearchOption,	// 検索条件
 		&m_CurRegexp							// 正規表現コンパイルデータ
 	);
 	// 2002.01.16 hor 分割したビューも更新
@@ -2671,10 +2671,10 @@ void CEditView::Command_SET_QUOTESTRING( const char* quotestr )
 	if( quotestr == NULL )
 		return;
 
-	strncpy( m_pShareData->m_Common.m_szInyouKigou, quotestr,
-		_countof( m_pShareData->m_Common.m_szInyouKigou ));
+	strncpy( m_pShareData->m_Common.m_sFormat.m_szInyouKigou, quotestr,
+		_countof( m_pShareData->m_Common.m_sFormat.m_szInyouKigou ));
 	
-	m_pShareData->m_Common.m_szInyouKigou[ _countof( m_pShareData->m_Common.m_szInyouKigou ) - 1 ] = '\0';
+	m_pShareData->m_Common.m_sFormat.m_szInyouKigou[ _countof( m_pShareData->m_Common.m_sFormat.m_szInyouKigou ) - 1 ] = '\0';
 }
 
 /*!	@brief ウィンドウ一覧ポップアップ表示処理（ファイル名のみ）

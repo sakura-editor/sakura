@@ -59,8 +59,8 @@ CDlgFind::CDlgFind()
 /* モードレスダイアログの表示 */
 HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_sSearchOption = m_pShareData->m_Common.m_sSearchOption;		// 検索オプション
-	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
+	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	// 検索開始時のカーソル位置退避	02/07/28 ai
 	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	// 検索開始時のカーソル位置退避	02/07/28 ai
 	((CEditView*)lParam)->m_bSearch = TRUE;							// 検索開始位置の登録有無		02/07/28 ai
@@ -132,10 +132,10 @@ void CDlgFind::SetData( void )
 	// To Here Jun. 29, 2001 genta
 
 	/* 検索ダイアログを自動的に閉じる */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFind, m_pShareData->m_Common.m_bAutoCloseDlgFind );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFind, m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind );
 
 	/* 先頭（末尾）から再検索 2002.01.26 hor */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_bSearchAll );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_sSearch.m_bSearchAll );
 
 	return;
 }
@@ -183,17 +183,17 @@ int CDlgFind::GetData( void )
 	/* 検索／置換  見つからないときメッセージを表示 */
 	m_bNOTIFYNOTFOUND = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND );
 
-	m_pShareData->m_Common.m_sSearchOption = m_sSearchOption;		// 検索オプション
-	m_pShareData->m_Common.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
+	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;		// 検索オプション
+	m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 
 	/* 検索文字列 */
 	::GetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText, _countof( m_szText ));
 
 	/* 検索ダイアログを自動的に閉じる */
-	m_pShareData->m_Common.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFind );
+	m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFind );
 
 	/* 先頭（末尾）から再検索 2002.01.26 hor */
-	m_pShareData->m_Common.m_bSearchAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SEARCHALL );
+	m_pShareData->m_Common.m_sSearch.m_bSearchAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SEARCHALL );
 
 	if( 0 < lstrlen( m_szText ) ){
 		/* 正規表現？ */
@@ -289,7 +289,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				}//  02/06/26 ai End
 
 				/* 検索ダイアログを自動的に閉じる */
-				if( m_pShareData->m_Common.m_bAutoCloseDlgFind ){
+				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
 			}
@@ -322,7 +322,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				}
 
 				/* 検索ダイアログを自動的に閉じる */
-				if( m_pShareData->m_Common.m_bAutoCloseDlgFind ){
+				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
 			}
@@ -338,7 +338,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}else{
 				pcEditView->HandleCommand( F_BOOKMARK_PATTERN, FALSE, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */
-				if( m_pShareData->m_Common.m_bAutoCloseDlgFind ){
+				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );
 				}
 				else{

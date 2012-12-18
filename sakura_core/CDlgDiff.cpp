@@ -204,10 +204,10 @@ void CDlgDiff::SetData( void )
 	if( m_nDiffFlgOpt & 0x0040 ) ::CheckDlgButton( m_hWnd, IDC_CHECK_DIFF_EXEC_STATE, TRUE );
 
 	/* 見つからないときメッセージを表示 */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND, m_pShareData->m_Common.m_bNOTIFYNOTFOUND );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND, m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND );
 	
 	/* 先頭（末尾）から再検索 */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_bSearchAll );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_SEARCHALL, m_pShareData->m_Common.m_sSearch.m_bSearchAll );
 
 	/* 編集中のファイル一覧を作成する */
 	{
@@ -374,15 +374,15 @@ int CDlgDiff::GetData( void )
 
 	/* 見つからないときメッセージを表示 */
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_NOTIFYNOTFOUND ) == BST_CHECKED )
-		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = TRUE;
+		m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = TRUE;
 	else
-		m_pShareData->m_Common.m_bNOTIFYNOTFOUND = FALSE;
+		m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = FALSE;
 
 	/* 先頭（末尾）から再検索 */
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SEARCHALL ) == BST_CHECKED )
-		m_pShareData->m_Common.m_bSearchAll = TRUE;
+		m_pShareData->m_Common.m_sSearch.m_bSearchAll = TRUE;
 	else
-		m_pShareData->m_Common.m_bSearchAll = FALSE;
+		m_pShareData->m_Common.m_sSearch.m_bSearchAll = FALSE;
 
 	//相手ファイルが指定されてなければキャンセル
 	//	2004.02.21 MIK 相手が無題だと比較できないので判定削除

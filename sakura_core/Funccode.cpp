@@ -1200,7 +1200,7 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
 	//	To Here 2003.06.23 Moca
 	//	2003.07.21 genta
 	case F_CHGMOD_INS:				return (pcEditDoc->IsInsMode()) ? true : false; //	Oct. 2, 2005 genta 挿入モードはドキュメント毎に補完するように変更した
-	case F_TOGGLE_KEY_SEARCH:		return (pShareData->m_Common.m_bUseCaretKeyWord) ? true : false;	//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
+	case F_TOGGLE_KEY_SEARCH:		return (pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord) ? true : false;	//	2007.02.03 genta キーワードポップアップのON/OFF状態を反映する
 	case F_BIND_WINDOW:				return ((pShareData->m_Common.m_sTabBar.m_bDispTabWnd) && !(pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin));
 	case F_TOPMOST:					return ((DWORD)::GetWindowLongPtr( pCEditWnd->m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST) ? true : false;
 	// Jan. 10, 2004 genta インクリメンタルサーチ

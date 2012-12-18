@@ -165,7 +165,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		if(IsTextSelected())	
 			DisableSelectArea( TRUE );
 
-		m_sCurSearchOption = m_pShareData->m_Common.m_sSearchOption;
+		m_sCurSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;
 		switch( mode ) {
 			case 1: // 通常インクリメンタルサーチ
 				m_sCurSearchOption.bRegularExp = false;
@@ -253,7 +253,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 void CEditView::ISearchExit()
 {
 	CShareData::getInstance()->AddToSearchKeyArr( m_szCurSrchKey );
-	m_pShareData->m_Common.m_sSearchOption = m_sCurSearchOption;
+	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sCurSearchOption;
 	m_nISearchDirection = SEARCH_BACKWARD;
 	m_nISearchMode = 0;
 	

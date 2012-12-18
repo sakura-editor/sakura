@@ -39,7 +39,7 @@ void CEditView::TranslateCommand_grep(
 
 	if( nCommand == F_CHAR ){
 		//	Jan. 23, 2005 genta •¶Žš”»’è–Y‚ê
-		if(( lparam1 == CR || lparam1 == LF ) && m_pShareData->m_Common.m_bGTJW_RETURN ){
+		if(( lparam1 == CR || lparam1 == LF ) && m_pShareData->m_Common.m_sSearch.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;
 			lparam1 = GetKeyState_Control();
 		}

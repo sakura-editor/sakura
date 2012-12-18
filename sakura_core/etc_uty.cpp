@@ -1844,7 +1844,7 @@ bool InitRegexp(
 	LPCTSTR RegexpDll = _T("");
 	
 	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
-		RegexpDll = pShareData->m_Common.m_szRegexpLib;
+		RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
 	}
 	//	To Here 2007.08.12 genta
 

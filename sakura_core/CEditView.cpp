@@ -268,7 +268,7 @@ CEditView::CEditView()
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	//	2007.08.12 genta 初期化にShareDataの値が必要になった
-	m_CurRegexp.Init(m_pShareData->m_Common.m_szRegexpLib );
+	m_CurRegexp.Init(m_pShareData->m_Common.m_sSearch.m_szRegexpLib );
 
 	// 2004.02.08 m_hFont_ZENは未使用により削除
 	m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
@@ -391,7 +391,7 @@ BOOL CEditView::Create(
 	m_dwTipTimer = ::GetTickCount();
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
-	m_cRegexKeyword = new CRegexKeyword( m_pShareData->m_Common.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
+	m_cRegexKeyword = new CRegexKeyword( m_pShareData->m_Common.m_sSearch.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
 
 	m_nTopYohaku = m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
@@ -3374,8 +3374,8 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	tripleClickMode = CheckTripleClick(xPos, yPos);
 
 	if(tripleClickMode){
-		// マウス左トリプルクリックに対応する機能コードはm_Common.m_pKeyNameArr[5]に入っている
-		nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK].m_nFuncCodeArr[getCtrlKeyState()];
+		// マウス左トリプルクリックに対応する機能コードはm_Common.m_sKeyBind.m_pKeyNameArr[5]に入っている
+		nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_TRIPLECLICK].m_nFuncCodeArr[getCtrlKeyState()];
 		if( 0 == nFuncID ){
 			tripleClickMode = 0;	// 割り当て機能無しの時はトリプルクリック OFF
 		}
@@ -3998,8 +3998,8 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 // novice 2004/10/10
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウス右クリックに対応する機能コードはm_Common.m_pKeyNameArr[1]に入っている */
-	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
+	/* マウス右クリックに対応する機能コードはm_Common.m_sKeyBind.m_pKeyNameArr[1]に入っている */
+	nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_RIGHT].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4060,8 +4060,8 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	// ホイール操作によるページスクロール・横スクロールあり
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウス中ボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
-	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
+	/* マウス中ボタンに対応する機能コードはm_Common.m_sKeyBind.m_pKeyNameArr[2]に入っている */
+	nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4119,8 +4119,8 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウスサイドボタン1に対応する機能コードはm_Common.m_pKeyNameArr[3]に入っている */
-	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
+	/* マウスサイドボタン1に対応する機能コードはm_Common.m_sKeyBind.m_pKeyNameArr[3]に入っている */
+	nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_LEFTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4181,8 +4181,8 @@ void CEditView::OnXRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
-	/* マウスサイドボタン2に対応する機能コードはm_Common.m_pKeyNameArr[4]に入っている */
-	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
+	/* マウスサイドボタン2に対応する機能コードはm_Common.m_sKeyBind.m_pKeyNameArr[4]に入っている */
+	nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_RIGHTSIDE].m_nFuncCodeArr[nIdx];
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -4310,7 +4310,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		cmemCurText.SetString( pszBuf, i );
 		delete [] pszBuf;
 	}/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
-	else if(m_pShareData->m_Common.m_bUseCaretKeyWord){
+	else if(m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord){
 		if(!GetCurrentWord(&cmemCurText))
 			goto end_of_search;
 	}else
@@ -5125,7 +5125,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 
 		/* GREP出力モードまたはデバッグモード かつ マウス左ボタンダブルクリックでタグジャンプ の場合 */
 		//	2004.09.20 naoh 外部コマンドの出力からTagjumpできるように
-		if( (m_pcEditDoc->m_bGrepMode || m_pcEditDoc->m_bDebugMode) && m_pShareData->m_Common.m_bGTJW_LDBLCLK ){
+		if( (m_pcEditDoc->m_bGrepMode || m_pcEditDoc->m_bDebugMode) && m_pShareData->m_Common.m_sSearch.m_bGTJW_LDBLCLK ){
 			/* タグジャンプ機能 */
 			Command_TAGJUMP();
 			return;
@@ -5136,8 +5136,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	/* Shift,Ctrl,Altキーが押されていたか */
 	nIdx = getCtrlKeyState();
 
-	/* マウス左クリックに対応する機能コードはm_Common.m_pKeyNameArr[?]に入っている 2007.10.06 nasukoji */
-	nFuncID = m_pShareData->m_Common.m_pKeyNameArr[
+	/* マウス左クリックに対応する機能コードはm_Common.m_sKeyBind.m_pKeyNameArr[?]に入っている 2007.10.06 nasukoji */
+	nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[
 		m_dwTripleClickCheck ? MOUSEFUNCTION_QUADCLICK : MOUSEFUNCTION_DOUBLECLICK
 		].m_nFuncCodeArr[nIdx];
 	if(m_dwTripleClickCheck){
@@ -5151,7 +5151,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 
 		if(! nFuncID){
 			m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
-			nFuncID = m_pShareData->m_Common.m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
+			nFuncID = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_DOUBLECLICK].m_nFuncCodeArr[nIdx];
 			OnLBUTTONDOWN( fwKeys, xPos , yPos );	// カーソルをクリック位置へ移動する
 		}
 	}
@@ -6344,7 +6344,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 //	if( nMenuIdx < 0 || MAX_CUSTOM_MENU	<= nMenuIdx ){
 //		return 0;
 //	}
-//	if( 0 == m_pShareData->m_Common.m_nCustMenuItemNumArr[nMenuIdx] ){
+//	if( 0 == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx] ){
 //		return 0;
 //	}
 
@@ -6352,29 +6352,29 @@ int	CEditView::CreatePopUpMenu_R( void )
 	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
 
 	hMenu = ::CreatePopupMenu();
-	for( i = 0; i < m_pShareData->m_Common.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( 0 == m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
+	for( i = 0; i < m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
+		if( 0 == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
 			::AppendMenu( hMenu, MF_SEPARATOR, 0, NULL );
 		}else{
 			//	Oct. 3, 2001 genta
-			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
-//			::LoadString( m_hInstance, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+			FuncLookup.Funccode2Name( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+//			::LoadString( m_hInstance, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
 			/* キー */
-			if( '\0' == m_pShareData->m_Common.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
+			if( '\0' == m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
 				strcpy( szLabel2, szLabel );
 			}else{
-				wsprintf( szLabel2, "%s (&%c)", szLabel, m_pShareData->m_Common.m_nCustMenuItemKeyArr[nMenuIdx][i] );
+				wsprintf( szLabel2, "%s (&%c)", szLabel, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] );
 			}
 			/* 機能が利用可能か調べる */
-			if( IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
+			if( IsFuncEnable( m_pcEditDoc, m_pShareData, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
 				uFlags = MF_STRING | MF_ENABLED;
 			}else{
 				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
 			}
-//			bBool = ::AppendMenu( hMenu, uFlags, m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel2 );
+//			bBool = ::AppendMenu( hMenu, uFlags, m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel2 );
 			pCEditWnd->m_CMenuDrawer.MyAppendMenu(
 				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				m_pShareData->m_Common.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
+				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , szLabel2 );
 
 		}
 	}
@@ -7084,7 +7084,7 @@ DWORD CEditView::DoGrep(
 
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
 	::SetDlgItemText( hwndCancel, IDC_STATIC_CURFILE, " " );	// 2002/09/09 Moca add
-	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_bGrepRealTimeView );	// 2003.06.23 Moca
+	::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );	// 2003.06.23 Moca
 
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
@@ -7248,7 +7248,7 @@ DWORD CEditView::DoGrep(
 //	m_bDrawSWITCH = FALSE;
 	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
 		m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
-	m_pcEditDoc->SetDrawSwitchOfAllViews( m_pShareData->m_Common.m_bGrepRealTimeView );
+	m_pcEditDoc->SetDrawSwitchOfAllViews( m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );
 
 
 	int nGrepTreeResult = DoGrepTree(
@@ -9444,7 +9444,7 @@ void CEditView::GetCurrentTextForSearchDlg( CMemory& cmemCurText )
 		GetCurrentTextForSearch( cmemCurText );
 	}
 	else{	// テキストが選択されていない
-		if( m_pShareData->m_Common.m_bCaretTextForSearch ){
+		if( m_pShareData->m_Common.m_sSearch.m_bCaretTextForSearch ){
 			GetCurrentTextForSearch( cmemCurText );	// カーソル位置単語を取得
 		}
 		else{
@@ -10747,7 +10747,7 @@ searchnext:;
 						/* キーワードが登録単語ならば、色を変える */
 						j = i - nPos;
 						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-						nIdx = m_pShareData->m_Common.m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
+						nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
 							TypeDataPtr->m_nKeyWordSetIdx[0],
 							&pLine[nPos],
 							j
@@ -10769,7 +10769,7 @@ searchnext:;
 									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
 								{																							//MIK
 									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-									nIdx = m_pShareData->m_Common.m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
+									nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
 										TypeDataPtr->m_nKeyWordSetIdx[my_i] ,													//MIK
 										&pLine[nPos],																		//MIK
 										j																					//MIK

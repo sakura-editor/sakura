@@ -480,28 +480,28 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "nHorizontalScrollByWheel"	, common.m_sGeneral.m_nHorizontalScrollByWheel );	// 2009.01.12 nasukoji
 	cProfile.IOProfileData( pszSecName, "bCloseAllConfirm"		, common.m_sGeneral.m_bCloseAllConfirm );	/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 	cProfile.IOProfileData( pszSecName, "bExitConfirm"			, common.m_sGeneral.m_bExitConfirm );
-	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_sSearchOption.bRegularExp );
-	cProfile.IOProfileData( pszSecName, "bSearchLoHiCase"		, common.m_sSearchOption.bLoHiCase );
-	cProfile.IOProfileData( pszSecName, "bSearchWordOnly"		, common.m_sSearchOption.bWordOnly );
-	cProfile.IOProfileData( pszSecName, "bSearchConsecutiveAll"		, common.m_bConsecutiveAll );	// 2007.01.16 ryoji
-	cProfile.IOProfileData( pszSecName, "bSearchNOTIFYNOTFOUND"	, common.m_bNOTIFYNOTFOUND );
+	cProfile.IOProfileData( pszSecName, "bSearchRegularExp"		, common.m_sSearch.m_sSearchOption.bRegularExp );
+	cProfile.IOProfileData( pszSecName, "bSearchLoHiCase"		, common.m_sSearch.m_sSearchOption.bLoHiCase );
+	cProfile.IOProfileData( pszSecName, "bSearchWordOnly"		, common.m_sSearch.m_sSearchOption.bWordOnly );
+	cProfile.IOProfileData( pszSecName, "bSearchConsecutiveAll"		, common.m_sSearch.m_bConsecutiveAll );	// 2007.01.16 ryoji
+	cProfile.IOProfileData( pszSecName, "bSearchNOTIFYNOTFOUND"	, common.m_sSearch.m_bNOTIFYNOTFOUND );
 	// 2002.01.26 hor
-	cProfile.IOProfileData( pszSecName, "bSearchAll"				, common.m_bSearchAll );
-	cProfile.IOProfileData( pszSecName, "bSearchSelectedArea"	, common.m_bSelectedArea );
-	cProfile.IOProfileData( pszSecName, "bGrepSubFolder"			, common.m_bGrepSubFolder );
-	cProfile.IOProfileData( pszSecName, "bGrepOutputLine"		, common.m_bGrepOutputLine );
-	cProfile.IOProfileData( pszSecName, "nGrepOutputStyle"		, common.m_nGrepOutputStyle );
-	cProfile.IOProfileData( pszSecName, "bGrepDefaultFolder"		, common.m_bGrepDefaultFolder );
+	cProfile.IOProfileData( pszSecName, "bSearchAll"				, common.m_sSearch.m_bSearchAll );
+	cProfile.IOProfileData( pszSecName, "bSearchSelectedArea"	, common.m_sSearch.m_bSelectedArea );
+	cProfile.IOProfileData( pszSecName, "bGrepSubFolder"			, common.m_sSearch.m_bGrepSubFolder );
+	cProfile.IOProfileData( pszSecName, "bGrepOutputLine"		, common.m_sSearch.m_bGrepOutputLine );
+	cProfile.IOProfileData( pszSecName, "nGrepOutputStyle"		, common.m_sSearch.m_nGrepOutputStyle );
+	cProfile.IOProfileData( pszSecName, "bGrepDefaultFolder"		, common.m_sSearch.m_bGrepDefaultFolder );
 	// 2002/09/21 Moca 追加
-	cProfile.IOProfileData( pszSecName, "nGrepCharSet"			, common.m_nGrepCharSet );
-	cProfile.IOProfileData( pszSecName, "bGrepRealTime"			, common.m_bGrepRealTimeView ); // 2003.06.16 Moca
-	cProfile.IOProfileData( pszSecName, "bCaretTextForSearch"	, common.m_bCaretTextForSearch );	// 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする
+	cProfile.IOProfileData( pszSecName, "nGrepCharSet"			, common.m_sSearch.m_nGrepCharSet );
+	cProfile.IOProfileData( pszSecName, "bGrepRealTime"			, common.m_sSearch.m_bGrepRealTimeView ); // 2003.06.16 Moca
+	cProfile.IOProfileData( pszSecName, "bCaretTextForSearch"	, common.m_sSearch.m_bCaretTextForSearch );	// 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする
 	
 	/* 正規表現DLL 2007.08.12 genta */
-	cProfile.IOProfileData( pszSecName, "szRegexpLib"			, common.m_szRegexpLib, sizeof( common.m_szRegexpLib ) );
+	cProfile.IOProfileData( pszSecName, "szRegexpLib"			, common.m_sSearch.m_szRegexpLib, sizeof( common.m_sSearch.m_szRegexpLib ) );
 	
-	cProfile.IOProfileData( pszSecName, "bGTJW_RETURN"			, common.m_bGTJW_RETURN );
-	cProfile.IOProfileData( pszSecName, "bGTJW_LDBLCLK"			, common.m_bGTJW_LDBLCLK );
+	cProfile.IOProfileData( pszSecName, "bGTJW_RETURN"			, common.m_sSearch.m_bGTJW_RETURN );
+	cProfile.IOProfileData( pszSecName, "bGTJW_LDBLCLK"			, common.m_sSearch.m_bGTJW_LDBLCLK );
 	cProfile.IOProfileData( pszSecName, "bBackUp"				, common.m_sBackup.m_bBackUp );
 	cProfile.IOProfileData( pszSecName, "bBackUpDialog"			, common.m_sBackup.m_bBackUpDialog );
 	cProfile.IOProfileData( pszSecName, "bBackUpFolder"			, common.m_sBackup.m_bBackUpFolder );
@@ -583,8 +583,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_sWindow.m_bSplitterWndHScroll );
 	cProfile.IOProfileData( pszSecName, "bSplitterWndVScroll"	, common.m_sWindow.m_bSplitterWndVScroll );
 	
-	cProfile.IOProfileData( pszSecName, "szMidashiKigou"			, common.m_szMidashiKigou, 0 );
-	cProfile.IOProfileData( pszSecName, "szInyouKigou"			, common.m_szInyouKigou, 0 );
+	cProfile.IOProfileData( pszSecName, "szMidashiKigou"		, common.m_sFormat.m_szMidashiKigou, 0 );
+	cProfile.IOProfileData( pszSecName, "szInyouKigou"			, common.m_sFormat.m_szInyouKigou, 0 );
 	
 	// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除：３行
 	cProfile.IOProfileData( pszSecName, "bUseHokan"				, common.m_bUseHokan );
@@ -608,7 +608,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bDispExitingDialog"			, common.m_sGeneral.m_bDispExitingDialog );
 	cProfile.IOProfileData( pszSecName, "bEnableUnmodifiedOverwrite"	, common.m_sFile.m_bEnableUnmodifiedOverwrite );
 	cProfile.IOProfileData( pszSecName, "bSelectClickedURL"			, common.m_sEdit.m_bSelectClickedURL );
-	cProfile.IOProfileData( pszSecName, "bGrepExitConfirm"			, common.m_bGrepExitConfirm );/* Grepモードで保存確認するか */
+	cProfile.IOProfileData( pszSecName, "bGrepExitConfirm"			, common.m_sSearch.m_bGrepExitConfirm );/* Grepモードで保存確認するか */
 //	cProfile.IOProfileData( pszSecName, "bRulerDisp"					, common.m_bRulerDisp );/* ルーラー表示 */
 	cProfile.IOProfileData( pszSecName, "nRulerHeight"				, common.m_sWindow.m_nRulerHeight );/* ルーラー高さ */
 	cProfile.IOProfileData( pszSecName, "nRulerBottomSpace"			, common.m_sWindow.m_nRulerBottomSpace );/* ルーラーとテキストの隙間 */
@@ -627,9 +627,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "nDropFileNumMax"			, common.m_sFile.m_nDropFileNumMax );/* 一度にドロップ可能なファイル数 */
 	cProfile.IOProfileData( pszSecName, "bCheckFileTimeStamp"		, common.m_sFile.m_bCheckFileTimeStamp );/* 更新の監視 */
 	cProfile.IOProfileData( pszSecName, "bNotOverWriteCRLF"			, common.m_sEdit.m_bNotOverWriteCRLF );/* 改行は上書きしない */
-	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFind"			, common.m_bAutoCloseDlgFind );/* 検索ダイアログを自動的に閉じる */
+	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFind"			, common.m_sSearch.m_bAutoCloseDlgFind );/* 検索ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFuncList"		, common.m_bAutoCloseDlgFuncList );/* アウトライン ダイアログを自動的に閉じる */
-	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgReplace"		, common.m_bAutoCloseDlgReplace );/* 置換 ダイアログを自動的に閉じる */
+	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgReplace"		, common.m_sSearch.m_bAutoCloseDlgReplace );/* 置換 ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoColmnPaste"			, common.m_sEdit.m_bAutoColmnPaste );/* 矩形コピーのテキストは常に矩形貼り付け */
 	cProfile.IOProfileData( pszSecName, "NoCaretMoveByActivation"	, common.m_sGeneral.m_bNoCaretMoveByActivation );/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 	cProfile.IOProfileData( pszSecName, "bScrollBarHorz"				, common.m_sWindow.m_bScrollBarHorz );/* 水平スクロールバーを使う */
@@ -639,10 +639,10 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bHokanKey_RIGHT"			, common.m_bHokanKey_RIGHT );/* VK_RIGHT  補完決定キーが有効/無効 */
 	cProfile.IOProfileData( pszSecName, "bHokanKey_SPACE"			, common.m_bHokanKey_SPACE );/* VK_SPACE  補完決定キーが有効/無効 */
 	
-	cProfile.IOProfileData( pszSecName, "nDateFormatType"			, common.m_nDateFormatType );/* 日付書式のタイプ */
-	cProfile.IOProfileData( pszSecName, "szDateFormat"				, common.m_szDateFormat, 0 );//日付書式
-	cProfile.IOProfileData( pszSecName, "nTimeFormatType"			, common.m_nTimeFormatType );/* 時刻書式のタイプ */
-	cProfile.IOProfileData( pszSecName, "szTimeFormat"				, common.m_szTimeFormat, 0 );//時刻書式
+	cProfile.IOProfileData( pszSecName, "nDateFormatType"			, common.m_sFormat.m_nDateFormatType );/* 日付書式のタイプ */
+	cProfile.IOProfileData( pszSecName, "szDateFormat"				, common.m_sFormat.m_szDateFormat, 0 );//日付書式
+	cProfile.IOProfileData( pszSecName, "nTimeFormatType"			, common.m_sFormat.m_nTimeFormatType );/* 時刻書式のタイプ */
+	cProfile.IOProfileData( pszSecName, "szTimeFormat"				, common.m_sFormat.m_szTimeFormat, 0 );//時刻書式
 	
 	cProfile.IOProfileData( pszSecName, "bMenuIcon"					, common.m_sWindow.m_bMenuIcon );//メニューにアイコンを表示する
 	cProfile.IOProfileData( pszSecName, "bAutoMIMEdecode"			, common.m_sFile.m_bAutoMIMEdecode );//ファイル読み込み時にMIMEのdecodeを行うか
@@ -654,7 +654,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bAlertIfLargeFile"			, common.m_sFile.m_bAlertIfLargeFile ); // 開こうとしたファイルが大きい場合に警告する
 	cProfile.IOProfileData( pszSecName, "nAlertFileSize"   			, common.m_sFile.m_nAlertFileSize );    // 警告を開始するファイルサイズ(MB単位)
 
-	cProfile.IOProfileData( pszSecName, "bCreateAccelTblEachWin"	, common.m_bCreateAccelTblEachWin);	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
+	cProfile.IOProfileData( pszSecName, "bCreateAccelTblEachWin"	, common.m_sKeyBind.m_bCreateAccelTblEachWin);	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 	
 	/* 「開く」ダイアログのサイズと位置 */
 	const char* pszKeyName = "rcOpenDialog";
@@ -716,17 +716,17 @@ void CShareData::ShareData_IO_Toolbar( CProfile& cProfile )
 	char	szKeyName[64];
 	CommonSetting& common = m_pShareData->m_Common;
 
-	cProfile.IOProfileData( pszSecName, "nToolBarButtonNum", common.m_nToolBarButtonNum );
-	cProfile.IOProfileData( pszSecName, "bToolBarIsFlat", common.m_bToolBarIsFlat );
-	int	nSize = common.m_nToolBarButtonNum;
+	cProfile.IOProfileData( pszSecName, "nToolBarButtonNum", common.m_sToolBar.m_nToolBarButtonNum );
+	cProfile.IOProfileData( pszSecName, "bToolBarIsFlat", common.m_sToolBar.m_bToolBarIsFlat );
+	int	nSize = common.m_sToolBar.m_nToolBarButtonNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "nTBB[%03d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, common.m_nToolBarButtonIdxArr[i] );
+		cProfile.IOProfileData( pszSecName, szKeyName, common.m_sToolBar.m_nToolBarButtonIdxArr[i] );
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
 		for(; i< MAX_TOOLBAR_BUTTON_ITEMS; ++i){
-			common.m_nToolBarButtonIdxArr[i] = 0;
+			common.m_sToolBar.m_nToolBarButtonIdxArr[i] = 0;
 		}
 	}
 }
@@ -746,15 +746,15 @@ void CShareData::ShareData_IO_CustMenu( CProfile& cProfile )
 
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		wsprintf( szKeyName, "szCMN[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, common.m_szCustMenuNameArr[i], MAX_CUSTOM_MENU_NAME_LEN + 1 );	//	Oct. 15, 2001 genta 最大長指定
+		cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_szCustMenuNameArr[i], MAX_CUSTOM_MENU_NAME_LEN + 1 );	//	Oct. 15, 2001 genta 最大長指定
 		wsprintf( szKeyName, "nCMIN[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, common.m_nCustMenuItemNumArr[i] );
-		int nSize = common.m_nCustMenuItemNumArr[i];
+		cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_nCustMenuItemNumArr[i] );
+		int nSize = common.m_sCustomMenu.m_nCustMenuItemNumArr[i];
 		for( j = 0; j < nSize; ++j ){
 			wsprintf( szKeyName, "nCMIF[%02d][%02d]", i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, common.m_nCustMenuItemFuncArr[i][j] );
+			cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] );
 			wsprintf( szKeyName, "nCMIK[%02d][%02d]", i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, common.m_nCustMenuItemKeyArr[i][j] );
+			cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_nCustMenuItemKeyArr[i][j] );
 		}
 	}
 }
@@ -787,10 +787,10 @@ void CShareData::ShareData_IO_KeyBind( CProfile& cProfile )
 	int		i;
 	char	szKeyName[64];
 	char	szKeyData[1024];
-	int		nSize = m_pShareData->m_Common.m_nKeyNameArrNum;
+	int		nSize = m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum;
 	for( i = 0; i < nSize; ++i ){
 		// 2005.04.07 D.S.Koba
-		KEYDATA& keydata = m_pShareData->m_Common.m_pKeyNameArr[i];
+		KEYDATA& keydata = m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr[i];
 		strcpy( szKeyName, keydata.m_szKeyName );
 		
 		if( cProfile.IsReadingMode() ){
@@ -1313,7 +1313,7 @@ void CShareData::ShareData_IO_KeyWords( CProfile& cProfile )
 	int				i, j;
 	char			szKeyName[64];
 	char			szKeyData[1024];
-	CKeyWordSetMgr*	pCKeyWordSetMgr = &m_pShareData->m_Common.m_CKeyWordSetMgr;
+	CKeyWordSetMgr*	pCKeyWordSetMgr = &m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 	int				nKeyWordSetNum = pCKeyWordSetMgr->m_nKeyWordSetNum;
 
 	cProfile.IOProfileData( pszSecName, "nCurrentKeyWordSetIdx"	, pCKeyWordSetMgr->m_nCurrentKeyWordSetIdx );

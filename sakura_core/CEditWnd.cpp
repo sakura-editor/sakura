@@ -155,10 +155,10 @@ CEditWnd::CEditWnd()
 	ClearMouseState();
 
 	// 2009.08.15 Hidetaka Sakai, nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	if( m_pShareData->m_Common.m_bCreateAccelTblEachWin ){
+	if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){
 		m_hAccel = CKeyBind::CreateAccerelator(
-						m_pShareData->m_Common.m_nKeyNameArrNum,
-						m_pShareData->m_Common.m_pKeyNameArr
+						m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+						m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 		);
 
 		if( NULL == m_hAccel ){
@@ -700,7 +700,7 @@ void CEditWnd::CreateToolBar( void )
 			return;
 		}
 
-		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
+		if( m_pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			PreventVisualStyle( m_hwndReBar );	// ビジュアルスタイル非適用のフラットな Rebar にする
 		}
 
@@ -731,8 +731,8 @@ void CEditWnd::CreateToolBar( void )
 		NULL
 	);
 	if( NULL == m_hwndToolBar ){
-		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
-			m_pShareData->m_Common.m_bToolBarIsFlat = FALSE;
+		if( m_pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
+			m_pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat = FALSE;
 		}
 		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME, _T("ツールバーの作成に失敗しました。") );
 		DestroyToolBar();	// 2006.06.17 ryoji
@@ -754,9 +754,9 @@ void CEditWnd::CreateToolBar( void )
 		int nToolBarButtonNum = 0;// 2005/8/29 aroka
 		//	From Here 2005.08.29 aroka
 		// はじめにツールバー構造体の配列を作っておく
-		TBBUTTON *pTbbArr = new TBBUTTON[m_pShareData->m_Common.m_nToolBarButtonNum];
-		for( i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-			nIdx = m_pShareData->m_Common.m_nToolBarButtonIdxArr[i];
+		TBBUTTON *pTbbArr = new TBBUTTON[m_pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum];
+		for( i = 0; i < m_pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
+			nIdx = m_pShareData->m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i];
 			pTbbArr[nToolBarButtonNum] = m_CMenuDrawer.getButton(nIdx);
 			// セパレータが続くときはひとつにまとめる
 			// 折り返しボタンもTBSTYLE_SEP属性を持っているので
@@ -881,7 +881,7 @@ void CEditWnd::CreateToolBar( void )
 			}
 			//@@@ 2002.06.15 MIK end
 		}
-		if( m_pShareData->m_Common.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
+		if( m_pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			uToolType = (UINT)::GetWindowLong(m_hwndToolBar, GWL_STYLE);
 			uToolType |= (TBSTYLE_FLAT);
 			::SetWindowLong(m_hwndToolBar, GWL_STYLE, uToolType);
@@ -1073,7 +1073,7 @@ void CEditWnd::MessageLoop( void )
 			// Wineでは別プロセスで作成したアクセラレータテーブルを使用することができない。
 			// m_bCreateAccelTblEachWinオプション選択によりプロセス毎にアクセラレータテーブルが作成されるようになる
 			// ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
-			HACCEL hAccel = m_pShareData->m_Common.m_bCreateAccelTblEachWin ? m_hAccel : m_pShareData->m_hAccel;
+			HACCEL hAccel = m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ? m_hAccel : m_pShareData->m_hAccel;
 
 			if( NULL != hAccel ){
 				if( TranslateAccelerator( msg.hwnd, hAccel, &msg ) ){}
@@ -1168,8 +1168,8 @@ LRESULT CEditWnd::DispatchEvent(
 			int			j;
 			nAssignedKeyNum = CKeyBind::GetKeyStrList(
 				m_hInstance,
-				m_pShareData->m_Common.m_nKeyNameArrNum,
-				(KEYDATA*)m_pShareData->m_Common.m_pKeyNameArr,
+				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+				(KEYDATA*)m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 				&ppcAssignedKeyList,
 				uItem
 			);
@@ -1472,8 +1472,8 @@ LRESULT CEditWnd::DispatchEvent(
 				// To Here Oct. 15, 2001 genta
 				/* 機能に対応するキー名の取得(複数) */
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(
-					m_hInstance, m_pShareData->m_Common.m_nKeyNameArrNum,
-					(KEYDATA*)m_pShareData->m_Common.m_pKeyNameArr, &ppcAssignedKeyList, lptip->hdr.idFrom
+					m_hInstance, m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+					(KEYDATA*)m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr, &ppcAssignedKeyList, lptip->hdr.idFrom
 				);
 				if( 0 < nAssignedKeyNum ){
 					for( j = 0; j < nAssignedKeyNum; ++j ){
@@ -1669,10 +1669,10 @@ LRESULT CEditWnd::DispatchEvent(
 			m_hAccel = NULL;
 		}
 
-		if( m_pShareData->m_Common.m_bCreateAccelTblEachWin ){		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+		if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
 			m_hAccel = CKeyBind::CreateAccerelator(
-				m_pShareData->m_Common.m_nKeyNameArrNum,
-				m_pShareData->m_Common.m_pKeyNameArr
+				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 			);
 
 			if( NULL == m_hAccel ){
@@ -2086,8 +2086,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 			int nFuncCode = CKeyBind::GetFuncCode(
 				wID,
-				m_pShareData->m_Common.m_nKeyNameArrNum,
-				m_pShareData->m_Common.m_pKeyNameArr
+				m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+				m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 			);
 			m_cEditDoc.HandleCommand( nFuncCode | FA_FROMKEYBOARD );
 		}
@@ -2562,15 +2562,15 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			//「カスタムメニュー」ポップアップ
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 			//	右クリックメニュー
-			if( m_pShareData->m_Common.m_nCustMenuItemNumArr[0] > 0 ){
+			if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[0] > 0 ){
 				 m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING,
-				 	F_MENU_RBUTTON, m_pShareData->m_Common.m_szCustMenuNameArr[0] );
+				 	F_MENU_RBUTTON, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0] );
 			}
 			//	カスタムメニュー
 			for( i = 1; i < MAX_CUSTOM_MENU; ++i ){
-				if( m_pShareData->m_Common.m_nCustMenuItemNumArr[i] > 0 ){
+				if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[i] > 0 ){
 					 m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING,
-					 	F_CUSTMENU_BASE + i, m_pShareData->m_Common.m_szCustMenuNameArr[i] );
+					 	F_CUSTMENU_BASE + i, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[i] );
 				}
 			}
 
@@ -3137,8 +3137,8 @@ void CEditWnd::UpdateToolbar( void )
 	//@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューなら、何もしない。そうでなければ、ツールバーの状態更新 */
 	if( !m_pPrintPreview && NULL != m_hwndToolBar ){
-		for( int i = 0; i < m_pShareData->m_Common.m_nToolBarButtonNum; ++i ){
-			TBBUTTON tbb = m_CMenuDrawer.getButton(m_pShareData->m_Common.m_nToolBarButtonIdxArr[i]);
+		for( int i = 0; i < m_pShareData->m_Common.m_sToolBar.m_nToolBarButtonNum; ++i ){
+			TBBUTTON tbb = m_CMenuDrawer.getButton(m_pShareData->m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i]);
 
 			/* 機能が利用可能か調べる */
 			::PostMessage(

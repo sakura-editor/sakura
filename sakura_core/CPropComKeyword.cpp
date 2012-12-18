@@ -172,17 +172,17 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						return TRUE;
 					}
 					/* ｎ番目のセットにキーワードを編集 */
-					m_Common.m_CKeyWordSetMgr.UpdateKeyWord(
-						m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
+					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
+						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
 						plvi->lParam,
 						plvi->pszText
 					);
 				}else{
 					/* ｎ番目のセットのｍ番目のキーワードを削除 */
-					m_Common.m_CKeyWordSetMgr.DelKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, plvi->lParam );
+					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, plvi->lParam );
 				}
 				/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
-				SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+				SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 				ListView_SetItemState( hwndLIST_KEYWORD, plvi->iItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 
@@ -238,7 +238,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 			case BN_CLICKED:
 				switch( wID ){
 				case IDC_BUTTON_ADDSET:	/* セット追加 */
-					if( MAX_SETNUM <= m_Common.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
+					if( MAX_SETNUM <= m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
 						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("セットは%d個までしか登録できません。\n"), MAX_SETNUM );
 						return TRUE;
 					}
@@ -258,9 +258,9 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					if( 0 < _tcslen( szKeyWord ) ){
 						/* セットの追加 */
-						m_Common.m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, false );
+						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, false );
 
-						m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = m_Common.m_CKeyWordSetMgr.m_nKeyWordSetNum - 1;
+						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum - 1;
 
 						/* ダイアログデータの設定 Keyword */
 						SetData_p7( hwndDlg );
@@ -296,7 +296,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					if( IDCANCEL == ::MYMESSAGEBOX(	hwndDlg, MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
 						_T("「%s」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%s"),
-						m_Common.m_CKeyWordSetMgr.GetTypeName( nIndex1 ),
+						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( nIndex1 ),
 						pszLabel
 					) ){
 						return TRUE;
@@ -314,13 +314,13 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						}
 					}
 					/* ｎ番目のセットを削除 */
-					m_Common.m_CKeyWordSetMgr.DelKeyWordSet( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWordSet( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 					/* ダイアログデータの設定 Keyword */
 					SetData_p7( hwndDlg );
 					return TRUE;
 				case IDC_BUTTON_KEYSETRENAME: // キーワードセットの名称変更
 					// モードレスダイアログの表示
-					_tcscpy( szKeyWord, m_Common.m_CKeyWordSetMgr.GetTypeName( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
+					_tcscpy( szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
 					{
 						BOOL bDlgInputResult = cDlgInput1.DoModal(
 							m_hInstance,
@@ -335,19 +335,19 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 						}
 					}
 					if( 0 < _tcslen( szKeyWord ) ){
-						m_Common.m_CKeyWordSetMgr.SetTypeName( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
+						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
 
 						// ダイアログデータの設定 Keyword
 						SetData_p7( hwndDlg );
 					}
 					return TRUE;
 				case IDC_CHECK_KEYWORDCASE:	/* キーワードの英大文字小文字区別 */
-//					m_Common.m_CKeyWordSetMgr.m_nKEYWORDCASEArr[ m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ] = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE );	//MIK 2000.12.01 case sense
-					m_Common.m_CKeyWordSetMgr.SetKeyWordCase(m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE ));			//MIK 2000.12.01 case sense
+//					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKEYWORDCASEArr[ m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ] = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE );	//MIK 2000.12.01 case sense
+					m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYWORDCASE ));			//MIK 2000.12.01 case sense
 					return TRUE;
 				case IDC_BUTTON_ADDKEYWORD:	/* キーワード追加 */
 					/* ｎ番目のセットのキーワードの数を返す */
-					if( !m_Common.m_CKeyWordSetMgr.CanAddKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
+					if( !m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CanAddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
 						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("登録できるキーワード数が上限に達しています。\n") );
 						return TRUE;
 					}
@@ -358,9 +358,9 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 					}
 					if( 0 < _tcslen( szKeyWord ) ){
 						/* ｎ番目のセットにキーワードを追加 */
-						if( 0 == m_Common.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
+						if( 0 == m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
 							// ダイアログデータの設定 Keyword 指定キーワードセットの設定
-							SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+							SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 						}
 					}
 					return TRUE;
@@ -446,7 +446,7 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	ListView_GetItem( hwndLIST_KEYWORD, &lvi );
 
 	/* ｎ番目のセットのｍ番目のキーワードを返す */
-	_tcscpy( szKeyWord, m_Common.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
+	_tcscpy( szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
 
 	/* モードレスダイアログの表示 */
 	if( !cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
@@ -454,17 +454,17 @@ void CPropCommon::p7_Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	}
 	if( 0 < _tcslen( szKeyWord ) ){
 		/* ｎ番目のセットにキーワードを編集 */
-		m_Common.m_CKeyWordSetMgr.UpdateKeyWord(
-			m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
+		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
+			m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
 			lvi.lParam,
 			szKeyWord
 		);
 	}else{
 		/* ｎ番目のセットのｍ番目のキーワードを削除 */
-		m_Common.m_CKeyWordSetMgr.DelKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam );
+		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam );
 	}
 	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
-	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 	ListView_SetItemState( hwndLIST_KEYWORD, nIndex1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 	return;
@@ -487,9 +487,9 @@ void CPropCommon::p7_Delete_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	lvi.iSubItem = 0;
 	ListView_GetItem( hwndLIST_KEYWORD, &lvi );
 	/* ｎ番目のセットのｍ番目のキーワードを削除 */
-	m_Common.m_CKeyWordSetMgr.DelKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam );
+	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.DelKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam );
 	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
-	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	ListView_SetItemState( hwndLIST_KEYWORD, nIndex1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 
 	//キーワード数を表示する。
@@ -547,7 +547,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 			}
 			if( 0 < (int)strlen( szLine ) ){
 				/* ｎ番目のセットにキーワードを追加 */
-				int nRetValue = m_Common.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szLine );
+				int nRetValue = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szLine );
 				if( 2 == nRetValue ){
 					bAddError = true;
 					break;
@@ -562,7 +562,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		);
 	}
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
-	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	return;
 }
 
@@ -604,24 +604,24 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		return;
 	}
 	fputs( "// ", pFile );
-	fputs( m_Common.m_CKeyWordSetMgr.GetTypeName( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ), pFile );
+	fputs( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ), pFile );
 	fputs( "  キーワード定義ファイル", pFile );
 	fputs( "\n", pFile );
 	fputs( "\n", pFile );
 
-	m_Common.m_CKeyWordSetMgr.SortKeyWord(m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx);	//MIK 2000.12.01 sort keyword
+	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SortKeyWord(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx);	//MIK 2000.12.01 sort keyword
 
 	/* ｎ番目のセットのキーワードの数を返す */
-	nKeyWordNum = m_Common.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	nKeyWordNum = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	for( i = 0; i < nKeyWordNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		m_Common.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i );
-		fputs( m_Common.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i ), pFile );
+		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i );
+		fputs( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, i ), pFile );
 		fputs( "\n", pFile );
 	}
 	fclose( pFile );
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
-	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
 	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 		_T("ファイルへエクスポートしました。\n\n%s"), szPath
@@ -636,9 +636,9 @@ void CPropCommon::p7_Clean_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
 	if( IDYES == ::MessageBox( hwndDlg, _T("現在の設定では強調キーワードとして表示できないキーワードを削除しますか？"),
 			GSTR_APPNAME, MB_YESNO | MB_ICONQUESTION ) ){	// 2009.03.26 ryoji MB_ICONSTOP->MB_ICONQUESTION
-		if( m_Common.m_CKeyWordSetMgr.CleanKeyWords( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
+		if( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CleanKeyWords( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
 		}
-		SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+		SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	}
 }
 
@@ -652,15 +652,15 @@ void CPropCommon::SetData_p7( HWND hwndDlg )
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
 	::SendMessage( hwndWork, CB_RESETCONTENT, 0, 0 );  /* コンボボックスを空にする */
-	if( 0 < m_Common.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
-		for( i = 0; i < m_Common.m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
-			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_Common.m_CKeyWordSetMgr.GetTypeName( i ) );
+	if( 0 < m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
+		for( i = 0; i < m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum; ++i ){
+			::SendMessage( hwndWork, CB_ADDSTRING, 0, (LPARAM) (LPCTSTR)m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( i ) );
 		}
 		/* セット名コンボボックスのデフォルト選択 */
-		::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, 0 );
+		::SendMessage( hwndWork, CB_SETCURSEL, (WPARAM)m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, 0 );
 
 		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
-		SetData_p7_KeyWordSet( hwndDlg, m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+		SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	}else{
 		/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 		SetData_p7_KeyWordSet( hwndDlg, -1 );
@@ -706,14 +706,14 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 	}
 
 	/* キーワードの英大文字小文字区別 */
-	if( true == m_Common.m_CKeyWordSetMgr.GetKeyWordCase(nIdx) ){		//MIK 2000.12.01 case sense
+	if( true == m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordCase(nIdx) ){		//MIK 2000.12.01 case sense
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, TRUE );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, FALSE );
 	}
 
 	/* ｎ番目のセットのキーワードの数を返す */
-	nNum = m_Common.m_CKeyWordSetMgr.GetKeyWordNum( nIdx );
+	nNum = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( nIdx );
 	hwndList = ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD );
 
 	// 2005.01.25 Moca/genta リスト追加中は再描画を抑制してすばやく表示
@@ -721,7 +721,7 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 
 	for( i = 0; i < nNum; ++i ){
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
-		const TCHAR* pszKeyWord =  const_cast<char*>(m_Common.m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
+		const TCHAR* pszKeyWord =  const_cast<char*>(m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( nIdx, i ));
 
 		lvi.mask = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText = const_cast<TCHAR*>(pszKeyWord);
@@ -731,7 +731,7 @@ void CPropCommon::SetData_p7_KeyWordSet( HWND hwndDlg, int nIdx )
 		ListView_InsertItem( hwndList, &lvi );
 
 	}
-	m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
+	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx = nIdx;
 
 	// 2005.01.25 Moca/genta リスト追加完了のため再描画許可
 	::SendMessage( hwndList, WM_SETREDRAW, TRUE, 0 );
@@ -776,9 +776,9 @@ void CPropCommon::DispKeywordCount( HWND hwndDlg )
 	if( n < 0 ) n = 0;
 
 	int		nAlloc;
-	nAlloc = m_Common.m_CKeyWordSetMgr.GetAllocSize( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
-	nAlloc -= m_Common.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
-	nAlloc += m_Common.m_CKeyWordSetMgr.GetFreeSize();
+	nAlloc = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetAllocSize( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	nAlloc -= m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
+	nAlloc += m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetFreeSize();
 	
 	wsprintf( szCount, _T("(最大 %d 文字, 登録数 %d, 空き %d 個)"), MAX_KEYWORDLEN, n, nAlloc );
 	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );

@@ -558,7 +558,7 @@ re_do:;
 	}
 
 
-	if( m_pShareData->m_Common.m_bSearchAll ){
+	if( m_pShareData->m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった。かつ、最初の検索
 		if( !bFound	&& bRedo ){
 			nY = 0 - 1;	// 1個手前を指定
@@ -572,7 +572,7 @@ re_do:;
 	}
 	else{
 		SendStatusMessage( _T("▽見つかりませんでした") );
-		if( m_pShareData->m_Common.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
+		if( m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
 			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("前方(↓) に差分が見つかりません。") );
 	}
 
@@ -611,7 +611,7 @@ re_do:;
 		}
 	}
 
-	if( m_pShareData->m_Common.m_bSearchAll ){
+	if( m_pShareData->m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった、かつ、最初の検索
 		if( !bFound	&& bRedo ){
 			nY = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 + 1;	// 1個手前を指定
@@ -625,7 +625,7 @@ re_do:;
 	}
 	else{
 		SendStatusMessage( _T("△見つかりませんでした") );
-		if( m_pShareData->m_Common.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
+		if( m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
 			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("後方(↑) に差分が見つかりません。") );
 	}
 

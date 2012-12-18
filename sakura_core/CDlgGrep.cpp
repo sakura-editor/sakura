@@ -71,11 +71,11 @@ CDlgGrep::CDlgGrep()
 /* モーダルダイアログの表示 */
 int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurrentFilePath )
 {
-	m_bSubFolder = m_pShareData->m_Common.m_bGrepSubFolder;							// Grep: サブフォルダも検索
-	m_sSearchOption = m_pShareData->m_Common.m_sSearchOption;						// 検索オプション
-	m_nGrepCharSet = (ECodeType)m_pShareData->m_Common.m_nGrepCharSet;				// 文字コードセット
-	m_bGrepOutputLine = m_pShareData->m_Common.m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
-	m_nGrepOutputStyle = m_pShareData->m_Common.m_nGrepOutputStyle;					// Grep: 出力形式
+	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;							// Grep: サブフォルダも検索
+	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;						// 検索オプション
+	m_nGrepCharSet = (ECodeType)m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;				// 文字コードセット
+	m_bGrepOutputLine = m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
+	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;					// Grep: 出力形式
 
 	if( pszCurrentFilePath ){	// 2010.01.10 ryoji
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
@@ -249,7 +249,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 	case IDC_CHK_DEFAULTFOLDER:
 		/* フォルダの初期値をカレントフォルダにする */
 		{
-			m_pShareData->m_Common.m_bGrepDefaultFolder = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_DEFAULTFOLDER );
+			m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_DEFAULTFOLDER );
 		}
 		return TRUE;
 	case IDOK:
@@ -297,7 +297,7 @@ void CDlgGrep::SetData( void )
 		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szGREPFOLDERArr[i] );
 	}
 
-	if((0 == _tcslen( m_pShareData->m_szGREPFOLDERArr[0] ) || m_pShareData->m_Common.m_bGrepDefaultFolder ) &&
+	if((0 == _tcslen( m_pShareData->m_szGREPFOLDERArr[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
 		0 < _tcslen( m_szCurrentFilePath )
 	){
 		TCHAR	szWorkFolder[MAX_PATH];
@@ -387,8 +387,8 @@ void CDlgGrep::SetData( void )
 	}
 
 	// フォルダの初期値をカレントフォルダにする
-	::CheckDlgButton( m_hWnd, IDC_CHK_DEFAULTFOLDER, m_pShareData->m_Common.m_bGrepDefaultFolder );
-	if( m_pShareData->m_Common.m_bGrepDefaultFolder ) OnBnClicked( IDC_BUTTON_CURRENTFOLDER );
+	::CheckDlgButton( m_hWnd, IDC_CHK_DEFAULTFOLDER, m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder );
+	if( m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) OnBnClicked( IDC_BUTTON_CURRENTFOLDER );
 
 	return;
 }
@@ -428,7 +428,7 @@ int CDlgGrep::GetData( void )
 	/* サブフォルダからも検索する*/
 	m_bSubFolder = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_SUBFOLDER );
 
-	m_pShareData->m_Common.m_bGrepSubFolder = m_bSubFolder;		/* Grep：サブフォルダも検索 */
+	m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = m_bSubFolder;		/* Grep：サブフォルダも検索 */
 
 	/* この編集中のテキストから検索する */
 	m_bFromThisText = ::IsDlgButtonChecked( m_hWnd, IDC_CHK_FROMTHISTEXT );
@@ -474,10 +474,10 @@ int CDlgGrep::GetData( void )
 	/* 検索フォルダ */
 	::GetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, m_szFolder, _MAX_PATH - 1 );
 
-	m_pShareData->m_Common.m_sSearchOption = m_sSearchOption;						// 検索オプション
-	m_pShareData->m_Common.m_nGrepCharSet = m_nGrepCharSet;							// 文字コード自動判別
-	m_pShareData->m_Common.m_bGrepOutputLine = m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
-	m_pShareData->m_Common.m_nGrepOutputStyle = m_nGrepOutputStyle;					// Grep: 出力形式
+	m_pShareData->m_Common.m_sSearch.m_sSearchOption = m_sSearchOption;						// 検索オプション
+	m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = m_nGrepCharSet;							// 文字コード自動判別
+	m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine = m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
+	m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = m_nGrepOutputStyle;					// Grep: 出力形式
 
 
 //やめました

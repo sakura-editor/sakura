@@ -128,24 +128,24 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 {
 	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_bCaretTextForSearch );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_sSearch.m_bCaretTextForSearch );
 
 	/* Grepモードで保存確認するか */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bGrepExitConfirm, m_Common.m_bGrepExitConfirm );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bGrepExitConfirm, m_Common.m_sSearch.m_bGrepExitConfirm );
 
 	/* Grep結果のリアルタイム表示 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_GREPREALTIME, m_Common.m_bGrepRealTimeView );	// 2006.08.08 ryoji ID修正
+	::CheckDlgButton( hwndDlg, IDC_CHECK_GREPREALTIME, m_Common.m_sSearch.m_bGrepRealTimeView );	// 2006.08.08 ryoji ID修正
 
 
 	/* Grepモード: エンターキーでタグジャンプ */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_Common.m_bGTJW_RETURN );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_RETURN, m_Common.m_sSearch.m_bGTJW_RETURN );
 
 	/* Grepモード: ダブルクリックでタグジャンプ */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_bGTJW_LDBLCLK );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_sSearch.m_bGTJW_LDBLCLK );
 
 	//	2007.08.12 genta 正規表現DLL
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( sizeof(m_Common.m_szRegexpLib ) - 1 ), 0 );
-	::SetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_szRegexpLib);
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( sizeof(m_Common.m_sSearch.m_szRegexpLib ) - 1 ), 0 );
+	::SetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
 
 	return;
@@ -161,22 +161,22 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_GREP;
 
 	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
-	m_Common.m_bCaretTextForSearch = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCaretTextForSearch );
+	m_Common.m_sSearch.m_bCaretTextForSearch = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCaretTextForSearch );
 
 	/* Grepモードで保存確認するか */
-	m_Common.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );
+	m_Common.m_sSearch.m_bGrepExitConfirm = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bGrepExitConfirm );
 
 	/* Grep結果のリアルタイム表示 */
-	m_Common.m_bGrepRealTimeView = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GREPREALTIME );	// 2006.08.08 ryoji ID修正
+	m_Common.m_sSearch.m_bGrepRealTimeView = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GREPREALTIME );	// 2006.08.08 ryoji ID修正
 
 	/* Grepモード: エンターキーでタグジャンプ */
-	m_Common.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );
+	m_Common.m_sSearch.m_bGTJW_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_RETURN );
 
 	/* Grepモード: ダブルクリックでタグジャンプ */
-	m_Common.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
+	m_Common.m_sSearch.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
 
 	//	2007.08.12 genta 正規表現DLL
-	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_szRegexpLib, sizeof( m_Common.m_szRegexpLib ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, sizeof( m_Common.m_sSearch.m_szRegexpLib ));
 
 	return TRUE;
 }
