@@ -2269,7 +2269,7 @@ void CEditView::Command_PASTE( int option )
 				::MessageBeep( MB_ICONHAND );
 				return;
 			}
-			if( !m_pShareData->m_Common.m_bFontIs_FIXED_PITCH ){
+			if( !m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){
 				return;
 			}
 			if( bConvertEol ){
@@ -2533,7 +2533,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 		ErrorBeep();
 		return;
 	}
-	if( !m_pShareData->m_Common.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
+	if( !m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
 	{
 		return;
 	}
@@ -2736,7 +2736,7 @@ void CEditView::Command_PASTEBOX( int option )
 	}
 
 
-	if( !m_pShareData->m_Common.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
+	if( !m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
 	{
 		return;
 	}
@@ -3569,7 +3569,7 @@ void CEditView::Command_BEGIN_SELECT( void )
 /* 矩形範囲選択開始 */
 void CEditView::Command_BEGIN_BOXSELECT( void )
 {
-	if( !m_pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
+	if( !m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		return;
 	}
 
@@ -3977,17 +3977,17 @@ void CEditView::Command_FONT( void )
 	hwndFrame = ::GetParent( m_hwndParent );
 
 	/* フォント設定ダイアログ */
-	LOGFONT cLogfont = m_pShareData->m_Common.m_lf;
+	LOGFONT cLogfont = m_pShareData->m_Common.m_sView.m_lf;
 	if( m_pcEditDoc->SelectFont( &cLogfont ) ){
-		m_pShareData->m_Common.m_lf = cLogfont;
+		m_pShareData->m_Common.m_sView.m_lf = cLogfont;
 
 //		/* 変更フラグ フォント */
 //		m_pShareData->m_bFontModify = TRUE;
 
-		if( m_pShareData->m_Common.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
-			m_pShareData->m_Common.m_bFontIs_FIXED_PITCH = TRUE;	/* 現在のフォントは固定幅フォントである */
+		if( m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
+			m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH = TRUE;	/* 現在のフォントは固定幅フォントである */
 		}else{
-			m_pShareData->m_Common.m_bFontIs_FIXED_PITCH = FALSE;	/* 現在のフォントは固定幅フォントである */
+			m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH = FALSE;	/* 現在のフォントは固定幅フォントである */
 		}
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
@@ -7077,7 +7077,7 @@ void CEditView::Command_REPLACE_ALL()
 			}
 
 			// 現在のフォントは固定幅フォントである
-			if( !m_pShareData->m_Common.m_bFontIs_FIXED_PITCH )
+			if( !m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH )
 			{
 				return;
 			}
@@ -7992,7 +7992,7 @@ void CEditView::Command_COMPARE( void )
 	HWND		hwndMsgBox;	//@@@ 2003.06.12 MIK
 
 	/* 比較後、左右に並べて表示 */
-	cDlgCompare.m_bCompareAndTileHorz = m_pShareData->m_Common.m_bCompareAndTileHorz;
+	cDlgCompare.m_bCompareAndTileHorz = m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz;
 	BOOL bDlgCompareResult = cDlgCompare.DoModal(
 		m_hInstance,
 		m_hWnd,
@@ -8006,14 +8006,14 @@ void CEditView::Command_COMPARE( void )
 		return;
 	}
 	/* 比較後、左右に並べて表示 */
-	m_pShareData->m_Common.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
+	m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = cDlgCompare.m_bCompareAndTileHorz;
 
 	//タブウインドウ時は禁止	//@@@ 2003.06.12 MIK
 	if( TRUE  == m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
 	 && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 	{
 		hwndMsgBox = m_hWnd;
-		m_pShareData->m_Common.m_bCompareAndTileHorz = FALSE;
+		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = FALSE;
 	}
 	else
 	{
@@ -8087,7 +8087,7 @@ end_of_compare:;
 	/* 比較後、左右に並べて表示 */
 //From Here Oct. 10, 2000 JEPRO	チェックボックスをボタン化すれば以下の行(To Here まで)は不要のはずだが
 //	うまくいかなかったので元に戻してある…
-	if( m_pShareData->m_Common.m_bCompareAndTileHorz ){
+	if( m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz ){
 		HWND* phwndArr = new HWND[2];
 		phwndArr[0] = ::GetParent( m_hwndParent );
 		phwndArr[1] = hwndCompareWnd;

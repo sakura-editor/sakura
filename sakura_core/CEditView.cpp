@@ -364,10 +364,10 @@ BOOL CEditView::Create(
 	// 2010.05.30 Moca フォントの作成をコンストラクタからCreateに移動
 	{
 		LOGFONT		lf;
-		m_hFont_HAN = ::CreateFontIndirect( &(m_pShareData->m_Common.m_lf) );
+		m_hFont_HAN = ::CreateFontIndirect( &(m_pShareData->m_Common.m_sView.m_lf) );
 
 		/* 太字フォント作成 */
-		lf = m_pShareData->m_Common.m_lf;
+		lf = m_pShareData->m_Common.m_sView.m_lf;
 		lf.lfWeight += 300;
 		if( 1000 < lf.lfWeight ){
 			lf.lfWeight = 1000;
@@ -375,12 +375,12 @@ BOOL CEditView::Create(
 		m_hFont_HAN_FAT = CreateFontIndirect( &lf );
 
 		/* 下線フォント作成 */
-		lf = m_pShareData->m_Common.m_lf;
+		lf = m_pShareData->m_Common.m_sView.m_lf;
 		lf.lfUnderline = TRUE;
 		m_hFont_HAN_UL = CreateFontIndirect( &lf );
 
 		/* 太字下線フォント作成 */
-		lf = m_pShareData->m_Common.m_lf;
+		lf = m_pShareData->m_Common.m_sView.m_lf;
 		lf.lfUnderline = TRUE;
 		lf.lfWeight += 300;
 		if( 1000 < lf.lfWeight ){
@@ -3194,7 +3194,7 @@ void CEditView::SetIMECompFormFont( void )
 	//
 	HIMC	hIMC = ::ImmGetContext( m_hWnd );
 	if ( hIMC ){
-		::ImmSetCompositionFont( hIMC, &(m_pShareData->m_Common.m_lf) );
+		::ImmSetCompositionFont( hIMC, &(m_pShareData->m_Common.m_sView.m_lf) );
 	}
 	::ImmReleaseContext( m_hWnd , hIMC );
 	return;
@@ -5190,7 +5190,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	m_bBeginLineSelect = FALSE;			/* 行単位選択中 */
 	m_bBeginWordSelect = TRUE;			/* 単語単位選択中 */
 
-	if( m_pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
+	if( m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		/* ALTキーが押されていたか */
 		if(GetKeyState_Alt()){
 			m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
@@ -6727,11 +6727,11 @@ void CEditView::OnChangeSetting( void )
 
 	/* フォント作成 */
 	::DeleteObject( m_hFont_HAN );
-	m_hFont_HAN = CreateFontIndirect( &(m_pShareData->m_Common.m_lf) );
+	m_hFont_HAN = CreateFontIndirect( &(m_pShareData->m_Common.m_sView.m_lf) );
 
 	/* 太字フォント作成 */
 	::DeleteObject( m_hFont_HAN_FAT );
-	lf = m_pShareData->m_Common.m_lf;
+	lf = m_pShareData->m_Common.m_sView.m_lf;
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
 		lf.lfWeight = 1000;
@@ -6740,13 +6740,13 @@ void CEditView::OnChangeSetting( void )
 
 	/* 下線フォント作成 */
 	::DeleteObject( m_hFont_HAN_UL );
-	lf = m_pShareData->m_Common.m_lf;
+	lf = m_pShareData->m_Common.m_sView.m_lf;
 	lf.lfUnderline = TRUE;
 	m_hFont_HAN_UL = CreateFontIndirect( &lf );
 
 	/* 太字下線フォント作成 */
 	::DeleteObject( m_hFont_HAN_FAT_UL );
-	lf = m_pShareData->m_Common.m_lf;
+	lf = m_pShareData->m_Common.m_sView.m_lf;
 	lf.lfUnderline = TRUE;
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){

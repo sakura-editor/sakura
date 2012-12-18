@@ -1008,14 +1008,14 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		return true;
 
 	case F_BEGIN_BOX:	//矩形範囲選択開始
-		if( TRUE == pShareData->m_Common.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
+		if( TRUE == pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 			return true;
 		}else{
 			return false;
 		}
 	case F_PASTEBOX:
 		/* クリップボードから貼り付け可能か？ */
-		if( pcEditDoc->IsEnablePaste() && TRUE == pShareData->m_Common.m_bFontIs_FIXED_PITCH ){
+		if( pcEditDoc->IsEnablePaste() && TRUE == pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){
 			return true;
 		}else{
 			return false;

@@ -622,13 +622,13 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bEnableLineModePaste"		, common.m_sEdit.m_bEnableLineModePaste );/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 	cProfile.IOProfileData( pszSecName, "bConvertEOLPaste"			, common.m_sEdit.m_bConvertEOLPaste );	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"			, common.m_sHelper.m_bHtmlHelpIsSingle );/* HtmlHelpビューアはひとつ */
-	cProfile.IOProfileData( pszSecName, "bCompareAndTileHorz"		, common.m_bCompareAndTileHorz );/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
+	cProfile.IOProfileData( pszSecName, "bCompareAndTileHorz"		, common.m_sCompare.m_bCompareAndTileHorz );/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 	cProfile.IOProfileData( pszSecName, "bDropFileAndClose"			, common.m_sFile.m_bDropFileAndClose );/* ファイルをドロップしたときは閉じて開く */
 	cProfile.IOProfileData( pszSecName, "nDropFileNumMax"			, common.m_sFile.m_nDropFileNumMax );/* 一度にドロップ可能なファイル数 */
 	cProfile.IOProfileData( pszSecName, "bCheckFileTimeStamp"		, common.m_sFile.m_bCheckFileTimeStamp );/* 更新の監視 */
 	cProfile.IOProfileData( pszSecName, "bNotOverWriteCRLF"			, common.m_sEdit.m_bNotOverWriteCRLF );/* 改行は上書きしない */
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFind"			, common.m_sSearch.m_bAutoCloseDlgFind );/* 検索ダイアログを自動的に閉じる */
-	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFuncList"		, common.m_bAutoCloseDlgFuncList );/* アウトライン ダイアログを自動的に閉じる */
+	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgFuncList"		, common.m_sOutline.m_bAutoCloseDlgFuncList );/* アウトライン ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoCloseDlgReplace"		, common.m_sSearch.m_bAutoCloseDlgReplace );/* 置換 ダイアログを自動的に閉じる */
 	cProfile.IOProfileData( pszSecName, "bAutoColmnPaste"			, common.m_sEdit.m_bAutoColmnPaste );/* 矩形コピーのテキストは常に矩形貼り付け */
 	cProfile.IOProfileData( pszSecName, "NoCaretMoveByActivation"	, common.m_sGeneral.m_bNoCaretMoveByActivation );/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
@@ -663,27 +663,27 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, pszKeyName, szKeyData, sizeof( szKeyData )) ){
 			sscanf( szKeyData, pszForm,
-				&common.m_rcOpenDialog.left,
-				&common.m_rcOpenDialog.top,
-				&common.m_rcOpenDialog.right,
-				&common.m_rcOpenDialog.bottom
+				&common.m_sOthers.m_rcOpenDialog.left,
+				&common.m_sOthers.m_rcOpenDialog.top,
+				&common.m_sOthers.m_rcOpenDialog.right,
+				&common.m_sOthers.m_rcOpenDialog.bottom
 			);
 		}
 	}else{
 		wsprintf(
 			szKeyData,
 			pszForm,
-			common.m_rcOpenDialog.left,
-			common.m_rcOpenDialog.top,
-			common.m_rcOpenDialog.right,
-			common.m_rcOpenDialog.bottom
+			common.m_sOthers.m_rcOpenDialog.left,
+			common.m_sOthers.m_rcOpenDialog.top,
+			common.m_sOthers.m_rcOpenDialog.right,
+			common.m_sOthers.m_rcOpenDialog.bottom
 		);
 		cProfile.IOProfileData( pszSecName, pszKeyName, szKeyData, 0 );
 	}
 	
 	//2002.02.08 aroka,hor
-	cProfile.IOProfileData( pszSecName, "bMarkUpBlankLineEnable"	, common.m_bMarkUpBlankLineEnable );
-	cProfile.IOProfileData( pszSecName, "bFunclistSetFocusOnJump"	, common.m_bFunclistSetFocusOnJump );
+	cProfile.IOProfileData( pszSecName, "bMarkUpBlankLineEnable"	, common.m_sOutline.m_bMarkUpBlankLineEnable );
+	cProfile.IOProfileData( pszSecName, "bFunclistSetFocusOnJump"	, common.m_sOutline.m_bFunclistSetFocusOnJump );
 	
 	//	Apr. 05, 2003 genta ウィンドウキャプションのカスタマイズ
 	cProfile.IOProfileData( pszSecName, "szWinCaptionActive"
@@ -692,12 +692,12 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 		, common.m_sWindow.m_szWindowCaptionInactive, MAX_CAPTION_CONF_LEN );
 	
 	// アウトライン/トピックリスト の位置とサイズを記憶  20060201 aroka
-	cProfile.IOProfileData( pszSecName, "bRememberOutlineWindowPos", common.m_bRememberOutlineWindowPos);
-	if( common.m_bRememberOutlineWindowPos ){
-		cProfile.IOProfileData( pszSecName, "widthOutlineWindow"	, common.m_widthOutlineWindow);
-		cProfile.IOProfileData( pszSecName, "heightOutlineWindow", common.m_heightOutlineWindow);
-		cProfile.IOProfileData( pszSecName, "xOutlineWindowPos"	, common.m_xOutlineWindowPos);
-		cProfile.IOProfileData( pszSecName, "yOutlineWindowPos"	, common.m_yOutlineWindowPos);
+	cProfile.IOProfileData( pszSecName, "bRememberOutlineWindowPos", common.m_sOutline.m_bRememberOutlineWindowPos);
+	if( common.m_sOutline.m_bRememberOutlineWindowPos ){
+		cProfile.IOProfileData( pszSecName, "widthOutlineWindow"	, common.m_sOutline.m_widthOutlineWindow);
+		cProfile.IOProfileData( pszSecName, "heightOutlineWindow", common.m_sOutline.m_heightOutlineWindow);
+		cProfile.IOProfileData( pszSecName, "xOutlineWindowPos"	, common.m_sOutline.m_xOutlineWindowPos);
+		cProfile.IOProfileData( pszSecName, "yOutlineWindowPos"	, common.m_sOutline.m_yOutlineWindowPos);
 	}
 	
 }
@@ -770,9 +770,9 @@ void CShareData::ShareData_IO_Font( CProfile& cProfile )
 	const char* pszSecName = "Font";
 	CommonSetting& common = m_pShareData->m_Common;
 	ShareData_IO_Sub_LogFont( cProfile, pszSecName, "lf", "lfFaceName",
-		common.m_lf );
+		common.m_sView.m_lf );
 
-	cProfile.IOProfileData( pszSecName, "bFontIs_FIXED_PITCH", common.m_bFontIs_FIXED_PITCH );
+	cProfile.IOProfileData( pszSecName, "bFontIs_FIXED_PITCH", common.m_sView.m_bFontIs_FIXED_PITCH );
 }
 
 /*!

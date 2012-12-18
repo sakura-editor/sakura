@@ -87,7 +87,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
 		pShareData = CShareData::getInstance()->GetShareData();
-		::GetWindowRect( hwnd, &pShareData->m_Common.m_rcOpenDialog );
+		::GetWindowRect( hwnd, &pShareData->m_Common.m_sOthers.m_rcOpenDialog );
 //		MYTRACE_A( "WM_MOVE 1\n" );
 		break;
 	case WM_COMMAND:
@@ -208,7 +208,7 @@ UINT_PTR CALLBACK OFNHookProc(
 
 		/* 「開く」ダイアログのサイズと位置 */
 		hwndFrame = ::GetParent( hdlg );
-		::GetWindowRect( hwndFrame, &pcDlgOpenFile->m_pShareData->m_Common.m_rcOpenDialog );
+		::GetWindowRect( hwndFrame, &pcDlgOpenFile->m_pShareData->m_Common.m_sOthers.m_rcOpenDialog );
 
 		// 2005.10.29 ryoji 最近のファイル／フォルダ コンボの右端を子ダイアログの右端に合わせる
 		::GetWindowRect( hwndComboMRU, &rc );

@@ -307,10 +307,13 @@ struct ARRHEAD {
 	Version 103:
 	CommonSetting構造体整理:支援、マクロ、ファイル名表示の移動
 
+	Version 104:
+	CommonSetting構造体整理:アウトライン、比較、ビュー、その他の移動
+
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 103;
+const unsigned int uShareDataVersion = 104;
 
 /*
 ||	Singleton風
@@ -552,21 +555,21 @@ bool CShareData::InitShareData()
 //	From Here Sept. 19, 2000 JEPRO コメントアウトになっていた初めのブロックを復活しその下をコメントアウト
 //	MS ゴシック標準スタイル10ptに設定
 //		/* LOGFONTの初期化 */
-		memset( &m_pShareData->m_Common.m_lf, 0, sizeof( m_pShareData->m_Common.m_lf ) );
-		m_pShareData->m_Common.m_lf.lfHeight			= -13;
-		m_pShareData->m_Common.m_lf.lfWidth				= 0;
-		m_pShareData->m_Common.m_lf.lfEscapement		= 0;
-		m_pShareData->m_Common.m_lf.lfOrientation		= 0;
-		m_pShareData->m_Common.m_lf.lfWeight			= 400;
-		m_pShareData->m_Common.m_lf.lfItalic			= 0x0;
-		m_pShareData->m_Common.m_lf.lfUnderline			= 0x0;
-		m_pShareData->m_Common.m_lf.lfStrikeOut			= 0x0;
-		m_pShareData->m_Common.m_lf.lfCharSet			= 0x80;
-		m_pShareData->m_Common.m_lf.lfOutPrecision		= 0x3;
-		m_pShareData->m_Common.m_lf.lfClipPrecision		= 0x2;
-		m_pShareData->m_Common.m_lf.lfQuality			= 0x1;
-		m_pShareData->m_Common.m_lf.lfPitchAndFamily	= 0x31;
-		_tcscpy( m_pShareData->m_Common.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
+		memset( &m_pShareData->m_Common.m_sView.m_lf, 0, sizeof( m_pShareData->m_Common.m_sView.m_lf ) );
+		m_pShareData->m_Common.m_sView.m_lf.lfHeight			= -13;
+		m_pShareData->m_Common.m_sView.m_lf.lfWidth				= 0;
+		m_pShareData->m_Common.m_sView.m_lf.lfEscapement		= 0;
+		m_pShareData->m_Common.m_sView.m_lf.lfOrientation		= 0;
+		m_pShareData->m_Common.m_sView.m_lf.lfWeight			= 400;
+		m_pShareData->m_Common.m_sView.m_lf.lfItalic			= 0x0;
+		m_pShareData->m_Common.m_sView.m_lf.lfUnderline			= 0x0;
+		m_pShareData->m_Common.m_sView.m_lf.lfStrikeOut			= 0x0;
+		m_pShareData->m_Common.m_sView.m_lf.lfCharSet			= 0x80;
+		m_pShareData->m_Common.m_sView.m_lf.lfOutPrecision		= 0x3;
+		m_pShareData->m_Common.m_sView.m_lf.lfClipPrecision		= 0x2;
+		m_pShareData->m_Common.m_sView.m_lf.lfQuality			= 0x1;
+		m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily	= 0x31;
+		_tcscpy( m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
 
 		// キーワードヘルプのフォント ai 02/05/21 Add S
 		::SystemParametersInfo(
@@ -579,7 +582,7 @@ bool CShareData::InitShareData()
 
 //	To Here Sept. 19,2000
 
-		m_pShareData->m_Common.m_bFontIs_FIXED_PITCH = TRUE;				/* 現在のフォントは固定幅フォントである */
+		m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH = TRUE;				/* 現在のフォントは固定幅フォントである */
 
 //		m_pShareData->m_Common.m_bUseCaretKeyWord = FALSE;		/* キャレット位置の単語を辞書検索-機能OFF */	// 2006.03.24 fon sakura起動ごとFALSEとし、初期化しない
 
@@ -726,18 +729,18 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
-		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
+		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
 		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = FALSE;	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 		/* 1999.11.15 */
 		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
 		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
 		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
 		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
-		::SetRect( &m_pShareData->m_Common.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
+		::SetRect( &m_pShareData->m_Common.m_sOthers.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
 		m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
 		m_pShareData->m_Common.m_sSearch.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */
 		m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz = TRUE;				/* 水平スクロールバーを使う */
-		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
+		m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
 		m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
 		m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation = FALSE;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
@@ -747,8 +750,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
 		m_pShareData->m_Common.m_sHelper.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
 
-		m_pShareData->m_Common.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
-		m_pShareData->m_Common.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
+		m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable	=	FALSE;	//アウトラインダイアログでブックマークの空行を無視			2002.02.08 aroka,hor
+		m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump	=	FALSE;	//アウトラインダイアログでジャンプしたらフォーカスを移す	2002.02.08 hor
 
 		/*
 			書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと

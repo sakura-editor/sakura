@@ -460,17 +460,17 @@ void CDlgFuncList::SetData()
 		}
 	}
 	/* アウトライン ダイアログを自動的に閉じる */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList, m_pShareData->m_Common.m_bAutoCloseDlgFuncList );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList, m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList );
 	/* アウトライン ブックマーク一覧で空行を無視する */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable, m_pShareData->m_Common.m_bMarkUpBlankLineEnable );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable, m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable );
 	/* アウトライン ジャンプしたらフォーカスを移す */
-	::CheckDlgButton( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump, m_pShareData->m_Common.m_bFunclistSetFocusOnJump );
+	::CheckDlgButton( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump, m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump );
 
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
-	::CheckDlgButton( m_hWnd, IDC_BUTTON_WINSIZE, m_pShareData->m_Common.m_bRememberOutlineWindowPos );
+	::CheckDlgButton( m_hWnd, IDC_BUTTON_WINSIZE, m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos );
 
 	/* ダイアログを自動的に閉じるならフォーカス移動オプションは関係ない */
-	if(m_pShareData->m_Common.m_bAutoCloseDlgFuncList){
+	if(m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList){
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
 	}else{
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
@@ -1254,15 +1254,15 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* アウトライン位置とサイズを初期化する */ // 20060201 aroka
 	if( m_lParam != NULL ){
 		CEditView* pcEditView=(CEditView*)m_lParam;
-		if( m_pShareData->m_Common.m_bRememberOutlineWindowPos ){
+		if( m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
 			if (::GetWindowPlacement( pcEditView->m_pcEditDoc->m_pcEditWnd->m_hWnd, &cWindowPlacement )){
 				/* ウィンドウ位置・サイズを-1以外の値にしておくと、CDialogで使用される． */
-				m_xPos = m_pShareData->m_Common.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
-				m_yPos = m_pShareData->m_Common.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;
-				m_nWidth =  m_pShareData->m_Common.m_widthOutlineWindow;
-				m_nHeight = m_pShareData->m_Common.m_heightOutlineWindow;
+				m_xPos = m_pShareData->m_Common.m_sOutline.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
+				m_yPos = m_pShareData->m_Common.m_sOutline.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;
+				m_nWidth =  m_pShareData->m_Common.m_sOutline.m_widthOutlineWindow;
+				m_nHeight = m_pShareData->m_Common.m_sOutline.m_heightOutlineWindow;
 			}
 		}
 	}
@@ -1301,17 +1301,17 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_WINSIZE:
 		{// ウィンドウの位置とサイズを記憶 // 20060201 aroka
-			m_pShareData->m_Common.m_bRememberOutlineWindowPos = ::IsDlgButtonChecked( m_hWnd, IDC_BUTTON_WINSIZE );
+			m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos = ::IsDlgButtonChecked( m_hWnd, IDC_BUTTON_WINSIZE );
 		}
 		return TRUE;
 	//2002.02.08 オプション切替後List/Treeにフォーカス移動
 	case IDC_CHECK_bAutoCloseDlgFuncList:
 	case IDC_CHECK_bMarkUpBlankLineEnable:
 	case IDC_CHECK_bFunclistSetFocusOnJump:
-		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
-		m_pShareData->m_Common.m_bMarkUpBlankLineEnable = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable );
-		m_pShareData->m_Common.m_bFunclistSetFocusOnJump = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump );
-		if(m_pShareData->m_Common.m_bAutoCloseDlgFuncList){
+		m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bAutoCloseDlgFuncList );
+		m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bMarkUpBlankLineEnable );
+		m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump );
+		if(m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList){
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), FALSE );
 		}else{
 			::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHECK_bFunclistSetFocusOnJump ), TRUE );
@@ -1369,7 +1369,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 		case NM_KILLFOCUS:
 			// 2002.02.16 hor Treeのダブルクリックでフォーカス移動できるように 4/4
 			if(m_bWaitTreeProcess){
-				if(m_pShareData->m_Common.m_bFunclistSetFocusOnJump){
+				if(m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump){
 					::SetFocus(::GetParent( ::GetParent( m_hwndParent ) ));
 				}
 				m_bWaitTreeProcess=false;
@@ -1576,16 +1576,16 @@ BOOL CDlgFuncList::OnDestroy( void )
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
 	CEditView* pcEditView=(CEditView*)m_lParam;
-	if( m_pShareData->m_Common.m_bRememberOutlineWindowPos ){
+	if( m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 		/* 親のウィンドウ位置・サイズを記憶 */
 		WINDOWPLACEMENT cWindowPlacement;
 		cWindowPlacement.length = sizeof( WINDOWPLACEMENT );
 		if (::GetWindowPlacement( pcEditView->m_pcEditDoc->m_pcEditWnd->m_hWnd, &cWindowPlacement )){
 			/* ウィンドウ位置・サイズを記憶 */
-			m_pShareData->m_Common.m_xOutlineWindowPos = m_xPos - cWindowPlacement.rcNormalPosition.left;
-			m_pShareData->m_Common.m_yOutlineWindowPos = m_yPos - cWindowPlacement.rcNormalPosition.top;
-			m_pShareData->m_Common.m_widthOutlineWindow = m_nWidth;
-			m_pShareData->m_Common.m_heightOutlineWindow = m_nHeight;
+			m_pShareData->m_Common.m_sOutline.m_xOutlineWindowPos = m_xPos - cWindowPlacement.rcNormalPosition.left;
+			m_pShareData->m_Common.m_sOutline.m_yOutlineWindowPos = m_yPos - cWindowPlacement.rcNormalPosition.top;
+			m_pShareData->m_Common.m_sOutline.m_widthOutlineWindow = m_nWidth;
+			m_pShareData->m_Common.m_sOutline.m_heightOutlineWindow = m_nHeight;
 		}
 
 	}
@@ -1651,10 +1651,10 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )	//2002.02.08 hor 引数追加
 				MYWM_SETCARETPOS, 0, PM_SETCARETPOS_KEEPSELECT );
 			if( bCheckAutoClose ){
 				/* アウトライン ダイアログを自動的に閉じる */
-				if( m_pShareData->m_Common.m_bAutoCloseDlgFuncList ){
+				if( m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList ){
 					::DestroyWindow( m_hWnd );
 				}
-				else if( m_pShareData->m_Common.m_bFunclistSetFocusOnJump ){
+				else if( m_pShareData->m_Common.m_sOutline.m_bFunclistSetFocusOnJump ){
 					::SetFocus( ::GetParent( ::GetParent( m_hwndParent ) ) );
 				}
 			}

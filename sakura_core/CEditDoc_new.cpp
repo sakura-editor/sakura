@@ -1005,7 +1005,7 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	int		nLineCount;
 	int		leftspace, pos_wo_space, k,nX,nY;
 	char*	pszText;
-	BOOL	bMarkUpBlankLineEnable = m_pShareData->m_Common.m_bMarkUpBlankLineEnable;	//! 空行をマーク対象にするフラグ 20020119 aroka
+	BOOL	bMarkUpBlankLineEnable = m_pShareData->m_Common.m_sOutline.m_bMarkUpBlankLineEnable;	//! 空行をマーク対象にするフラグ 20020119 aroka
 	int		nNewLineLen	= m_cNewLineCode.GetLen();
 	int		nLineLast	= m_cDocLineMgr.GetLineCount();
 	int		nCharChars;

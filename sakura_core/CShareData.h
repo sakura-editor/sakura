@@ -747,11 +747,11 @@ struct CommonSetting_FileName {
 	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//お気に入り	//@@@ 2003.04.08 MIK
 };
 
-//! 共通設定
-struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       アウトライン                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_OutLine
+{
 	// 20060201 aroka アウトライン/トピックリスト の位置とサイズを記憶
 	int					m_bRememberOutlineWindowPos;
 	int					m_widthOutlineWindow;
@@ -763,25 +763,34 @@ struct CommonSetting {
 	BOOL				m_bAutoCloseDlgFuncList;	/* アウトライン ダイアログを自動的に閉じる */
 	BOOL				m_bFunclistSetFocusOnJump;	//2002.02.08 hor
 	BOOL				m_bMarkUpBlankLineEnable;	//2002.02.08 aroka,hor
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ファイル内容比較                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Compare
+{
 	//ファイル内容比較ダイアログ
 	BOOL				m_bCompareAndTileHorz;		/* 文書比較後、左右に並べて表示 */
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ビュー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_View {
 	//INI内設定のみ
 	LOGFONT				m_lf;							/* 現在のフォント情報 */
 	BOOL				m_bFontIs_FIXED_PITCH;			/* 現在のフォントは固定幅フォントである */
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          その他                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Others
+{
 	//INI内設定のみ
 	RECT				m_rcOpenDialog;				/* 「開く」ダイアログのサイズと位置 */
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ステータスバー                     //
@@ -794,6 +803,9 @@ struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        メインメニュー                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//! 共通設定
+struct CommonSetting {
 	CommonSetting_General			m_sGeneral;			// 全般
 	CommonSetting_Window			m_sWindow;			// ウィンドウ
 	CommonSetting_TabBar			m_sTabBar;			// タブバー
@@ -810,7 +822,11 @@ struct CommonSetting {
 	CommonSetting_Helper			m_sHelper;			// 支援
 	CommonSetting_Macro				m_sMacro;			// マクロ
 	CommonSetting_FileName			m_sFileName;		// ファイル名表示
-
+	//
+	CommonSetting_OutLine			m_sOutline;
+	CommonSetting_Compare			m_sCompare;
+	CommonSetting_View				m_sView;
+	CommonSetting_Others			m_sOthers;
 }; /* Common */
 
 
