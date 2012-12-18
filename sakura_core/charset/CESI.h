@@ -37,7 +37,7 @@ class CESI;
 struct SEncodingConfig;
 //class CNativeT;
 
-#include "global.h"
+#include "_main/global.h"
 
 
 struct tagEncodingInfo {

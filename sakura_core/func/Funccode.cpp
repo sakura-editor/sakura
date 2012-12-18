@@ -32,7 +32,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "doc/CEditDoc.h"
-#include "CAppMode.h"
+#include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
 #include "macro/CSMacroMgr.h"

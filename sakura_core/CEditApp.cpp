@@ -9,10 +9,10 @@
 #include "macro/CSMacroMgr.h"
 #include "CPropertyManager.h"
 #include "CGrepAgent.h"
-#include "CAppMode.h"
+#include "_main/CAppMode.h"
+#include "_main/CCommandLine.h"
 #include "util/module.h"
 #include "util/shell.h"
-#include "CCommandLine.h"
 
 CEditApp::CEditApp(HINSTANCE hInst, int nGroupId)
 : m_hInst(hInst)

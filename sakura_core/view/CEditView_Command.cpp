@@ -4,14 +4,14 @@
 #include "window/CEditWnd.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "env/CTagJumpManager.h"
 #include "util/file.h"
 #include "util/module.h"
 #include "util/window.h"
-#include "CControlTray.h"
+#include "_main/CControlTray.h"
 #include "doc/CLayout.h"
 #include "charset/charcode.h"
 #include "recent/CRecent.h"
-#include "env/CTagJumpManager.h"
 
 /*
 	指定ファイルの指定位置にタグジャンプする。

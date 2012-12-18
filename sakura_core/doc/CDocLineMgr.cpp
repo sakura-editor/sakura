@@ -30,22 +30,25 @@
 
 
 #include "StdAfx.h"
-#include "charset/charcode.h"
-#include "doc/CDocLineMgr.h"
-#include "debug/Debug.h"
-#include "charset/charcode.h"
 // Oct 6, 2000 ao
 #include <stdio.h>
 #include <io.h>
+#include <commctrl.h>
+#include <list>
+#include "doc/CDocLineMgr.h"
+#include "doc/CDocLine.h"// 2002/2/10 aroka ヘッダ整理
+#include "charset/charcode.h"
+#include "charset/CCodeFactory.h"
+#include "charset/CCodeBase.h"
+#include "charset/CCodeMediator.h"
+#include "debug/Debug.h"
+#include "debug/CRunningTimer.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
-#include <commctrl.h>
-#include "global.h"
-#include "debug/CRunningTimer.h"
+#include "_main/global.h"
 
 //	May 15, 2000 genta
 #include "CEol.h"
-#include "doc/CDocLine.h"// 2002/2/10 aroka ヘッダ整理
 #include "mem/CMemory.h"// 2002/2/10 aroka
 
 #include "io/CFileLoad.h" // 2002/08/30 Moca
@@ -54,10 +57,6 @@
 #include "parse/CWordParse.h"
 #include "util/window.h"
 #include "util/file.h"
-#include "charset/CCodeFactory.h"
-#include "charset/CCodeBase.h"
-#include <list>
-#include "charset/CCodeMediator.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

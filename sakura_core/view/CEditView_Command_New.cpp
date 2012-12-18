@@ -28,7 +28,7 @@
 #include "doc/CLayout.h"///
 #include "doc/CDocLine.h"///
 #include "debug/Debug.h"///  2002/2/3 aroka to here
-#include "COsVersionInfo.h"   // 2002.04.09 minfu 
+#include "_os/COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ÉwÉbÉ_êÆóù
 #include "doc/CDocReader.h"
 #include "window/CEditWnd.h"

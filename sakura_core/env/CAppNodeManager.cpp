@@ -5,7 +5,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "recent/CRecentEditNode.h"
 #include "util/window.h"
-#include "CMutex.h"
+#include "_main/CMutex.h"
 
 
 // GetOpenedWindowArr—pÃ“I•Ï”^\‘¢‘Ì

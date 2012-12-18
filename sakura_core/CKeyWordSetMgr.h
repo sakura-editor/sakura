@@ -40,7 +40,7 @@ class CKeyWordSetMgr;
 #define _CKEYWORDSETMGR_H_
 
 #include <windows.h>
-#include "global.h"// 2002/2/10 aroka
+#include "_main/global.h"// 2002/2/10 aroka
 
 #define		MAX_SETNUM		100	//2007.12.01 genta ç≈ëÂílëùâ¡
 #define		MAX_SETNAMELEN	32

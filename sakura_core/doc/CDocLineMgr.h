@@ -23,7 +23,7 @@ class CDocLineMgr;
 #define _CDOCLINEMGR_H_
 
 #include <windows.h>
-#include "global.h" // 2002/2/10 aroka
+#include "_main/global.h" // 2002/2/10 aroka
 #include "CEol.h" // 2002/2/10 aroka
 class CDocLine; // 2002/2/10 aroka
 class CMemory; // 2002/2/10 aroka

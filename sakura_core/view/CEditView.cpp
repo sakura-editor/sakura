@@ -28,10 +28,10 @@
 #include "CWaitCursor.h"
 #include "window/CEditWnd.h"
 #include "COpeBlk.h"///
-#include "CDropTarget.h"///
+#include "_os/CDropTarget.h"///
 #include "window/CSplitBoxWnd.h"///
 #include "CMarkMgr.h"///
-#include "CClipboard.h"
+#include "_os/CClipboard.h"
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
 #include "util/string_ex2.h"

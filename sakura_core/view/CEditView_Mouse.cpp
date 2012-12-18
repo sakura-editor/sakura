@@ -1,21 +1,17 @@
 #include "StdAfx.h"
-#include "CAppMode.h"
+#include <process.h> // _beginthreadex
+#include "CEditView.h"
+#include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h" // use CEditApp.h
 #include "window/CEditWnd.h"
-#include "CEditView.h"
-#include "CDropTarget.h" // CDataObject
-//#include "types/CTypeSupport.h"
-//#include "parse/CWordParse.h"
+#include "_os/CDropTarget.h" // CDataObject
+#include "_os/CClipboard.h"
 #include "COpeBlk.h"
-//#include "view/colors/CColorStrategy.h"
-#include "CClipboard.h"
 #include "doc/CLayout.h"
-// #include "config/system_constants.h" // StdAfx.h
 #include "CWaitCursor.h"
 #include "util/input.h"
 #include "util/os.h"
-#include <process.h> // _beginthreadex
 #include "sakura_rc.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

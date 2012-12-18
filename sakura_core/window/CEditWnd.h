@@ -28,7 +28,7 @@
 class CEditWnd;
 
 #include <shellapi.h>// HDROP
-#include "global.h"
+#include "_main/global.h"
 #include "CMainToolBar.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
 #include "func/CFuncKeyWnd.h"
@@ -39,15 +39,15 @@ class CEditWnd;
 #include "dlg/CDlgReplace.h"
 #include "dlg/CDlgJump.h"
 #include "dlg/CDlgGrep.h"
-#include "outline/CDlgFuncList.h"
 #include "dlg/CDlgOpenFile.h"
+#include "outline/CDlgFuncList.h"
 #include "CHokanMgr.h"
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "CMenuDrawer.h"
 
 //by ‹S
-#include"CDropTarget.h"
+#include"_os/CDropTarget.h"
 
 const static int MENUBAR_MESSAGE_MAX_LEN = 30;
 

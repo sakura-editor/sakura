@@ -24,7 +24,8 @@
 #define _CEDITDOC_H_
 
 
-#include "global.h"
+#include "_main/global.h"
+#include "_main/CAppMode.h"
 #include "CLayoutMgr.h"
 #include "CDocLineMgr.h"
 #include "CBackupAgent.h"
@@ -39,7 +40,6 @@
 #include "func/CFuncLookup.h"
 #include "CEol.h"
 #include "util/design_template.h"
-#include "CAppMode.h"
 
 class CImageListMgr; // 2002/2/10 aroka
 class CSMacroMgr; // 2002/2/10 aroka

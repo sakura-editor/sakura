@@ -3,15 +3,15 @@
 */
 
 #include "StdAfx.h"
-#include "DLLSHAREDATA.h"
+#include <shlobj.h> //CSIDL_PROFILEìô
 
 #include "CFileNameManager.h"
-#include <shlobj.h> //CSIDL_PROFILEìô
 #include "util/module.h"
 #include "util/os.h"
 #include "util/shell.h"
-#include "CCommandLine.h"
-#include "COsVersionInfo.h"
+#include "_main/CCommandLine.h"
+#include "_os/COsVersionInfo.h"
+#include "DLLSHAREDATA.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ÉtÉ@ÉCÉãñºä«óù                         //

@@ -29,7 +29,7 @@
 #define SAKURA_CPLUGINIFOBJ_2205DDE8_330B_49AC_AC5E_4C02F07DDCD5D_H_
 
 #include "macro/CWSHIfObj.h"
-#include "OleTypes.h"
+#include "_os/OleTypes.h"
 #include "util/ole_convert.h"
 
 // cpp‚ÖˆÚ“®—\’è

@@ -2925,75 +2925,75 @@
 				Name="_main"
 				>
 				<File
-					RelativePath="..\sakura_core\CAppMode.cpp"
+					RelativePath="..\sakura_core\_main\CAppMode.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CAppMode.h"
+					RelativePath="..\sakura_core\_main\CAppMode.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CCommandLine.cpp"
+					RelativePath="..\sakura_core\_main\CCommandLine.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CCommandLine.h"
+					RelativePath="..\sakura_core\_main\CCommandLine.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CControlProcess.cpp"
+					RelativePath="..\sakura_core\_main\CControlProcess.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CControlProcess.h"
+					RelativePath="..\sakura_core\_main\CControlProcess.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CControlTray.cpp"
+					RelativePath="..\sakura_core\_main\CControlTray.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CControlTray.h"
+					RelativePath="..\sakura_core\_main\CControlTray.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CMutex.h"
+					RelativePath="..\sakura_core\_main\CMutex.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CNormalProcess.cpp"
+					RelativePath="..\sakura_core\_main\CNormalProcess.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CNormalProcess.h"
+					RelativePath="..\sakura_core\_main\CNormalProcess.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CProcess.cpp"
+					RelativePath="..\sakura_core\_main\CProcess.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CProcess.h"
+					RelativePath="..\sakura_core\_main\CProcess.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CProcessFactory.cpp"
+					RelativePath="..\sakura_core\_main\CProcessFactory.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CProcessFactory.h"
+					RelativePath="..\sakura_core\_main\CProcessFactory.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\global.cpp"
+					RelativePath="..\sakura_core\_main\global.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\global.h"
+					RelativePath="..\sakura_core\_main\global.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\WinMain.cpp"
+					RelativePath="..\sakura_core\_main\WinMain.cpp"
 					>
 				</File>
 			</Filter>
@@ -3001,27 +3001,27 @@
 				Name="_os"
 				>
 				<File
-					RelativePath="..\sakura_core\CClipboard.cpp"
+					RelativePath="..\sakura_core\_os\CClipboard.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CClipboard.h"
+					RelativePath="..\sakura_core\_os\CClipboard.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CDropTarget.cpp"
+					RelativePath="..\sakura_core\_os\CDropTarget.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\CDropTarget.h"
+					RelativePath="..\sakura_core\_os\CDropTarget.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\COsVersionInfo.h"
+					RelativePath="..\sakura_core\_os\COsVersionInfo.h"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\OleTypes.h"
+					RelativePath="..\sakura_core\_os\OleTypes.h"
 					>
 				</File>
 			</Filter>

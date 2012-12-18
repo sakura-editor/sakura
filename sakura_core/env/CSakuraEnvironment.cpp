@@ -4,7 +4,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "env/CFormatManager.h"
 #include "env/CFileNameManager.h"
-#include "CAppMode.h"
+#include "_main/CAppMode.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "CPrintPreview.h"

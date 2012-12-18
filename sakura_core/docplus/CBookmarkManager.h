@@ -24,11 +24,11 @@
 #ifndef SAKURA_CBOOKMARKMANAGER_0BD65312_87D5_4C0F_AA25_7F077D00E8DC_H_
 #define SAKURA_CBOOKMARKMANAGER_0BD65312_87D5_4C0F_AA25_7F077D00E8DC_H_
 
+#include "_main/global.h" // ESearchDirection, SSearchOption
+
 class CDocLine;
 class CDocLineMgr;
 class CBregexp;
-
-#include "global.h" // ESearchDirection, SSearchOption
 
 
 //! 行に付加するブックマーク情報

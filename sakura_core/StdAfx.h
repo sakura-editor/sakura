@@ -42,7 +42,7 @@
 #include "config/app_constants.h"		//アプリケーション定数
 
 //グローバル
-#include "global.h"
+#include "_main/global.h"
 
 //高頻度API等
 #include <windows.h>

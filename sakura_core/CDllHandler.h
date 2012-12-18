@@ -33,8 +33,8 @@
 #define _LOAD_LIBRARY_H_
 
 #include <windows.h>
-#include "global.h"
 #include <string>
+#include "_main/global.h"
 
 /*! CDllImp をラップ
 	CDllImp::DeinitDll を呼び忘れないためのヘルパ的クラス。

@@ -26,7 +26,7 @@ class CLayoutMgr;
 
 #include <windows.h>// 2002/2/10 aroka
 #include <vector>
-#include "global.h"// 2002/2/10 aroka
+#include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "types/CType.h"
 #include "CDocListener.h"

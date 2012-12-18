@@ -26,12 +26,13 @@
 // 2007.10.25 kobake CViewCommanderクラスに分離
 
 #include "StdAfx.h"
+#include <htmlhelp.h>
 #include "CViewCommander.h"
 
-#include <htmlhelp.h>
 #include "view/CEditView.h"
 #include "debug/CRunningTimer.h"
-#include "CControlTray.h"
+#include "_main/CControlTray.h"
+#include "_main/CAppMode.h"
 #include "CWaitCursor.h"
 //@@@ 2002.2.2 YAZAKI マクロはCSMacroMgrに統一
 #include "macro/CSMacroMgr.h"
@@ -69,7 +70,6 @@
 #include "plugin/COutlineIfObj.h"
 #include "plugin/CSmartIndentIfObj.h"
 #include "CPropertyManager.h"
-#include "CAppMode.h"
 #include "CGrepAgent.h"
 #include "CWriteManager.h"
 #include "sakura_rc.h"

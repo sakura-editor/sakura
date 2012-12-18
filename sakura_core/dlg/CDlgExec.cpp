@@ -18,10 +18,10 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgExec.h"
-#include "func/Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "dlg/CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
+#include "func/Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "util/shell.h"
-#include "CAppMode.h"
+#include "_main/CAppMode.h"
 #include "doc/CEditDoc.h"
 #include "sakura_rc.h"
 #include "sakura.hh"

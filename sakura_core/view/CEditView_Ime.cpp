@@ -3,7 +3,7 @@
 #include "charset/CShiftJis.h"
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
-#include "CAppMode.h"
+#include "_main/CAppMode.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

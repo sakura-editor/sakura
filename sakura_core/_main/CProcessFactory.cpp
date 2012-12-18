@@ -17,16 +17,16 @@
 */
 
 #include "StdAfx.h"
+#include <io.h>
+#include <tchar.h>
 #include "CProcessFactory.h"
 #include "CControlProcess.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"
-#include "debug/Debug.h"
 
-#include <io.h>
-#include <tchar.h>
-#include "COsVersionInfo.h"
+#include "_os/COsVersionInfo.h"
+#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
 

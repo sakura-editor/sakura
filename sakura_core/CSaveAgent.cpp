@@ -9,7 +9,7 @@
 #include "CWaitCursor.h"
 #include "io/CBinaryStream.h"
 #include "CEditApp.h"
-#include "CAppMode.h"
+#include "_main/CAppMode.h"
 #include "env/CShareData.h"
 
 CSaveAgent::CSaveAgent()

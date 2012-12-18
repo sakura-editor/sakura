@@ -28,7 +28,7 @@
 #ifndef SAKURA_CEDITORIFOBJ_87C246CB_1387_4893_A26F_190155191A96D_H_
 #define SAKURA_CEDITORIFOBJ_87C246CB_1387_4893_A26F_190155191A96D_H_
 
-#include "OleTypes.h"
+#include "_os/OleTypes.h"
 #include "macro/CWSHIfObj.h"
 
 

@@ -24,7 +24,7 @@ class CDlgOpenFile;
 
 #include <vector>
 #include "CEol.h"
-#include "COsVersionInfo.h"	// 2005.11.02 ryoji
+#include "_os/COsVersionInfo.h"	// 2005.11.02 ryoji
 
 struct DLLSHAREDATA;
 struct SLoadInfo;	// doc/CDocListener.h

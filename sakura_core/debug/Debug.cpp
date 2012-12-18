@@ -15,10 +15,10 @@
 */
 
 #include "StdAfx.h"
-#include "debug/Debug.h"
 #include <stdarg.h>
 #include <tchar.h>
-#include "global.h"
+#include "debug/Debug.h"
+#include "_main/global.h"
 
 #ifdef _DEBUG
 	int gm_ProfileOutput = 0;
@@ -101,7 +101,6 @@ void DebugOutA( LPCSTR lpFmt, ...)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#include "global.h"
 #include "window/CEditWnd.h"
 HWND GetMessageBoxOwner(HWND hwndOwner)
 {

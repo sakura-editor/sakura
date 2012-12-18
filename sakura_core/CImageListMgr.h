@@ -32,7 +32,7 @@
 #ifndef _CIMAGELIST_MGR_H_
 #define _CIMAGELIST_MGR_H_
 
-#include "global.h"
+#include "_main/global.h"
 //#include <commctrl.h> 2003.07.21 genta ïsóv
 
 /*! @brief ImageListÇÃä«óù

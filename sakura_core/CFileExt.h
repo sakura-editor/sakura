@@ -31,7 +31,7 @@
 #ifndef	_CFILEEXT_H_
 #define	_CFILEEXT_H_
 
-#include "global.h"
+#include "_main/global.h"
 
 class SAKURA_CORE_API CFileExt
 {

@@ -5,11 +5,11 @@
 
 #include "recent/CMRU.h"
 #include "recent/CMRUFolder.h"
-#include "CAppMode.h" 
+#include "_main/CAppMode.h" 
+#include "_main/CControlTray.h"
 #include "CEditApp.h"
 #include "window/CEditWnd.h"
 #include "CWaitCursor.h"
-#include "CControlTray.h"
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"

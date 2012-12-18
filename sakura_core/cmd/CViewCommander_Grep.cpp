@@ -2,12 +2,12 @@
 #include "CViewCommander.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "CControlTray.h"
+#include "_main/CControlTray.h"
+#include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
 #include "charset/charcode.h"
 #include "window/CEditWnd.h"
-#include "CAppMode.h"
 #include "sakura_rc.h"
 
 /*! GREPダイアログの表示
