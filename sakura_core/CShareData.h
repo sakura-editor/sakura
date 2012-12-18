@@ -864,6 +864,13 @@ struct DLLSHAREDATA {
 
 	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
+	/*	@@@ 2002.1.24 YAZAKI
+		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
+		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
+	*/
+	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */
+	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
+
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;
 	EditInfo			m_fiMRUArr[MAX_MRU];
@@ -885,13 +892,8 @@ struct DLLSHAREDATA {
 
 	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
 	
-	// 2004/06/21 タグジャンプ機能追加
-	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
-	int					m_TagJumpTop;					//!< スタックの一番上の位置
-	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
-
-	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
 	int					m_nCmdArrNum;
+	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
 
 	/**** iniフォルダ設定 ****/
 	IniFolder			m_IniFolder;
@@ -899,18 +901,11 @@ struct DLLSHAREDATA {
 	/**** 共通設定 ****/
 	CommonSetting		m_Common;
 
-	/**** 印刷ページ設定 ****/
-	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
-
 	/* **** タイプ別設定 **** */
 	STypeConfig			m_Types[MAX_TYPES];
 
-	/*	@@@ 2002.1.24 YAZAKI
-		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
-		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
-	*/
-	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */
-	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
+	/**** 印刷ページ設定 ****/
+	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
 
 //@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
 	/* **** その他のダイアログ **** */
@@ -921,6 +916,11 @@ struct DLLSHAREDATA {
 	
 	char				m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
 	int					m_nTagsOpt;			/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
+	// 2004/06/21 タグジャンプ機能追加
+	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
+	int					m_TagJumpTop;					//!< スタックの一番上の位置
+	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
+
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
 	int					m_nTagJumpKeywordArrNum;
 	char				m_szTagJumpKeywordArr[MAX_TAGJUMP_KEYWORD][_MAX_PATH];

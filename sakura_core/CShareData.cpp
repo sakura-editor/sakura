@@ -289,31 +289,13 @@ struct ARRHEAD {
 	Version 97:
 	改行コードを変換して貼り付ける
 
-	Version 98:
+	Version 98-105:
 	CommonSetting構造体整理開始
-
-	Version 99:
-	CommonSetting構造体整理:キー割り当て、強調キーワード、マクロ、ファイル名表示の移動
-
-	Version 100:
-	CommonSetting構造体整理:全般、ウィンドウ、タブバーの移動
-
-	Version 101:
-	CommonSetting構造体整理:編集、ファイル、バックアップの移動
-
-	Version 102:
-	CommonSetting構造体整理:書式、検索、キー割り当て、カスタムメニュー、ツールバー、強調キーワードの移動
-
-	Version 103:
-	CommonSetting構造体整理:支援、マクロ、ファイル名表示の移動
-
-	Version 104:
-	CommonSetting構造体整理:アウトライン、比較、ビュー、その他の移動
 
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 104;
+const unsigned int uShareDataVersion = 105;
 
 /*
 ||	Singleton風
@@ -572,13 +554,15 @@ bool CShareData::InitShareData()
 		_tcscpy( m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
 
 		// キーワードヘルプのフォント ai 02/05/21 Add S
+		LOGFONT lfIconTitle;	// エクスプローラのファイル名表示に使用されるフォント
 		::SystemParametersInfo(
-			SPI_GETICONTITLELOGFONT,							// system parameter to query or set
-			sizeof(LOGFONT),									// depends on action to be taken
-			(PVOID)&m_pShareData->m_Common.m_sHelper.m_lf_kh,	// depends on action to be taken
-			0													// user profile update flag
+			SPI_GETICONTITLELOGFONT,				// system parameter to query or set
+			sizeof(LOGFONT),						// depends on action to be taken
+			(PVOID)&lfIconTitle,					// depends on action to be taken
+			0										// user profile update flag
 		);
 		// ai 02/05/21 Add E
+		m_pShareData->m_Common.m_sHelper.m_lf_kh = lfIconTitle;
 
 //	To Here Sept. 19,2000
 
@@ -588,11 +572,11 @@ bool CShareData::InitShareData()
 
 
 		/* バックアップ */
-		m_pShareData->m_Common.m_sBackup.m_bBackUp = FALSE;				/* バックアップの作成 */
+		m_pShareData->m_Common.m_sBackup.m_bBackUp = FALSE;					/* バックアップの作成 */
 		m_pShareData->m_Common.m_sBackup.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
 		m_pShareData->m_Common.m_sBackup.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
 		m_pShareData->m_Common.m_sBackup.m_szBackUpFolder[0] = _T('\0');	/* バックアップを作成するフォルダ */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType = 2;					/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
 		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
 		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
 																/* バックアップファイル名：連番の数と先頭文字 */
@@ -600,81 +584,74 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
 		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
 		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
-		m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox = FALSE;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 		m_pShareData->m_Common.m_sBackup.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
 		m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
-		m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
-
-		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;				/* カーソルのタイプ 0=win 1=dos */
+		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;					/* カーソルのタイプ 0=win 1=dos */
 		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
 
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
-		//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
-
-		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
-
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption.Reset();			// 検索オプション
-		m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = 0;			/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
+		m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = 0;				/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 		m_pShareData->m_Common.m_sSearch.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
-		m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] = _T('\0');		/* 外部ヘルプ１ */
-		m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] = _T('\0');	/* 外部HTMLヘルプ */
+		m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] = _T('\0');			/* 外部ヘルプ１ */
+		m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] = _T('\0');		/* 外部HTMLヘルプ */
 		
 		m_pShareData->m_Common.m_sHelper.m_szMigemoDll[0] = _T('\0');		/* migemo dll */
-		m_pShareData->m_Common.m_sHelper.m_szMigemoDict[0] = _T('\0');	/* migemo dict */
+		m_pShareData->m_Common.m_sHelper.m_szMigemoDict[0] = _T('\0');		/* migemo dict */
 
-		m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = TRUE;		/* 検索／置換  見つからないときメッセージを表示 */
+		m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND = TRUE;			/* 検索／置換  見つからないときメッセージを表示 */
 
 		m_pShareData->m_Common.m_sGeneral.m_bCloseAllConfirm = FALSE;		/* [すべて閉じる]で他に編集用のウィンドウがあれば確認する */	// 2006.12.25 ryoji
 		m_pShareData->m_Common.m_sGeneral.m_bExitConfirm = FALSE;			/* 終了時の確認をする */
-		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum = 3;	/* キーリピート時のスクロール行数 */
-		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = FALSE;/* キーリピート時のスクロールを滑らかにするか */
-		m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel = 0;		/* キー/マウスボタン + ホイールスクロールでページスクロールする */	// 2009.01.12 nasukoji
+		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScrollLineNum = 3;		/* キーリピート時のスクロール行数 */
+		m_pShareData->m_Common.m_sGeneral.m_nRepeatedScroll_Smooth = FALSE;	/* キーリピート時のスクロールを滑らかにするか */
+		m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel = 0;			/* キー/マウスボタン + ホイールスクロールでページスクロールする */	// 2009.01.12 nasukoji
 		m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel = 0;	/* キー/マウスボタン + ホイールスクロールで横スクロールする */		// 2009.01.12 nasukoji
 
-		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy = FALSE;		/* 折り返し行に改行を付けてコピー */
+		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy = FALSE;			/* 折り返し行に改行を付けてコピー */
 		m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */
-		m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine = TRUE;		/* Grep: 行を出力するか該当部分だけ出力するか */
+		m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine = TRUE;			/* Grep: 行を出力するか該当部分だけ出力するか */
 		m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
 		m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダの初期値をカレントフォルダにする */
-		m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = CODE_AUTODETECT;/* Grep: 文字コードセット */
+		m_pShareData->m_Common.m_sSearch.m_nGrepCharSet = CODE_AUTODETECT;	/* Grep: 文字コードセット */
 		m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView = FALSE;		/* 2003.06.28 Moca Grep結果のリアルタイム表示 */
-		m_pShareData->m_Common.m_sSearch.m_bCaretTextForSearch = TRUE;	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
+		m_pShareData->m_Common.m_sSearch.m_bCaretTextForSearch = TRUE;		/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 		m_pShareData->m_Common.m_sSearch.m_szRegexpLib[0] = _T('\0');		/* 2007.08.12 genta 正規表現DLL */
-		m_pShareData->m_Common.m_sSearch.m_bGTJW_RETURN = TRUE;			/* エンターキーでタグジャンプ */
+		m_pShareData->m_Common.m_sSearch.m_bGTJW_RETURN = TRUE;				/* エンターキーでタグジャンプ */
 		m_pShareData->m_Common.m_sSearch.m_bGTJW_LDBLCLK = TRUE;			/* ダブルクリックでタグジャンプ */
 
 //キーワード：ツールバー順序
 		//	Jan. 30, 2005 genta 関数として独立
 		InitToolButtons( m_pShareData );
 
-		m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR = TRUE;			/* 次回ウィンドウを開いたときツールバーを表示する */
+		m_pShareData->m_Common.m_sWindow.m_bDispTOOLBAR = TRUE;				/* 次回ウィンドウを開いたときツールバーを表示する */
 		m_pShareData->m_Common.m_sWindow.m_bDispSTATUSBAR = TRUE;			/* 次回ウィンドウを開いたときステータスバーを表示する */
-		m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = FALSE;		/* 次回ウィンドウを開いたときファンクションキーを表示する */
+		m_pShareData->m_Common.m_sWindow.m_bDispFUNCKEYWND = FALSE;			/* 次回ウィンドウを開いたときファンクションキーを表示する */
 		m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_Place = 1;			/* ファンクションキー表示位置／0:上 1:下 */
-		m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum = 4;			// 2002/11/04 Moca ファンクションキーのグループボタン数
+		m_pShareData->m_Common.m_sWindow.m_nFUNCKEYWND_GroupNum = 4;		// 2002/11/04 Moca ファンクションキーのグループボタン数
 
-		m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
-		m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
+		m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd = FALSE;				//タブウインドウ表示	//@@@ 2003.05.31 MIK
+		m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin = FALSE;		//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		_tcscpy(	//@@@ 2003.06.13 MIK
 			m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption,
 			_T("${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読み取り専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}")
 		);
 		m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
-		m_pShareData->m_Common.m_sTabBar.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
-		m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
-		m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
+		m_pShareData->m_Common.m_sTabBar.m_bSortTabList = TRUE;				//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
+		m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin = TRUE;		// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
+		m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin = FALSE;		// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta
 		m_pShareData->m_Common.m_sTabBar.m_bTab_ListFull = FALSE;			//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
-		m_pShareData->m_Common.m_sTabBar.m_bChgWndByWheel = FALSE;		//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
-		m_pShareData->m_Common.m_sTabBar.m_bNewWindow = FALSE;			// 外部から起動するときは新しいウインドウで開く
+		m_pShareData->m_Common.m_sTabBar.m_bChgWndByWheel = FALSE;			//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
+		m_pShareData->m_Common.m_sTabBar.m_bNewWindow = FALSE;				// 外部から起動するときは新しいウインドウで開く
 
-		m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
-		m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
+		m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll = TRUE;		// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
+		m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll = TRUE;		// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
 
 		/* カスタムメニュー情報 */
 		wsprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0], _T("右クリックメニュー"), i );
@@ -692,7 +669,7 @@ bool CShareData::InitShareData()
 		/* 見出し記号 */
 		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szMidashiKigou, _T("１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍") );
 		/* 引用符 */
-		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szInyouKigou, _T("> ") );		/* 引用符 */
+		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szInyouKigou, _T("> ") );	/* 引用符 */
 		m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;					/* 入力補完機能を使用する */
 
 		// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除
@@ -703,38 +680,50 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sWindow.m_nWinSizeCY = 0;
 		
 		//	2004.05.13 Moca ウィンドウ位置
-		m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos = WINSIZEMODE_DEF;		// ウィンドウ位置固定・継承
+		m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos = WINSIZEMODE_DEF;	// ウィンドウ位置固定・継承
 		m_pShareData->m_Common.m_sWindow.m_nWinPosX = CW_USEDEFAULT;
 		m_pShareData->m_Common.m_sWindow.m_nWinPosY = 0;
 
 		m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray = TRUE;				/* タスクトレイのアイコンを使う */
 		m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray = TRUE;				/* タスクトレイのアイコンを常駐 */
-		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode = _T('Z');			/* タスクトレイ左クリックメニュー キー */
+		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode = _T('Z');		/* タスクトレイ左クリックメニュー キー */
 		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods = HOTKEYF_ALT | HOTKEYF_CONTROL;	/* タスクトレイ左クリックメニュー キー */
 		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
 		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource = TRUE;			/* OLEによるドラッグ元にするか */
 		m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog = FALSE;		/* 終了ダイアログを表示する */
-		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
 		m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL = TRUE;			/* URLがクリックされたら選択するか */
-		m_pShareData->m_Common.m_sSearch.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
-//		m_pShareData->m_Common.m_bRulerDisp = TRUE;					/* ルーラー表示 */
-		m_pShareData->m_Common.m_sWindow.m_nRulerHeight = 13;					/* ルーラーの高さ */
-		m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace = 0;				/* ルーラーとテキストの隙間 */
+		m_pShareData->m_Common.m_sSearch.m_bGrepExitConfirm = FALSE;		/* Grepモードで保存確認するか */
+//		m_pShareData->m_Common.m_bRulerDisp = TRUE;							/* ルーラー表示 */
+		m_pShareData->m_Common.m_sWindow.m_nRulerHeight = 13;				/* ルーラーの高さ */
+		m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace = 0;			/* ルーラーとテキストの隙間 */
 		m_pShareData->m_Common.m_sWindow.m_nRulerType = 0;					/* ルーラーのタイプ */
 		//	Sep. 18, 2002 genta
 		m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
-		m_pShareData->m_Common.m_sWindow.m_nVertLineOffset = -1;				// 2005.11.10 Moca 指定桁縦線
-		m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP = FALSE;			// 2007.09.09 Moca 画面キャッシュを使う
+		m_pShareData->m_Common.m_sWindow.m_nVertLineOffset = -1;			// 2005.11.10 Moca 指定桁縦線
+		m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP = FALSE;		// 2007.09.09 Moca 画面キャッシュを使う
 		m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
-		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
+		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;		/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
-		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = FALSE;	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
-		/* 1999.11.15 */
+		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = FALSE;			/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
+
+		//[ファイル]タブ
+		m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
+		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
+
+		//ファイルの保存
+		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
+
+		//ファイルオープン
 		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
 		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
-		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
+		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;		//	カーソル位置復元	//	Oct. 27, 2000 genta
+		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;			// 2002.01.16 hor ブックマーク復元
+		//	Nov. 12, 2000 genta
+		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;			//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+
+
 		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
 		::SetRect( &m_pShareData->m_Common.m_sOthers.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
 		m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
@@ -746,7 +735,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation = FALSE;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 
 		m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
-		m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB		= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
+		m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB	= FALSE;		/* VK_TAB   補完決定キーが有効/無効 */
 		m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT	= TRUE;			/* VK_RIGHT 補完決定キーが有効/無効 */
 		m_pShareData->m_Common.m_sHelper.m_bHokanKey_SPACE	= FALSE;		/* VK_SPACE 補完決定キーが有効/無効 */
 
@@ -763,9 +752,6 @@ bool CShareData::InitShareData()
 		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
 
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
-
-		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
 		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = TRUE;

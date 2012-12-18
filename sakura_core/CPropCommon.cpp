@@ -358,38 +358,15 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 */
 void CPropCommon::InitData( void )
 {
-	int i;
 	m_Common = m_pShareData->m_Common;
-	//m_Common.m_nKeyNameArrNum = m_pShareData->m_Common.m_nKeyNameArrNum;
-	//for( i = 0; i < _countof( m_pShareData->m_Common.m_pKeyNameArr ); ++i ){
-	//	m_Common.m_pKeyNameArr[i] = m_pShareData->m_Common.m_pKeyNameArr[i];
-	//}
-	//m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
+	int i;
 	for( i = 0; i < MAX_TYPES; ++i ){
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 			m_Types_nKeyWordSetIdx[i][j] = m_pShareData->m_Types[i].m_nKeyWordSetIdx[j];
 		}
 	}
-	///* マクロ関係
-	//@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	//*/
-	//for( i = 0; i < MAX_CUSTMACRO; ++i ){
-	//	m_Common.m_sMacro.m_MacroTable[i] = m_pShareData->m_sMacro.m_Common.m_MacroTable[i];
-	//}
-	//memcpy( m_Common.m_szMACROFOLDER, m_pShareData->m_Common.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_szMACROFOLDER ) );
-	//m_Common.m_sMacro.m_nMacroOnOpened = m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	//m_Common.m_sMacro.m_nMacroOnTypeChanged = m_pShareData->m_Common.m_sMacro.m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	//m_Common.m_sMacro.m_nMacroOnSave = m_pShareData->m_Common.m_sMacro.m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-
-	//// ファイル名簡易表示関係
-	//memcpy( m_Common.m_sFileName.m_szTransformFileNameFrom, m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom,
-	//	sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom ) );
-	//memcpy( m_Common.m_sFileName.m_szTransformFileNameTo, m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo,
-	//	sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo ) );
-	//m_Common.m_nTransformFileNameArrNum = m_pShareData->m_Common.m_nTransformFileNameArrNum;
-
 }
 
 /*!	ShareData に 設定を適用・コピーする
@@ -398,15 +375,9 @@ void CPropCommon::InitData( void )
 */
 void CPropCommon::ApplyData( void )
 {
-	int i;
-
-	//for( i = 0; i < sizeof( m_pShareData->m_Common.m_pKeyNameArr ) / sizeof( m_pShareData->m_Common.m_pKeyNameArr[0] ); ++i ){
-	//	m_pShareData->m_Common.m_pKeyNameArr[i] = m_Common.m_pKeyNameArr[i];
-	//}
-	//m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
-
 	m_pShareData->m_Common = m_Common;
 
+	int i;
 	for( i = 0; i < MAX_TYPES; ++i ){
 		//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 		/* 変更された設定値のコピー */
@@ -414,25 +385,6 @@ void CPropCommon::ApplyData( void )
 			m_pShareData->m_Types[i].m_nKeyWordSetIdx[j] = m_Types_nKeyWordSetIdx[i][j];
 		}
 	}
-
-	///* マクロ関係 */
-	//for( i = 0; i < MAX_CUSTMACRO; ++i ){
-	//	m_pShareData->m_Common.m_sMacro.m_MacroTable[i] = m_sMacro.m_Common.m_MacroTable[i];
-	//}
-	//memcpy( m_pShareData->m_Common.m_szMACROFOLDER, m_Common.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_szMACROFOLDER ) );
-	//m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened = m_Common.m_sMacro.m_nMacroOnOpened;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	//m_pShareData->m_Common.m_sMacro.m_nMacroOnTypeChanged = m_Common.m_sMacro.m_nMacroOnTypeChanged;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	//m_pShareData->m_Common.m_sMacro.m_nMacroOnSave = m_Common.m_sMacro.m_nMacroOnSave;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-
-	//// ファイル名簡易表示関係
-	//// 念のため，書き換える前に 0 を設定しておく
-	//m_pShareData->m_Common.m_nTransformFileNameArrNum = 0;
-	//memcpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom, m_Common.m_sFileName.m_szTransformFileNameFrom,
-	//	sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom ) );
-	//memcpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo, m_Common.m_sFileName.m_szTransformFileNameTo,
-	//	sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo ) );
-
-	//m_pShareData->m_Common.m_nTransformFileNameArrNum = m_Common.m_nTransformFileNameArrNum;
 
 }
 
