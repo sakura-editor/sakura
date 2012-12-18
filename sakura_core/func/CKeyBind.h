@@ -27,7 +27,7 @@ struct KEYDATA {
 	short			m_nKeyCode;
 	
 	/*!	キーの名前	*/
-	TCHAR			m_szKeyName[64];
+	TCHAR			m_szKeyName[30];
 	
 	/*!	対応する機能番号
 
