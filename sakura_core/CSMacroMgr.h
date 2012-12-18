@@ -95,21 +95,21 @@ public:
 	//!	実行可能か？CShareDataに問い合わせ
 	bool IsEnabled(int idx) const {
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
-		m_pShareData->m_Common.m_MacroTable[idx].IsEnabled() : false;
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() : false;
 	}
 	
 	//!	表示する名前の取得
 	const TCHAR* GetTitle(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
-		m_pShareData->m_Common.m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].GetTitle() : NULL;	// 2007.11.02 ryoji
 	}
 	
 	//!	表示名の取得
 	const TCHAR* GetName(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
-		m_pShareData->m_Common.m_MacroTable[idx].m_szName : NULL;
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szName : NULL;
 	}
 	
 	/*!	@brief ファイル名の取得
@@ -119,7 +119,7 @@ public:
 	const TCHAR* GetFile(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
-		m_pShareData->m_Common.m_MacroTable[idx].m_szFile : NULL;
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szFile : NULL;
 	}
 
 	/*! キーボードマクロの読み込み */

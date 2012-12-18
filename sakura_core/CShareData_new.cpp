@@ -385,7 +385,7 @@ void CShareData::ShareData_IO_Folders( CProfile& cProfile )
 	const char* pszSecName = "Folders";
 	/* マクロ用フォルダ */
 	cProfile.IOProfileData( pszSecName, "szMACROFOLDER",
-		m_pShareData->m_Common.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_szMACROFOLDER ));
+		m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER ));
 	/* 設定インポート用フォルダ */
 	cProfile.IOProfileData( pszSecName, "szIMPORTFOLDER",
 		m_pShareData->m_szIMPORTFOLDER, sizeof( m_pShareData->m_szIMPORTFOLDER ));
@@ -430,21 +430,21 @@ void CShareData::ShareData_IO_Nickname( CProfile& cProfile )
 	int		i;
 	char	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, "ArrNum", m_pShareData->m_Common.m_nTransformFileNameArrNum );
-	int nSize = m_pShareData->m_Common.m_nTransformFileNameArrNum;
+	cProfile.IOProfileData( pszSecName, "ArrNum", m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum );
+	int nSize = m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "From%02d", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_Common.m_szTransformFileNameFrom[i], sizeof( m_pShareData->m_Common.m_szTransformFileNameFrom[0] ));
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i], sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[0] ));
 		wsprintf( szKeyName, "To%02d", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_Common.m_szTransformFileNameTo[i], sizeof( m_pShareData->m_Common.m_szTransformFileNameTo[0] ));
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[i], sizeof( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[0] ));
 	}
 	// 読み込み時，残りをNULLで再初期化
 	if( cProfile.IsReadingMode() ){
 		for( ; i < MAX_TRANSFORM_FILENAME; i++ ){
-			m_pShareData->m_Common.m_szTransformFileNameFrom[i][0] = '\0';
-			m_pShareData->m_Common.m_szTransformFileNameTo[i][0]   = '\0';
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] = '\0';
+			m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[i][0]   = '\0';
 		}
 	}
 }
@@ -543,19 +543,19 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 		common.m_sBackup.m_szBackUpPathAdvanced, sizeof( common.m_sBackup.m_szBackUpPathAdvanced ));	/* 20051107 aroka */
 	cProfile.IOProfileData( pszSecName, "nFileShareMode"			, common.m_sFile.m_nFileShareMode );
 	cProfile.IOProfileData( pszSecName, "szExtHelp",
-		common.m_szExtHelp, sizeof( common.m_szExtHelp ));
+		common.m_sHelper.m_szExtHelp, sizeof( common.m_sHelper.m_szExtHelp ));
 	cProfile.IOProfileData( pszSecName, "szExtHtmlHelp",
-		common.m_szExtHtmlHelp, sizeof( common.m_szExtHtmlHelp ));
+		common.m_sHelper.m_szExtHtmlHelp, sizeof( common.m_sHelper.m_szExtHtmlHelp ));
 	
 	cProfile.IOProfileData( pszSecName, "szMigemoDll",
-		common.m_szMigemoDll, sizeof( common.m_szMigemoDll ));
+		common.m_sHelper.m_szMigemoDll, sizeof( common.m_sHelper.m_szMigemoDll ));
 	cProfile.IOProfileData( pszSecName, "szMigemoDict",
-		common.m_szMigemoDict, sizeof( common.m_szMigemoDict ));
+		common.m_sHelper.m_szMigemoDict, sizeof( common.m_sHelper.m_szMigemoDict ));
 	
 	// ai 02/05/23 Add S
 	{// Keword Help Font
 		ShareData_IO_Sub_LogFont( cProfile, pszSecName, "khlf", "khlfFaceName",
-			common.m_lf_kh );
+			common.m_sHelper.m_lf_kh );
 	}// Keword Help Font
 	
 
@@ -587,7 +587,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "szInyouKigou"			, common.m_sFormat.m_szInyouKigou, 0 );
 	
 	// 2001/06/14 asa-o 補完とキーワードヘルプはタイプ別に移動したので削除：３行
-	cProfile.IOProfileData( pszSecName, "bUseHokan"				, common.m_bUseHokan );
+	cProfile.IOProfileData( pszSecName, "bUseHokan"				, common.m_sHelper.m_bUseHokan );
 	// 2002/09/21 Moca bGrepKanjiCode_AutoDetect は bGrepCharSetに統合したので削除
 	// 2001/06/19 asa-o タイプ別に移動したので削除：1行
 	cProfile.IOProfileData( pszSecName, "bSaveWindowSize"		, (int&)common.m_sWindow.m_eSaveWindowSize );
@@ -621,7 +621,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bEnableNoSelectCopy"		, common.m_sEdit.m_bEnableNoSelectCopy );/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 	cProfile.IOProfileData( pszSecName, "bEnableLineModePaste"		, common.m_sEdit.m_bEnableLineModePaste );/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 	cProfile.IOProfileData( pszSecName, "bConvertEOLPaste"			, common.m_sEdit.m_bConvertEOLPaste );	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
-	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"			, common.m_bHtmlHelpIsSingle );/* HtmlHelpビューアはひとつ */
+	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"			, common.m_sHelper.m_bHtmlHelpIsSingle );/* HtmlHelpビューアはひとつ */
 	cProfile.IOProfileData( pszSecName, "bCompareAndTileHorz"		, common.m_bCompareAndTileHorz );/* 文書比較後、左右に並べて表示 */	//Oct. 10, 2000 JEPRO チェックボックスをボタン化すればこの行は不要のはず
 	cProfile.IOProfileData( pszSecName, "bDropFileAndClose"			, common.m_sFile.m_bDropFileAndClose );/* ファイルをドロップしたときは閉じて開く */
 	cProfile.IOProfileData( pszSecName, "nDropFileNumMax"			, common.m_sFile.m_nDropFileNumMax );/* 一度にドロップ可能なファイル数 */
@@ -634,10 +634,10 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "NoCaretMoveByActivation"	, common.m_sGeneral.m_bNoCaretMoveByActivation );/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 	cProfile.IOProfileData( pszSecName, "bScrollBarHorz"				, common.m_sWindow.m_bScrollBarHorz );/* 水平スクロールバーを使う */
 	
-	cProfile.IOProfileData( pszSecName, "bHokanKey_RETURN"			, common.m_bHokanKey_RETURN );/* VK_RETURN 補完決定キーが有効/無効 */
-	cProfile.IOProfileData( pszSecName, "bHokanKey_TAB"				, common.m_bHokanKey_TAB );/* VK_TAB    補完決定キーが有効/無効 */
-	cProfile.IOProfileData( pszSecName, "bHokanKey_RIGHT"			, common.m_bHokanKey_RIGHT );/* VK_RIGHT  補完決定キーが有効/無効 */
-	cProfile.IOProfileData( pszSecName, "bHokanKey_SPACE"			, common.m_bHokanKey_SPACE );/* VK_SPACE  補完決定キーが有効/無効 */
+	cProfile.IOProfileData( pszSecName, "bHokanKey_RETURN"			, common.m_sHelper.m_bHokanKey_RETURN );/* VK_RETURN 補完決定キーが有効/無効 */
+	cProfile.IOProfileData( pszSecName, "bHokanKey_TAB"				, common.m_sHelper.m_bHokanKey_TAB );/* VK_TAB    補完決定キーが有効/無効 */
+	cProfile.IOProfileData( pszSecName, "bHokanKey_RIGHT"			, common.m_sHelper.m_bHokanKey_RIGHT );/* VK_RIGHT  補完決定キーが有効/無効 */
+	cProfile.IOProfileData( pszSecName, "bHokanKey_SPACE"			, common.m_sHelper.m_bHokanKey_SPACE );/* VK_SPACE  補完決定キーが有効/無効 */
 	
 	cProfile.IOProfileData( pszSecName, "nDateFormatType"			, common.m_sFormat.m_nDateFormatType );/* 日付書式のタイプ */
 	cProfile.IOProfileData( pszSecName, "szDateFormat"				, common.m_sFormat.m_szDateFormat, 0 );//日付書式
@@ -1395,7 +1395,7 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 	int		i;	
 	char	szKeyName[64];
 	for( i = 0; i < MAX_CUSTMACRO; ++i ){
-		MacroRec& macrorec = m_pShareData->m_Common.m_MacroTable[i];
+		MacroRec& macrorec = m_pShareData->m_Common.m_sMacro.m_MacroTable[i];
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
 		if( !cProfile.IsReadingMode() && !_tcslen(macrorec.m_szName) && !_tcslen(macrorec.m_szFile) ) continue;
@@ -1406,9 +1406,9 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 		wsprintf( szKeyName, "ReloadWhenExecute[%03d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_bReloadWhenExecute );
 	}
-	cProfile.IOProfileData( pszSecName, "nMacroOnOpened", m_pShareData->m_Common.m_nMacroOnOpened );	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, "nMacroOnTypeChanged", m_pShareData->m_Common.m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
-	cProfile.IOProfileData( pszSecName, "nMacroOnSave", m_pShareData->m_Common.m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnOpened", m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnTypeChanged", m_pShareData->m_Common.m_sMacro.m_nMacroOnTypeChanged );	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+	cProfile.IOProfileData( pszSecName, "nMacroOnSave", m_pShareData->m_Common.m_sMacro.m_nMacroOnSave );	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 }
 
 /*!

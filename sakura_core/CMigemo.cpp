@@ -59,7 +59,7 @@ const char* CMigemo::GetDllName(const char *)
 {
 	char* szDll;
 	static char szDllName[_MAX_PATH];
-	szDll = CShareData::getInstance()->GetShareData()->m_Common.m_szMigemoDll;
+	szDll = CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_szMigemoDll;
 
 	if(strlen(szDll)==0){
 		GetInidir( szDllName, _T("migemo.dll") );
@@ -163,7 +163,7 @@ int CMigemo::migemo_load_all()
 {
 	if( !migemo_is_enable()){
 		
-		char* szDict = CShareData::getInstance()->GetShareData()->m_Common.m_szMigemoDict;
+		char* szDict = CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_szMigemoDict;
 		char path[MAX_PATH];
 		//char path2[MAX_PATH];
 		char *ppath;

@@ -2527,7 +2527,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 			
 			for( i = 0; i < MAX_CUSTMACRO; ++i ){
-				MacroRec *mp = &m_pShareData->m_Common.m_MacroTable[i];
+				MacroRec *mp = &m_pShareData->m_Common.m_sMacro.m_MacroTable[i];
 				if( mp->IsEnabled() ){
 					if(  mp->m_szName[0] ){
 						m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + i, mp->m_szName );
@@ -2980,7 +2980,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 
 				// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 				// 2007.06.27 maru すでに編集ウィンドウは開いているのでFileReadがキャンセルされたときは開くマクロを実行する必要なし
-				if(TRUE==bRet) m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_nMacroOnOpened );
+				if(TRUE==bRet) m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
 			}
 			else{
 				/* ファイルをドロップしたときは閉じて開く */
@@ -3011,7 +3011,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						ActivateFrameWindow( hWndOwner );
 
 						// 2006.09.01 ryoji オープン後自動実行マクロを実行する
-						m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_nMacroOnOpened );
+						m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
 					}
 					goto end_of_drop_query;
 				}

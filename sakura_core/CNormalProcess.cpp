@@ -300,7 +300,7 @@ bool CNormalProcess::InitializeProcess()
 
 	// 2006.09.03 ryoji オープン後自動実行マクロを実行する
 	if( hWnd && !( bDebugMode || bGrepMode ) )
-		m_pcEditWnd->m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_nMacroOnOpened );
+		m_pcEditWnd->m_cEditDoc.RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );
 
 
 	// 起動時マクロオプション

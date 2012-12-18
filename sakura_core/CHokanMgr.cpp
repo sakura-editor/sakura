@@ -485,9 +485,9 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	MYTRACE_A( "CHokanMgr::DoHokan( nVKey==%xh )\n", nVKey );
 #endif
 	/* 補完候補決定キー */
-	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
-	if( VK_TAB		== nVKey && !m_pShareData->m_Common.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    補完決定キーが有効/無効 */
-	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
+	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
+	if( VK_TAB		== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_TAB ) 		return FALSE;/* VK_TAB    補完決定キーが有効/無効 */
+	if( VK_RIGHT	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RIGHT )		return FALSE;/* VK_RIGHT  補完決定キーが有効/無効 */
 
 	HWND hwndList;
 	int nItem;
@@ -509,7 +509,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	// Until here
 	Hide();
 
-	m_pShareData->m_Common.m_bUseHokan = FALSE;	//	補完したら
+	m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	補完したら
 	return TRUE;
 }
 
@@ -589,7 +589,7 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 		}
 	case VK_ESCAPE:
 	case VK_LEFT:
-		m_pShareData->m_Common.m_bUseHokan = FALSE;
+		m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;
 		return -2;
 	}
 	return -2;

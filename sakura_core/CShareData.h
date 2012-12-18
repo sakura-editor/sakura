@@ -697,12 +697,11 @@ struct CommonSetting_SpecialKeyword
 	char				m_szKeyWordSetDir[MAX_PATH];		/* 強調キーワードファイルのディレクトリ */ //未使用
 };
 
-//! 共通設定
-struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//入力補完機能
+struct CommonSetting_Helper
+{	//入力補完機能
 	BOOL				m_bHokanKey_RETURN;	/* VK_RETURN	補完決定キーが有効/無効 */
 	BOOL				m_bHokanKey_TAB;	/* VK_TAB		補完決定キーが有効/無効 */
 	BOOL				m_bHokanKey_RIGHT;	/* VK_RIGHT		補完決定キーが有効/無効 */
@@ -724,24 +723,32 @@ struct CommonSetting {
 
 	//INI内設定のみ
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          マクロ                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Macro
+{
 	char				m_szKeyMacroFileName[MAX_PATH];	/* キーボードマクロのファイル名 */
 	MacroRec			m_MacroTable[MAX_CUSTMACRO];	//!< キー割り当て用マクロテーブル	//	Sep. 14, 2001 genta
 	char				m_szMACROFOLDER[_MAX_PATH];		/* マクロ用フォルダ */
 	int					m_nMacroOnOpened;			/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 	int					m_nMacroOnTypeChanged;		/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 	int					m_nMacroOnSave;				/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ファイル名表示                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_FileName {
 	int					m_nTransformFileNameArrNum;
 	char				m_szTransformFileNameFrom[MAX_TRANSFORM_FILENAME][_MAX_PATH];
 	char				m_szTransformFileNameTo[MAX_TRANSFORM_FILENAME][_MAX_PATH];	//お気に入り	//@@@ 2003.04.08 MIK
+};
 
+//! 共通設定
+struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       アウトライン                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -800,6 +807,9 @@ struct CommonSetting {
 	CommonSetting_CustomMenu		m_sCustomMenu;		// カスタムメニュー
 	CommonSetting_ToolBar			m_sToolBar;			// ツールバー
 	CommonSetting_SpecialKeyword	m_sSpecialKeyword;	// 強調キーワード
+	CommonSetting_Helper			m_sHelper;			// 支援
+	CommonSetting_Macro				m_sMacro;			// マクロ
+	CommonSetting_FileName			m_sFileName;		// ファイル名表示
 
 }; /* Common */
 

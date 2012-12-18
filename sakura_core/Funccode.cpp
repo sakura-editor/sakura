@@ -958,7 +958,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 			}
 		}else{
 			//@@@ 2002.1.24 YAZAKI m_szKeyMacroFileNameにファイル名がコピーされているかどうか。
-			if (pShareData->m_Common.m_szKeyMacroFileName[0] ) {
+			if (pShareData->m_Common.m_sMacro.m_szKeyMacroFileName[0] ) {
 				return true;
 			}else{
 				return false;

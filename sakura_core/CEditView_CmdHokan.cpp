@@ -57,7 +57,7 @@ void CEditView::PreprocessCommand_hokan( int nCommand )
 */
 void CEditView::PostprocessCommand_hokan(void)
 {
-	if( m_pShareData->m_Common.m_bUseHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
+	if( m_pShareData->m_Common.m_sHelper.m_bUseHokan && !m_bExecutingKeyMacro ){ /* キーボードマクロの実行中 */
 		CMemory	cmemData;
 
 		/* カーソル直前の単語を取得 */
@@ -145,7 +145,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	
 	//	補完終了。
 	if ( !m_bHokan ){
-		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
+		m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了の知らせ
 	}
 }
 
@@ -153,7 +153,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 /*!	入力補完
 	Ctrl+Spaceでここに到着。
 	CEditView::m_bHokan： 現在補完ウィンドウが表示されているかを表すフラグ。
-	m_Common.m_bUseHokan：現在補完ウィンドウが表示されているべきか否かをあらわすフラグ。
+	m_Common.m_sHelper.m_bUseHokan：現在補完ウィンドウが表示されているべきか否かをあらわすフラグ。
 
     @date 2001/06/19 asa-o 英大文字小文字を同一視する
                      候補が1つのときはそれに確定する
@@ -164,8 +164,8 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 */
 void CEditView::Command_HOKAN( void )
 {
-	if(!m_pShareData->m_Common.m_bUseHokan){
-		m_pShareData->m_Common.m_bUseHokan = TRUE;
+	if(!m_pShareData->m_Common.m_sHelper.m_bUseHokan){
+		m_pShareData->m_Common.m_sHelper.m_bUseHokan = TRUE;
 	}
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
@@ -192,7 +192,7 @@ retry:;
 	}else{
 		InfoBeep(); //2010.04.03 Error→Info
 		SendStatusMessage(_T("補完対象がありません")); // 2010.05.29 ステータスで表示
-		m_pShareData->m_Common.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
+		m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	入力補完終了のお知らせ
 	}
 	return;
 }

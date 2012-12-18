@@ -99,10 +99,10 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		//	Oct. 5, 2002 genta エディット コントロールに入力できるテキストの長さを制限する
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_MacroTable[0].m_szName ) - 1 ), 0 );
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACROPATH ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_MacroTable[0].m_szFile ) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRONAME ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_sMacro.m_MacroTable[0].m_szName ) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACROPATH ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_sMacro.m_MacroTable[0].m_szFile ) - 1 ), 0 );
 		// 2003.06.23 Moca
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRODIR ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_szMACROFOLDER ) - 1 ), 0 );
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_MACRODIR ),  EM_LIMITTEXT, (WPARAM)( sizeof( m_Common.m_sMacro.m_szMACROFOLDER ) - 1 ), 0 );
 
 		return TRUE;
 	case WM_NOTIFY:
@@ -218,31 +218,31 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 1;
-		sItem.pszText = m_pShareData->m_Common.m_MacroTable[index].m_szName;
+		sItem.pszText = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_szName;
 		ListView_SetItem( hListView, &sItem );
 
 		memset( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 2;
-		sItem.pszText = m_pShareData->m_Common.m_MacroTable[index].m_szFile;
+		sItem.pszText = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_szFile;
 		ListView_SetItem( hListView, &sItem );
 
 		memset( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		sItem.pszText = const_cast<TCHAR*>(m_pShareData->m_Common.m_MacroTable[index].m_bReloadWhenExecute ? _T("on") : _T("off"));
+		sItem.pszText = const_cast<TCHAR*>(m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute ? _T("on") : _T("off"));
 		ListView_SetItem( hListView, &sItem );
 
 		// 自動実行マクロ	// 2006.09.01 ryoji
 		TCHAR szText[8];
 		szText[0] = _T('\0');
-		if( index == m_pShareData->m_Common.m_nMacroOnOpened )
+		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened )
 			::lstrcat(szText, _T("O"));
-		if( index == m_pShareData->m_Common.m_nMacroOnTypeChanged )
+		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnTypeChanged )
 			::lstrcat(szText, _T("T"));
-		if( index == m_pShareData->m_Common.m_nMacroOnSave )
+		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnSave )
 			::lstrcat(szText, _T("S"));
 		memset( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
@@ -253,7 +253,7 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 	}
 	
 	//	マクロディレクトリ
-	::SetDlgItemText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_Common.m_szMACROFOLDER );
+	::SetDlgItemText( hwndDlg, IDC_MACRODIR, /*m_pShareData->*/m_Common.m_sMacro.m_szMACROFOLDER );
 
 	nLastPos_Macro = -1;
 	
@@ -283,9 +283,9 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 	LVITEM sItem;
 
 	// 自動実行マクロ変数初期化	// 2006.09.01 ryoji
-	m_Common.m_nMacroOnOpened = -1;
-	m_Common.m_nMacroOnTypeChanged = -1;
-	m_Common.m_nMacroOnSave = -1;
+	m_Common.m_sMacro.m_nMacroOnOpened = -1;
+	m_Common.m_sMacro.m_nMacroOnTypeChanged = -1;
+	m_Common.m_sMacro.m_nMacroOnSave = -1;
 
 	//	マクロデータ
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
@@ -297,7 +297,7 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.iSubItem = 1;
 		sItem.cchTextMax = MACRONAME_MAX - 1;
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-		sItem.pszText = /*m_pShareData->*/m_Common.m_MacroTable[index].m_szName;
+		sItem.pszText = /*m_pShareData->*/m_Common.m_sMacro.m_MacroTable[index].m_szName;
 		ListView_GetItem( hListView, &sItem );
 
 		memset( &sItem, 0, sizeof( sItem ));
@@ -306,7 +306,7 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.iSubItem = 2;
 		sItem.cchTextMax = _MAX_PATH;
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-		sItem.pszText = /*m_pShareData->*/m_Common.m_MacroTable[index].m_szFile;
+		sItem.pszText = /*m_pShareData->*/m_Common.m_sMacro.m_MacroTable[index].m_szFile;
 		ListView_GetItem( hListView, &sItem );
 
 		memset( &sItem, 0, sizeof( sItem ));
@@ -318,10 +318,10 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
 		if ( strcmp(buf, _T("on")) == 0){
-			m_Common.m_MacroTable[index].m_bReloadWhenExecute = TRUE;
+			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = TRUE;
 		}
 		else {
-			m_Common.m_MacroTable[index].m_bReloadWhenExecute = FALSE;
+			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = FALSE;
 		}
 
 		// 自動実行マクロ	// 2006.09.01 ryoji
@@ -339,19 +339,19 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 		for( i = 0; i < nLen; i++)
 		{
 			if( szText[i] == _T('O') )
-				m_Common.m_nMacroOnOpened = index;
+				m_Common.m_sMacro.m_nMacroOnOpened = index;
 			if( szText[i] == _T('T') )
-				m_Common.m_nMacroOnTypeChanged = index;
+				m_Common.m_sMacro.m_nMacroOnTypeChanged = index;
 			if( szText[i] == _T('S') )
-				m_Common.m_nMacroOnSave = index;
+				m_Common.m_sMacro.m_nMacroOnSave = index;
 		}
 	}
 
 	//	マクロディレクトリ
 //@@@ 2002.01.03 YAZAKI 共通設定『マクロ』がタブを切り替えるだけで設定が保存されないように。
-	::GetDlgItemText( hwndDlg, IDC_MACRODIR, m_Common.m_szMACROFOLDER, _MAX_PATH );
+	::GetDlgItemText( hwndDlg, IDC_MACRODIR, m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH );
 	// 2003.06.23 Moca マクロフォルダの最後の\がなければ付ける
-	AddLastChar( m_Common.m_szMACROFOLDER, _MAX_PATH, _T('\\') );
+	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, _T('\\') );
 	
 	return TRUE;
 }
