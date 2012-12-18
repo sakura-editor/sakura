@@ -479,8 +479,8 @@ void CEditDoc::CheckAutoSave(void)
 //
 void CEditDoc::ReloadAutoSaveParam(void)
 {
-	m_cAutoSave.SetInterval( m_pShareData->m_Common.GetAutoBackupInterval() );
-	m_cAutoSave.Enable( m_pShareData->m_Common.IsAutoBackupEnabled() );
+	m_cAutoSave.SetInterval( m_pShareData->m_Common.m_sBackup.GetAutoBackupInterval() );
+	m_cAutoSave.Enable( m_pShareData->m_Common.m_sBackup.IsAutoBackupEnabled() );
 }
 
 
@@ -1207,7 +1207,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, BOOL bReadOn
 			/* ファイル読み込み */
 			//	Oct. 03, 2004 genta コード確認は設定に依存
 			bRet = FileRead( pszPath, &bOpened, nCharCode, bReadOnly,
-							m_pShareData->m_Common.m_bQueryIfCodeChange );
+							m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange );
 
 			// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 			// 2007.06.27 maru すでに編集ウィンドウは開いているので、FileReadがキャンセルされた場合は開くマクロは実行不要
@@ -1348,7 +1348,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 {
 
 	/* 無変更でも上書きするか */
-	if( FALSE == m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite
+	if( FALSE == m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite
 	 && !IsModified()	// 変更フラグ
 	 ){
 	 	//	Feb. 28, 2004 genta

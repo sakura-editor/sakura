@@ -742,7 +742,7 @@ LRESULT CEditApp::DispatchEvent(
 						EditInfo openEditInfo;
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
 
-						if( m_pShareData->m_Common.GetRestoreCurPosition() ){
+						if( m_pShareData->m_Common.m_sFile.GetRestoreCurPosition() ){
 							CEditApp::OpenNewEditor2( m_hInstance, m_hWnd, &openEditInfo, FALSE );
 						}
 						else {

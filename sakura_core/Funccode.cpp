@@ -1043,7 +1043,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 				return true;
 			}else{
 				/* –³•ÏX‚Å‚àã‘‚«‚·‚é‚© */
-				if( !pShareData->m_Common.m_bEnableUnmodifiedOverwrite ){
+				if( !pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
 					return false;
 				}else{
 					return true;

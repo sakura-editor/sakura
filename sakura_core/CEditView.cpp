@@ -3389,8 +3389,8 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 
 	// OLEによるドラッグ & ドロップを使う
 	// 2007.11.30 nasukoji	トリプルクリック時はドラッグを開始しない
-	if( !tripleClickMode && TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){
-		if( m_pShareData->m_Common.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
+	if( !tripleClickMode && TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){
+		if( m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource ){		/* OLEによるドラッグ元にするか */
 			/* 行選択エリアをドラッグした */
 			if( xPos < m_nViewAlignLeft - ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) ){
 				goto normal_action;
@@ -3422,7 +3422,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 					return;
 				}
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					DWORD dwEffects;
 					DWORD dwEffectsSrc = (
 							m_pcEditDoc->IsReadOnly()	// 読み取り専用
@@ -3760,7 +3760,7 @@ normal_action:;
 		}
 		else{
 			/* URLがクリックされたら選択するか */
-			if( TRUE == m_pShareData->m_Common.m_bSelectClickedURL ){
+			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL ){
 
 				int			nUrlLine;	// URLの行(折り返し単位)
 				int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
@@ -4203,7 +4203,7 @@ VOID CEditView::OnTimer(
 	POINT		po;
 	RECT		rc;
 
-	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+	if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 		if( IsDragSource() ){
 			return;
 		}
@@ -4294,7 +4294,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		PleaseReportToAuthor( NULL, _T("CEditView::KeyWordHelpSearchDict\nnID=%d") );
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
-	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		pszWork = cmemCurText.GetStringPtr();
 		nWorkLength	= lstrlen( pszWork );
 		for( i = 0; i < nWorkLength; ++i ){
@@ -4478,7 +4478,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 		/* 選択テキストのドラッグ中か */
 		if( m_bDragMode ){
-			if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
+			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 				/* 座標指定によるカーソル移動 */
 				nScrollRowNum = MoveCursorToPoint( xPos , yPos );
 			}
@@ -4493,8 +4493,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					::SetCursor( ::LoadCursor( NULL, IDC_ARROW ) );
 			}else
 
-			if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
-			 && TRUE == m_pShareData->m_Common.m_bUseOLE_DropSource /* OLEによるドラッグ元にするか */
+			if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
+			 && TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource /* OLEによるドラッグ元にするか */
 			 && 0 == IsCurrentPositionSelected(						/* 指定カーソル位置が選択エリア内にあるか */
 				nNewX,	// カーソル位置X
 				nNewY	// カーソル位置Y
@@ -5922,7 +5922,7 @@ void CEditView::CopySelectedAllLines(
 		FALSE,
 		pszQuote, /* 引用符 */
 		bWithLineNumber, /* 行番号を付与する */
-		m_pShareData->m_Common.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
+		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy /* 折り返し位置に改行記号を入れる */
 	) ){
 		ErrorBeep();
 		return;
@@ -6106,7 +6106,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	}else{
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );
+		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy );
 
 		/* 機能種別によるバッファの変換 */
 		ConvMemory( &cmemBuf, nFuncCode, m_nSelectColmFrom );
@@ -8756,7 +8756,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	MYTRACE_A( "CEditView::DragEnter()\n" );
 #endif
 
-	if( TRUE == m_pShareData->m_Common.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
+	if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
 		//	Oct. 22, 2005 genta 上書き禁止(ファイルがロックされている)場合も不可
 		 && !( 0 != m_pcEditDoc->m_nFileShareModeOld && m_pcEditDoc->m_hLockedFile == NULL )
 		 && !m_pcEditDoc->IsReadOnly() ){ // Mar. 30, 2003 読み取り専用のファイルにはドロップさせない
@@ -9375,7 +9375,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 	szTopic[0] = '\0';
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 選択範囲のデータを取得 */
-		if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+		if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 			/* 検索文字列を現在位置の単語で初期化 */
 			strncpy( szTopic, cmemCurText.GetStringPtr(), _MAX_PATH - 1 );
 			szTopic[_MAX_PATH - 1] = '\0';
@@ -9408,7 +9408,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 				m_nSelectLineTo = nLineTo;
 				m_nSelectColmTo = nColmTo;
 				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					/* 検索文字列を現在位置の単語で初期化 */
 					strncpy( szTopic, cmemCurText.GetStringPtr(), MAX_PATH - 1 );
 					szTopic[MAX_PATH - 1] = '\0';

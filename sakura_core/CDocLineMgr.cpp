@@ -355,8 +355,8 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	}
 
 	// ファイルサイズチェック(ANSI版)
-	if( CShareData::getInstance()->GetShareData()->m_Common.m_bAlertIfLargeFile ){
-		int nFileMBSize = CShareData::getInstance()->GetShareData()->m_Common.m_nAlertFileSize;
+	if( CShareData::getInstance()->GetShareData()->m_Common.m_sFile.m_bAlertIfLargeFile ){
+		int nFileMBSize = CShareData::getInstance()->GetShareData()->m_Common.m_sFile.m_nAlertFileSize;
 		// m_Common.m_nAlertFileSize はMB単位
 		if( cfl.GetFileSize() >> 20 >= nFileMBSize ){
 			int nRet = MYMESSAGEBOX( hWndParent,

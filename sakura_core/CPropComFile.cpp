@@ -259,31 +259,31 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	int		nSelPos = 0;
 	for( int i = 0; i < _countof( ShareModeArr ); ++i ){
 		::SendMessage(hwndCombo, CB_INSERTSTRING, (WPARAM)i, (LPARAM)ShareModeArr[i].pszName);
-		if( ShareModeArr[i].nMethod == m_Common.m_nFileShareMode ){
+		if( ShareModeArr[i].nMethod == m_Common.m_sFile.m_nFileShareMode ){
 			nSelPos = i;
 		}
 	}
 	::SendMessage(hwndCombo, CB_SETCURSEL, (WPARAM)nSelPos, 0L);
 
 	/* 更新の監視 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_bCheckFileTimeStamp );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
 
 	/* 無変更でも上書きするか */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_bEnableUnmodifiedOverwrite );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_sFile.m_bEnableUnmodifiedOverwrite );
 
 	/* ファイルをドロップしたときは閉じて開く */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bDropFileAndClose, m_Common.m_bDropFileAndClose );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bDropFileAndClose, m_Common.m_sFile.m_bDropFileAndClose );
 	/* 一度にドロップ可能なファイル数 */
-	::SetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, m_Common.m_nDropFileNumMax, FALSE );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, m_Common.m_sFile.m_nDropFileNumMax, FALSE );
 
 	//	From Here Aug. 21, 2000 genta
 	//	自動保存の有効・無効
-	::CheckDlgButton( hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.IsAutoBackupEnabled() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_AUTOSAVE, m_Common.m_sBackup.IsAutoBackupEnabled() );
 
 	TCHAR buf[6];
 	int nN;
 
-	nN = m_Common.GetAutoBackupInterval();
+	nN = m_Common.m_sBackup.GetAutoBackupInterval();
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 35791 ? 35791 : nN;
 
@@ -292,22 +292,22 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	//	To Here Aug. 21, 2000 genta
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreCurPosition, m_Common.GetRestoreCurPosition() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreCurPosition, m_Common.m_sFile.GetRestoreCurPosition() );
 	// 2002.01.16 hor ブックマーク復元フラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreBookmarks, m_Common.GetRestoreBookmarks() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_RestoreBookmarks, m_Common.m_sFile.GetRestoreBookmarks() );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.GetAutoMIMEdecode() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_AutoMIMEDecode, m_Common.m_sFile.GetAutoMIMEdecode() );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_QueryIfCodeChange, m_Common.GetQueryIfCodeChange() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_QueryIfCodeChange, m_Common.m_sFile.GetQueryIfCodeChange() );
 	//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告するかどうかのフラグ
-	::CheckDlgButton( hwndDlg, IDC_CHECK_AlertIfFileNotExist, m_Common.GetAlertIfFileNotExist() );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_AlertIfFileNotExist, m_Common.m_sFile.GetAlertIfFileNotExist() );
 	//	ファイルサイズが大きい場合に警告を出す
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE, m_Common.m_bAlertIfLargeFile );
-	::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, m_Common.m_nAlertFileSize, FALSE );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE, m_Common.m_sFile.m_bAlertIfLargeFile );
+	::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, m_Common.m_sFile.m_nAlertFileSize, FALSE );
 
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示
-	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_sFile.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_sFile.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
 
 	EnableFilePropInput(hwndDlg);
 	return;
@@ -330,28 +330,28 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	/* ファイルの排他制御モード */
 	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE );
 	int		nSelPos = ::SendMessage(hwndCombo, CB_GETCURSEL, 0L, 0L);
-	m_Common.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
+	m_Common.m_sFile.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
 
 	/* 更新の監視 */
-	m_Common.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
+	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
 
 	/* 無変更でも上書きするか */
-	m_Common.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
+	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
 
 	/* ファイルをドロップしたときは閉じて開く */
-	m_Common.m_bDropFileAndClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose );
+	m_Common.m_sFile.m_bDropFileAndClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose );
 	/* 一度にドロップ可能なファイル数 */
-	m_Common.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
-	if( 1 > m_Common.m_nDropFileNumMax ){
-		m_Common.m_nDropFileNumMax = 1;
+	m_Common.m_sFile.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
+	if( 1 > m_Common.m_sFile.m_nDropFileNumMax ){
+		m_Common.m_sFile.m_nDropFileNumMax = 1;
 	}
-	if( 99 < m_Common.m_nDropFileNumMax ){	//Sept. 21, 2000, JEPRO 16より大きいときに99と制限されていたのを修正(16→99と変更)
-		m_Common.m_nDropFileNumMax = 99;
+	if( 99 < m_Common.m_sFile.m_nDropFileNumMax ){	//Sept. 21, 2000, JEPRO 16より大きいときに99と制限されていたのを修正(16→99と変更)
+		m_Common.m_sFile.m_nDropFileNumMax = 99;
 	}
 
 	//	From Here Aug. 16, 2000 genta
 	//	自動保存を行うかどうか
-	m_Common.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) == TRUE );
+	m_Common.m_sBackup.EnableAutoBackup( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AUTOSAVE ) == TRUE );
 
 	//	自動保存間隔の取得
 	TCHAR szNumBuf[/*6*/ 7];	//@@@ 2001.03.21 by MIK
@@ -369,33 +369,33 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	}
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 35791 ? 35791 : nN;
-	m_Common.SetAutoBackupInterval( nN );
+	m_Common.m_sBackup.SetAutoBackupInterval( nN );
 
 	//	To Here Aug. 16, 2000 genta
 
 	//	Oct. 27, 2000 genta	カーソル位置復元フラグ
-	m_Common.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) == TRUE );
+	m_Common.m_sFile.SetRestoreCurPosition( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreCurPosition ) == TRUE );
 	// 2002.01.16 hor ブックマーク復元フラグ
-	m_Common.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) == TRUE );
+	m_Common.m_sFile.SetRestoreBookmarks( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RestoreBookmarks ) == TRUE );
 	//	Nov. 12, 2000 genta	MIME Decodeフラグ
-	m_Common.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
+	m_Common.m_sFile.SetAutoMIMEdecode( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AutoMIMEDecode ) == TRUE );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	m_Common.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) == TRUE );
+	m_Common.m_sFile.SetQueryIfCodeChange( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_QueryIfCodeChange ) == TRUE );
 	//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うかどうかのフラグ
-	m_Common.SetAlertIfFileNotExist( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) == TRUE );
+	m_Common.m_sFile.SetAlertIfFileNotExist( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_AlertIfFileNotExist ) == TRUE );
 	// 開こうとしたファイルが大きい場合に警告する
-	m_Common.m_bAlertIfLargeFile = (::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE ) == TRUE);
-	m_Common.m_nAlertFileSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
-	if( m_Common.m_nAlertFileSize < 1 ){
-		m_Common.m_nAlertFileSize = 1;
+	m_Common.m_sFile.m_bAlertIfLargeFile = (::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALERT_IF_LARGEFILE ) == TRUE);
+	m_Common.m_sFile.m_nAlertFileSize = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
+	if( m_Common.m_sFile.m_nAlertFileSize < 1 ){
+		m_Common.m_sFile.m_nAlertFileSize = 1;
 	}
-	if( m_Common.m_nAlertFileSize > 2048 ){
-		m_Common.m_nAlertFileSize = 2048;
+	if( m_Common.m_sFile.m_nAlertFileSize > 2048 ){
+		m_Common.m_sFile.m_nAlertFileSize = 2048;
 	}
 
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	m_Common.m_bNoFilterSaveNew = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
-	m_Common.m_bNoFilterSaveFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
+	m_Common.m_sFile.m_bNoFilterSaveNew = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
+	m_Common.m_sFile.m_bNoFilterSaveFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
 
 	return TRUE;
 }

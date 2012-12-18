@@ -113,10 +113,10 @@ void CDlgProperty::SetData( void )
 
 	if( INVALID_HANDLE_VALUE != ( nFind = ::FindFirstFile( pCEditDoc->GetFilePath(), (WIN32_FIND_DATA*)&wfd ) ) ){
 		if( pCEditDoc->m_hLockedFile ){
-			if( m_pShareData->m_Common.m_nFileShareMode == OF_SHARE_DENY_WRITE ){
+			if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == OF_SHARE_DENY_WRITE ){
 				wsprintf( szWork, _T("あなたはこのファイルを、他プロセスからの上書き禁止モードでロックしています。\r\n") );
 			}
-			else if( m_pShareData->m_Common.m_nFileShareMode == OF_SHARE_EXCLUSIVE ){
+			else if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == OF_SHARE_EXCLUSIVE ){
 				wsprintf( szWork, _T("あなたはこのファイルを、他プロセスからの読み書き禁止モードでロックしています。\r\n") );
 			}
 			else{

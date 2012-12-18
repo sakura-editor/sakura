@@ -470,11 +470,11 @@ struct CommonSetting_TabBar
 
 };
 
-//! 共通設定
-struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           編集                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Edit
+{
 	//コピー
 	int					m_bAddCRLFWhenCopy;				/* 折り返し行に改行を付けてコピー */
 	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
@@ -490,36 +490,40 @@ struct CommonSetting {
 	BOOL				m_bNotOverWriteCRLF;		/* 改行は上書きしない */
 
 	//クリッカブルURL
-	BOOL				m_bJumpSingleClickURL;			/* URLのシングルクリックでJump */
+	BOOL				m_bJumpSingleClickURL;			/* URLのシングルクリックでJump */ // 未使用
 	BOOL				m_bSelectClickedURL;			/* URLがクリックされたら選択するか */
 
 	// (ダイアログ項目無し)
 	BOOL				m_bAutoColmnPaste;			/* 矩形コピーのテキストは常に矩形貼り付け */
 
+};
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         ファイル                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_File
+{
 	//	Oct. 27, 2000 genta
 	//	カーソル位置を復元するかどうか
 	bool	GetRestoreCurPosition(void) const { return m_bRestoreCurPosition != 0; }
-	void	SetRestoreCurPosition(bool i){ m_bRestoreCurPosition = i; }
+	void	SetRestoreCurPosition(bool i){ m_bRestoreCurPosition = i; } // 未使用
 
 	// 2002.01.16 hor ブックマークを復元するかどうか
 	bool	GetRestoreBookmarks(void) const { return m_bRestoreBookmarks != 0; }
-	void	SetRestoreBookmarks(bool i){ m_bRestoreBookmarks = i; }
+	void	SetRestoreBookmarks(bool i){ m_bRestoreBookmarks = i; } // 未使用
 
 	//	Nov. 12, 2000 genta
 	//	ファイル読み込み時にMIMEのdecodeを行うか
 	bool	GetAutoMIMEdecode(void) const { return m_bAutoMIMEdecode != 0; }
-	void	SetAutoMIMEdecode(bool i){ m_bAutoMIMEdecode = i; }
+	void	SetAutoMIMEdecode(bool i){ m_bAutoMIMEdecode = i; } // 未使用
 
 	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
 	bool	GetQueryIfCodeChange(void) const { return m_bQueryIfCodeChange != 0; }
-	void	SetQueryIfCodeChange(bool i){ m_bQueryIfCodeChange = i; }
+	void	SetQueryIfCodeChange(bool i){ m_bQueryIfCodeChange = i; } // 未使用
 	
 	// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
 	bool	GetAlertIfFileNotExist(void) const { return m_bAlertIfFileNotExist != 0; }
-	void	SetAlertIfFileNotExist(bool i){ m_bAlertIfFileNotExist = i; }
+	void	SetAlertIfFileNotExist(bool i){ m_bAlertIfFileNotExist = i; } // 未使用
 	
 	//ファイルの排他制御モード
 	int					m_nFileShareMode;				/* ファイルの排他制御モード */
@@ -541,12 +545,15 @@ struct CommonSetting {
 	BOOL				m_bAutoMIMEdecode;	// ファイル読み込み時にMIMEのdecodeを行うか
 	BOOL				m_bQueryIfCodeChange;	// Oct. 03, 2004 genta 前回と文字コードが異なるときに問い合わせを行う
 	BOOL				m_bAlertIfFileNotExist;	// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
-	bool				m_bAlertIfLargeFile;    // 開こうとしたファイルサイズが大きいバイイに警告する
+	bool				m_bAlertIfLargeFile;    // 開こうとしたファイルサイズが大きい場合に警告する
 	int 				m_nAlertFileSize;       // 警告を始めるファイルサイズ(MB)
+};
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       バックアップ                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+struct CommonSetting_Backup
+{
 	//	Aug. 15, 2000 genta
 	//	Backup設定のアクセス関数
 	int		GetBackupType(void) const { return m_nBackUpType; }
@@ -561,7 +568,7 @@ struct CommonSetting {
 
 	//	バックアップの拡張子先頭文字(1文字)
 	int		GetBackupExtChar(void) const { return ( m_nBackUpType_Opt2 >> 16 ) & 0xff ; }
-	void	SetBackupExtChar(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 ); }
+	void	SetBackupExtChar(int value){ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 ); } // 未使用
 
 	//	Aug. 21, 2000 genta
 	//	自動Backup
@@ -590,7 +597,10 @@ struct CommonSetting {
 	BOOL				m_bBackUpDustBox;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
 	BOOL				m_bBackUpPathAdvanced;				/* 20051107 aroka バックアップ先フォルダを詳細設定する */
 	char				m_szBackUpPathAdvanced[_MAX_PATH];	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+};
 
+//! 共通設定
+struct CommonSetting {
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           書式                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -762,6 +772,9 @@ struct CommonSetting {
 	CommonSetting_General			m_sGeneral;			// 全般
 	CommonSetting_Window			m_sWindow;			// ウィンドウ
 	CommonSetting_TabBar			m_sTabBar;			// タブバー
+	CommonSetting_Edit				m_sEdit;			// 編集
+	CommonSetting_File				m_sFile;			// ファイル
+	CommonSetting_Backup			m_sBackup;			// バックアップ
 
 }; /* Common */
 

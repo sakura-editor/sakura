@@ -393,9 +393,9 @@ BOOL CEditView::HandleCommand(
 
 	/* クリップボード系 */
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)
-	case F_COPY:					Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
+	case F_COPY:					Command_COPY( FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
 	case F_COPY_ADDCRLF:			Command_COPY( FALSE, TRUE );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
-	case F_COPY_CRLF:				Command_COPY( FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
+	case F_COPY_CRLF:				Command_COPY( FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE( (int)lparam1 );break;	//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX( (int)lparam1 );break;	//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSTEXT:					Command_INSTEXT( bRedraw, (const char*)lparam1, -1, (BOOL)lparam2 );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加(-1は\0終端まで)
@@ -1540,13 +1540,13 @@ void CEditView::Command_COPY(
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
 	if( !IsTextSelected() ){
 		/* 非選択時は、カーソル行をコピーする */
-		if( !m_pShareData->m_Common.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
+		if( !m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
 			return;	// 何もしない（音も鳴らさない）
 		}
 		CopyCurLine(
 			bAddCRLFWhenCopy,
 			neweol,
-			m_pShareData->m_Common.m_bEnableLineModePaste
+			m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste
 		);
 	}
 	else{
@@ -1576,7 +1576,7 @@ void CEditView::Command_COPY(
 			m_bSelectingLock = FALSE;
 		}
 	}
-	if( m_pShareData->m_Common.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
+	if( m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
 		/* テキストが選択されているか */
 		if( IsTextSelected() ){
 			/* 現在の選択範囲を非選択状態に戻す */
@@ -1605,7 +1605,7 @@ void CEditView::Command_CUT( void )
 	/* 範囲選択がされていない */
 	if( !IsTextSelected() ){
 		/* 非選択時は、カーソル行を切り取り */
-		if( !m_pShareData->m_Common.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
+		if( !m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy ){	// 2007.11.18 ryoji
 			return;	// 何もしない（音も鳴らさない）
 		}
 		//行切り取り(折り返し単位)
@@ -1620,7 +1620,7 @@ void CEditView::Command_CUT( void )
 
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( !GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+	if( !GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
@@ -2017,9 +2017,9 @@ void CEditView::Command_CUT_LINE( void )
 
 	// 2007.10.04 ryoji 処理簡素化
 	CopyCurLine(
-		m_pShareData->m_Common.m_bAddCRLFWhenCopy,
+		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy,
 		EOL_UNKNOWN,
-		m_pShareData->m_Common.m_bEnableLineModePaste
+		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste
 	);
 	Command_DELETE_LINE();
 	return;
@@ -2240,7 +2240,7 @@ void CEditView::Command_PASTE( int option )
 	BOOL		bLineSelectOption = 
 		((option & 0x04) == 0x04) ? TRUE :
 		((option & 0x08) == 0x08) ? FALSE :
-		m_pShareData->m_Common.m_bEnableLineModePaste;
+		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste;
 
 	if( !MyGetClipboardData( cmemClip, &bColmnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
 		ErrorBeep();
@@ -2254,12 +2254,12 @@ void CEditView::Command_PASTE( int option )
 	BOOL bConvertEol = 
 		((option & 0x01) == 0x01) ? TRUE :
 		((option & 0x02) == 0x02) ? FALSE :
-		m_pShareData->m_Common.m_bConvertEOLPaste;
+		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste;
 
 	BOOL bAutoColmnPaste = 
 		((option & 0x10) == 0x10) ? FALSE :
 		((option & 0x20) == 0x20) ? FALSE :
-		m_pShareData->m_Common.m_bAutoColmnPaste != FALSE;
+		m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste != FALSE;
 
 	/* 矩形コピーのテキストは常に矩形貼り付け */
 	if( bAutoColmnPaste ){
@@ -7060,14 +7060,14 @@ void CEditView::Command_REPLACE_ALL()
 	if( nPaste != 0 )
 	{
 		// クリップボードからデータを取得。
-		if ( !MyGetClipboardData( cmemClip, &bColmnSelect, m_pShareData->m_Common.m_bEnableLineModePaste? &bLineSelect: NULL ) )
+		if ( !MyGetClipboardData( cmemClip, &bColmnSelect, m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
 		{
 			ErrorBeep();
 			return;
 		}
 
 		// 矩形貼り付けが許可されていて、クリップボードのデータが矩形選択のとき。
-		if ( m_pShareData->m_Common.m_bAutoColmnPaste == TRUE && bColmnSelect == TRUE )
+		if ( m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste == TRUE && bColmnSelect == TRUE )
 		{
 			// マウスによる範囲選択中
 			if( m_bBeginSelect )
@@ -7105,7 +7105,7 @@ void CEditView::Command_REPLACE_ALL()
 		}
 	}
 
-	if( m_pShareData->m_Common.m_bConvertEOLPaste ){
+	if( m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste ){
 		char *pszConvertedText = new char[nREPLACEKEY * 2]; // 全文字\n→\r\n変換で最大の２倍になる
 		int nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
 		cmemClip.SetString(pszConvertedText, nConvertedTextLen);
@@ -7116,7 +7116,7 @@ void CEditView::Command_REPLACE_ALL()
 	// 取得にステップがかかりそうな変数などを、一時変数化する。
 	// とはいえ、これらの操作をすることによって得をするクロック数は合わせても 1 ループで数十だと思います。
 	// 数百クロック毎ループのオーダーから考えてもそんなに得はしないように思いますけど・・・。
-	BOOL bAddCRLFWhenCopy = m_pShareData->m_Common.m_bAddCRLFWhenCopy;
+	BOOL bAddCRLFWhenCopy = m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy;
 	BOOL &bCANCEL = cDlgCancel.m_bCANCEL;
 	CDocLineMgr& rDocLineMgr = m_pcEditDoc->m_cDocLineMgr;
 	CLayoutMgr& rLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
@@ -7550,7 +7550,7 @@ void CEditView::Command_BASE64DECODE( void )
 	}
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
-	if( !GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+	if( !GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
@@ -7593,7 +7593,7 @@ void CEditView::Command_UUDECODE( void )
 
 	// 選択範囲のデータを取得
 	// 正常時はTRUE,範囲未選択の場合はFALSEを返す
-	if( !GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_bAddCRLFWhenCopy ) ){
+	if( !GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		ErrorBeep();
 		return;
 	}
@@ -9125,7 +9125,7 @@ void CEditView::DelCharForOverwrite( void )
 		if( nIdxTo >= pcLayout->GetLengthWithoutEOL() ){
 			bEol = true;	// 現在位置は改行または折り返し以後
 			if( pcLayout->m_cEol != EOL_NONE ){
-				if( m_pShareData->m_Common.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
+				if( m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF ){	/* 改行は上書きしない */
 					/* 現在位置が改行ならば削除しない */
 					bDelete = FALSE;
 				}

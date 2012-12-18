@@ -537,7 +537,7 @@ void CEditWnd::OpenDocumentWhenStart(
 		::ShowWindow( m_hWnd, SW_SHOW );
 		//	Oct. 03, 2004 genta コード確認は設定に依存
 		BOOL		bOpened;
-		BOOL		bReadResult = m_cEditDoc.FileRead( pszPathNew, &bOpened, nCharCode, bReadOnly, m_pShareData->m_Common.m_bQueryIfCodeChange );
+		BOOL		bReadResult = m_cEditDoc.FileRead( pszPathNew, &bOpened, nCharCode, bReadOnly, m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange );
 		if( !bReadResult ){
 			/* ファイルが既に開かれている */
 			if( bOpened ){
@@ -2926,12 +2926,12 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 	::DragQueryPoint( hDrop, &pt );
 	cFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0);
 	/* ファイルをドロップしたときは閉じて開く */
-	if( m_pShareData->m_Common.m_bDropFileAndClose ){
+	if( m_pShareData->m_Common.m_sFile.m_bDropFileAndClose ){
 		cFiles = 1;
 	}
 	/* 一度にドロップ可能なファイル数 */
-	if( cFiles > m_pShareData->m_Common.m_nDropFileNumMax ){
-		cFiles = m_pShareData->m_Common.m_nDropFileNumMax;
+	if( cFiles > m_pShareData->m_Common.m_sFile.m_nDropFileNumMax ){
+		cFiles = m_pShareData->m_Common.m_sFile.m_nDropFileNumMax;
 	}
 
 	for( i = 0; i < cFiles; i++ ) {
@@ -2970,7 +2970,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					CODE_AUTODETECT,	/* 文字コード自動判別 */
 					FALSE,				/* 読み取り専用か */
 					//	Oct. 03, 2004 genta コード確認は設定に依存
-					m_pShareData->m_Common.m_bQueryIfCodeChange
+					m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange
 				);
 				hWndOwner = m_hWnd;
 				/* アクティブにする */
@@ -2984,7 +2984,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 			}
 			else{
 				/* ファイルをドロップしたときは閉じて開く */
-				if( m_pShareData->m_Common.m_bDropFileAndClose ){
+				if( m_pShareData->m_Common.m_sFile.m_bDropFileAndClose ){
 					/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
 					if( m_cEditDoc.OnFileClose() ){
 						/* 既存データのクリア */
@@ -3003,7 +3003,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 							CODE_AUTODETECT,	/* 文字コード自動判別 */
 							FALSE,				/* 読み取り専用か */
 							//	Oct. 03, 2004 genta コード確認は設定に依存
-							m_pShareData->m_Common.m_bQueryIfCodeChange
+							m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange
 							//TRUE
 						);
 						hWndOwner = m_hWnd;

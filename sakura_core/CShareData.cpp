@@ -298,10 +298,13 @@ struct ARRHEAD {
 	Version 100:
 	CommonSetting構造体整理:全般、ウィンドウ、タブバーの移動
 
+	Version 101:
+	CommonSetting構造体整理:編集、ファイル、バックアップの移動
+
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 100;
+const unsigned int uShareDataVersion = 101;
 
 /*
 ||	Singleton風
@@ -576,23 +579,23 @@ bool CShareData::InitShareData()
 
 
 		/* バックアップ */
-		m_pShareData->m_Common.m_bBackUp = FALSE;				/* バックアップの作成 */
-		m_pShareData->m_Common.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
-		m_pShareData->m_Common.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
-		m_pShareData->m_Common.m_szBackUpFolder[0] = _T('\0');	/* バックアップを作成するフォルダ */
-		m_pShareData->m_Common.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-		m_pShareData->m_Common.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
-		m_pShareData->m_Common.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
+		m_pShareData->m_Common.m_sBackup.m_bBackUp = FALSE;				/* バックアップの作成 */
+		m_pShareData->m_Common.m_sBackup.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
+		m_pShareData->m_Common.m_sBackup.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
+		m_pShareData->m_Common.m_sBackup.m_szBackUpFolder[0] = _T('\0');	/* バックアップを作成するフォルダ */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType = 2;				/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
 																/* バックアップファイル名：連番の数と先頭文字 */
-		m_pShareData->m_Common.m_nBackUpType_Opt3 = 5;			/* バックアップファイル名：Option3 */
-		m_pShareData->m_Common.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
-		m_pShareData->m_Common.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
-		m_pShareData->m_Common.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
-		m_pShareData->m_Common.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-		m_pShareData->m_Common.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-		m_pShareData->m_Common.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt3 = 5;			/* バックアップファイル名：Option3 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
+		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
+		m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox = FALSE;		/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		m_pShareData->m_Common.m_sBackup.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+		m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
-		m_pShareData->m_Common.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
+		m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
 
 		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;				/* カーソルのタイプ 0=win 1=dos */
 		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
@@ -602,9 +605,9 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
 		//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
+		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;	//	カーソル位置復元
 
-		m_pShareData->m_Common.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
+		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;		// 2002.01.16 hor ブックマーク復元
 
 		m_pShareData->m_Common.m_sSearchOption.Reset();			// 検索オプション
 		m_pShareData->m_Common.m_bConsecutiveAll = 0;			/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
@@ -624,7 +627,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sGeneral.m_nPageScrollByWheel = 0;		/* キー/マウスボタン + ホイールスクロールでページスクロールする */	// 2009.01.12 nasukoji
 		m_pShareData->m_Common.m_sGeneral.m_nHorizontalScrollByWheel = 0;	/* キー/マウスボタン + ホイールスクロールで横スクロールする */		// 2009.01.12 nasukoji
 
-		m_pShareData->m_Common.m_bAddCRLFWhenCopy = FALSE;		/* 折り返し行に改行を付けてコピー */
+		m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy = FALSE;		/* 折り返し行に改行を付けてコピー */
 		m_pShareData->m_Common.m_bGrepSubFolder = TRUE;			/* Grep: サブフォルダも検索 */
 		m_pShareData->m_Common.m_bGrepOutputLine = TRUE;		/* Grep: 行を出力するか該当部分だけ出力するか */
 		m_pShareData->m_Common.m_nGrepOutputStyle = 1;			/* Grep: 出力形式 */
@@ -699,11 +702,11 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray = TRUE;				/* タスクトレイのアイコンを常駐 */
 		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode = _T('Z');			/* タスクトレイ左クリックメニュー キー */
 		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods = HOTKEYF_ALT | HOTKEYF_CONTROL;	/* タスクトレイ左クリックメニュー キー */
-		m_pShareData->m_Common.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
-		m_pShareData->m_Common.m_bUseOLE_DropSource = TRUE;			/* OLEによるドラッグ元にするか */
+		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
+		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DropSource = TRUE;			/* OLEによるドラッグ元にするか */
 		m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog = FALSE;		/* 終了ダイアログを表示する */
-		m_pShareData->m_Common.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
-		m_pShareData->m_Common.m_bSelectClickedURL = TRUE;			/* URLがクリックされたら選択するか */
+		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
+		m_pShareData->m_Common.m_sEdit.m_bSelectClickedURL = TRUE;			/* URLがクリックされたら選択するか */
 		m_pShareData->m_Common.m_bGrepExitConfirm = FALSE;			/* Grepモードで保存確認するか */
 //		m_pShareData->m_Common.m_bRulerDisp = TRUE;					/* ルーラー表示 */
 		m_pShareData->m_Common.m_sWindow.m_nRulerHeight = 13;					/* ルーラーの高さ */
@@ -713,24 +716,24 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace = 0;			/* 行番号の右の隙間 */
 		m_pShareData->m_Common.m_sWindow.m_nVertLineOffset = -1;				// 2005.11.10 Moca 指定桁縦線
 		m_pShareData->m_Common.m_sWindow.m_bUseCompotibleBMP = FALSE;			// 2007.09.09 Moca 画面キャッシュを使う
-		m_pShareData->m_Common.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
-		m_pShareData->m_Common.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
-		m_pShareData->m_Common.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+		m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
+		m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
+		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = TRUE;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
 		m_pShareData->m_Common.m_bHtmlHelpIsSingle = TRUE;			/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
-		m_pShareData->m_Common.m_bConvertEOLPaste = FALSE;	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
+		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = FALSE;	/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 		/* 1999.11.15 */
-		m_pShareData->m_Common.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
-		m_pShareData->m_Common.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
-		m_pShareData->m_Common.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
-		m_pShareData->m_Common.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
+		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
+		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
+		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
+		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
 		::SetRect( &m_pShareData->m_Common.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
 		m_pShareData->m_Common.m_bAutoCloseDlgFind = TRUE;			/* 検索ダイアログを自動的に閉じる */
 		m_pShareData->m_Common.m_bSearchAll		 = FALSE;			/* 検索／置換／ブックマーク  先頭（末尾）から再検索 2002.01.26 hor */
 		m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz = TRUE;				/* 水平スクロールバーを使う */
 		m_pShareData->m_Common.m_bAutoCloseDlgFuncList = FALSE;		/* アウトライン ダイアログを自動的に閉じる */	//Nov. 18, 2000 JEPRO TRUE→FALSE に変更
 		m_pShareData->m_Common.m_bAutoCloseDlgReplace = TRUE;		/* 置換 ダイアログを自動的に閉じる */
-		m_pShareData->m_Common.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
+		m_pShareData->m_Common.m_sEdit.m_bAutoColmnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		m_pShareData->m_Common.m_sGeneral.m_bNoCaretMoveByActivation = FALSE;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
 
 		m_pShareData->m_Common.m_bHokanKey_RETURN	= TRUE;			/* VK_RETURN 補完決定キーが有効/無効 */
@@ -753,18 +756,18 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 
 		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;	//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
-		m_pShareData->m_Common.m_bQueryIfCodeChange = TRUE;
+		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = TRUE;
 		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
-		m_pShareData->m_Common.m_bAlertIfFileNotExist = FALSE;
-		m_pShareData->m_Common.m_bAlertIfLargeFile = false;  // 開こうとしたファイルが大きい場合に警告する
-		m_pShareData->m_Common.m_nAlertFileSize = 10;        // 警告を始めるファイルサイズ（MB単位）
+		m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = FALSE;
+		m_pShareData->m_Common.m_sFile.m_bAlertIfLargeFile = false;  // 開こうとしたファイルが大きい場合に警告する
+		m_pShareData->m_Common.m_sFile.m_nAlertFileSize = 10;        // 警告を始めるファイルサイズ（MB単位）
 
 		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-		m_pShareData->m_Common.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
-		m_pShareData->m_Common.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
+		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
+		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
 
 		m_pShareData->m_Common.m_bCreateAccelTblEachWin = FALSE;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 
