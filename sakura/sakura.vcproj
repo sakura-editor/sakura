@@ -3185,7 +3185,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Insert.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_ModeChange.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_New.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Settings.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Window.cpp"
 					>
 				</File>
 			</Filter>
