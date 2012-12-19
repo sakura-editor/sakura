@@ -194,7 +194,7 @@ public:
 	/* 矩形選択系 */
 //	void Command_BOXSELECTALL( void );		/* 矩形ですべて選択 */
 	void Command_BEGIN_BOXSELECT( void );	/* 矩形範囲選択開始 */
-	int Command_UP_BOX( BOOL );				/* (矩形選択)カーソル上移動 */
+//	int Command_UP_BOX( BOOL );				/* (矩形選択)カーソル上移動 */
 
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
