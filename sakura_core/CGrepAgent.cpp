@@ -937,7 +937,8 @@ int CGrepAgent::DoGrepFile(
 	bOutFileName = FALSE;
 	CEol	cEol;
 	int		nEolCodeLen;
-	CFileLoad	cfl( pcViewDst->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding );
+	CFileLoad	cfl( CDocTypeManager().GetDocumentTypeOfPath( pszFile ).GetTypeConfig()->m_encoding );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
+//	CFileLoad	cfl( pcViewDst->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding );
 	int		nOldPercent = 0;
 
 	int	nKeyKen = wcslen( pszKey );

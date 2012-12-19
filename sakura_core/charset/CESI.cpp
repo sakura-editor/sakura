@@ -234,7 +234,8 @@ void CESI::GetEncodingInfo_sjis( const char* pS, const int nLen )
 		if( echarset != CHARSET_BINARY ){
 			if( echarset == CHARSET_JIS_ZENKAKU ){
 				num_of_sjis_encoded_bytes += nret;
-				if( 0 == MyMultiByteToWideChar_JP(reinterpret_cast<const unsigned char*>(pr), nret, NULL) ){
+				unsigned short sDst[4];
+				if( 0 == MyMultiByteToWideChar_JP(reinterpret_cast<const unsigned char*>(pr), nret, sDst) ){
 					nillbytes += nret;
 				}
 			}

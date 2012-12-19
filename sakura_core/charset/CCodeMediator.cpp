@@ -58,13 +58,13 @@ ECodeType CCodeMediator::DetectMBCode( CESI* pcesi )
 {
 //	pcesi->m_dwStatus = ESI_NOINFORMATION;
 
-	if( pcesi->GetDataLen() < (pcesi->m_apMbcInfo[0]->nSpecific - pcesi->m_apMbcInfo[0]->nPoints) * 20 ){
+	if( pcesi->GetDataLen() < (pcesi->m_apMbcInfo[0]->nSpecific - pcesi->m_apMbcInfo[0]->nPoints) * 2000 ){
 		// 不正バイトの割合が、全体の 0.05% 未満であることを確認。
 		// 全体の0.05%ほどの不正バイトは、無視する。
 		pcesi->SetStatus( ESI_NODETECTED );
 		return CODE_NONE;
 	}
-	if( pcesi->m_apMbcInfo[0]->nPoints < 1 ){
+	if( pcesi->m_apMbcInfo[0]->nPoints <= 0 ){
 		pcesi->SetStatus( ESI_NODETECTED );
 		return CODE_NONE;
 	}
