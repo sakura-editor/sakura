@@ -54,7 +54,7 @@ int CDlgCompare::DoModal(
 	HWND			hwndParent,
 	LPARAM			lParam,
 	const TCHAR*	pszPath,
-	BOOL			bIsModified,
+	bool			bIsModified,
 	TCHAR*			pszComparePath,
 	HWND*			phwndCompareWnd
 )

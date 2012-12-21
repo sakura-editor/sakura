@@ -4121,7 +4121,7 @@ void CEditDoc::SetFileInfo( EditInfo* pfi )
 	pfi->m_nY = nY;		/* カーソル 物理位置(折り返し無し行位置) */
 
 
-	pfi->m_bIsModified = IsModified() ? TRUE : FALSE;			/* 変更フラグ */
+	pfi->m_bIsModified = IsModified();			/* 変更フラグ */
 	pfi->m_nCharCode = m_nCharCode;				/* 文字コード種別 */
 //	pfi->m_bPLSQL = m_cDlgJump.m_bPLSQL,		/* 行ジャンプが PL/SQLモードか */
 //	pfi->m_nPLSQL_E1 = m_cDlgJump.m_nPLSQL_E1;	/* 行ジャンプが PL/SQLモードのときの基点 */

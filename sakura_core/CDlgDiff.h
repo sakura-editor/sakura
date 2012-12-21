@@ -50,7 +50,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, BOOL );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, bool );	/* モーダルダイアログの表示 */
 
 protected:
 	/*
@@ -70,8 +70,8 @@ private:
 public:
 	char	m_szFile1[_MAX_PATH];	// 自ファイル
 	char	m_szFile2[_MAX_PATH];	// 相手ファイル
-	BOOL	m_bIsModified;			// 自ファイル更新中
-	BOOL	m_bIsModifiedDst;		// 相手ファイル更新中
+	bool	m_bIsModified;			// 自ファイル更新中
+	bool	m_bIsModifiedDst;		// 相手ファイル更新中
 	int		m_nDiffFlgOpt;			// DIFFオプション
 	HWND	m_hWnd_Dst;				// 相手ウインドウハンドル
 

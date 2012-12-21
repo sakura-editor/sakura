@@ -64,8 +64,8 @@ CDlgDiff::CDlgDiff()
 	m_szFile2[0] = 0;
 	//m_nDiffFlgFile12 = 1;
 	m_nDiffFlgOpt    = 0;
-	m_bIsModified    = FALSE;
-	m_bIsModifiedDst = FALSE;
+	m_bIsModified    = false;
+	m_bIsModifiedDst = false;
 	m_hWnd_Dst       = NULL;
 	return;
 }
@@ -76,7 +76,7 @@ int CDlgDiff::DoModal(
 	HWND				hwndParent,
 	LPARAM				lParam,
 	const TCHAR*		pszPath,		//自ファイル
-	BOOL				bIsModified		//自ファイル編集中？
+	bool				bIsModified		//自ファイル編集中？
 )
 {
 	_tcscpy(m_szFile1, pszPath);
@@ -333,7 +333,7 @@ int CDlgDiff::GetData( void )
 	//相手ファイル名
 	_tcscpy( m_szFile2, _T("") );
 	m_hWnd_Dst = NULL;
-	m_bIsModifiedDst = FALSE;
+	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( m_hWnd, IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )
 	{
 		::GetDlgItemText( m_hWnd, IDC_EDIT_DIFF_DST, m_szFile2, sizeof( m_szFile2 ) );

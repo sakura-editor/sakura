@@ -111,7 +111,7 @@ struct EditInfo {
 	int		m_nViewLeftCol;			/*!< 表示域の一番左の桁(0開始) */
 	int		m_nX;					/*!< カーソル  物理位置(行頭からのバイト数) */
 	int		m_nY;					/*!< カーソル  物理位置(折り返し無し行位置) */
-	int		m_bIsModified;			/*!< 変更フラグ */
+	bool	m_bIsModified;			/*!< 変更フラグ */
 	int		m_nCharCode;			/*!< 文字コード種別 */
 	char	m_szPath[_MAX_PATH];	/*!< ファイル名 */
 	BOOL	m_bIsGrep;				/*!< Grepのウィンドウか */
@@ -127,7 +127,7 @@ struct EditInfo {
 	// Mar. 7, 2002 genta
 	// Constructor 確実に初期化するため
 	EditInfo() : m_nViewTopLine( -1 ), m_nViewLeftCol( -1 ),
-		m_nX( -1 ), m_nY( -1 ), m_bIsModified( 0 ),
+		m_nX( -1 ), m_nY( -1 ), m_bIsModified( false ),
 		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE ), m_bIsDebug( FALSE ),
 		m_nWindowSizeX( -1 ), m_nWindowSizeY( -1 ),
 		//	2004.05.13 Moca “指定無し”を-1からCW_USEDEFAULTに変更
