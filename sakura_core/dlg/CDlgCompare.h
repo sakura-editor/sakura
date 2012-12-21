@@ -34,7 +34,7 @@ public:
 	int DoModal( HINSTANCE, HWND, LPARAM, const TCHAR*, bool, TCHAR*, HWND* );	/* モーダルダイアログの表示 */
 
 	const TCHAR*	m_pszPath;
-	BOOL			m_bIsModified;
+	bool			m_bIsModified;
 	TCHAR*			m_pszComparePath;
 	HWND*			m_phwndCompareWnd;
 	BOOL			m_bCompareAndTileHorz;/* 左右に並べて表示 */

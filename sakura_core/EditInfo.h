@@ -74,7 +74,7 @@ struct EditInfo {
 	, m_nViewLeftCol( -1 )
 	, m_nType( -1 )
 	, m_ptCursor(CLogicInt(-1), CLogicInt(-1))
-	, m_bIsModified( 0 )
+	, m_bIsModified( false )
 	, m_nCharCode( CODE_AUTODETECT )
 	, m_bIsGrep( false )
 	, m_bIsDebug( false )
