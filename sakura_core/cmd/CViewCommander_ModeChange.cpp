@@ -5,19 +5,9 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, jepro, genta, ‚Ý‚Â
-	Copyright (C) 2001, MIK, Stonee, Misaka, asa-o, novice, hor, YAZAKI
-	Copyright (C) 2002, hor, YAZAKI, novice, genta, aroka, Azumaiya, minfu, MIK, oak, ‚·‚È‚Ó‚«, Moca, ai
-	Copyright (C) 2003, MIK, genta, ‚©‚ë‚Æ, zenryaku, Moca, ryoji, naoh, KEITA, ‚¶‚ã‚¤‚¶
-	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, ‚Ý‚¿‚Î‚È, Kazika
-	Copyright (C) 2005, genta, novice, ‚©‚ë‚Æ, MIK, Moca, D.S.Koba, aroka, ryoji, maru
-	Copyright (C) 2006, genta, aroka, ryoji, ‚©‚ë‚Æ, fon, yukihane, Moca
-	Copyright (C) 2007, ryoji, maru, Uchi
-	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, ryoji, nasukoji
-	Copyright (C) 2010, ryoji
-	Copyright (C) 2011, ryoji
-	Copyright (C) 2012, Moca, ryoji
+	Copyright (C) 2003, Moca
+	Copyright (C) 2005, genta
+	Copyright (C) 2007, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.

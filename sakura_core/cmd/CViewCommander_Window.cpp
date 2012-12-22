@@ -1,23 +1,20 @@
 /*!	@file
 @brief CViewCommanderクラスのコマンド(ウィンドウ系)関数群
 
-	2012/11/15	CViewCommander.cpp,CViewCommander_New.cppから分離
+	2012/12/15	CViewCommander.cpp,CViewCommander_New.cppから分離
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2000-2001, jepro, genta, みつ
-	Copyright (C) 2001, MIK, Stonee, Misaka, asa-o, novice, hor, YAZAKI
-	Copyright (C) 2002, hor, YAZAKI, novice, genta, aroka, Azumaiya, minfu, MIK, oak, すなふき, Moca, ai
-	Copyright (C) 2003, MIK, genta, かろと, zenryaku, Moca, ryoji, naoh, KEITA, じゅうじ
-	Copyright (C) 2004, isearch, Moca, gis_dur, genta, crayonzen, fotomo, MIK, novice, みちばな, Kazika
-	Copyright (C) 2005, genta, novice, かろと, MIK, Moca, D.S.Koba, aroka, ryoji, maru
-	Copyright (C) 2006, genta, aroka, ryoji, かろと, fon, yukihane, Moca
-	Copyright (C) 2007, ryoji, maru, Uchi
-	Copyright (C) 2008, ryoji, nasukoji
-	Copyright (C) 2009, ryoji, nasukoji
-	Copyright (C) 2010, ryoji
-	Copyright (C) 2011, ryoji
-	Copyright (C) 2012, Moca, ryoji
+	Copyright (C) 2000-2001, jepro
+	Copyright (C) 2001, MIK
+	Copyright (C) 2002, YAZAKI, genta, MIK
+	Copyright (C) 2003, MIK, genta
+	Copyright (C) 2004, Moca, genta, crayonzen, Kazika
+	Copyright (C) 2006, genta, ryoji, maru
+	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2008, syat
+	Copyright (C) 2009, syat
+	Copyright (C) 2010, Moca
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
