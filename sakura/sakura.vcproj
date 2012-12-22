@@ -3177,11 +3177,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\cmd\CViewCommander_Grep.cpp"
+					RelativePath="..\sakura_core\cmd\CViewCommander_Edit.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\cmd\CViewCommander_Hokan.cpp"
+					RelativePath="..\sakura_core\cmd\CViewCommander_Edit_advanced.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Edit_word_line.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Grep.cpp"
 					>
 				</File>
 				<File
@@ -3198,6 +3206,10 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Settings.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Support.cpp"
 					>
 				</File>
 				<File
