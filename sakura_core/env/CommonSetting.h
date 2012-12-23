@@ -111,7 +111,7 @@ struct CommonSetting_Window
 	BOOL			m_bDispFUNCKEYWND;			// 次回ウィンドウを開いたときファンクションキーを表示する
 	BOOL			m_bMenuIcon;				// メニューにアイコンを表示する (アイコン付きメニュー)
 	BOOL			m_bScrollBarHorz;			// 水平スクロールバーを使う
-	BOOL			m_bUseCompotibleBMP;		// 再作画用互換ビットマップを使う 2007.09.09 Moca
+	BOOL			m_bUseCompatibleBMP;		// 再作画用互換ビットマップを使う 2007.09.09 Moca
 
 	//位置と大きさの設定
 	EWinSizeMode	m_eSaveWindowSize;			// ウィンドウサイズ継承・固定 EWinSizeModeに順ずる 2004.05.13 Moca

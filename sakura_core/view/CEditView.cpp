@@ -316,7 +316,7 @@ BOOL CEditView::Create(
 	/* 再描画用コンパチブルＤＣ */
 	// 2007.09.09 Moca 互換BMPによる画面バッファ
 	// 2007.09.30 genta 関数化
-	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompotibleBMP );
+	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompatibleBMP );
 
 	/* 垂直分割ボックス */
 	m_pcsbwVSplitBox = new CSplitBoxWnd;
@@ -1560,7 +1560,7 @@ void CEditView::OnChangeSetting()
 	AdjustScrollBars();
 
 	//	2007.09.30 genta 画面キャッシュ用CompatibleDCを用意する
-	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompotibleBMP );
+	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompatibleBMP );
 
 	/* ウィンドウサイズの変更処理 */
 	::GetClientRect( GetHwnd(), &rc );
