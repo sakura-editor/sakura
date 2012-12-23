@@ -616,7 +616,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	//	Sep. 18, 2002 genta 追加
 	cProfile.IOProfileData( pszSecName, "nLineNumberRightSpace"		, common.m_sWindow.m_nLineNumRightSpace );/* 行番号の右側の隙間 */
 	cProfile.IOProfileData( pszSecName, "nVertLineOffset"			, common.m_sWindow.m_nVertLineOffset ); // 2005.11.10 Moca
-	cProfile.IOProfileData( pszSecName, "bUseCompotibleBMP"			, common.m_sWindow.m_bUseCompotibleBMP ); // 2007.09.09 Moca
+	cProfile.IOProfileData( pszSecName, "bUseCompotibleBMP"			, common.m_sWindow.m_bUseCompatibleBMP ); // 2007.09.09 Moca
 	cProfile.IOProfileData( pszSecName, "bCopyAndDisablSelection"	, common.m_sEdit.m_bCopyAndDisablSelection );/* コピーしたら選択解除 */
 	cProfile.IOProfileData( pszSecName, "bEnableNoSelectCopy"		, common.m_sEdit.m_bEnableNoSelectCopy );/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 	cProfile.IOProfileData( pszSecName, "bEnableLineModePaste"		, common.m_sEdit.m_bEnableLineModePaste );/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji

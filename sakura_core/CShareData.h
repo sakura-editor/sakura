@@ -417,7 +417,7 @@ struct CommonSetting_Window
 	BOOL				m_bMenuIcon;		/* メニューにアイコンを表示する */
 
 	BOOL				m_bScrollBarHorz;			/* 水平スクロールバーを使う */
-	BOOL				m_bUseCompotibleBMP;		// 再作画用互換ビットマップを使う 2007.09.09 Moca
+	BOOL				m_bUseCompatibleBMP;		// 再作画用互換ビットマップを使う 2007.09.09 Moca
 
 	//位置と大きさの設定
 	EWinSizeMode		m_eSaveWindowSize;	// 2004.05.13 Moca ウィンドウサイズ継承・固定 EWinSizeModeに順ずる
