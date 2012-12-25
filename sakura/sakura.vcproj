@@ -3173,6 +3173,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Bookmark.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Cursor.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Diff.cpp"
 					>
 				</File>
@@ -3201,7 +3209,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\cmd\CViewCommander_New.cpp"
+					RelativePath="..\sakura_core\cmd\CViewCommander_Outline.cpp"
 					>
 				</File>
 				<File
@@ -3209,7 +3217,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Search.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Support.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_TagJump.cpp"
 					>
 				</File>
 				<File
