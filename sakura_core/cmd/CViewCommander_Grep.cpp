@@ -1,14 +1,24 @@
+/*!	@file
+@brief CViewCommanderクラスのコマンド(Grep)関数群
+
+*/
+/*
+	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2003, MIK
+	Copyright (C) 2005, genta
+	Copyright (C) 2006, ryoji
+
+	This source code is designed for sakura editor.
+	Please contact the copyright holders to use this code for other purpose.
+*/
 #include "StdAfx.h"
 #include "CViewCommander.h"
+
 #include "view/CEditView.h"
-#include "doc/CEditDoc.h"
 #include "_main/CControlTray.h"
-#include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
-#include "charset/charcode.h"
 #include "window/CEditWnd.h"
-#include "sakura_rc.h"
 
 /*! GREPダイアログの表示
 
