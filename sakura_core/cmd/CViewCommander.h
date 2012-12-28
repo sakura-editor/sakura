@@ -90,9 +90,9 @@ public:
 		ECodeType		nCharCode		= CODE_AUTODETECT,
 		bool			bViewMode	= false
 	);
-	
+
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
-	bool Command_FILESAVE( bool warnbeep = true, bool askname = true );	
+	bool Command_FILESAVE( bool warnbeep = true, bool askname = true );
 	bool Command_FILESAVEAS_DIALOG();									/* 名前を付けて保存 */
 	BOOL Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType);	/* 名前を付けて保存 */
 	BOOL Command_FILESAVEALL( void );					/* 全て上書き保存 */ // Jan. 23, 2005 genta
@@ -101,7 +101,7 @@ public:
 	// Mar. 30, 2003 genta 引数追加
 	void Command_FILECLOSE_OPEN( LPCWSTR filename = NULL,
 		ECodeType nCharCode = CODE_AUTODETECT, bool bViewMode = false );
-	
+
 	void Command_FILE_REOPEN( ECodeType nCharCode, bool bNoConfirm );		/* 再オープン */	//Dec. 4, 2002 genta 引数追加
 
 	void Command_PRINT( void );					/* 印刷*/
@@ -119,7 +119,6 @@ public:
 	void Command_EXITALL( void );				/* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 	BOOL Command_PUTFILE( LPCWSTR, ECodeType, int );	/* 作業中ファイルの一時出力 maru 2006.12.10 */
 	BOOL Command_INSFILE( LPCWSTR, ECodeType, int );	/* キャレット位置にファイル挿入 maru 2006.12.10 */
-	void Command_TEXTWRAPMETHOD( int );			/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
 
 	/* 編集系 */
 	void Command_WCHAR( wchar_t );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更
@@ -309,8 +308,9 @@ public:
 	void Command_OPTION( void );			/* 共通設定 */
 	void Command_FONT( void );				/* フォント設定 */
 	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
-	void Command_Favorite( void );	//履歴の管理	//@@@ 2003.04.08 MIK
+	void Command_Favorite( void );			//履歴の管理	//@@@ 2003.04.08 MIK
 	void Command_SET_QUOTESTRING( const wchar_t* );	//	Jan. 29, 2005 genta 引用符の設定
+	void Command_TEXTWRAPMETHOD( int );				/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
 	void Command_SELECT_COUNT_MODE( int nMode );	/* 文字カウント方法 */	//2009.07.06 syat
 
 	/* マクロ系 */

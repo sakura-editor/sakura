@@ -3177,7 +3177,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Clipboard.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Convert.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Cursor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_CustMenu.cpp"
 					>
 				</File>
 				<File
@@ -3201,7 +3213,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_File.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Insert.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Macro.cpp"
 					>
 				</File>
 				<File
@@ -3218,6 +3238,10 @@
 				</File>
 				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Search.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Select.cpp"
 					>
 				</File>
 				<File
