@@ -31,7 +31,10 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
+#include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgPluginOption.h"	// 2010/3/22 Uchi
+#include "io/CTextStream.h"
+#include "io/CZipFile.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -39,10 +42,12 @@
 static const DWORD p_helpids[] = {	//11700
 	IDC_CHECK_PluginEnable,	HIDC_CHECK_PluginEnable,	//プラグインを有効にする
 	IDC_PLUGINLIST,			HIDC_PLUGINLIST,			//プラグインリスト
+	IDC_PLUGIN_INST_ZIP,	HIDC_PLUGIN_INST_ZIP,		//Zipプラグインを追加	// 2011/11/2 Uchi
 	IDC_PLUGIN_SearchNew,	HIDC_PLUGIN_SearchNew,		//新規プラグインを追加
 	IDC_PLUGIN_OpenFolder,	HIDC_PLUGIN_OpenFolder,		//フォルダを開く
 	IDC_PLUGIN_Remove,		HIDC_PLUGIN_Remove,			//プラグインを削除
 	IDC_PLUGIN_OPTION,		HIDC_PLUGIN_OPTION,			//プラグイン設定	// 2010/3/22 Uchi
+	IDC_PLUGIN_README,		HIDC_PLUGIN_README,			//ReadMe表示		// 2011/11/2 Uchi
 //	IDC_STATIC,			-1,
 	0, 0
 };
@@ -112,7 +117,17 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						BOOL bEdit = (state != PLS_DELETED && state != PLS_NONE);
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove ), bEdit );
 						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), state == PLS_LOADED && plugin && plugin->m_options.size() > 0 );
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_README ), 
+							(state == PLS_INSTALLED || state == PLS_UPDATED || state == PLS_LOADED || state == PLS_DELETED)
+							&& !GetReadMeFile(to_tchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName)).empty());
 					}
+				}
+				break;
+			case NM_DBLCLK:
+				// リストビューへのダブルクリックで「プラグイン設定」を呼び出す
+				if (::IsWindowEnabled(::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION )))
+				{
+					DispatchEvent( hwndDlg, WM_COMMAND, MAKEWPARAM(IDC_PLUGIN_OPTION, BN_CLICKED), (LPARAM)::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ) );
 				}
 				break;
 			}
@@ -147,6 +162,30 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				CPluginManager::getInstance()->SearchNewPlugin( m_Common, hwndDlg );
 				SetData_LIST( hwndDlg );	//リストの再構築
 				break;
+			case IDC_PLUGIN_INST_ZIP:		// ZIPプラグインを追加
+				{
+					static std::tstring	sTrgDir;
+					CDlgOpenFile	cDlgOpenFile;
+					TCHAR			szPath[_MAX_PATH + 1];
+					_tcscpy( szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()));
+					// ファイルオープンダイアログの初期化
+					cDlgOpenFile.Create(
+						G_AppInstance(),
+						hwndDlg,
+						_T("*.zip"),
+						szPath
+					);
+					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						CPluginManager::getInstance()->InstZipPlugin( m_Common, hwndDlg, szPath );
+						SetData_LIST( hwndDlg );	//リストの再構築
+					}
+					// フォルダを記憶
+					TCHAR	szFolder[_MAX_PATH + 1];
+					TCHAR	szFname[_MAX_PATH + 1];
+					SplitPath_FolderAndFile(szPath, szFolder, szFname);
+					sTrgDir = szFolder;
+				}
+				break;
 			case IDC_CHECK_PluginEnable:	// プラグインを有効にする
 				EnablePluginPropInput( hwndDlg );
 				break;
@@ -172,7 +211,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						wstring sDirName = to_wchar(plugin->GetFolderName().c_str());
 						if( plugin && 0 == auto_stricmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
-							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, sel );
+							cDlgPluginOption.DoModal( ::GetModuleHandle(NULL), hwndDlg, this, sel );
 						}else{
 							WarningMessage( hwndDlg, _T("プラグインはこのウィンドウで読み込まれていないか、フォルダが異なるため\n設定を変更できません") );
 						}
@@ -188,6 +227,21 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						}
 					}
 					::ShellExecute( NULL, _T("open"), sBaseDir.c_str(), NULL, NULL, SW_SHOW );
+				}
+				break;
+			case IDC_PLUGIN_README:		// ReadMe表示	// 2011/11/2 Uchi
+				{
+					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
+					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
+					std::tstring sName = to_tchar(m_Common.m_sPlugin.m_PluginTable[sel].m_szName);	// 個別フォルダ名
+					std::tstring sReadMeName = GetReadMeFile(sName);
+					if (!sReadMeName.empty()) {
+						if (!BrowseReadMe(sReadMeName)) {
+							WarningMessage( hwndDlg, _T("ReadMeファイルが開けません") );
+						}
+					}else{
+						WarningMessage( hwndDlg, _T("ReadMeファイルが見つかりません ") );
+					}
 				}
 				break;
 			}
@@ -258,8 +312,9 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 	LVITEM sItem;
 	PluginRec* plugin_table = m_Common.m_sPlugin.m_PluginTable;
 
-	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), FALSE );
 	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_Remove ), FALSE );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_OPTION ), FALSE );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_README ), FALSE );
 
 	//プラグインリスト
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
@@ -421,9 +476,77 @@ void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 	if( !::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PluginEnable ) )
 	{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_SearchNew         ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_INST_ZIP          ), FALSE );
 	}
 	else
 	{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_SearchNew         ), TRUE );
+		CZipFile	cZipFile;
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_PLUGIN_INST_ZIP          ), cZipFile.IsOk() );
 	}
+}
+
+//	Readme ファイルの取得	2011/11/2 Uchi
+std::tstring CPropPlugin::GetReadMeFile(const std::tstring& sName)
+{
+	std::tstring sReadMeName = CPluginManager::getInstance()->GetBaseDir()
+		+ sName + _T("\\ReadMe.txt");
+	CFile* fl = new CFile(sReadMeName.c_str());
+	if (!fl->IsFileExist()) {
+		sReadMeName = CPluginManager::getInstance()->GetBaseDir()
+			+ sName + _T("\\") + sName + _T(".txt");
+		fl = new CFile(sReadMeName.c_str());
+	}
+	if (!fl->IsFileExist()) {
+		// exeフォルダ配下
+		sReadMeName = CPluginManager::getInstance()->GetExePluginDir()
+			+ sName + _T("\\ReadMe.txt");
+		fl = new CFile(sReadMeName.c_str());
+		if (!fl->IsFileExist()) {
+			sReadMeName = CPluginManager::getInstance()->GetExePluginDir()
+				+ sName + _T("\\") + sName + _T(".txt");
+			fl = new CFile(sReadMeName.c_str());
+		}
+	}
+
+	if (!fl->IsFileExist()) {
+		sReadMeName = _T("");
+	}
+	return sReadMeName;
+}
+
+//	Readme ファイルの表示	2011/11/2 Uchi
+bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
+{
+	// -- -- -- -- コマンドライン文字列を生成 -- -- -- -- //
+	CCommandLineString cCmdLineBuf;
+
+	//アプリケーションパス
+	TCHAR szExePath[MAX_PATH + 1];
+	::GetModuleFileName( NULL, szExePath, _countof( szExePath ) );
+	cCmdLineBuf.AppendF( _T("\"%ts\""), szExePath );
+
+	// ファイル名
+	cCmdLineBuf.AppendF( _T(" \"%ts\""), sReadMeName.c_str() );
+
+	// コマンドラインオプション
+	cCmdLineBuf.AppendF(_T(" -R -CODE=99"));
+
+	// グループID
+	int nGroup = GetDllShareData().m_sNodes.m_nGroupSequences;
+	if( nGroup > 0 ){
+		cCmdLineBuf.AppendF( _T(" -GROUP=%d"), nGroup+1 );
+	}
+
+	//CreateProcessに渡すSTARTUPINFOを作成
+	STARTUPINFO	sui;
+	::GetStartupInfo(&sui);
+
+	PROCESS_INFORMATION	pi;
+	ZeroMemory( &pi, sizeof(pi) );
+
+	TCHAR	szCmdLine[1024];
+	auto_strcpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
+	return (::CreateProcess( NULL, szCmdLine, NULL, NULL, TRUE,
+		CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) != 0);
 }

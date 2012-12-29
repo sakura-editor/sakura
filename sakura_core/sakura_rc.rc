@@ -1921,11 +1921,12 @@ BEGIN
     LTEXT           "プラグイン一覧",IDC_STATIC,4,9,36,8
     CONTROL         "プラグインを有効にする(&E)",IDC_CHECK_PluginEnable,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,21,100,10
+    PUSHBUTTON      "ZIPプラグインを導入(&Z)", IDC_PLUGIN_INST_ZIP,192, 6, 96, 14
+    PUSHBUTTON      "フォルダを開く(&F)",IDC_PLUGIN_OpenFolder,120,20,70,14
+    PUSHBUTTON      "新規プラグインを追加(&I)",IDC_PLUGIN_SearchNew,192,20,96,14
     CONTROL         "List1",IDC_PLUGINLIST,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | 
                     LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,41,285,108
-    PUSHBUTTON      "フォルダを開く(&F)",IDC_PLUGIN_OpenFolder,120,20,70,14
-    PUSHBUTTON      "新規プラグインを追加(&I)",IDC_PLUGIN_SearchNew,192,20,96,14
     LTEXT           "説明",IDC_STATIC,11,160,50,8
     LTEXT           "",IDC_LABEL_PLUGIN_Description,66,160,200,8
     LTEXT           "作者",IDC_STATIC,11,175,50,8
@@ -1934,6 +1935,7 @@ BEGIN
     LTEXT           "",IDC_LABEL_PLUGIN_Version,66,190,200,8
     PUSHBUTTON      "削除(&R)",IDC_PLUGIN_Remove,6,205,80,14
     PUSHBUTTON      "設定(&P)",IDC_PLUGIN_OPTION,96,205,80,14
+    PUSHBUTTON      "ReadMe(&M)",IDC_PLUGIN_README,186,205,80,14
 END
 
 IDD_PROP_MAINMENU DIALOGEX 0, 0, 293, 240
@@ -2042,6 +2044,7 @@ BEGIN
                     26, 216, 200, 10
     COMBOBOX        IDC_COMBO_PLUGIN_OPTION, 26, 214, 100, 30, CBS_DROPDOWNLIST | 
                     CBS_HASSTRINGS
+    PUSHBUTTON      "ReadMe(&M)", IDC_PLUGIN_README, 49, 234, 50, 14
     DEFPUSHBUTTON   "&OK", IDOK, 104, 234, 50, 14
     PUSHBUTTON      "キャンセル(&X)", IDCANCEL, 159, 234, 50, 14
     PUSHBUTTON      "ヘルプ(&H)", IDC_BUTTON_HELP, 214, 234, 50, 14

@@ -263,7 +263,7 @@ protected:
 public:
 	tstring GetFilePath( const tstring& sFileName ) const;				//プラグインフォルダ基準の相対パスをフルパスに変換
 	tstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
-	tstring GetOptionPath() const{ return m_sBaseDir + PII_OPTFILEEXT; }	//オプションファイルのパス
+	tstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
 	tstring GetFolderName() const;	//プラグインのフォルダ名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
@@ -277,6 +277,7 @@ public:
 	wstring m_sVersion;			//!< バージョン
 	wstring m_sUrl;				//!< 配布URL
 	tstring m_sBaseDir;
+	tstring m_sOptionDir;
 	CPluginOption::Array m_options;		// オプション	// 2010/3/24 Uchi
 private:
 	bool m_bLoaded;

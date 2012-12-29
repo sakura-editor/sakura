@@ -30,6 +30,7 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgPluginOption.h"
+#include "prop/CPropCommon.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"
@@ -56,6 +57,7 @@ const DWORD p_helpids[] = {
 	IDC_COMBO_PLUGIN_OPTION,		HIDC_EDIT_PLUGIN_OPTION,		// オプション編集
 	IDOK,							HIDC_FAVORITE_IDOK,				//OK
 	IDCANCEL,						HIDC_FAVORITE_IDCANCEL,			//キャンセル
+	IDC_PLUGIN_README,				HIDC_PLUGIN_README,				//ReadMe
 	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ヘルプ
 //	IDC_STATIC,						-1,
 	0, 0
@@ -75,12 +77,14 @@ CDlgPluginOption::~CDlgPluginOption()
 int CDlgPluginOption::DoModal(
 	HINSTANCE	hInstance,
 	HWND		hwndParent,
+	CPropPlugin*	cPropPlugin,
 	int 		ID
 )
 {
 	// プラグイン番号（エディタがふる番号）
 	m_ID = ID;
 	m_cPlugin = CPluginManager::getInstance()->GetPlugin( m_ID );
+	m_cPropPlugin = cPropPlugin;
 
 	if( m_cPlugin == NULL ){
 		::ErrorMessage( hwndParent, _T("プラグインがロードされていません。") );
@@ -180,6 +184,9 @@ void CDlgPluginOption::SetData( void )
 		::DlgItem_SetText( GetHwnd(), IDC_STATIC_MSG, _T("指定できるオプションがありません") );
 	}
 
+	// ReadMe Button
+	m_sReadMeName = m_cPropPlugin->GetReadMeFile(to_tchar(m_pShareData->m_Common.m_sPlugin.m_PluginTable[m_ID].m_szName));
+	::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_PLUGIN_README ), !m_sReadMeName.empty() );
 	return;
 }
 
@@ -335,6 +342,9 @@ BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
 			if (nVal > -INT_MAX)	--nVal;
 		}
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nVal, TRUE );
+
+		// 編集中のデータの戻し
+		SetFromEdit( m_Line );
 		return TRUE;
 	}
 
@@ -348,6 +358,24 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 {
 	switch( wID )
 	{
+	case IDC_CHECK_PLUGIN_OPTION:
+		// 編集中のデータの戻し
+		SetFromEdit( m_Line );
+		return TRUE;
+
+	case IDC_PLUGIN_README:		// 2012/12/22 Uchi
+		// ReadMe
+		{
+			if (!m_sReadMeName.empty()) {
+				if (!m_cPropPlugin->BrowseReadMe(m_sReadMeName)) {
+					WarningMessage( GetHwnd(), _T("ReadMeファイルが開けません") );
+				}
+			}else{
+				WarningMessage( GetHwnd(), _T("ReadMeファイルが見つかりません ") );
+			}
+		}
+		return TRUE;
+
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
 		MyWinHelp( GetHwnd(), m_pszHelpFile, HELP_CONTEXT, HLP000153 );	// 『プラグイン設定』Helpの指定 	2011/11/26 Uchi
@@ -368,6 +396,37 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
 }
+
+BOOL CDlgPluginOption::OnCbnSelChange( HWND hwndCtl, int wID )
+{
+	switch( wID ){
+	case IDC_COMBO_PLUGIN_OPTION:
+		// 編集中のデータの戻し
+		SetFromEdit( m_Line );
+
+		return TRUE;
+	}
+
+	/* 基底クラスメンバ */
+	return CDialog::OnCbnSelChange( hwndCtl, wID );
+}
+
+
+BOOL CDlgPluginOption::OnEnChange( HWND hwndCtl, int wID )
+{
+	switch( wID ){
+	case IDC_EDIT_PLUGIN_OPTION:
+	case IDC_EDIT_PLUGIN_OPTION_NUM:
+		// 編集中のデータの戻し
+		SetFromEdit( m_Line );
+
+		return TRUE;
+	}
+
+	/* 基底クラスメンバ */
+	return CDialog::OnEnChange( hwndCtl, wID );
+}
+
 
 BOOL CDlgPluginOption::OnActivate( WPARAM wParam, LPARAM lParam )
 {
