@@ -1,3 +1,27 @@
+/*
+	Copyright (C) 2008, kobake, ryoji
+	Copyright (C) 2012, Uchi
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "CSakuraEnvironment.h"
 #include "env/CShareData.h"
@@ -30,6 +54,8 @@ CEditWnd* CSakuraEnvironment::GetMainWindow()
 	@li g  開いているファイルの名前（拡張子除く）
 	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
 	@li N  開いているファイルの名前(簡易表示)
+	@li E  開いているファイルのあるフォルダの名前(簡易表示)
+	@li e  開いているファイルのあるフォルダの名前
 	@li C  現在選択中のテキスト
 	@li x  現在の物理桁位置(先頭からのバイト数1開始)
 	@li y  現在の物理行位置(1開始)
@@ -147,7 +173,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		//	From Here 2003/06/21 Moca
-		case L'N':
+		case L'N':	//	開いているファイルの名前(簡易表示)
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
@@ -160,6 +186,54 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		//	To Here 2003/06/21 Moca
+		case L'E':	// 開いているファイルのあるフォルダの名前(簡易表示)	2012/12/2 Uchi
+			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
+				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+			}
+			else {
+				WCHAR	buff[_MAX_PATH];		// \の処理をする為WCHAR
+				WCHAR*	pEnd;
+				WCHAR*	p;
+
+				wcscpy_s( buff, _MAX_PATH, to_wchar(pcDoc->m_cDocFile.GetFilePath()) );
+				pEnd = NULL;
+				for ( p = buff; *p != '\0'; p++) {
+					if (*p == L'\\') {
+						pEnd = p;
+					}
+				}
+				if (pEnd != NULL) {
+					// 最後の\の後で終端
+					*(pEnd+1) = '\0';
+				}
+
+				// 簡易表示に変換
+				TCHAR szText[1024];
+				CFileNameManager::getInstance()->GetTransformFileNameFast( to_tchar(buff), szText, _countof(szText)-1 );
+				q = wcs_pushT( q, q_max - q, szText);
+			}
+			++p;
+			break;
+		case L'e':	// 開いているファイルのあるフォルダの名前		2012/12/2 Uchi
+			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
+				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+			}
+			else {
+				const WCHAR*	pStr;
+				const WCHAR*	pEnd;
+				const WCHAR*	p;
+
+				pStr = to_wchar(pcDoc->m_cDocFile.GetFilePath());
+				pEnd = pStr - auto_strlen(pStr) - 1;
+				for ( p = pStr; *p != '\0'; p++) {
+					if (*p == L'\\') {
+						pEnd = p;
+					}
+				}
+				q = wcs_pushW( q, q_max - q, pStr, pEnd - pStr + 1 );
+			}
+			++p;
+			break;
 		//	From Here Jan. 15, 2002 hor
 		case L'C':	//	現在選択中のテキスト
 			{
@@ -328,6 +402,9 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				switch( CEditApp::getInstance()->m_pcSMacroMgr->GetCurrentIdx() ){
 				case INVALID_MACRO_IDX:
 					break;
+				case TEMP_KEYMACRO:
+					q = wcs_pushT( q, q_max - q, CEditApp::getInstance()->m_pcSMacroMgr->GetFile(TEMP_KEYMACRO) );
+					break;
 				case STAND_KEYMACRO:
 					{
 						TCHAR* pszMacroFilePath = GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName;
@@ -477,6 +554,13 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 		}
 	case L'U': // $U 更新
 		if( pcDoc->m_cDocEditor.IsModified()){
+			return 0;
+		}
+		else {
+			return 1;
+		}
+	case L'N': // $N 新規/(無題)		2012/12/2 Uchi
+		if (!pcDoc->m_cDocFile.GetFilePathClass().IsValidPath()) {
 			return 0;
 		}
 		else {

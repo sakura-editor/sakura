@@ -37,15 +37,15 @@ CEditApp::CEditApp(HINSTANCE hInst, int nGroupId)
 	//編集モード
 	CAppMode::getInstance();	//ウィンドウよりも前にイベントを受け取るためにここでインスタンス作成
 
+	//マクロ
+	m_pcSMacroMgr = new CSMacroMgr();
+
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
 	m_pcEditWnd->Create( nGroupId );
 
 	//MRU管理
 	m_pcMruListener = new CMruListener();
-
-	//マクロ
-	m_pcSMacroMgr = new CSMacroMgr();
 
 	//プロパティ管理
 	m_pcPropertyManager = new CPropertyManager();

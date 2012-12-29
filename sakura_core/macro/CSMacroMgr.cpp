@@ -559,11 +559,11 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
-	if( ppMacro == NULL ){
 #ifdef _DEBUG
+	if( ppMacro == NULL ){
 	MYTRACE_A( "CSMacroMgr::Load() Out of range: idx=%d Path=%ts\n", idx, pszPath);
-#endif
 	}
+#endif
 	//	バッファクリア
 	delete *ppMacro;
 	*ppMacro = NULL;
@@ -587,12 +587,16 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 		ext = pszType;
 	}
 
+	m_sMacroPath = _T("");
 	*ppMacro = CMacroFactory::getInstance()->Create(ext);
 	if( *ppMacro == NULL )
 		return FALSE;
 	BOOL bRet;
 	if( pszType == NULL ){
 		bRet = (*ppMacro)->LoadKeyMacro(hInstance, pszPath);
+		if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) {
+			m_sMacroPath = pszPath;
+		}
 	}else{
 		bRet = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath);
 	}
@@ -623,7 +627,7 @@ void CSMacroMgr::UnloadAll(void)
 		delete m_cSavedKeyMacro[idx];
 		m_cSavedKeyMacro[idx] = NULL;
 	}
-	
+
 }
 
 /*! キーボードマクロの保存
