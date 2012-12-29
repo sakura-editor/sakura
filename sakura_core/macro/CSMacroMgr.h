@@ -44,11 +44,9 @@
 class CEditView;
 
 
-#define TEMP_KEYMACRO	-2	//	一時マクロ（保存ができない）
-#define STAND_KEYMACRO	-1	//	標準マクロ（保存ができる）
-#define SAVED_KEYMACRO	0	//	保存されたマクロ
-
-const int INVALID_MACRO_IDX	= -2;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
+const int STAND_KEYMACRO	= -1;	//!< 標準マクロ(キーマクロ)
+const int TEMP_KEYMACRO		= -2;	//!< 一時マクロ(名前を指定してマクロ実行)
+const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
@@ -122,7 +120,9 @@ public:
 	const TCHAR* GetFile(int idx) const
 	{
 		return ( 0 <= idx && idx < MAX_CUSTMACRO ) ?
-		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szFile : NULL;
+		m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].m_szFile : 
+		( (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) && m_sMacroPath != _T("") ) ?
+		m_sMacroPath.c_str() : NULL;
 	}
 
 	/*! キーボードマクロの読み込み */
@@ -166,6 +166,8 @@ private:
 		@date Sep. 15, 2005 FILE
 	*/
 	int m_CurrentIdx;
+
+	std::tstring	m_sMacroPath;	// Loadしたマクロ名
 
 public:
 	static MacroFuncInfo	m_MacroFuncInfoArr[];
