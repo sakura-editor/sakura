@@ -473,6 +473,8 @@ public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	std::tstring GetReadMeFile(const std::tstring& sName);	//	Readme ファイルの取得
+	bool BrowseReadMe(const std::tstring& sReadMeName);		//	Readme ファイルの表示
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );

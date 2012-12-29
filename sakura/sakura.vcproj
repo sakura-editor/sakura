@@ -1284,6 +1284,14 @@
 					RelativePath="..\sakura_core\io\CTextStream.h"
 					>
 				</File>
+				<File
+					RelativePath="..\sakura_core\io\CZipFile.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\io\CZipFile.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="mem"

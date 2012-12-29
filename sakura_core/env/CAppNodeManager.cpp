@@ -156,6 +156,10 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 			if( m_nGroup > 0 )
 			{
 				sMyEditNode.m_nGroup = m_nGroup;	// 指定のグループ
+				if (pShare->m_sNodes.m_nGroupSequences < m_nGroup ) {
+					// 指定グループが現在のGroup Sequencesを超えていた場合の補正
+					pShare->m_sNodes.m_nGroupSequences = m_nGroup;
+				}
 			}
 			else
 			{
