@@ -414,7 +414,7 @@ bool CShareData::InitShareData()
 		PAGE_READWRITE | SEC_COMMIT,
 		0,
 		sizeof( DLLSHAREDATA ),
-		GSTR_CSHAREDATA
+		GSTR_SHAREDATA
 	);
 	if( NULL == m_hFileMap ){
 		::MessageBox(
@@ -495,19 +495,19 @@ bool CShareData::InitShareData()
 			_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[i], _T("") );
 		}
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[0], _T("%DeskTop%\\") );
-		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[0], _T("デスクトップ\\") );
+		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[0],   _T("デスクトップ\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[1], _T("%Personal%\\") );
-		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[1], _T("マイドキュメント\\") );
+		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[1],   _T("マイドキュメント\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[2], _T("%Cache%\\Content.IE5\\") );
-		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[2], _T("IEキャッシュ\\") );
+		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[2],   _T("IEキャッシュ\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[3], _T("%TEMP%\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[3],   _T("TEMP\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[4], _T("%Common DeskTop%\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[4],   _T("共有デスクトップ\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[5], _T("%Common Documents%\\") );
-		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[5], _T("共有ドキュメント\\") );
+		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[5],   _T("共有ドキュメント\\") );
 		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[6], _T("%AppData%\\") );	// 2007.05.19 ryoji 追加
-		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[6], _T("アプリデータ\\") );	// 2007.05.19 ryoji 追加
+		_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameTo[6],   _T("アプリデータ\\") );	// 2007.05.19 ryoji 追加
 		m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum = 7;
 		
 		/* m_PrintSettingArr[0]を設定して、残りの1～7にコピーする。
@@ -709,19 +709,19 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = FALSE;			/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 
 		//[ファイル]タブ
-		m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;/* ファイルの排他制御モード */
-		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		/* 更新の監視 */
+		m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;// ファイルの排他制御モード
+		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		// 更新の監視
 
 		//ファイルの保存
-		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;/* 無変更でも上書きするか */
+		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;// 無変更でも上書きするか
 
 		//ファイルオープン
-		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			/* ファイルをドロップしたときは閉じて開く */
-		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				/* 一度にドロップ可能なファイル数 */
+		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			// ファイルをドロップしたときは閉じて開く
+		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				// 一度にドロップ可能なファイル数
 		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;		//	カーソル位置復元	//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;			// 2002.01.16 hor ブックマーク復元
+		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;			// ブックマーク復元 //2002.01.16 hor 
 		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;			//ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;			// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 
 		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
@@ -1335,10 +1335,14 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 			}
 			else{
 				::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-					_T("%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n\n現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"),
+					_T("%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n")
+					_T("\n")
+					_T("現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"),
 					pszPath,
-					pfi->m_nCharCode, NULL==pszCodeNameCur?"不明":pszCodeNameCur,
-					nCharCode,        NULL==pszCodeNameNew?"不明":pszCodeNameNew
+					pfi->m_nCharCode,
+					NULL==pszCodeNameCur?_T("不明"):pszCodeNameCur,
+					nCharCode,
+					NULL==pszCodeNameNew?_T("不明"):pszCodeNameNew
 				);
 			}
 		}
@@ -5433,150 +5437,150 @@ void CShareData::InitPopupMenu(DLLSHAREDATA* pShareData)
 {
 	/* カスタムメニュー 規定値 */
 	
-	CommonSetting& rCommon = m_pShareData->m_Common;
+	CommonSetting_CustomMenu& rMenu = m_pShareData->m_Common.m_sCustomMenu;
 
 	/* 右クリックメニュー */
 	int n = 0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_UNDO;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'U';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_UNDO;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'U';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_REDO;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'R';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_REDO;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'R';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_CUT;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'T';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_CUT;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'T';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'C';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'C';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_PASTE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'P';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PASTE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'P';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_DELETE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'D';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_DELETE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'D';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY_CRLF;	//Nov. 9, 2000 JEPRO 「CRLF改行でコピー」を追加
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'L';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY_CRLF;	//Nov. 9, 2000 JEPRO 「CRLF改行でコピー」を追加
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'L';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY_ADDCRLF;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'H';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPY_ADDCRLF;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'H';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_PASTEBOX;	//Nov. 9, 2000 JEPRO 「矩形貼り付け」を復活
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'X';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PASTEBOX;	//Nov. 9, 2000 JEPRO 「矩形貼り付け」を復活
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'X';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_SELECTALL;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'A';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_SELECTALL;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'A';
 	n++;
 
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 3, 2000 JEPRO 以下に「タグジャンプ」と「タグジャンプバック」を追加
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMP;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'G';		//Nov. 9, 2000 JEPRO 「コピー」とバッティングしていたアクセスキーを変更(T→G)
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMP;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'G';		//Nov. 9, 2000 JEPRO 「コピー」とバッティングしていたアクセスキーを変更(T→G)
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMPBACK;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'B';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_TAGJUMPBACK;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'B';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;		//Oct. 15, 2000 JEPRO 以下に「選択範囲内全行コピー」と「引用符付きコピー」を追加
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINES;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '@';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINES;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '@';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINESASPASSAGE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '.';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYLINESASPASSAGE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '.';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = '\\';
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_COPYPATH;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = '\\';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[0][n] = F_PROPERTY_FILE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [0][n] = 'F';		//Nov. 9, 2000 JEPRO 「やり直し」とバッティングしていたアクセスキーを変更(R→F)
+	rMenu.m_nCustMenuItemFuncArr[0][n] = F_PROPERTY_FILE;
+	rMenu.m_nCustMenuItemKeyArr [0][n] = 'F';		//Nov. 9, 2000 JEPRO 「やり直し」とバッティングしていたアクセスキーを変更(R→F)
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemNumArr[0] = n;
+	rMenu.m_nCustMenuItemNumArr[0] = n;
 
 	/* カスタムメニュー１ */
-	rCommon.m_sCustomMenu.m_nCustMenuItemNumArr[1] = 7;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[1][0] = F_FILEOPEN;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [1][0] = 'O';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (F→O)
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[1][1] = F_FILESAVE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [1][1] = 'S';
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[1][2] = F_NEXTWINDOW;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [1][2] = 'N';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (O→N)
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[1][3] = F_TOLOWER;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [1][3] = 'L';
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[1][4] = F_TOUPPER;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [1][4] = 'U';
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[1][5] = F_0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [1][5] = '\0';
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [1][6] = 'C';
+	rMenu.m_nCustMenuItemNumArr[1] = 7;
+	rMenu.m_nCustMenuItemFuncArr[1][0] = F_FILEOPEN;
+	rMenu.m_nCustMenuItemKeyArr [1][0] = 'O';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (F→O)
+	rMenu.m_nCustMenuItemFuncArr[1][1] = F_FILESAVE;
+	rMenu.m_nCustMenuItemKeyArr [1][1] = 'S';
+	rMenu.m_nCustMenuItemFuncArr[1][2] = F_NEXTWINDOW;
+	rMenu.m_nCustMenuItemKeyArr [1][2] = 'N';		//Sept. 14, 2000 JEPRO できるだけ標準設定値に合わせるように変更 (O→N)
+	rMenu.m_nCustMenuItemFuncArr[1][3] = F_TOLOWER;
+	rMenu.m_nCustMenuItemKeyArr [1][3] = 'L';
+	rMenu.m_nCustMenuItemFuncArr[1][4] = F_TOUPPER;
+	rMenu.m_nCustMenuItemKeyArr [1][4] = 'U';
+	rMenu.m_nCustMenuItemFuncArr[1][5] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [1][5] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[1][6] = F_WINCLOSE;
+	rMenu.m_nCustMenuItemKeyArr [1][6] = 'C';
 
 	/* タブメニュー */	//@@@ 2003.06.14 MIK
 	n = 0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'S';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'S';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVEAS_DIALOG;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'A';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILESAVEAS_DIALOG;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'A';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'R';	// 2007.06.26 ryoji B -> R
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'R';	// 2007.06.26 ryoji B -> R
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE_OPEN;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'L';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILECLOSE_OPEN;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'L';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_WINCLOSE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'C';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_WINCLOSE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'C';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_FILE_REOPEN;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'W';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_GROUPCLOSE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'G';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_GROUPCLOSE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'G';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSEOTHER;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'O';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSEOTHER;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'O';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSELEFT;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'H';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSELEFT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'H';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSERIGHT;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'M';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_CLOSERIGHT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'M';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_0;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '\0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVERIGHT;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '0';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVERIGHT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '0';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVELEFT;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '1';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_MOVELEFT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = '1';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_SEPARATE;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'E';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_SEPARATE;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'E';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTNEXT;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'X';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTNEXT;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'X';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTPREV;
-	rCommon.m_sCustomMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'V';
+	rMenu.m_nCustMenuItemFuncArr[CUSTMENU_INDEX_FOR_TABWND][n] = F_TAB_JOINTPREV;
+	rMenu.m_nCustMenuItemKeyArr [CUSTMENU_INDEX_FOR_TABWND][n] = 'V';
 	n++;
-	rCommon.m_sCustomMenu.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
+	rMenu.m_nCustMenuItemNumArr[CUSTMENU_INDEX_FOR_TABWND] = n;
 }
 
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */

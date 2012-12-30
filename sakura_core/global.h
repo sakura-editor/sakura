@@ -119,12 +119,12 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 #endif
 
 #ifdef _DEBUG
-	#ifndef	GSTR_CSHAREDATA
-	#define	GSTR_CSHAREDATA "CShareData_DEBUG"
+	#ifndef	GSTR_SHAREDATA
+	#define	GSTR_SHAREDATA "CShareData_DEBUG"
 	#endif
 #else
-	#ifndef	GSTR_CSHAREDATA
-	#define	GSTR_CSHAREDATA "CShareData"
+	#ifndef	GSTR_SHAREDATA
+	#define	GSTR_SHAREDATA "CShareData"
 	#endif
 #endif
 
