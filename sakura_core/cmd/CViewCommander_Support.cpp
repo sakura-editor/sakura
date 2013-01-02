@@ -51,6 +51,7 @@ retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
 	if( GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
+		GetDocument()->m_cDocType.GetDocumentAttribute().m_bUseHokanByKeyword == false &&
 		_T('\0') == GetDocument()->m_cDocType.GetDocumentAttribute().m_szHokanFile[0]
 	){
 		ConfirmBeep();

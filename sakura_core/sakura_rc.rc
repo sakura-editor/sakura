@@ -1047,11 +1047,15 @@ BEGIN
     PUSHBUTTON      "(&1)...",IDC_BUTTON_HOKANFILE_REF,215,14,19,14
     COMBOBOX        IDC_COMBO_HOKAN_TYPE,236,15,60,57,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    CONTROL         "英大文字小文字を同一視する(&I)",IDC_CHECK_HOKANLOHICASE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,31,120,10
-    CONTROL         "編集中のファイルから候補を探す(&F)",
+    CONTROL         "英大文字小文字を同一視(&I)",IDC_CHECK_HOKANLOHICASE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,31,110,10
+    LTEXT           "候補：",IDC_STATIC,122,32,20,8,NOT WS_GROUP
+    CONTROL         "編集中のファイル(&F)",
                     IDC_CHECK_HOKANBYFILE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,132,31,129,10
+                    WS_TABSTOP,142,31,75,10
+    CONTROL         "強調キーワード(&K)",
+                    IDC_CHECK_HOKANBYKEYWORD,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,217,31,75,10
     GROUPBOX        "入力補完機能",IDC_STATIC,3,3,297,45,WS_GROUP
     GROUPBOX        "外部ヘルプの設定(&L)",IDC_STATIC,3,55,297,32,WS_GROUP
     EDITTEXT        IDC_EDIT_TYPEEXTHELP,8,68,264,12,ES_AUTOHSCROLL | 
