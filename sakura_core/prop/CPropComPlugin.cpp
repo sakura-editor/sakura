@@ -61,7 +61,7 @@ static const DWORD p_helpids[] = {	//11700
 INT_PTR CALLBACK CPropPlugin::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropPlugin::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
 /*! Pluginページのメッセージ処理
@@ -369,7 +369,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
 		if( plugin_table[index].m_state != PLS_NONE ){
-			sItem.pszText = plugin ? _T("読込") : _T("");
+			sItem.pszText = const_cast<TCHAR*>(plugin ? _T("読込") : _T(""));
 		}else{
 			sItem.pszText = _T("");
 		}
@@ -433,7 +433,7 @@ int CPropPlugin::GetData( HWND hwndDlg )
 void CPropPlugin::InitDialog( HWND hwndDlg )
 {
 	struct ColumnData {
-		TCHAR *title;
+		const TCHAR *title;
 		int width;
 	} ColumnList[] = {
 		{ _T("番号"), 40 },
@@ -453,7 +453,7 @@ void CPropPlugin::InitDialog( HWND hwndDlg )
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
-		sColumn.pszText = ColumnList[pos].title;
+		sColumn.pszText = const_cast<TCHAR*>(ColumnList[pos].title);
 		sColumn.cx = ColumnList[pos].width;
 		sColumn.iSubItem = pos;
 		sColumn.fmt = LVCFMT_LEFT;

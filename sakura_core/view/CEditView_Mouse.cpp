@@ -12,6 +12,7 @@
 #include "CWaitCursor.h"
 #include "util/input.h"
 #include "util/os.h"
+#include <limits.h>
 #include "sakura_rc.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1507,7 +1508,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( cf == CClipboard::GetSakuraFormat() ){
 		if( nSize > sizeof(int) ){
 			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(int));
-			cmemBuf.SetString( pszData, __min( (size_t)*(int*)pData, nSize / sizeof(wchar_t) ) );	// “r’†‚ÌNUL•¶Žš‚àŠÜ‚ß‚é
+			cmemBuf.SetString( pszData, std::min( (SIZE_T)*(int*)pData, nSize / sizeof(wchar_t) ) );	// “r’†‚ÌNUL•¶Žš‚àŠÜ‚ß‚é
 		}
 	}else if( cf == CF_UNICODETEXT ){
 		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );

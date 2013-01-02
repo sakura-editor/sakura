@@ -21,7 +21,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "CCommandLine.h"
 #include "env/CShareData_IO.h"
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ƒwƒbƒ_®—
 

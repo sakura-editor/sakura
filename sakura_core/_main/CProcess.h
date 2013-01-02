@@ -27,7 +27,7 @@
 */
 class SAKURA_CORE_API CProcess : public TSingleInstance<CProcess> {
 public:
-	CProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );
+	CProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine );
 	bool Run();
 	virtual ~CProcess(){}
 protected:
@@ -38,7 +38,9 @@ protected:
 
 protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
+#ifndef DISABLE_CRASHDUMP
 	int				WriteDump( PEXCEPTION_POINTERS pExceptPtrs );
+#endif
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
 	CShareData&		GetShareData()   { return m_cShareData; }
@@ -48,6 +50,7 @@ public:
 private:
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
+#ifndef DISABLE_CRASHDUMP
 	BOOL (WINAPI *m_pfnMiniDumpWriteDump)(
 		HANDLE hProcess,
 		DWORD ProcessId,
@@ -57,6 +60,7 @@ private:
 		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
 		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
 		);
+#endif
 	
 	//	óBàÍÇÃCShareDateÇ∆Ç∑ÇÈÅBÅiCProcessÇ™ê”îCÇéùÇ¡Çƒnew/deleteÇ∑ÇÈÅj
 	CShareData		m_cShareData;

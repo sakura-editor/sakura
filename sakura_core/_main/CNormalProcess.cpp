@@ -28,7 +28,6 @@
 #include "CGrepAgent.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocLine.h" // 2003/03/28 MIK
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 #include "util/window.h"
 #include "util/file.h"
@@ -41,7 +40,7 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine )
+CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 : m_pcEditApp( NULL )
 , CProcess( hInstance, lpCmdLine )
 {

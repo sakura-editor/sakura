@@ -104,7 +104,7 @@ public:
 		}
 		DWORD dwType = REG_SZ;
 		DWORD nError = 0;
-		if (nError = RegSetValueEx(_key, valueName, NULL, REG_SZ, (LPBYTE)buffer, nMaxChar))
+		if (nError = RegSetValueEx(_key, valueName, 0, REG_SZ, (LPBYTE)buffer, nMaxChar))
 		{
 			return nError;
 		}
@@ -113,7 +113,7 @@ public:
 	int SetValue(const TCHAR* valueName, const BYTE* buffer, int nMaxChar, DWORD dwType)
 	{
 		DWORD nError = 0;
-		if (nError = RegSetValueEx(_key, valueName, NULL, dwType, (LPBYTE)buffer, nMaxChar))
+		if (nError = RegSetValueEx(_key, valueName, 0, dwType, (LPBYTE)buffer, nMaxChar))
 		{
 			return nError;
 		}

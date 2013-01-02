@@ -33,6 +33,7 @@
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
 #include "util/window.h"
+#include <limits.h>
 #include "sakura_rc.h"
 #include "sakura.hh"
 

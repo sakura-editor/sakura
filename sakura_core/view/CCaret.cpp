@@ -1048,7 +1048,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 			){
 				// 折り返し幅とレイアウト行桁数（ぶら下げを含む）のどちらか大きいほうまでカーソル移動可能
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				CLayoutInt nMaxX = __max(nPosX, m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas());
+				CLayoutInt nMaxX = std::max(nPosX, m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas());
 				nPosX = ptNewXY.GetX2();
 				if( nPosX < CLayoutInt(0) ){
 					nPosX = CLayoutInt(0);

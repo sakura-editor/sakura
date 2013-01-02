@@ -100,7 +100,7 @@ LPCTSTR CFileNameManager::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int
 		if( 0 == _tcsncicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #endif
 		{
-			nCopy = __min( nToLen, nDestLen - j );
+			nCopy = std::min( nToLen, nDestLen - j );
 			memcpy( &pszDest[j], pszTo, nCopy * sizeof( TCHAR ) );
 			j += nCopy;
 			i += nFromLen - 1;
@@ -145,9 +145,9 @@ bool CFileNameManager::ExpandMetaToFolder( LPCTSTR pszSrc, LPTSTR pszDes, int nD
 #define _USE_META_ALIAS
 #ifdef _USE_META_ALIAS
 	struct MetaAlias{
-		LPTSTR szAlias;
+		LPCTSTR szAlias;
 		int nLenth;
-		LPTSTR szOrig;
+		LPCTSTR szOrig;
 	};
 	static const MetaAlias AliasList[] = {
 		{  _T("COMDESKTOP"), 10, _T("Common Desktop") },

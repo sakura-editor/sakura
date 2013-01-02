@@ -14,7 +14,6 @@
 #include "StdAfx.h"
 #include "CLayoutMgr.h"
 #include "charset/charcode.h"
-#include "debug/Debug.h"
 #include <stdlib.h>
 #include "doc/CLayout.h" // 2002/2/10 aroka
 #include "doc/CDocLineMgr.h" // 2002/2/10 aroka

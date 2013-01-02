@@ -30,7 +30,7 @@ class CLayoutMgr;
 #include "basis/SakuraBasis.h"
 #include "types/CType.h"
 #include "CDocListener.h"
-
+#include "view/colors/EColorIndexType.h"
 #include "util/container.h"
 
 class CBregexp;// 2002/2/10 aroka
@@ -40,7 +40,6 @@ class CDocLine;// 2002/2/10 aroka
 class CMemory;// 2002/2/10 aroka
 class CEditDoc;// 2003/07/20 genta
 class CColorStrategy;
-enum EColorIndexType;
 
 struct LayoutReplaceArg {
 	CLayoutRange	sDelRange;		//!< 削除範囲。レイアウト単位。

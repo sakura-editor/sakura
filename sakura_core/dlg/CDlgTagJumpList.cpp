@@ -319,7 +319,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		ListView_SetItemState( hwndList, nIndex, 0, LVIS_SELECTED | LVIS_FOCUSED );
 	}
 
-	/* const */ TCHAR* pszMsgText = NULL;
+	const TCHAR* pszMsgText = NULL;
 
 	//	”‚ª‘½‚·‚¬‚éê‡‚ÍØ‚èŽÌ‚Ä‚½Ž|‚ð––”ö‚É‘}“ü
 //	if( m_pcList->IsOverflow() ){
@@ -339,7 +339,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 //		ListView_SetItemText( hwndList, nIndex, 1, _T("") );
 //		ListView_SetItemText( hwndList, nIndex, 2, _T("") );
 //		ListView_SetItemText( hwndList, nIndex, 3, _T("") );
-		ListView_SetItemText( hwndList, nIndex, 4, pszMsgText );
+		ListView_SetItemText( hwndList, nIndex, 4, const_cast<TCHAR*>(pszMsgText) );
 //		ListView_SetItemText( hwndList, nIndex, 5, _T("") );
 	}
 

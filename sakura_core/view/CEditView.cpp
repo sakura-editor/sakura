@@ -37,7 +37,11 @@
 #include "util/string_ex2.h"
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
 #include "util/module.h"
+#include <limits.h>
 
+#ifndef IMR_DOCUMENTFEED
+#define IMR_DOCUMENTFEED 0x0007
+#endif
 
 CEditView*	g_m_pcEditView;
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
@@ -1196,7 +1200,7 @@ bool CEditView::IsCurrentPositionURL(
 	bool		bMatch;
 	int			nMatchColor;
 	int			nUrlLen;
-	CLogicInt	i = CLogicInt(__max(0, ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
+	CLogicInt	i = CLogicInt(std::max(CLogicInt(0), ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
 	//nLineLen = CLogicInt(__min(nLineLen, ptXY.GetX2() + _MAX_PATH));
 	while( i <= ptXY.GetX2() && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword
@@ -1697,7 +1701,7 @@ bool CEditView::GetSelectedData(
 	int				nRowNum;
 	int				nLineNumCols;
 	wchar_t*		pszLineNum;
-	wchar_t*		pszSpaces = L"                    ";
+	const wchar_t*	pszSpaces = L"                    ";
 	const CLayout*	pcLayout;
 	CEol			appendEol( neweol );
 	bool			addnl = false;

@@ -17,18 +17,16 @@
 */
 
 #include "StdAfx.h"
-#include <io.h>
-#include <tchar.h>
 #include "CProcessFactory.h"
 #include "CControlProcess.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
 #include "CControlTray.h"
-
 #include "_os/COsVersionInfo.h"
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
+#include <io.h>
+#include <tchar.h>
 
 class CProcess;
 
@@ -46,7 +44,7 @@ class CProcess;
 	@date 2002/01/08
 	@date 2006/04/10 ryoji
 */
-CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPTSTR lpCmdLine )
+CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 {
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
 

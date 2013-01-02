@@ -28,7 +28,7 @@ static void SetKeyNameArrVal(
 	DLLSHAREDATA*	pShareData,
 	int				nIdx,
 	short			nKeyCode,
-	TCHAR*			pszKeyName,
+	const TCHAR*	pszKeyName,
 	EFunctionCode	nFuncCode_0,
 	EFunctionCode	nFuncCode_1,
 	EFunctionCode	nFuncCode_2,
@@ -695,7 +695,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	/********************/
 	struct KEYDATAINIT {
 		short			nKeyCode;		//!< Key Code (0 for non-keybord button)
-		TCHAR*			pszKeyName;		//!< Key Name (for display)
+		const TCHAR*	pszKeyName;		//!< Key Name (for display)
 		EFunctionCode	nFuncCode_0;	//!<                      Key
 		EFunctionCode	nFuncCode_1;	//!< Shift +              Key
 		EFunctionCode	nFuncCode_2;	//!<         Ctrl +       Key
@@ -885,7 +885,7 @@ static void SetKeyNameArrVal(
 	DLLSHAREDATA*	pShareData,
 	int				nIdx,
 	short			nKeyCode,
-	TCHAR*			pszKeyName,
+	const TCHAR*			pszKeyName,
 	EFunctionCode	nFuncCode_0,
 	EFunctionCode	nFuncCode_1,
 	EFunctionCode	nFuncCode_2,

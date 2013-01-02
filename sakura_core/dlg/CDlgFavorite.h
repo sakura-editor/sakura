@@ -94,7 +94,7 @@ private:
 
 	struct FavoriteInfo {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
-		TCHAR*		m_pszCaption;		//キャプション
+		const TCHAR*	m_pszCaption;	//キャプション
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？
 		bool		m_bHaveView;		//表示数変更機能をもっているか？

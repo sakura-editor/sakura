@@ -43,6 +43,8 @@ public:
 	typedef INT_TYPE       IntType;
 	typedef SUPER_INT_TYPE SuperIntType;
 public:
+	using SUPER::x;
+	using SUPER::y;
 	//コンストラクタ・デストラクタ
 	CStrictPoint(){ x=SuperIntType(0); y=SuperIntType(0); }
 	CStrictPoint(int _x,int _y){ x=SuperIntType(_x); y=SuperIntType(_y); }

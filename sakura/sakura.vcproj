@@ -2087,6 +2087,10 @@
 						RelativePath="..\sakura_core\view\colors\CColorStrategy.h"
 						>
 					</File>
+					<File
+						RelativePath="..\sakura_core\view\colors\EColorIndexType.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="figures"
@@ -2905,11 +2909,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\debug\Debug.cpp"
+					RelativePath="..\sakura_core\debug\Debug1.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\debug\Debug.h"
+					RelativePath="..\sakura_core\debug\Debug1.h"
 					>
 				</File>
 				<File

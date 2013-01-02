@@ -14,7 +14,6 @@
 */
 #include "StdAfx.h"
 #include "window/CSplitBoxWnd.h"
-#include "debug/Debug.h"
 
 
 CSplitBoxWnd::CSplitBoxWnd()

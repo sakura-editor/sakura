@@ -39,9 +39,6 @@
 #include "CEol.h"
 #include "io/CFileLoad.h"
 #include "charset/charcode.h"
-#ifdef _DEBUG
-#include "debug/Debug.h"
-#endif
 #include "io/CIoBridge.h"
 #include "charset/CCodeMediator.h"
 #include "util/string_ex2.h"

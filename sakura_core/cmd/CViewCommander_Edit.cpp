@@ -101,13 +101,15 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 								goto end_of_for;
 							}
 						}
-
-						bool bZenSpace=GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
-						if(nCharChars==1 && WCODE::IsIndentChar(pLine[nPos],bZenSpace))
+						
 						{
-							//â∫Ç÷êiÇﬁ
+							bool bZenSpace=GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent_ZENSPACE;
+							if(nCharChars==1 && WCODE::IsIndentChar(pLine[nPos],bZenSpace))
+							{
+								//â∫Ç÷êiÇﬁ
+							}
+							else break;
 						}
-						else break;
 
 end_of_for:;
 						nPos += nCharChars;

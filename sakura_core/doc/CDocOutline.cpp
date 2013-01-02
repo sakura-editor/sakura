@@ -97,7 +97,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 	wchar_t*		pszText;
 
 	/* ルールファイルの内容をバッファに読み込む */
-	auto_array_ptr<SOneRule> test = new SOneRule[1024];	// 1024個許可。 2007.11.29 kobake スタック使いすぎなので、ヒープに確保するように修正。
+	auto_array_ptr<SOneRule> test(new SOneRule[1024]);	// 1024個許可。 2007.11.29 kobake スタック使いすぎなので、ヒープに確保するように修正。
 	int nCount = ReadRuleFile(m_pcDocRef->m_cDocType.GetDocumentAttribute().m_szOutlineRuleFilename, test.get(), 1024 );
 	if ( nCount < 1 ){
 		return;

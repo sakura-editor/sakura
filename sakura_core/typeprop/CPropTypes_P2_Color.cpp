@@ -1208,7 +1208,7 @@ void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	RECT		rc1;
 	COLORREF	cRim = (COLORREF)::GetSysColor( COLOR_3DSHADOW );
 
-	if( pDis == NULL || pDis->itemData == NULL ) return;
+	if( pDis == NULL || pDis->itemData == 0 ) return;
 
 	//•`‰æ‘ÎÛ
 	CGraphics gr(pDis->hDC);
@@ -1327,7 +1327,7 @@ BOOL CPropColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustCol
 	cc.rgbResult = *pColor;
 	cc.lpCustColors = pCustColors;
 	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-	cc.lCustData = NULL;
+	cc.lCustData = 0;
 	cc.lpfnHook = NULL;
 	cc.lpTemplateName = NULL;
 	if( !::ChooseColor( &cc ) ){

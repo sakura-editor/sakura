@@ -67,7 +67,7 @@ static const DWORD p_helpids[] = {	//10000
 INT_PTR CALLBACK CPropBackup::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropBackup::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 

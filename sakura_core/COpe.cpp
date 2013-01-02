@@ -13,7 +13,6 @@
 
 #include "StdAfx.h"
 #include "COpe.h"
-#include "debug/Debug.h"
 #include "mem/CMemory.h"// 2002/2/10 aroka
 
 

@@ -41,7 +41,7 @@
 
 
 #include "CStream.h" //CError_FileOpen
-enum EConvertResult;
+#include "charset/CCodeBase.h"
 
 
 /*!

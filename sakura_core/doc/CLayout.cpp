@@ -13,7 +13,6 @@
 */
 #include "StdAfx.h"
 #include "doc/CLayout.h"
-#include "debug/Debug.h"
 #include "charset/charcode.h"
 #include "CLayoutMgr.h"
 #include "CBregexp.h" // CLayoutMgr‚Ì’è‹`‚Å•K—v

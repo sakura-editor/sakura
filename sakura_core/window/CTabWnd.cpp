@@ -37,7 +37,6 @@
 
 #include "StdAfx.h"
 #include "CTabWnd.h"
-#include "debug/Debug.h"
 #include "window/CEditWnd.h"
 #include "_main/global.h"
 #include "charset/charcode.h"
@@ -49,6 +48,7 @@
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
+#include <limits.h>
 #include "sakura_rc.h"
 
 

@@ -472,7 +472,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( void )
 		TCHAR fileName[1024];
 		int   fileLine;
 
-		if( NULL == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , NULL ) ){
+		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , NULL ) ){
 			return false;
 		}
 		return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine) );

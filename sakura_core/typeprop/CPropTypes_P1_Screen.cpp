@@ -118,8 +118,8 @@ TYPE_NAME<int> WrapMethodArr[] = {
 };
 
 //静的メンバ
-std::vector<TYPE_NAME<EOutlineType>> CPropTypes::m_OlmArr;	//!<アウトライン解析ルール配列
-std::vector<TYPE_NAME<ESmartIndentType>> CPropTypes::m_SIndentArr;	//!<スマートインデントルール配列
+std::vector<TYPE_NAME<EOutlineType> > CPropTypes::m_OlmArr;	//!<アウトライン解析ルール配列
+std::vector<TYPE_NAME<ESmartIndentType> > CPropTypes::m_SIndentArr;	//!<スマートインデントルール配列
 
 //スクリーンタブの初期化
 void CPropScreen::CPropTypes_Screen()
@@ -699,8 +699,9 @@ void CPropScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME<EOutlineType> method;
 	method.nMethod = (EOutlineType)nMethod;
 	const TCHAR* tszName = to_tchar( szName );
-	method.pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
-	_tcscpy( method.pszName, tszName );
+	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
+	_tcscpy( pszName, tszName );
+	method.pszName = pszName;
 	m_OlmArr.push_back(method);
 }
 
@@ -713,7 +714,8 @@ void CPropScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME<ESmartIndentType> method;
 	method.nMethod = (ESmartIndentType)nMethod;
 	const TCHAR* tszName = to_tchar( szName );
-	method.pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
-	_tcscpy( method.pszName, tszName );
+	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
+	_tcscpy( pszName, tszName );
+	method.pszName = pszName;
 	m_SIndentArr.push_back(method);
 }

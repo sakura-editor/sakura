@@ -24,7 +24,7 @@
 #ifndef SAKURA_STATICTYPE_4B044731_DE17_46D9_9183_9F2E53F55F36_H_
 #define SAKURA_STATICTYPE_4B044731_DE17_46D9_9183_9F2E53F55F36_H_
 
-#include "debug/Debug.h"
+#include "util/string_ex.h"
 
 //! ヒープを用いないvector
 //2007.09.23 kobake 作成。

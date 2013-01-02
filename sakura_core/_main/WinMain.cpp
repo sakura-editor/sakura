@@ -38,12 +38,21 @@
 	コントロールプロセスはCControlProcessクラスのインスタンスを作り、
 	エディタプロセスはCNormalProcessクラスのインスタンスを作る。
 */
+#ifdef __MINGW32__
+int WINAPI WinMain(
+	HINSTANCE	hInstance,		//!< handle to current instance
+	HINSTANCE	hPrevInstance,	//!< handle to previous instance
+	LPSTR		lpCmdLineA,		//!< pointer to command line
+	int			nCmdShow		//!< show state of window
+)
+#else
 int WINAPI _tWinMain(
 	HINSTANCE	hInstance,		//!< handle to current instance
 	HINSTANCE	hPrevInstance,	//!< handle to previous instance
 	LPTSTR		lpCmdLine,		//!< pointer to command line
 	int			nCmdShow		//!< show state of window
 )
+#endif
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
 	// 2009.9.10 syat メモリリークチェックを追加
@@ -68,7 +77,32 @@ int WINAPI _tWinMain(
 	CProcessFactory aFactory;
 	CProcess *process = 0;
 	try{
+#ifdef __MINGW32__
+		LPTSTR pszCommandLine;
+		pszCommandLine = ::GetCommandLine();
+		// 実行ファイル名をスキップする
+		if( _T('\"') == *pszCommandLine ){
+			pszCommandLine++;
+			while( _T('\"') != *pszCommandLine && _T('\0') != *pszCommandLine ){
+				pszCommandLine++;
+			}
+			if( _T('\"') == *pszCommandLine ){
+				pszCommandLine++;
+			}
+		}else{
+			while( _T(' ') != *pszCommandLine && _T('\t') != *pszCommandLine
+				&& _T('\0') != *pszCommandLine ){
+				pszCommandLine++;
+			}
+		}
+		// 次のトークンまで進める
+		while( _T(' ') == *pszCommandLine || _T('\t') == *pszCommandLine ){
+			pszCommandLine++;
+		}
+		process = aFactory.Create( hInstance, pszCommandLine );
+#else
 		process = aFactory.Create( hInstance, lpCmdLine );
+#endif
 		MY_TRACETIME( cRunningTimer, "ProcessObject Created" );
 	}
 	catch(...){

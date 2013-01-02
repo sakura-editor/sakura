@@ -60,7 +60,7 @@ int CDlgTypeAscertain::DoModal( HINSTANCE hInstance, HWND hwndParent, SAscertain
 
 	m_psi->nColorType = -1;
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPE_ASCERTAIN, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPE_ASCERTAIN, (LPARAM)NULL );
 }
 
 // ボタンクリック

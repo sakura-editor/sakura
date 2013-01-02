@@ -23,7 +23,6 @@
 #include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
 #include "doc/CEditDoc.h"
-#include "debug/Debug.h"
 #include "util/input.h"
 #include "util/window.h"
 

@@ -36,7 +36,6 @@
 #include "CPPA.h"
 #include "view/CEditView.h"
 #include "func/Funccode.h"
-#include "debug/Debug.h"
 #include "CMacro.h"
 #include "macro/CSMacroMgr.h"// 2002/2/10 aroka
 #include "env/CShareData.h"
@@ -165,15 +164,15 @@ bool CPPA::InitDllImp()
 	if( ! RegisterEntries(table) )
 		return false;
 
-	SetIntFunc(CPPA::stdIntFunc);	// 2003.02.24 Moca
-	SetStrFunc(CPPA::stdStrFunc);
-	SetProc(CPPA::stdProc);
+	SetIntFunc((void *)CPPA::stdIntFunc);	// 2003.02.24 Moca
+	SetStrFunc((void *)CPPA::stdStrFunc);
+	SetProc((void *)CPPA::stdProc);
 
 	// 2003.06.01 Moca エラーメッセージを追加
-	SetErrProc(CPPA::stdError);
-	SetStrObj(CPPA::stdStrObj);	// UserErrorMes用
+	SetErrProc((void *)CPPA::stdError);
+	SetStrObj((void *)CPPA::stdStrObj);	// UserErrorMes用
 #if PPADLL_VER >= 123
-	SetFinishProc(CPPA::stdFinishProc);
+	SetFinishProc((void *)CPPA::stdFinishProc);
 #endif
 
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備

@@ -671,7 +671,7 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 
 	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
 */
-void CViewCommander::AlertNotFound(HWND hwnd, PCTSTR format, ...)
+void CViewCommander::AlertNotFound(HWND hwnd, LPCTSTR format, ...)
 {
 	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
 		&& m_pCommanderView->GetDrawSwitch()	// ← たぶん「全て置換」実行中判定の代用品（もとは Command_SEARCH_NEXT() の中でだけ使用されていた）

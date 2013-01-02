@@ -20,7 +20,6 @@
 #include <winspool.h>
 #include "CPrint.h"
 #include "_main/global.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
 
 
 // 2006.08.14 Moca —p†–¼ˆê——‚Ìd•¡íœEî•ñ‚Ì“‡

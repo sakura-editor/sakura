@@ -35,7 +35,6 @@
 */
 #include "StdAfx.h"
 #include "CProfile.h"
-#include "debug/Debug.h"
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resourceì«Ç›çûÇ›Ç…égóp
 #include "util/file.h"

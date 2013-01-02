@@ -33,6 +33,7 @@
 #include "view/colors/CColorStrategy.h"
 #include "env/CAppNodeManager.h"
 #include "CUxTheme.h"
+#include <limits.h>
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -1383,7 +1384,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	/* アウトライン位置とサイズを初期化する */ // 20060201 aroka
 	CEditView* pcEditView=(CEditView*)m_lParam;
-	if( m_lParam != NULL ){
+	if( pcEditView != NULL ){
 		if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( cWindowPlacement );
@@ -1731,9 +1732,9 @@ void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 	// From Here 2001.12.03 hor
 	//	col.pszText = _T("関数名 *");
 		if(OUTLINE_BOOKMARK == m_nListType){
-			col.pszText = ( sortcol == col_no ? _T("テキスト *") : _T("テキスト") );
+			col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("テキスト *") : _T("テキスト") );
 		}else{
-			col.pszText = ( sortcol == col_no ? _T("関数名 *") : _T("関数名") );
+			col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("関数名 *") : _T("関数名") );
 		}
 	// To Here 2001.12.03 hor
 		col.iSubItem = 0;
@@ -1741,21 +1742,21 @@ void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 
 		col_no = FL_COL_ROW;
 		col.mask = LVCF_TEXT;
-		col.pszText = ( sortcol == col_no ? _T("行 *") : _T("行") );
+		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("行 *") : _T("行") );
 		col.iSubItem = 0;
 		ListView_SetColumn( hwndList, col_no, &col );
 
 		// 2010.03.17 syat 桁追加
 		col_no = FL_COL_COL;
 		col.mask = LVCF_TEXT;
-		col.pszText = ( sortcol == col_no ? _T("桁 *") : _T("桁") );
+		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("桁 *") : _T("桁") );
 		col.iSubItem = 0;
 		ListView_SetColumn( hwndList, col_no, &col );
 
 		col_no = FL_COL_REMARK;
 	// From Here 2001.12.07 hor
 		col.mask = LVCF_TEXT;
-		col.pszText = ( sortcol == col_no ? _T("*") : _T("") );
+		col.pszText = const_cast<TCHAR*>( sortcol == col_no ? _T("*") : _T("") );
 		col.iSubItem = 0;
 		ListView_SetColumn( hwndList, col_no, &col );
 	// To Here 2001.12.07 hor

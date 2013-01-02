@@ -115,7 +115,7 @@ int CDlgSameColor::DoModal( HINSTANCE hInstance, HWND hwndParent, WORD wID, STyp
 	m_pTypes = pTypes;
 	m_cr = cr;
 
-	(void)CDialog::DoModal( hInstance, hwndParent, IDD_SAMECOLOR, NULL );
+	(void)CDialog::DoModal( hInstance, hwndParent, IDD_SAMECOLOR, (LPARAM)NULL );
 
 	return TRUE;
 }

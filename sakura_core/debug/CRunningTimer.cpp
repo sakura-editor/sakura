@@ -16,7 +16,6 @@
 
 #include "StdAfx.h"
 #include "debug/CRunningTimer.h"
-#include "debug/Debug.h"
 #include "_main/global.h"
 
 

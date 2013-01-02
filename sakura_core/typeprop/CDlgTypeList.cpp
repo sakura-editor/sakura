@@ -64,7 +64,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResu
 	int	nRet;
 	m_nSettingType = psResult->cDocumentType;
 	m_bAlertFileAssociation = true;
-	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, NULL );
+	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, (LPARAM)NULL );
 	if( -1 == nRet ){
 		return FALSE;
 	}

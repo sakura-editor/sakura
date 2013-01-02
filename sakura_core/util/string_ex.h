@@ -40,7 +40,6 @@
 */
 
 #include "util/tchar_printf.h"
-#include "charset/charcode.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          メモリ                             //
@@ -137,11 +136,40 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 
 // VS2005以降の安全版文字列関数
 #if _MSC_VER<1400 //VS2005より前なら
-	typedef int error_t;
-	error_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc);
-	
-#endif
+	typedef int errno_t;
+#define _TRUNCATE ((size_t)-1)
+	errno_t strcpy_s(char *dest, size_t num, const char *src);
+	errno_t wcscpy_s(wchar_t *dest, size_t num, const wchar_t *src);
+	errno_t strncpy_s(char *dest, size_t num, const char *src, size_t count);
+	errno_t wcsncpy_s(wchar_t *dest, size_t num, const wchar_t *src, size_t count);
+	errno_t strcat_s(char *dest, size_t num, const char *src);
+	errno_t wcscat_s(wchar_t *dest, size_t num, const wchar_t *src);
 
+	int vsprintf_s(char *buf, size_t num, const char *fmt, va_list vaarg);
+	int vswprintf_s(wchar_t *buf, size_t num, const wchar_t *fmt, va_list vaarg);
+	int vsnprintf_s(char *buf, size_t num, size_t count, const char *fmt, va_list vaarg);
+	int _vsnwprintf_s(wchar_t *buf, size_t num, size_t count, const wchar_t *fmt, va_list vaarg);
+
+	size_t strnlen(const char *str, size_t num);
+	size_t wcsnlen(const wchar_t *str, size_t num);
+#ifdef UNICODE
+#define _tcscpy_s wcscpy_s
+#define _tcsncpy_s wcsncpy_s
+#define _tcscat_s wcscat_s
+#define _tcsnlen wcsnlen
+#define _tcsncicmp _wcsnicmp
+#define _ttempnam _wtempnam
+#define _tWinMain wWinMain
+#else
+#define _tcscpy_s strcpy_s
+#define _tcsncpy_s strncpy_s
+#define _tcscat_s strcat_s
+#define _tcsnlen strnlen
+#define _tcsncicmp _strnicmp
+#define _ttempnam tempnam
+#define _tWinMain WinMain
+#endif
+#endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //        auto系（_UNICODE 定義に依存しない関数）              //

@@ -30,7 +30,6 @@
 #include "io/CTextStream.h"
 #include "util/shell.h"
 #include "util/file.h"
-#include "debug/Debug.h"
 #include "env/CSakuraEnvironment.h"
 
 /* コマンドラインオプション用定数 */

@@ -97,6 +97,7 @@ typedef CRangeBase<CMyPoint>     SelectionRange;
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          ÉcÅ[Éã                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+#include "CMyRect.h"
 
 //ïœä∑ä÷êî
 template <class POINT_T>

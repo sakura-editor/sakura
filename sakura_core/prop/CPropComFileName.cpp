@@ -59,7 +59,7 @@ static const DWORD p_helpids[] = {	//13400
 INT_PTR CALLBACK CPropFileName::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropFileName::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
 INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )

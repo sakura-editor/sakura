@@ -276,13 +276,17 @@ public:
 	CInvalidParameterHandler()
 	{
 		bInvalid = false;	// エラーの有無
+#if 1400 <= _MSC_VER
 		oldParamFunc = _set_invalid_parameter_handler( newParamFunc );	// Release 用（無効パラメータハンドラ）
 		oldRepoFunc = _CrtSetReportHook( newRepoFunc );					// Debug 用（デバッグレポートフック）
+#endif
 	}
 	~CInvalidParameterHandler()
 	{
+#if 1400 <= _MSC_VER
 		_set_invalid_parameter_handler(oldParamFunc);
 		_CrtSetReportHook(oldRepoFunc);
+#endif
 	}
 	bool IsInvalid(){ return bInvalid; }
 private:
@@ -301,12 +305,16 @@ private:
 		return TRUE;
 	}
 	static bool bInvalid;
+#if 1400 <= _MSC_VER
 	static _invalid_parameter_handler oldParamFunc;
 	static _CRT_REPORT_HOOK oldRepoFunc;
+#endif
 };
 bool CInvalidParameterHandler::bInvalid;
+#if 1400 <= _MSC_VER
 _invalid_parameter_handler CInvalidParameterHandler::oldParamFunc;
 _CRT_REPORT_HOOK CInvalidParameterHandler::oldRepoFunc;
+#endif
 
 
 /*! バックアップの作成
