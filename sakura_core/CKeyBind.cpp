@@ -387,8 +387,44 @@ int CKeyBind::GetKeyStrList(
 }
 
 
+
+
+// アクセスキー付きの文字列の作成
+TCHAR*	CKeyBind::MakeMenuLabel(const TCHAR* sName, const TCHAR* sKey)
+{
+	static	TCHAR	sLabel[300];
+	const	TCHAR*	p;
+
+	if (sKey == NULL || sKey[0] == _T('\0')) {
+		return const_cast<TCHAR*>( sName );
+	}
+	else {
+		if( (p = _tcschr( sName, _T('(') )) != NULL
+			  && (p = _tcschr( p, sKey[0] )) != NULL) {
+			// (付その後にアクセスキー
+			_tcsncpy( sLabel, sName, _countof(sLabel) );
+			sLabel[p-sName] = _T('&');
+			_tcsncpy( sLabel + (p-sName) + 1, p, _countof(sLabel) );
+		}
+		else if (_tcscmp( sName + _tcslen(sName) - 3, _T("...") ) == 0) {
+			// 末尾...
+			_tcsncpy( sLabel, sName, _countof(sLabel) );
+			sLabel[_tcslen(sName) - 3] = '\0';						// 末尾の...を取る
+			_tcsncat( sLabel, _T("(&"), _countof(sLabel) );
+			_tcsncat( sLabel, sKey, _countof(sLabel) );
+			_tcsncat( sLabel, _T(")..."), _countof(sLabel) );
+		}
+		else {
+			_stprintf( sLabel, _T("%s(&%s)"), sName, sKey );
+		}
+
+		return sLabel;
+	}
+}
+
 /*! メニューラベルの作成
 	@date 2007.02.22 ryoji デフォルト機能割り当てに関する処理を追加
+	2010/5/17	アクセスキーの追加
 */
 TCHAR* CKeyBind::GetMenuLabel(
 		HINSTANCE	hInstance,
@@ -396,20 +432,25 @@ TCHAR* CKeyBind::GetMenuLabel(
 		KEYDATA*	pKeyNameArr,
 		int			nFuncId,
 		TCHAR*		pszLabel,
+		const TCHAR*	pszKey,
 		BOOL		bKeyStr,
 		BOOL		bGetDefFuncCode /* = TRUE */
 )
 {
-	CMemory		cMemList;
+	const int LABEL_MAX = 256;
 
-	if( 0 == _tcslen( pszLabel ) ){
-		_tcscpy( pszLabel, _T("-- undefined name --") );
-		::LoadString( hInstance, nFuncId, pszLabel, 255 );
+	if( _T('\0') == pszLabel[0] ){
+		::LoadString( hInstance, nFuncId, pszLabel, LABEL_MAX );
 	}
-
+	if( _T('\0') == pszLabel[0] ){
+		_tcscpy( pszLabel, _T("-- undefined name --") );
+	}
+	// アクセスキーの追加	2010/5/17 Uchi
+	_tcsncpy( pszLabel, MakeMenuLabel( pszLabel, pszKey ), LABEL_MAX);
 
 	/* 機能に対応するキー名を追加するか */
 	if( bKeyStr ){
+		CMemory		cMemList;
 		/* 機能に対応するキー名の取得 */
 		if( ( IDM_SELWINDOW <= nFuncId && nFuncId <= IDM_SELWINDOW + 999 )
 		 || ( IDM_SELMRU <= nFuncId && nFuncId <= IDM_SELMRU + 999 )

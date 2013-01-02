@@ -92,7 +92,7 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		}
 
 		//	ƒƒjƒ…[‚É’Ç‰ÁB
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu, TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;

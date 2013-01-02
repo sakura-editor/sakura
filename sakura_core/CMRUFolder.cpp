@@ -69,7 +69,7 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 			szFolder2 );
 
 		//	ƒƒjƒ…[‚É’Ç‰Á
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMemu, TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMemu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;

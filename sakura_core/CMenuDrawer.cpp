@@ -730,11 +730,13 @@ void CMenuDrawer::MyAppendMenu(
 	int				nFlag,
 	int				nFuncId,
 	const TCHAR*	pszLabel,
+	const TCHAR*	pszKey,			// 2010/5/18 Uchi
 	BOOL			bAddKeyStr,
 	int				nForceIconId	//お気に入り	//@@@ 2003.04.08 MIK
 )
 {
 	TCHAR		szLabel[MAX_PATH + 5];
+	TCHAR		szKey[10];
 	int			nFlagAdd = 0;
 	int			i;
 
@@ -745,6 +747,7 @@ void CMenuDrawer::MyAppendMenu(
 		_tcsncpy( szLabel, pszLabel, _countof( szLabel ) - 1 );
 		szLabel[ _countof( szLabel ) - 1 ] = _T('\0');
 	}
+	_tcscpy( szKey, pszKey); 
 	if( nFuncId != 0 ){
 		/* メニューラベルの作成 */
 		CKeyBind::GetMenuLabel(
@@ -753,6 +756,7 @@ void CMenuDrawer::MyAppendMenu(
 			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr,
 			nFuncId,
 			szLabel,
+			szKey,
 			bAddKeyStr
 		 );
 
