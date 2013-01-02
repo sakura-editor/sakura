@@ -676,7 +676,7 @@
 #define IDC_CHECK_KINSOKUHIDE           1623
 #define IDC_PLUGIN_README               1624
 #define IDC_PLUGIN_INST_ZIP             1625
-#define IDC_CHECK_HOKANBYKEYWORD        1619
+#define IDC_CHECK_HOKANBYKEYWORD        1626
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
