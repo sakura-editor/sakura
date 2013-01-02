@@ -133,10 +133,15 @@ int CHokanMgr::Search(
 	int				bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
 	BOOL			bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
 	int				nHokanType,
+	bool			bHokanByKeyword,
 	CNativeW*		pcmemHokanWord	// 2001/06/19 asa-o
 )
 {
 	CEditView* pcEditView = (CEditView*)m_lParam;
+
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = CShareData::getInstance()->GetShareData();
+
 	/*
 	||  補完キーワードの検索
 	||
@@ -161,6 +166,14 @@ int CHokanMgr::Search(
 			bHokanLoHiCase,
 			m_vKouho,
 			1024 // 編集中データからなので数を制限しておく
+		);
+	}
+	// 2012.10.13 Moca 強調キーワードから候補を探す
+	if( bHokanByKeyword ){
+		HokanSearchByKeyword(
+			pszCurWord,
+			bHokanLoHiCase,
+			m_vKouho
 		);
 	}
 
@@ -209,8 +222,6 @@ int CHokanMgr::Search(
 	}
 
 
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
 
 //	m_hFont = hFont;
 	m_poWin.x = ppoWin->x;
@@ -335,6 +346,36 @@ int CHokanMgr::Search(
 	return kouhoNum;
 }
 
+void CHokanMgr::HokanSearchByKeyword(
+	const wchar_t*	pszCurWord,
+	BOOL 			bHokanLoHiCase,
+	vector_ex<std::wstring>& 	vKouho
+){
+	const CEditView* pcEditView = (const CEditView*)m_lParam;
+	const STypeConfig& type = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute();
+	CKeyWordSetMgr& keywordMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
+	const int nKeyLen = wcslen(pszCurWord);
+	for( int kwdset = 0; kwdset < MAX_KEYWORDSET_PER_TYPE; kwdset++ ){
+		if( type.m_nKeyWordSetIdx[kwdset] == -1 ){
+			continue;
+		}
+		const int keyCount = keywordMgr.GetKeyWordNum(kwdset);
+		for(int i = 0; i < keyCount; i++){
+			const wchar_t* word = keywordMgr.GetKeyWord(kwdset,i);
+			int nRet;
+			if( bHokanLoHiCase ){
+				nRet = auto_memicmp(pszCurWord, word, nKeyLen );
+			}else{
+				nRet = auto_memcmp(pszCurWord, word, nKeyLen );
+			}
+			if( nRet != 0 ){
+				continue;
+			}
+			std::wstring strWord = std::wstring(word);
+			AddKouhoUnique(vKouho, strWord);
+		}
+	}
+}
 
 
 BOOL CHokanMgr::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )

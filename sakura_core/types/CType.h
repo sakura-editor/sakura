@@ -160,6 +160,8 @@ struct STypeConfig{
 	int					m_nHokanType;					/*!< 入力補完 種別(プラグイン) */
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	bool				m_bUseHokanByFile;				//!< 入力補完 開いているファイル内から候補を探す
+	bool				m_bUseHokanByKeyword;			// 強調キーワードから入力補完
+	
 	//	2001/06/19 asa-o
 	bool				m_bHokanLoHiCase;				//!< 入力補完機能：英大文字小文字を同一視する
 

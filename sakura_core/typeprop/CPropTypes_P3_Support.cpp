@@ -9,6 +9,7 @@
 #include "util/module.h"
 #include "util/shell.h"
 #include "util/file.h" // _IS_REL_PATH
+#include "util/window.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -17,6 +18,7 @@ static const DWORD p_helpids3[] = {	//11500
 	IDC_COMBO_HOKAN_TYPE,			HIDC_COMBO_HOKAN_TYPE,				//入力補完タイプ
 	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
 	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//現在のファイルから入力補完
+	IDC_CHECK_HOKANBYKEYWORD,		HIDC_CHECK_HOKANBYKEYWORD,			//強調キーワードから入力補完
 	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
 	IDC_EDIT_TYPEEXTHELP,			HIDC_EDIT_TYPEEXTHELP,				//外部ヘルプファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_TYPEOPENHELP,		HIDC_BUTTON_TYPEOPENHELP,			//外部ヘルプファイル参照	// 2006.08.06 ryoji
@@ -277,6 +279,7 @@ void CPropSupport::SetData( HWND hwndDlg )
 
 	// 2003.06.25 Moca ファイルからの補完機能
 	::CheckDlgButton( hwndDlg, IDC_CHECK_HOKANBYFILE, m_Types.m_bUseHokanByFile );
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_HOKANBYKEYWORD, m_Types.m_bUseHokanByKeyword );
 
 	//@@@ 2002.2.2 YAZAKI
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
@@ -340,6 +343,7 @@ int CPropSupport::GetData( HWND hwndDlg )
 	m_Types.m_bHokanLoHiCase = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANLOHICASE )!= 0;
 
 	m_Types.m_bUseHokanByFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HOKANBYFILE ) != 0;
+	m_Types.m_bUseHokanByKeyword = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_HOKANBYKEYWORD );
 
 	/* 入力補完 単語ファイル */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile, _countof2( m_Types.m_szHokanFile ));

@@ -129,6 +129,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bHokanLoHiCase,
 		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseHokanByFile, // 2003.06.22 Moca
 		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nHokanType,
+		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseHokanByKeyword,
 		pcmemHokanWord
 	);
 	/* •âŠ®Œó•â‚Ì”‚É‚æ‚Á‚Ä“®ì‚ğ•Ï‚¦‚é */

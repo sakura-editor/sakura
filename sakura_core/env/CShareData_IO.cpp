@@ -1444,6 +1444,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	cProfile.IOProfileData( pszSecName, LTEXT("bUseHokanByFile")		, types.m_bUseHokanByFile );
+	cProfile.IOProfileData( pszSecName, LTEXT("bUseHokanByKeyword")		, types.m_bUseHokanByKeyword );
 
 	//@@@ 2002.2.4 YAZAKI
 	cProfile.IOProfileData( pszSecName, LTEXT("szExtHelp")			, types.m_szExtHelp );

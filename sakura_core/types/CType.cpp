@@ -172,6 +172,7 @@ void _DefaultConfig(STypeConfig* pType)
 
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	pType->m_bUseHokanByFile = false;			//! 入力補完 開いているファイル内から候補を探す
+	pType->m_bUseHokanByKeyword = false;			// 強調キーワードから入力補完
 
 	// 文字コード設定
 	pType->m_encoding.m_bPriorCesu8 = false;
