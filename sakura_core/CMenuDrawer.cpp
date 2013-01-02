@@ -1569,7 +1569,10 @@ TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
 
 
 
-
+struct WorkData{
+	int				idx;
+	MENUITEMINFO	mii;
+};
 
 /*! メニューアクセスキー押下時の処理(WM_MENUCHAR処理) */
 LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -1591,10 +1594,6 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		chUser = _totupper( chUser );
 	}
 
-	struct WorkData{
-		int				idx;
-		MENUITEMINFO	mii;
-	};
 	// 2011.11.18 vector化
 	std::vector<WorkData> vecAccel;
 	size_t nAccelSel = 99999;

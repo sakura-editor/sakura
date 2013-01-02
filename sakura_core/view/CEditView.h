@@ -48,6 +48,7 @@
 #include "mfclike/CMyWnd.h"
 #include "doc/CDocListener.h"
 #include "util/container.h"
+#include "view/colors/EColorIndexType.h"
 
 class CEditView;
 
@@ -63,7 +64,6 @@ struct SColorStrategyInfo;
 
 // struct DispPos; //	’N‚©‚ªinclude‚µ‚Ä‚Ü‚·
 // class CColorStrategy;	// ’N‚©‚ªinclude‚µ‚Ä‚Ü‚·
-// enum EColorIndexType;	// ’N‚©‚ªinclude‚µ‚Ä‚Ü‚·
 class CColor_Found;
 
 #ifndef IDM_COPYDICINFO

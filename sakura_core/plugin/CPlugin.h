@@ -227,7 +227,8 @@ class CPlugin
 	//型定義
 protected:
 	typedef std::wstring wstring;
-	typedef std::basic_string<TCHAR> tstring;
+	typedef std::string string;
+
 public:
 	typedef std::list<CPlugin*> List;		//プラグインのリスト
 	typedef List::const_iterator ListIter;	//そのイテレータ

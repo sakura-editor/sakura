@@ -71,6 +71,13 @@ private:
 		CDummy();
 		CDummy(int);
 	};
+	template<bool t, bool=false> struct ChooseIntOrDummy {
+		typedef int Type;
+	};
+	// クラス内でテンプレートの特殊化をするとG++に怒られるので部分特殊化にする
+	template<bool _> struct ChooseIntOrDummy<false, _> {
+		typedef CDummy Type;
+	};
 public:
 	//コンストラクタ・デストラクタ
 	CStrictInteger(){ m_value=0; }
@@ -129,26 +136,23 @@ public:
 
 	// -- -- -- -- 別種のCStrictIntegerとの演算は絶対許さん(やりたきゃintでも介してください) -- -- -- -- //
 private:
-	template <bool B0,bool B1,bool B2,bool B3> Me&  operator += (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&){ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> Me&  operator -= (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&){ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> Me   operator +  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> Me   operator -  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> Me&  operator =  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&){ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> bool operator <  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> bool operator <= (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> bool operator >  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> bool operator >= (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> bool operator == (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
-	template <bool B0,bool B1,bool B2,bool B3> bool operator != (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const{ DAMEDAYO; }
+	template <bool B0,bool B1,bool B2,bool B3> Me&  operator += (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&);
+	template <bool B0,bool B1,bool B2,bool B3> Me&  operator -= (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&);
+	template <bool B0,bool B1,bool B2,bool B3> Me   operator +  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
+	template <bool B0,bool B1,bool B2,bool B3> Me   operator -  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
+	template <bool B0,bool B1,bool B2,bool B3> Me&  operator =  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&);
+	template <bool B0,bool B1,bool B2,bool B3> bool operator <  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
+	template <bool B0,bool B1,bool B2,bool B3> bool operator <= (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
+	template <bool B0,bool B1,bool B2,bool B3> bool operator >  (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
+	template <bool B0,bool B1,bool B2,bool B3> bool operator >= (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
+	template <bool B0,bool B1,bool B2,bool B3> bool operator == (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
+	template <bool B0,bool B1,bool B2,bool B3> bool operator != (const CStrictInteger<NOT_STRICT_ID,B0,B1,B2,B3>&) const;
 
 
 	// -- -- -- -- ALLOW_ADDSUB_INTがtrueの場合は、intとの加減算を許す -- -- -- -- //
 private:
-	template <bool ALLOW> struct AddsubInteger{};
-	template<> struct AddsubInteger<true>{ typedef int Type; };
-	template<> struct AddsubInteger<false>{ typedef CDummy Type; };
-	typedef typename AddsubInteger< ALLOW_ADDSUB_INT>::Type AddsubIntegerType;
-	typedef typename AddsubInteger<!ALLOW_ADDSUB_INT>::Type NotAddsubIntegerType;
+	typedef typename ChooseIntOrDummy< ALLOW_ADDSUB_INT>::Type AddsubIntegerType;
+	typedef typename ChooseIntOrDummy<!ALLOW_ADDSUB_INT>::Type NotAddsubIntegerType;
 public:
 	Me& operator += (AddsubIntegerType rhs) { m_value += rhs; return *this; }
 	Me& operator -= (AddsubIntegerType rhs) { m_value -= rhs; return *this; }
@@ -164,11 +168,8 @@ private:
 
 	// -- -- -- -- ALLOW_CMP_INTがtrueの場合は、intとの比較を許す -- -- -- -- //
 private:
-	template <bool ALLOW> struct CmpInteger{};
-	template<> struct CmpInteger<true>{ typedef int Type; };
-	template<> struct CmpInteger<false>{ typedef CDummy Type; };
-	typedef typename CmpInteger< ALLOW_CMP_INT>::Type CmpIntegerType;
-	typedef typename CmpInteger<!ALLOW_CMP_INT>::Type NotCmpIntegerType;
+	typedef typename ChooseIntOrDummy< ALLOW_CMP_INT>::Type CmpIntegerType;
+	typedef typename ChooseIntOrDummy<!ALLOW_CMP_INT>::Type NotCmpIntegerType;
 public:
 	bool operator <  (CmpIntegerType rhs) const{ return m_value <  rhs; }
 	bool operator <= (CmpIntegerType rhs) const{ return m_value <= rhs; }
@@ -188,25 +189,19 @@ private:
 
 	// -- -- -- -- ALLOW_CAST_INTがtrueの場合は、intへの暗黙の変換を許す -- -- -- -- //
 private:
-	template <bool ALLOW> struct CastInteger{};
-	template<> struct CastInteger<true>{ typedef int Type; };
-	template<> struct CastInteger<false>{ typedef CDummy Type; };
-	typedef typename CastInteger< ALLOW_CAST_INT>::Type CastIntegerType;
-	typedef typename CastInteger<!ALLOW_CAST_INT>::Type NotCastIntegerType;
+	typedef typename ChooseIntOrDummy< ALLOW_CAST_INT>::Type CastIntegerType;
+	typedef typename ChooseIntOrDummy<!ALLOW_CAST_INT>::Type NotCastIntegerType;
 public:
 	operator CastIntegerType() const{ return m_value; }
 private:
 	//※ALLOW_CAST_INTがfalseの場合は、privateメンバを置くことにより、「明示的に」暗黙変換を禁止する。
-	operator NotCastIntegerType() const{ DAMEDAYO; }
+	operator NotCastIntegerType() const;
 
 
 	// -- -- -- -- ALLOW_ASSIGNOP_INTがtrueの場合は、intの代入を許す -- -- -- -- //
 private:
-	template <bool ALLOW> struct AssignInteger{};
-	template<> struct AssignInteger<true>{ typedef int Type; };
-	template<> struct AssignInteger<false>{ typedef CDummy Type; };
-	typedef typename AssignInteger< ALLOW_ASSIGNOP_INT>::Type AssignIntegerType;
-	typedef typename AssignInteger<!ALLOW_ASSIGNOP_INT>::Type NotAssignIntegerType;
+	typedef typename ChooseIntOrDummy< ALLOW_ASSIGNOP_INT>::Type AssignIntegerType;
+	typedef typename ChooseIntOrDummy<!ALLOW_ASSIGNOP_INT>::Type NotAssignIntegerType;
 public:
 	Me& operator = (const AssignIntegerType& rhs){ m_value = rhs; return *this; }
 private:

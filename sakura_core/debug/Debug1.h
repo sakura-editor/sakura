@@ -98,7 +98,7 @@ inline void DBPRINT_W( ... ){}
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //超簡易版  2007.09.29 kobake 作成
-void DBMSG_IMP(const ACHAR* msg); //!< メッセージボックスを表示。キャプションにはexe名。
+void DBMSG_IMP(const char* msg); //!< メッセージボックスを表示。キャプションにはexe名。
 
 #ifdef _DEBUG
 #define DBMSG DBMSG_IMP

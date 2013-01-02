@@ -488,7 +488,7 @@ int _CheckJisAnyPart(
 /*!
 	UTF-16 LE/BE 文字をチェック　(組み合わせ文字列考慮なし)
 */
-inline int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
+int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
 {
 	wchar_t wc1, wc2;
 	int ncwidth;

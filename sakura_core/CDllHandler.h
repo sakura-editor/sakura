@@ -59,7 +59,7 @@ public:
 	DLLIMP* operator->(){ return m_pcDllImp; }
 
 	//! 利用状態のチェック（operator版）
-	bool operator!() const { return IsAvailable(); }
+	bool operator!() const { return m_pcDllImp->IsAvailable(); }
 
 private:
 	DLLIMP*	m_pcDllImp;

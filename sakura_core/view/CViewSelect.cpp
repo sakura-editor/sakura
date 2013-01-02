@@ -10,6 +10,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
+#include <limits.h>
 
 CViewSelect::CViewSelect(CEditView* pcEditView)
 : m_pcEditView(pcEditView)

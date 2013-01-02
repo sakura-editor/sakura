@@ -13,7 +13,6 @@
 #include "StdAfx.h"
 #include "COpeBuf.h"
 #include "COpeBlk.h"// 2002/2/10 aroka
-#include "debug/Debug.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

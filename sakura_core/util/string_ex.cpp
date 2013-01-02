@@ -2,6 +2,7 @@
 #include "string_ex.h"
 #include "charset/charcode.h"
 #include "util/std_macro.h"
+#include <limits.h>
 
 SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
 
@@ -222,7 +223,7 @@ const char* stristr_j( const char* s1, const char* s2 )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 #if _MSC_VER<1400 //VS2005より前なら
-error_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
+errno_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
 {
 	// 本物は _set_invalid_parameter_handler で設定されたハンドラが起動します
 	if(!szDst)return EINVAL;
@@ -247,9 +248,101 @@ error_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
 
 	return 0;
 }
-	
-#endif
 
+errno_t strcat_s(char *dest, size_t num, const char *src)
+{
+	if(!dest || !src) return EINVAL;
+	size_t size1 = strnlen(dest, num);
+	if(size1 == num) return EINVAL; // destが未終了
+	if(num <= size1+strlen(src)) return ERANGE;
+	strcat(dest, src);
+	return 0;
+}
+errno_t strcpy_s(char *dest, size_t num, const char *src)
+{
+	if(!dest || !src) return EINVAL;
+	if(num <= strlen(src)) return ERANGE;
+	strcpy(dest, src);
+	return 0;
+}
+errno_t wcscpy_s(wchar_t *dest, size_t num, const wchar_t *src)
+{
+	if(!dest || !src) return EINVAL;
+	if(num <= wcslen(src)) return ERANGE;
+	wcscpy(dest, src);
+	return 0;
+}
+errno_t strncpy_s(char *dest, size_t num, const char *src, size_t count)
+{
+	if(!dest || !src) return EINVAL;
+	if(num == 0) return EINVAL;
+	if(count == _TRUNCATE) {
+		memcpy(dest, src, std::min(num, strlen(src)+1));
+		dest[num-1] = '\0';
+	} else {
+		if(num <= count) { *dest = '\0'; return EINVAL; }
+		memcpy(dest, src, count+1);
+	}
+	return 0;
+}
+errno_t wcsncpy_s(wchar_t *dest, size_t num, const wchar_t *src, size_t count)
+{
+	if(!dest || !src) return EINVAL;
+	if(num == 0) return EINVAL;
+	if(count == _TRUNCATE) {
+		wmemcpy(dest, src, std::min(num, wcslen(src)+1));
+		dest[num-1] = L'\0';
+	} else {
+		if(num <= count) { *dest = L'\0'; return EINVAL; }
+		wmemcpy(dest, src, count+1);
+	}
+	return 0;
+}
+size_t strnlen(const char *str, size_t num)
+{
+	for(size_t i = 0; i < num; ++i)
+	{
+		if(str[i] == '\0') return i;
+	}
+	return num;
+}
+size_t wcsnlen(const wchar_t *str, size_t num)
+{
+	for(size_t i = 0; i < num; ++i)
+	{
+		if(str[i] == L'\0') return i;
+	}
+	return num;
+}
+int vsprintf_s(char *buf, size_t num, const char *fmt, va_list vaarg)
+{
+	// 手抜き
+	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
+	buf[num-1] = '\0';
+	return _vsnprintf(buf, num-1, fmt, vaarg);
+}
+int vswprintf_s(wchar_t *buf, size_t num, const wchar_t *fmt, va_list vaarg)
+{
+	// 手抜き
+	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
+	buf[num-1] = L'\0';
+	return _vsnwprintf(buf, num-1, fmt, vaarg);
+}
+int vsnprintf_s(char *buf, size_t num, size_t count, const char *fmt, va_list vaarg)
+{
+	// 手抜き
+	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
+	buf[num-1] = L'\0';
+	return _vsnprintf(buf, num-1, fmt, vaarg);
+}
+int _vsnwprintf_s(wchar_t *buf, size_t num, size_t count, const wchar_t *fmt, va_list vaarg)
+{
+	// 手抜き
+	if(!buf || num == 0 || !fmt) { errno = EINVAL; return -1; }
+	buf[num-1] = L'\0';
+	return _vsnwprintf(buf, num-1, fmt, vaarg);
+}
+#endif
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -764,6 +857,7 @@ SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, un
 // ※ ランタイムの towupper(c)/tolower(c) が将来期待する動作になったとしてもこの方法を使い続けて問題無いはず
 int skr_towupper( int c )
 {
+#ifndef __MINGW32__
 	static wchar_t szMap[256];	// c < 256 用の変換テーブル
 	static bool bInit = false;
 	if( !bInit ){
@@ -778,11 +872,13 @@ int skr_towupper( int c )
 	}
 
 	if( c < 256 ) return szMap[c];
+#endif
 	return towupper( c );
 }
 
 int skr_towlower( int c )
 {
+#ifndef __MINGW32__
 	static wchar_t szMap[256];	// c < 256 用の変換テーブル
 	static bool bInit = false;
 	if( !bInit ){
@@ -796,5 +892,6 @@ int skr_towlower( int c )
 	}
 
 	if( c < 256 ) return szMap[c];
+#endif
 	return towlower( c );
 }

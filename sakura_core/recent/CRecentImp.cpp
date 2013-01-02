@@ -542,9 +542,13 @@ template class CRecentImp<CCmdString, LPCTSTR>;
 template class CRecentImp<EditNode>;
 template class CRecentImp<EditInfo>;
 template class CRecentImp<CPathString, LPCTSTR>;
+#ifndef __MINGW32__
 template class CRecentImp<CMetaPath, LPCTSTR>;
 template class CRecentImp<CGrepFileString, LPCTSTR>;
 template class CRecentImp<CGrepFolderString, LPCTSTR>;
-template class CRecentImp<CReplaceString, LPCWSTR>;
 template class CRecentImp<CSearchString, LPCWSTR>;
 template class CRecentImp<CTagjumpKeywordString, LPCWSTR>;
+#endif
+#if !defined(__MINGW32__) || (defined(__MINGW32__) && !defined(UNICODE))
+template class CRecentImp<CReplaceString, LPCWSTR>;
+#endif

@@ -17,7 +17,6 @@
 
 #include "StdAfx.h"
 #include "CProcess.h"
-#include "debug/Debug.h"
 #include "util/module.h"
 
 /*!
@@ -28,11 +27,13 @@
 */
 CProcess::CProcess(
 	HINSTANCE	hInstance,		//!< handle to process instance
-	LPTSTR		lpCmdLine		//!< pointer to command line
+	LPCTSTR		lpCmdLine		//!< pointer to command line
 )
 : m_hInstance( hInstance )
 , m_hWnd( 0 )
+#ifndef DISABLE_CRASHDUMP
 , m_pfnMiniDumpWriteDump(NULL)
+#endif
 {
 }
 
@@ -68,6 +69,7 @@ bool CProcess::Run()
 {
 	if( InitializeProcess() )
 	{
+#ifndef DISABLE_CRASHDUMP
 		HMODULE hDllDbgHelp = LoadLibraryExedir( _T("dbghelp.dll") );
 		m_pfnMiniDumpWriteDump = NULL;
 		if( hDllDbgHelp ){
@@ -75,8 +77,10 @@ bool CProcess::Run()
 		}
 
 		__try {
+#endif
 			MainLoop() ;
 			OnExitProcess();
+#ifndef DISABLE_CRASHDUMP
 		}
 		__except( WriteDump( GetExceptionInformation() ) ){
 		}
@@ -85,11 +89,13 @@ bool CProcess::Run()
 			::FreeLibrary( hDllDbgHelp );
 			m_pfnMiniDumpWriteDump = NULL;
 		}
+#endif
 		return true;
 	}
 	return false;
 }
 
+#ifndef DISABLE_CRASHDUMP
 /*!
 	@brief クラッシュダンプ
 	
@@ -133,3 +139,4 @@ int CProcess::WriteDump( PEXCEPTION_POINTERS pExceptPtrs )
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
+#endif

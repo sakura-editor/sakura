@@ -19,7 +19,6 @@
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocReader.h"
-#include "debug/Debug.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "window/CEditWnd.h"
 #include "parse/CWordParse.h"

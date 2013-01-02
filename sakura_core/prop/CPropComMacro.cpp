@@ -72,7 +72,7 @@ static const DWORD p_helpids[] = {	//11700
 INT_PTR CALLBACK CPropMacro::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropMacro::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
 /*! Macroページのメッセージ処理
@@ -234,7 +234,7 @@ void CPropMacro::SetData( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		sItem.pszText = m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute ? _T("on") : _T("off");
+		sItem.pszText = const_cast<TCHAR*>(m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute ? _T("on") : _T("off"));
 		ListView_SetItem( hListView, &sItem );
 
 		// 自動実行マクロ	// 2006.09.01 ryoji
@@ -370,7 +370,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 void CPropMacro::InitDialog( HWND hwndDlg )
 {
 	struct ColumnData {
-		TCHAR *title;
+		const TCHAR *title;
 		int width;
 	} ColumnList[] = {
 		{ _T("番号"), 40 },
@@ -394,7 +394,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 		
 		memset_raw( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
-		sColumn.pszText = ColumnList[pos].title;
+		sColumn.pszText = const_cast<TCHAR*>(ColumnList[pos].title);
 		sColumn.cx = ColumnList[pos].width;
 		sColumn.iSubItem = pos;
 		sColumn.fmt = LVCFMT_LEFT;
@@ -482,7 +482,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	sItem.iItem = index;
 	sItem.mask = LVIF_TEXT;
 	sItem.iSubItem = 3;
-	sItem.pszText = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? _T("on") : _T("off");
+	sItem.pszText = const_cast<TCHAR*>(::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? _T("on") : _T("off"));
 	ListView_SetItem( hListView, &sItem );
 
 	// 自動実行マクロ	// 2006.09.01 ryoji

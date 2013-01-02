@@ -50,7 +50,6 @@ class CPluginIfObj : public CWSHIfObj {
 	};
 	typedef std::string string;
 	typedef std::wstring wstring;
-	typedef std::basic_string<TCHAR> tstring;
 
 	// コンストラクタ
 public:
@@ -133,7 +132,8 @@ public:
 
 				cProfile.ReadProfile( m_cPlugin.GetOptionPath().c_str() );
 				cProfile.SetWritingMode();
-				cProfile.IOProfileData( Arguments[0], Arguments[1], wstring(Arguments[2]) );
+				wstring tmp(Arguments[2]);
+				cProfile.IOProfileData( Arguments[0], Arguments[1], tmp );
 				cProfile.WriteProfile( m_cPlugin.GetOptionPath().c_str(), (m_cPlugin.m_sName + L" プラグイン設定ファイル").c_str() );
 			}
 			break;

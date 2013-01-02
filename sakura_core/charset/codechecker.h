@@ -432,7 +432,7 @@ inline int CheckJisUnknownPart( const char *pS, const int nLen,
 #define UC_NONCHARACTER 1  //!< 非文字を不正文字とする
 
 /* --- Unicode 系コードチェック */
-inline int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );
+int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );
 inline int CheckUtf16leChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, false ); }
 inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, true ); }
 

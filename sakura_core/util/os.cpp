@@ -341,7 +341,7 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 	int		nSystemResources;
 	int		nUserResources;
 	int		nGDIResources;
-	TCHAR*	pszResourceName;
+	const TCHAR*	pszResourceName;
 	/* システムリソースの取得 */
 	if( GetSystemResources( &nSystemResources, &nUserResources,	&nGDIResources ) ){
 //		MYTRACE_A( "nSystemResources=%d\n", nSystemResources );

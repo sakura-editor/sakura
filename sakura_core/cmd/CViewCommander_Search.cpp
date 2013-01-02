@@ -29,6 +29,7 @@
 #include "window/CEditWnd.h"/// 2002/2/3 aroka 追加
 #include "util/window.h"
 #include "util/string_ex2.h"
+#include <limits.h>
 #include "sakura_rc.h"
 
 
@@ -103,6 +104,10 @@ void CViewCommander::Command_SEARCH_NEXT(
 	CLayoutRange sSelect_Old;
 	CLayoutInt  nLineNumOld;
 
+	bool bRedo;		//	hor
+	int  nIdxOld;		//	hor
+	int nSearchResult;
+
 	bSelecting = FALSE;
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
@@ -172,14 +177,14 @@ void CViewCommander::Command_SEARCH_NEXT(
 		}
 	}
 
-	bool bRedo			= TRUE;		//	hor
 	nLineNumOld = nLineNum;	//	hor
-	int  nIdxOld		= nIdx;		//	hor
+	bRedo			= TRUE;		//	hor
+	nIdxOld			= nIdx;		//	hor
 
 re_do:;
 	 /* 現在位置より後ろの位置を検索する */
 	// 2004.05.30 Moca 引数をGetShareData()からメンバ変数に変更。他のプロセス/スレッドに書き換えられてしまわないように。
-	int nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
+	nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
 		nLineNum,						// 検索開始レイアウト行
 		nIdx,							// 検索開始データ位置
 		m_pCommanderView->m_strCurSearchKey.c_str(),					// 検索条件
@@ -980,7 +985,8 @@ void CViewCommander::Command_REPLACE_ALL()
 					GetSelect().GetTo(),
 					&ptOldTmp
 				);
-				ptOld=CLayoutPoint(ptOldTmp); //$$ レイアウト型に無理やりロジック型を代入。気持ち悪い
+				ptOld.x=(CLayoutInt)ptOldTmp.x; //$$ レイアウト型に無理やりロジック型を代入。気持ち悪い
+				ptOld.y=(CLayoutInt)ptOldTmp.y;
 
 				// 置換前の行の長さ(改行は１文字と数える)を保存しておいて、置換前後で行位置が変わった場合に使用
 				linOldLen = rDocLineMgr.GetLine(ptOldTmp.GetY2())->GetLengthWithoutEOL() + CLogicInt(1);

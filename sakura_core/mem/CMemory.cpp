@@ -47,7 +47,6 @@
 #include "charset/charcode.h"
 #include "charset/CShiftJis.h"
 #include "_main/global.h"
-#include "debug/debug.h"
 #include "debug/CRunningTimer.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

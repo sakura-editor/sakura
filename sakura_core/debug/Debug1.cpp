@@ -17,7 +17,7 @@
 #include "StdAfx.h"
 #include <stdarg.h>
 #include <tchar.h>
-#include "debug/Debug.h"
+#include "debug/Debug1.h"
 #include "_main/global.h"
 
 #ifdef _DEBUG

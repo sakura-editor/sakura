@@ -86,7 +86,7 @@ static const TCHAR * MakeDispLabel( SMainMenuWork* );
 // 特別機能
 struct SSpecialFunc	{
 	EFunctionCode	m_nFunc;		// Function
-	WCHAR* 			m_sName;		// 名前
+	const WCHAR* 	m_sName;		// 名前
 };
 
 static	const	TCHAR*	NAME_SPECIAL_TOP	= _T("特別機能");
@@ -118,7 +118,7 @@ static WNDPROC	m_wpEdit = NULL;
 INT_PTR CALLBACK CPropMainMenu::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropMainMenu::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
 

@@ -34,7 +34,6 @@
 #include "mem/CMemory.h"
 
 
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //
 //    Quoted-Printable デコード
@@ -526,7 +525,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	}
 	// ファイル名を格納
 	if( pszFilename ){
-		strtotcs( pszFilename, pwstart, nwlen );
+		strtotcs( pszFilename, pwstart, (size_t)nwlen );
 		pszFilename[nwlen] = _WINT('\0');
 	}
 

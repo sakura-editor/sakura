@@ -28,32 +28,34 @@
 #include "CProfile.h"
 
 //文字列バッファの型
-struct StringBufferW{
+struct StringBufferW_{
 	WCHAR*    pData;
 	const int nDataCount;
 
-	StringBufferW() : pData(L""), nDataCount(0) { }
-	StringBufferW(WCHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
+//	StringBufferW_() : pData(L""), nDataCount(0) { }
+	StringBufferW_(WCHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
 
-	StringBufferW& operator = (const StringBufferW& rhs)
+	StringBufferW_& operator = (const StringBufferW_& rhs)
 	{
 		auto_strcpy_s(pData,nDataCount,rhs.pData);
 		return *this;
 	}
 };
-struct StringBufferA{
+struct StringBufferA_{
 	ACHAR* pData;
 	int    nDataCount;
 
-	StringBufferA() : pData(""), nDataCount(0) { }
-	StringBufferA(ACHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
+//	StringBufferA_() : pData(""), nDataCount(0) { }
+	StringBufferA_(ACHAR* _pData, int _nDataCount) : pData(_pData), nDataCount(_nDataCount) { }
 
-	StringBufferA& operator = (const StringBufferA& rhs)
+	StringBufferA_& operator = (const StringBufferA_& rhs)
 	{
 		auto_strcpy_s(pData,nDataCount,rhs.pData);
 		return *this;
 	}
 };
+typedef const StringBufferA_ StringBufferA;
+typedef const StringBufferW_ StringBufferW;
 #ifdef _UNICODE
 	typedef StringBufferW StringBufferT;
 #else
@@ -74,7 +76,9 @@ class CDataProfile : public CProfile{
 private:
 	//専用型
 	typedef std::wstring wstring;
+#ifndef UNICODE
 	typedef std::tstring tstring;
+#endif
 
 protected:
 	static const wchar_t* _work_itow(int n)

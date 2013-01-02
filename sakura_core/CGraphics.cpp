@@ -39,7 +39,7 @@ void CGraphics::Init(HDC hdc)
 	//ƒuƒ‰ƒV
 	m_hbrOrg = NULL;
 	m_hbrCurrent = NULL;
-	m_bDynamicBrush = NULL;
+	m_bDynamicBrush = false;
 }
 
 CGraphics::~CGraphics()

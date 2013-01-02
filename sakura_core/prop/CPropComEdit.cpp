@@ -18,7 +18,6 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -50,7 +49,7 @@ static const DWORD p_helpids[] = {	//10210
 INT_PTR CALLBACK CPropEdit::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropEdit::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 

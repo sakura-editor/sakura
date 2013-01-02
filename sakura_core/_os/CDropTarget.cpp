@@ -18,7 +18,6 @@
 #include "window/CEditWnd.h"	// 2008.06.20 ryoji
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "_main/global.h"
-#include "debug/Debug.h"// 2002/2/3 aroka
 #include "CClipboard.h"
 
 

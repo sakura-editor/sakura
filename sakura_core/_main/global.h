@@ -122,7 +122,7 @@ SAKURA_CORE_API	enum EBarChangeNotifyType {
 #define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
 
 struct SColorAttributeData{
-	TCHAR*			szName;
+	const TCHAR*			szName;
 	unsigned int	fAttribute;
 };
 SAKURA_CORE_API extern const SColorAttributeData g_ColorAttributeArr[];

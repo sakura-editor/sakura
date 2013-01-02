@@ -783,9 +783,10 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 		}
 		//Path
 		FILE* fp2;
+		const WCHAR* p4 = p2;
 		if( (fp2=_tfopen_absini(to_tchar(p3),_T("r"))) == NULL ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
-			p2 = L"【辞書ファイルが見つかりません】";
+			p4 = L"【辞書ファイルが見つかりません】";
 			b_enable_flag = 0;
 		}
 		else
@@ -801,7 +802,7 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 
 		//良さそうなら
 		m_Types.m_KeyHelpArr[i].m_bUse = (b_enable_flag!=0);	// 2007.02.03 genta
-		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, to_tchar(p2));
+		_tcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, to_tchar(p4));
 		_tcscpy(m_Types.m_KeyHelpArr[i].m_szPath,  to_tchar(p3));
 		i++;
 	}

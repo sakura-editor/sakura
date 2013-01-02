@@ -28,6 +28,8 @@
 #ifndef SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_
 #define SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_
 
+#include <ShlDisp.h>
+
 class CZipFile {
 private:
 	IShellDispatch*	psd;
@@ -38,7 +40,7 @@ public:
 	CZipFile() {
 		HRESULT		hr;
 
-		hr = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&psd));
+		hr = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_IShellDispatch, reinterpret_cast<void **>(&psd));
 		if (FAILED(hr)) {
 			psd = NULL;
 		}

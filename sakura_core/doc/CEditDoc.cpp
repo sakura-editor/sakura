@@ -46,7 +46,6 @@
 #include "charset/CCodeMediator.h"
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
-#include "debug/Debug.h"
 #include "env/CSakuraEnvironment.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"

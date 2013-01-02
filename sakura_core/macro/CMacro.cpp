@@ -28,7 +28,6 @@
 #include "view/CEditView.h" //2002/2/10 aroka
 #include "macro/CSMacroMgr.h" //2002/2/10 aroka
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ƒwƒbƒ_®—
-#include "debug/Debug.h"
 #include "_os/OleTypes.h" //2003-02-21 ‹S
 #include "io/CTextStream.h"
 #include "window/CEditWnd.h"

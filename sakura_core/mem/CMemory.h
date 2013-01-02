@@ -62,10 +62,10 @@ public:
 	void Clean(){ _Empty(); }
 	void Clear(){ _Empty(); }
 
-	__forceinline const void* GetRawPtr(int* pnLength) const;      //!< データへのポインタと長さ返す
-	__forceinline void* GetRawPtr(int* pnLength);                  //!< データへのポインタと長さ返す
-	__forceinline const void* GetRawPtr() const{ return m_pRawData; } //!< データへのポインタを返す
-	__forceinline void* GetRawPtr(){ return m_pRawData; }             //!< データへのポインタを返す
+	inline const void* GetRawPtr(int* pnLength) const;      //!< データへのポインタと長さ返す
+	inline void* GetRawPtr(int* pnLength);                  //!< データへのポインタと長さ返す
+	inline const void* GetRawPtr() const{ return m_pRawData; } //!< データへのポインタを返す
+	inline void* GetRawPtr(){ return m_pRawData; }             //!< データへのポインタを返す
 	int GetRawLength() const { return m_nRawLen; }                //!<データ長を返す。バイト単位。
 
 	// 演算子
@@ -107,12 +107,12 @@ private: // 2002/2/10 aroka アクセス権変更
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     inline関数の実装                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-__forceinline const void* CMemory::GetRawPtr(int* pnLength) const //!< データへのポインタと長さ返す
+inline const void* CMemory::GetRawPtr(int* pnLength) const //!< データへのポインタと長さ返す
 {
 	if(pnLength) *pnLength = GetRawLength();
 	return m_pRawData;
 }
-__forceinline void* CMemory::GetRawPtr(int* pnLength) //!< データへのポインタと長さ返す
+inline void* CMemory::GetRawPtr(int* pnLength) //!< データへのポインタと長さ返す
 {
 	if(pnLength) *pnLength = GetRawLength();
 	return m_pRawData;

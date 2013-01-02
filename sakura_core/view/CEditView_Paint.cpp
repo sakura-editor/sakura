@@ -2,6 +2,7 @@
 #include "CEditView_Paint.h"
 #include <vector>
 #include <memory> // auto_ptr
+#include <limits.h>
 #include "view/CEditView.h"
 #include "types/CTypeSupport.h"
 #include "doc/CEditDoc.h"
@@ -373,7 +374,7 @@ EColorIndexType CEditView::GetColorIndex(
 	pInfo->pStrategy = pool->GetStrategyByColor(eRet);
 	if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
 
-	int nPosTo = pcLayout->GetLogicOffset() + __min(nIndex, pcLayout->GetLengthWithEOL() - 1);
+	int nPosTo = pcLayout->GetLogicOffset() + std::min(nIndex, (int)pcLayout->GetLengthWithEOL() - 1);
 	while(pInfo->nPosInLogic <= nPosTo){
 		if( bPrev && pInfo->nPosInLogic == nPosTo )
 			break;
@@ -1269,8 +1270,8 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
 				// 前の画面内容をコピーする
 				::BitBlt( hdcTemp, 0, 0,
-					__min( nBmpWidthNew,m_nCompatBMPWidth ),
-					__min( nBmpHeightNew, m_nCompatBMPHeight ),
+					std::min( nBmpWidthNew,m_nCompatBMPWidth ),
+					std::min( nBmpHeightNew, m_nCompatBMPHeight ),
 					m_hdcCompatDC, 0, 0, SRCCOPY );
 				::SelectObject( hdcTemp, hBitmapOld );
 				::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );

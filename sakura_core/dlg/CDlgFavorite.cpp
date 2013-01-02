@@ -407,7 +407,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		col.fmt      = LVCFMT_LEFT;
 		col.cx       = nSubItem1Cx;
-		col.pszText  = m_aFavoriteInfo[nTab].m_pszCaption;
+		col.pszText  = const_cast<TCHAR*>(m_aFavoriteInfo[nTab].m_pszCaption);
 		col.iSubItem = 1;
 		ListView_InsertColumn( hwndList, 1, &col );
 
@@ -419,7 +419,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 		/* É^ÉuçÄñ⁄í«â¡ */
 		tcitem.mask = TCIF_TEXT;
-		tcitem.pszText = m_aFavoriteInfo[nTab].m_pszCaption;
+		tcitem.pszText = const_cast<TCHAR*>(m_aFavoriteInfo[nTab].m_pszCaption);
 		TabCtrl_InsertItem( hwndTab, nTab, &tcitem );
 	}
 

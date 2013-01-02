@@ -41,7 +41,6 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeMediator.h"
-#include "debug/Debug.h"
 #include "debug/CRunningTimer.h"
 //	Jun. 26, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
 #include "CBregexp.h"

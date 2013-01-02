@@ -16,7 +16,6 @@
 */
 #include "StdAfx.h"
 #include "dlg/CDlgProperty.h"
-#include "debug/Debug.h"
 #include "doc/CEditDoc.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "_main/global.h"		// Moca, 2002/05/26

@@ -32,7 +32,7 @@ class CControlTray;
 */
 class SAKURA_CORE_API CControlProcess : public CProcess {
 public:
-	CControlProcess( HINSTANCE hInstance, LPTSTR lpCmdLine ) : 
+	CControlProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine ) : 
 		CProcess( hInstance, lpCmdLine ),
 		m_pcTray( 0 ),
 		// 2006.04.10 ryoji 同期オブジェクトのハンドルを初期化

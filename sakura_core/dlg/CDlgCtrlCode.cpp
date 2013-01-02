@@ -49,7 +49,7 @@ struct ctrl_info_t {
 	wchar_t			code;		//入力する文字コード
 	unsigned int	vKey;		//表記
 	TCHAR			name[4];	//名前
-	TCHAR			*jname;		//説明
+	const TCHAR		*jname;		//説明
 } static const p_ctrl_list[] = {
 	{ 0x0000, 0x00c0, _T("NUL"), _T("空文字")    }, //NULL
 	{ 0x0001, 'A', _T("SOH"), _T("ヘッダ開始")   }, //START OF HEADING
@@ -158,7 +158,7 @@ void CDlgCtrlCode::SetData( void )
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = count;
 		lvi.iSubItem = 3;
-		lvi.pszText  = p_ctrl_list[i].jname;
+		lvi.pszText  = const_cast<TCHAR*>(p_ctrl_list[i].jname);
 		ListView_SetItem( hwndWork, &lvi );
 		
 		count++;
@@ -251,6 +251,14 @@ BOOL CDlgCtrlCode::OnBnClicked( int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
 }
+
+#ifdef __MINGW32__
+typedef struct tagNMKEY {
+  NMHDR hdr;
+  UINT  nVKey;
+  UINT  uFlags;
+} NMKEY, *LPNMKEY;
+#endif
 
 BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
 {

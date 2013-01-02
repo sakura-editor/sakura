@@ -20,7 +20,6 @@
 #include <mbstring.h>
 #include "CLayoutMgr.h"
 #include "charset/charcode.h"
-#include "debug/Debug.h"
 #include <commctrl.h>
 #include "debug/CRunningTimer.h"
 #include "doc/CLayout.h"/// 2002/2/10 aroka

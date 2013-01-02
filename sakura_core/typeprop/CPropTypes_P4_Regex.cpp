@@ -622,7 +622,7 @@ int CPropRegex::GetData( HWND hwndDlg )
 	HWND	hwndList;
 	int	nIndex, i, j;
 	const int szKeyWordSize = _countof(m_Types.m_RegexKeywordList) * 2 + 1;
-	auto_array_ptr<TCHAR> szKeyWord = new TCHAR [ szKeyWordSize ];
+	auto_array_ptr<TCHAR> szKeyWord(new TCHAR [ szKeyWordSize ]);
 	TCHAR	szColorIndex[256];
 
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正

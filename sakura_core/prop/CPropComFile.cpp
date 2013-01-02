@@ -17,7 +17,6 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "CPropertyManager.h"
-#include "debug/Debug.h" // 2002/2/10 aroka
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"
@@ -65,7 +64,7 @@ TYPE_NAME<EShareMode> ShareModeArr[] = {
 INT_PTR CALLBACK CPropFile::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( reinterpret_cast<pDispatchPage>(&DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropFile::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
