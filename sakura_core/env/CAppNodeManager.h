@@ -36,7 +36,7 @@ struct EditNode {
 	HWND			m_hWnd;
 	WIN_CHAR		m_szTabCaption[_MAX_PATH];	//!< タブウインドウ用：キャプション名		//@@@ 2003.05.31 MIK
 	SFilePath		m_szFilePath;				//!< タブウインドウ用：ファイル名			//@@@ 2006.01.28 ryoji
-	BOOL			m_bIsGrep;					//!< Grepのウィンドウか						//@@@ 2006.01.28 ryoji
+	bool			m_bIsGrep;					//!< Grepのウィンドウか						//@@@ 2006.01.28 ryoji
 	UINT			m_showCmdRestore;			//!< 元のサイズに戻すときのサイズ種別		//@@@ 2007.06.20 ryoji
 	BOOL			m_bClosing;					//!< 終了中か（「最後のファイルを閉じても(無題)を残す」用）	//@@@ 2007.06.20 ryoji
 
@@ -46,13 +46,14 @@ struct EditNode {
 	bool IsTopInGroup() const;
 };
 
-struct EditNodeEx{	// 拡張構造体
-	EditNode*	p;	// 編集ウィンドウ配列要素へのポインタ
-	int			nGroupMru;	// グループ単位のMRU番号
+//! 拡張構造体
+struct EditNodeEx{
+	EditNode*	p;			//!< 編集ウィンドウ配列要素へのポインタ
+	int			nGroupMru;	//!< グループ単位のMRU番号
 };
 
 
-//共有メモリ内構造体
+//! 共有メモリ内構造体
 struct SShare_Nodes{
 	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
