@@ -198,7 +198,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 
 		for( TCHAR *p = exename + len - 1; p > exename; p-- ){
 			if( *p == _T('.') ){
-				int n = p[-1] - _T('0');
+				ECodeType n = (ECodeType)(p[-1] - _T('0'));
 				if(IsValidCodeType(n))
 					m_fi.m_nCharCode = n;
 				break;
@@ -355,7 +355,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 				}
 				break;
 			case CMDLINEOPT_CODE:	//	CODE
-				m_fi.m_nCharCode = AtoiOptionInt( arg );
+				m_fi.m_nCharCode = (ECodeType)AtoiOptionInt( arg );
 				break;
 			case CMDLINEOPT_R:	//	R
 				m_bReadOnly = true;

@@ -7091,7 +7091,7 @@ DWORD CEditView::DoGrep(
 	if( pcmGrepKey->GetStringLength() < sizeof( m_pcEditDoc->m_szGrepKey )){
 		strcpy( m_pcEditDoc->m_szGrepKey, pcmGrepKey->GetStringPtr() );
 	}
-	m_pcEditDoc->m_bGrepMode = TRUE;
+	m_pcEditDoc->m_bGrepMode = true;
 
 	//	2007.07.22 genta
 	//	バージョン番号取得のため，処理を前の方へ移動した

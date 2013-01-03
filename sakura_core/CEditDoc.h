@@ -272,8 +272,8 @@ public:
 
 
 	BOOL			m_bReadOnly;				/* 読み取り専用モード */
-	BOOL			m_bDebugMode;				/* デバッグモニタモード */
-	BOOL			m_bGrepMode;				/* Grepモードか */
+	bool			m_bDebugMode;				/* デバッグモニタモード */
+	bool			m_bGrepMode;				/* Grepモードか */
 	char			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
 	HWND			m_hWnd;						/* 編集ウィンドウハンドル（CSplitterWndが管理） */
 	COpeBuf			m_cOpeBuf;					/* アンドゥバッファ */

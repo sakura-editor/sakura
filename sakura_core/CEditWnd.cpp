@@ -2038,7 +2038,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				CMRUFile cMRU;
 				EditInfo checkEditInfo;
 				cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
-				m_cEditDoc.OpenFile( checkEditInfo.m_szPath, (ECodeType)checkEditInfo.m_nCharCode);
+				m_cEditDoc.OpenFile( checkEditInfo.m_szPath, checkEditInfo.m_nCharCode);
 			}
 			//最近使ったフォルダ
 			else if( wID - IDM_SELOPENFOLDER >= 0 && wID - IDM_SELOPENFOLDER < 999){
@@ -3223,7 +3223,7 @@ void CEditWnd::SetDebugModeON()
 		}
 	}
 	m_pShareData->m_hwndDebug = m_hWnd;
-	m_cEditDoc.m_bDebugMode = TRUE;
+	m_cEditDoc.m_bDebugMode = false;
 
 // 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
 	m_cEditDoc.m_bReadOnly = FALSE;		/* 読み取り専用モード */
@@ -3237,7 +3237,7 @@ void CEditWnd::SetDebugModeOFF()
 {
 	if( m_pShareData->m_hwndDebug == m_hWnd ){
 		m_pShareData->m_hwndDebug = NULL;
-		m_cEditDoc.m_bDebugMode = FALSE;
+		m_cEditDoc.m_bDebugMode = false;
 		m_cEditDoc.UpdateCaption();
 	}
 }
@@ -4291,7 +4291,7 @@ void CEditWnd::SendStatusMessage2( const char* msg )
 	@date 2003.05.31 新規作成
 	@date 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 */
-void CEditWnd::ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, BOOL bIsGrep )
+void CEditWnd::ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep )
 {
 	CRecent	cRecentEditNode;
 	EditNode	*p;

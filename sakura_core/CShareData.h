@@ -107,31 +107,53 @@ enum maxdata{
 	@date 2003.01.26 aroka m_nWindowSizeX/Y m_nWindowOriginX/Y追加
 */
 struct EditInfo {
-	int		m_nViewTopLine;			/*!< 表示域の一番上の行(0開始) */
-	int		m_nViewLeftCol;			/*!< 表示域の一番左の桁(0開始) */
-	int		m_nX;					/*!< カーソル  物理位置(行頭からのバイト数) */
-	int		m_nY;					/*!< カーソル  物理位置(折り返し無し行位置) */
-	bool	m_bIsModified;			/*!< 変更フラグ */
-	int		m_nCharCode;			/*!< 文字コード種別 */
-	char	m_szPath[_MAX_PATH];	/*!< ファイル名 */
-	BOOL	m_bIsGrep;				/*!< Grepのウィンドウか */
-	BOOL	m_bIsDebug;				/*!< デバッグモードか(アウトプットウインドウ) */
-	char	m_szGrepKey[1024];
-	char	m_szMarkLines[MAX_MARKLINES_LEN + 1];	/*!< ブックマークの物理行リスト */
-	char	m_szDocType[MAX_DOCTYPE_LEN + 1];	/*!< 文書タイプ */
-	int		m_nWindowSizeX;			/*!< ウィンドウ  幅(ピクセル数) */
-	int		m_nWindowSizeY;			/*!< ウィンドウ  高さ(ピクセル数) */
-	int		m_nWindowOriginX;		/*!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効) */
-	int		m_nWindowOriginY;		/*!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効) */
+	//ファイル
+	TCHAR		m_szPath[_MAX_PATH];					//!< ファイル名
+	ECodeType	m_nCharCode;							//!< 文字コード種別
+	TCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< 文書タイプ
+
+	//表示域
+	int			m_nViewTopLine;							//!< 表示域の一番上の行(0開始)
+	int			m_nViewLeftCol;							//!< 表示域の一番左の桁(0開始)
+
+	//キャレット
+	int			m_nX;									//!< カーソル  物理位置(行頭からのバイト数)
+	int			m_nY;									//!< カーソル  物理位置(折り返し無し行位置)
+
+	//各種状態
+	bool		m_bIsModified;							//!< 変更フラグ
+
+	//GREPモード
+	bool		m_bIsGrep;								//!< Grepのウィンドウか
+	char		m_szGrepKey[1024];
+
+	//デバッグモニタ (アウトプットウィンドウ) モード
+	bool		m_bIsDebug;								//!< デバッグモニタモード (アウトプットウィンドウ)か
+
+	//ブックマーク情報
+	char		m_szMarkLines[MAX_MARKLINES_LEN + 1];	//!< ブックマークの物理行リスト
+
+	//ウィンドウ
+	int			m_nWindowSizeX;							//!< ウィンドウ  幅(ピクセル数)
+	int			m_nWindowSizeY;							//!< ウィンドウ  高さ(ピクセル数)
+	int			m_nWindowOriginX;						//!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
+	int			m_nWindowOriginY;						//!< ウィンドウ  物理位置(ピクセル数・マイナス値も有効)
 	
 	// Mar. 7, 2002 genta
 	// Constructor 確実に初期化するため
-	EditInfo() : m_nViewTopLine( -1 ), m_nViewLeftCol( -1 ),
-		m_nX( -1 ), m_nY( -1 ), m_bIsModified( false ),
-		m_nCharCode( CODE_AUTODETECT ), m_bIsGrep( FALSE ), m_bIsDebug( FALSE ),
-		m_nWindowSizeX( -1 ), m_nWindowSizeY( -1 ),
-		//	2004.05.13 Moca “指定無し”を-1からCW_USEDEFAULTに変更
-		m_nWindowOriginX( CW_USEDEFAULT ), m_nWindowOriginY( CW_USEDEFAULT )
+	EditInfo()
+	: m_nViewTopLine( -1 )
+	, m_nViewLeftCol( -1 )
+	, m_nX( -1 )
+	, m_nY( -1 )
+	, m_bIsModified( false )
+	, m_nCharCode( CODE_AUTODETECT )
+	, m_bIsGrep( false )
+	, m_bIsDebug( false )
+	, m_nWindowSizeX( -1 )
+	, m_nWindowSizeY( -1 )
+	, m_nWindowOriginX( CW_USEDEFAULT )	//	2004.05.13 Moca “指定無し”を-1からCW_USEDEFAULTに変更
+	, m_nWindowOriginY( CW_USEDEFAULT )
 	{
 		m_szPath[0] = '\0';
 		m_szMarkLines[0] = '\0';
@@ -142,18 +164,19 @@ struct EditInfo {
 //! 編集ウィンドウノード
 struct EditNode {
 	int				m_nIndex;
-	int				m_nGroup;					//!< グループID 							//@@@ 2007.06.20 ryoji
+	int				m_nGroup;					//!< グループID								//@@@ 2007.06.20 ryoji
 	HWND			m_hWnd;
-	char			m_szTabCaption[_MAX_PATH];	//!< タブウインドウ用：キャプション名 	//@@@ 2003.05.31 MIK
-	char			m_szFilePath[_MAX_PATH];	//!< タブウインドウ用：ファイル名 		//@@@ 2006.01.28 ryoji
-	BOOL			m_bIsGrep;					//!< Grepのウィンドウか 					//@@@ 2006.01.28 ryoji
-	UINT			m_showCmdRestore;			//!< 元のサイズに戻すときのサイズ種別 	//@@@ 2007.06.20 ryoji
-	BOOL			m_bClosing;					//!< 終了中か（「最後のファイルを閉じても(無題)を残す」用） 	//@@@ 2007.06.20 ryoji
+	char			m_szTabCaption[_MAX_PATH];	//!< タブウインドウ用：キャプション名		//@@@ 2003.05.31 MIK
+	char			m_szFilePath[_MAX_PATH];	//!< タブウインドウ用：ファイル名			//@@@ 2006.01.28 ryoji
+	bool			m_bIsGrep;					//!< Grepのウィンドウか						//@@@ 2006.01.28 ryoji
+	UINT			m_showCmdRestore;			//!< 元のサイズに戻すときのサイズ種別		//@@@ 2007.06.20 ryoji
+	BOOL			m_bClosing;					//!< 終了中か（「最後のファイルを閉じても(無題)を残す」用）	//@@@ 2007.06.20 ryoji
 };
 
-struct EditNodeEx{	// 拡張構造体
-	EditNode* p;	// 編集ウィンドウ配列要素へのポインタ
-	int nGroupMru;	// グループ単位のMRU番号
+//! 拡張構造体
+struct EditNodeEx{
+	EditNode*	p;			//!< 編集ウィンドウ配列要素へのポインタ
+	int			nGroupMru;	//!< グループ単位のMRU番号
 };
 
 //! 色設定

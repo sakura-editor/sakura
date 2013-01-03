@@ -70,8 +70,8 @@ CEditDoc::CEditDoc()
 , m_bGrepRunning( FALSE )		/* Grep処理中 */
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
 , m_bReadOnly( FALSE )			/* 読み取り専用モード */
-, m_bDebugMode( FALSE )			/* デバッグモニタモード */
-, m_bGrepMode( FALSE )			/* Grepモードか */
+, m_bDebugMode( false )			/* デバッグモニタモード */
+, m_bGrepMode( false )			/* Grepモードか */
 , m_nActivePaneIndex( 0 )
 , m_bDoing_UndoRedo( FALSE )		/* アンドゥ・リドゥの実行中か */
 , m_nFileShareModeOld( 0 )		/* ファイルの排他制御モード */
@@ -188,7 +188,7 @@ void CEditDoc::InitDoc()
 	m_bReadOnly = FALSE;	// 読み取り専用モード
 	strcpy( m_szGrepKey, "" );
 
-	m_bGrepMode = FALSE;	/* Grepモード */
+	m_bGrepMode = false;	/* Grepモード */
 	m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法
 
 	// 2005.06.24 Moca バグ修正
@@ -657,10 +657,10 @@ BOOL CEditDoc::OnFileClose()
 
 	/* テキストが変更されている場合 */
 	if( IsModified()
-	&& FALSE == m_bDebugMode	/* デバッグモニタモードのときは保存確認しない */
+	&& !m_bDebugMode	/* デバッグモニタモードのときは保存確認しない */
 //	&& FALSE == m_bReadOnly		/* 読み取り専用モード */
 	){
-		if( TRUE == m_bGrepMode ){	/* Grepモードのとき */
+		if( m_bGrepMode ){	/* Grepモードのとき */
 			/* Grepモードで保存確認するか */
 			if( FALSE == m_pShareData->m_Common.m_sSearch.m_bGrepExitConfirm ){
 				return TRUE;
@@ -1008,15 +1008,15 @@ BOOL CEditDoc::FileRead(
 
 		if( CODE_NONE == m_nCharCode ){
 			/* 前回に指定された文字コード種別に変更する */
-			m_nCharCode = (ECodeType)fi.m_nCharCode;
+			m_nCharCode = fi.m_nCharCode;
 		}
 		
 		if( !bConfirmCodeChange && ( CODE_AUTODETECT == m_nCharCode ) ){	// 文字コード指定の再オープンなら前回を無視
-			m_nCharCode = (ECodeType)fi.m_nCharCode;
+			m_nCharCode = fi.m_nCharCode;
 		}
 		if( (FALSE == bFileIsExist) && (CODE_AUTODETECT == m_nCharCode) ){
 			/* 存在しないファイルの文字コード指定なしなら前回を継承 */
-			m_nCharCode = (ECodeType)fi.m_nCharCode;
+			m_nCharCode = fi.m_nCharCode;
 		}
 	} else {
 		bIsExistInMRU = FALSE;
@@ -1064,7 +1064,7 @@ BOOL CEditDoc::FileRead(
 				);
 				if( IDYES == nRet ){
 					/* 前回に指定された文字コード種別に変更する */
-					m_nCharCode = (ECodeType)fi.m_nCharCode;
+					m_nCharCode = fi.m_nCharCode;
 				}else
 				if( IDCANCEL == nRet ){
 					m_nCharCode = CODE_DEFAULT;

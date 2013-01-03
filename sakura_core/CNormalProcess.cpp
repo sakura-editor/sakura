@@ -154,12 +154,12 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
 		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
-		m_pcEditWnd->SetDocumentTypeWhenCreate( (ECodeType)fi.m_nCharCode, FALSE, nType );
+		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, FALSE, nType );
 	}
 	else if( bGrepMode ){
 		/* GREP */
 		// 2010.06.16 Moca Grepでもオプション指定を適用
-		m_pcEditWnd->SetDocumentTypeWhenCreate( (ECodeType)fi.m_nCharCode, FALSE, nType );
+		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, FALSE, nType );
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];
@@ -223,7 +223,7 @@ bool CNormalProcess::InitializeProcess()
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			m_pcEditWnd->OpenDocumentWhenStart(
 				fi.m_szPath,
-				(ECodeType)fi.m_nCharCode,
+				fi.m_nCharCode,
 				bReadOnly
 			);
 			//	Nov. 6, 2000 genta
@@ -277,7 +277,7 @@ bool CNormalProcess::InitializeProcess()
 		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
 			m_pcEditWnd->SetDocumentTypeWhenCreate(
-				(ECodeType)fi.m_nCharCode,
+				fi.m_nCharCode,
 				bReadOnly,	// 読み取り専用か
 				nType
 			);

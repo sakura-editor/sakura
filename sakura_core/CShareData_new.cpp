@@ -244,7 +244,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 		wsprintf( szKeyName, "MRU[%02d].nY", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nY );
 		wsprintf( szKeyName, "MRU[%02d].nCharCode", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nCharCode );
+		cProfile.IOProfileData( pszSecName, szKeyName, (int&)pfiWork->m_nCharCode );
 		wsprintf( szKeyName, "MRU[%02d].szPath", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_szPath, sizeof( pfiWork->m_szPath ));
 		wsprintf( szKeyName, "MRU[%02d].szMark", i );

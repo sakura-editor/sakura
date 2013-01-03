@@ -2875,7 +2875,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 		EditInfo		fi;
 		CMRUFile		cMRU;
 		if ( cMRU.GetEditInfo( filename, &fi ) ){
-				nSaveCharCode = (ECodeType)fi.m_nCharCode;
+				nSaveCharCode = fi.m_nCharCode;
 		} else {
 			nSaveCharCode = m_pcEditDoc->m_nCharCode;
 		}
