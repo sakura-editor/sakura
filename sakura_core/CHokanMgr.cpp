@@ -476,7 +476,6 @@ BOOL CHokanMgr::OnBnClicked( int wID )
 		return TRUE;
 	}
 	return FALSE;
-	return 0;
 }
 
 
