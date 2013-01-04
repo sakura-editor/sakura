@@ -411,7 +411,7 @@ CMenuDrawer::CMenuDrawer()
 /* モード切り替え系(9段目4個: 257-260) */
 /* 257 */		F_CHGMOD_INS	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//挿入／上書きモード切り替え	//Nov. 5, 2000 JEPRO 追加
 /* 258 */		F_CANCEL_MODE	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//各種モードの取り消し			//Nov. 7, 2000 JEPRO 追加
-/* 259 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 259 */		F_CHG_CHARSET	/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//文字コードセット指定			//2010/6/14 Uchi
 /* 260 */		F_DISABLE		/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
 /* 設定系(9段目次の16個: 261-276) */

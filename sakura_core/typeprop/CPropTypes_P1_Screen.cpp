@@ -326,7 +326,7 @@ INT_PTR CPropScreen::DispatchEvent(
 		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
-				OnHelp( hwndDlg, IDD_PROPTYPESP1 );
+				OnHelp( hwndDlg, IDD_PROP_SCREEN );
 				return TRUE;
 			case PSN_KILLACTIVE:
 				/* ダイアログデータの取得 Screen */

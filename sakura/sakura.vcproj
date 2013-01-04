@@ -2777,6 +2777,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\dlg\CDlgSetCharSet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\dlg\CDlgSetCharSet.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\dlg\CDlgTagJumpList.cpp"
 					>
 				</File>

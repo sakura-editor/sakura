@@ -556,14 +556,8 @@ BOOL CViewCommander::Command_PUTFILE(
 	std::auto_ptr<CCodeBase> pcSaveCode( CCodeFactory::CreateCodeBase(nSaveCharCode,0) );
 
 	bool bBom = false;
-	switch( nSaveCharCode ){
-		case CODE_UNICODE:
-		case CODE_UNICODEBE:
-		case CODE_UTF8:
-		case CODE_CESU8:
-		case CODE_UTF7:
-			bBom = GetDocument()->m_cDocFile.IsBomExist();;
-			break;
+	if (CCodeTypeName(nSaveCharCode).UseBom()) {
+		bBom = GetDocument()->m_cDocFile.IsBomExist();;
 	}
 
 	if(nFlgOpt & 0x01)

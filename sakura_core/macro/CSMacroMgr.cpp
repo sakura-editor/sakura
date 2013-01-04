@@ -292,6 +292,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 
 	/* モード切り替え系 */
 	{F_CHGMOD_INS,				LTEXT("ChgmodINS"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //挿入／上書きモード切り替え
+	{F_CHG_CHARSET,				LTEXT("ChgCharSet"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //文字コードセット指定		2010/6/14 Uchi
 	{F_CHGMOD_EOL,				LTEXT("ChgmodEOL"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //入力改行コード指定 2003.06.23 Moca
 	{F_CANCEL_MODE,				LTEXT("CancelMode"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //各種モードの取り消し
 
@@ -1015,6 +1016,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS				://挿入／上書きモード切り替え
+	case F_CHG_CHARSET				://文字コードセット指定	2010/6/14 Uchi
 	case F_CHGMOD_EOL				://入力改行コード指定	2003.06.23 Moca
 
 	case F_CANCEL_MODE				://各種モードの取り消し

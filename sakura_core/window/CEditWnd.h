@@ -40,6 +40,7 @@ class CEditWnd;
 #include "dlg/CDlgJump.h"
 #include "dlg/CDlgGrep.h"
 #include "dlg/CDlgOpenFile.h"
+#include "dlg/CDlgSetCharSet.h"
 #include "outline/CDlgFuncList.h"
 #include "CHokanMgr.h"
 #include "util/design_template.h"
@@ -349,6 +350,7 @@ public:
 	CDlgFuncList	m_cDlgFuncList;		// アウトライン解析結果ダイアログ
 	CDlgOpenFile	m_cDlgOpenFile;		// ファイルオープンダイアログ
 	CHokanMgr		m_cHokanMgr;		// 入力補完
+	CDlgSetCharSet	m_cDlgSetCharSet;	// 「文字コードセット設定」ダイアログ
 
 private:
 	// 2010.04.10 Moca  public -> private. 起動直後は[0]のみ有効 4つとは限らないので注意

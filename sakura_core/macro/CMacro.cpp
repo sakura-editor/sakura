@@ -477,6 +477,13 @@ void CMacro::HandleCommand(
 		}
 		break;
 	/* 一つ目、二つ目とも引数は数値 */
+	case F_CHG_CHARSET:
+		{
+			int		nCharSet = ( Argument[0] == NULL || Argument[0][0] == '\0' ) ? CODE_NONE : _wtoi(Argument[0]);
+			BOOL	bBOM = ( Argument[1] == NULL ) ? FALSE : (_wtoi(Argument[1]) != 0);
+			pcEditView->GetCommander().HandleCommand( Index, FALSE, (LPARAM)nCharSet, (LPARAM)bBOM, 0, 0 );
+		}
+		break;
 	case F_JUMP:		//	指定行へジャンプ（ただしPL/SQLコンパイルエラー行へのジャンプは未対応）
 		//	Argument[0]へジャンプ。オプションはArgument[1]に。
 		//		******** 以下「行番号の単位」 ********

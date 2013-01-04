@@ -18,6 +18,7 @@
 #include "CViewCommander.h"
 
 #include "view/CEditView.h"
+#include "window/CEditWnd.h"
 
 
 /*! 挿入／上書きモード切り替え
@@ -53,6 +54,34 @@ void CViewCommander::Command_CHGMOD_EOL( EEolType e ){
 		// キャレットの行桁位置を表示する関数を呼び出す
 		GetCaret().ShowCaretPosInfo();
 	}
+}
+
+
+
+//! 文字コードセット指定
+void CViewCommander::Command_CHG_CHARSET(
+	ECodeType	eCharSet,	// [in] 設定する文字コードセット
+	bool		bBom		// [in] 設定するBOM(Unicode系以外は無視)
+)
+{
+	if (eCharSet == CODE_NONE || eCharSet ==  CODE_AUTODETECT) {
+		// 文字コードが指定されていないならば
+		// 文字コードの確認
+		eCharSet = GetDocument()->GetDocumentEncoding();	// 設定する文字コードセット
+		bBom     = GetDocument()->m_cDocFile.IsBomExist();	// 設定するBOM
+		int nRet = GetEditWindow()->m_cDlgSetCharSet.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 
+						&eCharSet, &bBom );
+		if (!nRet) {
+			return;
+		}
+	}
+
+	// 文字コードの設定
+	GetDocument()->SetDocumentEncoding( eCharSet );
+	GetDocument()->m_cDocFile.SetBomMode( CCodeTypeName( eCharSet ).UseBom() ? bBom : false );
+
+	// ステータス表示
+	GetCaret().ShowCaretPosInfo();
 }
 
 

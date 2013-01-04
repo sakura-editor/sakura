@@ -217,111 +217,107 @@ UINT_PTR CALLBACK OFNHookProc(
 		::SetWindowPos( hwndComboOPENFOLDER, 0, 0, 0, nWidth - po.x - nRightMargin, rc.bottom - rc.top, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
 		return 0;
 	case WM_INITDIALOG:
-		// Save off the long pointer to the OPENFILENAME structure.
-		// Modified by KEITA for WIN64 2003.9.6
-		::SetWindowLongPtr(hdlg, DWLP_USER, lParam);
-		pOf = (OPENFILENAME*)lParam;
-		pcDlgOpenFile = (CDlgOpenFile*)pOf->lCustData;
+		{
+			// Save off the long pointer to the OPENFILENAME structure.
+			// Modified by KEITA for WIN64 2003.9.6
+			::SetWindowLongPtr(hdlg, DWLP_USER, lParam);
+			pOf = (OPENFILENAME*)lParam;
+			pcDlgOpenFile = (CDlgOpenFile*)pOf->lCustData;
 
 
-		/* Explorerスタイルの「開く」ダイアログのハンドル */
-		hwndOpenDlg = ::GetParent( hdlg );
-		/* コントロールのハンドル */
-		hwndComboCODES = ::GetDlgItem( hdlg, IDC_COMBO_CODE );
-		hwndComboMRU = ::GetDlgItem( hdlg, IDC_COMBO_MRU );
-		hwndComboOPENFOLDER = ::GetDlgItem( hdlg, IDC_COMBO_OPENFOLDER );
-		hwndComboEOL = ::GetDlgItem( hdlg, IDC_COMBO_EOL );
-		hwndCheckBOM = ::GetDlgItem( hdlg, IDC_CHECK_BOM );//	Jul. 26, 2003 ryoji BOMチェックボックス
+			/* Explorerスタイルの「開く」ダイアログのハンドル */
+			hwndOpenDlg = ::GetParent( hdlg );
+			/* コントロールのハンドル */
+			hwndComboCODES = ::GetDlgItem( hdlg, IDC_COMBO_CODE );
+			hwndComboMRU = ::GetDlgItem( hdlg, IDC_COMBO_MRU );
+			hwndComboOPENFOLDER = ::GetDlgItem( hdlg, IDC_COMBO_OPENFOLDER );
+			hwndComboEOL = ::GetDlgItem( hdlg, IDC_COMBO_EOL );
+			hwndCheckBOM = ::GetDlgItem( hdlg, IDC_CHECK_BOM );//	Jul. 26, 2003 ryoji BOMチェックボックス
 
-		// 2005.11.02 ryoji 初期レイアウト設定
-		CDlgOpenFile::InitLayout( hwndOpenDlg, hdlg, hwndComboCODES );
+			// 2005.11.02 ryoji 初期レイアウト設定
+			CDlgOpenFile::InitLayout( hwndOpenDlg, hdlg, hwndComboCODES );
 
-		/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
-		Combo_SetExtendedUI( hwndComboCODES, TRUE );
-		Combo_SetExtendedUI( hwndComboMRU, TRUE );
-		Combo_SetExtendedUI( hwndComboOPENFOLDER, TRUE );
-		Combo_SetExtendedUI( hwndComboEOL, TRUE );
+			/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
+			Combo_SetExtendedUI( hwndComboCODES, TRUE );
+			Combo_SetExtendedUI( hwndComboMRU, TRUE );
+			Combo_SetExtendedUI( hwndComboOPENFOLDER, TRUE );
+			Combo_SetExtendedUI( hwndComboEOL, TRUE );
 
-		//	From Here Feb. 9, 2001 genta
-		//	改行コードの選択コンボボックス初期化
-		//	必要なときのみ利用する
-		if( pcDlgOpenFile->m_bUseEol ){
-			//	値の設定
-			for( i = 0; i < nEolNameArrNum; ++i ){
-				nIdx = Combo_AddString( hwndComboEOL, pEolNameArr[i] );
-				Combo_SetItemData( hwndComboEOL, nIdx, nEolValueArr[i] );
+			//	From Here Feb. 9, 2001 genta
+			//	改行コードの選択コンボボックス初期化
+			//	必要なときのみ利用する
+			if( pcDlgOpenFile->m_bUseEol ){
+				//	値の設定
+				for( i = 0; i < nEolNameArrNum; ++i ){
+					nIdx = Combo_AddString( hwndComboEOL, pEolNameArr[i] );
+					Combo_SetItemData( hwndComboEOL, nIdx, nEolValueArr[i] );
+				}
+				//	使うときは先頭の要素を選択状態にする
+				Combo_SetCurSel( hwndComboEOL, 0 );
 			}
-			//	使うときは先頭の要素を選択状態にする
-			Combo_SetCurSel( hwndComboEOL, 0 );
-		}
-		else {
-			//	使わないときは隠す
-			::ShowWindow( ::GetDlgItem( hdlg, IDC_STATIC_EOL ), SW_HIDE );
-			::ShowWindow( hwndComboEOL, SW_HIDE );
-		}
-		//	To Here Feb. 9, 2001 genta
-
-		//	From Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
-		if( pcDlgOpenFile->m_bUseBom ){
-			//	使うときは有効／無効を切り替え、チェック状態を初期値に設定する
-			switch( pcDlgOpenFile->m_nCharCode ){
-			case CODE_UNICODE:
-			case CODE_UNICODEBE:
-			case CODE_UTF8:
-			case CODE_CESU8:		// 2010/3/20 Uchi
-				::EnableWindow( hwndCheckBOM, TRUE );
-				fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
-				break;
-			default:
-				::EnableWindow( hwndCheckBOM, FALSE );
-				fCheck = BST_UNCHECKED;
-				break;
+			else {
+				//	使わないときは隠す
+				::ShowWindow( ::GetDlgItem( hdlg, IDC_STATIC_EOL ), SW_HIDE );
+				::ShowWindow( hwndComboEOL, SW_HIDE );
 			}
-			BtnCtl_SetCheck( hwndCheckBOM, fCheck );
-		}
-		else {
-			//	使わないときは隠す
-			::ShowWindow( hwndCheckBOM, SW_HIDE );
-		}
-		//	To Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
+			//	To Here Feb. 9, 2001 genta
 
-		/* Explorerスタイルの「開く」ダイアログをフック */
-		// Modified by KEITA for WIN64 2003.9.6
-		m_wpOpenDialogProc = (WNDPROC) ::SetWindowLongPtr( hwndOpenDlg, GWLP_WNDPROC, (LONG_PTR) OFNHookProcMain );
+			//	From Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
+			if( pcDlgOpenFile->m_bUseBom ){
+				//	使うときは有効／無効を切り替え、チェック状態を初期値に設定する
+				if (CCodeTypeName(pcDlgOpenFile->m_nCharCode).UseBom()) {
+					::EnableWindow( hwndCheckBOM, TRUE );
+					fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
+				}
+				else {
+					::EnableWindow( hwndCheckBOM, FALSE );
+					fCheck = BST_UNCHECKED;
+				}
+				BtnCtl_SetCheck( hwndCheckBOM, fCheck );
+			}
+			else {
+				//	使わないときは隠す
+				::ShowWindow( hwndCheckBOM, SW_HIDE );
+			}
+			//	To Here Jul. 26, 2003 ryoji BOMチェックボックスの初期化
 
-		/* 文字コード選択コンボボックス初期化 */
-		nIdxSel = 0;
-		if( m_bIsSaveDialog ){	/* 保存のダイアログか */
-			i = 1;
-		}else{
-			i = 0;
-		}
-		CCodeTypesForCombobox cCodeTypes;
-		for( /*i = 0*/; i < cCodeTypes.GetCount(); ++i ){
-			nIdx = Combo_AddString( hwndComboCODES, cCodeTypes.GetName(i) );
-			Combo_SetItemData( hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
-			if( cCodeTypes.GetCode(i) == pcDlgOpenFile->m_nCharCode ){
-				nIdxSel = nIdx;
+			/* Explorerスタイルの「開く」ダイアログをフック */
+			// Modified by KEITA for WIN64 2003.9.6
+			m_wpOpenDialogProc = (WNDPROC) ::SetWindowLongPtr( hwndOpenDlg, GWLP_WNDPROC, (LONG_PTR) OFNHookProcMain );
+
+			/* 文字コード選択コンボボックス初期化 */
+			nIdxSel = 0;
+			if( m_bIsSaveDialog ){	/* 保存のダイアログか */
+				i = 1;
+			}else{
+				i = 0;
+			}
+			CCodeTypesForCombobox cCodeTypes;
+			for( /*i = 0*/; i < cCodeTypes.GetCount(); ++i ){
+				nIdx = Combo_AddString( hwndComboCODES, cCodeTypes.GetName(i) );
+				Combo_SetItemData( hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
+				if( cCodeTypes.GetCode(i) == pcDlgOpenFile->m_nCharCode ){
+					nIdxSel = nIdx;
+				}
+			}
+			Combo_SetCurSel( hwndComboCODES, nIdxSel );
+
+
+			/* ビューモードの初期値セット */
+			::CheckDlgButton( hwndOpenDlg, chx1, m_bViewMode );
+
+			/* 最近開いたファイル コンボボックス初期値設定 */
+			//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
+			for( i = 0; i < (int)m_vMRU.size(); i++ ){
+				Combo_AddString( hwndComboMRU, m_vMRU[i] );
+			}
+
+			/* 最近開いたフォルダ コンボボックス初期値設定 */
+			//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
+			for( i = 0; i < (int)m_vOPENFOLDER.size(); i++ ){
+				Combo_AddString( hwndComboOPENFOLDER, m_vOPENFOLDER[i] );
 			}
 		}
-		Combo_SetCurSel( hwndComboCODES, nIdxSel );
-
-
-		/* ビューモードの初期値セット */
-		::CheckDlgButton( hwndOpenDlg, chx1, m_bViewMode );
-
-		/* 最近開いたファイル コンボボックス初期値設定 */
-		//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
-		for( i = 0; i < (int)m_vMRU.size(); i++ ){
-			Combo_AddString( hwndComboMRU, m_vMRU[i] );
-		}
-
-		/* 最近開いたフォルダ コンボボックス初期値設定 */
-		//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
-		for( i = 0; i < (int)m_vOPENFOLDER.size(); i++ ){
-			Combo_AddString( hwndComboOPENFOLDER, m_vOPENFOLDER[i] );
-		}
-
 		break;
 
 
@@ -476,26 +472,24 @@ UINT_PTR CALLBACK OFNHookProc(
 			//	From Here Jul. 26, 2003 ryoji
 			//	文字コードの変更をBOMチェックボックスに反映
 			case IDC_COMBO_CODE:
-				nIdx = Combo_GetCurSel( (HWND) lParam );
-				lRes = Combo_GetItemData( (HWND) lParam, nIdx );
-				switch( lRes ){
-				case CODE_UNICODE:
-				case CODE_UNICODEBE:
-				case CODE_UTF8:
-				case CODE_CESU8:		// 2010/3/20 Uchi
-					::EnableWindow( hwndCheckBOM, TRUE );
-					if (lRes == pcDlgOpenFile->m_nCharCode){
-						fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
-					}else{
-						fCheck = (lRes == CODE_UTF8 || lRes == CODE_CESU8)? BST_UNCHECKED: BST_CHECKED;	// 2010/3/20 Uchi add CODE_CESU8
+				{
+					nIdx = Combo_GetCurSel( (HWND) lParam );
+					lRes = Combo_GetItemData( (HWND) lParam, nIdx );
+					CCodeTypeName	cCodeTypeName( lRes );
+					if (cCodeTypeName.UseBom()) {
+						::EnableWindow( hwndCheckBOM, TRUE );
+						if (lRes == pcDlgOpenFile->m_nCharCode){
+							fCheck = pcDlgOpenFile->m_bBom? BST_CHECKED: BST_UNCHECKED;
+						}else{
+							fCheck = cCodeTypeName.IsBomDefOn() ? BST_CHECKED : BST_UNCHECKED;
+						}
 					}
-					break;
-				default:
-					::EnableWindow( hwndCheckBOM, FALSE );
-					fCheck = BST_UNCHECKED;
-					break;
+					else {
+						::EnableWindow( hwndCheckBOM, FALSE );
+						fCheck = BST_UNCHECKED;
+					}
+					BtnCtl_SetCheck( hwndCheckBOM, fCheck );
 				}
-				BtnCtl_SetCheck( hwndCheckBOM, fCheck );
 				break;
 			//	To Here Jul. 26, 2003 ryoji
 			case IDC_COMBO_MRU:

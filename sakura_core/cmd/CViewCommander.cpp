@@ -461,6 +461,7 @@ BOOL CViewCommander::HandleCommand(
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		Command_CHGMOD_INS();break;		//挿入／上書きモード切り替え
+	case F_CHG_CHARSET:		Command_CHG_CHARSET( (ECodeType)lparam1, lparam2 != 0 );break;	//文字コードセット指定	2010/6/14 Uchi
 	// From Here 2003.06.23 Moca
 	// F_CHGMOD_EOL_xxx はマクロに記録されないが、F_CHGMOD_EOLはマクロに記録されるので、マクロ関数を統合できるという手はず
 	case F_CHGMOD_EOL_CRLF:	HandleCommand( F_CHGMOD_EOL, bRedraw, EOL_CRLF, 0, 0, 0 );break;	//入力する改行コードをCRLFに設定

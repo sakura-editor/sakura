@@ -34,6 +34,7 @@
 #define IDD_DIFF                        136
 #define IDD_CTRLCODE                    137
 #define IDD_MACRORUNNING                138
+#define IDD_SETCHARSET                  139
 #define IDB_MYTOOL                      200
 #define IDI_ICON_STD                    210
 #define IDI_ICON_DEBUG                  211
@@ -681,14 +682,14 @@
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
 #define IDD_TYPE_ASCERTAIN              5001
-#define IDD_PROPTYPESP1                 5100
+#define IDD_PROP_SCREEN                 5100
 #define IDD_PROP_COLOR                  5101
-#define IDD_PROPTYPESP2                 5102
+#define IDD_PROP_SUPPORT                5102
 #define IDD_PROP_REGEX                  5103
 #define IDD_PROP_KEYHELP                5104
 #define IDD_DIALOG_KEYWORD_SELECT       5110
 #define IDD_SAMECOLOR                   5111
-#define IDD_PROP1P1                     5200
+#define IDD_PROP_GENERAL                5200
 #define IDD_PROP_WIN                    5201
 #define IDD_PROP_TOOLBAR                5202
 #define IDD_PROP_TAB                    5203

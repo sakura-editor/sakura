@@ -32,8 +32,8 @@
 //2007.08.14 kobake CODE_ERROR, CODE_DEFAULT 追加
 SAKURA_CORE_API enum ECodeType {
 	CODE_SJIS,						//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
-	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
-	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open))
+	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS)ではない)
+	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)ではない)
 	CODE_UNICODE,					//!< Unicode			(UTF-16 LittleEndian(UCS-2))
 	CODE_UTF8,						//!< UTF-8(UCS-2)
 	CODE_UTF7,						//!< UTF-7(UCS-2)
@@ -67,30 +67,31 @@ SAKURA_CORE_API enum ECodeType {
 
 //2007.08.14 kobake 追加
 //!有効な文字コードセットならtrue
-inline bool IsValidCodeType(int code)
-{
-	return code>=0 && code<CODE_CODEMAX;
-}
+//	2010/6/21	inlineをはずす
+bool IsValidCodeType(int code);
 
 //2007.08.14 kobake 追加
-//!有効な文字コードセットならtrue。ただし、SJISは除く(意図は不明)
+//!有効な文字コードセットならtrue。ただし、SJISは除く(ファイル一覧に文字コードを[]付きで表示のため)
 inline bool IsValidCodeTypeExceptSJIS(int code)
 {
 	return IsValidCodeType(code) && code!=CODE_SJIS;
 }
 
+// 2010/6/21 Uchi 削除
 //2007.08.14 kobake 追加
 //!ECodeType型で表せる値ならtrue
-inline bool IsInECodeType(int code)
-{
-	return (code>=0 && code<CODE_CODEMAX) || code==CODE_ERROR || code==CODE_AUTODETECT;
-}
+//inline bool IsInECodeType(int code)
+//{
+//	return (code>=0 && code<CODE_CODEMAX) || code==CODE_ERROR || code==CODE_AUTODETECT;
+//}
 
-inline bool IsConcreteCodeType(ECodeType eCodeType)
-{
-	return IsValidCodeType(eCodeType) && eCodeType != CODE_AUTODETECT;
-}
+// 2010/6/21 Uchi 削除
+//inline bool IsConcreteCodeType(ECodeType eCodeType)
+//{
+//	return IsValidCodeType(eCodeType) && eCodeType != CODE_AUTODETECT;
+//}
 
+void InitCodeSet();
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -99,10 +100,14 @@ inline bool IsConcreteCodeType(ECodeType eCodeType)
 
 class CCodeTypeName{
 public:
-	CCodeTypeName(ECodeType eCodeType) : m_eCodeType(eCodeType) { }
-	LPCTSTR Normal() const;
-	LPCTSTR Short() const;
-	LPCTSTR Bracket() const;
+	CCodeTypeName(ECodeType eCodeType) : m_eCodeType(eCodeType) { InitCodeSet(); }
+	CCodeTypeName(int eCodeType) : m_eCodeType((ECodeType)eCodeType) { InitCodeSet(); }
+	LPCTSTR	Normal() const;
+	LPCTSTR	Short() const;
+	LPCTSTR	Bracket() const;
+	bool	UseBom();
+	bool	CanDefault();
+	bool	IsBomDefOn();
 private:
 	ECodeType m_eCodeType;
 };
@@ -114,6 +119,7 @@ private:
 
 class CCodeTypesForCombobox{
 public:
+	CCodeTypesForCombobox() { InitCodeSet(); }
 	int			GetCount() const;
 	ECodeType	GetCode(int nIndex) const;
 	LPCTSTR		GetName(int nIndex) const;

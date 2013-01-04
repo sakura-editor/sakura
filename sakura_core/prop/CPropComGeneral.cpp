@@ -247,7 +247,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
-				OnHelp( hwndDlg, IDD_PROP1P1 );
+				OnHelp( hwndDlg, IDD_PROP_GENERAL );
 				return TRUE;
 			case PSN_KILLACTIVE:
 //				MYTRACE_A( "General PSN_KILLACTIVE\n" );

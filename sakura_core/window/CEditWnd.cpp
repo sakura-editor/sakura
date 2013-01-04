@@ -1400,6 +1400,9 @@ LRESULT CEditWnd::DispatchEvent(
 				else if( mp->dwItemSpec == 3 ){	//	文字コード→各種コード
 					ShowCodeBox(GetHwnd());
 				}
+				else if( mp->dwItemSpec == 4 ){	//	文字コードセット→文字コードセット指定
+					GetDocument().HandleCommand( F_CHG_CHARSET );
+				}
 			}
 			else if( pnmh->code == NM_RCLICK ){
 				LPNMMOUSE mp = (LPNMMOUSE) lParam;
