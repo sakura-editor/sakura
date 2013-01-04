@@ -1,5 +1,70 @@
+//
+//	全面的に作り変え	2010/6/21 Uchi
+//		interfaceはあまり変えない様にした
+//
 #include "StdAfx.h"
 #include "charset.h"
+#include <vector>
+#include <map>
+
+struct SCodeSet {
+	ECodeType		m_eCodeSet;
+	std::wstring	m_sNormal;
+	std::wstring	m_sShort;
+	std::wstring	m_sLong;		// for Combo
+	bool			m_bUseBom;		// BOMが使えるか
+	bool			m_bIsBomDefOn;	// BOMのデフォルトがOnか
+	bool			m_bCanDefault;	// デフォルト文字コードになれるか
+};
+
+// 文字コードセット(初期データ)
+static	SCodeSet	ASCodeSet[] = {
+	{ CODE_AUTODETECT,	L"Auto",	L"Auto",	L"自動選択",	false,	false,	false },	//!< 文字コード自動判別	//mapには入れない
+	{ CODE_SJIS,		L"SJIS",	L"SJIS",	L"SJIS",		false,	false,	true  },	//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
+	{ CODE_JIS,			L"JIS",		L"JIS",		L"JIS",			false,	false,	false },	//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
+	{ CODE_EUC,			L"EUC",		L"EUC",		L"EUC-JP",		false,	false,	true  },	//!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)ではない
+	{ CODE_UNICODE,		L"Unicode",	L"Uni",		L"Unicode",		true,	true,	true  },	//!< Unicode			(UTF-16 LittleEndian)	// UCS-2
+	{ CODE_UNICODEBE,	L"UniBE",	L"UniBE",	L"UnicodeBE",	true,	true,	true  },	//!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
+	{ CODE_UTF8,		L"UTF-8",	L"UTF-8",	L"UTF-8",		true,	false,	true  },	//!< UTF-8
+	{ CODE_CESU8,		L"CESU-8",	L"CESU-8",	L"CESU-8",		true,	false,	true  },	//!< CESU-8				(UCS-2からUTF-8化)
+	{ CODE_UTF7,		L"UTF-7",	L"UTF-7",	L"UTF-7",		false,	false,	false },	//!< UTF-7
+};
+
+// 文字コードセット
+typedef	std::map<int, SCodeSet>	MSCodeSet;
+static MSCodeSet				msCodeSet;
+// 表示順
+static std::vector<ECodeType>	vDispIdx;
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           初期化                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+void InitCodeSet()
+{
+	if (msCodeSet.empty()) {
+		int 	i;
+		for (i = 0; i < _countof(ASCodeSet); i++) {
+			vDispIdx.push_back( ASCodeSet[i].m_eCodeSet );
+			if (i > 0) {
+				msCodeSet[ASCodeSet[i].m_eCodeSet] = ASCodeSet[i];
+			}
+		}
+	}
+}
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                           判定                              //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+extern bool IsValidCodeType(int code)
+{
+	// 初期化
+	InitCodeSet();
+	return (msCodeSet.find( code ) != msCodeSet.end());
+}
+
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           名前                              //
@@ -7,50 +72,57 @@
 
 LPCTSTR CCodeTypeName::Normal() const
 {
-	LPCTSTR table[] = {
-		_T("SJIS"),			/* SJIS */
-		_T("JIS"),			/* JIS */
-		_T("EUC"),			/* EUC */
-		_T("Unicode"),		/* Unicode */
-		_T("UTF-8"),		/* UTF-8 */
-		_T("UTF-7"),		/* UTF-7 */
-		_T("UniBE"),		/* Unicode BigEndian */
-		_T("CESU-8")		/* CESU-8 */
-	};
-	if(!IsValidCodeType(m_eCodeType))return NULL;
-	return table[m_eCodeType];
+	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		return NULL;
+	}
+	return to_tchar( msCodeSet[m_eCodeType].m_sNormal.c_str() );
 }
 
 LPCTSTR CCodeTypeName::Short() const
 {
-	LPCTSTR table[] = {
-		_T("SJIS"),			/* SJIS */
-		_T("JIS"),			/* JIS */
-		_T("EUC"),			/* EUC */
-		_T("Uni"),			/* Unicode */
-		_T("UTF-8"),		/* UTF-8 */
-		_T("UTF-7"),		/* UTF-7 */
-		_T("UniBE"),		/* Unicode BigEndian */
-		_T("CESU-8")		/* CESU-8 */
-	};
-	if(!IsValidCodeType(m_eCodeType))return NULL;
-	return table[m_eCodeType];
+	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		return NULL;
+	}
+	return to_tchar( msCodeSet[m_eCodeType].m_sShort.c_str() );
 }
 
 LPCTSTR CCodeTypeName::Bracket() const
 {
-	LPCTSTR table[] = {
-		_T("  [SJIS]"),		/* SJIS */
-		_T("  [JIS]"),		/* JIS */
-		_T("  [EUC]"),		/* EUC */
-		_T("  [Unicode]"),	/* Unicode */
-		_T("  [UTF-8]"),	/* UTF-8 */
-		_T("  [UTF-7]"),	/* UTF-7 */
-		_T("  [UniBE]"),	/* Unicode BigEndian */
-		_T("  [CESU-8]")	/* CESU-8 */
-	};
-	if(!IsValidCodeType(m_eCodeType))return NULL;
-	return table[m_eCodeType];
+	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		return NULL;
+	}
+
+	static	std::wstring	sWork = L"  [" + msCodeSet[m_eCodeType].m_sShort + L"]";
+
+	return to_tchar( sWork.c_str() );
+}
+
+
+bool CCodeTypeName::UseBom()
+{
+	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		return false;
+	}
+
+	return msCodeSet[m_eCodeType].m_bUseBom;
+}
+
+bool CCodeTypeName::IsBomDefOn()
+{
+	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		return false;
+	}
+
+	return msCodeSet[m_eCodeType].m_bIsBomDefOn;
+}
+
+bool CCodeTypeName::CanDefault()
+{
+	if (msCodeSet.find( m_eCodeType ) == msCodeSet.end()) {
+		return false;
+	}
+
+	return msCodeSet[m_eCodeType].m_bCanDefault;
 }
 
 
@@ -58,43 +130,20 @@ LPCTSTR CCodeTypeName::Bracket() const
 //                      コンボボックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-ECodeType gm_nCodeComboValueArr[] = {
-	CODE_AUTODETECT,	/* 文字コード自動判別 */
-	CODE_SJIS,
-	CODE_JIS,
-	CODE_EUC,
-	CODE_UNICODE,
-	CODE_UNICODEBE,
-	CODE_UTF8,
-	CODE_CESU8,
-	CODE_UTF7
-};
-
-LPCTSTR	gm_pszCodeComboNameArr[] = {
-	_T("自動選択"),
-	_T("SJIS"),
-	_T("JIS"),
-	_T("EUC"),
-	_T("Unicode"),
-	_T("UnicodeBE"),
-	_T("UTF-8"),
-	_T("CESU-8"),
-	_T("UTF-7")
-};
-
 int CCodeTypesForCombobox::GetCount() const
 {
-	return _countof(gm_nCodeComboValueArr);
+	return vDispIdx.size();
 }
 
 ECodeType CCodeTypesForCombobox::GetCode(int nIndex) const
 {
-	return gm_nCodeComboValueArr[nIndex];
+	return vDispIdx[nIndex];
 }
 
 LPCTSTR CCodeTypesForCombobox::GetName(int nIndex) const
 {
-	return gm_pszCodeComboNameArr[nIndex];
+	if (nIndex == 0) {
+		return to_tchar( ASCodeSet[0].m_sLong.c_str() );
+	}
+	return to_tchar( msCodeSet[vDispIdx[nIndex]].m_sLong.c_str() );
 }
-
-

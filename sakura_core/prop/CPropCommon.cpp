@@ -162,7 +162,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	//	DProcの変更	2010/5/9 Uchi
 	static ComPropSheetInfo ComPropSheetInfoList[] = {
-		{ _T("全般"), 				IDD_PROP1P1,		CPropGeneral::DlgProc_page },
+		{ _T("全般"), 				IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
 		{ _T("ウィンドウ"),			IDD_PROP_WIN,		CPropWin::DlgProc_page },
 		{ _T("メインメニュー"),		IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
 		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	CPropToolbar::DlgProc_page },
@@ -304,7 +304,7 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 {
 	int		nContextID;
 	switch( nPageID ){
-	case IDD_PROP1P1:
+	case IDD_PROP_GENERAL:
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_GENERAL);
 		break;
 	case IDD_PROP_FORMAT:

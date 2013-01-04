@@ -33,30 +33,30 @@ static const DWORD p_helpids3[] = {	//11500
 	0, 0
 };
 
-static const wchar_t* aszCodeStr[] = {
-	L"SJIS",
-	L"EUC",
-	L"UTF-8",
-	L"CESU-8",
-	L"Unicode",
-	L"UnicodeBE"
-};
-static const ECodeType aeCodeType[] = {
-	CODE_SJIS,
-	CODE_EUC,
-	CODE_UTF8,
-	CODE_CESU8,
-	CODE_UNICODE,
-	CODE_UNICODEBE
-};
-static const BOOL abBomEnable[] = {
-	FALSE,
-	FALSE,
-	TRUE,
-	TRUE,
-	TRUE,
-	TRUE
-};
+//static const wchar_t* aszCodeStr[] = {
+//	L"SJIS",
+//	L"EUC",
+//	L"UTF-8",
+//	L"CESU-8",
+//	L"Unicode",
+//	L"UnicodeBE"
+//};
+//static const ECodeType aeCodeType[] = {
+//	CODE_SJIS,
+//	CODE_EUC,
+//	CODE_UTF8,
+//	CODE_CESU8,
+//	CODE_UNICODE,
+//	CODE_UNICODEBE
+//};
+//static const BOOL abBomEnable[] = {
+//	FALSE,
+//	FALSE,
+//	TRUE,
+//	TRUE,
+//	TRUE,
+//	TRUE
+//};
 static const wchar_t* aszEolStr[] = {
 	L"CR+LF",
 	L"LF (UNIX)",
@@ -119,13 +119,9 @@ INT_PTR CPropSupport::DispatchEvent(
 					// 文字コードの変更をBOMチェックボックスに反映
 					i = Combo_GetCurSel( (HWND) lParam );
 					if( CB_ERR != i ){
-						int nCheck = BST_UNCHECKED;
-						if( abBomEnable[i] ){
-							if( (aeCodeType[i] == CODE_UNICODE || aeCodeType[i] == CODE_UNICODEBE) )
-								nCheck = BST_CHECKED;
-						}
-						::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, nCheck );
-						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
+						CCodeTypeName	cCodeTypeName( Combo_GetItemData( (HWND)lParam, i ) );
+						::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (cCodeTypeName.IsBomDefOn() ?  BST_CHECKED : BST_UNCHECKED) );
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), cCodeTypeName.UseBom() );
 					}
 					break;
 				}
@@ -219,7 +215,7 @@ INT_PTR CPropSupport::DispatchEvent(
 //		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:	//Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
-			OnHelp( hwndDlg, IDD_PROPTYPESP2 );
+			OnHelp( hwndDlg, IDD_PROP_SUPPORT );
 			return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 p2 */
@@ -295,25 +291,28 @@ void CPropSupport::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_encoding.m_bPriorCesu8 );
 
 		// デフォルトコードタイプのコンボボックス設定
+		int		nSel= 0;
+		int		j = 0;
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
-		for( i = 0; i < _countof(aszCodeStr); ++i ){
-			ApiWrap::Combo_AddString( hCombo, aszCodeStr[i] );
-		}
-		for( i = 0; i < _countof(aeCodeType); ++i ){
-			if( m_Types.m_encoding.m_eDefaultCodetype == aeCodeType[i] ){
-				break;
+		CCodeTypesForCombobox cCodeTypes;
+		for (i = 0; i < cCodeTypes.GetCount(); i++) {
+			if (CCodeTypeName( cCodeTypes.GetCode(i) ).CanDefault()) {
+				int idx = Combo_AddString( hCombo, cCodeTypes.GetName(i) );
+				Combo_SetItemData( hCombo, idx, cCodeTypes.GetCode(i) );
+				if (m_Types.m_encoding.m_eDefaultCodetype == cCodeTypes.GetCode(i)) {
+					nSel = j;
+				}
+				j++;
 			}
 		}
-		if( i == _countof(aeCodeType) ){
-			i = 0;
-		}
-		Combo_SetCurSel( hCombo, i );
+		Combo_SetCurSel( hCombo, nSel );
 
 		// BOM チェックボックス設定
-		if( !abBomEnable[i] )
+		CCodeTypeName	cCodeTypeName(m_Types.m_encoding.m_eDefaultCodetype);
+		if( !cCodeTypeName.UseBom() )
 			m_Types.m_encoding.m_bDefaultBom = FALSE;
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, m_Types.m_encoding.m_bDefaultBom );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_encoding.m_bDefaultBom ?  BST_CHECKED : BST_UNCHECKED) );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), (int)cCodeTypeName.UseBom() );
 
 		// デフォルト改行タイプのコンボボックス設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
@@ -376,7 +375,7 @@ int CPropSupport::GetData( HWND hwndDlg )
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
 		i = Combo_GetCurSel( hCombo );
 		if( CB_ERR != i ){
-			m_Types.m_encoding.m_eDefaultCodetype = aeCodeType[i];
+			m_Types.m_encoding.m_eDefaultCodetype = ECodeType( Combo_GetItemData( hCombo, i ) );
 		}
 
 		// m_Types.m_bDefaultBom を設定

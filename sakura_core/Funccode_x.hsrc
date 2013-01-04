@@ -319,6 +319,7 @@ F_ISEARCH_MIGEMO_PREV	= 30986,	//後方MIGEMOインクリメンタルサーチ			？
 
 // モード切り替え系 
 F_CHGMOD_INS		= 31001,	//挿入／上書きモード切り替え			なし
+F_CHG_CHARSET		= 31010,	//文字コードセット指定					
 F_CHGMOD_EOL_CRLF	= 31081,	//入力改行コード指定(CRLF)				なし
 F_CHGMOD_EOL_LF		= 31082,	//入力改行コード指定(LF)				なし
 F_CHGMOD_EOL_CR		= 31083,	//入力改行コード指定(CR)				なし
