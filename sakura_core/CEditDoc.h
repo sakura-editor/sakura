@@ -164,10 +164,11 @@ public:
 	//	Nov. 29, 2000 To Here
 	//	Nov. 23, 2000 From Here	genta
 	//	文書種別情報の設定，取得Interface
-	void SetDocumentType(int type, bool force)	//	文書種別の設定
+	void SetDocumentType(int type, bool force, bool bTypeOnly = false)	//!< 文書種別の設定
 	{
 		if( (!m_nSettingTypeLocked) || force ){
 			m_nSettingType = type;
+			if( bTypeOnly ) return;	// bTypeOnly == true は特殊ケース（一時利用）に限定
 			UnlockDocumentType();
 			m_pShareData->m_Types[m_nSettingType].m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
 			SetDocumentIcon();	// Sep. 11, 2002 genta

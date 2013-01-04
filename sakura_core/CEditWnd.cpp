@@ -196,66 +196,11 @@ CEditWnd::~CEditWnd()
 	m_hWnd = NULL;
 }
 
-
-
-
-
-/*!
-	作成
-
-	@date 2002.03.07 genta nDocumentType追加
-	@date 2007.06.26 ryoji nGroup追加
-	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
-*/
-HWND CEditWnd::Create(
-	HINSTANCE	hInstance,		//!< [in] Instance Handle
-	HWND		hwndParent,		//!< [in] 親ウィンドウのハンドル
-	int			nGroup			//!< [in] グループID
-)
+//!< ウィンドウ生成用の矩形を取得
+void CEditWnd::_GetWindowRectForInit(int& nWinOX, int& nWinOY, int& nWinCX, int& nWinCY, int nGroup, const STabGroupInfo& sTabGroupInfo)
 {
-	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
-
-	//	Dec. 6, 2002 genta
-	//	small icon指定のため RegisterClassExに変更
-	WNDCLASSEX	wc;
-	HWND		hwndTop;
-	WINDOWPLACEMENT	wpTop;
-	ATOM		atom;
-
-	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
-		return NULL;
-	}
-
-
-	m_hInstance = hInstance;
-	m_hwndParent = hwndParent;
-	//	Apr. 27, 2000 genta
-	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
-	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
-	wc.lpfnWndProc		= CEditWndProc;
-	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= 32;
-	wc.hInstance		= m_hInstance;
-	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	wc.hIcon			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
-
-	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
-	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
-	wc.lpszMenuName		= MAKEINTRESOURCE( IDR_MENU1 );
-	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
-
-	//	Dec. 6, 2002 genta
-	//	small icon指定のため RegisterClassExに変更
-	wc.cbSize			= sizeof( wc );
-	wc.hIconSm			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
-	if( 0 == ( atom = RegisterClassEx( &wc ) ) ){
-		//	2004.05.13 Moca return NULLを有効にした
-		return NULL;
-	}
-
 	/* ウィンドウサイズ継承 */
-	int	nWinCX, nWinCY;
+	
 	//	2004.05.13 Moca m_Common.m_eSaveWindowSizeをBOOLからenumに変えたため
 	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_eSaveWindowSize ){
 		nWinCX = m_pShareData->m_Common.m_sWindow.m_nWinSizeCX;
@@ -276,7 +221,7 @@ HWND CEditWnd::Create(
 	}
 
 	/* ウィンドウ位置指定 */
-	int nWinOX, nWinOY;
+	
 	nWinOX = CW_USEDEFAULT;
 	nWinOY = 0;
 	// ウィンドウ位置固定
@@ -295,40 +240,54 @@ HWND CEditWnd::Create(
 		nWinOY = fi.m_nWindowOriginY;
 	}
 
-	//From Here @@@ 2003.05.31 MIK
-	//タブウインドウの場合は現状値を指定
-	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
-	{
-		if( nGroup < 0 )	// 不正なグループID
-			nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
-		EditNode*	pEditNode = CShareData::getInstance()->GetEditNodeAt( nGroup, 0 );	// グループの先頭ウィンドウ情報を取得	// 2007.06.20 ryoji
-		hwndTop = pEditNode? pEditNode->m_hWnd: NULL;
+	// 必要なら、タブグループにフィットするよう、変更
+	if(sTabGroupInfo.IsValid()){
+		RECT rcWork, rcMon;
+		GetMonitorWorkRect( sTabGroupInfo.hwndTop, &rcWork, &rcMon );
 
-		if( hwndTop )
-		{
-			//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
-			// 2007.06.20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
-			RECT rcWork;
-			RECT rcMon;
-			GetMonitorWorkRect( hwndTop, &rcWork, &rcMon );
-
-			wpTop.length = sizeof(wpTop);
-			if( ::GetWindowPlacement( hwndTop, &wpTop ) ){	// 現在の先頭ウィンドウから位置を取得
-				nWinCX = wpTop.rcNormalPosition.right - wpTop.rcNormalPosition.left;
-				nWinCY = wpTop.rcNormalPosition.bottom - wpTop.rcNormalPosition.top;
-				nWinOX = wpTop.rcNormalPosition.left + (rcWork.left - rcMon.left);
-				nWinOY = wpTop.rcNormalPosition.top + (rcWork.top - rcMon.top);
-				if( wpTop.showCmd == SW_SHOWMINIMIZED )
-					wpTop.showCmd = pEditNode->m_showCmdRestore;
-			}
-			else{
-				hwndTop = NULL;
-			}
-		}
+		const WINDOWPLACEMENT& wpTop = sTabGroupInfo.wpTop;
+		nWinCX = wpTop.rcNormalPosition.right  - wpTop.rcNormalPosition.left;
+		nWinCY = wpTop.rcNormalPosition.bottom - wpTop.rcNormalPosition.top;
+		nWinOX = wpTop.rcNormalPosition.left   + (rcWork.left - rcMon.left);
+		nWinOY = wpTop.rcNormalPosition.top    + (rcWork.top - rcMon.top);
 	}
-	//To Here @@@ 2003.05.31 MIK
+}
 
-	HWND hWnd = ::CreateWindowEx(
+HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
+{
+	// -- -- -- -- ウィンドウクラス登録 -- -- -- -- //
+	WNDCLASSEX	wc;
+	//	Apr. 27, 2000 genta
+	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
+	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
+	wc.lpfnWndProc		= CEditWndProc;
+	wc.cbClsExtra		= 0;
+	wc.cbWndExtra		= 32;
+	wc.hInstance		= m_hInstance;
+	//	Dec, 2, 2002 genta アイコン読み込み方法変更
+	wc.hIcon			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, false );
+
+	wc.hCursor			= NULL/*LoadCursor( NULL, IDC_ARROW )*/;
+	wc.hbrBackground	= (HBRUSH)NULL/*(COLOR_3DSHADOW + 1)*/;
+	wc.lpszMenuName		= MAKEINTRESOURCE( IDR_MENU1 );
+	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
+
+	//	Dec. 6, 2002 genta
+	//	small icon指定のため RegisterClassExに変更
+	wc.cbSize			= sizeof( wc );
+	wc.hIconSm			= GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
+	ATOM	atom = RegisterClassEx( &wc );
+	if( 0 == atom ){
+		//	2004.05.13 Moca return NULLを有効にした
+		return NULL;
+	}
+
+	//矩形取得
+	int nWinOX, nWinOY, nWinCX, nWinCY;
+	_GetWindowRectForInit(nWinOX, nWinOY, nWinCX, nWinCY, nGroup, sTabGroupInfo);
+
+	//作成
+	HWND hwndResult = ::CreateWindowEx(
 		0,				 	// extended window style
 		GSTR_EDITWINDOWNAME,		// pointer to registered class name
 		GSTR_EDITWINDOWNAME,		// pointer to window name
@@ -342,57 +301,47 @@ HWND CEditWnd::Create(
 		m_hInstance,		// handle to application instance
 		NULL				// pointer to window-creation data
 	);
-	m_hWnd = hWnd;
+	return hwndResult;
+}
 
-	// 2004.05.13 Moca ウィンドウ作成失敗。終了
-	if( NULL == hWnd ){
-		return NULL;
+void CEditWnd::_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup)
+{
+	HWND hwndTop = NULL;
+	WINDOWPLACEMENT	wpTop = {0};
+
+	//From Here @@@ 2003.05.31 MIK
+	//タブウインドウの場合は現状値を指定
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+	{
+		if( nGroup < 0 )	// 不正なグループID
+			nGroup = 0;	// グループ指定無し（最近アクティブのグループに入れる）
+		EditNode*	pEditNode = CShareData::getInstance()->GetEditNodeAt( nGroup, 0 );	// グループの先頭ウィンドウ情報を取得	// 2007.06.20 ryoji
+		hwndTop = pEditNode? pEditNode->m_hWnd: NULL;
+
+		if( hwndTop )
+		{
+			//	Sep. 11, 2003 MIK 新規TABウィンドウの位置が上にずれないように
+			// 2007.06.20 ryoji 非プライマリモニタまたはタスクバーを動かした後でもずれないように
+
+			wpTop.length = sizeof(wpTop);
+			if( ::GetWindowPlacement( hwndTop, &wpTop ) ){	// 現在の先頭ウィンドウから位置を取得
+				if( wpTop.showCmd == SW_SHOWMINIMIZED )
+					wpTop.showCmd = pEditNode->m_showCmdRestore;
+			}
+			else{
+				hwndTop = NULL;
+			}
+		}
 	}
+	//To Here @@@ 2003.05.31 MIK
 
-	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
-	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
-	// ※起動元での起動先アイドリング検出については CEditApp::OpenNewEditor を参照
-	::SetTimer( m_hWnd, IDT_FIRST_IDLE, 0, NULL );
+	//結果
+	pTabGroupInfo->hwndTop = hwndTop;
+	pTabGroupInfo->wpTop = wpTop;
+}
 
-	MyInitCommonControls();	// 2006.06.19 ryoji コモンコントロールの初期化を CreateToolBar() から移動
-
-
-	m_cIcons.Create( m_hInstance );	//	CreateImage List
-
-	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
-
-	// 各種バーよりも先に m_cEditDoc.Create() を実行しておく	// 2007.01.30 ryoji
-	// （m_cEditDoc メンバーの初期化を優先）
-	if( FALSE == m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons/*, 1, 1, 0, 0*/ ) ){
-		::MessageBox(
-			m_hWnd,
-			"クライアントウィンドウの作成に失敗しました", GSTR_APPNAME,
-			MB_OK
-		);
-	}
-
-	// 2007.03.08 ryoji 各種バーの作成を Layoutxxx(), EndLayoutBars() で簡素化
-
-// 次のSetWindowLongPtr以降だとデバッグ中に落ちることがあったので順番を入れ替えた。 // 2005/8/9 aroka
-	/* ツールバー */
-	LayoutToolBar();
-
-	/* ステータスバー */
-	LayoutStatusBar();
-
-	/* ファンクションキー バー */
-	LayoutFuncKey();
-
-	/* タブウインドウ */
-	LayoutTabBar();
-
-	/* バーの配置終了 */
-	EndLayoutBars( FALSE );
-
-	// 画面表示直前にDispatchEventを有効化する
-	::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
-
-	/* デスクトップからはみ出さないようにする */
+void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
+{
 	RECT	rcOrg;
 	RECT	rcDesktop;
 //	int		nWork;
@@ -434,21 +383,70 @@ HWND CEditWnd::Create(
 	//From Here @@@ 2003.06.13 MIK
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
 		&& !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin
-		&& hwndTop )
+		&& sTabGroupInfo.hwndTop )
 	{
 		// 現在の先頭ウィンドウから WS_EX_TOPMOST 状態を引き継ぐ	// 2007.05.18 ryoji
-		DWORD dwExStyle = (DWORD)::GetWindowLongPtr( hwndTop, GWL_EXSTYLE );
+		DWORD dwExStyle = (DWORD)::GetWindowLongPtr( sTabGroupInfo.hwndTop, GWL_EXSTYLE );
 		::SetWindowPos( m_hWnd, (dwExStyle & WS_EX_TOPMOST)? HWND_TOPMOST: HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
-		if( wpTop.showCmd == SW_SHOWMAXIMIZED )
-		{
-			::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
+		bool bStopAnimation = COsVersionInfo().IsWinVista_or_later();	// Vista 以降の初回表示アニメーション効果を抑止する
+		if( !bStopAnimation ){
+			if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
+			{
+				::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
+			}
+			else
+			{
+				::ShowWindow( m_hWnd, SW_SHOW );
+			}
 		}
 		else
 		{
-			::ShowWindow( m_hWnd, SW_SHOW );
+			// 初回表示のアニメーション効果を抑止する
+
+			// 先頭ウィンドウの背後で画面描画してから手前に出す（ツールバーやビューのちらつきを抑える）
+			// ここでは、あとで正式に適用されるはずのドキュメントタイプを仮設定して一時描画しておく（ビューの配色切替によるちらつきを抑える）
+			// さらに、タイプを戻して画面を無効化だけしておく（何らかの原因で途中停止した場合にはもとのタイプ色で再描画されるように ← 例えばファイルサイズが大きすぎる警告を出すときなど）
+			// ※ 正攻法とはいえないかもしれないがあちこち手を入れることなく簡潔に済ませられるのでこうしておく
+			int cTypeOld, cTypeNew = -1;
+			cTypeOld = m_cEditDoc.GetDocumentType();	// 現在のタイプ
+			{
+				EditInfo ei;
+				CCommandLine::getInstance()->GetEditInfo( &ei );
+				if( ei.m_szDocType[0] != '\0' ){
+					cTypeNew = CShareData::getInstance()->GetDocumentTypeOfExt( ei.m_szDocType );
+				}else{
+					cTypeNew = CShareData::getInstance()->GetDocumentTypeOfPath( ei.m_szPath );
+				}
+			}
+			m_cEditDoc.SetDocumentType( cTypeNew, true, true );	// 仮設定
+
+			// 可能な限り画面描画の様子が見えないよう一時的に先頭ウィンドウの後ろに配置
+			::SetWindowPos( m_hWnd, sTabGroupInfo.hwndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
+
+			// アニメーション効果は一時的に OFF にする
+			ANIMATIONINFO ai = {sizeof(ANIMATIONINFO)};
+			::SystemParametersInfo( SPI_GETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+			int iMinAnimateOld = ai.iMinAnimate;
+			ai.iMinAnimate = 0;
+			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+
+			// 可視化する（最大化のときは次の ::ShowWindow() で手前に出てしまうので、アニメーション除去効果はあるがクライアント領域のちらつきは抑えきれない）
+			int nCmdShow = ( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )? SW_SHOWMAXIMIZED: SW_SHOWNOACTIVATE;
+			::ShowWindow( m_hWnd, nCmdShow );
+			::UpdateWindow( m_hWnd );	// 画面更新
+			::BringWindowToTop( m_hWnd );
+			::ShowWindow( sTabGroupInfo.hwndTop , SW_HIDE );	// 以前の先頭ウィンドウはここで消しておかないと消えるアニメーションが見える場合がある
+
+			// アニメーション効果を戻す
+			ai.iMinAnimate = iMinAnimateOld;
+			::SystemParametersInfo( SPI_SETANIMATION, sizeof(ANIMATIONINFO), &ai, 0 );
+
+			// アイドリング開始時にその時点のタイプ別設定色で再描画されるようにしておく
+			m_cEditDoc.SetDocumentType( cTypeOld, true, true );	// タイプ戻し
+			::InvalidateRect( m_hWnd, NULL, TRUE );	// 画面無効化
 		}
 	}
 	else
@@ -475,6 +473,100 @@ HWND CEditWnd::Create(
 		}
 	}
 	//To Here @@@ 2003.06.13 MIK
+}
+
+/*!
+	作成
+
+	@date 2002.03.07 genta nDocumentType追加
+	@date 2007.06.26 ryoji nGroup追加
+	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
+*/
+HWND CEditWnd::Create(
+	HINSTANCE	hInstance,		//!< [in] Instance Handle
+	HWND		hwndParent,		//!< [in] 親ウィンドウのハンドル
+	int			nGroup			//!< [in] グループID
+)
+{
+	MY_RUNNINGTIMER( cRunningTimer, "CEditWnd::Create" );
+
+	m_hInstance = hInstance;
+	m_hwndParent = hwndParent;
+
+	//ウィンドウ数制限
+	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		return NULL;
+	}
+
+	//タブグループ情報取得
+	STabGroupInfo sTabGroupInfo;
+	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
+
+
+	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
+	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
+	if(!hWnd)return NULL;
+	m_hWnd = hWnd;
+
+	// 初回アイドリング検出用のゼロ秒タイマーをセットする	// 2008.04.19 ryoji
+	// ゼロ秒タイマーが発動（初回アイドリング検出）したら MYWM_FIRST_IDLE を起動元プロセスにポストする。
+	// ※起動元での起動先アイドリング検出については CEditApp::OpenNewEditor を参照
+	::SetTimer( m_hWnd, IDT_FIRST_IDLE, 0, NULL );
+
+	/* 編集ウィンドウリストへの登録 */
+	// 2011.01.12 ryoji この処理は以前はウィンドウ可視化よりも後の位置にあった
+	// Vista/7 での初回表示アニメーション抑止（rev1868）とのからみで、ウィンドウが可視化される時点でタブバーに全タブが揃っていないと見苦しいのでここに移動。
+	// AddEditWndList() で自ウィンドウにポストされる MYWM_TAB_WINDOW_NOTIFY(TWNT_ADD) はタブバー作成後の初回アイドリング時に処理されるので特に問題は無いはず。
+	if( !CShareData::getInstance()->AddEditWndList( m_hWnd, nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
+		::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		::DestroyWindow( m_hWnd );
+		m_hWnd = hWnd = NULL;
+		return hWnd;
+	}
+
+	//コモンコントロール初期化
+	MyInitCommonControls();
+
+	//イメージ、ヘルパなどの作成
+	m_cIcons.Create( m_hInstance );
+	m_CMenuDrawer.Create( m_hInstance, m_hWnd, &m_cIcons );
+
+	// 各種バーよりも先に m_cEditDoc.Create() を実行しておく	// 2007.01.30 ryoji
+	// （m_cEditDoc メンバーの初期化を優先）
+	if( !m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons ) ){
+		::MessageBox(
+			m_hWnd,
+			"クライアントウィンドウの作成に失敗しました", GSTR_APPNAME,
+			MB_OK
+		);
+	}
+
+	// -- -- -- -- 各種バー作成 -- -- -- -- //
+
+	/* ツールバー */
+	LayoutToolBar();
+
+	/* ステータスバー */
+	LayoutStatusBar();
+
+	/* ファンクションキー バー */
+	LayoutFuncKey();
+
+	/* タブウインドウ */
+	LayoutTabBar();
+
+	/* バーの配置終了 */
+	EndLayoutBars( FALSE );
+
+
+	// -- -- -- -- その他調整など -- -- -- -- //
+
+	// 画面表示直前にDispatchEventを有効化する
+	::SetWindowLongPtr( m_hWnd, GWLP_USERDATA, (LONG_PTR)this );
+
+	// デスクトップからはみ出さないようにする
+	_AdjustInMonitor(sTabGroupInfo);
 
 	// ドロップされたファイルを受け入れる
 	::DragAcceptFiles( m_hWnd, TRUE );
@@ -483,7 +575,7 @@ HWND CEditWnd::Create(
 	//アクティブ情報
 	m_bIsActiveApp = ( ::GetActiveWindow() == m_hWnd );	// 2007.03.08 ryoji
 
-	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能）  2007.06.07 ryoji
+	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
 	if( COsVersionInfo().IsWinVista_or_later() ){
 		m_bUIPI = FALSE;
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)m_hWnd );
@@ -498,13 +590,6 @@ HWND CEditWnd::Create(
 		}
 	}
 
-	/* 編集ウィンドウリストへの登録 */
-	if( FALSE == CShareData::getInstance()->AddEditWndList( m_hWnd, nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
-		::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, "編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
-		::DestroyWindow( m_hWnd );
-		m_hWnd = hWnd = NULL;
-		return hWnd;
-	}
 	CShareData::getInstance()->SetTraceOutSource( m_hWnd );	// TraceOut()起動元ウィンドウの設定	// 2006.06.26 ryoji
 
 	//	Aug. 29, 2003 wmlhq
@@ -534,7 +619,6 @@ void CEditWnd::OpenDocumentWhenStart(
 	if( pszPath ){
 		char*	pszPathNew = new char[_MAX_PATH];
 		strcpy( pszPathNew, pszPath );
-		::ShowWindow( m_hWnd, SW_SHOW );
 		//	Oct. 03, 2004 genta コード確認は設定に依存
 		BOOL		bOpened;
 		BOOL		bReadResult = m_cEditDoc.FileRead( pszPathNew, &bOpened, nCharCode, bReadOnly, m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange );

@@ -52,7 +52,13 @@ class CDropTarget;
 #define IDT_SYSMENU		1357
 #define ID_TOOLBAR		100
 
+struct STabGroupInfo{
+	HWND			hwndTop;
+	WINDOWPLACEMENT	wpTop;
 
+	STabGroupInfo() : hwndTop(NULL) { }
+	bool IsValid() const{ return hwndTop!=NULL; }
+};
 
 //! 編集ウィンドウ（外枠）管理クラス
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -71,6 +77,12 @@ public:
 	//	Mar. 7, 2002 genta 文書タイプ用引数追加
 	// 2007.06.26 ryoji グループ指定引数追加
 	HWND Create( HINSTANCE, HWND, int nGroup);	/* 作成 */
+
+	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
+	void _GetWindowRectForInit(int& nWinOX, int& nWinOY, int& nWinCX, int& nWinCY, int nGroup, const STabGroupInfo& sTabGroupInfo);
+	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
+	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
+
 	void OpenDocumentWhenStart(const char*, ECodeType, bool);	//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
 	void SetDocumentTypeWhenCreate(ECodeType, bool, int = -1);	//!< [in] 文書タイプ．-1のとき強制指定無し．
 
@@ -109,7 +121,7 @@ public:
 	void AcceptSharedSearchKey();		/* 検索ボックスを更新 */
 
 	//ファイル名変更通知
-	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool m_bIsGrep );	//ファイル名変更通知	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
+	void ChangeFileNameNotify( const TCHAR* pszTabCaption, const TCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 	void InitMenu( HMENU, UINT, BOOL );
 	void InitMenubarMessageFont(void);
 	LRESULT WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull );	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon
