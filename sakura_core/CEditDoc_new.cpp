@@ -1170,7 +1170,7 @@ void CEditDoc::AddToMRU(void)
 	@date 2004.10.09 CEditViewより移動
 	@date 2007.03.12 maru 重複コード(多重オープン処理部分など)をCShareData::IsPathOpenedに移動
 */
-void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, BOOL bReadOnly )
+void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOnly )
 {
 	char		pszPath[_MAX_PATH];
 	BOOL		bOpened;
@@ -1305,7 +1305,7 @@ void CEditDoc::FileClose( void )
 
 	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS()から処理本体を切り出し
 */
-void CEditDoc::FileCloseOpen( const char *filename, ECodeType nCharCode, BOOL bReadOnly )
+void CEditDoc::FileCloseOpen( const char *filename, ECodeType nCharCode, bool bReadOnly )
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
 	if( !OnFileClose() ){
@@ -1452,7 +1452,7 @@ BOOL CEditDoc::FileSaveAs( const char *filename )
 		OnChangeSetting();	//	タイプ別設定の変更を指示。
 		//	再オープン
 		//	Jul. 26, 2003 ryoji 現在開いているのと同じコードで開き直す
-		ReloadCurrentFile( m_nCharCode, FALSE );
+		ReloadCurrentFile( m_nCharCode, false );
 		return TRUE;
 	}
 	return FALSE;

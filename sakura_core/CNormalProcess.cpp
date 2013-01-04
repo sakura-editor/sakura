@@ -154,12 +154,12 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
 		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
-		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, FALSE, nType );
+		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 	}
 	else if( bGrepMode ){
 		/* GREP */
 		// 2010.06.16 Moca Grepでもオプション指定を適用
-		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, FALSE, nType );
+		m_pcEditWnd->SetDocumentTypeWhenCreate( fi.m_nCharCode, false, nType );
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
 		if( !bGrepDlg ){
 			TCHAR szWork[MAX_PATH];

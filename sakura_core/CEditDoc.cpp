@@ -69,7 +69,7 @@ CEditDoc::CEditDoc()
 : m_cSaveLineCode( EOL_NONE )		//	保存時のLine Type
 , m_bGrepRunning( FALSE )		/* Grep処理中 */
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
-, m_bReadOnly( FALSE )			/* 読み取り専用モード */
+, m_bReadOnly( false )			/* 読み取り専用モード */
 , m_bDebugMode( false )			/* デバッグモニタモード */
 , m_bGrepMode( false )			/* Grepモードか */
 , m_nActivePaneIndex( 0 )
@@ -185,7 +185,7 @@ void CEditDoc::Clear()
 /* 既存データのクリア */
 void CEditDoc::InitDoc()
 {
-	m_bReadOnly = FALSE;	// 読み取り専用モード
+	m_bReadOnly = false;	// 読み取り専用モード
 	strcpy( m_szGrepKey, "" );
 
 	m_bGrepMode = false;	/* Grepモード */
@@ -658,7 +658,6 @@ BOOL CEditDoc::OnFileClose()
 	/* テキストが変更されている場合 */
 	if( IsModified()
 	&& !m_bDebugMode	/* デバッグモニタモードのときは保存確認しない */
-//	&& FALSE == m_bReadOnly		/* 読み取り専用モード */
 	){
 		if( m_bGrepMode ){	/* Grepモードのとき */
 			/* Grepモードで保存確認するか */
@@ -868,7 +867,7 @@ BOOL CEditDoc::FileRead(
 	char*	pszPath,	//!< [in/out]
 	BOOL*	pbOpened,	//!< [out] すでに開かれていたか
 	ECodeType	nCharCode,		/*!< [in] 文字コード種別 */
-	BOOL	bReadOnly,			/*!< [in] 読み取り専用か */
+	bool	bReadOnly,			/*!< [in] 読み取り専用か */
 	BOOL	bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
 )
 {
@@ -908,14 +907,12 @@ BOOL CEditDoc::FileRead(
 			/* 指定フォルダで「開くダイアログ」を表示 */
 			{
 				char*		pszPathNew = new char[_MAX_PATH];
-//				int			nCharCode;
-//				BOOL		bReadOnly;
 
 				strcpy( pszPathNew, "" );
 
 				/* 「ファイルを開く」ダイアログ */
 				nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-				bReadOnly = FALSE;
+				bReadOnly = false;
 //				::ShowWindow( m_hWnd, SW_SHOW );
 				if( !OpenFileDialog( m_hWnd, pszPath, pszPathNew, &nCharCode, &bReadOnly ) ){
 					delete [] pszPathNew;
@@ -1383,14 +1380,14 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 	/* 現在位置で無変更な状態になったことを通知 */
 	m_cOpeBuf.SetNoModified();
 
-	m_bReadOnly = FALSE;	/* 読み取り専用モード */
+	m_bReadOnly = false;	/* 読み取り専用モード */
 
 	/* 親ウィンドウのタイトルを更新 */
 	UpdateCaption();
 end_of_func:;
 
 	if( IsFilePathAvailable() &&
-		FALSE == m_bReadOnly && /* 読み取り専用モード ではない */
+		!m_bReadOnly && /* 読み取り専用モード ではない */
 		TRUE == bRet
 	){
 		/* ファイルの排他ロック */
@@ -1416,7 +1413,7 @@ BOOL CEditDoc::OpenFileDialog(
 	const char*	pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
 	char*		pszPath,		//!< [out] 開くファイルのパスを受け取るアドレス
 	ECodeType*	pnCharCode,		//!< [out] 指定された文字コード種別を受け取るアドレス
-	BOOL*		pbReadOnly		//!< [out] 読み取り専用か
+	bool*		pbReadOnly		//!< [out] 読み取り専用か
 )
 {
 	/* アクティブにする */
@@ -2277,7 +2274,7 @@ void CEditDoc::DoFileLock( void )
 		return;
 	}
 	/* 読み取り専用モード */
-	if( TRUE == m_bReadOnly ){
+	if( m_bReadOnly ){
 		return;
 	}
 
@@ -4260,7 +4257,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 /*! 同一ファイルの再オープン */
 void CEditDoc::ReloadCurrentFile(
 	ECodeType	nCharCode,		/*!< [in] 文字コード種別 */
-	BOOL	bReadOnly		/*!< [in] 読み取り専用モード */
+	bool	bReadOnly		/*!< [in] 読み取り専用モード */
 )
 {
 	if( !fexist( GetFilePath() ) ){

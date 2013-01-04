@@ -71,8 +71,8 @@ public:
 	//	Mar. 7, 2002 genta 文書タイプ用引数追加
 	// 2007.06.26 ryoji グループ指定引数追加
 	HWND Create( HINSTANCE, HWND, int nGroup);	/* 作成 */
-	void OpenDocumentWhenStart(const char*, ECodeType, BOOL);	//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
-	void SetDocumentTypeWhenCreate(ECodeType, BOOL, int = -1);	//!< [in] 文書タイプ．-1のとき強制指定無し．
+	void OpenDocumentWhenStart(const char*, ECodeType, bool);	//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
+	void SetDocumentTypeWhenCreate(ECodeType, bool, int = -1);	//!< [in] 文書タイプ．-1のとき強制指定無し．
 
 
 	void MessageLoop( void );								/* メッセージループ */

@@ -67,7 +67,7 @@ public:
 		HWND				hWndParent,					//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
 		const TCHAR*		pszPath,					//!< [in] 新規エディタで開くファイル名とオプション．NULLで新規エディタ作成．
 		int					nCharCode,					//!< [in] 新規エディタの文字コード
-		BOOL				bReadOnly,					//!< [in] FALSEでなければ読み取り専用で開く
+		bool				bReadOnly,					//!< [in] falseでなければ読み取り専用で開く
 		bool				sync			= false,	//!< [in] trueなら新規エディタの起動まで待機する
 		const TCHAR*		szCurDir		= NULL,		//!< [in] 新規エディタのカレントディレクトリ
 		bool				bNewWindow		= false		//!< [in] 新規エディタをウインドウで開く
@@ -76,7 +76,7 @@ public:
 		HINSTANCE		hInstance,
 		HWND			hWndParent,
 		const EditInfo*	pfi,
-		BOOL			bReadOnly,
+		bool			bReadOnly,
 		bool			sync		= false,
 		bool			bNewWindow	= false
 	);

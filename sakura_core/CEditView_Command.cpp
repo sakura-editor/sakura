@@ -3602,7 +3602,7 @@ void CEditView::Command_FILENEW( void )
 void CEditView::Command_FILENEW_NEWWINDOW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
-	CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE,
+	CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, false,
 		false,
 		NULL,
 		true
@@ -3616,7 +3616,7 @@ void CEditView::Command_FILENEW_NEWWINDOW( void )
 	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
 	@date 2004.10.09 genta 実装をCEditDocへ移動
 */
-void CEditView::Command_FILEOPEN( const char* filename, ECodeType nCharCode, BOOL bReadOnly )
+void CEditView::Command_FILEOPEN( const char* filename, ECodeType nCharCode, bool bReadOnly )
 {
 	m_pcEditDoc->OpenFile( filename, nCharCode, bReadOnly );
 }
@@ -3638,7 +3638,7 @@ void CEditView::Command_FILECLOSE( void )
 	@date 2003.03.30 genta 開くダイアログでキャンセルしたとき元のファイルが残るように。
 				ついでにFILEOPENと同じように引数を追加しておく
 */
-void CEditView::Command_FILECLOSE_OPEN( const char *filename, ECodeType nCharCode, BOOL bReadOnly )
+void CEditView::Command_FILECLOSE_OPEN( const char *filename, ECodeType nCharCode, bool bReadOnly )
 {
 	m_pcEditDoc->FileCloseOpen( filename, nCharCode, bReadOnly );
 }
@@ -5843,7 +5843,7 @@ bool CEditView::TagJumpSub(
 			m_hInstance,
 			m_hWnd,
 			&inf,
-			FALSE,	/* 読み取り専用か */
+			false,	/* 読み取り専用か */
 			true	//	同期モードで開く
 		);
 
@@ -6282,7 +6282,7 @@ open_c:;
 			m_hWnd,
 			szPath2,
 			m_pcEditDoc->m_nCharCode,
-			FALSE,	/* 読み取り専用か */
+			false,	/* 読み取り専用か */
 			true
 		);
 		/* ファイルを開いているか */
@@ -7739,7 +7739,7 @@ void CEditView::Command_ACTIVATE_SQLPLUS( void )
 /* 読み取り専用 */
 void CEditView::Command_READONLY( void )
 {
-	m_pcEditDoc->m_bReadOnly ^= 1;
+	m_pcEditDoc->m_bReadOnly = !m_pcEditDoc->m_bReadOnly;
 
 	// 親ウィンドウのタイトルを更新
 	m_pcEditDoc->UpdateCaption();
@@ -7825,7 +7825,7 @@ void CEditView::Command_WIN_OUTPUT( void )
 	if( NULL == m_pShareData->m_hwndDebug
 		|| !IsSakuraMainWindow( m_pShareData->m_hwndDebug )
 	){
-		CEditApp::OpenNewEditor( NULL, m_hWnd, "-DEBUGMODE", CODE_SJIS, FALSE, true );
+		CEditApp::OpenNewEditor( NULL, m_hWnd, "-DEBUGMODE", CODE_SJIS, false, true );
 	}else{
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */

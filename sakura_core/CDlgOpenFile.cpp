@@ -57,7 +57,7 @@ const char**	m_ppszMRU;
 const char**	m_ppszOPENFOLDER;
 LPCTSTR			m_pszHelpFile;
 int				m_nHelpTopicID;
-BOOL			m_bReadOnly;		/* 読み取り専用か */
+bool			m_bReadOnly;		/* 読み取り専用か */
 BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 
 COsVersionInfo CDlgOpenFile::m_cOsVer;	// 2005.11.02 ryoji
@@ -104,7 +104,7 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 				MyWinHelp( hwnd, m_pszHelpFile, HELP_CONTEXT, m_nHelpTopicID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 				break;
 			case chx1:	// The read-only check box
-				m_bReadOnly = ::IsDlgButtonChecked( hwnd , chx1 );
+				m_bReadOnly = ( 0 != ::IsDlgButtonChecked( hwnd , chx1 ) );
 				break;
 			}
 			break;
@@ -790,7 +790,7 @@ BOOL CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005/02/20 novice 拡張子を省略したら補完する
 */
-BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, BOOL* pbReadOnly )
+BOOL CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* pbReadOnly )
 {
 	m_bIsSaveDialog = FALSE;	/* 保存のダイアログか */
 

@@ -562,7 +562,7 @@ public: /* テスト用にアクセス属性を変更 */
 	void Command_FILEOPEN(
 		const char *filename = NULL,
 		ECodeType nCharCode = CODE_AUTODETECT,
-		BOOL bReadOnly = FALSE
+		bool bReadOnly = false
 	);
 	
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
@@ -574,7 +574,7 @@ public: /* テスト用にアクセス属性を変更 */
 	/* 閉じて開く*/
 	// Mar. 30, 2003 genta 引数追加
 	void Command_FILECLOSE_OPEN( const char *filename = NULL,
-		ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );
+		ECodeType nCharCode = CODE_AUTODETECT, bool bReadOnly = false );
 	
 	void Command_FILE_REOPEN( ECodeType nCharCode, int bNoConfirm );	/* 再オープン */	//Dec. 4, 2002 genta 引数追加
 

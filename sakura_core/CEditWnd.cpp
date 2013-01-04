@@ -528,7 +528,7 @@ HWND CEditWnd::Create(
 void CEditWnd::OpenDocumentWhenStart(
 	const char*	pszPath,		//!< [in] 最初に開くファイルのパス．NULLのとき開くファイル無し．
 	ECodeType	nCharCode,		//!< [in] 漢字コード
-	BOOL		bReadOnly		//!< [in] 読み取り専用で開くかどうか
+	bool		bReadOnly		//!< [in] 読み取り専用で開くかどうか
 )
 {
 	if( pszPath ){
@@ -553,7 +553,7 @@ void CEditWnd::OpenDocumentWhenStart(
 
 void CEditWnd::SetDocumentTypeWhenCreate(
 	ECodeType		nCharCode,		//!< [in] 漢字コード
-	BOOL			bReadOnly,		//!< [in] 読み取り専用で開くかどうか
+	bool			bReadOnly,		//!< [in] 読み取り専用で開くかどうか
 	int				nDocumentType	//!< [in] 文書タイプ．-1のとき強制指定無し．
 )
 {
@@ -1600,7 +1600,7 @@ LRESULT CEditWnd::DispatchEvent(
 							m_hWnd,
 							(char*)NULL,
 							0,
-							FALSE,
+							false,
 							TRUE
 						);
 					}
@@ -2051,7 +2051,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 				//「ファイルを開く」ダイアログ
 				ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-				BOOL bReadOnly = FALSE;
+				bool bReadOnly = false;
 				char		szPath[_MAX_PATH + 3];
 				szPath[0] = '\0';
 				if( !m_cEditDoc.OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
@@ -2968,7 +2968,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 					szFile,
 					&bOpened,
 					CODE_AUTODETECT,	/* 文字コード自動判別 */
-					FALSE,				/* 読み取り専用か */
+					false,				/* 読み取り専用か */
 					//	Oct. 03, 2004 genta コード確認は設定に依存
 					m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange
 				);
@@ -3001,7 +3001,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 							szFile,
 							&bOpened,
 							CODE_AUTODETECT,	/* 文字コード自動判別 */
-							FALSE,				/* 読み取り専用か */
+							false,				/* 読み取り専用か */
 							//	Oct. 03, 2004 genta コード確認は設定に依存
 							m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange
 							//TRUE
@@ -3033,7 +3033,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						m_hWnd,
 						szFile,
 						CODE_NONE,
-						FALSE				/* 読み取り専用か */
+						false				/* 読み取り専用か */
 					);
 				}
 			}
@@ -3226,7 +3226,7 @@ void CEditWnd::SetDebugModeON()
 	m_cEditDoc.m_bDebugMode = false;
 
 // 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
-	m_cEditDoc.m_bReadOnly = FALSE;		/* 読み取り専用モード */
+	m_cEditDoc.m_bReadOnly = false;		/* 読み取り専用モード */
 	/* 親ウィンドウのタイトルを更新 */
 	m_cEditDoc.UpdateCaption();
 }

@@ -97,14 +97,14 @@ public:
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
 	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
 	BOOL SelectFont( LOGFONT* );
-	BOOL FileRead( /*const*/ char* , BOOL*, ECodeType, BOOL, BOOL );	/* ファイルを開く */
+	BOOL FileRead( /*const*/ char* , BOOL*, ECodeType, bool, BOOL );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
 	BOOL FileWrite( const char*, EEolType cEolType );
 	bool SaveFile( const char* path );	//	ファイルの保存（に伴ういろいろ）
 	void OpenFile( const char *filename = NULL, ECodeType nCharCode = CODE_AUTODETECT,
-		BOOL bReadOnly = FALSE );	//	Oct. 9, 2004 genta CEditViewより移動
+		bool bReadOnly = false );	//	Oct. 9, 2004 genta CEditViewより移動
 	void FileClose( void );	/* 閉じて(無題) */	// 2006.12.30 ryoji
-	void FileCloseOpen( const char *filename = NULL, ECodeType nCharCode = CODE_AUTODETECT, BOOL bReadOnly = FALSE );	/* 閉じて開く */	// 2006.12.30 ryoji
+	void FileCloseOpen( const char *filename = NULL, ECodeType nCharCode = CODE_AUTODETECT, bool bReadOnly = false );	/* 閉じて開く */	// 2006.12.30 ryoji
 	BOOL FileSave( bool warnbeep = true, bool askname = true );	/* 上書き保存 */	// 2006.12.30 ryoji
 	BOOL FileSaveAs_Dialog( void );				/* 名前を付けて保存ダイアログ */	// 2006.12.30 ryoji
 	BOOL FileSaveAs( const char *filename );	/* 名前を付けて保存 */	// 2006.12.30 ryoji
@@ -114,14 +114,14 @@ public:
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
-	BOOL OpenFileDialog( HWND, const char*, char*, ECodeType*, BOOL* );	/* 「ファイルを開く」ダイアログ */
+	BOOL OpenFileDialog( HWND, const char*, char*, ECodeType*, bool* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeType();
 	void OnChangeSetting();	/* ビューに設定変更を反映させる */
 	//	Jul. 26, 2003 ryoji BOMオプション追加
 	BOOL SaveFileDialog( char*, ECodeType*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
 	void CheckFileTimeStamp( void );	/* ファイルのタイムスタンプのチェック処理 */
-	void ReloadCurrentFile( ECodeType, BOOL );/* 同一ファイルの再オープン */
+	void ReloadCurrentFile( ECodeType, bool );/* 同一ファイルの再オープン */
 
 	//	May 15, 2000 genta
 	CEol  GetNewLineCode() const { return m_cNewLineCode; }
@@ -129,7 +129,7 @@ public:
 
 	//	Aug. 14, 2000 genta
 	bool IsModificationForbidden( int nCommand );
-	bool IsEditable() const { return ( m_bReadOnly == FALSE && !( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ) ); }	//!< 編集可能かどうか
+	bool IsEditable() const { return ( !m_bReadOnly && !( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ) ); }	//!< 編集可能かどうか
 
 	//	Aug. 21, 2000 genta
 	CPassiveTimer	m_cAutoSave;	//!<	自動保存管理
@@ -185,9 +185,9 @@ public:
 
 	//	May 18, 2001 genta
 	//! ReadOnly状態の読み出し
-	BOOL IsReadOnly( void ){ return m_bReadOnly; }
+	bool IsReadOnly( void ){ return m_bReadOnly; }
 	//! ReadOnly状態の設定
-	void SetReadOnly( BOOL flag){ m_bReadOnly = flag; }
+	void SetReadOnly( bool flag){ m_bReadOnly = flag; }
 	
 	//	Jan. 22, 2002 genta Modified Flagの設定
 	void SetModified( bool flag, bool redraw);
@@ -271,7 +271,7 @@ public:
 	CEol			m_cSaveLineCode;			//	保存時の改行コード種別（EOL_NONE:変換なし）
 
 
-	BOOL			m_bReadOnly;				/* 読み取り専用モード */
+	bool			m_bReadOnly;				/* 読み取り専用モード */
 	bool			m_bDebugMode;				/* デバッグモニタモード */
 	bool			m_bGrepMode;				/* Grepモードか */
 	char			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */

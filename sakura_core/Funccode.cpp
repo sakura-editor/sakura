@@ -1192,7 +1192,7 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
 	case F_TMPWRAPSETTING:			return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_SETTING_WIDTH ) ? true : false;	// 指定桁で折り返す
 	case F_TMPWRAPWINDOW:			return ( pcEditDoc->m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH ) ? true : false;		// 右端で折り返す
 	// Mar. 6, 2002 genta
-	case F_READONLY:				return (pcEditDoc->m_bReadOnly) ? true : false; //読み取り専用
+	case F_READONLY:				return pcEditDoc->m_bReadOnly; //読み取り専用
 	//	From Here 2003.06.23 Moca
 	case F_CHGMOD_EOL_CRLF:			return (EOL_CRLF == pcEditDoc->GetNewLineCode()) ? true : false;
 	case F_CHGMOD_EOL_LF:			return (EOL_LF == pcEditDoc->GetNewLineCode()) ? true : false;

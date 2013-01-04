@@ -104,7 +104,7 @@ void CEditApp::DoGrep()
 	}
 
 	/* 新規編集ウィンドウの追加 ver 0 */
-	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, FALSE,
+	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, false,
 		false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 
 	delete [] pCmdLine;
@@ -670,7 +670,7 @@ LRESULT CEditApp::DispatchEvent(
 						TCHAR szPath[_MAX_PATH + 1];
 						_tcscpy( szPath, _T("") );
 						ECodeType nCharCode = CODE_AUTODETECT;	// 文字コード自動判別
-						BOOL bReadOnly = FALSE;
+						bool bReadOnly = false;
 						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
 							m_hInstance,
@@ -743,7 +743,7 @@ LRESULT CEditApp::DispatchEvent(
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
 
 						if( m_pShareData->m_Common.m_sFile.GetRestoreCurPosition() ){
-							CEditApp::OpenNewEditor2( m_hInstance, m_hWnd, &openEditInfo, FALSE );
+							CEditApp::OpenNewEditor2( m_hInstance, m_hWnd, &openEditInfo, false );
 						}
 						else {
 							CEditApp::OpenNewEditor(
@@ -751,7 +751,7 @@ LRESULT CEditApp::DispatchEvent(
 								m_hWnd,
 								openEditInfo.m_szPath,
 								openEditInfo.m_nCharCode,
-								FALSE,
+								false,
 								false,
 								NULL,
 								m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false
@@ -780,7 +780,7 @@ LRESULT CEditApp::DispatchEvent(
 						TCHAR szPath[_MAX_PATH + 1];
 						_tcscpy( szPath, _T("") );
 						ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-						int bReadOnly = FALSE;
+						bool bReadOnly = false;
 						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
 							m_hInstance,
@@ -938,7 +938,7 @@ void CEditApp::OnNewEditor( bool bNewWindow )
 
 
 	// 編集ウインドウを開く
-	OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, FALSE, false, szCurDir, bNewWindow );
+	OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, false, false, szCurDir, bNewWindow );
 }
 
 /*!
@@ -956,7 +956,7 @@ bool CEditApp::OpenNewEditor(
 	HWND				hWndParent,			//!< [in] 親ウィンドウハンドル．エラーメッセージ表示用
 	const TCHAR*		pszPath,			//!< [in] 新規エディタで開くファイル名とオプション．NULLで新規エディタ作成．
 	int					nCharCode,			//!< [in] 新規エディタの文字コード
-	BOOL				bReadOnly,			//!< [in] FALSEでなければ読み取り専用で開く
+	bool				bReadOnly,			//!< [in] FALSEでなければ読み取り専用で開く
 	bool				sync,				//!< [in] trueなら新規エディタの起動まで待機する
 	const TCHAR*		szCurDir,			//!< [in] 新規エディタのカレントディレクトリ
 	bool				bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
@@ -1123,7 +1123,7 @@ bool CEditApp::OpenNewEditor2(
 	HINSTANCE		hInstance,
 	HWND			hWndParent,
 	const EditInfo*	pfi,
-	BOOL			bReadOnly,
+	bool			bReadOnly,
 	bool			sync,
 	bool			bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
