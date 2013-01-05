@@ -1149,7 +1149,7 @@ void CEditDoc::AddToMRU(void)
 	EditInfo	fi;
 	CMRUFile	cMRU;
 
-	SetFileInfo( &fi );
+	GetEditInfo( &fi );
 	strcpy( fi.m_szMarkLines, m_cDocLineMgr.GetBookMarks() );
 
 	//@@@ 2001.12.26 YAZAKI MRUƒŠƒXƒg‚ÍACMRU‚ÉˆË—Š‚·‚é

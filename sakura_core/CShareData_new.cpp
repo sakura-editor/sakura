@@ -235,6 +235,9 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 	nSize = m_pShareData->m_nMRUArrNum;
 	for( i = 0; i < nSize; ++i ){
 		pfiWork = &m_pShareData->m_fiMRUArr[i];
+		if( cProfile.IsReadingMode() ){
+			pfiWork->m_nType = -1;
+		}
 		wsprintf( szKeyName, "MRU[%02d].nViewTopLine", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nViewTopLine );
 		wsprintf( szKeyName, "MRU[%02d].nViewLeftCol", i );
@@ -249,6 +252,10 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_szPath, sizeof( pfiWork->m_szPath ));
 		wsprintf( szKeyName, "MRU[%02d].szMark", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_szMarkLines, sizeof( pfiWork->m_szMarkLines ));
+		wsprintf( szKeyName, "MRU[%02d].nType", i );
+		int nType = pfiWork->m_nType;
+		cProfile.IOProfileData( pszSecName, szKeyName, nType );
+		pfiWork->m_nType = nType;
 		//‚¨‹C‚É“ü‚è	//@@@ 2003.04.08 MIK
 		wsprintf( szKeyName, "MRU[%02d].bFavorite", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, m_pShareData->m_bMRUArrFavorite[i] );

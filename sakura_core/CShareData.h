@@ -111,6 +111,7 @@ struct EditInfo {
 	TCHAR		m_szPath[_MAX_PATH];					//!< ファイル名
 	ECodeType	m_nCharCode;							//!< 文字コード種別
 	TCHAR		m_szDocType[MAX_DOCTYPE_LEN + 1];		//!< 文書タイプ
+	int			m_nType;								//!< 文書タイプ(MRU)
 
 	//表示域
 	int			m_nViewTopLine;							//!< 表示域の一番上の行(0開始)
@@ -144,6 +145,7 @@ struct EditInfo {
 	EditInfo()
 	: m_nViewTopLine( -1 )
 	, m_nViewLeftCol( -1 )
+	, m_nType( -1 )
 	, m_nX( -1 )
 	, m_nY( -1 )
 	, m_bIsModified( false )

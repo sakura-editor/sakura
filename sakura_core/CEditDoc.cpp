@@ -1096,7 +1096,12 @@ BOOL CEditDoc::FileRead(
 		SetFilePathAndIcon( szWork );
 	}
 
-	doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
+	// タイプ別設定
+	if( bIsExistInMRU && ((fi.m_nType>=0 && fi.m_nType<MAX_TYPES)) ){
+		doctype = fi.m_nType;
+	}else{
+		doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
+	}
 	SetDocumentType( doctype, true );
 
 	//	From Here Jul. 26, 2003 ryoji BOMの有無の初期状態を設定
@@ -1214,7 +1219,7 @@ BOOL CEditDoc::FileRead(
 	}else{
 		strcpy(fi.m_szMarkLines,"");
 	}
-	SetFileInfo( &fi );
+	GetEditInfo( &fi );
 
 	//	May 12, 2000 genta
 	//	改行コードの設定
@@ -4091,16 +4096,19 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 }
 
 /* 編集ファイル情報を格納 */
-void CEditDoc::SetFileInfo( EditInfo* pfi )
+void CEditDoc::GetEditInfo(
+	EditInfo* pfi	//!< [out]
+)
 {
 	int		nX;
 	int		nY;
 
-	strcpy( pfi->m_szPath, GetFilePath() );
+	//ファイルパス
+	_tcscpy( pfi->m_szPath, GetFilePath() );
+
+	//表示域
 	pfi->m_nViewTopLine = m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine;	/* 表示域の一番上の行(0開始) */
 	pfi->m_nViewLeftCol = m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol;	/* 表示域の一番左の桁(0開始) */
-	//	pfi->m_nCaretPosX = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;	/* ビュー左端からのカーソル桁位置(０開始) */
-	//	pfi->m_nCaretPosY = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosY;	/* ビュー上端からのカーソル行位置(０開始) */
 
 	/*
 	  カーソル位置変換
@@ -4117,20 +4125,17 @@ void CEditDoc::SetFileInfo( EditInfo* pfi )
 	pfi->m_nX = nX;		/* カーソル 物理位置(行頭からのバイト数) */
 	pfi->m_nY = nY;		/* カーソル 物理位置(折り返し無し行位置) */
 
-
+	//各種状態
 	pfi->m_bIsModified = IsModified();			/* 変更フラグ */
 	pfi->m_nCharCode = m_nCharCode;				/* 文字コード種別 */
-//	pfi->m_bPLSQL = m_cDlgJump.m_bPLSQL,		/* 行ジャンプが PL/SQLモードか */
-//	pfi->m_nPLSQL_E1 = m_cDlgJump.m_nPLSQL_E1;	/* 行ジャンプが PL/SQLモードのときの基点 */
+	pfi->m_nType = GetDocumentType();
 
+	//GREPモード
 	pfi->m_bIsGrep = m_bGrepMode;
-	strcpy( pfi->m_szGrepKey, m_szGrepKey );
+	_tcscpy( pfi->m_szGrepKey, m_szGrepKey );
 
-	//デバッグモニタ(アウトプットウインドウ)
+	//デバッグモニタ (アウトプットウインドウ) モード
 	pfi->m_bIsDebug = m_bDebugMode;
-
-	return;
-
 }
 
 

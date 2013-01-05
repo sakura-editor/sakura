@@ -292,10 +292,13 @@ struct ARRHEAD {
 	Version 98-105:
 	CommonSetting構造体整理開始
 
+	Version 106:
+	MRUにタイプ別設定追加
+
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 105;
+const unsigned int uShareDataVersion = 106;
 
 /*
 ||	Singleton風

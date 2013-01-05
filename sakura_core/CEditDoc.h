@@ -81,7 +81,7 @@ public:
 	BOOL IsEnableUndo( void );		/* Undo(元に戻す)可能な状態か？ */
 	BOOL IsEnableRedo( void );		/* Redo(やり直し)可能な状態か？ */
 	BOOL IsEnablePaste( void );		/* クリップボードから貼り付け可能か？ */
-	void SetFileInfo( EditInfo* );	/* 編集ファイル情報を格納 */
+	void GetEditInfo( EditInfo* );	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
 
 	/* いろいろ */
 	LRESULT DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* メッセージディスパッチャ */

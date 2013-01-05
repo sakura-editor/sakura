@@ -413,12 +413,21 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 			int cTypeOld, cTypeNew = -1;
 			cTypeOld = m_cEditDoc.GetDocumentType();	// 現在のタイプ
 			{
-				EditInfo ei;
+				EditInfo ei, mruei;
 				CCommandLine::getInstance()->GetEditInfo( &ei );
 				if( ei.m_szDocType[0] != '\0' ){
 					cTypeNew = CShareData::getInstance()->GetDocumentTypeOfExt( ei.m_szDocType );
 				}else{
-					cTypeNew = CShareData::getInstance()->GetDocumentTypeOfPath( ei.m_szPath );
+					if( CMRUFile().GetEditInfo( ei.m_szPath, &mruei ) ){
+						cTypeNew = mruei.m_nType;
+					}
+					if( !(cTypeNew>=0 && cTypeNew<MAX_TYPES) ){
+						if( ei.m_szPath[0] ){
+							cTypeNew = CShareData::getInstance()->GetDocumentTypeOfPath( ei.m_szPath );
+						}else{
+							cTypeNew = cTypeOld;
+						}
+					}
 				}
 			}
 			m_cEditDoc.SetDocumentType( cTypeNew, true, true );	// 仮設定
@@ -1700,7 +1709,7 @@ LRESULT CEditWnd::DispatchEvent(
 		pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
 
 		/* 編集ファイル情報を格納 */
-		m_cEditDoc.SetFileInfo( pfi );
+		m_cEditDoc.GetEditInfo( pfi );
 		return 0L;
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
