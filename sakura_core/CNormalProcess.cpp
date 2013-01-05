@@ -307,7 +307,7 @@ bool CNormalProcess::InitializeProcess()
 	LPCSTR pszMacro = CCommandLine::getInstance()->GetMacro();
 	if( hWnd  &&  pszMacro  &&  pszMacro[0] != '\0' ){
 		LPCSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
-		if( pszMacroType == NULL || pszMacroType == "" || strcmpi(pszMacroType, "file") == 0 ){
+		if( pszMacroType == NULL || pszMacroType[0] == '\0' || strcmpi(pszMacroType, "file") == 0 ){
 			pszMacroType = NULL;
 		}
 		CEditView* view = &m_pcEditWnd->m_cEditDoc.m_cEditViewArr[ m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex ];
