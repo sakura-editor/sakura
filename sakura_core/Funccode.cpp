@@ -1092,8 +1092,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		// テキストが選択されていなければtrue
 		return pcEditDoc->IsTextSelected() ? false : true;
 
-	case F_UNDO: return pcEditDoc->IsEnableUndo() ? true : false; /* Undo(元に戻す)可能な状態か？ */
-	case F_REDO: return pcEditDoc->IsEnableRedo() ? true : false; /* Redo(やり直し)可能な状態か？ */
+	case F_UNDO: return pcEditDoc->IsEnableUndo(); /* Undo(元に戻す)可能な状態か？ */
+	case F_REDO: return pcEditDoc->IsEnableRedo(); /* Redo(やり直し)可能な状態か？ */
 
 	case F_COPYPATH:
 	case F_COPYTAG:

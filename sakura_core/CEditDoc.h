@@ -78,8 +78,8 @@ public:
 	|| 状態
 	*/
 	BOOL IsTextSelected( void );	/* テキストが選択されているか */
-	BOOL IsEnableUndo( void );		/* Undo(元に戻す)可能な状態か？ */
-	BOOL IsEnableRedo( void );		/* Redo(やり直し)可能な状態か？ */
+	bool IsEnableUndo( void );		/* Undo(元に戻す)可能な状態か？ */
+	bool IsEnableRedo( void );		/* Redo(やり直し)可能な状態か？ */
 	BOOL IsEnablePaste( void );		/* クリップボードから貼り付け可能か？ */
 	void GetEditInfo( EditInfo* );	//!< 編集ファイル情報を取得 //2007.10.24 kobake 関数名変更: SetFileInfo→GetEditInfo
 

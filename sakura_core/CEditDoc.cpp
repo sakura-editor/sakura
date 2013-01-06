@@ -1650,7 +1650,7 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 
 
 /* Undo(元に戻す)可能な状態か？ */
-BOOL CEditDoc::IsEnableUndo( void )
+bool CEditDoc::IsEnableUndo( void )
 {
 	return m_cOpeBuf.IsEnableUndo();
 }
@@ -1658,7 +1658,7 @@ BOOL CEditDoc::IsEnableUndo( void )
 
 
 /*! Redo(やり直し)可能な状態か？ */
-BOOL CEditDoc::IsEnableRedo( void )
+bool CEditDoc::IsEnableRedo( void )
 {
 	return m_cOpeBuf.IsEnableRedo();
 }

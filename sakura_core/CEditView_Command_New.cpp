@@ -694,7 +694,7 @@ void CEditView::Command_UNDO( void )
 	COpeBlk*	pcOpeBlk;
 	int			nOpeBlkNum;
 	int			i;
-	int			bIsModified;
+	bool		bIsModified;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
 	HDC			hdc;
@@ -874,7 +874,7 @@ void CEditView::Command_REDO( void )
 	int			i;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
-	int			bIsModified;
+	bool		bIsModified;
 	HDC			hdc;
 	PAINTSTRUCT	ps;
 	CWaitCursor cWaitCursor( m_hWnd );
