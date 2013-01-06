@@ -44,7 +44,6 @@ public:
 
 	static CMacroManagerBase* Creator(const TCHAR* FileExt);
 	static void declare();
-	static void EnumEngines(EngineCallback Proc);	//スクリプトエンジン列挙
 
 	void AddParam( CWSHIfObj* param );				//インタフェースオブジェクトを追加する
 	void AddParam( CWSHIfObj::List& params );		//インタフェースオブジェクト達を追加する
