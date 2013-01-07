@@ -167,7 +167,8 @@ const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1
 	F_WndScrollDown		,	//テキストを１行下へスクロール	// 2001/06/20 asa-o
 	F_WndScrollUp		,	//テキストを１行上へスクロール	// 2001/06/20 asa-o
 	F_GONEXTPARAGRAPH	,	//次の段落へ
-	F_GOPREVPARAGRAPH		//前の段落へ
+	F_GOPREVPARAGRAPH	,	//前の段落へ
+	F_AUTOSCROLL		,	//オートスクロール
 };
 const int nFincList_Move_Num = _countof( pnFuncList_Move );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 
@@ -626,6 +627,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_WndScrollUp:		return HLP000199;	//テキストを１行上へスクロール	//Jul. 05, 2001 JEPRO 追加
 	case F_GONEXTPARAGRAPH:	return HLP000262;	//前の段落に移動
 	case F_GOPREVPARAGRAPH:	return HLP000263;	//前の段落に移動
+	case F_AUTOSCROLL:		return HLP000296;	//オートスクロール
 
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択

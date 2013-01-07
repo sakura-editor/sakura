@@ -161,6 +161,7 @@ F_WndScrollDown		= 30380,	//テキストを１行下へスクロール				なし
 F_WndScrollUp		= 30381,	//テキストを１行上へスクロール				なし
 F_GONEXTPARAGRAPH	= 30382,	//次の段落へ								なし
 F_GOPREVPARAGRAPH	= 30383,	//前の段落へ								なし
+F_AUTOSCROLL 		= 30384,	//オートスクロール
 
 // 選択系
 F_SELECTWORD		= 30400,	//現在位置の単語選択						なし

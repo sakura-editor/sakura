@@ -183,6 +183,7 @@ public:
 	void Command_WndScrollUp(void);			// テキストを１行上へスクロール	// 2001/06/20 asa-o
 	void Command_GONEXTPARAGRAPH( bool bSelect );	// 次の段落へ進む
 	void Command_GOPREVPARAGRAPH( bool bSelect );	// 前の段落へ戻る
+	void Command_AUTOSCROLL();		// オートスクロール
 
 	/* 選択系 */
 	bool Command_SELECTWORD( void );		/* 現在位置の単語選択 */

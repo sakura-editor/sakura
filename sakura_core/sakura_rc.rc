@@ -2521,6 +2521,9 @@ END
 //
 
 IDB_MYTOOL              BITMAP  DISCARDABLE     "../resource/mytool.bmp"
+IDB_SCROLL_CENTER       BITMAP  DISCARDABLE     "../resource/auto_scroll_center.bmp"
+IDB_SCROLL_VERTICAL     BITMAP  DISCARDABLE     "../resource/auto_scroll_vertical.bmp"
+IDB_SCROLL_HORIZONTAL   BITMAP  DISCARDABLE     "../resource/auto_scroll_horizontal.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2549,6 +2552,17 @@ IDC_CURSOR_ISEARCH_B    CURSOR  DISCARDABLE     "../resource/cursor_isb.cur"
 //IDC_CURSOR_TAB_RIGHT    CURSOR  DISCARDABLE     "../resource/cursor_tab_right.cur"
 IDC_CURSOR_TAB_SEPARATE CURSOR  DISCARDABLE     "../resource/cursor_tab_separate.cur"
 IDC_CURSOR_TAB_JOIN     CURSOR  DISCARDABLE     "../resource/cursor_tab_join.cur"
+IDC_CURSOR_AUTOSCROLL_CENTER CURSOR DISCARDABLE "../resource/auto_scroll_center.cur"
+IDC_CURSOR_AUTOSCROLL_HORIZONTAL CURSOR DISCARDABLE "../resource/auto_scroll_horizontal.cur"
+IDC_CURSOR_AUTOSCROLL_VERTICAL CURSOR DISCARDABLE "../resource/auto_scroll_vertical.cur"
+IDC_CURSOR_AUTOSCROLL_UP CURSOR DISCARDABLE     "../resource/auto_scroll_up.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN CURSOR DISCARDABLE   "../resource/auto_scroll_down.cur"
+IDC_CURSOR_AUTOSCROLL_LEFT CURSOR DISCARDABLE   "../resource/auto_scroll_left.cur"
+IDC_CURSOR_AUTOSCROLL_RIGHT CURSOR DISCARDABLE  "../resource/auto_scroll_right.cur"
+IDC_CURSOR_AUTOSCROLL_UP_LEFT CURSOR DISCARDABLE "../resource/auto_scroll_up_left.cur"
+IDC_CURSOR_AUTOSCROLL_UP_RIGHT CURSOR DISCARDABLE "../resource/auto_scroll_up_right.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN_LEFT CURSOR DISCARDABLE "../resource/auto_scroll_down_left.cur"
+IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT CURSOR DISCARDABLE "../resource/auto_scroll_down_right.cur"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2703,6 +2717,7 @@ BEGIN
     F_WndScrollUp           "テキストを１行上へスクロール"
     F_GONEXTPARAGRAPH       "次の段落へ移動"
     F_GOPREVPARAGRAPH       "前の段落へ移動"
+    F_AUTOSCROLL            "オートスクロール"
 END
 
 STRINGTABLE DISCARDABLE 

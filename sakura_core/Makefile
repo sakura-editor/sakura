@@ -363,6 +363,7 @@ view/figures/CFigure_Eol.o \
 view/figures/CFigure_HanSpace.o \
 view/figures/CFigure_Tab.o \
 view/figures/CFigure_ZenSpace.o \
+window/CAutoScrollWnd.o \
 window/CEditWnd.o \
 window/CMainStatusBar.o \
 window/CMainToolBar.o \

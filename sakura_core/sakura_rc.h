@@ -36,6 +36,9 @@
 #define IDD_MACRORUNNING                138
 #define IDD_SETCHARSET                  139
 #define IDB_MYTOOL                      200
+#define IDB_SCROLL_CENTER               201
+#define IDB_SCROLL_VERTICAL             202
+#define IDB_SCROLL_HORIZONTAL           203
 #define IDI_ICON_STD                    210
 #define IDI_ICON_DEBUG                  211
 #define IDI_ICON_GREP                   212
@@ -50,6 +53,17 @@
 //#define IDC_CURSOR_TAB_RIGHT            227
 #define IDC_CURSOR_TAB_SEPARATE         228
 #define IDC_CURSOR_TAB_JOIN             229
+#define IDC_CURSOR_AUTOSCROLL_CENTER   230
+#define IDC_CURSOR_AUTOSCROLL_VERTICAL 231
+#define IDC_CURSOR_AUTOSCROLL_HORIZONTAL 232
+#define IDC_CURSOR_AUTOSCROLL_UP       233
+#define IDC_CURSOR_AUTOSCROLL_DOWN     234
+#define IDC_CURSOR_AUTOSCROLL_LEFT     235
+#define IDC_CURSOR_AUTOSCROLL_RIGHT    236
+#define IDC_CURSOR_AUTOSCROLL_UP_LEFT  237
+#define IDC_CURSOR_AUTOSCROLL_UP_RIGHT 238
+#define IDC_CURSOR_AUTOSCROLL_DOWN_LEFT 239
+#define IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT 240
 #define IDC_BUTTON_PRINTERSELECT        1000
 #define IDC_CHK_LOHICASE                1001
 #define IDC_CHECK_INDENT                1002

@@ -1116,3 +1116,15 @@ void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 
 	GetCaret().Cursor_UPDOWN( ptCaretPos_Layo_CaretPointer.y - ptCaretPos_Layo.y, bSelect );
 }
+
+void CViewCommander::Command_AUTOSCROLL()
+{
+	if( 0 == m_pCommanderView->m_nAutoScrollMode ){
+		GetCursorPos( &m_pCommanderView->m_cAutoScrollMousePos );
+		ScreenToClient( m_pCommanderView->GetHwnd(), &m_pCommanderView->m_cAutoScrollMousePos );
+		m_pCommanderView->m_bAutoScrollDragMode = false;
+		m_pCommanderView->AutoScrollEnter();
+	}else{
+		m_pCommanderView->AutoScrollExit();
+	}
+}

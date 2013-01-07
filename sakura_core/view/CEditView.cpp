@@ -125,6 +125,7 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_nWheelDelta(0)
 , m_eWheelScroll(WHEEL_SCROLL_NONE)
+, m_nAutoScrollMode(0)
 {
 }
 
@@ -1047,6 +1048,9 @@ void CEditView::OnKillFocus( void )
 	if( m_bHokan ){
 		m_pcEditDoc->m_pcEditWnd->m_cHokanMgr.Hide();
 		m_bHokan = FALSE;
+	}
+	if( m_nAutoScrollMode ){
+		AutoScrollExit();
 	}
 
 	return;

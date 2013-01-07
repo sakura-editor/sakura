@@ -95,6 +95,9 @@ BOOL CViewCommander::HandleCommand(
 	nCommand = (EFunctionCode)LOWORD( nCommand );
 
 
+	if( m_pCommanderView->m_nAutoScrollMode && F_AUTOSCROLL != nCommand ){
+		m_pCommanderView->AutoScrollExit();
+	}
 	// -------------------------------------
 	//	Jan. 10, 2005 genta
 	//	Call message translators
@@ -316,6 +319,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_WndScrollUp:		Command_WndScrollUp(); break;								//テキストを１行上へスクロール	// 2001/06/20 asa-o
 	case F_GONEXTPARAGRAPH:	Command_GONEXTPARAGRAPH( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;			//次の段落へ進む
 	case F_GOPREVPARAGRAPH:	Command_GOPREVPARAGRAPH( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;			//前の段落へ戻る
+	case F_AUTOSCROLL:	Command_AUTOSCROLL(); break;	//オートスクロール
 
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択

@@ -716,7 +716,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		//keycode,	keyname,			なし,			Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
 		{ 0,_T("ダブルクリック"),		F_SELECTWORD,	F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD,		F_SELECTWORD,			F_SELECTWORD }, //Feb. 19, 2001 JEPRO Altと右クリックの組合せは効かないので右クリックメニューのキー割り当てをはずした
 		{ 0,_T("右クリック"),			F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_0,					F_0,				F_0,					F_0 },
-		{ 0,_T("中クリック"),			F_0,			F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, // novice 2004/10/11 マウス中ボタン対応
+		{ 0,_T("中クリック"),			F_AUTOSCROLL,	F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, // novice 2004/10/11 マウス中ボタン対応
 		{ 0,_T("左サイドクリック"),		F_0,			F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, // novice 2004/10/10 マウスサイドボタン対応
 		{ 0,_T("右サイドクリック"),		F_0,			F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 },
 		{ 0,_T("トリプルクリック"),		F_SELECTLINE,	F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE,		F_SELECTLINE,			F_SELECTLINE },
