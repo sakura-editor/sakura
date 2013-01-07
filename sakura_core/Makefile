@@ -164,6 +164,7 @@ dlg/CDlgPluginOption.o \
 dlg/CDlgPrintSetting.o \
 dlg/CDlgProperty.o \
 dlg/CDlgReplace.o \
+dlg/CDlgSetCharSet.o \
 dlg/CDlgTagJumpList.o \
 dlg/CDlgTagsMake.o \
 dlg/CDlgWinSize.o \
