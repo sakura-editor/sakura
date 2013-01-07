@@ -29,6 +29,7 @@
 #include <objidl.h>  // LPDATAOBJECT
 #include <shellapi.h>  // HDROP
 #include "window/CTipWnd.h"
+#include "window/CAutoScrollWnd.h"
 #include "CDicMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 #include "CBregexp.h"
@@ -292,6 +293,10 @@ public:
 
 	void SetBracketPairPos( bool );								/* 対括弧の強調表示位置設定 03/02/18 ai */
 
+	void AutoScrollEnter();
+	void AutoScrollExit();
+	void AutoScrollMove( CMyPoint& point );
+	void AutoScrollOnTimer();
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        過去の遺産                           //
@@ -591,6 +596,7 @@ public:
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	CSplitBoxWnd*	m_pcsbwVSplitBox;	/* 垂直分割ボックス */
 	CSplitBoxWnd*	m_pcsbwHSplitBox;	/* 水平分割ボックス */
+	CAutoScrollWnd	m_cAutoScrollWnd;	//!< オートスクロール
 
 public:
 	//描画
@@ -635,6 +641,12 @@ public:
 		WHEEL_SCROLL_VPAGE,
 	};
 	eWheelScrollType	m_eWheelScroll; //!< スクロールの種類
+
+	int				m_nAutoScrollMode;			//!< オートスクロールモード
+	bool			m_bAutoScrollDragMode;		//!< ドラッグモード
+	CMyPoint		m_cAutoScrollMousePos;		//!< オートスクロールのマウス基準位置
+	bool			m_bAutoScrollVertical;		//!< 垂直スクロール可
+	bool			m_bAutoScrollHorizontal;	//!< 水平スクロール可
 
 	//検索
 	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */

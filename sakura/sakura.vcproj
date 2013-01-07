@@ -2813,6 +2813,14 @@
 				Name="window"
 				>
 				<File
+					RelativePath="..\sakura_core\window\CAutoScrollWnd.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\window\CAutoScrollWnd.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\window\CEditWnd.cpp"
 					>
 				</File>

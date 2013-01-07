@@ -1347,6 +1347,9 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_SYSKEYUP:	// 2004.04.28 Moca ALT+キーのキーリピート処理のため追加
 	case WM_ENTERMENULOOP:
 	case MYWM_IME_REQUEST:   /*  再変換対応 by minfu 2002.03.27  */ // 20020331 aroka
+		if( GetActiveView().m_nAutoScrollMode ){
+			GetActiveView().AutoScrollExit();
+		}
 		/* メッセージの配送 */
 		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 

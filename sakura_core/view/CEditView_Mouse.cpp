@@ -33,6 +33,9 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 	if (m_nISearchMode > 0 ){
 		ISearchExit();
 	}
+	if( m_nAutoScrollMode ){
+		AutoScrollExit();
+	}
 
 	CNativeW	cmemCurText;
 	const wchar_t*	pLine;
@@ -526,6 +529,9 @@ BOOL CEditView::CheckTripleClick( CMyPoint ptMouse )
 /* マウス右ボタン押下 */
 void CEditView::OnRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	if( m_nAutoScrollMode ){
+		AutoScrollExit();
+	}
 	/* 現在のマウスカーソル位置→レイアウト位置 */
 
 	CLayoutPoint ptNew;
@@ -585,6 +591,17 @@ void CEditView::OnRBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnMBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	int nIdx = getCtrlKeyState();
+	if( F_AUTOSCROLL == GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx] ){
+		if( m_nAutoScrollMode ){
+			AutoScrollExit();
+			return;
+		}else{
+			m_nAutoScrollMode = 1;
+			m_cAutoScrollMousePos = CMyPoint(xPos, yPos);
+			::SetCapture( GetHwnd() );
+		}
+	}
 }
 
 
@@ -622,13 +639,122 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 	nIdx = getCtrlKeyState();
 	/* マウス左サイドボタンに対応する機能コードはm_Common.m_pKeyNameArr[2]に入っている */
 	nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_CENTER].m_nFuncCodeArr[nIdx];
+	if( nFuncID == F_AUTOSCROLL ){
+		if( 1 == m_nAutoScrollMode ){
+			m_bAutoScrollDragMode = false;
+			AutoScrollEnter();
+			return;
+		}else if( 2 == m_nAutoScrollMode && m_bAutoScrollDragMode ){
+			AutoScrollExit();
+			return;
+		}
+	}else
 	if( nFuncID != 0 ){
 		/* コマンドコードによる処理振り分け */
 		//	May 19, 2006 genta マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
 		::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
 	}
+	if( m_nAutoScrollMode ){
+		AutoScrollExit();
+	}
 }
 
+void CALLBACK AutoScrollTimerProc( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
+{
+	CEditView*	pCEditView;
+	pCEditView = ( CEditView* )::GetWindowLongPtr( hwnd, 0 );
+	if( NULL != pCEditView ){
+		pCEditView->AutoScrollOnTimer();
+	}
+}
+
+void CEditView::AutoScrollEnter()
+{
+	m_bAutoScrollVertical = GetTextArea().m_nViewRowNum < m_pcEditDoc->m_cLayoutMgr.GetLineCount() + 2;
+	m_bAutoScrollHorizontal = GetTextArea().m_nViewColNum < GetRightEdgeForScrollBar();
+	if( !m_bAutoScrollHorizontal && !m_bAutoScrollVertical ){
+		m_nAutoScrollMode = 0;
+		return;
+	}
+	m_nAutoScrollMode = 2;
+	m_cAutoScrollWnd.Create(G_AppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
+	::SetTimer(GetHwnd(), 2, 200, AutoScrollTimerProc);
+	HCURSOR hCursor;
+	hCursor = ::LoadCursor(GetModuleHandle(NULL), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
+	::SetCursor(hCursor);
+}
+
+void CEditView::AutoScrollExit()
+{
+	if( m_nAutoScrollMode ){
+		::ReleaseCapture();
+	}
+	if( 2 == m_nAutoScrollMode ){
+		KillTimer(GetHwnd(), 2);
+		m_cAutoScrollWnd.Close();
+	}
+	m_nAutoScrollMode = 0;
+}
+
+void CEditView::AutoScrollMove( CMyPoint& point )
+{
+	const CMyPoint relPos = point - m_cAutoScrollMousePos;
+	int idcX, idcY;
+	if( !m_bAutoScrollHorizontal || abs(relPos.x) < 16 ){
+		idcX = 0;
+	}else if( relPos.x < 0 ){
+		idcX = 1;
+	}else{
+		idcX = 2;
+	}
+	if( !m_bAutoScrollVertical || abs(relPos.y) < 16 ){
+		idcY = 0;
+	}else if( relPos.y < 0 ){
+		idcY = 1;
+	}else{
+		idcY = 2;
+	}
+	const int idcs[3][3] = {
+		{IDC_CURSOR_AUTOSCROLL_CENTER, IDC_CURSOR_AUTOSCROLL_UP,       IDC_CURSOR_AUTOSCROLL_DOWN},
+		{IDC_CURSOR_AUTOSCROLL_LEFT,   IDC_CURSOR_AUTOSCROLL_UP_LEFT,  IDC_CURSOR_AUTOSCROLL_DOWN_LEFT},
+		{IDC_CURSOR_AUTOSCROLL_RIGHT,  IDC_CURSOR_AUTOSCROLL_UP_RIGHT, IDC_CURSOR_AUTOSCROLL_DOWN_RIGHT}};
+	int cursor = idcs[idcX][idcY];
+	if( cursor == IDC_CURSOR_AUTOSCROLL_CENTER ){
+		if( !m_bAutoScrollVertical ){
+			cursor = IDC_CURSOR_AUTOSCROLL_HORIZONTAL;
+		}else if( !m_bAutoScrollHorizontal ){
+			cursor = IDC_CURSOR_AUTOSCROLL_VERTICAL;
+		}
+	}
+	const HCURSOR hCursor = ::LoadCursor(GetModuleHandle(NULL), MAKEINTRESOURCE(cursor));
+	::SetCursor(hCursor);
+}
+
+void CEditView::AutoScrollOnTimer()
+{
+	CMyPoint cursorPos;
+	::GetCursorPos(&cursorPos);
+	::ScreenToClient(GetHwnd(), &cursorPos);
+	
+	const CMyPoint relPos = cursorPos - m_cAutoScrollMousePos;
+	CMyPoint scrollPos = relPos / 8;
+	if( m_bAutoScrollHorizontal ){
+		if( scrollPos.x < 0 ){
+			scrollPos.x += 1;
+		}else if( scrollPos.x > 0 ){
+			scrollPos.x -= 1;
+		}
+		SyncScrollH( ScrollAtH( GetTextArea().GetViewLeftCol() + scrollPos.x ) );
+	}
+	if( m_bAutoScrollVertical ){
+		if( scrollPos.y < 0 ){
+			scrollPos.y += 1;
+		}else if( scrollPos.y > 0 ){
+			scrollPos.y -= 1;
+		}
+		SyncScrollV( ScrollAtV( GetTextArea().GetViewTopLine() + scrollPos.y ) );
+	}
+}
 
 // novice 2004/10/10 マウスサイドボタン対応
 /*!
@@ -643,6 +769,9 @@ void CEditView::OnMBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	if( m_nAutoScrollMode ){
+		AutoScrollExit();
+	}
 }
 
 
@@ -702,6 +831,9 @@ void CEditView::OnXLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 */
 void CEditView::OnXRBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 {
+	if( m_nAutoScrollMode ){
+		AutoScrollExit();
+	}
 }
 
 
@@ -759,6 +891,19 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 
 //	CLayoutRange sSelectBgn_Old = GetSelectionInfo().m_sSelectBgn;  // 範囲選択(原点)
 	CLayoutRange sSelect_Old    = GetSelectionInfo().m_sSelect;
+
+	// オートスクロール
+	if( 1 == m_nAutoScrollMode ){
+		if( ::GetSystemMetrics(SM_CXDOUBLECLK) < abs(ptMouse.x - m_cAutoScrollMousePos.x) ||
+		    ::GetSystemMetrics(SM_CYDOUBLECLK) < abs(ptMouse.y - m_cAutoScrollMousePos.y) ){
+			m_bAutoScrollDragMode = true;
+			AutoScrollEnter();
+		}
+		return;
+	}else if( 2 == m_nAutoScrollMode ){
+		AutoScrollMove(ptMouse);
+		return;
+	}
 
 	if( !GetSelectionInfo().IsMouseSelecting() ){
 		// マウスによる範囲選択中でない場合
