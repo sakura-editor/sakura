@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "CEditView.h"
+#include <algorithm>
 #include "charset/CShiftJis.h"
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
@@ -214,25 +215,19 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 
 	// 選択開始位置より前後200(or 50)文字ずつを考慮文字列にする
 	const int nReconvMaxLen = (bDocumentFeed ? 50 : 200); //$$マジックナンバー注意
-	if ( ptSelect.x > nReconvMaxLen ) {
-		const wchar_t* pszWork = pLine;
-		while( (ptSelect.x - nReconvIndex) > nReconvMaxLen ){
-			pszWork = ::CharNextW_AnyBuild( pszWork);
-			nReconvIndex = pszWork - pLine ;
-		}
+	while (ptSelect.x - nReconvIndex > nReconvMaxLen) {
+		nReconvIndex = std::max(nReconvIndex+1, ::CharNextW_AnyBuild(pLine+nReconvIndex)-pLine);
 	}
 	
 	//再変換考慮文字列終了  //行の中で再変換のAPIにわたすとする文字列の長さ
 	int nReconvLen = nLineLen - nReconvIndex;
 	if ( (nReconvLen + nReconvIndex - ptSelect.x) > nReconvMaxLen ){
-		const wchar_t* pszWork = pLine + ptSelect.x;
-		nReconvLen = ptSelect.x - nReconvIndex;
-		while( ( nReconvLen + nReconvIndex - ptSelect.x) <= nReconvMaxLen
-			&& pszWork[0] // IMEには NUL文字から後ろを渡さない。
-		){
-			pszWork = ::CharNextW_AnyBuild( pszWork);
-			nReconvLen = pszWork - (pLine + nReconvIndex) ;
+		const wchar_t*       p = pLine + ptSelect.x;
+		const wchar_t* const q = pLine + ptSelect.x + nReconvMaxLen;
+		while (p <= q) {
+			p = std::max(p+1, const_cast<LPCWSTR>(::CharNextW_AnyBuild(p)));
 		}
+		nReconvLen = p - pLine - nReconvIndex;
 	}
 	
 	//対象文字列の調整
