@@ -122,7 +122,7 @@ public:
 		if(p>=head && *p==_T('.')){
 			return bWithoutDot ? p+1 : p;	//bWithoutDot==true‚È‚çƒhƒbƒg‚È‚µ‚ð•Ô‚·
 		}else{
-			return _T("");
+			return auto_strchr(head,_T('\0'));
 		}
 	}
 };
