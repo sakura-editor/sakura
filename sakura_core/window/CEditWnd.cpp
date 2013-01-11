@@ -4484,15 +4484,22 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 {
 	const int NUM_OF_VIEW = GetAllViewCount();
-	const int NUM_OF_POS = 5;
+	const int NUM_OF_POS = 6;
 	
 	CLogicPointEx* pptPosArray = new CLogicPointEx[NUM_OF_VIEW * NUM_OF_POS];
 	
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
-		GetDocument().m_cLayoutMgr.LayoutToLogicEx(
-			this->GetView(i).GetCaret().GetCaretLayoutPos(),
-			&pptPosArray[i * NUM_OF_POS + 0]
-		);
+		CLayoutPoint tmp = CLayoutPoint(CLayoutInt(0),this->GetView(i).m_pcTextArea->GetViewTopLine());
+		const CLayout* layoutLine = GetDocument().m_cLayoutMgr.SearchLineByLayoutY(tmp.GetY2());
+		if( layoutLine ){
+			CLogicInt nLineCenter = layoutLine->GetLogicOffset() + layoutLine->GetLengthWithoutEOL() / 2;
+			pptPosArray[i * NUM_OF_POS + 0].x = nLineCenter;
+			pptPosArray[i * NUM_OF_POS + 0].y = layoutLine->GetLogicLineNo();
+		}else{
+			pptPosArray[i * NUM_OF_POS + 0].x = CLogicInt(0);
+			pptPosArray[i * NUM_OF_POS + 0].y = CLogicInt(0);
+		}
+		pptPosArray[i * NUM_OF_POS + 0].ext = CLayoutInt(0);
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
 			GetDocument().m_cLayoutMgr.LayoutToLogicEx(
 				this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom(),
@@ -4517,6 +4524,10 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 				&pptPosArray[i * NUM_OF_POS + 4]
 			);
 		}
+		GetDocument().m_cLayoutMgr.LayoutToLogicEx(
+			this->GetView(i).GetCaret().GetCaretLayoutPos(),
+			&pptPosArray[i * NUM_OF_POS + 5]
+		);
 	}
 	return pptPosArray;
 }
@@ -4536,13 +4547,12 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 	const int NUM_OF_POS = 5;
 
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
-		CLayoutPoint ptPosXY;
+		CLayoutPoint tmp;
 		GetDocument().m_cLayoutMgr.LogicToLayoutEx(
 			pptPosArray[i * NUM_OF_POS + 0],
-			&ptPosXY
+			&tmp
 		);
-		this->GetView(i).GetCaret().MoveCursor( ptPosXY, TRUE );
-		this->GetView(i).GetCaret().m_nCaretPosX_Prev = this->GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
+		this->GetView(i).m_pcTextArea->SetViewTopLine(tmp.GetY2());
 
 		if( this->GetView(i).GetSelectionInfo().m_sSelectBgn.GetFrom().y >= 0 ){
 			GetDocument().m_cLayoutMgr.LogicToLayoutEx(
@@ -4568,6 +4578,13 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 				this->GetView(i).GetSelectionInfo().m_sSelect.GetToPointer()
 			);
 		}
+		CLayoutPoint ptPosXY;
+		GetDocument().m_cLayoutMgr.LogicToLayoutEx(
+			pptPosArray[i * NUM_OF_POS + 5],
+			&ptPosXY
+		);
+		this->GetView(i).GetCaret().MoveCursor( ptPosXY, TRUE );
+		this->GetView(i).GetCaret().m_nCaretPosX_Prev = this->GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	delete[] pptPosArray;
 }
