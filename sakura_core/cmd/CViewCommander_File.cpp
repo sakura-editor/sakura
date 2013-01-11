@@ -566,23 +566,28 @@ BOOL CViewCommander::Command_PUTFILE(
 		{
 			CBinaryOutputStream out(to_tchar(filename),true);
 
-			//BOM出力
-			if( bBom ){
-				CMemory cmemBom;
-				pcSaveCode->GetBom(&cmemBom);
-				if(cmemBom.GetRawLength()>0)
-					out.Write(cmemBom.GetRawPtr(),cmemBom.GetRawLength());
-				else
-					PleaseReportToAuthor( NULL, _T("CEditView::Command_PUTFILE/BOM Error\nSaveCharCode=%d"), nSaveCharCode );
-			}
-
 			// 選択範囲の取得 -> cMem
 			CNativeW cMem;
 			m_pCommanderView->GetSelectedData(&cMem, FALSE, NULL, FALSE, FALSE);
 
+			// BOM追加
+			CNativeW cMem2;
+			const CNativeW* pConvBuffer;
+			if( bBom ){
+				CNativeW cmemBom;
+				std::auto_ptr<CCodeBase> pcUtf16( CCodeFactory::CreateCodeBase(CODE_UNICODE,0) );
+				pcUtf16->GetBom(cmemBom._GetMemory());
+				cMem2.AppendNativeData(cmemBom);
+				cMem2.AppendNativeData(cMem);
+				cMem.Clear();
+				pConvBuffer = &cMem2;
+			}else{
+				pConvBuffer = &cMem;
+			}
+
 			// 書き込み時のコード変換 -> cDst
 			CMemory cDst;
-			pcSaveCode->UnicodeToCode(cMem, &cDst);
+			pcSaveCode->UnicodeToCode(*pConvBuffer, &cDst);
 
 			//書込
 			if( 0 < cDst.GetRawLength() )

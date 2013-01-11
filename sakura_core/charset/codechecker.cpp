@@ -64,7 +64,7 @@ const char TABLE_IsUtf7Direct[] = {
 	0, 1, 1, 0, 0, 1, 0, 0,  //08-0f:TAB, LF, CR
 	0, 0, 0, 0, 0, 0, 0, 0,  //10-17:
 	0, 0, 0, 0, 0, 0, 0, 0,  //18-1f:
-	1, 2, 2, 2, 2, 2, 0, 1,  //20-27:SP, `'`
+	1, 2, 2, 2, 2, 2, 2, 1,  //20-27:SP, `'`
 	1, 1, 2, 0, 1, 1, 1, 1,  //28-2f:(, ), `,`, -, ., /
 	1, 1, 1, 1, 1, 1, 1, 1,  //30-37:0 - 7
 	1, 1, 1, 2, 2, 2, 2, 1,  //38-3f:8, 9, :, ?
@@ -873,7 +873,7 @@ int CheckUtf7DPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 		*pbError = berror;
 	}
 
-	if( pr < pr_end && berror == false ){
+	if( pr < pr_end ){
 		// '+' をスキップ
 		*ppNextChar = const_cast<char*>(pr) + 1;
 	}else{
@@ -974,6 +974,10 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 		berror_found = true;
 	}
 
+	if( UC_LOOSE == (nOption & UC_LOOSE) ){
+		goto EndFunc;
+	}
+
 	// UTF-7文字列 "+-" のチェック
 
 	if( pr < pr_end && (nchecklen < 1 && bminus_found != true) ){
@@ -997,7 +1001,7 @@ int CheckUtf7BPart( const char *pS, const int nLen, char **ppNextChar, bool *pbE
 	ndatalen = _DecodeBase64(pS, nchecklen, reinterpret_cast<char*>(pdata)) / sizeof(wchar_t);
 	CMemory::SwapHLByte( reinterpret_cast<char*>(pdata), ndatalen*sizeof(wchar_t) );
 	for( int i = 0; i < ndatalen; i += nret ){
-		nret = CheckUtf16leChar( &pdata[i], ndatalen - i, &echarset, nOption );
+		nret = CheckUtf16leChar( &pdata[i], ndatalen - i, &echarset, nOption & UC_NONCHARACTER );
 		if( echarset == CHARSET_BINARY ){
 			berror_found = true;
 			goto EndFunc;
@@ -1014,7 +1018,7 @@ EndFunc:;
 		*pbError = berror_found;
 	}
 
-	if( berror_found != true && (pr < pr_end && bminus_found == true) ){
+	if( (berror_found == false || UC_LOOSE == (nOption & UC_LOOSE)) && (pr < pr_end && bminus_found == true) ){
 		// '-' をスキップ。
 		*ppNextChar = const_cast<char*>(pr) + 1;
 	}else{

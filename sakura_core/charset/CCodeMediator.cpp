@@ -41,6 +41,12 @@ ECodeType CCodeMediator::DetectUnicodeBom( const char* pS, const int nLen )
 			}
 		}
 	}
+	if( 4 <= nLen ){
+		if( memcmp( pBuf, "+/v", 3 ) == 0
+			&& ( pBuf[3] == '8' || pBuf[3] == '9' || pBuf[3] == '+' || pBuf[3] == '/' ) ){
+			return CODE_UTF7;
+		}
+	}
 	return CODE_NONE;
 }
 
