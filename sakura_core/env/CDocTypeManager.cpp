@@ -16,13 +16,25 @@
 CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 {
 	TCHAR	szExt[_MAX_EXT];
+	TCHAR	szName[_MAX_FNAME];
+	TCHAR*	pszExt = szExt;
 
-	if( NULL != pszFilePath && 0 < (int)_tcslen( pszFilePath ) ){
-		_tsplitpath( pszFilePath, NULL, NULL, NULL, szExt );
-		if( szExt[0] == _T('.') )
-			return GetDocumentTypeOfExt( szExt + 1 );
-		else
-			return GetDocumentTypeOfExt( szExt );
+	if( NULL != pszFilePath && pszFilePath[0] ){
+		_tsplitpath( pszFilePath, NULL, NULL, szName, szExt );
+		// 2重拡張子探索
+		TCHAR* pFileExt = _tcschr( szName, '.' );
+		if( pFileExt ){
+			pFileExt++;
+			auto_strcat( pFileExt, pszExt );
+		}else{
+			if( 0 == pszExt[0] ){
+				// 拡張子がファイルにない
+				pFileExt = szName;
+			}else{
+				pFileExt = pszExt + 1;
+			}
+		}
+		return GetDocumentTypeOfExt( pFileExt );
 	}
 	return CTypeConfig(0);
 }
@@ -31,11 +43,12 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 /*!
 	拡張子から、ドキュメントタイプ（数値）を取得する
 	
-	@param pszExt [in] 拡張子 (先頭の,は含まない)
+	@param pszExt [in] 拡張子 (先頭の.は含まない)
 	
 	指定された拡張子の属する文書タイプ番号を返す．
 	とりあえず今のところはタイプは拡張子のみに依存すると仮定している．
 	ファイル全体の形式に対応させるときは，また考え直す．
+	@date 2012.10.22 Moca ２重拡張子, 拡張子なしに対応
 */
 CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 {
@@ -55,6 +68,10 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 			}
 			pszToken = _tcstok( NULL, pszSeps );
 		}
+	}
+	const TCHAR* pFileExt = _tcschr( pszExt, _T('.') );
+	if( pFileExt && pFileExt[1] ){
+		return GetDocumentTypeOfExt( pFileExt + 1 );
 	}
 	return CTypeConfig(0);	//	ハズレ
 }
