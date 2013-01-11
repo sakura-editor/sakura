@@ -104,7 +104,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	HANDLE	hFile;
 	DWORD	FileSize;
 	DWORD	FileSizeHigh;
-	int		nBomCode;
+	ECodeType	nBomCode;
 
 	// FileCloseを呼んでからにしてください
 	if( NULL != m_hFile ){
@@ -142,9 +142,14 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	// データ読み込み
 	Buffering();
 
+	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );
 	if( CharCode == CODE_AUTODETECT ){
-		CCodeMediator mediator(*m_pEencoding);
-		CharCode = mediator.CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
+		if( nBomCode != CODE_NONE ){
+			CharCode = nBomCode;
+		}else{
+			CCodeMediator mediator(*m_pEencoding);
+			CharCode = mediator.CheckKanjiCode( m_pReadBuf, m_nReadDataLen );
+		}
 	}
 	// To Here Jun. 08, 2003
 	// 不正な文字コードのときはデフォルト(SJIS:無変換)を設定
@@ -154,25 +159,21 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	m_CharCode = CharCode;
 	m_nFlag = nFlag;
 
-	// From Here Jun. 08, 2003 Moca BOMの除去
-	nBomCode = CCodeMediator::DetectUnicodeBom( m_pReadBuf, m_nReadDataLen );
 	m_nFileDataLen = m_nFileSize;
-	if(( nBomCode != CODE_NONE && nBomCode == m_CharCode ) || ( m_CharCode == CODE_CESU8 && nBomCode == CODE_UTF8 )){	// 2010/3/20 Uchi
+	bool bBom = false;
+	if( 0 < m_nReadDataLen ){
+		CMemory headData(m_pReadBuf, t_min(m_nReadDataLen, 10));
+		CNativeW headUni;
+		CIoBridge::FileToImpl(headData, &headUni, m_CharCode, m_nFlag);
+		if( 1 <= headUni.GetStringLength() && headUni.GetStringPtr()[0] == 0xfeff ){
+			bBom = true;
+		}
+	}
+	if( bBom ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		m_bBomExist = TRUE;
 		if( pbBomExist != NULL ){
 			*pbBomExist = true;
-		}
-		switch( nBomCode ){
-			case CODE_UNICODE:
-			case CODE_UNICODEBE:
-				m_nFileDataLen -= 2;
-				m_nReadBufOffSet += 2;
-				break;
-			case CODE_UTF8:
-				m_nFileDataLen -= 3;
-				m_nReadBufOffSet += 3;
-				break;
 		}
 	}else{
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
@@ -267,17 +268,24 @@ EConvertResult CFileLoad::ReadLine(
 	}
 
 	m_nLineIndex++;
+
+	// 2012.10.21 Moca BOMの除去(UTF-7対応)
+	if( m_nLineIndex == 0 ){
+		if( m_bBomExist && 1 <= pUnicodeBuffer->GetStringLength() ){
+			if( pUnicodeBuffer->GetStringPtr()[0] == 0xfeff ){
+				CNativeW tmp(pUnicodeBuffer->GetStringPtr() + 1, pUnicodeBuffer->GetStringLength() - 1);
+				*pUnicodeBuffer = tmp;
+			}
+		}
+	}
 	// データあり
-	if( 0 != nBufLineLen + nEolLen ){
+	if( 0 != pUnicodeBuffer->GetStringLength() + nEolLen ){
 		// 改行コードを追加
 		pUnicodeBuffer->AppendString( pcEol->GetValue2(), pcEol->GetLen() );
 	}
 	else{
 		eRet = RESULT_FAILURE;
 	}
-
-	//staticバッファを解放しておく
-	cLineBuffer.SetRawData("",0);
 
 	return eRet;
 }

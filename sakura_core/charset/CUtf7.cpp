@@ -22,7 +22,7 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 		if( IsUtf7Direct(*pr) ){
 			*pw = *pr;
 		}else{
-			*pw = L'?';
+			BinToText(reinterpret_cast<const unsigned char*>(pr), 1, reinterpret_cast<unsigned short*>(pw));
 		}
 		++pw;
 	}
@@ -32,28 +32,41 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 /*!
 	UTF-7 Set B 部分の読み込み
 */
-int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst )
+int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	const char* pr = pSrc;
 
 	int ndecoded_len = 0;
 	char* pbuf;
+	bool bError = false;
 
 	try{
 		pbuf = new char[nSrcLen];
 	}catch( ... ){
 		pbuf = NULL;
+		bError = true;
 	}
 
 	if( pbuf != NULL ){
 		ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
+		int nModLen = ndecoded_len % sizeof(wchar_t);
+		ndecoded_len = ndecoded_len - nModLen;
 		CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE を UTF-16 LE に直す
 		memcpy( reinterpret_cast<char*>(pDst), pbuf, ndecoded_len );
+		if( nModLen ){
+			ndecoded_len += BinToText( reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len,
+				nModLen, &reinterpret_cast<unsigned short*>(pDst)[ndecoded_len / sizeof(wchar_t)]) * sizeof(wchar_t);
+			bError = true;
+		}
 	}else{
 		;
 	}
 
 	delete [] pbuf;
+
+	if( pbError ){
+		*pbError = bError;
+	}
 
 	return ndecoded_len / sizeof(wchar_t);
 }
@@ -84,25 +97,23 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 		}
 
 		// UTF-7 Set B 部分のチェック
-		nblocklen = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror_tmp, false );
-		if( berror_tmp == false ){
+		nblocklen = CheckUtf7BPart( pr, pr_end-pr, &pr_next, &berror_tmp, UC_LOOSE );
+		{
+			// エラーがあってもできるところまでデコード
+			if( berror_tmp ){
+				berror = true;
+			}
 			if( nblocklen < 1 && *(pr_next-1) == '-' ){
 				// +- → + 変換
 				*pw = L'+';
 				++pw;
 			}else{
-				pw += _Utf7SetBToUni_block( pr, nblocklen, pw );
-			}
-		}else{
-			// フォーマットエラーがある場合、
-			// 置換文字を使う
-			berror = true;
-			for( int i = 0; i < nblocklen; ++i ){
-				*pw = L'?';
-				++pw;
+				pw += _Utf7SetBToUni_block( pr, nblocklen, pw, &berror_tmp );
+				if( berror_tmp != false ){
+					berror = true;
+				}
 			}
 		}
-
 		pr = pr_next;  // 次の読み込み位置を取得
 	}while( pr_next < pr_end );
 
@@ -128,7 +139,7 @@ EConvertResult CUtf7::UTF7ToUnicode( CMemory* pMem )
 	// 必要なバッファサイズを調べて確保
 	wchar_t* pDst;
 	try{
-		pDst = new wchar_t[nDataLen * 3 + 1];
+		pDst = new wchar_t[nDataLen + 1];
 		if( pDst == NULL ){
 			return RESULT_FAILURE;
 		}
@@ -283,3 +294,9 @@ EConvertResult CUtf7::UnicodeToUTF7( CMemory* pMem )
 	return RESULT_COMPLETE;
 }
 
+//! BOMデータ取得
+void CUtf7::GetBom(CMemory* pcmemBom)
+{
+	static const BYTE UTF7_BOM[]= {'+','/','v','8','-'};
+	pcmemBom->SetRawData(UTF7_BOM, sizeof(UTF7_BOM));
+}

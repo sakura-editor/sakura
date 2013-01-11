@@ -7,6 +7,7 @@
 #include "window/CEditWnd.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
+#include "charset/CUnicode.h"
 #include "io/CIoBridge.h"
 #include "io/CBinaryStream.h"
 #include "util/window.h"
@@ -30,16 +31,34 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 		//ファイルオープン
 		CBinaryOutputStream out(sSaveInfo.cFilePath,true);
 
-		//BOM出力
-		if(sSaveInfo.bBomExist){
-			CMemory cBom;
-			pcCodeBase->GetBom(&cBom);
-			out.Write(cBom.GetRawPtr(),cBom.GetRawLength());
-		}
-
 		//各行出力
 		int			nLineNumber = 0;
 		CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
+		// 1行目
+		{
+			++nLineNumber;
+			CMemory cmemOutputBuffer;
+			{
+				CNativeW cstrSrc;
+				CMemory cstrBomCheck;
+				pcCodeBase->GetBom( &cstrBomCheck );
+				if( sSaveInfo.bBomExist && 0 < cstrBomCheck.GetRawLength() ){
+					// 1行目にはBOMを付加する。エンコーダでbomがある場合のみ付加する。
+					CUnicode().GetBom( cstrSrc._GetMemory() );
+				}
+				if( pcDocLine ){
+					cstrSrc.AppendNativeData( pcDocLine->_GetDocLineDataWithEOL() );
+				}
+				EConvertResult e = pcCodeBase->UnicodeToCode( cstrSrc, &cmemOutputBuffer );
+				if(e==RESULT_LOSESOME){
+					nRetVal=RESULT_LOSESOME;
+				}
+			}
+			out.Write(cmemOutputBuffer.GetRawPtr(), cmemOutputBuffer.GetRawLength());
+			if( pcDocLine ){
+				pcDocLine = pcDocLine->GetNextLine();
+			}
+		}
 		while( pcDocLine ){
 			++nLineNumber;
 
@@ -54,25 +73,15 @@ EConvertResult CWriteManager::WriteFile_From_CDocLineMgr(
 
 			//1行出力 -> cmemOutputBuffer
 			CMemory cmemOutputBuffer;
-			if( 0 < pcDocLine->GetLengthWithoutEOL() ){
-				CNativeW cstrSrc( pcDocLine->GetPtr(), pcDocLine->GetLengthWithoutEOL() );
-
+			{
 				// 書き込み時のコード変換 cstrSrc -> cmemOutputBuffer
-				EConvertResult e = CIoBridge::ImplToFile(
-					cstrSrc,
-					&cmemOutputBuffer,
-					sSaveInfo.eCharCode
+				EConvertResult e = pcCodeBase->UnicodeToCode(
+					pcDocLine->_GetDocLineDataWithEOL(),
+					&cmemOutputBuffer
 				);
 				if(e==RESULT_LOSESOME){
 					if(nRetVal==RESULT_COMPLETE)nRetVal=RESULT_LOSESOME;
 				}
-			}
-
-			//改行出力 -> cmemOutputBuffer
-			if( pcDocLine->GetEol() != EOL_NONE ){
-				CMemory cEolMem;
-				pcCodeBase->GetEol(&cEolMem,sSaveInfo.cEol!=EOL_NONE?sSaveInfo.cEol:pcDocLine->GetEol());
-				cmemOutputBuffer.AppendRawData(cEolMem.GetRawPtr(),cEolMem.GetRawLength());
 			}
 
 			//ファイルに出力 cmemOutputBuffer -> fp

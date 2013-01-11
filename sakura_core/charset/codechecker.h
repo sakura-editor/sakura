@@ -311,30 +311,29 @@ inline bool IsUtf8SurrogLow( const char* pS ) {
 	}
 	return false;
 }
-//! UTF-7 で直接エンコードされ得る文字か
-template< typename CHAR_TYPE >
-inline bool IsUtf7Direct( const CHAR_TYPE c ){
-	int c_ = c;
-	return ( c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 1 );
-	// とりあえず無条件でSetO文字集合は読み込めないと判断する
-
-}
 //! UTF-7 Set D の文字か
 template< typename CHAR_TYPE >
 inline bool IsUtf7SetD( const CHAR_TYPE c ){
-	int c_ = c;
+	unsigned int c_ = c;
 	return ( c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 1 );
 }
 //! UTF-7 Set O の文字か
 template< typename CHAR_TYPE >
 inline bool IsUtf7SetO( const CHAR_TYPE c ){
-	int c_ = c;
+	unsigned int c_ = c;
 	return ( c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 2 );
 }
+//! UTF-7 で直接エンコードされ得る文字か
+template< typename CHAR_TYPE >
+inline bool IsUtf7Direct( const CHAR_TYPE c ){
+	return IsUtf7SetD( c ) || IsUtf7SetO( c );
+	// 2012.11.08 Set O も読み込めるように
+}
+
 //! UTF-7 Set B (Modified BASE64) の文字か
 template< class CHAR_TYPE >
 inline bool IsBase64( const CHAR_TYPE c ){
-	int c_ = c;
+	unsigned int c_ = c;
 	return (c_ < 0x80 && (int)TABLE_BASE64CharToValue[c_] < 64)? true : false;
 }
 
@@ -430,6 +429,9 @@ inline int CheckJisUnknownPart( const char *pS, const int nLen,
 
 // _CheckUtf16Char のオプション定義
 #define UC_NONCHARACTER 1  //!< 非文字を不正文字とする
+// CheckUtf7BPart のオプション定義
+#define UC_LOOSE 0x02
+
 
 /* --- Unicode 系コードチェック */
 int _CheckUtf16Char( const wchar_t*, const int, ECharSet*, const int nOption, const bool bBigEndian );
