@@ -99,7 +99,7 @@ next:
 			if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 			ErrorMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("\'%ls\'\n")
+				_T("\'%ts\'\n")
 				_T("というファイルを開けません。\n")
 				_T("読み込みアクセス権がありません。"),
 				pLoadInfo->cFilePath.c_str()
