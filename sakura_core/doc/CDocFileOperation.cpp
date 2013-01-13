@@ -199,18 +199,7 @@ bool CDocFileOperation::SaveFileDialog(
 )
 {
 	//ダイアログオープン時のディレクトリを決定
-	std::tstring strDefFolder; // デフォルトフォルダ
-	{
-		// ファイルパスのディレクトリ
-		strDefFolder = this->m_pcDocRef->m_cDocFile.GetFilePathClass().GetDirPath();
-
-		// カレントディレクトリ
-		if(strDefFolder.length()==0){
-			TCHAR	buf[_MAX_PATH];
-			int		n = ::GetCurrentDirectory( _MAX_PATH, buf );
-			if( 0 != n && n < _MAX_PATH )strDefFolder = buf;
-		}
-	}
+	std::tstring strDefFolder = CSakuraEnvironment::GetDlgInitialDir(); // デフォルトフォルダ
 
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
