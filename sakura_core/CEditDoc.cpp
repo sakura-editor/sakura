@@ -1960,6 +1960,7 @@ int CEditDoc::MakeBackUp(
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
 	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
 	@date 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
+	@date 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる対応
 
 	@retval true  成功
 	@retval false	バッファ不足
@@ -2121,14 +2122,11 @@ bool CEditDoc::FormatBackUpPath(
 		case 2:	//	現在の日付，時刻
 		default:
 			{
-				time_t	ltime;
-				struct	tm *today;
+				// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
+				SYSTEMTIME	SystemTime;
+				::GetSystemTime(&SystemTime);			// 現在時刻を取得
 
-				time( &ltime );				/* システム時刻を得ます */
-				today = localtime( &ltime );/* 現地時間に変換する */
-
-				/* YYYYMMDD時分秒 形式に変換 */
-				_tcsftime( szFormat, _countof( szFormat ) - 1, m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced , today );
+				GetDateTimeFormat( szFormat, sizeof(szFormat), m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced , SystemTime );
 			}
 			break;
 		}
