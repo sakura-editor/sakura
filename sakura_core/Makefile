@@ -215,6 +215,7 @@ io/CIoBridge.o \
 io/CStream.o \
 io/CTextStream.o \
 io/CZipFile.o \
+macro/CCookieManager.o \
 macro/CEditorIfObj.o \
 macro/CIfObj.o \
 macro/CKeyMacroMgr.o \
