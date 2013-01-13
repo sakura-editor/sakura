@@ -34,6 +34,7 @@
 #include "_os/CClipboard.h"
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
+#include "util/RegKey.h"
 #include "util/string_ex2.h"
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
 #include "util/module.h"
@@ -126,6 +127,7 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , m_nWheelDelta(0)
 , m_eWheelScroll(WHEEL_SCROLL_NONE)
 , m_nAutoScrollMode(0)
+, m_nMousePouse(0)
 {
 }
 
@@ -351,6 +353,14 @@ BOOL CEditView::Create(
 		WarningMessage( GetHwnd(), _T("CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 
+	m_bHideMouse = false;
+	CRegKey reg;
+	BYTE bUserPref[8] = {0};
+	reg.Open(HKEY_CURRENT_USER, _T("Control Panel\\Desktop") );
+	reg.GetValueBINARY( _T("UserPreferencesMask"), bUserPref, sizeof(bUserPref) );
+	if( (bUserPref[2] & 0x01) == 1 ){
+		m_bHideMouse = true;
+	}
 	return TRUE;
 }
 
@@ -531,6 +541,10 @@ LRESULT CEditView::DispatchEvent(
 			ImmGetCompositionString(hIMC, GCS_RESULTSTR, lptstr, dwSize);
 
 			/* テキストを貼り付け */
+			if( m_bHideMouse && 0 <= m_nMousePouse ){
+				m_nMousePouse = -1;
+				::SetCursor( NULL );
+			}
 			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)to_wchar(lptstr), TRUE, 0, 0 );
 
 			ImmReleaseContext( hwnd, hIMC );
