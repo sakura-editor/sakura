@@ -94,6 +94,7 @@ charset/CEuc.o \
 charset/charcode.o \
 charset/charset.o \
 charset/CJis.o \
+charset/CLatin1.o \
 charset/codechecker.o \
 charset/codeutil.o \
 charset/CShiftJis.o \

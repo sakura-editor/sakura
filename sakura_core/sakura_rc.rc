@@ -1459,7 +1459,7 @@ EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     GROUPBOX        "表示文字コードの指定",IDC_STATIC,3,3,285,113
-    CONTROL         "SJISで文字コード値をUnicodeで表示する(&S)",
+    CONTROL         "SJIS,Latin1等で文字コード値をUnicodeで表示する(&S)",
                     IDC_CHECK_DISP_UNICODE_IN_SJIS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,16,165,10
     CONTROL         "JISで文字コード値をUnicodeで表示する(&J)",
@@ -2598,6 +2598,7 @@ BEGIN
     F_FILE_REOPEN_UTF7      "UTF-7で開き直す"
     F_FILE_REOPEN_UNICODEBE "UnicodeBEで開き直す"
     F_FILE_REOPEN_CESU8     "CESU-8で開き直す"
+    F_FILE_REOPEN_LATIN1    "Latin1で開き直す"
     F_FILE_REOPEN           "開き直す"
     F_FILESAVEALL           "すべて上書き保存"
 END

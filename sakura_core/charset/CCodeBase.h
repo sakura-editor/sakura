@@ -53,7 +53,7 @@ public:
 
 	//ファイル形式
 	virtual void GetBom(CMemory* pcmemBom);											//!< BOMデータ取得
-	virtual void GetEol(CMemory* pcmemEol, EEolType eEolType)=0;					//!< 改行データ取得
+	void GetEol(CMemory* pcmemEol, EEolType eEolType){ S_GetEol(pcmemEol,eEolType); }	//!< 改行データ取得 virtualから実体へ	2010/6/13 Uchi
 
 	// 文字コード表示用		2008/6/9 Uchi
 	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
@@ -64,6 +64,9 @@ public:
 
 	// MIME Header デコーダ
 	static bool MIMEHeaderDecode( const char*, const int, CMemory*, const ECodeType );
+
+	// CShiftJisより移動 2010/6/13 Uchi
+	static void S_GetEol(CMemory* pcmemEol, EEolType eEolType);	//!< 改行データ取得
 };
 
 /*!

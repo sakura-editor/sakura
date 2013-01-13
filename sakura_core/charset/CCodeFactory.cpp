@@ -2,6 +2,18 @@
 #include "CCodeFactory.h"
 #include "CCodeMediator.h"
 
+// move start	from CCodeMediator.h	2012/12/02 Uchi
+#include "CEuc.h"
+#include "CJis.h"
+#include "CShiftJis.h"
+#include "CUnicode.h"
+#include "CUnicodeBe.h"
+#include "CUtf7.h"
+#include "CUtf8.h"
+#include "CCesu8.h"
+// move end
+#include "CLatin1.h"
+
 //! eCodeTypeに適合する CCodeBaseインスタンス を生成
 CCodeBase* CCodeFactory::CreateCodeBase(
 	ECodeType	eCodeType,		//!< 文字コード
@@ -17,6 +29,7 @@ CCodeBase* CCodeFactory::CreateCodeBase(
 	case CODE_UTF7:			return new CUtf7();
 	case CODE_UNICODEBE:	return new CUnicodeBe();
 	case CODE_CESU8:		return new CCesu8();
+	case CODE_LATIN1:		return new CLatin1();	// 2010/3/20 Uchi
 	default:
 		assert(0);
 	}

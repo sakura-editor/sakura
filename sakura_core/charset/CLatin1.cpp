@@ -1,11 +1,38 @@
+/*!	@file
+	@brief Latin1 (Latin1, 欧文, Windows-1252, Windows Codepage 1252 West European) 対応クラス
+
+	@author Uchi
+	@date 20010/03/20 新規作成
+*/
+/*
+	Copyright (C) 20010, Uchi
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose, 
+	including commercial applications, and to alter it and redistribute it 
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such, 
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
-#include "CShiftJis.h"
+#include "CLatin1.h"
+#include "env/CShareData.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 
-// 非依存推奨
-#include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 
 
 //! 指定した位置の文字が何バイト文字かを返す
@@ -14,25 +41,16 @@
 	@param[in] nDataLen 文字列長
 	@param[in] nIdx 位置(0オリジン)
 	@retval 1  1バイト文字
-	@retval 2  2バイト文字
 	@retval 0  エラー
 
-	@date 2005-09-02 D.S.Koba 作成
+	@date 2010/3/20 Uchi 作成
 
-	@note nIdxは予め文字の先頭位置とわかっていなければならない．
-	2バイト文字の2バイト目をnIdxに与えると正しい結果が得られない．
+	エラーでなければ1を返す
 */
-int CShiftJis::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
+int CLatin1::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 {
 	if( nIdx >= nDataLen ){
 		return 0;
-	}else if( nIdx == (nDataLen - 1) ){
-		return 1;
-	}
-	
-	if( _IS_SJIS_1( reinterpret_cast<const unsigned char*>(pData)[nIdx] )
-			&& _IS_SJIS_2( reinterpret_cast<const unsigned char*>(pData)[nIdx+1] ) ){
-		return 2;
 	}
 	return 1;
 }
@@ -41,20 +59,18 @@ int CShiftJis::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 
 
 /*!
-	SJIS → Unicode 変換
+	Latin1 → Unicode 変換
 */
-int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError )
+int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError )
 {
-	ECharSet echarset;
-	int nclen;
+	int nret;
 	const unsigned char *pr, *pr_end;
 	unsigned short *pw;
-	bool berror_tmp, berror=false;
 
+	if( pbError ){
+		*pbError = false;
+	}
 	if( nSrcLen < 1 ){
-		if( pbError ){
-			*pbError = false;
-		}
 		return 0;
 	}
 
@@ -62,43 +78,18 @@ int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 	pr_end = reinterpret_cast<const unsigned char*>(pSrc + nSrcLen);
 	pw = reinterpret_cast<unsigned short*>(pDst);
 
-	for( ; (nclen = CheckSjisChar(reinterpret_cast<const char*>(pr), pr_end-pr, &echarset)) != 0; pr += nclen ){
-		switch( echarset ){
-		case CHARSET_ASCII7:
-			// 保護コード
-			if( nclen != 1 ){
-				nclen = 1;
+	for( ; pr < pr_end; pr++ ){
+		if (*pr >= 0x80 && *pr <=0x9f) {
+			// Windows 拡張部
+			nret = ::MultiByteToWideChar( 1252, 0, reinterpret_cast<const char*>(pr), 1, reinterpret_cast<wchar_t*>(pw), 4 );
+			if( nret == 0 ){
+				*pw = static_cast<unsigned short>( *pr );
 			}
-			// 7-bit ASCII 文字を変換
-			*pw = static_cast<unsigned short>( *pr );
-			pw += 1;
-			break;
-		case CHARSET_JIS_ZENKAKU:
-		case CHARSET_JIS_HANKATA:
-			// 保護コード
-			if( echarset == CHARSET_JIS_ZENKAKU && nclen != 2 ){
-				nclen = 2;
-			}
-			if( echarset == CHARSET_JIS_HANKATA && nclen != 1 ){
-				nclen = 1;
-			}
-			// 全角文字または半角カタカナ文字を変換
-			pw += _SjisToUni_char( pr, pw, echarset, &berror_tmp );
-			if( berror_tmp == true ){
-				berror = true;
-			}
-			break;
-		default:/* CHARSET_BINARY:*/
-			if( nclen != 1 ){	// 保護コード
-				nclen = 1;
-			}
-			// エラーが見つかった
-			pw += BinToText( pr, nclen, pw );
+			pw++;
 		}
-	}
-
-	if( pbError ){
-		*pbError = berror;
+		else {
+			*pw++ = static_cast<unsigned short>( *pr );
+		}
 	}
 
 	return pw - reinterpret_cast<unsigned short*>(pDst);
@@ -106,8 +97,8 @@ int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 
 
 
-/* コード変換 SJIS→Unicode */
-EConvertResult CShiftJis::SJISToUnicode( CMemory* pMem )
+/* コード変換 Latin1→Unicode */
+EConvertResult CLatin1::Latin1ToUnicode( CMemory* pMem )
 {
 	// エラー状態
 	bool bError;
@@ -128,7 +119,7 @@ EConvertResult CShiftJis::SJISToUnicode( CMemory* pMem )
 	}
 
 	// 変換
-	int nDstLen = SjisToUni( pSrc, nSrcLen, pDst, &bError );
+	int nDstLen = Latin1ToUni( pSrc, nSrcLen, pDst, &bError );
 
 	// pMemを更新
 	pMem->SetRawData( pDst, nDstLen*sizeof(wchar_t) );
@@ -150,9 +141,9 @@ EConvertResult CShiftJis::SJISToUnicode( CMemory* pMem )
 
 
 /*
-	Unicode -> SJIS
+	Unicode -> Latin1
 */
-int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError )
+int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError )
 {
 	int nclen;
 	const unsigned short *pr, *pr_end;
@@ -185,7 +176,7 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 			nclen = 1;
 		}
 		if( echarset != CHARSET_BINARY ){
-			pw += _UniToSjis_char( pr, pw, echarset, &berror_tmp );
+			pw += _UniToLatin1_char( pr, pw, echarset, &berror_tmp );
 			if( berror_tmp == true ){
 				berror = true;
 			}
@@ -213,8 +204,8 @@ int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 
 
 
-/* コード変換 Unicode→SJIS */
-EConvertResult CShiftJis::UnicodeToSJIS( CMemory* pMem )
+/* コード変換 Unicode→Latin1 */
+EConvertResult CLatin1::UnicodeToLatin1( CMemory* pMem )
 {
 	// 状態
 	bool berror;
@@ -235,7 +226,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( CMemory* pMem )
 	}
 
 	// 変換
-	int nDstLen = UniToSjis( pSrc, nSrcLen, pDst, &berror );
+	int nDstLen = UniToLatin1( pSrc, nSrcLen, pDst, &berror );
 
 	// pMemを更新
 	pMem->SetRawData( pDst, nDstLen );
@@ -253,7 +244,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( CMemory* pMem )
 
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CMemory cCharBuffer;
 	EConvertResult	res;
@@ -275,8 +266,8 @@ EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCH
 		bbinary = true;
 	}
 
-	// SJIS 変換
-	res = UnicodeToSJIS(&cCharBuffer);
+	// Latin1 変換
+	res = UnicodeToLatin1(&cCharBuffer);
 	if (res != RESULT_COMPLETE) {
 		return RESULT_LOSESOME;
 	}
@@ -286,10 +277,10 @@ EConvertResult CShiftJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCH
 	pd = pDst;
 	if( bbinary == false ){
 		for (i = cCharBuffer.GetRawLength(); i >0; i--, ps ++, pd += 2) {
-			auto_sprintf( pd, _T("%02X"), *ps);
+			auto_sprintf( pd, _T("%02x"), *ps);
 		}
 	}else{
-		auto_sprintf( pd, _T("?%02X"), *ps );
+		auto_sprintf( pd, _T("?%02x"), *ps );
 	}
 
 	return RESULT_COMPLETE;

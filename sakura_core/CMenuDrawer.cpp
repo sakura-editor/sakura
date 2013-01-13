@@ -200,7 +200,7 @@ CMenuDrawer::CMenuDrawer()
 /* 61 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 62 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 63 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
-/* 64 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
+/* 64 */		F_FILE_REOPEN_LATIN1			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//Latin1で開きなおす	// 2010/3/20 Uchi
 
 /* カーソル移動系(3段目32個: 65-96) */
 /* 65 */		F_DISABLE						/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー

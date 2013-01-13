@@ -1,8 +1,5 @@
 #include "StdAfx.h"
 #include "CEuc.h"
-#include "CShiftJis.h"
-#include "charset/charcode.h"
-#include "charset/codechecker.h"
 
 // ”ñˆË‘¶„§
 #include "env/CShareData.h"

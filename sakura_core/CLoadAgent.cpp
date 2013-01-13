@@ -189,7 +189,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = ( types.m_encoding.m_bDefaultBom != FALSE );	// 2011.01.24 ryoji デフォルトBOM
 		}
 		else{
-			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = ( sLoadInfo.eCharCode == CODE_UNICODE || sLoadInfo.eCharCode == CODE_UNICODEBE );
+			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = CCodeTypeName( sLoadInfo.eCharCode ).IsBomDefOn();
 		}
 	}
 
@@ -236,8 +236,7 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 
 	if(eLoadResult==LOADED_FAILURE){
 		pcDoc->SetFilePathAndIcon( _T("") );
-		pcDoc->m_cDocFile.m_sFileInfo.bBomExist = false;
-		if(pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODE || pcDoc->m_cDocFile.m_sFileInfo.eCharCode==CODE_UNICODEBE)pcDoc->m_cDocFile.m_sFileInfo.bBomExist = true;
+		pcDoc->m_cDocFile.m_sFileInfo.bBomExist = CCodeTypeName( pcDoc->m_cDocFile.m_sFileInfo.eCharCode ).IsBomDefOn();
 	}
 	if(eLoadResult==LOADED_LOSESOME){
 		CAppMode::getInstance()->SetViewMode(true);

@@ -25,7 +25,6 @@
 #define SAKURA_CUTF8_EDEFA3B8_A37B_4416_9EC5_0A16659C92059_H_
 
 #include "CCodeBase.h"
-#include "CShiftJis.h"
 #include "charset/codeutil.h"
 
 
@@ -40,7 +39,7 @@ public:
 		*pDst=*cSrc._GetMemory(); return UnicodeToUTF8(pDst);
 	}
 	void GetBom(CMemory* pcmemBom);																			//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType){ CShiftJis::S_GetEol(pcmemEol,eEolType); }	//!< 改行データ取得
+// GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, TCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE → Hex 変換
 	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, TCHAR* pd, const CommonSetting_Statusbar* psStatusbar){ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
 

@@ -131,7 +131,7 @@ void ShowCodeBox(HWND hWnd)
 				memcpy(szChar, &pLine[nIdx], nCharChars * sizeof(wchar_t));
 				szChar[nCharChars] = L'\0';
 				for( int i = 0; i < CODE_CODEMAX; i++ ){
-					if( i == CODE_SJIS || i == CODE_JIS || i == CODE_EUC || i == CODE_UNICODE || i == CODE_UTF8 || i == CODE_CESU8 ){
+					if( i == CODE_SJIS || i == CODE_JIS || i == CODE_EUC || i == CODE_LATIN1 || i == CODE_UNICODE || i == CODE_UTF8 || i == CODE_CESU8 ){
 						//auto_sprintf( szCaretChar, _T("%04x"), );
 						//任意の文字コードからUnicodeへ変換する		2008/6/9 Uchi
 						CCodeBase* pCode = CCodeFactory::CreateCodeBase((ECodeType)i, false);
@@ -155,8 +155,8 @@ void ShowCodeBox(HWND hWnd)
 				}
 
 				// メッセージボックス表示
-				auto_sprintf(szMsg, _T("文字:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"),
-					szChar, szCodeCP, szCode[CODE_SJIS], szCode[CODE_JIS], szCode[CODE_EUC], szCode[CODE_UNICODE], szCode[CODE_UTF8], szCode[CODE_CESU8]);
+				auto_sprintf(szMsg, _T("文字:\t\t%ls (%s)\n\nSJIS:\t\t%s\nJIS:\t\t%s\nEUC:\t\t%s\nLatin1:\t\t%s\nUnicode:\t\t%s\nUTF-8:\t\t%s\nCESU-8:\t\t%s"),
+					szChar, szCodeCP, szCode[CODE_SJIS], szCode[CODE_JIS], szCode[CODE_EUC], szCode[CODE_LATIN1], szCode[CODE_UNICODE], szCode[CODE_UTF8], szCode[CODE_CESU8]);
 				::MessageBox( hWnd, szMsg, GSTR_APPNAME, MB_OK );
 			}
 		}
@@ -794,7 +794,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 			GetDocument().m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_encoding.m_eDefaultEoltype );
 		}
 		else{
-			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = ( nCharCode == CODE_UNICODE || nCharCode == CODE_UNICODEBE );
+			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = CCodeTypeName( nCharCode ).IsBomDefOn();
 			GetDocument().m_cDocEditor.m_cNewLineCode = EOL_CRLF;
 		}
 	}
