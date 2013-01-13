@@ -511,6 +511,11 @@ F_LAYOUTTOLOGICLINENUM	= 40036,	// ロジック行番号取得
 F_LOGICTOLAYOUTLINENUM	= 40037,	// レイアウト行番号取得
 F_LINECOLUMNTOINDEX	= 40038,	// ロジック桁番号取得
 F_LINEINDEXTOCOLUMN	= 40039,	// レイアウト桁番号取得
+F_GETCOOKIE			= 40040,	// Cookie取得
+F_GETCOOKIEDEFAULT	= 40041,	// Cookie取得デフォルト値
+F_SETCOOKIE			= 40042,	// Cookie設定
+F_DELETECOOKIE		= 40043,	// Cookie削除
+F_GETCOOKIENAMES	= 40044,	// Cookie名前取得
 
 
 //	= 2005,.01.10 genta ISearch用補助コード

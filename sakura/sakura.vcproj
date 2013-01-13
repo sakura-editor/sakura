@@ -2533,6 +2533,14 @@
 				Name="macro"
 				>
 				<File
+					RelativePath="..\sakura_core\macro\CCookieManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\macro\CCookieManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\macro\CEditorIfObj.cpp"
 					>
 				</File>

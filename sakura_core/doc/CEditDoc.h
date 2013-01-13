@@ -39,6 +39,7 @@
 #include "CDocLocker.h"
 #include "func/CFuncLookup.h"
 #include "CEol.h"
+#include "macro/CCookieManager.h"
 #include "util/design_template.h"
 
 class CImageListMgr; // 2002/2/10 aroka
@@ -113,6 +114,7 @@ public:
 	CDocFileOperation	m_cDocFileOperation;
 	CDocEditor			m_cDocEditor;
 	CDocType			m_cDocType;
+	CCookieManager		m_cCookie;
 
 	//ƒwƒ‹ƒp
 public:

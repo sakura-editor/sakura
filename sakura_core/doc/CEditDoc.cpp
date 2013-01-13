@@ -200,6 +200,8 @@ void CEditDoc::InitDoc()
 
 	//	Oct. 2, 2005 genta ë}ì¸ÉÇÅ[Éh
 	m_cDocEditor.SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
+
+	m_cCookie.DeleteAll(L"document");
 }
 
 void CEditDoc::SetBackgroundImage()
