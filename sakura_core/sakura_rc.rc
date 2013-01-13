@@ -1514,6 +1514,16 @@ BEGIN
     CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,161,18,94,10
     GROUPBOX        "クリッカブルURL",IDC_STATIC,156,3,131,35,WS_GROUP
+    CONTROL         "カレントフォルダ(&U)",IDC_RADIO_CURDIR,"Button",
+                    BS_AUTORADIOBUTTON,161,54,87,8
+    CONTROL         "最近使ったフォルダ(&M)",IDC_RADIO_MRUDIR,"Button",
+                    BS_AUTORADIOBUTTON,161,69,80,8
+    CONTROL         "指定フォルダ(&F)",IDC_RADIO_SELDIR,"Button",
+                    BS_AUTORADIOBUTTON,161,84,80,8
+    EDITTEXT        IDC_EDIT_FILEOPENDIR,161,100,111,12
+    PUSHBUTTON      "...",IDC_BUTTON_FILEOPENDIR,272,98,9,14
+    GROUPBOX        "ファイルダイアログの初期位置",IDC_STATIC,156,41,130,79,
+                    WS_GROUP
 END
 
 IDD_PROP_FILE DIALOGEX 0, 0, 293, 240

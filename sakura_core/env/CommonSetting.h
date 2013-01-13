@@ -170,6 +170,12 @@ struct CommonSetting_TabBar
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           編集                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+enum EOpenDialogDir{
+	OPENDIALOGDIR_CUR, //!< カレントフォルダ
+	OPENDIALOGDIR_MRU, //!< 最近使ったフォルダ
+	OPENDIALOGDIR_SEL, //!< 指定フォルダ
+};
+
 struct CommonSetting_Edit
 {
 	//コピー
@@ -190,6 +196,8 @@ struct CommonSetting_Edit
 	BOOL	m_bJumpSingleClickURL;		// URLのシングルクリックでJump $$$未使用
 	BOOL	m_bSelectClickedURL;		// URLがクリックされたら選択するか
 
+	EOpenDialogDir	m_eOpenDialogDir;	// ファイルダイアログの初期位置
+	SFilePath	m_OpenDialogSelDir;		// 指定フォルダ
 
 	// (ダイアログ項目無し)
 	BOOL	m_bAutoColmnPaste;			// 矩形コピーのテキストは常に矩形貼り付け
