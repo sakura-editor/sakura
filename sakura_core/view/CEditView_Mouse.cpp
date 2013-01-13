@@ -888,6 +888,12 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 	CMyPoint ptMouse(xPos_, yPos_);
 
 	CLayoutInt	nScrollRowNum;
+	if( m_cMousePousePos != ptMouse ){
+		m_cMousePousePos = ptMouse;
+		if( m_nMousePouse < 0 ){
+			m_nMousePouse = 0;
+		}
+	}
 
 //	CLayoutRange sSelectBgn_Old = GetSelectionInfo().m_sSelectBgn;  // 範囲選択(原点)
 	CLayoutRange sSelect_Old    = GetSelectionInfo().m_sSelect;
@@ -973,14 +979,18 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 					}
 				}else
 				/* アイビーム */
-				::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
+				if( 0 <= m_nMousePouse ){
+					::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
+				}
 			}
 		}
 		return;
 	}
 	// 以下、マウスでの選択中(ドラッグ中)
 
-	::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
+	if( 0 <= m_nMousePouse ){
+		::SetCursor( ::LoadCursor( NULL, IDC_IBEAM ) );
+	}
 
 	// 2010.07.15 Moca ドラッグ開始位置から移動していない場合はMOVEとみなさない
 	// 遊びは 2px固定とする

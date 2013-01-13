@@ -44,6 +44,11 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
+	if( m_pCommanderView->m_bHideMouse && 0 <= m_pCommanderView->m_nMousePouse ){
+		m_pCommanderView->m_nMousePouse = -1;
+		::SetCursor( NULL );
+	}
+
 	/* 現在位置にデータを挿入 */
 	nPosX = CLayoutInt(-1);
 	CNativeW cmemDataW2;
@@ -240,6 +245,11 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 		return;
 	}
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
+
+ 	if( m_pCommanderView->m_bHideMouse && 0 <= m_pCommanderView->m_nMousePouse ){
+		m_pCommanderView->m_nMousePouse = -1;
+		::SetCursor( NULL );
+	}
 
 	// Oct. 6 ,2002 genta バッファに格納する
 	// Aug. 15, 2007 kobake WCHARバッファに変換する

@@ -96,6 +96,21 @@ public:
 		}
 		return ERROR_SUCCESS;
 	}
+	int GetValueBINARY(const TCHAR* valueName, BYTE* buffer, unsigned int nMaxChar, int* pGetChars = NULL) const
+	{
+		DWORD dwType = REG_BINARY;
+		DWORD nError = 0;
+		DWORD getChars = nMaxChar;
+		if (nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars))
+		{
+			return nError;
+		}
+		if(pGetChars)
+		{
+			*pGetChars = getChars;
+		}
+		return ERROR_SUCCESS;
+	}
 	int SetValue(const TCHAR* valueName, const TCHAR* buffer, int nMaxChar = -1)
 	{
 		if(nMaxChar == -1)

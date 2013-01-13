@@ -641,6 +641,9 @@ public:
 		WHEEL_SCROLL_VPAGE,
 	};
 	eWheelScrollType	m_eWheelScroll; //!< スクロールの種類
+	int				m_nMousePouse;	// マウス停止時間
+	CMyPoint		m_cMousePousePos;	// マウスの停止位置
+	bool			m_bHideMouse;
 
 	int				m_nAutoScrollMode;			//!< オートスクロールモード
 	bool			m_bAutoScrollDragMode;		//!< ドラッグモード
