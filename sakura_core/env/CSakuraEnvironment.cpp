@@ -598,7 +598,7 @@ std::tstring CSakuraEnvironment::GetDlgInitialDir()
 			return pszCurDir;
 		}
 	}else if( GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_MRU ){
-		const CMRU cMRU;
+		const CMRUFile cMRU;
 		std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
 		if( !vMRU.empty() ){
 			return vMRU[0];
