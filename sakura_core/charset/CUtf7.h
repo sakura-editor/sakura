@@ -25,7 +25,6 @@
 #define SAKURA_CUTF7_D489ED48_E52A_43DD_8124_CB439CA30FC8_H_
 
 #include "CCodeBase.h"
-#include "CShiftJis.h"
 
 class CUtf7 : public CCodeBase{
 public:
@@ -33,7 +32,7 @@ public:
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst){ *pDst->_GetMemory()=cSrc; return UTF7ToUnicode(pDst->_GetMemory()); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst){ *pDst=*cSrc._GetMemory(); return UnicodeToUTF7(pDst); }	//!< UNICODE    → 特定コード 変換
 	void GetBom(CMemory* pcmemBom);	//!< BOMデータ取得
-	void GetEol(CMemory* pcmemEol, EEolType eEolType){ CShiftJis::S_GetEol(pcmemEol,eEolType); }	//!< 改行データ取得
+// GetEolはCCodeBaseに移動	2010/6/13 Uchi
 
 public:
 	//実装

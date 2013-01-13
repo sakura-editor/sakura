@@ -854,19 +854,10 @@ void CMacro::HandleCommand(
 			if (Argument[1] != NULL){
 				nCharCode = (ECodeType)_wtoi( Argument[1] );
 			}
-			if(	IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding() ){
+			if (IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
 				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode);
 				//	From Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»
-				switch( pcEditView->m_pcEditDoc->GetDocumentEncoding() ){
-				case CODE_UNICODE:
-				case CODE_UNICODEBE:
-					pcEditView->m_pcEditDoc->m_cDocFile.SetBomMode(true);
-					break;
-				case CODE_UTF8:
-				default:
-					pcEditView->m_pcEditDoc->m_cDocFile.SetBomMode(false);
-					break;
-				}
+				pcEditView->m_pcEditDoc->m_cDocFile.SetBomMode( CCodeTypeName(pcEditView->m_pcEditDoc->GetDocumentEncoding()).IsBomDefOn() );
 				//	To Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»
 			}
 

@@ -1,13 +1,10 @@
 // 2008.11.10  変換ロジックを書き直す
 
 #include "StdAfx.h"
-#include "CJis.h"
-#include "CShiftJis.h"
 #include <mbstring.h>
-#include "convert/CDecode_Base64Decode.h"
+#include "CJis.h"
 #include "charset/charcode.h"
 #include "charset/codeutil.h"
-#include "convert/convert_util2.h"
 #include "charset/codechecker.h"
 
 // 非依存推奨
@@ -21,7 +18,7 @@
 
 //	@author D. S. Koba
 //	星マークを添えてあるものは、書き込みで使われる。
-const char CJis::JISESCDATA_ASCII7[]				= "\x1b" "(B";  // ☆
+const char CJis::JISESCDATA_ASCII7[]			= "\x1b" "(B";  // ☆
 const char CJis::JISESCDATA_JISX0201Latin[]		= "\x1b" "(J";
 const char CJis::JISESCDATA_JISX0201Latin_OLD[]	= "\x1b" "(H";
 const char CJis::JISESCDATA_JISX0201Katakana[]	= "\x1b" "(I";  // ☆

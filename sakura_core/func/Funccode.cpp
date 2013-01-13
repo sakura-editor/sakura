@@ -84,6 +84,7 @@ const EFunctionCode pnFuncList_File[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List5
 	F_FILE_REOPEN_SJIS		,//SJISで開き直す
 	F_FILE_REOPEN_JIS		,//JISで開き直す
 	F_FILE_REOPEN_EUC		,//EUCで開き直す
+	F_FILE_REOPEN_LATIN1	,//Latin1で開き直す	// 2010/3/20 Uchi
 	F_FILE_REOPEN_UNICODE	,//Unicodeで開き直す
 	F_FILE_REOPEN_UNICODEBE	,//UnicodeBEで開き直す
 	F_FILE_REOPEN_UTF8		,//UTF-8で開き直す
@@ -554,6 +555,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_FILE_REOPEN_SJIS:	return HLP000156;			//SJISで開き直す
 	case F_FILE_REOPEN_JIS:		return HLP000157;			//JISで開き直す
 	case F_FILE_REOPEN_EUC:		return HLP000158;			//EUCで開き直す
+	case F_FILE_REOPEN_LATIN1:	return HLP000156;			//Latin1で開き直す	// 2010/3/20 Uchi
 	case F_FILE_REOPEN_UNICODE:	return HLP000159;			//Unicodeで開き直す
 	case F_FILE_REOPEN_UNICODEBE:	return HLP000256;		//UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:	return HLP000160;			//UTF-8で開き直す
@@ -1186,6 +1188,7 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, EFunctionCode
 	case F_FILE_REOPEN_SJIS:		return CODE_SJIS == eDocCode;
 	case F_FILE_REOPEN_JIS:			return CODE_JIS == eDocCode;
 	case F_FILE_REOPEN_EUC:			return CODE_EUC == eDocCode;
+	case F_FILE_REOPEN_LATIN1:		return CODE_LATIN1 == eDocCode;		// 2010/3/20 Uchi
 	case F_FILE_REOPEN_UNICODE:		return CODE_UNICODE == eDocCode;
 	case F_FILE_REOPEN_UNICODEBE:	return CODE_UNICODEBE == eDocCode;
 	case F_FILE_REOPEN_UTF8:		return CODE_UTF8 == eDocCode;

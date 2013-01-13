@@ -1005,6 +1005,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\charset\CLatin1.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\charset\CLatin1.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\charset\codechecker.cpp"
 					>
 				</File>

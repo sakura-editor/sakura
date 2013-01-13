@@ -145,6 +145,7 @@ protected:
 	void GetEncodingInfo_utf7( const char *, const int );
 	void GetEncodingInfo_cesu8( const char *, const int );
 	void GetEncodingInfo_uni( const char *, const int );
+	void GetEncodingInfo_latin1( const char *, const int );
 
 
 	bool _CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian );

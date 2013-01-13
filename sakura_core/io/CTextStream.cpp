@@ -1,11 +1,12 @@
 #include "StdAfx.h"
 #include "CTextStream.h"
-#include <vector>
-using namespace std;
-#include "charset/CCodeMediator.h"
-#include "util/file.h"
-#include "util/module.h"
 #include "charset/CCodeFactory.h"
+#include "charset/CShiftJis.h"	// move from CCodeMediator.h	2010/6/14 Uchi
+#include "charset/CUtf8.h"		// move from CCodeMediator.h	2010/6/14 Uchi
+#include "util/file.h"			// _IS_REL_PATH
+#include "util/module.h"
+
+using namespace std;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CTextInputStream                        //

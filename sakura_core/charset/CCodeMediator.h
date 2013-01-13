@@ -50,14 +50,5 @@ private:
 	const SEncodingConfig* m_pEncodingConfig;
 };
 
-#include "CEuc.h"
-#include "CJis.h"
-#include "CShiftJis.h"
-#include "CUnicode.h"
-#include "CUnicodeBe.h"
-#include "CUtf7.h"
-#include "CUtf8.h"
-#include "CCesu8.h"
-
 #endif /* SAKURA_CCODEMEDIATOR_653AC1CB_8935_4F2A_AF03_8FE669F6FA9F_H_ */
 /*[EOF]*/

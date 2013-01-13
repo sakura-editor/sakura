@@ -645,7 +645,7 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 				if(nCharCode != pfi->m_nCharCode){
 					TopWarningMessage( *phwndOwner,
 						_T("%ts\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n")
-						_T("ファイルメニューから「開き直す」を使用してください。\n")
+						_T("ファイルメニューから「閉じて開く」を使用してください。\n")
 						_T("\n")
 						_T("現在の文字コードセット=[%ts]\n")
 						_T("新しい文字コードセット=[%ts]"),

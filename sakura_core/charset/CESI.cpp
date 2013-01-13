@@ -37,18 +37,13 @@
 #include <windows.h>
 #include "charset/codechecker.h"
 #include "charset/CESI.h"
-#include "mem/CMemory.h"
-#include "util/tchar_printf.h"
-#include "charset/charset.h"
 #include "charset/CCodeMediator.h"
-#include "convert/convert_util2.h"
-#include "charset/charcode.h"
+#include "charset/CEuc.h"
 #include "charset/codeutil.h"
 
 // 非依存推奨
 #include "window/CEditWnd.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 
 
 /*!
@@ -76,6 +71,7 @@ static const int gm_aMbcPriority[] =
 	5,			//CODE_UTF7
 	INT_MAX,	//CODE_UNICODEBE
 	1,			//CODE_CESU8
+	6,			//CODE_LATIN1
 };
 
 
@@ -526,6 +522,20 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 
 
 /*!
+	Latin1(欧文, Windows-1252)の文字コード判定情報を収集する
+
+	@note
+	　必ずFalse。
+*/
+void CESI::GetEncodingInfo_latin1( const char* pS, const int nLen )
+{
+	SetEvaluation( CODE_LATIN1, 0, - nLen );
+	return;
+}
+
+
+
+/*!
 	UTF-16 チェッカ内で使う改行コード確認関数
 */
 bool CESI::_CheckUtf16Eol( const char* pS, const int nLen, const bool bbig_endian )
@@ -674,6 +684,7 @@ void CESI::ScanCode( const char* pS, const int nLen )
 	GetEncodingInfo_utf8( pS, nLen );
 	GetEncodingInfo_utf7( pS, nLen );
 	GetEncodingInfo_cesu8( pS, nLen );
+	GetEncodingInfo_latin1( pS, nLen );
 	GetEncodingInfo_uni( pS, nLen );
 	SortMBCInfo();
 

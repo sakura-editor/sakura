@@ -36,7 +36,6 @@
 
 #include "_main/global.h"
 #include "convert/convert_util2.h"
-#include "charset/codeutil.h"
 
 
 
