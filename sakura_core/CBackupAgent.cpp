@@ -269,54 +269,6 @@ int CBackupAgent::MakeBackUp(
 
 
 
-// CInvalidParameterHandler: CRT 内でのエラー検出を横取りして異常終了を防ぐためのクラス
-// ※ マルチスレッドには非対応
-class CInvalidParameterHandler{
-public:
-	CInvalidParameterHandler()
-	{
-		bInvalid = false;	// エラーの有無
-#if 1400 <= _MSC_VER
-		oldParamFunc = _set_invalid_parameter_handler( newParamFunc );	// Release 用（無効パラメータハンドラ）
-		oldRepoFunc = _CrtSetReportHook( newRepoFunc );					// Debug 用（デバッグレポートフック）
-#endif
-	}
-	~CInvalidParameterHandler()
-	{
-#if 1400 <= _MSC_VER
-		_set_invalid_parameter_handler(oldParamFunc);
-		_CrtSetReportHook(oldRepoFunc);
-#endif
-	}
-	bool IsInvalid(){ return bInvalid; }
-private:
-	static void newParamFunc(
-		const wchar_t* expression,
-		const wchar_t* function,
-		const wchar_t* file,
-		unsigned int line,
-		uintptr_t pReserved)
-	{
-		bInvalid = true;
-	}
-	static int newRepoFunc( int reportType, char *message, int *returnValue )
-	{
-		bInvalid = true;
-		return TRUE;
-	}
-	static bool bInvalid;
-#if 1400 <= _MSC_VER
-	static _invalid_parameter_handler oldParamFunc;
-	static _CRT_REPORT_HOOK oldRepoFunc;
-#endif
-};
-bool CInvalidParameterHandler::bInvalid;
-#if 1400 <= _MSC_VER
-_invalid_parameter_handler CInvalidParameterHandler::oldParamFunc;
-_CRT_REPORT_HOOK CInvalidParameterHandler::oldRepoFunc;
-#endif
-
-
 /*! バックアップの作成
 
 	@author aroka
@@ -490,17 +442,13 @@ bool CBackupAgent::FormatBackUpPath(
 		case 2:	//	現在の日付，時刻
 		default:
 			{
-				time_t	ltime;
-				struct	tm *today;
+				// 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる
+				SYSTEMTIME	SystemTime;
+				::GetSystemTime(&SystemTime);			// 現在時刻を取得
 
-				time( &ltime );				/* システム時刻を得ます */
-				today = localtime( &ltime );/* 現地時間に変換する */
-
-				/* YYYYMMDD時分秒 形式に変換 */
-				CInvalidParameterHandler cInvalidParam;	// CRT 内エラー検出クラス	// 2011.02.23 ryoji Wiki BugReport/67 の修正
-				_tcsftime( szFormat, _countof( szFormat ) - 1, bup_setting.m_szBackUpPathAdvanced , today );
-				if( cInvalidParam.IsInvalid() )
-					return false;	// _tcsftime() が無効な引数を検出した
+				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
+					return false;
+				}
 			}
 			break;
 		}
