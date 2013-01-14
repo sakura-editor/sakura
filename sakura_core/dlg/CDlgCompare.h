@@ -35,7 +35,7 @@ public:
 
 	const TCHAR*	m_pszPath;
 	bool			m_bIsModified;
-	TCHAR*			m_pszComparePath;
+	TCHAR*			m_pszCompareLabel;
 	HWND*			m_phwndCompareWnd;
 	BOOL			m_bCompareAndTileHorz;/* ç∂âEÇ…ï¿Ç◊Çƒï\é¶ */
 

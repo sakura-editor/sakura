@@ -64,6 +64,29 @@ public:
 	int TransformFileName_MakeCache( void );
 	static LPCTSTR GetFilePathFormat( LPCTSTR, LPTSTR, int, LPCTSTR, LPCTSTR );
 	static bool ExpandMetaToFolder( LPCTSTR, LPTSTR, int );
+
+	//メニュー類のファイル名作成
+	bool GetMenuFullLabel_WinList(TCHAR* pszOutput, int nBuffSize, const EditInfo* editInfo, int id, int index){
+		return GetMenuFullLabel(pszOutput, nBuffSize, true, editInfo, id, false, index, false);
+	}
+	bool GetMenuFullLabel_MRU(TCHAR* pszOutput, int nBuffSize, const EditInfo* editInfo, int id, bool bFavorite, int index){
+		return GetMenuFullLabel(pszOutput, nBuffSize, true, editInfo, id, bFavorite, index, true);
+	}
+	bool GetMenuFullLabel_WinListNoEscape(TCHAR* pszOutput, int nBuffSize, const EditInfo* editInfo, int id, int index){
+		return GetMenuFullLabel(pszOutput, nBuffSize, false, editInfo, id, false, index, false);
+	}
+	bool GetMenuFullLabel_File(TCHAR* pszOutput, int nBuffSize, const TCHAR* pszFile, int id, bool bModified = false, ECodeType nCharCode = CODE_NONE){
+		return GetMenuFullLabel(pszOutput, nBuffSize, true, pszFile, id, false, nCharCode, false, -1, false);
+	}
+	bool GetMenuFullLabel_FileNoEscape(TCHAR* pszOutput, int nBuffSize, const TCHAR* pszFile, int id, bool bModified = false, ECodeType nCharCode = CODE_NONE){
+		return GetMenuFullLabel(pszOutput, nBuffSize, false, pszFile, id, false, nCharCode, false, -1, false);
+	}
+
+	bool GetMenuFullLabel(TCHAR* pszOutput, int nBuffSize, bool bEspaceAmp, const EditInfo* editInfo, int id, bool bFavorite, int index, bool bAccKeyZeroOrigin);
+	bool GetMenuFullLabel(TCHAR* pszOutput, int nBuffSize, bool bEspaceAmp, const TCHAR* pszFile, int id, bool bModified, ECodeType nCharCode, bool bFavorite, int index, bool bAccKeyZeroOrigin);
+	
+	static TCHAR GetAccessKeyByIndex(int index, bool bZeroOrigin);
+
 	static void GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile );	/* 構成設定ファイルからiniファイル名を取得する */	// 2007.09.04 ryoji
 	void GetIniFileName( LPTSTR pszIniFileName, BOOL bRead = FALSE );	/* iniファイル名の取得 */	// 2007.05.19 ryoji
 

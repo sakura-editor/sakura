@@ -65,8 +65,7 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 */
 HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
-	TCHAR	szFolder2[_MAX_PATH * 2];	//	全部&でも問題ないように :-)
-	TCHAR	szMemu[_MAX_PATH * 2 + 10];				//	メニューキャプション
+	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
 	int		i;
 	bool	bFavorite;
 
@@ -76,20 +75,13 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecentFolder.GetViewCount() ) break;
 
-		CFileNameManager::getInstance()->GetTransformFileNameFast( m_cRecentFolder.GetItemText( i ), szMemu, _MAX_PATH );
-		//	&を&&に置換。
-		//	Jan. 19, 2002 genta
-		dupamp( szMemu, szFolder2 );
-
+		const TCHAR* pszFolder = m_cRecentFolder.GetItemText( i );
 		bFavorite = m_cRecentFolder.IsFavorite( i );
-		const int nAccKey = i % 36;
-		auto_sprintf( szMemu, _T("&%tc %ts%ts"), 
-			(nAccKey < 10) ? (_T('0') + nAccKey) : (_T('A') + nAccKey - 10), 
-			(!m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
-			szFolder2 );
+		bool bFavoriteLabel = bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
+		CFileNameManager::getInstance()->GetMenuFullLabel( szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true );
 
 		//	メニューに追加
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMemu, _T(""), TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;

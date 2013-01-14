@@ -151,6 +151,7 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 
 			//連番を更新する。
 			sMyEditNode.m_nIndex = pShare->m_sNodes.m_nSequences;
+			sMyEditNode.m_nId = pShare->m_sNodes.m_nSequences;
 
 			/* タブグループ連番 */
 			if( m_nGroup > 0 )
