@@ -71,8 +71,7 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 */
 HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
-	TCHAR	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
-	TCHAR	szMemu[_MAX_PATH * 2 + 10];				//	メニューキャプション
+	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
 	int		i;
 	bool	bFavorite;
 	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
@@ -87,30 +86,12 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 		/* MRUリストの中にある開かれていないファイル */
 
 		const EditInfo	*p = m_cRecentFile.GetItem( i );
-		
-		CFileNameManager::getInstance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
-		//	&を&&に置換。
-		//	Jan. 19, 2002 genta
-		dupamp( szMemu, szFile2 );
-		
 		bFavorite = m_cRecentFile.IsFavorite( i );
-		const int nAccKey = i % 36;
-		auto_sprintf(
-			szMemu,
-			_T("&%tc %ts%ts"),
-			(nAccKey < 10) ? (_T('0') + nAccKey) : (_T('A') + nAccKey - 10), 
-			(!bMenuIcon && bFavorite) ? _T("★ ") : _T(""),
-			szFile2
-		);
-
-		//	ファイル名のみ必要。
-		//	文字コード表記
-		if(IsValidCodeTypeExceptSJIS(p->m_nCharCode)){
-			_tcscat( szMemu, CCodeTypeName(p->m_nCharCode).Bracket() );
-		}
+		bool bFavoriteLabel = bFavorite && !bMenuIcon;
+		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i );
 
 		//	メニューに追加。
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu, _T(""), TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;

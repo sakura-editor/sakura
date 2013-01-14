@@ -171,9 +171,6 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 /* ダイアログデータの設定 */
 void CDlgDiff::SetData( void )
 {
-	//自ファイル
-	::DlgItem_SetText( GetHwnd(), IDC_STATIC_DIFF_SRC, m_szFile1 );
-
 	//オプション
 	m_nDiffFlgOpt = m_pShareData->m_nDiffFlgOpt;
 	if( m_nDiffFlgOpt & 0x0001 ) ::CheckDlgButton( GetHwnd(), IDC_CHECK_DIFF_OPT_CASE,   TRUE );
@@ -239,33 +236,15 @@ void CDlgDiff::SetData( void )
 				/* 自分ならスキップ */
 				if ( pEditNode[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() )
 				{
+					// 同じ形式にしておく。ただしアクセスキー番号はなし
+					CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, -1 );
+					::DlgItem_SetText( GetHwnd(), IDC_STATIC_DIFF_SRC, szName );
 					continue;
 				}
 
-				/* ファイル名を作成する */
-				if( pFileInfo->m_bIsGrep && !pFileInfo->m_szPath[0] ){
-					LPCWSTR		pszGrepKey = pFileInfo->m_szGrepKey;
-					int			nLen = (int)wcslen( pszGrepKey );
-					CNativeW	cmemDes;
-					LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
-					auto_sprintf( szName, _T("【Grep】%ls%ts %ts"),
-						cmemDes.GetStringPtr(),
-						( nLen > cmemDes.GetStringLength() ) ? _T("...") : _T(""),
-						pFileInfo->m_bIsModified ? _T("*") : _T(" ")
-					);
-				}else{
-					auto_sprintf(
-						szName,
-						_T("%ts %ts"),
-						pFileInfo->m_szPath[0] ? pFileInfo->m_szPath : _T("(無題)"),
-						pFileInfo->m_bIsModified ? _T("*") : _T(" ")
-					);
-				}
+				// 番号はウィンドウ一覧と同じ番号を使う
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szName, _countof(szName), pFileInfo, pEditNode[i].m_nId, i );
 
-				// gm_pszCodeNameArr_Bracket からコピーするように変更
-				if(IsValidCodeTypeExceptSJIS(pFileInfo->m_nCharCode)){
-					_tcscat( szName, CCodeTypeName(pFileInfo->m_nCharCode).Bracket() );
-				}
 
 				/* リストに登録する */
 				nItem = ::List_AddString( hwndList, szName );

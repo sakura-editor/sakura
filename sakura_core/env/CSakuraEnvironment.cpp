@@ -55,6 +55,7 @@ CEditWnd* CSakuraEnvironment::GetMainWindow()
 	@li g  開いているファイルの名前（拡張子除く）
 	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
 	@li N  開いているファイルの名前(簡易表示)
+	@li n  無題の通し番号
 	@li E  開いているファイルのあるフォルダの名前(簡易表示)
 	@li e  開いているファイルのあるフォルダの名前
 	@li C  現在選択中のテキスト
@@ -76,6 +77,7 @@ CEditWnd* CSakuraEnvironment::GetMainWindow()
 	@date 2005.09.15 FILE 特殊文字S, M追加
 	@date 2007.09.21 kobake 特殊文字A(アプリ名)を追加
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
+	@date 2012.10.11 Moca 特殊文字n追加
 */
 void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen)
 {
@@ -187,6 +189,19 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		//	To Here 2003/06/21 Moca
+		case L'n':
+			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
+				if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
+				}else if( CAppMode::getInstance()->IsDebugMode() ){
+				}else{
+					WCHAR szText[10];
+					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow()->GetHwnd() );
+					swprintf( szText, L"%d", node->m_nId );
+					q = wcs_pushW( q, q_max - q, szText );
+				}
+			}
+			++p;
+			break;
 		case L'E':	// 開いているファイルのあるフォルダの名前(簡易表示)	2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );

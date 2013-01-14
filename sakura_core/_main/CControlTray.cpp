@@ -1346,7 +1346,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	HMENU		hMenuTop;
 	HMENU		hMenu;
 	HMENU		hMenuPopUp;
-	TCHAR		szMemu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
+	TCHAR		szMenu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	POINT		po;
 	RECT		rc;
 	EditInfo*	pfi;
@@ -1414,54 +1414,10 @@ int	CControlTray::CreatePopUpMenu_L( void )
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
 				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
-					if( pfi->m_bIsGrep ){
-						/* データを指定バイト数以内に切り詰める */
 
-						//pfi->m_szGrepKey → cmemDes
-						CNativeW	cmemDes;
-						LimitStringLengthW( pfi->m_szGrepKey, wcslen( pfi->m_szGrepKey ), 64, cmemDes );
-
-						//cmmDes → szMenu2
-						//	Jan. 19, 2002 genta
-						//	メニュー文字列の&を考慮
-						TCHAR szMenu2[MAX_PATH * 2];
-						dupamp( cmemDes.GetStringT(), szMenu2 );
-//	From Here Oct. 4, 2000 JEPRO commented out & modified
-//		j >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
-
-						//szMenuを作る
-						//	Jan. 19, 2002 genta
-						//	&の重複処理を追加したため継続判定を若干変更
-						auto_sprintf( szMemu, _T("&%tc 【Grep】\"%ts%ts\""),
-							((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
-							szMenu2,
-							( (int)wcslen( pfi->m_szGrepKey ) > cmemDes.GetStringLength() ) ? _T("…"):_T("")
-						);
-					}else{
-						// 2003/01/27 Moca ファイル名の簡易表示
-						// pfi->m_szPath → szFileName
-						TCHAR szFileName[_MAX_PATH];
-						CFileNameManager::getInstance()->GetTransformFileNameFast( pfi->m_szPath, szFileName, MAX_PATH );
-
-						// szFileName → szMenu2
-						//	Jan. 19, 2002 genta
-						//	メニュー文字列の&を考慮
-						TCHAR szMenu2[MAX_PATH * 2];
-						dupamp( szFileName, szMenu2 );
-						auto_sprintf( szMemu, _T("&%tc %ts %ts"),
-							((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
-							(0 < _tcslen( szMenu2 ))? szMenu2:_T("(無題)"),
-							pfi->m_bIsModified ? _T("*"):_T(" ")
-						);
-//		To Here Oct. 4, 2000
-						// gm_pszCodeNameArr_Bracket からコピーするように変更
-						if(IsValidCodeTypeExceptSJIS(pfi->m_nCharCode)){
-							_tcscat( szMemu, CCodeTypeName(pfi->m_nCharCode).Bracket() );
-						}
-					}
-
-//				::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMemu );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMemu, _T(""), FALSE );
+				// メニューラベル。1からアクセスキーを振る
+				CFileNameManager::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, m_pShareData->m_sNodes.m_pEditArr[i].m_nId, i );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, _T(""), FALSE );
 				++j;
 			}
 		}
