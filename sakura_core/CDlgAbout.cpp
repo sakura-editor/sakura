@@ -187,18 +187,15 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( szMsg );
 
 	/* 更新日情報 */
-	FILETIME		lastTime;
-	SYSTEMTIME		systimeL;
-	GetLastWriteTimestamp( szFile, &lastTime );
-	::FileTimeToLocalFileTime( &lastTime, &lastTime );
-	::FileTimeToSystemTime( &lastTime, &systimeL );
+	CFileTime cFileTime;
+	GetLastWriteTimestamp( szFile, &cFileTime );
 	_stprintf( szMsg, _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
-		systimeL.wYear,
-		systimeL.wMonth,
-		systimeL.wDay,
-		systimeL.wHour,
-		systimeL.wMinute,
-		systimeL.wSecond
+		cFileTime->wYear,
+		cFileTime->wMonth,
+		cFileTime->wDay,
+		cFileTime->wHour,
+		cFileTime->wMinute,
+		cFileTime->wSecond
 	);
 	cmemMsg.AppendString( szMsg );
 
@@ -215,7 +212,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	From Here Jun. 8, 2001 genta
 	//	Edit Boxにメッセージを追加する．
-	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, sizeof( szMsg ) );
+	int desclen = ::LoadString( m_hInstance, IDS_ABOUT_DESCRIPTION, szMsg, _countof( szMsg ) );
 	if( desclen > 0 ){
 		::SetDlgItemText( m_hWnd, IDC_EDIT_ABOUT, szMsg );
 	}
@@ -251,7 +248,7 @@ BOOL CDlgAbout::OnBnClicked( int wID )
 			::SendMessage( hwndEditVer, EM_SETSEL, 0, -1 );
 			::SendMessage( hwndEditVer, WM_COPY, 0, 0 );
 			::SendMessage( hwndEditVer, EM_SETSEL, -1, 0 );
- 		}
+		}
 		return TRUE;
 	}
 	return CDialog::OnBnClicked( wID );

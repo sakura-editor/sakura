@@ -45,7 +45,6 @@ public:
 
 	static CMacroManagerBase* Creator(char const *FileExt);
 	static void declare();
-	static void EnumEngines(EngineCallback Proc); //スクリプトエンジン列挙
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;

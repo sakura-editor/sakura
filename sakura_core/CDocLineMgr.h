@@ -25,7 +25,7 @@ class CDocLineMgr;
 #include <windows.h>
 #include "global.h" // 2002/2/10 aroka
 #include "CEol.h" // 2002/2/10 aroka
-
+#include "etc_uty.h"
 
 /* 文字種類識別子 */
 #define	CK_NULL			0	/*!< NULL 0x0<=c<=0x0 */
@@ -190,10 +190,10 @@ public:
 
 	//	Nov. 12, 2000 genta 引数追加
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	int ReadFile( const char*, HWND, HWND, ECodeType, FILETIME*, int extraflag, BOOL* pbBomExist = NULL );
+	int ReadFile( const char*, HWND, HWND, ECodeType, CFileTime*, int extraflag, BOOL* pbBomExist = NULL );
 	//	Feb. 6, 2001 genta 引数追加(改行コード設定)
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	int WriteFile( const char*, HWND, HWND, int, FILETIME*, CEol, BOOL bBomExist = FALSE );
+	int WriteFile( const char*, HWND, HWND, int, CFileTime*, CEol, BOOL bBomExist = FALSE );
 	CDocLine* GetLine( int );
 	// 2002/2/10 aroka メンバを private にしてアクセサ追加
 	CDocLine* GetDocLineTop() const { return m_pDocLineTop; }

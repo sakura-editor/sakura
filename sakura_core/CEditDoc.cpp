@@ -120,8 +120,7 @@ CEditDoc::CEditDoc()
 	m_pcSMacroMgr = new CSMacroMgr;
 	
 	//	m_FileTimeの初期化
-	m_FileTime.dwLowDateTime = 0;
-	m_FileTime.dwHighDateTime = 0;
+	m_FileTime.ClearFILETIME();
 
 	//	Oct. 2, 2005 genta 挿入モード
 	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode != FALSE );
@@ -167,8 +166,7 @@ void CEditDoc::Clear()
 	SetFilePathAndIcon( _T("") );
 
 	// ファイルのタイムスタンプのクリア
-	m_FileTime.dwLowDateTime = 0;
-	m_FileTime.dwHighDateTime = 0;
+	m_FileTime.ClearFILETIME();
 
 	int doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
 	SetDocumentType( doctype, true );
@@ -2044,33 +2042,27 @@ bool CEditDoc::FormatBackUpPath(
 	//	2001/06/12 Start by asa-o: ファイルに付ける日付を前回の保存時(更新日時)にする
 		case 4:	//	日付，時刻
 			{
-				FILETIME	LastWriteTime,
-							LocalTime;
-				SYSTEMTIME	SystemTime;
-
-				// 2005.10.20 ryoji FindFirstFileを使うように変更
-				GetLastWriteTimestamp( target_file, &LastWriteTime );
-				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
-				::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
+				CFileTime ctimeLastWrite;
+				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
 
 				_tcscpy( szTime, _T("") );
 				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
-					wsprintf(szTime,_T("%d"),SystemTime.wYear);
+					wsprintf(szTime,_T("%d"),ctimeLastWrite->wYear);
 				}
 				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
-					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wMonth);
+					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wMonth);
 				}
 				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
-					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wDay);
+					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wDay);
 				}
 				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
-					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wHour);
+					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wHour);
 				}
 				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
-					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wMinute);
+					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wMinute);
 				}
 				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
-					wsprintf(szTime,_T("%s%02d"),szTime,SystemTime.wSecond);
+					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wSecond);
 				}
 				wsprintf( pBase, _T("%s_%s%s"), szFname, szTime, szExt );
 			}
@@ -2107,16 +2099,12 @@ bool CEditDoc::FormatBackUpPath(
 		switch( m_pShareData->m_Common.m_sBackup.GetBackupTypeAdv() ){
 		case 4:	//	ファイルの日付，時刻
 			{
-				FILETIME	LastWriteTime,
-							LocalTime;
-				SYSTEMTIME	SystemTime;
-
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
-				GetLastWriteTimestamp( target_file, &LastWriteTime );
-				::FileTimeToLocalFileTime(&LastWriteTime,&LocalTime);	// 現地時刻に変換
-				::FileTimeToSystemTime(&LocalTime,&SystemTime);			// システムタイムに変換
-
-				GetDateTimeFormat( szFormat, sizeof(szFormat), m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced , SystemTime );
+				CFileTime ctimeLastWrite;
+				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
+				if( !GetDateTimeFormat( szFormat, _countof(szFormat), m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
+					return false;
+				}
 			}
 			break;
 		case 2:	//	現在の日付，時刻
@@ -4179,18 +4167,18 @@ void CEditDoc::CheckFileTimeStamp( void )
 	 && NULL != ( hwndActive = ::GetActiveWindow() )	/* アクティブ? */
 	 && hwndActive == m_hwndParent
 	 && IsFilePathAvailable()
-	 && ( m_FileTime.dwLowDateTime != 0 || m_FileTime.dwHighDateTime != 0 ) 	/* 現在編集中のファイルのタイムスタンプ */
+	 && ( m_FileTime.IsZero() ) 	/* 現在編集中のファイルのタイムスタンプ */
 
 	){
 		/* ファイルスタンプをチェックする */
 
 		// 2005.10.20 ryoji FindFirstFileを使うように変更（ファイルがロックされていてもタイムスタンプ取得可能）
-		FILETIME ftime;
+		CFileTime ftime;
 		if( GetLastWriteTimestamp( GetFilePath(), &ftime )){
-			if( 0 != ::CompareFileTime( &m_FileTime, &ftime ) )	//	Aug. 13, 2003 wmlhq タイムスタンプが古く変更されている場合も検出対象とする
+			if( 0 != ::CompareFileTime( &m_FileTime.GetFILETIME(), &ftime.GetFILETIME() ) )	//	Aug. 13, 2003 wmlhq タイムスタンプが古く変更されている場合も検出対象とする
 			{
 				bUpdate = TRUE;
-				m_FileTime = ftime;
+				m_FileTime = ftime.GetFILETIME();
 			}
 		}
 	}
@@ -4201,19 +4189,8 @@ void CEditDoc::CheckFileTimeStamp( void )
 		case WU_NOTIFY:
 			{
 				TCHAR szText[40];
-				//	現在時刻の取得
-				SYSTEMTIME st;
-				FILETIME lft;
-				if( ::FileTimeToLocalFileTime( &m_FileTime, &lft ) &&
-					::FileTimeToSystemTime( &lft, &st )){
-					// nothing to do
-				}
-				else {
-					//	ファイル時刻の変換に失敗した場合は
-					//	現在時刻でごまかす
-					::GetLocalTime( &st );
-				}
-				wsprintf( szText, _T("★ファイル更新 %02d:%02d:%02d"), st.wHour, st.wMinute, st.wSecond );
+				const CFileTime& ctime = m_FileTime;
+				wsprintf( szText, _T("★ファイル更新 %02d:%02d:%02d"), ctime->wHour, ctime->wMinute, ctime->wSecond );
 				m_pcEditWnd->SendStatusMessage( szText );
 			}	
 			break;
@@ -4594,13 +4571,13 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 			break;
 		case 'D':	//	タイムスタンプ
-			if (m_FileTime.dwLowDateTime){
-				FILETIME	FileTime;
-				SYSTEMTIME	systimeL;
-				::FileTimeToLocalFileTime( &m_FileTime, &FileTime );
-				::FileTimeToSystemTime( &FileTime, &systimeL );
-				char szText[1024];
-				CShareData::getInstance()->MyGetDateFormat( systimeL, szText, sizeof( szText ) - 1 );
+			if (m_FileTime.GetFILETIME().dwLowDateTime){
+				TCHAR szText[1024];
+				CShareData::getInstance()->MyGetDateFormat(
+					m_FileTime.GetSYSTEMTIME(),
+					szText,
+					_countof( szText ) - 1
+				);
 				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
@@ -4610,13 +4587,13 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 			break;
 		case 'T':	//	タイムスタンプ
-			if (m_FileTime.dwLowDateTime){
-				FILETIME	FileTime;
-				SYSTEMTIME	systimeL;
-				::FileTimeToLocalFileTime( &m_FileTime, &FileTime );
-				::FileTimeToSystemTime( &FileTime, &systimeL );
-				char szText[1024];
-				CShareData::getInstance()->MyGetTimeFormat( systimeL, szText, sizeof( szText ) - 1 );
+			if (m_FileTime.GetFILETIME().dwLowDateTime){
+				TCHAR szText[1024];
+				CShareData::getInstance()->MyGetTimeFormat(
+					m_FileTime.GetSYSTEMTIME(),
+					szText,
+					_countof( szText ) - 1
+				);
 				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}

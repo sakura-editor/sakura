@@ -319,7 +319,7 @@ void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEol cEol )
 	@date	2002/08/30 Moca 旧ReadFileを元に作成 ファイルアクセスに関する部分をCFileLoadで行う
 	@date	2003/07/26 ryoji BOMの状態の取得を追加
 */
-int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, ECodeType nCharCode, FILETIME* pFileTime, int nFlags, BOOL* pbBomExist)
+int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, ECodeType nCharCode, CFileTime* pcFileTime, int nFlags, BOOL* pbBomExist)
 {
 #ifdef _DEBUG
 	MYTRACE_A( "pszPath=[%s]\n", pszPath );
@@ -351,7 +351,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	/* ファイル時刻の取得 */
 	FILETIME	FileTime;
 	if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
-		*pFileTime = FileTime;
+		pcFileTime->SetFILETIME(FileTime);
 	}
 
 	// ファイルサイズチェック(ANSI版)
@@ -465,7 +465,7 @@ int CDocLineMgr::WriteFile(
 	HWND hWndParent,
 	HWND hwndProgress,
 	int nCharCode,
-	FILETIME* pFileTime,
+	CFileTime* pFileTime,
 	CEol cEol,				//!< [in]	使用する改行コード
 	BOOL bBomExist			//!< [in]	ファイル先頭にBOMを付けるか
 )
@@ -602,9 +602,9 @@ int CDocLineMgr::WriteFile(
 		 */
 
 		// 2005.10.20 ryoji FindFirstFileを使うように変更（ファイルがロックされていてもタイムスタンプ取得可能）
-		FILETIME ftime;
-		if( GetLastWriteTimestamp( pszPath, &ftime )){
-			*pFileTime = ftime;
+		CFileTime cftime;
+		if( GetLastWriteTimestamp( pszPath, &cftime )){
+			*pFileTime = cftime;
 		}
 
 	}

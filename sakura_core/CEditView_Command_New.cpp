@@ -2802,7 +2802,7 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const ECodeType nCharCode
 		}
 	}
 	else {	/* ファイル全体を出力 */
-		FILETIME	filetime;
+		CFileTime	cfiletime;
 		HWND		hwndProgress;
 		CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;
 		
@@ -2817,7 +2817,7 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const ECodeType nCharCode
 
 		bResult = (BOOL)m_pcEditDoc->m_cDocLineMgr.WriteFile(	// 一時ファイル出力
 					filename, m_pcEditDoc->m_hWnd, hwndProgress, nSaveCharCode,
-					&filetime, EOL_NONE , m_pcEditDoc->m_bBomExist );
+					&cfiletime, EOL_NONE , m_pcEditDoc->m_bBomExist );
 
 		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );
 	}

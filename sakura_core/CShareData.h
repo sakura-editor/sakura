@@ -1064,10 +1064,10 @@ public:
 	bool		HTMLHelpIsSingle( int nType = -1 );	//	タイプがnTypeのときの、外部HTMLヘルプ「ビューアを複数起動しない」がONかを取得。
 	
 	//@@@ 2002.2.9 YAZAKI
-	const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen );
-	const char* MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen );
-	const char* MyGetDateFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat );
-	const char* MyGetTimeFormat( SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat );
+	const char* MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen );
+	const char* MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen );
+	const char* MyGetDateFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nDateFormatType, char* szDateFormat );
+	const char* MyGetTimeFormat( const SYSTEMTIME& systime, char* pszDest, int nDestLen, int nTimeFormatType, char* szTimeFormat );
 	
 	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int );
 	int TransformFileName_MakeCache( void );

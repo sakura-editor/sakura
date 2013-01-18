@@ -795,37 +795,3 @@ void CWSHMacroManager::declare()
 	CMacroFactory::getInstance()->RegisterCreator(Creator);
 }
 
-#if 0
-Feb. 08, 2003 使ってないのでとりあえずコメントアウト
-void CWSHMacroManager::EnumEngines(EngineCallback Proc)
-{
-	char FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
-	LONG	lret;
-	DWORD	index;
-	DWORD	dwSize;
-	FILETIME	szFileTime;
-
-	for( index = 0; ; index++ )
-	{
-		/* 列挙する */
-		dwSize = sizeof( FileExtWithDot );
-		memset( FileExtWithDot, 0, sizeof( FileExtWithDot ) );
-		lret = RegEnumKeyEx( HKEY_CLASSES_ROOT, index, FileExtWithDot, &dwSize, NULL, NULL, NULL, &szFileTime );
-		//if( lret == ERROR_NO_MORE_ITEMS ) break;	/* 列挙終了 */
-		if( lret != ERROR_SUCCESS ) break;	/* 列挙終了 */
-
-		if( FileExtWithDot[0] == '.' )	/* 拡張子か？ */
-		{
-			/* スクリプトエンジンか確認する */
-			if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, NULL, FileType, 1024))
-			{
-				lstrcat(FileType, "\\ScriptEngine");
-				if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, NULL, EngineName, 1024))
-				{
-					Proc(FileExtWithDot + 1, EngineName);
-				}
-			}
-		}
-	}
-}
-#endif

@@ -75,7 +75,6 @@ void CDlgProperty::SetData( void )
 
 	HANDLE			nFind;
 	WIN32_FIND_DATA	wfd;
-	SYSTEMTIME		systimeL;
 
 	//	Aug. 16, 2000 genta	全角化
 	cmemProp.AppendString( _T("ファイル名  ") );
@@ -129,7 +128,7 @@ void CDlgProperty::SetData( void )
 			cmemProp.AppendString( szWork );
 		}
 
-		wsprintf( szWork, "ファイル属性  ", pCEditDoc->m_cDocLineMgr.GetLineCount() );
+		wsprintf( szWork, _T("ファイル属性  "), pCEditDoc->m_cDocLineMgr.GetLineCount() );
 		cmemProp.AppendString( szWork );
 		if( wfd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE ){
 			cmemProp.AppendString( _T("/アーカイブ") );
@@ -162,41 +161,38 @@ void CDlgProperty::SetData( void )
 
 
 		cmemProp.AppendString( _T("作成日時  ") );
-		::FileTimeToLocalFileTime( &wfd.ftCreationTime, &wfd.ftCreationTime );
-		::FileTimeToSystemTime( &wfd.ftCreationTime, &systimeL );
+		CFileTime ctimeCreation = wfd.ftCreationTime;
 		wsprintf( szWork, _T("%d年%d月%d日 %02d:%02d:%02d"),
-			systimeL.wYear,
-			systimeL.wMonth,
-			systimeL.wDay,
-			systimeL.wHour,
-			systimeL.wMinute,
-			systimeL.wSecond
+			ctimeCreation->wYear,
+			ctimeCreation->wMonth,
+			ctimeCreation->wDay,
+			ctimeCreation->wHour,
+			ctimeCreation->wMinute,
+			ctimeCreation->wSecond
 		);
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );
 
 		cmemProp.AppendString( _T("更新日時  ") );
-		::FileTimeToLocalFileTime( &wfd.ftLastWriteTime, &wfd.ftLastWriteTime );
-		::FileTimeToSystemTime( &wfd.ftLastWriteTime, &systimeL );
+		CFileTime ctimeLastWrite = wfd.ftLastWriteTime;
 		wsprintf( szWork, _T("%d年%d月%d日 %02d:%02d:%02d"),
-			systimeL.wYear,
-			systimeL.wMonth,
-			systimeL.wDay,
-			systimeL.wHour,
-			systimeL.wMinute,
-			systimeL.wSecond
+			ctimeLastWrite->wYear,
+			ctimeLastWrite->wMonth,
+			ctimeLastWrite->wDay,
+			ctimeLastWrite->wHour,
+			ctimeLastWrite->wMinute,
+			ctimeLastWrite->wSecond
 		);
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );
 
 
 		cmemProp.AppendString( _T("アクセス日  ") );
-		::FileTimeToLocalFileTime( &wfd.ftLastAccessTime, &wfd.ftLastAccessTime );
-		::FileTimeToSystemTime( &wfd.ftLastAccessTime, &systimeL );
+		CFileTime ctimeLastAccess = wfd.ftLastAccessTime;
 		wsprintf( szWork, _T("%d年%d月%d日"),
-			systimeL.wYear,
-			systimeL.wMonth,
-			systimeL.wDay
+			ctimeLastAccess->wYear,
+			ctimeLastAccess->wMonth,
+			ctimeLastAccess->wDay
 		);
 		cmemProp.AppendString( szWork );
 		cmemProp.AppendString( _T("\r\n") );

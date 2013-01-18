@@ -2567,7 +2567,7 @@ int getCtrlKeyState()
 */
 bool GetLastWriteTimestamp(
 	const TCHAR*	pszFileName,	//!< [in] ファイルのパス
-	FILETIME*		pcFileTime		//!< [out] 更新日時を返す場所
+	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
 )
 {
 	HANDLE hFindFile;
@@ -2577,12 +2577,12 @@ bool GetLastWriteTimestamp(
 	if( INVALID_HANDLE_VALUE != hFindFile )
 	{
 		::FindClose( hFindFile );
-		*pcFileTime = ffd.ftLastWriteTime;
+		pcFileTime->SetFILETIME(ffd.ftLastWriteTime);
 		return true;
 	}
 	else{
 		//	ファイルが見つからなかった
-		pcFileTime->dwLowDateTime = pcFileTime->dwHighDateTime = 0;
+		pcFileTime->ClearFILETIME();
 		return false;
 	}
 }

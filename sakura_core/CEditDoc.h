@@ -258,7 +258,7 @@ public: /* テスト用にアクセス属性を変更 */
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 //	BOOL			m_bPrintPreviewMode;		/* 印刷プレビューモードか */
 	int				m_nCommandExecNum;			/* コマンド実行回数 */
-	FILETIME		m_FileTime;					/* ファイルの最終更新日付 */
+	CFileTime		m_FileTime;					/* ファイルの最終更新日付 */
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
 	ECodeType		m_nCharCode;				/* 文字コード種別 */

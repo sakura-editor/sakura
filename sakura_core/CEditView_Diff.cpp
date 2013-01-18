@@ -670,13 +670,13 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 	if( NULL == hWnd )
 	{
 		CEol	cEol( m_pcEditDoc->m_cSaveLineCode );
-		FILETIME	filetime;
+		CFileTime	cFileTime;
 		return (BOOL)m_pcEditDoc->m_cDocLineMgr.WriteFile( 
 			filename, 
 			m_pcEditDoc->m_hWnd,
 			NULL,
 			m_pcEditDoc->m_nCharCode,
-			&filetime,
+			&cFileTime,
 			cEol,
 			m_pcEditDoc->m_bBomExist);	//	Jul. 26, 2003 ryoji BOM
 	}

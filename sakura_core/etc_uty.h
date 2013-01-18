@@ -160,8 +160,42 @@ bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor = NULL)
 
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// 指定したウィンドウの祖先のハンドルを取得する	// 2007.07.01 ryoji
 
-//	Oct. 22, 2005 genta
-bool GetLastWriteTimestamp( const TCHAR* pszFileName, FILETIME* pcFileTime );
+//ファイル時刻
+class CFileTime{
+public:
+	CFileTime(){ ClearFILETIME(); }
+	CFileTime(const FILETIME& ftime){ SetFILETIME(ftime); }
+	//設定
+	void ClearFILETIME(){ m_ftime.dwLowDateTime = m_ftime.dwHighDateTime = 0; m_bModified = true; }
+	void SetFILETIME(const FILETIME& ftime){ m_ftime = ftime; m_bModified = true; }
+	//取得
+	const FILETIME& GetFILETIME() const{ return m_ftime; }
+	const SYSTEMTIME& GetSYSTEMTIME() const
+	{
+		//キャッシュ更新 -> m_systime, m_bModified
+		if(m_bModified){
+			m_bModified = false;
+			FILETIME ftimeLocal;
+			if(!::FileTimeToLocalFileTime( &m_ftime, &ftimeLocal ) || !::FileTimeToSystemTime( &ftimeLocal, &m_systime )){
+				memset(&m_systime,0,sizeof(m_systime)); //失敗時ゼロクリア
+			}
+		}
+		return m_systime;
+	}
+	const SYSTEMTIME* operator->() const{ return &GetSYSTEMTIME(); }
+	//判定
+	bool IsZero() const
+	{
+		return m_ftime.dwLowDateTime == 0 && m_ftime.dwHighDateTime == 0;
+	}
+protected:
+private:
+	FILETIME m_ftime;
+	//キャッシュ
+	mutable SYSTEMTIME	m_systime;
+	mutable bool		m_bModified;
+};
+bool GetLastWriteTimestamp( const TCHAR* filename, CFileTime* pcFileTime ); //	Oct. 22, 2005 genta
 
 // 20051121 aroka
 bool GetDateTimeFormat( TCHAR* szResult, int size, const TCHAR* format, const SYSTEMTIME& systime );
