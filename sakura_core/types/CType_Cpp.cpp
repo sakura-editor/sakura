@@ -4,8 +4,8 @@
 #include "doc/CEditDoc.h"
 #include "outline/CFuncInfoArr.h"
 #include "COpeBlk.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/CEditView.h"
+#include "view/colors/EColorIndexType.h"
 
 //!CPPキーワードで始まっていれば true
 inline bool IsHeadCppKeyword(const wchar_t* pData)

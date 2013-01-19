@@ -1,8 +1,7 @@
 #include "StdAfx.h"
 #include "types/CType.h"
 #include "doc/CDocOutline.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
 
 void CType_Basis::InitTypeConfigImp(STypeConfig* pType)
 {

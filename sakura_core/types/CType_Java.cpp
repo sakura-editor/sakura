@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 #include "types/CType.h"
+#include "doc/CEditDoc.h"
 #include "doc/CDocOutline.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
 
 /* Java */
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)
