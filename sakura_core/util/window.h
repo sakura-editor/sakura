@@ -68,12 +68,6 @@ public:
 	static int PixelsToPoints(int px, int ptMag = 1){Init(); return ::MulDiv(px * ptMag, 72, nDpiY);}	// ptMag: 戻り値のポイント数にかける倍率
 };
 
-#ifdef COMPILE_WINDOW_STUBS
-int CDPI::nDpiX = 96;
-int CDPI::nDpiY = 96;
-bool CDPI::bInitialized = false;
-#endif
-
 inline int DpiScaleX(int x){return CDPI::ScaleX(x);}
 inline int DpiScaleY(int y){return CDPI::ScaleY(y);}
 inline int DpiUnscaleX(int x){return CDPI::UnscaleX(x);}

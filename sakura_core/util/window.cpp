@@ -3,9 +3,11 @@
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
 #include <limits.h>
-
-#define COMPILE_WINDOW_STUBS
 #include "window.h"
+
+int CDPI::nDpiX = 96;
+int CDPI::nDpiY = 96;
+bool CDPI::bInitialized = false;
 
 /**	指定したウィンドウの祖先のハンドルを取得する
 
