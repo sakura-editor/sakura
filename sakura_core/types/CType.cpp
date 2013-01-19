@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "CType.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/Colors/CColorStrategy.h"
+#include "view/Colors/EColorIndexType.h"
+#include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 

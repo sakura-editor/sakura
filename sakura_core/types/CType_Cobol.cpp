@@ -3,8 +3,7 @@
 #include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
 
 /* COBOL */
 void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)

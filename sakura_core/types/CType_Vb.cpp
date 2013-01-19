@@ -3,8 +3,7 @@
 #include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
 
 /* Visual Basic */
 //JUl. 10, 2001 JEPRO VB   ÉÜÅ[ÉUÇ…ë°ÇÈ

@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "types/CType.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
 
 /* Pascal */
 //Mar. 10, 2001 JEPRO	”¼Šp”’l‚ğF•ª‚¯•\¦

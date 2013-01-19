@@ -26,7 +26,6 @@
 
 class CEditDoc;
 class CFuncInfoArr;
-struct SOneRule;
 
 /*! ルールファイルの1行を管理する構造体
 
