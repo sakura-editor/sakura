@@ -23,6 +23,7 @@
 #include "CPropCommon.h"
 #include "CDlgWinSize.h"	//	2004.05.13 Moca
 #include "sakura.hh"
+#include "COsVersionInfo.h"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//11200
@@ -31,6 +32,7 @@ static const DWORD p_helpids[] = {	//11200
 	IDC_CHECK_DispTOOLBAR,			HIDC_CHECK_DispTOOLBAR,			//ツールバー表示
 	IDC_CHECK_bScrollBarHorz,		HIDC_CHECK_bScrollBarHorz,		//水平スクロールバー
 	IDC_CHECK_bMenuIcon,			HIDC_CHECK_bMenuIcon,			//アイコン付きメニュー
+	IDC_CHECK_bMenuWChar,			HIDC_CHECK_bMenuWChar,			//メニュー字化け対策
 	IDC_CHECK_SplitterWndVScroll,	HIDC_CHECK_SplitterWndVScroll,	//垂直スクロールの同期	//Jul. 05, 2001 JEPRO 追加
 	IDC_CHECK_SplitterWndHScroll,	HIDC_CHECK_SplitterWndHScroll,	//水平スクロールの同期	//Jul. 05, 2001 JEPRO 追加
 	IDC_EDIT_nRulerBottomSpace,		HIDC_EDIT_nRulerBottomSpace,	//ルーラーの高さ
@@ -312,7 +314,16 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 
 	/* アイコン付きメニュー */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuIcon, m_Common.m_sWindow.m_bMenuIcon );
-
+	
+	/* メニュー字化け対策(Win2K以降でのみ機能する) */
+	COsVersionInfo cOsVer;
+	if( cOsVer.IsWin2000_or_later() ){
+		::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuWChar, m_Common.m_sWindow.m_bMenuWChar );
+	}else{
+		::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuWChar, FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bMenuWChar ), FALSE );
+	}
+	
 	//	2001/06/20 Start by asa-o:	スクロールの同期
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SplitterWndVScroll, m_Common.m_sWindow.m_bSplitterWndVScroll );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SplitterWndHScroll, m_Common.m_sWindow.m_bSplitterWndHScroll );
@@ -411,6 +422,9 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 
 	/* アイコン付きメニュー */
 	m_Common.m_sWindow.m_bMenuIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bMenuIcon );
+
+	/* メニュー字化け対策 */
+	m_Common.m_sWindow.m_bMenuWChar = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bMenuWChar );
 
 	//	2001/06/20 Start by asa-o:	スクロールの同期
 	m_Common.m_sWindow.m_bSplitterWndVScroll = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SplitterWndVScroll );

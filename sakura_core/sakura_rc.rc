@@ -1510,6 +1510,9 @@ BEGIN
     CONTROL         "アイコン付きメニュー(&I)",IDC_CHECK_bMenuIcon,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,182,13,82,10,0,
                     HIDC_CHECK_bMenuIcon
+    CONTROL         "メニュー字化け対策(&M)",IDC_CHECK_bMenuWChar,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,182,25,82,10,0,
+                    HIDC_CHECK_bMenuWChar
     PUSHBUTTON      "位置と大きさの設定(&W)...",IDC_BUTTON_WINSIZE,185,35,79,
                     14,0,0,HIDC_BUTTON_WINSIZE
     LTEXT           "タブバー表示は\n[タブバー]タブにあります",

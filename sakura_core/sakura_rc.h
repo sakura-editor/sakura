@@ -389,6 +389,7 @@
 #define IDC_EDIT_FROM                   1333
 #define IDC_STATIC_ALL                  1334
 #define IDC_CHECK_bMenuIcon             1335
+#define IDC_CHECK_bMenuWChar            1336
 #define IDC_LABEL_BACKUP_3              1336
 #define IDC_LABEL_AUTOSAVE              1337
 #define IDC_LABEL_BACKUP_4              1338

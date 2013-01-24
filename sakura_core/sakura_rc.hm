@@ -200,6 +200,7 @@
 #define HIDC_CHECK_bMarkUpBlankLineEnable \
                                         0x807a051b    // IDD_FUNCLIST
 #define HIDC_CHECK_bMenuIcon            0x93f40537    // IDD_PROP_WIN
+#define HIDC_CHECK_bMenuWChar           0x93f40539    // IDD_PROP_WIN
 #define HIDC_CHECK_bNotOverWriteCRLF    0x93f50514    // IDD_PROP_EDIT
 #define HIDC_CHECK_bScrollBarHorz       0x93f40519    // IDD_PROP_WIN
 #define HIDC_CHECK_bSelectClickedURL    0x93f6050d    // IDD_PROP_URL

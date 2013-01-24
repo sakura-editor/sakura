@@ -515,6 +515,7 @@
 #define HIDC_CHECK_DispTOOLBAR					11212 //ツールバー表示
 #define HIDC_CHECK_bScrollBarHorz				11213 //水平スクロールバー
 #define HIDC_CHECK_bMenuIcon					11214 //アイコン付きメニュー
+#define HIDC_CHECK_bMenuWChar					11215 //メニュー字化け対策
 #define HIDC_CHECK_SplitterWndVScroll			11216 //垂直スクロールの同期
 #define HIDC_CHECK_SplitterWndHScroll			11217 //水平スクロールの同期
 #define HIDC_CHECK_DispTabWnd					11218 //タブウインドウ表示	//@@@ 2003.05.31 MIK

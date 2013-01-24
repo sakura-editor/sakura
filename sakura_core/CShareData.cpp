@@ -295,10 +295,13 @@ struct ARRHEAD {
 	Version 106:
 	MRUにタイプ別設定追加
 
+	Version 107:
+	ウィンドウにメニュー字化け対策設定追加
+
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 106;
+const unsigned int uShareDataVersion = 107;
 
 /*
 ||	Singleton風
@@ -755,6 +758,7 @@ bool CShareData::InitShareData()
 		_tcscpy( m_pShareData->m_Common.m_sFormat.m_szTimeFormat, _T("tthh\'時\'mm\'分\'ss\'秒\'")  );			//時刻書式
 
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
+		m_pShareData->m_Common.m_sWindow.m_bMenuWChar = FALSE;		/* メニューの字化け対策を行う(Win2K以降のみ) */
 
 		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
 		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = TRUE;

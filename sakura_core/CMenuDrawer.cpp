@@ -52,6 +52,21 @@ CMenuDrawer::CMenuDrawer()
 	m_nMenuHeight = 0;
 	m_hFontMenu = NULL;
 	m_hFontMenuUndelLine = NULL;
+	m_pfnDrawTextW = 0;
+
+	// English版Windows等でメニューラベルが字化けする問題の対策	2013.1.23 aroka
+	// 対策ONにした場合、ラベルをWideChar変換してから描画する。
+	// UNICODE対応が十分ではないWin2000より前のバージョンでの問題を避けるため、
+	// OSのバージョンをチェックした上で DrawTextWを動的に取得する。
+	static COsVersionInfo cOsVer;
+
+	if( cOsVer.IsWin2000_or_later() ){
+		HINSTANCE hDll;
+		hDll = ::GetModuleHandle(_T("USER32"));
+		if( NULL != hDll ){
+			*(FARPROC*)&m_pfnDrawTextW = ::GetProcAddress( hDll, "DrawTextW" );
+		}
+	}
 
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。	/* ツールバーのボタン TBBUTTON構造体 */
 	/* ツールバーのボタン TBBUTTON構造体 */
@@ -574,7 +589,7 @@ CMenuDrawer::CMenuDrawer()
 /* 415 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 /* 416 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//ダミー
 
-};
+	};
 	int tbd_num = _countof( tbd );
 	
 	for( int i = 0; i < tbd_num; i++ ){
@@ -823,6 +838,45 @@ void CMenuDrawer::MyAppendMenu(
 
 
 
+int CMenuDrawer::MyDrawText( int nMode, HDC hDC, LPCTSTR lpItemStr_, LPRECT rc, UINT uFormat )
+{
+	int nCount=0;
+
+	// English版Windows等でメニューラベルが字化けする問題の対策	2013.1.23 aroka
+	// 対策ONにした場合、ラベルをWideChar変換してから描画する。
+	// 余計なMBCS->Wide変換が発生するため、問題がないときは使わないことをおすすめ。
+	if( m_pShareData->m_Common.m_sWindow.m_bMenuWChar && m_pfnDrawTextW ){
+		wchar_t wszItem[MAX_PATH];
+		int c = MultiByteToWideChar(CP_ACP, 0, lpItemStr_, _tcslen(lpItemStr_), wszItem, MAX_PATH);
+		wszItem[c] = 0;
+
+		LPCWSTR lpItemStr = 0;
+		LPCWSTR p = wcschr( wszItem, L'\t' );
+		if( nMode == 0 ){
+			lpItemStr = wszItem;
+			nCount = (p)?(p-lpItemStr):(wcslen(lpItemStr));
+		}else{
+			lpItemStr = p?(p+1):0;
+			nCount = wcslen(lpItemStr);
+		}
+		return m_pfnDrawTextW( hDC, lpItemStr, nCount, rc, uFormat );
+	}else{
+		const TCHAR* lpItemStr = 0;
+		const TCHAR* p = _tcschr( lpItemStr_, _T('\t') );
+		if( nMode == 0 ){
+			lpItemStr = lpItemStr_;
+			nCount = (p)?(p-lpItemStr):(_tcslen(lpItemStr));
+		}else{
+			lpItemStr = p?p+1:0;
+			nCount = _tcslen(lpItemStr);
+		}
+		return ::DrawText( hDC, lpItemStr, nCount, rc, uFormat );
+	}
+}
+
+
+
+
 /*! メニューアイテム描画
 	@date 2001.12.21 YAZAKI デバッグモードでもメニューを選択したらハイライト。
 	@date 2003.08.27 Moca システムカラーのブラシはCreateSolidBrushをやめGetSysColorBrushに
@@ -933,10 +987,11 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				rcText.top++;
 				rcText.right++;
 				rcText.bottom++;
-				::DrawText(
+				MyDrawText(
+					1,
 					hdc,
-					&pszItemStr[j + 1],
-					_tcslen( &pszItemStr[j + 1] ),
+					pszItemStr,//&pszItemStr[j + 1],
+					//_tcslen( &pszItemStr[j + 1] ),
 					&rcText,
 					DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
 				);
@@ -946,10 +1001,11 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				rcText.bottom--;
 				::SetTextColor( hdc, colOld );
 		}
-		::DrawText(
+		MyDrawText(
+			1,
 			hdc,
-			&pszItemStr[j + 1],
-			_tcslen( &pszItemStr[j + 1] ),
+			pszItemStr,//&pszItemStr[j + 1],
+			//_tcslen( &pszItemStr[j + 1] ),
 			&rcText,
 			DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_RIGHT
 		);
@@ -963,7 +1019,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		rcText.top++;
 		rcText.right++;
 		rcText.bottom++;
-		::DrawText( hdc, pszItemStr, j, &rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT );
+		MyDrawText( 0, hdc, pszItemStr, 
+			//j, 
+			&rcText, DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT );
 
 		rcText.left--;
 		rcText.top--;
@@ -971,10 +1029,11 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		rcText.bottom--;
 		::SetTextColor( hdc, colOld );
 	}
-	::DrawText(
+	MyDrawText(
+		0,
 		hdc,
 		pszItemStr,
-		j,
+		//j,
 		&rcText,
 		DT_SINGLELINE | DT_VCENTER | DT_EXPANDTABS | DT_LEFT
 	);

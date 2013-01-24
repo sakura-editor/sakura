@@ -73,7 +73,6 @@ public:
 	void DrawItem( DRAWITEMSTRUCT* );	/* メニューアイテム描画 */
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
 	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true )const; // ツールバーIndexの取得 // 20050809 aroka
-	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
 
 	TBBUTTON getButton( int index ) const; // 20050809 aroka
 
@@ -86,13 +85,16 @@ private:
 	int Find( int nFuncID );
 	const TCHAR* GetLabel( int nFuncID );
 	TCHAR GetAccelCharFromLabel( const TCHAR* pszLabel );
+	int GetIconId( int nIndex ){ return ( 0 <= nIndex && nIndex < m_nMyButtonNum )? m_tbMyButton[nIndex].iBitmap: -1; }	// 2007.11.02 ryoji 範囲外チェック
 
+	int MyDrawText( int nMode, HDC hDC, LPCTSTR lpItemStr, LPRECT rc, UINT uFormat );
 
 private:
 	DLLSHAREDATA*	m_pShareData;
 
 	HINSTANCE		m_hInstance;
 	HWND			m_hWndOwner;
+	int				(WINAPI *m_pfnDrawTextW)( HDC, LPCWSTR, int, LPRECT, UINT );
 
 	int				m_nMenuItemNum;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。

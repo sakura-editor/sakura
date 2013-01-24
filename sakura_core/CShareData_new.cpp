@@ -652,6 +652,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "szTimeFormat"				, common.m_sFormat.m_szTimeFormat, 0 );//時刻書式
 	
 	cProfile.IOProfileData( pszSecName, "bMenuIcon"					, common.m_sWindow.m_bMenuIcon );//メニューにアイコンを表示する
+	cProfile.IOProfileData( pszSecName, "bMenuWChar"				, common.m_sWindow.m_bMenuWChar );//メニューの字化け対策
 	cProfile.IOProfileData( pszSecName, "bAutoMIMEdecode"			, common.m_sFile.m_bAutoMIMEdecode );//ファイル読み込み時にMIMEのdecodeを行うか
 	cProfile.IOProfileData( pszSecName, "bQueryIfCodeChange"		, common.m_sFile.m_bQueryIfCodeChange );//	Oct. 03, 2004 genta 前回と異なる文字コードのときに問い合わせを行うか
 	cProfile.IOProfileData( pszSecName, "bAlertIfFileNotExist"		, common.m_sFile.m_bAlertIfFileNotExist );// Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
