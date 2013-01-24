@@ -29,6 +29,8 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 #pragma code_page(932)
 #endif //_WIN32
 
+#define	S_COPYRIGHT	"Copyright (C) 1998-2013  by Norio Nakatani & Collaborators"
+
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -181,8 +183,7 @@ BEGIN
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     EDITTEXT        IDC_EDIT_VER,33,6,204,51,ES_MULTILINE | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           "Copyright (C) 1998-2011  by Norio Nakatani && Collaborators",
-                    IDC_STATIC,33,61,205,8,NOT WS_GROUP
+    LTEXT           S_COPYRIGHT,IDC_STATIC,33,61,205,8,NOT WS_GROUP
     LTEXT           "原作者: たけ(竹パンダ) さん",IDC_STATIC,33,75,125,8,NOT 
                     WS_GROUP
     LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,33,88,71,
@@ -2612,7 +2613,7 @@ BEGIN
             VALUE "FileDescription", "サクラエディタ\0"
             VALUE "FileVersion", "1.6\0"
             VALUE "InternalName", "sakura\0"
-            VALUE "LegalCopyright", "Copyright (C) Norio Nakatani & Collaborators\0"
+            VALUE "LegalCopyright", S_COPYRIGHT "\0"
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
