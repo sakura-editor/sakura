@@ -11,6 +11,7 @@
 	Copyright (C) 2004, novice
 	Copyright (C) 2006, aroka, ryoji
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -21,7 +22,7 @@
 #include "Debug.h"
 #include "CEditWnd.h"
 #include "mymessage.h"
-#include "etc_uty.h" // novice 2004/10/10
+#include "etc_uty.h"
 
 #define IDT_FUNCWND 1248
 #define TIMER_TIMEOUT 100
@@ -73,7 +74,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	/* 表示用フォント */
 	/* LOGFONTの初期化 */
 	memset( &lf, 0, sizeof(lf) );
-	lf.lfHeight			= -12;
+	lf.lfHeight			= DpiPointsToPixels(-9);	// 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
 	lf.lfWidth			= 0;
 	lf.lfEscapement		= 0;
 	lf.lfOrientation	= 0;

@@ -47,6 +47,59 @@
 #include <multimon.h>
 #endif
 
+/*!
+	@brief 画面 DPI スケーリング
+	@note 96 DPI ピクセルを想定しているデザインをどれだけスケーリングするか
+
+	@date 2009.10.01 ryoji 高DPI対応用に作成
+*/
+class CDPI{
+	static void Init()
+	{
+		if( !bInitialized )
+		{
+			HDC hDC = GetDC(NULL);
+			nDpiX = GetDeviceCaps(hDC, LOGPIXELSX);
+			nDpiY = GetDeviceCaps(hDC, LOGPIXELSY);
+			ReleaseDC(NULL, hDC);
+			bInitialized = true;
+		}
+	}
+	static int nDpiX;
+	static int nDpiY;
+	static bool bInitialized;
+public:
+	static int ScaleX(int x){Init(); return ::MulDiv(x, nDpiX, 96);}
+	static int ScaleY(int y){Init(); return ::MulDiv(y, nDpiY, 96);}
+	static int UnscaleX(int x){Init(); return ::MulDiv(x, 96, nDpiX);}
+	static int UnscaleY(int y){Init(); return ::MulDiv(y, 96, nDpiY);}
+	static void ScaleRect(LPRECT lprc)
+	{
+		lprc->left = ScaleX(lprc->left);
+		lprc->right = ScaleX(lprc->right);
+		lprc->top = ScaleY(lprc->top);
+		lprc->bottom = ScaleY(lprc->bottom);
+	}
+	static void UnscaleRect(LPRECT lprc)
+	{
+		lprc->left = UnscaleX(lprc->left);
+		lprc->right = UnscaleX(lprc->right);
+		lprc->top = UnscaleY(lprc->top);
+		lprc->bottom = UnscaleY(lprc->bottom);
+	}
+	static int PointsToPixels(int pt, int ptMag = 1){Init(); return ::MulDiv(pt, nDpiY, 72 * ptMag);}	// ptMag: 引数のポイント数にかかっている倍率
+	static int PixelsToPoints(int px, int ptMag = 1){Init(); return ::MulDiv(px * ptMag, 72, nDpiY);}	// ptMag: 戻り値のポイント数にかける倍率
+};
+
+inline int DpiScaleX(int x){return CDPI::ScaleX(x);}
+inline int DpiScaleY(int y){return CDPI::ScaleY(y);}
+inline int DpiUnscaleX(int x){return CDPI::UnscaleX(x);}
+inline int DpiUnscaleY(int y){return CDPI::UnscaleY(y);}
+inline void DpiScaleRect(LPRECT lprc){CDPI::ScaleRect(lprc);}
+inline void DpiUnscaleRect(LPRECT lprc){CDPI::UnscaleRect(lprc);}
+inline int DpiPointsToPixels(int pt, int ptMag = 1){return CDPI::PointsToPixels(pt, ptMag);}
+inline int DpiPixelsToPoints(int px, int ptMag = 1){return CDPI::PixelsToPoints(px, ptMag);}
+
 #ifndef GA_PARENT
 #define GA_PARENT		1
 #define GA_ROOT			2
@@ -60,6 +113,9 @@ class CEol;// 2002/2/3 aroka ヘッダ軽量化
 class CBregexp;// 2002/2/3 aroka ヘッダ軽量化
 
 BOOL MyWinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
+
+//!フォント選択ダイアログ
+BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );   // 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
 
 SAKURA_CORE_API void CutLastYenFromDirectoryPath( TCHAR* );/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
 SAKURA_CORE_API void AddLastYenFromDirectoryPath( TCHAR* );/* フォルダの最後が半角かつ'\\'でない場合は、付加する */

@@ -31,6 +31,7 @@
 #include <HtmlHelp.h>
 #include <io.h>
 #include <memory.h>		// Apr. 03, 2003 genta
+#include <Cderr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
 #include "etc_uty.h"
 #include "Debug.h"
 #include "CMemory.h"
@@ -49,6 +50,10 @@
 #include "CMRU.h"
 #include "CMRUFolder.h"
 #include "CUxTheme.h"	// 2007.04.01 ryoji
+
+int CDPI::nDpiX = 96;
+int CDPI::nDpiY = 96;
+bool CDPI::bInitialized = false;
 
 /*!	WinHelp のかわりに HtmlHelp を呼び出す
 
@@ -153,6 +158,55 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 		_stprintf( buf, _T("http://sakura-editor.sourceforge.net/cgi-bin/hid.cgi?%d"), dwData );
 		ShellExecute( ::GetActiveWindow(), NULL, buf, NULL, NULL, SW_SHOWNORMAL );
 	}
+
+	return TRUE;
+}
+
+/*フォント選択ダイアログ
+	@param plf [in/out]
+	@param piPointSize [in/out] 1/10ポイント単位
+	
+	2008.04.27 kobake CEditDoc::SelectFont から分離
+	2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
+*/
+BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool FixedFontOnly )
+{
+	// 2004.02.16 Moca CHOOSEFONTをメンバから外す
+	CHOOSEFONT cf;
+	/* CHOOSEFONTの初期化 */
+	::ZeroMemory( &cf, sizeof( cf ) );
+	cf.lStructSize = sizeof( cf );
+	cf.hwndOwner = hwndDlgOwner;
+	cf.hDC = NULL;
+	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+	if( FixedFontOnly ){
+		//FIXEDフォント
+		cf.Flags |= CF_FIXEDPITCHONLY;
+	}
+	cf.lpLogFont = plf;
+	if( !ChooseFont( &cf ) ){
+#ifdef _DEBUG
+		DWORD nErr;
+		nErr = CommDlgExtendedError();
+		switch( nErr ){
+		case CDERR_FINDRESFAILURE:	MYTRACE_A( "CDERR_FINDRESFAILURE \n" );	break;
+		case CDERR_INITIALIZATION:	MYTRACE_A( "CDERR_INITIALIZATION \n" );	break;
+		case CDERR_LOCKRESFAILURE:	MYTRACE_A( "CDERR_LOCKRESFAILURE \n" );	break;
+		case CDERR_LOADRESFAILURE:	MYTRACE_A( "CDERR_LOADRESFAILURE \n" );	break;
+		case CDERR_LOADSTRFAILURE:	MYTRACE_A( "CDERR_LOADSTRFAILURE \n" );	break;
+		case CDERR_MEMALLOCFAILURE:	MYTRACE_A( "CDERR_MEMALLOCFAILURE\n" );	break;
+		case CDERR_MEMLOCKFAILURE:	MYTRACE_A( "CDERR_MEMLOCKFAILURE \n" );	break;
+		case CDERR_NOHINSTANCE:		MYTRACE_A( "CDERR_NOHINSTANCE \n" );		break;
+		case CDERR_NOHOOK:			MYTRACE_A( "CDERR_NOHOOK \n" );			break;
+		case CDERR_NOTEMPLATE:		MYTRACE_A( "CDERR_NOTEMPLATE \n" );		break;
+		case CDERR_STRUCTSIZE:		MYTRACE_A( "CDERR_STRUCTSIZE \n" );		break;
+		case CFERR_MAXLESSTHANMIN:	MYTRACE_A( "CFERR_MAXLESSTHANMIN \n" );	break;
+		case CFERR_NOFONTS:			MYTRACE_A( "CFERR_NOFONTS \n" );			break;
+		}
+#endif
+		return FALSE;
+	}
+	*piPointSize = cf.iPointSize;
 
 	return TRUE;
 }

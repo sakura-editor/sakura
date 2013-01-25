@@ -746,6 +746,7 @@ struct CommonSetting_Helper
 
 	//キーワードヘルプ
 	LOGFONT				m_lf_kh;						/* キーワードヘルプのフォント情報 */		// ai 02/05/21 Add
+	INT					m_ps_kh;						// キーワードヘルプのフォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
 
 	//INI内設定のみ
 	int					m_bUseHokan;					/* 入力補完機能を使用する */
@@ -807,6 +808,7 @@ struct CommonSetting_View {
 	//INI内設定のみ
 	LOGFONT				m_lf;							/* 現在のフォント情報 */
 	BOOL				m_bFontIs_FIXED_PITCH;			/* 現在のフォントは固定幅フォントである */
+	INT					m_nPointSize;					// フォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

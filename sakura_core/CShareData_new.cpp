@@ -43,7 +43,7 @@
 #define STR_COLORDATA_HEAD3		" テキストエディタ色設定 Ver3"	//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 
 void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
-	const char* pszKeyLf, const char* pszKeyFaceName, LOGFONT& lf );
+	const char* pszKeyLf, const char* pszKeyPointSize, const char* pszKeyFaceName, LOGFONT& lf, int& pointSize );
 
 
 /**
@@ -561,8 +561,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 	// ai 02/05/23 Add S
 	{// Keword Help Font
-		ShareData_IO_Sub_LogFont( cProfile, pszSecName, "khlf", "khlfFaceName",
-			common.m_sHelper.m_lf_kh );
+		ShareData_IO_Sub_LogFont( cProfile, pszSecName, "khlf", "khps", "khlfFaceName",
+			common.m_sHelper.m_lf_kh, common.m_sHelper.m_ps_kh );
 	}// Keword Help Font
 	
 
@@ -776,11 +776,11 @@ void CShareData::ShareData_IO_CustMenu( CProfile& cProfile )
 void CShareData::ShareData_IO_Font( CProfile& cProfile )
 {
 	const char* pszSecName = "Font";
-	CommonSetting& common = m_pShareData->m_Common;
-	ShareData_IO_Sub_LogFont( cProfile, pszSecName, "lf", "lfFaceName",
-		common.m_sView.m_lf );
+	CommonSetting_View& view = m_pShareData->m_Common.m_sView;
+	ShareData_IO_Sub_LogFont( cProfile, pszSecName, "lf", "nPointSize", "lfFaceName",
+		view.m_lf, view.m_nPointSize );
 
-	cProfile.IOProfileData( pszSecName, "bFontIs_FIXED_PITCH", common.m_sView.m_bFontIs_FIXED_PITCH );
+	cProfile.IOProfileData( pszSecName, "bFontIs_FIXED_PITCH", view.m_bFontIs_FIXED_PITCH );
 }
 
 /*!
@@ -1589,10 +1589,12 @@ bool CShareData::PopTagJump(TagJump *pTagJump)
 }
 
 void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
-	const char* pszKeyLf, const char* pszKeyFaceName, LOGFONT& lf )
+	const char* pszKeyLf, const char* pszKeyPointSize, const char* pszKeyFaceName, LOGFONT& lf, int& pointSize )
 {
 	const TCHAR* pszForm = _T("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
 	TCHAR		szKeyData[1024];
+
+	cProfile.IOProfileData( pszSecName, pszKeyPointSize, pointSize );	// 2009.10.01 ryoji
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, pszKeyLf, szKeyData, sizeof(szKeyData) ) ){
 			sscanf( szKeyData, pszForm,
@@ -1610,6 +1612,14 @@ void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
 				&lf.lfQuality,
 				&lf.lfPitchAndFamily
 			);
+			if( pointSize != 0 ){
+				// DPI変更してもフォントのポイントサイズが変わらないように
+				// ポイント数からピクセル数に変換する
+				lf.lfHeight = -DpiPointsToPixels( abs(pointSize), 10 );	// pointSize: 1/10ポイント単位のサイズ
+			}else{
+				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
+				pointSize = DpiPixelsToPoints( abs(lf.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
+			}
 		}
 	}else{
 		wsprintf( szKeyData, pszForm,

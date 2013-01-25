@@ -11,6 +11,7 @@
 	Copyright (C) 2003, Moca, KEITA
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -172,6 +173,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					if(ChooseFont(&cf))
 					{
 						memcpy(&(m_Common.m_sHelper.m_lf_kh), &lf, sizeof(lf));
+						m_Common.m_sHelper.m_ps_kh = cf.iPointSize;     // 2009.10.01 ryoji
 					}
 				}
 				return TRUE;

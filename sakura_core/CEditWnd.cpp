@@ -838,6 +838,7 @@ void CEditWnd::CreateToolBar( void )
 			(LONG_PTR)ToolBarWndProc
 		);
 
+		::SendMessage( m_hwndToolBar, TB_SETBUTTONSIZE, 0, (LPARAM)MAKELONG(DpiScaleX(22), DpiScaleY(22)) );	// 2009.10.01 ryoji 高DPI対応スケーリング
 		::SendMessage( m_hwndToolBar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0 );
 		//	Oct. 12, 2000 genta
 		//	既に用意されているImage Listをアイコンとして登録
@@ -912,7 +913,7 @@ void CEditWnd::CreateToolBar( void )
 						//サイズを設定する
 						tbi.cbSize = sizeof(tbi);
 						tbi.dwMask = TBIF_SIZE;
-						tbi.cx     = 160;	//ボックスの幅
+						tbi.cx     = DpiScaleX(160);	//ボックスの幅	// 2009.10.01 ryoji 高DPI対応スケーリング
 						::SendMessage( m_hwndToolBar, TB_SETBUTTONINFO, (WPARAM)(tbb.idCommand), (LPARAM)&tbi );
 
 						//位置とサイズを取得する
@@ -931,7 +932,7 @@ void CEditWnd::CreateToolBar( void )
 							m_nCurrentFocus = 0;
 
 							memset( &lf, 0, sizeof(lf) );
-							lf.lfHeight			= 12; // Jan. 14, 2003 genta ダイアログにあわせてちょっと小さく
+							lf.lfHeight			= DpiPointsToPixels(-9); // Jan. 14, 2003 genta ダイアログにあわせてちょっと小さく	// 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
 							lf.lfWidth			= 0;
 							lf.lfEscapement		= 0;
 							lf.lfOrientation	= 0;
@@ -4254,7 +4255,7 @@ void CEditWnd::InitMenubarMessageFont(void)
 
 	/* LOGFONTの初期化 */
 	memset( &lf, 0, sizeof( lf ) );
-	lf.lfHeight			= -12;
+	lf.lfHeight			= DpiPointsToPixels(-9);	// 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
 	lf.lfWidth			= 0;
 	lf.lfEscapement		= 0;
 	lf.lfOrientation	= 0;

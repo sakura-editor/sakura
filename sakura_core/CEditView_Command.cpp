@@ -3978,8 +3978,15 @@ void CEditView::Command_FONT( void )
 
 	/* フォント設定ダイアログ */
 	LOGFONT cLogfont = m_pShareData->m_Common.m_sView.m_lf;
-	if( m_pcEditDoc->SelectFont( &cLogfont ) ){
+	INT nPointSize;
+#ifdef USE_UNFIXED_FONT
+	bool bFixedFont = false;
+#else
+	bool bFixedFont = true;
+#endif
+	if( MySelectFont( &cLogfont, &nPointSize, m_pcEditDoc->m_hWnd, bFixedFont ) ){
 		m_pShareData->m_Common.m_sView.m_lf = cLogfont;
+		m_pShareData->m_Common.m_sView.m_nPointSize = nPointSize;
 
 //		/* 変更フラグ フォント */
 //		m_pShareData->m_bFontModify = TRUE;

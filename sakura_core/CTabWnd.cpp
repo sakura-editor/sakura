@@ -61,15 +61,21 @@
 #endif
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
-#define TAB_WINDOW_HEIGHT	24
-#define TAB_MARGIN_TOP		3
-#define TAB_MARGIN_LEFT		1
-#define TAB_MARGIN_RIGHT	47
-#define TAB_ITEM_HEIGHT		(TAB_WINDOW_HEIGHT - 5)
-#define MAX_TABITEM_WIDTH	200
-#define MIN_TABITEM_WIDTH	60
-#define CX_SMICON			16
-#define CY_SMICON			16
+// 2009.10.01 ryoji 高DPI対応スケーリング
+#define TAB_MARGIN_TOP		DpiScaleY(3)
+#define TAB_MARGIN_LEFT		DpiScaleX(1)
+#define TAB_MARGIN_RIGHT	DpiScaleX(47)
+
+#define TAB_FONT_HEIGHT		DpiPointsToPixels(9)
+#define TAB_ITEM_HEIGHT		(TAB_FONT_HEIGHT + DpiScaleY(7))
+#define TAB_WINDOW_HEIGHT	(TAB_ITEM_HEIGHT + TAB_MARGIN_TOP + 2)
+
+#define MAX_TABITEM_WIDTH	DpiScaleX(200)
+#define MIN_TABITEM_WIDTH	DpiScaleX(60)
+
+#define CX_SMICON			DpiScaleX(16)
+#define CY_SMICON			DpiScaleY(16)
+
 static const RECT rcBtnBase = { 0, 0, 16, 16 };
 
 // 2006.02.01 ryoji タブ一覧メニュー用データ
@@ -802,7 +808,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		/* LOGFONTの初期化 */
 		LOGFONT	lf;
 		::ZeroMemory( &lf, sizeof(lf) );
-		lf.lfHeight			= -12;
+		lf.lfHeight			= -TAB_FONT_HEIGHT;     // 2009.10.01 ryoji 高DPI対応
 		lf.lfWidth			= 0;
 		lf.lfEscapement		= 0;
 		lf.lfOrientation	= 0;
@@ -1092,8 +1098,15 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		SIZE size;
 		::GetTextExtentPoint32( hdc, pData->szText, ::_tcslen(pData->szText), &size );
 
+		int cxIcon = CX_SMICON;
+		int cyIcon = CY_SMICON;
+		if( NULL != m_hIml )
+		{
+			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
+		}
+
 		lpmis->itemHeight = ::GetSystemMetrics( SM_CYMENU );
-		lpmis->itemWidth = size.cx + CX_SMICON + 8;
+		lpmis->itemWidth = (cxIcon + DpiScaleX(8)) + size.cx;
 
 		::SelectObject( hdc, hfntOld );
 		::DeleteObject( hfnt );
@@ -1136,12 +1149,15 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		::FillRect( hdc, &rcItem, (HBRUSH)(clrBk + 1) );
 
 		// アイコン描画
+		int cxIcon = CX_SMICON;
+		int cyIcon = CY_SMICON;
 		if( NULL != m_hIml )
 		{
+			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
 			if( 0 <= pData->iImage )
 			{
-				int top = rcItem.top + ( rcItem.bottom - rcItem.top - CY_SMICON ) / 2;
-				ImageList_Draw( m_hIml, pData->iImage, lpdis->hDC, rcItem.left + 2, top, ILD_TRANSPARENT );
+				int top = rcItem.top + ( rcItem.bottom - rcItem.top - cyIcon ) / 2;
+				ImageList_Draw( m_hIml, pData->iImage, lpdis->hDC, rcItem.left + DpiScaleX(2), top, ILD_TRANSPARENT );
 			}
 		}
 
@@ -1151,7 +1167,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		HFONT hfnt = CreateMenuFont();
 		HFONT hfntOld = (HFONT)::SelectObject( hdc, hfnt );
 		RECT rcText = rcItem;
-		rcText.left += (CX_SMICON + 8);
+		rcText.left += (cxIcon + DpiScaleX(8));
 
 		::DrawText( hdc, pData->szText, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
 
@@ -2174,6 +2190,8 @@ int CTabWnd::GetImageIndex( EditNode* pNode )
 */
 HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 {
+	if( NULL == himl ) return NULL;
+
 	// 本物の ImageList_Duplicate() があればそれを呼び出す
 	HIMAGELIST hImlNew;
 	if( m_RealImageList_Duplicate )
@@ -2187,7 +2205,10 @@ HIMAGELIST CTabWnd::ImageList_Duplicate( HIMAGELIST himl )
 	// 本物の ImageList_Duplicate() の代替処理
 	// 新しいイメージリストを作成してアイコン単位でコピーする
 	//（この場合、多色アイコンは綺麗には表示されないかもしれない）
-	hImlNew = ImageList_Create( CX_SMICON, CY_SMICON, ILC_COLOR32 | ILC_MASK, 4, 4 );
+	int cxIcon = CX_SMICON;
+	int cyIcon = CY_SMICON;
+	ImageList_GetIconSize( himl, &cxIcon, &cyIcon );
+	hImlNew = ImageList_Create( cxIcon, cyIcon, ILC_COLOR32 | ILC_MASK, 4, 4 );
 	if( hImlNew )
 	{
 		ImageList_SetBkColor( hImlNew, CLR_NONE );
@@ -2237,6 +2258,7 @@ void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 /*! 一覧ボタン描画処理
 	@date 2006.02.01 ryoji 新規作成
 	@date 2006.10.21 ryoji 背景描画を関数呼び出しに変更
+	@date 2009.10.01 ryoji 描画イメージを矩形中央にもってくる
 */
 void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
 {
@@ -2250,12 +2272,18 @@ void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
 	GetListBtnRect( lprcClient, &rcBtn );
 	DrawBtnBkgnd( hdc, &rcBtn, m_bListBtnHilighted );	// 2006.10.21 ryoji
 
+	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2;
+	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
+	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
+
 	int nIndex = m_bListBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( nIndex ) );
 	hbr = (HBRUSH)::GetSysColorBrush( nIndex );
 	hpenOld = (HPEN)::SelectObject( hdc, hpen );
 	hbrOld = (HBRUSH)::SelectObject( hdc, hbr );
-	for( i = 0; i < sizeof(ptBase)/sizeof(ptBase[0]); i++ )
+	for( i = 0; i < _countof(ptBase); i++ )
 	{
 		pt[i].x = ptBase[i].x + rcBtn.left;
 		pt[i].y = ptBase[i].y + rcBtn.top;
@@ -2268,6 +2296,7 @@ void CTabWnd::DrawListBtn( HDC hdc, const LPRECT lprcClient )
 
 /*! 閉じるボタン描画処理
 	@date 2006.10.21 ryoji 新規作成
+	@date 2009.10.01 ryoji 描画イメージを矩形中央にもってくる
 */
 void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
 {
@@ -2305,12 +2334,18 @@ void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
 	// ボタンの左側にセパレータを描画する	// 2007.02.27 ryoji
 	hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( COLOR_3DSHADOW ) );
 	hpenOld = (HPEN)::SelectObject( hdc, hpen );
-	::MoveToEx( hdc, rcBtn.left - 4, rcBtn.top + 1, NULL );
-	::LineTo( hdc, rcBtn.left - 4, rcBtn.bottom - 1 );
+	::MoveToEx( hdc, rcBtn.left - DpiScaleX(4), rcBtn.top + 1, NULL );
+	::LineTo( hdc, rcBtn.left - DpiScaleX(4), rcBtn.bottom - 1 );
 	::SelectObject( hdc, hpenOld );
 	::DeleteObject( hpen );
 
 	DrawBtnBkgnd( hdc, &rcBtn, m_bCloseBtnHilighted );
+
+	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2;
+	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
+	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
 
 	int nIndex = m_bCloseBtnHilighted? COLOR_MENUTEXT: COLOR_BTNTEXT;
 	hpen = ::CreatePen( PS_SOLID, 0, ::GetSysColor( nIndex ) );
@@ -2356,7 +2391,8 @@ void CTabWnd::DrawCloseBtn( HDC hdc, const LPRECT lprcClient )
 void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4, lprcClient->top + TAB_MARGIN_TOP + 2 );
+	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4), lprcClient->top + TAB_MARGIN_TOP + DpiScaleX(2) );
 }
 
 /*! 閉じるボタンの矩形取得処理
@@ -2365,7 +2401,8 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + 4 + (rcBtnBase.right - rcBtnBase.left) + 7, lprcClient->top + TAB_MARGIN_TOP + 2 );
+	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(7), lprcClient->top + TAB_MARGIN_TOP + DpiScaleX(2) );
 }
 
 
