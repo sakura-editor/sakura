@@ -4167,7 +4167,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	 && NULL != ( hwndActive = ::GetActiveWindow() )	/* アクティブ? */
 	 && hwndActive == m_hwndParent
 	 && IsFilePathAvailable()
-	 && ( m_FileTime.IsZero() ) 	/* 現在編集中のファイルのタイムスタンプ */
+	 && ( !m_FileTime.IsZero() ) 	/* 現在編集中のファイルのタイムスタンプ */
 
 	){
 		/* ファイルスタンプをチェックする */
