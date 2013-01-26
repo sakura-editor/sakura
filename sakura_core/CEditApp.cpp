@@ -1249,11 +1249,10 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	HMENU		hMenuTop;
 	HMENU		hMenu;
 	HMENU		hMenuPopUp;
-	TCHAR		szMemu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
+	TCHAR		szMenu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	char		szMenu2[MAX_PATH * 2];	//	Jan. 19, 2001 genta
 	POINT		po;
 	RECT		rc;
-	int			nMenuNum;
 	EditInfo*	pfi;
 
 	//本当はセマフォにしないとだめ
@@ -1263,12 +1262,10 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	m_CMenuDrawer.ResetContents();
 	CShareData::getInstance()->TransformFileName_MakeCache();
 
-	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
-	hMenu = ::GetSubMenu( hMenuTop, 0 );
-	nMenuNum = ::GetMenuItemCount( hMenu )/* - 1*/;
-	for( i = nMenuNum - 1; i >= 0; i-- ){
-		::DeleteMenu( hMenu, i, MF_BYPOSITION );
-	}
+	// リソースを使わないように
+	hMenuTop = ::CreatePopupMenu();
+	hMenu = ::CreatePopupMenu();
+	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenu, "TrayL", "" );
 
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T(""), _T("N"), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T(""), _T("O"), FALSE );
@@ -1332,7 +1329,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 //		j >= 10 + 26 の時の考慮を省いた(に近い)が開くファイル数が36個を越えることはまずないので事実上OKでしょう
 						//	Jan. 19, 2002 genta
 						//	&の重複処理を追加したため継続判定を若干変更
-						wsprintf( szMemu, _T("&%c 【Grep】\"%s%s\""),
+						wsprintf( szMenu, _T("&%c 【Grep】\"%s%s\""),
 							((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
 							szMenu2,
 							( (int)lstrlen( pfi->m_szGrepKey ) > cmemDes.GetStringLength() ) ? _T("…"):_T("")
@@ -1346,7 +1343,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 						//	Jan. 19, 2002 genta
 						//	メニュー文字列の&を考慮
 						dupamp( szFileName, szMenu2 );
-						wsprintf( szMemu, _T("&%c %s %s"),
+						wsprintf( szMenu, _T("&%c %s %s"),
 							((1 + i) <= 9)?(_T('1') + i):(_T('A') + i - 9),
 							(0 < _tcslen( szMenu2 ))? szMenu2:_T("(無題)"),
 							pfi->m_bIsModified ? _T("*"):_T(" ")
@@ -1354,12 +1351,12 @@ int	CEditApp::CreatePopUpMenu_L( void )
 //		To Here Oct. 4, 2000
 						// gm_pszCodeNameArr_3 からコピーするように変更
 						if(IsValidCodeTypeExceptSJIS(pfi->m_nCharCode)){
-							_tcscat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
+							_tcscat( szMenu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
 						}
 					}
 
-//				::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMemu );
-				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMemu, _T(""), FALSE );
+//				::InsertMenu( hMenu, IDM_EXITALL, MF_BYCOMMAND | MF_STRING, IDM_SELWINDOW + i, szMenu );
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + i, szMenu, _T(""), FALSE );
 				++j;
 			}
 		}
@@ -1414,13 +1411,11 @@ int	CEditApp::CreatePopUpMenu_L( void )
 /*! ポップアップメニュー(トレイ右ボタン) */
 int	CEditApp::CreatePopUpMenu_R( void )
 {
-	int		i;
 	int		nId;
 	HMENU	hMenuTop;
 	HMENU	hMenu;
 	POINT	po;
 	RECT	rc;
-	int		nMenuNum;
 
 	//本当はセマフォにしないとだめ
 	if( m_bUseTrayMenu ) return -1;
@@ -1428,12 +1423,10 @@ int	CEditApp::CreatePopUpMenu_R( void )
 
 	m_CMenuDrawer.ResetContents();
 
-	hMenuTop = ::LoadMenu( m_hInstance, MAKEINTRESOURCE( IDR_TRAYMENU_L ) );
-	hMenu = ::GetSubMenu( hMenuTop, 0 );
-	nMenuNum = ::GetMenuItemCount( hMenu )/* - 1*/;
-	for( i = nMenuNum - 1; i >= 0; i-- ){
-		::DeleteMenu( hMenu, i, MF_BYPOSITION );
-	}
+	// リソースを使わないように
+	hMenuTop = ::CreatePopupMenu();
+	hMenu = ::CreatePopupMenu();
+	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenu, "TrayR", "" );
 
 	/* トレイ右クリックの「ヘルプ」メニュー */
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T("ヘルプ目次"), _T("O"), FALSE );
