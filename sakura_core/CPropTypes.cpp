@@ -182,7 +182,6 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
 	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
 	IDC_COMBO_SET,					HIDC_COMBO_SET_COLOR,			//強調キーワード１セット名
-	IDC_COMBO_SET2,					HIDC_COMBO_SET2_COLOR,			//強調キーワード２セット名
 	IDC_EDIT_BLOCKCOMMENT_FROM,		HIDC_EDIT_BLOCKCOMMENT_FROM,	//ブロックコメント１開始
 	IDC_EDIT_BLOCKCOMMENT_TO,		HIDC_EDIT_BLOCKCOMMENT_TO,		//ブロックコメント１終了
 	IDC_EDIT_LINECOMMENT,			HIDC_EDIT_LINECOMMENT,			//行コメント１
@@ -1243,8 +1242,6 @@ INT_PTR CPropSupport::DispatchEvent(
 		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 		/* 入力補完 単語ファイル */
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_HOKANFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
-		/* キーワードヘルプ 辞書ファイル */
-		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYWORDHELPFILE ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1 ), 0 );
 
 		return TRUE;
 	case WM_COMMAND:

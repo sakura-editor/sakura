@@ -300,21 +300,21 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	//	Sep. 18. 2002 genta 行番号とテキストの隙間
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_nLineNumberRightSpace, m_Common.m_sWindow.m_nLineNumRightSpace, FALSE );
 
-	/* ルーラーのタイプ */
-	if( 0 == m_Common.m_sWindow.m_nRulerType ){
-		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_0, TRUE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_1, FALSE );
-	}else{
-		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_0, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_1, TRUE );
-	}
+	/* ルーラーのタイプ *///	del 2008/7/4 Uchi
+//	if( 0 == m_Common.m_sWindow.m_nRulerType ){
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_0, TRUE );
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_1, FALSE );
+//	}else{
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_0, FALSE );
+//		::CheckDlgButton( hwndDlg, IDC_RADIO_nRulerType_1, TRUE );
+//	}
 
 	/* 水平スクロールバー */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bScrollBarHorz, m_Common.m_sWindow.m_bScrollBarHorz );
 
 	/* アイコン付きメニュー */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuIcon, m_Common.m_sWindow.m_bMenuIcon );
-	
+
 	/* メニュー字化け対策(Win2K以降でのみ機能する) */
 	COsVersionInfo cOsVer;
 	if( cOsVer.IsWin2000_or_later() ){
@@ -383,13 +383,13 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 	/* 次回ウィンドウを開いたときステータスバーを表示する */
 	m_Common.m_sWindow.m_bDispSTATUSBAR = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispSTATUSBAR );
 
-	/* ルーラーのタイプ */
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_nRulerType_0 ) ){
-		m_Common.m_sWindow.m_nRulerType = 0;
-	}
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_nRulerType_1 ) ){
-		m_Common.m_sWindow.m_nRulerType = 1;
-	}
+	/* ルーラーのタイプ *///	del 2008/7/4 Uchi
+//	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_nRulerType_0 ) ){
+//		m_Common.m_sWindow.m_nRulerType = 0;
+//	}
+//	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_nRulerType_1 ) ){
+//		m_Common.m_sWindow.m_nRulerType = 1;
+//	}
 
 	/* ルーラー高さ */
 	m_Common.m_sWindow.m_nRulerHeight = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nRulerHeight, NULL, FALSE );

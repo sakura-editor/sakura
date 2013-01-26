@@ -1076,10 +1076,6 @@ SOURCE=..\sakura_core\sakura_rc.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\sakura_rc.hm
-# End Source File
-# Begin Source File
-
 SOURCE=..\sakura_core\StdAfx.h
 # End Source File
 # End Group
