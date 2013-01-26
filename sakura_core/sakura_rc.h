@@ -616,6 +616,7 @@
 #define IDC_COMBO_DEFAULT_EOLTYPE       1600
 #define IDC_CHECK_DEFAULT_BOM           1601
 #define IDC_CHECK_OpenNewWin            1612
+#define IDC_BUTTON_TABFONT              1613
 
 #define IDM_POPLAST                     4047
 #define IDS_AUTHOR_PAGE                 4054
@@ -672,7 +673,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        249
 #define _APS_NEXT_COMMAND_VALUE         4073
-#define _APS_NEXT_CONTROL_VALUE         1558
+#define _APS_NEXT_CONTROL_VALUE         1614
 #define _APS_NEXT_SYMED_VALUE           103
 #endif
 #endif

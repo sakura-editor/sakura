@@ -13,6 +13,7 @@
 	Copyright (C) 2007, ryoji, genta
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2010, aroka
+	Copyright (C) 2012, Moca, syat, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -66,7 +67,8 @@
 #define TAB_MARGIN_LEFT		DpiScaleX(1)
 #define TAB_MARGIN_RIGHT	DpiScaleX(47)
 
-#define TAB_FONT_HEIGHT		DpiPointsToPixels(9)
+//#define TAB_FONT_HEIGHT		DpiPointsToPixels(9)
+#define TAB_FONT_HEIGHT		abs(CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_tabFont.lfHeight)
 #define TAB_ITEM_HEIGHT		(TAB_FONT_HEIGHT + DpiScaleY(7))
 #define TAB_WINDOW_HEIGHT	(TAB_ITEM_HEIGHT + TAB_MARGIN_TOP + 2)
 
@@ -801,28 +803,13 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 		HWND hwndToolTips;
 		hwndToolTips = TabCtrl_GetToolTips( m_hwndTab );
 		lngStyle = (UINT)::GetWindowLongPtr( hwndToolTips, GWL_STYLE );
-		lngStyle |= TTS_ALWAYSTIP | TTS_NOPREFIX;	// 従来通りTTS_ALWAYSTIPにしておく	// 2009.12.11 ryoji TTS_NOPREFIX追加
+		lngStyle |= TTS_ALWAYSTIP | TTS_NOPREFIX;	// 従来通りTTS_ALWAYSTIPにしておく
 		::SetWindowLongPtr( hwndToolTips, GWL_STYLE, lngStyle );
 
 		/* 表示用フォント */
 		/* LOGFONTの初期化 */
-		LOGFONT	lf;
-		::ZeroMemory( &lf, sizeof(lf) );
-		lf.lfHeight			= -TAB_FONT_HEIGHT;     // 2009.10.01 ryoji 高DPI対応
-		lf.lfWidth			= 0;
-		lf.lfEscapement		= 0;
-		lf.lfOrientation	= 0;
-		lf.lfWeight			= 400;
-		lf.lfItalic			= 0x0;
-		lf.lfUnderline		= 0x0;
-		lf.lfStrikeOut		= 0x0;
-		lf.lfCharSet		= 0x80;
-		lf.lfOutPrecision	= 0x3;
-		lf.lfClipPrecision	= 0x2;
-		lf.lfQuality		= 0x1;
-		lf.lfPitchAndFamily	= 0x31;
-		_tcscpy( lf.lfFaceName, _T("ＭＳ Ｐゴシック") );
-		m_hFont = ::CreateFontIndirect( &lf );
+		m_logfont = m_pShareData->m_Common.m_sTabBar.m_tabFont;
+		m_hFont = ::CreateFontIndirect( &m_logfont );
 		/* フォント変更 */
 		::SendMessage( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 
@@ -2016,6 +2003,22 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 */
 void CTabWnd::LayoutTab( void )
 {
+	// フォントを切り替える 2011.12.01 Moca
+	if( 0 != memcmp( &m_logfont, &m_pShareData->m_Common.m_sTabBar.m_tabFont, sizeof(m_logfont) ) ){
+		HFONT hFontOld = m_hFont;
+		m_logfont = m_pShareData->m_Common.m_sTabBar.m_tabFont;
+		m_hFont = ::CreateFontIndirect( &m_logfont );
+		::SendMessage( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
+		::DeleteObject( hFontOld );
+		// ウィンドウの高さを修正
+		RECT rcWnd;
+		::GetWindowRect( m_hWnd, &rcWnd );
+
+		int nHeight = TAB_WINDOW_HEIGHT;
+		::SetWindowPos( m_hWnd, NULL, 0, 0, rcWnd.right - rcWnd.left, nHeight, SWP_NOMOVE | SWP_NOZORDER );
+		::MoveWindow( m_hwndTab, TAB_MARGIN_LEFT, TAB_MARGIN_TOP, (rcWnd.right - rcWnd.left) - (TAB_MARGIN_LEFT + TAB_MARGIN_RIGHT), nHeight, TRUE );
+	}
+
 	// アイコンの表示を切り替える
 	HIMAGELIST hImg = TabCtrl_GetImageList( m_hwndTab );
 	if( NULL == hImg && m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )

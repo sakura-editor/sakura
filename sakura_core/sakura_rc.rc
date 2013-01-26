@@ -1632,6 +1632,7 @@ BEGIN
     CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,115,39,10,0,
                     HIDC_CHECK_SameTabWidth
+    PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_TABFONT,209,113,51,14
     CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,129,90,10,0,
                     HIDC_CHECK_SortTabList

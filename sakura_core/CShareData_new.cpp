@@ -585,6 +585,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bTab_ListFull"			, common.m_sTabBar.m_bTab_ListFull );	// タブ一覧をフルパス表示する	// 2007.02.28 ryoji
 	cProfile.IOProfileData( pszSecName, "bChgWndByWheel"		, common.m_sTabBar.m_bChgWndByWheel );	// 2006.03.26 ryoji マウスホイールでウィンドウ切り替え
 	cProfile.IOProfileData( pszSecName, "bNewWindow"			, common.m_sTabBar.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
+
+	ShareData_IO_Sub_LogFont( cProfile, pszSecName, "lfTabFont", "lfTabFontPs", "lfTabFaceName",
+		common.m_sTabBar.m_tabFont, common.m_sTabBar.m_tabFontPs );
 	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_sWindow.m_bSplitterWndHScroll );
