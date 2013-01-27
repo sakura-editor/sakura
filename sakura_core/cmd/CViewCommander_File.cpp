@@ -32,7 +32,7 @@
 #include "io/CFileLoad.h"
 #include "CWriteManager.h"
 #include "CEditApp.h"
-#include "recent/CMRU.h"
+#include "recent/CMRUFile.h"
 #include "util/window.h"
 #include "charset/CCodeFactory.h"
 #include "debug/CRunningTimer.h"

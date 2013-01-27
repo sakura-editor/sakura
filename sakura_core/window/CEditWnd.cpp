@@ -38,7 +38,7 @@
 #include "charset/CharPointer.h"
 #include "charset/CCodeFactory.h"
 #include "CEditApp.h"
-#include "recent/CMRU.h"
+#include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "util/module.h"
 #include "util/os.h"		//WM_MOUSEWHEEL,WM_THEMECHANGED

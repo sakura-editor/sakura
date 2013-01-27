@@ -2249,11 +2249,11 @@
 				Name="recent"
 				>
 				<File
-					RelativePath="..\sakura_core\recent\CMRU.cpp"
+					RelativePath="..\sakura_core\recent\CMRUFile.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\recent\CMRU.h"
+					RelativePath="..\sakura_core\recent\CMRUFile.h"
 					>
 				</File>
 				<File

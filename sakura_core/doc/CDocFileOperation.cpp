@@ -3,7 +3,7 @@
 #include "CDocVisitor.h"
 #include "CEditDoc.h"
 
-#include "recent/CMRU.h"
+#include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "_main/CAppMode.h" 
 #include "_main/CControlTray.h"

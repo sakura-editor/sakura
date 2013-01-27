@@ -35,7 +35,7 @@
 #include "macro/CSMacroMgr.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
-#include "recent/CMru.h"
+#include "recent/CMRUFile.h"
 #include "util/string_ex2.h"
 #include "util/module.h" //GetAppVersionInfo
 #include "util/shell.h"
