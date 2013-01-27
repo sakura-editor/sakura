@@ -152,7 +152,7 @@ int my_strnicmp( const char *s1, const char *s2, size_t n );
 
 	size_t strnlen(const char *str, size_t num);
 	size_t wcsnlen(const wchar_t *str, size_t num);
-#ifdef UNICODE
+#ifdef _UNICODE
 #define _tcscpy_s wcscpy_s
 #define _tcsncpy_s wcsncpy_s
 #define _tcscat_s wcscat_s

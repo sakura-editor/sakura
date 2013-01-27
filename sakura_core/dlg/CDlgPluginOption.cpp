@@ -29,17 +29,22 @@
 */
 
 #include "StdAfx.h"
+#include <limits.h>
 #include "dlg/CDlgPluginOption.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
 #include "util/window.h"
-#include <limits.h>
 #include "sakura_rc.h"
 #include "sakura.hh"
 
 // BOOL変数の表示
+#ifdef _UNICODE
+#define	BOOL_DISP_TRUE	_T("\u2611")
+#define	BOOL_DISP_FALSE	_T("\u2610")
+#else
 #define	BOOL_DISP_TRUE	_T("<True>")
 #define	BOOL_DISP_FALSE	_T("<False>")
+#endif
 
 // 編集領域を表示、非表示にする
 static inline void CtrlShow(HWND hwndDlg, int id, BOOL bShow)

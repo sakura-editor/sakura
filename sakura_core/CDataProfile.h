@@ -76,7 +76,7 @@ class CDataProfile : public CProfile{
 private:
 	//ê—pŒ^
 	typedef std::wstring wstring;
-#ifndef UNICODE
+#ifndef _UNICODE
 	typedef std::tstring tstring;
 #endif
 
