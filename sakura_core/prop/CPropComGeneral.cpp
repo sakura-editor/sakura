@@ -14,7 +14,7 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "CPropertyManager.h"
-#include "recent/CMRU.h"
+#include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "util/shell.h"
 #include "sakura_rc.h"

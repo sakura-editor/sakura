@@ -26,16 +26,16 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CShareData_IO.h"
+#include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
 #include "_main/CControlTray.h"
 #include "debug/CRunningTimer.h"
-#include "recent/CMRU.h"
+#include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "util/window.h"
 #include "util/os.h"
-#include "env/CSakuraEnvironment.h"
 #include "CDataProfile.h"
 #include "sakura_rc.h"
 

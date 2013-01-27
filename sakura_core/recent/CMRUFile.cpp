@@ -16,11 +16,11 @@
 */
 
 #include "StdAfx.h"
-#include "CMRU.h"
+#include "recent/CMRUFile.h"
+#include "recent/CMRUFolder.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
-#include "recent/CMRUFolder.h"
 #include "CMenuDrawer.h"	//	Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÇ©ÅH
 #include "window/CEditWnd.h"
 #include "util/string_ex2.h"

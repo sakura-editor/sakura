@@ -42,7 +42,7 @@
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo,EditInfo
-#include "recent/CMRU.h"
+#include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "sakura_rc.h"
 

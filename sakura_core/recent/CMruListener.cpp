@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "CMruListener.h"
-#include "recent/CMRU.h"
+#include "recent/CMRUFile.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"

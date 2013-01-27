@@ -31,10 +31,9 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-class CMRUFile;
 
-#ifndef _CMRU_H_
-#define _CMRU_H_
+#ifndef _CMRUFILE_H_
+#define _CMRUFILE_H_
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
 #include <vector>
@@ -73,4 +72,4 @@ private:
 	CRecentFile	m_cRecentFile;	//—š—ð	//@@@ 2003.04.08 MIK
 };
 
-#endif
+#endif	// _CMRUFILE_H_
