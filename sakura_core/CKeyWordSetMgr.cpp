@@ -372,39 +372,43 @@ void CKeyWordSetMgr::SortKeyWord( int nIdx )
 	return;
 }
 
-/** nIdx番目のセットから指定キーワードをバイナリサーチ 無いときは-1を返す */
+
+/** nIdx番目のキーワードセットから pszKeyWordを探す。
+	見つかれば 0以上を、見つからなければ負の数を返す。
+	@retval 0以上 見つかった。
+	@retval -1     見つからなかった。
+*/
 int CKeyWordSetMgr::SearchKeyWord2(int nIdx, const char* pszKeyWord, int nKeyWordLen )
 {
-	int ret;
-
 	//sort
 	if( m_IsSorted[nIdx] == 0 ) {
 		SortKeyWord( nIdx );
 	}
 
+	if( m_nKeyWordMaxLenArr[nIdx] < nKeyWordLen ) {
+		return -1; // 字数オーバー。
+	}
+
 	int pl = m_nStartIdx[nIdx];
 	int pr = m_nStartIdx[nIdx] + m_nKeyWordNumArr[nIdx] - 1;
-	if( nKeyWordLen > m_nKeyWordMaxLenArr[nIdx] ) return -1;
 	int pc = (pr + 1 - pl) / 2 + pl;
-	bool wcase = m_bKEYWORDCASEArr[nIdx];
+
+	int (*const cmp)(const char*, const char*, size_t) = m_bKEYWORDCASEArr[nIdx] ? strncmp : my_strnicmp;
 	while( pl <= pr ) {
-		if( wcase ) {
-			ret = strncmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
-		} else {
-			ret = my_strnicmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
+		const int ret = cmp( pszKeyWord, m_szKeyWordArr[pc], nKeyWordLen );
+
+		if( 0 < ret ) {
+			pl = pc + 1;
 		}
-		if( ret == 0 ) {
+		else if( ret < 0 ) {
+			pr = pc - 1;
+		}
+		else {
 			if( (int)strlen( m_szKeyWordArr[pc] ) > nKeyWordLen ) {
-				ret = -1;
+				pr = pc - 1;
 			} else {
 				return pc - m_nStartIdx[nIdx];
 			}
-		}
-
-		if( ret < 0 ) {
-			pr = pc - 1;
-		} else {
-			pl = pc + 1;
 		}
 		pc = (pr + 1 - pl) / 2 + pl;
 	}
