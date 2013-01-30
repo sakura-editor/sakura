@@ -10435,7 +10435,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 */
 int CEditView::GetColorIndex(
 		HDC						hdc,
-		const CLayout*			pcLayout,
+		const CLayout* const	pcLayout,
 		int						nCol
 )
 {
@@ -10444,35 +10444,12 @@ int CEditView::GetColorIndex(
 
 	const char*				pLine;	//@@@ 2002.09.22 YAZAKI
 	int						nLineLen;
-	int						nLineBgn;
-	int						nBgn;
-	int						nPos;
-	int						nCharChars;
-	int						nCharChars_2;
 	int						nCOMMENTMODE;
 	int						nCOMMENTMODE_OLD;
 	int						nCOMMENTEND;
 	int						nCOMMENTEND_OLD;
 	const CLayout*			pcLayout2;
-	int						i, j;
-	int						nIdx;
-	int						nUrlLen;
-	BOOL					bSearchStringMode;
-	BOOL					bSearchFlg;			// 2002.02.08 hor
-	int						nSearchStart;		// 2002.02.08 hor
-	int						nSearchEnd;
-	bool					bKeyWordTop = true;	//	Keyword Top
 	int						nColorIndex;
-
-//@@@ 2001.11.17 add start MIK
-	int		nMatchLen;
-	int		nMatchColor;
-//@@@ 2001.11.17 add end MIK
-
-	bSearchStringMode = FALSE;
-	bSearchFlg	= TRUE;	// 2002.02.08 hor
-	nSearchStart= -1;	// 2002.02.08 hor
-	nSearchEnd	= -1;	// 2002.02.08 hor
 
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
@@ -10502,11 +10479,6 @@ int CEditView::GetColorIndex(
 	//@SetCurrentColor( hdc, nCOMMENTMODE );
 	nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 
-	nBgn = 0;
-	nPos = 0;
-	nLineBgn = 0;
-	nCharChars = 0;
-
 	if( NULL != pLine ){
 
 		//@@@ 2001.11.17 add start MIK
@@ -10515,6 +10487,23 @@ int CEditView::GetColorIndex(
 			m_cRegexKeyword->RegexKeyLineStart();
 		}
 		//@@@ 2001.11.17 add end MIK
+
+		int			nBgn = 0;
+		int			nPos = 0;
+		int			nLineBgn =0;
+		int			nCharChars = 0;
+		BOOL		bSearchStringMode = FALSE;
+		BOOL		bSearchFlg = TRUE;	// 2002.02.08 hor
+		int			nSearchStart = -1;	// 2002.02.08 hor
+		int			nSearchEnd	= -1;	// 2002.02.08 hor
+		bool		bKeyWordTop	= true;	//	Keyword Top
+
+		int			nNumLen;
+		int			nUrlLen;
+
+//@@@ 2001.11.17 add start MIK
+		int			nMatchLen;
+		int			nMatchColor;
 
 		while( nPos <= nCol ){	// 03/10/24 ai 行頭のColorIndexが取得できない問題に対応
 
@@ -10634,7 +10623,7 @@ searchnext:;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
 							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+							int nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -10677,7 +10666,7 @@ searchnext:;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
 							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+							int nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -10718,14 +10707,14 @@ searchnext:;
 						}
 //@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
 					}else if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
-						&& (i = IsNumber( pLine, nPos, nLineLen )) > 0 )		/* 半角数字を表示する */
+						&& (nNumLen = IsNumber( pLine, nPos, nLineLen )) > 0 )		/* 半角数字を表示する */
 					{
 						/* キーワード文字列の終端をセットする */
-						i = nPos + i;
+						nNumLen = nPos + nNumLen;
 						/* 現在の色を指定 */
 						nBgn = nPos;
 						nCOMMENTMODE = COLORIDX_DIGIT;	/* 半角数値である */ // 2002/03/13 novice
-						nCOMMENTEND = i;
+						nCOMMENTEND = nNumLen;
 						if( !bSearchStringMode ){
 							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
@@ -10738,25 +10727,25 @@ searchnext:;
 					){
 						//	Mar 4, 2001 genta comment out
 						/* キーワード文字列の終端を探す */
-						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
-							if( IS_KEYWORD_CHAR( pLine[i] ) ){
-							}else{
+						int nKeyEnd;
+						for( nKeyEnd = nPos + 1; nKeyEnd <= nLineLen - 1; ++nKeyEnd ){
+							if( !IS_KEYWORD_CHAR( pLine[nKeyEnd] ) ){
 								break;
 							}
 						}
 						/* キーワードが登録単語ならば、色を変える */
-						j = i - nPos;
+						int nKeyLen = nKeyEnd - nPos;
 						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-						nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
+						int nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
 							TypeDataPtr->m_nKeyWordSetIdx[0],
 							&pLine[nPos],
-							j
+							nKeyLen
 						);
 						if( nIdx != -1 ){
 							/* 現在の色を指定 */
 							nBgn = nPos;
 							nCOMMENTMODE = COLORIDX_KEYWORD1;	/* 強調キーワード1 */ // 2002/03/13 novice
-							nCOMMENTEND = i;
+							nCOMMENTEND = nKeyEnd;
 							if( !bSearchStringMode ){
 								//@SetCurrentColor( hdc, nCOMMENTMODE );
 								nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
@@ -10769,16 +10758,16 @@ searchnext:;
 									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
 								{																							//MIK
 									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-									nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
+									int nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
 										TypeDataPtr->m_nKeyWordSetIdx[my_i] ,													//MIK
 										&pLine[nPos],																		//MIK
-										j																					//MIK
+										nKeyLen																					//MIK
 									);																						//MIK
 									if( nIdx != -1 ){																		//MIK
 										/* 現在の色を指定 */																//MIK
 										nBgn = nPos;																		//MIK
 										nCOMMENTMODE = COLORIDX_KEYWORD1 + my_i;	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
-										nCOMMENTEND = i;																	//MIK
+										nCOMMENTEND = nKeyEnd;																	//MIK
 										if( !bSearchStringMode ){															//MIK
 											//@SetCurrentColor( hdc, nCOMMENTMODE );										//MIK
 											nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
@@ -10878,7 +10867,7 @@ searchnext:;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
 							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+							int nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -10924,7 +10913,7 @@ searchnext:;
 						nCOMMENTEND = nLineLen;
 						for( i = nPos/* + 1*/; i <= nLineLen - 1; ++i ){
 							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+							int nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -11018,9 +11007,10 @@ searchnext:;
 						nCOMMENTEND_OLD = nCOMMENTEND;
 						nCOMMENTMODE = COLORIDX_CTRLCODE;	/* コントロールコード モード */ // 2002/03/13 novice
 						/* コントロールコード列の終端を探す */
-						for( i = nPos + 1; i <= nLineLen - 1; ++i ){
+						int nCtrlEnd;
+						for( nCtrlEnd = nPos + 1; nCtrlEnd <= nLineLen - 1; ++nCtrlEnd ){
 							// 2005-09-02 D.S.Koba GetSizeOfChar
-							nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, i );
+							int nCharChars_2 = CMemory::GetSizeOfChar( pLine, nLineLen, nCtrlEnd );
 							if( 0 == nCharChars_2 ){
 								nCharChars_2 = 1;
 							}
@@ -11029,17 +11019,17 @@ searchnext:;
 							}
 							if( (
 								//	Jan. 23, 2002 genta 警告抑制
-								( (unsigned char)pLine[i] <= (unsigned char)0x1F ) ||
-									( (unsigned char)'~' < (unsigned char)pLine[i] && (unsigned char)pLine[i] < (unsigned char)'｡' ) ||
-									( (unsigned char)'ﾟ' < (unsigned char)pLine[i] )
+								( (unsigned char)pLine[nCtrlEnd] <= (unsigned char)0x1F ) ||
+									( (unsigned char)'~' < (unsigned char)pLine[nCtrlEnd] && (unsigned char)pLine[nCtrlEnd] < (unsigned char)'｡' ) ||
+									( (unsigned char)'ﾟ' < (unsigned char)pLine[nCtrlEnd] )
 								) &&
-								pLine[i] != TAB && pLine[i] != CR && pLine[i] != LF
+								pLine[nCtrlEnd] != TAB && pLine[nCtrlEnd] != CR && pLine[nCtrlEnd] != LF
 							){
 							}else{
 								break;
 							}
 						}
-						nCOMMENTEND = i;
+						nCOMMENTEND = nCtrlEnd;
 						/* 現在の色を指定 */
 						//@SetCurrentColor( hdc, nCOMMENTMODE );
 						nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
