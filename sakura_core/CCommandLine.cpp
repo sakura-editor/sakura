@@ -161,8 +161,8 @@ void strncpyWithCheckOverflow(char *dest, int destCount, char *src, int srcCount
 {
 	if( destCount < srcCount + 1 ){
 		dest[0] = '\0';
-		MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-					  "ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。",
+		TopErrorMessage( NULL,
+					  _T("ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。"),
 					  destCount );
 	}else{
 		strcpy(dest, src);

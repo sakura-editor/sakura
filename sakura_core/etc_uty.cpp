@@ -1905,10 +1905,10 @@ bool InitRegexp(
 	if( !rRegexp.Init( RegexpDll ) ){
 		if( bShowMessage ){
 			WarningBeep();
-			::MessageBox( hWnd, _T("正規表現ライブラリが見つかりません。\r\n"
+			WarningMessage( hWnd, _T("正規表現ライブラリが見つかりません。\r\n"
 				"正規表現を利用するにはBREGEXP.DLL互換のライブラリが必要です。\r\n"
-				"入手方法はヘルプを参照してください。"),
-				GSTR_APPNAME, MB_OK | MB_ICONEXCLAMATION );
+				"入手方法はヘルプを参照してください。")
+			);
 		}
 		return false;
 	}

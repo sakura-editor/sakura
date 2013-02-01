@@ -295,7 +295,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}
 		}
 		else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("検索条件を指定してください。") );
+			OkMessage( m_hWnd, _T("検索条件を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_SEARCHNEXT:		/* 下検索 */	//Feb. 13, 2001 JEPRO ボタン名を[IDOK]→[IDC_BUTTON_SERACHNEXT]に変更
@@ -328,7 +328,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}
 		}
 		else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("検索条件を指定してください。") );
+			OkMessage( m_hWnd, _T("検索条件を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク

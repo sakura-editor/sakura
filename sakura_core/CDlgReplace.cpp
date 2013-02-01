@@ -331,7 +331,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		/* テキストの貼り付け */
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE ) &&
 			!pcEditView->m_pcEditDoc->IsEnablePaste() ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("クリップボードに有効なデータがありません！") );
+			OkMessage( m_hWnd, _T("クリップボードに有効なデータがありません！") );
 			::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
 		}
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), !(::IsDlgButtonChecked( m_hWnd, IDC_CHK_PASTE)) );
@@ -438,7 +438,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
+			OkMessage( m_hWnd, _T("文字列を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_SEARCHNEXT:	/* 下検索 */
@@ -457,7 +457,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
+			OkMessage( m_hWnd, _T("文字列を指定してください。") );
 		}
 		return TRUE;
 
@@ -485,7 +485,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 再描画 */
 			pcEditView->HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("文字列を指定してください。") );
+			OkMessage( m_hWnd, _T("文字列を指定してください。") );
 		}
 		return TRUE;
 	case IDC_BUTTON_REPALCEALL:	/* すべて置換 */
@@ -504,7 +504,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* アクティブにする */
 			ActivateFrameWindow( m_hWnd );
 
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST, GSTR_APPNAME, _T("%d箇所を置換しました。"), m_nReplaceCnt);
+			TopOkMessage( m_hWnd, _T("%d箇所を置換しました。"), m_nReplaceCnt);
 
 			if( !m_bCanceled ){
 				if( m_bModal ){		/* モーダルダイアログか */
@@ -519,7 +519,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			}
 			return TRUE;
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, _T("置換条件を指定してください。") );
+			OkMessage( m_hWnd, _T("置換条件を指定してください。") );
 		}
 		return TRUE;
 //	case IDCANCEL:

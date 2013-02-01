@@ -709,7 +709,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 
 	hFile = _lopen( szPath, OF_READ );
 	if( HFILE_ERROR == hFile ){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
@@ -721,7 +721,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr	)	!= _lread( hFile, (LPVOID)&m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr , sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr  ) ) ||
 		0 != memcmp( pHeader, STR_CUSTMENU_HEAD, STR_CUSTMENU_HEAD_LEN )
 	){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("カスタムメニュー設定ファイルの形式が違います。\n\n%s"), szPath
 		);
 		return;
@@ -760,7 +760,7 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 
 	hFile = _lcreat( szPath, 0 );
 	if( HFILE_ERROR == hFile ){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
@@ -772,7 +772,7 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr, sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr ) ) ||
 		sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr	)	!= _lwrite( hFile, (LPCSTR)&m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr , sizeof( m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr  ) )
 	){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("ファイルの書き込みに失敗しました。\n\n%s"), szPath
 		);
 		return;

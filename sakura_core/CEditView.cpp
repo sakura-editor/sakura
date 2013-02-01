@@ -477,7 +477,7 @@ BOOL CEditView::Create(
 
 	/* タイマー起動 */
 	if( 0 == ::SetTimer( m_hWnd, IDT_ROLLMOUSE, nKeyBoardSpeed, (TIMERPROC)EditViewTimerProc ) ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
+		WarningMessage( m_hWnd, _T("CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 
 	/* アンダーライン */
@@ -3608,7 +3608,7 @@ normal_action:;
 
 		/******* この時点で必ず true == IsTextSelected() の状態になる ****:*/
 		if( !IsTextSelected() ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("バグってる") );
+			WarningMessage( m_hWnd, _T("バグってる") );
 			return;
 		}
 

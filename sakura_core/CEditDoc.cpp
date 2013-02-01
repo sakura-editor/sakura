@@ -643,11 +643,9 @@ BOOL CEditDoc::OnFileClose()
 	if( m_bGrepRunning ){		/* Grep処理中 */
 		/* アクティブにする */
 		ActivateFrameWindow( hwndMainFrame );	//@@@ 2003.06.25 MIK
-		::MYMESSAGEBOX(
+		TopInfoMessage(
 			hwndMainFrame,
-			MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-			GSTR_APPNAME,
-			"Grepの処理中です。\n"
+			_T("Grepの処理中です。\n")
 		);
 		return FALSE;
 	}
@@ -673,7 +671,7 @@ BOOL CEditDoc::OnFileClose()
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
 				_T("%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"),
-				IsFilePathAvailable() ? GetFilePath() : "(無題)"
+				IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
 			);
 			switch( nRet ){
 			case IDYES:
@@ -693,7 +691,7 @@ BOOL CEditDoc::OnFileClose()
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
 				_T("%s\nは変更されています。 閉じる前に保存しますか？"),
-				IsFilePathAvailable() ? GetFilePath() : "(無題)"
+				IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
 			);
 			switch( nRet ){
 			case IDYES:
@@ -941,8 +939,8 @@ BOOL CEditDoc::FileRead(
 			NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, NULL );
 		if( hTest == INVALID_HANDLE_VALUE ){
 			// 読み込みアクセス権がない
-			::MYMESSAGEBOX(
-				m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			ErrorMessage(
+				m_hWnd,
 				_T("\'%s\'\nというファイルを開けません。\n読み込みアクセス権がありません。"),
 				pszPath
 			 );
@@ -965,8 +963,8 @@ BOOL CEditDoc::FileRead(
 		MYMESSAGEBOX(
 			m_hWnd,
 			MB_YESNO | MB_ICONEXCLAMATION | MB_TOPMOST,
-			"バグじゃぁあああ！！！",
-			"CEditDoc::FileRead()\n\nNULL == pszPath\n【対処】エラーの出た状況を作者に連絡してくださいね。"
+			_T("バグじゃぁあああ！！！"),
+			_T("CEditDoc::FileRead()\n\nNULL == pszPath\n【対処】エラーの出た状況を作者に連絡してくださいね。")
 		);
 		return FALSE;
 	}
@@ -1024,8 +1022,8 @@ BOOL CEditDoc::FileRead(
 		} else {
 			m_nCharCode = CMemory::CheckKanjiCodeOfFile( pszPath );
 			if( CODE_NONE == m_nCharCode ){
-				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-					"%s\n文字コードの判別処理でエラーが発生しました。",
+				TopWarningMessage( m_hWnd,
+					_T("%s\n文字コードの判別処理でエラーが発生しました。"),
 					pszPath
 				);
 				//	Sep. 10, 2002 genta
@@ -1053,8 +1051,8 @@ BOOL CEditDoc::FileRead(
 				nRet = MYMESSAGEBOX(
 					m_hWnd,
 					MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-					"文字コード情報",
-					"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません",
+					_T("文字コード情報"),
+					_T("%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません"),
 					GetFilePath(), pszCodeName, pszCodeName, pszCodeNameNew
 				);
 				if( IDYES == nRet ){
@@ -1072,8 +1070,8 @@ BOOL CEditDoc::FileRead(
 				MYMESSAGEBOX(
 					m_hWnd,
 					MB_YESNO | MB_ICONEXCLAMATION | MB_TOPMOST,
-					"バグじゃぁあああ！！！",
-					"【対処】エラーの出た状況を作者に連絡してください。"
+					_T("バグじゃぁあああ！！！"),
+					_T("【対処】エラーの出た状況を作者に連絡してください。")
 				);
 				//	Sep. 10, 2002 genta
 				SetFilePathAndIcon( _T("") );
@@ -1141,11 +1139,9 @@ BOOL CEditDoc::FileRead(
 
 			//	Feb. 15, 2003 genta Popupウィンドウを表示しないように．
 			//	ここでステータスメッセージを使っても画面に表示されない．
-			::MYMESSAGEBOX(
+			TopInfoMessage(
 				m_hwndParent,
-				MB_OK | MB_ICONINFORMATION | MB_TOPMOST,
-				GSTR_APPNAME,
-				"%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。",	//Mar. 24, 2001 jepro 若干修正
+				_T("%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			);
 		}
@@ -1333,8 +1329,8 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 			if( IDYES != ::MYMESSAGEBOX(
 				m_hWnd,
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-				"ファイル保存",
-				"バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．"
+				_T("ファイル保存"),
+				_T("バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．")
 			)){
 				return FALSE;
 			}
@@ -1342,10 +1338,10 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 			if( IDYES != ::MYMESSAGEBOX(
 				m_hWnd,
 				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-				"ファイル保存",
-				"ファイルパスが長すぎるためバックアップの作成に失敗しました．\n"
-				"ANSI 版では %d バイト以上の絶対パスを扱えません．\n\n"
-				"元ファイルへの上書きを継続して行いますか．",
+				_T("ファイル保存"),
+				_T("ファイルパスが長すぎるためバックアップの作成に失敗しました．\n")
+				_T("ANSI 版では %d バイト以上の絶対パスを扱えません．\n\n")
+				_T("元ファイルへの上書きを継続して行いますか．"),
 				_MAX_PATH
 			)){
 				return FALSE;
@@ -1751,12 +1747,11 @@ int CEditDoc::MakeBackUp(
 	if( m_pShareData->m_Common.m_sBackup.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
 		if( (!fexist( m_pShareData->m_Common.m_sBackup.m_szBackUpFolder ))){
-			if( ::MYMESSAGEBOX(
+			if( ::TopConfirmMessage(
 				m_hWnd,
-				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-				"バックアップエラー",
-				"以下のバックアップフォルダが見つかりません．\n%s\n"
-				"バックアップを作成せずに上書き保存してよろしいですか．",
+				_T("バックアップエラー"),
+				_T("以下のバックアップフォルダが見つかりません．\n%s\n")
+				_T("バックアップを作成せずに上書き保存してよろしいですか．"),
 				m_pShareData->m_Common.m_sBackup.m_szBackUpFolder
 			) == IDYES ){
 				return 0;//	保存継続
@@ -2292,12 +2287,10 @@ void CEditDoc::DoFileLock( void )
 	_lclose( m_hLockedFile );
 	if( HFILE_ERROR == m_hLockedFile ){
 		WarningBeep();
-		MYMESSAGEBOX(
+		TopWarningMessage(
 			m_hWnd,
-			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
-			GSTR_APPNAME,
-			"%s\nは現在他のプロセスによって書込みが禁止されています。",
-			IsFilePathAvailable() ? GetFilePath() : "(無題)"
+			_T("%s\nは現在他のプロセスによって書込みが禁止されています。"),
+			IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
 		);
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
@@ -2318,12 +2311,10 @@ void CEditDoc::DoFileLock( void )
 			break;
 		}
 		WarningBeep();
-		MYMESSAGEBOX(
+		TopWarningMessage(
 			m_hWnd,
-			MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST,
-			GSTR_APPNAME,
-			"%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。",
-			IsFilePathAvailable() ? GetFilePath() : "(無題)",
+			_T("%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
+			IsFilePathAvailable() ? GetFilePath() : _T("(無題)"),
 			pszMode
 		);
 		/* 親ウィンドウのタイトルを更新 */

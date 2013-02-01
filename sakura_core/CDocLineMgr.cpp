@@ -396,16 +396,15 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		nRetVal = FALSE;
 		if( !fexist( pszPath )){
 			// ファイルがない
-			::MYMESSAGEBOX(
-				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			ErrorMessage(hWndParent,
 				_T("%s\nというファイルを開けません。\nファイルが存在しません。"),	//Mar. 24, 2001 jepro 若干修正
 				pszPath
 			 );
 		}
 		else if( -1 == _taccess( pszPath, 4 )){
 			// 読み込みアクセス権がない
-			::MYMESSAGEBOX(
-				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			ErrorMessage(
+				hWndParent,
 				_T("\'%s\'\nというファイルを開けません。\n読み込みアクセス権がありません。"),
 				pszPath
 			 );
@@ -419,8 +418,8 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 //			 );
 //		}
 		else{
-			::MYMESSAGEBOX(
-				hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			ErrorMessage(
+				hWndParent,
 				_T("\'%s\'\nというファイルを開けません。\n他のアプリケーションで使用されている可能性があります。"),
 				pszPath
 			 );
@@ -428,8 +427,8 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	}
 	catch( CError_FileRead ){
 		nRetVal = FALSE;
-		::MYMESSAGEBOX(
-			hWndParent, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage(
+			hWndParent,
 			_T("\'%s\'というファイルの読み込み中にエラーが発生しました。\nファイルの読み込みを中止します。"),
 			pszPath
 		 );
@@ -609,10 +608,8 @@ int CDocLineMgr::WriteFile(
 
 	}
 	catch(CError_FileOpen){
-		::MYMESSAGEBOX(
+		ErrorMessage(
 			hWndParent,
-			MB_OK | MB_ICONSTOP,
-			GSTR_APPNAME,
 			_T("\'%s\'\nファイルを保存できません。\n")
 			_T("パスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
 			pszPath
@@ -1944,9 +1941,9 @@ char* CDocLineMgr::GetAllData( int*	pnDataLen )
 	char*	pData;
 	pData = (char*)malloc( nDataLen + 1 );
 	if( NULL == pData ){
-		::MYMESSAGEBOX(
-			NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
-			"CDocLineMgr::GetAllData()\nメモリ確保に失敗しました。\n%dバイト",
+		TopErrorMessage(
+			NULL,
+			_T("CDocLineMgr::GetAllData()\nメモリ確保に失敗しました。\n%dバイト"),
 			nDataLen + 1
 		);
 		return NULL;

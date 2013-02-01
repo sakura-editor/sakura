@@ -87,7 +87,7 @@ bool CPropRegex::Import(HWND hwndDlg)
 
 	if( (fp = fopen(szPath, "r")) == NULL )
 	{
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%s"), szPath );
 		return false;
 	}
 
@@ -188,7 +188,7 @@ bool CPropRegex::Export(HWND hwndDlg)
 
 	if( (fp = fopen(szPath, "w")) == NULL )
 	{
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%s"), szPath );
 		return false;
 	}
 
@@ -218,8 +218,8 @@ bool CPropRegex::Export(HWND hwndDlg)
 
 	fclose(fp);
 
-	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-		"ファイルへエクスポートしました。\n\n%s", szPath
+	InfoMessage( hwndDlg,
+		_T("ファイルへエクスポートしました。\n\n%s"), szPath
 	);
 
 	return true;
@@ -339,7 +339,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("これ以上登録できません。"));
+					ErrorMessage( hwndDlg, _T("これ以上登録できません。"));
 					return FALSE;
 				}
 				for(i = 0; i < nIndex2; i++)
@@ -348,7 +348,7 @@ INT_PTR CPropRegex::DispatchEvent(
 					ListView_GetItemText(hwndList, i, 0, szColorIndex, _countof(szColorIndex));
 					if( strcmp(szKeyWord, szColorIndex) == 0 ) 
 					{
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("同じキーワードで登録済みです。"));
+						ErrorMessage( hwndDlg, _T("同じキーワードで登録済みです。"));
 						return FALSE;
 					}
 				}
@@ -362,10 +362,8 @@ INT_PTR CPropRegex::DispatchEvent(
 				//書式をチェックする。
 				if( !RegexKakomiCheck(szKeyWord) )	//囲みをチェックする。
 				{
-					::MYMESSAGEBOX(
+					TopErrorMessage(
 							hwndDlg,
-							MB_OK | MB_ICONSTOP | MB_TOPMOST,
-							GSTR_APPNAME,
 							_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
 							_T("正規表現キーワード") );
 					return FALSE;
@@ -410,7 +408,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				nIndex2 = ListView_GetItemCount(hwndList);
 				if( nIndex2 >= MAX_REGEX_KEYWORD )
 				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("これ以上登録できません。"));
+					ErrorMessage( hwndDlg, _T("これ以上登録できません。"));
 					return FALSE;
 				}
 				for(i = 0; i < nIndex2; i++)
@@ -419,17 +417,15 @@ INT_PTR CPropRegex::DispatchEvent(
 					ListView_GetItemText(hwndList, i, 0, szColorIndex, _countof(szColorIndex));
 					if( strcmp(szKeyWord, szColorIndex) == 0 ) 
 					{
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("同じキーワードで登録済みです。"));
+						ErrorMessage( hwndDlg, _T("同じキーワードで登録済みです。"));
 						return FALSE;
 					}
 				}
 				//書式をチェックする。
 				if( !RegexKakomiCheck(szKeyWord) )	//囲みをチェックする。
 				{
-					::MYMESSAGEBOX(
+					TopErrorMessage(
 						hwndDlg,
-						MB_OK | MB_ICONSTOP | MB_TOPMOST,
-						GSTR_APPNAME,
 						_T("正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"),
 						_T("正規表現キーワード")
 					);
@@ -470,7 +466,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
 				{
-					::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("キーワードが選択されていません。"));
+					ErrorMessage( hwndDlg, _T("キーワードが選択されていません。"));
 					return FALSE;
 				}
 				//更新するキー情報を取得する。
@@ -486,7 +482,7 @@ INT_PTR CPropRegex::DispatchEvent(
 						ListView_GetItemText(hwndList, i, 0, szColorIndex, _countof(szColorIndex));
 						if( strcmp(szKeyWord, szColorIndex) == 0 ) 
 						{
-							::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("同じキーワードで登録済みです。"));
+							ErrorMessage( hwndDlg, _T("同じキーワードで登録済みです。"));
 							return FALSE;
 						}
 					}

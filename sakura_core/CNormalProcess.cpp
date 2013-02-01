@@ -365,13 +365,13 @@ HANDLE CNormalProcess::_GetInitializeMutex() const
 	hMutex = ::CreateMutex( NULL, TRUE, GSTR_MUTEX_SAKURA_INIT );
 	if( NULL == hMutex ){
 		ErrorBeep();
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("CreateMutex()失敗。\n終了します。") );
+		TopErrorMessage( NULL, _T("CreateMutex()失敗。\n終了します。") );
 		return NULL;
 	}
 	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
 		DWORD dwRet = ::WaitForSingleObject( hMutex, 15000 );	// 2002/2/8 aroka 少し長くした
 		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
+			TopErrorMessage( NULL, _T("エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。") );
 			::CloseHandle( hMutex );
 			return NULL;
 		}

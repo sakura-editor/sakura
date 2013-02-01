@@ -2008,7 +2008,7 @@ re_do:;								// hor
 	}else{
 		SendStatusMessage("▽見つかりませんでした");
 		if(m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("前方(↓) にブックマークが見つかりません。"));
+			InfoMessage( m_hWnd, _T("前方(↓) にブックマークが見つかりません。"));
 	}
 	return;
 }
@@ -2047,7 +2047,7 @@ re_do:;								// hor
 	}else{
 		SendStatusMessage(_T("△見つかりませんでした"));
 		if(m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("後方(↑) にブックマークが見つかりません。") );
+			InfoMessage( m_hWnd, _T("後方(↑) にブックマークが見つかりません。") );
 	}
 	return;
 }
@@ -2497,9 +2497,9 @@ void CEditView::Command_MERGE(void)
 	RedrawAll();
 
 	if(j){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST, GSTR_APPNAME, _T("%d行をマージしました。"), j);
+		TopOkMessage( m_hWnd, _T("%d行をマージしました。"), j);
 	}else{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("マージ可能な行がみつかりませんでした。") );
+		InfoMessage( m_hWnd, _T("マージ可能な行がみつかりませんでした。") );
 	}
 }
 
@@ -2790,14 +2790,14 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const ECodeType nCharCode
 		}
 		catch(CError_FileOpen)
 		{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME,
-				"\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。",
+			WarningMessage( NULL,
+				_T("\'%s\'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。"),
 				filename);
 			bResult = FALSE;
 		}
 		catch(CError_FileWrite)
 		{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, "ファイルの書き込み中にエラーが発生しました。" );
+			WarningMessage( NULL, _T("ファイルの書き込み中にエラーが発生しました。") );
 			bResult = FALSE;
 		}
 	}
@@ -2925,11 +2925,11 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 		cfl.FileClose();
 	} // try
 	catch( CError_FileOpen ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, "file open error [%s]", filename );
+		WarningMessage( NULL, _T("file open error [%s]"), filename );
 		bResult = FALSE;
 	}
 	catch( CError_FileRead ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, "ファイルの読み込み中にエラーが発生しました。" );
+		WarningMessage( NULL, _T("ファイルの読み込み中にエラーが発生しました。") );
 		bResult = FALSE;
 	} // 例外処理終わり
 

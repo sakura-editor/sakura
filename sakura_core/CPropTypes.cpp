@@ -1546,7 +1546,7 @@ bool CPropColor::Import( HWND hwndDlg )
 	/* 色設定Ver1か */
 	hFile = _lopen( szPath, OF_READ );
 	if( HFILE_ERROR == hFile ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "ファイルを開けませんでした。\n\n%s", szPath );
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%s"), szPath );
 		return false;
 	}
 
@@ -1564,7 +1564,7 @@ bool CPropColor::Import( HWND hwndDlg )
 		0 == memcmp( pHeader, szWork, nWorkLen )
 	){
 	}else{
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 //			"色設定ファイルの形式が違います。\n古い形式はサポートされなくなりました。\n%s", szPath
 //			Nov. 2, 2000 JEPRO 変更 [注]. 0.3.9.0:ur3β10以降、設定項目の番号を入れ替えたため
 //			Dec. 26, 2000 JEPRO UR1.2.24.0で強調キーワード2が入ってきたためCI[13]が追加された. それに伴い13番以降を1つづらした
@@ -1631,7 +1631,7 @@ bool CPropColor::Import( HWND hwndDlg )
 	/* 色設定Ver2 */
 	if( false == cProfile.ReadProfile( szPath ) ){
 		/* 設定ファイルが存在しない */
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return false;

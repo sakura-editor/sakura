@@ -728,9 +728,8 @@ void CPrintPreview::OnChangePrintSetting( void )
 			CPrint::GetPaperName( m_pPrintSetting->m_nPrintPaperSize , szPaperNameOld );
 			CPrint::GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , szPaperNameNew );
 
-			::MYMESSAGEBOX(
+			TopWarningMessage(
 				m_pParentWnd->m_hWnd,
-				MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
 				_T("現在のプリンタ %s では、\n指定された用紙 %s は使用できません。\n")
 				_T("利用可能な用紙 %s に変更しました。"),
 				m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName,
@@ -967,7 +966,7 @@ void CPrintPreview::OnPrint( void )
 	HFONT		hFontZen;	//	印刷用全角フォント
 
 	if( 0 == m_nAllPageNum ){
-		::MYMESSAGEBOX( m_pParentWnd->m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME, _T("印刷するページがありません。") );
+		TopWarningMessage( m_pParentWnd->m_hWnd, _T("印刷するページがありません。") );
 		return;
 	}
 

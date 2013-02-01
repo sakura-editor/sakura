@@ -543,7 +543,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 
 	hFile = _lopen( szPath, OF_READ );
 	if( HFILE_ERROR == hFile ){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
@@ -563,7 +563,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 
 			if( (fp = fopen( szPath, "r" )) == NULL )
 			{
-				::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+				ErrorMessage( hwndDlg,
 					_T("ファイルを開けませんでした。\n\n%s"), szPath
 				);
 				return;
@@ -634,7 +634,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		}
 //@@@ 2001.11.07 add end MIK
 
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("キー設定ファイルの形式が違います。\n\n%s"), szPath
 		);
 		return;
@@ -692,7 +692,7 @@ void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
 		
 		if( (fp = fopen( szPath, "w" )) == NULL )
 		{
-			::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+			ErrorMessage( hwndDlg,
 				_T("ファイルを開けませんでした。\n\n%s"), szPath
 			);
 			return;

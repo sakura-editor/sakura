@@ -399,29 +399,25 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 
 	case IDC_BUTTON_CLEAR:	//履歴のクリア
 		{
-			::SetDlgItemText( m_hWnd, IDC_STATIC_FAVORITE_MSG, "" );
+			::SetDlgItemText( m_hWnd, IDC_STATIC_FAVORITE_MSG, _T("") );
 			HWND	hwndTab;
 			int		nIndex;
 			hwndTab = ::GetDlgItem( m_hWnd, IDC_TAB_FAVORITE );
 			nIndex = TabCtrl_GetCurSel( hwndTab );
 			if( -1 != nIndex )
 			{
-				int	nRet;
-				
-				if( m_aFavoriteInfo[nIndex].m_bHaveFavorite )
-				{
-					nRet = ::MYMESSAGEBOX( m_hWnd, 
-						MB_YESNOCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-						"最近使った%sの履歴を削除します。\n\nよろしいですか？\n\n"
-						"「はい」\tすべて削除します。\n"
-						"「いいえ」\tお気に入り以外を削除します。\n",
+				int nRet;
+				if( m_aFavoriteInfo[nIndex].m_bHaveFavorite ){
+					nRet = ConfirmMessage( m_hWnd, 
+						_T("最近使った%sの履歴を削除します。\n\nよろしいですか？\n\n")
+						_T("「はい」\tすべて削除します。\n")
+						_T("「いいえ」\tお気に入り以外を削除します。\n"),
 						m_aFavoriteInfo[nIndex].m_pszCaption );
 				}
 				else
 				{
-					nRet = ::MYMESSAGEBOX( m_hWnd, 
-						MB_OKCANCEL | MB_ICONQUESTION, GSTR_APPNAME,
-						"最近使った%sの履歴を削除します。\n\nよろしいですか？\n",
+					nRet = ConfirmMessage( m_hWnd, 
+						_T("最近使った%sの履歴を削除します。\n\nよろしいですか？\n"),
 						m_aFavoriteInfo[nIndex].m_pszCaption );
 				}
 				
@@ -433,8 +429,8 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 				case IDYES:
 				case IDOK:
 					if( pRecent ) pRecent->DeleteAllItem();
-					::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-						"最近使った%sの履歴を削除しました。",
+					InfoMessage( m_hWnd,
+						_T("最近使った%sの履歴を削除しました。"),
 						m_aFavoriteInfo[nIndex].m_pszCaption );
 					break;
 					
@@ -452,8 +448,8 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 							}
 						}
 					}
-					::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-						"最近使った%sの履歴(お気に入り以外)を削除しました。",
+					InfoMessage( m_hWnd,
+						_T("最近使った%sの履歴(お気に入り以外)を削除しました。"),
 						m_aFavoriteInfo[nIndex].m_pszCaption );
 					break;
 					

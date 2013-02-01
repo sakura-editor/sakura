@@ -1189,7 +1189,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 		//	同一ファイルを複数開くことがある．
 		if( ! GetLongFileName( filename, pszPath )){
 			//	ファイル名の変換に失敗
-			::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME, 
+			OkMessage( m_hWnd,
 				_T("ファイル名の変換に失敗しました [%s]"), filename );
 			return;
 		}
@@ -1374,10 +1374,8 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 		if( m_bReadOnly ){	/* 読み取り専用モード */
 			if( warnbeep ){
 				ErrorBeep();
-				MYMESSAGEBOX(
+				TopErrorMessage(
 					m_hWnd,
-					MB_OK | MB_ICONSTOP | MB_TOPMOST,
-					GSTR_APPNAME,
 					_T("%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n")
 					_T("名前を付けて保存をすればいいと思います。"),
 					IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
@@ -1420,10 +1418,8 @@ BOOL CEditDoc::FileSaveAs_Dialog( void )
 		//	同名で上書きされるのを防ぐ
 		if( m_bReadOnly && strcmp( szPath, GetFilePath()) == 0 ){
 			ErrorBeep();
-			MYMESSAGEBOX(
+			TopErrorMessage(
 				m_hWnd,
-				MB_OK | MB_ICONSTOP | MB_TOPMOST,
-				GSTR_APPNAME,
 				_T("読み取り専用モードでは同一ファイルへの上書き保存はできません。")
 			);
 		}

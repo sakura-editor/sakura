@@ -1337,8 +1337,7 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 
 			if(NULL != pszCodeNameCur && pszCodeNameNew){
 				if(nCharCode != pfi->m_nCharCode){
-					::MYMESSAGEBOX( *phwndOwner,
-						MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+					TopWarningMessage( *phwndOwner,
 						_T("%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n")
 						_T("ファイルメニューから「開き直す」を使用してください。\n")
 						_T("\n")
@@ -1351,7 +1350,7 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 				}
 			}
 			else{
-				::MYMESSAGEBOX( *phwndOwner, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
+				TopWarningMessage( *phwndOwner,
 					_T("%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n")
 					_T("\n")
 					_T("現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"),

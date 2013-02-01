@@ -50,7 +50,7 @@ void CEditView::Command_Diff( const char *szTmpFile2, int nFlgOpt )
 
 	if( -1 == ::GetFileAttributes( szTmpFile2 ) )
 	{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。") );
+		WarningMessage( m_hWnd,	_T( "差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。" ) );
 		return;
 	}
 
@@ -168,7 +168,7 @@ void CEditView::ViewDiffInfo(
 	//	diff.exeの存在チェック
 	if( -1 == ::GetFileAttributes( cmdline ) )
 	{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
+		WarningMessage( m_hWnd,	_T( "差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。" ) );
 		return;
 	}
 
@@ -261,7 +261,7 @@ void CEditView::ViewDiffInfo(
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 			CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE )
 	{
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n%s"), cmdline );
+		WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n%s"), cmdline );
 		goto finish;
 	}
 
@@ -317,7 +317,7 @@ void CEditView::ViewDiffInfo(
 						bFirst = false;
 						if( strncmp( work, "Binary files ", strlen( "Binary files " ) ) == 0 )
 						{
-							::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("DIFF差分を行おうとしたファイルはバイナリファイルです。") );
+							WarningMessage( NULL, _T("DIFF差分を行おうとしたファイルはバイナリファイルです。") );
 							goto finish;
 						}
 					}
@@ -401,7 +401,7 @@ void CEditView::ViewDiffInfo(
 	{
 		if( !m_pcEditDoc->m_cDocLineMgr.IsDiffUse() )
 		{
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("DIFF差分は見つかりませんでした。") );
+			InfoMessage( m_hWnd, _T("DIFF差分は見つかりませんでした。") );
 		}
 	}
 
@@ -573,7 +573,7 @@ re_do:;
 	else{
 		SendStatusMessage( _T("▽見つかりませんでした") );
 		if( m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("前方(↓) に差分が見つかりません。") );
+			InfoMessage( m_hWnd, _T("前方(↓) に差分が見つかりません。") );
 	}
 
 	return;
@@ -626,7 +626,7 @@ re_do:;
 	else{
 		SendStatusMessage( _T("△見つかりませんでした") );
 		if( m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("後方(↑) に差分が見つかりません。") );
+			InfoMessage( m_hWnd, _T("後方(↑) に差分が見つかりません。") );
 	}
 
 	return;
@@ -659,7 +659,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 
 	TCHAR* pszTmpName = _ttempnam( NULL, SAKURA_DIFF_TEMP_PREFIX );
 	if( NULL == pszTmpName ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。") );
+		WarningMessage( NULL, _T("差分コマンド実行は失敗しました。") );
 		return FALSE;
 	}
 
@@ -683,7 +683,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 
 	fp = fopen( filename, "wb" );
 	if( NULL == fp ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
+		WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
 		return FALSE;
 	}
 
@@ -705,14 +705,14 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 			// 一時バッファを超えている
 			fclose( fp );
 			_tunlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n行が長すぎます。") );
+			WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n行が長すぎます。") );
 			return FALSE;
 		}
 
 		if( 1 != fwrite( pLineData, nLineLen, 1, fp ) ){
 			fclose( fp );
 			_tunlink( filename );	//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29
-			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
+			WarningMessage( NULL, _T("差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。") );
 			return FALSE;
 		}
 

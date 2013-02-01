@@ -79,7 +79,7 @@ HWND CSplitterWnd::Create( HINSTANCE hInstance, HWND hwndParent, void* pCEditWnd
 		m_pszClassName// Pointer to a null-terminated string or is an atom.
 	);
 	if( 0 == atWork ){
-		::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("SplitterWndクラスの登録に失敗しました。") );
+		ErrorMessage( NULL, _T("SplitterWndクラスの登録に失敗しました。") );
 	}
 
 	/* 基底クラスメンバ呼び出し */

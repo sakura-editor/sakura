@@ -177,9 +177,7 @@ CDropTarget::~CDropTarget()
 BOOL CDropTarget::Register_DropTarget( HWND hWnd )
 {
 	if( FAILED( ::RegisterDragDrop( hWnd, this ) ) ){
-		::MYMESSAGEBOX( hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME,
-			"::RegisterDragDrop()\né∏îs"
-		);
+		TopWarningMessage( hWnd, _T("::RegisterDragDrop()\né∏îs") );
 		return FALSE;
 	}
 	m_hWnd_DropTarget = hWnd;

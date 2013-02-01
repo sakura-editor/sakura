@@ -2758,7 +2758,7 @@ void CMemory::AllocStringBuffer( int nNewDataLen )
 
 	if( NULL == pWork ){
 		::MYMESSAGEBOX(	NULL, MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST, GSTR_APPNAME,
-			"CMemory::AllocStringBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n", nNewDataLen
+			_T("CMemory::AllocStringBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n"), nNewDataLen
 		);
 		if( NULL != m_pData && 0 != nWorkLen ){
 			/* 古いバッファを解放して初期化 */

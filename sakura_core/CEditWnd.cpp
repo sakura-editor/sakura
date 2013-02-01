@@ -162,12 +162,11 @@ CEditWnd::CEditWnd()
 		);
 
 		if( NULL == m_hAccel ){
-			::MessageBox(
+			ErrorMessage(
 				NULL,
 				_T("CEditWnd::CEditWnd()\n")
 				_T("アクセラレータ テーブルが作成できません。\n")
-				_T("システムリソースが不足しています。"),
-				GSTR_APPNAME, MB_OK | MB_ICONSTOP
+				_T("システムリソースが不足しています。")
 			);
 		}
 	}else{
@@ -504,7 +503,7 @@ HWND CEditWnd::Create(
 
 	//ウィンドウ数制限
 	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( m_hWnd, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return NULL;
 	}
 
@@ -528,7 +527,7 @@ HWND CEditWnd::Create(
 	// Vista/7 での初回表示アニメーション抑止（rev1868）とのからみで、ウィンドウが可視化される時点でタブバーに全タブが揃っていないと見苦しいのでここに移動。
 	// AddEditWndList() で自ウィンドウにポストされる MYWM_TAB_WINDOW_NOTIFY(TWNT_ADD) はタブバー作成後の初回アイドリング時に処理されるので特に問題は無いはず。
 	if( !CShareData::getInstance()->AddEditWndList( m_hWnd, nGroup ) ){	// 2007.06.26 ryoji nGroup引数追加
-		::MYMESSAGEBOX( m_hWnd, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( m_hWnd, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		::DestroyWindow( m_hWnd );
 		m_hWnd = hWnd = NULL;
 		return hWnd;
@@ -544,10 +543,9 @@ HWND CEditWnd::Create(
 	// 各種バーよりも先に m_cEditDoc.Create() を実行しておく	// 2007.01.30 ryoji
 	// （m_cEditDoc メンバーの初期化を優先）
 	if( !m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons ) ){
-		::MessageBox(
+		OkMessage(
 			m_hWnd,
-			"クライアントウィンドウの作成に失敗しました", GSTR_APPNAME,
-			MB_OK
+			_T("クライアントウィンドウの作成に失敗しました")
 		);
 	}
 
@@ -589,7 +587,7 @@ HWND CEditWnd::Create(
 		m_bUIPI = FALSE;
 		::SendMessage( m_pShareData->m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)m_hWnd );
 		if( !m_bUIPI ){	// 返事が返らない
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			TopErrorMessage( m_hWnd,
 				_T("エディタ間の対話に失敗しました。\n")
 				_T("権限レベルの異なるエディタが既に起動している可能性があります。")
 			);
@@ -605,7 +603,7 @@ HWND CEditWnd::Create(
 	m_nTimerCount = 0;
 	/* タイマーを起動 */ // タイマーのIDと間隔を変更 20060128 aroka
 	if( 0 == ::SetTimer( m_hWnd, IDT_EDIT, 500, NULL ) ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
+		WarningMessage( m_hWnd, _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 	}
 	// ツールバーのタイマーを分離した 20060128 aroka
 	Timer_ONOFF( true );
@@ -789,7 +787,7 @@ void CEditWnd::CreateToolBar( void )
 		);
 
 		if( NULL == m_hwndReBar ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME, _T("Rebar の作成に失敗しました。") );
+			TopWarningMessage( m_hWnd, _T("Rebar の作成に失敗しました。") );
 			return;
 		}
 
@@ -827,7 +825,7 @@ void CEditWnd::CreateToolBar( void )
 		if( m_pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
 			m_pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat = FALSE;
 		}
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION | MB_TOPMOST, GSTR_APPNAME, _T("ツールバーの作成に失敗しました。") );
+		TopWarningMessage( m_hWnd, _T("ツールバーの作成に失敗しました。") );
 		DestroyToolBar();	// 2006.06.17 ryoji
 	}
 	else{
@@ -1770,12 +1768,11 @@ LRESULT CEditWnd::DispatchEvent(
 			);
 
 			if( NULL == m_hAccel ){
-				::MessageBox(
+				ErrorMessage(
 					NULL,
 					_T("CEditWnd::DispatchEvent()\n")
 					_T("アクセラレータ テーブルが作成できません。\n")
-					_T("システムリソースが不足しています。"),
-					GSTR_APPNAME, MB_OK | MB_ICONSTOP
+					_T("システムリソースが不足しています。")
 				);
 			}
 		}
@@ -3034,7 +3031,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 		// 2008.07.28 nasukoji	長すぎるパスをドロップされると異常終了することへの対策
 		if( ::DragQueryFile( hDrop, i, NULL, 0 ) >= _MAX_PATH ){
 			ErrorBeep();
-			MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			TopErrorMessage( m_hWnd,
 				_T("ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。"),
 				_MAX_PATH );
 			continue;
@@ -3112,7 +3109,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				else{
 					/* 編集ウィンドウの上限チェック */
 					if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-						::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+						OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 						::DragFinish( hDrop );
 						return;
 					}
@@ -3399,7 +3396,7 @@ void CEditWnd::PrintPreviewModeONOFF( void )
 		BOOL bRes;
 		bRes = m_pPrintPreview->GetDefaultPrinterInfo();
 		if( !bRes ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME, _T("印刷プレビューを実行する前に、プリンタをインストールしてください。\n") );
+			TopInfoMessage( m_hWnd, _T("印刷プレビューを実行する前に、プリンタをインストールしてください。\n") );
 			return;
 		}
 
@@ -4541,7 +4538,7 @@ void CEditWnd::Timer_ONOFF( bool bStart )
 		if( bStart ){
 			/* タイマーを起動 */
 			if( 0 == ::SetTimer( m_hWnd, IDT_TOOLBAR, 300, NULL ) ){
-				::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
+				WarningMessage( m_hWnd, _T("CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。") );
 			}
 		} else {
 			/* タCマーを削除 */

@@ -168,7 +168,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				}
 				if( 0 < _tcslen( plvi->pszText ) ){
 					if( MAX_KEYWORDLEN < _tcslen( plvi->pszText ) ){
-						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("キーワードの長さは%dバイトまでです。"), MAX_KEYWORDLEN );
+						InfoMessage( hwndDlg, _T("キーワードの長さは%dバイトまでです。"), MAX_KEYWORDLEN );
 						return TRUE;
 					}
 					/* ｎ番目のセットにキーワードを編集 */
@@ -239,7 +239,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				switch( wID ){
 				case IDC_BUTTON_ADDSET:	/* セット追加 */
 					if( MAX_SETNUM <= m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nKeyWordSetNum ){
-						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("セットは%d個までしか登録できません。\n"), MAX_SETNUM );
+						InfoMessage( hwndDlg, _T("セットは%d個までしか登録できません。\n"), MAX_SETNUM );
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
@@ -348,7 +348,7 @@ INT_PTR CPropCommon::DispatchEvent_p7(
 				case IDC_BUTTON_ADDKEYWORD:	/* キーワード追加 */
 					/* ｎ番目のセットのキーワードの数を返す */
 					if( !m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.CanAddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) ){
-						::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("登録できるキーワード数が上限に達しています。\n") );
+						InfoMessage( hwndDlg, _T("登録できるキーワード数が上限に達しています。\n") );
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
@@ -530,7 +530,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 	pFile = fopen( szPath, "r" );
 	if( NULL == pFile ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
@@ -557,7 +557,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	}
 	fclose( pFile );
 	if( bAddError ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。")
 		);
 	}
@@ -598,7 +598,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 	pFile = fopen( szPath, "w" );
 	if( NULL == pFile ){
-		::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME,
+		ErrorMessage( hwndDlg,
 			_T("ファイルを開けませんでした。\n\n%s"), szPath
 		);
 		return;
@@ -623,7 +623,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	/* ダイアログデータの設定 p7 指定キーワードセットの設定 */
 	SetData_p7_KeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
-	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+	InfoMessage( hwndDlg,
 		_T("ファイルへエクスポートしました。\n\n%s"), szPath
 	);
 

@@ -150,9 +150,7 @@ void CDocLineMgr::ReplaceData( DocLineReplaceArg* pArg )
 				_T("pLine != pCDocLine->m_pLine->GetPtr() =%d\n")
 				_T("i=%d\n")
 				_T("pArg->nDelLineTo=%d"),
-				pLine,
-				i,
-				pArg->nDelLineTo
+				pLine, i, pArg->nDelLineTo
 			);
 		}
 

@@ -51,8 +51,7 @@ int COpeBlk::AppendOpe( COpe* pcOpe )
 	 || -1 == pcOpe->m_nCaretPosX_PHY_After		/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
 	 || -1 == pcOpe->m_nCaretPosY_PHY_After		/* カーソル位置 改行単位行の行番号（０開始）*/
 	){
-		MYMESSAGEBOX( NULL,
-			MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+		TopErrorMessage( NULL,
 			_T("COpeBlk::AppendOpe() error.\n")
 			_T("バグ\n")
 			_T("pcOpe->m_nCaretPosX_PHY_Before = %d\n")

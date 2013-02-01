@@ -159,12 +159,11 @@ CEditApp::CEditApp()
 			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 		);
 	if( NULL == m_pShareData->m_hAccel ){
-		::MessageBox(
+		ErrorMessage(
 			NULL,
 			_T("CEditApp::CEditApp()\n")
 			_T("アクセラレータ テーブルが作成できません。\n")
-			_T("システムリソースが不足しています。"),
-			GSTR_APPNAME, MB_OK | MB_ICONSTOP
+			_T("システムリソースが不足しています。")
 		);
 	}
 
@@ -216,7 +215,7 @@ HWND CEditApp::Create( HINSTANCE hInstance )
 		wc.lpszClassName	= GSTR_CEDITAPP;
 		ATOM	atom = RegisterClass( &wc );
 		if( 0 == atom ){
-			::MessageBox( NULL, _T("CEditApp::Create()\nウィンドウクラスを登録できませんでした。"), GSTR_APPNAME, MB_OK | MB_ICONSTOP );
+			ErrorMessage( NULL, _T("CEditApp::Create()\nウィンドウクラスを登録できませんでした。") );
 		}
 	}
 	g_m_pCEditApp = this;
@@ -561,12 +560,11 @@ LRESULT CEditApp::DispatchEvent(
 					m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 				);
 			if( NULL == m_pShareData->m_hAccel ){
-				::MessageBox(
+				ErrorMessage(
 					NULL,
 					_T("CEditApp::DispatchEvent()\n")
 					_T("アクセラレータ テーブルが作成できません。\n")
-					_T("システムリソースが不足しています。"),
-					GSTR_APPNAME, MB_OK | MB_ICONSTOP
+					_T("システムリソースが不足しています。")
 				);
 			}
 
@@ -967,7 +965,7 @@ bool CEditApp::OpenNewEditor(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return false;
 	}
 
@@ -1045,10 +1043,8 @@ bool CEditApp::OpenNewEditor(
 						0,
 						NULL
 		);
-		::MYMESSAGEBOX(
+		ErrorMessage(
 			hWndParent,
-			MB_OK | MB_ICONSTOP,
-			GSTR_APPNAME,
 			_T("\'%s\'\nプロセスの起動に失敗しました。\n%s"),
 			szEXE,
 			pMsg
@@ -1062,10 +1058,8 @@ bool CEditApp::OpenNewEditor(
 		//	起動したプロセスが完全に立ち上がるまでちょっと待つ．
 		int nResult = WaitForInputIdle( p.hProcess, 10000 );	//	最大10秒間待つ
 		if( nResult != 0 ){
-			::MYMESSAGEBOX(
+			ErrorMessage(
 				hWndParent,
-				MB_OK | MB_ICONSTOP,
-				GSTR_APPNAME,
 				_T("\'%s\'\nプロセスの起動に失敗しました。"),
 				szEXE
 			);
@@ -1137,7 +1131,7 @@ bool CEditApp::OpenNewEditor2(
 
 	/* 編集ウィンドウの上限チェック */
 	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-		::MYMESSAGEBOX( NULL, MB_OK, GSTR_APPNAME, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
+		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return false;
 	}
 

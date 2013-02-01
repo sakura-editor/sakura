@@ -175,9 +175,8 @@ BOOL CEditView::HandleCommand(
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
 		if( !m_pcEditDoc->m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, m_hInstance, this,
 			nCommandFrom & FA_NONRECORD )){
-			::MYMESSAGEBOX(
+			InfoMessage(
 				m_hwndParent,
-				MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 				_T("マクロ %d (%s) の実行に失敗しました。"),
 				nCommand - F_USERMACRO_0,
 				m_pcEditDoc->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
@@ -3275,9 +3274,8 @@ end_of_func:;
 			if( NULL == hwndParent ){
 				hwndParent = m_hWnd;
 			}
-			::MYMESSAGEBOX(
+			InfoMessage(
 				hwndParent,
-				MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 				_T("後方(↑) に文字列 '%s' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
 				m_szCurSrchKey
 			);
@@ -3513,16 +3511,13 @@ end_of_func:;
 				hwndParent = m_hWnd;
 			}
 			if( NULL == pszNotFoundMessage ){
-				::MYMESSAGEBOX(
+				InfoMessage(
 					hwndParent,
-					MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
 					_T("前方(↓) に文字列 '%s' が１つも見つかりません。"),
 					m_szCurSrchKey
 				);
 			}else{
-				::MYMESSAGEBOX( hwndParent, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
-					pszNotFoundMessage
-				);
+				InfoMessage(hwndParent, _T("%s"),pszNotFoundMessage);
 			}
 		}
 	}
@@ -5919,7 +5914,7 @@ bool CEditView::Command_TagsMake( void )
 	//ctags.exeの存在チェック
 	if( -1 == ::GetFileAttributes( cmdline ) )
 	{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T( "タグ作成コマンド実行は失敗しました。\n\nCTAGS.EXE が見つかりません。" ) );
+		WarningMessage( m_hWnd,	_T( "タグ作成コマンド実行は失敗しました。\n\nCTAGS.EXE が見つかりません。" ) );
 		return false;
 	}
 
@@ -6006,7 +6001,7 @@ bool CEditView::Command_TagsMake( void )
 	);
 	if( !bProcessResult )
 	{
-		::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("タグ作成コマンド実行は失敗しました。\n\n%s"), cmdline );
+		WarningMessage( m_hWnd,	_T("タグ作成コマンド実行は失敗しました。\n\n%s"), cmdline );
 		goto finish;
 	}
 
@@ -6079,7 +6074,7 @@ bool CEditView::Command_TagsMake( void )
 						cDlgCancel.CloseDialog( TRUE );
 
 						work[ read_cnt ] = '\0';	// Nov. 15, 2003 genta 表示用に0終端する
-						::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONEXCLAMATION, GSTR_APPNAME, _T("タグ作成コマンド実行は失敗しました。\n\n%s"), work ); // 2003.11.09 じゅうじ
+						WarningMessage( m_hWnd,	_T("タグ作成コマンド実行は失敗しました。\n\n%s"), work ); // 2003.11.09 じゅうじ
 
 						return true;
 					}
@@ -6100,7 +6095,7 @@ finish:
 
 	cDlgCancel.CloseDialog( TRUE );
 
-	::MYMESSAGEBOX( m_hWnd,	MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, _T("タグファイルの作成が終了しました。") );
+	InfoMessage( m_hWnd, _T("タグファイルの作成が終了しました。"));
 
 	return true;
 }
@@ -6295,7 +6290,7 @@ open_c:;
 		/* ファイルを開いているか */
 		if( CShareData::getInstance()->IsPathOpened( (const char*)szPath, &hwndOwner ) ){
 		}else{
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("%s\n\n%s\n\n"), errmes, szPath );
+			ErrorMessage( m_hWnd, _T("%s\n\n%s\n\n"), errmes, szPath );
 			return FALSE;
 		}
 	}
@@ -6770,7 +6765,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !m_pcEditDoc->IsEnablePaste()){
-		::MYMESSAGEBOX( hwndParent, MB_OK , GSTR_APPNAME, _T("クリップボードに有効なデータがありません！") );
+		OkMessage( hwndParent, _T("クリップボードに有効なデータがありません！") );
 		::CheckDlgButton( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_CHK_PASTE, FALSE );
 		::EnableWindow( ::GetDlgItem( m_pcEditDoc->m_cDlgReplace.m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
 		return;	//	失敗return;
@@ -6958,7 +6953,7 @@ void CEditView::Command_REPLACE_ALL()
 
 	// From Here 2001.12.03 hor
 	if( nPaste && !m_pcEditDoc->IsEnablePaste() ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK , GSTR_APPNAME,"クリップボードに有効なデータがありません！");
+		OkMessage( m_hWnd, _T("クリップボードに有効なデータがありません！") );
 		::CheckDlgButton( m_hWnd, IDC_CHK_PASTE, FALSE );
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 ), TRUE );
 		return;	// TRUE;
@@ -7572,12 +7567,12 @@ void CEditView::Command_BASE64DECODE( void )
 	}
 	if(HFILE_ERROR == (hFile = _lcreat( szPath, 0 ) ) ){
 		ErrorBeep();
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルの作成に失敗しました。\n\n%s"), szPath );
+		ErrorMessage( m_hWnd, _T("ファイルの作成に失敗しました。\n\n%s"), szPath );
 		return;
 	}
 	if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength() ) ){
 		ErrorBeep();
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルの書き込みに失敗しました。\n\n%s"), szPath );
+		ErrorMessage( m_hWnd, _T("ファイルの書き込みに失敗しました。\n\n%s"), szPath );
 	}
 	_lclose( hFile );
 	return;
@@ -7615,12 +7610,12 @@ void CEditView::Command_UUDECODE( void )
 	}
 	if(HFILE_ERROR == (hFile = _lcreat( szPath, 0 ) ) ){
 		ErrorBeep();
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルの作成に失敗しました。\n\n%s"), szPath );
+		ErrorMessage( m_hWnd, _T("ファイルの作成に失敗しました。\n\n%s"), szPath );
 		return;
 	}
 	if( HFILE_ERROR == _lwrite( hFile, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength() ) ){
 		ErrorBeep();
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルの書き込みに失敗しました。\n\n%s"), szPath );
+		ErrorMessage( m_hWnd, _T("ファイルの書き込みに失敗しました。\n\n%s"), szPath );
 	}
 	_lclose( hFile );
 	return;
@@ -7653,7 +7648,7 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 
 	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
 	if( NULL == hwndSQLPLUS ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n") );
+		ErrorMessage( m_hWnd, _T("Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n") );
 		return;
 	}
 	/* テキストが変更されている場合 */
@@ -7712,11 +7707,11 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			&dwResult
 		);
 		if( !bResult ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_TOPMOST | MB_ICONSTOP, GSTR_APPNAME, _T("Oracle SQL*Plusからの反応がありません。\nしばらく待ってから再び実行してください。") );
+			TopErrorMessage( m_hWnd, _T("Oracle SQL*Plusからの反応がありません。\nしばらく待ってから再び実行してください。") );
 		}
 	}else{
 		ErrorBeep();
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("SQLをファイルに保存しないとOracle SQL*Plusで実行できません。\n") );
+		ErrorMessage( m_hWnd, _T("SQLをファイルに保存しないとOracle SQL*Plusで実行できません。\n") );
 		return;
 	}
 	return;
@@ -7731,7 +7726,7 @@ void CEditView::Command_ACTIVATE_SQLPLUS( void )
 	HWND		hwndSQLPLUS;
 	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
 	if( NULL == hwndSQLPLUS ){
-		::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n") );
+		ErrorMessage( m_hWnd, _T("Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n") );
 		return;
 	}
 	/* Oracle SQL*Plusをアクティブにする */
@@ -8061,11 +8056,11 @@ void CEditView::Command_COMPARE( void )
 			break;
 		}
 		if( nLineLenDes > sizeof( m_pShareData->m_szWork ) ){
-			::MYMESSAGEBOX( m_hWnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, GSTR_APPNAME,
+			TopErrorMessage( m_hWnd,
 				_T("比較先のファイル\n%s\n%dバイトを超える行があります。\n")
 				_T("比較できません。"),
 				szPath,
-				sizeof( m_pShareData->m_szWork)
+				sizeof( m_pShareData->m_szWork )
 			);
 			return;
 		}
@@ -8126,10 +8121,10 @@ end_of_compare:;
 
 	//	2002/05/11 YAZAKI 親ウィンドウをうまく設定してみる。
 	if( !bDefferent ){
-		::MYMESSAGEBOX( hwndMsgBox, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME, _T("異なる箇所は見つかりませんでした。") );
+		TopInfoMessage( hwndMsgBox, _T("異なる箇所は見つかりませんでした。") );
 	}
 	else{
-		::MYMESSAGEBOX( hwndMsgBox, MB_OK | MB_ICONINFORMATION | MB_TOPMOST, GSTR_APPNAME, _T("異なる箇所が見つかりました。") );
+		TopInfoMessage( hwndMsgBox, _T("異なる箇所が見つかりました。") );
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
@@ -8345,7 +8340,7 @@ void CEditView::Command_RECKEYMACRO( void )
 		// 2003.06.23 Moca 記録用キーマクロのフルパスをCShareData経由で取得
 		nRet = CShareData::getInstance()->GetMacroFilename( -1, szInitDir, MAX_PATH ); 
 		if( nRet <= 0 ){
-			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"), nRet );
+			ErrorMessage( m_hWnd, _T("マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"), nRet );
 			return;
 		}else{
 			_tcscpy( m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
@@ -8357,7 +8352,7 @@ void CEditView::Command_RECKEYMACRO( void )
 			m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName
 		);
 		if ( !nSaveResult ){
-			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("マクロファイルを作成できませんでした。\n\n%s"), m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName );
+			ErrorMessage(	m_hWnd, _T("マクロファイルを作成できませんでした。\n\n%s"), m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 	}else{
 		m_pShareData->m_bRecordingKeyMacro = TRUE;
@@ -8388,7 +8383,7 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	//	Jun. 16, 2002 genta
 	if( !m_pcEditDoc->m_pcSMacroMgr->IsSaveOk() ){
 		//	保存不可
-		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("保存可能なマクロがありません．キーボードマクロ以外は保存できません．") );
+		ErrorMessage( m_hWnd, _T("保存可能なマクロがありません．キーボードマクロ以外は保存できません．") );
 	}
 
 	CDlgOpenFile	cDlgOpenFile;
@@ -8421,7 +8416,7 @@ void CEditView::Command_SAVEKEYMACRO( void )
 	//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 	//@@@ 2002.1.24 YAZAKI
 	if ( !m_pcEditDoc->m_pcSMacroMgr->Save( STAND_KEYMACRO, m_hInstance, szPath ) ){
-		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("マクロファイルを作成できませんでした。\n\n%s"), szPath );
+		ErrorMessage( m_hWnd, _T("マクロファイルを作成できませんでした。\n\n%s"), szPath );
 	}
 	return;
 }
@@ -8451,7 +8446,7 @@ void CEditView::Command_EXECKEYMACRO( void )
 			NULL
 		);
 		if ( !bLoadResult ){
-			::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName );
+			ErrorMessage( m_hWnd, _T("ファイルを開けませんでした。\n\n%s"), m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
@@ -8571,7 +8566,7 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 		pszType
 	);
 	if ( !bLoadResult ){
-		::MYMESSAGEBOX(	m_hWnd, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("マクロの読み込みに失敗しました。\n\n%s"), pszPath );
+		ErrorMessage( m_hWnd, _T("マクロの読み込みに失敗しました。\n\n%s"), pszPath );
 	}
 	else {
 		m_pcEditDoc->m_pcSMacroMgr->Exec( TEMP_KEYMACRO, m_hInstance, this, FA_NONRECORD | FA_FROMMACRO );

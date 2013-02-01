@@ -209,7 +209,7 @@ INT_PTR CPropKeyHelp::DispatchEvent(
 
 				if(wID == IDC_BUTTON_KEYHELP_INS){	/* 挿入 */
 					if( nIndex2 >= MAX_KEYHELP_FILE ){
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("これ以上登録できません。"));
+						ErrorMessage( hwndDlg, _T("これ以上登録できません。"));
 						return FALSE;
 					}if( -1 == nIndex ){
 						/* 選択中でなければ最後にする。 */
@@ -219,7 +219,7 @@ INT_PTR CPropKeyHelp::DispatchEvent(
 					}
 				}else{								/* 更新 */
 					if( -1 == nIndex ){
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("更新する辞書をリストから選択してください。"));
+						ErrorMessage( hwndDlg, _T("更新する辞書をリストから選択してください。"));
 						return FALSE;
 					}
 				}
@@ -237,7 +237,7 @@ INT_PTR CPropKeyHelp::DispatchEvent(
 					if( _tcscmp(szPath, szPath2) == 0 ){
 						if( (wID ==IDC_BUTTON_KEYHELP_UPD) && (i == nIndex) ){	/* 更新時、変わっていなかったら何もしない */
 						}else{
-							::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("既に登録済みの辞書です。"));
+							ErrorMessage( hwndDlg, _T("既に登録済みの辞書です。"));
 							return FALSE;
 						}
 					}
@@ -247,7 +247,7 @@ INT_PTR CPropKeyHelp::DispatchEvent(
 				{
 					FILE* fp;
 					if( (fp=_tfopen_absini(szPath,"r")) == NULL ){	// 2006.02.01 genta 本体からの相対パスを受け付ける	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-						::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), szPath );
+						ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%s"), szPath );
 						return FALSE;
 					}
 					// 開けたなら1行目を取得してから閉じる
@@ -681,7 +681,7 @@ bool CPropKeyHelp::Import(HWND hwndDlg)
 
 	FILE		*fp;
 	if( (fp = fopen(szPath, "r")) == NULL ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), szPath );
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%s"), szPath );
 		return false;
 	}
 	/* LIST内のデータ全削除 */
@@ -753,7 +753,7 @@ bool CPropKeyHelp::Import(HWND hwndDlg)
 
 		//About
 		if(strlen(p2)>DICT_ABOUT_LEN){
-			::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, "辞書の説明は%d文字以内にしてください。\n", DICT_ABOUT_LEN );
+			ErrorMessage( hwndDlg, _T("辞書の説明は%d文字以内にしてください。\n"), DICT_ABOUT_LEN );
 			++invalid_record;
 			continue;
 		}
@@ -769,8 +769,8 @@ bool CPropKeyHelp::Import(HWND hwndDlg)
 	SetData(hwndDlg);
 	// 2007.02.03 genta 失敗したら警告する
 	if( invalid_record > 0 ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONWARNING, GSTR_APPNAME,
-		"一部のデータが読み込めませんでした\n不正な行数: %d",
+		WarningMessage( hwndDlg,
+		_T("一部のデータが読み込めませんでした\n不正な行数: %d"),
 		invalid_record );
 	}
 	return true;
@@ -800,7 +800,7 @@ bool CPropKeyHelp::Export(HWND hwndDlg)
 	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
 	FILE		*fp;
 	if( (fp = fopen(szXPath, "w")) == NULL ){
-		::MYMESSAGEBOX( hwndDlg, MB_OK | MB_ICONSTOP, GSTR_APPNAME, _T("ファイルを開けませんでした。\n\n%s"), szXPath );
+		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%s"), szXPath );
 		return false;
 	}
 
@@ -821,7 +821,7 @@ bool CPropKeyHelp::Export(HWND hwndDlg)
 	}
 	fclose(fp);
 
-	::MYMESSAGEBOX(	hwndDlg, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME,
+	InfoMessage( hwndDlg,
 		_T("ファイルへエクスポートしました。\n\n%s"), szXPath
 	);
 	return true;
