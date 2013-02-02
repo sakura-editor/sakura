@@ -44,7 +44,7 @@
 #define IDI_ICON_GREP                   212
 #define IDI_PRINTER                     215
 #define IDC_CURSOR_COPYARROW            220
-#define IDC_CURSOR_HAND                 221
+//#define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
 #define IDC_CURSOR_RVARROW              223
 #define IDC_CURSOR_ISEARCH_F            224
