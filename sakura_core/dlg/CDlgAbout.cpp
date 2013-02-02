@@ -20,6 +20,7 @@
 
 #include "StdAfx.h"
 #include "dlg/CDlgAbout.h"
+#include "_os/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
@@ -319,9 +320,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	switch ( msg ) {
 	case WM_SETCURSOR:
 		// カーソル形状変更
-		HCURSOR hCursor;
-		hCursor = LoadCursor( GetModuleHandle( NULL ), MAKEINTRESOURCE( IDC_CURSOR_HAND ) );
-		SetCursor( hCursor );
+		SetHandCursor();		// Hand Cursorを設定 2013/1/29 Uchi
 		return (LRESULT)0;
 	case WM_LBUTTONDOWN:
 		// キーボードフォーカスを自分に当てる

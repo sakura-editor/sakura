@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include <process.h> // _beginthreadex
+#include <limits.h>
 #include "CEditView.h"
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
@@ -7,12 +8,12 @@
 #include "window/CEditWnd.h"
 #include "_os/CDropTarget.h" // CDataObject
 #include "_os/CClipboard.h"
+#include "_os/HandCursor.h"
 #include "COpeBlk.h"
 #include "doc/CLayout.h"
 #include "CWaitCursor.h"
 #include "util/input.h"
 #include "util/os.h"
-#include <limits.h>
 #include "sakura_rc.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -968,7 +969,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				)
 			){
 				/* ŽèƒJ[ƒ\ƒ‹ */
-				::SetCursor( ::LoadCursor( G_AppInstance(), MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
+				SetHandCursor();		// Hand Cursor‚ðÝ’è 2013/1/29 Uchi
 			}else{
 				//migemo isearch 2004.10.22
 				if( m_nISearchMode > 0 ){

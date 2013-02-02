@@ -3065,6 +3065,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\_os\HandCursor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\_os\OleTypes.h"
 					>
 				</File>

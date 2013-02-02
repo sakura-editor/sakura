@@ -18,14 +18,11 @@
 
 #include "StdAfx.h"
 #include "CPrintPreview.h"
+#include "_os/HandCursor.h"
 #include "doc/CLayout.h"
 #include "window/CEditWnd.h"
-//#include "charset/charcode.h"
-//#include "dlg/CDlgPrintPage.h"
-#include "dlg/CDlgCancel.h"/// 2002/2/3 aroka from here
+#include "dlg/CDlgCancel.h" /// 2002/2/3 aroka from here
 #include "dlg/CDlgInput1.h" /// 2007.02.11 Moca
-//#include <stdio.h>/// 2002/2/3 aroka to here
-//#include <vector>
 #include "CEditApp.h"
 #include "util/window.h"
 #include "util/shell.h"
@@ -568,7 +565,7 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 {
 	/* ŽèƒJ[ƒ\ƒ‹ */
-	::SetCursor( ::LoadCursor( CEditApp::getInstance()->GetAppInstance(), MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
+	SetHandCursor();		// Hand Cursor‚ðÝ’è 2013/1/29 Uchi
 	if( !m_pParentWnd->GetDragMode() ){
 		return 0;
 	}

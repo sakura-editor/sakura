@@ -2554,7 +2554,9 @@ IDI_PRINTER             ICON    DISCARDABLE     "../resource/printer.ico"
 //
 
 IDC_CURSOR_COPYARROW    CURSOR  DISCARDABLE     "../resource/cursor_copy.cur"
+#ifdef IDC_CURSOR_HAND
 IDC_CURSOR_HAND         CURSOR  DISCARDABLE     "../resource/cursor_hand.cur"
+#endif
 IDC_CURSOR_MOVEARROW    CURSOR  DISCARDABLE     "../resource/cursor_move.cur"
 IDC_CURSOR_RVARROW      CURSOR  DISCARDABLE     "../resource/cursor_rvarrow.cur"
 IDC_CURSOR_ISEARCH_F    CURSOR  DISCARDABLE     "../resource/cursor_isf.cur"
