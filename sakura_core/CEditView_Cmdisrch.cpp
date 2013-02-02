@@ -543,12 +543,11 @@ void CEditView::ISearchWordMake(void)
 
 		{
 			//migemoで捜す
-			unsigned char* pszMigemoWord = m_pcmigemo->migemo_query((unsigned char*)m_szCurSrchKey);
+			std::string strMigemoWord = m_pcmigemo->migemo_query_a((unsigned char *)m_szCurSrchKey);
 			
 			/* 検索パターンのコンパイル */
-			m_CurRegexp.Compile((char*)pszMigemoWord , nFlag );
+			m_CurRegexp.Compile(strMigemoWord.c_str(), nFlag );
 
-			m_pcmigemo->migemo_release(pszMigemoWord);
 		}
 		break;
 	}
