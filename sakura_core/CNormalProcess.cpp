@@ -36,7 +36,7 @@
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine )
+CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 : m_pcEditWnd( 0 )
 , CProcess( hInstance, lpCmdLine )
 {
@@ -288,7 +288,7 @@ bool CNormalProcess::InitializeProcess()
 
 	//ウィンドウキャプション更新
 	m_pcEditWnd->m_cEditDoc.UpdateCaption();
-	
+
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
 

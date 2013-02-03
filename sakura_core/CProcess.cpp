@@ -27,7 +27,7 @@
 */
 CProcess::CProcess(
 	HINSTANCE	hInstance,		//!< handle to process instance
-	LPTSTR		lpCmdLine		//!< pointer to command line
+	LPCTSTR		lpCmdLine		//!< pointer to command line
 )
 : m_hInstance( hInstance )
 , m_hWnd( 0 )

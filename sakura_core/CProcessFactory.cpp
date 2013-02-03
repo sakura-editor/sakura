@@ -47,7 +47,7 @@ class CProcess;
 	@date 2002/01/08
 	@date 2006/04/10 ryoji
 */
-CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPTSTR lpCmdLine )
+CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 {
 	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
 

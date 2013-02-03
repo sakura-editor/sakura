@@ -30,7 +30,7 @@ class CEditWnd;
 class SAKURA_CORE_API CNormalProcess : public CProcess {
 public:
 	//コンストラクタ・デストラクタ
-	CNormalProcess( HINSTANCE hInstance, LPTSTR lpCmdLine );
+	CNormalProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine );
 	virtual ~CNormalProcess();
 
 protected:
