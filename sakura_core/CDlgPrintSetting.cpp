@@ -17,9 +17,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <stdio.h>
 #include "CDlgPrintSetting.h"
-#include "CPrint.h"
 #include "CDlgInput1.h"
 #include "Funccode.h"		// Stonee, 2001/03/12
 #include "etc_uty.h"		// Stonee, 2001/03/12
@@ -213,7 +211,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 				_T("設定の名称を入力してください。"),
 				_countof( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName ) - 1,
 				szWork
-				);
+			);
 			if( !bDlgInputResult ){
 				return TRUE;
 			}
@@ -359,9 +357,9 @@ int CDlgPrintSetting::GetData( void )
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX = ::GetDlgItemInt( m_hWnd, IDC_EDIT_MARGINRX, NULL, FALSE ) * 10;
 
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_WORDWRAP ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = TRUE;
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = true;
 	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = FALSE;
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = false;
 	}
 	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_LINENUMBER ) ){
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintLineNumber = TRUE;
@@ -445,29 +443,17 @@ int CDlgPrintSetting::GetData( void )
 	::GetDlgItemText( m_hWnd, IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[2], HEADER_MAX );	//	100文字で制限しないと。。。
 
 	//行頭禁則	//@@@ 2002.04.09 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUHEAD ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuHead =
+		( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUHEAD ) );
 	//行末禁則	//@@@ 2002.04.09 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUTAIL ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuTail =
+		( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUTAIL ) );
 	//改行文字をぶら下げる	//@@@ 2002.04.13 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKURET ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet =
+		( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKURET ) );
 	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
-	if( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUKUTO ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = TRUE;
-	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = FALSE;
-	}
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto =
+		( BST_CHECKED == ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_PS_KINSOKUKUTO ) );
 
 	return TRUE;
 }

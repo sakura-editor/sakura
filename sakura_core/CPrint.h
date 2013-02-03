@@ -19,6 +19,7 @@ class CPrint;
 #define _CPRINT_H_
 
 #include <winspool.h>
+#include <commdlg.h> // PRINTDLG
 
 struct	MYDEVMODE {
 	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */
@@ -83,11 +84,11 @@ struct PRINTSETTING {
 	int				m_nPrintMarginRX;					/*!< 印刷用紙マージン 右(mm単位) */
 	int				m_nPrintPaperOrientation;			/*!< 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
 	int				m_nPrintPaperSize;					/*!< 用紙サイズ */
-	BOOL			m_bPrintWordWrap;					/*!< 英文ワードラップする */
-	BOOL			m_bPrintKinsokuHead;				/*!< 行頭禁則する */	//@@@ 2002.04.09 MIK
-	BOOL			m_bPrintKinsokuTail;				/*!< 行末禁則する */	//@@@ 2002.04.09 MIK
-	BOOL			m_bPrintKinsokuRet;					/*!< 改行文字のぶら下げ */	//@@@ 2002.04.13 MIK
-	BOOL			m_bPrintKinsokuKuto;				/*!< 句読点のぶらさげ */	//@@@ 2002.04.17 MIK
+	bool			m_bPrintWordWrap;					//!< 英文ワードラップする
+	bool			m_bPrintKinsokuHead;				//!< 行頭禁則する		//@@@ 2002.04.09 MIK
+	bool			m_bPrintKinsokuTail;				//!< 行末禁則する		//@@@ 2002.04.09 MIK
+	bool			m_bPrintKinsokuRet;					//!< 改行文字のぶら下げ	//@@@ 2002.04.13 MIK
+	bool			m_bPrintKinsokuKuto;				//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
 	BOOL			m_bPrintLineNumber;					/*!< 行番号を印刷する */
 
 

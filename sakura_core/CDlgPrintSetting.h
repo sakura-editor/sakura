@@ -17,6 +17,7 @@ class CDlgPrintSetting;
 #define _CDLGPRINTSETTING_H_
 
 #include "CDialog.h"
+#include "CPrint.h" //PRINTSETTING
 
 /*!	印刷設定ダイアログ
 

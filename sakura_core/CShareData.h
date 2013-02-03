@@ -283,11 +283,11 @@ struct STypeConfig {
 	char				m_cLineTermChar;				/*!< 行番号区切り文字 */
 	int					m_nVertLineIdx[MAX_VERTLINES];	/*!< 指定桁縦線 */
 
-	BOOL				m_bWordWrap;					/*!< 英文ワードラップをする */
-	BOOL				m_bKinsokuHead;					/*!< 行頭禁則をする */	//@@@ 2002.04.08 MIK
-	BOOL				m_bKinsokuTail;					/*!< 行末禁則をする */	//@@@ 2002.04.08 MIK
-	BOOL				m_bKinsokuRet;					/*!< 改行文字のぶら下げ */	//@@@ 2002.04.13 MIK
-	BOOL				m_bKinsokuKuto;					/*!< 句読点のぶらさげ */	//@@@ 2002.04.17 MIK
+	BOOL				m_bWordWrap;					//!< 英文ワードラップをする
+	bool				m_bKinsokuHead;					//!< 行頭禁則をする		//@@@ 2002.04.08 MIK
+	bool				m_bKinsokuTail;					//!< 行末禁則をする		//@@@ 2002.04.08 MIK
+	bool				m_bKinsokuRet;					//!< 改行文字のぶら下げ	//@@@ 2002.04.13 MIK
+	bool				m_bKinsokuKuto;					//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
 	char				m_szKinsokuHead[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 	char				m_szKinsokuTail[200];			/*!< 行頭禁則文字 */	//@@@ 2002.04.08 MIK
 	char				m_szKinsokuKuto[200];			/*!< 句読点ぶらさげ文字 */	// 2009.08.07 ryoji
@@ -335,7 +335,7 @@ struct STypeConfig {
 	BOOL				m_bAutoIndent_ZENSPACE;			/* 日本語空白もインデント */
 	BOOL				m_bRTrimPrevLine;				/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
 	int					m_nIndentLayout;				/* 折り返しは2行目以降を字下げ表示 */
-	
+
 	//	Sep. 10, 2002 genta
 	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */
 
