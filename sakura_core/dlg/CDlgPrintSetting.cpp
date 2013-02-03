@@ -356,9 +356,9 @@ int CDlgPrintSetting::GetData( void )
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintMarginRX = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_MARGINRX, NULL, FALSE ) * 10;
 
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_WORDWRAP ) ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = TRUE;
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = true;
 	}else{
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = FALSE;
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintWordWrap = false;
 	}
 	if( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_LINENUMBER ) ){
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintLineNumber = TRUE;
