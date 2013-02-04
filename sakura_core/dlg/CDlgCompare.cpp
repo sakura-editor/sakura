@@ -215,4 +215,58 @@ LPVOID CDlgCompare::GetHelpIdTable(void)
 }
 //@@@ 2002.01.18 add end
 
+INT_PTR CDlgCompare::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
 
+	if( wMsg == WM_GETMINMAXINFO ){
+		return OnMinMaxInfo( lParam );
+	}
+	return result;
+}
+
+BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
+{
+	CreateSizeBox();
+	
+	RECT rc;
+	::GetWindowRect( hwndDlg, &rc );
+	m_ptDefaultSize.x = rc.right - rc.left;
+	m_ptDefaultSize.y = rc.bottom - rc.top;
+
+	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+}
+
+BOOL CDlgCompare::OnSize( WPARAM wParam, LPARAM lParam )
+{
+	/* Šî’êƒNƒ‰ƒXƒƒ“ƒo */
+	CDialog::OnSize( wParam, lParam );
+
+	HWND hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
+	if( hwndList ){
+		RECT rc;
+		POINT po1, po2;
+
+		::GetWindowRect( hwndList, &rc );
+
+		po1.x = rc.left;
+		po1.y = rc.top;
+		::ScreenToClient( GetHwnd(), &po1 );
+		po2.x = rc.right;
+		po2.y = rc.bottom;
+		::ScreenToClient( GetHwnd(), &po2 );
+		::MoveWindow( hwndList, po1.x, po1.y, LOWORD(lParam)-po1.x, (po2.y-po1.y), TRUE);
+	}
+	return TRUE;
+}
+
+BOOL CDlgCompare::OnMinMaxInfo( LPARAM lParam )
+{
+	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
+	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
+	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
+	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y;
+	return 0;
+}
