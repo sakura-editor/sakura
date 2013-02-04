@@ -46,8 +46,16 @@ protected:
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 標準以外のメッセージを捕捉する
+	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
+	BOOL OnSize( WPARAM wParam, LPARAM lParam );
+	BOOL OnMinMaxInfo( LPARAM lParam );
+
 	void SetData( void );	/* ダイアログデータの設定 */
 	int GetData( void );	/* ダイアログデータの取得 */
+
+private:
+	POINT			m_ptDefaultSize;
 };
 
 
