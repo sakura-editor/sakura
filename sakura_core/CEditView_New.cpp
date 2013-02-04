@@ -894,62 +894,41 @@ searchnext:;
 								break;
 							}
 						}
-						/* キーワードが登録単語ならば、色を変える */
 						int nKeyLen = nKeyEnd - nPos;
-						/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
-						int nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(		//MIK UPDATE 2000.12.01 binary search
-							TypeDataPtr->m_nKeyWordSetIdx[0],
-							&pLine[nPos],
-							nKeyLen
-						);
-						if( nIdx != -1 ){
-							if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
-								/* テキスト表示 */
-								nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
-							}
 
-							/* 現在の色を指定 */
-							nBgn = nPos;
-							nCOMMENTMODE = COLORIDX_KEYWORD1;	/* 強調キーワード1 */ // 2002/03/13 novice
-							nCOMMENTEND = nKeyEnd;
-							if( !bSearchStringMode ){
-								SetCurrentColor( hdc, nCOMMENTMODE );
+						/* キーワードが登録単語ならば、色を変える */
+						// 2005.01.13 MIK 強調キーワード数追加に伴う配列化 //MIK 2000.12.01 second keyword & binary search
+						for( int n = 0; n < 10; n++ )
+						{
+							// 強調キーワードは前詰めで設定されるので、未設定のIndexがあれば中断
+							if(TypeDataPtr->m_nKeyWordSetIdx[n] == -1 ){
+									break;
 							}
-						}else{		//MIK START ADD 2000.12.01 second keyword & binary search
-							// 2005.01.13 MIK 強調キーワード数追加に伴う配列化
-							for( int my_i = 1; my_i < 10; my_i++ )
+							else if(TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + n].m_bDisp)
 							{
-								if(TypeDataPtr->m_nKeyWordSetIdx[my_i] != -1 && /* キーワードセット */							//MIK 2000.12.01 second keyword
-									TypeDataPtr->m_ColorInfoArr[COLORIDX_KEYWORD1 + my_i].m_bDisp)									//MIK
-								{																							//MIK
-									/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */						//MIK
-									int nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(									//MIK 2000.12.01 binary search
-										TypeDataPtr->m_nKeyWordSetIdx[my_i] ,													//MIK
-										&pLine[nPos],																		//MIK
-										nKeyLen																					//MIK
-									);																						//MIK
-									if( nIdx != -1 ){																		//MIK
-										if( y/* + nLineHeight*/ >= m_nViewAlignTop ){										//MIK
-											/* テキスト表示 */																//MIK
-											nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );	//MIK
-										}																					//MIK
-										/* 現在の色を指定 */																//MIK
-										nBgn = nPos;																		//MIK
-										nCOMMENTMODE = COLORIDX_KEYWORD1 + my_i;	/* 強調キーワード2 */ // 2002/03/13 novice		//MIK
-										nCOMMENTEND = nKeyEnd;																	//MIK
-										if( !bSearchStringMode ){															//MIK
-											SetCurrentColor( hdc, nCOMMENTMODE );											//MIK
-										}																					//MIK
-										break;
-									}																						//MIK
-								}																							//MIK
-								else
-								{
-									if(TypeDataPtr->m_nKeyWordSetIdx[my_i] == -1 )
-										break;
+								/* ｎ番目のセットから指定キーワードをサーチ 無いときは-1を返す */
+								int nIdx = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SearchKeyWord2(
+									TypeDataPtr->m_nKeyWordSetIdx[n],
+									&pLine[nPos],
+									nKeyLen
+								);
+								if( nIdx >= 0 ){
+									if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
+										/* テキスト表示 */
+										nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
+									}
+									/* 現在の色を指定 */
+									nBgn = nPos;
+									nCOMMENTMODE = COLORIDX_KEYWORD1 + n;
+									nCOMMENTEND = nKeyEnd;
+									if( !bSearchStringMode ){
+										SetCurrentColor( hdc, nCOMMENTMODE );
+									}
+									break;
 								}
 							}
-						}			//MIK END
+						}
+						//MIK END
 					}
 					//	From Here Mar. 4, 2001 genta
 					if( IS_KEYWORD_CHAR( pLine[nPos] ))	bKeyWordTop = false;
