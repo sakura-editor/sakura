@@ -1644,7 +1644,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose )	//2002.02.08 hor ˆø”’Ç‰Á
 			poCaret.x = nColTo - 1;
 			poCaret.y = nLineTo - 1;
 
-			memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
+			memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poCaret, sizeof(poCaret) );
 
 			//	2006.07.09 genta ˆÚ“®‚É‘I‘ğó‘Ô‚ğ•Û‚·‚é‚æ‚¤‚É
 			::SendMessage( ::GetParent( ::GetParent( m_hwndParent ) ),

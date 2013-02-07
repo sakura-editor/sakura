@@ -104,7 +104,7 @@ void CEditApp::DoGrep()
 	}
 
 	/* 新規編集ウィンドウの追加 ver 0 */
-	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_hwndTray, pCmdLine, 0, false,
+	CEditApp::OpenNewEditor( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, pCmdLine, 0, false,
 		false, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
 
 	delete [] pCmdLine;
@@ -149,16 +149,16 @@ CEditApp::CEditApp()
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	if( m_pShareData->m_hAccel != NULL ){
-		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-		m_pShareData->m_hAccel = NULL;
+	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
+		m_pShareData->m_sHandles.m_hAccel = NULL;
 	}
-	m_pShareData->m_hAccel =
+	m_pShareData->m_sHandles.m_hAccel =
 		CKeyBind::CreateAccerelator(
 			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 		);
-	if( NULL == m_pShareData->m_hAccel ){
+	if( NULL == m_pShareData->m_sHandles.m_hAccel ){
 		ErrorMessage(
 			NULL,
 			_T("CEditApp::CEditApp()\n")
@@ -419,7 +419,7 @@ LRESULT CEditApp::DispatchEvent(
 
 	case MYWM_HTMLHELP:
 		{
-			TCHAR* pWork = m_pShareData->m_szWork;
+			TCHAR* pWork = m_pShareData->m_sWorkBuffer.m_szWork;
 
 			//szHtmlFile取得
 			TCHAR	szHtmlHelpFile[1024];
@@ -550,16 +550,16 @@ LRESULT CEditApp::DispatchEvent(
 //@@		m_cShareData.SaveShareData();
 
 			/* アクセラレータテーブルの再作成 */
-			if( m_pShareData->m_hAccel != NULL ){
-				::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-				m_pShareData->m_hAccel = NULL;
+			if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+				::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
+				m_pShareData->m_sHandles.m_hAccel = NULL;
 			}
-			m_pShareData->m_hAccel =
+			m_pShareData->m_sHandles.m_hAccel =
 				CKeyBind::CreateAccerelator(
 					m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
 					m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
 				);
-			if( NULL == m_pShareData->m_hAccel ){
+			if( NULL == m_pShareData->m_sHandles.m_hAccel ){
 				ErrorMessage(
 					NULL,
 					_T("CEditApp::DispatchEvent()\n")
@@ -726,8 +726,8 @@ LRESULT CEditApp::DispatchEvent(
 					CEditApp::TerminateApplication( m_hWnd );	// 2006.12.25 ryoji 引数追加
 					break;
 				default:
-					if( nId - IDM_SELWINDOW  >= 0 && nId - IDM_SELWINDOW  < m_pShareData->m_nEditArrNum ){
-						hwndWork = m_pShareData->m_pEditArr[nId - IDM_SELWINDOW].m_hWnd;
+					if( nId - IDM_SELWINDOW  >= 0 && nId - IDM_SELWINDOW  < m_pShareData->m_sNodes.m_nEditArrNum ){
+						hwndWork = m_pShareData->m_sNodes.m_pEditArr[nId - IDM_SELWINDOW].m_hWnd;
 
 						/* アクティブにする */
 						ActivateFrameWindow( hwndWork );
@@ -964,7 +964,7 @@ bool CEditApp::OpenNewEditor(
 	DLLSHAREDATA*	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return false;
 	}
@@ -1130,7 +1130,7 @@ bool CEditApp::OpenNewEditor2(
 	pShareData = CShareData::getInstance()->GetShareData();
 
 	/* 編集ウィンドウの上限チェック */
-	if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return false;
 	}
@@ -1193,7 +1193,7 @@ void CEditApp::TerminateApplication(
 	/* 「すべてのウィンドウを閉じる」要求 */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 	BOOL bCheckConfirm = (pShareData->m_Common.m_sGeneral.m_bExitConfirm)? FALSE: TRUE;	// 2006.12.25 ryoji 終了確認済みならそれ以上は確認しない
 	if( CloseAllEditor( bCheckConfirm, hWndFrom, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
-		::PostMessage( pShareData->m_hwndTray, WM_CLOSE, 0, 0 );
+		::PostMessage( pShareData->m_sHandles.m_hwndTray, WM_CLOSE, 0, 0 );
 	}
 	return;
 }
@@ -1298,8 +1298,8 @@ int	CEditApp::CreatePopUpMenu_L( void )
 
 	/* 現在開いている編集窓のリストをメニューにする */
 	j = 0;
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) ){
 			++j;
 		}
 	}
@@ -1307,11 +1307,11 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	if( j > 0 ){
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T(""), FALSE );
 		j = 0;
-		for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-			if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+		for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) ){
 				/* トレイからエディタへの編集ファイル名要求通知 */
-				::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-				pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+				::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
+				pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 					if( pfi->m_bIsGrep ){
 						/* データを指定バイト数以内に切り詰める */
 						CMemory		cmemDes;
@@ -1512,9 +1512,9 @@ void CEditApp::OnDestroy()
 	}
 
 	/* アクセラレータテーブルの削除 */
-	if( m_pShareData->m_hAccel != NULL ){
-		::DestroyAcceleratorTable( m_pShareData->m_hAccel );
-		m_pShareData->m_hAccel = NULL;
+	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
+		m_pShareData->m_sHandles.m_hAccel = NULL;
 	}
 
 	m_hWnd = NULL;

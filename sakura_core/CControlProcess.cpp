@@ -103,7 +103,7 @@ bool CControlProcess::InitializeProcess()
 		TopErrorMessage( NULL, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
 		return false;
 	}
-	m_pShareData->m_hwndTray = m_hWnd;
+	m_pShareData->m_sHandles.m_hwndTray = m_hWnd;
 
 	// 初期化完了イベントをシグナル状態にする
 	if( !::SetEvent( m_hEventCPInitialized ) ){
@@ -139,7 +139,7 @@ bool CControlProcess::MainLoop()
 */
 void CControlProcess::OnExitProcess()
 {
-	m_pShareData->m_hwndTray = NULL;
+	m_pShareData->m_sHandles.m_hwndTray = NULL;
 }
 
 CControlProcess::~CControlProcess()

@@ -870,37 +870,62 @@ struct IniFolder {
 	TCHAR m_szPrivateIniFile[_MAX_PATH];	// マルチユーザ用のiniファイルパス
 };	/* iniフォルダ設定 */
 
-//! 共有データ領域
-struct DLLSHAREDATA {
-	//	Oct. 27, 2000 genta
-	//!	データ構造 Version
-	/*	データ構造の異なるバージョンの同時起動を防ぐため
-		必ず先頭になくてはならない．
-	*/
-	unsigned int		m_vStructureVersion;
-	/* 共通作業域(保存しない) */
-	char				m_szWork[32000];
-	EditInfo			m_EditInfo_MYWM_GETFILEINFO;
-
-	DWORD				m_dwProductVersionMS;
-	DWORD				m_dwProductVersionLS;
-	HWND				m_hwndTray;
-	HWND				m_hwndDebug;
-	HACCEL				m_hAccel;
-	LONG				m_nSequences;	/* ウィンドウ連番 */
-	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
-	/**** 共通作業域(保存する) ****/
-	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
-	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
-
+//共有フラグ
+struct SShare_Flags{
 	BOOL				m_bEditWndChanging;				// 編集ウィンドウ切替中	// 2007.04.03 ryoji
-
 	/*	@@@ 2002.1.24 YAZAKI
 		キーボードマクロは、記録終了した時点でファイル「m_szKeyMacroFileName」に書き出すことにする。
 		m_bRecordingKeyMacroがTRUEのときは、キーボードマクロの記録中なので、m_szKeyMacroFileNameにアクセスしてはならない。
 	*/
 	BOOL				m_bRecordingKeyMacro;		/* キーボードマクロの記録中 */
 	HWND				m_hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
+};
+
+//共有ワークバッファ
+struct SShare_WorkBuffer{
+	char				m_szWork[32000];
+	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
+};
+
+//共有ハンドル
+struct SShare_Handles{
+	HWND				m_hwndTray;
+	HWND				m_hwndDebug;
+	HACCEL				m_hAccel;
+};
+
+//! 共有メモリ内構造体
+struct SShare_Nodes{
+	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
+	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
+	LONG				m_nSequences;	/* ウィンドウ連番 */
+	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
+};
+
+//EXE情報
+struct SShare_Version{
+	DWORD				m_dwProductVersionMS;
+	DWORD				m_dwProductVersionLS;
+};
+
+//! 共有データ領域
+struct DLLSHAREDATA {
+	// -- -- バージョン -- -- //
+	/*!
+		データ構造 Version	//	Oct. 27, 2000 genta
+		データ構造の異なるバージョンの同時起動を防ぐため
+		必ず先頭になくてはならない．
+	*/
+	unsigned int				m_vStructureVersion;
+
+	// -- -- 非保存対象 -- -- //
+	SShare_Version				m_sVersion;	//※読込は行わないが、書込は行う
+	SShare_WorkBuffer			m_sWorkBuffer;
+	SShare_Flags				m_sFlags;
+	SShare_Nodes				m_sNodes;
+	SShare_Handles				m_sHandles;
+
+	// -- -- 保存対象 -- -- //
 
 //@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
 	int					m_nMRUArrNum;

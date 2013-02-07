@@ -9966,7 +9966,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 			CShareData::getInstance()->TraceOut( "\r\n終了コード: %d\r\n", result );
 
 			// 2004.09.20 naoh 終了コードが1以上の時はアウトプットをアクティブにする
-			if(result > 0) ActivateFrameWindow( m_pShareData->m_hwndDebug );
+			if(result > 0) ActivateFrameWindow( m_pShareData->m_sHandles.m_hwndDebug );
 		}
 		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			Command_INSTEXT(FALSE, work, bufidx, TRUE);	/* 最後の文字の処理 */

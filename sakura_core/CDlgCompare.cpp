@@ -141,7 +141,7 @@ void CDlgCompare::SetData( void )
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
 //			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
@@ -208,7 +208,7 @@ int CDlgCompare::GetData( void )
 	*m_phwndCompareWnd = (HWND)::SendMessage( hwndList, LB_GETITEMDATA, nItem, 0 );
 	/* トレイからエディタへの編集ファイル名要求通知 */
 	::SendMessage( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
-	pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+	pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 	_tcscpy( m_pszComparePath, pfi->m_szPath );
 

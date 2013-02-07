@@ -502,7 +502,7 @@ HWND CEditWnd::Create(
 	m_hwndParent = hwndParent;
 
 	//ウィンドウ数制限
-	if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+	if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 		OkMessage( m_hWnd, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 		return NULL;
 	}
@@ -585,7 +585,7 @@ HWND CEditWnd::Create(
 	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
 	if( COsVersionInfo().IsWinVista_or_later() ){
 		m_bUIPI = FALSE;
-		::SendMessage( m_pShareData->m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)m_hWnd );
+		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)m_hWnd );
 		if( !m_bUIPI ){	// 返事が返らない
 			TopErrorMessage( m_hWnd,
 				_T("エディタ間の対話に失敗しました。\n")
@@ -1165,7 +1165,7 @@ void CEditWnd::MessageLoop( void )
 			// Wineでは別プロセスで作成したアクセラレータテーブルを使用することができない。
 			// m_bCreateAccelTblEachWinオプション選択によりプロセス毎にアクセラレータテーブルが作成されるようになる
 			// ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
-			HACCEL hAccel = m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ? m_hAccel : m_pShareData->m_hAccel;
+			HACCEL hAccel = m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ? m_hAccel : m_pShareData->m_sHandles.m_hAccel;
 
 			if( NULL != hAccel ){
 				if( TranslateAccelerator( msg.hwnd, hAccel, &msg ) ){}
@@ -1291,8 +1291,8 @@ LRESULT CEditWnd::DispatchEvent(
 		if( IDW_STATUSBAR == idCtl ){
 			if( 5 == lpdis->itemID ){ // 2003.08.26 Moca idがずれて作画されなかった
 				int	nColor;
-				if( m_pShareData->m_bRecordingKeyMacro	/* キーボードマクロの記録中 */
-				 && m_pShareData->m_hwndRecordingKeyMacro == m_hWnd	/* キーボードマクロを記録中のウィンドウ */
+				if( m_pShareData->m_sFlags.m_bRecordingKeyMacro	/* キーボードマクロの記録中 */
+				 && m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == m_hWnd	/* キーボードマクロを記録中のウィンドウ */
 				){
 					nColor = COLOR_BTNTEXT;
 				}else{
@@ -1622,10 +1622,10 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 		return 0L;
 	case WM_DESTROY:
-		if( m_pShareData->m_bRecordingKeyMacro ){					/* キーボードマクロの記録中 */
-			if( m_pShareData->m_hwndRecordingKeyMacro == m_hWnd ){	/* キーボードマクロを記録中のウィンドウ */
-				m_pShareData->m_bRecordingKeyMacro = FALSE;			/* キーボードマクロの記録中 */
-				m_pShareData->m_hwndRecordingKeyMacro = NULL;		/* キーボードマクロを記録中のウィンドウ */
+		if( m_pShareData->m_sFlags.m_bRecordingKeyMacro ){					/* キーボードマクロの記録中 */
+			if( m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == m_hWnd ){	/* キーボードマクロを記録中のウィンドウ */
+				m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;			/* キーボードマクロの記録中 */
+				m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;		/* キーボードマクロを記録中のウィンドウ */
 			}
 		}
 
@@ -1639,14 +1639,14 @@ LRESULT CEditWnd::DispatchEvent(
 		/* 編集ウィンドウリストからの削除 */
 		CShareData::getInstance()->DeleteEditWndList( m_hWnd );
 
-		if( m_pShareData->m_hwndDebug == m_hWnd ){
-			m_pShareData->m_hwndDebug = NULL;
+		if( m_pShareData->m_sHandles.m_hwndDebug == m_hWnd ){
+			m_pShareData->m_sHandles.m_hwndDebug = NULL;
 		}
 		m_hWnd = NULL;
 
 
 		/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
-		::PostMessage( m_pShareData->m_hwndTray, MYWM_DELETE_ME, 0, 0 );
+		::PostMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_DELETE_ME, 0, 0 );
 
 		/* Windows にスレッドの終了を要求します */
 		::PostQuitMessage( 0 );
@@ -1705,7 +1705,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case MYWM_GETFILEINFO:
 		/* トレイからエディタへの編集ファイル名要求通知 */
-		pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 		/* 編集ファイル情報を格納 */
 		m_cEditDoc.GetEditInfo( pfi );
@@ -1847,7 +1847,7 @@ LRESULT CEditWnd::DispatchEvent(
 				bSelect = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSelectingLock;
 			}
 			
-			ppoCaret = (POINT*)m_pShareData->m_szWork;
+			ppoCaret = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
 			//	2006.07.09 genta 強制解除しない
 			/*
 			カーソル位置変換
@@ -1881,7 +1881,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 	case MYWM_GETCARETPOS:	/* カーソル位置取得要求 */
-		ppoCaret = (POINT*)m_pShareData->m_szWork;
+		ppoCaret = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
 		/*
 		カーソル位置変換
 		 レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -1903,16 +1903,16 @@ LRESULT CEditWnd::DispatchEvent(
 		if( NULL == pLine ){
 			return 0;
 		}
-		if( nLineLen > sizeof( m_pShareData->m_szWork ) ){
-			memcpy( m_pShareData->m_szWork, pLine, sizeof( m_pShareData->m_szWork ) );
+		if( nLineLen > sizeof( m_pShareData->m_sWorkBuffer.m_szWork ) ){
+			memcpy( m_pShareData->m_sWorkBuffer.m_szWork, pLine, sizeof( m_pShareData->m_sWorkBuffer.m_szWork ) );
 		}else{
-			memcpy( m_pShareData->m_szWork, pLine, nLineLen );
+			memcpy( m_pShareData->m_sWorkBuffer.m_szWork, pLine, nLineLen );
 		}
 		return nLineLen;
 
 
 	case MYWM_ADDSTRING:
-		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_ADDTAIL, TRUE, (LPARAM)m_pShareData->m_szWork, (LPARAM)lstrlen( m_pShareData->m_szWork ), 0, 0 );
+		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_ADDTAIL, TRUE, (LPARAM)m_pShareData->m_sWorkBuffer.m_szWork, (LPARAM)lstrlen( m_pShareData->m_sWorkBuffer.m_szWork ), 0, 0 );
 		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
 		return 0L;
 
@@ -1982,7 +1982,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_NCACTIVATE:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（１）	// 2007.04.03 ryoji
 		// 前面にいるのが編集ウィンドウならアクティブ状態を保持する
-		if( m_pShareData->m_bEditWndChanging && IsSakuraMainWindow(::GetForegroundWindow()) ){
+		if( m_pShareData->m_sFlags.m_bEditWndChanging && IsSakuraMainWindow(::GetForegroundWindow()) ){
 			wParam = TRUE;	// アクティブ
 		}
 		lRes = DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -1994,7 +1994,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_SETTEXT:
 		// 編集ウィンドウ切替中（タブまとめ時）はタイトルバーのアクティブ／非アクティブ状態をできるだけ変更しないように（２）	// 2007.04.03 ryoji
 		// タイマーを使用してタイトルの変更を遅延する
-		if( m_pShareData->m_bEditWndChanging ){
+		if( m_pShareData->m_sFlags.m_bEditWndChanging ){
 			delete[] m_pszLastCaption;
 			m_pszLastCaption = new TCHAR[ ::_tcslen((LPCTSTR)lParam) + 1 ];
 			::_tcscpy( m_pszLastCaption, (LPCTSTR)lParam );	// 変更後のタイトルを記憶しておく
@@ -2120,8 +2120,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			break;
 		default:
 			//ウィンドウ切り替え
-			if( wID - IDM_SELWINDOW >= 0 && wID - IDM_SELWINDOW < m_pShareData->m_nEditArrNum ){
-				ActivateFrameWindow( m_pShareData->m_pEditArr[wID - IDM_SELWINDOW].m_hWnd );
+			if( wID - IDM_SELWINDOW >= 0 && wID - IDM_SELWINDOW < m_pShareData->m_sNodes.m_nEditArrNum ){
+				ActivateFrameWindow( m_pShareData->m_sNodes.m_pEditArr[wID - IDM_SELWINDOW].m_hWnd );
 			}
 			//最近使ったファイル
 			else if( wID - IDM_SELMRU >= 0 && wID - IDM_SELMRU < 999){
@@ -2600,7 +2600,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
 			}
 
-			if( !m_pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( !m_pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_RECKEYMACRO	, _T(""), _T("R") );
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_SAVEKEYMACRO, _T(""), _T("M") );
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_LOADKEYMACRO, _T(""), _T("A") );
@@ -2631,7 +2631,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , "登録済みマクロ", _T("B") );
 			//	To Here Sep. 14, 2001 genta
 
-			if( m_pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( m_pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
 				::CheckMenuItem( hMenu, F_RECKEYMACRO, MF_BYCOMMAND | MF_CHECKED );
 			}
 			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXECEXTMACRO, _T(""), _T("E") ); // 2008.10.22 syat 追加
@@ -3043,7 +3043,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 		/* 指定ファイルが開かれているか調べる */
 		if( CShareData::getInstance()->IsPathOpened( szFile, &hWndOwner ) ){
 			::SendMessage( hWndOwner, MYWM_GETFILEINFO, 0, 0 );
-			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 			/* アクティブにする */
 			ActivateFrameWindow( hWndOwner );
 			/* MRUリストへの登録 */
@@ -3108,7 +3108,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 				}
 				else{
 					/* 編集ウィンドウの上限チェック */
-					if( m_pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+					if( m_pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 						OkMessage( NULL, _T("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 						::DragFinish( hDrop );
 						return;
@@ -3268,7 +3268,7 @@ void CEditWnd::OnCaptionTimer( void )
 {
 	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
 	// まだ切替中ならタイマー継続
-	if( !m_pShareData->m_bEditWndChanging ){
+	if( !m_pShareData->m_sFlags.m_bEditWndChanging ){
 		::KillTimer( m_hWnd, IDT_CAPTION );
 		::SetWindowText( m_hWnd, m_pszLastCaption );
 	}
@@ -3308,12 +3308,12 @@ void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
 /* デバッグモニタモードに設定 */
 void CEditWnd::SetDebugModeON()
 {
-	if( NULL != m_pShareData->m_hwndDebug ){
-		if( IsSakuraMainWindow( m_pShareData->m_hwndDebug ) ){
+	if( NULL != m_pShareData->m_sHandles.m_hwndDebug ){
+		if( IsSakuraMainWindow( m_pShareData->m_sHandles.m_hwndDebug ) ){
 			return;
 		}
 	}
-	m_pShareData->m_hwndDebug = m_hWnd;
+	m_pShareData->m_sHandles.m_hwndDebug = m_hWnd;
 	m_cEditDoc.m_bDebugMode = false;
 
 // 2001/06/23 N.Nakatani アウトプット窓への出力テキストの追加F_ADDTAILが抑止されるのでとりあえず読み取り専用モードは辞めました
@@ -3326,8 +3326,8 @@ void CEditWnd::SetDebugModeON()
 //! デバックモニタモードの解除
 void CEditWnd::SetDebugModeOFF()
 {
-	if( m_pShareData->m_hwndDebug == m_hWnd ){
-		m_pShareData->m_hwndDebug = NULL;
+	if( m_pShareData->m_sHandles.m_hwndDebug == m_hWnd ){
+		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 		m_cEditDoc.m_bDebugMode = false;
 		m_cEditDoc.UpdateCaption();
 	}
@@ -4504,8 +4504,8 @@ void CEditWnd::WindowTopMost( int top )
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 		HWND hwnd;
 		int i;
-		for( i = 0, hwndInsertAfter = m_hWnd; i < m_pShareData->m_nEditArrNum; i++ ){
-			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
+		for( i = 0, hwndInsertAfter = m_hWnd; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ ){
+			hwnd = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
 			if( hwnd != m_hWnd && IsSakuraMainWindow( hwnd ) ){
 				if( !CShareData::getInstance()->IsSameGroup( m_hWnd, hwnd ) )
 					continue;
@@ -4621,7 +4621,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
 ////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
 			TCHAR c = ((1 + i%35) <= 9)?(_T('1') + i%35):(_T('A') + i%35 - 9);	// 2009.06.02 ryoji アクセスキーを 1-9,A-Z の範囲で再使用
-			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 			if( pfi->m_bIsGrep ){
 				/* データを指定バイト数以内に切り詰める */
 				CMemory		cmemDes;
@@ -4636,7 +4636,7 @@ LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum,
 					( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? _T("・・・"):_T("")
 				);
 			}
-			else if( pEditNodeArr[i].m_hWnd == m_pShareData->m_hwndDebug ){
+			else if( pEditNodeArr[i].m_hWnd == m_pShareData->m_sHandles.m_hwndDebug ){
 				wsprintf( szMemu, _T("&%c アウトプット"), c );
 
 			}

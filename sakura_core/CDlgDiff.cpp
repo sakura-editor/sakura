@@ -237,7 +237,7 @@ void CDlgDiff::SetData( void )
 			{
 				/* トレイからエディタへの編集ファイル名要求通知 */
 				::SendMessage( pEditNode[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
-				pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+				pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 				/* 自分ならスキップ */
 				if ( pEditNode[i].m_hWnd == pCEditDoc->m_hwndParent )
@@ -357,7 +357,7 @@ int CDlgDiff::GetData( void )
 
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( m_hWnd_Dst, MYWM_GETFILEINFO, 0, 0 );
-			pFileInfo = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+			pFileInfo = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 			_tcscpy( m_szFile2, pFileInfo->m_szPath );
 			m_bIsModifiedDst = pFileInfo->m_bIsModified;

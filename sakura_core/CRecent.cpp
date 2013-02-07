@@ -692,12 +692,12 @@ bool CRecent::EasyCreate( int nRecentType )
 	//@@@ 2003.06.28 MIK 追加
 	case RECENT_FOR_EDITNODE:	//ウインドウリスト
 		return Create(
-			(char*)m_pShareData->m_pEditArr,
-			&m_pShareData->m_nEditArrNum,
+			(char*)m_pShareData->m_sNodes.m_pEditArr,
+			&m_pShareData->m_sNodes.m_nEditArrNum,
 			NULL,
 			MAX_EDITWINDOWS,
 			NULL,
-			sizeof( m_pShareData->m_pEditArr[0] ),
+			sizeof( m_pShareData->m_sNodes.m_pEditArr[0] ),
 			(int)(&((EditNode*)0)->m_hWnd),
 			sizeof( ((EditNode*)0)->m_hWnd ),	//sizeof(HWND)
 			RECENT_CMP_MEMCMP

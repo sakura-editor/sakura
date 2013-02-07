@@ -927,8 +927,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 
 	switch( nId ){
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
+		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -940,8 +940,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		//	Jun. 16, 2002 genta
 		//	キーマクロエンジン以外のマクロを読み込んでいるときは
 		//	実行はできるが保存はできない．
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
+		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -950,8 +950,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 			return pcEditDoc->m_pcSMacroMgr->IsSaveOk();
 		}
 	case F_EXECKEYMACRO:	/* キーマクロの実行 */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
+		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -965,8 +965,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 			}
 		}
 	case F_LOADKEYMACRO:	/* キーマクロの読み込み */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
+		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;
@@ -991,7 +991,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	// 02/06/26 ai End
 
 	case F_COMPARE:	/* ファイル内容比較 */
-		if( 2 <= pShareData->m_nEditArrNum ){
+		if( 2 <= pShareData->m_sNodes.m_nEditArrNum ){
 			return true;
 		}else{
 			return false;
@@ -1031,7 +1031,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_FILENEW:	/* 新規作成 */
 	case F_GREP_DIALOG:	/* Grep */
 		/* 編集ウィンドウの上限チェック */
-		if( pShareData->m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
+		if( pShareData->m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
 			return false;
 		}else{
 			return true;
@@ -1174,8 +1174,8 @@ bool IsFuncChecked( CEditDoc* pcEditDoc, DLLSHAREDATA*	pShareData, int nId )
 	case F_FILE_REOPEN_UTF8:		return (CODE_UTF8 == pcEditDoc->m_nCharCode) ? true : false;
 	case F_FILE_REOPEN_UTF7:		return (CODE_UTF7 == pcEditDoc->m_nCharCode) ? true : false;
 	case F_RECKEYMACRO:	/* キーマクロの記録開始／終了 */
-		if( pShareData->m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
-			if( pShareData->m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
+		if( pShareData->m_sFlags.m_bRecordingKeyMacro ){	/* キーボードマクロの記録中 */
+			if( pShareData->m_sFlags.m_hwndRecordingKeyMacro == pcEditDoc->m_hwndParent ){	/* キーボードマクロを記録中のウィンドウ */
 				return true;
 			}else{
 				return false;

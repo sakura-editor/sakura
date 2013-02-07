@@ -1468,10 +1468,10 @@ void CShareData::ShareData_IO_Other( CProfile& cProfile )
 	if( ! cProfile.IsReadingMode() ){
 		TCHAR	iniVer[256];
 		wsprintf( iniVer, _T("%d.%d.%d.%d"), 
-					HIWORD( m_pShareData->m_dwProductVersionMS ),
-					LOWORD( m_pShareData->m_dwProductVersionMS ),
-					HIWORD( m_pShareData->m_dwProductVersionLS ),
-					LOWORD( m_pShareData->m_dwProductVersionLS ) );
+					HIWORD( m_pShareData->m_sVersion.m_dwProductVersionMS ),
+					LOWORD( m_pShareData->m_sVersion.m_dwProductVersionMS ),
+					HIWORD( m_pShareData->m_sVersion.m_dwProductVersionLS ),
+					LOWORD( m_pShareData->m_sVersion.m_dwProductVersionLS ) );
 		cProfile.IOProfileData( pszSecName, _T("szVersion")	, iniVer, sizeof( iniVer ) );
 	}
 }

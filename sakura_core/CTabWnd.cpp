@@ -1866,9 +1866,9 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 	{
 		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
-			if( m_pShareData->m_bEditWndChanging )
+			if( m_pShareData->m_sFlags.m_bEditWndChanging )
 				return;	// 切替の最中(busy)は要求を無視する
-			m_pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
+			m_pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
 
 			// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
 			DWORD_PTR dwResult;
@@ -1878,7 +1878,7 @@ void CTabWnd::ShowHideWindow( HWND hwnd, BOOL bDisp )
 
 		TabWnd_ActivateFrameWindow( hwnd );
 
-		m_pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
+		m_pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
 	}
 	else
 	{
@@ -1904,9 +1904,9 @@ void CTabWnd::HideOtherWindows( HWND hwndExclude )
 	{
 		HWND hwnd;
 		int	i;
-		for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+		for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
 		{
-			hwnd = m_pShareData->m_pEditArr[i].m_hWnd;
+			hwnd = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
 			if( IsSakuraMainWindow( hwnd ) )
 			{
 				if( !CShareData::getInstance()->IsSameGroup( hwndExclude, hwnd ) )

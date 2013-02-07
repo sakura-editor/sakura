@@ -455,20 +455,20 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		_tcscpy(m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName, _T(""));	/* キーワードマクロのファイル名 */ //@@@ 2002.1.24 YAZAKI
-		m_pShareData->m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
-		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+		m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;		/* キーボードマクロの記録中 */
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 		// 2004.05.13 Moca リソースから製品バージョンの取得
 		GetAppVersionInfo( NULL, VS_VERSION_INFO,
-			&m_pShareData->m_dwProductVersionMS, &m_pShareData->m_dwProductVersionLS );
-		m_pShareData->m_hwndTray = NULL;
-		m_pShareData->m_hAccel = NULL;
-		m_pShareData->m_hwndDebug = NULL;
-		m_pShareData->m_nSequences = 0;					/* ウィンドウ連番 */
-		m_pShareData->m_nGroupSequences = 0;			/* タブグループ連番 */	// 2007.06.20 ryoji
-		m_pShareData->m_nEditArrNum = 0;
+			&m_pShareData->m_sVersion.m_dwProductVersionMS, &m_pShareData->m_sVersion.m_dwProductVersionLS );
+		m_pShareData->m_sHandles.m_hwndTray = NULL;
+		m_pShareData->m_sHandles.m_hAccel = NULL;
+		m_pShareData->m_sHandles.m_hwndDebug = NULL;
+		m_pShareData->m_sNodes.m_nSequences = 0;					/* ウィンドウ連番 */
+		m_pShareData->m_sNodes.m_nGroupSequences = 0;			/* タブグループ連番 */	// 2007.06.20 ryoji
+		m_pShareData->m_sNodes.m_nEditArrNum = 0;
 
-		m_pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中	// 2007.04.03 ryoji
+		m_pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中	// 2007.04.03 ryoji
 
 		m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX = 15;	/* ファイルの履歴MAX */	//Oct. 14, 2000 JEPRO 少し増やした(10→15)
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
@@ -989,11 +989,11 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 
 		if( 0 == ::GetWindowLongPtr( hWnd, sizeof(LONG_PTR) ) )
 		{
-			m_pShareData->m_nSequences++;
-			::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)m_pShareData->m_nSequences );
+			m_pShareData->m_sNodes.m_nSequences++;
+			::SetWindowLongPtr( hWnd, sizeof(LONG_PTR) , (LONG_PTR)m_pShareData->m_sNodes.m_nSequences );
 
 			//連番を更新する。
-			sMyEditNode.m_nIndex = m_pShareData->m_nSequences;
+			sMyEditNode.m_nIndex = m_pShareData->m_sNodes.m_nSequences;
 
 			/* タブグループ連番 */
 			if( nGroup > 0 )
@@ -1004,7 +1004,7 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 			{
 				p = (EditNode*)cRecentEditNode.GetItem( 0 );
 				if( NULL == p )
-					sMyEditNode.m_nGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+					sMyEditNode.m_nGroup = ++m_pShareData->m_sNodes.m_nGroupSequences;	// 新規グループ
 				else
 					sMyEditNode.m_nGroup = p->m_nGroup;	// 最近アクティブのグループ
 			}
@@ -1057,12 +1057,12 @@ void CShareData::ResetGroupId( void )
 	int nGroup;
 	int	i;
 
-	nGroup = ++m_pShareData->m_nGroupSequences;
-	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	nGroup = ++m_pShareData->m_sNodes.m_nGroupSequences;
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
 	{
-		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) )
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
 		{
-			m_pShareData->m_pEditArr[i].m_nGroup = nGroup;
+			m_pShareData->m_sNodes.m_pEditArr[i].m_nGroup = nGroup;
 		}
 	}
 }
@@ -1078,12 +1078,12 @@ EditNode* CShareData::GetEditNode( HWND hWnd )
 {
 	int	i;
 
-	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
 	{
-		if( hWnd == m_pShareData->m_pEditArr[i].m_hWnd )
+		if( hWnd == m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd )
 		{
-			if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) )
-				return &m_pShareData->m_pEditArr[i];
+			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
+				return &m_pShareData->m_sNodes.m_pEditArr[i];
 		}
 	}
 
@@ -1134,7 +1134,7 @@ int CShareData::GetFreeGroupId( void )
 {
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
 
-	return ++pShareData->m_nGroupSequences;	// 新規グループ
+	return ++pShareData->m_sNodes.m_nGroupSequences;	// 新規グループ
 }
 
 /** 指定位置の編集ウィンドウ情報を取得する
@@ -1147,14 +1147,14 @@ EditNode* CShareData::GetEditNodeAt( int nGroup, int nIndex )
 	int iIndex;
 
 	iIndex = 0;
-	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
 	{
-		if( nGroup == 0 || nGroup == m_pShareData->m_pEditArr[i].m_nGroup )
+		if( nGroup == 0 || nGroup == m_pShareData->m_sNodes.m_pEditArr[i].m_nGroup )
 		{
-			if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) )
+			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
 			{
 				if( iIndex == nIndex )
-					return &m_pShareData->m_pEditArr[i];
+					return &m_pShareData->m_sNodes.m_pEditArr[i];
 				iIndex++;
 			}
 		}
@@ -1284,15 +1284,15 @@ BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
 		return FALSE;
 	}
 	
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) ){
 			// トレイからエディタへの編集ファイル名要求通知
-			::SendMessage( m_pShareData->m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
-			pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+			::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
+			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 			// 同一パスのファイルが既に開かれているか
 			if( 0 == my_stricmp( pfi->m_szPath, pszPath ) ){
-				*phwndOwner = m_pShareData->m_pEditArr[i].m_hWnd;
+				*phwndOwner = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
 				return TRUE;
 			}
 		}
@@ -1324,7 +1324,7 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 		EditInfo*		pfi;
 		CMRUFile		cMRU;
 		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
-		pfi = (EditInfo*)&m_pShareData->m_EditInfo_MYWM_GETFILEINFO;
+		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 		if(nCharCode != CODE_AUTODETECT){
 			char*	pszCodeNameCur = NULL;
 			char*	pszCodeNameNew = NULL;
@@ -1393,11 +1393,11 @@ int CShareData::GetEditorWindowsNum( int nGroup, bool bExcludeClosing/* = true *
 	int		j;
 
 	j = 0;
-	for( i = 0; i < m_pShareData->m_nEditArrNum; ++i ){
-		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[i].m_hWnd ) ){
-			if( nGroup != 0 && nGroup != GetGroupId( m_pShareData->m_pEditArr[i].m_hWnd ) )
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) ){
+			if( nGroup != 0 && nGroup != GetGroupId( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
 				continue;
-			if( bExcludeClosing && m_pShareData->m_pEditArr[i].m_bClosing )
+			if( bExcludeClosing && m_pShareData->m_sNodes.m_pEditArr[i].m_bClosing )
 				continue;
 			j++;
 		}
@@ -1552,16 +1552,16 @@ int CShareData::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL
 
 	//編集ウインドウ数を取得する。
 	*ppEditNode = NULL;
-	if( m_pShareData->m_nEditArrNum <= 0 )
+	if( m_pShareData->m_sNodes.m_nEditArrNum <= 0 )
 		return 0;
 
 	//編集ウインドウリスト格納領域を作成する。
-	*ppEditNode = new EditNode[ m_pShareData->m_nEditArrNum ];
+	*ppEditNode = new EditNode[ m_pShareData->m_sNodes.m_nEditArrNum ];
 	if( NULL == *ppEditNode )
 		return 0;
 
 	// 拡張リストを作成する
-	pNode = new EditNodeEx[ m_pShareData->m_nEditArrNum ];
+	pNode = new EditNodeEx[ m_pShareData->m_sNodes.m_nEditArrNum ];
 	if( NULL == pNode )
 	{
 		delete [](*ppEditNode);
@@ -1571,11 +1571,11 @@ int CShareData::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL
 
 	// 拡張リストの各要素に編集ウィンドウリストの各要素へのポインタを格納する
 	nRowNum = 0;
-	for( i = 0; i < m_pShareData->m_nEditArrNum; i++ )
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
 	{
-		if( IsSakuraMainWindow( m_pShareData->m_pEditArr[ i ].m_hWnd ) )
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[ i ].m_hWnd ) )
 		{
-			pNode[ nRowNum ].p = &m_pShareData->m_pEditArr[ i ];	// ポインタ格納
+			pNode[ nRowNum ].p = &m_pShareData->m_sNodes.m_pEditArr[ i ];	// ポインタ格納
 			pNode[ nRowNum ].nGroupMru = -1;	// グループ単位のMRU番号初期化
 			nRowNum++;
 		}
@@ -1626,7 +1626,7 @@ int CShareData::_GetOpenedWindowArrCore( EditNode** ppEditNode, BOOL bSort, BOOL
 
 		//インデックスを付ける。
 		//このインデックスは m_pEditArr の配列番号です。
-		(*ppEditNode)[i].m_nIndex = pNode[i].p - m_pShareData->m_pEditArr;	// ポインタ減算＝配列番号
+		(*ppEditNode)[i].m_nIndex = pNode[i].p - m_pShareData->m_sNodes.m_pEditArr;	// ポインタ減算＝配列番号
 	}
 
 	delete []pNode;
@@ -1671,14 +1671,14 @@ bool CShareData::ReorderTab( HWND hwndSrc, HWND hwndDst )
 	int	nIndex;
 
 	nArr0 = p[ nDstTab ].m_nIndex;
-	nIndex = m_pShareData->m_pEditArr[ nArr0 ].m_nIndex;
+	nIndex = m_pShareData->m_sNodes.m_pEditArr[ nArr0 ].m_nIndex;
 	if( nSrcTab < nDstTab )
 	{
 		// タブ左方向ローテート
 		for( i = nDstTab - 1; i >= nSrcTab; i-- )
 		{
 			nArr1 = p[ i ].m_nIndex;
-			m_pShareData->m_pEditArr[ nArr0 ].m_nIndex = m_pShareData->m_pEditArr[ nArr1 ].m_nIndex;
+			m_pShareData->m_sNodes.m_pEditArr[ nArr0 ].m_nIndex = m_pShareData->m_sNodes.m_pEditArr[ nArr1 ].m_nIndex;
 			nArr0 = nArr1;
 		}
 	}
@@ -1688,11 +1688,11 @@ bool CShareData::ReorderTab( HWND hwndSrc, HWND hwndDst )
 		for( i = nDstTab + 1; i <= nSrcTab; i++ )
 		{
 			nArr1 = p[ i ].m_nIndex;
-			m_pShareData->m_pEditArr[ nArr0 ].m_nIndex = m_pShareData->m_pEditArr[ nArr1 ].m_nIndex;
+			m_pShareData->m_sNodes.m_pEditArr[ nArr0 ].m_nIndex = m_pShareData->m_sNodes.m_pEditArr[ nArr1 ].m_nIndex;
 			nArr0 = nArr1;
 		}
 	}
-	m_pShareData->m_pEditArr[ nArr0 ].m_nIndex = nIndex;
+	m_pShareData->m_sNodes.m_pEditArr[ nArr0 ].m_nIndex = nIndex;
 
 	if( p ) delete []p;
 	return true;
@@ -1721,7 +1721,7 @@ HWND CShareData::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int 
 	if( pDstEditNode == NULL )
 	{
 		hwndDst = NULL;
-		nDstGroup = ++m_pShareData->m_nGroupSequences;	// 新規グループ
+		nDstGroup = ++m_pShareData->m_sNodes.m_nGroupSequences;	// 新規グループ
 	}
 	else
 	{
@@ -1729,7 +1729,7 @@ HWND CShareData::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int 
 	}
 
 	pSrcEditNode->m_nGroup = nDstGroup;
-	pSrcEditNode->m_nIndex = ++m_pShareData->m_nSequences;	// タブ並びの最後（起動順の最後）にもっていく
+	pSrcEditNode->m_nIndex = ++m_pShareData->m_sNodes.m_nSequences;	// タブ並びの最後（起動順の最後）にもっていく
 
 	// 非表示のタブを既存グループに移動するときは非表示のままにするので
 	// 内部情報も先頭にはならないよう、必要なら先頭ウィンドウと位置を交換する。
@@ -1758,8 +1758,8 @@ HWND CShareData::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int 
 void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 {
 
-	if( NULL == m_pShareData->m_hwndDebug
-	|| !IsSakuraMainWindow( m_pShareData->m_hwndDebug )
+	if( NULL == m_pShareData->m_sHandles.m_hwndDebug
+	|| !IsSakuraMainWindow( m_pShareData->m_sHandles.m_hwndDebug )
 	){
 		// 2007.06.26 ryoji
 		// アウトプットウィンドウを作成元と同じグループに作成するために m_hwndTraceOutSource を使っています
@@ -1772,13 +1772,13 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */
-		ActivateFrameWindow( m_pShareData->m_hwndDebug );
+		ActivateFrameWindow( m_pShareData->m_sHandles.m_hwndDebug );
 	}
 	va_list argList;
 	va_start( argList, lpFmt );
-	wvsprintf( m_pShareData->m_szWork, lpFmt, argList );
+	wvsprintf( m_pShareData->m_sWorkBuffer.m_szWork, lpFmt, argList );
 	va_end( argList );
-	::SendMessage( m_pShareData->m_hwndDebug, MYWM_ADDSTRING, 0, 0 );
+	::SendMessage( m_pShareData->m_sHandles.m_hwndDebug, MYWM_ADDSTRING, 0, 0 );
 	return;
 }
 

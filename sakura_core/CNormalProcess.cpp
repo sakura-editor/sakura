@@ -104,7 +104,7 @@ bool CNormalProcess::InitializeProcess()
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
 			if( fi.m_nY >= 0 ){	//	行の指定があるか
-				POINT& pt = *(POINT*)CProcess::m_pShareData->m_szWork;
+				POINT& pt = *(POINT*)CProcess::m_pShareData->m_sWorkBuffer.m_szWork;
 				if( fi.m_nX < 0 ){
 					//	桁の指定が無い場合
 					::SendMessage( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
@@ -133,7 +133,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 	// CEditWndを作成
 	m_pcEditWnd = new CEditWnd;
-	HWND hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_hwndTray, nGroupId );
+	HWND hWnd = m_pcEditWnd->Create( m_hInstance, m_pShareData->m_sHandles.m_hwndTray, nGroupId );
 	if( NULL == hWnd ){
 		::ReleaseMutex( hMutex );
 		::CloseHandle( hMutex );

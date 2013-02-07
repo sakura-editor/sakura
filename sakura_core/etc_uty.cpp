@@ -545,9 +545,9 @@ void ActivateFrameWindow( HWND hwnd )
 	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
 		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
 			if( IsSakuraMainWindow( hwnd ) ){
-				if( pShareData->m_bEditWndChanging )
+				if( pShareData->m_sFlags.m_bEditWndChanging )
 					return;	// 切替の最中(busy)は要求を無視する
-				pShareData->m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
+				pShareData->m_sFlags.m_bEditWndChanging = TRUE;	// 編集ウィンドウ切替中ON	2007.04.03 ryoji
 
 				// 対象ウィンドウのスレッドに位置合わせを依頼する	// 2007.04.03 ryoji
 				DWORD_PTR dwResult;
@@ -580,7 +580,7 @@ void ActivateFrameWindow( HWND hwnd )
 	::BringWindowToTop( hwndActivate );
 
 	if( pShareData )
-		pShareData->m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
+		pShareData->m_sFlags.m_bEditWndChanging = FALSE;	// 編集ウィンドウ切替中OFF	2007.04.03 ryoji
 
 	return;
 }

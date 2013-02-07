@@ -141,8 +141,8 @@ BOOL CEditView::HandleCommand(
 		bRepeat = TRUE;
 	}
 	m_bPrevCommand = nCommand;
-	if( m_pShareData->m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
-		m_pShareData->m_hwndRecordingKeyMacro == ::GetParent( m_hwndParent ) &&	/* キーボードマクロを記録中のウィンドウ */
+	if( m_pShareData->m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == ::GetParent( m_hwndParent ) &&	/* キーボードマクロを記録中のウィンドウ */
 		( nCommandFrom & FA_NONRECORD ) != FA_NONRECORD	/* 2007.07.07 genta 記録抑制フラグ off */
 	){
 		/* キーリピート状態をなくする */
@@ -4779,14 +4779,14 @@ void CEditView::Command_EXTHTMLHELP( const char* helpfile, const char* kwd )
 		// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 		// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
 		if( _IS_REL_PATH( filename ) ){
-			GetInidirOrExedir( m_pShareData->m_szWork, filename );
+			GetInidirOrExedir( m_pShareData->m_sWorkBuffer.m_szWork, filename );
 		}else{
-			_tcscpy( m_pShareData->m_szWork, filename ); //	Jul. 5, 2002 genta
+			_tcscpy( m_pShareData->m_sWorkBuffer.m_szWork, filename ); //	Jul. 5, 2002 genta
 		}
-		nLen = lstrlen( m_pShareData->m_szWork );
-		_tcscpy( &m_pShareData->m_szWork[nLen + 1], cmemCurText.GetStringPtr() );
+		nLen = lstrlen( m_pShareData->m_sWorkBuffer.m_szWork );
+		_tcscpy( &m_pShareData->m_sWorkBuffer.m_szWork[nLen + 1], cmemCurText.GetStringPtr() );
 		hwndHtmlHelp = (HWND)::SendMessage(
-			m_pShareData->m_hwndTray,
+			m_pShareData->m_sHandles.m_hwndTray,
 			MYWM_HTMLHELP,
 			(WPARAM)::GetParent( m_hwndParent ),
 			0
@@ -5594,7 +5594,7 @@ void CEditView::Command_TAGJUMPBACK( void )
 	ActivateFrameWindow( tagJump.hwndReferer );
 
 	/* カーソルを移動させる */
-	memcpy( m_pShareData->m_szWork, (void*)&(tagJump.point), sizeof( tagJump.point ) );
+	memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&(tagJump.point), sizeof( tagJump.point ) );
 	::SendMessage( tagJump.hwndReferer, MYWM_SETCARETPOS, 0, 0 );
 
 	return;
@@ -5824,7 +5824,7 @@ bool CEditView::TagJumpSub(
 			}else{
 				poCaret.x = 0;
 			}
-			memcpy( m_pShareData->m_szWork, (void*)&poCaret, sizeof(poCaret) );
+			memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poCaret, sizeof(poCaret) );
 			::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
 		}
 		/* アクティブにする */
@@ -6687,13 +6687,13 @@ void CEditView::Command_MINIMIZE_ALL( void )
 	HWND*	phWndArr;
 	int		i;
 	int		j;
-	j = m_pShareData->m_nEditArrNum;
+	j = m_pShareData->m_sNodes.m_nEditArrNum;
 	if( 0 == j ){
 		return;
 	}
 	phWndArr = new HWND[j];
 	for( i = 0; i < j; ++i ){
-		phWndArr[i] = m_pShareData->m_pEditArr[i].m_hWnd;
+		phWndArr[i] = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
 	}
 	for( i = 0; i < j; ++i ){
 		if( IsSakuraMainWindow( phWndArr[i] ) )
@@ -7824,14 +7824,14 @@ void CEditView::Command_WINCLOSE( void )
 //アウトプットウィンドウ表示
 void CEditView::Command_WIN_OUTPUT( void )
 {
-	if( NULL == m_pShareData->m_hwndDebug
-		|| !IsSakuraMainWindow( m_pShareData->m_hwndDebug )
+	if( NULL == m_pShareData->m_sHandles.m_hwndDebug
+		|| !IsSakuraMainWindow( m_pShareData->m_sHandles.m_hwndDebug )
 	){
 		CEditApp::OpenNewEditor( NULL, m_hWnd, "-DEBUGMODE", CODE_SJIS, false, true );
 	}else{
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */
-		ActivateFrameWindow( m_pShareData->m_hwndDebug );
+		ActivateFrameWindow( m_pShareData->m_sHandles.m_hwndDebug );
 	}
 	return;
 }
@@ -8038,12 +8038,12 @@ void CEditView::Command_COMPARE( void )
 	// カーソル位置取得要求
 	{
 		::SendMessage( hwndCompareWnd, MYWM_GETCARETPOS, 0, 0 );
-		ppoCaretDes = (POINT*)m_pShareData->m_szWork;
+		ppoCaretDes = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
 		poDes.x = ppoCaretDes->x;
 		poDes.y = ppoCaretDes->y;
 	}
 	bDefferent = TRUE;
-	pLineDes = m_pShareData->m_szWork;
+	pLineDes = m_pShareData->m_sWorkBuffer.m_szWork;
 	pLineSrc = m_pcEditDoc->m_cDocLineMgr.GetLineStr( poSrc.y, &nLineLenSrc );
 	/* 行(改行単位)データの要求 */
 	nLineLenDes = ::SendMessage( hwndCompareWnd, MYWM_GETLINEDATA, poDes.y, 0 );
@@ -8055,12 +8055,12 @@ void CEditView::Command_COMPARE( void )
 		if( pLineSrc == NULL || 0 == nLineLenDes ){
 			break;
 		}
-		if( nLineLenDes > sizeof( m_pShareData->m_szWork ) ){
+		if( nLineLenDes > sizeof( m_pShareData->m_sWorkBuffer.m_szWork ) ){
 			TopErrorMessage( m_hWnd,
 				_T("比較先のファイル\n%s\n%dバイトを超える行があります。\n")
 				_T("比較できません。"),
 				szPath,
-				sizeof( m_pShareData->m_szWork )
+				sizeof( m_pShareData->m_sWorkBuffer.m_szWork )
 			);
 			return;
 		}
@@ -8128,11 +8128,11 @@ end_of_compare:;
 		/* カーソルを移動させる
 			比較相手は、別プロセスなのでメッセージを飛ばす。
 		*/
-		memcpy( m_pShareData->m_szWork, (void*)&poDes, sizeof( poDes ) );
+		memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poDes, sizeof( poDes ) );
 		::SendMessage( hwndCompareWnd, MYWM_SETCARETPOS, 0, 0 );
 
 		/* カーソルを移動させる */
-		memcpy( m_pShareData->m_szWork, (void*)&poSrc, sizeof( poSrc ) );
+		memcpy( m_pShareData->m_sWorkBuffer.m_szWork, (void*)&poSrc, sizeof( poSrc ) );
 		::PostMessage( ::GetParent( m_hwndParent ), MYWM_SETCARETPOS, 0, 0 );
 	}
 
@@ -8331,9 +8331,9 @@ void CEditView::Command_BROWSE( void )
 /* キーマクロの記録開始／終了 */
 void CEditView::Command_RECKEYMACRO( void )
 {
-	if( m_pShareData->m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
-		m_pShareData->m_bRecordingKeyMacro = FALSE;
-		m_pShareData->m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
+	if( m_pShareData->m_sFlags.m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
+		m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;							/* キーボードマクロを記録中のウィンドウ */
 		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダに「RecKey.mac」という名で保存
 		TCHAR szInitDir[MAX_PATH];
 		int nRet;
@@ -8355,8 +8355,8 @@ void CEditView::Command_RECKEYMACRO( void )
 			ErrorMessage(	m_hWnd, _T("マクロファイルを作成できませんでした。\n\n%s"), m_pShareData->m_Common.m_sMacro.m_szKeyMacroFileName );
 		}
 	}else{
-		m_pShareData->m_bRecordingKeyMacro = TRUE;
-		m_pShareData->m_hwndRecordingKeyMacro = ::GetParent( m_hwndParent );;	/* キーボードマクロを記録中のウィンドウ */
+		m_pShareData->m_sFlags.m_bRecordingKeyMacro = TRUE;
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = ::GetParent( m_hwndParent );;	/* キーボードマクロを記録中のウィンドウ */
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -8377,8 +8377,8 @@ void CEditView::Command_RECKEYMACRO( void )
 /* キーマクロの保存 */
 void CEditView::Command_SAVEKEYMACRO( void )
 {
-	m_pShareData->m_bRecordingKeyMacro = FALSE;
-	m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;
+	m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	//	Jun. 16, 2002 genta
 	if( !m_pcEditDoc->m_pcSMacroMgr->IsSaveOk() ){
@@ -8428,11 +8428,11 @@ void CEditView::Command_SAVEKEYMACRO( void )
 void CEditView::Command_EXECKEYMACRO( void )
 {
 	//@@@ 2002.1.24 YAZAKI 記録中は終了してから実行
-	if (m_pShareData->m_bRecordingKeyMacro){
+	if (m_pShareData->m_sFlags.m_bRecordingKeyMacro){
 		Command_RECKEYMACRO();
 	}
-	m_pShareData->m_bRecordingKeyMacro = FALSE;
-	m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;
+	m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	/* キーボードマクロの実行 */
 	//@@@ 2002.1.24 YAZAKI
@@ -8468,8 +8468,8 @@ void CEditView::Command_EXECKEYMACRO( void )
  */
 void CEditView::Command_LOADKEYMACRO( void )
 {
-	m_pShareData->m_bRecordingKeyMacro = FALSE;
-	m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+	m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;
+	m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 
 	CDlgOpenFile	cDlgOpenFile;
 	TCHAR			szPath[_MAX_PATH + 1];
@@ -8545,15 +8545,15 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 	}
 
 	//キーマクロ記録中の場合、追加する
-	if( m_pShareData->m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
-		m_pShareData->m_hwndRecordingKeyMacro == ::GetParent( m_hwndParent )	/* キーボードマクロを記録中のウィンドウ */
+	if( m_pShareData->m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == ::GetParent( m_hwndParent )	/* キーボードマクロを記録中のウィンドウ */
 	){
 		m_pcEditDoc->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, (LPARAM)pszPath, this );
 
 		//キーマクロの記録を一時停止する
-		m_pShareData->m_bRecordingKeyMacro = FALSE;
-		hwndRecordingKeyMacro = m_pShareData->m_hwndRecordingKeyMacro;
-		m_pShareData->m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
+		m_pShareData->m_sFlags.m_bRecordingKeyMacro = FALSE;
+		hwndRecordingKeyMacro = m_pShareData->m_sFlags.m_hwndRecordingKeyMacro;
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = NULL;	/* キーボードマクロを記録中のウィンドウ */
 	}
 
 	//古い一時マクロの退避
@@ -8580,8 +8580,8 @@ void CEditView::Command_EXECEXTMACRO( const char* pszPath, const char* pszType )
 
 	// キーマクロ記録中だった場合は再開する
 	if ( hwndRecordingKeyMacro != NULL ) {
-		m_pShareData->m_bRecordingKeyMacro = TRUE;
-		m_pShareData->m_hwndRecordingKeyMacro = hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
+		m_pShareData->m_sFlags.m_bRecordingKeyMacro = TRUE;
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
 	}
 
 	/* フォーカス移動時の再描画 */

@@ -691,7 +691,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 
 	// 行(改行単位)データの要求
 	if( hWnd ){
-		pLineData = m_pShareData->m_szWork;
+		pLineData = m_pShareData->m_sWorkBuffer.m_szWork;
 		nLineLen = ::SendMessage( hWnd, MYWM_GETLINEDATA, y, 0 );
 	}
 	else{
@@ -701,7 +701,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 	while(1){
 		if( 0 == nLineLen || NULL == pLineData ) break;
 
-		if( hWnd && nLineLen > sizeof( m_pShareData->m_szWork ) ){
+		if( hWnd && nLineLen > sizeof( m_pShareData->m_sWorkBuffer.m_szWork ) ){
 			// 一時バッファを超えている
 			fclose( fp );
 			_tunlink( filename );		//関数の実行に失敗したとき、一時ファイルの削除は関数内で行う。2005.10.29

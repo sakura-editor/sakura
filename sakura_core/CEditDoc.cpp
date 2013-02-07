@@ -1585,7 +1585,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		}
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
 		/* フォントが変わった */
 		for( i = 0; i < GetAllViewCount(); ++i ){
@@ -1630,7 +1630,7 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 			m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessage( m_pShareData->m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
 
 		/* 設定変更を反映させる */
 		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)m_hwndParent, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
@@ -4791,8 +4791,8 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 			return 2;
 		}
 	case 'M': // キーボードマクロの記録中
-		if( TRUE == m_pShareData->m_bRecordingKeyMacro &&
-		m_pShareData->m_hwndRecordingKeyMacro == m_hwndParent ){ /* ウィンドウ */
+		if( TRUE == m_pShareData->m_sFlags.m_bRecordingKeyMacro &&
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == m_hwndParent ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
