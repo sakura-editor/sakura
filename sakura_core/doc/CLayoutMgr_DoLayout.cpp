@@ -420,7 +420,7 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 	if( ( pWork->ptDelLogicalFrom.GetY2() == pWork->nCurLine && pWork->ptDelLogicalFrom.GetX2() < pWork->nPos ) ||
 		( pWork->ptDelLogicalFrom.GetY2() < pWork->nCurLine )
 	){
-		(pWork->nModifyLayoutLinesNew)++;;
+		(pWork->nModifyLayoutLinesNew)++;
 	}
 }
 

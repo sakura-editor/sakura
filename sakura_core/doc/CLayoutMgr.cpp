@@ -884,7 +884,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			  ptDelLogicalFrom.GetX2() < pLayout->GetLogicOffset() + pLayout->GetLengthWithEOL() ) ||
 			( ptDelLogicalFrom.GetY2() < pLayout->GetLogicLineNo() )
 		){
-			(*pnDeleteLines)++;;
+			(*pnDeleteLines)++;
 		}
 
 #ifdef _DEBUG

@@ -557,7 +557,7 @@ BOOL CViewCommander::Command_PUTFILE(
 
 	bool bBom = false;
 	if (CCodeTypeName(nSaveCharCode).UseBom()) {
-		bBom = GetDocument()->m_cDocFile.IsBomExist();;
+		bBom = GetDocument()->m_cDocFile.IsBomExist();
 	}
 
 	if(nFlgOpt & 0x01)
