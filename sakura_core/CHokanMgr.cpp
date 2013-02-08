@@ -77,7 +77,7 @@ CHokanMgr::CHokanMgr()
 	m_cmemCurWord.SetString( "" );
 
 	m_pcmemKouho = NULL;
-	m_nKouhoNum = 0;;
+	m_nKouhoNum = 0;
 	m_nCurKouhoIdx = -1;
 	m_bTimerFlag = TRUE;
 }
@@ -88,7 +88,7 @@ CHokanMgr::~CHokanMgr()
 		delete m_pcmemKouho;
 		m_pcmemKouho = NULL;
 	}
-	m_nKouhoNum = 0;;
+	m_nKouhoNum = 0;
 }
 
 /* モードレスダイアログの表示 */

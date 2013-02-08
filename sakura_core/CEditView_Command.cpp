@@ -2248,7 +2248,7 @@ void CEditView::Command_PASTE( int option )
 
 	// クリップボードデータ取得 -> pszText, nTextLen
 	int			nTextLen;
-	char*		pszText = cmemClip.GetStringPtr(&nTextLen);;
+	char*		pszText = cmemClip.GetStringPtr(&nTextLen);
 
 	BOOL bConvertEol = 
 		((option & 0x01) == 0x01) ? TRUE :
@@ -8356,7 +8356,7 @@ void CEditView::Command_RECKEYMACRO( void )
 		}
 	}else{
 		m_pShareData->m_sFlags.m_bRecordingKeyMacro = TRUE;
-		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = ::GetParent( m_hwndParent );;	/* キーボードマクロを記録中のウィンドウ */
+		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro = ::GetParent( m_hwndParent );	/* キーボードマクロを記録中のウィンドウ */
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一

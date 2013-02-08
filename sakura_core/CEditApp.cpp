@@ -454,7 +454,7 @@ LRESULT CEditApp::DispatchEvent(
 				false
 			);
 		}
-		return (LRESULT)hwndHtmlHelp;;
+		return (LRESULT)hwndHtmlHelp;
 
 
 	/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */

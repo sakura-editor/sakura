@@ -1509,8 +1509,8 @@ int CPropSupport::GetData( HWND hwndDlg )
 bool CPropColor::Import( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
+	char*			pszMRU = NULL;
+	char*			pszOPENFOLDER = NULL;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
 	int				i;
@@ -1661,8 +1661,8 @@ bool CPropColor::Import( HWND hwndDlg )
 bool CPropColor::Export( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;;
-	char*			pszOPENFOLDER = NULL;;
+	char*			pszMRU = NULL;
+	char*			pszOPENFOLDER = NULL;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
 	CProfile		cProfile;

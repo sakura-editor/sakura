@@ -987,7 +987,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			  nDelLogicalColFrom < pLayout->m_nOffset + pLayout->m_nLength ) ||
 			( nDelLogicalLineFrom < pLayout->m_nLinePhysical )
 		){
-			(*pnDeleteLines)++;;
+			(*pnDeleteLines)++;
 		}
 
 #ifdef _DEBUG

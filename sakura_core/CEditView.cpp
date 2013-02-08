@@ -2061,9 +2061,9 @@ void CEditView::TraceRgn( HRGN hrgn )
 	nRgnDataSize = ::GetRegionData( hrgn, nRgnDataSize, pRgnData );
 	pRect = (RECT*)&pRgnData->Buffer[0];
 //	if( 0 < pRgnData->rdh.nCount ){
-//		m_cShareData.TraceOut( "---------\n" );;
+//		m_cShareData.TraceOut( "---------\n" );
 //		for( i = 0; i < pRgnData->rdh.nCount; ++i ){
-//			m_cShareData.TraceOut( "\t(%d, %d, %d, %d \n", pRect[i].left, pRect[i].right, pRect[i].top, pRect[i].bottom );;
+//			m_cShareData.TraceOut( "\t(%d, %d, %d, %d \n", pRect[i].left, pRect[i].right, pRect[i].top, pRect[i].bottom );
 //		}
 //	}
 	delete [] pBuf;

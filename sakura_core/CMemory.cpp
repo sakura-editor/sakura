@@ -1052,7 +1052,7 @@ void CMemory::EUCToSJIS( void )
 			if( sCode != 0 ){
 				pszDes[nPtrDes	  ] = (unsigned char)(sCode >> 8);
 				pszDes[nPtrDes + 1] = (unsigned char)(sCode);
-				nPtrDes += 2;;
+				nPtrDes += 2;
 				nPtr += 2;
 			}else{
 				pszDes[nPtrDes] = pBuf[nPtr];
@@ -1956,7 +1956,7 @@ int CMemory::MemSJISToUnicode( char** ppBufUnicode, const char*pBuf, int nBufLen
 /* Unicode•¶Žš—ñ‚ðASCII&SJIS‚É•ÏŠ· */
 int CMemory::MemUnicodeToSJIS( char** ppBufSJIS, const char*pBuf, int nBufLen )
 {
-	int			i, j, k;;
+	int			i, j, k;
 	char*		pBufSJIS;
 	wchar_t*	pUniBuf;
 	char		mbchar[4];

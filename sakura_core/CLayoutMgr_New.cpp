@@ -377,7 +377,7 @@ void CLayoutMgr::_DoLayout(
 			}
 		}
 //		pLine = m_pcDocLineMgr->GetNextLinrStr( &nLineLen );
-		pCDocLine = pCDocLine->m_pNext;;
+		pCDocLine = pCDocLine->m_pNext;
 // 2002/03/13 novice
 		if( nCOMMENTMODE_Prev == COLORIDX_COMMENT ){	/* çsÉRÉÅÉìÉgÇ≈Ç†ÇÈ */
 			nCOMMENTMODE_Prev = COLORIDX_TEXT;
@@ -550,7 +550,7 @@ int CLayoutMgr::DoLayout_Range(
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
 							){
-								(nModifyLayoutLinesNew)++;;
+								(nModifyLayoutLinesNew)++;
 							}
 						}
 					}
@@ -614,7 +614,7 @@ int CLayoutMgr::DoLayout_Range(
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
 							){
-								(nModifyLayoutLinesNew)++;;
+								(nModifyLayoutLinesNew)++;
 							}
 //?							continue;
 						}
@@ -677,7 +677,7 @@ int CLayoutMgr::DoLayout_Range(
 						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 							( nDelLogicalLineFrom < nCurLine )
 						){
-							(nModifyLayoutLinesNew)++;;
+							(nModifyLayoutLinesNew)++;
 						}
 					}
 				}
@@ -717,7 +717,7 @@ int CLayoutMgr::DoLayout_Range(
 						if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 							( nDelLogicalLineFrom < nCurLine )
 						){
-							(nModifyLayoutLinesNew)++;;
+							(nModifyLayoutLinesNew)++;
 						}
 					}
 				}
@@ -752,7 +752,7 @@ int CLayoutMgr::DoLayout_Range(
 					if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 						( nDelLogicalLineFrom < nCurLine )
 					){
-						(nModifyLayoutLinesNew)++;;
+						(nModifyLayoutLinesNew)++;
 					}
 					continue;
 				}
@@ -787,7 +787,7 @@ int CLayoutMgr::DoLayout_Range(
 							if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 								( nDelLogicalLineFrom < nCurLine )
 							){
-								(nModifyLayoutLinesNew)++;;
+								(nModifyLayoutLinesNew)++;
 							}
 							continue;
 						}
@@ -817,7 +817,7 @@ int CLayoutMgr::DoLayout_Range(
 			if( ( nDelLogicalLineFrom == nCurLine && nDelLogicalColFrom < nPos ) ||
 				( nDelLogicalLineFrom < nCurLine )
 			){
-				(nModifyLayoutLinesNew)++;;
+				(nModifyLayoutLinesNew)++;
 			}
 		}
 
