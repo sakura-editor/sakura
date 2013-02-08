@@ -88,7 +88,7 @@ HACCEL CKeyBind::CreateAccerelator(
 		if( 0 != pKeyNameArr[i].m_nKeyCode ){
 			for( j = 0; j < 8; ++j ){
 				if( 0 != GetFuncCodeAt( pKeyNameArr[i], j ) ){
-					pAccelArr[k].fVirt = FNOINVERT | FVIRTKEY;;
+					pAccelArr[k].fVirt = FNOINVERT | FVIRTKEY;
 					pAccelArr[k].key = pKeyNameArr[i].m_nKeyCode;
 					pAccelArr[k].cmd = pKeyNameArr[i].m_nKeyCode | (((WORD)j)<<8) ;
 					if( j & _SHIFT ){

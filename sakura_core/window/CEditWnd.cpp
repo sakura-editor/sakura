@@ -2402,7 +2402,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 						const CMRUFolder cMRUFolder;
 						hMenuPopUp = cMRUFolder.CreateMenu( hMenu, &m_CMenuDrawer );
-						bInList = (cMRUFolder.MenuLength() > 0);;
+						bInList = (cMRUFolder.MenuLength() > 0);
 					}
 					break;
 				case F_CUSTMENU_LIST:			// カスタムメニューリスト

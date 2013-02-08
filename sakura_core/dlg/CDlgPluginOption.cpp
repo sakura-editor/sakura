@@ -331,7 +331,7 @@ BOOL CDlgPluginOption::OnNotify( WPARAM wParam, LPARAM lParam )
 			ChangeListPosition( );
 			break;
 		}
-		return TRUE;;
+		return TRUE;
 
 	case IDC_SPIN_PLUGIN_OPTION:
 		int			nVal;
