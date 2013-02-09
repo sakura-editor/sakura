@@ -131,7 +131,7 @@ CEditDoc::CEditDoc()
 
 	// 文字コード種別を初期化
 	m_nCharCode = (ECodeType)( m_pShareData->m_Types[0].m_eDefaultCodetype );
-	m_bBomExist = ( m_pShareData->m_Types[0].m_bDefaultBom != FALSE );
+	m_bBomExist = m_pShareData->m_Types[0].m_bDefaultBom;
 	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
 }
 
@@ -205,7 +205,7 @@ void CEditDoc::InitDoc()
 
 	/* 文字コード種別 */
 	m_nCharCode = (ECodeType)( m_pShareData->m_Types[0].m_eDefaultCodetype );
-	m_bBomExist = ( m_pShareData->m_Types[0].m_bDefaultBom != FALSE );
+	m_bBomExist = m_pShareData->m_Types[0].m_bDefaultBom;
 	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
 
 	//	Oct. 2, 2005 genta 挿入モード
@@ -534,7 +534,7 @@ void CEditDoc::OnChangeType()
 		if( !IsModified()  && m_cDocLineMgr.GetLineCount() == 0 ){
 			STypeConfig& types = GetDocumentAttribute();
 			m_nCharCode = (ECodeType)( types.m_eDefaultCodetype );
-			m_bBomExist = ( types.m_bDefaultBom != FALSE );
+			m_bBomExist = types.m_bDefaultBom;
 			SetNewLineCode( static_cast<EEolType>(types.m_eDefaultEoltype) );
 		}
 	}
@@ -1104,11 +1104,11 @@ BOOL CEditDoc::FileRead(
 	switch( m_nCharCode ){
 	case CODE_UNICODE:
 	case CODE_UNICODEBE:
-		m_bBomExist = TRUE;
+		m_bBomExist = true;
 		break;
 	case CODE_UTF8:
 	default:
-		m_bBomExist = FALSE;
+		m_bBomExist = false;
 		break;
 	}
 	//	To Here Jul. 26, 2003 ryoji BOMの有無の初期状態を設定
@@ -1131,7 +1131,7 @@ BOOL CEditDoc::FileRead(
 		// 存在しないときもドキュメントに文字コードを反映する
 		const STypeConfig& type = GetDocumentAttribute();
 		m_nCharCode = (ECodeType)( type.m_eDefaultCodetype );
-		m_bBomExist = ( type.m_bDefaultBom != FALSE );
+		m_bBomExist = type.m_bDefaultBom;
 
 		//	Oct. 09, 2004 genta フラグに応じて警告を出す（以前の動作）ように
 		if( m_pShareData->m_Common.m_sFile.GetAlertIfFileNotExist() ){
@@ -1264,11 +1264,11 @@ end_of_func:;
 		switch( m_nCharCode ){
 		case CODE_UNICODE:
 		case CODE_UNICODEBE:
-			m_bBomExist = TRUE;
+			m_bBomExist = true;
 			break;
 		case CODE_UTF8:
 		default:
-			m_bBomExist = FALSE;
+			m_bBomExist = false;
 			break;
 		}
 	}
@@ -1493,7 +1493,7 @@ BOOL CEditDoc::OpenFileDialog(
 	@date 2003.07.20 ryoji	BOMの有無を示す引数追加
 	@date 2006.11.10 ryoji	ユーザー指定の拡張子を状況依存で変化させる
 */
-BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, BOOL* pbBomExist )
+BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, bool* pbBomExist )
 {
 	char**	ppszMRU;		//	最近のファイル
 	char**	ppszOPENFOLDER;	//	最近のフォルダ
@@ -4238,11 +4238,11 @@ void CEditDoc::ReloadCurrentFile(
 		switch( m_nCharCode ){
 		case CODE_UNICODE:
 		case CODE_UNICODEBE:
-			m_bBomExist = TRUE;
+			m_bBomExist = true;
 			break;
 		case CODE_UTF8:
 		default:
-			m_bBomExist = FALSE;
+			m_bBomExist = false;
 			break;
 		}
 		return;

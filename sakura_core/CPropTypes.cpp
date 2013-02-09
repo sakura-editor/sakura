@@ -1432,8 +1432,8 @@ void CPropSupport::SetData( HWND hwndDlg )
 
 		// BOM チェックボックス設定
 		if( !abBomEnable[i] )
-			m_Types.m_bDefaultBom = FALSE;
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, m_Types.m_bDefaultBom );
+			m_Types.m_bDefaultBom = false;
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_bDefaultBom ? BST_CHECKED : BST_UNCHECKED) );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), abBomEnable[i] );
 
 		// デフォルト改行タイプのコンボボックス設定
@@ -1486,7 +1486,7 @@ int CPropSupport::GetData( HWND hwndDlg )
 		}
 
 		// m_Types.m_bDefaultBom を設定
-		m_Types.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM );
+		m_Types.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM ) != 0;
 
 		// m_Types.eDefaultEoltype を設定
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );

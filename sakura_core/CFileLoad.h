@@ -69,7 +69,7 @@ public:
 	~CFileLoad( void );
 
 	//	Jul. 26, 2003 ryoji BOM引数追加
-	ECodeType FileOpen( LPCTSTR, ECodeType, int, BOOL* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
+	ECodeType FileOpen( LPCTSTR, ECodeType, int, bool* pbBomExist = NULL );		// 指定文字コードでファイルをオープンする
 	void FileClose( void );					// 明示的にファイルをクローズする
 
 	//! 1行データをロードする 順アクセス用
@@ -88,7 +88,7 @@ public:
 
 	//	Jun. 08, 2003 Moca
 	//! 開いたファイルにはBOMがあるか？
-	BOOL IsBomExist( void ){ return m_bBomExist; }
+	bool IsBomExist( void ){ return m_bBomExist; }
 
 	//! 現在の進行率を取得する(0% - 100%) 若干誤差が出る
 	int GetPercent( void );
@@ -130,7 +130,7 @@ protected:
 	int		m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	ECodeType	m_CharCode;		// 文字コード
-	BOOL	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
+	bool	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca
 	//	状態をenumとしてわかりやすく．

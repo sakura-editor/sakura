@@ -665,7 +665,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 		}
 		m_cEditDoc.m_nCharCode = nCharCode;
 		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
-			m_cEditDoc.m_bBomExist = ( types.m_bDefaultBom != FALSE );
+			m_cEditDoc.m_bBomExist = types.m_bDefaultBom;
 			m_cEditDoc.SetNewLineCode( static_cast<EEolType>( types.m_eDefaultEoltype ) );
 		}
 		else{

@@ -765,11 +765,11 @@ void CMacro::HandleCommand(
 				switch( pcEditView->m_pcEditDoc->m_nCharCode ){
 				case CODE_UNICODE:
 				case CODE_UNICODEBE:
-					pcEditView->m_pcEditDoc->m_bBomExist = TRUE;
+					pcEditView->m_pcEditDoc->m_bBomExist = true;
 					break;
 				case CODE_UTF8:
 				default:
-					pcEditView->m_pcEditDoc->m_bBomExist = FALSE;
+					pcEditView->m_pcEditDoc->m_bBomExist = false;
 					break;
 				}
 				//	To Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»

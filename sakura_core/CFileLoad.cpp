@@ -64,7 +64,7 @@ CFileLoad::CFileLoad( void ) : m_cmemLine()
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
 	m_CharCode		= CODE_DEFAULT;
-	m_bBomExist		= FALSE;	// Jun. 08, 2003 Moca
+	m_bBomExist		= false;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
 	m_nReadLength	= 0;
 	m_eMode			= FLMODE_CLOSE;	// Jun. 08, 2003 Moca
@@ -97,7 +97,7 @@ CFileLoad::~CFileLoad( void )
 	@date 2003.06.08 Moca CODE_AUTODETECTを指定できるように変更
 	@date 2003.07.26 ryoji BOM引数追加
 */
-ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag, BOOL* pbBomExist )
+ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag, bool* pbBomExist )
 {
 	HANDLE	hFile;
 	DWORD	FileSize;
@@ -156,7 +156,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	m_nFileDataLen = m_nFileSize;
 	if( nBomCode != 0 && nBomCode == m_CharCode ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
-		m_bBomExist = TRUE;
+		m_bBomExist = true;
 		if( pbBomExist != NULL ){
 			*pbBomExist = TRUE;
 		}
@@ -174,7 +174,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}else{
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
 		if( pbBomExist != NULL ){
-			*pbBomExist = FALSE;
+			*pbBomExist = false;
 		}
 	}
 	
@@ -198,7 +198,7 @@ void CFileLoad::FileClose( void )
 	m_nFileSize		=  0;
 	m_nFileDataLen	=  0;
 	m_CharCode		= CODE_DEFAULT;
-	m_bBomExist		= FALSE; // From Here Jun. 08, 2003
+	m_bBomExist		= false; // From Here Jun. 08, 2003
 	m_nFlag 		=  0;
 	m_nReadLength	=  0;
 	m_eMode			= FLMODE_CLOSE;

@@ -313,7 +313,7 @@ struct STypeConfig {
 
 	int					m_eDefaultCodetype;				/* デフォルト文字コード */
 	int					m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
-	BOOL				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
+	bool				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
 
 //@@@ 2001.11.17 add start MIK
 	BOOL	m_bUseRegexKeyword;	/* 正規表現キーワードを使うか*/

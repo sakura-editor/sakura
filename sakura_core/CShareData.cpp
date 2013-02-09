@@ -5057,7 +5057,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	// •¶ŽšƒR[ƒhÝ’è
 	pShareData->m_Types[nIdx].m_eDefaultCodetype = CODE_SJIS;
 	pShareData->m_Types[nIdx].m_eDefaultEoltype = EOL_CRLF;
-	pShareData->m_Types[nIdx].m_bDefaultBom = FALSE;
+	pShareData->m_Types[nIdx].m_bDefaultBom = false;
 
 	//@@@2002.2.4 YAZAKI
 	pShareData->m_Types[nIdx].m_szExtHelp[0] = _T('\0');

@@ -69,7 +69,7 @@ public:
 	BOOL DoModalOpenDlg( char* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	//	Jul. 26, 2003 ryoji BOM用引数追加
-	BOOL DoModalSaveDlg( char* , ECodeType*, CEol*, BOOL* );	/* 保存ダイアログ モーダルダイアログの表示 */
+	BOOL DoModalSaveDlg( char* , ECodeType*, CEol*, bool* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
@@ -85,7 +85,7 @@ public:
 	CEol			m_cEol;		//	Feb. 9, 2001 genta
 	bool			m_bUseEol;	//	Feb. 9, 2001 genta
 
-	BOOL			m_bBom;		//!< BOMを付けるかどうか
+	bool			m_bBom;		//!< BOMを付けるかどうか
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
 
 	TCHAR			m_szPath[_MAX_PATH];	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji

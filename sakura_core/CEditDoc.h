@@ -118,7 +118,7 @@ public:
 	void OnChangeType();
 	void OnChangeSetting();	/* ビューに設定変更を反映させる */
 	//	Jul. 26, 2003 ryoji BOMオプション追加
-	BOOL SaveFileDialog( char*, ECodeType*, CEol* pcEol = NULL, BOOL* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
+	BOOL SaveFileDialog( char*, ECodeType*, CEol* pcEol = NULL, bool* pbBomExist = NULL );	/* 「ファイル名を付けて保存」ダイアログ */
 
 	void CheckFileTimeStamp( void );	/* ファイルのタイムスタンプのチェック処理 */
 	void ReloadCurrentFile( ECodeType, bool );/* 同一ファイルの再オープン */
@@ -262,7 +262,7 @@ public: /* テスト用にアクセス属性を変更 */
 	CDocLineMgr		m_cDocLineMgr;
 	CLayoutMgr		m_cLayoutMgr;
 	ECodeType		m_nCharCode;				/* 文字コード種別 */
-	BOOL			m_bBomExist;	//!< 保存時にBOMを付けるかどうか Jul. 26, 2003 ryoji 
+	bool			m_bBomExist;	//!< 保存時にBOMを付けるかどうか Jul. 26, 2003 ryoji 
 	bool			m_bInsMode;		//!< 挿入・上書きモード Oct. 2, 2005 genta
 
 	//	May 15, 2000 genta
