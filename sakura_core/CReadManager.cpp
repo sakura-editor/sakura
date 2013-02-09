@@ -35,7 +35,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		pFileInfo->eCharCode = type.m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
 	}
 	if ( pFileInfo->eCharCode == type.m_encoding.m_eDefaultCodetype ){
-		pFileInfo->bBomExist = ( type.m_encoding.m_bDefaultBom != FALSE );	// 2011.01.24 ryoji デフォルトBOM
+		pFileInfo->bBomExist = type.m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
 	}
 	else{
 		pFileInfo->bBomExist = CCodeTypeName( pFileInfo->eCharCode ).IsBomDefOn() ;

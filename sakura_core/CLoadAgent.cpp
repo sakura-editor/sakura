@@ -186,7 +186,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		pcDoc->m_cDocFile.m_sFileInfo.eCharCode = sLoadInfo.eCharCode;
 		STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
 		if ( sLoadInfo.eCharCode == types.m_encoding.m_eDefaultCodetype ){
-			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = ( types.m_encoding.m_bDefaultBom != FALSE );	// 2011.01.24 ryoji デフォルトBOM
+			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = types.m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
 		}
 		else{
 			pcDoc->m_cDocFile.m_sFileInfo.bBomExist = CCodeTypeName( sLoadInfo.eCharCode ).IsBomDefOn();

@@ -118,7 +118,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 
 	// 文字コード種別を初期化
 	m_cDocFile.m_sFileInfo.eCharCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultCodetype;
-	m_cDocFile.m_sFileInfo.bBomExist = ( GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom != FALSE );
+	m_cDocFile.m_sFileInfo.bBomExist = GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom;
 	m_cDocEditor.m_cNewLineCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultEoltype;
 
 	// 排他制御オプションを初期化
@@ -195,7 +195,7 @@ void CEditDoc::InitDoc()
 
 	/* 文字コード種別 */
 	m_cDocFile.m_sFileInfo.eCharCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultCodetype;
-	m_cDocFile.m_sFileInfo.bBomExist = ( GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom != FALSE );
+	m_cDocFile.m_sFileInfo.bBomExist = GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom;
 	m_cDocEditor.m_cNewLineCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultEoltype;
 
 	//	Oct. 2, 2005 genta 挿入モード
@@ -580,7 +580,7 @@ void CEditDoc::OnChangeType()
 		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
 			STypeConfig& types = m_cDocType.GetDocumentAttribute();
 			m_cDocFile.m_sFileInfo.eCharCode = types.m_encoding.m_eDefaultCodetype;
-			m_cDocFile.m_sFileInfo.bBomExist = ( types.m_encoding.m_bDefaultBom != FALSE );
+			m_cDocFile.m_sFileInfo.bBomExist = types.m_encoding.m_bDefaultBom;
 			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
 		}
 	}
