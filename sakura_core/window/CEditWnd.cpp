@@ -790,7 +790,7 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 		}
 		GetDocument().SetDocumentEncoding( nCharCode );
 		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
-			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = ( types.m_encoding.m_bDefaultBom != FALSE );
+			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = types.m_encoding.m_bDefaultBom;
 			GetDocument().m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_encoding.m_eDefaultEoltype );
 		}
 		else{

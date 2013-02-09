@@ -310,8 +310,8 @@ void CPropSupport::SetData( HWND hwndDlg )
 		// BOM チェックボックス設定
 		CCodeTypeName	cCodeTypeName(m_Types.m_encoding.m_eDefaultCodetype);
 		if( !cCodeTypeName.UseBom() )
-			m_Types.m_encoding.m_bDefaultBom = FALSE;
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_encoding.m_bDefaultBom ?  BST_CHECKED : BST_UNCHECKED) );
+			m_Types.m_encoding.m_bDefaultBom = false;
+		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_encoding.m_bDefaultBom ? BST_CHECKED : BST_UNCHECKED) );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), (int)cCodeTypeName.UseBom() );
 
 		// デフォルト改行タイプのコンボボックス設定

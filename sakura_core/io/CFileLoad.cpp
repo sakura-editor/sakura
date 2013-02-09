@@ -8,6 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, Moca, genta
 	Copyright (C) 2003, Moca, ryoji
+	Copyright (C) 2006, rastiv
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -66,7 +67,7 @@ CFileLoad::CFileLoad( SEncodingConfig& encode )
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
 	m_CharCode		= CODE_DEFAULT;
-	m_bBomExist		= FALSE;	// Jun. 08, 2003 Moca
+	m_bBomExist		= false;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
 	m_nReadLength	= 0;
 	m_eMode			= FLMODE_CLOSE;	// Jun. 08, 2003 Moca
@@ -171,7 +172,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}
 	if( bBom ){
 		//	Jul. 26, 2003 ryoji BOMの有無をパラメータで返す
-		m_bBomExist = TRUE;
+		m_bBomExist = true;
 		if( pbBomExist != NULL ){
 			*pbBomExist = true;
 		}
@@ -202,7 +203,7 @@ void CFileLoad::FileClose( void )
 	m_nFileSize		=  0;
 	m_nFileDataLen	=  0;
 	m_CharCode		= CODE_DEFAULT;
-	m_bBomExist		= FALSE; // From Here Jun. 08, 2003
+	m_bBomExist		= false; // From Here Jun. 08, 2003
 	m_nFlag 		=  0;
 	m_nReadLength	=  0;
 	m_eMode			= FLMODE_CLOSE;
