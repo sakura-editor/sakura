@@ -459,7 +459,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].dwSize      = sizeof( psp[nIdx] );
 	psp[nIdx].dwFlags     = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
 	psp[nIdx].hInstance   = m_hInstance;
-	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROPTYPESP1 );
+	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SCREEN );
 	psp[nIdx].pszIcon     = NULL;
 	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesScreen;
 	psp[nIdx].pszTitle    = _T("スクリーン");
@@ -484,7 +484,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].dwSize      = sizeof( psp[nIdx] );
 	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
 	psp[nIdx].hInstance   = m_hInstance;
-	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROPTYPESP2 );
+	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SUPPORT );
 	psp[nIdx].pszIcon     = NULL;
 	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesSupport;
 	psp[nIdx].pszTitle    = _T("支援");
@@ -599,9 +599,9 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 {
 	int		nContextID;
 	switch( nPageID ){
-	case IDD_PROPTYPESP1:	nContextID = ::FuncID_To_HelpContextID(F_TYPE_SCREEN);			break;
+	case IDD_PROP_SCREEN:	nContextID = ::FuncID_To_HelpContextID(F_TYPE_SCREEN);			break;
 	case IDD_PROP_COLOR:	nContextID = ::FuncID_To_HelpContextID(F_TYPE_COLOR);			break;
-	case IDD_PROPTYPESP2:	nContextID = ::FuncID_To_HelpContextID(F_TYPE_HELPER);			break;
+	case IDD_PROP_SUPPORT:	nContextID = ::FuncID_To_HelpContextID(F_TYPE_HELPER);			break;
 	case IDD_PROP_REGEX:	nContextID = ::FuncID_To_HelpContextID(F_TYPE_REGEX_KEYWORD);	break;
 	case IDD_PROP_KEYHELP:	nContextID = ::FuncID_To_HelpContextID(F_TYPE_KEYHELP);			break;
 	default:				nContextID = -1;												break;
@@ -852,7 +852,7 @@ INT_PTR CPropScreen::DispatchEvent(
 		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
-				OnHelp( hwndDlg, IDD_PROPTYPESP1 );
+				OnHelp( hwndDlg, IDD_PROP_SCREEN );
 				return TRUE;
 			case PSN_KILLACTIVE:
 				/* ダイアログデータの取得 Screen */
@@ -1357,7 +1357,7 @@ INT_PTR CPropSupport::DispatchEvent(
 //		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:	//Jul. 03, 2001 JEPRO 支援タブのヘルプを有効化
-			OnHelp( hwndDlg, IDD_PROPTYPESP2 );
+			OnHelp( hwndDlg, IDD_PROP_SUPPORT );
 			return TRUE;
 		case PSN_KILLACTIVE:
 			/* ダイアログデータの取得 p2 */

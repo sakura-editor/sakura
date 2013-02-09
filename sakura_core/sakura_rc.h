@@ -598,7 +598,7 @@
 
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
-#define IDD_PROPTYPESP1                 5101
+#define IDD_PROP_SCREEN                 5101
 #define IDD_PROP_CUSTMENU               5103
 #define IDD_PROP_FORMAT                 5104
 #define IDD_PROP_HELPER                 5105
@@ -610,7 +610,7 @@
 #define IDD_PROP_GREP                   5111
 #define IDD_PROP_BACKUP                 5112
 #define IDD_OPERATIONRUNNING            5113
-#define IDD_PROPTYPESP2                 5114
+#define IDD_PROP_SUPPORT                5114
 #define IDD_DIFF                        5115
 #define IDD_CTRLCODE                    5116
 #define IDD_WINPOSSIZE                  5117
