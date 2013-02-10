@@ -4,7 +4,7 @@
 //
 #define IDR_MENU1                       102
 #define IDR_TRAYMENU_L                  103
-#define IDD_PROP1P1                     107
+#define IDD_PROP_GENERAL                107
 #define IDD_FIND                        109
 #define IDD_PROP_FILE                   110
 #define IDD_ABOUT                       115

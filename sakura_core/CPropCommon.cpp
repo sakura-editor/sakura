@@ -254,7 +254,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 	//!	「共通設定」プロパティシートの作成時に必要な情報の配列．
 	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	static ComPropSheetInfo ComPropSheetInfoList[] = {
-		{ _T("全般"), 				IDD_PROP1P1,		DlgProc_PROP_GENERAL },
+		{ _T("全般"), 				IDD_PROP_GENERAL,	DlgProc_PROP_GENERAL },
 		{ _T("ウィンドウ"),			IDD_PROP_WIN,		DlgProc_PROP_WIN },
 
 		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	DlgProc_PROP_TOOLBAR },
@@ -564,7 +564,7 @@ INT_PTR CPropCommon::DispatchEvent_p1(
 		default:
 			switch( pNMHDR->code ){
 			case PSN_HELP:
-				OnHelp( hwndDlg, IDD_PROP1P1 );
+				OnHelp( hwndDlg, IDD_PROP_GENERAL );
 				return TRUE;
 			case PSN_KILLACTIVE:
 //				MYTRACE_A( "p1 PSN_KILLACTIVE\n" );
@@ -829,7 +829,7 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 {
 	int		nContextID;
 	switch( nPageID ){
-	case IDD_PROP1P1:
+	case IDD_PROP_GENERAL:
 		nContextID = ::FuncID_To_HelpContextID(F_OPTION_GENERAL);
 		break;
 	case IDD_PROP_FORMAT:
