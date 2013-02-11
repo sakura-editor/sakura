@@ -69,7 +69,7 @@ bool CPropRegex::Import(HWND hwndDlg)
 	char	*p;
 
 	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
@@ -82,8 +82,8 @@ bool CPropRegex::Import(HWND hwndDlg)
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 	if( (fp = fopen(szPath, "r")) == NULL )
 	{
@@ -170,7 +170,7 @@ bool CPropRegex::Export(HWND hwndDlg)
 	HWND	hwndList;
 
 	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
@@ -183,8 +183,8 @@ bool CPropRegex::Export(HWND hwndDlg)
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 	if( (fp = fopen(szPath, "w")) == NULL )
 	{

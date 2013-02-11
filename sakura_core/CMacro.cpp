@@ -88,7 +88,7 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 	case F_SEARCH_NEXT:
 	case F_SEARCH_PREV:
 		{
-			AddStringParam( pcEditView->m_pShareData->m_szSEARCHKEYArr[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
@@ -103,8 +103,8 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 	case F_REPLACE:
 	case F_REPLACE_ALL:
 		{
-			AddStringParam( pcEditView->m_pShareData->m_szSEARCHKEYArr[0] );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pShareData->m_szREPLACEKEYArr[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x01 : 0x00;
@@ -122,9 +122,9 @@ void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
 		break;
 	case F_GREP:
 		{
-			AddStringParam( pcEditView->m_pShareData->m_szSEARCHKEYArr[0] );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pShareData->m_szGREPFILEArr[0] );	//	lParamを追加。
-			AddStringParam( pcEditView->m_pShareData->m_szGREPFOLDERArr[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0] );	//	lParamを追加。
+			AddStringParam( pcEditView->m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] );	//	lParamを追加。
 
 			LPARAM lFlag = 0x00;
 			lFlag |= pcEditView->m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder				? 0x01 : 0x00;

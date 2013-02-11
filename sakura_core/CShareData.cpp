@@ -449,7 +449,7 @@ bool CShareData::InitShareData()
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
 		TCHAR	szIniFolder[_MAX_PATH];
-		m_pShareData->m_IniFolder.m_bInit = false;
+		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = false;
 		GetInidir( szIniFolder );
 		AddLastChar( szIniFolder, _MAX_PATH, _T('\\') );
 
@@ -479,27 +479,27 @@ bool CShareData::InitShareData()
 		CMRUFolder cMRUFolder;
 		cMRUFolder.ClearAll();
 
-		m_pShareData->m_nSEARCHKEYArrNum = 0;
+		m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum = 0;
 		for( i = 0; i < MAX_SEARCHKEY; ++i ){
-			_tcscpy( m_pShareData->m_szSEARCHKEYArr[i], _T("") );
+			_tcscpy( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i], _T("") );
 		}
-		m_pShareData->m_nREPLACEKEYArrNum = 0;
+		m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum = 0;
 		for( i = 0; i < MAX_REPLACEKEY; ++i ){
-			_tcscpy( m_pShareData->m_szREPLACEKEYArr[i], _T("") );
+			_tcscpy( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i], _T("") );
 		}
-		m_pShareData->m_nGREPFILEArrNum = 0;
+		m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum = 0;
 		for( i = 0; i < MAX_GREPFILE; ++i ){
-			_tcscpy( m_pShareData->m_szGREPFILEArr[i], _T("") );
+			_tcscpy( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i], _T("") );
 		}
-		m_pShareData->m_nGREPFILEArrNum = 1;
-		_tcscpy( m_pShareData->m_szGREPFILEArr[0], _T("*.*") );
+		m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum = 1;
+		_tcscpy( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0], _T("*.*") );
 
-		m_pShareData->m_nGREPFOLDERArrNum = 0;
+		m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum = 0;
 		for( i = 0; i < MAX_GREPFOLDER; ++i ){
-			_tcscpy( m_pShareData->m_szGREPFOLDERArr[i], _T("") );
+			_tcscpy( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i], _T("") );
 		}
 		_tcscpy( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダ */
-		_tcscpy( m_pShareData->m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
+		_tcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダ */
 
 		for( i = 0; i < MAX_TRANSFORM_FILENAME; ++i ){
 			_tcscpy( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i], _T("") );
@@ -785,9 +785,9 @@ bool CShareData::InitShareData()
 
 		for( i = 0; i < MAX_CMDARR; i++ ){
 			/* 初期化 */
-			m_pShareData->m_szCmdArr[i][0] = '\0';
+			m_pShareData->m_sHistory.m_szCmdArr[i][0] = '\0';
 		}
-		m_pShareData->m_nCmdArrNum = 0;
+		m_pShareData->m_sHistory.m_nCmdArrNum = 0;
 
 		InitKeyword( m_pShareData );
 		InitTypeConfigs( m_pShareData );
@@ -816,9 +816,9 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sMacro.m_nMacroOnSave = -1;	/* 保存前自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 
 		// 2004/06/21 novice タグジャンプ機能追加
-		m_pShareData->m_TagJumpNum = 0;
+		m_pShareData->m_sTagJump.m_TagJumpNum = 0;
 		// 2004.06.22 Moca タグジャンプの先頭
-		m_pShareData->m_TagJumpTop = 0;
+		m_pShareData->m_sTagJump.m_TagJumpTop = 0;
 		m_pShareData->m_nExecFlgOpt = 1;	/* 外部コマンド実行の「標準出力を得る」 */	// 2006.12.03 maru オプションの拡張のため
 		m_pShareData->m_bLineNumIsCRLF = TRUE;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 
@@ -827,12 +827,12 @@ bool CShareData::InitShareData()
 		m_pShareData->m_nTagsOpt = 0;	/* CTAGS */	//@@@ 2003.05.12 MIK
 		_tcscpy( m_pShareData->m_szTagsCmdLine, _T("") );	/* CTAGS */	//@@@ 2003.05.12 MIK
 		//From Here 2005.04.03 MIK キーワード指定タグジャンプのHistory保管
-		m_pShareData->m_nTagJumpKeywordArrNum = 0;
+		m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum = 0;
 		for( i = 0; i < MAX_TAGJUMP_KEYWORD; ++i ){
-			_tcscpy( m_pShareData->m_szTagJumpKeywordArr[i], _T("") );
+			_tcscpy( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[i], _T("") );
 		}
-		m_pShareData->m_bTagJumpICase = FALSE;
-		m_pShareData->m_bTagJumpAnyWhere = FALSE;
+		m_pShareData->m_sTagJump.m_bTagJumpICase = FALSE;
+		m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = FALSE;
 		//To Here 2005.04.03 MIK 
 
 	}else{

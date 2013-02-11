@@ -908,6 +908,54 @@ struct SShare_Version{
 	DWORD				m_dwProductVersionLS;
 };
 
+//共有メモリ内構造体
+struct SShare_SearchKeywords{
+	// -- -- 検索キー -- -- //
+	int					m_nSEARCHKEYArrNum;
+	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
+	int					m_nREPLACEKEYArrNum;
+	char				m_szREPLACEKEYArr[MAX_REPLACEKEY][_MAX_PATH];
+	int					m_nGREPFILEArrNum;
+	char				m_szGREPFILEArr[MAX_GREPFILE][_MAX_PATH];
+	int					m_nGREPFOLDERArrNum;
+	char				m_szGREPFOLDERArr[MAX_GREPFOLDER][_MAX_PATH];
+};
+
+//共有メモリ内構造体
+struct SShare_TagJump{
+	//データ
+	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
+	int					m_TagJumpTop;					//!< スタックの一番上の位置
+	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
+	int					m_nTagJumpKeywordArrNum;
+	char				m_szTagJumpKeywordArr[MAX_TAGJUMP_KEYWORD][_MAX_PATH];
+	BOOL				m_bTagJumpICase;	//!< 大文字小文字を同一視
+	BOOL				m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
+};
+
+//共有メモリ内構造体
+struct SShare_FileNameManagement{
+	IniFolder			m_IniFolder;	/**** iniフォルダ設定 ****/
+};
+
+//共有メモリ内構造体
+struct SShare_History{
+	//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
+	int					m_nMRUArrNum;
+	EditInfo			m_fiMRUArr[MAX_MRU];
+	bool				m_bMRUArrFavorite[MAX_MRU];	//お気に入り	//@@@ 2003.04.08 MIK
+
+	//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUFolderを経由してください。
+	int					m_nOPENFOLDERArrNum;
+	char				m_szOPENFOLDERArr[MAX_OPENFOLDER][_MAX_PATH];
+	bool				m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
+
+	//MRU以外の情報
+	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
+	int					m_nCmdArrNum;
+	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
+};
+
 //! 共有データ領域
 struct DLLSHAREDATA {
 	// -- -- バージョン -- -- //
@@ -926,65 +974,29 @@ struct DLLSHAREDATA {
 	SShare_Handles				m_sHandles;
 
 	// -- -- 保存対象 -- -- //
+	//設定
+	CommonSetting				m_Common;								// 共通設定
+	STypeConfig					m_Types[MAX_TYPES];						// タイプ別設定
+	PRINTSETTING				m_PrintSettingArr[MAX_PRINTSETTINGARR];	// 印刷ページ設定
+	//その他
+	SShare_SearchKeywords		m_sSearchKeywords;
+	SShare_TagJump				m_sTagJump;
+	SShare_FileNameManagement	m_sFileNameManagement;
+	SShare_History				m_sHistory;
 
-//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUを経由してください。
-	int					m_nMRUArrNum;
-	EditInfo			m_fiMRUArr[MAX_MRU];
-	bool				m_bMRUArrFavorite[MAX_MRU];	//お気に入り	//@@@ 2003.04.08 MIK
+	//外部コマンド実行ダイアログのオプション
+	int							m_nExecFlgOpt;		/* 外部コマンド実行オプション */	//	2006.12.03 maru オプションの拡張のため
+	//DIFF差分表示ダイアログのオプション
+	int							m_nDiffFlgOpt;		/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
+	//タグファイルの作成ダイアログのオプション
+	TCHAR						m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
+	int							m_nTagsOpt;			/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
 
-//@@@ 2001.12.26 YAZAKI	以下の2つは、直接アクセスしないでください。CMRUFolderを経由してください。
-	int					m_nOPENFOLDERArrNum;
-	char				m_szOPENFOLDERArr[MAX_OPENFOLDER][_MAX_PATH];
-	bool				m_bOPENFOLDERArrFavorite[MAX_OPENFOLDER];	//お気に入り	//@@@ 2003.04.08 MIK
 
-	int					m_nSEARCHKEYArrNum;
-	char				m_szSEARCHKEYArr[MAX_SEARCHKEY][_MAX_PATH];
-	int					m_nREPLACEKEYArrNum;
-	char				m_szREPLACEKEYArr[MAX_REPLACEKEY][_MAX_PATH];
-	int					m_nGREPFILEArrNum;
-	char				m_szGREPFILEArr[MAX_GREPFILE][_MAX_PATH];
-	int					m_nGREPFOLDERArrNum;
-	char				m_szGREPFOLDERArr[MAX_GREPFOLDER][_MAX_PATH];
-
-	char				m_szIMPORTFOLDER[_MAX_PATH];	/* 設定インポート用フォルダ */
-	
-	int					m_nCmdArrNum;
-	char				m_szCmdArr[MAX_CMDARR][MAX_CMDLEN];
-
-	/**** iniフォルダ設定 ****/
-	IniFolder			m_IniFolder;
-
-	/**** 共通設定 ****/
-	CommonSetting		m_Common;
-
-	/* **** タイプ別設定 **** */
-	STypeConfig			m_Types[MAX_TYPES];
-
-	/**** 印刷ページ設定 ****/
-	PRINTSETTING		m_PrintSettingArr[MAX_PRINTSETTINGARR];
-
-//@@@ 2002.01.08 YAZAKI 設定を保存するためにShareDataに移動
-	/* **** その他のダイアログ **** */
-	int					m_nExecFlgOpt;		/* 外部コマンド実行オプション */	//	2006.12.03 maru オプションの拡張のため
-	BOOL				m_bLineNumIsCRLF;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
-
-	int					m_nDiffFlgOpt;		/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
-	
-	char				m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
-	int					m_nTagsOpt;			/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
-	// 2004/06/21 タグジャンプ機能追加
-	int					m_TagJumpNum;					//!< タグジャンプ情報の有効データ数
-	int					m_TagJumpTop;					//!< スタックの一番上の位置
-	TagJump				m_TagJump[MAX_TAGJUMPNUM];		//!< タグジャンプ情報
-
-	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
-	int					m_nTagJumpKeywordArrNum;
-	char				m_szTagJumpKeywordArr[MAX_TAGJUMP_KEYWORD][_MAX_PATH];
-	BOOL				m_bTagJumpICase;	//!< 大文字小文字を同一視
-	BOOL				m_bTagJumpAnyWhere;	//!< 文字列の途中にマッチ
-	//To Here 2005.04.03 MIK
+	// -- -- テンポラリ -- -- //
+	//指定行へジャンプダイアログのオプション
+	BOOL						m_bLineNumIsCRLF;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
-
 
 
 /*!	@brief 共有データの管理
@@ -1074,7 +1086,7 @@ public:
 	void SaveShareData( void );	/* 共有データの保存 */
 	static void GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFile );	/* 構成設定ファイルからiniファイル名を取得する */	// 2007.09.04 ryoji
 	void GetIniFileName( LPTSTR pszIniFileName, BOOL bRead = FALSE );	/* iniファイル名の取得 */	// 2007.05.19 ryoji
-	BOOL IsPrivateSettings( void ){ return m_pShareData->m_IniFolder.m_bWritePrivate; }			/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
+	BOOL IsPrivateSettings( void ){ return m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate; }			/* iniファイルの保存先がユーザ別設定フォルダかどうか */	// 2007.05.25 ryoji
 	BOOL ShareData_IO_2( bool );	/* 共有データの保存 */
 	static void IO_ColorSet( CProfile* , const char* , ColorInfo* );	/* 色設定 I/O */ // Feb. 12, 2006 D.S.Koba
 

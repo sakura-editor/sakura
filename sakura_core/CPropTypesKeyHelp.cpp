@@ -670,14 +670,14 @@ bool CPropKeyHelp::Import(HWND hwndDlg)
 	char	szPath[_MAX_PATH + 1];
 	char	szInitDir[_MAX_PATH + 1];
 	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create( m_hInstance, hwndDlg, _T("*.txt"), szInitDir );
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
 		return false;
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 	FILE		*fp;
 	if( (fp = fopen(szPath, "r")) == NULL ){
@@ -789,15 +789,15 @@ bool CPropKeyHelp::Export(HWND hwndDlg)
 	char	szXPath[_MAX_PATH + 1];
 	char	szInitDir[_MAX_PATH + 1];
 	_tcscpy( szXPath, "" );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create( m_hInstance, hwndDlg, _T("*.txt"), szInitDir );
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szXPath ) ){
 		return false;
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szXPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szXPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 	FILE		*fp;
 	if( (fp = fopen(szXPath, "w")) == NULL ){
 		ErrorMessage( hwndDlg, _T("ファイルを開けませんでした。\n\n%s"), szXPath );

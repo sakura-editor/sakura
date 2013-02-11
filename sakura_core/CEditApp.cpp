@@ -58,7 +58,7 @@ void CEditApp::DoGrep()
 		return;
 	}
 
-	_tcscpy( m_cDlgGrep.m_szText, m_pShareData->m_szSEARCHKEYArr[0] );
+	_tcscpy( m_cDlgGrep.m_szText, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );
 
 	/* Grepダイアログの表示 */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );

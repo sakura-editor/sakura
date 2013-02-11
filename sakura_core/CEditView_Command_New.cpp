@@ -2071,7 +2071,7 @@ void CEditView::Command_BOOKMARK_PATTERN( void )
 	if( !ChangeCurRegexp(false) ) return;
 
 	m_pcEditDoc->m_cDocLineMgr.MarkSearchWord(
-		m_pShareData->m_szSEARCHKEYArr[0],		// 検索条件
+		m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0],		// 検索条件
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption,	// 検索条件
 		&m_CurRegexp							// 正規表現コンパイルデータ
 	);

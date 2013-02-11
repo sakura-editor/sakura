@@ -97,12 +97,12 @@ void CDlgExec::SetData( void )
 	/*****************************
 	*         ƒf[ƒ^Ý’è         *
 	*****************************/
-	_tcscpy( m_szCommand, m_pShareData->m_szCmdArr[0] );
+	_tcscpy( m_szCommand, m_pShareData->m_sHistory.m_szCmdArr[0] );
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_m_szCommand );
 	::SendMessage( hwndCombo, CB_RESETCONTENT, 0, 0 );
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szCommand );
-	for( i = 0; i < m_pShareData->m_nCmdArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szCmdArr[i] );
+	for( i = 0; i < m_pShareData->m_sHistory.m_nCmdArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sHistory.m_szCmdArr[i] );
 	}
 	::SendMessage( hwndCombo, CB_SETCURSEL, 0, 0 );
 	return;

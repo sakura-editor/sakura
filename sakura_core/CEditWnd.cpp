@@ -3253,9 +3253,9 @@ void CEditWnd::AcceptSharedSearchKey()
 	{
 		int	i;
 		::SendMessage( m_hwndSearchBox, CB_RESETCONTENT, 0, 0 );
-		for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; i++ )
+		for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; i++ )
 		{
-			::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
+			::SendMessage( m_hwndSearchBox, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
 		}
 		::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
 	}

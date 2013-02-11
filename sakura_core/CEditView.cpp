@@ -9448,7 +9448,7 @@ void CEditView::GetCurrentTextForSearchDlg( CMemory& cmemCurText )
 			GetCurrentTextForSearch( cmemCurText );	// カーソル位置単語を取得
 		}
 		else{
-			cmemCurText.SetString( m_pShareData->m_szSEARCHKEYArr[0] );	// 履歴からとってくる
+			cmemCurText.SetString( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );	// 履歴からとってくる
 		}
 	}
 }

@@ -512,7 +512,7 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 	// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
 	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	strcpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
@@ -525,8 +525,8 @@ void CPropCommon::p7_Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 	pFile = fopen( szPath, "r" );
 	if( NULL == pFile ){
@@ -579,7 +579,7 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 
 	// 2007.05.19 ryoji 他画面と同じようにインポート用フォルダ設定を使うようにした
 	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	strcpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
@@ -593,8 +593,8 @@ void CPropCommon::p7_Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 //	MYTRACE_A( "%s\n", szPath );
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 	pFile = fopen( szPath, "w" );
 	if( NULL == pFile ){

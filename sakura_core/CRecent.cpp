@@ -600,9 +600,9 @@ bool CRecent::EasyCreate( int nRecentType )
 	{
 	case RECENT_FOR_FILE:	//ファイル
 		return Create(
-			(char*)m_pShareData->m_fiMRUArr,
-			&m_pShareData->m_nMRUArrNum,
-			m_pShareData->m_bMRUArrFavorite,
+			(char*)m_pShareData->m_sHistory.m_fiMRUArr,
+			&m_pShareData->m_sHistory.m_nMRUArrNum,
+			m_pShareData->m_sHistory.m_bMRUArrFavorite,
 			MAX_MRU,
 			&(m_pShareData->m_Common.m_sGeneral.m_nMRUArrNum_MAX),
 			sizeof( EditInfo ),
@@ -613,12 +613,12 @@ bool CRecent::EasyCreate( int nRecentType )
 
 	case RECENT_FOR_FOLDER:	//フォルダ
 		return Create(
-			(char*)m_pShareData->m_szOPENFOLDERArr,
-			&m_pShareData->m_nOPENFOLDERArrNum,
-			m_pShareData->m_bOPENFOLDERArrFavorite,
+			(char*)m_pShareData->m_sHistory.m_szOPENFOLDERArr,
+			&m_pShareData->m_sHistory.m_nOPENFOLDERArrNum,
+			m_pShareData->m_sHistory.m_bOPENFOLDERArrFavorite,
 			MAX_OPENFOLDER,
 			&(m_pShareData->m_Common.m_sGeneral.m_nOPENFOLDERArrNum_MAX),
-			sizeof( m_pShareData->m_szOPENFOLDERArr[0] ),	//_MAX_PATH
+			sizeof( m_pShareData->m_sHistory.m_szOPENFOLDERArr[0] ),	//_MAX_PATH
 			0,
 			0,	//AppendItemのデータは文字列
 			RECENT_CMP_STRICMP
@@ -626,12 +626,12 @@ bool CRecent::EasyCreate( int nRecentType )
 
 	case RECENT_FOR_SEARCH:	//検索
 		return Create(
-			(char*)m_pShareData->m_szSEARCHKEYArr,
-			&m_pShareData->m_nSEARCHKEYArrNum,
+			(char*)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr,
+			&m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum,
 			NULL /*m_pShareData->m_bSEARCHKEYArrFavorite*/,
 			MAX_SEARCHKEY,
 			NULL,
-			sizeof( m_pShareData->m_szSEARCHKEYArr[0] ),	//_MAX_PATH
+			sizeof( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] ),	//_MAX_PATH
 			0,
 			0,	//AppendItemのデータは文字列
 			RECENT_CMP_STRCMP
@@ -639,12 +639,12 @@ bool CRecent::EasyCreate( int nRecentType )
 
 	case RECENT_FOR_REPLACE:	//置換
 		return Create(
-			(char*)m_pShareData->m_szREPLACEKEYArr,
-			&m_pShareData->m_nREPLACEKEYArrNum,
+			(char*)m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr,
+			&m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum,
 			NULL /*m_pShareData->m_bREPLACEKEYArrFavorite*/,
 			MAX_REPLACEKEY,
 			NULL,
-			sizeof( m_pShareData->m_szREPLACEKEYArr[0] ),	//_MAX_PATH
+			sizeof( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0] ),	//_MAX_PATH
 			0,
 			0,	//AppendItemのデータは文字列
 			RECENT_CMP_STRCMP
@@ -652,12 +652,12 @@ bool CRecent::EasyCreate( int nRecentType )
 
 	case RECENT_FOR_GREP_FILE:	//GREPファイル
 		return Create(
-			(char*)m_pShareData->m_szGREPFILEArr,
-			&m_pShareData->m_nGREPFILEArrNum,
+			(char*)m_pShareData->m_sSearchKeywords.m_szGREPFILEArr,
+			&m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum,
 			NULL /*m_pShareData->m_bGREPFILEArrFavorite*/,
 			MAX_GREPFILE,
 			NULL,
-			sizeof( m_pShareData->m_szGREPFILEArr[0] ),	//_MAX_PATH
+			sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0] ),	//_MAX_PATH
 			0,
 			0,	//AppendItemのデータは文字列
 			RECENT_CMP_STRICMP
@@ -665,12 +665,12 @@ bool CRecent::EasyCreate( int nRecentType )
 
 	case RECENT_FOR_GREP_FOLDER:	//GREPフォルダ
 		return Create(
-			(char*)m_pShareData->m_szGREPFOLDERArr,
-			&m_pShareData->m_nGREPFOLDERArrNum,
+			(char*)m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr,
+			&m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum,
 			NULL /*m_pShareData->m_bGREPFOLDERArrFavorite*/,
 			MAX_GREPFOLDER,
 			NULL,
-			sizeof( m_pShareData->m_szGREPFOLDERArr[0] ),	//_MAX_PATH
+			sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ),	//_MAX_PATH
 			0,
 			0,	//AppendItemのデータは文字列
 			RECENT_CMP_STRICMP
@@ -678,12 +678,12 @@ bool CRecent::EasyCreate( int nRecentType )
 
 	case RECENT_FOR_CMD:	//コマンド
 		return Create(
-			(char*)m_pShareData->m_szCmdArr,
-			&m_pShareData->m_nCmdArrNum,
+			(char*)m_pShareData->m_sHistory.m_szCmdArr,
+			&m_pShareData->m_sHistory.m_nCmdArrNum,
 			NULL /*m_pShareData->m_bCmdArrFavorite*/,
 			MAX_CMDARR,
 			NULL,
-			sizeof( m_pShareData->m_szCmdArr[0] ),	//MAX_CMDLEN
+			sizeof( m_pShareData->m_sHistory.m_szCmdArr[0] ),	//MAX_CMDLEN
 			0,
 			0,	//AppendItemのデータは文字列
 			RECENT_CMP_STRCMP
@@ -705,12 +705,12 @@ bool CRecent::EasyCreate( int nRecentType )
 
 	case RECENT_FOR_TAGJUMP_KEYWORD:	//タグジャンプキーワード 2005.04.03 MIK
 		return Create(
-			(char*)m_pShareData->m_szTagJumpKeywordArr,
-			&m_pShareData->m_nTagJumpKeywordArrNum,
+			(char*)m_pShareData->m_sTagJump.m_szTagJumpKeywordArr,
+			&m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum,
 			NULL /*m_pShareData->m_bTagJumpKeywordArrFavorite*/,
 			MAX_TAGJUMP_KEYWORD,
 			NULL,
-			sizeof( m_pShareData->m_szTagJumpKeywordArr[0] ),	//_MAX_PATH
+			sizeof( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[0] ),	//_MAX_PATH
 			0,
 			0,	//AppendItemのデータは文字列
 			RECENT_CMP_STRCMP

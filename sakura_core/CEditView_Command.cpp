@@ -3071,7 +3071,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
 	BOOL	bChangeState;
 	if( !m_bCurSrchKeyMark
-	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] )
+	 || 0 != strcmp( m_szCurSrchKey, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] )
 	 || m_sCurSearchOption != m_pShareData->m_Common.m_sSearch.m_sSearchOption
 	){
 		bChangeState = TRUE;
@@ -3080,7 +3080,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 	}
 
 	m_bCurSrchKeyMark = TRUE;									/* 検索文字列のマーク */
-	strcpy( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[0] );/* 検索文字列 */
+	strcpy( m_szCurSrchKey, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );/* 検索文字列 */
 	m_sCurSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
 	/* 正規表現 */
 	if( m_sCurSearchOption.bRegularExp
@@ -3135,7 +3135,7 @@ void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
 	nColmTo = m_nCaretPosX;
 //	bFlag1 = FALSE;
 	bSelecting = FALSE;
-	if( '\0' == m_pShareData->m_szSEARCHKEYArr[0][0] ){
+	if( '\0' == m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0][0] ){
 		goto end_of_func;
 	}
 	if( IsTextSelected() ){	/* テキストが選択されているか */
@@ -3327,7 +3327,7 @@ void CEditView::Command_SEARCH_NEXT(
 
 	bSelecting = FALSE;
 	//	2004.05.30 Moca bChangeCurRegexpに応じて対象文字列を変える
-	if( bChangeCurRegexp  && '\0' == m_pShareData->m_szSEARCHKEYArr[0][0] 
+	if( bChangeCurRegexp  && '\0' == m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0][0] 
 	 || !bChangeCurRegexp && '\0' == m_szCurSrchKey[0] ){
 		goto end_of_func;
 	}
@@ -6720,7 +6720,7 @@ void CEditView::Command_REPLACE_DIALOG( void )
 
 	/* 検索文字列を初期化 */
 	strcpy( m_pcEditDoc->m_cDlgReplace.m_szText, cmemCurText.GetStringPtr() );
-	strncpy( m_pcEditDoc->m_cDlgReplace.m_szText2, m_pShareData->m_szREPLACEKEYArr[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
+	strncpy( m_pcEditDoc->m_cDlgReplace.m_szText2, m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0], MAX_PATH - 1 );	// 2006.08.23 ryoji 前回の置換後文字列を引き継ぐ
 	m_pcEditDoc->m_cDlgReplace.m_szText2[MAX_PATH - 1] = '\0';
 
 	if ( IsTextSelected() && m_nSelectLineFrom!=m_nSelectLineTo ) {
@@ -6795,7 +6795,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 	DisableSelectArea( TRUE );
 
 	// 2004.06.01 Moca 検索中に、他のプロセスによってm_szREPLACEKEYArrが書き換えられても大丈夫なように
-	const CMemory	cMemRepKey( m_pShareData->m_szREPLACEKEYArr[0], _tcslen(m_pShareData->m_szREPLACEKEYArr[0]) );
+	const CMemory	cMemRepKey( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0], _tcslen(m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0]) );
 
 	/* 次を検索 */
 	Command_SEARCH_NEXT( true, TRUE, hwndParent, 0 );
@@ -6862,7 +6862,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			} else {
 				cMemRepKey2 = cMemRepKey;
 			}
-			cRegexp.Compile( m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetStringPtr(), nFlag);
+			cRegexp.Compile( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0], cMemRepKey2.GetStringPtr(), nFlag);
 			if( cRegexp.Replace(pLine, nLen, nIdx) ){
 				// From Here Jun. 6, 2005 かろと
 				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
@@ -7093,7 +7093,7 @@ void CEditView::Command_REPLACE_ALL()
 	else
 	{
 		// 2004.05.14 Moca 全置換の途中で他のウィンドウで置換されるとまずいのでコピーする
-		cmemClip.SetString( m_pShareData->m_szREPLACEKEYArr[0] );
+		cmemClip.SetString( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0] );
 	}
 
 	szREPLACEKEY = cmemClip.GetStringPtr(&nREPLACEKEY);
@@ -7151,7 +7151,7 @@ void CEditView::Command_REPLACE_ALL()
 		// 正規表現オプションの設定2006.04.01 かろと
 		int nFlag = (m_pShareData->m_Common.m_sSearch.m_sSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
 		nFlag |= (bConsecutiveAll ? CBregexp::optNothing : CBregexp::optGlobal);	// 2007.01.16 ryoji
-		cRegexp.Compile(m_pShareData->m_szSEARCHKEYArr[0], cMemRepKey2.GetStringPtr(), nFlag);
+		cRegexp.Compile(m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0], cMemRepKey2.GetStringPtr(), nFlag);
 	}
 
 	/* テキストが選択されているか */
@@ -8727,26 +8727,26 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 		// 検索文字列設定
 		int i,j;
 		strcpy( m_szCurSrchKey, cmemCurText.GetStringPtr() );
-		for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-			if( 0 == strcmp( m_szCurSrchKey, m_pShareData->m_szSEARCHKEYArr[i] ) ){
+		for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i ){
+			if( 0 == strcmp( m_szCurSrchKey, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] ) ){
 				break;
 			}
 		}
-		if( i < m_pShareData->m_nSEARCHKEYArrNum ){
+		if( i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum ){
 			for( j = i; j > 0; j-- ){
-				strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
+				strcpy( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[j], m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[j - 1] );
 			}
 		}
 		else{
 			for( j = MAX_SEARCHKEY - 1; j > 0; j-- ){
-				strcpy( m_pShareData->m_szSEARCHKEYArr[j], m_pShareData->m_szSEARCHKEYArr[j - 1] );
+				strcpy( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[j], m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[j - 1] );
 			}
-			++m_pShareData->m_nSEARCHKEYArrNum;
-			if( m_pShareData->m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
-				m_pShareData->m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
+			++m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum;
+			if( m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum > MAX_SEARCHKEY ){
+				m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum = MAX_SEARCHKEY;
 			}
 		}
-		strcpy( m_pShareData->m_szSEARCHKEYArr[0], cmemCurText.GetStringPtr() );
+		strcpy( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0], cmemCurText.GetStringPtr() );
 
 		// 検索オプション設定
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption.bRegularExp=false;	//正規表現使わない

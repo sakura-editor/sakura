@@ -60,7 +60,7 @@ void CEditView::Command_GREP_DIALOG( void )
 
 	/* ƒL[‚ª‚È‚¢‚È‚çA—š—ð‚©‚ç‚Æ‚Á‚Ä‚­‚é */
 	if( 0 == cmemCurText.GetStringLength() ){
-		cmemCurText.SetString( m_pShareData->m_szSEARCHKEYArr[0] );
+		cmemCurText.SetString( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );
 	}
 	_tcscpy( m_pcEditDoc->m_cDlgGrep.m_szText, cmemCurText.GetStringPtr() );
 

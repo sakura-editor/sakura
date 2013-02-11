@@ -3022,7 +3022,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				if( IDOK == nMsgResult )
 				{
 					DLLSHAREDATA *pShareData = CShareData::getInstance()->GetShareData();
-					GetInidir( pShareData->m_szIMPORTFOLDER );
+					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
 				}
 				break;
 			}

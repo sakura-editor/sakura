@@ -1523,7 +1523,7 @@ bool CPropColor::Import( HWND hwndDlg )
 	cProfile.SetReadingMode();
 
 	_tcscpy( szPath, "" );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -1539,8 +1539,8 @@ bool CPropColor::Import( HWND hwndDlg )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 
 	/* 色設定Ver1か */
@@ -1670,7 +1670,7 @@ bool CPropColor::Export( HWND hwndDlg )
 	cProfile.SetWritingMode();
 
 	_tcscpy( szPath, _T("") );
-	_tcscpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
@@ -1686,8 +1686,8 @@ bool CPropColor::Export( HWND hwndDlg )
 	}
 	/* ファイルのフルパスをフォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, _T("\\") );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, _T("\\") );
 
 	/* 色設定 I/O */
 	CShareData::IO_ColorSet( &cProfile, STR_COLORDATA_SECTION, m_Types.m_ColorInfoArr );

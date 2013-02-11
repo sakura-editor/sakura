@@ -191,9 +191,9 @@ void CDlgTagJumpList::SetData( void )
 		HWND hwndKey;
 		hwndKey = ::GetDlgItem( m_hWnd, IDC_KEYWORD );
 
-		m_bTagJumpICase = m_pShareData->m_bTagJumpICase;
+		m_bTagJumpICase = m_pShareData->m_sTagJump.m_bTagJumpICase;
 		::CheckDlgButton( m_hWnd, IDC_CHECK_ICASE, m_bTagJumpICase ? BST_CHECKED : BST_UNCHECKED );
-		m_bTagJumpAnyWhere = m_pShareData->m_bTagJumpAnyWhere;
+		m_bTagJumpAnyWhere = m_pShareData->m_sTagJump.m_bTagJumpAnyWhere;
 		::CheckDlgButton( m_hWnd, IDC_CHECK_ANYWHERE, m_bTagJumpAnyWhere ? BST_CHECKED : BST_UNCHECKED );
 		::SendMessage( hwndKey, CB_LIMITTEXT, (WPARAM)_MAX_PATH-1, 0 );
 		CRecent cRecent;
@@ -304,8 +304,8 @@ int CDlgTagJumpList::GetData( void )
 	//	From Here 2005.04.03 MIK Ý’è’l‚Ì•Û‘¶
 	if( 0 != m_lParam )
 	{
-		m_pShareData->m_bTagJumpICase = m_bTagJumpICase;
-		m_pShareData->m_bTagJumpAnyWhere = m_bTagJumpAnyWhere;
+		m_pShareData->m_sTagJump.m_bTagJumpICase = m_bTagJumpICase;
+		m_pShareData->m_sTagJump.m_bTagJumpAnyWhere = m_bTagJumpAnyWhere;
 
 		char	tmp[MAX_TAG_STRING_LENGTH];
 		_tcscpy( tmp, _T("") );

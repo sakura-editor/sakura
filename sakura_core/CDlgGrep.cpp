@@ -59,9 +59,9 @@ CDlgGrep::CDlgGrep()
 	m_bGrepOutputLine = TRUE;			// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = 1;				// Grep: 出力形式
 
-	_tcscpy( m_szText, m_pShareData->m_szSEARCHKEYArr[0] );		/* 検索文字列 */
-	_tcscpy( m_szFile, m_pShareData->m_szGREPFILEArr[0] );		/* 検索ファイル */
-	_tcscpy( m_szFolder, m_pShareData->m_szGREPFOLDERArr[0] );	/* 検索フォルダ */
+	_tcscpy( m_szText, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );		/* 検索文字列 */
+	_tcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0] );		/* 検索ファイル */
+	_tcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] );	/* 検索フォルダ */
 	m_szCurrentFilePath[0] = _T('\0');
 	return;
 }
@@ -279,25 +279,25 @@ void CDlgGrep::SetData( void )
 	/* 検索文字列 */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
 	HWND	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
-	for( i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
+	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
 	}
 
 	/* 検索ファイル */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_FILE, m_szFile );
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_FILE );
-	for( i = 0; i < m_pShareData->m_nGREPFILEArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szGREPFILEArr[i] );
+	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i] );
 	}
 
 	/* 検索フォルダ */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, m_szFolder );
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER );
-	for( i = 0; i < m_pShareData->m_nGREPFOLDERArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_szGREPFOLDERArr[i] );
+	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum; ++i ){
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i] );
 	}
 
-	if((0 == _tcslen( m_pShareData->m_szGREPFOLDERArr[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
+	if((0 == _tcslen( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
 		0 < _tcslen( m_szCurrentFilePath )
 	){
 		TCHAR	szWorkFolder[MAX_PATH];

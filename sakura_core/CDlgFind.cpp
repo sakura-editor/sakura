@@ -154,8 +154,8 @@ void CDlgFind::SetCombosList( void )
 	while (::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) > 0) {
 		::SendMessage(hwndCombo, CB_DELETESTRING, 0L, 0L);
 	}
-	for (i = 0; i < m_pShareData->m_nSEARCHKEYArrNum; ++i) {
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_szSEARCHKEYArr[i] );
+	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i) {
+		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
 	}
 	::GetWindowText( hwndCombo, szBuff, _MAX_PATH );
 	if (_tcscmp( szBuff, m_szText ) != 0) {

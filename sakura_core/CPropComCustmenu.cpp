@@ -691,7 +691,7 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 	char			szInitDir[_MAX_PATH + 1];
 
 	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	strcpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
@@ -704,8 +704,8 @@ void CPropCommon::p8_Import_CustMenuSetting( HWND hwndDlg )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 	hFile = _lopen( szPath, OF_READ );
 	if( HFILE_ERROR == hFile ){
@@ -742,7 +742,7 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 	char			szInitDir[_MAX_PATH + 1];
 
 	strcpy( szPath, "" );
-	strcpy( szInitDir, m_pShareData->m_szIMPORTFOLDER );	/* インポート用フォルダ */
+	strcpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 	/* ファイルオープンダイアログの初期化 */
 	cDlgOpenFile.Create(
 		m_hInstance,
@@ -755,8 +755,8 @@ void CPropCommon::p8_Export_CustMenuSetting( HWND hwndDlg )
 	}
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
-	::SplitPath_FolderAndFile( szPath, m_pShareData->m_szIMPORTFOLDER, NULL );
-	strcat( m_pShareData->m_szIMPORTFOLDER, "\\" );
+	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );
+	strcat( m_pShareData->m_sHistory.m_szIMPORTFOLDER, "\\" );
 
 	hFile = _lcreat( szPath, 0 );
 	if( HFILE_ERROR == hFile ){

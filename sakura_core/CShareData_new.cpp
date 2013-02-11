@@ -125,24 +125,24 @@ void CShareData::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFi
 */
 void CShareData::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE*/ )
 {
-	if( !m_pShareData->m_IniFolder.m_bInit ){
-		m_pShareData->m_IniFolder.m_bInit = true;			// 初期化済フラグ
-		m_pShareData->m_IniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
-		m_pShareData->m_IniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
+	if( !m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit ){
+		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bInit = true;			// 初期化済フラグ
+		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = false;	// マルチユーザ用iniからの読み出しフラグ
+		m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;	// マルチユーザ用iniへの書き込みフラグ
 
-		GetIniFileNameDirect( m_pShareData->m_IniFolder.m_szPrivateIniFile, m_pShareData->m_IniFolder.m_szIniFile );
-		if( m_pShareData->m_IniFolder.m_szPrivateIniFile[0] != _T('\0') ){
-			m_pShareData->m_IniFolder.m_bReadPrivate = true;
-			m_pShareData->m_IniFolder.m_bWritePrivate = true;
+		GetIniFileNameDirect( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile );
+		if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile[0] != _T('\0') ){
+			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate = true;
+			m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = true;
 			if( CCommandLine::getInstance()->IsNoWindow() && CCommandLine::getInstance()->IsWriteQuit() )
-				m_pShareData->m_IniFolder.m_bWritePrivate = false;
+				m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate = false;
 
 			// マルチユーザ用のiniフォルダを作成しておく
-			if( m_pShareData->m_IniFolder.m_bWritePrivate ){
+			if( m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate ){
 				TCHAR szPath[_MAX_PATH];
 				TCHAR szDrive[_MAX_DRIVE];
 				TCHAR szDir[_MAX_DIR];
-				_tsplitpath( m_pShareData->m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
+				_tsplitpath( m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile, szDrive, szDir, NULL, NULL );
 				_snprintf( szPath, _MAX_PATH - 1, _T("%s\\%s"), szDrive, szDir );
 				szPath[_MAX_PATH - 1] = _T('\0');
 				::MakeSureDirectoryPathExists( szPath );
@@ -150,8 +150,8 @@ void CShareData::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE*/ )
 		}
 	}
 
-	bool bPrivate = bRead? m_pShareData->m_IniFolder.m_bReadPrivate: m_pShareData->m_IniFolder.m_bWritePrivate;
-	::lstrcpy( pszIniFileName, bPrivate? m_pShareData->m_IniFolder.m_szPrivateIniFile: m_pShareData->m_IniFolder.m_szIniFile );
+	bool bPrivate = bRead? m_pShareData->m_sFileNameManagement.m_IniFolder.m_bReadPrivate: m_pShareData->m_sFileNameManagement.m_IniFolder.m_bWritePrivate;
+	::lstrcpy( pszIniFileName, bPrivate? m_pShareData->m_sFileNameManagement.m_IniFolder.m_szPrivateIniFile: m_pShareData->m_sFileNameManagement.m_IniFolder.m_szIniFile );
 }
 
 /*!
@@ -231,10 +231,10 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 	EditInfo*	pfiWork;
 	char		szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, "_MRU_Counts", m_pShareData->m_nMRUArrNum );
-	nSize = m_pShareData->m_nMRUArrNum;
+	cProfile.IOProfileData( pszSecName, "_MRU_Counts", m_pShareData->m_sHistory.m_nMRUArrNum );
+	nSize = m_pShareData->m_sHistory.m_nMRUArrNum;
 	for( i = 0; i < nSize; ++i ){
-		pfiWork = &m_pShareData->m_fiMRUArr[i];
+		pfiWork = &m_pShareData->m_sHistory.m_fiMRUArr[i];
 		if( cProfile.IsReadingMode() ){
 			pfiWork->m_nType = -1;
 		}
@@ -258,7 +258,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 		pfiWork->m_nType = nType;
 		//お気に入り	//@@@ 2003.04.08 MIK
 		wsprintf( szKeyName, "MRU[%02d].bFavorite", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, m_pShareData->m_bMRUArrFavorite[i] );
+		cProfile.IOProfileData( pszSecName, szKeyName, m_pShareData->m_sHistory.m_bMRUArrFavorite[i] );
 	}
 	//@@@ 2001.12.26 YAZAKI 残りのm_fiMRUArrを初期化。
 	if ( cProfile.IsReadingMode() ){
@@ -272,27 +272,27 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 		_tcscpy( fiInit.m_szPath, _T("") );
 		strcpy( fiInit.m_szMarkLines, "" );	// 2002.01.16 hor
 		for( ; i < MAX_MRU; ++i){
-			m_pShareData->m_fiMRUArr[i] = fiInit;
-			m_pShareData->m_bMRUArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
+			m_pShareData->m_sHistory.m_fiMRUArr[i] = fiInit;
+			m_pShareData->m_sHistory.m_bMRUArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 	}
 
-	cProfile.IOProfileData( pszSecName, "_MRUFOLDER_Counts", m_pShareData->m_nOPENFOLDERArrNum );
-	nSize = m_pShareData->m_nOPENFOLDERArrNum;
+	cProfile.IOProfileData( pszSecName, "_MRUFOLDER_Counts", m_pShareData->m_sHistory.m_nOPENFOLDERArrNum );
+	nSize = m_pShareData->m_sHistory.m_nOPENFOLDERArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "MRUFOLDER[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, m_pShareData->m_szOPENFOLDERArr[i],
-			sizeof( m_pShareData->m_szOPENFOLDERArr[0] ));
+		cProfile.IOProfileData( pszSecName, szKeyName, m_pShareData->m_sHistory.m_szOPENFOLDERArr[i],
+			sizeof( m_pShareData->m_sHistory.m_szOPENFOLDERArr[0] ));
 		//お気に入り	//@@@ 2003.04.08 MIK
 		strcat( szKeyName, ".bFavorite" );
-		cProfile.IOProfileData( pszSecName, szKeyName, m_pShareData->m_bOPENFOLDERArrFavorite[i] );
+		cProfile.IOProfileData( pszSecName, szKeyName, m_pShareData->m_sHistory.m_bOPENFOLDERArrFavorite[i] );
 	}
 	//読み込み時は残りを初期化
 	if ( cProfile.IsReadingMode() ){
 		for (; i< MAX_OPENFOLDER; ++i){
 			// 2005.04.05 D.S.Koba
-			m_pShareData->m_szOPENFOLDERArr[i][0] = '\0';
-			m_pShareData->m_bOPENFOLDERArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
+			m_pShareData->m_sHistory.m_szOPENFOLDERArr[i][0] = '\0';
+			m_pShareData->m_sHistory.m_bOPENFOLDERArrFavorite[i] = false;	//お気に入り	//@@@ 2003.04.08 MIK
 		}
 	}
 }
@@ -310,31 +310,31 @@ void CShareData::ShareData_IO_Keys( CProfile& cProfile )
 	int		nSize;
 	char	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, "_SEARCHKEY_Counts", m_pShareData->m_nSEARCHKEYArrNum );
-	nSize = m_pShareData->m_nSEARCHKEYArrNum;
+	cProfile.IOProfileData( pszSecName, "_SEARCHKEY_Counts", m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum );
+	nSize = m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "SEARCHKEY[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szSEARCHKEYArr[i], sizeof( m_pShareData->m_szSEARCHKEYArr[0] ));
+			m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] ));
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
 		for(; i < MAX_SEARCHKEY; ++i){
-			m_pShareData->m_szSEARCHKEYArr[i][0] = '\0';
+			m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i][0] = '\0';
 		}
 	}
 
-	cProfile.IOProfileData( pszSecName, "_REPLACEKEY_Counts", m_pShareData->m_nREPLACEKEYArrNum );
-	nSize = m_pShareData->m_nREPLACEKEYArrNum;
+	cProfile.IOProfileData( pszSecName, "_REPLACEKEY_Counts", m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum );
+	nSize = m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "REPLACEKEY[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szREPLACEKEYArr[i], sizeof( m_pShareData->m_szREPLACEKEYArr[0] ) );
+			m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0] ) );
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
 		for(; i < MAX_REPLACEKEY; ++i){
-			m_pShareData->m_szREPLACEKEYArr[i][0] = '\0';
+			m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i][0] = '\0';
 		}
 	}
 }
@@ -352,31 +352,31 @@ void CShareData::ShareData_IO_Grep( CProfile& cProfile )
 	int		nSize;
 	char	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, "_GREPFILE_Counts", m_pShareData->m_nGREPFILEArrNum );
-	nSize = m_pShareData->m_nGREPFILEArrNum;
+	cProfile.IOProfileData( pszSecName, "_GREPFILE_Counts", m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum );
+	nSize = m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "GREPFILE[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szGREPFILEArr[i], sizeof( m_pShareData->m_szGREPFILEArr[0] ));
+			m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0] ));
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
 		for(; i < MAX_GREPFILE; ++i){
-			m_pShareData->m_szGREPFILEArr[i][0] = '\0';
+			m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i][0] = '\0';
 		}
 	}
 
-	cProfile.IOProfileData( pszSecName, "_GREPFOLDER_Counts", m_pShareData->m_nGREPFOLDERArrNum );
-	nSize = m_pShareData->m_nGREPFOLDERArrNum;
+	cProfile.IOProfileData( pszSecName, "_GREPFOLDER_Counts", m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum );
+	nSize = m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "GREPFOLDER[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szGREPFOLDERArr[i], sizeof( m_pShareData->m_szGREPFOLDERArr[0] ));
+			m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ));
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
 		for(; i < MAX_GREPFOLDER; ++i){
-			m_pShareData->m_szGREPFOLDERArr[i][0] = '\0';
+			m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i][0] = '\0';
 		}
 	}
 }
@@ -395,7 +395,7 @@ void CShareData::ShareData_IO_Folders( CProfile& cProfile )
 		m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, sizeof( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER ));
 	/* 設定インポート用フォルダ */
 	cProfile.IOProfileData( pszSecName, "szIMPORTFOLDER",
-		m_pShareData->m_szIMPORTFOLDER, sizeof( m_pShareData->m_szIMPORTFOLDER ));
+		m_pShareData->m_sHistory.m_szIMPORTFOLDER, sizeof( m_pShareData->m_sHistory.m_szIMPORTFOLDER ));
 }
 
 /*!
@@ -410,17 +410,17 @@ void CShareData::ShareData_IO_Cmd( CProfile& cProfile )
 	int		i;
 	char	szKeyName[64];
 
-	cProfile.IOProfileData( pszSecName, "nCmdArrNum", m_pShareData->m_nCmdArrNum );
-	int nSize = m_pShareData->m_nCmdArrNum;
+	cProfile.IOProfileData( pszSecName, "nCmdArrNum", m_pShareData->m_sHistory.m_nCmdArrNum );
+	int nSize = m_pShareData->m_sHistory.m_nCmdArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "szCmdArr[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szCmdArr[i], sizeof( m_pShareData->m_szCmdArr[0] ));
+			m_pShareData->m_sHistory.m_szCmdArr[i], sizeof( m_pShareData->m_sHistory.m_szCmdArr[0] ));
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
 		for(; i < MAX_CMDARR; ++i){
-			m_pShareData->m_szCmdArr[i][0] = '\0';
+			m_pShareData->m_sHistory.m_szCmdArr[i][0] = '\0';
 		}
 	}
 }
@@ -1451,17 +1451,17 @@ void CShareData::ShareData_IO_Other( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "szTagsCmdLine"	, m_pShareData->m_szTagsCmdLine, sizeof( m_pShareData->m_szTagsCmdLine ) );
 	
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
-	cProfile.IOProfileData( pszSecName, "_TagJumpKeyword_Counts", m_pShareData->m_nTagJumpKeywordArrNum );
-	for( i = 0; i < m_pShareData->m_nTagJumpKeywordArrNum; ++i ){
+	cProfile.IOProfileData( pszSecName, "_TagJumpKeyword_Counts", m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum );
+	for( i = 0; i < m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum; ++i ){
 		wsprintf( szKeyName, "TagJumpKeyword[%02d]", i );
-		if( i >= m_pShareData->m_nTagJumpKeywordArrNum ){
-			strcpy( m_pShareData->m_szTagJumpKeywordArr[i], "" );
+		if( i >= m_pShareData->m_sTagJump.m_nTagJumpKeywordArrNum ){
+			strcpy( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[i], "" );
 		}
 		cProfile.IOProfileData( pszSecName, szKeyName,
-			m_pShareData->m_szTagJumpKeywordArr[i], sizeof( m_pShareData->m_szTagJumpKeywordArr[0] ));
+			m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[i], sizeof( m_pShareData->m_sTagJump.m_szTagJumpKeywordArr[0] ));
 	}
-	cProfile.IOProfileData( pszSecName, "m_bTagJumpICase"		, m_pShareData->m_bTagJumpICase );
-	cProfile.IOProfileData( pszSecName, "m_bTagJumpAnyWhere"		, m_pShareData->m_bTagJumpAnyWhere );
+	cProfile.IOProfileData( pszSecName, "m_bTagJumpICase"		, m_pShareData->m_sTagJump.m_bTagJumpICase );
+	cProfile.IOProfileData( pszSecName, "m_bTagJumpAnyWhere"		, m_pShareData->m_sTagJump.m_bTagJumpAnyWhere );
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプの
 
 	//	MIK バージョン情報（書き込みのみ）
@@ -1554,15 +1554,15 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 */
 void CShareData::PushTagJump(const TagJump *pTagJump)
 {
-	int i = m_pShareData->m_TagJumpTop + 1;
+	int i = m_pShareData->m_sTagJump.m_TagJumpTop + 1;
 	if( MAX_TAGJUMPNUM <= i ){
 		i = 0;
 	}
-	if( m_pShareData->m_TagJumpNum < MAX_TAGJUMPNUM ){
-		m_pShareData->m_TagJumpNum++;
+	if( m_pShareData->m_sTagJump.m_TagJumpNum < MAX_TAGJUMPNUM ){
+		m_pShareData->m_sTagJump.m_TagJumpNum++;
 	}
-	m_pShareData->m_TagJump[i] = *pTagJump;
-	m_pShareData->m_TagJumpTop = i;
+	m_pShareData->m_sTagJump.m_TagJump[i] = *pTagJump;
+	m_pShareData->m_sTagJump.m_TagJumpTop = i;
 }
 
 
@@ -1580,12 +1580,12 @@ void CShareData::PushTagJump(const TagJump *pTagJump)
 */
 bool CShareData::PopTagJump(TagJump *pTagJump)
 {
-	if( 0 < m_pShareData->m_TagJumpNum ){
-		*pTagJump = m_pShareData->m_TagJump[m_pShareData->m_TagJumpTop--];
-		if( m_pShareData->m_TagJumpTop < 0 ){
-			m_pShareData->m_TagJumpTop = MAX_TAGJUMPNUM - 1;
+	if( 0 < m_pShareData->m_sTagJump.m_TagJumpNum ){
+		*pTagJump = m_pShareData->m_sTagJump.m_TagJump[m_pShareData->m_sTagJump.m_TagJumpTop--];
+		if( m_pShareData->m_sTagJump.m_TagJumpTop < 0 ){
+			m_pShareData->m_sTagJump.m_TagJumpTop = MAX_TAGJUMPNUM - 1;
 		}
-		m_pShareData->m_TagJumpNum--;
+		m_pShareData->m_sTagJump.m_TagJumpNum--;
 		return true;
 	}
 	return false;
