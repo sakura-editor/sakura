@@ -191,6 +191,7 @@ struct CommonSetting_Edit
 
 	//上書きモード
 	BOOL	m_bNotOverWriteCRLF;		// 改行は上書きしない
+	bool	m_bOverWriteFixMode;			// 文字幅に合わせてスペースを詰める
 
 	//クリッカブルURL
 	BOOL	m_bJumpSingleClickURL;		// URLのシングルクリックでJump $$$未使用
