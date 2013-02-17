@@ -146,7 +146,7 @@ end_of_for:;
 		}
 		else{
 			if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-				DelCharForOverwrite();	// 上書き用の一文字削除	// 2009.04.11 ryoji
+				DelCharForOverwrite(&wcChar, 1);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 			}
 		}
 	}
@@ -274,7 +274,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 	}
 	else{
 		if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			DelCharForOverwrite();	// 上書き用の一文字削除	// 2009.04.11 ryoji
+			DelCharForOverwrite(szWord, nWord);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 		}
 	}
 
@@ -700,11 +700,14 @@ void CViewCommander::Command_DELETE_BACK( void )
 
 
 /* 	上書き用の一文字削除	2009.04.11 ryoji */
-void CViewCommander::DelCharForOverwrite( void )
+void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 {
 	bool bEol = false;
 	BOOL bDelete = TRUE;
 	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+	int nDelLen = CLogicInt(0);
+	CLayoutInt nKetaDiff = CLayoutInt(0);
+	CLayoutInt nKetaAfterIns = CLayoutInt(0);
 	if( NULL != pcLayout ){
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 		CLogicInt nIdxTo = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
@@ -716,14 +719,53 @@ void CViewCommander::DelCharForOverwrite( void )
 					bDelete = FALSE;
 				}
 			}
+		}else{
+			// 文字幅に合わせてスペースを詰める
+			if( GetDllShareData().m_Common.m_sEdit.m_bOverWriteFixMode ){
+				const CStringRef line = pcLayout->GetDocLineRef()->GetStringRefWithEOL();
+				CLogicInt nPos = GetCaret().GetCaretLogicPos().GetX();
+				if( line.At(nPos) != WCODE::TAB ){
+					CLayoutInt nKetaBefore = CNativeW::GetKetaOfChar(line, nPos);
+					CLayoutInt nKetaAfter = CNativeW::GetKetaOfChar(pszInput, nLen, 0);
+					nKetaDiff = nKetaBefore - nKetaAfter;
+					nPos += CNativeW::GetSizeOfChar(line.GetPtr(), line.GetLength(), nPos);
+					nDelLen = 1;
+					if( nKetaDiff < 0 && nPos < line.GetLength() ){
+						wchar_t c = line.At(nPos);
+						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c) ){
+							nDelLen = 2;
+							CLayoutInt nKetaBefore2 = CNativeW::GetKetaOfChar(line, nPos);
+							nKetaAfterIns = nKetaBefore + nKetaBefore2 - nKetaAfter;
+						}
+					}
+				}
+			}
 		}
 	}
 	if( bDelete ){
 		/* 上書きモードなので、現在位置の文字を１文字消去 */
+		CLayoutPoint posBefore;
 		if( bEol ){
 			Command_DELETE();	//行数減では再描画が必要＆行末以後の削除を処理統一
+			posBefore = GetCaret().GetCaretLayoutPos();
 		}else{
+			// 1文字削除
 			m_pCommanderView->DeleteData( FALSE );
+			posBefore = GetCaret().GetCaretLayoutPos();
+			for(int i = 1; i < nDelLen; i++){
+				m_pCommanderView->DeleteData( FALSE );
+			}
+		}
+		CNativeW tmp;
+		for(CLayoutInt i = CLayoutInt(0); i < nKetaDiff; i++){
+			tmp.AppendString(L" ");
+		}
+		for(CLayoutInt i = CLayoutInt(0); i < nKetaAfterIns; i++){
+			tmp.AppendString(L" ");
+		}
+		if( 0 < tmp.GetStringLength() ){
+			Command_INSTEXT(FALSE, tmp.GetStringPtr(), tmp.GetStringLength(), false, false);
+			GetCaret().MoveCursor(posBefore, false);
 		}
 	}
 }

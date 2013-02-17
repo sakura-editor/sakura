@@ -1510,7 +1510,10 @@ BEGIN
     CONTROL         "改行コードは上書きしない(&N)",
                     IDC_CHECK_bNotOverWriteCRLF,"Button",BS_AUTOCHECKBOX | 
                     WS_GROUP | WS_TABSTOP,8,174,108,10
-    GROUPBOX        "上書きモード",IDC_STATIC,3,159,149,35,WS_GROUP
+    CONTROL         "文字幅に合わせてスペースを詰める(&F)",
+                    IDC_CHECK_bOverWriteFixMode,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,8,190,128,10
+    GROUPBOX        "上書きモード",IDC_STATIC,3,159,149,51,WS_GROUP
     CONTROL         "クリックで&URLを選択する",IDC_CHECK_bSelectClickedURL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,161,18,94,10
     GROUPBOX        "クリッカブルURL",IDC_STATIC,156,3,131,35,WS_GROUP

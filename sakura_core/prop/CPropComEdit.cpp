@@ -19,6 +19,7 @@
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -31,6 +32,7 @@ static const DWORD p_helpids[] = {	//10210
 	IDC_CHECK_DRAGDROP,					HIDC_CHECK_DRAGDROP,					//Drag&Drop編集する
 	IDC_CHECK_DROPSOURCE,				HIDC_CHECK_DROPSOURCE,					//ドロップ元にする
 	IDC_CHECK_bNotOverWriteCRLF,		HIDC_CHECK_bNotOverWriteCRLF,			//上書きモード
+	IDC_CHECK_bOverWriteFixMode,			HIDC_CHECK_bOverWriteFixMode,				//文字幅に合わせてスペースを詰める
 	//	2007.02.11 genta クリッカブルURLをこのページに移動
 	IDC_CHECK_bSelectClickedURL,	HIDC_CHECK_bSelectClickedURL,	//クリッカブルURL
 	IDC_CHECK_CONVERTEOLPASTE,			HIDC_CHECK_CONVERTEOLPASTE,			//改行コードを変換して貼り付ける
@@ -195,6 +197,9 @@ void CPropEdit::SetData( HWND hwndDlg )
 	/* 改行は上書きしない */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bNotOverWriteCRLF, m_Common.m_sEdit.m_bNotOverWriteCRLF );
 
+	// 文字幅に合わせてスペースを詰める
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_bOverWriteFixMode, m_Common.m_sEdit.m_bOverWriteFixMode );
+
 	//	URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_sEdit.m_bSelectClickedURL );
 
@@ -242,6 +247,10 @@ int CPropEdit::GetData( HWND hwndDlg )
 
 	/* 改行は上書きしない */
 	m_Common.m_sEdit.m_bNotOverWriteCRLF = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bNotOverWriteCRLF );
+
+	// 文字幅に合わせてスペースを詰める
+	m_Common.m_sEdit.m_bOverWriteFixMode = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bOverWriteFixMode );
+	
 
 	/* URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
 	m_Common.m_sEdit.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );

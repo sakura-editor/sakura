@@ -109,7 +109,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		else{
 			// ※矩形選択ではないのでここへ来るのは実際にはソフトタブのときだけ
 			if( bSoftTab && !m_pCommanderView->IsInsMode() ){
-				DelCharForOverwrite();
+				DelCharForOverwrite(pData, nDataLen);
 			}
 			m_pCommanderView->InsertData_CEditView(
 				GetCaret().GetCaretLayoutPos(),
