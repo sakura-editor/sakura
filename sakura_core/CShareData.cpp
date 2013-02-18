@@ -701,7 +701,11 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sWindow.m_nWinPosY = 0;
 
 		m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray = TRUE;				/* タスクトレイのアイコンを使う */
+#ifdef _DEBUG
+		m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray = FALSE;				/* タスクトレイのアイコンを常駐 */
+#else
 		m_pShareData->m_Common.m_sGeneral.m_bStayTaskTray = TRUE;				/* タスクトレイのアイコンを常駐 */
+#endif
 		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode = _T('Z');		/* タスクトレイ左クリックメニュー キー */
 		m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods = HOTKEYF_ALT | HOTKEYF_CONTROL;	/* タスクトレイ左クリックメニュー キー */
 		m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop = TRUE;			/* OLEによるドラッグ & ドロップを使う */
