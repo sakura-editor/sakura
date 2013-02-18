@@ -53,19 +53,30 @@ const DWORD p_helpids[] = {
 	IDC_LIST_FAVORITE_GREP_FILE,	HIDC_LIST_FAVORITE_GREPFILE,	//GREPファイル
 	IDC_LIST_FAVORITE_GREP_FOLDER,	HIDC_LIST_FAVORITE_GREPFOLDER,	//GREPフォルダ
 	IDC_LIST_FAVORITE_CMD,			HIDC_LIST_FAVORITE_CMD,			//コマンド
+//	IDC_STATIC_BUTTONS,				-1,
 	IDC_BUTTON_CLEAR,				HIDC_BUTTON_FAVORITE_CLEAR,		//すべて	// 2006.10.10 ryoji
 	IDC_BUTTON_DELETE_NOFAVORATE,   HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE,  //お気に入り以外
 	IDC_BUTTON_DELETE_NOTFOUND,		HIDC_BUTTON_FAVORITE_DELETE_NOTFOUND		,  //存在しない項目
 	IDC_BUTTON_DELETE_SELECTED,     HIDC_BUTTON_FAVORITE_DELETE_SELECTED,    //選択項目
 	IDC_BUTTON_ADD_FAVORITE,        HIDC_BUTTON_ADD_FAVORITE,		// 追加
 	IDOK,							HIDC_FAVORITE_IDOK,				//閉じる
-//	IDCANCEL,						HIDC_FAVORITE_IDCANCEL,			//キャンセル
 	IDC_BUTTON_HELP,				HIDC_BUTTON_FAVORITE_HELP,		//ヘルプ
-//	IDC_STATIC,						-1,
+//	IDC_STATIC_FAVORITE_MSG,		-1,
 	0, 0
 };
 
-
+static const SAnchorList anchorList[] = {
+	{IDC_TAB_FAVORITE,              ANCHOR_LEFT_RIGHT},
+	{IDC_STATIC_BUTTONS,			ANCHOR_BOTTOM},
+	{IDC_BUTTON_CLEAR, 				ANCHOR_BOTTOM},
+	{IDC_BUTTON_DELETE_NOFAVORATE,	ANCHOR_BOTTOM},
+	{IDC_BUTTON_DELETE_NOTFOUND,	ANCHOR_BOTTOM},
+	{IDC_BUTTON_DELETE_SELECTED,	ANCHOR_BOTTOM},
+	{IDC_BUTTON_ADD_FAVORITE, 		ANCHOR_BOTTOM},
+	{IDOK, 							ANCHOR_BOTTOM},
+	{IDC_BUTTON_HELP, 				ANCHOR_BOTTOM},
+	{IDC_STATIC_FAVORITE_MSG, 		ANCHOR_BOTTOM},
+};
 
 //SDKにしか定義されていない。
 #ifndef	ListView_SetCheckState
@@ -102,6 +113,9 @@ CDlgFavorite::CDlgFavorite()
 
 	m_nCurrentTab = 0;
 	_tcscpy( m_szMsg, _T("") );
+
+	/* サイズ変更時に位置を制御するコントロール数 */
+	assert( _countof(anchorList) == _countof(m_rcItems) );
 
 	{
 		memset_raw( m_aFavoriteInfo, 0, sizeof( m_aFavoriteInfo ) );
@@ -336,10 +350,17 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	LV_COLUMN	col;
 	RECT		rc;
 	int			nTab;
-	POINT		po;
 	long		lngStyle;
 
 	_SetHwnd( hwndDlg );
+
+	::GetWindowRect( hwndDlg, &rc );
+	m_ptDefaultSize.x = rc.right - rc.left;
+	m_ptDefaultSize.y = rc.bottom - rc.top;
+
+	for( int i = 0; i < _countof(anchorList); i++ ){
+		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
+	}
 
 	hwndTab = ::GetDlgItem( hwndDlg, IDC_TAB_FAVORITE );
 	TabCtrl_DeleteAllItems( hwndTab );
@@ -349,17 +370,8 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	hwndBaseList = ::GetDlgItem( hwndDlg, m_aFavoriteInfo[0].m_nId );
 	{
 		rc.left = rc.top = rc.right = rc.bottom = 0;
-		::GetWindowRect( hwndBaseList, &rc );
-		po.x = rc.left;
-		po.y = rc.top;
-		::ScreenToClient( hwndDlg, &po );
-		rc.left = po.x;
-		rc.top  = po.y;
-		po.x = rc.right;
-		po.y = rc.bottom;
-		::ScreenToClient( hwndDlg, &po );
-		rc.right  = po.x;
-		rc.bottom = po.y;
+		GetItemClientRect( m_aFavoriteInfo[0].m_nId, rc );
+		m_rcListDefault = rc;
 	}
 
 	// リストビューのItem/SubItem幅を計算
@@ -427,6 +439,9 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::ShowWindow( hwndList, SW_SHOW );
 	TabCtrl_SetCurSel( hwndTab, m_nCurrentTab );
 	//ChangeSlider( m_nCurrentTab );
+
+	CreateSizeBox();
+	CDialog::OnSize();
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
@@ -978,4 +993,47 @@ static int CALLBACK CompareListViewFunc( LPARAM lParamItem1, LPARAM lParamItem2,
 		nRet = auto_stricmp(p->GetItemText((int)lParamItem1), p->GetItemText((int)lParamItem2));
 	}
 	return pCompInfo->bAbsOrder ? nRet : -nRet;
+}
+
+INT_PTR CDlgFavorite::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+
+	if( wMsg == WM_GETMINMAXINFO ){
+		return OnMinMaxInfo( lParam );
+	}
+	return result;
+}
+
+BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
+{
+	/* 基底クラスメンバ */
+	CDialog::OnSize( wParam, lParam );
+	RECT rc;
+	POINT ptNew;
+	::GetWindowRect( GetHwnd(), &rc );
+	ptNew.x = rc.right - rc.left;
+	ptNew.y = rc.bottom - rc.top;
+
+	for( int i = 0 ; i < _countof(anchorList); i++ ){
+		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
+	}
+
+	for( int i = 0; i < FAVORITE_INFO_MAX; i++ ){
+		HWND hwndList = GetItemHwnd( m_aFavoriteInfo[i].m_nId );
+		ResizeItem( hwndList, m_ptDefaultSize, ptNew, m_rcListDefault, ANCHOR_ALL, (i==m_nCurrentTab) );
+	}
+	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	return TRUE;
+}
+
+BOOL CDlgFavorite::OnMinMaxInfo( LPARAM lParam )
+{
+	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
+	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
+	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
+	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*2;
+	return 0;
 }

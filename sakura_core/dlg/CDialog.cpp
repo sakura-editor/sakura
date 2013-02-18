@@ -282,6 +282,10 @@ BOOL CDialog::OnBnClicked( int wID )
 	return FALSE;
 }
 
+BOOL CDialog::OnSize()
+{
+	return CDialog::OnSize( 0, 0 );
+}
 
 BOOL CDialog::OnSize( WPARAM wParam, LPARAM lParam )
 {
@@ -639,4 +643,66 @@ void	CDialog::SetMainFont( HWND hTarget )
 	hFont = CreateFontIndirect(&lf);
 	// ÉtÉHÉìÉgÇÃê›íË
 	::SendMessage(hTarget, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
+}
+
+void CDialog::ResizeItem( HWND hTarget, const POINT& ptDlgDefault, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate)
+{
+	POINT pt;
+	int height, width;
+	pt.x = rcItemDefault.left;
+	pt.y = rcItemDefault.top;
+	width = rcItemDefault.right - rcItemDefault.left;
+	height = rcItemDefault.bottom - rcItemDefault.top;
+	if( (anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == ANCHOR_LEFT ){
+		// Ç»Çµ
+	}
+	else if( (anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == ANCHOR_RIGHT ){
+		/*
+			[<- rcItemDefault.left ->[   ]      ]
+			[<- rcItemDefault.right  [ ->]      ]
+			[<-    ptDlgDefault.x             ->]
+			[<-    ptDlgNew.x             [   ]    ->]
+			[<-    pt.x                 ->[   ]      ]
+		*/
+		pt.x = rcItemDefault.left + (ptDlgNew.x - ptDlgDefault.x);
+	}
+	else if( (anchor & (ANCHOR_LEFT | ANCHOR_RIGHT)) == (ANCHOR_LEFT | ANCHOR_RIGHT) ){
+		/*
+			[<-    ptDlgNew.x        [   ]         ->]
+			[                        [<-width->]     ]
+		*/
+		width = ptDlgNew.x - rcItemDefault.left - (ptDlgDefault.x - rcItemDefault.right);
+	}
+	
+	if( (anchor & (ANCHOR_TOP | ANCHOR_BOTTOM) ) == ANCHOR_TOP ){
+		// Ç»Çµ
+	}
+	else if( (anchor & (ANCHOR_TOP | ANCHOR_BOTTOM) ) == ANCHOR_BOTTOM ){
+		pt.y = rcItemDefault.top + (ptDlgNew.y - ptDlgDefault.y);
+	}
+	else if( (anchor & (ANCHOR_TOP | ANCHOR_BOTTOM) ) == (ANCHOR_TOP | ANCHOR_BOTTOM) ){
+		height = ptDlgNew.y - rcItemDefault.top - (ptDlgDefault.y - rcItemDefault.bottom);
+	}
+//	::MoveWindow( hTarget, pt.x, pt.y, width, height, FALSE );
+	::SetWindowPos( hTarget, NULL, pt.x, pt.y, width, height,
+				SWP_NOOWNERZORDER | SWP_NOZORDER );
+	if( bUpdate ){
+		::InvalidateRect( hTarget, NULL, TRUE );
+	}
+}
+
+void CDialog::GetItemClientRect( int wID, RECT& rc )
+{
+	POINT po;
+	::GetWindowRect( GetItemHwnd(wID), &rc );
+	po.x = rc.left;
+	po.y = rc.top;
+	::ScreenToClient( GetHwnd(), &po );
+	rc.left = po.x;
+	rc.top  = po.y;
+	po.x = rc.right;
+	po.y = rc.bottom;
+	::ScreenToClient( GetHwnd(), &po );
+	rc.right  = po.x;
+	rc.bottom = po.y;
 }

@@ -23,6 +23,32 @@ class CDialog;
 
 struct DLLSHAREDATA;
 
+enum EAnchorStyle
+{
+	ANCHOR_NONE              = 0,
+	ANCHOR_LEFT              = 1,
+	ANCHOR_RIGHT             = 2,
+	ANCHOR_LEFT_RIGHT        = 3,
+	ANCHOR_TOP               = 4,
+	ANCHOR_TOP_LEFT          = 5,
+	ANCHOR_TOP_RIGHT         = 6,
+	ANCHOR_TOP_LEFT_RIGHT    = 7,
+	ANCHOR_BOTTOM            = 8,
+	ANCHOR_BOTTOM_LEFT       = 9,
+	ANCHOR_BOTTOM_RIGHT      = 10,
+	ANCHOR_BOTTOM_LEFT_RIGHT = 11,
+	ANCHOR_TOP_BOTTOM        = 12,
+	ANCHOR_TOP_BOTTOM_LEFT   = 13,
+	ANCHOR_TOP_BOTTOM_RIGHT  = 14,
+	ANCHOR_ALL               = 15
+};
+
+struct SAnchorList
+{
+	int id;
+	EAnchorStyle anchor;
+};
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -53,6 +79,7 @@ public:
 	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnDestroy( void );
 	virtual BOOL OnNotify( WPARAM wParam, LPARAM lParam ){return FALSE;}
+	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnDrawItem( WPARAM wParam, LPARAM lParam ){return TRUE;}
@@ -80,6 +107,8 @@ public:
 	virtual BOOL OnContextMenu( WPARAM, LPARAM );	//@@@ 2002.01.18 add
 	virtual LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
+	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
+	void GetItemClientRect( int wID, RECT& rc );
 public:
 	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
 	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath);

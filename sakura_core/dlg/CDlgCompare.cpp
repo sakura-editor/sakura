@@ -27,20 +27,30 @@
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12300
-//	IDC_BUTTON1,					HIDC_CMP_BUTTON1,			//上下に表示
-//	IDOK2,							HIDOK2_CMP,					//左右に表示
+//	IDC_STATIC,						-1,
 	IDOK,							HIDOK_CMP,					//OK
 	IDCANCEL,						HIDCANCEL_CMP,				//キャンセル
 	IDC_BUTTON_HELP,				HIDC_CMP_BUTTON_HELP,		//ヘルプ
 	IDC_CHECK_TILE_H,				HIDC_CMP_CHECK_TILE_H,		//左右に表示
 	IDC_LIST_FILES,					HIDC_CMP_LIST_FILES,		//ファイル一覧
 	IDC_STATIC_COMPARESRC,			HIDC_CMP_STATIC_COMPARESRC,	//ソースファイル
-//	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
+static const SAnchorList anchorList[] = {
+	{IDOK,					ANCHOR_BOTTOM},
+	{IDCANCEL,				ANCHOR_BOTTOM},
+	{IDC_BUTTON_HELP,		ANCHOR_BOTTOM},
+	{IDC_CHECK_TILE_H,		ANCHOR_LEFT},
+	{IDC_LIST_FILES,        ANCHOR_ALL},
+	{IDC_STATIC_COMPARESRC, ANCHOR_LEFT_RIGHT},
+};
+
 CDlgCompare::CDlgCompare()
 {
+	/* サイズ変更時に位置を制御するコントロール数 */
+	assert( _countof(anchorList) == _countof(m_rcItems) );
+
 	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */
 	return;
 }
@@ -228,12 +238,19 @@ INT_PTR CDlgCompare::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 
 BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
+	_SetHwnd(hwndDlg);
+
 	CreateSizeBox();
+	CDialog::OnSize();
 	
 	RECT rc;
 	::GetWindowRect( hwndDlg, &rc );
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
+
+	for( int i = 0; i < _countof(anchorList); i++ ){
+		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
+	}
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
@@ -243,21 +260,16 @@ BOOL CDlgCompare::OnSize( WPARAM wParam, LPARAM lParam )
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
 
-	HWND hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
-	if( hwndList ){
-		RECT rc;
-		POINT po1, po2;
+	RECT  rc;
+	POINT ptNew;
+	::GetWindowRect( GetHwnd(), &rc );
+	ptNew.x = rc.right - rc.left;
+	ptNew.y = rc.bottom - rc.top;
 
-		::GetWindowRect( hwndList, &rc );
-
-		po1.x = rc.left;
-		po1.y = rc.top;
-		::ScreenToClient( GetHwnd(), &po1 );
-		po2.x = rc.right;
-		po2.y = rc.bottom;
-		::ScreenToClient( GetHwnd(), &po2 );
-		::MoveWindow( hwndList, po1.x, po1.y, LOWORD(lParam)-po1.x, (po2.y-po1.y), TRUE);
+	for( int i = 0 ; i < _countof(anchorList); i++ ){
+		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
 	}
+	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return TRUE;
 }
 
@@ -267,6 +279,6 @@ BOOL CDlgCompare::OnMinMaxInfo( LPARAM lParam )
 	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
 	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
 	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
-	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y;
+	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*3;
 	return 0;
 }
