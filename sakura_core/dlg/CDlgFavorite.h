@@ -62,6 +62,9 @@ protected:
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam );
 	LPVOID	GetHelpIdTable( void );
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 標準以外のメッセージを捕捉する
+	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
+	BOOL	OnMinMaxInfo( LPARAM lParam );
 
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
@@ -111,6 +114,9 @@ private:
 
 	FavoriteInfo        m_aFavoriteInfo[FAVORITE_INFO_MAX];
 	ListViewSortInfo    m_aListViewInfo[FAVORITE_INFO_MAX];
+	POINT				m_ptDefaultSize;
+	RECT				m_rcListDefault;
+	RECT				m_rcItems[10];
 
 	int		m_nCurrentTab;
 	TCHAR	m_szMsg[1024];

@@ -49,14 +49,43 @@ const DWORD p_helpids[] = {	//13200
 	IDC_CHECK_DIFF_EXEC_STATE,	HIDC_CHECK_DIFF_EXEC_STATE,	//DIFF差分が見つからないときにメッセージを表示  2003.05.12 MIK
 	IDC_CHECK_NOTIFYNOTFOUND,	HIDC_CHECK_DIFF_NOTIFYNOTFOUND,	// 見つからないときにメッセージを表示	// 2006.10.10 ryoji
 	IDC_CHECK_SEARCHALL,		HIDC_CHECK_DIFF_SEARCHALL,		// 先頭（末尾）から再検索する	// 2006.10.10 ryoji
-//	IDC_FRAME_DIFF_SEARCH_MSG,	HIDC_FRAME_DIFF_SEARCH_MSG,
-//	IDC_STATIC,						-1,
+//	IDC_FRAME_SEARCH_MSG,		HIDC_FRAME_DIFF_SEARCH_MSG,
+//	IDC_STATIC,					-1,
 	0, 0
 };
+
+static const SAnchorList anchorList[] = {
+	{IDC_BUTTON_DIFF_DST,       ANCHOR_RIGHT},
+	{IDC_CHECK_DIFF_OPT_BLINE,  ANCHOR_BOTTOM},
+	{IDC_CHECK_DIFF_OPT_CASE,   ANCHOR_BOTTOM},
+	{IDC_CHECK_DIFF_OPT_SPACE,  ANCHOR_BOTTOM},
+	{IDC_CHECK_DIFF_OPT_SPCCHG, ANCHOR_BOTTOM},
+	{IDC_CHECK_DIFF_OPT_TABSPC, ANCHOR_BOTTOM},
+	{IDC_EDIT_DIFF_DST,         ANCHOR_LEFT_RIGHT},
+	{IDC_FRAME_DIFF_FILE12,     ANCHOR_BOTTOM},
+	{IDC_RADIO_DIFF_FILE1,      ANCHOR_BOTTOM},
+	{IDC_RADIO_DIFF_FILE2,      ANCHOR_BOTTOM},
+	{IDC_FRAME_DIFF_DST,        ANCHOR_ALL},
+	{IDC_RADIO_DIFF_DST1,		ANCHOR_TOP_LEFT},
+	{IDC_RADIO_DIFF_DST2,		ANCHOR_TOP_LEFT},
+	{IDC_LIST_DIFF_FILES,       ANCHOR_ALL},
+	{IDC_STATIC_DIFF_SRC,       ANCHOR_LEFT_RIGHT},
+	{IDOK,                      ANCHOR_BOTTOM},
+	{IDCANCEL,                  ANCHOR_BOTTOM},
+	{IDC_BUTTON_HELP,           ANCHOR_BOTTOM},
+	{IDC_CHECK_DIFF_EXEC_STATE, ANCHOR_BOTTOM},
+	{IDC_CHECK_NOTIFYNOTFOUND,  ANCHOR_BOTTOM},
+	{IDC_CHECK_SEARCHALL,       ANCHOR_BOTTOM},
+	{IDC_FRAME_SEARCH_MSG,      ANCHOR_BOTTOM},
+};
+
 
 CDlgDiff::CDlgDiff()
 	: m_nIndexSave( 0 )
 {
+	/* サイズ変更時に位置を制御するコントロール数 */
+	assert( _countof(anchorList) == _countof(m_rcItems) );
+
 	m_szFile1[0] = 0;
 	m_szFile2[0] = 0;
 	//m_nDiffFlgFile12 = 1;
@@ -425,3 +454,67 @@ LPVOID CDlgDiff::GetHelpIdTable( void )
 }
 
 
+INT_PTR CDlgDiff::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+
+	if( wMsg == WM_GETMINMAXINFO ){
+		return OnMinMaxInfo( lParam );
+	}
+	return result;
+}
+
+BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
+{
+	_SetHwnd(hwndDlg);
+
+	CreateSizeBox();
+	CDialog::OnSize();
+	
+	LONG style;
+		style = ::GetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE );
+		::SetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE, style | WS_EX_TRANSPARENT );
+		style = ::GetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE );
+		::SetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE, style | WS_EX_TRANSPARENT );
+		style = ::GetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE );
+		::SetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE, style | WS_EX_TRANSPARENT );
+
+	RECT rc;
+	::GetWindowRect( hwndDlg, &rc );
+	m_ptDefaultSize.x = rc.right - rc.left;
+	m_ptDefaultSize.y = rc.bottom - rc.top;
+
+	for( int i = 0; i < _countof(anchorList); i++){
+		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
+	}
+	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+}
+
+BOOL CDlgDiff::OnSize( WPARAM wParam, LPARAM lParam )
+{
+	/* 基底クラスメンバ */
+	CDialog::OnSize( wParam, lParam );
+
+	RECT  rc;
+	POINT ptNew;
+	::GetWindowRect( GetHwnd(), &rc );
+	ptNew.x = rc.right - rc.left;
+	ptNew.y = rc.bottom - rc.top;
+
+	for( int i = 0; i < _countof(anchorList); i++){
+		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
+	}
+	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	return TRUE;
+}
+
+BOOL CDlgDiff::OnMinMaxInfo( LPARAM lParam )
+{
+	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
+	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
+	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
+	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*2;
+	return 0;
+}

@@ -87,7 +87,8 @@ protected:
 	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
 	BOOL OnNotify( WPARAM, LPARAM );
-	BOOL OnSize( WPARAM, LPARAM );
+	BOOL OnSize( WPARAM wParam, LPARAM lParam );
+	BOOL OnMinMaxInfo( LPARAM lParam );
 	BOOL OnDestroy(void); // 20060201 aroka
 	BOOL OnCbnSelChange( HWND hwndCtl, int wID ); // 2002/11/1 frozen
 	BOOL OnContextMenu( WPARAM, LPARAM );
@@ -168,6 +169,9 @@ private:
 
 	static LPDLGTEMPLATE m_pDlgTemplate;
 	static DWORD m_dwDlgTmpSize;
+
+	POINT				m_ptDefaultSize;
+	RECT				m_rcItems[12];
 };
 
 

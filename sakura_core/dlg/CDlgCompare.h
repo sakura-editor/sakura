@@ -56,6 +56,7 @@ protected:
 
 private:
 	POINT			m_ptDefaultSize;
+	RECT			m_rcItems[6];
 };
 
 

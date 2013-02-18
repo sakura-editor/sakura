@@ -61,6 +61,21 @@ const DWORD p_helpids[] = {	//12200
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
 
+static const SAnchorList anchorList[] = {
+	{IDC_BUTTON_COPY, ANCHOR_BOTTOM},
+	{IDOK, ANCHOR_BOTTOM},
+	{IDCANCEL, ANCHOR_BOTTOM},
+	{IDC_BUTTON_HELP, ANCHOR_BOTTOM},
+	{IDC_CHECK_bAutoCloseDlgFuncList, ANCHOR_BOTTOM},
+	{IDC_LIST_FL, ANCHOR_ALL},
+	{IDC_TREE_FL, ANCHOR_ALL},
+	{IDC_CHECK_bFunclistSetFocusOnJump, ANCHOR_BOTTOM},
+	{IDC_CHECK_bMarkUpBlankLineEnable , ANCHOR_BOTTOM},
+	{IDC_COMBO_nSortType, ANCHOR_TOP},
+	{IDC_BUTTON_WINSIZE, ANCHOR_BOTTOM}, // 20060201 aroka
+	{IDC_BUTTON_MENU, ANCHOR_BOTTOM},
+};
+
 //関数リストの列
 enum EFuncListCol {
 	FL_COL_ROW		= 0,	//行
@@ -137,6 +152,9 @@ DWORD CDlgFuncList::m_dwDlgTmpSize = 0;
 
 CDlgFuncList::CDlgFuncList()
 {
+	/* サイズ変更時に位置を制御するコントロール数 */
+	assert( _countof(anchorList) == _countof(m_rcItems) );
+
 	m_pcFuncInfoArr = NULL;		/* 関数情報配列 */
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */
 	m_nListType = OUTLINE_DEFAULT;
@@ -207,6 +225,8 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		break;
 	case WM_TIMER:
 		return OnTimer( hWnd, wMsg, wParam, lParam );
+	case WM_GETMINMAXINFO:
+		return OnMinMaxInfo( lParam );
 	case WM_SETTEXT:
 		if( IsDocking() ){
 			// キャプションを再描画する
@@ -1494,6 +1514,21 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	SyncColor();
 
+	::GetWindowRect( hwndDlg, &rc );
+	m_ptDefaultSize.x = rc.right - rc.left;
+	m_ptDefaultSize.y = rc.bottom - rc.top;
+
+	for( int i = 0; i < _countof(anchorList); i++ ){
+		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
+		// ドッキング中はウィンドウ幅いっぱいまで伸ばす
+		if( IsDocking() ){
+			if( anchorList[i].anchor == ANCHOR_ALL ){
+				m_rcItems[i].bottom = m_ptDefaultSize.y;
+			}
+		}
+	}
+
+
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
@@ -1793,92 +1828,23 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
 
-	static const int Controls[][2] = {
-		{IDC_CHECK_bFunclistSetFocusOnJump, 1},
-		{IDC_CHECK_bMarkUpBlankLineEnable , 1},
-		{IDC_CHECK_bAutoCloseDlgFuncList, 1},
-		{IDC_BUTTON_MENU, 2},
-		{IDC_BUTTON_WINSIZE, 2}, // 20060201 aroka
-		{IDC_BUTTON_COPY, 2},
-		{IDOK, 2},
-		{IDCANCEL, 2},
-		{IDC_BUTTON_HELP, 2},
-		{IDC_LIST_FL, 3},
-		{IDC_TREE_FL, 3},
-		{IDC_COMBO_nSortType, 4},
-	};
-	int		nControls = _countof( Controls );
-//	int		fwSizeType;
-	int		nWidth;
-	int		nHeight;
-	int		i;
-	int		nHeightCheckBox;
-	int		nHeightButton;
-	const int	nHeightMargin = 3;
-	RECT	rc;
-	HWND	hwndCtrl;
-	POINT	po;
+	RECT  rc;
+	POINT ptNew;
+	::GetWindowRect( GetHwnd(), &rc );
+	ptNew.x = rc.right - rc.left;
+	ptNew.y = rc.bottom - rc.top;
 
-	nWidth = LOWORD(lParam);	// width of client area
-	nHeight = HIWORD(lParam);	// height of client area
-
-
-	::GetWindowRect( ::GetDlgItem( GetHwnd(), IDC_CHECK_bAutoCloseDlgFuncList ), &rc );
-	nHeightCheckBox = rc.bottom -  rc.top;
-	::GetWindowRect( ::GetDlgItem( GetHwnd(), IDOK ), &rc );	
-	nHeightButton = rc.bottom - rc.top;
-
-	for ( i = 0; i < nControls; ++i ){
-		hwndCtrl = ::GetDlgItem( GetHwnd(), Controls[i][0] );
-		if( !hwndCtrl ) continue;	// 存在しないモノは無視（NULLウィンドウで継続するとスクリーン全体がちらつく）
-		::GetWindowRect( hwndCtrl, &rc );
-		po.x = rc.left;
-		po.y = rc.top;
-		::ScreenToClient( GetHwnd(), &po );
-		rc.left = po.x;
-		rc.top  = po.y;
-		po.x = rc.right;
-		po.y = rc.bottom;
-		::ScreenToClient( GetHwnd(), &po );
-		rc.right = po.x;
-		rc.bottom  = po.y;
-		//	2003.06.22 Moca テーブル上の種別によって処理方法を変える
-		switch( Controls[i][1] ){
-		case 1:
-			::SetWindowPos( hwndCtrl, NULL, 
-				rc.left,
-				nHeight - nHeightCheckBox - nHeightMargin,
-				0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-			break;
-// 2002/11/1 frozen ここから
-		case 2:
-			::SetWindowPos( hwndCtrl, NULL,
-				rc.left,
-				nHeight - nHeightCheckBox - nHeightButton - nHeightMargin * 2,
-				0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-			break;
-		case 3:
-			::SetWindowPos( hwndCtrl, NULL, 0, 0, 
-				nWidth - 2 * rc.left,
-								nHeight - rc.top - (IsDocking()? 0: nHeightCheckBox + nHeightButton + 3 * nHeightMargin),
-				SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-			break;
-		case 4:
-			if( !IsDocking() ) break;
-			::SetWindowPos( hwndCtrl, NULL, 0, 0, 
-				nWidth - rc.left,
-				rc.bottom - rc.top,
-				SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-			break;
+	for( int i = 0 ; i < _countof(anchorList); i++ ){
+		HWND hwndCtrl = GetItemHwnd(anchorList[i].id);
+		ResizeItem( hwndCtrl, m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor, (anchorList[i].anchor != ANCHOR_ALL));
+//	2013.2.6 aroka ちらつき防止用の試行錯誤
+		if(anchorList[i].anchor == ANCHOR_ALL){
+			::UpdateWindow( hwndCtrl );
 		}
-// 2002/11/1 frozen ここまで
-		// workaround
-		// ツリーやリストはちらつきを抑えるように UpdateWindow()
-		// ツリーやリスト以外は UpdateWindow() だとゴミが残るので InvalidateRect()
-		(Controls[i][1] == 3)? ::UpdateWindow( hwndCtrl ): ::InvalidateRect( hwndCtrl, NULL, TRUE );
 	}
 
-	if( IsDocking() ){
+//	if( IsDocking() )
+	{
 		// ダイアログ部分を再描画（ツリー／リストの範囲はちらつかないように除外）
 		::InvalidateRect( GetHwnd(), NULL, FALSE );
 		POINT pt;
@@ -1892,6 +1858,15 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 	return TRUE;
 }
 
+BOOL CDlgFuncList::OnMinMaxInfo( LPARAM lParam )
+{
+	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x/2;
+	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y/3;
+	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
+	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*2;
+	return 0;
+}
 int CALLBACK Compare_by_ItemData(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	if( lParam1< lParam2 )
