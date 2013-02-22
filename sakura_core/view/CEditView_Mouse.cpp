@@ -215,6 +215,8 @@ normal_action:;
 		GetCaret().HideCaret_( GetHwnd() ); // 2002/07/22 novice
 
 
+		CLayoutPoint ptNewCaret = GetCaret().GetCaretLayoutPos();
+		bool bSetPtNewCaret = false;
 		if(tripleClickMode){		// 2007.11.15 nasukoji	トリプルクリックを処理する
 			// 1行選択でない場合は選択文字列を解除
 			// トリプルクリックが1行選択でなくてもクアドラプルクリックを有効とする
@@ -226,7 +228,12 @@ normal_action:;
 			}
 
 			// 単語の途中で折り返されていると下の行が選択されてしまうことへの対処
-			GetCaret().MoveCursorToClientPoint( ptMouse );	// カーソル移動
+			if(F_SELECTLINE != nFuncID){
+				GetCaret().MoveCursorToClientPoint( ptMouse );	// カーソル移動
+			}else{
+				GetCaret().MoveCursorToClientPoint( ptMouse, true, &ptNewCaret );	// カーソル移動
+				bSetPtNewCaret = true;
+			}
 
 			// コマンドコードによる処理振り分け
 			// マウスからのメッセージはCMD_FROM_MOUSEを上位ビットに入れて送る
@@ -235,6 +242,7 @@ normal_action:;
 			// 1行選択でない場合はここで抜ける（他の選択コマンドの時問題となるかも）
 			if(F_SELECTLINE != nFuncID)
 				return;
+			ptNewCaret = GetCaret().GetCaretLayoutPos();
 
 			// 選択するものが無い（[EOF]のみの行）時は通常クリックと同じ処理
 			if(( ! GetSelectionInfo().IsTextSelected() )&&
@@ -266,11 +274,12 @@ normal_action:;
 			/* カーソル移動 */
 			if( ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom() ){
 				if( ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight() ){
-					GetCaret().MoveCursorToClientPoint( ptMouse );
+					GetCaret().MoveCursorToClientPoint( ptMouse, true, &ptNewCaret );
 				}
 				else if( ptMouse.x < GetTextArea().GetAreaLeft() ){
-					GetCaret().MoveCursorToClientPoint( CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y) );
+					GetCaret().MoveCursorToClientPoint( CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y), true, &ptNewCaret );
 				}
+				bSetPtNewCaret = true;
 			}
 		}
 		else{
@@ -281,14 +290,15 @@ normal_action:;
 			/* カーソル移動 */
 			if( ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom() ){
 				if( ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight() ){
-					GetCaret().MoveCursorToClientPoint( ptMouse );
+					GetCaret().MoveCursorToClientPoint( ptMouse, true, &ptNewCaret );
 				}
 				else if( ptMouse.x < GetTextArea().GetAreaLeft() ){
-					GetCaret().MoveCursorToClientPoint( CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y) );
+					GetCaret().MoveCursorToClientPoint( CMyPoint(GetTextArea().GetDocumentLeftClientPointX(), ptMouse.y), true, &ptNewCaret );
 				}
+				bSetPtNewCaret = true;
 			}
 			/* 現在のカーソル位置から選択を開始する */
-			GetSelectionInfo().BeginSelectArea( );
+			GetSelectionInfo().BeginSelectArea( &ptNewCaret );
 		}
 
 
@@ -300,12 +310,12 @@ normal_action:;
 
 		int	nWorkRel;
 		nWorkRel = IsCurrentPositionSelected(
-			GetCaret().GetCaretLayoutPos()	// カーソル位置
+			ptNewCaret	// カーソル位置
 		);
 
 
 		/* 現在のカーソル位置によって選択範囲を変更 */
-		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptNewCaret );
 
 
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
@@ -405,7 +415,7 @@ normal_action:;
 			// 2009.02.22 ryoji 
 			// Command_GOLINEEND()/Command_RIGHT()ではなく次のレイアウトを調べて移動選択する方法に変更
 			// ※Command_GOLINEEND()/Command_RIGHT()は[折り返し末尾文字の右へ移動]＋[次行の先頭文字の右に移動]の仕様だとＮＧ
-			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptNewCaret.GetY2() );
 			if( pcLayout ){
 				CLayoutPoint ptCaret;
 				const CLayout* pNext = pcLayout->GetNextLayout();
@@ -414,10 +424,18 @@ normal_action:;
 				}else{
 					ptCaret.x = CLayoutInt(0);
 				}
-				ptCaret.y = GetCaret().GetCaretLayoutPos().GetY2() + 1;	// 改行無しEOF行でも MoveCursor() が有効な座標に調整してくれる
+				ptCaret.y = ptNewCaret.GetY2() + 1;	// 改行無しEOF行でも MoveCursor() が有効な座標に調整してくれる
+				GetCaret().GetAdjustCursorPos( &ptCaret );
+				GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptCaret );
 				GetCaret().MoveCursor( ptCaret, TRUE );
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
-				GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+			}else{
+				/* 現在のカーソル位置によって選択範囲を変更 */
+				if( bSetPtNewCaret ){
+					GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptNewCaret );
+					GetCaret().MoveCursor( ptNewCaret, true, 1000 );
+					GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+				}
 			}
 
 			//	Apr. 14, 2003 genta
@@ -440,7 +458,7 @@ normal_action:;
 				CLogicRange cUrlRange;	//URL範囲
 				// カーソル位置にURLが有る場合のその範囲を調べる
 				bool bIsUrl = IsCurrentPositionURL(
-					GetCaret().GetCaretLayoutPos(),	// カーソル位置
+					ptNewCaret,	// カーソル位置
 					&cUrlRange,						// URL範囲
 					NULL							// URL受け取り先
 				);
@@ -467,6 +485,11 @@ normal_action:;
 					/* 選択領域描画 */
 					GetSelectionInfo().DrawSelectArea();
 				}
+			}
+			if( bSetPtNewCaret ){
+				/* 現在のカーソル位置によって選択範囲を変更 */
+				GetCaret().MoveCursor( ptNewCaret, true, 1000 );
+				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 			}
 		}
 	}
@@ -888,7 +911,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 {
 	CMyPoint ptMouse(xPos_, yPos_);
 
-	CLayoutInt	nScrollRowNum;
 	if( m_cMousePousePos != ptMouse ){
 		m_cMousePousePos = ptMouse;
 		if( m_nMousePouse < 0 ){
@@ -896,7 +918,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 		}
 	}
 
-//	CLayoutRange sSelectBgn_Old = GetSelectionInfo().m_sSelectBgn;  // 範囲選択(原点)
 	CLayoutRange sSelect_Old    = GetSelectionInfo().m_sSelect;
 
 	// オートスクロール
@@ -939,7 +960,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 		if( m_bDragMode ){
 			if( GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop ){	/* OLEによるドラッグ & ドロップを使う */
 				/* 座標指定によるカーソル移動 */
-				nScrollRowNum = GetCaret().MoveCursorToClientPoint( ptMouse );
+				GetCaret().MoveCursorToClientPoint( ptMouse );
 			}
 		}
 		else{
@@ -1002,11 +1023,13 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 	// 一度移動したら戻ってきたときも、移動とみなすように設定
 	m_cMouseDownPos.Set(-INT_MAX, -INT_MAX);
 	
+	CLayoutPoint ptNewCursor(CLayoutInt(-1), CLayoutInt(-1));
 	if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
 		/* 座標指定によるカーソル移動 */
-		nScrollRowNum = GetCaret().MoveCursorToClientPoint( ptMouse );
+		GetCaret().MoveCursorToClientPoint( ptMouse, true, &ptNewCursor );
+		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptNewCursor );
+		GetCaret().MoveCursorToClientPoint( ptMouse );
 		/* 現在のカーソル位置によって選択範囲を変更 */
-		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse; // マウス範囲選択前回位置(XY座標)
 	}
 	else{
@@ -1024,13 +1047,23 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 
 			// カーソルを移動
 			nNewPos.x = GetTextArea().GetAreaLeft() - Int(GetTextArea().GetViewLeftCol()) * ( GetTextMetrics().GetHankakuWidth() + m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace );
-			nScrollRowNum = GetCaret().MoveCursorToClientPoint( nNewPos );
+			GetCaret().MoveCursorToClientPoint( nNewPos, false, &ptNewCursor );
 
 			// 2.5クリックによる行単位のドラッグ
 			if( m_dwTripleClickCheck ){
 				// 選択開始行以上にドラッグした
-				if( GetCaret().GetCaretLayoutPos().GetY() <= GetSelectionInfo().m_sSelectBgn.GetTo().y ){
-					GetCommander().Command_GOLINETOP( TRUE, 0x09 );		// 改行単位の行頭へ移動
+				if( ptNewCursor.GetY() <= GetSelectionInfo().m_sSelectBgn.GetTo().y ){
+					// GetCommander().Command_GOLINETOP( TRUE, 0x09 );		// 改行単位の行頭へ移動
+					CLogicInt nLineLen;
+					const CLayout*	pcLayout;
+					const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptNewCursor.GetY2(), &nLineLen, &pcLayout );
+					ptNewCursor.x = CLayoutInt(0);
+					if( pLine ){
+						while( pcLayout->GetLogicOffset() ){
+							ptNewCursor.y--;
+							pcLayout = pcLayout->GetPrevLayout();
+						}
+					}
 				}else{
 					CLayoutPoint ptCaret;
 
@@ -1038,23 +1071,25 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 
 					// 選択開始行より下にカーソルがある時は1行前と物理行番号の違いをチェックする
 					// 選択開始行にカーソルがある時はチェック不要
-					if( GetCaret().GetCaretLayoutPos().GetY() > GetSelectionInfo().m_sSelectBgn.GetTo().y ){
+					if( ptNewCursor.GetY() > GetSelectionInfo().m_sSelectBgn.GetTo().y ){
 						// 1行前の物理行を取得する
-						m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( CLayoutPoint(CLayoutInt(0), GetCaret().GetCaretLayoutPos().GetY() - 1), &ptCaretPrevLog );
+						m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( CLayoutPoint(CLayoutInt(0), ptNewCursor.GetY() - 1), &ptCaretPrevLog );
 					}
 
+					CLogicPoint ptNewCursorLogic;
+					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(ptNewCursor, &ptNewCursorLogic);
 					// 前の行と同じ物理行
-					if( ptCaretPrevLog.y == GetCaret().GetCaretLogicPos().y ){
+					if( ptCaretPrevLog.y == ptNewCursorLogic.y ){
 						// 1行先の物理行からレイアウト行を求める
 						m_pcEditDoc->m_cLayoutMgr.LogicToLayout( CLogicPoint(0, GetCaret().GetCaretLogicPos().y + 1), &ptCaret );
 
 						// カーソルを次の物理行頭へ移動する
-						nScrollRowNum = GetCaret().MoveCursor( ptCaret, TRUE );
+						ptNewCursor = ptCaret;
 					}
 				}
 			}
 		}else{
-			nScrollRowNum = GetCaret().MoveCursorToClientPoint( ptMouse );
+			GetCaret().MoveCursorToClientPoint( ptMouse, true, &ptNewCursor );
 		}
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse; // マウス範囲選択前回位置(XY座標)
 
@@ -1062,7 +1097,8 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 //		if( GetKeyState_Control() ){
 		if( !GetSelectionInfo().m_bBeginWordSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+			GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptNewCursor );
+			GetCaret().MoveCursor( ptNewCursor, true, 1000 );
 		}else{
 			CLayoutRange sSelect;
 			
@@ -1076,6 +1112,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				GetSelectionInfo().ChangeSelectAreaByCurrentCursor(
 					GetCaret().GetCaretLayoutPos()
 				);
+				GetCaret().MoveCursor( ptNewCursor, true, 1000 );
 				return;
 			}
 			CLogicInt nLineLen;
@@ -1135,6 +1172,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				/* 現在のカーソル位置によって選択範囲を変更 */
 				GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
 			}
+			GetCaret().MoveCursor( ptNewCursor, true, 1000 );
 		}
 	}
 	return;

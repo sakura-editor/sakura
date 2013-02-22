@@ -51,13 +51,13 @@ bool CViewCommander::Command_SELECTWORD( void )
 		/* 選択範囲の変更 */
 		//	2005.06.24 Moca
 		m_pCommanderView->GetSelectionInfo().SetSelectArea( sRange );
+		/* 選択領域描画 */
+		m_pCommanderView->GetSelectionInfo().DrawSelectArea();
 
 		/* 単語の先頭にカーソルを移動 */
 		GetCaret().MoveCursor( sRange.GetTo(), TRUE );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
-		/* 選択領域描画 */
-		m_pCommanderView->GetSelectionInfo().DrawSelectArea();
 		return true;	//	単語選択に成功。
 	}
 	else {
@@ -89,7 +89,7 @@ void CViewCommander::Command_SELECTALL( void )
 	m_pCommanderView->GetSelectionInfo().SetSelectArea( sRange );
 
 	/* 選択領域描画 */
-	m_pCommanderView->GetSelectionInfo().DrawSelectArea();
+	m_pCommanderView->GetSelectionInfo().DrawSelectArea(false);
 }
 
 

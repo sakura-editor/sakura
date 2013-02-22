@@ -227,7 +227,9 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			::InvalidateRect( hwnd, &rcItem, TRUE );
 		}else
 		/* 前景色見本 矩形 */
-		if( rcItem.right - 27 <= xPos && xPos <= rcItem.right - 27 + 12 ){
+		if( rcItem.right - 27 <= xPos && xPos <= rcItem.right - 27 + 12
+			&& ( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_TEXT) ) )
+		{
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
@@ -321,7 +323,9 @@ INT_PTR CPropColor::DispatchEvent(
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ),			(0 == (fAttribute & COLOR_ATTRIB_FORCE_DISP))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ),				(0 == (fAttribute & COLOR_ATTRIB_NO_BOLD))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_UNDERLINE ),		(0 == (fAttribute & COLOR_ATTRIB_NO_UNDERLINE))? TRUE: FALSE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ),	TRUE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_MOZI ),			(0 == (fAttribute & COLOR_ATTRIB_NO_TEXT))? TRUE: FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_TEXT))? TRUE: FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ),	(0 == (fAttribute & COLOR_ATTRIB_NO_TEXT))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ),			(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ),	(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
@@ -1303,16 +1307,18 @@ void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	}
 
 
-	/* 前景色 見本矩形 */
-	rc1 = pDis->rcItem;
-	rc1.left = rc1.right - 27;
-	rc1.top += 2;
-	rc1.right = rc1.left + 12;
-	rc1.bottom -= 2;
-	gr.SetBrushColor( pColorInfo->m_colTEXT );
-	gr.SetPen( cRim );
-	::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , 3, 3 );
-
+	if( 0 == (g_ColorAttributeArr[pColorInfo->m_nColorIdx].fAttribute & COLOR_ATTRIB_NO_TEXT) )
+	{
+		/* 前景色 見本矩形 */
+		rc1 = pDis->rcItem;
+		rc1.left = rc1.right - 27;
+		rc1.top += 2;
+		rc1.right = rc1.left + 12;
+		rc1.bottom -= 2;
+		gr.SetBrushColor( pColorInfo->m_colTEXT );
+		gr.SetPen( cRim );
+		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , 3, 3 );
+	}
 }
 
 

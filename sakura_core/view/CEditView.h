@@ -229,7 +229,7 @@ protected:
 public:
 	EColorIndexType GetColorIndex( const CLayout*, int, bool bPrev = false, CColorStrategy** ppStrategy = NULL, CColor_Found** ppStrategyFound = NULL );				/* 指定位置のColorIndexの取得 02/12/13 ai */
 	void SetCurrentColor( CGraphics& gr, EColorIndexType );							/* 現在の色を指定 */
-	void SetCurrentColor2( CGraphics& gr, EColorIndexType, EColorIndexType);
+	void SetCurrentColor3( CGraphics& gr, EColorIndexType, EColorIndexType, EColorIndexType);
 	COLORREF GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
 	COLORREF GetBackColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
 
@@ -244,8 +244,8 @@ public:
 	void DispTextSelected( HDC hdc, CLayoutInt nLineNum, const CMyPoint& ptXY, CLayoutInt nX_Layout );	/* テキスト反転 */
 	void RedrawAll();											/* フォーカス移動時の再描画 */
 	void Redraw();										// 2001/06/21 asa-o 再描画
-	void CaretUnderLineON( bool );								/* カーソル行アンダーラインのON */
-	void CaretUnderLineOFF( bool );								/* カーソル行アンダーラインのOFF */
+	void CaretUnderLineON( bool, bool );						/* カーソル行アンダーラインのON */
+	void CaretUnderLineOFF( bool, bool = true, bool = false );				/* カーソル行アンダーラインのOFF */
 	bool GetDrawSwitch() const
 	{
 		return m_bDrawSWITCH;
@@ -602,7 +602,11 @@ public:
 	//描画
 	bool			m_bDrawSWITCH;
 	COLORREF		m_crBack;				/* テキストの背景色 */			// 2006.12.07 ryoji
-	int				m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
+	CLayoutInt		m_nOldUnderLineY;		// 前回作画したカーソルアンダーラインの位置 0未満=非表示
+	CLayoutInt		m_nOldUnderLineYBg;
+	int				m_nOldUnderLineYMargin;
+	int				m_nOldUnderLineYHeight;
+	int				m_nOldUnderLineYHeightReal;
 	int				m_nOldCursorLineX;		/* 前回作画したカーソル位置縦線の位置 */ // 2007.09.09 Moca
 	int				m_nOldCursorVLineWidth;	// カーソル位置縦線の太さ(px)
 

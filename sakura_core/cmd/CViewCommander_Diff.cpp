@@ -306,10 +306,10 @@ re_do:;
 			if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ) m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
 		}
 
-		GetCaret().MoveCursor( ptXY_Layout, TRUE );
 		if( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptXY_Layout );
 		}
+		GetCaret().MoveCursor( ptXY_Layout, TRUE );
 	}
 
 
@@ -359,10 +359,10 @@ re_do:;
 			if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ) m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
 		}
 
-		GetCaret().MoveCursor( ptXY_Layout, TRUE );
 		if( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptXY_Layout );
 		}
+		GetCaret().MoveCursor( ptXY_Layout, TRUE );
 	}
 
 	if( GetDllShareData().m_Common.m_sSearch.m_bSearchAll ){

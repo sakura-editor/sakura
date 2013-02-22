@@ -127,7 +127,7 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelecting()
 				|| m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			m_pCommanderView->GetSelectionInfo().DisableSelectArea(true);
-			GetCaret().m_cUnderLine.CaretUnderLineON(true);
+			GetCaret().m_cUnderLine.CaretUnderLineON(true,false);
 			m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
 		}
 	}

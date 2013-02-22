@@ -421,11 +421,12 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 	eColorIndex   選択を含む現在の色
 	eColorIndex2  選択以外の現在の色
 */
-void CEditView::SetCurrentColor2( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2)
+void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2, EColorIndexType eColorIndexBg)
 {
 	//インデックス決定
 	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
 	int		nColorIdx2 = ToColorInfoArrIndex(eColorIndex2);
+	int		nColorIdxBg = ToColorInfoArrIndex(eColorIndexBg);
 	STypeConfig& config = m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	//実際に色を設定
@@ -433,8 +434,15 @@ void CEditView::SetCurrentColor2( CGraphics& gr, EColorIndexType eColorIndex,  E
 		if(nColorIdx2 == -1){ nColorIdx2 = nColorIdx; }
 		const ColorInfo& info  = config.m_ColorInfoArr[nColorIdx];
 		const ColorInfo& info2 = config.m_ColorInfoArr[nColorIdx2];
+		const ColorInfo& infoBg = config.m_ColorInfoArr[nColorIdxBg];
 		gr.SetForegroundColor(GetTextColorByColorInfo2(info, info2));
-		gr.SetBackgroundColor(GetBackColorByColorInfo2(info, info2));
+		// 2012.11.21 背景色がテキストとおなじなら背景色はカーソル行背景
+		const ColorInfo& info3 = (info2.m_colBACK == m_crBack ? infoBg : info2);
+		if( nColorIdx == nColorIdx2 ){
+			gr.SetBackgroundColor(info3.m_colBACK);
+		}else{
+			gr.SetBackgroundColor(GetBackColorByColorInfo2(info, info3));
+		}
 		gr.SetMyFont(
 			GetFontset().ChooseFontHandle(
 				info.m_colTEXT != info.m_colBACK ? info.m_bFatFont   : info2.m_bFatFont,
@@ -531,7 +539,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 		);
 		if ( m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex ){
 			/* アクティブペインは、アンダーライン描画 */
-			GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
+			GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 		}
 		return;
 	}
@@ -774,7 +782,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
 	if ( m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex ){
 		/* アクティブペインは、アンダーライン描画 */
-		GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
+		GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 	}
 	// To Here 2007.09.09 Moca
 
@@ -970,7 +978,13 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	// コンフィグ
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
 	STypeConfig* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+	CTypeSupport	cCaretLineBg(this, COLORIDX_CARETLINEBG);
+	CTypeSupport&	cBackType = (cCaretLineBg.IsDisp() &&
+		GetCaret().GetCaretLayoutPos().GetY() == pInfo->pDispPos->GetLayoutLineRef() ?  cCaretLineBg : cTextType);
 	bool bTransText = IsBkBitmap();
+	if( IsBkBitmap() ){
+		bTransText = cBackType.GetBackColor() == cTextType.GetBackColor();
+	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        行番号描画                           //
@@ -995,7 +1009,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	{
 		RECT rcClip;
 		if(!bTransText && GetTextArea().GenerateClipRect(&rcClip,*pInfo->pDispPos,(Int)pcLayout->GetIndent())){
-			cTextType.FillBack(pInfo->gr,rcClip);
+			cBackType.FillBack(pInfo->gr,rcClip);
 		}
 		//描画位置進める
 		pInfo->pDispPos->ForwardDrawCol((Int)pcLayout->GetIndent());
@@ -1053,7 +1067,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	bool rcClipRet = pInfo->pcView->GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos);
 	if(rcClipRet){
 		if( !bTransText ){
-			cTextType.FillBack(pInfo->gr,rcClip);
+			cBackType.FillBack(pInfo->gr,rcClip);
 		}
 		CTypeSupport cSelectType(this, COLORIDX_SELECT);
 		if( GetSelectionInfo().IsTextSelected() && cSelectType.IsDisp() ){
@@ -1072,8 +1086,8 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 				rcSelect.right  = view.GetTextArea().GetAreaLeft() + nSelectToPx;
 				RECT rcDraw;
 				if( ::IntersectRect(&rcDraw, &rcClip, &rcSelect) ){
-					COLORREF color = GetBackColorByColorInfo2(cSelectType.GetColorInfo(), cTextType.GetColorInfo());
-					if( color != cTextType.GetBackColor() ){
+					COLORREF color = GetBackColorByColorInfo2(cSelectType.GetColorInfo(), cBackType.GetColorInfo());
+					if( color != cBackType.GetBackColor() ){
 						pInfo->gr.FillSolidMyRect(rcDraw, color);
 					}
 				}
