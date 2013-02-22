@@ -42,12 +42,15 @@ void CViewSelect::CopySelectStatus(CViewSelect* pSelect) const
 }
 
 //! 現在のカーソル位置から選択を開始する
-void CViewSelect::BeginSelectArea()
+void CViewSelect::BeginSelectArea( const CLayoutPoint* po )
 {
 	const CEditView* pView=GetEditView();
 
-	m_sSelectBgn.Set(pView->GetCaret().GetCaretLayoutPos()); //範囲選択(原点)
-	m_sSelect.   Set(pView->GetCaret().GetCaretLayoutPos()); //範囲選択
+	if( NULL == po ){
+		po = &(pView->GetCaret().GetCaretLayoutPos());
+	}
+	m_sSelectBgn.Set(*po); //範囲選択(原点)
+	m_sSelect.   Set(*po); //範囲選択
 }
 
 
@@ -231,7 +234,7 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 				PAINTSTRUCT ps;
 				ps.rcPaint = rcUpdate;
 				// DrawSelectAreaLineでの下線OFFの代わり
-				view.GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
+				view.GetCaret().m_cUnderLine.CaretUnderLineOFF(true, false);
 				view.GetCaret().m_cUnderLine.Lock();
 				view.OnPaint(hdc, &ps, false);
 				view.GetCaret().m_cUnderLine.UnLock();
@@ -239,7 +242,7 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 			}
 			// 2010.10.10 0幅選択(解除)状態での、カーソル位置ライン復帰(リージョン外)
 			if( bDrawBracketCursorLine ){
-				view.GetCaret().m_cUnderLine.CaretUnderLineON(true);
+				view.GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
 			}
 		}
 	}else{
@@ -247,7 +250,7 @@ void CViewSelect::DrawSelectArea(bool bDrawBracketCursorLine)
 		DrawSelectArea2( hdc );
 		// 2011.12.02 選択解除状態での、カーソル位置ライン復帰
 		if( bDrawBracketCursorLine ){
-			pView->GetCaret().m_cUnderLine.CaretUnderLineON(true);
+			pView->GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
 		}
 		pView->ReleaseDC( hdc );
 	}
@@ -540,7 +543,10 @@ void CViewSelect::DrawSelectAreaLine(
 	}
 	//	必要なときだけ。
 	if ( rcClip.right != rcClip.left ){
-		pView->GetCaret().m_cUnderLine.CaretUnderLineOFF(true);
+		CLayoutRange selectOld = m_sSelect;
+		const_cast<CLayoutRange*>(&m_sSelect)->Clear(-1);
+		pView->GetCaret().m_cUnderLine.CaretUnderLineOFF(true, false, true);
+		*(const_cast<CLayoutRange*>(&m_sSelect)) = selectOld;
 		
 		// 2006.03.28 Moca 表示域内のみ処理する
 		if( nSelectFrom <=pView->GetTextArea().GetRightCol() && pView->GetTextArea().GetViewLeftCol() < nSelectTo ){

@@ -127,7 +127,7 @@ void CViewCommander::Command_COPY(
 			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = FALSE;
 			m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
 			if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-				GetCaret().m_cUnderLine.CaretUnderLineON(true);
+				GetCaret().m_cUnderLine.CaretUnderLineON(true, false);
 			}
 		}
 	}

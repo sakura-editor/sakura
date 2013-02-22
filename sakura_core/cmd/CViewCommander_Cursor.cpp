@@ -65,12 +65,14 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 		}
 	}
 
-	GetCaret().MoveCursor( pos, TRUE );
-	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+
+	GetCaret().GetAdjustCursorPos( &pos );
 	// 選択
 	if( bSelect || bBoxSelect ){
-		m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+		m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( pos );
 	}
+	GetCaret().MoveCursor( pos, TRUE );
+	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
 
 
@@ -223,8 +225,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			}
 		}
 
-		GetCaret().MoveCursor( ptPos, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		GetCaret().GetAdjustCursorPos( &ptPos );
 		if( bSelect ) {
 			/*	現在のカーソル位置によって選択範囲を変更．
 				2004.04.02 Moca 
@@ -232,8 +233,10 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 				引数で与えた座標とは異なることがあるため，
 				ptPosの代わりに実際の移動結果を使うように．
 			*/
-			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptPos );
 		}
+		GetCaret().MoveCursor( ptPos, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		nRes = 1;
 	}
 	return nRes;
@@ -351,12 +354,13 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			ptTo.x = 0;
 		}
 
-		GetCaret().MoveCursor( ptTo, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		GetCaret().GetAdjustCursorPos( &ptTo );
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptTo );
 		}
+		GetCaret().MoveCursor( ptTo, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	return;
 }
@@ -442,12 +446,13 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 		*/
 
 		/* カーソル移動 */
-		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		GetCaret().GetAdjustCursorPos( &ptLayoutNew );
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptLayoutNew );
 		}
+		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}else{
 		bool bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
@@ -522,12 +527,13 @@ try_again:;
 		ptLayoutNew.x = m_pCommanderView->LineIndexToColmn( pcLayout, ptLayoutNew.x );
 		*/
 		// カーソル移動
-		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
-		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+		GetCaret().GetAdjustCursorPos( &ptLayoutNew );
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptLayoutNew );
 		}
+		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	else{
 		bool	bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
@@ -661,12 +667,13 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 		nPosXY.x = pcLayout->CalcLayoutWidth(GetDocument()->m_cLayoutMgr);
 
 	// キャレット移動
-	GetCaret().MoveCursor( nPosXY, true );
-	GetCaret().m_nCaretPosX_Prev = nPosXY.x;
+	GetCaret().GetAdjustCursorPos( &nPosXY );
 	if( bSelect ){
 		// 現在のカーソル位置によって選択範囲を変更
 		m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( nPosXY );
 	}
+	GetCaret().MoveCursor( nPosXY, true );
+	GetCaret().m_nCaretPosX_Prev = nPosXY.x;
 }
 
 
@@ -890,8 +897,9 @@ void CViewCommander::Command_WndScrollDown( void )
 
 	nCaretMarginY += 2;
 
+	bool bCaretOff = false;
 	if( GetCaret().GetCaretLayoutPos().GetY() > m_pCommanderView->GetTextArea().m_nViewRowNum + m_pCommanderView->GetTextArea().GetViewTopLine() - (nCaretMarginY + 1) ){
-		GetCaret().m_cUnderLine.CaretUnderLineOFF( TRUE );
+		bCaretOff = true;
 	}
 
 	//	Sep. 11, 2004 genta 同期用に行数を記憶
@@ -911,8 +919,10 @@ void CViewCommander::Command_WndScrollDown( void )
 			GetCaret().ShowCaretPosInfo();
 		}
 	}
-
-	GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
+	if( bCaretOff ){
+		GetCaret().m_cUnderLine.CaretUnderLineOFF( true );
+	}
+	GetCaret().m_cUnderLine.CaretUnderLineON( true, true );
 }
 
 
@@ -927,8 +937,9 @@ void CViewCommander::Command_WndScrollUp(void)
 	if( nCaretMarginY < 1 )
 		nCaretMarginY = 1;
 
+	bool bCaretOff = false;
 	if( GetCaret().GetCaretLayoutPos().GetY2() < m_pCommanderView->GetTextArea().GetViewTopLine() + (nCaretMarginY + 1) ){
-		GetCaret().m_cUnderLine.CaretUnderLineOFF( TRUE );
+		bCaretOff = true;
 	}
 
 	//	Sep. 11, 2004 genta 同期用に行数を記憶
@@ -948,8 +959,10 @@ void CViewCommander::Command_WndScrollUp(void)
 			GetCaret().ShowCaretPosInfo();
 		}
 	}
-
-	GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
+	if( bCaretOff ){
+		GetCaret().m_cUnderLine.CaretUnderLineOFF( true );
+	}
+	GetCaret().m_cUnderLine.CaretUnderLineON( true, true );
 }
 
 // 2001/06/20 End

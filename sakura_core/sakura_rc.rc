@@ -953,7 +953,7 @@ BEGIN
                     WS_TABSTOP,73,152,41,10
     CONTROL         "â∫ê¸(&U)",IDC_CHECK_UNDERLINE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,114,152,41,10
-    LTEXT           "ï∂éöêF(C)",IDC_STATIC,15,168,34,8
+    LTEXT           "ï∂éöêF(C)",IDC_STATIC_MOZI,15,168,34,8
     CONTROL         "&C",IDC_BUTTON_TEXTCOLOR,"Button",BS_OWNERDRAW | 
                     WS_TABSTOP,54,165,25,14
     PUSHBUTTON      "ï∂éöêFìùàÍ(&<)...",IDC_BUTTON_SAMETEXTCOLOR,84,165,58,

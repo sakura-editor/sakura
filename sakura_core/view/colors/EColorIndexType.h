@@ -14,6 +14,7 @@ SAKURA_CORE_API enum EColorIndexType {
 	COLORIDX_RULER,			// ルーラー
 	COLORIDX_CARET,			// キャレット	// 2006.12.07 ryoji
 	COLORIDX_CARET_IME,		// IMEキャレット // 2006.12.07 ryoji
+	COLORIDX_CARETLINEBG,	// カーソル行背景色
 	COLORIDX_UNDERLINE,		// カーソル行アンダーライン
 	COLORIDX_CURSORVLINE,	// カーソル位置縦線 // 2006.05.13 Moca
 	COLORIDX_GYOU,			// 行番号

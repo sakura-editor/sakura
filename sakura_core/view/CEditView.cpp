@@ -203,6 +203,7 @@ BOOL CEditView::Create(
 	m_nOldUnderLineY = -1;
 	m_nOldCursorLineX = -1;
 	m_nOldCursorVLineWidth = 1;
+	m_nOldUnderLineYHeightReal = 0;
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 	//	2007.08.12 genta 初期化にShareDataの値が必要になった
@@ -1136,8 +1137,7 @@ void CEditView::MoveCursorSelecting(
 			GetSelectionInfo().DisableSelectArea( TRUE );
 		}
 	}
-	GetCaret().MoveCursor( ptWk_CaretPos, TRUE, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
-	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+	GetCaret().GetAdjustCursorPos(&ptWk_CaretPos);
 	if( bSelect ){
 		/*	現在のカーソル位置によって選択範囲を変更．
 		
@@ -1146,9 +1146,10 @@ void CEditView::MoveCursorSelecting(
 			引数で与えた座標とは異なることがあるため，
 			nPosX, nPosYの代わりに実際の移動結果を使うように．
 		*/
-		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaret().GetCaretLayoutPos() );
+		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptWk_CaretPos );
 	}
-	
+	GetCaret().MoveCursor( ptWk_CaretPos, TRUE, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
+	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
 
 
@@ -2185,11 +2186,12 @@ inline bool CEditView::IsDrawCursorVLinePos( int posX ){
 }
 
 /* カーソル行アンダーラインのON */
-void CEditView::CaretUnderLineON( bool bDraw )
+void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 {
 	BOOL bUnderLine = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
 	BOOL bCursorVLine = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
-	if( FALSE == bUnderLine && FALSE == bCursorVLine ){
+	BOOL bCursorLineBg = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CARETLINEBG].m_bDisp;
+	if( FALSE == bUnderLine && FALSE == bCursorVLine && FALSE == bCursorLineBg ){
 		return;
 	}
 
@@ -2198,8 +2200,37 @@ void CEditView::CaretUnderLineON( bool bDraw )
 //	m_nOldCursorLineX = -1;
 //	m_nOldUnderLineY  = -1;
 	// 2011.12.06 Moca IsTextSelected → IsTextSelecting に変更。ロック中も下線を表示しない
-	if( GetSelectionInfo().IsTextSelecting() ){
-		return;
+	int bCursorLineBgDraw = false;
+	
+	// カーソル行の描画
+	if( bDraw
+	 && bCursorLineBg
+	 && GetDrawSwitch()
+	 && GetCaret().GetCaretLayoutPos().GetY2() >= GetTextArea().GetViewTopLine()
+	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
+		){
+		bCursorLineBgDraw = true;
+
+		m_nOldUnderLineY = GetCaret().GetCaretLayoutPos().GetY2();
+		m_nOldUnderLineYBg = m_nOldUnderLineY;
+		m_nOldUnderLineYMargin = 0;
+		m_nOldUnderLineYHeight = GetTextMetrics().GetHankakuDy();
+		if( bDrawPaint ){
+			GetCaret().m_cUnderLine.Lock();
+			PAINTSTRUCT ps;
+			ps.rcPaint.left = GetTextArea().GetAreaLeft();
+			ps.rcPaint.right = GetTextArea().GetAreaRight();
+			ps.rcPaint.top = GetTextArea().GetAreaTop() + (Int)(m_nOldUnderLineY - GetTextArea().GetViewTopLine())
+				 * (GetTextMetrics().GetHankakuDy());
+			ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeight;
+
+			// 描画
+			HDC hdc = this->GetDC();
+			OnPaint( hdc, &ps, FALSE );
+			this->ReleaseDC( hdc );
+
+			GetCaret().m_cUnderLine.UnLock();
+		}
 	}
 	
 	int nCursorVLineX = -1;
@@ -2214,6 +2245,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	 && GetDrawSwitch()
 	 && IsDrawCursorVLinePos(nCursorVLineX)
 	 && m_bDoing_UndoRedo == FALSE
+	 && !GetSelectionInfo().IsTextSelecting()
 	){
 		m_nOldCursorLineX = nCursorVLineX;
 		// カーソル位置縦線の描画
@@ -2241,7 +2273,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	int nUnderLineY = -1;
 	if( bUnderLine ){
 		nUnderLineY = GetTextArea().GetAreaTop() + (Int)(GetCaret().GetCaretLayoutPos().GetY2() - GetTextArea().GetViewTopLine())
-			 * (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nLineSpace + GetTextMetrics().GetHankakuHeight()) + GetTextMetrics().GetHankakuHeight();
+			 * GetTextMetrics().GetHankakuDy() + GetTextMetrics().GetHankakuHeight();
 	}
 	// To Here 2007.09.09 Moca
 
@@ -2249,8 +2281,15 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	 && GetDrawSwitch()
 	 && nUnderLineY >= GetTextArea().GetAreaTop()
 	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
+	 && !GetSelectionInfo().IsTextSelecting()
 	){
-		m_nOldUnderLineY = nUnderLineY;
+		if( false == bCursorLineBgDraw || -1 == m_nOldUnderLineY ){
+			m_nOldUnderLineY = GetCaret().GetCaretLayoutPos().GetY2();
+			m_nOldUnderLineYBg = m_nOldUnderLineY;
+			m_nOldUnderLineYMargin = GetTextMetrics().GetHankakuHeight();
+			m_nOldUnderLineYHeight = 1;
+		}
+		m_nOldUnderLineYHeightReal = 1;
 //		MYTRACE_A( "★カーソル行アンダーラインの描画\n" );
 		/* ★カーソル行アンダーラインの描画 */
 		HDC		hdc = ::GetDC( GetHwnd() );
@@ -2260,13 +2299,13 @@ void CEditView::CaretUnderLineON( bool bDraw )
 			::MoveToEx(
 				gr,
 				GetTextArea().GetAreaLeft(),
-				m_nOldUnderLineY,
+				nUnderLineY,
 				NULL
 			);
 			::LineTo(
 				gr,
 				GetTextArea().GetAreaRight(),
-				m_nOldUnderLineY
+				nUnderLineY
 			);
 		}	// ReleaseDC の前に gr デストラクト
 		::ReleaseDC( GetHwnd(), hdc );
@@ -2274,45 +2313,62 @@ void CEditView::CaretUnderLineON( bool bDraw )
 }
 
 /* カーソル行アンダーラインのOFF */
-void CEditView::CaretUnderLineOFF( bool bDraw )
+void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag )
 {
 	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
-			FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp ){
+			FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp &&
+			FALSE == m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CARETLINEBG].m_bDisp ){
 		return;
 	}
-
 	if( -1 != m_nOldUnderLineY ){
 		if( bDraw
 		 && GetDrawSwitch()
-		 && m_nOldUnderLineY >=GetTextArea().GetAreaTop()
+		 && m_nOldUnderLineY >= GetTextArea().GetViewTopLine()
 		 && !m_bDoing_UndoRedo	/* アンドゥ・リドゥの実行中か */
 		 && !GetCaret().m_cUnderLine.GetUnderLineDoNotOFF()	// アンダーラインを消去するか
 		){
 			// -- -- カーソル行アンダーラインの消去（無理やり） -- -- //
+			int nUnderLineY = GetTextArea().GetAreaTop() + (Int)(m_nOldUnderLineY - GetTextArea().GetViewTopLine())
+			 * GetTextMetrics().GetHankakuDy() + m_nOldUnderLineYMargin;
 
 			GetCaret().m_cUnderLine.Lock();
 
 			PAINTSTRUCT ps;
 			ps.rcPaint.left = GetTextArea().GetAreaLeft();
 			ps.rcPaint.right = GetTextArea().GetAreaRight();
-			ps.rcPaint.top = m_nOldUnderLineY;
-			ps.rcPaint.bottom = m_nOldUnderLineY + 1; // 2007.09.09 Moca +1 するように
+			ps.rcPaint.top = nUnderLineY;
+			if( bDrawPaint ){
+				ps.rcPaint.top = nUnderLineY;
+				ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeight;
+			}else{
+				ps.rcPaint.top = nUnderLineY + (m_nOldUnderLineYHeight - m_nOldUnderLineYHeightReal);
+				ps.rcPaint.bottom = ps.rcPaint.top + m_nOldUnderLineYHeightReal;
+			}
 
 			//	不本意ながら選択情報をバックアップ。
-			CLayoutRange sSelectBackup = GetSelectionInfo().m_sSelect;
-			GetSelectionInfo().m_sSelect.Clear(-1);
+//			CLayoutRange sSelectBackup = GetSelectionInfo().m_sSelect;
+//			GetSelectionInfo().m_sSelect.Clear(-1);
 
-			// 描画
-			HDC hdc = this->GetDC();
-			// 可能なら互換BMPからコピーして再作画
-			OnPaint( hdc, &ps, TRUE );
-			this->ReleaseDC( hdc );
+			if( ps.rcPaint.bottom - ps.rcPaint.top ){
+				// 描画
+				HDC hdc = this->GetDC();
+				// 可能なら互換BMPからコピーして再作画
+				OnPaint( hdc, &ps, (ps.rcPaint.bottom - ps.rcPaint.top) == 1 );
+				this->ReleaseDC( hdc );
+			}
 
 			//	選択情報を復元
-			GetSelectionInfo().m_sSelect = sSelectBackup;
+//			GetSelectionInfo().m_sSelect = sSelectBackup;
 			GetCaret().m_cUnderLine.UnLock();
+			
+			if( bDrawPaint ){
+				m_nOldUnderLineYBg = -1;
+			}
 		}
-		m_nOldUnderLineY = -1;
+		if( bResetFlag ){
+			m_nOldUnderLineY = -1;
+		}
+		m_nOldUnderLineYHeightReal = 0;
 	}
 
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ

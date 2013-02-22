@@ -150,6 +150,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 						break;
 					}
 				}
+				CTypeSupport    cCuretLineBg(this,COLORIDX_CARETLINEBG);
+				EColorIndexType nColorIndexBg = (cCuretLineBg.IsDisp() && ptColLine.GetY2() == GetCaret().GetCaretLayoutPos().GetY2() ? COLORIDX_CARETLINEBG :  COLORIDX_TEXT);
 
 				int nHeight = GetTextMetrics().GetHankakuDy();
 				int nLeft = (GetTextArea().GetDocumentLeftClientPointX()) + (Int)ptColLine.x * GetTextMetrics().GetHankakuDx();
@@ -169,7 +171,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 					CTypeSupport cTextType(this,COLORIDX_TEXT);
 					cTextType.SetGraphicsState_WhileThisObj(gr);
 
-					SetCurrentColor( gr, nColorIndex );
+					SetCurrentColor3( gr, nColorIndex, nColorIndex, nColorIndexBg );
 					bool bTrans = false;
 					// DBPRINT_A("DrawBracket %d %d ", ptColLine.y, ptColLine.x );
 					if( IsBkBitmap() &&
@@ -194,7 +196,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 				if( ( m_pcEditDoc->m_pcEditWnd->m_nActivePaneIndex == m_nMyIndex )
 					&& ( ( ptColLine.y == GetCaret().GetCaretLayoutPos().GetY() ) || ( ptColLine.y - 1 == GetCaret().GetCaretLayoutPos().GetY() ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
-					GetCaret().m_cUnderLine.CaretUnderLineON( TRUE );
+					GetCaret().m_cUnderLine.CaretUnderLineON( true, false );
 				}
 			}
 		}

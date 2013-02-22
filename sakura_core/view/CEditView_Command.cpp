@@ -432,7 +432,7 @@ void CEditView::CopyCurLine(
 void CEditView::DrawBracketCursorLine(bool bDraw)
 {
 	if( bDraw ){
-		GetCaret().m_cUnderLine.CaretUnderLineON(true);
+		GetCaret().m_cUnderLine.CaretUnderLineON(true, true);
 		DrawBracketPair(false);
 		SetBracketPairPos(true);
 		DrawBracketPair(true);

@@ -53,8 +53,8 @@ public:
 			m_nLockCounter = 0;
 		}
 	}
-	void CaretUnderLineON( bool );	// カーソル行アンダーラインのON
-	void CaretUnderLineOFF( bool );	// カーソル行アンダーラインのOFF
+	void CaretUnderLineON( bool, bool );	// カーソル行アンダーラインのON
+	void CaretUnderLineOFF( bool, bool = true, bool = false );	// カーソル行アンダーラインのOFF
 	void SetUnderLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bUnderLineDoNotOFF = flag; }
 	void SetVertLineDoNotOFF( bool flag ){ if( !m_nLockCounter )m_bVertLineDoNotOFF = flag; }
 	inline bool GetUnderLineDoNotOFF( )const { return m_bUnderLineDoNotOFF; }
@@ -118,7 +118,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//設定
-	CLayoutInt MoveCursorToClientPoint( const POINT& ptClientPos );		//!< マウス等による座標指定によるカーソル移動
+	CLayoutInt MoveCursorToClientPoint( const POINT& ptClientPos, bool = false, CLayoutPoint* = NULL );		//!< マウス等による座標指定によるカーソル移動
 	CLayoutInt Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect );	//!< カーソル上下移動処理
 	CLayoutInt MoveCursor(												//!< 行桁指定によるカーソル移動
 		CLayoutPoint	ptWk_CaretPos,									//!< [in] 移動先レイアウト位置
@@ -127,7 +127,7 @@ public:
 		bool			bUnderlineDoNotOFF	= false,					//!< [in] アンダーラインを消去しない
 		bool			bVertLineDoNotOFF	= false						//!< [in] カーソル位置縦線を消去しない
 	);
-	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
+	CLayoutInt MoveCursorProperly( CLayoutPoint ptNewXY, bool, bool = false, CLayoutPoint* = NULL, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 
 	//$ 設計思想的に微妙
 	void SetCaretLayoutPos(const CLayoutPoint& pt){ m_ptCaretPos_Layout = pt; }	//!< キャレット位置(レイアウト)を設定

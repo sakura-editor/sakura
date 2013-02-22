@@ -147,6 +147,8 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		// タイプ別設定から文字色を重複しないように取り出す
 		::SetWindowText( GetHwnd(), _T("文字色統一") );
 		for( i = 0; i < COLORIDX_LAST; ++i ){
+			if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) )
+				continue;
 			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_colTEXT ){
 				_ultow( m_pTypes->m_ColorInfoArr[i].m_colTEXT, szText, 10 );
 				if( LB_ERR == List_FindStringExact( hwndList, -1, szText ) ){
@@ -346,6 +348,8 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 		{
 		case IDC_BUTTON_SAMETEXTCOLOR:
 			for( j = 0; j < COLORIDX_LAST; ++j ){
+			if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_TEXT) )
+				continue;
 				if( cr == m_pTypes->m_ColorInfoArr[j].m_colTEXT ){
 					::List_AddString( hwndListInfo, m_pTypes->m_ColorInfoArr[j].m_szName);
 				}

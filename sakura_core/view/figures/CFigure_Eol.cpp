@@ -54,6 +54,8 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 			CTypeSupport cTextType(pcView, COLORIDX_TEXT);				// テキストの指定色
 			CTypeSupport cSpaceType(pcView, pcView->GetTextDrawer()._GetColorIdx(GetColorIdx()));	// 空白の指定色
 			CTypeSupport cSearchType(pcView, COLORIDX_SEARCH);	// 検索色(EOL固有)
+			CTypeSupport cCurrentTypeBg(pcView, pInfo->GetCurrentColorBg());
+			CTypeSupport& cCurrentType3 = (cCurrentType2.GetBackColor() == cTextType.GetBackColor() ? cCurrentTypeBg: cCurrentType2);
 			COLORREF crText;
 			COLORREF crBack;
 			bool bSelecting = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2();
@@ -70,7 +72,7 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 				pcBack = &cSearchType;
 			}else{
 				pcText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? &cCurrentType2 : &cSpaceType;
-				pcBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? &cCurrentType2 : &cSpaceType;
+				pcBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? &cCurrentType3 : &cSpaceType;
 			}
 			if( blendColor ){
 				// 混合色(検索色を優先しつつ)

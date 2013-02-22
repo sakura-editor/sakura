@@ -80,7 +80,7 @@ class CColor_Found;
 class CColor_Select;
 
 struct SColorStrategyInfo{
-	SColorStrategyInfo() : sDispPosBegin(0,0), pStrategy(NULL), pStrategyFound(NULL), pStrategySelect(NULL) {}
+	SColorStrategyInfo() : sDispPosBegin(0,0), pStrategy(NULL), pStrategyFound(NULL), pStrategySelect(NULL), m_colorIdxBackLine(COLORIDX_TEXT) {}
 
 	//参照
 	CEditView*	pcView;
@@ -99,6 +99,7 @@ struct SColorStrategyInfo{
 	CColorStrategy*		pStrategy;
 	CColor_Found*		pStrategyFound;
 	CColor_Select*		pStrategySelect;
+	EColorIndexType		m_colorIdxBackLine;
 
 	//! 色の切り替え
 	void ChangeColor(EColorIndexType eNewColor)
@@ -107,12 +108,13 @@ struct SColorStrategyInfo{
 	}
 	void ChangeColor2(EColorIndexType eNewColor, EColorIndexType eNewColor2)
 	{
-		this->pcView->SetCurrentColor2(this->gr, eNewColor, eNewColor2);
+		this->pcView->SetCurrentColor3(this->gr, eNewColor, eNewColor2, m_colorIdxBackLine);
 	}
 
 	void DoChangeColor(const CStringRef& cLineStr);
 	EColorIndexType GetCurrentColor() const;
 	EColorIndexType GetCurrentColor2() const;
+	EColorIndexType GetCurrentColorBg() const{ return m_colorIdxBackLine; }
 
 	//! 現在のスキャン位置
 	CLogicInt GetPosInLogic() const

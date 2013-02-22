@@ -44,17 +44,17 @@ int CCaret::GetHankakuDy() const
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* カーソル行アンダーラインのON */
-void CCaretUnderLine::CaretUnderLineON( bool bDraw )
+void CCaretUnderLine::CaretUnderLineON( bool bDraw, bool bPaintDraw )
 {
 	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
-	m_pcEditView->CaretUnderLineON( bDraw );
+	m_pcEditView->CaretUnderLineON( bDraw, bPaintDraw );
 }
 
 /* カーソル行アンダーラインのOFF */
-void CCaretUnderLine::CaretUnderLineOFF( bool bDraw )
+void CCaretUnderLine::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag )
 {
 	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
-	m_pcEditView->CaretUnderLineOFF( bDraw );
+	m_pcEditView->CaretUnderLineOFF( bDraw, bDrawPaint, bResetFlag );
 }
 
 
@@ -139,13 +139,6 @@ CLayoutInt CCaret::MoveCursor(
 		return CLayoutInt(0);
 	}
 
-	// カーソル行アンダーラインのOFF
-	m_cUnderLine.SetUnderLineDoNotOFF( bUnderLineDoNotOFF );
-	m_cUnderLine.SetVertLineDoNotOFF( bVertLineDoNotOFF );
-	m_cUnderLine.CaretUnderLineOFF( bScroll );	//	YAZAKI
-	m_cUnderLine.SetUnderLineDoNotOFF( false );
-	m_cUnderLine.SetVertLineDoNotOFF( false );
-
 	if( m_pEditView->GetSelectionInfo().IsMouseSelecting() ){	// 範囲選択中
 		nCaretMarginY = 0;
 	}
@@ -159,6 +152,25 @@ CLayoutInt CCaret::MoveCursor(
 	// 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
 	GetAdjustCursorPos( &ptWk_CaretPos );
 	
+	/* キャレット移動 */
+	SetCaretLayoutPos(ptWk_CaretPos);
+
+	/* カーソル位置変換
+	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
+	||  →物理位置(行頭からのバイト数、折り返し無し行位置)
+	*/
+	m_pEditDoc->m_cLayoutMgr.LayoutToLogic(
+		m_ptCaretPos_Layout,
+		&m_ptCaretPos_Logic	//カーソル位置。ロジック単位。
+	);
+
+	// カーソル行アンダーラインのOFF
+	m_cUnderLine.SetUnderLineDoNotOFF( bUnderLineDoNotOFF );
+	m_cUnderLine.SetVertLineDoNotOFF( bVertLineDoNotOFF );
+	DBPRINT_A("%d\n", (int)(ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg) );
+	m_cUnderLine.CaretUnderLineOFF( bScroll, ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg );	//	YAZAKI
+	m_cUnderLine.SetUnderLineDoNotOFF( false );
+	m_cUnderLine.SetVertLineDoNotOFF( false );
 	
 	// 水平スクロール量（文字数）の算出
 	nScrollColNum = CLayoutInt(0);
@@ -287,29 +299,9 @@ CLayoutInt CCaret::MoveCursor(
 			}
 		}
 
-		// 2009.08.28 nasukoji	「折り返さない」（スクロールバーをテキスト幅に合わせる）
-		if( m_pEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
-			// AdjustScrollBars()で移動後のキャレット位置が必要なため、ここでコピー
-			if( m_pEditView->GetSelectionInfo().IsTextSelected() || GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode ){
-				SetCaretLayoutPos(ptWk_CaretPos);
-			}
-		}
-
 		/* スクロールバーの状態を更新する */
 		m_pEditView->AdjustScrollBars(); // 2001/10/20 novice
 	}
-
-	/* キャレット移動 */
-	SetCaretLayoutPos(ptWk_CaretPos);
-
-	/* カーソル位置変換
-	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
-	||  →物理位置(行頭からのバイト数、折り返し無し行位置)
-	*/
-	m_pEditDoc->m_cLayoutMgr.LayoutToLogic(
-		m_ptCaretPos_Layout,
-		&m_ptCaretPos_Logic	//カーソル位置。ロジック単位。
-	);
 
 	// 横スクロールが発生したら、ルーラー全体を再描画 2002.02.25 Add By KK
 	if (nScrollColNum != 0 ){
@@ -319,16 +311,17 @@ CLayoutInt CCaret::MoveCursor(
 
 	/* カーソル行アンダーラインのON */
 	//CaretUnderLineON( bDraw ); //2002.02.27 Del By KK アンダーラインのちらつきを低減
-	HDC		hdc = m_pEditView->GetDC();
 	if( bScroll ){
 		/* キャレットの表示・更新 */
 		ShowEditCaret();
 
 		/* ルーラの再描画 */
+		HDC		hdc = m_pEditView->GetDC();
 		m_pEditView->GetRuler().DispRuler( hdc );
+		m_pEditView->ReleaseDC( hdc );
 
 		/* アンダーラインの再描画 */
-		m_cUnderLine.CaretUnderLineON(TRUE);
+		m_cUnderLine.CaretUnderLineON(true, ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg);
 
 		/* キャレットの行桁位置を表示する */
 		ShowCaretPosInfo();
@@ -339,7 +332,6 @@ CLayoutInt CCaret::MoveCursor(
 		m_pEditView->SyncScrollH( -nScrollColNum );	//	方向が逆なので符号反転が必要
 
 	}
-	m_pEditView->ReleaseDC( hdc );
 
 // 02/09/18 対括弧の強調表示 ai Start	03/02/18 ai mod S
 	m_pEditView->DrawBracketPair( false );
@@ -356,7 +348,7 @@ CLayoutInt CCaret::MoveCursor(
 || 垂直スクロールをした場合はその行数を返す(正／負)
 */
 //2007.09.11 kobake 関数名変更: MoveCursorToPoint→MoveCursorToClientPoint
-CLayoutInt CCaret::MoveCursorToClientPoint( const POINT& ptClientPos )
+CLayoutInt CCaret::MoveCursorToClientPoint( const POINT& ptClientPos, bool test, CLayoutPoint* pCaretPosNew )
 {
 	CLayoutInt		nScrollRowNum;
 	CLayoutPoint	ptLayoutPos;
@@ -364,8 +356,10 @@ CLayoutInt CCaret::MoveCursorToClientPoint( const POINT& ptClientPos )
 
 	int	dx = (ptClientPos.x - m_pEditView->GetTextArea().GetAreaLeft()) % ( m_pEditView->GetTextMetrics().GetHankakuDx() );
 
-	nScrollRowNum = MoveCursorProperly( ptLayoutPos, TRUE, 1000, dx );
-	m_nCaretPosX_Prev = GetCaretLayoutPos().GetX2();
+	nScrollRowNum = MoveCursorProperly( ptLayoutPos, true, test, pCaretPosNew, 1000, dx );
+	if( !test ){
+		m_nCaretPosX_Prev = GetCaretLayoutPos().GetX2();
+	}
 	return nScrollRowNum;
 }
 //_CARETMARGINRATE_CARETMARGINRATE_CARETMARGINRATE
@@ -847,15 +841,16 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 	if( ptTo.x != GetCaretLayoutPos().GetX() ){
 		bVertLineDoNotOFF = false;
 	}
+	GetAdjustCursorPos( &ptTo );
+	if( bSelect ) {
+		/* 現在のカーソル位置によって選択範囲を変更 */
+		m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptTo );
+	}
 	const CLayoutInt nScrollLines = MoveCursor(	ptTo,
 								m_pEditView->GetDrawSwitch() /* TRUE */,
 								_CARETMARGINRATE,
 								false,
 								bVertLineDoNotOFF );
-	if( bSelect ) {
-		/* 現在のカーソル位置によって選択範囲を変更 */
-		m_pEditView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( GetCaretLayoutPos() );
-	}
 	return nScrollLines;
 }
 
@@ -978,6 +973,8 @@ POINT CCaret::CalcCaretDrawPos(const CLayoutPoint& ptCaretPos) const
 CLayoutInt CCaret::MoveCursorProperly(
 	CLayoutPoint	ptNewXY,			//!< [in] カーソルのレイアウト座標X
 	bool			bScroll,			//!< [in] TRUE: 画面位置調整有り/ FALSE: 画面位置調整有り無し
+	bool			test,				//!< [in] true: カーソル移動はしない
+	CLayoutPoint*	ptNewXYNew,			//!< [out] 新しいレイアウト座標
 	int				nCaretMarginRate,	//!< [in] 縦スクロール開始位置を決める値
 	int				dx					//!< [in] nNewXとマウスカーソル位置との誤差(カラム幅未満のドット数)
 )
@@ -1060,6 +1057,12 @@ CLayoutInt CCaret::MoveCursorProperly(
 		}
 		ptNewXY.SetX( nPosX );
 	}
-
+	
+	if( ptNewXYNew ){
+		*ptNewXYNew = ptNewXY;
+	}
+	if( test ){
+		return CLayoutInt(0);
+	}
 	return MoveCursor( ptNewXY, bScroll, nCaretMarginRate );
 }

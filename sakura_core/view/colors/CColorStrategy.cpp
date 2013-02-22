@@ -11,6 +11,7 @@
 #include "CColor_Found.h"
 #include "doc/CLayout.h"
 #include "window/CEditWnd.h"
+#include "types/CTypeSupport.h"
 
 
 
@@ -89,6 +90,22 @@ void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 				this->pStrategy = pool->GetStrategy(i);
 				ChangeColor2(GetCurrentColor(), GetCurrentColor2());
 				break;
+			}
+		}
+	}
+	
+	//カーソル行背景色
+	CTypeSupport cCaretLineBg(this->pcView, COLORIDX_CARETLINEBG);
+	if( cCaretLineBg.IsDisp() ){
+		if(m_colorIdxBackLine==COLORIDX_CARETLINEBG){
+			if( this->pDispPos->GetLayoutLineRef() != this->pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
+				m_colorIdxBackLine = COLORIDX_TEXT;
+				ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+			}
+		}else{
+			if( this->pDispPos->GetLayoutLineRef() == this->pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
+				m_colorIdxBackLine = COLORIDX_CARETLINEBG;
+				ChangeColor2(GetCurrentColor(), GetCurrentColor2());
 			}
 		}
 	}
@@ -220,6 +237,7 @@ const SColorAttributeData g_ColorAttributeArr[] =
 	{_T("RUL"), COLOR_ATTRIB_NO_EFFECTS},
 	{_T("CAR"), COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// キャレット		// 2006.12.07 ryoji
 	{_T("IME"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// IMEキャレット	// 2006.12.07 ryoji
+	{_T("CBK"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("UND"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
 	{_T("CVL"), COLOR_ATTRIB_NO_BACK | ( COLOR_ATTRIB_NO_EFFECTS & ~COLOR_ATTRIB_NO_BOLD )}, // 2007.09.09 Moca カーソル位置縦線
 	{_T("LNO"), 0},
