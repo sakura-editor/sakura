@@ -126,6 +126,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 	m_pCommanderView->SetDrawSwitch(false);	// 2002.01.25 hor
 	/* 矩形範囲選択中か */
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+// 2012.10.31 Moca 上書きモードのときの選択範囲削除をやめる
+#if 0
 		// From Here 2001.12.03 hor
 		/* 上書モードのときは選択範囲削除 */
 		if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */){
@@ -135,6 +137,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(true);
 		}
 		// To Here 2001.12.03 hor
+#endif
 
 		/* 2点を対角とする矩形を求める */
 		CLayoutRange rcSel;
