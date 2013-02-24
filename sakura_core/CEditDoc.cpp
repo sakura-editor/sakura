@@ -1407,7 +1407,7 @@ end_of_func:;
 
 /* 「ファイルを開く」ダイアログ */
 //	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
-BOOL CEditDoc::OpenFileDialog(
+bool CEditDoc::OpenFileDialog(
 	HWND		hwndParent,
 	const char*	pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダを指定できる
 	char*		pszPath,		//!< [out] 開くファイルのパスを受け取るアドレス
@@ -1422,7 +1422,7 @@ BOOL CEditDoc::OpenFileDialog(
 	char*	pszCurDir = NULL;
 	char**	ppszMRU;
 	char**	ppszOPENFOLDER;
-	BOOL	bRet;
+	bool	bRet;
 
 	/* MRUリストのファイルのリスト */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する

@@ -63,10 +63,10 @@ public:
 	void Create( HINSTANCE, HWND, const char*, const char*, const char** = NULL,const char** = NULL);
 	//void Create( HINSTANCE, HWND, const char*, const char* );
 	//	2002/08/21 moca	引数追加
-	BOOL DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
+	bool DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
 	//	2002/08/21 30,2002 moca	引数追加
-	BOOL DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
-	BOOL DoModalOpenDlg( char* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
+	bool DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
+	bool DoModalOpenDlg( char* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
 	//	Feb. 9, 2001 genta	引数追加
 	//	Jul. 26, 2003 ryoji BOM用引数追加
 	BOOL DoModalSaveDlg( char* , ECodeType*, CEol*, bool* );	/* 保存ダイアログ モーダルダイアログの表示 */
@@ -111,9 +111,9 @@ protected:
 
 	// 2006.09.03 Moca ファイルダイアログのエラー回避
 	//! リトライ機能付き GetOpenFileName
-	BOOL _GetOpenFileNameRecover( OPENFILENAMEZ* ofn );
+	bool _GetOpenFileNameRecover( OPENFILENAMEZ* ofn );
 	//! リトライ機能付き GetOpenFileName
-	BOOL GetSaveFileNameRecover( OPENFILENAMEZ* ofn );
+	bool GetSaveFileNameRecover( OPENFILENAMEZ* ofn );
 
 	BOOL CheckPathLengthOverflow( const char *pszPath, int nLength, BOOL bErrDisp = TRUE );	// 2008.11.23 nasukoji	指定のファイルパスのバッファオーバーフローをチェックする
 

@@ -114,7 +114,7 @@ public:
 	BOOL OpenPropertySheet( int/*, int*/ );	/* 共通設定 */
 	BOOL OpenPropertySheetTypes( int, int );	/* タイプ別設定 */
 
-	BOOL OpenFileDialog( HWND, const char*, char*, ECodeType*, bool* );	/* 「ファイルを開く」ダイアログ */
+	bool OpenFileDialog( HWND, const char*, char*, ECodeType*, bool* );	/* 「ファイルを開く」ダイアログ */
 	void OnChangeType();
 	void OnChangeSetting();	/* ビューに設定変更を反映させる */
 	//	Jul. 26, 2003 ryoji BOMオプション追加

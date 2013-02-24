@@ -28,6 +28,7 @@
 #define IDD_EXECRUNNING                 191
 #define IDD_PRINTING                    192
 //#define IDD_PRINTPAGE                   193
+#define IDD_FILEOPEN                    130
 #define IDB_MYTOOL                      200
 #define IDB_PRINTER                     203
 #define IDD_PROP_MACRO                  217
