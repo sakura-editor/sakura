@@ -121,7 +121,7 @@ protected:
 	enum enumFileLoadMode{
 		FLMODE_CLOSE = 0, //!< 初期状態
 		FLMODE_OPEN, //!< ファイルオープンのみ
-		FLMODE_REDY, //!< 順アクセスOK
+		FLMODE_READY, //!< 順アクセスOK
 		FLMODE_READBUFEND //!<ファイルの終端までバッファに入れた
 	};
 	enumFileLoadMode	m_eMode;		// 現在の読み込み状態
