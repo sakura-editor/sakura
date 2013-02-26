@@ -941,7 +941,7 @@ int CGrepAgent::DoGrepFile(
 //	CFileLoad	cfl( pcViewDst->GetDocument()->m_cDocType.GetDocumentAttribute().m_encoding );
 	int		nOldPercent = 0;
 
-	int	nKeyKen = wcslen( pszKey );
+	int	nKeyLen = wcslen( pszKey );
 
 	//	ここでは正規表現コンパイルデータの初期化は不要
 
@@ -952,7 +952,7 @@ int CGrepAgent::DoGrepFile(
 
 	/* 検索条件が長さゼロの場合はファイル名だけ返す */
 	// 2002/08/29 行ループの前からここに移動
-	if( 0 == nKeyKen ){
+	if( 0 == nKeyLen ){
 		if( CODE_AUTODETECT == nGrepCharSet ){
 			// 2003.06.10 Moca コード判別処理をここに移動．
 			// 判別エラーでもファイル数にカウントするため
@@ -1002,7 +1002,7 @@ int CGrepAgent::DoGrepFile(
 	
 	std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
 	if( sSearchOption.bWordOnly ){
-		CSearchAgent::CreateWordList( searchWords, pszKey, nKeyKen );
+		CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
 	}
 
 	// 注意 : cfl.ReadLine が throw する可能性がある
@@ -1162,7 +1162,7 @@ int CGrepAgent::DoGrepFile(
 			}
 		}
 		else {
-			const CSearchStringPattern pattern(pszKey, nKeyKen, sSearchOption.bLoHiCase);
+			const CSearchStringPattern pattern(pszKey, nKeyLen, sSearchOption.bLoHiCase);
 			/* 文字列検索 */
 			int nColmPrev = 0;
 			//	Jun. 21, 2003 genta ループ条件見直し
@@ -1185,7 +1185,7 @@ int CGrepAgent::DoGrepFile(
 					szWork, &nWorkLen,
 					pszFullPath, pszCodeName,
 					nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
-					pszRes, nKeyKen,
+					pszRes, nKeyLen,
 					bGrepOutputLine, nGrepOutputStyle
 				);
 				if( 2 == nGrepOutputStyle ){
@@ -1212,7 +1212,7 @@ int CGrepAgent::DoGrepFile(
 				//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
 				//	nClom : マッチ位置
 				//	matchlen : マッチした文字列の長さ
-				int nPosDiff = nColm += nKeyKen - 1;
+				int nPosDiff = nColm += nKeyLen - 1;
 				pCompareData += nPosDiff;
 				nLineLen -= nPosDiff;
 				nColmPrev += nPosDiff;
