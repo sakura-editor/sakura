@@ -34,7 +34,6 @@
 
 #include <limits.h>
 #include <stdio.h>
-#include <windows.h>
 #include "charset/codechecker.h"
 #include "charset/CESI.h"
 #include "charset/CCodeMediator.h"

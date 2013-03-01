@@ -4,7 +4,7 @@
 #include "CUnicode.h"
 #include "codechecker.h"
 #include "mem/CMemory.h"
-
+#include "CEol.h"
 
 EConvertResult CUnicode::_UnicodeToUnicode_in( CMemory* pMem, const bool bBigEndian )
 {

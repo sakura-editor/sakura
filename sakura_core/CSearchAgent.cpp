@@ -1,17 +1,17 @@
 #include "StdAfx.h"
-#include "CBregexp.h" // ƒwƒbƒ_ˆË‘¶ CSearchAgent
 
 #include <vector>
 #include <utility>
 #include "CSearchAgent.h"
 #include "doc/CDocLineMgr.h"
+#include "doc/CDocLine.h"
 #include "dlg/CDlgCancel.h"
 #include "util/string_ex.h"
 #include "sakura_rc.h"
 
 //#define MEASURE_SEARCH_TIME
 #ifdef MEASURE_SEARCH_TIME
-#include "time.h"
+#include <time.h>
 #endif
 
 // CSearchStringPattern

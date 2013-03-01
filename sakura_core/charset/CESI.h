@@ -33,9 +33,7 @@
 #ifndef SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_
 #define SAKURA_CESI_B70CADC4_E43F_40D7_B87C_0C7C14ABDF41_H_
 
-class CESI;
 struct SEncodingConfig;
-//class CNativeT;
 
 #include "_main/global.h"
 

@@ -32,6 +32,7 @@
 class CDocLine;
 class CDocLineMgr;
 class CTypeSupport;
+class CGraphics;
 
 //! DIFFî•ñ’è”
 enum EDiffMark{

@@ -37,6 +37,7 @@
 #include "CProfile.h"
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resourceì«Ç›çûÇ›Ç…égóp
+#include "CEol.h"
 #include "util/file.h"
 
 using namespace std;

@@ -21,7 +21,10 @@
 
 #include "global.h"
 #include "EditInfo.h"
+#include "util/design_template.h"
+
 class CMemory;
+
 /*!	ŒŸõƒIƒvƒVƒ‡ƒ“
 	20020118 aroka
 */

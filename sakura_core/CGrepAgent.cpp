@@ -6,6 +6,7 @@
 #include "COpeBlk.h"
 #include "window/CEditWnd.h"
 #include "charset/CCodeMediator.h"
+#include "charset/CCodeBase.h"
 #include "io/CFileLoad.h"
 #include "util/window.h"
 #include "util/module.h"

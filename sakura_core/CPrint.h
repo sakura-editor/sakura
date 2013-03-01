@@ -12,13 +12,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CPrint;
-
 #ifndef _CPRINT_H_
 #define _CPRINT_H_
 
-#include <winspool.h>
-#include <commdlg.h> // PRINTDLG
+#include <WinSpool.h>
+#include <CommDlg.h> // PRINTDLG
 
 struct	MYDEVMODE {
 	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */

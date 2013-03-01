@@ -18,16 +18,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDlgFuncList;
-
 #ifndef _CDLGFUNCLIST_H_
 #define _CDLGFUNCLIST_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "dlg/CDialog.h"
-#include "CFuncInfo.h"
-#include "env/CShareData.h"
 #include "doc/CEditDoc.h"
+
+class CFuncInfo;
 class CFuncInfoArr; // 2002/2/10 aroka
 
 #define OUTLINE_LAYOUT_FOREGROUND (0)

@@ -11,7 +11,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <windows.h>
 #include <stdlib.h>
 #include "COpeBlk.h"
 

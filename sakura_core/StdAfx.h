@@ -49,19 +49,19 @@
 #include "_main/global.h"
 
 //高頻度API等
-#include <windows.h>
-// #include <commdlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
-#include <commctrl.h> // コモンコントロール
+#include <Windows.h>
+// #include <CommDlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
+#include <CommCtrl.h> // コモンコントロール
 #include <stdlib.h>  // _MAX_PATH
 #include <wchar.h>
 #include <tchar.h>
 
 #ifndef SAKURA_PCH_MODE_MIN
 // 2010.04.19 重そうなので追加
-#include <htmlhelp.h>
-#include <objidl.h>
-#include <shlobj.h>
-#include <shellapi.h>
+#include <HtmlHelp.h>
+#include <ObjIdl.h>
+#include <ShlObj.h>
+#include <ShellAPI.h>
 #include <string.h>
 #include <stdio.h>
 #include <io.h>
@@ -114,9 +114,6 @@
 #include "util/tchar_convert.h"
 #include "charset/charcode.h"
 
-//###########超仮
-#include "CGraphics.h"
-
 // 2010.04.19 Moca includeの大規模整理
 #ifndef SAKURA_PCH_MODE_MIN
 #define SAKURA_PCH_MODE_DLLSHARE 1
@@ -128,17 +125,19 @@
 
 #ifdef SAKURA_PCH_MODE_MAX
 #include "env/CShareData.h"
-#include "CNormalProcess.h"
+#include "_main/CNormalProcess.h"
+#include "_main/CAppMode.h"
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
+#include "doc/CDocReader.h"
 #include "docplus/CModifyManager.h"
 #include "docplus/CDiffManager.h"
 #include "docplus/CBookmarkManager.h"
 #include "CReadManager.h"
 #include "CWriteManager.h"
 #include "CSearchAgent.h"
-#include "doc/CDocReader.h"
-#include "CAppMode.h"
+//###########超仮
+#include "CGraphics.h"
 #endif // SAKURA_PCH_MODE_MAX
 
 //{{AFX_INSERT_LOCATION}}

@@ -1,8 +1,8 @@
 #include "StdAfx.h"
-#include "CTextMetrics.h"
-//#include "charset/charcode.h"
-#include "charset/codechecker.h"
 #include <vector>
+#include "CTextMetrics.h"
+#include "charset/codechecker.h"
+
 using namespace std;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

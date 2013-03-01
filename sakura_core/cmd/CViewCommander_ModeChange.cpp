@@ -14,7 +14,6 @@
 */
 
 #include "StdAfx.h"
-#include <htmlhelp.h>
 #include "CViewCommander.h"
 
 #include "view/CEditView.h"

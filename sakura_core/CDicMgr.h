@@ -11,16 +11,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDicMgr;
-
 #ifndef _CDICMGR_H_
 #define _CDICMGR_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "util/container.h"
 #include "_main/global.h"
-
-class CMemory;
 
 /*-----------------------------------------------------------------------
 ƒNƒ‰ƒX‚ÌéŒ¾

@@ -25,7 +25,7 @@
 #ifndef _CEDITAPP_H_
 #define _CEDITAPP_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "CMenuDrawer.h"
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
 #include "CImageListMgr.h" // 2002/2/10 aroka

@@ -22,7 +22,7 @@
 #ifndef __CWSH_Manager_H__
 #define __CWSH_Manager_H__
 
-#include <windows.h>
+#include <Windows.h>
 #include <string>
 #include "macro/CSMacroMgr.h"
 #include "macro/CMacroManagerBase.h"

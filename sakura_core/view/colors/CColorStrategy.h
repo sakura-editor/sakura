@@ -27,6 +27,9 @@
 // óvêÊçsíËã`
 // #include "view/CEditView.h"
 #include "EColorIndexType.h"
+#include "CGraphics.h"
+
+class	CEditView;
 
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
 
@@ -74,7 +77,6 @@ SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index );
 struct DispPos;
 class CColorStrategy;
 #include "view/DispPos.h"
-#include <memory> //auto_ptr
 
 class CColor_Found;
 class CColor_Select;

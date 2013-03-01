@@ -1,7 +1,7 @@
 #include "StdAfx.h"
-#include "codeutil.h"
-#include "charset/charcode.h"
 #include <mbstring.h>
+#include "charset/codeutil.h"
+#include "charset/charcode.h"
 #include "charset/codechecker.h"
 
 #if 0

@@ -20,8 +20,7 @@
 */
 
 #include "StdAfx.h"
-#include <windows.h>
-#include <ole2.h>
+#include <Ole2.h>
 #include "CProcessFactory.h"
 #include "CProcess.h"
 #include "util/os.h"

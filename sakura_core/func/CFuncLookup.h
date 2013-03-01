@@ -35,7 +35,7 @@
 #ifndef __CNAMELOOKUP_H__
 #define __CNAMELOOKUP_H__
 
-#include <windows.h>
+#include <Windows.h>
 #include "_main/global.h"
 #include "config/maxdata.h"
 #include "func/Funccode.h"

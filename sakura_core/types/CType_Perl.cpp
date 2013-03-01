@@ -1,9 +1,11 @@
 #include "StdAfx.h"
 #include "types/CType.h"
 #include "doc/CEditDoc.h"
+#include "doc/CDocLine.h"
+#include "doc/CDocLineMgr.h"
 #include "doc/CDocOutline.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/colors/EColorIndexType.h"
+#include "view/Colors/EColorIndexType.h"
 
 /* Perl */
 //Jul. 08, 2001 JEPRO Perl ÉÜÅ[ÉUÇ…ë°ÇÈ

@@ -26,10 +26,10 @@
 */
 #include "StdAfx.h"
 #include <WindowsX.h>
-#include "CMainToolBar.h"
+#include "window/CMainToolBar.h"
 #include "window/CEditWnd.h"
-#include "util/os.h"
 #include "CEditApp.h"
+#include "util/os.h"
 #include "util/tchar_receive.h"
 #include "util/window.h"
 

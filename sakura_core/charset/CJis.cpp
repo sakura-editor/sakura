@@ -2,7 +2,7 @@
 
 #include "StdAfx.h"
 #include <mbstring.h>
-#include "CJis.h"
+#include "charset/CJis.h"
 #include "charset/charcode.h"
 #include "charset/codeutil.h"
 #include "charset/codechecker.h"

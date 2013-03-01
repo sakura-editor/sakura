@@ -33,7 +33,6 @@
 #define _CIMAGELIST_MGR_H_
 
 #include "_main/global.h"
-//#include <commctrl.h> 2003.07.21 genta •s—v
 
 /*! @brief ImageList‚ÌŠÇ—
 

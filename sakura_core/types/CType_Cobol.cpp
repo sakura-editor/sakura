@@ -1,9 +1,11 @@
 #include "StdAfx.h"
 #include "types/CType.h"
-#include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"
+#include "doc/CDocLine.h"
+#include "doc/CDocLineMgr.h"
+#include "doc/CDocOutline.h"
 #include "outline/CFuncInfoArr.h"
-#include "view/colors/EColorIndexType.h"
+#include "view/Colors/EColorIndexType.h"
 
 /* COBOL */
 void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)

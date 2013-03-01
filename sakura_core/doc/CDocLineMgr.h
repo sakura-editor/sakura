@@ -17,21 +17,15 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDocLineMgr;
-
 #ifndef _CDOCLINEMGR_H_
 #define _CDOCLINEMGR_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "_main/global.h" // 2002/2/10 aroka
-#include "CEol.h" // 2002/2/10 aroka
+#include "basis/SakuraBasis.h"
 class CDocLine; // 2002/2/10 aroka
 class CMemory; // 2002/2/10 aroka
 class CBregexp; // 2002/2/10 aroka
-#include "basis/SakuraBasis.h"
-#include "charset/CCodeBase.h"
-#include "CDocFile.h"
-#include "doc/CDocLine.h"
 
 struct DocLineReplaceArg {
 	CLogicRange		sDelRange;			//!< 削除範囲。ロジック単位。

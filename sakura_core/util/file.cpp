@@ -1,8 +1,11 @@
 #include "StdAfx.h"
+#include <io.h>
 #include "file.h"
 #include "charset/CharPointer.h"
 #include "util/module.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
+#include "env/CFileNameManager.h"
 
 bool fexist(LPCTSTR pszPath)
 {

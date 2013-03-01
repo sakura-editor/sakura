@@ -28,21 +28,19 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#include <windows.h>
-#include "mem/CMemory.h"
-
 #ifndef _CFILELOAD_H_
 #define _CFILELOAD_H_
+
+#include <Windows.h>
+#include "CStream.h" //CError_FileOpen
 
 // VC6添付のヘッダで定義されてません
 #ifndef INVALID_SET_FILE_POINTER
  #define INVALID_SET_FILE_POINTER 0xFFFFFFFF
 #endif // INVALID_SET_FILE_POINTER
 
-
-#include "CStream.h" //CError_FileOpen
-#include "charset/CCodeBase.h"
-
+struct SEncodingConfig;
+enum EConvertResult;	// defined in "charset/CCodeBase.h"
 
 /*!
 	文字コードを変換してデータを行単位で取得するためのクラス

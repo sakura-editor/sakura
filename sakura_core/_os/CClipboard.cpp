@@ -1,7 +1,8 @@
 #include "StdAfx.h"
-#include <shellapi.h>// HDROP
+#include <ShellAPI.h>// HDROP
 #include "CClipboard.h"
 #include "charset/CShiftJis.h"
+#include "CEol.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

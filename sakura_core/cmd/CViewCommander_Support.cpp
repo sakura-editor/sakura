@@ -19,12 +19,14 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
+#include <HtmlHelp.h>
 #include "CViewCommander.h"
 #include "CPropertyManager.h"
 #include "view/CEditView.h"
 #include "CEditApp.h"
 #include "window/CEditWnd.h"/// 2002/2/3 aroka 追加
 #include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO 追加
+#include "env/CHelpManager.h"
 #include "util/module.h"
 #include "util/shell.h"
 
@@ -36,7 +38,7 @@
     @date 2001/06/19 asa-o 英大文字小文字を同一視する
                      候補が1つのときはそれに確定する
 	@date 2001/06/14 asa-o 参照データ変更
-	                 開くプロパティシートをタイプ別に変更
+	                 開くプロパティシートをタイプ別に変更y
 	@date 2000/09/15 JEPRO [Esc]キーと[x]ボタンでも中止できるように変更
 	@date 2005/01/10 genta CEditView_Commandから移動
 */

@@ -12,12 +12,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CFuncInfoArr;
-
 #ifndef _CFUNCINFOARR_H_
 #define _CFUNCINFOARR_H_
 
-#include "CFuncInfo.h"
+class CFuncInfo;
 
 //! アウトライン解析 データ配列
 class CFuncInfoArr {

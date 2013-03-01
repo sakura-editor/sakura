@@ -29,9 +29,11 @@
 */
 #include "StdAfx.h"
 #include "CLatin1.h"
-#include "env/CShareData.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
+#include "CEol.h"
+//#include "env/CShareData.h"
+#include "env/CommonSetting.h"
 
 
 

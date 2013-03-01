@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "CAutoReloadAgent.h"
-//#include "doc/CEditDoc.h"
+// #include "doc/CEditDoc.h"	//  in under CEditWnd.h
 #include "window/CEditWnd.h"
 #include "dlg/CDlgFileUpdateQuery.h"
 #include "sakura_rc.h"

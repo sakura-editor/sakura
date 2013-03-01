@@ -32,7 +32,6 @@ class COpeBlk;
 class CCaret;
 class CEditWnd;
 #include "CEol.h"
-// #include "types/CType.h" // OUTLINE_DEFAULT
 
 class CViewCommander{
 public:

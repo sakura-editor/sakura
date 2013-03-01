@@ -24,7 +24,6 @@
 #ifndef SAKURA_CTEXTDRAWER_AECD0708_CE8E_489C_A9ED_484CBAB9523E9_H_
 #define SAKURA_CTEXTDRAWER_AECD0708_CE8E_489C_A9ED_484CBAB9523E9_H_
 
-// #include "view/colors/CColorStrategy.h"
 class CTextMetrics;
 class CTextArea;
 class CViewFont;

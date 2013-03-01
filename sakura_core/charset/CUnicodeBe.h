@@ -26,6 +26,7 @@
 
 #include "CCodeBase.h"
 #include "CUnicode.h"
+#include "CEol.h"
 
 class CUnicodeBe : public CCodeBase{
 public:

@@ -5,6 +5,7 @@
 #include "doc/CDocLine.h"
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
+#include "outline/CFuncInfo.h"
 #include "outline/CFuncInfoArr.h"
 #include "view/colors/EColorIndexType.h"
 

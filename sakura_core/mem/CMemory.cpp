@@ -35,19 +35,8 @@
 */
 
 #include "StdAfx.h"
-#include <stdio.h>
-#include <windows.h>
-#include <ctype.h>
-#include <locale.h>
-#include <limits.h>
-#include <vector>
-#include <mbstring.h>
 #include "mem/CMemory.h"
-#include "CEol.h"// 2002/2/3 aroka
-#include "charset/charcode.h"
-#include "charset/CShiftJis.h"
 #include "_main/global.h"
-#include "debug/CRunningTimer.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

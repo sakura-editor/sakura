@@ -36,6 +36,7 @@
 */
 
 #include "StdAfx.h"
+#include <limits.h>
 #include "CTabWnd.h"
 #include "window/CEditWnd.h"
 #include "_main/global.h"
@@ -43,12 +44,12 @@
 
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
+#include "CGraphics.h"
 #include "recent/CRecentEditNode.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
-#include <limits.h>
 #include "sakura_rc.h"
 
 

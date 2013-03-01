@@ -24,9 +24,7 @@
 
 #include "StdAfx.h"
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>	// Apr. 03, 2003 genta
-#include <DLGS.H>
 #include <OleCtl.h>
 #include "doc/CEditDoc.h"
 #include "doc/CDocLine.h" /// 2002/2/3 aroka
@@ -78,11 +76,11 @@
 CEditDoc::CEditDoc(CEditApp* pcApp)
 : m_pcEditWnd(pcApp->m_pcEditWnd)
 , m_nCommandExecNum( 0 )			/* コマンド実行回数 */
-, m_cDocFile(this)
-, m_cDocOutline(this)
-, m_cDocType(this)
-, m_cDocEditor(this)
-, m_cDocFileOperation(this)
+, m_cDocFile(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocEditor(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cDocFileOperation(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_hBackImg(NULL)
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );

@@ -28,6 +28,7 @@
 #include "window/CEditWnd.h"/// 2002/2/3 aroka 追加
 #include "util/os.h"
 #include "env/CSakuraEnvironment.h"
+#include "env/CShareData.h"
 
 
 /* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更

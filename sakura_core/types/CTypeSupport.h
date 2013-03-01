@@ -24,14 +24,11 @@
 #ifndef SAKURA_CTYPESUPPORT_21FC7075_96B4_4572_BA60_A6550E11AC0B9_H_
 #define SAKURA_CTYPESUPPORT_21FC7075_96B4_4572_BA60_A6550E11AC0B9_H_
 
-// #include "CGraphics.h"	// StdAfx.h参照
-// #include "types/CTypes.h"	// STypeConfig たぶんCLayoutMgr.hがinclude
-#include "view/CEditView.h"
+#include "CGraphics.h"
 #include "doc/CEditDoc.h"
+#include "view/CEditView.h"
+#include "view/CViewFont.h"
 #include "view/colors/CColorStrategy.h"
-// #include "view/CViewFont.h"	// in view/CEditView.h
-
-
 
 //2007.08.28 kobake 追加
 /*!タイプサポートクラス

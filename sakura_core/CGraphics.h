@@ -28,7 +28,7 @@
 2008.05.20 kobake 作成
 */
 
-#include <windows.h>
+#include <Windows.h>
 #include <vector>
 
 //! オリジナル値保存クラス

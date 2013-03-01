@@ -30,15 +30,10 @@
 		   distribution.
 */
 
-
-
-class CDlgTagJumpList;
-
 #ifndef	SAKURA_CDLGTAGJUMPLIST_H_
 #define	SAKURA_CDLGTAGJUMPLIST_H_
 
 #include "dlg/CDialog.h"
-// #include "CSortedTagJumpList.h"
 
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
 #define TAG_FILENAME_T        _T("tags")

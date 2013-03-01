@@ -24,35 +24,33 @@
 #ifndef _CEDITVIEW_H_
 #define _CEDITVIEW_H_
 
-
-#include <windows.h>
-#include <objidl.h>  // LPDATAOBJECT
-#include <shellapi.h>  // HDROP
+#include <Windows.h>
+#include <ObjIdl.h>  // LPDATAOBJECT
+#include <ShellAPI.h>  // HDROP
+#include "CTextMetrics.h"
+#include "CTextDrawer.h"
+#include "CTextArea.h"
+#include "CCaret.h"
+#include "CViewCalc.h" // parent
+#include "CEditView_Paint.h"	// parent
+#include "CViewParser.h"
+#include "CViewSelect.h"
+#include "view/colors/EColorIndexType.h"
 #include "window/CTipWnd.h"
 #include "window/CAutoScrollWnd.h"
 #include "CDicMgr.h"
 //	Jun. 26, 2001 genta	ê≥ãKï\åªÉâÉCÉuÉâÉäÇÃç∑Çµë÷Ç¶
 #include "CBregexp.h"
-#include "CEol.h"
-#include "CTextMetrics.h"
-#include "CTextDrawer.h"
-#include "CTextArea.h"
-#include "CViewFont.h"
-#include "CCaret.h"
-#include "CRuler.h"
-#include "CViewCalc.h" // parent
+#include "CEol.h"				// EEolType
 #include "cmd/CViewCommander.h"
-#include "CViewParser.h"
-#include "CViewSelect.h"
-#include "basis/SakuraBasis.h"
-#include "CEditView_Paint.h"
-#include "mfclike/CMyWnd.h"
-#include "doc/CDocListener.h"
-#include "util/container.h"
-#include "view/colors/EColorIndexType.h"
+#include "mfclike/CMyWnd.h"		// parent
+#include "doc/CDocListener.h"	// parent
+#include "basis/SakuraBasis.h"	// CLogicInt, CLayoutInt
+#include "util/container.h"		// vector_ex
 
-class CEditView;
 
+class CViewFont;
+class CRuler;
 class CDropTarget; /// 2002/2/3 aroka ÉwÉbÉ_åyó âª
 class COpeBlk;///
 class CSplitBoxWnd;///

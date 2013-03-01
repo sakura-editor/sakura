@@ -26,7 +26,7 @@
 #define STRICT
 #endif
 
-#include <windows.h>
+#include <Windows.h>
 #include <tchar.h>
 
 // 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。

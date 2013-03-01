@@ -4,7 +4,6 @@
 #include "doc/CEditDoc.h"
 // #include "doc/CDocType.h" in CEditDoc.h
 #include "types/CTypeSupport.h"
-#include "view/colors/CColorStrategy.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           Š‡ŒÊ                              //

@@ -13,14 +13,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDropTarget;
-class CYbInterfaceBase;
-class COleLibrary;
 
 #ifndef _CEDITDROPTARGET_H_
 #define _CEDITDROPTARGET_H_
 
-#include <windows.h>
+#include <Unknwn.h>
+
+class CDropTarget;
+class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ƒwƒbƒ_Œy—Ê‰»
 

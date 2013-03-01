@@ -24,7 +24,7 @@
 #ifndef SAKURA_CMYPOINT_A1799013_DDEC_472A_850B_6FCA04FC21049_H_
 #define SAKURA_CMYPOINT_A1799013_DDEC_472A_850B_6FCA04FC21049_H_
 
-#include <windows.h> //POINT
+#include <Windows.h> //POINT
 
 class CMyPoint : public POINT{
 public:

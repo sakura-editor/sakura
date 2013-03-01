@@ -3,6 +3,7 @@
 #include "charset/CCodeFactory.h"
 #include "charset/CShiftJis.h"	// move from CCodeMediator.h	2010/6/14 Uchi
 #include "charset/CUtf8.h"		// move from CCodeMediator.h	2010/6/14 Uchi
+#include "CEol.h"
 #include "util/file.h"			// _IS_REL_PATH
 #include "util/module.h"
 

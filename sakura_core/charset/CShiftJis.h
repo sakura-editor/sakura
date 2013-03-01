@@ -27,6 +27,8 @@
 #include "CCodeBase.h"
 #include "charset/codeutil.h"
 
+struct CommonSetting_Statusbar;
+
 class CShiftJis : public CCodeBase{
 
 public:

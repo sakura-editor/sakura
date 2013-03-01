@@ -31,11 +31,11 @@
 #ifndef SAKURA_CWSHIFOBJ_EAA6C3E3_1442_4940_B8A3_2AAB324D8788D_H_
 #define SAKURA_CWSHIFOBJ_EAA6C3E3_1442_4940_B8A3_2AAB324D8788D_H_
 #include <list>
-#include <activscp.h>
+#include <ActivScp.h>
 #include "_os/OleTypes.h"
 #include "macro/CIfObj.h"
 #include "macro/CWSH.h" // CWSHClient::List, ListIter
-#include "CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
+#include "macro/CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
 class CEditView;
 
 /* CWSHIfObj - プラグインやマクロに公開するオブジェクト

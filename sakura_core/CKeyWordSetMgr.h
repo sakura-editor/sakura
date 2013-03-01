@@ -34,12 +34,10 @@
 		   distribution.
 */
 
-class CKeyWordSetMgr;
-
 #ifndef _CKEYWORDSETMGR_H_
 #define _CKEYWORDSETMGR_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "_main/global.h"// 2002/2/10 aroka
 
 #define		MAX_SETNUM		100	//2007.12.01 genta ç≈ëÂílëùâ¡

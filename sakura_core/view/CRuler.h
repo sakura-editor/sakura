@@ -28,6 +28,7 @@ class CTextArea;
 class CEditView;
 class CEditDoc;
 class CTextMetrics;
+class CGraphics;
 
 class CRuler{
 public:

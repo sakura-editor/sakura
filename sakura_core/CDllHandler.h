@@ -32,7 +32,7 @@
 #ifndef _LOAD_LIBRARY_H_
 #define _LOAD_LIBRARY_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include <string>
 #include "_main/global.h"
 

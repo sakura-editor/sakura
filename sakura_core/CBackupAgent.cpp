@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include <time.h>
 #include "CBackupAgent.h"
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat

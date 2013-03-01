@@ -24,6 +24,7 @@
 
 #include "StdAfx.h"
 #include "outline/CDlgFuncList.h"
+#include "outline/CFuncInfo.h"
 #include "outline/CFuncInfoArr.h"// 2002/2/3 aroka
 #include "window/CEditWnd.h"	//	2006/2/11 aroka ’Ç‰Á
 #include "util/shell.h"

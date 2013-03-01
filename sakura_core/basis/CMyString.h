@@ -81,9 +81,6 @@ private:
 
 
 
-// ファイルパス用文字列 2008.01.11 rastiv  CFilePath.h から移動。
-//#include "CFilePath.h"
-
 //共通マクロ
 #define _FT _T
 #include "util/StaticType.h"

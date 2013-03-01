@@ -30,7 +30,6 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-class CMemory;
 
 #ifndef _CMEMORY_H_
 #define _CMEMORY_H_

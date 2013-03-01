@@ -1,27 +1,3 @@
-#include "StdAfx.h"
-#include "doc/CDocOutline.h"
-#include "outline/CFuncInfoArr.h"
-#include "doc/CEditDoc.h"
-
-
-/*!
-	関数に用いることができる文字かどうかの判定
-	
-	@date 2007.02.08 genta
-
-	@note 厳密には1文字目に数字を使うことは出来ないが，
-		それは実行してみれば明らかにわかることなので
-		そこまで厳密にチェックしない
-*/
-inline bool Python_IsWordChar( wchar_t c ){
-	return ( L'_' == c ||
-			(L'a' <= c && c <= L'z' )||
-			(L'A' <= c && c <= L'Z' )||
-			(L'0' <= c && c <= L'9' )
-		);
-}
-
-
 /*! @file
 	@brief Pythonアウトライン解析
 
@@ -52,6 +28,32 @@ inline bool Python_IsWordChar( wchar_t c ){
 		   distribution.
 
 */
+#include "StdAfx.h"
+#include "doc/CEditDoc.h"
+#include "doc/CDocLine.h"
+#include "doc/CDocLineMgr.h"
+#include "doc/CDocOutline.h"
+#include "outline/CFuncInfoArr.h"
+
+
+/*!
+	関数に用いることができる文字かどうかの判定
+	
+	@date 2007.02.08 genta
+
+	@note 厳密には1文字目に数字を使うことは出来ないが，
+		それは実行してみれば明らかにわかることなので
+		そこまで厳密にチェックしない
+*/
+inline bool Python_IsWordChar( wchar_t c ){
+	return ( L'_' == c ||
+			(L'a' <= c && c <= L'z' )||
+			(L'A' <= c && c <= L'Z' )||
+			(L'0' <= c && c <= L'9' )
+		);
+}
+
+
 
 /*! pythonのパース状態を管理する構造体
 

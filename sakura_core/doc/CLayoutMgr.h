@@ -19,12 +19,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CLayoutMgr;
-
 #ifndef _CLAYOUTMGR_H_
 #define _CLAYOUTMGR_H_
 
-#include <windows.h>// 2002/2/10 aroka
+#include <Windows.h>// 2002/2/10 aroka
 #include <vector>
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"

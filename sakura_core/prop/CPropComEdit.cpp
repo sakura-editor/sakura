@@ -18,6 +18,8 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
+#include "env/DLLSHAREDATA.h"
+#include "env/CFileNameManager.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"

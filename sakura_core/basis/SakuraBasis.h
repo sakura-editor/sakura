@@ -24,7 +24,7 @@
 #ifndef SAKURA_SAKURABASIS_DA3203FF_3FD7_4AD1_BC64_E85C8171335E9_H_
 #define SAKURA_SAKURABASIS_DA3203FF_3FD7_4AD1_BC64_E85C8171335E9_H_
 
-#include <windows.h> //POINT,LONG
+#include <Windows.h> //POINT,LONG
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ‚PŽŸŒ³Œ^‚Ì’è‹`                         //

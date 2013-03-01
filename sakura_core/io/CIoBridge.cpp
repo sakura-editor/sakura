@@ -2,6 +2,7 @@
 #include "io/CIoBridge.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
+#include "CEol.h"
 
 //! 内部実装のエンコードへ変換
 EConvertResult CIoBridge::FileToImpl(

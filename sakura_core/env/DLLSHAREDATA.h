@@ -40,28 +40,17 @@ DLLSHAREDATA& GetDllShareData();
 
 #include "config/maxdata.h"
 
-
-#include "EditInfo.h"
 #include "env/CAppNodeManager.h"	//SShare_Nodes
-
 //2007.09.28 kobake Commonç\ë¢ëÃÇCShareData.hÇ©ÇÁï™ó£
 #include "env/CommonSetting.h"
-
-#include "types/CType.h" // STypeConfig
-#include "CPrint.h" //PRINTSETTING
 #include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
 #include "env/CTagJumpManager.h"		//SShare_TagJump
 #include "env/CFileNameManager.h"		//SShare_FileNameManagement
+
+#include "EditInfo.h"
+#include "types/CType.h" // STypeConfig
+#include "CPrint.h" //PRINTSETTING
 #include "recent/SShare_History.h"	//SShare_History
-
-#ifndef SAKURA_EXCLUDE_OPTIONAL_INCLUDE
-//@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
-// #include "recent/CMRUFile.h"
-// #include "recent/CMRUFolder.h"
-
-#include "env/CFormatManager.h"
-#include "env/CHelpManager.h"
-#endif
 
 
 

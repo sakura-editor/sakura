@@ -38,13 +38,10 @@ struct ColorInfoBase{
 };
 
 //! 名前とインデックス付き色設定
-struct NamedColorInfo : public ColorInfoBase{
+struct ColorInfo : public ColorInfoBase{
 	int			m_nColorIdx;		//!< インデックス
 	TCHAR		m_szName[64];		//!< 名前
 };
-
-
-typedef NamedColorInfo ColorInfo;
 
 
 //デフォルト色設定
@@ -64,9 +61,6 @@ struct KeyHelpInfo {
 	SFilePath	m_szPath;					//!< ファイルパス
 };
 //@@@ 2006.04.10 fon ADD-end
-
-// とりあえずコメントアウト
-// #include "../types/CType.h"
 
 #endif /* SAKURA_CDOCTYPESETTING_28058D99_2101_4488_A634_832BD50A2F3C9_H_ */
 /*[EOF]*/
