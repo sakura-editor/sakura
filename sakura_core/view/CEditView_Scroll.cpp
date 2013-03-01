@@ -24,6 +24,7 @@
 */
 #include "StdAfx.h"
 #include "CEditView.h"
+#include "CRuler.h"
 #include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"

@@ -21,6 +21,7 @@
 #include "dlg/CDialog.h"
 #include "CEditApp.h"
 #include "env/CShareData.h"
+#include "env/DLLSHAREDATA.h"
 #include "CDlgOpenFile.h"
 #include "util/os.h"
 #include "util/shell.h"

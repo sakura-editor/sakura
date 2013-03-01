@@ -12,17 +12,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CHokanMgr;
-
 #ifndef _CHOKANMGR_H_
 #define _CHOKANMGR_H_
 
+#include <Windows.h>
 #include "dlg/CDialog.h"
-#include <windows.h>
-#include "mem/CMemory.h"
 #include "util/container.h"
-
-class CEditView;
 
 
 /*! @brief キーワード補完

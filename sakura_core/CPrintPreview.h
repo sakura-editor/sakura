@@ -15,11 +15,9 @@
 #ifndef _CPRINTPREVIEW_H_
 #define _CPRINTPREVIEW_H_
 
-class CPrintPreview;
-
+#include <Windows.h> // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "CPrint.h" // 2002/2/10 aroka
-#include <windows.h> // 2002/2/10 aroka
 
 class CEditWnd;
 class CLayoutMgr;

@@ -29,7 +29,7 @@
 */
 #ifndef __CAUTOSAVE_H_
 #define __CAUTOSAVE_H_
-#include <windows.h>
+#include <Windows.h>
 #include "_main/global.h"
 #include "doc/CDocListener.h"
 

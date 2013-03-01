@@ -28,6 +28,7 @@
 
 class CDocLineMgr;
 struct DocLineReplaceArg;
+class CBregexp;
 
 #define SEARCH_STRING_KMP
 #define SEARCH_STRING_SUNDAY_QUICK

@@ -31,7 +31,7 @@
 #ifndef __CMACROMGR_BASE_H_
 #define __CMACROMGR_BASE_H_
 
-#include <windows.h>
+#include <Windows.h>
 class CEditView;
 /*!
 	@brief マクロを処理するエンジン部分の基底クラス

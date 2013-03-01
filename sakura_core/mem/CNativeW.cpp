@@ -1,10 +1,7 @@
 #include "StdAfx.h"
 #include "mem/CNativeW.h"
-//#include "charset/charcode.h"
 #include "CEol.h"
-#include <mbstring.h>
 #include "charset/CShiftJis.h"
-#include "charset/codechecker.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //

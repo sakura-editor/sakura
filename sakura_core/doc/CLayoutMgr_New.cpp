@@ -17,17 +17,11 @@
 */
 
 #include "StdAfx.h"
-#include <mbstring.h>
-#include "CLayoutMgr.h"
-#include "charset/charcode.h"
-#include <commctrl.h>
-#include "debug/CRunningTimer.h"
+#include "doc/CLayoutMgr.h"
 #include "doc/CLayout.h"/// 2002/2/10 aroka
-#include "doc/CDocLine.h"/// 2002/2/10 aroka
-#include "doc/CDocLineMgr.h"// 2002/2/10 aroka
-#include "mem/CMemory.h"/// 2002/2/10 aroka
-#include "mem/CMemoryIterator.h"
 #include "doc/CEditDoc.h" /// 2003/07/20 genta
+#include "charset/charcode.h"
+#include "mem/CMemoryIterator.h"
 #include "util/window.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"

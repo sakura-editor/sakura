@@ -24,14 +24,12 @@
 #ifndef SAKURA_CSHAREDATA_IO_AA81C249_631D_40B0_AAFF_2F163748954B9_H_
 #define SAKURA_CSHAREDATA_IO_AA81C249_631D_40B0_AAFF_2F163748954B9_H_
 
-#include "doc/CDocTypeSetting.h" // ColorInfo typedefÇ≥ÇÍÇƒÇ¢ÇÈ
-
 class CDataProfile;
 class CMenuDrawer;
 struct CommonSetting_CustomMenu; // defined CommonSetting.h
 struct CommonSetting_MainMenu; // defined CommonSetting.h
-struct KEYDATA; // defined CKeyBind.h
-// struct ColorInfo; // defined doc/CDocTypeSetting.h
+struct CommonSetting_KeyBind;	// defined CommonSetting.h
+struct ColorInfo; // defined doc/CDocTypeSetting.h
 
 // 2008.XX.XX kobake CShareDataÇ©ÇÁï™ó£
 // 2008.05.24 Uchi   ShareData_IO_CustMenu, ShareData_IO_KeyBind  move ExportÅAImportÇ…égóp

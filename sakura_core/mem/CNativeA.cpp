@@ -1,10 +1,10 @@
 #include "StdAfx.h"
-#include "mem/CNativeA.h"
-#include "charset/CShiftJis.h"
-#include <mbstring.h>
-#include "CEol.h"
-#include "charset/charcode.h"
 #include <string>
+#include <mbstring.h>
+#include "mem/CNativeA.h"
+#include "CEol.h"
+#include "charset/CShiftJis.h"
+#include "charset/charcode.h"
 #include "util/string_ex2.h"
 
 CNativeA::CNativeA(const char* szData)

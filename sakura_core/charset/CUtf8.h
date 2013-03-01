@@ -27,6 +27,7 @@
 #include "CCodeBase.h"
 #include "charset/codeutil.h"
 
+struct CommonSetting_Statusbar;
 
 class CUtf8 : public CCodeBase{
 public:

@@ -16,9 +16,8 @@
 #ifndef _CPPAMACROMGR_H_
 #define _CPPAMACROMGR_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "CKeyMacroMgr.h"
-#include "mem/CMemory.h"
 #include "CPPA.h"
 
 /*-----------------------------------------------------------------------

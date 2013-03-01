@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "CRecentImp.h"
 
-//#include "env/DLLSHAREDATA.h"
 #include "env/CAppNodeManager.h" // EditNode
 #include "EditInfo.h" // EditInfo
 

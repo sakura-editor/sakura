@@ -4,6 +4,7 @@
 #include "charcode.h"
 #include "convert/convert_util2.h"
 #include "charset/codechecker.h"
+#include "CEol.h"
 
 // ”ñˆË‘¶„§
 #include "env/CShareData.h"

@@ -24,6 +24,8 @@
 #ifndef SAKURA_COMMONCONTROL_D732DE4D_9F3E_4E17_B6B3_0C11AD0D9F4F_H_
 #define SAKURA_COMMONCONTROL_D732DE4D_9F3E_4E17_B6B3_0C11AD0D9F4F_H_
 
+#include <CommCtrl.h> // コモンコントロール
+
 namespace ApiWrap
 {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

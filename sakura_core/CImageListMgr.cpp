@@ -17,9 +17,10 @@
 */
 #include "StdAfx.h"
 #include "CImageListMgr.h"
-#include "sakura_rc.h"
-#include "debug/CRunningTimer.h"
+#include "env/CommonSetting.h"
 #include "util/module.h"
+#include "debug/CRunningTimer.h"
+#include "sakura_rc.h"
 
 //  2010/06/29 syat MAX_X, MAX_Yの値をCommonSettings.hに移動
 //	Jul. 21, 2003 genta 他でも使うので関数の外に出した

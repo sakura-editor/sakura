@@ -11,13 +11,11 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CWaitCursor;
-
 #ifndef _CWAITCURSOR_H_
 #define _CWAITCURSOR_H_
 
 
-#include <windows.h>
+#include <Windows.h>
 
 
 /*-----------------------------------------------------------------------

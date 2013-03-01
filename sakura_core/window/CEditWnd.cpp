@@ -23,20 +23,21 @@
 */
 
 #include "StdAfx.h"
-#include <shlobj.h>
+#include <ShlObj.h>
 
 #include "window/CEditWnd.h"
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"	/// 2003/1/26 aroka
 #include "_main/CAppMode.h"
+#include"_os/CDropTarget.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "CPrintPreview.h"	/// 2002/2/3 aroka
-#include "debug/CRunningTimer.h"
 #include "charset/CharPointer.h"
 #include "charset/CCodeFactory.h"
+#include "charset/CCodeBase.h"
 #include "CEditApp.h"
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
@@ -49,6 +50,7 @@
 #include "CGrepAgent.h"
 #include "CMarkMgr.h"
 #include "doc/CLayout.h"
+#include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 
 
@@ -191,8 +193,8 @@ CEditWnd::CEditWnd()
 , m_nCurrentFocus( 0 )
 , m_bIsActiveApp( false )
 , m_IconClicked(icNone) //by 鬼(2)
-, m_cToolbar(this)
-, m_cStatusBar(this)
+, m_cToolbar(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
+, m_cStatusBar(this)		// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_nActivePaneIndex( 0 )
 , m_pcDragSourceView( NULL )
 , m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )

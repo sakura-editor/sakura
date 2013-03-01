@@ -26,7 +26,7 @@
 
 //2007.10.02 kobake CEditView‚©‚ç•ª—£
 
-enum EFunctionCode;
+#include "Funccode_enum.h"	// EFunctionCode
 
 class CConvertMediator{
 public:

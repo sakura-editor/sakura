@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 #include <HtmlHelp.h>
-#include <Shlobj.h>
-#include <shellapi.h>
-#include <Cderr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE“™
-#include "shell.h"
+#include <ShlObj.h>
+#include <ShellAPI.h>
+#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE“™
+#include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"

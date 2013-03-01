@@ -31,10 +31,10 @@ enum EConvertResult{
 	RESULT_FAILURE,  //!< 何らかの原因により失敗した。
 };
 
-#include "CEol.h"
-#include "mem/CNativeW.h"
 class CMemory;
 class CNativeW;
+struct CommonSetting_Statusbar;
+enum EEolType;
 
 /*!
 	文字コード基底クラス。

@@ -6,6 +6,7 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "convert/convert_util2.h"
+#include "CEol.h"
 
 
 

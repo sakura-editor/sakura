@@ -34,6 +34,7 @@
 #define _SAKURA_UXTHEME_H_
 
 #include "CDllHandler.h"
+#include "util/design_template.h"
 
 /*!
 	@brief UxTheme “®“Iƒ[ƒh

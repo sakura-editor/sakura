@@ -3,8 +3,9 @@
 */
 
 #include "StdAfx.h"
-#include <shlobj.h> //CSIDL_PROFILEìô
+#include <ShlObj.h> //CSIDL_PROFILEìô
 
+#include "DLLSHAREDATA.h"
 #include "CFileNameManager.h"
 #include "util/module.h"
 #include "util/os.h"
@@ -12,7 +13,6 @@
 #include "util/string_ex2.h"
 #include "_main/CCommandLine.h"
 #include "_os/COsVersionInfo.h"
-#include "DLLSHAREDATA.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ÉtÉ@ÉCÉãñºä«óù                         //

@@ -17,7 +17,7 @@
 
 #include "StdAfx.h"
 #include <stdlib.h>
-#include <winspool.h>
+#include <WinSpool.h>
 #include "CPrint.h"
 #include "_main/global.h"
 

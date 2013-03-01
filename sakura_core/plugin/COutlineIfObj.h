@@ -29,6 +29,7 @@
 #define SAKURA_COUTLINEIFOBJ_5C2DD72B_8550_40AB_9C49_2B1C5D17C91FW_H_
 
 #include "macro/CWSHIfObj.h"
+#include "outline/CFuncInfo.h"	// FUNCINFO_INFOMASK
 
 class COutlineIfObj : public CWSHIfObj {
 	// Œ^’è‹`

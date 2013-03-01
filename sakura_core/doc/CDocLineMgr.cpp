@@ -20,20 +20,10 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-/* for TRACE() of MFC */
-//#ifdef _DEBUG
-//	#include <afx.h>
-//#endif
-//#ifndef _DEBUG
-//	#include <windows.h>
-//#endif
-
-
 #include "StdAfx.h"
 // Oct 6, 2000 ao
 #include <stdio.h>
 #include <io.h>
-#include <commctrl.h>
 #include <list>
 #include "doc/CDocLineMgr.h"
 #include "doc/CDocLine.h"// 2002/2/10 aroka ÉwÉbÉ_êÆóù

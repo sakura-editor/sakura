@@ -31,6 +31,9 @@
 // #include "DLLSHAREDATA.h"
 
 #include "util/design_template.h"
+#include "config/maxdata.h"
+
+struct EditInfo;
 
 //! iniƒtƒHƒ‹ƒ_İ’è	// 2007.05.31 ryoji
 struct IniFolder {

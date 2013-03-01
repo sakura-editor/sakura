@@ -16,7 +16,7 @@
 
 #include "view/CEditView.h"
 #include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
-
+#include "env/CFormatManager.h"
 
 //日付挿入
 void CViewCommander::Command_INS_DATE( void )

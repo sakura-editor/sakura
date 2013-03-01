@@ -2,7 +2,6 @@
 #include "CDocReader.h"
 #include "CDocLine.h"
 #include "CDocLineMgr.h"
-// #include "CBregexp.h" // CDocLineMgrの定義で必要
 
 /* 全行データを返す
 	改行コードは、CFLF統一される。

@@ -14,8 +14,8 @@
 
 #include "StdAfx.h"
 #include <stdlib.h>
-#include <malloc.h>
 #include "outline/CFuncInfoArr.h"
+#include "outline/CFuncInfo.h"
 
 
 /* CFuncInfoArrÉNÉâÉXç\íz */

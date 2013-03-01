@@ -1,18 +1,18 @@
 #include "StdAfx.h"
-#include "CEditView_Paint.h"
 #include <vector>
-#include <memory> // auto_ptr
-#include <limits.h>
+#include "view/CEditView_Paint.h"
 #include "view/CEditView.h"
-#include "types/CTypeSupport.h"
-#include "doc/CEditDoc.h"
-#include "window/CEditWnd.h"
-#include "doc/CLayout.h"
-#include "parse/CWordParse.h"
-#include "util/string_ex2.h"
+#include "view/CViewFont.h"
+#include "view/CRuler.h"
 #include "view/colors/CColorStrategy.h"
 #include "view/colors/CColor_Found.h"
 #include "view/figures/CFigureStrategy.h"
+#include "types/CTypeSupport.h"
+#include "doc/CEditDoc.h"
+#include "doc/CLayout.h"
+#include "window/CEditWnd.h"
+#include "parse/CWordParse.h"
+#include "util/string_ex2.h"
 
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 

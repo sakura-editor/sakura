@@ -35,10 +35,7 @@
 */
 #include "StdAfx.h"
 #include "CKeyWordSetMgr.h"
-//#include <stdlib.h>
-//#include <malloc.h>
 #include <limits>
-//#include "charset/charcode.h"
 
 //! 1ブロック当たりのキーワード数
 static const int nKeyWordSetBlockSize = 50;

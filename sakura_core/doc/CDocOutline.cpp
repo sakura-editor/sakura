@@ -18,14 +18,11 @@
 
 #include "StdAfx.h"
 #include <string.h>
-#include <assert.h>
-#include "CDocOutline.h"
-
-#include "_main/global.h"
-
+#include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"
-#include "outline/CFuncInfoArr.h"
 #include "doc/CDocLine.h"
+#include "_main/global.h"
+#include "outline/CFuncInfoArr.h"
 #include "charset/charcode.h"
 #include "util/other_util.h"
 

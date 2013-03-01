@@ -21,6 +21,7 @@
 #include "CViewCommander.h"
 
 #include "view/CEditView.h"
+#include "view/CRuler.h"
 #include "CWaitCursor.h"
 #include "COpeBlk.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á

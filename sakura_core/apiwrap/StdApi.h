@@ -24,7 +24,7 @@
 #ifndef SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 #define SAKURA_STDAPI_85471C2C_6AEE_410D_BD09_A59056A5BA68_H_
 
-#include <imagehlp.h> //MakeSureDirectoryPathExists
+#include <ImageHlp.h> //MakeSureDirectoryPathExists
 
 namespace ApiWrap
 {

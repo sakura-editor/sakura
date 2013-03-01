@@ -11,15 +11,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CKeyBind;
 
 #ifndef _CKEYBIND_H_
 #define _CKEYBIND_H_
 
-#include <windows.h>
-class CMemory;// 2002/2/10 aroka
+#include <Windows.h>
 
-#include "func/Funccode.h"
+class CFuncLookup;
+enum EFunctionCode;
 
 //! ÉLÅ[èÓïÒÇï€éùÇ∑ÇÈ
 struct KEYDATA {
@@ -36,8 +35,6 @@ struct KEYDATA {
 	*/
 	EFunctionCode	m_nFuncCodeArr[8];
 };
-
-class CFuncLookup;
 
 
 /*-----------------------------------------------------------------------

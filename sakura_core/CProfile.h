@@ -31,11 +31,10 @@
 		   distribution.
 */
 
-class CProfile;
 #ifndef _CPROFILE_H_
 #define _CPROFILE_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include <string>
 #include <vector>
 #include <map>

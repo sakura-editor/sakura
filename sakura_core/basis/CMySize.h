@@ -24,7 +24,7 @@
 #ifndef SAKURA_CMYSIZE_1885EC13_14C3_4F76_9907_6AEAA9D83A7B9_H_
 #define SAKURA_CMYSIZE_1885EC13_14C3_4F76_9907_6AEAA9D83A7B9_H_
 
-#include <windows.h> //SIZE
+#include <Windows.h> //SIZE
 
 class CMySize : public SIZE{
 public:

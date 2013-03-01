@@ -25,9 +25,7 @@
 #ifndef _CEDITWND_H_
 #define _CEDITWND_H_
 
-class CEditWnd;
-
-#include <shellapi.h>// HDROP
+#include <ShellAPI.h>// HDROP
 #include "_main/global.h"
 #include "CMainToolBar.h"
 #include "CTabWnd.h"	//@@@ 2003.05.31 MIK
@@ -46,9 +44,6 @@ class CEditWnd;
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "CMenuDrawer.h"
-
-//by ‹S
-#include"_os/CDropTarget.h"
 
 const static int MENUBAR_MESSAGE_MAX_LEN = 30;
 

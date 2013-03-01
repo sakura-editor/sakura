@@ -24,7 +24,7 @@
 #ifndef SAKURA_CMYRECT_25A0FB5F_E06F_4F51_B046_E6951B95B0059_H_
 #define SAKURA_CMYRECT_25A0FB5F_E06F_4F51_B046_E6951B95B0059_H_
 
-#include <windows.h> //RECT
+#include <Windows.h> //RECT
 #include "CMyPoint.h"
 
 class CMyRect : public RECT{

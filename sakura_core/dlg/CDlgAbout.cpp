@@ -19,6 +19,7 @@
 */
 
 #include "StdAfx.h"
+#include <ShellAPI.h>
 #include "dlg/CDlgAbout.h"
 #include "_os/HandCursor.h"
 #include "util/file.h"

@@ -2,6 +2,7 @@
 #include "docplus/CModifyManager.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocLineMgr.h"
+#include "doc/CDocLine.h"
 
 
 void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)

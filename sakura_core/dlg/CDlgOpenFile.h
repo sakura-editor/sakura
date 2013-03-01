@@ -20,8 +20,7 @@
 #ifndef _CDLGOPENFILE_H_
 #define _CDLGOPENFILE_H_
 
-class CDlgOpenFile;
-
+#include <CommDlg.h>
 #include <vector>
 #include "CEol.h"
 #include "_os/COsVersionInfo.h"	// 2005.11.02 ryoji
@@ -33,7 +32,7 @@ struct SSaveInfo;	// doc/CDocListener.h
 // 2005.10.29 ryoji
 // Windows 2000 version of OPENFILENAME.
 // The new version has three extra members.
-// See commdlg.h
+// See CommDlg.h
 #if (_WIN32_WINNT >= 0x0500)
 struct OPENFILENAMEZ : public OPENFILENAME {
 };

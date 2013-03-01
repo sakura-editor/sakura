@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "docplus/CBookmarkManager.h"
 #include "doc/CDocLineMgr.h"
+#include "doc/CDocLine.h"
 #include "CSearchAgent.h"
 #include "CBregexp.h"
 

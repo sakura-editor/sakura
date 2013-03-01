@@ -1,6 +1,7 @@
 // ‚±‚Ìs‚Í•¶š‰»‚¯‘Îô—p‚Å‚·B
 #include "StdAfx.h"
 #include "CCesu8.h"
+#include "CEol.h"
 
 
 

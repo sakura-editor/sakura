@@ -15,7 +15,7 @@
 #ifndef _CKEYMACROMGR_H_
 #define _CKEYMACROMGR_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "CMacroManagerBase.h"
 
 enum EFunctionCode;

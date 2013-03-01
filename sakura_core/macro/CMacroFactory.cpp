@@ -29,9 +29,9 @@
 		   distribution.
 */
 #include "StdAfx.h"
-#include "CMacroFactory.h"
 #include <algorithm>
-#include "ctype.h"
+#include <ctype.h>
+#include "CMacroFactory.h"
 
 static const TCHAR NULSTR[] = _T("");
 

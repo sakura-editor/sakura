@@ -16,6 +16,7 @@
 */
 
 #include "StdAfx.h"
+#include <ShlObj.h>
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "env/CShareData.h"

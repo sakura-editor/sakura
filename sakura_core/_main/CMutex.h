@@ -31,7 +31,7 @@
 #ifndef _CMUTEX_H_
 #define _CMUTEX_H_
 
-#include <windows.h>
+#include <Windows.h>
 
 /** ミューテックスを扱うクラス
 	@date 2007.07.05 ryoji 新規作成

@@ -16,8 +16,6 @@
 
 //@@@ 2001.11.17 add start MIK
 
-//class CRegexKeyword;
-
 #ifndef	_REGEX_KEYWORD_H_
 #define	_REGEX_KEYWORD_H_
 

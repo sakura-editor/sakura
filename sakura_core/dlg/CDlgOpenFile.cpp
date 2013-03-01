@@ -18,6 +18,8 @@
 */
 
 #include "StdAfx.h"
+#include <CdErr.h>
+#include <Dlgs.h>
 #include "dlg/CDlgOpenFile.h"
 #include "func/Funccode.h"	//Stonee, 2001/05/18
 #include "CFileExt.h"

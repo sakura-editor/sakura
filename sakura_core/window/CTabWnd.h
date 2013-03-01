@@ -39,6 +39,7 @@
 
 #include "CWnd.h"
 
+class CGraphics;
 struct EditNode;
 struct DLLSHAREDATA;
 

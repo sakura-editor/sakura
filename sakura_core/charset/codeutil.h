@@ -25,7 +25,7 @@
 #ifndef SAKURA_CODEUTIL_E12B274F_2A3B_47A0_AFCB_4BAD1B3308AB_H_
 #define SAKURA_CODEUTIL_E12B274F_2A3B_47A0_AFCB_4BAD1B3308AB_H_
 
-#include <windows.h>
+#include <Windows.h>
 
 #if 0  // –¢Žg—p
 //	Oct. 3, 2002 genta

@@ -27,7 +27,7 @@
 #include "StdAfx.h"
 #define ID_HOTKEY_TRAYMENU	0x1234
 
-#include <htmlhelp.h>
+#include <HtmlHelp.h>
 #include "CControlTray.h"
 #include "CEditApp.h"
 #include "debug/CRunningTimer.h"
@@ -41,6 +41,7 @@
 #include "env/CShareData.h"
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
+#include "env/CHelpManager.h"
 #include "doc/CDocListener.h" // SLoadInfo,EditInfo
 #include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"

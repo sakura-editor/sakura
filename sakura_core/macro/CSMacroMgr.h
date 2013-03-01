@@ -34,10 +34,10 @@
 #ifndef _CSMACROMGR_H_
 #define _CSMACROMGR_H_
 
-#include <windows.h>
-#include <wtypes.h> //VARTYPE
+#include <Windows.h>
+#include <WTypes.h> //VARTYPE
 
-#include "CKeyMacroMgr.h"
+#include "CMacroManagerBase.h"
 #include "env/DLLSHAREDATA.h"
 #include "config/maxdata.h"
 

@@ -13,12 +13,11 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
-class CWnd;
 
 #ifndef _CWND_H_
 #define _CWND_H_
 
-#include <windows.h>
+#include <Windows.h>
 #include "_main/global.h"
 
 /*-----------------------------------------------------------------------

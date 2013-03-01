@@ -30,11 +30,11 @@
 
 #include "StdAfx.h"
 #include "CImpExpManager.h"
+#include "typeprop/CDlgTypeAscertain.h"
 
 #include "dlg/CDlgOpenFile.h"
 #include "io/CTextStream.h"
 #include "env/CShareData_IO.h"
-#include "typeprop/CDlgTypeAscertain.h"
 #include "plugin/CPlugin.h"
 #include "view/CEditView.h"
 #include "view/colors/CColorStrategy.h"

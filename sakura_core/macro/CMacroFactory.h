@@ -35,6 +35,7 @@
 #include <map>
 #include <list>
 #include <string>
+#include "util/design_template.h"
 
 class CMacroManagerBase;
 

@@ -29,6 +29,7 @@
 
 
 #include "StdAfx.h"
+#include <ShellAPI.h>
 #include "prop/CPropCommon.h"
 #include "util/shell.h"
 #include "dlg/CDlgOpenFile.h"

@@ -24,8 +24,8 @@
 #ifndef SAKURA_CEUC_13190B0A_A5F1_4CF2_AA8E_E58906DA05AD9_H_
 #define SAKURA_CEUC_13190B0A_A5F1_4CF2_AA8E_E58906DA05AD9_H_
 
-#include "CCodeBase.h"
 #include <mbstring.h>
+#include "charset/CCodeBase.h"
 #include "charset/codeutil.h"
 
 class CEuc : public CCodeBase{

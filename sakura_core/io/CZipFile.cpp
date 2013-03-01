@@ -26,6 +26,7 @@
 		   distribution.
 */
 #include "StdAfx.h"
+#include <ShellAPI.h>
 #include "CZipFile.h"
 #ifdef __MINGW32__
 //uuid(D8F015C0-C278-11CE-A49E-444553540000);

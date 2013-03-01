@@ -14,16 +14,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CMacro;
-class CTextOutputStream;
-
 #ifndef _CMACRO_H_
 #define _CMACRO_H_
 
-#include <windows.h>
-#include <objidl.h>  // VARIANT等
+#include <Windows.h>
+#include <ObjIdl.h>  // VARIANT等
 #include "func/Funccode.h"
 
+class CTextOutputStream;
 class CEditView;
 
 /*! @brief キーボードマクロの1コマンド

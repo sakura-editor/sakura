@@ -1,17 +1,20 @@
 #include "StdAfx.h"
-#include <vector>
 #include <algorithm>
-#include "CCaret.h"
-#include "CTextArea.h"
+#include "view/CCaret.h"
 #include "view/CEditView.h"
+#include "view/CTextArea.h"
+#include "view/CTextMetrics.h"
+#include "view/CViewFont.h"
+#include "view/CRuler.h"
+#include "view/colors/CColorStrategy.h"
 #include "doc/CEditDoc.h"
-#include "CTextMetrics.h"
-#include "mem/CMemoryIterator.h"
 #include "doc/CLayout.h"
+#include "mem/CMemoryIterator.h"
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"
+#include "charset/CCodeBase.h"
 #include "window/CEditWnd.h"
-#include "view/colors/CColorStrategy.h"
+
 using namespace std;
 
 #define SCROLLMARGIN_LEFT 4

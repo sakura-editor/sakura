@@ -30,13 +30,13 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-class CMRUFolder;
 
 #ifndef _CMRUFOLDER_H_
 #define _CMRUFOLDER_H_
 
-#include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
-#include "recent/CRecent.h"
+#include <Windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+#include "recent/CRecentFolder.h"
+
 class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
