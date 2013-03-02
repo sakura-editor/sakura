@@ -132,7 +132,7 @@ BOOL CDicMgr::Search(
 */
 int CDicMgr::HokanSearch(
 	const wchar_t*	pszKey,
-	BOOL			bHokanLoHiCase,	//!< ‰p‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚·‚é
+	bool			bHokanLoHiCase,	//!< ‰p‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚·‚é
 	vector_ex<std::wstring>&		vKouho,	//!< [out] Œó•âƒŠƒXƒg
 	int				nMaxKouho,		//!< MaxŒó•â”(0==–³§ŒÀ)
 	const TCHAR*	pszKeyWordFile

@@ -180,7 +180,7 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 */
 int CEditView::HokanSearchByFile(
 	const wchar_t*	pszKey,			//!< [in]
-	BOOL			bHokanLoHiCase,	//!< [in] ‰p‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚·‚é
+	bool			bHokanLoHiCase,	//!< [in] ‰p‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚·‚é
 	vector_ex<std::wstring>& 	vKouho,	//!< [in,out] Œó•â
 	int				nMaxKouho		//!< [in] MaxŒó•â”(0==–³§ŒÀ)
 ){
