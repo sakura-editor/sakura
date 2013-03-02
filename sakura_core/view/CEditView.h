@@ -473,7 +473,7 @@ public:
 	// 補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided );
 
-	int HokanSearchByFile( const wchar_t*, BOOL, vector_ex<std::wstring>&, int ); // 2003.06.25 Moca
+	int HokanSearchByFile( const wchar_t*, bool, vector_ex<std::wstring>&, int ); // 2003.06.25 Moca
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
