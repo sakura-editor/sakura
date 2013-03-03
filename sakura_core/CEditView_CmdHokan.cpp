@@ -170,7 +170,7 @@ void CEditView::Command_HOKAN( void )
 retry:;
 	/* 補完候補一覧ファイルが設定されていないときは、設定するように促す。 */
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
-	if( m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile == FALSE &&
+	if( m_pcEditDoc->GetDocumentAttribute().m_bUseHokanByFile == false &&
 		_T('\0') == m_pcEditDoc->GetDocumentAttribute().m_szHokanFile[0]
 	){
 		ConfirmBeep();
@@ -212,7 +212,7 @@ retry:;
 */
 int CEditView::HokanSearchByFile(
 	const char* 	pszKey,			//!< [in]
-	BOOL			bHokanLoHiCase,	//!< [in] 英大文字小文字を同一視する
+	bool			bHokanLoHiCase,	//!< [in] 英大文字小文字を同一視する
 	CMemory**		ppcmemKouho,	//!< [in,out] 候補
 	int				nKouhoNum,		//!< [in] ppcmemKouhoのすでに入っている数
 	int				nMaxKouho		//!< [in] Max候補数(0==無制限)

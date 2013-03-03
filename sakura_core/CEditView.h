@@ -256,7 +256,7 @@ public:
 	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
 	void CreateEditCaret( COLORREF crCaret, COLORREF crBack, int nWidth, int nHeight );		/* キャレットの作成 */	// 2006.12.07 ryoji
 	void ShowEditCaret( void );									/* キャレットの表示・更新 */
-	int HokanSearchByFile( const char*, BOOL, CMemory**, int, int ); // 2003.06.25 Moca
+	int HokanSearchByFile( const char*, bool, CMemory**, int, int ); // 2003.06.25 Moca
 
 	/*!	CEditView::KeyWordHelpSearchDictのコール元指定用ローカルID
 		@date 2006.04.10 fon 新規作成

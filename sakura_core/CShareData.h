@@ -303,9 +303,9 @@ struct STypeConfig {
 	//	2001/06/14 asa-o 補完のタイプ別設定
 	char				m_szHokanFile[_MAX_PATH];		/*!< 入力補完 単語ファイル */
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	int					m_bUseHokanByFile;				/*!< 入力補完 開いているファイル内から候補を探す */
+	bool				m_bUseHokanByFile;				//!< 入力補完 開いているファイル内から候補を探す
 	//	2001/06/19 asa-o
-	int					m_bHokanLoHiCase;				/*!< 入力補完機能：英大文字小文字を同一視する */
+	bool				m_bHokanLoHiCase;				//!< 入力補完機能：英大文字小文字を同一視する
 
 	char				m_szExtHelp[_MAX_PATH];			/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */

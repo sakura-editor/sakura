@@ -39,7 +39,7 @@ public:
 	*/
 //	BOOL Open( char* );
 	static BOOL Search( const char*, const int, CMemory**, CMemory**, const TCHAR*, int * );	// 2006.04.10 fon (const int,CMemory**,int*)ˆø”‚ğ’Ç‰Á
-	static int HokanSearch( const char* , BOOL, CMemory** , int, const TCHAR* );
+	static int HokanSearch( const char* , bool, CMemory** , int, const TCHAR* );
 //	BOOL Close( char* );
 
 

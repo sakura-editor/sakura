@@ -128,7 +128,7 @@ BOOL CDicMgr::Search(
 */
 int CDicMgr::HokanSearch(
 	const char* 	pszKey,
-	BOOL			bHokanLoHiCase,	//!< ‰p‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚·‚é
+	bool			bHokanLoHiCase,	//!< ‰p‘å•¶Žš¬•¶Žš‚ð“¯ˆêŽ‹‚·‚é
 	CMemory**		ppcmemKouho,
 	int				nMaxKouho,		//!< MaxŒó•â”(0==–³§ŒÀ)
 	const TCHAR*	pszKeyWordFile

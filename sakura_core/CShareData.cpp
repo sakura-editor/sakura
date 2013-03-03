@@ -5053,10 +5053,10 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	// 2001/06/14 End
 
 	// 2001/06/19 asa-o
-	pShareData->m_Types[nIdx].m_bHokanLoHiCase = FALSE;			/* 入力補完機能：英大文字小文字を同一視する */
+	pShareData->m_Types[nIdx].m_bHokanLoHiCase = false;			/* 入力補完機能：英大文字小文字を同一視する */
 
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	pShareData->m_Types[nIdx].m_bUseHokanByFile = FALSE;			/*! 入力補完 開いているファイル内から候補を探す */
+	pShareData->m_Types[nIdx].m_bUseHokanByFile = false;			/*! 入力補完 開いているファイル内から候補を探す */
 
 	// 文字コード設定
 	pShareData->m_Types[nIdx].m_eDefaultCodetype = CODE_SJIS;
@@ -5314,7 +5314,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
 	pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	pShareData->m_Types[2].m_bUseHokanByFile = TRUE;			/*! 入力補完 開いているファイル内から候補を探す */
+	pShareData->m_Types[2].m_bUseHokanByFile = true;			/*! 入力補完 開いているファイル内から候補を探す */
 
 	/* HTML */
 	pShareData->m_Types[3].m_cBlockComments[0].SetBlockCommentRule("<!--", "-->" );	/* ブロックコメントデリミタ */

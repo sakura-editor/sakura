@@ -46,8 +46,8 @@ public:
 		int				nColmWidth,
 		const char*		pszCurWord,
 		const TCHAR*	pszHokanFile,
-		BOOL			bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
-		BOOL			bHokanByFile,			// 編集中データから候補を探す。 2003.06.23 Moca
+		bool			bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
+		bool			bHokanByFile,			// 編集中データから候補を探す。 2003.06.23 Moca
 		CMemory*		pcmemHokanWord = NULL	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
 	);
 //	void SetCurKouhoStr( void );
