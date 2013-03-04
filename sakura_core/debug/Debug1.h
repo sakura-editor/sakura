@@ -2,6 +2,8 @@
 	@brief デバッグ用関数
 
 	@author Norio Nakatani
+
+	@date 2013/03/03 Uchi MessageBox用関数を分離
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
@@ -10,33 +12,16 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-#ifndef _DEBUG_H_
-#define _DEBUG_H_
-
-#include <Windows.h>
-#include "_main/global.h"
+#ifndef SAKURA_DEBUG1_587B8A50_4B0A_4E5E_A638_40FB1EC301CA_H_
+#define SAKURA_DEBUG1_587B8A50_4B0A_4E5E_A638_40FB1EC301CA_H_
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-SAKURA_CORE_API void AssertError( LPCTSTR pszFile, long nLine, BOOL bIsError );
+#if defined(_DEBUG) || defined(USE_RELPRINT)
 SAKURA_CORE_API void DebugOutW( LPCWSTR lpFmt, ...);
 SAKURA_CORE_API void DebugOutA( LPCSTR lpFmt, ...);
-#ifdef _UNICODE
-#define DebugOut DebugOutW
-#else
-#define DebugOut DebugOutA
-#endif
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                 メッセージボックス：実装                    //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//2007.10.02 kobake メッセージボックスの使用はデバッグ時に限らないので、「Debug～」という名前を廃止
-
-//テキスト整形機能付きMessageBox
-SAKURA_CORE_API int VMessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, va_list& v );
-SAKURA_CORE_API int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... );
+#endif	// _DEBUG || USE_RELPRINT
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 デバッグ用メッセージ出力                    //
@@ -46,14 +31,17 @@ SAKURA_CORE_API int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption,
 	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
 */
 #ifdef _DEBUG
-	#define MYTRACE DebugOut
 	#define MYTRACE_A DebugOutA
 	#define MYTRACE_W DebugOutW
-#endif
-#ifndef _DEBUG
+	#ifdef _UNICODE
+	#define MYTRACE DebugOutW
+	#else
+	#define MYTRACE DebugOutA
+	#endif
+#else
 	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode
 	#define MYTRACE_A Do_not_use_the_MYTRACE_A_function_if_release_mode
-	#define MYTRACE_W Do_not_use_the_MYTRACE_A_function_if_release_mode
+	#define MYTRACE_W Do_not_use_the_MYTRACE_W_function_if_release_mode
 #endif
 
 //#ifdef _DEBUG～#endifで囲まなくても良い版
@@ -81,6 +69,7 @@ inline void DBPRINT_W( ... ){}
 
 
 //RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
+#ifdef USE_RELPRINT
 #define RELPRINT_A DebugOutA
 #define RELPRINT_W DebugOutW
 
@@ -89,84 +78,11 @@ inline void DBPRINT_W( ... ){}
 #else
 #define RELPRINT DebugOutA
 #endif
+#endif	// USE_RELPRINT
 
-#define MYASSERT AssertError
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//               デバッグ用メッセージボックス                  //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//超簡易版  2007.09.29 kobake 作成
-void DBMSG_IMP(const char* msg); //!< メッセージボックスを表示。キャプションにはexe名。
-
-#ifdef _DEBUG
-#define DBMSG DBMSG_IMP
-#else
-#define DBMSG(S)
-#endif
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                ユーザ用メッセージボックス                   //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//$$メモ：Debug.h以外の置き場所を考える
-
-//デバッグ用メッセージボックス
-#define MYMESSAGEBOX MessageBoxF
-
-//一般の警告音
-#define DefaultBeep()   MessageBeep(MB_OK)
-
-//エラー：赤丸に「×」[OK]
-int ErrorMessage  (HWND hwnd, LPCTSTR format, ...);
-//(TOPMOST)
-int TopErrorMessage  (HWND hwnd, LPCTSTR format, ...);
-#define ErrorBeep()     MessageBeep(MB_ICONSTOP)
-
-//警告：三角に「！」[OK]
-int WarningMessage   (HWND hwnd, LPCTSTR format, ...);
-int TopWarningMessage(HWND hwnd, LPCTSTR format, ...);
-#define WarningBeep()   MessageBeep(MB_ICONEXCLAMATION)
-
-//情報：青丸に「i」[OK]
-int InfoMessage   (HWND hwnd, LPCTSTR format, ...);
-int TopInfoMessage(HWND hwnd, LPCTSTR format, ...);
-#define InfoBeep()      MessageBeep(MB_ICONINFORMATION)
-
-//確認：吹き出しの「？」 [はい][いいえ] 戻り値:IDYES,IDNO
-int ConfirmMessage   (HWND hwnd, LPCTSTR format, ...);
-int TopConfirmMessage(HWND hwnd, LPCTSTR format, ...);
-#define ConfirmBeep()   MessageBeep(MB_ICONQUESTION)
-
-//その他メッセージ表示用ボックス[OK]
-int OkMessage  (HWND hwnd, LPCTSTR format, ...);
-int TopOkMessage  (HWND hwnd, LPCTSTR format, ...);
-
-//タイプ指定メッセージ表示用ボックス
-int CustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);
-//(TOPMOST)
-int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...);
-
-//作者に教えて欲しいエラー
-int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...);
-
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         フラグ等                            //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#ifdef _DEBUG
-	//!	設定している場所はあるが，参照している場所がない変数
-	SAKURA_CORE_API extern int gm_ProfileOutput;
-#endif
-
-
-
-#include "debug/Debug2.h"
-#include "debug/Debug3.h"
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _DEBUG_H_ */
+#endif /* SAKURA_DEBUG1_587B8A50_4B0A_4E5E_A638_40FB1EC301CA_H_ */
 
 
 

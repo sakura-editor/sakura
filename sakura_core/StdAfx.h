@@ -97,6 +97,7 @@
 #include "mem/CNativeT.h"
 
 #include "util/string_ex.h"
+#include "util/MessageBoxF.h"
 
 //‚»‚Ì‘¼
 #define malloc_char (char*)malloc

@@ -133,7 +133,7 @@ UINT32 ParseVersion( const TCHAR* sVer )
 		//‹æØ‚è•¶š‚Ìˆ—
 		while( *p && _tcschr( _T(".-_+"), *p ) ){ p++; }
 
-		DebugOut(_T("  VersionPart%d: ver=%d,shift=%d\n"), i, nVer, nShift);
+		DEBUG_TRACE(_T("  VersionPart%d: ver=%d,shift=%d\n"), i, nVer, nShift);
 		ret |= ( (nShift + nVer + 128) << (24-8*i) );
 	}
 	for( ; i<4; i++ ){	//c‚è‚Ì•”•ª‚Ísigned 0 (=0x80)‚ğ–„‚ß‚é
@@ -141,7 +141,7 @@ UINT32 ParseVersion( const TCHAR* sVer )
 	}
 
 #ifdef _UNICODE
-	DebugOut(_T("ParseVersion %ls -> %08x\n"), sVer, ret);
+	DEBUG_TRACE(_T("ParseVersion %ls -> %08x\n"), sVer, ret);
 #endif
 	return ret;
 }

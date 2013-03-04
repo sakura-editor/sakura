@@ -512,9 +512,6 @@ void CViewCommander::Command_INSTEXT(
 					bRedraw,
 					m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
 				);
-#ifdef _DEBUG
-				gm_ProfileOutput = FALSE;
-#endif
 				if( !bLinePaste )	// 2007.10.04 ryoji
 					goto end_of_func;
 			}
