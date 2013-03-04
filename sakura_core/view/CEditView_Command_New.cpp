@@ -51,7 +51,6 @@ void CEditView::InsertData_CEditView(
 )
 {
 #ifdef _DEBUG
-	gm_ProfileOutput = 1;
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::InsertData_CEditView" );
 #endif
 
@@ -304,10 +303,6 @@ void CEditView::InsertData_CEditView(
 		// ‘€ì‚Ì’Ç‰Á
 		m_pcOpeBlk->AppendOpe( pcOpe );
 	}
-
-#ifdef _DEBUG
-	gm_ProfileOutput = 0;
-#endif
 }
 
 
@@ -325,7 +320,6 @@ void CEditView::DeleteData2(
 )
 {
 #ifdef _DEBUG
-	gm_ProfileOutput = 1;
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(1)" );
 #endif
 	const wchar_t*	pLine;
@@ -399,7 +393,6 @@ void CEditView::DeleteData(
 )
 {
 #ifdef _DEBUG
-	gm_ProfileOutput = 1;
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DeleteData(2)" );
 #endif
 	const wchar_t*	pLine;

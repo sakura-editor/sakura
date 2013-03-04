@@ -151,7 +151,6 @@ dlg/CDlgAbout.o \
 dlg/CDlgCancel.o \
 dlg/CDlgCompare.o \
 dlg/CDlgCtrlCode.o \
-dlg/CDlgDebug.o \
 dlg/CDlgDiff.o \
 dlg/CDlgExec.o \
 dlg/CDlgFavorite.o \
@@ -313,6 +312,7 @@ types/CType_Vb.o \
 util/file.o \
 util/format.o \
 util/input.o \
+util/MessageBoxF.o \
 util/module.o \
 util/ole_convert.o \
 util/os.o \

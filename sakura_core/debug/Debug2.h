@@ -1,3 +1,7 @@
+/*!	@file
+	@brief assertä÷êî
+
+*/
 /*
 	Copyright (C) 2007, kobake
 
@@ -35,20 +39,20 @@
 	void warning_point();
 
 	#define assert(exp) \
-	do{ \
+	{ \
 		if(!(exp)){ \
 			debug_output("!assert: %hs(line%d): %hs\n", __FILE__, __LINE__, #exp); \
 			debug_exit(); \
 		} \
-	}while(false)
+	}
 
 	#define assert_warning(exp) \
-	do{ \
+	{ \
 		if(!(exp)){ \
 			debug_output("!warning: %hs(line%d): %hs\n", __FILE__, __LINE__, #exp); \
 			warning_point(); \
 		} \
-	}while(false)
+	}
 
 #else
 	#define assert(exp)

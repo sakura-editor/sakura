@@ -2,6 +2,8 @@
 #include "debug/Debug3.h"
 #include "util/module.h"
 
+#ifdef USE_DEBUGMON
+
 static HINSTANCE hDll=NULL;
 static void Load()
 {
@@ -40,5 +42,5 @@ LPCWSTR GetWindowsMessageName(UINT msg)
 	return f(msg);
 }
 
-
+#endif
 

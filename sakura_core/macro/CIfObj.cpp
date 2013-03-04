@@ -55,7 +55,7 @@ public:
 					/* [out] */ TYPEATTR __RPC_FAR *__RPC_FAR *ppTypeAttr)
 	{
 #ifdef TEST
-		DebugOut( L"GetTypeAttr\n" );
+		DEBUG_TRACE( _T("GetTypeAttr\n") );
 #endif
 		*ppTypeAttr = &m_TypeAttr;
 		return S_OK;
@@ -65,7 +65,7 @@ public:
 					/* [out] */ ITypeComp __RPC_FAR *__RPC_FAR *ppTComp)
 	{
 #ifdef TEST
-		DebugOut( L"GetTypeComp\n" );
+		DEBUG_TRACE( _T("GetTypeComp\n") );
 #endif
 		return E_NOTIMPL;
 	}
@@ -213,7 +213,7 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetFuncDesc(
 			/* [out] */ FUNCDESC __RPC_FAR *__RPC_FAR *ppFuncDesc)
 {
 #ifdef TEST
-	DebugOut( L"GetFuncDesc\n" );
+	DEBUG_TRACE( _T("GetFuncDesc\n") );
 #endif
 	*ppFuncDesc = const_cast<FUNCDESC __RPC_FAR *>(&(m_MethodsRef[index].Desc));
 	return S_OK;
@@ -226,7 +226,7 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetNames(
     /* [out] */ UINT __RPC_FAR *pcNames)
 {
 #ifdef TEST
-		DebugOut( L"GetNames\n" );
+		DEBUG_TRACE( _T("GetNames\n") );
 #endif
 	*pcNames = 1;
 	if(cMaxNames > 0)
@@ -320,7 +320,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
 	{
 #ifdef TEST
 		//大量にメッセージが出るので注意。
-		//DebugOut( L"GetIDsOfNames: %ls\n", rgszNames[I] );
+		//DEBUG_TRACE( _T("GetIDsOfNames: %ls\n"), rgszNames[I] );
 #endif
 		for(unsigned J = 0; J < m_Methods.size(); ++J)
 		{
