@@ -1524,7 +1524,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		// ドッキング中はウィンドウ幅いっぱいまで伸ばす
 		if( IsDocking() ){
 			if( anchorList[i].anchor == ANCHOR_ALL ){
-				m_rcItems[i].bottom = m_ptDefaultSize.y;
+				m_rcItems[i].bottom = m_ptDefaultSize.y - 20;
 			}
 		}
 	}
