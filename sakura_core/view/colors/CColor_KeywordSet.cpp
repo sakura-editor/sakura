@@ -5,13 +5,6 @@
 #include "mem/CNativeW.h"
 #include "charset/charcode.h"
 
-/** 文字を分類する。
-	@retval 0 キーワードに使える文字ではない。
-	@retval その他の数 連続する同じ数の文字が一つのキーワードをつくる。
-	たとえば、ABCDEFGという文字列があり、それぞれの文字の CharTypeが順番に 1121133だったとすると、AB、C、DE、FGがキーワード候補になる。
-*/
-static int CharType( const wchar_t wch );
-
 /** startより後ろの語の境界の位置を返す。
 	startより前の文字は読まない。一番大きい戻り値は str.GetLength()と等しくなる。
 */
@@ -42,12 +35,16 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 			現在位置からキーワードを抜き出し、そのキーワードが登録単語ならば、色を変える
 	*/
 
-	const int charType = CharType( cStr.At( nPos ) );
-	if( ! charType ) {
+	const ECharKind charKind = CWordParse::WhatKindOfChar( cStr.GetPtr(), cStr.GetLength() , nPos );
+	if( charKind <= CK_SPACE ){
 		return false; // この文字はキーワード対象文字ではない。
 	}
-	if( 0 < nPos && charType == CharType( cStr.At( nPos - 1 ) ) ) {
-		return false; // 語の境界ではなかった。
+	if( 0 < nPos ){
+		const ECharKind charKindPrev = CWordParse::WhatKindOfChar( cStr.GetPtr(), cStr.GetLength() , nPos-1 );
+		const ECharKind charKindTwo = CWordParse::WhatKindOfTwoChars4KW( charKindPrev, charKind );
+		if( charKindTwo != CK_NULL ){
+			return false;
+		}
 	}
 
 	const int posNextWordHead = NextWordBreak( cStr, nPos );
@@ -100,23 +97,11 @@ bool CColor_KeywordSet::EndColor(const CStringRef& cStr, int nPos)
 }
 
 
-static inline int CharType( const wchar_t wch )
+static inline int NextWordBreak( const CStringRef& str, const int start )
 {
-	if( ! wch || WCODE::IsBlank( wch ) || WCODE::IsLineDelimiter( wch ) || WCODE::IsControlCode( wch ) ) {
-		return 0;
+	CLogicInt nColmNew;
+	if( CWordParse::SearchNextWordPosition4KW( str.GetPtr(), CLogicInt(str.GetLength()), CLogicInt(start), &nColmNew, true ) ){
+		return nColmNew;
 	}
-	const int charType = IS_KEYWORD_CHAR( wch ) ? 1 : 2;
-	return charType;
-}
-
-static int NextWordBreak( const CStringRef& str, const int start )
-{
-	const int charType = CharType( str.At( start ) );
-	int result = start;
-	for( ; result < str.GetLength(); result += CNativeW::GetSizeOfChar( str.GetPtr(), str.GetLength(), result ) ) {
-		if( charType != CharType( str.At( result ) ) ) {
-			break;
-		}
-	}
-	return result;
+	return start;
 }
