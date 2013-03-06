@@ -355,8 +355,9 @@ void CHokanMgr::HokanSearchByKeyword(
 	const STypeConfig& type = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute();
 	CKeyWordSetMgr& keywordMgr = m_pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr;
 	const int nKeyLen = wcslen(pszCurWord);
-	for( int kwdset = 0; kwdset < MAX_KEYWORDSET_PER_TYPE; kwdset++ ){
-		if( type.m_nKeyWordSetIdx[kwdset] == -1 ){
+	for( int n = 0; n < MAX_KEYWORDSET_PER_TYPE; n++ ){
+		int kwdset = type.m_nKeyWordSetIdx[n];
+		if( kwdset == -1 ){
 			continue;
 		}
 		const int keyCount = keywordMgr.GetKeyWordNum(kwdset);
