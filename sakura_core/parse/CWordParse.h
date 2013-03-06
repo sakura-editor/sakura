@@ -39,6 +39,7 @@ enum ECharKind{
 	CK_CSYM,			//!< 識別子に使用可能な文字 (英数字、アンダースコア)
 	CK_KATA,			//!< 半角のカタカナ 0xA1<=c<=0xFD
 	CK_LATIN,			//!< ラテン１補助、ラテン拡張のうちアルファベット風のもの 0x00C0<=c<0x0180
+	CK_UDEF,			//!< ユーザ定義キーワード文字（#$@\）
 	CK_ETC,				//!< 半角のその他
 
 	CK_ZEN_SPACE,		//!< 全角スペース
@@ -88,8 +89,23 @@ public:
 		ECharKind		kindCur
 	);
 
+	//! 二つの文字を結合したものの種類を調べる for 強調キーワード
+	static ECharKind WhatKindOfTwoChars4KW(
+		ECharKind		kindPre,
+		ECharKind		kindCur
+	);
+
 	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。
 	static bool SearchNextWordPosition(
+		const wchar_t*	pLine,
+		CLogicInt		nLineLen,
+		CLogicInt		nIdx,		//	桁数
+		CLogicInt*		pnColmNew,	//	見つかった位置
+		BOOL			bStopsBothEnds	//	単語の両端で止まる
+	);
+
+	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。 for 強調キーワード
+	static bool SearchNextWordPosition4KW(
 		const wchar_t*	pLine,
 		CLogicInt		nLineLen,
 		CLogicInt		nIdx,		//	桁数
