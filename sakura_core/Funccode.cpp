@@ -33,7 +33,7 @@
 #include "CSMacroMgr.h"
 #include "CMarkMgr.h"
 #include "CEditWnd.h"
-#include "CMRU.h"
+#include "CMRUFile.h"
 #include "CMRUFolder.h"
 #include "sakura.hh"
 

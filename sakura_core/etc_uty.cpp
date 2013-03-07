@@ -47,7 +47,7 @@
 #include "charcode.h"  // 2006/08/28 rastiv
 
 #include "CShareData.h"
-#include "CMRU.h"
+#include "CMRUFile.h"
 #include "CMRUFolder.h"
 #include "CUxTheme.h"	// 2007.04.01 ryoji
 

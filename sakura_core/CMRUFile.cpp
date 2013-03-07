@@ -20,7 +20,7 @@
 #include "CMenuDrawer.h"	//	‚±‚ê‚Å‚¢‚¢‚Ì‚©H
 #include "global.h"
 #include <stdio.h>
-#include "CMRU.h"
+#include "CMRUFile.h"
 #include "CRecent.h"	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
 #include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca ’Ç‰Á

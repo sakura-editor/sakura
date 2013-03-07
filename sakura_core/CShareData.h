@@ -35,7 +35,7 @@ class CShareData;
 #include "CProfile.h"
 
 //@@@ 2001.12.26 YAZAKI CMRU, CMRUFolder
-#include "CMRU.h"
+#include "CMRUFile.h"
 #include "CMRUFolder.h"
 
 //20020129 aroka

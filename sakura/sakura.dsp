@@ -417,7 +417,7 @@ SOURCE=..\sakura_core\CMigemo.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CMRU.cpp
+SOURCE=..\sakura_core\CMRUFile.cpp
 # End Source File
 # Begin Source File
 
@@ -908,7 +908,7 @@ SOURCE=..\sakura_core\CMigemo.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CMRU.h
+SOURCE=..\sakura_core\CMRUFile.h
 # End Source File
 # Begin Source File
 
