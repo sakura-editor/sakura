@@ -123,7 +123,7 @@ CEditDoc::CEditDoc()
 	m_FileTime.ClearFILETIME();
 
 	//	Oct. 2, 2005 genta 挿入モード
-	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode != FALSE );
+	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode );
 
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
@@ -209,7 +209,7 @@ void CEditDoc::InitDoc()
 	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
 
 	//	Oct. 2, 2005 genta 挿入モード
-	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode != FALSE );
+	SetInsMode( m_pShareData->m_Common.m_sGeneral.m_bIsINSMode );
 }
 
 

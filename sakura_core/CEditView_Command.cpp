@@ -1332,7 +1332,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 	int				nIdx;
 	int				nLineNew;
 	int				nColmNew;
-	BOOL			bIsFreeCursorModeOld;
+	bool			bIsFreeCursorModeOld;
 	if( bSelect ){
 		if( !IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在のカーソル位置から選択を開始する */
@@ -1349,7 +1349,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
 		bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル左移動 */
 		Command_LEFT( bSelect, FALSE );
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
@@ -1387,7 +1387,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 		}
 	}else{
 		bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル左移動 */
 		Command_LEFT( bSelect, FALSE );
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
@@ -1460,8 +1460,8 @@ try_again:;
 		}
 	}
 	else{
-		BOOL	bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
-		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;
+		bool	bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル右移動 */
 		Command_RIGHT( bSelect, FALSE, FALSE );
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */

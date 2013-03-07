@@ -602,8 +602,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
 		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;					/* カーソルのタイプ 0=win 1=dos */
-		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = TRUE;				/* 挿入／上書きモード */
-		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = FALSE;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
+		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = true;				/* 挿入／上書きモード */
+		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;		/* フリーカーソルモードか */	//Oct. 29, 2000 JEPRO 「なし」に変更
 
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchWord = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */

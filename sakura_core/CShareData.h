@@ -400,8 +400,8 @@ struct CommonSetting_General
 
 	//カーソル
 	int					m_nCaretType;					/* カーソルのタイプ 0=win 1=dos  */
-	int					m_bIsINSMode;					/* 挿入／上書きモード */
-	int					m_bIsFreeCursorMode;			/* フリーカーソルモードか */
+	bool				m_bIsINSMode;					// 挿入／上書きモード
+	bool				m_bIsFreeCursorMode;			// フリーカーソルモードか
 	BOOL				m_bStopsBothEndsWhenSearchWord;	/* 単語単位で移動するときに、単語の両端で止まるか */
 	BOOL				m_bStopsBothEndsWhenSearchParagraph;	/* 段落単位で移動するときに、段落の両端で止まるか */
 	BOOL				m_bNoCaretMoveByActivation;	/* マウスクリックにてアクティベートされた時はカーソル位置を移動しない 2007.10.02 nasukoji (add by genta) */
