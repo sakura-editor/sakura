@@ -34,6 +34,7 @@ enum ECharKind{
 	CK_TAB,				//!< タブ 0x9<=c<=0x9
 	CK_CR,				//!< CR = 0x0d 
 	CK_LF,				//!< LF = 0x0a 
+	CK_CTRL,			//!< 上記以外の c<0x20
 
 	CK_SPACE,			//!< 半角のスペース 0x20<=c<=0x20
 	CK_CSYM,			//!< 識別子に使用可能な文字 (英数字、アンダースコア)

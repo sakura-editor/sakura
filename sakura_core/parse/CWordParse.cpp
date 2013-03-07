@@ -128,6 +128,7 @@ ECharKind CWordParse::WhatKindOfChar(
 		if( c == CR              )return CK_CR;
 		if( c == LF              )return CK_LF;
 		if( c == TAB             )return CK_TAB;	// タブ
+		if( IsControlCode(c)     )return CK_CTRL;	// 制御文字
 		if( c == SPACE           )return CK_SPACE;	// 半角スペース
 		if( isCSymbol(c)         )return CK_CSYM;	// 識別子に使用可能な文字 (半角英数字、半角アンダースコア)
 		if( IsHankakuKatakana(c) )return CK_KATA;	// 半角のカタカナ
@@ -186,6 +187,8 @@ ECharKind CWordParse::WhatKindOfTwoChars( ECharKind kindPre, ECharKind kindCur )
 	if( kindCur == CK_LATIN )kindCur = CK_CSYM;
 	if( kindPre == CK_UDEF )kindPre = CK_ETC;		// ユーザ定義文字はその他の半角とみなす
 	if( kindCur == CK_UDEF )kindCur = CK_ETC;
+	if( kindPre == CK_CTRL )kindPre = CK_ETC;		// 制御文字はその他の半角とみなす
+	if( kindCur == CK_CTRL )kindCur = CK_ETC;
 
 	if( kindPre == kindCur )return kindCur;			// 同種ならその種別を返す
 
@@ -211,6 +214,8 @@ ECharKind CWordParse::WhatKindOfTwoChars4KW( ECharKind kindPre, ECharKind kindCu
 	if( kindCur == CK_LATIN )kindCur = CK_CSYM;
 	if( kindPre == CK_UDEF )kindPre = CK_CSYM;		// ユーザ定義文字はアルファベットとみなす
 	if( kindCur == CK_UDEF )kindCur = CK_CSYM;
+	if( kindPre == CK_CTRL )kindPre = CK_CTRL;		// 制御文字はそのまま制御文字とみなす
+	if( kindCur == CK_CTRL )kindCur = CK_CTRL;
 
 	if( kindPre == kindCur )return kindCur;			// 同種ならその種別を返す
 
