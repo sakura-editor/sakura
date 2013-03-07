@@ -11,6 +11,7 @@
 #define HLP000130	130 //右ドロップ
 #define HLP000260	260 //アプリアイコンの変更手順
 #define HLP000261	261 //あると便利なツール、ファイル
+#define HLP000110	110 //プラグイン
 #define HLP000009	9 //リリース履歴
 #define HLP000133	133 //メニュー項目のヘルプ
 #define HLP000011	11 //通常選択
@@ -79,6 +80,7 @@
 #define HLP000223	223 //単語の右端に移動
 #define HLP000262	262 //前の段落に移動
 #define HLP000263	263 //次の段落に移動
+#define HLP000296	296 //オートスクロール
 #define HLP000224	224 //行頭に移動（折り返し単位）
 #define HLP000225	225 //行末に移動（折り返し単位）
 #define HLP000226	226 //1ページアップ
@@ -214,6 +216,7 @@
 #define HLP000277	277 //共通設定『ファイル名表示』タブ
 #define HLP000147	147 //共通設定『ステータスバー』タブ
 #define HLP000151	151 //共通設定『プラグイン』タブ
+#define HLP000153	153 //共通設定『プラグイン設定』ダイアログ
 #define HLP000152	152 //共通設定『メインメニュー』タブ
 #define HLP000279	279 //履歴の管理
 #define HLP000071	71 //フォント設定
@@ -268,8 +271,8 @@
 #define HLP000100	100 //ヘルプ目次
 #define HLP000101	101 //キーワード検索
 #define HLP000189	189 //コマンド一覧
-#define HLP000024	24 //同名のC/C++ヘッダファイルを開く
-#define HLP000026	26 //同名のC/C++ソースファイルを開く
+//#define HLP000024	24 //同名のC/C++ヘッダファイルを開く
+//#define HLP000026	26 //同名のC/C++ソースファイルを開く
 #define HLP000198	198 //テキストを１行下へスクロール
 #define HLP000199	199 //テキストを１行上へスクロール
 #define HLP000194	194 //各種モードの取り消し
@@ -343,6 +346,7 @@
 #define HLP000500	500	//「設定(O)」メニュー
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
+#define HLP_UR015	3015 //変更履歴(2011/02/11-) Ver2以降
 #define HLP_UR014	3014 //変更履歴(2007/09/27-)
 #define HLP_UR013	3013 //変更履歴(2006/11/04-)
 #define HLP_UR012	3012 //変更履歴(2005/10/02-)
@@ -409,8 +413,13 @@
 #define HIDC_CHECK_bEnableLineModePaste			10215 //ラインモード貼り付けを可能にする	// 2007.10.08 ryoji
 #define HIDC_CHECK_DRAGDROP						10212 //ドラッグ＆ドロップ編集する
 #define HIDC_CHECK_DROPSOURCE					10213 //ドロップ元にする
-#define HIDC_CHECK_bNotOverWriteCRLF			10214 //上書きモード
+#define HIDC_CHECK_bNotOverWriteCRLF			10214 //改行は上書きしない
+#define HIDC_CHECK_bOverWriteFixMode			10215 //文字幅に合わせてスペースを詰める
 #define HIDC_CHECK_CONVERTEOLPASTE				10217 //改行コードを変換して貼り付ける // 2009.02.28 salarm
+#define HIDC_RADIO_CURDIR						10220 //カレントフォルダ
+#define HIDC_RADIO_MRUDIR						10221 //最近使ったフォルダ
+#define HIDC_RADIO_SELDIR						10222 //指定フォルダ
+#define HIDC_EDIT_FILEOPENDIR					10223 //指定フォルダパス
 #define HIDC_CHECK_EXCVLUSIVE_NO				10310 //ファイルの排他制御（排他制御しない）
 #define HIDC_CHECK_bCheckFileTimeStamp			10311 //更新の監視
 #define HIDC_CHECK_EXCVLUSIVE_WRITE				10312 //ファイルの排他制御（上書き禁止）
@@ -554,6 +563,7 @@
 #define HIDC_CHECK_ChgWndByWheel				11275 //マウスホイールでタブ切替	// 2007.04.03 ryoji
 #define HIDC_CHECK_OpenNewWin					11276 //外部から起動するときは新しいウインドウ開く	// 2009.06.19
 #define HIDC_BUTTON_TABFONT						11277 //タブフォント
+#define HIDC_CHECK_INHERIT_KEY_OTHER_VIEW		11278 //次・前検索で他のビューの検索条件を引き継ぐ
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK
@@ -631,6 +641,8 @@
 #define HIDC_BUTTON_HOKANFILE_REF				11500 //入力補完 単語ファイル参照		//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANLOHICASE				11510 //入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANBYFILE					11512 //現在のファイルから入力補完		// 2003.06.25 Moca
+#define HIDC_COMBO_HOKAN_TYPE					11513 //入力補完種別
+#define HIDC_CHECK_HOKANBYKEYWORD				11514 //強調キーワードから入力補完
 #define HIDC_EDIT_HOKANFILE						11540 //単語ファイル名					//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_EDIT_KEYWORDHELPFILE				11541 //辞書ファイル名					//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_EDIT_TYPEEXTHELP					11542 //外部ヘルプファイル名	// 2006.08.06 ryoji
@@ -676,6 +688,13 @@
 #define HIDC_PLUGIN_OPTION			11760	//プラグインオプション設定	// 2010/3/22 Uchi
 #define HIDC_LIST_PLUGIN_OPTIONS	11761	//プラグインオプションリスト	// 2010/3/22 Uchi
 #define HIDC_EDIT_PLUGIN_OPTION		11762	//プラグインオプション編集		// 2010/3/22 Uchi
+#define HIDC_MACROCANCELTIMER		11763	//マクロ停止ダイアログ表示待ち時間	// 2011.08.04 syat
+#define HIDC_PLUGIN_OpenFolder		11764	//プラグインフォルダを開く
+#define HIDC_EDIT_AUTOLOAD_DELAY	11765	//自動読込時遅延
+#define HIDC_CHECK_KINSOKUHIDE		11766	//ぶら下げを隠す			// 2012.11.30 Uchi
+#define HIDC_PLUGIN_README			11767	//ReadMe表示					// 2011/11/2 Uchi
+#define HIDC_PLUGIN_INST_ZIP		11768	//Zipプラグインを追加			// 2011/11/2 Uchi
+
 //検索ダイアログ
 #define HIDC_FIND_BUTTON_SEARCHNEXT			11800	//次を検索
 #define HIDC_FIND_BUTTON_SEARCHPREV			11801	//前を検索
@@ -929,6 +948,8 @@
 #define	HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE	13519
 #define	HIDC_BUTTON_FAVORITE_DELETE_NOTFOUND	13520
 #define	HIDC_BUTTON_FAVORITE_DELETE_SELECTED	13521
+#define	HIDC_LIST_FAVORITE_EXCEPTMRU	13522
+#define	HIDC_BUTTON_ADD_FAVORITE	13523
 //タグジャンプリスト
 #define	HIDC_LIST_TAGJUMPLIST		13600
 #define	HIDC_TAGJUMPLIST_IDOK		13601
