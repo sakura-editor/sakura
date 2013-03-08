@@ -1233,14 +1233,6 @@
 <param name="Local" value="_RESOURCE\HLP000194.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
-<param name="Name" value="同名のC/C++ヘッダファイルを開く">
-<param name="Local" value="_RESOURCE\HLP000024.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
-<param name="Name" value="同名のC/C++ソースファイルを開く">
-<param name="Local" value="_RESOURCE\HLP000026.html">
-</OBJECT>
-<LI><OBJECT type="text/sitemap">
 <param name="Name" value="テキストを１行下へスクロール">
 <param name="Local" value="_RESOURCE\HLP000198.html">
 </OBJECT>
@@ -1271,6 +1263,10 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="検索（ボックス）">
 <param name="Local" value="_RESOURCE\HLP000276.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="アウトライン解析(トグル)">
+<param name="Local" value="_RESOURCE\HLP000317.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="閉じてタグジャンプ">

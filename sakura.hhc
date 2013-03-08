@@ -1191,11 +1191,13 @@
 					<param name="Local" value="_RESOURCE\HLP000072.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="タイプ別設定インポート">
-					<param name="Local" value="_RESOURCE\HLP000338.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
+				<UL>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="タイプ別設定インポート">
+						<param name="Local" value="_RESOURCE\HLP000338.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+				</UL>
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="タイプ別設定">
 					<param name="Local" value="_RESOURCE\HLP000073.html">
@@ -1377,7 +1379,7 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="読み取り専用">
+					<param name="Name" value="ビューモード">
 					<param name="Local" value="_RESOURCE\HLP000249.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
@@ -1629,16 +1631,6 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="同名のC/C++ヘッダファイルを開く">
-					<param name="Local" value="_RESOURCE\HLP000024.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="同名のC/C++ソースファイルを開く">
-					<param name="Local" value="_RESOURCE\HLP000026.html">
-					<param name="ImageNumber" value="9">
-					</OBJECT>
-				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="テキストを１行下へスクロール">
 					<param name="Local" value="_RESOURCE\HLP000198.html">
 					<param name="ImageNumber" value="9">
@@ -1676,6 +1668,11 @@
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="検索（ボックス）">
 					<param name="Local" value="_RESOURCE\HLP000276.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="アウトライン解析(トグル)">
+					<param name="Local" value="_RESOURCE\HLP000317.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
