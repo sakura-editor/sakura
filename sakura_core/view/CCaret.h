@@ -202,6 +202,8 @@ private:
 	//アンダーライン
 public:
 	mutable CCaretUnderLine m_cUnderLine;
+	
+	bool			m_bClearStatus;
 };
 
 

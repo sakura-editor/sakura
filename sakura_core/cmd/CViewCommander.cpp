@@ -98,6 +98,7 @@ BOOL CViewCommander::HandleCommand(
 	if( m_pCommanderView->m_nAutoScrollMode && F_AUTOSCROLL != nCommand ){
 		m_pCommanderView->AutoScrollExit();
 	}
+	m_pCommanderView->GetCaret().m_bClearStatus = true;
 	// -------------------------------------
 	//	Jan. 10, 2005 genta
 	//	Call message translators
