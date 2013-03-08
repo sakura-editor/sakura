@@ -183,11 +183,6 @@ void CDocFileOperation::ReloadCurrentFile(
 //                         セーブUI                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-
-
-//pszOpenFolder pszOpenFolder
-
-
 /*! 「ファイル名を付けて保存」ダイアログ
 	@date 2001.02.09 genta	改行コードを示す引数追加
 	@date 2003.03.30 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
@@ -198,9 +193,6 @@ bool CDocFileOperation::SaveFileDialog(
 	SSaveInfo*	pSaveInfo	//!< [out]
 )
 {
-	//ダイアログオープン時のディレクトリを決定
-	std::tstring strDefFolder = CSakuraEnvironment::GetDlgInitialDir(); // デフォルトフォルダ
-
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
 	// 2008/6/14 大きく改造 Uchi
@@ -274,7 +266,7 @@ bool CDocFileOperation::SaveFileDialog(
 		G_AppInstance(),
 		CEditWnd::getInstance()->GetHwnd(),
 		szDefaultWildCard,
-		strDefFolder.c_str(),
+		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダ
 		CMRUFile().GetPathList(),		//	最近のファイル
 		CMRUFolder().GetPathList()	//	最近のフォルダ
 	);
