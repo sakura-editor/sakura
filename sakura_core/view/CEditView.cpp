@@ -2290,6 +2290,8 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 			m_nOldUnderLineYBg = m_nOldUnderLineY;
 			m_nOldUnderLineYMargin = GetTextMetrics().GetHankakuHeight();
 			m_nOldUnderLineYHeight = 1;
+		}else{
+			m_nOldUnderLineYHeight = std::max(m_nOldUnderLineYMargin + m_nOldUnderLineYHeight, GetTextMetrics().GetHankakuHeight() + 1) - m_nOldUnderLineYMargin;
 		}
 		m_nOldUnderLineYHeightReal = 1;
 //		MYTRACE_A( "★カーソル行アンダーラインの描画\n" );
