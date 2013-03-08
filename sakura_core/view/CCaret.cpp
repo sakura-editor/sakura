@@ -79,6 +79,7 @@ CCaret::CCaret(CEditView* pEditView, const CEditDoc* pEditDoc)
 
 	m_crCaret = -1;				/* キャレットの色 */			// 2006.12.16 ryoji
 	m_hbmpCaret = NULL;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
+	m_bClearStatus = true;
 }
 
 CCaret::~CCaret()
@@ -747,7 +748,9 @@ void CCaret::ShowCaretPosInfo()
 		}else{
 			_tcscpy( szText_6, _T("上書") );
 		}
-		::StatusBar_SetText( hwndStatusBar, 0 | SBT_NOBORDERS, _T("") );
+		if( m_bClearStatus ){
+			::StatusBar_SetText( hwndStatusBar, 0 | SBT_NOBORDERS, _T("") );
+		}
 		::StatusBar_SetText( hwndStatusBar, 1 | 0,             szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす

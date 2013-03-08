@@ -636,6 +636,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 
 	CLayoutInt nLineCount = pView->m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 	if( ! IsTextSelected() || m_sSelect.GetFrom().y >= nLineCount ){ // æ“ªs‚ªÀİ‚µ‚È‚¢
+		const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
 		if( IsBoxSelecting() ){
 			pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( _T("box selecting") );
 		}else if( m_bSelectingLock ){
@@ -824,5 +825,6 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		auto_sprintf( msg, _T("%d %ts (%d lines) selected."), select_sum, ( bCountByByte ? _T("bytes") : _T("chars") ), select_line );
 #endif
 	}
+	const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
 	pView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( msg );
 }
