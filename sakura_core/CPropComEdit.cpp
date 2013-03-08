@@ -20,6 +20,7 @@
 #include "StdAfx.h"
 #include "CPropCommon.h"
 #include "Debug.h" // 2002/2/10 aroka
+#include "sakura_rc.h"
 #include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
@@ -34,6 +35,11 @@ static const DWORD p_helpids[] = {	//10210
 	//	2007.02.11 genta クリッカブルURLをこのページに移動
 	IDC_CHECK_bSelectClickedURL,	HIDC_CHECK_bSelectClickedURL,	//クリッカブルURL
 	IDC_CHECK_CONVERTEOLPASTE,			HIDC_CHECK_CONVERTEOLPASTE,			//改行コードを変換して貼り付ける
+	IDC_RADIO_CURDIR,					HIDC_RADIO_CURDIR,						//カレントフォルダ
+	IDC_RADIO_MRUDIR,					HIDC_RADIO_MRUDIR,						//最近使ったフォルダ
+	IDC_RADIO_SELDIR,					HIDC_RADIO_SELDIR,						//指定フォルダ
+	IDC_EDIT_FILEOPENDIR,				HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
+	IDC_BUTTON_FILEOPENDIR, 			HIDC_EDIT_FILEOPENDIR,					//指定フォルダパス
 //	IDC_STATIC,							-1,
 	0, 0
 };
@@ -73,6 +79,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 	switch( uMsg ){
 
 	case WM_INITDIALOG:
+		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1), 0L);
 		/* ダイアログデータの設定 Edit */
 		SetData_PROP_EDIT( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
@@ -95,6 +102,19 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 				}
 				else{
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
+				}
+				return TRUE;
+			case IDC_BUTTON_FILEOPENDIR:
+				{
+					TCHAR szMetaPath[_MAX_PATH];
+					TCHAR szPath[_MAX_PATH];
+					::GetDlgItemText( hwndDlg, IDC_EDIT_FILEOPENDIR, szMetaPath, _countof(szMetaPath) );
+					CShareData::ExpandMetaToFolder( szMetaPath, szPath, _countof(szPath) );
+					if( SelectDir( hwndDlg, _T("ファイルダイアログの指定フォルダの選択"), szPath, szPath ) ){
+						CMemory cmem(szPath, _tcslen(szPath));
+						cmem.Replace(_T("%"), _T("%%"));
+						::SetDlgItemText( hwndDlg, IDC_EDIT_FILEOPENDIR, cmem.GetStringPtr() );
+					}
 				}
 				return TRUE;
 			}
@@ -180,11 +200,19 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bSelectClickedURL, m_Common.m_sEdit.m_bSelectClickedURL );
 
 	/*	改行コードを変換して貼り付ける */	// 2009.02.28 salarm
-	::CheckDlgButton( hwndDlg, IDC_CHECK_CONVERTEOLPASTE, m_Common.m_sEdit.m_bConvertEOLPaste );
-	return;
+	::CheckDlgButton( hwndDlg, IDC_CHECK_CONVERTEOLPASTE, m_Common.m_sEdit.m_bConvertEOLPaste ? BST_CHECKED : BST_UNCHECKED );
+
+	if( m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_CUR ){
+		::CheckDlgButton( hwndDlg, IDC_RADIO_CURDIR, TRUE );
+	}
+	if( m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_MRU ){
+		::CheckDlgButton( hwndDlg, IDC_RADIO_MRUDIR, TRUE );
+	}
+	if( m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_SEL ){
+		::CheckDlgButton( hwndDlg, IDC_RADIO_SELDIR, TRUE );
+	}
+	::SetDlgItemText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir );
 }
-
-
 
 
 
@@ -219,6 +247,17 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 
 	//	改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 	m_Common.m_sEdit.m_bConvertEOLPaste = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CONVERTEOLPASTE ));
+
+	if( ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_CURDIR) ){
+		m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
+	}
+	if( ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_MRUDIR) ){
+		m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_MRU;
+	}
+	if( ::IsDlgButtonChecked(hwndDlg, IDC_RADIO_SELDIR) ){
+		m_Common.m_sEdit.m_eOpenDialogDir = OPENDIALOGDIR_SEL;
+	}
+	::GetDlgItemText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir, _countof(m_Common.m_sEdit.m_OpenDialogSelDir) );
 	return TRUE;
 }
 

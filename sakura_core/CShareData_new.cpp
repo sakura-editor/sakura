@@ -481,6 +481,8 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	// 2002.01.16 hor
 	cProfile.IOProfileData( pszSecName, "m_bRestoreBookmarks"	, common.m_sFile.m_bRestoreBookmarks );
 	cProfile.IOProfileData( pszSecName, "bAddCRLFWhenCopy"		, common.m_sEdit.m_bAddCRLFWhenCopy );
+	cProfile.IOProfileData( pszSecName, "eOpenDialogDir"		, (int&)common.m_sEdit.m_eOpenDialogDir );
+	cProfile.IOProfileData( pszSecName, "szOpenDialogSelDir"		, common.m_sEdit.m_OpenDialogSelDir, sizeof(common.m_sEdit.m_OpenDialogSelDir) );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScrollLineNum"	, common.m_sGeneral.m_nRepeatedScrollLineNum );
 	cProfile.IOProfileData( pszSecName, "nRepeatedScroll_Smooth"	, common.m_sGeneral.m_nRepeatedScroll_Smooth );
 	cProfile.IOProfileData( pszSecName, "nPageScrollByWheel"	, common.m_sGeneral.m_nPageScrollByWheel );	// 2009.01.12 nasukoji

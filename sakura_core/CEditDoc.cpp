@@ -1403,7 +1403,42 @@ end_of_func:;
 	return bRet;
 }
 
-
+std::tstring CEditDoc::GetDlgInitialDir()
+{
+	if( IsFilePathAvailable() ){
+		return GetFilePath();
+	}
+	else if( m_pShareData->m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_CUR ){
+		// 2002.10.25 Moca
+		TCHAR pszCurDir[_MAX_PATH];
+		int nCurDir = ::GetCurrentDirectory( _countof(pszCurDir), pszCurDir );
+		if( 0 == nCurDir || _MAX_PATH < nCurDir ){
+			return _T("");
+		}
+		else{
+			return pszCurDir;
+		}
+	}else if( m_pShareData->m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_MRU ){
+		const CMRUFile cMRU;
+		std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
+		if( !vMRU.empty() ){
+			return vMRU[0];
+		}else{
+			TCHAR pszCurDir[_MAX_PATH];
+			int nCurDir = ::GetCurrentDirectory( _countof(pszCurDir), pszCurDir );
+			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
+				return _T("");
+			}
+			else{
+				return pszCurDir;
+			}
+		}
+	}else{
+		TCHAR selDir[_MAX_PATH];
+		CShareData::ExpandMetaToFolder( m_pShareData->m_Common.m_sEdit.m_OpenDialogSelDir , selDir, _countof(selDir) );
+		return selDir;
+	}
+}
 
 /* 「ファイルを開く」ダイアログ */
 //	Mar. 30, 2003 genta	ファイル名未定時の初期ディレクトリをカレントフォルダに
@@ -1418,49 +1453,18 @@ bool CEditDoc::OpenFileDialog(
 	/* アクティブにする */
 	ActivateFrameWindow( hwndParent );
 
-	const char*	pszDefFolder;
-	char*	pszCurDir = NULL;
-	bool	bRet;
-
-	/* 初期フォルダの設定 */
-	// pszFolderはフォルダ名だが、ファイル名付きパスを渡してもCDlgOpenFile側で処理してくれる
-	if( NULL != pszOpenFolder ){
-		pszDefFolder = pszOpenFolder;
-	}else{
-		if( IsFilePathAvailable() ){
-			pszDefFolder = GetFilePath();
-		// Mar. 28, 2003 genta カレントディレクトリをMRUより優先させる
-		//}else if( ppszMRU[0] != NULL && ppszMRU[0][0] != '\0' ){ // Sep. 9, 2002 genta
-		//	pszDefFolder = ppszMRU[0];
-		}else{ // 2002.10.25 Moca
-			int nCurDir;
-			pszCurDir = new char[_MAX_PATH];
-			nCurDir = ::GetCurrentDirectory( _MAX_PATH, pszCurDir );
-			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
-				pszDefFolder = "";
-			}else{
-				pszDefFolder = pszCurDir;
-			}
-		}
-	}
 	/* ファイルオープンダイアログの初期化 */
 	m_cDlgOpenFile.Create(
 		m_hInstance,
 		hwndParent,
 		"*.*",
-		pszDefFolder,
+		pszOpenFolder ? pszOpenFolder : GetDlgInitialDir().c_str(),	// 初期フォルダ
 		CMRUFile().GetPathList(),
 		CMRUFolder().GetPathList()
 	);
-	
-	bRet = m_cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly );
-
-	delete [] pszCurDir;
-	return bRet;
+	return m_cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly );
 }
 
-
-//pszOpenFolder pszOpenFolder
 
 
 /*! 「ファイル名を付けて保存」ダイアログ
@@ -1476,11 +1480,8 @@ bool CEditDoc::OpenFileDialog(
 */
 BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, bool* pbBomExist )
 {
-	const char*	pszDefFolder; // デフォルトフォルダ
-	char*	pszCurDir = NULL;
 	char	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
 	char	szExt[_MAX_EXT];
-	BOOL	bret;
 
 	/* ファイル保存ダイアログの初期化 */
 	/* ファイル名の無いファイルだったら、ppszMRU[0]をデフォルトファイル名として？ppszOPENFOLDERじゃない？ */
@@ -1488,19 +1489,10 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 	// 掲示板要望 No.2699 (2003/02/05)
 	if( !IsFilePathAvailable() ){
 		// 2002.10.25 Moca さんのコードを流用 Mar. 23, 2003 genta
-		int nCurDir;
-		pszCurDir = new char[_MAX_PATH];
-		nCurDir = ::GetCurrentDirectory( _MAX_PATH, pszCurDir );
-		if( 0 == nCurDir || _MAX_PATH < nCurDir ){
-			pszDefFolder = "";
-		}else{
-			pszDefFolder = pszCurDir;
-		}
 		strcpy(szDefaultWildCard, "*.txt");
 		if( m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew )
 			strcat(szDefaultWildCard, ";*.*");	// 全ファイル表示
 	}else{
-		pszDefFolder = GetFilePath();
 		_splitpath(GetFilePath(), NULL, NULL, NULL, szExt);
 		if( szExt[0] == _T('.') && szExt[1] != _T('\0') ){
 			strcpy(szDefaultWildCard, "*");
@@ -1511,21 +1503,17 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 			strcpy(szDefaultWildCard, "*.*");
 		}
 	}
+
+	/* ダイアログを表示 */
 	m_cDlgOpenFile.Create(
 		m_hInstance,
 		m_hWnd,
 		szDefaultWildCard,
-		pszDefFolder,
+		GetDlgInitialDir().c_str(),	// 初期フォルダ
 		CMRUFile().GetPathList(),		//	最近のファイル
 		CMRUFolder().GetPathList()	//	最近のフォルダ
 	);
-
-	/* ダイアログを表示 */
-	//	Jul. 26, 2003 ryoji pbBomExist追加
-	bret = m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol, pbBomExist );
-
-	delete [] pszCurDir;
-	return bret;
+	return m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol, pbBomExist );
 }
 
 
