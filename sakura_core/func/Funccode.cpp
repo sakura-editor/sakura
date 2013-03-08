@@ -779,7 +779,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 
 	/* モード切り替え系 */
 	case F_CHGMOD_INS:		return HLP000046;	//挿入／上書きモード切り替え
-	case F_CHG_CHARSET:		return HLP000046;	//文字コードセット指定	(仮		// 2010/6/14 Uchi
+	case F_CHG_CHARSET:		return HLP000297;	//文字コードセット指定	// 2010/6/14 Uchi
 	case F_CHGMOD_EOL_CRLF:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
 	case F_CHGMOD_EOL_CR:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
 	case F_CHGMOD_EOL_LF:	return HLP000285;	//入力改行コード指定	// 2003.09.23 Moca
