@@ -45,9 +45,10 @@ void CViewSelect::CopySelectStatus(CViewSelect* pSelect) const
 void CViewSelect::BeginSelectArea( const CLayoutPoint* po )
 {
 	const CEditView* pView=GetEditView();
-
+	CLayoutPoint temp;
 	if( NULL == po ){
-		po = &(pView->GetCaret().GetCaretLayoutPos());
+		temp = pView->GetCaret().GetCaretLayoutPos();
+		po = &temp;
 	}
 	m_sSelectBgn.Set(*po); //”ÍˆÍ‘I‘ð(Œ´“_)
 	m_sSelect.   Set(*po); //”ÍˆÍ‘I‘ð

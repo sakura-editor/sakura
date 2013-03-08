@@ -40,7 +40,7 @@
 #endif // INVALID_SET_FILE_POINTER
 
 struct SEncodingConfig;
-enum EConvertResult;	// defined in "charset/CCodeBase.h"
+#include "charset/CCodeBase.h"
 
 /*!
 	文字コードを変換してデータを行単位で取得するためのクラス

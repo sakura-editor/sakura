@@ -261,7 +261,7 @@ prop/CPropComStatusbar.o \
 prop/CPropComTab.o \
 prop/CPropComToolbar.o \
 prop/CPropComWin.o \
-recent/CMRU.o \
+recent/CMRUFile.o \
 recent/CMRUFolder.o \
 recent/CMruListener.o \
 recent/CRecent.o \
