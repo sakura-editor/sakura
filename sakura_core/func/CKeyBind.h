@@ -16,9 +16,9 @@
 #define _CKEYBIND_H_
 
 #include <Windows.h>
+#include <Funccode_enum.h>
 
 class CFuncLookup;
-enum EFunctionCode;
 
 //! ƒL[î•ñ‚ğ•Û‚·‚é
 struct KEYDATA {

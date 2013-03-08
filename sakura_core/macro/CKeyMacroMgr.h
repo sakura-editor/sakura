@@ -17,8 +17,8 @@
 
 #include <Windows.h>
 #include "CMacroManagerBase.h"
+#include "Funccode_enum.h"
 
-enum EFunctionCode;
 class CMacro;
 
 //#define MAX_STRLEN			70
