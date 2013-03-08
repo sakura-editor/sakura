@@ -1509,8 +1509,6 @@ int CPropSupport::GetData( HWND hwndDlg )
 bool CPropColor::Import( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;
-	char*			pszOPENFOLDER = NULL;
 	char			szPath[_MAX_PATH + 1];
 	HFILE			hFile;
 	int				i;
@@ -1522,7 +1520,7 @@ bool CPropColor::Import( HWND hwndDlg )
 
 	cProfile.SetReadingMode();
 
-	_tcscpy( szPath, "" );
+	_tcscpy( szPath, _T("") );
 	_tcscpy( szInitDir, m_pShareData->m_sHistory.m_szIMPORTFOLDER );	/* インポート用フォルダ */
 
 	/* ファイルオープンダイアログの初期化 */
@@ -1530,9 +1528,7 @@ bool CPropColor::Import( HWND hwndDlg )
 		m_hInstance,
 		hwndDlg,
 		"*.col",
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
 		return false;
@@ -1661,8 +1657,6 @@ bool CPropColor::Import( HWND hwndDlg )
 bool CPropColor::Export( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
-	char*			pszMRU = NULL;
-	char*			pszOPENFOLDER = NULL;
 	char			szPath[_MAX_PATH + 1];
 	char			szInitDir[_MAX_PATH + 1];
 	CProfile		cProfile;
@@ -1677,9 +1671,7 @@ bool CPropColor::Export( HWND hwndDlg )
 		m_hInstance,
 		hwndDlg,
 		_T("*.col"),
-		szInitDir,
-		(const char **)&pszMRU,
-		(const char **)&pszOPENFOLDER
+		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return false;

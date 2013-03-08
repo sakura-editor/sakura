@@ -30,14 +30,15 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-class CMRUFolder;
 
 #ifndef _CMRUFOLDER_H_
 #define _CMRUFOLDER_H_
 
 #include <windows.h> /// BOOL,HMENU // 2002/2/10 aroka
+#include <vector>
 #include "CRecent.h"
 
+class CMenuDrawer;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 class CMRUFolder {
@@ -47,20 +48,19 @@ public:
 	~CMRUFolder();
 
 	//	メニューを取得する
-	HMENU CreateMenu( class CMenuDrawer* pCMenuDrawer );	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
-	BOOL DestroyMenu( HMENU hMenu );
+	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+	BOOL DestroyMenu( HMENU hMenu ) const;
 	
 	//	フォルダ名の一覧を教えて
-	void GetPathList( char** ppszMRU );	//	ppszMRUにはフォルダ名をコピーしません。変更しないでね☆
+	std::vector<LPCTSTR> GetPathList() const;
 
 	//	アクセス関数
-	int Length();	//	アイテムの数。
+	int Length() const;	//	アイテムの数。
 	void ClearAll();					//	アイテムを削除～。
-	void Add( const char* pszFolder );	//	pszFolderを追加する。
-	const char* GetPath(int num);
+	void Add( const TCHAR* pszFolder );	//	pszFolderを追加する。
+	const TCHAR* GetPath(int num) const;
 
 protected:
-
 	//	共有メモリアクセス用。
 	struct DLLSHAREDATA*	m_pShareData;			//	共有メモリを参照するよ。
 

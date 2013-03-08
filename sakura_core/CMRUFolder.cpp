@@ -15,9 +15,9 @@
 */
 
 #include "StdAfx.h"
+#include "CMRUFolder.h"
 #include "CShareData.h"
 #include "CMenuDrawer.h"	//	これでいいのか？
-#include "CMRUFolder.h"
 #include "CRecent.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
@@ -41,11 +41,20 @@ CMRUFolder::~CMRUFolder()
 	m_cRecent.Terminate();
 }
 
-HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
+/*!
+	フォルダ履歴メニューの作成
+	
+	@param 追加するメニューのハンドル
+	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
+	
+	@author Norio Nakantani
+	@return メニューのハンドル
+*/
+HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
 	HMENU	hMenuPopUp;
 	char	szFolder2[_MAX_PATH * 2];	//	全部&でも問題ないように :-)
-	char	szMemu[300];				//	メニューキャプション
+	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
 	int		i;
 	bool	bFavorite;
 
@@ -56,39 +65,38 @@ HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecent.GetViewCount() ) break;
 
-		CShareData::getInstance()->GetTransformFileNameFast( m_cRecent.GetDataOfItem( i ), szMemu, _MAX_PATH );
+		CShareData::getInstance()->GetTransformFileNameFast( m_cRecent.GetDataOfItem( i ), szMenu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
-		dupamp( szMemu, szFolder2 );
+		dupamp( szMenu, szFolder2 );
 
 		bFavorite = m_cRecent.IsFavorite( i );
 		//	j >= 10 + 26 の時の考慮を省いた(に近い)がフォルダの履歴MAXを36個にしてあるので事実上OKでしょう
-		wsprintf( szMemu, "&%c %s%s", 
+		wsprintf( szMenu, "&%c %s%s", 
 			(i < 10) ? ('0' + i) : ('A' + i - 10), 
 			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? "★ " : "",
 			szFolder2 );
 
 		//	メニューに追加
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMemu, _T(""), TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;
 }
 
-void CMRUFolder::GetPathList( char** ppszOPENFOLDER )
+std::vector<LPCTSTR> CMRUFolder::GetPathList() const
 {
 	int	i;
-
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
-	{
+	std::vector<LPCTSTR> ret;
+	for( i = 0; i < m_cRecent.GetItemCount(); ++i ){
 		//	「共通設定」→「全般」→「フォルダの履歴MAX」を反映
 		if ( i >= m_cRecent.GetViewCount() ) break;
-		ppszOPENFOLDER[i] = (char*)m_cRecent.GetDataOfItem( i );
+		ret.push_back(m_cRecent.GetDataOfItem(i));
 	}
-	ppszOPENFOLDER[i] = NULL;
+	return ret;
 }
 
-int CMRUFolder::Length()
+int CMRUFolder::Length() const
 {
 	return m_cRecent.GetItemCount();
 }
@@ -102,10 +110,10 @@ void CMRUFolder::ClearAll()
 
 	@date 2001.12.26  CShareData::AddOPENFOLDERListから移動した。（YAZAKI）
 */
-void CMRUFolder::Add( const char* pszFolder )
+void CMRUFolder::Add( const TCHAR* pszFolder )
 {
 	if( NULL == pszFolder
-	 || 0 == strlen( pszFolder ) )
+	 || 0 == _tcslen( pszFolder ) )
 	{	//	長さが0なら排除。
 		return;
 	}
@@ -113,7 +121,7 @@ void CMRUFolder::Add( const char* pszFolder )
 	(void)m_cRecent.AppendItem( pszFolder );
 }
 
-const char* CMRUFolder::GetPath(int num)
+const TCHAR* CMRUFolder::GetPath(int num) const
 {
 	return m_cRecent.GetDataOfItem( num );
 }

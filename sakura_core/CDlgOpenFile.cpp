@@ -53,8 +53,8 @@ static const DWORD p_helpids[] = {	//13100
 
 WNDPROC			m_wpOpenDialogProc;
 
-const char**	m_ppszMRU;
-const char**	m_ppszOPENFOLDER;
+std::vector<LPCTSTR>	m_vMRU;
+std::vector<LPCTSTR>	m_vOPENFOLDER;
 LPCTSTR			m_pszHelpFile;
 int				m_nHelpTopicID;
 bool			m_bReadOnly;		/* 読み取り専用か */
@@ -311,19 +311,15 @@ UINT_PTR CALLBACK OFNHookProc(
 			::CheckDlgButton( hwndOpenDlg, chx1, m_bReadOnly );
 
 			/* 最近開いたファイル コンボボックス初期値設定 */
-			//	2003.06.22 Moca m_ppszMRU がNULLの場合を考慮する
-			if( NULL != m_ppszMRU ){
-				for( i = 0; m_ppszMRU[i] != NULL; ++i ){
-					::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_ppszMRU[i] );
-				}
+			//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
+			for( i = 0; i < (int)m_vMRU.size(); i++ ){
+				::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_vMRU[i] );
 			}
 
 			/* 最近開いたフォルダ コンボボックス初期値設定 */
-			//	2003.06.22 Moca m_ppszOPENFOLDER がNULLの場合を考慮する
-			if( NULL != m_ppszOPENFOLDER ){
-				for( i = 0; m_ppszOPENFOLDER[i] != NULL; ++i ){
-					::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_ppszOPENFOLDER[i] );
-				}
+			//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
+			for( i = 0; i < (int)m_vOPENFOLDER.size(); i++ ){
+				::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_vOPENFOLDER[i] );
 			}
 		}
 		break;
@@ -625,8 +621,8 @@ void CDlgOpenFile::Create(
 	HWND						hwndParent,
 	const TCHAR*				pszUserWildCard,
 	const TCHAR*				pszDefaultPath,
-	const char**				ppszMRU,
-	const char**				ppszOPENFOLDER
+	const std::vector<LPCTSTR>& vMRU,
+	const std::vector<LPCTSTR>& vOPENFOLDER
 )
 {
 	m_hInstance = hInstance;
@@ -651,8 +647,8 @@ void CDlgOpenFile::Create(
 			_tcscpy(m_szInitialDir, p );
 		}
 	}
-	m_ppszMRU = ppszMRU;
-	m_ppszOPENFOLDER = ppszOPENFOLDER;
+	m_vMRU = vMRU;
+	m_vOPENFOLDER = vOPENFOLDER;
 	return;
 }
 

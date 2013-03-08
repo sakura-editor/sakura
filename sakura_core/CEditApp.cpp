@@ -655,14 +655,8 @@ LRESULT CEditApp::DispatchEvent(
 						HWND			hWndOwner;
 
 						// MRUリストのファイルのリスト
-						CMRUFile cMRU;
-						char** ppszMRU = new char*[ cMRU.Length() + 1 ];
-						cMRU.GetPathList(ppszMRU);
-
-						/* OPENFOLDERリストのファイルのリスト */
-						CMRUFolder cMRUFolder;
-						char** ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
-						cMRUFolder.GetPathList(ppszOPENFOLDER);
+						const CMRUFile cMRU;
+						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
 
 						// ファイルオープンダイアログの初期化
 						TCHAR szPath[_MAX_PATH + 1];
@@ -674,22 +668,16 @@ LRESULT CEditApp::DispatchEvent(
 							m_hInstance,
 							NULL,
 							_T("*.*"),
-							ppszMRU[0],//@@@ 2001.12.26 YAZAKI m_fiMRUArrにはアクセスしない
-							(const char **)ppszMRU,
-							(const char **)ppszOPENFOLDER
+							vMRU.empty()? NULL: vMRU[0],//@@@ 2001.12.26 YAZAKI m_fiMRUArrにはアクセスしない
+							vMRU,
+							CMRUFolder().GetPathList()	// OPENFOLDERリストのファイルのリスト
 						);
 						if( !cDlgOpenFile.DoModalOpenDlg( szPath, &nCharCode, &bReadOnly ) ){
-							delete [] ppszMRU;
-							delete [] ppszOPENFOLDER;
 							break;
 						}
 						if( NULL == m_hWnd ){
-							delete [] ppszMRU;
-							delete [] ppszOPENFOLDER;
 							break;
 						}
-						delete [] ppszMRU;
-						delete [] ppszOPENFOLDER;
 						/* 指定ファイルが開かれているか調べる */
 						if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
 							// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
@@ -736,7 +724,7 @@ LRESULT CEditApp::DispatchEvent(
 
 						/* 新しい編集ウィンドウを開く */
 						//	From Here Oct. 27, 2000 genta	カーソル位置を復元しない機能
-						CMRUFile cMRU;
+						const CMRUFile cMRU;
 						EditInfo openEditInfo;
 						cMRU.GetEditInfo(nId - IDM_SELMRU, &openEditInfo);
 
@@ -762,14 +750,12 @@ LRESULT CEditApp::DispatchEvent(
 						HWND			hWndOwner;
 
 						/* MRUリストのファイルのリスト */
-						CMRUFile cMRU;
-						char** ppszMRU = NULL;
-						ppszMRU = new char*[ cMRU.Length() + 1 ];
-						cMRU.GetPathList(ppszMRU);
+						const CMRUFile cMRU;
+						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
+
 						/* OPENFOLDERリストのファイルのリスト */
-						CMRUFolder cMRUFolder;
-						char** ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
-						cMRUFolder.GetPathList(ppszOPENFOLDER);
+						const CMRUFolder cMRUFolder;
+						std::vector<LPCTSTR> vOPENFOLDER = cMRUFolder.GetPathList();
 
 						//Stonee, 2001/12/21 UNCであれば接続を試みる
 						NetConnect( cMRUFolder.GetPath( nId - IDM_SELOPENFOLDER ) );
@@ -784,22 +770,16 @@ LRESULT CEditApp::DispatchEvent(
 							m_hInstance,
 							NULL,
 							_T("*.*"),
-							ppszOPENFOLDER[ nId - IDM_SELOPENFOLDER ],
-							(const char **)ppszMRU,
-							(const char **)ppszOPENFOLDER
+							vOPENFOLDER[ nId - IDM_SELOPENFOLDER ],
+							vMRU,
+							vOPENFOLDER
 						);
 						if( !cDlgOpenFile.DoModalOpenDlg( szPath, &nCharCode, &bReadOnly ) ){
-							delete [] ppszMRU;
-							delete [] ppszOPENFOLDER;
 							break;
 						}
 						if( NULL == m_hWnd ){
-							delete [] ppszMRU;
-							delete [] ppszOPENFOLDER;
 							break;
 						}
-						delete [] ppszMRU;
-						delete [] ppszOPENFOLDER;
 						/* 指定ファイルが開かれているか調べる */
 						if( CShareData::getInstance()->ActiveAlreadyOpenedWindow( szPath, &hWndOwner, nCharCode )){
 							// 2007.03.13 maru 多重オープンに対する処理はCShareData::IsPathOpenedへ移動
@@ -914,7 +894,7 @@ void CEditApp::OnNewEditor( bool bNewWindow )
 	//  szCurDir を設定
 	//
 	//	最近使ったフォルダを順番にたどる
-	CMRUFolder mrufolder;
+	const CMRUFolder mrufolder;
 
 	// 新規ウィンドウで開くオプションは、タブバー＆グループ化を前提とする
 	bNewWindow = bNewWindow
@@ -1269,7 +1249,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 
 	/* MRUリストのファイルのリストをメニューにする */
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRUFile cMRU;
+	const CMRUFile cMRU;
 	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
 	if ( cMRU.Length() > 0 ){
 		//	アクティブ
@@ -1282,7 +1262,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 
 	/* 最近使ったフォルダのメニューを作成 */
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
-	CMRUFolder cMRUFolder;
+	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
 	if ( cMRUFolder.Length() > 0 ){
 		//	アクティブ

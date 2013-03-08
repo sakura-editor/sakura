@@ -68,7 +68,7 @@ public:
 	CRecent();
 	~CRecent();
 
-	bool IsAvailable( void );
+	bool IsAvailable( void ) const;
 
 	//初期処理
 	bool Create( 
@@ -92,12 +92,12 @@ public:
 
 	//アイテム制御系
 	bool AppendItem( const char *pszData );	//アイテムを先頭に追加
-	const char *GetItem( int nIndex );		//アイテムを取得
-	const char *GetDataOfItem( int nIndex );	//アイテムの比較要素を取得
+	const char *GetItem( int nIndex ) const;		//アイテムを取得
+	const char *GetDataOfItem( int nIndex ) const;	//アイテムの比較要素を取得
 	bool DeleteItem( int nIndex );			//アイテムをクリア
 	bool DeleteItem( const char *pszItemData ) { return DeleteItem( FindItem( pszItemData ) ); }
 	void DeleteAllItem( void );				//アイテムをすべてクリア
-	int FindItem( const char *pszItemData );
+	int FindItem( const char *pszItemData ) const;
 	bool MoveItem( int nSrcIndex, int nDstIndex );	//アイテムを移動
 
 	//お気に入り制御系
@@ -105,12 +105,12 @@ public:
 	bool SetFavorite( int nIndex ) { return SetFavorite( nIndex, true ); }	//お気に入りに設定
 	bool ResetFavorite( int nIndex ) { return SetFavorite( nIndex, false ); }	//お気に入りを解除
 	void ResetAllFavorite( void );			//お気に入りをすべて解除
-	bool IsFavorite( int nIndex );			//お気に入りか調べる
+	bool IsFavorite( int nIndex ) const;			//お気に入りか調べる
 
 	//プロパティ取得系
 	int GetArrayCount( void ) { return m_nArrayCount; }	//最大要素数
-	int GetItemCount( void ) { return ( IsAvailable() ? *m_pnUserItemCount : 0); }	//登録アイテム数
-	int GetViewCount( void ) { return ( IsAvailable() ? (m_pnUserViewCount ? *m_pnUserViewCount : m_nArrayCount) : 0); }	//表示数
+	int GetItemCount( void ) const { return ( IsAvailable() ? *m_pnUserItemCount : 0); }	//登録アイテム数
+	int GetViewCount( void ) const { return ( IsAvailable() ? (m_pnUserViewCount ? *m_pnUserViewCount : m_nArrayCount) : 0); }	//表示数
 	//int GetItemSize( void ) { return m_nItemSize; }		//アイテムサイズ
 	//int GetCmpType( void ) { return m_nCmpType; }		//比較タイプ
 	int GetOffset( void ) { return m_nOffset; }		//比較位置
@@ -140,7 +140,7 @@ private:
 
 	void ZeroItem( int nIndex );	//アイテムをゼロクリアする
 	int GetOldestItem( int nIndex, bool bFavorite );	//最古のアイテムを探す
-	char *GetArrayOffset( int nIndex ) { return m_puUserItemData + (nIndex * m_nItemSize); }
+	char *GetArrayOffset( int nIndex ) const { return m_puUserItemData + (nIndex * m_nItemSize); }
 	bool CopyItem( int nSrcIndex, int nDstIndex );
 };
 

@@ -16,11 +16,11 @@
 */
 
 #include "StdAfx.h"
+#include "CMRUFile.h"
 #include "CShareData.h"
 #include "CMenuDrawer.h"	//	これでいいのか？
 #include "global.h"
 #include <stdio.h>
-#include "CMRUFile.h"
 #include "CRecent.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "etc_uty.h"
 #include "my_icmp.h" // 2002/11/30 Moca 追加
@@ -51,11 +51,11 @@ CMRUFile::~CMRUFile()
 	@author Norio Nakantani
 	@return 生成したメニューのハンドル
 */
-HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer )
+HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
 	HMENU	hMenuPopUp;
 	char	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
-	char	szMemu[300];			//	メニューキャプション
+	TCHAR	szMenu[_MAX_PATH * 2 + 10];			//	メニューキャプション
 	int		i;
 	bool	bFavorite;
 	EditInfo	*p;
@@ -73,14 +73,14 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer )
 
 		p = (EditInfo*)m_cRecent.GetItem( i );
 		
-		CShareData::getInstance()->GetTransformFileNameFast( p->m_szPath, szMemu, _MAX_PATH );
+		CShareData::getInstance()->GetTransformFileNameFast( p->m_szPath, szMenu, _MAX_PATH );
 		//	&を&&に置換。
 		//	Jan. 19, 2002 genta
-		dupamp( szMemu, szFile2 );
+		dupamp( szMenu, szFile2 );
 		
 		bFavorite = m_cRecent.IsFavorite( i );
 		//	j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
-		wsprintf( szMemu, "&%c %s%s", 
+		wsprintf( szMenu, "&%c %s%s", 
 			(i < 10) ? ('0' + i) : ('A' + i - 10), 
 			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? "★ " : "",
 			szFile2 );
@@ -88,11 +88,11 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer )
 		//	ファイル名のみ必要。
 		//	文字コード表記
 		if( IsValidCodeTypeExceptSJIS(p->m_nCharCode) ){
-			strcat( szMemu, gm_pszCodeNameArr_3[ p->m_nCharCode ] );
+			strcat( szMenu, gm_pszCodeNameArr_3[ p->m_nCharCode ] );
 		}
 
 		//	メニューに追加。
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMemu, _T(""), TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, _T(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;
@@ -110,21 +110,20 @@ BOOL CMRUFile::DestroyMenu( HMENU hMenuPopUp ) const
 	最後の要素の次にはNULLが入る．
 	予め呼び出す側で最大値+1の領域を確保しておくこと．
 */
-void CMRUFile::GetPathList( char** ppszMRU )
+std::vector<LPCTSTR> CMRUFile::GetPathList() const
 {
 	int i;
-
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
-	{
+	std::vector<LPCTSTR> ret;
+	for( i = 0; i < m_cRecent.GetItemCount(); ++i ){
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecent.GetViewCount() ) break;
-		ppszMRU[i] = (char*)m_cRecent.GetDataOfItem( i );
+		ret.push_back(m_cRecent.GetDataOfItem(i));
 	}
-	ppszMRU[i] = NULL;
+	return ret;
 }
 
 /*! アイテム数を返す */
-int CMRUFile::Length(void)
+int CMRUFile::Length(void) const
 {
 	return m_cRecent.GetItemCount();
 }
@@ -146,7 +145,7 @@ void CMRUFile::ClearAll(void)
 	@retval TRUE データが格納された
 	@retval FALSE 正しくない番号が指定された．データは格納されなかった．
 */
-bool CMRUFile::GetEditInfo( int num, EditInfo* pfi )
+bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 {
 	const EditInfo* p = (EditInfo*)m_cRecent.GetItem( num );
 	if( NULL == p ) return false;
@@ -167,7 +166,7 @@ bool CMRUFile::GetEditInfo( int num, EditInfo* pfi )
 
 	@date 2001.12.26 CShareData::IsExistInMRUListから移動した。（YAZAKI）
 */
-bool CMRUFile::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi )
+bool CMRUFile::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 {
 	const EditInfo* p = (EditInfo*)m_cRecent.GetItem( m_cRecent.FindItem( pszPath ) );
 	if( NULL == p ) return false;

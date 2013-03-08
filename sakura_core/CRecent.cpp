@@ -34,7 +34,6 @@
 */
 
 
-
 #include "StdAfx.h"
 #include "global.h"
 #include "CShareData.h"
@@ -68,14 +67,14 @@ CRecent::~CRecent()
 /*
 	初期化済みか調べる。
 */
-bool CRecent::IsAvailable( void )
+bool CRecent::IsAvailable( void ) const
 {
 	if( ! m_bCreate ) return false;
 
 	if( NULL == m_puUserItemData
 	 || NULL == m_pnUserItemCount )
 	{
-		Terminate();
+		const_cast<CRecent*>(this)->Terminate();
 		return false;
 	}
 
@@ -280,7 +279,7 @@ void CRecent::ResetAllFavorite( void )
 	true	お気に入り
 	false	通常
 */
-bool CRecent::IsFavorite( int nIndex )
+bool CRecent::IsFavorite( int nIndex ) const
 {
 	if( ! IsAvailable() ) return false;
 	if( nIndex < 0 || nIndex >= *m_pnUserItemCount ) return false;
@@ -440,7 +439,7 @@ void CRecent::DeleteAllItem( void )
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const char *CRecent::GetItem( int nIndex )
+const char *CRecent::GetItem( int nIndex ) const
 {
 	if( ! IsAvailable() ) return NULL;
 	if( nIndex < 0 || nIndex >= *m_pnUserItemCount ) return NULL;
@@ -453,7 +452,7 @@ const char *CRecent::GetItem( int nIndex )
 
 	@note	取得後のポインタはユーザ管理の構造体にキャストして参照してください。
 */
-const char *CRecent::GetDataOfItem( int nIndex )
+const char *CRecent::GetDataOfItem( int nIndex ) const
 {
 	const char	*p;
 
@@ -547,7 +546,7 @@ reconfigure:
 /*
 	アイテムを検索する。
 */
-int CRecent::FindItem( const char *pszItemData )
+int CRecent::FindItem( const char *pszItemData ) const
 {
 	int	i;
 	const char	*p, *q;

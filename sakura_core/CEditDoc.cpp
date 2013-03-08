@@ -1420,24 +1420,7 @@ bool CEditDoc::OpenFileDialog(
 
 	const char*	pszDefFolder;
 	char*	pszCurDir = NULL;
-	char**	ppszMRU;
-	char**	ppszOPENFOLDER;
 	bool	bRet;
-
-	/* MRUリストのファイルのリスト */
-//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-	CMRUFile cMRU;
-	ppszMRU = NULL;
-	ppszMRU = new char*[ cMRU.Length() + 1 ];
-	cMRU.GetPathList(ppszMRU);
-
-
-	/* OPENFOLDERリストのファイルのリスト */
-//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
-	CMRUFolder cMRUFolder;
-	ppszOPENFOLDER = NULL;
-	ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
-	cMRUFolder.GetPathList(ppszOPENFOLDER);
 
 	/* 初期フォルダの設定 */
 	// pszFolderはフォルダ名だが、ファイル名付きパスを渡してもCDlgOpenFile側で処理してくれる
@@ -1466,14 +1449,12 @@ bool CEditDoc::OpenFileDialog(
 		hwndParent,
 		"*.*",
 		pszDefFolder,
-		(const char **)ppszMRU,
-		(const char **)ppszOPENFOLDER
+		CMRUFile().GetPathList(),
+		CMRUFolder().GetPathList()
 	);
 	
 	bRet = m_cDlgOpenFile.DoModalOpenDlg( pszPath, pnCharCode, pbReadOnly );
 
-	delete [] ppszMRU;
-	delete [] ppszOPENFOLDER;
 	delete [] pszCurDir;
 	return bRet;
 }
@@ -1495,25 +1476,11 @@ bool CEditDoc::OpenFileDialog(
 */
 BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, bool* pbBomExist )
 {
-	char**	ppszMRU;		//	最近のファイル
-	char**	ppszOPENFOLDER;	//	最近のフォルダ
 	const char*	pszDefFolder; // デフォルトフォルダ
 	char*	pszCurDir = NULL;
 	char	szDefaultWildCard[_MAX_PATH + 10];	// ユーザー指定拡張子
 	char	szExt[_MAX_EXT];
 	BOOL	bret;
-
-	/* MRUリストのファイルのリスト */
-	CMRUFile cMRU;
-	ppszMRU = NULL;
-	ppszMRU = new char*[ cMRU.Length() + 1 ];
-	cMRU.GetPathList(ppszMRU);
-
-	/* OPENFOLDERリストのファイルのリスト */
-	CMRUFolder cMRUFolder;
-	ppszOPENFOLDER = NULL;
-	ppszOPENFOLDER = new char*[ cMRUFolder.Length() + 1 ];
-	cMRUFolder.GetPathList(ppszOPENFOLDER);
 
 	/* ファイル保存ダイアログの初期化 */
 	/* ファイル名の無いファイルだったら、ppszMRU[0]をデフォルトファイル名として？ppszOPENFOLDERじゃない？ */
@@ -1544,15 +1511,19 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 			strcpy(szDefaultWildCard, "*.*");
 		}
 	}
-	m_cDlgOpenFile.Create( m_hInstance, /*NULL*/m_hWnd, szDefaultWildCard, pszDefFolder,
-		(const char **)ppszMRU, (const char **)ppszOPENFOLDER );
+	m_cDlgOpenFile.Create(
+		m_hInstance,
+		m_hWnd,
+		szDefaultWildCard,
+		pszDefFolder,
+		CMRUFile().GetPathList(),		//	最近のファイル
+		CMRUFolder().GetPathList()	//	最近のフォルダ
+	);
 
 	/* ダイアログを表示 */
 	//	Jul. 26, 2003 ryoji pbBomExist追加
 	bret = m_cDlgOpenFile.DoModalSaveDlg( pszPath, pnCharCode, pcEol, pbBomExist );
 
-	delete [] ppszMRU;
-	delete [] ppszOPENFOLDER;
 	delete [] pszCurDir;
 	return bret;
 }

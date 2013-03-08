@@ -21,9 +21,8 @@
 #ifndef _CDLGOPENFILE_H_
 #define _CDLGOPENFILE_H_
 
-class CDlgOpenFile;
-
 #include <windows.h>
+#include <vector>
 #include "CShareData.h"
 #include "CEol.h"
 #include "COsVersionInfo.h"	// 2005.11.02 ryoji
@@ -60,7 +59,14 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	void Create( HINSTANCE, HWND, const char*, const char*, const char** = NULL,const char** = NULL);
+	void Create(
+		HINSTANCE					hInstance,
+		HWND						hwndParent,
+		const TCHAR*				pszUserWildCard,
+		const TCHAR*				pszDefaultPath,
+		const std::vector<LPCTSTR>& vMRU			= std::vector<LPCTSTR>(),
+		const std::vector<LPCTSTR>& vOPENFOLDER		= std::vector<LPCTSTR>()
+	);
 	//void Create( HINSTANCE, HWND, const char*, const char* );
 	//	2002/08/21 moca	引数追加
 	bool DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */

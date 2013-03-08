@@ -2126,7 +2126,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//最近使ったファイル
 			else if( wID - IDM_SELMRU >= 0 && wID - IDM_SELMRU < 999){
 				/* 指定ファイルが開かれているか調べる */
-				CMRUFile cMRU;
+				const CMRUFile cMRU;
 				EditInfo checkEditInfo;
 				cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
 				m_cEditDoc.OpenFile( checkEditInfo.m_szPath, checkEditInfo.m_nCharCode);
@@ -2134,7 +2134,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//最近使ったフォルダ
 			else if( wID - IDM_SELOPENFOLDER >= 0 && wID - IDM_SELOPENFOLDER < 999){
 				//フォルダ取得
-				CMRUFolder cMRUFolder;
+				const CMRUFolder cMRUFolder;
 				LPCTSTR pszFolderPath = cMRUFolder.GetPath( wID - IDM_SELOPENFOLDER );
 
 				//Stonee, 2001/12/21 UNCであれば接続を試みる
@@ -2294,7 +2294,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* MRUリストのファイルのリストをメニューにする */
 			{
 				//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-				CMRUFile cMRU;
+				const CMRUFile cMRU;
 				hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
 				if ( cMRU.Length() > 0 ){
 					//	アクティブ
@@ -2309,7 +2309,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			/* 最近使ったフォルダのメニューを作成 */
 			{
 				//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
-				CMRUFolder cMRUFolder;
+				const CMRUFolder cMRUFolder;
 				hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
 				if (cMRUFolder.Length() > 0){
 					//	アクティブ
@@ -4071,7 +4071,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	m_CMenuDrawer.ResetContents();
 
 	/* MRUリストのファイルのリストをメニューにする */
-	CMRUFile cMRU;
+	const CMRUFile cMRU;
 	hMenu = cMRU.CreateMenu( &m_CMenuDrawer );
 	if( cMRU.Length() > 0 )
 	{
@@ -4079,7 +4079,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	}
 
 	/* 最近使ったフォルダのメニューを作成 */
-	CMRUFolder cMRUFolder;
+	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
 	if ( cMRUFolder.Length() > 0 )
 	{
