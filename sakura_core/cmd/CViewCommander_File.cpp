@@ -568,7 +568,7 @@ BOOL CViewCommander::Command_PUTFILE(
 
 			// ‘I‘ð”ÍˆÍ‚ÌŽæ“¾ -> cMem
 			CNativeW cMem;
-			m_pCommanderView->GetSelectedData(&cMem, FALSE, NULL, FALSE, FALSE);
+			m_pCommanderView->GetSelectedData(&cMem, FALSE, NULL, FALSE, false);
 
 			// BOM’Ç‰Á
 			CNativeW cMem2;
