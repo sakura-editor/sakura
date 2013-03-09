@@ -47,6 +47,10 @@
 #include <multimon.h>
 #endif
 
+#if (_MSC_VER >= 1500) && (WINVER <= 0x0400)
+#include <multimon.h>
+#endif
+
 /*!
 	@brief 画面 DPI スケーリング
 	@note 96 DPI ピクセルを想定しているデザインをどれだけスケーリングするか
