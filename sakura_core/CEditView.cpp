@@ -5631,7 +5631,7 @@ BOOL CEditView::GetSelectedData(
 		BOOL		bLineOnly,
 		const char*	pszQuote,			/* 先頭に付ける引用符 */
 		BOOL		bWithLineNumber,	/* 行番号を付与する */
-		BOOL		bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
+		bool		bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 //	Jul. 25, 2000 genta
 		EEolType	neweol				//	コピー後の改行コード EOL_NONEはコード保存
 )
@@ -5928,7 +5928,7 @@ void CEditView::CopySelectedAllLines(
 		return;
 	}
 	/* クリップボードにデータを設定 */
-	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
+	MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), false );
 }
 
 /* 選択エリアのテキストを指定方法で変換 */
@@ -8630,7 +8630,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 	@date 2010.11.17 ryoji VS2010の行コピー対応処理を追加
  */
-BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bColmnSelect, BOOL bLineSelect /*= FALSE*/ )
+BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bColmnSelect, bool bLineSelect /*= false*/ )
 {
 	HGLOBAL		hgClipText = NULL;
 	HGLOBAL		hgClipSakura = NULL;

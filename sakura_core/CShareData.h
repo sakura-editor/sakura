@@ -511,10 +511,10 @@ enum EOpenDialogDir{
 struct CommonSetting_Edit
 {
 	//コピー
-	int					m_bAddCRLFWhenCopy;				/* 折り返し行に改行を付けてコピー */
+	bool				m_bAddCRLFWhenCopy;			// 折り返し行に改行を付けてコピー
 	BOOL				m_bEnableNoSelectCopy;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 	BOOL				m_bCopyAndDisablSelection;	/* コピーしたら選択解除 */
-	BOOL				m_bEnableLineModePaste;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
+	bool				m_bEnableLineModePaste;		// ラインモード貼り付けを可能にする 2007.10.08 ryoji
 	bool				m_bConvertEOLPaste;			// 改行コードを変換して貼り付ける  2009.2.28 salarm
 
 	//ドラッグ＆ドロップ

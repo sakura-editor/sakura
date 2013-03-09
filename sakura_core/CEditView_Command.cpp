@@ -1483,9 +1483,9 @@ try_again:;
 	@date 2007.10.08 ryoji 新規（Command_COPY()から処理抜き出し）
 */
 void CEditView::CopyCurLine(
-	BOOL bAddCRLFWhenCopy,
+	bool bAddCRLFWhenCopy,
 	EEolType neweol,
-	BOOL bEnableLineModePaste
+	bool bEnableLineModePaste
 )
 {
 	if( IsTextSelected() ){
@@ -1529,7 +1529,7 @@ void CEditView::CopyCurLine(
 */
 void CEditView::Command_COPY(
 	int			bIgnoreLockAndDisable,	//!< [in] 選択範囲を解除するか？
-	BOOL		bAddCRLFWhenCopy,		//!< [in] 折り返し位置に改行コードを挿入するか？
+	bool		bAddCRLFWhenCopy,		//!< [in] 折り返し位置に改行コードを挿入するか？
 	EEolType	neweol					//!< [in] コピーするときのEOL。
 )
 {
@@ -1562,7 +1562,7 @@ void CEditView::Command_COPY(
 		}
 
 		/* クリップボードにデータcmemBufの内容を設定 */
-		if( !MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect, FALSE ) ){
+		if( !MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), bBeginBoxSelect, false ) ){
 			ErrorBeep();
 			return;
 		}
@@ -2236,7 +2236,7 @@ void CEditView::Command_PASTE( int option )
 	CMemory		cmemClip;
 	BOOL		bColmnSelect;
 	BOOL		bLineSelect = FALSE;
-	BOOL		bLineSelectOption = 
+	bool		bLineSelectOption = 
 		((option & 0x04) == 0x04) ? TRUE :
 		((option & 0x08) == 0x08) ? FALSE :
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste;
@@ -3700,7 +3700,7 @@ void CEditView::Command_COPYFILENAME( void )
 	if( m_pcEditDoc->IsFilePathAvailable() ){
 		/* クリップボードにデータを設定 */
 		const char* pszFile = m_pcEditDoc->GetFileName();
-		MySetClipboardData( pszFile , lstrlen( pszFile ), FALSE );
+		MySetClipboardData( pszFile , lstrlen( pszFile ), false );
 	}
 	else{
 		ErrorBeep();
@@ -3715,7 +3715,7 @@ void CEditView::Command_COPYPATH( void )
 {
 	if( m_pcEditDoc->IsFilePathAvailable() ){
 		/* クリップボードにデータを設定 */
-		MySetClipboardData( m_pcEditDoc->GetFilePath(), lstrlen( m_pcEditDoc->GetFilePath() ), FALSE );
+		MySetClipboardData( m_pcEditDoc->GetFilePath(), lstrlen( m_pcEditDoc->GetFilePath() ), false );
 	}
 	else{
 		ErrorBeep();
@@ -3738,7 +3738,7 @@ void CEditView::Command_COPYTAG( void )
 
 		/* クリップボードにデータを設定 */
 		wsprintf( buf, "%s (%d,%d): ", m_pcEditDoc->GetFilePath(), line+1, col+1 );
-		MySetClipboardData( buf, lstrlen( buf ), FALSE );
+		MySetClipboardData( buf, lstrlen( buf ), false );
 	}
 	else{
 		ErrorBeep();
@@ -4882,7 +4882,7 @@ void CEditView::Command_MENU_RBUTTON( void )
 			}
 		}
 		/* クリップボードにデータを設定 */
-		MySetClipboardData( pszWork, nLength, FALSE );
+		MySetClipboardData( pszWork, nLength, false );
 		free( pszWork );
 
 		break;
@@ -7118,7 +7118,7 @@ void CEditView::Command_REPLACE_ALL()
 	// 取得にステップがかかりそうな変数などを、一時変数化する。
 	// とはいえ、これらの操作をすることによって得をするクロック数は合わせても 1 ループで数十だと思います。
 	// 数百クロック毎ループのオーダーから考えてもそんなに得はしないように思いますけど・・・。
-	BOOL bAddCRLFWhenCopy = m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy;
+	bool bAddCRLFWhenCopy = m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy;
 	BOOL &bCANCEL = cDlgCancel.m_bCANCEL;
 	CDocLineMgr& rDocLineMgr = m_pcEditDoc->m_cDocLineMgr;
 	CLayoutMgr& rLayoutMgr = m_pcEditDoc->m_cLayoutMgr;
@@ -7689,7 +7689,7 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			wsprintf( szPath, _T("@%s\r\n"), m_pcEditDoc->GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
-		MySetClipboardData( szPath, lstrlen( szPath ), FALSE );
+		MySetClipboardData( szPath, lstrlen( szPath ), false );
 
 		/* Oracle SQL*Plusをアクティブにする */
 		/* アクティブにする */

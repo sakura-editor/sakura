@@ -891,7 +891,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			if(View->IsTextSelected())
 			{
 				CMemory cMem;
-				if(!View->GetSelectedData(&cMem, FALSE, NULL, FALSE, FALSE)) return false;
+				if(!View->GetSelectedData(&cMem, FALSE, NULL, FALSE, false)) return false;
 				SysString S(cMem.GetStringPtr(), cMem.GetStringLength());
 				Wrap(&Result)->Receive(S);
 			}

@@ -2773,7 +2773,7 @@ BOOL CEditView::Command_PUTFILE( const char* filename, const ECodeType nCharCode
 
 			/* 選択範囲の取得 */
 			CMemory cMem;
-			GetSelectedData(&cMem, FALSE, NULL, FALSE, FALSE);
+			GetSelectedData(&cMem, FALSE, NULL, FALSE, false);
 
 			/* 書き込み時のコード変換 */
 			switch( nSaveCharCode ){

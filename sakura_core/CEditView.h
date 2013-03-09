@@ -251,7 +251,7 @@ public:
 	bool  ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
 
 // 2002/01/19 novice public属性に変更
-	BOOL GetSelectedData( CMemory*, BOOL, const char*, BOOL, BOOL bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	BOOL GetSelectedData( CMemory*, BOOL, const char*, BOOL, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
 	//	Aug. 25, 2002 genta protected->publicに移動
 	bool IsImeON( void );	// IME ONか	// 2006.12.04 ryoji
 	void CreateEditCaret( COLORREF crCaret, COLORREF crBack, int nWidth, int nHeight );		/* キャレットの作成 */	// 2006.12.07 ryoji
@@ -456,7 +456,7 @@ public: /* テスト用にアクセス属性を変更 */
 	}
 protected:
 	BOOL MyGetClipboardData( CMemory&, BOOL*, BOOL* = NULL );			/* クリップボードからデータを取得 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
-	BOOL MySetClipboardData( const char*, int, BOOL, BOOL = FALSE );	/* クリップボードにデータを設定 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
+	BOOL MySetClipboardData( const char*, int, BOOL, bool = false );	/* クリップボードにデータを設定 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
 	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
 	BOOL GetCurrentWord( CMemory* );					/* キャレット位置の単語を取得 */	// 2006.03.24 fon
 //	void PrintBitmap( HDC, int, int, const char* );		/* ビットマップファイル表示 */
@@ -696,9 +696,9 @@ public: /* テスト用にアクセス属性を変更 */
 	int Command_UP_BOX( BOOL );				/* (矩形選択)カーソル上移動 */
 
 	/* クリップボード系 */
-	void CopyCurLine( BOOL bAddCRLFWhenCopy, EEolType neweol, BOOL bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
+	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( int, BOOL bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( int, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );				/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( int option );			/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
