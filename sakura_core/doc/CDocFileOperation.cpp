@@ -159,7 +159,7 @@ void CDocFileOperation::ReloadCurrentFile(
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath=m_pcDocRef->m_cDocFile.GetFilePath();
 	sLoadInfo.eCharCode=nCharCode;
-	sLoadInfo.bViewMode=CAppMode::getInstance()->IsViewMode();
+	sLoadInfo.bViewMode=!m_pcDocRef->IsEditable(); //CAppMode::getInstance()->IsViewMode();
 	sLoadInfo.bRequestReload=true;
 	bool bRet = this->DoLoadFlow(&sLoadInfo);
 
