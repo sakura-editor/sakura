@@ -253,8 +253,8 @@ public:
 	bool	m_bAutoMIMEdecode;				// ファイル読み込み時にMIMEのdecodeを行うか
 	bool	m_bQueryIfCodeChange;			// 前回と文字コードが異なるときに問い合わせを行う Oct. 03, 2004 genta
 	bool	m_bAlertIfFileNotExist;			// 開こうとしたファイルが存在しないとき警告する Oct. 09, 2004 genta
-	bool	m_bAlertIfLargeFile;			// 開こうとしたファイルサイズが大きいバイイに警告する
-	int		m_nAlertFileSize;				// 警告を始めるファイルサイズ
+	bool	m_bAlertIfLargeFile;			// 開こうとしたファイルサイズが大きい場合に警告する
+	int		m_nAlertFileSize;				// 警告を始めるファイルサイズ(MB)
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -387,8 +387,8 @@ struct CommonSetting_Search
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       キー割り当て                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//共有メモリ内構造体
-struct CommonSetting_KeyBind{
+struct CommonSetting_KeyBind
+{
 	/* キー割り当て */
 	int					m_nKeyNameArrNum;			/* キー割り当て表の有効データ数 */
 	KEYDATA				m_pKeyNameArr[100+1];		/* キー割り当て表 */ // 未割り当てキーコード用にダミーを追加
