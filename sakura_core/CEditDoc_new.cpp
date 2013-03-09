@@ -1348,7 +1348,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 {
 
 	/* 無変更でも上書きするか */
-	if( FALSE == m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite
+	if( !m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite
 	 && !IsModified()	// 変更フラグ
 	 ){
 	 	//	Feb. 28, 2004 genta

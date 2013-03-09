@@ -3095,7 +3095,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 							false,				/* 読み取り専用か */
 							//	Oct. 03, 2004 genta コード確認は設定に依存
 							m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange
-							//TRUE
+							//true
 						);
 						hWndOwner = m_hWnd;
 						/* アクティブにする */

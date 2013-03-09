@@ -733,18 +733,18 @@ bool CShareData::InitShareData()
 
 		//[ファイル]タブ
 		m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;// ファイルの排他制御モード
-		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = TRUE;		// 更新の監視
+		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = true;		// 更新の監視
 
 		//ファイルの保存
 		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;// 無変更でも上書きするか
 
 		//ファイルオープン
-		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = FALSE;			// ファイルをドロップしたときは閉じて開く
+		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = false;			// ファイルをドロップしたときは閉じて開く
 		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				// 一度にドロップ可能なファイル数
-		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = TRUE;		//	カーソル位置復元	//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = TRUE;			// ブックマーク復元 //2002.01.16 hor 
+		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = true;		//	カーソル位置復元	//	Oct. 27, 2000 genta
+		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = true;			// ブックマーク復元 //2002.01.16 hor 
 		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = FALSE;			// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = false;			// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
 
 
 		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
@@ -780,15 +780,15 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sWindow.m_bMenuWChar = FALSE;		/* メニューの字化け対策を行う(Win2K以降のみ) */
 
 		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
-		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = TRUE;
+		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = true;
 		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
-		m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = FALSE;
+		m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = false;
 		m_pShareData->m_Common.m_sFile.m_bAlertIfLargeFile = false;  // 開こうとしたファイルが大きい場合に警告する
 		m_pShareData->m_Common.m_sFile.m_nAlertFileSize = 10;        // 警告を始めるファイルサイズ（MB単位）
 
 		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = TRUE;	// 新規から保存時は全ファイル表示
-		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = TRUE;	// 新規以外から保存時は全ファイル表示
+		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = true;	// 新規から保存時は全ファイル表示
+		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = true;	// 新規以外から保存時は全ファイル表示
 
 		m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin = FALSE;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 

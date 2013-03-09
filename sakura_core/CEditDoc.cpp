@@ -864,7 +864,7 @@ BOOL CEditDoc::FileRead(
 	BOOL*	pbOpened,	//!< [out] すでに開かれていたか
 	ECodeType	nCharCode,		/*!< [in] 文字コード種別 */
 	bool	bReadOnly,			/*!< [in] 読み取り専用か */
-	BOOL	bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
+	bool	bConfirmCodeChange	/*!< [in] 文字コード変更時の確認をするかどうか */
 )
 {
 	int				i;
@@ -4239,7 +4239,7 @@ void CEditDoc::ReloadCurrentFile(
 		&bOpened,
 		nCharCode,	/* 文字コード自動判別 */
 		bReadOnly,	/* 読み取り専用か */
-		FALSE		/* 文字コード変更時の確認をするかどうか */
+		false		/* 文字コード変更時の確認をするかどうか */
 	);
 
 	// レイアウト行単位のカーソル位置復元

@@ -266,13 +266,13 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	::SendMessage(hwndCombo, CB_SETCURSEL, (WPARAM)nSelPos, 0L);
 
 	/* 更新の監視 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bCheckFileTimeStamp, m_Common.m_sFile.m_bCheckFileTimeStamp ? BST_CHECKED : BST_UNCHECKED );
 
 	/* 無変更でも上書きするか */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_sFile.m_bEnableUnmodifiedOverwrite );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE, m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ? BST_CHECKED : BST_UNCHECKED );
 
 	/* ファイルをドロップしたときは閉じて開く */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_bDropFileAndClose, m_Common.m_sFile.m_bDropFileAndClose );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_bDropFileAndClose, m_Common.m_sFile.m_bDropFileAndClose ? BST_CHECKED : BST_UNCHECKED );
 	/* 一度にドロップ可能なファイル数 */
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, m_Common.m_sFile.m_nDropFileNumMax, FALSE );
 
@@ -306,8 +306,8 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, m_Common.m_sFile.m_nAlertFileSize, FALSE );
 
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_sFile.m_bNoFilterSaveNew );	// 新規から保存時は全ファイル表示
-	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_sFile.m_bNoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveNew, m_Common.m_sFile.m_bNoFilterSaveNew ? BST_CHECKED : BST_UNCHECKED );	// 新規から保存時は全ファイル表示
+	::CheckDlgButton( hwndDlg, IDC_CHECK_NoFilterSaveFile, m_Common.m_sFile.m_bNoFilterSaveFile ? BST_CHECKED : BST_UNCHECKED );	// 新規以外から保存時は全ファイル表示
 
 	EnableFilePropInput(hwndDlg);
 	return;
@@ -333,13 +333,13 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	m_Common.m_sFile.m_nFileShareMode = ShareModeArr[nSelPos].nMethod;
 
 	/* 更新の監視 */
-	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp );
+	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ) != 0;
 
 	/* 無変更でも上書きするか */
 	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
 
 	/* ファイルをドロップしたときは閉じて開く */
-	m_Common.m_sFile.m_bDropFileAndClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose );
+	m_Common.m_sFile.m_bDropFileAndClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose ) != 0;
 	/* 一度にドロップ可能なファイル数 */
 	m_Common.m_sFile.m_nDropFileNumMax = ::GetDlgItemInt( hwndDlg, IDC_EDIT_nDropFileNumMax, NULL, FALSE );
 	if( 1 > m_Common.m_sFile.m_nDropFileNumMax ){
@@ -394,8 +394,8 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	}
 
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-	m_Common.m_sFile.m_bNoFilterSaveNew = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
-	m_Common.m_sFile.m_bNoFilterSaveFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveFile );	// 新規以外から保存時は全ファイル表示
+	m_Common.m_sFile.m_bNoFilterSaveNew = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveNew ) != 0;	// 新規から保存時は全ファイル表示
+	m_Common.m_sFile.m_bNoFilterSaveFile = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_NoFilterSaveFile ) != 0;	// 新規以外から保存時は全ファイル表示
 
 	return TRUE;
 }
