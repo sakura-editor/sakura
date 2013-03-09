@@ -726,7 +726,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 						thiz->m_sSelect = CLayoutRange( m_sSelectOld.GetTo(), m_sSelect.GetTo() );
 					}
 
-					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, FALSE );
+					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, false );
 					thiz->m_sSelect = rngSelect;		// m_sSelectを元に戻す
 				}
 				else if( m_bSelectAreaChanging && m_nLastSelectedByteLen && m_sSelect.GetTo() == m_sSelectOld.GetTo() ){
@@ -739,12 +739,12 @@ void CViewSelect::PrintSelectionInfoMsg() const
 						thiz->m_sSelect = CLayoutRange( m_sSelectOld.GetFrom(), m_sSelect.GetFrom() );
 					}
 
-					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, FALSE );
+					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, false );
 					thiz->m_sSelect = rngSelect;		// m_sSelectを元に戻す
 				}
 				else{
 					// 選択領域全体をコード変換対象にする
-					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, FALSE );
+					const_cast<CEditView*>( pView )->GetSelectedData( cmemW, FALSE, NULL, FALSE, false );
 					bSelExtend = true;
 					thiz->m_nLastSelectedByteLen = 0;
 				}

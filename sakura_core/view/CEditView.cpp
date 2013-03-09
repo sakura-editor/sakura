@@ -1710,7 +1710,7 @@ bool CEditView::GetSelectedData(
 	BOOL			bLineOnly,
 	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
-	BOOL			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
+	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 	EEolType		neweol				//	コピー後の改行コード EOL_NONEはコード保存
 )
 {
