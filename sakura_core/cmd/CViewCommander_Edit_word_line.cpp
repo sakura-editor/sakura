@@ -55,7 +55,7 @@ void CViewCommander::Command_WordDeleteToStart( void )
 	}
 
 	// 削除
-	m_pCommanderView->DeleteData( TRUE );
+	m_pCommanderView->DeleteData( true );
 }
 
 
@@ -90,7 +90,7 @@ void CViewCommander::Command_WordDeleteToEnd( void )
 		GetOpeBlk()->AppendOpe( pcOpe );
 	}
 	/* 削除 */
-	m_pCommanderView->DeleteData( TRUE );
+	m_pCommanderView->DeleteData( true );
 }
 
 
@@ -121,13 +121,13 @@ void CViewCommander::Command_WordDelete( void )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		/* 削除 */
-		m_pCommanderView->DeleteData( TRUE );
+		m_pCommanderView->DeleteData( true );
 		return;
 	}
 	//現在位置の単語選択
 	Command_SELECTWORD();
 	/* 削除 */
-	m_pCommanderView->DeleteData( TRUE );
+	m_pCommanderView->DeleteData( true );
 	return;
 }
 
@@ -223,7 +223,7 @@ void CViewCommander::Command_LineDeleteToStart( void )
 {
 	CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-		m_pCommanderView->DeleteData( TRUE );
+		m_pCommanderView->DeleteData( true );
 		return;
 	}
 	pCLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
@@ -246,7 +246,7 @@ void CViewCommander::Command_LineDeleteToStart( void )
 	m_pCommanderView->GetSelectionInfo().SetSelectArea( sRange );
 
 	/* 選択領域削除 */
-	m_pCommanderView->DeleteData( TRUE );
+	m_pCommanderView->DeleteData( true );
 }
 
 
@@ -256,7 +256,7 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 {
 	CLayout*	pCLayout;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
-		m_pCommanderView->DeleteData( TRUE );
+		m_pCommanderView->DeleteData( true );
 		return;
 	}
 	pCLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
@@ -296,7 +296,7 @@ void CViewCommander::Command_LineDeleteToEnd( void )
 	m_pCommanderView->GetSelectionInfo().SetSelectArea( sRange );
 
 	/* 選択領域削除 */
-	m_pCommanderView->DeleteData( TRUE );
+	m_pCommanderView->DeleteData( true );
 }
 
 

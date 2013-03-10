@@ -137,7 +137,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 							}
 
 							// 選択範囲を削除
-							DeleteData( TRUE );
+							DeleteData( true );
 
 							// アンドゥバッファの処理
 							SetUndoBuffer();
@@ -1771,7 +1771,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				GetSelectionInfo().m_sSelectBgn = sSelectBgn_Old;
 				GetSelectionInfo().m_sSelect = sSelect_Old;
 			}
-			DeleteData( TRUE );
+			DeleteData( true );
 			GetCaret().MoveCursor( ptCaretPos_Old, TRUE );
 		}else{
 			/* 現在の選択範囲を非選択状態に戻す */
@@ -1846,7 +1846,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			GetSelectionInfo().m_sSelect = sSelect_Old;
 
 			/* 選択エリアを削除 */
-			DeleteData( TRUE );
+			DeleteData( true );
 
 			// 削除前の選択範囲を復元する	// 2008.03.26 ryoji
 			if( !bBoxData ){
