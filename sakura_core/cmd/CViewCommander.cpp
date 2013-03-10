@@ -560,7 +560,7 @@ BOOL CViewCommander::HandleCommand(
 		nFuncID = Command_CUSTMENU( nCommand - F_CUSTMENU_1 + 1 );
 		if( 0 != nFuncID ){
 			/* コマンドコードによる処理振り分け */
-//			HandleCommand( nFuncID, TRUE, 0, 0, 0, 0 );
+//			HandleCommand( nFuncID, true, 0, 0, 0, 0 );
 			::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nFuncID, 0 ), (LPARAM)NULL );
 		}
 		break;

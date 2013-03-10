@@ -245,7 +245,7 @@ bool CNormalProcess::InitializeProcess()
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = pEditWnd->m_cDlgGrep.DoModal( GetProcessInstance(), pEditWnd->GetHwnd(),  NULL);
 			if( FALSE != nRet ){
-				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
+				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 			return true; // 2003.06.23 Moca
@@ -379,7 +379,7 @@ bool CNormalProcess::InitializeProcess()
 			pszMacroType = NULL;
 		}
 		CEditView& view = pEditWnd->GetActiveView();
-		view.GetCommander().HandleCommand( F_EXECEXTMACRO, TRUE, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
+		view.GetCommander().HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
 
 	// 複数ファイル読み込み

@@ -539,7 +539,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			GetCaret().MoveCursor( GetSelect().GetFrom(), true );
 		} else {
-//			HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );
+//			HandleCommand( F_LEFT, true, 0, 0, 0, 0 );
 			Command_LEFT( FALSE, FALSE );
 		}
 	}
@@ -549,7 +549,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 //			bBeginBoxSelect = m_pCommanderView->GetSelectionInfo().IsBoxSelecting();
 
 	/* カーソル左移動 */
-	//HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );	//？？？
+	//HandleCommand( F_LEFT, true, 0, 0, 0, 0 );	//？？？
 	// To Here 2001.12.03 hor
 
 	/* テキスト選択解除 */
@@ -651,7 +651,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
-			//	HandleCommand( F_INSTEXT_W, FALSE, (LPARAM)GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0], FALSE, 0, 0 );
+			//	HandleCommand( F_INSTEXT_W, false, (LPARAM)GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0], FALSE, 0, 0 );
 			Command_INSTEXT( FALSE, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
 		}
 

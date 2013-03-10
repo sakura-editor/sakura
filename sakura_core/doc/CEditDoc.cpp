@@ -561,10 +561,10 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 		}
 		return TRUE;
 	case F_CHG_CHARSET:
-		return m_pcEditWnd->GetActiveView().GetCommander().HandleCommand( nCommand, TRUE, (LPARAM)CODE_NONE, 0, 0, 0 );
+		return m_pcEditWnd->GetActiveView().GetCommander().HandleCommand( nCommand, true, (LPARAM)CODE_NONE, 0, 0, 0 );
 
 	default:
-		return m_pcEditWnd->GetActiveView().GetCommander().HandleCommand( nCommand, TRUE, 0, 0, 0, 0 );
+		return m_pcEditWnd->GetActiveView().GetCommander().HandleCommand( nCommand, true, 0, 0, 0, 0 );
 	}
 }
 

@@ -548,11 +548,11 @@ BOOL CHokanMgr::DoHokan( int nVKey )
  	/* テキストを貼り付け */
 	pcEditView = (CEditView*)m_lParam;
 	//	Apr. 28, 2000 genta
-	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, FALSE, 0, 0, 0, 0 );
-	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)wszLabel, TRUE, 0, 0 );
+	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
+	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)wszLabel, TRUE, 0, 0 );
 
 	// Until here
-//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)(wszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
+//	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(wszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
 	Hide();
 
 	m_pShareData->m_Common.m_sHelper.m_bUseHokan = FALSE;	//	補完したら
