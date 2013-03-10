@@ -147,7 +147,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			GetSelect().GetTo()		// 範囲選択終了
 		);
 		/* 現在の選択範囲を非選択状態に戻す */
-		m_pCommanderView->GetSelectionInfo().DisableSelectArea( FALSE/*TRUE 2002.01.25 hor*/ );
+		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false/*true 2002.01.25 hor*/ );
 
 		/*
 			文字を直前に挿入された文字が、それにより元の位置からどれだけ後ろにずれたか。
@@ -320,7 +320,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		}
 
 		// 現在の選択範囲を非選択状態に戻す
-		m_pCommanderView->GetSelectionInfo().DisableSelectArea( FALSE );
+		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false );
 
 		for( CLayoutInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().GetY2(); i++ ){
 			CLayoutInt nLineCountPrev = GetDocument()->m_cLayoutMgr.GetLineCount();
@@ -422,7 +422,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 		}
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		m_pCommanderView->GetSelectionInfo().DisableSelectArea( FALSE );
+		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false );
 
 		CLogicInt		nDelLen;
 		for( CLayoutInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().GetY2(); i++ ){
@@ -541,7 +541,7 @@ void CViewCommander::Command_TRIM(
 	}
 
 	if(bBeDisableSelectArea)
-		cViewSelect.DisableSelectArea( TRUE );
+		cViewSelect.DisableSelectArea( true );
 }
 
 

@@ -416,7 +416,7 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 		return 0;
 
 	if ( GetSelectionInfo().IsTextSelected()) 
-		GetSelectionInfo().DisableSelectArea( TRUE );
+		GetSelectionInfo().DisableSelectArea( true );
 
 	if( 0 != pReconv->dwVersion ){
 		return 0;

@@ -402,7 +402,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
-		m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 	}
 
 	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );

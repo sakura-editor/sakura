@@ -161,7 +161,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		//インクリメンタルサーチモードに入るだけ.		
 		//選択範囲の解除
 		if(GetSelectionInfo().IsTextSelected())	
-			GetSelectionInfo().DisableSelectArea( TRUE );
+			GetSelectionInfo().DisableSelectArea( true );
 
 		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;
 		switch( mode ) {
@@ -482,7 +482,7 @@ void CEditView::ISearchBack(void) {
 	CLayoutRange sRange = m_sISearchHistory[m_nISearchHistoryCount];
 
 	if(m_nISearchHistoryCount == 0){
-		GetSelectionInfo().DisableSelectArea( TRUE );
+		GetSelectionInfo().DisableSelectArea( true );
 		sRange.SetToX( sRange.GetFrom().x );
 	}
 

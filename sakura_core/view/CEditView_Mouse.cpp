@@ -102,7 +102,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					// ドラッグ開始条件を満たさなかったのでクリック位置にカーソル移動する
 					if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 						/* 現在の選択範囲を非選択状態に戻す */
-						GetSelectionInfo().DisableSelectArea( TRUE );
+						GetSelectionInfo().DisableSelectArea( true );
 					}
 //@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
 					/* カーソル移動。 */
@@ -155,7 +155,7 @@ normal_action:;
 	if( GetKeyState_Alt() &&( ! tripleClickMode)){
 		if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			GetSelectionInfo().DisableSelectArea( TRUE );
+			GetSelectionInfo().DisableSelectArea( true );
 		}
 		if( ptMouse.y >= GetTextArea().GetAreaTop()  && ptMouse.y < GetTextArea().GetAreaBottom() ){
 			if( ptMouse.x >= GetTextArea().GetAreaLeft() && ptMouse.x < GetTextArea().GetAreaRight() ){
@@ -224,7 +224,7 @@ normal_action:;
 				OnLBUTTONUP( fwKeys, ptMouse.x, ptMouse.y );	// ここで左ボタンアップしたことにする
 
 				if( GetSelectionInfo().IsTextSelected() )		// テキストが選択されているか
-					GetSelectionInfo().DisableSelectArea( TRUE );	// 現在の選択範囲を非選択状態に戻す
+					GetSelectionInfo().DisableSelectArea( true );	// 現在の選択範囲を非選択状態に戻す
 			}
 
 			// 単語の途中で折り返されていると下の行が選択されてしまうことへの対処
@@ -258,7 +258,7 @@ normal_action:;
 			if( GetSelectionInfo().IsTextSelected() ){		/* テキストが選択されているか */
 				if( GetSelectionInfo().IsBoxSelecting() ){	/* 矩形範囲選択中 */
 					/* 現在の選択範囲を非選択状態に戻す */
-					GetSelectionInfo().DisableSelectArea( TRUE );
+					GetSelectionInfo().DisableSelectArea( true );
 
 					/* 現在のカーソル位置から選択を開始する */
 					GetSelectionInfo().BeginSelectArea( );
@@ -285,7 +285,7 @@ normal_action:;
 		else{
 			if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
-				GetSelectionInfo().DisableSelectArea( TRUE );
+				GetSelectionInfo().DisableSelectArea( true );
 			}
 			/* カーソル移動 */
 			if( ptMouse.y >= GetTextArea().GetAreaTop() && ptMouse.y < GetTextArea().GetAreaBottom() ){
@@ -464,7 +464,7 @@ normal_action:;
 				);
 				if( bIsUrl ){
 					/* 現在の選択範囲を非選択状態に戻す */
-					GetSelectionInfo().DisableSelectArea( TRUE );
+					GetSelectionInfo().DisableSelectArea( true );
 
 					/*
 					  カーソル位置変換
@@ -1373,7 +1373,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 		GetCaret().m_cUnderLine.UnLock();
 		if( GetSelectionInfo().m_sSelect.IsOne() ){
 			/* 現在の選択範囲を非選択状態に戻す */
-			GetSelectionInfo().DisableSelectArea( TRUE );
+			GetSelectionInfo().DisableSelectArea( true );
 		}
 	}
 	return;
@@ -1478,7 +1478,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 		// クアドラプルクリック機能が割り当てられていない場合は、ダブルクリック
 		// として処理するため。
 		if( GetSelectionInfo().IsTextSelected() )		// テキストが選択されているか
-			GetSelectionInfo().DisableSelectArea( TRUE );		// 現在の選択範囲を非選択状態に戻す
+			GetSelectionInfo().DisableSelectArea( true );		// 現在の選択範囲を非選択状態に戻す
 
 		if(! nFuncID){
 			m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
@@ -1756,7 +1756,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( !bMove ){
 		/* コピーモード */
 		/* 現在の選択範囲を非選択状態に戻す */
-		GetSelectionInfo().DisableSelectArea( TRUE );
+		GetSelectionInfo().DisableSelectArea( true );
 	}else{
 		bBeginBoxSelect_Old = pcDragSourceView->GetSelectionInfo().IsBoxSelecting();
 		sSelectBgn_Old = pcDragSourceView->GetSelectionInfo().m_sSelectBgn;
@@ -1765,8 +1765,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			/* 移動モード & 前に移動 */
 			/* 選択エリアを削除 */
 			if( this != pcDragSourceView ){
-				pcDragSourceView->GetSelectionInfo().DisableSelectArea( TRUE );
-				GetSelectionInfo().DisableSelectArea( TRUE );
+				pcDragSourceView->GetSelectionInfo().DisableSelectArea( true );
+				GetSelectionInfo().DisableSelectArea( true );
 				GetSelectionInfo().SetBoxSelect( bBeginBoxSelect_Old );
 				GetSelectionInfo().m_sSelectBgn = sSelectBgn_Old;
 				GetSelectionInfo().m_sSelect = sSelect_Old;
@@ -1775,9 +1775,9 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			GetCaret().MoveCursor( ptCaretPos_Old, TRUE );
 		}else{
 			/* 現在の選択範囲を非選択状態に戻す */
-			pcDragSourceView->GetSelectionInfo().DisableSelectArea( TRUE );
+			pcDragSourceView->GetSelectionInfo().DisableSelectArea( true );
 			if( this != pcDragSourceView )
-				GetSelectionInfo().DisableSelectArea( TRUE );
+				GetSelectionInfo().DisableSelectArea( true );
 		}
 	}
 	if( !bBoxData ){	/* 矩形データ */
@@ -2020,7 +2020,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 
 		// 選択範囲の選択解除
 		if( GetSelectionInfo().IsTextSelected() ){
-			GetSelectionInfo().DisableSelectArea( TRUE );
+			GetSelectionInfo().DisableSelectArea( true );
 		}
 
 		// 挿入前のキャレット位置を記憶する

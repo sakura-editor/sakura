@@ -59,7 +59,7 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 		}
 	}else{
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 		}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
@@ -401,7 +401,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 	}else{
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){		/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 		}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
@@ -482,7 +482,7 @@ void CViewCommander::Command_WORDRIGHT( bool bSelect )
 	}else{
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 		}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 		}
@@ -652,7 +652,7 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 		}else{
 			if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
-				m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+				m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 			}else if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 				m_pCommanderView->GetSelectionInfo().SetBoxSelect(false);
 			}
