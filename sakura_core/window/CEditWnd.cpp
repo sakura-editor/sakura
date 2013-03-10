@@ -4151,7 +4151,7 @@ void CEditWnd::InitAllViews()
 		GetView(i).GetSelectionInfo().DisableSelectArea( false );
 
 		GetView(i).OnChangeSetting();
-		GetView(i).GetCaret().MoveCursor( CLayoutPoint(0, 0), TRUE );
+		GetView(i).GetCaret().MoveCursor( CLayoutPoint(0, 0), true );
 		GetView(i).GetCaret().m_nCaretPosX_Prev = CLayoutInt(0);
 	}
 }
@@ -4532,7 +4532,7 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 			pptPosArray[i * NUM_OF_POS + 5],
 			&ptPosXY
 		);
-		this->GetView(i).GetCaret().MoveCursor( ptPosXY, TRUE );
+		this->GetView(i).GetCaret().MoveCursor( ptPosXY, true );
 		this->GetView(i).GetCaret().m_nCaretPosX_Prev = this->GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	delete[] pptPosArray;

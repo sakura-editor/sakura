@@ -315,7 +315,7 @@ bool CNormalProcess::InitializeProcess()
 				}
 				// To Here Mar. 28, 2003 MIK
 
-				pEditWnd->GetActiveView().GetCaret().MoveCursor( ptPos, TRUE );
+				pEditWnd->GetActiveView().GetCaret().MoveCursor( ptPos, true );
 				pEditWnd->GetActiveView().GetCaret().m_nCaretPosX_Prev =
 					pEditWnd->GetActiveView().GetCaret().GetCaretLayoutPos().GetX2();
 			}

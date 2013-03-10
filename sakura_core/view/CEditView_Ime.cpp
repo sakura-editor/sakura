@@ -476,7 +476,7 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 	);
 
 	// 単語の先頭にカーソルを移動
-	GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetFrom(), TRUE );
+	GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetFrom(), true );
 
 	//選択範囲再描画 
 	GetSelectionInfo().DrawSelectArea();

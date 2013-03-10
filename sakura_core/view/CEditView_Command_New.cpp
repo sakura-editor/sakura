@@ -892,7 +892,7 @@ void CEditView::RTrimPrevLine( void )
 					);
 					CLayoutPoint ptCP;
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCaretPos_PHY, &ptCP );
-					GetCaret().MoveCursor( ptCP, TRUE );
+					GetCaret().MoveCursor( ptCP, true );
 
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 						/* 操作の追加 */

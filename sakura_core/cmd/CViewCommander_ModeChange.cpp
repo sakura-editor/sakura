@@ -118,7 +118,7 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 			/* ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“® */
 			Command_GOFILEEND(FALSE);
 		} else {
-			GetCaret().MoveCursor( ptTo, TRUE );
+			GetCaret().MoveCursor( ptTo, true );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
 	}else{

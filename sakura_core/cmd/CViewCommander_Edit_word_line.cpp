@@ -375,7 +375,7 @@ void CViewCommander::Command_DELETE_LINE( void )
 			}
 		}
 		/* 操作前の位置へカーソルを移動 */
-		GetCaret().MoveCursor( ptCaretPos_OLD, TRUE );
+		GetCaret().MoveCursor( ptCaretPos_OLD, true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
@@ -473,7 +473,7 @@ void CViewCommander::Command_DUPLICATELINE( void )
 	);
 
 	/* カーソルを移動 */
-	GetCaret().MoveCursor( ptCaretPosOld, TRUE );
+	GetCaret().MoveCursor( ptCaretPosOld, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 

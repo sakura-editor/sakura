@@ -435,7 +435,7 @@ void CEditView::ISearchExec(bool bNext)
 	}else{
 		//åüçıåãâ Ç†ÇË
 		//ÉLÉÉÉåÉbÉgà⁄ìÆ
-		GetCaret().MoveCursor( sMatchRange.GetFrom(), TRUE, _CARETMARGINRATE / 3 );
+		GetCaret().MoveCursor( sMatchRange.GetFrom(), true, _CARETMARGINRATE / 3 );
 		
 		//	2005.06.24 Moca
 		GetSelectionInfo().SetSelectArea( sMatchRange );
@@ -486,7 +486,7 @@ void CEditView::ISearchBack(void) {
 		sRange.SetToX( sRange.GetFrom().x );
 	}
 
-	GetCaret().MoveCursor( sRange.GetFrom(), TRUE, _CARETMARGINRATE / 3 );
+	GetCaret().MoveCursor( sRange.GetFrom(), true, _CARETMARGINRATE / 3 );
 	if(m_nISearchHistoryCount != 0){
 		//	2005.06.24 Moca
 		GetSelectionInfo().SetSelectArea( sRange );

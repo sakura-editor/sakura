@@ -331,7 +331,7 @@ DWORD CGrepAgent::DoGrep(
 		pcViewDst->GetCommander().Command_ADDTAIL( szBuffer, -1 );
 #endif
 	}
-	pcViewDst->GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), tmp_PosY_Layout), TRUE );	//	カーソルをGrep直前の位置に戻す。
+	pcViewDst->GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), tmp_PosY_Layout), true );	//	カーソルをGrep直前の位置に戻す。
 
 	cDlgCancel.CloseDialog( 0 );
 

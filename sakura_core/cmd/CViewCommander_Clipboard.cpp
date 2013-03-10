@@ -364,7 +364,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 	}
 
 	/* 挿入データの先頭位置へカーソルを移動 */
-	GetCaret().MoveCursor( ptCurOld, TRUE );
+	GetCaret().MoveCursor( ptCurOld, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 	if( !m_pCommanderView->m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
@@ -612,7 +612,7 @@ void CViewCommander::Command_ADDTAIL(
 
 	/* 挿入データの最後へカーソルを移動 */
 	// Sep. 2, 2002 すなふき アンダーラインの表示が残ってしまう問題を修正
-	GetCaret().MoveCursor( ptLayoutNew, TRUE );
+	GetCaret().MoveCursor( ptLayoutNew, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
 

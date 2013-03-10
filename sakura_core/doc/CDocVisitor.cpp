@@ -56,7 +56,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 			// カーソル位置復元
 			pcView->GetTextArea().SetViewTopLine(nViewTopLine);
 			pcView->GetTextArea().SetViewLeftCol(nViewLeftCol);
-			pcView->GetCaret().MoveCursor( ptCaretPosXY, TRUE );
+			pcView->GetCaret().MoveCursor( ptCaretPosXY, true );
 			pcView->GetCaret().m_nCaretPosX_Prev = nCaretPosX_Prev;
 			pcOpeBlk->AppendOpe(
 				new CMoveCaretOpe(
