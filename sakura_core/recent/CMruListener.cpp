@@ -151,7 +151,7 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 				if( pTmpDocLine->GetLengthWithoutEOL() < eiOld.m_ptCursor.x ) ptCaretPos.x--;
 			}
 			// To Here Mar. 28, 2003 MIK
-			cView.GetCaret().MoveCursor( ptCaretPos, TRUE );
+			cView.GetCaret().MoveCursor( ptCaretPos, true );
 			cView.GetCaret().m_nCaretPosX_Prev = cView.GetCaret().GetCaretLayoutPos().GetX2();
 		}
 	}

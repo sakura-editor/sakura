@@ -71,7 +71,7 @@ void CViewCommander::Command_MOVECURSORLAYOUT(CLayoutPoint pos, int option)
 	if( bSelect || bBoxSelect ){
 		m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( pos );
 	}
-	GetCaret().MoveCursor( pos, TRUE );
+	GetCaret().MoveCursor( pos, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
 
@@ -235,7 +235,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 			*/
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptPos );
 		}
-		GetCaret().MoveCursor( ptPos, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().MoveCursor( ptPos, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		nRes = 1;
 	}
@@ -359,7 +359,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptTo );
 		}
-		GetCaret().MoveCursor( ptTo, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().MoveCursor( ptTo, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	return;
@@ -451,7 +451,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptLayoutNew );
 		}
-		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().MoveCursor( ptLayoutNew, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}else{
 		bool bIsFreeCursorModeOld = GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
@@ -532,7 +532,7 @@ try_again:;
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			m_pCommanderView->GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptLayoutNew );
 		}
-		GetCaret().MoveCursor( ptLayoutNew, TRUE, _CARETMARGINRATE, bUnderlineDoNotOFF );
+		GetCaret().MoveCursor( ptLayoutNew, true, _CARETMARGINRATE, bUnderlineDoNotOFF );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 	}
 	else{
@@ -795,7 +795,7 @@ void CViewCommander::Command_GOFILEEND( bool bSelect )
 		*/
 		Command_GOLINEEND( bSelect, FALSE );				// 2001.12.21 hor Add
 	}
-	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), TRUE );	// 2001.12.21 hor Add
+	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), true );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
 	if( !(m_pCommanderView->GetSelectionInfo().IsTextSelected() && m_pCommanderView->GetSelectionInfo().IsBoxSelecting()) ) GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 

@@ -1020,7 +1020,7 @@ void CEditView::OnSetFocus( void )
 	{
 		CLayoutPoint ptPos = GetCaret().GetCaretLayoutPos();
 		if( GetCaret().GetAdjustCursorPos( &ptPos ) ){
-			GetCaret().MoveCursor( ptPos, FALSE );
+			GetCaret().MoveCursor( ptPos, false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
 	}
@@ -1150,7 +1150,7 @@ void CEditView::MoveCursorSelecting(
 		*/
 		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptWk_CaretPos );
 	}
-	GetCaret().MoveCursor( ptWk_CaretPos, TRUE, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
+	GetCaret().MoveCursor( ptWk_CaretPos, true, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 }
 
@@ -1394,13 +1394,13 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 					);
 
 					/* カーソルを移動 */
-					GetCaret().MoveCursor( ptLayoutNew, FALSE );
+					GetCaret().MoveCursor( ptLayoutNew, false );
 					GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 				}
 			}
 		}
 		/* 挿入データの先頭位置へカーソルを移動 */
-		GetCaret().MoveCursor( rcSelLayout.UpperLeft(), TRUE );
+		GetCaret().MoveCursor( rcSelLayout.UpperLeft(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -1439,7 +1439,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			&ptFrom
 		);
 		GetSelectionInfo().SetSelectArea( CLayoutRange(ptFrom, GetCaret().GetCaretLayoutPos()) );	// 2009.07.25 ryoji
-		GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), TRUE );
+		GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -1579,7 +1579,7 @@ void CEditView::OnChangeSetting()
 	SetFont();
 
 	/* フォントが変わっているかもしれないので、カーソル移動 */
-	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), TRUE );
+	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), true );
 
 	/* スクロールバーの状態を更新する */
 	AdjustScrollBars();
@@ -2459,7 +2459,7 @@ void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	GetSelectionInfo().DisableSelectArea( false );
 
 	OnChangeSetting();
-	GetCaret().MoveCursor( CLayoutPoint(0, 0), TRUE );
+	GetCaret().MoveCursor( CLayoutPoint(0, 0), true );
 	GetCaret().m_nCaretPosX_Prev = CLayoutInt(0);
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 

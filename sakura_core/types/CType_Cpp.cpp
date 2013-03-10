@@ -1314,7 +1314,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCP, &ptCP_Layout );
 
 		/* 選択エリアの先頭へカーソルを移動 */
-		GetCaret().MoveCursor( ptCP_Layout, TRUE );
+		GetCaret().MoveCursor( ptCP_Layout, true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 
 

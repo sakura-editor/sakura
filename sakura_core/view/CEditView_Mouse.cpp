@@ -427,7 +427,7 @@ normal_action:;
 				ptCaret.y = ptNewCaret.GetY2() + 1;	// 改行無しEOF行でも MoveCursor() が有効な座標に調整してくれる
 				GetCaret().GetAdjustCursorPos( &ptCaret );
 				GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptCaret );
-				GetCaret().MoveCursor( ptCaret, TRUE );
+				GetCaret().MoveCursor( ptCaret, true );
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 			}else{
 				/* 現在のカーソル位置によって選択範囲を変更 */
@@ -1623,7 +1623,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 
 	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
 	// ※範囲選択中のときに選択範囲とカーソルが分離すると変だから
-	GetCaret().MoveCursor( m_ptCaretPos_DragEnter, FALSE );
+	GetCaret().MoveCursor( m_ptCaretPos_DragEnter, false );
 	GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
 	RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
 
@@ -1686,7 +1686,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		// DragEnter時のカーソル位置を復元
 		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
 		*pdwEffect = DROPEFFECT_NONE;
-		GetCaret().MoveCursor( m_ptCaretPos_DragEnter, FALSE );
+		GetCaret().MoveCursor( m_ptCaretPos_DragEnter, false );
 		GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
 		if( !IsDragSource() )	// ドラッグ元の場合はここでは再描画不要（DragDrop後処理のSetActivePaneで再描画される）
 			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
@@ -1772,7 +1772,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				GetSelectionInfo().m_sSelect = sSelect_Old;
 			}
 			DeleteData( true );
-			GetCaret().MoveCursor( ptCaretPos_Old, TRUE );
+			GetCaret().MoveCursor( ptCaretPos_Old, true );
 		}else{
 			/* 現在の選択範囲を非選択状態に戻す */
 			pcDragSourceView->GetSelectionInfo().DisableSelectArea( true );
@@ -1882,7 +1882,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			}
 
 			// キャレットを移動する
-			GetCaret().MoveCursor( ptCaretPos_Old, TRUE );
+			GetCaret().MoveCursor( ptCaretPos_Old, true );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 			// 削除位置から移動先へのカーソル移動をアンドゥ操作に追加する	// 2008.03.26 ryoji

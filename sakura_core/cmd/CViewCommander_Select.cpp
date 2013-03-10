@@ -55,7 +55,7 @@ bool CViewCommander::Command_SELECTWORD( void )
 		m_pCommanderView->GetSelectionInfo().DrawSelectArea();
 
 		/* 単語の先頭にカーソルを移動 */
-		GetCaret().MoveCursor( sRange.GetTo(), TRUE );
+		GetCaret().MoveCursor( sRange.GetTo(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 		return true;	//	単語選択に成功。

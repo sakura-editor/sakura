@@ -1221,7 +1221,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	if((!bSelectedArea) ||			// ファイル全体置換
 	   (cDlgCancel.IsCanceled())) {		// キャンセルされた
 		// 最後に置換した文字列の右へ
-		GetCaret().MoveCursor( ptLast, TRUE );
+		GetCaret().MoveCursor( ptLast, true );
 	}
 	else{
 		if (bBeginBoxSelect) {
@@ -1244,7 +1244,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		if(sRangeA.GetFrom().y<sRangeA.GetTo().y || sRangeA.GetFrom().x<sRangeA.GetTo().x){
 			m_pCommanderView->GetSelectionInfo().SetSelectArea( sRangeA );	// 2009.07.25 ryoji
 		}
-		GetCaret().MoveCursor( sRangeA.GetTo(), TRUE );
+		GetCaret().MoveCursor( sRangeA.GetTo(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();	// 2009.07.25 ryoji
 	}
 	// To Here 2001.12.03 hor

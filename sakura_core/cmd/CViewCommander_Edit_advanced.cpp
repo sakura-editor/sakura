@@ -118,7 +118,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				&ptInserted,
 				true
 			);
-			GetCaret().MoveCursor( ptInserted, TRUE );
+			GetCaret().MoveCursor( ptInserted, true );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
 		return;
@@ -262,7 +262,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 					ptInsert.x <= ptInserted.x ? ptInserted.x - ptInsert.x : std::max( CLayoutInt(0), this->GetDocument()->m_cLayoutMgr.GetMaxLineKetas() - ptInsert.x)
 				);
 
-				GetCaret().MoveCursor( ptInserted, FALSE );
+				GetCaret().MoveCursor( ptInserted, false );
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 			}
 			if( insertionWasDone || !alignFullWidthChar ) {
@@ -277,7 +277,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		}
 
 		/* カーソルを移動 */
-		GetCaret().MoveCursor( rcSel.GetFrom(), TRUE );
+		GetCaret().MoveCursor( rcSel.GetFrom(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -308,7 +308,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				&ptInserted,
 				false
 			);
-			GetCaret().MoveCursor( ptInserted, TRUE );
+			GetCaret().MoveCursor( ptInserted, true );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
 	}
@@ -332,7 +332,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 			}
 
 			/* カーソルを移動 */
-			GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), i), FALSE );
+			GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), i), false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 			/* 現在位置にデータを挿入 */
@@ -344,7 +344,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				false
 			);
 			/* カーソルを移動 */
-			GetCaret().MoveCursor( ptInserted, FALSE );
+			GetCaret().MoveCursor( ptInserted, false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 			if ( nLineCountPrev != GetDocument()->m_cLayoutMgr.GetLineCount() ){
@@ -356,7 +356,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		GetSelect() = sSelectOld;
 
 		// From Here 2001.12.03 hor
-		GetCaret().MoveCursor( GetSelect().GetTo(), TRUE );
+		GetCaret().MoveCursor( GetSelect().GetTo(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			GetOpeBlk()->AppendOpe(
@@ -466,7 +466,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 			}
 
 			/* カーソルを移動 */
-			GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), i), FALSE );
+			GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), i), false );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 			
 
@@ -485,7 +485,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 		GetSelect() = sSelectOld;	//範囲選択
 
 		// From Here 2001.12.03 hor
-		GetCaret().MoveCursor( GetSelect().GetTo(), TRUE );
+		GetCaret().MoveCursor( GetSelect().GetTo(), true );
 		GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			GetOpeBlk()->AppendOpe(

@@ -167,7 +167,7 @@ end_of_for:;
 	);
 
 	/* 挿入データの最後へカーソルを移動 */
-	GetCaret().MoveCursor( ptLayoutNew, TRUE );
+	GetCaret().MoveCursor( ptLayoutNew, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 	/* スマートインデント */
@@ -284,7 +284,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 	m_pCommanderView->InsertData_CEditView( GetCaret().GetCaretLayoutPos(), szWord, nWord, &ptLayoutNew, true );
 
 	/* 挿入データの最後へカーソルを移動 */
-	GetCaret().MoveCursor( ptLayoutNew, TRUE );
+	GetCaret().MoveCursor( ptLayoutNew, true );
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 
 	m_pCommanderView->PostprocessCommand_hokan();	//	Jan. 10, 2005 genta 関数化
@@ -639,7 +639,7 @@ void CViewCommander::Command_DELETE( void )
 								CLayoutPoint ptLay;
 								CLogicPoint ptLog(pcLayout->GetLogicOffset() + nIndex, pcLayout->GetLogicLineNo());
 								GetDocument()->m_cLayoutMgr.LogicToLayout( ptLog, &ptLay );
-								GetCaret().MoveCursor( ptLay, TRUE );
+								GetCaret().MoveCursor( ptLay, true );
 								GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 							}
 						}
