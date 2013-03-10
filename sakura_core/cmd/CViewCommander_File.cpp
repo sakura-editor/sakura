@@ -731,7 +731,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			int			nLineLen = cBuf.GetStringLength();
 
 			++nLineNum;
-			Command_INSTEXT(false, pLine, CLogicInt(nLineLen), true);
+			Command_INSTEXT( false, pLine, CLogicInt(nLineLen), true);
 
 			/* 進捗ダイアログ有無 */
 			if( NULL == pcDlgCancel ){

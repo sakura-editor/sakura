@@ -1800,7 +1800,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			}
 		}
 
-		GetCommander().Command_INSTEXT( TRUE, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
+		GetCommander().Command_INSTEXT( true, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
 
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		CLayoutPoint ptSelectFrom;

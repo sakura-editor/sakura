@@ -647,12 +647,12 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 					rLayoutMgr.LogicToLayout( CLogicPoint(nLen, pcLayout->GetLogicLineNo()), GetSelect().GetToPointer() );	// 2007.01.19 ryoji 追加
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
-				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
+				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
 				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
 			//	HandleCommand( F_INSTEXT_W, false, (LPARAM)GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0], FALSE, 0, 0 );
-			Command_INSTEXT( FALSE, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
+			Command_INSTEXT( false, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
 		}
 
 		// 挿入後の検索開始位置を調整
@@ -1037,7 +1037,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				** →m_nSelectXXXが-1の時に m_pCommanderView->ReplaceData_CEditViewを直接たたくと動作不良となるため
 				**   直接たたくのやめた。2003.05.18 by かろと
 				*/
-				Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE, bLineSelect );
+				Command_INSTEXT( false, szREPLACEKEY, nREPLACEKEY, TRUE, bLineSelect );
 			}
 			else
 			{
@@ -1121,7 +1121,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				    }
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
-				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
+				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
 				// To Here Jun. 6, 2005 かろと
 			}
 		}
@@ -1130,7 +1130,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
 			** →m_nSelectXXXが-1の時に m_pCommanderView->ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18 かろと
 			*/
-			Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
+			Command_INSTEXT( false, szREPLACEKEY, nREPLACEKEY, TRUE );
 			++nReplaceNum;
 		}
 
