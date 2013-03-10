@@ -450,7 +450,7 @@ void CEditView::ISearchExec(bool bNext)
 	}else{
 		//åüçıåãâ Ç†ÇË
 		//ÉLÉÉÉåÉbÉgà⁄ìÆ
-		MoveCursor( nColmFrom, nLineFrom , TRUE, _CARETMARGINRATE / 3 );
+		MoveCursor( nColmFrom, nLineFrom , true, _CARETMARGINRATE / 3 );
 		//	2005.06.24 Moca
 		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );
 
@@ -505,7 +505,7 @@ void CEditView::ISearchBack(void) {
 		nColmTo = nColmFrom;
 	}
 
-	MoveCursor( nColmFrom , nLineFrom , TRUE, _CARETMARGINRATE / 3 );
+	MoveCursor( nColmFrom , nLineFrom , true, _CARETMARGINRATE / 3 );
 	if(m_nISearchHistoryCount != 0){
 		//	2005.06.24 Moca
 		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );

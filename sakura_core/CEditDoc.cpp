@@ -240,7 +240,7 @@ void CEditDoc::InitAllView( void )
 		m_cEditViewArr[i].DisableSelectArea( FALSE );
 
 		m_cEditViewArr[i].OnChangeSetting();
-		m_cEditViewArr[i].MoveCursor( 0, 0, TRUE );
+		m_cEditViewArr[i].MoveCursor( 0, 0, true );
 		m_cEditViewArr[i].m_nCaretPosX_Prev = 0;
 	}
 
@@ -1200,7 +1200,7 @@ BOOL CEditDoc::FileRead(
 				if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nCaretPosX--;
 			}
 			// To Here Mar. 28, 2003 MIK
-			m_cEditViewArr[m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, TRUE );
+			m_cEditViewArr[m_nActivePaneIndex].MoveCursor( nCaretPosX, nCaretPosY, true );
 			m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev =
 				m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 		}
@@ -3992,7 +3992,7 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 			&nPosX,
 			&nPosY
 		);
-		m_cEditViewArr[i].MoveCursor( nPosX, nPosY, TRUE );
+		m_cEditViewArr[i].MoveCursor( nPosX, nPosY, true );
 		m_cEditViewArr[i].m_nCaretPosX_Prev = m_cEditViewArr[i].m_nCaretPosX;
 
 		if( m_cEditViewArr[i].m_nSelectLineBgnFrom >= 0 ){

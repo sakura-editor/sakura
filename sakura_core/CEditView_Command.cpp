@@ -779,7 +779,7 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 					/* 現在の選択範囲を非選択状態に戻す */
 					DisableSelectArea( TRUE );
 					/* カーソルを選択開始位置に移動 */
-					MoveCursor( rcSel.left, rcSel.top, TRUE );
+					MoveCursor( rcSel.left, rcSel.top, true );
 					m_nCaretPosX_Prev = m_nCaretPosX;
 				}else{
 					nPosX = m_nSelectColmFrom;
@@ -787,7 +787,7 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 					/* 現在の選択範囲を非選択状態に戻す */
 					DisableSelectArea( TRUE );
 					/* カーソルを選択開始位置に移動 */
-					MoveCursor( nPosX, nPosY, TRUE );
+					MoveCursor( nPosX, nPosY, true );
 					m_nCaretPosX_Prev = m_nCaretPosX;
 				}
 				nRes = 1;
@@ -834,7 +834,7 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 			}
 		}
 
-		MoveCursor( nPosX, nPosY, TRUE );
+		MoveCursor( nPosX, nPosY, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( bSelect ){
 			/*	現在のカーソル位置によって選択範囲を変更．
@@ -894,7 +894,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 						/* 現在の選択範囲を非選択状態に戻す */
 						DisableSelectArea( TRUE );
 						/* カーソルを選択終了位置に移動 */
-						MoveCursor( rcSel.right, rcSel.bottom, TRUE );
+						MoveCursor( rcSel.right, rcSel.bottom, true );
 						m_nCaretPosX_Prev = m_nCaretPosX;
 					}else{
 						nPosX = m_nSelectColmTo;
@@ -907,7 +907,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 							Command_GOFILEEND(FALSE);
 						}else{
 							/* カーソルを選択終了位置に移動 */
-							MoveCursor( nPosX, nPosY, TRUE );
+							MoveCursor( nPosX, nPosY, true );
 							m_nCaretPosX_Prev = m_nCaretPosX;
 						}
 					}
@@ -988,7 +988,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 			// pcLayoutがNULLの場合はnPosX=0に調整
 			nPosX = 0;
 		}
-		MoveCursor( nPosX, nPosY, TRUE );
+		MoveCursor( nPosX, nPosY, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
@@ -1273,7 +1273,7 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 		}
 	}
 	
-	MoveCursor( nPosX, m_nCaretPosY, TRUE );
+	MoveCursor( nPosX, m_nCaretPosY, true );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( bSelect ){
 		// 現在のカーソル位置によって選択範囲を変更
@@ -1313,7 +1313,7 @@ void CEditView::Command_GOFILEEND( int bSelect )
 		*/
 		Command_GOLINEEND( bSelect, FALSE );				// 2001.12.21 hor Add
 	}
-	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );	// 2001.12.21 hor Add
+	MoveCursor( m_nCaretPosX, m_nCaretPosY, true );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
 	if( !(IsTextSelected() && m_bBeginBoxSelect) ) m_nCaretPosX_Prev = m_nCaretPosX;
 
@@ -1379,7 +1379,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		nColmNew = LineIndexToColmn( pcLayout, nColmNew );
 		/* カーソル移動 */
-		MoveCursor( nColmNew, nLineNew, TRUE );
+		MoveCursor( nColmNew, nLineNew, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
@@ -1452,7 +1452,7 @@ try_again:;
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		nColmNew = LineIndexToColmn( pcLayout, nColmNew );
 		// カーソル移動
-		MoveCursor( nColmNew, nLineNew, TRUE );
+		MoveCursor( nColmNew, nLineNew, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
@@ -2073,7 +2073,7 @@ void CEditView::Command_DELETE_LINE( void )
 			}
 		}
 		/* 操作前の位置へカーソルを移動 */
-		MoveCursor( nCaretPosX_OLD, nCaretPosY_OLD, TRUE );
+		MoveCursor( nCaretPosX_OLD, nCaretPosY_OLD, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
@@ -2204,7 +2204,7 @@ bool CEditView::Command_SELECTWORD( void )
 		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );
 
 		/* 単語の先頭にカーソルを移動 */
-		MoveCursor( nColmTo, nLineTo, TRUE );
+		MoveCursor( nColmTo, nLineTo, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 
 		/* 選択領域描画 */
@@ -2464,7 +2464,7 @@ void CEditView::Command_INSTEXT(
 		);
 
 		// 挿入データの最後へカーソルを移動
-		MoveCursor( nNewPos, nNewLine, TRUE );
+		MoveCursor( nNewPos, nNewLine, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( !m_bDoing_UndoRedo ){								/* アンドゥ・リドゥの実行中か */
 			pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -2488,7 +2488,7 @@ void CEditView::Command_INSTEXT(
 				&nPosX,
 				&nPosY
 			);
-			MoveCursor( nPosX, nPosY, TRUE );
+			MoveCursor( nPosX, nPosY, true );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -2612,7 +2612,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 			}
 
 			/* この行の挿入位置へカーソルを移動 */
-			MoveCursor( nCurXOld, nCurYOld + nCount, FALSE/*TRUE 2002.01.25 hor*/ );
+			MoveCursor( nCurXOld, nCurYOld + nCount, false/*true 2002.01.25 hor*/ );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 			/* カーソル行が最後の行かつ行末に改行が無く、挿入すべきデータがまだある場合 */
 			bAddLastCR = FALSE;
@@ -2702,7 +2702,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 	}
 
 	/* 挿入データの先頭位置へカーソルを移動 */
-	MoveCursor( nCurXOld, nCurYOld, TRUE );
+	MoveCursor( nCurXOld, nCurYOld, true );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
 	if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
@@ -2908,7 +2908,7 @@ end_of_for:;
 		true
 	);
 	/* 挿入データの最後へカーソルを移動 */
-	MoveCursor( nNewPos, nNewLine, TRUE );
+	MoveCursor( nNewPos, nNewLine, true );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -2995,7 +2995,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 	InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, &sWord[0], 2, &nNewLine, &nNewPos, pcOpe, true );
 
 	/* 挿入データの最後へカーソルを移動 */
-	MoveCursor( nNewPos, nNewLine, TRUE );
+	MoveCursor( nNewPos, nNewLine, true );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -4164,7 +4164,7 @@ void CEditView::Command_DUPLICATELINE( void )
 	}
 
 	/* カーソルを移動 */
-	MoveCursor( nCaretPosXOld, nCaretPosYOld, TRUE );
+	MoveCursor( nCaretPosXOld, nCaretPosYOld, true );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
 
@@ -5112,7 +5112,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 				pcOpe,
 				false
 			);
-			MoveCursor( nNewPos, nNewLine, FALSE );
+			MoveCursor( nNewPos, nNewLine, false );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -5123,7 +5123,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		//	nextline:;	// 2001.12.03 hor
 		}
 		/* 挿入データの先頭位置へカーソルを移動 */
-		MoveCursor( rcSel.left, rcSel.top, FALSE );
+		MoveCursor( rcSel.left, rcSel.top, false );
 
 		/* 挿入文字列の情報 */
 		CDocLineMgr::CreateCharCharsArr(
@@ -5148,7 +5148,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		rcSel.left = m_nCaretPosX;
 
 		/* カーソルを移動 */
-		MoveCursor( rcSel.left, rcSel.top, TRUE );
+		MoveCursor( rcSel.left, rcSel.top, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -5190,7 +5190,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			}
 
 			/* カーソルを移動 */
-			MoveCursor( 0, i, FALSE );
+			MoveCursor( 0, i, false );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -5214,7 +5214,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 				false
 			);
 			/* カーソルを移動 */
-			MoveCursor( nNewPos, nNewLine, FALSE );
+			MoveCursor( nNewPos, nNewLine, false );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -5234,7 +5234,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		m_nSelectLineTo = nSelectLineToOld;		/* 範囲選択終了行 */
 		m_nSelectColmTo = nSelectColToOld;		/* 範囲選択終了桁 */
 		// From Here 2001.12.03 hor
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
@@ -5339,7 +5339,7 @@ void CEditView::Command_UNINDENT( char cChar )
 			}
 
 			/* カーソルを移動 */
-			MoveCursor( 0, i, FALSE );
+			MoveCursor( 0, i, false );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe = new COpe;
@@ -5384,7 +5384,7 @@ void CEditView::Command_UNINDENT( char cChar )
 		m_nSelectLineTo = nSelectLineToOld;		/* 範囲選択終了行 */
 		m_nSelectColmTo = nSelectColToOld;		/* 範囲選択終了桁 */
 		// From Here 2001.12.03 hor
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
@@ -5436,7 +5436,7 @@ void CEditView::Command_ADDTAIL(
 
 	/* 挿入データの最後へカーソルを移動 */
 	// Sep. 2, 2002 すなふき アンダーラインの表示が残ってしまう問題を修正
-	MoveCursor( nNewPos, nNewLine, TRUE );
+	MoveCursor( nNewPos, nNewLine, true );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -6775,7 +6775,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 	// 選択エリアがあれば、その先頭にカーソルを移す
 	if( IsTextSelected() ){
 		if( m_bBeginBoxSelect ){
-			MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
+			MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, true );
 		} else {
 //			HandleCommand( F_LEFT, true, 0, 0, 0, 0 );
 			Command_LEFT( FALSE, FALSE );
@@ -6817,7 +6817,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			}
 			else if(nReplaceTarget==2){	//追加位置へ移動
 				// 正規表現を除外したので、「検索後の文字が改行やったら次の行の先頭へ移動」の処理を削除
-				MoveCursor( m_nSelectColmTo, m_nSelectLineTo, FALSE );
+				MoveCursor( m_nSelectColmTo, m_nSelectLineTo, false );
 				m_nSelectColmFrom=-1;
 				m_nSelectLineFrom=-1;
 				m_nSelectColmTo	 =-1;
@@ -7269,7 +7269,7 @@ void CEditView::Command_REPLACE_ALL()
 			else if( nReplaceTarget == 2 )	//追加位置セット
 			{
 				// 正規表現を除外したので、「検索後の文字が改行やったら次の行の先頭へ移動」の処理を削除
-				MoveCursor( m_nSelectColmTo, m_nSelectLineTo, FALSE );
+				MoveCursor( m_nSelectColmTo, m_nSelectLineTo, false );
 			    m_nSelectColmFrom=-1;
 			    m_nSelectLineFrom=-1;
 			    m_nSelectColmTo	 =-1;
@@ -7478,7 +7478,7 @@ void CEditView::Command_REPLACE_ALL()
 	if((!bSelectedArea) ||			// ファイル全体置換
 	   (cDlgCancel.IsCanceled())) {		// キャンセルされた
 		// 最後に置換した文字列の右へ
-		MoveCursor( colLast, linLast, TRUE );
+		MoveCursor( colLast, linLast, true );
 	}
 	else{
 		if (bBeginBoxSelect) {
@@ -7503,7 +7503,7 @@ void CEditView::Command_REPLACE_ALL()
 		if(linFrom<linTo || colFrom<colTo){
 			SetSelectArea( linFrom, colFrom, linTo, colTo );	// 2009.07.25 ryoji
 		}
-		MoveCursor( colTo, linTo, TRUE );
+		MoveCursor( colTo, linTo, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;	// 2009.07.25 ryoji
 	}
 	// To Here 2001.12.03 hor

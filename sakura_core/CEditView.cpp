@@ -1501,7 +1501,7 @@ void CEditView::OnSetFocus( void )
 		int nPosX = m_nCaretPosX;
 		int nPosY = m_nCaretPosY;
 		if( GetAdjustCursorPos( &nPosX, &nPosY ) ){
-			MoveCursor( nPosX, nPosY, FALSE );
+			MoveCursor( nPosX, nPosY, false );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 		}
 	}
@@ -2784,7 +2784,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, BOOL 
 			DisableSelectArea( TRUE );
 		}
 	}
-	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, TRUE, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
+	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, true, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( bSelect ){
 		/*	現在のカーソル位置によって選択範囲を変更．
@@ -2825,7 +2825,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, BOOL 
 	@date 2004.09.11 genta bDrawスイッチは動作と名称が一致していないので
 		再描画スイッチ→画面位置調整スイッチと名称変更
 */
-int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bScroll, int nCaretMarginRate )
+int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, int nCaretMarginRate )
 {
 
 	/* スクロール処理 */
@@ -4584,7 +4584,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 						);
 
 						// カーソルを次の物理行頭へ移動する
-						nScrollRowNum = MoveCursor( nCaretPosX, nCaretPosY, TRUE );
+						nScrollRowNum = MoveCursor( nCaretPosX, nCaretPosY, true );
 					}
 				}
 			}
@@ -5900,7 +5900,7 @@ void CEditView::CopySelectedAllLines(
 		DisableSelectArea( FALSE ); // 2011.06.03 TRUE →FALSE
 		SetSelectArea( nSelectLineFrom, nSelectColmFrom, nSelectLineTo, nSelectColmTo );
 
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, FALSE );
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, false );
 		ShowEditCaret();
 	}
 	/* 再描画 */
@@ -6079,7 +6079,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					false	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
 				);
 				/* カーソルを移動 */
-				MoveCursor( nNewPos, nNewLine, FALSE );
+				MoveCursor( nNewPos, nNewLine, false );
 				m_nCaretPosX_Prev = m_nCaretPosX;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -6090,7 +6090,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			}
 		}
 		/* 挿入データの先頭位置へカーソルを移動 */
-		MoveCursor( rcSel.left, rcSel.top, TRUE );
+		MoveCursor( rcSel.left, rcSel.top, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -6132,7 +6132,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			&m_nSelectLineFrom	/* 範囲選択開始行 */
 		);
 		SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nCaretPosY, m_nCaretPosX );	// 2009.07.25 ryoji
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -6760,7 +6760,7 @@ void CEditView::OnChangeSetting( void )
 	SetFont();
 
 	/* フォントが変わっているかもしれないので、カーソル移動 */
-	MoveCursor( m_nCaretPosX, m_nCaretPosY, TRUE );
+	MoveCursor( m_nCaretPosX, m_nCaretPosY, true );
 
 
 	/* スクロールバーの状態を更新する */
@@ -7280,7 +7280,7 @@ DWORD CEditView::DoGrep(
 		Command_ADDTAIL( szPath, lstrlen( szPath ) );
 #endif
 	}
-	MoveCursor( 0, tmp_PosY_PHY, TRUE );	//	カーソルをGrep直前の位置に戻す
+	MoveCursor( 0, tmp_PosY_PHY, true );	//	カーソルをGrep直前の位置に戻す
 
 	cDlgCancel.CloseDialog( 0 );
 
@@ -8833,7 +8833,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 	m_bDragMode = FALSE;
 
 	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
-	MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, FALSE );
+	MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, false );
 	m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
 	RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
 
@@ -8907,7 +8907,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		// DragEnter時のカーソル位置を復元
 		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
 		*pdwEffect = DROPEFFECT_NONE;
-		MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, FALSE );
+		MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, false );
 		m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
 		if( !IsDragSource() )	// ドラッグ元の場合はここでは再描画不要（DragDrop後処理のSetActivePaneで再描画される）
 			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
@@ -9008,7 +9008,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				m_nSelectColmTo = nSelectColTo_Old;
 			}
 			DeleteData( true );
-			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
+			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, true );
 		}else{
 			/* 現在の選択範囲を非選択状態に戻す */
 			pcDragSourceView->DisableSelectArea( TRUE );
@@ -9131,7 +9131,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			}
 
 			// キャレットを移動する
-			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
+			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, true );
 			m_nCaretPosX_Prev = m_nCaretPosX;
 
 			// 削除位置から移動先へのカーソル移動をアンドゥ操作に追加する	// 2008.03.26 ryoji
@@ -10206,7 +10206,7 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 												, m_nLastReconvLine, &m_nSelectColmTo, &m_nSelectLineTo);
 
 	// 単語の先頭にカーソルを移動
-	MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
+	MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, true );
 
 	//選択範囲再描画 
 	DrawSelectArea();

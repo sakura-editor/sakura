@@ -551,7 +551,7 @@ re_do:;
 		else{
 			if( IsTextSelected() ) DisableSelectArea( TRUE );
 		}
-		MoveCursor( nX, nY, TRUE );
+		MoveCursor( nX, nY, true );
 		if( m_bSelectingLock ){
 			ChangeSelectAreaByCurrentCursor( nX, nY );
 		}
@@ -605,7 +605,7 @@ re_do:;
 			if( IsTextSelected() ) DisableSelectArea( TRUE );
 		}
 
-		MoveCursor( nX, nY, TRUE );
+		MoveCursor( nX, nY, true );
 		if( m_bSelectingLock ){
 			ChangeSelectAreaByCurrentCursor( nX, nY );
 		}

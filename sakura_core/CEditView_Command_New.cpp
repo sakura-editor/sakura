@@ -371,7 +371,7 @@ void CEditView::DeleteData2(
 	}
 
 	/* 選択エリアの先頭へカーソルを移動 */
-	MoveCursor( nCaretX, nCaretY, FALSE );
+	MoveCursor( nCaretX, nCaretY, false );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 
 
@@ -732,7 +732,7 @@ void CEditView::Command_UNDO( void )
 
 
 			/* カーソルを移動 */
-			MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE );
+			MoveCursor( nCaretPosX_After, nCaretPosY_After, false );
 
 			switch( pcOpe->m_nOpe ){
 			case OPE_INSERT:
@@ -795,7 +795,7 @@ void CEditView::Command_UNDO( void )
 				break;
 			case OPE_MOVECARET:
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE/*TRUE 2002.02.16 hor */ );
+				MoveCursor( nCaretPosX_After, nCaretPosY_After, false/*true 2002.02.16 hor */ );
 				break;
 			}
 
@@ -807,10 +807,10 @@ void CEditView::Command_UNDO( void )
 			);
 			if( i == 0 ){
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, TRUE );
+				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, true );
 			}else{
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, FALSE );
+				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, false );
 			}
 		}
 		m_bDrawSWITCH = true;	//	hor
@@ -913,10 +913,10 @@ void CEditView::Command_REDO( void )
 
 			if( i == 0 ){
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, TRUE );
+				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, true );
 			}else{
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, FALSE );
+				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, false );
 			}
 			switch( pcOpe->m_nOpe ){
 			case OPE_INSERT:
@@ -975,10 +975,10 @@ void CEditView::Command_REDO( void )
 
 			if( i == nOpeBlkNum - 1	){
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_After, nCaretPosY_After, TRUE );
+				MoveCursor( nCaretPosX_After, nCaretPosY_After, true );
 			}else{
 				/* カーソルを移動 */
-				MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE );
+				MoveCursor( nCaretPosX_After, nCaretPosY_After, false );
 			}
 		}
 		m_bDrawSWITCH = true; // 2007.07.22 ryoji
@@ -1616,7 +1616,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 		/* カーソル位置調整 */
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nCPX, nCPY, &nCPX, &nCPY );
 		/* 選択エリアの先頭へカーソルを移動 */
-		MoveCursor( nCPX, nCPY, TRUE );
+		MoveCursor( nCPX, nCPY, true );
 		m_nCaretPosX_Prev = m_nCaretPosX;
 
 
@@ -1691,7 +1691,7 @@ void CEditView::RTrimPrevLine( void )
 						true
 					);
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nCaretPosX_PHY, nCaretPosY_PHY, &nCPX, &nCPY );
-					MoveCursor( nCPX, nCPY, TRUE );
+					MoveCursor( nCPX, nCPY, true );
 
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 						pcOpe = new COpe;
@@ -2363,9 +2363,9 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		m_nSelectColmTo  =nSelectColToOld;
 	}
 	if(nCaretPosYOLD==m_nSelectLineFrom || m_bBeginBoxSelect ) {
-		MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
+		MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, true );
 	}else{
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, true );
 	}
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -2480,9 +2480,9 @@ void CEditView::Command_MERGE(void)
 	m_nSelectLineTo  =nSelectLineToOld-j;
 	m_nSelectColmTo  =nSelectColToOld;
 	if(nCaretPosYOLD==m_nSelectLineFrom){
-		MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
+		MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, true );
 	}else{
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, TRUE );
+		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, true );
 	}
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */

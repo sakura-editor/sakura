@@ -268,7 +268,7 @@ bool CNormalProcess::InitializeProcess()
 				}
 				// To Here Mar. 28, 2003 MIK
 
-				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, TRUE );
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, true );
 				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
 					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
 			}
