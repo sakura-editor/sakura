@@ -40,6 +40,7 @@
 #include "io/CFileLoad.h"
 #include "charset/charcode.h"
 #include "io/CIoBridge.h"
+#include "charset/CCodeFactory.h" ////
 #include "charset/CCodeMediator.h"
 #include "util/string_ex2.h"
 #include "charset/CESI.h"
@@ -66,6 +67,7 @@ CFileLoad::CFileLoad( SEncodingConfig& encode )
 	m_nFileSize		= 0;
 	m_nFileDataLen	= 0;
 	m_CharCode		= CODE_DEFAULT;
+	m_pCodeBase		= NULL;////
 	m_bBomExist		= false;	// Jun. 08, 2003 Moca
 	m_nFlag 		= 0;
 	m_nReadLength	= 0;
@@ -87,6 +89,9 @@ CFileLoad::~CFileLoad( void )
 	}
 	if( NULL != m_pReadBuf ){
 		free( m_pReadBuf );
+	}
+	if( NULL != m_pCodeBase ){
+		delete m_pCodeBase;
 	}
 }
 
@@ -157,6 +162,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 		CharCode = CODE_DEFAULT;
 	}
 	m_CharCode = CharCode;
+	m_pCodeBase=CCodeFactory::CreateCodeBase(m_CharCode, m_nFlag);
 	m_nFlag = nFlag;
 
 	m_nFileDataLen = m_nFileSize;
@@ -164,7 +170,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	if( 0 < m_nReadDataLen ){
 		CMemory headData(m_pReadBuf, t_min(m_nReadDataLen, 10));
 		CNativeW headUni;
-		CIoBridge::FileToImpl(headData, &headUni, m_CharCode, m_nFlag);
+		CIoBridge::FileToImpl(headData, &headUni, m_pCodeBase, m_nFlag);
 		if( 1 <= headUni.GetStringLength() && headUni.GetStringPtr()[0] == 0xfeff ){
 			bBom = true;
 		}
@@ -198,6 +204,10 @@ void CFileLoad::FileClose( void )
 	if( NULL != m_hFile ){
 		::CloseHandle( m_hFile );
 		m_hFile = NULL;
+	}
+	if( NULL != m_pCodeBase ){
+		delete m_pCodeBase;
+		m_pCodeBase = NULL;
 	}
 	m_nFileSize		=  0;
 	m_nFileDataLen	=  0;
@@ -240,7 +250,7 @@ EConvertResult CFileLoad::ReadLine(
 	while(1){
 		const char* pLine = GetNextLineCharCode(
 			m_pReadBuf,
-			m_nReadDataLen,    //[in] 改行を含む長さ
+			m_nReadDataLen,    //[in] バッファの有効データサイズ
 			&nBufLineLen,      //[out]改行を含まない長さ
 			&m_nReadBufOffSet, //[i/o]オフセット
 			pcEol,
@@ -262,7 +272,7 @@ EConvertResult CFileLoad::ReadLine(
 	m_nReadLength += ( nBufLineLen = cLineBuffer.GetRawLength() );
 
 	// 文字コード変換 cLineBuffer -> pUnicodeBuffer
-	EConvertResult eConvertResult = CIoBridge::FileToImpl(cLineBuffer,pUnicodeBuffer,m_CharCode,m_nFlag);
+	EConvertResult eConvertResult = CIoBridge::FileToImpl(cLineBuffer,pUnicodeBuffer,m_pCodeBase,m_nFlag);
 	if(eConvertResult==RESULT_LOSESOME){
 		eRet = RESULT_LOSESOME;
 	}
