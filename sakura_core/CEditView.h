@@ -288,7 +288,7 @@ public:
 
 public: /* テスト用にアクセス属性を変更 */
 	CDropTarget*	m_pcDropTarget;
-	BOOL			m_bDrawSWITCH;
+	bool			m_bDrawSWITCH;
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
 	CLIPFORMAT		m_cfDragData;	/* ドラッグデータのクリップ形式 */	// 2008.06.20 ryoji
 	BOOL			m_bDragBoxData;	/* ドラッグデータは矩形か */

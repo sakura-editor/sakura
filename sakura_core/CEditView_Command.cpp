@@ -1058,13 +1058,13 @@ void CEditView::Command_1PageUp( int bSelect )
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページアップ
 	if(m_nViewTopLine>=m_nViewRowNum-1){
-		m_bDrawSWITCH = FALSE;
+		m_bDrawSWITCH = false;
 		int nViewTopLine=m_nCaretPosY-m_nViewTopLine;
 		Cursor_UPDOWN( -m_nViewRowNum+1, bSelect );
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	RedrawAllではなくScrollAtを使うように
 		SyncScrollV( ScrollAtV( m_nCaretPosY-nViewTopLine ));
-		m_bDrawSWITCH = TRUE;
+		m_bDrawSWITCH = true;
 		RedrawAll();
 		
 	}else{
@@ -1089,13 +1089,13 @@ void CEditView::Command_1PageDown( int bSelect )
 // 2001.12.03 hor
 //		メモ帳ライクに、画面に対するカーソル位置はそのままで１ページダウン
 	if(m_nViewTopLine+m_nViewRowNum <= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){ //- m_nViewRowNum){
-		m_bDrawSWITCH = FALSE;
+		m_bDrawSWITCH = false;
 		int nViewTopLine=m_nCaretPosY-m_nViewTopLine;
 		Cursor_UPDOWN( m_nViewRowNum-1, bSelect );
 		//	Sep. 11, 2004 genta 同期スクロール処理のため
 		//	RedrawAllではなくScrollAtを使うように
 		SyncScrollV( ScrollAtV( m_nCaretPosY-nViewTopLine ));
-		m_bDrawSWITCH = TRUE;
+		m_bDrawSWITCH = true;
 		RedrawAll();
 	}else{
 		Cursor_UPDOWN( m_nViewRowNum , bSelect );
@@ -2510,7 +2510,7 @@ end_of_func:
 //  なお、この関数は Command_PASTEBOX(void) と、
 // 2769 : m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 // から、
-// 3057 : m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
+// 3057 : m_bDrawSWITCH = true;	// 2002.01.25 hor
 // 間まで、一緒です。
 //  ですが、コメントを削ったり、#if 0 のところを削ったりしていますので、Command_PASTEBOX(void) は
 // 残すようにしました(下にこの関数を使った使ったバージョンをコメントで書いておきました)。
@@ -2551,7 +2551,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 
 	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 
-	m_bDrawSWITCH = FALSE;	// 2002.01.25 hor
+	m_bDrawSWITCH = false;	// 2002.01.25 hor
 
 	// とりあえず選択範囲を削除
 	// 2004.06.30 Moca IsTextSelected()がないと未選択時、一文字消えてしまう
@@ -2718,7 +2718,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 		m_pcOpeBlk->AppendOpe( pcOpe );
 	}
 
-	m_bDrawSWITCH = TRUE;	// 2002.01.25 hor
+	m_bDrawSWITCH = true;	// 2002.01.25 hor
 	return;
 }
 
@@ -5024,7 +5024,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		delete [] pszWork;
 		return;
 	}
-	m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
+	m_bDrawSWITCH = false;	// 2002.01.25 hor
 	/* 矩形範囲選択中か */
 	if( m_bBeginBoxSelect ){
 		// From Here 2001.12.03 hor
@@ -5248,7 +5248,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		// To Here 2001.12.03 hor
 	}
 	/* 再描画 */
-	m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
+	m_bDrawSWITCH = true;	// 2002.01.25 hor
 	RedrawAll();		// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 	return;
 }
@@ -6970,7 +6970,7 @@ void CEditView::Command_REPLACE_ALL()
 	}
 
 	/* 表示処理ON/OFF */
-	BOOL bDisplayUpdate = FALSE;
+	bool bDisplayUpdate = false;
 
 	m_bDrawSWITCH = bDisplayUpdate;
 	CDlgCancel	cDlgCancel;
@@ -7510,7 +7510,7 @@ void CEditView::Command_REPLACE_ALL()
 
 	m_pcEditDoc->m_cDlgReplace.m_bCanceled = (cDlgCancel.IsCanceled() != FALSE);
 	m_pcEditDoc->m_cDlgReplace.m_nReplaceCnt=nReplaceNum;
-	m_bDrawSWITCH = TRUE;
+	m_bDrawSWITCH = true;
 	ActivateFrameWindow( ::GetParent( m_hwndParent ) );
 }
 

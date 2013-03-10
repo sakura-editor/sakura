@@ -463,7 +463,7 @@ void CEditView::DeleteData(
 		if( m_bBeginBoxSelect ){
 			m_pcEditDoc->SetModified(true,bRedraw);	//	2002/06/04 YAZAKI 矩形選択を削除したときに変更マークがつかない。
 
-			m_bDrawSWITCH=FALSE;	// 2002.01.25 hor
+			m_bDrawSWITCH = false;	// 2002.01.25 hor
 			nSelectColmFrom_Old = m_nSelectColmFrom;
 			nSelectLineFrom_Old = m_nSelectLineFrom;
 
@@ -542,7 +542,7 @@ void CEditView::DeleteData(
 					}
 				}
 			}
-			m_bDrawSWITCH=TRUE;	// 2002.01.25 hor
+			m_bDrawSWITCH = true;	// 2002.01.25 hor
 
 			/* 行番号表示に必要な幅を設定 */
 			if ( m_pcEditDoc->DetectWidthOfLineNumberAreaAllPane( TRUE ) ){
@@ -713,7 +713,7 @@ void CEditView::Command_UNDO( void )
 
 	/* 現在のUndo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = m_pcEditDoc->m_cOpeBuf.DoUndo( &bIsModified ) ) ){
-		m_bDrawSWITCH = FALSE;	//	hor
+		m_bDrawSWITCH = false;	//	hor
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		for( i = nOpeBlkNum - 1; i >= 0; i-- ){
 			pcOpe = pcOpeBlk->GetOpe( i );
@@ -813,7 +813,7 @@ void CEditView::Command_UNDO( void )
 				MoveCursor( nCaretPosX_Before, nCaretPosY_Before, FALSE );
 			}
 		}
-		m_bDrawSWITCH = TRUE;	//	hor
+		m_bDrawSWITCH = true;	//	hor
 		AdjustScrollBars(); // 2007.07.22 ryoji
 
 		/* Undo後の変更フラグ */
@@ -894,7 +894,7 @@ void CEditView::Command_REDO( void )
 
 	/* 現在のRedo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = m_pcEditDoc->m_cOpeBuf.DoRedo( &bIsModified ) ) ){
-		m_bDrawSWITCH = FALSE;	// 2007.07.22 ryoji
+		m_bDrawSWITCH = false;	// 2007.07.22 ryoji
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		for( i = 0; i < nOpeBlkNum; ++i ){
 			pcOpe = pcOpeBlk->GetOpe( i );
@@ -981,7 +981,7 @@ void CEditView::Command_REDO( void )
 				MoveCursor( nCaretPosX_After, nCaretPosY_After, FALSE );
 			}
 		}
-		m_bDrawSWITCH = TRUE; // 2007.07.22 ryoji
+		m_bDrawSWITCH = true; // 2007.07.22 ryoji
 		AdjustScrollBars(); // 2007.07.22 ryoji
 
 		/* Redo後の変更フラグ */

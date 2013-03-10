@@ -162,7 +162,7 @@ CEditView::CEditView()
 , m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
 {
 
-	m_bDrawSWITCH = TRUE;
+	m_bDrawSWITCH = true;
 	m_pcDropTarget = new CDropTarget( this );
 	m_bDragMode = FALSE;					/* 選択テキストのドラッグ中か */
 	m_bCurSrchKeyMark = FALSE;				/* 検索文字列 */
@@ -3725,7 +3725,7 @@ normal_action:;
 
 			// 2002.10.07 YAZAKI 折り返し行をインデントしているときに選択がおかしいバグの対策
 			// １行が画面幅よりも長いと左右にスクロールしてちらつきが激しくなるので後で全体を再描画	// 2008.05.20 ryoji
-			BOOL bDrawSwitchOld = m_bDrawSWITCH;
+			bool bDrawSwitchOld = m_bDrawSWITCH;
 			BOOL bDrawAfter = FALSE;
 			if( bDrawSwitchOld ){
 				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
@@ -3733,14 +3733,14 @@ normal_action:;
 					int nColumn = LineIndexToColmn( pcLayout, pcLayout->GetLengthWithoutEOL() );
 					bDrawAfter = (nColumn + SCROLLMARGIN_RIGHT >= m_nViewColNum);
 					if( bDrawAfter ){
-						m_bDrawSWITCH = FALSE;
+						m_bDrawSWITCH = false;
 					}
 				}
 			}
 			Command_GOLINEEND( TRUE, FALSE );
 			Command_RIGHT( TRUE, FALSE, FALSE );
 			if( bDrawSwitchOld && bDrawAfter ){
-				m_bDrawSWITCH = TRUE;
+				m_bDrawSWITCH = true;
 				Redraw();
 			}
 
@@ -5254,7 +5254,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 					}
 					nPosX = 0;
 					++nPosY;
-					nScrollLines = MoveCursor( nPosX, nPosY, m_bDrawSWITCH /* TRUE */ ); // YAZAKI.
+					nScrollLines = MoveCursor( nPosX, nPosY, m_bDrawSWITCH /* true */ ); // YAZAKI.
 					if( bSelect ){
 						/* 現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nPosX, nPosY );
@@ -5324,7 +5324,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			}
 		}
 	}
-	nScrollLines = MoveCursor( nPosX, m_nCaretPosY + nMoveLines, m_bDrawSWITCH /* TRUE */ ); // YAZAKI.
+	nScrollLines = MoveCursor( nPosX, m_nCaretPosY + nMoveLines, m_bDrawSWITCH /* true */ ); // YAZAKI.
 	if( bSelect ){
 //		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && !IsTextSelected() && -1 != m_nOldUnderLineY ){
 //			HDC		hdc;
@@ -7245,7 +7245,7 @@ DWORD CEditView::DoGrep(
 	/* 表示処理ON/OFF */
 	// 2003.06.23 Moca 共通設定で変更できるように
 	// 2008.06.08 ryoji 全ビューの表示ON/OFFを同期させる
-//	m_bDrawSWITCH = FALSE;
+//	m_bDrawSWITCH = false;
 	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
 		m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 	m_pcEditDoc->SetDrawSwitchOfAllViews( 0 != m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );
