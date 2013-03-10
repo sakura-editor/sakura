@@ -1253,9 +1253,9 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 
 	//	座標の復元
 	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
-	SetDrawSwitchOfAllViews( FALSE );
+	SetDrawSwitchOfAllViews( false );
 	RestorePhysPosOfAllView( posSave );
-	SetDrawSwitchOfAllViews( TRUE );
+	SetDrawSwitchOfAllViews( true );
 
 	for( int i = 0; i < GetAllViewCount(); i++ ){
 		if( m_cEditViewArr[i].m_hWnd ){

@@ -3789,7 +3789,7 @@ int CEditDoc::GetActivePane( void )
 
 	@date 2008.06.08 ryoji êVãKçÏê¨
 */
-void CEditDoc::SetDrawSwitchOfAllViews( BOOL bDraw )
+void CEditDoc::SetDrawSwitchOfAllViews( bool bDraw )
 {
 	int i;
 	CEditView* pView;

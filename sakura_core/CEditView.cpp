@@ -7248,7 +7248,7 @@ DWORD CEditView::DoGrep(
 //	m_bDrawSWITCH = FALSE;
 	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
 		m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
-	m_pcEditDoc->SetDrawSwitchOfAllViews( m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );
+	m_pcEditDoc->SetDrawSwitchOfAllViews( 0 != m_pShareData->m_Common.m_sSearch.m_bGrepRealTimeView );
 
 
 	int nGrepTreeResult = DoGrepTree(
@@ -7314,7 +7314,7 @@ DWORD CEditView::DoGrep(
 	}
 
 	/* 表示処理ON/OFF */
-	m_pcEditDoc->SetDrawSwitchOfAllViews( TRUE );
+	m_pcEditDoc->SetDrawSwitchOfAllViews( true );
 
 	/* 再描画 */
 	if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
@@ -7533,7 +7533,7 @@ int CEditView::DoGrepTree(
 
 			/* 表示設定をチェック */
 			m_pcEditDoc->SetDrawSwitchOfAllViews(
-				::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
+				0 != ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
 			);
 
 			if( ! (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )	//フォルダでない場合
@@ -7694,7 +7694,7 @@ int CEditView::DoGrepTree(
 			}
 			/* 表示設定をチェック */
 			m_pcEditDoc->SetDrawSwitchOfAllViews(
-				::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
+				0 != ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
 			);
 
 			if( (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)	//フォルダの場合
@@ -7980,7 +7980,7 @@ int CEditView::DoGrepFile(
 			}
 			//	2003.06.23 Moca 表示設定をチェック
 			m_pcEditDoc->SetDrawSwitchOfAllViews(
-				::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
+				0 != ::IsDlgButtonChecked( pcDlgCancel->m_hWnd, IDC_CHECK_REALTIMEVIEW )
 			);
 			// 2002/08/30 Moca 進行状態を表示する(5MB以上)
 			if( 5000000 < cfl.GetFileSize() ){

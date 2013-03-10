@@ -90,7 +90,7 @@ public:
 	BOOL HandleCommand( int );
 	void SetActivePane( int );	/* アクティブなペインを設定 */
 	int GetActivePane( void );	/* アクティブなペインを取得 */
-	void SetDrawSwitchOfAllViews( BOOL bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
+	void SetDrawSwitchOfAllViews( bool bDraw );					/* すべてのペインの描画スイッチを設定する */	// 2008.06.08 ryoji
 	void RedrawAllViews( CEditView* pViewExclude );				/* すべてのペインをRedrawする */
 	void Views_Redraw();				/* Redrawする */
 	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
@@ -199,14 +199,6 @@ public:
 	*/
 	bool IsModified( void ) const { return m_bIsModified; }
 
-	//	Jan. 28, 2002 genta Modified Flagの設定 (暫定BOOL Version)
-	void SetModified( bool flag, BOOL redraw){
-		SetModified( flag, redraw != FALSE );
-	}
-	void SetModified( BOOL flag, bool redraw){
-		SetModified( flag != FALSE, redraw );
-	}
-	
 	/*! @brief このウィンドウで新しいファイルを開けるか
 
 		新しいウィンドウを開かずに現在のウィンドウを再利用できるかどうかのテストを行う．
