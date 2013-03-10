@@ -60,7 +60,7 @@ void CEditView::InsertData_CEditView(
 	int*		pnNewLine,			/* 挿入された部分の次の位置の行 */
 	int*		pnNewPos,			/* 挿入された部分の次の位置のデータ位置 */
 	COpe*		pcOpe,				/* 編集操作要素 COpe */
-	BOOL		bRedraw
+	bool		bRedraw
 )
 {
 #ifdef _DEBUG
@@ -390,7 +390,7 @@ end_of_func:;
 	@date 2002/03/24 YAZAKI bUndo削除
 */
 void CEditView::DeleteData(
-	BOOL	bRedraw
+	bool	bRedraw
 //	BOOL	bUndo	/* Undo操作かどうか */
 )
 {

@@ -1630,7 +1630,7 @@ void CEditView::Command_CUT( void )
 	}
 
 	/* カーソル位置または選択エリアを削除 */
-	DeleteData( TRUE );
+	DeleteData( true );
 	return;
 }
 
@@ -1660,7 +1660,7 @@ void CEditView::Command_DELETE( void )
 			}
 		}
 	}
-	DeleteData( TRUE );
+	DeleteData( true );
 	return;
 }
 
@@ -1682,7 +1682,7 @@ void CEditView::Command_DELETE_BACK( void )
 	//	May 29, 2004 genta 実際に削除された文字がないときはフラグをたてないように
 	//m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 	if( IsTextSelected() ){				/* テキストが選択されているか */
-		DeleteData( TRUE );
+		DeleteData( true );
 	}
 	else{
 		nPosX = m_nCaretPosX;
@@ -1712,7 +1712,7 @@ void CEditView::Command_DELETE_BACK( void )
 							/* 操作の追加 */
 							m_pcOpeBlk->AppendOpe( pcOpe );
 						}
-						DeleteData( TRUE );
+						DeleteData( true );
 					}
 				}
 			}
@@ -1759,7 +1759,7 @@ void CEditView::Command_WordDeleteToEnd( void )
 		m_pcOpeBlk->AppendOpe( pcOpe );
 	}
 	/* 削除 */
-	DeleteData( TRUE );
+	DeleteData( true );
 }
 
 
@@ -1802,7 +1802,7 @@ void CEditView::Command_WordDeleteToStart( void )
 	}
 
 	// 削除
-	DeleteData( TRUE );
+	DeleteData( true );
 }
 
 
@@ -1835,13 +1835,13 @@ void CEditView::Command_WordDelete( void )
 {
 	if( IsTextSelected() ){
 		/* 削除 */
-		DeleteData( TRUE );
+		DeleteData( true );
 		return;
 	}
 	//現在位置の単語選択
 	Command_SELECTWORD();
 	/* 削除 */
-	DeleteData( TRUE );
+	DeleteData( true );
 	return;
 }
 
@@ -1930,7 +1930,7 @@ void CEditView::Command_LineDeleteToStart( void )
 	int			nY;
 	CLayout*	pCLayout;
 	if( IsTextSelected() ){	/* テキストが選択されているか */
-		DeleteData( TRUE );
+		DeleteData( true );
 		return;
 	}
 	pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
@@ -1950,7 +1950,7 @@ void CEditView::Command_LineDeleteToStart( void )
 	SetSelectArea( nY, nX, m_nCaretPosY, m_nCaretPosX );
 
 	/* 選択領域削除 */
-	DeleteData( TRUE );
+	DeleteData( true );
 }
 
 
@@ -1963,7 +1963,7 @@ void CEditView::Command_LineDeleteToEnd( void )
 	int			nY;
 	CLayout*	pCLayout;
 	if( IsTextSelected() ){	/* テキストが選択されているか */
-		DeleteData( TRUE );
+		DeleteData( true );
 		return;
 	}
 	pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
@@ -1989,7 +1989,7 @@ void CEditView::Command_LineDeleteToEnd( void )
 	SetSelectArea( m_nCaretPosY, m_nCaretPosX, nY, nX );
 
 	/* 選択領域削除 */
-	DeleteData( TRUE );
+	DeleteData( true );
 }
 
 
@@ -2460,7 +2460,7 @@ void CEditView::Command_INSTEXT(
 			&nNewLine,
 			&nNewPos,
 			pcOpe,
-			TRUE
+			true
 		);
 
 		// 挿入データの最後へカーソルを移動
@@ -2556,7 +2556,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 	// とりあえず選択範囲を削除
 	// 2004.06.30 Moca IsTextSelected()がないと未選択時、一文字消えてしまう
 	if( IsTextSelected() ){
-		DeleteData( FALSE/*TRUE 2002.01.25 hor*/ );
+		DeleteData( false/*true 2002.01.25 hor*/ );
 	}
 
 	nCurXOld = m_nCaretPosX;
@@ -2595,7 +2595,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
-					FALSE
+					false
 				);
 			}
 
@@ -2659,7 +2659,7 @@ void CEditView::Command_PASTEBOX( const char *szPaste, int nPasteSize )
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
-					FALSE
+					false
 				);
 
 				if( !m_bDoing_UndoRedo )	/* アンドゥ・リドゥの実行中か */
@@ -2790,7 +2790,7 @@ void CEditView::Command_CHAR( char cChar )
 
 		/* テキストが選択されているか */
 		if( IsTextSelected() ){
-			DeleteData( TRUE );
+			DeleteData( true );
 		}
 		if( m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent ){	/* オートインデント */
 			const CLayout* pCLayout;
@@ -2881,7 +2881,7 @@ end_of_for:;
 				Command_INDENT( cChar );
 				return;
 			}else{
-				DeleteData( TRUE );
+				DeleteData( true );
 			}
 		}
 		else{
@@ -2905,7 +2905,7 @@ end_of_for:;
 		&nNewLine,
 		&nNewPos,
 		pcOpe,
-		TRUE
+		true
 	);
 	/* 挿入データの最後へカーソルを移動 */
 	MoveCursor( nNewPos, nNewLine, TRUE );
@@ -2978,7 +2978,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 			Command_INDENT( &sWord[0], 2 );	//	Oct. 6 ,2002 genta 
 			return;
 		}else{
-			DeleteData( TRUE );
+			DeleteData( true );
 		}
 	}
 	else{
@@ -2992,7 +2992,7 @@ void CEditView::Command_IME_CHAR( WORD wChar )
 		pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
 	}
 	//	Oct. 6 ,2002 genta 
-	InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, &sWord[0], 2, &nNewLine, &nNewPos, pcOpe, TRUE );
+	InsertData_CEditView( m_nCaretPosX, m_nCaretPosY, &sWord[0], 2, &nNewLine, &nNewPos, pcOpe, true );
 
 	/* 挿入データの最後へカーソルを移動 */
 	MoveCursor( nNewPos, nNewLine, TRUE );
@@ -4147,7 +4147,7 @@ void CEditView::Command_DUPLICATELINE( void )
 		&nNewLine,
 		&nNewPos,
 		pcOpe,
-		TRUE
+		true
 	);
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
@@ -5034,7 +5034,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			nSelectColFromOld	= m_nSelectColmFrom;
 			nSelectLineToOld	= m_nSelectLineTo;
 			nSelectColToOld		= m_nSelectColmTo;
-			DeleteData( FALSE );
+			DeleteData( false );
 			m_nSelectLineFrom	= nSelectLineFromOld;
 			m_nSelectColmFrom	= nSelectColFromOld;
 			m_nSelectLineTo		= nSelectLineToOld;
@@ -5110,7 +5110,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 				&nNewLine,
 				&nNewPos,
 				pcOpe,
-				FALSE
+				false
 			);
 			MoveCursor( nNewPos, nNewLine, FALSE );
 			m_nCaretPosX_Prev = m_nCaretPosX;
@@ -5211,7 +5211,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 				&nNewLine,
 				&nNewPos,
 				pcOpe,
-				FALSE
+				false
 			);
 			/* カーソルを移動 */
 			MoveCursor( nNewPos, nNewLine, FALSE );
@@ -5431,7 +5431,7 @@ void CEditView::Command_ADDTAIL(
 		&nNewLine,
 		&nNewPos,
 		pcOpe,
-		TRUE
+		true
 	);
 
 	/* 挿入データの最後へカーソルを移動 */
@@ -9139,7 +9139,7 @@ void CEditView::DelCharForOverwrite( void )
 		if( bEol ){
 			Command_DELETE();	//行数減では再描画が必要＆行末以後の削除を処理統一
 		}else{
-			DeleteData( FALSE );
+			DeleteData( false );
 		}
 	}
 }

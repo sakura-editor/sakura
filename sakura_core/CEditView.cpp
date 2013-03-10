@@ -3445,7 +3445,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							}
 
 							// 選択範囲を削除
-							DeleteData( TRUE );
+							DeleteData( true );
 
 							// アンドゥバッファの処理
 							if( NULL != m_pcOpeBlk ){
@@ -6076,7 +6076,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					&nNewLine,
 					&nNewPos,
 					pcOpe,
-					FALSE	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
+					false	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
 				);
 				/* カーソルを移動 */
 				MoveCursor( nNewPos, nNewLine, FALSE );
@@ -9007,7 +9007,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				m_nSelectLineTo = nSelectLineTo_Old;
 				m_nSelectColmTo = nSelectColTo_Old;
 			}
-			DeleteData( TRUE );
+			DeleteData( true );
 			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, TRUE );
 		}else{
 			/* 現在の選択範囲を非選択状態に戻す */
@@ -9097,7 +9097,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			m_nSelectColmTo = nSelectColTo_Old;
 
 			/* 選択エリアを削除 */
-			DeleteData( TRUE );
+			DeleteData( true );
 
 			// 削除前の選択範囲を復元する	// 2008.03.26 ryoji
 			if( !bBoxData ){
@@ -9806,7 +9806,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	//	2007.05.20 maru
 	if((FALSE == bBeforeTextSelected) && bSendStdin && bGetStdout && bToEditWindow){
 		SetSelectArea( 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), 0 );
-		DeleteData( TRUE );
+		DeleteData( true );
 	}
 
 	// hStdOutWrite は CreateProcess() で継承したので親プロセスでは用済み
