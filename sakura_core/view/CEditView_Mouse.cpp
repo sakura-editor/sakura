@@ -2041,7 +2041,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		}
 
 		// テキスト挿入
-		GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)cmemBuf.GetStringPtr(), TRUE, 0, 0 );
+		GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)cmemBuf.GetStringPtr(), TRUE, 0, 0 );
 
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		CLayoutPoint ptSelectFrom;

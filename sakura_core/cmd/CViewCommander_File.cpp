@@ -366,10 +366,10 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		switch( nRet ){
 		case IDYES:
 			if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				//nBool = HandleCommand( F_FILESAVE, TRUE, 0, 0, 0, 0 );
+				//nBool = HandleCommand( F_FILESAVE, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVE();
 			}else{
-				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, TRUE, 0, 0, 0, 0 );
+				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVEAS_DIALOG();
 			}
 			if( !nBool ){

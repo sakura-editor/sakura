@@ -1590,7 +1590,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		}
 		if(wID==IDC_CHECK_bMarkUpBlankLineEnable&&m_nListType==OUTLINE_BOOKMARK){
 			CEditView* pcEditView=(CEditView*)m_lParam;
-			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_VIEW, TRUE, TRUE, 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_VIEW, true, TRUE, 0, 0, 0 );
 			m_nCurLine=pcEditView->GetCaret().GetCaretLayoutPos().GetY2() + CLayoutInt(1);
 			SetData();
 		}else
@@ -2030,13 +2030,13 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	case F_OUTLINE_TOGGLE: // 20060201 aroka フォーカスがあるときはリロード
 	case F_BOOKMARK_VIEW:
 		pcEditView=(CEditView*)m_lParam;
-		pcEditView->GetCommander().HandleCommand( nFuncCode, TRUE, SHOW_RELOAD, 0, 0, 0 ); // 引数の変更 20060201 aroka
+		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 ); // 引数の変更 20060201 aroka
 
 		break;
 	case F_BOOKMARK_SET:
 		OnJump( false );
 		pcEditView=(CEditView*)m_lParam;
-		pcEditView->GetCommander().HandleCommand( nFuncCode, TRUE, 0, 0, 0, 0 );
+		pcEditView->GetCommander().HandleCommand( nFuncCode, true, 0, 0, 0, 0 );
 
 		break;
 	case F_COPY:
@@ -2494,7 +2494,7 @@ INT_PTR CDlgFuncList::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 			}else if( m_nCapturingBtn == 2 ){	// 更新
 				EFunctionCode nFuncCode = (m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
 				CEditView* pcEditView = (CEditView*)m_lParam;
-				pcEditView->GetCommander().HandleCommand( nFuncCode, TRUE, SHOW_RELOAD, 0, 0, 0 );
+				pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 			}
 		}
 		m_nCapturingBtn = -1;
@@ -2678,7 +2678,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	if( nId == 450 ){	// 更新
 		EFunctionCode nFuncCode = (m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
 		CEditView* pcEditView = (CEditView*)m_lParam;
-		pcEditView->GetCommander().HandleCommand( nFuncCode, TRUE, SHOW_RELOAD, 0, 0, 0 );
+		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
 	else if( nId == 451 ){	// コピー
 		// Windowsクリップボードにコピー 

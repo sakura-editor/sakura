@@ -474,7 +474,7 @@ LRESULT CEditView::DispatchEvent(
 		if( WCODE::IsControlCode((wchar_t)wParam) ){
 			ErrorBeep();
 		}else{
-			GetCommander().HandleCommand( F_WCHAR, TRUE, WCHAR(wParam), 0, 0, 0 );
+			GetCommander().HandleCommand( F_WCHAR, true, WCHAR(wParam), 0, 0, 0 );
 		}
 #else
 		// SJIS固有
@@ -485,12 +485,12 @@ LRESULT CEditView::DispatchEvent(
 				if( ACODE::IsControlCode((char)wParam) ){
 					ErrorBeep();
 				}else{
-					GetCommander().HandleCommand( F_WCHAR, TRUE, tchar_to_wchar((ACHAR)wParam), 0, 0, 0 );
+					GetCommander().HandleCommand( F_WCHAR, true, tchar_to_wchar((ACHAR)wParam), 0, 0, 0 );
 				}
 			}else{
 				if( preChar ){
 					WORD wordData = MAKEWORD((BYTE)wParam, preChar);
-					GetCommander().HandleCommand( F_IME_CHAR, TRUE, wordData, 0, 0, 0 );
+					GetCommander().HandleCommand( F_IME_CHAR, true, wordData, 0, 0, 0 );
 					preChar = 0;
 				}else{
 					preChar = (BYTE)wParam;
@@ -548,7 +548,7 @@ LRESULT CEditView::DispatchEvent(
 				m_nMousePouse = -1;
 				::SetCursor( NULL );
 			}
-			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)to_wchar(lptstr), TRUE, 0, 0 );
+			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)to_wchar(lptstr), TRUE, 0, 0 );
 
 			ImmReleaseContext( hwnd, hIMC );
 
@@ -567,16 +567,16 @@ LRESULT CEditView::DispatchEvent(
 
 	case WM_IME_CHAR:
 		if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){ /* 上書きモードか？ */
-			GetCommander().HandleCommand( F_IME_CHAR, TRUE, wParam, 0, 0, 0 );
+			GetCommander().HandleCommand( F_IME_CHAR, true, wParam, 0, 0, 0 );
 		}
 		return 0L;
 
 	// From Here 2008.03.24 Moca ATOK等の要求にこたえる
 	case WM_PASTE:
-		return GetCommander().HandleCommand( F_PASTE, TRUE, 0, 0, 0, 0 );
+		return GetCommander().HandleCommand( F_PASTE, true, 0, 0, 0, 0 );
 
 	case WM_COPY:
-		return GetCommander().HandleCommand( F_COPY, TRUE, 0, 0, 0, 0 );
+		return GetCommander().HandleCommand( F_COPY, true, 0, 0, 0, 0 );
 	// To Here 2008.03.24 Moca
 
 	case WM_KEYUP:
@@ -857,10 +857,10 @@ LRESULT CEditView::DispatchEvent(
 		// wParam RedoUndoフラグは無視する
 		if( lParam ){
 #ifdef _UNICODE
-			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, lParam, TRUE, 0, 0 );
+			GetCommander().HandleCommand( F_INSTEXT_W, true, lParam, TRUE, 0, 0 );
 #else
 			std::wstring text = to_wchar((LPCTSTR)lParam);
-			GetCommander().HandleCommand( F_INSTEXT_W, TRUE, (LPARAM)text.c_str(), TRUE, 0, 0 );
+			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)text.c_str(), TRUE, 0, 0 );
 #endif
 		}
 		return 0L; // not use.

@@ -186,7 +186,7 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 	::DestroyMenu( hMenu );
 	if( 0 != nId ){
 		/* コマンドコードによる処理振り分け */
-//		HandleCommand( nFuncID, TRUE, 0, 0, 0, 0 );
+//		HandleCommand( nFuncID, true, 0, 0, 0, 0 );
 		::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nId, 0 ), (LPARAM)NULL );
 	}
 	return;

@@ -1229,10 +1229,10 @@ LRESULT CEditWnd::DispatchEvent(
 		return OnPaint( hwnd, uMsg, wParam, lParam );
 
 	case WM_PASTE:
-		return GetActiveView().GetCommander().HandleCommand( F_PASTE, TRUE, 0, 0, 0, 0 );
+		return GetActiveView().GetCommander().HandleCommand( F_PASTE, true, 0, 0, 0, 0 );
 
 	case WM_COPY:
-		return GetActiveView().GetCommander().HandleCommand( F_COPY, TRUE, 0, 0, 0, 0 );
+		return GetActiveView().GetCommander().HandleCommand( F_COPY, true, 0, 0, 0, 0 );
 
 	case WM_HELP:
 		lphi = (LPHELPINFO) lParam;
@@ -1723,7 +1723,7 @@ LRESULT CEditWnd::DispatchEvent(
 			if( m_cDlgFuncList.GetHwnd() && !bAnalyzed ){	// アウトラインを開いていれば再解析
 				// SHOW_NORMAL: 解析方法が変化していれば再解析される。そうでなければ描画更新（変更されたカラーの適用）のみ。
 				EFunctionCode nFuncCode = (m_cDlgFuncList.m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
-				GetActiveView().GetCommander().HandleCommand( nFuncCode, TRUE, SHOW_NORMAL, 0, 0, 0 );
+				GetActiveView().GetCommander().HandleCommand( nFuncCode, true, SHOW_NORMAL, 0, 0, 0 );
 			}
 			if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == GetHwnd() )
 				::SetFocus( GetActiveView().GetHwnd() );	// フォーカスを戻す
@@ -1822,8 +1822,8 @@ LRESULT CEditWnd::DispatchEvent(
 			EDIT_CHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
 			// 2010.05.11 Moca wcslenをwcsnlenに変更。m_sWorkBufferの大きさを超えないように
 			int addSize = wcsnlen( pWork, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() );
-			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, TRUE, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
-			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
+			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, true, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
+			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
 		}
 		return 0L;
 
@@ -1832,8 +1832,8 @@ LRESULT CEditWnd::DispatchEvent(
 		{
 			EDIT_CHAR* pWork = m_pShareData->m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
 			size_t addSize = t_min((size_t)wParam, m_pShareData->m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() );
-			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, TRUE, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
-			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, TRUE, 0, 0, 0, 0 );
+			GetActiveView().GetCommander().HandleCommand( F_ADDTAIL_W, true, (LPARAM)pWork, (LPARAM)addSize, 0, 0 );
+			GetActiveView().GetCommander().HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
 		}
 		return 0L;
 

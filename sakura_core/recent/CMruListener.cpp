@@ -139,7 +139,7 @@ void CMruListener::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 		if( ptCaretPos.GetY2() >= pcDoc->m_cLayoutMgr.GetLineCount() ){
 			//ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“®
-			cView.GetCommander().HandleCommand( F_GOFILEEND, 0, 0, 0, 0, 0 );
+			cView.GetCommander().HandleCommand( F_GOFILEEND, false, 0, 0, 0, 0 );
 		}
 		else{
 			cView.GetTextArea().SetViewTopLine( eiOld.m_nViewTopLine ); // 2001/10/20 novice

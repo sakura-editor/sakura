@@ -316,8 +316,8 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	m_pCommanderView->AddToCmdArr( cDlgExec.m_szCommand );
 	const WCHAR* cmd_string = to_wchar(cDlgExec.m_szCommand);
 
-	//HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
-	HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, (LPARAM)(GetDllShareData().m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行
+	//HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
+	HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, (LPARAM)(GetDllShareData().m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行
 }
 
 

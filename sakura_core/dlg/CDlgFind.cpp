@@ -284,7 +284,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				CloseDialog( 1 );
 			}else{
 				/* 前を検索 */
-				pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
+				pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
 				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
@@ -321,7 +321,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}
 			else{
 				/* 次を検索 */
-				pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
+				pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
 				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
@@ -348,7 +348,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 2 );
 			}else{
-				pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, FALSE, 0, 0, 0, 0 );
+				pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );

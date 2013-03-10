@@ -458,7 +458,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 			/* コマンドコードによる処理振り分け */
 			/* 前を検索 */
-			pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_SEARCH_PREV, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
@@ -480,7 +480,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 			/* コマンドコードによる処理振り分け */
 			/* 次を検索 */
-			pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_SEARCH_NEXT, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 			/* 再描画（0文字幅マッチでキャレットを表示するため） */
 			pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要
 		}else{
@@ -490,7 +490,7 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 	case IDC_BUTTON_SETMARK:	//2002.01.16 hor 該当行マーク
 		if( 0 < GetData() ){
-			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, FALSE, 0, 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
 			::SendMessage(GetHwnd(),WM_NEXTDLGCTL,(WPARAM)::GetDlgItem(GetHwnd(),IDC_COMBO_TEXT ),TRUE);
 		}
 		return TRUE;
@@ -511,9 +511,9 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			/* 置換 */
 			//@@@ 2002.2.2 YAZAKI 置換コマンドをCEditViewに新設
 			//@@@ 2002/04/08 YAZAKI 親ウィンドウのハンドルを渡すように変更。
-			pcEditView->GetCommander().HandleCommand( F_REPLACE, TRUE, (LPARAM)GetHwnd(), 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_REPLACE, true, (LPARAM)GetHwnd(), 0, 0, 0 );
 			/* 再描画 */
-			pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_REDRAW, true, 0, 0, 0, 0 );
 		}else{
 			OkMessage( GetHwnd(), _T("文字列を指定してください。") );
 		}
@@ -527,8 +527,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 			}// 02/07/28 ai end
 
 			/* すべて行置換時の処置は「すべて置換」は置換の繰返しオプションOFFの場合にして削除 2007.01.16 ryoji */
-			pcEditView->GetCommander().HandleCommand( F_REPLACE_ALL, TRUE, 0, 0, 0, 0 );
-			pcEditView->GetCommander().HandleCommand( F_REDRAW, TRUE, 0, 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_REPLACE_ALL, true, 0, 0, 0, 0 );
+			pcEditView->GetCommander().HandleCommand( F_REDRAW, true, 0, 0, 0, 0 );
 
 			/* アクティブにする */
 			ActivateFrameWindow( GetHwnd() );
