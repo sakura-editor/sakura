@@ -1724,7 +1724,7 @@ void CEditView::Command_WndScrollDown( void )
 	nCaretMarginY += 2;
 
 	if( m_nCaretPosY > m_nViewRowNum + m_nViewTopLine - (nCaretMarginY + 1) ){
-		m_cUnderLine.CaretUnderLineOFF( TRUE );
+		m_cUnderLine.CaretUnderLineOFF( true );
 	}
 
 	//	Sep. 11, 2004 genta 同期用に行数を記憶
@@ -1745,7 +1745,7 @@ void CEditView::Command_WndScrollDown( void )
 		}
 	}
 
-	m_cUnderLine.CaretUnderLineON( TRUE );
+	m_cUnderLine.CaretUnderLineON( true );
 }
 
 // テキストを１行上へスクロール
@@ -1758,7 +1758,7 @@ void CEditView::Command_WndScrollUp(void)
 		nCaretMarginY = 1;
 
 	if( m_nCaretPosY < m_nViewTopLine + (nCaretMarginY + 1) ){
-		m_cUnderLine.CaretUnderLineOFF( TRUE );
+		m_cUnderLine.CaretUnderLineOFF( true );
 	}
 
 	//	Sep. 11, 2004 genta 同期用に行数を記憶
@@ -1779,7 +1779,7 @@ void CEditView::Command_WndScrollUp(void)
 		}
 	}
 
-	m_cUnderLine.CaretUnderLineON( TRUE );
+	m_cUnderLine.CaretUnderLineON( true );
 }
 
 // 2001/06/20 End
@@ -2107,7 +2107,7 @@ void CEditView::Command_TRIM(
 	else{
 		ConvSelectedArea( F_RTRIM );
 	}
-	if (bBeDisableSelectArea) DisableSelectArea( TRUE );
+	if (bBeDisableSelectArea) DisableSelectArea( true );
 }
 
 /*! TRIM Step2

@@ -777,7 +777,7 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 						m_nSelectColmTo			/* 範囲選択終了桁 */
 					);
 					/* 現在の選択範囲を非選択状態に戻す */
-					DisableSelectArea( TRUE );
+					DisableSelectArea( true );
 					/* カーソルを選択開始位置に移動 */
 					MoveCursor( rcSel.left, rcSel.top, true );
 					m_nCaretPosX_Prev = m_nCaretPosX;
@@ -785,7 +785,7 @@ int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
 					nPosX = m_nSelectColmFrom;
 					nPosY = m_nSelectLineFrom;
 					/* 現在の選択範囲を非選択状態に戻す */
-					DisableSelectArea( TRUE );
+					DisableSelectArea( true );
 					/* カーソルを選択開始位置に移動 */
 					MoveCursor( nPosX, nPosY, true );
 					m_nCaretPosX_Prev = m_nCaretPosX;
@@ -892,7 +892,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 							m_nSelectColmTo			/* 範囲選択終了桁 */
 						);
 						/* 現在の選択範囲を非選択状態に戻す */
-						DisableSelectArea( TRUE );
+						DisableSelectArea( true );
 						/* カーソルを選択終了位置に移動 */
 						MoveCursor( rcSel.right, rcSel.bottom, true );
 						m_nCaretPosX_Prev = m_nCaretPosX;
@@ -901,7 +901,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 						nPosY = m_nSelectLineTo;
 
 						/* 現在の選択範囲を非選択状態に戻す */
-						DisableSelectArea( TRUE );
+						DisableSelectArea( true );
 						if( nPosY >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
 							/* ファイルの最後に移動 */
 							Command_GOFILEEND(FALSE);
@@ -1246,7 +1246,7 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 		}else{
 			if( IsTextSelected() ){	/* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
-				DisableSelectArea( TRUE );
+				DisableSelectArea( true );
 			}
 		}
 	}
@@ -1302,7 +1302,7 @@ void CEditView::Command_GOFILETOP( int bSelect )
 void CEditView::Command_GOFILEEND( int bSelect )
 {
 // 2001.12.13 hor BOX選択中にファイルの最後にジャンプすると[EOF]の行が反転したままになるの修正
-	if( !bSelect && IsTextSelected() ) DisableSelectArea( TRUE );	// 2001.12.21 hor Add
+	if( !bSelect && IsTextSelected() ) DisableSelectArea( true );	// 2001.12.21 hor Add
 	AddCurrentLineToHistory();
 	Cursor_UPDOWN( m_pcEditDoc->m_cLayoutMgr.GetLineCount() , bSelect );
 	Command_DOWN( bSelect, TRUE );
@@ -1341,7 +1341,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 	}else{
 		if( IsTextSelected() ){		/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 	}
 
@@ -1413,7 +1413,7 @@ void CEditView::Command_WORDRIGHT( int bSelect )
 	}else{
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 	}
 	int		bTryAgain = FALSE;
@@ -1579,7 +1579,7 @@ void CEditView::Command_COPY(
 		/* テキストが選択されているか */
 		if( IsTextSelected() ){
 			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 	}
 	return;
@@ -2098,7 +2098,7 @@ void CEditView::Command_SELECTALL( void )
 {
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 	}
 
 	/* 先頭へカーソルを移動 */
@@ -2155,7 +2155,7 @@ void CEditView::Command_SELECTLINE( int lparam )
 		if(( ! IsTextSelected() )&&( m_nCaretPosY_PHY >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() ))
 		{
 			// 現在の選択範囲を非選択状態に戻す
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 	}
 
@@ -2181,7 +2181,7 @@ bool CEditView::Command_SELECTWORD( void )
 	int				nIdx;
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 	}
 	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
 	if( NULL == pcLayout ){
@@ -3532,7 +3532,7 @@ void CEditView::Command_CANCEL_MODE( void )
 {
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 	}
 	m_bSelectingLock = FALSE;	/* 選択状態のロック */
 }
@@ -3571,7 +3571,7 @@ void CEditView::Command_BEGIN_BOXSELECT( void )
 //@@@ 2002.01.03 YAZAKI 範囲選択中にShift+F6を実行すると選択範囲がクリアされない問題に対処
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 	}
 
 	/* 現在のカーソル位置から選択を開始する */
@@ -4069,7 +4069,7 @@ void CEditView::Command_DUPLICATELINE( void )
 
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 	}
 
 	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
@@ -5052,7 +5052,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			m_nSelectColmTo			// 範囲選択終了桁
 		);
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( FALSE/*TRUE 2002.01.25 hor*/ );
+		DisableSelectArea( false/*true 2002.01.25 hor*/ );
 
 		// From Here 2001.12.03 hor
 		/* インデント時は空白行に書込まない */
@@ -5178,7 +5178,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		nSelectColToOld = 0;					/* 範囲選択終了桁 */
 
 		// 現在の選択範囲を非選択状態に戻す
-		DisableSelectArea( FALSE );
+		DisableSelectArea( false );
 
 		for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
 			int nLineCountPrev = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
@@ -5299,7 +5299,7 @@ void CEditView::Command_UNINDENT( char cChar )
 		nSelectColToOld = 0;					/* 範囲選択終了桁 */
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( FALSE );
+		DisableSelectArea( false );
 
 		int				nDelLen;
 		for( i = nSelectLineFromOld; i < nSelectLineToOld; i++ ){
@@ -6792,7 +6792,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 
 	/* テキスト選択解除 */
 	/* 現在の選択範囲を非選択状態に戻す */
-	DisableSelectArea( TRUE );
+	DisableSelectArea( true );
 
 	// 2004.06.01 Moca 検索中に、他のプロセスによってm_szREPLACEKEYArrが書き換えられても大丈夫なように
 	const CMemory	cMemRepKey( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0], _tcslen(m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0]) );
@@ -7472,7 +7472,7 @@ void CEditView::Command_REPLACE_ALL()
 	// From Here 2001.12.03 hor
 
 	/* テキスト選択解除 */
-	DisableSelectArea( TRUE );
+	DisableSelectArea( true );
 
 	/* カーソル・選択範囲復元 */
 	if((!bSelectedArea) ||			// ファイル全体置換

@@ -98,8 +98,8 @@ public:
 			m_nLockCounter = 0;
 		}
 	}
-	void CaretUnderLineON( BOOL );								// カーソル行アンダーラインのON
-	void CaretUnderLineOFF( BOOL );								// カーソル行アンダーラインのOFF
+	void CaretUnderLineON( bool );								// カーソル行アンダーラインのON
+	void CaretUnderLineOFF( bool );								// カーソル行アンダーラインのOFF
 	void SetView( CEditView* pcEditView ){
 		m_pcEditView = pcEditView;
 	}
@@ -187,8 +187,8 @@ public:
 
 	BOOL HandleCommand( int, bool, LPARAM, LPARAM, LPARAM, LPARAM );
 	/* コマンド操作 */
-	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
-	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
+	void CaretUnderLineON( bool );								/* カーソル行アンダーラインのON */
+	void CaretUnderLineOFF( bool );								/* カーソル行アンダーラインのOFF */
 	void AdjustScrollBars( void );								/* スクロールバーの状態を更新する */
 	int GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
 	int ViewColNumToWrapColNum( int nViewColNum ) const;		/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
@@ -199,7 +199,7 @@ public:
 	BOOL GetAdjustCursorPos( int *, int *);	// 正しいカーソル位置を算出する
 	BOOL DetectWidthOfLineNumberArea( BOOL );					/* 行番号表示に必要な幅を設定 */
 	int DetectWidthOfLineNumberArea_calculate( void );			/* 行番号表示に必要な桁数を計算 */
-	void DisableSelectArea( BOOL );								/* 現在の選択範囲を非選択状態に戻す */
+	void DisableSelectArea( bool );								/* 現在の選択範囲を非選択状態に戻す */
 	void SetFont( void );										/* フォントの変更 */
 	void RedrawAll( void );										/* フォーカス移動時の再描画 */
 	void Redraw( void );										// 2001/06/21 asa-o 再描画

@@ -163,7 +163,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		//インクリメンタルサーチモードに入るだけ.		
 		//選択範囲の解除
 		if(IsTextSelected())	
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 
 		m_sCurSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;
 		switch( mode ) {
@@ -501,7 +501,7 @@ void CEditView::ISearchBack(void) {
 	nLineTo   = m_nISearchY2History[m_nISearchHistoryCount];
 
 	if(m_nISearchHistoryCount == 0){
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 		nColmTo = nColmFrom;
 	}
 

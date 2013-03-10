@@ -1467,22 +1467,6 @@ void CEditView::ShowEditCaret( void )
 	m_crCaret = crCaret;	//	2006.12.07 ryoji
 	m_crBack = crBack;		//	2006.12.07 ryoji
 	SetIMECompFormPos();
-
-#if 0
-	2002/05/12 YAZAKI ShowEditCaretで仕事をしすぎ。
-	//2002.02.27 Add By KK アンダーラインのちらつきを低減
-	if (m_nOldUnderLineY != m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight) {
-		//アンダーラインの描画位置が、前回のアンダーライン描画位置と異なっていたら、アンダーラインを描き直す。
-		CaretUnderLineOFF(TRUE);
-		CaretUnderLineON(TRUE);
-	}
-
-	/* ルーラー描画 */
-	DispRuler( hdc );
-	::ReleaseDC( m_hWnd, hdc );
-#endif
-
-	return;
 }
 
 
@@ -2416,7 +2400,7 @@ void CEditView::DrawSelectAreaLine(
 	}
 	//	必要なときだけ。
 	if ( rcClip.right != rcClip.left ){
-		m_cUnderLine.CaretUnderLineOFF( TRUE );	//	YAZAKI
+		m_cUnderLine.CaretUnderLineOFF( true );	//	YAZAKI
 		
 		// 2006.03.28 Moca 表示域内のみ処理する
 		if( nSelectFrom <= m_nViewLeftCol + m_nViewColNum && m_nViewLeftCol < nSelectTo ){
@@ -2781,7 +2765,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, BOOL 
 	}else{
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 	}
 	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, true, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
@@ -2809,7 +2793,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, BOOL 
 	
 	@param nWk_CaretPosX	[in] 移動先桁位置(0～)
 	@param nWk_CaretPosY	[in] 移動先行位置(0～)
-	@param bScroll			[in] TRUE: 画面位置調整有り/ FALSE: 画面位置調整有り無し
+	@param bScroll			[in] true: 画面位置調整有り/ false: 画面位置調整有り無し
 	@param nCaretMarginRate	[in] 縦スクロール開始位置を決める値
 	@return 縦スクロール行数(負:上スクロール/正:下スクロール)
 
@@ -3078,7 +3062,7 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 		DispRuler( hdc );
 
 		/* アンダーラインの再描画 */
-		m_cUnderLine.CaretUnderLineON(TRUE);
+		m_cUnderLine.CaretUnderLineON( true );
 
 		/* キャレットの行桁位置を表示する */
 		DrawCaretPosInfo();
@@ -3407,7 +3391,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 					// ドラッグ開始条件を満たさなかったのでクリック位置にカーソル移動する
 					if( IsTextSelected() ){	/* テキストが選択されているか */
 						/* 現在の選択範囲を非選択状態に戻す */
-						DisableSelectArea( TRUE );
+						DisableSelectArea( true );
 					}
 //@@@ 2002.01.08 YAZAKI フリーカーソルOFFで複数行選択し、行の後ろをクリックするとそこにキャレットが置かれてしまうバグ修正
 					/* カーソル移動。 */
@@ -3472,7 +3456,7 @@ normal_action:;
 	if( GetKeyState_Alt() &&( ! tripleClickMode)){
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 		if( yPos >= m_nViewAlignTop  && yPos < m_nViewAlignTop  + m_nViewCy ){
 			if( xPos >= m_nViewAlignLeft && xPos < m_nViewAlignLeft + m_nViewCx ){
@@ -3496,7 +3480,7 @@ normal_action:;
 		HideCaret_( m_hWnd ); // 2002/07/22 novice
 		/* 現在のカーソル位置から選択を開始する */
 		BeginSelectArea( );
-		m_cUnderLine.CaretUnderLineOFF( TRUE );
+		m_cUnderLine.CaretUnderLineOFF( true );
 		m_cUnderLine.Lock();
 		if( xPos < m_nViewAlignLeft ){
 			/* カーソル下移動 */
@@ -3539,7 +3523,7 @@ normal_action:;
 				OnLBUTTONUP( fwKeys, xPos, yPos );	// ここで左ボタンアップしたことにする
 
 				if( IsTextSelected() )		// テキストが選択されているか
-					DisableSelectArea( TRUE );		// 現在の選択範囲を非選択状態に戻す
+					DisableSelectArea( true );		// 現在の選択範囲を非選択状態に戻す
 			}
 
 			// 2007.10.10 nasukoji	単語の途中で折り返されていると下の行が選択されてしまうことへの対処
@@ -3565,7 +3549,7 @@ normal_action:;
 			if( IsTextSelected() ){			/* テキストが選択されているか */
 				if( m_bBeginBoxSelect ){	/* 矩形範囲選択中 */
 					/* 現在の選択範囲を非選択状態に戻す */
-					DisableSelectArea( TRUE );
+					DisableSelectArea( true );
 					/* 現在のカーソル位置から選択を開始する */
 					BeginSelectArea( );
 				}
@@ -3590,7 +3574,7 @@ normal_action:;
 		else{
 			if( IsTextSelected() ){	/* テキストが選択されているか */
 				/* 現在の選択範囲を非選択状態に戻す */
-				DisableSelectArea( TRUE );
+				DisableSelectArea( true );
 			}
 			/* カーソル移動 */
 			if( yPos >= m_nViewAlignTop && yPos < m_nViewAlignTop  + m_nViewCy ){
@@ -3776,7 +3760,7 @@ normal_action:;
 				) ){
 
 					/* 現在の選択範囲を非選択状態に戻す */
-					DisableSelectArea( TRUE );
+					DisableSelectArea( true );
 
 					/*
 					  カーソル位置変換
@@ -4850,7 +4834,7 @@ void CEditView::BeginSelectArea( void )
 
 
 /* 現在の選択範囲を非選択状態に戻す */
-void CEditView::DisableSelectArea( BOOL bDraw )
+void CEditView::DisableSelectArea( bool bDraw )
 {
 	m_nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
 	m_nSelectColmFromOld = m_nSelectColmFrom;	/* 範囲選択開始桁 */
@@ -5020,7 +5004,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 			m_nSelectColmFrom == m_nSelectColmTo
 		){
 			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 
 			// 対括弧の強調表示	// 2007.10.18 ryoji
 			DrawBracketPair( false );
@@ -5147,7 +5131,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		// クアドラプルクリック機能が割り当てられていない場合は、ダブルクリック
 		// として処理するため。
 		if( IsTextSelected() )		// テキストが選択されているか
-			DisableSelectArea( TRUE );		// 現在の選択範囲を非選択状態に戻す
+			DisableSelectArea( true );		// 現在の選択範囲を非選択状態に戻す
 
 		if(! nFuncID){
 			m_dwTripleClickCheck = 0;	// トリプルクリックチェック OFF
@@ -5249,7 +5233,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 					}else{
 						if( IsTextSelected() ){	/* テキストが選択されているか */
 							/* 現在の選択範囲を非選択状態に戻す */
-							DisableSelectArea( TRUE );
+							DisableSelectArea( true );
 						}
 					}
 					nPosX = 0;
@@ -5285,7 +5269,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 	}else{
 		if( IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 	}
 	/* 次の行のデータを取得 */
@@ -5897,7 +5881,7 @@ void CEditView::CopySelectedAllLines(
 		nSelectColmTo = pcLayout? pcLayout->GetIndent(): 0;	/* 範囲選択終了桁 */
 		GetAdjustCursorPos( &nSelectColmTo, &nSelectLineTo );	// EOF行を超えていたら座標修正
 
-		DisableSelectArea( FALSE ); // 2011.06.03 TRUE →FALSE
+		DisableSelectArea( false ); // 2011.06.03 true →false
 		SetSelectArea( nSelectLineFrom, nSelectColmFrom, nSelectLineTo, nSelectColmTo );
 
 		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, false );
@@ -5989,7 +5973,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		);
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( FALSE );	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
+		DisableSelectArea( false );	// 2009.07.18 ryoji true -> false 各行にアンダーラインが残る問題の修正
 
 		nIdxFrom = 0;
 		nIdxTo = 0;
@@ -8977,7 +8961,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( !bMove ){
 		/* コピーモード */
 		/* 現在の選択範囲を非選択状態に戻す */
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 	}else{
 		// ドラッグ元の選択範囲を記憶
 		bBeginBoxSelect_Old = pcDragSourceView->m_bBeginBoxSelect;
@@ -8995,8 +8979,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			/* 選択エリアを削除 */
 			if( this != pcDragSourceView ){
 				// ドラッグ元の選択範囲を復元
-				pcDragSourceView->DisableSelectArea( TRUE );
-				DisableSelectArea( TRUE );
+				pcDragSourceView->DisableSelectArea( true );
+				DisableSelectArea( true );
 				m_bBeginBoxSelect = bBeginBoxSelect_Old;
 				m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;
 				m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;
@@ -9011,9 +8995,9 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, true );
 		}else{
 			/* 現在の選択範囲を非選択状態に戻す */
-			pcDragSourceView->DisableSelectArea( TRUE );
+			pcDragSourceView->DisableSelectArea( true );
 			if( this != pcDragSourceView )
-				DisableSelectArea( TRUE );
+				DisableSelectArea( true );
 		}
 	}
 	if( !bBoxData ){	/* 矩形データ */
@@ -9270,7 +9254,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 
 		// 選択範囲の選択解除
 		if( IsTextSelected() ){
-			DisableSelectArea( TRUE );
+			DisableSelectArea( true );
 		}
 
 		// 挿入前のキャレット位置を記憶する
@@ -9414,7 +9398,7 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 					szTopic[MAX_PATH - 1] = '\0';
 				}
 				/* 現在の選択範囲を非選択状態に戻す */
-				DisableSelectArea( FALSE );
+				DisableSelectArea( false );
 			}
 		}
 	}
@@ -9455,7 +9439,7 @@ void CEditView::GetCurrentTextForSearchDlg( CMemory& cmemCurText )
 
 
 /* カーソル行アンダーラインのON */
-void CCaretUnderLine::CaretUnderLineON( BOOL bDraw )
+void CCaretUnderLine::CaretUnderLineON( bool bDraw )
 {
 	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
 	m_pcEditView->CaretUnderLineON( bDraw );
@@ -9464,7 +9448,7 @@ void CCaretUnderLine::CaretUnderLineON( BOOL bDraw )
 
 
 /* カーソル行アンダーラインのOFF */
-void CCaretUnderLine::CaretUnderLineOFF( BOOL bDraw )
+void CCaretUnderLine::CaretUnderLineOFF( bool bDraw )
 {
 	if( m_nLockCounter ) return;	//	ロックされていたら何もできない。
 	m_pcEditView->CaretUnderLineOFF( bDraw );
@@ -9474,7 +9458,7 @@ void CCaretUnderLine::CaretUnderLineOFF( BOOL bDraw )
 /*! カーソル行アンダーラインのON
 	@date 2007.09.09 Moca カーソル位置縦線処理追加
 */
-void CEditView::CaretUnderLineON( BOOL bDraw )
+void CEditView::CaretUnderLineON( bool bDraw )
 {
 
 	BOOL bUnderLine = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
@@ -9569,7 +9553,7 @@ void CEditView::CaretUnderLineON( BOOL bDraw )
 /*! カーソル行アンダーラインのOFF
 	@date 2007.09.09 Moca カーソル位置縦線処理追加
 */
-void CEditView::CaretUnderLineOFF( BOOL bDraw )
+void CEditView::CaretUnderLineOFF( bool bDraw )
 {
 	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
 			FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp ){
@@ -10167,7 +10151,7 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 		return 0;
 
 	if ( IsTextSelected()) 
-		DisableSelectArea( TRUE );
+		DisableSelectArea( true );
 
 	DWORD		dwOffset, dwLen;
 	
@@ -10405,7 +10389,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 				if( ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex )
 					&& ( ( nLine == m_nCaretPosY ) || ( nLine - 1 == m_nCaretPosY ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
-					m_cUnderLine.CaretUnderLineON( TRUE );
+					m_cUnderLine.CaretUnderLineON( true );
 				}
 			}
 		}

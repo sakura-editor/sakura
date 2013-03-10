@@ -237,7 +237,7 @@ void CEditDoc::InitAllView( void )
 		m_cEditViewArr[i].m_cHistory->Flush();
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		m_cEditViewArr[i].DisableSelectArea( FALSE );
+		m_cEditViewArr[i].DisableSelectArea( false );
 
 		m_cEditViewArr[i].OnChangeSetting();
 		m_cEditViewArr[i].MoveCursor( 0, 0, true );
@@ -977,7 +977,7 @@ BOOL CEditDoc::FileRead(
 	for( i = 0; i < GetAllViewCount(); ++i ){
 		if( m_cEditViewArr[i].IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			m_cEditViewArr[i].DisableSelectArea( TRUE );
+			m_cEditViewArr[i].DisableSelectArea( true );
 		}
 	}
 
@@ -3721,7 +3721,7 @@ void  CEditDoc::SetActivePane( int nIndex )
 	m_nActivePaneIndex = nIndex;
 
 	// フォーカスを移動する	// 2007.10.16 ryoji
-	m_cEditViewArr[nOldIndex].m_cUnderLine.CaretUnderLineOFF(TRUE);	//	2002/05/11 YAZAKI
+	m_cEditViewArr[nOldIndex].m_cUnderLine.CaretUnderLineOFF( true );	//	2002/05/11 YAZAKI
 	if( ::GetActiveWindow() == m_pcEditWnd->m_hWnd
 		&& ::GetFocus() != m_cEditViewArr[m_nActivePaneIndex].m_hWnd )
 	{
@@ -3761,14 +3761,6 @@ void  CEditDoc::SetActivePane( int nIndex )
 		/* モードレス時：現在位置表示の対象となるビューの変更 */
 		m_cDlgFuncList.ChangeView( (LPARAM)&m_cEditViewArr[m_nActivePaneIndex] );
 	}
-
-	//	2002/05/08 YAZAKI OnKillFocus()とOnSetFocus()で、アンダーラインを制御するようにした。
-	//	2001/06/20 Start by asa-o:	アクティブでないペインのカーソルアンダーバーを非表示
-	//	m_cEditViewArr[m_nActivePaneIndex].CaretUnderLineON(TRUE);
-	//	m_cEditViewArr[m_nActivePaneIndex^1].CaretUnderLineOFF(TRUE);
-	//	m_cEditViewArr[m_nActivePaneIndex^2].CaretUnderLineOFF(TRUE);
-	//	m_cEditViewArr[(m_nActivePaneIndex^2)^1].CaretUnderLineOFF(TRUE);
-	//	2001/06/20 End
 
 	return;
 }

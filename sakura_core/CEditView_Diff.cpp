@@ -549,7 +549,7 @@ re_do:;
 			if( !IsTextSelected() ) BeginSelectArea();
 		}
 		else{
-			if( IsTextSelected() ) DisableSelectArea( TRUE );
+			if( IsTextSelected() ) DisableSelectArea( true );
 		}
 		MoveCursor( nX, nY, true );
 		if( m_bSelectingLock ){
@@ -602,7 +602,7 @@ re_do:;
 			if( !IsTextSelected() ) BeginSelectArea();
 		}
 		else{
-			if( IsTextSelected() ) DisableSelectArea( TRUE );
+			if( IsTextSelected() ) DisableSelectArea( true );
 		}
 
 		MoveCursor( nX, nY, true );

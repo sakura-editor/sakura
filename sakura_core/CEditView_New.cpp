@@ -114,7 +114,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 		);
 		if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
 			/* アクティブペインは、アンダーライン描画 */
-			m_cUnderLine.CaretUnderLineON( TRUE );
+			m_cUnderLine.CaretUnderLineON( true );
 		}
 		return;
 	}
@@ -360,7 +360,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	//     アンダーライン描画をメモリDCからのコピー前処理から後に移動
 	if ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex ){
 		/* アクティブペインは、アンダーライン描画 */
-		m_cUnderLine.CaretUnderLineON( TRUE );
+		m_cUnderLine.CaretUnderLineON( true );
 	}
 	// To Here 2007.09.09 Moca
 
