@@ -69,7 +69,7 @@ void CViewCommander::Command_CUT( void )
 	}
 
 	/* カーソル位置または選択エリアを削除 */
-	m_pCommanderView->DeleteData( TRUE );
+	m_pCommanderView->DeleteData( true );
 	return;
 }
 
@@ -275,7 +275,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 	// とりあえず選択範囲を削除
 	// 2004.06.30 Moca m_pCommanderView->GetSelectionInfo().IsTextSelected()がないと未選択時、一文字消えてしまう
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-		m_pCommanderView->DeleteData( FALSE/*TRUE 2002.01.25 hor*/ );
+		m_pCommanderView->DeleteData( false/*true 2002.01.25 hor*/ );
 	}
 
 	CLayoutPoint ptCurOld = GetCaret().GetCaretLayoutPos();

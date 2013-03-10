@@ -61,7 +61,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 
 		/* テキストが選択されているか */
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
-			m_pCommanderView->DeleteData( TRUE );
+			m_pCommanderView->DeleteData( true );
 		}
 		if( GetDocument()->m_cDocType.GetDocumentAttribute().m_bAutoIndent ){	/* オートインデント */
 			const CLayout* pCLayout;
@@ -142,7 +142,7 @@ end_of_for:;
 				Command_INDENT( wcChar );
 				return;
 			}else{
-				m_pCommanderView->DeleteData( TRUE );
+				m_pCommanderView->DeleteData( true );
 			}
 		}
 		else{
@@ -270,7 +270,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 			Command_INDENT( szWord, nWord );	//	Oct. 6 ,2002 genta 
 			return;
 		}else{
-			m_pCommanderView->DeleteData( TRUE );
+			m_pCommanderView->DeleteData( true );
 		}
 	}
 	else{
@@ -648,7 +648,7 @@ void CViewCommander::Command_DELETE( void )
 			}
 		}
 	}
-	m_pCommanderView->DeleteData( TRUE );
+	m_pCommanderView->DeleteData( true );
 	return;
 }
 
@@ -665,7 +665,7 @@ void CViewCommander::Command_DELETE_BACK( void )
 	//	May 29, 2004 genta 実際に削除された文字がないときはフラグをたてないように
 	//GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){				/* テキストが選択されているか */
-		m_pCommanderView->DeleteData( TRUE );
+		m_pCommanderView->DeleteData( true );
 	}
 	else{
 		CLayoutPoint	ptLayoutPos_Old = GetCaret().GetCaretLayoutPos();
@@ -689,7 +689,7 @@ void CViewCommander::Command_DELETE_BACK( void )
 								)
 							);
 						}
-						m_pCommanderView->DeleteData( TRUE );
+						m_pCommanderView->DeleteData( true );
 					}
 				}
 			}
@@ -751,10 +751,10 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 			posBefore = GetCaret().GetCaretLayoutPos();
 		}else{
 			// 1文字削除
-			m_pCommanderView->DeleteData( FALSE );
+			m_pCommanderView->DeleteData( false );
 			posBefore = GetCaret().GetCaretLayoutPos();
 			for(int i = 1; i < nDelLen; i++){
-				m_pCommanderView->DeleteData( FALSE );
+				m_pCommanderView->DeleteData( false );
 			}
 		}
 		CNativeW tmp;

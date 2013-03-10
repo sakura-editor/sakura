@@ -132,7 +132,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		/* ã‘ƒ‚[ƒh‚Ì‚Æ‚«‚Í‘I‘ð”ÍˆÍíœ */
 		if( ! m_pCommanderView->IsInsMode() /* Oct. 2, 2005 genta */){
 			sSelectOld = GetSelect();
-			m_pCommanderView->DeleteData( FALSE );
+			m_pCommanderView->DeleteData( false );
 			GetSelect() = sSelectOld;
 			m_pCommanderView->GetSelectionInfo().SetBoxSelect(true);
 		}

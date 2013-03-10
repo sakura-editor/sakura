@@ -210,7 +210,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 				CLayoutPoint(CLayoutInt(0), m_pcEditDoc->m_cLayoutMgr.GetLineCount())
 			)
 		);
-		DeleteData( TRUE );
+		DeleteData( true );
 	}
 
 	// hStdOutWrite は CreateProcess() で継承したので親プロセスでは用済み
