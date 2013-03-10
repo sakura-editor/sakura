@@ -205,7 +205,7 @@ void CMacro::AddIntParam( const int nParam )
 	引数がintのときは、*((int*)paramArr[i])として渡しましょう。
 	
 	たとえば、F_INSTEXTの1つめ、2つめの引数は文字列、3つめの引数はint、4つめの引数が無し。だったりする場合は、次のようにしましょう。
-	pcEditView->HandleCommand( m_nFuncID, TRUE, paramArr[0], paramArr[1], *((int*)paramArr[2]), 0);
+	pcEditView->HandleCommand( m_nFuncID, true, paramArr[0], paramArr[1], *((int*)paramArr[2]), 0);
 	
 	@date 2007.07.20 genta : flags追加．FA_FROMMACROはflagsに含めて渡すものとする．
 		(1コマンド発行毎に毎回演算する必要はないので)
@@ -398,7 +398,7 @@ void CMacro::HandleCommand(
 	case F_TEXTWRAPMETHOD:	//	テキストの折り返し方法の指定。数値は、0x0（折り返さない）、0x1（指定桁で折り返す）、0x2（右端で折り返す）	// 2008.05.30 nasukoji
 	case F_GOLINETOP:	//	行頭に移動。数値は、0x0（デフォルト）、0x1（空白を無視して先頭に移動）、0x2（未定義）、0x4（選択して移動）、0x8（改行単位で先頭に移動：未実装）
 		//	一つ目の引数が数値。
-		pcEditView->HandleCommand( Index, FALSE, (Argument[0] != NULL ? atoi(Argument[0]) : 0 ), 0, 0, 0 );
+		pcEditView->HandleCommand( Index, false, (Argument[0] != NULL ? atoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;
 	case F_INSTEXT:		//	テキスト挿入
 	case F_ADDTAIL:		//	この操作はキーボード操作では存在しないので保存することができない？
@@ -416,7 +416,7 @@ void CMacro::HandleCommand(
 		}
 		{
 			int len = _tcslen(Argument[0]);
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], len, 0, 0 );	//	標準
+			pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], len, 0, 0 );	//	標準
 		}
 		break;
 	/* 一つ目、二つ目とも引数は数値 */
@@ -443,7 +443,7 @@ void CMacro::HandleCommand(
 			LPARAM lFlag = Argument[1] != NULL ? atoi(Argument[1]) : 1; // デフォルト1
 			pcEditView->m_pShareData->m_bLineNumIsCRLF = lFlag & 0x01 ? 1 : 0;
 			pcEditView->m_pcEditDoc->m_cDlgJump.m_bPLSQL = lFlag & 0x02 ? 1 : 0;
-			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準
+			pcEditView->HandleCommand( Index, false, 0, 0, 0, 0 );	//	標準
 		}
 		break;
 	/*	一つ目の引数は文字列、二つ目の引数は数値	*/
@@ -492,8 +492,8 @@ void CMacro::HandleCommand(
 			pcEditView->m_pShareData->m_Common.m_sSearch.m_bSearchAll			= lFlag & 0x20 ? 1 : 0;
 
 			//	コマンド発行
-		//	pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
-			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0);
+		//	pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], 0, 0, 0);
+			pcEditView->HandleCommand( Index, false, 0, 0, 0, 0);
 		}
 		break;
 	case F_DIFF:
@@ -534,7 +534,7 @@ void CMacro::HandleCommand(
 			break;
 		}
 		{
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)(Argument[1] != NULL ? atoi(Argument[1]) : 0 ), 0, 0);
+			pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], (LPARAM)(Argument[1] != NULL ? atoi(Argument[1]) : 0 ), 0, 0);
 		}
 		break;
 
@@ -558,7 +558,7 @@ void CMacro::HandleCommand(
 		{
 			pcEditView->HandleCommand(
 				Index,
-				FALSE,
+				false,
 				(LPARAM)Argument[0], 
 				(LPARAM)(Argument[1] != NULL ? atoi(Argument[1]) : 0 ),
 				(LPARAM)(Argument[2] != NULL ? atoi(Argument[2]) : 0 ),
@@ -635,7 +635,7 @@ void CMacro::HandleCommand(
 			}
 			pcEditView->m_pcEditDoc->m_cDlgReplace.m_nReplaceTarget	= (lFlag >> 8) & 0x03;	//	8bitシフト（0x100で割り算）	// 2007.01.16 ryoji 下位 2bitだけ取り出す
 			//	コマンド発行
-			pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0);
+			pcEditView->HandleCommand( Index, false, 0, 0, 0, 0);
 		}
 		break;
 	case F_GREP:
@@ -734,7 +734,7 @@ void CMacro::HandleCommand(
 			break;
 		}
 		{
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+			pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
 	case F_FILESAVEAS:
@@ -784,14 +784,14 @@ void CMacro::HandleCommand(
 			default:	pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;	break;
 			}
 			
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+			pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], 0, 0, 0);
 			pcEditView->m_pcEditDoc->m_cSaveLineCode = EOL_NONE;	// 2008.03.20 ryoji 改行コードは引き継がない（上書き保存では常に「変換なし」になるように）
 		}
 		break;
 	// Jul. 5, 2002 genta
 	case F_EXTHTMLHELP:
 	case F_EXECEXTMACRO:				// 2008.10.22 syat
-		pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
+		pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], (LPARAM)Argument[1], 0, 0);
 		break;
 	//	From Here Dec. 4, 2002 genta
 	case F_FILE_REOPEN				://開き直す
@@ -807,7 +807,7 @@ void CMacro::HandleCommand(
 			if (Argument[0] != NULL){
 				noconfirm = ( atoi( Argument[0] ) != 0 );
 			}
-			pcEditView->HandleCommand( Index, FALSE, noconfirm, 0, 0, 0 );
+			pcEditView->HandleCommand( Index, false, noconfirm, 0, 0, 0 );
 		}
 		break;
 	//	To Here Dec. 4, 2002 genta
@@ -816,14 +816,14 @@ void CMacro::HandleCommand(
 			int lparam1;
 			if( Argument[0] != NULL ){
 				lparam1 = atoi( Argument[0] );
-				pcEditView->HandleCommand( Index, FALSE, lparam1, 0, 0, 0 );
+				pcEditView->HandleCommand( Index, false, lparam1, 0, 0, 0 );
 			}
 		}
 		break;	//	Jan. 29, 2005 genta 抜けていた
 	case F_TAGJUMP_KEYWORD:	// @@ 2005.03.31 MIK
 		{
 			//引数はNULLでもOK
-			pcEditView->HandleCommand( Index, FALSE, (LPARAM)Argument[0], 0, 0, 0);
+			pcEditView->HandleCommand( Index, false, (LPARAM)Argument[0], 0, 0, 0);
 		}
 		break;
 	case F_NEXTWINDOW:
@@ -843,7 +843,7 @@ void CMacro::HandleCommand(
 		break;
 	default:
 		//	引数なし。
-		pcEditView->HandleCommand( Index, FALSE, 0, 0, 0, 0 );	//	標準
+		pcEditView->HandleCommand( Index, false, 0, 0, 0, 0 );	//	標準
 		break;
 	}
 }

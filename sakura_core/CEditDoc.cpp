@@ -520,7 +520,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 		}
 		return TRUE;
 	default:
-		return m_cEditViewArr[m_nActivePaneIndex].HandleCommand( nCommand, TRUE, 0, 0, 0, 0 );
+		return m_cEditViewArr[m_nActivePaneIndex].HandleCommand( nCommand, true, 0, 0, 0, 0 );
 	}
 }
 
@@ -1189,7 +1189,7 @@ BOOL CEditDoc::FileRead(
 		if( nCaretPosY >= m_cLayoutMgr.GetLineCount() ){
 			/*ÉtÉ@ÉCÉãÇÃç≈å„Ç…à⁄ìÆ */
 //			m_cEditViewArr[m_nActivePaneIndex].Command_GOFILEEND(FALSE);
-			m_cEditViewArr[m_nActivePaneIndex].HandleCommand( F_GOFILEEND, 0, 0, 0, 0, 0 );
+			m_cEditViewArr[m_nActivePaneIndex].HandleCommand( F_GOFILEEND, false, 0, 0, 0, 0 );
 		}else{
 			m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine = fi.m_nViewTopLine; // 2001/10/20 novice
 			m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol = fi.m_nViewLeftCol; // 2001/10/20 novice

@@ -273,7 +273,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				CloseDialog( 1 );
 			}else{
 				/* 前を検索 */
-				pcEditView->HandleCommand( F_SEARCH_PREV, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
+				pcEditView->HandleCommand( F_SEARCH_PREV, true, (LPARAM)m_hWnd, 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
 				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
@@ -307,7 +307,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			}
 			else{
 				/* 次を検索 */
-				pcEditView->HandleCommand( F_SEARCH_NEXT, TRUE, (LPARAM)m_hWnd, 0, 0, 0 );
+				pcEditView->HandleCommand( F_SEARCH_NEXT, true, (LPARAM)m_hWnd, 0, 0, 0 );
 
 				/* 再描画 2005.04.06 zenryaku 0文字幅マッチでキャレットを表示するため */
 				pcEditView->Redraw();	// 前回0文字幅マッチの消去にも必要	// HandleCommand(F_REDRAW) -> Redraw() 非マッチ時に「見つからなかった」ステータスバーメッセージを消さない
@@ -336,7 +336,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 			if( m_bModal ){		/* モーダルダイアログか */
 				CloseDialog( 2 );
 			}else{
-				pcEditView->HandleCommand( F_BOOKMARK_PATTERN, FALSE, 0, 0, 0, 0 );
+				pcEditView->HandleCommand( F_BOOKMARK_PATTERN, false, 0, 0, 0, 0 );
 				/* 検索ダイアログを自動的に閉じる */
 				if( m_pShareData->m_Common.m_sSearch.m_bAutoCloseDlgFind ){
 					CloseDialog( 0 );

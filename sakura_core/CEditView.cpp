@@ -699,7 +699,7 @@ LRESULT CEditView::DispatchEvent(
 
 		return 0L;
 	case WM_CHAR:
-		HandleCommand( F_CHAR, TRUE, wParam, 0, 0, 0 );
+		HandleCommand( F_CHAR, true, wParam, 0, 0, 0 );
 		return 0L;
 
 	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
@@ -744,7 +744,7 @@ LRESULT CEditView::DispatchEvent(
 			ImmGetCompositionString(hIMC, GCS_RESULTSTR, lptstr, dwSize);
 
 			/* テキストを貼り付け */
-			HandleCommand( F_INSTEXT, TRUE, (LPARAM)lptstr, TRUE, 0, 0 );
+			HandleCommand( F_INSTEXT, true, (LPARAM)lptstr, TRUE, 0, 0 );
 
 			ImmReleaseContext( hwnd, hIMC );
 
@@ -759,16 +759,16 @@ LRESULT CEditView::DispatchEvent(
 
 	case WM_IME_CHAR:
 		if( ! IsInsMode() /* Oct. 2, 2005 genta */ ){ /* 上書きモードか？ */
-			HandleCommand( F_IME_CHAR, TRUE, wParam, 0, 0, 0 );
+			HandleCommand( F_IME_CHAR, true, wParam, 0, 0, 0 );
 		}
 		return 0L;
 
 	// From Here 2008.03.24 Moca ATOK等の要求にこたえる
 	case WM_PASTE:
-		return HandleCommand( F_PASTE, TRUE, 0, 0, 0, 0 );
+		return HandleCommand( F_PASTE, true, 0, 0, 0, 0 );
 
 	case WM_COPY:
-		return HandleCommand( F_COPY, TRUE, 0, 0, 0, 0 );
+		return HandleCommand( F_COPY, true, 0, 0, 0, 0 );
 	// To Here 2008.03.24 Moca
 
 	case WM_KEYUP:
@@ -9287,7 +9287,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		}
 
 		// テキスト挿入
-		HandleCommand( F_INSTEXT, TRUE, (LPARAM)cmemBuf.GetStringPtr(), TRUE, 0, 0 );
+		HandleCommand( F_INSTEXT, true, (LPARAM)cmemBuf.GetStringPtr(), TRUE, 0, 0 );
 
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(

@@ -210,7 +210,7 @@ bool CNormalProcess::InitializeProcess()
 			// Feb. 23, 2003 Moca Owner window‚ª³‚µ‚­Žw’è‚³‚ê‚Ä‚¢‚È‚©‚Á‚½
 			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, hWnd,  NULL);
 			if( FALSE != nRet ){
-				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);
+				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}
 			return true; // 2003.06.23 Moca
 		}
@@ -311,7 +311,7 @@ bool CNormalProcess::InitializeProcess()
 			pszMacroType = NULL;
 		}
 		CEditView* view = &m_pcEditWnd->m_cEditDoc.m_cEditViewArr[ m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex ];
-		view->HandleCommand( F_EXECEXTMACRO, TRUE, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
+		view->HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
 
 	return hWnd ? true : false;

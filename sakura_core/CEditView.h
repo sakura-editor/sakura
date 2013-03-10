@@ -185,7 +185,7 @@ public:
 	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );				/* マウスホイールのメッセージ処理 */
 	int  IsSpecialScrollMode( int );					/* キー・マウスボタン状態よりスクロールモードを判定する */		// 2009.01.12 nasukoji
 
-	BOOL HandleCommand( int, BOOL, LPARAM, LPARAM, LPARAM, LPARAM );
+	BOOL HandleCommand( int, bool, LPARAM, LPARAM, LPARAM, LPARAM );
 	/* コマンド操作 */
 	void CaretUnderLineON( BOOL );								/* カーソル行アンダーラインのON */
 	void CaretUnderLineOFF( BOOL );								/* カーソル行アンダーラインのOFF */
@@ -773,7 +773,7 @@ public: /* テスト用にアクセス属性を変更 */
 	void Command_JUMP_SRCHSTARTPOS( void );				/* 検索開始位置へ戻る */	// 02/06/26 ai
 
 	//	Jan. 10, 2005 genta HandleCommandからgrep関連処理を分離
-	void TranslateCommand_grep( int&, BOOL&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
+	void TranslateCommand_grep( int&, bool&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
 	void Command_GREP_DIALOG( void );					/* Grepダイアログの表示 */
 	void Command_GREP( void );							/* Grep */
 	void Command_JUMP_DIALOG( void );					/* 指定行ヘジャンプダイアログの表示 */
@@ -806,7 +806,7 @@ public: /* テスト用にアクセス属性を変更 */
 	void Command_BOOKMARK_PATTERN( void );				// 2002.01.16 hor 指定パターンに一致する行をマーク
 
 //2004.10.13 インクリメンタルサーチ関係
-	void TranslateCommand_isearch( int&, BOOL&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
+	void TranslateCommand_isearch( int&, bool&, LPARAM&, LPARAM&, LPARAM&, LPARAM& );
 	bool ProcessCommand_isearch( int, BOOL, LPARAM, LPARAM, LPARAM, LPARAM );
 
 	/* モード切り替え系 */

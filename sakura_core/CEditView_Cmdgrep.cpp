@@ -27,7 +27,7 @@
 */
 void CEditView::TranslateCommand_grep(
 	int&	nCommand,
-	BOOL&	bRedraw,
+	bool&	bRedraw,
 	LPARAM&	lparam1,
 	LPARAM&	lparam2,
 	LPARAM&	lparam3,
@@ -70,7 +70,7 @@ void CEditView::Command_GREP_DIALOG( void )
 	if( !nRet ){
 		return;
 	}
-	HandleCommand(F_GREP, TRUE, 0, 0, 0, 0);	//	GREPコマンドの発行
+	HandleCommand(F_GREP, true, 0, 0, 0, 0);	//	GREPコマンドの発行
 }
 
 /*! GREP実行

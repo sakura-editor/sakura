@@ -1318,7 +1318,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		}
 		if(wID==IDC_CHECK_bMarkUpBlankLineEnable&&m_nListType==OUTLINE_BOOKMARK){
 			CEditView* pcEditView=(CEditView*)m_lParam;
-			pcEditView->HandleCommand( F_BOOKMARK_VIEW, TRUE, TRUE, 0, 0, 0 );
+			pcEditView->HandleCommand( F_BOOKMARK_VIEW, true, TRUE, 0, 0, 0 );
 			m_nCurLine=pcEditView->m_nCaretPosY + CLayoutInt(1);
 			SetData();
 		}else
@@ -1694,13 +1694,13 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 	case F_OUTLINE_TOGGLE: // 20060201 aroka フォーカスがあるときはリロード
 	case F_BOOKMARK_VIEW:
 		pcEditView=(CEditView*)m_lParam;
-		pcEditView->HandleCommand( nFuncCode, TRUE, SHOW_RELOAD, 0, 0, 0 ); // 引数の変更 20060201 aroka
+		pcEditView->HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 ); // 引数の変更 20060201 aroka
 
 		break;
 	case F_BOOKMARK_SET:
 		OnJump( false );
 		pcEditView=(CEditView*)m_lParam;
-		pcEditView->HandleCommand( nFuncCode, TRUE, 0, 0, 0, 0 );
+		pcEditView->HandleCommand( nFuncCode, true, 0, 0, 0, 0 );
 
 		break;
 	case F_COPY:

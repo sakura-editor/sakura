@@ -183,7 +183,7 @@ BOOL CDlgJump::OnBnClicked( int wID )
 //To Here Feb. 20, 2001
 		{	//@@@ 2002.2.2 YAZAKI 指定行へジャンプを、ダイアログを表示するコマンドと、実際にジャンプするコマンドに分離。
 			CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
-			pCEditDoc->m_cEditViewArr[pCEditDoc->m_nActivePaneIndex].HandleCommand(F_JUMP, TRUE, 0, 0, 0, 0);	//	ジャンプコマンド発行
+			pCEditDoc->m_cEditViewArr[pCEditDoc->m_nActivePaneIndex].HandleCommand(F_JUMP, true, 0, 0, 0, 0);	//	ジャンプコマンド発行
 		}
 		return TRUE;
 	case IDCANCEL:

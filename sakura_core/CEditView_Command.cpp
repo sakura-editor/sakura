@@ -67,7 +67,7 @@
 /* コマンドコードによる処理振り分け */
 BOOL CEditView::HandleCommand(
 	int				nCommand,
-	BOOL			bRedraw,
+	bool			bRedraw,
 	LPARAM			lparam1,
 	LPARAM			lparam2,
 	LPARAM			lparam3,
@@ -584,7 +584,7 @@ BOOL CEditView::HandleCommand(
 		nFuncID = Command_CUSTMENU( nCommand - F_CUSTMENU_1 + 1 );
 		if( 0 != nFuncID ){
 			/* コマンドコードによる処理振り分け */
-//			HandleCommand( nFuncID, TRUE, 0, 0, 0, 0 );
+//			HandleCommand( nFuncID, true, 0, 0, 0, 0 );
 			::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, 0 ), (LPARAM)NULL );
 		}
 		break;
@@ -4670,7 +4670,7 @@ void CEditView::Command_MENU_ALLFUNC( void )
 	::DestroyMenu( hMenu );
 	if( 0 != nId ){
 		/* コマンドコードによる処理振り分け */
-//		HandleCommand( nFuncID, TRUE, 0, 0, 0, 0 );
+//		HandleCommand( nFuncID, true, 0, 0, 0, 0 );
 		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nId, 0 ), (LPARAM)NULL );
 	}
 	return;
@@ -4903,7 +4903,7 @@ void CEditView::Command_MENU_RBUTTON( void )
 
 	default:
 		/* コマンドコードによる処理振り分け */
-//		HandleCommand( nId, TRUE, 0, 0, 0, 0 );
+//		HandleCommand( nId, true, 0, 0, 0, 0 );
 		::PostMessage( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nId, 0 ),  (LPARAM)NULL );
 		break;
 	}
@@ -6777,7 +6777,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 		if( m_bBeginBoxSelect ){
 			MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, TRUE );
 		} else {
-//			HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );
+//			HandleCommand( F_LEFT, true, 0, 0, 0, 0 );
 			Command_LEFT( FALSE, FALSE );
 		}
 	}
@@ -6787,7 +6787,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 //			bBeginBoxSelect = m_bBeginBoxSelect;
 
 	/* カーソル左移動 */
-	//HandleCommand( F_LEFT, TRUE, 0, 0, 0, 0 );	//？？？
+	//HandleCommand( F_LEFT, true, 0, 0, 0, 0 );	//？？？
 	// To Here 2001.12.03 hor
 
 	/* テキスト選択解除 */
@@ -6895,7 +6895,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
-			//	HandleCommand( F_INSTEXT, FALSE, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
+			//	HandleCommand( F_INSTEXT, false, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
 			Command_INSTEXT( FALSE, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
 		}
 
@@ -7663,10 +7663,10 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		switch( nRet ){
 		case IDYES:
 			if( m_pcEditDoc->IsFilePathAvailable() ){
-				//nBool = HandleCommand( F_FILESAVE, TRUE, 0, 0, 0, 0 );
+				//nBool = HandleCommand( F_FILESAVE, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVE();
 			}else{
-				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, TRUE, 0, 0, 0, 0 );
+				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVEAS_DIALOG();
 			}
 			if( !nBool ){
@@ -8854,8 +8854,8 @@ void CEditView::Command_EXECCOMMAND_DIALOG( void )
 	AddToCmdArr( cDlgExec.m_szCommand );
 	const char* cmd_string = cDlgExec.m_szCommand;
 
-	//HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
-	HandleCommand( F_EXECMD, TRUE, (LPARAM)cmd_string, (LPARAM)(m_pShareData->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
+	//HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
+	HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, (LPARAM)(m_pShareData->m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行	
 }
 
 //外部コマンド実行

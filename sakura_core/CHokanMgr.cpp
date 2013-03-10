@@ -502,8 +502,8 @@ BOOL CHokanMgr::DoHokan( int nVKey )
  	/* テキストを貼り付け */
 	pcEditView = (CEditView*)m_lParam;
 	//	Apr. 28, 2000 genta
-	pcEditView->HandleCommand( F_WordDeleteToStart, FALSE, 0, 0, 0, 0 );
-	pcEditView->HandleCommand( F_INSTEXT, TRUE, (LPARAM)(szLabel), TRUE, 0, 0 );
+	pcEditView->HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
+	pcEditView->HandleCommand( F_INSTEXT, true, (LPARAM)(szLabel), TRUE, 0, 0 );
 
 	// Until here
 	Hide();
