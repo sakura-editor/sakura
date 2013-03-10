@@ -705,9 +705,7 @@ public: /* テスト用にアクセス属性を変更 */
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
 	void Command_PASTEBOX( const char *szPaste, int nPasteSize );
 	//>> 2002/03/29 Azumaiya
-//	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
-	//void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
-	void Command_INSTEXT( BOOL, const char*, int, BOOL, BOOL bLinePaste = FALSE ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
+	void Command_INSTEXT( bool, const char*, int, BOOL, BOOL bLinePaste = FALSE ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
 	void Command_ADDTAIL( const char* pszData, int nDataLen );		/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
@@ -727,7 +725,7 @@ public: /* テスト用にアクセス属性を変更 */
 		CMemory*	pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
 		const char*	pInsData,			// 挿入するデータ
 		int			nInsDataLen,		// 挿入するデータの長さ
-		BOOL		bRedraw
+		bool		bRedraw
 	);
 
 	/* 挿入系 */

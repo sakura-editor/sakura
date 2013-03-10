@@ -1654,7 +1654,7 @@ void CEditView::Command_DELETE( void )
 				LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
 				if( nLineLen ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					if( EOL_NONE != pcLayout->m_cEol ){	// 行終端は改行コードか?
-						Command_INSTEXT( TRUE, "", 0, FALSE );	// カーソル位置まで半角スペース挿入
+						Command_INSTEXT( true, "", 0, FALSE );	// カーソル位置まで半角スペース挿入
 					}
 				}
 			}
@@ -2301,11 +2301,11 @@ void CEditView::Command_PASTE( int option )
 		char	*pszConvertedText = new char[nTextLen * 2]; // 全文字\n→\r\n変換で最大の２倍になる
 		int nConvertedTextLen = ConvertEol( pszText, nTextLen, pszConvertedText );
 		// テキストを貼り付け
-		Command_INSTEXT( TRUE, pszConvertedText, nConvertedTextLen, TRUE, bLineSelect );	// 2010.09.17 ryoji
+		Command_INSTEXT( true, pszConvertedText, nConvertedTextLen, TRUE, bLineSelect );	// 2010.09.17 ryoji
 		delete [] pszConvertedText;
 	}else{
 		// テキストを貼り付け
-		Command_INSTEXT( TRUE, pszText, nTextLen, TRUE, bLineSelect );	// 2010.09.17 ryoji
+		Command_INSTEXT( true, pszText, nTextLen, TRUE, bLineSelect );	// 2010.09.17 ryoji
 	}
 
 	return;
@@ -2346,7 +2346,7 @@ int CEditView::ConvertEol(const char* pszText, int nTextLen, char* pszConvertedT
 	@date 2010.09.17 ryoji ラインモード貼り付けオプションを追加して以前の Command_PASTE() との重複部を整理・統合
 */
 void CEditView::Command_INSTEXT(
-	BOOL			bRedraw,		//!<
+	bool			bRedraw,		//!<
 	const char*		pszText,		//!< [in] 貼り付ける文字列。
 	int				nTextLen,		//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
 	BOOL			bNoWaitCursor,	//!<
@@ -2415,7 +2415,7 @@ void CEditView::Command_INSTEXT(
 					NULL,					// 削除されたデータのコピー(NULL可能)
 					bLinePaste? "": pszText,	// 挿入するデータ
 					bLinePaste? 0: nTextLen,	// 挿入するデータの長さ
-					TRUE
+					true
 				);
 #ifdef _DEBUG
 				gm_ProfileOutput = FALSE;
@@ -4955,7 +4955,7 @@ void CEditView::Command_INDENT_TAB( void )
 			// Sep. 22, 2002 genta TABの最大幅を64に拡張
 			"                                                                ",				/* 挿入するデータ */
 			nSpace,					/* 挿入するデータの長さ */
-			TRUE
+			true
 		);
 		return;
 	}
@@ -5020,7 +5020,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		memcpy( pszWork, pData, nDataLen );
 		pszWork[nDataLen] = '\0';
 		// テキストを貼り付け 2004.05.14 Moca 長さを引数で与える
-		Command_INSTEXT( TRUE, pszWork, nDataLen, FALSE );
+		Command_INSTEXT( true, pszWork, nDataLen, FALSE );
 		delete [] pszWork;
 		return;
 	}
@@ -6891,12 +6891,12 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					rLayoutMgr.LogicToLayout( nLen, pcLayout->m_nLinePhysical, &m_nSelectColmTo, &m_nSelectLineTo );	// 2007.01.19 ryoji 追加
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
-				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
+				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
 				// To Here Jun. 6, 2005 かろと
 			}
 		}else{
 			//	HandleCommand( F_INSTEXT, false, (LPARAM)m_pShareData->m_szREPLACEKEYArr[0], FALSE, 0, 0 );
-			Command_INSTEXT( FALSE, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
+			Command_INSTEXT( false, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
 		}
 
 		// 挿入後の検索開始位置を調整
@@ -7290,7 +7290,7 @@ void CEditView::Command_REPLACE_ALL()
 				** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため
 				**   直接たたくのやめた。2003.05.18 by かろと
 				*/
-				Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE, bLineSelect );
+				Command_INSTEXT( false, szREPLACEKEY, nREPLACEKEY, TRUE, bLineSelect );
 			}
 			else
 			{
@@ -7375,7 +7375,7 @@ void CEditView::Command_REPLACE_ALL()
 				    }
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
-				Command_INSTEXT( FALSE, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
+				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
 				// To Here Jun. 6, 2005 かろと
 			}
 		}
@@ -7384,7 +7384,7 @@ void CEditView::Command_REPLACE_ALL()
 			/* 本当は元コードを使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
 			** →m_nSelectXXXが-1の時に ReplaceData_CEditViewを直接たたくと動作不良となるため直接たたくのやめた。2003.05.18 かろと
 			*/
-			Command_INSTEXT( FALSE, szREPLACEKEY, nREPLACEKEY, TRUE );
+			Command_INSTEXT( false, szREPLACEKEY, nREPLACEKEY, TRUE );
 			++nReplaceNum;
 		}
 
@@ -8816,7 +8816,7 @@ void CEditView::Command_INS_DATE( void )
 	CShareData::getInstance()->MyGetDateFormat( systime, szText, _countof( szText ) - 1 );
 
 	// テキストを貼り付け ver1
-	Command_INSTEXT( TRUE, szText, -1, TRUE );
+	Command_INSTEXT( true, szText, -1, TRUE );
 }
 
 
@@ -8832,7 +8832,7 @@ void CEditView::Command_INS_TIME( void )
 	CShareData::getInstance()->MyGetTimeFormat( systime, szText, _countof( szText ) - 1 );
 
 	// テキストを貼り付け ver1
-	Command_INSTEXT( TRUE, szText, -1, TRUE );
+	Command_INSTEXT( true, szText, -1, TRUE );
 }
 
 

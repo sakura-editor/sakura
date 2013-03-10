@@ -6120,7 +6120,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			cmemBuf.GetStringPtr(),	/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
 			cmemBuf.GetStringLength(),		/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
-			FALSE/*TRUEbRedraw*/
+			false
 		);
 
 		// From Here 2001.12.03 hor
@@ -9032,7 +9032,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			}
 		}
 
-		Command_INSTEXT( TRUE, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
+		Command_INSTEXT( true, cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE );
 
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
@@ -9924,7 +9924,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 							work[read_cnt] = '\0';
 							CShareData::getInstance()->TraceOut( "%s", work );
 						} else {
-							Command_INSTEXT(FALSE, work, read_cnt, TRUE);
+							Command_INSTEXT( false, work, read_cnt, TRUE);
 						}
 						bufidx = 0;
 #ifdef _DEBUG
@@ -9937,7 +9937,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 							work[read_cnt-1] = '\0';
 							CShareData::getInstance()->TraceOut( "%s", work );
 						} else {
-							Command_INSTEXT(FALSE, work, read_cnt-1, TRUE);
+							Command_INSTEXT( false, work, read_cnt-1, TRUE);
 						}
 						work[0] = tmp;
 						bufidx = 1;
@@ -9969,7 +9969,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 			if(result > 0) ActivateFrameWindow( m_pShareData->m_sHandles.m_hwndDebug );
 		}
 		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
-			Command_INSTEXT(FALSE, work, bufidx, TRUE);	/* 最後の文字の処理 */
+			Command_INSTEXT( false, work, bufidx, TRUE);	/* 最後の文字の処理 */
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
 				SetSelectArea( nLineFrom, nColmFrom, m_nCaretPosY, m_nCaretPosX );
 				DrawSelectArea();

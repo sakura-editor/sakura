@@ -758,7 +758,7 @@ void CEditView::Command_UNDO( void )
 						pcMem,					// 削除されたデータのコピー(NULL可能)
 						"",						// 挿入するデータ
 						0,						// 挿入するデータの長さ
-						FALSE					// 再描画するか否か
+						false					// 再描画するか否か
 					);
 
 					/* 選択範囲の変更 */
@@ -786,7 +786,7 @@ void CEditView::Command_UNDO( void )
 						NULL,								// 削除されたデータのコピー(NULL可能)
 						pcOpe->m_pcmemData->GetStringPtr(),	// 挿入するデータ
 						pcOpe->m_nDataLen,					// 挿入するデータの長さ
-						FALSE								// 再描画するか否か
+						false								// 再描画するか否か
 					);
 
 				}
@@ -931,7 +931,7 @@ void CEditView::Command_REDO( void )
 						NULL,								// 削除されたデータのコピー(NULL可能)
 						pcOpe->m_pcmemData->GetStringPtr(),	// 挿入するデータ
 						pcOpe->m_pcmemData->GetStringLength(),	// 挿入するデータの長さ
-						FALSE								//再描画するか否か
+						false								//再描画するか否か
 					);
 				}
 				delete pcOpe->m_pcmemData;
@@ -957,7 +957,7 @@ void CEditView::Command_REDO( void )
 					pcMem,				// 削除されたデータのコピー(NULL可能)
 					"",					// 挿入するデータ
 					0,					// 挿入するデータの長さ
-					FALSE
+					false
 				);
 
 				pcOpe->m_pcmemData = pcMem;
@@ -1028,7 +1028,7 @@ void CEditView::ReplaceData_CEditView(
 	CMemory*	pcmemCopyOfDeleted,		// 削除されたデータのコピー(NULL可能)
 	const char*	pInsData,				// 挿入するデータ
 	int			nInsDataLen,			// 挿入するデータの長さ
-	BOOL		bRedraw
+	bool		bRedraw
 )
 {
 	bool bLineModifiedChange;
@@ -1608,7 +1608,7 @@ void CEditView::SmartIndent_CPP( char cChar )
 				NULL,		/* 削除されたデータのコピー(NULL可能) */
 				pszData,	/* 挿入するデータ */
 				nDataLen,	/* 挿入するデータの長さ */
-				TRUE
+				true
 			);
 		}
 
@@ -1688,7 +1688,7 @@ void CEditView::RTrimPrevLine( void )
 						NULL,		/* 削除されたデータのコピー(NULL可能) */
 						NULL,		/* 挿入するデータ */
 						0,			/* 挿入するデータの長さ */
-						TRUE
+						true
 					);
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nCaretPosX_PHY, nCaretPosY_PHY, &nCPX, &nCPY );
 					MoveCursor( nCPX, nCPY, TRUE );
@@ -2346,7 +2346,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		NULL,					/* 削除されたデータのコピー(NULL可能) */
 		cmemBuf.GetStringPtr(),
 		cmemBuf.GetStringLength(),
-		FALSE
+		false
 	);
 
 	//	選択エリアの復元
@@ -2470,7 +2470,7 @@ void CEditView::Command_MERGE(void)
 		NULL,					/* 削除されたデータのコピー(NULL可能) */
 		cmemBuf.GetStringPtr(),
 		cmemBuf.GetStringLength(),
-		FALSE
+		false
 	);
 	j-=m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 
@@ -2902,7 +2902,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 		// エラー時はthrow CError_FileRead を投げます
 		while( NULL != ( pLine = cfl.ReadLine( &nLineLen, &cEol ) ) ){
 			++nLineNum;
-			Command_INSTEXT(FALSE, pLine, nLineLen, TRUE);
+			Command_INSTEXT( false, pLine, nLineLen, TRUE);
 
 			/* 進捗ダイアログ有無 */
 			if( NULL == pcDlgCancel ){

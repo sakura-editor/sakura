@@ -137,7 +137,7 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 		// 2004.05.14 Moca CHokanMgr::Search‘¤‚Å‰üs‚ğíœ‚·‚é‚æ‚¤‚É‚µA’¼Ú‘‚«Š·‚¦‚é‚Ì‚ğ‚â‚ß‚½
 
 		Command_WordDeleteToStart();
-		Command_INSTEXT( TRUE, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE );
+		Command_INSTEXT( true, cmemHokanWord.GetStringPtr(), cmemHokanWord.GetStringLength(), TRUE );
 	}
 	else {
 		m_bHokan = TRUE;

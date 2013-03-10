@@ -336,7 +336,7 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 	m_Common.m_sFile.m_bCheckFileTimeStamp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ) != 0;
 
 	/* 無変更でも上書きするか */
-	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE );
+	m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ENABLEUNMODIFIEDOVERWRITE ) != 0;
 
 	/* ファイルをドロップしたときは閉じて開く */
 	m_Common.m_sFile.m_bDropFileAndClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bDropFileAndClose ) != 0;
