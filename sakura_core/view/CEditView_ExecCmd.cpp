@@ -498,7 +498,7 @@ finish:
 void OutputAdapter::OutputW(const WCHAR* pBuf, int size)
 {
 	if( m_bWindow ){
-		m_pCommander->Command_INSTEXT(FALSE, pBuf, CLogicInt(size), TRUE);
+		m_pCommander->Command_INSTEXT( false, pBuf, CLogicInt(size), TRUE);
 	}else{
 		m_pCShareData->TraceOutString( pBuf , size );
 	}
@@ -517,7 +517,7 @@ void OutputAdapter::OutputA(const ACHAR* pBuf, int size)
 		}else{
 			buf.SetStringOld(pBuf,size);
 		}
-		m_pCommander->Command_INSTEXT(FALSE, buf.GetStringPtr(), buf.GetStringLength(), TRUE);
+		m_pCommander->Command_INSTEXT( false, buf.GetStringPtr(), buf.GetStringLength(), TRUE);
 	}else{
 		// TraceOutString‘¤‚ÉANSI”Å‚ğì‚Á‚½‚Ù‚¤‚ª‚‘¬
 		CNativeW buf;

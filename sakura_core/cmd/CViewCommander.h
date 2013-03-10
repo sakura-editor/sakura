@@ -204,8 +204,6 @@ public:
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
 	void Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize );
 	//>> 2002/03/29 Azumaiya
-//	void Command_INSTEXT( BOOL, const char*, int );	/* テキストを貼り付け ver0 */
-	//void Command_INSTEXT( BOOL, const char*, BOOL );/* テキストを貼り付け ver1 */
 	void Command_INSBOXTEXT( const wchar_t *, int ); // 矩形貼り付け
 	void Command_INSTEXT( bool bRedraw, const wchar_t*, CLogicInt, bool bNoWaitCursor, bool bLinePaste = false ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */

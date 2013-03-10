@@ -622,7 +622,7 @@ void CViewCommander::Command_DELETE( void )
 				nIndex = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 				if( nLineLen != 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					if( EOL_NONE != pcLayout->GetLayoutEol().GetType() ){	// 行終端は改行コードか?
-						Command_INSTEXT( TRUE, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
+						Command_INSTEXT( true, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
 					}else{	// 行終端が折り返し
 						// 折り返し行末ではスペース挿入後、次の文字を削除する	// 2009.02.19 ryoji
 
@@ -630,7 +630,7 @@ void CViewCommander::Command_DELETE( void )
 						// 非フリーカーソル時（ちょうどカーソルが折り返し位置にある）には次の行の先頭文字を削除したい
 
 						if( nLineLen < GetCaret().GetCaretLayoutPos().GetX2() ){	// 折り返し行末とカーソルの間に隙間がある
-							Command_INSTEXT( TRUE, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
+							Command_INSTEXT( true, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
 							pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 							nIndex = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 						}
@@ -765,7 +765,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 			tmp.AppendString(L" ");
 		}
 		if( 0 < tmp.GetStringLength() ){
-			Command_INSTEXT(FALSE, tmp.GetStringPtr(), tmp.GetStringLength(), false, false);
+			Command_INSTEXT( false, tmp.GetStringPtr(), tmp.GetStringLength(), false, false);
 			GetCaret().MoveCursor(posBefore, false);
 		}
 	}
