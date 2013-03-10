@@ -41,6 +41,7 @@
 
 struct SEncodingConfig;
 #include "charset/CCodeBase.h"
+class CCodeBase;
 
 /*!
 	文字コードを変換してデータを行単位で取得するためのクラス
@@ -112,6 +113,7 @@ protected:
 	int		m_nReadLength;	// 現在までにロードしたデータの合計バイト数(BOM長を含まない)
 	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	ECodeType	m_CharCode;		// 文字コード
+	CCodeBase*	m_pCodeBase;	////
 	bool	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca

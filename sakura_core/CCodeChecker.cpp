@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "CCodeChecker.h"
 #include "io/CIoBridge.h"
+#include "charset/CCodeFactory.h" ////
 
 #include "doc/CEditDoc.h"
 #include "doc/CDocLineMgr.h"
@@ -36,21 +37,24 @@ static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECodeType eCodeType)
 {
 	CDocLine*	pcDocLine = pcDocLineMgr.GetDocLineTop();
+	CCodeBase* pCodeBase=CCodeFactory::CreateCodeBase(eCodeType,0);
 	while( pcDocLine ){
 		// コード変換 pcDocLine -> cmemTmp
 		CMemory cmemTmp;
 		EConvertResult e = CIoBridge::ImplToFile(
 			pcDocLine->_GetDocLineDataWithEOL(),
 			&cmemTmp,
-			eCodeType
+			pCodeBase
 		);
 		if(e!=RESULT_COMPLETE){
+			delete pCodeBase;
 			return e;
 		}
 
 		//次の行へ
 		pcDocLine = pcDocLine->GetNextLine();
 	}
+	delete pCodeBase;
 	return RESULT_COMPLETE;
 }
 
