@@ -4148,7 +4148,7 @@ void CEditWnd::InitAllViews()
 		GetView(i).m_cHistory->Flush();
 
 		/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
-		GetView(i).GetSelectionInfo().DisableSelectArea( FALSE );
+		GetView(i).GetSelectionInfo().DisableSelectArea( false );
 
 		GetView(i).OnChangeSetting();
 		GetView(i).GetCaret().MoveCursor( CLayoutPoint(0, 0), TRUE );

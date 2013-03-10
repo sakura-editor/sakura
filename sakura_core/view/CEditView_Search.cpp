@@ -235,7 +235,7 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 					}
 				}
 				/* Œ»İ‚Ì‘I‘ğ”ÍˆÍ‚ğ”ñ‘I‘ğó‘Ô‚É–ß‚· */
-				GetSelectionInfo().DisableSelectArea( FALSE );
+				GetSelectionInfo().DisableSelectArea( false );
 			}
 		}
 	}

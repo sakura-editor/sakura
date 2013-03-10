@@ -554,7 +554,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 
 	/* テキスト選択解除 */
 	/* 現在の選択範囲を非選択状態に戻す */
-	m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+	m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 
 	// 2004.06.01 Moca 検索中に、他のプロセスによってm_aReplaceKeysが書き換えられても大丈夫なように
 	const CNativeW	cMemRepKey( GetEditWindow()->m_cDlgReplace.m_strText2.c_str() );
@@ -1215,7 +1215,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	// From Here 2001.12.03 hor
 
 	/* テキスト選択解除 */
-	m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+	m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 
 	/* カーソル・選択範囲復元 */
 	if((!bSelectedArea) ||			// ファイル全体置換

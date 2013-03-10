@@ -111,7 +111,7 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 		}
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+		m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 
 		/* カーソルを移動 */
 		if( ptTo.y >= GetDocument()->m_cLayoutMgr.GetLineCount() ){

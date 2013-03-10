@@ -1136,7 +1136,7 @@ void CEditView::MoveCursorSelecting(
 	}else{
 		if( GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 			/* 現在の選択範囲を非選択状態に戻す */
-			GetSelectionInfo().DisableSelectArea( TRUE );
+			GetSelectionInfo().DisableSelectArea( true );
 		}
 	}
 	GetCaret().GetAdjustCursorPos(&ptWk_CaretPos);
@@ -1338,7 +1338,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		);
 
 		/* 現在の選択範囲を非選択状態に戻す */
-		GetSelectionInfo().DisableSelectArea( FALSE );	// 2009.07.18 ryoji TRUE -> FALSE 各行にアンダーラインが残る問題の修正
+		GetSelectionInfo().DisableSelectArea( false );	// 2009.07.18 ryoji true -> false 各行にアンダーラインが残る問題の修正
 
 		nIdxFrom = CLogicInt(0);
 		nIdxTo = CLogicInt(0);
@@ -2086,7 +2086,7 @@ void CEditView::CopySelectedAllLines(
 		sSelect.SetToX( pcLayout? pcLayout->GetIndent(): CLayoutInt(0) );
 		GetCaret().GetAdjustCursorPos( sSelect.GetToPointer() );	// EOF行を超えていたら座標修正
 
-		GetSelectionInfo().DisableSelectArea( false ); // 2011.06.03 TRUE →false
+		GetSelectionInfo().DisableSelectArea( false ); // 2011.06.03 true →false
 		GetSelectionInfo().SetSelectArea( sSelect );
 
 		GetCaret().MoveCursor( GetSelectionInfo().m_sSelect.GetTo(), false );
@@ -2456,7 +2456,7 @@ void CEditView::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	m_cHistory->Flush();
 
 	/* 現在の選択範囲を非選択状態に戻す */
-	GetSelectionInfo().DisableSelectArea( FALSE );
+	GetSelectionInfo().DisableSelectArea( false );
 
 	OnChangeSetting();
 	GetCaret().MoveCursor( CLayoutPoint(0, 0), TRUE );

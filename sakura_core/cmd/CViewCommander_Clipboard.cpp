@@ -135,7 +135,7 @@ void CViewCommander::Command_COPY(
 		/* テキストが選択されているか */
 		if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 			/* 現在の選択範囲を非選択状態に戻す */
-			m_pCommanderView->GetSelectionInfo().DisableSelectArea( TRUE );
+			m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 		}
 	}
 	return;
