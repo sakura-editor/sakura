@@ -3106,7 +3106,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 
 
 /* 前を検索 */
-void CEditView::Command_SEARCH_PREV( BOOL bReDraw, HWND hwndParent )
+void CEditView::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
 	int			nLineNum;
 	int			nIdx;
@@ -3294,7 +3294,7 @@ end_of_func:;
 */
 void CEditView::Command_SEARCH_NEXT(
 	bool			bChangeCurRegexp,
-	BOOL			bRedraw,
+	bool			bRedraw,
 	HWND			hwndParent,
 	const char*		pszNotFoundMessage
 )
@@ -6798,7 +6798,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 	const CMemory	cMemRepKey( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0], _tcslen(m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0]) );
 
 	/* 次を検索 */
-	Command_SEARCH_NEXT( true, TRUE, hwndParent, 0 );
+	Command_SEARCH_NEXT( true, true, hwndParent, 0 );
 
 	/* テキストが選択されているか */
 	if( IsTextSelected() ){
@@ -6912,7 +6912,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 		Redraw();
 
 		/* 次を検索 */
-		Command_SEARCH_NEXT( true, TRUE, hwndParent, "最後まで置換しました。" );
+		Command_SEARCH_NEXT( true, true, hwndParent, "最後まで置換しました。" );
 	}
 }
 

@@ -4249,7 +4249,7 @@ void CEditDoc::ReloadCurrentFile(
 		m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine = nViewTopLine;
 		m_cEditViewArr[m_nActivePaneIndex].m_nViewLeftCol = nViewLeftCol;
 	}
-	m_cEditViewArr[m_nActivePaneIndex].MoveCursorProperly( nCaretPosX, nCaretPosY, TRUE );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
+	m_cEditViewArr[m_nActivePaneIndex].MoveCursorProperly( nCaretPosX, nCaretPosY, true );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
 	m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX_Prev = m_cEditViewArr[m_nActivePaneIndex].m_nCaretPosX;
 
 	// 2006.09.01 ryoji オープン後自動実行マクロを実行する

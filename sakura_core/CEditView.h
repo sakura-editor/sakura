@@ -193,7 +193,7 @@ public:
 	int GetWrapOverhang( void ) const;							/* 折り返し桁以後のぶら下げ余白計算 */	// 2008.06.08 ryoji
 	int ViewColNumToWrapColNum( int nViewColNum ) const;		/* 「右端で折り返す」用にビューの桁数から折り返し桁数を計算する */	// 2008.06.08 ryoji
 	int  MoveCursor( int, int, BOOL, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
-	int MoveCursorProperly( int, int, BOOL, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
+	int MoveCursorProperly( int, int, bool, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
 	void MoveCursorSelecting( int, int, BOOL, int = _CARETMARGINRATE );
 	BOOL GetAdjustCursorPos( int *, int *);	// 正しいカーソル位置を算出する
@@ -762,8 +762,8 @@ public: /* テスト用にアクセス属性を変更 */
 	/* 検索系 */
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
-	void Command_SEARCH_NEXT( bool, BOOL, HWND, const char* );/* 次を検索 */
-	void Command_SEARCH_PREV( BOOL bReDraw, HWND );		/* 前を検索 */
+	void Command_SEARCH_NEXT( bool, bool, HWND, const char* );/* 次を検索 */
+	void Command_SEARCH_PREV( bool bReDraw, HWND );		/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
 	void Command_REPLACE_ALL();							/* すべて置換(実行) */

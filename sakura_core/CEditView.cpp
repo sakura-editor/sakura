@@ -3207,7 +3207,7 @@ void CEditView::SetIMECompFormFont( void )
 /** 行桁指定によるカーソル移動（座標調整付き）
 	@param nNewX[in/out] カーソルのレイアウト座標X
 	@param nNewY[in/out] カーソルのレイアウト座標Y
-	@param bScroll[in] TRUE: 画面位置調整有り/ FALSE: 画面位置調整有り無し
+	@param bScroll[in] true: 画面位置調整有り/ false: 画面位置調整有り無し
 	@param nCaretMarginRate[in] 縦スクロール開始位置を決める値
 	@param dx[in] nNewXとマウスカーソル位置との誤差(カラム幅未満のドット数)
 	@return 縦スクロール行数(負:上スクロール/正:下スクロール)
@@ -3217,7 +3217,7 @@ void CEditView::SetIMECompFormFont( void )
 	@date 2007.08.23 ryoji 関数化（MoveCursorToPoint()から処理を抜き出し）
 	@date 2007.09.26 ryoji 半角文字でも中央で左右にカーソルを振り分ける
 */
-int CEditView::MoveCursorProperly( int nNewX, int nNewY, BOOL bScroll, int nCaretMarginRate, int dx )
+int CEditView::MoveCursorProperly( int nNewX, int nNewY, bool bScroll, int nCaretMarginRate, int dx )
 {
 	const char*		pLine;
 	int				nLineLen;
@@ -3317,7 +3317,7 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 	nNewY = m_nViewTopLine + (yPos - m_nViewAlignTop) / ( m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace );
 	dx = (xPos - m_nViewAlignLeft) % ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 
-	nScrollRowNum = MoveCursorProperly( nNewX, nNewY, TRUE, 1000, dx );
+	nScrollRowNum = MoveCursorProperly( nNewX, nNewY, true, 1000, dx );
 	m_nCaretPosX_Prev = m_nCaretPosX;
 	return nScrollRowNum;
 }
