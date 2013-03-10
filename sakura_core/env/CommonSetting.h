@@ -370,7 +370,7 @@ struct CommonSetting_Search
 
 	//Grep
 	BOOL			m_bGrepExitConfirm;			// Grepモードで保存確認するか
-	int				m_bGrepRealTimeView;		// Grep結果のリアルタイム表示 2003.06.16 Moca
+	BOOL			m_bGrepRealTimeView;		// Grep結果のリアルタイム表示 2003.06.16 Moca
 
 	BOOL			m_bGTJW_RETURN;				// エンターキーでタグジャンプ
 	BOOL			m_bGTJW_LDBLCLK;			// ダブルクリックでタグジャンプ
