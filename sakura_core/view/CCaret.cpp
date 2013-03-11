@@ -1066,6 +1066,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 	
 	if( ptNewXYNew ){
 		*ptNewXYNew = ptNewXY;
+		GetAdjustCursorPos( ptNewXYNew );
 	}
 	if( test ){
 		return CLayoutInt(0);
