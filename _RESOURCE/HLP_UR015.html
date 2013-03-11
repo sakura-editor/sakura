@@ -12,6 +12,96 @@
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>変更履歴(2011/02/11～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
+
+<h3>Mar. 11, 2013 (2.0.6.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>入力補完でもプラグインを使えるように (svn:2362 svn:2371 upatch:3327635 Moca)</li>
+	<li>ファイルを開くで複数選択 (svn:2363 upatch:3364481 Moca)</li>
+	<li>WSHマクロの中断ができるように (svn:2365 upatch:3373462 syat)</li>
+	<li>Javaアウトライン解析の日本語対応 (svn:2367 upatch:3410222 unicode:1463 syat)</li>
+	<li>"送る"などで複数ファイルが指定されたときに、複数ファイルを開けるように (svn:2369 upatch:3493822 unicode:1757 novice)</li>
+	<li>C/Migemo1.3対応 (svn:2427 upatch:3450189 Moca)</li>
+	<li>MRU除外リスト (svn:2455 upatch:3450196 Moca)</li>
+	<li>(簡易)ログ監視モードの追加 (svn:2494 upatchid:273 Uchi)</li>
+	<li>複数単語検索のブックマーク・Grep対応 (svn:2497 upatchid:219 Moca)</li>
+	<li>改行、句読点ぶら下げが有効で右端で折り返して居る時のマージンを取らない設定の追加 (svn:2510 upatchid:288 Uchi)</li>
+	<li>ExpandParameter機能追加 (svn:2540 upatchid:302 Uchi)</li>
+	<li>プラグインの設定の各種改善 (svn:2541 upatchid:303 Uchi)</li>
+	<li>強調キーワードで補完 (svn:2544svn:2625 upatchid:253upatchid:340 Moca,aroka)</li>
+	<li>文字コードセット指定を追加 (svn:2552 upatchid:307 Uchi)</li>
+	<li>オートスクロール (svn:2559 upatchid:218 Moca)</li>
+	<li>UTF7のBOMサポート (svn:2564 upatchid:258 Moca)</li>
+	<li>文字コードセットLatin1の追加 (svn:2566 upatchid:309 Uchi)</li>
+	<li>Cookieマクロの追加 (svn:2567 upatchid:278 Moca)</li>
+	<li>ファイルダイアログの初期位置を指定 (svn:2569 upatchid:280 Moca)</li>
+	<li>無題番号 (svn:2574 upatchid:263 Moca)</li>
+	<li>固定幅モード (svn:2607 upatchid:267 Moca)</li>
+	<li>日本語強調キーワード対応 (svn:2624 upatchid:326 aroka)</li>
+	<li>カーソル行の背景色 (svn:2610 upatchid:277 Moca)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>プラグインの最大個数を20から40に変更 (svn:2366 upatch:3396061 syat)</li>
+	<li>外部ヘルプ1でもHTMLヘルプを表示 (svn:2428 upatch:3571858 Moca)</li>
+	<li>検索置換キー長制限の撤廃 (svn:2453 upatch:3462954 Moca)</li>
+	<li>Grep終了後Grep画面のフォルダを検索したフォルダに変更する(svn:2473 upatchid:269 Uchi)</li>
+	<li>正規表現キーワードを最大1000文字に (svn:2499 upatchid:237 Moca)</li>
+	<li>初期値にないキーコードへの割り当てに対応 (svn:2505 upatchid:282 aroka)</li>
+	<li>検索入力コンボボックスに画面のフォントを設定します (svn:2509 upatchid:287 Uchi)</li>
+	<li>キー割当ての名前の長さを29文字に変更 (svn:2530 upatchid:292 aroka)</li>
+	<li>タイプ別設定の拡張子を二重・なしにも対応 (svn:2565 upatchid:262 Moca)</li>
+	<li>文字の入力中にポインタを非表示 (svn:2568 upatchid:274 Moca)</li>
+	<li>プラグインのオプション設定でBool値の表示をチェックボックス風に変更 (svn:2587 upatchid:317 Uchi)</li>
+	<li>比較、DIFF、履歴ダイアログのサイズを可変にする (svn:2598svn:2608 upatchid:320upatchid:321 aroka,Moca)</li>
+	<li>上書きモードのときの矩形選択中の入力の動作を変更 (svn:2611 upatchid:312 Moca)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>"無変更でも上書き"のポップアップヘルプが表示されない (svn:2138 upatch:3526290 novice)</li>
+	<li>大文字同一検索で一部文字の扱いが不正 (svn:2151 svn:2152 upatch:3028557 syat)</li>
+	<li>タイプ別「ビューアを複数起動しない」が正しくiniに記録されない (svn:2267 svn:2268 unicode:1832 Moca)</li>
+	<li>折り返し行での再作画が不足している (svn:2368 upatch:3465554 Moca)</li>
+	<li>全角→半角で単体の濁点・半濁点が変換されない (svn:2370 upatch:3531937 syat)</li>
+	<li>EOF回りのカーソル移動の修正 (svn:2372 upatch:3465570 Moca)</li>
+	<li>フリーカーソル・矩形で縦移動したときの位置を修正 (svn:2373 upatch:3547225 Moca)</li>
+	<li>Editor.Char(0)が使えない (svn:2416 upatch:3470602 Moca)</li>
+	<li>選択ロック中での検索で選択範囲の描画がおかしい (svn:2419 upatch:3572369 Moca)</li>
+	<li>選択色で行末以降の選択も表示 (svn:2420 upatch:3572374 Moca)</li>
+	<li>パス貼り付けの形式をANSI版に合わせる (svn:2443 upatch:3576647 BugReport/83 Moca)</li>
+	<li>設定変更時の行末以降でのカーソル・選択範囲の復帰 (svn:2444 upatch:3577006 Moca)</li>
+	<li>Texアウトライン解析のSJISチェックの修正 (svn:2454 upatch:3578795 Moca)</li>
+	<li>キーマクロが実行できない実行形式が出来てしまうことが有る (svn:2468 upatchid:266 Uchi)</li>
+	<li>ファイルの履歴0のときの処理を修正 (svn:2456 upatch:3578285 Moca)</li>
+	<li>PUTFILEでエラー (svn:2457 upatch:3576676 BugReport/102 Moca)</li>
+	<li>キー設定のインポート時の画面更新バグ修正 (svn:2470 svn:2487 upatchid:272 aroka)</li>
+	<li>ファイルダイアログで沢山選択すると応答なしになる (svn:2480 svn:2482 upatchid:279 Moca)</li>
+	<li>ファイルタイムスタンプのチェック頻度をコメント通りの３秒間隔にする (svn:2495 upatchid:286 aroka)</li>
+	<li>文字コード認識の改善 (svn:2500 upatchid:249 Moca)</li>
+	<li>矩形の選択中の未選択状態でコピーをすると矩形のままになる (svn:2501 upatchid:255 Moca)</li>
+	<li>古いキー割り当て設定をImportするとマウスが誤動作する (svn:2505 upatchid:282 aroka)</li>
+	<li>デフォルト文字コードをUTF-8にしているとSjisのファイルをUTF-8と判定ミスをする (svn:2508 svn:2531 upatchid:289 Uchi)</li>
+	<li>C/C++アウトライン解析で#if(0)以降の解析がおかしくなる (svn:2512 upatchid:293 novice)</li>
+	<li>Importしたキー割付の名前が内部のバッファサイズより長いとメモリ破壊する (svn:2530 upatchid:292 aroka)</li>
+	<li>NUL文字を含み、ある程度以上の長さがある行で IMEを使うと無限ループに陥っていた (svn:2516 upatchid:495 ds14050)</li>
+	<li>文字コード判定で全体の0.05%未満の不正バイトは、無視するはずが、5％だったのを修正 (svn:2531 upatchid:298 Uchi)</li>
+	<li>Grep時のデフォルトの文字コードを検査するファイル名から設定する (svn:2531 upatchid:298 Uchi)</li>
+	<li>折り返しを変更した時に画面がずれる (svn:2563 upatchid:261 Moca)</li>
+	<li>バックアップ詳細設定の日時書式をファイル保存時刻と現在時刻であわせる (BugReport/67)(svn:2572 upatchid:306 aroka)</li>
+	<li>アウトラインのドッキング時のサイズ調整 (svn:2623 upatchid:336 Uchi)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>ヘルプファイルのフルパス格納処理変更 (svn:2320 upatch:3565773 novice)</li>
+	<li>ルーラのキャレット位置をANSI版に合わせて1px右へ (svn:2327 upatch:3549768 Moca)</li>
+	<li>キャレットの幅のシステムの設定を適用 (svn:2418 upatch:3572365 Moca)</li>
+	<li>『プラグイン設定』Helpの指定 (svn:2474 upatchid:270 Uchi)</li>
+	<li>MinGW32 コンパイル対応 (svn:2543 upatchid:271 minoki)</li>
+</ul>
+
 <h3>May. 13, 2012 (2.0.5.0)</h3>
 [機能追加]<br />
 <ul>
