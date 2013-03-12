@@ -126,7 +126,7 @@ BOOL CViewCommander::HandleCommand(
 	}
 	/* キーリピート状態 */
 	if( m_bPrevCommand == nCommand ){
-		bRepeat = TRUE;
+		bRepeat = true;
 	}
 	m_bPrevCommand = nCommand;
 	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
@@ -134,7 +134,7 @@ BOOL CViewCommander::HandleCommand(
 		( nCommandFrom & FA_NONRECORD ) != FA_NONRECORD	/* 2007.07.07 genta 記録抑制フラグ off */
 	){
 		/* キーリピート状態をなくする */
-		bRepeat = FALSE;
+		bRepeat = false;
 		/* キーマクロに記録可能な機能かどうかを調べる */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		//F_EXECEXTMACROコマンドはファイルを選択した後にマクロ文が確定するため個別に記録する。
@@ -155,7 +155,7 @@ BOOL CViewCommander::HandleCommand(
 	/* キーボードマクロの実行中 */
 	if( m_pCommanderView->m_bExecutingKeyMacro ){
 		/* キーリピート状態をなくする */
-		bRepeat = FALSE;
+		bRepeat = false;
 	}
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
