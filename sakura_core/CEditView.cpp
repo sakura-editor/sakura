@@ -10725,7 +10725,7 @@ searchnext:;
 
 						/* キーワードが登録単語ならば、色を変える */
 						// 2005.01.13 MIK 強調キーワード数追加に伴う配列化 //MIK 2000.12.01 second keyword & binary search
-						for( int n = 0; n < 10; n++ )
+						for( int n = 0; n < MAX_KEYWORDSET_PER_TYPE; n++ )
 						{
 							// 強調キーワードは前詰めで設定されるので、未設定のIndexがあれば中断
 							if(TypeDataPtr->m_nKeyWordSetIdx[n] == -1 ){
