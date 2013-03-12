@@ -1154,8 +1154,8 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 /*!
 	キーボードマクロの保存が可能かどうか
 	
-	@retval TRUE 保存可能
-	@retval FALSE 保存不可
+	@retval true 保存可能
+	@retval false 保存不可
 */
 bool CSMacroMgr::IsSaveOk(void)
 {
