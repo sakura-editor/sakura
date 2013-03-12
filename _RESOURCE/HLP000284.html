@@ -29,12 +29,15 @@ $A	アプリ名(sakura) (sakura:2.0.0.0以降)<br>
 $F	開いているファイルのフルパス。名前がなければ(無題)。<br>
 $f	開いているファイルの名前（ファイル名+拡張子のみ）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：Main.cpp<br>
-$N	開いているファイルの名前(<a href="HLP000277.html">簡易表示</a>)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：ソース\Main.cpp(設定によります)<br>
 $g	開いているファイルの名前（拡張子除く）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：Main<br>
 $/	開いているファイルのフルパス（パスの区切りが/）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：D:/source/Main.cpp<br>
+$N	開いているファイルの名前(<a href="HLP000277.html">簡易表示</a>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：ソース\Main.cpp(設定によります)<br>
+$n	無題の通し番号 (sakura:2.0.6.0以降)<br>
+$E	開いているファイルのあるフォルダの名前(簡易表示) (sakura:2.0.6.0以降)<br>
+$e	開いているファイルのあるフォルダの名前 (sakura:2.0.6.0以降)<br>
 $C	現在選択中のなかで改行コードを除く１行目のテキスト<br>
 &nbsp;&nbsp;&nbsp;&nbsp;選択範囲がない場合は現在のカーソル位置の単語を取得します。<br>
 $x	現在の論理桁位置(先頭からのバイト数1開始)<br>
@@ -49,8 +52,8 @@ $V	エディタのバージョン文字列<br>
 $h	Grep検索キーの先頭32byte<br>
 $S	サクラエディタのフルパス名 (sakura:1.5.7.0以降)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;例：C:\Program files\sakura\sakura.exe<br>
-$M	現在実行中のマクロのフルパス名 (sakura:1.5.7.0以降)<br>
 $I	現在参照しているiniファイルのパス<br>
+$M	現在実行中のマクロのフルパス名 (sakura:1.5.7.0以降)<br>
 </div><br>
 <img src="images/note.png"><b>注意</b><div class=li200>
 新規ファイル，Grep検索結果ウィンドウ，アウトプットウィンドウの場合、$F，$f，$g，$/ は「(無題)」に、$D，$T は「(保存されていません)」になります。<br>
