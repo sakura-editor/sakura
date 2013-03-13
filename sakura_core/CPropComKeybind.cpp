@@ -559,7 +559,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 		{
 			FILE	*fp;
 			int	i, j, cnt, kc, n, an;
-			char	buff[1024], name[1024], szFuncNameJapanese[256], s[1024], *p, *q;
+			char	buff[1024], szFuncNameJapanese[256], s[1024], *p, *q;
 
 			if( (fp = fopen( szPath, "r" )) == NULL )
 			{
@@ -579,7 +579,6 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 				{
 					for(i = 0; i < an; i++)
 					{
-						name[0] = '\0';
 						if( fgets(buff, sizeof(buff), fp) == NULL ) break;
 						for(j = strlen(buff) - 1; j >= 0; j--){
 							if( buff[j] == '\n' || buff[j] == '\r' ) buff[j] = '\0';
@@ -587,8 +586,7 @@ void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
 						cnt = sscanf(buff, "KeyBind[%03d]=%04x,%s",
 							&n,
 							&kc,
-							s,
-							name);
+							s);
 						if( cnt != 3 ) break;
 						if( i != n ) break;
 						pKeyNameArr[i].m_nKeyCode = kc;

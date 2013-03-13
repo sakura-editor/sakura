@@ -7591,7 +7591,7 @@ int CEditView::DoGrepTree(
 						currentFile,
 						cmemMessage
 					);
-					delete currentFile;
+					delete [] currentFile;
 					currentFile = NULL;
 
 					// 2003.06.23 Moca リアルタイム表示のときは早めに表示
