@@ -617,21 +617,21 @@ struct CommonSetting_Backup
 	int		GetBackupTypeAdv(void) const { return m_nBackUpType_Opt4; }
 	void	SetBackupTypeAdv(int n){ m_nBackUpType_Opt4 = n; }
 
-	BOOL				m_bBackUp;						/* バックアップの作成 */
-	BOOL				m_bBackUpDialog;				/* バックアップの作成前に確認 */
-	BOOL				m_bBackUpFolder;				/* 指定フォルダにバックアップを作成する */
+	bool				m_bBackUp;						// 保存時にバックアップを作成する
+	bool				m_bBackUpDialog;				// バックアップの作成前に確認
+	bool				m_bBackUpFolder;				// 指定フォルダにバックアップを作成する
 
-	char				m_szBackUpFolder[_MAX_PATH];	/* バックアップを作成するフォルダ */
-	int 				m_nBackUpType;					/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-	int 				m_nBackUpType_Opt1;				/* バックアップファイル名：オプション1 */
-	int 				m_nBackUpType_Opt2;				/* バックアップファイル名：オプション2 */
-	int 				m_nBackUpType_Opt3;				/* バックアップファイル名：オプション3 */
-	int 				m_nBackUpType_Opt4;				/* バックアップファイル名：オプション4 */
-	int 				m_nBackUpType_Opt5;				/* バックアップファイル名：オプション5 */
-	int 				m_nBackUpType_Opt6;				/* バックアップファイル名：オプション6 */
-	BOOL				m_bBackUpDustBox;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-	BOOL				m_bBackUpPathAdvanced;				/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-	char				m_szBackUpPathAdvanced[_MAX_PATH];	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+	char				m_szBackUpFolder[_MAX_PATH];	// バックアップを作成するフォルダ
+	int 				m_nBackUpType;					// バックアップファイル名のタイプ 1=(.bak) 2=*_日付.*
+	int 				m_nBackUpType_Opt1;				// バックアップファイル名：オプション1
+	int 				m_nBackUpType_Opt2;				// バックアップファイル名：オプション2
+	int 				m_nBackUpType_Opt3;				// バックアップファイル名：オプション3
+	int 				m_nBackUpType_Opt4;				// バックアップファイル名：オプション4
+	int 				m_nBackUpType_Opt5;				// バックアップファイル名：オプション5
+	int 				m_nBackUpType_Opt6;				// バックアップファイル名：オプション6
+	bool				m_bBackUpDustBox;				// バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
+	bool				m_bBackUpPathAdvanced;				// バックアップ先フォルダを詳細設定する 20051107 aroka 
+	char				m_szBackUpPathAdvanced[_MAX_PATH];	// バックアップを作成するフォルダの詳細設定 20051107 aroka 
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -588,21 +588,21 @@ bool CShareData::InitShareData()
 
 
 		/* バックアップ */
-		m_pShareData->m_Common.m_sBackup.m_bBackUp = FALSE;					/* バックアップの作成 */
-		m_pShareData->m_Common.m_sBackup.m_bBackUpDialog = TRUE;			/* バックアップの作成前に確認 */
-		m_pShareData->m_Common.m_sBackup.m_bBackUpFolder = FALSE;			/* 指定フォルダにバックアップを作成する */
-		m_pShareData->m_Common.m_sBackup.m_szBackUpFolder[0] = _T('\0');	/* バックアップを作成するフォルダ */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType = 2;					/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;
-																/* バックアップファイル名：連番の数と先頭文字 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt3 = 5;			/* バックアップファイル名：Option3 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt4 = 0;			/* バックアップファイル名：Option4 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt5 = 0;			/* バックアップファイル名：Option5 */
-		m_pShareData->m_Common.m_sBackup.m_nBackUpType_Opt6 = 0;			/* バックアップファイル名：Option6 */
-		m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox = FALSE;			/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-		m_pShareData->m_Common.m_sBackup.m_bBackUpPathAdvanced = FALSE;		/* 20051107 aroka バックアップ先フォルダを詳細設定する */
-		m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced[0] = _T('\0');	/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
+		CommonSetting_Backup& sBackup = m_pShareData->m_Common.m_sBackup;
+		sBackup.m_bBackUp = false;										/* バックアップの作成 */
+		sBackup.m_bBackUpDialog = true;									/* バックアップの作成前に確認 */
+		sBackup.m_bBackUpFolder = false;								/* 指定フォルダにバックアップを作成する */
+		sBackup.m_szBackUpFolder[0] = _T('\0');							/* バックアップを作成するフォルダ */
+		sBackup.m_nBackUpType = 2;										/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
+		sBackup.m_nBackUpType_Opt1 = BKUP_YEAR | BKUP_MONTH | BKUP_DAY;	/* バックアップファイル名：日付 */
+		sBackup.m_nBackUpType_Opt2 = ('b' << 16 ) + 10;					/* バックアップファイル名：連番の数と先頭文字 */
+		sBackup.m_nBackUpType_Opt3 = 5;									/* バックアップファイル名：Option3 */
+		sBackup.m_nBackUpType_Opt4 = 0;									/* バックアップファイル名：Option4 */
+		sBackup.m_nBackUpType_Opt5 = 0;									/* バックアップファイル名：Option5 */
+		sBackup.m_nBackUpType_Opt6 = 0;									/* バックアップファイル名：Option6 */
+		sBackup.m_bBackUpDustBox = false;								/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
+		sBackup.m_bBackUpPathAdvanced = false;							/* 20051107 aroka バックアップ先フォルダを詳細設定する */
+		sBackup.m_szBackUpPathAdvanced[0] = _T('\0');					/* 20051107 aroka バックアップを作成するフォルダの詳細設定 */
 
 		m_pShareData->m_Common.m_sGeneral.m_nCaretType = 0;					/* カーソルのタイプ 0=win 1=dos */
 		m_pShareData->m_Common.m_sGeneral.m_bIsINSMode = true;				/* 挿入／上書きモード */

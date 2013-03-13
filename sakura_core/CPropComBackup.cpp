@@ -233,9 +233,9 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 
 
 	/* バックアップの作成 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP, m_Common.m_sBackup.m_bBackUp );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP, m_Common.m_sBackup.m_bBackUp ? BST_CHECKED : BST_UNCHECKED );
 	/* バックアップの作成前に確認 */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPDIALOG, m_Common.m_sBackup.m_bBackUpDialog );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPDIALOG, m_Common.m_sBackup.m_bBackUpDialog ? BST_CHECKED : BST_UNCHECKED );
 //	/* 指定フォルダにバックアップを作成する */ //	20051107 aroka 「バックアップの作成」に連動させる
 //	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_sBackup.m_bBackUpFolder );
 
@@ -278,16 +278,16 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_SEC, m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) );
 
 	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動：連動対象にする。
-	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_sBackup.m_bBackUpFolder );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_sBackup.m_bBackUpFolder ? BST_CHECKED : BST_UNCHECKED );
 
 	/* バックアップを作成するフォルダ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder );
 
 	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX, m_Common.m_sBackup.m_bBackUpDustBox );	//@@@ 2001.12.11 add MIK
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX, m_Common.m_sBackup.m_bBackUpDustBox ? BST_CHECKED : BST_UNCHECKED );	//@@@ 2001.12.11 add MIK
 
 	/* バックアップ先フォルダを詳細設定する */ // 20051107 aroka
-	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_ADVANCED, m_Common.m_sBackup.m_bBackUpPathAdvanced );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_ADVANCED, m_Common.m_sBackup.m_bBackUpPathAdvanced ? BST_CHECKED : BST_UNCHECKED );
 
 	/* バックアップを作成するフォルダの詳細設定 */ // 20051107 aroka
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFILE, m_Common.m_sBackup.m_szBackUpPathAdvanced );
@@ -333,9 +333,9 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 //	m_nPageNum = ID_PAGENUM_BACKUP;
 
 	/* バックアップの作成 */
-	m_Common.m_sBackup.m_bBackUp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP );
+	m_Common.m_sBackup.m_bBackUp = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP ) != 0;
 	/* バックアップの作成前に確認 */
-	m_Common.m_sBackup.m_bBackUpDialog = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPDIALOG );
+	m_Common.m_sBackup.m_bBackUpDialog = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPDIALOG ) != 0;
 //	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 「バックアップの作成」に連動させる
 //	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER );
 
@@ -386,7 +386,7 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 	m_Common.m_sBackup.SetBackupOpt(BKUP_SEC, ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_SEC ) == BST_CHECKED);
 
 	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動
-	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER );
+	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER ) != 0;
 
 	/* バックアップを作成するフォルダ */
 	//	Oct. 5, 2002 genta サイズをsizeof()で指定
@@ -394,10 +394,10 @@ int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
 	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder, sizeof( m_Common.m_sBackup.m_szBackUpFolder ) - 1);
 
 	/* バックアップファイルをごみ箱に放り込む */	//@@@ 2001.12.11 add MIK
-	m_Common.m_sBackup.m_bBackUpDustBox = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX );	//@@@ 2001.12.11 add MIK
+	m_Common.m_sBackup.m_bBackUpDustBox = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_DUSTBOX ) != 0;	//@@@ 2001.12.11 add MIK
 
 	/* 指定フォルダにバックアップを作成する詳細設定 */ // 20051107 aroka
-	m_Common.m_sBackup.m_bBackUpPathAdvanced = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_ADVANCED );
+	m_Common.m_sBackup.m_bBackUpPathAdvanced = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_ADVANCED ) != 0;
 	/* バックアップを作成するフォルダ */ // 20051107 aroka
 	::GetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFILE, m_Common.m_sBackup.m_szBackUpPathAdvanced, sizeof( m_Common.m_sBackup.m_szBackUpPathAdvanced ) - 1);
 
