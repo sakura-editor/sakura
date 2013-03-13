@@ -660,32 +660,33 @@ struct CommonSetting_Format
 struct CommonSetting_Search
 {
 	SSearchOption		m_sSearchOption;				// 検索／置換  条件
-	int					m_bConsecutiveAll;				/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-	int					m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
-	int					m_bSelectedArea;				/* 置換  選択範囲内置換 */
-	int					m_bGrepSubFolder;				/* Grep: サブフォルダも検索 */
-	BOOL				m_bGrepOutputLine;				/* Grep: 行を出力するか該当部分だけ出力するか */
-	int					m_nGrepOutputStyle;				/* Grep: 出力形式 */
-	int					m_bGrepDefaultFolder;			/* Grep: フォルダの初期値をカレントフォルダにする */
-	int					m_nGrepCharSet;					/* Grep: 文字コードセット */ // 2002/09/20 Moca Add
+	int					m_bConsecutiveAll;				// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+	int					m_bNOTIFYNOTFOUND;				// 検索／置換  見つからないときメッセージを表示
+	int					m_bSelectedArea;				// 置換  選択範囲内置換
 
-	BOOL				m_bCaretTextForSearch;			/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
-	char				m_szRegexpLib[_MAX_PATH];		/* 使用する正規表現DLL */ // 2007.08.22 genta
+	int					m_bGrepSubFolder;				// Grep: サブフォルダも検索
+	BOOL				m_bGrepOutputLine;				// Grep: 行を出力するか該当部分だけ出力するか
+	int					m_nGrepOutputStyle;				// Grep: 出力形式
+	int					m_bGrepDefaultFolder;			// Grep: フォルダの初期値をカレントフォルダにする
+	int					m_nGrepCharSet;					// Grep: 文字コードセット // 2002/09/20 Moca Add
+
+	BOOL				m_bCaretTextForSearch;			// カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
+	TCHAR				m_szRegexpLib[_MAX_PATH];		// 使用する正規表現DLL 2007.08.22 genta
 
 	//Grep
-	BOOL				m_bGrepExitConfirm;				/* Grepモードで保存確認するか */
+	BOOL				m_bGrepExitConfirm;				// Grepモードで保存確認するか
 	BOOL				m_bGrepRealTimeView;			// Grep結果のリアルタイム表示 2003.06.16 Moca
 
-	BOOL				m_bGTJW_RETURN;					/* エンターキーでタグジャンプ */
-	BOOL				m_bGTJW_LDBLCLK;				/* ダブルクリックでタグジャンプ */
+	BOOL				m_bGTJW_RETURN;					// エンターキーでタグジャンプ
+	BOOL				m_bGTJW_LDBLCLK;				// ダブルクリックでタグジャンプ
 
 	//検索・置換ダイアログ
-	BOOL				m_bAutoCloseDlgFind;		/* 検索ダイアログを自動的に閉じる */
-	BOOL				m_bAutoCloseDlgReplace;		/* 置換 ダイアログを自動的に閉じる */
-	BOOL				m_bSearchAll;				/* 先頭（末尾）から再検索 2002.01.26 hor */
+	BOOL				m_bAutoCloseDlgFind;			// 検索ダイアログを自動的に閉じる
+	BOOL				m_bAutoCloseDlgReplace;			// 置換 ダイアログを自動的に閉じる
+	BOOL				m_bSearchAll;					// 先頭（末尾）から再検索 2002.01.26 hor
 
 	//INI内設定のみ
-	BOOL				m_bUseCaretKeyWord;				/* キャレット位置の単語を辞書検索 */		// 2006.03.24 fon
+	BOOL				m_bUseCaretKeyWord;				// キャレット位置の単語を辞書検索		// 2006.03.24 fon
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -144,7 +144,7 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_GTJW_LDBLCLK, m_Common.m_sSearch.m_bGTJW_LDBLCLK );
 
 	//	2007.08.12 genta ê≥ãKï\åªDLL
-	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( sizeof(m_Common.m_sSearch.m_szRegexpLib ) - 1 ), 0 );
+	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEXPLIB ),  EM_LIMITTEXT, (WPARAM)( _countof(m_Common.m_sSearch.m_szRegexpLib ) - 1 ), 0 );
 	::SetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib);
 	SetRegexpVersion( hwndDlg );
 
@@ -176,7 +176,7 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 	m_Common.m_sSearch.m_bGTJW_LDBLCLK = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_GTJW_LDBLCLK );
 
 	//	2007.08.12 genta ê≥ãKï\åªDLL
-	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, sizeof( m_Common.m_sSearch.m_szRegexpLib ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_REGEXPLIB, m_Common.m_sSearch.m_szRegexpLib, _countof( m_Common.m_sSearch.m_szRegexpLib ));
 
 	return TRUE;
 }
