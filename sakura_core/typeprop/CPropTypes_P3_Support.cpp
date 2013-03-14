@@ -14,21 +14,18 @@
 #include "sakura.hh"
 
 static const DWORD p_helpids3[] = {	//11500
+	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
 	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//入力補完 単語ファイル参照
 	IDC_COMBO_HOKAN_TYPE,			HIDC_COMBO_HOKAN_TYPE,				//入力補完タイプ
 	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
 	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//現在のファイルから入力補完
 	IDC_CHECK_HOKANBYKEYWORD,		HIDC_CHECK_HOKANBYKEYWORD,			//強調キーワードから入力補完
-	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
+
 	IDC_EDIT_TYPEEXTHELP,			HIDC_EDIT_TYPEEXTHELP,				//外部ヘルプファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_TYPEOPENHELP,		HIDC_BUTTON_TYPEOPENHELP,			//外部ヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_EDIT_TYPEEXTHTMLHELP,		HIDC_EDIT_TYPEEXTHTMLHELP,			//外部HTMLヘルプファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_TYPEOPENEXTHTMLHELP,	HIDC_BUTTON_TYPEOPENEXTHTMLHELP,	//外部HTMLヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_CHECK_TYPEHTMLHELPISSINGLE,	HIDC_CHECK_TYPEHTMLHELPISSINGLE,	//ビューアを複数起動しない	// 2006.08.06 ryoji
-	IDC_COMBO_DEFAULT_CODETYPE,		HIDC_COMBO_DEFAULT_CODETYPE,		//デフォルト文字コード
-	IDC_COMBO_DEFAULT_EOLTYPE,		HIDC_COMBO_DEFAULT_EOLTYPE,			//デフォルト改行コード	// 2011.01.24 ryoji
-	IDC_CHECK_DEFAULT_BOM,			HIDC_CHECK_DEFAULT_BOM,				//デフォルトBOM	// 2011.01.24 ryoji
-	IDC_CHECK_PRIOR_CESU8,			HIDC_CHECK_PRIOR_CESU8,				//自動判別時にCESU-8を優先する
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -57,16 +54,6 @@ static const DWORD p_helpids3[] = {	//11500
 //	TRUE,
 //	TRUE
 //};
-static const wchar_t* aszEolStr[] = {
-	L"CR+LF",
-	L"LF (UNIX)",
-	L"CR (Mac)",
-};
-static const EEolType aeEolType[] = {
-	EOL_CRLF,
-	EOL_LF,
-	EOL_CR,
-};
 
 struct SHokanMethod{
 	int nMethod;
@@ -111,23 +98,6 @@ INT_PTR CPropSupport::DispatchEvent(
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 //		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
-		case CBN_SELCHANGE:
-			{
-				int i;
-				switch( wID ){
-				case IDC_COMBO_DEFAULT_CODETYPE:
-					// 文字コードの変更をBOMチェックボックスに反映
-					i = Combo_GetCurSel( (HWND) lParam );
-					if( CB_ERR != i ){
-						CCodeTypeName	cCodeTypeName( Combo_GetItemData( (HWND)lParam, i ) );
-						::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (cCodeTypeName.IsBomDefOn() ?  BST_CHECKED : BST_UNCHECKED) );
-						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), cCodeTypeName.UseBom() );
-					}
-					break;
-				}
-			}
-			break;
-
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			/* ダイアログデータの取得 p2 */
@@ -223,7 +193,7 @@ INT_PTR CPropSupport::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = 2;
+			m_nPageNum = 3;
 			return TRUE;
 		}
 		break;
@@ -281,61 +251,13 @@ void CPropSupport::SetData( HWND hwndDlg )
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp );
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp );
 	::CheckDlgButton( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE, m_Types.m_bHtmlHelpIsSingle ? BST_CHECKED : BST_UNCHECKED);
-
-	/* 「文字コード」グループの設定 */
-	{
-		int i;
-		HWND hCombo;
-
-		// 「自動認識時にCESU-8を優先」m_Types.m_encoding.m_bPriorCesu8 をチェック
-		::CheckDlgButton( hwndDlg, IDC_CHECK_PRIOR_CESU8, m_Types.m_encoding.m_bPriorCesu8 );
-
-		// デフォルトコードタイプのコンボボックス設定
-		int		nSel= 0;
-		int		j = 0;
-		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
-		CCodeTypesForCombobox cCodeTypes;
-		for (i = 0; i < cCodeTypes.GetCount(); i++) {
-			if (CCodeTypeName( cCodeTypes.GetCode(i) ).CanDefault()) {
-				int idx = Combo_AddString( hCombo, cCodeTypes.GetName(i) );
-				Combo_SetItemData( hCombo, idx, cCodeTypes.GetCode(i) );
-				if (m_Types.m_encoding.m_eDefaultCodetype == cCodeTypes.GetCode(i)) {
-					nSel = j;
-				}
-				j++;
-			}
-		}
-		Combo_SetCurSel( hCombo, nSel );
-
-		// BOM チェックボックス設定
-		CCodeTypeName	cCodeTypeName(m_Types.m_encoding.m_eDefaultCodetype);
-		if( !cCodeTypeName.UseBom() )
-			m_Types.m_encoding.m_bDefaultBom = false;
-		::CheckDlgButton( hwndDlg, IDC_CHECK_DEFAULT_BOM, (m_Types.m_encoding.m_bDefaultBom ? BST_CHECKED : BST_UNCHECKED) );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DEFAULT_BOM ), (int)cCodeTypeName.UseBom() );
-
-		// デフォルト改行タイプのコンボボックス設定
-		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
-		for( i = 0; i < _countof(aszEolStr); ++i ){
-			ApiWrap::Combo_AddString( hCombo, aszEolStr[i] );
-		}
-		for( i = 0; i < _countof(aeEolType); ++i ){
-			if( m_Types.m_encoding.m_eDefaultEoltype == aeEolType[i] ){
-				break;
-			}
-		}
-		if( i == _countof(aeEolType) ){
-			i = 0;
-		}
-		Combo_SetCurSel( hCombo, i );
-	}
 }
 
 /* ダイアログデータの取得 */
 int CPropSupport::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
-//	m_nPageNum = 2;
+//	m_nPageNum = 3;
 
 //	2001/06/19	asa-o
 	/* 入力補完機能：英大文字小文字を同一視する */
@@ -362,32 +284,6 @@ int CPropSupport::GetData( HWND hwndDlg )
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHELP, m_Types.m_szExtHelp, _countof2( m_Types.m_szExtHelp ));
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP, m_Types.m_szExtHtmlHelp, _countof2( m_Types.m_szExtHtmlHelp ));
 	m_Types.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TYPEHTMLHELPISSINGLE ) != 0;
-
-	/* 「文字コード」グループの設定 */
-	{
-		int i;
-		HWND hCombo;
-
-		// m_Types.m_bPriorCesu8 を設定
-		m_Types.m_encoding.m_bPriorCesu8 = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_PRIOR_CESU8 ) != 0;
-
-		// m_Types.eDefaultCodetype を設定
-		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
-		i = Combo_GetCurSel( hCombo );
-		if( CB_ERR != i ){
-			m_Types.m_encoding.m_eDefaultCodetype = ECodeType( Combo_GetItemData( hCombo, i ) );
-		}
-
-		// m_Types.m_bDefaultBom を設定
-		m_Types.m_encoding.m_bDefaultBom = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DEFAULT_BOM ) != 0;
-
-		// m_Types.eDefaultEoltype を設定
-		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_EOLTYPE );
-		i = Combo_GetCurSel( hCombo );
-		if( CB_ERR != i ){
-			m_Types.m_encoding.m_eDefaultEoltype = aeEolType[i];
-		}
-	}
 
 
 	return TRUE;

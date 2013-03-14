@@ -1676,6 +1676,10 @@
 					RelativePath="..\sakura_core\typeprop\CPropTypes_P5_KeyHelp.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypes_P6_Window.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="types"

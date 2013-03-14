@@ -60,6 +60,35 @@ INT_PTR CALLBACK CPropKeyword::DlgProc_page(
 	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropKeyword::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
+INT_PTR CALLBACK CPropKeyword::DlgProc_dialog(
+	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	return DlgProc2( reinterpret_cast<pDispatchPage>(&CPropKeyword::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
+}
+INT_PTR CPropCommon::DlgProc2(
+	INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
+	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
+)
+{
+	CPropCommon*	pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pCPropCommon = ( CPropCommon* )(lParam);
+		if( NULL != pCPropCommon ){
+			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPropCommon = ( CPropCommon* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		if( NULL != pCPropCommon ){
+			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
 
 /* Keyword メッセージ処理 */
 INT_PTR CPropKeyword::DispatchEvent(
@@ -95,6 +124,23 @@ INT_PTR CPropKeyword::DispatchEvent(
 		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
+		if( wParam == IDOK ){ // 独立ウィンドウ
+			hwndCtl = ::GetDlgItem( hwndDlg, IDOK );
+			GetWindowRect( hwndCtl, &rc );
+			i = rc.bottom; // OK,CANCELボタンの下端
+
+			GetWindowRect( hwndDlg, &rc );
+			SetWindowPos( hwndDlg, NULL, 0, 0, rc.right-rc.left, i-rc.top+10, SWP_NOZORDER|SWP_NOMOVE );
+			SetWindowText( hwndDlg, _T("共通設定 - 強調キーワード") );
+
+			hwndCOMBO_SET = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
+		}
+		else{
+			hwndCtl = ::GetDlgItem( hwndDlg, IDOK );
+			ShowWindow( hwndCtl, SW_HIDE );
+			hwndCtl = ::GetDlgItem( hwndDlg, IDCANCEL );
+			ShowWindow( hwndCtl, SW_HIDE );
+		}
 
 		/* コントロールのハンドルを取得 */
 		hwndCOMBO_SET = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
@@ -382,6 +428,13 @@ INT_PTR CPropKeyword::DispatchEvent(
 					/* リスト中のキーワードをエクスポートする */
 					Export_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 					return TRUE;
+				// 独立ウィンドウで使用する
+				case IDOK:
+					EndDialog( hwndDlg, IDOK );
+					break;
+				case IDCANCEL:
+					EndDialog( hwndDlg, IDCANCEL );
+					break;
 				}
 				break;	/* BN_CLICKED */
 			}

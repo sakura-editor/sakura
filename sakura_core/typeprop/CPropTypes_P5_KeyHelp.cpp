@@ -495,7 +495,7 @@ INT_PTR CPropKeyHelp::DispatchEvent(
 			return TRUE;
 
 		case PSN_SETACTIVE:
-			m_nPageNum = 4;	//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
+			m_nPageNum = 5;	//@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			return TRUE;
 
 		case LVN_ITEMCHANGED:	/*リストの項目が変更された際の処理*/
@@ -601,7 +601,7 @@ int CPropKeyHelp::GetData( HWND hwndDlg )
 	int	nIndex, i;
 	TCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
 	TCHAR	szPath[_MAX_PATH];			/* ファイルパス */
-//	m_nPageNum = 4;	//自分のページ番号
+//	m_nPageNum = 5;	//自分のページ番号
 
 	/* 使用する・使用しない */
 	m_Types.m_bUseKeyWordHelp      = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) );

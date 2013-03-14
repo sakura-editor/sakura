@@ -699,6 +699,7 @@
 #define IDC_BUTTON_FILEOPENDIR          1631
 #define IDC_CHECK_bOverWriteFixMode     1632
 #define IDC_STATIC_MOZI                 1633
+#define IDC_BUTTON_TYPEFONT             1634
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -708,6 +709,7 @@
 #define IDD_PROP_SUPPORT                5102
 #define IDD_PROP_REGEX                  5103
 #define IDD_PROP_KEYHELP                5104
+#define IDD_PROP_WINDOW                 5105
 #define IDD_DIALOG_KEYWORD_SELECT       5110
 #define IDD_SAMECOLOR                   5111
 #define IDD_PROP_GENERAL                5200

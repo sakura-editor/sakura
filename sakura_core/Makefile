@@ -287,6 +287,7 @@ typeprop/CPropTypes_P2_Color.o \
 typeprop/CPropTypes_P3_Support.o \
 typeprop/CPropTypes_P4_Regex.o \
 typeprop/CPropTypes_P5_KeyHelp.o \
+typeprop/CPropTypes_P6_Window.o \
 types/CType.o \
 types/CTypeSupport.o \
 types/CType_Asm.o \

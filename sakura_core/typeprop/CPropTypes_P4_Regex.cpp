@@ -469,7 +469,7 @@ INT_PTR CPropRegex::DispatchEvent(
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
-			m_nPageNum = 3;
+			m_nPageNum = 4;
 			return TRUE;
 		case LVN_ITEMCHANGED:
 			if( pNMHDR->hwndFrom == hwndList )
@@ -630,7 +630,7 @@ int CPropRegex::GetData( HWND hwndDlg )
 
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	//自分のページ番号
-//	m_nPageNum = 3;
+//	m_nPageNum = 4;
 
 	//使用する・使用しない
 	if( IsDlgButtonChecked( hwndDlg, IDC_CHECK_REGEX ) )

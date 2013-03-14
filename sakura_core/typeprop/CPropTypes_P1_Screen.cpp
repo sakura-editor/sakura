@@ -37,9 +37,6 @@ static const DWORD p_helpids1[] = {	//11300
 	IDC_COMBO_INDENTLAYOUT,			HIDC_COMBO_INDENTLAYOUT,	//折り返し行インデント	// 2006.08.06 ryoji
 	IDC_CHECK_RTRIM_PREVLINE,		HIDC_CHECK_RTRIM_PREVLINE,	//改行時に末尾の空白を削除	// 2006.08.06 ryoji
 
-	IDC_COMBO_IMESWITCH,			HIDC_COMBO_IMESWITCH,		//IMEのON/OFF状態
-	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IMEの入力モード
-
 	IDC_RADIO_OUTLINEDEFAULT,		HIDC_RADIO_OUTLINEDEFAULT,	//標準ルール	// 2006.08.06 ryoji
 	IDC_COMBO_OUTLINES,				HIDC_COMBO_OUTLINES,		//アウトライン解析方法
 	IDC_RADIO_OUTLINERULEFILE,		HIDC_RADIO_OUTLINERULEFILE,	//ルールファイル	// 2006.08.06 ryoji
@@ -48,14 +45,13 @@ static const DWORD p_helpids1[] = {	//11300
 
 	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
 	IDC_CHECK_KINSOKURET,			HIDC_CHECK_KINSOKURET,		//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
+	IDC_CHECK_KINSOKUHIDE,			HIDC_CHECK_KINSOKUHIDE,		//ぶら下げを隠す		// 2012.11.30 Uchi
 	IDC_CHECK_KINSOKUKUTO,			HIDC_CHECK_KINSOKUKUTO,		//句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	IDC_EDIT_KINSOKUKUTO,			HIDC_EDIT_KINSOKUKUTO,		//句読点ぶら下げ文字	// 2009.08.07 ryoji
-	IDC_CHECK_KINSOKUHIDE,			HIDC_CHECK_KINSOKUHIDE,		//ぶら下げを隠す		// 2012.11.30 Uchi
 	IDC_CHECK_KINSOKUHEAD,			HIDC_CHECK_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
 	IDC_EDIT_KINSOKUHEAD,			HIDC_EDIT_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
 	IDC_CHECK_KINSOKUTAIL,			HIDC_CHECK_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
 	IDC_EDIT_KINSOKUTAIL,			HIDC_EDIT_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
-	IDC_CHECK_DOCICON,				HIDC_CHECK_DOCICON,			//文書アイコンを使う	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -82,21 +78,6 @@ TYPE_NAME<EOutlineType> OlmArr[] = {
 TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
 	{ SMARTINDENT_NONE,	_T("なし") },
 	{ SMARTINDENT_CPP,	_T("C/C++") }
-};
-
-//	Nov. 20, 2000 genta
-TYPE_NAME<int> ImeStateArr[] = {
-	{ 0, _T("標準設定") },
-	{ 1, _T("全角") },
-	{ 2, _T("全角ひらがな") },
-	{ 3, _T("全角カタカナ") },
-	{ 4, _T("無変換") }
-};
-
-TYPE_NAME<int> ImeSwitchArr[] = {
-	{ 0, _T("そのまま") },
-	{ 1, _T("常にON") },
-	{ 2, _T("常にOFF") },
 };
 
 /*!	2行目以降のインデント方法
@@ -441,36 +422,6 @@ void CPropScreen::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RTRIM_PREVLINE, m_Types.m_bRTrimPrevLine );
 	}
 
-	//起動時のIME(日本語入力変換)	//Nov. 20, 2000 genta
-	{
-		int ime;
-		// ON/OFF状態
-		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
-		Combo_ResetContent( hwndCombo );
-		ime = m_Types.m_nImeState & 3;
-		int		nSelPos = 0;
-		for( int i = 0; i < _countof( ImeSwitchArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, ImeSwitchArr[i].pszName );
-			if( ImeSwitchArr[i].nMethod == ime ){	/* IME状態 */
-				nSelPos = i;
-			}
-		}
-		Combo_SetCurSel( hwndCombo, nSelPos );
-
-		// 入力モード
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
-		Combo_ResetContent( hwndCombo );
-		ime = m_Types.m_nImeState >> 2;
-		nSelPos = 0;
-		for( int i = 0; i < _countof( ImeStateArr ); ++i ){
-			Combo_InsertString( hwndCombo, i, ImeStateArr[i].pszName );
-			if( ImeStateArr[i].nMethod == ime ){	/* IME状態 */
-				nSelPos = i;
-			}
-		}
-		Combo_SetCurSel( hwndCombo, nSelPos );
-	}
-
 	//アウトライン解析方法
 	//2002.04.01 YAZAKI ルールファイル関連追加
 	{
@@ -633,19 +584,6 @@ int CPropScreen::GetData( HWND hwndDlg )
 		m_Types.m_bRTrimPrevLine = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RTRIM_PREVLINE ) ? TRUE : FALSE;
 	}
 
-	//起動時のIME(日本語入力変換)	Nov. 20, 2000 genta
-	{
-		//入力モード
-		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESTATE );
-		int		nSelPos = Combo_GetCurSel( hwndCombo );
-		m_Types.m_nImeState = ImeStateArr[nSelPos].nMethod << 2;	//	IME入力モード
-
-		//ON/OFF状態
-		hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_IMESWITCH );
-		nSelPos = Combo_GetCurSel( hwndCombo );
-		m_Types.m_nImeState |= ImeSwitchArr[nSelPos].nMethod;	//	IME ON/OFF
-	}
-
 	//アウトライン解析方法
 	//2002.04.01 YAZAKI ルールファイル関連追加
 	{
@@ -683,8 +621,6 @@ int CPropScreen::GetData( HWND hwndDlg )
 			::DlgItem_GetText( hwndDlg, IDC_EDIT_KINSOKUKUTO, m_Types.m_szKinsokuKuto, _countof( m_Types.m_szKinsokuKuto ) );	// 2009.08.07 ryoji
 		}	//@@@ 2002.04.08 MIK end
 
-		// 文書アイコンを使う	//Sep. 10, 2002 genta
-		m_Types.m_bUseDocumentIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DOCICON ) ? true : false;
 	}
 
 	return TRUE;

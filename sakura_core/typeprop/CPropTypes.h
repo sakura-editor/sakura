@@ -120,6 +120,24 @@ public:
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                          ウィンドウ                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+class SAKURA_CORE_API CPropWindow : CPropTypes
+{
+public:
+	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
+protected:
+	void SetData( HWND );											//!< ダイアログデータの設定
+	int  GetData( HWND );											//!< ダイアログデータの取得
+
+protected:
+	void SetCombobox(HWND hwndWork, const TCHAR** pszLabels, int nCount, int select);
+	void EnableTypesPropInput( HWND hwndDlg );						//!< タイプ別設定のON/OFF
+public:
+private:
+};
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 class SAKURA_CORE_API CPropColor : CPropTypes
