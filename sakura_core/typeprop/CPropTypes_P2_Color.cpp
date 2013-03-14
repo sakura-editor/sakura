@@ -454,6 +454,7 @@ INT_PTR CPropColor::DispatchEvent(
 					CPropKeyword* pPropKeyword = new CPropKeyword;
 					CPropCommon* pCommon = (CPropCommon*)pPropKeyword;
 					pCommon->InitData();
+					pCommon->m_nKeywordSet1 = m_nSet[0];
 					INT_PTR res = ::DialogBoxParam(
 						::GetModuleHandle(NULL),
 						MAKEINTRESOURCE( IDD_PROP_KEYWORD ),

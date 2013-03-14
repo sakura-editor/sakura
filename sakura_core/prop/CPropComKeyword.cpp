@@ -65,30 +65,6 @@ INT_PTR CALLBACK CPropKeyword::DlgProc_dialog(
 {
 	return DlgProc2( reinterpret_cast<pDispatchPage>(&CPropKeyword::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
-INT_PTR CPropCommon::DlgProc2(
-	INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
-	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
-)
-{
-	CPropCommon*	pCPropCommon;
-	switch( uMsg ){
-	case WM_INITDIALOG:
-		pCPropCommon = ( CPropCommon* )(lParam);
-		if( NULL != pCPropCommon ){
-			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
-		}else{
-			return FALSE;
-		}
-	default:
-		// Modified by KEITA for WIN64 2003.9.6
-		pCPropCommon = ( CPropCommon* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
-		if( NULL != pCPropCommon ){
-			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, lParam );
-		}else{
-			return FALSE;
-		}
-	}
-}
 
 /* Keyword メッセージ処理 */
 INT_PTR CPropKeyword::DispatchEvent(
@@ -134,6 +110,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 			SetWindowText( hwndDlg, _T("共通設定 - 強調キーワード") );
 
 			hwndCOMBO_SET = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
+			Combo_SetCurSel( hwndCOMBO_SET, m_nKeywordSet1 );
 		}
 		else{
 			hwndCtl = ::GetDlgItem( hwndDlg, IDOK );
