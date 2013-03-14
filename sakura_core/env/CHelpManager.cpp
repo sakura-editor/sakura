@@ -72,8 +72,8 @@ const TCHAR* CHelpManager::GetExtHTMLHelp( CTypeConfig nTypeNo )
 bool CHelpManager::HTMLHelpIsSingle( CTypeConfig nTypeNo )
 {
 	if (nTypeNo.IsValid() && CDocTypeManager().GetTypeSetting(nTypeNo).m_szExtHtmlHelp[0] != L'\0'){
-		return (CDocTypeManager().GetTypeSetting(nTypeNo).m_bHtmlHelpIsSingle != FALSE);
+		return CDocTypeManager().GetTypeSetting(nTypeNo).m_bHtmlHelpIsSingle;
 	}
-	
-	return (m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle != FALSE);
+
+	return m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle;
 }
