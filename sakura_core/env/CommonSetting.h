@@ -448,7 +448,7 @@ struct CommonSetting_Helper
 
 	//外部HTMLヘルプの設定
 	TCHAR		m_szExtHtmlHelp[_MAX_PATH];
-	BOOL		m_bHtmlHelpIsSingle;			// HtmlHelpビューアはひとつ (ビューアを複数起動しない)
+	bool		m_bHtmlHelpIsSingle;			// HtmlHelpビューアはひとつ (ビューアを複数起動しない)
 
 	//migemo設定
 	TCHAR		m_szMigemoDll[_MAX_PATH];		// migemo dll
