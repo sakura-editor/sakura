@@ -18,7 +18,7 @@
 
 #include "StdAfx.h"
 #include "CPrintPreview.h"
-#include "_os/HandCursor.h"
+#include "uiparts/HandCursor.h"
 #include "doc/CLayout.h"
 #include "window/CEditWnd.h"
 #include "dlg/CDlgCancel.h" /// 2002/2/3 aroka from here

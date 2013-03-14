@@ -49,7 +49,7 @@ DLLSHAREDATA& GetDllShareData();
 
 #include "EditInfo.h"
 #include "types/CType.h" // STypeConfig
-#include "CPrint.h" //PRINTSETTING
+#include "print/CPrint.h" //PRINTSETTING
 #include "recent/SShare_History.h"	//SShare_History
 
 

@@ -4,7 +4,7 @@
 #include "window/CEditWnd.h"
 #include "CLoadAgent.h"
 #include "CSaveAgent.h"
-#include "CVisualProgress.h"
+#include "uiparts/CVisualProgress.h"
 #include "recent/CMruListener.h"
 #include "macro/CSMacroMgr.h"
 #include "CPropertyManager.h"

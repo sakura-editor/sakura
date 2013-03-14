@@ -27,6 +27,8 @@
 //2007.10.23 kobake 作成
 
 #include "util/design_template.h"
+#include "uiparts/CSoundSet.h"
+#include "uiparts/CImageListMgr.h"
 class CEditDoc;
 class CEditWnd;
 class CLoadAgent;
@@ -37,8 +39,6 @@ class CSMacroMgr;
 class CPropertyManager;
 class CGrepAgent;
 enum EFunctionCode;
-#include "CSoundSet.h"
-#include "CImageListMgr.h"
 
 //!エディタ部分アプリケーションクラス。CNormalProcess1個につき、1個存在。
 // 2007.10.30 kobake OnHelp_MenuItemをCEditWndから持ってきた

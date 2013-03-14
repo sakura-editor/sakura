@@ -11,7 +11,7 @@
 #include "_os/COsVersionInfo.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "CHtmlHelp.h"
+#include "extmodule/CHtmlHelp.h"
 
 int CALLBACK MYBrowseCallbackProc(
 	HWND hwnd,

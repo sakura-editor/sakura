@@ -20,7 +20,7 @@
 */
 #include "StdAfx.h"
 #include "view/CEditView.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
 #include "charset/charcode.h"
 #include "debug/CRunningTimer.h"
 #include "COpe.h" ///	2002/2/3 aroka from here

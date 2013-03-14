@@ -21,7 +21,7 @@
 #include "StdAfx.h"
 #include <ShellAPI.h>
 #include "dlg/CDlgAbout.h"
-#include "_os/HandCursor.h"
+#include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
 #include "sakura_rc.h" // 2002/2/10 aroka •œ‹A

@@ -34,7 +34,7 @@
 #include "dlg/CDlgPrintSetting.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
-#include "CPrintPreview.h"	/// 2002/2/3 aroka
+#include "print/CPrintPreview.h"	/// 2002/2/3 aroka
 #include "charset/CharPointer.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"

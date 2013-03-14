@@ -138,7 +138,7 @@
 #include "CWriteManager.h"
 #include "CSearchAgent.h"
 //###########’´‰¼
-#include "CGraphics.h"
+#include "uiparts/CGraphics.h"
 #endif // SAKURA_PCH_MODE_MAX
 
 //{{AFX_INSERT_LOCATION}}

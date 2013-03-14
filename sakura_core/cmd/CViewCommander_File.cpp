@@ -22,12 +22,12 @@
 
 #include "view/CEditView.h"
 #include "_main/CControlTray.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"
 #include "dlg/CDlgCancel.h"// 2002/2/8 hor
 #include "doc/CDocReader.h"	//  Command_PROPERTY_FILE for _DEBUG
 #include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
-#include "CPrintPreview.h"
+#include "print/CPrintPreview.h"
 #include "io/CBinaryStream.h"
 #include "io/CFileLoad.h"
 #include "CWriteManager.h"

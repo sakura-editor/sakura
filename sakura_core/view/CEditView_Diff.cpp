@@ -28,7 +28,7 @@
 #include "doc/CEditDoc.h"
 #include "doc/CDocLine.h"
 #include "doc/CDocLineMgr.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
 #include "_os/COsVersionInfo.h"
 #include "util/module.h"
 #include "util/file.h"

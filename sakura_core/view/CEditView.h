@@ -40,7 +40,7 @@
 #include "window/CAutoScrollWnd.h"
 #include "CDicMgr.h"
 //	Jun. 26, 2001 genta	³‹K•\Œ»ƒ‰ƒCƒuƒ‰ƒŠ‚Ì·‚µ‘Ö‚¦
-#include "CBregexp.h"
+#include "extmodule/CBregexp.h"
 #include "CEol.h"				// EEolType
 #include "cmd/CViewCommander.h"
 #include "mfclike/CMyWnd.h"		// parent

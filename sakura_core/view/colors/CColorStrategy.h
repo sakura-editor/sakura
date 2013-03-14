@@ -27,7 +27,7 @@
 // —væs’è‹`
 // #include "view/CEditView.h"
 #include "EColorIndexType.h"
-#include "CGraphics.h"
+#include "uiparts/CGraphics.h"
 
 class	CEditView;
 

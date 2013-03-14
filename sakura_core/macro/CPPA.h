@@ -41,7 +41,7 @@ PPA(Poor-Pascal for Application)‚ÍDelphi/C++Builder—p‚ÌPascalƒCƒ“ƒ^ƒvƒŠƒ^ƒRƒ“ƒ|
 #include <ObjIdl.h>  // VARIANT“™
 #include <stdio.h>
 #include "macro/CSMacroMgr.h"
-#include "CDllHandler.h"
+#include "extmodule/CDllHandler.h"
 
 #define PPADLL_VER 123
 

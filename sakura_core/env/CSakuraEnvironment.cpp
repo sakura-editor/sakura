@@ -31,7 +31,7 @@
 #include "_main/CAppMode.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
-#include "CPrintPreview.h"
+#include "print/CPrintPreview.h"
 #include "macro/CSMacroMgr.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"

@@ -24,7 +24,7 @@
 #include "CViewCommander.h"
 
 #include "view/CEditView.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgCancel.h"// 2002/2/8 hor
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
