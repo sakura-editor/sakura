@@ -3,7 +3,7 @@
 #include "doc/CDocLineMgr.h"
 #include "doc/CDocLine.h"
 #include "CSearchAgent.h"
-#include "CBregexp.h"
+#include "extmodule/CBregexp.h"
 
 
 bool CBookmarkGetter::IsBookmarked() const{ return m_pcDocLine->m_sMark.m_cBookmarked; }

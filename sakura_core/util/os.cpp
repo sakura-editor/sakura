@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "os.h"
 #include "util/module.h"
-#include "CUxTheme.h"
+#include "extmodule/CUxTheme.h"
 
 /*!	Comctl32.dll ‚Ìƒo[ƒWƒ‡ƒ“”Ô†‚ğæ“¾
 

@@ -20,7 +20,7 @@
 #define	_REGEX_KEYWORD_H_
 
 #include "_main/global.h"
-#include "CBregexp.h"
+#include "extmodule/CBregexp.h"
 #include "config/maxdata.h" //MAX_REGEX_KEYWORD
 
 struct STypeConfig;

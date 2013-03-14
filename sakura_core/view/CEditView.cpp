@@ -27,7 +27,7 @@
 #include "view/CEditView.h"
 #include "view/CViewFont.h"
 #include "view/CRuler.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
 #include "window/CEditWnd.h"
 #include "window/CSplitBoxWnd.h"///
 #include "COpeBlk.h"///

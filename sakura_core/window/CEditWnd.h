@@ -43,7 +43,7 @@
 #include "CHokanMgr.h"
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
-#include "CMenuDrawer.h"
+#include "uiparts/CMenuDrawer.h"
 
 const static int MENUBAR_MESSAGE_MAX_LEN = 30;
 

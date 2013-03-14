@@ -22,7 +22,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
-#include "CMenuDrawer.h"	//	Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÇ©ÅH
+#include "uiparts/CMenuDrawer.h"	//	Ç±ÇÍÇ≈Ç¢Ç¢ÇÃÇ©ÅH
 #include "window/CEditWnd.h"
 #include "util/string_ex2.h"
 

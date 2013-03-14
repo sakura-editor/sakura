@@ -16,7 +16,7 @@
 
 #include "global.h"
 #include "CProcess.h"
-#include "CMigemo.h"
+#include "extmodule/CMigemo.h"
 #include "CEditApp.h"
 #include "util/design_template.h"
 class CEditWnd;

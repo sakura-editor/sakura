@@ -16,7 +16,7 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "CBregexp.h"	// 2007.08/12 genta バージョン取得
+#include "extmodule/CBregexp.h"	// 2007.08/12 genta バージョン取得
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"

@@ -18,7 +18,7 @@
 #include "CMRUFolder.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "CMenuDrawer.h"	//	これでいいのか？
+#include "uiparts/CMenuDrawer.h"	//	これでいいのか？
 #include "util/string_ex2.h"
 
 /*!	コンストラクタ

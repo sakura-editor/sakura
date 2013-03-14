@@ -35,7 +35,7 @@
 #include "dlg/CDlgInput1.h"
 #include "util/format.h"
 #include "util/shell.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
 
 CMacro::CMacro( EFunctionCode nFuncID )
 {

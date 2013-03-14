@@ -9,7 +9,7 @@
 #include "_main/CControlTray.h"
 #include "CEditApp.h"
 #include "window/CEditWnd.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"

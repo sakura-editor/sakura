@@ -12,11 +12,11 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "sakura_rc.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
 #include "doc/CDocLine.h"
-#include "CMigemo.h"
+#include "extmodule/CMigemo.h"
+#include "sakura_rc.h"
 
 /*!
 	コマンドコードの変換(ISearch時)及び

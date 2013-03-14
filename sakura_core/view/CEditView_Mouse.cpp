@@ -8,10 +8,10 @@
 #include "window/CEditWnd.h"
 #include "_os/CDropTarget.h" // CDataObject
 #include "_os/CClipboard.h"
-#include "_os/HandCursor.h"
 #include "COpeBlk.h"
 #include "doc/CLayout.h"
-#include "CWaitCursor.h"
+#include "uiparts/CWaitCursor.h"
+#include "uiparts/HandCursor.h"
 #include "util/input.h"
 #include "util/os.h"
 #include "sakura_rc.h"

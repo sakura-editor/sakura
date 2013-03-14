@@ -31,7 +31,7 @@
 #ifndef _HANDCURSOR_A545F10D_9F24_4ab5_889F_13732FC0150B_H_
 #define _HANDCURSOR_A545F10D_9F24_4ab5_889F_13732FC0150B_H_
 
-#include "COsVersionInfo.h"
+#include "_os/COsVersionInfo.h"
 #include "sakura_rc.h"
 
 inline void SetHandCursor ()

@@ -9,7 +9,7 @@
 #include "doc/CEditDoc.h"
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
-#include "CVisualProgress.h"
+#include "uiparts/CVisualProgress.h"
 #include "util/file.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)

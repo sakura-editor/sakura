@@ -26,9 +26,9 @@
 #define _CEDITAPP_H_
 
 #include <Windows.h>
-#include "CMenuDrawer.h"
+#include "uiparts/CMenuDrawer.h"
+#include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
-#include "CImageListMgr.h" // 2002/2/10 aroka
 
 struct SLoadInfo;
 struct EditInfo;

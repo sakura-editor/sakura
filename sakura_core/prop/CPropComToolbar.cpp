@@ -18,8 +18,8 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
-#include "CMenuDrawer.h" // 2002/2/10 aroka
-#include "CImageListMgr.h" // 2005/8/9 aroka
+#include "uiparts/CMenuDrawer.h" // 2002/2/10 aroka
+#include "uiparts/CImageListMgr.h" // 2005/8/9 aroka
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"

@@ -9,7 +9,7 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 #include "plugin/CPlugin.h"
-#include "CMenuDrawer.h"
+#include "uiparts/CMenuDrawer.h"
 
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, int& pointSize );

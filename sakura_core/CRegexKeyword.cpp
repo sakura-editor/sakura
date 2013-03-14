@@ -19,7 +19,7 @@
 
 #include "StdAfx.h"
 #include "CRegexKeyword.h"
-#include "CBregexp.h"
+#include "extmodule/CBregexp.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 

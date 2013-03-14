@@ -15,7 +15,7 @@
 #include "doc/CLayout.h"
 #include "charset/charcode.h"
 #include "CLayoutMgr.h"
-#include "CBregexp.h" // CLayoutMgrの定義で必要
+#include "extmodule/CBregexp.h" // CLayoutMgrの定義で必要
 
 
 

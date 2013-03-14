@@ -44,7 +44,7 @@
 
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
-#include "CGraphics.h"
+#include "uiparts/CGraphics.h"
 #include "recent/CRecentEditNode.h"
 #include "util/os.h" //WM_THEMECHANGED
 #include "util/window.h"
