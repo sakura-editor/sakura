@@ -79,6 +79,32 @@ INT_PTR CPropCommon::DlgProc(
 }
 //	To Here Jun. 2, 2001 genta
 
+// 独立ウィンドウ用 2013.3.14 aroka
+INT_PTR CPropCommon::DlgProc2(
+	INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
+	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
+)
+{
+	CPropCommon*	pCPropCommon;
+	switch( uMsg ){
+	case WM_INITDIALOG:
+		pCPropCommon = ( CPropCommon* )(lParam);
+		if( NULL != pCPropCommon ){
+			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, IDOK, lParam );
+		}else{
+			return FALSE;
+		}
+	default:
+		// Modified by KEITA for WIN64 2003.9.6
+		pCPropCommon = ( CPropCommon* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		if( NULL != pCPropCommon ){
+			return (pCPropCommon->*DispatchPage)( hwndDlg, uMsg, wParam, lParam );
+		}else{
+			return FALSE;
+		}
+	}
+}
+
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CPropCommon::CPropCommon()
 {
@@ -91,6 +117,7 @@ CPropCommon::CPropCommon()
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
 	m_nPageNum = ID_PAGENUM_GENERAL;
+	m_nKeywordSet1 = -1;
 
 	/* ヘルプファイルのフルパスを返す */
 	m_pszHelpFile = CEditApp::getInstance()->GetHelpFilePath();

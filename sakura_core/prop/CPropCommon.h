@@ -92,9 +92,9 @@ public:
 	HWND				m_hwndThis;		/* このダイアログのハンドル */
 	ComPropSheetOrder	m_nPageNum;
 	DLLSHAREDATA*		m_pShareData;
-	int					m_nSettingType;
+//	int				m_nSettingType;
 //	int				m_nActiveItem;
-
+	int					m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
 	CImageListMgr*	m_pcIcons;	//	Image List
 	
@@ -136,7 +136,7 @@ protected:
 	static INT_PTR DlgProc(
 		INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-	static INT_PTR DlgProc2(
+	static INT_PTR DlgProc2( //独立ウィンドウ用
 		INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	typedef	INT_PTR (CPropCommon::*pDispatchPage)( HWND, UINT, WPARAM, LPARAM );
