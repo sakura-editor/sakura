@@ -309,7 +309,7 @@ struct STypeConfig {
 
 	char				m_szExtHelp[_MAX_PATH];			/* 外部ヘルプ１ */
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
-	BOOL				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
+	bool				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
 
 	int					m_eDefaultCodetype;				/* デフォルト文字コード */
 	int					m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
@@ -748,7 +748,7 @@ struct CommonSetting_Helper
 
 	//外部HTMLヘルプの設定
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
-	BOOL				m_bHtmlHelpIsSingle;		/* HtmlHelpビューアはひとつ */
+	bool				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
 
 	//migemo設定
 	char				m_szMigemoDll[_MAX_PATH];		/* migemo dll */

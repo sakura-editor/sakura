@@ -727,7 +727,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection = FALSE;	/* コピーしたら選択解除 */
 		m_pShareData->m_Common.m_sEdit.m_bEnableNoSelectCopy = TRUE;		/* 選択なしでコピーを可能にする */	// 2007.11.18 ryoji
 		m_pShareData->m_Common.m_sEdit.m_bEnableLineModePaste = true;		/* ラインモード貼り付けを可能にする */	// 2007.10.08 ryoji
-		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = TRUE;		/* HtmlHelpビューアはひとつ */
+		m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle = true;		/* HtmlHelpビューアはひとつ */
 		m_pShareData->m_Common.m_sCompare.m_bCompareAndTileHorz = TRUE;		/* 文書比較後、左右に並べて表示 */
 		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = false;			/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 
@@ -1999,10 +1999,10 @@ char* CShareData::GetExtHTMLHelp( int nTypeNo )
 bool CShareData::HTMLHelpIsSingle( int nTypeNo )
 {
 	if (0 <= nTypeNo && nTypeNo < MAX_TYPES && m_pShareData->m_Types[nTypeNo].m_szExtHtmlHelp[0] != '\0'){
-		return (m_pShareData->m_Types[nTypeNo].m_bHtmlHelpIsSingle != FALSE);
+		return m_pShareData->m_Types[nTypeNo].m_bHtmlHelpIsSingle;
 	}
 	
-	return (m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle != FALSE);
+	return m_pShareData->m_Common.m_sHelper.m_bHtmlHelpIsSingle;
 }
 
 /*! 日付をフォーマット
@@ -5071,7 +5071,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	//@@@2002.2.4 YAZAKI
 	pShareData->m_Types[nIdx].m_szExtHelp[0] = _T('\0');
 	pShareData->m_Types[nIdx].m_szExtHtmlHelp[0] = _T('\0');
-	pShareData->m_Types[nIdx].m_bHtmlHelpIsSingle = TRUE;
+	pShareData->m_Types[nIdx].m_bHtmlHelpIsSingle = true;
 
 	pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
 	pShareData->m_Types[nIdx].m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
