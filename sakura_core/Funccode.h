@@ -502,9 +502,9 @@ enum FunctionAttribute {
 #define F_ISEARCH_ADD_STR	0xC002	//	Incremental Searchへ文字列へ追加
 #define F_ISEARCH_DEL_BACK	0xC003	//	Incremental Searchの末尾から1文字削除
 
-/* 機能一覧に関するデータ宣言 */
+// 機能一覧に関するデータ宣言
 namespace nsFuncCode{
-	extern const char*	ppszFuncKind[];
+	extern const TCHAR*	ppszFuncKind[];
 	extern const int	nFuncKindNum;
 	extern const int	pnFuncListNumArr[];
 	extern const int*	ppnFuncListArr[];
