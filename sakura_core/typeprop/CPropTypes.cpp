@@ -67,6 +67,7 @@ INT_PTR CALLBACK FUNC(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) \
 	return PropTypesCommonProc(hwndDlg,uMsg,wParam,lParam,reinterpret_cast<pDispatchPage>(&CLASS::DispatchEvent)); \
 }
 GEN_PROPTYPES_CALLBACK(PropTypesScreen,		CPropScreen)
+GEN_PROPTYPES_CALLBACK(PropTypesWindow,		CPropWindow)
 GEN_PROPTYPES_CALLBACK(PropTypesColor,		CPropColor)
 GEN_PROPTYPES_CALLBACK(PropTypesSupport,	CPropSupport)
 GEN_PROPTYPES_CALLBACK(PropTypesRegex,		CPropRegex)
@@ -148,6 +149,20 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].pfnCallback = NULL;
 	nIdx++;
 
+	// 2013.03.10 aroka ADD-start タイプ別設定に「ウィンドウ」タブを追加
+	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
+	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
+	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
+	psp[nIdx].hInstance   = m_hInstance;
+	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_WINDOW );
+	psp[nIdx].pszIcon     = NULL;
+	psp[nIdx].pfnDlgProc  = PropTypesWindow;
+	psp[nIdx].pszTitle    = _T("ウィンドウ");
+	psp[nIdx].lParam      = (LPARAM)this;
+	psp[nIdx].pfnCallback = NULL;
+	nIdx++;
+	// 2013.03.10 aroka ADD-end
+
 	// 2001/06/14 Start by asa-o: タイプ別設定に支援タブ追加
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
 	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
@@ -189,7 +204,6 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].pfnCallback = NULL;
 	nIdx++;
 	// 2006.04.10 fon ADD-end
-
 
 	PROPSHEETHEADER		psh;
 	memset_raw( &psh, 0, sizeof_raw( psh ) );

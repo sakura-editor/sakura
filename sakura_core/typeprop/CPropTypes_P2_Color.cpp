@@ -16,54 +16,40 @@
 #include "util/window.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "prop/CPropCommon.h"
 
 using namespace std;
 
 WNDPROC	m_wpColorListProc;
 
 static const DWORD p_helpids2[] = {	//11400
+	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定
+	IDC_CHECK_DISP,					HIDC_CHECK_DISP,				//色分け表示
+	IDC_CHECK_FAT,					HIDC_CHECK_FAT,					//太字
+	IDC_CHECK_UNDERLINE,			HIDC_CHECK_UNDERLINE,			//下線
 	IDC_BUTTON_TEXTCOLOR,			HIDC_BUTTON_TEXTCOLOR,			//文字色
 	IDC_BUTTON_BACKCOLOR,			HIDC_BUTTON_BACKCOLOR,			//背景色
 	IDC_BUTTON_SAMETEXTCOLOR,		HIDC_BUTTON_SAMETEXTCOLOR,		//文字色統一
 	IDC_BUTTON_SAMEBKCOLOR,			HIDC_BUTTON_SAMEBKCOLOR,		//背景色統一
 	IDC_BUTTON_IMPORT,				HIDC_BUTTON_IMPORT_COLOR,		//インポート
 	IDC_BUTTON_EXPORT,				HIDC_BUTTON_EXPORT_COLOR,		//エクスポート
-	IDC_CHECK_DISP,					HIDC_CHECK_DISP,				//色分け表示
-	IDC_CHECK_FAT,					HIDC_CHECK_FAT,					//太字
-	IDC_CHECK_UNDERLINE,			HIDC_CHECK_UNDERLINE,			//下線
-	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
-	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
-	IDC_EDIT_BACKIMG_PATH,			HIDC_EDIT_BACKIMG_PATH,			//背景画像
-	IDC_BUTTON_BACKIMG_PATH_SEL,	HIDC_BUTTON_BACKIMG_PATH_SEL,	//背景画像ボタン
-	IDC_COMBO_BACKIMG_POS,			HIDC_COMBO_BACKIMG_POS,			//背景画像位置
-	IDC_CHECK_BACKIMG_SCR_X,		HIDC_CHECK_BACKIMG_SCR_X,		//背景画像ScrollX
-	IDC_CHECK_BACKIMG_SCR_Y,		HIDC_CHECK_BACKIMG_SCR_Y,		//背景画像ScrollY
-	IDC_CHECK_BACKIMG_REP_X,		HIDC_CHECK_BACKIMG_REP_X,		//背景画像RepeatX
-	IDC_CHECK_BACKIMG_REP_Y,		HIDC_CHECK_BACKIMG_REP_Y,		//背景画像RepeatY
-	IDC_EDIT_BACKIMG_OFFSET_X,		HIDC_EDIT_BACKIMG_OFFSET_X,		//背景画像OffsetX
-	IDC_EDIT_BACKIMG_OFFSET_Y,		HIDC_EDIT_BACKIMG_OFFSET_Y,		//背景画像OffsetY
 	IDC_COMBO_SET,					HIDC_COMBO_SET_COLOR,			//強調キーワード１セット名
+	IDC_BUTTON_KEYWORD_SELECT,		HIDC_BUTTON_KEYWORD_SELECT,		//強調キーワード2～10	// 2006.08.06 ryoji
 	IDC_EDIT_BLOCKCOMMENT_FROM,		HIDC_EDIT_BLOCKCOMMENT_FROM,	//ブロックコメント１開始
 	IDC_EDIT_BLOCKCOMMENT_TO,		HIDC_EDIT_BLOCKCOMMENT_TO,		//ブロックコメント１終了
-	IDC_EDIT_LINECOMMENT,			HIDC_EDIT_LINECOMMENT,			//行コメント１
-	IDC_EDIT_LINECOMMENT2,			HIDC_EDIT_LINECOMMENT2,			//行コメント２
-	IDC_EDIT_LINECOMMENTPOS,		HIDC_EDIT_LINECOMMENTPOS,		//桁数１
-	IDC_EDIT_LINECOMMENTPOS2,		HIDC_EDIT_LINECOMMENTPOS2,		//桁数２
-	IDC_EDIT_LINETERMCHAR,			HIDC_EDIT_LINETERMCHAR,			//行番号区切り
 	IDC_EDIT_BLOCKCOMMENT_FROM2,	HIDC_EDIT_BLOCKCOMMENT_FROM2,	//ブロックコメント２開始
 	IDC_EDIT_BLOCKCOMMENT_TO2,		HIDC_EDIT_BLOCKCOMMENT_TO2,		//ブロックコメント２終了
+	IDC_EDIT_LINECOMMENT,			HIDC_EDIT_LINECOMMENT,			//行コメント１
+	IDC_EDIT_LINECOMMENT2,			HIDC_EDIT_LINECOMMENT2,			//行コメント２
 	IDC_EDIT_LINECOMMENT3,			HIDC_EDIT_LINECOMMENT3,			//行コメント３
-	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定
-	IDC_CHECK_LCPOS3,				HIDC_CHECK_LCPOS3,				//桁指定３
+	IDC_EDIT_LINECOMMENTPOS,		HIDC_EDIT_LINECOMMENTPOS,		//桁数１
+	IDC_EDIT_LINECOMMENTPOS2,		HIDC_EDIT_LINECOMMENTPOS2,		//桁数２
 	IDC_EDIT_LINECOMMENTPOS3,		HIDC_EDIT_LINECOMMENTPOS3,		//桁数３
+	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
+	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
+	IDC_CHECK_LCPOS3,				HIDC_CHECK_LCPOS3,				//桁指定３
 	IDC_RADIO_ESCAPETYPE_1,			HIDC_RADIO_ESCAPETYPE_1,		//文字列エスケープ（C言語風）
 	IDC_RADIO_ESCAPETYPE_2,			HIDC_RADIO_ESCAPETYPE_2,		//文字列エスケープ（PL/SQL風）
-	IDC_RADIO_LINENUM_LAYOUT,		HIDC_RADIO_LINENUM_LAYOUT,		//行番号の表示（折り返し単位）
-	IDC_RADIO_LINENUM_CRLF,			HIDC_RADIO_LINENUM_CRLF,		//行番号の表示（改行単位）
-	IDC_RADIO_LINETERMTYPE0,		HIDC_RADIO_LINETERMTYPE0,		//行番号区切り（なし）
-	IDC_RADIO_LINETERMTYPE1,		HIDC_RADIO_LINETERMTYPE1,		//行番号区切り（縦線）
-	IDC_RADIO_LINETERMTYPE2,		HIDC_RADIO_LINETERMTYPE2,		//行番号区切り（任意）
-	IDC_BUTTON_KEYWORD_SELECT,		HIDC_BUTTON_KEYWORD_SELECT,		//強調キーワード2～10	// 2006.08.06 ryoji
 	IDC_EDIT_VERTLINE,				HIDC_EDIT_VERTLINE,				//縦線の桁指定	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
@@ -295,10 +281,6 @@ INT_PTR CPropColor::DispatchEvent(
 		/* ダイアログデータの設定 color */
 		SetData( hwndDlg );
 
-		/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
-		EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), 1 );
-
-
 		/* 色リストをフック */
 		// Modified by KEITA for WIN64 2003.9.6
 		m_wpColorListProc = (WNDPROC) ::SetWindowLongPtr( hwndListColor, GWLP_WNDPROC, (LONG_PTR)ColorList_SubclassProc );
@@ -329,14 +311,6 @@ INT_PTR CPropColor::DispatchEvent(
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ),			(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ),	(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
-
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ),				(0 == (fAttribute & COLOR_ATTRIB_FORCE_DISP))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ),				(0 == (fAttribute & COLOR_ATTRIB_NO_BOLD))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_UNDERLINE ),			(0 == (fAttribute & COLOR_ATTRIB_NO_UNDERLINE))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ),	TRUE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ),			(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? SW_SHOW: SW_HIDE );
 				}
 
 				/* 色分け/表示 をする */
@@ -396,12 +370,6 @@ INT_PTR CPropColor::DispatchEvent(
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
-			case IDC_BUTTON_BACKIMG_PATH_SEL:
-				{
-					CDialog::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH),
-						_T("*.bmp;*.jpg;*.jpeg"), true );
-				}
-				return TRUE;
 			case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
 				/* 色選択ダイアログ */
 				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK, m_dwCustColors ) ){
@@ -448,11 +416,6 @@ INT_PTR CPropColor::DispatchEvent(
 				Export( hwndDlg );
 				return TRUE;
 
-			//	From Here Sept. 10, 2000 JEPRO
-			//	行番号区切りを任意の半角文字にするときだけ指定文字入力をEnableに設定
-			case IDC_RADIO_LINETERMTYPE0: /* 行番号区切り 0=なし 1=縦線 2=任意 */
-			case IDC_RADIO_LINETERMTYPE1:
-			case IDC_RADIO_LINETERMTYPE2:
 			//	From Here Jun. 6, 2001 genta
 			//	行コメント開始桁指定のON/OFF
 			case IDC_CHECK_LCPOS:
@@ -485,6 +448,32 @@ INT_PTR CPropColor::DispatchEvent(
 					}
 				}
 				break;
+			//強調キーワードの選択
+			case IDC_BUTTON_EDITKEYWORD:
+				{
+					CPropKeyword* pPropKeyword = new CPropKeyword;
+					CPropCommon* pCommon = (CPropCommon*)pPropKeyword;
+					pCommon->InitData();
+					INT_PTR res = ::DialogBoxParam(
+						::GetModuleHandle(NULL),
+						MAKEINTRESOURCE( IDD_PROP_KEYWORD ),
+						hwndDlg,
+						CPropKeyword::DlgProc_dialog,
+						(LPARAM)pPropKeyword
+					);
+					if( res == IDOK ){
+						pCommon->ApplyData();
+						SetData(hwndDlg);
+					}
+					delete pPropKeyword;
+					return TRUE;
+				}
+			//強調キーワードの選択
+			case IDC_BUTTON_TYPEFONT:
+				{
+//					ChooseFont();
+					return TRUE;
+				}
 			}
 			break;	/* BN_CLICKED */
 		}
@@ -610,16 +599,6 @@ INT_PTR CPropColor::DispatchEvent(
 }
 
 
-void SetCombobox(HWND hwndWork, const TCHAR** pszLabels, int nCount, int select)
-{
-	Combo_ResetContent(hwndWork);
-	for(int i = 0; i < nCount; ++i ){
-		Combo_AddString( hwndWork, pszLabels[i] );
-	}
-	Combo_SetCurSel(hwndWork, select);
-}
-
-
 /* ダイアログデータの設定 color */
 void CPropColor::SetData( HWND hwndDlg )
 {
@@ -676,44 +655,6 @@ void CPropColor::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_2, TRUE );
 	}
 
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	if( !m_Types.m_bLineNumIsCRLF ){
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_LAYOUT, TRUE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_CRLF, FALSE );
-	}else{
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_LAYOUT, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINENUM_CRLF, TRUE );
-	}
-
-	// 背景画像
-	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH), _countof2(m_Types.m_szBackImgPath));
-	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X), 5);
-	EditCtl_LimitText(GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y), 5);
-
-	DlgItem_SetText( hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath );
-	{
-		const TCHAR* posNames[] ={
-			_T("左上"),
-			_T("右上"),
-			_T("左下"),
-			_T("右下"),
-			_T("中央"),
-			_T("中央上"),
-			_T("中央下"),
-			_T("中央左"),
-			_T("中央右"),
-		};
-		/*BGIMAGE_TOP_LEFT .. */
-		int nCount = _countof(posNames);
-		SetCombobox( ::GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS), posNames, nCount, m_Types.m_backImgPos);
-	}
-	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X, m_Types.m_backImgRepeatX);
-	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_REP_Y, m_Types.m_backImgRepeatY);
-	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_X, m_Types.m_backImgScrollX);
-	CheckDlgButtonBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y, m_Types.m_backImgScrollY);
-	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, m_Types.m_backImgPosOffset.x, TRUE);
-	SetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, m_Types.m_backImgPosOffset.y, TRUE);
-
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
 	Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
@@ -748,34 +689,6 @@ void CPropColor::SetData( HWND hwndDlg )
 	/* 現在選択されている色タイプ */
 	List_SetCurSel( hwndWork, m_nCurrentColorType );
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwndWork );
-
-	/* 行番号区切り  0=なし 1=縦線 2=任意 */
-	if( 0 == m_Types.m_nLineTermType ){
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE0, TRUE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE1, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE2, FALSE );
-	}else
-	if( 1 == m_Types.m_nLineTermType ){
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE0, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE1, TRUE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE2, FALSE );
-	}else
-	if( 2 == m_Types.m_nLineTermType ){
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE0, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE1, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_LINETERMTYPE2, TRUE );
-	}
-
-	/* 行番号区切り文字 */
-	wchar_t	szLineTermChar[2];
-	auto_sprintf( szLineTermChar, L"%lc", m_Types.m_cLineTermChar );
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar );
-
-	//	From Here Sept. 10, 2000 JEPRO
-	//	行番号区切りを任意の半角文字にするときだけ指定文字入力をEnableに設定
-	EnableTypesPropInput( hwndDlg );
-	//	To Here Sept. 10, 2000
-
 
 	// from here 2005.11.30 Moca 指定位置縦線の設定
 	WCHAR szVertLine[MAX_VERTLINES * 15] = L"";
@@ -875,21 +788,6 @@ int CPropColor::GetData( HWND hwndDlg )
 	}else{
 		m_Types.m_nStringType = 1;
 	}
-	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINENUM_LAYOUT ) ){
-		m_Types.m_bLineNumIsCRLF = false;
-	}else{
-		m_Types.m_bLineNumIsCRLF = true;
-	}
-
-	DlgItem_GetText(hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath, _countof2(m_Types.m_szBackImgPath));
-	m_Types.m_backImgPos = static_cast<EBackgroundImagePos>(Combo_GetCurSel(GetDlgItem(hwndDlg, IDC_COMBO_BACKIMG_POS)));
-	m_Types.m_backImgRepeatX = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_REP_X);
-	m_Types.m_backImgRepeatY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_REP_Y);
-	m_Types.m_backImgScrollX = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_X);
-	m_Types.m_backImgScrollY = IsDlgButtonCheckedBool(hwndDlg, IDC_CHECK_BACKIMG_SCR_Y);
-	m_Types.m_backImgPosOffset.x = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_X, NULL, TRUE);
-	m_Types.m_backImgPosOffset.y = GetDlgItemInt(hwndDlg, IDC_EDIT_BACKIMG_OFFSET_Y, NULL, TRUE);
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
@@ -906,24 +804,6 @@ int CPropColor::GetData( HWND hwndDlg )
 	for( nIdx = 1; nIdx < MAX_KEYWORDSET_PER_TYPE; nIdx++ ){
 		m_Types.m_nKeyWordSetIdx[nIdx] = m_nSet[nIdx];
 	}
-
-	/* 行番号区切り  0=なし 1=縦線 2=任意 */
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE0 ) ){
-		m_Types.m_nLineTermType = 0;
-	}else
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE1 ) ){
-		m_Types.m_nLineTermType = 1;
-	}else
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE2 ) ){
-		m_Types.m_nLineTermType = 2;
-	}
-
-
-	/* 行番号区切り文字 */
-	wchar_t	szLineTermChar[2];
-	::DlgItem_GetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar, 2 );
-	m_Types.m_cLineTermChar = szLineTermChar[0];
-
 
 	// from here 2005.11.30 Moca 指定位置縦線の設定
 	WCHAR szVertLine[MAX_VERTLINES * 15];
@@ -1087,15 +967,6 @@ void CPropColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 //	適切に設定する
 void CPropColor::EnableTypesPropInput( HWND hwndDlg )
 {
-	//	行番号区切りを任意の半角文字にするかどうか
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE2 ) ){
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LINETERMCHAR ), TRUE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), TRUE );
-	}else{
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LABEL_LINETERMCHAR ), FALSE );
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_LINETERMCHAR ), FALSE );
-	}
-
 	//	From Here Jun. 6, 2001 genta
 	//	行コメント開始桁位置入力ボックスのEnable/Disable設定
 	//	1つ目

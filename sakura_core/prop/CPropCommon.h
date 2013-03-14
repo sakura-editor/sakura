@@ -136,6 +136,9 @@ protected:
 	static INT_PTR DlgProc(
 		INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	static INT_PTR DlgProc2(
+		INT_PTR (CPropCommon::*DispatchPage)( HWND, UINT, WPARAM, LPARAM ),
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 	typedef	INT_PTR (CPropCommon::*pDispatchPage)( HWND, UINT, WPARAM, LPARAM );
 
 	int nLastPos_Macro; //!< 前回フォーカスのあった場所
@@ -242,6 +245,8 @@ class SAKURA_CORE_API CPropKeyword : CPropCommon
 public:
 	//!	Dialog Procedure
 	static INT_PTR CALLBACK DlgProc_page(
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+	static INT_PTR CALLBACK DlgProc_dialog(
 		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 protected:
 	//! Message Handler
