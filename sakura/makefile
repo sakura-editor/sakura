@@ -170,7 +170,7 @@ OBJS =\
 	$(OBJDIR)\CMemory.obj \
 	$(OBJDIR)\CMenuDrawer.obj \
 	$(OBJDIR)\CMigemo.obj \
-	$(OBJDIR)\CMRU.obj \
+	$(OBJDIR)\CMRUFile.obj \
 	$(OBJDIR)\CMRUFolder.obj \
 	$(OBJDIR)\CNormalProcess.obj \
 	$(OBJDIR)\COpe.obj \

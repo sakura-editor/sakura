@@ -16,6 +16,7 @@
 */
 
 #include "StdAfx.h"
+#include <stdio.h>
 #include "CKeyBind.h"
 #include "Debug.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
