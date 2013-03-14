@@ -260,7 +260,7 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 			delete[] m_nTabBorderArray;
 			m_nTabBorderArray = NULL;
 		}
-		::SendMessageAny( TabCtrl_GetToolTips( m_hwndTab ), TTM_ACTIVATE, (WPARAM)TRUE, (LPARAM)0 );	// ツールチップ有効化
+		Tooltip_Activate( TabCtrl_GetToolTips( m_hwndTab ), TRUE );	// ツールチップ有効化
 		break;
 
 	default:
@@ -304,7 +304,7 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 			m_nTabBorderArray[ i ] = rc.right;
 		}
 		m_nTabBorderArray[ i ] = 0;		// 最後の要素は番兵
-		::SendMessageAny( TabCtrl_GetToolTips( m_hwndTab ), TTM_ACTIVATE, (WPARAM)FALSE, (LPARAM)0 );	// ツールチップ無効化
+		Tooltip_Activate( TabCtrl_GetToolTips( m_hwndTab ), FALSE );	// ツールチップ無効化
 		// ここに来たらドラッグ開始なので break しないでそのまま DRAG_DRAG 処理に入る
 
 	case DRAG_DRAG:

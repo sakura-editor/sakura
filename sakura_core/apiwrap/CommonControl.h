@@ -84,6 +84,7 @@ namespace ApiWrap
 	inline BOOL Tooltip_AddTool(HWND hwndCtl, TOOLINFO* info)			{ return (BOOL)(DWORD)::SendMessage(hwndCtl, TTM_ADDTOOL, 0L, (LPARAM)info); }
 	inline int Tooltip_SetMaxTipWidth(HWND hwndCtl, int width)			{ return (int)(DWORD)::SendMessage(hwndCtl, TTM_SETMAXTIPWIDTH, 0L, (LPARAM)width); }
 	inline void Tooltip_UpdateTipText(HWND hwndCtl, TOOLINFO* info)		{ ::SendMessage(hwndCtl, TTM_UPDATETIPTEXT, 0L, (LPARAM)info); }
+	inline void Tooltip_Activate(HWND hwndCtl, BOOL enable)				{ ::SendMessage(hwndCtl, TTM_ACTIVATE, (WPARAM)enable, (LPARAM)0); }
 }
 
 using namespace ApiWrap;
