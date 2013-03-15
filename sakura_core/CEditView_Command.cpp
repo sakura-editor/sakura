@@ -7680,7 +7680,7 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			return;
 		}
 	}
-	if( m_pcEditDoc->IsFilePathAvailable() ){
+	if( m_pcEditDoc->IsValidPath() ){
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( _tcschr( m_pcEditDoc->GetFilePath(), SPACE ) ? TRUE : FALSE ){
