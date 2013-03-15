@@ -95,7 +95,7 @@ void CEditView::Command_GREP( void )
 		   !m_pcEditDoc->m_bGrepRunning ) ||
 	    ( !m_pcEditDoc->m_bGrepMode &&
 		   !m_pcEditDoc->IsModified() &&
-		   !m_pcEditDoc->IsFilePathAvailable() &&		/* 現在編集中のファイルのパス */
+		   !m_pcEditDoc->IsValidPath() &&		/* 現在編集中のファイルのパス */
 		   !m_pcEditDoc->m_bDebugMode
 		)
 	){

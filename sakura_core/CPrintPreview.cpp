@@ -971,7 +971,7 @@ void CPrintPreview::OnPrint( void )
 	}
 
 	/* プリンタに渡すジョブ名を生成 */
-	if( ! m_pParentWnd->m_cEditDoc.IsFilePathAvailable() ){	/* 現在編集中のファイルのパス */
+	if( ! m_pParentWnd->m_cEditDoc.IsValidPath() ){	/* 現在編集中のファイルのパス */
 		_tcscpy( szJobName, _T("無題") );
 	}else{
 		TCHAR	szFileName[_MAX_FNAME];

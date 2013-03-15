@@ -152,7 +152,7 @@ public:
 	//	Sep. 9, 2002 genta
 	const char* GetFilePath(void) const { return m_szFilePath; }
 	const char* GetSaveFilePath(void) const { return (m_szSaveFilePath[0] != '\0')? m_szSaveFilePath: m_szFilePath; }
-	bool IsFilePathAvailable(void) const { return m_szFilePath[0] != '\0'; }
+	bool IsValidPath(void) const { return m_szFilePath[0] != '\0'; }
 	//	2002.10.13 Moca
 	const char* GetFileName(void) const; //!< ファイル名(パスなし)を取得
 	void SetDocumentIcon(void);	// Sep. 10, 2002 genta
@@ -209,7 +209,7 @@ public:
 		@date 2005.06.24 Moca
 	*/
 	bool IsFileOpenInThisWindow( void ){
-		return !( IsModified() || IsFilePathAvailable() || m_bGrepMode || m_bDebugMode );
+		return !( IsModified() || IsValidPath() || m_bGrepMode || m_bDebugMode );
 	}
 
 	void AddToMRU(void); // Mar. 30, 2003 genta

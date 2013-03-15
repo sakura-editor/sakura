@@ -464,7 +464,7 @@ void CEditDoc::CheckAutoSave(void)
 			return;				//	ここでは，「無変更でも保存」は無視する
 
 		//	2003.10.09 zenryaku 保存失敗エラーの抑制
-		if( !IsFilePathAvailable() )	//	まだファイル名が設定されていなければ保存しない
+		if( !IsValidPath() )	//	まだファイル名が設定されていなければ保存しない
 			return;
 
 		bool en = m_cAutoSave.IsEnabled();
@@ -1359,7 +1359,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 		return TRUE;
 	}
 
-	if( !IsFilePathAvailable() ){
+	if( !IsValidPath() ){
 		if( ! askname ){
 			return FALSE;
 		}
@@ -1378,7 +1378,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 					m_hWnd,
 					_T("%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n")
 					_T("名前を付けて保存をすればいいと思います。"),
-					IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
+					IsValidPath() ? GetFilePath() : _T("(無題)")
 				);
 			}
 			return FALSE;

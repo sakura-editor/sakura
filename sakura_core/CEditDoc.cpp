@@ -530,7 +530,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 void CEditDoc::OnChangeType()
 {
 	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
-	if( !IsFilePathAvailable() ){
+	if( !IsValidPath() ){
 		if( !IsModified()  && m_cDocLineMgr.GetLineCount() == 0 ){
 			STypeConfig& types = GetDocumentAttribute();
 			m_nCharCode = (ECodeType)( types.m_eDefaultCodetype );
@@ -671,7 +671,7 @@ BOOL CEditDoc::OnFileClose()
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
 				_T("%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"),
-				IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
+				IsValidPath() ? GetFilePath() : _T("(無題)")
 			);
 			switch( nRet ){
 			case IDYES:
@@ -691,11 +691,11 @@ BOOL CEditDoc::OnFileClose()
 				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 				GSTR_APPNAME,
 				_T("%s\nは変更されています。 閉じる前に保存しますか？"),
-				IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
+				IsValidPath() ? GetFilePath() : _T("(無題)")
 			);
 			switch( nRet ){
 			case IDYES:
-				if( IsFilePathAvailable() ){
+				if( IsValidPath() ){
 					nBool = FileSave();	// 2006.12.30 ryoji
 				}
 				else{
@@ -1255,7 +1255,7 @@ end_of_func:;
 	if( NULL != hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}
-	if( TRUE == bRet && IsFilePathAvailable() ){
+	if( TRUE == bRet && IsValidPath() ){
 		/* ファイルの排他ロック */
 		DoFileLock();
 	}
@@ -1385,7 +1385,7 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 	UpdateCaption();
 end_of_func:;
 
-	if( IsFilePathAvailable() &&
+	if( IsValidPath() &&
 		!m_bReadOnly && /* 読み取り専用モード ではない */
 		TRUE == bRet
 	){
@@ -1405,7 +1405,7 @@ end_of_func:;
 
 std::tstring CEditDoc::GetDlgInitialDir()
 {
-	if( IsFilePathAvailable() ){
+	if( IsValidPath() ){
 		return GetFilePath();
 	}
 	else if( m_pShareData->m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_CUR ){
@@ -1487,7 +1487,7 @@ BOOL CEditDoc::SaveFileDialog( char* pszPath, ECodeType* pnCharCode, CEol* pcEol
 	/* ファイル名の無いファイルだったら、ppszMRU[0]をデフォルトファイル名として？ppszOPENFOLDERじゃない？ */
 	// ファイル名の無いときはカレントフォルダをデフォルトにします。Mar. 30, 2003 genta
 	// 掲示板要望 No.2699 (2003/02/05)
-	if( !IsFilePathAvailable() ){
+	if( !IsValidPath() ){
 		// 2002.10.25 Moca さんのコードを流用 Mar. 23, 2003 genta
 		strcpy(szDefaultWildCard, "*.txt");
 		if( m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew )
@@ -2215,7 +2215,7 @@ void CEditDoc::DoFileLock( void )
 
 
 	/* ファイルを開いていない */
-	if( ! IsFilePathAvailable() ){
+	if( !IsValidPath() ){
 		return;
 	}
 	/* 読み取り専用モード */
@@ -2249,7 +2249,7 @@ void CEditDoc::DoFileLock( void )
 		TopWarningMessage(
 			m_hWnd,
 			_T("%s\nは現在他のプロセスによって書込みが禁止されています。"),
-			IsFilePathAvailable() ? GetFilePath() : _T("(無題)")
+			IsValidPath() ? GetFilePath() : _T("(無題)")
 		);
 		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
@@ -2273,7 +2273,7 @@ void CEditDoc::DoFileLock( void )
 		TopWarningMessage(
 			m_hWnd,
 			_T("%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
-			IsFilePathAvailable() ? GetFilePath() : _T("(無題)"),
+			IsValidPath() ? GetFilePath() : _T("(無題)"),
 			pszMode
 		);
 		/* 親ウィンドウのタイトルを更新 */
@@ -4108,7 +4108,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	 && m_pShareData->m_Common.m_sFile.m_nFileShareMode == 0	/* ファイルの排他制御モード */
 	 && NULL != ( hwndActive = ::GetActiveWindow() )	/* アクティブ? */
 	 && hwndActive == m_hwndParent
-	 && IsFilePathAvailable()
+	 && IsValidPath()
 	 && ( !m_FileTime.IsZero() ) 	/* 現在編集中のファイルのタイムスタンプ */
 
 	){
@@ -4353,7 +4353,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			++p;
 			break;
 		case 'F':	//	開いているファイルの名前（フルパス）
-			if ( !IsFilePathAvailable() ){
+			if ( !IsValidPath() ){
 				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
@@ -4367,7 +4367,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			// Oct. 28, 2001 genta
 			//	ファイル名のみを渡すバージョン
 			//	ポインタを末尾に
-			if ( ! IsFilePathAvailable() ){
+			if ( ! IsValidPath() ){
 				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
@@ -4380,7 +4380,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			break;
 		case 'g':	//	開いているファイルの名前（拡張子を除くファイル名のみ）
 			//	From Here Sep. 16, 2002 genta
-			if ( ! IsFilePathAvailable() ){
+			if ( ! IsValidPath() ){
 				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
@@ -4405,7 +4405,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			//	To Here Sep. 16, 2002 genta
 		case '/':	//	開いているファイルの名前（フルパス。パスの区切りが/）
 			// Oct. 28, 2001 genta
-			if ( !IsFilePathAvailable() ){
+			if ( !IsValidPath() ){
 				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			} 
@@ -4422,7 +4422,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			break;
 		//	From Here 2003/06/21 Moca
 		case 'N':
-			if( !IsFilePathAvailable() ){
+			if( !IsValidPath() ){
 				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
 			}

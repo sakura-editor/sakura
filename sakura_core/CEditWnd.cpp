@@ -3739,7 +3739,7 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 				ReleaseCapture();
 				m_IconClicked = icNone;
 
-				if(m_cEditDoc.IsFilePathAvailable())
+				if(m_cEditDoc.IsValidPath())
 				{
 					const char *PathEnd = m_cEditDoc.GetFilePath();
 					for(const char* I = m_cEditDoc.GetFilePath(); *I != 0; ++I)

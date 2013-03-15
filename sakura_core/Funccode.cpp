@@ -1004,7 +1004,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 		return true;
 	case F_DIFF_DIALOG:	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK
 		//if( pcEditDoc->IsModified() ) return false;
-		//if( ! pcEditDoc->IsFilePathAvailable() ) return false;
+		//if( ! pcEditDoc->IsValidPath() ) return false;
 		return true;
 
 	case F_BEGIN_BOX:	//矩形範囲選択開始
@@ -1105,7 +1105,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_BROWSE:						//ブラウズ
 	//case F_READONLY:					//読み取り専用	//	Sep. 10, 2002 genta 常に使えるように
 	//case F_PROPERTY_FILE:				//ファイルのプロパティ	// 2009.04.11 ryoji コメントアウト
-		return pcEditDoc->IsFilePathAvailable(); // 現在編集中のファイルのパス名をクリップボードにコピーできるか
+		return pcEditDoc->IsValidPath(); // 現在編集中のファイルのパス名をクリップボードにコピーできるか
 
 	case F_JUMPHIST_PREV:	//	移動履歴: 前へ
 		if( pcEditDoc->ActiveView().m_cHistory->CheckPrev() )
@@ -1123,7 +1123,7 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 	case F_TAGJUMP_KEYWORD:	//キーワードを指定してダイレクトタグジャンプ	//@@@ 2005.03.31 MIK
 	//	2003.05.12 MIK タグファイル作成先を選べるようにしたので、常に作成可能とする
 //	case F_TAGS_MAKE:	//タグファイルの作成	//@@@ 2003.04.13 MIK
-		if( pcEditDoc->IsFilePathAvailable() ){
+		if( pcEditDoc->IsValidPath() ){
 			return true;
 		}else{
 			return false;

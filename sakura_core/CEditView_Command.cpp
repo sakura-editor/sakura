@@ -3697,7 +3697,7 @@ BOOL CEditView::Command_FILESAVEALL( void )
 */
 void CEditView::Command_COPYFILENAME( void )
 {
-	if( m_pcEditDoc->IsFilePathAvailable() ){
+	if( m_pcEditDoc->IsValidPath() ){
 		/* クリップボードにデータを設定 */
 		const char* pszFile = m_pcEditDoc->GetFileName();
 		MySetClipboardData( pszFile , lstrlen( pszFile ), false );
@@ -3713,7 +3713,7 @@ void CEditView::Command_COPYFILENAME( void )
 /* 現在編集中のファイルのパス名をクリップボードにコピー */
 void CEditView::Command_COPYPATH( void )
 {
-	if( m_pcEditDoc->IsFilePathAvailable() ){
+	if( m_pcEditDoc->IsValidPath() ){
 		/* クリップボードにデータを設定 */
 		MySetClipboardData( m_pcEditDoc->GetFilePath(), lstrlen( m_pcEditDoc->GetFilePath() ), false );
 	}
@@ -3729,7 +3729,7 @@ void CEditView::Command_COPYPATH( void )
 /* 現在編集中のファイルのパス名とカーソル位置をクリップボードにコピー */
 void CEditView::Command_COPYTAG( void )
 {
-	if( m_pcEditDoc->IsFilePathAvailable() ){
+	if( m_pcEditDoc->IsValidPath() ){
 		char	buf[ MAX_PATH + 20 ];
 		int		line, col;
 
@@ -5627,7 +5627,7 @@ bool CEditView::Command_TagJumpByTagsFile( void )
 	GetCurrentTextForSearch( cmemKey );
 	if( 0 == cmemKey.GetStringLength() ) return false;	//キーがないなら終わり
 
-	if( ! m_pcEditDoc->IsFilePathAvailable() ) return false;
+	if( ! m_pcEditDoc->IsValidPath() ) return false;
 
 	// ファイル名に応じて探索回数を決定する
 	strcpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
@@ -5883,7 +5883,7 @@ bool CEditView::Command_TagsMake( void )
 #define	CTAGS_COMMAND	_T("ctags.exe")
 
 	TCHAR	szTargetPath[1024 /*_MAX_PATH+1*/ ];
-	if( m_pcEditDoc->IsFilePathAvailable() )
+	if( m_pcEditDoc->IsValidPath() )
 	{
 		_tcscpy( szTargetPath, m_pcEditDoc->GetFilePath() );
 		szTargetPath[ _tcslen( szTargetPath ) - _tcslen( m_pcEditDoc->GetFileName() ) ] = _T('\0');
@@ -6116,7 +6116,7 @@ bool CEditView::Command_TagJumpByTagsFileKeyword( const char* keyword )
 	TCHAR	szTagFile[1024];		//タグファイル
 	TCHAR	szCurrentPath[1024];
 
-	if( ! m_pcEditDoc->IsFilePathAvailable() ) return false;
+	if( ! m_pcEditDoc->IsValidPath() ) return false;
 	_tcscpy( szCurrentPath, m_pcEditDoc->GetFilePath() );
 
 	cDlgTagJumpList.SetFileName( szCurrentPath );
@@ -7658,11 +7658,11 @@ void CEditView::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 			MB_YESNOCANCEL | MB_ICONEXCLAMATION,
 			GSTR_APPNAME,
 			_T("%s\nは変更されています。 Oracle SQL*Plusで実行する前に保存しますか？"),
-			m_pcEditDoc->IsFilePathAvailable() ? m_pcEditDoc->GetFilePath() : _T("(無題)")
+			m_pcEditDoc->IsValidPath() ? m_pcEditDoc->GetFilePath() : _T("(無題)")
 		);
 		switch( nRet ){
 		case IDYES:
-			if( m_pcEditDoc->IsFilePathAvailable() ){
+			if( m_pcEditDoc->IsValidPath() ){
 				//nBool = HandleCommand( F_FILESAVE, true, 0, 0, 0, 0 );
 				nBool = Command_FILESAVE();
 			}else{
@@ -8295,7 +8295,7 @@ void CEditView::Command_PRINT_PAGESETUP( void )
 /* ブラウズ */
 void CEditView::Command_BROWSE( void )
 {
-	if( !m_pcEditDoc->IsFilePathAvailable() ){
+	if( !m_pcEditDoc->IsValidPath() ){
 		ErrorBeep();
 		return;
 	}
