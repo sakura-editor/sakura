@@ -4306,6 +4306,8 @@ void CEditDoc::SetImeMode( int mode )
 	@li g  開いているファイルの名前（拡張子除く）
 	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
 	@li N  開いているファイルの名前(簡易表示)
+	@li E  開いているファイルのあるフォルダの名前(簡易表示)
+	@li e  開いているファイルのあるフォルダの名前
 	@li C  現在選択中のテキスト
 	@li x  現在の物理桁位置(先頭からのバイト数1開始)
 	@li y  現在の物理行位置(1開始)
@@ -4421,7 +4423,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 			break;
 		//	From Here 2003/06/21 Moca
-		case 'N':
+		case 'N':	//	開いているファイルの名前(簡易表示)
 			if( !IsValidPath() ){
 				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
 				++p;
@@ -4434,6 +4436,54 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 			break;
 		//	To Here 2003/06/21 Moca
+		case 'E':	// 開いているファイルのあるフォルダの名前(簡易表示)	2012/12/2 Uchi
+			if( !IsValidPath() ){
+				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+			}
+			else {
+				TCHAR	buff[_MAX_PATH];		// \の処理をする為TCHAR
+				TCHAR*	pEnd;
+				TCHAR*	p;
+
+				_tcscpy( buff, GetFilePath() );
+				pEnd = NULL;
+				for ( p = buff; *p != '\0'; p++) {
+					if (*p == '\\') {
+						pEnd = p;
+					}
+				}
+				if (pEnd != NULL) {
+					// 最後の\の後で終端
+					*(pEnd+1) = '\0';
+				}
+
+				// 簡易表示に変換
+				TCHAR szText[1024];
+				CShareData::getInstance()->GetTransformFileNameFast( buff, szText, _countof(szText)-1 );
+				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
+			}
+			++p;
+			break;
+		case 'e':	// 開いているファイルのあるフォルダの名前		2012/12/2 Uchi
+			if( !IsValidPath() ){
+				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+			}
+			else {
+				const TCHAR*	pStr;
+				const TCHAR*	pEnd;
+				const TCHAR*	p;
+
+				pStr = GetFilePath();
+				pEnd = pStr - strlen(pStr) - 1;
+				for ( p = pStr; *p != '\0'; p++) {
+					if (*p == '\\') {
+						pEnd = p;
+					}
+				}
+				q = strncpy_ex( q, q_max - q, pStr, _tcslen(pStr) );
+			}
+			++p;
+			break;
 		//	From Here Jan. 15, 2002 hor
 		case 'C':	//	現在選択中のテキスト
 			{
@@ -4603,6 +4653,12 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				switch( m_pcSMacroMgr->GetCurrentIdx() ){
 				case INVALID_MACRO_IDX:
 					break;
+				case TEMP_KEYMACRO:
+					{
+						const TCHAR* pszMacroFilePath = m_pcSMacroMgr->GetFile(TEMP_KEYMACRO);
+						q = strncpy_ex( q, q_max - q, pszMacroFilePath, strlen(pszMacroFilePath) );
+					}
+					break;
 				case STAND_KEYMACRO:
 					{
 						char* pszMacroFilePath = CShareData::getInstance()->GetShareData()->m_Common.m_sMacro.m_szKeyMacroFileName;
@@ -4750,6 +4806,13 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 		}
 	case 'U': // 更新
 		if( IsModified()){
+			return 0;
+		}
+		else {
+			return 1;
+		}
+	case 'N': // $N 新規/(無題)		2012/12/2 Uchi
+		if (!IsValidPath()) {
 			return 0;
 		}
 		else {

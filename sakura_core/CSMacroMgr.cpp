@@ -539,11 +539,11 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
-	if( ppMacro == NULL ){
 #ifdef _DEBUG
+	if( ppMacro == NULL ){
 	MYTRACE_A( "CSMacroMgr::Load() Out of range: idx=%d Path=%s\n", idx, pszPath);
-#endif
 	}
+#endif
 	//	バッファクリア
 	delete *ppMacro;
 	*ppMacro = NULL;
@@ -551,10 +551,10 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 	const TCHAR *ext;
 	if( pszType == NULL ){				//ファイル指定
 		//ファイルの拡張子を取得する
-		ext = strrchr( pszPath, _T('.'));
+		ext = _tcsrchr( pszPath, _T('.'));
 		//	Feb. 02, 2004 genta .が無い場合にext==NULLとなるのでNULLチェック追加
 		if( ext != NULL ){
-			const TCHAR *chk = strrchr( ext, _T('\\') );
+			const TCHAR *chk = _tcsrchr( ext, _T('\\') );
 			if( chk != NULL ){	//	.のあとに\があったらそれは拡張子の区切りではない
 								//	\が漢字の2バイト目の場合も拡張子ではない。
 				ext = NULL;
@@ -567,12 +567,16 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 		ext = pszType;
 	}
 
+	m_sMacroPath = _T("");
 	*ppMacro = CMacroFactory::getInstance()->Create(ext);
 	if( *ppMacro == NULL )
 		return FALSE;
 	BOOL bRet;
 	if( pszType == NULL ){
 		bRet = (*ppMacro)->LoadKeyMacro( hInstance, pszPath );
+		if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) {
+			m_sMacroPath = pszPath;
+		}
 	}else{
 		bRet = (*ppMacro)->LoadKeyMacroStr( hInstance, pszPath );
 	}
@@ -603,7 +607,7 @@ void CSMacroMgr::UnloadAll(void)
 		delete m_cSavedKeyMacro[idx];
 		m_cSavedKeyMacro[idx] = NULL;
 	}
-	
+
 }
 
 /*! キーボードマクロの保存
