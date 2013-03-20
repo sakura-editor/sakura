@@ -89,11 +89,12 @@ bool CWordParse::WhereCurrentWord_2(
 //! 識別子に使用可能な文字かどうか
 inline bool isCSymbol(wchar_t c)
 {
-	return
-		(c==L'_') ||
-		(c>=L'0' && c<=L'9') ||
-		(c>=L'A' && c<=L'Z') ||
-		(c>=L'a' && c<=L'z');
+	//return
+	//	(c==L'_') ||
+	//	(c>=L'0' && c<=L'9') ||
+	//	(c>=L'A' && c<=L'Z') ||
+	//	(c>=L'a' && c<=L'z');
+	return (c<128 && gm_keyword_char[c]==CK_CSYM);
 }
 
 //! 全角版、識別子に使用可能な文字かどうか
@@ -125,16 +126,17 @@ ECharKind CWordParse::WhatKindOfChar(
 		wchar_t c=pData[nIdx];
 
 		//今までの半角
-		if( c == CR              )return CK_CR;
-		if( c == LF              )return CK_LF;
-		if( c == TAB             )return CK_TAB;	// タブ
-		if( IsControlCode(c)     )return CK_CTRL;	// 制御文字
-		if( c == SPACE           )return CK_SPACE;	// 半角スペース
-		if( isCSymbol(c)         )return CK_CSYM;	// 識別子に使用可能な文字 (半角英数字、半角アンダースコア)
+		if( c<128                ) return (ECharKind)gm_keyword_char[c];
+		//if( c == CR              )return CK_CR;
+		//if( c == LF              )return CK_LF;
+		//if( c == TAB             )return CK_TAB;	// タブ
+		//if( IsControlCode(c)     )return CK_CTRL;	// 制御文字
+		//if( c == SPACE           )return CK_SPACE;	// 半角スペース
+		//if( isCSymbol(c)         )return CK_CSYM;	// 識別子に使用可能な文字 (半角英数字、半角アンダースコア)
 		if( IsHankakuKatakana(c) )return CK_KATA;	// 半角のカタカナ
 		if( 0x00C0 <= c && c < 0x0180 && c != 0x00D7 && c != 0x00F7 )return CK_LATIN;
 													// ラテン１補助、ラテン拡張のうちアルファベット風のもの（×÷を除く）
-		if( c == L'#'|| c == L'$' || c == L'@'|| c == L'\\' )return CK_UDEF;	// ユーザ定義
+		//if( c == L'#'|| c == L'$' || c == L'@'|| c == L'\\' )return CK_UDEF;	// ユーザ定義
 
 		//その他
 		if( IsZenkakuSpace(c)    )return CK_ZEN_SPACE;	// 全角スペース
