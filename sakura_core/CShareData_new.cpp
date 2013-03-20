@@ -162,7 +162,7 @@ void CShareData::GetIniFileName( LPTSTR pszIniFileName, BOOL bRead/*=FALSE*/ )
 	@date 2004-01-11 D.S.Koba CProfile変更によるコード簡略化
 	@date 2005-04-05 D.S.Koba 各セクションの入出力を関数として分離
 */
-BOOL CShareData::ShareData_IO_2( bool bRead )
+bool CShareData::ShareData_IO_2( bool bRead )
 {
 	//MY_RUNNINGTIMER( cRunningTimer, "CShareData::ShareData_IO_2" );
 
@@ -184,7 +184,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 	if( bRead ){
 		if( !cProfile.ReadProfile( szIniFileName ) ){
 			/* 設定ファイルが存在しない */
-			return FALSE;
+			return false;
 		}
 	}
 //	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
@@ -214,7 +214,7 @@ BOOL CShareData::ShareData_IO_2( bool bRead )
 //	MYTRACE_A( "Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
 //	MYTRACE_A( "Iniファイル処理 所要時間(ミリ秒) = %d\n", cRunningTimerStart.Read() );
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -727,19 +727,19 @@ void CShareData::ShareData_IO_Toolbar( CProfile& cProfile )
 	const char* pszSecName = "Toolbar";
 	int		i;
 	char	szKeyName[64];
-	CommonSetting& common = m_pShareData->m_Common;
+	CommonSetting_ToolBar& toolbar = m_pShareData->m_Common.m_sToolBar;
 
-	cProfile.IOProfileData( pszSecName, "nToolBarButtonNum", common.m_sToolBar.m_nToolBarButtonNum );
-	cProfile.IOProfileData( pszSecName, "bToolBarIsFlat", common.m_sToolBar.m_bToolBarIsFlat );
-	int	nSize = common.m_sToolBar.m_nToolBarButtonNum;
+	cProfile.IOProfileData( pszSecName, "nToolBarButtonNum", toolbar.m_nToolBarButtonNum );
+	cProfile.IOProfileData( pszSecName, "bToolBarIsFlat", toolbar.m_bToolBarIsFlat );
+	int	nSize = toolbar.m_nToolBarButtonNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "nTBB[%03d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, common.m_sToolBar.m_nToolBarButtonIdxArr[i] );
+		cProfile.IOProfileData( pszSecName, szKeyName, toolbar.m_nToolBarButtonIdxArr[i] );
 	}
 	//読み込み時は残りを初期化
 	if( cProfile.IsReadingMode() ){
 		for(; i< MAX_TOOLBAR_BUTTON_ITEMS; ++i){
-			common.m_sToolBar.m_nToolBarButtonIdxArr[i] = 0;
+			toolbar.m_nToolBarButtonIdxArr[i] = 0;
 		}
 	}
 }

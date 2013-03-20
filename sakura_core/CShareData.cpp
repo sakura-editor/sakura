@@ -612,10 +612,10 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sGeneral.m_bStopsBothEndsWhenSearchParagraph = FALSE;	/* 単語単位で移動するときに、単語の両端で止まるか */
 
 		m_pShareData->m_Common.m_sSearch.m_sSearchOption.Reset();			// 検索オプション
-		m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = 0;				/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-		m_pShareData->m_Common.m_sSearch.m_bSelectedArea = FALSE;			/* 選択範囲内置換 */
-		m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] = _T('\0');			/* 外部ヘルプ１ */
-		m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] = _T('\0');		/* 外部HTMLヘルプ */
+		m_pShareData->m_Common.m_sSearch.m_bConsecutiveAll = 0;				// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
+		m_pShareData->m_Common.m_sSearch.m_bSelectedArea = FALSE;			// 選択範囲内置換
+		m_pShareData->m_Common.m_sHelper.m_szExtHelp[0] = _T('\0');			// 外部ヘルプ１
+		m_pShareData->m_Common.m_sHelper.m_szExtHtmlHelp[0] = _T('\0');		// 外部HTMLヘルプ
 		
 		m_pShareData->m_Common.m_sHelper.m_szMigemoDll[0] = _T('\0');		/* migemo dll */
 		m_pShareData->m_Common.m_sHelper.m_szMigemoDict[0] = _T('\0');		/* migemo dict */
@@ -678,7 +678,7 @@ bool CShareData::InitShareData()
 			wsprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[i], _T("メニュー%d"), i );
 			m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[i] = 0;
 			for( j = 0; j < MAX_CUSTOM_MENU_ITEMS; ++j ){
-				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] = 0;
+				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] = F_0;
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr [i][j] = '\0';
 			}
 		}
@@ -732,20 +732,29 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sEdit.m_bConvertEOLPaste = false;			/* 改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 
 		//[ファイル]タブ
-		m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;// ファイルの排他制御モード
-		m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = true;		// 更新の監視
+		{
+			//ファイルの排他制御
+			m_pShareData->m_Common.m_sFile.m_nFileShareMode = OF_SHARE_DENY_WRITE;// ファイルの排他制御モード
+			m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp = true;		// 更新の監視
 
-		//ファイルの保存
-		m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;// 無変更でも上書きするか
+			//ファイルの保存
+			m_pShareData->m_Common.m_sFile.m_bEnableUnmodifiedOverwrite = FALSE;// 無変更でも上書きするか
 
-		//ファイルオープン
-		m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = false;			// ファイルをドロップしたときは閉じて開く
-		m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				// 一度にドロップ可能なファイル数
-		m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = true;		//	カーソル位置復元	//	Oct. 27, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = true;			// ブックマーク復元 //2002.01.16 hor 
-		//	Nov. 12, 2000 genta
-		m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = false;			// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+			// 「名前を付けて保存」でファイルの種類が[ユーザ指定]のときのファイル一覧表示	//ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
+			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = true;	// 新規から保存時は全ファイル表示
+			m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = true;	// 新規以外から保存時は全ファイル表示
 
+			//ファイルオープン
+			m_pShareData->m_Common.m_sFile.m_bDropFileAndClose = false;			// ファイルをドロップしたときは閉じて開く
+			m_pShareData->m_Common.m_sFile.m_nDropFileNumMax = 8;				// 一度にドロップ可能なファイル数
+			m_pShareData->m_Common.m_sFile.m_bRestoreCurPosition = true;		// カーソル位置復元	//	Oct. 27, 2000 genta
+			m_pShareData->m_Common.m_sFile.m_bRestoreBookmarks = true;			// ブックマーク復元 //2002.01.16 hor
+			m_pShareData->m_Common.m_sFile.m_bAutoMIMEdecode = false;			// ファイル読み込み時にMIMEのデコードを行うか	//Jul. 13, 2001 JEPRO
+			m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = true;			// 前回と異なる文字コードの時に問い合わせを行うか	Oct. 03, 2004 genta
+			m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = false;		// 開こうとしたファイルが存在しないとき警告する	Oct. 09, 2004 genta
+			m_pShareData->m_Common.m_sFile.m_bAlertIfLargeFile = false;  		// 開こうとしたファイルが大きい場合に警告する
+			m_pShareData->m_Common.m_sFile.m_nAlertFileSize = 10;        		// 警告を始めるファイルサイズ（MB単位）
+		}
 
 		m_pShareData->m_Common.m_sEdit.m_bNotOverWriteCRLF = TRUE;			/* 改行は上書きしない */
 		::SetRect( &m_pShareData->m_Common.m_sOthers.m_rcOpenDialog, 0, 0, 0, 0 );	/* 「開く」ダイアログのサイズと位置 */
@@ -778,17 +787,6 @@ bool CShareData::InitShareData()
 
 		m_pShareData->m_Common.m_sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
 		m_pShareData->m_Common.m_sWindow.m_bMenuWChar = FALSE;		/* メニューの字化け対策を行う(Win2K以降のみ) */
-
-		//	Oct. 03, 2004 genta 前回と異なる文字コードの時に問い合わせを行うか
-		m_pShareData->m_Common.m_sFile.m_bQueryIfCodeChange = true;
-		//	Oct. 09, 2004 genta 開こうとしたファイルが存在しないとき警告する
-		m_pShareData->m_Common.m_sFile.m_bAlertIfFileNotExist = false;
-		m_pShareData->m_Common.m_sFile.m_bAlertIfLargeFile = false;  // 開こうとしたファイルが大きい場合に警告する
-		m_pShareData->m_Common.m_sFile.m_nAlertFileSize = 10;        // 警告を始めるファイルサイズ（MB単位）
-
-		// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
-		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveNew = true;	// 新規から保存時は全ファイル表示
-		m_pShareData->m_Common.m_sFile.m_bNoFilterSaveFile = true;	// 新規以外から保存時は全ファイル表示
 
 		m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin = FALSE;	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)	// 2009.08.15 nasukoji
 
@@ -1199,7 +1197,7 @@ HWND CShareData::GetTopEditWnd( HWND hWnd )
 }
 
 /* 共有データのロード */
-BOOL CShareData::LoadShareData( void )
+bool CShareData::LoadShareData( void )
 {
 	return ShareData_IO_2( true );
 }
@@ -4926,8 +4924,9 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		{ VK_APPS, _T("アプリキー"), F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON, F_MENU_RBUTTON }
 	};
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
+	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
-	if( nKeyDataInitNum > _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) ) {
+	if( nKeyDataInitNum > KEYNAME_SIZE ) {
 		PleaseReportToAuthor( NULL, _T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
 		return false;
 	}
@@ -5058,10 +5057,10 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	// 2001/06/14 End
 
 	// 2001/06/19 asa-o
-	pShareData->m_Types[nIdx].m_bHokanLoHiCase = false;			/* 入力補完機能：英大文字小文字を同一視する */
+	pShareData->m_Types[nIdx].m_bHokanLoHiCase = false;			// 入力補完機能：英大文字小文字を同一視する
 
 	//	2003.06.23 Moca ファイル内からの入力補完機能
-	pShareData->m_Types[nIdx].m_bUseHokanByFile = false;			/*! 入力補完 開いているファイル内から候補を探す */
+	pShareData->m_Types[nIdx].m_bUseHokanByFile = false;			//! 入力補完 開いているファイル内から候補を探す
 
 	// 文字コード設定
 	pShareData->m_Types[nIdx].m_eDefaultCodetype = CODE_SJIS;
@@ -5075,7 +5074,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 
 	pShareData->m_Types[nIdx].m_bAutoIndent = TRUE;			/* オートインデント */
 	pShareData->m_Types[nIdx].m_bAutoIndent_ZENSPACE = TRUE;	/* 日本語空白もインデント */
-	pShareData->m_Types[nIdx].m_bRTrimPrevLine = FALSE;			/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
+	pShareData->m_Types[nIdx].m_bRTrimPrevLine = FALSE;			// 2005.10.11 ryoji 改行時に末尾の空白を削除
 
 	pShareData->m_Types[nIdx].m_nIndentLayout = 0;	/* 折り返しは2行目以降を字下げ表示 */
 
@@ -5171,7 +5170,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[nIdx].m_bUseDocumentIcon = FALSE;			/* 文書に関連づけられたアイコンを使う */
 
 //@@@ 2001.11.17 add start MIK
-	for(i = 0; i < 100; i++)
+	for(i = 0; i < _countof(pShareData->m_Types[0].m_RegexKeywordArr); i++)
 	{
 		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_szKeyword[0] = _T('\0');
 		pShareData->m_Types[nIdx].m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
@@ -5186,11 +5185,11 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szAbout[0] = _T('\0');
 		pShareData->m_Types[nIdx].m_KeyHelpArr[i].m_szPath[0] = _T('\0');
 	}
-	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;	/* 辞書選択機能の使用可否 */
-	pShareData->m_Types[nIdx].m_nKeyHelpNum = 0;			/* 登録辞書数 */
-	pShareData->m_Types[nIdx].m_bUseKeyHelpAllSearch = FALSE;	/* ヒットした次の辞書も検索(&A) */
-	pShareData->m_Types[nIdx].m_bUseKeyHelpKeyDisp = FALSE;		/* 1行目にキーワードも表示する(&W) */
-	pShareData->m_Types[nIdx].m_bUseKeyHelpPrefix = FALSE;		/* 選択範囲で前方一致検索(&P) */
+	pShareData->m_Types[nIdx].m_bUseKeyWordHelp = FALSE;	// 辞書選択機能の使用可否
+	pShareData->m_Types[nIdx].m_nKeyHelpNum = 0;			// 登録辞書数
+	pShareData->m_Types[nIdx].m_bUseKeyHelpAllSearch = FALSE;	// ヒットした次の辞書も検索(&A)
+	pShareData->m_Types[nIdx].m_bUseKeyHelpKeyDisp = FALSE;		// 1行目にキーワードも表示する(&W)
+	pShareData->m_Types[nIdx].m_bUseKeyHelpPrefix = FALSE;		// 選択範囲で前方一致検索(&P)
 //@@@ 2006.04.10 fon ADD-end
 
 	// 2005.11.08 Moca 指定位置縦線の設定
