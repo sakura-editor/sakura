@@ -604,7 +604,7 @@ void CEditView::DeleteData(
 				goto end_of_func;
 			}
 			/*ƒtƒ@ƒCƒ‹‚ÌÅŒã‚ÉˆÚ“® */
-			GetCommander().Command_GOFILEEND( FALSE );
+			GetCommander().Command_GOFILEEND( false );
 		}
 	}
 end_of_func:;

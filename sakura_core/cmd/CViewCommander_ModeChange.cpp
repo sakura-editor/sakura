@@ -116,7 +116,7 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 		/* カーソルを移動 */
 		if( ptTo.y >= GetDocument()->m_cLayoutMgr.GetLineCount() ){
 			/* ファイルの最後に移動 */
-			Command_GOFILEEND(FALSE);
+			Command_GOFILEEND(false);
 		} else {
 			GetCaret().MoveCursor( ptTo, true );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();

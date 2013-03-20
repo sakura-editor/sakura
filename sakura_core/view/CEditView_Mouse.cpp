@@ -184,7 +184,7 @@ normal_action:;
 		GetCaret().m_cUnderLine.Lock();
 		if( ptMouse.x < GetTextArea().GetAreaLeft() ){
 			/* カーソル下移動 */
-			GetCommander().Command_DOWN( TRUE, FALSE );
+			GetCommander().Command_DOWN( true, false );
 		}
 	}
 	else{
@@ -1053,7 +1053,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			if( m_dwTripleClickCheck ){
 				// 選択開始行以上にドラッグした
 				if( ptNewCursor.GetY() <= GetSelectionInfo().m_sSelectBgn.GetTo().y ){
-					// GetCommander().Command_GOLINETOP( TRUE, 0x09 );		// 改行単位の行頭へ移動
+					// GetCommander().Command_GOLINETOP( true, 0x09 );		// 改行単位の行頭へ移動
 					CLogicInt nLineLen;
 					const CLayout*	pcLayout;
 					const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptNewCursor.GetY2(), &nLineLen, &pcLayout );
