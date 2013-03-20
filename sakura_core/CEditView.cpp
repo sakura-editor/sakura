@@ -212,7 +212,7 @@ CEditView::CEditView()
 	m_crBack = -1;				/* テキストの背景色 */			// 2006.12.16 ryoji
 	m_hbmpCaret = NULL;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
 
-	m_bSelectingLock = FALSE;	/* 選択状態のロック */
+	m_bSelectingLock = false;	/* 選択状態のロック */
 	m_bBeginSelect = FALSE;		/* 範囲選択中 */
 	m_bBeginBoxSelect = FALSE;	/* 矩形範囲選択中 */
 	m_bBeginLineSelect = FALSE;	/* 行単位選択中 */
@@ -2755,7 +2755,7 @@ int CEditView::GetRightEdgeForScrollBar( void )
 
 	@date 2006.07.09 genta 新規作成
 */
-void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, BOOL bSelect, int nCaretMarginRate )
+void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool bSelect, int nCaretMarginRate )
 {
 	if( bSelect ){
 		if( !IsTextSelected() ){	/* テキストが選択されているか */
@@ -3484,7 +3484,7 @@ normal_action:;
 		m_cUnderLine.Lock();
 		if( xPos < m_nViewAlignLeft ){
 			/* カーソル下移動 */
-			Command_DOWN( TRUE, FALSE );
+			Command_DOWN( true, false );
 		}
 	}
 	else{
@@ -3721,8 +3721,8 @@ normal_action:;
 					}
 				}
 			}
-			Command_GOLINEEND( TRUE, FALSE );
-			Command_RIGHT( TRUE, FALSE, FALSE );
+			Command_GOLINEEND( true, 0 );
+			Command_RIGHT( true, false, false );
 			if( bDrawSwitchOld && bDrawAfter ){
 				m_bDrawSWITCH = true;
 				Redraw();
@@ -4543,7 +4543,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 				// 選択開始行以上にドラッグした
 				if( m_nCaretPosY <= nSelectStartLine ){
-					Command_GOLINETOP( TRUE, 0x09 );	// 改行単位の行頭へ移動
+					Command_GOLINETOP( true, 0x09 );	// 改行単位の行頭へ移動
 				}else{
 					int nCaretPosX;
 					int nCaretPosY;
@@ -4854,7 +4854,7 @@ void CEditView::DisableSelectArea( bool bDraw )
 		DrawSelectArea();
 		m_bDrawSelectArea = FALSE;	// 02/12/13 ai
 	}
-	m_bSelectingLock	 = FALSE;	/* 選択状態のロック */
+	m_bSelectingLock	 = false;	/* 選択状態のロック */
 	m_nSelectLineFromOld = 0;		/* 範囲選択開始行 */
 	m_nSelectColmFromOld = 0; 		/* 範囲選択開始桁 */
 	m_nSelectLineToOld = 0;			/* 範囲選択終了行 */
@@ -7609,7 +7609,7 @@ int CEditView::DoGrepTree(
 						/* 結果出力 */
 						if( 0 < cmemMessage.GetStringLength() ){
 							Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
-							Command_GOFILEEND( FALSE );
+							Command_GOFILEEND( false );
 							if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 								m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 							cmemMessage.SetString( _T("") );
@@ -7648,7 +7648,7 @@ int CEditView::DoGrepTree(
 	// 2010.08.25 フォルダ移動前に残りを先に出力
 	if( 0 < cmemMessage.GetStringLength() ){
 		Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
-		Command_GOFILEEND( FALSE );
+		Command_GOFILEEND( false );
 		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
 			m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
 		cmemMessage.SetString( _T("") );
@@ -7751,7 +7751,7 @@ error_return:;
 	/* 結果出力 */
 	if( 0 < cmemMessage.GetStringLength() ){
 		Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
-		Command_GOFILEEND( FALSE );
+		Command_GOFILEEND( false );
 		if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新
 			cmemMessage.GetStringPtr( &nWork );	//	他のペインの表示を更新
 		cmemMessage.SetString( _T("") );

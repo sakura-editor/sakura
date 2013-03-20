@@ -1188,7 +1188,7 @@ BOOL CEditDoc::FileRead(
 		);
 		if( nCaretPosY >= m_cLayoutMgr.GetLineCount() ){
 			/*ÉtÉ@ÉCÉãÇÃç≈å„Ç…à⁄ìÆ */
-//			m_cEditViewArr[m_nActivePaneIndex].Command_GOFILEEND(FALSE);
+//			m_cEditViewArr[m_nActivePaneIndex].Command_GOFILEEND(false);
 			m_cEditViewArr[m_nActivePaneIndex].HandleCommand( F_GOFILEEND, false, 0, 0, 0, 0 );
 		}else{
 			m_cEditViewArr[m_nActivePaneIndex].m_nViewTopLine = fi.m_nViewTopLine; // 2001/10/20 novice

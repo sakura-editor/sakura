@@ -657,7 +657,7 @@ void CEditView::DeleteData(
 				goto end_of_func;
 			}
 			/*ファイルの最後に移動 */
-			Command_GOFILEEND( FALSE );
+			Command_GOFILEEND( false );
 		}
 	}
 end_of_func:;
@@ -1790,7 +1790,7 @@ void CEditView::Command_WndScrollUp(void)
 	2002/04/26 段落の両端で止まるオプションを追加
 	2002/04/19 新規
 */
-void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
+void CEditView::Command_GONEXTPARAGRAPH( bool bSelect )
 {
 	CDocLine* pcDocLine;
 	int nCaretPointer = 0;
@@ -1866,7 +1866,7 @@ void CEditView::Command_GONEXTPARAGRAPH( int bSelect )
 	2002/04/26 段落の両端で止まるオプションを追加
 	2002/04/19 新規
 */
-void CEditView::Command_GOPREVPARAGRAPH( int bSelect )
+void CEditView::Command_GOPREVPARAGRAPH( bool bSelect )
 {
 	CDocLine* pcDocLine;
 	int nCaretPointer = -1;

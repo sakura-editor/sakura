@@ -75,7 +75,7 @@ BOOL CEditView::HandleCommand(
 )
 {
 	BOOL	bRet = TRUE;
-	BOOL	bRepeat = FALSE;
+	bool	bRepeat = false;
 	int		nFuncID;
 
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
@@ -138,7 +138,7 @@ BOOL CEditView::HandleCommand(
 	}
 	/* キーリピート状態 */
 	if( m_bPrevCommand == nCommand ){
-		bRepeat = TRUE;
+		bRepeat = true;
 	}
 	m_bPrevCommand = nCommand;
 	if( m_pShareData->m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
@@ -146,7 +146,7 @@ BOOL CEditView::HandleCommand(
 		( nCommandFrom & FA_NONRECORD ) != FA_NONRECORD	/* 2007.07.07 genta 記録抑制フラグ off */
 	){
 		/* キーリピート状態をなくする */
-		bRepeat = FALSE;
+		bRepeat = false;
 		/* キーマクロに記録可能な機能かどうかを調べる */
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
 		//F_EXECEXTMACROコマンドはファイルを選択した後にマクロ文が確定するため個別に記録する。
@@ -162,12 +162,12 @@ BOOL CEditView::HandleCommand(
 	//	2007.07.07 genta マクロ実行中フラグの設定
 	//	マクロからのコマンドかどうかはnCommandFromでわかるが
 	//	nCommandFromを引数で浸透させるのが大変なので，従来のフラグにも値をコピーする
-	m_bExecutingKeyMacro = ( nCommandFrom & FA_FROMMACRO ) ? TRUE : FALSE;
+	m_bExecutingKeyMacro = ( nCommandFrom & FA_FROMMACRO ) ? true : false;
 
 	/* キーボードマクロの実行中 */
 	if( m_bExecutingKeyMacro ){
 		/* キーリピート状態をなくする */
-		bRepeat = FALSE;
+		bRepeat = false;
 	}
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
@@ -250,14 +250,14 @@ BOOL CEditView::HandleCommand(
 	case F_FILECLOSE_OPEN:	/* 閉じて開く */
 		Command_FILECLOSE_OPEN();
 		break;
-	case F_FILE_REOPEN:				Command_FILE_REOPEN( m_pcEditDoc->m_nCharCode, lparam1 );break;//	Dec. 4, 2002 genta
-	case F_FILE_REOPEN_SJIS:		Command_FILE_REOPEN( CODE_SJIS, lparam1 );break;		//SJISで開き直す
-	case F_FILE_REOPEN_JIS:			Command_FILE_REOPEN( CODE_JIS, lparam1 );break;		//JISで開き直す
-	case F_FILE_REOPEN_EUC:			Command_FILE_REOPEN( CODE_EUC, lparam1 );break;		//EUCで開き直す
-	case F_FILE_REOPEN_UNICODE:		Command_FILE_REOPEN( CODE_UNICODE, lparam1 );break;	//Unicodeで開き直す
-	case F_FILE_REOPEN_UNICODEBE: 	Command_FILE_REOPEN( CODE_UNICODEBE, lparam1 );break;	//UnicodeBEで開き直す
-	case F_FILE_REOPEN_UTF8:		Command_FILE_REOPEN( CODE_UTF8, lparam1 );break;		//UTF-8で開き直す
-	case F_FILE_REOPEN_UTF7:		Command_FILE_REOPEN( CODE_UTF7, lparam1 );break;		//UTF-7で開き直す
+	case F_FILE_REOPEN:				Command_FILE_REOPEN( m_pcEditDoc->m_nCharCode, lparam1!=0 );break;//	Dec. 4, 2002 genta
+	case F_FILE_REOPEN_SJIS:		Command_FILE_REOPEN( CODE_SJIS, lparam1!=0 );break;		//SJISで開き直す
+	case F_FILE_REOPEN_JIS:			Command_FILE_REOPEN( CODE_JIS, lparam1!=0 );break;		//JISで開き直す
+	case F_FILE_REOPEN_EUC:			Command_FILE_REOPEN( CODE_EUC, lparam1!=0 );break;		//EUCで開き直す
+	case F_FILE_REOPEN_UNICODE:		Command_FILE_REOPEN( CODE_UNICODE, lparam1!=0 );break;	//Unicodeで開き直す
+	case F_FILE_REOPEN_UNICODEBE: 	Command_FILE_REOPEN( CODE_UNICODEBE, lparam1!=0 );break;	//UnicodeBEで開き直す
+	case F_FILE_REOPEN_UTF8:		Command_FILE_REOPEN( CODE_UTF8, lparam1!=0 );break;		//UTF-8で開き直す
+	case F_FILE_REOPEN_UTF7:		Command_FILE_REOPEN( CODE_UTF7, lparam1!=0 );break;		//UTF-7で開き直す
 	case F_PRINT:				Command_PRINT();break;					/* 印刷 */
 	case F_PRINT_PREVIEW:		Command_PRINT_PREVIEW();break;			/* 印刷プレビュー */
 	case F_PRINT_PAGESETUP:		Command_PRINT_PAGESETUP();break;		/* 印刷ページ設定 */	//Sept. 14, 2000 jepro 「印刷のページレイアウトの設定」から変更
@@ -319,14 +319,14 @@ BOOL CEditView::HandleCommand(
 	case F_UP:				Command_UP( m_bSelectingLock, bRepeat ); break;				//カーソル上移動
 	case F_DOWN:			Command_DOWN( m_bSelectingLock, bRepeat ); break;			//カーソル下移動
 	case F_LEFT:			Command_LEFT( m_bSelectingLock, bRepeat ); break;			//カーソル左移動
-	case F_RIGHT:			Command_RIGHT( m_bSelectingLock, FALSE, bRepeat ); break;	//カーソル右移動
+	case F_RIGHT:			Command_RIGHT( m_bSelectingLock, false, bRepeat ); break;	//カーソル右移動
 	case F_UP2:				Command_UP2( m_bSelectingLock ); break;						//カーソル上移動(２行づつ)
 	case F_DOWN2:			Command_DOWN2( m_bSelectingLock ); break;					//カーソル下移動(２行づつ)
 	case F_WORDLEFT:		Command_WORDLEFT( m_bSelectingLock ); break;				/* 単語の左端に移動 */
 	case F_WORDRIGHT:		Command_WORDRIGHT( m_bSelectingLock ); break;				/* 単語の右端に移動 */
 	//	0ct. 29, 2001 genta マクロ向け機能拡張
 	case F_GOLINETOP:		Command_GOLINETOP( m_bSelectingLock, lparam1  ); break;		//行頭に移動(折り返し単位)
-	case F_GOLINEEND:		Command_GOLINEEND( m_bSelectingLock, FALSE ); break;		//行末に移動(折り返し単位)
+	case F_GOLINEEND:		Command_GOLINEEND( m_bSelectingLock, 0 ); break;			//行末に移動(折り返し単位)
 //	case F_ROLLDOWN:		Command_ROLLDOWN( m_bSelectingLock ); break;				//スクロールダウン
 //	case F_ROLLUP:			Command_ROLLUP( m_bSelectingLock ); break;					//スクロールアップ
 	case F_HalfPageUp:		Command_HalfPageUp( m_bSelectingLock ); break;				//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
@@ -345,56 +345,56 @@ BOOL CEditView::HandleCommand(
 	case F_GOPREVPARAGRAPH:	Command_GOPREVPARAGRAPH( m_bSelectingLock ); break;			//前の段落へ戻る
 
 	/* 選択系 */
-	case F_SELECTWORD:		Command_SELECTWORD( );break;					//現在位置の単語選択
+	case F_SELECTWORD:		Command_SELECTWORD();break;						//現在位置の単語選択
 	case F_SELECTALL:		Command_SELECTALL();break;						//すべて選択
 	case F_SELECTLINE:		Command_SELECTLINE( lparam1 );break;			//1行選択	// 2007.10.13 nasukoji
 	case F_BEGIN_SEL:		Command_BEGIN_SELECT();break;					/* 範囲選択開始 */
-	case F_UP_SEL:			Command_UP( TRUE, bRepeat, lparam1 ); break;	//(範囲選択)カーソル上移動
-	case F_DOWN_SEL:		Command_DOWN( TRUE, bRepeat ); break;			//(範囲選択)カーソル下移動
-	case F_LEFT_SEL:		Command_LEFT( TRUE, bRepeat ); break;			//(範囲選択)カーソル左移動
-	case F_RIGHT_SEL:		Command_RIGHT( TRUE, FALSE, bRepeat ); break;	//(範囲選択)カーソル右移動
-	case F_UP2_SEL:			Command_UP2( TRUE ); break;						//(範囲選択)カーソル上移動(２行ごと)
-	case F_DOWN2_SEL:		Command_DOWN2( TRUE );break;					//(範囲選択)カーソル下移動(２行ごと)
-	case F_WORDLEFT_SEL:	Command_WORDLEFT( TRUE );break;					//(範囲選択)単語の左端に移動
-	case F_WORDRIGHT_SEL:	Command_WORDRIGHT( TRUE );break;				//(範囲選択)単語の右端に移動
-	case F_GOLINETOP_SEL:	Command_GOLINETOP( TRUE, 0 );break;				//(範囲選択)行頭に移動(折り返し単位)
-	case F_GOLINEEND_SEL:	Command_GOLINEEND( TRUE, FALSE );break;			//(範囲選択)行末に移動(折り返し単位)
+	case F_UP_SEL:			Command_UP( true, bRepeat, lparam1 ); break;	//(範囲選択)カーソル上移動
+	case F_DOWN_SEL:		Command_DOWN( true, bRepeat ); break;			//(範囲選択)カーソル下移動
+	case F_LEFT_SEL:		Command_LEFT( true, bRepeat ); break;			//(範囲選択)カーソル左移動
+	case F_RIGHT_SEL:		Command_RIGHT( true, false, bRepeat ); break;	//(範囲選択)カーソル右移動
+	case F_UP2_SEL:			Command_UP2( true ); break;						//(範囲選択)カーソル上移動(２行ごと)
+	case F_DOWN2_SEL:		Command_DOWN2( true );break;					//(範囲選択)カーソル下移動(２行ごと)
+	case F_WORDLEFT_SEL:	Command_WORDLEFT( true );break;					//(範囲選択)単語の左端に移動
+	case F_WORDRIGHT_SEL:	Command_WORDRIGHT( true );break;				//(範囲選択)単語の右端に移動
+	case F_GOLINETOP_SEL:	Command_GOLINETOP( true, 0 );break;				//(範囲選択)行頭に移動(折り返し単位)
+	case F_GOLINEEND_SEL:	Command_GOLINEEND( true, 0 );break;				//(範囲選択)行末に移動(折り返し単位)
 //	case F_ROLLDOWN_SEL:	Command_ROLLDOWN( TRUE ); break;				//(範囲選択)スクロールダウン
 //	case F_ROLLUP_SEL:		Command_ROLLUP( TRUE ); break;					//(範囲選択)スクロールアップ
-	case F_HalfPageUp_Sel:	Command_HalfPageUp( TRUE ); break;				//(範囲選択)半ページアップ
-	case F_HalfPageDown_Sel:Command_HalfPageDown( TRUE ); break;			//(範囲選択)半ページダウン
-	case F_1PageUp_Sel:		Command_1PageUp( TRUE ); break;					//(範囲選択)１ページアップ
-	case F_1PageDown_Sel:	Command_1PageDown( TRUE ); break;				//(範囲選択)１ページダウン
-	case F_GOFILETOP_SEL:	Command_GOFILETOP( TRUE );break;				//(範囲選択)ファイルの先頭に移動
-	case F_GOFILEEND_SEL:	Command_GOFILEEND( TRUE );break;				//(範囲選択)ファイルの最後に移動
-	case F_GONEXTPARAGRAPH_SEL:	Command_GONEXTPARAGRAPH( TRUE ); break;			//次の段落へ進む
-	case F_GOPREVPARAGRAPH_SEL:	Command_GOPREVPARAGRAPH( TRUE ); break;			//前の段落へ戻る
+	case F_HalfPageUp_Sel:	Command_HalfPageUp( true ); break;				//(範囲選択)半ページアップ
+	case F_HalfPageDown_Sel:Command_HalfPageDown( true ); break;			//(範囲選択)半ページダウン
+	case F_1PageUp_Sel:		Command_1PageUp( true ); break;					//(範囲選択)１ページアップ
+	case F_1PageDown_Sel:	Command_1PageDown( true ); break;				//(範囲選択)１ページダウン
+	case F_GOFILETOP_SEL:	Command_GOFILETOP( true );break;				//(範囲選択)ファイルの先頭に移動
+	case F_GOFILEEND_SEL:	Command_GOFILEEND( true );break;				//(範囲選択)ファイルの最後に移動
+	case F_GONEXTPARAGRAPH_SEL:	Command_GONEXTPARAGRAPH( true ); break;			//次の段落へ進む
+	case F_GOPREVPARAGRAPH_SEL:	Command_GOPREVPARAGRAPH( true ); break;			//前の段落へ戻る
 
 	/* 矩形選択系 */
 //	case F_BOXSELALL:		Command_BOXSELECTALL();break;		//矩形ですべて選択
 	case F_BEGIN_BOX:		Command_BEGIN_BOXSELECT();break;	/* 矩形範囲選択開始 */
 //	case F_UP_BOX:			Command_UP_BOX( bRepeat ); break;			//(矩形選択)カーソル上移動
-//	case F_DOWN_BOX:		Command_DOWN( TRUE, bRepeat ); break;		//(矩形選択)カーソル下移動
-//	case F_LEFT_BOX:		Command_LEFT( TRUE, bRepeat ); break;		//(矩形選択)カーソル左移動
-//	case F_RIGHT_BOX:		Command_RIGHT( TRUE, FALSE, bRepeat ); break;//(矩形選択)カーソル右移動
-//	case F_UP2_BOX:			Command_UP2( TRUE ); break;					//(矩形選択)カーソル上移動(２行ごと)
-//	case F_DOWN2_BOX:		Command_DOWN2( TRUE );break;				//(矩形選択)カーソル下移動(２行ごと)
-//	case F_WORDLEFT_BOX:	Command_WORDLEFT( TRUE );break;				//(矩形選択)単語の左端に移動
-//	case F_WORDRIGHT_BOX:	Command_WORDRIGHT( TRUE );break;			//(矩形選択)単語の右端に移動
-//	case F_GOLINETOP_BOX:	Command_GOLINETOP( TRUE, FALSE );break;		//(矩形選択)行頭に移動(折り返し単位)
-//	case F_GOLINEEND_BOX:	Command_GOLINEEND( TRUE, FALSE );break;		//(矩形選択)行末に移動(折り返し単位)
-//	case F_HalfPageUp_Box:	Command_HalfPageUp( TRUE ); break;			//(矩形選択)半ページアップ
-//	case F_HalfPageDown_Box:Command_HalfPageDown( TRUE ); break;		//(矩形選択)半ページダウン
-//	case F_1PageUp_Box:		Command_1PageUp( TRUE ); break;				//(矩形選択)１ページアップ
-//	case F_1PageDown_Box:	Command_1PageDown( TRUE ); break;			//(矩形選択)１ページダウン
-//	case F_GOFILETOP_Box:	Command_GOFILETOP( TRUE );break;			//(矩形選択)ファイルの先頭に移動
-//	case F_GOFILEEND_Box:	Command_GOFILEEND( TRUE );break;			//(矩形選択)ファイルの最後に移動
+//	case F_DOWN_BOX:		Command_DOWN( true, bRepeat ); break;		//(矩形選択)カーソル下移動
+//	case F_LEFT_BOX:		Command_LEFT( true, bRepeat ); break;		//(矩形選択)カーソル左移動
+//	case F_RIGHT_BOX:		Command_RIGHT( true, false, bRepeat ); break;//(矩形選択)カーソル右移動
+//	case F_UP2_BOX:			Command_UP2( true ); break;					//(矩形選択)カーソル上移動(２行ごと)
+//	case F_DOWN2_BOX:		Command_DOWN2( true );break;				//(矩形選択)カーソル下移動(２行ごと)
+//	case F_WORDLEFT_BOX:	Command_WORDLEFT( true );break;				//(矩形選択)単語の左端に移動
+//	case F_WORDRIGHT_BOX:	Command_WORDRIGHT( true );break;			//(矩形選択)単語の右端に移動
+//	case F_GOLINETOP_BOX:	Command_GOLINETOP( true, 0 );break;			//(矩形選択)行頭に移動(折り返し単位)
+//	case F_GOLINEEND_BOX:	Command_GOLINEEND( true, 0 );break;			//(矩形選択)行末に移動(折り返し単位)
+//	case F_HalfPageUp_Box:	Command_HalfPageUp( true ); break;			//(矩形選択)半ページアップ
+//	case F_HalfPageDown_Box:Command_HalfPageDown( true ); break;		//(矩形選択)半ページダウン
+//	case F_1PageUp_Box:		Command_1PageUp( true ); break;				//(矩形選択)１ページアップ
+//	case F_1PageDown_Box:	Command_1PageDown( true ); break;			//(矩形選択)１ページダウン
+//	case F_GOFILETOP_Box:	Command_GOFILETOP( true );break;			//(矩形選択)ファイルの先頭に移動
+//	case F_GOFILEEND_Box:	Command_GOFILEEND( true );break;			//(矩形選択)ファイルの最後に移動
 
 	/* クリップボード系 */
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)
-	case F_COPY:					Command_COPY( FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
-	case F_COPY_ADDCRLF:			Command_COPY( FALSE, TRUE );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
-	case F_COPY_CRLF:				Command_COPY( FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
+	case F_COPY:					Command_COPY( false, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy );break;			//コピー(選択範囲をクリップボードにコピー)
+	case F_COPY_ADDCRLF:			Command_COPY( false, true );break;		//折り返し位置に改行をつけてコピー(選択範囲をクリップボードにコピー)
+	case F_COPY_CRLF:				Command_COPY( false, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy, EOL_CRLF );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE( (int)lparam1 );break;	//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX( (int)lparam1 );break;	//矩形貼り付け(クリップボードから矩形貼り付け)
 	case F_INSTEXT:					Command_INSTEXT( bRedraw, (const char*)lparam1, -1, (BOOL)lparam2 );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加(-1は\0終端まで)
@@ -424,7 +424,7 @@ BOOL CEditView::HandleCommand(
 	case F_HANKATATOZENKATA:		Command_HANKATATOZENKAKUKATA();break;	/* 半角カタカナ→全角カタカナ */
 	case F_HANKATATOZENHIRA:		Command_HANKATATOZENKAKUHIRA();break;	/* 半角カタカナ→全角ひらがな */
 	case F_TABTOSPACE:				Command_TABTOSPACE();break;				/* TAB→空白 */
-	case F_SPACETOTAB:				Command_SPACETOTAB();break;				/* 空白→TAB */  //#### Stonee, 2001/05/27
+	case F_SPACETOTAB:				Command_SPACETOTAB();break;				/* 空白→TAB */  //---- Stonee, 2001/05/27
 	case F_CODECNV_AUTO2SJIS:		Command_CODECNV_AUTO2SJIS();break;		/* 自動判別→SJISコード変換 */
 	case F_CODECNV_EMAIL:			Command_CODECNV_EMAIL();break;			/* E-Mail(JIS→SJIS)コード変換 */
 	case F_CODECNV_EUC2SJIS:		Command_CODECNV_EUC2SJIS();break;		/* EUC→SJISコード変換 */
@@ -667,7 +667,7 @@ BOOL CEditView::HandleCommand(
 /////////////////////////////////// 以下はコマンド群 (Oct. 17, 2000 jepro note) ///////////////////////////////////////////
 
 /*! カーソル上移動 */
-int CEditView::Command_UP( int bSelect, BOOL bRepeat, int lines )
+int CEditView::Command_UP( bool bSelect, bool bRepeat, int lines )
 {
 	//	From Here Oct. 24, 2001 genta
 	if( lines != 0 ){
@@ -706,7 +706,7 @@ int CEditView::Command_UP( int bSelect, BOOL bRepeat, int lines )
 
 
 /* カーソル下移動 */
-int CEditView::Command_DOWN( int bSelect, BOOL bRepeat )
+int CEditView::Command_DOWN( bool bSelect, bool bRepeat )
 {
 	int		i;
 	int		nRepeat;
@@ -744,7 +744,7 @@ int CEditView::Command_DOWN( int bSelect, BOOL bRepeat )
 			2つのifのどちらにも当てはまらないが，そのあとのMoveCursorにて適正な
 			位置に移動させられる．
 */
-int CEditView::Command_LEFT( int bSelect, BOOL bRepeat )
+int CEditView::Command_LEFT( bool bSelect, bool bRepeat )
 {
 	int		nRepCount;
 	int		nRepeat;
@@ -857,7 +857,7 @@ end_of_func:;
 
 
 /* カーソル右移動 */
-void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bRepeat )
+void CEditView::Command_RIGHT( bool bSelect,  bool bIgnoreCurrentSelection, bool bRepeat )
 {
 	int		nRepCount;
 	int		nRepeat;
@@ -904,7 +904,7 @@ void CEditView::Command_RIGHT( int bSelect, int bIgnoreCurrentSelection, BOOL bR
 						DisableSelectArea( true );
 						if( nPosY >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
 							/* ファイルの最後に移動 */
-							Command_GOFILEEND(FALSE);
+							Command_GOFILEEND(false);
 						}else{
 							/* カーソルを選択終了位置に移動 */
 							MoveCursor( nPosX, nPosY, true );
@@ -1002,31 +1002,8 @@ end_of_func:;
 
 
 
-
-//	From Here Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL/UP/DOWN→PAGE/DOWN/UP)するために以下をコメントアウト
-///* スクロールアップ */
-//void CEditView::Command_ROLLUP( int bSelect )
-//{
-//	Cursor_UPDOWN( ( m_nViewRowNum / 2 ), bSelect );
-//	return;
-//}
-//
-//
-//
-//
-///* スクロールダウン */
-//void CEditView::Command_ROLLDOWN( int bSelect )
-//{
-//	Cursor_UPDOWN( - ( m_nViewRowNum / 2 ), bSelect );
-//	return;
-//}
-//	To Here Oct. 6, 2000
-
-
-
-
 /* 半ページアップ */	//Oct. 6, 2000 JEPRO added (実は従来のスクロールダウンそのもの)
-void CEditView::Command_HalfPageUp( int bSelect )
+void CEditView::Command_HalfPageUp( bool bSelect )
 {
 	Cursor_UPDOWN( - ( m_nViewRowNum / 2 ), bSelect );
 	return;
@@ -1036,7 +1013,7 @@ void CEditView::Command_HalfPageUp( int bSelect )
 
 
 /* 半ページダウン */	//Oct. 6, 2000 JEPRO added (実は従来のスクロールアップそのもの)
-void CEditView::Command_HalfPageDown( int bSelect )
+void CEditView::Command_HalfPageDown( bool bSelect )
 {
 	Cursor_UPDOWN( ( m_nViewRowNum / 2 ), bSelect );
 	return;
@@ -1051,7 +1028,7 @@ void CEditView::Command_HalfPageDown( int bSelect )
 	@date 2001.12.13 hor 画面に対するカーソル位置はそのままで
 		１ページアップに動作変更
 */	//Oct. 10, 2000 JEPRO added
-void CEditView::Command_1PageUp( int bSelect )
+void CEditView::Command_1PageUp( bool bSelect )
 {
 //	Cursor_UPDOWN( - m_nViewRowNum, bSelect );
 
@@ -1082,7 +1059,7 @@ void CEditView::Command_1PageUp( int bSelect )
 	@date 2001.12.13 hor 画面に対するカーソル位置はそのままで
 		１ページダウンに動作変更
 */
-void CEditView::Command_1PageDown( int bSelect )
+void CEditView::Command_1PageDown( bool bSelect )
 {
 //	Cursor_UPDOWN( m_nViewRowNum, bSelect );
 
@@ -1099,7 +1076,7 @@ void CEditView::Command_1PageDown( int bSelect )
 		RedrawAll();
 	}else{
 		Cursor_UPDOWN( m_nViewRowNum , bSelect );
-		Command_DOWN( bSelect, TRUE );
+		Command_DOWN( bSelect, true );
 	}
 
 	return;
@@ -1109,7 +1086,7 @@ void CEditView::Command_1PageDown( int bSelect )
 
 
 /* カーソル上移動(２行づつ) */
-void CEditView::Command_UP2( int bSelect )
+void CEditView::Command_UP2( bool bSelect )
 {
 	Cursor_UPDOWN( -2, bSelect );
 	return;
@@ -1119,7 +1096,7 @@ void CEditView::Command_UP2( int bSelect )
 
 
 /* カーソル下移動(２行づつ) */
-void CEditView::Command_DOWN2( int bSelect )
+void CEditView::Command_DOWN2( bool bSelect )
 {
 	Cursor_UPDOWN( 2, bSelect );
 	return;
@@ -1136,7 +1113,7 @@ void CEditView::Command_DOWN2( int bSelect )
 	@date Jun. 18, 2007 maru 行頭判定に全角空白のインデント設定も考慮する
 */
 void CEditView::Command_GOLINETOP(
-	int		bSelect,	//!< [in] 選択の有無。true: 選択しながら移動。false: 選択しないで移動。
+	bool	bSelect,	//!< [in] 選択の有無。true: 選択しながら移動。false: 選択しないで移動。
 	int		lparam		/*!< [in] マクロから使用する拡張フラグ
 								  @li 0: キー操作と同一(default)
 								  @li 1: カーソル位置に関係なく行頭に移動。
@@ -1158,7 +1135,7 @@ void CEditView::Command_GOLINETOP(
 	}
 	
 	if( lparam & 4 ){
-		bSelect = TRUE;
+		bSelect = true;
 	}
 
 	if ( lparam & 8 ){
@@ -1232,7 +1209,7 @@ void CEditView::Command_GOLINETOP(
 
 
 // 行末に移動(折り返し単位)
-void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
+void CEditView::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection )
 {
 	int				nPosX = 0;
 	int				nPosY = m_nCaretPosY;
@@ -1285,7 +1262,7 @@ void CEditView::Command_GOLINEEND( int bSelect, int bIgnoreCurrentSelection )
 
 
 /* ファイルの先頭に移動 */
-void CEditView::Command_GOFILETOP( int bSelect )
+void CEditView::Command_GOFILETOP( bool bSelect )
 {
 	/* 先頭へカーソルを移動 */
 	//	Sep. 8, 2000 genta
@@ -1299,19 +1276,19 @@ void CEditView::Command_GOFILETOP( int bSelect )
 
 
 /* ファイルの最後に移動 */
-void CEditView::Command_GOFILEEND( int bSelect )
+void CEditView::Command_GOFILEEND( bool bSelect )
 {
 // 2001.12.13 hor BOX選択中にファイルの最後にジャンプすると[EOF]の行が反転したままになるの修正
 	if( !bSelect && IsTextSelected() ) DisableSelectArea( true );	// 2001.12.21 hor Add
 	AddCurrentLineToHistory();
 	Cursor_UPDOWN( m_pcEditDoc->m_cLayoutMgr.GetLineCount() , bSelect );
-	Command_DOWN( bSelect, TRUE );
+	Command_DOWN( bSelect, true );
 	if ( !m_bBeginBoxSelect ){							// 2002/04/18 YAZAKI
 		/*	2004.04.19 fotomo
 			改行のない最終行で選択肢ながら文書末へ移動した場合に
 			選択範囲が正しくない場合がある問題に対応
 		*/
-		Command_GOLINEEND( bSelect, FALSE );				// 2001.12.21 hor Add
+		Command_GOLINEEND( bSelect, 0 );				// 2001.12.21 hor Add
 	}
 	MoveCursor( m_nCaretPosX, m_nCaretPosY, true );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
@@ -1327,7 +1304,7 @@ void CEditView::Command_GOFILEEND( int bSelect )
 
 
 /* 単語の左端に移動 */
-void CEditView::Command_WORDLEFT( int bSelect )
+void CEditView::Command_WORDLEFT( bool bSelect )
 {
 	int				nIdx;
 	int				nLineNew;
@@ -1351,7 +1328,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 		bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル左移動 */
-		Command_LEFT( bSelect, FALSE );
+		Command_LEFT( bSelect, false );
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 		return;
 	}
@@ -1389,7 +1366,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 		bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル左移動 */
-		Command_LEFT( bSelect, FALSE );
+		Command_LEFT( bSelect, false );
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 	}
 	return;
@@ -1399,7 +1376,7 @@ void CEditView::Command_WORDLEFT( int bSelect )
 
 
 /* 単語の右端に移動 */
-void CEditView::Command_WORDRIGHT( int bSelect )
+void CEditView::Command_WORDRIGHT( bool bSelect )
 {
 	int			nIdx;
 	int			nCurLine;
@@ -1463,7 +1440,7 @@ try_again:;
 		bool	bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = false;
 		/* カーソル右移動 */
-		Command_RIGHT( bSelect, FALSE, FALSE );
+		Command_RIGHT( bSelect, false, false );
 		m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode = bIsFreeCursorModeOld;	/* フリーカーソルモードか */
 		if( !bTryAgain ){
 			bTryAgain = TRUE;
@@ -1528,7 +1505,7 @@ void CEditView::CopyCurLine(
 	@date 2007.11.18 ryoji 「選択なしでコピーを可能にする」オプション処理追加
 */
 void CEditView::Command_COPY(
-	int			bIgnoreLockAndDisable,	//!< [in] 選択範囲を解除するか？
+	bool		bIgnoreLockAndDisable,	//!< [in] 選択範囲を解除するか？
 	bool		bAddCRLFWhenCopy,		//!< [in] 折り返し位置に改行コードを挿入するか？
 	EEolType	neweol					//!< [in] コピーするときのEOL。
 )
@@ -1572,7 +1549,7 @@ void CEditView::Command_COPY(
 	if( !bIgnoreLockAndDisable ){
 		/* 選択状態のロック */
 		if( m_bSelectingLock ){
-			m_bSelectingLock = FALSE;
+			m_bSelectingLock = false;
 		}
 	}
 	if( m_pShareData->m_Common.m_sEdit.m_bCopyAndDisablSelection ){	/* コピーしたら選択解除 */
@@ -1687,7 +1664,7 @@ void CEditView::Command_DELETE_BACK( void )
 	else{
 		nPosX = m_nCaretPosX;
 		nPosY = m_nCaretPosY;
-		bBool = Command_LEFT( FALSE, FALSE );
+		bBool = Command_LEFT( false, false );
 		// 2008.08.03 nasukoji	改行より右側でのBACKSPACEでもUndoデータを作成しない
 		if( bBool ){
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
@@ -1739,7 +1716,7 @@ void CEditView::Command_WordDeleteToEnd( void )
 		}
 	}
 	/* 単語の右端に移動 */
-	CEditView::Command_WORDRIGHT( TRUE );
+	CEditView::Command_WORDRIGHT( true );
 	if( !IsTextSelected() ){
 		ErrorBeep();
 		return;
@@ -1780,7 +1757,7 @@ void CEditView::Command_WordDeleteToStart( void )
 	}
 
 	// 単語の左端に移動
-	CEditView::Command_WORDLEFT( TRUE );
+	CEditView::Command_WORDLEFT( true );
 	if( !IsTextSelected() ){
 		ErrorBeep();
 		return;
@@ -1821,7 +1798,7 @@ void CEditView::Command_WordCut( void )
 	/* 切り取り(選択範囲をクリップボードにコピーして削除) */
 	if ( !IsTextSelected() ){
 		//	単語選択で選択できなかったら、次の文字を選ぶことに挑戦。
-		Command_RIGHT( TRUE, FALSE, FALSE );
+		Command_RIGHT( true, false, false );
 	}
 	Command_CUT();
 	return;
@@ -2132,7 +2109,7 @@ void CEditView::Command_SELECTALL( void )
 void CEditView::Command_SELECTLINE( int lparam )
 {
 	// 改行単位で1行選択する
-	Command_GOLINETOP( FALSE, 0x9 );	// 物理行頭に移動
+	Command_GOLINETOP( false, 0x9 );	// 物理行頭に移動
 
 	m_bBeginLineSelect = TRUE;		// 行単位選択中
 
@@ -2145,11 +2122,11 @@ void CEditView::Command_SELECTLINE( int lparam )
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, m_nCaretPosY_PHY + 1, &nCaretPosX, &nCaretPosY );
 
 		// カーソルを次の物理行頭へ移動する
-		MoveCursorSelecting( nCaretPosX, nCaretPosY, TRUE );
+		MoveCursorSelecting( nCaretPosX, nCaretPosY, true );
 	}else{
 		// カーソルを最下行（レイアウト行）へ移動する
-		MoveCursorSelecting( 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), TRUE );
-		Command_GOLINEEND( TRUE, FALSE );	// 行末に移動
+		MoveCursorSelecting( 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), true );
+		Command_GOLINEEND( true, 0 );	// 行末に移動
 
 		// 選択するものが無い（[EOF]のみの行）時は選択状態としない
 		if(( ! IsTextSelected() )&&( m_nCaretPosY_PHY >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() ))
@@ -2436,7 +2413,7 @@ void CEditView::Command_INSTEXT(
 				pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;	/* 操作前のキャレット位置Ｘ */
 				pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;	/* 操作前のキャレット位置Ｙ */
 			}
-			Command_GOLINETOP( FALSE, 1 );	// 行頭に移動(折り返し単位)
+			Command_GOLINETOP( false, 1 );	// 行頭に移動(折り返し単位)
 			nPosX_PHY_Delta = pcOpe->m_nCaretPosX_PHY_Before - m_nCaretPosX_PHY;	// 挿入ポイントと元の位置との差分桁数
 			if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 				pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
@@ -3123,7 +3100,7 @@ void CEditView::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	int			nSelectColFrom_Old;
 	int			nSelectLineTo_Old;
 	int			nSelectColTo_Old;
-	BOOL		bSelectingLock_Old;
+	bool		bSelectingLock_Old;
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = FALSE;			//	hor
 	int			nLineNumOld,nIdxOld;	//	hor
@@ -3150,7 +3127,7 @@ void CEditView::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		bSelectingLock_Old = m_bSelectingLock;
 
 		/* 矩形範囲選択中か */
-		if( !m_bBeginBoxSelect && TRUE == m_bSelectingLock ){	/* 選択状態のロック */
+		if( !m_bBeginBoxSelect && m_bSelectingLock ){	/* 選択状態のロック */
 			bSelecting = TRUE;
 		}
 		else{
@@ -3311,7 +3288,7 @@ void CEditView::Command_SEARCH_NEXT(
 	int			nSelectLineTo_Old;
 	int			nSelectColTo_Old;
 	BOOL		bFlag1;
-	BOOL		bSelectingLock_Old;
+	bool		bSelectingLock_Old;
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = FALSE;			//	hor
 	int			nLineNumOld,nIdxOld;	//	hor
@@ -3336,7 +3313,7 @@ void CEditView::Command_SEARCH_NEXT(
 	bFlag1 = FALSE;
 	if( IsTextSelected() ){	/* テキストが選択されているか */
 		/* 矩形範囲選択中でない & 選択状態のロック */
-		if( !m_bBeginBoxSelect && TRUE == m_bSelectingLock ){
+		if( !m_bBeginBoxSelect && m_bSelectingLock ){
 			bSelecting = TRUE;
 			bSelectingLock_Old = m_bSelectingLock;
 			nSelectLineBgnFrom_Old = m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
@@ -3534,7 +3511,7 @@ void CEditView::Command_CANCEL_MODE( void )
 		/* 現在の選択範囲を非選択状態に戻す */
 		DisableSelectArea( true );
 	}
-	m_bSelectingLock = FALSE;	/* 選択状態のロック */
+	m_bSelectingLock = false;	/* 選択状態のロック */
 }
 
 
@@ -3550,10 +3527,10 @@ void CEditView::Command_BEGIN_SELECT( void )
 	
 	//	ロックの解除切り替え
 	if ( m_bSelectingLock ) {
-		m_bSelectingLock = FALSE;	/* 選択状態のロック解除 */
+		m_bSelectingLock = false;	/* 選択状態のロック解除 */
 	}
 	else {
-		m_bSelectingLock = TRUE;	/* 選択状態のロック */
+		m_bSelectingLock = true;	/* 選択状態のロック */
 	}
 	return;
 }
@@ -3577,7 +3554,7 @@ void CEditView::Command_BEGIN_BOXSELECT( void )
 	/* 現在のカーソル位置から選択を開始する */
 	BeginSelectArea();
 
-	m_bSelectingLock = TRUE;	/* 選択状態のロック */
+	m_bSelectingLock = true;	/* 選択状態のロック */
 	m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
 	return;
 }
@@ -5132,7 +5109,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		);
 		for( i = 0; i < nDataLen; ){
 			/* カーソル右移動 */
-			Command_RIGHT( FALSE, TRUE, FALSE );
+			Command_RIGHT( false, true, false );
 			i+= pnKey_CharCharsArr[i];
 		}
 		if( NULL != pnKey_CharCharsArr ){
@@ -5414,7 +5391,7 @@ void CEditView::Command_ADDTAIL(
 
 	m_pcEditDoc->SetModified(true,true);	//	Jan. 22, 2002 genta
 	/*ファイルの最後に移動 */
-	Command_GOFILEEND( FALSE );
+	Command_GOFILEEND( false );
 
 	if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 		pcOpe = new COpe;
@@ -6778,7 +6755,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, true );
 		} else {
 //			HandleCommand( F_LEFT, true, 0, 0, 0, 0 );
-			Command_LEFT( FALSE, FALSE );
+			Command_LEFT( false, false );
 		}
 	}
 	// To Here 2002.01.09 hor
@@ -8774,12 +8751,10 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 //! ファイルの再オープン
 void CEditView::Command_FILE_REOPEN(
 	ECodeType	nCharCode,	//!< [in] 開き直す際の文字コード
-	int 		bNoConfirm	//!< [in] ファイルが更新された場合に確認を行うか．0: 確認する, !0: 確認しない
+	bool 		bNoConfirm	//!< [in] ファイルが更新された場合に確認を行わ「ない」かどうか。true:確認しない false:確認する
 )
 {
-	if( bNoConfirm == 0 && ( fexist( m_pcEditDoc->GetFilePath() ))
-	 && m_pcEditDoc->IsModified()	/* 変更フラグ */
-	){
+	if( !bNoConfirm && fexist( m_pcEditDoc->GetFilePath() ) && m_pcEditDoc->IsModified() ){
 		int nDlgResult = MYMESSAGEBOX(
 			m_hWnd,
 			MB_OKCANCEL | MB_ICONQUESTION | MB_TOPMOST,

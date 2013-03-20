@@ -1841,7 +1841,7 @@ LRESULT CEditWnd::DispatchEvent(
 			//	bit 1 (MASK 2): 0: bit 0の設定に従う．1:現在の選択ロックs状態を継続
 			//	既存の実装では どちらも0なので強制解除と解釈される．
 			//	呼び出し時はe_PM_SETCARETPOS_SELECTSTATEの値を使うこと．
-			int bSelect = lParam & 1;
+			bool bSelect = (0!= (lParam & 1));
 			if( lParam & 2 ){
 				// 現在の状態をKEEP
 				bSelect = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSelectingLock;

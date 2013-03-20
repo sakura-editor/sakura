@@ -147,7 +147,7 @@ public:
 	BOOL IsTextSelecting( void )	/* テキストの選択中か */
 	{
 		// ジャンプ回数を減らして、一気に判定。
-		return m_bSelectingLock|IsTextSelected();
+		return m_bSelectingLock||IsTextSelected();
 	}
 	//>> 2002/03/29 Azumaiya
 	//	Oct. 2, 2005 genta 挿入モードの設定・取得
@@ -195,7 +195,7 @@ public:
 	int  MoveCursor( int, int, bool, int = _CARETMARGINRATE );	/* 行桁指定によるカーソル移動 */
 	int MoveCursorProperly( int, int, bool, int = _CARETMARGINRATE, int = 0 );	/* 行桁指定によるカーソル移動（座標調整付き） */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
-	void MoveCursorSelecting( int, int, BOOL, int = _CARETMARGINRATE );
+	void MoveCursorSelecting( int, int, bool, int = _CARETMARGINRATE );
 	BOOL GetAdjustCursorPos( int *, int *);	// 正しいカーソル位置を算出する
 	BOOL DetectWidthOfLineNumberArea( BOOL );					/* 行番号表示に必要な幅を設定 */
 	int DetectWidthOfLineNumberArea_calculate( void );			/* 行番号表示に必要な桁数を計算 */
@@ -304,7 +304,7 @@ public: /* テスト用にアクセス属性を変更 */
 	char	m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
 	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
 
-	BOOL	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
+	bool	m_bExecutingKeyMacro;		/* キーボードマクロの実行中 */
 	HWND	m_hWnd;				/* 編集ウィンドウハンドル */
 	int		m_nViewTopLine;		/* 表示域の一番上の行(0開始) */
 	int		m_nViewLeftCol;		/* 表示域の一番左の桁(0開始) */
@@ -394,7 +394,7 @@ public: /* テスト用にアクセス属性を変更 */
 	bool	m_bRedrawRuler;		// ルーラー全体を描き直す時 = true      2002.02.25 Add By KK
 
 	/* 選択状態 */
-	int		m_bSelectingLock;		/* 選択状態のロック */
+	bool	m_bSelectingLock;		/* 選択状態のロック */
 	int		m_bBeginSelect;			/* 範囲選択中 */
 	int		m_bBeginBoxSelect;		/* 矩形範囲選択中 */
 	int		m_bBeginLineSelect;		/* 行単位選択中 */
@@ -576,7 +576,7 @@ public: /* テスト用にアクセス属性を変更 */
 	void Command_FILECLOSE_OPEN( const char *filename = NULL,
 		ECodeType nCharCode = CODE_AUTODETECT, bool bReadOnly = false );
 	
-	void Command_FILE_REOPEN( ECodeType nCharCode, int bNoConfirm );	/* 再オープン */	//Dec. 4, 2002 genta 引数追加
+	void Command_FILE_REOPEN( ECodeType nCharCode, bool bNoConfirm );	/* 再オープン */	//Dec. 4, 2002 genta 引数追加
 
 	void Command_PRINT( void );					/* 印刷*/
 	void Command_PRINT_PREVIEW( void );			/* 印刷プレビュー*/
@@ -656,33 +656,33 @@ public: /* テスト用にアクセス属性を変更 */
 
 	/* カーソル移動系 */
 	//	Oct. 24, 2001 genta 機能拡張のため引数追加
-	int Command_UP( int bSelect, BOOL bRepeat, int line = 0 );			/* カーソル上移動 */
-	int Command_DOWN( int bSelect, BOOL bRepeat );						/* カーソル下移動 */
-	int  Command_LEFT( int, BOOL );			/* カーソル左移動 */
-	void Command_RIGHT( int, int, BOOL );	/* カーソル右移動 */
-	void Command_UP2( int bSelect );				/* カーソル上移動（２行づつ） */
-	void Command_DOWN2( int bSelect );				/* カーソル下移動（２行づつ） */
-	void Command_WORDLEFT( int bSelect );			/* 単語の左端に移動 */
-	void Command_WORDRIGHT( int bSelect );			/* 単語の右端に移動 */
+	int Command_UP( bool bSelect, bool bRepeat, int line = 0 );			/* カーソル上移動 */
+	int Command_DOWN( bool bSelect, bool bRepeat );						/* カーソル下移動 */
+	int  Command_LEFT( bool, bool );			/* カーソル左移動 */
+	void Command_RIGHT( bool, bool, bool );	/* カーソル右移動 */
+	void Command_UP2( bool bSelect );				/* カーソル上移動（２行づつ） */
+	void Command_DOWN2( bool bSelect );				/* カーソル下移動（２行づつ） */
+	void Command_WORDLEFT( bool bSelect );			/* 単語の左端に移動 */
+	void Command_WORDRIGHT( bool bSelect );			/* 単語の右端に移動 */
 	//	Oct. 29, 2001 genta マクロ向け機能拡張
-	void Command_GOLINETOP( int bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
-	void Command_GOLINEEND( int bSelect, int );		/* 行末に移動（折り返し単位） */
+	void Command_GOLINETOP( bool bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
+	void Command_GOLINEEND( bool bSelect, int );		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */
-	void Command_HalfPageUp( int bSelect );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	void Command_HalfPageDown( int bSelect );		//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
-	void Command_1PageUp( int bSelect );			//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
-	void Command_1PageDown( int bSelect );			//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
-	void Command_GOFILETOP( int bSelect );			/* ファイルの先頭に移動 */
-	void Command_GOFILEEND( int bSelect );			/* ファイルの最後に移動 */
+	void Command_HalfPageUp( bool bSelect );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	void Command_HalfPageDown( bool bSelect );		//半ページダウン	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
+	void Command_1PageUp( bool bSelect );			//１ページアップ	//Oct. 10, 2000 JEPRO 従来のページアップを半ページアップと名称変更し１ページアップを追加
+	void Command_1PageDown( bool bSelect );			//１ページダウン	//Oct. 10, 2000 JEPRO 従来のページダウンを半ページダウンと名称変更し１ページダウンを追加
+	void Command_GOFILETOP( bool bSelect );			/* ファイルの先頭に移動 */
+	void Command_GOFILEEND( bool bSelect );			/* ファイルの最後に移動 */
 	void Command_CURLINECENTER( void );		/* カーソル行をウィンドウ中央へ */
 	void Command_JUMPHIST_PREV(void);		// 移動履歴: 前へ
 	void Command_JUMPHIST_NEXT(void);		// 移動履歴: 次へ
 	void Command_JUMPHIST_SET(void);		// 現在位置を移動履歴に登録
 	void Command_WndScrollDown(void);		// テキストを１行下へスクロール	// 2001/06/20 asa-o
 	void Command_WndScrollUp(void);			// テキストを１行上へスクロール	// 2001/06/20 asa-o
-	void Command_GONEXTPARAGRAPH( int bSelect );	// 次の段落へ進む
-	void Command_GOPREVPARAGRAPH( int bSelect );	// 前の段落へ戻る
+	void Command_GONEXTPARAGRAPH( bool bSelect );	// 次の段落へ進む
+	void Command_GOPREVPARAGRAPH( bool bSelect );	// 前の段落へ戻る
 
 	/* 選択系 */
 	bool Command_SELECTWORD( void );		/* 現在位置の単語選択 */
@@ -698,7 +698,7 @@ public: /* テスト用にアクセス属性を変更 */
 	/* クリップボード系 */
 	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( int, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( bool, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );				/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( int option );			/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
