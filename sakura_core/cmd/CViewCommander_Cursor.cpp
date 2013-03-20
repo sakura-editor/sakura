@@ -749,7 +749,7 @@ void CViewCommander::Command_1PageDown( bool bSelect )
 		m_pCommanderView->RedrawAll();
 	}else{
 		GetCaret().Cursor_UPDOWN( m_pCommanderView->GetTextArea().m_nViewRowNum , bSelect );
-		Command_DOWN( bSelect, TRUE );
+		Command_DOWN( bSelect, true );
 	}
 
 	return;
@@ -787,13 +787,13 @@ void CViewCommander::Command_GOFILEEND( bool bSelect )
 	}
 	m_pCommanderView->AddCurrentLineToHistory();
 	GetCaret().Cursor_UPDOWN( GetDocument()->m_cLayoutMgr.GetLineCount() , bSelect );
-	Command_DOWN( bSelect, TRUE );
+	Command_DOWN( bSelect, true );
 	if ( !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){							// 2002/04/18 YAZAKI
 		/*	2004.04.19 fotomo
 			改行のない最終行で選択肢ながら文書末へ移動した場合に
 			選択範囲が正しくない場合がある問題に対応
 		*/
-		Command_GOLINEEND( bSelect, FALSE );				// 2001.12.21 hor Add
+		Command_GOLINEEND( bSelect, 0 );				// 2001.12.21 hor Add
 	}
 	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), true );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット

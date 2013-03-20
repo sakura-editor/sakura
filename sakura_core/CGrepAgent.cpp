@@ -664,7 +664,7 @@ int CGrepAgent::DoGrepTree(
 						/* 結果出力 */
 						if( 0 < cmemMessage.GetStringLength() ){
 							pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
-							pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
+							pcViewDst->GetCommander().Command_GOFILEEND( false );
 							if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 								CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 							cmemMessage.Clear();
@@ -703,7 +703,7 @@ int CGrepAgent::DoGrepTree(
 	// 2010.08.25 フォルダ移動前に残りを先に出力
 	if( 0 < cmemMessage.GetStringLength() ){
 		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
-		pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
+		pcViewDst->GetCommander().Command_GOFILEEND( false );
 		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
 			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 		cmemMessage.Clear();
@@ -806,7 +806,7 @@ error_return:;
 	/* 結果出力 */
 	if( 0 < cmemMessage.GetStringLength() ){
 		pcViewDst->GetCommander().Command_ADDTAIL( cmemMessage.GetStringPtr(), cmemMessage.GetStringLength() );
-		pcViewDst->GetCommander().Command_GOFILEEND( FALSE );
+		pcViewDst->GetCommander().Command_GOFILEEND( false );
 		if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
 			CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
 		cmemMessage.Clear();

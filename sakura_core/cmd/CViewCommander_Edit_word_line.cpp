@@ -33,7 +33,7 @@ void CViewCommander::Command_WordDeleteToStart( void )
 	}
 
 	// 単語の左端に移動
-	CViewCommander::Command_WORDLEFT( TRUE );
+	CViewCommander::Command_WORDLEFT( true );
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		ErrorBeep();
 		return;
@@ -74,7 +74,7 @@ void CViewCommander::Command_WordDeleteToEnd( void )
 		}
 	}
 	/* 単語の右端に移動 */
-	CViewCommander::Command_WORDRIGHT( TRUE );
+	CViewCommander::Command_WORDRIGHT( true );
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		ErrorBeep();
 		return;
@@ -108,7 +108,7 @@ void CViewCommander::Command_WordCut( void )
 	/* 切り取り(選択範囲をクリップボードにコピーして削除) */
 	if ( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 		//	単語選択で選択できなかったら、次の文字を選ぶことに挑戦。
-		Command_RIGHT( TRUE, FALSE, FALSE );
+		Command_RIGHT( true, false, false );
 	}
 	Command_CUT();
 	return;

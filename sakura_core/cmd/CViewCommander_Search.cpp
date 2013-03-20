@@ -540,7 +540,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 			GetCaret().MoveCursor( GetSelect().GetFrom(), true );
 		} else {
 //			HandleCommand( F_LEFT, true, 0, 0, 0, 0 );
-			Command_LEFT( FALSE, FALSE );
+			Command_LEFT( false, false );
 		}
 	}
 	// To Here 2002.01.09 hor

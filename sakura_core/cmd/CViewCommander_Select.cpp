@@ -105,7 +105,7 @@ void CViewCommander::Command_SELECTALL( void )
 void CViewCommander::Command_SELECTLINE( int lparam )
 {
 	// 改行単位で1行選択する
-	Command_GOLINETOP( FALSE, 0x9 );	// 物理行頭に移動
+	Command_GOLINETOP( false, 0x9 );	// 物理行頭に移動
 
 	m_pCommanderView->GetSelectionInfo().m_bBeginLineSelect = TRUE;		// 行単位選択中
 
@@ -124,7 +124,7 @@ void CViewCommander::Command_SELECTLINE( int lparam )
 	}else{
 		// カーソルを最下行（レイアウト行）へ移動する
 		m_pCommanderView->MoveCursorSelecting( CLayoutPoint(CLayoutInt(0), GetDocument()->m_cLayoutMgr.GetLineCount()), TRUE );
-		Command_GOLINEEND( TRUE, FALSE );	// 行末に移動
+		Command_GOLINEEND( true, 0 );	// 行末に移動
 
 		// 選択するものが無い（[EOF]のみの行）時は選択状態としない
 		if(( ! m_pCommanderView->GetSelectionInfo().IsTextSelected() )&&
