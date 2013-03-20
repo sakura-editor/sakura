@@ -70,7 +70,7 @@ static TCHAR* GetFileName(const TCHAR *fullpath);
 
 	@date 2006.04.10 fon 新規作成
 */
-INT_PTR CPropKeyHelp::DispatchEvent(
+INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -535,7 +535,7 @@ void CheckDlgButtonBOOL(HWND hwnd, int id, BOOL bState ){
 
 	@date 2006.04.10 fon 新規作成
 */
-void CPropKeyHelp::SetData( HWND hwndDlg )
+void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 {
 	HWND	hwndWork;
 	int		i;
@@ -595,7 +595,7 @@ void CPropKeyHelp::SetData( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-int CPropKeyHelp::GetData( HWND hwndDlg )
+int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i;
@@ -638,7 +638,7 @@ int CPropKeyHelp::GetData( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-bool CPropKeyHelp::Import(HWND hwndDlg)
+bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 {
 	// インポート
 	GetData( hwndDlg );
@@ -658,7 +658,7 @@ bool CPropKeyHelp::Import(HWND hwndDlg)
 
 	@date 2006.04.10 fon 新規作成
 */
-bool CPropKeyHelp::Export(HWND hwndDlg)
+bool CPropTypesKeyHelp::Export(HWND hwndDlg)
 {
 	GetData(hwndDlg);
 	CImpExpKeyHelp	cImpExpKeyHelp( m_Types );

@@ -70,7 +70,7 @@ static std::vector<SHokanMethod>* GetHokanMethodList()
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
 /* メッセージ処理 */
-INT_PTR CPropSupport::DispatchEvent(
+INT_PTR CPropTypesSupport::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -221,7 +221,7 @@ INT_PTR CPropSupport::DispatchEvent(
 }
 
 /* ダイアログデータの設定 */
-void CPropSupport::SetData( HWND hwndDlg )
+void CPropTypesSupport::SetData( HWND hwndDlg )
 {
 	/* 入力補完 単語ファイル */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
@@ -254,7 +254,7 @@ void CPropSupport::SetData( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 */
-int CPropSupport::GetData( HWND hwndDlg )
+int CPropTypesSupport::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = 3;
@@ -293,7 +293,7 @@ int CPropSupport::GetData( HWND hwndDlg )
 
 /*! 補完種別の追加
 /*/
-void CPropSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
+void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
 {
 	SHokanMethod item = { nMethod, std::wstring(szName) };
 	GetHokanMethodList()->push_back(item);

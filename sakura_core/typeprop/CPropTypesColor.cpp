@@ -69,7 +69,7 @@ struct {
 
 /* 色の設定をインポート */
 // 2010/4/23 Uchi Importの外出し
-bool CPropColor::Import( HWND hwndDlg )
+bool CPropTypesColor::Import( HWND hwndDlg )
 {
 	ColorInfo		ColorInfoArr[64];
 	CImpExpColors	cImpExpColors( ColorInfoArr );
@@ -101,7 +101,7 @@ bool CPropColor::Import( HWND hwndDlg )
 
 /* 色の設定をエクスポート */
 // 2010/4/23 Uchi Exportの外出し
-bool CPropColor::Export( HWND hwndDlg )
+bool CPropTypesColor::Export( HWND hwndDlg )
 {
 	CImpExpColors	cImpExpColors( m_Types.m_ColorInfoArr);
 
@@ -219,7 +219,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropColor::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
+			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 			}
@@ -232,7 +232,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropColor::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
+			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 			}
@@ -253,7 +253,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 
 /* color メッセージ処理 */
-INT_PTR CPropColor::DispatchEvent(
+INT_PTR CPropTypesColor::DispatchEvent(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
 	WPARAM				wParam,		// first message parameter
@@ -601,7 +601,7 @@ INT_PTR CPropColor::DispatchEvent(
 
 
 /* ダイアログデータの設定 color */
-void CPropColor::SetData( HWND hwndDlg )
+void CPropTypesColor::SetData( HWND hwndDlg )
 {
 
 	HWND	hwndWork;
@@ -739,7 +739,7 @@ void CPropColor::SetData( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 color */
-int CPropColor::GetData( HWND hwndDlg )
+int CPropTypesColor::GetData( HWND hwndDlg )
 {
 	int		nIdx;
 	HWND	hwndWork;
@@ -872,7 +872,7 @@ int CPropColor::GetData( HWND hwndDlg )
 
 
 /* 色ボタンの描画 */
-void CPropColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
+void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
 //	MYTRACE_A( "pDis->itemAction = " );
 
@@ -966,7 +966,7 @@ void CPropColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
-void CPropColor::EnableTypesPropInput( HWND hwndDlg )
+void CPropTypesColor::EnableTypesPropInput( HWND hwndDlg )
 {
 	//	From Here Jun. 6, 2001 genta
 	//	行コメント開始桁位置入力ボックスのEnable/Disable設定
@@ -1021,7 +1021,7 @@ void CPropColor::EnableTypesPropInput( HWND hwndDlg )
 	@date	2005.01.23 genta new
 
 */
-void CPropColor::RearrangeKeywordSet( HWND hwndDlg )
+void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 {
 	int i, j;
 	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
@@ -1077,7 +1077,7 @@ void CPropColor::RearrangeKeywordSet( HWND hwndDlg )
 
 
 /* 色種別リスト オーナー描画 */
-void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
+void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 {
 	ColorInfo*	pColorInfo;
 //	RECT		rc0,rc1,rc2;
@@ -1196,7 +1196,7 @@ void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 
 
 /* 色選択ダイアログ */
-BOOL CPropColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
+BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
 {
 	CHOOSECOLOR		cc;
 	cc.lStructSize = sizeof_raw( cc );

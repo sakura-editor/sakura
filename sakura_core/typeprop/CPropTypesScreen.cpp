@@ -103,7 +103,7 @@ std::vector<TYPE_NAME<EOutlineType> > CPropTypes::m_OlmArr;	//!<アウトライン解析
 std::vector<TYPE_NAME<ESmartIndentType> > CPropTypes::m_SIndentArr;	//!<スマートインデントルール配列
 
 //スクリーンタブの初期化
-void CPropScreen::CPropTypes_Screen()
+void CPropTypesScreen::CPropTypes_Screen()
 {
 	//プラグイン無効の場合、ここで静的メンバを初期化する。プラグイン有効の場合はAddXXXMethod内で初期化する。
 	if( m_OlmArr.empty() ){
@@ -115,7 +115,7 @@ void CPropScreen::CPropTypes_Screen()
 }
 
 /* Screen メッセージ処理 */
-INT_PTR CPropScreen::DispatchEvent(
+INT_PTR CPropTypesScreen::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -354,7 +354,7 @@ INT_PTR CPropScreen::DispatchEvent(
 
 
 /* ダイアログデータの設定 Screen */
-void CPropScreen::SetData( HWND hwndDlg )
+void CPropTypesScreen::SetData( HWND hwndDlg )
 {
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPENAME, m_Types.m_szTypeName );	//設定の名前
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_TYPEEXTS, m_Types.m_szTypeExts );	//ファイル拡張子
@@ -490,7 +490,7 @@ void CPropScreen::SetData( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 Screen */
-int CPropScreen::GetData( HWND hwndDlg )
+int CPropTypesScreen::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = 0;
@@ -627,7 +627,7 @@ int CPropScreen::GetData( HWND hwndDlg )
 }
 
 //アウトライン解析ルールの追加
-void CPropScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 {
 	if( m_OlmArr.empty() ){
 		m_OlmArr.insert(m_OlmArr.end(), OlmArr, &OlmArr[_countof(OlmArr)]);	//アウトライン解析ルール
@@ -642,7 +642,7 @@ void CPropScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 }
 
 //スマートインデントルールの追加
-void CPropScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
+void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
 {
 	if( m_SIndentArr.empty() ){
 		m_SIndentArr.insert(m_SIndentArr.end(), SmartIndentArr, &SmartIndentArr[_countof(SmartIndentArr)]);	//スマートインデントルール

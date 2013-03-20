@@ -57,7 +57,7 @@ static const DWORD p_helpids[] = {	//11600
 
 // Import
 // 2010/4/23 Uchi Importの外出し
-bool CPropRegex::Import(HWND hwndDlg)
+bool CPropTypesRegex::Import(HWND hwndDlg)
 {
 	CImpExpRegex	cImpExpRegex(m_Types);
 
@@ -71,7 +71,7 @@ bool CPropRegex::Import(HWND hwndDlg)
 
 // Export
 // 2010/4/23 Uchi Exportの外出し
-bool CPropRegex::Export(HWND hwndDlg)
+bool CPropTypesRegex::Export(HWND hwndDlg)
 {
 	GetData(hwndDlg);
 	CImpExpRegex	cImpExpRegex(m_Types);
@@ -81,7 +81,7 @@ bool CPropRegex::Export(HWND hwndDlg)
 }
 
 /* 正規表現キーワード メッセージ処理 */
-INT_PTR CPropRegex::DispatchEvent(
+INT_PTR CPropTypesRegex::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -547,7 +547,7 @@ INT_PTR CPropRegex::DispatchEvent(
 }
 
 /* ダイアログデータの設定 正規表現キーワード */
-void CPropRegex::SetData( HWND hwndDlg )
+void CPropTypesRegex::SetData( HWND hwndDlg )
 {
 	HWND		hwndWork;
 	int			i, j;
@@ -586,7 +586,7 @@ void CPropRegex::SetData( HWND hwndDlg )
 }
 
 /* ダイアログデータの設定 正規表現キーワードの一覧部分 */
-void CPropRegex::SetDataKeywordList( HWND hwndDlg )
+void CPropTypesRegex::SetDataKeywordList( HWND hwndDlg )
 {
 	LV_ITEM		lvi;
 
@@ -620,7 +620,7 @@ void CPropRegex::SetDataKeywordList( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 正規表現キーワード */
-int CPropRegex::GetData( HWND hwndDlg )
+int CPropTypesRegex::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i, j;
@@ -687,13 +687,13 @@ int CPropRegex::GetData( HWND hwndDlg )
 /*!
 	@date 2010.07.11 Moca 今のところCRegexKeyword::RegexKeyCheckSyntaxと同一なので、中身を削除して転送関数に変更
 */
-BOOL CPropRegex::RegexKakomiCheck(const wchar_t *s)
+BOOL CPropTypesRegex::RegexKakomiCheck(const wchar_t *s)
 {
 	return CRegexKeyword::RegexKeyCheckSyntax( s );
 }
 //@@@ 2001.11.17 add end MIK
 
-bool CPropRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, int nUpdateItem)
+bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const TCHAR* szNewKeyWord, int nUpdateItem)
 {
 	int nRet;
 	//書式をチェックする。

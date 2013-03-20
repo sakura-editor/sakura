@@ -101,19 +101,19 @@ ERegisterPlugResult CJackManager::RegisterPlug( wstring pszJack, CPlug* plug )
 	case PP_OUTLINE:					//アウトライン解析方法を追加
 		{
 			int nMethod = CPlug::GetOutlineType( plug->GetFunctionCode() );	// 2011/8/20 syat プラグ複数化のためGetOutlineType仕様変更// 2010/5/1 Uchi 関数化
-			CPropScreen::AddOutlineMethod( nMethod, plug->m_sLabel.c_str() );
+			CPropTypesScreen::AddOutlineMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
 	case PP_SMARTINDENT:				//スマートインデント方法を追加
 		{
 			int nMethod = CPlug::GetSmartIndentType( plug->GetFunctionCode() );	// 2011/8/20 syat プラグ複数化のためGetOutlineType仕様変更// 2010/5/1 Uchi 関数化
-			CPropScreen::AddSIndentMethod( nMethod, plug->m_sLabel.c_str() );
+			CPropTypesScreen::AddSIndentMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
 	case PP_COMPLEMENT:
 		{
 			int nMethod = CPlug::GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );
-			CPropSupport::AddHokanMethod( nMethod, plug->m_sLabel.c_str() );
+			CPropTypesSupport::AddHokanMethod( nMethod, plug->m_sLabel.c_str() );
 		}
 		break;
 	}
