@@ -1657,27 +1657,27 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypes_P1_Screen.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesScreen.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypes_P2_Color.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesColor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypes_P3_Support.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesWindow.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypes_P4_Regex.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesSupport.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypes_P5_KeyHelp.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesRegex.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypes_P6_Window.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesKeyHelp.cpp"
 					>
 				</File>
 			</Filter>

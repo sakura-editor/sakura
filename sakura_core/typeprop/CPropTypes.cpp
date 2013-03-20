@@ -66,12 +66,12 @@ INT_PTR CALLBACK FUNC(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) \
 { \
 	return PropTypesCommonProc(hwndDlg,uMsg,wParam,lParam,reinterpret_cast<pDispatchPage>(&CLASS::DispatchEvent)); \
 }
-GEN_PROPTYPES_CALLBACK(PropTypesScreen,		CPropScreen)
-GEN_PROPTYPES_CALLBACK(PropTypesWindow,		CPropWindow)
-GEN_PROPTYPES_CALLBACK(PropTypesColor,		CPropColor)
-GEN_PROPTYPES_CALLBACK(PropTypesSupport,	CPropSupport)
-GEN_PROPTYPES_CALLBACK(PropTypesRegex,		CPropRegex)
-GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,	CPropKeyHelp)
+GEN_PROPTYPES_CALLBACK(PropTypesScreen,		CPropTypesScreen)
+GEN_PROPTYPES_CALLBACK(PropTypesWindow,		CPropTypesWindow)
+GEN_PROPTYPES_CALLBACK(PropTypesColor,		CPropTypesColor)
+GEN_PROPTYPES_CALLBACK(PropTypesSupport,	CPropTypesSupport)
+GEN_PROPTYPES_CALLBACK(PropTypesRegex,		CPropTypesRegex)
+GEN_PROPTYPES_CALLBACK(PropTypesKeyHelp,	CPropTypesKeyHelp)
 
 
 
@@ -98,7 +98,7 @@ CPropTypes::CPropTypes()
 	/* ヘルプファイルのフルパスを返す */
 	m_pszHelpFile = CEditApp::getInstance()->GetHelpFilePath();
 
-	((CPropScreen*)(this))->CPropTypes_Screen();
+	((CPropTypesScreen*)(this))->CPropTypes_Screen();
 }
 
 CPropTypes::~CPropTypes()
