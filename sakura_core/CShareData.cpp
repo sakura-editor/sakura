@@ -306,10 +306,13 @@ struct ARRHEAD {
 
 	Version 110:
 	ファイルダイアログの初期位置
+
+	Version 111:
+	無題番号
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 110;
+const unsigned int uShareDataVersion = 111;
 
 /*
 ||	Singleton風
@@ -655,7 +658,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin = FALSE;		//タブウインドウ表示	//@@@ 2003.05.31 MIK
 		_tcscpy(	//@@@ 2003.06.13 MIK
 			m_pShareData->m_Common.m_sTabBar.m_szTabWndCaption,
-			_T("${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読み取り専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}")
+			_T("${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(読み取り専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}")
 		);
 		m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
@@ -803,10 +806,10 @@ bool CShareData::InitShareData()
 		//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 		//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionActive, 
-			_T("${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} -")
+			_T("${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -")
 			_T(" $A $V ${R?(読み取り専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
 		_tcscpy( m_pShareData->m_Common.m_sWindow.m_szWindowCaptionInactive, 
-			_T("${w?$h$:アウトプット$:$f$}${U?(更新)$} -")
+			_T("${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -")
 			_T(" $A $V ${R?(読み取り専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}") );
 
 		//	From Here Sep. 14, 2001 genta
@@ -1001,6 +1004,7 @@ BOOL CShareData::AddEditWndList( HWND hWnd, int nGroup )
 
 			//連番を更新する。
 			sMyEditNode.m_nIndex = m_pShareData->m_sNodes.m_nSequences;
+			sMyEditNode.m_nId = m_pShareData->m_sNodes.m_nSequences;
 
 			/* タブグループ連番 */
 			if( nGroup > 0 )

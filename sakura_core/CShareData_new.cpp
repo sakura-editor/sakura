@@ -46,6 +46,129 @@ void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
 	const char* pszKeyLf, const char* pszKeyPointSize, const char* pszKeyFaceName, LOGFONT& lf, int& pointSize );
 
 
+
+/* static */ TCHAR CShareData::GetAccessKeyByIndex(int index, bool bZeroOrigin)
+{
+	if( index < 0 ) return 0;
+	int accKeyIndex = ((bZeroOrigin? index: index+1) % 36);
+	TCHAR c = (TCHAR)((accKeyIndex < 10) ? (_T('0') + accKeyIndex) : (_T('A') + accKeyIndex - 10));
+	return c;
+}
+
+static void GetAccessKeyLabelByIndex(TCHAR* pszLabel, bool bEspaceAmp, int index, bool bZeroOrigin)
+{
+	TCHAR c = CShareData::GetAccessKeyByIndex(index, bZeroOrigin);
+	if( c ){
+		if( bEspaceAmp ){
+			pszLabel[0] = _T('&');
+			pszLabel[1] = c;
+			pszLabel[2] = _T(' ');
+			pszLabel[3] = _T('\0');
+		}else{
+			pszLabel[0] = c;
+			pszLabel[1] = _T(' ');
+			pszLabel[2] = _T('\0');
+		}
+	}else{
+		pszLabel[0] = _T('\0');
+	}
+}
+
+/*
+	@param editInfo      ウィンドウ情報。NULで不明扱い
+	@param index         いつも0originで指定。 -1で非表示
+	@param bZeroOrigin   アクセスキーを0から振る
+*/
+bool CShareData::GetMenuFullLabel(
+	TCHAR* pszOutput, int nBuffSize, bool bEspaceAmp,
+	const EditInfo* editInfo, int nId, bool bFavorite,
+	int index, bool bAccKeyZeroOrigin
+){
+	const EditInfo* pfi = editInfo;
+	TCHAR szAccKey[4];
+	int ret = 0;
+	if( NULL == pfi ){
+		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
+		ret = _stprintf( pszOutput, _T("%s 不明(応答なし)"), szAccKey );
+		return true; // trueにしておく
+	}else if( pfi->m_bIsGrep ){
+		
+		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
+		//pfi->m_szGrepKeyShort → cmemDes
+		CMemory	cmemDes;
+		int nGrepKeyLen = _tcslen(pfi->m_szGrepKey);
+		const int GREPKEY_LIMIT_LEN = 64;
+		// CEditDoc::ExpandParameter では 32文字制限
+		// メニューは 64文字制限
+		LimitStringLengthB( pfi->m_szGrepKey, nGrepKeyLen, GREPKEY_LIMIT_LEN, cmemDes );
+		
+		const TCHAR* pszKey;
+		TCHAR szMenu2[GREPKEY_LIMIT_LEN*2*2+1]; // WCHAR=>ACHARで2倍、&で2倍
+		if( bEspaceAmp ){
+			dupamp( cmemDes.GetStringPtr(), szMenu2 );
+			pszKey = szMenu2;
+		}else{
+			pszKey = cmemDes.GetStringPtr();
+		}
+
+		//szMenuを作る
+		//	Jan. 19, 2002 genta
+		//	&の重複処理を追加したため継続判定を若干変更
+		//	20100729 ExpandParameterにあわせて、・・・を...に変更
+		ret = _stprintf( pszOutput, _T("%s 【Grep】\"%s%s\""),
+			szAccKey, pszKey,
+			( nGrepKeyLen > cmemDes.GetStringLength() ) ? _T("..."):_T("")
+		);
+	}else if( pfi->m_bIsDebug ){
+		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
+		ret = _stprintf( pszOutput, _T("%s アウトプット"), szAccKey );
+	}else{
+		return GetMenuFullLabel(pszOutput, nBuffSize, bEspaceAmp, pfi->m_szPath, nId, pfi->m_bIsModified, pfi->m_nCharCode, bFavorite,
+			 index, bAccKeyZeroOrigin);
+	}
+	return 0 < ret;
+}
+
+bool CShareData::GetMenuFullLabel(
+	TCHAR* pszOutput, int nBuffSize, bool bEspaceAmp,
+	const TCHAR* pszFile, int nId, bool bModified, ECodeType nCharCode, bool bFavorite,
+	int index, bool bAccKeyZeroOrigin
+){
+	TCHAR szAccKey[4];
+	TCHAR szFileName[_MAX_PATH];
+	TCHAR szMenu2[_MAX_PATH * 2];
+	const TCHAR* pszName;
+
+	GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
+	if( pszFile[0] ){
+		this->GetTransformFileNameFast( pszFile, szFileName, _MAX_PATH );
+
+		// szFileName → szMenu2
+		//	Jan. 19, 2002 genta
+		//	メニュー文字列の&を考慮
+		if( bEspaceAmp ){
+			dupamp( szFileName, szMenu2 );
+			pszName = szMenu2;
+		}else{
+			pszName = szFileName;
+		}
+	}else{
+		wsprintf( szFileName, _T("(無題)%d"), nId);
+		pszName = szFileName;
+	}
+	const TCHAR* pszCharset = _T("");
+	if( IsValidCodeTypeExceptSJIS(nCharCode)){
+		pszCharset = gm_pszCodeNameArr_3[nCharCode];
+	}
+	
+	int ret = _stprintf( pszOutput, _T("%s%s%s %s%s"),
+		szAccKey, (bFavorite ? _T("★ ") : _T("")), pszName,
+		(bModified ? _T("*"):_T(" ")), pszCharset
+	);
+	return 0 < ret;
+}
+
+
 /**
 	構成設定ファイルからiniファイル名を取得する
 

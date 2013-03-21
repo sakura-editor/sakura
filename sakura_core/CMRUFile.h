@@ -51,6 +51,7 @@ public:
 
 	//	メニューを取得する
 	HMENU CreateMenu( CMenuDrawer* pCMenuDrawer ) const;	//	うーん。pCMenuDrawerが必要なくなるといいなぁ。
+	HMENU CreateMenu( HMENU hMenu, CMenuDrawer* pCMenuDrawer ) const;	//	2010/5/21 Uchi
 	BOOL DestroyMenu( HMENU hMenu ) const;
 	
 	//	ファイル名の一覧を教えて

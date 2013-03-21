@@ -4607,75 +4607,22 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 LRESULT CEditWnd::WinListMenu( HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull )
 {
 	int			i;
-	TCHAR		szMemu[280];
-//>	EditNode*	pEditNodeArr;
-	EditInfo*	pfi;
+	TCHAR		szMenu[_MAX_PATH * 2 + 3];
+	const EditInfo*	pfi;
 
-//>	int	nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
 	if( nRowNum > 0 ){
-//>		/* セパレータ */
-//>		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 		CShareData::getInstance()->TransformFileName_MakeCache();
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessage( pEditNodeArr[i].m_hWnd, MYWM_GETFILEINFO, 0, 0 );
 ////	From Here Oct. 4, 2000 JEPRO commented out & modified	開いているファイル数がわかるように履歴とは違って1から数える
-			TCHAR c = ((1 + i%35) <= 9)?(_T('1') + i%35):(_T('A') + i%35 - 9);	// 2009.06.02 ryoji アクセスキーを 1-9,A-Z の範囲で再使用
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
-			if( pfi->m_bIsGrep ){
-				/* データを指定バイト数以内に切り詰める */
-				CMemory		cmemDes;
-				int			nDesLen;
-				const char*	pszDes;
-				LimitStringLengthB( pfi->m_szGrepKey, lstrlen( pfi->m_szGrepKey ), 64, cmemDes );
-				pszDes = cmemDes.GetStringPtr();
-				nDesLen = lstrlen( pszDes );
-				wsprintf( szMemu, _T("&%c 【Grep】\"%s%s\""),
-					c,
-					pszDes,
-					( (int)lstrlen( pfi->m_szGrepKey ) > nDesLen ) ? _T("・・・"):_T("")
-				);
-			}
-			else if( pEditNodeArr[i].m_hWnd == m_pShareData->m_sHandles.m_hwndDebug ){
-				wsprintf( szMemu, _T("&%c アウトプット"), c );
-
-			}
-			else{
-////		From Here Jan. 23, 2001 JEPRO
-////		ファイル名やパス名に'&'が使われているときに履歴等でキチンと表示されない問題を修正(&を&&に置換するだけ)
-////<----- From Here Added
-				TCHAR	szFile2[_MAX_PATH * 2];
-				if( _T('\0') == pfi->m_szPath[0] ){
-					_tcscpy( szFile2, _T("(無題)") );
-				}else{
-					TCHAR buf[_MAX_PATH];
-					CShareData::getInstance()->GetTransformFileNameFast( pfi->m_szPath, buf, _MAX_PATH );
-
-					dupamp( buf, szFile2 );
-				}
-				wsprintf(
-					szMemu,
-					_T("&%c %s %s"),
-					c,
-					szFile2,
-					pfi->m_bIsModified ? _T("*"):_T(" ")
-				);
-////-----> To Here Added
-////		To Here Jan. 23, 2001
-
-////	To Here Oct. 4, 2000
-				// SJIS以外の文字コードの種別を表示する
-				// gm_pszCodeNameArr_3 からコピーするように変更
-				if( IsValidCodeTypeExceptSJIS(pfi->m_nCharCode) ){
-					_tcscat( szMemu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
-				}
-			}
-			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMemu, _T("") );
+			CShareData::getInstance()->GetMenuFullLabel_WinList( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i );
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, szMenu, _T("") );
 			if( m_hWnd == pEditNodeArr[i].m_hWnd ){
 				::CheckMenuItem( hMenu, IDM_SELWINDOW + pEditNodeArr[i].m_nIndex, MF_BYCOMMAND | MF_CHECKED );
 			}
 		}
-//>		delete [] pEditNodeArr;
 	}
 	return 0L;
 }

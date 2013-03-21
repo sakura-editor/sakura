@@ -55,13 +55,13 @@ int CDlgCompare::DoModal(
 	LPARAM			lParam,
 	const TCHAR*	pszPath,
 	bool			bIsModified,
-	TCHAR*			pszComparePath,
+	TCHAR*			pszCompareLabel,
 	HWND*			phwndCompareWnd
 )
 {
 	m_pszPath = pszPath;
 	m_bIsModified = bIsModified;
-	m_pszComparePath = pszComparePath;
+	m_pszCompareLabel = pszCompareLabel;
 	m_phwndCompareWnd = phwndCompareWnd;
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_COMPARE, lParam );
 }
@@ -144,20 +144,15 @@ void CDlgCompare::SetData( void )
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
-//			if( 0 == stricmp( pfi->m_szPath, m_pszPath ) ){
 			if (pEditNodeArr[i].m_hWnd == pCEditDoc->m_hwndParent){
+				// 2010.07.30 自分の名前もここから設定する
+				CShareData::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, -1 );
+				::SetDlgItemText( m_hWnd, IDC_STATIC_COMPARESRC, szMenu );
 				continue;
 			}
-			wsprintf(
-				szMenu,
-				_T("%s %s"),
-				(0 < lstrlen(pfi->m_szPath))?pfi->m_szPath : _T("(無題)"),
-				pfi->m_bIsModified ? _T("*") : _T(" ")
-			);
-			// gm_pszCodeNameArr_3 からコピーするように変更
-			if( IsValidCodeTypeExceptSJIS(pfi->m_nCharCode) ){
-				strcat( szMenu, gm_pszCodeNameArr_3[pfi->m_nCharCode] );
-			}
+			// 番号は ウィンドウリストと同じになるようにする
+			CShareData::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, _countof(szMenu), pfi, pEditNodeArr[i].m_nId, i );
+
 			nItem = ::SendMessage( hwndList, LB_ADDSTRING, 0, (LPARAM)(char*)szMenu );
 			::SendMessage( hwndList, LB_SETITEMDATA, nItem, (LPARAM)pEditNodeArr[i].m_hWnd );
 
@@ -174,12 +169,7 @@ void CDlgCompare::SetData( void )
 		::SendMessage( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)(nExtent + 8), 0 );
 	}
 	::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)0, 0 );
-	TCHAR	szWork[512];
-	wsprintf( szWork, _T("%s %s"),
-		(0 < _tcslen( m_pszPath )?m_pszPath:_T("(無題)") ),
-		m_bIsModified?_T("*"):_T("")
-	);
-	::SetDlgItemText( m_hWnd, IDC_STATIC_COMPARESRC, szWork );
+
 	/* 左右に並べて表示 */
 	//@@@ 2003.06.12 MIK
 	// TAB 1ウィンドウ表示のときは並べて比較できなくする
@@ -210,7 +200,9 @@ int CDlgCompare::GetData( void )
 	::SendMessage( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
 	pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-	_tcscpy( m_pszComparePath, pfi->m_szPath );
+	// 2010.07.30 パス名はやめて表示名に変更
+	int nId = CShareData::getInstance()->GetEditNode( *m_phwndCompareWnd )->m_nId;
+	CShareData::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*長さ不明*/, pfi, nId, -1 );
 
 	/* 左右に並べて表示 */
 	m_bCompareAndTileHorz = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_TILE_H );

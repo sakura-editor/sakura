@@ -50,20 +50,37 @@ CMRUFile::~CMRUFile()
 	
 	@author Norio Nakantani
 	@return 生成したメニューのハンドル
+
+	2010/5/21 Uchi 組み直し
 */
 HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 {
 	HMENU	hMenuPopUp;
-	char	szFile2[_MAX_PATH * 2];	//	全部&でも問題ないように。
-	TCHAR	szMenu[_MAX_PATH * 2 + 10];			//	メニューキャプション
-	int		i;
-	bool	bFavorite;
-	EditInfo	*p;
-
-	CShareData::getInstance()->TransformFileName_MakeCache();
 
 	//	空メニューを作る
 	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
+	return CreateMenu( hMenuPopUp, pCMenuDrawer );
+}
+/*!
+	ファイル履歴メニューの作成
+	
+	@param 追加するメニューのハンドル
+	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
+	
+	@author Norio Nakantani
+	@return 生成したメニューのハンドル
+
+	2010/5/21 Uchi 組み直し
+*/
+HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
+{
+	TCHAR	szMenu[_MAX_PATH * 2 + 10];			//	メニューキャプション
+	int		i;
+	bool	bFavorite;
+	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
+
+	CShareData::getInstance()->TransformFileName_MakeCache();
+
 	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
@@ -71,25 +88,10 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 		
 		/* MRUリストの中にある開かれていないファイル */
 
-		p = (EditInfo*)m_cRecent.GetItem( i );
-		
-		CShareData::getInstance()->GetTransformFileNameFast( p->m_szPath, szMenu, _MAX_PATH );
-		//	&を&&に置換。
-		//	Jan. 19, 2002 genta
-		dupamp( szMenu, szFile2 );
-		
+		const EditInfo	*p = (EditInfo*)m_cRecent.GetItem( i );
 		bFavorite = m_cRecent.IsFavorite( i );
-		//	j >= 10 + 26 の時の考慮を省いた(に近い)がファイルの履歴MAXを36個にしてあるので事実上OKでしょう
-		wsprintf( szMenu, "&%c %s%s", 
-			(i < 10) ? ('0' + i) : ('A' + i - 10), 
-			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? "★ " : "",
-			szFile2 );
-
-		//	ファイル名のみ必要。
-		//	文字コード表記
-		if( IsValidCodeTypeExceptSJIS(p->m_nCharCode) ){
-			strcat( szMenu, gm_pszCodeNameArr_3[ p->m_nCharCode ] );
-		}
+		bool bFavoriteLabel = bFavorite && !bMenuIcon;
+		CShareData::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i );
 
 		//	メニューに追加。
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, _T(""), TRUE,

@@ -4327,6 +4327,7 @@ void CEditDoc::SetImeMode( int mode )
 	@date 2005.09.15 FILE 特殊文字S, M追加
 	@date 2007.09.21 kobake 特殊文字A(アプリ名)を追加
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
+	@date 2012.10.11 Moca 特殊文字n追加
 */
 void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
 {
@@ -4436,6 +4437,19 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 			break;
 		//	To Here 2003/06/21 Moca
+		case L'n':
+			if( !IsValidPath() ){
+				if( m_bGrepMode ){
+				}else if( m_bDebugMode ){
+				}else{
+					TCHAR szText[10];
+					const EditNode* node = CShareData::getInstance()->GetEditNode( m_pcEditWnd->m_hWnd );
+					_stprintf( szText, "%d", node->m_nId );
+					q = strncpy_ex( q, q_max - q, szText, strlen(szText));
+				}
+			}
+			++p;
+			break;
 		case 'E':	// 開いているファイルのあるフォルダの名前(簡易表示)	2012/12/2 Uchi
 			if( !IsValidPath() ){
 				q = strncpy_ex( q, q_max - q, NO_TITLE, NO_TITLE_LEN );

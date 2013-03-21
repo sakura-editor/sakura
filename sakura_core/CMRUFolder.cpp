@@ -44,38 +44,45 @@ CMRUFolder::~CMRUFolder()
 /*!
 	フォルダ履歴メニューの作成
 	
+	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
+	
+	@return 生成したメニューのハンドル
+
+	2010/5/21 Uchi 組み直し
+*/
+HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
+{
+	HMENU	hMenuPopUp;
+
+	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
+	return CreateMenu( hMenuPopUp, pCMenuDrawer );
+}
+
+/*!
+	フォルダ履歴メニューの作成
+	
 	@param 追加するメニューのハンドル
 	@param pCMenuDrawer [in] (out?) メニュー作成で用いるMenuDrawer
 	
 	@author Norio Nakantani
 	@return メニューのハンドル
 */
-HMENU CMRUFolder::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
+HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
-	HMENU	hMenuPopUp;
-	char	szFolder2[_MAX_PATH * 2];	//	全部&でも問題ないように :-)
 	TCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
 	int		i;
 	bool	bFavorite;
 
-	hMenuPopUp = ::CreatePopupMenu();	// Jan. 29, 2002 genta
 	CShareData::getInstance()->TransformFileName_MakeCache();
 	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecent.GetViewCount() ) break;
 
-		CShareData::getInstance()->GetTransformFileNameFast( m_cRecent.GetDataOfItem( i ), szMenu, _MAX_PATH );
-		//	&を&&に置換。
-		//	Jan. 19, 2002 genta
-		dupamp( szMenu, szFolder2 );
-
+		const TCHAR* pszFolder = m_cRecent.GetDataOfItem( i );
 		bFavorite = m_cRecent.IsFavorite( i );
-		//	j >= 10 + 26 の時の考慮を省いた(に近い)がフォルダの履歴MAXを36個にしてあるので事実上OKでしょう
-		wsprintf( szMenu, "&%c %s%s", 
-			(i < 10) ? ('0' + i) : ('A' + i - 10), 
-			(FALSE == m_pShareData->m_Common.m_sWindow.m_bMenuIcon && bFavorite) ? "★ " : "",
-			szFolder2 );
+		bool bFavoriteLabel =  bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
+		CShareData::getInstance()->GetMenuFullLabel( szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true );
 
 		//	メニューに追加
 		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, _T(""), TRUE,
