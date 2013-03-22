@@ -27,6 +27,7 @@
 #include "env/CShareData.h"
 #include "CEditApp.h"
 #include "doc/CDocListener.h"
+#include "_os/COsVersionInfo.h"
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/os.h"
@@ -60,9 +61,6 @@ LPCTSTR			m_pszHelpFile;
 int				m_nHelpTopicID;
 bool			m_bViewMode;		/* ビューモードか */
 BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
-
-COsVersionInfo CDlgOpenFile::m_cOsVer;	// 2005.11.02 ryoji
-
 
 
 
@@ -438,9 +436,9 @@ UINT_PTR CALLBACK OFNHookProc(
 				// OFNの再設定はNT系ではUnicode版APIのみ有効
 				if( pcDlgOpenFile->m_ofn.Flags & OFN_ALLOWMULTISELECT &&
 #ifdef _UNICODE
-						CDlgOpenFile::m_cOsVer.IsWin32NT()
+						IsWin32NT()
 #else
-						!CDlgOpenFile::m_cOsVer.IsWin32NT()
+						!IsWin32NT()
 #endif
 				){
 					DWORD nLength = CommDlg_OpenSave_GetSpec( hwndOpenDlg, NULL, 0 );
@@ -1039,7 +1037,7 @@ void CDlgOpenFile::InitOfn( OPENFILENAMEZ* ofn )
 {
 	memset_raw(ofn, 0, sizeof(m_ofn));
 
-	ofn->lStructSize = IsOfnV5()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
+	ofn->lStructSize = IsWinV5forOfn()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
 	ofn->lCustData = (LPARAM)this;
 	ofn->lpfnHook = OFNHookProc;
 	ofn->lpTemplateName = MAKEINTRESOURCE(IDD_FILEOPEN);	// <-_T("IDD_FILEOPEN"); 2008/7/26 Uchi

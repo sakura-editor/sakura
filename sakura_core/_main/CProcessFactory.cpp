@@ -31,6 +31,13 @@
 class CProcess;
 
 
+// COsVersionInfoの内部static変数の定義
+//	初期化はIsValidVersion()で行う
+//	_os/COsVersionInfo.cppを作るべきか?
+BOOL	 		COsVersionInfo::m_bSuccess;
+OSVERSIONINFO	COsVersionInfo::m_cOsVersionInfo;
+
+
 /*!
 	@brief プロセスクラスを生成する
 	
@@ -94,12 +101,20 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCTSTR lpCmdLine )
 bool CProcessFactory::IsValidVersion()
 {
 	/* Windowsバージョンのチェック */
-	COsVersionInfo	cOsVer;
+	COsVersionInfo	cOsVer(true);	// 初期化を行う
 	if( cOsVer.GetVersion() ){
 		if( !cOsVer.OsIsEnableVersion() ){
 			InfoMessage( NULL,
 				_T("このアプリケーションを実行するには、\n")
+#if (WINVER >= _WIN32_WINNT_WIN7)
+				_T("Windows7以降のOSが必要です。\n")
+#elif (WINVER >= _WIN32_WINNT_VISTA)
+				_T("WindowsVista以降 または WindowsServer2008以降のOSが必要です。\n")
+#elif (WINVER >= _WIN32_WINNT_WIN2K)
+				_T("Windows2000以降のOSが必要です。\n")
+#else
 				_T("Windows95以上 または WindowsNT4.0以上のOSが必要です。\n")
+#endif
 				_T("アプリケーションを終了します。")
 			);
 			return false;
@@ -109,13 +124,15 @@ bool CProcessFactory::IsValidVersion()
 		return false;
 	}
 
+#if (WINVER < _WIN32_WINNT_WIN2K)
 	/* システムリソースのチェック */
 	// Jul. 5, 2001 shoji masami NTではリソースチェックを行わない
-	if( !cOsVer.IsWin32NT() ){
+	if( !IsWin32NT() ){
 		if( !CheckSystemResources( GSTR_APPNAME ) ){
 			return false;
 		}
 	}
+#endif
 	return true;
 }
 

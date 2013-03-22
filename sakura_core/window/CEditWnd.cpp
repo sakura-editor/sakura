@@ -29,7 +29,8 @@
 #include "_main/CControlTray.h"
 #include "_main/CCommandLine.h"	/// 2003/1/26 aroka
 #include "_main/CAppMode.h"
-#include"_os/CDropTarget.h"
+#include "_os/CDropTarget.h"
+#include "_os/COsVersionInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
 #include "env/CShareData.h"
@@ -512,8 +513,8 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
-		bool bStopAnimation = COsVersionInfo().IsWinVista_or_later();	// Vista 以降の初回表示アニメーション効果を抑止する
-		if( !bStopAnimation ){
+		// Vista 以降の初回表示アニメーション効果を抑止する
+		if( !IsWinVista_or_later() ){
 			if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
 			{
 				::ShowWindow( GetHwnd(), SW_SHOWMAXIMIZED );
@@ -714,7 +715,7 @@ HWND CEditWnd::Create(
 	m_bIsActiveApp = ( ::GetActiveWindow() == GetHwnd() );	// 2007.03.08 ryoji
 
 	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
-	if( COsVersionInfo().IsWinVista_or_later() ){
+	if( IsWinVista_or_later() ){
 		m_bUIPI = FALSE;
 		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)GetHwnd() );
 		if( !m_bUIPI ){	// 返事が返らない
@@ -3772,7 +3773,7 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg )
 	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
 	//	Sep. 6, 2003 genta Windows XP(Luna)の場合にはCOLOR_MENUBARを使わなくてはならない
 	COLORREF bkColor =
-		::GetSysColor( COsVersionInfo().IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
+		::GetSysColor( IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
 	::SetBkColor( hdc, bkColor );
 	/*
 	int			m_pnCaretPosInfoDx[64];	// 文字列描画用文字幅配列

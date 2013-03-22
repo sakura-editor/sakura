@@ -31,6 +31,7 @@
 #include "COpeBlk.h"/// 2002/2/3 aroka 追加
 #include "window/CEditWnd.h"/// 2002/2/3 aroka 追加
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
+#include "_os/COsVersionInfo.h"
 
 using namespace std; // 2002/2/3 aroka to here
 
@@ -829,11 +830,10 @@ void CViewCommander::Command_Reconvert(void)
 	int nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL);
 	if( 0 == nSize )  // サイズ０の時は何もしない
 		return ;
-	
+
 	bool bUseUnicodeATOK = false;
 	//バージョンチェック
-	COsVersionInfo cOs;
-	if( cOs.OsDoesNOTSupportReconvert() ){
+	if( !OsSupportReconvert() ){
 		
 		// MSIMEかどうか
 		HWND hWnd = ImmGetDefaultIMEWnd(m_pCommanderView->GetHwnd());
@@ -855,13 +855,11 @@ void CViewCommander::Command_Reconvert(void)
 		//現在のIMEが対応しているかどうか
 		//IMEのプロパティ
 		if ( !(ImmGetProperty(GetKeyboardLayout(0),IGP_SETCOMPSTR) & SCS_CAP_SETRECONVERTSTRING) ){
-			//対応IMEなし			
+			//対応IMEなし
 			return ;
 		}
-#ifdef _UNICODE
-#endif
 	}
-	
+
 	//サイズ取得し直し
 	if((UNICODE_BOOL || bUseUnicodeATOK) != UNICODE_BOOL){
 		nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL || bUseUnicodeATOK);

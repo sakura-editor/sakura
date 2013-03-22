@@ -270,14 +270,13 @@ int MyPropertySheet( LPPROPSHEETHEADER lppsph )
 */
 void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
 {
-	COsVersionInfo cOsVer;
-	if ( cOsVer.HasWinHelpContentsProblem() ){
+	if ( HasWinHelpContentsProblem() ){
 		/* 目次ページを表示する */
-		MyWinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更
 		return;
 	}
 	/* 目次タブを表示する */
-	MyWinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更
 	return;
 }
 

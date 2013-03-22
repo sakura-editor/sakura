@@ -163,8 +163,6 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	//コマンドライン実行
 	TCHAR	cmdline[1024];
 	_tcscpy( cmdline, pszCmd );
-	//OSバージョン取得
-	COsVersionInfo cOsVer;		// move to	2008/6/7 Uchi
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 				CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
@@ -172,20 +170,18 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 
 		// 2010.08.27 Moca システムディレクトリ付加
 		TCHAR szCmdDir[_MAX_PATH];
-		if( cOsVer.IsWin32NT() ){
+		if( IsWin32NT() ){
 			::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 		}else{
 			::GetWindowsDirectory(szCmdDir, _countof(szCmdDir));
 		}
 
-		//OSバージョン取得
-		//COsVersionInfo cOsVer;		// move from	2008/6/7 Uchi
 		//コマンドライン文字列作成
 		auto_sprintf(
 			cmdline,
 			_T("\"%ts\\%ts\" %ts%ts%ts"),
 			szCmdDir,
-			( cOsVer.IsWin32NT() ? _T("cmd.exe") : _T("command.com") ),
+			( IsWin32NT() ? _T("cmd.exe") : _T("command.com") ),
 			( bIOUnicodeGet ? _T("/U") : _T("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
 			( bGetStdout ? _T("/C ") : _T("/K ") ),
 			pszCmd
