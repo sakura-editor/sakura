@@ -28,24 +28,27 @@
 		   distribution.
 */
 
-#ifndef _HANDCURSOR_A545F10D_9F24_4ab5_889F_13732FC0150B_H_
-#define _HANDCURSOR_A545F10D_9F24_4ab5_889F_13732FC0150B_H_
+#ifndef SAKURA_HANDCURSOR_A545F10D_9F24_4AB5_889F_13732FC0150B_H_
+#define SAKURA_HANDCURSOR_A545F10D_9F24_4AB5_889F_13732FC0150B_H_
 
 #include "_os/COsVersionInfo.h"
 #include "sakura_rc.h"
 
+#ifndef IDC_HAND
+#define IDC_HAND	MAKEINTRESOURCE(32649)
+#endif
+
 inline void SetHandCursor ()
 {
 #ifdef IDC_CURSOR_HAND
-	if (COsVersionInfo().IsWin2000_or_later()) {
-#endif
-		SetCursor( LoadCursor( NULL, IDC_HAND ) );
-#ifdef IDC_CURSOR_HAND
-	}
-	else {
+	if (!IsWin2000_or_later()) {
 		SetCursor( LoadCursor( GetModuleHandle( NULL ), MAKEINTRESOURCE( IDC_CURSOR_HAND ) ) );
 	}
+	else
 #endif
+	{
+		SetCursor( LoadCursor( NULL, IDC_HAND ) );
+	}
 }
 
-#endif	//_HANDCURSOR_A545F10D_9F24_4ab5_889F_13732FC0150B_H_
+#endif	// SAKURA_HANDCURSOR_A545F10D_9F24_4AB5_889F_13732FC0150B_H_

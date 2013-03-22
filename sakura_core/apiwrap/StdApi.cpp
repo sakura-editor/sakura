@@ -1,8 +1,9 @@
 #include "StdAfx.h"
-#include "StdApi.h"
 #include <vector>
+#include "StdApi.h"
 #include "charset/charcode.h"
 #include "_os/COsVersionInfo.h"
+
 using namespace std;
 
 //デバッグ用。
@@ -290,13 +291,12 @@ namespace ApiWrap{
 	*/
 	void SetPixelSurely(HDC hdc,int x,int y,COLORREF c)
 	{
-		static COsVersionInfo os;
+		if (!IsWinVista_or_later()) {
 		//Vistaより前：SetPixel直呼び出し
-		if(!os.IsWinVista_or_later()){
 			::SetPixel(hdc,x,y,c);
 		}
+		else {
 		//Vista以降：SetPixelエミュレート
-		else{
 			static HPEN hPen = NULL;
 			static COLORREF clrPen = 0;
 			if(hPen && c!=clrPen){
@@ -314,5 +314,4 @@ namespace ApiWrap{
 			SelectObject(hdc,hpnOld);
 		}
 	}
-
 }

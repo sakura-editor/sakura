@@ -33,6 +33,7 @@
 #include "COpeBlk.h"///
 #include "_os/CDropTarget.h"///
 #include "_os/CClipboard.h"
+#include "_os/COsVersionInfo.h"
 #include "CMarkMgr.h"///
 #include "types/CTypeSupport.h"
 #include "convert/CConvert.h"
@@ -222,8 +223,7 @@ BOOL CEditView::Create(
 
 	// from here  2002.04.09 minfu OSによって再変換の方式を変える
 	//	YAZAKI COsVersionInfoのカプセル化は守りましょ。
-	COsVersionInfo	cOs;
-	if( cOs.OsDoesNOTSupportReconvert() ){
+	if( !OsSupportReconvert() ){
 		// 95 or NTならば
 		m_uMSIMEReconvertMsg = ::RegisterWindowMessage( RWM_RECONVERT );
 		m_uATOKReconvertMsg = ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ;
@@ -259,7 +259,6 @@ BOOL CEditView::Create(
 	//↓今までCreateでやってたこと
 
 	WNDCLASS	wc;
-//	HDC			hdc;	???
 	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
 	m_nMyIndex = nMyIndex;

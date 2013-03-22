@@ -335,6 +335,8 @@ BOOL GetSystemResources(
 }
 
 
+#if (WINVER < _WIN32_WINNT_WIN2K)
+// NTではリソースチェックを行わない
 /* システムリソースのチェック */
 BOOL CheckSystemResources( const TCHAR* pszAppName )
 {
@@ -382,6 +384,7 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 	}
 	return TRUE;
 }
+#endif	// (WINVER < _WIN32_WINNT_WIN2K)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

@@ -22,17 +22,16 @@
 #include "view/CEditView.h"
 #include "uiparts/CWaitCursor.h"
 #include "charset/charcode.h"
-#include "debug/CRunningTimer.h"
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
 #include "doc/CLayout.h"///
 #include "doc/CDocLine.h"///
-#include "_os/COsVersionInfo.h"   // 2002.04.09 minfu 
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "doc/CDocReader.h"
 #include "window/CEditWnd.h"
 #include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
+#include "debug/CRunningTimer.h"
 
 using namespace std; // 2002/2/3 aroka
 
