@@ -74,7 +74,7 @@ static TCHAR* GetFileName(const TCHAR *fullpath);
 
 	@date 2006.04.10 fon 新規作成
 */
-INT_PTR CPropKeyHelp::DispatchEvent(
+INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -530,12 +530,15 @@ INT_PTR CPropKeyHelp::DispatchEvent(
 	return FALSE;
 }
 
+void CheckDlgButtonBOOL(HWND hwnd, int id, BOOL bState ){
+	CheckDlgButton( hwnd, id, (bState ? BST_CHECKED : BST_UNCHECKED) );
+}
 
 /*! ダイアログデータの設定 キーワード辞書ファイル設定
 
 	@date 2006.04.10 fon 新規作成
 */
-void CPropKeyHelp::SetData( HWND hwndDlg )
+void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 {
 	HWND	hwndWork;
 	int		i;
@@ -546,22 +549,11 @@ void CPropKeyHelp::SetData( HWND hwndDlg )
 	::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_KEYHELP ), EM_LIMITTEXT, (WPARAM)(sizeof( m_Types.m_KeyHelpArr[0].m_szPath ) - 1 ), (LPARAM)0 );
 
 	// 使用する・使用しない
-	if( m_Types.m_bUseKeyWordHelp == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP, BST_UNCHECKED );
-	if( m_Types.m_bUseKeyHelpAllSearch == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH, BST_UNCHECKED );
-	if( m_Types.m_bUseKeyHelpKeyDisp == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, BST_UNCHECKED );
-	if( m_Types.m_bUseKeyHelpPrefix == TRUE )
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, BST_CHECKED );
-	else
-		CheckDlgButton( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, BST_UNCHECKED );
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP, m_Types.m_bUseKeyWordHelp );
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH, m_Types.m_bUseKeyHelpAllSearch );
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP, m_Types.m_bUseKeyHelpKeyDisp );
+	CheckDlgButtonBOOL( hwndDlg, IDC_CHECK_KEYHELP_PREFIX, m_Types.m_bUseKeyHelpPrefix );
+
 	/* リスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
@@ -606,38 +598,26 @@ void CPropKeyHelp::SetData( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-int CPropKeyHelp::GetData( HWND hwndDlg )
+int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i;
-	int		nUse;						/* 辞書ON(1)/OFF(0) */
 	TCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
 	TCHAR	szPath[_MAX_PATH];			/* ファイルパス */
 //	m_nPageNum = 4;	//自分のページ番号
 
 	/* 使用する・使用しない */
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) )
-		m_Types.m_bUseKeyWordHelp = TRUE;
-	else
-		m_Types.m_bUseKeyWordHelp = FALSE;
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ) )
-		m_Types.m_bUseKeyHelpAllSearch = TRUE;
-	else
-		m_Types.m_bUseKeyHelpAllSearch = FALSE;
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ) )
-		m_Types.m_bUseKeyHelpKeyDisp = TRUE;
-	else
-		m_Types.m_bUseKeyHelpKeyDisp = FALSE;
-	if( TRUE == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ) )
-		m_Types.m_bUseKeyHelpPrefix = TRUE;
-	else
-		m_Types.m_bUseKeyHelpPrefix = FALSE;
+	m_Types.m_bUseKeyWordHelp = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP ) ); 	
+	m_Types.m_bUseKeyHelpAllSearch = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_ALLSEARCH ) );
+	m_Types.m_bUseKeyHelpKeyDisp = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_KEYDISP ) );
+	m_Types.m_bUseKeyHelpPrefix = ( BST_CHECKED == IsDlgButtonChecked( hwndDlg, IDC_CHECK_KEYHELP_PREFIX ) );
+
 	/* リストに登録されている情報を配列に取り込む */
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_KEYHELP );
 	nIndex = ListView_GetItemCount( hwndList );
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( i < nIndex ){
-			nUse	= 0;	/* 辞書ON(1)/OFF(0) */
+			int nUse	= 0;	/* 辞書ON(1)/OFF(0) */
 			szAbout[0]	= _T('\0');
 			szPath[0]	= _T('\0');
 			/* チェックボックス状態を取得してnUseにセット */
@@ -661,7 +641,7 @@ int CPropKeyHelp::GetData( HWND hwndDlg )
 
 	@date 2006.04.10 fon 新規作成
 */
-bool CPropKeyHelp::Import(HWND hwndDlg)
+bool CPropTypesKeyHelp::Import(HWND hwndDlg)
 {
 	int		i, j;
 	char	buff[sizeof(int)+DICT_ABOUT_LEN+_MAX_PATH+sizeof("KDct[99]=,,\r\n")];
@@ -781,7 +761,7 @@ bool CPropKeyHelp::Import(HWND hwndDlg)
 
 	@date 2006.04.10 fon 新規作成
 */
-bool CPropKeyHelp::Export(HWND hwndDlg)
+bool CPropTypesKeyHelp::Export(HWND hwndDlg)
 {
 	int		i, j;
 

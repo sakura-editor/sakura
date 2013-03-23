@@ -54,7 +54,7 @@ static const DWORD p_helpids[] = {	//11600
 	0, 0
 };
 
-bool CPropRegex::Import(HWND hwndDlg)
+bool CPropTypesRegex::Import(HWND hwndDlg)
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char		szPath[_MAX_PATH + 1];
@@ -158,7 +158,7 @@ bool CPropRegex::Import(HWND hwndDlg)
 	return true;
 }
 
-bool CPropRegex::Export(HWND hwndDlg)
+bool CPropTypesRegex::Export(HWND hwndDlg)
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char		szPath[_MAX_PATH + 1];
@@ -226,7 +226,7 @@ bool CPropRegex::Export(HWND hwndDlg)
 }
 
 /* 正規表現キーワード メッセージ処理 */
-INT_PTR CPropRegex::DispatchEvent(
+INT_PTR CPropTypesRegex::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -331,6 +331,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_INS:	/* 挿入 */
+			{
 				//挿入するキー情報を取得する。
 				memset(szKeyWord, 0, _countof(szKeyWord));
 				::GetDlgItemText( hwndDlg, IDC_EDIT_REGEX, szKeyWord, _countof(szKeyWord) );
@@ -397,8 +398,10 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
+			}
 
 			case IDC_BUTTON_REGEX_ADD:	/* 追加 */
+			{
 				//最後のキー番号を取得する。
 				nIndex = ListView_GetItemCount( hwndList );
 				//追加するキー情報を取得する。
@@ -460,8 +463,10 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
+			}
 
 			case IDC_BUTTON_REGEX_UPD:	/* 更新 */
+			{
 				//選択中のキーを探す。
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex )
@@ -529,6 +534,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_SetItemState( hwndList, nIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
+			}
 
 			case IDC_BUTTON_REGEX_DEL:	/* 削除 */
 				//選択中のキー番号を探す。
@@ -542,6 +548,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				return TRUE;
 
 			case IDC_BUTTON_REGEX_TOP:	/* 先頭 */
+			{
 				//選択中のキーを探す。
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
@@ -566,8 +573,10 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
+			}
 
 			case IDC_BUTTON_REGEX_LAST:	/* 最終 */
+			{
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
@@ -576,7 +585,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_GetItemText(hwndList, nIndex, 1, szColorIndex, _countof(szColorIndex));
 				//キーを追加する。
 				lvi.mask     = LVIF_TEXT | LVIF_PARAM;
-				lvi.pszText  = szKeyWord;
+				lvi.pszText  = &szKeyWord[0];
 				lvi.iItem    = nIndex2;
 				lvi.iSubItem = 0;
 				lvi.lParam   = 0;
@@ -591,8 +600,10 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				GetData( hwndDlg );
 				return TRUE;
+			}
 
 			case IDC_BUTTON_REGEX_UP:	/* 上へ */
+			{
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				if( 0 == nIndex ) return TRUE;	//すでに先頭にある。
@@ -618,8 +629,10 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_SetItemState( hwndList, nIndex2, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 				GetData( hwndDlg );
 				return TRUE;
+			}
 
 			case IDC_BUTTON_REGEX_DOWN:	/* 下へ */
+			{
 				nIndex = ListView_GetNextItem( hwndList, -1, LVNI_ALL | LVNI_SELECTED );
 				if( -1 == nIndex ) return FALSE;
 				nIndex2 = ListView_GetItemCount(hwndList);
@@ -645,6 +658,7 @@ INT_PTR CPropRegex::DispatchEvent(
 				ListView_DeleteItem(hwndList, nIndex);	//古いキーを削除
 				GetData( hwndDlg );
 				return TRUE;
+			}
 
 			case IDC_BUTTON_REGEX_IMPORT:	/* インポート */
 				Import(hwndDlg);
@@ -712,7 +726,7 @@ INT_PTR CPropRegex::DispatchEvent(
 					{
 						if ( 0 == (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 						{
-							if(strcmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
+							if(_tcscmp(m_Types.m_ColorInfoArr[i].m_szName, szColorIndex) == 0)
 							{
 								::SendMessage(hwndCombo, CB_SETCURSEL, j, 0);
 								break;
@@ -746,7 +760,7 @@ INT_PTR CPropRegex::DispatchEvent(
 }
 
 /* ダイアログデータの設定 正規表現キーワード */
-void CPropRegex::SetData( HWND hwndDlg )
+void CPropTypesRegex::SetData( HWND hwndDlg )
 {
 	HWND		hwndWork;
 	int			i, j;
@@ -807,7 +821,7 @@ void CPropRegex::SetData( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 正規表現キーワード */
-int CPropRegex::GetData( HWND hwndDlg )
+int CPropTypesRegex::GetData( HWND hwndDlg )
 {
 	HWND	hwndList;
 	int	nIndex, i, j;
@@ -840,7 +854,7 @@ int CPropRegex::GetData( HWND hwndDlg )
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 			for(j = 0; j < COLORIDX_LAST; j++)
 			{
-				if(strcmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0)
+				if(_tcscmp(m_Types.m_ColorInfoArr[j].m_szName, szColorIndex) == 0)
 				{
 					m_Types.m_RegexKeywordArr[i].m_nColorIndex = j;
 					break;
@@ -861,7 +875,7 @@ int CPropRegex::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
-BOOL CPropRegex::RegexKakomiCheck(const char *s)
+BOOL CPropTypesRegex::RegexKakomiCheck(const char *s)
 {
 	const char	*p;
 	int	length, i;

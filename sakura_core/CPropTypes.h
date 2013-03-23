@@ -24,6 +24,10 @@ class CPropTypes;
 
 
 #include "CShareData.h"
+struct TYPE_NAME {
+	int				nMethod;
+	const TCHAR*	pszName;
+};
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -90,7 +94,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        スクリーン                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropScreen : CPropTypes
+class SAKURA_CORE_API CPropTypesScreen : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -102,7 +106,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropColor : CPropTypes
+class SAKURA_CORE_API CPropTypesColor : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -125,7 +129,7 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropSupport : CPropTypes
+class SAKURA_CORE_API CPropTypesSupport : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -137,7 +141,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    正規表現キーワード                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropRegex : CPropTypes
+class SAKURA_CORE_API CPropTypesRegex : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -155,7 +159,7 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キーワードヘルプ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropKeyHelp : CPropTypes
+class SAKURA_CORE_API CPropTypesKeyHelp : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理

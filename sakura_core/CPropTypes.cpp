@@ -36,10 +36,6 @@
 #include "sakura_rc.h"
 #include "sakura.hh"
 
-struct TYPE_NAME {
-	int		nMethod;
-	char*	pszName;
-};
 TYPE_NAME OlmArr[] = {
 //	{ OUTLINE_C,		_T("C") },
 	{ OUTLINE_CPP,		_T("C/C++") },
@@ -131,41 +127,47 @@ char* MakeRGBStr( DWORD dwRGB, char* pszText )
 
 
 static const DWORD p_helpids1[] = {	//11300
-	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
-	IDC_EDIT_TABSPACE,				HIDC_EDIT_TABSPACE,			//TAB幅 // Sep. 19, 2002 genta
-	IDC_COMBO_IMESWITCH,			HIDC_COMBO_IMESWITCH,		//IMEのON/OFF状態
-	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IMEの入力モード
-	IDC_COMBO_SMARTINDENT,			HIDC_COMBO_SMARTINDENT,		//スマートインデント
-	IDC_COMBO_OUTLINES,				HIDC_COMBO_OUTLINES,		//アウトライン解析方法
 	IDC_EDIT_TYPENAME,				HIDC_EDIT_TYPENAME,			//設定の名前
 	IDC_EDIT_TYPEEXTS,				HIDC_EDIT_TYPEEXTS,			//ファイル拡張子
+
+	IDC_COMBO_WRAPMETHOD,			HIDC_COMBO_WRAPMETHOD,		//テキストの折り返し方法		// 2008.05.30 nasukoji
 	IDC_EDIT_MAXLINELEN,			HIDC_EDIT_MAXLINELEN,		//折り返し桁数
-	IDC_EDIT_CHARSPACE,				HIDC_EDIT_CHARSPACE,		//文字の間隔
-	IDC_EDIT_LINESPACE,				HIDC_EDIT_LINESPACE,		//行の間隔
-	IDC_EDIT_INDENTCHARS,			HIDC_EDIT_INDENTCHARS,		//その他のインデント対象文字
-	IDC_EDIT_TABVIEWSTRING,			HIDC_EDIT_TABVIEWSTRING,	//TAB表示文字列
-	IDC_CHECK_INS_SPACE,			HIDC_CHECK_INS_SPACE,		//スペースの挿入
 	IDC_SPIN_MAXLINELEN,			HIDC_EDIT_MAXLINELEN,
+	IDC_EDIT_CHARSPACE,				HIDC_EDIT_CHARSPACE,		//文字の間隔
 	IDC_SPIN_CHARSPACE,				HIDC_EDIT_CHARSPACE,
+	IDC_EDIT_LINESPACE,				HIDC_EDIT_LINESPACE,		//行の間隔
 	IDC_SPIN_LINESPACE,				HIDC_EDIT_LINESPACE,
-	IDC_CHECK_KINSOKUHEAD,			HIDC_CHECK_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
-	IDC_CHECK_KINSOKUTAIL,			HIDC_CHECK_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
-	IDC_CHECK_KINSOKURET,			HIDC_CHECK_KINSOKURET,		//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
-	IDC_CHECK_KINSOKUKUTO,			HIDC_CHECK_KINSOKUKUTO,		//句読点をぶら下げる	//@@@ 2002.04.17 MIK
-	IDC_EDIT_KINSOKUHEAD,			HIDC_EDIT_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
-	IDC_EDIT_KINSOKUTAIL,			HIDC_EDIT_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
-	IDC_EDIT_KINSOKUKUTO,			HIDC_EDIT_KINSOKUKUTO,		//句読点ぶら下げ文字	// 2009.08.07 ryoji
+	IDC_EDIT_TABSPACE,				HIDC_EDIT_TABSPACE,			//TAB幅 // Sep. 19, 2002 genta
+	IDC_SPIN_TABSPACE,				HIDC_EDIT_TABSPACE,
+	IDC_EDIT_TABVIEWSTRING,			HIDC_EDIT_TABVIEWSTRING,	//TAB表示文字列
 	IDC_CHECK_TAB_ARROW,			HIDC_CHECK_TAB_ARROW,		//矢印表示	// 2006.08.06 ryoji
+	IDC_CHECK_INS_SPACE,			HIDC_CHECK_INS_SPACE,		//スペースの挿入
+
 	IDC_CHECK_INDENT,				HIDC_CHECK_INDENT,			//自動インデント	// 2006.08.19 ryoji
 	IDC_CHECK_INDENT_WSPACE,		HIDC_CHECK_INDENT_WSPACE,	//全角空白もインデント	// 2006.08.19 ryoji
+	IDC_COMBO_SMARTINDENT,			HIDC_COMBO_SMARTINDENT,		//スマートインデント
+	IDC_EDIT_INDENTCHARS,			HIDC_EDIT_INDENTCHARS,		//その他のインデント対象文字
 	IDC_COMBO_INDENTLAYOUT,			HIDC_COMBO_INDENTLAYOUT,	//折り返し行インデント	// 2006.08.06 ryoji
 	IDC_CHECK_RTRIM_PREVLINE,		HIDC_CHECK_RTRIM_PREVLINE,	//改行時に末尾の空白を削除	// 2006.08.06 ryoji
+
 	IDC_RADIO_OUTLINEDEFAULT,		HIDC_RADIO_OUTLINEDEFAULT,	//標準ルール	// 2006.08.06 ryoji
+	IDC_COMBO_OUTLINES,				HIDC_COMBO_OUTLINES,		//アウトライン解析方法
 	IDC_RADIO_OUTLINERULEFILE,		HIDC_RADIO_OUTLINERULEFILE,	//ルールファイル	// 2006.08.06 ryoji
 	IDC_EDIT_OUTLINERULEFILE,		HIDC_EDIT_OUTLINERULEFILE,	//ルールファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_RULEFILE_REF,		HIDC_BUTTON_RULEFILE_REF,	//ルールファイル参照	// 2006/09/09 novice
+
+	IDC_COMBO_IMESWITCH,			HIDC_COMBO_IMESWITCH,		//IMEのON/OFF状態
+	IDC_COMBO_IMESTATE,				HIDC_COMBO_IMESTATE,		//IMEの入力モード
 	IDC_CHECK_DOCICON,				HIDC_CHECK_DOCICON,			//文書アイコンを使う	// 2006.08.06 ryoji
-	IDC_COMBO_WRAPMETHOD,			HIDC_COMBO_WRAPMETHOD,		//テキストの折り返し方法		// 2008.05.30 nasukoji
+
+	IDC_CHECK_WORDWRAP,				HIDC_CHECK_WORDWRAP,		//英文ワードラップ
+	IDC_CHECK_KINSOKURET,			HIDC_CHECK_KINSOKURET,		//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
+	IDC_CHECK_KINSOKUKUTO,			HIDC_CHECK_KINSOKUKUTO,		//句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	IDC_EDIT_KINSOKUKUTO,			HIDC_EDIT_KINSOKUKUTO,		//句読点ぶら下げ文字	// 2009.08.07 ryoji
+	IDC_CHECK_KINSOKUHEAD,			HIDC_CHECK_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
+	IDC_EDIT_KINSOKUHEAD,			HIDC_EDIT_KINSOKUHEAD,		//行頭禁則	//@@@ 2002.04.08 MIK
+	IDC_CHECK_KINSOKUTAIL,			HIDC_CHECK_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
+	IDC_EDIT_KINSOKUTAIL,			HIDC_EDIT_KINSOKUTAIL,		//行末禁則	//@@@ 2002.04.08 MIK
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -208,10 +210,10 @@ static const DWORD p_helpids2[] = {	//11400
 	0, 0
 };
 static const DWORD p_helpids3[] = {	//11500
+	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
 	IDC_BUTTON_HOKANFILE_REF,		HIDC_BUTTON_HOKANFILE_REF,			//入力補完 単語ファイル参照
 	IDC_CHECK_HOKANLOHICASE,		HIDC_CHECK_HOKANLOHICASE,			//入力補完の英大文字小文字
 	IDC_CHECK_HOKANBYFILE,			HIDC_CHECK_HOKANBYFILE,				//現在のファイルから入力補完
-	IDC_EDIT_HOKANFILE,				HIDC_EDIT_HOKANFILE,				//単語ファイル名
 	IDC_EDIT_TYPEEXTHELP,			HIDC_EDIT_TYPEEXTHELP,				//外部ヘルプファイル名	// 2006.08.06 ryoji
 	IDC_BUTTON_TYPEOPENHELP,		HIDC_BUTTON_TYPEOPENHELP,			//外部ヘルプファイル参照	// 2006.08.06 ryoji
 	IDC_EDIT_TYPEEXTHTMLHELP,		HIDC_EDIT_TYPEEXTHTMLHELP,			//外部HTMLヘルプファイル名	// 2006.08.06 ryoji
@@ -223,7 +225,6 @@ static const DWORD p_helpids3[] = {	//11500
 //	IDC_STATIC,						-1,
 	0, 0
 };
-//To Here Jul. 05, 2001
 
 static const TCHAR* aszCodeStr[] = {
 	_T("SJIS"),
@@ -270,11 +271,11 @@ INT_PTR CALLBACK PropTypesScreen(
 )
 {
 	PROPSHEETPAGE*	pPsp;
-	CPropScreen* pCPropTypes;
+	CPropTypesScreen* pCPropTypes;
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropScreen* )(pPsp->lParam);
+		pCPropTypes = ( CPropTypesScreen* )(pPsp->lParam);
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
@@ -282,7 +283,7 @@ INT_PTR CALLBACK PropTypesScreen(
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
-		pCPropTypes = ( CPropScreen* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		pCPropTypes = ( CPropTypesScreen* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -300,11 +301,11 @@ INT_PTR CALLBACK PropTypesColor(
 )
 {
 	PROPSHEETPAGE*	pPsp;
-	CPropColor*		pCPropTypes;
+	CPropTypesColor*		pCPropTypes;
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropColor* )(pPsp->lParam);
+		pCPropTypes = ( CPropTypesColor* )(pPsp->lParam);
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
@@ -312,7 +313,7 @@ INT_PTR CALLBACK PropTypesColor(
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
-		pCPropTypes = ( CPropColor* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		pCPropTypes = ( CPropTypesColor* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -330,11 +331,11 @@ INT_PTR CALLBACK PropTypesSupport(
 )
 {
 	PROPSHEETPAGE*	pPsp;
-	CPropSupport* pCPropTypes;
+	CPropTypesSupport* pCPropTypes;
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropSupport* )(pPsp->lParam);
+		pCPropTypes = ( CPropTypesSupport* )(pPsp->lParam);
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}else{
@@ -342,7 +343,7 @@ INT_PTR CALLBACK PropTypesSupport(
 		}
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
-		pCPropTypes = ( CPropSupport* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		pCPropTypes = ( CPropTypesSupport* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, lParam );
 		}else{
@@ -360,18 +361,18 @@ INT_PTR CALLBACK PropTypesRegex(
 )
 {
 	PROPSHEETPAGE*	pPsp;
-	CPropRegex* pCPropTypes;
+	CPropTypesRegex* pCPropTypes;
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropRegex* )(pPsp->lParam);
+		pCPropTypes = ( CPropTypesRegex* )(pPsp->lParam);
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}
 		break;
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
-		pCPropTypes = ( CPropRegex* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		pCPropTypes = ( CPropTypesRegex* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, lParam );
 		}
@@ -392,16 +393,16 @@ INT_PTR CALLBACK PropTypesKeyHelp(
 )
 {
 	PROPSHEETPAGE*	pPsp;
-	CPropKeyHelp* pCPropTypes;
+	CPropTypesKeyHelp* pCPropTypes;
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
-		pCPropTypes = ( CPropKeyHelp* )(pPsp->lParam);
+		pCPropTypes = ( CPropTypesKeyHelp* )(pPsp->lParam);
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, pPsp->lParam );
 		}break;
 	default:
-		pCPropTypes = ( CPropKeyHelp* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
+		pCPropTypes = ( CPropTypesKeyHelp* )::GetWindowLongPtr( hwndDlg, DWLP_USER );
 		if( NULL != pCPropTypes ){
 			return (pCPropTypes->DispatchEvent)( hwndDlg, uMsg, wParam, lParam );
 		}break;
@@ -521,7 +522,6 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	nIdx++;
 	// 2006.04.10 fon ADD-end
 
-
 	PROPSHEETHEADER	psh;
 	memset( &psh, 0, sizeof( psh ) );
 	
@@ -616,7 +616,7 @@ void CPropTypes::OnHelp( HWND hwndParent, int nPageID )
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
-void CPropColor::EnableTypesPropInput( HWND hwndDlg )
+void CPropTypesColor::EnableTypesPropInput( HWND hwndDlg )
 {
 	//	行番号区切りを任意の半角文字にするかどうか
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_LINETERMTYPE2 ) ){
@@ -666,7 +666,7 @@ void CPropColor::EnableTypesPropInput( HWND hwndDlg )
 
 
 /* Screen メッセージ処理 */
-INT_PTR CPropScreen::DispatchEvent(
+INT_PTR CPropTypesScreen::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -772,7 +772,7 @@ INT_PTR CPropScreen::DispatchEvent(
 		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( idCtrl ){
 		case IDC_SPIN_MAXLINELEN:
-			/* 折り返し文字数 */
+			/* 折り返し桁数 */
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -899,7 +899,7 @@ INT_PTR CPropScreen::DispatchEvent(
 
 
 /* ダイアログデータの設定 Screen */
-void CPropScreen::SetData( HWND hwndDlg )
+void CPropTypesScreen::SetData( HWND hwndDlg )
 {
 	int i;
 
@@ -1065,7 +1065,7 @@ void CPropScreen::SetData( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 Screen */
-int CPropScreen::GetData( HWND hwndDlg )
+int CPropTypesScreen::GetData( HWND hwndDlg )
 {
 	int  i;
 
@@ -1221,7 +1221,7 @@ int CPropScreen::GetData( HWND hwndDlg )
 // 2001/06/13 Start By asa-o: タイプ別設定の支援タブに関する処理
 
 /* メッセージ処理 */
-INT_PTR CPropSupport::DispatchEvent(
+INT_PTR CPropTypesSupport::DispatchEvent(
 	HWND		hwndDlg,	// handle to dialog box
 	UINT		uMsg,		// message
 	WPARAM		wParam,		// first message parameter
@@ -1393,7 +1393,7 @@ INT_PTR CPropSupport::DispatchEvent(
 }
 
 /* ダイアログデータの設定 */
-void CPropSupport::SetData( HWND hwndDlg )
+void CPropTypesSupport::SetData( HWND hwndDlg )
 {
 	/* 入力補完 単語ファイル */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_HOKANFILE, m_Types.m_szHokanFile );
@@ -1454,7 +1454,7 @@ void CPropSupport::SetData( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 */
-int CPropSupport::GetData( HWND hwndDlg )
+int CPropTypesSupport::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = 2;
@@ -1506,7 +1506,7 @@ int CPropSupport::GetData( HWND hwndDlg )
 
 
 /* 色の設定をインポート */
-bool CPropColor::Import( HWND hwndDlg )
+bool CPropTypesColor::Import( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
@@ -1654,7 +1654,7 @@ bool CPropColor::Import( HWND hwndDlg )
 
 
 /* 色の設定をエクスポート */
-bool CPropColor::Export( HWND hwndDlg )
+bool CPropTypesColor::Export( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
@@ -1800,7 +1800,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropColor::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
+			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 			}
@@ -1813,7 +1813,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropColor::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
+			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 			}
@@ -1834,7 +1834,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 
 /* color メッセージ処理 */
-INT_PTR CPropColor::DispatchEvent(
+INT_PTR CPropTypesColor::DispatchEvent(
 	HWND				hwndDlg,	// handle to dialog box
 	UINT				uMsg,		// message
 	WPARAM				wParam,		// first message parameter
@@ -1894,14 +1894,6 @@ INT_PTR CPropColor::DispatchEvent(
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ),			(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ),	(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? TRUE: FALSE );
-
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ),				(0 == (fAttribute & COLOR_ATTRIB_FORCE_DISP))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ),				(0 == (fAttribute & COLOR_ATTRIB_NO_BOLD))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_UNDERLINE ),			(0 == (fAttribute & COLOR_ATTRIB_NO_UNDERLINE))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMETEXTCOLOR ),	TRUE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_HAIKEI ),			(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? SW_SHOW: SW_HIDE );
-					//::ShowWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_SAMEBKCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_BACK))? SW_SHOW: SW_HIDE );
 				}
 
 				/* 色分け/表示 をする */
@@ -2169,10 +2161,8 @@ INT_PTR CPropColor::DispatchEvent(
 }
 
 
-
-
 /* ダイアログデータの設定 color */
-void CPropColor::SetData( HWND hwndDlg )
+void CPropTypesColor::SetData( HWND hwndDlg )
 {
 
 	HWND	hwndWork;
@@ -2343,7 +2333,7 @@ void CPropColor::SetData( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 color */
-int CPropColor::GetData( HWND hwndDlg )
+int CPropTypesColor::GetData( HWND hwndDlg )
 {
 	int		nIdx;
 	HWND	hwndWork;
@@ -2500,7 +2490,7 @@ int CPropColor::GetData( HWND hwndDlg )
 
 
 /* 色ボタンの描画 */
-void CPropColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
+void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
 //	MYTRACE_A( "pDis->itemAction = " );
 
@@ -2633,7 +2623,7 @@ void CPropColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 	@date	2005.01.23 genta new
 
 */
-void CPropColor::RearrangeKeywordSet( HWND hwndDlg )
+void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 {
 	int i, j;
 	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
@@ -2689,7 +2679,7 @@ void CPropColor::RearrangeKeywordSet( HWND hwndDlg )
 
 
 /* 色種別リスト オーナー描画 */
-void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
+void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 {
 	HBRUSH		hBrush;
 	HBRUSH		hBrushOld;
@@ -2699,7 +2689,7 @@ void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	RECT		rc1;
 	COLORREF	cRim = (COLORREF)::GetSysColor( COLOR_3DSHADOW );
 
-	if( pDis == NULL || pDis->itemData == NULL ) return;
+	if( pDis == NULL || pDis->itemData == 0 ) return;
 
 	rc1 = pDis->rcItem;
 
@@ -2821,7 +2811,7 @@ void CPropColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 
 
 /* 色選択ダイアログ */
-BOOL CPropColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
+BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustColors )
 {
 	CHOOSECOLOR		cc;
 	cc.lStructSize = sizeof( cc );
@@ -2830,7 +2820,7 @@ BOOL CPropColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCustCol
 	cc.rgbResult = *pColor;
 	cc.lpCustColors = pCustColors;
 	cc.Flags = /*CC_PREVENTFULLOPEN |*/ CC_RGBINIT;
-	cc.lCustData = NULL;
+	cc.lCustData = 0;
 	cc.lpfnHook = NULL;
 	cc.lpTemplateName = NULL;
 	if( !::ChooseColor( &cc ) ){
