@@ -121,7 +121,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 					cDlgOpenFile.Create(
 						m_hInstance,
 						hwndDlg,
-						_T("*.hlp"),
+						_T("*.hlp;*.chm;*.col"),
 						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
