@@ -1961,11 +1961,11 @@ void CEditView::Command_BOOKMARK_SET(void)
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(nX,nYto,&nX,&nYto);
 		for(nY=nYfrom;nY<=nYto;nY++){
 			pCDocLine=m_pcEditDoc->m_cDocLineMgr.GetLine( nY );
-			if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookMarked());
+			if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookmarked());
 		}
 	}else{
 		pCDocLine=m_pcEditDoc->m_cDocLineMgr.GetLine( m_nCaretPosY_PHY );
-		if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookMarked());
+		if(NULL!=pCDocLine)pCDocLine->SetBookMark(!pCDocLine->IsBookmarked());
 	}
 	// 2002.01.16 hor 分割したビューも更新
 	m_pcEditDoc->Views_Redraw();

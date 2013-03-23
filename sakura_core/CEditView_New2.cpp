@@ -200,7 +200,7 @@ void CEditView::DispLineNumber(
 
 	/* 02/10/16 ai Start */
 	// ブックマークの表示
-	if(pCDocLine->IsBookMarked()){
+	if(pCDocLine->IsBookmarked()){
 		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_MARK].m_bDisp ) {
 			nColorIndex = COLORIDX_MARK;
 		}
@@ -323,7 +323,7 @@ void CEditView::DispLineNumber(
 
 // From Here 2001.12.03 hor
 	/* とりあえずブックマークに縦線 */
-	if(pCDocLine->IsBookMarked() &&	// Dec. 24, 2002 ai
+	if(pCDocLine->IsBookmarked() &&	// Dec. 24, 2002 ai
 		(FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_MARK].m_bDisp)){
 		hPen = ::CreatePen( PS_SOLID, 2, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );

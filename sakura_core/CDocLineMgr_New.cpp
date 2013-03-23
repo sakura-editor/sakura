@@ -503,7 +503,7 @@ int CDocLineMgr::SearchBookMark(
 		nLinePos--;
 		pDocLine = GetLine( nLinePos );
 		while( pDocLine ){
-			if(pDocLine->IsBookMarked()){
+			if(pDocLine->IsBookmarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
 				return TRUE;
 			}
@@ -516,7 +516,7 @@ int CDocLineMgr::SearchBookMark(
 		nLinePos++;
 		pDocLine = GetLine( nLinePos );
 		while( NULL != pDocLine ){
-			if(pDocLine->IsBookMarked()){
+			if(pDocLine->IsBookmarked()){
 				*pnLineNum = nLinePos;				/* マッチ行 */
 				return TRUE;
 			}
@@ -559,7 +559,7 @@ char* CDocLineMgr::GetBookMarks( void )
 	pCDocLine = GetLine( nLinePos );
 	strcpy( szText, "" );
 	while( pCDocLine ){
-		if(pCDocLine->IsBookMarked()){
+		if(pCDocLine->IsBookmarked()){
 			wsprintf( szBuff, "%d,",nLinePos );
 			if(lstrlen(szBuff)+lstrlen(szText)>MAX_MARKLINES_LEN)break;	//2002.01.17
 			strcat( szText, szBuff);
@@ -596,7 +596,7 @@ void CDocLineMgr::MarkSearchWord(
 	if( sSearchOption.bRegularExp ){
 		pDocLine = GetLine( 0 );
 		while( pDocLine ){
-			if(!pDocLine->IsBookMarked()){
+			if(!pDocLine->IsBookmarked()){
 				pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 				// 2005.03.19 かろと 前方一致サポートのためのメソッド変更
 				if( pRegexp->Match( pLine, nLineLen, 0 ) ){
@@ -614,7 +614,7 @@ void CDocLineMgr::MarkSearchWord(
 		int nNextWordFrom2;
 		int nNextWordTo2;
 		while( NULL != pDocLine ){
-			if(!pDocLine->IsBookMarked() &&
+			if(!pDocLine->IsBookmarked() &&
 				WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL )) {
 				const char* pData = pDocLine->m_cLine.GetStringPtr(); // 2002/2/10 aroka CMemory変更
 				
@@ -643,7 +643,7 @@ void CDocLineMgr::MarkSearchWord(
 		);
 		pDocLine = GetLine( 0 );
 		while( NULL != pDocLine ){
-			if(!pDocLine->IsBookMarked()){
+			if(!pDocLine->IsBookmarked()){
 				pLine = pDocLine->m_cLine.GetStringPtr( &nLineLen );
 				pszRes = SearchString(
 					(const unsigned char *)pLine,

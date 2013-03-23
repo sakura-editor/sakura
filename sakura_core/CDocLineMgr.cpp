@@ -843,7 +843,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 		cmemNextLine.SetString( &pLine[nInsPos], nLineLen - nInsPos );
 
 		cEOLTypeNext = pDocLine->m_cEol;
-		bBookMarkNext= pDocLine->IsBookMarked();	// 2001.12.03 hor
+		bBookMarkNext= pDocLine->IsBookmarked();	// 2001.12.03 hor
 	}
 
 	int	nBgn = 0;

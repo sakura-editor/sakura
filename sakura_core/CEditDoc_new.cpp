@@ -1011,7 +1011,7 @@ void CEditDoc::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 	int		nCharChars;
 
 	for( nLineCount = 0; nLineCount <  nLineLast; ++nLineCount ){
-		if(!m_cDocLineMgr.GetLine(nLineCount)->IsBookMarked())continue;
+		if(!m_cDocLineMgr.GetLine(nLineCount)->IsBookmarked())continue;
 		pLine = m_cDocLineMgr.GetLineStr( nLineCount, &nLineLen );
 		if( NULL == pLine ){
 			break;
