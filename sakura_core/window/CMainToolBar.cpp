@@ -34,7 +34,7 @@
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
-, m_fontSearchBox(NULL)
+, m_hFontSearchBox(NULL)
 , m_hwndReBar(NULL)
 , m_hwndToolBar(NULL)
 , m_hwndSearchBox(NULL)
@@ -300,10 +300,10 @@ void CMainToolBar::CreateToolBar( void )
 							lf.lfQuality		= GetDllShareData().m_Common.m_sView.m_lf.lfQuality;
 							lf.lfPitchAndFamily	= GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily;
 							_tcsncpy( lf.lfFaceName, GetDllShareData().m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// âÊñ ÇÃÉtÉHÉìÉgÇ…ê›íË	2012/11/27 Uchi
-							m_fontSearchBox = ::CreateFontIndirect( &lf );
-							if( m_fontSearchBox )
+							m_hFontSearchBox = ::CreateFontIndirect( &lf );
+							if( m_hFontSearchBox )
 							{
-								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_fontSearchBox, MAKELONG (TRUE, 0) );
+								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_hFontSearchBox, MAKELONG (TRUE, 0) );
 							}
 
 							//ì¸óÕí∑êßå¿
@@ -369,10 +369,10 @@ void CMainToolBar::DestroyToolBar( void )
 	{
 		if( m_hwndSearchBox )
 		{
-			if( m_fontSearchBox )
+			if( m_hFontSearchBox )
 			{
-				::DeleteObject( m_fontSearchBox );
-				m_fontSearchBox = NULL;
+				::DeleteObject( m_hFontSearchBox );
+				m_hFontSearchBox = NULL;
 			}
 
 			::DestroyWindow( m_hwndSearchBox );

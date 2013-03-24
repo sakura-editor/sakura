@@ -107,7 +107,7 @@
 	CommonからSTypeConfigへ、m_bAutoIndent、m_bAutoIndent_ZENSPACEを移動 2002/04/30 YAZAKI
 
 	Version 33:
-	Commonに、m_lf_khを追加 2002/05/21 ai
+	Commonに、m_lf_kh(後にCommonSetting_Helper::m_lf)を追加 2002/05/21 ai
 	m_nDiffFlgOptを追加 2002.05.27 MIK
 	STypeConfig-ColorにCOLORIDX_DIFF_APPEND,COLORIDX_DIFF_CHANGE,COLORIDX_DIFF_DELETEを追加
 

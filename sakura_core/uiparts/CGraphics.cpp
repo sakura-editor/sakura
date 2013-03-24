@@ -241,11 +241,11 @@ void CGraphics::RestoreTextColors()
 void CGraphics::PushMyFont(HFONT hFont)
 {
 	//ê›íË
-	HFONT hfntOld = (HFONT)SelectObject(m_hdc, hFont);
+	HFONT hFontOld = (HFONT)SelectObject(m_hdc, hFont);
 
 	//ãLò^
 	if(m_vFonts.empty()){
-		m_vFonts.push_back(hfntOld);
+		m_vFonts.push_back(hFontOld);
 	}
 	m_vFonts.push_back(hFont);
 }

@@ -66,7 +66,7 @@ private:
 	HWND		m_hwndSearchBox;	//!< 検索コンボボックス
 
 	//フォント
-	HFONT		m_fontSearchBox;	//!< 検索コンボボックスのフォント
+	HFONT		m_hFontSearchBox;	//!< 検索コンボボックスのフォント
 };
 
 #endif /* SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_ */

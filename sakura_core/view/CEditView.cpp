@@ -1587,7 +1587,7 @@ void CEditView::OnChangeSetting()
 	OnSize( rc.right, rc.bottom );
 
 	/* ƒtƒHƒ“ƒg‚ª•Ï‚í‚Á‚½ */
-	m_cTipWnd.ChangeFont( &(GetDllShareData().m_Common.m_sHelper.m_lf_kh) );
+	m_cTipWnd.ChangeFont( &(GetDllShareData().m_Common.m_sHelper.m_lf) );
 
 
 	/* Ä•`‰æ */

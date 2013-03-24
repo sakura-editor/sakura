@@ -12,7 +12,7 @@
 #include "uiparts/CMenuDrawer.h"
 
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
-	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, int& pointSize );
+	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize );
 
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
@@ -497,7 +497,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	// ai 02/05/23 Add S
 	{// Keword Help Font
 		ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"khlf", L"khps", L"khlfFaceName",
-			common.m_sHelper.m_lf_kh, common.m_sHelper.m_ps_kh );
+			common.m_sHelper.m_lf, common.m_sHelper.m_nPointSize );
 	}// Keword Help Font
 	
 	
@@ -524,7 +524,7 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bNewWindow")			, common.m_sTabBar.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
 
 	ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lfTabFont", L"lfTabFontPs", L"lfTabFaceName",
-		common.m_sTabBar.m_tabFont, common.m_sTabBar.m_tabFontPs );
+		common.m_sTabBar.m_lf, common.m_sTabBar.m_nPointSize );
 	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, LTEXT("bSplitterWndHScroll")	, common.m_sWindow.m_bSplitterWndHScroll );
@@ -2071,12 +2071,12 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
-	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, int& pointSize )
+	const WCHAR* pszKeyLf, const WCHAR* pszKeyPointSize, const WCHAR* pszKeyFaceName, LOGFONT& lf, INT& nPointSize )
 {
 	const WCHAR* pszForm = LTEXT("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d");
 	WCHAR		szKeyData[1024];
 
-	cProfile.IOProfileData( pszSecName, pszKeyPointSize, pointSize );	// 2009.10.01 ryoji
+	cProfile.IOProfileData( pszSecName, pszKeyPointSize, nPointSize );	// 2009.10.01 ryoji
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, pszKeyLf, MakeStringBufferW(szKeyData) ) ){
 			int buf[13];
@@ -2094,13 +2094,13 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 			lf.lfClipPrecision	= buf[10];
 			lf.lfQuality		= buf[11];
 			lf.lfPitchAndFamily	= buf[12];
-			if( pointSize != 0 ){
+			if( nPointSize != 0 ){
 				// DPI変更してもフォントのポイントサイズが変わらないように
 				// ポイント数からピクセル数に変換する
-				lf.lfHeight = -DpiPointsToPixels( abs(pointSize), 10 );	// pointSize: 1/10ポイント単位のサイズ
+				lf.lfHeight = -DpiPointsToPixels( abs(nPointSize), 10 );	// pointSize: 1/10ポイント単位のサイズ
 			}else{
 				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
-				pointSize = DpiPixelsToPoints( abs(lf.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
+				nPointSize = DpiPixelsToPoints( abs(lf.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
 			}
 		}
 	}else{

@@ -163,8 +163,8 @@ struct CommonSetting_TabBar
 
 	BOOL		m_bChgWndByWheel;				//マウスホイールでウィンドウ切り替え	//@@@ 2006.03.26 ryoji
 
-	LOGFONT		m_tabFont;						//タブフォント // 2011.12.01 Moca
-	int			m_tabFontPs;
+	LOGFONT		m_lf;							//タブフォント // 2011.12.01 Moca
+	INT			m_nPointSize;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -455,8 +455,8 @@ struct CommonSetting_Helper
 	TCHAR		m_szMigemoDict[_MAX_PATH];		// migemo dict
 
 	//キーワードヘルプ
-	LOGFONT		m_lf_kh;						// キーワードヘルプのフォント情報		// ai 02/05/21 Add
-	INT			m_ps_kh;						// キーワードヘルプのフォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
+	LOGFONT		m_lf;							// キーワードヘルプのフォント情報		// ai 02/05/21 Add
+	INT			m_nPointSize;					// キーワードヘルプのフォントサイズ（1/10ポイント単位）	// 2009.10.01 ryoji
 
 	//INI内設定のみ
 	int			m_bUseHokan;					// 入力補完機能を使用する
