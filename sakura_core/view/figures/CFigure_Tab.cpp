@@ -4,6 +4,7 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
+#include "window/CEditWnd.h"
 
 //2007.08.28 kobake 追加
 void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView );
@@ -92,7 +93,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 				// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
 				TEXTMETRIC tm;
 				::GetTextMetrics(gr, &tm);
-				LONG lfWeightNormal = CShareData::getInstance()->GetShareData()->m_Common.m_sView.m_lf.lfWeight;
+				LONG lfWeightNormal = pcView->m_pcEditWnd->GetLogfont().lfWeight;
 				_DrawTabArrow(
 					gr,
 					sPos.GetDrawPos().x,

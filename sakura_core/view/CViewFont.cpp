@@ -2,18 +2,19 @@
 #include "CViewFont.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "window/CEditWnd.h"
 
 CViewFont::CViewFont()
 {
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
 
-	LOGFONT	lf;
+	LOGFONT	lf = CEditWnd::getInstance()->GetLogfont();
 
 	/* フォント作成 */
-	m_hFont_HAN = CreateFontIndirect( &(pShareData->m_Common.m_sView.m_lf) );
+	m_hFont_HAN = CreateFontIndirect( &lf );
 
 	/* 太字フォント作成 */
-	lf = pShareData->m_Common.m_sView.m_lf;
+	lf = CEditWnd::getInstance()->GetLogfont();
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
 		lf.lfWeight = 1000;
@@ -21,12 +22,12 @@ CViewFont::CViewFont()
 	m_hFont_HAN_FAT = CreateFontIndirect( &lf );
 
 	/* 下線フォント作成 */
-	lf = pShareData->m_Common.m_sView.m_lf;
+	lf = CEditWnd::getInstance()->GetLogfont();
 	lf.lfUnderline = TRUE;
 	m_hFont_HAN_UL = CreateFontIndirect( &lf );
 
 	/* 太字下線フォント作成 */
-	lf = pShareData->m_Common.m_sView.m_lf;
+	lf = CEditWnd::getInstance()->GetLogfont();
 	lf.lfUnderline = TRUE;
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
@@ -46,15 +47,15 @@ CViewFont::~CViewFont()
 void CViewFont::UpdateFont()
 {
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
-	LOGFONT	lf;
+	LOGFONT	lf = CEditWnd::getInstance()->GetLogfont();
 
 	/* フォント作成 */
 	::DeleteObject( m_hFont_HAN );
-	m_hFont_HAN = CreateFontIndirect( &pShareData->m_Common.m_sView.m_lf );
+	m_hFont_HAN = CreateFontIndirect( &lf );
 
 	/* 太字フォント作成 */
 	::DeleteObject( m_hFont_HAN_FAT );
-	lf = pShareData->m_Common.m_sView.m_lf;
+	lf = CEditWnd::getInstance()->GetLogfont();
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
 		lf.lfWeight = 1000;
@@ -63,13 +64,13 @@ void CViewFont::UpdateFont()
 
 	/* 下線フォント作成 */
 	::DeleteObject( m_hFont_HAN_UL );
-	lf = pShareData->m_Common.m_sView.m_lf;
+	lf = CEditWnd::getInstance()->GetLogfont();
 	lf.lfUnderline = TRUE;
 	m_hFont_HAN_UL = CreateFontIndirect( &lf );
 
 	/* 太字下線フォント作成 */
 	::DeleteObject( m_hFont_HAN_FAT_UL );
-	lf = pShareData->m_Common.m_sView.m_lf;
+	lf = CEditWnd::getInstance()->GetLogfont();
 	lf.lfUnderline = TRUE;
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){

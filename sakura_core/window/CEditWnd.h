@@ -315,6 +315,7 @@ public:
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
 
+	LOGFONT&	GetLogfont();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        ƒƒ“ƒo•Ï”                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

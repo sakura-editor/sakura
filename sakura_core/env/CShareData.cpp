@@ -212,21 +212,23 @@ bool CShareData::InitShareData()
 //	From Here Sept. 19, 2000 JEPRO コメントアウトになっていた初めのブロックを復活しその下をコメントアウト
 //	MS ゴシック標準スタイル10ptに設定
 //		/* LOGFONTの初期化 */
-		memset_raw( &m_pShareData->m_Common.m_sView.m_lf, 0, sizeof( m_pShareData->m_Common.m_sView.m_lf ) );
-		m_pShareData->m_Common.m_sView.m_lf.lfHeight			= DpiPointsToPixels(-10);	// 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
-		m_pShareData->m_Common.m_sView.m_lf.lfWidth				= 0;
-		m_pShareData->m_Common.m_sView.m_lf.lfEscapement		= 0;
-		m_pShareData->m_Common.m_sView.m_lf.lfOrientation		= 0;
-		m_pShareData->m_Common.m_sView.m_lf.lfWeight			= 400;
-		m_pShareData->m_Common.m_sView.m_lf.lfItalic			= 0x0;
-		m_pShareData->m_Common.m_sView.m_lf.lfUnderline			= 0x0;
-		m_pShareData->m_Common.m_sView.m_lf.lfStrikeOut			= 0x0;
-		m_pShareData->m_Common.m_sView.m_lf.lfCharSet			= 0x80;
-		m_pShareData->m_Common.m_sView.m_lf.lfOutPrecision		= 0x3;
-		m_pShareData->m_Common.m_sView.m_lf.lfClipPrecision		= 0x2;
-		m_pShareData->m_Common.m_sView.m_lf.lfQuality			= 0x1;
-		m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily	= 0x31;
-		_tcscpy( m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _T("ＭＳ ゴシック") );
+		LOGFONT lf;
+		memset_raw( &lf, 0, sizeof( lf ) );
+		lf.lfHeight			= DpiPointsToPixels(-10);	// 2009.10.01 ryoji 高DPI対応（ポイント数から算出）
+		lf.lfWidth				= 0;
+		lf.lfEscapement		= 0;
+		lf.lfOrientation		= 0;
+		lf.lfWeight			= 400;
+		lf.lfItalic			= 0x0;
+		lf.lfUnderline			= 0x0;
+		lf.lfStrikeOut			= 0x0;
+		lf.lfCharSet			= 0x80;
+		lf.lfOutPrecision		= 0x3;
+		lf.lfClipPrecision		= 0x2;
+		lf.lfQuality			= 0x1;
+		lf.lfPitchAndFamily	= 0x31;
+		_tcscpy( lf.lfFaceName, _T("ＭＳ ゴシック") );
+		m_pShareData->m_Common.m_sView.m_lf = lf;
 		m_pShareData->m_Common.m_sView.m_nPointSize = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
 
 		InitCharWidthCacheCommon();								// 2008/5/17 Uchi
