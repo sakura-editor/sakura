@@ -1311,7 +1311,7 @@ void CDlgFuncList::SetTree(bool tagjump)
 				text.AppendString( m_pcFuncInfoArr->m_szFilePath );
 				
 				TCHAR linenum[32];
-				int len = auto_sprintf( linenum, _T("(%d,%d): "),
+				auto_sprintf( linenum, _T("(%d,%d): "),
 					pcFuncInfo->m_nFuncLineCRLF,				/* ŒŸos”Ô† */
 					pcFuncInfo->m_nFuncColCRLF					/* ŒŸoŒ…”Ô† */
 				);

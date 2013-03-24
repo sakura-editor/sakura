@@ -365,7 +365,7 @@ void CWSHClient::Execute(wchar_t const *AScript)
 				sThreadParam.view = (CEditView*)m_Data;
 
 				unsigned int nThreadId;
-				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
+				/* HANDLE hThread = (HANDLE) */ _beginthreadex( NULL, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
 				DEBUG_TRACE(_T("Start AbortMacroProc 0x%08x\n"), nThreadId);
 
 				//É}ÉNÉçé¿çs

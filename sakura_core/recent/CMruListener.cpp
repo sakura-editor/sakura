@@ -28,8 +28,6 @@ void CMruListener::OnBeforeLoad(SLoadInfo* pLoadInfo)
 	// Mar. 30, 2003 genta ブックマーク保存のためMRUへ登録
 	_HoldBookmarks_And_AddToMRU();	// ← 新規オープン（ファイル名未設定）では何もしない
 
-	CEditDoc* pcDoc = GetListeningDoc();
-
 	// 文字コード指定は明示的であるか
 	bool bSpecified = IsValidCodeType(pLoadInfo->eCharCode);
 

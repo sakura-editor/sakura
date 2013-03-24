@@ -56,10 +56,10 @@ const DWORD p_helpids[] = {	//12900
 #elif defined(__GNUG__)
 #  define COMPILER_TYPE "G"
 #  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
-#elif __INTEL_COMPILER
+#elif defined(__INTEL_COMPILER)
 #  define COMPILER_TYPE "I"
 #  define COMPILER_VER __INTEL_COMPILER
-#elif __DMC__
+#elif defined(__DMC__)
 #  define COMPILER_TYPE "D"
 #  define COMPILER_VER __DMC__
 #elif defined(_MSC_VER)

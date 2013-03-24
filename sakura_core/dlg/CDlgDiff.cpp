@@ -88,7 +88,6 @@ CDlgDiff::CDlgDiff()
 
 	m_szFile1[0] = 0;
 	m_szFile2[0] = 0;
-	//m_nDiffFlgFile12 = 1;
 	m_nDiffFlgOpt    = 0;
 	m_bIsModified    = false;
 	m_bIsModifiedDst = false;
@@ -241,7 +240,6 @@ void CDlgDiff::SetData( void )
 		int			i;
 		int			nItem;
 		WIN_CHAR	szName[_MAX_PATH];
-		CEditDoc*	pCEditDoc = (CEditDoc*)m_lParam;
 		int			count = 0;
 
 		/* リストのハンドル取得 */

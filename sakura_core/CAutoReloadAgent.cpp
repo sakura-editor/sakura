@@ -48,7 +48,6 @@ void CAutoReloadAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 
 void CAutoReloadAgent::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
-	CEditDoc* pcDoc = GetListeningDoc();
 	//pcDoc->m_cDocFile.m_sFileInfo.cFileTime.SetFILETIME(ftime); //#####Šù‚Éİ’èÏ‚İ‚Ì‚Í‚¸
 }
 

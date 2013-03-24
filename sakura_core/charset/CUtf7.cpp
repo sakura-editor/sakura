@@ -35,8 +35,6 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 */
 int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
 {
-	const char* pr = pSrc;
-
 	int ndecoded_len = 0;
 	char* pbuf;
 	bool bError = false;

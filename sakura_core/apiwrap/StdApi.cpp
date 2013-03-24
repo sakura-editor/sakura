@@ -15,6 +15,7 @@ using namespace std;
 #define DEBUG_SETPIXEL(hdc)
 #endif
 
+#ifndef _UNICODE
 /*!
 	ワイド文字列からマルチバイト文字列を生成する。
 	マルチバイト文字列のために新しいメモリ領域が確保されるので、
@@ -68,6 +69,7 @@ static void DestroyMbString(ACHAR* pMbString)
 {
 	delete[] pMbString;
 }
+#endif	// ndef _UNICODE
 
 
 
@@ -102,7 +104,7 @@ namespace ApiWrap{
 	BOOL MakeSureDirectoryPathExistsW(LPCWSTR szDirPath)
 	{
 		const wchar_t* p=szDirPath-1;
-		while(1){
+		for (;;) {
 			p=wcschr(p+1,L'\\');
 			if(!p)break; //'\\'を走査し終わったので終了
 

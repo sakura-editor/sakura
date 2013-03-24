@@ -726,7 +726,6 @@ bool GetPlugCmdInfoByFuncCode(
 	WCHAR*			pszFuncName				//!< [out] 機能名．この先にはMAX_PLUGIN_ID + 20文字のメモリが必要．
 )
 {
-	CommonSetting& common = GetDllShareData().m_Common;
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
 
 	if (eFuncCode < F_PLUGCOMMAND_FIRST || eFuncCode > F_PLUGCOMMAND_LAST) {
@@ -1731,7 +1730,6 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 void CShareData_IO::ShareData_IO_Statusbar( CDataProfile& cProfile )
 {
 	const WCHAR* pszSecName = LTEXT("Statusbar");
-	CommonSetting& common = GetDllShareData().m_Common;
 	CommonSetting_Statusbar& statusbar = GetDllShareData().m_Common.m_sStatusbar;
 
 	// 表示文字コードの指定
@@ -1802,7 +1800,6 @@ void CShareData_IO::ShareData_IO_MainMenu( CDataProfile& cProfile )
 void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu& mainmenu, bool bOutCmdName)
 {
 	const WCHAR*	pszSecName = LTEXT("MainMenu");
-	CommonSetting&	common = GetDllShareData().m_Common;
 	CMainMenu*		pcMenu;
 	WCHAR	szKeyName[64];
 	WCHAR	szFuncName[MAX_PLUGIN_ID+20];

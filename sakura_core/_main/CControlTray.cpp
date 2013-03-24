@@ -313,7 +313,7 @@ void CControlTray::MessageLoop( void )
 	int ret;
 	
 	//2004.02.17 Moca GetMessageのエラーチェック
-	while ( GetTrayHwnd() != NULL && (ret = ::GetMessage(&msg, NULL, 0, 0 )) ){
+	while ( GetTrayHwnd() != NULL && (ret = ::GetMessage(&msg, NULL, 0, 0 )) != 0 ){
 		if( ret == -1 ){
 			break;
 		}

@@ -199,7 +199,6 @@ static LRESULT CALLBACK WindowProcEdit(
 	LPARAM	lParam 		// second message parameter
 )
 {
-	LRESULT	reult = 0;
 	switch (uMsg) {
 	case WM_GETDLGCODE:
 		return DLGC_WANTALLKEYS;

@@ -123,7 +123,6 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 /* ダイアログデータの設定 */
 void CDlgCompare::SetData( void )
 {
-	CEditDoc*		pCEditDoc = (CEditDoc*)m_lParam;
 	HWND			hwndList;
 	int				nRowNum;
 	EditNode*		pEditNodeArr;

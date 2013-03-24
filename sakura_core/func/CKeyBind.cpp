@@ -75,7 +75,6 @@ HACCEL CKeyBind::CreateAccerelator(
 			}
 		}
 	}
-//	nAccelArrNum = nKeyNameArrNum * 8;
 
 
 	if( nAccelArrNum <= 0 ){
@@ -171,16 +170,11 @@ int CKeyBind::CreateKeyBindList(
 	WCHAR	szFuncNameJapanese[256];
 
 	nValidKeys = 0;
-//	cMemList = "";
-//	cMemList.SetData( "", strlen( "" ) );
 	cMemList.SetString(LTEXT(""));
 	const WCHAR*	pszSHIFT = LTEXT("Shift+");
 	const WCHAR*	pszCTRL  = LTEXT("Ctrl+");
 	const WCHAR*	pszALT   = LTEXT("Alt+");
-//	char*	pszEQUAL = " = ";
 	const WCHAR*	pszTAB   = LTEXT("\t");
-
-//	char*	pszCR = "\n";	//Feb. 17, 2001 JEPRO \n=0x0a=LFが行末コードになってしまうので
 	const WCHAR*	pszCR    = LTEXT("\r\n");	//\r=0x0d=CRを追加
 
 
@@ -205,8 +199,6 @@ int CKeyBind::CreateKeyBindList(
 					cMemList.AppendString( pszALT );
 				}
 				cMemList.AppendString( to_wchar(pKeyNameArr[i].m_szKeyName) );
-//				cMemList.AppendString( pszEQUAL );
-//				cMemList.AppendString( pszTAB );
 				//	Oct. 31, 2001 genta 
 				if( !pcFuncLookup->Funccode2Name(
 					iFunc,
@@ -226,7 +218,6 @@ int CKeyBind::CreateKeyBindList(
 
 				/* 機能ID→関数名，機能名日本語 */
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-//				CMacro::GetFuncInfoByID(
 				CSMacroMgr::GetFuncInfoByID(
 					hInstance,
 					iFunc,
@@ -246,7 +237,6 @@ int CKeyBind::CreateKeyBindList(
 				/* キーマクロに記録可能な機能かどうかを調べる */
 				cMemList.AppendString( pszTAB );
 				//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-//				if( CMacro::CanFuncIsKeyMacro( pKeyNameArr[i].m_nFuncCodeArr[j] ) ){
 				if( CSMacroMgr::CanFuncIsKeyMacro( iFunc ) ){
 					cMemList.AppendString( LTEXT("○") );
 				}else{
@@ -259,7 +249,6 @@ int CKeyBind::CreateKeyBindList(
 			}
 		}
 	}
-//	delete [] pszStr;
 	return nValidKeys;
 }
 
@@ -370,9 +359,6 @@ int CKeyBind::GetKeyStrList(
 {
 	int		i;
 	int		j;
-	const TCHAR*	pszSHIFT = _T("Shift+");
-	const TCHAR*	pszCTRL  = _T("Ctrl+");
-	const TCHAR*	pszALT   = _T("Alt+");
 	int		nAssignedKeysNum;
 
 	nAssignedKeysNum = 0;

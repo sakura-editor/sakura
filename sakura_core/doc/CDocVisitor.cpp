@@ -26,7 +26,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	//改行コードを統一する
 	if(cEol.IsValid()){
 		CLogicInt	nLine = CLogicInt(0);
-		while( 1 ){
+		for (;;) {
 			CDocLine* pcDocLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLine); //#######非効率
 			if(!pcDocLine)break;
 			//改行を置換

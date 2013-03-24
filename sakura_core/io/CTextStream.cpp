@@ -53,7 +53,7 @@ wstring CTextInputStream::ReadLineW()
 {
 	//$$ 非効率だけど今のところは許して。。
 	CMemory line;
-	while(1){
+	for (;;) {
 		int c=getc(GetFp());
 		if(c==EOF)break; //EOFで終了
 		if(c=='\r'){ c=getc(GetFp()); if(c!='\n')ungetc(c,GetFp()); break; } //"\r" または "\r\n" で終了
@@ -114,7 +114,7 @@ void CTextOutputStream::WriteString(
 
 	//1行毎にカキコ。"\n"は"\r\n"に変換しながら出力。ただし、"\r\n"は"\r\r\n"に変換しない。
 	const wchar_t* p = pData;
-	while(1){
+	for (;;) {
 		//\nを検出。ただし\r\nは除外。
 		const wchar_t* q = p;
 		while(q<pEnd){

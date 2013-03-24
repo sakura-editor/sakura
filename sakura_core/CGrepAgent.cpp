@@ -1128,7 +1128,7 @@ int CGrepAgent::DoGrepFile(
 			int nMatchLen;
 			int nIdx = 0;
 			// Jun. 26, 2003 genta 無駄なwhileは削除
-			while( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
+			while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != NULL ){
 				nIdx = pszRes - pLine + nMatchLen;
 				/* Grep結果を、szWorkに格納する */
 				SetGrepResult(
@@ -1170,7 +1170,7 @@ int CGrepAgent::DoGrepFile(
 			//	マッチ箇所を1行から複数検出するケースを標準に，
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
 			//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-			while(1){
+			for (;;) {
 				pszRes = CSearchAgent::SearchString(
 					pCompareData,
 					nLineLen,

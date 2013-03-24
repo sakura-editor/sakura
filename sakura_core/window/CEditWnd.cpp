@@ -1042,9 +1042,8 @@ void CEditWnd::MessageLoop( void )
 		if(ret== 0)break; //WM_QUIT
 		if(ret==-1)break; //GetMessage失敗
 
-		if(0){}
 		//ダイアログメッセージ
-		else if( MyIsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE_Safe(),	&msg ) ){}	//!< 印刷プレビュー 操作バー
+		     if( MyIsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE_Safe(),	&msg ) ){}	//!< 印刷プレビュー 操作バー
 		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
 		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
@@ -2258,12 +2257,10 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				// プラグインコマンド
 				if (cMainMenu->m_nFunc >= F_PLUGCOMMAND_FIRST && cMainMenu->m_nFunc < F_PLUGCOMMAND_LAST) {
 					const CJackManager* pcJackManager = CJackManager::getInstance();
-					const CPlugin* prevPlugin = NULL;
 
 					CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
 					j = -1;
 					for (CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++) {
-						const CPlugin* curPlugin = &(*it)->m_cPlugin;
 						if ((*it)->GetFunctionCode() == cMainMenu->m_nFunc) {
 							//コマンドを登録
 							j = cMainMenu->m_nFunc - F_PLUGCOMMAND_FIRST;

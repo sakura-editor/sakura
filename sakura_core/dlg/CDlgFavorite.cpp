@@ -401,8 +401,6 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	for( nTab = 0; m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
 	{
-		CRecent* pRecent = m_aFavoriteInfo[nTab].m_pRecent;
-
 		hwndList = GetDlgItem( hwndDlg, m_aFavoriteInfo[nTab].m_nId );
 		m_aListViewInfo[nTab].hListView = hwndList;
 		
@@ -759,7 +757,6 @@ void CDlgFavorite::GetFavorite( int nIndex )
 int CDlgFavorite::DeleteSelected()
 {
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
-	const int nLIST_SUBITEM_TEXT = 1;
 	int     nDelItemCount = 0;
 	CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 	if( pRecent ){

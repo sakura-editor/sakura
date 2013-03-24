@@ -476,7 +476,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int nBufLen, int* pnAddressLenfth )
 //	nAlphaCount = 0;
 
 
-	while( 1 ){
+	for (;;) {
 		nBgn = j;
 		while( j < nBufLen &&
 			(

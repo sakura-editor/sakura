@@ -128,10 +128,6 @@ CLayoutInt CCaret::MoveCursor(
 	bool			bVertLineDoNotOFF	//!< [in] カーソル位置縦線を消去しない
 )
 {
-	//必要なインターフェース
-	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-	const STypeConfig* pTypes=&m_pEditDoc->m_cDocType.GetDocumentAttribute();
-
 	// スクロール処理
 	CLayoutInt	nScrollRowNum = CLayoutInt(0);
 	CLayoutInt	nScrollColNum = CLayoutInt(0);
@@ -383,9 +379,6 @@ BOOL CCaret::GetAdjustCursorPos(
 	CLayoutPoint* pptPosXY
 )
 {
-	//必要なインターフェース
-	const CLayoutMgr* pLayoutMgr=&m_pEditDoc->m_cLayoutMgr;
-
 	// 2004.03.28 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
 	CLayoutInt nLayoutLineCount = m_pEditDoc->m_cLayoutMgr.GetLineCount();
 
@@ -670,7 +663,7 @@ void CCaret::ShowCaretPosInfo()
 				if (ret != RESULT_COMPLETE) {
 					// うまくコードが取れなかった(Unicodeで表示)
 					pCode = CCodeFactory::CreateCodeBase(CODE_UNICODE, false);
-					EConvertResult ret = pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar, psStatusbar);
+					/* EConvertResult ret = */ pCode->UnicodeToHex(&pLine[nIdx], nLineLen - nIdx, szCaretChar, psStatusbar);
 					delete pCode;
 				}
 			}

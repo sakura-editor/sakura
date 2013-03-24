@@ -489,7 +489,7 @@ BOOL CEditView::MakeDiffTmpFile( TCHAR* filename, HWND hWnd )
 
 	CLogicInt y = CLogicInt(0);
 
-	while(1){
+	for (;;) {
 		// 行(改行単位)データの要求 
 		const wchar_t*	pLineData;
 		CLogicInt		nLineLen;

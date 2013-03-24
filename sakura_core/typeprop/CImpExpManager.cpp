@@ -747,8 +747,8 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
 		if( buff.length() < 10 ||
 			auto_memcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
-			auto_memcmp(&buff[7], LTEXT("]="), 2) != 0 ||
-			0 ){
+			auto_memcmp(&buff[7], LTEXT("]="), 2) != 0
+			){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;
 			continue;
@@ -766,9 +766,9 @@ bool CImpExpKeyHelp::Import( const wstring& sFileName, wstring& sErrMsg )
 			}
 		}/* 結果の確認 */
 		if( (p3==NULL) ||			//カンマが1個足りない
-			(p3==p1) ||				//カンマが2個足りない
+			(p3==p1) //||			//カンマが2個足りない
 			//	2007.02.03 genta ファイル名にカンマがあるかもしれない
-			0 //(NULL!=wcsstr(p3,","))	//カンマが多すぎる
+			//(NULL!=wcsstr(p3,","))	//カンマが多すぎる
 		){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;

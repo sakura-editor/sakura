@@ -96,7 +96,7 @@ void CViewCommander::Command_COMPARE( void )
 	/* 行(改行単位)データの要求 */
 	nLineLenDes = ::SendMessageAny( hwndCompareWnd, MYWM_GETLINEDATA, poDes.y, 0 );
 	pLineDes = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<EDIT_CHAR>();
-	while( 1 ){
+	for (;;) {
 		if( pLineSrc == NULL &&	0 == nLineLenDes ){
 			bDefferent = FALSE;
 			break;

@@ -97,8 +97,6 @@ bool CTextArea::TrimRectByArea(RECT* rc) const
 
 bool CTextArea::GenerateClipRect(RECT* rc,const DispPos& sPos,int nHankakuNum) const
 {
-	const CEditView* pView=m_pEditView;
-
 	GenerateCharRect(rc,sPos,nHankakuNum);
 	return TrimRectByArea(rc);
 }
@@ -237,8 +235,6 @@ void CTextArea::TextArea_OnSize(
 	int nCyHScroll             //!< 水平スクロールバーの縦幅
 )
 {
-	const CEditView* pView = m_pEditView;
-
 	m_nViewCx = sizeClient.cx - nCxVScroll - GetAreaLeft(); // 表示域の幅
 	m_nViewCy = sizeClient.cy - nCyHScroll - GetAreaTop();  // 表示域の高さ
 	UpdateViewColRowNums();

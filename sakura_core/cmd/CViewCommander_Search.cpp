@@ -49,8 +49,6 @@ void CViewCommander::Command_SEARCH_BOX( void )
 /* 検索(単語検索ダイアログ) */
 void CViewCommander::Command_SEARCH_DIALOG( void )
 {
-//	int			nRet;
-
 	/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	CNativeW		cmemCurText;
 	m_pCommanderView->GetCurrentTextForSearchDlg( cmemCurText );	// 2006.08.23 ryoji ダイアログ専用関数に変更
@@ -444,7 +442,6 @@ end_of_func:;
 			m_pCommanderView->SendStatusMessage(_T("▲末尾から再検索しました"));
 	}else{
 		m_pCommanderView->SendStatusMessage(_T("△見つかりませんでした"));
-//	if( !bFound ){
 // To Here 2002.01.26 hor
 
 		/* 検索／置換  見つからないときメッセージを表示 */
@@ -539,7 +536,6 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 			GetCaret().MoveCursor( GetSelect().GetFrom(), true );
 		} else {
-//			HandleCommand( F_LEFT, true, 0, 0, 0, 0 );
 			Command_LEFT( false, false );
 		}
 	}
@@ -862,7 +858,6 @@ void CViewCommander::Command_REPLACE_ALL()
 	// 取得にステップがかかりそうな変数などを、一時変数化する。
 	// とはいえ、これらの操作をすることによって得をするクロック数は合わせても 1 ループで数十だと思います。
 	// 数百クロック毎ループのオーダーから考えてもそんなに得はしないように思いますけど・・・。
-	bool bAddCRLFWhenCopy = GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy;
 	BOOL &bCANCEL = cDlgCancel.m_bCANCEL;
 	CDocLineMgr& rDocLineMgr = GetDocument()->m_cDocLineMgr;
 	CLayoutMgr& rLayoutMgr = GetDocument()->m_cLayoutMgr;

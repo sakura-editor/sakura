@@ -71,16 +71,11 @@ BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 */
 LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-//	WPARAM					wCtlFocus;	/* フォーカスを持つコントロールのID */
-//	BOOL					fHandle;	/* wParamが処理するフラグ */
 	int						idCtrl;
 	OFNOTIFY*				pofn;
-//	int						nIdx;
-//	char*					pszWork;
 	WORD					wNotifyCode;
 	WORD					wID;
 	HWND					hwndCtl;
-//	HWND					hwndFrame;
 	static DLLSHAREDATA*	pShareData;
 	switch( uMsg ){
 	case WM_MOVE:
@@ -139,7 +134,6 @@ UINT_PTR CALLBACK OFNHookProc(
 )
 {
 	POINT					po;
-//	RECT					rc0;
 	RECT					rc;
 	static OPENFILENAME*	pOf;
 	static HWND				hwndOpenDlg;
@@ -152,10 +146,7 @@ UINT_PTR CALLBACK OFNHookProc(
 	int						i;
 	OFNOTIFY*				pofn;
 	int						idCtrl;
-//	HWND					hwndCtrl;
 	LRESULT					lRes;
-	const int				nExtraSize = 100;
-	const int				nControls = 9;
 	WORD					wNotifyCode;
 	WORD					wID;
 	HWND					hwndCtl;
@@ -184,14 +175,6 @@ UINT_PTR CALLBACK OFNHookProc(
 	int nEolNameArrNum = (int)_countof(pEolNameArr);
 
 //	To Here	Feb. 9, 2001 genta
-	int	Controls[nControls] = {
-		stc3, stc2,		// The two label controls
-		edt1, cmb1,		// The edit control and the drop-down box
-		IDOK, IDCANCEL,
-		pshHelp,		// The Help command button (push button)
-		lst1,			// The Explorer window
-		chx1			// The read-only check box
-	};
 	int	nRightMargin = 24;
 	HWND	hwndFrame;
 
@@ -555,7 +538,6 @@ CDlgOpenFile::CDlgOpenFile()
 {
 	/* メンバの初期化 */
 	long	lPathLen;
-//	int		nCharChars;
 
 	m_nCharCode = CODE_AUTODETECT;	/* 文字コード *//* 文字コード自動判別 */
 
@@ -602,31 +584,6 @@ CDlgOpenFile::~CDlgOpenFile()
 	return;
 }
 
-
-#if 0
-/*! 初期化
-	DoModal_GetSaveFileName/DoModal_GetOpenFileName用
-	
-	@author Moca
-	@date 2003.06.23
-*/
-void CDlgOpenFile::Create(
-	HINSTANCE		hInstance,
-	HWND			hwndParent,
-	const char*		pszUserWildCard,
-	const char*		pszDefaultPath
-)
-{
-	Create(
-		hInstance,
-		hwndParent,
-		pszUserWildCard,
-		pszDefaultPath,
-		NULL,
-		NULL
-	);
-}
-#endif
 
 /* 初期化 */
 void CDlgOpenFile::Create(

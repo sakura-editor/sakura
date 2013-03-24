@@ -108,7 +108,7 @@ next:
 		}
 		if( bLock ) pcDoc->m_cDocFileOperation.DoFileLock(false);
 	}
-	while(false);
+	while(false);	//	1回しか通らない. breakでここまで飛ぶ
 
 	// ファイルサイズチェック
 	if( GetDllShareData().m_Common.m_sFile.m_bAlertIfLargeFile ){
