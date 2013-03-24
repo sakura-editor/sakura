@@ -410,8 +410,8 @@
 //                      ミューテックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//旧サクラエディタ (1.2.104.1以前)
-#define	GSTR_MUTEX_SAKURA_OLD				_T("MutexSakuraEditor")
+//アプリケーション実行検出用(インストーラで使用)
+#define	GSTR_MUTEX_SAKURA					_T("MutexSakuraEditor")
 
 //コントロールプロセス
 #define	GSTR_MUTEX_SAKURA_CP				(_T("MutexSakuraEditorCP")				_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
