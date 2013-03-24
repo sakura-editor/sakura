@@ -197,11 +197,9 @@ bool CProcessFactory::StartControlProcess()
 
 	TCHAR szCmdLineBuf[1024];	//	コマンドライン
 	TCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
-	TCHAR szDir[MAX_PATH + 1];	//	ディレクトリパス名
 
 	::GetModuleFileName( NULL, szEXE, _countof( szEXE ));
 	::auto_sprintf( szCmdLineBuf, _T("\"%ts\" -NOWIN"), szEXE ); // ""付加
-	::GetSystemDirectory( szDir, _countof( szDir ));
 
 	//常駐プロセス起動
 	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
@@ -216,7 +214,7 @@ bool CProcessFactory::StartControlProcess()
 		FALSE,				// ハンドルの継承オプション
 		dwCreationFlag,		// 作成のフラグ
 		NULL,				// 新しい環境ブロック
-		szDir,				// カレントディレクトリの名前
+		NULL,				// カレントディレクトリの名前
 		&s,					// スタートアップ情報
 		&p					// プロセス情報
 	);
