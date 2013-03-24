@@ -187,9 +187,6 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 */
 void CRuler::DispRuler( HDC hdc )
 {
-	//必要なインターフェース
-	const CommonSetting* pCommon=&GetDllShareData().m_Common;
-
 	//サポート
 	CTypeSupport cRulerType(m_pEditView,COLORIDX_RULER);
 

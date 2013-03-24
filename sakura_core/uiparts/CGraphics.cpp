@@ -431,10 +431,10 @@ void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
 	int x = x1;
 	int y = y1;
 	if(!mx && !my)return;
-	while(1){
+	for (;;) {
 		//ì_ï`âÊ
 		ApiWrap::SetPixelSurely(m_hdc,x,y,c);
-		
+
 		//êiÇﬂÇÈ
 		x+=mx;
 		y+=my;

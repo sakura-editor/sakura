@@ -73,7 +73,6 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	DEBUG_TRACE(_T("Enter SearchNewPlugin\n"));
 #endif
 
-	PluginRec* plugin_table = common.m_sPlugin.m_PluginTable;
 	HANDLE hFind;
 	CZipFile	cZipFile;
 
@@ -175,7 +174,6 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 	DEBUG_TRACE(_T("Enter SearchNewPluginZip\n"));
 #endif
 
-	PluginRec* plugin_table = common.m_sPlugin.m_PluginTable;
 	HANDLE hFind;
 
 	WIN32_FIND_DATA wf;

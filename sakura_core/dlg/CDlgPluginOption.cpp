@@ -106,7 +106,6 @@ void CDlgPluginOption::SetData( void )
 	HWND	hwndList;
 	int		i;
 	LV_ITEM	lvi;
-	int		nNewFocus = -1;
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
 
 	// ƒ^ƒCƒgƒ‹

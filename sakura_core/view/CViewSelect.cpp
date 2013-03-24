@@ -107,9 +107,6 @@ void CViewSelect::ChangeSelectAreaByCurrentCursorTEST(
 	CLayoutRange* pSelect
 )
 {
-	const CEditView* pView=GetEditView();
-	CEditView* pView2=GetEditView();
-
 	if(m_sSelectBgn.GetFrom()==m_sSelectBgn.GetTo()){
 		if( ptCaretPos==m_sSelectBgn.GetFrom() ){
 			// ‘I‘ğ‰ğœ

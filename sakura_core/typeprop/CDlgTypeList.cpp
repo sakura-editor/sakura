@@ -161,7 +161,6 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				}else{
 					::EnableWindow( GetDlgItem( GetHwnd(), IDC_CHECK_EXT_RMENU ), TRUE );
 					if( !m_bRegistryChecked[ nIdx ] ){
-						bool checked = ( BtnCtl_GetCheck( hwndRMenu ) == TRUE ? true : false );
 						TCHAR exts[_countof(types.m_szTypeExts)] = {0};
 						_tcscpy( exts, types.m_szTypeExts );
 						const TCHAR	pszSeps[] = _T(" ;,");	// separator
@@ -200,7 +199,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			int nRet;
 			while( NULL != ext ){
 				if( checked ){	//「右クリック」チェックON
-					if( nRet = RegistExt( ext, true ) )
+					if( (nRet = RegistExt( ext, true )) != 0 )
 					{
 						TCHAR buf[BUFFER_SIZE] = {0};
 						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
@@ -208,7 +207,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 						break;
 					}
 				}else{			//「右クリック」チェックOFF
-					if( nRet = UnregistExt( ext ) )
+					if( (nRet = UnregistExt( ext )) != 0 )
 					{
 						TCHAR buf[BUFFER_SIZE] = {0};
 						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
@@ -237,7 +236,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			TCHAR *ext = _tcstok( exts, pszSeps );
 			int nRet;
 			while( NULL != ext ){
-				if( nRet = RegistExt( ext, checked ) )
+				if( (nRet = RegistExt( ext, checked )) != 0 )
 				{
 					TCHAR buf[BUFFER_SIZE] = {0};
 					::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, NULL, nRet, 0, buf, _countof(buf), NULL ); 
@@ -337,8 +336,6 @@ bool CDlgTypeList::Export()
 	return true;
 }
 
-//void _DefaultConfig(STypeConfig* pType);
-
 // タイプ別設定初期化
 //		2010/4/12 Uchi
 bool CDlgTypeList::InitializeType( void )
@@ -385,16 +382,16 @@ int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstri
 {
 	int errorCode;
 	CRegKey keySrc;
-	if(errorCode = keySrc.Open(srcRoot, srcPath.c_str(), KEY_READ)){ return errorCode; }
+	if((errorCode = keySrc.Open(srcRoot, srcPath.c_str(), KEY_READ)) != 0){ return errorCode; }
 
 	CRegKey keyDest;
-	if(errorCode = keyDest.Open(destRoot, destPath.c_str(), KEY_READ | KEY_WRITE))
+	if((errorCode = keyDest.Open(destRoot, destPath.c_str(), KEY_READ | KEY_WRITE)) != 0)
 	{
-		if( errorCode = keyDest.Create(destRoot, destPath.c_str()) ){ return errorCode; }
+		if( (errorCode = keyDest.Create(destRoot, destPath.c_str())) != 0 ){ return errorCode; }
 	}
 
 	int index = 0;
-	while( 1 )
+	for (;;)
 	{
 		TCHAR szValue[ BUFFER_SIZE ] = {0};
 		BYTE data[ BUFFER_SIZE ] = {0};
@@ -409,14 +406,14 @@ int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstri
 			return errorCode;
 		}else{
 			// 手抜き：データのサイズがBUFFER_SIZE(=1024)を超える場合を考慮していない
-			if( errorCode = keyDest.SetValue(szValue, data, dwDataLen, dwType) ){ return errorCode; }
+			if( (errorCode = keyDest.SetValue(szValue, data, dwDataLen, dwType)) != 0 ){ return errorCode; }
 			index++;
 		}
 	}
 
 	index = 0;
 	TCHAR szSubKey[ BUFFER_SIZE ] = {0};
-	while( 1 )
+	for (;;)
 	{
 		errorCode = keySrc.EnumKey(index, szSubKey, _countof(szSubKey));
 		if( errorCode == ERROR_NO_MORE_ITEMS ){
@@ -438,12 +435,12 @@ int DeleteRegistry(HKEY root, const tstring path)
 {
 	int errorCode;
 	CRegKey keySrc;
-	if(errorCode = keySrc.Open(root, path.c_str(), KEY_READ | KEY_WRITE)){ return ERROR_SUCCESS; }
+	if((errorCode = keySrc.Open(root, path.c_str(), KEY_READ | KEY_WRITE)) != 0){ return ERROR_SUCCESS; }
 
 	int index = 0;
 	index = 0;
 	TCHAR szSubKey[ BUFFER_SIZE ] = {0};
-	while( 1 )
+	for (;;)
 	{
 		errorCode = keySrc.EnumKey(index, szSubKey, _countof(szSubKey));
 		if( errorCode == ERROR_NO_MORE_ITEMS ){
@@ -452,11 +449,11 @@ int DeleteRegistry(HKEY root, const tstring path)
 		}else if( errorCode ){
 			return errorCode;
 		}else{
-			if( errorCode = DeleteRegistry(root, path + _T("\\") + szSubKey) ){ return errorCode; }
+			if( (errorCode = DeleteRegistry(root, path + _T("\\") + szSubKey)) != 0 ){ return errorCode; }
 		}
 	}
 	keySrc.Close();
-	if( errorCode = CRegKey::DeleteKey(root, path.c_str()) ){ return errorCode; }
+	if( (errorCode = CRegKey::DeleteKey(root, path.c_str())) != 0 ){ return errorCode; }
 
 	return errorCode;
 }
@@ -506,15 +503,15 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 
 	CRegKey keyExt_HKLM;
 	TCHAR szProgID_HKLM[ BUFFER_SIZE ] = {0};
-	if(! ( errorCode = keyExt_HKLM.Open(HKEY_LOCAL_MACHINE, sDotExt.c_str(), KEY_READ) ))
+	if( ( errorCode = keyExt_HKLM.Open(HKEY_LOCAL_MACHINE, sDotExt.c_str(), KEY_READ) ) == 0 )
 	{
 		keyExt_HKLM.GetValue(NULL, szProgID_HKLM, _countof(szProgID_HKLM));
 	}
 
 	CRegKey keyExt;
-	if(errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE))
+	if((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE)) != 0)
 	{
-		if( errorCode = keyExt.Create(HKEY_CURRENT_USER, sDotExt.c_str()) ){ return errorCode; }
+		if( (errorCode = keyExt.Create(HKEY_CURRENT_USER, sDotExt.c_str())) != 0 ){ return errorCode; }
 	}
 
 	TCHAR szProgID[ BUFFER_SIZE ] = {0};
@@ -523,9 +520,9 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 	if(_tcscmp( sGenProgID.c_str(), szProgID ) != 0) {
 		if(_tcslen(szProgID) != 0)
 		{
-			if(errorCode = keyExt.SetValue(PROGID_BACKUP_NAME, szProgID)){ return errorCode; }
+			if( (errorCode = keyExt.SetValue(PROGID_BACKUP_NAME, szProgID)) != 0 ){ return errorCode; }
 		} 
-		if( errorCode = keyExt.SetValue(NULL, sGenProgID.c_str()) ){ return errorCode; }
+		if( (errorCode = keyExt.SetValue(NULL, sGenProgID.c_str())) != 0 ){ return errorCode; }
 	}
 
 	tstring sProgIDPath = sBasePath + sGenProgID;
@@ -533,7 +530,7 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 	{
 		if( _tcslen(szProgID_HKLM) != 0 )
 		{
-			if( errorCode = CopyRegistry(HKEY_LOCAL_MACHINE, (sBasePath + szProgID_HKLM).c_str(), HKEY_CURRENT_USER, sProgIDPath.c_str()) ){ return errorCode; }
+			if( (errorCode = CopyRegistry(HKEY_LOCAL_MACHINE, (sBasePath + szProgID_HKLM).c_str(), HKEY_CURRENT_USER, sProgIDPath.c_str())) != 0 ){ return errorCode; }
 		}
 	}
 
@@ -543,22 +540,22 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 	tstring sBackupPath = sShellActionPath + ACTION_BACKUP_PATH;
 
 	CRegKey keyShellActionCommand;
-	if( errorCode = keyShellActionCommand.Open(HKEY_CURRENT_USER, sShellActionCommandPath.c_str(), KEY_READ | KEY_WRITE) )
+	if( (errorCode = keyShellActionCommand.Open(HKEY_CURRENT_USER, sShellActionCommandPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
 	{
-		if( errorCode = keyShellActionCommand.Create(HKEY_CURRENT_USER, sShellActionCommandPath.c_str()) ){ return errorCode; }
+		if( (errorCode = keyShellActionCommand.Create(HKEY_CURRENT_USER, sShellActionCommandPath.c_str())) != 0 ){ return errorCode; }
 	}
 
 	TCHAR sExePath[_MAX_PATH] = {0};
 	::GetModuleFileName( NULL, sExePath, _countof(sExePath) );
 	tstring sCommandPathArg = tstring() + _T("\"") + sExePath + _T("\" \"%1\"");
-	if( errorCode = keyShellActionCommand.SetValue(NULL, sCommandPathArg.c_str()) ){ return errorCode; }
+	if( (errorCode = keyShellActionCommand.SetValue(NULL, sCommandPathArg.c_str())) != 0 ){ return errorCode; }
 
 	CRegKey keyShellAction;
-	if( errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE) ){ return errorCode; }
-	if( errorCode = keyShellAction.SetValue(NULL, _T("Sakura &Editor")) ){ return errorCode; }
+	if( (errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) !=0 ){ return errorCode; }
+	if( (errorCode = keyShellAction.SetValue(NULL, _T("Sakura &Editor"))) != 0 ){ return errorCode; }
 
 	CRegKey keyShell;
-	if( errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE) ){ return errorCode; }
+	if( (errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0 ){ return errorCode; }
 	TCHAR szShellValue[ BUFFER_SIZE ] = {0};
 	keyShell.GetValue(NULL, szShellValue, _countof(szShellValue));
 	if(bDefProg)
@@ -568,9 +565,9 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 			if( szShellValue[0] != '\0')
 			{
 				CRegKey keyBackup;
-				if( errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE) )
+				if( (errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
 				{
-					if( errorCode = keyBackup.Create(HKEY_CURRENT_USER, sBackupPath.c_str()) ){ return errorCode; }
+					if( (errorCode = keyBackup.Create(HKEY_CURRENT_USER, sBackupPath.c_str())) != 0 ){ return errorCode; }
 				}
 				keyBackup.SetValue(NULL, szShellValue);
 			}
@@ -580,7 +577,7 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 	else
 	{
 		CRegKey keyBackup;
-		if( errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE) )
+		if( (errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
 		{
 			keyShell.DeleteValue(_T(""));
 		}
@@ -625,7 +622,7 @@ int UnregistExt(LPCTSTR sExt)
 	tstring sGenProgID = tstring() + szLowerExt + _T("file");
 
 	CRegKey keyExt;
-	if(errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE))
+	if((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE)) != 0)
 	{
 		return errorCode;
 	}
@@ -645,15 +642,15 @@ int UnregistExt(LPCTSTR sExt)
 	tstring sBackupPath = sShellActionPath + ACTION_BACKUP_PATH;
 
 	CRegKey keyShellAction;
-	if( errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE) )
+	if( (errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
 	{
 		return ERROR_SUCCESS;
 	}
 
 	CRegKey keyShell;
-	if( errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE) ){ return errorCode; }
+	if( (errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0 ){ return errorCode; }
 	CRegKey keyBackup;
-	if( errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE) )
+	if( (errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
 	{
 		keyShell.DeleteValue(_T(""));
 	}
@@ -668,17 +665,17 @@ int UnregistExt(LPCTSTR sExt)
 	keyShellAction.Close();
 	if( _tcsncmp(szProgID, _T("SakuraEditor_"), 13) == 0)
 	{
-		if( errorCode = DeleteRegistry(HKEY_CURRENT_USER, sProgIDPath) ){ return errorCode; }
+		if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sProgIDPath)) != 0 ){ return errorCode; }
 
 		TCHAR szBackupValue[ BUFFER_SIZE ] = {0};
 		keyExt.GetValue(PROGID_BACKUP_NAME, szBackupValue, _countof(szBackupValue));
 		if( _tcslen(szBackupValue) != 0 ){
 			keyExt.SetValue(NULL, szBackupValue);
 		}else{
-			if( errorCode = DeleteRegistry(HKEY_CURRENT_USER, sDotExt) ){ return errorCode; }
+			if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sDotExt)) != 0 ){ return errorCode; }
 		}
 	}else{
-		if( errorCode = DeleteRegistry(HKEY_CURRENT_USER, sShellActionPath) ){ return errorCode; }
+		if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sShellActionPath)) != 0 ){ return errorCode; }
 	}
 
 	return ERROR_SUCCESS;
@@ -717,7 +714,7 @@ int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	tstring sGenProgID = tstring() + szLowerExt + _T("file");
 
 	CRegKey keyExt;
-	if(errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ))
+	if((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ)) != 0)
 	{
 		return ERROR_SUCCESS;
 	}
@@ -739,7 +736,7 @@ int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	*pbRMenu = true;
 
 	CRegKey keyShell;
-	if( errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ) ){ return errorCode; }
+	if( (errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ)) != 0 ){ return errorCode; }
 	TCHAR szShellValue[ BUFFER_SIZE ] = {0};
 	keyShell.GetValue(NULL, szShellValue, _countof(szShellValue));
 	if( _tcscmp( szShellValue, ACTION_NAME ) == 0 )

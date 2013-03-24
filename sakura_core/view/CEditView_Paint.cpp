@@ -865,8 +865,6 @@ bool CEditView::DrawLogicLine(
 
 	//サイズ
 	STypeConfig* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
-	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
-	int nCharDx  = GetTextMetrics().GetHankakuDx();  //半角
 
 	//処理する文字位置
 	pInfo->nPosInLogic = CLogicInt(0); //☆開始
@@ -895,7 +893,7 @@ bool CEditView::DrawLogicLine(
 		m_cRegexKeyword->RegexKeyLineStart();
 	}
 
-	while(1){
+	for (;;) {
 		//対象行が描画範囲外だったら終了
 		if( GetTextArea().GetBottomLine() < pInfo->pDispPos->GetLayoutLineRef() ){
 			pInfo->pDispPos->SetLayoutLineRef(nLineTo + CLayoutInt(1));
@@ -978,7 +976,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 
 	// コンフィグ
 	int nLineHeight = GetTextMetrics().GetHankakuDy();  //行の縦幅？
-	STypeConfig* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	CTypeSupport	cCaretLineBg(this, COLORIDX_CARETLINEBG);
 	CTypeSupport&	cBackType = (cCaretLineBg.IsDisp() &&
 		GetCaret().GetCaretLayoutPos().GetY() == pInfo->pDispPos->GetLayoutLineRef() ?  cCaretLineBg : cTextType);
@@ -1079,7 +1076,6 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			int nSelectFromPx = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetFrom().x - view.GetTextArea().GetViewLeftCol());
 			int nSelectToPx   = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetTo().x - view.GetTextArea().GetViewLeftCol());
 			if( nSelectFromPx < nSelectToPx && selectArea.GetTo().x != INT_MAX ){
-				const int nCharWidth = view.GetTextMetrics().GetHankakuDx();
 				RECT rcSelect; // Pixel
 				rcSelect.top    = pInfo->pDispPos->GetDrawPos().y;
 				rcSelect.bottom = pInfo->pDispPos->GetDrawPos().y + view.GetTextMetrics().GetHankakuDy();

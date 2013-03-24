@@ -247,7 +247,7 @@ EConvertResult CFileLoad::ReadLine(
 	//	Oct. 19, 2002 genta while条件を整理
 	int			nBufLineLen;
 	int			nEolLen;
-	while(1){
+	for (;;) {
 		const char* pLine = GetNextLineCharCode(
 			m_pReadBuf,
 			m_nReadDataLen,    //[in] バッファの有効データサイズ

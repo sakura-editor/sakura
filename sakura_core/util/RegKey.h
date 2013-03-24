@@ -52,7 +52,6 @@ public:
 	}
 	int Create(HKEY root, const TCHAR* path, unsigned int access = (KEY_READ | KEY_WRITE))
 	{
-		DWORD result = 0;
 		LONG error = RegCreateKeyEx(root, path, 0, NULL, 0, access, NULL, &_key, NULL);
 		if(error != ERROR_SUCCESS)
 		{
@@ -63,7 +62,6 @@ public:
 	}
 	int Open(HKEY root, const TCHAR* path, unsigned int access = KEY_READ)
 	{
-		DWORD result = 0;
 		LONG error = RegOpenKeyEx(root, path, 0, access, &_key);
 		if(error != ERROR_SUCCESS)
 		{
@@ -86,7 +84,7 @@ public:
 		DWORD dwType = REG_SZ;
 		DWORD nError = 0;
 		DWORD getChars = nMaxChar;
-		if (nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars))
+		if ((nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars)) != 0)
 		{
 			return nError;
 		}
@@ -101,7 +99,7 @@ public:
 		DWORD dwType = REG_BINARY;
 		DWORD nError = 0;
 		DWORD getChars = nMaxChar;
-		if (nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars))
+		if ((nError = RegQueryValueEx(_key, valueName, NULL, &dwType, (LPBYTE)buffer, &getChars)) != 0)
 		{
 			return nError;
 		}
@@ -117,9 +115,8 @@ public:
 		{
 			nMaxChar = (DWORD)_tcslen(buffer) * sizeof(TCHAR);
 		}
-		DWORD dwType = REG_SZ;
 		DWORD nError = 0;
-		if (nError = RegSetValueEx(_key, valueName, 0, REG_SZ, (LPBYTE)buffer, nMaxChar))
+		if ((nError = RegSetValueEx(_key, valueName, 0, REG_SZ, (LPBYTE)buffer, nMaxChar)) != 0)
 		{
 			return nError;
 		}
@@ -128,7 +125,7 @@ public:
 	int SetValue(const TCHAR* valueName, const BYTE* buffer, int nMaxChar, DWORD dwType)
 	{
 		DWORD nError = 0;
-		if (nError = RegSetValueEx(_key, valueName, 0, dwType, (LPBYTE)buffer, nMaxChar))
+		if ((nError = RegSetValueEx(_key, valueName, 0, dwType, (LPBYTE)buffer, nMaxChar)) != 0)
 		{
 			return nError;
 		}

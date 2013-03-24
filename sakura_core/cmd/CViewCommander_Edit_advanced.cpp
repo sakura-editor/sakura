@@ -861,7 +861,7 @@ void CViewCommander::Command_Reconvert(void)
 	}
 
 	//サイズ取得し直し
-	if((UNICODE_BOOL || bUseUnicodeATOK) != UNICODE_BOOL){
+	if (!UNICODE_BOOL && bUseUnicodeATOK) {
 		nSize = m_pCommanderView->SetReconvertStruct(NULL,UNICODE_BOOL || bUseUnicodeATOK);
 		if( 0 == nSize )  // サイズ０の時は何もしない
 			return ;

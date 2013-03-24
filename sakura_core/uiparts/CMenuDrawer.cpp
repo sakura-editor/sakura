@@ -1409,6 +1409,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				::SetTextColor( hdc, ::GetSysColor(nTxSysColor) );
 				::SetBkColor( hdc, RGB(0,0,0) );
 				::BitBlt( hdc, lpdis->rcItem.left+2, lpdis->rcItem.top+2, nCxCheck, nCyCheck, hdcMem, 0, 0, SRCPAINT );
+				::SetTextColor( hdc, colTextOld );
 				::SetBkColor( hdc, colBackOld );
 				::SelectObject( hdcMem, hOld );
 				::DeleteObject( hBmpMono );

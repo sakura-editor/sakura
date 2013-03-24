@@ -25,7 +25,7 @@
 #ifndef SAKURA_STD_MACRO_A4AD5AD7_E307_4F40_A051_F4301FC8DA58_H_
 #define SAKURA_STD_MACRO_A4AD5AD7_E307_4F40_A051_F4301FC8DA58_H_
 
-#define SAFE_DELETE(p) do{ if(p){ delete p; p=0; } }while(0)
+#define SAFE_DELETE(p) { if(p){ delete p; p=0; } }
 
 
 /*

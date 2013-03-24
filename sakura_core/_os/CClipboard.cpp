@@ -81,7 +81,7 @@ bool CClipboard::SetText(
 		//クリップボードに設定
 		::SetClipboardData( CF_UNICODETEXT, hgClipText );
 	}
-	while(0);
+	while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	// バイナリ形式のデータ
 	//	(int) 「データ」の長さ
@@ -109,7 +109,7 @@ bool CClipboard::SetText(
 		//クリップボードに設定
 		::SetClipboardData( uFormatSakuraClip, hgClipSakura );
 	}
-	while(0);
+	while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	// 矩形選択を示すダミーデータ
 	HGLOBAL hgClipMSDEVColm = NULL;
@@ -191,7 +191,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 	//矩形選択や行選択のデータがあれば取得
 	if( NULL != pbColmnSelect || NULL != pbLineSelect ){
 		UINT uFormat = 0;
-		while( uFormat = ::EnumClipboardFormats( uFormat ) ){
+		while( ( uFormat = ::EnumClipboardFormats( uFormat ) ) != 0 ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			TCHAR szFormatName[128];
 			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){

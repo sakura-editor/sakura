@@ -20,8 +20,6 @@ STypeConfig* CTypeConfig::GetTypeConfig()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 void CType::InitTypeConfig(int nIdx)
 {
-	DLLSHAREDATA* pShareData = &GetDllShareData();
-
 	//規定値をコピー
 	static STypeConfig sDefault;
 	static bool bLoadedDefault = false;

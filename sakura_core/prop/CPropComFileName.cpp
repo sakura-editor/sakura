@@ -110,7 +110,6 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 	case WM_NOTIFY:
 		{
 			NMHDR*		pNMHDR = (NMHDR*)lParam;
-			NM_UPDOWN*	pMNUD  = (NM_UPDOWN*)lParam;
 			int			idCtrl = (int)wParam;
 
 			switch( idCtrl ){
@@ -160,7 +159,6 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 		{
 			WORD	wNotifyCode = HIWORD(wParam);	// 通知コード
 			WORD	wID = LOWORD(wParam);			// 項目ID､ コントロールID､ またはアクセラレータID
-			HWND	hwndCtl = (HWND) lParam;		// コントロールのハンドル
 			int		nCount;
 
 			switch( wNotifyCode ){

@@ -27,7 +27,7 @@
 #include <string>
 #include "util/string_ex.h"
 
-#define m_delete2(p) do{ if(p){ delete[] p; p=0; } }while(0)
+#define m_delete2(p) { if(p){ delete[] p; p=0; } }
 
 class CMyString{
 public:

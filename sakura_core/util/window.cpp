@@ -106,7 +106,7 @@ void ActivateFrameWindow( HWND hwnd )
 	// 編集ウィンドウでタブまとめ表示の場合は表示位置を復元する
 	CShareData* pInstance = NULL;
 	DLLSHAREDATA* pShareData = NULL;
-	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
+	if( (pInstance = CShareData::getInstance()) != NULL && (pShareData = pInstance->GetShareData()) != NULL ){
 		if( pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
 			if( IsSakuraMainWindow( hwnd ) ){
 				if( pShareData->m_sFlags.m_bEditWndChanging )

@@ -170,7 +170,7 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 
 		SetWindowText(hwnd, sPath);
 	}
-	while(0);
+	while(0);	//	1‰ñ‚µ‚©’Ê‚ç‚È‚¢. break‚Å‚±‚±‚Ü‚Å”ò‚Ô
 
 	return  CallWindowProc(g_pOnFolderProc,hwnd,msg,wparam,lparam);
 }

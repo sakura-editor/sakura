@@ -416,7 +416,7 @@ int CSearchAgent::SearchWord(
 			while( NULL != pDocLine ){
 				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
 				nHitPos		= -1;	// -1:この行でマッチ位置なし
-				while( 1 ){
+				for (;;) {
 					nHitPosOld = nHitPos;
 					nIdxPosOld = nIdxPos;
 					// 長さ０でマッチしたので、この位置で再度マッチしないように、１文字進める
@@ -586,7 +586,7 @@ int CSearchAgent::SearchWord(
 			while( NULL != pDocLine ){
 				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
 				nHitPos = -1;
-				while( 1 ){
+				for (;;) {
 					nHitPosOld = nHitPos;
 					nIdxPosOld = nIdxPos;
 					pszRes = SearchString(

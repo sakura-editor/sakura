@@ -131,7 +131,6 @@ const wchar_t* COutlineErlang::ScanFuncName( const wchar_t* buf, const wchar_t* 
 	}
 	
 	int buf_len = sizeof( m_func ) / sizeof( m_func[0]);
-	const wchar_t *head = buf;
 	int len = p - buf;
 	if( buf[0] == L'\'' ){
 		++buf;

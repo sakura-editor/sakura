@@ -291,7 +291,6 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 {
 	this->CheckPattern( szSearch );
 
-	const bool nestedBracketIsAllowed = true;
 	const wchar_t szDotAlternative[] = L"[^\\r\\n]";
 	const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
 
@@ -593,7 +592,7 @@ bool InitRegexp(
 	
 	LPCTSTR RegexpDll = _T("");
 	
-	if( (pInstance = CShareData::getInstance()) && (pShareData = pInstance->GetShareData()) ){
+	if( (pInstance = CShareData::getInstance()) != NULL && (pShareData = pInstance->GetShareData()) != NULL ){
 		RegexpDll = pShareData->m_Common.m_sSearch.m_szRegexpLib;
 	}
 	//	To Here 2007.08.12 genta

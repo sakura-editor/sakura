@@ -1443,9 +1443,6 @@ void CPrintPreview::Print_DrawLine(
 	HFONT			hFontZen
 )
 {
-	const int MODE_SINGLEBYTE = 1;
-	const int MODE_DOUBLEBYTE = 2;
-
 	TEXTMETRIC	tm;
 
 	/* 全角文字のアセント（文字高）を取得 */
@@ -1612,11 +1609,6 @@ int CALLBACK CPrintPreview::MyEnumFontFamProc(
 */
 void CPrintPreview::CreatePrintPreviewControls( void )
 {
-	int			nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
-	int			nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
-	int			nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
-	int			nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
-
 	/* 印刷プレビュー 操作バー */
 	m_hwndPrintPreviewBar = ::CreateDialogParam(
 		CEditApp::getInstance()->GetAppInstance(),				// handle to application instance

@@ -94,7 +94,7 @@ void CSaveAgent::OnSave(const SSaveInfo& sSaveInfo)
 	//ƒJƒLƒR
 	CWriteManager cWriter;
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&cWriter);
-	EConvertResult eSaveResult = cWriter.WriteFile_From_CDocLineMgr(
+	cWriter.WriteFile_From_CDocLineMgr(
 		pcDoc->m_cDocLineMgr,
 		sSaveInfo
 	);
