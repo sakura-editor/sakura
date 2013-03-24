@@ -39,6 +39,7 @@
 	@date 2002/01/07
 	@date 2002/02/17 YAZAKI 共有メモリを初期化するのはCProcessに移動。
 	@date 2006/04/10 ryoji 初期化完了イベントの処理を追加、異常時の後始末はデストラクタに任せる
+	@date 2013/03/20 novice コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
 */
 bool CControlProcess::InitializeProcess()
 {
@@ -76,6 +77,11 @@ bool CControlProcess::InitializeProcess()
 	if( !CProcess::InitializeProcess() ){
 		return false;
 	}
+
+	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
+	TCHAR szDir[_MAX_PATH];
+	::GetSystemDirectory( szDir, _countof(szDir) );
+	::SetCurrentDirectory( szDir );
 
 	/* 共有データのロード */
 	// 2007.05.19 ryoji 「設定を保存して終了する」オプション処理（sakuext連携用）を追加
