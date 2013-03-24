@@ -31,8 +31,6 @@
 		   distribution.
 */
 
-class CRunningTimer;
-
 #ifndef _CRUNNINGTIMER_H_
 #define _CRUNNINGTIMER_H_
 
@@ -74,8 +72,9 @@ protected:
 	char	m_szText[100];	//!< タイマー名
 	int		m_nDeapth;	//!< このオブジェクトのネストの深さ
 	
+#ifdef _DEBUG
 	static int m_nNestCount;
-	
+#endif
 };
 
 //	Oct. 16, 2002 genta

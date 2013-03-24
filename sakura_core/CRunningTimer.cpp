@@ -15,13 +15,16 @@
 */
 
 #include "StdAfx.h"
+#include <MMSystem.h>
 #include "CRunningTimer.h"
 #include "global.h"
 #include "Debug.h"
 
+#ifdef _DEBUG
+
+#pragma comment(lib, "winmm.lib")
 
 int CRunningTimer::m_nNestCount = 0;
-#ifdef _DEBUG
 
 CRunningTimer::CRunningTimer( const char* pszText )
 {
@@ -46,13 +49,13 @@ CRunningTimer::~CRunningTimer()
 
 void CRunningTimer::Reset()
 {
-	m_nStartTime = GetTickCount();
+	m_nStartTime = timeGetTime();
 }
 
 
 DWORD CRunningTimer::Read()
 {
-	return GetTickCount() - m_nStartTime;
+	return timeGetTime() - m_nStartTime;
 }
 
 /*!
@@ -60,7 +63,7 @@ DWORD CRunningTimer::Read()
 */
 void CRunningTimer::WriteTrace(const char* msg) const
 {
-	MYTRACE_A( "%3d:\"%s\", %d‡_•b : %s\n", m_nDeapth, m_szText, GetTickCount() - m_nStartTime, msg );
+	MYTRACE_A( "%3d:\"%s\", %d‡_•b : %s\n", m_nDeapth, m_szText, timeGetTime() - m_nStartTime, msg );
 }
 #endif
 
