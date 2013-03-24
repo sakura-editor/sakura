@@ -50,9 +50,9 @@ protected:
 	virtual void OnExitProcess();
 
 private:
-	HANDLE			m_hMutex;
-	HANDLE			m_hMutexCP;
-	HANDLE			m_hEventCPInitialized;	// コントロールプロセス初期化完了イベント 2006.04.10 ryoji
+	HANDLE			m_hMutex;				//!< アプリケーション実行検出用ミューテックス
+	HANDLE			m_hMutexCP;				//!< コントロールプロセスミューテックス
+	HANDLE			m_hEventCPInitialized;	//!< コントロールプロセス初期化完了イベント 2006.04.10 ryoji
 	CEditApp*		m_pcEditApp;
 };
 

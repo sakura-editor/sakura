@@ -76,11 +76,11 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 
 #ifdef _DEBUG
 	#ifndef	GSTR_EDITWINDOWNAME
-	#define	GSTR_EDITWINDOWNAME "TextEditorWindow_DEBUG"
+	#define	GSTR_EDITWINDOWNAME _T("TextEditorWindow_DEBUG")
 	#endif
 #else
 	#ifndef	GSTR_EDITWINDOWNAME
-	#define	GSTR_EDITWINDOWNAME "TextEditorWindow"
+	#define	GSTR_EDITWINDOWNAME _T("TextEditorWindow")
 	#endif
 #endif
 
@@ -91,7 +91,7 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 #ifdef _DEBUG
 	#ifndef	GSTR_SYNCOBJ_SAKURA
 	#define	GSTR_SYNCOBJ_SAKURA
-	#define	GSTR_MUTEX_SAKURA_OLD "MutexSakuraEditor_DEBUG"
+	#define	GSTR_MUTEX_SAKURA _T("MutexSakuraEditor_DEBUG")
 	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP_DEBUG")
 	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized_DEBUG")
 	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit_DEBUG")
@@ -100,7 +100,7 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 #else
 	#ifndef	GSTR_SYNCOBJ_SAKURA
 	#define	GSTR_SYNCOBJ_SAKURA
-	#define	GSTR_MUTEX_SAKURA_OLD "MutexSakuraEditor"
+	#define	GSTR_MUTEX_SAKURA _T("MutexSakuraEditor")
 	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP")
 	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized")
 	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit")
@@ -110,29 +110,29 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 
 #ifdef _DEBUG
 	#ifndef	GSTR_CEDITAPP
-#define	GSTR_CEDITAPP "CEditApp_DEBUG"
+#define	GSTR_CEDITAPP _T("CEditApp_DEBUG")
 	#endif
 #else
 	#ifndef	GSTR_CEDITAPP
-	#define	GSTR_CEDITAPP "CEditApp"
+	#define	GSTR_CEDITAPP _T("CEditApp")
 	#endif
 #endif
 
 #ifdef _DEBUG
 	#ifndef	GSTR_SHAREDATA
-	#define	GSTR_SHAREDATA "CShareData_DEBUG"
+	#define	GSTR_SHAREDATA _T("CShareData_DEBUG")
 	#endif
 #else
 	#ifndef	GSTR_SHAREDATA
-	#define	GSTR_SHAREDATA "CShareData"
+	#define	GSTR_SHAREDATA _T("CShareData")
 	#endif
 #endif
 
 //	Dec. 2, 2002 genta
 //	固定ファイル名
-#define FN_APP_ICON "my_appicon.ico"
-#define FN_GREP_ICON "my_grepicon.ico"
-#define FN_TOOL_BMP "my_icons.bmp"
+#define FN_APP_ICON _T("my_appicon.ico")
+#define FN_GREP_ICON _T("my_grepicon.ico")
+#define FN_TOOL_BMP _T("my_icons.bmp")
 
 //	標準アプリケーションアイコンリソース名
 #ifdef _DEBUG
