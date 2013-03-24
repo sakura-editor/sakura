@@ -182,19 +182,19 @@ void CViewCommander::Command_FONT( void )
 	hwndFrame = GetMainWindow();
 
 	/* フォント設定ダイアログ */
-	LOGFONT cLogfont = GetDllShareData().m_Common.m_sView.m_lf;
+	LOGFONT lf = GetDllShareData().m_Common.m_sView.m_lf;
 	INT nPointSize;
 #ifdef USE_UNFIXED_FONT
 	bool bFixedFont = false;
 #else
 	bool bFixedFont = true;
 #endif
-	if( MySelectFont( &cLogfont, &nPointSize, CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), bFixedFont ) ){
-		GetDllShareData().m_Common.m_sView.m_lf = cLogfont;
+	if( MySelectFont( &lf, &nPointSize, CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), bFixedFont ) ){
+		GetDllShareData().m_Common.m_sView.m_lf = lf;
 		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 
 		// 文字幅キャッシュの初期化	// 2008/5/15 Uchi
-		InitCharWidthCache(cLogfont);
+		InitCharWidthCache(lf);
 		InitCharWidthCacheCommon();
 
 //		/* 変更フラグ フォント */

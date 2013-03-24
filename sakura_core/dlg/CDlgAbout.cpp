@@ -367,7 +367,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		// ウィンドウの描画
 		PAINTSTRUCT ps;
 		HFONT hFont;
-		HFONT hOldFont;
+		HFONT hFontOld;
 		TCHAR szText[512];
 
 		hdc = BeginPaint( hWnd, &ps );
@@ -380,9 +380,9 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		// テキスト描画
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
-		hOldFont = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
+		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
 		TextOut( hdc, 2, 0, szText, _tcslen( szText ) );
-		SelectObject( hdc, (HGDIOBJ)hOldFont );
+		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
 		// フォーカス枠描画
 		if( GetFocus() == hWnd )

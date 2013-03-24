@@ -155,12 +155,12 @@ INT_PTR CPropHelper::DispatchEvent(
 			// ai 02/05/21 Add S
 			case IDC_BUTTON_KEYWORDHELPFONT:	/* キーワードヘルプの「フォント」ボタン */
 				{
-					LOGFONT   lf = m_Common.m_sHelper.m_lf_kh;
-					INT fontSize = m_Common.m_sHelper.m_ps_kh;
+					LOGFONT   lf = m_Common.m_sHelper.m_lf;
+					INT nPointSize = m_Common.m_sHelper.m_nPointSize;
 
-					if( MySelectFont( &lf, &fontSize, hwndDlg, false) ){
-						m_Common.m_sHelper.m_lf_kh = lf;
-						m_Common.m_sHelper.m_ps_kh = fontSize;	// 2009.10.01 ryoji
+					if( MySelectFont( &lf, &nPointSize, hwndDlg, false) ){
+						m_Common.m_sHelper.m_lf = lf;
+						m_Common.m_sHelper.m_nPointSize = nPointSize;	// 2009.10.01 ryoji
 					}
 				}
 				return TRUE;

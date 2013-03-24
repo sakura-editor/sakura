@@ -112,13 +112,13 @@ public:
 		ReleaseDC(NULL, hdc);
 
 		m_hFont =NULL;
-		m_hfntOld =NULL;
+		m_hFontOld =NULL;
 	}
 	~LocalCache()
 	{
 		// -- -- å„énññ -- -- //
 		if (m_hFont != NULL) {
-			SelectObject(m_hdc, m_hfntOld);
+			SelectObject(m_hdc, m_hFontOld);
 			DeleteObject(m_hFont);
 		}
 		DeleteDC(m_hdc);
@@ -126,15 +126,15 @@ public:
 	// çƒèâä˙âª
 	void Init( const LOGFONT &lf )
 	{
-		if (m_hfntOld != NULL) {
-			m_hfntOld = (HFONT)SelectObject(m_hdc, m_hfntOld);
-			DeleteObject(m_hfntOld);
+		if (m_hFontOld != NULL) {
+			m_hFontOld = (HFONT)SelectObject(m_hdc, m_hFontOld);
+			DeleteObject(m_hFontOld);
 		}
 
 		m_lf = lf;
 
 		m_hFont = ::CreateFontIndirect( &lf );
-		m_hfntOld = (HFONT)SelectObject(m_hdc,m_hFont);
+		m_hFontOld = (HFONT)SelectObject(m_hdc,m_hFont);
 
 		// -- -- îºäpäÓèÄ -- -- //
 		GetTextExtentPoint32W_AnyBuild(m_hdc,L"x",1,&m_han_size);
@@ -167,7 +167,7 @@ protected:
 	}
 private:
 	HDC m_hdc;
-	HFONT m_hfntOld;
+	HFONT m_hFontOld;
 	HFONT m_hFont;
 	SIZE m_han_size;
 	LOGFONT	m_lf;							// 2008/5/15 Uchi
