@@ -1596,7 +1596,8 @@ LRESULT CEditWnd::DispatchEvent(
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
 		// Font変更の通知 2008/5/17 Uchi
-		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);
+		InitCharWidthCache(GetLogfont());
+		InitCharWidthCacheCommon(); //// aroka
 
 		// メインメニュー	2010/5/16 Uchi
 		LayoutMainMenu();
@@ -4585,3 +4586,12 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 
 	m_CMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
 }
+
+
+LOGFONT& CEditWnd::GetLogfont()
+{
+	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+
+	return pShareData->m_Common.m_sView.m_lf;
+}
+

@@ -616,7 +616,7 @@ void	CDialog::SetMainFont( HWND hTarget )
 	if (hTarget == NULL)	return;
 
 	HFONT	hFont;
-    LOGFONT	lf;
+	LOGFONT	lf;
 
 	// 設定するフォントの高さを取得
 	hFont = (HFONT)SendMessage(hTarget, WM_GETFONT, 0, 0);
@@ -624,7 +624,7 @@ void	CDialog::SetMainFont( HWND hTarget )
 	LONG nfHeight = lf.lfHeight;
 
 	// LOGFONTの作成
-	memset_raw( &lf, 0, sizeof(lf) );
+	lf = m_pShareData->m_Common.m_sView.m_lf;
 	lf.lfHeight			= nfHeight;
 	lf.lfWidth			= 0;
 	lf.lfEscapement		= 0;
@@ -633,12 +633,12 @@ void	CDialog::SetMainFont( HWND hTarget )
 	lf.lfItalic			= FALSE;
 	lf.lfUnderline		= FALSE;
 	lf.lfStrikeOut		= FALSE;
-	lf.lfCharSet		= m_pShareData->m_Common.m_sView.m_lf.lfCharSet;
-	lf.lfOutPrecision	= m_pShareData->m_Common.m_sView.m_lf.lfOutPrecision;
-	lf.lfClipPrecision	= m_pShareData->m_Common.m_sView.m_lf.lfClipPrecision;
-	lf.lfQuality		= m_pShareData->m_Common.m_sView.m_lf.lfQuality;
-	lf.lfPitchAndFamily	= m_pShareData->m_Common.m_sView.m_lf.lfPitchAndFamily;
-	_tcsncpy( lf.lfFaceName, m_pShareData->m_Common.m_sView.m_lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
+	//lf.lfCharSet		= lf.lfCharSet;
+	//lf.lfOutPrecision	= lf.lfOutPrecision;
+	//lf.lfClipPrecision	= lf.lfClipPrecision;
+	//lf.lfQuality		= lf.lfQuality;
+	//lf.lfPitchAndFamily	= lf.lfPitchAndFamily;
+	//_tcsncpy( lf.lfFaceName, lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
 
 	// フォントを作成
 	hFont = CreateFontIndirect(&lf);

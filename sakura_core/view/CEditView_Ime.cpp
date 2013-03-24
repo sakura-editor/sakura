@@ -5,7 +5,7 @@
 #include "doc/CEditDoc.h"
 #include "env/DLLSHAREDATA.h"
 #include "_main/CAppMode.h"
-
+#include "window/CEditWnd.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           IME                               //
@@ -82,7 +82,7 @@ void CEditView::SetIMECompFormFont( void )
 	//
 	HIMC	hIMC = ::ImmGetContext( GetHwnd() );
 	if ( hIMC ){
-		::ImmSetCompositionFont( hIMC, &(GetDllShareData().m_Common.m_sView.m_lf) );
+		::ImmSetCompositionFont( hIMC, &(m_pcEditWnd->GetLogfont()) );
 	}
 	::ImmReleaseContext( GetHwnd() , hIMC );
 }
