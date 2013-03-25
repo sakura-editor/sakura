@@ -469,7 +469,7 @@ protected:
 //	void TraceRgn( HRGN );								/* デバッグ用 リージョン矩形のダンプ */
 	int DispLineNew( HDC, const CLayout* const, int&, int, int&, BOOL, int, BOOL );	/* 行のテキスト／選択状態の描画 */
 	void DispLineNumber( HDC, const CLayout*, int, int );		/* 行番号表示 */
-	void SetCurrentColor( HDC, int );							/* 現在の色を指定 */
+	void SetCurrentColor( HDC, EColorIndexType );				/* 現在の色を指定 */
 	void DispRuler( HDC );										/* ルーラー描画 */
 	void DrawRulerCaret( HDC hdc );								// ルーラーのキャレットのみ描画 2002.02.25 Add By KK
 	int	DispText( HDC, int, int, const char*, int );	/* テキスト表示 */	//@@@ 2002.09.22 YAZAKI
@@ -517,7 +517,7 @@ protected:
 	int Cursor_UPDOWN( int, int );								/* カーソル上下移動処理 */
 	void DrawBracketPair( bool );								/* 対括弧の強調表示 02/09/18 ai */
 	void SetBracketPairPos( bool );								/* 対括弧の強調表示位置設定 03/02/18 ai */
-	int GetColorIndex( HDC, const CLayout* const, int );		/* 指定位置のColorIndexの取得 02/12/13 ai */
+	EColorIndexType GetColorIndex( HDC, const CLayout* const, int );		/* 指定位置のColorIndexの取得 02/12/13 ai */
 	bool IsBracket( const char*, int, int );					/* 括弧判定 03/01/09 ai */
 public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */

@@ -39,7 +39,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 
 	/* 置換先頭位置のレイアウト情報 */
 	CLayout* pLayout = (CLayout*)SearchLineByLayoutY( pArg->nDelLineFrom );
-	int nCurrentLineType = COLORIDX_DEFAULT;
+	EColorIndexType nCurrentLineType = COLORIDX_DEFAULT;
 	CLayout* pLayoutWork = pLayout;
 	nLineWork = pArg->nDelLineFrom;
 

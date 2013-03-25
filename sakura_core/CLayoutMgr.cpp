@@ -453,13 +453,13 @@ CLayout* CLayoutMgr::InsertLineNext( CLayout* pLayoutPrev, CLayout* pLayout )
 	@date 2009.08.28 nasukoji	レイアウト長を引数に追加
 */
 CLayout* CLayoutMgr::CreateLayout(
-	CDocLine*	pCDocLine,
-	int			nLine,
-	int			nOffset,
-	int			nLength,
-	int			nTypePrev,
-	int			nIndent,
-	int			nPosX
+	CDocLine*		pCDocLine,
+	int				nLine,
+	int				nOffset,
+	int				nLength,
+	EColorIndexType	nTypePrev,
+	int				nIndent,
+	int				nPosX
 )
 {
 	CLayout* pLayout = new CLayout;
@@ -633,7 +633,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	int			nRowNum;
 	int			nDelStartLogicalLine;
 	int			nDelStartLogicalPos;
-	int			nCurrentLineType;
+	EColorIndexType	nCurrentLineType;
 	int			nLineWork;
 
 	/* 現在行のデータを取得 */
@@ -755,7 +755,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	int			nInsStartLogicalPos;
 	int			nInsLineNum;
 	int			nRowNum;
-	int			nCurrentLineType;
+	EColorIndexType	nCurrentLineType;
 	int			nLineWork;
 
 
@@ -775,7 +775,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 			nLineWork = 0;
 			nInsStartLogicalLine = m_pcDocLineMgr->GetLineCount();
 			nInsStartLogicalPos  = 0;
-			nCurrentLineType = 0;
+			nCurrentLineType = COLORIDX_DEFAULT;
 		}
 		else{
 			pLine = GetLineStr( m_nLines - 1, &nLineLen );

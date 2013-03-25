@@ -66,8 +66,8 @@ void CLayoutMgr::_DoLayout(
 		2004.03.28 Moca nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	*/
 	int			nPosX;
-	int			nCOMMENTMODE;
-	int			nCOMMENTMODE_Prev;
+	EColorIndexType	nCOMMENTMODE;
+	EColorIndexType	nCOMMENTMODE_Prev;
 	int			nCOMMENTEND;
 	int			nWordBgn;
 	int			nWordLen;
@@ -419,13 +419,13 @@ void CLayoutMgr::_DoLayout(
 		代わりに最終行のコメントモードを終了間際に確認している．
 */
 int CLayoutMgr::DoLayout_Range(
-			CLayout* pLayoutPrev,
-			int		nLineNum,
-			int		nDelLogicalLineFrom,
-			int		nDelLogicalColFrom,
-			int		nCurrentLineType,
-			const CalTextWidthArg*	pctwArg,
-			int*	pnExtInsLineNum
+	CLayout* pLayoutPrev,
+	int		nLineNum,
+	int		nDelLogicalLineFrom,
+	int		nDelLogicalColFrom,
+	EColorIndexType	nCurrentLineType,
+	const CalTextWidthArg*	pctwArg,
+	int*	pnExtInsLineNum
 )
 {
 	int			nLineNumWork;
@@ -442,8 +442,8 @@ int CLayoutMgr::DoLayout_Range(
 	int			nPosX;
 	CLayout*	pLayout;
 	int			nModifyLayoutLinesNew;
-	int			nCOMMENTMODE;
-	int			nCOMMENTMODE_Prev;
+	EColorIndexType	nCOMMENTMODE;
+	EColorIndexType	nCOMMENTMODE_Prev;
 	int			nCOMMENTEND;
 	bool		bNeedChangeCOMMENTMODE = false;	//@@@ 2002.09.23 YAZAKI bAddを名称変更
 	int			nWordBgn;
@@ -1127,7 +1127,7 @@ int CLayoutMgr::Match_Quote( char szQuote, int nPos, int nLineLen, const char* p
 	return nLineLen;
 }
 
-bool CLayoutMgr::CheckColorMODE( int &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine )
+bool CLayoutMgr::CheckColorMODE( EColorIndexType &nCOMMENTMODE, int &nCOMMENTEND, int nPos, int nLineLen, const char* pLine )
 {
 	switch( nCOMMENTMODE ){
 	case COLORIDX_TEXT: // 2002/03/13 novice

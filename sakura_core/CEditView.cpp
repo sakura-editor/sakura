@@ -10335,7 +10335,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 			const char*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLine, &nLineLen, &pcLayout );
 			if( pLine )
 			{
-				int nColorIndex;
+				EColorIndexType nColorIndex;
 				int	OutputX = LineColmnToIndex( pcLayout, nCol );
 				if( bDraw )	{
 					nColorIndex = COLORIDX_BRACKET_PAIR;
@@ -10403,26 +10403,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 /*! 指定位置のColorIndexの取得
 	CEditView::DispLineNewを元にしたためCEditView::DispLineNewに
 	修正があった場合は、ここも修正が必要。
-
-	@par nCOMMENTMODE
-	関数内部で状態遷移のために使われる変数nCOMMENTMODEと状態の関係。
- - COLORIDX_TEXT     : テキスト
- - COLORIDX_COMMENT  : 行コメント
- - COLORIDX_BLOCK1   : ブロックコメント1
- - COLORIDX_SSTRING  : シングルコーテーション
- - COLORIDX_WSTRING  : ダブルコーテーション
- - COLORIDX_KEYWORD1 : 強調キーワード1
- - COLORIDX_CTRLCODE : コントロールコード
- - COLORIDX_DIGIT    : 半角数値
- - COLORIDX_BLOCK2   : ブロックコメント2
- - COLORIDX_KEYWORD2 : 強調キーワード2
- - COLORIDX_URL      : URL
- - COLORIDX_SEARCH   : 検索
- - 1000: 正規表現キーワード
- 	色指定SetCurrentColorを呼ぶときにCOLORIDX_*値を加算するので、
- 	1000～COLORIDX_LASTまでは正規表現で使用する。
 */
-int CEditView::GetColorIndex(
+EColorIndexType CEditView::GetColorIndex(
 		HDC						hdc,
 		const CLayout* const	pcLayout,
 		int						nCol
@@ -10433,12 +10415,12 @@ int CEditView::GetColorIndex(
 
 	const char*				pLine;	//@@@ 2002.09.22 YAZAKI
 	int						nLineLen;
-	int						nCOMMENTMODE;
-	int						nCOMMENTMODE_OLD;
+	EColorIndexType			nCOMMENTMODE;
+	EColorIndexType			nCOMMENTMODE_OLD;
 	int						nCOMMENTEND;
 	int						nCOMMENTEND_OLD;
 	const CLayout*			pcLayout2;
-	int						nColorIndex;
+	EColorIndexType			nColorIndex;
 
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
@@ -10465,7 +10447,6 @@ int CEditView::GetColorIndex(
 	}
 
 	/* 現在の色を指定 */
-	//@SetCurrentColor( hdc, nCOMMENTMODE );
 	nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 
 	if( NULL != pLine ){
@@ -10513,7 +10494,6 @@ searchnext:;
 						nBgn = nPos;
 						bSearchStringMode = TRUE;
 						/* 現在の色を指定 */
-						//@SetCurrentColor( hdc, COLORIDX_SEARCH ); // 2002/03/13 novice
 						nColorIndex = COLORIDX_SEARCH;	// 02/12/18 ai
 					}else
 					if( bSearchStringMode
@@ -10521,7 +10501,6 @@ searchnext:;
 					){
 						nBgn = nPos;
 						/* 現在の色を指定 */
-						//@SetCurrentColor( hdc, nCOMMENTMODE );
 						nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						bSearchStringMode = FALSE;
 						goto searchnext;
@@ -10542,10 +10521,9 @@ searchnext:;
 					{
 						/* 現在の色を指定 */
 						nBgn = nPos;
-						nCOMMENTMODE = 1000 + nMatchColor;	/* 色指定 */	//@@@ 2002.01.04 upd
+						nCOMMENTMODE = (EColorIndexType)(COLORIDX_REGEX_FIRST + nMatchColor);	/* 色指定 */	//@@@ 2002.01.04 upd
 						nCOMMENTEND = nPos + nMatchLen;  /* キーワード文字列の終端をセットする */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );	//@@@ 2002.01.04
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 					}
@@ -10561,7 +10539,6 @@ searchnext:;
 
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 					}else
@@ -10574,7 +10551,6 @@ searchnext:;
 
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						/* この物理行にブロックコメントの終端があるか */
@@ -10589,7 +10565,6 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						/* この物理行にブロックコメントの終端があるか */
@@ -10604,7 +10579,6 @@ searchnext:;
 
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						/* シングルクォーテーション文字列の終端があるか */
@@ -10647,7 +10621,6 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						/* ダブルクォーテーション文字列の終端があるか */
@@ -10691,7 +10664,6 @@ searchnext:;
 						nCOMMENTEND = nPos + nUrlLen;
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 //@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
@@ -10705,7 +10677,6 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_DIGIT;	/* 半角数値である */ // 2002/03/13 novice
 						nCOMMENTEND = nNumLen;
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 //@@@ 2001.02.17 End by MIK: 半角数値を強調表示
@@ -10742,10 +10713,9 @@ searchnext:;
 								if( nIdx >= 0 ){
 									/* 現在の色を指定 */
 									nBgn = nPos;
-									nCOMMENTMODE = COLORIDX_KEYWORD1 + n;
+									nCOMMENTMODE = (EColorIndexType)(COLORIDX_KEYWORD1 + n);
 									nCOMMENTEND = nKeyEnd;
 									if( !bSearchStringMode ){
-										//@SetCurrentColor( hdc, nCOMMENTMODE );
 										nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 									}
 									break;
@@ -10777,7 +10747,6 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
@@ -10790,7 +10759,6 @@ searchnext:;
 						nCOMMENTEND = nCOMMENTEND_OLD;
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
@@ -10809,7 +10777,6 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
@@ -10825,7 +10792,6 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
@@ -10871,7 +10837,6 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
@@ -10917,20 +10882,18 @@ searchnext:;
 						nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 						/* 現在の色を指定 */
 						if( !bSearchStringMode ){
-							//@SetCurrentColor( hdc, nCOMMENTMODE );
 							nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 						}
 						goto SEARCH_START;
 					}
 					break;
 				default:	//@@@ 2002.01.04 add start
-					if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
+					if( nCOMMENTMODE >= COLORIDX_REGEX_FIRST && nCOMMENTMODE <= COLORIDX_REGEX_LAST ){	//正規表現キーワード1～10
 						if( nPos == nCOMMENTEND ){
 							nBgn = nPos;
 							nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 							/* 現在の色を指定 */
 							if( !bSearchStringMode ){
-								//@SetCurrentColor( hdc, nCOMMENTMODE );
 								nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 							}
 							goto SEARCH_START;
@@ -10943,14 +10906,14 @@ searchnext:;
 					nCharChars = 1;
 				}else
 				if( (unsigned char)pLine[nPos] == 0x81 && (unsigned char)pLine[nPos + 1] == 0x40	//@@@ 2001.11.17 upd MIK
-				 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
+				 && (nCOMMENTMODE < COLORIDX_REGEX_FIRST || nCOMMENTMODE > COLORIDX_REGEX_LAST) )	//@@@ 2002.01.04
 				{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
 					nBgn = nPos + 2;
 					nCharChars = 2;
 				}
 				//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
 				else if (pLine[nPos] == ' ' && TypeDataPtr->m_ColorInfoArr[COLORIDX_SPACE].m_bDisp 
-					 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )
+					 && (nCOMMENTMODE < COLORIDX_REGEX_FIRST || nCOMMENTMODE > COLORIDX_REGEX_LAST) )
 				{
 					nBgn = nPos + 1;
 					nCharChars = 1;
@@ -11002,7 +10965,6 @@ searchnext:;
 						}
 						nCOMMENTEND = nCtrlEnd;
 						/* 現在の色を指定 */
-						//@SetCurrentColor( hdc, nCOMMENTMODE );
 						nColorIndex = nCOMMENTMODE;	// 02/12/18 ai
 					}
 				}

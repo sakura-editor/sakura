@@ -40,16 +40,16 @@
 
 
 /* 現在の色を指定 */
-void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
+void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 {
-	int				nColorIdx;
+	EColorIndexType	nColorIdx;
 	COLORREF		colText;
 	COLORREF		colBack;
 //	if( NULL != m_hFontOld ){
 //		::SelectObject( hdc, m_hFontOld );
 //		m_hFontOld = NULL;
 //	}
-	nColorIdx = -1;
+	nColorIdx = (EColorIndexType)(-1);
 	switch( nCOMMENTMODE ){
 // 2002/03/13 novice
 	case COLORIDX_TEXT: /* テキスト */
@@ -80,9 +80,9 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 
 //@@@ 2001.11.17 add start MIK
 	default:	/* 正規表現キーワード */
-		if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 )
+		if( nCOMMENTMODE >= COLORIDX_REGEX_FIRST && nCOMMENTMODE <= COLORIDX_REGEX_LAST )
 		{
-			nColorIdx = nCOMMENTMODE - 1000;	//下駄を履かせているのをはずす
+			nColorIdx = (EColorIndexType)(nCOMMENTMODE - COLORIDX_REGEX_FIRST);	//下駄を履かせているのをはずす
 			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
 			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
 			::SetTextColor( hdc, colText );
@@ -104,11 +104,7 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 
 	}
 
-
-
-
-
-	if( -1 != nColorIdx ){
+	if( (EColorIndexType)(-1) != nColorIdx ){
 		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bDisp ){
 			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
 			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
@@ -126,8 +122,6 @@ void CEditView::SetCurrentColor( HDC hdc, int nCOMMENTMODE )
 			);
 		}
 	}
-
-	return;
 }
 
 

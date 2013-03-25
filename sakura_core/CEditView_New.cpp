@@ -394,26 +394,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	@param          bSelected      選択中か
 	@return EOFを作画したらtrue
 
-	@par nCOMMENTMODE
-	関数内部で状態遷移のために使われる変数nCOMMENTMODEと状態の関係。
-
-// 2002/03/13 novice
- - COLORIDX_TEXT     : テキスト
- - COLORIDX_COMMENT  : 行コメント
- - COLORIDX_BLOCK1   : ブロックコメント1
- - COLORIDX_SSTRING  : シングルコーテーション
- - COLORIDX_WSTRING  : ダブルコーテーション
- - COLORIDX_KEYWORD1 : 強調キーワード1
- - COLORIDX_CTRLCODE : コントロールコード
- - COLORIDX_DIGIT    : 半角数値
- - COLORIDX_BLOCK2   : ブロックコメント2
- - COLORIDX_KEYWORD2 : 強調キーワード2
- - COLORIDX_URL      : URL
- - COLORIDX_SEARCH   : 検索
- - 1000: 正規表現キーワード
- 	色指定SetCurrentColorを呼ぶときにCOLORIDX_*値を加算するので、
- 	1000～COLORIDX_LASTまでは正規表現で使用する。
-
 	@date 2001.12.21 YAZAKI 改行記号の描きかたを変更
  */
 //@@@ 2001.02.17 End by MIK
@@ -438,8 +418,8 @@ int CEditView::DispLineNew(
 
 	const char*				pLine;	//@@@ 2002.09.22 YAZAKI
 	int						nLineLen;
-	int						nCOMMENTMODE;
-	int						nCOMMENTMODE_OLD;
+	EColorIndexType			nCOMMENTMODE;
+	EColorIndexType			nCOMMENTMODE_OLD;
 	int						nCOMMENTEND;
 	int						nCOMMENTEND_OLD;
 	const CLayout*			pcLayout2;
@@ -690,7 +670,7 @@ searchnext:;
 						}
 						/* 現在の色を指定 */
 						nBgn = nPos;
-						nCOMMENTMODE = 1000 + nMatchColor;	/* 色指定 */	//@@@ 2002.01.04 upd
+						nCOMMENTMODE = (EColorIndexType)(COLORIDX_REGEX_FIRST + nMatchColor);	/* 色指定 */	//@@@ 2002.01.04 upd
 						nCOMMENTEND = nPos + nMatchLen;  /* キーワード文字列の終端をセットする */
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );	//@@@ 2002.01.04
@@ -919,7 +899,7 @@ searchnext:;
 									}
 									/* 現在の色を指定 */
 									nBgn = nPos;
-									nCOMMENTMODE = COLORIDX_KEYWORD1 + n;
+									nCOMMENTMODE = (EColorIndexType)(COLORIDX_KEYWORD1 + n);
 									nCOMMENTEND = nKeyEnd;
 									if( !bSearchStringMode ){
 										SetCurrentColor( hdc, nCOMMENTMODE );
@@ -948,7 +928,6 @@ searchnext:;
 				case COLORIDX_KEYWORD8:
 				case COLORIDX_KEYWORD9:
 				case COLORIDX_KEYWORD10:
-				//case 1000:	//正規表現キーワード1～10	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04 del
 					if( nPos == nCOMMENTEND ){
 						if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 							/* テキスト表示 */
@@ -1121,7 +1100,7 @@ searchnext:;
 					}
 					break;
 				default:	//@@@ 2002.01.04 add start
-					if( nCOMMENTMODE >= 1000 && nCOMMENTMODE <= 1099 ){	//正規表現キーワード1～10
+					if( nCOMMENTMODE >= COLORIDX_REGEX_FIRST && nCOMMENTMODE <= COLORIDX_REGEX_LAST ){	//正規表現キーワード1～10
 						if( nPos == nCOMMENTEND ){
 							if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 								/* テキスト表示 */
@@ -1213,8 +1192,7 @@ searchnext:;
 					nCharChars = 1;
 				}else
 				if( (unsigned char)pLine[nPos] == 0x81 && (unsigned char)pLine[nPos + 1] == 0x40	//@@@ 2001.11.17 upd MIK
-				// && nCOMMENTMODE != 1000 )	//@@@ 2002.01.04
-				 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )	//@@@ 2002.01.04
+				 && (nCOMMENTMODE < COLORIDX_REGEX_FIRST || nCOMMENTMODE > COLORIDX_REGEX_LAST) )	//@@@ 2002.01.04
 				{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
 					if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 						/* テキスト表示 */
@@ -1276,7 +1254,7 @@ searchnext:;
 				}
 				//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
 				else if (pLine[nPos] == ' ' && TypeDataPtr->m_ColorInfoArr[COLORIDX_SPACE].m_bDisp 
-					 && (nCOMMENTMODE < 1000 || nCOMMENTMODE > 1099) )
+					 && (nCOMMENTMODE < COLORIDX_REGEX_FIRST || nCOMMENTMODE > COLORIDX_REGEX_LAST) )
 				{
 					nX += DispText( hdc, x + nX * ( nCharWidth ), y, &pLine[nBgn], nPos - nBgn );
 					if( y >= m_nViewAlignTop ){

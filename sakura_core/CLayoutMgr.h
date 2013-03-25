@@ -195,7 +195,7 @@ protected:
 	void _DoLayout( HWND );	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	// 2009.08.28 nasukoji	テキスト最大幅算出用引数追加
-	int DoLayout_Range( CLayout* , int, int, int, int, const CalTextWidthArg*, int* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
+	int DoLayout_Range( CLayout* , int, int, int, EColorIndexType, const CalTextWidthArg*, int* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	void CalculateTextWidth_Range( const CalTextWidthArg* pctwArg );	/* テキストが編集されたら最大幅を算出する */	// 2009.08.28 nasukoji
 	CLayout* DeleteLayoutAsLogical( CLayout*, int, int , int, int, int, int* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , int );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
@@ -217,7 +217,7 @@ private:
 
 	//@@@ 2002.09.22 YAZAKI
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	bool CheckColorMODE( int& nCOMMENTMODE, int& nCOMMENTEND, int nPos, int nLineLen, const char* pLine );
+	bool CheckColorMODE( EColorIndexType& nCOMMENTMODE, int& nCOMMENTEND, int nPos, int nLineLen, const char* pLine );
 	int Match_Quote( char szQuote, int nPos, int nLineLen, const char* pLine );
 
 	//	Oct. 1, 2002 genta インデント幅計算関数群
@@ -230,7 +230,7 @@ private:
 	*/
 	//@@@ 2002.09.23 YAZAKI
 	// 2009.08.15 nasukoji	nPosX引数追加
-	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, int nTypePrev, int nIndent, int nPosX );
+	CLayout* CreateLayout( CDocLine* pCDocLine, int nLine, int nOffset, int nLength, EColorIndexType nTypePrev, int nIndent, int nPosX );
 	CLayout* InsertLineNext( CLayout*, CLayout* );
 	void AddLineBottom( CLayout* );
 
@@ -247,7 +247,7 @@ protected:
 
 	CLayout*		m_pLayoutTop;
 	CLayout*		m_pLayoutBot;
-	int				m_nLineTypeBot;	/*!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
+	EColorIndexType	m_nLineTypeBot;				/*!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 	int				m_nLines;					/* 全物理行数 */
 	int				m_nMaxLineKetas;			/* 折り返し文字数 */
 	BOOL			m_bWordWrap;				/* 英文ワードラップをする */
