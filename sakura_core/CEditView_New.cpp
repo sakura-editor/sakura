@@ -152,7 +152,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	int				nLineTo;
 	int				nX = m_nViewAlignLeft - m_nViewLeftCol * nCharWidth;
 	int				nY;
-	BOOL			bDispBkBitmap = /*TRUE*/FALSE;
 	const CLayout*	pcLayout;
 	HPEN			hPen;
 	HPEN			hPenOld;
@@ -270,7 +269,6 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 				i,
 				nX,
 				nY,
-				bDispBkBitmap,
 				nLineTo,
 				bSelected
 			) ){
@@ -289,30 +287,18 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 		m_hFontOld = NULL;
 	}
 
-//	if( bEOF ){
-//		nTop = ( i + 1 - m_nViewTopLine ) * nLineHeight + m_nViewAlignTop;
-//	}else{
-//		nTop = ( i	   - m_nViewTopLine ) * nLineHeight + m_nViewAlignTop;
-//	}
-	if( bDispBkBitmap ){
-	}else{
-		/* テキストのない部分を背景色で塗りつぶす */
-		if( nY/*nTop*/ < pPs->rcPaint.bottom ){
-			rcBack.left = pPs->rcPaint.left;
-			rcBack.right = pPs->rcPaint.right;
-			rcBack.top = nY/*nTop*/;
-			rcBack.bottom = pPs->rcPaint.bottom;
-//#ifdef _DEBUG
-//			hBrush = ::CreateSolidBrush( RGB( 128, 128,  128 ) );
-//#else
-			hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-//#endif
-			::FillRect( hdc, &rcBack, hBrush );
-			::DeleteObject( hBrush );
+	/* テキストのない部分を背景色で塗りつぶす */
+	if( nY < pPs->rcPaint.bottom ){
+		rcBack.left = pPs->rcPaint.left;
+		rcBack.right = pPs->rcPaint.right;
+		rcBack.top = nY;
+		rcBack.bottom = pPs->rcPaint.bottom;
+		hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+		::FillRect( hdc, &rcBack, hBrush );
+		::DeleteObject( hBrush );
 
-			// 2006.04.29 行部分は行ごとに作画し、ここでは縦線の残りを作画
-			DispVerticalLines( hdc, nY, pPs->rcPaint.bottom, 0, -1 );
-		}
+		// 2006.04.29 行部分は行ごとに作画し、ここでは縦線の残りを作画
+		DispVerticalLines( hdc, nY, pPs->rcPaint.bottom, 0, -1 );
 	}
 
 	::SetTextColor( hdc, crTextOld );
@@ -384,28 +370,20 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 //@@@ 2001.02.17 Start by MIK
 /*! 行のテキスト／選択状態の描画
 	1回で1論理行分を作画する。
-	@param          hdc            作画対象
-	@param          pcLayout       表示を開始するレイアウト
-	@param[in,out]  nLineNum       作画するレイアウト行番号(0開始), 次の物理行に対応するレイアウト行番号
-	@param          x              レイアウト0桁目の作画座標x
-	@param[in,out]  y              作画座標y, 次の作画座標y
-	@param          bDispBkBitmap  背景にビットマップを使用する(事実上は常にFALSE。TRUEの場合背景作画しない)
-	@param          nLineTo        作画終了するレイアウト行番号
-	@param          bSelected      選択中か
+
 	@return EOFを作画したらtrue
 
 	@date 2001.12.21 YAZAKI 改行記号の描きかたを変更
- */
-//@@@ 2001.02.17 End by MIK
-int CEditView::DispLineNew(
-		HDC						hdc,
-		const CLayout* const	pcLayout,
-		int&					nLineNum,
-		int						x,
-		int&					y,
-		BOOL					bDispBkBitmap,
-		int						nLineTo,
-		BOOL					bSelected
+	@date 2007.08.31 kobake 引数 bDispBkBitmap を削除
+*/
+bool CEditView::DispLineNew(
+	HDC						hdc,			//!< 作画対象
+	const CLayout*			pcLayout,		//!< 表示を開始するレイアウト
+	int&					nLineNum,		//!< 作画するレイアウト行番号(0開始), 次の物理行に対応するレイアウト行番号
+	int						x,				//!< レイアウト0桁目の作画座標x
+	int&					y,				//!< 作画座標y, 次の作画座標y
+	int						nLineTo,		//!< 作画終了するレイアウト行番号
+	BOOL					bSelected		//!< 選択中か
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditView::DispLineNew" );
@@ -424,7 +402,7 @@ int CEditView::DispLineNew(
 	int						nCOMMENTEND_OLD;
 	const CLayout*			pcLayout2;
 	int						nColorIndex;
-	int						bEOF = FALSE;
+	bool					bDispEOF = false;
 
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
@@ -1437,25 +1415,24 @@ searchnext:;
 					nX += DispEOF( hdc, x + nX * ( nCharWidth ), y, nCharWidth, nLineHeight, fuOptions,
 						TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
 				}
-				bEOF = TRUE;
+				bDispEOF = true;
 			}
-			if( bDispBkBitmap ){
-			}else{
-				/* 行末背景描画 */
-				rcClip.left = x + nX * ( nCharWidth );
-				rcClip.right = m_nViewAlignLeft + m_nViewCx;
-				rcClip.top = y;
-				rcClip.bottom = y + nLineHeight;
-				if( rcClip.left < m_nViewAlignLeft ){
-					rcClip.left = m_nViewAlignLeft;
-				}
-				if( rcClip.left < rcClip.right &&
-					rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
-					hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-					::FillRect( hdc, &rcClip, hBrush );
-					::DeleteObject( hBrush );
-				}
+
+			/* 行末背景描画 */
+			rcClip.left = x + nX * ( nCharWidth );
+			rcClip.right = m_nViewAlignLeft + m_nViewCx;
+			rcClip.top = y;
+			rcClip.bottom = y + nLineHeight;
+			if( rcClip.left < m_nViewAlignLeft ){
+				rcClip.left = m_nViewAlignLeft;
 			}
+			if( rcClip.left < rcClip.right &&
+				rcClip.left < m_nViewAlignLeft + m_nViewCx && rcClip.right > m_nViewAlignLeft ){
+				hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+				::FillRect( hdc, &rcClip, hBrush );
+				::DeleteObject( hBrush );
+			}
+
 			// 2006.04.29 Moca 選択処理のため縦線処理を追加
 			DispVerticalLines( hdc, y, y + nLineHeight,  0, -1 );
 			if( bSelected ){
@@ -1469,19 +1446,17 @@ end_of_line:;
 	}else{ // NULL == pLineの場合
 		if( y/* + nLineHeight*/ >= m_nViewAlignTop ){
 			int nYPrev = y;
-			
-			if( bDispBkBitmap ){
-			}else{
-				/* 背景描画 */
-				RECT		rcClip;
-				rcClip.left = 0;
-				rcClip.right = m_nViewAlignLeft + m_nViewCx;
-				rcClip.top = y;
-				rcClip.bottom = y + nLineHeight;
-				HBRUSH hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-				::FillRect( hdc, &rcClip, hBrush );
-				::DeleteObject( hBrush );
-			}
+
+			/* 背景描画 */
+			RECT		rcClip;
+			rcClip.left = 0;
+			rcClip.right = m_nViewAlignLeft + m_nViewCx;
+			rcClip.top = y;
+			rcClip.bottom = y + nLineHeight;
+			HBRUSH hBrush = ::CreateSolidBrush( TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+			::FillRect( hdc, &rcClip, hBrush );
+			::DeleteObject( hBrush );
+
 			/* EOF記号の表示 */
 			int nCount = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 			if( nCount == 0 && m_nViewTopLine == 0 && nLineNum == 0 ){
@@ -1492,7 +1467,7 @@ end_of_line:;
 						TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
 				}
 				y += nLineHeight;
-				bEOF = TRUE;
+				bDispEOF = true;
 			}else{
 				if( nCount > 0 && nLineNum == nCount ){
 					const char*	pLine;
@@ -1510,7 +1485,7 @@ end_of_line:;
 								TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF] );
 						}
 						y += nLineHeight;
-						bEOF = TRUE;
+						bDispEOF = true;
 					}
 				}
 			}
@@ -1520,21 +1495,12 @@ end_of_line:;
 	}
 
 end_of_func:;
-	return bEOF;
+	return bDispEOF;
 }
 
 //	May 23, 2000 genta
-/*! 画面描画補助関数:
+/*!	画面描画補助関数:
 	行末の改行マークを改行コードによって書き分ける（メイン）
-
-	@param hdc Device Context Handle
-	@param nPosX 描画座標X
-	@param nPosY 描画座標Y
-	@param nWidth  描画エリアのサイズX
-	@param nHeight 描画エリアのサイズY
-	@param cEol 行末コード種別
-	@param bBold TRUE: 太字
-	@param pColor 色
 
 	@note bBoldがTRUEの時は横に1ドットずらして重ね書きを行うが、
 	あまり太く見えない。
@@ -1542,7 +1508,16 @@ end_of_func:;
 	@date 2001.12.21 YAZAKI 改行記号の描きかたを変更。ペンはこの関数内で作るようにした。
 							矢印の先頭を、sx, syにして描画ルーチン書き直し。
 */
-void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight, CEol cEol, int bBold, COLORREF pColor )
+void CEditView::DrawEOL(
+	HDC hdc,			//!< Device Context Handle
+	int nPosX,			//!< 描画座標X
+	int nPosY,			//!< 描画座標Y
+	int nWidth,			//!< 描画エリアのサイズX
+	int nHeight,		//!< 描画エリアのサイズY
+	CEol cEol,			//!< 行末コード種別
+	int bBold,			//!< TRUE: 太字
+	COLORREF pColor		//!< 色
+)
 {
 	int sx, sy;	//	矢印の先頭
 	HANDLE	hPen;
@@ -1569,21 +1544,6 @@ void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
 			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
 		}
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
-//		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy - ( nHeight * 5 / 20 ) );
-//		if( bBold ){
-//			++sx;
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL);
-//			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), nPosY + ( nHeight * 15/ 20) - ( nHeight * 5 / 20 ) );
-//		}
 		break;
 	case EOL_CR:	//	左向き矢印	// 2007.08.17 ryoji EOL_LF -> EOL_CR
 		sx = nPosX;
@@ -1601,21 +1561,6 @@ void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
 			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
 		}
-//		::MoveToEx( hdc, nPosX, sy, NULL );
-//		::LineTo(   hdc, nPosX + nWidth, sy );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
-//		if( bBold ){
-//			++sy;
-//			::MoveToEx( hdc, nPosX, sy, NULL );
-//			::LineTo(   hdc, nPosX + nWidth, sy );
-//			::MoveToEx( hdc, sx, sy, NULL );
-//			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4);
-//		}
 		break;
 	case EOL_LF:	//	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
 		sx = nPosX + ( nWidth / 2 );
@@ -1633,38 +1578,6 @@ void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
 			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
 		}
-//#if 1
-//		sx = nPosX + nWidth;
-//		sy = nPosY + ( nHeight / 2 );
-//		::MoveToEx( hdc, nPosX, sy, NULL );
-//		::LineTo(   hdc, nPosX + nWidth, sy );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//		::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
-//		if( bBold ){
-//			++sy;
-//			::MoveToEx( hdc, nPosX, sy, NULL );
-//			::LineTo(   hdc, nPosX + nWidth, sy );
-//			::MoveToEx( hdc, sx, sy, NULL );
-//			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4 );
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight / 2 ), NULL );
-//			::LineTo(   hdc, sx - nHeight / 4, sy + nHeight / 4);
-//		}
-//#else
-//		sx = nPosX;
-//		::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
-//		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
-//		::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
-//		::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
-//		if( bBold ){
-//			++sx;
-//			::MoveToEx( hdc, sx + nWidth - 3, nPosY + nHeight * 1 / 4, NULL );
-//			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4);
-//			::LineTo(   hdc, sx, nPosY + nHeight * 3 / 4 );
-//			::LineTo(   hdc, sx + nWidth - 3, nPosY + nHeight * 3 / 4 - nHeight / 4);
-//		}
-//#endif
 		break;
 	case EOL_LFCR:
 		sx = nPosX + ( nWidth / 2 );
@@ -1684,23 +1597,6 @@ void CEditView::DrawEOL( HDC hdc, int nPosX, int nPosY, int nWidth, int nHeight,
 			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
 			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
 		}
-//		sx = nPosX + ( nWidth / 2 );
-//		sy = nPosY + ( nHeight * 1 / 4 );
-//		::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//		::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, sy, NULL );
-//		::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//		::MoveToEx( hdc, sx, sy, NULL);
-//		::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//		if( bBold ){
-//			++sx;
-//			::MoveToEx( hdc, sx, nPosY + ( nHeight * 15 / 20 ), NULL );
-//			::LineTo(   hdc, sx, nPosY + ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, sy, NULL );
-//			::LineTo(   hdc, sx - ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//			::MoveToEx( hdc, sx, sy, NULL);
-//			::LineTo(   hdc, sx + ( nHeight * 5 / 20 ), sy + ( nHeight * 5 / 20 ) );
-//		}
 		break;
 	}
 	::SelectObject( hdc, hPenOld );

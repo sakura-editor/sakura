@@ -467,7 +467,7 @@ protected:
 //	WORD DibNumColors ( VOID FAR * );					/* 情報ブロックのBitCountメンバを参照して、DIBの色数を判断します */
 //	DWORD lread ( int, void*, DWORD );					/* データをすべて読み取る */
 //	void TraceRgn( HRGN );								/* デバッグ用 リージョン矩形のダンプ */
-	int DispLineNew( HDC, const CLayout* const, int&, int, int&, BOOL, int, BOOL );	/* 行のテキスト／選択状態の描画 */
+	bool DispLineNew( HDC, const CLayout*, int&, int, int&, int, BOOL );	/* 行のテキスト／選択状態の描画 */
 	void DispLineNumber( HDC, const CLayout*, int, int );		/* 行番号表示 */
 	void SetCurrentColor( HDC, EColorIndexType );				/* 現在の色を指定 */
 	void DispRuler( HDC );										/* ルーラー描画 */
