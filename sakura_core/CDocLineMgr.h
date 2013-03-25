@@ -24,6 +24,7 @@ class CDocLineMgr;
 
 #include <windows.h>
 #include "global.h" // 2002/2/10 aroka
+#include "CDocLine.h"
 #include "CEol.h" // 2002/2/10 aroka
 #include "etc_uty.h"
 
@@ -138,7 +139,7 @@ public:
 	//@@@ 2002.05.25 MIK
 	void ResetAllDiffMark( void );			/* ·•ª•\¦‚Ì‘S‰ğœ */
 	int SearchDiffMark( int , ESearchDirection , int* ); /* ·•ªŒŸõ */
-	void SetDiffMarkRange( int nMode, int nStartLine, int nEndLine );	/* ·•ª”ÍˆÍ‚Ì“o˜^ */
+	void SetDiffMarkRange( EDiffMark nMode, int nStartLine, int nEndLine );	/* ·•ª”ÍˆÍ‚Ì“o˜^ */
 	bool IsDiffUse( void ) const { return m_bIsDiffUse; }	/* DIFFg—p’† */
 
 // From Here 2002.01.16 hor

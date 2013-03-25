@@ -169,7 +169,7 @@ void CEditView::DispLineNumber(
 		}
 	}
 
-	int type = pCDocLine->IsDiffMarked();
+	EDiffMark type = pCDocLine->IsDiffMarked();
 	{	//DIFF差分マーク表示	//@@@ 2002.05.25 MIK
 		if( type )
 		{

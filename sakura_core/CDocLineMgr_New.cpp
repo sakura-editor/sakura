@@ -27,7 +27,6 @@
 #include "etc_uty.h"
 #include "CRunningTimer.h"
 #include "CDlgCancel.h"
-#include "CDocLine.h"// 2002/2/10 aroka
 #include "CMemory.h"// 2002/2/10 aroka
 #include "CBregexp.h"// 2002/2/10 aroka
 #include "sakura_rc.h"// 2002/2/10 aroka
@@ -680,7 +679,7 @@ void CDocLineMgr::ResetAllDiffMark( void )
 	pDocLine = m_pDocLineTop;
 	while( pDocLine )
 	{
-		pDocLine->SetDiffMark( 0 );
+		pDocLine->SetDiffMark( MARK_DIFF_NONE );
 		pDocLine = pDocLine->m_pNext;
 	}
 
@@ -739,7 +738,7 @@ int CDocLineMgr::SearchDiffMark(
 	@author	MIK
 	@date	2002/05/25
 */
-void CDocLineMgr::SetDiffMarkRange( int nMode, int nStartLine, int nEndLine )
+void CDocLineMgr::SetDiffMarkRange( EDiffMark nMode, int nStartLine, int nEndLine )
 {
 	int	i;
 	CDocLine	*pCDocLine;

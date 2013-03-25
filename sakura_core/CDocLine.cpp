@@ -17,9 +17,8 @@
 #include "CMemory.h"
 
 CDocLine::CDocLine()
-	: m_pPrev( NULL ), m_pNext( NULL )
+: m_pPrev( NULL ), m_pNext( NULL )
 {
-//	m_bMark.m_bAllMark  = 0;
 	m_bMark.m_bMarkArray.m_bModify   = 1;	//true
 	m_bMark.m_bMarkArray.m_bBookMark = 0;	//false
 	m_bMark.m_bMarkArray.m_bDiffMark = 0;
@@ -35,9 +34,9 @@ CDocLine::~CDocLine()
 
 	2002/04/26 YAZAKI
 */
-bool CDocLine::IsEmptyLine( void )
+bool CDocLine::IsEmptyLine() const
 {
-	char* pLine = GetPtr();
+	const char* pLine = GetPtr();
 	int nLineLen = GetLengthWithoutEOL();
 	int i;
 	for ( i = 0; i < nLineLen; i++ ){
