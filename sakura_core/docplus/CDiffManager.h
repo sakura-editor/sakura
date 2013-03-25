@@ -36,11 +36,11 @@ class CGraphics;
 
 //! DIFF情報定数
 enum EDiffMark{
-	MARK_DIFF_NONE		= 0,	//無変更
-	MARK_DIFF_APPEND	= 1,	//追加
-	MARK_DIFF_CHANGE	= 2,	//変更
-	MARK_DIFF_DELETE	= 3,	//削除
-	MARK_DIFF_DEL_EX	= 4,	//削除(EOF以降)
+	MARK_DIFF_NONE		= 0,	//!< 無変更
+	MARK_DIFF_APPEND	= 1,	//!< 追加
+	MARK_DIFF_CHANGE	= 2,	//!< 変更
+	MARK_DIFF_DELETE	= 3,	//!< 削除
+	MARK_DIFF_DEL_EX	= 4,	//!< 削除(EOF以降)
 };
 
 //! DIFF挙動の管理
