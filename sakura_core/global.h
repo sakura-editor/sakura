@@ -198,13 +198,13 @@ inline bool IsValidCodeTypeExceptSJIS(int code)
 	return IsValidCodeType(code) && code!=CODE_SJIS;
 }
 
-SAKURA_CORE_API extern const char* gm_pszCodeNameArr_1[];
-SAKURA_CORE_API extern const char* gm_pszCodeNameArr_2[];
-SAKURA_CORE_API extern const char* gm_pszCodeNameArr_3[];
+SAKURA_CORE_API extern LPCTSTR gm_pszCodeNameArr_1[];
+SAKURA_CORE_API extern LPCTSTR gm_pszCodeNameArr_2[];
+SAKURA_CORE_API extern LPCTSTR gm_pszCodeNameArr_3[];
 
 /* コンボボックス用 自動判別を含む配列 */
 SAKURA_CORE_API extern const int gm_nCodeComboValueArr[];
-SAKURA_CORE_API extern const char* const gm_pszCodeComboNameArr[];
+SAKURA_CORE_API extern LPCTSTR gm_pszCodeComboNameArr[];
 SAKURA_CORE_API extern const int gm_nCodeComboNameArrNum;
 
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka

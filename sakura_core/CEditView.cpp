@@ -6441,7 +6441,7 @@ void CEditView::DrawCaretPosInfo( void )
 	CEditWnd*		pCEditWnd;
 	const CLayout*	pcLayout;
 	// 2002.05.26 Moca  gm_pszCodeNameArr_2 を使う
-	const char* pCodeName = gm_pszCodeNameArr_2[m_pcEditDoc->m_nCharCode];
+	LPCTSTR pCodeName = gm_pszCodeNameArr_2[m_pcEditDoc->m_nCharCode];
 //	2002/04/08 YAZAKI コードの重複を削除
 
 	hwndFrame = ::GetParent( m_hwndParent );
@@ -6572,7 +6572,7 @@ void CEditView::DrawCaretPosInfo( void )
 		}else{
 			strcpy( szText_6, "上書" );
 		}
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)"" );
+		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)_T("") );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 1 | 0, (LPARAM) (LPINT)szText_1 );
 		//	May 12, 2000 genta
 		//	改行コードの表示を追加．後ろの番号を1つずつずらす
@@ -6581,7 +6581,7 @@ void CEditView::DrawCaretPosInfo( void )
 		//	To Here
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 3 | 0, (LPARAM) (LPINT)szText_3 );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 4 | 0, (LPARAM) (LPINT)gm_pszCodeNameArr_1[m_pcEditDoc->m_nCharCode] );
-		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 5 | SBT_OWNERDRAW, (LPARAM) (LPINT)"" );
+		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 5 | SBT_OWNERDRAW, (LPARAM) (LPINT)_T("") );
 		::SendMessage( pCEditWnd->m_hwndStatusBar, SB_SETTEXT, 6 | 0, (LPARAM) (LPINT)szText_6 );
 	}
 
@@ -7892,7 +7892,7 @@ int CEditView::DoGrepFile(
 
 	//	ここでは正規表現コンパイルデータの初期化は不要
 
-	const TCHAR*	pszCodeName; // 2002/08/29 const付加
+	LPCTSTR	pszCodeName; // 2002/08/29 const付加
 	pszCodeName = _T("");
 	nHitCount = 0;
 	nLine = 0;

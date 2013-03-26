@@ -21,40 +21,40 @@
 
 
 #ifdef _DEBUG
-	const char* GSTR_APPNAME = "sakura(デバッグ版)";
+	const char* GSTR_APPNAME = _T("sakura(デバッグ版)");
 #else
-	const char* GSTR_APPNAME = "sakura";
+	const char* GSTR_APPNAME = _T("sakura");
 #endif
 
 
-const char* gm_pszCodeNameArr_1[] = {
-	"SJIS",				/* SJIS */
-	"JIS",				/* JIS */
-	"EUC",				/* EUC */
-	"Unicode",			/* Unicode */
-	"UTF-8",			/* UTF-8 */
-	"UTF-7",			/* UTF-7 */
-	"UniBE"				/* Unicode BigEndian */
+LPCTSTR gm_pszCodeNameArr_1[] = {
+	_T("SJIS"),			/* SJIS */
+	_T("JIS"),			/* JIS */
+	_T("EUC"),			/* EUC */
+	_T("Unicode"),		/* Unicode */
+	_T("UTF-8"),		/* UTF-8 */
+	_T("UTF-7"),		/* UTF-7 */
+	_T("UniBE")			/* Unicode BigEndian */
 };
 
-const char* gm_pszCodeNameArr_2[] = {
-	"SJIS",				/* SJIS */
-	"JIS",				/* JIS */
-	"EUC",				/* EUC */
-	"Uni",				/* Unicode */
-	"UTF-8",			/* UTF-8 */
-	"UTF-7",			/* UTF-7 */
-	"UniBE"				/* Unicode BigEndian */
+LPCTSTR gm_pszCodeNameArr_2[] = {
+	_T("SJIS"),			/* SJIS */
+	_T("JIS"),			/* JIS */
+	_T("EUC"),			/* EUC */
+	_T("Uni"),			/* Unicode */
+	_T("UTF-8"),		/* UTF-8 */
+	_T("UTF-7"),		/* UTF-7 */
+	_T("UniBE")			/* Unicode BigEndian */
 };
 
-const char* gm_pszCodeNameArr_3[] = {
-	"  [SJIS]",			/* SJIS */
-	"  [JIS]",			/* JIS */
-	"  [EUC]",			/* EUC */
-	"  [Unicode]",		/* Unicode */
-	"  [UTF-8]",		/* UTF-8 */
-	"  [UTF-7]",		/* UTF-7 */
-	"  [UniBE]"			/* Unicode BigEndian */
+LPCTSTR gm_pszCodeNameArr_3[] = {
+	_T("  [SJIS]"),		/* SJIS */
+	_T("  [JIS]"),		/* JIS */
+	_T("  [EUC]"),		/* EUC */
+	_T("  [Unicode]"),	/* Unicode */
+	_T("  [UTF-8]"),	/* UTF-8 */
+	_T("  [UTF-7]"),	/* UTF-7 */
+	_T("  [UniBE]")		/* Unicode BigEndian */
 };
 
 const int gm_nCodeComboValueArr[] = {
@@ -67,18 +67,19 @@ const int gm_nCodeComboValueArr[] = {
 	CODE_UTF8,
 	CODE_UTF7
 };
-const char* const	gm_pszCodeComboNameArr[] = {
-	"自動選択",
-	"SJIS",
-	"JIS",
-	"EUC",
-	"Unicode",
-	"UnicodeBE",
-	"UTF-8",
-	"UTF-7"
+
+LPCTSTR	gm_pszCodeComboNameArr[] = {
+	_T("自動選択"),
+	_T("SJIS"),
+	_T("JIS"),
+	_T("EUC"),
+	_T("Unicode"),
+	_T("UnicodeBE"),
+	_T("UTF-8"),
+	_T("UTF-7")
 };
 
-const int gm_nCodeComboNameArrNum = sizeof( gm_nCodeComboValueArr ) / sizeof( gm_nCodeComboValueArr[0] );
+const int gm_nCodeComboNameArrNum = _countof( gm_nCodeComboValueArr );
 
 
 /*! 選択領域描画用パラメータ */

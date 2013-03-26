@@ -1036,24 +1036,34 @@ BOOL CEditDoc::FileRead(
 	/* 文字コードが異なるときに確認する */
 	if( bConfirmCodeChange && bIsExistInMRU ){
 		if (m_nCharCode != fi.m_nCharCode ) {	// MRU の文字コードと判別が異なる
-			char*	pszCodeName = NULL;
-			char*	pszCodeNameNew = NULL;
+			LPCTSTR	pszCodeNameOld = NULL;
+			LPCTSTR	pszCodeNameNew = NULL;
 
 			// gm_pszCodeNameArr_1 を使うように変更 Moca. 2002/05/26
 			if( IsValidCodeType(fi.m_nCharCode) ){
-				pszCodeName = (char*)gm_pszCodeNameArr_1[fi.m_nCharCode];
+				pszCodeNameOld = gm_pszCodeNameArr_1[fi.m_nCharCode];
 			}
 			if( IsValidCodeType(m_nCharCode) ){
-				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[m_nCharCode];
+				pszCodeNameNew = gm_pszCodeNameArr_1[m_nCharCode];
 			}
-			if( pszCodeName != NULL ){
+			if( pszCodeNameOld != NULL ){
 				ConfirmBeep();
 				nRet = MYMESSAGEBOX(
 					m_hWnd,
 					MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
 					_T("文字コード情報"),
-					_T("%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません"),
-					GetFilePath(), pszCodeName, pszCodeName, pszCodeNameNew
+					_T("%s\n")
+					_T("\n")
+					_T("このファイルは、前回は別の文字コード %s で開かれています。\n")
+					_T("前回と同じ文字コードを使いますか？\n")
+					_T("\n")
+					_T("・[はい(Y)]  ＝%s\n")
+					_T("・[いいえ(N)]＝%s\n")
+					_T("・[キャンセル]＝開きません"),
+					GetFilePath(),
+					pszCodeNameOld,
+					pszCodeNameOld,
+					pszCodeNameNew
 				);
 				if( IDYES == nRet ){
 					/* 前回に指定された文字コード種別に変更する */

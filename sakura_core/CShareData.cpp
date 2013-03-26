@@ -1337,13 +1337,13 @@ BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwn
 		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
 		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 		if(nCharCode != CODE_AUTODETECT){
-			char*	pszCodeNameCur = NULL;
-			char*	pszCodeNameNew = NULL;
+			LPCTSTR	pszCodeNameCur = NULL;
+			LPCTSTR	pszCodeNameNew = NULL;
 			if( IsValidCodeType(nCharCode) ){
-				pszCodeNameNew = (char*)gm_pszCodeNameArr_1[nCharCode];
+				pszCodeNameNew = gm_pszCodeNameArr_1[nCharCode];
 			}
 			if( IsValidCodeType(pfi->m_nCharCode) ){
-				pszCodeNameCur = (char*)gm_pszCodeNameArr_1[pfi->m_nCharCode];
+				pszCodeNameCur = gm_pszCodeNameArr_1[pfi->m_nCharCode];
 			}
 
 			if(NULL != pszCodeNameCur && pszCodeNameNew){
