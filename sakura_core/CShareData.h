@@ -312,7 +312,7 @@ struct STypeConfig {
 	char				m_szExtHtmlHelp[_MAX_PATH];		/* 外部HTMLヘルプ */
 	bool				m_bHtmlHelpIsSingle;			/* HtmlHelpビューアはひとつ */
 
-	int					m_eDefaultCodetype;				/* デフォルト文字コード */
+	ECodeType			m_eDefaultCodetype;				/* デフォルト文字コード */
 	int					m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
 	bool				m_bDefaultBom;					/* デフォルトBOM */	// 2011.01.24 ryoji
 
@@ -669,7 +669,7 @@ struct CommonSetting_Search
 	BOOL				m_bGrepOutputLine;				// Grep: 行を出力するか該当部分だけ出力するか
 	int					m_nGrepOutputStyle;				// Grep: 出力形式
 	int					m_bGrepDefaultFolder;			// Grep: フォルダの初期値をカレントフォルダにする
-	int					m_nGrepCharSet;					// Grep: 文字コードセット // 2002/09/20 Moca Add
+	ECodeType			m_nGrepCharSet;					// Grep: 文字コードセット // 2002/09/20 Moca Add
 
 	BOOL				m_bCaretTextForSearch;			// カーソル位置の文字列をデフォルトの検索文字列にする 2006.08.23 ryoji
 	TCHAR				m_szRegexpLib[_MAX_PATH];		// 使用する正規表現DLL 2007.08.22 genta

@@ -130,7 +130,7 @@ CEditDoc::CEditDoc()
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 
 	// 文字コード種別を初期化
-	m_nCharCode = (ECodeType)( m_pShareData->m_Types[0].m_eDefaultCodetype );
+	m_nCharCode = m_pShareData->m_Types[0].m_eDefaultCodetype;
 	m_bBomExist = m_pShareData->m_Types[0].m_bDefaultBom;
 	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
 }
@@ -204,7 +204,7 @@ void CEditDoc::InitDoc()
 	SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	m_nCharCode = (ECodeType)( m_pShareData->m_Types[0].m_eDefaultCodetype );
+	m_nCharCode = m_pShareData->m_Types[0].m_eDefaultCodetype;
 	m_bBomExist = m_pShareData->m_Types[0].m_bDefaultBom;
 	SetNewLineCode( static_cast<EEolType>(m_pShareData->m_Types[0].m_eDefaultEoltype) );
 
@@ -533,7 +533,7 @@ void CEditDoc::OnChangeType()
 	if( !IsValidPath() ){
 		if( !IsModified()  && m_cDocLineMgr.GetLineCount() == 0 ){
 			STypeConfig& types = GetDocumentAttribute();
-			m_nCharCode = (ECodeType)( types.m_eDefaultCodetype );
+			m_nCharCode = types.m_eDefaultCodetype;
 			m_bBomExist = types.m_bDefaultBom;
 			SetNewLineCode( static_cast<EEolType>(types.m_eDefaultEoltype) );
 		}
@@ -1130,7 +1130,7 @@ BOOL CEditDoc::FileRead(
 	}else{
 		// 存在しないときもドキュメントに文字コードを反映する
 		const STypeConfig& type = GetDocumentAttribute();
-		m_nCharCode = (ECodeType)( type.m_eDefaultCodetype );
+		m_nCharCode = type.m_eDefaultCodetype;
 		m_bBomExist = type.m_bDefaultBom;
 
 		//	Oct. 09, 2004 genta フラグに応じて警告を出す（以前の動作）ように

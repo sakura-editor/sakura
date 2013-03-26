@@ -625,7 +625,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "nGrepOutputStyle"		, common.m_sSearch.m_nGrepOutputStyle );
 	cProfile.IOProfileData( pszSecName, "bGrepDefaultFolder"	, common.m_sSearch.m_bGrepDefaultFolder );
 	// 2002/09/21 Moca 追加
-	cProfile.IOProfileData( pszSecName, "nGrepCharSet"			, common.m_sSearch.m_nGrepCharSet );
+	cProfile.IOProfileData( pszSecName, "nGrepCharSet"			, (int&)common.m_sSearch.m_nGrepCharSet );
 	cProfile.IOProfileData( pszSecName, "bGrepRealTime"			, common.m_sSearch.m_bGrepRealTimeView ); // 2003.06.16 Moca
 	cProfile.IOProfileData( pszSecName, "bCaretTextForSearch"	, common.m_sSearch.m_bCaretTextForSearch );	// 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする
 	
@@ -1303,7 +1303,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 		sizeof( types.m_szExtHtmlHelp ));
 	cProfile.IOProfileData( pszSecName, "bHtmlHelpIsSingle"	, types.m_bHtmlHelpIsSingle ); // 2012.06.30 Fix m_bHokanLoHiCase -> m_bHtmlHelpIsSingle
 
-	cProfile.IOProfileData( pszSecName, "eDefaultCodetype"		, types.m_eDefaultCodetype );
+	cProfile.IOProfileData( pszSecName, "eDefaultCodetype"		, (int&)types.m_eDefaultCodetype );
 	cProfile.IOProfileData( pszSecName, "eDefaultEoltype"		, types.m_eDefaultEoltype );
 	cProfile.IOProfileData( pszSecName, "bDefaultBom"			, types.m_bDefaultBom );
 

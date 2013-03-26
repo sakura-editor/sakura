@@ -73,7 +73,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurr
 {
 	m_bSubFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSubFolder;							// Grep: サブフォルダも検索
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;						// 検索オプション
-	m_nGrepCharSet = (ECodeType)m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;				// 文字コードセット
+	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;						// 文字コードセット
 	m_bGrepOutputLine = m_pShareData->m_Common.m_sSearch.m_bGrepOutputLine;					// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;					// Grep: 出力形式
 
