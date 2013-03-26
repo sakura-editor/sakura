@@ -21,7 +21,9 @@
 
 #include "global.h"
 #include "CShareData.h"	// EditInfo, GrepInfo
+
 class CMemory;
+
 /*!	検索オプション
 	20020118 aroka
 */
@@ -85,8 +87,8 @@ public:
 	bool GetEditInfo(EditInfo* fi) const { *fi = m_fi; return true; }
 	bool GetGrepInfo(GrepInfo* gi) const { *gi = m_gi; return true; }
 	int GetGroupId() const {return m_nGroup;}	// 2007.06.26 ryoji
-	LPCSTR GetMacro() const{ return m_pszMacro; }
-	LPCSTR GetMacroType() const{ return m_pszMacroType; }
+	LPCSTR GetMacro() const{ return m_cmMacro.GetStringPtr(); }
+	LPCSTR GetMacroType() const{ return m_cmMacroType.GetStringPtr(); }
 	void ParseCommandLine( LPCTSTR pszCmdLineSrc = NULL );
 
 // member valiables
@@ -100,8 +102,8 @@ private:
 	GrepInfo	m_gi;				//!
 	bool		m_bReadOnly;		//! [out] TRUE: Read Only
 	int			m_nGroup;			//! グループID	// 2007.06.26 ryoji
-	LPSTR		m_pszMacro;			//! [out] マクロファイル名／マクロ文
-	LPSTR		m_pszMacroType;		//! [out] マクロ種別
+	CMemory		m_cmMacro;			//! [out] マクロファイル名／マクロ文
+	CMemory		m_cmMacroType;		//! [out] マクロ種別
 };
 
 ///////////////////////////////////////////////////////////////////////

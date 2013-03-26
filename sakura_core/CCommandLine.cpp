@@ -316,7 +316,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 				}
 			}
 			++pszToken;	//	êÊì™ÇÃ'-'ÇÕskip
-			TCHAR *arg;
+			TCHAR *arg = NULL;
 			int nArgLen;
 			switch( CheckCommandLine( pszToken, nQuoteLen, &arg, &nArgLen ) ){
 			case CMDLINEOPT_X: //	X
@@ -438,18 +438,11 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 				bParseOptDisabled = true;
 				break;
 			case CMDLINEOPT_M:			// 2009.07.19 syat í«â¡
-				{
-					if( m_pszMacro ){ delete[] m_pszMacro; }
-					m_pszMacro = new char[ nArgLen + 1 ];
-					strcpy( m_pszMacro, arg );
-				}
+				m_cmMacro.SetString( arg );
+				m_cmMacro.Replace( "\"\"", "\"" );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.07.19 syat í«â¡
-				{
-					if( m_pszMacroType ){ delete[] m_pszMacroType; }
-					m_pszMacroType = new char[ nArgLen + 1 ];
-					strcpy( m_pszMacroType, arg );
-				}
+				m_cmMacroType.SetString( arg );
 				break;
 			}
 		}
@@ -490,7 +483,5 @@ CCommandLine::CCommandLine()
 	m_gi.nGrepOutputStyle	= 1;
 	m_bReadOnly				= false;
 	m_nGroup				= -1;		// 2007.06.26 ryoji
-	m_pszMacro				= NULL;		// 2009.07.19 syat
-	m_pszMacroType			= NULL;		// 2009.07.19 syat
 }
 /*[EOF]*/
