@@ -87,9 +87,9 @@ CEditDoc::CEditDoc()
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CEditDoc::CEditDoc" );
 
-	m_szFilePath[0] = '\0';			/* 現在編集中のファイルのパス */
-	m_szSaveFilePath[0] = '\0';			/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
-	strcpy( m_szGrepKey, "" );
+	m_szFilePath[0] = _T('\0');			/* 現在編集中のファイルのパス */
+	m_szSaveFilePath[0] = _T('\0');		/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
+	m_szGrepKey[0] = _T('\0');
 
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
@@ -184,7 +184,7 @@ void CEditDoc::Clear()
 void CEditDoc::InitDoc()
 {
 	m_bReadOnly = false;	// 読み取り専用モード
-	strcpy( m_szGrepKey, "" );
+	m_szGrepKey[0] = _T('\0');
 
 	m_bGrepMode = false;	/* Grepモード */
 	m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法
@@ -321,7 +321,7 @@ BOOL CEditDoc::Create(
 */
 void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
 {
-	strcpy( m_szFilePath, szFile );
+	_tcscpy( m_szFilePath, szFile );
 	SetDocumentIcon();
 }
 
@@ -724,7 +724,7 @@ BOOL CEditDoc::OnFileClose()
 	@date 2007.07.20 genta HandleCommandに追加情報を渡す．
 		自動実行マクロで発行したコマンドはキーマクロに保存しない
 */
-void CEditDoc::RunAutoMacro( int idx, const char *pszSaveFilePath )
+void CEditDoc::RunAutoMacro( int idx, LPCTSTR pszSaveFilePath )
 {
 	static bool bRunning = false;
 	if( bRunning )
@@ -734,10 +734,10 @@ void CEditDoc::RunAutoMacro( int idx, const char *pszSaveFilePath )
 	if( m_pcSMacroMgr->IsEnabled(idx) ){
 		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
 			if( NULL != pszSaveFilePath )
-				strcpy( m_szSaveFilePath, pszSaveFilePath );
+				_tcscpy( m_szSaveFilePath, pszSaveFilePath );
 			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
 			HandleCommand(( F_USERMACRO_0 + idx ) | FA_NONRECORD );
-			m_szSaveFilePath[0] = '\0';
+			m_szSaveFilePath[0] = _T('\0');
 		}
 	}
 	bRunning = false;
@@ -860,7 +860,7 @@ BOOL CEditDoc::SelectFont( LOGFONT* plf )
 						多重オープン処理をCEditDoc::IsPathOpenedに移動
 */
 BOOL CEditDoc::FileRead(
-	char*	pszPath,	//!< [in/out]
+	TCHAR*	pszPath,	//!< [in/out]
 	BOOL*	pbOpened,	//!< [out] すでに開かれていたか
 	ECodeType	nCharCode,		/*!< [in] 文字コード種別 */
 	bool	bReadOnly,			/*!< [in] 読み取り専用か */
@@ -902,9 +902,9 @@ BOOL CEditDoc::FileRead(
 		if( w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ){
 			/* 指定フォルダで「開くダイアログ」を表示 */
 			{
-				char*		pszPathNew = new char[_MAX_PATH];
+				TCHAR*		pszPathNew = new TCHAR[_MAX_PATH];
 
-				strcpy( pszPathNew, "" );
+				pszPathNew[0] = _T('\0');
 
 				/* 「ファイルを開く」ダイアログ */
 				nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
@@ -914,7 +914,7 @@ BOOL CEditDoc::FileRead(
 					delete [] pszPathNew;
 					return FALSE;
 				}
-				strcpy( pszPath, pszPathNew );
+				_tcscpy( pszPath, pszPathNew );
 				delete [] pszPathNew;
 				if( !fexist( pszPath ) ){
 					bFileIsExist = FALSE;
@@ -1211,7 +1211,7 @@ BOOL CEditDoc::FileRead(
 			m_cDocLineMgr.SetBookMarks(fi.m_szMarkLines);
 		}
 	}else{
-		strcpy(fi.m_szMarkLines,"");
+		fi.m_szMarkLines[0] = '\0';
 	}
 	GetEditInfo( &fi );
 
@@ -2823,8 +2823,9 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 /*! ルールファイルの1行を管理する構造体
 
 	@date 2002.04.01 YAZAKI
+	@date 2007.11.29 kobake 名前変更: oneRule→SOneRule
 */
-struct oneRule {
+struct SOneRule {
 	char szMatch[256];
 	int  nLength;
 	char szGroupName[256];
@@ -2835,7 +2836,7 @@ struct oneRule {
 	@date 2002.04.01 YAZAKI
 	@date 2002.11.03 Moca 引数nMaxCountを追加。バッファ長チェックをするように変更
 */
-int CEditDoc::ReadRuleFile( const char* pszFilename, oneRule* pcOneRule, int nMaxCount )
+int CEditDoc::ReadRuleFile( const char* pszFilename, SOneRule* pcOneRule, int nMaxCount )
 {
 	long	i;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
@@ -2898,7 +2899,7 @@ void CEditDoc::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 
 	/* ルールファイルの内容をバッファに読み込む */
 	const int nRuleSize = 1024;
-	oneRule* test = new oneRule[nRuleSize];	//	1024個許可。 // 516*1024 = 528,384 byte
+	SOneRule* test = new SOneRule[nRuleSize];	//	1024個許可。 // 516*1024 = 528,384 byte
 	int nCount = ReadRuleFile(GetDocumentAttribute().m_szOutlineRuleFilename, test, nRuleSize );
 	if ( nCount < 1 ){
 		return;
@@ -4631,9 +4632,9 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			//	中身はSetParentCaption()より移植
 			{
 				CMemory		cmemDes;
-				LimitStringLengthB( m_szGrepKey, lstrlen( m_szGrepKey ),
+				LimitStringLengthB( m_szGrepKey, _tcslen( m_szGrepKey ),
 					(q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
-				if( (int)lstrlen( m_szGrepKey ) > cmemDes.GetStringLength() ){
+				if( (int)_tcslen( m_szGrepKey ) > cmemDes.GetStringLength() ){
 					cmemDes.AppendString( "...", 3 );
 				}
 				q = strncpy_ex( q, q_max - q, cmemDes.GetStringPtr(), cmemDes.GetStringLength());

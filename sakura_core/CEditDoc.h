@@ -49,7 +49,7 @@ class CSMacroMgr; // 2002/2/10 aroka
 class CEditWnd; // Sep. 10, 2002 genta
 struct EditInfo; // 20050705 aroka
 class CFuncInfoArr;
-struct oneRule; // 2004.04.11 genta パラメータ内のstructを削除するため．doxygen対策
+struct SOneRule;
 
 /*!
 	文書関連情報の管理
@@ -97,7 +97,7 @@ public:
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
 	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
 	BOOL SelectFont( LOGFONT* );
-	BOOL FileRead( /*const*/ char* , BOOL*, ECodeType, bool, bool );	/* ファイルを開く */
+	BOOL FileRead( /*const*/ TCHAR* , BOOL*, ECodeType, bool, bool );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
 	BOOL FileWrite( const char*, EEolType cEolType );
 	bool SaveFile( const char* path );	//	ファイルの保存（に伴ういろいろ）
@@ -150,9 +150,9 @@ public:
 	void SetImeMode(int mode);	//	IME状態の設定
 
 	//	Sep. 9, 2002 genta
-	const char* GetFilePath(void) const { return m_szFilePath; }
-	const char* GetSaveFilePath(void) const { return (m_szSaveFilePath[0] != '\0')? m_szSaveFilePath: m_szFilePath; }
-	bool IsValidPath(void) const { return m_szFilePath[0] != '\0'; }
+	const TCHAR* GetFilePath(void) const { return m_szFilePath; }
+	const TCHAR* GetSaveFilePath(void) const { return (m_szSaveFilePath[0] != _T('\0')) ? m_szSaveFilePath : m_szFilePath; }
+	bool IsValidPath(void) const { return m_szFilePath[0] != _T('\0'); }
 	//	2002.10.13 Moca
 	const char* GetFileName(void) const; //!< ファイル名(パスなし)を取得
 	void SetDocumentIcon(void);	// Sep. 10, 2002 genta
@@ -239,9 +239,9 @@ protected:
 	*/
 	bool			m_bIsModified;
 	//	Sep. 9, 2002 genta protectedに移動
-	char			m_szFilePath[_MAX_PATH];	/* 現在編集中のファイルのパス */
-	char			m_szSaveFilePath[_MAX_PATH];	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
-	
+	TCHAR			m_szFilePath[_MAX_PATH];	/* 現在編集中のファイルのパス */
+	TCHAR			m_szSaveFilePath[_MAX_PATH];	/* 保存時のファイルのパス（マクロ用） */	// 2006.09.04 ryoji
+
 	void SetFilePathAndIcon(const TCHAR*);	// Sep. 9, 2002 genta
 	
 public: /* テスト用にアクセス属性を変更 */
@@ -268,7 +268,7 @@ public:
 	bool			m_bReadOnly;				/* 読み取り専用モード */
 	bool			m_bDebugMode;				/* デバッグモニタモード */
 	bool			m_bGrepMode;				/* Grepモードか */
-	char			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
+	TCHAR			m_szGrepKey[1024];			/* Grepモードの場合、その検索キー */
 	HWND			m_hWnd;						/* 編集ウィンドウハンドル（CSplitterWndが管理） */
 	COpeBuf			m_cOpeBuf;					/* アンドゥバッファ */
 public:
@@ -286,7 +286,7 @@ public:
 	void			MakeTopicList_html(CFuncInfoArr*);		/* HTML アウトライン解析 */ // 2003.05.20 zenryaku
 	void			MakeTopicList_tex(CFuncInfoArr*);		/* TeX アウトライン解析 */ // 2003.07.20 naoh
 	void			MakeFuncList_RuleFile( CFuncInfoArr* );	/* ルールファイルを使ってリスト作成 2002.04.01 YAZAKI */
-	int				ReadRuleFile( const char* pszFilename, oneRule* pcOneRule, int nMaxCount );	/* ルールファイル読込 2002.04.01 YAZAKI */
+	int				ReadRuleFile( const char* pszFilename, SOneRule* pcOneRule, int nMaxCount );	/* ルールファイル読込 2002.04.01 YAZAKI */
 
 // From Here 2001.12.03 hor
 	void			MakeFuncList_BookMark( CFuncInfoArr* );	/* ブックマークリスト作成 */
