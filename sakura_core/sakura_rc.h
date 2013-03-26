@@ -4,9 +4,7 @@
 //
 #define IDR_MENU1                       102
 #define IDR_TRAYMENU_L                  103
-#define IDD_PROP_GENERAL                107
 #define IDD_FIND                        109
-#define IDD_PROP_FILE                   110
 #define IDD_ABOUT                       115
 #define IDD_JUMP                        118
 #define IDD_FUNCLIST                    122
@@ -15,7 +13,6 @@
 #define IDD_REPLACE                     137
 #define IDD_TYPELIST                    147
 #define IDD_PROPERTY_FILE               152
-#define IDD_PROP_KEYWORD                153
 #define IDD_INPUT1                      154
 #define IDD_REPLACERUNNING              160
 #define IDD_COMPARE                     168
@@ -31,14 +28,12 @@
 #define IDD_FILEOPEN                    130
 #define IDB_MYTOOL                      200
 #define IDB_PRINTER                     203
-#define IDD_PROP_MACRO                  217
 #define IDD_PROP_REGEX                  219
 #define IDC_CURSOR_COPYARROW            220
 #define IDC_CURSOR_HAND                 221
 #define IDC_CURSOR_MOVEARROW            222
 #define IDC_CURSOR_RVARROW              223
 #define IDD_FILEUPDATEQUERY             225
-#define IDD_PROP_FNAME                  226
 #define IDD_FAVORITE                    227
 #define IDD_TAGJUMPLIST                 228
 #define IDD_TAG_MAKE                    229
@@ -83,9 +78,6 @@
 #define IDC_BUTTON_BACKCOLOR            1060
 #define IDC_STATIC_JRE32VER             1065
 #define IDC_COMBO_FILESHAREMODE         1066
-#define IDC_CHECK_EXCVLUSIVE_NO         1069
-#define IDC_CHECK_EXCVLUSIVE_READWRITE  1070
-#define IDC_CHECK_EXCVLUSIVE_WRITE      1071
 #define IDC_CHECK_NOMOVE_ACTIVATE_BY_MOUSE      1072
 #define IDC_EDIT_LINENUM                1074
 #define IDC_CHECK_BACKUP                1076
@@ -604,22 +596,11 @@
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_PROP_SCREEN                 5101
-#define IDD_PROP_CUSTMENU               5103
-#define IDD_PROP_FORMAT                 5104
-#define IDD_PROP_HELPER                 5105
 #define IDD_PROP_COLOR                  5106
-#define IDD_PROP_KEYBIND                5107
-#define IDD_PROP_WIN                    5108
-#define IDD_PROP_EDIT                   5109
-#define IDD_PROP_TAB                    5110
-#define IDD_PROP_GREP                   5111
-#define IDD_PROP_BACKUP                 5112
 #define IDD_OPERATIONRUNNING            5113
 #define IDD_PROP_SUPPORT                5114
 #define IDD_DIFF                        5115
 #define IDD_CTRLCODE                    5116
-#define IDD_WINPOSSIZE                  5117
-#define IDD_PROP_TOOLBAR                5118
 #define IDD_PROP_KEYHELP                5119
 #define IDC_FRAME_KEYHELP               5120
 #define IDC_LIST_KEYHELP                5121
@@ -642,6 +623,23 @@
 #define IDC_CHECK_KEYHELP_ALLSEARCH     5141
 #define IDC_CHECK_KEYHELP_KEYDISP       5142
 #define IDC_CHECK_KEYHELP_PREFIX        5143
+
+#define IDD_PROP_GENERAL                5200
+#define IDD_PROP_WIN                    5201
+#define IDD_PROP_TOOLBAR                5202
+#define IDD_PROP_TAB                    5203
+#define IDD_PROP_EDIT                   5205
+#define IDD_PROP_FILE                   5206
+#define IDD_PROP_FNAME                  5207
+#define IDD_PROP_BACKUP                 5208
+#define IDD_PROP_FORMAT                 5209
+#define IDD_PROP_GREP                   5210
+#define IDD_PROP_KEYBIND                5211
+#define IDD_PROP_CUSTMENU               5212
+#define IDD_PROP_KEYWORD                5213
+#define IDD_PROP_HELPER                 5214
+#define IDD_PROP_MACRO                  5215
+#define IDD_WINPOSSIZE                  5220
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
