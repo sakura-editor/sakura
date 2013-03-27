@@ -9716,9 +9716,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 
 		GetTempPath( MAX_PATH, szPathName );
 		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
-#ifdef _DEBUG
-		MYTRACE_A( "CEditView::ExecCmd() TempFilename=[%s]\n", szTempFileName );
-#endif
+		DBPRINT( _T("CEditView::ExecCmd() TempFilename=[%s]\n"), szTempFileName );
 		
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* ëIëîÕàÕÇèoóÕ */
 		

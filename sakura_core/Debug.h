@@ -20,7 +20,6 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-SAKURA_CORE_API void AssertError( LPCTSTR pszFile, long nLine, BOOL bIsError );
 SAKURA_CORE_API void DebugOutA( LPCSTR lpFmt, ...);
 #ifdef _UNICODE
 #define DebugOut DebugOutW
@@ -48,28 +47,30 @@ SAKURA_CORE_API int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption,
 #ifdef _DEBUG
 	#define MYTRACE DebugOut
 	#define MYTRACE_A DebugOutA
-#endif
-#ifndef _DEBUG
+#else
 	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode
 	#define MYTRACE_A Do_not_use_the_MYTRACE_A_function_if_release_mode
 #endif
 
 //#ifdef _DEBUG～#endifで囲まなくても良い版
 #ifdef _DEBUG
-#define DBPRINT DebugOut
+#define DBPRINT_A DebugOutA
 #else
 #if (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
-#define DBPRINT(...)
+#define DBPRINT_A(...)
 #else
 // Not support C99 variable macro
-inline void DBPRINT( ... ){}
+inline void DBPRINT_A( ... ){}
 #endif
-#endif // _DEBUG
+#endif
+
+#ifdef _UNICODE
+#define DBPRINT DBPRINT_W
+#else
+#define DBPRINT DBPRINT_A
+#endif
 
 #define DEBUG_TRACE DBPRINT
-
-#define MYASSERT AssertError
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                ユーザ用メッセージボックス                   //

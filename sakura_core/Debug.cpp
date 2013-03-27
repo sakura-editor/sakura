@@ -113,20 +113,4 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCTSTR format, ...){         va_lis
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...){ va_list p;va_start(p, format);int n=VMessageBoxF  (hwnd, MB_OK | MB_ICONSTOP | MB_TOPMOST, _T("作者に教えて欲しいエラー"), format, p);va_end(p);return n;}
 
-
-
-
-
-
-void AssertError( LPCTSTR pszFile, long nLine, BOOL bIsError )
-{
-	if( !bIsError ){
-		TCHAR psz[1000];
-		::wsprintf(psz, _T("%s\n行 %d でASSERT正当性チェックエラー"), pszFile, nLine );
-		::MessageBox( NULL, psz, _T("MYASSERT"), MB_OK );
-	}
-	return;
-}
-
-
 /*[EOF]*/
