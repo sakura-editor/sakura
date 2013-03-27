@@ -216,7 +216,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode, b
 	// 選択開始位置より前後200(or 50)文字ずつを考慮文字列にする
 	const int nReconvMaxLen = (bDocumentFeed ? 50 : 200); //$$マジックナンバー注意
 	while (ptSelect.x - nReconvIndex > nReconvMaxLen) {
-		nReconvIndex = std::max(nReconvIndex+1, ::CharNextW_AnyBuild(pLine+nReconvIndex)-pLine);
+		nReconvIndex = std::max<int>(nReconvIndex+1, ::CharNextW_AnyBuild(pLine+nReconvIndex)-pLine);
 	}
 	
 	//再変換考慮文字列終了  //行の中で再変換のAPIにわたすとする文字列の長さ
