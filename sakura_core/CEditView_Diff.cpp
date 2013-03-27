@@ -227,9 +227,8 @@ void CEditView::ViewDiffInfo(
 		// 2010.08.28 Moca システムディレクトリ付加
 		TCHAR szCmdDir[_MAX_PATH];
 
-		COsVersionInfo cOsVer;
 		//コマンドライン文字列作成(MAX:1024)
-		if (cOsVer.IsWin32NT()){
+		if (IsWin32NT()){
 			::GetSystemDirectory(szCmdDir, _countof(szCmdDir));
 			wsprintf(
 				cmdline,

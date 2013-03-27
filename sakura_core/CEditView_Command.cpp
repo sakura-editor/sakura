@@ -5951,10 +5951,8 @@ bool CEditView::Command_TagsMake( void )
 	}
 	_tcscat( options, _T(" *") );	//配下のすべてのファイル
 
-	//OSバージョン取得
-	COsVersionInfo cOsVer;
 	//コマンドライン文字列作成(MAX:1024)
-	if (cOsVer.IsWin32NT())
+	if (IsWin32NT())
 	{
 		// 2010.08.28 Moca システムディレクトリ付加
 		TCHAR szCmdDir[_MAX_PATH];

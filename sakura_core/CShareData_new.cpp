@@ -202,7 +202,7 @@ void CShareData::GetIniFileNameDirect( LPTSTR pszPrivateIniFile, LPTSTR pszIniFi
 	//		exeと同じフォルダに置かれたマルチユーザ構成設定ファイル（sakura.exe.ini）の内容
 	//		に従ってマルチユーザ用のiniファイルパスを決める
 	pszPrivateIniFile[0] = _T('\0');
-	if( COsVersionInfo().IsWin2000_or_later() ){
+	if( IsWin2000_or_later() ){
 		_snprintf( szPath, _MAX_PATH - 1, _T("%s%s%s%s"), szDrive, szDir, szFname, _T(".exe.ini") );
 		szPath[_MAX_PATH - 1] = _T('\0');
 		int nEnable = ::GetPrivateProfileInt(_T("Settings"), _T("MultiUser"), 0, szPath );

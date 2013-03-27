@@ -390,8 +390,8 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 
 		//タブウインドウ時は現状を維持
 		/* ウィンドウサイズ継承 */
-		bool bStopAnimation = COsVersionInfo().IsWinVista_or_later();	// Vista 以降の初回表示アニメーション効果を抑止する
-		if( !bStopAnimation ){
+		// Vista 以降の初回表示アニメーション効果を抑止する
+		if( !IsWinVista_or_later() ){
 			if( sTabGroupInfo.wpTop.showCmd == SW_SHOWMAXIMIZED )
 			{
 				::ShowWindow( m_hWnd, SW_SHOWMAXIMIZED );
@@ -583,7 +583,7 @@ HWND CEditWnd::Create(
 	m_bIsActiveApp = ( ::GetActiveWindow() == m_hWnd );	// 2007.03.08 ryoji
 
 	// エディタ－トレイ間でのUI特権分離の確認（Vista UIPI機能） 2007.06.07 ryoji
-	if( COsVersionInfo().IsWinVista_or_later() ){
+	if( IsWinVista_or_later() ){
 		m_bUIPI = FALSE;
 		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_UIPI_CHECK,  (WPARAM)0, (LPARAM)m_hWnd );
 		if( !m_bUIPI ){	// 返事が返らない
@@ -4325,7 +4325,7 @@ void CEditWnd::PrintMenubarMessage( const TCHAR* msg )
 	::SetTextColor( hdc, ::GetSysColor( COLOR_MENUTEXT ) );
 	//	Sep. 6, 2003 genta Windows XP(Luna)の場合にはCOLOR_MENUBARを使わなくてはならない
 	COLORREF bkColor =
-		::GetSysColor( COsVersionInfo().IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
+		::GetSysColor( IsWinXP_or_later() ? COLOR_MENUBAR : COLOR_MENU );
 	::SetBkColor( hdc, bkColor );
 	::ExtTextOut( hdc,rc.left,rc.top,ETO_OPAQUE,&rc,m_pszMenubarMessage,nStrLen,m_pnCaretPosInfoDx);
 	::SelectObject( hdc, hFontOld );

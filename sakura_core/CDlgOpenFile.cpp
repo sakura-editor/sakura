@@ -60,9 +60,6 @@ int				m_nHelpTopicID;
 bool			m_bReadOnly;		/* 読み取り専用か */
 BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 
-COsVersionInfo CDlgOpenFile::m_cOsVer;	// 2005.11.02 ryoji
-
-
 
 
 /*
@@ -1010,7 +1007,7 @@ void CDlgOpenFile::InitOfn( OPENFILENAMEZ* ofn )
 {
 	memset(ofn, 0, sizeof(m_ofn));
 
-	ofn->lStructSize = IsOfnV5()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
+	ofn->lStructSize = IsWinV5forOfn()? sizeof(OPENFILENAMEZ): OPENFILENAME_SIZE_VERSION_400;
 	ofn->lCustData = (LPARAM)this;
 	ofn->lpfnHook = OFNHookProc;
 	ofn->lpTemplateName = MAKEINTRESOURCE(IDD_FILEOPEN);	// <-_T("IDD_FILEOPEN"); 2008/7/26 Uchi

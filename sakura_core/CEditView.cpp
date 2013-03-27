@@ -283,8 +283,7 @@ CEditView::CEditView()
 
 	// from here  2002.04.09 minfu OSによって再変換の方式を変える
 	//	YAZAKI COsVersionInfoのカプセル化は守りましょ。
-	COsVersionInfo	cOs;
-	if( cOs.OsDoesNOTSupportReconvert() ){
+	if( !OsSupportReconvert() ){
 		// 95 or NTならば
 		m_uMSIMEReconvertMsg = ::RegisterWindowMessage( RWM_RECONVERT );
 		m_uATOKReconvertMsg = ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) ;
@@ -9759,12 +9758,9 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
 		// command(9x) か cmd(NT) を呼び出す
 
-		//OSバージョン取得
-		COsVersionInfo cOsVer;
-
 		// 2010.08.27 Moca システムディレクトリ付加
 		TCHAR szCmdDir[_MAX_PATH];
-		if( cOsVer.IsWin32NT() ){
+		if( IsWin32NT() ){
 			::GetSystemDirectory(szCmdDir, sizeof(szCmdDir));
 		}else{
 			::GetWindowsDirectory(szCmdDir, sizeof(szCmdDir));
@@ -9773,7 +9769,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 		//コマンドライン文字列作成
 		wsprintf( cmdline, "\"%s\\%s\" %s%s",
 				szCmdDir,
-				( cOsVer.IsWin32NT() ? "cmd.exe" : "command.com" ),
+				( IsWin32NT() ? "cmd.exe" : "command.com" ),
 				( bGetStdout ? "/C " : "/K " ), pszCmd );
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
 					CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {

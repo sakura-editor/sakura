@@ -431,6 +431,8 @@ BOOL GetSystemResources(
 
 
 
+#if (WINVER < _WIN32_WINNT_WIN2K)
+// NTではリソースチェックを行わない
 /* システムリソースのチェック */
 BOOL CheckSystemResources( const TCHAR* pszAppName )
 {
@@ -478,7 +480,7 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 	}
 	return TRUE;
 }
-
+#endif	// (WINVER < _WIN32_WINNT_WIN2K)
 
 
 
@@ -2131,14 +2133,13 @@ int cescape_j(const char* org, char* buf, char cesc, char cwith)
 */
 void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
 {
-	COsVersionInfo cOsVer;
-	if ( cOsVer.HasWinHelpContentsProblem() ){
+	if ( HasWinHelpContentsProblem() ){
 		/* 目次ページを表示する */
-		MyWinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更
 		return;
 	}
 	/* 目次タブを表示する */
-	MyWinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更
 	return;
 }
 

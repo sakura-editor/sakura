@@ -2513,8 +2513,6 @@ void CEditView::Command_MERGE(void)
 */
 void CEditView::Command_Reconvert(void)
 {
-	COsVersionInfo cOs;
-
 	//サイズを取得
 	int nSize = SetReconvertStruct(NULL,false);
 	if( 0 == nSize )  // サイズ０の時は何もしない
@@ -2522,7 +2520,7 @@ void CEditView::Command_Reconvert(void)
 	
 	bool bUseUnicodeATOK = false;
 	//バージョンチェック
-	if( cOs.OsDoesNOTSupportReconvert() ){
+	if( !OsSupportReconvert() ){
 		
 		// MSIMEかどうか
 		HWND hWnd = ImmGetDefaultIMEWnd(m_hWnd);

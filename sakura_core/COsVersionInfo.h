@@ -38,117 +38,214 @@
 #ifndef _COSVERSIONINFO_H_
 #define _COSVERSIONINFO_H_
 
+#ifndef _WIN32_WINNT_WIN2K
+#define _WIN32_WINNT_WIN2K	0x0500
+#endif
+#ifndef _WIN32_WINNT_WINXP
+#define _WIN32_WINNT_WINXP	0x0501
+#endif
+#ifndef _WIN32_WINNT_VISTA
+#define _WIN32_WINNT_VISTA	0x0600
+#endif
+#ifndef _WIN32_WINNT_WIN7
+#define _WIN32_WINNT_WIN7	0x0601
+#endif
+
 class COsVersionInfo {
 public:
-	COsVersionInfo(){
-		memset( (void *)&m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
+	// 初期化を行う(引数はダミー)
+	// 呼出は基本1回のみ
+	COsVersionInfo( bool pbStart ) {
+		memset( &m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
 		m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
 		m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
 	}
-	
+
+	// 通常のコンストラクタ
+	// 何もしない
+	COsVersionInfo() {}
+
 	/* OsVersionが取得できたか？ */
 	BOOL GetVersion(){
 		return m_bSuccess;
 	}
-	
+
 	/* 使用しているOS（Windows）が、動作対象か確認する */
-	BOOL OsIsEnableVersion(){
-		return !( m_cOsVersionInfo.dwMajorVersion < 4 );
+	bool OsIsEnableVersion(){
+#if (WINVER >= _WIN32_WINNT_WIN7)
+		return ( _IsWin32NT() &&
+			(m_cOsVersionInfo.dwMajorVersion >= 7 ||
+			(m_cOsVersionInfo.dwMajorVersion == 6 && m_cOsVersionInfo.dwMinorVersion >= 1)) );
+#elif (WINVER >= _WIN32_WINNT_VISTA)
+		return ( _IsWin32NT() && (m_cOsVersionInfo.dwMajorVersion >= 6) );
+#elif (WINVER >= _WIN32_WINNT_WIN2K)
+		return ( _IsWin32NT() && (m_cOsVersionInfo.dwMajorVersion >= 5) );
+#else
+		return ( m_cOsVersionInfo.dwMajorVersion >= 4 );
+#endif
 	}
-	
-	
+
+
 	// From Here Jul. 5, 2001 shoji masami
 	/*! NTプラットフォームかどうか調べる
 
-		@retval TRUE NT platform
-		@retval FALSE non-NT platform
+		@retval true NT platform
+		@retval false non-NT platform
 	*/
-	BOOL IsWin32NT(){
+	bool _IsWin32NT(){
 		return (m_cOsVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT);
 	}
-	
+
 	// 2005.10.31 ryoji
 	/*! Windowsプラットフォームかどうか調べる
 
-		@retval TRUE Windows platform
-		@retval FALSE non-Windows platform
+		@retval true Windows platform
+		@retval false non-Windows platform
 	*/
-	BOOL IsWin32Windows(){
+	bool IsWin32Windows(){
 		return (m_cOsVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS);
 	}
 
 	/*	::WinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );
-		が使用できないバージョンなら、TRUE
-		使用できるバージョンなら、FALSE
+		が使用できないバージョンなら、true
+		使用できるバージョンなら、false
 	*/
-	BOOL HasWinHelpContentsProblem(){
-		return ( IsWin32NT() && (m_cOsVersionInfo.dwMajorVersion <= 4));
+	bool _HasWinHelpContentsProblem(){
+		return ( _IsWin32NT() && (m_cOsVersionInfo.dwMajorVersion <= 4));
 	}
-	
+
 	/*	再変換がOS標準で提供されていないか。
-		提供されていないなら、TRUE。
-		提供されているなら、FALSE。
-	
-		Windows95 or WindowsNTなら、TRUE（提供されていない）
-		それ以外のOSなら、FALSE（提供されている）
+		提供されていないなら、false。
+		提供されているなら、true。
+
+		Windows95 or WindowsNTなら、FASLE（提供されていない）
+		それ以外のOSなら、true（提供されている）
 	*/
-	BOOL OsDoesNOTSupportReconvert(){
-		return ((4 == m_cOsVersionInfo.dwMajorVersion) && ( 0 == m_cOsVersionInfo.dwMinorVersion ));
+	bool _OsSupportReconvert(){
+		return !((4 == m_cOsVersionInfo.dwMajorVersion) && ( 0 == m_cOsVersionInfo.dwMinorVersion ));
 	}
-#if 0
-	2002.04.11 YAZAKI カプセル化を守る。
-	// 2002.04.08 minfu OSVERSIONINFO構造体へのポインタを返す
-	POSVERSIONINFO GetOsVersionInfo(){
-		return &m_cOsVersionInfo;
+
+	// 2005.10.29 ryoji
+	// Windows 2000 version of OPENFILENAME.
+	// The new version has three extra members.
+	// See CommDlg.h
+	bool _IsWinV5forOfn() {
+		return (_IsWin2000_or_later() || _IsWinMe()); 
 	}
-#endif
+
+	/*! Windows Vista以上か調べる
+
+		@retval true Windows Vista or later
+
+		@date 2007.05.19 ryoji
+	*/
+	bool _IsWinVista_or_later()
+	{
+		return ( 6 <= m_cOsVersionInfo.dwMajorVersion );
+	}
 
 	/*! Windows XP以上か調べる
 
-		@retval TRUE Windows XP or later
+		@retval true Windows XP or later
 
 		@date 2003.09.06 genta
 	*/
-	BOOL IsWinXP_or_later(){
+	bool _IsWinXP_or_later(){
 		return ( m_cOsVersionInfo.dwMajorVersion >= 6 ||	// 2006.06.17 ryoji Ver 6.0, 7.0,...も含める
 			(m_cOsVersionInfo.dwMajorVersion >= 5 && m_cOsVersionInfo.dwMinorVersion >= 1) );
 	}
 
 	/*! Windows 2000以上か調べる
 
-		@retval TRUE Windows 2000 or later
+		@retval true Windows 2000 or later
 
 		@date 2005.10.26 ryoji
 	*/
-	BOOL IsWin2000_or_later(){
-		return ( IsWin32NT() && (5 <= m_cOsVersionInfo.dwMajorVersion) );
+	bool _IsWin2000_or_later(){
+		return ( _IsWin32NT() && (5 <= m_cOsVersionInfo.dwMajorVersion) );
 	}
 
 	/*! Windows Meか調べる
 
-		@retval TRUE Windows Me
+		@retval true Windows Me
 
 		@date 2005.10.26 ryoji
 	*/
-	BOOL IsWinMe(){
+	bool _IsWinMe(){
 		return ( IsWin32Windows() && (4 == m_cOsVersionInfo.dwMajorVersion) && ( 90 == m_cOsVersionInfo.dwMinorVersion ) );
 	}
 
-	/*! Windows Vista以上か調べる
-
-		@retval TRUE Windows Vista or later
-
-		@date 2007.05.19 ryoji
-	*/
-	bool IsWinVista_or_later()
-	{
-		return ( 6 <= m_cOsVersionInfo.dwMajorVersion );
-	}
-
 protected:
-	BOOL m_bSuccess;
-	OSVERSIONINFO m_cOsVersionInfo;
+	// Classはstatic(全クラス共有)変数以外持たない
+	static BOOL m_bSuccess;
+	static OSVERSIONINFO m_cOsVersionInfo;
 };
+
+
+
+inline bool IsWin32NT() {
+#if (WINVER >= _WIN32_WINNT_WIN2K)
+	return true;
+#else
+	return COsVersionInfo()._IsWin32NT();
+#endif
+}
+
+inline bool HasWinHelpContentsProblem() {
+#if (WINVER >= _WIN32_WINNT_WIN2K)
+	return false;
+#else
+	return COsVersionInfo()._HasWinHelpContentsProblem();
+#endif
+}
+
+inline bool OsSupportReconvert() {
+#if (WINVER >= _WIN32_WINNT_WIN2K)
+	return true;
+#else
+	return COsVersionInfo()._OsSupportReconvert();
+#endif
+}
+
+inline bool IsWinV5forOfn() {
+#if (WINVER >= _WIN32_WINNT_WIN2K)
+	return true;
+#else
+	return COsVersionInfo()._IsWinV5forOfn();
+#endif
+}
+
+inline bool IsWinVista_or_later() {
+#if (WINVER >= _WIN32_WINNT_VISTA)
+	return true;
+#else
+	return COsVersionInfo()._IsWinVista_or_later();
+#endif
+}
+
+inline bool IsWinXP_or_later() {
+#if (WINVER >= _WIN32_WINNT_WINXP)
+	return true;
+#else
+	return COsVersionInfo()._IsWinXP_or_later();
+#endif
+}
+
+inline bool IsWin2000_or_later() {
+#if (WINVER >= _WIN32_WINNT_WIN2K)
+	return true;
+#else
+	return COsVersionInfo()._IsWin2000_or_later();
+#endif
+}
+
+inline bool IsWinMe() {
+#if (WINVER >= _WIN32_WINNT_WIN2K)
+	return false;
+#else
+	return COsVersionInfo()._IsWinMe();
+#endif
+}
 
 #endif
 

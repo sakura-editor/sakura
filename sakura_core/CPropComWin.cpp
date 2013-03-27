@@ -316,8 +316,7 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuIcon, m_Common.m_sWindow.m_bMenuIcon );
 
 	/* メニュー字化け対策(Win2K以降でのみ機能する) */
-	COsVersionInfo cOsVer;
-	if( cOsVer.IsWin2000_or_later() ){
+	if( IsWin2000_or_later() ){
 		::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuWChar, m_Common.m_sWindow.m_bMenuWChar );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_CHECK_bMenuWChar, FALSE );

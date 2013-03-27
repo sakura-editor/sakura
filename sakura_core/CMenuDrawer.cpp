@@ -58,9 +58,7 @@ CMenuDrawer::CMenuDrawer()
 	// 対策ONにした場合、ラベルをWideChar変換してから描画する。
 	// UNICODE対応が十分ではないWin2000より前のバージョンでの問題を避けるため、
 	// OSのバージョンをチェックした上で DrawTextWを動的に取得する。
-	static COsVersionInfo cOsVer;
-
-	if( cOsVer.IsWin2000_or_later() ){
+	if( IsWin2000_or_later() ){
 		HINSTANCE hDll;
 		hDll = ::GetModuleHandle(_T("USER32"));
 		if( NULL != hDll ){
