@@ -286,9 +286,6 @@ bool CNormalProcess::InitializeProcess()
 
 	m_hWnd = hWnd;
 
-	//ウィンドウキャプション更新
-	m_pcEditWnd->m_cEditDoc.UpdateCaption();
-
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
 

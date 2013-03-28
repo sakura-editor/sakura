@@ -8349,7 +8349,7 @@ void CEditView::Command_RECKEYMACRO( void )
 //		m_pShareData->m_CKeyMacroMgr.Clear();
 	}
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
+	m_pcEditDoc->UpdateCaption();
 
 	/* キャレットの行桁位置を表示する */
 	DrawCaretPosInfo();

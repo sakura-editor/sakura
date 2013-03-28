@@ -523,7 +523,6 @@ public:
 	void SetIMECompFormPos( void );								/* IME編集エリアの位置を変更 */
 protected:
 	void SetIMECompFormFont( void );							/* IME編集エリアの表示フォントを変更 */
-	void SetParentCaption( void );								/* 親ウィンドウのタイトルを更新 */	// 2007.03.08 ryoji bKillFocusパラメータを除去
 public:
 	void DrawCaretPosInfo( void );								/* キャレットの行桁位置を表示する */
 protected:

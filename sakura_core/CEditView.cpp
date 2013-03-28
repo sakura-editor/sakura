@@ -468,7 +468,7 @@ BOOL CEditView::Create(
 	}
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
+	m_pcEditDoc->UpdateCaption();
 
 	/* キーボードの現在のリピート間隔を取得 */
 	int nKeyBoardSpeed;
@@ -687,7 +687,7 @@ LRESULT CEditView::DispatchEvent(
 		OnSetFocus();
 
 		/* 親ウィンドウのタイトルを更新 */
-		SetParentCaption();
+		m_pcEditDoc->UpdateCaption();
 
 		return 0L;
 	case WM_KILLFOCUS:
@@ -1139,7 +1139,7 @@ void CEditView::OnSize( int cx, int cy )
 	// To Here 2007.09.09 Moca
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();	//	[Q] genta 本当に必要？
+	m_pcEditDoc->UpdateCaption();	//	[Q] genta 本当に必要？
 
 	return;
 }
@@ -6404,19 +6404,6 @@ int	CEditView::CreatePopUpMenu_R( void )
 	return nId;
 }
 
-
-
-/*! 親ウィンドウのタイトルを更新
-
-	@date 2007.03.08 ryoji bKillFocusパラメータを除去
-*/
-void CEditView::SetParentCaption( void )
-{
-	m_pcEditDoc->UpdateCaption();
-	return;
-}
-
-
 /*! キャレットの行桁位置およびステータスバーの状態表示の更新
 
 	@note ステータスバーの状態の並び方の変更はメッセージを受信する
@@ -6791,7 +6778,7 @@ void CEditView::RedrawAll( void )
 	DrawCaretPosInfo();
 
 	/* 親ウィンドウのタイトルを更新 */
-	SetParentCaption();
+	m_pcEditDoc->UpdateCaption();
 
 	//	Jul. 9, 2005 genta	選択範囲の情報をステータスバーへ表示
 	PrintSelectionInfoMsg();
