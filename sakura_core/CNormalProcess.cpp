@@ -172,7 +172,7 @@ bool CNormalProcess::InitializeProcess()
 			m_hWnd = hWnd;
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
-			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].DoGrep(
+			m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->DoGrep(
 				&gi.cmGrepKey,
 				&gi.cmGrepFile,
 				&gi.cmGrepFolder,
@@ -210,7 +210,7 @@ bool CNormalProcess::InitializeProcess()
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			int nRet = m_pcEditWnd->m_cEditDoc.m_cDlgGrep.DoModal( m_hInstance, hWnd,  NULL);
 			if( FALSE != nRet ){
-				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].HandleCommand(F_GREP, true, 0, 0, 0, 0);
+				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}
 			return true; // 2003.06.23 Moca
 		}
@@ -234,8 +234,8 @@ bool CNormalProcess::InitializeProcess()
 			//	移動するようにする． || → &&
 			if( ( 0 <= fi.m_nViewTopLine && 0 <= fi.m_nViewLeftCol )
 				&& fi.m_nViewTopLine < m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.GetLineCount() ){
-				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewTopLine = fi.m_nViewTopLine;
-				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nViewLeftCol = fi.m_nViewLeftCol;
+				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nViewTopLine = fi.m_nViewTopLine;
+				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nViewLeftCol = fi.m_nViewLeftCol;
 			}
 
 			//	オプション指定がないときはカーソル位置設定を行わないようにする
@@ -268,11 +268,11 @@ bool CNormalProcess::InitializeProcess()
 				}
 				// To Here Mar. 28, 2003 MIK
 
-				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].MoveCursor( nPosX, nPosY, true );
-				m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX_Prev =
-					m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].m_nCaretPosX;
+				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->MoveCursor( nPosX, nPosY, true );
+				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nCaretPosX_Prev =
+					m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nCaretPosX;
 			}
-			m_pcEditWnd->m_cEditDoc.m_cEditViewArr[0].RedrawAll();
+			m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->RedrawAll();
 		}
 		else{
 			// 2004.05.13 Moca ファイル名が与えられなくてもReadOnlyとタイプ指定を有効にする
@@ -287,7 +287,7 @@ bool CNormalProcess::InitializeProcess()
 	m_hWnd = hWnd;
 
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
-	m_pcEditWnd->m_cEditDoc.m_cEditViewArr[m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+	m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex]->SetIMECompFormPos();
 
 	//再描画
 	::InvalidateRect( m_pcEditWnd->m_hWnd, NULL, TRUE );
@@ -307,7 +307,7 @@ bool CNormalProcess::InitializeProcess()
 		if( pszMacroType == NULL || pszMacroType[0] == '\0' || strcmpi(pszMacroType, "file") == 0 ){
 			pszMacroType = NULL;
 		}
-		CEditView* view = &m_pcEditWnd->m_cEditDoc.m_cEditViewArr[ m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex ];
+		CEditView* view = m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[ m_pcEditWnd->m_cEditDoc.m_nActivePaneIndex ];
 		view->HandleCommand( F_EXECEXTMACRO, true, (LPARAM)pszMacro, (LPARAM)pszMacroType, 0, 0 );
 	}
 

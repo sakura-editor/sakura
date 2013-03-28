@@ -1132,7 +1132,7 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 		::SendMessage( m_hWnd, WM_SIZE, m_nWinSizeType, MAKELONG( rc.right - rc.left, rc.bottom - rc.top ) );
 		::RedrawWindow( m_hWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW );	// ステータスバーに必要？
 
-		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].SetIMECompFormPos();
+		m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->SetIMECompFormPos();
 	}
 }
 
@@ -1347,10 +1347,10 @@ LRESULT CEditWnd::DispatchEvent(
 		return OnPaint( hwnd, uMsg, wParam, lParam );
 
 	case WM_PASTE:
-		return m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_PASTE, true, 0, 0, 0, 0 );
+		return m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->HandleCommand( F_PASTE, true, 0, 0, 0, 0 );
 
 	case WM_COPY:
-		return m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_COPY, true, 0, 0, 0, 0 );
+		return m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->HandleCommand( F_COPY, true, 0, 0, 0, 0 );
 
 	case WM_HELP:
 		lphi = (LPHELPINFO) lParam;
@@ -1477,7 +1477,7 @@ LRESULT CEditWnd::DispatchEvent(
 		m_nTimerCount = 9;
 
 		// ビューにフォーカスを移動する	// 2007.10.16 ryoji
-		::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+		::SetFocus( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd );
 		lRes = 0;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -1743,11 +1743,11 @@ LRESULT CEditWnd::DispatchEvent(
 			b1 = (m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz == FALSE);
 			for( i = 0; i < m_cEditDoc.GetAllViewCount(); i++ )
 			{
-				b2 = (m_cEditDoc.m_cEditViewArr[i].m_hwndHScrollBar == NULL);
+				b2 = (m_cEditDoc.m_pcEditViewArr[i]->m_hwndHScrollBar == NULL);
 				if( b1 != b2 )		/* 水平スクロールバーを使う */
 				{
-					m_cEditDoc.m_cEditViewArr[i].DestroyScrollBar();
-					m_cEditDoc.m_cEditViewArr[i].CreateScrollBar();
+					m_cEditDoc.m_pcEditViewArr[i]->DestroyScrollBar();
+					m_cEditDoc.m_pcEditViewArr[i]->CreateScrollBar();
 				}
 			}
 		}
@@ -1844,7 +1844,7 @@ LRESULT CEditWnd::DispatchEvent(
 			bool bSelect = (0!= (lParam & 1));
 			if( lParam & 2 ){
 				// 現在の状態をKEEP
-				bSelect = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_bSelectingLock;
+				bSelect = m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_bSelectingLock;
 			}
 			
 			ppoCaret = (POINT*)m_pShareData->m_sWorkBuffer.m_szWork;
@@ -1875,7 +1875,7 @@ LRESULT CEditWnd::DispatchEvent(
 			//	2006.07.09 genta 選択範囲を考慮して移動
 			//	MoveCursorの位置調整機能があるので，最終行以降への
 			//	移動指示の調整もMoveCursorにまかせる
-			m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect, _CARETMARGINRATE / 3 );
+			m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->MoveCursorSelecting( nCaretPosX, nCaretPosY, bSelect, _CARETMARGINRATE / 3 );
 		}
 		return 0L;
 
@@ -1890,8 +1890,8 @@ LRESULT CEditWnd::DispatchEvent(
 		*/
 		{
 			m_cEditDoc.m_cLayoutMgr.LayoutToLogic(
-				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX,
-				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY,
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosX,
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosY,
 				(int*)&ppoCaret->x,
 				(int*)&ppoCaret->y
 			);
@@ -1912,8 +1912,8 @@ LRESULT CEditWnd::DispatchEvent(
 
 
 	case MYWM_ADDSTRING:
-		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_ADDTAIL, true, (LPARAM)m_pShareData->m_sWorkBuffer.m_szWork, (LPARAM)lstrlen( m_pShareData->m_sWorkBuffer.m_szWork ), 0, 0 );
-		m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
+		m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->HandleCommand( F_ADDTAIL, true, (LPARAM)m_pShareData->m_sWorkBuffer.m_szWork, (LPARAM)lstrlen( m_pShareData->m_sWorkBuffer.m_szWork ), 0, 0 );
+		m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->HandleCommand( F_GOFILEEND, true, 0, 0, 0, 0 );
 		return 0L;
 
 	//タブウインドウ	//@@@ 2003.05.31 MIK
@@ -2155,7 +2155,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			else{
 				//ビューにフォーカスを移動しておく
 				if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
-					::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+					::SetFocus( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd );
 					//検索ボックスを更新	// 2010/6/6 Uchi
 					AcceptSharedSearchKey();
 				}
@@ -2173,7 +2173,7 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 		{
 			//ビューにフォーカスを移動しておく
 			if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX )
-				::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+				::SetFocus( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd );
 
 			int nFuncCode = CKeyBind::GetFuncCode(
 				wID,
@@ -2768,8 +2768,8 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 						sprintf(
 							szBuf,
 							"折り返し桁数: %d 桁（右端）",
-							m_cEditDoc.m_cEditViewArr[nActive].ViewColNumToWrapColNum(
-								m_cEditDoc.m_cEditViewArr[nActive].m_nViewColNum
+							m_cEditDoc.m_pcEditViewArr[nActive]->ViewColNumToWrapColNum(
+								m_cEditDoc.m_pcEditViewArr[nActive]->m_nViewColNum
 							)
 						);
 					}
@@ -3002,7 +3002,7 @@ STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 
 	// ファイルドロップをアクティブビューで処理する
 	*pdwEffect &= DROPEFFECT_LINK;
-	return m_cEditDoc.m_cEditViewArr[m_cEditDoc.GetActivePane()].PostMyDropFiles( pDataObject );
+	return m_cEditDoc.m_pcEditViewArr[m_cEditDoc.GetActivePane()]->PostMyDropFiles( pDataObject );
 }
 
 /* ファイルがドロップされた */
@@ -4137,11 +4137,11 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 				AcceptSharedSearchKey();
 
 				//::SetFocus( m_hWnd );	//先にフォーカスを移動しておかないとキャレットが消える
-				::SetFocus( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd );
+				::SetFocus( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd );
 
 				// 検索開始時のカーソル位置登録条件を変更 02/07/28 ai start
-				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosX_PHY = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosX_PHY;
-				m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nSrchStartPosY_PHY = m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_nCaretPosY_PHY;
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nSrchStartPosX_PHY = m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosX_PHY;
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nSrchStartPosY_PHY = m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosY_PHY;
 				// 02/07/28 ai end
 
 				//次を検索
@@ -4568,7 +4568,7 @@ LRESULT CEditWnd::PopupWinList( bool bMousePos )
 		::GetCursorPos( &pt );	// マウスカーソル位置に変更
 	}
 	else {
-		::GetWindowRect( m_cEditDoc.m_cEditViewArr[m_cEditDoc.m_nActivePaneIndex].m_hWnd, &rc );
+		::GetWindowRect( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd, &rc );
 		pt.x = rc.right - 150;
 		if( pt.x < rc.left )
 			pt.x = rc.left;

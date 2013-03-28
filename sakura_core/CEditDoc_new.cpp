@@ -1258,9 +1258,9 @@ void CEditDoc::ChangeLayoutParam( bool bShowProgress, int nTabSize, int nMaxLine
 	SetDrawSwitchOfAllViews( true );
 
 	for( int i = 0; i < GetAllViewCount(); i++ ){
-		if( m_cEditViewArr[i].m_hWnd ){
-			InvalidateRect( m_cEditViewArr[i].m_hWnd, NULL, TRUE );
-			m_cEditViewArr[i].AdjustScrollBars();	// 2008.06.18 ryoji
+		if( m_pcEditViewArr[i]->m_hWnd ){
+			InvalidateRect( m_pcEditViewArr[i]->m_hWnd, NULL, TRUE );
+			m_pcEditViewArr[i]->AdjustScrollBars();	// 2008.06.18 ryoji
 		}
 	}
 	if( !GetDocumentAttribute().m_bLineNumIsCRLF ){
@@ -1386,7 +1386,7 @@ BOOL CEditDoc::FileSave( bool warnbeep, bool askname )
 
 		if( SaveFile( GetFilePath() ) ){	//	m_nCharCode, m_cSaveLineCodeを変更せずに保存
 			/* キャレットの行桁位置を表示する */
-			m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+			m_pcEditViewArr[m_nActivePaneIndex]->DrawCaretPosInfo();
 			return TRUE;
 		}
 	}
@@ -1444,7 +1444,7 @@ BOOL CEditDoc::FileSaveAs( const char *filename )
 {
 	if( SaveFile( filename ) ){
 		/* キャレットの行桁位置を表示する */
-		m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+		m_pcEditViewArr[m_nActivePaneIndex]->DrawCaretPosInfo();
 		OnChangeSetting();	//	タイプ別設定の変更を指示。
 		//	再オープン
 		//	Jul. 26, 2003 ryoji 現在開いているのと同じコードで開き直す
@@ -1463,8 +1463,8 @@ void CEditDoc::DeleteCompatibleBitmap()
 {
 	// CEditView群へ転送する
 	for( int i = 0; i < GetAllViewCount(); i++ ){
-		if( m_cEditViewArr[i].m_hWnd ){
-			m_cEditViewArr[i].DeleteCompatibleBitmap();
+		if( m_pcEditViewArr[i]->m_hWnd ){
+			m_pcEditViewArr[i]->DeleteCompatibleBitmap();
 		}
 	}
 }

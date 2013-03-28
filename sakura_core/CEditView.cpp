@@ -5565,7 +5565,7 @@ void CEditView::SyncScrollV( int line )
 	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll && line != 0
 		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x01)
 	) {
-		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x01];
+		CEditView*	pcEditView = m_pcEditDoc->m_pcEditViewArr[m_nMyIndex^0x01];
 #if 0
 		//	·•ª‚ð•Û‚Á‚½‚Ü‚ÜƒXƒNƒ[ƒ‹‚·‚éê‡
 		pcEditView -> ScrollByV( line );
@@ -5592,7 +5592,7 @@ void CEditView::SyncScrollH( int col )
 	if( m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll && col != 0
 		&& m_pcEditDoc->IsEnablePane(m_nMyIndex^0x02)
 	) {
-		CEditView*	pcEditView = &m_pcEditDoc->m_cEditViewArr[m_nMyIndex^0x02];
+		CEditView*	pcEditView = m_pcEditDoc->m_pcEditViewArr[m_nMyIndex^0x02];
 		HDC			hdc = ::GetDC( pcEditView->m_hWnd );
 		
 #if 0

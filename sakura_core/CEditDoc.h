@@ -138,8 +138,8 @@ public:
 	void	ReloadAutoSaveParam(void);	//	設定をSharedAreaから読み出す
 
 	//	Aug. 31, 2000 genta
-	const CEditView& ActiveView(void) const { return m_cEditViewArr[m_nActivePaneIndex]; }
-	CEditView& ActiveView(void) { return m_cEditViewArr[m_nActivePaneIndex]; }
+	const CEditView& ActiveView(void) const { return *m_pcEditViewArr[m_nActivePaneIndex]; }
+	CEditView& ActiveView(void) { return *m_pcEditViewArr[m_nActivePaneIndex]; }
 	bool IsEnablePane(int n) const { return 0 <= n && n < m_nEditViewCount; }
 	int	GetAllViewCount() const { return m_nEditViewCount; }
 
@@ -293,8 +293,10 @@ public:
 // To Here 2001.12.03 hor
 
 	CSplitterWnd	m_cSplitterWnd;				/* 分割フレーム */
-	CEditView		m_cEditViewArr[4];			/* ビュー */
-	int				m_nEditViewCount;			/* ビューのうちウィンドウが存在している数 */
+
+	CEditView*		m_pcEditViewArr[4];			//!< ビュー 
+	int				m_nEditViewCount;			//!< 有効なビューの数
+	int				m_nEditViewMaxCount;		//!< ビューの最大数=4
 	int				m_nActivePaneIndex;			/* アクティブなビュー */
 	CEditView*		m_pcDragSourceView;			/* ドラッグ元のビュー */
 //	HWND			m_hwndActiveDialog;			/* アクティブな子ダイアログ */
