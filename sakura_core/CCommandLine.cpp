@@ -179,6 +179,7 @@ void strncpyWithCheckOverflow(char *dest, int destCount, char *src, int srcCount
 		オプションが""で囲まれた場合に対応する．
 		そうすると-で始まるファイル名を指定できなくなるので，
 		それ以降オプション解析をしないという "--" オプションを新設する．
+	@date 2012.02.25 novice 複数ファイル読み込み
 
 	@note
 	これが呼び出された時点では共有メモリの初期化が完了していないため，
@@ -229,9 +230,11 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 		}
 	}
 	if( bFind ){
+		ResolvePath(szPath);
 		_tcscpy( m_fi.m_szPath, szPath );	/* ファイル名 */
 		nPos = i + 1;
 	}else{
+		m_fi.m_szPath[0] = _T('\0');
 		nPos = 0;
 	}
 
@@ -244,7 +247,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 		DBPRINT( _T("OPT=[%ts]\n"), pszToken );
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
-		if( !bFind && ( bParseOptDisabled ||
+		if( ( bParseOptDisabled ||
 			! (pszToken[0] == '-' || pszToken[0] == '"' && pszToken[1] == '-' ) )){
 
 			if( pszToken[0] == _T('\"') ){
@@ -262,48 +265,57 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 				if( len > 0 ){
 					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == _T('"') ? 1 : 0 ));
 					cmWork.Replace( _T("\"\""), _T("\"") );
-					strncpyWithCheckOverflow(m_fi.m_szPath, _countof(m_fi.m_szPath), cmWork.GetStringPtr(), cmWork.GetStringLength());
+					strncpyWithCheckOverflow(szPath, _countof(szPath), cmWork.GetStringPtr(), cmWork.GetStringLength());
 				}
 				else {
-					m_fi.m_szPath[0] = _T('\0');
+					szPath[0] = _T('\0');
 				}
 			}
 			else{
-				strncpyWithCheckOverflow(m_fi.m_szPath, _countof(m_fi.m_szPath), pszToken, strlen(pszToken));
+				strncpyWithCheckOverflow(szPath, _countof(szPath), pszToken, strlen(pszToken));
 			}
 
 			// Nov. 11, 2005 susu
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
-			if (!memcmp(m_fi.m_szPath, _T("file:///"), 8)) {
+			if (!memcmp(szPath, _T("file:///"), 8)) {
 				char tmp_str[_MAX_PATH + 1];
-				_tcscpy(tmp_str, &(m_fi.m_szPath[8]));
-				_tcscpy(m_fi.m_szPath, tmp_str);
+				_tcscpy(tmp_str, &(szPath[8]));
+				_tcscpy(szPath, tmp_str);
 			}
-			int len = _tcslen(m_fi.m_szPath);
+			int len = _tcslen(szPath);
 			for (int i = 0; i < len ; i ++) {
-				if ( (m_fi.m_szPath[i] == '<' ||	//	0x3C
-					  m_fi.m_szPath[i] == '>' ||	//	0x3E
-					  m_fi.m_szPath[i] == '?' ||	//	0x3F
-					  m_fi.m_szPath[i] == '"' ||	//	0x22
-					  m_fi.m_szPath[i] == '|' ||	//	0x7C
-					  m_fi.m_szPath[i] == '*' ||	//	0x2A
+				if ( (szPath[i] == '<' ||	//	0x3C
+					  szPath[i] == '>' ||	//	0x3E
+					  szPath[i] == '?' ||	//	0x3F
+					  szPath[i] == '"' ||	//	0x22
+					  szPath[i] == '|' ||	//	0x7C
+					  szPath[i] == '*' ||	//	0x2A
 					  0
 					 ) &&
-					( i ==0 || (i > 0 && ! _IS_SJIS_1( (unsigned char)(m_fi.m_szPath[i - 1] )) ))){
+					( i ==0 || (i > 0 && ! _IS_SJIS_1( (unsigned char)(szPath[i - 1] )) ))){
 						TCHAR msg_str[_MAX_PATH + 1];
 						_stprintf(
 							msg_str,
 							_T("%s\r\n")
 							_T("上記のファイル名は不正です。ファイル名に \\ / : * ? \" < > | の文字は使えません。 "),
-							m_fi.m_szPath
+							szPath
 						);
 						MessageBox( NULL, msg_str, _T("FileNameError"), MB_OK);
-						m_fi.m_szPath[0] = _T('\0');
+						szPath[0] = _T('\0');
 						break;
 				}
 			}
 
+			if (szPath[0] != _T('\0')) {
+				ResolvePath(szPath);
+				if (m_fi.m_szPath[0] == _T('\0')) {
+					_tcscpy(m_fi.m_szPath, szPath );
+				}
+				else {
+					m_vFiles.push_back( szPath );
+				}
+			}
 		}
 		else{
 			int nQuoteLen = 0;
@@ -449,12 +461,6 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 		pszToken = my_strtok( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
 	}
 	delete [] pszCmdLineWork;
-
-	/* ファイル名 */
-	if( _T('\0') != m_fi.m_szPath[0] ){
-		//ファイルパスの解決
-		ResolvePath(m_fi.m_szPath);
-	}
 
 	return;
 }

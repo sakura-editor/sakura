@@ -89,6 +89,9 @@ public:
 	int GetGroupId() const {return m_nGroup;}	// 2007.06.26 ryoji
 	LPCSTR GetMacro() const{ return m_cmMacro.GetStringPtr(); }
 	LPCSTR GetMacroType() const{ return m_cmMacroType.GetStringPtr(); }
+	int GetFileNum(void) { return m_vFiles.size(); }
+	const TCHAR* GetFileName(int i) { return i < GetFileNum() ? m_vFiles[i].c_str() : NULL; }
+	void ClearFile(void) { m_vFiles.clear(); }
 	void ParseCommandLine( LPCTSTR pszCmdLineSrc = NULL );
 
 // member valiables
@@ -104,6 +107,7 @@ private:
 	int			m_nGroup;			//! グループID	// 2007.06.26 ryoji
 	CMemory		m_cmMacro;			//! [out] マクロファイル名／マクロ文
 	CMemory		m_cmMacroType;		//! [out] マクロ種別
+	std::vector<std::string> m_vFiles;	//!< ファイル名(複数)
 };
 
 ///////////////////////////////////////////////////////////////////////
