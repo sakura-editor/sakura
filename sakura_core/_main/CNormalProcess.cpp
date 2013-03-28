@@ -380,16 +380,16 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	// 複数ファイル読み込み
-	int fileNumMax = CCommandLine::getInstance()->GetFileNum();
-	if( fileNumMax > 0 ){
+	int fileNum = CCommandLine::getInstance()->GetFileNum();
+	if( fileNum > 0 ){
 		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
 		// ファイルドロップ数の上限に合わせる
-		if( fileNumMax > nDropFileNumMax ){
-			fileNumMax = nDropFileNumMax;
+		if( fileNum > nDropFileNumMax ){
+			fileNum = nDropFileNumMax;
 		}
 		EditInfo openFileInfo = fi;
 		int i;
-		for( i = 0; i < fileNumMax; i++ ){
+		for( i = 0; i < fileNum; i++ ){
 			// ファイル名差し替え
 			_tcscpy(openFileInfo.m_szPath, CCommandLine::getInstance()->GetFileName(i));
 			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), pEditWnd->GetHwnd(), &openFileInfo, bViewMode );
