@@ -177,6 +177,15 @@ public:
 	int	CreateFileDropDownMenu( HWND );	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 	void Timer_ONOFF( bool ); /* 更新の開始／停止 20060128 aroka */
 
+	//! 周期内でm_nTimerCountをインクリメント
+	void IncrementTimerCount(int nInterval)
+	{
+		m_nTimerCount++;
+		if( nInterval <= m_nTimerCount ){ // 2012.11.29 aroka 呼び出し間隔のバグ修正
+			m_nTimerCount = 0;
+		}
+	}
+
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
 	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragOver( DWORD, POINTL, LPDWORD );
@@ -201,7 +210,7 @@ public:
 	CTabWnd			m_cTabWnd;		//タブウインドウ	//@@@ 2003.05.31 MIK
 	CMenuDrawer		m_CMenuDrawer;
 	int				m_nWinSizeType;	/* サイズ変更のタイプ */
-	BOOL			m_bDragMode;
+	bool			m_bDragMode;
 	int				m_nDragPosOrgX;
 	int				m_nDragPosOrgY;
 	CDropTarget*	m_pcDropTarget;

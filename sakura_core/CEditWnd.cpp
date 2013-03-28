@@ -123,7 +123,7 @@ LRESULT CALLBACK CEditWndProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd()
 : m_hWnd( NULL )
-, m_bDragMode( FALSE )
+, m_bDragMode( false )
 , m_hwndParent( NULL )
 , m_hwndReBar( NULL )	// 2006.06.17 ryoji
 , m_hwndToolBar( NULL )
@@ -1145,12 +1145,14 @@ void CEditWnd::MessageLoop( void )
 	MSG	msg;
 	int ret;
 	
-	while ( m_hWnd && ( ret = GetMessage( &msg, NULL, 0, 0 ) ) )
+	while( m_hWnd )
 	{
-		if( ret == -1 ){
-			break;
-		}
+		//メッセージ取得
+		ret = GetMessage( &msg, NULL, 0, 0 );
+		if(ret== 0)break; //WM_QUIT
+		if(ret==-1)break; //GetMessage失敗
 
+		//ダイアログメッセージ
 		if( m_pPrintPreview && NULL != m_pPrintPreview->GetPrintPreviewBarHANDLE() && ::IsDialogMessage( m_pPrintPreview->GetPrintPreviewBarHANDLE(), &msg ) ){}	//!< 印刷プレビュー 操作バー
 		else if( m_cEditDoc.m_cDlgFind.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cDlgFind.m_hWnd, &msg ) ){}	//!<「検索」ダイアログ
 		else if( m_cEditDoc.m_cDlgFuncList.m_hWnd && ::IsDialogMessage( m_cEditDoc.m_cDlgFuncList.m_hWnd, &msg ) ){}	//!<「アウトライン」ダイアログ
@@ -1167,13 +1169,8 @@ void CEditWnd::MessageLoop( void )
 			// ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
 			HACCEL hAccel = m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ? m_hAccel : m_pShareData->m_sHandles.m_hAccel;
 
-			if( NULL != hAccel ){
-				if( TranslateAccelerator( msg.hwnd, hAccel, &msg ) ){}
-				else{
-					TranslateMessage( &msg );
-					DispatchMessage( &msg );
-				}
-			}
+			if( hAccel && TranslateAccelerator( msg.hwnd, hAccel, &msg ) ){}
+			//通常メッセージ
 			else{
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
@@ -2001,6 +1998,7 @@ LRESULT CEditWnd::DispatchEvent(
 			::SetTimer( m_hWnd, IDT_CAPTION, 50, NULL );
 			return 0L;
 		}
+		::KillTimer( m_hWnd, IDT_CAPTION );	// タイマーが残っていたら削除する（遅延タイトルを破棄）
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	case WM_TIMER:
@@ -3167,6 +3165,51 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 	return 0L;
 }
 
+
+/*! キャプション更新用タイマーの処理
+	@date 2007.04.03 ryoji 新規
+*/
+void CEditWnd::OnCaptionTimer( void )
+{
+	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
+	// まだ切替中ならタイマー継続
+	if( !m_pShareData->m_sFlags.m_bEditWndChanging ){
+		::KillTimer( m_hWnd, IDT_CAPTION );
+		::SetWindowText( m_hWnd, m_pszLastCaption );
+	}
+}
+
+/*! システムメニュー表示用タイマーの処理
+	@date 2007.04.03 ryoji パラメータ無しにした
+	                       以前はコールバック関数でやっていたKillTimer()をここで行うようにした
+*/
+void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
+{
+	::KillTimer( m_hWnd, IDT_SYSMENU );	// 2007.04.03 ryoji
+
+	if(m_IconClicked == icClicked)
+	{
+		ReleaseCapture();
+
+		//システムメニュー表示
+		// 2006.04.21 ryoji マルチモニタ対応の修正
+		// 2007.05.13 ryoji 0x0313メッセージをポストする方式に変更（TrackPopupMenuだとメニュー項目の有効／無効状態が不正になる問題対策）
+		RECT R;
+		GetWindowRect(m_hWnd, &R);
+		POINT pt;
+		pt.x = R.left + GetSystemMetrics(SM_CXFRAME);
+		pt.y = R.top + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME);
+		GetMonitorWorkRect( pt, &R );
+		::PostMessage(
+			m_hWnd,
+			0x0313, //右クリックでシステムメニューを表示する際に送信するモノらしい
+			0,
+			MAKELPARAM( (pt.x > R.left)? pt.x: R.left, (pt.y < R.bottom)? pt.y: R.bottom )
+		);
+	}
+	m_IconClicked = icNone;
+}
+
 /*! タイマーの処理
 	@date 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
 	@date 2003.08.29 wmlhq, ryoji nTimerCountの導入
@@ -3178,21 +3221,17 @@ void CEditWnd::OnEditTimer( void )
 {
 	//static	int	nLoopCount = 0; // wmlhq m_nTimerCountに移行
 	// タイマーの呼び出し間隔を 500msに変更。300*10→500*6にする。 20060128 aroka
-	m_nTimerCount++;
-	if( 6 <= m_nTimerCount ){	// 2012.11.29 aroka 呼び出し間隔のバグ修正
-		m_nTimerCount = 0;
-	}
+	IncrementTimerCount(6);
 
 	// 2006.01.28 aroka ツールバー更新関連は OnToolbarTimerに移動した。
 	
 	//	Aug. 29, 2003 wmlhq, ryoji
 	if( m_nTimerCount == 0 && GetCapture() == NULL ){ 
-		/* ファイルのタイムスタンプのチェック処理 */
+		// ファイルのタイムスタンプのチェック処理
 		m_cEditDoc.CheckFileTimeStamp() ;
 	}
 
 	m_cEditDoc.CheckAutoSave();
-	return;
 }
 
 /*! ツールバー更新用タイマーの処理
@@ -3259,50 +3298,6 @@ void CEditWnd::AcceptSharedSearchKey()
 		}
 		::SendMessage( m_hwndSearchBox, CB_SETCURSEL, 0, 0 );
 	}
-}
-
-/*! キャプション更新用タイマーの処理
-	@date 2007.04.03 ryoji 新規
-*/
-void CEditWnd::OnCaptionTimer( void )
-{
-	// 編集画面の切替（タブまとめ時）が終わっていたらタイマーを終了してタイトルバーを更新する
-	// まだ切替中ならタイマー継続
-	if( !m_pShareData->m_sFlags.m_bEditWndChanging ){
-		::KillTimer( m_hWnd, IDT_CAPTION );
-		::SetWindowText( m_hWnd, m_pszLastCaption );
-	}
-}
-
-/*! システムメニュー表示用タイマーの処理
-	@date 2007.04.03 ryoji パラメータ無しにした
-	                       以前はコールバック関数でやっていたKillTimer()をここで行うようにした
-*/
-void CEditWnd::OnSysMenuTimer( void ) //by 鬼(2)
-{
-	::KillTimer( m_hWnd, IDT_SYSMENU );	// 2007.04.03 ryoji
-
-	if(m_IconClicked == icClicked)
-	{
-		ReleaseCapture();
-
-		//システムメニュー表示
-		// 2006.04.21 ryoji マルチモニタ対応の修正
-		// 2007.05.13 ryoji 0x0313メッセージをポストする方式に変更（TrackPopupMenuだとメニュー項目の有効／無効状態が不正になる問題対策）
-		RECT R;
-		GetWindowRect(m_hWnd, &R);
-		POINT pt;
-		pt.x = R.left + GetSystemMetrics(SM_CXFRAME);
-		pt.y = R.top + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME);
-		GetMonitorWorkRect( pt, &R );
-		::PostMessage(
-			m_hWnd,
-			0x0313, //右クリックでシステムメニューを表示する際に送信するモノらしい
-			0,
-			MAKELPARAM( (pt.x > R.left)? pt.x: R.left, (pt.y < R.bottom)? pt.y: R.bottom )
-		);
-	}
-	m_IconClicked = icNone;
 }
 
 /* デバッグモニタモードに設定 */
@@ -3695,7 +3690,7 @@ LRESULT CEditWnd::OnLButtonDown( WPARAM wParam, LPARAM lParam )
 	m_nDragPosOrgX = xPos;
 	m_nDragPosOrgY = yPos;
 	SetCapture( m_hWnd );
-	m_bDragMode = TRUE;
+	m_bDragMode = true;
 
 	return 0;
 }
@@ -3714,7 +3709,7 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 		return 0;
 	}
 
-	m_bDragMode = FALSE;
+	m_bDragMode = false;
 	ReleaseCapture();
 	::InvalidateRect( m_hWnd, NULL, TRUE );
 	return 0;
