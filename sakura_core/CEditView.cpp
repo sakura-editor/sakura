@@ -161,6 +161,18 @@ CEditView::CEditView()
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_cRegexKeyword( NULL )				// 2007.04.08 ryoji
 {
+}
+
+
+// 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
+BOOL CEditView::Create(
+	HINSTANCE	hInstance,
+	HWND		hwndParent,		//!< 親
+	CEditDoc*	pcEditDoc,		//!< 参照するドキュメント
+	int			nMyIndex,		//!< ビューのインデックス
+	BOOL		bShow			//!< 作成時に表示するかどうか
+)
+{
 
 	m_bDrawSWITCH = true;
 	m_pcDropTarget = new CDropTarget( this );
@@ -309,51 +321,13 @@ CEditView::CEditView()
 
 	// 2007.10.02 nasukoji
 	m_dwTripleClickCheck = 0;		// トリプルクリックチェック用時刻初期化
-}
-
-
-CEditView::~CEditView()
-{
-	if( m_hFont_HAN )        DeleteObject( m_hFont_HAN );
-	if( m_hFont_HAN_FAT )    DeleteObject( m_hFont_HAN_FAT );
-	if( m_hFont_HAN_UL )     DeleteObject( m_hFont_HAN_UL );
-	if( m_hFont_HAN_FAT_UL ) DeleteObject( m_hFont_HAN_FAT_UL );
-
-	// キャレット用ビットマップ	// 2006.11.28 ryoji
-	if( m_hbmpCaret != NULL )
-		DeleteObject( m_hbmpCaret );
-
-	if( m_hWnd != NULL ){
-		DestroyWindow( m_hWnd );
-	}
-
-	/* 再描画用コンパチブルＤＣ */
-	//	2007.09.30 genta 関数化
-	//	m_hbmpCompatBMPもここで削除される．
-	UseCompatibleDC(FALSE);
-
-	delete m_pcDropTarget;
-	m_pcDropTarget = NULL;
-
-	delete m_cHistory;
-
-	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
-	
-	//再変換 2002.04.10 minfu
-	if(m_hAtokModule)
-		FreeLibrary(m_hAtokModule);
-}
 
 
 
-BOOL CEditView::Create(
-	HINSTANCE	hInstance,
-	HWND		hwndParent,
-	CEditDoc*	pcEditDoc,
-	int			nMyIndex,
-	BOOL		bShow
-)
-{
+	//↑今までコンストラクタでやってたこと
+	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//↓今までCreateでやってたこと
+
 	WNDCLASS	wc;
 	m_hInstance = hInstance;
 	m_hwndParent = hwndParent;
@@ -482,6 +456,39 @@ BOOL CEditView::Create(
 	/* アンダーライン */
 	m_cUnderLine.SetView( this );
 	return TRUE;
+}
+
+
+CEditView::~CEditView()
+{
+	if( m_hFont_HAN )        DeleteObject( m_hFont_HAN );
+	if( m_hFont_HAN_FAT )    DeleteObject( m_hFont_HAN_FAT );
+	if( m_hFont_HAN_UL )     DeleteObject( m_hFont_HAN_UL );
+	if( m_hFont_HAN_FAT_UL ) DeleteObject( m_hFont_HAN_FAT_UL );
+
+	// キャレット用ビットマップ	// 2006.11.28 ryoji
+	if( m_hbmpCaret != NULL )
+		DeleteObject( m_hbmpCaret );
+
+	if( m_hWnd != NULL ){
+		DestroyWindow( m_hWnd );
+	}
+
+	/* 再描画用コンパチブルＤＣ */
+	//	2007.09.30 genta 関数化
+	//	m_hbmpCompatBMPもここで削除される．
+	UseCompatibleDC(FALSE);
+
+	delete m_pcDropTarget;
+	m_pcDropTarget = NULL;
+
+	delete m_cHistory;
+
+	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
+	
+	//再変換 2002.04.10 minfu
+	if(m_hAtokModule)
+		FreeLibrary(m_hAtokModule);
 }
 
 /** 画面キャッシュ用CompatibleDCを用意する
@@ -752,7 +759,6 @@ LRESULT CEditView::DispatchEvent(
 			GlobalUnlock( hstr );
 			GlobalFree( hstr );
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
-//			return 0;
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
@@ -931,10 +937,7 @@ LRESULT CEditView::DispatchEvent(
 		DestroyWindow( hwnd );
 		return 0L;
 	case WM_DESTROY:
-//		CDropTarget::Revoke_DropTarget();
 		m_pcDropTarget->Revoke_DropTarget();
-//		::RevokeDragDrop( m_hWnd );
-//		::OleUninitialize();
 
 		/* タイマー終了 */
 		::KillTimer( m_hWnd, IDT_ROLLMOUSE );
@@ -1475,10 +1478,6 @@ void CEditView::ShowEditCaret( void )
 /* 入力フォーカスを受け取ったときの処理 */
 void CEditView::OnSetFocus( void )
 {
-//NG	/* 1999.11.15 */
-//NG	::SetFocus( m_hwndParent );
-//NG	::SetFocus( m_hWnd );
-
 	// 2004.04.02 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
 	{
 		int nPosX = m_nCaretPosX;
@@ -1502,12 +1501,7 @@ void CEditView::OnSetFocus( void )
 	// 03/02/18 対括弧の強調表示(描画) ai
 	m_bDrawBracketPairFlag = TRUE;
 	DrawBracketPair( true );
-
-	return;
 }
-
-
-
 
 
 /* 入力フォーカスを失ったときの処理 */
@@ -1640,368 +1634,6 @@ int CEditView::OnHScroll( int nScrollCode, int nPos )
 	return nScrollVal;
 }
 
-
-
-#if 0//////////////////////////////////////////////
-/************************************************************************
- *
- * 	関数:	OpenDIB( LPSTR szFile )
- *
- * 	目的:	DIBファイルを開いてメモリDIBを作成します。また、BITMAPINFO、
- *	パレットデータ、ビットを含むメモリハンドルを作成します。
- *
- *	戻り値:	DIBを識別するハンドル
- *
- ************************************************************************/
-HANDLE CEditView::OpenDIB ( LPCSTR szFile )
-{
-	unsigned			fh;
-	BITMAPINFOHEADER	bi;
-	LPBITMAPINFOHEADER	lpbi;
-	DWORD				dwLen = 0;
-	DWORD				dwBits;
-	HANDLE				hdib;
-	HANDLE				h;
-	OFSTRUCT			of;
-
-	/* ファイルを開いてDIB情報を読み取る */
-	fh = OpenFile( szFile, &of, OF_READ );
-	if( fh == -1 )
-		return NULL;
-
-	hdib = ReadDibBitmapInfo( fh );
-	if( !hdib )
-		return NULL;
-	DibInfo( hdib, &bi );
-
-	/* DIBの保持に必要なメモリ量を計算 */
-	dwBits = bi.biSizeImage;
-	dwLen  = bi.biSize + (DWORD)PaletteSize( &bi ) + dwBits;
-
-	/* DIBを保持するビットマップ情報バッファサイズを増やす */
-	h = GlobalReAlloc( hdib, dwLen, GHND );
-	if( !h ){
-		GlobalFree( hdib );
-		hdib = NULL;
-	}
-	else
-		hdib = h;
-	/* ビットを読み取る */
-	if( hdib ){
-		lpbi = (LPBITMAPINFOHEADER)GlobalLock( hdib );
-		lread( fh, (LPSTR)lpbi + (WORD)lpbi->biSize + PaletteSize(lpbi), dwBits );
-		GlobalUnlock( hdib );
-	}
-	_lclose( fh );
-	return hdib;
-}
-
-/************************************************************************
- *
- *	関数:	ReadDibBitmapInfo( int fh )
- *
- *	目的:	DIB形式のファイルを読み取り、そのBITMAPINFOの
- *	グローバルハンドルを返します。
- *	この関数は以前の(BITMAPCOREHEADER)形式と新しい(BITMAPINFOHEADER)形式の
- * 	両方を処理できますが、返すのはつねに新しいBITMAPINFOです。
- *
- *	 戻り値: ファイル内のDIBのBITMAPINFOを識別するハンドル
- *
- ************************************************************************/
-HANDLE CEditView::ReadDibBitmapInfo ( int fh )
-{
-	DWORD				off;
-	HANDLE				hbi = NULL;
-	int					size;
-	int					i;
-	WORD				nNumColors;
-
-	RGBQUAD FAR			*pRgb;
-	BITMAPINFOHEADER	bi;
-	BITMAPCOREHEADER	bc;
-	LPBITMAPINFOHEADER	lpbi;
-	BITMAPFILEHEADER	bf;
-	DWORD				dwWidth = 0;
-	DWORD				dwHeight = 0;
-	WORD				wPlanes, wBitCount;
-
-	if( fh == -1 )
-		return NULL;
-
-	/* ファイルポインタをリセットし、ファイルヘッダーを読み取る */
-	off = _llseek( fh, 0L, SEEK_CUR );
-	if( sizeof( bf ) != _lread( fh, (LPSTR)&bf, sizeof( bf ) ) )
-		return FALSE;
-
-	/* RCヘッダーがあるか調べる */
-	if( !ISDIB( bf.bfType ) ){
-		bf.bfOffBits = 0L;
-		_llseek( fh, off, SEEK_SET );
-	}
-	if( sizeof( bi ) != _lread( fh, (LPSTR)&bi, sizeof( bi ) ) )
-		return FALSE;
-
-	nNumColors = DibNumColors( &bi );
-
-	/*
-	 * 情報ブロックの内容(BITMAPINFOまたはBITMAPCORE)をチェックし、
-	 * それに従って情報を取得する。BITMAPCOREHEADERならば、情報を
-	 * BITMAPINFOHEADER形式のブロックに転送する。
-	 */
-	switch ( size = (int)bi.biSize ){
-	  case sizeof( BITMAPINFOHEADER ):
-		break;
-	  case  sizeof( BITMAPCOREHEADER ):
-
-		bc = *(BITMAPCOREHEADER*)&bi;
-
-		dwWidth		= (DWORD)bc.bcWidth;
-		dwHeight	= (DWORD)bc.bcHeight;
-		wPlanes		= bc.bcPlanes;
-		wBitCount	= bc.bcBitCount;
-
-		bi.biSize		= sizeof( BITMAPINFOHEADER );
-		bi.biWidth		= dwWidth;
-		bi.biHeight		= dwHeight;
-		bi.biPlanes		= wPlanes;
-		bi.biBitCount	= wBitCount;
-
-		bi.biCompression	= BI_RGB;
-		bi.biSizeImage	 	= 0;
-		bi.biXPelsPerMeter	= 0;
-		bi.biYPelsPerMeter	= 0;
-		bi.biClrUsed		= nNumColors;
-		bi.biClrImportant	= nNumColors;
-		_llseek( fh, (LONG)sizeof( BITMAPCOREHEADER ) - sizeof( BITMAPINFOHEADER ), SEEK_CUR );
-		break;
-	  default:
-		/* DIBではない */
-		return NULL;
-	}
-	/* 0ならばデフォルト値を設定 */
-	if( bi.biSizeImage == 0 ){
-		bi.biSizeImage = WIDTHBYTES( (DWORD)bi.biWidth * bi.biBitCount ) * bi.biHeight;
-	}
-	if( bi.biClrUsed == 0 )
-		bi.biClrUsed = DibNumColors(&bi);
-	/* BITMAPINFO構造体とカラーテーブルを割り当てる */
-	hbi = GlobalAlloc( GHND, (LONG)bi.biSize + nNumColors * sizeof( RGBQUAD ) );
-	if( !hbi )
-		return NULL;
-	lpbi = (LPBITMAPINFOHEADER)GlobalLock( hbi );
-	*lpbi = bi;
-	/* カラーテーブルを指すポインタを取得 */
-	pRgb = (RGBQUAD FAR *)( (LPSTR)lpbi + bi.biSize );
-	if (nNumColors){
-		if( size == sizeof( BITMAPCOREHEADER ) ){
-			/*
-			 * 古いカラーテーブル(3バイトのRGBTRIPLE)を新しいカラーテーブル(4バイトのRGBQUAD)に変換
-			 */
-			_lread( fh, (LPSTR)pRgb, nNumColors * sizeof( RGBTRIPLE ) );
-			for( i = nNumColors - 1; i >= 0; i-- ){
-				RGBQUAD rgb;
-				rgb.rgbRed		= ((RGBTRIPLE FAR *)pRgb)[i].rgbtRed;
-				rgb.rgbBlue		= ((RGBTRIPLE FAR *)pRgb)[i].rgbtBlue;
-				rgb.rgbGreen	= ((RGBTRIPLE FAR *)pRgb)[i].rgbtGreen;
-				rgb.rgbReserved = (BYTE)0;
-				pRgb[i]			= rgb;
-			}
-		}
-		else
-			_lread( fh, (LPSTR)pRgb, nNumColors * sizeof( RGBQUAD ) );
-	}
-	if( bf.bfOffBits != 0L )
-		_llseek( fh, off + bf.bfOffBits, SEEK_SET );
- 	GlobalUnlock( hbi );
-	return hbi;
-}
-
-
-/************************************************************************
- *
- *	関数:	DibInfo( HANDLE hbi, LPBITMAPINFOHEADER lpbi )
- *
- *	目的:	CF_DIB形式のメモリブロックに関連付けられているDIB情報を取得します。
- *
- *  戻り値:	TRUE	- 正常に終了した場合
- *			FALSE	- それ以外の場合
- *
- ************************************************************************/
-BOOL CEditView::DibInfo( HANDLE hbi, LPBITMAPINFOHEADER lpbi )
-{
-	if( hbi ){
-		*lpbi = *(LPBITMAPINFOHEADER)GlobalLock( hbi );
-
-		/* デフォルトのメンバ設定 */
-		if( lpbi->biSize != sizeof( BITMAPCOREHEADER ) ){
-			if( lpbi->biSizeImage == 0L )
-				lpbi->biSizeImage =
-					WIDTHBYTES( lpbi->biWidth*lpbi->biBitCount ) * lpbi->biHeight;
-
-			if( lpbi->biClrUsed == 0L )
-				lpbi->biClrUsed = DibNumColors( lpbi );
-		}
-		GlobalUnlock( hbi );
-		return TRUE;
-	}
-	return FALSE;
-}
-
-/********************************************************************************
- *
- *	関数:	PaletteSize( VOID FAR * pv )
- *
- *	目的:	パレットのバイト数を計算します。情報ブロックがBITMAPCOREHEADER型
- *			ならば、色数の3倍がパレットサイズになります。それ以外の場合は、
- *			色数の4倍がパレットサイズになります。
- *
- *	戻り値:	パレットのバイト数
- *
- *******************************************************************************/
-WORD CEditView::PaletteSize ( VOID FAR * pv )
-{
-	LPBITMAPINFOHEADER lpbi;
-	WORD		NumColors;
-	lpbi		= (LPBITMAPINFOHEADER)pv;
-	NumColors	= DibNumColors(lpbi);
-
-	if( lpbi->biSize == sizeof( BITMAPCOREHEADER ) )
-		return NumColors * sizeof( RGBTRIPLE );
-	else
-		return NumColors * sizeof( RGBQUAD );
-}
-
-
-
-
-
-/********************************************************************************
- *
- *	関数:	DibNumColors( VOID FAR * pv )
- *
- *	目的:	情報ブロックのBitCountメンバを参照して、DIBの色数を判断します。
- *
- *	戻り値:	DIBの色数
- *
- *******************************************************************************/
-WORD CEditView::DibNumColors ( VOID FAR * pv)
-{
-	int					bits;
-	LPBITMAPINFOHEADER lpbi;
-	LPBITMAPCOREHEADER lpbc;
-	lpbi = ( (LPBITMAPINFOHEADER)pv );
-	lpbc = ( (LPBITMAPCOREHEADER)pv );
-	/*
-	 *	BITMAPINFO形式ヘッダーの場合、パレットのサイズはBITMAPCORE形式の
-	 *	ヘッダーのbiClrUsedが示している。パレットのサイズは、ピクセル当たり
-	 *	のビット数により異なる。
-	 */
-	if( lpbi->biSize != sizeof( BITMAPCOREHEADER ) ){
-		if( lpbi->biClrUsed != 0 )
-			return (WORD)lpbi->biClrUsed;
-		bits = lpbi->biBitCount;
-	}
-	else
-		bits = lpbc->bcBitCount;
-
-	switch ( bits ){
-		case 1:	return 2;
-		case 4:	return 16;
-		case 8:	return 256;
-		/* 24ビットDIBにはカラーテーブルはない */
-		default:	return 0;
-	}
-}
-
- /********** 64Kバイト以上の読み書きを行うプライベートルーチン *********/
-/************************************************************************
- *
- *	関数:	lread( int fh, VOID FAR *pv, DWORD ul )
- *
- *	目的:	データをすべて読み取るまで32Kバイトずつデータを読み取ります。
- *
- *	戻り値:	0			- 正常に読み取れなかった場合
- *	読み取ったバイト数	- それ以外の場合
- *
- ************************************************************************/
-DWORD CEditView::lread( int fh, void* pv, DWORD ul )
-{
-	DWORD	ulT = ul;
-	BYTE	*hp = (BYTE *)pv;
-
-#define	 MAXREAD_BYTES	32768	/* 読み取り処理時の読み取り可能なバイト数 */
-
-	while( ul > (DWORD)MAXREAD_BYTES ){
-		if( _lread( fh, (LPSTR)hp, (WORD)MAXREAD_BYTES ) != MAXREAD_BYTES )
-			return 0;
-		ul -= MAXREAD_BYTES;
-		hp += MAXREAD_BYTES;
-	}
-	if( _lread(fh, (LPSTR)hp, (WORD)ul) != (WORD)ul )
-		return 0;
-	return ulT;
-}
-
-
-/************************************************************************
- * 関数:  PrintBitmap(int , int , int , int , LPCSTR );
- *
- *	目的:	指定したDIBファイルを読み込んで指定文字桁範囲に伸縮印刷します。
- *			印刷位置は現在のフォントサイズに影響されます。
- *
- *	戻り値:	なし
- *
- ************************************************************************/
-void CEditView::PrintBitmap( HDC hdc, int x1, int y1, const char* szFile )
-{
-	HANDLE				hdib;
-	BITMAPINFOHEADER	bi;
-	LPBITMAPINFOHEADER	lpbi;
-	LPSTR				pBuf;
-
-	/* DIBファイルを開いてメモリDIBを作成 */
-	hdib = OpenDIB ( szFile );
-	if( hdib == NULL ){
-//		MYTRACE_A( " OpenDIB()の実行に失敗  \n" );
-		return;
-	}
-	DibInfo( hdib, &bi );
-
-	/* DIBをプリンタDCに伸縮して転送 */
-	lpbi = (LPBITMAPINFOHEADER)GlobalLock( hdib );
-	if( !lpbi ){
-		GlobalFree( (HGLOBAL)hdib );
-		return ;
-	}
-	pBuf = (LPSTR)lpbi + (WORD)lpbi->biSize + PaletteSize( lpbi );
-	StretchDIBits ( hdc,
-		x1,
-		y1,
-		bi.biWidth,
-		bi.biHeight,
-		0,
-		0,
-		bi.biWidth,
-		bi.biHeight,
-		pBuf,
-		(LPBITMAPINFO)lpbi,
-		DIB_RGB_COLORS,
-		SRCCOPY
-	);
-	GlobalUnlock( hdib );
-	GlobalFree( hdib );
-	return;
-}
-
-#endif //////////////////////////////////////////////
-
-
-
-
-
-
-
-
 /* 2点を対角とする矩形を求める */
 void CEditView::TwoPointToRect(
 		RECT*	prcRect,
@@ -2028,34 +1660,6 @@ void CEditView::TwoPointToRect(
 	return;
 
 }
-
-#if 0//////////////////////////////////////////
-/* デバッグ用 リージョン矩形のダンプ */
-void CEditView::TraceRgn( HRGN hrgn )
-{
-//	unsigned int	i;
-	char*			pBuf;
-	int				nRgnDataSize;
-	RGNDATA*		pRgnData;
-	RECT*			pRect;
-	nRgnDataSize = ::GetRegionData( hrgn, 0, NULL );
-	pBuf = new char[nRgnDataSize];
-	pRgnData = (RGNDATA*)pBuf;
-	nRgnDataSize = ::GetRegionData( hrgn, nRgnDataSize, pRgnData );
-	pRect = (RECT*)&pRgnData->Buffer[0];
-//	if( 0 < pRgnData->rdh.nCount ){
-//		m_cShareData.TraceOut( "---------\n" );
-//		for( i = 0; i < pRgnData->rdh.nCount; ++i ){
-//			m_cShareData.TraceOut( "\t(%d, %d, %d, %d \n", pRect[i].left, pRect[i].right, pRect[i].top, pRect[i].bottom );
-//		}
-//	}
-	delete [] pBuf;
-	return;
-}
-#endif //#if 0
-
-
-
 
 /*! 選択領域の描画
 

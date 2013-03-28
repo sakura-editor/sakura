@@ -459,14 +459,6 @@ protected:
 	BOOL MySetClipboardData( const char*, int, BOOL, bool = false );	/* クリップボードにデータを設定 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
 	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
 	BOOL GetCurrentWord( CMemory* );					/* キャレット位置の単語を取得 */	// 2006.03.24 fon
-//	void PrintBitmap( HDC, int, int, const char* );		/* ビットマップファイル表示 */
-//	HANDLE OpenDIB ( LPCSTR );							/* DIBファイルを開いてメモリDIBを作成 */
-//	HANDLE ReadDibBitmapInfo ( int );					/* DIB形式のファイルを読む */
-//	BOOL DibInfo ( HANDLE, LPBITMAPINFOHEADER );		/* CF_DIB形式のメモリブロックに関連付けられているDIB情報を取得します */
-//	WORD PaletteSize ( VOID FAR * pv );					/* パレットのバイト数を計算します */
-//	WORD DibNumColors ( VOID FAR * );					/* 情報ブロックのBitCountメンバを参照して、DIBの色数を判断します */
-//	DWORD lread ( int, void*, DWORD );					/* データをすべて読み取る */
-//	void TraceRgn( HRGN );								/* デバッグ用 リージョン矩形のダンプ */
 	bool DispLineNew( HDC, const CLayout*, int&, int, int&, int, BOOL );	/* 行のテキスト／選択状態の描画 */
 	void DispLineNumber( HDC, const CLayout*, int, int );		/* 行番号表示 */
 	void SetCurrentColor( HDC, EColorIndexType );				/* 現在の色を指定 */
