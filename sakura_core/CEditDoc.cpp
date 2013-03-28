@@ -310,9 +310,6 @@ BOOL CEditDoc::Create(
 
 	MY_TRACETIME( cRunningTimer, "End: PropSheet" );
 
-	/* 入力補完ウィンドウ作成 */
-	m_cHokanMgr.DoModeless( m_hInstance, m_pcEditViewArr[0]->m_hWnd, (LPARAM)m_pcEditViewArr[0] );
-
 	return TRUE;
 }
 

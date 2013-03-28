@@ -110,6 +110,20 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	else {
 		pcmemHokanWord = NULL;
 	}
+
+	/* 入力補完ウィンドウ作成 */
+	// 以前はエディタ起動時に作成していたが必要になってからここで作成するようにした。
+	// エディタ起動時だとエディタ可視化の途中になぜか不可視の入力補完ウィンドウが一時的にフォアグラウンドになって、
+	// タブバーに新規タブが追加されるときのタブ切替でタイトルバーがちらつく（一瞬非アクティブ表示になるのがはっきり見える）ことがあった。
+	// ※ Vista/7 の特定の PC でだけのちらつきか？ 該当 PC 以外の Vista/7 PC でもたまに微妙に表示が乱れた感じになる程度の症状が見られたが、それらが同一原因かどうかは不明。
+	if( !m_pcEditDoc->m_cHokanMgr.m_hWnd ){
+		m_pcEditDoc->m_cHokanMgr.DoModeless(
+			m_pcEditDoc->m_hInstance,
+			m_hWnd,
+			(LPARAM)this
+		);
+		::SetFocus( m_hWnd );	//エディタにフォーカスを戻す
+	}
 	nKouhoNum = m_pcEditDoc->m_cHokanMgr.Search(
 		&poWin,
 		m_nCharHeight,
