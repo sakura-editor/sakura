@@ -333,9 +333,6 @@ bool CNormalProcess::InitializeProcess()
 
 	SetMainWindow( pEditWnd->GetHwnd() );
 
-	//ウィンドウキャプション更新
-	pEditWnd->UpdateCaption();
-
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	pEditWnd->GetActiveView().SetIMECompFormPos();
 
