@@ -542,12 +542,7 @@ HWND CEditWnd::Create(
 
 	// 各種バーよりも先に m_cEditDoc.Create() を実行しておく	// 2007.01.30 ryoji
 	// （m_cEditDoc メンバーの初期化を優先）
-	if( !m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons ) ){
-		OkMessage(
-			m_hWnd,
-			_T("クライアントウィンドウの作成に失敗しました")
-		);
-	}
+	m_cEditDoc.Create( m_hInstance, m_hWnd, &m_cIcons );
 
 	// -- -- -- -- 各種バー作成 -- -- -- -- //
 
