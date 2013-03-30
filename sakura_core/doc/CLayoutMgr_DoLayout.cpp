@@ -552,8 +552,8 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 {
 	if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){	// 「折り返さない」
-		CLayoutInt nCalTextWidthLinesFrom;		// テキスト最大幅の算出開始レイアウト行
-		CLayoutInt nCalTextWidthLinesTo;		// テキスト最大幅の算出終了レイアウト行
+		CLayoutInt	nCalTextWidthLinesFrom(0);	// テキスト最大幅の算出開始レイアウト行
+		CLayoutInt	nCalTextWidthLinesTo(0);	// テキスト最大幅の算出終了レイアウト行
 		BOOL bCalTextWidth        = TRUE;		// テキスト最大幅の算出要求をON
 		CLayoutInt nInsLineNum    = m_nLines - pctwArg->nAllLinesOld;		// 追加削除行数
 

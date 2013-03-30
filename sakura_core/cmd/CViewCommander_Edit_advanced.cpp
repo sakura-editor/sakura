@@ -575,8 +575,8 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=è∏èá,FALSE=ç~èá
 	CLayoutRange sRangeA;
 	CLogicRange sSelectOld;
 
-	int			nColmFrom,nColmTo;
-	CLayoutInt	nCF,nCT;
+	int			nColmFrom, nColmTo;
+	CLayoutInt	nCF(0), nCT(0);
 	CLayoutInt	nCaretPosYOLD;
 	bool		bBeginBoxSelectOld;
 	const wchar_t*	pLine;

@@ -267,7 +267,7 @@ void CMainToolBar::CreateToolBar( void )
 						//サイズを設定する
 						tbi.cbSize = sizeof(tbi);
 						tbi.dwMask = TBIF_SIZE;
-						tbi.cx     = DpiScaleX(160);	//ボックスの幅	// 2009.10.01 ryoji 高DPI対応スケーリング
+						tbi.cx     = (WORD)DpiScaleX(160);	//ボックスの幅	// 2009.10.01 ryoji 高DPI対応スケーリング
 						Toolbar_SetButtonInfo( m_hwndToolBar, tbb.idCommand, &tbi );
 
 						//位置とサイズを取得する

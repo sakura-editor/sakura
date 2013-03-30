@@ -335,7 +335,7 @@ int CDlgPrintSetting::GetData( void )
 	hwndCtrl = ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER );
 	nIdx1 = Combo_GetCurSel( hwndCtrl );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
-		Combo_GetItemData( hwndCtrl, nIdx1 );
+		(short)Combo_GetItemData( hwndCtrl, nIdx1 );
 
 	// 用紙の向き
 	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
@@ -573,10 +573,9 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 /* スピンコントロールの処理 */
 void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 {
-	int		nData;
-	BOOL	bUnknown;
-	int		nCtrlIdEDIT;
-	bUnknown = FALSE;
+	bool	bUnknown = false;
+	int		nData = 0;
+	int		nCtrlIdEDIT = 0;
 	switch( nCtrlId ){
 	case IDC_SPIN_FONTWIDTH:
 		nCtrlIdEDIT = IDC_EDIT_FONTWIDTH;
@@ -651,7 +650,7 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 		}
 		break;
 	default:
-		bUnknown = TRUE;
+		bUnknown = true;
 		break;
 	}
 	if( !bUnknown ){
@@ -659,14 +658,12 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 		nData = DataCheckAndCrrect( nCtrlIdEDIT, nData );
 		::SetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nData, FALSE );
 	}
-	return;
 }
 
 
 /* 入力値(数値)のエラーチェックをして正しい値を返す */
 int CDlgPrintSetting::DataCheckAndCrrect( int nCtrlId, int nData )
 {
-//	int		nData;
 	switch( nCtrlId ){
 	case IDC_EDIT_FONTWIDTH:
 		if( 7 >= nData ){
@@ -742,10 +739,9 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	int nTimer;
 	int				nEnableColmns;		/* 行あたりの文字数 */
 	int				nEnableLines;		/* 縦方向の行数 */
-//	int				nEnableLinesAll;	/* ページあたりの行数 */
 	MYDEVMODE		dmDummy;			// 2003.05.18 かろと 型変更
-	int				nPaperAllWidth;		/* 用紙幅 */
-	int				nPaperAllHeight;	/* 用紙高さ */
+	short			nPaperAllWidth;		/* 用紙幅 */
+	short			nPaperAllHeight;	/* 用紙高さ */
 	PRINTSETTING*	pPS;
 	nTimer = (int)wParam;
 

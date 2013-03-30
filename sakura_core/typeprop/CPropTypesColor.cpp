@@ -113,11 +113,11 @@ bool CPropTypesColor::Export( HWND hwndDlg )
 
 LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	int			xPos;
+	int			xPos = 0;
 	int			yPos;
-	int			nIndex;
+	int			nIndex = -1;
 	int			nItemNum;
-	RECT		rcItem;
+	RECT		rcItem = {0,0,0,0};
 	int			i;
 	POINT		poMouse;
 	ColorInfo*	pColorInfo;
@@ -126,14 +126,12 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONDBLCLK:
 	case WM_LBUTTONUP:
-//		fwKeys = wParam;		// key flags
 		xPos = LOWORD(lParam);	// horizontal position of cursor
 		yPos = HIWORD(lParam);	// vertical position of cursor
 
 		poMouse.x = xPos;
 		poMouse.y = yPos;
 		nItemNum = List_GetCount( hwnd );
-		nIndex = -1;
 		for( i = 0; i < nItemNum; ++i ){
 			List_GetItemRect( hwnd, i, &rcItem );
 			if( ::PtInRect( &rcItem, poMouse ) ){
@@ -622,7 +620,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 //#endif
 
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, m_Types.m_cBlockComments[0].getBlockCommentFrom() );	/* ブロックコメントデリミタ(From) */
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, m_Types.m_cBlockComments[0].getBlockCommentTo() );	/* ブロックコメントデリミタ(To) */
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO	, m_Types.m_cBlockComments[0].getBlockCommentTo() );	/* ブロックコメントデリミタ(To) */
 //#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM2	, m_Types.m_cBlockComments[1].getBlockCommentFrom() );	/* ブロックコメントデリミタ2(From) */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, m_Types.m_cBlockComments[1].getBlockCommentTo() );	/* ブロックコメントデリミタ2(To) */

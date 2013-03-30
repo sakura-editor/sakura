@@ -68,7 +68,7 @@ void CViewCommander::Command_JUMP( void )
 	int			nMode;
 	int			bValidLine;
 	int			nCurrentLine;
-	int			nCommentBegin;
+	int			nCommentBegin = 0;
 
 	if( 0 == GetDocument()->m_cLayoutMgr.GetLineCount() ){
 		ErrorBeep();

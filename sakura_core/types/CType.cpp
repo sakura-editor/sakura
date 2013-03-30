@@ -74,6 +74,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	}
 
 	// ê›íË17-30(MAX_TYPES)
+	assert( _countof(table) <= MAX_TYPES);
 	if( _countof(table) < MAX_TYPES ){
 		CType_Other other;
 		for( int i = _countof(table); i < MAX_TYPES; i++ ){

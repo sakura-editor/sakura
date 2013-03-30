@@ -350,8 +350,8 @@ void CEditView::ISearchExec(bool bNext)
 	
 	ISearchWordMake();
 	
-	CLayoutInt nLine;
-	CLayoutInt nIdx1;
+	CLayoutInt	nLine(0);
+	CLayoutInt	nIdx1(0);
 	
 	if ( bNext && m_bISearchWrap ) {
 		switch (m_nISearchDirection)

@@ -48,7 +48,7 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 	char *pw, *pw_base;
 	wchar_t buffer[_BUFSIZE];
 	int i, j;
-	wchar_t c;
+	wchar_t c = 0;
 
 	pSrc = pcSrc.GetStringPtr();
 	nSrcLen = pcSrc.GetStringLength();

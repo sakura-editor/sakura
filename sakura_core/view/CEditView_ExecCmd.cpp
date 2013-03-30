@@ -85,7 +85,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	if( nFlgOpt & 0x40 ) bOutputExtInfo = FALSE;
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
-	CLayoutInt	nLineFrom, nColmFrom;
+	CLayoutInt	nLineFrom(0), nColmFrom(0);
 	bool bBeforeTextSelected = GetSelectionInfo().IsTextSelected();
 	if (bBeforeTextSelected){
 		nLineFrom = this->GetSelectionInfo().m_sSelect.GetFrom().y; //m_nSelectLineFrom;
@@ -313,7 +313,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						wchar_t*	workw;
 						int			read_cntw;
 						bool		bCarry;
-						char		byteCarry;
+						char		byteCarry = 0;
 						workw = (wchar_t*)work;
 						read_cntw = (int)read_cnt/sizeof(wchar_t);
 						if( read_cnt % (int)sizeof(wchar_t) ){

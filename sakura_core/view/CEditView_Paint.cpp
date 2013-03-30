@@ -439,9 +439,9 @@ inline COLORREF MakeColor2(COLORREF a, COLORREF b, int alpha)
 {
 	const int ap = alpha;
 	const int bp = 256 - ap;
-	BYTE valR = ((GetRValue(a) * ap + GetRValue(b) * bp) / 256);
-	BYTE valG = ((GetGValue(a) * ap + GetGValue(b) * bp) / 256);
-	BYTE valB = ((GetBValue(a) * ap + GetBValue(b) * bp) / 256);
+	BYTE valR = (BYTE)((GetRValue(a) * ap + GetRValue(b) * bp) / 256);
+	BYTE valG = (BYTE)((GetGValue(a) * ap + GetGValue(b) * bp) / 256);
+	BYTE valB = (BYTE)((GetBValue(a) * ap + GetBValue(b) * bp) / 256);
 	return RGB(valR, valG, valB);
 }
 
@@ -563,7 +563,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 
 	bool bTransText = IsBkBitmap();
 	// ƒƒ‚ƒŠ‚c‚b‚ğ—˜—p‚µ‚½Ä•`‰æ‚Ìê‡‚Í•`‰ææ‚Ì‚c‚b‚ğØ‚è‘Ö‚¦‚é
-	HDC hdcOld;
+	HDC hdcOld = 0;
 	// 2007.09.09 Moca bUseMemoryDC‚ğ—LŒø‰»B
 	// bUseMemoryDC = FALSE;
 	BOOL bUseMemoryDC = (m_hdcCompatDC != NULL);

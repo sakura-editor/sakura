@@ -38,7 +38,7 @@ CSearchStringPattern::CSearchStringPattern( const wchar_t* pszPattern, int nPatt
 	if( m_bIgnoreCase ){
 		//note: 合成文字,サロゲートの「大文字小文字同一視」未対応
 		for( int i = 0; i < m_nPatternLen; i++ ){
-			m_pszPatternCase[i] = skr_towupper(pszPattern[i]);
+			m_pszPatternCase[i] = (wchar_t)skr_towupper(pszPattern[i]);
 		}
 	}else{
 		wmemcpy( m_pszPatternCase, pszPattern, m_nPatternLen );
@@ -129,7 +129,7 @@ const wchar_t* CSearchAgent::SearchString(
 		for( int nPos = nIdxPos; nPos <= nCompareTo; ){
 			if( toLoHiUpper(bLoHiCase, pLine[nPos]) != pattern0 ){
 #ifdef SEARCH_STRING_SUNDAY_QUICK
-				int index = CSearchStringPattern::GetMapIndex(toLoHiUpper( bLoHiCase, pLine[nPos + nPatternLen]) );
+				int index = CSearchStringPattern::GetMapIndex((wchar_t)toLoHiUpper( bLoHiCase, pLine[nPos + nPatternLen]) );
 				nPos += useSkipMap[index];
 #else
 				nPos++;

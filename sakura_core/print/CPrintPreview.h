@@ -167,28 +167,26 @@ protected:
 	int				m_nPreview_ViewHeight;		/* 印刷プレビュー：ビュー高さ(ピクセル) */
 	int				m_nPreview_ViewMarginLeft;	/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 	int				m_nPreview_ViewMarginTop;	/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
-	int				m_nPreview_PaperAllWidth;	/* 用紙幅(1/10mm単位) */
-	int				m_nPreview_PaperAllHeight;	/* 用紙高さ(1/10mm単位) */
-	int				m_nPreview_PaperWidth;	/* 用紙印刷有効幅(1/10mm単位) */
-	int				m_nPreview_PaperHeight;	/* 用紙印刷有効高さ(1/10mm単位) */
-	int				m_nPreview_PaperOffsetLeft;	/* 用紙余白左端(1/10mm単位) */
-	int				m_nPreview_PaperOffsetTop;	/* 用紙余白上端(1/10mm単位) */
-//	int				m_nPreview_PaperOffsetRight;	/* 用紙余白右端(1/10mm単位) */
-//	int				m_nPreview_PaperOffsetBottom;	/* 用紙余白下端(1/10mm単位) */
-	CLayoutInt		m_bPreview_EnableColms;	/* 印字可能桁数/ページ */
-	int				m_bPreview_EnableLines;	/* 印字可能行数/ページ */
+	short			m_nPreview_PaperAllWidth;	/* 用紙幅(1/10mm単位) */
+	short			m_nPreview_PaperAllHeight;	/* 用紙高さ(1/10mm単位) */
+	short			m_nPreview_PaperWidth;		/* 用紙印刷有効幅(1/10mm単位) */
+	short			m_nPreview_PaperHeight;		/* 用紙印刷有効高さ(1/10mm単位) */
+	short			m_nPreview_PaperOffsetLeft;	/* 用紙余白左端(1/10mm単位) */
+	short			m_nPreview_PaperOffsetTop;	/* 用紙余白上端(1/10mm単位) */
+	CLayoutInt		m_bPreview_EnableColms;		/* 印字可能桁数/ページ */
+	int				m_bPreview_EnableLines;		/* 印字可能行数/ページ */
 	int				m_nPreview_LineNumberColmns;	/* 行番号エリアの幅（文字数） */
-	int				m_nAllPageNum;	/* 全ページ数 */
-	int				m_nCurPageNum;	/* 現在のページ */
+	WORD			m_nAllPageNum;				/* 全ページ数 */
+	WORD			m_nCurPageNum;				/* 現在のページ */
 
-	PRINTSETTING*	m_pPrintSetting;	/* 現在の印刷設定 */
-	LOGFONT		m_lfPreviewHan;	/* プレビュー用フォント */
-	LOGFONT		m_lfPreviewZen;	/* プレビュー用フォント */
+	PRINTSETTING*	m_pPrintSetting;			/* 現在の印刷設定 */
+	LOGFONT			m_lfPreviewHan;				/* プレビュー用フォント */
+	LOGFONT			m_lfPreviewZen;				/* プレビュー用フォント */
 
-	class CLayoutMgr*	m_pLayoutMgr_Print;	/* 印刷用のレイアウト管理情報 */
+	class CLayoutMgr*	m_pLayoutMgr_Print;		/* 印刷用のレイアウト管理情報 */
 
 	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
-	static CPrint	m_cPrint;		//!< 現在のプリンタ情報
+	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
 };
 
 #endif

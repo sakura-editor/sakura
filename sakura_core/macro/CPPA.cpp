@@ -244,11 +244,11 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		}
 		if ( cMacroFuncInfo.m_varArguments[i] == VT_BSTR ){
 			strcpy( szArguments[i], "s0: string" );
-			szArguments[i][1] = '0' + i;
+			szArguments[i][1] = '0' + (char)i;
 		}
 		else if ( cMacroFuncInfo.m_varArguments[i] == VT_I4 ){
 			strcpy( szArguments[i], "i0: Integer" );
-			szArguments[i][1] = '0' + i;
+			szArguments[i][1] = '0' + (char)i;
 		}
 		else {
 			strcpy( szArguments[i], "u0: Unknown" );

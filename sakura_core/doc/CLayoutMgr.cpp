@@ -646,7 +646,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 {
 	CLayout*		pLayout;
 	CLayout*		pLayoutPrev;
-	CLayout*		pLayoutWork;
+	CLayout*		pLayoutWork = NULL;
 	CLogicInt		nInsStartLogicalLine;
 	CLogicInt		nInsStartLogicalPos;
 	CLogicInt		nInsLineNum;
@@ -710,7 +710,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nCurrentLineType = pLayout->GetColorTypePrev();
 	}
 
-	if( pLayout ){
+	if( NULL != pLayout ){
 		pLayoutWork = pLayout;
 		while( pLayoutWork != NULL && 0 != pLayoutWork->GetLogicOffset() ){
 			pLayoutWork = pLayoutWork->GetPrevLayout();

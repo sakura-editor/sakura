@@ -84,29 +84,29 @@ void CViewCommander::Command_SEARCH_NEXT(
 )
 {
 	bool		bSelecting;
-	bool		bFlag1;
-	bool		bSelectingLock_Old;
+	bool		bFlag1 = false;
+	bool		bSelectingLock_Old = false;
 	bool		bFound = false;
 	bool		bDisableSelect = false;
-	const CLayout* pcLayout;
-	bool b0Match = false;		//!< 長さ０でマッチしているか？フラグ by かろと
-	const wchar_t *pLine;
-	CLogicInt nIdx;
+	bool		b0Match = false;		//!< 長さ０でマッチしているか？フラグ by かろと
+	const CLayout*	pcLayout;
+	const wchar_t*	pLine;
+	CLogicInt	nIdx(0);
 	CLogicInt	nLineLen;
-	CLayoutInt	nLineNum;
+	CLayoutInt	nLineNum(0);
 
-	CLayoutRange sRangeA;
+	CLayoutRange	sRangeA;
 	sRangeA.Set(GetCaret().GetCaretLayoutPos());
 
-	CLayoutRange sSelectBgn_Old;
-	CLayoutRange sSelect_Old;
-	CLayoutInt  nLineNumOld;
+	CLayoutRange	sSelectBgn_Old;
+	CLayoutRange	sSelect_Old;
+	CLayoutInt	nLineNumOld(0);
 
-	bool bRedo;		//	hor
-	int  nIdxOld;		//	hor
-	int nSearchResult;
+	bool		bRedo = false;	//	hor
+	int			nIdxOld = 0;	//	hor
+	int			nSearchResult;
 
-	bSelecting = FALSE;
+	bSelecting = false;
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
 	// 2004.05.30 Moca CEditViewの現在設定されている検索パターンを使えるように
@@ -116,11 +116,11 @@ void CViewCommander::Command_SEARCH_NEXT(
 	}
 
 	// 検索開始位置を調整
-	bFlag1 = FALSE;
+	bFlag1 = false;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
 		/* 矩形範囲選択中でない & 選択状態のロック */
 		if( !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
-			bSelecting = TRUE;
+			bSelecting = true;
 			bSelectingLock_Old = m_pCommanderView->GetSelectionInfo().m_bSelectingLock;
 
 			sSelectBgn_Old = m_pCommanderView->GetSelectionInfo().m_sSelectBgn; //範囲選択(原点)
@@ -133,7 +133,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 					// 現在、長さ０でマッチしている場合は１文字進める(無限マッチ対策) by かろと
 					b0Match = true;
 				}
-				bFlag1 = TRUE;
+				bFlag1 = true;
 			}
 			else{
 				// カーソル移動
@@ -176,8 +176,8 @@ void CViewCommander::Command_SEARCH_NEXT(
 	}
 
 	nLineNumOld = nLineNum;	//	hor
-	bRedo			= TRUE;		//	hor
-	nIdxOld			= nIdx;		//	hor
+	bRedo		= true;		//	hor
+	nIdxOld		= nIdx;		//	hor
 
 re_do:;
 	 /* 現在位置より後ろの位置を検索する */
@@ -264,9 +264,9 @@ end_of_func:;
 			bRedo	&&		// 最初の検索
 			m_pCommanderView->GetDrawSwitch()	// 全て置換の実行中じゃない
 		){
-			nLineNum=CLayoutInt(0);
-			nIdx=CLogicInt(0);
-			bRedo=FALSE;
+			nLineNum	= CLayoutInt(0);
+			nIdx		= CLogicInt(0);
+			bRedo		= false;
 			goto re_do;		// 先頭から再検索
 		}
 	}
@@ -307,15 +307,15 @@ end_of_func:;
 void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 {
 	bool		bSelecting;
-	bool		bSelectingLock_Old;
+	bool		bSelectingLock_Old = false;
 	bool		bFound = false;
 	bool		bRedo = false;			//	hor
 	bool		bDisableSelect = false;
-	CLayoutInt	nLineNumOld;
-	CLogicInt	nIdxOld;
+	CLayoutInt	nLineNumOld(0);
+	CLogicInt	nIdxOld(0);
 	const CLayout* pcLayout = NULL;
-	CLayoutInt nLineNum;
-	CLogicInt nIdx;
+	CLayoutInt	nLineNum(0);
+	CLogicInt	nIdx(0);
 
 	CLayoutRange sRangeA;
 	sRangeA.Set(GetCaret().GetCaretLayoutPos());
@@ -323,8 +323,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	CLayoutRange sSelectBgn_Old;
 	CLayoutRange sSelect_Old;
 
-	//	bFlag1 = FALSE;
-	bSelecting = FALSE;
+	bSelecting = false;
 	// 2002.01.16 hor
 	// 共通部分のくくりだし
 	if(!m_pCommanderView->ChangeCurRegexp()){
@@ -341,7 +340,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 
 		/* 矩形範囲選択中か */
 		if( !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && TRUE == m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){	/* 選択状態のロック */
-			bSelecting = TRUE;
+			bSelecting = true;
 		}
 		else{
 			/* 現在の選択範囲を非選択状態に戻す */
@@ -373,7 +372,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 	}
 
-	bRedo		=	TRUE;		//	hor
+	bRedo		=	true;		//	hor
 	nLineNumOld	=	nLineNum;	//	hor
 	nIdxOld		=	nIdx;		//	hor
 re_do:;							//	hor
@@ -431,9 +430,9 @@ end_of_func:;
 		if(!bFound	&&	// 見つからなかった
 			bRedo		// 最初の検索
 		){
-			nLineNum=GetDocument()->m_cLayoutMgr.GetLineCount()-CLayoutInt(1);
-			nIdx=CLogicInt(MAXLINEKETAS);
-			bRedo=FALSE;
+			nLineNum	= GetDocument()->m_cLayoutMgr.GetLineCount()-CLayoutInt(1);
+			nIdx		= CLogicInt(MAXLINEKETAS);
+			bRedo		= false;
 			goto re_do;	// 末尾から再検索
 		}
 	}
@@ -793,9 +792,9 @@ void CViewCommander::Command_REPLACE_ALL()
 	// 速く動かすことを最優先に組んでみました。
 	// ループの外で文字列の長さを特定できるので、一時変数化。
 	const wchar_t *szREPLACEKEY;		// 置換後文字列。
-	bool		bColmnSelect;	// 矩形貼り付けを行うかどうか。
+	bool		bColmnSelect = false;	// 矩形貼り付けを行うかどうか。
 	bool		bLineSelect = false;	// ラインモード貼り付けを行うかどうか
-	CNativeW	cmemClip;		// 置換後文字列のデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
+	CNativeW	cmemClip;				// 置換後文字列のデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
 
 	// クリップボードからのデータ貼り付けかどうか。
 	if( nPaste != 0 )
@@ -895,12 +894,12 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	//$$ 単位混在
 	CLayoutPoint	ptOld;						//検索後の選択範囲
-	/*CLogicInt*/int		lineCnt;					//置換前の行数
+	/*CLogicInt*/int		lineCnt = 0;		//置換前の行数
 	/*CLayoutInt*/int		linDif = (0);		//置換後の行調整
 	/*CLayoutInt*/int		colDif = (0);		//置換後の桁調整
-	/*CLayoutInt*/int		linPrev = (0);	//前回の検索行(矩形) @@@2001.12.31 YAZAKI warning退治
+	/*CLayoutInt*/int		linPrev = (0);		//前回の検索行(矩形) @@@2001.12.31 YAZAKI warning退治
 	/*CLogicInt*/int		linOldLen = (0);	//検査後の行の長さ
-	/*CLayoutInt*/int		linNext;					//次回の検索行(矩形)
+	/*CLayoutInt*/int		linNext;			//次回の検索行(矩形)
 
 	/* テキストが選択されているか */
 	while( m_pCommanderView->GetSelectionInfo().IsTextSelected() )

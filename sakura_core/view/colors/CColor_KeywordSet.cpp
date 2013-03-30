@@ -79,7 +79,7 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 				// CKeyWordSetMgr::SearchKeyWord2()から想定外の戻り値。
 				break;
 			}
-		} while( posWordEndCandidate < cStr.GetLength() && (posWordEndCandidate = NextWordBreak( cStr, posWordEndCandidate )) != NULL );
+		} while( posWordEndCandidate < cStr.GetLength() && ((posWordEndCandidate = NextWordBreak( cStr, posWordEndCandidate )) != 0) );
 
 		// nPos...posWordEnd がキーワード。
 		if( nPos < posWordEnd ) {

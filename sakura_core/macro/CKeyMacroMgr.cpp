@@ -249,7 +249,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					}
 					WCHAR cQuote = szLine[i];
 					++i;
-					nBgn = i;	//	nBgnは引数の先頭の文字
+					nBgn = nEnd = i;	//	nBgnは引数の先頭の文字
 					//	Jun. 16, 2002 genta
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
@@ -310,7 +310,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 						m_nReady = false;
 						break;
 					}
-					nBgn = i;	//	nBgnは引数の先頭の文字
+					nBgn = nEnd = i;	//	nBgnは引数の先頭の文字
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
 						if( Is09(szLine[i]) ){	// まだ数値

@@ -235,7 +235,7 @@ static const int TABLESIZE_SjisPoorcodeIndex = 23;
 */
 unsigned int __fastcall SjisFilter_basis( const unsigned int uCode )
 {
-	int ni, nleft, nright;
+	int ni = 0, nleft, nright;
 	unsigned int code_tmp;
 
 	/* “ñ•ªŒŸõŠJn */

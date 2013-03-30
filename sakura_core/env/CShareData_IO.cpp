@@ -1004,7 +1004,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 					*pn = 0;
 					nRes = scan_ints(p, L"%04x", &keycode);
 					if (nRes!=1)	continue;
-					tmpKeydata.m_nKeyCode = keycode;	
+					tmpKeydata.m_nKeyCode = (short)keycode;
 					p = pn+1;
 
 					//後に続くトークン 
@@ -1051,7 +1051,7 @@ void CShareData_IO::IO_KeyBind( CDataProfile& cProfile, CommonSetting_KeyBind& s
 							if( nKeyNameArrUsed >= KEYNAME_SIZE ){}
 							else{
 								sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = tmpKeydata;
-								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = nKeyNameArrUsed++;
+								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 							}
 						}
 					}
@@ -1149,8 +1149,8 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 				printsetting.m_nPrintMarginBY			= buf[ 6];
 				printsetting.m_nPrintMarginLX			= buf[ 7];
 				printsetting.m_nPrintMarginRX			= buf[ 8];
-				printsetting.m_nPrintPaperOrientation	= buf[ 9];
-				printsetting.m_nPrintPaperSize			= buf[10];
+				printsetting.m_nPrintPaperOrientation	= (short)buf[ 9];
+				printsetting.m_nPrintPaperSize			= (short)buf[10];
 				printsetting.m_bPrintWordWrap			= (buf[11]!=0);
 				printsetting.m_bPrintLineNumber			= buf[12];
 				printsetting.m_bHeaderUse[0]			= buf[13];
@@ -1806,7 +1806,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu&
 	EFunctionCode n;
 	int		nIdx;
 	WCHAR	szLine[1024];
-	WCHAR*	p;
+	WCHAR*	p = NULL;
 	WCHAR*	pn;
 
 	if (cProfile.IsReadingMode()) {
@@ -2086,14 +2086,14 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 			lf.lfEscapement		= buf[ 2];
 			lf.lfOrientation	= buf[ 3];
 			lf.lfWeight			= buf[ 4];
-			lf.lfItalic			= buf[ 5];
-			lf.lfUnderline		= buf[ 6];
-			lf.lfStrikeOut		= buf[ 7];
-			lf.lfCharSet		= buf[ 8];
-			lf.lfOutPrecision	= buf[ 9];
-			lf.lfClipPrecision	= buf[10];
-			lf.lfQuality		= buf[11];
-			lf.lfPitchAndFamily	= buf[12];
+			lf.lfItalic			= (BYTE)buf[ 5];
+			lf.lfUnderline		= (BYTE)buf[ 6];
+			lf.lfStrikeOut		= (BYTE)buf[ 7];
+			lf.lfCharSet		= (BYTE)buf[ 8];
+			lf.lfOutPrecision	= (BYTE)buf[ 9];
+			lf.lfClipPrecision	= (BYTE)buf[10];
+			lf.lfQuality		= (BYTE)buf[11];
+			lf.lfPitchAndFamily	= (BYTE)buf[12];
 			if( nPointSize != 0 ){
 				// DPI変更してもフォントのポイントサイズが変わらないように
 				// ポイント数からピクセル数に変換する

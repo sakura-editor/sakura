@@ -384,7 +384,7 @@ int _CheckJisAnyPart(
 		const int nType			// [in]    今のエスケープシーケンスの種類
 )
 {
-	EMyJisEscseq emyesc;
+	EMyJisEscseq emyesc = MYJISESC_NONE;
 	int nesclen;
 	int nerror_cnt;
 	const char *pr, *pr_end;
@@ -490,7 +490,7 @@ int _CheckJisAnyPart(
 */
 int _CheckUtf16Char( const wchar_t* pS, const int nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
 {
-	wchar_t wc1, wc2;
+	wchar_t wc1, wc2 = 0;
 	int ncwidth;
 	ECharSet echarset;
 

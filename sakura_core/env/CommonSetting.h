@@ -291,7 +291,7 @@ public:
 	void	SetBackupCount(int value)			{ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xffff0000) | ( value & 0xffff ); }
 
 	//	バックアップの拡張子先頭文字(1文字)
-	int		GetBackupExtChar(void) const		{ return ( m_nBackUpType_Opt2 >> 16 ) & 0xff ; }
+	TCHAR	GetBackupExtChar(void) const		{ return (TCHAR)(( m_nBackUpType_Opt2 >> 16 ) & 0xff) ; }
 	void	SetBackupExtChar(int value)			{ m_nBackUpType_Opt2 = (m_nBackUpType_Opt2 & 0xff00ffff) | (( value & 0xff ) << 16 ); }
 
 	//	Aug. 21, 2000 genta

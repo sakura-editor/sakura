@@ -279,8 +279,8 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 	HBRUSH      hBrushOld = (HBRUSH)::SelectObject( hdc, hBrush );
 	int         nROP_Old = ::SetROP2( hdc, SELECTEDAREA_ROP2 );
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
-	HBRUSH		hBrushCompatOld;
-	int			nROPCompatOld;
+	HBRUSH		hBrushCompatOld = 0;
+	int			nROPCompatOld = 0;
 	bool bCompatBMP = pView->m_hbmpCompatBMP && hdc != pView->m_hdcCompatDC;
 	if( bCompatBMP ){
 		hBrushCompatOld = (HBRUSH)::SelectObject( pView->m_hdcCompatDC, hBrush );

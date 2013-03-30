@@ -78,10 +78,10 @@ bool CImageListMgr::Create(HINSTANCE hInstance)
 		return true;
 	}
 
-	HBITMAP	hRscbmp;	//	リソースから読み込んだひとかたまりのBitmap
-	HBITMAP	hFOldbmp;	//	SetObjectで得られた1つ前のハンドルを保持する
-	HDC		dcFrom;		//	描画用
-	int		nRetPos;	//	後処理用
+	HBITMAP	hRscbmp;			//	リソースから読み込んだひとかたまりのBitmap
+	HBITMAP	hFOldbmp = NULL;	//	SetObjectで得られた1つ前のハンドルを保持する
+	HDC		dcFrom = 0;			//	描画用
+	int		nRetPos;			//	後処理用
 	m_cx = m_cy  = 16;
 
 	nRetPos = 0;

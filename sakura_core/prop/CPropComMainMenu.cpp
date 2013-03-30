@@ -133,7 +133,7 @@ static LRESULT CALLBACK TreeViewProc(
 {
 	HTREEITEM		htiItem;
 	TV_ITEM			tvi;		// 取得用
-	WCHAR			cKey;	
+	WCHAR			cKey;
 	SMainMenuWork*	pFuncWk;	// 機能
 	short	AltKey;
 
@@ -150,7 +150,7 @@ static LRESULT CALLBACK TreeViewProc(
 		return DLGC_WANTALLKEYS;
 	case WM_KEYDOWN:
 		htiItem = TreeView_GetSelection( hwndTree );
-		cKey = MapVirtualKey( wParam, 2 );
+		cKey = (WCHAR)MapVirtualKey( wParam, 2 );
 		if (cKey > ' ') {
 			// アクセスキー設定
 			tvi.mask = TVIF_HANDLE | TVIF_PARAM;
@@ -1191,7 +1191,7 @@ static void TreeView_ExpandAll( HWND hwndTree, bool bExpand )
 	int			nLevel;
 
 	nLevel = 0;
-	htiCur = TreeView_GetSelection( hwndTree );
+	htiCur = htiItem = TreeView_GetSelection( hwndTree );
 	if (!bExpand && htiCur != NULL) {
 		// 閉じる時はトップに変更
 		for (htiNext = htiCur; htiNext !=  NULL; ) {

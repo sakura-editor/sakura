@@ -1320,15 +1320,15 @@ BOOL CEditView::IsSpecialScrollMode( int nSelect )
 		break;
 
 	case MOUSEFUNCTION_CENTER:		// マウス中ボタン
-		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetAsyncKeyState( VK_MBUTTON ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = ( 0x8000 & ::GetAsyncKeyState( VK_MBUTTON ) ) ? TRUE : FALSE;
 		break;
 
 	case MOUSEFUNCTION_LEFTSIDE:	// マウスサイドボタン1
-		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetAsyncKeyState( VK_XBUTTON1 ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = ( 0x8000 & ::GetAsyncKeyState( VK_XBUTTON1 ) ) ? TRUE : FALSE;
 		break;
 
 	case MOUSEFUNCTION_RIGHTSIDE:	// マウスサイドボタン2
-		bSpecialScrollMode = ( (SHORT)0x8000 & ::GetAsyncKeyState( VK_XBUTTON2 ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = ( 0x8000 & ::GetAsyncKeyState( VK_XBUTTON2 ) ) ? TRUE : FALSE;
 		break;
 
 	case VK_CONTROL:	// Controlキー
@@ -1576,7 +1576,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	m_nCaretPosX_Prev_DragEnter = GetCaret().m_nCaretPosX_Prev;
 
 	// ドラッグデータは矩形か
-	m_bDragBoxData = IsDataAvailable( pDataObject, ::RegisterClipboardFormat( _T("MSDEVColumnSelect") ) );
+	m_bDragBoxData = IsDataAvailable( pDataObject, (CLIPFORMAT)::RegisterClipboardFormat( _T("MSDEVColumnSelect") ) );
 
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( TRUE );
@@ -1641,10 +1641,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 #endif
 	BOOL		bBoxData;
 	BOOL		bMove;
-	BOOL		bMoveToPrev;
+	BOOL		bMoveToPrev = FALSE;
 	RECT		rcSel;
 	CNativeW	cmemBuf;
-	bool		bBeginBoxSelect_Old;
+	bool		bBeginBoxSelect_Old = false;
 
 	CLayoutRange sSelectBgn_Old;
 	CLayoutRange sSelect_Old;
