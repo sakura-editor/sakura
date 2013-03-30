@@ -950,6 +950,32 @@ int CShareData::GetDocumentTypeOfExt( const char* pszExt )
 	return 0;	//	ハズレ
 }
 
+/** 指定位置の編集ウィンドウ情報を取得する
+
+	@date 2007.06.20 ryoji
+*/
+EditNode* CShareData::GetEditNodeAt( int nGroup, int nIndex )
+{
+	int	i;
+	int iIndex;
+
+	iIndex = 0;
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
+	{
+		if( nGroup == 0 || nGroup == m_pShareData->m_sNodes.m_pEditArr[i].m_nGroup )
+		{
+			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
+			{
+				if( iIndex == nIndex )
+					return &m_pShareData->m_sNodes.m_pEditArr[i];
+				iIndex++;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 
 /** 編集ウィンドウリストへの登録
 
@@ -1059,164 +1085,6 @@ void CShareData::DeleteEditWndList( HWND hWnd )
 	PostMessageToAllEditors( MYWM_TAB_WINDOW_NOTIFY, (WPARAM)TWNT_DEL, (LPARAM)hWnd, hWnd, nGroup );
 }
 
-/** グループをIDリセットする
-
-	@date 2007.06.20 ryoji
-*/
-void CShareData::ResetGroupId( void )
-{
-	int nGroup;
-	int	i;
-
-	nGroup = ++m_pShareData->m_sNodes.m_nGroupSequences;
-	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
-	{
-		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
-		{
-			m_pShareData->m_sNodes.m_pEditArr[i].m_nGroup = nGroup;
-		}
-	}
-}
-
-/** 編集ウィンドウ情報を取得する
-
-	@date 2007.06.20 ryoji
-
-	@warning この関数はm_pEditArr内の要素へのポインタを返す．
-	m_pEditArrが変更された後ではアクセスしないよう注意が必要．
-*/
-EditNode* CShareData::GetEditNode( HWND hWnd )
-{
-	int	i;
-
-	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
-	{
-		if( hWnd == m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd )
-		{
-			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
-				return &m_pShareData->m_sNodes.m_pEditArr[i];
-		}
-	}
-
-	return NULL;
-}
-
-/** グループIDを取得する
-
-	@date 2007.06.20 ryoji
-*/
-int CShareData::GetGroupId( HWND hWnd )
-{
-	EditNode* pEditNode;
-	pEditNode = GetEditNode( hWnd );
-	return (pEditNode != NULL)? pEditNode->m_nGroup: -1;
-}
-
-/** 同一グループかどうかを調べる
-
-	@param[in] hWnd1 比較するウィンドウ1
-	@param[in] hWnd2 比較するウィンドウ2
-	
-	@return 2つのウィンドウが同一グループに属していればtrue
-
-	@date 2007.06.20 ryoji
-*/
-bool CShareData::IsSameGroup( HWND hWnd1, HWND hWnd2 )
-{
-	int nGroup1;
-	int nGroup2;
-
-	if( hWnd1 == hWnd2 )
-		return true;
-
-	nGroup1 = GetGroupId( hWnd1 );
-	if( nGroup1 < 0 )
-		return false;
-
-	nGroup2 = GetGroupId( hWnd2 );
-	if( nGroup2 < 0 )
-		return false;
-
-	return ( nGroup1 == nGroup2 );
-}
-
-/* 空いているグループ番号を取得する */
-int CShareData::GetFreeGroupId( void )
-{
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
-
-	return ++pShareData->m_sNodes.m_nGroupSequences;	// 新規グループ
-}
-
-/** 指定位置の編集ウィンドウ情報を取得する
-
-	@date 2007.06.20 ryoji
-*/
-EditNode* CShareData::GetEditNodeAt( int nGroup, int nIndex )
-{
-	int	i;
-	int iIndex;
-
-	iIndex = 0;
-	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
-	{
-		if( nGroup == 0 || nGroup == m_pShareData->m_sNodes.m_pEditArr[i].m_nGroup )
-		{
-			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
-			{
-				if( iIndex == nIndex )
-					return &m_pShareData->m_sNodes.m_pEditArr[i];
-				iIndex++;
-			}
-		}
-	}
-
-	return NULL;
-}
-
-/** 先頭の編集ウィンドウ情報を取得する
-
-	@date 2007.06.20 ryoji
-*/
-EditNode* CShareData::GetTopEditNode( HWND hWnd )
-{
-	int nGroup;
-
-	nGroup = GetGroupId( hWnd );
-	return GetEditNodeAt( nGroup, 0 );
-}
-
-/** 先頭の編集ウィンドウを取得する
-
-	@return 与えられたエディタウィンドウと同一グループに属す
-	先頭ウィンドウのハンドル
-
-	@date 2007.06.20 ryoji
-*/
-HWND CShareData::GetTopEditWnd( HWND hWnd )
-{
-	EditNode* p = GetTopEditNode( hWnd );
-
-	return ( p != NULL )? p->m_hWnd: NULL;
-}
-
-/* 共有データのロード */
-bool CShareData::LoadShareData( void )
-{
-	return ShareData_IO_2( true );
-}
-
-
-
-
-/* 共有データの保存 */
-void CShareData::SaveShareData( void )
-{
-	ShareData_IO_2( false );
-	return;
-}
-
-
 /** いくつかのウィンドウへ終了要求を出す
 
 	@param pWndArr [in] EditNodeの配列。m_hWndがNULLの要素は処理しない
@@ -1274,120 +1142,6 @@ BOOL CShareData::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit,
 	}
 	return TRUE;
 }
-
-
-/*!
-	@brief	指定ファイルが開かれているか調べる
-	
-	指定のファイルが開かれている場合は開いているウィンドウのハンドルを返す
-
-	@retval	TRUE すでに開いていた
-	@retval	FALSE 開いていなかった
-*/
-BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
-{
-	int			i;
-	EditInfo*	pfi;
-	*phwndOwner = NULL;
-
-	// 現在の編集ウィンドウの数を調べる
-	if( 0 ==  GetEditorWindowsNum( 0 ) ){
-		return FALSE;
-	}
-	
-	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
-		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) ){
-			// トレイからエディタへの編集ファイル名要求通知
-			::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
-			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
-
-			// 同一パスのファイルが既に開かれているか
-			if( 0 == my_stricmp( pfi->m_szPath, pszPath ) ){
-				*phwndOwner = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
-				return TRUE;
-			}
-		}
-	}
-	return FALSE;
-}
-
-/*!
-	@brief	指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認
-
-	もしすでに開いていればアクティブにして、ウィンドウのハンドルを返す。
-	さらに、文字コードが異なるときのワーニングも処理する。
-	あちこちに散らばった多重オープン処理を集結させるのが目的。
-
-	@retval	開かれている場合は開いているウィンドウのハンドル
-
-	@note	CEditDoc::FileReadに先立って実行されることもあるが、
-			CEditDoc::FileReadからも実行される必要があることに注意。
-			(フォルダ指定の場合やCEditDoc::FileReadが直接実行される場合もあるため)
-
-	@retval	TRUE すでに開いていた
-	@retval	FALSE 開いていなかった
-
-	@date 2007.03.12 maru 新規作成
-*/
-BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, int nCharCode )
-{
-	if( IsPathOpened( pszPath, phwndOwner ) ){
-		EditInfo*		pfi;
-		CMRUFile		cMRU;
-		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
-		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
-		if(nCharCode != CODE_AUTODETECT){
-			LPCTSTR	pszCodeNameCur = NULL;
-			LPCTSTR	pszCodeNameNew = NULL;
-			if( IsValidCodeType(nCharCode) ){
-				pszCodeNameNew = gm_pszCodeNameArr_1[nCharCode];
-			}
-			if( IsValidCodeType(pfi->m_nCharCode) ){
-				pszCodeNameCur = gm_pszCodeNameArr_1[pfi->m_nCharCode];
-			}
-
-			if(NULL != pszCodeNameCur && pszCodeNameNew){
-				if(nCharCode != pfi->m_nCharCode){
-					TopWarningMessage( *phwndOwner,
-						_T("%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n")
-						_T("ファイルメニューから「開き直す」を使用してください。\n")
-						_T("\n")
-						_T("現在の文字コードセット=[%s]\n")
-						_T("新しい文字コードセット=[%s]"),
-						pszPath,
-						pszCodeNameCur,
-						pszCodeNameNew
-					);
-				}
-			}
-			else{
-				TopWarningMessage( *phwndOwner,
-					_T("%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n")
-					_T("\n")
-					_T("現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"),
-					pszPath,
-					pfi->m_nCharCode,
-					NULL==pszCodeNameCur?_T("不明"):pszCodeNameCur,
-					nCharCode,
-					NULL==pszCodeNameNew?_T("不明"):pszCodeNameNew
-				);
-			}
-		}
-
-		// 開いているウィンドウをアクティブにする
-		ActivateFrameWindow( *phwndOwner );
-
-		// MRUリストへの登録
-		cMRU.Add( pfi );
-		return TRUE;
-	}
-	else {
-		return FALSE;
-	}
-
-}
-
-
 
 
 /** 現在の編集ウィンドウの数を調べる
@@ -1518,6 +1272,49 @@ BOOL CShareData::SendMessageToAllEditors(
 	delete []pWndArr;
 	return TRUE;
 }
+
+/** グループをIDリセットする
+
+	@date 2007.06.20 ryoji
+*/
+void CShareData::ResetGroupId( void )
+{
+	int	i;
+
+	int nGroup = ++m_pShareData->m_sNodes.m_nGroupSequences;
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
+	{
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
+		{
+			m_pShareData->m_sNodes.m_pEditArr[i].m_nGroup = nGroup;
+		}
+	}
+}
+
+/** 編集ウィンドウ情報を取得する
+
+	@date 2007.06.20 ryoji
+
+	@warning この関数はm_pEditArr内の要素へのポインタを返す．
+	m_pEditArrが変更された後ではアクセスしないよう注意が必要．
+*/
+EditNode* CShareData::GetEditNode( HWND hWnd )
+{
+	int	i;
+
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; i++ )
+	{
+		if( hWnd == m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd )
+		{
+			if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) )
+				return &m_pShareData->m_sNodes.m_pEditArr[i];
+		}
+	}
+
+	return NULL;
+}
+
+
 
 /** 現在開いている編集ウィンドウの配列を返す
 
@@ -1759,6 +1556,207 @@ HWND CShareData::SeparateGroup( HWND hwndSrc, HWND hwndDst, bool bSrcIsTop, int 
 	
 	return hwndDst;
 }
+
+/** グループIDを取得する
+
+	@date 2007.06.20 ryoji
+*/
+int CShareData::GetGroupId( HWND hWnd )
+{
+	EditNode* pEditNode = GetEditNode( hWnd );
+	return (pEditNode != NULL)? pEditNode->m_nGroup: -1;
+}
+
+/** 同一グループかどうかを調べる
+
+	@param[in] hWnd1 比較するウィンドウ1
+	@param[in] hWnd2 比較するウィンドウ2
+	
+	@return 2つのウィンドウが同一グループに属していればtrue
+
+	@date 2007.06.20 ryoji
+*/
+bool CShareData::IsSameGroup( HWND hWnd1, HWND hWnd2 )
+{
+	if( hWnd1 == hWnd2 )
+		return true;
+
+	int nGroup1 = GetGroupId( hWnd1 );
+	if( nGroup1 < 0 )
+		return false;
+
+	int nGroup2 = GetGroupId( hWnd2 );
+	if( nGroup2 < 0 )
+		return false;
+
+	return ( nGroup1 == nGroup2 );
+}
+
+/* 空いているグループ番号を取得する */
+int CShareData::GetFreeGroupId( void )
+{
+	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
+
+	return ++pShareData->m_sNodes.m_nGroupSequences;	// 新規グループ
+}
+
+/** 先頭の編集ウィンドウ情報を取得する
+
+	@date 2007.06.20 ryoji
+*/
+EditNode* CShareData::GetTopEditNode( HWND hWnd )
+{
+	int nGroup;
+
+	nGroup = GetGroupId( hWnd );
+	return GetEditNodeAt( nGroup, 0 );
+}
+
+/** 先頭の編集ウィンドウを取得する
+
+	@return 与えられたエディタウィンドウと同一グループに属す
+	先頭ウィンドウのハンドル
+
+	@date 2007.06.20 ryoji
+*/
+HWND CShareData::GetTopEditWnd( HWND hWnd )
+{
+	EditNode* p = GetTopEditNode( hWnd );
+
+	return ( p != NULL )? p->m_hWnd: NULL;
+}
+
+/* 共有データのロード */
+bool CShareData::LoadShareData( void )
+{
+	return ShareData_IO_2( true );
+}
+
+
+
+
+/* 共有データの保存 */
+void CShareData::SaveShareData( void )
+{
+	ShareData_IO_2( false );
+	return;
+}
+
+
+/*!
+	@brief	指定ファイルが開かれているか調べる
+	
+	指定のファイルが開かれている場合は開いているウィンドウのハンドルを返す
+
+	@retval	TRUE すでに開いていた
+	@retval	FALSE 開いていなかった
+*/
+BOOL CShareData::IsPathOpened( const TCHAR* pszPath, HWND* phwndOwner )
+{
+	int			i;
+	EditInfo*	pfi;
+	*phwndOwner = NULL;
+
+	// 現在の編集ウィンドウの数を調べる
+	if( 0 ==  GetEditorWindowsNum( 0 ) ){
+		return FALSE;
+	}
+	
+	for( i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
+		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) ){
+			// トレイからエディタへの編集ファイル名要求通知
+			::SendMessage( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
+			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
+
+			// 同一パスのファイルが既に開かれているか
+			if( 0 == my_stricmp( pfi->m_szPath, pszPath ) ){
+				*phwndOwner = m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd;
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
+/*!
+	@brief	指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認
+
+	もしすでに開いていればアクティブにして、ウィンドウのハンドルを返す。
+	さらに、文字コードが異なるときのワーニングも処理する。
+	あちこちに散らばった多重オープン処理を集結させるのが目的。
+
+	@retval	開かれている場合は開いているウィンドウのハンドル
+
+	@note	CEditDoc::FileReadに先立って実行されることもあるが、
+			CEditDoc::FileReadからも実行される必要があることに注意。
+			(フォルダ指定の場合やCEditDoc::FileReadが直接実行される場合もあるため)
+
+	@retval	TRUE すでに開いていた
+	@retval	FALSE 開いていなかった
+
+	@date 2007.03.12 maru 新規作成
+*/
+BOOL CShareData::ActiveAlreadyOpenedWindow( const TCHAR* pszPath, HWND* phwndOwner, int nCharCode )
+{
+	if( IsPathOpened( pszPath, phwndOwner ) ){
+		EditInfo*		pfi;
+		CMRUFile		cMRU;
+		::SendMessage( *phwndOwner, MYWM_GETFILEINFO, 0, 0 );
+		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
+		if(nCharCode != CODE_AUTODETECT){
+			LPCTSTR	pszCodeNameCur = NULL;
+			LPCTSTR	pszCodeNameNew = NULL;
+			if( IsValidCodeType(nCharCode) ){
+				pszCodeNameNew = gm_pszCodeNameArr_1[nCharCode];
+			}
+			if( IsValidCodeType(pfi->m_nCharCode) ){
+				pszCodeNameCur = gm_pszCodeNameArr_1[pfi->m_nCharCode];
+			}
+
+			if(NULL != pszCodeNameCur && pszCodeNameNew){
+				if(nCharCode != pfi->m_nCharCode){
+					TopWarningMessage( *phwndOwner,
+						_T("%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\n")
+						_T("ファイルメニューから「開き直す」を使用してください。\n")
+						_T("\n")
+						_T("現在の文字コードセット=[%s]\n")
+						_T("新しい文字コードセット=[%s]"),
+						pszPath,
+						pszCodeNameCur,
+						pszCodeNameNew
+					);
+				}
+			}
+			else{
+				TopWarningMessage( *phwndOwner,
+					_T("%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n")
+					_T("\n")
+					_T("現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"),
+					pszPath,
+					pfi->m_nCharCode,
+					NULL==pszCodeNameCur?_T("不明"):pszCodeNameCur,
+					nCharCode,
+					NULL==pszCodeNameNew?_T("不明"):pszCodeNameNew
+				);
+			}
+		}
+
+		// 開いているウィンドウをアクティブにする
+		ActivateFrameWindow( *phwndOwner );
+
+		// MRUリストへの登録
+		cMRU.Add( pfi );
+		return TRUE;
+	}
+	else {
+		return FALSE;
+	}
+
+}
+
+
+
+
 
 /*!
 	アウトプットウインドウに出力
