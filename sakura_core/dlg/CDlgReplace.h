@@ -37,6 +37,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ); // 標準以外のメッセージを捕捉する
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* モーダルダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：置換・検索対象となるビューの変更 */
 
