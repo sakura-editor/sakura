@@ -40,7 +40,7 @@
 #include "_main/global.h"
 
 //! メモリバッファクラス
-class SAKURA_CORE_API CMemory
+class CMemory
 {
 	//コンストラクタ・デストラクタ
 public:

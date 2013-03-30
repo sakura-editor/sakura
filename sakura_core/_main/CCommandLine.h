@@ -47,7 +47,7 @@ struct GrepInfo {
 /*!
 	@brief コマンドラインパーサ クラス
 */
-class SAKURA_CORE_API CCommandLine  : public TSingleton<CCommandLine> {
+class CCommandLine  : public TSingleton<CCommandLine> {
 public:
 	friend class TSingleton<CCommandLine>;
 private:

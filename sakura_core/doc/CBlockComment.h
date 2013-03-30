@@ -34,7 +34,7 @@ enum ECommentType{
 #define BLOCKCOMMENT_BUFFERSIZE	16
 
 //	2005.11.10 Moca アクセス関数追加
-class SAKURA_CORE_API CBlockComment{
+class CBlockComment{
 public:
 	//生成と破棄
 	CBlockComment();

@@ -28,12 +28,12 @@
 
 
 //システム資源
-SAKURA_CORE_API BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
-SAKURA_CORE_API BOOL CheckSystemResources( const TCHAR* );	/* システムリソースのチェック */
+BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
+BOOL CheckSystemResources( const TCHAR* );	/* システムリソースのチェック */
 
 //クリップボード
-SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength );    //!< クリープボードにText形式でコピーする。ANSI版。nLengthは文字単位。
-SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
+bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength );    //!< クリープボードにText形式でコピーする。ANSI版。nLengthは文字単位。
+bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 

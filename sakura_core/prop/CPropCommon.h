@@ -64,7 +64,7 @@ enum ComPropSheetOrder {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CPropCommon
+class CPropCommon
 {
 public:
 	/*
@@ -167,7 +167,7 @@ protected:
 */
 //==============================================================
 //!	全般ページ
-class SAKURA_CORE_API CPropGeneral : CPropCommon
+class CPropGeneral : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -182,7 +182,7 @@ protected:
 
 //==============================================================
 //!	ファイルページ
-class SAKURA_CORE_API CPropFile : CPropCommon
+class CPropFile : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -201,7 +201,7 @@ private:
 
 //==============================================================
 //!	キー割り当てページ
-class SAKURA_CORE_API CPropKeybind : CPropCommon
+class CPropKeybind : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -222,7 +222,7 @@ private:
 
 //==============================================================
 //!	ツールバーページ
-class SAKURA_CORE_API CPropToolbar : CPropCommon
+class CPropToolbar : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -240,7 +240,7 @@ private:
 
 //==============================================================
 //!	キーワードページ
-class SAKURA_CORE_API CPropKeyword : CPropCommon
+class CPropKeyword : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -268,7 +268,7 @@ private:
 
 //==============================================================
 //!	カスタムメニューページ
-class SAKURA_CORE_API CPropCustmenu : CPropCommon
+class CPropCustmenu : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -285,7 +285,7 @@ protected:
 
 //==============================================================
 //!	書式ページ
-class SAKURA_CORE_API CPropFormat : CPropCommon
+class CPropFormat : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -307,7 +307,7 @@ private:
 
 //==============================================================
 //!	支援ページ
-class SAKURA_CORE_API CPropHelper : CPropCommon
+class CPropHelper : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -322,7 +322,7 @@ protected:
 
 //==============================================================
 //!	バックアップページ
-class SAKURA_CORE_API CPropBackup : CPropCommon
+class CPropBackup : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -343,7 +343,7 @@ private:
 
 //==============================================================
 //!	ウィンドウページ
-class SAKURA_CORE_API CPropWin : CPropCommon
+class CPropWin : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -362,7 +362,7 @@ private:
 
 //==============================================================
 //!	タブ動作ページ
-class SAKURA_CORE_API CPropTab : CPropCommon
+class CPropTab : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -380,7 +380,7 @@ private:
 
 //==============================================================
 //!	編集ページ
-class SAKURA_CORE_API CPropEdit : CPropCommon
+class CPropEdit : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -395,7 +395,7 @@ protected:
 
 //==============================================================
 //!	検索ページ
-class SAKURA_CORE_API CPropGrep : CPropCommon
+class CPropGrep : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -413,7 +413,7 @@ private:
 
 //==============================================================
 //!	マクロページ
-class SAKURA_CORE_API CPropMacro : CPropCommon
+class CPropMacro : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -437,7 +437,7 @@ private:
 
 //==============================================================
 //!	ファイル名表示ページ
-class SAKURA_CORE_API CPropFileName : CPropCommon
+class CPropFileName : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -457,7 +457,7 @@ private:
 
 //==============================================================
 //!	ステータスバーページ
-class SAKURA_CORE_API CPropStatusbar : CPropCommon
+class CPropStatusbar : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -472,7 +472,7 @@ protected:
 
 //==============================================================
 //!	プラグインページ
-class SAKURA_CORE_API CPropPlugin : CPropCommon
+class CPropPlugin : CPropCommon
 {
 public:
 	//!	Dialog Procedure
@@ -494,7 +494,7 @@ private:
 
 //==============================================================
 //!	メインメニューページ
-class SAKURA_CORE_API CPropMainMenu : CPropCommon
+class CPropMainMenu : CPropCommon
 {
 public:
 	//!	Dialog Procedure

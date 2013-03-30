@@ -24,7 +24,7 @@
 #ifndef SAKURA_MODULE_4F382EF5_EF52_47E1_A774_5CDFB545AB25_H_
 #define SAKURA_MODULE_4F382EF5_EF52_47E1_A774_5CDFB545AB25_H_
 
-SAKURA_CORE_API void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* リソースから製品バージョンの取得 */
+void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* リソースから製品バージョンの取得 */
 
 HICON GetAppIcon( HINSTANCE hInst, int nResource, const TCHAR* szFile, bool bSmall = false);
 

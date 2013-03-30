@@ -29,23 +29,6 @@
 #include <Windows.h>
 #include <tchar.h>
 
-// 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。
-// この DLL 内のすべてのファイルはコマンドラインで定義された SAKURA_CORE_EXPORTS シンボル
-// でコンパイルされます。このシンボルはこの DLL が使用するどのプロジェクト上でも未定義でなけ
-// ればなりません。この方法ではソースファイルにこのファイルを含むすべてのプロジェクトが DLL
-// からインポートされたものとして SAKURA_CORE_API 関数を参照し、そのためこの DLL はこのマク
-// ロで定義されたシンボルをエクスポートされたものとして参照します。
-#ifdef SAKURA_CORE_EXPORTS
-#define SAKURA_CORE_API __declspec(dllexport)
-#else
-#define SAKURA_CORE_API __declspec(dllimport)
-#endif
-
-#ifdef SAKURA_NO_DLL	//@@@ 2001.12.30 add MIK
-#undef SAKURA_CORE_API
-#define SAKURA_CORE_API
-#endif	//SAKURA_NO_DLL
-
 #if defined(__BORLANDC__)
 #define __forceinline inline
 #define _itoa itoa
@@ -68,7 +51,7 @@
 #include "charset/charset.h"
 
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
-SAKURA_CORE_API enum enumShowDlg {
+enum enumShowDlg {
 	SHOW_NORMAL			= 0,
 	SHOW_RELOAD			= 1,
 	SHOW_TOGGLE			= 2,
@@ -76,8 +59,8 @@ SAKURA_CORE_API enum enumShowDlg {
 
 
 /* 選択領域描画用パラメータ */
-SAKURA_CORE_API extern const COLORREF	SELECTEDAREA_RGB;
-SAKURA_CORE_API extern const int		SELECTEDAREA_ROP2;
+extern const COLORREF	SELECTEDAREA_RGB;
+extern const int		SELECTEDAREA_ROP2;
 
 
 
@@ -85,7 +68,7 @@ SAKURA_CORE_API extern const int		SELECTEDAREA_ROP2;
 
 //@@@ From Here 2003.05.31 MIK
 /*! タブウインドウ用メッセージサブコマンド */
-SAKURA_CORE_API enum ETabWndNotifyType {
+enum ETabWndNotifyType {
 	TWNT_REFRESH	= 0,		//再表示
 	TWNT_ADD		= 1,		//ウインドウ登録
 	TWNT_DEL		= 2,		//ウインドウ削除
@@ -97,7 +80,7 @@ SAKURA_CORE_API enum ETabWndNotifyType {
 };
 
 /*! バーの表示・非表示 */
-SAKURA_CORE_API	enum EBarChangeNotifyType {
+enum EBarChangeNotifyType {
 	MYBCN_TOOLBAR	= 0,		//ツールバー
 	MYBCN_FUNCKEY	= 1,		//ファンクションキー
 	MYBCN_TAB		= 2,		//タブ
@@ -125,7 +108,7 @@ struct SColorAttributeData{
 	const TCHAR*			szName;
 	unsigned int	fAttribute;
 };
-SAKURA_CORE_API extern const SColorAttributeData g_ColorAttributeArr[];
+extern const SColorAttributeData g_ColorAttributeArr[];
 
 //@@@ To Here 2006.12.18 ryoji
 

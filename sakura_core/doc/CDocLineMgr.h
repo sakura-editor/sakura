@@ -41,7 +41,7 @@ struct DocLineReplaceArg {
 クラスの宣言
 -----------------------------------------------------------------------*/
 //2007.09.30 kobake WhereCurrentWord_2 を CWordParse に移動
-class SAKURA_CORE_API CDocLineMgr{
+class CDocLineMgr{
 public:
 	//コンストラクタ・デストラクタ
 	CDocLineMgr();

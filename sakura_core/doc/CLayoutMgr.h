@@ -72,7 +72,7 @@ public:
 	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
 */
 //2007.10.15 XYLogicalToLayoutを廃止。LogicToLayoutに統合。
-class SAKURA_CORE_API CLayoutMgr : public CProgressSubject
+class CLayoutMgr : public CProgressSubject
 {
 private:
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)( CLayout* );

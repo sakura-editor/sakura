@@ -26,8 +26,8 @@
 
 bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 
-SAKURA_CORE_API bool IsFilePath( const wchar_t*, int*, int*, bool = true );
-SAKURA_CORE_API bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
+bool IsFilePath( const wchar_t*, int*, int*, bool = true );
+bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 bool IsDirectory(LPCTSTR pszPath);	// 2009.08.20 ryoji
 
 //	Apr. 30, 2003 genta
@@ -42,12 +42,12 @@ FILE *_tfopen_absexe(LPCTSTR fname, LPCTSTR mode); // 2003.06.23 Moca
 FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 2007.05.19 ryoji
 
 //パス文字列処理
-SAKURA_CORE_API void CutLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-SAKURA_CORE_API void AddLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-SAKURA_CORE_API void SplitPath_FolderAndFile( const TCHAR*, TCHAR*, TCHAR* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-SAKURA_CORE_API void Concat_FolderAndFile( const TCHAR*, const TCHAR*, TCHAR* );/* フォルダ、ファイル名から、結合したパスを作成 */
-SAKURA_CORE_API BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ロングファイル名を取得する */
-SAKURA_CORE_API BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* 拡張子を調べる */
+void CutLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
+void AddLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+void SplitPath_FolderAndFile( const TCHAR*, TCHAR*, TCHAR* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+void Concat_FolderAndFile( const TCHAR*, const TCHAR*, TCHAR* );/* フォルダ、ファイル名から、結合したパスを作成 */
+BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ロングファイル名を取得する */
+BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* 拡張子を調べる */
 const TCHAR* GetFileTitlePointer(const TCHAR* tszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成
 bool _IS_REL_PATH(const TCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
 

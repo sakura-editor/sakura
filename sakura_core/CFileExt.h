@@ -34,7 +34,7 @@
 #include "_main/global.h"
 #include "config/maxdata.h"
 
-class SAKURA_CORE_API CFileExt
+class CFileExt
 {
 public:
 	CFileExt();

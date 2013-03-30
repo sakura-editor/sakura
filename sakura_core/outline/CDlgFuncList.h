@@ -33,7 +33,7 @@ class CFuncInfoArr; // 2002/2/10 aroka
 #define OUTLINE_LAYOUT_FILECHANGED (2)
 
 //!	アウトライン解析ダイアログボックス
-class SAKURA_CORE_API CDlgFuncList : public CDialog
+class CDlgFuncList : public CDialog
 {
 public:
 	/*

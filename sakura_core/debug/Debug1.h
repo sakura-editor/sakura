@@ -19,8 +19,8 @@
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 #if defined(_DEBUG) || defined(USE_RELPRINT)
-SAKURA_CORE_API void DebugOutW( LPCWSTR lpFmt, ...);
-SAKURA_CORE_API void DebugOutA( LPCSTR lpFmt, ...);
+void DebugOutW( LPCWSTR lpFmt, ...);
+void DebugOutA( LPCSTR lpFmt, ...);
 #endif	// _DEBUG || USE_RELPRINT
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

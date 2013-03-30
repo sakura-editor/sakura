@@ -43,7 +43,7 @@ const int MSec2Min = 1000 * 60;
 	ファイルの自動保存で使っている。
 	@author genta
 */
-class SAKURA_CORE_API CPassiveTimer {
+class CPassiveTimer {
 public:
 	/*!
 		初期値は間隔1msecでタイマーは無効。

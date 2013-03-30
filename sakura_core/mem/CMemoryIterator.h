@@ -28,7 +28,7 @@
 #include "doc/CDocLine.h"
 
 //! ブロックコメントデリミタを管理する
-class SAKURA_CORE_API CMemoryIterator
+class CMemoryIterator
 {
 public:
 	//CDocLine用コンストラクタ

@@ -49,7 +49,7 @@
 		初期Win95でイメージの表示ができなかった．それらを回避するためにImageListの使用をやめて
 		当初の独自描画に戻した．
 */
-class SAKURA_CORE_API CImageListMgr {
+class CImageListMgr {
 public:
 
 	//	constructor

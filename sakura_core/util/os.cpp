@@ -188,7 +188,7 @@ bool ReadRegistry(HKEY Hive, const TCHAR* Path, const TCHAR* Item, TCHAR* Buffer
 	@date 2004.02.17 Moca 各所のソースを統合
 */
 template <class T>
-SAKURA_CORE_API bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
+bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLength )
 {
 	HGLOBAL	hgClip;
 	T*		pszClip;
@@ -224,12 +224,12 @@ SAKURA_CORE_API bool SetClipboardTextImp( HWND hwnd, const T* pszText, int nLeng
 	return true;
 }
 
-SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength )
+bool SetClipboardText( HWND hwnd, const ACHAR* pszText, int nLength )
 {
 	return SetClipboardTextImp<ACHAR>(hwnd,pszText,nLength);
 }
 
-SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
+bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
 {
 	return SetClipboardTextImp<WCHAR>(hwnd,pszText,nLength);
 }

@@ -62,7 +62,7 @@
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
-class SAKURA_CORE_API CBregexp : public CBregexpDll2{
+class CBregexp : public CBregexpDll2{
 public:
 	CBregexp();
 	virtual ~CBregexp();
@@ -219,9 +219,9 @@ private:
 
 //	Jun. 26, 2001 genta
 //!	正規表現ライブラリのバージョン取得
-SAKURA_CORE_API bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
-SAKURA_CORE_API bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
-SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
+bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
+bool CheckRegexpSyntax( const wchar_t* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
+bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
 
 #endif

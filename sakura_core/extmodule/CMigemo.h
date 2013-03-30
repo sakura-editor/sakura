@@ -52,7 +52,7 @@ typedef struct _migemo migemo;
 #include "CDllHandler.h"
 #include "util/design_template.h"
 
-class SAKURA_CORE_API CMigemo : public TSingleton<CMigemo>, public CDllImp {
+class CMigemo : public TSingleton<CMigemo>, public CDllImp {
 public:
 	friend class TSingleton<CMigemo>;
 private:

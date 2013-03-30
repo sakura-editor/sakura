@@ -106,7 +106,7 @@ const int CMD_FROM_MOUSE = 2;
 //2007.08.25 kobake 文字間隔配列の機能をCTextMetricsに移動
 //2007.10.02 kobake Command_TRIM2をCConvertに移動
 
-class SAKURA_CORE_API CEditView
+class CEditView
 : public CViewCalc //$$ これが親クラスである必要は無いが、このクラスのメソッド呼び出しが多いので、暫定的に親クラスとする。
 , public CEditView_Paint
 , public CMyWnd

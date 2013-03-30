@@ -52,7 +52,7 @@ struct DLLSHAREDATA;
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 	@date 20050809 aroka クラス外部からアクセスされないメンバはprivateにした。
 */
-class SAKURA_CORE_API CMenuDrawer
+class CMenuDrawer
 {
 public:
 	/*

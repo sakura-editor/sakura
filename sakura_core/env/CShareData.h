@@ -51,7 +51,7 @@ struct DLLSHAREDATA;
 
 	@date 2002.01.03 YAZAKI m_tbMyButton‚È‚Ç‚ğCShareData‚©‚çCMenuDrawer‚ÖˆÚ“®‚µ‚½‚±‚Æ‚É‚æ‚éC³B
 */
-class SAKURA_CORE_API CShareData
+class CShareData
 {
 public:
 	/*
