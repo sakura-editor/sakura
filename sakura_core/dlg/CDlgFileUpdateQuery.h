@@ -34,7 +34,7 @@
 
 #include "dlg/CDialog.h"
 
-class SAKURA_CORE_API CDlgFileUpdateQuery : public CDialog {
+class CDlgFileUpdateQuery : public CDialog {
 public:
 	CDlgFileUpdateQuery(const TCHAR* filename, bool IsModified)
 	: m_pFilename( filename )

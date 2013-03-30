@@ -24,7 +24,7 @@
 
 	@date 2003.06.25 Moca ファイル内からの補完機能を追加
 */
-class SAKURA_CORE_API CHokanMgr : public CDialog
+class CHokanMgr : public CDialog
 {
 public:
 	/*

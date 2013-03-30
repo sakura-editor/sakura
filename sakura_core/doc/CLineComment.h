@@ -27,7 +27,7 @@
 
 	@note CLineCommentは、共有メモリSTypeConfigに含まれるので、メンバ変数は常に実体を持っていなければならない。
 */
-class SAKURA_CORE_API CLineComment
+class CLineComment
 {
 public:
 	/*

@@ -17,7 +17,7 @@
 #include "dlg/CDialog.h"
 
 //! 文字コードセット設定ダイアログボックス
-class SAKURA_CORE_API CDlgSetCharSet : public CDialog
+class CDlgSetCharSet : public CDialog
 {
 public:
 	/*

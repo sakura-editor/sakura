@@ -58,7 +58,7 @@ typedef CEditWnd* P_CEditWnd;
 	@date 2007.12.13 kobake SetDocumentEncodingçÏê¨
 	@date 2007.12.13 kobake IsViewModeçÏê¨
 */
-class SAKURA_CORE_API CEditDoc
+class CEditDoc
 : public CDocSubject
 , public TInstanceHolder<CEditDoc>
 {

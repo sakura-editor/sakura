@@ -44,7 +44,7 @@ struct EditNode;
 struct DLLSHAREDATA;
 
 //! タブバーウィンドウ
-class SAKURA_CORE_API CTabWnd : public CWnd
+class CTabWnd : public CWnd
 {
 public:
 	/*

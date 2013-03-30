@@ -41,7 +41,7 @@
 
 	UxTheme コンポーネントの動的ロードをサポートするクラス
 */
-class SAKURA_CORE_API CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
+class CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
 public:
 	friend class TSingleton<CUxTheme>;
 private:

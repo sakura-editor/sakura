@@ -32,7 +32,7 @@ class CTextMetrics;
 class CCaret;
 class CEditWnd;
 
-class SAKURA_CORE_API CCaretUnderLine
+class CCaretUnderLine
 {
 public:
 	CCaretUnderLine(CEditView* pcEditView)

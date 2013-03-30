@@ -41,7 +41,7 @@
 
 	HTMLヘルプコンポーネントの動的ロードをサポートするクラス
 */
-class SAKURA_CORE_API CHtmlHelp : public CDllImp {
+class CHtmlHelp : public CDllImp {
 public:
 	CHtmlHelp(){}
 	virtual ~CHtmlHelp();

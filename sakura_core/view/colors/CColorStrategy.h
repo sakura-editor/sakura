@@ -66,8 +66,8 @@ inline int ToColorInfoArrIndex(const EColorIndexType& eColorIndex)
 }
 
 // カラー名＜＞インデックス番号の変換	//@@@ 2002.04.30
-SAKURA_CORE_API int GetColorIndexByName( const TCHAR *name );
-SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index );
+int GetColorIndexByName( const TCHAR *name );
+const TCHAR* GetColorNameByIndex( int index );
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

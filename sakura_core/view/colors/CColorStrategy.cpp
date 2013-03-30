@@ -294,7 +294,7 @@ const SColorAttributeData g_ColorAttributeArr[] =
 /*
  * カラー名からインデックス番号に変換する
  */
-SAKURA_CORE_API int GetColorIndexByName( const TCHAR *name )
+int GetColorIndexByName( const TCHAR *name )
 {
 	int	i;
 	for( i = 0; i < COLORIDX_LAST; i++ )
@@ -307,7 +307,7 @@ SAKURA_CORE_API int GetColorIndexByName( const TCHAR *name )
 /*
  * インデックス番号からカラー名に変換する
  */
-SAKURA_CORE_API const TCHAR* GetColorNameByIndex( int index )
+const TCHAR* GetColorNameByIndex( int index )
 {
 	return g_ColorAttributeArr[index].szName;
 }

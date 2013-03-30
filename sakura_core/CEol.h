@@ -36,7 +36,7 @@
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
-SAKURA_CORE_API enum EEolType {
+enum EEolType {
 	EOL_NONE,			//!< 
 	EOL_CRLF,			//!< 0d0a
 	EOL_LF,				//!< 0a
@@ -48,7 +48,7 @@ SAKURA_CORE_API enum EEolType {
 #define EOL_TYPE_NUM	EOL_CODEMAX // 5
 
 /* 行終端子の配列 */
-SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
+extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
 #include "basis/SakuraBasis.h"
 
@@ -59,7 +59,7 @@ SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
-class SAKURA_CORE_API CEol{
+class CEol{
 public:
 	//コンストラクタ・デストラクタ
 	CEol(){ m_eEolType = EOL_NONE; }

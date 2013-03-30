@@ -56,7 +56,7 @@ static const wstring	OPTION_TYPE_BOOL = wstring( L"bool" );
 static const wstring	OPTION_TYPE_INT  = wstring( L"int" );
 static const wstring	OPTION_TYPE_SEL  = wstring( L"sel" );
 
-class SAKURA_CORE_API CDlgPluginOption : public CDialog
+class CDlgPluginOption : public CDialog
 {
 public:
 	/*

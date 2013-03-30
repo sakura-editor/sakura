@@ -9,7 +9,7 @@
 // ここを変更したときは、global.cpp のg_ColorAttributeArrの定義も変更して下さい。
 //	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
 //	2007.09.09 Moca  中間の定義はお任せに変更
-SAKURA_CORE_API enum EColorIndexType {
+enum EColorIndexType {
 	COLORIDX_TEXT = 0,		//!< テキスト
 	COLORIDX_RULER,			//!< ルーラー
 	COLORIDX_CARET,			//!< キャレット	// 2006.12.07 ryoji

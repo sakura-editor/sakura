@@ -30,7 +30,7 @@
 
 // 文字コードセット種別
 //2007.08.14 kobake CODE_ERROR, CODE_DEFAULT 追加
-SAKURA_CORE_API enum ECodeType {
+enum ECodeType {
 	CODE_SJIS,						//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
 	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS)ではない)
 	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open)ではない)

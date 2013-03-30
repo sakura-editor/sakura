@@ -269,7 +269,7 @@ const char* GetNextLimitedLengthText( const char* pText, int nTextLen, int nLimi
 
 
 //! データを指定「文字数」以内に切り詰める。戻り値は結果の文字数。
-SAKURA_CORE_API int LimitStringLengthW(
+int LimitStringLengthW(
 	const wchar_t*	pszData,		//!< [in]
 	int				nDataLength,	//!< [in]
 	int				nLimitLength,	//!< [in]

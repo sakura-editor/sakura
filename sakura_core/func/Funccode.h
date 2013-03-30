@@ -157,7 +157,7 @@ namespace nsFuncCode{
 
 
 /*機能番号に対応したヘルプトピックIDを返す*/
-SAKURA_CORE_API int FuncID_To_HelpContextID( EFunctionCode nFuncID );	//Stonee, 2001/02/23
+int FuncID_To_HelpContextID( EFunctionCode nFuncID );	//Stonee, 2001/02/23
 
 class CEditDoc;
 struct DLLSHAREDATA;
