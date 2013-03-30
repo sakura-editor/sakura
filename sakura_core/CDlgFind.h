@@ -31,9 +31,9 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ); // 標準以外のメッセージを捕捉する
 //	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 	HWND DoModeless( HINSTANCE, HWND, LPARAM );	/* モードレスダイアログの表示 */
-//	BOOL DispatchEvent( HWND, UINT, WPARAM, LPARAM );	/* ダイアログのメッセージ処理 */
 
 	void ChangeView( LPARAM );
 
@@ -45,6 +45,7 @@ public:
 	*/
 	int		m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	char	m_szText[_MAX_PATH + 1];	// 検索文字列
+
 	int		m_nEscCaretPosX_PHY;	// 検索開始時のカーソル位置退避エリア 02/07/28 ai/
 	int		m_nEscCaretPosY_PHY;	// 検索開始時のカーソル位置退避エリア 02/07/28 ai/
 

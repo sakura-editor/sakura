@@ -66,7 +66,57 @@ CDlgGrep::CDlgGrep()
 	return;
 }
 
+/*!
+	標準以外のメッセージを捕捉する
 
+	@date 2013/03/24 novice 新規作成
+*/
+INT_PTR CDlgGrep::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+	switch( wMsg ){
+	case WM_COMMAND:
+		WORD wID = LOWORD(wParam);
+		switch( wID ){
+		case IDC_COMBO_TEXT:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					int i;
+					for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i ){
+						::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
+					}
+				}
+			}
+			break;
+		case IDC_COMBO_FILE:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_FILE );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					int i;
+					for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum; ++i ){
+						::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i] );
+					}
+				}
+			}
+			break;
+		case IDC_COMBO_FOLDER:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					int i;
+					for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum; ++i ){
+						::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i] );
+					}
+				}
+			}
+			break;
+		}
+		break;
+	}
+	return result;
+}
 
 /* モーダルダイアログの表示 */
 int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const char* pszCurrentFilePath )
@@ -160,7 +210,7 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 
 		SetWindowText(hwnd, sPath);
 	}
-	while(0);
+	while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	return  CallWindowProc((WNDPROC)g_pOnFolderProc,hwnd,msg,wparam,lparam);
 }
@@ -274,28 +324,14 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 /* ダイアログデータの設定 */
 void CDlgGrep::SetData( void )
 {
-	int		i;
-
 	/* 検索文字列 */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_TEXT, m_szText );
-	HWND	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
-	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
-	}
 
 	/* 検索ファイル */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_FILE, m_szFile );
-	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_FILE );
-	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i] );
-	}
 
 	/* 検索フォルダ */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, m_szFolder );
-	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_FOLDER );
-	for( i = 0; i < m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum; ++i ){
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0, (LPARAM)m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i] );
-	}
 
 	if((0 == _tcslen( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
 		0 < _tcslen( m_szCurrentFilePath )

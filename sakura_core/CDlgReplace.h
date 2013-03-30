@@ -37,6 +37,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ); // 標準以外のメッセージを捕捉する
 	HWND DoModeless( HINSTANCE, HWND, LPARAM, BOOL );	/* モーダルダイアログの表示 */
 	void ChangeView( LPARAM );	/* モードレス時：置換・検索対象となるビューの変更 */
 
@@ -47,16 +48,16 @@ public:
 	int				m_bRegularExp;	// 正規表現
 	*/
 	int				m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
-	char			m_szText[_MAX_PATH + 1];	/* 検索文字列 */
-	char			m_szText2[_MAX_PATH + 1];	/* 置換後文字列 */
+	char			m_szText[_MAX_PATH + 1];	// 検索文字列
+	char			m_szText2[_MAX_PATH + 1];	// 置換後文字列
 	BOOL			m_bSelectedArea;	/* 選択範囲内置換 */
 	int				m_bNOTIFYNOTFOUND;				/* 検索／置換  見つからないときメッセージを表示 */
-	int				m_nSettingType;
 	BOOL			m_bSelected;	/* テキスト選択中か */
 	int				m_nReplaceTarget;	/* 置換対象 */	// 2001.12.03 hor
 	int				m_nPaste;			/* 貼り付け？ */	// 2001.12.03 hor
 	int				m_nReplaceCnt;		//すべて置換の実行結果		// 2002.02.08 hor
 	bool			m_bCanceled;		//すべて置換で中断したか	// 2002.02.08 hor
+
 	int				m_nEscCaretPosX_PHY;	// 検索/置換開始時のカーソル位置退避エリア 02/07/28 ai
 	int				m_nEscCaretPosY_PHY;	// 検索/置換開始時のカーソル位置退避エリア 02/07/28 ai
 

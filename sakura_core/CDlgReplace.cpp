@@ -76,6 +76,47 @@ CDlgReplace::CDlgReplace()
 	return;
 }
 
+/*!
+	標準以外のメッセージを捕捉する
+
+	@date 2013/03/24 novice 新規作成
+*/
+INT_PTR CDlgReplace::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+	switch( wMsg ){
+	case WM_COMMAND:
+		WORD wID = LOWORD(wParam);
+		switch( wID ){
+		case IDC_COMBO_TEXT:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					int i;
+					for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i) {
+						::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
+					}
+				}
+			}
+			break;
+		case IDC_COMBO_TEXT2:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					int i;
+					for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum; ++i) {
+						::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i] );
+					}
+				}
+			}
+			break;
+		}
+		break;
+	}
+	return result;
+}
+
 /* モードレスダイアログの表示 */
 HWND CDlgReplace::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam, BOOL bSelected )
 {
@@ -171,7 +212,6 @@ void CDlgReplace::SetData( void )
 //	2010/5/26 Uchi
 void CDlgReplace::SetCombosList( void )
 {
-	int		i;
 	HWND	hwndCombo;
 	TCHAR	szBuff[_MAX_PATH+1];
 
@@ -179,9 +219,6 @@ void CDlgReplace::SetCombosList( void )
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
 	while (::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) > 0) {
 		::SendMessage(hwndCombo, CB_DELETESTRING, 0L, 0L);
-	}
-	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i) {
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
 	}
 	::GetWindowText( hwndCombo, szBuff, _MAX_PATH );
 	if (_tcscmp( szBuff, m_szText ) != 0) {
@@ -192,9 +229,6 @@ void CDlgReplace::SetCombosList( void )
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT2 );
 	while (::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) > 0) {
 		::SendMessage(hwndCombo, CB_DELETESTRING, 0L, 0L);
-	}
-	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum; ++i) {
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i] );
 	}
 	::GetWindowText( hwndCombo, szBuff, _MAX_PATH );
 	if (_tcscmp( szBuff, m_szText2 ) != 0) {

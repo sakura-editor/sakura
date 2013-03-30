@@ -31,6 +31,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ); // 標準以外のメッセージを捕捉する
 	int DoModal( HINSTANCE, HWND, const TCHAR* );	/* モーダルダイアログの表示 */
 //	HWND DoModeless( HINSTANCE, HWND, const char* );	/* モードレスダイアログの表示 */
 

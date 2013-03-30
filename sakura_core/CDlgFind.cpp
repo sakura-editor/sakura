@@ -56,6 +56,36 @@ CDlgFind::CDlgFind()
 }
 
 
+/*!
+	標準以外のメッセージを捕捉する
+
+	@date 2013/03/24 novice 新規作成
+*/
+INT_PTR CDlgFind::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+	switch( wMsg ){
+	case WM_COMMAND:
+		WORD wID = LOWORD(wParam);
+		switch( wID ){
+		case IDC_COMBO_TEXT:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					int i;
+					for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i) {
+						::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
+					}
+				}
+			}
+			break;
+		}
+		break;
+	}
+	return result;
+}
+
 /* モードレスダイアログの表示 */
 HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
@@ -145,7 +175,6 @@ void CDlgFind::SetData( void )
 //	2010/5/28 Uchi
 void CDlgFind::SetCombosList( void )
 {
-	int		i;
 	HWND	hwndCombo;
 	TCHAR	szBuff[_MAX_PATH+1];
 
@@ -153,9 +182,6 @@ void CDlgFind::SetCombosList( void )
 	hwndCombo = ::GetDlgItem( m_hWnd, IDC_COMBO_TEXT );
 	while (::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) > 0) {
 		::SendMessage(hwndCombo, CB_DELETESTRING, 0L, 0L);
-	}
-	for (i = 0; i < m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum; ++i) {
-		::SendMessage( hwndCombo, CB_ADDSTRING, 0L, (LPARAM)m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i] );
 	}
 	::GetWindowText( hwndCombo, szBuff, _MAX_PATH );
 	if (_tcscmp( szBuff, m_szText ) != 0) {
@@ -318,7 +344,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 					pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
 					pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
 					pcEditView->m_bSearch = FALSE;
-					// 02/07/28 ai end
 				}
 
 				/* 検索ダイアログを自動的に閉じる */
