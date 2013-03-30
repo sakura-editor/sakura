@@ -42,7 +42,7 @@
 	@date Jun. 10, 2001
 	@date Apr. 15, 2002 genta RegisterEntriesÇÃí«â¡ÅB
 */
-class SAKURA_CORE_API CDllHandler {
+class CDllHandler {
 public:
 	CDllHandler();
 	virtual ~CDllHandler();

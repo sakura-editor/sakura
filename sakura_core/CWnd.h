@@ -36,7 +36,7 @@ extern CWnd* gm_pCWnd;
 	@li RegisterWC()	ウィンドウクラス登録
 	@li Create()		ウィンドウ作成
 */
-class SAKURA_CORE_API CWnd
+class CWnd
 {
 protected:
 	friend LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );

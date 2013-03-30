@@ -43,7 +43,7 @@ class CTabWnd;
 #include "CShareData.h"
 
 //! タブバーウィンドウ
-class SAKURA_CORE_API CTabWnd : public CWnd
+class CTabWnd : public CWnd
 {
 public:
 	/*

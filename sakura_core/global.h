@@ -30,22 +30,6 @@
 #include <windows.h>
 #include <tchar.h>
 
-// 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。
-// この DLL 内のすべてのファイルはコマンドラインで定義された SAKURA_CORE_EXPORTS シンボル
-// でコンパイルされます。このシンボルはこの DLL が使用するどのプロジェクト上でも未定義でなけ
-// ればなりません。この方法ではソースファイルにこのファイルを含むすべてのプロジェクトが DLL
-// からインポートされたものとして SAKURA_CORE_API 関数を参照し、そのためこの DLL はこのマク
-// ロで定義されたシンボルをエクスポートされたものとして参照します。
-#ifdef SAKURA_CORE_EXPORTS
-#define SAKURA_CORE_API __declspec(dllexport)
-#else
-#define SAKURA_CORE_API __declspec(dllimport)
-#endif
-
-#ifdef SAKURA_NO_DLL	//@@@ 2001.12.30 add MIK
-#undef SAKURA_CORE_API
-#define SAKURA_CORE_API
-#endif	//SAKURA_NO_DLL
 
 #ifndef _countof
 #define _countof(A) (sizeof(A)/sizeof(A[0]))
@@ -67,11 +51,11 @@
 //Oct. 31, 2000 JEPRO TeX Keyword のために'\'を追加	//Nov. 9, 2000 JEPRO HSP Keyword のために'@'を追加
 //#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))
 //#define IS_KEYWORD_CHAR(c) ((c) == '#'/*35*/ || (c) == '$'/*36*/ || (c) == '@'/*64*/ || (c) == '\\'/*92*/ || __iscsym( (c) ))
-SAKURA_CORE_API	extern const unsigned char gm_keyword_char[256];	//@@@ 2002.04.27
+extern const unsigned char gm_keyword_char[256];	//@@@ 2002.04.27
 #define IS_KEYWORD_CHAR(c)	((int)(gm_keyword_char[(unsigned char)((c) & 0xff)]))	//@@@ 2002.04.27 ロケールに依存しない
 
 
-SAKURA_CORE_API extern const char* GSTR_APPNAME;
+extern const char* GSTR_APPNAME;
 
 
 #ifdef _DEBUG
@@ -155,7 +139,7 @@ SAKURA_CORE_API extern const char* GSTR_APPNAME;
 
 // 文字コードセット種別
 //2007.08.14 kobake CODE_ERROR, CODE_DEFAULT 追加
-SAKURA_CORE_API enum ECodeType {
+enum ECodeType {
 	CODE_SJIS,						//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
 	CODE_JIS,						//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
 	CODE_EUC,						//!< EUC				(MS-CP51932, eucJP-ms(eucJP-open))
@@ -198,17 +182,17 @@ inline bool IsValidCodeTypeExceptSJIS(int code)
 	return IsValidCodeType(code) && code!=CODE_SJIS;
 }
 
-SAKURA_CORE_API extern LPCTSTR gm_pszCodeNameArr_1[];
-SAKURA_CORE_API extern LPCTSTR gm_pszCodeNameArr_2[];
-SAKURA_CORE_API extern LPCTSTR gm_pszCodeNameArr_3[];
+extern LPCTSTR gm_pszCodeNameArr_1[];
+extern LPCTSTR gm_pszCodeNameArr_2[];
+extern LPCTSTR gm_pszCodeNameArr_3[];
 
 /* コンボボックス用 自動判別を含む配列 */
-SAKURA_CORE_API extern const int gm_nCodeComboValueArr[];
-SAKURA_CORE_API extern LPCTSTR gm_pszCodeComboNameArr[];
-SAKURA_CORE_API extern const int gm_nCodeComboNameArrNum;
+extern const int gm_nCodeComboValueArr[];
+extern LPCTSTR gm_pszCodeComboNameArr[];
+extern const int gm_nCodeComboNameArrNum;
 
 /* ダイアログ表示方法 */ // アウトラインウィンドウ用に作成 20060201 aroka
-SAKURA_CORE_API enum enumShowDlg {
+enum enumShowDlg {
 	SHOW_NORMAL			= 0,
 	SHOW_RELOAD			= 1,
 	SHOW_TOGGLE			= 2,
@@ -216,8 +200,8 @@ SAKURA_CORE_API enum enumShowDlg {
 
 
 /* 選択領域描画用パラメータ */
-SAKURA_CORE_API extern const COLORREF	SELECTEDAREA_RGB;
-SAKURA_CORE_API extern const int		SELECTEDAREA_ROP2;
+extern const COLORREF	SELECTEDAREA_RGB;
+extern const int		SELECTEDAREA_ROP2;
 
 
 
@@ -230,7 +214,7 @@ SAKURA_CORE_API extern const int		SELECTEDAREA_ROP2;
 // ここを変更したときは、global.cpp のg_ColorAttributeArrの定義も変更して下さい。
 //	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
 //	2007.09.09 Moca  中間の定義はお任せに変更
-SAKURA_CORE_API enum EColorIndexType {
+enum EColorIndexType {
 	COLORIDX_TEXT = 0,      //!< テキスト
 	COLORIDX_RULER,         //!< ルーラー
 	COLORIDX_CARET,         //!< キャレット    // 2006.12.07 ryoji
@@ -299,7 +283,7 @@ SAKURA_CORE_API enum EColorIndexType {
 
 //@@@ From Here 2003.05.31 MIK
 /*! タブウインドウ用メッセージサブコマンド */
-SAKURA_CORE_API enum ETabWndNotifyType {
+enum ETabWndNotifyType {
 	TWNT_REFRESH	= 0,		//再表示
 	TWNT_ADD		= 1,		//ウインドウ登録
 	TWNT_DEL		= 2,		//ウインドウ削除
@@ -311,7 +295,7 @@ SAKURA_CORE_API enum ETabWndNotifyType {
 };
 
 /*! バーの表示・非表示 */
-SAKURA_CORE_API	enum EBarChangeNotifyType {
+enum EBarChangeNotifyType {
 	MYBCN_TOOLBAR	= 0,		//ツールバー
 	MYBCN_FUNCKEY	= 1,		//ファンクションキー
 	MYBCN_TAB		= 2,		//タブ
@@ -339,7 +323,7 @@ struct SColorAttributeData{
 	TCHAR*			szName;
 	unsigned int	fAttribute;
 };
-SAKURA_CORE_API extern const SColorAttributeData g_ColorAttributeArr[];
+extern const SColorAttributeData g_ColorAttributeArr[];
 
 //@@@ To Here 2006.12.18 ryoji
 

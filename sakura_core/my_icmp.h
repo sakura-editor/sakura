@@ -54,7 +54,6 @@
  * ヘッダ
  */
 #include "global.h"
-//#define SAKURA_CORE_API
 
 
 
@@ -74,43 +73,43 @@
 /*
  * プロトタイプ
  */
-SAKURA_CORE_API MY_INLINE int my_toupper( int c );
-SAKURA_CORE_API MY_INLINE int my_tolower( int c );
-SAKURA_CORE_API MY_INLINE int my_iskanji1( int c );
-SAKURA_CORE_API MY_INLINE int my_iskanji2( int c );
-SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
-SAKURA_CORE_API int __cdecl my_memicmp( const void *m1, const void *m2, unsigned int n );
-SAKURA_CORE_API int __cdecl my_stricmp( const char *s1, const char *s2 );
-SAKURA_CORE_API int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n );
+MY_INLINE int my_toupper( int c );
+MY_INLINE int my_tolower( int c );
+MY_INLINE int my_iskanji1( int c );
+MY_INLINE int my_iskanji2( int c );
+int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag );
+int __cdecl my_memicmp( const void *m1, const void *m2, unsigned int n );
+int __cdecl my_stricmp( const char *s1, const char *s2 );
+int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n );
 #ifdef MY_ICMP_MBS
-SAKURA_CORE_API MY_INLINE int my_mbtoupper2( int c );
-SAKURA_CORE_API MY_INLINE int my_mbtolower2( int c );
-SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c );
+MY_INLINE int my_mbtoupper2( int c );
+MY_INLINE int my_mbtolower2( int c );
+MY_INLINE int my_mbisalpha2( int c );
 #endif  /* MY_ICMP_MBS */
 
 // 2005.04.07 MIK strstr系関数追加
 //	Aug. 21, 2005 genta 実体には__cdeclが無いので，宣言からも削除
-SAKURA_CORE_API const char* my_strstri( const char* s1, const char* s2 );
-SAKURA_CORE_API const char* my_strstr( const char* s1, const char* s2 );
-SAKURA_CORE_API const char* my_strchri( const char* s1, int c2 );
-SAKURA_CORE_API const char* my_strchr( const char* s1, int c2 );
+const char* my_strstri( const char* s1, const char* s2 );
+const char* my_strstr( const char* s1, const char* s2 );
+const char* my_strchri( const char* s1, int c2 );
+const char* my_strchr( const char* s1, int c2 );
 
-inline SAKURA_CORE_API char* my_strstri( char* s1, const char* s2 )
+inline char* my_strstri( char* s1, const char* s2 )
 {
 	return const_cast<char*>(my_strstri((const char*)s1, s2));
 }
 
-inline SAKURA_CORE_API char* my_strstr( char* s1, const char* s2 )
+inline char* my_strstr( char* s1, const char* s2 )
 {
 	return const_cast<char*>(my_strstr((const char*)s1, s2));
 }
 
-inline SAKURA_CORE_API char* my_strchri( char* s1, int c2 )
+inline char* my_strchri( char* s1, int c2 )
 {
 	return const_cast<char*>(my_strchri((const char*)s1, c2));
 }
 
-inline SAKURA_CORE_API char* my_strchr( char* s1, int c2 )
+inline char* my_strchr( char* s1, int c2 )
 {
 	return const_cast<char*>(my_strchr((const char*)s1, c2));
 }

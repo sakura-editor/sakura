@@ -41,7 +41,7 @@ class CEditApp;
 	@date 2007.10.30 kobake OnHelp_MenuItem‚ğCEditWnd‚©‚ç‚Á‚Ä‚«‚½
 	@date 2007.10.30 kobake ŠÖ”–¼•ÏX: OnHelp_MenuItem¨ShowFuncHelp
 */
-class SAKURA_CORE_API CEditApp
+class CEditApp
 {
 public:
 	/*

@@ -62,7 +62,7 @@ struct STabGroupInfo{
 
 //! 編集ウィンドウ（外枠）管理クラス
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-class SAKURA_CORE_API CEditWnd
+class CEditWnd
 {
 public:
 	/*

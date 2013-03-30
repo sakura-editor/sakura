@@ -46,7 +46,7 @@ struct GrepInfo {
 /*!
 	@brief コマンドラインパーサ クラス
 */
-class SAKURA_CORE_API CCommandLine {
+class CCommandLine {
 public:
 	static CCommandLine* getInstance(){
 		static CCommandLine instance;

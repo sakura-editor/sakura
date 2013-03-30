@@ -37,7 +37,7 @@ struct TYPE_NAME {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CPropTypes{
+class CPropTypes{
 
 public:
 	//生成と破棄
@@ -94,7 +94,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        スクリーン                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropTypesScreen : CPropTypes
+class CPropTypesScreen : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -106,7 +106,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropTypesColor : CPropTypes
+class CPropTypesColor : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -129,7 +129,7 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           支援                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropTypesSupport : CPropTypes
+class CPropTypesSupport : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -141,7 +141,7 @@ protected:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                    正規表現キーワード                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropTypesRegex : CPropTypes
+class CPropTypesRegex : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理
@@ -159,7 +159,7 @@ private:
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     キーワードヘルプ                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-class SAKURA_CORE_API CPropTypesKeyHelp : CPropTypes
+class CPropTypesKeyHelp : CPropTypes
 {
 public:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );			//!< メッセージ処理

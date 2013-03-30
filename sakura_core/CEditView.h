@@ -78,7 +78,7 @@ const int CMD_FROM_MOUSE = 2;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class SAKURA_CORE_API CCaretUnderLine
+class CCaretUnderLine
 {
 public:
 	CCaretUnderLine()
@@ -119,7 +119,7 @@ protected:
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CEditView
+class CEditView
 {
 public:
 	/* Constructors */

@@ -79,7 +79,7 @@ typedef struct bregexp {
 	@date 2005.03.19 かろと リファクタリング。クラス内部を隠蔽
 	@date 2006.01.22 かろと オプション追加・名称変更(全て行置換用Globalオプション追加のため)
 */
-class SAKURA_CORE_API CBregexp : public CDllHandler {
+class CBregexp : public CDllHandler {
 public:
 	CBregexp();
 	virtual ~CBregexp();

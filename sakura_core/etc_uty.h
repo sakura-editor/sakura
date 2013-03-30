@@ -121,63 +121,63 @@ BOOL MyWinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData)
 //!フォント選択ダイアログ
 BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );   // 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
 
-SAKURA_CORE_API void CutLastYenFromDirectoryPath( TCHAR* );/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-SAKURA_CORE_API void AddLastYenFromDirectoryPath( TCHAR* );/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-SAKURA_CORE_API int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
-SAKURA_CORE_API int LimitStringLengthB( const char*, int, int, CMemory& );/* データを指定バイト数以内に切り詰める */
-SAKURA_CORE_API const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* 指定長以下のテキストに切り分ける */
-SAKURA_CORE_API const char* GetNextLine( const char*, int, int*, int*, CEol* );/* CR0LF0,CRLF,LFCR,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
-SAKURA_CORE_API void GetLineColm( const char*, int*, int* );
-SAKURA_CORE_API bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
-SAKURA_CORE_API bool IsFilePath( const char*, int*, int*, bool = true );
-SAKURA_CORE_API bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
-SAKURA_CORE_API BOOL IsURL( const char*, int, int* );/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
-SAKURA_CORE_API BOOL IsMailAddress( const char*, int, int* );	/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
+void CutLastYenFromDirectoryPath( TCHAR* );/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
+void AddLastYenFromDirectoryPath( TCHAR* );/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+int AddLastChar( TCHAR*, int, TCHAR );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
+int LimitStringLengthB( const char*, int, int, CMemory& );/* データを指定バイト数以内に切り詰める */
+const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* 指定長以下のテキストに切り分ける */
+const char* GetNextLine( const char*, int, int*, int*, CEol* );/* CR0LF0,CRLF,LFCR,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
+void GetLineColm( const char*, int*, int* );
+bool fexist(LPCTSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
+bool IsFilePath( const char*, int*, int*, bool = true );
+bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
+BOOL IsURL( const char*, int, int* );/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
+BOOL IsMailAddress( const char*, int, int* );	/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
 //#ifdef COMPILE_COLOR_DIGIT
-SAKURA_CORE_API int IsNumber( const char*, int, int );/* 数値ならその長さを返す */	//@@@ 2001.02.17 by MIK
+int IsNumber( const char*, int, int );/* 数値ならその長さを返す */	//@@@ 2001.02.17 by MIK
 //#endif
-SAKURA_CORE_API void ActivateFrameWindow( HWND );	/* アクティブにする */
-SAKURA_CORE_API BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
-SAKURA_CORE_API BOOL CheckSystemResources( const TCHAR* );	/* システムリソースのチェック */
-//SAKURA_CORE_API BOOL CheckWindowsVersion( const char* pszAppName );	/* Windowsバージョンのチェック */
+void ActivateFrameWindow( HWND );	/* アクティブにする */
+BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
+BOOL CheckSystemResources( const TCHAR* );	/* システムリソースのチェック */
+//BOOL CheckWindowsVersion( const char* pszAppName );	/* Windowsバージョンのチェック */
 // Jul. 5, 2001 shoji masami
-//SAKURA_CORE_API bool CheckWindowsVersionNT( void );	/* NTプラットフォームかどうか */
-SAKURA_CORE_API void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* リソースから製品バージョンの取得 */
-SAKURA_CORE_API void SplitPath_FolderAndFile( const char*, char*, char* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
-SAKURA_CORE_API BOOL GetAbsolutePath( const char*, char*, BOOL );	/* 相対パス→絶対パス */
-SAKURA_CORE_API BOOL GetLongFileName( const TCHAR*, TCHAR* );	/* ロングファイル名を取得する */
-SAKURA_CORE_API BOOL CheckEXT( const TCHAR*, const TCHAR* );	/* 拡張子を調べる */
-SAKURA_CORE_API char* my_strtok( char*, int, int*, const char* );
+//bool CheckWindowsVersionNT( void );	/* NTプラットフォームかどうか */
+void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* リソースから製品バージョンの取得 */
+void SplitPath_FolderAndFile( const char*, char*, char* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
+BOOL GetAbsolutePath( const char*, char*, BOOL );	/* 相対パス→絶対パス */
+BOOL GetLongFileName( const TCHAR*, TCHAR* );	/* ロングファイル名を取得する */
+BOOL CheckEXT( const TCHAR*, const TCHAR* );	/* 拡張子を調べる */
+char* my_strtok( char*, int, int*, const char* );
 /* Shell Interface系(?) */
-SAKURA_CORE_API BOOL SelectDir(HWND, const TCHAR*, const TCHAR*, TCHAR* );	/* フォルダ選択ダイアログ */
+BOOL SelectDir(HWND, const TCHAR*, const TCHAR*, TCHAR* );	/* フォルダ選択ダイアログ */
 //不要＆実装間違いのため
-//SAKURA_CORE_API ITEMIDLIST* CreateItemIDList( const char* );	/* パス名に対するアイテムＩＤリストを取得する */
-//SAKURA_CORE_API BOOL DeleteItemIDList( ITEMIDLIST* );/* アイテムＩＤリストを削除する */
-SAKURA_CORE_API BOOL ResolveShortcutLink(HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath);/* ショートカット(.lnk)の解決 */
-SAKURA_CORE_API void ResolvePath(TCHAR* pszPath); //!< ショートカットの解決とロングファイル名へ変換を行う。
+//ITEMIDLIST* CreateItemIDList( const char* );	/* パス名に対するアイテムＩＤリストを取得する */
+//BOOL DeleteItemIDList( ITEMIDLIST* );/* アイテムＩＤリストを削除する */
+BOOL ResolveShortcutLink(HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath);/* ショートカット(.lnk)の解決 */
+void ResolvePath(TCHAR* pszPath); //!< ショートカットの解決とロングファイル名へ変換を行う。
 
 /*
 ||	処理中のユーザー操作を可能にする
 ||	ブロッキングフック(?)(メッセージ配送)
 */
-SAKURA_CORE_API BOOL BlockingHook( HWND hwndDlgCancel );
+BOOL BlockingHook( HWND hwndDlgCancel );
 
 //	Jun. 26, 2001 genta
 //!	正規表現ライブラリのバージョン取得
-SAKURA_CORE_API bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
-SAKURA_CORE_API bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
-SAKURA_CORE_API bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
+bool CheckRegexpVersion( HWND hWnd, int nCmpId, bool bShowMsg = false );
+bool CheckRegexpSyntax( const char* szPattern, HWND hWnd, bool bShowMessage, int nOption = -1 );// 2002/2/1 hor追加
+bool InitRegexp( HWND hWnd, CBregexp& rRegexp, bool bShowMessage );
 
-SAKURA_CORE_API HWND OpenHtmlHelp( HWND hWnd, LPCTSTR szFile, UINT uCmd, DWORD_PTR data, bool msgflag = true);
-SAKURA_CORE_API DWORD NetConnect ( const char strNetWorkPass[] );
+HWND OpenHtmlHelp( HWND hWnd, LPCTSTR szFile, UINT uCmd, DWORD_PTR data, bool msgflag = true);
+DWORD NetConnect ( const char strNetWorkPass[] );
 
-SAKURA_CORE_API int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
-SAKURA_CORE_API int cescape_j(const char* org, char* out, char cesc, char cwith);
+int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
+int cescape_j(const char* org, char* out, char cesc, char cwith);
 
 /* ヘルプの目次を表示 */
-SAKURA_CORE_API void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
+void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
 
-SAKURA_CORE_API bool SetClipboardText( HWND, const char*, int );	//!クリープボードにText形式でコピーする
+bool SetClipboardText( HWND, const char*, int );	//!クリープボードにText形式でコピーする
 
 /*!	&の二重化
 	メニューに含まれる&を&&に置き換える
@@ -190,8 +190,8 @@ inline void dupamp(const TCHAR* org, TCHAR* out)
 ///////////////////////////////////////////////////////////////////////
 
 /* カラー名＜＞インデックス番号の変換 */	//@@@ 2002.04.30
-SAKURA_CORE_API int GetColorIndexByName( const char *name );
-SAKURA_CORE_API const char* GetColorNameByIndex( int index );
+int GetColorIndexByName( const char *name );
+const char* GetColorNameByIndex( int index );
 
 //	Sep. 10, 2002 genta CWSH.cppからの移動に伴う追加
 bool ReadRegistry(HKEY Hive, const TCHAR *Path, const TCHAR* Item, TCHAR* Buffer, unsigned BufferSize);

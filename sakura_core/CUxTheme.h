@@ -40,7 +40,7 @@
 
 	UxTheme コンポーネントの動的ロードをサポートするクラス
 */
-class SAKURA_CORE_API CUxTheme : public CDllHandler {
+class CUxTheme : public CDllHandler {
 public:
 	static CUxTheme* getInstance()
 	{

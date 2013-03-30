@@ -55,7 +55,7 @@ typedef struct _migemo migemo;
 #include <string>
 #include "CDllHandler.h"
 
-class SAKURA_CORE_API CMigemo : public CDllHandler {
+class CMigemo : public CDllHandler {
 public:
 	static inline CMigemo* getInstance()
 	{

@@ -36,7 +36,7 @@
 
 // 2002/09/22 Moca EOL_CRLF_UNICODEを廃止
 /* 行終端子の種類 */
-SAKURA_CORE_API enum EEolType {
+enum EEolType {
 	EOL_NONE,			//!<
 	EOL_CRLF,			//!< 0d0a
 	EOL_LFCR,			//!< 0a0d
@@ -47,7 +47,7 @@ SAKURA_CORE_API enum EEolType {
 };
 
 /* 行終端子のデータ長 */
-SAKURA_CORE_API enum enumEOLLen {
+enum enumEOLLen {
 	LEN_EOL_NONE			= 0,
 	LEN_EOL_CRLF			= 2,
 	LEN_EOL_LFCR			= 2,
@@ -59,7 +59,7 @@ SAKURA_CORE_API enum enumEOLLen {
 #define EOL_TYPE_NUM	5
 
 /* 行終端子の配列 */
-SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
+extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 
 
 /*!
@@ -69,7 +69,7 @@ SAKURA_CORE_API extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 	オブジェクトに対するメソッドで行えるだけだが、グローバル変数への参照を
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
-class SAKURA_CORE_API CEol{
+class CEol{
 	static const char* gm_pszEolDataArr[EOL_TYPE_NUM];
 	static const wchar_t* gm_pszEolUnicodeDataArr[EOL_TYPE_NUM];
 	static const wchar_t* gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM];

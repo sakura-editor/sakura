@@ -41,7 +41,7 @@ class CMemory;
 #include "global.h"
 
 //! メモリバッファクラス
-class SAKURA_CORE_API CMemory
+class CMemory
 {
 public:
 	/*

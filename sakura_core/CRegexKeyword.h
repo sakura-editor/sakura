@@ -85,7 +85,7 @@ typedef struct RegexInfo_t {
 /*!
 	正規表現キーワードを扱う。
 */
-class SAKURA_CORE_API CRegexKeyword : public CBregexp {
+class CRegexKeyword : public CBregexp {
 public:
 	CRegexKeyword(LPCTSTR);
 	~CRegexKeyword();

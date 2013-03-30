@@ -69,7 +69,7 @@ class CKeyWordSetMgr;
 	頻繁にずらす操作が発生しないよう，nKeyWordSetBlockSize(50個)ずつの
 	ブロック単位で場所を確保するようにしている．
 */
-class SAKURA_CORE_API CKeyWordSetMgr
+class CKeyWordSetMgr
 {
 public:
 	/*

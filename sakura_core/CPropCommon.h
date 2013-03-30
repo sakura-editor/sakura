@@ -61,7 +61,7 @@ enum ComPropSheetOrder {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CPropCommon
+class CPropCommon
 {
 public:
 	/*

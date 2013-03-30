@@ -62,7 +62,7 @@
 
 	@return 変換された文字コード
 */
-SAKURA_CORE_API MY_INLINE int my_toupper( int c )
+MY_INLINE int my_toupper( int c )
 {
 	if( c >= 'a' && c <= 'z' ) return c - ('a' - 'A');
 	return c;
@@ -75,7 +75,7 @@ SAKURA_CORE_API MY_INLINE int my_toupper( int c )
 
 	@return 変換された文字コード
 */
-SAKURA_CORE_API MY_INLINE int my_tolower( int c )
+MY_INLINE int my_tolower( int c )
 {
 	if( c >= 'A' && c <= 'Z' ) return c + ('a' - 'A');
 	return c;
@@ -89,7 +89,7 @@ SAKURA_CORE_API MY_INLINE int my_tolower( int c )
 	@retval 1	漢字１バイト目である
 	@retval 0	漢字１バイト目ではない
 */
-SAKURA_CORE_API MY_INLINE int my_iskanji1( int c )
+MY_INLINE int my_iskanji1( int c )
 {
 	if( (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc) ) return 1;
 	return 0;
@@ -103,7 +103,7 @@ SAKURA_CORE_API MY_INLINE int my_iskanji1( int c )
 	@retval 1	漢字２バイト目である
 	@retval 0	漢字２バイト目ではない
 */
-SAKURA_CORE_API MY_INLINE int my_iskanji2( int c )
+MY_INLINE int my_iskanji2( int c )
 {
 	if( (c >= 0x40 && c <= 0x7e) || (c >= 0x80 && c <= 0xfc) ) return 1;
 	return 0;
@@ -121,7 +121,7 @@ SAKURA_CORE_API MY_INLINE int my_iskanji2( int c )
 
 	@return 変換された文字コード
 */
-SAKURA_CORE_API MY_INLINE int my_mbtoupper2( int c )
+MY_INLINE int my_mbtoupper2( int c )
 {
 	if( c >= 0x81 && c <= 0x9a ) return c - (0x81 - 0x60);
 	return c;
@@ -136,7 +136,7 @@ SAKURA_CORE_API MY_INLINE int my_mbtoupper2( int c )
 
 	@return 変換された文字コード
 */
-SAKURA_CORE_API MY_INLINE int my_mbtolower2( int c )
+MY_INLINE int my_mbtolower2( int c )
 {
 	if( c >= 0x60 && c <= 0x79 ) return c + (0x81 - 0x60);
 	return c;
@@ -152,7 +152,7 @@ SAKURA_CORE_API MY_INLINE int my_mbtolower2( int c )
 	@retval 1	全角アルファベット２バイト目である
 	@retval 0	ちがう
 */
-SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c )
+MY_INLINE int my_mbisalpha2( int c )
 {
 	if( (c >= 0x60 && c <= 0x79) || (c >= 0x81 && c <= 0x9a) ) return 1;
 	return 0;
@@ -171,7 +171,7 @@ SAKURA_CORE_API MY_INLINE int my_mbisalpha2( int c )
 	@retval 0	一致
 	@date 2002.11.29 Moca 0以外の時の戻り値を，「元の値の差」から「大文字としたときの差」に変更
  */
-SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag )
+int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, unsigned int dcount, bool flag )
 {
 	unsigned int	i;
 	unsigned char	*p1, *p2;
@@ -294,7 +294,7 @@ SAKURA_CORE_API int __cdecl my_internal_icmp( const char *s1, const char *s2, un
 	比較を行っている。
 	ここでは日本語に対応した memicmp を実装する。
 */
-SAKURA_CORE_API int __cdecl my_memicmp( const void *m1, const void *m2, unsigned int n )
+int __cdecl my_memicmp( const void *m1, const void *m2, unsigned int n )
 {
 	return my_internal_icmp( (const char*)m1, (const char*)m2, n, 1, false );
 }
@@ -307,7 +307,7 @@ SAKURA_CORE_API int __cdecl my_memicmp( const void *m1, const void *m2, unsigned
 
 	@retval 0	一致
  */
-SAKURA_CORE_API int __cdecl my_stricmp( const char *s1, const char *s2 )
+int __cdecl my_stricmp( const char *s1, const char *s2 )
 {
 	/* チェックする文字数をuint最大に設定する */
 	//return my_internal_icmp( s1, s2, (unsigned int)(~0), 0, true );
@@ -323,7 +323,7 @@ SAKURA_CORE_API int __cdecl my_stricmp( const char *s1, const char *s2 )
 
 	@retval 0	一致
  */
-SAKURA_CORE_API int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n )
+int __cdecl my_strnicmp( const char *s1, const char *s2, size_t n )
 {
 	return my_internal_icmp( s1, s2, (unsigned int)n, 1, true );
 }

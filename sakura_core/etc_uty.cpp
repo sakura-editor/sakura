@@ -1850,7 +1850,7 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
 	@date 2004.02.17 Moca 各所のソースを統合
 */
-SAKURA_CORE_API bool SetClipboardText( HWND hwnd, const char* pszText, int nLength )
+bool SetClipboardText( HWND hwnd, const char* pszText, int nLength )
 {
 	HGLOBAL		hgClip;
 	char*		pszClip;
@@ -2147,7 +2147,7 @@ void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
 /*
  * カラー名からインデックス番号に変換する
  */
-SAKURA_CORE_API int GetColorIndexByName( const char *name )
+int GetColorIndexByName( const char *name )
 {
 	int	i;
 	for( i = 0; i < COLORIDX_LAST; i++ )
@@ -2160,7 +2160,7 @@ SAKURA_CORE_API int GetColorIndexByName( const char *name )
 /*
  * インデックス番号からカラー名に変換する
  */
-SAKURA_CORE_API const char* GetColorNameByIndex( int index )
+const char* GetColorNameByIndex( int index )
 {
 	return g_ColorAttributeArr[index].szName;
 }

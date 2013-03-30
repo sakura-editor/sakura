@@ -31,7 +31,7 @@ class CEditApp;
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CControlProcess : public CProcess {
+class CControlProcess : public CProcess {
 public:
 	CControlProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine ) : 
 		CProcess( hInstance, lpCmdLine ),

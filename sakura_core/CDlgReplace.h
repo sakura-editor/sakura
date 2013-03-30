@@ -27,7 +27,7 @@ class CDlgReplace;
 /*!
 	@brief 置換ダイアログボックス
 */
-class SAKURA_CORE_API CDlgReplace : public CDialog
+class CDlgReplace : public CDialog
 {
 public:
 	/*

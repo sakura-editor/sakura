@@ -60,7 +60,7 @@ void DebugOutA( LPCSTR lpFmt, ...)
 	引数で与えられた情報をダイアログボックスで表示する．
 	デバッグ目的以外でも使用できる．
 */
-SAKURA_CORE_API int VMessageBoxF(
+int VMessageBoxF(
 	HWND		hwndOwner,	//!< [in] オーナーウィンドウのハンドル
 	UINT		uType,		//!< [in] メッセージボックスのスタイル (MessageBoxと同じ形式)
 	LPCTSTR		lpCaption,	//!< [in] メッセージボックスのタイトル
@@ -73,7 +73,7 @@ SAKURA_CORE_API int VMessageBoxF(
 	return ::MessageBox( hwndOwner, szBuf, lpCaption, uType );
 }
 
-SAKURA_CORE_API int MessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... )
+int MessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... )
 {
 	va_list v;
 	va_start(v,lpText);

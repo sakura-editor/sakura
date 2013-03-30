@@ -26,7 +26,7 @@
 
 */
 template <class T>
-class SAKURA_CORE_API CMemoryIterator
+class CMemoryIterator
 {
 	int m_nIndent;
 	int m_nIndex;

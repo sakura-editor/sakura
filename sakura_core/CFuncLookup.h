@@ -46,7 +46,7 @@ struct CommonSetting;// 2002/2/10 aroka
 
 	機能，機能分類と位置，機能番号，文字列などの対応を集約する．
 */
-class SAKURA_CORE_API CFuncLookup {
+class CFuncLookup {
 
 public:
 	//	Oct. 15, 2001 genta 引数追加

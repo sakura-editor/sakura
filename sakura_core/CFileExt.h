@@ -33,7 +33,7 @@
 
 #include "global.h"
 
-class SAKURA_CORE_API CFileExt
+class CFileExt
 {
 public:
 	CFileExt();

@@ -74,7 +74,7 @@ struct CalTextWidthArg {
 
 	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
 */
-class SAKURA_CORE_API CLayoutMgr
+class CLayoutMgr
 {
 public:
 	/*

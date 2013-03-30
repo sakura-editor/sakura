@@ -20,7 +20,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-SAKURA_CORE_API void DebugOutA( LPCSTR lpFmt, ...);
+void DebugOutA( LPCSTR lpFmt, ...);
 #ifdef _UNICODE
 #define DebugOut DebugOutW
 #else
@@ -34,8 +34,8 @@ SAKURA_CORE_API void DebugOutA( LPCSTR lpFmt, ...);
 //2007.10.02 kobake メッセージボックスの使用はデバッグ時に限らないので、「Debug～」という名前を廃止
 
 //テキスト整形機能付きMessageBox
-SAKURA_CORE_API int VMessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, va_list& v );
-SAKURA_CORE_API int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... );
+int VMessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, va_list& v );
+int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... );
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 デバッグ用メッセージ出力                    //
@@ -123,7 +123,7 @@ int PleaseReportToAuthor(HWND hwnd, LPCTSTR format, ...);
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 #ifdef _DEBUG
 	//!	設定している場所はあるが，参照している場所がない変数
-	SAKURA_CORE_API extern int gm_ProfileOutput;
+	extern int gm_ProfileOutput;
 #endif
 
 

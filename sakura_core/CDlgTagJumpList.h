@@ -54,7 +54,7 @@ class CDlgTagJumpList;
 	ダイレクトタグジャンプで複数の候補がある場合及び
 	キーワード指定タグジャンプのためのダイアログボックス制御
 */
-class SAKURA_CORE_API CDlgTagJumpList : public CDialog
+class CDlgTagJumpList : public CDialog
 {
 public:
 	/*

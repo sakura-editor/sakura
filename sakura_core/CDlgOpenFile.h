@@ -48,7 +48,7 @@ struct OPENFILENAMEZ : public OPENFILENAME {
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CDlgOpenFile
+class CDlgOpenFile
 {
 public:
 	/*

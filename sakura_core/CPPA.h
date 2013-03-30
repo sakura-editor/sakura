@@ -59,7 +59,7 @@ Pascalインタプリタコンポーネントです。
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CPPA : public CDllHandler {
+class CPPA : public CDllHandler {
 public:
 	CPPA();
 	virtual ~CPPA();

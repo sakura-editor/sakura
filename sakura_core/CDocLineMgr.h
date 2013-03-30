@@ -86,7 +86,7 @@ struct DocLineReplaceArg {
 /*-----------------------------------------------------------------------
 ÉNÉâÉXÇÃêÈåæ
 -----------------------------------------------------------------------*/
-class SAKURA_CORE_API CDocLineMgr{
+class CDocLineMgr{
 public:
 	/*
 	||  Constructors

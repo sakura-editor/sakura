@@ -61,7 +61,7 @@ class CError_FileRead
 	@note 明示的にFileOpenメンバを呼び出さないと使えない
 		ファイルポインタを共有すると困るので、クラスのコピー禁止
 */
-class SAKURA_CORE_API CFileLoad
+class CFileLoad
 {
 public:
 

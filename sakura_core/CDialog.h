@@ -34,7 +34,7 @@ class CDialog;
 
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CDialog
+class CDialog
 {
 public:
 	/*

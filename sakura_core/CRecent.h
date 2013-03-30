@@ -62,7 +62,7 @@ typedef enum {
 
 
 
-class SAKURA_CORE_API CRecent {
+class CRecent {
 
 public:
 	CRecent();

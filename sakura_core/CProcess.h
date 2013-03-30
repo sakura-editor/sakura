@@ -23,7 +23,7 @@
 /*!
 	@brief プロセス基底クラス
 */
-class SAKURA_CORE_API CProcess {
+class CProcess {
 public:
 	CProcess( HINSTANCE hInstance, LPCTSTR lpCmdLine );
 	bool Run();

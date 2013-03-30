@@ -31,7 +31,7 @@ struct DLLSHAREDATA;
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CSplitterWnd : public CWnd
+class CSplitterWnd : public CWnd
 {
 public:
 	/*

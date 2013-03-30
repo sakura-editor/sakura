@@ -21,7 +21,7 @@ class CDlgGrep;
 #include "CDialog.h"
 
 //! GREPダイアログボックス
-class SAKURA_CORE_API CDlgGrep : public CDialog
+class CDlgGrep : public CDialog
 {
 public:
 	/*

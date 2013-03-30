@@ -56,7 +56,7 @@ struct SOneRule;
 
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class SAKURA_CORE_API CEditDoc
+class CEditDoc
 {
 public:
 	/*
