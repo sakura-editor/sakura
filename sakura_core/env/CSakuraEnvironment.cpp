@@ -58,6 +58,9 @@ CEditWnd* CSakuraEnvironment::GetMainWindow()
 	@li n  無題の通し番号
 	@li E  開いているファイルのあるフォルダの名前(簡易表示)
 	@li e  開いているファイルのあるフォルダの名前
+	@li B  タイプ別設定の名前
+	@li b  開いているファイルの拡張子
+	@li Q  印刷ページ設定の名前
 	@li C  現在選択中のテキスト
 	@li x  現在の物理桁位置(先頭からのバイト数1開始)
 	@li y  現在の物理行位置(1開始)
@@ -251,6 +254,39 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			++p;
 			break;
 		//	From Here Jan. 15, 2002 hor
+		case L'B':	// タイプ別設定の名前			2013/03/28 Uchi
+			{
+				STypeConfig&	sTypeCongig = pcDoc->m_cDocType.GetDocumentAttribute();
+				if (sTypeCongig.m_nIdx > 0) {	// 基本は表示しない
+					q = wcs_pushT( q, q_max - q, sTypeCongig.m_szTypeName);
+				}
+				++p;
+			}
+			break;
+		case L'b':	// 開いているファイルの拡張子	2013/03/28 Uchi
+			if ( pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
+				//	ポインタを末尾に
+				const wchar_t	*dot_position, *end_of_path;
+				r = to_wchar(pcDoc->m_cDocFile.GetFileName());
+				end_of_path = dot_position = r + wcslen( r );
+				//	後ろから.を探す
+				while (--dot_position >= r && *dot_position != L'.')
+					;
+				//	.を発見(拡張子有り)
+				if (*dot_position == L'.') {
+					q = wcs_pushW( q, q_max - q, dot_position +1, end_of_path - dot_position -1 );
+				}
+			}
+			++p;
+			break;
+		case L'Q':	// 印刷ページ設定の名前			2013/03/28 Uchi
+			{
+				PRINTSETTING*	ps = &GetDllShareData().m_PrintSettingArr[
+					 pcDoc->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting];
+				q = wcs_pushT( q, q_max - q, ps->m_szPrintSettingName);
+				++p;
+			}
+			break;
 		case L'C':	//	現在選択中のテキスト
 			{
 				CNativeW cmemCurText;
