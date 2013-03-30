@@ -75,7 +75,55 @@ CDlgGrep::CDlgGrep()
 	return;
 }
 
+/*!
+	標準以外のメッセージを捕捉する
 
+	@date 2013/03/24 novice 新規作成
+*/
+INT_PTR CDlgGrep::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+	switch( wMsg ){
+	case WM_COMMAND:
+		WORD wID = LOWORD(wParam);
+		switch( wID ){
+		case IDC_COMBO_TEXT:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
+						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
+					}
+				}
+			}
+			break;
+		case IDC_COMBO_FILE:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size(); ++i ){
+						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFiles[i] );
+					}
+				}
+			}
+			break;
+		case IDC_COMBO_FOLDER:
+			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
+				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
+				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
+					hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
+					for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size(); ++i ){
+						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFolders[i] );
+					}
+				}
+			}
+			break;
+		}
+		break;
+	}
+	return result;
+}
 
 /* モーダルダイアログの表示 */
 int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCurrentFilePath )
@@ -289,24 +337,12 @@ void CDlgGrep::SetData( void )
 
 	/* 検索文字列 */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
-	HWND	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
-	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
-	}
 
 	/* 検索ファイル */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FILE, m_szFile );
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE );
-	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFiles[i] );
-	}
 
 	/* 検索フォルダ */
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_FOLDER, m_szFolder );
-	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
-	for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size(); ++i ){
-		Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFolders[i] );
-	}
 
 	if((0 == _tcslen( m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
 		0 < _tcslen( m_szCurrentFilePath )
