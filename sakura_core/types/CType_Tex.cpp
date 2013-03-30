@@ -47,8 +47,8 @@ void CDocOutline::MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr)
 	wchar_t szTag[32], szTitle[256];			//	一時領域
 	int thisSection=0, lastSection = 0;	// 現在のセクション種類と一つ前のセクション種類
 	int stackSection[nMaxStack];		// 各深さでのセクションの番号
-	int nStartTitlePos;					// \section{dddd} の dddd の部分の始まる番号
-	int bNoNumber;						// * 付の場合はセクション番号を付けない
+	int nStartTitlePos = 0;				// \section{dddd} の dddd の部分の始まる番号
+	int bNoNumber = 0;					// * 付の場合はセクション番号を付けない
 
 	// 一行ずつ
 	CLogicInt	nLineCount;

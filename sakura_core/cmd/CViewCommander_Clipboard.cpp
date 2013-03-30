@@ -519,7 +519,7 @@ void CViewCommander::Command_INSTEXT(
 	}
 
 	{	// 非選択時の処理 or ラインモード貼り付け時の残りの処理
-		CLogicInt nPosX_PHY_Delta;
+		CLogicInt	nPosX_PHY_Delta(0);
 		if( bLinePaste ){	// 2007.10.04 ryoji
 			/* 挿入ポイント（折り返し単位行頭）にカーソルを移動 */
 			CLogicPoint ptCaretBefore = GetCaret().GetCaretLogicPos();	// 操作前のキャレット位置

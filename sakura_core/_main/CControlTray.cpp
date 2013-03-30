@@ -1539,7 +1539,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 */
 void CControlTray::OnDestroy()
 {
-	HWND hwndExitingDlg;
+	HWND hwndExitingDlg = 0;
 
 	if (GetTrayHwnd() == NULL)
 		return;	// Šù‚É”jŠü‚³‚ê‚Ä‚¢‚é

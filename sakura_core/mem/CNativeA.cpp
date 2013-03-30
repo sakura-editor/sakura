@@ -350,7 +350,7 @@ void CNativeA::ToZenkaku(
 					usDes = (unsigned short)0x8394; /* ƒ” */
 					nCharChars = 2;
 				}else {
-					usDes = _mbbtombc( usSrc );
+					usDes = (unsigned short)_mbbtombc( usSrc );
 					/* ‘÷‰¹ */
 					if( bHiragana != 2 && pBuf[i + 1] == (unsigned char)'Þ' && NULL != strchr( (const char *)pszDakuSet, pBuf[i] ) ){
 						usDes++;

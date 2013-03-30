@@ -1658,9 +1658,9 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 	TCITEM		tcitem;
 	EditNode	*pEditNode;
 	int			nCount;
-	int			nGroup;
+	int			nGroup = 0;
 	int			nTab;
-	int			nSel;
+	int			nSel = 0;
 	int			nCurTab;
 	int			nCurSel;
 	int			i;
@@ -2465,11 +2465,11 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 	{
 		EditNode* pEditNode;
 		int i;
-		int nGroup;
+		int nGroup = 0;
 		int nSelfTab;
 		int nTab;
 		int nCount;
-		
+
 		// タブメニュー用の情報を取得する
 		nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		if( 0 >= nCount )
@@ -2485,6 +2485,9 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 				nGroup = pEditNode[i].m_nGroup;
 				break;
 			}
+		}
+		if( i >= nCount ) {
+			return 0L;
 		}
 
 		// 自グループのウィンドウ一覧情報を作成する

@@ -84,7 +84,7 @@ bool CNormalProcess::InitializeProcess()
 	}
 
 	/* コマンドラインオプション */
-	bool			bViewMode;
+	bool			bViewMode = false;
 	bool			bDebugMode;
 	bool			bGrepMode;
 	bool			bGrepDlg;

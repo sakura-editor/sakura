@@ -1558,7 +1558,7 @@ TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
 			if( _T('&') == pszLabel[i + 1]  ){
 				i++;
 			}else{
-				return _totupper( pszLabel[i + 1] );
+				return (TCHAR)_totupper( pszLabel[i + 1] );
 			}
 		}
 	}
@@ -1589,7 +1589,7 @@ LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		chUser += '@';
 	}
 	else {
-		chUser = _totupper( chUser );
+		chUser = (TCHAR)_totupper( chUser );
 	}
 
 	// 2011.11.18 vector化
@@ -1727,7 +1727,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			// 新規登録
 			SetTBBUTTONVal( &tbb, iBitmap, iCommand, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 );
 
-			m_pShareData->m_PlugCmdIcon[iCmdNo] = m_tbMyButton.size();
+			m_pShareData->m_PlugCmdIcon[iCmdNo] = (short)m_tbMyButton.size();
 			//最後から２番目に挿入する。一番最後は番兵で固定。
 			//2010.06.23 Moca 最後に追加に変更
 			m_tbMyButton.push_back( tbb );

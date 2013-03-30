@@ -815,10 +815,11 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 	const int	nKeyDataInitNum = _countof( KeyDataInit );
 	const int	KEYNAME_SIZE = _countof( pShareData->m_Common.m_sKeyBind.m_pKeyNameArr ) -1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 	//	From Here 2007.11.04 genta バッファオーバーラン防止
-	if( nKeyDataInitNum > KEYNAME_SIZE ) {
-		PleaseReportToAuthor( NULL, _T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
-		return false;
-	}
+	assert( !(nKeyDataInitNum > KEYNAME_SIZE) );
+//	if( nKeyDataInitNum > KEYNAME_SIZE ) {
+//		PleaseReportToAuthor( NULL, _T("キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています") );
+//		return false;
+//	}
 	//	To Here 2007.11.04 genta バッファオーバーラン防止
 
 	// マウスコードの固定と重複排除 2012.11.25 aroka
@@ -835,7 +836,7 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[ii] = KEYNAME_SIZE;
 	}
 	for( int i=nKeyDataInitNum-1; i>=0; i-- ){
-		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[KeyDataInit[i].nKeyCode] = i;
+		pShareData->m_Common.m_sKeyBind.m_VKeyToKeyNameArr[KeyDataInit[i].nKeyCode] = (BYTE)i;
 	}
 
 	for( int i = 0; i < nKeyDataInitNum; ++i ){

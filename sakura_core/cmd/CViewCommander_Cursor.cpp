@@ -162,7 +162,7 @@ int CViewCommander::Command_LEFT( bool bSelect, bool bRepeat )
 		bUnderlineDoNotOFF = false;		//選択状態ならアンダーライン消去を行う
 	}
 	int		nRepeat = bRepeat ? 2 : 1;
-	int		nRes;
+	int		nRes = 0;
 	for( int nRepCount = 0; nRepCount < nRepeat; ++nRepCount ) {
 
 		if( bSelect && ! m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {

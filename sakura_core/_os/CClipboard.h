@@ -48,7 +48,7 @@ private:
 	// -- -- staticインターフェース -- -- //
 public:
 	static bool HasValidData();    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue
-	static UINT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
+	static CLIPFORMAT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
 	static int GetDataType();      //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 };
 

@@ -1215,7 +1215,7 @@ bool CEditView::IsCurrentPositionURL(
 
 	bool		bMatch;
 	int			nMatchColor;
-	int			nUrlLen;
+	int			nUrlLen = 0;
 	CLogicInt	i = CLogicInt(std::max(CLogicInt(0), ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
 	//nLineLen = CLogicInt(__min(nLineLen, ptXY.GetX2() + _MAX_PATH));
 	while( i <= ptXY.GetX2() && i < nLineLen ){
@@ -1715,8 +1715,8 @@ bool CEditView::GetSelectedData(
 	CLogicInt		nIdxFrom;
 	CLogicInt		nIdxTo;
 	int				nRowNum;
-	int				nLineNumCols;
-	wchar_t*		pszLineNum;
+	int				nLineNumCols = 0;
+	wchar_t*		pszLineNum = NULL;
 	const wchar_t*	pszSpaces = L"                    ";
 	const CLayout*	pcLayout;
 	CEol			appendEol( neweol );

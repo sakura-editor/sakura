@@ -121,7 +121,7 @@ int _DecodeQP( const CHAR_TYPE* pS, const int nLen, char* pDst )
 			c1 = _GetHexChar(pr[1]);
 			c2 = _GetHexChar(pr[2]);
 			if( c1 != 0 && c2 != 0 ){
-				*pw = static_cast<char>(_HexToInt(c1) << 4) | _HexToInt(c2);
+				*pw = static_cast<char>(_HexToInt(c1) << 4) | static_cast<char>(_HexToInt(c2));
 				++pw;
 			}else{
 				pw[0] = '=';
@@ -274,7 +274,8 @@ int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
 {
 	const unsigned char *psrc;
 	unsigned long lDataSrc;
-	int i, j, k, n, v;
+	int i, j, k, n;
+	char v;
 	int nDesLen;
 
 	psrc = reinterpret_cast<const unsigned char *>(pSrc);
@@ -298,8 +299,8 @@ int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
 		lDataSrc <<= j * 6 - n * 8;
 		// エンコードして書き込む。
 		for( k = 0; k < j; k++ ){
-			v = static_cast<int>((lDataSrc >> (6 * (j - k - 1))) & 0x0000003f);
-			pDest[nDesLen] = ValToBase64<CHAR_TYPE>( v );
+			v = static_cast<char>((lDataSrc >> (6 * (j - k - 1))) & 0x0000003f);
+			pDest[nDesLen] = static_cast<CHAR_TYPE>(ValToBase64<CHAR_TYPE>( v ));
 			nDesLen++;
 		}
 	}

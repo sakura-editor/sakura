@@ -897,7 +897,7 @@ int FormatFavoriteColm(TCHAR* buf, int size, int index, bool view)
 	// 2010.03.21 Moca Textに連番を設定することによってアクセスキーにする
 	// 0 - 9 A - Z
 	const int mod = index % 36;
-	const TCHAR c = ((mod) <= 9)?(_T('0') + mod):(_T('A') + mod - 10);
+	const TCHAR c = (TCHAR)(((mod) <= 9)?(_T('0') + mod):(_T('A') + mod - 10));
 	return auto_snprintf_s( buf, size, _T("%tc%ts"), c, (view ? _T("   ") : _T(" (非表示)")) );
 }
 

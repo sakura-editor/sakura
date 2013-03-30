@@ -343,7 +343,7 @@ bool CImpExpType::Import( const wstring& sFileName, wstring& sErrMsg )
 	wchar_t	szKeyName[64];
 	wchar_t	szKeyData[1024];
 	int		nIdx;
-	int		nPlug;
+	int		nPlug = 0;
 	int		nDataLen;
 	wchar_t* pSlashPos;
 	wchar_t	szFileName[_MAX_PATH+1];
@@ -926,7 +926,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 												&n,   &kc, &nc);
 				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
 				if( i != n ) break;
-				sKeyBind.m_pKeyNameArr[i].m_nKeyCode = kc;
+				sKeyBind.m_pKeyNameArr[i].m_nKeyCode = (short)kc;
 				wchar_t* p = szData + nc;
 
 				//Œã‚É‘±‚­ƒg[ƒNƒ“
@@ -990,7 +990,7 @@ bool CImpExpKeybind::Import( const wstring& sFileName, wstring& sErrMsg )
 		if( idx == KEYNAME_SIZE ){// not assigned
 			if( nKeyNameArrUsed >= KEYNAME_SIZE ) continue;
 			m_Common.m_sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = sKeyBind.m_pKeyNameArr[j2];
-			sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode] = nKeyNameArrUsed++;
+			sKeyBind.m_VKeyToKeyNameArr[sKeyBind.m_pKeyNameArr[j2].m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 		}
 	}
 	m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyNameArrUsed;

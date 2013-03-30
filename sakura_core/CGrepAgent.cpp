@@ -854,7 +854,7 @@ void CGrepAgent::SetGrepResult(
 	const wchar_t * pDispData;
 	int k;
 	bool bEOL = true;
-	int nMaxOutStr;
+	int nMaxOutStr = 0;
 
 	/* ÉmÅ[É}Éã */
 	if( 1 == nGrepOutputStyle ){

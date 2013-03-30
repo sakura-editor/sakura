@@ -589,7 +589,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
  			return 1;
  		}
 	default:
-		return 0;
+		break;
 	}
 	return 0;
 }

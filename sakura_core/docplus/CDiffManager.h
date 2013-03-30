@@ -57,10 +57,10 @@ private:
 class CLineDiffed{
 public:
 	CLineDiffed() : m_nDiffed(MARK_DIFF_NONE) { }
-	operator EDiffMark() const{ return (EDiffMark)m_nDiffed; }
+	operator EDiffMark() const{ return m_nDiffed; }
 	CLineDiffed& operator = (EDiffMark e){ m_nDiffed = e; return *this; }
 private:
-	uchar_t m_nDiffed;
+	EDiffMark m_nDiffed;
 };
 
 //! s‚ÌDIFFî•ñæ“¾

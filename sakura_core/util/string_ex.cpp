@@ -863,9 +863,9 @@ int skr_towupper( int c )
 	if( !bInit ){
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = my_towupper( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) szMap[i] = i;						// 無変換（制御コード部）
-		for( ; i < 255; i++ ) szMap[i] = _towupper_l( i, locale );	// "English"localeで変換
+		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towupper( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// 無変換（制御コード部）
+		for( ; i < 255; i++ ) szMap[i] = _towupper_l( (wchar_t)i, locale );	// "English"localeで変換
 		szMap[255] = 0x0178;	// Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
 		_free_locale( locale );
 		bInit = true;
@@ -873,7 +873,7 @@ int skr_towupper( int c )
 
 	if( c < 256 ) return szMap[c];
 #endif
-	return towupper( c );
+	return towupper( (wchar_t)c );
 }
 
 int skr_towlower( int c )
@@ -884,14 +884,14 @@ int skr_towlower( int c )
 	if( !bInit ){
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = my_towlower( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) szMap[i] = i;						// 無変換（制御コード部）
-		for( ; i < 256; i++ ) szMap[i] = _towlower_l( i, locale );	// "English"localeで変換
+		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towlower( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// 無変換（制御コード部）
+		for( ; i < 256; i++ ) szMap[i] = _towlower_l( (wchar_t)i, locale );	// "English"localeで変換
 		_free_locale( locale );
 		bInit = true;
 	}
 
 	if( c < 256 ) return szMap[c];
 #endif
-	return towlower( c );
+	return towlower( (wchar_t)c );
 }

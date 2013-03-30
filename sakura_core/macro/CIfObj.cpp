@@ -205,7 +205,7 @@ CIfObjTypeInfo::CIfObjTypeInfo(const CIfObj::CMethodInfoList& methods)
 { 
 	ZeroMemory(&m_TypeAttr, sizeof(m_TypeAttr));
 	m_TypeAttr.cImplTypes = 0; //親クラスのITypeInfoの数
-	m_TypeAttr.cFuncs = m_MethodsRef.size();
+	m_TypeAttr.cFuncs = (WORD)m_MethodsRef.size();
 }
 
 HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetFuncDesc( 
@@ -316,18 +316,18 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
   LCID lcid,
   DISPID FAR* rgdispid)
 {
-	for(unsigned I = 0; I < cNames; ++I)
+	for(unsigned i = 0; i < cNames; ++i)
 	{
 #ifdef TEST
 		//大量にメッセージが出るので注意。
-		//DEBUG_TRACE( _T("GetIDsOfNames: %ls\n"), rgszNames[I] );
+		//DEBUG_TRACE( _T("GetIDsOfNames: %ls\n"), rgszNames[i] );
 #endif
-		for(unsigned J = 0; J < m_Methods.size(); ++J)
+		for(unsigned j = 0; j < m_Methods.size(); ++j)
 		{
 			//	Nov. 10, 2003 FILE Win9Xでは、[lstrcmpiW]が無効のため、[_wcsicmp]に修正
-			if(_wcsicmp(rgszNames[I], m_Methods[J].Name) == 0)
+			if(_wcsicmp(rgszNames[i], m_Methods[j].Name) == 0)
 			{
-				rgdispid[I] = J;
+				rgdispid[i] = j;
 				goto Found;
 			}
 		}
@@ -335,7 +335,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
 		Found:
 		;
 	}
-	return S_OK;		
+	return S_OK;
 }
 
 //型情報にメソッドを追加する
@@ -355,16 +355,16 @@ void CIfObj::AddMethod(
 	CMethodInfo *Info = &m_Methods[m_Methods.size() - 1];
 	ZeroMemory(Info, sizeof(CMethodInfo));
 	Info->Desc.invkind = INVOKE_FUNC;
-	Info->Desc.cParams = ArgumentCount + 1; //戻り値の分
+	Info->Desc.cParams = (SHORT)ArgumentCount + 1; //戻り値の分
 	Info->Desc.lprgelemdescParam = Info->Arguments;
 	//	Nov. 10, 2003 FILE Win9Xでは、[lstrcpyW]が無効のため、[wcscpy]に修正
 	wcscpy(Info->Name, Name);
 	Info->Method = Method;
 	Info->ID = ID;
-	for(int I = 0; I < ArgumentCount; ++I)
+	for(int i = 0; i < ArgumentCount; ++i)
 	{
-		Info->Arguments[I].tdesc.vt = ArgumentTypes[ArgumentCount - I - 1];
-		Info->Arguments[I].paramdesc.wParamFlags = PARAMFLAG_FIN;
+		Info->Arguments[i].tdesc.vt = ArgumentTypes[ArgumentCount - i - 1];
+		Info->Arguments[i].paramdesc.wParamFlags = PARAMFLAG_FIN;
 	}
 	Info->Arguments[ArgumentCount].tdesc.vt = ResultType;
 	Info->Arguments[ArgumentCount].paramdesc.wParamFlags = PARAMFLAG_FRETVAL;

@@ -210,7 +210,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
-	int		i;
+	int		i = 0;
 	if( pszCmdLineSrc[0] != _T('-') ){
 		for( i = 0; i < _countof( szPath ); ++i ){
 			if( pszCmdLineSrc[i] == _T(' ') || pszCmdLineSrc[i] == _T('\0') ){

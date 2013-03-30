@@ -54,7 +54,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	int			nWordIdx = 0;
 	int			nMode;
 	wchar_t		szFuncName[256];	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
-	CLogicInt	nFuncLine;
+	CLogicInt	nFuncLine(0);
 	int			nFuncId;
 	int			nParseCnt = 0;
 	bool		bClass;			// クラスモジュールフラグ

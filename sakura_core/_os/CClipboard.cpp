@@ -89,7 +89,7 @@ bool CClipboard::SetText(
 	HGLOBAL hgClipSakura = NULL;
 	do{
 		//サクラエディタ専用フォーマットを取得
-		UINT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
+		CLIPFORMAT	uFormatSakuraClip = CClipboard::GetSakuraFormat();
 		if( 0 == uFormatSakuraClip )break;
 
 		//領域確保
@@ -212,7 +212,7 @@ bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSel
 	}
 
 	//サクラ形式のデータがあれば取得
-	UINT uFormatSakuraClip = CClipboard::GetSakuraFormat();
+	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
 	if( ::IsClipboardFormatAvailable( uFormatSakuraClip ) ){
 		HGLOBAL hSakura = ::GetClipboardData( uFormatSakuraClip );
 		if (hSakura != NULL) {
@@ -291,7 +291,7 @@ bool CClipboard::HasValidData()
 }
 
 //!< サクラエディタ独自のクリップボードデータ形式
-UINT CClipboard::GetSakuraFormat()
+CLIPFORMAT CClipboard::GetSakuraFormat()
 {
 	/*
 		2007.09.30 kobake
@@ -300,7 +300,7 @@ UINT CClipboard::GetSakuraFormat()
 		以前のバージョンのクリップボードデータと競合しないように
 		フォーマット名を変更
 	*/
-	return ::RegisterClipboardFormat( _T("SAKURAClipW") );
+	return (CLIPFORMAT)::RegisterClipboardFormat( _T("SAKURAClipW") );
 }
 
 //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得

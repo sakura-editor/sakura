@@ -346,7 +346,7 @@ void CDlgFuncList::SetData()
 	HWND			hwndTree;
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
-	int				nSelectedLine;
+	int				nSelectedLine = 0;
 	RECT			rc;
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
 	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
@@ -736,9 +736,9 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	HTREEITEM		htiGlobal = NULL;	// Jan. 04, 2001 genta C++と統合
 	HTREEITEM		htiClass;
 	HTREEITEM		htiItem;
-	HTREEITEM		htiItemOld;
-	HTREEITEM		htiSelected;
-	TV_ITEM		tvi;
+	HTREEITEM		htiItemOld = NULL;
+	HTREEITEM		htiSelected = NULL;
+	TV_ITEM			tvi;
 	int				nClassNest;
 	int				nDummylParam = -64000;	// 2002.11.10 Moca クラス名のダミーlParam ソートのため
 	TCHAR			szClassArr[MAX_JAVA_TREE_NEST][64];	// Jan. 04, 2001 genta クラス名エリアの拡大 //2009.9.21 syat ネストが深すぎる際のBOF対策
@@ -750,7 +750,6 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	nFuncLineOld = CLayoutInt(0);
 	nFuncColOld = CLayoutInt(0);
 	bSelected = FALSE;
-	htiItemOld = NULL;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 		const TCHAR*		pWork;
@@ -1014,7 +1013,7 @@ void CDlgFuncList::SetListVB (void)
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
 	CLayoutInt		nFuncColOld;
-	int				nSelectedLine;
+	int				nSelectedLine = 0;
 	RECT			rc;
 
 	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
@@ -2437,7 +2436,6 @@ INT_PTR CDlgFuncList::OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	if( HitTestSplitter(pt.x, pt.y) ){	// 分割バー
 		m_bStretching = true;
 		::SetCapture( GetHwnd() );	// OnMouseMoveでのサイズ制限のために自前のキャプチャが必要
-		return 1L;
 	}else{
 		if( (nBtn = HitTestCaptionButton(pt.x, pt.y)) >= 0 ){	// キャプション上のボタン
 			if( nBtn == 1 ){	// メニュー
@@ -2455,10 +2453,9 @@ INT_PTR CDlgFuncList::OnNcLButtonDown( HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 		}else{	// 残りはタイトルバーのみ
 			Track( pt );	// タイトルバーのドラッグ＆ドロップによるドッキング配置変更
 		}
-		return 1L;
 	}
 
-	return 0L;
+	return 1L;
 }
 
 /** WM_LBUTTONUP 処理
@@ -2732,8 +2729,8 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		}
 	}
 	else if( nId >= 100 - 1 ){	// ドッキングモード （※ DOCKSIDE_UNDOCKABLE は -1 です） */
-		int* pnWidth;
-		int* pnHeight;
+		int* pnWidth = NULL;
+		int* pnHeight = NULL;
 		RECT rc;
 		GetDockSpaceRect( &rc );
 		eDockSide = EDockSide(nId - 100);	// 新しいドッキングモード

@@ -371,8 +371,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	//　←
 	//　}}
 
-	CLogicInt	nItemLine;			//!< すぐ前の 関数 or クラス or 構造体 or 共用体 or 列挙体 or ネームスペースのある行
-	int			nItemFuncId;
+	CLogicInt	nItemLine(0);		//!< すぐ前の 関数 or クラス or 構造体 or 共用体 or 列挙体 or ネームスペースのある行
+	int			nItemFuncId = 0;
 
 	szWordPrev[0] = L'\0';
 	szWord[nWordIdx] = L'\0';
@@ -1044,16 +1044,16 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	wchar_t*	pszData = NULL;
 	CLogicInt	nDataLen;
 
-	int			nWork;
+	int			nWork = 0;
 	CDocLine*	pCDocLine = NULL;
-	int	nCharChars;
+	int			nCharChars;
 	int			nSrcLen;
 	wchar_t		pszSrc[1024];
 	BOOL		bChange;
 
 	int			nCaretPosX_PHY;
 
-	CLogicPoint ptCP;
+	CLogicPoint	ptCP;
 
 	if(wcChar==WCODE::CR || wcschr(L":{}()",wcChar)!=NULL){
 		//次へ進む

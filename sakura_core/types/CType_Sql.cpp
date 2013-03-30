@@ -38,8 +38,8 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 	int			nMaxWordLeng = 70;
 	int			nMode;
 	wchar_t		szFuncName[100];
-	CLogicInt	nFuncLine;
-	int			nFuncId;
+	CLogicInt	nFuncLine(0);
+	int			nFuncId = 0;
 	int			nFuncNum;
 	int			nFuncOrProc = 0;
 	int			nParseCnt = 0;

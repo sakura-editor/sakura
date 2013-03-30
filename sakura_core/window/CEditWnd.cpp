@@ -186,7 +186,7 @@ LRESULT CALLBACK CEditWndProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd()
 : m_hWnd( NULL )
-, m_bDragMode( false )
+, m_bDragMode( FALSE )
 , m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ) // 20020331 aroka 再変換対応 for 95/NT
 , m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -1331,7 +1331,7 @@ LRESULT CEditWnd::DispatchEvent(
 				PrintPreviewModeONOFF();	// 印刷プレビューモードのオン/オフ
 				return 0L;
 			}
-			OnCommand( 0, CKeyBind::GetDefFuncCode( VK_F4, _ALT ), NULL );
+			OnCommand( 0, (WORD)CKeyBind::GetDefFuncCode( VK_F4, _ALT ), NULL );
 			return 0L;
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -2441,7 +2441,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 					{
 						const CJackManager* pcJackManager = CJackManager::getInstance();
 						const CPlugin* prevPlugin = NULL;
-						HMENU hMenuPlugin;
+						HMENU hMenuPlugin = 0;
 
 						CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
 						for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
@@ -2639,12 +2639,12 @@ STDMETHODIMP CEditWnd::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL 
 void CEditWnd::OnDropFiles( HDROP hDrop )
 {
 	POINT		pt;
-	WORD		cFiles, i;
+	int			cFiles, i;
 	EditInfo*	pfi;
 	HWND		hWndOwner;
 
 	::DragQueryPoint( hDrop, &pt );
-	cFiles = ::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0);
+	cFiles = (int)::DragQueryFile( hDrop, 0xFFFFFFFF, NULL, 0);
 	/* ファイルをドロップしたときは閉じて開く */
 	if( m_pShareData->m_Common.m_sFile.m_bDropFileAndClose ){
 		cFiles = 1;
@@ -3212,8 +3212,8 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 		return 0;
 	}
 
-	m_bDragMode = false;
-//	MYTRACE_A("m_bDragMode = false (OnLButtonUp)\n");
+	m_bDragMode = FALSE;
+//	MYTRACE_A("m_bDragMode = FALSE (OnLButtonUp)\n");
 	ReleaseCapture();
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return 0;

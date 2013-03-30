@@ -74,8 +74,8 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResu
 		psResult->bTempChange   = ((nRet & PROP_TEMPCHANGE_FLAG) != 0);
 		return TRUE;
 	}
-	return nRet;
 }
+
 
 BOOL CDlgTypeList::OnLbnDblclk( int wID )
 {
