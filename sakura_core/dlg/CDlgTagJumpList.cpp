@@ -53,13 +53,28 @@ const DWORD p_helpids[] = {
 	IDCANCEL,				HIDC_TAGJUMPLIST_IDCANCEL,		//キャンセル
 	IDC_BUTTON_HELP,		HIDC_BUTTON_TAGJUMPLIST_HELP,	//ヘルプ
 	IDC_KEYWORD,			HDIC_TAGJUMPLIST_KEYWORD,		//キーワード
-//	IDC_CHECK_ICASE,		HIDC_CHECK_ICASE,
-//	IDC_CHECK_ANYWHERE,		HIDC_CHECK_ANYWHERE,
-//	IDC_BUTTON_NEXTTAG,		HIDC_BUTTON_NEXTTAG,
-//	IDC_BUTTON_PREVTAG,		HIDC_BUTTON_PREVTAG,
+	IDC_CHECK_ICASE,		HIDC_CHECK_ICASE,
+	IDC_CHECK_ANYWHERE,		HIDC_CHECK_ANYWHERE,
+	IDC_BUTTON_NEXTTAG,		HIDC_BUTTON_NEXTTAG,
+	IDC_BUTTON_PREVTAG,		HIDC_BUTTON_PREVTAG,
 //	IDC_STATIC,				-1,
 	0, 0
 };
+
+static const SAnchorList anchorList[] = {
+	{IDC_STATIC_BASEDIR,	ANCHOR_BOTTOM},
+	{IDC_STATIC_KEYWORD,	ANCHOR_BOTTOM},
+	{IDC_KEYWORD,			ANCHOR_BOTTOM},
+	{IDC_LIST_TAGJUMP,		ANCHOR_ALL},
+	{IDC_BUTTON_PREVTAG,	ANCHOR_BOTTOM},
+	{IDC_BUTTON_NEXTTAG,	ANCHOR_BOTTOM},
+	{IDC_BUTTON_HELP,		ANCHOR_BOTTOM},
+	{IDOK,					ANCHOR_BOTTOM},
+	{IDCANCEL,				ANCHOR_BOTTOM},
+	{IDC_CHECK_ICASE,		ANCHOR_BOTTOM},
+	{IDC_CHECK_ANYWHERE,	ANCHOR_BOTTOM},
+};
+
 
 //タグファイルのフォーマット	//	@@ 2005.03.31 MIK 定数化
 //	@@ 2005.04.03 MIK キーワードに空白が含まれる場合の考慮
@@ -138,6 +153,9 @@ CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	  m_psFindPrev( NULL ),
 	  m_psFind0Match( NULL )
 {
+	/* サイズ変更時に位置を制御するコントロール数 */
+	assert( _countof(anchorList) == _countof(m_rcItems) );
+
 	// 2010.07.22 Moca ページング採用で 最大値を100→50に減らす
 	m_pcList = new CSortedTagJumpList(50);
 	m_psFindPrev = new STagFindState();
@@ -485,6 +503,16 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		bRet = FALSE;	//for set focus
 	}
 
+	CreateSizeBox();
+	CDialog::OnSize();
+	
+	::GetWindowRect( hwndDlg, &rc );
+	m_ptDefaultSize.x = rc.right - rc.left;
+	m_ptDefaultSize.y = rc.bottom - rc.top;
+
+	for( int i = 0; i < _countof(anchorList); i++ ){
+		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
+	}
 
 	/* 基底クラスメンバ */
 	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
@@ -539,6 +567,53 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
 }
+
+
+
+INT_PTR CDlgTagJumpList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
+{
+	INT_PTR result;
+	result = CDialog::DispatchEvent( hWnd, wMsg, wParam, lParam );
+
+	if( wMsg == WM_GETMINMAXINFO ){
+		return OnMinMaxInfo( lParam );
+	}
+	return result;
+}
+
+
+
+BOOL CDlgTagJumpList::OnSize( WPARAM wParam, LPARAM lParam )
+{
+	/* 基底クラスメンバ */
+	CDialog::OnSize( wParam, lParam );
+
+	RECT  rc;
+	POINT ptNew;
+	::GetWindowRect( GetHwnd(), &rc );
+	ptNew.x = rc.right - rc.left;
+	ptNew.y = rc.bottom - rc.top;
+
+	for( int i = 0 ; i < _countof(anchorList); i++ ){
+		ResizeItem( GetItemHwnd(anchorList[i].id), m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor );
+	}
+	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	return TRUE;
+}
+
+
+
+BOOL CDlgTagJumpList::OnMinMaxInfo( LPARAM lParam )
+{
+	LPMINMAXINFO lpmmi = (LPMINMAXINFO) lParam;
+	lpmmi->ptMinTrackSize.x = m_ptDefaultSize.x;
+	lpmmi->ptMinTrackSize.y = m_ptDefaultSize.y;
+	lpmmi->ptMaxTrackSize.x = m_ptDefaultSize.x*2;
+	lpmmi->ptMaxTrackSize.y = m_ptDefaultSize.y*3;
+	return 0;
+}
+
+
 
 BOOL CDlgTagJumpList::OnNotify( WPARAM wParam, LPARAM lParam )
 {
