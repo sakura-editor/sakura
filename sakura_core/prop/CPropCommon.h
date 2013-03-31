@@ -391,6 +391,9 @@ protected:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void SetData( HWND );	/* ダイアログデータの設定 */
 	int  GetData( HWND );	/* ダイアログデータの取得 */
+
+private:
+	void EnableEditPropInput( HWND hwndDlg );
 };
 
 //==============================================================
