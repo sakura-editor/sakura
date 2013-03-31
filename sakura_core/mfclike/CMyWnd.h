@@ -32,51 +32,51 @@
 
 class CMyWnd{
 public:
-	CMyWnd() : m_hwnd(NULL) { }
+	CMyWnd() : m_hWnd(NULL) { }
 
-	void SetHwnd(HWND hwnd){ m_hwnd = hwnd; }
-	HWND GetHwnd() const{ return m_hwnd; }
-	HWND GetSafeHwnd() const{ return this?m_hwnd:NULL; }
-	void InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE){ ::InvalidateRect(m_hwnd, lpRect, bErase); }
+	void SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
+	HWND GetHwnd() const{ return m_hWnd; }
+	HWND GetSafeHwnd() const{ return this?m_hWnd:NULL; }
+	void InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE){ ::InvalidateRect(m_hWnd, lpRect, bErase); }
 	int ScrollWindowEx(int dx, int dy, const RECT* prcScroll, const RECT* prcClip, HRGN hrgnUpdate, RECT* prcUpdate, UINT uFlags)
 	{
-		return ::ScrollWindowEx(m_hwnd, dx, dy, prcScroll, prcClip, hrgnUpdate, prcUpdate, uFlags);
+		return ::ScrollWindowEx(m_hWnd, dx, dy, prcScroll, prcClip, hrgnUpdate, prcUpdate, uFlags);
 	}
 	HDC GetDC() const
 	{
-		return ::GetDC(m_hwnd);
+		return ::GetDC(m_hWnd);
 	}
 	int ReleaseDC(HDC hdc) const
 	{
-		return ::ReleaseDC(m_hwnd,hdc);
+		return ::ReleaseDC(m_hWnd,hdc);
 	}
 	HWND GetAncestor(UINT gaFlags) const
 	{
-		return ::GetAncestor(m_hwnd,gaFlags);
+		return ::GetAncestor(m_hWnd,gaFlags);
 	}
 	BOOL CreateCaret(HBITMAP hBitmap, int nWidth, int nHeight)
 	{
-		return ::CreateCaret(m_hwnd, hBitmap, nWidth, nHeight);
+		return ::CreateCaret(m_hWnd, hBitmap, nWidth, nHeight);
 	}
 	BOOL ClientToScreen(LPPOINT lpPoint) const
 	{
-		return ::ClientToScreen(m_hwnd, lpPoint);
+		return ::ClientToScreen(m_hWnd, lpPoint);
 	}
 
 	BOOL UpdateWindow()
 	{
-		return ::UpdateWindow(m_hwnd);
+		return ::UpdateWindow(m_hWnd);
 	}
 	HWND SetFocus()
 	{
-		return ::SetFocus(m_hwnd);
+		return ::SetFocus(m_hWnd);
 	}
 	BOOL GetClientRect(LPRECT lpRect) const
 	{
-		return ::GetClientRect(m_hwnd, lpRect);
+		return ::GetClientRect(m_hWnd, lpRect);
 	}
 private:
-	HWND m_hwnd;
+	HWND m_hWnd;
 };
 
 #endif /* SAKURA_CMYWND_2BBCE2D2_F4DC_4809_BFFE_476824F2E0ABR_H_ */
