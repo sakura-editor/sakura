@@ -10,7 +10,7 @@
 	Copyright (C) 2002, YAZAKI, MIK, aroka
 	Copyright (C) 2003, KEITA
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2007, genta
+	Copyright (C) 2007, genta, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -106,6 +106,11 @@ INT_PTR CPropEdit::DispatchEvent(
 				else{
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
 				}
+				return TRUE;
+			case IDC_RADIO_CURDIR:
+			case IDC_RADIO_MRUDIR:
+			case IDC_RADIO_SELDIR:
+				EnableEditPropInput( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_FILEOPENDIR:
 				{
@@ -208,6 +213,7 @@ void CPropEdit::SetData( HWND hwndDlg )
 	/*	改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CONVERTEOLPASTE, m_Common.m_sEdit.m_bConvertEOLPaste ? BST_CHECKED : BST_UNCHECKED );
 
+	// ファイルダイアログの初期位置
 	if( m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_CUR ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CURDIR, TRUE );
 	}
@@ -218,6 +224,8 @@ void CPropEdit::SetData( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_SELDIR, TRUE );
 	}
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir );
+
+	EnableEditPropInput( hwndDlg );
 }
 
 
@@ -250,7 +258,6 @@ int CPropEdit::GetData( HWND hwndDlg )
 
 	// 文字幅に合わせてスペースを詰める
 	m_Common.m_sEdit.m_bOverWriteFixMode = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_bOverWriteFixMode );
-	
 
 	/* URLがクリックされたら選択するか */	// 2007.02.11 genta このページへ移動
 	m_Common.m_sEdit.m_bSelectClickedURL = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_bSelectClickedURL );
@@ -271,5 +278,23 @@ int CPropEdit::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
+/*!	チェック状態に応じてダイアログボックス要素のEnable/Disableを
+	適切に設定する
+
+	@param hwndDlg プロパティシートのWindow Handle
+
+	@date 2013/03/31 novice 新規作成
+*/
+void CPropEdit::EnableEditPropInput( HWND hwndDlg )
+{
+	// 指定フォルダ
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_SELDIR ) ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), FALSE );
+	}
+}
 
 
