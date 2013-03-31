@@ -104,6 +104,11 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DROPSOURCE ), FALSE );
 				}
 				return TRUE;
+			case IDC_RADIO_CURDIR:
+			case IDC_RADIO_MRUDIR:
+			case IDC_RADIO_SELDIR:
+				EnableEditPropInput( hwndDlg );
+				return TRUE;
 			case IDC_BUTTON_FILEOPENDIR:
 				{
 					TCHAR szMetaPath[_MAX_PATH];
@@ -202,6 +207,7 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 	/*	改行コードを変換して貼り付ける */	// 2009.02.28 salarm
 	::CheckDlgButton( hwndDlg, IDC_CHECK_CONVERTEOLPASTE, m_Common.m_sEdit.m_bConvertEOLPaste ? BST_CHECKED : BST_UNCHECKED );
 
+	// ファイルダイアログの初期位置
 	if( m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_CUR ){
 		::CheckDlgButton( hwndDlg, IDC_RADIO_CURDIR, TRUE );
 	}
@@ -212,6 +218,8 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 		::CheckDlgButton( hwndDlg, IDC_RADIO_SELDIR, TRUE );
 	}
 	::SetDlgItemText( hwndDlg, IDC_EDIT_FILEOPENDIR, m_Common.m_sEdit.m_OpenDialogSelDir );
+
+	EnableEditPropInput( hwndDlg );
 }
 
 
@@ -261,5 +269,23 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 	return TRUE;
 }
 
+/*!	チェック状態に応じてダイアログボックス要素のEnable/Disableを
+	適切に設定する
+
+	@param hwndDlg プロパティシートのWindow Handle
+
+	@date 2013/03/31 novice 新規作成
+*/
+void CPropCommon::EnableEditPropInput( HWND hwndDlg )
+{
+	// 指定フォルダ
+	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_SELDIR ) ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), TRUE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), TRUE );
+	}else{
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_FILEOPENDIR ), FALSE );
+	}
+}
 
 /*[EOF]*/
