@@ -76,6 +76,9 @@ protected:
 	*/
 	BOOL	OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	BOOL	OnBnClicked( int );
+	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
+	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
+	BOOL	OnMinMaxInfo( LPARAM lParam );
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	//	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理
 	BOOL	OnCbnSelChange( HWND hwndCtl, int wID );
@@ -146,6 +149,9 @@ private:
 	CNativeW	m_strOldKeyword;	//!< 前回のキーワード
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
 	BOOL	m_bOldTagJumpAnyWhere;	//!< 前回の文字列の途中にマッチ
+	
+	POINT	m_ptDefaultSize;
+	RECT	m_rcItems[11];
 };
 
 #endif	//SAKURA_CDLGTAGJUMPLIST_H_
