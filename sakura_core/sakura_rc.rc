@@ -2315,13 +2315,13 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,6,6,0
- PRODUCTVERSION 1,6,6,0
+ FILEVERSION 1,6,7,0
+ PRODUCTVERSION 1,6,7,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
- FILEFLAGS 0x21L
+ FILEFLAGS 0x01L
 #else
- FILEFLAGS 0x20L
+ FILEFLAGS 0x00L
 #endif
  FILEOS 0x40004L
  FILETYPE 0x1L
@@ -2336,11 +2336,11 @@ BEGIN
             VALUE "FileDescription", "サクラエディタ\0"
             VALUE "FileVersion", "1.6\0"
             VALUE "InternalName", "sakura\0"
-            VALUE "LegalCopyright", S_COPYRIGHT "\0"
+            VALUE "LegalCopyright", S_COPYRIGHT
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "1.6.6.0\0"
+            VALUE "ProductVersion", "1.6.7.0\0"
         END
     END
     BLOCK "VarFileInfo"
