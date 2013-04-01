@@ -558,7 +558,7 @@ BOOL CDlgTagJumpList::OnBnClicked( int wID )
 		FindNext( false );
 		return TRUE;
 	case IDC_BUTTON_PREVTAG:
-		m_nTop = std::max(0, m_nTop - m_pcList->GetCapacity());
+		m_nTop = t_max(0, m_nTop - m_pcList->GetCapacity());
 		StopTimer();
 		FindNext( false );
 		return TRUE;

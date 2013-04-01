@@ -17,7 +17,7 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
 {
-	target = std::max<T>(minval, std::min<T>(maxval, target));
+	target = t_max<T>(minval, t_min<T>(maxval, target));
 }
 
 template <typename T>

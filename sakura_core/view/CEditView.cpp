@@ -1216,7 +1216,7 @@ bool CEditView::IsCurrentPositionURL(
 	bool		bMatch;
 	int			nMatchColor;
 	int			nUrlLen = 0;
-	CLogicInt	i = CLogicInt(std::max(CLogicInt(0), ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
+	CLogicInt	i = CLogicInt(t_max(CLogicInt(0), ptXY.GetX2() - _MAX_PATH));	// 2009.05.22 ryoji 200->_MAX_PATH
 	//nLineLen = CLogicInt(__min(nLineLen, ptXY.GetX2() + _MAX_PATH));
 	while( i <= ptXY.GetX2() && i < nLineLen ){
 		bMatch = ( bUseRegexKeyword
@@ -2269,7 +2269,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 			m_nOldUnderLineYMargin = GetTextMetrics().GetHankakuHeight();
 			m_nOldUnderLineYHeight = 1;
 		}else{
-			m_nOldUnderLineYHeight = std::max(m_nOldUnderLineYMargin + m_nOldUnderLineYHeight, GetTextMetrics().GetHankakuHeight() + 1) - m_nOldUnderLineYMargin;
+			m_nOldUnderLineYHeight = t_max(m_nOldUnderLineYMargin + m_nOldUnderLineYHeight, GetTextMetrics().GetHankakuHeight() + 1) - m_nOldUnderLineYMargin;
 		}
 		m_nOldUnderLineYHeightReal = 1;
 //		MYTRACE_A( "★カーソル行アンダーラインの描画\n" );

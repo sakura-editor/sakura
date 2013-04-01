@@ -39,13 +39,13 @@
 */
 
 template <class T>
-T t_min(T t1,T t2)
+inline T t_min(T t1,T t2)
 {
 	return t1<t2?t1:t2;
 }
 
 template <class T>
-T t_max(T t1,T t2)
+inline T t_max(T t1,T t2)
 {
 	return t1>t2?t1:t2;
 }

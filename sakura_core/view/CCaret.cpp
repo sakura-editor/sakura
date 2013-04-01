@@ -183,8 +183,8 @@ CLayoutInt CCaret::MoveCursor(
 		int nNoMove = SCROLLMARGIN_NOMOVE;
 		CLayoutInt a = ((m_pEditView->GetTextArea().m_nViewColNum) - nNoMove) / 2;
 		CLayoutInt nMin = (2 <= a ? a : CLayoutInt(0)); // 1だと全角移動に支障があるので2以上
-		nScrollMarginRight = std::min(nScrollMarginRight, nMin);
-		nScrollMarginLeft  = std::min(nScrollMarginLeft,  nMin);
+		nScrollMarginRight = t_min(nScrollMarginRight, nMin);
+		nScrollMarginLeft  = t_min(nScrollMarginLeft,  nMin);
 	}
 	
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
@@ -464,7 +464,7 @@ void CCaret::ShowEditCaret()
 			// 2011.12.22 システムの設定に従う(けど2px以上)
 			DWORD dwWidth;
 			if( ::SystemParametersInfo(SPI_GETCARETWIDTH, 0, &dwWidth, 0) && 2 < dwWidth){
-				nCaretWidth = std::min((int)dwWidth, GetHankakuDx());
+				nCaretWidth = t_min((int)dwWidth, GetHankakuDx());
 			}
 		}
 		else{
@@ -778,16 +778,16 @@ CLayoutInt CCaret::Cursor_UPDOWN( CLayoutInt nMoveLines, bool bSelect )
 			|| pLayoutMgr->GetLineCount() == 0;
 		const CLayoutInt maxLayoutLine = pLayoutMgr->GetLineCount() + (existsEOFOnlyLine ? 1 : 0 ) - 1;
 		// 移動先が EOFのみの行を含めたレイアウト行数未満になるように移動量を規正する。
-		nMoveLines = std::min( nMoveLines,  maxLayoutLine - ptCaret.y );
+		nMoveLines = t_min( nMoveLines,  maxLayoutLine - ptCaret.y );
 		if( ptCaret.y + nMoveLines == maxLayoutLine && existsEOFOnlyLine // 移動先が EOFのみの行
 			&& m_pEditView->GetSelectionInfo().IsBoxSelecting() && 0 != ptCaret.x // かつ矩形選択中なら、
 		) {
 			// EOFのみの行には移動しない。下移動でキャレットの X座標を動かしたくないので。
-			nMoveLines = std::max( CLayoutInt(0), nMoveLines - 1 ); // うっかり上移動しないように 0以上を守る。
+			nMoveLines = t_max( CLayoutInt(0), nMoveLines - 1 ); // うっかり上移動しないように 0以上を守る。
 		}
 	} else { // 上移動。
 		// 移動先が 0行目より小さくならないように移動量を規制。
-		nMoveLines = std::max( nMoveLines, - GetCaretLayoutPos().GetY() );
+		nMoveLines = t_max( nMoveLines, - GetCaretLayoutPos().GetY() );
 	}
 
 	if( bSelect && ! m_pEditView->GetSelectionInfo().IsTextSelected() ) {
@@ -994,7 +994,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 	 	// 2012.01.09 ぴったり[EOF]位置にある場合は位置を維持(1つ上の行にしない)
 	 	if( bEofOnly && ptNewXY.y == m_pEditDoc->m_cLayoutMgr.GetLineCount() && ptNewXY.x == 0 ){
 	 	}else{
-			ptNewXY.y = std::max(CLayoutInt(0), m_pEditDoc->m_cLayoutMgr.GetLineCount() - 1);
+			ptNewXY.y = t_max(CLayoutInt(0), m_pEditDoc->m_cLayoutMgr.GetLineCount() - 1);
 		}
 	}
 	/* カーソルがテキスト最下端行にあるか */
@@ -1044,7 +1044,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 			){
 				// 折り返し幅とレイアウト行桁数（ぶら下げを含む）のどちらか大きいほうまでカーソル移動可能
 				//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
-				CLayoutInt nMaxX = std::max(nPosX, m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas());
+				CLayoutInt nMaxX = t_max(nPosX, m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas());
 				nPosX = ptNewXY.GetX2();
 				if( nPosX < CLayoutInt(0) ){
 					nPosX = CLayoutInt(0);

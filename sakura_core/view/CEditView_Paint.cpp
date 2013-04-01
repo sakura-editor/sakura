@@ -196,8 +196,8 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 	
 	
 	RECT rc = rcPaint;
-	// rc.left = std::max((int)rc.left, area.GetAreaLeft());
-	rc.top  = std::max((int)rc.top,  area.GetRulerHeight()); // ルーラーを除外
+	// rc.left = t_max((int)rc.left, area.GetAreaLeft());
+	rc.top  = t_max((int)rc.top,  area.GetRulerHeight()); // ルーラーを除外
 	const int nXEnd = area.GetAreaRight();
 	const int nYEnd = area.GetAreaBottom();
 	CMyRect rcBltAll;
@@ -218,10 +218,10 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 					rcBlt.top - rcImagePos.top,
 					SRCCOPY
 				);
-				rcBltAll.left   = std::min(rcBltAll.left,   rcBlt.left);
-				rcBltAll.top    = std::min(rcBltAll.top,    rcBlt.top);
-				rcBltAll.right  = std::max(rcBltAll.right,  rcBlt.right);
-				rcBltAll.bottom = std::max(rcBltAll.bottom, rcBlt.bottom);
+				rcBltAll.left   = t_min(rcBltAll.left,   rcBlt.left);
+				rcBltAll.top    = t_min(rcBltAll.top,    rcBlt.top);
+				rcBltAll.right  = t_max(rcBltAll.right,  rcBlt.right);
+				rcBltAll.bottom = t_max(rcBltAll.bottom, rcBlt.bottom);
 			}
 			rcImagePos.left  += doc.m_nBackImgWidth;
 			rcImagePos.right += doc.m_nBackImgWidth;
@@ -357,7 +357,7 @@ EColorIndexType CEditView::GetColorIndex(
 	pInfo->pStrategy = pool->GetStrategyByColor(eRet);
 	if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
 
-	int nPosTo = pcLayout->GetLogicOffset() + std::min(nIndex, (int)pcLayout->GetLengthWithEOL() - 1);
+	int nPosTo = pcLayout->GetLogicOffset() + t_min(nIndex, (int)pcLayout->GetLengthWithEOL() - 1);
 	while(pInfo->nPosInLogic <= nPosTo){
 		if( bPrev && pInfo->nPosInLogic == nPosTo )
 			break;
@@ -1235,8 +1235,8 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
 				// 前の画面内容をコピーする
 				::BitBlt( hdcTemp, 0, 0,
-					std::min( nBmpWidthNew,m_nCompatBMPWidth ),
-					std::min( nBmpHeightNew, m_nCompatBMPHeight ),
+					t_min( nBmpWidthNew,m_nCompatBMPWidth ),
+					t_min( nBmpHeightNew, m_nCompatBMPHeight ),
 					m_hdcCompatDC, 0, 0, SRCCOPY );
 				::SelectObject( hdcTemp, hBitmapOld );
 				::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );
