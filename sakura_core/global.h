@@ -30,6 +30,27 @@
 #include <windows.h>
 #include <tchar.h>
 
+/*
+	2007.10.18 kobake
+	テンプレート式 min とか max とか。
+
+	どっかの標準ヘッダに、同じようなものがあった気がするけど、
+	NOMINMAX を定義するにしても、なんだか min とか max とかいう名前だと、
+	テンプレートを呼んでるんだかマクロを呼んでるんだか訳分かんないので、
+	明示的に「t_～」という名前を持つ関数を用意。
+*/
+
+template <class T>
+inline T t_min(T t1,T t2)
+{
+	return t1<t2?t1:t2;
+}
+
+template <class T>
+inline T t_max(T t1,T t2)
+{
+	return t1>t2?t1:t2;
+}
 
 #ifndef _countof
 #define _countof(A) (sizeof(A)/sizeof(A[0]))
@@ -39,12 +60,6 @@
 #define __forceinline inline
 #define _itoa itoa
 #define _strlwr strlwr
-#ifndef __max
-#define __max(a,b)  (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef __min
-#define __min(a,b)  (((a) < (b)) ? (a) : (b))
-#endif
 #endif
 
 

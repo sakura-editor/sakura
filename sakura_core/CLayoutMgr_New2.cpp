@@ -87,7 +87,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	int	nModifyLayoutLinesOld = 0;
 	CLayout* pLayoutPrev;
 	int nWork;
-	nWork = __max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
+	nWork = t_max( DLRArg.nDeletedLineNum, DLRArg.nInsLineNum );
 
 
 	if( pLayoutWork ){
