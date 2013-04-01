@@ -249,7 +249,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	HWND			GetHwnd()		const	{ return this?m_hWnd:NULL; }
+	HWND			GetHwnd()		const	{ return m_hWnd; }
 	CMenuDrawer&	GetMenuDrawer()			{ return m_CMenuDrawer; }
 	CEditDoc&		GetDocument();
 	const CEditDoc&	GetDocument() const;
