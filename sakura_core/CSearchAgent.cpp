@@ -213,7 +213,7 @@ void CSearchAgent::CreateWordList(
 			}
 			pos += end;
 		} else {
-			pos += std::max( CLogicInt(1), CNativeW::GetSizeOfChar( pszPattern, nPatternLen, pos ) );
+			pos += t_max( CLogicInt(1), CNativeW::GetSizeOfChar( pszPattern, nPatternLen, pos ) );
 		}
 	}
 }

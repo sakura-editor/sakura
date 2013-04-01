@@ -292,7 +292,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 					break;
 				}
 			}
-			const CLayoutInt to_x = std::max( it.getColumn(), ptCaret.x + 1 );
+			const CLayoutInt to_x = t_max( it.getColumn(), ptCaret.x + 1 );
 
 			// キャレットの右端( x_max )と、そこでの扱い( on_x_max )を決める。
 			CLayoutInt x_max;
@@ -304,7 +304,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 			} on_x_max;
 
 			if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) {
-				x_max = std::max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+				x_max = t_max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
 				on_x_max = STOP;
 			} else if( GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode ) {
 				// フリーカーソルモードでは折り返し位置だけをみて、改行文字の位置はみない。
@@ -314,7 +314,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 						on_x_max = MOVE_NEXTLINE_IMMEDIATELY;
 					}else{
 						// データのあるEOF行は折り返しではない
-						x_max = std::max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
+						x_max = t_max( x_wrap, GetDocument()->m_cLayoutMgr.GetMaxLineKetas() );
 						on_x_max = STOP;
 					}
 				} else {
@@ -346,7 +346,7 @@ void CViewCommander::Command_RIGHT( bool bSelect, bool bIgnoreCurrentSelection, 
 				bUnderlineDoNotOFF = false;
 			} else {
 				ptTo.y = ptCaret.y;
-				ptTo.x = std::min( to_x, x_max );
+				ptTo.x = t_min( to_x, x_max );
 			}
 		} else {
 			// pcLayoutがNULLの場合はptPos.x=0に調整

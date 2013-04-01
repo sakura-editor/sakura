@@ -49,8 +49,8 @@ void CTextArea::UpdateViewColRowNums()
 	CEditView* pView=m_pEditView;
 	// Note: マイナスの割り算は処理系依存です。
 	// 0だとカーソルを設定できない・選択できないなど動作不良になるので1以上にする
-	m_nViewColNum = CLayoutInt(std::max(1, std::max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx()));	// 表示域の桁数
-	m_nViewRowNum = CLayoutInt(std::max(1, std::max(0, m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy()));	// 表示域の行数
+	m_nViewColNum = CLayoutInt(t_max(1, t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx()));	// 表示域の桁数
+	m_nViewRowNum = CLayoutInt(t_max(1, t_max(0, m_nViewCy - 1) / pView->GetTextMetrics().GetHankakuDy()));	// 表示域の行数
 }
 
 //!フォント変更の際、各種パラメータを計算し直す
@@ -165,7 +165,7 @@ bool CTextArea::DetectWidthOfLineNumberArea( bool bRedraw )
 		int nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL ); // 垂直スクロールバーの横幅
 		m_nViewCx = rc.Width() - nCxVScroll - GetAreaLeft(); // 表示域の幅
 		// 2008.05.27 nasukoji	表示域の桁数も算出する（右端カーソル移動時の表示場所ずれへの対処）
-		// m_nViewColNum = CLayoutInt(std::max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
+		// m_nViewColNum = CLayoutInt(t_max(0, m_nViewCx - 1) / pView->GetTextMetrics().GetHankakuDx());	// 表示域の桁数
 		UpdateViewColRowNums();
 
 		if( bRedraw ){

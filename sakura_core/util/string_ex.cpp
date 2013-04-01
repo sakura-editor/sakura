@@ -277,7 +277,7 @@ errno_t strncpy_s(char *dest, size_t num, const char *src, size_t count)
 	if(!dest || !src) return EINVAL;
 	if(num == 0) return EINVAL;
 	if(count == _TRUNCATE) {
-		memcpy(dest, src, std::min(num, strlen(src)+1));
+		memcpy(dest, src, t_min(num, strlen(src)+1));
 		dest[num-1] = '\0';
 	} else {
 		if(num <= count) { *dest = '\0'; return EINVAL; }
@@ -290,7 +290,7 @@ errno_t wcsncpy_s(wchar_t *dest, size_t num, const wchar_t *src, size_t count)
 	if(!dest || !src) return EINVAL;
 	if(num == 0) return EINVAL;
 	if(count == _TRUNCATE) {
-		wmemcpy(dest, src, std::min(num, wcslen(src)+1));
+		wmemcpy(dest, src, t_min(num, wcslen(src)+1));
 		dest[num-1] = L'\0';
 	} else {
 		if(num <= count) { *dest = L'\0'; return EINVAL; }

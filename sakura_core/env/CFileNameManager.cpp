@@ -101,7 +101,7 @@ LPCTSTR CFileNameManager::GetFilePathFormat( LPCTSTR pszSrc, LPTSTR pszDest, int
 		if( 0 == _tcsncicmp( &pszSrc[i], pszFrom, nFromLen ) )
 #endif
 		{
-			nCopy = std::min( nToLen, nDestLen - j );
+			nCopy = t_min( nToLen, nDestLen - j );
 			memcpy( &pszDest[j], pszTo, nCopy * sizeof( TCHAR ) );
 			j += nCopy;
 			i += nFromLen - 1;
