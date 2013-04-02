@@ -151,10 +151,10 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
-	void Import( HWND );	/* インポートする */
-	void Export( HWND );	/* エクスポートする */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
+	void Import( HWND );	//!< インポートする
+	void Export( HWND );	//!< エクスポートする
 };
 
 
@@ -176,8 +176,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 };
 
 //==============================================================
@@ -191,8 +191,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	//	Aug. 21, 2000 genta
@@ -210,11 +210,11 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
-	void Import( HWND );	/* インポートする */
-	void Export( HWND );	/* エクスポートする */
+	void Import( HWND );	//!< インポートする
+	void Export( HWND );	//!< エクスポートする
 
 private:
 	void ChangeKeyList( HWND ); /* キーリストをチェックボックスの状態に合わせて更新する*/
@@ -231,8 +231,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void DrawToolBarItemList( DRAWITEMSTRUCT* );	/* ツールバーボタンリストのアイテム描画 */
@@ -251,19 +251,19 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void SetKeyWordSet( HWND , int );	/* 指定キーワードセットの設定 */
 	void GetKeyWordSet( HWND , int );	/* 指定キーワードセットの取得 */
 	void DispKeywordCount( HWND hwndDlg );
 
-	void Edit_List_KeyWord( HWND, HWND );		/* リスト中で選択されているキーワードを編集する */
-	void Delete_List_KeyWord( HWND , HWND );	/* リスト中で選択されているキーワードを削除する */
-	void Import_List_KeyWord( HWND , HWND );	/* リスト中のキーワードをインポートする */
-	void Export_List_KeyWord( HWND , HWND );	/* リスト中のキーワードをエクスポートする */
-	void Clean_List_KeyWord( HWND , HWND );		//!リスト中のキーワードを整理する 2005.01.26 Moca
+	void Edit_List_KeyWord( HWND, HWND );		//<! リスト中で選択されているキーワードを編集する
+	void Delete_List_KeyWord( HWND , HWND );	//<! リスト中で選択されているキーワードを削除する
+	void Import_List_KeyWord( HWND , HWND );	//<! リスト中のキーワードをインポートする
+	void Export_List_KeyWord( HWND , HWND );	//<! リスト中のキーワードをエクスポートする
+	void Clean_List_KeyWord( HWND , HWND );		//<! リスト中のキーワードを整理する 2005.01.26 Moca
 };
 
 //==============================================================
@@ -277,10 +277,10 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
-	void Import( HWND );	/* カスタムメニュー設定をインポートする */
-	void Export( HWND );	/* カスタムメニュー設定をエクスポートする */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
+	void Import( HWND );	//!< カスタムメニュー設定をインポートする
+	void Export( HWND );	//!< カスタムメニュー設定をエクスポートする
 };
 
 //==============================================================
@@ -294,8 +294,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void ChangeDateExample( HWND hwndDlg );
@@ -316,8 +316,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 };
 
 //==============================================================
@@ -331,8 +331,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	//	Aug. 16, 2000 genta
@@ -352,8 +352,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	//	Sept. 9, 2000 JEPRO		次行を追加
@@ -371,8 +371,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void EnableTabPropInput(HWND hwndDlg);
@@ -389,8 +389,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void EnableEditPropInput( HWND hwndDlg );
@@ -407,8 +407,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void SetRegexpVersion( HWND ); // 2007.08.12 genta バージョン表示
@@ -425,8 +425,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void InitDialog( HWND hwndDlg );//!< Macroページの初期化
@@ -449,8 +449,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	static int SetListViewItem_FILENAME( HWND hListView, int, LPTSTR, LPTSTR, bool );//!<ListViewのアイテムを設定
@@ -469,8 +469,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 };
 
 //==============================================================
@@ -486,8 +486,8 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
 
 private:
 	void SetData_LIST( HWND );
@@ -506,10 +506,10 @@ public:
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
-	void SetData( HWND );	/* ダイアログデータの設定 */
-	int  GetData( HWND );	/* ダイアログデータの取得 */
-	void Import( HWND );	/* メニュー設定をインポートする */
-	void Export( HWND );	/* メニュー設定をエクスポートする */
+	void SetData( HWND );	//!< ダイアログデータの設定
+	int  GetData( HWND );	//!< ダイアログデータの取得
+	void Import( HWND );	//!< メニュー設定をインポートする
+	void Export( HWND );	//!< メニュー設定をエクスポートする
 
 private:
 	bool GetDataTree( HWND, HTREEITEM, int );

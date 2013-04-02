@@ -336,17 +336,6 @@ int CPropFormat::GetData( HWND hwndDlg )
 	//éûçèèëéÆ
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_sFormat.m_szTimeFormat, _countof( m_Common.m_sFormat.m_szTimeFormat ));
 
-
-
-
-
-
-
-
-
-
-
-
 	return TRUE;
 }
 
