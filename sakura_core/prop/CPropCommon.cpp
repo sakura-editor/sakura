@@ -27,8 +27,6 @@
 #include "util/shell.h"
 #include "sakura_rc.h"
 
-
-//@@@ 2001.02.04 Start by MIK: Popup Help
 int	CPropCommon::SearchIntArr( int nKey, int* pnArr, int nArrNum )
 {
 	int i;
@@ -194,10 +192,10 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		{ _T("メインメニュー"),		IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
 		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	CPropToolbar::DlgProc_page },
 		{ _T("タブバー"),			IDD_PROP_TAB,		CPropTab::DlgProc_page },
-		{ _T("ステータスバー"),		IDD_PROP_STATUSBAR,	CPropStatusbar::DlgProc_page},	// 文字コード表示指定	2008/6/21	Uchi
+		{ _T("ステータスバー"),		IDD_PROP_STATUSBAR,	CPropStatusbar::DlgProc_page },	// 文字コード表示指定	2008/6/21	Uchi
 		{ _T("編集"),				IDD_PROP_EDIT,		CPropEdit::DlgProc_page },
 		{ _T("ファイル"),			IDD_PROP_FILE,		CPropFile::DlgProc_page },
-		{ _T("ファイル名表示"),		IDD_PROP_FNAME,		CPropFileName::DlgProc_page},
+		{ _T("ファイル名表示"),		IDD_PROP_FNAME,		CPropFileName::DlgProc_page },
 		{ _T("バックアップ"),		IDD_PROP_BACKUP,	CPropBackup::DlgProc_page },
 		{ _T("書式"),				IDD_PROP_FORMAT,	CPropFormat::DlgProc_page },
 		{ _T("検索"),				IDD_PROP_GREP,		CPropGrep::DlgProc_page },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
