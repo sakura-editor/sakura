@@ -70,10 +70,10 @@ static const DWORD p_helpids[] = {	//10700
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_KEYBIND(
+INT_PTR CALLBACK CPropKeybind::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p5, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropKeybind::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
@@ -100,7 +100,7 @@ LRESULT CALLBACK CPropComKeybindWndProc( HWND hwndDlg, UINT uMsg, WPARAM wParam,
 
 
 /* Keybind メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p5(
+INT_PTR CPropKeybind::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -136,7 +136,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Keybind */
-		SetData_p5( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -175,7 +175,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 		case PSN_KILLACTIVE:
 //			MYTRACE_A( "Keybind PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 Keybind */
-			GetData_p5( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -209,11 +209,11 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 			switch( wID ){
 			case IDC_BUTTON_IMPORT:	/* インポート */
 				/* Keybind:キー割り当て設定をインポートする */
-				p5_Import_KeySetting( hwndDlg );
+				Import( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_EXPORT:	/* エクスポート */
 				/* Keybind:キー割り当て設定をエクスポートする */
-				p5_Export_KeySetting( hwndDlg );
+				Export( hwndDlg );
 				return TRUE;
 			case IDC_BUTTON_ASSIGN:	/* 割付 */
 				nIndex = ::SendMessage( hwndKeyList, LB_GETCURSEL, 0, 0 );
@@ -266,7 +266,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 		){
 			switch( wNotifyCode ){
 			case BN_CLICKED:
-				p5_ChangeKeyList( hwndDlg );
+				ChangeKeyList( hwndDlg );
 
 				return TRUE;
 			}
@@ -380,7 +380,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 								::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_KEY, LBN_SELCHANGE ), (LPARAM)hwndKeyList );
 
 								// キー一覧の文字列も変更
-								p5_ChangeKeyList( hwndDlg );
+								ChangeKeyList( hwndDlg );
 								break;
 							}
 						}
@@ -435,7 +435,7 @@ INT_PTR CPropCommon::DispatchEvent_p5(
 
 
 /* ダイアログデータの設定 Keybind */
-void CPropCommon::SetData_p5( HWND hwndDlg )
+void CPropKeybind::SetData( HWND hwndDlg )
 {
 	HWND		hwndCombo;
 	HWND		hwndKeyList;
@@ -463,7 +463,7 @@ void CPropCommon::SetData_p5( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 Keybind */
-int CPropCommon::GetData_p5( HWND hwndDlg )
+int CPropKeybind::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_KEYBOARD;
@@ -474,7 +474,7 @@ int CPropCommon::GetData_p5( HWND hwndDlg )
 }
 
 /*! Keybind: キーリストをチェックボックスの状態に合わせて更新する */
-void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
+void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	HWND	hwndKeyList;
 	int 	nIndex;
 	int 	nIndexTop;
@@ -511,7 +511,7 @@ void CPropCommon::p5_ChangeKeyList( HWND hwndDlg){
 }
 
 /* Keybind:キー割り当て設定をインポートする */
-void CPropCommon::p5_Import_KeySetting( HWND hwndDlg )
+void CPropKeybind::Import( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];
@@ -649,7 +649,7 @@ ToMaster:	//@@@ 2001.11.07 add MIK
 
 //	/* ダイアログデータの設定 p5 */
 	// 2012.11.18 aroka キー一覧の更新は全アイテムを更新する。
-	p5_ChangeKeyList( hwndDlg );
+	ChangeKeyList( hwndDlg );
 	//@@@ 2001.11.07 modify start MIK: 機能に割り当てられているキーを更新する。// 2012.11.18 aroka コメント修正
 	hwndCtrl = ::GetDlgItem( hwndDlg, IDC_LIST_FUNC );
 	::SendMessage( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_FUNC, LBN_SELCHANGE ), (LPARAM)hwndCtrl );
@@ -658,7 +658,7 @@ ToMaster:	//@@@ 2001.11.07 add MIK
 
 
 /* Keybind:キー割り当て設定をエクスポートする */
-void CPropCommon::p5_Export_KeySetting( HWND hwndDlg )
+void CPropKeybind::Export( HWND hwndDlg )
 {
 	CDlgOpenFile	cDlgOpenFile;
 	char			szPath[_MAX_PATH + 1];

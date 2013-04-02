@@ -42,15 +42,15 @@ static const DWORD p_helpids[] = {	//10500
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_GREP(
+INT_PTR CALLBACK CPropGrep::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_GREP, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropGrep::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropGrep::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 //	WORD		wNotifyCode;
 //	WORD		wID;
@@ -65,7 +65,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Grep */
-		SetData_PROP_GREP( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -84,7 +84,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 				return TRUE;
 			case PSN_KILLACTIVE:
 				/* ダイアログデータの取得 Grep */
-				GetData_PROP_GREP( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -125,7 +125,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_GREP( HWND hwndDlg, UINT uMsg, WPARAM wP
 
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
+void CPropGrep::SetData( HWND hwndDlg )
 {
 	/* 2006.08.23 ryoji カーソル位置の文字列をデフォルトの検索文字列にする */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_bCaretTextForSearch, m_Common.m_sSearch.m_bCaretTextForSearch );
@@ -155,7 +155,7 @@ void CPropCommon::SetData_PROP_GREP( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
+int CPropGrep::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_GREP;
@@ -181,7 +181,7 @@ int CPropCommon::GetData_PROP_GREP( HWND hwndDlg )
 	return TRUE;
 }
 
-void CPropCommon::SetRegexpVersion( HWND hwndDlg )
+void CPropGrep::SetRegexpVersion( HWND hwndDlg )
 {
 	TCHAR regexp_dll[_MAX_PATH];
 	

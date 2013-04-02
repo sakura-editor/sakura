@@ -67,10 +67,10 @@ static const DWORD p_helpids[] = {	//11700
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_MACRO(
+INT_PTR CALLBACK CPropMacro::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc(&CPropCommon::DispatchEvent_PROP_Macro, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropMacro::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 
 /*! Macroページのメッセージ処理
@@ -79,7 +79,7 @@ INT_PTR CALLBACK CPropCommon::DlgProc_PROP_MACRO(
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
@@ -93,8 +93,8 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Macro */
-		InitDialog_PROP_Macro( hwndDlg );
-		SetData_PROP_Macro( hwndDlg );
+		InitDialog( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -124,7 +124,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 				return TRUE;
 			case PSN_KILLACTIVE:
 				/* ダイアログデータの取得 Macro */
-				GetData_PROP_Macro( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -205,7 +205,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_Macro( HWND hwndDlg, UINT uMsg, WPARAM w
 
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
-void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
+void CPropMacro::SetData( HWND hwndDlg )
 {
 	int index;
 	LVITEM sItem;
@@ -274,7 +274,7 @@ void CPropCommon::SetData_PROP_Macro( HWND hwndDlg )
 	@param hwndDlg ダイアログボックスのウィンドウハンドル
 */
 
-int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
+int CPropMacro::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_MACRO;
@@ -356,7 +356,7 @@ int CPropCommon::GetData_PROP_Macro( HWND hwndDlg )
 	return TRUE;
 }
 
-void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
+void CPropMacro::InitDialog( HWND hwndDlg )
 {
 	struct ColumnData {
 		TCHAR *title;
@@ -430,7 +430,7 @@ void CPropCommon::InitDialog_PROP_Macro( HWND hwndDlg )
 	::SendMessage( hNumCombo, CB_SETCURSEL, (WPARAM)0, (LPARAM)0 );
 }
 
-void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
+void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 {
 	int index;
 	LVITEM sItem;
@@ -535,7 +535,7 @@ void CPropCommon::SetMacro2List_Macro( HWND hwndDlg )
 
 	@param hwndDlg [in] ダイアログボックスのウィンドウハンドル
 */
-void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
+void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 {
 	TCHAR szDir[_MAX_PATH];
 
@@ -564,7 +564,7 @@ void CPropCommon::SelectBaseDir_Macro( HWND hwndDlg )
 
 	@param hwndDlg [in] ダイアログボックスのウィンドウハンドル
 */
-void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
+void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 {
 	HANDLE hFind;
 	HWND hCombo = ::GetDlgItem( hwndDlg, IDC_MACROPATH );
@@ -606,7 +606,7 @@ void CPropCommon::OnFileDropdown_Macro( HWND hwndDlg )
     FindClose(hFind);
 }
 
-void CPropCommon::CheckListPosition_Macro( HWND hwndDlg )
+void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 {
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
 	HWND hNum = ::GetDlgItem( hwndDlg, IDC_COMBO_MACROID );

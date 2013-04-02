@@ -42,15 +42,15 @@ static const DWORD p_helpids[] = {
 	@param wParam[in] パラメータ1
 	@param lParam[in] パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_TAB(
+INT_PTR CALLBACK CPropTab::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_TAB, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropTab::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
@@ -60,7 +60,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Tab */
-		SetData_PROP_TAB( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -79,7 +79,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 				return TRUE;
 			case PSN_KILLACTIVE:
 				/* ダイアログデータの取得 Tab */
-				GetData_PROP_TAB( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -137,7 +137,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TAB( HWND hwndDlg, UINT uMsg, WPARAM wPa
 
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
+void CPropTab::SetData( HWND hwndDlg )
 {
 
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
@@ -160,7 +160,7 @@ void CPropCommon::SetData_PROP_TAB( HWND hwndDlg )
 }
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
+int CPropTab::GetData( HWND hwndDlg )
 {
 	//	Feb. 11, 2007 genta「ウィンドウ」シートより移動
 	m_Common.m_sTabBar.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
@@ -184,7 +184,7 @@ int CPropCommon::GetData_PROP_TAB( HWND hwndDlg )
 
 	@date 2007.02.12 genta 新規作成
 */
-void CPropCommon::EnableTabPropInput(HWND hwndDlg)
+void CPropTab::EnableTabPropInput(HWND hwndDlg)
 {
 
 	BOOL bTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );

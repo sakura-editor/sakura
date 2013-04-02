@@ -189,6 +189,7 @@ OBJS =\
 	$(OBJDIR)\CPropComFile.obj \
 	$(OBJDIR)\CPropComFileName.obj \
 	$(OBJDIR)\CPropComFormat.obj \
+	$(OBJDIR)\CPropComGeneral.obj \
 	$(OBJDIR)\CPropComGrep.obj \
 	$(OBJDIR)\CPropComHelper.obj \
 	$(OBJDIR)\CPropComKeybind.obj \

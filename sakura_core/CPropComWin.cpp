@@ -61,16 +61,16 @@ static const DWORD p_helpids[] = {	//11200
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_WIN(
+INT_PTR CALLBACK CPropWin::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_WIN, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropWin::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
+INT_PTR CPropWin::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -92,7 +92,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Window */
-		SetData_PROP_WIN( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -117,7 +117,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 			case PSN_KILLACTIVE:
 //				MYTRACE_A( "Window PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 Window */
-				GetData_PROP_WIN( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -263,7 +263,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_WIN(
 }
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
+void CPropWin::SetData( HWND hwndDlg )
 {
 //	BOOL	bRet;
 
@@ -347,7 +347,7 @@ void CPropCommon::SetData_PROP_WIN( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
+int CPropWin::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_WIN;
@@ -446,7 +446,7 @@ int CPropCommon::GetData_PROP_WIN( HWND hwndDlg )
 //	From Here Sept. 9, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
-void CPropCommon::EnableWinPropInput( HWND hwndDlg )
+void CPropWin::EnableWinPropInput( HWND hwndDlg )
 {
 	//	ファクションキーを表示するかどうか
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispFUNCKEYWND ) ){

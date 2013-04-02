@@ -52,15 +52,15 @@ static const DWORD p_helpids[] = {	//10210
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_EDIT(
+INT_PTR CALLBACK CPropEdit::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_EDIT, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropEdit::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
+INT_PTR CPropEdit::DispatchEvent(
     HWND		hwndDlg,	// handle to dialog box
     UINT		uMsg,		// message
     WPARAM		wParam,		// first message parameter
@@ -81,7 +81,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 	case WM_INITDIALOG:
 		::SendMessage( ::GetDlgItem( hwndDlg, IDC_EDIT_FILEOPENDIR ), EM_LIMITTEXT, (WPARAM)(_MAX_PATH - 1), 0L);
 		/* ダイアログデータの設定 Edit */
-		SetData_PROP_EDIT( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -139,7 +139,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 			DBPRINT_A( "Edit PSN_KILLACTIVE\n" );
 
 			/* ダイアログデータの取得 Edit */
-			GetData_PROP_EDIT( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 
 		case PSN_SETACTIVE: //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
@@ -172,7 +172,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_EDIT(
 
 
 /* ダイアログデータの設定 */
-void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
+void CPropEdit::SetData( HWND hwndDlg )
 {
 	/* ドラッグ & ドロップ編集 */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DRAGDROP, m_Common.m_sEdit.m_bUseOLE_DragDrop );
@@ -225,7 +225,7 @@ void CPropCommon::SetData_PROP_EDIT( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
+int CPropEdit::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_EDIT;
@@ -276,7 +276,7 @@ int CPropCommon::GetData_PROP_EDIT( HWND hwndDlg )
 
 	@date 2013/03/31 novice 新規作成
 */
-void CPropCommon::EnableEditPropInput( HWND hwndDlg )
+void CPropEdit::EnableEditPropInput( HWND hwndDlg )
 {
 	// 指定フォルダ
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_SELDIR ) ){

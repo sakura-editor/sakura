@@ -58,15 +58,15 @@ struct {
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FILE(
+INT_PTR CALLBACK CPropFile::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p2, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropFile::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /*! ファイルページ メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p2(
+INT_PTR CPropFile::DispatchEvent(
 	HWND	hwndDlg,	//!< handle to dialog box
 	UINT	uMsg,	//!< message
 	WPARAM	wParam,	//!< first message parameter
@@ -86,7 +86,7 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 File */
-		SetData_p2( hwndDlg );
+		SetData( hwndDlg );
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
 		return TRUE;
@@ -123,7 +123,7 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 			case PSN_KILLACTIVE:
 //				MYTRACE_A( "File PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 File */
-				GetData_p2( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -168,9 +168,6 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, nVal, FALSE );
 			return TRUE;
-			/*NOTREACHED*/
-//			break;
-//@@@ 2001.03.21 End by MIK
 		case IDC_SPIN_ALERT_FILESIZE:
 			/* ファイルの警告サイズ */
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, NULL, FALSE );
@@ -188,6 +185,9 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 			}
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, nVal, FALSE );
 			return TRUE;
+			/*NOTREACHED*/
+//			break;
+//@@@ 2001.03.21 End by MIK
 		}
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるのでWM_NOTIFYをコメントアウトにしその下に修正を置いた
 		break;
@@ -250,7 +250,7 @@ INT_PTR CPropCommon::DispatchEvent_p2(
 
 	@param hwndDlg プロパティページのWindow Handle
 */
-void CPropCommon::SetData_p2( HWND hwndDlg )
+void CPropFile::SetData( HWND hwndDlg )
 {
 	/*--- File ---*/
 	/* ファイルの排他制御モード */
@@ -322,7 +322,7 @@ void CPropCommon::SetData_p2( HWND hwndDlg )
 	@param hwndDlg プロパティページのWindow Handle
 	@return 常にTRUE
 */
-int CPropCommon::GetData_p2( HWND hwndDlg )
+int CPropFile::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_FILE;
@@ -406,7 +406,7 @@ int CPropCommon::GetData_p2( HWND hwndDlg )
 
 	@param hwndDlg プロパティシートのWindow Handle
 */
-void CPropCommon::EnableFilePropInput(HWND hwndDlg)
+void CPropFile::EnableFilePropInput(HWND hwndDlg)
 {
 
 	//	Drop時の動作

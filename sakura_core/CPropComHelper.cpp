@@ -60,15 +60,15 @@ static const DWORD p_helpids[] = {	//10600
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_HELPER(
+INT_PTR CALLBACK CPropHelper::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p10, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropHelper::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 /* Helper メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p10(
+INT_PTR CPropHelper::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -85,7 +85,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Helper */
-		SetData_p10( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -104,7 +104,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			/* ダイアログデータの取得 Helper */
-			GetData_p10( hwndDlg );
+			GetData( hwndDlg );
 			switch( wID ){
 			case IDC_BUTTON_OPENHELP1:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
@@ -226,7 +226,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 			case PSN_KILLACTIVE:
 //				MYTRACE_A( "Helper PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 Helper */
-				GetData_p10( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -266,7 +266,7 @@ INT_PTR CPropCommon::DispatchEvent_p10(
 }
 
 /* ダイアログデータの設定 Helper */
-void CPropCommon::SetData_p10( HWND hwndDlg )
+void CPropHelper::SetData( HWND hwndDlg )
 {
 	/* 外部ヘルプ１ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sHelper.m_szExtHelp );
@@ -281,7 +281,6 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN, m_Common.m_sHelper.m_bHokanKey_RETURN );	//VK_RETURN 補完決定キーが有効/無効
 	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_TAB, m_Common.m_sHelper.m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
 	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT, m_Common.m_sHelper.m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
-//	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_SPACE, m_Common.m_sHelper.m_bHokanKey_SPACE );	//VK_SPACE  補完決定キーが有効/無効
 
 	//migemo dict 
 	::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll);
@@ -292,14 +291,14 @@ void CPropCommon::SetData_p10( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 Helper */
-int CPropCommon::GetData_p10( HWND hwndDlg )
+int CPropHelper::GetData( HWND hwndDlg )
 {
 	// Oct. 5, 2002 genta サイズ制限方法変更
 	/* 外部ヘルプ１ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sHelper.m_szExtHelp, sizeof( m_Common.m_sHelper.m_szExtHelp ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sHelper.m_szExtHelp, _countof( m_Common.m_sHelper.m_szExtHelp ));
 
 	/* 外部HTMLヘルプ */
-	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_sHelper.m_szExtHtmlHelp, sizeof( m_Common.m_sHelper.m_szExtHtmlHelp ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_EXTHTMLHELP, m_Common.m_sHelper.m_szExtHtmlHelp, _countof( m_Common.m_sHelper.m_szExtHtmlHelp ));
 
 	/* HtmlHelpビューアはひとつ */
 	m_Common.m_sHelper.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HTMLHELPISSINGLE ) != 0;
@@ -310,8 +309,8 @@ int CPropCommon::GetData_p10( HWND hwndDlg )
 	m_Common.m_sHelper.m_bHokanKey_TAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
 	m_Common.m_sHelper.m_bHokanKey_RIGHT = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
 
-	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll, sizeof( m_Common.m_sHelper.m_szMigemoDll ));
-	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict, sizeof( m_Common.m_sHelper.m_szMigemoDict ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll, _countof( m_Common.m_sHelper.m_szMigemoDll ));
+	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict, _countof( m_Common.m_sHelper.m_szMigemoDict ));
 
 
 	return TRUE;

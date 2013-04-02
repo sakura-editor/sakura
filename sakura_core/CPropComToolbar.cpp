@@ -52,10 +52,10 @@ static const DWORD p_helpids[] = {	//11000
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_TOOLBAR(
+INT_PTR CALLBACK CPropToolbar::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_TOOLBAR, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropToolbar::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
@@ -126,7 +126,7 @@ int Listbox_ADDDATA(
 }
 
 /* Toolbar メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
+INT_PTR CPropToolbar::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,		// message
 	WPARAM	wParam,		// first message parameter
@@ -158,7 +158,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Toolbar */
-		SetData_PROP_TOOLBAR( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -207,7 +207,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 		case PSN_KILLACTIVE:
 //			MYTRACE_A( "PROP_TOOLBAR PSN_KILLACTIVE\n" );
 			/* ダイアログデータの取得 Toolbar */
-			GetData_PROP_TOOLBAR( hwndDlg );
+			GetData( hwndDlg );
 			return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 		case PSN_SETACTIVE:
@@ -461,7 +461,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_TOOLBAR(
 
 
 /* ダイアログデータの設定 Toolbar */
-void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
+void CPropToolbar::SetData( HWND hwndDlg )
 {
 	HWND		hwndCombo;
 	HWND		hwndResList;
@@ -513,7 +513,7 @@ void CPropCommon::SetData_PROP_TOOLBAR( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 Toolbar */
-int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
+int CPropToolbar::GetData( HWND hwndDlg )
 {
 	HWND	hwndResList;
 	int		i;
@@ -551,7 +551,7 @@ int CPropCommon::GetData_PROP_TOOLBAR( HWND hwndDlg )
 	@date 2005.08.09 aroka CPropCommon.cpp から移動
 	@date 2007.11.02 ryoji ボタンとセパレータとで処理を分ける
 */
-void CPropCommon::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
+void CPropToolbar::DrawToolBarItemList( DRAWITEMSTRUCT* pDis )
 {
 	TBBUTTON	tbb;
 	HBRUSH		hBrush;

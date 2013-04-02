@@ -13,6 +13,7 @@
 	Copyright (C) 2005, genta, aroka
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2010, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -60,16 +61,16 @@ static const DWORD p_helpids[] = {	//10000
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_BACKUP(
+INT_PTR CALLBACK CPropBackup::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_PROP_BACKUP, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropBackup::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
 
 /* メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	WORD		wNotifyCode;
 	WORD		wID;
@@ -86,7 +87,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Backup */
-		SetData_PROP_BACKUP( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -110,7 +111,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 				return TRUE;
 			case PSN_KILLACTIVE:
 				/* ダイアログデータの取得 Backup */
-				GetData_PROP_BACKUP( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -162,7 +163,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 			case IDC_RADIO_BACKUP_DATETYPE2:
 			// 20051107 aroka
 			case IDC_CHECK_BACKUP_ADVANCED:
-				GetData_PROP_BACKUP( hwndDlg );
+				GetData( hwndDlg );
 				UpdateBackupFile( hwndDlg );
 				EnableBackupInput(hwndDlg);
 				return TRUE;
@@ -180,7 +181,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 				}
 				return TRUE;
 			default: // 20051107 aroka Default節 追加
-				GetData_PROP_BACKUP( hwndDlg );
+				GetData( hwndDlg );
 				UpdateBackupFile( hwndDlg );
 			}
 			break;	/* BN_CLICKED */
@@ -225,7 +226,7 @@ INT_PTR CPropCommon::DispatchEvent_PROP_BACKUP( HWND hwndDlg, UINT uMsg, WPARAM 
 		IDC_RADIO_BACKUP_TYPE2
 		を廃止してレイアウト変更
 */
-void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
+void CPropBackup::SetData( HWND hwndDlg )
 {
 //	BOOL	bRet;
 
@@ -327,7 +328,7 @@ void CPropCommon::SetData_PROP_BACKUP( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 */
-int CPropCommon::GetData_PROP_BACKUP( HWND hwndDlg )
+int CPropBackup::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_BACKUP;
@@ -450,7 +451,7 @@ static inline void ShowEnable(HWND hWnd, BOOL bShow, BOOL bEnable)
 	::EnableWindow( hWnd, bEnable );
 }
 
-void CPropCommon::EnableBackupInput(HWND hwndDlg)
+void CPropBackup::EnableBackupInput(HWND hwndDlg)
 {
 	#define SHOWENABLE(id, show, enable) ShowEnable( ::GetDlgItem( hwndDlg, id ), show, enable )
 
@@ -507,7 +508,7 @@ void CPropCommon::EnableBackupInput(HWND hwndDlg)
 	@note 詳細設定切り替え時のデフォルトをオプションに合わせるため、
 		m_szBackUpPathAdvanced を更新する
 */
-void CPropCommon::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設定
+void CPropBackup::UpdateBackupFile(HWND hwndDlg)	//	バックアップファイルの詳細設定
 {
 	char temp[MAX_PATH];
 	/* バックアップを作成するファイル */ // 20051107 aroka

@@ -76,17 +76,17 @@ static const char *p_time_form[] = {
 	@param wParam パラメータ1
 	@param lParam パラメータ2
 */
-INT_PTR CALLBACK CPropCommon::DlgProc_PROP_FORMAT(
+INT_PTR CALLBACK CPropFormat::DlgProc_page(
 	HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-	return DlgProc( &CPropCommon::DispatchEvent_p9, hwndDlg, uMsg, wParam, lParam );
+	return DlgProc( reinterpret_cast<pDispatchPage>(&CPropFormat::DispatchEvent), hwndDlg, uMsg, wParam, lParam );
 }
 //	To Here Jun. 2, 2001 genta
 
-void CPropCommon::ChangeDateExample( HWND hwndDlg )
+void CPropFormat::ChangeDateExample( HWND hwndDlg )
 {
 	/* ダイアログデータの取得 Format */
-	GetData_p9( hwndDlg );
+	GetData( hwndDlg );
 
 	/* 日付をフォーマット */
 	TCHAR szText[1024];
@@ -96,10 +96,10 @@ void CPropCommon::ChangeDateExample( HWND hwndDlg )
 	::SetDlgItemText( hwndDlg, IDC_EDIT_DFORM_EX, szText );
 	return;
 }
-void CPropCommon::ChangeTimeExample( HWND hwndDlg )
+void CPropFormat::ChangeTimeExample( HWND hwndDlg )
 {
 	/* ダイアログデータの取得 Format */
-	GetData_p9( hwndDlg );
+	GetData( hwndDlg );
 
 	/* 時刻をフォーマット */
 	TCHAR szText[1024];
@@ -112,7 +112,7 @@ void CPropCommon::ChangeTimeExample( HWND hwndDlg )
 
 
 /* Format メッセージ処理 */
-INT_PTR CPropCommon::DispatchEvent_p9(
+INT_PTR CPropFormat::DispatchEvent(
 	HWND	hwndDlg,	// handle to dialog box
 	UINT	uMsg,	// message
 	WPARAM	wParam,	// first message parameter
@@ -130,7 +130,7 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 	switch( uMsg ){
 	case WM_INITDIALOG:
 		/* ダイアログデータの設定 Format */
-		SetData_p9( hwndDlg );
+		SetData( hwndDlg );
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 
@@ -212,7 +212,7 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 			case PSN_KILLACTIVE:
 //				MYTRACE_A( "Format PSN_KILLACTIVE\n" );
 				/* ダイアログデータの取得 Format */
-				GetData_p9( hwndDlg );
+				GetData( hwndDlg );
 				return TRUE;
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 			case PSN_SETACTIVE:
@@ -256,7 +256,7 @@ INT_PTR CPropCommon::DispatchEvent_p9(
 
 
 /* ダイアログデータの設定 Format */
-void CPropCommon::SetData_p9( HWND hwndDlg )
+void CPropFormat::SetData( HWND hwndDlg )
 {
 
 	/* 見出し記号 */
@@ -297,7 +297,7 @@ void CPropCommon::SetData_p9( HWND hwndDlg )
 
 
 /* ダイアログデータの取得 Format */
-int CPropCommon::GetData_p9( HWND hwndDlg )
+int CPropFormat::GetData( HWND hwndDlg )
 {
 //@@@ 2002.01.03 YAZAKI 最後に表示していたシートを正しく覚えていないバグ修正
 //	m_nPageNum = ID_PAGENUM_FORMAT;
@@ -334,17 +334,6 @@ int CPropCommon::GetData_p9( HWND hwndDlg )
 	//時刻書式
 	::GetDlgItemText( hwndDlg, IDC_EDIT_TFORM, m_Common.m_sFormat.m_szTimeFormat, sizeof( m_Common.m_sFormat.m_szTimeFormat ));
 
-
-
-
-
-
-
-
-
-
-
-
 	return TRUE;
 }
 
@@ -355,7 +344,7 @@ int CPropCommon::GetData_p9( HWND hwndDlg )
 //	From Here Sept. 10, 2000 JEPRO
 //	チェック状態に応じてダイアログボックス要素のEnable/Disableを
 //	適切に設定する
-void CPropCommon::EnableFormatPropInput( HWND hwndDlg )
+void CPropFormat::EnableFormatPropInput( HWND hwndDlg )
 {
 	//	日付書式をカスタムにするかどうか
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_DFORM_1 ) ){

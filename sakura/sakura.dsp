@@ -493,6 +493,10 @@ SOURCE=..\sakura_core\CPropComFormat.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CPropComGeneral.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CPropComGrep.cpp
 # End Source File
 # Begin Source File
