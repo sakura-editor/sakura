@@ -45,7 +45,17 @@
 void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
 	const char* pszKeyLf, const char* pszKeyPointSize, const char* pszKeyFaceName, LOGFONT& lf, int& pointSize );
 
+template <typename T>
+void SetValueLimit(T& target, int minval, int maxval)
+{
+	target = t_max<T>(minval, t_min<T>(maxval, target));
+}
 
+template <typename T>
+void SetValueLimit(T& target, int maxval)
+{
+	SetValueLimit( target, 0, maxval );
+}
 
 /* static */ TCHAR CShareData::GetAccessKeyByIndex(int index, bool bZeroOrigin)
 {
@@ -355,6 +365,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 	char		szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, "_MRU_Counts", m_pShareData->m_sHistory.m_nMRUArrNum );
+	SetValueLimit( m_pShareData->m_sHistory.m_nMRUArrNum, MAX_MRU );
 	nSize = m_pShareData->m_sHistory.m_nMRUArrNum;
 	for( i = 0; i < nSize; ++i ){
 		pfiWork = &m_pShareData->m_sHistory.m_fiMRUArr[i];
@@ -401,6 +412,7 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 	}
 
 	cProfile.IOProfileData( pszSecName, "_MRUFOLDER_Counts", m_pShareData->m_sHistory.m_nOPENFOLDERArrNum );
+	SetValueLimit( m_pShareData->m_sHistory.m_nOPENFOLDERArrNum, MAX_OPENFOLDER );
 	nSize = m_pShareData->m_sHistory.m_nOPENFOLDERArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "MRUFOLDER[%02d]", i );
@@ -434,6 +446,7 @@ void CShareData::ShareData_IO_Keys( CProfile& cProfile )
 	char	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, "_SEARCHKEY_Counts", m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum );
+	SetValueLimit( m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum, MAX_SEARCHKEY );
 	nSize = m_pShareData->m_sSearchKeywords.m_nSEARCHKEYArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "SEARCHKEY[%02d]", i );
@@ -448,6 +461,7 @@ void CShareData::ShareData_IO_Keys( CProfile& cProfile )
 	}
 
 	cProfile.IOProfileData( pszSecName, "_REPLACEKEY_Counts", m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum );
+	SetValueLimit( m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum, MAX_REPLACEKEY );
 	nSize = m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "REPLACEKEY[%02d]", i );
@@ -476,6 +490,7 @@ void CShareData::ShareData_IO_Grep( CProfile& cProfile )
 	char	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, "_GREPFILE_Counts", m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum );
+	SetValueLimit( m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum, MAX_GREPFILE );
 	nSize = m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "GREPFILE[%02d]", i );
@@ -490,6 +505,7 @@ void CShareData::ShareData_IO_Grep( CProfile& cProfile )
 	}
 
 	cProfile.IOProfileData( pszSecName, "_GREPFOLDER_Counts", m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum );
+	SetValueLimit( m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum, MAX_GREPFOLDER );
 	nSize = m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "GREPFOLDER[%02d]", i );
@@ -534,6 +550,7 @@ void CShareData::ShareData_IO_Cmd( CProfile& cProfile )
 	char	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, "nCmdArrNum", m_pShareData->m_sHistory.m_nCmdArrNum );
+	SetValueLimit( m_pShareData->m_sHistory.m_nCmdArrNum, MAX_CMDARR );
 	int nSize = m_pShareData->m_sHistory.m_nCmdArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "szCmdArr[%02d]", i );
@@ -561,6 +578,7 @@ void CShareData::ShareData_IO_Nickname( CProfile& cProfile )
 	char	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, "ArrNum", m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum );
+	SetValueLimit( m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum, MAX_TRANSFORM_FILENAME );
 	int nSize = m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "From%02d", i );
@@ -692,7 +710,9 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 
 	cProfile.IOProfileData( pszSecName, "nMRUArrNum_MAX"		, common.m_sGeneral.m_nMRUArrNum_MAX );
+	SetValueLimit( common.m_sGeneral.m_nMRUArrNum_MAX, MAX_MRU );
 	cProfile.IOProfileData( pszSecName, "nOPENFOLDERArrNum_MAX"	, common.m_sGeneral.m_nOPENFOLDERArrNum_MAX );
+	SetValueLimit( common.m_sGeneral.m_nOPENFOLDERArrNum_MAX, MAX_OPENFOLDER );
 	cProfile.IOProfileData( pszSecName, "bDispTOOLBAR"			, common.m_sWindow.m_bDispTOOLBAR );
 	cProfile.IOProfileData( pszSecName, "bDispSTATUSBAR"		, common.m_sWindow.m_bDispSTATUSBAR );
 	cProfile.IOProfileData( pszSecName, "bDispFUNCKEYWND"		, common.m_sWindow.m_bDispFUNCKEYWND );
@@ -852,8 +872,10 @@ void CShareData::ShareData_IO_Toolbar( CProfile& cProfile )
 	char	szKeyName[64];
 	CommonSetting_ToolBar& toolbar = m_pShareData->m_Common.m_sToolBar;
 
-	cProfile.IOProfileData( pszSecName, "nToolBarButtonNum", toolbar.m_nToolBarButtonNum );
 	cProfile.IOProfileData( pszSecName, "bToolBarIsFlat", toolbar.m_bToolBarIsFlat );
+
+	cProfile.IOProfileData( pszSecName, "nToolBarButtonNum", toolbar.m_nToolBarButtonNum );
+	SetValueLimit( toolbar.m_nToolBarButtonNum, MAX_TOOLBAR_BUTTON_ITEMS );
 	int	nSize = toolbar.m_nToolBarButtonNum;
 	for( i = 0; i < nSize; ++i ){
 		wsprintf( szKeyName, "nTBB[%03d]", i );
@@ -878,19 +900,20 @@ void CShareData::ShareData_IO_CustMenu( CProfile& cProfile )
 	const char* pszSecName = "CustMenu";
 	int		i, j;
 	char	szKeyName[64];
-	CommonSetting& common = m_pShareData->m_Common;
+	CommonSetting_CustomMenu& menu = m_pShareData->m_Common.m_sCustomMenu;
 
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		wsprintf( szKeyName, "szCMN[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_szCustMenuNameArr[i], MAX_CUSTOM_MENU_NAME_LEN + 1 );	//	Oct. 15, 2001 genta Å‘å’·Žw’è
+		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_szCustMenuNameArr[i], MAX_CUSTOM_MENU_NAME_LEN + 1 );	//	Oct. 15, 2001 genta Å‘å’·Žw’è
 		wsprintf( szKeyName, "nCMIN[%02d]", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_nCustMenuItemNumArr[i] );
-		int nSize = common.m_sCustomMenu.m_nCustMenuItemNumArr[i];
+		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemNumArr[i] );
+		SetValueLimit( menu.m_nCustMenuItemNumArr[i], _countof(menu.m_nCustMenuItemFuncArr[0]) );
+		int nSize = menu.m_nCustMenuItemNumArr[i];
 		for( j = 0; j < nSize; ++j ){
 			wsprintf( szKeyName, "nCMIF[%02d][%02d]", i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] );
+			cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemFuncArr[i][j] );
 			wsprintf( szKeyName, "nCMIK[%02d][%02d]", i, j );
-			cProfile.IOProfileData( pszSecName, szKeyName, common.m_sCustomMenu.m_nCustMenuItemKeyArr[i][j] );
+			cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemKeyArr[i][j] );
 		}
 	}
 }
@@ -1618,11 +1641,7 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 	int		j;
 	for( j = 0; j < COLORIDX_LAST; ++j ){
 		static const char* pszForm = "%d,%d,%06x,%06x,%d";
-#ifndef STR_COLORDATA_HEAD3
-		wsprintf( szKeyName, "CI[%02d]", j );
-#else
 		wsprintf( szKeyName, "C[%s]", g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
-#endif
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
 				pColorInfoArr[j].m_bUnderLine = FALSE;
