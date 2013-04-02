@@ -1,3 +1,14 @@
+/*! @file
+	@brief システム定数
+
+	@date 2002.01.08 aroka  コントロールプロセスと起動処理のためにミューテックス名を追加
+	@date 2006.04.10 ryoji  コントロールプロセス初期化完了を示すイベントフラグ名を追加
+	@date 2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
+	@date 2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
+	@date 2009.01.17 nasukoji	マウスサイドボタンのキーコード定義追加（_WIN32_WINNTの都合によりシステム側で定義されない為）
+	@date 2009.02.11 ryoji		共有メモリ履歴追加, NUM_TO_STRマクロ追加
+	@date 2010.08.21 Moca		Win64を定数で分離
+*/
 /*
 	Copyright (C) 2008, kobake
 
@@ -24,13 +35,6 @@
 #ifndef SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
 #define SAKURA_SYSTEM_CONSTANTS_608BC31D_86C2_4526_B749_70DBD090752A_H_
 
-//2002.01.08 aroka  コントロールプロセスと起動処理のためにミューテックス名を追加
-//2006.04.10 ryoji  コントロールプロセス初期化完了を示すイベントフラグ名を追加
-//2007.09.05 kobake ANSI版と衝突を避けるため、名前変更
-//2007.09.20 kobake ANSI版とUNICODE版で別の名前を用いる
-//2009.01.17 nasukoji	マウスサイドボタンのキーコード定義追加（_WIN32_WINNTの都合によりシステム側で定義されない為）
-//2009.02.11 ryoji		共有メモリ履歴追加, NUM_TO_STRマクロ追加
-//2010.08.21 Moca		Win64を定数で分離
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                       定数命名補助                          //
@@ -39,21 +43,21 @@
 #define _NUM_TO_STR(n) #n
 #define NUM_TO_STR(n) _NUM_TO_STR(n)
 
-//デバッグ判別、定数サフィックス 2007.09.20 kobake
+//! デバッグ判別、定数サフィックス 2007.09.20 kobake
 #ifdef _DEBUG
 	#define _DEBUG_SUFFIX_ "_DEBUG"
 #else
 	#define _DEBUG_SUFFIX_ ""
 #endif
 
-//ビルドコード判別、定数サフィックス 2007.09.20 kobake
+//! ビルドコード判別、定数サフィックス 2007.09.20 kobake
 #ifdef _UNICODE
 	#define _CODE_SUFFIX_ "W"
 #else
 	#define _CODE_SUFFIX_ "A"
 #endif
 
-// ターゲットマシン判別 2010.08.21 Moca 追加
+//! ターゲットマシン判別 2010.08.21 Moca 追加
 #ifdef _WIN64
 	#define CON_SKR_MACHINE_SUFFIX_ "M64"
 #else
@@ -410,22 +414,24 @@
 //                      ミューテックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//アプリケーション実行検出用(インストーラで使用)
+//! アプリケーション実行検出用(インストーラで使用)
 #define	GSTR_MUTEX_SAKURA					_T("MutexSakuraEditor")
 
-//コントロールプロセス
+//! コントロールプロセス
 #define	GSTR_MUTEX_SAKURA_CP				(_T("MutexSakuraEditorCP")				_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//ノーマルプロセス初期化同期
+//! ノーマルプロセス初期化同期
 #define	GSTR_MUTEX_SAKURA_INIT				(_T("MutexSakuraEditorInit")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//ノード操作同期
+//! ノード操作同期
 #define	GSTR_MUTEX_SAKURA_EDITARR			(_T("MutexSakuraEditorEditArr")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//! 初期化完了イベント
 #define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(_T("EventSakuraEditorCPInitialized")	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 
@@ -433,13 +439,13 @@
 //                     ウィンドウクラス                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//コントロールトレイ
+//! コントロールトレイ
 #define	GSTR_CEDITAPP		(_T("CControlTray") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)		_T(STR_SHAREDATA_VERSION))
 
-//メインウィンドウ
+//! メインウィンドウ
 #define	GSTR_EDITWINDOWNAME	(_T("TextEditorWindow") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
-//ビュー
+//! ビュー
 #define	GSTR_VIEWNAME		(_T("EditorClient")												_T(STR_SHAREDATA_VERSION))
 
 
