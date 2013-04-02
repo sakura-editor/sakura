@@ -544,7 +544,6 @@
 #define IDC_CHECK_ANYWHERE              1502
 #define IDC_COMBO10                     1503
 #define IDC_EDIT_BACKUPFILE             1504
-#define IDC_LABEL_BACKUP_HELP           1505
 #define IDC_CHECK_BACKUP_ADVANCED       1506
 #define IDC_RADIO_BACKUP_DATETYPE1A     1507
 #define IDC_RADIO_BACKUP_DATETYPE2A     1508
