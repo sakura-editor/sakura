@@ -432,7 +432,7 @@ const wchar_t* CFileLoad::GetNextLineW(
 		// 改行コードがあった
 		if( pData[i] == (wchar_t)0x000a || pData[i] == (wchar_t)0x000d ){
 			// 行終端子の種類を調べる
-			pcEol->SetType( CEol::GetEOLTypeUni( &pData[i], nDataLen - i ) );
+			pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
 			break;
 		}
 	}
@@ -466,7 +466,7 @@ const wchar_t* CFileLoad::GetNextLineWB(
 		// 改行コードがあった
 		if( pData[i] == (wchar_t)0x0a00 || pData[i] == (wchar_t)0x0d00 ){
 			// 行終端子の種類を調べる
-			pcEol->SetType( CEol::GetEOLTypeUniBE( &pData[i], nDataLen - i ) );
+			pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
 			break;
 		}
 	}

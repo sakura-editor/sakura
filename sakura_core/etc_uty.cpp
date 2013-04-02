@@ -1554,7 +1554,7 @@ const char* GetNextLine(
 		/* 改行コードがあった */
 		if( pData[i] == '\n' || pData[i] == '\r' ){
 			/* 行終端子の種類を調べる */
-			 pcEol->GetTypeFromString( &pData[i], nDataLen - i );
+			pcEol->SetTypeByString( &pData[i], nDataLen - i );
 			break;
 		}
 	}

@@ -70,11 +70,6 @@ extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];
 	クラス内部に閉じこめることができるのでそれなりに意味はあると思う。
 */
 class CEol{
-	static const char* gm_pszEolDataArr[EOL_TYPE_NUM];
-	static const wchar_t* gm_pszEolUnicodeDataArr[EOL_TYPE_NUM];
-	static const wchar_t* gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM];
-	static const int gm_pnEolLenArr[EOL_TYPE_NUM];
-	static const char* gm_pszEolNameArr[EOL_TYPE_NUM];
 public:
 	//コンストラクタ・デストラクタ
 	CEol(){ m_eEolType = EOL_NONE; }
@@ -91,26 +86,21 @@ public:
 	operator EEolType() const { return GetType(); }
 
 	//設定
-	static EEolType GetEOLType( const char* pszData, int nDataLen );
-	static EEolType GetEOLTypeUni( const wchar_t* pszData, int nDataLen );
-	static EEolType GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen );
 	bool SetType( EEolType t);	//	Typeの設定
-	void GetTypeFromString( const char* pszData, int nDataLen )
-		{	SetType( GetEOLType( pszData, nDataLen ) ); }
+	void SetTypeByString( const char* pszData, int nDataLen );
 
-	//	読み出し関数
-	EEolType GetType(void) const { return m_eEolType; }	//!<	現在のTypeを取得
-	int GetLen(void) const
-		{ return gm_pnEolLenArr[ m_eEolType ]; }	//!<	現在のEOL長を取得
-	const char* GetName(void) const
-		{ return gm_pszEolNameArr[ m_eEolType ]; }	//!<	現在のEOLの名称取得
-	const char* GetValue(void) const
-		{ return gm_pszEolDataArr[ m_eEolType ]; }	//!<	現在のEOL文字列先頭へのポインタを取得
-	const char* GetUnicodeValue() const
-		{ return reinterpret_cast<const char*>(gm_pszEolUnicodeDataArr[m_eEolType]);}	//!<	Unicode版GetValue	2002/5/9 Frozen
-	const char* GetUnicodeBEValue(void) const
-		{ return reinterpret_cast<const char*>(gm_pszEolUnicodeBEDataArr[m_eEolType]); }	//!<	UnicodeBE版のGetValue 2002.05.30 Moca
+	//設定（ファイル読み込み時に使用）
 
+	void SetTypeByStringForFile_uni( const wchar_t* pszData, int nDataLen );
+	void SetTypeByStringForFile_unibe( const wchar_t* pszData, int nDataLen );
+
+	//取得
+	EEolType GetType() const { return m_eEolType; }	//!< 現在のTypeを取得
+	int GetLen() const;								//!< 現在のEOL長を取得
+	const TCHAR* GetName() const;					//!< 現在のEOLの名称取得
+	const char* GetValue() const;					//!< 現在のEOL文字列先頭へのポインタを取得
+	const char* GetUnicodeValue() const;			//!< Unicode版GetValue	2002/5/9 Frozen
+	const char* GetUnicodeBEValue() const;			//!< UnicodeBE版のGetValue 2002.05.30 Moca
 
 private:
 	EEolType		m_eEolType;	//!< 改行コードの種類

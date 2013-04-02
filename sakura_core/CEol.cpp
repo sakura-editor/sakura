@@ -45,7 +45,7 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 //	固定データ
 //-----------------------------------------------
 /*! 行終端子のデータの配列 */
-const char* CEol::gm_pszEolDataArr[EOL_TYPE_NUM] = {
+const char* gm_pszEolDataArr[EOL_TYPE_NUM] = {
 	"",
 	"\x0d\x0a",			// EOL_CRLF
 	"\x0a\x0d",			// EOL_LFCR
@@ -54,7 +54,7 @@ const char* CEol::gm_pszEolDataArr[EOL_TYPE_NUM] = {
 };
 
 /*! 行終端子のデータの配列(Unicode版) 2000/05/09 Frozen */
-const wchar_t* CEol::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
+const wchar_t* gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
 	L"",
 	L"\x0d\x0a",		// EOL_CRLF
 	L"\x0a\x0d",		// EOL_LFCR
@@ -63,7 +63,7 @@ const wchar_t* CEol::gm_pszEolUnicodeDataArr[EOL_TYPE_NUM] = {
 };
 
 /*! 行終端子のデータの配列(UnicodeBE版) 2000.05.30 Moca */
-const wchar_t* CEol::gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
+const wchar_t* gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
 	L"",
 	(const wchar_t*)"\x00\x0d\x00\x0a\x00",		// EOL_CRLF
 	(const wchar_t*)"\x00\x0a\x00\x0d\x00",		// EOL_LFCR
@@ -72,7 +72,7 @@ const wchar_t* CEol::gm_pszEolUnicodeBEDataArr[EOL_TYPE_NUM] = {
 };
 
 /*! 行終端子のデータ長の配列 */
-const int CEol::gm_pnEolLenArr[EOL_TYPE_NUM] = {
+const int gm_pnEolLenArr[EOL_TYPE_NUM] = {
 	LEN_EOL_NONE			,	// == 0
 	LEN_EOL_CRLF			,	// == 2
 	LEN_EOL_LFCR			,	// == 2
@@ -82,18 +82,96 @@ const int CEol::gm_pnEolLenArr[EOL_TYPE_NUM] = {
 };
 
 /* 行終端子の表示名の配列 */
-const char* CEol::gm_pszEolNameArr[EOL_TYPE_NUM] = {
+const TCHAR* gm_pszEolNameArr[EOL_TYPE_NUM] = {
 	//	May 12, 2000 genta
 	//	文字幅の都合上“無”を漢字に
-	"改行無",
-	"CRLF",
-	"LFCR",
-	"LF",
-	"CR"
+	_T("改行無"),
+	_T("CRLF"),
+	_T("LFCR"),
+	_T("LF"),
+	_T("CR")
 };
+
+/*!
+	行終端子の種類を調べる。
+	@param pszData 調査対象文字列へのポインタ
+	@param nDataLen 調査対象文字列の長さ
+	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
+*/
+template <class T>
+EEolType GetEOLType( const T* pszData, int nDataLen )
+{
+	int	i;
+	/* 改行コードの長さを調べる */
+	for( i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( gm_pnEolLenArr[i] <= nDataLen && 0 == memcmp( pszData, gm_pszEolDataArr[i], gm_pnEolLenArr[i] ) )
+			return gm_pnEolTypeArr[i];
+	}
+	return EOL_NONE;
+}
+
+
+/*
+	ファイルを読み込むときに使用するもの
+*/
+
+EEolType _GetEOLType_uni( const wchar_t* pszData, int nDataLen )
+{
+	int	i;
+	/* 改行コードの長さを調べる */
+	for( i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( gm_pnEolLenArr[i] <= nDataLen && 0 == memcmp( pszData, gm_pszEolUnicodeDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) ) )
+			return gm_pnEolTypeArr[i];
+	}
+	return EOL_NONE;
+}
+
+EEolType _GetEOLType_unibe( const wchar_t* pszData, int nDataLen )
+{
+	int	i;
+	/* 改行コードの長さを調べる */
+	for( i = 1; i < EOL_TYPE_NUM; ++i ){
+		if( gm_pnEolLenArr[i] <= nDataLen && 0 == memcmp( pszData, gm_pszEolUnicodeBEDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) ) )
+			return gm_pnEolTypeArr[i];
+	}
+	return EOL_NONE;
+}
+
 //-----------------------------------------------
 //	実装部
 //-----------------------------------------------
+
+
+//! 現在のEOL長を取得
+int CEol::GetLen() const
+{
+	return gm_pnEolLenArr[ m_eEolType ];
+}
+
+//! 現在のEOLの名称取得
+const TCHAR* CEol::GetName() const
+{
+	return gm_pszEolNameArr[ m_eEolType ];
+}
+
+//! 現在のEOL文字列先頭へのポインタを取得
+const char* CEol::GetValue() const
+{
+	return gm_pszEolDataArr[ m_eEolType ];
+}
+
+//! Unicode版GetValue
+const char* CEol::GetUnicodeValue() const
+{
+	return reinterpret_cast<const char*>(gm_pszEolUnicodeDataArr[m_eEolType]);
+}
+
+//! UnicodeBE版のGetValue
+const char* CEol::GetUnicodeBEValue() const
+{
+	return reinterpret_cast<const char*>(gm_pszEolUnicodeBEDataArr[m_eEolType]);
+}
+
 /*!
 	行末種別の設定。
 	@param t 行末種別
@@ -112,64 +190,19 @@ bool CEol::SetType( EEolType t )
 	return true;
 }
 
-/*!
-	行終端子の種類を調べる。
-	@param pszData 調査対象文字列へのポインタ
-	@param nDataLen 調査対象文字列の長さ
-	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
-*/
-EEolType CEol::GetEOLType( const char* pszData, int nDataLen )
+void CEol::SetTypeByString( const char* pszData, int nDataLen )
 {
-	int	i;
-	/* 改行コードの長さを調べる */
-	for( i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == memcmp( pszData, gm_pszEolDataArr[i], gm_pnEolLenArr[i] )
-		){
-			return gm_pnEolTypeArr[i];
-		}
-	}
-	return EOL_NONE;
+	SetType( GetEOLType( pszData, nDataLen ) );
 }
 
-/*!
-	行端子の種類を調べるUnicode版
-	@param pszData 調査対象文字列へのポインタ
-	@param nDataLen 調査対象文字列の長さ(wchar_tの長さ)
-	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
-*/
-EEolType CEol::GetEOLTypeUni( const wchar_t* pszData, int nDataLen )
+void CEol::SetTypeByStringForFile_uni( const wchar_t* pszData, int nDataLen )
 {
-	int	i;
-	/* 改行コードの長さを調べる */
-	for( i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == memcmp( pszData, gm_pszEolUnicodeDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) )
-		){
-			return gm_pnEolTypeArr[i];
-		}
-	}
-	return EOL_NONE;
+	SetType( _GetEOLType_uni( pszData, nDataLen ) );
 }
 
-/*
-	行端子の種類を調べるUnicodeBE版
-	@param pszData 調査対象文字列へのポインタ
-	@param nDataLen 調査対象文字列の長さ(wchar_tの長さ)
-	@return 改行コードの種類。終端子が見つからなかったときはEOL_NONEを返す。
-*/
-EEolType CEol::GetEOLTypeUniBE( const wchar_t* pszData, int nDataLen )
+void CEol::SetTypeByStringForFile_unibe( const wchar_t* pszData, int nDataLen )
 {
-	int	i;
-	/* 改行コードの長さを調べる */
-	for( i = 1; i < EOL_TYPE_NUM; ++i ){
-		if( gm_pnEolLenArr[i] <= nDataLen
-		 && 0 == memcmp( pszData, gm_pszEolUnicodeBEDataArr[i], gm_pnEolLenArr[i] * sizeof( wchar_t ) )
-		){
-			return gm_pnEolTypeArr[i];
-		}
-	}
-	return EOL_NONE;
+	SetType( _GetEOLType_unibe( pszData, nDataLen ) );
 }
 
 /*[EOF]*/

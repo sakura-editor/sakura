@@ -851,7 +851,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 	for( nPos = 0; nPos < nInsDataLen; ){
 		if( pInsData[nPos] == '\n' || pInsData[nPos] == '\r' ){
 			/* 行終端子の種類を調べる */
-			cEOLType.GetTypeFromString( &pInsData[nPos], nInsDataLen - nPos );
+			cEOLType.SetTypeByString( &pInsData[nPos], nInsDataLen - nPos );
 			/* 行終端子も含めてテキストをバッファに格納 */
 			cmemCurLine.SetString( &pInsData[nBgn], nPos - nBgn + cEOLType.GetLen() );
 			nBgn = nPos + cEOLType.GetLen();

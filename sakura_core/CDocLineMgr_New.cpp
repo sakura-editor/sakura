@@ -319,7 +319,7 @@ prev_line:;
 	for( nPos = 0; nPos < pArg->nInsDataLen; ){
 		if( pArg->pInsData[nPos] == '\n' || pArg->pInsData[nPos] == '\r' ){
 			/* 行終端子の種類を調べる */
-			cEOLType.GetTypeFromString( &(pArg->pInsData[nPos]), pArg->nInsDataLen - nPos );
+			cEOLType.SetTypeByString( &(pArg->pInsData[nPos]), pArg->nInsDataLen - nPos );
 			/* 行終端子も含めてテキストをバッファに格納 */
 			cmemCurLine.SetString( &(pArg->pInsData[nBgn]), nPos - nBgn + cEOLType.GetLen() );
 			nBgn = nPos + cEOLType.GetLen();
