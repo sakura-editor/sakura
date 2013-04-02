@@ -72,61 +72,64 @@ extern const unsigned char gm_keyword_char[256];	//@@@ 2002.04.27
 
 extern const char* GSTR_APPNAME;
 
-
+//! デバッグ判別、定数サフィックス 2007.09.20 kobake
 #ifdef _DEBUG
-	#ifndef	GSTR_EDITWINDOWNAME
-	#define	GSTR_EDITWINDOWNAME _T("TextEditorWindow_DEBUG")
-	#endif
+	#define _DEBUG_SUFFIX_ "_DEBUG"
 #else
-	#ifndef	GSTR_EDITWINDOWNAME
-	#define	GSTR_EDITWINDOWNAME _T("TextEditorWindow")
-	#endif
+	#define _DEBUG_SUFFIX_ ""
 #endif
 
+//! ターゲットマシン判別 2010.08.21 Moca 追加
+#ifdef _WIN64
+	#define CON_SKR_MACHINE_SUFFIX_ "M64"
+#else
+	#define CON_SKR_MACHINE_SUFFIX_ ""
+#endif
+
+#define	GSTR_SHAREDATA (_T("CShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      ミューテックス                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//! アプリケーション実行検出用(インストーラで使用)
+#define	GSTR_MUTEX_SAKURA _T("MutexSakuraEditor")
+
+//! コントロールプロセス
+#define	GSTR_MUTEX_SAKURA_CP (_T("MutexSakuraEditorCP") _T(CON_SKR_MACHINE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+
+//! ノーマルプロセス初期化同期
+#define	GSTR_MUTEX_SAKURA_INIT (_T("MutexSakuraEditorInit") _T(CON_SKR_MACHINE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+
+//! ノード操作同期
+#define	GSTR_MUTEX_SAKURA_EDITARR (_T("MutexSakuraEditorEditArr") _T(CON_SKR_MACHINE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         イベント                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//! 初期化完了イベント
+#define	GSTR_EVENT_SAKURA_CP_INITIALIZED (_T("EventSakuraEditorCPInitialized") _T(CON_SKR_MACHINE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                     ウィンドウクラス                        //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+//! コントロールトレイ
+#define	GSTR_CEDITAPP (_T("CEditApp") _T(CON_SKR_MACHINE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+
+//! メインウィンドウ
+#define	GSTR_EDITWINDOWNAME (_T("TextEditorWindow") _T(CON_SKR_MACHINE_SUFFIX_) _T(_DEBUG_SUFFIX_))
+
+//! ビュー
 #define	GSTR_VIEWNAME (_T("EditorClient"))
 
-//20020108 aroka コントロールプロセスと起動処理のためにミューテックス名を追加
-// 2006.04.10 ryoji コントロールプロセス初期化完了を示すイベントフラグ名を追加
-#ifdef _DEBUG
-	#ifndef	GSTR_SYNCOBJ_SAKURA
-	#define	GSTR_SYNCOBJ_SAKURA
-	#define	GSTR_MUTEX_SAKURA _T("MutexSakuraEditor_DEBUG")
-	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP_DEBUG")
-	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized_DEBUG")
-	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit_DEBUG")
-	#define	GSTR_MUTEX_SAKURA_EDITARR _T("MutexSakuraEditorEditArr_DEBUG")
-	#endif
-#else
-	#ifndef	GSTR_SYNCOBJ_SAKURA
-	#define	GSTR_SYNCOBJ_SAKURA
-	#define	GSTR_MUTEX_SAKURA _T("MutexSakuraEditor")
-	#define	GSTR_MUTEX_SAKURA_CP _T("MutexSakuraEditorCP")
-	#define	GSTR_EVENT_SAKURA_CP_INITIALIZED _T("EventSakuraEditorCPInitialized")
-	#define	GSTR_MUTEX_SAKURA_INIT _T("MutexSakuraEditorInit")
-	#define	GSTR_MUTEX_SAKURA_EDITARR _T("MutexSakuraEditorEditArr")
-	#endif
-#endif
 
-#ifdef _DEBUG
-	#ifndef	GSTR_CEDITAPP
-#define	GSTR_CEDITAPP _T("CEditApp_DEBUG")
-	#endif
-#else
-	#ifndef	GSTR_CEDITAPP
-	#define	GSTR_CEDITAPP _T("CEditApp")
-	#endif
-#endif
-
-#ifdef _DEBUG
-	#ifndef	GSTR_SHAREDATA
-	#define	GSTR_SHAREDATA _T("CShareData_DEBUG")
-	#endif
-#else
-	#ifndef	GSTR_SHAREDATA
-	#define	GSTR_SHAREDATA _T("CShareData")
-	#endif
-#endif
-
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                         リソース                            //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	Dec. 2, 2002 genta
 //	固定ファイル名
 #define FN_APP_ICON _T("my_appicon.ico")
@@ -191,7 +194,7 @@ inline bool IsValidCodeType(int code)
 }
 
 //2007.08.14 kobake 追加
-//!有効な文字コードセットならtrue。ただし、SJISは除く(意図は不明)
+//!有効な文字コードセットならtrue。ただし、SJISは除く(ファイル一覧に文字コードを[]付きで表示のため)
 inline bool IsValidCodeTypeExceptSJIS(int code)
 {
 	return IsValidCodeType(code) && code!=CODE_SJIS;
@@ -335,7 +338,7 @@ enum EBarChangeNotifyType {
 #define COLOR_ATTRIB_NO_EFFECTS		0x00000F00
 
 struct SColorAttributeData{
-	TCHAR*			szName;
+	const TCHAR*	szName;
 	unsigned int	fAttribute;
 };
 extern const SColorAttributeData g_ColorAttributeArr[];
