@@ -1653,29 +1653,29 @@ BEGIN
                     156,10
     CONTROL         "ファイル名の後ろに保存時の日付・時刻を付加したもの(&E)",
                     IDC_RADIO_BACKUP_DATETYPE1,"Button",BS_AUTORADIOBUTTON,
-                    12,104,204,10
+                    12,106,204,10
     CONTROL         "ファイル名の後ろに前回の保存時の日付・時刻を付加したもの(&U)",
                     IDC_RADIO_BACKUP_DATETYPE2,"Button",BS_AUTORADIOBUTTON,
-                    12,118,230,10
+                    12,120,230,10
     CONTROL         "元の拡張子を保存(&R)",IDC_CHECK_BACKUP_RETAINEXT,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,66,86,10
-    LTEXT           "保存する世代数(1-99 &N)",IDC_LABEL_BACKUP_3,22,90,81,8
+    LTEXT           "保存する世代数(1-99 &N)",IDC_LABEL_BACKUP_3,22,94,81,8
     EDITTEXT        IDC_EDIT_BACKUP_3,106,92,28,12
     CONTROL         "Spin1",IDC_SPIN_BACKUP_GENS,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,134,92,9,
                     12
     CONTROL         "西暦(&Y)",IDC_CHECK_BACKUP_YEAR,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,130,35,10
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,22,132,35,10
     CONTROL         "月(&M)",IDC_CHECK_BACKUP_MONTH,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,60,130,34,10
+                    WS_TABSTOP,60,132,34,10
     CONTROL         "日(&D)",IDC_CHECK_BACKUP_DAY,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,97,130,34,10
+                    WS_TABSTOP,97,132,34,10
     CONTROL         "時(&H)",IDC_CHECK_BACKUP_HOUR,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,134,130,34,10
+                    WS_TABSTOP,134,132,34,10
     CONTROL         "分(&I)",IDC_CHECK_BACKUP_MIN,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,171,130,31,10
+                    WS_TABSTOP,171,132,31,10
     CONTROL         "秒(&S)",IDC_CHECK_BACKUP_SEC,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,205,130,33,10
+                    WS_TABSTOP,205,132,33,10
 
     LTEXT           "",IDC_STATIC,12,60,271,83,NOT WS_VISIBLE
     CONTROL         "保存時の日付・時刻を使用",IDC_RADIO_BACKUP_DATETYPE1A,
