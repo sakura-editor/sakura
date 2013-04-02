@@ -137,10 +137,12 @@ public:
 	}
 
 private: // 2002/2/10 aroka アクセス権変更
-	TCHAR		m_szClassInheritances[1024];
 	HINSTANCE	m_hInstance;	// アプリケーションインスタンスのハンドル
 	HWND		m_hwndParent;	// オーナーウィンドウのハンドル
 	HWND		m_hWnd;			// このダイアログのハンドル
+#if _DEBUG
+	TCHAR		m_szClassInheritances[1024];
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////

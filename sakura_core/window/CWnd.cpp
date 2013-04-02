@@ -84,11 +84,13 @@ next:
 
 CWnd::CWnd(const TCHAR* pszInheritanceAppend)
 {
-	_tcscpy( m_szClassInheritances, _T("CWnd") );
-	_tcscat( m_szClassInheritances, pszInheritanceAppend );
 	m_hInstance = NULL;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd = NULL;			/* このウィンドウのハンドル */
+#if _DEBUG
+	_tcscpy( m_szClassInheritances, _T("CWnd") );
+	_tcscat( m_szClassInheritances, pszInheritanceAppend );
+#endif
 }
 
 CWnd::~CWnd()
