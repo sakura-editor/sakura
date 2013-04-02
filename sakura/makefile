@@ -33,7 +33,7 @@ CC_OBJFILEOPT=-o
 CC_EXEFILEOPT=-e
 
 ## (BCC) CPP Options
-CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -D_MBCS -DNOMINMAX -tW
+CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -D_MBCS -tW
 RFLAGS=-dDS_SETFOREGROUND=0x200L -i$(SRCDIR)
 WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp -wuse
 
@@ -71,7 +71,7 @@ OPTLIBS=libc.lib libcp.lib
 !endif
 
 RC=rc.exe
-CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "NOMINMAX" /D "SAKURA_NO_DLL" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
+CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
 RFLAGS=/l 0x411 /d "NDEBUG" /I "$(SRCDIR)"
 LFLAGS=/subsystem:windows /machine:x86 /map
 
@@ -199,8 +199,11 @@ OBJS =\
 	$(OBJDIR)\CPropComToolbar.obj \
 	$(OBJDIR)\CPropComWin.obj \
 	$(OBJDIR)\CPropTypes.obj \
+	$(OBJDIR)\CPropTypesColor.obj \
 	$(OBJDIR)\CPropTypesKeyHelp.obj \
 	$(OBJDIR)\CPropTypesRegex.obj \
+	$(OBJDIR)\CPropTypesScreen.obj \
+	$(OBJDIR)\CPropTypesSupport.obj \
 	$(OBJDIR)\CRunningTimer.obj \
 	$(OBJDIR)\CRecent.obj \
 	$(OBJDIR)\CRegexKeyword.obj \
