@@ -221,7 +221,7 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 			m_nSrchStartPosY_PHY = m_nCaretPosY_PHY;
 		}
 		
-		m_bCurSrchKeyMark = FALSE;
+		m_bCurSrchKeyMark = false;
 		m_nISearchDirection = direction;
 		m_nISearchMode = mode;
 		
@@ -461,7 +461,7 @@ void CEditView::ISearchExec(bool bNext)
 		m_nISearchY2History[m_nISearchHistoryCount] = nLineTo;
 	}
 
-	m_bCurSrchKeyMark = TRUE;
+	m_bCurSrchKeyMark = true;
 
 	Redraw();	
 	SendStatusMessage(msg.GetStringPtr());
@@ -473,7 +473,7 @@ void CEditView::ISearchBack(void) {
 	if(m_nISearchHistoryCount==0) return;
 	
 	if(m_nISearchHistoryCount==1){
-		m_bCurSrchKeyMark = FALSE;
+		m_bCurSrchKeyMark = false;
 		m_bISearchFirst = true;
 	}else if( m_bISearchFlagHistory[m_nISearchHistoryCount] == false){
 		//ŒŸõ•¶Žš‚ð‚Ö‚ç‚·
@@ -487,7 +487,7 @@ void CEditView::ISearchBack(void) {
 			if ( (p - m_szCurSrchKey) > 0 ) 
 				ISearchWordMake();
 			else
-				m_bCurSrchKeyMark = FALSE;
+				m_bCurSrchKeyMark = false;
 
 		}else{
 			WarningBeep();

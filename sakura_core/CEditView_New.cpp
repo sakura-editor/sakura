@@ -514,7 +514,7 @@ bool CEditView::DispLineNew(
 
 			while( nPos - nLineBgn < pcLayout2->m_nLength ){
 				/* 検索文字列の色分け */
-				if( TRUE == m_bCurSrchKeyMark	/* 検索文字列のマーク */
+				if( m_bCurSrchKeyMark	/* 検索文字列のマーク */
 				 && TypeDataPtr->m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
 searchnext:;
 				// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化

@@ -177,7 +177,7 @@ BOOL CEditView::Create(
 	m_bDrawSWITCH = true;
 	m_pcDropTarget = new CDropTarget( this );
 	m_bDragMode = FALSE;					/* 選択テキストのドラッグ中か */
-	m_bCurSrchKeyMark = FALSE;				/* 検索文字列 */
+	m_bCurSrchKeyMark = false;				/* 検索文字列 */
 	//	Jun. 27, 2001 genta
 	m_szCurSrchKey[0] = '\0';
 	m_sCurSearchOption.Reset();				// 検索／置換 オプション
@@ -6625,7 +6625,7 @@ DWORD CEditView::DoGrep(
 		m_pcOpeBlk = new COpeBlk;
 	}
 
-	m_bCurSrchKeyMark = TRUE;								/* 検索文字列のマーク */
+	m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, pcmGrepKey->GetStringPtr() );	/* 検索文字列 */
 	m_sCurSearchOption = sSearchOption;						// 検索オプション
 
@@ -10067,7 +10067,7 @@ EColorIndexType CEditView::GetColorIndex(
 
 			while( nPos - nLineBgn <= nCol ){	// 02/12/18 ai
 				/* 検索文字列の色分け */
-				if( TRUE == m_bCurSrchKeyMark	/* 検索文字列のマーク */
+				if( m_bCurSrchKeyMark	/* 検索文字列のマーク */
 				 && TypeDataPtr->m_ColorInfoArr[COLORIDX_SEARCH].m_bDisp ){
 searchnext:;
 				// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化

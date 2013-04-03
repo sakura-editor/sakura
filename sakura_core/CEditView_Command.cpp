@@ -3056,7 +3056,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 		bChangeState = FALSE;
 	}
 
-	m_bCurSrchKeyMark = TRUE;									/* 検索文字列のマーク */
+	m_bCurSrchKeyMark = true;									/* 検索文字列のマーク */
 	strcpy( m_szCurSrchKey, m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] );/* 検索文字列 */
 	m_sCurSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
 	/* 正規表現 */
@@ -8746,7 +8746,7 @@ void CEditView::Command_SEARCH_CLEARMARK( void )
 
 	//検索マークのクリア
 
-	m_bCurSrchKeyMark = FALSE;	/* 検索文字列のマーク */
+	m_bCurSrchKeyMark = false;	/* 検索文字列のマーク */
 	/* フォーカス移動時の再描画 */
 	RedrawAll();
 	return;

@@ -300,7 +300,7 @@ public: /* テスト用にアクセス属性を変更 */
 
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 	CBregexp	m_CurRegexp;			/*!< コンパイルデータ */
-	BOOL	m_bCurSrchKeyMark;			/* 検索文字列のマーク */
+	bool	m_bCurSrchKeyMark;			/* 検索文字列のマーク */
 	char	m_szCurSrchKey[_MAX_PATH];	/* 検索文字列 */
 	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
 
