@@ -124,7 +124,7 @@ CEditDoc::CEditDoc()
 
 	//	Sep, 29, 2001 genta
 	//	マクロ
-	m_pcSMacroMgr = new CSMacroMgr;
+	m_pcSMacroMgr = new CSMacroMgr();
 	
 	//	m_FileTimeの初期化
 	m_FileTime.ClearFILETIME();
@@ -180,6 +180,7 @@ void CEditDoc::Clear()
 	// ファイルのタイムスタンプのクリア
 	m_FileTime.ClearFILETIME();
 
+	// 「基本」のタイプ別設定を適用
 	int doctype = CShareData::getInstance()->GetDocumentTypeOfPath( GetFilePath() );
 	SetDocumentType( doctype, true );
 
@@ -400,7 +401,7 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 	case F_HANKATATOZENKATA:
 	case F_HANKATATOZENHIRA:
 	case F_TABTOSPACE:
-	case F_SPACETOTAB:  //#### Stonee, 2001/05/27
+	case F_SPACETOTAB:  //---- Stonee, 2001/05/27
 	case F_HOKAN:
 	case F_CHGMOD_INS:
 	case F_LTRIM:		// 2001.12.03 hor
@@ -1150,7 +1151,7 @@ BOOL CEditDoc::FileRead(
 		m_nCharCode = type.m_eDefaultCodetype;
 		m_bBomExist = type.m_bDefaultBom;
 
-		//	Oct. 09, 2004 genta フラグに応じて警告を出す（以前の動作）ように
+		// オプション：開こうとしたファイルが存在しないとき警告する
 		if( m_pShareData->m_Common.m_sFile.GetAlertIfFileNotExist() ){
 			InfoBeep();
 
@@ -1718,7 +1719,9 @@ int CEditDoc::MakeBackUp(
 		return 0;
 	}
 
-	if( m_pShareData->m_Common.m_sBackup.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
+	const CommonSetting_Backup& bup_setting = m_pShareData->m_Common.m_Common.m_sBackup;
+
+	if( bup_setting.m_sBackup.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
 		if( (!fexist( m_pShareData->m_Common.m_sBackup.m_szBackUpFolder ))){
 			if( ::TopConfirmMessage(
@@ -1743,14 +1746,14 @@ int CEditDoc::MakeBackUp(
 
 	//@@@ 2002.03.23 start ネットワーク・リムーバブルドライブの場合はごみ箱に放り込まない
 	bool dustflag = false;
-	if( m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox ){
+	if( bup_setting.m_bBackUpDustBox ){
 		dustflag = !IsLocalDrive( szPath );
 	}
 	//@@@ 2002.03.23 end
 
-	if( m_pShareData->m_Common.m_sBackup.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
+	if( bup_setting.m_bBackUpDialog ){	/* バックアップの作成前に確認 */
 		ConfirmBeep();
-		if( m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
+		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//共通設定：バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add start MIK	//2002.03.23
 			nRet = ::MYMESSAGEBOX(
 				m_hWnd,
 				MB_YESNO/*CANCEL*/ | MB_ICONQUESTION | MB_TOPMOST,
@@ -1793,8 +1796,8 @@ int CEditDoc::MakeBackUp(
 
 	//	From Here Aug. 16, 2000 genta
 	//	Jun.  5, 2005 genta 1の拡張子を残す版を追加
-	if( m_pShareData->m_Common.m_sBackup.GetBackupType() == 3 ||
-		m_pShareData->m_Common.m_sBackup.GetBackupType() == 6 ){
+	if( bup_setting.GetBackupType() == 3 ||
+		bup_setting.GetBackupType() == 6 ){
 		//	既に存在するBackupをずらす処理
 		int				i;
 
@@ -1824,9 +1827,8 @@ int CEditDoc::MakeBackUp(
 
 		//------------------------------------------------------------------
 		//	2. 最大値から制限数-1番までを削除
-		int boundary = m_pShareData->m_Common.m_sBackup.GetBackupCount();
+		int boundary = bup_setting.GetBackupCount();
 		boundary = boundary > 0 ? boundary - 1 : 0;	//	最小値は0
-		//::MessageBox( NULL, pBase, "書き換え場所", MB_OK );
 
 		for( ; i >= boundary; --i ){
 			//	ファイル名をセット
@@ -1868,7 +1870,6 @@ int CEditDoc::MakeBackUp(
 	}
 	//	To Here Aug. 16, 2000 genta
 
-	//::MessageBox( NULL, szPath, "直前のバックアップファイル", MB_OK );
 	/* バックアップの作成 */
 	//	Aug. 21, 2005 genta 現在のファイルではなくターゲットファイルをバックアップするように
 	TCHAR	szDrive[_MAX_DIR];
@@ -1876,10 +1877,11 @@ int CEditDoc::MakeBackUp(
 	TCHAR	szFname[_MAX_FNAME];
 	TCHAR	szExt[_MAX_EXT];
 	_splitpath( szPath, szDrive, szDir, szFname, szExt );
-	TCHAR szPath2[MAX_PATH];
+	TCHAR	szPath2[MAX_PATH];
 	wsprintf( szPath2, _T("%s%s"), szDrive, szDir );
-		HANDLE			hFind;
-		WIN32_FIND_DATA	fData;
+
+	HANDLE			hFind;
+	WIN32_FIND_DATA	fData;
 
 	hFind = ::FindFirstFile( szPath2, &fData );
 	if( hFind == INVALID_HANDLE_VALUE ){
@@ -1891,7 +1893,7 @@ int CEditDoc::MakeBackUp(
 	if( ::CopyFile( target_file, szPath, FALSE ) ){
 		/* 正常終了 */
 		//@@@ 2001.12.11 start MIK
-		if( m_pShareData->m_Common.m_sBackup.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
+		if( bup_setting.m_bBackUpDustBox && !dustflag ){	//@@@ 2002.03.23 ネットワーク・リムーバブルドライブでない
 			TCHAR	szDustPath[_MAX_PATH+1];
 			_tcscpy(szDustPath, szPath);
 			szDustPath[_tcslen(szDustPath) + 1] = _T('\0');
@@ -1919,6 +1921,9 @@ int CEditDoc::MakeBackUp(
 	//	Jun.  5, 2005 genta 戻り値変更
 	return 1;
 }
+
+
+
 
 /*! バックアップの作成
 
@@ -1948,10 +1953,12 @@ bool CEditDoc::FormatBackUpPath(
 
 	bool	bOverflow = false;		// バッファオーバーフロー
 
+	const CommonSetting_Backup& bup_setting = m_pShareData->m_Common.m_sBackup;
+
 	/* パスの分解 */
 	_tsplitpath( target_file, szDrive, szDir, szFname, szExt );
 
-	if( m_pShareData->m_Common.m_sBackup.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
+	if( bup_setting.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		_tcscpy( szTempPath, m_pShareData->m_Common.m_sBackup.m_szBackUpFolder );
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szTempPath );
@@ -1961,17 +1968,18 @@ bool CEditDoc::FormatBackUpPath(
 	}
 
 	/* 相対フォルダを挿入 */
-	if( !m_pShareData->m_Common.m_sBackup.m_bBackUpPathAdvanced ){
+	if( !bup_setting.m_bBackUpPathAdvanced ){
+
 		time_t	ltime;
 		struct	tm *today, *gmt;
 		TCHAR	szTime[64];
 		TCHAR	szForm[64];
-		TCHAR*	pBase;
 
+		TCHAR*	pBase;
 		pBase = szTempPath + _tcslen( szTempPath );
 
 		/* バックアップファイル名のタイプ 1=(.bak) 2=*_日付.* */
-		switch( m_pShareData->m_Common.m_sBackup.GetBackupType() ){
+		switch( bup_setting.GetBackupType() ){
 		case 1:
 			wsprintf( pBase, _T("%s.bak"), szFname );
 			break;
@@ -1986,22 +1994,22 @@ bool CEditDoc::FormatBackUpPath(
 			today = localtime( &ltime );/* 現地時間に変換する */
 
 			_tcscpy( szForm, _T("") );
-			if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
+			if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
 				strcat( szForm, "%Y" );
 			}
-			if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
+			if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
 				strcat( szForm, "%m" );
 			}
-			if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
+			if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
 				strcat( szForm, "%d" );
 			}
-			if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
+			if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
 				strcat( szForm, "%H" );
 			}
-			if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
+			if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
 				strcat( szForm, "%M" );
 			}
-			if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
+			if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
 				strcat( szForm, "%S" );
 			}
 			/* YYYYMMDD時分秒 形式に変換 */
@@ -2015,22 +2023,22 @@ bool CEditDoc::FormatBackUpPath(
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
 
 				_tcscpy( szTime, _T("") );
-				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
+				if( bup_setting.GetBackupOpt(BKUP_YEAR) ){	/* バックアップファイル名：日付の年 */
 					wsprintf(szTime,_T("%d"),ctimeLastWrite->wYear);
 				}
-				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
+				if( bup_setting.GetBackupOpt(BKUP_MONTH) ){	/* バックアップファイル名：日付の月 */
 					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wMonth);
 				}
-				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
+				if( bup_setting.GetBackupOpt(BKUP_DAY) ){	/* バックアップファイル名：日付の日 */
 					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wDay);
 				}
-				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
+				if( bup_setting.GetBackupOpt(BKUP_HOUR) ){	/* バックアップファイル名：日付の時 */
 					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wHour);
 				}
-				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
+				if( bup_setting.GetBackupOpt(BKUP_MIN) ){	/* バックアップファイル名：日付の分 */
 					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wMinute);
 				}
-				if( m_pShareData->m_Common.m_sBackup.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
+				if( bup_setting.GetBackupOpt(BKUP_SEC) ){	/* バックアップファイル名：日付の秒 */
 					wsprintf(szTime,_T("%s%02d"),szTime,ctimeLastWrite->wSecond);
 				}
 				wsprintf( pBase, _T("%s_%s%s"), szFname, szTime, szExt );
@@ -2046,14 +2054,14 @@ bool CEditDoc::FormatBackUpPath(
 			{
 				//	Jun.  5, 2005 genta 拡張子を残せるように処理起点を操作する
 				TCHAR* ptr;
-				if( m_pShareData->m_Common.m_sBackup.GetBackupType() == 3 ){
+				if( bup_setting.GetBackupType() == 3 ){
 					ptr = szExt;
 				}
 				else {
 					ptr = szExt + _tcslen( szExt );
 				}
 				*ptr   = _T('.');
-				*++ptr = m_pShareData->m_Common.m_sBackup.GetBackupExtChar();
+				*++ptr = bup_setting.GetBackupExtChar();
 				*++ptr = _T('0');
 				*++ptr = _T('0');
 				*++ptr = _T('\0');
@@ -2065,13 +2073,13 @@ bool CEditDoc::FormatBackUpPath(
 	}else{ // 詳細設定使用する
 		TCHAR szFormat[1024];
 
-		switch( m_pShareData->m_Common.m_sBackup.GetBackupTypeAdv() ){
+		switch( bup_setting.GetBackupTypeAdv() ){
 		case 4:	//	ファイルの日付，時刻
 			{
 				// 2005.10.20 ryoji FindFirstFileを使うように変更
 				CFileTime ctimeLastWrite;
 				GetLastWriteTimestamp( target_file, &ctimeLastWrite );
-				if( !GetDateTimeFormat( szFormat, _countof(szFormat), m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
+				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , ctimeLastWrite.GetSYSTEMTIME() ) ){
 					return false;
 				}
 			}
@@ -4452,7 +4460,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 				++p;
 			}
 			else {
-				char szText[1024];
+				TCHAR szText[1024];
 				CShareData::getInstance()->GetTransformFileNameFast( GetFilePath(), szText, 1023 );
 				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
@@ -4558,6 +4566,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			{
 				CMemory cmemCurText;
 				m_pcEditViewArr[m_nActivePaneIndex]->GetCurrentTextForSearch( cmemCurText );
+
 				q = strncpy_ex( q, q_max - q, cmemCurText.GetStringPtr(), cmemCurText.GetStringLength());
 				++p;
 			}
@@ -4583,7 +4592,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 		//	To Here 2002/12/04 Moca
 		case 'd':	//	共通設定の日付書式
 			{
-				char szText[1024];
+				TCHAR szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
 				CShareData::getInstance()->MyGetDateFormat( systime, szText, sizeof( szText ) - 1 );
@@ -4593,7 +4602,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			break;
 		case 't':	//	共通設定の時刻書式
 			{
-				char szText[1024];
+				TCHAR szText[1024];
 				SYSTEMTIME systime;
 				::GetLocalTime( &systime );
 				CShareData::getInstance()->MyGetTimeFormat( systime, szText, sizeof( szText ) - 1 );
@@ -4708,7 +4717,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 		case 'I':	//	May. 19, 2007 ryoji
 			//	iniファイルのフルパス
 			{
-				char	szPath[_MAX_PATH + 1];
+				TCHAR	szPath[_MAX_PATH + 1];
 				CShareData::getInstance()->GetIniFileName( szPath );
 				q = strncpy_ex( q, q_max - q, szPath, strlen(szPath) );
 				++p;
@@ -4729,13 +4738,13 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 					break;
 				case STAND_KEYMACRO:
 					{
-						char* pszMacroFilePath = CShareData::getInstance()->GetShareData()->m_Common.m_sMacro.m_szKeyMacroFileName;
+						TCHAR* pszMacroFilePath = CShareData::getInstance()->GetShareData()->m_Common.m_sMacro.m_szKeyMacroFileName;
 						q = strncpy_ex( q, q_max - q, pszMacroFilePath, strlen(pszMacroFilePath) );
 					}
 					break;
 				default:
 					{
-						char szMacroFilePath[_MAX_PATH * 2];
+						TCHAR szMacroFilePath[_MAX_PATH * 2];
 						int n = CShareData::getInstance()->GetMacroFilename( m_pcSMacroMgr->GetCurrentIdx(), szMacroFilePath, sizeof(szMacroFilePath) );
 						if ( 0 < n ){
 							q = strncpy_ex( q, q_max - q, szMacroFilePath, strlen(szMacroFilePath) );
