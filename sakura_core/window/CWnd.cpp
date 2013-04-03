@@ -240,9 +240,6 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 
 	CALLH( WM_NCDESTROY			, OnNcDestroy		);
 
-	/* MDI用 */
-	CALLH( WM_MDIACTIVATE		, OnMDIActivate		);
-
 	default:
 		if( WM_APP <= msg && msg <= 0xBFFF ){
 			/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
