@@ -453,12 +453,6 @@ void CShareData::ShareData_IO_Keys( CProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName,
 			m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[0] ));
 	}
-	//読み込み時は残りを初期化
-	if( cProfile.IsReadingMode() ){
-		for(; i < MAX_SEARCHKEY; ++i){
-			m_pShareData->m_sSearchKeywords.m_szSEARCHKEYArr[i][0] = '\0';
-		}
-	}
 
 	cProfile.IOProfileData( pszSecName, "_REPLACEKEY_Counts", m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum );
 	SetValueLimit( m_pShareData->m_sSearchKeywords.m_nREPLACEKEYArrNum, MAX_REPLACEKEY );
@@ -467,12 +461,6 @@ void CShareData::ShareData_IO_Keys( CProfile& cProfile )
 		wsprintf( szKeyName, "REPLACEKEY[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
 			m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[0] ) );
-	}
-	//読み込み時は残りを初期化
-	if( cProfile.IsReadingMode() ){
-		for(; i < MAX_REPLACEKEY; ++i){
-			m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i][0] = '\0';
-		}
 	}
 }
 
@@ -497,12 +485,6 @@ void CShareData::ShareData_IO_Grep( CProfile& cProfile )
 		cProfile.IOProfileData( pszSecName, szKeyName,
 			m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0] ));
 	}
-	//読み込み時は残りを初期化
-	if( cProfile.IsReadingMode() ){
-		for(; i < MAX_GREPFILE; ++i){
-			m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i][0] = '\0';
-		}
-	}
 
 	cProfile.IOProfileData( pszSecName, "_GREPFOLDER_Counts", m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum );
 	SetValueLimit( m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum, MAX_GREPFOLDER );
@@ -511,12 +493,6 @@ void CShareData::ShareData_IO_Grep( CProfile& cProfile )
 		wsprintf( szKeyName, "GREPFOLDER[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
 			m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i], sizeof( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ));
-	}
-	//読み込み時は残りを初期化
-	if( cProfile.IsReadingMode() ){
-		for(; i < MAX_GREPFOLDER; ++i){
-			m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i][0] = '\0';
-		}
 	}
 }
 
@@ -556,12 +532,6 @@ void CShareData::ShareData_IO_Cmd( CProfile& cProfile )
 		wsprintf( szKeyName, "szCmdArr[%02d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName,
 			m_pShareData->m_sHistory.m_szCmdArr[i], sizeof( m_pShareData->m_sHistory.m_szCmdArr[0] ));
-	}
-	//読み込み時は残りを初期化
-	if( cProfile.IsReadingMode() ){
-		for(; i < MAX_CMDARR; ++i){
-			m_pShareData->m_sHistory.m_szCmdArr[i][0] = '\0';
-		}
 	}
 }
 

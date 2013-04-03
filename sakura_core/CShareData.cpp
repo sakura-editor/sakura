@@ -493,13 +493,11 @@ bool CShareData::InitShareData()
 		for( i = 0; i < MAX_REPLACEKEY; ++i ){
 			_tcscpy( m_pShareData->m_sSearchKeywords.m_szREPLACEKEYArr[i], _T("") );
 		}
-		m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum = 0;
-		for( i = 0; i < MAX_GREPFILE; ++i ){
-			_tcscpy( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i], _T("") );
-		}
 		m_pShareData->m_sSearchKeywords.m_nGREPFILEArrNum = 1;
 		_tcscpy( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[0], _T("*.*") );
-
+		for( i = 1; i < MAX_GREPFILE; ++i ){
+			_tcscpy( m_pShareData->m_sSearchKeywords.m_szGREPFILEArr[i], _T("") );
+		}
 		m_pShareData->m_sSearchKeywords.m_nGREPFOLDERArrNum = 0;
 		for( i = 0; i < MAX_GREPFOLDER; ++i ){
 			_tcscpy( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[i], _T("") );
