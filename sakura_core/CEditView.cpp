@@ -216,7 +216,7 @@ BOOL CEditView::Create(
 	m_nBracketCaretPosX_PHY = -1;	/* 03/02/18 ai */
 	m_nBracketCaretPosY_PHY = -1;	/* 03/02/18 ai */
 	m_bDrawBracketPairFlag = FALSE;	/* 03/02/18 ai */
-	m_bDrawSelectArea = FALSE;	/* 選択範囲を描画したか */	// 02/12/13 ai
+	m_bDrawSelectArea = false;	/* 選択範囲を描画したか */	// 02/12/13 ai
 
 	m_nCaretWidth = 0;			/* キャレットの幅 */
 	m_nCaretHeight = 0;			/* キャレットの高さ */
@@ -1679,7 +1679,7 @@ void CEditView::DrawSelectArea( void )
 	int			nToCol;
 	int			nLineNum;
 
-	m_bDrawSelectArea = TRUE;	// 2002/12/13 ai
+	m_bDrawSelectArea = true;	// 2002/12/13 ai
 
 	// 2006.10.01 Moca 重複コード統合
 	HDC         hdc = ::GetDC( m_hWnd );
@@ -4455,7 +4455,7 @@ void CEditView::DisableSelectArea( bool bDraw )
 
 	if( bDraw ){
 		DrawSelectArea();
-		m_bDrawSelectArea = FALSE;	// 02/12/13 ai
+		m_bDrawSelectArea = false;	// 02/12/13 ai
 	}
 	m_bSelectingLock	 = false;	/* 選択状態のロック */
 	m_nSelectLineFromOld = 0;		/* 範囲選択開始行 */
@@ -9887,7 +9887,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 	//   フォーカスを持っていない		又は
 	//   アクティブなペインではない )	場合は終了
 	if( bDraw
-	 &&( IsTextSelected() || ( m_bDrawSelectArea == TRUE ) || m_bBeginBoxSelect || !m_bDrawBracketPairFlag
+	 &&( IsTextSelected() || m_bDrawSelectArea || m_bBeginBoxSelect || !m_bDrawBracketPairFlag
 	 || ( m_pcEditDoc->m_nActivePaneIndex != m_nMyIndex ) ) ){
 		return;
 	}
@@ -9911,7 +9911,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 		if ( ( nCol >= m_nViewLeftCol ) && ( nCol <= m_nViewLeftCol + m_nViewColNum )
 			&& ( nLine >= m_nViewTopLine ) && ( nLine <= m_nViewTopLine + m_nViewRowNum ) )
 		{	// 表示領域内の場合
-			if( !bDraw && ( m_bDrawSelectArea == TRUE ) && ( 0 == IsCurrentPositionSelected( nCol, nLine ) ) )
+			if( !bDraw && m_bDrawSelectArea && ( 0 == IsCurrentPositionSelected( nCol, nLine ) ) )
 			{	// 選択範囲描画済みで消去対象の括弧が選択範囲内の場合
 				continue;
 			}

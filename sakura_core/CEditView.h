@@ -340,7 +340,7 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nBracketPairPosX_PHY;	/* 対括弧の位置 改行単位行先頭からのバイト数(0開始) */	// 02/12/13 ai
 	int		m_nBracketPairPosY_PHY;	/* 対括弧の位置 改行単位行の行番号(0開始) */			// 02/12/13 ai
 	BOOL	m_bDrawBracketPairFlag;	/* 対括弧の強調表示を行なうか */						// 03/02/18 ai
-	BOOL	m_bDrawSelectArea;		/* 選択範囲を描画したか */	// 02/12/13 ai
+	bool	m_bDrawSelectArea;		/* 選択範囲を描画したか */	// 02/12/13 ai
 
 	/*
 	||  メンバ変数
