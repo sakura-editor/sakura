@@ -112,9 +112,6 @@ protected:
 	virtual DECLH( OnDrawItem		);	// WM_DRAWITEM	// 2006.02.01 ryoji
 	virtual DECLH( OnCaptureChanged	);	// WM_CAPTURECHANGED	// 2006.11.30 ryoji
 
-	/* MDI用 */
-	virtual DECLH( OnMDIActivate	);	// WM_MDIACTIVATE
-
 	/* デフォルトメッセージ処理 */
 	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );
 
