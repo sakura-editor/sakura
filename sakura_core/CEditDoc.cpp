@@ -4324,8 +4324,12 @@ void CEditDoc::SetImeMode( int mode )
 	@li g  開いているファイルの名前（拡張子除く）
 	@li /  開いているファイルの名前（フルパス。パスの区切りが/）
 	@li N  開いているファイルの名前(簡易表示)
+	@li n  無題の通し番号
 	@li E  開いているファイルのあるフォルダの名前(簡易表示)
 	@li e  開いているファイルのあるフォルダの名前
+	@li B  タイプ別設定の名前
+	@li b  開いているファイルの拡張子
+	@li Q  印刷ページ設定の名前
 	@li C  現在選択中のテキスト
 	@li x  現在の物理桁位置(先頭からのバイト数1開始)
 	@li y  現在の物理行位置(1開始)
@@ -4349,7 +4353,6 @@ void CEditDoc::SetImeMode( int mode )
 */
 void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen)
 {
-	
 	// Apr. 03, 2003 genta 固定文字列をまとめる
 	static const char PRINT_PREVIEW_ONLY[] = "(印刷プレビューでのみ使用できます)";
 	const int PRINT_PREVIEW_ONLY_LEN = sizeof( PRINT_PREVIEW_ONLY ) - 1;
@@ -4360,6 +4363,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 
 	const char *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
 	char *q, *q_max;
+
 	for( p = pszSource, q = pszBuffer, q_max = pszBuffer + nBufferLen; *p != '\0' && q < q_max;){
 		if( *p != '$' ){
 			*q++ = *p++;
@@ -4455,7 +4459,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			}
 			break;
 		//	To Here 2003/06/21 Moca
-		case L'n':
+		case 'n':
 			if( !IsValidPath() ){
 				if( m_bGrepMode ){
 				}else if( m_bDebugMode ){
@@ -4517,6 +4521,39 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			++p;
 			break;
 		//	From Here Jan. 15, 2002 hor
+		case 'B':	// タイプ別設定の名前			2013/03/28 Uchi
+			{
+				STypeConfig&	sTypeCongig = GetDocumentAttribute();
+				if (sTypeCongig.m_nIdx > 0) {	// 基本は表示しない
+					q = strncpy_ex( q, q_max - q, sTypeCongig.m_szTypeName, strlen(sTypeCongig.m_szTypeName) );
+				}
+				++p;
+			}
+			break;
+		case 'b':	// 開いているファイルの拡張子	2013/03/28 Uchi
+			if ( IsValidPath() ){
+				//	ポインタを末尾に
+				const TCHAR	*dot_position, *end_of_path;
+				r = GetFileName();
+				end_of_path = dot_position = r + strlen( r );
+				//	後ろから.を探す
+				while (--dot_position >= r && *dot_position != '.')
+					;
+				//	.を発見(拡張子有り)
+				if (*dot_position == '.') {
+					q = strncpy_ex( q, q_max - q, dot_position +1, end_of_path - dot_position -1 );
+				}
+			}
+			++p;
+			break;
+		case 'Q':	// 印刷ページ設定の名前			2013/03/28 Uchi
+			{
+				PRINTSETTING*	ps = &m_pShareData->m_PrintSettingArr[
+					 GetDocumentAttribute().m_nCurrentPrintSetting];
+				q = strncpy_ex( q, q_max - q, ps->m_szPrintSettingName, strlen(ps->m_szPrintSettingName) );
+				++p;
+			}
+			break;
 		case 'C':	//	現在選択中のテキスト
 			{
 				CMemory cmemCurText;
@@ -4672,7 +4709,6 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 			//	iniファイルのフルパス
 			{
 				char	szPath[_MAX_PATH + 1];
-
 				CShareData::getInstance()->GetIniFileName( szPath );
 				q = strncpy_ex( q, q_max - q, szPath, strlen(szPath) );
 				++p;
@@ -4742,6 +4778,8 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 	*q = '\0';
 }
 
+
+
 /*! @brief 処理の読み飛ばし
 
 	条件分岐の構文 ${cond:A0$:A1$:A2$:..$} において，
@@ -4810,18 +4848,19 @@ const char* CEditDoc::ExParam_SkipCond(const char* pszSource, int part)
 int CEditDoc::ExParam_Evaluate( const char* pCond )
 {
 	switch( *pCond ){
-	case 'R': // 読み取り専用
+	case 'R': // $R 読み取り専用
 		if( m_bReadOnly ){	/* 読み取り専用モード */
 			return 0;
-		}else
-		if( 0 != m_nFileShareModeOld && /* ファイルの排他制御モード */
+		}
+		else if( 0 != m_nFileShareModeOld && /* ファイルの排他制御モード */
 			NULL == m_hLockedFile		/* ロックしていない */
 		){
 			return 1;
-		}else{
+		}
+		else{
 			return 2;
 		}
-	case 'w': // Grepモード/Output Mode
+	case 'w': // $w Grepモード/Output Mode
 		if( m_bGrepMode ){
 			return 0;
 		}else if( m_bDebugMode ){
@@ -4829,14 +4868,13 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 		}else {
 			return 2;
 		}
-	case 'M': // キーボードマクロの記録中
-		if( TRUE == m_pShareData->m_sFlags.m_bRecordingKeyMacro &&
-		m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == m_hwndParent ){ /* ウィンドウ */
+	case 'M': // $M キーボードマクロの記録中
+		if( m_pShareData->m_sFlags.m_bRecordingKeyMacro && m_pShareData->m_sFlags.m_hwndRecordingKeyMacro == m_hwndParent ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
 		}
-	case 'U': // 更新
+	case 'U': // $U 更新
 		if( IsModified()){
 			return 0;
 		}
@@ -4850,14 +4888,14 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 		else {
 			return 1;
 		}
-	case 'I': // アイコン化されているか
+	case 'I': // $I アイコン化されているか
 		if( ::IsIconic( m_hwndParent )){
 			return 0;
 		} else {
  			return 1;
  		}
 	default:
-		return 0;
+		break;
 	}
 	return 0;
 }
