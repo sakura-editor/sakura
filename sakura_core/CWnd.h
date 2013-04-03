@@ -119,15 +119,14 @@ protected:
 	virtual DECLH( OnDrawItem		);	// WM_DRAWITEM	// 2006.02.01 ryoji
 	virtual DECLH( OnCaptureChanged	);	// WM_CAPTURECHANGED	// 2006.11.30 ryoji
 
-	/* MDI用 */
-	virtual DECLH( OnMDIActivate	);	// WM_MDIACTIVATE
-
 	/* デフォルトメッセージ処理 */
 	virtual LRESULT CallDefWndProc( HWND, UINT, WPARAM, LPARAM );
 
 
 private: // 2002/2/10 aroka アクセス権変更
+#if _DEBUG
 	TCHAR		m_szClassInheritances[1024];
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////
