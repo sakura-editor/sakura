@@ -87,7 +87,7 @@ CWnd::CWnd(const TCHAR* pszInheritanceAppend)
 	m_hInstance = NULL;	/* アプリケーションインスタンスのハンドル */
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd = NULL;			/* このウィンドウのハンドル */
-#if _DEBUG
+#ifdef _DEBUG
 	_tcscpy( m_szClassInheritances, _T("CWnd") );
 	_tcscat( m_szClassInheritances, pszInheritanceAppend );
 #endif
