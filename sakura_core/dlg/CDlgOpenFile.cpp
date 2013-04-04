@@ -632,7 +632,7 @@ void CDlgOpenFile::Create(
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
-	@date 2005/02/20 novice 拡張子を省略したら補完する
+	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
 bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 {
@@ -704,7 +704,7 @@ bool CDlgOpenFile::DoModal_GetOpenFileName( TCHAR* pszPath , bool bSetCurDir )
 	@date 2002/08/21 カレントディレクトリを変更するかどうかのオプションを追加
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
-	@date 2005/02/20 novice 拡張子を省略したら補完する
+	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
 bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 {
@@ -759,7 +759,7 @@ bool CDlgOpenFile::DoModal_GetSaveFileName( TCHAR* pszPath, bool bSetCurDir )
 /*! 「開く」ダイアログ モーダルダイアログの表示
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
-	@date 2005/02/20 novice 拡張子を省略したら補完する
+	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
 bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstring>* pFileNames )
 {
@@ -846,7 +846,7 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 	@date 2003.05.12 MIK 拡張子フィルタでタイプ別設定の拡張子を使うように。
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2003.07.26 ryoji BOMパラメータ追加
-	@date 2005/02/20 novice 拡張子を省略したら補完する
+	@date 2005.02.20 novice 拡張子を省略したら補完する
 	@date 2006.11.10 ryoji フックを使う場合は拡張子の補完を自前で行う
 		Windowsで関連付けが無いような拡張子を指定して保存すると、明示的に
 		拡張子入力してあるのにデフォルト拡張子が補完されてしまうことがある。
