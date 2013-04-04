@@ -2407,7 +2407,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool 
 	@note bScrollがfalseの場合にはカーソル位置のみ移動する．
 		trueの場合にはスクロール位置があわせて変更される
 
-	@date 2001/10/20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
+	@date 2001.10.20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
 	@date 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
 	@date 2004.09.11 genta bDrawスイッチは動作と名称が一致していないので
 		再描画スイッチ→画面位置調整スイッチと名称変更
@@ -8071,7 +8071,7 @@ int CEditView::IsCurrentPositionSelectedTEST(
 }
 
 /*! クリップボードからデータを取得
-	@date 2005/05/29 novice UNICODE TEXT 対応処理を追加
+	@date 2005.05.29 novice UNICODE TEXT 対応処理を追加
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 	@date 2010.11.17 ryoji VS2010の行コピー対応処理を追加
 */

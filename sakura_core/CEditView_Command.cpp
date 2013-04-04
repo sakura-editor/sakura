@@ -8448,7 +8448,7 @@ void CEditView::Command_EXECKEYMACRO( void )
 
 
 /*! キーマクロの読み込み
-	@date 2005/02/20 novice デフォルトの拡張子変更
+	@date 2005.02.20 novice デフォルトの拡張子変更
  */
 void CEditView::Command_LOADKEYMACRO( void )
 {
