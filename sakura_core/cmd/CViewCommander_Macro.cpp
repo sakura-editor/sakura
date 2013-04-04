@@ -127,7 +127,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 
 
 /*! キーマクロの読み込み
-	@date 2005/02/20 novice デフォルトの拡張子変更
+	@date 2005.02.20 novice デフォルトの拡張子変更
  */
 void CViewCommander::Command_LOADKEYMACRO( void )
 {

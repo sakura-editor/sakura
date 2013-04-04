@@ -113,7 +113,7 @@ CCaret::~CCaret()
 		同様に同じ桁の上下移動はbVertLineDoNotOFFを指定すると
 		カーソル位置縦線の消去を省いて高速化できる.
 
-	@date 2001/10/20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
+	@date 2001.10.20 deleted by novice AdjustScrollBar()を呼ぶ位置を変更
 	@date 2004.04.02 Moca 行だけ有効な座標に修正するのを厳密に処理する
 	@date 2004.09.11 genta bDrawスイッチは動作と名称が一致していないので
 		再描画スイッチ→画面位置調整スイッチと名称変更

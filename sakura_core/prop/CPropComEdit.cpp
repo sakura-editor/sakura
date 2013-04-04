@@ -283,7 +283,7 @@ int CPropEdit::GetData( HWND hwndDlg )
 
 	@param hwndDlg プロパティシートのWindow Handle
 
-	@date 2013/03/31 novice 新規作成
+	@date 2013.03.31 novice 新規作成
 */
 void CPropEdit::EnableEditPropInput( HWND hwndDlg )
 {

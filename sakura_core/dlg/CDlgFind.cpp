@@ -54,7 +54,7 @@ CDlgFind::CDlgFind()
 /*!
 	標準以外のメッセージを捕捉する
 
-	@date 2013/03/24 novice 新規作成
+	@date 2013.03.24 novice 新規作成
 */
 INT_PTR CDlgFind::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {

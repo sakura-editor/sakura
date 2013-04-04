@@ -2093,7 +2093,7 @@ void CEditView::CopySelectedAllLines(
 }
 
 /*! クリップボードからデータを取得
-	@date 2005/05/29 novice UNICODE TEXT 対応処理を追加
+	@date 2005.05.29 novice UNICODE TEXT 対応処理を追加
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 	@date 2008.09.10 bosagami パス貼り付け対応
 */
