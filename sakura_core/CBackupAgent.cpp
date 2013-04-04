@@ -1,9 +1,39 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 #include "StdAfx.h"
 #include <time.h>
 #include "CBackupAgent.h"
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat
 
+/*! セーブ前おまけ処理
+	@param pSaveInfo [in] 保存ファイル情報
+
+	@retval CALLBACK_CONTINUE 続ける
+	@retval CALLBACK_INTERRUPT 中断
+*/
 ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
@@ -53,11 +83,13 @@ ECallbackResult CBackupAgent::OnPreBeforeSave(SSaveInfo* pSaveInfo)
 		また，バックアップも保存も行わない選択肢を追加．
 	@date 2005.11.26 aroka ファイル名生成をFormatBackUpPathに分離
 
+	@param target_file [in] バックアップ元パス名
+
 	@retval 0 バックアップ作成失敗．
 	@retval 1 バックアップ作成成功．
 	@retval 2 バックアップ作成失敗．保存中断指示．
 	@retval 3 ファイル操作エラーによるバックアップ作成失敗．
-	
+
 	@todo Advanced modeでの世代管理
 */
 int CBackupAgent::MakeBackUp(
@@ -75,8 +107,8 @@ int CBackupAgent::MakeBackUp(
 
 	const CommonSetting_Backup& bup_setting = GetDllShareData().m_Common.m_sBackup;
 
-	TCHAR	szPath[_MAX_PATH];
-	if( false == FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
+	TCHAR	szPath[_MAX_PATH]; // バックアップ先パス名
+	if( !FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
 		int nMsgResult = ::TopConfirmMessage(
 			CEditWnd::getInstance()->GetHwnd(),
 			_T("バックアップ先のパス作成中にエラーになりました。\n")
@@ -270,21 +302,25 @@ int CBackupAgent::MakeBackUp(
 
 
 
-/*! バックアップの作成
+/*! バックアップパスの作成
 
 	@author aroka
 	@date 2005.11.29 aroka
 		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
 
+	@param szNewPath [out] バックアップ先パス名
+	@param newPathCount [in] szNewPathのサイズ
+	@param target_file [in] バックアップ元パス名
+
 	@retval true  成功
 	@retval false バッファ不足
-	
+
 	@todo Advanced modeでの世代管理
 */
 bool CBackupAgent::FormatBackUpPath(
-	TCHAR*			szNewPath,	//!< [out] szNewPath バックアップ先パス名
-	size_t 			newPathCount,	//!< [in] szNewPathのサイズ
-	const TCHAR*	target_file	//!< [in]  target_file バックアップ元パス名
+	TCHAR*			szNewPath,
+	size_t 			newPathCount,
+	const TCHAR*	target_file
 )
 {
 	TCHAR	szDrive[_MAX_DIR];
@@ -300,7 +336,7 @@ bool CBackupAgent::FormatBackUpPath(
 
 	if( bup_setting.m_bBackUpFolder
 	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
-		if (GetFullPathName(bup_setting.m_szBackUpFolder, _MAX_PATH, szNewPath, & psNext) == 0) {
+		if (GetFullPathName(bup_setting.m_szBackUpFolder, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
 			_tcscpy( szNewPath, bup_setting.m_szBackUpFolder );
 		}
