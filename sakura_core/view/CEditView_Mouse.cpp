@@ -317,13 +317,14 @@ normal_action:;
 		/* 現在のカーソル位置によって選択範囲を変更 */
 		GetSelectionInfo().ChangeSelectAreaByCurrentCursor( ptNewCaret );
 
-
+		bool bSelectWord = false;
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
 		if( GetKeyState_Control() &&( ! tripleClickMode)){
 			GetSelectionInfo().m_bBeginWordSelect = TRUE;		/* 単語単位選択中 */
 			if( !GetSelectionInfo().IsTextSelected() ){
 				/* 現在位置の単語選択 */
-				if ( GetCommander().Command_SELECTWORD() ){
+				if ( GetCommander().Command_SELECTWORD( &ptNewCaret ) ){
+					bSelectWord = true;
 					GetSelectionInfo().m_sSelectBgn = GetSelectionInfo().m_sSelect;
 				}
 			}else{
@@ -486,7 +487,7 @@ normal_action:;
 					GetSelectionInfo().DrawSelectArea();
 				}
 			}
-			if( bSetPtNewCaret ){
+			if( bSetPtNewCaret && !bSelectWord ){
 				/* 現在のカーソル位置によって選択範囲を変更 */
 				GetCaret().MoveCursor( ptNewCaret, true, 1000 );
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
