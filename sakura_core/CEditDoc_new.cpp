@@ -65,15 +65,15 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	int			nFuncNum;
 	char		szClass[1024];
 
-	int			nClassNestArr[16];
 	int			nClassNestArrNum;
-	int			nNestLevel2Arr[16];
+	std::vector<int>	nClassNestArr(0);
+	std::vector<int>	nNestLevel2Arr(0);
 
 	nNestLevel = 0;
 	szWordPrev[0] = '\0';
 	szWord[nWordIdx] = '\0';
 	nMode = FL_JAVA_MODE_NORMAL;
-	nNestLevel2Arr[0] = 0;
+	//nNestLevel2Arr[0] = 0;
 	nFuncNum = 0;
 	szClass[0] = '\0';
 	nClassNestArrNum = 0;
@@ -141,7 +141,8 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					if( 0 == strcmp( "class", szWordPrev ) ||
 						0 == strcmp( "interface", szWordPrev )
 					 ){
-						nClassNestArr[nClassNestArrNum] = nNestLevel;
+						nClassNestArr.push_back( nNestLevel );
+						nNestLevel2Arr.push_back( 0 );
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
 							strcat( szClass, "\\" );
@@ -293,6 +294,8 @@ void CEditDoc::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					if( 0 < nClassNestArrNum &&
 						nClassNestArr[nClassNestArrNum - 1] == nNestLevel
 					){
+						nClassNestArr.pop_back();
+						nNestLevel2Arr.pop_back();
 						nClassNestArrNum--;
 						int k;
 						for( k = lstrlen( szClass ) - 1; k >= 0; k-- ){
