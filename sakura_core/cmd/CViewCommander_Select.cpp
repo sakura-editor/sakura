@@ -21,7 +21,7 @@
 
 
 /* 現在位置の単語選択 */
-bool CViewCommander::Command_SELECTWORD( void )
+bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 {
 	CLayoutRange sRange;
 	CLogicInt	nIdx;
@@ -29,15 +29,16 @@ bool CViewCommander::Command_SELECTWORD( void )
 		/* 現在の選択範囲を非選択状態に戻す */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( true );
 	}
-	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
+	CLayoutPoint ptCaretPos = (NULL == pptCaretPos ? GetCaret().GetCaretLayoutPos() : *pptCaretPos);
+	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptCaretPos.GetY2() );
 	if( NULL == pcLayout ){
 		return false;	//	単語選択に失敗
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+	nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, ptCaretPos.GetX2() );
 
 	/* 現在位置の単語の範囲を調べる */
-	if( GetDocument()->m_cLayoutMgr.WhereCurrentWord(	GetCaret().GetCaretLayoutPos().GetY2(), nIdx, &sRange, NULL, NULL ) ){
+	if( GetDocument()->m_cLayoutMgr.WhereCurrentWord(	ptCaretPos.GetY2(), nIdx, &sRange, NULL, NULL ) ){
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
