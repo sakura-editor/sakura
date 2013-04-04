@@ -1719,9 +1719,9 @@ int CEditDoc::MakeBackUp(
 		return 0;
 	}
 
-	const CommonSetting_Backup& bup_setting = m_pShareData->m_Common.m_Common.m_sBackup;
+	const CommonSetting_Backup& bup_setting = m_pShareData->m_Common.m_sBackup;
 
-	if( bup_setting.m_sBackup.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
+	if( bup_setting.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
 		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
 		if( (!fexist( m_pShareData->m_Common.m_sBackup.m_szBackUpFolder ))){
 			if( ::TopConfirmMessage(
