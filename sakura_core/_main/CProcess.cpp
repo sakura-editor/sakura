@@ -31,7 +31,7 @@ CProcess::CProcess(
 )
 : m_hInstance( hInstance )
 , m_hWnd( 0 )
-#ifndef DISABLE_CRASHDUMP
+#ifdef USE_CRASHDUMP
 , m_pfnMiniDumpWriteDump(NULL)
 #endif
 {
@@ -69,7 +69,7 @@ bool CProcess::Run()
 {
 	if( InitializeProcess() )
 	{
-#ifndef DISABLE_CRASHDUMP
+#ifdef USE_CRASHDUMP
 		HMODULE hDllDbgHelp = LoadLibraryExedir( _T("dbghelp.dll") );
 		m_pfnMiniDumpWriteDump = NULL;
 		if( hDllDbgHelp ){
@@ -80,7 +80,7 @@ bool CProcess::Run()
 #endif
 			MainLoop() ;
 			OnExitProcess();
-#ifndef DISABLE_CRASHDUMP
+#ifdef USE_CRASHDUMP
 		}
 		__except( WriteDump( GetExceptionInformation() ) ){
 		}
@@ -95,7 +95,7 @@ bool CProcess::Run()
 	return false;
 }
 
-#ifndef DISABLE_CRASHDUMP
+#ifdef USE_CRASHDUMP
 /*!
 	@brief クラッシュダンプ
 	

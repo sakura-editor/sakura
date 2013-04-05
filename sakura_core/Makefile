@@ -14,8 +14,7 @@ DEFINES= \
  -D_UNICODE \
  -DUNICODE \
  -DSAKURA_NO_DLL \
- -DNDEBUG \
- -DDISABLE_CRASHDUMP
+ -DNDEBUG
 CFLAGS= -O2 \
  -finput-charset=cp932 -fexec-charset=cp932 \
  -I. \

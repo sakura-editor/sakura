@@ -38,7 +38,7 @@ protected:
 
 protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
-#ifndef DISABLE_CRASHDUMP
+#ifdef USE_CRASHDUMP
 	int				WriteDump( PEXCEPTION_POINTERS pExceptPtrs );
 #endif
 public:
@@ -50,7 +50,7 @@ public:
 private:
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
-#ifndef DISABLE_CRASHDUMP
+#ifdef USE_CRASHDUMP
 	BOOL (WINAPI *m_pfnMiniDumpWriteDump)(
 		HANDLE hProcess,
 		DWORD ProcessId,
