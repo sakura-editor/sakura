@@ -555,6 +555,10 @@ struct CommonSetting_Others
 {
 	//INI内設定のみ
 	RECT		m_rcOpenDialog;				// 「開く」ダイアログのサイズと位置
+	RECT		m_rcCompareDialog;
+	RECT		m_rcDiffDialog;
+	RECT		m_rcFavoriteDialog;
+	RECT		m_rcTagJumpDialog;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

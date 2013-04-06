@@ -176,9 +176,18 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	m_hWnd = hwndDlg;
 	// Modified by KEITA for WIN64 2003.9.6
 	::SetWindowLongPtr( m_hWnd, DWLP_USER, lParam );
+
 	/* ダイアログデータの設定 */
 	SetData();
 
+	SetDialogPosSize();
+
+	m_bInited = TRUE;
+	return TRUE;
+}
+
+void CDialog::SetDialogPosSize()
+{
 #if 0
 	/* ダイアログのサイズ、位置の再現 */
 	if( -1 != m_xPos && -1 != m_yPos ){
@@ -195,7 +204,7 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	if( -1 != m_xPos && -1 != m_yPos ){
 		/* ウィンドウ位置・サイズを再現 */
 
-		if( !(::GetWindowLongPtr( hwndDlg, GWL_STYLE ) & WS_CHILD) ){
+		if( !(::GetWindowLongPtr( m_hWnd, GWL_STYLE ) & WS_CHILD) ){
 			// 2006.06.09 ryoji
 			// モニタのワーク領域よりも左右上下に１ドット小さい領域内に全体が収まるように位置調整する
 			//
@@ -246,8 +255,6 @@ BOOL CDialog::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		cWindowPlacement.rcNormalPosition.bottom = m_nHeight + m_yPos;
 		::SetWindowPlacement( m_hWnd, &cWindowPlacement );
 	}
-	m_bInited = TRUE;
-	return TRUE;
 }
 
 BOOL CDialog::OnDestroy( void )
