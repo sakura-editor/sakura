@@ -2114,7 +2114,7 @@ bool CEditDoc::FormatBackUpPath(
 
 				for( idx=1; idx<10; ++idx ){
 					TCHAR *cp;
-					cp = sjis_strrchr2((unsigned char*)keybuff, _T('\\'), _T('\\'));
+					cp = sjis_strrchr2(keybuff, _T('\\'), _T('\\'));
 					if( cp != NULL ){
 						folders[idx] = cp+1;
 						*cp = _T('\0');

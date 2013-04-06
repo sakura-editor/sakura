@@ -155,14 +155,14 @@ CommandLine に文字列として D:\Test.ext が与えられた場合、
 / # strrchr( char *s , char c ) とは、文字列 s 中の最後尾の c を探し出す関数。
 / # 文字 c が見つかったら、その位置を返す。
 / # 文字 c が見つからない場合は NULL を返す。 */
-char	*sjis_strrchr2( unsigned char *pt , const unsigned char ch1 , const unsigned char ch2 ){
-	unsigned char	*pf = NULL;
+char *sjis_strrchr2( const char *pt , const char ch1 , const char ch2 ){
+	const char *pf = NULL;
 	while( *pt != '\0' ){	/* 文字列の終端まで調べる。 */
 		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = 検索文字の位置 */
 		if( _IS_SJIS_1(*pt) )	pt++;	/* Shift_JIS の1文字目なら、次の1文字をスキップ */
 		if( *pt != '\0' )		pt++;	/* 次の文字へ */
 	}
-	return	pf;
+	return	(char *)pf;
 }
 
 /* 文字列 pi 中の先頭にある有効なパス名（実在するファイル・ディレクトリ名）部分

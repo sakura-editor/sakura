@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 void my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext );
-char	*sjis_strrchr2( unsigned char *pt , const unsigned char ch1 , const unsigned char ch2 );
+char	*sjis_strrchr2( const char *pt , const char ch1 , const char ch2 );
 
 #ifdef __cplusplus
 }
