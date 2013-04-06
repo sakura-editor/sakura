@@ -58,6 +58,8 @@ class CMigemo;	// 2004.09.14 isearch
 #define IDM_JUMPDICT 2001	// 2006.04.10 fon
 #endif
 
+#if defined(__GNUC__)
+#else
 #if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
 typedef struct tagRECONVERTSTRING {
     DWORD dwSize;
@@ -70,6 +72,7 @@ typedef struct tagRECONVERTSTRING {
     DWORD dwTargetStrOffset;
 } RECONVERTSTRING, *PRECONVERTSTRING;
 #endif // RECONVERTSTRING
+#endif // defined(__GNUC__)
 
 ///	マウスからコマンドが実行された場合の上位ビット
 ///	@date 2006.05.19 genta

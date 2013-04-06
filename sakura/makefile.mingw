@@ -1,0 +1,476 @@
+PREFIX=i586-mingw32msvc-
+
+CC= $(PREFIX)gcc
+CXX= $(PREFIX)g++
+RM= rm
+RC= $(PREFIX)windres
+SDKDIR= ./sdk
+SRCDIR= ../sakura_core
+OBJDIR= ./Release_gcc
+
+DEFINES= \
+ -DWIN32 \
+ -DWINVER=0x400 \
+ -D_WIN32_WINNT=0 \
+ -D_WIN32_WINDOWS=0x0400 \
+ -D_WIN32_IE=0x400 \
+ -DNOMINMAX \
+ -DNDEBUG
+
+CFLAGS= -Os \
+ -finput-charset=cp932 -fexec-charset=cp932 \
+ -I$(SDKDIR) -I$(SRCDIR) \
+ $(DEFINES)
+
+CXXFLAGS= $(CFLAGS)
+
+LIBS= \
+ -lkernel32 -luser32 -lgdi32 \
+ -lwinspool -lcomdlg32 -ladvapi32 \
+ -lshell32 -lole32 -loleaut32 \
+ -luuid -lcomctl32 -limm32 \
+ -lmpr -limagehlp
+
+exe= sakura.exe
+
+OBJS= \
+	$(OBJDIR)/CAutoSave.o \
+	$(OBJDIR)/CBlockComment.o \
+	$(OBJDIR)/CBregexp.o \
+	$(OBJDIR)/CCommandLine.o \
+	$(OBJDIR)/CControlProcess.o \
+	$(OBJDIR)/CDialog.o \
+	$(OBJDIR)/CDicMgr.o \
+	$(OBJDIR)/CDlgAbout.o \
+	$(OBJDIR)/CDlgCancel.o \
+	$(OBJDIR)/CDlgCompare.o \
+	$(OBJDIR)/CDlgCtrlCode.o \
+	$(OBJDIR)/CDlgDebug.o \
+	$(OBJDIR)/CDlgDiff.o \
+	$(OBJDIR)/CDlgExec.o \
+	$(OBJDIR)/CDlgFavorite.o \
+	$(OBJDIR)/CDlgFileUpdateQuery.o \
+	$(OBJDIR)/CDlgFind.o \
+	$(OBJDIR)/CDlgFuncList.o \
+	$(OBJDIR)/CDlgGrep.o \
+	$(OBJDIR)/CDlgInput1.o \
+	$(OBJDIR)/CDlgJump.o \
+	$(OBJDIR)/CDlgKeywordSelect.o \
+	$(OBJDIR)/CDlgOpenFile.o \
+	$(OBJDIR)/CDlgPrintSetting.o \
+	$(OBJDIR)/CDlgProperty.o \
+	$(OBJDIR)/CDlgReplace.o \
+	$(OBJDIR)/CDlgSameColor.o \
+	$(OBJDIR)/CDlgTagJumpList.o \
+	$(OBJDIR)/CDlgTagsMake.o \
+	$(OBJDIR)/CDlgTypeList.o \
+	$(OBJDIR)/CDlgWinSize.o \
+	$(OBJDIR)/CDllHandler.o \
+	$(OBJDIR)/CDocLine.o \
+	$(OBJDIR)/CDocLineMgr.o \
+	$(OBJDIR)/CDocLineMgr_New.o \
+	$(OBJDIR)/CDropTarget.o \
+	$(OBJDIR)/CESI.o \
+	$(OBJDIR)/CEditApp.o \
+	$(OBJDIR)/CEditDoc.o \
+	$(OBJDIR)/CEditDoc_FuncList1.o \
+	$(OBJDIR)/CEditDoc_FuncList2.o \
+	$(OBJDIR)/CEditDoc_FuncList3.o \
+	$(OBJDIR)/CEditDoc_new.o \
+	$(OBJDIR)/CEditView.o \
+	$(OBJDIR)/CEditView_CmdHokan.o \
+	$(OBJDIR)/CEditView_Cmdgrep.o \
+	$(OBJDIR)/CEditView_Cmdisrch.o \
+	$(OBJDIR)/CEditView_Command.o \
+	$(OBJDIR)/CEditView_Command_New.o \
+	$(OBJDIR)/CEditView_Diff.o \
+	$(OBJDIR)/CEditView_New.o \
+	$(OBJDIR)/CEditView_New2.o \
+	$(OBJDIR)/CEditView_New3.o \
+	$(OBJDIR)/CEditWnd.o \
+	$(OBJDIR)/CEol.o \
+	$(OBJDIR)/CFileExt.o \
+	$(OBJDIR)/CFileLoad.o \
+	$(OBJDIR)/CFileWrite.o \
+	$(OBJDIR)/CFuncInfo.o \
+	$(OBJDIR)/CFuncInfoArr.o \
+	$(OBJDIR)/CFuncKeyWnd.o \
+	$(OBJDIR)/CFuncLookup.o \
+	$(OBJDIR)/CHokanMgr.o \
+	$(OBJDIR)/CHtmlHelp.o \
+	$(OBJDIR)/CImageListMgr.o \
+	$(OBJDIR)/CKeyBind.o \
+	$(OBJDIR)/CKeyMacroMgr.o \
+	$(OBJDIR)/CKeyWordSetMgr.o \
+	$(OBJDIR)/CLayout.o \
+	$(OBJDIR)/CLayoutMgr.o \
+	$(OBJDIR)/CLayoutMgr_New.o \
+	$(OBJDIR)/CLayoutMgr_New2.o \
+	$(OBJDIR)/CLineComment.o \
+	$(OBJDIR)/CMRUFile.o \
+	$(OBJDIR)/CMRUFolder.o \
+	$(OBJDIR)/CMacro.o \
+	$(OBJDIR)/CMacroFactory.o \
+	$(OBJDIR)/CMacroManagerBase.o \
+	$(OBJDIR)/CMarkMgr.o \
+	$(OBJDIR)/CMemory.o \
+	$(OBJDIR)/CMenuDrawer.o \
+	$(OBJDIR)/CMigemo.o \
+	$(OBJDIR)/CNormalProcess.o \
+	$(OBJDIR)/COpe.o \
+	$(OBJDIR)/COpeBlk.o \
+	$(OBJDIR)/COpeBuf.o \
+	$(OBJDIR)/CPPA.o \
+	$(OBJDIR)/CPPAMacroMgr.o \
+	$(OBJDIR)/CPrint.o \
+	$(OBJDIR)/CPrintPreview.o \
+	$(OBJDIR)/CProcess.o \
+	$(OBJDIR)/CProcessFactory.o \
+	$(OBJDIR)/CProfile.o \
+	$(OBJDIR)/CPropComBackup.o \
+	$(OBJDIR)/CPropComCustmenu.o \
+	$(OBJDIR)/CPropComEdit.o \
+	$(OBJDIR)/CPropComFile.o \
+	$(OBJDIR)/CPropComFileName.o \
+	$(OBJDIR)/CPropComFormat.o \
+	$(OBJDIR)/CPropComGeneral.o \
+	$(OBJDIR)/CPropComGrep.o \
+	$(OBJDIR)/CPropComHelper.o \
+	$(OBJDIR)/CPropComKeybind.o \
+	$(OBJDIR)/CPropComKeyword.o \
+	$(OBJDIR)/CPropComMacro.o \
+	$(OBJDIR)/CPropComTab.o \
+	$(OBJDIR)/CPropComToolbar.o \
+	$(OBJDIR)/CPropComWin.o \
+	$(OBJDIR)/CPropCommon.o \
+	$(OBJDIR)/CPropTypes.o \
+	$(OBJDIR)/CPropTypesColor.o \
+	$(OBJDIR)/CPropTypesKeyHelp.o \
+	$(OBJDIR)/CPropTypesRegex.o \
+	$(OBJDIR)/CPropTypesScreen.o \
+	$(OBJDIR)/CPropTypesSupport.o \
+	$(OBJDIR)/CRecent.o \
+	$(OBJDIR)/CRegexKeyword.o \
+	$(OBJDIR)/CRunningTimer.o \
+	$(OBJDIR)/CSMacroMgr.o \
+	$(OBJDIR)/CShareData.o \
+	$(OBJDIR)/CShareData_new.o \
+	$(OBJDIR)/CSortedTagJumpList.o \
+	$(OBJDIR)/CSplitBoxWnd.o \
+	$(OBJDIR)/CSplitterWnd.o \
+	$(OBJDIR)/CTabWnd.o \
+	$(OBJDIR)/CTipWnd.o \
+	$(OBJDIR)/CUxTheme.o \
+	$(OBJDIR)/CWSH.o \
+	$(OBJDIR)/CWaitCursor.o \
+	$(OBJDIR)/CWnd.o \
+	$(OBJDIR)/Debug.o \
+	$(OBJDIR)/Funccode.o \
+	$(OBJDIR)/MY_SP.o \
+	$(OBJDIR)/StdAfx.o \
+	$(OBJDIR)/WinMain.o \
+	$(OBJDIR)/charcode.o \
+	$(OBJDIR)/etc_uty.o \
+	$(OBJDIR)/global.o \
+	$(OBJDIR)/my_icmp.o \
+	$(OBJDIR)/sakura_rc.o
+
+all: $(exe)
+
+$(exe): $(OBJDIR) $(OBJS)
+	$(CXX) -o $@ $(OBJS) $(LIBS) -mwindows -static
+	$(PREFIX)strip sakura.exe
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+$(OBJDIR)/CAutoSave.o: $(SRCDIR)/CAutoSave.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CBlockComment.o: $(SRCDIR)/CBlockComment.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CBregexp.o: $(SRCDIR)/CBregexp.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CCommandLine.o: $(SRCDIR)/CCommandLine.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CControlProcess.o: $(SRCDIR)/CControlProcess.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDialog.o: $(SRCDIR)/CDialog.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDicMgr.o: $(SRCDIR)/CDicMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgAbout.o: $(SRCDIR)/CDlgAbout.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgCancel.o: $(SRCDIR)/CDlgCancel.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgCompare.o: $(SRCDIR)/CDlgCompare.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgCtrlCode.o: $(SRCDIR)/CDlgCtrlCode.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgDebug.o: $(SRCDIR)/CDlgDebug.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgDiff.o: $(SRCDIR)/CDlgDiff.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgExec.o: $(SRCDIR)/CDlgExec.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgFavorite.o: $(SRCDIR)/CDlgFavorite.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgFileUpdateQuery.o: $(SRCDIR)/CDlgFileUpdateQuery.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgFind.o: $(SRCDIR)/CDlgFind.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgFuncList.o: $(SRCDIR)/CDlgFuncList.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgGrep.o: $(SRCDIR)/CDlgGrep.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgInput1.o: $(SRCDIR)/CDlgInput1.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgJump.o: $(SRCDIR)/CDlgJump.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgKeywordSelect.o: $(SRCDIR)/CDlgKeywordSelect.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgOpenFile.o: $(SRCDIR)/CDlgOpenFile.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgPrintSetting.o: $(SRCDIR)/CDlgPrintSetting.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgProperty.o: $(SRCDIR)/CDlgProperty.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgReplace.o: $(SRCDIR)/CDlgReplace.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgSameColor.o: $(SRCDIR)/CDlgSameColor.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgTagJumpList.o: $(SRCDIR)/CDlgTagJumpList.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgTagsMake.o: $(SRCDIR)/CDlgTagsMake.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgTypeList.o: $(SRCDIR)/CDlgTypeList.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDlgWinSize.o: $(SRCDIR)/CDlgWinSize.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDllHandler.o: $(SRCDIR)/CDllHandler.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDocLine.o: $(SRCDIR)/CDocLine.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDocLineMgr.o: $(SRCDIR)/CDocLineMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDocLineMgr_New.o: $(SRCDIR)/CDocLineMgr_New.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CDropTarget.o: $(SRCDIR)/CDropTarget.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CESI.o: $(SRCDIR)/CESI.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditApp.o: $(SRCDIR)/CEditApp.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditDoc.o: $(SRCDIR)/CEditDoc.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditDoc_FuncList1.o: $(SRCDIR)/CEditDoc_FuncList1.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditDoc_FuncList2.o: $(SRCDIR)/CEditDoc_FuncList2.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditDoc_FuncList3.o: $(SRCDIR)/CEditDoc_FuncList3.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditDoc_new.o: $(SRCDIR)/CEditDoc_new.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView.o: $(SRCDIR)/CEditView.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_CmdHokan.o: $(SRCDIR)/CEditView_CmdHokan.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_Cmdgrep.o: $(SRCDIR)/CEditView_Cmdgrep.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_Cmdisrch.o: $(SRCDIR)/CEditView_Cmdisrch.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_Command.o: $(SRCDIR)/CEditView_Command.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_Command_New.o: $(SRCDIR)/CEditView_Command_New.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_Diff.o: $(SRCDIR)/CEditView_Diff.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_New.o: $(SRCDIR)/CEditView_New.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_New2.o: $(SRCDIR)/CEditView_New2.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_New3.o: $(SRCDIR)/CEditView_New3.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditWnd.o: $(SRCDIR)/CEditWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEol.o: $(SRCDIR)/CEol.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CFileExt.o: $(SRCDIR)/CFileExt.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CFileLoad.o: $(SRCDIR)/CFileLoad.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CFileWrite.o: $(SRCDIR)/CFileWrite.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CFuncInfo.o: $(SRCDIR)/CFuncInfo.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CFuncInfoArr.o: $(SRCDIR)/CFuncInfoArr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CFuncKeyWnd.o: $(SRCDIR)/CFuncKeyWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CFuncLookup.o: $(SRCDIR)/CFuncLookup.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CHokanMgr.o: $(SRCDIR)/CHokanMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CHtmlHelp.o: $(SRCDIR)/CHtmlHelp.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CImageListMgr.o: $(SRCDIR)/CImageListMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CKeyBind.o: $(SRCDIR)/CKeyBind.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CKeyMacroMgr.o: $(SRCDIR)/CKeyMacroMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CKeyWordSetMgr.o: $(SRCDIR)/CKeyWordSetMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CLayout.o: $(SRCDIR)/CLayout.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CLayoutMgr.o: $(SRCDIR)/CLayoutMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CLayoutMgr_New.o: $(SRCDIR)/CLayoutMgr_New.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CLayoutMgr_New2.o: $(SRCDIR)/CLayoutMgr_New2.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CLineComment.o: $(SRCDIR)/CLineComment.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMRUFile.o: $(SRCDIR)/CMRUFile.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMRUFolder.o: $(SRCDIR)/CMRUFolder.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMacro.o: $(SRCDIR)/CMacro.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMacroFactory.o: $(SRCDIR)/CMacroFactory.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMacroManagerBase.o: $(SRCDIR)/CMacroManagerBase.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMarkMgr.o: $(SRCDIR)/CMarkMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMemory.o: $(SRCDIR)/CMemory.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMenuDrawer.o: $(SRCDIR)/CMenuDrawer.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CMigemo.o: $(SRCDIR)/CMigemo.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CNormalProcess.o: $(SRCDIR)/CNormalProcess.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/COpe.o: $(SRCDIR)/COpe.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/COpeBlk.o: $(SRCDIR)/COpeBlk.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/COpeBuf.o: $(SRCDIR)/COpeBuf.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPPA.o: $(SRCDIR)/CPPA.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPPAMacroMgr.o: $(SRCDIR)/CPPAMacroMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPrint.o: $(SRCDIR)/CPrint.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPrintPreview.o: $(SRCDIR)/CPrintPreview.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CProcess.o: $(SRCDIR)/CProcess.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CProcessFactory.o: $(SRCDIR)/CProcessFactory.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CProfile.o: $(SRCDIR)/CProfile.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComBackup.o: $(SRCDIR)/CPropComBackup.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComCustmenu.o: $(SRCDIR)/CPropComCustmenu.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComEdit.o: $(SRCDIR)/CPropComEdit.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComFile.o: $(SRCDIR)/CPropComFile.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComFileName.o: $(SRCDIR)/CPropComFileName.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComFormat.o: $(SRCDIR)/CPropComFormat.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComGeneral.o: $(SRCDIR)/CPropComGeneral.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComGrep.o: $(SRCDIR)/CPropComGrep.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComHelper.o: $(SRCDIR)/CPropComHelper.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComKeybind.o: $(SRCDIR)/CPropComKeybind.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComKeyword.o: $(SRCDIR)/CPropComKeyword.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComMacro.o: $(SRCDIR)/CPropComMacro.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComTab.o: $(SRCDIR)/CPropComTab.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComToolbar.o: $(SRCDIR)/CPropComToolbar.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropComWin.o: $(SRCDIR)/CPropComWin.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropCommon.o: $(SRCDIR)/CPropCommon.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropTypes.o: $(SRCDIR)/CPropTypes.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropTypesColor.o: $(SRCDIR)/CPropTypesColor.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropTypesKeyHelp.o: $(SRCDIR)/CPropTypesKeyHelp.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropTypesRegex.o: $(SRCDIR)/CPropTypesRegex.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropTypesScreen.o: $(SRCDIR)/CPropTypesScreen.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CPropTypesSupport.o: $(SRCDIR)/CPropTypesSupport.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRecent.o: $(SRCDIR)/CRecent.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRegexKeyword.o: $(SRCDIR)/CRegexKeyword.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CRunningTimer.o: $(SRCDIR)/CRunningTimer.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CSMacroMgr.o: $(SRCDIR)/CSMacroMgr.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CShareData.o: $(SRCDIR)/CShareData.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CShareData_new.o: $(SRCDIR)/CShareData_new.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CSortedTagJumpList.o: $(SRCDIR)/CSortedTagJumpList.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CSplitBoxWnd.o: $(SRCDIR)/CSplitBoxWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CSplitterWnd.o: $(SRCDIR)/CSplitterWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CTabWnd.o: $(SRCDIR)/CTabWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CTipWnd.o: $(SRCDIR)/CTipWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CUxTheme.o: $(SRCDIR)/CUxTheme.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CWSH.o: $(SRCDIR)/CWSH.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CWaitCursor.o: $(SRCDIR)/CWaitCursor.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CWnd.o: $(SRCDIR)/CWnd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/Debug.o: $(SRCDIR)/Debug.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/Funccode.o: $(SRCDIR)/Funccode.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/MY_SP.o: $(SRCDIR)/MY_SP.C
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/StdAfx.o: $(SRCDIR)/StdAfx.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/WinMain.o: $(SRCDIR)/WinMain.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/charcode.o: $(SRCDIR)/charcode.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/etc_uty.o: $(SRCDIR)/etc_uty.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/global.o: $(SRCDIR)/global.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/my_icmp.o: $(SRCDIR)/my_icmp.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/sakura_rc.o: $(SRCDIR)/sakura_rc.res
+	$(RC) -i $< -o $@
+
+clean:
+	$(RM) -rf $(exe) $(OBJDIR)
+
+depend:
+	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) $(SRCDIR)/*.cpp > depend.mak
+
+.SUFFIXES: .cpp .o .res
+.PHONY: all clean depend

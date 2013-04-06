@@ -31,7 +31,7 @@
 #include <HtmlHelp.h>
 #include <io.h>
 #include <memory.h>		// Apr. 03, 2003 genta
-#include <Cderr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE“™
+#include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE“™
 #include "etc_uty.h"
 #include "Debug.h"
 #include "CMemory.h"

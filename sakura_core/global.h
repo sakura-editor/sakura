@@ -62,6 +62,30 @@ inline T t_max(T t1,T t2)
 #define _strlwr strlwr
 #endif
 
+#if defined(__GNUC__)
+#define __forceinline
+#include <limits.h>
+#include <ole2.h>
+#include <objbase.h>
+#include <imm.h>
+extern "C" unsigned char *   _mbsstr   (const unsigned char *__s1, const unsigned char *__s2);
+#define _tcsncicmp _strnicmp
+#define _ttempnam _tempnam
+#define SCS_CAP_SETRECONVERTSTRING 0x00000004
+#define SCS_QUERYRECONVERTSTRING 0x00020000
+#define SCS_SETRECONVERTSTRING 0x00010000
+typedef struct tagNMKEY
+{
+    NMHDR hdr;
+    UINT  nVKey;
+    UINT  uFlags;
+} NMKEY, FAR *LPNMKEY;
+typedef DWORD HIMC;
+#define MONITOR_DEFAULTTONULL       0x00000000
+#define MONITOR_DEFAULTTOPRIMARY    0x00000001
+#define MONITOR_DEFAULTTONEAREST    0x00000002
+#define MONITORINFOF_PRIMARY        0x00000001
+#endif
 
 //Oct. 31, 2000 JEPRO TeX Keyword ‚Ì‚½‚ß‚É'\'‚ð’Ç‰Á	//Nov. 9, 2000 JEPRO HSP Keyword ‚Ì‚½‚ß‚É'@'‚ð’Ç‰Á
 //#define IS_KEYWORD_CHAR(c) ((c) == '#' || (c) == '$' || __iscsym( (c) ))

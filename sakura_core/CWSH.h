@@ -24,7 +24,7 @@
 #include <winreg.h>
 #include <objbase.h>
 #include <initguid.h>
-#include "activscp.h"
+#include <ActivScp.h>
 //Å™Microsoft Platform SDK ÇÊÇË
 
 #include <string>

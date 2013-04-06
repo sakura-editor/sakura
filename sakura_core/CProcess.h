@@ -16,7 +16,9 @@
 #define _CPROCESS_H_
 
 #include "global.h"
+#ifdef USE_CRASHDUMP
 #include <DbgHelp.h> // MINIDUMP_TYPE
+#endif
 #include "CShareData.h"
 
 /*-----------------------------------------------------------------------

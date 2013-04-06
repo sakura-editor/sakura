@@ -32,7 +32,7 @@
 #include "global.h"
 #include <windows.h>
 #include <commdlg.h> // PRINTDLG, 
-#include <comutil.h> // VT_BSTR,..
+//#include <comutil.h> // VT_BSTR,..
 #include <objidl.h>  // LPDATAOBJECT
 #include <shellapi.h>// HDROP
 #include <stdlib.h>  // _MAX_PATH

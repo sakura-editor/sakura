@@ -43,8 +43,8 @@
 
 #ifndef _INC_SDKDDKVER	// êVÇµÇ¢ Windows SDK Ç≈ÇÕ windows.h Ç™ sdkddkver.h Ç include Ç∑ÇÈ
 #define WANT_GETLONGPATHNAME_WRAPPER
-#include <NewApis.h>
-#include <multimon.h>
+#include <NewAPIs.h>
+#include <MultiMon.h>
 #endif
 
 #if (_MSC_VER >= 1500) && (WINVER <= 0x0400)
