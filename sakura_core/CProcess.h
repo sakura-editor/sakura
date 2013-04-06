@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2002, aroka 新規作成
+	Copyright (C) 2009, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -15,6 +16,7 @@
 #define _CPROCESS_H_
 
 #include "global.h"
+#include <DbgHelp.h> // MINIDUMP_TYPE
 #include "CShareData.h"
 
 /*-----------------------------------------------------------------------
@@ -34,8 +36,22 @@ protected:
 	virtual bool MainLoop() = 0;
 	virtual void OnExitProcess() = 0;
 
+#ifdef USE_CRASHDUMP
+	int				WriteDump( PEXCEPTION_POINTERS pExceptPtrs );
+#endif
 	HINSTANCE	m_hInstance;
 	HWND		m_hWnd;
+#ifdef USE_CRASHDUMP
+	BOOL (WINAPI *m_pfnMiniDumpWriteDump)(
+		HANDLE hProcess,
+		DWORD ProcessId,
+		HANDLE hFile,
+		MINIDUMP_TYPE DumpType,
+		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam,
+		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam,
+		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
+		);
+#endif
 
 	//	唯一のCShareDateとする。（CProcessが責任を持ってnew/deleteする）
 	CShareData		m_cShareData;
