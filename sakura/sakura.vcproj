@@ -25,7 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine="call preBuild.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -107,7 +107,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call touch.bat &quot;$(TargetPath).manifest&quot;"
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -121,7 +121,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine="call preBuild.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -199,7 +199,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call touch.bat &quot;$(TargetPath).manifest&quot;"
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -213,7 +213,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine="call preBuild.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -292,7 +292,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call touch.bat &quot;$(TargetPath).manifest&quot;"
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -307,7 +307,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define&amp;HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode"
+				CommandLine="call preBuild.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -390,7 +390,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call touch.bat &quot;$(TargetPath).manifest&quot;"
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"
 			/>
 		</Configuration>
 	</Configurations>
