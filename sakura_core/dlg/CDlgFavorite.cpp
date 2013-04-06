@@ -353,6 +353,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	long		lngStyle;
 
 	_SetHwnd( hwndDlg );
+	::SetWindowLongPtr( GetHwnd(), DWLP_USER, lParam );
 
 	::GetWindowRect( hwndDlg, &rc );
 	m_ptDefaultSize.x = rc.right - rc.left;
@@ -362,8 +363,17 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
-	hwndTab = ::GetDlgItem( hwndDlg, IDC_TAB_FAVORITE );
-	TabCtrl_DeleteAllItems( hwndTab );
+	CreateSizeBox();
+	CDialog::OnSize();
+
+	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog;
+	if( rcDialog.left != 0 ||
+		rcDialog.bottom != 0 ){
+		m_xPos = rcDialog.left;
+		m_yPos = rcDialog.top;
+		m_nWidth = rcDialog.right - rcDialog.left;
+		m_nHeight = rcDialog.bottom - rcDialog.top;
+	}
 
 	//リストビューの表示位置を取得する。
 	m_nCurrentTab = 0;
@@ -374,8 +384,16 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		m_rcListDefault = rc;
 	}
 
+	// ウィンドウのリサイズ
+	SetDialogPosSize();
+
+	hwndTab = ::GetDlgItem( hwndDlg, IDC_TAB_FAVORITE );
+	TabCtrl_DeleteAllItems( hwndTab );
+
+	GetItemClientRect( m_aFavoriteInfo[0].m_nId, rc );
+
 	// リストビューのItem/SubItem幅を計算
-	TCHAR* pszFAVORITE_TEXT = _T("お気に入り");
+	TCHAR* pszFAVORITE_TEXT = const_cast<TCHAR*>(_T("お気に入り"));
 	const int nListViewWidthClient = rc.right - rc.left
 		 - CTextWidthCalc::WIDTH_MARGIN_SCROLLBER - ::GetSystemMetrics(SM_CXVSCROLL);
 	// 初期値は従来方式の%指定
@@ -438,10 +456,6 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	TabCtrl_SetCurSel( hwndTab, m_nCurrentTab );
 	//ChangeSlider( m_nCurrentTab );
 
-	CreateSizeBox();
-	CDialog::OnSize();
-
-	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 }
 
@@ -1007,6 +1021,9 @@ BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
 {
 	/* 基底クラスメンバ */
 	CDialog::OnSize( wParam, lParam );
+
+	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog );
+
 	RECT rc;
 	POINT ptNew;
 	::GetWindowRect( GetHwnd(), &rc );
@@ -1023,6 +1040,13 @@ BOOL CDlgFavorite::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return TRUE;
+}
+
+BOOL CDlgFavorite::OnMove( WPARAM wParam, LPARAM lParam )
+{
+	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcFavoriteDialog );
+	
+	return CDialog::OnMove( wParam, lParam );
 }
 
 BOOL CDlgFavorite::OnMinMaxInfo( LPARAM lParam )

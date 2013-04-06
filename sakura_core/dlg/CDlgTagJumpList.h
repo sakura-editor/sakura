@@ -78,6 +78,7 @@ protected:
 	BOOL	OnBnClicked( int );
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
+	BOOL	OnMove( WPARAM wParam, LPARAM lParam );
 	BOOL	OnMinMaxInfo( LPARAM lParam );
 	BOOL	OnNotify( WPARAM wParam, LPARAM lParam );
 	//	@@ 2005.03.31 MIK キーワード入力エリアのイベント処理

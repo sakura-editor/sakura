@@ -251,6 +251,15 @@ BOOL CDlgCompare::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 	}
 
+	RECT rcDialog = GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog;
+	if( rcDialog.left != 0 ||
+		rcDialog.bottom != 0 ){
+		m_xPos = rcDialog.left;
+		m_yPos = rcDialog.top;
+		m_nWidth = rcDialog.right - rcDialog.left;
+		m_nHeight = rcDialog.bottom - rcDialog.top;
+	}
+
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 }
 
@@ -258,6 +267,8 @@ BOOL CDlgCompare::OnSize( WPARAM wParam, LPARAM lParam )
 {
 	/* äÓíÍÉNÉâÉXÉÅÉìÉo */
 	CDialog::OnSize( wParam, lParam );
+
+	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog );
 
 	RECT  rc;
 	POINT ptNew;
@@ -270,6 +281,13 @@ BOOL CDlgCompare::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return TRUE;
+}
+
+BOOL CDlgCompare::OnMove( WPARAM wParam, LPARAM lParam )
+{
+	::GetWindowRect( GetHwnd(), &GetDllShareData().m_Common.m_sOthers.m_rcCompareDialog );
+	
+	return CDialog::OnMove( wParam, lParam );
 }
 
 BOOL CDlgCompare::OnMinMaxInfo( LPARAM lParam )

@@ -64,6 +64,7 @@ protected:
 	LPVOID	GetHelpIdTable( void );
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam );	// 標準以外のメッセージを捕捉する
 	BOOL	OnSize( WPARAM wParam, LPARAM lParam );
+	BOOL	OnMove( WPARAM wParam, LPARAM lParam );
 	BOOL	OnMinMaxInfo( LPARAM lParam );
 
 	void	SetData( void );	/* ダイアログデータの設定 */

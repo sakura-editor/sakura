@@ -77,6 +77,7 @@ public:
 	void CloseDialog( int );
 
 	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
+	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
 	virtual BOOL OnNotify( WPARAM wParam, LPARAM lParam ){return FALSE;}
 	BOOL OnSize();
