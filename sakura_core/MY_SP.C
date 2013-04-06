@@ -148,7 +148,7 @@ CommandLine に文字列として D:\Test.ext が与えられた場合、
 )=========================================================================== */
 
 /* ↓ Shift_JIS の漢字の1バイト目の判定 */
-#define	_IS_SJIS_1(ch)	( ( ( ch >=0x081 )&&( ch <=0x09F ) ) || ( ( ch >=0x0E0 )&&( ch <=0x0FC ) ) )
+#define	_IS_SJIS_1(ch)	( ( ( (unsigned char)ch >=0x081 )&&( (unsigned char)ch <=0x09F ) ) || ( ( (unsigned char)ch >=0x0E0 )&&( (unsigned char)ch <=0x0FC ) ) )
 
 /* Shift_JIS 対応で検索対象文字を２個指定できる strrchr() みたいなもの。
 / 指定された２つの文字のうち、見つかった方(より後方の方)の位置を返す。
@@ -279,10 +279,10 @@ void	GetExistPath( char *po , const char *pi ) {
 　 先頭部分に有効なパス名が存在しない場合、全てに空文字列が返る。 */
 void	my_splitpath ( const char *comln , char *drv,char *dir,char *fnm,char *ext ){
 	char	ppp[_MAX_PATH];		/* パス格納（作業用） */
-	unsigned char	*pd;
-	unsigned char	*pf;
-	unsigned char	*pe;
-	unsigned char	ch;
+	char	*pd;
+	char	*pf;
+	char	*pe;
+	char	ch;
 	#ifdef	_USE_MS_DOS_FUNC_
 		unsigned	attr;
 	#else
