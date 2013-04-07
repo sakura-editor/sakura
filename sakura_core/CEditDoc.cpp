@@ -3346,7 +3346,12 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 	char					pszStack[nMaxStack][32];
 	char					szTitle[32];			//	一時領域
 	char					szTag[32];				//	一時領域  小文字で保持して高速化しています。
-	int						nLabelType;				// default, inlined, ignore, empty, block, p, heading
+
+	enum ELabelType {						//	列挙体：ラベルの種別
+		LT_DEFAULT,		LT_INLINE,		LT_IGNORE,		LT_EMPTY,
+		LT_BLOCK,		LT_PARAGRAPH,	LT_HEADING
+	};
+	enum ELabelType	nLabelType;				// default, inlined, ignore, empty, block, p, heading
 	/*	同じ見出し要素（hy）を次に上位レベルの見出し(hx)が現れるまで同じ深さにそろえます。
 		このため、見出しの深さを記憶しておきます。
 		下位レベルの見出しの深さは現れるまで不定で、前の章節での深さは影響しません。 2008.08.15 aroka
@@ -3422,7 +3427,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 			strcpy( szTag, szTitle );
 			_strlwr( szTag );
 			
-			nLabelType = 'de';//default
+			nLabelType = LT_DEFAULT;
 			// 物理要素（見た目を変えるためのタグ）は構造解析しない。
 			if( !strcmp(szTag,"b") || !strcmp(szTag,"big") || !strcmp(szTag,"blink")
 			 || !strcmp(szTag,"font") || !strcmp(szTag,"i") || !strcmp(szTag,"marquee")
@@ -3430,7 +3435,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 			 || !strcmp(szTag,"strike") || !strcmp(szTag,"tt") || !strcmp(szTag,"u")
 			 || !strcmp(szTag,"bdo") || !strcmp(szTag,"sub") || !strcmp(szTag,"sup") )
 			{
-				nLabelType = 'in';//inlined
+				nLabelType = LT_INLINE;
 			}
 			// インラインテキスト要素（テキストを修飾するタグ）は構造解析しない?
 //			if( !strcmp(szTag,"abbr") || !strcmp(szTag,"acronym") || !strcmp(szTag,"dfn")
@@ -3438,26 +3443,26 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 //			 || !strcmp(szTag,"code") || !strcmp(szTag,"samp") || !strcmp(szTag,"kbd")
 //			 || !strcmp(szTag,"var") || !strcmp(szTag,"cite") || !strcmp(szTag,"q") )
 //			{
-//				nLabelType = 'in';//inlined
+//				nLabelType = LT_INLINE;
 //			}
 			// ルビ要素（XHTML1.1）は構造解析しない。
 			if( !strcmp(szTag,"rbc") || !strcmp(szTag,"rtc") || !strcmp(szTag,"ruby")
 			 || !strcmp(szTag,"rb") || !strcmp(szTag,"rt") || !strcmp(szTag,"rp") )
 			{
-				nLabelType = 'in';//inlined
+				nLabelType = LT_INLINE;
 			}
 			// 空要素（内容を持たないタグ）のうち構造に関係ないものは構造解析しない。
 			if( !strcmp(szTag,"br") || !strcmp(szTag,"base") || !strcmp(szTag,"basefont")
 			 || !strcmp(szTag,"frame") )
 			{
-				nLabelType = 'ig';//empty
+				nLabelType = LT_IGNORE;
 			}
 			// 空要素（内容を持たないタグ）のうち構造に関係するもの。
 			if( !strcmp(szTag,"area") || !strcmp(szTag,"hr") || !strcmp(szTag,"img")
 			 || !strcmp(szTag,"input") || !strcmp(szTag,"link") || !strcmp(szTag,"meta")
 			 || !strcmp(szTag,"param") )
 			{
-				nLabelType = 'em';//empty
+				nLabelType = LT_EMPTY;
 			}
 			if( !strcmp(szTag,"div") || !strcmp(szTag,"center")
 			 || !strcmp(szTag,"address") || !strcmp(szTag,"blockquote")
@@ -3467,14 +3472,14 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 			 || !strcmp(szTag,"pre") || !strcmp(szTag,"table")
 			 || !strcmp(szTag,"form") || !strcmp(szTag,"fieldset") || !strcmp(szTag,"isindex") )
 			{
-				nLabelType = 'bl';//block
+				nLabelType = LT_BLOCK;
 			}
 			if( !strcmp(szTag,"p") )
 			{
-				nLabelType = 'pa';//paragraph
+				nLabelType = LT_PARAGRAPH;
 			}
 			if( (szTag[0]=='h') && ('1'<=szTitle[1]&&szTitle[1]<='6') ){
-				nLabelType = 'hd';//heading
+				nLabelType = LT_HEADING;
 			}
 
 			// 2009.08.08 syat 「/>」で終わるタグの判定のため、終了タグ処理を開始タグ処理の後にした。
@@ -3482,14 +3487,14 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 
 			if( ! bEndTag ) // 開始タグ
 			{
-				if( nLabelType!='in' && nLabelType!='ig' ){
+				if( nLabelType!=LT_INLINE && nLabelType!=LT_IGNORE ){
 					// pの中でブロック要素がきたら、自動的にpを閉じる。 2008.09.07 aroka
 					if( bParaTag ){
-						if( nLabelType=='hd' || nLabelType=='pa' || nLabelType=='bl' ){
+						if( nLabelType==LT_HEADING || nLabelType==LT_PARAGRAPH || nLabelType==LT_BLOCK ){
 							nDepth--;
 						}
 					}
-					if( nLabelType=='hd' ){
+					if( nLabelType==LT_HEADING ){
 						if( nHeadDepth[szTitle[1]-'0'] != -1 ) // 小見出し:既出
 						{
 							nDepth = nHeadDepth[szTitle[1]-'0'];
@@ -3500,10 +3505,10 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 							bParaTag = false;
 						}
 					}
-					if( nLabelType=='pa' ){
+					if( nLabelType==LT_PARAGRAPH ){
 						bParaTag = true;
 					}
-					if( nLabelType=='bl' ){
+					if( nLabelType==LT_BLOCK ){
 						bParaTag = false;
 					}
 
@@ -3517,7 +3522,7 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 						&nPosY
 					);
 
-					if( nLabelType!='em' ){
+					if( nLabelType!=LT_EMPTY ){
 						// 終了タグなしを除く全てのタグらしきものを判定
 						strcpy(pszStack[nDepth],szTitle);
 						k	=	j;
@@ -3586,11 +3591,11 @@ void CEditDoc::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 						nDepth = nDepthOrg;
 					}
 				}else{
-					if( nLabelType=='hd' ){	//	見出しの終わり
+					if( nLabelType==LT_HEADING ){	//	見出しの終わり
 						nHeadDepth[szTitle[1]-'0'] = nDepth;
 						nDepth++;
 					}
-					if( nLabelType=='pa' ){
+					if( nLabelType==LT_PARAGRAPH ){
 						bParaTag = false;
 					}
 				}
