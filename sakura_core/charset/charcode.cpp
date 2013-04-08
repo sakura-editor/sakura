@@ -38,14 +38,24 @@ namespace WCODE
 		//http://ja.wikipedia.org/wiki/Unicode%E4%B8%80%E8%A6%A7_0000-0FFF を見て、なんとなく
 		if(wc>=0x007F && wc<=0x00A0)return true;	// Control Code ISO/IEC 6429
 
-		// 漢字は全角とみなす
+		// 漢字はすべて同一幅とみなす	// 2013.04.07 aroka
 		if ( wc>=0x4E00 && wc<=0x9FBB		// Unified Ideographs, CJK
 		  || wc>=0x3400 && wc<=0x4DB5		// Unified Ideographs Extension A, CJK
-		  || wc>=0xAC00 && wc<=0xD7A3		// 	Hangul Syllables
-		) return false;	// Private Use Area
-
-		// 外字は全角とみなす
-		if (wc>=0xE000 && wc<=0xE8FF)	return false;	// Private Use Area
+		){
+			wc = 0x4E00; // '一'(0x4E00)の幅で代用
+		}
+		else
+		// ハングルはすべて同一幅とみなす	// 2013.04.08 aroka
+		if ( wc>=0xAC00 && wc<=0xD7A3 )		// Hangul Syllables
+		{
+			wc = 0xAC00; // (0xAC00)の幅で代用
+		}
+		else
+		// 外字はすべて同一幅とみなす	// 2013.04.08 aroka
+		if (wc>=0xE000 && wc<=0xE8FF) // Private Use Area
+		{
+			wc = 0xE000; // (0xE000)の幅で代用
+		}
 
 		//$$ 仮。もう動的に計算しちゃえ。(初回のみ)
 		return CalcHankakuByFont(wc);
