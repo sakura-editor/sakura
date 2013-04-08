@@ -43,7 +43,7 @@ private: // 2002/2/3 aroka
 	/*
 	||  Attributes & Operations
 	*/
-	TCHAR*			m_pszClassName;			/* クラス名 */
+	LPCTSTR			m_pszClassName;			/* クラス名 */
 	DLLSHAREDATA*	m_pShareData;
 	void*			m_pCEditWnd;
 	int				m_nAllSplitRows;		/* 分割行数 */

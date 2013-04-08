@@ -42,7 +42,7 @@ public:
 	*/
 private:
 	// 20060126 aroka すべてPrivateにして、初期化順序に合わせて並べ替え
-	const TCHAR*	m_pszClassName;	/*!< クラス名 */
+	LPCTSTR			m_pszClassName;	/*!< クラス名 */
 	CEditDoc*		m_pCEditDoc;
 	DLLSHAREDATA*	m_pShareData;
 	int				m_nCurrentKeyState;
