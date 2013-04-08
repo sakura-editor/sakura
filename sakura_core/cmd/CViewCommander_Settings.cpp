@@ -195,7 +195,6 @@ void CViewCommander::Command_FONT( void )
 
 		// 文字幅キャッシュの初期化	// 2008/5/15 Uchi
 		InitCharWidthCache(lf);
-		InitCharWidthCacheCommon();
 
 //		/* 変更フラグ フォント */
 //		GetDllShareData().m_bFontModify = TRUE;

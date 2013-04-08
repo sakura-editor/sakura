@@ -334,8 +334,14 @@ namespace TCODE
 }
 
 // 文字幅キャッシュ関連
+struct SCharWidthCache {
+	// 文字半角全角キャッシュ
+	TCHAR		m_lfFaceName[LF_FACESIZE];
+	BYTE		m_bCharWidthCache[0x10000/4];		//16KB 文字半角全角キャッシュ 2008/5/16 Uchi
+	int			m_nCharWidthCacheTest;				//cache溢れ検出
+};
+
 void InitCharWidthCache( const LOGFONT &lf );
-void InitCharWidthCacheCommon();
 
 #endif /* SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_ */
 /*[EOF]*/

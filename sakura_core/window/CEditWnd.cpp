@@ -1597,7 +1597,6 @@ LRESULT CEditWnd::DispatchEvent(
 		/* 設定変更の通知 */
 		// Font変更の通知 2008/5/17 Uchi
 		InitCharWidthCache(GetLogfont());
-		InitCharWidthCacheCommon(); //// aroka
 
 		// メインメニュー	2010/5/16 Uchi
 		LayoutMainMenu();
