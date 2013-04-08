@@ -231,7 +231,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sView.m_lf = lf;
 		m_pShareData->m_Common.m_sView.m_nPointSize = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
 
-		InitCharWidthCacheCommon();								// 2008/5/17 Uchi
+		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
+		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
 
 		// キーワードヘルプのフォント ai 02/05/21 Add S
 		LOGFONT lfIconTitle;	// エクスプローラのファイル名表示に使用されるフォント

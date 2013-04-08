@@ -123,6 +123,7 @@ public:
 
 		m_hFont =NULL;
 		m_hFontOld =NULL;
+		m_pCache = 0;
 	}
 	~LocalCache()
 	{
@@ -146,14 +147,28 @@ public:
 		m_hFont = ::CreateFontIndirect( &lf );
 		m_hFontOld = (HFONT)SelectObject(m_hdc,m_hFont);
 
+		m_pCache = &(GetDllShareData().m_sCharWidth);
 		// -- -- 半角基準 -- -- //
 		GetTextExtentPoint32W_AnyBuild(m_hdc,L"x",1,&m_han_size);
+	}
+	void Clear()
+	{
+		assert(m_pCache!=0);
+		// キャッシュのクリア
+		memcpy(m_pCache->m_lfFaceName, m_lf.lfFaceName, sizeof(m_lf.lfFaceName));
+		memset(m_pCache->m_bCharWidthCache, 0, sizeof(m_pCache->m_bCharWidthCache));
+		m_pCache->m_nCharWidthCacheTest=0x12345678;
+	}
+	bool IsSameFontFace( const LOGFONT &lf )
+	{
+		assert(m_pCache!=0);
+		return ( memcmp(m_pCache->m_lfFaceName, lf.lfFaceName, sizeof(lf.lfFaceName)) == 0 );
 	}
 	void SetCache(wchar_t c, bool cache_value)
 	{
 		int v=cache_value?0x1:0x2;
-		GetDllShareData().m_bCharWidthCache[c/4] &= ~( 0x3<< ((c%4)*2) ); //該当箇所クリア
-		GetDllShareData().m_bCharWidthCache[c/4] |=  ( v  << ((c%4)*2) ); //該当箇所セット
+		m_pCache->m_bCharWidthCache[c/4] &= ~( 0x3<< ((c%4)*2) ); //該当箇所クリア
+		m_pCache->m_bCharWidthCache[c/4] |=  ( v  << ((c%4)*2) ); //該当箇所セット
 	}
 	bool GetCache(wchar_t c) const
 	{
@@ -161,7 +176,7 @@ public:
 	}
 	bool ExistCache(wchar_t c) const
 	{
-		assert(GetDllShareData().m_nCharWidthCacheTest==0x12345678);
+		assert(m_pCache->m_nCharWidthCacheTest==0x12345678);
 		return _GetRaw(c)!=0x0;
 	}
 	bool CalcHankakuByFont(wchar_t c)
@@ -173,14 +188,15 @@ public:
 protected:
 	int _GetRaw(wchar_t c) const
 	{
-		return (GetDllShareData().m_bCharWidthCache[c/4]>>((c%4)*2))&0x3;
+		return (m_pCache->m_bCharWidthCache[c/4]>>((c%4)*2))&0x3;
 	}
 private:
-	HDC m_hdc;
-	HFONT m_hFontOld;
-	HFONT m_hFont;
-	SIZE m_han_size;
-	LOGFONT	m_lf;							// 2008/5/15 Uchi
+	HDC					m_hdc;
+	HFONT				m_hFontOld;
+	HFONT				m_hFont;
+	SIZE				m_han_size;
+	LOGFONT				m_lf;				// 2008/5/15 Uchi
+	SCharWidthCache*	m_pCache;
 };
 
 static LocalCache cache;
@@ -203,15 +219,12 @@ bool CalcHankakuByFont(wchar_t c)
 }
 
 //	文字幅の動的計算用キャッシュの初期化。	2007/5/18 Uchi
+//	Fontfaceが変更されていたらキャッシュをクリアする	2013.04.08 aroka
 void InitCharWidthCache( const LOGFONT &lf )
 {
 	WCODE::cache.Init(lf);
-}
-
-//	文字幅の動的計算用キャッシュの初期化。	2007/5/18 Uchi
-void InitCharWidthCacheCommon()
-{
-	// キャッシュのクリア
-	memset(GetDllShareData().m_bCharWidthCache, 0, sizeof(GetDllShareData().m_bCharWidthCache));
-	GetDllShareData().m_nCharWidthCacheTest=0x12345678;
+	if( !WCODE::cache.IsSameFontFace(lf) )
+	{
+		WCODE::cache.Clear();
+	}
 }
