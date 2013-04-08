@@ -74,8 +74,8 @@ CEditDoc::CEditDoc()
 , m_bGrepMode( false )			/* Grepモードか */
 , m_nActivePaneIndex( 0 )
 , m_bDoing_UndoRedo( FALSE )		/* アンドゥ・リドゥの実行中か */
-, m_nFileShareModeOld( 0 )		/* ファイルの排他制御モード */
-, m_hLockedFile( NULL )			/* ロックしているファイルのハンドル */
+, m_nFileShareModeOld( SHAREMODE_NOT_EXCLUSIVE )	/* ファイルの排他制御モード */
+, m_hLockedFile( INVALID_HANDLE_VALUE )	/* ロックしているファイルのハンドル */
 , m_hInstance( NULL )
 , m_hWnd( NULL )
 , m_eWatchUpdate( CEditDoc::WU_QUERY )
@@ -165,7 +165,7 @@ void CEditDoc::Clear()
 	DoFileUnlock();
 
 	// ファイルの排他制御モード
-	m_nFileShareModeOld = 0;
+	m_nFileShareModeOld = SHAREMODE_NOT_EXCLUSIVE;
 
 	// アンドゥ・リドゥバッファのクリア
 	m_cOpeBuf.ClearAll();
@@ -2215,21 +2215,19 @@ bool CEditDoc::FormatBackUpPath(
 /* ファイルの排他ロック */
 void CEditDoc::DoFileLock( void )
 {
-	char*	pszMode;
-	int		nAccessMode;
 	BOOL	bCheckOnly;
 
 	/* ロックしている */
-	if( NULL != m_hLockedFile ){
+	if( INVALID_HANDLE_VALUE != m_hLockedFile ){
 		/* ロック解除 */
-		::_lclose( m_hLockedFile );
-		m_hLockedFile = NULL;
+		CloseHandle( m_hLockedFile );
+		m_hLockedFile = INVALID_HANDLE_VALUE;
 	}
 
 	/* ファイルが存在しない */
 	if( !fexist( GetFilePath() ) ){
 		/* ファイルの排他制御モード */
-		m_nFileShareModeOld = 0;
+		m_nFileShareModeOld = SHAREMODE_NOT_EXCLUSIVE;
 		return;
 	}else{
 		/* ファイルの排他制御モード */
@@ -2247,9 +2245,8 @@ void CEditDoc::DoFileLock( void )
 	}
 
 
-	nAccessMode = 0;
-	if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == OF_SHARE_DENY_WRITE ||
-		m_pShareData->m_Common.m_sFile.m_nFileShareMode == OF_SHARE_EXCLUSIVE ){
+	if( m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_WRITE ||
+		m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_DENY_READWRITE ){
 		bCheckOnly = FALSE;
 	}else{
 		/* 排他制御しないけどロックされているかのチェックは行うのでreturnしない */
@@ -2258,41 +2255,63 @@ void CEditDoc::DoFileLock( void )
 	}
 	/* 書込み禁止かどうか調べる */
 	if( -1 == _taccess( GetFilePath(), 2 ) ){	/* アクセス権：書き込み許可 */
-		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
 		UpdateCaption();
 		return;
 	}
 
-
-	m_hLockedFile = ::_lopen( GetFilePath(), OF_READWRITE );
-	_lclose( m_hLockedFile );
-	if( HFILE_ERROR == m_hLockedFile ){
-		WarningBeep();
+	HANDLE hLockedFile = CreateFile(
+		GetFilePath(),					//ファイル名
+		GENERIC_READ | GENERIC_WRITE,	//読み書きタイプ
+		0,								//共有モード
+		NULL,							//既定のセキュリティ記述子
+		OPEN_EXISTING,					//ファイルが存在しなければ失敗
+		FILE_ATTRIBUTE_NORMAL,			//特に属性は指定しない
+		NULL							//テンプレート無し
+	);
+	CloseHandle( hLockedFile );
+	if( INVALID_HANDLE_VALUE == hLockedFile ){
 		TopWarningMessage(
 			m_hWnd,
 			_T("%s\nは現在他のプロセスによって書込みが禁止されています。"),
 			IsValidPath() ? GetFilePath() : _T("(無題)")
 		);
-		m_hLockedFile = NULL;
 		/* 親ウィンドウのタイトルを更新 */
 		UpdateCaption();
 		return;
 	}
-	m_hLockedFile = ::_lopen( GetFilePath(), nAccessMode | m_pShareData->m_Common.m_sFile.m_nFileShareMode );
-	if( HFILE_ERROR == m_hLockedFile ){
+
+	DWORD dwShareMode=0;
+	switch(m_pShareData->m_Common.m_sFile.m_nFileShareMode){
+	case SHAREMODE_NOT_EXCLUSIVE:	return;												break; //排他制御無し
+	case SHAREMODE_DENY_READWRITE:	dwShareMode = 0;									break; //読み書き禁止→共有無し
+	case SHAREMODE_DENY_WRITE:		dwShareMode = FILE_SHARE_READ;						break; //書き込み禁止→読み込みのみ認める
+	default:						dwShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;	break; //禁止事項なし→読み書き共に認める
+	}
+
+	m_hLockedFile = CreateFile(
+		GetFilePath(),					//ファイル名
+		GENERIC_READ ,					//読み書きタイプ
+		dwShareMode,					//共有モード
+		NULL,							//既定のセキュリティ記述子
+		OPEN_EXISTING,					//ファイルが存在しなければ失敗
+		FILE_ATTRIBUTE_NORMAL,			//特に属性は指定しない
+		NULL							//テンプレート無し
+	);
+
+	if( INVALID_HANDLE_VALUE == m_hLockedFile ){
+		const TCHAR*	pszMode;
 		switch( m_pShareData->m_Common.m_sFile.m_nFileShareMode ){
-		case OF_SHARE_EXCLUSIVE:	/* 読み書き */
-			pszMode = "読み書き禁止モード";
+		case SHAREMODE_DENY_READWRITE:	/* 読み書き */
+			pszMode = _T("読み書き禁止モード");
 			break;
-		case OF_SHARE_DENY_WRITE:	/* 書き */
-			pszMode = "書き込み禁止モード";
+		case SHAREMODE_DENY_WRITE:	/* 書き */
+			pszMode = _T("書き込み禁止モード");
 			break;
 		default:
-			pszMode = "未定義のモード（問題があります）";
+			pszMode = _T("未定義のモード（問題があります）");
 			break;
 		}
-		WarningBeep();
 		TopWarningMessage(
 			m_hWnd,
 			_T("%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"),
@@ -2316,12 +2335,12 @@ void CEditDoc::DoFileLock( void )
 /* ファイルの排他ロック解除 */
 void CEditDoc::DoFileUnlock( void )
 {
-	if( NULL != m_hLockedFile ){
+	if( INVALID_HANDLE_VALUE != m_hLockedFile ){
 		/* ロック解除 */
-		::_lclose( m_hLockedFile );
-		m_hLockedFile = NULL;
+		CloseHandle( m_hLockedFile );
+		m_hLockedFile = INVALID_HANDLE_VALUE;
 		/* ファイルの排他制御モード */
-		m_nFileShareModeOld = 0;
+		m_nFileShareModeOld = SHAREMODE_NOT_EXCLUSIVE;
 	}
 	return;
 }
@@ -4136,7 +4155,7 @@ void CEditDoc::CheckFileTimeStamp( void )
 	if( m_pShareData->m_Common.m_sFile.m_bCheckFileTimeStamp	/* 更新の監視 */
 	 // Dec. 4, 2002 genta
 	 && m_eWatchUpdate != WU_NONE
-	 && m_pShareData->m_Common.m_sFile.m_nFileShareMode == 0	/* ファイルの排他制御モード */
+	 && m_pShareData->m_Common.m_sFile.m_nFileShareMode == SHAREMODE_NOT_EXCLUSIVE	/* ファイルの排他制御モード */
 	 && NULL != ( hwndActive = ::GetActiveWindow() )	/* アクティブ? */
 	 && hwndActive == m_hwndParent
 	 && IsValidPath()
@@ -4866,8 +4885,8 @@ int CEditDoc::ExParam_Evaluate( const char* pCond )
 		if( m_bReadOnly ){	/* 読み取り専用モード */
 			return 0;
 		}
-		else if( 0 != m_nFileShareModeOld && /* ファイルの排他制御モード */
-			NULL == m_hLockedFile		/* ロックしていない */
+		else if( SHAREMODE_NOT_EXCLUSIVE != m_nFileShareModeOld && /* ファイルの排他制御モード */
+			INVALID_HANDLE_VALUE == m_hLockedFile		/* ロックしていない */
 		){
 			return 1;
 		}

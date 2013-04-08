@@ -661,7 +661,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bBackUpPathAdvanced"	, common.m_sBackup.m_bBackUpPathAdvanced );	/* 20051107 aroka */
 	cProfile.IOProfileData( pszSecName, "szBackUpPathAdvanced"	,
 		common.m_sBackup.m_szBackUpPathAdvanced, sizeof( common.m_sBackup.m_szBackUpPathAdvanced ));	/* 20051107 aroka */
-	cProfile.IOProfileData( pszSecName, "nFileShareMode"		, common.m_sFile.m_nFileShareMode );
+	cProfile.IOProfileData( pszSecName, "nFileShareMode"		, (int&)common.m_sFile.m_nFileShareMode );
 	cProfile.IOProfileData( pszSecName, "szExtHelp",
 		common.m_sHelper.m_szExtHelp, sizeof( common.m_sHelper.m_szExtHelp ));
 	cProfile.IOProfileData( pszSecName, "szExtHtmlHelp",

@@ -3013,7 +3013,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 					DWORD dwEffects;
 					DWORD dwEffectsSrc = (
 							m_pcEditDoc->IsReadOnly()	// 読み取り専用
-							|| ( 0 != m_pcEditDoc->m_nFileShareModeOld && NULL == m_pcEditDoc->m_hLockedFile )	// 上書き禁止
+							|| ( SHAREMODE_NOT_EXCLUSIVE != m_pcEditDoc->m_nFileShareModeOld && INVALID_HANDLE_VALUE == m_pcEditDoc->m_hLockedFile )	// 上書き禁止
 						)? DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
 					int nOpe = m_pcEditDoc->m_cOpeBuf.GetCurrentPointer();
 					m_pcEditDoc->SetDragSourceView( this );
@@ -8332,7 +8332,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 	if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
 		//	Oct. 22, 2005 genta 上書き禁止(ファイルがロックされている)場合も不可
-		 && !( 0 != m_pcEditDoc->m_nFileShareModeOld && m_pcEditDoc->m_hLockedFile == NULL )
+		 && !( SHAREMODE_NOT_EXCLUSIVE != m_pcEditDoc->m_nFileShareModeOld && INVALID_HANDLE_VALUE == m_pcEditDoc->m_hLockedFile )
 		 && !m_pcEditDoc->IsReadOnly() ){ // Mar. 30, 2003 読み取り専用のファイルにはドロップさせない
 	}else{
 		return E_UNEXPECTED;	//	Moca E_INVALIDARGから変更

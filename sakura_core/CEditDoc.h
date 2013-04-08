@@ -130,7 +130,7 @@ public:
 
 	//	Aug. 14, 2000 genta
 	bool IsModificationForbidden( int nCommand );
-	bool IsEditable() const { return ( !m_bReadOnly && !( 0 != m_nFileShareModeOld && m_hLockedFile == NULL ) ); }	//!< 編集可能かどうか
+	bool IsEditable() const { return ( !m_bReadOnly && !( SHAREMODE_NOT_EXCLUSIVE != m_nFileShareModeOld && INVALID_HANDLE_VALUE == m_hLockedFile ) ); }	//!< 編集可能かどうか
 
 	//	Aug. 21, 2000 genta
 	CPassiveTimer	m_cAutoSave;	//!<	自動保存管理
@@ -326,8 +326,8 @@ public:
 	CPropCommon		m_cPropCommon;
 	CPropTypes		m_cPropTypes;
 
-	int				m_nFileShareModeOld;	/* ファイルの排他制御モード */
-	HFILE			m_hLockedFile;			/* ロックしているファイルのハンドル */
+	EShareMode		m_nFileShareModeOld;	/* ファイルの排他制御モード */
+	HANDLE			m_hLockedFile;			/* ロックしているファイルのハンドル */
 
 	//	Sep. 29, 2001 genta
 	CSMacroMgr*		m_pcSMacroMgr;	//!< マクロ

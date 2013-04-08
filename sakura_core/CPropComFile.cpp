@@ -43,12 +43,12 @@ static const DWORD p_helpids[] = {	//01310
 };
 
 struct {
-	int		nMethod;
-	TCHAR*		pszName;
+	EShareMode		nMethod;
+	const TCHAR*	pszName;
 } ShareModeArr[] = {
-	{ 0,	_T("‚µ‚È‚¢") },
-	{ OF_SHARE_DENY_WRITE,		_T("ã‘‚«‚ğ‹Ö~‚·‚é") },
-	{ OF_SHARE_EXCLUSIVE,	_T("“Ç‚İ‘‚«‚ğ‹Ö~‚·‚é") },
+	{ SHAREMODE_NOT_EXCLUSIVE,	_T("‚µ‚È‚¢") },
+	{ SHAREMODE_DENY_WRITE,		_T("ã‘‚«‚ğ‹Ö~‚·‚é") },
+	{ SHAREMODE_DENY_READWRITE,	_T("“Ç‚İ‘‚«‚ğ‹Ö~‚·‚é") },
 };
 
 //	From Here Jun. 2, 2001 genta
