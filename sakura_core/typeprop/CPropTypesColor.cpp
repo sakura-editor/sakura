@@ -483,12 +483,6 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					delete pPropKeyword;
 					return TRUE;
 				}
-			//強調キーワードの選択
-			case IDC_BUTTON_TYPEFONT:
-				{
-//					ChooseFont();
-					return TRUE;
-				}
 			}
 			break;	/* BN_CLICKED */
 		}
