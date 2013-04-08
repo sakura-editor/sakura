@@ -1,4 +1,7 @@
-PREFIX=i586-mingw32msvc-
+ifeq ($(MSYSTEM), MINGW32)
+else
+	PREFIX=i586-mingw32msvc-
+endif
 
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
