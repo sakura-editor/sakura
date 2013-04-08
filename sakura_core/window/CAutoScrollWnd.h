@@ -36,7 +36,7 @@ public:
 	void Close();
 
 private:
-	const TCHAR*	m_pszClassName;	/* クラス名 */
+	LPCTSTR	m_pszClassName;	/* クラス名 */
 	HBITMAP	m_hCenterImg;
 	CEditView*	m_cView;
 protected:
