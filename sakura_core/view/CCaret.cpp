@@ -167,7 +167,6 @@ CLayoutInt CCaret::MoveCursor(
 	// カーソル行アンダーラインのOFF
 	m_cUnderLine.SetUnderLineDoNotOFF( bUnderLineDoNotOFF );
 	m_cUnderLine.SetVertLineDoNotOFF( bVertLineDoNotOFF );
-	DBPRINT_A("%d\n", (int)(ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg) );
 	m_cUnderLine.CaretUnderLineOFF( bScroll, ptWk_CaretPos.GetY2() != m_pEditView->m_nOldUnderLineYBg );	//	YAZAKI
 	m_cUnderLine.SetUnderLineDoNotOFF( false );
 	m_cUnderLine.SetVertLineDoNotOFF( false );
