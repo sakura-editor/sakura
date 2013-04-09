@@ -1309,6 +1309,10 @@
 <param name="Local" value="_RESOURCE\HLP000108.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="オートスクロール">
+<param name="Local" value="_RESOURCE\HLP000296.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="デフォルト設定値（インストール時）">
 <param name="Local" value="_RESOURCE\HLP000001.html#c925">
 </OBJECT>

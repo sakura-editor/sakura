@@ -1725,6 +1725,11 @@
 					<param name="Local" value="_RESOURCE\HLP000108.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="オートスクロール">
+					<param name="Local" value="_RESOURCE\HLP000296.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
 			</UL>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
