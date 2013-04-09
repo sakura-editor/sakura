@@ -169,6 +169,7 @@ private:
 	static DWORD m_dwDlgTmpSize;
 
 	POINT				m_ptDefaultSize;
+	POINT				m_ptDefaultSizeClient;
 	RECT				m_rcItems[12];
 };
 

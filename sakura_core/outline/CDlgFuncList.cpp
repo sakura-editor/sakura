@@ -1517,13 +1517,19 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	::GetWindowRect( hwndDlg, &rc );
 	m_ptDefaultSize.x = rc.right - rc.left;
 	m_ptDefaultSize.y = rc.bottom - rc.top;
+	
+	::GetClientRect( hwndDlg, &rc );
+	m_ptDefaultSizeClient.x = rc.right;
+	m_ptDefaultSizeClient.y = rc.bottom;
 
 	for( int i = 0; i < _countof(anchorList); i++ ){
 		GetItemClientRect( anchorList[i].id, m_rcItems[i] );
 		// ドッキング中はウィンドウ幅いっぱいまで伸ばす
 		if( IsDocking() ){
 			if( anchorList[i].anchor == ANCHOR_ALL ){
-				m_rcItems[i].bottom = m_ptDefaultSize.y - 20;
+				::GetClientRect( hwndDlg, &rc );
+				m_rcItems[i].right = rc.right;
+				m_rcItems[i].bottom = rc.bottom;
 			}
 		}
 	}
@@ -1830,13 +1836,12 @@ BOOL CDlgFuncList::OnSize( WPARAM wParam, LPARAM lParam )
 
 	RECT  rc;
 	POINT ptNew;
-	::GetWindowRect( GetHwnd(), &rc );
-	ptNew.x = rc.right - rc.left;
-	ptNew.y = rc.bottom - rc.top;
+	ptNew.x = rcDlg.right - rcDlg.left;
+	ptNew.y = rcDlg.bottom - rcDlg.top;
 
 	for( int i = 0 ; i < _countof(anchorList); i++ ){
 		HWND hwndCtrl = GetItemHwnd(anchorList[i].id);
-		ResizeItem( hwndCtrl, m_ptDefaultSize, ptNew, m_rcItems[i], anchorList[i].anchor, (anchorList[i].anchor != ANCHOR_ALL));
+		ResizeItem( hwndCtrl, m_ptDefaultSizeClient, ptNew, m_rcItems[i], anchorList[i].anchor, (anchorList[i].anchor != ANCHOR_ALL));
 //	2013.2.6 aroka ちらつき防止用の試行錯誤
 		if(anchorList[i].anchor == ANCHOR_ALL){
 			::UpdateWindow( hwndCtrl );
