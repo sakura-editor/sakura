@@ -1657,19 +1657,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypesScreen.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\typeprop\CPropTypesColor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypesWindow.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypesSupport.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesKeyHelp.cpp"
 					>
 				</File>
 				<File
@@ -1677,7 +1669,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\typeprop\CPropTypesKeyHelp.cpp"
+					RelativePath="..\sakura_core\typeprop\CPropTypesScreen.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypesSupport.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\typeprop\CPropTypesWindow.cpp"
 					>
 				</File>
 			</Filter>
@@ -3145,11 +3145,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\cmd\CViewCommander_Grep.cpp"
+					RelativePath="..\sakura_core\cmd\CViewCommander_File.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\cmd\CViewCommander_File.cpp"
+					RelativePath="..\sakura_core\cmd\CViewCommander_Grep.cpp"
 					>
 				</File>
 				<File
@@ -3169,15 +3169,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\sakura_core\cmd\CViewCommander_Settings.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Search.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Select.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_Settings.cpp"
 					>
 				</File>
 				<File

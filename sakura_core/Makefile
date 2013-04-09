@@ -7,9 +7,9 @@ RC= windres
 
 DEFINES= \
  -DWIN32 \
- -DWINVER=0x601 \
- -D_WIN32_WINNT=0x601 \
- -D_WIN32_IE=0x600 \
+ -DWINVER=0x500 \
+ -D_WIN32_WINNT=0x500 \
+ -D_WIN32_IE=0x501 \
  -DNOMINMAX \
  -D_UNICODE \
  -DUNICODE \
@@ -35,30 +35,20 @@ OBJS= \
 CAutoReloadAgent.o \
 CAutoSaveAgent.o \
 CBackupAgent.o \
-CBregexp.o \
-CBregexpDll2.o \
 CCodeChecker.o \
 CDataProfile.o \
 CDicMgr.o \
-CDllHandler.o \
 CEditApp.o \
 CEol.o \
 CFileExt.o \
-CGraphics.o \
 CGrepAgent.o \
 CHokanMgr.o \
-CHtmlHelp.o \
-CImageListMgr.o \
 CKeyWordSetMgr.o \
 CLoadAgent.o \
 CMarkMgr.o \
-CMenuDrawer.o \
-CMigemo.o \
 COpe.o \
 COpeBlk.o \
 COpeBuf.o \
-CPrint.o \
-CPrintPreview.o \
 CProfile.o \
 CPropertyManager.o \
 CReadManager.o \
@@ -66,10 +56,6 @@ CRegexKeyword.o \
 CSaveAgent.o \
 CSearchAgent.o \
 CSortedTagJumpList.o \
-CSoundSet.o \
-CUxTheme.o \
-CVisualProgress.o \
-CWaitCursor.o \
 CWriteManager.o \
 StdAfx.o \
 apiwrap/StdApi.o \
@@ -202,6 +188,12 @@ env/CShareData.o \
 env/CShareData_IO.o \
 env/CTagJumpManager.o \
 env/DLLSHAREDATA.o \
+extmodule/CBregexp.o \
+extmodule/CBregexpDll2.o \
+extmodule/CDllHandler.o \
+extmodule/CHtmlHelp.o \
+extmodule/CMigemo.o \
+extmodule/CUxTheme.o \
 func/CFuncKeyWnd.o \
 func/CFuncLookup.o \
 func/CKeyBind.o \
@@ -241,6 +233,8 @@ plugin/CJackManager.o \
 plugin/CPlugin.o \
 plugin/CPluginManager.o \
 plugin/CWSHPlugin.o \
+print/CPrint.o \
+print/CPrintPreview.o \
 prop/CPropComBackup.o \
 prop/CPropComCustmenu.o \
 prop/CPropComEdit.o \
@@ -281,12 +275,12 @@ typeprop/CDlgTypeAscertain.o \
 typeprop/CDlgTypeList.o \
 typeprop/CImpExpManager.o \
 typeprop/CPropTypes.o \
-typeprop/CPropTypesScreen.o \
 typeprop/CPropTypesColor.o \
-typeprop/CPropTypesWindow.o \
-typeprop/CPropTypesSupport.o \
-typeprop/CPropTypesRegex.o \
 typeprop/CPropTypesKeyHelp.o \
+typeprop/CPropTypesRegex.o \
+typeprop/CPropTypesScreen.o \
+typeprop/CPropTypesSupport.o \
+typeprop/CPropTypesWindow.o \
 types/CType.o \
 types/CTypeSupport.o \
 types/CType_Asm.o \
@@ -309,6 +303,12 @@ types/CType_Sql.o \
 types/CType_Tex.o \
 types/CType_Text.o \
 types/CType_Vb.o \
+uiparts/CGraphics.o \
+uiparts/CImageListMgr.o \
+uiparts/CMenuDrawer.o \
+uiparts/CSoundSet.o \
+uiparts/CVisualProgress.o \
+uiparts/CWaitCursor.o \
 util/file.o \
 util/format.o \
 util/input.o \
@@ -385,15 +385,18 @@ _main/global.o \
 _main/WinMain.o \
 _os/CClipboard.o \
 _os/CDropTarget.o \
-sakura_rc.o
+sakura_rc.o \
 
 TOOLDIR=../btool
 RCTOOL=$(TOOLDIR)/mrc2grc.exe
 
 all: $(RCTOOL) $(exe)
 
-$(exe): $(OBJS)
+$(exe): stdafx $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LIBS)
+
+stdafx:
+	$(CXX) $(CXXFLAGS) -c StdAfx.h
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
