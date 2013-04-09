@@ -2263,7 +2263,7 @@ void CEditDoc::DoFileLock( void )
 	HANDLE hLockedFile = CreateFile(
 		GetFilePath(),					//ファイル名
 		GENERIC_READ | GENERIC_WRITE,	//読み書きタイプ
-		0,								//共有モード
+		FILE_SHARE_READ | FILE_SHARE_WRITE,	//共有モード
 		NULL,							//既定のセキュリティ記述子
 		OPEN_EXISTING,					//ファイルが存在しなければ失敗
 		FILE_ATTRIBUTE_NORMAL,			//特に属性は指定しない
