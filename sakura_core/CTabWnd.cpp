@@ -2486,17 +2486,15 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 	{
 		EditNode* pEditNode;
 		int i;
-		int nGroup;
+		int nGroup = 0;
 		int nSelfTab;
 		int nTab;
 		int nCount;
-		
+
 		// タブメニュー用の情報を取得する
 		nCount = CShareData::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 		if( 0 >= nCount )
 			return 0L;
-
-		TABMENU_DATA* pData = new TABMENU_DATA[nCount];	// タブメニュー用の情報
 
 		// 自ウィンドウのグループ番号を調べる
 		for( i = 0; i < nCount; i++ )
@@ -2507,6 +2505,11 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 				break;
 			}
 		}
+		if( i >= nCount ) {
+			return 0L;
+		}
+
+		TABMENU_DATA* pData = new TABMENU_DATA[nCount];	// タブメニュー用の情報
 
 		// 自グループのウィンドウ一覧情報を作成する
 		nSelfTab = 0;

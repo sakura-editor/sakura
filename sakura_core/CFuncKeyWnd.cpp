@@ -437,7 +437,7 @@ void CFuncKeyWnd::CreateButtons( void )
 	int		i;
 
 	::GetWindowRect( m_hWnd, &rcParent );
-	nButtonHeight = nButtonHeight = rcParent.bottom - rcParent.top - 2;
+	nButtonHeight = rcParent.bottom - rcParent.top - 2;
 
 	for( i = 0; i < _countof(	m_nFuncCodeArr ); ++i ){
 		m_nFuncCodeArr[i] = F_0;
@@ -450,14 +450,14 @@ void CFuncKeyWnd::CreateButtons( void )
 			WS_VISIBLE | WS_CHILD | BS_LEFT,	// styles
 			// Size and position values are given explicitly, because
 			// the CW_USEDEFAULT constant gives zero values for buttons.
-			0,			// starting x position
-			0 + 1,		// starting y position
-			0,			// button width
+			0,					// starting x position
+			0 + 1,				// starting y position
+			0,					// button width
 			nButtonHeight,		// button height
-			m_hWnd,		// parent window
-			NULL,		// No menu
+			m_hWnd,				// parent window
+			NULL,				// No menu
 			(HINSTANCE) GetWindowLongPtr(m_hWnd, GWLP_HINSTANCE),	// Modified by KEITA for WIN64 2003.9.6
-			NULL		// pointer not needed
+			NULL				// pointer not needed
 		);
 		/* フォント変更 */
 		::SendMessage( m_hwndButtonArr[i], WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
