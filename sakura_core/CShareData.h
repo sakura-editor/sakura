@@ -628,7 +628,7 @@ struct CommonSetting_Backup
 	bool				m_bBackUp;						// 保存時にバックアップを作成する
 	bool				m_bBackUpDialog;				// バックアップの作成前に確認
 	bool				m_bBackUpFolder;				// 指定フォルダにバックアップを作成する
-
+	bool				m_bBackUpFolderRM;				// 指定フォルダにバックアップを作成する(リムーバブルメディアのみ)
 	char				m_szBackUpFolder[_MAX_PATH];	// バックアップを作成するフォルダ
 	int 				m_nBackUpType;					// バックアップファイル名のタイプ 1=(.bak) 2=*_日付.*
 	int 				m_nBackUpType_Opt1;				// バックアップファイル名：オプション1

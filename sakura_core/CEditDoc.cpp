@@ -1350,19 +1350,6 @@ BOOL CEditDoc::FileWrite( const char* pszPath, EEolType cEolType )
 			)){
 				return FALSE;
 			}
-		case 4:	//	バックアップファイルのパスが長すぎる
-			if( IDYES != ::MYMESSAGEBOX(
-				m_hWnd,
-				MB_YESNO | MB_ICONQUESTION | MB_TOPMOST,
-				_T("ファイル保存"),
-				_T("ファイルパスが長すぎるためバックアップの作成に失敗しました．\n")
-				_T("ANSI 版では %d バイト以上の絶対パスを扱えません．\n\n")
-				_T("元ファイルへの上書きを継続して行いますか．"),
-				_MAX_PATH
-			)){
-				return FALSE;
-			}
-		break;
 		}
 	}
 
@@ -1698,12 +1685,13 @@ void CEditDoc::UpdateCaption()
 	@date 2005.11.26 aroka ファイル名生成をFormatBackUpPathに分離
 	@date 2008.11.23 nasukoji パスが長すぎる場合への対応（戻り値4を追加）
 
+	@param target_file [in] バックアップ元パス名
+
 	@retval 0 バックアップ作成失敗．
 	@retval 1 バックアップ作成成功．
 	@retval 2 バックアップ作成失敗．保存中断指示．
 	@retval 3 ファイル操作エラーによるバックアップ作成失敗．
-	@retval 4 バックアップ作成失敗．ファイルパスが長すぎる．
-	
+
 	@todo Advanced modeでの世代管理
 */
 int CEditDoc::MakeBackUp(
@@ -1721,27 +1709,18 @@ int CEditDoc::MakeBackUp(
 
 	const CommonSetting_Backup& bup_setting = m_pShareData->m_Common.m_sBackup;
 
-	if( bup_setting.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
-		//	Aug. 21, 2005 genta 指定フォルダがない場合に警告
-		if( (!fexist( m_pShareData->m_Common.m_sBackup.m_szBackUpFolder ))){
-			if( ::TopConfirmMessage(
-				m_hWnd,
-				_T("バックアップエラー"),
-				_T("以下のバックアップフォルダが見つかりません．\n%s\n")
-				_T("バックアップを作成せずに上書き保存してよろしいですか．"),
-				m_pShareData->m_Common.m_sBackup.m_szBackUpFolder
-			) == IDYES ){
-				return 0;//	保存継続
-			}
-			else {
-				return 2;// 保存中断
-			}
-		}
-	}
-
-	TCHAR	szPath[_MAX_PATH];
+	TCHAR	szPath[_MAX_PATH]; // バックアップ先パス名
 	if( !FormatBackUpPath( szPath, _countof(szPath), target_file ) ){
-		return 4;	// 作成すべきバックアップファイルのパスが長すぎる
+		int nMsgResult = ::TopConfirmMessage(
+			m_hWnd,
+			_T("バックアップ先のパス作成中にエラーになりました。\n")
+			_T("パスが長すぎるか不正な書式です。\n")
+			_T("バックアップを作成せずに上書き保存してよろしいですか？")
+		);
+		if( nMsgResult == IDYES ){
+			return 0;//	保存継続
+		}
+		return 2;// 保存中断
 	}
 
 	//@@@ 2002.03.23 start ネットワーク・リムーバブルドライブの場合はごみ箱に放り込まない
@@ -1925,7 +1904,7 @@ int CEditDoc::MakeBackUp(
 
 
 
-/*! バックアップの作成
+/*! バックアップパスの作成
 
 	@author aroka
 	@date 2005.11.29 aroka
@@ -1934,21 +1913,26 @@ int CEditDoc::MakeBackUp(
 	@date 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
 	@date 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる対応
 
+	@param szNewPath [out] バックアップ先パス名
+	@param newPathCount [in] szNewPathのサイズ
+	@param target_file [in] バックアップ元パス名
+
 	@retval true  成功
-	@retval false	バッファ不足
-	
+	@retval false バッファ不足
+
 	@todo Advanced modeでの世代管理
 */
 bool CEditDoc::FormatBackUpPath(
-	TCHAR*			szNewPath,		//!< [out] バックアップ先パス名
-	DWORD 			newPathCount,	//!< [in]  szNewPathのサイズ
-	const TCHAR*	target_file		//!< [in]  バックアップ元パス名
+	TCHAR*			szNewPath,
+	size_t 			newPathCount,
+	const TCHAR*	target_file
 )
 {
 	TCHAR	szDrive[_MAX_DIR];
 	TCHAR	szDir[_MAX_DIR];
 	TCHAR	szFname[_MAX_FNAME];
 	TCHAR	szExt[_MAX_EXT];
+	TCHAR*	psNext;
 	TCHAR	szTempPath[1024];		// パス名作成用の一時バッファ（_MAX_PATHよりある程度大きいこと）
 
 	bool	bOverflow = false;		// バッファオーバーフロー
@@ -1958,8 +1942,12 @@ bool CEditDoc::FormatBackUpPath(
 	/* パスの分解 */
 	_tsplitpath( target_file, szDrive, szDir, szFname, szExt );
 
-	if( bup_setting.m_bBackUpFolder ){	/* 指定フォルダにバックアップを作成する */
-		_tcscpy( szTempPath, m_pShareData->m_Common.m_sBackup.m_szBackUpFolder );
+	if( bup_setting.m_bBackUpFolder
+	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file )) ){	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
+		if (GetFullPathName(bup_setting.m_szBackUpFolder, _MAX_PATH, szTempPath, &psNext) == 0) {
+			// うまく取れなかった
+			_tcscpy( szTempPath, bup_setting.m_szBackUpFolder );
+		}
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szTempPath );
 	}
@@ -2091,7 +2079,9 @@ bool CEditDoc::FormatBackUpPath(
 				SYSTEMTIME	SystemTime;
 				::GetSystemTime(&SystemTime);			// 現在時刻を取得
 
-				GetDateTimeFormat( szFormat, sizeof(szFormat), m_pShareData->m_Common.m_sBackup.m_szBackUpPathAdvanced , SystemTime );
+				if( !GetDateTimeFormat( szFormat, _countof(szFormat), bup_setting.m_szBackUpPathAdvanced , SystemTime ) ){
+					return false;
+				}
 			}
 			break;
 		}

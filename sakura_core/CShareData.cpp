@@ -309,10 +309,13 @@ struct ARRHEAD {
 
 	Version 111:
 	–³‘è”Ô†
+
+	Version 112:
+	Backup Removable Media ‘Î‰
 */
 
 extern const unsigned int uShareDataVersion;
-const unsigned int uShareDataVersion = 111;
+const unsigned int uShareDataVersion = 112;
 
 /*
 ||	Singleton•—

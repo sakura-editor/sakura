@@ -369,7 +369,7 @@ protected:
 
 	// 2005.11.21 aroka
 	// 2008.11.23 nasukoji	パスが長すぎる場合への対応
-	bool FormatBackUpPath( char* szNewPath, DWORD dwSize, const char* target_file );	/* バックアップパスの作成 */
+	bool FormatBackUpPath( char* szNewPath, size_t dwSize, const char* target_file );	/* バックアップパスの作成 */
 };
 
 

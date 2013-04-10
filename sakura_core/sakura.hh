@@ -328,6 +328,7 @@
 
 
 #define HLP_UR000	3000 //サクラエディタ共同開発版について
+#define HLP_UR015	3014 //変更履歴(2013/03/31-)
 #define HLP_UR014	3014 //変更履歴(2007/09/27-)
 #define HLP_UR013	3013 //変更履歴(2006/11/04-)
 #define HLP_UR012	3012 //変更履歴(2005/10/02-)
@@ -358,6 +359,7 @@
 #define HIDC_CHECK_BACKUPDIALOG					10017 //作成前に確認
 #define HIDC_CHECK_BACKUPFOLDER					10018 //指定フォルダに作成
 #define HIDC_CHECK_BACKUP_DUSTBOX				10019 //バックアップをごみ箱に放り込む	//@@@ 2002.01.03
+#define HIDC_CHECK_BACKUP_FOLDER_RM				10020 //指定フォルダに作成(リムーバブルメディアのみ)	// 2010/5/27 Uchi
 #define HIDC_EDIT_BACKUPFOLDER					10040 //保存フォルダ名
 #define HIDC_EDIT_BACKUP_3						10041 //世代数
 #define HIDC_EDIT_BACKUPFILE					10042 //保存ファイル名

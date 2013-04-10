@@ -35,6 +35,7 @@ static const DWORD p_helpids[] = {	//10000
 	IDC_CHECK_BACKUP_SEC,			HIDC_CHECK_BACKUP_SEC,			//バックアップファイル名（秒）
 	IDC_CHECK_BACKUPDIALOG,			HIDC_CHECK_BACKUPDIALOG,		//作成前に確認
 	IDC_CHECK_BACKUPFOLDER,			HIDC_CHECK_BACKUPFOLDER,		//指定フォルダに作成
+	IDC_CHECK_BACKUP_FOLDER_RM,		HIDC_CHECK_BACKUP_FOLDER_RM,	//指定フォルダに作成(リムーバブルメディアのみ)
 	IDC_CHECK_BACKUP_DUSTBOX,		HIDC_CHECK_BACKUP_DUSTBOX,		//バックアップファイルをごみ箱に放り込む	//@@@ 2001.12.11 add MIK
 	IDC_EDIT_BACKUPFOLDER,			HIDC_EDIT_BACKUPFOLDER,			//保存フォルダ名
 	IDC_EDIT_BACKUP_3,				HIDC_EDIT_BACKUP_3,				//世代数
@@ -280,6 +281,7 @@ void CPropBackup::SetData( HWND hwndDlg )
 
 	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動：連動対象にする。
 	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUPFOLDER, m_Common.m_sBackup.m_bBackUpFolder ? BST_CHECKED : BST_UNCHECKED );
+	::CheckDlgButton( hwndDlg, IDC_CHECK_BACKUP_FOLDER_RM, m_Common.m_sBackup.m_bBackUpFolderRM ? BST_CHECKED : BST_UNCHECKED );	// 2010/5/27 Uchi
 
 	/* バックアップを作成するフォルダ */
 	::SetDlgItemText( hwndDlg, IDC_EDIT_BACKUPFOLDER, m_Common.m_sBackup.m_szBackUpFolder );
@@ -388,6 +390,7 @@ int CPropBackup::GetData( HWND hwndDlg )
 
 	/* 指定フォルダにバックアップを作成する */ // 20051107 aroka 移動
 	m_Common.m_sBackup.m_bBackUpFolder = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUPFOLDER ) != 0;
+	m_Common.m_sBackup.m_bBackUpFolderRM = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BACKUP_FOLDER_RM ) != 0;	// 2010/5/27 Uchi
 
 	/* バックアップを作成するフォルダ */
 	//	Oct. 5, 2002 genta サイズをsizeof()で指定
@@ -489,6 +492,7 @@ void CPropBackup::EnableBackupInput(HWND hwndDlg)
 
 	SHOWENABLE( IDC_CHECK_BACKUPFOLDER,		TRUE, bBackup );
 	SHOWENABLE( IDC_LABEL_BACKUP_4,			TRUE, bBackup && bFolder );	// added Sept. 6, JEPRO フォルダ指定したときだけEnableになるように変更
+	SHOWENABLE( IDC_CHECK_BACKUP_FOLDER_RM,	TRUE, bBackup && bFolder );	// 2010/5/27 Uchi
 	SHOWENABLE( IDC_EDIT_BACKUPFOLDER,		TRUE, bBackup && bFolder );
 	SHOWENABLE( IDC_BUTTON_BACKUP_FOLDER_REF,	TRUE, bBackup && bFolder );
 	SHOWENABLE( IDC_CHECK_BACKUP_DUSTBOX,	TRUE, bBackup );	//@@@ 2001.12.11 add MIK

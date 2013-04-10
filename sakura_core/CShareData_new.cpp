@@ -619,12 +619,12 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	
 	/* ê≥ãKï\åªDLL 2007.08.12 genta */
 	cProfile.IOProfileData( pszSecName, "szRegexpLib"			, common.m_sSearch.m_szRegexpLib, sizeof( common.m_sSearch.m_szRegexpLib ) );
-	
 	cProfile.IOProfileData( pszSecName, "bGTJW_RETURN"			, common.m_sSearch.m_bGTJW_RETURN );
 	cProfile.IOProfileData( pszSecName, "bGTJW_LDBLCLK"			, common.m_sSearch.m_bGTJW_LDBLCLK );
 	cProfile.IOProfileData( pszSecName, "bBackUp"				, common.m_sBackup.m_bBackUp );
 	cProfile.IOProfileData( pszSecName, "bBackUpDialog"			, common.m_sBackup.m_bBackUpDialog );
 	cProfile.IOProfileData( pszSecName, "bBackUpFolder"			, common.m_sBackup.m_bBackUpFolder );
+	cProfile.IOProfileData( pszSecName, "bBackUpFolderRM"		, common.m_sBackup.m_bBackUpFolderRM );	// 2010/5/27 Uchi
 	
 	if( !cProfile.IsReadingMode() ){
 		int	nDummy;

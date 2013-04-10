@@ -1467,12 +1467,16 @@ bool IsLocalDrive( const TCHAR* pszDrive )
 	long	lngRet;
 
 	if( isalpha(pszDrive[0]) ){
-		sprintf(szDriveType, _T("%c:\\"), toupper(pszDrive[0]));
+		_stprintf(szDriveType, _T("%c:\\"), toupper(pszDrive[0]));
 		lngRet = GetDriveType( szDriveType );
 		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
 		{
 			return false;
 		}
+	}
+	else if (pszDrive[0] == _T('\\') && pszDrive[1] == _T('\\')) {
+		// ネットワークパス	2010/5/27 Uchi
+		return false;
 	}
 	return true;
 }
