@@ -436,7 +436,7 @@ void CFuncKeyWnd::CreateButtons( void )
 	int		i;
 
 	::GetWindowRect( GetHwnd(), &rcParent );
-	nButtonHeight = nButtonHeight = rcParent.bottom - rcParent.top - 2;
+	nButtonHeight = rcParent.bottom - rcParent.top - 2;
 
 	for( i = 0; i < _countof(	m_nFuncCodeArr ); ++i ){
 		m_nFuncCodeArr[i] = F_0;

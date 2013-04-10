@@ -2475,8 +2475,6 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 		if( 0 >= nCount )
 			return 0L;
 
-		TABMENU_DATA* pData = new TABMENU_DATA[nCount];	// タブメニュー用の情報
-
 		// 自ウィンドウのグループ番号を調べる
 		for( i = 0; i < nCount; i++ )
 		{
@@ -2489,6 +2487,8 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 		if( i >= nCount ) {
 			return 0L;
 		}
+
+		TABMENU_DATA* pData = new TABMENU_DATA[nCount];	// タブメニュー用の情報
 
 		// 自グループのウィンドウ一覧情報を作成する
 		nSelfTab = 0;
