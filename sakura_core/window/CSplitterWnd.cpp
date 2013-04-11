@@ -53,7 +53,6 @@ CSplitterWnd::CSplitterWnd()
 
 CSplitterWnd::~CSplitterWnd()
 {
-	this->DestroyWindow();
 }
 
 

@@ -92,8 +92,8 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 
 void CAutoScrollWnd::Close()
 {
-	DestroyWindow();
-	
+	this->DestroyWindow();
+
 	if( m_hCenterImg ){
 		::DeleteObject( m_hCenterImg );
 		m_hCenterImg = NULL;

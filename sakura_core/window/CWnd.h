@@ -30,7 +30,6 @@
 	@li ウィンドウメッセージ配送
 
 	@par 普通?のウィンドウの使用方法は以下の手順
-	@li Init()		初期化
 	@li RegisterWC()	ウィンドウクラス登録
 	@li Create()		ウィンドウ作成
 */
@@ -45,8 +44,6 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-
-	void Init( HINSTANCE, HWND );/* 初期化 */
 
 	// ウィンドウクラス登録
 	ATOM RegisterWC(
@@ -79,9 +76,6 @@ protected:
 	virtual LRESULT DispatchEvent_WM_APP( HWND, UINT, WPARAM, LPARAM );/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
 	virtual void PreviCreateWindow( void ){return;}/* ウィンドウ作成前の処理(クラス登録前) ( virtual )*/
 	virtual void AfterCreateWindow( void ){::ShowWindow( m_hWnd, SW_SHOW );}/* ウィンドウ作成後の処理 ( virtual )*/
-
-	/* 仮想関数 メッセージ処理 詳しくは実装を参照 */
-	virtual LRESULT OnNcDestroy( HWND, UINT, WPARAM, LPARAM );// WM_NCDESTROY
 
 	/* 仮想関数 メッセージ処理(デフォルト動作) */
 	#define DECLH(method) LRESULT method( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ){return CallDefWndProc( hwnd, msg, wp, lp );}
@@ -125,13 +119,7 @@ public:
 	void _SetHwnd(HWND hwnd){ m_hWnd = hwnd; }
 
 	//ウィンドウ標準操作
-	void DestroyWindow()
-	{
-		if(m_hWnd){
-			::DestroyWindow( m_hWnd );
-			m_hWnd = NULL;
-		}
-	}
+	void DestroyWindow();
 
 private: // 2002/2/10 aroka アクセス権変更
 	HINSTANCE	m_hInstance;	// アプリケーションインスタンスのハンドル
