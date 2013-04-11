@@ -370,7 +370,7 @@ BOOL CEditView::Create(
 CEditView::~CEditView()
 {
 	if( GetHwnd() != NULL ){
-		DestroyWindow( GetHwnd() );
+		::DestroyWindow( GetHwnd() );
 	}
 
 	/* 再描画用コンパチブルＤＣ */
@@ -735,7 +735,7 @@ LRESULT CEditView::DispatchEvent(
 
 	case WM_CLOSE:
 //		MYTRACE_A( "	WM_CLOSE\n" );
-		DestroyWindow( hwnd );
+		::DestroyWindow( hwnd );
 		return 0L;
 	case WM_DESTROY:
 		m_pcDropTarget->Revoke_DropTarget();
@@ -749,15 +749,15 @@ LRESULT CEditView::DispatchEvent(
 		||子ウィンドウの破棄
 		*/
 		if( NULL != m_hwndVScrollBar ){	// Aug. 20, 2005 Aroka
-			DestroyWindow( m_hwndVScrollBar );
+			::DestroyWindow( m_hwndVScrollBar );
 			m_hwndVScrollBar = NULL;
 		}
 		if( NULL != m_hwndHScrollBar ){
-			DestroyWindow( m_hwndHScrollBar );
+			::DestroyWindow( m_hwndHScrollBar );
 			m_hwndHScrollBar = NULL;
 		}
 		if( NULL != m_hwndSizeBox ){
-			DestroyWindow( m_hwndSizeBox );
+			::DestroyWindow( m_hwndSizeBox );
 			m_hwndSizeBox = NULL;
 		}
 		SAFE_DELETE(m_pcsbwVSplitBox);	/* 垂直分割ボックス */
@@ -1668,7 +1668,7 @@ void CEditView::SplitBoxOnOff( BOOL bVert, BOOL bHorz, BOOL bSizeBox )
 		);
 	}else{
 		if( NULL != m_hwndSizeBox ){
-			DestroyWindow( m_hwndSizeBox );
+			::DestroyWindow( m_hwndSizeBox );
 			m_hwndSizeBox = NULL;
 		}
 		m_hwndSizeBox = ::CreateWindowEx(
