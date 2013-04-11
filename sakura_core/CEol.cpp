@@ -118,8 +118,7 @@ EEolType _GetEOLType_uni( const char* pszData, int nDataLen )
 EEolType _GetEOLType_unibe( const char* pszData, int nDataLen )
 {
 	for( int i = 1; i < EOL_TYPE_NUM; ++i ){
-		bool bret = g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen);
-		if( bret == true )
+		if( g_aEolTable_uni_file[i].StartsWithWB(pszData, nDataLen) )
 			return gm_pnEolTypeArr[i];
 	}
 	return EOL_NONE;
