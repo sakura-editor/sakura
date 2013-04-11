@@ -815,7 +815,7 @@ LRESULT CEditApp::DispatchEvent(
 			if( CloseAllEditor( FALSE, m_hWnd, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
 				//	Jan. 31, 2000 genta
 				//	この時点ではWindowsの終了が確定していないので常駐解除すべきではない．
-				//	DestroyWindow( hwnd );
+				//	::DestroyWindow( hwnd );
 				return TRUE;
 			}else{
 				return FALSE;
@@ -823,7 +823,7 @@ LRESULT CEditApp::DispatchEvent(
 		case WM_CLOSE:
 			/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更
 			if( CloseAllEditor( FALSE, m_hWnd, TRUE, 0 ) ){	// 2006.12.25, 2007.02.13 ryoji 引数追加
-				DestroyWindow( hwnd );
+				::DestroyWindow( hwnd );
 			}
 			return 0L;
 

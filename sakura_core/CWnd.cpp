@@ -78,18 +78,6 @@ CWnd::~CWnd()
 }
 
 
-/* 初期化 */
-void CWnd::Init(
-	HINSTANCE	hInstance,		// handle to application instance
-	HWND		hwndParent // handle to parent or owner window
-)
-{
-	m_hInstance = hInstance;
-	m_hwndParent = hwndParent;
-	return;
-}
-
-
 /* ウィンドウクラス作成 */
 ATOM CWnd::RegisterWC(
 	/* WNDCLASS用 */
@@ -203,8 +191,6 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 	CALLH( WM_DRAWITEM			, OnDrawItem		);	// 2006.02.01 ryoji
 	CALLH( WM_CAPTURECHANGED	, OnCaptureChanged	);	// 2006.11.30 ryoji
 
-	CALLH( WM_NCDESTROY			, OnNcDestroy		);
-
 	default:
 		if( WM_APP <= msg && msg <= 0xBFFF ){
 			/* アプリケーション定義のメッセージ(WM_APP <= msg <= 0xBFFF) */
@@ -219,15 +205,6 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 LRESULT CWnd::DispatchEvent_WM_APP( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
 	return CallDefWndProc( hwnd, msg, wp, lp );
-}
-
-
-
-// WM_NCDESTROY
-LRESULT CWnd::OnNcDestroy( HWND, UINT, WPARAM, LPARAM )
-{
-	m_hWnd = NULL;
-	return 0L;
 }
 
 /* デフォルトメッセージ処理 */

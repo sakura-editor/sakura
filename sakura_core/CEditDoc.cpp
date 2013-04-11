@@ -151,7 +151,7 @@ CEditDoc::~CEditDoc()
 	}
 
 	if( m_hWnd != NULL ){
-		DestroyWindow( m_hWnd );
+		::DestroyWindow( m_hWnd );
 	}
 	/* ファイルの排他ロック解除 */
 	delete m_pcSMacroMgr;

@@ -1602,7 +1602,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 	case WM_QUERYENDSESSION:	//OSÇÃèIóπ
 		if( OnClose() ){
-			DestroyWindow( hwnd );
+			::DestroyWindow( hwnd );
 			return TRUE;
 		}
 		else{
@@ -1610,7 +1610,7 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 	case WM_CLOSE:
 		if( OnClose() ){
-			DestroyWindow( hwnd );
+			::DestroyWindow( hwnd );
 		}
 		return 0L;
 	case WM_DESTROY:
@@ -1690,7 +1690,7 @@ LRESULT CEditWnd::DispatchEvent(
 					}
 				}
 			}
-			DestroyWindow( hwnd );
+			::DestroyWindow( hwnd );
 		}
 		return nRet;
 
