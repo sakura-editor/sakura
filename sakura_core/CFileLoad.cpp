@@ -179,7 +179,7 @@ ECodeType CFileLoad::FileOpen( LPCTSTR pFileName, ECodeType CharCode, int nFlag,
 	}
 	
 	// To Here Jun. 13, 2003 Moca BOMの除去
-	m_eMode = FLMODE_REDY;
+	m_eMode = FLMODE_READY;
 	return m_CharCode;
 }
 
@@ -222,7 +222,7 @@ const char* CFileLoad::ReadLine(
 	int			nBufLineLen;
 	int			nEolLen;
 #ifdef _DEBUG
-	if( m_eMode < FLMODE_REDY ){
+	if( m_eMode < FLMODE_READY ){
 		MYTRACE_A( "CFileLoad::ReadLine(): m_eMode = %d\n", m_eMode );
 		return NULL;
 	}
@@ -235,7 +235,7 @@ const char* CFileLoad::ReadLine(
 	while( NULL != ( pLine = GetNextLineCharCode( m_pReadBuf, m_nReadDataLen,
 		&nBufLineLen, &m_nReadBufOffSet, pcEol, &nEolLen ) ) ){
 			// ReadBufから1行を取得するとき、改行コードが欠ける可能性があるため
-			if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_REDY == m_eMode ){// From Here Jun. 13, 2003 Moca
+			if( m_nReadDataLen <= m_nReadBufOffSet && FLMODE_READY == m_eMode ){// From Here Jun. 13, 2003 Moca
 				m_cmemLine.AppendString( pLine, nBufLineLen );
 				m_nReadBufOffSet -= nEolLen;
 				// バッファロード   File -> ReadBuf
