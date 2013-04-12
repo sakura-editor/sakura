@@ -27,10 +27,17 @@
 #define _CTRL	0x00000002
 #define _ALT	0x00000004
 
+//wParam: X
+//lParam: Y
 #define MYWM_DOSPLIT        (WM_APP+1500)
+
+//wParam: なんかのインデックス
+//lParam: boolっぽい何か
 #define MYWM_SETACTIVEPANE  (WM_APP+1510)
 
 //!設定が変更されたことの通知メッセージ
+//wParam:未使用
+//lParam:未使用
 #define MYWM_CHANGESETTING  (WM_APP+1520)
 
 //! タスクトレイからの通知メッセージ
@@ -57,6 +64,8 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 #define	MYWM_GETCARETPOS	(WM_APP+205)
 
 //! テキスト追加通知(共有データ経由)
+//wParam:未使用
+//lParam:未使用
 #define	MYWM_ADDSTRING		(WM_APP+206)
 
 /*! タグジャンプ元通知 */
