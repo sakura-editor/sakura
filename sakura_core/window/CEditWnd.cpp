@@ -1021,7 +1021,7 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 	}
 }
 
-static BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
+static inline BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
 {
 	if(hwnd==NULL)return FALSE;
 	return ::IsDialogMessage(hwnd, msg);
