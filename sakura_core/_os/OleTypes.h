@@ -13,8 +13,8 @@
 #ifndef __OLE_TYPES_WRAP__
 #define __OLE_TYPES_WRAP__
 
-#include "Windows.h"
-#include "OleAuto.h"
+#include <Windows.h>
+#include <OleAuto.h>
 
 /*! BSTR‚ÌWrapper class
 
