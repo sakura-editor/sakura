@@ -13,8 +13,8 @@
 #ifndef __OLE_TYPES_WRAP__
 #define __OLE_TYPES_WRAP__
 
-#include "windows.h"
-#include "oleauto.h"
+#include <windows.h>
+#include <oleauto.h>
 
 /*! BSTR‚ÌWrapper class
 
@@ -23,8 +23,9 @@
 struct SysString
 {
 	BSTR Data;
+
 	SysString()                         { Data = NULL; }
-	SysString(SysString &Source)        { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); }
+	SysString(const SysString &Source)  { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); }
 	SysString(BSTR &Source)             { Data = ::SysAllocStringLen(Source, SysStringLen(Source)); }
 	SysString(wchar_t const *S, int L)  { Data = ::SysAllocStringLen(S, L); }
 	SysString(char const *S, int L)
@@ -35,7 +36,7 @@ struct SysString
 		delete[] buf;
 	}
 	~SysString()                        { ::SysFreeString(Data); }
-	SysString& operator = (SysString& Source) { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); return *this; }
+	SysString& operator = (const SysString& Source) { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); return *this; }
 	int Length()                        { return ::SysStringLen(Data); }
 	void Get(char **S, int *L)
 	{
