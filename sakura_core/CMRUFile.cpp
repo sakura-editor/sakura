@@ -216,6 +216,8 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 	cMRUFolder.Add(szFolder);
 
 	m_cRecent.AppendItem( (char*)pEditInfo );
+
+	::SHAddToRecentDocs( SHARD_PATH, pEditInfo->m_szPath );
 }
 
 /*EOF*/
