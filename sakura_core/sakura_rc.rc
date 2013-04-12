@@ -1431,7 +1431,7 @@ BEGIN
                     WS_TABSTOP,8,63,126,10
     CONTROL         "改行コードを変換して貼り付ける(&P)",
                     IDC_CHECK_CONVERTEOLPASTE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,8,78,143,10
+                    WS_TABSTOP,8,78,126,10
     GROUPBOX        "コピー",IDC_STATIC,3,3,134,93,WS_GROUP
     CONTROL         "ドラッグ && ドロップ編集する(&D)",IDC_CHECK_DRAGDROP,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,8,117,
