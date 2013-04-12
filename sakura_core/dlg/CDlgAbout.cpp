@@ -24,6 +24,7 @@
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
+#include "svnrev.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "sakura.hh"
 
@@ -128,6 +129,7 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 
 /*! 初期化処理
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
+	@date 2013.04.07 novice svn revision 情報追加
 */
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -149,7 +151,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ   Ver. 2.0.0.0
+	//サクラエディタ   Ver. 2.0.0.0 (r9999)
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
@@ -158,10 +160,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CNativeT cmemMsg;
 	cmemMsg.AppendString(_T("サクラエディタ   "));
 
+	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;
-	GetAppVersionInfo( NULL, VS_VERSION_INFO,
-		&dwVersionMS, &dwVersionLS );
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
+	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
+#if (SVN_REV == 0)
+	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d \r\n"),
+#else
+	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (r") _T(NUM_TO_STR(SVN_REV)) _T(")\r\n"),
+#endif
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
 		HIWORD( dwVersionLS ),
@@ -171,21 +177,20 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	cmemMsg.AppendString( _T("\r\n") );
 
+	// 共有メモリ情報
 	auto_sprintf( szMsg,  _T("      Share Ver: %3d\r\n"),
 		N_SHAREDATA_VERSION
 	);
 	cmemMsg.AppendString( szMsg );
 
-	cmemMsg.AppendString( _T("      Compile Info: ") );
-	int Compiler_ver = COMPILER_VER;
-	auto_sprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T(" %d  ")
-			TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
-		Compiler_ver,
+	// コンパイル情報
+	cmemMsg.AppendString( _T("      Compile Info: ") _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T(NUM_TO_STR(COMPILER_VER) _T(" ")) TSTR_TARGET_MODE );
+	auto_sprintf( szMsg, _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
 		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
 	cmemMsg.AppendString( szMsg );
 
-	/* 更新日情報 */
+	// 更新日情報
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
 	auto_sprintf( szMsg,  _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
@@ -198,7 +203,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( szMsg );
 
-// パッチ(かリビジョン)の情報をコンパイル時に渡せるようにする
+	// パッチの情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
 	cmemMsg.AppendString( _T("      ") );
 	const TCHAR* ptszPatchInfo = to_tchar(SKR_PATCH_INFO);
