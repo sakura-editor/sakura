@@ -1,9 +1,42 @@
+/*!	@file
+	@brief アプリケーションノードマネージャ
+
+	@author kobake
+*/
+/*
+	Copyright (C) 2008, kobake
+	Copyright (C) 2009, syat
+	Copyright (C) 2011, syat
+	Copyright (C) 2012, syat, Uchi
+	Copyright (C) 2013, Moca, Uchi
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "env/CAppNodeManager.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
 #include "recent/CRecentEditNode.h"
+#include "uiparts/CWaitCursor.h"
 #include "util/window.h"
 #include "_main/CMutex.h"
 
@@ -218,21 +251,22 @@ void CAppNodeGroupHandle::DeleteEditWndList( HWND hWnd )
 	@date 2007.02.13 ryoji 「編集の全終了」を示す引数(bExit)を追加
 	@date 2007.06.22 ryoji nGroup引数を追加
 	@date 2008.11.22 syat 全て→いくつかに変更。複数ウィンドウを閉じる時の警告メッセージを追加
+	@date 2013.03.09 Uchi 終了要求に要求元のウィンドウを渡す
 */
 BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BOOL bExit, BOOL bCheckConfirm, HWND hWndFrom )
 {
-	int nCloseCount = 0;
+	if( bCheckConfirm && CShareData::getInstance()->GetShareData()->m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
+		int nCloseCount = 0;
 
-	/* クローズ対象ウィンドウの数を調べる */
-	for( int i = 0; i < nArrCnt; i++){
-		if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
-			if( pWndArr[i].m_hWnd ){
-				nCloseCount++;
+		/* クローズ対象ウィンドウの数を調べる */
+		for( int i = 0; i < nArrCnt; i++){
+			if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
+				if( pWndArr[i].m_hWnd ){
+					nCloseCount++;
+				}
 			}
 		}
-	}
 
-	if( bCheckConfirm && CShareData::getInstance()->GetShareData()->m_Common.m_sGeneral.m_bCloseAllConfirm ){	//[すべて閉じる]で他に編集用のウィンドウがあれば確認する
 		if( 1 < nCloseCount ){
 			if( IDYES != ::MYMESSAGEBOX(
 				hWndFrom,
@@ -245,22 +279,36 @@ BOOL CAppNodeGroupHandle::RequestCloseEditor( EditNode* pWndArr, int nArrCnt, BO
 		}
 	}
 
+	bool		bInThisClose = false;		// 要求元のウィンドウをクローズするか
+	CWaitCursor	cWaitCursor( hWndFrom );	// 砂時計カーソル
 	for( int i = 0; i < nArrCnt; ++i ){
 		/* m_hWndにNULLを設定したEditNodeはとばす */
 		if( pWndArr[i].m_hWnd == NULL )continue;
 
- 		if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
- 			if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
- 				/* アクティブにする */
- 				ActivateFrameWindow( pWndArr[i].m_hWnd );
- 				/* トレイからエディタへの終了要求 */
- 				if( !::SendMessageAny( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit, 0 ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
-					delete []pWndArr;
+		if( m_nGroup == 0 || m_nGroup == pWndArr[i].m_nGroup ){
+			if( IsSakuraMainWindow( pWndArr[i].m_hWnd ) ){
+				if (pWndArr[i].m_hWnd == hWndFrom) {	// 要求元?
+					bInThisClose = true;
+					continue;
+				}
+				/* アクティブにする */
+// 				ActivateFrameWindow( pWndArr[i].m_hWnd );	// 画面をバタつかせない様に削除 2013/4/8 Uchi
+				/* トレイからエディタへの終了要求 */
+				if( !::SendMessage( pWndArr[i].m_hWnd, MYWM_CLOSE, bExit, (LPARAM)hWndFrom ) ){	// 2007.02.13 ryoji bExitを引き継ぐ	//  終了要求元のウィンドウを通知するようにする 2013/4/9 Uchi
+//					delete []pWndArr;	// 呼元で削除に合わせる
 					return FALSE;
 				}
 			}
 		}
 	}
+	if (bInThisClose) {
+		// 要求元は最後
+		// トレイからエディタへの終了要求
+		if( !::SendMessage( hWndFrom, MYWM_CLOSE, bExit, (LPARAM)hWndFrom ) ){
+			return FALSE;
+		}
+	}
+
 	return TRUE;
 }
 
@@ -723,3 +771,50 @@ int CAppNodeManager::GetFreeGroupId( void )
 }
 
 
+// Close した時の次のWindowを取得する
+//  (タブまとめ表示の場合)
+//
+//	@param hWndCur [in] Close対象のウィンドウハンドル
+//	@retval クローズ後移動するウィンドウ
+//			NULLはタブまとめ表示で無いかグループに他にウィンドウが無い場合
+//
+//	@date 2013.04.10 Uchi
+//
+HWND CAppNodeManager::GetNextTab(HWND hWndCur)
+{
+	HWND	hWnd = NULL;
+	if ( CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_bDispTabWnd
+		&& !CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_bDispTabWndMultiWin ) {
+		int			i;
+		int			nGroup = 0;
+		bool		bFound = false;
+		EditNode*	p = NULL;
+		int			nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &p, TRUE );
+		if ( nCount > 1 ) {
+			// search Group No.
+			for (i = 0; i < nCount; i++) {
+				if (p[i].GetHwnd() == hWndCur) {
+					nGroup = p[i].m_nGroup;
+					break;
+				}
+			}
+			// Search Next Window
+			for (i = 0; i < nCount; i++) {
+				if (p[i].m_nGroup == nGroup) {
+					if (p[i].GetHwnd() == hWndCur) {
+						bFound= true;
+					}
+					else {
+						hWnd = p[i].GetHwnd();
+						if (bFound) {
+							break;
+						}
+					}
+				}
+			}
+		}
+		if( p ) delete []p;
+	}
+
+	return hWnd;
+}
