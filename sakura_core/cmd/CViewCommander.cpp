@@ -74,7 +74,15 @@ CCaret& CViewCommander::GetCaret()
 
 
 
-/* コマンドコードによる処理振り分け */
+/*!
+	コマンドコードによる処理振り分け
+
+	@param nCommand コマンドコード
+	@param lparam1 parameter1(内容はコマンドコードによって変わります)
+	@param lparam2 parameter2(内容はコマンドコードによって変わります)
+	@param lparam3 parameter3(内容はコマンドコードによって変わります)
+	@param lparam4 parameter4(内容はコマンドコードによって変わります)
+*/
 BOOL CViewCommander::HandleCommand(
 	EFunctionCode	nCommand,
 	bool			bRedraw,
@@ -170,6 +178,10 @@ BOOL CViewCommander::HandleCommand(
 				CEditApp::getInstance()->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
 		}
+
+		/* フォーカス移動時の再描画 */
+		m_pCommanderView->RedrawAll();
+
 		return TRUE;
 	}
 	//	To Here Sep. 29, 2001 genta マクロの実行機能追加
