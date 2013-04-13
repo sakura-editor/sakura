@@ -105,34 +105,6 @@ void CGraphics::ClearClipping()
 	m_vClippingRgns.clear();
 }
 
-void CGraphics::SetClipping(const RECT& rc)
-{
-	ClearClipping();
-	PushClipping(rc);
-}
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                           総合                              //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//! 描画色を設定
-void CGraphics::SetForegroundColor(COLORREF color)
-{
-	//テキスト前景色
-	SetTextForeColor(color);
-
-	//ペン
-//	SetPen(color);
-}
-
-//! 背景色を設定
-void CGraphics::SetBackgroundColor(COLORREF color)
-{
-	//テキスト背景色
-	SetTextBackColor(color);
-}
-
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキスト文字色                         //
@@ -166,11 +138,6 @@ void CGraphics::ClearTextForeColor()
 	}
 }
 
-void CGraphics::SetTextForeColor(COLORREF color)
-{
-	ClearTextForeColor();
-	PushTextForeColor(color);
-}
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      テキスト背景色                         //
@@ -204,21 +171,6 @@ void CGraphics::ClearTextBackColor()
 	}
 }
 
-void CGraphics::SetTextBackColor(COLORREF color)
-{
-	ClearTextBackColor();
-	PushTextBackColor(color);
-}
-
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      テキストモード                         //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-void CGraphics::SetTextBackTransparent(bool b)
-{
-	m_nTextModeOrg.AssignOnce( ::SetBkMode(m_hdc,b?TRANSPARENT:OPAQUE) );
-}
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -269,13 +221,6 @@ void CGraphics::ClearMyFont()
 	m_vFonts.clear();
 }
 
-//! フォント設定
-void CGraphics::SetMyFont(HFONT hFont)
-{
-	ClearMyFont();
-	PushMyFont(hFont);
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           ペン                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -319,11 +264,6 @@ void CGraphics::PopPen()
 	}
 }
 
-void CGraphics::SetPen(COLORREF color)
-{
-	ClearPen();
-	PushPen(color,1);
-}
 
 void CGraphics::ClearPen()
 {
@@ -404,22 +344,10 @@ void CGraphics::ClearBrush()
 }
 
 
-void CGraphics::SetBrushColor(COLORREF color)
-{
-	ClearBrush();
-	PushBrushColor(color);
-}
-
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           直線                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CGraphics::DrawLine(int x1, int y1, int x2, int y2)
-{
-	::MoveToEx(m_hdc,x1,y1,NULL);
-	::LineTo(m_hdc,x2,y2);
-}
 
 //$$note:高速化
 void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
@@ -445,27 +373,6 @@ void CGraphics::DrawDotLine(int x1, int y1, int x2, int y2)
 		if(my>0 && y>=y2)break;
 		if(my<0 && y<=y2)break;
 	}
-}
-
-//矩形塗り潰し
-void CGraphics::FillMyRect(const RECT& rc)
-{
-	::FillRect(m_hdc,&rc,GetCurrentBrush());
-#ifdef _DEBUG
-	::SetPixel(m_hdc,-1,-1,0); //###########実験
-#endif
-}
-
-void CGraphics::FillSolidMyRect(const RECT& rc, COLORREF color)
-{
-	PushTextBackColor(color);
-	FillMyRectTextBackColor(rc);
-	PopTextBackColor();
-}
-
-void CGraphics::FillMyRectTextBackColor(const RECT& rc)
-{
-	::ExtTextOut(m_hdc, rc.left, rc.top, ETO_OPAQUE|ETO_CLIPPED, &rc, _T(""), 0, NULL);
 }
 
 
