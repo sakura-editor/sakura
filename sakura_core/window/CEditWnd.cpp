@@ -1959,8 +1959,8 @@ int	CEditWnd::OnClose(HWND hWndFrom)
 	if( !nRet ) return nRet;
 	// パラメータでハンドルを貰う様にしたので検索を削除	2013/4/9 Uchi
 	if (hWndFrom != 0 && IsSakuraMainWindow( hWndFrom )) {
-		for (int iWait = 0; ::IsWindowVisible( hWndFrom ) && iWait < 100; iWait++)	// Waitを追加(パフォーマンスが低いマシンで間に合わない)	Uchi 2013/4/19 Uchi
-			::Sleep(1);
+//		for (int iWait = 0; ::IsWindowVisible( hWndFrom ) && iWait < 100; iWait++)	// Waitを追加(パフォーマンスが低いマシンで間に合わない)	Uchi 2013/4/19 Uchi
+//			::Sleep(1);
 		ActivateFrameWindow( hWndFrom );
 	}
 
