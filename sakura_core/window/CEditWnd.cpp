@@ -17,6 +17,7 @@
 	Copyright (C) 2009, ryoji, nasukoji, Hidetaka Sakai
 	Copyright (C) 2010, ryoji, Moca、Uchi
 	Copyright (C) 2011, ryoji
+	Copyright (C) 2013, Uchi
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -1489,7 +1490,7 @@ LRESULT CEditWnd::DispatchEvent(
 		OnDropFiles( (HDROP) wParam );
 		return 0L;
 	case WM_QUERYENDSESSION:	//OSの終了
-		if( OnClose() ){
+		if( OnClose( NULL ) ){
 			::DestroyWindow( hwnd );
 			return TRUE;
 		}
@@ -1497,7 +1498,7 @@ LRESULT CEditWnd::DispatchEvent(
 			return FALSE;
 		}
 	case WM_CLOSE:
-		if( OnClose() ){
+		if( OnClose( NULL ) ){
 			::DestroyWindow( hwnd );
 		}
 		return 0L;
@@ -1553,7 +1554,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 	case MYWM_CLOSE:
 		/* エディタへの終了要求 */
-		if( FALSE != ( nRet = OnClose()) ){	// Jan. 23, 2002 genta 警告抑制
+		if( FALSE != ( nRet = OnClose( (HWND)lParam )) ){	// Jan. 23, 2002 genta 警告抑制
 			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 			if( !(BOOL)wParam ){	// 全終了要求でない場合
 				// タブまとめ表示で(無題)を残す指定の場合、残ウィンドウが１個なら新規エディタを起動して終了する
@@ -1947,14 +1948,23 @@ LRESULT CEditWnd::DispatchEvent(
 
 /*! 終了時の処理
 
+	@param hWndFrom [in] 終了要求の Wimdow Handle	//2013/4/9 Uchi
+
 	@retval TRUE: 終了して良い / FALSE: 終了しない
 */
-int	CEditWnd::OnClose()
+int	CEditWnd::OnClose(HWND hWndFrom)
 {
 	/* ファイルを閉じるときのMRU登録 & 保存確認 & 保存実行 */
 	int nRet = GetDocument().OnFileClose();
 	if( !nRet ) return nRet;
+	// パラメータでハンドルを貰う様にしたので検索を削除	2013/4/9 Uchi
+	if (hWndFrom != 0 && IsSakuraMainWindow( hWndFrom )) {
+		for (int iWait = 0; ::IsWindowVisible( hWndFrom ) && iWait < 100; iWait++)	// Waitを追加(パフォーマンスが低いマシンで間に合わない)	Uchi 2013/4/19 Uchi
+			::Sleep(1);
+		ActivateFrameWindow( hWndFrom );
+	}
 
+#if 0
 	// 2005.09.01 ryoji タブまとめ表示の場合は次のウィンドウを前面に（終了時のウィンドウちらつきを抑制）
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd
 		&& !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
@@ -2005,6 +2015,7 @@ int	CEditWnd::OnClose()
 		}
 		if( p ) delete []p;
 	}
+#endif	// 0
 
 	return nRet;
 }

@@ -1328,11 +1328,9 @@ BOOL CControlTray::CloseAllEditor(
 	}
 	
 	/* 全編集ウィンドウへ終了要求を出す */
-	if( !CAppNodeGroupHandle(nGroup).RequestCloseEditor( pWndArr, n, bExit, bCheckConfirm, hWndFrom ) ){	// 2007.02.13 ryoji bExitを引き継ぐ
-		return FALSE;
-	}else{
-		return TRUE;
-	}
+	BOOL	bRes = CAppNodeGroupHandle(nGroup).RequestCloseEditor( pWndArr, n, bExit, bCheckConfirm, hWndFrom );	// 2007.02.13 ryoji bExitを引き継ぐ
+	delete []pWndArr;
+	return bRes;
 }
 
 

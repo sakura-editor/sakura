@@ -122,6 +122,7 @@ protected:
 public:
 	static bool IsSameGroup( HWND hWnd1, HWND hWnd2 );					/* 同一グループかどうかを調べる */
 	int GetFreeGroupId( void );											/* 空いているグループ番号を取得する */
+	HWND GetNextTab(HWND hWndCur);										// Close した時の次のWindowを取得する(タブまとめ表示の場合)	2013/4/10 Uchi
 };
 
 
