@@ -345,6 +345,7 @@ F_SELECT_COUNT_MODE	= 31144,	// 文字カウントの方法を取得、設定する	int nMode
 
 F_TYPE_SCREEN			= 31115,	// タイプ別設定『スクリーン』			？
 F_TYPE_COLOR			= 31116,	// タイプ別設定『カラー』				？
+F_TYPE_WINDOW			= 31114,	// タイプ別設定『ウィンドウ』			？
 F_TYPE_HELPER			= 31117,	// タイプ別設定『支援』					？
 F_TYPE_REGEX_KEYWORD	= 31118,	// タイプ別設定『正規表現キーワード』	？
 F_TYPE_KEYHELP			= 31119,	// タイプ別設定『キーワードヘルプ』		？

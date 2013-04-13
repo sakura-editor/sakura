@@ -797,6 +797,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 //From here 設定ダイアログ用のhelpトピックIDを追加  Stonee, 2001/05/18
 	case F_TYPE_SCREEN:		return HLP000074;	/* タイプ別設定『スクリーン』 */
 	case F_TYPE_COLOR:		return HLP000075;	/* タイプ別設定『カラー』 */
+	case F_TYPE_WINDOW:		return HLP000319;	/* タイプ別設定『ウィンドウ』 */
 	case F_TYPE_HELPER:		return HLP000197;	/* タイプ別設定『支援』 */	//Jul. 03, 2001 JEPRO 追加
 	case F_TYPE_REGEX_KEYWORD:	return HLP000203;	/* タイプ別設定『正規表現キーワード』 */	//@@@ 2001.11.17 add MIK
 	case F_TYPE_KEYHELP:	return HLP000315;	/* タイプ別設定『キーワードヘルプ』 */	// 2006.10.06 ryoji 追加
