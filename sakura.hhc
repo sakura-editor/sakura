@@ -1222,6 +1222,11 @@
 							</OBJECT>
 					</UL>
 					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="タイプ別設定『ウィンドウ』プロパティ">
+						<param name="Local" value="_RESOURCE\HLP000319.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
 						<param name="Name" value="タイプ別設定『支援』プロパティ">
 						<param name="Local" value="_RESOURCE\HLP000197.html">
 						<param name="ImageNumber" value="9">

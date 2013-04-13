@@ -190,6 +190,7 @@
 #define HLP000073	73 //タイプ別設定
 #define HLP000074	74 //タイプ別設定 『スクリーン』プロパティ
 #define HLP000075	75 //タイプ別設定 『カラー』プロパティ
+#define HLP000319	319 //タイプ別設定 『ウィンドウ』プロパティ	// 2013.04.13
 #define HLP000197	197 //タイプ別設定 『支援』プロパティ
 #define HLP000203	203 //タイプ別設定 『正規表現キーワード』プロパティ	//@@@ 2001.11.17 add MIK
 #define HLP000315	315 //タイプ別設定 『キーワードヘルプ』プロパティ	// 2006.10.06 ryoji
@@ -326,6 +327,7 @@
 #define HLP000286	286	//ウィンドウの位置と大きさ
 #define HLP000316	316	//文字色／背景色統一	// 2006.10.07 ryoji
 #define HLP000318	318	//キャレット位置辞書検索機能ON/OFF	// 2006.10.11 ryoji
+#define HLP000297	297	//文字コードセット指定
 
 #define HLP000300	300 //ファイルタイプ
 #define HLP000301	301 //スマートインデント
@@ -956,6 +958,10 @@
 #define	HIDC_TAGJUMPLIST_IDCANCEL	13602
 #define	HIDC_BUTTON_TAGJUMPLIST_HELP	13603
 #define	HDIC_TAGJUMPLIST_KEYWORD	13604
+#define	HIDC_CHECK_ICASE			13605
+#define	HIDC_CHECK_ANYWHERE			13606
+#define	HIDC_BUTTON_NEXTTAG			13607
+#define	HIDC_BUTTON_PREVTAG			13608
 
 //タグファイル作成
 #define	HIDC_EDIT_TAG_MAKE_FOLDER	13701
