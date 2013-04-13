@@ -547,7 +547,6 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	m_cSavedKeyMacro[idx]->ExecKeyMacro(pcEditView, flags);
 	SetCurrentIdx( prevmacro );
 
-	pcEditView->Redraw();	//	•K—vH
 	return TRUE;
 }
 
