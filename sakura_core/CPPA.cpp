@@ -188,20 +188,20 @@ int CPPA::InitDll()
 	//	Jun. 16, 2003 genta 一時作業エリア
 	char buf[1024];
 	// コマンドに置き換えられない関数 ＝ PPA無しでは使えない。。。
-	for (i=0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; i++) {
-		//	2003.06.08 Moca メモリーリークの修正
-		//	2003.06.16 genta バッファを外から与えるように
-		//	関数登録用文字列を作成する
-		GetDeclarations( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i], buf );
-		SetDefProc( buf );
-	}
-
-	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
 	for (i=0; CSMacroMgr::m_MacroFuncInfoArr[i].m_pszFuncName != NULL; i++) {
 		//	2003.06.08 Moca メモリーリークの修正
 		//	2003.06.16 genta バッファを外から与えるように
 		//	関数登録用文字列を作成する
 		GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], buf );
+		SetDefProc( buf );
+	}
+
+	// コマンドに置き換えられる関数 ＝ PPA無しでも使える。
+	for (i=0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; i++) {
+		//	2003.06.08 Moca メモリーリークの修正
+		//	2003.06.16 genta バッファを外から与えるように
+		//	関数登録用文字列を作成する
+		GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], buf );
 		SetDefProc( buf );
 	}
 	return 0; 
@@ -340,14 +340,14 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	if( 0 < Err_CD ){
 		int i, FuncID;
 		FuncID = Err_CD - 1;
-		for( i = 0; CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID != -1; i++ ){
-			if( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID == FuncID ){
+		for( i = 0; CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1; i++ ){
+			if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID == FuncID ){
 				break;
 			}
 		}
-		if( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i].m_nFuncID != -1 ){
+		if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1 ){
 			char szFuncDec[1024];
-			GetDeclarations( CSMacroMgr::m_MacroFuncInfoNotCommandArr[i], szFuncDec );
+			GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], szFuncDec );
 			wsprintf( szMes, "関数の実行エラー\n%s", szFuncDec );
 		}else{
 			wsprintf( szMes, "不明な関数の実行エラー(バグです)\nFunc_ID=%d", FuncID );

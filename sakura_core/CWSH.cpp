@@ -704,12 +704,12 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	{
 /* // CSMacroMgr.hで配列のサイズが明確に宣言されて無いのでsizeofが使えない
 		Engine->m_InterfaceObject->ReserveMethods(
-						sizeof (CSMacroMgr::m_MacroFuncInfoArr) / sizeof (CSMacroMgr::m_MacroFuncInfoArr[0]) +
-						sizeof (CSMacroMgr::m_MacroFuncInfoNotCommandArr) / sizeof (CSMacroMgr::m_MacroFuncInfoNotCommandArr[0]));
+						sizeof (CSMacroMgr::m_MacroFuncInfoCommandArr) / sizeof (CSMacroMgr::m_MacroFuncInfoCommandArr[0]) +
+						sizeof (CSMacroMgr::m_MacroFuncInfoArr) / sizeof (CSMacroMgr::m_MacroFuncInfoArr[0]));
 */
 		//	 2007.07.20 genta : コマンドに混ぜ込むフラグを渡す
-		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoArr, flags | FA_FROMMACRO );
-		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoNotCommandArr, 0);
+		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoCommandArr, flags | FA_FROMMACRO );
+		ReadyCommands(Engine->m_InterfaceObject, CSMacroMgr::m_MacroFuncInfoArr, 0);
 		
 		Engine->Execute(m_Source.c_str());
 		

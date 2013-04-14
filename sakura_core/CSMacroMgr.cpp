@@ -34,38 +34,7 @@
 #include "Debug.h"
 #include "CRunningTimer.h"
 
-MacroFuncInfo CSMacroMgr::m_MacroFuncInfoNotCommandArr[] = 
-{
-	{F_GETFILENAME,			"GetFilename",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
-	{F_GETSAVEFILENAME,		"GetSaveFilename",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //保存時のファイル名を返す	2006.09.04	ryoji
-	{F_GETSELECTED,			"GetSelectedString",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
-	{F_EXPANDPARAMETER,		"ExpandParameter",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
-	{F_GETLINESTR,			"GetLineStr",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, // 指定論理行の取得 2003.06.01 Moca
-	{F_GETLINECOUNT,		"GetLineCount",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 全論理行数の取得 2003.06.01 Moca
-	{F_CHGTABWIDTH,			"ChangeTabWidth",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //タブサイズ変更 2004.03.16 zenryaku
-	{F_ISTEXTSELECTED,		"IsTextSelected",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //テキストが選択されているか 2005.7.30 maru
-	{F_GETSELLINEFROM,		"GetSelectLineFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始行の取得 2005.7.30 maru
-	{F_GETSELCOLMFROM,		"GetSelectColmFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始桁の取得 2005.7.30 maru
-	{F_GETSELLINETO,		"GetSelectLineTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了行の取得 2005.7.30 maru
-	{F_GETSELCOLMTO,		"GetSelectColmTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了桁の取得 2005.7.30 maru
-	{F_ISINSMODE,			"IsInsMode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 挿入／上書きモードの取得 2005.7.30 maru
-	{F_GETCHARCODE,			"GetCharCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 文字コード取得 2005.07.31 maru
-	{F_GETLINECODE,			"GetLineCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 改行コード取得 2005.08.05 maru
-	{F_ISPOSSIBLEUNDO,		"IsPossibleUndo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Undo可能か調べる 2005.08.05 maru
-	{F_ISPOSSIBLEREDO,		"IsPossibleRedo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Redo可能か調べる 2005.08.05 maru
-	{F_CHGWRAPCOLM,			"ChangeWrapColm",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //折り返し桁変更 2008.06.19 ryoji
-	{F_ISCURTYPEEXT,		"IsCurTypeExt",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
-	{F_ISSAMETYPEEXT,		"IsSameTypeExt",			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
-
-	
-	//	終端
-	//	Jun. 27, 2002 genta
-	//	終端としては決して現れないものを使うべきなので，
-	//	FuncIDを-1に変更．(0は使われる)
-	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
-};
-
-MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
+MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = 
 {
 //	機能番号			関数名			引数				作業用バッファ
 
@@ -371,7 +340,37 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	//	FuncIDを-1に変更．(0は使われる)
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
-//int	CSMacroMgr::m_nMacroFuncInfoArrNum = _countof( CSMacroMgr::m_MacroFuncInfoArr ) / sizeof( CSMacroMgr::m_MacroFuncInfoArr[0] );
+
+MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
+{
+	{F_GETFILENAME,			"GetFilename",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
+	{F_GETSAVEFILENAME,		"GetSaveFilename",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //保存時のファイル名を返す	2006.09.04	ryoji
+	{F_GETSELECTED,			"GetSelectedString",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
+	{F_EXPANDPARAMETER,		"ExpandParameter",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
+	{F_GETLINESTR,			"GetLineStr",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, // 指定論理行の取得 2003.06.01 Moca
+	{F_GETLINECOUNT,		"GetLineCount",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 全論理行数の取得 2003.06.01 Moca
+	{F_CHGTABWIDTH,			"ChangeTabWidth",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //タブサイズ変更 2004.03.16 zenryaku
+	{F_ISTEXTSELECTED,		"IsTextSelected",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //テキストが選択されているか 2005.7.30 maru
+	{F_GETSELLINEFROM,		"GetSelectLineFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始行の取得 2005.7.30 maru
+	{F_GETSELCOLMFROM,		"GetSelectColmFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELLINETO,		"GetSelectLineTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了行の取得 2005.7.30 maru
+	{F_GETSELCOLMTO,		"GetSelectColmTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了桁の取得 2005.7.30 maru
+	{F_ISINSMODE,			"IsInsMode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 挿入／上書きモードの取得 2005.7.30 maru
+	{F_GETCHARCODE,			"GetCharCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 文字コード取得 2005.07.31 maru
+	{F_GETLINECODE,			"GetLineCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 改行コード取得 2005.08.05 maru
+	{F_ISPOSSIBLEUNDO,		"IsPossibleUndo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Undo可能か調べる 2005.08.05 maru
+	{F_ISPOSSIBLEREDO,		"IsPossibleRedo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Redo可能か調べる 2005.08.05 maru
+	{F_CHGWRAPCOLM,			"ChangeWrapColm",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //折り返し桁変更 2008.06.19 ryoji
+	{F_ISCURTYPEEXT,		"IsCurTypeExt",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_ISSAMETYPEEXT,		"IsSameTypeExt",			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+
+	
+	//	終端
+	//	Jun. 27, 2002 genta
+	//	終端としては決して現れないものを使うべきなので，
+	//	FuncIDを-1に変更．(0は使われる)
+	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
+};
 
 /*!
 	@date 2002.02.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
@@ -663,21 +662,21 @@ void CSMacroMgr::Clear( int idx )
 	@return 構造体へのポインタ．見つからなければNULL
 	
 	@date 2002.06.16 genta
-	@data 2003.02.24 m_MacroFuncInfoNotCommandArrも検索対象にする
+	@data 2003.02.24 m_MacroFuncInfoArrも検索対象にする
 */
 const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 {
 	int i;
 	//	Jun. 27, 2002 genta
 	//	番人をコード0として拾ってしまうので，配列サイズによる判定をやめた．
+	for( i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i ){
+		if( m_MacroFuncInfoCommandArr[i].m_nFuncID == nFuncID ){
+			return &m_MacroFuncInfoCommandArr[i];
+		}
+	}
 	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( m_MacroFuncInfoArr[i].m_nFuncID == nFuncID ){
 			return &m_MacroFuncInfoArr[i];
-		}
-	}
-	for( i = 0; m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; ++i ){
-		if( m_MacroFuncInfoNotCommandArr[i].m_nFuncID == nFuncID ){
-			return &m_MacroFuncInfoNotCommandArr[i];
 		}
 	}
 	return NULL;
@@ -759,9 +758,9 @@ int CSMacroMgr::GetFuncInfoByName(
 	}
 
 	// コマンド関数を検索
-	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
-		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
-			nFuncID = m_MacroFuncInfoArr[i].m_nFuncID;
+	for( i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i ){
+		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
+			nFuncID = m_MacroFuncInfoCommandArr[i].m_nFuncID;
 			if( pszFuncNameJapanese != NULL ){
 				::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
 			}
@@ -769,14 +768,14 @@ int CSMacroMgr::GetFuncInfoByName(
 		}
 	}
 	// 非コマンド関数を検索
-	for( i = 0; m_MacroFuncInfoNotCommandArr[i].m_pszFuncName != NULL; ++i ){
-		if( m_MacroFuncInfoNotCommandArr[i].m_nFuncID != F_CHGTABWIDTH &&
-			m_MacroFuncInfoNotCommandArr[i].m_nFuncID != F_CHGWRAPCOLM ){
+	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
+		if( m_MacroFuncInfoArr[i].m_nFuncID != F_CHGTABWIDTH &&
+			m_MacroFuncInfoArr[i].m_nFuncID != F_CHGWRAPCOLM ){
 			// キーマクロではChangeTabWidthとChangeWrapColm以外は許可しない
 			continue;
 		}
-		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoNotCommandArr[i].m_pszFuncName) ){
-			nFuncID = m_MacroFuncInfoNotCommandArr[i].m_nFuncID;
+		if( 0 == strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName) ){
+			nFuncID = m_MacroFuncInfoArr[i].m_nFuncID;
 			if( pszFuncNameJapanese != NULL ){
 				::LoadString( hInstance, nFuncID, pszFuncNameJapanese, 255 );
 			}
