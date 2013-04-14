@@ -2,7 +2,7 @@
 
 HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_define.h -mode=define
 HeaderMake -in=..\sakura_core\Funccode_x.hsrc -out=..\sakura_core\Funccode_enum.h -mode=enum -enum=EFunctionCode
-MakefileMake -file=..\sakura_core\Makefile -dir=..\sakura_core"
+MakefileMake -file=..\sakura_core\Makefile -dir=..\sakura_core
 
 SubWCRev.exe "..\\" "..\sakura_core\svnrev_template.h" "..\sakura_core\svnrev.h"
 if %ERRORLEVEL% NEQ 0 (
