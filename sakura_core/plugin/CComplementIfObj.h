@@ -60,9 +60,9 @@ public:
 	// 実装
 public:
 	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoArr; }
+	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
 	//関数情報を取得する
-	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoNotCommandArr; };
+	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; };
 	//関数を処理する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
@@ -110,12 +110,12 @@ private:
 	int m_nOption; // 0x01 == IgnoreCase
 
 private:
-	static MacroFuncInfo m_MacroFuncInfoArr[];
-	static MacroFuncInfo m_MacroFuncInfoNotCommandArr[];
+	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
+	static MacroFuncInfo m_MacroFuncInfoArr[];	// 関数情報(戻り値あり)
 };
 
 //コマンド情報
-MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] = 
+MacroFuncInfo CComplementIfObj::m_MacroFuncInfoCommandArr[] = 
 {
 	//ID									関数名							引数										戻り値の型	m_pszData
 	//	終端
@@ -123,7 +123,7 @@ MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] =
 };
 
 //関数情報
-MacroFuncInfo CComplementIfObj::m_MacroFuncInfoNotCommandArr[] = 
+MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] = 
 {
 	//ID								関数名				引数										戻り値の型	m_pszData
 	{EFunctionCode(F_CM_GETCURRENTWORD),L"GetCurrentWord",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //補完対象の文字列を取得
