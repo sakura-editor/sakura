@@ -160,7 +160,7 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] =
 {
 	//ID									関数名							引数										戻り値の型	m_pszData
 	{EFunctionCode(F_PL_SETOPTION),			LTEXT("SetOption"),				{VT_BSTR, VT_BSTR, VT_VARIANT, VT_EMPTY},	VT_EMPTY,	NULL }, //オプションファイルに値を書く
-	{EFunctionCode(F_PL_ADDCOMMAND),		LTEXT("AddCommand"),			{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	NULL }, //コマンドを追加する
+	{EFunctionCode(F_PL_ADDCOMMAND),		LTEXT("AddCommand"),			{VT_BSTR, VT_BSTR, VT_BSTR, VT_EMPTY},		VT_EMPTY,	NULL }, //コマンドを追加する
 	//	終端
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
