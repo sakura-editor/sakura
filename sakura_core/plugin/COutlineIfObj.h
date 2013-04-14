@@ -60,9 +60,9 @@ public:
 	// 実装
 public:
 	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoArr; }
+	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
 	//関数情報を取得する
-	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoNotCommandArr; }
+	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; }
 	//関数を処理する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result)
 	{
@@ -112,12 +112,12 @@ public:
 	EOutlineType m_nListType;
 private:
 	CFuncInfoArr& m_cFuncInfoArr;
-	static MacroFuncInfo m_MacroFuncInfoArr[];
-	static MacroFuncInfo m_MacroFuncInfoNotCommandArr[];
+	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
+	static MacroFuncInfo m_MacroFuncInfoArr[];	// 関数情報(戻り値あり)
 };
 
 //コマンド情報
-MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] = 
+MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] = 
 {
 	//ID									関数名							引数										戻り値の型	m_pszData
 	{EFunctionCode(F_OL_ADDFUNCINFO),		LTEXT("AddFuncInfo"),			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	NULL }, //アウトライン解析に追加する
@@ -129,7 +129,7 @@ MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] =
 };
 
 //関数情報
-MacroFuncInfo COutlineIfObj::m_MacroFuncInfoNotCommandArr[] = 
+MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] = 
 {
 	//ID									関数名							引数										戻り値の型	m_pszData
 	//	終端
