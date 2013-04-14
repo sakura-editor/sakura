@@ -508,6 +508,10 @@
 				RelativePath="..\sakura_core\StdAfx.h"
 				>
 			</File>
+			<File
+				RelativePath="..\sakura_core\svnrev.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
