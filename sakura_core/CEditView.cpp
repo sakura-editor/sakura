@@ -8075,13 +8075,13 @@ int CEditView::IsCurrentPositionSelectedTEST(
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 	@date 2010.11.17 ryoji VS2010の行コピー対応処理を追加
 */
-BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL* pbLineSelect /*= NULL*/ )
+bool CEditView::MyGetClipboardData( CMemory& cmemBuf, bool* pbColmnSelect, bool* pbLineSelect /*= NULL*/ )
 {
 	HGLOBAL		hglb;
 	char*		lptstr;
 
 	if( NULL != pbColmnSelect ){
-		*pbColmnSelect = FALSE;
+		*pbColmnSelect = false;
 	}
 	if( NULL != pbLineSelect ){
 		*pbLineSelect = FALSE;
@@ -8097,10 +8097,10 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 	 && !::IsClipboardFormatAvailable( CF_HDROP )
 	 && !::IsClipboardFormatAvailable( uFormatSakuraClip )
 	){
-		return FALSE;
+		return false;
 	}
 	if ( !::OpenClipboard( m_hWnd ) ){
-		return FALSE;
+		return false;
 	}
 
 	char	szFormatName[128];
@@ -8112,15 +8112,15 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			if( ::GetClipboardFormatName( uFormat, szFormatName, sizeof(szFormatName) - 1 ) ){
 				if( NULL != pbColmnSelect && 0 == lstrcmpi( _T("MSDEVColumnSelect"), szFormatName ) ){
-					*pbColmnSelect = TRUE;
+					*pbColmnSelect = true;
 					break;
 				}
 				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("MSDEVLineSelect"), szFormatName ) ){
-					*pbLineSelect = TRUE;
+					*pbLineSelect = true;
 					break;
 				}
 				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("VisualStudioEditorOperationsLineCutCopyClipboardTag"), szFormatName ) ){
-					*pbLineSelect = TRUE;
+					*pbLineSelect = true;
 					break;
 				}
 			}
@@ -8133,7 +8133,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 			cmemBuf.SetString( lptstr + sizeof(int), *((int*)lptstr) );
 			::GlobalUnlock(hglb);
 			::CloseClipboard();
-			return TRUE;
+			return true;
 		}
 	}else if(::IsClipboardFormatAvailable( CF_HDROP )){
 		// 2008/02/16 クリップボードからのファイルパス貼り付け対応	bosagami	zlib/libpng license
@@ -8168,7 +8168,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 				pathListItr++;
 			}
 			::CloseClipboard();
-			return TRUE;
+			return true;
 		}
 	}else{
 		// From Here 2005/05/29 novice UNICODE TEXT 対応処理を追加
@@ -8182,7 +8182,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 			cmemBuf.SetString( cmemUnicode.GetStringPtr() );
 			::GlobalUnlock(hglb);
 			::CloseClipboard();
-			return TRUE;
+			return true;
 		}
 		//	To Here 2005/05/29 novice
 
@@ -8192,11 +8192,11 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 			cmemBuf.SetString( lptstr );
 			::GlobalUnlock(hglb);
 			::CloseClipboard();
-			return TRUE;
+			return true;
 		}
 	}
 	::CloseClipboard();
-	return FALSE;
+	return false;
 }
 
 /* クリップボードにデータを設定
@@ -8204,7 +8204,7 @@ BOOL CEditView::MyGetClipboardData( CMemory& cmemBuf, BOOL* pbColmnSelect, BOOL*
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 	@date 2010.11.17 ryoji VS2010の行コピー対応処理を追加
  */
-BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bColmnSelect, bool bLineSelect /*= false*/ )
+bool CEditView::MySetClipboardData( const char* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= false*/ )
 {
 	HGLOBAL		hgClipText = NULL;
 	HGLOBAL		hgClipSakura = NULL;
@@ -8216,7 +8216,7 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 	UINT		uFormat;
 	/* Windowsクリップボードにコピー */
 	if( FALSE == ::OpenClipboard( m_hWnd ) ){
-		return FALSE;
+		return false;
 	}
 	::EmptyClipboard();
 	// ヌル終端までの長さ
@@ -8304,15 +8304,15 @@ BOOL CEditView::MySetClipboardData( const char* pszText, int nTextLen, BOOL bCol
 	::CloseClipboard();
 
 	if( bColmnSelect && !hgClipMSDEVColm ){
-		return FALSE;
+		return false;
 	}
 	if( bLineSelect && !(hgClipMSDEVLine && hgClipMSDEVLine2) ){
-		return FALSE;
+		return false;
 	}
 	if( !(hgClipText && hgClipSakura) ){
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 

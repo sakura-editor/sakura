@@ -1502,7 +1502,7 @@ void CEditView::CopyCurLine(
 	}
 
 	/* クリップボードにデータcmemBufの内容を設定 */
-	if( FALSE == MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), FALSE, bEnableLineModePaste ) ){
+	if( false == MySetClipboardData( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength(), false, bEnableLineModePaste ) ){
 		ErrorBeep();
 		return;
 	}
@@ -1523,7 +1523,7 @@ void CEditView::Command_COPY(
 )
 {
 	CMemory		cmemBuf;
-	BOOL		bBeginBoxSelect = FALSE;
+	bool		bBeginBoxSelect = false;
 
 	/* クリップボードに入れるべきテキストデータを、cmemBufに格納する */
 	if( !IsTextSelected() ){
@@ -1541,7 +1541,7 @@ void CEditView::Command_COPY(
 		/* テキストが選択されているときは、選択範囲のデータを取得 */
 
 		if( m_bBeginBoxSelect ){
-			bBeginBoxSelect = TRUE;
+			bBeginBoxSelect = true;
 		}
 		/* 選択範囲のデータを取得 */
 		/* 正常時はTRUE,範囲未選択の場合はFALSEを返す */
@@ -1589,7 +1589,7 @@ void CEditView::Command_CUT( void )
 	}
 
 	CMemory	cmemBuf;
-	BOOL	bBeginBoxSelect;
+	bool	bBeginBoxSelect;
 	/* 範囲選択がされていない */
 	if( !IsTextSelected() ){
 		/* 非選択時は、カーソル行を切り取り */
@@ -1601,9 +1601,9 @@ void CEditView::Command_CUT( void )
 		return;
 	}
 	if( m_bBeginBoxSelect ){
-		bBeginBoxSelect = TRUE;
+		bBeginBoxSelect = true;
 	}else{
-		bBeginBoxSelect = FALSE;
+		bBeginBoxSelect = false;
 	}
 
 	/* 選択範囲のデータを取得 */
@@ -2223,8 +2223,8 @@ void CEditView::Command_PASTE( int option )
 
 	// クリップボードからデータを取得
 	CMemory		cmemClip;
-	BOOL		bColmnSelect;
-	BOOL		bLineSelect = FALSE;
+	bool		bColmnSelect;
+	bool		bLineSelect = false;
 	bool		bLineSelectOption = 
 		((option & 0x04) == 0x04) ? TRUE :
 		((option & 0x08) == 0x08) ? FALSE :
@@ -7050,8 +7050,8 @@ void CEditView::Command_REPLACE_ALL()
 	// ループの外で文字列の長さを特定できるので、一時変数化。
 	char *szREPLACEKEY;			// 置換後文字列。
 	int nREPLACEKEY;			// 置換後文字列の長さ。
-	BOOL		bColmnSelect;	// 矩形貼り付けを行うかどうか。
-	BOOL		bLineSelect = FALSE;	// ラインモード貼り付けを行うかどうか
+	bool		bColmnSelect;	// 矩形貼り付けを行うかどうか。
+	bool		bLineSelect = false;	// ラインモード貼り付けを行うかどうか
 	CMemory		cmemClip;		// 置換後文字列のデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
 
 	// クリップボードからのデータ貼り付けかどうか。
