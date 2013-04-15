@@ -305,8 +305,6 @@ int CBackupAgent::MakeBackUp(
 /*! バックアップパスの作成
 
 	@author aroka
-	@date 2005.11.29 aroka
-		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
 
 	@param szNewPath [out] バックアップ先パス名
 	@param newPathCount [in] szNewPathのサイズ
@@ -314,6 +312,10 @@ int CBackupAgent::MakeBackUp(
 
 	@retval true  成功
 	@retval false バッファ不足
+
+	@date 2005.11.29 aroka
+		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
+	@date 2013.04.15 novice 指定フォルダのメタ文字列展開サポート
 
 	@todo Advanced modeでの世代管理
 */
@@ -336,9 +338,11 @@ bool CBackupAgent::FormatBackUpPath(
 
 	if( bup_setting.m_bBackUpFolder
 	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file ))) {	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
-		if (GetFullPathName(bup_setting.m_szBackUpFolder, _MAX_PATH, szNewPath, &psNext) == 0) {
+		TCHAR selDir[_MAX_PATH];
+		CFileNameManager::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
+		if (GetFullPathName(selDir, _MAX_PATH, szNewPath, &psNext) == 0) {
 			// うまく取れなかった
-			_tcscpy( szNewPath, bup_setting.m_szBackUpFolder );
+			_tcscpy( szNewPath, selDir );
 		}
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szNewPath );
@@ -349,7 +353,6 @@ bool CBackupAgent::FormatBackUpPath(
 
 	/* 相対フォルダを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
-
 		time_t	ltime;
 		struct	tm *today, *gmt;
 		wchar_t	szTime[64];
