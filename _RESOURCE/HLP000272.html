@@ -14,20 +14,25 @@
 メタ文字列はWindowsに設定された特殊なフォルダを指定するときに使います。<br>
 また、サクラエディタの実行ファイルのあるフォルダも指定可能です。<br>
 <a href="HLP000277.html">ファイル名の簡易表示</a>で使えます。<br>
-<div class=li200>１．%% … %(パーセント記号)<br>
-２．%SAKURA% … サクラの実行ファイルフォルダ<br>
-３．エクスプローラ(シェル)のパス<br>
+<ol>
+<li>%%% … %(パーセント記号)
+<li>%SAKURA% … 実行ファイル(sakura.exe)があるフォルダ
+<li>%SAKURADATA% … 設定ファイル(sakura.ini)があるフォルダ(sakura:1.6.6.0以降)
+<li>エクスプローラ(シェル)のパス<br>
 &nbsp;&nbsp;&nbsp;&nbsp;HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Foldersの値<br>
 &nbsp;&nbsp;&nbsp;&nbsp;HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Foldersの値<br>
-４．環境変数<br>
-</div><br>
+<li>環境変数
+</ol>
+<br>
+
 が使えます。<br>
 この順番に探索して、最初に見つけた値に置き換えられます。 <br>
+<br>
 また，%...% には エイリアス名が利用できます。<br>
 エイリアス名も大文字小文字を区別しません。<br>
 <pre>
 <table style="border-collapse: collapse;" id="AutoNumber1" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
-<tr><td>エイリアス名</td><td>名称</td><td>意味</td></tr>
+<tr><td>エイリアス名</td><td>メタ文字列</td><td>意味</td></tr>
 <tr><td>%MyDoc%</td><td>%Personal%</td><td>マイドキュメント</td></tr>
 <tr><td>%MyPict%</td><td>%My Pictures%</td><td>マイピクチャ</td></tr>
 <tr><td>%MyMusic%</td><td>%My Music%</td><td>マイミュージック</td></tr>
