@@ -1683,7 +1683,6 @@ void CEditDoc::UpdateCaption()
 		名前を付けて保存の時は自分のバックアップを作っても無意味なので．
 		また，バックアップも保存も行わない選択肢を追加．
 	@date 2005.11.26 aroka ファイル名生成をFormatBackUpPathに分離
-	@date 2008.11.23 nasukoji パスが長すぎる場合への対応（戻り値4を追加）
 
 	@param target_file [in] バックアップ元パス名
 
@@ -1907,11 +1906,6 @@ int CEditDoc::MakeBackUp(
 /*! バックアップパスの作成
 
 	@author aroka
-	@date 2005.11.29 aroka
-		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
-	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
-	@date 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
-	@date 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる対応
 
 	@param szNewPath [out] バックアップ先パス名
 	@param newPathCount [in] szNewPathのサイズ
@@ -1919,6 +1913,13 @@ int CEditDoc::MakeBackUp(
 
 	@retval true  成功
 	@retval false バッファ不足
+
+	@date 2005.11.29 aroka
+		MakeBackUpから分離．書式を元にバックアップファイル名を作成する機能追加
+	@date 2008.11.23 nasukoji	パスが長すぎる場合への対応
+	@date 2009.10.10 aroka	階層が浅いときに落ちるバグの対応
+	@date 2012.12.26 aroka	詳細設定のファイル保存日時と現在時刻で書式を合わせる対応
+	@date 2013.04.15 novice 指定フォルダのメタ文字列展開サポート
 
 	@todo Advanced modeでの世代管理
 */
@@ -1944,9 +1945,11 @@ bool CEditDoc::FormatBackUpPath(
 
 	if( bup_setting.m_bBackUpFolder
 	  && (!bup_setting.m_bBackUpFolderRM || !IsLocalDrive( target_file )) ){	/* 指定フォルダにバックアップを作成する */	// m_bBackUpFolderRM 追加	2010/5/27 Uchi
-		if (GetFullPathName(bup_setting.m_szBackUpFolder, _MAX_PATH, szTempPath, &psNext) == 0) {
+		TCHAR selDir[_MAX_PATH];
+		CShareData::ExpandMetaToFolder( bup_setting.m_szBackUpFolder, selDir, _countof(selDir) );
+		if (GetFullPathName(selDir, _MAX_PATH, szTempPath, &psNext) == 0) {
 			// うまく取れなかった
-			_tcscpy( szTempPath, bup_setting.m_szBackUpFolder );
+			_tcscpy( szTempPath, selDir );
 		}
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		AddLastYenFromDirectoryPath( szTempPath );
@@ -1957,7 +1960,6 @@ bool CEditDoc::FormatBackUpPath(
 
 	/* 相対フォルダを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
-
 		time_t	ltime;
 		struct	tm *today, *gmt;
 		TCHAR	szTime[64];
