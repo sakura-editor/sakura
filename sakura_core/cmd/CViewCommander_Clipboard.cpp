@@ -144,6 +144,14 @@ void CViewCommander::Command_COPY(
 
 
 /** 貼り付け(クリップボードから貼り付け)
+	@param [in] option 貼り付け時のオプション
+	@li 0x01 改行コード変換有効
+	@li 0x02 改行コード変換無効
+	@li 0x04 ラインモード貼り付け有効
+	@li 0x08 ラインモード貼り付け無効
+	@li 0x10 矩形コピーは常に矩形貼り付け
+	@li 0x20 矩形コピーは常に通常貼り付け
+
 	@date 2007.10.04 ryoji MSDEVLineSelect形式の行コピー対応処理を追加（VS2003/2005のエディタと類似の挙動に）
 */
 void CViewCommander::Command_PASTE( int option )
@@ -384,10 +392,12 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 
 
-// 一応、Command_PASTEBOX(char *, int) を使った Command_PASTEBOX(void) を書いておきます。
-/* 矩形貼り付け(クリップボードから矩形貼り付け) */
-// 2004.06.29 Moca 未使用だったものを有効にする
-//	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
+/** 矩形貼り付け(クリップボードから矩形貼り付け)
+	@param [in] option 未使用
+
+	@date 2004.06.29 Moca 未使用だったものを有効にする
+	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
+*/
 void CViewCommander::Command_PASTEBOX( int option )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// マウスによる範囲選択中
@@ -395,7 +405,6 @@ void CViewCommander::Command_PASTEBOX( int option )
 		ErrorBeep();
 		return;
 	}
-
 
 	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
 	{
