@@ -1,13 +1,13 @@
 #include "StdAfx.h"
 #include "view/CEditView.h" // SColorStrategyInfo
+#include "view/CViewFont.h"
 #include "CFigureStrategy.h"
 #include "CFigure_Tab.h"
 #include "CFigure_Eol.h"
 #include "CFigure_ZenSpace.h"
 #include "CFigure_HanSpace.h"
 #include "CFigure_CtrlCode.h"
-#include "view/CViewFont.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "charset/charcode.h"
 #include "types/CTypeSupport.h"
 

@@ -25,8 +25,8 @@
 #define SAKURA_DISPPOS_5705EE1C_0A31_419D_81A1_07DA95E57D879_H_
 
 #include "doc/CEditDoc.h"
-#include "doc/CLayoutMgr.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayoutMgr.h"
+#include "doc/layout/CLayout.h"
 
 struct DispPos{
 public:

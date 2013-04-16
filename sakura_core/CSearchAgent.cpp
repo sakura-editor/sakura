@@ -3,8 +3,8 @@
 #include <vector>
 #include <utility>
 #include "CSearchAgent.h"
-#include "doc/CDocLineMgr.h"
-#include "doc/CDocLine.h"
+#include "doc/logic/CDocLineMgr.h"
+#include "doc/logic/CDocLine.h"
 #include "dlg/CDlgCancel.h"
 #include "util/string_ex.h"
 #include "sakura_rc.h"

@@ -13,7 +13,7 @@
 */
 
 #include "StdAfx.h"
-#include "doc/CDocLine.h"
+#include "CDocLine.h"
 #include "mem/CMemory.h"
 
 CDocLine::CDocLine()

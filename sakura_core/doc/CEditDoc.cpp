@@ -27,8 +27,8 @@
 #include <string.h>	// Apr. 03, 2003 genta
 #include <OleCtl.h>
 #include "doc/CEditDoc.h"
-#include "doc/CDocLine.h" /// 2002/2/3 aroka
-#include "doc/CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
+#include "doc/logic/CDocLine.h" /// 2002/2/3 aroka
+#include "doc/layout/CLayout.h"	// 2007.08.22 ryoji ’Ç‰Á
 #include "docplus/CModifyManager.h"
 #include "_main/global.h"
 #include "_main/CAppMode.h"

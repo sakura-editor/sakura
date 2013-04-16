@@ -2,7 +2,7 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Eol.h"
 #include "types/CTypeSupport.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"

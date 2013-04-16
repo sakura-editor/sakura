@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "CDocReader.h"
-#include "CDocLine.h"
-#include "CDocLineMgr.h"
+#include "logic/CDocLine.h"
+#include "logic/CDocLineMgr.h"
 
 /* 全行データを返す
 	改行コードは、CFLF統一される。

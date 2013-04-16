@@ -14,7 +14,7 @@
 #include "StdAfx.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "doc/CDocLine.h"
+#include "doc/logic/CDocLine.h"
 #include "extmodule/CMigemo.h"
 #include "sakura_rc.h"
 

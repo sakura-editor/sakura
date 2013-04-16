@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "CViewParser.h"
-#include "doc/CLayout.h"
-#include "view/CEditView.h"
 #include "doc/CEditDoc.h"
+#include "doc/layout/CLayout.h"
+#include "view/CEditView.h"
 #include "charset/charcode.h"
 
 /*

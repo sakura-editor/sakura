@@ -27,7 +27,7 @@
 class CEditView;
 
 #include "basis/SakuraBasis.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 
 class CViewSelect{
 public:

@@ -8,7 +8,7 @@
 #include "view/CRuler.h"
 #include "view/colors/CColorStrategy.h"
 #include "doc/CEditDoc.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "mem/CMemoryIterator.h"
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"

@@ -20,7 +20,7 @@
 #include <string.h>
 #include "doc/CDocOutline.h"
 #include "doc/CEditDoc.h"
-#include "doc/CDocLine.h"
+#include "doc/logic/CDocLine.h"
 #include "_main/global.h"
 #include "outline/CFuncInfoArr.h"
 #include "charset/charcode.h"

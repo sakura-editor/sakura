@@ -22,7 +22,7 @@ class CLayoutMgr;
 
 
 #include "CEol.h"// 2002/2/10 aroka
-#include "doc/CDocLine.h"// 2002/4/21 YAZAKI
+#include "doc/logic/CDocLine.h"// 2002/4/21 YAZAKI
 #include "mem/CMemory.h"// 2002/4/21 YAZAKI
 #include "view/colors/EColorIndexType.h"
 
