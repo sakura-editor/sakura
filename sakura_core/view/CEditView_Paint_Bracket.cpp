@@ -172,7 +172,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 					SetCurrentColor3( gr, nColorIndex, nColorIndex, nColorIndexBg );
 					bool bTrans = false;
-					// DBPRINT_A("DrawBracket %d %d ", ptColLine.y, ptColLine.x );
+					// DEBUG_TRACE( _T("DrawBracket %d %d ") , ptColLine.y, ptColLine.x );
 					if( IsBkBitmap() &&
 							cTextType.GetBackColor() == CTypeSupport(this,nColorIndex).GetBackColor() ){
 						bTrans = true;

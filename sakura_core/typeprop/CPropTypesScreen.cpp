@@ -261,7 +261,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_CHARSPACE:
 			/* •¶Žš‚ÌŒ„ŠÔ */
-//			MYTRACE_A( "IDC_SPIN_CHARSPACE\n" );
+//			MYTRACE( _T("IDC_SPIN_CHARSPACE\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -279,7 +279,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_LINESPACE:
 			/* s‚ÌŒ„ŠÔ */
-//			MYTRACE_A( "IDC_SPIN_LINESPACE\n" );
+//			MYTRACE( _T("IDC_SPIN_LINESPACE\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -303,7 +303,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		case IDC_SPIN_TABSPACE:
 			//	Sep. 22, 2002 genta
 			/* TAB• */
-//			MYTRACE_A( "IDC_SPIN_CHARSPACE\n" );
+//			MYTRACE( _T("IDC_SPIN_CHARSPACE\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -338,11 +338,11 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 			break;
 		}
 
-//		MYTRACE_A( "pNMHDR->hwndFrom	=%xh\n",	pNMHDR->hwndFrom );
-//		MYTRACE_A( "pNMHDR->idFrom	=%xh\n",	pNMHDR->idFrom );
-//		MYTRACE_A( "pNMHDR->code		=%xh\n",	pNMHDR->code );
-//		MYTRACE_A( "pMNUD->iPos		=%d\n",		pMNUD->iPos );
-//		MYTRACE_A( "pMNUD->iDelta		=%d\n",		pMNUD->iDelta );
+//		MYTRACE( _T("pNMHDR->hwndFrom	=%xh\n"),	pNMHDR->hwndFrom );
+//		MYTRACE( _T("pNMHDR->idFrom	=%xh\n"),	pNMHDR->idFrom );
+//		MYTRACE( _T("pNMHDR->code		=%xh\n"),	pNMHDR->code );
+//		MYTRACE( _T("pMNUD->iPos		=%d\n"),		pMNUD->iPos );
+//		MYTRACE( _T("pMNUD->iDelta		=%d\n"),		pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

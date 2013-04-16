@@ -243,7 +243,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 	LPTSTR pszToken = my_strtok<TCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, _T(" ") );
 	while( pszToken != NULL )
 	{
-		DBPRINT( _T("OPT=[%ts]\n"), pszToken );
+		DEBUG_TRACE( _T("OPT=[%ts]\n"), pszToken );
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
 		if( ( bParseOptDisabled ||

@@ -212,7 +212,7 @@ INT_PTR CPropFormat::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_FORMAT );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "Format PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("Format PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 Format */
 				GetData( hwndDlg );
 				return TRUE;
@@ -224,11 +224,11 @@ INT_PTR CPropFormat::DispatchEvent(
 //			break;	/* default */
 //		}
 
-//		MYTRACE_A( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
-//		MYTRACE_A( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
-//		MYTRACE_A( "pNMHDR->code    =%xh\n", pNMHDR->code );
-//		MYTRACE_A( "pMNUD->iPos    =%d\n", pMNUD->iPos );
-//		MYTRACE_A( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
+//		MYTRACE( _T("pNMHDR->hwndFrom=%xh\n"), pNMHDR->hwndFrom );
+//		MYTRACE( _T("pNMHDR->idFrom  =%xh\n"), pNMHDR->idFrom );
+//		MYTRACE( _T("pNMHDR->code    =%xh\n"), pNMHDR->code );
+//		MYTRACE( _T("pMNUD->iPos    =%d\n"), pMNUD->iPos );
+//		MYTRACE( _T("pMNUD->iDelta  =%d\n"), pMNUD->iDelta );
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

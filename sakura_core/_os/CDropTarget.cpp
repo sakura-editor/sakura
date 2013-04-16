@@ -141,9 +141,7 @@ BOOL CDropTarget::Revoke_DropTarget( void )
 }
 STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-#ifdef _DEBUG
-	MYTRACE_A( "CDropTarget::DragEnter()\n" );
-#endif
+	DEBUG_TRACE( _T("CDropTarget::DragEnter()\n") );
 	if( m_pCEditWnd ){	// 2008.06.20 ryoji
 		return m_pCEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 	}

@@ -1063,7 +1063,7 @@ int CGrepAgent::DoGrepFile(
 					int matchlen = pRegexp->GetMatchLen();
 #ifdef _DEBUG
 					if( nIndex <= nIndexPrev ){
-						MYTRACE_A( "ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n" );
+						MYTRACE( _T("ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n") );
 						break;
 					}
 					nIndexPrev = nIndex;

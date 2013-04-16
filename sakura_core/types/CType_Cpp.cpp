@@ -1164,7 +1164,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					if( 0 < k && L'\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
-//						MYTRACE_A( "Å•[%ls]\n", pLine2 );
+//						MYTRACE( _T("Å•[%ls]\n"), pLine2 );
 					}else{
 						//ìØÇ∂çsÇÃèÍçá
 						if( j == GetCaret().GetCaretLogicPos().y ){
@@ -1186,7 +1186,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					if( 0 < k && L'\'' == pLine2[k - 1]
 					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
 					){
-//						MYTRACE_A( "Å•[%ls]\n", pLine2 );
+//						MYTRACE( _T("Å•[%ls]\n"), pLine2 );
 					}else{
 						//ìØÇ∂çsÇÃèÍçá
 						if( j == GetCaret().GetCaretLogicPos().y ){

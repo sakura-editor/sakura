@@ -81,7 +81,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 				}
 			}
 			szLabel[k] = L'\0';
-//			MYTRACE_A( "szLabel=[%ls]\n", szLabel );
+//			MYTRACE( _T("szLabel=[%ls]\n"), szLabel );
 
 
 

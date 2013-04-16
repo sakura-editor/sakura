@@ -262,7 +262,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	HWND		hwndHtmlHelp;
 	int			nLen;
 
-	DBPRINT_A("helpfile=%ts\n",helpfile);
+	DEBUG_TRACE( _T("helpfile=%ts\n"), helpfile );
 
 	//	From Here Jul. 5, 2002 genta
 	const TCHAR *filename = NULL;

@@ -346,9 +346,9 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 	const TCHAR*	pszResourceName;
 	/* システムリソースの取得 */
 	if( GetSystemResources( &nSystemResources, &nUserResources,	&nGDIResources ) ){
-//		MYTRACE_A( "nSystemResources=%d\n", nSystemResources );
-//		MYTRACE_A( "nUserResources=%d\n", nUserResources );
-//		MYTRACE_A( "nGDIResources=%d\n", nGDIResources );
+//		MYTRACE( _T("nSystemResources=%d\n"), nSystemResources );
+//		MYTRACE( _T("nUserResources=%d\n"), nUserResources );
+//		MYTRACE( _T("nGDIResources=%d\n"), nGDIResources );
 		pszResourceName = NULL;
 		if( nSystemResources <= 5 ){
 			pszResourceName = _T("システム ");

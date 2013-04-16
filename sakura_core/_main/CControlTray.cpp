@@ -147,7 +147,7 @@ LRESULT CALLBACK CEditAppWndProc(
 		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
-		//RELPRINT_A("dispatch\n");
+		//RELPRINT( _T("dispatch\n") );
 		pSApp = ( CControlTray* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 		if( NULL != pSApp ){
 			return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
@@ -597,7 +597,7 @@ LRESULT CControlTray::DispatchEvent(
 			return 0L;
 
 		case MYWM_NOTIFYICON:
-//			MYTRACE_A( "MYWM_NOTIFYICON\n" );
+//			MYTRACE( _T("MYWM_NOTIFYICON\n") );
 			switch (lParam){
 //キーワード：トレイ右クリックメニュー設定
 //	From Here Oct. 12, 2000 JEPRO 左右とも同一処理になっていたのを別々に処理するように変更
@@ -660,7 +660,7 @@ LRESULT CControlTray::DispatchEvent(
 				bLDClick = false;
 				return 0L;
 			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UPに変更
-//				MYTRACE_A( "WM_LBUTTONDOWN\n" );
+//				MYTRACE( _T("WM_LBUTTONDOWN\n") );
 				/* 03/02/20 左ダブルクリック後はメニューを表示しない ai Start */
 				if( bLDClick ){
 					bLDClick = false;
@@ -1458,7 +1458,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	);
 	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE_A( "nId=%d\n", nId );
+//	MYTRACE( _T("nId=%d\n"), nId );
 
 	m_bUseTrayMenu = false;
 
@@ -1524,7 +1524,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	);
 	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE_A( "nId=%d\n", nId );
+//	MYTRACE( _T("nId=%d\n"), nId );
 
 	m_bUseTrayMenu = false;
 

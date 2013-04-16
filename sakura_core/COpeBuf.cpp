@@ -142,12 +142,12 @@ void COpeBuf::DUMP()
 {
 #ifdef _DEBUG
 	int i;
-	MYTRACE_A( "COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
+	MYTRACE( _T("COpeBuf.m_nCurrentPointer=[%d]----\n"), m_nCurrentPointer );
 	for( i = 0; i < (int)m_vCOpeBlkArr.size(); ++i ){
-		MYTRACE_A( "COpeBuf.m_vCOpeBlkArr[%d]----\n", i );
+		MYTRACE( _T("COpeBuf.m_vCOpeBlkArr[%d]----\n"), i );
 		m_vCOpeBlkArr[i]->DUMP();
 	}
-	MYTRACE_A( "COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
+	MYTRACE( _T("COpeBuf.m_nCurrentPointer=[%d]----\n"), m_nCurrentPointer );
 #endif
 }
 

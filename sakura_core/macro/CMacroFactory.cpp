@@ -127,7 +127,7 @@ CMacroManagerBase* CMacroFactory::Create(const TCHAR* ext)
 		c_it != m_mMacroCreators.end(); ++ c_it ){
 		CMacroManagerBase* pobj = (*c_it)(key.c_str());
 		if( pobj != NULL ){
-			DBPRINT_A( "CMacroFactory::Create/ Answered for (%ts)\n", key.c_str() );
+			DEBUG_TRACE( _T("CMacroFactory::Create/ Answered for (%ts)\n"), key.c_str() );
 			return pobj;
 		}
 	}

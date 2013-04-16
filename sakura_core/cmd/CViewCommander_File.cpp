@@ -488,10 +488,10 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 		CRunningTimer cRunningTimer( "CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト" );
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );
-//		MYTRACE_A( "全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( _T("全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n"), nDataAllLen, cRunningTimer.Read() );
 		free( pDataAll );
 		pDataAll = NULL;
-//		MYTRACE_A( "全データ取得のメモリ開放 (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
+//		MYTRACE( _T("全データ取得のメモリ開放 (%dバイト) 所要時間(ミリ秒) = %d\n"), nDataAllLen, cRunningTimer.Read() );
 	}
 #endif
 

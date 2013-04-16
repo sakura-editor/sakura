@@ -338,7 +338,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 			if( bAddLastCR )
 			{
-//				MYTRACE_A( " カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n" );
+//				MYTRACE( _T(" カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n") );
 				nInsPosX = m_pCommanderView->LineIndexToColmn( pcLayout, nLineLen );
 
 				m_pCommanderView->InsertData_CEditView(

@@ -564,11 +564,10 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
-#ifdef _DEBUG
 	if( ppMacro == NULL ){
-	MYTRACE_A( "CSMacroMgr::Load() Out of range: idx=%d Path=%ts\n", idx, pszPath);
+		DEBUG_TRACE( _T("CSMacroMgr::Load() Out of range: idx=%d Path=%ts\n"), idx, pszPath);
 	}
-#endif
+
 	//	バッファクリア
 	delete *ppMacro;
 	*ppMacro = NULL;
@@ -1142,9 +1141,7 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 		return &m_cSavedKeyMacro[idx];
 	}
 
-#ifdef _DEBUG
-	MYTRACE_A( "CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n", idx);
-#endif
+	DEBUG_TRACE( _T("CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n"), idx);
 
 	return NULL;
 }

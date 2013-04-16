@@ -161,7 +161,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_WINDOW );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//				MYTRACE_A( "color PSN_KILLACTIVE\n" );
+//			MYTRACE( _T("color PSN_KILLACTIVE\n") );
 			/* ダイアログデータの取得 window */
 			GetData( hwndDlg );
 			return TRUE;

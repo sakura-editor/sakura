@@ -268,7 +268,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		yPos = po.y;
 
 		if( yPos != m_nDragPosY ){
-//			MYTRACE_A( "xPos=%d yPos=%d\n", xPos, yPos );
+//			MYTRACE( _T("xPos=%d yPos=%d\n"), xPos, yPos );
 
 			hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
 			::SetBkColor( hdc, RGB(0, 0, 0) );
@@ -322,7 +322,7 @@ LRESULT CSplitBoxWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		yPos = po.y;
 
 		if( xPos != m_nDragPosX ){
-//			MYTRACE_A( "xPos=%d yPos=%d\n", xPos, yPos );
+//			MYTRACE( _T("xPos=%d yPos=%d\n"), xPos, yPos );
 
 			hdc = ::GetDC( ::GetParent( GetParentHwnd() ) );
 			::SetBkColor( hdc, RGB(0, 0, 0) );

@@ -38,7 +38,7 @@ void CViewCommander::Command_GREP_DIALOG( void )
 
 	/* Grepダイアログの表示 */
 	int nRet = GetEditWindow()->m_cDlgGrep.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument()->m_cDocFile.GetFilePath() );
-//	MYTRACE_A( "nRet=%d\n", nRet );
+//	MYTRACE( _T("nRet=%d\n"), nRet );
 	if( !nRet ){
 		return;
 	}

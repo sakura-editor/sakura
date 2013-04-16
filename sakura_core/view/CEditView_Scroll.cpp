@@ -230,11 +230,11 @@ CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 		break;
 	case SB_THUMBPOSITION:
 		nScrollVal = ScrollAtH( CLayoutInt(nPos) );
-//		MYTRACE_A( "nPos=%d\n", nPos );
+//		MYTRACE( _T("nPos=%d\n"), nPos );
 		break;
 	case SB_THUMBTRACK:
 		nScrollVal = ScrollAtH( CLayoutInt(nPos) );
-//		MYTRACE_A( "nPos=%d\n", nPos );
+//		MYTRACE( _T("nPos=%d\n"), nPos );
 		break;
 	case SB_LEFT:
 		nScrollVal = ScrollAtH( CLayoutInt(0) );

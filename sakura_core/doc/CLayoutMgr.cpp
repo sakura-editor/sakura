@@ -196,11 +196,9 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 
 	//	Mar. 19, 2003 Moca nLineNumが負の場合のチェックを追加
 	if( CLayoutInt(0) > nLineNum || nLineNum >= m_nLines ){
-#ifdef _DEBUG
 		if( CLayoutInt(0) > nLineNum ){
-			MYTRACE_A( "CLayoutMgr::SearchLineByLayoutY() nLineNum = %d\n", nLineNum );
+			DEBUG_TRACE( _T("CLayoutMgr::SearchLineByLayoutY() nLineNum = %d\n"), nLineNum );
 		}
-#endif
 		return NULL;
 	}
 //	/*+++++++ 低速版 +++++++++*/
@@ -882,11 +880,10 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			(*pnDeleteLines)++;
 		}
 
-#ifdef _DEBUG
 		if( m_pLayoutPrevRefer == pLayout ){
-			MYTRACE_A( "バグバグ\n" );
+			DEBUG_TRACE( _T("バグバグ\n") );
 		}
-#endif
+
 		delete pLayout;
 
 		m_nLines--;	/* 全物理行数 */
@@ -895,7 +892,7 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 		}
 		pLayout = pLayoutNext;
 	}
-//	MYTRACE_A( "(*pnDeleteLines)=%d\n", (*pnDeleteLines) );
+//	MYTRACE( _T("(*pnDeleteLines)=%d\n"), (*pnDeleteLines) );
 
 	return pLayoutWork;
 }
@@ -1350,34 +1347,34 @@ void CLayoutMgr::DUMP()
 #ifdef _DEBUG
 	const wchar_t* pData;
 	CLogicInt nDataLen;
-	MYTRACE_A( "------------------------\n" );
-	MYTRACE_A( "m_nLines=%d\n", m_nLines );
-	MYTRACE_A( "m_pLayoutTop=%08lxh\n", m_pLayoutTop );
-	MYTRACE_A( "m_pLayoutBot=%08lxh\n", m_pLayoutBot );
-	MYTRACE_A( "m_nMaxLineKetas=%d\n", m_sTypeConfig.m_nMaxLineKetas );
+	MYTRACE( _T("------------------------\n") );
+	MYTRACE( _T("m_nLines=%d\n"), m_nLines );
+	MYTRACE( _T("m_pLayoutTop=%08lxh\n"), m_pLayoutTop );
+	MYTRACE( _T("m_pLayoutBot=%08lxh\n"), m_pLayoutBot );
+	MYTRACE( _T("m_nMaxLineKetas=%d\n"), m_sTypeConfig.m_nMaxLineKetas );
 
-	MYTRACE_A( "m_nTabSpace=%d\n", m_sTypeConfig.m_nTabSpace );
+	MYTRACE( _T("m_nTabSpace=%d\n"), m_sTypeConfig.m_nTabSpace );
 	CLayout* pLayout;
 	CLayout* pLayoutNext;
 	pLayout = m_pLayoutTop;
 	while( NULL != pLayout ){
 		pLayoutNext = pLayout->GetNextLayout();
-		MYTRACE_A( "\t-------\n" );
-		MYTRACE_A( "\tthis=%08lxh\n", pLayout );
-		MYTRACE_A( "\tm_pPrev =%08lxh\n",		pLayout->GetPrevLayout() );
-		MYTRACE_A( "\tm_pNext =%08lxh\n",		pLayout->GetNextLayout() );
-		MYTRACE_A( "\tm_nLinePhysical=%d\n",	pLayout->GetLogicLineNo() );
-		MYTRACE_A( "\tm_nOffset=%d\n",		pLayout->GetLogicOffset() );
-		MYTRACE_A( "\tm_nLength=%d\n",		pLayout->GetLengthWithEOL() );
-		MYTRACE_A( "\tm_enumEOLType =%ls\n",	pLayout->GetLayoutEol().GetName() );
-		MYTRACE_A( "\tm_nEOLLen =%d\n",		pLayout->GetLayoutEol().GetLen() );
-		MYTRACE_A( "\tm_nTypePrev=%d\n",		pLayout->GetColorTypePrev() );
+		MYTRACE( _T("\t-------\n") );
+		MYTRACE( _T("\tthis=%08lxh\n"), pLayout );
+		MYTRACE( _T("\tm_pPrev =%08lxh\n"),		pLayout->GetPrevLayout() );
+		MYTRACE( _T("\tm_pNext =%08lxh\n"),		pLayout->GetNextLayout() );
+		MYTRACE( _T("\tm_nLinePhysical=%d\n"),	pLayout->GetLogicLineNo() );
+		MYTRACE( _T("\tm_nOffset=%d\n"),		pLayout->GetLogicOffset() );
+		MYTRACE( _T("\tm_nLength=%d\n"),		pLayout->GetLengthWithEOL() );
+		MYTRACE( _T("\tm_enumEOLType =%ls\n"),	pLayout->GetLayoutEol().GetName() );
+		MYTRACE( _T("\tm_nEOLLen =%d\n"),		pLayout->GetLayoutEol().GetLen() );
+		MYTRACE( _T("\tm_nTypePrev=%d\n"),		pLayout->GetColorTypePrev() );
 		pData = CDocReader(*m_pcDocLineMgr).GetLineStr( pLayout->GetLogicLineNo(), &nDataLen );
-		MYTRACE_A( "\t[%ls]\n", pData );
+		MYTRACE( _T("\t[%ls]\n"), pData );
 		pLayout = pLayoutNext;
 	}
-	MYTRACE_A( "------------------------\n" );
-#endif
+	MYTRACE( _T("------------------------\n") );
+#endif _DEBUG
 	return;
 }
 

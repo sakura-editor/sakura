@@ -31,8 +31,6 @@ void DebugOutA( LPCSTR lpFmt, ...);
 	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
 */
 #ifdef _DEBUG
-	#define MYTRACE_A DebugOutA
-	#define MYTRACE_W DebugOutW
 	#ifdef _UNICODE
 	#define MYTRACE DebugOutW
 	#else
@@ -40,44 +38,31 @@ void DebugOutA( LPCSTR lpFmt, ...);
 	#endif
 #else
 	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode
-	#define MYTRACE_A Do_not_use_the_MYTRACE_A_function_if_release_mode
-	#define MYTRACE_W Do_not_use_the_MYTRACE_W_function_if_release_mode
 #endif
 
 //#ifdef _DEBUG～#endifで囲まなくても良い版
 #ifdef _DEBUG
-#define DBPRINT_A DebugOutA
-#define DBPRINT_W DebugOutW
+	#ifdef _UNICODE
+	#define DEBUG_TRACE DebugOutW
+	#else
+	#define DEBUG_TRACE DebugOutA
+	#endif
+#elif (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
+	#define DEBUG_TRACE(...)
 #else
-#if (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
-#define DBPRINT_A(...)
-#define DBPRINT_W(...)
-#else
-// Not support C99 variable macro
-inline void DBPRINT_A( ... ){}
-inline void DBPRINT_W( ... ){}
+	// Not support C99 variable macro
+	inline void DEBUG_TRACE( ... ){}
 #endif
-#endif
-
-#ifdef _UNICODE
-#define DBPRINT DBPRINT_W
-#else
-#define DBPRINT DBPRINT_A
-#endif
-
-#define DEBUG_TRACE DBPRINT
-
 
 //RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
 #ifdef USE_RELPRINT
-#define RELPRINT_A DebugOutA
-#define RELPRINT_W DebugOutW
-
-#ifdef _UNICODE
-#define RELPRINT DebugOutW
+	#ifdef _UNICODE
+	#define RELPRINT DebugOutW
+	#else
+	#define RELPRINT DebugOutA
+	#endif
 #else
-#define RELPRINT DebugOutA
-#endif
+	#define RELPRINT   Do_not_define_USE_RELPRINT
 #endif	// USE_RELPRINT
 
 

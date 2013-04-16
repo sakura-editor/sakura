@@ -1022,7 +1022,7 @@ void CPrintPreview::OnPrint( void )
 		&hdc,
 		szErrMsg						/* エラーメッセージ格納場所 */
 	) ){
-//		MYTRACE_A( "%ts\n", szErrMsg );
+//		MYTRACE( _T("%ts\n"), szErrMsg );
 	}
 
 	/* 印刷用半角フォントと、印刷用全角フォントを作成 */

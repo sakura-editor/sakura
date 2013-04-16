@@ -67,7 +67,7 @@ LRESULT CALLBACK EditViewWndProc(
 	LPARAM		lParam 	// second message parameter
 )
 {
-//	DBPRINT_W(L"EditViewWndProc(0x%08X): %ls\n", hwnd, GetWindowsMessageName(uMsg));
+//	DEBUG_TRACE(_T("EditViewWndProc(0x%08X): %ls\n"), hwnd, GetWindowsMessageName(uMsg));
 
 	CEditView*	pCEdit;
 	switch( uMsg ){
@@ -215,7 +215,7 @@ BOOL CEditView::Create(
 	// 2004.02.08 m_hFont_ZENは未使用により削除
 	m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
 	m_bInMenuLoop = FALSE;				/* メニュー モーダル ループに入っています */
-//	MYTRACE_A( "CEditView::CEditView()おわり\n" );
+//	MYTRACE( _T("CEditView::CEditView()おわり\n") );
 	m_bHokan = FALSE;
 
 	//	Aug. 31, 2000 genta
@@ -601,7 +601,7 @@ LRESULT CEditView::DispatchEvent(
 			// 2007.10.02 nasukoji
 			m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
 		}
-		//		MYTRACE_A( " WM_LBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+		//		MYTRACE( _T(" WM_LBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDBLCLK( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
@@ -619,13 +619,13 @@ LRESULT CEditView::DispatchEvent(
 	case WM_LBUTTONDOWN:
 		// 2007.10.02 nasukoji
 		m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
-//		MYTRACE_A( " WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
 	case WM_LBUTTONUP:
 
-//		MYTRACE_A( " WM_LBUTTONUP wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_LBUTTONUP wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 	case WM_MOUSEMOVE:
@@ -633,10 +633,10 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_RBUTTONDBLCLK:
-//		MYTRACE_A( " WM_RBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_RBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		return 0L;
 //	case WM_RBUTTONDOWN:
-//		MYTRACE_A( " WM_RBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_RBUTTONDOWN wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 //		OnRBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 //		if( m_nMyIndex != m_pcEditDoc->m_pcEditWnd->GetActivePane() ){
 //			/* アクティブなペインを設定 */
@@ -644,7 +644,7 @@ LRESULT CEditView::DispatchEvent(
 //		}
 //		return 0L;
 	case WM_RBUTTONUP:
-//		MYTRACE_A( " WM_RBUTTONUP wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_RBUTTONUP wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnRBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
@@ -675,7 +675,7 @@ LRESULT CEditView::DispatchEvent(
 		return TRUE;
 
 	case WM_VSCROLL:
-//		MYTRACE_A( "	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
+//		MYTRACE( _T("	WM_VSCROLL nPos=%d\n"), GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
 			CLayoutInt Scroll = OnVScroll(
@@ -690,7 +690,7 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_HSCROLL:
-//		MYTRACE_A( "	WM_HSCROLL nPos=%d\n", GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
+//		MYTRACE( _T("	WM_HSCROLL nPos=%d\n"), GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
 			CLayoutInt Scroll = OnHScroll(
@@ -734,7 +734,7 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_CLOSE:
-//		MYTRACE_A( "	WM_CLOSE\n" );
+//		MYTRACE( _T("	WM_CLOSE\n") );
 		::DestroyWindow( hwnd );
 		return 0L;
 	case WM_DESTROY:
@@ -744,7 +744,7 @@ LRESULT CEditView::DispatchEvent(
 		::KillTimer( GetHwnd(), IDT_ROLLMOUSE );
 
 
-//		MYTRACE_A( "	WM_DESTROY\n" );
+//		MYTRACE( _T("	WM_DESTROY\n") );
 		/*
 		||子ウィンドウの破棄
 		*/
@@ -769,7 +769,7 @@ LRESULT CEditView::DispatchEvent(
 	case MYWM_DOSPLIT:
 		nPosX = (int)wParam;
 		nPosY = (int)lParam;
-//		MYTRACE_A( "MYWM_DOSPLIT nPosX=%d nPosY=%d\n", nPosX, nPosY );
+//		MYTRACE( _T("MYWM_DOSPLIT nPosX=%d nPosY=%d\n"), nPosX, nPosY );
 		::SendMessage( m_hwndParent, MYWM_DOSPLIT, wParam, lParam );
 		return 0L;
 
@@ -2272,7 +2272,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 			m_nOldUnderLineYHeight = t_max(m_nOldUnderLineYMargin + m_nOldUnderLineYHeight, GetTextMetrics().GetHankakuHeight() + 1) - m_nOldUnderLineYMargin;
 		}
 		m_nOldUnderLineYHeightReal = 1;
-//		MYTRACE_A( "★カーソル行アンダーラインの描画\n" );
+//		MYTRACE( _T("★カーソル行アンダーラインの描画\n") );
 		/* ★カーソル行アンダーラインの描画 */
 		HDC		hdc = ::GetDC( GetHwnd() );
 		{
