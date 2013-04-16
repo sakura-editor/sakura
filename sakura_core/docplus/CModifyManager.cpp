@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "docplus/CModifyManager.h"
 #include "doc/CEditDoc.h"
-#include "doc/CDocLineMgr.h"
-#include "doc/CDocLine.h"
+#include "doc/logic/CDocLineMgr.h"
+#include "doc/logic/CDocLine.h"
 
 
 void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)

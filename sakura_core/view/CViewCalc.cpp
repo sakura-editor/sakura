@@ -3,7 +3,7 @@
 #include "mem/CMemoryIterator.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 
 //ŠO•”ˆË‘¶
 CLayoutInt CViewCalc::GetTabSpace() const

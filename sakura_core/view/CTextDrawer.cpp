@@ -9,7 +9,7 @@
 #include "doc/CEditDoc.h"
 #include "types/CTypeSupport.h"
 #include "charset/charcode.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "view/colors/CColorStrategy.h"
 
 

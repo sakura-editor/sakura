@@ -9,7 +9,7 @@
 #include "_os/CDropTarget.h" // CDataObject
 #include "_os/CClipboard.h"
 #include "COpeBlk.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "uiparts/CWaitCursor.h"
 #include "uiparts/HandCursor.h"
 #include "util/input.h"

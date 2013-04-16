@@ -2384,31 +2384,31 @@
 					Name="layout"
 					>
 					<File
-						RelativePath="..\sakura_core\doc\CLayout.cpp"
+						RelativePath="..\sakura_core\doc\layout\CLayout.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CLayout.h"
+						RelativePath="..\sakura_core\doc\layout\CLayout.h"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CLayoutMgr.cpp"
+						RelativePath="..\sakura_core\doc\layout\CLayoutMgr.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CLayoutMgr.h"
+						RelativePath="..\sakura_core\doc\layout\CLayoutMgr.h"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CLayoutMgr_DoLayout.cpp"
+						RelativePath="..\sakura_core\doc\layout\CLayoutMgr_DoLayout.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CLayoutMgr_New.cpp"
+						RelativePath="..\sakura_core\doc\layout\CLayoutMgr_New.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CLayoutMgr_New2.cpp"
+						RelativePath="..\sakura_core\doc\layout\CLayoutMgr_New2.cpp"
 						>
 					</File>
 				</Filter>
@@ -2416,19 +2416,19 @@
 					Name="logic"
 					>
 					<File
-						RelativePath="..\sakura_core\doc\CDocLine.cpp"
+						RelativePath="..\sakura_core\doc\logic\CDocLine.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CDocLine.h"
+						RelativePath="..\sakura_core\doc\logic\CDocLine.h"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CDocLineMgr.cpp"
+						RelativePath="..\sakura_core\doc\logic\CDocLineMgr.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\sakura_core\doc\CDocLineMgr.h"
+						RelativePath="..\sakura_core\doc\logic\CDocLineMgr.h"
 						>
 					</File>
 				</Filter>

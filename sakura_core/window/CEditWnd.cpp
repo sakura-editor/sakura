@@ -51,7 +51,7 @@
 #include "plugin/CJackManager.h"
 #include "CGrepAgent.h"
 #include "CMarkMgr.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 

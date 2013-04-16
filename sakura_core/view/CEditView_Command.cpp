@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
+#include "doc/layout/CLayout.h"
 #include "window/CEditWnd.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
@@ -9,7 +10,6 @@
 #include "util/module.h"
 #include "util/window.h"
 #include "_main/CControlTray.h"
-#include "doc/CLayout.h"
 #include "charset/charcode.h"
 #include "recent/CRecent.h"
 

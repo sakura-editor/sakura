@@ -24,10 +24,10 @@
 #include "charset/charcode.h"
 #include "COpe.h" ///	2002/2/3 aroka from here
 #include "COpeBlk.h" ///
-#include "doc/CLayout.h"///
-#include "doc/CDocLine.h"///
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "doc/CDocReader.h"
+#include "doc/layout/CLayout.h"
+#include "doc/logic/CDocLine.h"
 #include "window/CEditWnd.h"
 #include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK

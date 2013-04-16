@@ -3,7 +3,7 @@
 #include "CColor_Numeric.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "types/CTypeSupport.h"
 
 static int IsNumber( const CStringRef& cStr, int offset );/* ”’l‚È‚ç‚»‚Ì’·‚³‚ğ•Ô‚· */	//@@@ 2001.02.17 by MIK

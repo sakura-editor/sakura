@@ -19,7 +19,7 @@
 #include "StdAfx.h"
 #include "CPrintPreview.h"
 #include "uiparts/HandCursor.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "window/CEditWnd.h"
 #include "dlg/CDlgCancel.h" /// 2002/2/3 aroka from here
 #include "dlg/CDlgInput1.h" /// 2007.02.11 Moca

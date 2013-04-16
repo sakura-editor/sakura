@@ -10,7 +10,7 @@
 #include "view/figures/CFigureStrategy.h"
 #include "types/CTypeSupport.h"
 #include "doc/CEditDoc.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "window/CEditWnd.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"

@@ -12,9 +12,9 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "doc/CLayout.h"
-#include "charset/charcode.h"
+#include "CLayout.h"
 #include "CLayoutMgr.h"
+#include "charset/charcode.h"
 #include "extmodule/CBregexp.h" // CLayoutMgr‚Ì’è‹`‚Å•K—v
 
 

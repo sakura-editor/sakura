@@ -1,16 +1,16 @@
 #include "StdAfx.h"
+#include <limits.h>
 #include "CViewSelect.h"
-#include "view/CEditView.h"
+#include "CEditView.h"
 #include "doc/CEditDoc.h"
+#include "doc/layout/CLayout.h"
 #include "mem/CMemoryIterator.h"
-#include "doc/CLayout.h"
 #include "window/CEditWnd.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
-#include <limits.h>
 
 CViewSelect::CViewSelect(CEditView* pcEditView)
 : m_pcEditView(pcEditView)

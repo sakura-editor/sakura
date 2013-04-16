@@ -15,19 +15,19 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include "CLayoutMgr.h"
-#include "charset/charcode.h"
-#include "debug/CRunningTimer.h"
-#include "doc/CLayout.h"/// 2002/2/10 aroka
-#include "doc/CDocLine.h"/// 2002/2/10 aroka
-#include "doc/CDocLineMgr.h"/// 2002/2/10 aroka
+#include "doc/layout/CLayoutMgr.h"
+#include "doc/layout/CLayout.h"/// 2002/2/10 aroka
 #include "doc/CDocReader.h" // for _DEBUG
+#include "doc/logic/CDocLine.h"/// 2002/2/10 aroka
+#include "doc/logic/CDocLineMgr.h"/// 2002/2/10 aroka
+#include "charset/charcode.h"
 #include "mem/CMemory.h"/// 2002/2/10 aroka
 #include "mem/CMemoryIterator.h" // 2006.07.29 genta
 #include "basis/SakuraBasis.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
 #include "CSearchAgent.h"
+#include "debug/CRunningTimer.h"
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

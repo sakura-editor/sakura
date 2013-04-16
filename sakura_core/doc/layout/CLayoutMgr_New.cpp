@@ -17,9 +17,9 @@
 */
 
 #include "StdAfx.h"
-#include "doc/CLayoutMgr.h"
-#include "doc/CLayout.h"/// 2002/2/10 aroka
 #include "doc/CEditDoc.h" /// 2003/07/20 genta
+#include "doc/layout/CLayoutMgr.h"
+#include "doc/layout/CLayout.h"/// 2002/2/10 aroka
 #include "charset/charcode.h"
 #include "mem/CMemoryIterator.h"
 #include "util/window.h"

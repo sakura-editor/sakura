@@ -3,7 +3,7 @@
 #include "CColor_Url.h"
 #include "parse/CWordParse.h"
 #include "doc/CEditDoc.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "types/CTypeSupport.h"
 
 

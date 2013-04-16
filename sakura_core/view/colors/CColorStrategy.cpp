@@ -9,7 +9,7 @@
 #include "CColor_Numeric.h"
 #include "CColor_KeywordSet.h"
 #include "CColor_Found.h"
-#include "doc/CLayout.h"
+#include "doc/layout/CLayout.h"
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
 

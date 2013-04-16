@@ -32,9 +32,8 @@
 
 #include "StdAfx.h"
 #include "doc/CEditDoc.h"
-#include "doc/CDocLine.h"
-#include "doc/CDocLineMgr.h"
 #include "doc/CDocOutline.h"
+#include "doc/logic/CDocLine.h"
 #include "outline/CFuncInfoArr.h"
 
 /** Erlang アウトライン解析 管理＆解析

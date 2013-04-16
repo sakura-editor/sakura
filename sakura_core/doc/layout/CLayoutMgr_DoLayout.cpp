@@ -1,14 +1,14 @@
 #include "StdAfx.h"
-#include "doc/CLayoutMgr.h"
-#include "doc/CLayout.h"/// 2002/2/10 aroka
-#include "doc/CDocLine.h"/// 2002/2/10 aroka
-#include "doc/CDocLineMgr.h"// 2002/2/10 aroka
 #include "doc/CEditDoc.h" /// 2003/07/20 genta
+#include "doc/layout/CLayoutMgr.h"
+#include "doc/layout/CLayout.h"/// 2002/2/10 aroka
+#include "doc/logic/CDocLine.h"/// 2002/2/10 aroka
+#include "doc/logic/CDocLineMgr.h"// 2002/2/10 aroka
 #include "charset/charcode.h"
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "view/colors/CColorStrategy.h"
-#include "debug/CRunningTimer.h"
 #include "util/window.h"
+#include "debug/CRunningTimer.h"
 
 
 //レイアウト中の禁則タイプ	//@@@ 2002.04.20 MIK

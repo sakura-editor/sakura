@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "CWriteManager.h"
 #include <list>
-#include "doc/CDocLineMgr.h"
-#include "doc/CDocLine.h"
+#include "doc/logic/CDocLineMgr.h"
+#include "doc/logic/CDocLine.h"
 #include "CEditApp.h" // CAppExitException
 #include "window/CEditWnd.h"
 #include "charset/CCodeFactory.h"
