@@ -15,6 +15,7 @@
 	Copyright (C) 2007, ryoji, maru, genta
 	Copyright (C) 2008, nasukoji, ryoji, syat
 	Copyright (C) 2009, ryoji, nasukoji
+	Copyright (C) 2011, syat
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -30,6 +31,8 @@
 #include "CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
 #include "Debug.h"
 #include "OleTypes.h" //2003-02-21 鬼
+#include "CDlgInput1.h"
+#include "CWaitCursor.h"
 
 CMacro::CMacro( int nFuncID )
 {
@@ -1111,6 +1114,255 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			delete[] Source;
 
 			Wrap( &Result )->Receive( (nType1 == nType2)? 1: 0 );	// タイプ別設定の一致／不一致
+		}
+		return true;
+	case F_INPUTBOX:
+		//	2011.03.18 syat テキスト入力ダイアログの表示
+		{
+			if( ArgSize < 1 ) return false;
+			TCHAR *Source;
+			int SourceLength;
+
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+			std::tstring sMessage = Source;	// 表示メッセージ
+			delete[] Source;
+
+			std::tstring sDefaultValue = _T("");
+			if( ArgSize >= 2 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+				sDefaultValue = Source;	// デフォルト値
+				delete[] Source;
+			}
+
+			int nMaxLen = _MAX_PATH;
+			if( ArgSize >= 3 ){
+				HRESULT r = VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[2]) ), 0, VT_I4);
+				if( r != S_OK) return false;	// VT_I4として解釈
+				nMaxLen = varCopy.Data.intVal;	// 最大入力長
+				if( nMaxLen <= 0 ){
+					nMaxLen = _MAX_PATH;
+				}
+			}
+
+			TCHAR *Buffer = new TCHAR[ nMaxLen+1 ];
+			_tcscpy( Buffer, sDefaultValue.c_str() );
+			CDlgInput1 cDlgInput1;
+			if( cDlgInput1.DoModal( View->m_hInstance, View->m_hWnd, _T("sakura macro"), sMessage.c_str(), nMaxLen, Buffer ) ) {
+				SysString S( Buffer, _tcslen(Buffer) );
+				Wrap( &Result )->Receive( S );
+			}else{
+				Result.vt = VT_BSTR;
+				Result.bstrVal = SysAllocString(L"");
+			}
+			delete[] Buffer;
+		}
+		return true;
+	case F_MESSAGEBOX:	// メッセージボックスの表示
+	case F_ERRORMSG:	// メッセージボックス（エラー）の表示
+	case F_WARNMSG:		// メッセージボックス（警告）の表示
+	case F_INFOMSG:		// メッセージボックス（情報）の表示
+	case F_OKCANCELBOX:	// メッセージボックス（確認：OK／キャンセル）の表示
+	case F_YESNOBOX:	// メッセージボックス（確認：はい／いいえ）の表示
+		//	2011.03.18 syat メッセージボックスの表示
+		{
+			if( ArgSize < 1 ) return false;
+			TCHAR *Source;
+			int SourceLength;
+
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+			std::tstring sMessage = Source;	// 表示文字列
+			delete[] Source;
+
+			UINT uType = 0;		// メッセージボックス種別
+			switch( LOWORD(ID) ) {
+			case F_MESSAGEBOX:
+				if( ArgSize >= 2 ){
+					if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+					uType = varCopy.Data.uintVal;
+				}else{
+					uType = MB_OK;
+				}
+				break;
+			case F_ERRORMSG:
+				uType |= MB_OK | MB_ICONSTOP;
+				break;
+			case F_WARNMSG:
+				uType |= MB_OK | MB_ICONEXCLAMATION;
+				break;
+			case F_INFOMSG:
+				uType |= MB_OK | MB_ICONINFORMATION;
+				break;
+			case F_OKCANCELBOX:
+				uType |= MB_OKCANCEL | MB_ICONQUESTION;
+				break;
+			case F_YESNOBOX:
+				uType |= MB_YESNO | MB_ICONQUESTION;
+				break;
+			}
+			int ret = ::MessageBox( View->m_hWnd, sMessage.c_str(), _T("sakura macro"), uType );
+			Wrap( &Result )->Receive( ret );
+		}
+		return true;
+	case F_COMPAREVERSION:
+		//	2011.03.18 syat バージョン番号の比較
+		{
+			if( ArgSize != 2 ) return false;
+			TCHAR *Source;
+			int SourceLength;
+
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+			std::tstring sVerA = Source;	// バージョンA
+			delete[] Source;
+
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+			Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+			std::tstring sVerB = Source;	// バージョンB
+			delete[] Source;
+
+			Wrap( &Result )->Receive( CompareVersion( sVerA.c_str(), sVerB.c_str() ) );
+		}
+		return true;
+	case F_MACROSLEEP:
+		//	2011.03.18 syat 指定した時間（ミリ秒）停止する
+		{
+			if( ArgSize != 1 ) return false;
+
+			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_UI4) != S_OK) return false;	// VT_UI4として解釈
+			CWaitCursor cWaitCursor( View->m_hWnd );	// カーソルを砂時計にする
+			::Sleep( varCopy.Data.uintVal );
+			Wrap( &Result )->Receive( 0 );	//戻り値は今のところ0固定
+		}
+		return true;
+	case F_FILEOPENDIALOG:
+	case F_FILESAVEDIALOG:
+		//	2011.03.18 syat ファイルダイアログの表示
+		{
+			TCHAR *Source;
+			int SourceLength;
+			std::tstring sDefault;
+			std::tstring sFilter;
+
+			if( ArgSize >= 1 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+				sDefault = Source;	// 既定のファイル名
+				delete[] Source;
+			}
+
+			if( ArgSize >= 2 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+				sFilter = Source;	// フィルタ文字列
+				delete[] Source;
+			}
+
+			CDlgOpenFile cDlgOpenFile;
+			cDlgOpenFile.Create(
+				View->m_hInstance, View->m_hWnd,
+				sFilter.c_str(),
+				sDefault.c_str()
+			);
+			bool bRet;
+			TCHAR szPath[ _MAX_PATH ];
+			_tcscpy( szPath, sDefault.c_str() );
+			if( LOWORD(ID) == F_FILEOPENDIALOG ){
+				bRet = cDlgOpenFile.DoModal_GetOpenFileName( szPath );
+			}else{
+				bRet = cDlgOpenFile.DoModal_GetSaveFileName( szPath );
+			}
+			if( bRet ){
+				SysString S( szPath, _tcslen(szPath) );
+				Wrap( &Result )->Receive( S );
+			}else{
+				Result.vt = VT_BSTR;
+				Result.bstrVal = SysAllocString(L"");
+			}
+		}
+		return true;
+	case F_FOLDERDIALOG:
+		//	2011.03.18 syat フォルダダイアログの表示
+		{
+			TCHAR *Source;
+			int SourceLength;
+			std::tstring sMessage;
+			std::tstring sDefault;
+
+			if( ArgSize >= 1 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+				sMessage = Source;	// 表示メッセージ
+				delete[] Source;
+			}
+
+			if( ArgSize >= 2 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+				sDefault = Source;	// 既定のファイル名
+				delete[] Source;
+			}
+
+			TCHAR szPath[ _MAX_PATH ];
+			int nRet = SelectDir( View->m_hWnd, sMessage.c_str(), sDefault.c_str(), szPath );
+			if( nRet == IDOK ){
+				SysString S( szPath, _tcslen(szPath) );
+				Wrap( &Result )->Receive( S );
+			}else{
+				Result.vt = VT_BSTR;
+				Result.bstrVal = SysAllocString(L"");
+			}
+		}
+		return true;
+	case F_GETCLIPBOARD:
+		//	2011.03.18 syat クリップボードの文字列を取得
+		{
+			int nOpt = 0;
+
+			if( ArgSize >= 1 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+				nOpt = varCopy.Data.intVal;	// オプション
+			}
+
+			CMemory memBuff;
+			bool bColumnSelect = false;
+			bool bLineSelect = false;
+			bool bRet = View->MyGetClipboardData( memBuff, &bColumnSelect, &bLineSelect );
+			if( bRet ){
+				SysString S( memBuff.GetStringPtr(), memBuff.GetStringLength() );
+				Wrap( &Result )->Receive( S );
+			}else{
+				Result.vt = VT_BSTR;
+				Result.bstrVal = SysAllocString(L"");
+			}
+		}
+		return true;
+	case F_SETCLIPBOARD:
+		//	2011.03.18 syat クリップボードに文字列を設定
+		{
+			TCHAR *Source;
+			int SourceLength;
+			std::tstring sValue;
+			int nOpt = 0;
+
+			if( ArgSize >= 1 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
+				nOpt = varCopy.Data.intVal;	// オプション
+			}
+
+			if( ArgSize >= 2 ){
+				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
+				Wrap(&varCopy.Data.bstrVal)->Get(&Source, &SourceLength);
+				sValue = Source;	// 設定する文字列
+				delete[] Source;
+			}
+
+			bool bColumnSelect = false;
+			bool bLineSelect = false;
+			bool bRet = View->MySetClipboardData( sValue.c_str(), sValue.size(), bColumnSelect, bLineSelect );
+			Wrap( &Result )->Receive( bRet );
 		}
 		return true;
 	default:

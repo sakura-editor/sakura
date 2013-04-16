@@ -598,14 +598,24 @@ void CWSHClient::Error(wchar_t* Description)
 */
 static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data)
 {
-	CEditView *View = reinterpret_cast<CEditView*>(Data);
+	int I;
+	int ArgCount = Arguments->cArgs;
+	if(ArgCount > 4) ArgCount = 4;
 
+	CEditView *View = reinterpret_cast<CEditView*>(Data);
 	//	2007.07.22 genta : コマンドは下位16ビットのみ
 	if(LOWORD(ID) >= F_FUNCTION_FIRST)
 	{
 		VARIANT ret; // 2005.06.27 zenryaku 戻り値の受け取りが無くても関数を実行する
 		VariantInit(&ret);
 		
+		// 2011.3.18 syat 引数の順序を正しい順にする
+		VARIANTARG rgvargBak[4];
+		memcpy( rgvargBak, Arguments->rgvarg, sizeof(VARIANTARG) * ArgCount );
+		for(I = 0; I < ArgCount; I++){
+			Arguments->rgvarg[ArgCount-I-1] = rgvargBak[I];
+		}
+
 		bool r = CMacro::HandleFunction(View, ID, Arguments->rgvarg, Arguments->cArgs, ret);
 		if(Result) {::VariantCopyInd(Result, &ret);}
 		VariantClear(&ret);
@@ -613,14 +623,12 @@ static HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void
 	}
 	else
 	{
-		int ArgCount = Arguments->cArgs;
-		if(ArgCount > 4) ArgCount = 4;
-
 		//	Nov. 29, 2005 FILE 引数を文字列で取得する
-		char *StrArgs[4] = {NULL, NULL, NULL, NULL}, *S = NULL;	// 初期化必須
+		char *StrArgs[4] = {NULL, NULL, NULL, NULL};	// 初期化必須
+		char *S = NULL;									// 初期化必須
 		Variant varCopy;										// VT_BYREFだと困るのでコピー用
 		int Len;
-		for(int I = 0; I < ArgCount; ++I)
+		for(I = 0; I < ArgCount; ++I)
 		{
 			if(VariantChangeType(&varCopy.Data, &(Arguments->rgvarg[I]), 0, VT_BSTR) == S_OK)
 			{

@@ -495,6 +495,20 @@ enum FunctionAttribute {
 #define F_ISCURTYPEEXT    40019 // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 #define F_ISSAMETYPEEXT   40020 // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 
+#define F_INPUTBOX        40021 // テキスト入力ダイアログの表示
+#define F_MESSAGEBOX      40023 // メッセージボックスの表示
+#define F_ERRORMSG        40024 // メッセージボックス（エラー）の表示
+#define F_WARNMSG         40025 // メッセージボックス（警告）の表示
+#define F_INFOMSG         40026 // メッセージボックス（情報）の表示
+#define F_OKCANCELBOX     40027 // メッセージボックス（確認：OK／キャンセル）の表示
+#define F_YESNOBOX        40028 // メッセージボックス（確認：はい／いいえ）の表示
+#define F_COMPAREVERSION  40029 // バージョン番号の比較
+#define F_MACROSLEEP      40030 // 指定した時間（ミリ秒）停止
+#define F_FILEOPENDIALOG  40031 // ファイルを開くダイアログの表示
+#define F_FILESAVEDIALOG  40032 // ファイルを保存ダイアログの表示
+#define F_FOLDERDIALOG    40033 // フォルダを開くダイアログの表示
+#define F_GETCLIPBOARD    40034 // クリップボードの文字列を取得
+#define F_SETCLIPBOARD    40035 // クリップボードに文字列を設定
 
 //	2005.01.10 genta ISearch用補助コード
 //	2007.07.07 genta 16bit以内に収めないと状況コードと衝突するのでコードを変更
