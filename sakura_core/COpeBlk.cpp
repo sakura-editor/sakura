@@ -78,7 +78,7 @@ void COpeBlk::DUMP( void )
 #ifdef _DEBUG
 	int i;
 	for( i = 0; i < GetNum(); ++i ){
-		MYTRACE_A( "\tCOpeBlk.m_ppCOpeArr[%d]----\n", i );
+		MYTRACE( _T("\tCOpeBlk.m_ppCOpeArr[%d]----\n"), i );
 		m_ppCOpeArr[i]->DUMP();
 	}
 #endif

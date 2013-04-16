@@ -74,6 +74,6 @@ void CRecentEditNode::DeleteItemByHwnd(HWND hwnd)
 		DeleteItem(n);
 	}
 	else{
-		DBPRINT_A("DeleteItemByHwndé∏îs\n");
+		DEBUG_TRACE( _T("DeleteItemByHwndé∏îs\n") );
 	}
 }

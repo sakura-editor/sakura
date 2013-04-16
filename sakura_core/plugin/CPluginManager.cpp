@@ -69,7 +69,7 @@ void CPluginManager::UnloadAllPlugin()
 //新規プラグインを追加する
 bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 {
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter SearchNewPlugin\n"));
 #endif
 
@@ -112,7 +112,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 //新規プラグインを追加する(下請け)
 bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, tstring sSearchDir )
 {
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter SearchNewPluginDir\n"));
 #endif
 
@@ -170,7 +170,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 //新規プラグインを追加する(下請け)Zip File
 bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, tstring sSearchDir )
 {
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter SearchNewPluginZip\n"));
 #endif
 
@@ -203,7 +203,7 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 //Zipプラグインを導入する
 bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, tstring sZipFile, bool bInSearch )
 {
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("Entry InstZipPlugin\n"));
 #endif
 
@@ -427,7 +427,7 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 //全プラグインを読み込む
 bool CPluginManager::LoadAllPlugin()
 {
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter LoadAllPlugin\n"));
 #endif
 
@@ -471,7 +471,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	CDataProfile cProfOption;			//オプションファイル
 	CPlugin* plugin = NULL;
 
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("Load Plugin %ts\n"),  pszPluginName );
 #endif
 	//プラグイン定義ファイルを読み込む
@@ -482,7 +482,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 		//プラグイン定義ファイルが存在しない
 		return NULL;
 	}
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("  定義ファイル読込 %ts\n"),  pszPath );
 #endif
 
@@ -498,7 +498,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 	}
 	plugin->m_sOptionDir = m_sBaseDir + pszPluginName;
 	plugin->ReadPluginDef( &cProfDef );
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("  プラグインタイプ %ls\n"), sPlugType.c_str() );
 #endif
 
@@ -508,7 +508,7 @@ CPlugin* CPluginManager::LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* psz
 		//オプションファイルが存在する場合、読み込む
 		plugin->ReadPluginOption( &cProfOption );
 	}
-#if _DEBUG & _UNICODE
+#ifdef _UNICODE
 	DEBUG_TRACE(_T("  オプションファイル読込 %ts\n"),  pszPath );
 #endif
 

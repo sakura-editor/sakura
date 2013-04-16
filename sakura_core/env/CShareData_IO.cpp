@@ -86,7 +86,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	TCHAR	szIniFileName[_MAX_PATH + 1];
 	CFileNameManager::getInstance()->GetIniFileName( szIniFileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
-//	MYTRACE_A( "Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE( _T("Iniファイル処理-1 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
 
 
 	if( bRead ){
@@ -113,7 +113,7 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 			::CopyFile(szIniFileName, szBkFileName, FALSE);
 		}
 	}
-//	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE( _T("Iniファイル処理 0 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
 
 	CMenuDrawer* pcMenuDrawer = new CMenuDrawer; // 2010/7/4 Uchi
 
@@ -145,8 +145,8 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 		cProfile.WriteProfile( szIniFileName, LTEXT(" sakura.ini テキストエディタ設定ファイル") );
 	}
 
-//	MYTRACE_A( "Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
-//	MYTRACE_A( "Iniファイル処理 所要時間(ミリ秒) = %d\n", cRunningTimerStart.Read() );
+//	MYTRACE( _T("Iniファイル処理 8 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
+//	MYTRACE( _T("Iniファイル処理 所要時間(ミリ秒) = %d\n"), cRunningTimerStart.Read() );
 
 	return true;
 }

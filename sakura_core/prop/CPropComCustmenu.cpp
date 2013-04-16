@@ -127,7 +127,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_CUSTMENU );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE_A( "Custom menu PSN_KILLACTIVE\n" );
+//			MYTRACE( _T("Custom menu PSN_KILLACTIVE\n") );
 			/* ダイアログデータの取得 Custom menu */
 			GetData( hwndDlg );
 			return TRUE;

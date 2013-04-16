@@ -151,8 +151,8 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		for( i = 0; i < nItemNum; ++i ){
 			List_GetItemRect( hwnd, i, &rcItem );
 			if( ::PtInRect( &rcItem, poMouse ) ){
-//				MYTRACE_A( "hit at i==%d\n", i );
-//				MYTRACE_A( "\n" );
+//				MYTRACE( _T("hit at i==%d\n"), i );
+//				MYTRACE( _T("\n") );
 				nIndex = i;
 				break;
 			}
@@ -556,7 +556,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_COLOR );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "color PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("color PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 color */
 				GetData( hwndDlg );
 				return TRUE;
@@ -882,7 +882,7 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 /* 色ボタンの描画 */
 void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 {
-//	MYTRACE_A( "pDis->itemAction = " );
+//	MYTRACE( _T("pDis->itemAction = ") );
 
 	COLORREF	cBtnHiLight		= (COLORREF)::GetSysColor(COLOR_3DHILIGHT);
 	COLORREF	cBtnShadow		= (COLORREF)::GetSysColor(COLOR_3DSHADOW);

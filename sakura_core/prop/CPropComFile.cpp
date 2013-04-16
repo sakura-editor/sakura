@@ -105,7 +105,7 @@ INT_PTR CPropFile::DispatchEvent(
 //				OnHelp( hwndDlg, IDD_PROP_FILE );
 //				return TRUE;
 //			case PSN_KILLACTIVE:
-////				MYTRACE_A( "p2 PSN_KILLACTIVE\n" );
+////				MYTRACE( _T("p2 PSN_KILLACTIVE\n") );
 //				/* ダイアログデータの取得 p2 */
 //				GetData_p2( hwndDlg );
 //				return TRUE;
@@ -124,7 +124,7 @@ INT_PTR CPropFile::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_FILE );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "File PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("File PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 File */
 				GetData( hwndDlg );
 				return TRUE;

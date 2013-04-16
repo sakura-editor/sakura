@@ -1212,7 +1212,7 @@ LRESULT CEditWnd::DispatchEvent(
 //			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
 
 
-//			MYTRACE_A( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
+//			MYTRACE( _T("WM_MEASUREITEM  lpmis->itemID=%d\n"), lpmis->itemID );
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
 			if( 0 < nItemWidth ){
@@ -1291,7 +1291,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_SIZE:
-//		MYTRACE_A( "WM_SIZE\n" );
+//		MYTRACE( _T("WM_SIZE\n") );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
 			this->UpdateCaption();
@@ -1357,7 +1357,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_EXITMENULOOP:
-//		MYTRACE_A( "WM_EXITMENULOOP\n" );
+//		MYTRACE( _T("WM_EXITMENULOOP\n") );
 		if( NULL != m_cStatusBar.GetStatusHwnd() ){
 			m_cStatusBar.SetStatusText(0, SBT_NOBORDERS, _T(""));
 		}
@@ -1366,7 +1366,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_SETFOCUS:
-//		MYTRACE_A( "WM_SETFOCUS\n" );
+//		MYTRACE( _T("WM_SETFOCUS\n") );
 
 		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
 		m_nTimerCount = 9;
@@ -3223,7 +3223,7 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 	}
 
 	m_bDragMode = FALSE;
-//	MYTRACE_A("m_bDragMode = FALSE (OnLButtonUp)\n");
+//	MYTRACE( _T("m_bDragMode = FALSE (OnLButtonUp)\n"));
 	ReleaseCapture();
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
 	return 0;

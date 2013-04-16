@@ -951,7 +951,7 @@ LRESULT CSplitterWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		}
 		/* 分割トラッカーの表示 */
 		DrawSplitter( xPos, yPos, TRUE );
-//		MYTRACE_A( "xPos=%d yPos=%d \n", xPos, yPos );
+//		MYTRACE( _T("xPos=%d yPos=%d \n"), xPos, yPos );
 	}
 	return 0L;
 }
@@ -1076,7 +1076,7 @@ LRESULT CSplitterWnd::DispatchEvent_WM_APP( HWND hwnd, UINT uMsg, WPARAM wParam,
 	case MYWM_DOSPLIT:
 		nPosX = (int)wParam;
 		nPosY = (int)lParam;
-//		MYTRACE_A( "MYWM_DOSPLIT nPosX=%d nPosY=%d\n", nPosX, nPosY );
+//		MYTRACE( _T("MYWM_DOSPLIT nPosX=%d nPosY=%d\n"), nPosX, nPosY );
 
 		/* ウィンドウの分割 */
 		if( 0 != m_nHSplitPos ){

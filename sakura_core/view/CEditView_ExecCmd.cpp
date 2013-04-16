@@ -120,10 +120,10 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 
 		GetTempPath( MAX_PATH, szPathName );
 		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
-		DBPRINT( _T("CEditView::ExecCmd() TempFilename=[%ts]\n"), szTempFileName );
-		
+		DEBUG_TRACE( _T("CEditView::ExecCmd() TempFilename=[%ts]\n"), szTempFileName );
+
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
-		
+
 		if( !GetCommander().Command_PUTFILE( to_wchar(szTempFileName), bIOUnicodeSend? CODE_UNICODE : CODE_SJIS, nFlgOpt) ){	// 一時ファイル出力
 			hStdIn = NULL;
 		} else {
@@ -333,12 +333,12 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 							if (bCarry) {
 								workw[0] = L'\r'; // 2010.04.12 'r' -> '\r'
 								bufidx = sizeof(wchar_t);
-								DBPRINT_A( "ExecCmd: Carry last character [CR]\n");
+								DEBUG_TRACE( _T("ExecCmd: Carry last character [CR]\n") );
 							}
 						}
 						if( read_cnt % (int)sizeof(wchar_t) ){
 							// 高確率で0だと思うが1だと困る
-							DBPRINT_A( "ExecCmd: Carry Unicode 1byte [%x]\n", byteCarry);
+							DEBUG_TRACE( _T("ExecCmd: Carry Unicode 1byte [%x]\n"), byteCarry );
 							work[bufidx] = byteCarry;
 							bufidx += 1;
 						}
@@ -389,7 +389,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 							oa.OutputA( work, read_cnt-1 );
 							work[0] = tmp;
 							bufidx = 1;
-							DBPRINT_A( "ExecCmd: Carry last character [%x]\n", tmp );
+							DEBUG_TRACE( _T("ExecCmd: Carry last character [%x]\n"), tmp );
 						}
 					}
 					// Jan. 23, 2004 genta
@@ -428,7 +428,7 @@ user_cancel:
 		if( 0 < bufidx ){
 			if( bIOUnicodeGet ){
 				if( bufidx % (int)sizeof(wchar_t) ){
-					DBPRINT_A( "ExecCmd: Carry last Unicode byte [%x]\n", work[bufidx-1] );
+					DEBUG_TRACE( _T("ExecCmd: Carry last Unicode byte [%x]\n"), work[bufidx-1] );
 					// UTF-16なのに奇数バイトだった
 					work[bufidx] = 0x00; // 上位バイトを0にしてごまかす
 					bufidx += 1;

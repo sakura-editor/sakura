@@ -1673,7 +1673,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	if( hwndList == pnmh->hwndFrom ){
 		switch( pnmh->code ){
 		case LVN_COLUMNCLICK:
-//				MYTRACE_A( "LVN_COLUMNCLICK\n" );
+//			MYTRACE( _T("LVN_COLUMNCLICK\n") );
 			m_nSortCol =  pnlv->iSubItem;
 			pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute().m_nOutlineSortCol = m_nSortCol;
 			//	Apr. 23, 2005 genta ŠÖ”‚Æ‚µ‚Ä“Æ—§‚³‚¹‚½
