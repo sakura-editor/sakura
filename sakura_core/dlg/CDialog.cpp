@@ -620,7 +620,7 @@ void	CDialog::SetMainFont( HWND hTarget )
 	LOGFONT	lf;
 
 	// 設定するフォントの高さを取得
-	hFont = (HFONT)SendMessage(hTarget, WM_GETFONT, 0, 0);
+	hFont = (HFONT)::SendMessage(hTarget, WM_GETFONT, 0, 0);
 	GetObject(hFont, sizeof(lf), &lf);
 	LONG nfHeight = lf.lfHeight;
 
@@ -635,16 +635,18 @@ void	CDialog::SetMainFont( HWND hTarget )
 	lf.lfUnderline		= FALSE;
 	lf.lfStrikeOut		= FALSE;
 	//lf.lfCharSet		= lf.lfCharSet;
-	//lf.lfOutPrecision	= lf.lfOutPrecision;
+	lf.lfOutPrecision	= OUT_TT_ONLY_PRECIS;		// Raster Font を使わないように
 	//lf.lfClipPrecision	= lf.lfClipPrecision;
 	//lf.lfQuality		= lf.lfQuality;
 	//lf.lfPitchAndFamily	= lf.lfPitchAndFamily;
 	//_tcsncpy( lf.lfFaceName, lf.lfFaceName, _countof(lf.lfFaceName));	// 画面のフォントに設定	2012/11/27 Uchi
 
 	// フォントを作成
-	hFont = CreateFontIndirect(&lf);
-	// フォントの設定
-	::SendMessage(hTarget, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
+	hFont = ::CreateFontIndirect(&lf);
+	if (hFont) {
+		// フォントの設定
+		::SendMessage(hTarget, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0));
+	}
 }
 
 void CDialog::ResizeItem( HWND hTarget, const POINT& ptDlgDefault, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate)
