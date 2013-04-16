@@ -296,7 +296,7 @@ void CMainToolBar::CreateToolBar( void )
 							lf.lfUnderline		= FALSE;
 							lf.lfStrikeOut		= FALSE;
 							//lf.lfCharSet		= GetDllShareData().m_Common.m_sView.m_lf.lfCharSet;
-							//lf.lfOutPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfOutPrecision;
+							lf.lfOutPrecision	= OUT_TT_ONLY_PRECIS;		// Raster Font ‚ðŽg‚í‚È‚¢‚æ‚¤‚É
 							//lf.lfClipPrecision	= GetDllShareData().m_Common.m_sView.m_lf.lfClipPrecision;
 							//lf.lfQuality		= GetDllShareData().m_Common.m_sView.m_lf.lfQuality;
 							//lf.lfPitchAndFamily	= GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily;
