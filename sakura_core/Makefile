@@ -4,6 +4,7 @@ PREFIX=
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
 RC= windres
+SUBWCREV= SubWCRev.exe
 
 DEFINES= \
  -DWIN32 \
@@ -13,7 +14,6 @@ DEFINES= \
  -DNOMINMAX \
  -D_UNICODE \
  -DUNICODE \
- -DSAKURA_NO_DLL \
  -DNDEBUG
 CFLAGS= -O2 \
  -finput-charset=cp932 -fexec-charset=cp932 \
@@ -392,8 +392,12 @@ RCTOOL=$(TOOLDIR)/mrc2grc.exe
 
 all: $(RCTOOL) $(exe)
 
-$(exe): stdafx $(OBJS)
+$(exe): stdafx svnrev $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LIBS)
+
+svnrev:
+	cp svnrev_unknown.h svnrev.h
+	-$(SUBWCREV) ".\\" ".\svnrev_template.h" ".\svnrev.h"
 
 stdafx:
 	$(CXX) $(CXXFLAGS) -c StdAfx.h

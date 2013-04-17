@@ -164,7 +164,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	DWORD dwVersionMS, dwVersionLS;
 	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 #if (SVN_REV == 0)
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d \r\n"),
+	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
 #else
 	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (r") _T(NUM_TO_STR(SVN_REV)) _T(")\r\n"),
 #endif
@@ -184,8 +184,11 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( szMsg );
 
 	// ÉRÉìÉpÉCÉãèÓïÒ
-	cmemMsg.AppendString( _T("      Compile Info: ") _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T(NUM_TO_STR(COMPILER_VER) _T(" ")) TSTR_TARGET_MODE );
-	auto_sprintf( szMsg, _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
+	cmemMsg.AppendString( _T("      Compile Info: ") );
+	int Compiler_ver = COMPILER_VER;
+	auto_sprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T("%d ")
+			TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
+		Compiler_ver,
 		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
 	cmemMsg.AppendString( szMsg );
