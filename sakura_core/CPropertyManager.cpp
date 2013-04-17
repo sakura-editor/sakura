@@ -8,7 +8,7 @@
 CPropertyManager::CPropertyManager()
 {
 	/* 設定プロパティシートの初期化１ */
-	m_cPropCommon.Create( CEditWnd::getInstance()->GetHwnd(), &CEditApp::getInstance()->GetIcons(), CEditApp::getInstance()->m_pcSMacroMgr, &CEditWnd::getInstance()->GetMenuDrawer() );
+	m_cPropCommon.Create( CEditWnd::getInstance()->GetHwnd(), &CEditApp::getInstance()->GetIcons(), &CEditWnd::getInstance()->GetMenuDrawer() );
 	m_cPropTypes.Create( G_AppInstance(), CEditWnd::getInstance()->GetHwnd() );
 }
 
