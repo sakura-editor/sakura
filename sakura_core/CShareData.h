@@ -496,8 +496,8 @@ struct CommonSetting_TabBar
 
 	BOOL				m_bChgWndByWheel;				//マウスホイールでウィンドウ切り替え	//@@@ 2006.03.26 ryoji
 
-	LOGFONT				m_tabFont;						//タブフォント // 2011.12.01 Moca
-	int					m_tabFontPs;
+	LOGFONT				m_lf;							//タブフォント // 2011.12.01 Moca
+	int					m_nPointSize;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

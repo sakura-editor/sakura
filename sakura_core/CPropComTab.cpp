@@ -101,12 +101,12 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 					EnableTabPropInput( hwndDlg );
 					break;
 				case IDC_BUTTON_TABFONT:
-					LOGFONT   lf = m_Common.m_sTabBar.m_tabFont;
-					INT fontSize = m_Common.m_sTabBar.m_tabFontPs;
+					LOGFONT   lf = m_Common.m_sTabBar.m_lf;
+					INT nPointSize = m_Common.m_sTabBar.m_nPointSize;
 
-					if( MySelectFont( &lf, &fontSize, hwndDlg, false) ){
-						m_Common.m_sTabBar.m_tabFont = lf;
-						m_Common.m_sTabBar.m_tabFontPs = fontSize;
+					if( MySelectFont( &lf, &nPointSize, hwndDlg, false) ){
+						m_Common.m_sTabBar.m_lf = lf;
+						m_Common.m_sTabBar.m_nPointSize = nPointSize;
 					}
 					break;
 				}

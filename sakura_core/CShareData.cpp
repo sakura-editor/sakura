@@ -670,8 +670,8 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sTabBar.m_bChgWndByWheel = FALSE;			//マウスホイールでウィンドウ切替	//@@@ 2006.03.26 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bNewWindow = FALSE;				// 外部から起動するときは新しいウインドウで開く
 
-		m_pShareData->m_Common.m_sTabBar.m_tabFont = lfIconTitle;
-		m_pShareData->m_Common.m_sTabBar.m_tabFontPs = 0;
+		m_pShareData->m_Common.m_sTabBar.m_lf = lfIconTitle;
+		m_pShareData->m_Common.m_sTabBar.m_nPointSize = 0;
 
 		m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll = TRUE;		// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll = TRUE;		// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる

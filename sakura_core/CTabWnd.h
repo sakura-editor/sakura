@@ -33,7 +33,6 @@
 		   distribution.
 */
 
-class CTabWnd;
 
 #ifndef _CTABWND_H_
 #define _CTABWND_H_
@@ -183,7 +182,7 @@ private:
 	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
-	LOGFONT		m_logfont;				//!< 表示フォントの特性情報
+	LOGFONT		m_lf;					//!< 表示フォントの特性情報
 };
 
 #endif /* _CTABWND_H_ */

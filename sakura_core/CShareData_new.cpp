@@ -702,7 +702,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, "bNewWindow"			, common.m_sTabBar.m_bNewWindow );	// 外部から起動するときは新しいウインドウで開く
 
 	ShareData_IO_Sub_LogFont( cProfile, pszSecName, "lfTabFont", "lfTabFontPs", "lfTabFaceName",
-		common.m_sTabBar.m_tabFont, common.m_sTabBar.m_tabFontPs );
+		common.m_sTabBar.m_lf, common.m_sTabBar.m_nPointSize );
 	
 	// 2001/06/20 asa-o 分割ウィンドウのスクロールの同期をとる
 	cProfile.IOProfileData( pszSecName, "bSplitterWndHScroll"	, common.m_sWindow.m_bSplitterWndHScroll );

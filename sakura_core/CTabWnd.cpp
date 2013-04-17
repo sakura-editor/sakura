@@ -68,7 +68,7 @@
 #define TAB_MARGIN_RIGHT	DpiScaleX(47)
 
 //#define TAB_FONT_HEIGHT		DpiPointsToPixels(9)
-#define TAB_FONT_HEIGHT		abs(CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_tabFont.lfHeight)
+#define TAB_FONT_HEIGHT		abs(CShareData::getInstance()->GetShareData()->m_Common.m_sTabBar.m_lf.lfHeight)
 #define TAB_ITEM_HEIGHT		(TAB_FONT_HEIGHT + DpiScaleY(7))
 #define TAB_WINDOW_HEIGHT	(TAB_ITEM_HEIGHT + TAB_MARGIN_TOP + 2)
 
@@ -808,8 +808,8 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 
 		/* 表示用フォント */
 		/* LOGFONTの初期化 */
-		m_logfont = m_pShareData->m_Common.m_sTabBar.m_tabFont;
-		m_hFont = ::CreateFontIndirect( &m_logfont );
+		m_lf = m_pShareData->m_Common.m_sTabBar.m_lf;
+		m_hFont = ::CreateFontIndirect( &m_lf );
 		/* フォント変更 */
 		::SendMessage( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 
@@ -1079,8 +1079,8 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		TABMENU_DATA* pData = (TABMENU_DATA*)lpmis->itemData;
 
 		HDC hdc = ::GetDC( hwnd );
-		HFONT hfnt = CreateMenuFont();
-		HFONT hfntOld = (HFONT)::SelectObject( hdc, hfnt );
+		HFONT hFont = CreateMenuFont();
+		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFont );
 
 		SIZE size;
 		::GetTextExtentPoint32( hdc, pData->szText, ::_tcslen(pData->szText), &size );
@@ -1095,8 +1095,8 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		lpmis->itemHeight = ::GetSystemMetrics( SM_CYMENU );
 		lpmis->itemWidth = (cxIcon + DpiScaleX(8)) + size.cx;
 
-		::SelectObject( hdc, hfntOld );
-		::DeleteObject( hfnt );
+		::SelectObject( hdc, hFontOld );
+		::DeleteObject( hFont );
 		::ReleaseDC( hwnd, hdc );
 	}
 
@@ -1151,8 +1151,8 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		// テキスト描画
 		COLORREF clrTextOld = ::SetTextColor( hdc, clrText );
 		int iBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
-		HFONT hfnt = CreateMenuFont();
-		HFONT hfntOld = (HFONT)::SelectObject( hdc, hfnt );
+		HFONT hFont = CreateMenuFont();
+		HFONT hFontOld = (HFONT)::SelectObject( hdc, hFont );
 		RECT rcText = rcItem;
 		rcText.left += (cxIcon + DpiScaleX(8));
 
@@ -1160,8 +1160,8 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		::SetTextColor( hdc, clrTextOld );
 		::SetBkMode( hdc, iBkModeOld );
-		::SelectObject( hdc, hfntOld );
-		::DeleteObject( hfnt );
+		::SelectObject( hdc, hFontOld );
+		::DeleteObject( hFont );
 
 		// チェック状態なら外枠描画
 		if( lpdis->itemState & ODS_CHECKED )
@@ -2004,10 +2004,10 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 void CTabWnd::LayoutTab( void )
 {
 	// フォントを切り替える 2011.12.01 Moca
-	if( 0 != memcmp( &m_logfont, &m_pShareData->m_Common.m_sTabBar.m_tabFont, sizeof(m_logfont) ) ){
+	if( 0 != memcmp( &m_lf, &m_pShareData->m_Common.m_sTabBar.m_lf, sizeof(m_lf) ) ){
 		HFONT hFontOld = m_hFont;
-		m_logfont = m_pShareData->m_Common.m_sTabBar.m_tabFont;
-		m_hFont = ::CreateFontIndirect( &m_logfont );
+		m_lf = m_pShareData->m_Common.m_sTabBar.m_lf;
+		m_hFont = ::CreateFontIndirect( &m_lf );
 		::SendMessage( m_hwndTab, WM_SETFONT, (WPARAM)m_hFont, MAKELPARAM(TRUE, 0) );
 		::DeleteObject( hFontOld );
 		// ウィンドウの高さを修正
