@@ -32,13 +32,13 @@ CMRUFolder::CMRUFolder()
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	//履歴の管理	//@@@ 2003.04.08 MIK
-	(void)m_cRecent.EasyCreate( RECENT_FOR_FOLDER );
+	(void)m_cRecentFolder.EasyCreate( RECENT_FOR_FOLDER );
 }
 
 /*	デストラクタ	*/
 CMRUFolder::~CMRUFolder()
 {
-	m_cRecent.Terminate();
+	m_cRecentFolder.Terminate();
 }
 
 /*!
@@ -74,13 +74,13 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 	bool	bFavorite;
 
 	CShareData::getInstance()->TransformFileName_MakeCache();
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
+	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecent.GetViewCount() ) break;
+		if ( i >= m_cRecentFolder.GetViewCount() ) break;
 
-		const TCHAR* pszFolder = m_cRecent.GetDataOfItem( i );
-		bFavorite = m_cRecent.IsFavorite( i );
+		const TCHAR* pszFolder = m_cRecentFolder.GetDataOfItem( i );
+		bFavorite = m_cRecentFolder.IsFavorite( i );
 		bool bFavoriteLabel =  bFavorite && !m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 		CShareData::getInstance()->GetMenuFullLabel( szMenu, _countof(szMenu), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true );
 
@@ -95,22 +95,22 @@ std::vector<LPCTSTR> CMRUFolder::GetPathList() const
 {
 	int	i;
 	std::vector<LPCTSTR> ret;
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i ){
+	for( i = 0; i < m_cRecentFolder.GetItemCount(); ++i ){
 		//	「共通設定」→「全般」→「フォルダの履歴MAX」を反映
-		if ( i >= m_cRecent.GetViewCount() ) break;
-		ret.push_back(m_cRecent.GetDataOfItem(i));
+		if ( i >= m_cRecentFolder.GetViewCount() ) break;
+		ret.push_back(m_cRecentFolder.GetDataOfItem(i));
 	}
 	return ret;
 }
 
 int CMRUFolder::Length() const
 {
-	return m_cRecent.GetItemCount();
+	return m_cRecentFolder.GetItemCount();
 }
 
 void CMRUFolder::ClearAll()
 {
-	m_cRecent.DeleteAllItem();
+	m_cRecentFolder.DeleteAllItem();
 }
 
 /*	@brief 開いたフォルダ リストへの登録
@@ -125,11 +125,11 @@ void CMRUFolder::Add( const TCHAR* pszFolder )
 		return;
 	}
 
-	(void)m_cRecent.AppendItem( pszFolder );
+	(void)m_cRecentFolder.AppendItem( pszFolder );
 }
 
 const TCHAR* CMRUFolder::GetPath(int num) const
 {
-	return m_cRecent.GetDataOfItem( num );
+	return m_cRecentFolder.GetDataOfItem( num );
 }
 

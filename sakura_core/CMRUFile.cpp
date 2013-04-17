@@ -34,13 +34,13 @@ CMRUFile::CMRUFile()
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	//履歴の管理	//@@@ 2003.04.08 MIK
-	(void)m_cRecent.EasyCreate( RECENT_FOR_FILE );
+	(void)m_cRecentFile.EasyCreate( RECENT_FOR_FILE );
 }
 
 /*	デストラクタ	*/
 CMRUFile::~CMRUFile()
 {
-	m_cRecent.Terminate();
+	m_cRecentFile.Terminate();
 }
 
 /*!
@@ -81,15 +81,15 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 
 	CShareData::getInstance()->TransformFileName_MakeCache();
 
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i )
+	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecent.GetViewCount() ) break;
+		if ( i >= m_cRecentFile.GetViewCount() ) break;
 		
 		/* MRUリストの中にある開かれていないファイル */
 
-		const EditInfo	*p = (EditInfo*)m_cRecent.GetItem( i );
-		bFavorite = m_cRecent.IsFavorite( i );
+		const EditInfo	*p = (EditInfo*)m_cRecentFile.GetItem( i );
+		bFavorite = m_cRecentFile.IsFavorite( i );
 		bool bFavoriteLabel = bFavorite && !bMenuIcon;
 		CShareData::getInstance()->GetMenuFullLabel_MRU( szMenu, _countof(szMenu), p, -1, bFavoriteLabel, i );
 
@@ -116,10 +116,10 @@ std::vector<LPCTSTR> CMRUFile::GetPathList() const
 {
 	int i;
 	std::vector<LPCTSTR> ret;
-	for( i = 0; i < m_cRecent.GetItemCount(); ++i ){
+	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i ){
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
-		if ( i >= m_cRecent.GetViewCount() ) break;
-		ret.push_back(m_cRecent.GetDataOfItem(i));
+		if ( i >= m_cRecentFile.GetViewCount() ) break;
+		ret.push_back(m_cRecentFile.GetDataOfItem(i));
 	}
 	return ret;
 }
@@ -127,7 +127,7 @@ std::vector<LPCTSTR> CMRUFile::GetPathList() const
 /*! アイテム数を返す */
 int CMRUFile::Length(void) const
 {
-	return m_cRecent.GetItemCount();
+	return m_cRecentFile.GetItemCount();
 }
 
 /*!
@@ -135,7 +135,7 @@ int CMRUFile::Length(void) const
 */
 void CMRUFile::ClearAll(void)
 {
-	m_cRecent.DeleteAllItem();
+	m_cRecentFile.DeleteAllItem();
 }
 
 /*!
@@ -149,7 +149,7 @@ void CMRUFile::ClearAll(void)
 */
 bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 {
-	const EditInfo* p = (EditInfo*)m_cRecent.GetItem( num );
+	const EditInfo* p = (EditInfo*)m_cRecentFile.GetItem( num );
 	if( NULL == p ) return false;
 
 	*pfi = *p;
@@ -170,7 +170,7 @@ bool CMRUFile::GetEditInfo( int num, EditInfo* pfi ) const
 */
 bool CMRUFile::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 {
-	const EditInfo* p = (EditInfo*)m_cRecent.GetItem( m_cRecent.FindItem( pszPath ) );
+	const EditInfo* p = (EditInfo*)m_cRecentFile.GetItem( m_cRecentFile.FindItem( pszPath ) );
 	if( NULL == p ) return false;
 
 	*pfi = *p;
@@ -215,7 +215,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 	CMRUFolder cMRUFolder;
 	cMRUFolder.Add(szFolder);
 
-	m_cRecent.AppendItem( (char*)pEditInfo );
+	m_cRecentFile.AppendItem( (char*)pEditInfo );
 
 	::SHAddToRecentDocs( SHARD_PATH, pEditInfo->m_szPath );
 }

@@ -69,7 +69,7 @@ protected:
 	struct DLLSHAREDATA*	m_pShareData;		//	‹¤—Lƒƒ‚ƒŠ‚ğQÆ‚·‚é‚æB
 
 private:
-	CRecent	m_cRecent;	//—š—ğ	//@@@ 2003.04.08 MIK
+	CRecent	m_cRecentFile;	//—š—ğ	//@@@ 2003.04.08 MIK
 };
 
 #endif
