@@ -1374,7 +1374,7 @@ void CLayoutMgr::DUMP()
 		pLayout = pLayoutNext;
 	}
 	MYTRACE( _T("------------------------\n") );
-#endif _DEBUG
+#endif
 	return;
 }
 
