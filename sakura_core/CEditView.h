@@ -965,6 +965,7 @@ private:
 	DWORD	m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻
 
 private:
+	void AlertNotFound(HWND hwnd, LPCTSTR format, ...);
 	void DelCharForOverwrite( void );	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	int ConvertEol(const char* pszText, int nTextLen, char* pszConvertedText);
 };

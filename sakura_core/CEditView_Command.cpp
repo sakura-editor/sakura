@@ -17,6 +17,7 @@
 	Copyright (C) 2008, ryoji, nasukoji, novice, syat
 	Copyright (C) 2009, ryoji, syat, genta, salarm
 	Copyright (C) 2010, ryoji, Moca
+	Copyright (C) 2012, ryoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -3262,21 +3263,14 @@ end_of_func:;
 			SendStatusMessage(_T("▲末尾から再検索しました"));
 	}else{
 		SendStatusMessage(_T("△見つかりませんでした"));
-//	if( !bFound ){
 // To Here 2002.01.26 hor
-		ErrorBeep();
-		if( bReDraw	&&
-			m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND 	/* 検索／置換  見つからないときメッセージを表示 */
-		){
-			if( NULL == hwndParent ){
-				hwndParent = m_hWnd;
-			}
-			InfoMessage(
-				hwndParent,
-				_T("後方(↑) に文字列 '%s' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
-				m_szCurSrchKey
-			);
-		}
+
+		/* 検索／置換  見つからないときメッセージを表示 */
+		AlertNotFound(
+			hwndParent,
+			_T("後方(↑) に文字列 '%s' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
+			m_szCurSrchKey
+		);
 	}
 	return;
 }
@@ -3500,22 +3494,16 @@ end_of_func:;
 		DrawCaretPosInfo();	// 2002/04/18 YAZAKI
 		SendStatusMessage(_T("▽見つかりませんでした"));
 // To Here 2002.01.26 hor
-		ErrorBeep();
-		if( bRedraw	&&
-			m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND	/* 検索／置換  見つからないときメッセージを表示 */
-		){
-			if( NULL == hwndParent ){
-				hwndParent = m_hWnd;
-			}
-			if( NULL == pszNotFoundMessage ){
-				InfoMessage(
-					hwndParent,
-					_T("前方(↓) に文字列 '%s' が１つも見つかりません。"),
-					m_szCurSrchKey
-				);
-			}else{
-				InfoMessage(hwndParent, _T("%s"),pszNotFoundMessage);
-			}
+
+		/* 検索／置換  見つからないときメッセージを表示 */
+		if( NULL == pszNotFoundMessage ){
+			AlertNotFound(
+				hwndParent,
+				_T("前方(↓) に文字列 '%s' が１つも見つかりません。"),
+				m_szCurSrchKey
+			);
+		}else{
+			AlertNotFound(hwndParent, _T("%s"),pszNotFoundMessage);
 		}
 	}
 }
@@ -9143,6 +9131,29 @@ void CEditView::DelCharForOverwrite( void )
 		}else{
 			DeleteData( false );
 		}
+	}
+}
+
+/*!
+	@brief 検索で見つからないときの警告（メッセージボックス／サウンド）
+
+	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
+*/
+void CEditView::AlertNotFound(HWND hwnd, LPCTSTR format, ...)
+{
+	if( m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND
+		&& m_bDrawSWITCH	// ← たぶん「全て置換」実行中判定の代用品（もとは Command_SEARCH_NEXT() の中でだけ使用されていた）
+	){
+		if( NULL == hwnd ){
+			hwnd = m_hWnd;
+		}
+		//InfoMessage(hwnd, format, __VA_ARGS__);
+		va_list p;
+		va_start(p, format);
+		VMessageBoxF(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p);
+		va_end(p);
+	}else{
+		DefaultBeep();
 	}
 }
 

@@ -571,8 +571,7 @@ re_do:;
 	}
 	else{
 		SendStatusMessage( _T("▽見つかりませんでした") );
-		if( m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			InfoMessage( m_hWnd, _T("前方(↓) に差分が見つかりません。") );
+		AlertNotFound( m_hWnd, _T("前方(↓) に差分が見つかりません。") );
 	}
 
 	return;
@@ -620,12 +619,11 @@ re_do:;
 	}
 
 	if( bFound ){
-		if( nYOld <= nY ) SendStatusMessage( "▲末尾から再検索しました" );
+		if( nYOld <= nY ) SendStatusMessage( _T("▲末尾から再検索しました") );
 	}
 	else{
 		SendStatusMessage( _T("△見つかりませんでした") );
-		if( m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND )	/* 見つからないときメッセージを表示 */
-			InfoMessage( m_hWnd, _T("後方(↑) に差分が見つかりません。") );
+		AlertNotFound( m_hWnd, _T("後方(↑) に差分が見つかりません。") );
 	}
 
 	return;

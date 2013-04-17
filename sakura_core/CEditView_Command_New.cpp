@@ -1977,15 +1977,15 @@ void CEditView::Command_BOOKMARK_SET(void)
 //! 次のブックマークを探し，見つかったら移動する
 void CEditView::Command_BOOKMARK_NEXT(void)
 {
-//	CDocLine*	pCDocLine;
 	int			nX=0;
 	int			nY;
-//	int			nRet;
 	int			nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
 	BOOL		bRedo	=	TRUE;	// hor
+
 	nY=m_nCaretPosY_PHY;
 	nYOld=nY;						// hor
+
 re_do:;								// hor
 	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, SEARCH_FORWARD, &nY)){
 		bFound = TRUE;				// hor
@@ -2004,11 +2004,10 @@ re_do:;								// hor
 		}
 	}
 	if(bFound){
-		if(nYOld >= nY)SendStatusMessage("▼先頭から再検索しました");
+		if(nYOld >= nY)SendStatusMessage(_T("▼先頭から再検索しました"));
 	}else{
-		SendStatusMessage("▽見つかりませんでした");
-		if(m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			InfoMessage( m_hWnd, _T("前方(↓) にブックマークが見つかりません。"));
+		SendStatusMessage(_T("▽見つかりませんでした"));
+		AlertNotFound( m_hWnd, _T("前方(↓) にブックマークが見つかりません。"));
 	}
 	return;
 }
@@ -2023,8 +2022,10 @@ void CEditView::Command_BOOKMARK_PREV(void)
 	int			nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
 	BOOL		bRedo	=	TRUE;	// hor
+
 	nY=m_nCaretPosY_PHY;
 	nYOld=nY;						// hor
+
 re_do:;								// hor
 	if(m_pcEditDoc->m_cDocLineMgr.SearchBookMark(nY, SEARCH_BACKWARD, &nY)){
 		bFound = TRUE;				// hor
@@ -2046,8 +2047,7 @@ re_do:;								// hor
 		if(nYOld <= nY)SendStatusMessage(_T("▲末尾から再検索しました"));
 	}else{
 		SendStatusMessage(_T("△見つかりませんでした"));
-		if(m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND)	/* 検索／置換  見つからないときメッセージを表示 */
-			InfoMessage( m_hWnd, _T("後方(↑) にブックマークが見つかりません。") );
+		AlertNotFound( m_hWnd, _T("後方(↑) にブックマークが見つかりません。") );
 	}
 	return;
 }
