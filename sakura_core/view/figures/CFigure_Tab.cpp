@@ -12,7 +12,7 @@ void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView );
 void _DrawTabArrow( CGraphics& gr, int nPosX, int nPosY, int nWidth, int nHeight, bool bBold, COLORREF pColor );
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                         CFigure_Tab                           //
+//                         CFigure_Tab                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 bool CFigure_Tab::Match(const wchar_t* pText) const
@@ -88,19 +88,22 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 			);
 
 			//タブ矢印表示
-			if( cTabType.IsDisp() && TypeDataPtr->m_bTabArrow && rcClip2.left <= sPos.GetDrawPos().x ){ // Apr. 1, 2003 MIK 行番号と重なる
+			if( cTabType.IsDisp() && TypeDataPtr->m_bTabArrow /*&& rcClip2.left <= sPos.GetDrawPos().x*/ ){ // Apr. 1, 2003 MIK 行番号と重なる
 				// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
 				// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
+				//	太字かどうか設定も見る様にする 2013/4/11 Uchi
 				TEXTMETRIC tm;
 				::GetTextMetrics(gr, &tm);
 				LONG lfWeightNormal = pcView->m_pcEditWnd->GetLogfont().lfWeight;
+				int	nPosLeft = rcClip2.left > sPos.GetDrawPos().x ? rcClip2.left : sPos.GetDrawPos().x;
 				_DrawTabArrow(
 					gr,
-					sPos.GetDrawPos().x,
+					nPosLeft,
 					sPos.GetDrawPos().y,
-					pMetrics->GetHankakuWidth(),
+					nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Area一杯に 2013/4/11 Uchi
 					pMetrics->GetHankakuHeight(),
-					tm.tmWeight > lfWeightNormal,
+					tm.tmWeight > lfWeightNormal ||
+						TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bFatFont,
 					::GetTextColor(gr)//cTabType.GetTextColor()
 				);
 			}
@@ -132,17 +135,15 @@ void _DrawTabArrow(
 	// ペン設定
 	gr.SetPen( pColor );
 
-	// 幅調整
-	nWidth--;
-
 	// 矢印の先頭
-	int sx = nPosX + nWidth;
+	int sx = nPosX + nWidth - 2;
 	int sy = nPosY + ( nHeight / 2 );
+	int sa = nHeight / 4;								// 鏃のsize
 
 	for(int i = 0; i < (bBold?2:1); i++){
 		int y = sy + i;
-		gr.DrawLine(sx - nWidth,	y,	sx,					y				);	//「─」左端から右端
-		gr.DrawLine(sx,				y,	sx - nHeight / 4,	y + nHeight / 4	);	//「／」右端から斜め左下
-		gr.DrawLine(sx,				y,	sx - nHeight / 4,	y - nHeight / 4	);	//「＼」右端から斜め左上
+		gr.DrawLine(nPosX,	y,	sx,			y		);	//「─」左端から右端
+		gr.DrawLine(sx,		y,	sx - sa,	y + sa	);	//「／」右端から斜め左下
+		gr.DrawLine(sx,		y,	sx - sa,	y - sa	);	//「＼」右端から斜め左上
 	}
 }
