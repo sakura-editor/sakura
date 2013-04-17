@@ -137,11 +137,10 @@ CPropCommon::~CPropCommon()
 
 /* 初期化 */
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CSMacroMgr* pMacro, CMenuDrawer* pMenuDrawer )
+void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CMenuDrawer* pMenuDrawer )
 {
 	m_hwndParent = hwndParent;	/* オーナーウィンドウのハンドル */
 	m_pcIcons = cIcons;
-	m_pcSMacro = pMacro;
 
 	// 2007.11.02 ryoji マクロ設定を変更したあと、画面を閉じないでカスタムメニュー、ツールバー、
 	//                  キー割り当ての画面に切り替えた時に各画面でマクロ設定の変更が反映されるよう、
