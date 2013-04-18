@@ -252,6 +252,7 @@ public:
 
 //	2001/06/18 asa-o
 	bool  ShowKeywordHelp( POINT po, LPCTSTR pszHelp, LPRECT prcHokanWin);	// 補完ウィンドウ用のキーワードヘルプ表示
+	void SetUndoBuffer( bool bPaintLineNumber = false );					// アンドゥバッファの処理
 
 // 2002/01/19 novice public属性に変更
 	BOOL GetSelectedData( CMemory*, BOOL, const char*, BOOL, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */

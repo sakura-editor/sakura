@@ -215,6 +215,7 @@ BOOL CEditView::HandleCommand(
 	if( NULL == m_pcOpeBlk ){	/* 操作ブロック */
 		m_pcOpeBlk = new COpeBlk;
 	}
+	m_pcOpeBlk->AddRef();	//参照カウンタ増加
 	
 	//	Jan. 10, 2005 genta コメント
 	//	ここより後ではswitchの後ろでUndoを正しく登録するため，
@@ -657,22 +658,8 @@ BOOL CEditView::HandleCommand(
 
 	}
 
-	/* アンドゥバッファの処理 */
-	if( NULL != m_pcOpeBlk ){
-		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
-			/* 操作の追加 */
-			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-
-			if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
-				RedrawLineNumber();	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
-
-			if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-				m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
-		}else{
-			delete m_pcOpeBlk;
-		}
-		m_pcOpeBlk = NULL;
-	}
+	// アンドゥバッファの処理
+	SetUndoBuffer(true);
 
 	return bRet;
 }

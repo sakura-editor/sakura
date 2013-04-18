@@ -3035,16 +3035,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 							DeleteData( true );
 
 							// アンドゥバッファの処理
-							if( NULL != m_pcOpeBlk ){
-								if( 0 < m_pcOpeBlk->GetNum() ){
-									m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-									if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-										m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
-								}else{
-									delete m_pcOpeBlk;
-								}
-								m_pcOpeBlk = NULL;
-							}
+							SetUndoBuffer();
 						}
 					}
 				}
@@ -6863,17 +6854,8 @@ DWORD CEditView::DoGrep(
 	/* アクティブにする */
 	ActivateFrameWindow( hwndMainFrame );
 
-
-	/* アンドゥバッファの処理 */
-	if( NULL != m_pcOpeBlk ){
-		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
-			/* 操作の追加 */
-			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-		}else{
-			delete m_pcOpeBlk;
-		}
-		m_pcOpeBlk = NULL;
-	}
+	// アンドゥバッファの処理
+	SetUndoBuffer();
 
 	//	Apr. 13, 2001 genta
 	//	Grep実行後はファイルを変更無しの状態にする．
@@ -8720,18 +8702,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 	DrawSelectArea();
 
-	/* アンドゥバッファの処理 */
-	if( NULL != m_pcOpeBlk ){
-		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
-			/* 操作の追加 */
-			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
-			if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
-				m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新	// 2007.07.22 ryoji
-		}else{
-			delete m_pcOpeBlk;
-		}
-		m_pcOpeBlk = NULL;
-	}
+	// アンドゥバッファの処理
+	SetUndoBuffer();
 
 	::GlobalUnlock( hData );
 	// 2004.07.12 fotomo/もか メモリーリークの修正
@@ -10581,4 +10553,27 @@ void CEditView::SetInsMode(bool mode)
 {
 	m_pcEditDoc->SetInsMode( mode );
 }
+
+/*! アンドゥバッファの処理 */
+void CEditView::SetUndoBuffer( bool bPaintLineNumber )
+{
+	if( NULL != m_pcOpeBlk && m_pcOpeBlk->Release() == 0 ){
+		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
+			/* 操作の追加 */
+			m_pcEditDoc->m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+
+			if( bPaintLineNumber
+			 && m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
+				RedrawLineNumber();	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
+
+			if( !m_pcEditDoc->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
+				m_pcEditDoc->RedrawAllViews( this );	//	他のペインの表示を更新
+		}
+		else{
+			delete m_pcOpeBlk;
+		}
+		m_pcOpeBlk = NULL;
+	}
+}
+
 /*[EOF]*/
