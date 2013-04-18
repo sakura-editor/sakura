@@ -306,7 +306,7 @@ BOOL CEditDoc::Create(
 	m_cFuncLookup.Init( m_hInstance, m_pShareData->m_Common.m_sMacro.m_MacroTable, &m_pShareData->m_Common );
 
 	/* 設定プロパティシートの初期化１ */
-	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, m_pcSMacroMgr, &(pCEditWnd->m_CMenuDrawer) );
+	m_cPropCommon.Create( m_hInstance, m_hWnd, pcIcons, &(pCEditWnd->m_CMenuDrawer) );
 	m_cPropTypes.Create( m_hInstance, m_hWnd );
 
 	MY_TRACETIME( cRunningTimer, "End: PropSheet" );

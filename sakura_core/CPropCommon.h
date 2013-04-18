@@ -73,7 +73,7 @@ public:
 	~CPropCommon();
 	//	Sep. 29, 2001 genta マクロクラスを渡すように;
 //@@@ 2002.01.03 YAZAKI m_tbMyButtonなどをCShareDataからCMenuDrawerへ移動したことによる修正。
-	void Create( HINSTANCE, HWND, CImageListMgr*, CSMacroMgr* , CMenuDrawer* );	/* 初期化 */
+	void Create( HINSTANCE, HWND, CImageListMgr*, CMenuDrawer* );	/* 初期化 */
 
 	/*
 	||  Attributes & Operations
@@ -102,7 +102,6 @@ public:
 	//	Oct. 15, 2001 genta Lookupはダイアログボックス内で別インスタンスを作るように
 	//	(検索対象として，設定用common領域を指すようにするため．)
 	CFuncLookup			m_cLookup;
-	CSMacroMgr*			m_pcSMacro;
 
 	CMenuDrawer*		m_pcMenuDrawer;
 	/*
