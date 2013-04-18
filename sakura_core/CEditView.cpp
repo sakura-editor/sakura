@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <io.h>
+#include <process.h> // _beginthreadex
 #include "CEditView.h"
 #include "Debug.h"
 #include "CRunningTimer.h"
@@ -4613,12 +4614,12 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 
 /* ShellExecuteを呼び出すプロシージャ */
-/*   呼び出し前に lpParameter を GlobalAlloc しておくこと */
-/*   CreateThreadにてスレッドが生成されているため、Cランタイム関数は使用できない */
-DWORD WINAPI ShellExecuteProc( LPVOID lpParameter )
+/*   呼び出し前に lpParameter を new しておくこと */
+static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 {
-	::ShellExecute( NULL, _T("open"), (char*)lpParameter, NULL, NULL, SW_SHOW );
-	::GlobalFree( lpParameter );
+	LPTSTR pszFile = (LPTSTR)lpParameter;
+	::ShellExecute( NULL, _T("open"), pszFile, NULL, NULL, SW_SHOW );
+	delete []pszFile;
 	return 0;
 }
 
@@ -4640,13 +4641,14 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
 		if(
 			IsCurrentPositionURL(
-			m_nCaretPosX,	// カーソル位置X
-			m_nCaretPosY,	// カーソル位置Y
-			&nUrlLine,		// URLの行(改行単位)
-			&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
-			&nUrlLen,		// URLの長さ(バイト数)
-			&pszURL			// URL受け取り先
-		) ){
+				m_nCaretPosX,	// カーソル位置X
+				m_nCaretPosY,	// カーソル位置Y
+				&nUrlLine,		// URLの行(改行単位)
+				&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
+				&nUrlLen,		// URLの長さ(バイト数)
+				&pszURL			// URL受け取り先
+			)
+		 ){
 			char*		pszWork = NULL;
 			char*		pszOPEN;
 
@@ -4677,13 +4679,12 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 				// 2009.05.21 syat UNCパスだと1分以上無応答になることがあるのでスレッド化
 				CWaitCursor cWaitCursor( m_hWnd );	// カーソルを砂時計にする
 
-				char* sUrlGlobal = (char*)::GlobalAlloc( 0, strlen(pszOPEN)+1 );
-				strcpy( sUrlGlobal, pszOPEN );
-				// bccなど他のビルド環境での設定変更を不要とするため、_beginthreadexではなく
-				// CreateThreadを使用してスレッドを生成する
-				DWORD nThreadId;
-				HANDLE hThread = ::CreateThread( NULL, 0, ShellExecuteProc, (LPVOID)sUrlGlobal, 0, &nThreadId );
-				if( hThread ){
+				unsigned int nThreadId;
+				LPCTSTR szUrl = pszOPEN;
+				LPTSTR szUrlDup = new TCHAR[_tcslen( szUrl ) + 1];
+				_tcscpy( szUrlDup, szUrl );
+				HANDLE hThread = (HANDLE)_beginthreadex( NULL, 0, ShellExecuteProc, (LPVOID)szUrlDup, 0, &nThreadId );
+				if( hThread != INVALID_HANDLE_VALUE ){
 					// ユーザーのURL起動指示に反応した目印としてちょっとの時間だけ砂時計カーソルを表示しておく
 					// ShellExecute は即座にエラー終了することがちょくちょくあるので WaitForSingleObject ではなく Sleep を使用（ex.存在しないパスの起動）
 					// 【補足】いずれの API でも待ちを長め（2～3秒）にするとなぜか Web ブラウザ未起動からの起動が重くなる模様（PCタイプ, XP/Vista, IE/FireFox に関係なく）
@@ -4691,13 +4692,11 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 					::CloseHandle(hThread);
 				}else{
 					//スレッド作成失敗
-					::GlobalFree( sUrlGlobal );
+					delete[] szUrlDup;
 				}
 			}
 			delete [] pszURL;
-			if( NULL != pszWork ){
-				delete [] pszWork;
-			}
+			delete [] pszWork;
 			return;
 		}
 

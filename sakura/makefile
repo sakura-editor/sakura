@@ -1,4 +1,3 @@
-# $Id$
 # Makefile for Sakura Editor
 # 	Output - sakura.exe
 # 	Compiler - borland C++ free compiler 5.5.1 (with borland make)
@@ -33,7 +32,7 @@ CC_OBJFILEOPT=-o
 CC_EXEFILEOPT=-e
 
 ## (BCC) CPP Options
-CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -D_MBCS -tW
+CPPFLAGS=-I$(SRCDIR)  -DWINVER=0x400 -D_WIN32_WINNT=0 -D_WIN32_IE=0x400 -D_MBCS -D__MT__ -tWM
 RFLAGS=-dDS_SETFOREGROUND=0x200L -i$(SRCDIR)
 WARNINGS=-wamb -wamp -wbbf -wcln -wdef -wncf -wnak -wnod -wsig -wstu -wstv -wucp -wuse
 
@@ -54,7 +53,7 @@ OPTFLAGS=$(OPTFLAGS) -DNDEBUG -w-8004  -w-8057
 ## (BCC) LINK Options
 LFLAGS=-aa -V4.0 -c -Gn -m -s
 STDOBJS=c0w32.obj
-STDLIBS=import32.lib cw32.lib
+STDLIBS=import32.lib cw32mt.lib
 
 !elseif "$(CC)"=="cl"
 #------------------------------------------
@@ -71,7 +70,7 @@ OPTLIBS=libc.lib libcp.lib
 !endif
 
 RC=rc.exe
-CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "SAKURA_NO_DLL" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
+CPPFLAGS=/nologo /I "$(SRCDIR)" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /Fp$(OBJDIR)\sakura.pch /Fd$(OBJDIR)\sakura.pdb
 RFLAGS=/l 0x411 /d "NDEBUG" /I "$(SRCDIR)"
 LFLAGS=/subsystem:windows /machine:x86 /map
 
@@ -84,8 +83,6 @@ CC_EXEFILEOPT=/Fe
 !ERROR Compiler $(CC) is not supported.
 
 !endif
-
-#DEF=EXPORT_SAKURA_DLL
 
 LIBS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comctl32.lib Imm32.lib mpr.lib imagehlp.lib
 
