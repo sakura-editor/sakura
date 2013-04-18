@@ -30,6 +30,7 @@
 #include <dlgs.h>
 #include <io.h>
 #include <cderr.h> // Nov. 3, 2005 genta
+#include "CEditApp.h"
 #include "CEditDoc.h"
 #include "Debug.h"
 #include "Funccode.h"
@@ -103,7 +104,7 @@ CEditDoc::CEditDoc()
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView();
 
-	/* レイアウト管理情報の初期化 */
+	// レイアウト管理情報の初期化
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
 	// レイアウト情報の変更
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
@@ -426,104 +427,26 @@ bool CEditDoc::IsModificationForbidden( int nCommand )
 */
 BOOL CEditDoc::HandleCommand( int nCommand )
 {
-	int				i;
-	int				j;
-	int				nGroup;
-	int				nRowNum;
-	int				nPane;
-	HWND			hwndWork;
-	EditNode*		pEditNodeArr;
-
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
 	//	下位16ビットのみを取り出す
 	switch( LOWORD( nCommand )){
 	case F_PREVWINDOW:	//前のウィンドウ
-		nPane = m_cSplitterWnd.GetPrevPane();
-		if( -1 != nPane ){
-			SetActivePane( nPane );
-		}else{
-			/* 現在開いている編集窓のリストを得る */
-			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-			if(  nRowNum > 0 ){
-				/* 自分のウィンドウを調べる */
-				nGroup = 0;
-				for( i = 0; i < nRowNum; ++i )
-				{
-					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
-					{
-						nGroup = pEditNodeArr[i].m_nGroup;
-						break;
-					}
-				}
-				if( i < nRowNum )
-				{
-					// 前のウィンドウ
-					for( j = i - 1; j >= 0; --j )
-					{
-						if( nGroup == pEditNodeArr[j].m_nGroup )
-							break;
-					}
-					if( j < 0 )
-					{
-						for( j = nRowNum - 1; j > i; --j )
-						{
-							if( nGroup == pEditNodeArr[j].m_nGroup )
-								break;
-						}
-					}
-					/* 前のウィンドウをアクティブにする */
-					hwndWork = pEditNodeArr[j].m_hWnd;
-					/* アクティブにする */
-					ActivateFrameWindow( hwndWork );
-					/* 最後のペインをアクティブにする */
-					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
-				}
-				delete [] pEditNodeArr;
+		{
+			int nPane = m_cSplitterWnd.GetPrevPane();
+			if( -1 != nPane ){
+				SetActivePane( nPane );
+			}else{
+				CEditApp::ActiveNextWindow(m_hwndParent);
 			}
 		}
 		return TRUE;
 	case F_NEXTWINDOW:	//次のウィンドウ
-		nPane = m_cSplitterWnd.GetNextPane();
-		if( -1 != nPane ){
-			SetActivePane( nPane );
-		}else{
-			/* 現在開いている編集窓のリストを得る */
-			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-			if(  nRowNum > 0 ){
-				/* 自分のウィンドウを調べる */
-				nGroup = 0;
-				for( i = 0; i < nRowNum; ++i )
-				{
-					if( m_hwndParent == pEditNodeArr[i].m_hWnd )
-					{
-						nGroup = pEditNodeArr[i].m_nGroup;
-						break;
-					}
-				}
-				if( i < nRowNum )
-				{
-					// 次のウィンドウ
-					for( j = i + 1; j < nRowNum; ++j )
-					{
-						if( nGroup == pEditNodeArr[j].m_nGroup )
-							break;
-					}
-					if( j >= nRowNum )
-					{
-						for( j = 0; j < i; ++j )
-						{
-							if( nGroup == pEditNodeArr[j].m_nGroup )
-								break;
-						}
-					}
-					/* 次のウィンドウをアクティブにする */
-					hwndWork = pEditNodeArr[j].m_hWnd;
-					/* アクティブにする */
-					ActivateFrameWindow( hwndWork );
-					/* 最初のペインをアクティブにする */
-					::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
-				}
-				delete [] pEditNodeArr;
+		{
+			int nPane = m_cSplitterWnd.GetNextPane();
+			if( -1 != nPane ){
+				SetActivePane( nPane );
+			}else{
+				CEditApp::ActiveNextWindow(m_hwndParent);
 			}
 		}
 		return TRUE;

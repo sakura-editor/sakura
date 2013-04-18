@@ -1102,7 +1102,6 @@ bool CEditApp::OpenNewEditor2(
 	bool			bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
-	char			pszCmdLine[1024];
 	DLLSHAREDATA*	pShareData;
 	int				nPos = 0;		//	引数作成用ポインタ
 
@@ -1115,6 +1114,8 @@ bool CEditApp::OpenNewEditor2(
 		return false;
 	}
 
+	// 追加のコマンドラインオプション
+	char pszCmdLine[1024];
 	if( pfi != NULL ){
 		if( pfi->m_szPath != NULL ){
 			if( strlen( pfi->m_szPath ) > 0 ){
@@ -1143,6 +1144,83 @@ bool CEditApp::OpenNewEditor2(
 //	To Here Oct. 24, 2000 genta
 
 
+
+void CEditApp::ActiveNextWindow(HWND hwndParent)
+{
+	/* 現在開いている編集窓のリストを得る */
+	EditNode*	pEditNodeArr;
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	if(  nRowNum > 0 ){
+		/* 自分のウィンドウを調べる */
+		int				nGroup = 0;
+		int				i;
+		for( i = 0; i < nRowNum; ++i ){
+			if( hwndParent == pEditNodeArr[i].m_hWnd )
+			{
+				nGroup = pEditNodeArr[i].m_nGroup;
+				break;
+			}
+		}
+		if( i < nRowNum ){
+			// 前のウィンドウ
+			int		j;
+			for( j = i - 1; j >= 0; --j ){
+				if( nGroup == pEditNodeArr[j].m_nGroup )
+					break;
+			}
+			if( j < 0 ){
+				for( j = nRowNum - 1; j > i; --j ){
+					if( nGroup == pEditNodeArr[j].m_nGroup )
+						break;
+				}
+			}
+			/* 前のウィンドウをアクティブにする */
+			HWND	hwndWork = pEditNodeArr[j].m_hWnd;
+			ActivateFrameWindow( hwndWork );
+			/* 最後のペインをアクティブにする */
+			::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 1 );
+		}
+		delete [] pEditNodeArr;
+	}
+}
+
+void CEditApp::ActivePrevWindow(HWND hwndParent)
+{
+	/* 現在開いている編集窓のリストを得る */
+	EditNode*	pEditNodeArr;
+	int			nRowNum = CShareData::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+	if(  nRowNum > 0 ){
+		/* 自分のウィンドウを調べる */
+		int				nGroup = 0;
+		int				i;
+		for( i = 0; i < nRowNum; ++i ){
+			if( hwndParent == pEditNodeArr[i].m_hWnd ){
+				nGroup = pEditNodeArr[i].m_nGroup;
+				break;
+			}
+		}
+		if( i < nRowNum ){
+			// 次のウィンドウ
+			int		j;
+			for( j = i + 1; j < nRowNum; ++j ){
+				if( nGroup == pEditNodeArr[j].m_nGroup )
+					break;
+			}
+			if( j >= nRowNum ){
+				for( j = 0; j < i; ++j ){
+					if( nGroup == pEditNodeArr[j].m_nGroup )
+						break;
+				}
+			}
+			/* 次のウィンドウをアクティブにする */
+			HWND	hwndWork = pEditNodeArr[j].m_hWnd;
+			ActivateFrameWindow( hwndWork );
+			/* 最初のペインをアクティブにする */
+			::PostMessage( hwndWork, MYWM_SETACTIVEPANE, (WPARAM)-1, 0 );
+		}
+		delete [] pEditNodeArr;
+	}
+}
 
 
 
@@ -1415,7 +1493,7 @@ int	CEditApp::CreatePopUpMenu_R( void )
 */
 void CEditApp::OnDestroy()
 {
-	HWND hwndExitingDlg;
+	HWND hwndExitingDlg = 0;
 
 	if (m_hWnd == NULL)
 		return;	// 既に破棄されている
@@ -1431,7 +1509,7 @@ void CEditApp::OnDestroy()
 	//
 
 	/* 終了ダイアログを表示する */
-	if( TRUE == m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog ){
+	if( m_pShareData->m_Common.m_sGeneral.m_bDispExitingDialog ){
 		/* 終了中ダイアログの表示 */
 		hwndExitingDlg = ::CreateDialog(
 			m_hInstance,
