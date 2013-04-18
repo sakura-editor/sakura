@@ -144,7 +144,7 @@ BEGIN
     ICON            IDI_ICON_STD,IDC_STATIC_MYICON,5,5,20,20,SS_NOTIFY
     EDITTEXT        IDC_EDIT_VER,33,6,204,51,ES_MULTILINE | ES_READONLY | 
                     NOT WS_BORDER | NOT WS_TABSTOP
-    LTEXT           S_COPYRIGHT,IDC_STATIC,33,61,205,8,NOT WS_GROUP
+    LTEXT           S_COPYRIGHT,IDC_STATIC,33,61,205,8,NOT WS_GROUP | SS_NOPREFIX
     LTEXT           "原作者: たけ(竹パンダ) さん",IDC_STATIC,33,75,125,8,NOT 
                     WS_GROUP
     LTEXT           "Project Sakura-Editor:",IDC_STATIC_URL_CAPTION,33,88,71,
@@ -2778,7 +2778,6 @@ BEGIN
     F_TMPWRAPNOWRAP         "折り返さない"
     F_TMPWRAPSETTING        "指定桁で折り返す"
     F_TMPWRAPWINDOW         "右端で折り返す"
-    F_TEXTWRAPMETHOD        "折り返し方法"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2807,6 +2806,7 @@ BEGIN
     F_SPLIT_VH              "縦横に分割／分割解除"
     F_WINCLOSE              "閉じる"
     F_WIN_CLOSEALL          "すべて閉じる"
+    F_TAB_CLOSEOTHER        "このタブ／ウィンドウ以外を閉じる"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2844,7 +2844,6 @@ BEGIN
     F_TAB_SEPARATE          "新規グループ"
     F_TAB_JOINTNEXT         "次のグループに移動"
     F_TAB_JOINTPREV         "前のグループに移動"
-    F_TAB_CLOSEOTHER        "このウィンドウ／タブ以外を閉じる"
     F_TAB_CLOSELEFT         "左をすべて閉じる"
     F_TAB_CLOSERIGHT        "右をすべて閉じる"
 END
@@ -2914,6 +2913,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_CHGMOD_EOL            "入力改行コード指定"
+    F_TEXTWRAPMETHOD        "折り返し方法"
 END
 
 STRINGTABLE DISCARDABLE 
