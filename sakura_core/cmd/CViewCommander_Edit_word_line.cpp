@@ -63,7 +63,6 @@ void CViewCommander::Command_WordDeleteToStart( void )
 //単語の右端まで削除
 void CViewCommander::Command_WordDeleteToEnd( void )
 {
-	CMemory	cmemData;
 
 	/* 矩形選択状態では実行不能((★★もろ手抜き★★)) */
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ){

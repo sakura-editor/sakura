@@ -403,8 +403,6 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 	//»ŽžŒv
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
-	CMemory		cmemBuf;
-
 	/* ‹éŒ`”ÍˆÍ‘I‘ð’†‚© */
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 		ErrorBeep();
