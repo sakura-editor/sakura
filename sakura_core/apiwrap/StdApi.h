@@ -26,6 +26,15 @@
 
 #include <ImageHlp.h> //MakeSureDirectoryPathExists
 
+//デバッグ用。
+//VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
+//デバッグ時ステップ実行する際に便利になる。ただし、当然重くなる。
+#ifdef _DEBUG
+#define DEBUG_SETPIXEL(hdc) SetPixel(hdc,-1,-1,0); //SetPixelをすると、結果が即反映される。
+#else
+#define DEBUG_SETPIXEL(hdc)
+#endif
+
 namespace ApiWrap
 {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -44,6 +53,27 @@ namespace ApiWrap
 	//              W系描画API (ANSI版でも利用可能)                //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+	/*!
+		ANSI版でも使えるExtTextOutW_AnyBuild。
+		文字数制限1024半角文字。(文字間隔配列を1024半角文字分しか用意していないため)
+	*/
+#ifdef _UNICODE
+	inline BOOL ExtTextOutW_AnyBuild(
+		HDC				hdc,
+		int				x,
+		int				y,
+		UINT			fuOptions,
+		const RECT*		lprc,
+		LPCWSTR			lpwString,
+		UINT			cbCount,
+		const int*		lpDx
+	)
+	{
+		BOOL ret=::ExtTextOut(hdc,x,y,fuOptions,lprc,lpwString,cbCount,lpDx);
+		DEBUG_SETPIXEL(hdc);
+		return ret;
+	}
+#else
 	BOOL ExtTextOutW_AnyBuild(
 		HDC				hdc,
 		int				x,
@@ -54,14 +84,30 @@ namespace ApiWrap
 		UINT			cbCount,
 		const int*		lpDx
 	);
+#endif
 
+#ifdef _UNICODE
+	inline BOOL TextOutW_AnyBuild(
+		HDC		hdc,
+		int		nXStart,
+		int		nYStart,
+		LPCWSTR	lpwString,
+		int		cbString
+	)
+	{
+		BOOL ret=::TextOut(hdc,nXStart,nYStart,lpwString,cbString);
+		DEBUG_SETPIXEL(hdc);
+		return ret;
+	}
+#else
 	BOOL TextOutW_AnyBuild(
 		HDC		hdc,
 		int		nXStart,
 		int		nYStart,
-		LPCWSTR	lpString,
+		LPCWSTR	lpwString,
 		int		cbString
 	);
+#endif
 
 	LPWSTR CharNextW_AnyBuild(
 		LPCWSTR lpsz
@@ -89,12 +135,24 @@ namespace ApiWrap
 	//             その他W系API (ANSI版でも利用可能)               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+#ifdef _UNICODE
+	inline int LoadStringW_AnyBuild(
+		HINSTANCE	hInstance,
+		UINT		uID,
+		LPWSTR		lpBuffer,
+		int			nBufferCount	//!< バッファのサイズ。文字単位。
+	)
+	{
+		return ::LoadStringW(hInstance, uID, lpBuffer, nBufferCount);
+	}
+#else
 	int LoadStringW_AnyBuild(
 		HINSTANCE	hInstance,
 		UINT		uID,
 		LPWSTR		lpBuffer,
 		int			nBufferCount	//!< バッファのサイズ。文字単位。
 	);
+#endif
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
