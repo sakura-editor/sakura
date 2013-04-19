@@ -547,16 +547,29 @@ void CViewCommander::Command_TRIM(
 
 //	from CViewCommander_New.cpp
 /*!	物理行のソートに使う構造体*/
-typedef struct _SORTTABLE {
-	wstring sKey1;
-	wstring sKey2;
-} SORTDATA, *SORTTABLE;
+struct SORTDATA {
+	const CNativeW* pCmemLine;
+	std::wstring  sKey;
+};
+
+inline int CNativeW_comp(const CNativeW& lhs, const CNativeW& rhs )
+{
+	// 比較長には終端NULを含めないといけない
+	return wmemcmp(lhs.GetStringPtr(), rhs.GetStringPtr(),
+			t_min(lhs.GetStringLength() + 1, rhs.GetStringLength() + 1));
+}
 
 /*!	物理行のソートに使う関数(昇順) */
-bool SortByKeyAsc (SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1<pst2->sKey1);}
+bool SortByLineAsc (SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1->pCmemLine, *pst2->pCmemLine) < 0;}
 
 /*!	物理行のソートに使う関数(降順) */
-bool SortByKeyDesc(SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1>pst2->sKey1);}
+bool SortByLineDesc(SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1->pCmemLine, *pst2->pCmemLine) > 0;}
+
+/*!	物理行のソートに使う関数(昇順) */
+bool SortByKeyAsc(SORTDATA* pst1, SORTDATA* pst2)  {return (pst1->sKey < pst2->sKey);}
+
+/*!	物理行のソートに使う関数(降順) */
+bool SortByKeyDesc(SORTDATA* pst1, SORTDATA* pst2) {return (pst1->sKey > pst2->sKey);}
 
 /*!	@brief 物理行のソート
 
@@ -567,6 +580,7 @@ bool SortByKeyDesc(SORTTABLE pst1, SORTTABLE pst2) {return (pst1->sKey1>pst2->sK
 	@author hor
 	@date 2001.12.03 hor 新規作成
 	@date 2001.12.21 hor 選択範囲の調整ロジックを訂正
+	@data 2010.07.27 行ソートでコピーを減らす/NULより後ろも比較対照に
 */
 void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 {
@@ -581,7 +595,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	CLogicInt		nLineLen;
 	int			j;
 	CNativeW	cmemBuf;
-	std::vector<SORTTABLE> sta;
+	std::vector<SORTDATA*> sta;
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* テキストが選択されているか */
 		return;
@@ -630,42 +644,57 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		return;
 	}
 
+	sta.reserve(sSelectOld.GetTo().GetY2() - sSelectOld.GetFrom().GetY2() );
+	int nStrDataLength = 0;
 	for( CLogicInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().y; i++ ){
 		const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( i );
-		pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
+		const CNativeW& cmemLine = pcDocLine->_GetDocLineDataWithEOL();
+		pLine = cmemLine.GetStringPtr(&nLineLen);
+		CLogicInt nLineLenWithoutEOL = pcDocLine->GetLengthWithoutEOL();
 		if( NULL == pLine ) continue;
-		SORTTABLE pst = new SORTDATA;
+		SORTDATA* pst = new SORTDATA;
 		if( bBeginBoxSelectOld ){
 			nColmFrom = m_pCommanderView->LineColmnToIndex( pcDocLine, nCF );
 			nColmTo   = m_pCommanderView->LineColmnToIndex( pcDocLine, nCT );
-			if(nColmTo<nLineLen){	// BOX選択範囲の右端が行内に収まっている場合
+			if(nColmTo<nLineLenWithoutEOL){	// BOX選択範囲の右端が行内に収まっている場合
 				// 2006.03.31 genta std::string::assignを使って一時変数削除
-				pst->sKey1.assign( &pLine[nColmFrom], nColmTo-nColmFrom );
+				pst->sKey.assign( &pLine[nColmFrom], nColmTo-nColmFrom );
+			}else if(nColmFrom<nLineLenWithoutEOL){	// BOX選択範囲の右端が行末より右にはみ出している場合
+				pst->sKey.assign( &pLine[nColmFrom], nLineLenWithoutEOL-nColmFrom );
+			}else{
+				// 選択範囲の左端もはみ出している==データなし
+				// pst->sKey = L"";
 			}
-			else if(nColmFrom<nLineLen){	// BOX選択範囲の右端が行末より右にはみ出している場合
-				pst->sKey1=&pLine[nColmFrom];
-			}
-			pst->sKey2=pLine;
-		}else{
-			pst->sKey1=pLine;
 		}
+		pst->pCmemLine = &cmemLine;
+		nStrDataLength += nLineLen;
 		sta.push_back(pst);
 	}
-	if(bAsc){
-		std::stable_sort(sta.begin(), sta.end(), SortByKeyAsc);
+	if( bBeginBoxSelectOld ){
+		if(bAsc){
+			std::stable_sort(sta.begin(), sta.end(), SortByKeyAsc);
+		}else{
+			std::stable_sort(sta.begin(), sta.end(), SortByKeyDesc);
+		}
 	}else{
-		std::stable_sort(sta.begin(), sta.end(), SortByKeyDesc);
+		if(bAsc){
+			std::stable_sort(sta.begin(), sta.end(), SortByLineAsc);
+		}else{
+			std::stable_sort(sta.begin(), sta.end(), SortByLineDesc);
+		}
 	}
 	cmemBuf.SetString(L"");
+	cmemBuf.AllocStringBuffer( nStrDataLength );
 	j=(int)sta.size();
-	if( bBeginBoxSelectOld ){
-		for (int i=0; i<j; i++) cmemBuf.AppendString( sta[i]->sKey2.c_str() ); 
-	}else{
-		for (int i=0; i<j; i++) cmemBuf.AppendString( sta[i]->sKey1.c_str() );
+	for (int i=0; i<j; i++){
+		cmemBuf.AppendString( sta[i]->pCmemLine->GetStringPtr(), sta[i]->pCmemLine->GetStringLength() );
+		delete sta[i];
 	}
-
-	//sta.clear(); ←これじゃだめみたい
-	for (int i=0; i<j; i++) delete sta[i];
+	// 2010.08.22 Moca swapで削除
+	{
+		std::vector<SORTDATA*> temp;
+		temp.swap(sta);
+	}
 
 	CLayoutRange sSelectOld_Layout;
 	GetDocument()->m_cLayoutMgr.LogicToLayout(sSelectOld, &sSelectOld_Layout);
@@ -724,7 +753,7 @@ void CViewCommander::Command_MERGE(void)
 	const wchar_t*	pLinew;
 	CLogicInt		nLineLen;
 	int			j;
-	CNativeW	cmemBuf;
+	CLayoutInt		nMergeLayoutLines;
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* テキストが選択されているか */
 		return;
@@ -744,11 +773,19 @@ void CViewCommander::Command_MERGE(void)
 	// カーソル位置が行頭じゃない ＆ 選択範囲の終端に改行コードがある場合は
 	// その行も選択範囲に加える
 	if ( sSelectOld.GetTo().x > 0 ) {
+#if 0
 		const CLayout* pcLayout=GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(m_pCommanderView->GetSelectionInfo().m_sSelect.GetTo().GetY2()); //2007.10.09 kobake 単位混在バグ修正
 		if( NULL != pcLayout && EOL_NONE != pcLayout->GetLayoutEol() ){
 			sSelectOld.GetToPointer()->y++;
 			//sSelectOld.GetTo().y++;
 		}
+#else
+		// 2010.08.22 Moca ソートと仕様を合わせる
+		const CDocLine* pcDocLine = GetDocument()->m_cDocLineMgr.GetLine( sSelectOld.GetTo().GetY2() );
+		if( NULL != pcDocLine && EOL_NONE != pcDocLine->GetEol() ){
+			sSelectOld.GetToPointer()->y++;
+		}
+#endif
 	}
 
 	sSelectOld.SetFromX(CLogicInt(0));
@@ -759,34 +796,58 @@ void CViewCommander::Command_MERGE(void)
 		return;
 	}
 
-	pLinew=NULL;
-	cmemBuf.SetString(L"");
-	for( CLogicInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().y; i++ ){
-		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
-		if( NULL == pLine ) continue;
-		if( NULL == pLinew || wcscmp(pLine,pLinew) ){
-			cmemBuf.AppendString( pLine );
-		}
-		pLinew=pLine;
-	}
 	j=GetDocument()->m_cDocLineMgr.GetLineCount();
+	nMergeLayoutLines = GetDocument()->m_cLayoutMgr.GetLineCount();
 
 	CLayoutRange sSelectOld_Layout;
 	GetDocument()->m_cLayoutMgr.LogicToLayout(sSelectOld, &sSelectOld_Layout);
 
-	m_pCommanderView->ReplaceData_CEditView(
-		sSelectOld_Layout,
-		NULL,					/* 削除されたデータのコピー(NULL可能) */
-		cmemBuf.GetStringPtr(),
-		cmemBuf.GetStringLength(),
-		false,
-		m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
-	);
+	// 2010.08.22 NUL対応修正
+	std::vector<CStringRef> lineArr;
+	size_t nMergeDataLen = 0;
+	pLinew=NULL;
+	int nLineLenw = 0;
+	bool bMerge = false;
+	lineArr.reserve(sSelectOld.GetTo().y - sSelectOld.GetFrom().GetY2());
+	for( CLogicInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().y; i++ ){
+		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
+		if( NULL == pLine ) continue;
+		if( NULL == pLinew || nLineLen != nLineLenw || wmemcmp(pLine, pLinew, nLineLen) ){
+			lineArr.push_back( CStringRef(pLine, nLineLen) );
+			nMergeDataLen += nLineLen;
+		}else{
+			bMerge = true;
+		}
+		pLinew=pLine;
+		nLineLenw=nLineLen;
+	}
+	if( bMerge ){
+		CNativeW cmemBuf;
+		cmemBuf.SetString(L"");
+		cmemBuf.AllocStringBuffer( nMergeDataLen );
+		int nSize = (int)lineArr.size();
+		for( int idx = 0; idx < nSize; idx++ ){
+			cmemBuf.AppendString( lineArr[idx].GetPtr(), lineArr[idx].GetLength() );
+		}
+		m_pCommanderView->ReplaceData_CEditView(
+			sSelectOld_Layout,
+			NULL,					/* 削除されたデータのコピー(NULL可能) */
+			cmemBuf.GetStringPtr(),
+			cmemBuf.GetStringLength(),
+			false,
+			m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
+		);
+	}else{
+		// 2010.08.23 未変更なら変更しない
+	}
+
 	j-=GetDocument()->m_cDocLineMgr.GetLineCount();
+	nMergeLayoutLines -= GetDocument()->m_cLayoutMgr.GetLineCount();
 
 	//	選択エリアの復元
 	m_pCommanderView->GetSelectionInfo().m_sSelect=sSelectOld_Layout;
-	m_pCommanderView->GetSelectionInfo().m_sSelect.GetToPointer()->y -= j;
+	// 2010.08.22 座標混在バグ
+	m_pCommanderView->GetSelectionInfo().m_sSelect.GetToPointer()->y -= nMergeLayoutLines;
 
 	if(nCaretPosYOLD==m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom().y){
 		GetCaret().MoveCursor( m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom(), true );
