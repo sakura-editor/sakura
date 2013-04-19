@@ -571,7 +571,7 @@ LRESULT CEditApp::DispatchEvent(
 			return 0L;
 
 		case MYWM_NOTIFYICON:
-//			MYTRACE_A( "MYWM_NOTIFYICON\n" );
+//			MYTRACE( _T("MYWM_NOTIFYICON\n") );
 			switch (lParam){
 //キーワード：トレイ右クリックメニュー設定
 //	From Here Oct. 12, 2000 JEPRO 左右とも同一処理になっていたのを別々に処理するように変更
@@ -634,7 +634,7 @@ LRESULT CEditApp::DispatchEvent(
 				bLDClick = false;
 				return 0L;
 			case WM_LBUTTONUP:	// Dec. 24, 2002 towest UPに変更
-//				MYTRACE_A( "WM_LBUTTONDOWN\n" );
+//				MYTRACE( _T("WM_LBUTTONDOWN\n") );
 				/* 03/02/20 左ダブルクリック後はメニューを表示しない ai Start */
 				if( bLDClick ){
 					bLDClick = false;
@@ -1328,7 +1328,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 //@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
 	const CMRUFile cMRU;
 	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
-	if ( cMRU.Length() > 0 ){
+	if ( cMRU.MenuLength() > 0 ){
 		//	アクティブ
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("最近使ったファイル"), _T("F") );
 	}
@@ -1341,7 +1341,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 //@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
 	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
-	if ( cMRUFolder.Length() > 0 ){
+	if ( cMRUFolder.MenuLength() > 0 ){
 		//	アクティブ
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
 	}
@@ -1414,7 +1414,7 @@ int	CEditApp::CreatePopUpMenu_L( void )
 	);
 	::PostMessage( m_hWnd, WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE_A( "nId=%d\n", nId );
+//	MYTRACE( _T("nId=%d\n"), nId );
 
 	m_bUseTrayMenu = false;
 
@@ -1480,7 +1480,7 @@ int	CEditApp::CreatePopUpMenu_R( void )
 	);
 	::PostMessage( m_hWnd, WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
-//	MYTRACE_A( "nId=%d\n", nId );
+//	MYTRACE( _T("nId=%d\n"), nId );
 
 	m_bUseTrayMenu = false;
 

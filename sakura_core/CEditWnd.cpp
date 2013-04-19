@@ -1321,7 +1321,7 @@ LRESULT CEditWnd::DispatchEvent(
 //			pCMenuDrawer = (CMenuDrawer*)lpmis->itemData;
 
 
-//			MYTRACE_A( "WM_MEASUREITEM  lpmis->itemID=%d\n", lpmis->itemID );
+//			MYTRACE( _T("WM_MEASUREITEM  lpmis->itemID=%d\n"), lpmis->itemID );
 			/* メニューアイテムの描画サイズを計算 */
 			nItemWidth = m_CMenuDrawer.MeasureItem( lpmis->itemID, &nItemHeight );
 			if( 0 < nItemWidth ){
@@ -1400,7 +1400,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 
 	case WM_SIZE:
-//		MYTRACE_A( "WM_SIZE\n" );
+//		MYTRACE( _T("WM_SIZE\n") );
 		/* WM_SIZE 処理 */
 		if( SIZE_MINIMIZED == wParam ){
 			m_cEditDoc.UpdateCaption();
@@ -1455,7 +1455,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_EXITMENULOOP:
-//		MYTRACE_A( "WM_EXITMENULOOP\n" );
+//		MYTRACE( _T("WM_EXITMENULOOP\n") );
 		if( NULL != m_hwndStatusBar ){
 			::SendMessage( m_hwndStatusBar, SB_SETTEXT, 0 | SBT_NOBORDERS, (LPARAM) (LPINT)_T(""));
 		}
@@ -1463,7 +1463,7 @@ LRESULT CEditWnd::DispatchEvent(
 		return m_cEditDoc.DispatchEvent( hwnd, uMsg, wParam, lParam );
 
 	case WM_SETFOCUS:
-//		MYTRACE_A( "WM_SETFOCUS\n" );
+//		MYTRACE( _T("WM_SETFOCUS\n") );
 
 		// Aug. 29, 2003 wmlhq & ryojiファイルのタイムスタンプのチェック処理 OnTimer に移行
 		m_nTimerCount = 9;
@@ -4063,7 +4063,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	/* MRUリストのファイルのリストをメニューにする */
 	const CMRUFile cMRU;
 	hMenu = cMRU.CreateMenu( &m_CMenuDrawer );
-	if( cMRU.Length() > 0 )
+	if( cMRU.MenuLength() > 0 )
 	{
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, _T(""), FALSE );
 	}
@@ -4071,7 +4071,7 @@ int	CEditWnd::CreateFileDropDownMenu( HWND hwnd )
 	/* 最近使ったフォルダのメニューを作成 */
 	const CMRUFolder cMRUFolder;
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
-	if ( cMRUFolder.Length() > 0 )
+	if ( cMRUFolder.MenuLength() > 0 )
 	{
 		//	アクティブ
 		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
