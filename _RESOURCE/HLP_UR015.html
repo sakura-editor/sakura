@@ -13,6 +13,60 @@
 <h2>変更履歴(2011/02/11～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
 
+<h3>Apr. 13, 2013 (2.0.7.1)</h3>
+[バグ修正]<br />
+<ul>
+	<li>closeのバグFix (svn:2835 upatchid:414 Uchi)</li>
+</ul>
+
+<h3>Apr. 13, 2013 (2.0.7.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>タイプ別設定画面に共通設定の強調キーワード確認・登録ボタン追加 (svn:2680svn:2681 wiki:Request/110 upatchid:350upatchid:356 aroka)</li>
+	<li>ExpandParameter機能追加($B,$b,$Q) (svn:2746 wiki:Request/422 upatchid:374 Uchi)</li>
+	<li>ダイアログのリサイズの位置と大きさの記憶 (svn:2795 upatchid:380 Moca)</li>
+</ul>
+
+[仕様変更]<br />
+<ul>
+	<li>スクリーンタブ「起動時のIME」「文書アイコンを使う」->ウィンドウタブ (svn:2680 upatchid:350 aroka)</li>
+	<li>カラータブ「背景画像」「行番号の表示」「行番号区切り」->ウィンドウタブ (svn:2680 upatchid:350 aroka)</li>
+	<li>支援タブ「デフォルトの文字コード」->ウィンドウタブ (svn:2680 upatchid:350 aroka)</li>
+	<li>Close時の改良 (svn:2832 upatchid:404 Uchi)</li>
+</ul>
+
+[バグ修正]<br />
+<ul>
+	<li>CGrepAgent.cpp(646): delete currentFileの[]がない (svn:2673 upatchid:354 aroka)</li>
+	<li>タイプ別設定(スクリーン)のヘルプID修正 (svn:2695 upatchid:366 novice)</li>
+	<li>コントロールプロセスのカレントディレクトリ(sakura.exe -NOWIN起動時) (svn:2707 upatchid:359 novice)</li>
+	<li>TAB記号の背景色 (svn:2711 upatchid:353 novice)</li>
+	<li>Ctrl+クリックがおかしい (svn:2786 upatchid:379 Moca)</li>
+	<li>アウトラインダイアログのコントロール位置修正 (svn:2812 upatchid:391 Moca)</li>
+	<li>cppcheckで検出したエラー、警告修正 (svn:2815 upatchid:403 novice)</li>
+</ul>
+
+[その他変更]<br />
+<ul>
+	<li>正規表現キーワードタブのタブオーダーを変更 (svn:2680 upatchid:350 aroka)</li>
+	<li>キーワードヘルプタブのタブオーダーとボタン配置を変更 (svn:2680 upatchid:350 aroka)</li>
+	<li>タイプ別設定全タブレイアウト調整 (svn:2680 upatchid:350 aroka)</li>
+	<li>単語判定処理コード変更 (svn:2691 upatchid:361 aroka)</li>
+	<li>OS バージョンチェックの修正(起動時のバージョンチェックをWin2000以降に変更、不要なバージョンチェックおよびルーチンを条件コンパイルではずす) (svn:2693 upatchid:357 Uchi)</li>
+	<li>CRunningTimerの分解能向上 (svn:2698 upatchid:364 Uchi)</li>
+	<li>Grepダイアログのアイテム(条件、ファイル、フォルダ)の遅延登録 (svn:2743 upatchid:368 novice)</li>
+	<li>ファイルダイアログの初期位置GUI調整 (svn:2752 upatchid:378 novice)</li>
+	<li>タグジャンプダイアログのリサイズ (svn:2754 upatchid:363 Moca)</li>
+	<li>共通設定-バックアップのGUI調整 (svn:2766 upatchid:386 novice)</li>
+	<li>iconの修正 (svn:2768 upatchid:381 Uchi)</li>
+	<li>クラッシュダンプ機能のデフォルト設定(無効) (svn:2791 upatchid:389 novice)</li>
+	<li>初期化処理の省略 (svn:2781 upatchid:383 novice)</li>
+	<li>漢字の描画幅を'一'の幅で決める ハングル、外字も同様に先頭文字の幅で決める (svn:2806 upatchid:396 aroka)</li>
+	<li>同一Fontfaceの場合、キャッシュのクリアを省略 (svn:2807 upatchid:399 aroka)</li>
+	<li>Makefileを自動生成する (svn:2813 upatchid:384 upatchid:392 Uchi)</li>
+	<li>改行記号描画高速化 (svn:2830 upatchid:411 novice)</li>
+</ul>
+
 <h3>Mar. 11, 2013 (2.0.6.0)</h3>
 [機能追加]<br />
 <ul>
