@@ -40,6 +40,8 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/file.h"
+#include "util/os.h"
+#include "util/input.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -128,6 +130,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = true;
 		m_aFavoriteInfo[i].m_bEditable  = false;
+		m_aFavoriteInfo[i].m_bAddExcept = true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentFolder;
@@ -137,6 +140,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = true;
 		m_aFavoriteInfo[i].m_bEditable  = false;
+		m_aFavoriteInfo[i].m_bAddExcept = true;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentExceptMRU;
@@ -146,6 +150,8 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
+		m_nExceptTab = i;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentSearch;
@@ -155,6 +161,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentReplace;
@@ -164,6 +171,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFile;
@@ -173,6 +181,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentGrepFolder;
@@ -182,6 +191,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = true;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentCmd;
@@ -191,6 +201,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = NULL;
@@ -200,6 +211,7 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bFilePath  = false;
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = false;
+		m_aFavoriteInfo[i].m_bAddExcept = false;
 
 		/* これ以上増やすときはテーブルサイズも書き換えてね */
 		assert( i < _countof(m_aFavoriteInfo) );
@@ -567,7 +579,6 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 	LPNMHDR	lpnmhdr;
 	HWND	hwndTab;
 	HWND	hwndList;
-	int		nIndex;
 
 	hwndTab = ::GetDlgItem( GetHwnd(), IDC_TAB_FAVORITE );
 	lpnmhdr = (LPNMHDR) lParam;
@@ -576,26 +587,7 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 		switch( lpnmhdr->code )
 		{
 		case TCN_SELCHANGE:
-			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
-			nIndex = TabCtrl_GetCurSel( hwndTab );
-			if( -1 != nIndex )
-			{
-				//新しく表示する。
-				hwndList = GetDlgItem( GetHwnd(), m_aFavoriteInfo[nIndex].m_nId );
-				::ShowWindow( hwndList, SW_SHOW );
-
-				//現在表示中のリストを隠す。
-				hwndList = GetDlgItem( GetHwnd(), m_aFavoriteInfo[m_nCurrentTab].m_nId );
-				::ShowWindow( hwndList, SW_HIDE );
-
-				::SetFocus( hwndList );
-
-				m_nCurrentTab = nIndex;
-
-				UpdateUIState();
-
-				//ChangeSlider( nIndex );
-			}
+			TabSelectChange(false);
 			return TRUE;
 			//break;
 		}
@@ -608,6 +600,14 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 			{
 			case NM_DBLCLK:
 				EditItem();
+				return TRUE;
+			case NM_RCLICK:
+				{
+					POINT po;
+					if( 0 != GetCursorPos( &po ) ){
+						RightMenu( po );
+					}
+				}
 				return TRUE;
 
 			// ListViewヘッダクリック:ソートする
@@ -625,6 +625,36 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 				case VK_DELETE:
 					DeleteSelected();
 					return TRUE;
+				case VK_APPS:
+					{
+						POINT po;
+						RECT rc;
+						hwndList = GetItemHwnd( m_aFavoriteInfo[m_nCurrentTab].m_nId );
+						::GetWindowRect( hwndList, &rc );
+						po.x = rc.left;
+						po.y = rc.top;
+						RightMenu( po );
+					}
+					return TRUE;
+				}
+				int nIdx = getCtrlKeyState();
+				WORD wKey = ((NMLVKEYDOWN*)lParam)->wVKey;
+				if( (wKey == VK_NEXT && nIdx == _CTRL) ){
+					int next = m_nCurrentTab + 1;
+					if( _countof(m_aFavoriteInfo) - 1 <= next ){
+						next = 0;
+					}
+					TabCtrl_SetCurSel( GetItemHwnd(IDC_TAB_FAVORITE), next );
+					TabSelectChange(true);
+					return FALSE;
+				}else if( (wKey == VK_PRIOR && nIdx == _CTRL) ){
+					int prev = m_nCurrentTab - 1;
+					if( prev < 0 ){
+						prev = _countof(m_aFavoriteInfo) - 2;
+					}
+					TabCtrl_SetCurSel( GetItemHwnd(IDC_TAB_FAVORITE), prev );
+					TabSelectChange(true);
+					return FALSE;
 				}
 			}
 		}
@@ -632,6 +662,33 @@ BOOL CDlgFavorite::OnNotify( WPARAM wParam, LPARAM lParam )
 
 	/* 基底クラスメンバ */
 	return CDialog::OnNotify( wParam, lParam );
+}
+
+void CDlgFavorite::TabSelectChange(bool bSetFocus)
+{
+	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
+	HWND hwndTab = GetItemHwnd( IDC_TAB_FAVORITE );
+	int nIndex = TabCtrl_GetCurSel( hwndTab );
+	if( -1 != nIndex )
+	{
+		//新しく表示する。
+		HWND hwndList = GetItemHwnd( m_aFavoriteInfo[nIndex].m_nId );
+		::ShowWindow( hwndList, SW_SHOW );
+
+		//現在表示中のリストを隠す。
+		HWND hwndList2 = GetItemHwnd( m_aFavoriteInfo[m_nCurrentTab].m_nId );
+		::ShowWindow( hwndList2, SW_HIDE );
+
+		if( bSetFocus ){
+			::SetFocus( hwndList );
+		}
+
+		m_nCurrentTab = nIndex;
+
+		UpdateUIState();
+
+		//ChangeSlider( nIndex );
+	}
 }
 
 BOOL CDlgFavorite::OnActivate( WPARAM wParam, LPARAM lParam )
@@ -903,6 +960,102 @@ void CDlgFavorite::EditItem()
 				UpdateUIState();
 			}
 		}
+	}
+}
+
+void CDlgFavorite::RightMenu(POINT &menuPos)
+{
+	HMENU hMenu = ::CreatePopupMenu();
+	const int MENU_EDIT = 100;
+	const int MENU_ADD_EXCEPT = 101;
+	const int MENU_ADD_NEW = 102;
+	const int MENU_DELETE_ALL = 200;
+	const int MENU_DELETE_NOFAVORATE = 201;
+	const int MENU_DELETE_NOTFOUND = 202;
+	const int MENU_DELETE_SELECTED = 203;
+	CRecent& recent = *m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
+	CRecent& exceptMRU = *m_aFavoriteInfo[m_nExceptTab].m_pRecent;
+	
+	int iPos = 0;
+	int nEnable;
+	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bEditable && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_EDIT, _T("編集(&E)") );
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
+	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bEditable ? 0 : MF_GRAYED);
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_NEW, _T("新規追加(&I)") );
+	if( m_aFavoriteInfo[m_nCurrentTab].m_bAddExcept ){
+		nEnable = (exceptMRU.GetItemCount() <= exceptMRU.GetArrayCount() ? 0 : MF_GRAYED);
+		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_ADD_EXCEPT, _T("除外リストに追加(&I)") );
+	}
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
+	nEnable = (0 < recent.GetItemCount() ? 0 : MF_GRAYED);
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_ALL, _T("すべて削除(&A)") );
+	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_NOFAVORATE, _T("お気に入り以外削除(&F)") );
+	nEnable = (m_aFavoriteInfo[m_nCurrentTab].m_bFilePath && 0 < recent.GetItemCount() ? 0 : MF_GRAYED);
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_NOTFOUND, _T("存在しない項目削除(&N)") );
+	nEnable = (0 < recent.GetItemCount() ? 0 : MF_GRAYED);
+	::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | nEnable, MENU_DELETE_SELECTED, _T("選択項目削除(&D)") );
+
+	// メニューを表示する
+	POINT pt = menuPos;
+	RECT rcWork;
+	GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
+	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+								( pt.x > rcWork.left )? pt.x: rcWork.left,
+								( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
+								0, GetHwnd(), NULL);
+	::DestroyMenu( hMenu );	// サブメニューは再帰的に破棄される
+
+	switch( nId ){
+	case MENU_EDIT:
+		EditItem();
+		break;
+	case MENU_ADD_EXCEPT:
+		{
+			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
+			const int nLIST_SUBITEM_TEXT = 1;
+			int     nDelItemCount = 0;
+			CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
+			if( pRecent ){
+				HWND hwndList = m_aListViewInfo[m_nCurrentTab].hListView;
+				int nSelectedCount = ListView_GetSelectedCount(hwndList);
+				if( 0 < nSelectedCount ){
+					int nLvItem = -1;
+					bool bAddFalse = false;
+					CRecent& exceptMRU = *m_aFavoriteInfo[m_nExceptTab].m_pRecent;
+					while( (nLvItem = ListView_GetNextItem(hwndList, nLvItem, LVNI_SELECTED)) != -1 ) {
+						int nRecIndex = ListView_GetLParamInt(hwndList, nLvItem);
+						if( exceptMRU.GetArrayCount() <= exceptMRU.GetItemCount() ){
+							bAddFalse = true;
+						}else{
+							exceptMRU.AppendItemText(pRecent->GetItemText(nRecIndex));
+						}
+					}
+					if( bAddFalse ){
+						WarningMessage(GetHwnd(), _T("除外リストがいっぱいで追加できませんでした。") );
+					}
+					SetDataOne(m_nExceptTab, -1);
+					UpdateUIState();
+				}
+			}
+		}
+		break;
+	case MENU_ADD_NEW:
+		AddItem();
+		break;
+	case MENU_DELETE_ALL:
+		OnBnClicked( IDC_BUTTON_CLEAR );
+		break;
+	case MENU_DELETE_NOFAVORATE:
+		OnBnClicked( IDC_BUTTON_DELETE_NOFAVORATE );
+		break;
+	case MENU_DELETE_NOTFOUND:
+		OnBnClicked( IDC_BUTTON_DELETE_NOTFOUND );
+		break;
+	case MENU_DELETE_SELECTED:
+		OnBnClicked( IDC_BUTTON_DELETE_SELECTED );
+		break;
 	}
 }
 
