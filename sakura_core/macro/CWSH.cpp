@@ -32,6 +32,7 @@
 #include "util/window.h"	// BlockingHook
 #include "dlg/CDlgCancel.h"
 #include "sakura_rc.h"
+const HRESULT SCRIPT_E_REPORTED = 0x80020101; // 何を includeしたらいいかわからないので。
 
 /* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
@@ -255,11 +256,8 @@ CWSHClient::~CWSHClient()
 
 // AbortMacroProcのパラメータ構造体
 typedef struct {
-	CRITICAL_SECTION cs;				//同期用クリティカルセクション
-	bool bIsMacroRunning;				//マクロ実行中フラグ
-	bool bIsAbortThreadRunning;			//AbortMacroProc実行中フラグ
+	HANDLE hEvent;
 	IActiveScript *pEngine;				//ActiveScript
-	HWND hwndDlgCancel;
 	int nCancelTimer;
 	CEditView *view;
 } SAbortMacroParam;
@@ -270,58 +268,52 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 	SAbortMacroParam* pParam = (SAbortMacroParam*) lpParameter;
 
 	//停止ダイアログ表示前に数秒待つ
-	int i;
-	for( i=0; i < pParam->nCancelTimer * 10; i++ ){
-		::EnterCriticalSection(&pParam->cs);
-		if( ! pParam->bIsMacroRunning ){
-			::LeaveCriticalSection(&pParam->cs);
-			break;
-		}
-		::LeaveCriticalSection(&pParam->cs);
-		::Sleep(100);
-	}
-
-	//停止ダイアログ表示
-	if( pParam->bIsMacroRunning ){
+	if(::WaitForSingleObject(pParam->hEvent, pParam->nCancelTimer * 1000) == WAIT_TIMEOUT){
+		//停止ダイアログ表示
 		DEBUG_TRACE(_T("AbortMacro: Show Dialog\n"));
 
 		MSG msg;
-		CDlgCancel* pcDlgCancel = new CDlgCancel;
-		pcDlgCancel->DoModeless(G_AppInstance(), NULL, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
-		pParam->hwndDlgCancel = pcDlgCancel->GetHwnd();
+		CDlgCancel cDlgCancel;
+		HWND hwndDlg = cDlgCancel.DoModeless(G_AppInstance(), NULL, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
 		// ダイアログタイトルとファイル名を設定
-		::SendMessage(pParam->hwndDlgCancel, WM_SETTEXT, 0, (LPARAM)GSTR_APPNAME);
-		::SendMessage(GetDlgItem(pParam->hwndDlgCancel, IDC_STATIC_CMD),
+		::SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)GSTR_APPNAME);
+		::SendMessage(GetDlgItem(hwndDlg, IDC_STATIC_CMD),
 			WM_SETTEXT, 0, (LPARAM)pParam->view->GetDocument()->m_cDocFile.GetFilePath());
 		
-		while (GetMessage(&msg , NULL , 0 , 0 )) {
-			if (pcDlgCancel->IsCanceled() || pcDlgCancel->m_nShowCmd != SW_SHOW) {
+		bool bCanceled = false;
+		for(;;){
+			DWORD dwResult = MsgWaitForMultipleObjects( 1, &pParam->hEvent, FALSE, INFINITE, QS_ALLINPUT );
+			if(dwResult == WAIT_OBJECT_0){
+				::SendMessage( cDlgCancel.GetHwnd(), WM_CLOSE, 0, 0 );
+			}else if(dwResult == WAIT_OBJECT_0+1){
+				while(::PeekMessage(&msg , NULL , 0 , 0, PM_REMOVE )){
+					if(cDlgCancel.GetHwnd() != NULL && ::IsDialogMessage(cDlgCancel.GetHwnd(), &msg)){
+					}else{
+						::TranslateMessage(&msg);
+						::DispatchMessage(&msg);
+					}
+				}
+			}else{
+				//MsgWaitForMultipleObjectsに与えたハンドルのエラー
 				break;
 			}
-			/* 処理中のユーザー操作を可能にする */
-			if( !::BlockingHook( pcDlgCancel->GetHwnd() ) ){
-				::SendMessage( pcDlgCancel->GetHwnd(), WM_CLOSE, 0, 0 );
+			if(!bCanceled && cDlgCancel.IsCanceled()){
+				DEBUG_TRACE(_T("Canceld\n"));
+				bCanceled = true;
+				cDlgCancel.CloseDialog( 0 );
+			}
+			if(cDlgCancel.GetHwnd() == NULL){
+				DEBUG_TRACE(_T("Close\n"));
 				break;
 			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
 		}
 
-		::EnterCriticalSection( &pParam->cs );
-		if( pcDlgCancel->IsCanceled() ){
-			if( pParam->bIsMacroRunning ){
-				DEBUG_TRACE(_T("AbortMacro: Try Interrupt\n"));
-				pParam->pEngine->InterruptScriptThread(SCRIPTTHREADID_BASE, NULL, 0);
-				DEBUG_TRACE(_T("AbortMacro: Done\n"));
-			}
-		}
-		pParam->hwndDlgCancel = NULL;
-		::LeaveCriticalSection( &pParam->cs );
-		pcDlgCancel->DeleteAsync();
+		DEBUG_TRACE(_T("AbortMacro: Try Interrupt\n"));
+		pParam->pEngine->InterruptScriptThread(SCRIPTTHREADID_BASE, NULL, 0);
+		DEBUG_TRACE(_T("AbortMacro: Done\n"));
 	}
 
 	DEBUG_TRACE(_T("AbortMacro: Exit\n"));
-	pParam->bIsAbortThreadRunning = false;
 	return 0;
 }
 
@@ -356,47 +348,42 @@ void CWSHClient::Execute(wchar_t const *AScript)
 			{
 				//マクロ停止スレッドの起動
 				SAbortMacroParam sThreadParam;
-				::InitializeCriticalSection(&sThreadParam.cs);
-				sThreadParam.bIsMacroRunning = true;
-				sThreadParam.bIsAbortThreadRunning = true;
 				sThreadParam.pEngine = m_Engine;
-				sThreadParam.hwndDlgCancel = NULL;
 				sThreadParam.nCancelTimer = GetDllShareData().m_Common.m_sMacro.m_nMacroCancelTimer;
 				sThreadParam.view = (CEditView*)m_Data;
 
-				unsigned int nThreadId;
-				/* HANDLE hThread = (HANDLE) */ _beginthreadex( NULL, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
-				DEBUG_TRACE(_T("Start AbortMacroProc 0x%08x\n"), nThreadId);
+				HANDLE hThread = NULL;
+				unsigned int nThreadId = 0;
+				if( 0 < sThreadParam.nCancelTimer ){
+					sThreadParam.hEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+					hThread = (HANDLE)_beginthreadex( NULL, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
+					DEBUG_TRACE(_T("Start AbortMacroProc 0x%08x\n"), nThreadId);
+				}
 
 				//マクロ実行
 				if(m_Engine->SetScriptState(SCRIPTSTATE_STARTED) != S_OK)
 					Error(L"状態変更エラー");
 				else
 				{
-					if(Parser->ParseScriptText(AScript, 0, 0, 0, 0, 0, SCRIPTTEXT_ISVISIBLE, 0, 0) != S_OK)
+					HRESULT hr = Parser->ParseScriptText(AScript, 0, 0, 0, 0, 0, SCRIPTTEXT_ISVISIBLE, 0, 0);
+					if (hr == SCRIPT_E_REPORTED) {
+					/*
+						IActiveScriptSite->OnScriptErrorに通知済み。
+						中断メッセージが既に表示されてるはず。
+					*/
+					} else if(hr != S_OK) {
 						Error(L"実行に失敗しました");
-				}
-
-				::EnterCriticalSection(&sThreadParam.cs);
-				sThreadParam.bIsMacroRunning = false;	//マクロ実行中フラグを落とす
-				//マクロ停止ダイアログが表示されていれば閉じる
-				if ( sThreadParam.hwndDlgCancel ) {
-					::SendMessage( sThreadParam.hwndDlgCancel, WM_CLOSE, 0, 0 );
-				}
-				::LeaveCriticalSection(&sThreadParam.cs);
-
-				//マクロ停止スレッドの終了待ち
-				DEBUG_TRACE(_T("Waiting for AbortMacroProc to finish\n"));
-				for (;;) {
-					::EnterCriticalSection(&sThreadParam.cs);
-					if( ! sThreadParam.bIsAbortThreadRunning ){
-						::LeaveCriticalSection(&sThreadParam.cs);
-						sThreadParam.pEngine = NULL;
-						::DeleteCriticalSection(&sThreadParam.cs);
-						break;
 					}
-					::LeaveCriticalSection(&sThreadParam.cs);
-					::Sleep(50);
+				}
+
+				if( 0 < sThreadParam.nCancelTimer ){
+					::SetEvent(sThreadParam.hEvent);
+
+					//マクロ停止スレッドの終了待ち
+					DEBUG_TRACE(_T("Waiting for AbortMacroProc to finish\n"));
+					::WaitForSingleObject(hThread, INFINITE); 
+					::CloseHandle(hThread);
+					::CloseHandle(sThreadParam.hEvent);
 				}
 			}
 		}
