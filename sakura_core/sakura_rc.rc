@@ -1029,6 +1029,8 @@ BEGIN
     CONTROL         "ビューアを複数起動しない(&N)",
                     IDC_CHECK_TYPEHTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,125,109,10
+    CONTROL         "終了時、改行の一致を検査する(&E)",IDC_CHECK_CHKENTERATEND,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,116,8
 END
 
 IDD_PROP_REGEX DIALOGEX 0, 0, 302, 244

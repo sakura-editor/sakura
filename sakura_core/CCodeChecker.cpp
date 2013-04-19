@@ -69,7 +69,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 	);
 
 	//ƒ†[ƒU–â‚¢‡‚í‚¹
-	if(bTmpResult){
+	if (bTmpResult && pcDoc->m_cDocType.GetDocumentType()->m_bChkEnterAtEnd) {	// –â‚¢‡‚í‚¹‚Ì—}§‚ð’Ç‰Á	2013/4/14 Uchi
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::getInstance()->GetHwnd(),
 			MB_YESNOCANCEL | MB_ICONWARNING,

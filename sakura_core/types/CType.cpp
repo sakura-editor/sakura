@@ -259,4 +259,7 @@ void _DefaultConfig(STypeConfig* pType)
 	for(int i = 0; i < MAX_VERTLINES; i++ ){
 		pType->m_nVertLineIdx[i] = CLayoutInt(0);
 	}
+
+	//  I—¹ŽžA‰üs‚Ìˆê’v‚ðŒŸ¸‚·‚é	2013/4/14 Uchi
+	pType->m_bChkEnterAtEnd = true;
 }

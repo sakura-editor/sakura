@@ -1605,6 +1605,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 		}
 	}
 //@@@ 2006.04.10 fon ADD-end
+
+	// I—¹A‰üs‚Ìˆê’v‚ğŒŸ¸‚·‚é	2013/4/14 Uchi
+	cProfile.IOProfileData( pszSecName, LTEXT("bChkEnterAtEnd")	, types.m_bChkEnterAtEnd );
 }
 
 /*!
