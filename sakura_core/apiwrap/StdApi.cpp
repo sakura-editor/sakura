@@ -6,15 +6,6 @@
 
 using namespace std;
 
-//デバッグ用。
-//VistaだとExtTextOutの結果が即反映されない。この関数を用いると即反映されるので、
-//デバッグ時ステップ実行する際に便利になる。ただし、当然重くなる。
-#ifdef _DEBUG
-#define DEBUG_SETPIXEL(hdc) SetPixel(hdc,-1,-1,0); //SetPixelをすると、結果が即反映される。
-#else
-#define DEBUG_SETPIXEL(hdc)
-#endif
-
 #ifndef _UNICODE
 /*!
 	ワイド文字列からマルチバイト文字列を生成する。
@@ -134,6 +125,8 @@ namespace ApiWrap{
 		ANSI版でも使えるExtTextOutW_AnyBuild。
 		文字数制限1024半角文字。(文字間隔配列を1024半角文字分しか用意していないため)
 	*/
+#ifdef _UNICODE
+#else
 	BOOL ExtTextOutW_AnyBuild(
 		HDC				hdc,
 		int				x,
@@ -145,10 +138,6 @@ namespace ApiWrap{
 		const int*		lpDx
 	)
 	{
-		BOOL ret;
-#ifdef _UNICODE
-		ret=::ExtTextOut(hdc,x,y,fuOptions,lprc,lpwString,cbCount,lpDx);
-#else
 		if(lpwString==NULL || *lpwString==L'\0')return FALSE;
 		if(cbCount>1024)return FALSE;
 
@@ -176,15 +165,17 @@ namespace ApiWrap{
 		}
 
 		//APIコール
-		ret=::ExtTextOut(hdc,x,y,fuOptions,lprc,pNewString,nNewLength,lpDxNew);
+		BOOL ret=::ExtTextOut(hdc,x,y,fuOptions,lprc,pNewString,nNewLength,lpDxNew);
 
 		//後始末
 		DestroyMbString(pNewString);
-#endif
 		DEBUG_SETPIXEL(hdc);
 		return ret;
 	}
+#endif
 
+#ifdef _UNICODE
+#else
 	BOOL TextOutW_AnyBuild(
 		HDC		hdc,
 		int		nXStart,
@@ -193,22 +184,18 @@ namespace ApiWrap{
 		int		cbString
 	)
 	{
-		BOOL ret;
-#ifdef _UNICODE
-		ret=::TextOut(hdc,nXStart,nYStart,lpwString,cbString);
-#else
 		int nNewLength=0;
 		ACHAR* pNewString = CreateMbString(
 			lpwString,
 			cbString==-1?wcslen(lpwString):cbString,
 			&nNewLength
 		);
-		ret=::TextOut(hdc,nXStart,nYStart,pNewString,nNewLength);
+		BOOL ret=::TextOut(hdc,nXStart,nYStart,pNewString,nNewLength);
 		DestroyMbString(pNewString);
-#endif
 		DEBUG_SETPIXEL(hdc);
 		return ret;
 	}
+#endif
 
 
 	LPWSTR CharNextW_AnyBuild(
@@ -253,6 +240,8 @@ namespace ApiWrap{
 	//             その他W系API (ANSI版でも利用可能)               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+#ifdef _UNICODE
+#else
 	int LoadStringW_AnyBuild(
 		HINSTANCE	hInstance,
 		UINT		uID,
@@ -260,9 +249,6 @@ namespace ApiWrap{
 		int			nBufferCount	//!< バッファのサイズ。文字単位。
 	)
 	{
-#ifdef _UNICODE
-		return ::LoadStringW(hInstance, uID, lpBuffer, nBufferCount);
-#else
 		//まずはACHARでロード
 		int nTmpCnt = nBufferCount*2+2;
 		ACHAR* pTmp = new ACHAR[nTmpCnt];
@@ -277,8 +263,8 @@ namespace ApiWrap{
 
 		//結果
 		return ret2;
-#endif
 	}
+#endif
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

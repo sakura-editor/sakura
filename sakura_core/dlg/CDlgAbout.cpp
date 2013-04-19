@@ -406,7 +406,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		if( pUrlWnd->m_bHilighted ){
 			// ハイライト時背景描画
 			SetBkColor( hdc, RGB( 0xff, 0xff, 0 ) );
-			ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+			::ExtTextOutW_AnyBuild( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
 		}else{
 			// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
 			HBRUSH hbr;
