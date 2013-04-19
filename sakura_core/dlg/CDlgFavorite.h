@@ -70,6 +70,7 @@ protected:
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
 
+	void	TabSelectChange( bool );
 	bool	RefreshList( void );
 	void	SetDataOne( int nIndex, int nLvItemIndex );	/* ダイアログデータの設定 */
 	bool	RefreshListOne( int nIndex );
@@ -80,6 +81,7 @@ protected:
 	int     DeleteSelected();
 	void	AddItem();
 	void	EditItem();
+	void	RightMenu( POINT& );
 
 private:
 	CRecentFile			m_cRecentFile;
@@ -104,6 +106,7 @@ private:
 		bool		m_bHaveView;		//表示数変更機能をもっているか？
 		bool		m_bFilePath;		//ファイル/フォルダか？
 		bool		m_bEditable;		//編集可能
+		bool		m_bAddExcept;		//除外へ追加
 		int			m_nViewCount;		//カレントの表示数
 	};
 
@@ -120,6 +123,7 @@ private:
 	RECT				m_rcItems[10];
 
 	int		m_nCurrentTab;
+	int		m_nExceptTab;
 	TCHAR	m_szMsg[1024];
 
 	static void  ListViewSort(ListViewSortInfo&, const CRecent* , int, bool);
