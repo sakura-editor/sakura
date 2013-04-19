@@ -82,7 +82,7 @@ void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 		m_hFont = NULL;
 	}
 
-	m_hFont = ::CreateFontIndirect( &(CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_lf_kh) );
+	m_hFont = ::CreateFontIndirect( &(CShareData::getInstance()->GetShareData()->m_Common.m_sHelper.m_lf) );
 	return;
 }
 

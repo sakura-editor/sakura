@@ -1474,7 +1474,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 
 		/* フォントが変わった */
 		for( i = 0; i < GetAllViewCount(); ++i ){
-			m_pcEditViewArr[i]->m_cTipWnd.ChangeFont( &(m_pShareData->m_Common.m_sHelper.m_lf_kh) );
+			m_pcEditViewArr[i]->m_cTipWnd.ChangeFont( &(m_pShareData->m_Common.m_sHelper.m_lf) );
 		}
 
 		/* 設定変更を反映させる */

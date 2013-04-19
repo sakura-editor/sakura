@@ -157,12 +157,12 @@ INT_PTR CPropHelper::DispatchEvent(
 			// ai 02/05/21 Add S
 			case IDC_BUTTON_KEYWORDHELPFONT:	/* キーワードヘルプの「フォント」ボタン */
 				{
-					LOGFONT   lf = m_Common.m_sHelper.m_lf_kh;
-					INT fontSize = m_Common.m_sHelper.m_ps_kh;
+					LOGFONT   lf = m_Common.m_sHelper.m_lf;
+					INT nPointSize = m_Common.m_sHelper.m_nPointSize;
 
-					if( MySelectFont( &lf, &fontSize, hwndDlg, false) ){
-						m_Common.m_sHelper.m_lf_kh = lf;
-						m_Common.m_sHelper.m_ps_kh = fontSize;	// 2009.10.01 ryoji
+					if( MySelectFont( &lf, &nPointSize, hwndDlg, false) ){
+						m_Common.m_sHelper.m_lf = lf;
+						m_Common.m_sHelper.m_nPointSize = nPointSize;	// 2009.10.01 ryoji
 					}
 				}
 				return TRUE;
@@ -224,7 +224,7 @@ INT_PTR CPropHelper::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_HELPER );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "Helper PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("Helper PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 Helper */
 				GetData( hwndDlg );
 				return TRUE;
@@ -236,11 +236,11 @@ INT_PTR CPropHelper::DispatchEvent(
 //			break;	/* default */
 //		}
 
-//		MYTRACE_A( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
-//		MYTRACE_A( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
-//		MYTRACE_A( "pNMHDR->code    =%xh\n", pNMHDR->code );
-//		MYTRACE_A( "pMNUD->iPos    =%d\n", pMNUD->iPos );
-//		MYTRACE_A( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
+//		MYTRACE( _T("pNMHDR->hwndFrom=%xh\n"), pNMHDR->hwndFrom );
+//		MYTRACE( _T("pNMHDR->idFrom  =%xh\n"), pNMHDR->idFrom );
+//		MYTRACE( _T("pNMHDR->code    =%xh\n"), pNMHDR->code );
+//		MYTRACE( _T("pMNUD->iPos    =%d\n"), pMNUD->iPos );
+//		MYTRACE( _T("pMNUD->iDelta  =%d\n"), pMNUD->iDelta );
 		break;	/* WM_NOTIFY */
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

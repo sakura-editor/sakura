@@ -581,8 +581,8 @@ bool CShareData::InitShareData()
 			0										// user profile update flag
 		);
 		// ai 02/05/21 Add E
-		m_pShareData->m_Common.m_sHelper.m_lf_kh = lfIconTitle;
-		m_pShareData->m_Common.m_sHelper.m_ps_kh = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
+		m_pShareData->m_Common.m_sHelper.m_lf = lfIconTitle;
+		m_pShareData->m_Common.m_sHelper.m_nPointSize = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
 
 //	To Here Sept. 19,2000
 

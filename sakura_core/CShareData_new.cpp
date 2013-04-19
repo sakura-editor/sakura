@@ -308,10 +308,10 @@ bool CShareData::ShareData_IO_2( bool bRead )
 		cProfile.SetWritingMode();
 	}
 
-	TCHAR		szIniFileName[_MAX_PATH + 1];
+	TCHAR	szIniFileName[_MAX_PATH + 1];
 	GetIniFileName( szIniFileName, bRead );	// 2007.05.19 ryoji iniファイル名を取得する
 
-//	MYTRACE_A( "Iniファイル処理-1 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
+//	MYTRACE( _T("Iniファイル処理-1 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
 
 
 	if( bRead ){
@@ -320,8 +320,8 @@ bool CShareData::ShareData_IO_2( bool bRead )
 			return false;
 		}
 	}
-//	MYTRACE_A( "Iniファイル処理 0 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
-	
+//	MYTRACE( _T("Iniファイル処理 0 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
+
 	// Feb. 12, 2006 D.S.Koba
 	ShareData_IO_Mru( cProfile );
 	ShareData_IO_Keys( cProfile );
@@ -344,8 +344,8 @@ bool CShareData::ShareData_IO_2( bool bRead )
 		cProfile.WriteProfile( szIniFileName, _T(" sakura.ini テキストエディタ設定ファイル") );
 	}
 
-//	MYTRACE_A( "Iniファイル処理 8 所要時間(ミリ秒) = %d\n", cRunningTimer.Read() );
-//	MYTRACE_A( "Iniファイル処理 所要時間(ミリ秒) = %d\n", cRunningTimerStart.Read() );
+//	MYTRACE( _T("Iniファイル処理 8 所要時間(ミリ秒) = %d\n"), cRunningTimer.Read() );
+//	MYTRACE( _T("Iniファイル処理 所要時間(ミリ秒) = %d\n"), cRunningTimerStart.Read() );
 
 	return true;
 }
@@ -675,7 +675,7 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	// ai 02/05/23 Add S
 	{// Keword Help Font
 		ShareData_IO_Sub_LogFont( cProfile, pszSecName, "khlf", "khps", "khlfFaceName",
-			common.m_sHelper.m_lf_kh, common.m_sHelper.m_ps_kh );
+			common.m_sHelper.m_lf, common.m_sHelper.m_nPointSize );
 	}// Keword Help Font
 	
 
