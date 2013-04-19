@@ -95,7 +95,7 @@ struct STypeConfig{
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int					m_nIdx;
 	TCHAR				m_szTypeName[64];				/*!< タイプ属性：名称 */
-	TCHAR				m_szTypeExts[MAX_TYPES_EXTS];				/*!< タイプ属性：拡張子リスト */
+	TCHAR				m_szTypeExts[MAX_TYPES_EXTS];	/*!< タイプ属性：拡張子リスト */
 	int					m_nTextWrapMethod;				/*!< テキストの折り返し方法 */		// 2008.05.30 nasukoji
 	CLayoutInt			m_nMaxLineKetas;				/*!< 折り返し桁数 */
 	int					m_nColmSpace;					/*!< 文字と文字の隙間 */
@@ -153,7 +153,7 @@ struct STypeConfig{
 	int					m_nOutlineSortType;				/*!< アウトライン解析ソート基準 */
 
 	ESmartIndentType	m_eSmartIndent;					/*!< スマートインデント種別 */
-	int					m_nImeState;	//	Nov. 20, 2000 genta 初期IME状態
+	int					m_nImeState;					//!< 初期IME状態	Nov. 20, 2000 genta
 
 	//	2001/06/14 asa-o 補完のタイプ別設定
 	SFilePath			m_szHokanFile;					/*!< 入力補完 単語ファイル */
@@ -169,7 +169,9 @@ struct STypeConfig{
 	SFilePath			m_szExtHtmlHelp;				/* 外部HTMLヘルプ */
 	bool				m_bHtmlHelpIsSingle;			// HtmlHelpビューアはひとつ
 
-	SEncodingConfig		m_encoding;			//!< エンコードオプション
+	bool				m_bChkEnterAtEnd;				//!< 終了時、改行の一致を検査する	2013/4/14 Uchi
+
+	SEncodingConfig		m_encoding;						//!< エンコードオプション
 
 
 //@@@ 2001.11.17 add start MIK
