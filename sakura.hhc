@@ -1949,6 +1949,10 @@
 
 	</OBJECT>
 <OBJECT type="text/sitemap">
+	<param name="Merge" value="plugin.chm::plugin.hhc">
+
+	</OBJECT>
+<OBJECT type="text/sitemap">
 	<param name="Merge" value="ppa.chm::ppa.hhc">
 
 	</OBJECT>
