@@ -445,8 +445,9 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 			int nPane = m_cSplitterWnd.GetNextPane();
 			if( -1 != nPane ){
 				SetActivePane( nPane );
-			}else{
-				CEditApp::ActiveNextWindow(m_hwndParent);
+			}
+			else{
+				CEditApp::ActivePrevWindow(m_hwndParent);
 			}
 		}
 		return TRUE;
