@@ -1358,7 +1358,6 @@ BOOL CEditView::IsSpecialScrollMode( int nSelect )
 void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
 //	MYTRACE( _T("OnLBUTTONUP()\n") );
-	CMemory		cmemBuf, cmemClip;
 
 	/* 範囲選択終了 & マウスキャプチャーおわり */
 	if( GetSelectionInfo().IsMouseSelecting() ){	/* 範囲選択中 */

@@ -1773,7 +1773,6 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	WORD				wNotifyCode;
 	WORD				wID;
 	HWND				hwndCtl;
-	CMemory				cMemBuf;
 
 
 

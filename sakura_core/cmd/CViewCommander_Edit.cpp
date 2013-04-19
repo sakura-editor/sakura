@@ -125,11 +125,11 @@ end_of_for:;
 					}
 
 					//インデント取得
-					CNativeW cmemIndent;
-					cmemIndent.SetString( pLine, nPos );
+					//CNativeW cmemIndent;
+					//cmemIndent.SetString( pLine, nPos );
 
 					//インデント付加
-					cmemDataW2.AppendNativeData(cmemIndent);
+					cmemDataW2.AppendString(pLine, nPos);
 				}
 			}
 		}
@@ -152,16 +152,12 @@ end_of_for:;
 		}
 	}
 
-	//UNICODEに変換する
-	CNativeW cmemUnicode;
-	cmemUnicode.SetNativeData(cmemDataW2);
-
 	//本文に挿入する
 	CLayoutPoint ptLayoutNew;
 	m_pCommanderView->InsertData_CEditView(
 		GetCaret().GetCaretLayoutPos(),
-		cmemUnicode.GetStringPtr(),
-		cmemUnicode.GetStringLength(),
+		cmemDataW2.GetStringPtr(),
+		cmemDataW2.GetStringLength(),
 		&ptLayoutNew,
 		true
 	);
@@ -237,8 +233,6 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 		ErrorBeep();
 		return;
 	}
-
-	CMemory			cmemData;
 
 	//	Oct. 6 ,2002 genta 上下逆転
 	if( 0 == (wChar & 0xff00) ){
