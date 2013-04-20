@@ -290,104 +290,106 @@ void _DrawEOL(
 
 	switch( cEol.GetType() ){
 	case EOL_CRLF:	//	下左矢印
-	{
-		sx = rcEol.left;						//X左端
-		sy = rcEol.top + ( rcEol.Height() / 2);	//Y中心
-		DWORD pp[] = { 3, 3 };
-		POINT pt[6];
-		pt[0].x = sx + rcEol.Width();	//	上へ
-		pt[0].y = sy - rcEol.Height() / 4;
-		pt[1].x = sx + rcEol.Width();	//	下へ
-		pt[1].y = sy;
-		pt[2].x = sx;	//	先頭へ
-		pt[2].y = sy;
-		pt[3].x = sx + rcEol.Height() / 4;	//	先頭から下へ
-		pt[3].y = sy + rcEol.Height() / 4;
-		pt[4].x = sx;	//	先頭へ戻り
-		pt[4].y = sy;
-		pt[5].x = sx + rcEol.Height() / 4;	//	先頭から上へ
-		pt[5].y = sy - rcEol.Height() / 4;
-		::PolyPolyline( gr, pt, pp, _countof(pp));
-
-		if ( bBold ) {
-			pt[0].x += 1;	//	上へ（右へずらす）
-			pt[0].y += 0;
-			pt[1].x += 1;	//	右へ（右にひとつずれている）
-			pt[1].y += 1;
-			pt[2].x += 0;	//	先頭へ
-			pt[2].y += 1;
-			pt[3].x += 0;	//	先頭から下へ
-			pt[3].y += 1;
-			pt[4].x += 0;	//	先頭へ戻り
-			pt[4].y += 1;
-			pt[5].x += 0;	//	先頭から上へ
-			pt[5].y += 1;
+		{
+			sx = rcEol.left;						//X左端
+			sy = rcEol.top + ( rcEol.Height() / 2);	//Y中心
+			DWORD pp[] = { 3, 3 };
+			POINT pt[6];
+			pt[0].x = sx + rcEol.Width();	//	上へ
+			pt[0].y = sy - rcEol.Height() / 4;
+			pt[1].x = sx + rcEol.Width();	//	下へ
+			pt[1].y = sy;
+			pt[2].x = sx;	//	先頭へ
+			pt[2].y = sy;
+			pt[3].x = sx + rcEol.Height() / 4;	//	先頭から下へ
+			pt[3].y = sy + rcEol.Height() / 4;
+			pt[4].x = sx;	//	先頭へ戻り
+			pt[4].y = sy;
+			pt[5].x = sx + rcEol.Height() / 4;	//	先頭から上へ
+			pt[5].y = sy - rcEol.Height() / 4;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
+
+			if ( bBold ) {
+				pt[0].x += 1;	//	上へ（右へずらす）
+				pt[0].y += 0;
+				pt[1].x += 1;	//	右へ（右にひとつずれている）
+				pt[1].y += 1;
+				pt[2].x += 0;	//	先頭へ
+				pt[2].y += 1;
+				pt[3].x += 0;	//	先頭から下へ
+				pt[3].y += 1;
+				pt[4].x += 0;	//	先頭へ戻り
+				pt[4].y += 1;
+				pt[5].x += 0;	//	先頭から上へ
+				pt[5].y += 1;
+				::PolyPolyline( gr, pt, pp, _countof(pp));
+			}
 		}
-	}
 		break;
 	case EOL_CR:	//	左向き矢印	// 2007.08.17 ryoji EOL_LF -> EOL_CR
-	{
-		sx = rcEol.left;
-		sy = rcEol.top + ( rcEol.Height() / 2 );
-		DWORD pp[] = { 3, 2 };
-		POINT pt[5];
-		pt[0].x = sx + rcEol.Width();	//	右へ
-		pt[0].y = sy;
-		pt[1].x = sx;	//	先頭へ
-		pt[1].y = sy;
-		pt[2].x = sx + rcEol.Height() / 4;	//	先頭から下へ
-		pt[2].y = sy + rcEol.Height() / 4;
-		pt[3].x = sx;	//	先頭へ戻り
-		pt[3].y = sy;
-		pt[4].x = sx + rcEol.Height() / 4;	//	先頭から上へ
-		pt[4].y = sy - rcEol.Height() / 4;
-		::PolyPolyline( gr, pt, pp, _countof(pp));
-
-		if ( bBold ) {
-			pt[0].x += 0;	//	右へ
-			pt[0].y += 1;
-			pt[1].x += 0;	//	先頭へ
-			pt[1].y += 1;
-			pt[2].x += 0;	//	先頭から下へ
-			pt[2].y += 1;
-			pt[3].x += 0;	//	先頭へ戻り
-			pt[3].y += 1;
-			pt[4].x += 0;	//	先頭から上へ
-			pt[4].y += 1;
+		{
+			sx = rcEol.left;
+			sy = rcEol.top + ( rcEol.Height() / 2 );
+			DWORD pp[] = { 3, 2 };
+			POINT pt[5];
+			pt[0].x = sx + rcEol.Width();	//	右へ
+			pt[0].y = sy;
+			pt[1].x = sx;	//	先頭へ
+			pt[1].y = sy;
+			pt[2].x = sx + rcEol.Height() / 4;	//	先頭から下へ
+			pt[2].y = sy + rcEol.Height() / 4;
+			pt[3].x = sx;	//	先頭へ戻り
+			pt[3].y = sy;
+			pt[4].x = sx + rcEol.Height() / 4;	//	先頭から上へ
+			pt[4].y = sy - rcEol.Height() / 4;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
+
+			if ( bBold ) {
+				pt[0].x += 0;	//	右へ
+				pt[0].y += 1;
+				pt[1].x += 0;	//	先頭へ
+				pt[1].y += 1;
+				pt[2].x += 0;	//	先頭から下へ
+				pt[2].y += 1;
+				pt[3].x += 0;	//	先頭へ戻り
+				pt[3].y += 1;
+				pt[4].x += 0;	//	先頭から上へ
+				pt[4].y += 1;
+				::PolyPolyline( gr, pt, pp, _countof(pp));
+			}
 		}
-	}
 		break;
 	case EOL_LF:	//	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
-		sx = rcEol.left + ( rcEol.Width() / 2 );
-		sy = rcEol.top + ( rcEol.Height() * 3 / 4 );
-		DWORD pp[] = { 3, 2 };
-		POINT pt[5];
-		pt[0].x = sx;	//	上へ
-		pt[0].y = rcEol.top + rcEol.Height() / 4 + 1;
-		pt[1].x = sx;	//	上から下へ
-		pt[1].y = sy;
-		pt[2].x = sx - rcEol.Height() / 4;	//	そのまま左上へ
-		pt[2].y = sy - rcEol.Height() / 4;
-		pt[3].x = sx;	//	矢印の先端に戻る
-		pt[3].y = sy;
-		pt[4].x = sx + rcEol.Height() / 4;	//	そして右上へ
-		pt[4].y = sy - rcEol.Height() / 4;
-		::PolyPolyline( gr, pt, pp, _countof(pp));
-
-		if( bBold ){
-			pt[0].x += 1;	//	上へ
-			pt[0].y += 0;
-			pt[1].x += 1;	//	上から下へ
-			pt[1].y += 0;
-			pt[2].x += 1;	//	そのまま左上へ
-			pt[2].y += 0;
-			pt[3].x += 1;	//	矢印の先端に戻る
-			pt[3].y += 0;
-			pt[4].x += 1;	//	そして右上へ
-			pt[4].y += 0;
+		{
+			sx = rcEol.left + ( rcEol.Width() / 2 );
+			sy = rcEol.top + ( rcEol.Height() * 3 / 4 );
+			DWORD pp[] = { 3, 2 };
+			POINT pt[5];
+			pt[0].x = sx;	//	上へ
+			pt[0].y = rcEol.top + rcEol.Height() / 4 + 1;
+			pt[1].x = sx;	//	上から下へ
+			pt[1].y = sy;
+			pt[2].x = sx - rcEol.Height() / 4;	//	そのまま左上へ
+			pt[2].y = sy - rcEol.Height() / 4;
+			pt[3].x = sx;	//	矢印の先端に戻る
+			pt[3].y = sy;
+			pt[4].x = sx + rcEol.Height() / 4;	//	そして右上へ
+			pt[4].y = sy - rcEol.Height() / 4;
 			::PolyPolyline( gr, pt, pp, _countof(pp));
+
+			if( bBold ){
+				pt[0].x += 1;	//	上へ
+				pt[0].y += 0;
+				pt[1].x += 1;	//	上から下へ
+				pt[1].y += 0;
+				pt[2].x += 1;	//	そのまま左上へ
+				pt[2].y += 0;
+				pt[3].x += 1;	//	矢印の先端に戻る
+				pt[3].y += 0;
+				pt[4].x += 1;	//	そして右上へ
+				pt[4].y += 0;
+				::PolyPolyline( gr, pt, pp, _countof(pp));
+			}
 		}
 		break;
 	}
