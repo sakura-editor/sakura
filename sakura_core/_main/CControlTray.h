@@ -60,6 +60,8 @@ public:
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
+	void CreateAccelTbl( void ); // アクセラレータテーブル作成
+	void DeleteAccelTbl( void ); // アクセラレータテーブル破棄
 
 	//ウィンドウ管理
 	static bool OpenNewEditor(							//!< 新規編集ウィンドウの追加 ver 0

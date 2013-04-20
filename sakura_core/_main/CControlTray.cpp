@@ -172,23 +172,11 @@ CControlTray::CControlTray()
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
-	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
-		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
-		m_pShareData->m_sHandles.m_hAccel = NULL;
-	}
-	m_pShareData->m_sHandles.m_hAccel =
-		CKeyBind::CreateAccerelator(
-			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
-		);
-	if( NULL == m_pShareData->m_sHandles.m_hAccel ){
-		ErrorMessage(
-			NULL,
-			_T("CControlTray::CControlTray()\n")
-			_T("アクセラレータ テーブルが作成できません。\n")
-			_T("システムリソースが不足しています。")
-		);
-	}
+
+	// アクセラレータテーブル破棄
+	DeleteAccelTbl();
+	// アクセラレータテーブル作成
+	CreateAccelTbl();
 
 	m_bUseTrayMenu = false;
 
@@ -576,23 +564,10 @@ LRESULT CControlTray::DispatchEvent(
 //@@		m_cShareData.SaveShareData();
 
 			/* アクセラレータテーブルの再作成 */
-			if( m_pShareData->m_sHandles.m_hAccel != NULL ){
-				::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
-				m_pShareData->m_sHandles.m_hAccel = NULL;
-			}
-			m_pShareData->m_sHandles.m_hAccel =
-				CKeyBind::CreateAccerelator(
-					m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-					m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
-				);
-			if( NULL == m_pShareData->m_sHandles.m_hAccel ){
-				ErrorMessage(
-					NULL,
-					_T("CControlTray::DispatchEvent()\n")
-					_T("アクセラレータ テーブルが作成できません。\n")
-					_T("システムリソースが不足しています。")
-				);
-			}
+			// ウィンドウ毎のアクセラレータテーブル破棄
+			DeleteAccelTbl();
+			// ウィンドウ毎のアクセラレータテーブル作成
+			CreateAccelTbl();
 
 			return 0L;
 
@@ -1529,6 +1504,37 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	m_bUseTrayMenu = false;
 
 	return nId;
+}
+
+/*! アクセラレータテーブル作成
+	@date 2013.04.20 novice 共通処理を関数化
+*/
+void CControlTray::CreateAccelTbl( void )
+{
+	m_pShareData->m_sHandles.m_hAccel = CKeyBind::CreateAccerelator(
+		m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+		m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
+	);
+
+	if( NULL == m_pShareData->m_sHandles.m_hAccel ){
+		ErrorMessage(
+			NULL,
+			_T("CControlTray::CreateAccelTbl()\n")
+			_T("アクセラレータ テーブルが作成できません。\n")
+			_T("システムリソースが不足しています。")
+		);
+	}
+}
+
+/*! アクセラレータテーブル破棄
+	@date 2013.04.20 novice 共通処理を関数化
+*/
+void CControlTray::DeleteAccelTbl( void )
+{
+	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
+		m_pShareData->m_sHandles.m_hAccel = NULL;
+	}
 }
 
 /*!

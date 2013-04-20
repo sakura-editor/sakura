@@ -298,6 +298,9 @@ protected:
 		}
 	}
 
+	void CreateAccelTbl( void ); // ウィンドウ毎のアクセラレータテーブル作成(Wine用)
+	void DeleteAccelTbl( void ); // ウィンドウ毎のアクセラレータテーブル破棄(Wine用)
+
 public:
 	//D&Dフラグ管理
 	void SetDragPosOrg(CMyPoint ptDragPosOrg){ m_ptDragPosOrg=ptDragPosOrg; }
@@ -375,7 +378,8 @@ private:
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
 	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
 	BOOL			m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
-	HACCEL			m_hAccel;			//! ウィンドウ毎のアクセラレータテーブルのハンドル(Wine用)	// 2009.08.15 nasukoji
+	HACCEL			m_hAccelWine;		//!< ウィンドウ毎のアクセラレータテーブルのハンドル(Wine用)	// 2009.08.15 nasukoji
+	HACCEL			m_hAccel;			//!< アクセラレータテーブル(共有 or ウィンドウ毎)
 
 	//フォント・イメージ
 	HFONT			m_hFontCaretPosInfo;		//!< キャレットの行桁位置表示用フォント
