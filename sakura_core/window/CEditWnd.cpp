@@ -201,6 +201,8 @@ CEditWnd::CEditWnd()
 , m_pcDragSourceView( NULL )
 , m_pszMenubarMessage( new TCHAR[MENUBAR_MESSAGE_MAX_LEN] )
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
+, m_hAccelWine( NULL )
+, m_hAccel( NULL )
 {
 	g_pcEditWnd=this;
 
@@ -226,24 +228,8 @@ CEditWnd::CEditWnd()
 	// 2009.01.17 nasukoji	ホイールスクロール有無状態をクリア
 	ClearMouseState();
 
-	// 2009.08.15 Hidetaka Sakai, nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-	if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){
-		m_hAccel = CKeyBind::CreateAccerelator(
-						m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-						m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
-				   );
-
-		if( NULL == m_hAccel ){
-			ErrorMessage(
-				NULL,
-				_T("CEditWnd::CEditWnd()\n")
-				_T("アクセラレータ テーブルが作成できません。\n")
-				_T("システムリソースが不足しています。")
-			);
-		}
-	}else{
-		m_hAccel = NULL;
-	}
+	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	CreateAccelTbl();
 }
 
 CEditWnd::~CEditWnd()
@@ -264,11 +250,8 @@ CEditWnd::~CEditWnd()
 	delete m_pcDropTarget;	// 2008.06.20 ryoji
 	m_pcDropTarget = NULL;
 
-	// 2009.08.15 Hidetaka Sakai, nasukoji	ウィンドウ毎に作成したアクセラレータテーブルを開放する
-	if( m_hAccel ){
-		::DestroyAcceleratorTable( m_hAccel );
-		m_hAccel = NULL;
-	}
+	// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+	DeleteAccelTbl();
 
 	m_hWnd = NULL;
 }
@@ -1053,13 +1036,7 @@ void CEditWnd::MessageLoop( void )
 		else if( m_cToolbar.EatMessage(&msg ) ){ }													//!<ツールバー
 		//アクセラレータ
 		else{
-			// 2009.08.15 Hidetaka Sakai, nasukoji
-			// Wineでは別プロセスで作成したアクセラレータテーブルを使用することができない。
-			// m_bCreateAccelTblEachWinオプション選択によりプロセス毎にアクセラレータテーブルが作成されるようになる
-			// ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
-			HACCEL hAccel = m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ? m_hAccel : m_pShareData->m_sHandles.m_hAccel;
-
-			if( hAccel && TranslateAccelerator( msg.hwnd, hAccel, &msg ) ){}
+			if( m_hAccel && TranslateAccelerator( msg.hwnd, m_hAccel, &msg ) ){}
 			//通常メッセージ
 			else{
 				TranslateMessage( &msg );
@@ -1645,27 +1622,11 @@ LRESULT CEditWnd::DispatchEvent(
 		// バー変更で画面が乱れないように	// 2006.12.19 ryoji
 		EndLayoutBars();
 
-		// 2009.08.15 nasukoji	アクセラレータテーブルを再作成する(Wine用)
-		if( m_hAccel ){
-			::DestroyAcceleratorTable( m_hAccel );		// ウィンドウ毎に作成したアクセラレータテーブルを開放する
-			m_hAccel = NULL;
-		}
-
-		if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-			m_hAccel = CKeyBind::CreateAccerelator(
-							m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
-							m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
-					   );
-
-			if( NULL == m_hAccel ){
-				ErrorMessage(
-					NULL,
-					_T("CEditWnd::DispatchEvent()\n")
-					_T("アクセラレータ テーブルが作成できません。\n")
-					_T("システムリソースが不足しています。")
-				);
-			}
-		}
+		// アクセラレータテーブルを再作成する(Wine用)
+		// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+		DeleteAccelTbl();
+		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+		CreateAccelTbl();
 
 		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
 		{
@@ -4568,6 +4529,46 @@ void CEditWnd::ClearMouseState( void )
 {
 	SetPageScrollByWheel( FALSE );		// ホイール操作によるページスクロール有無
 	SetHScrollByWheel( FALSE );			// ホイール操作による横スクロール有無
+}
+
+/*! ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+	@date 2009.08.15 Hidetaka Sakai, nasukoji
+	@note Wineでは別プロセスで作成したアクセラレータテーブルを使用することができない。
+	      m_bCreateAccelTblEachWinオプション選択によりプロセス毎にアクセラレータテーブルが作成されるようになる
+	      ため、ショートカットキーやカーソルキーが正常に処理されるようになる。
+*/
+void CEditWnd::CreateAccelTbl( void )
+{
+	if( m_pShareData->m_Common.m_sKeyBind.m_bCreateAccelTblEachWin ){
+		m_hAccelWine = CKeyBind::CreateAccerelator(
+			m_pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum,
+			m_pShareData->m_Common.m_sKeyBind.m_pKeyNameArr
+		);
+
+		if( NULL == m_hAccelWine ){
+			ErrorMessage(
+				NULL,
+				_T("CEditWnd::CEditWnd()\n")
+				_T("アクセラレータ テーブルが作成できません。\n")
+				_T("システムリソースが不足しています。")
+			);
+		}
+	}
+
+	m_hAccel = m_hAccelWine ? m_hAccelWine : m_pShareData->m_sHandles.m_hAccel;
+}
+
+/*! ウィンドウ毎に作成したアクセラレータテーブルを破棄する
+	@datet 2009.08.15 Hidetaka Sakai, nasukoji
+*/
+void CEditWnd::DeleteAccelTbl( void )
+{
+	m_hAccel = m_pShareData->m_sHandles.m_hAccel;
+
+	if( m_hAccelWine ){
+		::DestroyAcceleratorTable( m_hAccelWine );
+		m_hAccelWine = NULL;
+	}
 }
 
 //プラグインコマンドをエディタに登録する
