@@ -1527,75 +1527,160 @@ void CEditView::DrawEOL(
 
 	switch( cEol.GetType() ){
 	case EOL_CRLF:	//	下左矢印
-		sx = nPosX;
-		sy = nPosY + ( nHeight / 2);
-		::MoveToEx( hdc, sx + nWidth, sy - nHeight / 4, NULL );	//	上へ
-		::LineTo(   hdc, sx + nWidth, sy );			//	下へ
-		::LineTo(   hdc, sx, sy );					//	先頭へ
-		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
-		::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
-		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
-		if ( bBold ) {
-			::MoveToEx( hdc, sx + nWidth + 1, sy - nHeight / 4, NULL );	//	上へ（右へずらす）
-			++sy;
-			::LineTo( hdc, sx + nWidth + 1, sy );	//	右へ（右にひとつずれている）
-			::LineTo(   hdc, sx, sy );					//	先頭へ
-			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
-			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
-			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
+		{
+			sx = nPosX;
+			sy = nPosY + ( nHeight / 2);
+			DWORD pp[] = { 3, 3 };
+			POINT pt[6];
+			pt[0].x = sx + nWidth;	//	上へ
+			pt[0].y = sy - nHeight / 4;
+			pt[1].x = sx + nWidth;	//	下へ
+			pt[1].y = sy;
+			pt[2].x = sx;	//	先頭へ
+			pt[2].y = sy;
+			pt[3].x = sx + nHeight / 4;	//	先頭から下へ
+			pt[3].y = sy + nHeight / 4;
+			pt[4].x = sx;	//	先頭へ戻り
+			pt[4].y = sy;
+			pt[5].x = sx + nHeight / 4;	//	先頭から上へ
+			pt[5].y = sy - nHeight / 4;
+			::PolyPolyline( hdc, pt, pp, _countof(pp));
+
+			if ( bBold ) {
+				pt[0].x += 1;	//	上へ（右へずらす）
+				pt[0].y += 0;
+				pt[1].x += 1;	//	右へ（右にひとつずれている）
+				pt[1].y += 1;
+				pt[2].x += 0;	//	先頭へ
+				pt[2].y += 1;
+				pt[3].x += 0;	//	先頭から下へ
+				pt[3].y += 1;
+				pt[4].x += 0;	//	先頭へ戻り
+				pt[4].y += 1;
+				pt[5].x += 0;	//	先頭から上へ
+				pt[5].y += 1;
+				::PolyPolyline( hdc, pt, pp, _countof(pp));
+			}
 		}
 		break;
 	case EOL_CR:	//	左向き矢印	// 2007.08.17 ryoji EOL_LF -> EOL_CR
-		sx = nPosX;
-		sy = nPosY + ( nHeight / 2 );
-		::MoveToEx( hdc, sx + nWidth, sy, NULL );	//	右へ
-		::LineTo(   hdc, sx, sy );					//	先頭へ
-		::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
-		::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
-		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
-		if ( bBold ) {
-			++sy;
-			::MoveToEx( hdc, sx + nWidth, sy, NULL );	//	右へ
-			::LineTo(   hdc, sx, sy );					//	先頭へ
-			::LineTo(   hdc, sx + nHeight / 4, sy + nHeight / 4 );	//	先頭から下へ
-			::MoveToEx( hdc, sx, sy, NULL);				//	先頭へ戻り
-			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4 );	//	先頭から上へ
+		{
+			sx = nPosX;
+			sy = nPosY + ( nHeight / 2 );
+			DWORD pp[] = { 3, 2 };
+			POINT pt[5];
+			pt[0].x = sx + nWidth;	//	右へ
+			pt[0].y = sy;
+			pt[1].x = sx;	//	先頭へ
+			pt[1].y = sy;
+			pt[2].x = sx + nHeight / 4;	//	先頭から下へ
+			pt[2].y = sy + nHeight / 4;
+			pt[3].x = sx;	//	先頭へ戻り
+			pt[3].y = sy;
+			pt[4].x = sx + nHeight / 4;	//	先頭から上へ
+			pt[4].y = sy - nHeight / 4;
+			::PolyPolyline( hdc, pt, pp, _countof(pp));
+
+			if ( bBold ) {
+				pt[0].x += 0;	//	右へ
+				pt[0].y += 1;
+				pt[1].x += 0;	//	先頭へ
+				pt[1].y += 1;
+				pt[2].x += 0;	//	先頭から下へ
+				pt[2].y += 1;
+				pt[3].x += 0;	//	先頭へ戻り
+				pt[3].y += 1;
+				pt[4].x += 0;	//	先頭から上へ
+				pt[4].y += 1;
+				::PolyPolyline( hdc, pt, pp, _countof(pp));
+			}
 		}
 		break;
 	case EOL_LF:	//	下向き矢印	// 2007.08.17 ryoji EOL_CR -> EOL_LF
-		sx = nPosX + ( nWidth / 2 );
-		sy = nPosY + ( nHeight * 3 / 4 );
-		::MoveToEx( hdc, sx, nPosY + nHeight / 4 + 1, NULL );	//	上へ
-		::LineTo(   hdc, sx, sy );								//	上から下へ
-		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
-		::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
-		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
-		if( bBold ){
-			++sx;
-			::MoveToEx( hdc, sx, nPosY + nHeight / 4 + 1, NULL );
-			::LineTo(   hdc, sx, sy );								//	上から下へ
-			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
-			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
-			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
+		{
+			sx = nPosX + ( nWidth / 2 );
+			sy = nPosY + ( nHeight * 3 / 4 );
+
+			DWORD pp[] = { 3, 2 };
+			POINT pt[5];
+			pt[0].x = sx;	//	上へ
+			pt[0].y = nPosY + nHeight / 4 + 1;
+			pt[1].x = sx;	//	上から下へ
+			pt[1].y = sy;
+			pt[2].x = sx - nHeight / 4;	//	そのまま左上へ
+			pt[2].y = sy - nHeight / 4;
+			pt[3].x = sx;	//	矢印の先端に戻る
+			pt[3].y = sy;
+			pt[4].x = sx + nHeight / 4;	//	そして右上へ
+			pt[4].y = sy - nHeight / 4;
+			::PolyPolyline( hdc, pt, pp, _countof(pp));
+
+			if( bBold ){
+				pt[0].x += 1;	//	上へ
+				pt[0].y += 0;
+				pt[1].x += 1;	//	上から下へ
+				pt[1].y += 0;
+				pt[2].x += 1;	//	そのまま左上へ
+				pt[2].y += 0;
+				pt[3].x += 1;	//	矢印の先端に戻る
+				pt[3].y += 0;
+				pt[4].x += 1;	//	そして右上へ
+				pt[4].y += 0;
+				::PolyPolyline( hdc, pt, pp, _countof(pp));
+			}
 		}
 		break;
 	case EOL_LFCR:
-		sx = nPosX + ( nWidth / 2 );
-		sy = nPosY + ( nHeight * 3 / 4 );
-		::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 1, NULL );	//	右上へ
-		::LineTo(   hdc, sx, nPosY + nHeight / 4 + 1 );			//	右から左へ
-		::LineTo(   hdc, sx, sy );								//	上から下へ
-		::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
-		::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
-		::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
-		if( bBold ){
-			::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 2, NULL );	//	右上へ
-			++sx;
-			::LineTo(   hdc, sx, nPosY + nHeight / 4 + 2 );			//	右から左へ
-			::LineTo(   hdc, sx, sy );								//	上から下へ
-			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
-			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
-			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
+		{
+			sx = nPosX + ( nWidth / 2 );
+			sy = nPosY + ( nHeight * 3 / 4 );
+			DWORD pp[] = { 4, 2 };
+			POINT pt[6];
+			pt[0].x = sx + nWidth / 2;	//	右上へ
+			pt[0].y = nPosY + nHeight / 4 + 1;
+			pt[1].x = sx;	//	右から左へ
+			pt[1].y = nPosY + nHeight / 4 + 1;
+			pt[2].x = sx;	//	上から下へ
+			pt[2].y = sy;
+			pt[3].x = sx - nHeight / 4;	//	そのまま左上へ
+			pt[3].y = sy - nHeight / 4;
+			pt[4].x = sx;	//	矢印の先端に戻る
+			pt[4].y = sy;
+			pt[5].x = sx + nHeight / 4;	//	矢印の先端に戻る
+			pt[5].y = sy - nHeight / 4;
+			::PolyPolyline( hdc, pt, pp, _countof(pp));
+
+			if ( bBold ) {
+				pt[0].x += 0;	//	右上へ
+				pt[0].y += 1;
+				pt[1].x += 1;	//	右から左へ
+				pt[1].y += 1;
+				pt[2].x += 1;	//	上から下へ
+				pt[2].y += 0;
+				pt[3].x += 1;	//	そのまま左上へ
+				pt[3].y += 0;
+				pt[4].x += 1;	//	矢印の先端に戻る
+				pt[4].y += 0;
+				pt[5].x += 1;	//	そして右上へ
+				pt[5].y += 0;
+				::PolyPolyline( hdc, pt, pp, _countof(pp));
+			}
+
+//			::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 1, NULL );	//	右上へ
+//			::LineTo(   hdc, sx, nPosY + nHeight / 4 + 1 );			//	右から左へ
+//			::LineTo(   hdc, sx, sy );								//	上から下へ
+//			::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
+//			::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
+//			::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
+//			if( bBold ){
+//				::MoveToEx( hdc, sx + nWidth / 2, nPosY + nHeight / 4 + 2, NULL );	//	右上へ
+//				++sx;
+//				::LineTo(   hdc, sx, nPosY + nHeight / 4 + 2 );			//	右から左へ
+//				::LineTo(   hdc, sx, sy );								//	上から下へ
+//				::LineTo(   hdc, sx - nHeight / 4, sy - nHeight / 4);	//	そのまま左上へ
+//				::MoveToEx( hdc, sx, sy, NULL);							//	矢印の先端に戻る
+//				::LineTo(   hdc, sx + nHeight / 4, sy - nHeight / 4);	//	そして右上へ
+//			}
 		}
 		break;
 	}
