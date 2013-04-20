@@ -186,12 +186,14 @@ public:
 		}
 	}
 
+	void CreateAccelTbl( void ); // ウィンドウ毎のアクセラレータテーブル作成(Wine用)
+	void DeleteAccelTbl( void ); // ウィンドウ毎のアクセラレータテーブル破棄(Wine用)
+
 	/* IDropTarget実装 */	// 2008.06.20 ryoji
 	STDMETHODIMP DragEnter( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragOver( DWORD, POINTL, LPDWORD );
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop( LPDATAOBJECT, DWORD, POINTL, LPDWORD );
-
 
 	/*
 	|| メンバ変数
@@ -244,9 +246,10 @@ private:
 	int		m_nCurrentFocus;
 	bool	m_bIsActiveApp;	// 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	BOOL	m_bUIPI;	// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
-	BOOL	m_bPageScrollByWheel;		// ホイール操作によるページスクロールあり	// 2009.01.12 nasukoji
-	BOOL	m_bHorizontalScrollByWheel;	// ホイール操作による横スクロールあり		// 2009.01.12 nasukoji
-	HACCEL	m_hAccel;		// ウィンドウ毎のアクセラレータテーブルのハンドル(Wine用)	// 2009.08.15 nasukoji
+	BOOL	m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.12 nasukoji
+	BOOL	m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.12 nasukoji
+	HACCEL	m_hAccelWine;		//!< ウィンドウ毎のアクセラレータテーブルのハンドル(Wine用)	// 2009.08.15 nasukoji
+	HACCEL	m_hAccel;			//!< アクセラレータテーブル(共有 or ウィンドウ毎)
 
 	//	Jul. 21, 2003 genta ToolBarのOwner Draw
 	LPARAM ToolBarOwnerDraw( LPNMCUSTOMDRAW pnmh );
