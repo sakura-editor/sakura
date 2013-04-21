@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<OBJECT type="text/site properties">
+	<param name="Window Styles" value="0x800027">
+	<param name="ImageType" value="Folder">
+</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="プラグイン開発ガイド">
+		<param name="Local" value="Text/index.html">
+		<param name="ImageNumber" value="1">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="1. はじめに">
+			<param name="Local" value="Text/beginning.html">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="2. 概要">
+			<param name="Local" value="Text/overview.html">
+			<param name="ImageNumber" value="1">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.1. 利用イメージ">
+				<param name="Local" value="Text/overview.html#c0201">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.2. 動き">
+				<param name="Local" value="Text/overview.html#c0202">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.3. フォルダ構成">
+				<param name="Local" value="Text/overview.html#c0203">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.4. ER図">
+				<param name="Local" value="Text/overview.html#c0204">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.5. ジャック一覧">
+				<param name="Local" value="Text/overview.html#c0205">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="3. 現時点の実装仕様">
+			<param name="Local" value="Text/implementation01.html">
+			<param name="ImageNumber" value="1">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="3.1. プラグイン定義ファイル(plugin.def)">
+				<param name="Local" value="Text/implementation01.html#c0301">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="3.2. インタフェースオブジェクト">
+				<param name="Local" value="Text/implementation02.html#c0302">
+				<param name="ImageNumber" value="3">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.2.1. Editor">
+					<param name="Local" value="Text/implementation02.html#c030201">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.2.2. Plugin">
+					<param name="Local" value="Text/implementation02.html#c030202">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.2.3. Outline">
+					<param name="Local" value="Text/implementation02.html#c030203">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.2.4. Indent">
+					<param name="Local" value="Text/implementation02.html#c030204">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.2.5. Complement">
+					<param name="Local" value="Text/implementation02.html#c030205">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="3.3. プラグインコーディングガイド">
+				<param name="Local" value="Text/implementation03.html#c0303">
+				<param name="ImageNumber" value="3">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.3.1. アウトライン解析">
+					<param name="Local" value="Text/implementation03.html#c030301">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.3.2. スマートインデント">
+					<param name="Local" value="Text/implementation03.html#c030302">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.3.3. 補完候補検索">
+					<param name="Local" value="Text/implementation03.html#c030303">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="3.3.4. エディタイベント">
+					<param name="Local" value="Text/implementation03.html#c030304">
+					</OBJECT>
+			</UL>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="4. エディタでの実装">
+			<param name="Local" value="Text/renovation.html">
+			<param name="ImageNumber" value="1">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="4.1. マクロ関連クラスの改造">
+				<param name="Local" value="Text/renovation.html#c0401">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="4.2. プラグイン関連クラス構成">
+				<param name="Local" value="Text/renovation.html#c0402">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="4.3. 課題">
+				<param name="Local" value="Text/renovation.html#c0403">
+				<param name="ImageNumber" value="37">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="5. 参考">
+			<param name="Local" value="Text/reference.html">
+			<param name="ImageNumber" value="13">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="このヘルプファイルについて">
+			<param name="Local" value="Text/HLP_LISENCE.html">
+			<param name="ImageNumber" value="1">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="プラグイン開発ガイド更新履歴">
+				<param name="Local" value="Text/history.html">
+				<param name="ImageNumber" value="17">
+				</OBJECT>
+		</UL>
+	</UL>
+</UL>
+</BODY></HTML>

@@ -1,0 +1,33 @@
+[OPTIONS]
+Auto Index=Yes
+Compatibility=1.1 or later
+Compiled file=plugin.chm
+Contents file=plugin.hhc
+Default Font=MS UI Gothic,10,128
+Default Window=XHP
+Default topic=Text/index.html
+Display compile progress=No
+Error log file=Compile.Log
+Full-text search=Yes
+Index file=plugin.hhk
+Language=0x411 日本語
+Title=サクラエディタ プラグイン仕様
+
+[WINDOWS]
+XHP="プラグイン仕様","plugin.hhc","plugin.hhk","Text/index.html","Text/index.html",,,,,0x61720,200,0x10384e,[50,50,850,550],0x0,0x0,,,,,0
+$global_Web="Remote URL",,,,,,,,,,,0x383c,[125,144,721,602],,,,,,,0
+
+
+[FILES]
+Text/index.html
+Text/beginning.html
+Text/overview.html
+Text/implementation01.html
+Text/implementation02.html
+Text/implementation03.html
+Text/renovation.html
+Text/reference.html
+Text/HLP_LISENCE.html
+Text/history.html
+
+[INFOTYPES]

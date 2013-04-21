@@ -1,0 +1,202 @@
+@charset "shift_jis";
+
+BODY {
+	margin: 1em 5%; line-height: 1.4; font-family: "MS UI Gothic", sans-serif, "verdana", "arial", "helvetica"; color: #000; background-color: #fff;
+}
+A:link {
+	COLOR: #f03; BACKGROUND-COLOR: transparent
+}
+A:visited {
+	COLOR: #903; BACKGROUND-COLOR: transparent
+}
+A:hover {
+	COLOR: #000; BACKGROUND-COLOR: #fcd
+}
+A:link IMG {
+	border-color: #f03;
+}
+A:visited IMG {
+	border-color: #903;
+}
+A:hover IMG {
+	border-color: #fcd;
+}
+HR {
+	border-color: #666; margin: 1em; border-style: solid; height: 2px;
+}
+H1 {
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1.5em; line-height: 1;
+	border-color: #f28; background-color: #fee; color: #000;
+}
+H2 {
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1.2em; line-height: 1; margin-top: 1em;
+	border-top: 2px solid #f28; border-bottom: 2px solid #f28;
+	background-color: #fee; color: #000;
+}
+H3 {
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
+	border-bottom: 2px solid #f28;
+	background-color: #fee; color: #000;
+}
+H4 {
+	padding: 0.2em 0.5em 0.2em 0.5em; font-weight: bold; font-size: 1em; line-height: 1; margin-top: 1em;
+	background-color: #fee; color: #000;
+}
+DL {
+	padding: 0; border: 1px solid #666; margin-right: 1em; margin-left: 1em;
+}
+DT {
+	PADDING: 0.1em 0.3em 0.1em 0.3em; MARGIN: 0.5em 0px 0px; BORDER-RIGHT: 1px; BORDER-TOP: 1px solid #666; BORDER-LEFT: 1px; BORDER-BOTTOM: 1px solid #f28; BACKGROUND-COLOR: #fee
+}
+DD {
+	PADDING-RIGHT: 0.1em; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.2em; MARGIN: 0px; PADDING-TOP: 0.2em
+}
+/*TABLE {
+	BORDER-RIGHT: #666 2px solid; BORDER-TOP: 2px solid #666; BORDER-LEFT: #666 2px solid; BORDER-BOTTOM: #666 2px solid; BORDER-COLLAPSE: collapse
+}
+TH {
+	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid
+}
+TD {
+	BORDER-RIGHT: #666 1px solid; PADDING-RIGHT: 0.5em; BORDER-TOP: #666 1px solid; PADDING-LEFT: 0.5em; PADDING-BOTTOM: 0.1em; BORDER-LEFT: #666 1px solid; PADDING-TOP: 0.1em; BORDER-BOTTOM: #666 1px solid
+}*/
+P {
+	LINE-HEIGHT: 1.4
+}
+DL {
+	LINE-HEIGHT: 1.4
+}
+UL {
+	LINE-HEIGHT: 1.4
+}
+OL {
+	LINE-HEIGHT: 1.4
+}
+DT {
+	FONT-WEIGHT: bold
+}
+UL {
+	LIST-STYLE-TYPE: square
+}
+EM {
+	COLOR: #909; BACKGROUND-COLOR: transparent
+}
+STRONG {
+	COLOR: #909; BACKGROUND-COLOR: transparent
+}
+STRONG {
+	BORDER-RIGHT: 3px; BORDER-TOP: 3px; BORDER-LEFT: 3px; BORDER-BOTTOM: 3px double
+}
+.s {
+	FONT-SIZE: smaller
+}
+.title {
+	MARGIN-TOP: 0.5em; MARGIN-BOTTOM: 0.5em; PADDING-BOTTOM: 0.5em; PADDING-TOP: 0.5em; TEXT-ALIGN: center
+}
+.sub {
+	FONT-WEIGHT: bold; TEXT-ALIGN: center
+}
+.example {
+	margin: 0px; padding: 0 1em 0 1em; font-weight: bold; border-top-style: none; 
+	; border-right-style: none; border-left-style: none; background-color: #e0fce8; text-align: left; border-bottom-style: none
+}
+.note {
+	PADDING-RIGHT: 1em; PADDING-LEFT: 1em; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-TOP-STYLE: none; PADDING-TOP: 0px; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BACKGROUND-COLOR: #cdf; TEXT-ALIGN: left; BORDER-BOTTOM-STYLE: none
+}
+.codesample {
+	color: #000; background-color: #f9f9f9;
+	border: 1px solid #888;
+}
+.codecomment {
+	color: #070;
+}
+.codestr {
+	color: #A11; 
+}
+
+.li100 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 1em;
+}
+
+.li200 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 2em;
+}
+
+.li300 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 3em;
+}
+
+.li400 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 4em;
+}
+
+.li500 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 5em;
+}
+
+.li600 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 6em;
+}
+
+.li1400 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 14em;
+}
+
+.li1600 {
+	MARGIN-TOP: 0em; MARGIN-BOTTOM: 0em; PADDING-LEFT: 16em;
+}
+
+.fs18 {
+	MARGIN-TOP: 0em; FONT-SIZE: 90%;
+}
+
+PRE {
+	FONT-SIZE: 100%;
+}
+
+table.box {
+	border: #666 2px solid;
+	border-collapse: collapse
+}
+th.box {
+	border: #666 1px solid;
+	padding-right: 0.5em;
+	padding-left: 0.5em;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+td.box {
+	border: #666 1px solid;
+	padding-right: 0.5em;
+	padding-left: 0.5em;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+table.er {
+	border:0;
+}
+th.er {
+}
+td.er {
+	border: #666 1px solid;
+	padding-right: 0.5em;
+	padding-left: 0.5em;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+table.f {
+	/*border: #666 2px solid;*/
+}
+th.f {
+}
+td.f {
+}
+
+pre.code {
+	width:100%;
+	overflow:auto;
+	border:inset #c0c0c0;
+	padding:0.5em;
+}
