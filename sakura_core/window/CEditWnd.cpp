@@ -1694,7 +1694,7 @@ LRESULT CEditWnd::DispatchEvent(
 			// Font変更の通知 2008/5/17 Uchi
 			InitCharWidthCache(GetLogfont());
 
-			GetDocument().OnChangeSetting();	// ビューに設定変更を反映させる
+			GetDocument().OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
 			break;
 		default:
 			break;
