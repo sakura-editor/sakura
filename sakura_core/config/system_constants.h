@@ -508,8 +508,12 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 
 //!Ý’è‚ª•ÏX‚³‚ê‚½‚±‚Æ‚Ì’Ê’mƒƒbƒZ[ƒW
 //wParam:–¢Žg—p
-//lParam:–¢Žg—p
 #define MYWM_CHANGESETTING  (WM_APP+1520)
+//! MYWM_CHANGESETTINGƒƒbƒZ[ƒW‚ÌlParam
+enum e_PM_CHANGESETTING_SELECT {
+	PM_CHANGESETTING_ALL		= 0, //!< ‘S•”
+	PM_CHANGESETTING_FONT		= 1, //!< ƒtƒHƒ“ƒg•ÏX
+};
 
 //! ƒ^ƒXƒNƒgƒŒƒC‚©‚ç‚Ì’Ê’mƒƒbƒZ[ƒW
 #define MYWM_NOTIFYICON		(WM_APP+100)
@@ -524,11 +528,11 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 
 /*! ƒJ[ƒ\ƒ‹ˆÊ’u•ÏX’Ê’m */
 #define	MYWM_SETCARETPOS	(WM_APP+204)
-/// MYWM_SETCARETPOSƒƒbƒZ[ƒW‚ÌLPARAM
+//! MYWM_SETCARETPOSƒƒbƒZ[ƒW‚ÌlParam
 enum e_PM_SETCARETPOS_SELECTSTATE {
-	PM_SETCARETPOS_NOSELECT		= 0, /*!<‘I‘ð‰ðœ */
-	PM_SETCARETPOS_SELECT		= 1, /*!<‘I‘ðŠJŽnE•ÏX */
-	PM_SETCARETPOS_KEEPSELECT	= 2, /*!<Œ»Ý‚Ì‘I‘ðó‘Ô‚ð•Û‚Á‚ÄˆÚ“® */
+	PM_SETCARETPOS_NOSELECT		= 0, //!< ‘I‘ð‰ðœ
+	PM_SETCARETPOS_SELECT		= 1, //!< ‘I‘ðŠJŽnE•ÏX
+	PM_SETCARETPOS_KEEPSELECT	= 2, //!< Œ»Ý‚Ì‘I‘ðó‘Ô‚ð•Û‚Á‚ÄˆÚ“®
 };
 
 /*! ƒJ[ƒ\ƒ‹ˆÊ’uŽæ“¾—v‹ */

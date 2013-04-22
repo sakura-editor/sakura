@@ -208,7 +208,7 @@ void CViewCommander::Command_FONT( void )
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_CHANGESETTING,
-			(WPARAM)0, (LPARAM)hwndFrame, hwndFrame
+			(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONT, hwndFrame
 		);
 
 		/* キャレットの表示 */
