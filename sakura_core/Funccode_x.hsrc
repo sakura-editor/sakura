@@ -337,6 +337,7 @@ F_OPTION_TYPE		= 31111,	//タイプ別設定 							なし
 F_OPTION			= 31112,	//共通設定 								なし
 F_FAVORITE			= 31113,	//履歴の管理							なし
 F_FONT				= 31120,	// フォント設定							なし
+F_FONTSIZE			= 31121,	// フォントサイズ設定					int fontSize, int shift
 F_WRAPWINDOWWIDTH	= 31140,	// 現在のウィンドウ幅で折り返し			なし
 F_TMPWRAPNOWRAP		= 31141,	// 折り返さない（一時設定）				なし
 F_TMPWRAPSETTING	= 31142,	// 指定桁で折り返す（一時設定）			なし

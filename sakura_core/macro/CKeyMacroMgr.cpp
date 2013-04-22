@@ -291,10 +291,10 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					cmemWork.Replace( LTEXT("\\\\"), LTEXT("\\") );
 					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
-				else if ( Is09(szLine[i]) ){	//	数字で始まったら数字列だ。
+ 				else if ( Is09(szLine[i]) || szLine[i] == '-' ){	//	数字で始まったら数字列だ(-記号も含む)。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
-					if( mInfo->m_varArguments[nArgs] != VT_I4 && 
+					if( mInfo->m_varArguments[nArgs] != VT_I4 &&
 						mInfo->m_varArguments[nArgs] != VT_EMPTY){
 						::MYMESSAGEBOX(
 							NULL,
@@ -312,7 +312,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					}
 					nBgn = nEnd = i;	//	nBgnは引数の先頭の文字
 					//	行末の検出のため，ループ回数を1増やした
-					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
+					for( i = nBgn + 1; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
 						if( Is09(szLine[i]) ){	// まだ数値
 //							++i;
 							continue;

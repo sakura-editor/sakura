@@ -112,8 +112,9 @@ void CLayoutMgr::_Empty()
 
 
 
-/*
-|| レイアウト情報の変更
+/*! レイアウト情報の変更
+	@param bDoRayout [in] レイアウト情報の再作成
+	@param refType [in] タイプ別設定
 */
 void CLayoutMgr::SetLayoutInfo(
 	bool				bDoRayout,

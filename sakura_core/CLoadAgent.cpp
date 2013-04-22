@@ -202,7 +202,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 		ref.m_nMaxLineKetas = MAXLINEKETAS;
 
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&pcDoc->m_cLayoutMgr);
-	pcDoc->m_cLayoutMgr.SetLayoutInfo(true, ref);
+	pcDoc->m_cLayoutMgr.SetLayoutInfo( true, ref );
 	CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(pOld);
 
 	return eRet;
