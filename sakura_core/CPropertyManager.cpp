@@ -37,15 +37,15 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		}
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
-			0,
-			(LPARAM)CEditWnd::getInstance()->GetHwnd(),
+			(WPARAM)0,
+			(LPARAM)PM_CHANGESETTING_ALL,
 			CEditWnd::getInstance()->GetHwnd()
 		);
 
@@ -78,14 +78,14 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 			CEditWnd::getInstance()->GetDocument().m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
-			0,
-			(LPARAM)CEditWnd::getInstance()->GetHwnd(),
+			(WPARAM)0,
+			(LPARAM)PM_CHANGESETTING_ALL,
 			CEditWnd::getInstance()->GetHwnd()
 		);
 

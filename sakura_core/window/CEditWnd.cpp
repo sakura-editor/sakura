@@ -1573,69 +1573,89 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
-		// Font変更の通知 2008/5/17 Uchi
-		InitCharWidthCache(GetLogfont());
+		switch( (e_PM_CHANGESETTING_SELECT)lParam ){
+		case PM_CHANGESETTING_ALL:
+			// メインメニュー	2010/5/16 Uchi
+			LayoutMainMenu();
 
-		// メインメニュー	2010/5/16 Uchi
-		LayoutMainMenu();
+			// Oct 10, 2000 ao
+			/* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
+			m_cToolbar.DestroyToolBar();
+			LayoutToolBar();
+			// Oct 10, 2000 ao ここまで
 
-// Oct 10, 2000 ao
-/* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
-		m_cToolbar.DestroyToolBar();
-		LayoutToolBar();
-// Oct 10, 2000 ao ここまで
+			// 2008.10.05 nasukoji	非アクティブなウィンドウのツールバーを更新する
+			// アクティブなウィンドウはタイマにより更新されるが、それ以外のウィンドウは
+			// タイマを停止させており設定変更すると全部有効となってしまうため、ここで
+			// ツールバーを更新する
+			if( !m_bIsActiveApp )
+				m_cToolbar.UpdateToolbar();
 
-		// 2008.10.05 nasukoji	非アクティブなウィンドウのツールバーを更新する
-		// アクティブなウィンドウはタイマにより更新されるが、それ以外のウィンドウは
-		// タイマを停止させており設定変更すると全部有効となってしまうため、ここで
-		// ツールバーを更新する
-		if( !m_bIsActiveApp )
-			m_cToolbar.UpdateToolbar();
+			// ファンクションキーを再作成する（バーの内容、位置、グループボタン数の変更も反映）	// 2006.12.19 ryoji
+			m_CFuncKeyWnd.Close();
+			LayoutFuncKey();
 
-		// ファンクションキーを再作成する（バーの内容、位置、グループボタン数の変更も反映）	// 2006.12.19 ryoji
-		m_CFuncKeyWnd.Close();
-		LayoutFuncKey();
+			// タブバーの表示／非表示切り替え	// 2006.12.19 ryoji
+			LayoutTabBar();
 
-		// タブバーの表示／非表示切り替え	// 2006.12.19 ryoji
-		LayoutTabBar();
+			// ステータスバーの表示／非表示切り替え	// 2006.12.19 ryoji
+			LayoutStatusBar();
 
-		// ステータスバーの表示／非表示切り替え	// 2006.12.19 ryoji
-		LayoutStatusBar();
-
-		// 水平スクロールバーの表示／非表示切り替え	// 2006.12.19 ryoji
-		{
-			int i;
-			bool b1;
-			bool b2;
-			b1 = (m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz == FALSE);
-			for( i = 0; i < GetAllViewCount(); i++ )
+			// 水平スクロールバーの表示／非表示切り替え	// 2006.12.19 ryoji
 			{
-				b2 = (GetView(i).m_hwndHScrollBar == NULL);
-				if( b1 != b2 )		/* 水平スクロールバーを使う */
+				int i;
+				bool b1;
+				bool b2;
+				b1 = (m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz == FALSE);
+				for( i = 0; i < GetAllViewCount(); i++ )
 				{
-					GetView(i).DestroyScrollBar();
-					GetView(i).CreateScrollBar();
+					b2 = (GetView(i).m_hwndHScrollBar == NULL);
+					if( b1 != b2 )		/* 水平スクロールバーを使う */
+					{
+						GetView(i).DestroyScrollBar();
+						GetView(i).CreateScrollBar();
+					}
 				}
 			}
-		}
 
-		// バー変更で画面が乱れないように	// 2006.12.19 ryoji
-		EndLayoutBars();
+			// バー変更で画面が乱れないように	// 2006.12.19 ryoji
+			EndLayoutBars();
 
-		// アクセラレータテーブルを再作成する(Wine用)
-		// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
-		DeleteAccelTbl();
-		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-		CreateAccelTbl();
+			// アクセラレータテーブルを再作成する(Wine用)
+			// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+			DeleteAccelTbl();
+			// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+			CreateAccelTbl();
 
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
-		{
-			// タブ表示のままグループ化する／しないが変更されていたらタブを更新する必要がある
-			m_cTabWnd.Refresh( FALSE );
-		}
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
-		{
-			if( CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->IsTopInGroup() )
+			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
+			{
+				// タブ表示のままグループ化する／しないが変更されていたらタブを更新する必要がある
+				m_cTabWnd.Refresh( FALSE );
+			}
+			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+			{
+				if( CAppNodeManager::getInstance()->GetEditNode( GetHwnd() )->IsTopInGroup() )
+				{
+					if( !::IsWindowVisible( GetHwnd() ) )
+					{
+						// ::ShowWindow( GetHwnd(), SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+						::SetWindowPos( GetHwnd(), NULL,0,0,0,0,
+										SWP_SHOWWINDOW | SWP_NOACTIVATE
+										| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
+
+						// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
+						WindowTopMost( ((DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
+					}
+				}
+				else
+				{
+					if( ::IsWindowVisible( GetHwnd() ) )
+					{
+						::ShowWindow( GetHwnd(), SW_HIDE );
+					}
+				}
+			}
+			else
 			{
 				if( !::IsWindowVisible( GetHwnd() ) )
 				{
@@ -1643,52 +1663,41 @@ LRESULT CEditWnd::DispatchEvent(
 					::SetWindowPos( GetHwnd(), NULL,0,0,0,0,
 									SWP_SHOWWINDOW | SWP_NOACTIVATE
 									| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
-
-					// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
-					WindowTopMost( ((DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
 				}
 			}
-			else
-			{
-				if( ::IsWindowVisible( GetHwnd() ) )
-				{
-					::ShowWindow( GetHwnd(), SW_HIDE );
-				}
-			}
-		}
-		else
-		{
-			if( !::IsWindowVisible( GetHwnd() ) )
-			{
-				// ::ShowWindow( GetHwnd(), SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
-				::SetWindowPos( GetHwnd(), NULL,0,0,0,0,
-								SWP_SHOWWINDOW | SWP_NOACTIVATE
-								| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
-			}
-		}
 
-		//	Aug, 21, 2000 genta
-		GetDocument().m_cAutoSaveAgent.ReloadAutoSaveParam();
+			//	Aug, 21, 2000 genta
+			GetDocument().m_cAutoSaveAgent.ReloadAutoSaveParam();
 
-		GetDocument().m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
-		GetDocument().OnChangeSetting();	/* ビューに設定変更を反映させる */
+			GetDocument().m_cDocType.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
+			GetDocument().OnChangeSetting();	// ビューに設定変更を反映させる
 
-		{	// アウトライン解析画面処理
-			bool bAnalyzed = FALSE;
+			{	// アウトライン解析画面処理
+				bool bAnalyzed = FALSE;
 #if 0
-			if( /* 必要なら変更条件をここに記述する（将来用） */ )
-			{
-				// アウトライン解析画面の位置を現在の設定に合わせる
-				bAnalyzed = m_cDlgFuncList.ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// 外部からの変更通知と同等の扱い
-			}
+				if( /* 必要なら変更条件をここに記述する（将来用） */ )
+				{
+					// アウトライン解析画面の位置を現在の設定に合わせる
+					bAnalyzed = m_cDlgFuncList.ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// 外部からの変更通知と同等の扱い
+				}
 #endif
-			if( m_cDlgFuncList.GetHwnd() && !bAnalyzed ){	// アウトラインを開いていれば再解析
-				// SHOW_NORMAL: 解析方法が変化していれば再解析される。そうでなければ描画更新（変更されたカラーの適用）のみ。
-				EFunctionCode nFuncCode = (m_cDlgFuncList.m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
-				GetActiveView().GetCommander().HandleCommand( nFuncCode, true, SHOW_NORMAL, 0, 0, 0 );
+				if( m_cDlgFuncList.GetHwnd() && !bAnalyzed ){	// アウトラインを開いていれば再解析
+					// SHOW_NORMAL: 解析方法が変化していれば再解析される。そうでなければ描画更新（変更されたカラーの適用）のみ。
+					EFunctionCode nFuncCode = (m_cDlgFuncList.m_nListType == OUTLINE_BOOKMARK)? F_BOOKMARK_VIEW: F_OUTLINE;
+					GetActiveView().GetCommander().HandleCommand( nFuncCode, true, SHOW_NORMAL, 0, 0, 0 );
+				}
+				if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == GetHwnd() )
+					::SetFocus( GetActiveView().GetHwnd() );	// フォーカスを戻す
 			}
-			if( MyGetAncestor( ::GetForegroundWindow(), GA_ROOTOWNER2 ) == GetHwnd() )
-				::SetFocus( GetActiveView().GetHwnd() );	// フォーカスを戻す
+			break;
+		case PM_CHANGESETTING_FONT:
+			// Font変更の通知 2008/5/17 Uchi
+			InitCharWidthCache(GetLogfont());
+
+			GetDocument().OnChangeSetting();	// ビューに設定変更を反映させる
+			break;
+		default:
+			break;
 		}
 		return 0L;
 	case MYWM_SETACTIVEPANE:
