@@ -39,14 +39,15 @@ private:
 	static const COLORREF INVALID_COLOR=0xFFFFFFFF; //無効な色定数
 
 public:
-	CTypeSupport(const CEditView* pEditView,EColorIndexType eColorIdx)
+	CTypeSupport(const CEditView* pEditView, EColorIndexType eColorIdx)
 	: m_pFontset(&pEditView->GetFontset())
 	, m_nColorIdx(ToColorInfoArrIndex(eColorIdx))
 	{
 		assert(0 <= m_nColorIdx);
 		m_pTypes = &pEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+		m_pColorInfoArr = &m_pTypes->m_ColorInfoArr[m_nColorIdx];
 
-		m_gr=NULL;
+		m_gr = NULL;
 	}
 	virtual ~CTypeSupport()
 	{
@@ -62,37 +63,37 @@ public:
 	//!前景色(文字色)
 	COLORREF GetTextColor() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_colTEXT;
+		return m_pColorInfoArr->m_colTEXT;
 	}
 
 	//!背景色
 	COLORREF GetBackColor() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_colBACK;
+		return m_pColorInfoArr->m_colBACK;
 	}
 
 	//!表示するかどうか
 	bool IsDisp() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bDisp;
+		return m_pColorInfoArr->m_bDisp;
 	}
 
 	//!太字かどうか
 	bool IsFatFont() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bFatFont;
+		return m_pColorInfoArr->m_bFatFont;
 	}
 
 	//!下線を持つかどうか
 	bool HasUnderLine() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bUnderLine;
+		return m_pColorInfoArr->m_bUnderLine;
 	}
 
 
 	const ColorInfo& GetColorInfo() const
 	{
-		return m_pTypes->m_ColorInfoArr[m_nColorIdx];
+		return *m_pColorInfoArr;
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -100,7 +101,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void FillBack(CGraphics& gr,const RECT& rc)
 	{
-		gr.FillSolidMyRect(rc, m_pTypes->m_ColorInfoArr[m_nColorIdx].m_colBACK);
+		gr.FillSolidMyRect(rc, m_pColorInfoArr->m_colBACK);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -109,8 +110,8 @@ public:
 	HFONT GetTypeFont()
 	{
 		return m_pFontset->ChooseFontHandle(
-			m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bFatFont,
-			m_pTypes->m_ColorInfoArr[m_nColorIdx].m_bUnderLine
+			m_pColorInfoArr->m_bFatFont,
+			m_pColorInfoArr->m_bUnderLine
 		);
 	}
 	void SetGraphicsState_WhileThisObj(CGraphics& gr)
@@ -142,6 +143,7 @@ private:
 	const CViewFont*		m_pFontset;
 	const STypeConfig*		m_pTypes;
 	int						m_nColorIdx;
+	const ColorInfo*		m_pColorInfoArr;
 
 	CGraphics* m_gr;        //設定を変更したHDC
 };
