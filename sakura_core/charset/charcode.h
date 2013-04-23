@@ -333,7 +333,7 @@ namespace TCODE
 	#endif
 }
 
-// 文字幅キャッシュ関連
+// 文字幅の動的計算用キャッシュ関連
 struct SCharWidthCache {
 	// 文字半角全角キャッシュ
 	TCHAR		m_lfFaceName[LF_FACESIZE];
@@ -341,7 +341,20 @@ struct SCharWidthCache {
 	int			m_nCharWidthCacheTest;				//cache溢れ検出
 };
 
-void InitCharWidthCache( const LOGFONT &lf );
+enum ECharWidthFontMode {
+	CWM_FONT_EDIT,
+	CWM_FONT_PRINT,
+	CWM_FONT_MAX,
+};
+enum ECharWidthCacheMode {
+	CWM_CACHE_NEUTRAL,
+	CWM_CACHE_SHARE,
+	CWM_CACHE_LOCAL,
+};
+
+// キャッシュの初期化関数群
+void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode );  //<! モードを変更したいとき
+void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode=CWM_FONT_EDIT ); //<! フォントを変更したとき
 
 #endif /* SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_ */
 /*[EOF]*/
