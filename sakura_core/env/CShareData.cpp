@@ -555,6 +555,7 @@ bool CShareData::InitShareData()
 		);
 		m_pShareData->OnInit();
 
+		SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_SHARE );
 		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);	// 2008/5/15 Uchi
 
 		//	From Here Oct. 27, 2000 genta

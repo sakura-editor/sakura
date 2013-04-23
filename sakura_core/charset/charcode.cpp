@@ -147,9 +147,12 @@ public:
 		m_hFont = ::CreateFontIndirect( &lf );
 		m_hFontOld = (HFONT)SelectObject(m_hdc,m_hFont);
 
-		m_pCache = &(GetDllShareData().m_sCharWidth);
 		// -- -- 半角基準 -- -- //
 		GetTextExtentPoint32W_AnyBuild(m_hdc,L"x",1,&m_han_size);
+	}
+	void SelectCache( SCharWidthCache* pCache )
+	{
+		m_pCache = pCache;
 	}
 	void Clear()
 	{
@@ -199,32 +202,88 @@ private:
 	SCharWidthCache*	m_pCache;
 };
 
-static LocalCache cache;
+class LocalCacheSelector{
+public:
+	LocalCacheSelector()
+	{
+		pcache = &m_localcache[0];
+		for( int i=0; i<CWM_FONT_MAX; i++ ){
+			m_parCache[i] = 0;
+		}
+		m_eLastEditCacheMode = CWM_CACHE_NEUTRAL;
+	}
+	~LocalCacheSelector()
+	{
+		for( int i=0; i<CWM_FONT_MAX; i++ ){
+			if( m_parCache[i] != &(GetDllShareData().m_sCharWidth) ){
+				delete m_parCache[i];
+				m_parCache[i] = 0;
+			}
+		}
+	}
+	void Init( const LOGFONT &lf, ECharWidthFontMode fMode )
+ 	{
+		//	Fontfaceが変更されていたらキャッシュをクリアする	2013.04.08 aroka
+		m_localcache[fMode].Init(lf);
+		if( !m_localcache[fMode].IsSameFontFace(lf) )
+		{
+			m_localcache[fMode].Clear();
+		}
+	}
+	void Select( ECharWidthFontMode fMode, ECharWidthCacheMode cMode )
+	{
+		ECharWidthCacheMode cmode = (cMode==CWM_CACHE_NEUTRAL)?m_eLastEditCacheMode:cMode;
+
+		pcache = &m_localcache[fMode];
+		if( cmode == CWM_CACHE_SHARE ){
+			pcache->SelectCache( &(GetDllShareData().m_sCharWidth) );
+		}else{
+			if( m_parCache[fMode] == 0 ){
+				m_parCache[fMode] = new SCharWidthCache;
+			}
+			pcache->SelectCache( m_parCache[fMode] );
+		}
+		if( fMode==CWM_FONT_EDIT ){ m_eLastEditCacheMode = cmode; }
+	}
+	LocalCache* GetCache(){ return pcache; }
+private:
+	LocalCache* pcache;
+	LocalCache m_localcache[2];
+	SCharWidthCache* m_parCache[2];
+	ECharWidthCacheMode m_eLastEditCacheMode;
+};
+
+static LocalCacheSelector selector;
+
 
 //文字幅の動的計算。半角ならtrue。
 bool CalcHankakuByFont(wchar_t c)
 {
+	LocalCache* pcache = selector.GetCache();
 	// -- -- キャッシュが存在すれば、それをそのまま返す -- -- //
-	if(cache.ExistCache(c))return cache.GetCache(c);
+	if(pcache->ExistCache(c))return pcache->GetCache(c);
 
 	// -- -- 相対比較 -- -- //
 	bool value;
-	value = cache.CalcHankakuByFont(c);
+	value = pcache->CalcHankakuByFont(c);
 
 	// -- -- キャッシュ更新 -- -- //
-	cache.SetCache(c,value);
+	pcache->SetCache(c,value);
 
-	return cache.GetCache(c);
+	return pcache->GetCache(c);
 }
 }
 
 //	文字幅の動的計算用キャッシュの初期化。	2007/5/18 Uchi
-//	Fontfaceが変更されていたらキャッシュをクリアする	2013.04.08 aroka
-void InitCharWidthCache( const LOGFONT &lf )
+void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode )
 {
-	WCODE::cache.Init(lf);
-	if( !WCODE::cache.IsSameFontFace(lf) )
-	{
-		WCODE::cache.Clear();
-	}
+	WCODE::selector.Init( lf, fMode );
+}
+
+//	文字幅の動的計算用キャッシュの選択	2013.04.08 aroka
+void SelectCharWidthCache( ECharWidthFontMode fMode, ECharWidthCacheMode cMode  )
+{
+	assert( fMode==CWM_FONT_EDIT || cMode==CWM_CACHE_LOCAL );
+
+	WCODE::selector.Select( fMode, cMode );
 }

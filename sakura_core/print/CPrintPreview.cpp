@@ -82,6 +82,9 @@ CPrintPreview::~CPrintPreview()
 	/* 印刷用のレイアウト情報の削除 */
 	delete m_pLayoutMgr_Print;
 	
+	/* フォント幅キャッシュを編集モードに戻す */
+	SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_NEUTRAL );
+
 	// 2006.08.17 Moca CompatDC削除。CEditWndから移設
 	// 再描画用メモリBMP
 	if( m_hbmpCompatBMP != NULL ){
@@ -1572,6 +1575,9 @@ void CPrintPreview::SetPreviewFontHan( const LOGFONT* lf )
 	m_lfPreviewHan.lfHeight			= m_pPrintSetting->m_nPrintFontHeight;
 	m_lfPreviewHan.lfWidth			= m_pPrintSetting->m_nPrintFontWidth;
 	_tcscpy(m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan);
+
+	SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
+	InitCharWidthCache( m_lfPreviewHan, CWM_FONT_PRINT );
 }
 
 void CPrintPreview::SetPreviewFontZen( const LOGFONT* lf )
