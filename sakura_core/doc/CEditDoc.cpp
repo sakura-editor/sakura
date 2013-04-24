@@ -112,9 +112,9 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 
 	// 文字コード種別を初期化
-	m_cDocFile.m_sFileInfo.eCharCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultCodetype;
-	m_cDocFile.m_sFileInfo.bBomExist = GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom;
-	m_cDocEditor.m_cNewLineCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultEoltype;
+	m_cDocFile.m_sFileInfo.eCharCode = ref.m_encoding.m_eDefaultCodetype;
+	m_cDocFile.m_sFileInfo.bBomExist = ref.m_encoding.m_bDefaultBom;
+	m_cDocEditor.m_cNewLineCode = ref.m_encoding.m_eDefaultEoltype;
 
 	// 排他制御オプションを初期化
 	m_cDocFile.SetShareMode( GetDllShareData().m_Common.m_sFile.m_nFileShareMode );
@@ -186,9 +186,10 @@ void CEditDoc::InitDoc()
 	m_cDocEditor.SetModified(false,false);	//	Jan. 22, 2002 genta
 
 	/* 文字コード種別 */
-	m_cDocFile.m_sFileInfo.eCharCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultCodetype;
-	m_cDocFile.m_sFileInfo.bBomExist = GetDllShareData().m_Types[0].m_encoding.m_bDefaultBom;
-	m_cDocEditor.m_cNewLineCode = GetDllShareData().m_Types[0].m_encoding.m_eDefaultEoltype;
+	STypeConfig ref = m_cDocType.GetDocumentAttribute();
+	m_cDocFile.m_sFileInfo.eCharCode = ref.m_encoding.m_eDefaultCodetype;
+	m_cDocFile.m_sFileInfo.bBomExist = ref.m_encoding.m_bDefaultBom;
+	m_cDocEditor.m_cNewLineCode = ref.m_encoding.m_eDefaultEoltype;
 
 	//	Oct. 2, 2005 genta 挿入モード
 	m_cDocEditor.SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
