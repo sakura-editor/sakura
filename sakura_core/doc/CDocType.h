@@ -50,16 +50,17 @@ public:
 	}
 	STypeConfig& GetDocumentAttribute() const						//!< 文書種別の詳細情報
 	{
-		return CDocTypeManager().GetTypeSetting(m_nSettingType);
+		return m_pType;
 	}
 
 	// 拡張機能
 	void SetDocumentIcon();	//アイコンの設定	//Sep. 10, 2002 genta
 
 private:
-	CEditDoc*		m_pcDocRef;
-	CTypeConfig	m_nSettingType;
-	bool			m_nSettingTypeLocked;		//!< 文書種別の一時設定状態
+	CEditDoc*				m_pcDocRef;
+	CTypeConfig				m_nSettingType;
+	STypeConfig&			m_pType;
+	bool					m_nSettingTypeLocked;		//!< 文書種別の一時設定状態
 };
 
 #endif /* SAKURA_CDOCTYPE_BB51F346_E9F1_42DD_8B28_2F5BAFCE7CE09_H_ */

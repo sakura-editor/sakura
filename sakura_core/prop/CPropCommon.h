@@ -92,7 +92,6 @@ public:
 	HWND				m_hwndThis;		/* このダイアログのハンドル */
 	ComPropSheetOrder	m_nPageNum;
 	DLLSHAREDATA*		m_pShareData;
-//	int				m_nSettingType;
 //	int				m_nActiveItem;
 	int					m_nKeywordSet1;
 	//	Oct. 16, 2000 genta
