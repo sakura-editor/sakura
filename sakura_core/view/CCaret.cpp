@@ -22,6 +22,40 @@
 		   distribution.
 */
 
+/*!	@file
+	@brief キャレットの管理
+
+	@author	kobake
+*/
+/*
+	Copyright (C) 2008, kobake, ryoji, Uchi
+	Copyright (C) 2009, ryoji, nasukoji
+	Copyright (C) 2010, ryoji, Moca
+	Copyright (C) 2011, Moca, syat
+	Copyright (C) 2012, ryoji, Moca
+	Copyright (C) 2013, Moca, Uchi
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 #include "StdAfx.h"
 #include <algorithm>
 #include "view/CCaret.h"
@@ -628,16 +662,19 @@ void CCaret::ShowCaretPosInfo()
 	// -- -- -- -- 文字コード情報 -> pszCodeName -- -- -- -- //
 	const TCHAR* pszCodeName;
 	CNativeT cmemCodeName;
-	if(!hwndStatusBar){
-		pszCodeName = CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Short();
-	}
-	else{
+	if (hwndStatusBar) {
 		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Normal() );
 		if(m_pEditDoc->m_cDocFile.IsBomExist()){
 			cmemCodeName.AppendString( _T(" BOM付") );
 		}
-		pszCodeName = (const TCHAR*)cmemCodeName._GetMemory()->GetRawPtr();
 	}
+	else {
+		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Short() );
+		if (m_pEditDoc->m_cDocFile.IsBomExist()) {
+			cmemCodeName.AppendString( _T("#") );		// BOM付(メニューバーなので小さく)	// 2013/4/17 Uchi
+		}
+	}
+	pszCodeName = (const TCHAR*)cmemCodeName._GetMemory()->GetRawPtr();
 
 
 	// -- -- -- -- 改行モード -> szEolMode -- -- -- -- //
