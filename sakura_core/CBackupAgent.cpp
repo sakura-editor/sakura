@@ -24,6 +24,7 @@
 
 #include "StdAfx.h"
 #include <time.h>
+#include <io.h>	// access
 #include "CBackupAgent.h"
 #include "window/CEditWnd.h"
 #include "util/format.h" //GetDateTimeFormat
