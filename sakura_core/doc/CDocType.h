@@ -50,7 +50,7 @@ public:
 	}
 	STypeConfig& GetDocumentAttribute() const						//!< •¶‘Ží•Ê‚ÌÚ×î•ñ
 	{
-		return m_pType;
+		return *m_pType;
 	}
 
 	// Šg’£‹@”\
@@ -59,7 +59,7 @@ public:
 private:
 	CEditDoc*				m_pcDocRef;
 	CTypeConfig				m_nSettingType;
-	STypeConfig&			m_pType;
+	STypeConfig*			m_pType;
 	bool					m_nSettingTypeLocked;		//!< •¶‘Ží•Ê‚ÌˆêŽžÝ’èó‘Ô
 };
 
