@@ -11,6 +11,10 @@
 #include <Windows.h>
 #undef APSTUDIO_HIDDEN_SYMBOLS
 #include "funccode_define.h"
+#include "svnrev.h"
+
+#define _NUM_TO_STR(n) #n
+#define NUM_TO_STR(n) _NUM_TO_STR(n)
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -25,6 +29,8 @@ LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 #endif //_WIN32
 
 #define	S_COPYRIGHT	"Copyright (C) 1998-2013  by Norio Nakatani & Collaborators"
+#define PR_VER	2,0,7,1
+#define FL_VER	PR_VER
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -2488,8 +2494,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,0,7,1
- PRODUCTVERSION 2,0,7,1
+ FILEVERSION    FL_VER
+ PRODUCTVERSION PR_VER
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x01L
@@ -2507,13 +2513,22 @@ BEGIN
             VALUE "Comments", "このソフトはフリーソフトです。\0"
             VALUE "CompanyName", "Project: Sakura-Editor\0"
             VALUE "FileDescription", "サクラエディタ\0"
-            VALUE "FileVersion", "2.0\0"
+            VALUE "FileVersion", NUM_TO_STR(FL_VER)
             VALUE "InternalName", "sakura\0"
             VALUE "LegalCopyright", S_COPYRIGHT
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "サクラエディタ\0"
-            VALUE "ProductVersion", "2.0.7.1\0"
+            VALUE "ProductVersion", NUM_TO_STR(PR_VER)
+#if (SVN_REV != 0)
+                " (r" NUM_TO_STR(SVN_REV) ")"
+#endif
+#ifdef _DEBUG
+                " Debug version"
+#endif
+#ifndef _UNICODE
+                " ANSI"
+#endif
         END
     END
     BLOCK "VarFileInfo"
