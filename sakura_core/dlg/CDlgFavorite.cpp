@@ -36,6 +36,7 @@
 #include <algorithm>
 #include "CDlgFavorite.h"
 #include "dlg/CDlgInput1.h"
+#include "env/DLLSHAREDATA.h"
 #include "func/Funccode.h"
 #include "util/shell.h"
 #include "util/window.h"
