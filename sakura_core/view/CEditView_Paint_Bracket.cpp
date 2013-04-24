@@ -2,7 +2,6 @@
 #include "CEditView_Paint.h"
 #include "window/CEditWnd.h"
 #include "doc/CEditDoc.h"
-// #include "doc/CDocType.h" in CEditDoc.h
 #include "types/CTypeSupport.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
