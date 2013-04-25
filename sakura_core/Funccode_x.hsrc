@@ -96,9 +96,6 @@ F_VIEWMODE					= 30185,	//ビューモード						なし
 F_PROPERTY_FILE				= 30190,	//ファイルのプロパティ				なし
 F_EXITALLEDITORS			= 30194,	//編集の全終了						なし
 F_EXITALL					= 30195,	//サクラエディタの全終了			なし
-F_NOWOPENFILE				= 30197,	//現在開いているファイル			？
-F_RECENTFILE				= 30198,	//最近使ったファイル				？
-F_RECENTFOLDER				= 30199,	//最近使ったフォルダ				？
 
 // 編集系
 F_WCHAR				= 30200,	//文字入力									WCHAR c

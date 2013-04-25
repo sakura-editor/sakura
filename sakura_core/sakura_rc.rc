@@ -2604,7 +2604,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_FILENEW               "新規作成"
-    F_FILENEW_NEWWINDOW		"新規ウインドウを開く"
+    F_FILENEW_NEWWINDOW     "新規ウインドウを開く"
     F_FILEOPEN              "開く..."
     F_FILESAVE              "上書き保存"
     F_FILESAVEAS_DIALOG     "名前を付けて保存..."
@@ -2881,6 +2881,7 @@ BEGIN
     F_REPLACE_DIALOG        "置換..."
     F_SEARCH_CLEARMARK      "検索マークの切替え"
     F_REPLACE               "置換"
+    F_REPLACE_ALL           "すべて置換"
     F_SEARCH_BOX            "検索 (ボックス)"
     F_JUMP_SRCHSTARTPOS     "検索開始位置へ戻る"
     F_GREP_DIALOG           "Grep..."
@@ -2915,6 +2916,7 @@ BEGIN
     F_BRACKETPAIR           "対括弧の検索"
     F_BOOKMARK_SET          "ブックマーク設定・解除"
     F_BOOKMARK_NEXT         "次のブックマークへ"
+    F_BOOKMARK_PATTERN      "該当行マーク"
     F_BOOKMARK_PREV         "前のブックマークへ"
     F_BOOKMARK_RESET        "ブックマークの全解除"
     F_BOOKMARK_VIEW         "ブックマークの一覧..."
