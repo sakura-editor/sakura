@@ -711,7 +711,7 @@ BOOL CEditDoc::OnFileClose()
 
 	// -- -- 保存確認 -- -- //
 	TCHAR szGrepTitle[90];
-	LPCTSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : _T("(無題)");
+	LPCTSTR pszTitle = m_cDocFile.GetFilePathClass().IsValidPath() ? m_cDocFile.GetFilePath() : NULL;
 	if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
 		LPCWSTR		pszGrepKey = CAppMode::getInstance()->m_szGrepKey;
 		int			nLen = (int)wcslen( pszGrepKey );
@@ -721,6 +721,11 @@ BOOL CEditDoc::OnFileClose()
 			cmemDes.GetStringPtr(),
 			( nLen > cmemDes.GetStringLength() ) ? _T("...") : _T("")
 		);
+		pszTitle = szGrepTitle;
+	}
+	if( NULL == pszTitle ){
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
+		auto_sprintf( szGrepTitle, _T("(無題)%d"), node->m_nId );
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */
