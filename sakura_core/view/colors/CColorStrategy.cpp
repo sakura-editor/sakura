@@ -85,7 +85,8 @@ void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 
 	//FŠJŽn
 	if(!this->pStrategy){
-		for(int i=0;i<pool->GetStrategyCount();i++){
+		int size = pool->GetStrategyCount();
+		for(int i = 0; i < size; i++ ){
 			if(pool->GetStrategy(i)->BeginColor(cLineStr,this->GetPosInLogic())){
 				this->pStrategy = pool->GetStrategy(i);
 				ChangeColor2(GetCurrentColor(), GetCurrentColor2());
@@ -162,7 +163,8 @@ CColorStrategyPool::~CColorStrategyPool()
 {
 	SAFE_DELETE(m_pcSelectStrategy);
 	SAFE_DELETE(m_pcFoundStrategy);
-	for(int i=0;i<(int)m_vStrategies.size();i++){
+	int size = (int)m_vStrategies.size();
+	for(int i = 0; i < size; i++ ){
 		delete m_vStrategies[i];
 	}
 	m_vStrategies.clear();
@@ -173,7 +175,8 @@ CColorStrategy*	CColorStrategyPool::GetStrategyByColor(EColorIndexType eColor) c
 	if( COLORIDX_SEARCH <= eColor && eColor <= COLORIDX_SEARCHTAIL ){
 		return m_pcFoundStrategy;
 	}
-	for(int i=0;i<(int)m_vStrategies.size();i++){
+	int size = (int)m_vStrategies.size();
+	for(int i = 0; i < size; i++ ){
 		if(m_vStrategies[i]->GetStrategyColor()==eColor){
 			return m_vStrategies[i];
 		}
@@ -185,7 +188,8 @@ void CColorStrategyPool::NotifyOnStartScanLogic()
 {
 	m_pcSelectStrategy->OnStartScanLogic();
 	m_pcFoundStrategy->OnStartScanLogic();
-	for(int i=0;i<GetStrategyCount();i++){
+	int size = GetStrategyCount();
+	for(int i = 0; i < size; i++ ){
 		GetStrategy(i)->OnStartScanLogic();
 	}
 }
