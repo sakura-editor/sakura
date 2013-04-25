@@ -27,51 +27,12 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 //@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ÍCSMacroMgr‚É“ˆê
 #include "macro/CSMacroMgr.h"
-#include "COpeBlk.h"/// 2002/2/3 aroka ’Ç‰Á
-#include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "CEditApp.h"
 #include "plugin/CJackManager.h"
-
-
-//ŠO•”ˆË‘¶
-CEditDoc* CViewCommander::GetDocument()
-{
-	return m_pCommanderView->m_pcEditDoc;
-}
-CEditWnd* CViewCommander::GetEditWindow()
-{
-	return m_pCommanderView->m_pcEditWnd;
-}
-HWND CViewCommander::GetMainWindow()
-{
-	return ::GetParent( m_pCommanderView->m_hwndParent );
-}
-COpeBlk* CViewCommander::GetOpeBlk()
-{
-	return m_pCommanderView->m_pcOpeBlk;
-}
-void CViewCommander::ClearOpeBlk()
-{
-	delete m_pCommanderView->m_pcOpeBlk;
-	m_pCommanderView->m_pcOpeBlk=NULL;
-}
-void CViewCommander::SetOpeBlk(COpeBlk* p)
-{
-	m_pCommanderView->m_pcOpeBlk = p;
-}
-CLayoutRange& CViewCommander::GetSelect()
-{
-	return m_pCommanderView->GetSelectionInfo().m_sSelect;
-}
-CCaret& CViewCommander::GetCaret()
-{
-	return m_pCommanderView->GetCaret();
-}
-
 
 
 /*!

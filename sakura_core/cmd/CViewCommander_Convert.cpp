@@ -15,8 +15,8 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "convert/CDecode_Base64Decode.h"
 #include "convert/CDecode_UuDecode.h"
 #include "io/CBinaryStream.h"

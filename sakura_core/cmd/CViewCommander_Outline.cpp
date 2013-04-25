@@ -20,9 +20,8 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
-#include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "outline/CFuncInfoArr.h"
 #include "plugin/CJackManager.h"
 #include "plugin/COutlineIfObj.h"

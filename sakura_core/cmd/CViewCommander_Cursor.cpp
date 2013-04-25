@@ -20,8 +20,8 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "CMarkMgr.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "mem/CMemoryIterator.h"	// @@@ 2002.09.28 YAZAKI
 

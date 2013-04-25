@@ -13,12 +13,11 @@
 */
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "_main/CControlTray.h"
 #include "CEditApp.h"
 #include "CGrepAgent.h"
-#include "window/CEditWnd.h"
 
 /*! GREPダイアログの表示
 

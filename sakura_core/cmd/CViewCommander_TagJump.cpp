@@ -22,13 +22,12 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgCancel.h"// 2002/2/8 hor
 #include "dlg/CDlgTagJumpList.h"
 #include "dlg/CDlgTagsMake.h"	//@@@ 2003.05.12 MIK
-#include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "CEditApp.h"
 #include "_os/COsVersionInfo.h"
 #include "util/window.h"

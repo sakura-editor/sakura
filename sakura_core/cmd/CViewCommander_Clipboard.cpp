@@ -19,11 +19,9 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "uiparts/CWaitCursor.h"
-#include "COpeBlk.h"/// 2002/2/3 aroka ’Ç‰Á
-#include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "util/os.h"
 
 

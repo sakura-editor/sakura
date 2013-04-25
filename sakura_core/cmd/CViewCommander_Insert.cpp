@@ -13,8 +13,8 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "env/CFormatManager.h"
 

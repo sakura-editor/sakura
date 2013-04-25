@@ -19,12 +19,10 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "view/CRuler.h"
 #include "uiparts/CWaitCursor.h"
-#include "COpeBlk.h"/// 2002/2/3 aroka ’Ç‰Á
-#include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "plugin/CJackManager.h"
 #include "plugin/CSmartIndentIfObj.h"
 #include "debug/CRunningTimer.h"
