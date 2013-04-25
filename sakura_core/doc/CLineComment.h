@@ -40,13 +40,13 @@ public:
 
 	const wchar_t* getLineComment( const int n ){
 		return m_pszLineComment[n];
-	};
+	}
 	int getLineCommentPos( const int n ) const {
 		return m_nLineCommentPos[n];
-	};
+	}
 
 private:
-	wchar_t	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	/* 行コメントデリミタ */
+	wchar_t	m_pszLineComment[COMMENT_DELIMITER_NUM][COMMENT_DELIMITER_BUFFERSIZE];	//!< 行コメントデリミタ
 	int		m_nLineCommentPos[COMMENT_DELIMITER_NUM];	//!< 行コメントの開始位置(負数は指定無し)
 	int		m_nLineCommentLen[COMMENT_DELIMITER_NUM];	//!< 行コメント文字列の長さ
 };
