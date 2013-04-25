@@ -144,8 +144,11 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		wchar_t*	pszText = new wchar_t[nLineLen + 1];
 		wmemcpy( pszText, &pLine[i], nLineLen );
 		pszText[nLineLen] = L'\0';
-		for( i = 0; i < (int)wcslen(pszText); ++i ){
-			if( pszText[i] == CR || pszText[i] == LF )pszText[i] = L'\0';
+		for( i = 0; i < nLineLen; ++i ){
+			if( pszText[i] == CR || pszText[i] == LF ){
+				pszText[i] = L'\0';
+				break;
+			}
 		}
 
 		/*
