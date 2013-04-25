@@ -95,7 +95,8 @@ BOOL CDicMgr::Search(
 			while( NULL != pszToken ){
 				nRes = _wcsnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
-					for( i = 0; i < (int)wcslen(pszWork); ++i ){
+					int nLen = (int)wcslen(pszWork);
+					for( i = 0; i < nLen; ++i ){
 						if( pszWork[i] == L'\r' ||
 							pszWork[i] == L'\n' ){
 							pszWork[i] = L'\0';

@@ -59,7 +59,8 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 			wchar_t* pszToken = wcstok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
 //				nRes = wcsicmp( pszKey, pszToken );
-				for( i = 0; i < (int)wcslen(pszWork); ++i ){
+				int nLen = (int)wcslen(pszWork);
+				for( i = 0; i < nLen; ++i ){
 					if( pszWork[i] == L'\r' ||
 						pszWork[i] == L'\n' ){
 						pszWork[i] = L'\0';
