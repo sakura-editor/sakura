@@ -17,13 +17,13 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
+
 #include "StdAfx.h"
 #include "CViewCommander.h"
-#include "view/CEditView.h"
-#include "doc/CEditDoc.h"
+#include "CViewCommander_inline.h"
+
 #include "dlg/CDlgCompare.h"
 #include "dlg/CDlgDiff.h"
-#include "window/CEditWnd.h"
 #include "util/window.h"
 #include "util/os.h"
 

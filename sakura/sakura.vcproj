@@ -3092,6 +3092,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\sakura_core\cmd\CViewCommander_inline.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sakura_core\cmd\CViewCommander_Insert.cpp"
 					>
 				</File>

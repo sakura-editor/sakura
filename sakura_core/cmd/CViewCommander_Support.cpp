@@ -18,13 +18,14 @@
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
+
 #include "StdAfx.h"
 #include <HtmlHelp.h>
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
+
 #include "CPropertyManager.h"
-#include "view/CEditView.h"
 #include "CEditApp.h"
-#include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "dlg/CDlgAbout.h"	//Dec. 24, 2000 JEPRO ’Ç‰Á
 #include "env/CHelpManager.h"
 #include "util/module.h"

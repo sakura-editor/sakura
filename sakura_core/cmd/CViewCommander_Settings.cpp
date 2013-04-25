@@ -20,11 +20,10 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 #include "typeprop/CDlgTypeList.h"
 #include "dlg/CDlgFavorite.h"	//—š—ğ‚ÌŠÇ—	//@@@ 2003.04.08 MIK
-#include "window/CEditWnd.h"/// 2002/2/3 aroka ’Ç‰Á
 #include "CEditApp.h"
 #include "util/shell.h"
 #include "CPropertyManager.h"

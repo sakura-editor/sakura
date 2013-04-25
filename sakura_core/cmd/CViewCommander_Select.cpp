@@ -16,8 +16,7 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
-
-#include "view/CEditView.h"
+#include "CViewCommander_inline.h"
 
 
 /* Œ»İˆÊ’u‚Ì’PŒê‘I‘ğ */

@@ -20,12 +20,11 @@
 
 #include "StdAfx.h"
 #include "CViewCommander.h"
+#include "CViewCommander_inline.h"
 
-#include "view/CEditView.h"
 //@@@ 2002.2.2 YAZAKI É}ÉNÉçÇÕCSMacroMgrÇ…ìùàÍ
 #include "macro/CSMacroMgr.h"
 #include "dlg/CDlgExec.h"
-#include "window/CEditWnd.h"/// 2002/2/3 aroka í«â¡
 #include "CEditApp.h"
 #include "util/module.h"
 #include "env/CShareData.h"
