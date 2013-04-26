@@ -1,9 +1,32 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 #include "StdAfx.h"
 #include "CDocEditor.h"
 #include "CEditDoc.h"
 #include "doc/logic/CDocLine.h"
 #include "doc/logic/CDocLineMgr.h"
-#include "_os/CClipboard.h"
 #include "env/DLLSHAREDATA.h"
 #include "_main/CAppMode.h"
 #include "CEol.h"
@@ -93,28 +116,6 @@ void CDocEditor::OnAfterSave(const SSaveInfo& sSaveInfo)
 
 
 
-/* Undo(元に戻す)可能な状態か？ */
-bool CDocEditor::IsEnableUndo( void )
-{
-	return m_cOpeBuf.IsEnableUndo();
-}
-
-
-/*! Redo(やり直し)可能な状態か？ */
-bool CDocEditor::IsEnableRedo( void )
-{
-	return m_cOpeBuf.IsEnableRedo();
-}
-
-/*! クリップボードから貼り付け可能か？ */
-bool CDocEditor::IsEnablePaste( void )
-{
-	return CClipboard::HasValidData();
-}
-
-
-
-
 //	From Here Nov. 20, 2000 genta
 /*!	IME状態の設定
 	
@@ -181,8 +182,6 @@ void CDocEditor::SetImeMode( int mode )
 	@param cEol     [in] 行末コード
 
 */
-
-
 void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
 {
 	//チェーン適用
