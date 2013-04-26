@@ -25,6 +25,7 @@
 #define SAKURA_CDOCEDITOR_1F90937C_B53A_490C_BCCF_74EFAEE628AC_H_
 
 #include "doc/CDocListener.h"
+#include "_os/CClipboard.h"
 #include "COpeBuf.h"
 
 class CEditDoc;
@@ -68,9 +69,23 @@ public:
 	bool IsInsMode() const { return m_bInsMode; }
 	void SetInsMode(bool mode) { m_bInsMode = mode; }
 
-	bool IsEnableUndo( void );				/* Undo(元に戻す)可能な状態か？ */
-	bool IsEnableRedo( void );				/* Redo(やり直し)可能な状態か？ */
-	bool IsEnablePaste( void );				/* クリップボードから貼り付け可能か？ */
+	//! Undo(元に戻す)可能な状態か？ */
+	bool CDocEditor::IsEnableUndo( void )
+	{
+		return m_cOpeBuf.IsEnableUndo();
+	}
+
+	//! Redo(やり直し)可能な状態か？
+	bool CDocEditor::IsEnableRedo( void )
+	{
+		return m_cOpeBuf.IsEnableRedo();
+	}
+
+	//! クリップボードから貼り付け可能か？
+	bool CDocEditor::IsEnablePaste( void )
+	{
+		return CClipboard::HasValidData();
+	}
 
 public:
 	CEditDoc*		m_pcDocRef;
