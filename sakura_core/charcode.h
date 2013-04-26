@@ -40,6 +40,10 @@ typedef unsigned long	uchar32_t;		//  UTF-32 —pD
 typedef long wchar32_t;
 
 
+inline bool Is09(char c)
+{
+	return ('0'<=c && c<='9');
+}
 
 
 enum ECodeType;

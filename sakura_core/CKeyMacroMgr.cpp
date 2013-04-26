@@ -23,11 +23,11 @@
 #include "CKeyMacroMgr.h"
 #include "CMacro.h"
 #include "CSMacroMgr.h"// 2002/2/10 aroka
-#include "Debug.h"
 #include "charcode.h"
 #include "etc_uty.h" // Oct. 5, 2002 genta
 #include "CMemory.h"
 #include "CMacroFactory.h"
+#include "Debug.h"
 
 CKeyMacroMgr::CKeyMacroMgr()
 {
@@ -110,8 +110,12 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 	if( HFILE_ERROR == hFile ){
 		return FALSE;
 	}
+
+	//最初のコメント
 	strcpy( szLine, "//キーボードマクロのファイル\r\n" );
 	_lwrite( hFile, szLine, strlen( szLine ) );
+
+	//マクロ内容
 	CMacro* p = m_pTop;
 	while (p){
 		p->Save( hInstance, hFile );
@@ -242,7 +246,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							MACRO_ERROR_TITLE,
 							_T("Line %d: Column %d\r\n")
-							_T("関数%sの%d番目の引数に文字列は置けません．" ),
+							_T("関数%sの%d番目の引数に文字列は置けません．"),
 							line,
 							i + 1,
 							szFuncName,
@@ -253,7 +257,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					}
 					int cQuote = szLine[i];
 					++i;
-					nBgn = i;	//	nBgnは引数の先頭の文字
+					nBgn = nEnd = i;	//	nBgnは引数の先頭の文字
 					//	Jun. 16, 2002 genta
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
@@ -289,6 +293,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					if( !m_nReady ){
 						break;
 					}
+					
 					cmemWork.SetString( szLine + nBgn, nEnd - nBgn );
 					cmemWork.Replace( "\\\'", "\'" );
 
@@ -297,7 +302,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					cmemWork.Replace( "\\\\", "\\" );
 					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
-				else if ( '0' <= szLine[i] && szLine[i] <= '9' ){	//	数字で始まったら数字列だ。
+				else if ( Is09(szLine[i]) ){	//	数字で始まったら数字列だ。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( mInfo->m_varArguments[nArgs] != VT_I4 && 
@@ -307,7 +312,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
 							MACRO_ERROR_TITLE,
 							_T("Line %d: Column %d\r\n")
-							_T("関数%sの%d番目の引数に数値は置けません．" ),
+							_T("関数%sの%d番目の引数に数値は置けません．"),
 							line,
 							i + 1,
 							szFuncName,
@@ -316,10 +321,10 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 						m_nReady = false;
 						break;
 					}
-					nBgn = i;	//	nBgnは引数の先頭の文字
+					nBgn = nEnd = i;	//	nBgnは引数の先頭の文字
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
-						if( '0' <= szLine[i] && szLine[i] <= '9' ){	// まだ数値
+						if( Is09(szLine[i]) ){	// まだ数値
 //							++i;
 							continue;
 						}
@@ -347,7 +352,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
 					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-						_T("Line %d: Column %d: Syntax Error\n" ), line, i );
+						_T("Line %d: Column %d: Syntax Error\n"), line, i );
 					m_nReady = false;
 					break;
 				}
@@ -373,7 +378,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 		}
 		else {
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-				_T("Line %d: %sは存在しない関数です．\n" ), line, szFuncName );
+				_T("Line %d: %sは存在しない関数です．\n"), line, szFuncName );
 			//	Jun. 16, 2002 genta
 			m_nReady = false;
 			break;
@@ -419,7 +424,7 @@ BOOL CKeyMacroMgr::LoadKeyMacroStr( HINSTANCE hInstance, const char* pszCode )
 */
 CMacroManagerBase* CKeyMacroMgr::Creator(const TCHAR* ext)
 {
-	if( strcmp( ext, _T("mac") ) == 0 ){
+	if( _tcscmp( ext, _T("mac") ) == 0 ){
 		return new CKeyMacroMgr;
 	}
 	return NULL;
