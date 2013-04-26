@@ -522,6 +522,7 @@ BOOL CEditView::HandleCommand(
 	case F_OPTION_TYPE:		Command_OPTION_TYPE();break;	/* タイプ別設定 */
 	case F_OPTION:			Command_OPTION();break;			/* 共通設定 */
 	case F_FONT:			Command_FONT();break;			/* フォント設定 */
+	case F_SETFONTSIZE:		Command_SETFONTSIZE((int)lparam1, (int)lparam2);break;	/* フォントサイズ設定 */
 	case F_WRAPWINDOWWIDTH:	Command_WRAPWINDOWWIDTH();break;/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	case F_FAVORITE:		Command_Favorite();break;		//履歴の管理	//@@@ 2003.04.08 MIK
 	//	Jan. 29, 2005 genta 引用符の設定
@@ -3983,8 +3984,65 @@ void CEditView::Command_FONT( void )
 	return;
 }
 
+/*! フォントサイズ変更
+	@param fontSize フォントサイズ（1/10ポイント単位）
+	@param shift フォントサイズを拡大or縮小するための変更量(fontSize=0のとき有効)
 
+	@note TrueTypeのみサポート
 
+	@date 2013.04.10 novice 新規作成
+*/
+void CEditView::Command_SETFONTSIZE( int fontSize, int shift )
+{
+	// The point sizes recommended by "The Windows Interface: An Application Design Guide", 1/10ポイント単位
+	static const INT sizeTable[] = { 8*10, 9*10, 10*10, (INT)(10.5*10), 11*10, 12*10, 14*10, 16*10, 18*10, 20*10, 22*10, 24*10, 26*10, 28*10, 36*10, 48*10, 72*10 };
+	LOGFONT& lf = m_pShareData->m_Common.m_sView.m_lf;
+	INT nPointSize;
+
+	// TrueTypeのみ対応
+	if( OUT_STROKE_PRECIS != lf.lfOutPrecision) {
+		return;
+	}
+
+	if( 0 != fontSize ){
+		// フォントサイズを直接選択する場合
+		nPointSize = t_max(sizeTable[0], t_min(sizeTable[_countof(sizeTable)-1], fontSize));
+
+		// 新しいフォントサイズ設定
+		lf.lfHeight = DpiPointsToPixels(-nPointSize, 10);
+		m_pShareData->m_Common.m_sView.m_nPointSize = nPointSize;
+	} else if( 0 != shift ) {
+		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
+		nPointSize = m_pShareData->m_Common.m_sView.m_nPointSize;
+
+		// フォントの拡大or縮小するためのサイズ検索
+		int i;
+		for( i = 0; i < _countof(sizeTable); i++) {
+			if( nPointSize <= sizeTable[i] ){
+				int index = t_max(0, t_min((int)_countof(sizeTable) - 1, (int)(i + shift)));
+				nPointSize = sizeTable[index];
+				break;
+			}
+		}
+
+		// 新しいフォントサイズ設定
+		lf.lfHeight = DpiPointsToPixels(-nPointSize, 10);
+		m_pShareData->m_Common.m_sView.m_nPointSize = nPointSize;
+	} else {
+		// フォントサイズが変わらないので終了
+		return;
+	}
+
+	HWND	hwndFrame;
+	hwndFrame = ::GetParent( m_hwndParent );
+
+	/* 設定変更を反映させる */
+	/* 全編集ウィンドウへメッセージをポストする */
+	CShareData::getInstance()->PostMessageToAllEditors(
+		MYWM_CHANGESETTING,
+		(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONT, hwndFrame
+	);
+}
 
 /* 共通設定 */
 void CEditView::Command_OPTION( void )

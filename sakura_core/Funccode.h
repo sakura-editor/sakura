@@ -362,6 +362,7 @@ enum FunctionAttribute {
 #define F_OPTION_TAB		32015	/* 共通設定『タブ』*/ // Feb. 11, 2007 genta 追加
 
 #define F_FONT				31120	/* フォント設定 */
+#define F_SETFONTSIZE		31121	/* フォントサイズ変更 */
 #define F_WRAPWINDOWWIDTH	31140	//現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 #define F_TMPWRAPNOWRAP		31141	// 折り返さない（一時設定）			// 2008.05.30 nasukoji
 #define F_TMPWRAPSETTING	31142	// 指定桁で折り返す（一時設定）		// 2008.05.30 nasukoji

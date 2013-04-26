@@ -844,6 +844,13 @@ void CMacro::HandleCommand(
 			HandleFunction( pcEditView, Index, vArg, 1, vResult );
 		}
 		break;
+	case F_SETFONTSIZE:
+		{
+			int val0 = Argument[0] != NULL ? atoi(Argument[0]) : 0;
+			int val1 = Argument[1] != NULL ? atoi(Argument[1]) : 0;
+			pcEditView->HandleCommand( Index, false, (LPARAM)val0, (LPARAM)val1, 0, 0 );
+		}
+		break;
 	default:
 		//	ˆø”‚È‚µB
 		pcEditView->HandleCommand( Index, false, 0, 0, 0, 0 );	//	•W€
