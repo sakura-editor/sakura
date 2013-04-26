@@ -55,7 +55,7 @@ protected:
 
 	void OnChangeSettingType( BOOL );	/* 設定のタイプが変わった */
 	void OnSpin( int , BOOL );	/* スピンコントロールの処理 */
-	int DataCheckAndCrrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
+	int DataCheckAndCorrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	BOOL OnTimer( WPARAM );	/* タイマー処理 */
 
 };
