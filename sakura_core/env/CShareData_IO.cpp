@@ -2101,7 +2101,7 @@ void ShareData_IO_Sub_LogFont( CDataProfile& cProfile, const WCHAR* pszSecName,
 				lf.lfHeight = -DpiPointsToPixels( abs(nPointSize), 10 );	// pointSize: 1/10ポイント単位のサイズ
 			}else{
 				// 初回または古いバージョンからの更新時はポイント数をピクセル数から逆算して仮設定
-				nPointSize = DpiPixelsToPoints( abs(lf.lfHeight) ) * 10;	// 小数点部分はゼロの扱い（従来フォントダイアログで小数点は指定不可）
+				nPointSize = DpiPixelsToPoints( abs(lf.lfHeight), 10 );		// （従来フォントダイアログで小数点は指定不可）
 			}
 		}
 	}else{

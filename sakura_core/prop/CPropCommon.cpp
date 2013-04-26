@@ -14,9 +14,27 @@
 	Copyright (C) 2007, genta, ryoji
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2013, Uchi
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holders to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
 #include "StdAfx.h"
@@ -399,4 +417,45 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 		MyWinHelp( hwndParent, m_pszHelpFile, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 	return;
+}
+
+
+
+/*!	コントロールにフォント設定する
+	@date 2013.04.24 Uchi
+*/
+HFONT CPropCommon::SetCtrlFont( HWND hwndDlg, int idc_ctrl, const LOGFONT& lf )
+{
+	HFONT	hFont;
+	HWND	hCtrl;
+
+	// 論理フォントを作成
+	hCtrl = ::GetDlgItem( hwndDlg, idc_ctrl );
+	hFont = ::CreateFontIndirect( &lf );
+	if (hFont) {
+		// フォントの設定
+		::SendMessage( hCtrl, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(FALSE, 0) );
+	}
+
+	return hFont;
+}
+
+
+
+/*!	フォントラベルにフォントとフォント名設定する
+	@date 2013.04.24 Uchi
+*/
+HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps )
+{
+	HFONT	hFont;
+	TCHAR	szFontName[80];
+
+	hFont = SetCtrlFont( hwndDlg, idc_static, lf );
+
+	// フォント名の設定
+	auto_sprintf( szFontName, nps % 10 ? _T("%s(%.1fpt)") : _T("%s(%.0fpt)"),
+		lf.lfFaceName, double(nps)/10 );
+	::DlgItem_SetText( hwndDlg, idc_static, szFontName );
+
+	return hFont;
 }

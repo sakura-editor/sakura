@@ -243,8 +243,9 @@ bool CShareData::InitShareData()
 			0										// user profile update flag
 		);
 		// ai 02/05/21 Add E
+		INT		nIconPointSize = lfIconTitle.lfHeight >=0 ? lfIconTitle.lfHeight : DpiPixelsToPoints( -lfIconTitle.lfHeight, 10 );	// フォントサイズ（1/10ポイント単位）
 		m_pShareData->m_Common.m_sHelper.m_lf = lfIconTitle;
-		m_pShareData->m_Common.m_sHelper.m_nPointSize = 0;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
+		m_pShareData->m_Common.m_sHelper.m_nPointSize = nIconPointSize;	// フォントサイズ（1/10ポイント単位） ※古いバージョンからの移行を考慮して無効値で初期化	// 2009.10.01 ryoji
 
 //	To Here Sept. 19,2000
 
@@ -334,7 +335,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_Common.m_sTabBar.m_bNewWindow = FALSE;			// 外部から起動するときは新しいウインドウで開く
 
 		m_pShareData->m_Common.m_sTabBar.m_lf = lfIconTitle;
-		m_pShareData->m_Common.m_sTabBar.m_nPointSize = 0;
+		m_pShareData->m_Common.m_sTabBar.m_nPointSize = nIconPointSize;
 
 		m_pShareData->m_Common.m_sWindow.m_bSplitterWndHScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの水平スクロールの同期をとる
 		m_pShareData->m_Common.m_sWindow.m_bSplitterWndVScroll = TRUE;	// 2001/06/20 asa-o 分割ウィンドウの垂直スクロールの同期をとる
