@@ -13,9 +13,27 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2012, Moca
+	Copyright (C) 2013, Uchi
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holders to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
 #include "StdAfx.h"
@@ -161,6 +179,9 @@ INT_PTR CPropHelper::DispatchEvent(
 					if( MySelectFont( &lf, &nPointSize, hwndDlg, false) ){
 						m_Common.m_sHelper.m_lf = lf;
 						m_Common.m_sHelper.m_nPointSize = nPointSize;	// 2009.10.01 ryoji
+						// キーワードヘルプ フォント表示	// 2013/4/24 Uchi
+						if (m_hKeywordHelpFont != NULL)		::DeleteObject( m_hKeywordHelpFont );
+						m_hKeywordHelpFont = SetFontLabel( hwndDlg, IDC_STATIC_KEYWORDHELPFONT, m_Common.m_sHelper.m_lf, m_Common.m_sHelper.m_nPointSize);
 					}
 				}
 				return TRUE;
@@ -259,6 +280,13 @@ INT_PTR CPropHelper::DispatchEvent(
 		return TRUE;
 //@@@ 2001.12.22 End
 
+	case WM_DESTROY:
+		// キーワードヘルプ フォント破棄	// 2013/4/24 Uchi
+		if (m_hKeywordHelpFont != NULL) {
+			::DeleteObject( m_hKeywordHelpFont );
+			m_hKeywordHelpFont = NULL;
+		}
+		return TRUE;
 	}
 	return FALSE;
 }
@@ -266,6 +294,11 @@ INT_PTR CPropHelper::DispatchEvent(
 /* ダイアログデータの設定 Helper */
 void CPropHelper::SetData( HWND hwndDlg )
 {
+	/* 補完候補決定キー */
+	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN, m_Common.m_sHelper.m_bHokanKey_RETURN );	//VK_RETURN 補完決定キーが有効/無効
+	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_TAB, m_Common.m_sHelper.m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
+	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT, m_Common.m_sHelper.m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
+
 	/* 外部ヘルプ１ */
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sHelper.m_szExtHelp );
 
@@ -275,23 +308,23 @@ void CPropHelper::SetData( HWND hwndDlg )
 	/* HtmlHelpビューアはひとつ */
 	::CheckDlgButton( hwndDlg, IDC_CHECK_HTMLHELPISSINGLE, m_Common.m_sHelper.m_bHtmlHelpIsSingle ? BST_CHECKED : BST_UNCHECKED );
 
-	/* 補完候補決定キー */
-	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN, m_Common.m_sHelper.m_bHokanKey_RETURN );	//VK_RETURN 補完決定キーが有効/無効
-	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_TAB, m_Common.m_sHelper.m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
-	::CheckDlgButton( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT, m_Common.m_sHelper.m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
+	// キーワードヘルプ フォント	// 2013/4/24 Uchi
+	m_hKeywordHelpFont = SetFontLabel( hwndDlg, IDC_STATIC_KEYWORDHELPFONT, m_Common.m_sHelper.m_lf, m_Common.m_sHelper.m_nPointSize);
 
-	//migemo dict 
+	//migemo dict
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll);
 	::DlgItem_SetText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict);
-
-	return;
 }
 
 
 /* ダイアログデータの取得 Helper */
 int CPropHelper::GetData( HWND hwndDlg )
 {
-	// Oct. 5, 2002 genta サイズ制限方法変更
+	/* 補完候補決定キー */
+	m_Common.m_sHelper.m_bHokanKey_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN );//VK_RETURN 補完決定キーが有効/無効
+	m_Common.m_sHelper.m_bHokanKey_TAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
+	m_Common.m_sHelper.m_bHokanKey_RIGHT = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
+
 	/* 外部ヘルプ１ */
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_EXTHELP1, m_Common.m_sHelper.m_szExtHelp, _countof( m_Common.m_sHelper.m_szExtHelp ));
 
@@ -301,18 +334,9 @@ int CPropHelper::GetData( HWND hwndDlg )
 	/* HtmlHelpビューアはひとつ */
 	m_Common.m_sHelper.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HTMLHELPISSINGLE ) != 0;
 
-
-	/* 補完候補決定キー */
-	m_Common.m_sHelper.m_bHokanKey_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN );//VK_RETURN 補完決定キーが有効/無効
-	m_Common.m_sHelper.m_bHokanKey_TAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
-	m_Common.m_sHelper.m_bHokanKey_RIGHT = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RIGHT );	//VK_RIGHT  補完決定キーが有効/無効
-
+	//migemo dict
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll, _countof( m_Common.m_sHelper.m_szMigemoDll ));
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict, _countof( m_Common.m_sHelper.m_szMigemoDict ));
 
-
 	return TRUE;
 }
-
-
-

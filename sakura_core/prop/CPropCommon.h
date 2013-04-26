@@ -13,15 +13,31 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, genta, ryoji
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2013, Uchi
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holders to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
-#ifndef SAKURA_PROP_CPROPCOMMON_H_
-#define SAKURA_PROP_CPROPCOMMON_H_
-
-class CPropCommon;
+#ifndef SAKURA_CPROPCOMMON_8B67EE84_54E5_4541_A820_EE4FC61CCF0D_H_
+#define SAKURA_CPROPCOMMON_8B67EE84_54E5_4541_A820_EE4FC61CCF0D_H_
 
 #include "func/CFuncLookup.h"
 #include "env/CommonSetting.h"
@@ -85,6 +101,10 @@ public:
 	void InitData( void );		//!< DLLSHAREDATAから一時データ領域に設定を複製する
 	void ApplyData( void );		//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
 
+	//
+	static INT_PTR CALLBACK DlgProc_page(
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+
 	//	Jun. 2, 2001 genta
 	//	ここにあったEvent Handlerはprotectedエリアに移動した．
 
@@ -140,17 +160,15 @@ protected:
 	int nLastPos_Macro; //!< 前回フォーカスのあった場所
 	int m_nLastPos_FILENAME; //!< 前回フォーカスのあった場所 ファイル名タブ用
 
-public:
-	//
-	static INT_PTR CALLBACK DlgProc_page(
-		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void SetData( HWND );	//!< ダイアログデータの設定
 	int  GetData( HWND );	//!< ダイアログデータの取得
 	void Import( HWND );	//!< インポートする
 	void Export( HWND );	//!< エクスポートする
+
+	HFONT SetCtrlFont( HWND hwndDlg, int idc_static, const LOGFONT& lf );			//!< コントロールにフォント設定する		// 2013/4/24 Uchi
+	HFONT SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf, int nps );	//!< フォントラベルにフォントとフォント名設定する	// 2013/4/24 Uchi
 };
 
 
@@ -314,6 +332,8 @@ protected:
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void SetData( HWND );	//!< ダイアログデータの設定
 	int  GetData( HWND );	//!< ダイアログデータの取得
+
+	HFONT	m_hKeywordHelpFont;		// キーワードヘルプ フォント ハンドル
 };
 
 //==============================================================
@@ -372,6 +392,8 @@ protected:
 
 private:
 	void EnableTabPropInput(HWND hwndDlg);
+
+	HFONT	m_hTabFont;		// タブ フォント ハンドル
 };
 
 //==============================================================
@@ -517,4 +539,4 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* SAKURA_PROP_CPROPCOMMON_H_ */
+#endif /* SAKURA_CPROPCOMMON_8B67EE84_54E5_4541_A820_EE4FC61CCF0D_H_ */
