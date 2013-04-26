@@ -37,8 +37,12 @@
 
 //!設定が変更されたことの通知メッセージ
 //wParam:未使用
-//lParam:未使用
 #define MYWM_CHANGESETTING  (WM_APP+1520)
+//! MYWM_CHANGESETTINGメッセージのlParam
+enum e_PM_CHANGESETTING_SELECT {
+	PM_CHANGESETTING_ALL		= 0, //!< 全部
+	PM_CHANGESETTING_FONT		= 1, //!< フォント変更
+};
 
 //! タスクトレイからの通知メッセージ
 #define MYWM_NOTIFYICON		(WM_APP+100)
@@ -53,11 +57,11 @@
 
 /*! カーソル位置変更通知 */
 #define	MYWM_SETCARETPOS	(WM_APP+204)
-/// MYWM_SETCARETPOSメッセージのLPARAM
+//! MYWM_SETCARETPOSメッセージのlParam
 enum e_PM_SETCARETPOS_SELECTSTATE {
-	PM_SETCARETPOS_NOSELECT		= 0, /*!<選択解除 */
-	PM_SETCARETPOS_SELECT		= 1, /*!<選択開始・変更 */
-	PM_SETCARETPOS_KEEPSELECT	= 2, /*!<現在の選択状態を保って移動 */
+	PM_SETCARETPOS_NOSELECT		= 0, //!< 選択解除
+	PM_SETCARETPOS_SELECT		= 1, //!< 選択開始・変更
+	PM_SETCARETPOS_KEEPSELECT	= 2, //!< 現在の選択状態を保って移動
 };
 
 /*! カーソル位置取得要求 */

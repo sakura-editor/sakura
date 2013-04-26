@@ -113,12 +113,8 @@ CEditDoc::CEditDoc()
 	STypeConfig ref = GetDocumentAttribute();
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH ){
 		ref.m_nMaxLineKetas = MAXLINEKETAS;
-	}	
-	m_cLayoutMgr.SetLayoutInfo(
-		TRUE,
-		NULL,
-		ref
-	);
+	}
+	m_cLayoutMgr.SetLayoutInfo( true, NULL, ref );
 
 	//	自動保存の設定	//	Aug, 21, 2000 genta
 	ReloadAutoSaveParam();
@@ -187,11 +183,7 @@ void CEditDoc::Clear()
 
 	// レイアウト管理情報の初期化
 	STypeConfig& ref = GetDocumentAttribute();
-	m_cLayoutMgr.SetLayoutInfo(
-		TRUE,
-		NULL,
-		ref
-	);
+	m_cLayoutMgr.SetLayoutInfo( true, NULL, ref );
 }
 
 /* 既存データのクリア */
@@ -479,11 +471,15 @@ void CEditDoc::OnChangeType()
 }
 
 /*! ビューに設定変更を反映させる
+	@param [in] bDoRayout レイアウト情報の再作成
 
 	@date 2004.06.09 Moca レイアウト再構築中にProgress Barを表示する．
 	@date 2008.05.30 nasukoji	テキストの折り返し方法の変更処理を追加
+	@date 2013.04.22 novice レイアウト情報の再作成を設定できるようにした
 */
-void CEditDoc::OnChangeSetting()
+void CEditDoc::OnChangeSetting(
+	bool	bDoRayout
+)
 {
 	int			i;
 	HWND		hwndProgress = NULL;
@@ -535,11 +531,7 @@ void CEditDoc::OnChangeSetting()
 		}
 	}
 
-	m_cLayoutMgr.SetLayoutInfo(
-		TRUE,
-		hwndProgress,
-		ref
-	); /* レイアウト情報の変更 */
+	m_cLayoutMgr.SetLayoutInfo( bDoRayout, hwndProgress, ref ); /* レイアウト情報の変更 */
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
@@ -1099,11 +1091,7 @@ BOOL CEditDoc::FileRead(
 		if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH )
 			ref.m_nMaxLineKetas = MAXLINEKETAS;
 
-		m_cLayoutMgr.SetLayoutInfo(
-			TRUE,
-			hwndProgress,
-			ref
-		);
+		m_cLayoutMgr.SetLayoutInfo( true, hwndProgress, ref );
 	}
 
 	/* 全ビューの初期化：ファイルオープン/クローズ時等に、ビューを初期化する */
@@ -1471,7 +1459,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		}
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
 		/* フォントが変わった */
 		for( i = 0; i < GetAllViewCount(); ++i ){
@@ -1479,7 +1467,7 @@ BOOL CEditDoc::OpenPropertySheet( int nPageNum/*, int nActiveItem*/ )
 		}
 
 		/* 設定変更を反映させる */
-		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)m_hwndParent, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
+		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
 
 		return TRUE;
 	}else{
@@ -1516,10 +1504,10 @@ BOOL CEditDoc::OpenPropertySheetTypes( int nPageNum, int nSettingType )
 			m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
 
 		/* アクセラレータテーブルの再作成 */
-		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)0 );
+		::SendMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
 		/* 設定変更を反映させる */
-		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)m_hwndParent, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
+		CShareData::getInstance()->SendMessageToAllEditors( MYWM_CHANGESETTING, (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL, m_hwndParent );	/* 全編集ウィンドウへメッセージをポストする */
 
 		return TRUE;
 	}else{

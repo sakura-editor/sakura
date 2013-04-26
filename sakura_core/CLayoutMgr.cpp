@@ -129,7 +129,7 @@ void CLayoutMgr::_Empty()
 || レイアウト情報の変更
 */
 void CLayoutMgr::SetLayoutInfo(
-	int				bDoRayout,
+	bool			bDoRayout,
 	HWND			hwndProgress,
 	STypeConfig&	refType			/* タイプ別設定 */
 )

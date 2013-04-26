@@ -514,35 +514,40 @@ LRESULT CEditApp::DispatchEvent(
 //		case MYWM_SETFILEINFO:
 //			return 0L;
 		case MYWM_CHANGESETTING:
-			::UnregisterHotKey( m_hWnd, ID_HOTKEY_TRAYMENU );
-			/* タスクトレイ左クリックメニューへのショートカットキー登録 */
-			wHotKeyMods = 0;
-			if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
-				wHotKeyMods |= MOD_SHIFT;
-			}
-			if( HOTKEYF_CONTROL & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
-				wHotKeyMods |= MOD_CONTROL;
-			}
-			if( HOTKEYF_ALT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
-				wHotKeyMods |= MOD_ALT;
-			}
-			wHotKeyCode = m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
-			::RegisterHotKey(
-				m_hWnd,
-				ID_HOTKEY_TRAYMENU,
-				wHotKeyMods,
-				wHotKeyCode
-			);
+			switch( (e_PM_CHANGESETTING_SELECT)lParam ){
+			case PM_CHANGESETTING_ALL:
+				::UnregisterHotKey( m_hWnd, ID_HOTKEY_TRAYMENU );
+				/* タスクトレイ左クリックメニューへのショートカットキー登録 */
+				wHotKeyMods = 0;
+				if( HOTKEYF_SHIFT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
+					wHotKeyMods |= MOD_SHIFT;
+				}
+				if( HOTKEYF_CONTROL & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
+					wHotKeyMods |= MOD_CONTROL;
+				}
+				if( HOTKEYF_ALT & m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyMods ){
+					wHotKeyMods |= MOD_ALT;
+				}
+				wHotKeyCode = m_pShareData->m_Common.m_sGeneral.m_wTrayMenuHotKeyCode;
+				::RegisterHotKey(
+					m_hWnd,
+					ID_HOTKEY_TRAYMENU,
+					wHotKeyMods,
+					wHotKeyCode
+				);
 
-//@@		/* 共有データの保存 */
-//@@		m_cShareData.SaveShareData();
+//@@			/* 共有データの保存 */
+//@@			m_cShareData.SaveShareData();
 
-			/* アクセラレータテーブルの再作成 */
-			// ウィンドウ毎のアクセラレータテーブル破棄
-			DeleteAccelTbl();
-			// ウィンドウ毎のアクセラレータテーブル作成
-			CreateAccelTbl();
-
+				/* アクセラレータテーブルの再作成 */
+				// ウィンドウ毎のアクセラレータテーブル破棄
+				DeleteAccelTbl();
+				// ウィンドウ毎のアクセラレータテーブル作成
+				CreateAccelTbl();
+				break;
+			default:
+				break;
+			}
 			return 0L;
 
 		case MYWM_NOTIFYICON:

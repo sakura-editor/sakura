@@ -139,7 +139,7 @@ public:
 		@date 2002/04/27 YAZAKI STypeConfig‚ğ“n‚·‚æ‚¤‚É•ÏXB
 	*/
 	void SetLayoutInfo(
-		int		bDoRayout,
+		bool	bDoRayout,
 		HWND	hwndProgress,
 		STypeConfig& refType
 	);

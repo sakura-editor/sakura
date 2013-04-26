@@ -1682,63 +1682,86 @@ LRESULT CEditWnd::DispatchEvent(
 		return 0L;
 	case MYWM_CHANGESETTING:
 		/* 設定変更の通知 */
-// Oct 10, 2000 ao
-/* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
-		DestroyToolBar();
-		LayoutToolBar();
-// Oct 10, 2000 ao ここまで
+		switch( (e_PM_CHANGESETTING_SELECT)lParam ){
+		case PM_CHANGESETTING_ALL:
+			// Oct 10, 2000 ao
+			/* 設定変更時、ツールバーを再作成するようにする（バーの内容変更も反映） */
+			DestroyToolBar();
+			LayoutToolBar();
+			// Oct 10, 2000 ao ここまで
 
-		// 2008.09.23 nasukoji	非アクティブなウィンドウのツールバーを更新する
-		// アクティブなウィンドウはタイマにより更新されるが、それ以外のウィンドウは
-		// タイマを停止させており設定変更すると全部有効となってしまうため、ここで
-		// ツールバーを更新する
-		if( !m_bIsActiveApp )
-			UpdateToolbar();
+			// 2008.09.23 nasukoji	非アクティブなウィンドウのツールバーを更新する
+			// アクティブなウィンドウはタイマにより更新されるが、それ以外のウィンドウは
+			// タイマを停止させており設定変更すると全部有効となってしまうため、ここで
+			// ツールバーを更新する
+			if( !m_bIsActiveApp )
+				UpdateToolbar();
 
-		// ファンクションキーを再作成する（バーの内容、位置、グループボタン数の変更も反映）	// 2006.12.19 ryoji
-		m_CFuncKeyWnd.Close();
-		LayoutFuncKey();
+			// ファンクションキーを再作成する（バーの内容、位置、グループボタン数の変更も反映）	// 2006.12.19 ryoji
+			m_CFuncKeyWnd.Close();
+			LayoutFuncKey();
 
-		// タブバーの表示／非表示切り替え	// 2006.12.19 ryoji
-		LayoutTabBar();
+			// タブバーの表示／非表示切り替え	// 2006.12.19 ryoji
+			LayoutTabBar();
 
-		// ステータスバーの表示／非表示切り替え	// 2006.12.19 ryoji
-		LayoutStatusBar();
+			// ステータスバーの表示／非表示切り替え	// 2006.12.19 ryoji
+			LayoutStatusBar();
 
-		// 水平スクロールバーの表示／非表示切り替え	// 2006.12.19 ryoji
-		{
-			int i;
-			bool b1;
-			bool b2;
-			b1 = (m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz == FALSE);
-			for( i = 0; i < m_cEditDoc.GetAllViewCount(); i++ )
+			// 水平スクロールバーの表示／非表示切り替え	// 2006.12.19 ryoji
 			{
-				b2 = (m_cEditDoc.m_pcEditViewArr[i]->m_hwndHScrollBar == NULL);
-				if( b1 != b2 )		/* 水平スクロールバーを使う */
+				int i;
+				bool b1;
+				bool b2;
+				b1 = (m_pShareData->m_Common.m_sWindow.m_bScrollBarHorz == FALSE);
+				for( i = 0; i < m_cEditDoc.GetAllViewCount(); i++ )
 				{
-					m_cEditDoc.m_pcEditViewArr[i]->DestroyScrollBar();
-					m_cEditDoc.m_pcEditViewArr[i]->CreateScrollBar();
+					b2 = (m_cEditDoc.m_pcEditViewArr[i]->m_hwndHScrollBar == NULL);
+					if( b1 != b2 )		/* 水平スクロールバーを使う */
+					{
+						m_cEditDoc.m_pcEditViewArr[i]->DestroyScrollBar();
+						m_cEditDoc.m_pcEditViewArr[i]->CreateScrollBar();
+					}
 				}
 			}
-		}
 
-		// バー変更で画面が乱れないように	// 2006.12.19 ryoji
-		EndLayoutBars();
+			// バー変更で画面が乱れないように	// 2006.12.19 ryoji
+			EndLayoutBars();
 
-		// アクセラレータテーブルを再作成する(Wine用)
-		// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
-		DeleteAccelTbl();
-		// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
-		CreateAccelTbl();
+			// アクセラレータテーブルを再作成する(Wine用)
+			// ウィンドウ毎に作成したアクセラレータテーブルを破棄する(Wine用)
+			DeleteAccelTbl();
+			// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
+			CreateAccelTbl();
 
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
-		{
-			// タブ表示のままグループ化する／しないが変更されていたらタブを更新する必要がある
-			m_cTabWnd.Refresh( FALSE );
-		}
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
-		{
-			if( CShareData::getInstance()->IsTopEditWnd( m_hWnd ) )
+			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd )
+			{
+				// タブ表示のままグループ化する／しないが変更されていたらタブを更新する必要がある
+				m_cTabWnd.Refresh( FALSE );
+			}
+			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin )
+			{
+				if( CShareData::getInstance()->IsTopEditWnd( m_hWnd ) )
+				{
+					if( !::IsWindowVisible( m_hWnd ) )
+					{
+						// ::ShowWindow( m_hWnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
+						::SetWindowPos( m_hWnd, NULL,0,0,0,0,
+										SWP_SHOWWINDOW | SWP_NOACTIVATE
+										| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
+
+						// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
+						WindowTopMost( ((DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
+					}
+				}
+				else
+				{
+					if( ::IsWindowVisible( m_hWnd ) )
+					{
+						::ShowWindow( m_hWnd, SW_HIDE );
+					}
+				}
+			}
+			else
 			{
 				if( !::IsWindowVisible( m_hWnd ) )
 				{
@@ -1746,35 +1769,21 @@ LRESULT CEditWnd::DispatchEvent(
 					::SetWindowPos( m_hWnd, NULL,0,0,0,0,
 									SWP_SHOWWINDOW | SWP_NOACTIVATE
 									| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
-
-					// このウィンドウの WS_EX_TOPMOST 状態を全ウィンドウに反映する	// 2007.05.18 ryoji
-					WindowTopMost( ((DWORD)::GetWindowLongPtr( m_hWnd, GWL_EXSTYLE ) & WS_EX_TOPMOST)? 1: 2 );
 				}
 			}
-			else
-			{
-				if( ::IsWindowVisible( m_hWnd ) )
-				{
-					::ShowWindow( m_hWnd, SW_HIDE );
-				}
-			}
-		}
-		else
-		{
-			if( !::IsWindowVisible( m_hWnd ) )
-			{
-				// ::ShowWindow( m_hWnd, SW_SHOWNA ) だと非表示から表示に切り替わるときに Z-order がおかしくなることがあるので ::SetWindowPos を使う
-				::SetWindowPos( m_hWnd, NULL,0,0,0,0,
-								SWP_SHOWWINDOW | SWP_NOACTIVATE
-								| SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER );
-			}
-		}
 
-		//	Aug, 21, 2000 genta
-		m_cEditDoc.ReloadAutoSaveParam();
+			//	Aug, 21, 2000 genta
+			m_cEditDoc.ReloadAutoSaveParam();
 
-		m_cEditDoc.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
-		m_cEditDoc.OnChangeSetting();	/* ビューに設定変更を反映させる */
+			m_cEditDoc.SetDocumentIcon();	// Sep. 10, 2002 genta 文書アイコンの再設定
+			m_cEditDoc.OnChangeSetting();	// ビューに設定変更を反映させる
+			break;
+		case PM_CHANGESETTING_FONT:
+			m_cEditDoc.OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
+			break;
+		default:
+			break;
+		}
 		return 0L;
 	case MYWM_SETACTIVEPANE:
 		if( -1 == (int)wParam ){
