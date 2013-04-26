@@ -34,6 +34,8 @@
 #include "recent/CMRUFile.h"
 #include "util/window.h"
 #include "charset/CCodeFactory.h"
+#include "plugin/CPlugin.h"
+#include "plugin/CJackManager.h"
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 
@@ -206,6 +208,14 @@ void CViewCommander::Command_FILECLOSE( void )
 void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCode, bool bViewMode )
 {
 	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(to_tchar(filename), nCharCode, bViewMode) );
+
+	//プラグイン：DocumentOpenイベント実行
+	CPlug::Array plugs;
+	CWSHIfObj::List params;
+	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
+	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+		(*it)->Invoke(&GetEditWindow()->GetActiveView(), params);
+	}
 }
 
 
