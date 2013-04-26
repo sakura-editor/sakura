@@ -1534,6 +1534,21 @@ LRESULT CEditWnd::DispatchEvent(
 	case MYWM_CLOSE:
 		/* エディタへの終了要求 */
 		if( FALSE != ( nRet = OnClose( (HWND)lParam )) ){	// Jan. 23, 2002 genta 警告抑制
+			//プラグイン：DocumentCloseイベント実行
+			CPlug::Array plugs;
+			CWSHIfObj::List params;
+			CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_CLOSE, 0, &plugs );
+			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+				(*it)->Invoke(&this->GetActiveView(), params);
+			}
+
+			//プラグイン：EditorEndイベント実行
+			plugs.clear();
+			CJackManager::getInstance()->GetUsablePlug( PP_EDITOR_END, 0, &plugs );
+			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+				(*it)->Invoke(&this->GetActiveView(), params);
+			}
+
 			// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
 			if( !(BOOL)wParam ){	// 全終了要求でない場合
 				// タブまとめ表示で(無題)を残す指定の場合、残ウィンドウが１個なら新規エディタを起動して終了する

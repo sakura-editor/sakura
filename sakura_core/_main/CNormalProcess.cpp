@@ -207,7 +207,7 @@ bool CNormalProcess::InitializeProcess()
 				gi.nGrepOutputStyle
 			);
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
-			return true; // 2003.06.23 Moca
+			//return true; // 2003.06.23 Moca
 		}
 		else{
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
@@ -248,8 +248,25 @@ bool CNormalProcess::InitializeProcess()
 				pEditWnd->GetActiveView().GetCommander().HandleCommand(F_GREP, true, 0, 0, 0, 0);
 			}
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
-			return true; // 2003.06.23 Moca
+			//return true; // 2003.06.23 Moca
 		}
+
+		//プラグイン：EditorStartイベント実行
+		CPlug::Array plugs;
+		CWSHIfObj::List params;
+		CJackManager::getInstance()->GetUsablePlug( PP_EDITOR_START, 0, &plugs );
+		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+			(*it)->Invoke(&pEditWnd->GetActiveView(), params);
+		}
+
+		//プラグイン：DocumentOpenイベント実行
+		plugs.clear();
+		CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
+		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+			(*it)->Invoke(&pEditWnd->GetActiveView(), params);
+		}
+
+		return true; // 2003.06.23 Moca
 	}
 	else{
 		// 2004.05.13 Moca さらにif分の中から前に移動
@@ -399,6 +416,13 @@ bool CNormalProcess::InitializeProcess()
 		}
 		// 用済みなので削除
 		CCommandLine::getInstance()->ClearFile();
+	}
+
+	//プラグイン：DocumentOpenイベント実行
+	plugs.clear();
+	CJackManager::getInstance()->GetUsablePlug( PP_DOCUMENT_OPEN, 0, &plugs );
+	for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+		(*it)->Invoke(&pEditWnd->GetActiveView(), params);
 	}
 
 	return pEditWnd->GetHwnd() ? true : false;
