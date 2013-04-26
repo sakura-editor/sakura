@@ -23,6 +23,11 @@
 #include "StdAfx.h"
 #include "CDlgAbout.h"
 #include "etc_uty.h"
+#ifdef USE_SVNREV
+#include "svnrev.h"
+#else
+#define SVN_REV 0
+#endif
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "sakura.hh"
 
@@ -55,10 +60,10 @@ const DWORD p_helpids[] = {	//12900
 #elif defined(__GNUG__)
 #  define COMPILER_TYPE "G"
 #  define COMPILER_VER (__GNUC__ * 10000 + __GNUC_MINOR__  * 100 + __GNUC_PATCHLEVEL__)
-#elif __INTEL_COMPILER
+#elif defined(__INTEL_COMPILER)
 #  define COMPILER_TYPE "I"
 #  define COMPILER_VER __INTEL_COMPILER
-#elif __DMC__
+#elif defined(__DMC__)
 #  define COMPILER_TYPE "D"
 #  define COMPILER_VER __DMC__
 #elif defined(_MSC_VER)
@@ -127,6 +132,7 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 
 /*! 初期化処理
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
+	@date 2013.04.07 novice svn revision 情報追加
 */
 BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 {
@@ -150,7 +156,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	//	2010.04.15 Moca コンパイラ情報を分離/WINヘッダ,N_SHAREDATA_VERSION追加
 
 	// 以下の形式で出力
-	//サクラエディタ   Ver. 2.0.0.0
+	//サクラエディタ   Ver. 1.0.0.0 (r9999)
 	//
 	//      Share Ver: 96
 	//      Compile Info: V 1400  WR WIN600/I601/C000/N600
@@ -159,10 +165,14 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CMemory cmemMsg;
 	cmemMsg.AppendString(_T("サクラエディタ   "));
 
+	// バージョン&リビジョン情報
 	DWORD dwVersionMS, dwVersionLS;
-	GetAppVersionInfo( NULL, VS_VERSION_INFO,
-		&dwVersionMS, &dwVersionLS );
+	GetAppVersionInfo( NULL, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
+#if (SVN_REV == 0)
 	_stprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
+#else
+	_stprintf( szMsg, _T("Ver. %d.%d.%d.%d (r") _T(NUM_TO_STR(SVN_REV)) _T(")\r\n"),
+#endif
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
 		HIWORD( dwVersionLS ),
@@ -172,21 +182,23 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	cmemMsg.AppendString( _T("\r\n") );
 
+	// 共有メモリ情報
 	_stprintf( szMsg, _T("      Share Ver: %3d\r\n"),
 		uShareDataVersion // instead of N_SHAREDATA_VERSION
 	);
 	cmemMsg.AppendString( szMsg );
 
+	// コンパイル情報
 	cmemMsg.AppendString( _T("      Compile Info: ") );
 	int Compiler_ver = COMPILER_VER;
-	_stprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T(" %d  ")
+	_stprintf( szMsg, _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) _T("%d ")
 			TSTR_TARGET_MODE _T(" WIN%03x/I%03x/C%03x/N%03x\r\n"),
 		Compiler_ver,
 		WINVER, _WIN32_IE, MY_WIN32_WINDOWS, MY_WIN32_WINNT
 	);
 	cmemMsg.AppendString( szMsg );
 
-	/* 更新日情報 */
+	// 更新日情報
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
 	_stprintf( szMsg, _T("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
@@ -199,7 +211,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	);
 	cmemMsg.AppendString( szMsg );
 
-// パッチ(かリビジョン)の情報をコンパイル時に渡せるようにする
+	// パッチの情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
 	cmemMsg.AppendString( _T("      ") );
 	const TCHAR* ptszPatchInfo = SKR_PATCH_INFO;
@@ -370,7 +382,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		// ウィンドウの描画
 		PAINTSTRUCT ps;
 		HFONT hFont;
-		HFONT hOldFont;
+		HFONT hFontOld;
 		TCHAR szText[512];
 
 		hdc = BeginPaint( hWnd, &ps );
@@ -383,9 +395,9 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		// テキスト描画
 		SetBkMode( hdc, TRANSPARENT );
 		SetTextColor( hdc, pUrlWnd->m_bHilighted? RGB( 0x84, 0, 0 ): RGB( 0, 0, 0xff ) );
-		hOldFont = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
+		hFontOld = (HFONT)SelectObject( hdc, (HGDIOBJ)hFont );
 		TextOut( hdc, 2, 0, szText, _tcslen( szText ) );
-		SelectObject( hdc, (HGDIOBJ)hOldFont );
+		SelectObject( hdc, (HGDIOBJ)hFontOld );
 
 		// フォーカス枠描画
 		if( GetFocus() == hWnd )
@@ -401,7 +413,7 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 		if( pUrlWnd->m_bHilighted ){
 			// ハイライト時背景描画
 			SetBkColor( hdc, RGB( 0xff, 0xff, 0 ) );
-			ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
+			::ExtTextOut( hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL );
 		}else{
 			// 親にWM_CTLCOLORSTATICを送って背景ブラシを取得し、背景描画する
 			HBRUSH hbr;

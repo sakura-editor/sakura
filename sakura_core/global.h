@@ -96,6 +96,10 @@ extern const unsigned char gm_keyword_char[256];	//@@@ 2002.04.27
 
 extern const char* GSTR_APPNAME;
 
+//数値定数の文字列化 2009.02.11 ryoji
+#define _NUM_TO_STR(n) #n
+#define NUM_TO_STR(n) _NUM_TO_STR(n)
+
 //! デバッグ判別、定数サフィックス 2007.09.20 kobake
 #ifdef _DEBUG
 	#define _DEBUG_SUFFIX_ "_DEBUG"
