@@ -387,13 +387,21 @@ _os/CClipboard.o \
 _os/CDropTarget.o \
 sakura_rc.o \
 
-TOOLDIR=../btool
-RCTOOL=$(TOOLDIR)/mrc2grc.exe
+RCTOOLDIR=../btool
+RCTOOL=$(RCTOOLDIR)/mrc2grc.exe
+HEADERMAKETOOLDIR= ../HeaderMake
+HEADERMAKE= $(HEADERMAKETOOLDIR)/HeaderMake.exe
 
-all: $(RCTOOL) $(exe)
+all: $(RCTOOL) $(HEADERMAKE) $(exe)
 
-$(exe): stdafx svnrev $(OBJS)
+$(exe): Funccode_define.h Funccode_enum.h svnrev stdafx $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LIBS)
+
+Funccode_define.h: Funccode_x.hsrc
+	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_define.h -mode=define
+
+Funccode_enum.h: Funccode_x.hsrc
+	$(HEADERMAKE) -in=../sakura_core/Funccode_x.hsrc -out=../sakura_core/Funccode_enum.h -mode=enum -enum=EFunctionCode
 
 svnrev:
 	cp svnrev_unknown.h svnrev.h
@@ -405,15 +413,18 @@ stdafx:
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(RCTOOL): $(TOOLDIR)/mrc2grc.cpp
-	$(CXX) $(CXXFLAGS) $(TOOLDIR)\mrc2grc.cpp -o $@ -static-libgcc
+$(RCTOOL): $(RCTOOLDIR)/mrc2grc.cpp
+	$(CXX) $(CXXFLAGS) $(RCTOOLDIR)/mrc2grc.cpp -o $@ -static-libgcc
+
+$(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
+	$(CXX) $(CXXFLAGS) $(HEADERMAKETOOLDIR)/HeaderMake.cpp -o $@ -static-libgcc
 
 .rc.o:
 	$(RCTOOL) $< sakura_grc.rc
 	$(RC) --language=0411 sakura_grc.rc -o $@
 
 clean:
-	$(RM) $(exe) $(OBJS) $(TOOLDIR)/mrc2grc.exe sakura_grc.rc
+	$(RM) $(exe) $(OBJS) $(RCTOOL) $(HEADERMAKE) sakura_grc.rc
 
 depend:
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak

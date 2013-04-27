@@ -43,8 +43,8 @@ FA_FROMKEYBOARD		 = 0x00010000,	//!< キーボードアクセラレータからのコマンド
 FA_FROMMACRO		 = 0x00020000,	//!< マクロからのコマンド実行
 FA_NONRECORD		 = 0x00040000,	//!< マクロへの記録を抑制する
 
-F_PLUGCOMMAND_FIRST			= 20000
-F_PLUGCOMMAND_LAST			= 21999
+F_PLUGCOMMAND_FIRST			= 20000,
+F_PLUGCOMMAND_LAST			= 21999,
 
 // Main Menu 特殊機能
 F_WINDOW_LIST				= 29001,	// ウィンドウリスト
@@ -56,7 +56,7 @@ F_PLUGIN_LIST				= 29006,	// プラグインコマンドリスト
 F_SPECIAL_FIRST				= F_WINDOW_LIST,
 F_SPECIAL_LAST				= F_PLUGIN_LIST,
 
-F_MENU_FIRST				= 30000
+F_MENU_FIRST				= 30000,
 
 // ファイル操作系
 //											[意味]								[引数]
