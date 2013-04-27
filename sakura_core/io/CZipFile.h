@@ -34,31 +34,16 @@ class CZipFile {
 private:
 	IShellDispatch*	psd;
 	Folder*			pZipFile;
+	std::tstring	sZipName;
 
 public:
-	// コンストラクタ
-	CZipFile() {
-		HRESULT		hr;
-
-		hr = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_IShellDispatch, reinterpret_cast<void **>(&psd));
-		if (FAILED(hr)) {
-			psd = NULL;
-		}
-		pZipFile = NULL;
-	}
-	// デストラクタ
-	~CZipFile() {
-		if (pZipFile != NULL) {
-			pZipFile->Release();
-			pZipFile = NULL;
-		}
-		psd = NULL;
-	}
+	CZipFile();		// コンストラクタ
+	~CZipFile();	// デストラクタ
 
 public:
-	bool	IsOk() { return (psd != NULL); }
-	bool	SetZip(const std::tstring sZipPath);
-	bool	ChkPluginDef(const std::tstring sDefFile, std::tstring& sFolderName);
-	bool	Unzip(const std::tstring sOutPath);
+	bool	IsOk() { return (psd != NULL); }			// Zip Folderが使用できるか?
+	bool	SetZip(const std::tstring sZipPath);		// Zip File名 設定
+	bool	ChkPluginDef(const std::tstring sDefFile, std::tstring& sFolderName);	// ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
+	bool	Unzip(const std::tstring sOutPath);			// Zip File 解凍
 };
 #endif	// SAKURA_CZIPFILE_5D06C90F_5043_418e_BA31_FB599CF6FD03_H_
