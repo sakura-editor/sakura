@@ -60,6 +60,29 @@
 #include <errno.h>
 using namespace std;
 
+#define PREPROCESSOR "cl.exe /EP %s"
+
+#ifdef __MINGW32__
+#include <windows.h>
+#ifndef _countof
+#define _countof(A) (sizeof(A)/sizeof(A[0]))
+#endif
+#define sprintf_s(A, B, C, ...) sprintf((A), (C), (__VA_ARGS__))
+#define strncpy_s(A, B, C, D) strncpy((A), (C), (D))
+
+#undef PREPROCESSOR
+#define PREPROCESSOR "gcc -x c++ -finput-charset=cp932 -fexec-charset=cp932 -E %s"
+
+void fopen_s( 
+   FILE** pFile,
+   const char *filename,
+   const char *mode 
+)
+{
+	*pFile = fopen(filename, mode);
+}
+#endif
+
 enum EMode{
 	MODE_INVALID,
 
@@ -166,7 +189,7 @@ int main(int argc,char* argv[])
 next:
 	//ファイルオープン
 	char in_file2[_MAX_PATH];
-	sprintf_s(in_file2,_countof(in_file2),"cl.exe /EP %s",in_file);
+	sprintf_s(in_file2,_countof(in_file2),PREPROCESSOR,in_file);
 	FILE* in=_popen(in_file2,"rt");               if(!in ){ printf("Error: 入力ファイルを開けません\n"); return 1; } //※プリプロセス済みストリーム
 	FILE* out=NULL; fopen_s(&out,out_file,"wt");  if(!out){ printf("Error: 出力ファイルを開けません\n"); return 1; }
 
@@ -199,6 +222,11 @@ next:
 	if(mode==MODE_ENUM)fprintf(out,"enum %s{\n",enum_name); //enum開始
 	while(NULL!=fgets(line,_countof(line),in))
 	{
+		// #無視(for MinGW)
+		if('#' == line[0]){
+			continue;
+		}
+
 		//改行除去
 		{
 			char* p=strrchr(line,'\n');
