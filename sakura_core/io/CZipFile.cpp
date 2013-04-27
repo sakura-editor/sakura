@@ -41,6 +41,31 @@ const GUID CLSID_Shell =
 };
 #endif
 
+
+// コンストラクタ
+CZipFile::CZipFile() {
+	HRESULT		hr;
+
+	hr = CoCreateInstance(CLSID_Shell, NULL, CLSCTX_INPROC_SERVER, IID_IShellDispatch, reinterpret_cast<void **>(&psd));
+	if (FAILED(hr)) {
+		psd = NULL;
+	}
+	pZipFile = NULL;
+}
+
+
+// デストラクタ
+CZipFile::~CZipFile() {
+	if (pZipFile != NULL) {
+		pZipFile->Release();
+		pZipFile = NULL;
+	}
+	psd = NULL;
+}
+
+
+
+// Zip File名 設定
 bool CZipFile::SetZip(const std::tstring sZipPath)
 {
 	HRESULT			hr;
@@ -60,6 +85,9 @@ bool CZipFile::SetZip(const std::tstring sZipPath)
 		pZipFile = NULL;
 		return false;
 	}
+
+	sZipName = sZipPath;
+
 	return true;
 }
 
@@ -123,7 +151,8 @@ bool CZipFile::ChkPluginDef(const std::tstring sDefFile, std::tstring& sFolderNa
 				// 定義ファイルか
 				if (!vFolder && auto_strlen(bps) >= sDefFile.length()
 					&& (auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("/") + sDefFile).c_str())) == 0
-					|| auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("\\") + sDefFile).c_str())) == 0)) {
+					|| auto_stricmp(to_tchar(bps), to_tchar((sFolderName + _T("\\") + sDefFile).c_str())) == 0
+					|| auto_stricmp(to_tchar(bps), to_tchar((sZipName + _T("\\") + sFolderName + _T("\\") + sDefFile).c_str())) == 0)) {
 					bFoundDef = true;
 					break;
 				}
