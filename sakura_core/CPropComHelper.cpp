@@ -285,8 +285,6 @@ void CPropHelper::SetData( HWND hwndDlg )
 	//migemo dict 
 	::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll);
 	::SetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict);
-
-	return;
 }
 
 
@@ -303,7 +301,6 @@ int CPropHelper::GetData( HWND hwndDlg )
 	/* HtmlHelpビューアはひとつ */
 	m_Common.m_sHelper.m_bHtmlHelpIsSingle = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_HTMLHELPISSINGLE ) != 0;
 
-
 	/* 補完候補決定キー */
 	m_Common.m_sHelper.m_bHokanKey_RETURN = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_RETURN );//VK_RETURN 補完決定キーが有効/無効
 	m_Common.m_sHelper.m_bHokanKey_TAB = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_m_bHokanKey_TAB );		//VK_TAB    補完決定キーが有効/無効
@@ -311,7 +308,6 @@ int CPropHelper::GetData( HWND hwndDlg )
 
 	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DLL, m_Common.m_sHelper.m_szMigemoDll, _countof( m_Common.m_sHelper.m_szMigemoDll ));
 	::GetDlgItemText( hwndDlg, IDC_EDIT_MIGEMO_DICT, m_Common.m_sHelper.m_szMigemoDict, _countof( m_Common.m_sHelper.m_szMigemoDict ));
-
 
 	return TRUE;
 }

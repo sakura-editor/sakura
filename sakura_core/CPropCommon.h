@@ -22,8 +22,6 @@
 #ifndef SAKURA_PROP_CPROPCOMMON_H_
 #define SAKURA_PROP_CPROPCOMMON_H_
 
-class CPropCommon;
-
 #include "CShareData.h"
 #include "sakura_rc.h"
 #include "CFuncLookup.h"
@@ -84,6 +82,10 @@ public:
 	void InitData( void );		//!< DLLSHAREDATAから一時データ領域に設定を複製する
 	void ApplyData( void );		//!< 一時データ領域からにDLLSHAREDATA設定をコピーする
 
+	//
+	static INT_PTR CALLBACK DlgProc_page(
+		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
+
 	//	Jun. 2, 2001 genta
 	//	ここにあったEvent Handlerはprotectedエリアに移動した．
 
@@ -92,7 +94,6 @@ public:
 	HWND				m_hwndThis;		/* このダイアログのハンドル */
 	ComPropSheetOrder	m_nPageNum;
 	DLLSHAREDATA*		m_pShareData;
-	int					m_nSettingType;
 //	int				m_nActiveItem;
 
 	//	Oct. 16, 2000 genta
@@ -110,8 +111,6 @@ public:
 	LPCTSTR			m_pszHelpFile;
 	CommonSetting	m_Common;
 
-	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
-	//STypeConfig			m_Types[MAX_TYPES];
 	// 2005.01.13 MIK セット数増加
 	int				m_Types_nKeyWordSetIdx[MAX_TYPES][MAX_KEYWORDSET_PER_TYPE];
 
@@ -140,11 +139,6 @@ protected:
 	int nLastPos_Macro; //!< 前回フォーカスのあった場所
 	int m_nLastPos_FILENAME; //!< 前回フォーカスのあった場所 ファイル名タブ用
 
-public:
-	//
-	static INT_PTR CALLBACK DlgProc_page(
-		HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
-protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void SetData( HWND );	//!< ダイアログデータの設定

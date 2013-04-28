@@ -205,7 +205,7 @@ INT_PTR CPropToolbar::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_TOOLBAR );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE_A( "PROP_TOOLBAR PSN_KILLACTIVE\n" );
+//			MYTRACE( _T("PROP_TOOLBAR PSN_KILLACTIVE\n") );
 			/* ダイアログデータの取得 Toolbar */
 			GetData( hwndDlg );
 			return TRUE;

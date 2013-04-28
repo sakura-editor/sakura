@@ -359,7 +359,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 void CPropMacro::InitDialog( HWND hwndDlg )
 {
 	struct ColumnData {
-		TCHAR *title;
+		const TCHAR *title;
 		int width;
 	} ColumnList[] = {
 		{ _T("î‘çÜ"), 40 },
@@ -383,7 +383,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 		
 		memset( &sColumn, 0, sizeof( sColumn ));
 		sColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM | LVCF_FMT;
-		sColumn.pszText = ColumnList[pos].title;
+		sColumn.pszText = const_cast<TCHAR*>(ColumnList[pos].title);
 		sColumn.cx = ColumnList[pos].width;
 		sColumn.iSubItem = pos;
 		sColumn.fmt = LVCFMT_LEFT;
@@ -434,7 +434,6 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 {
 	int index;
 	LVITEM sItem;
-	char buf[256];
 	
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
 	HWND hNum = ::GetDlgItem( hwndDlg, IDC_COMBO_MACROID );
@@ -452,6 +451,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	sItem.mask = LVIF_TEXT;
 	sItem.iSubItem = 1;
 	
+	TCHAR buf[256];
 	::GetDlgItemText( hwndDlg, IDC_MACRONAME, buf, MACRONAME_MAX );
 	sItem.pszText = buf;
 	ListView_SetItem( hListView, &sItem );
@@ -652,7 +652,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.pszText = buf;
 	sItem.cchTextMax = MAX_PATH;
 	ListView_GetItem( hListView, &sItem );
-	if ( strcmp(buf, _T("on")) == 0){
+	if ( _tcscmp(buf, _T("on")) == 0){
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true );
 	}
 	else {

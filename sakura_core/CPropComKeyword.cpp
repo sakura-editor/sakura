@@ -19,11 +19,11 @@
 */
 
 #include "StdAfx.h"
-#include "CPropCommon.h"
-#include "Debug.h"
 #include <windows.h>
 #include <stdio.h>
 #include <commctrl.h>
+#include "CPropCommon.h"
+#include "Debug.h"
 #include "CDlgOpenFile.h"
 #include "etc_uty.h"
 #include "CDlgInput1.h"
@@ -132,36 +132,36 @@ INT_PTR CPropKeyword::DispatchEvent(
 		if( hwndLIST_KEYWORD == pNMHDR->hwndFrom ){
 			switch( pNMHDR->code ){
 			case NM_DBLCLK:
-//				MYTRACE_A( "NM_DBLCLK     \n" );
+//				MYTRACE( _T("NM_DBLCLK     \n") );
 				/* リスト中で選択されているキーワードを編集する */
 				Edit_List_KeyWord( hwndDlg, hwndLIST_KEYWORD );
 				return TRUE;
 			case LVN_BEGINLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE_A( "LVN_BEGINLABELEDIT\n" );
-												MYTRACE_A( "	plvi->mask =[%xh]\n", plvi->mask );
-												MYTRACE_A( "	plvi->iItem =[%d]\n", plvi->iItem );
-												MYTRACE_A( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE_A( "	plvi->state =[%xf]\n", plvi->state );
-												MYTRACE_A( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE_A( "	plvi->pszText =[%s]\n", plvi->pszText );
-												MYTRACE_A( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE_A( "	plvi->iImage=[%d]\n", plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE_A( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+				MYTRACE( _T("LVN_BEGINLABELEDIT\n") );
+												MYTRACE( _T("	plvi->mask =[%xh]\n"), plvi->mask );
+												MYTRACE( _T("	plvi->iItem =[%d]\n"), plvi->iItem );
+												MYTRACE( _T("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( _T("	plvi->state =[%xf]\n"), plvi->state );
+												MYTRACE( _T("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%s]\n"), plvi->pszText );
+												MYTRACE( _T("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( _T("	plvi->iImage=[%d]\n"), plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( _T("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );
 #endif
 				return TRUE;
 			case LVN_ENDLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE_A( "LVN_ENDLABELEDIT\n" );
-												MYTRACE_A( "	plvi->mask =[%xh]\n", plvi->mask );
-												MYTRACE_A( "	plvi->iItem =[%d]\n", plvi->iItem );
-												MYTRACE_A( "	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE_A( "	plvi->state =[%xf]\n", plvi->state );
-												MYTRACE_A( "	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE_A( "	plvi->pszText =[%s]\n", plvi->pszText  );
-												MYTRACE_A( "	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE_A( "	plvi->iImage=[%d]\n", plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE_A( "	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+				MYTRACE( _T("LVN_ENDLABELEDIT\n") );
+												MYTRACE( _T("	plvi->mask =[%xh]\n"), plvi->mask );
+												MYTRACE( _T("	plvi->iItem =[%d]\n"), plvi->iItem );
+												MYTRACE( _T("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( _T("	plvi->state =[%xf]\n"), plvi->state );
+												MYTRACE( _T("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( _T("	plvi->pszText =[%s]\n"), plvi->pszText  );
+												MYTRACE( _T("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( _T("	plvi->iImage=[%d]\n"), plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( _T("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );
 #endif
 				if( NULL == plvi->pszText ){
 					return TRUE;
@@ -188,7 +188,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 
 				return TRUE;
 			case LVN_KEYDOWN:
-//				MYTRACE_A( "LVN_KEYDOWN\n" );
+//				MYTRACE( _T("LVN_KEYDOWN\n") );
 				switch( pnkd->wVKey ){
 				case VK_DELETE:
 					/* リスト中で選択されているキーワードを削除する */
@@ -207,9 +207,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_KEYWORD );
 				return TRUE;
 			case PSN_KILLACTIVE:
-#ifdef _DEBUG
-				MYTRACE_A( "Keyword PSN_KILLACTIVE\n" );
-#endif
+				DEBUG_TRACE( _T("Keyword PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 Keyword */
 				GetData( hwndDlg );
 				return TRUE;

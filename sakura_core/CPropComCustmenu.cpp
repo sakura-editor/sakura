@@ -98,6 +98,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 	int			nIdx4;
 	char		szLabel[300];
 	char		szLabel2[300];
+
 	CDlgInput1	cDlgInput1;
 
 	switch( uMsg ){
@@ -129,7 +130,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_CUSTMENU );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE_A( "Custom menu PSN_KILLACTIVE\n" );
+//			MYTRACE( _T("Custom menu PSN_KILLACTIVE\n") );
 			/* ダイアログデータの取得 Custom menu */
 			GetData( hwndDlg );
 			return TRUE;
@@ -263,7 +264,10 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = szKey[0];
 //@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
 				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
-					wsprintf( szLabel2, "%s(%c)", szLabel, m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+					wsprintf( szLabel2, "%s(%c)",
+						szLabel,
+						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]
+					);
 				}
 				else {
 					wsprintf( szLabel2, "%s", szLabel );

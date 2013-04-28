@@ -12,9 +12,9 @@
 */
 
 #include "StdAfx.h"
-#include "CPropCommon.h"
 #include <windows.h>
 #include <commctrl.h>
+#include "CPropCommon.h"
 #include "global.h"
 #include "etc_uty.h"
 #include "Debug.h"
@@ -218,7 +218,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FILE:
 			/* ファイルの履歴MAX */
-//			MYTRACE_A( "IDC_SPIN_MAX_MRU_FILE\n" );
+//			MYTRACE( _T("IDC_SPIN_MAX_MRU_FILE\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FILE, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -236,7 +236,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 			return TRUE;
 		case IDC_SPIN_MAX_MRU_FOLDER:
 			/* フォルダの履歴MAX */
-//			MYTRACE_A( "IDC_SPIN_MAX_MRU_FOLDER\n" );
+//			MYTRACE( _T("IDC_SPIN_MAX_MRU_FOLDER\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_MAX_MRU_FOLDER, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;
@@ -258,7 +258,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_GENERAL );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "General PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("General PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 General */
 				GetData( hwndDlg );
 				return TRUE;
@@ -270,11 +270,11 @@ INT_PTR CPropGeneral::DispatchEvent(
 			break;
 		}
 
-//		MYTRACE_A( "pNMHDR->hwndFrom=%xh\n", pNMHDR->hwndFrom );
-//		MYTRACE_A( "pNMHDR->idFrom  =%xh\n", pNMHDR->idFrom );
-//		MYTRACE_A( "pNMHDR->code    =%xh\n", pNMHDR->code );
-//		MYTRACE_A( "pMNUD->iPos    =%d\n", pMNUD->iPos );
-//		MYTRACE_A( "pMNUD->iDelta  =%d\n", pMNUD->iDelta );
+//		MYTRACE( _T("pNMHDR->hwndFrom=%xh\n"), pNMHDR->hwndFrom );
+//		MYTRACE( _T("pNMHDR->idFrom  =%xh\n"), pNMHDR->idFrom );
+//		MYTRACE( _T("pNMHDR->code    =%xh\n"), pNMHDR->code );
+//		MYTRACE( _T("pMNUD->iPos    =%d\n"), pMNUD->iPos );
+//		MYTRACE( _T("pMNUD->iDelta  =%d\n"), pMNUD->iDelta );
 		break;
 
 //@@@ 2001.02.04 Start by MIK: Popup Help

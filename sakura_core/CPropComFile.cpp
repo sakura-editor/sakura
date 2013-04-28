@@ -102,7 +102,7 @@ INT_PTR CPropFile::DispatchEvent(
 //				OnHelp( hwndDlg, IDD_PROP_FILE );
 //				return TRUE;
 //			case PSN_KILLACTIVE:
-////				MYTRACE_A( "p2 PSN_KILLACTIVE\n" );
+////				MYTRACE( _T("p2 PSN_KILLACTIVE\n") );
 //				/* ダイアログデータの取得 p2 */
 //				GetData_p2( hwndDlg );
 //				return TRUE;
@@ -121,7 +121,7 @@ INT_PTR CPropFile::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_FILE );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "File PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("File PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 File */
 				GetData( hwndDlg );
 				return TRUE;
@@ -424,7 +424,7 @@ void CPropFile::EnableFilePropInput(HWND hwndDlg)
 
 	//	排他するかどうか
 	int nSelPos = ::SendMessage(::GetDlgItem( hwndDlg, IDC_COMBO_FILESHAREMODE), CB_GETCURSEL, 0L, 0L);
-	if( ShareModeArr[nSelPos].nMethod == 0 ){
+	if( ShareModeArr[nSelPos].nMethod == SHAREMODE_NOT_EXCLUSIVE ){
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_bCheckFileTimeStamp ), FALSE );

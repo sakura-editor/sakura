@@ -173,7 +173,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_KEYBIND );
 			return TRUE;
 		case PSN_KILLACTIVE:
-//			MYTRACE_A( "Keybind PSN_KILLACTIVE\n" );
+//			MYTRACE( _T("Keybind PSN_KILLACTIVE\n") );
 			/* ダイアログデータの取得 Keybind */
 			GetData( hwndDlg );
 			return TRUE;
@@ -451,7 +451,7 @@ void CPropKeybind::SetData( HWND hwndDlg )
 	/* キー一覧に文字列をセット（リストボックス）*/
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
-			::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		::SendMessage( hwndKeyList, LB_ADDSTRING, 0, (LPARAM)m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 	}
 
 	// 2009.08.15 nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)

@@ -19,11 +19,11 @@
 
 #include "StdAfx.h"
 #include "global.h"
-#include "Debug.h" // 2002/2/10 aroka
 #include "CPropCommon.h"
 #include "CDlgWinSize.h"	//	2004.05.13 Moca
-#include "sakura.hh"
 #include "COsVersionInfo.h"
+#include "Debug.h" // 2002/2/10 aroka
+#include "sakura.hh"
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//11200
@@ -115,7 +115,7 @@ INT_PTR CPropWin::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_WIN );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "Window PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("Window PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 Window */
 				GetData( hwndDlg );
 				return TRUE;

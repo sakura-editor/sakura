@@ -136,7 +136,7 @@ INT_PTR CPropEdit::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_EDIT );
 			return TRUE;
 		case PSN_KILLACTIVE:
-			DBPRINT_A( "Edit PSN_KILLACTIVE\n" );
+			DBPRINT( _T("Edit PSN_KILLACTIVE\n") );
 
 			/* ダイアログデータの取得 Edit */
 			GetData( hwndDlg );
