@@ -79,13 +79,9 @@ void CColor_Found::OnStartScanLogic()
 	m_nSearchEnd	= CLogicInt(-1);
 
 	this->validColorNum = 0;
-	const CEditDoc* const pDoc = CEditDoc::GetInstance(0);
-	if( pDoc ) {
-		const STypeConfig& doctype = pDoc->m_cDocType.GetDocumentAttribute();
-		for( int color = COLORIDX_SEARCH; color <= COLORIDX_SEARCHTAIL; ++color ) {
-			if( doctype.m_ColorInfoArr[ color ].m_bDisp ) {
-				this->highlightColors[ this->validColorNum++ ] = EColorIndexType( color );
-			}
+	for( int color = COLORIDX_SEARCH; color <= COLORIDX_SEARCHTAIL; ++color ) {
+		if( m_pTypeData->m_ColorInfoArr[ color ].m_bDisp ) {
+			this->highlightColors[ this->validColorNum++ ] = EColorIndexType( color );
 		}
 	}
 }
