@@ -225,7 +225,15 @@ bool CColorStrategyPool::CheckColorMODE(
 	return false;
 }
 
-
+/*! 設定更新
+*/
+void CColorStrategyPool::OnChangeSetting(void)
+{
+	int size = (int)m_vStrategies.size();
+	for(int i = 0; i < size; i++){
+		m_vStrategies[i]->Update();
+	}
+}
 
 /*!
   iniの色設定を番号でなく文字列で書き出す。(added by Stonee, 2001/01/12, 2001/01/15)

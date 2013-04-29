@@ -16,11 +16,9 @@ bool CColor_Numeric::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
 
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
 	int	nnn;
-	
-	if( _IsPosKeywordHead(cStr,nPos) && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
+
+	if( _IsPosKeywordHead(cStr,nPos) && m_pTypeData->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
 		&& (nnn = IsNumber(cStr, nPos)) > 0 )		/* 半角数字を表示する */
 	{
 		/* キーワード文字列の終端をセットする */

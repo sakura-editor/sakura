@@ -4,6 +4,7 @@
 #include "CEditApp.h"
 #include "window/CEditWnd.h"
 #include "CGrepAgent.h"
+#include "view/colors/CColorStrategy.h"
 
 CDocType::CDocType(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
@@ -24,6 +25,9 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 		CDocTypeManager().GetTypeSetting(m_nSettingType).m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
 		this->SetDocumentIcon();	// Sep. 11, 2002 genta
 		m_pcDocRef->SetBackgroundImage();
+
+		// タイプ別設定更新を反映
+		CColorStrategyPool::getInstance()->OnChangeSetting();
 	}
 }
 

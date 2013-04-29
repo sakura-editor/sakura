@@ -27,9 +27,7 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 	if( ! cStr.IsValid() ) {
 		return false; // どうにもできない。
 	}
-	const CEditDoc* const pDoc = CEditDoc::GetInstance(0);
-	const STypeConfig& doctype = pDoc->m_cDocType.GetDocumentAttribute();
-	
+
 	/*
 		Summary:
 			現在位置からキーワードを抜き出し、そのキーワードが登録単語ならば、色を変える
@@ -49,10 +47,10 @@ bool CColor_KeywordSet::BeginColor(const CStringRef& cStr, int nPos)
 
 	const int posNextWordHead = NextWordBreak( cStr, nPos );
 	for( int i = 0; i < MAX_KEYWORDSET_PER_TYPE; ++i ) {
-		if( ! doctype.m_ColorInfoArr[ COLORIDX_KEYWORD1 + i ].m_bDisp ) {
+		if( ! m_pTypeData->m_ColorInfoArr[ COLORIDX_KEYWORD1 + i ].m_bDisp ) {
 			continue; // 色設定が非表示なのでスキップ。
 		}
-		const int iKwdSet = doctype.m_nKeyWordSetIdx[i];
+		const int iKwdSet = m_pTypeData->m_nKeyWordSetIdx[i];
 		if( iKwdSet == -1 ) {
 			continue; // キーワードセットが設定されていないのでスキップ。
 		}
