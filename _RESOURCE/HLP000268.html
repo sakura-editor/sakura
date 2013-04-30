@@ -45,6 +45,11 @@
 <META NAME="MS-HKWD" CONTENT="LogicToLayoutLineNum">
 <META NAME="MS-HKWD" CONTENT="LineColumnToIndex">
 <META NAME="MS-HKWD" CONTENT="LineIndexToColumn">
+<META NAME="MS-HKWD" CONTENT="GetCookie">
+<META NAME="MS-HKWD" CONTENT="GetCookieDefault">
+<META NAME="MS-HKWD" CONTENT="SetCookie">
+<META NAME="MS-HKWD" CONTENT="DeleteCookie">
+<META NAME="MS-HKWD" CONTENT="GetCookieNames">
 <META NAME="MS-HKWD" CONTENT="SetFontSize">
 </HEAD>
 <BODY>
@@ -107,7 +112,12 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#LogicToLayoutLineNum">LogicToLayoutLineNum</a>( int1: Integer, int2: Integer ) :Integer<br>
 ・<a href="#LineColumnToIndex">LineColumnToIndex</a>( int1: Integer, int2: Integer ) :Integer<br>
 ・<a href="#LineIndexToColumn">LineIndexToColumn</a>( int1: Integer, int2: Integer ) :Integer<br>
-・<a href="#SetFontSize">SetFontSize</a>( int1: Integer, int2: Integer )<br>
+・<a href="#GetCookie">GetCookie</a>( str1: String, str2: String ) :String;<br>
+・<a href="#GetCookieDefault">GetCookieDefault</a>( str1: String, str2: String, str3: String ) :String;<br>
+・<a href="#SetCookie">SetCookie</a>( str1: String, str2: String, str3: String ) :Integer;<br>
+・<a href="#DeleteCookie">DeleteCookie</a>( str1: String, str2: String ) :Integer;<br>
+・<a href="#GetCookieNames">GetCookieNames</a>( str1: String ) :String;<br>
+・<a href="#SetFontSize">SetFontSize</a>( int1: Integer, int2: Integer );<br>
 <hr>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -588,7 +598,89 @@ int2&nbsp;&nbsp;&nbsp;&nbsp;ロジック桁番号(1開始)<br>
 </div>
 sakura:2.0.4.0以降<br>
 <br>
-■ function <span id="SetFontSize">SetFontSize</span>( int1: Integer, int2: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+■ function <span id="GetCookie">GetCookie</span>( str1: String, str2: String ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
+<b>戻り値</b><br>
+設定されていたCookie値が返ります。<br>
+Cookieが設定されていなかった場合、空文字列が返ります。<br>
+<b>解説</b><br>
+スコープ名には、"document"と"window"を指定できます。<br>
+スコープ名、Cookie名は大文字小文字を区別します。
+</div>
+sakura:2.0.6.0以降<br>
+<br>
+■ function <span id="GetCookieDefault">GetCookieDefault</span>( str1: String, str2: String, str3: String ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
+str3&nbsp;&nbsp;&nbsp;&nbsp;デフォルト値<br>
+<b>戻り値</b><br>
+設定されていたCookie値が返ります。<br>
+Cookieが設定されていなかった場合、デフォルト値が返ります。<br>
+<br>
+<b>解説</b><br>
+スコープ名には、"document"と"window"を指定できます。<br>
+スコープ名、Cookie名は大文字小文字を区別します。
+</div>
+sakura:2.0.6.0以降<br>
+<br>
+■ function <span id="SetCookie">SetCookie</span>( str1: String, str2: String, str3: String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
+str3&nbsp;&nbsp;&nbsp;&nbsp;設定値<br>
+<b>戻り値</b><br>
+0: 正常終了<br>
+1: スコープ名が不正だった<br>
+2: Cookie名が不正だった<br>
+<br>
+<b>解説</b><br>
+Cookie系マクロでは、マクロ/プラグイン実行終了後も保持できる一時的な文字列を格納しておくことができます。<br>
+プラグインのPlugin.SetOption/GetOptionはグローバルな値を保持するのに使います。<br>
+Cookieでは各ウィンドウごとに別々の値を保持します。
+スコープ名には、"document"と"window"を指定できます。<br>
+"document"は、ファイルを開いてから閉じるまで有効です。ファイルを開きなおすしたり閉じるとクリアされます。<br>
+"window"は、ウィンドウを開いてから閉じるまで有効です。<br>
+<br>
+Cookie名に使用可能な文字は、[0-9A-Za-z_]のみです。<br>
+スコープ名、Cookie名は大文字小文字を区別します。
+</div>
+sakura:2.0.6.0以降<br>
+<br>
+■ function <span id="DeleteCookie">DeleteCookie</span>( str1: String, str2: String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;Cookie名<br>
+<b>戻り値</b><br>
+0: 正常終了<br>
+1: スコープ名が不正だった<br>
+2: Cookie名が不正だった<br>
+5: Cookie名に該当するCookieが存在しなかった<br>
+<b>解説</b><br>
+スコープ名には、"document"と"window"を指定できます。<br>
+スコープ名、Cookie名は大文字小文字を区別します。
+</div>
+sakura:2.0.6.0以降<br>
+<br>
+■ function <span id="GetCookieNames">GetCookieNames</span>( str1: String ) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
+<b>戻り値</b><br>
+該当のスコープの全Cookie名がカンマ区切り(例：「option1,option2」)で取得できます。
+<br>
+<b>解説</b><br>
+スコープ名、Cookie名は大文字小文字を区別します。<br>
+</div>
+sakura:2.0.6.0以降<br>
+<br>
+■ function <span id="SetFontSize">SetFontSize</span>( int1: Integer, int2: Integer ); <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>引数</b><br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;フォントサイズ(1/10ポイント単位)<br>
@@ -604,8 +696,9 @@ int1=0に設定したときに、int2でフォントサイズの拡大or縮小ができます。<br>
 選択されるフォントサイズは下記の通りです。<br>
 8pt, 9pt, 10pt, 10.5pt, 11pt, 12pt, 14pt, 16pt, 18pt, 20pt, 22pt, 24pt, 26pt, 28pt, 36pt, 48pt, 72pt<br>
 現在のフォントサイズが10のときにSelectFontSize(0,1);を設定するとフォントサイズが11になります。<br>
-現在のフォントサイズが10のときにSelectFontSize(0,-1);を設定するとフォントサイズが9になります。<br>
+現在のフォントサイズが10のときにSelectFontSize(0,-1);を設定するとフォントサイズが9になります。
 </div>
 sakura:2.0.8.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
 </BODY></HTML>
