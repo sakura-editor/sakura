@@ -145,7 +145,7 @@ public:
 	virtual void OnStartScanLogic(){}
 
 	//! Ý’èXV
-	void Update(void)
+	virtual void Update(void)
 	{
 		m_pCEditDoc = CEditDoc::GetInstance(0);
 		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
