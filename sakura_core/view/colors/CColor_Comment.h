@@ -46,20 +46,13 @@ public:
 
 class CColor_BlockComment : public CColorStrategy{
 public:
-	CColor_BlockComment(EColorIndexType nType) : m_nType(nType), m_nCOMMENTEND(0){}
-	virtual void Update(void)
-	{
-		m_pCEditDoc = CEditDoc::GetInstance(0);
-		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
-		m_pcBlockComments = &m_pTypeData->m_cBlockComments[COLORIDX_BLOCK1 - m_nType];
-	}
-	virtual EColorIndexType GetStrategyColor() const{ return m_nType; }
+	CColor_BlockComment(int nType) : m_nType(nType), m_nCOMMENTEND(0) { }
+	virtual EColorIndexType GetStrategyColor() const{ return (EColorIndexType)(COLORIDX_BLOCK1 + m_nType); }
 	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; }
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
 private:
-	EColorIndexType m_nType;
-	const CBlockComment* m_pcBlockComments;
+	int m_nType; //0 or 1 (ÉRÉÅÉìÉgéÌ)
 	int m_nCOMMENTEND;
 };
 
