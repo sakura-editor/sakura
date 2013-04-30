@@ -143,13 +143,16 @@ CColorStrategyPool::CColorStrategyPool()
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
 	m_vStrategies.push_back(new CColor_RegexKeyword);		// 正規表現キーワード
 	m_vStrategies.push_back(new CColor_LineComment);		// 行コメント
-	m_vStrategies.push_back(new CColor_BlockComment(0));	// ブロックコメント
-	m_vStrategies.push_back(new CColor_BlockComment(1));	// ブロックコメント2
+	m_vStrategies.push_back(new CColor_BlockComment(COLORIDX_BLOCK1));	// ブロックコメント
+	m_vStrategies.push_back(new CColor_BlockComment(COLORIDX_BLOCK2));	// ブロックコメント2
 	m_vStrategies.push_back(new CColor_SingleQuote);		// シングルクォーテーション文字列
 	m_vStrategies.push_back(new CColor_DoubleQuote);		// ダブルクォーテーション文字列
 	m_vStrategies.push_back(new CColor_Url);				// URL
 	m_vStrategies.push_back(new CColor_Numeric);			// 半角数字
 	m_vStrategies.push_back(new CColor_KeywordSet);			// キーワードセット
+
+	// 設定更新
+	OnChangeSetting();
 
 	// CheckColorMODE 用
 	m_pcLineComment = (CColor_LineComment*)GetStrategyByColor(COLORIDX_COMMENT);	// 行コメント
@@ -229,6 +232,8 @@ bool CColorStrategyPool::CheckColorMODE(
 */
 void CColorStrategyPool::OnChangeSetting(void)
 {
+	m_pcSelectStrategy->Update();
+	m_pcFoundStrategy->Update();
 	int size = (int)m_vStrategies.size();
 	for(int i = 0; i < size; i++){
 		m_vStrategies[i]->Update();
