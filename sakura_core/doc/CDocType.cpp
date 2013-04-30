@@ -5,6 +5,7 @@
 #include "window/CEditWnd.h"
 #include "CGrepAgent.h"
 #include "view/colors/CColorStrategy.h"
+#include "view/figures/CFigureStrategy.h"
 
 CDocType::CDocType(CEditDoc* pcDoc)
 : m_pcDocRef(pcDoc)
@@ -28,6 +29,7 @@ void CDocType::SetDocumentType(CTypeConfig type, bool force, bool bTypeOnly )
 
 		// タイプ別設定更新を反映
 		CColorStrategyPool::getInstance()->OnChangeSetting();
+		CFigureManager::getInstance()->OnChangeSetting();
 	}
 }
 

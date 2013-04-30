@@ -35,6 +35,16 @@ public:
 	virtual ~CFigure(){}
 	virtual bool DrawImp(SColorStrategyInfo* pInfo) = 0;
 	virtual bool Match(const wchar_t* pText) const = 0;
+
+	//! 設定更新
+	virtual void Update(void)
+	{
+		m_pCEditDoc = CEditDoc::GetInstance(0);
+		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
+	}
+protected:
+	const CEditDoc* m_pCEditDoc;
+	const STypeConfig* m_pTypeData;
 };
 
 //! 各種空白（半角空白／全角空白／タブ／改行）描画用の基本クラス
@@ -58,6 +68,9 @@ public:
 	CFigureManager();
 	virtual ~CFigureManager();
 	CFigure& GetFigure(const wchar_t* pText);
+
+	// 設定変更
+	void OnChangeSetting(void);
 
 private:
 	std::vector<CFigure*>	m_vFigures;
