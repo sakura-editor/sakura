@@ -143,8 +143,8 @@ CColorStrategyPool::CColorStrategyPool()
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
 	m_vStrategies.push_back(new CColor_RegexKeyword);		// 正規表現キーワード
 	m_vStrategies.push_back(new CColor_LineComment);		// 行コメント
-	m_vStrategies.push_back(new CColor_BlockComment(0));	// ブロックコメント
-	m_vStrategies.push_back(new CColor_BlockComment(1));	// ブロックコメント2
+	m_vStrategies.push_back(new CColor_BlockComment(COLORIDX_BLOCK1));	// ブロックコメント
+	m_vStrategies.push_back(new CColor_BlockComment(COLORIDX_BLOCK2));	// ブロックコメント2
 	m_vStrategies.push_back(new CColor_SingleQuote);		// シングルクォーテーション文字列
 	m_vStrategies.push_back(new CColor_DoubleQuote);		// ダブルクォーテーション文字列
 	m_vStrategies.push_back(new CColor_Url);				// URL
