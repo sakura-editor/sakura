@@ -48,11 +48,11 @@ bool CColor_BlockComment::BeginColor(const CStringRef& cStr, int nPos)
 
 	// ブロックコメント
 	if( m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
-		m_pTypeData->m_cBlockComments[m_nType].Match_CommentFrom( nPos, cStr )	//@@@ 2002.09.22 YAZAKI
+		m_pcBlockComment->Match_CommentFrom( nPos, cStr )	//@@@ 2002.09.22 YAZAKI
 	){
 		/* この物理行にブロックコメントの終端があるか */	//@@@ 2002.09.22 YAZAKI
-		this->m_nCOMMENTEND = m_pTypeData->m_cBlockComments[m_nType].Match_CommentTo(
-			nPos + m_pTypeData->m_cBlockComments[m_nType].getBlockFromLen(),
+		this->m_nCOMMENTEND = m_pcBlockComment->Match_CommentTo(
+			nPos + m_pcBlockComment->getBlockFromLen(),
 			cStr
 		);
 
@@ -65,7 +65,7 @@ bool CColor_BlockComment::EndColor(const CStringRef& cStr, int nPos)
 {
 	if( 0 == this->m_nCOMMENTEND ){
 		/* この物理行にブロックコメントの終端があるか */
-		this->m_nCOMMENTEND = m_pTypeData->m_cBlockComments[m_nType].Match_CommentTo(
+		this->m_nCOMMENTEND = m_pcBlockComment->Match_CommentTo(
 			nPos,
 			cStr
 		);

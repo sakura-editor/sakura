@@ -130,10 +130,6 @@ struct SColorStrategyInfo{
 
 class CColorStrategy{
 public:
-	CColorStrategy()
-	{
-		Update();
-	}
 	virtual ~CColorStrategy(){}
 	//! 色定義
 	virtual EColorIndexType GetStrategyColor() const = 0;
@@ -145,7 +141,7 @@ public:
 	virtual void OnStartScanLogic(){}
 
 	//! 設定更新
-	void Update(void)
+	virtual void Update(void)
 	{
 		m_pCEditDoc = CEditDoc::GetInstance(0);
 		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
