@@ -41,7 +41,6 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	//必要なインターフェース
 	const CTextMetrics* pMetrics=&pcView->GetTextMetrics();
 	const CTextArea* pArea=&pcView->GetTextArea();
-	STypeConfig* TypeDataPtr = &pcView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int nLineHeight = pMetrics->GetHankakuDy();
 	int nCharWidth = pMetrics->GetHankakuDx();
@@ -62,7 +61,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
 
 	if( pArea->IsRectIntersected(rcClip2) ){
-		if( cTabType.IsDisp() && !TypeDataPtr->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
+		if( cTabType.IsDisp() && !m_pTypeData->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
 			//@@@ 2001.03.16 by MIK
 			::ExtTextOutW_AnyBuild(
 				gr,
@@ -70,7 +69,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 				sPos.GetDrawPos().y,
 				ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 				&rcClip2,
-				TypeDataPtr->m_szTabViewString,
+				m_pTypeData->m_szTabViewString,
 				tabDispWidth <= 8 ? tabDispWidth : 8, // Sep. 22, 2002 genta
 				pMetrics->GetDxArray_AllHankaku()
 			);
@@ -88,7 +87,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 			);
 
 			//タブ矢印表示
-			if( cTabType.IsDisp() && TypeDataPtr->m_bTabArrow /*&& rcClip2.left <= sPos.GetDrawPos().x*/ ){ // Apr. 1, 2003 MIK 行番号と重なる
+			if( cTabType.IsDisp() && m_pTypeData->m_bTabArrow /*&& rcClip2.left <= sPos.GetDrawPos().x*/ ){ // Apr. 1, 2003 MIK 行番号と重なる
 				// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
 				// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
 				//	太字かどうか設定も見る様にする 2013/4/11 Uchi
@@ -103,7 +102,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 					nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Area一杯に 2013/4/11 Uchi
 					pMetrics->GetHankakuHeight(),
 					tm.tmWeight > lfWeightNormal ||
-						TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bFatFont,
+						m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bFatFont,
 					::GetTextColor(gr)//cTabType.GetTextColor()
 				);
 			}

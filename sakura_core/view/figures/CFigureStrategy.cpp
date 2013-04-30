@@ -174,11 +174,14 @@ CFigureManager::CFigureManager()
 	m_vFigures.push_back(new CFigure_HanBinary());
 	m_vFigures.push_back(new CFigure_ZenBinary());
 	m_vFigures.push_back(new CFigure_Text());
+
+	OnChangeSetting();
 }
 
 CFigureManager::~CFigureManager()
 {
-	for(int i=0;i<(int)m_vFigures.size();i++){
+	int size = (int)m_vFigures.size();
+	for(int i = 0; i < size; i++){
 		SAFE_DELETE(m_vFigures[i]);
 	}
 	m_vFigures.clear();
@@ -187,7 +190,8 @@ CFigureManager::~CFigureManager()
 //$$ ‚‘¬‰»‰Â”\
 CFigure& CFigureManager::GetFigure(const wchar_t* pText)
 {
-	for(int i=0;i<(int)m_vFigures.size();i++){
+	int size = (int)m_vFigures.size();
+	for(int i = 0; i < size; i++){
 		CFigure* pcFigure = m_vFigures[i];
 		if(pcFigure->Match(pText)){
 			return *pcFigure;
@@ -196,5 +200,15 @@ CFigure& CFigureManager::GetFigure(const wchar_t* pText)
 	assert(0);
 	static CFigure_Text cDummy;
 	return cDummy;
+}
+
+/*! İ’èXV
+*/
+void CFigureManager::OnChangeSetting(void)
+{
+	int size = (int)m_vFigures.size();
+	for(int i = 0; i < size; i++){
+		m_vFigures[i]->Update();
+	}
 }
 

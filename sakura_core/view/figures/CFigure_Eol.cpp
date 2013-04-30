@@ -40,10 +40,9 @@ bool CFigure_Eol::Match(const wchar_t* pText) const
 bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 {
 	CEditView* pcView = pInfo->pcView;
-	const CEditDoc* pcDoc =  pcView->m_pcEditDoc;
 
 	// ‰üsŽæ“¾
-	const CLayout*	pcLayout2 = pcDoc->m_cLayoutMgr.SearchLineByLayoutY(pInfo->pDispPos->GetLayoutLineRef());
+	const CLayout*	pcLayout2 = m_pCEditDoc->m_cLayoutMgr.SearchLineByLayoutY(pInfo->pDispPos->GetLayoutLineRef());
 	CEol cEol = pcLayout2->GetLayoutEol();
 	if(cEol.GetLen()){
 		m_cEol = cEol;

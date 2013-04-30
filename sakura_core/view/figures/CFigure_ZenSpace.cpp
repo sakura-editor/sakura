@@ -10,10 +10,7 @@
 
 bool CFigure_ZenSpace::Match(const wchar_t* pText) const
 {
-	const CEditDoc* pcDoc = CEditDoc::GetInstance(0);
-	const STypeConfig* TypeDataPtr = &pcDoc->m_cDocType.GetDocumentAttribute();
-
-	if(pText[0] == L'@' && TypeDataPtr->m_ColorInfoArr[COLORIDX_ZENSPACE].m_bDisp){
+	if(pText[0] == L'@' && m_pTypeData->m_ColorInfoArr[COLORIDX_ZENSPACE].m_bDisp){
 		return true;
 	}
 	return false;
