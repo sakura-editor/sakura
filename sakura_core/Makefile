@@ -421,7 +421,7 @@ $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 
 .rc.o:
 	$(RCTOOL) $< sakura_grc.rc
-	$(RC) --language=0411 sakura_grc.rc -o $@
+	$(RC) --language=0411 $(DEFINES) sakura_grc.rc -o $@
 
 clean:
 	$(RM) $(exe) $(OBJS) $(RCTOOL) $(HEADERMAKE) sakura_grc.rc
