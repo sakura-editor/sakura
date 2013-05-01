@@ -166,7 +166,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #if (SVN_REV == 0)
 	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d\r\n"),
 #else
-	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (r") _T(NUM_TO_STR(SVN_REV)) _T(")\r\n"),
+	auto_sprintf( szMsg, _T("Ver. %d.%d.%d.%d (r") _T(SVN_REV_STR) _T(")\r\n"),
 #endif
 		HIWORD( dwVersionMS ),
 		LOWORD( dwVersionMS ),
