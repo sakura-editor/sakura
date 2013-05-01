@@ -151,11 +151,6 @@ void CEditView::DrawBracketPair( bool bDraw )
 				CTypeSupport    cCuretLineBg(this,COLORIDX_CARETLINEBG);
 				EColorIndexType nColorIndexBg = (cCuretLineBg.IsDisp() && ptColLine.GetY2() == GetCaret().GetCaretLayoutPos().GetY2() ? COLORIDX_CARETLINEBG :  COLORIDX_TEXT);
 
-				int nHeight = GetTextMetrics().GetHankakuDy();
-				int nLeft = (GetTextArea().GetDocumentLeftClientPointX()) + (Int)ptColLine.x * GetTextMetrics().GetHankakuDx();
-				int nTop  = (Int)( ptColLine.GetY2() - GetTextArea().GetViewTopLine() ) * nHeight + GetTextArea().GetAreaTop();
-				CLayoutInt charsWidth = CNativeW::GetKetaOfChar(pLine, nLineLen, OutputX);
-
 				// 03/03/03 ai カーソルの左に括弧があり括弧が強調表示されている状態でShift+←で選択開始すると
 				//             選択範囲内に反転表示されない部分がある問題の修正
 				CLayoutInt caretX = GetCaret().GetCaretLayoutPos().GetX2();
@@ -165,6 +160,12 @@ void CEditView::DrawBracketPair( bool bDraw )
 					GetCaret().HideCaret_( GetHwnd() );	// キャレットが一瞬消えるのを防止
 				}
 				{
+					int nWidth  = GetTextMetrics().GetHankakuDx();
+					int nHeight = GetTextMetrics().GetHankakuDy();
+					int nLeft = (GetTextArea().GetDocumentLeftClientPointX()) + (Int)ptColLine.x * nWidth;
+					int nTop  = (Int)( ptColLine.GetY2() - GetTextArea().GetViewTopLine() ) * nHeight + GetTextArea().GetAreaTop();
+					CLayoutInt charsWidth = CNativeW::GetKetaOfChar(pLine, nLineLen, OutputX);
+
 					//色設定
 					CTypeSupport cTextType(this,COLORIDX_TEXT);
 					cTextType.SetGraphicsState_WhileThisObj(gr);
@@ -178,7 +179,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 						RECT rcChar;
 						rcChar.left  = nLeft;
 						rcChar.top = nTop;
-						rcChar.right = nLeft + (Int)charsWidth * GetTextMetrics().GetHankakuDx();
+						rcChar.right = nLeft + (Int)charsWidth * nWidth;
 						rcChar.bottom = nTop + nHeight;
 						HDC hdcBgImg = ::CreateCompatibleDC(gr);
 						HBITMAP hBmpOld = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
@@ -186,7 +187,9 @@ void CEditView::DrawBracketPair( bool bDraw )
 						::SelectObject(hdcBgImg, hBmpOld);
 						::DeleteDC(hdcBgImg);
 					}
-					GetTextDrawer().DispText(gr, nLeft, nTop, &pLine[OutputX], 1, bTrans);
+					DispPos sPos(nWidth, nHeight);
+					sPos.InitDrawPos(CMyPoint(nLeft, nTop));
+					GetTextDrawer().DispText(gr, &sPos,  &pLine[OutputX], 1, bTrans);
 					// 2006.04.30 Moca 対括弧の縦線対応
 					GetTextDrawer().DispVerticalLines(gr, nTop, nTop + nHeight, ptColLine.x, ptColLine.x + charsWidth); //※括弧が全角幅である場合を考慮
 					cTextType.RewindGraphicsState(gr);
