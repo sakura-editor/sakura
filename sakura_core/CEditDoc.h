@@ -169,6 +169,7 @@ public:
 	{
 		if( (!m_nSettingTypeLocked) || force ){
 			m_nSettingType = type;
+			m_pTypes = &m_pShareData->m_Types[m_nSettingType];
 			if( bTypeOnly ) return;	// bTypeOnly == true は特殊ケース（一時利用）に限定
 			UnlockDocumentType();
 			m_pShareData->m_Types[m_nSettingType].m_nRegexKeyMagicNumber++;	//@@@ 2001.11.17 add MIK
@@ -181,7 +182,7 @@ public:
 	}
 	STypeConfig& GetDocumentAttribute(void) const	//!<	設定された文書情報への参照を返す
 	{
-		return m_pShareData->m_Types[m_nSettingType];
+		return *m_pTypes;
 	}
 	//	Nov. 23, 2000 To Here
 
@@ -232,6 +233,7 @@ public:
 
 protected:
 	int				m_nSettingType;
+	STypeConfig*	m_pTypes;
 	bool			m_nSettingTypeLocked;	//	文書種別の一時設定状態
 	//	Jan. 22, 2002 genta public -> protectedに移動
 	/*! 変更フラグ

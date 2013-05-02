@@ -95,6 +95,8 @@ CEditDoc::CEditDoc()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
+	m_pTypes = &m_pShareData->m_Types[m_nSettingType];
+
 	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
 		m_pcEditViewArr[i] = NULL;
 	}
