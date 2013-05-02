@@ -187,7 +187,7 @@ LRESULT CALLBACK CEditWndProc(
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CEditWnd::CEditWnd()
 : m_hWnd( NULL )
-, m_bDragMode( FALSE )
+, m_bDragMode( false )
 , m_uMSIMEReconvertMsg( ::RegisterWindowMessage( RWM_RECONVERT ) ) // 20020331 aroka 再変換対応 for 95/NT
 , m_uATOKReconvertMsg( ::RegisterWindowMessage( MSGNAME_ATOK_RECONVERT ) )
 , m_pPrintPreview( NULL ) //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -3209,7 +3209,7 @@ LRESULT CEditWnd::OnLButtonUp( WPARAM wParam, LPARAM lParam )
 		return 0;
 	}
 
-	m_bDragMode = FALSE;
+	m_bDragMode = false;
 //	MYTRACE( _T("m_bDragMode = FALSE (OnLButtonUp)\n"));
 	ReleaseCapture();
 	::InvalidateRect( GetHwnd(), NULL, TRUE );
@@ -3681,7 +3681,7 @@ bool CEditWnd::GetRelatedIcon(const TCHAR* szFile, HICON* hIconBig, HICON* hIcon
 void CEditWnd::InitMenubarMessageFont(void)
 {
 	TEXTMETRIC	tm;
-	LOGFONT	lf;
+	LOGFONT		lf;
 	HDC			hdc;
 	HFONT		hFontOld;
 
