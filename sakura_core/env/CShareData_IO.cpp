@@ -2031,7 +2031,7 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 				int buf[5];
 				scan_ints( szKeyData, pszForm, buf);
 				pColorInfoArr[j].m_bDisp      = (buf[0]!=0);
-				pColorInfoArr[j].m_bFatFont   = (buf[1]!=0);
+				pColorInfoArr[j].m_bBoldFont  = (buf[1]!=0);
 				pColorInfoArr[j].m_colTEXT    = buf[2];
 				pColorInfoArr[j].m_colBACK    = buf[3];
 				pColorInfoArr[j].m_bUnderLine = (buf[4]!=0);
@@ -2049,14 +2049,14 @@ void CShareData_IO::IO_ColorSet( CDataProfile* pcProfile, const WCHAR* pszSecNam
 			if( 0 != (fAttribute & COLOR_ATTRIB_FORCE_DISP) )
 				pColorInfoArr[j].m_bDisp = true;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_BOLD) )
-				pColorInfoArr[j].m_bFatFont = false;
+				pColorInfoArr[j].m_bBoldFont = false;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
 				pColorInfoArr[j].m_bUnderLine = false;
 		}
 		else{
 			auto_sprintf( szKeyData, pszForm,
 				pColorInfoArr[j].m_bDisp?1:0,
-				pColorInfoArr[j].m_bFatFont?1:0,
+				pColorInfoArr[j].m_bBoldFont?1:0,
 				pColorInfoArr[j].m_colTEXT,
 				pColorInfoArr[j].m_colBACK,
 				pColorInfoArr[j].m_bUnderLine?1:0

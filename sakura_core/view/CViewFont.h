@@ -30,17 +30,17 @@ public:
 	virtual ~CViewFont();
 
 	void UpdateFont();
-	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine ) const;		/* フォントを選ぶ */
+	HFONT ChooseFontHandle( BOOL bBold, BOOL bUnderLine ) const;		/* フォントを選ぶ */
 
 	HFONT GetFontHan() const
 	{
 		return m_hFont_HAN;
 	}
 private:
-	HFONT			m_hFont_HAN;		/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_FAT_UL;	/* 現在のフォントハンドル */
+	HFONT			m_hFont_HAN;			/* 現在のフォントハンドル */
+	HFONT			m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */
+	HFONT			m_hFont_HAN_UL;			/* 現在のフォントハンドル(下線) */
+	HFONT			m_hFont_HAN_BOLD_UL;	/* 現在のフォントハンドル(太字、下線) */
 };
 
 #endif /* SAKURA_CVIEWFONT_9E51373D_58BA_4A64_9930_5174F7BF9C929_H_ */

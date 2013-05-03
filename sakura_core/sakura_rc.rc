@@ -936,7 +936,7 @@ BEGIN
                     WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "êFï™ÇØ/ï\é¶(&D)",IDC_CHECK_DISP,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,165,67,10
-    CONTROL         "ëæéö(&B)",IDC_CHECK_FAT,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "ëæéö(&B)",IDC_CHECK_BOLD,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,72,165,36,10
     CONTROL         "â∫ê¸(&U)",IDC_CHECK_UNDERLINE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,112,165,36,10

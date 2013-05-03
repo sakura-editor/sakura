@@ -102,7 +102,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 					nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Areaˆê”t‚É 2013/4/11 Uchi
 					pMetrics->GetHankakuHeight(),
 					tm.tmWeight > lfWeightNormal ||
-						m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bFatFont,
+						m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
 					::GetTextColor(gr)//cTabType.GetTextColor()
 				);
 			}
