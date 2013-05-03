@@ -41,7 +41,7 @@ WNDPROC	m_wpColorListProc;
 static const DWORD p_helpids2[] = {	//11400
 	IDC_LIST_COLORS,				HIDC_LIST_COLORS,				//色指定
 	IDC_CHECK_DISP,					HIDC_CHECK_DISP,				//色分け表示
-	IDC_CHECK_FAT,					HIDC_CHECK_FAT,					//太字
+	IDC_CHECK_BOLD,					HIDC_CHECK_BOLD,				//太字
 	IDC_CHECK_UNDERLINE,			HIDC_CHECK_UNDERLINE,			//下線
 	IDC_BUTTON_TEXTCOLOR,			HIDC_BUTTON_TEXTCOLOR,			//文字色
 	IDC_BUTTON_BACKCOLOR,			HIDC_BUTTON_BACKCOLOR,			//背景色
@@ -193,12 +193,12 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 太字で表示 */
 			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BOLD) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			{
-				if( pColorInfo->m_bFatFont ){	/* 太字で表示 */
-					pColorInfo->m_bFatFont = false;
-					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, FALSE );
+				if( pColorInfo->m_bBoldFont ){	/* 太字で表示 */
+					pColorInfo->m_bBoldFont = false;
+					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_BOLD, FALSE );
 				}else{
-					pColorInfo->m_bFatFont = true;
-					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_FAT, TRUE );
+					pColorInfo->m_bBoldFont = true;
+					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_BOLD, TRUE );
 				}
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 			}
@@ -317,7 +317,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					// 各種コントロールの有効／無効を切り替える	// 2006.12.18 ryoji フラグ利用で簡素化
 					unsigned int fAttribute = g_ColorAttributeArr[nIndex].fAttribute;
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_DISP ),			(0 == (fAttribute & COLOR_ATTRIB_FORCE_DISP))? TRUE: FALSE );
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_FAT ),				(0 == (fAttribute & COLOR_ATTRIB_NO_BOLD))? TRUE: FALSE );
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_BOLD ),			(0 == (fAttribute & COLOR_ATTRIB_NO_BOLD))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_UNDERLINE ),		(0 == (fAttribute & COLOR_ATTRIB_NO_UNDERLINE))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_STATIC_MOZI ),			(0 == (fAttribute & COLOR_ATTRIB_NO_TEXT))? TRUE: FALSE );
 					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ),		(0 == (fAttribute & COLOR_ATTRIB_NO_TEXT))? TRUE: FALSE );
@@ -334,10 +334,10 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					::CheckDlgButton( hwndDlg, IDC_CHECK_DISP, FALSE );
 				}
 				/* 太字で表示 */
-				if( m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont ){
-					::CheckDlgButton( hwndDlg, IDC_CHECK_FAT, TRUE );
+				if( m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bBoldFont ){
+					::CheckDlgButton( hwndDlg, IDC_CHECK_BOLD, TRUE );
 				}else{
-					::CheckDlgButton( hwndDlg, IDC_CHECK_FAT, FALSE );
+					::CheckDlgButton( hwndDlg, IDC_CHECK_BOLD, FALSE );
 				}
 				/* 下線を表示 */
 				if( m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine ){
@@ -402,11 +402,11 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
-			case IDC_CHECK_FAT:	/* 太字か */
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_FAT ) ){
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont = true;
+			case IDC_CHECK_BOLD:	/* 太字か */
+				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BOLD ) ){
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bBoldFont = true;
 				}else{
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bFatFont = false;
+					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bBoldFont = false;
 				}
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
@@ -1050,19 +1050,19 @@ void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 				ColorInfo &col2   = m_Types.m_ColorInfoArr[ COLORIDX_KEYWORD1 + j ];
 
 				colT.m_bDisp		= col1.m_bDisp;
-				colT.m_bFatFont		= col1.m_bFatFont;
+				colT.m_bBoldFont	= col1.m_bBoldFont;
 				colT.m_bUnderLine	= col1.m_bUnderLine;
 				colT.m_colTEXT		= col1.m_colTEXT;
 				colT.m_colBACK		= col1.m_colBACK;
 
 				col1.m_bDisp		= col2.m_bDisp;
-				col1.m_bFatFont		= col2.m_bFatFont;
+				col1.m_bBoldFont	= col2.m_bBoldFont;
 				col1.m_bUnderLine	= col2.m_bUnderLine;
 				col1.m_colTEXT		= col2.m_colTEXT;
 				col1.m_colBACK		= col2.m_colBACK;
 
 				col2.m_bDisp		= colT.m_bDisp;
-				col2.m_bFatFont		= colT.m_bFatFont;
+				col2.m_bBoldFont	= colT.m_bBoldFont;
 				col2.m_bUnderLine	= colT.m_bUnderLine;
 				col2.m_colTEXT		= colT.m_colTEXT;
 				col2.m_colBACK		= colT.m_colBACK;
@@ -1126,7 +1126,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
 	::TextOut( gr, rc1.left, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
-	if( pColorInfo->m_bFatFont ){	/* 太字か */
+	if( pColorInfo->m_bBoldFont ){	/* 太字か */
 		::TextOut( gr, rc1.left + 1, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
 	}
 	if( pColorInfo->m_bUnderLine ){	/* 下線か */

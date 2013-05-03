@@ -201,7 +201,7 @@ void CTextDrawer::DispVerticalLines(
 	bool bOddLine = ((((nLineHeight % 2) ? (Int)pView->GetTextArea().GetViewTopLine() : 0) + pView->GetTextArea().GetAreaTop() + nTop) % 2 == 1);
 
 	// 太線
-	const bool bBold = cVertType.IsFatFont();
+	const bool bBold = cVertType.IsBoldFont();
 	// ドット線(下線属性を転用/テスト用)
 	const bool bDot = cVertType.HasUnderLine();
 	const bool bExorPen = ( cVertType.GetTextColor() == cTextType.GetBackColor() );

@@ -31,7 +31,7 @@
 //! 色設定
 struct ColorInfoBase{
 	bool		m_bDisp;			//!< 表示
-	bool		m_bFatFont;			//!< 太字
+	bool		m_bBoldFont;		//!< 太字
 	bool		m_bUnderLine;		//!< 下線
 	COLORREF	m_colTEXT;			//!< 文字色
 	COLORREF	m_colBACK;			//!< 背景色

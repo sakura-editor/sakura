@@ -393,7 +393,7 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 		gr.SetBackgroundColor(info.m_colBACK);
 		gr.SetMyFont(
 			GetFontset().ChooseFontHandle(
-				info.m_bFatFont,
+				info.m_bBoldFont,
 				info.m_bUnderLine
 			)
 		);
@@ -428,7 +428,7 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 		}
 		gr.SetMyFont(
 			GetFontset().ChooseFontHandle(
-				info.m_colTEXT != info.m_colBACK ? info.m_bFatFont   : info2.m_bFatFont,
+				info.m_colTEXT != info.m_colBACK ? info.m_bBoldFont  : info2.m_bBoldFont,
 				info.m_colTEXT != info.m_colBACK ? info.m_bUnderLine : info2.m_bUnderLine
 			)
 		);

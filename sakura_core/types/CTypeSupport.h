@@ -79,9 +79,9 @@ public:
 	}
 
 	//!‘¾Žš‚©‚Ç‚¤‚©
-	bool IsFatFont() const
+	bool IsBoldFont() const
 	{
-		return m_pColorInfoArr->m_bFatFont;
+		return m_pColorInfoArr->m_bBoldFont;
 	}
 
 	//!‰ºü‚ðŽ‚Â‚©‚Ç‚¤‚©
@@ -110,7 +110,7 @@ public:
 	HFONT GetTypeFont()
 	{
 		return m_pFontset->ChooseFontHandle(
-			m_pColorInfoArr->m_bFatFont,
+			m_pColorInfoArr->m_bBoldFont,
 			m_pColorInfoArr->m_bUnderLine
 		);
 	}

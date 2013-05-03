@@ -113,7 +113,7 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 	pInfo->gr.PushTextBackColor(crBack);
 	// Figureが下線指定ならこちらで下線を指定。元の色のほうが下線指定なら、DrawImp_DrawUnderlineで下線だけ指定
 	pInfo->gr.PushMyFont(
-		pInfo->pcView->GetFontset().ChooseFontHandle(cSpaceType.IsFatFont() || cCurrentType.IsFatFont(), cSpaceType.HasUnderLine())
+		pInfo->pcView->GetFontset().ChooseFontHandle(cSpaceType.IsBoldFont() || cCurrentType.IsBoldFont(), cSpaceType.HasUnderLine())
 	);
 	bool bTrans = pcView->IsBkBitmap() && cTextType.GetBackColor() == crBack;
 	return bTrans;
