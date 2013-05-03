@@ -82,6 +82,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	wchar_t pszStack[nMaxStack][32];
 	wchar_t szTitle[32];			//	ˆê—Ìˆæ
 	CLogicInt				nLineCount;
+	bool b278a = false;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount )
 	{
 		//sæ“¾
@@ -127,8 +128,25 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 			else continue; //¦u(v‚ÌŸ‚ª‰p”š‚Å–³‚¢ê‡AŒ©o‚µ‚Æ‚İ‚È‚³‚È‚¢
 		}
 		else if( IsInRange(pLine[i], L'‚O', L'‚X') ) wcscpy( szTitle, L"‚O" ); // ‘SŠp”š
-		else if( IsInRange(pLine[i], L'‡@', L'‡S') ) wcscpy( szTitle, L"‡@" ); // ‡@`‡S
-		else if( IsInRange(pLine[i], L'‡T', L'‡]') ) wcscpy( szTitle, L"‡T" ); // ‡T`‡]
+		else if( IsInRange(pLine[i], L'‡@', L'‡S') || pLine[i] == L'\u24ea'
+			|| IsInRange(pLine[i], L'\u3251', L'\u325f') || IsInRange(pLine[i], L'\u32b1', L'\u32bf') ) wcscpy( szTitle, L"‡@" ); // ‡@`‡S ›0@›21›35@›36›50
+		else if( IsInRange(pLine[i], L'‡T', L'\u216f') ) wcscpy( szTitle, L"‡T" ); // ‡T`‡]@XIXIILCDM
+		else if( IsInRange(pLine[i], L'ú@', L'\u217f') ) wcscpy( szTitle, L"‡T" ); // ‡T`‡]@xixiilcdm
+		else if( IsInRange(pLine[i], L'\u2474', L'\u2487') ) wcscpy( szTitle, L"\u2474" ); // (1)-(20)
+		else if( IsInRange(pLine[i], L'\u2488', L'\u249b') ) wcscpy( szTitle, L"\u2488" ); // 1.-20.
+		else if( IsInRange(pLine[i], L'\u249c', L'\u24b5') ) wcscpy( szTitle, L"\u249c" ); // (a)-(z)
+		else if( IsInRange(pLine[i], L'\u24b6', L'\u24cf') ) wcscpy( szTitle, L"\u24b6" ); // ›A-›Z
+		else if( IsInRange(pLine[i], L'\u24d0', L'\u24e9') ) wcscpy( szTitle, L"\u24d0" ); // ›a-›z
+		else if( IsInRange(pLine[i], L'\u24eb', L'\u24f4') ){ // œ11-œ20
+			if(b278a){ wcscpy( szTitle, L"\u278a" ); }
+			else{ wcscpy( szTitle, L"\u2776" ); } }
+		else if( IsInRange(pLine[i], L'\u24f5', L'\u24fe') ) wcscpy( szTitle, L"\u24f5" ); // 1-10
+		else if( IsInRange(pLine[i], L'\u2776', L'\u277f') ) wcscpy( szTitle, L"\u2776" ); // œ1-œ10
+		else if( IsInRange(pLine[i], L'\u2780', L'\u2789') ) wcscpy( szTitle, L"\u2780" ); // ›1-›10
+		else if( IsInRange(pLine[i], L'\u278a', L'\u2793') ){ wcscpy( szTitle, L"\u278a" ); b278a = true; } // œ1-œ10(SANS-SERIF)
+		else if( IsInRange(pLine[i], L'\u3220', L'\u3229') ) wcscpy( szTitle, L"\ua3220" ); // (ˆê)-(\)
+		else if( IsInRange(pLine[i], L'\u3280', L'\u3289') ) wcscpy( szTitle, L"\u3220" ); // ›ˆê-›\
+		else if( IsInRange(pLine[i], L'\u32d0', L'\u32fe') ) wcscpy( szTitle, L"\u32d0" ); // ›ƒA-›ƒ’
 		else if( wcschr(L"Zˆê“ñOlŒÜ˜Zµ”ª‹ã\•S—ëˆë“óQŒŞ", pLine[i]) ) wcscpy( szTitle, L"ˆê" ); //Š¿”š
 		else{
 			wcsncpy( szTitle, &pLine[i], nCharChars );	//	æ“ª•¶š‚ğszTitle‚É•ÛB
