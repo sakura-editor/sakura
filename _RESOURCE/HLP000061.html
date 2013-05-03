@@ -13,7 +13,8 @@
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
 <h2>次を検索</h2>
 「<a href="HLP000059.html">検索</a>」で指定した条件で、カーソル位置より後ろを検索します。<br>
-検索を実行すると、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索結果」に指定した色で検索マークが付きます。<br>
+検索を実行すると、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索文字列」に指定した色で検索マークが付きます。<br>
+検索キーが260文字以上の場合は、履歴に登録されません。<br>
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文:	SearchNext( str1 :String, int2 :Integer );<br>
@@ -29,6 +30,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;0x08&nbsp;&nbsp;&nbsp;&nbsp;見つからないときにメッセージを表示する<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x10&nbsp;&nbsp;&nbsp;&nbsp;検索ダイアログを自動的に閉じる<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x20&nbsp;&nbsp;&nbsp;&nbsp;先頭（末尾）から再検索する<br>
+&nbsp;&nbsp;&nbsp;0x800&nbsp;&nbsp;&nbsp;&nbsp;検索キーを履歴に登録しない(2.0.6.0 以降)<br>
 省略時規定値は0です。<br>
 記録時には str1,int2 に検索した時点の条件が入ります。<br>
 <br>

@@ -30,7 +30,8 @@
 <b>[現フォルダ]ボタン</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;このボタンを押すと現在開いているファイルを元に「フォルダ」を設定します。<br>
 □<b>単語単位で探す</b><br>
-&nbsp;&nbsp;&nbsp;&nbsp;単語として識別するもののみ検索します。キーワードに単語以外を入れると何もヒットしません。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;単語として識別するもののみ検索します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;スペースなどで区切ると複数単語検索が行えます。(2.0.6.0 以降)<br>
 ■<b>サブフォルダからも検索する</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;指定フォルダの下層フォルダからも検索するかどうかを指定します。<br>
 □<b>現在編集中のファイルから検索</b><br>
@@ -42,17 +43,15 @@
 □<b>正規表現</b> … 検索条件に、<a href="HLP000089.html">正規表現</a>を使うかどうかを指定します。<br>
 □<b>文字コードセット</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;検索対象となるファイルの<a href="HLP000271.html">文字コードセット</a>を選択します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b>自動選択</b>、SJIS、JIS、EUC、Unicode、UnicodeBE、UTF-8、CESU-8、UTF-7から選択します。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(sakura:1.6.6.0以前)どの文字コードを選択しても、検索時には、SJISに変換してから検索します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>自動選択</b>、SJIS、JIS、EUC、Latin1、Unicode、UnicodeBE、UTF-8、CESU-8、UTF-7から選択します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(sakura:1.x 以前)どの文字コードを選択しても、検索時には、SJISに変換してから検索します。<br>
 □<b>フォルダの初期値をカレントフォルダにする</b><br>
 &nbsp;&nbsp;&nbsp;&nbsp;現在開いているファイルがあるフォルダを(フォルダ)の初期値にします。次回のダイアログ表示時に反映されます。<br>
 </div><br>
-<b>&lt;結果出力&gt;</b> … 検索条件に合致した箇所の出力方法を指定します。合致した箇所はその先頭の合致箇所の位置が示され、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索結果」に指定した色でハイライト表示されます。<br>
+<b>&lt;結果出力&gt;</b> … 検索条件に合致した箇所の出力方法を指定します。合致した箇所はその先頭の合致箇所の位置が示され、<a href="HLP000075.html">タイプ別設定 『カラー』プロパティ</a>で「検索文字列」に指定した色でハイライト表示されます。<br>
 <div class=li200>◎<b>該当行</b>	… 合致した箇所のある行全体を表示します。<br>
-○<b>該当部分</b>	… 合致した箇所のある行のうち先頭の合致箇所だけを表示します。<br>
-</div><br>
-<img src="images/hint.png">ヒント<br>
-単語単位で検索したときは、すべての合致箇所が表示されます。<br>
+○<b>該当部分</b>	… 合致した文字列だけを表示します。<br>
+</div>
 <br>
 <b>&lt;結果出力形式&gt;</b> … 検索条件の結果の出力形式を選べます。<br>
 <div class=li200>
@@ -95,6 +94,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;0x0400&nbsp;&nbsp;&nbsp;&nbsp;UTF-8<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0500&nbsp;&nbsp;&nbsp;&nbsp;UTF-7<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0600&nbsp;&nbsp;&nbsp;&nbsp;UNICODE(BigEndian)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0700&nbsp;&nbsp;&nbsp;&nbsp;CESU-8<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x0800&nbsp;&nbsp;&nbsp;&nbsp;Latin1<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x6300&nbsp;&nbsp;&nbsp;&nbsp;自動選択<br>
 文字コード自動判別を設定した場合と文字コードセットを 自動選択にした場合の動作は同じです。<br>
 <br>
@@ -104,4 +105,5 @@
 <br>
 <img src="images/note.png"><b>注意</b><br>
 Grepのダイアログをマクロで出すことはできません。<br>
+マクロからは必ず新しいウィンドウを作成してGrepします。<br>
 </BODY></HTML>

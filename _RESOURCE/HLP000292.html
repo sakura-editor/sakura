@@ -17,7 +17,7 @@
 <br>
 ■<a href="HLP000204.html"><b>マクロ構文</b></a><br>
 ・構文: 	Replace( str1 :String , str2 :String , int3 :Integer );<br>
-&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;検索文字列(空文字列はエラー)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;str2&nbsp;&nbsp;&nbsp;&nbsp;置換文字列<br>
 &nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;置換オプション（省略可能）<br>
 ・記録:	<a href="HLP000062.html">置換</a>の[置換]実行により記録<br>
@@ -37,6 +37,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;0x000&nbsp;&nbsp;&nbsp;&nbsp;見つかった文字列と置換（省略時規定値）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x100&nbsp;&nbsp;&nbsp;&nbsp;見つかった文字列の前に挿入<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x200&nbsp;&nbsp;&nbsp;&nbsp;見つかった文字列の後に追加<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x800&nbsp;&nbsp;&nbsp;&nbsp;検索キーを履歴に登録しない(2.0.6.0 以降)<br>
 <br>
 <img src="images/note.png"><b>注意</b><br>
 キーマクロ中では 10進数の定数表記しか受け付けません。<br>

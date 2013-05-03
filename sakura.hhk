@@ -209,6 +209,10 @@
 <param name="Local" value="_RESOURCE\HLP000158.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="Latin1で開き直す">
+<param name="Local" value="_RESOURCE\HLP000341.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="Unicodeで開き直す">
 <param name="Local" value="_RESOURCE\HLP000159.html">
 </OBJECT>
@@ -1051,6 +1055,9 @@
 <param name="Name" value="キーワードヘルプ自動表示">
 <param name="Local" value="_RESOURCE\HLP000318.html">
 </OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="文字コードセット指定">
+<param name="Local" value="_RESOURCE\HLP000297.html">
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="入力改行コード指定">
 <param name="Local" value="_RESOURCE\HLP000285.html">

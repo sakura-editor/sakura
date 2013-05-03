@@ -277,6 +277,11 @@
 						<param name="ImageNumber" value="9">
 						</OBJECT>
 					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="Latin1で開き直す">
+						<param name="Local" value="_RESOURCE\HLP000341.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
 						<param name="Name" value="Unicodeで開き直す">
 						<param name="Local" value="_RESOURCE\HLP000159.html">
 						<param name="ImageNumber" value="9">
@@ -1391,6 +1396,11 @@
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="キーワードヘルプ自動表示する／しない">
 					<param name="Local" value="_RESOURCE\HLP000318.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="文字コードセット指定">
+					<param name="Local" value="_RESOURCE\HLP000297.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
