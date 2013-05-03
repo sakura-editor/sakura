@@ -41,6 +41,7 @@
 #define HLP000156	156 //SJISで開き直す
 #define HLP000157	157 //JISで開き直す
 #define HLP000158	158 //EUCで開き直す
+#define HLP000341	341 //Latin1で開き直す
 #define HLP000159	159 //Unicodeで開き直す
 #define HLP000256	256 //UnicodeBEで開き直す
 #define HLP000160	160 //UTF-8で開き直す
@@ -183,7 +184,7 @@
 #define HLP000068	68 //「ツール(T)」メニューの一覧
 #define HLP000069	69 //ツールバーを表示(隠す)
 #define HLP000070	70 //ファンクションキーを表示(隠す)
-#define	HLP000282	282	//タブの表示／非表示	//@@@ 2003.06.10 MIK
+#define HLP000282	282	//タブの表示／非表示	//@@@ 2003.06.10 MIK
 #define HLP000134	134 //ステータスバーを表示(隠す)
 #define HLP000072	72 //タイプ別設定一覧
 #define HLP000338	338 //タイプ別設定インポート	// 2010/5/1 Uchi

@@ -555,7 +555,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_FILE_REOPEN_SJIS:	return HLP000156;			//SJISで開き直す
 	case F_FILE_REOPEN_JIS:		return HLP000157;			//JISで開き直す
 	case F_FILE_REOPEN_EUC:		return HLP000158;			//EUCで開き直す
-	case F_FILE_REOPEN_LATIN1:	return HLP000156;			//Latin1で開き直す	// 2010/3/20 Uchi
+	case F_FILE_REOPEN_LATIN1:	return HLP000341;			//Latin1で開き直す	// 2010/3/20 Uchi //2013.05.02 HLP000156->HLP000341
 	case F_FILE_REOPEN_UNICODE:	return HLP000159;			//Unicodeで開き直す
 	case F_FILE_REOPEN_UNICODEBE:	return HLP000256;		//UnicodeBEで開き直す
 	case F_FILE_REOPEN_UTF8:	return HLP000160;			//UTF-8で開き直す
@@ -634,7 +634,7 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	/* 選択系 */	//Oct. 15, 2000 JEPRO 「カーソル移動系」から(選択)を移動
 	case F_SELECTWORD:		return HLP000045;	//現在位置の単語選択
 	case F_SELECTALL:		return HLP000044;	//すべて選択
-//	case F_SELECTLINE:		return ;	//1行選択	// 2007.10.06 nasukoji
+	case F_SELECTLINE:		return HLP000108;	//1行選択	// 2007.10.06 nasukoji 2013.05.03 Moca
 	case F_BEGIN_SEL:		return HLP000233;	//範囲選択開始
 	case F_UP_SEL:			return HLP000290;	//(範囲選択)カーソル上移動	// 2006.10.11 ryoji
 	case F_DOWN_SEL:		return HLP000290;	//(範囲選択)カーソル下移動	// 2006.10.11 ryoji
