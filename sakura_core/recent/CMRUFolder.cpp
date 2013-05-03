@@ -120,11 +120,14 @@ void CMRUFolder::Add( const TCHAR* pszFolder )
 		return;
 	}
 
-	for( int i = 0 ; i < m_pShareData->m_sHistory.m_aExceptMRU.size(); i++ ){
-		TCHAR szExceptMRU[_MAX_PATH];
-		CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
-		if( NULL != _tcsistr( pszFolder, szExceptMRU ) ){
-			return;
+	// ‚·‚Å‚É“o˜^‚³‚ê‚Ä‚¢‚éê‡‚ÍAœŠOw’è‚ğ–³‹‚·‚é
+	if( -1 == m_cRecentFolder.FindItemByText( pszFolder ) ){
+		for( int i = 0 ; i < m_pShareData->m_sHistory.m_aExceptMRU.size(); i++ ){
+			TCHAR szExceptMRU[_MAX_PATH];
+			CFileNameManager::ExpandMetaToFolder( m_pShareData->m_sHistory.m_aExceptMRU[i], szExceptMRU, _countof(szExceptMRU) );
+			if( NULL != _tcsistr( pszFolder, szExceptMRU ) ){
+				return;
+			}
 		}
 	}
 
