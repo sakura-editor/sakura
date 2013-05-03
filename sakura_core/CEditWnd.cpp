@@ -1340,10 +1340,12 @@ LRESULT CEditWnd::DispatchEvent(
 
 			// 2009.01.12 nasukoji	ホイールスクロール有無状態をクリア
 			ClearMouseState();
+		} else {
+			// 非アクティブになるときだけキャプション設定(アクティブ時はほかで呼び出される)
+			m_cEditDoc.UpdateCaption();
 		}
 
-		// キャプション設定、タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動
-		m_cEditDoc.UpdateCaption();
+		// タイマーON/OFF		// 2007.03.08 ryoji WM_ACTIVATEから移動
 		m_CFuncKeyWnd.Timer_ONOFF( m_bIsActiveApp ); // 20060126 aroka
 		this->Timer_ONOFF( m_bIsActiveApp ); // 20060128 aroka
 
