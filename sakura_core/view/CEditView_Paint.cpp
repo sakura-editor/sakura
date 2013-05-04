@@ -400,9 +400,10 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 	}
 }
 
-/* 現在の色を指定
-	eColorIndex   選択を含む現在の色
-	eColorIndex2  選択以外の現在の色
+/*! 現在の色を指定
+	@param eColorIndex   選択を含む現在の色
+	@param eColorIndex2  選択以外の現在の色
+	@param eColorIndexBg 背景色
 */
 void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2, EColorIndexType eColorIndexBg)
 {
