@@ -442,7 +442,7 @@ void CPropKeybind::SetData( HWND hwndDlg )
 	/* キー一覧に文字列をセット（リストボックス）*/
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
-			::List_AddString( hwndKeyList, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		::List_AddString( hwndKeyList, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 	}
 
 	// 2009.08.15 nasukoji	ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
