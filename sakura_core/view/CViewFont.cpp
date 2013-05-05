@@ -80,10 +80,10 @@ void CViewFont::UpdateFont()
 }
 
 /*! フォントを選ぶ
-	@param bBold TRUEで太字
-	@param bUnderLine TRUEでアンダーライン
+	@param bBold trueで太字
+	@param bUnderLine trueでアンダーライン
 */
-HFONT CViewFont::ChooseFontHandle( BOOL bBold, BOOL bUnderLine ) const
+HFONT CViewFont::ChooseFontHandle( bool bBold, bool bUnderLine ) const
 {
 	if( bBold ){	/* 太字か */
 		if( bUnderLine ){	/* 下線か */

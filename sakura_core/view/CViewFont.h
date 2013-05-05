@@ -30,7 +30,7 @@ public:
 	virtual ~CViewFont();
 
 	void UpdateFont();
-	HFONT ChooseFontHandle( BOOL bBold, BOOL bUnderLine ) const;		/* フォントを選ぶ */
+	HFONT ChooseFontHandle( bool bBold, bool bUnderLine ) const;		/* フォントを選ぶ */
 
 	HFONT GetFontHan() const
 	{
