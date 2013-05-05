@@ -584,7 +584,7 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settin
 	pPrintSetting.m_bPrintKinsokuTail = false;	// 行末禁則する			//@@@ 2002.04.09 MIK
 	pPrintSetting.m_bPrintKinsokuRet  = false;	// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
 	pPrintSetting.m_bPrintKinsokuKuto = false;	// 2006.08.14 Moca 初期化ミス
-	pPrintSetting.m_bPrintLineNumber = FALSE;	/* 行番号を印刷する */
+	pPrintSetting.m_bPrintLineNumber = false;	/* 行番号を印刷する */
 	pPrintSetting.m_nPrintLineSpacing = 30;	/* 印刷フォント行間 文字の高さに対する割合(%) */
 	pPrintSetting.m_nPrintMarginTY = 100;		/* 印刷用紙マージン 上(1/10mm単位) */
 	pPrintSetting.m_nPrintMarginBY = 200;		/* 印刷用紙マージン 下(1/10mm単位) */
