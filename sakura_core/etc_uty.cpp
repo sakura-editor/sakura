@@ -1882,6 +1882,47 @@ bool SetClipboardText( HWND hwnd, const char* pszText, int nLength )
 	return true;
 }
 
+/*
+	scanf的安全スキャン
+
+	使用例:
+		int a[3];
+		scan_ints("1,23,4,5", "%d,%d,%d", a);
+		//結果: a[0]=1, a[1]=23, a[2]=4 となる。
+*/
+int scan_ints(
+	const TCHAR*	pszData,	//!< [in]
+	const TCHAR*	pszFormat,	//!< [in]
+	int*			anBuf		//!< [out]
+)
+{
+	//要素数
+	int num = 0;
+	const TCHAR* p = pszFormat;
+	while(*p){
+		if(*p==_T('%'))num++;
+		p++;
+	}
+
+	//スキャン
+	int dummy[32];
+	memset(dummy,0,sizeof(dummy));
+	int nRet = _stscanf(
+		pszData,pszFormat,
+		&dummy[ 0],&dummy[ 1],&dummy[ 2],&dummy[ 3],&dummy[ 4],&dummy[ 5],&dummy[ 6],&dummy[ 7],&dummy[ 8],&dummy[ 9],
+		&dummy[10],&dummy[11],&dummy[12],&dummy[13],&dummy[14],&dummy[15],&dummy[16],&dummy[17],&dummy[18],&dummy[19],
+		&dummy[20],&dummy[21],&dummy[22],&dummy[23],&dummy[24],&dummy[25],&dummy[26],&dummy[27],&dummy[28],&dummy[29]
+	);
+
+	//結果コピー
+	int i;
+	for(i=0;i<num;i++){
+		anBuf[i]=dummy[i];
+	}
+
+	return nRet;
+}
+
 /*!
 	与えられた正規表現ライブラリの初期化を行う．
 	メッセージフラグがONで初期化に失敗したときはメッセージを表示する．

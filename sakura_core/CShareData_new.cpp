@@ -788,12 +788,12 @@ void CShareData::ShareData_IO_Common( CProfile& cProfile )
 	char		szKeyData[1024];
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, pszKeyName, szKeyData, sizeof( szKeyData )) ){
-			sscanf( szKeyData, pszForm,
-				&common.m_sOthers.m_rcOpenDialog.left,
-				&common.m_sOthers.m_rcOpenDialog.top,
-				&common.m_sOthers.m_rcOpenDialog.right,
-				&common.m_sOthers.m_rcOpenDialog.bottom
-			);
+			int buf[4];
+			scan_ints( szKeyData, pszForm, buf );
+			common.m_sOthers.m_rcOpenDialog.left   = buf[0];
+			common.m_sOthers.m_rcOpenDialog.top    = buf[1];
+			common.m_sOthers.m_rcOpenDialog.right  = buf[2];
+			common.m_sOthers.m_rcOpenDialog.bottom = buf[3];
 		}
 	}else{
 		wsprintf(
@@ -925,16 +925,16 @@ void CShareData::ShareData_IO_KeyBind( CProfile& cProfile )
 		if( cProfile.IsReadingMode() ){
 			if( cProfile.IOProfileData( pszSecName, szKeyName,
 				szKeyData, sizeof( szKeyData )) ){
-				sscanf( szKeyData, "%hd,%hd,%hd,%hd,%hd,%hd,%hd,%hd",
-					&keydata.m_nFuncCodeArr[0],
-					&keydata.m_nFuncCodeArr[1],
-					&keydata.m_nFuncCodeArr[2],
-					&keydata.m_nFuncCodeArr[3],
-					&keydata.m_nFuncCodeArr[4],
-					&keydata.m_nFuncCodeArr[5],
-					&keydata.m_nFuncCodeArr[6],
-					&keydata.m_nFuncCodeArr[7]
-				 );
+				int buf[8];
+				scan_ints( szKeyData, _T("%d,%d,%d,%d,%d,%d,%d,%d"), buf );
+				keydata.m_nFuncCodeArr[0] = buf[0];
+				keydata.m_nFuncCodeArr[1] = buf[1];
+				keydata.m_nFuncCodeArr[2] = buf[2];
+				keydata.m_nFuncCodeArr[3] = buf[3];
+				keydata.m_nFuncCodeArr[4] = buf[4];
+				keydata.m_nFuncCodeArr[5] = buf[5];
+				keydata.m_nFuncCodeArr[6] = buf[6];
+				keydata.m_nFuncCodeArr[7] = buf[7];
 			}
 		}else{
 			wsprintf( szKeyData, "%d,%d,%d,%d,%d,%d,%d,%d",
@@ -970,29 +970,28 @@ void CShareData::ShareData_IO_Print( CProfile& cProfile )
 		wsprintf( szKeyName, "PS[%02d].nInts", i );
 		static const char* pszForm = "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d";
 		if( cProfile.IsReadingMode() ){
-			if( cProfile.IOProfileData( pszSecName, szKeyName,
-				szKeyData, sizeof( szKeyData ) ) ){
-				sscanf( szKeyData, pszForm,
-					&printsetting.m_nPrintFontWidth		,
-					&printsetting.m_nPrintFontHeight		,
-					&printsetting.m_nPrintDansuu			,
-					&printsetting.m_nPrintDanSpace		,
-					&printsetting.m_nPrintLineSpacing		,
-					&printsetting.m_nPrintMarginTY		,
-					&printsetting.m_nPrintMarginBY		,
-					&printsetting.m_nPrintMarginLX		,
-					&printsetting.m_nPrintMarginRX		,
-					&printsetting.m_nPrintPaperOrientation,
-					&printsetting.m_nPrintPaperSize		,
-					&printsetting.m_bPrintWordWrap		,
-					&printsetting.m_bPrintLineNumber		,
-					&printsetting.m_bHeaderUse[0]			,
-					&printsetting.m_bHeaderUse[1]			,
-					&printsetting.m_bHeaderUse[2]			,
-					&printsetting.m_bFooterUse[0]			,
-					&printsetting.m_bFooterUse[1]			,
-					&printsetting.m_bFooterUse[2]
-				 );
+			if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData ) ) ){
+				int buf[19];
+				scan_ints( szKeyData, pszForm, buf );
+				printsetting.m_nPrintFontWidth        = buf[ 0];
+				printsetting.m_nPrintFontHeight       = buf[ 1];
+				printsetting.m_nPrintDansuu           = buf[ 2];
+				printsetting.m_nPrintDanSpace         = buf[ 3];
+				printsetting.m_nPrintLineSpacing      = buf[ 4];
+				printsetting.m_nPrintMarginTY         = buf[ 5];
+				printsetting.m_nPrintMarginBY         = buf[ 6];
+				printsetting.m_nPrintMarginLX         = buf[ 7];
+				printsetting.m_nPrintMarginRX         = buf[ 8];
+				printsetting.m_nPrintPaperOrientation = buf[ 9];
+				printsetting.m_nPrintPaperSize        = buf[10];
+				printsetting.m_bPrintWordWrap         = (buf[11]!=0);
+				printsetting.m_bPrintLineNumber       = buf[12];
+				printsetting.m_bHeaderUse[0]          = buf[13];
+				printsetting.m_bHeaderUse[1]          = buf[14];
+				printsetting.m_bHeaderUse[2]          = buf[15];
+				printsetting.m_bFooterUse[0]          = buf[16];
+				printsetting.m_bFooterUse[1]          = buf[17];
+				printsetting.m_bFooterUse[2]          = buf[18];
 			}
 		}else{
 			wsprintf( szKeyData, pszForm,
@@ -1109,19 +1108,19 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 	strcpy( szKeyName, "nInts" );
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
-			sscanf( szKeyData, pszForm,
-				&types.m_nIdx,
-				&types.m_nMaxLineKetas,
-				&types.m_nColmSpace,
-				&types.m_nTabSpace,
-				&types.m_nKeyWordSetIdx[0],
-				&types.m_nKeyWordSetIdx[1],	//MIK
-				&types.m_nStringType,
-				&types.m_bLineNumIsCRLF,
-				&types.m_nLineTermType,
-				&types.m_bWordWrap,
-				&types.m_nCurrentPrintSetting
-			 );
+			int buf[11];
+			scan_ints( szKeyData, pszForm, buf );
+			types.m_nIdx                 = buf[ 0];
+			types.m_nMaxLineKetas        = buf[ 1];
+			types.m_nColmSpace           = buf[ 2];
+			types.m_nTabSpace            = buf[ 3];
+			types.m_nKeyWordSetIdx[0]    = buf[ 4];
+			types.m_nKeyWordSetIdx[1]    = buf[ 5];
+			types.m_nStringType          = buf[ 6];
+			types.m_bLineNumIsCRLF       = (buf[ 7]!=0);
+			types.m_nLineTermType        = buf[ 8];
+			types.m_bWordWrap            = (buf[ 9]!=0);
+			types.m_nCurrentPrintSetting = buf[10];
 		}
 		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
 		if( types.m_nMaxLineKetas < MINLINEKETAS ){
@@ -1135,7 +1134,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 			types.m_nColmSpace,
 			types.m_nTabSpace,
 			types.m_nKeyWordSetIdx[0],
-			types.m_nKeyWordSetIdx[1],	//MIK
+			types.m_nKeyWordSetIdx[1],
 			types.m_nStringType,
 			types.m_bLineNumIsCRLF,
 			types.m_nLineTermType,
@@ -1615,13 +1614,13 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
 				pColorInfoArr[j].m_bUnderLine = FALSE;
-				sscanf( szKeyData, pszForm,
-					&pColorInfoArr[j].m_bDisp,
-					&pColorInfoArr[j].m_bFatFont,
-					&pColorInfoArr[j].m_colTEXT,
-					&pColorInfoArr[j].m_colBACK,
-					&pColorInfoArr[j].m_bUnderLine
-				 );
+				int buf[5];
+				scan_ints( szKeyData, pszForm, buf );
+				pColorInfoArr[j].m_bDisp      = (buf[0]!=0);
+				pColorInfoArr[j].m_bFatFont   = (buf[1]!=0);
+				pColorInfoArr[j].m_colTEXT    = buf[2];
+				pColorInfoArr[j].m_colBACK    = buf[3];
+				pColorInfoArr[j].m_bUnderLine = (buf[4]!=0);
 			}
 			else{
 				// 2006.12.07 ryoji
@@ -1714,21 +1713,21 @@ void ShareData_IO_Sub_LogFont( CProfile& cProfile, const char* pszSecName,
 	cProfile.IOProfileData( pszSecName, pszKeyPointSize, pointSize );	// 2009.10.01 ryoji
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData( pszSecName, pszKeyLf, szKeyData, sizeof(szKeyData) ) ){
-			sscanf( szKeyData, pszForm,
-				&lf.lfHeight,
-				&lf.lfWidth,
-				&lf.lfEscapement,
-				&lf.lfOrientation,
-				&lf.lfWeight,
-				&lf.lfItalic,
-				&lf.lfUnderline,
-				&lf.lfStrikeOut,
-				&lf.lfCharSet,
-				&lf.lfOutPrecision,
-				&lf.lfClipPrecision,
-				&lf.lfQuality,
-				&lf.lfPitchAndFamily
-			);
+			int buf[13];
+			scan_ints( szKeyData, pszForm, buf );
+			lf.lfHeight         = buf[ 0];
+			lf.lfWidth          = buf[ 1];
+			lf.lfEscapement     = buf[ 2];
+			lf.lfOrientation    = buf[ 3];
+			lf.lfWeight         = buf[ 4];
+			lf.lfItalic         = (BYTE)buf[ 5];
+			lf.lfUnderline      = (BYTE)buf[ 6];
+			lf.lfStrikeOut      = (BYTE)buf[ 7];
+			lf.lfCharSet        = (BYTE)buf[ 8];
+			lf.lfOutPrecision   = (BYTE)buf[ 9];
+			lf.lfClipPrecision  = (BYTE)buf[10];
+			lf.lfQuality        = (BYTE)buf[11];
+			lf.lfPitchAndFamily = (BYTE)buf[12];
 			if( pointSize != 0 ){
 				// DPI変更してもフォントのポイントサイズが変わらないように
 				// ポイント数からピクセル数に変換する
