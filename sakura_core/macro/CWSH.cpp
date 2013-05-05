@@ -11,9 +11,25 @@
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
 
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
 #include "StdAfx.h"
@@ -32,7 +48,9 @@
 #include "util/window.h"	// BlockingHook
 #include "dlg/CDlgCancel.h"
 #include "sakura_rc.h"
-const HRESULT SCRIPT_E_REPORTED = 0x80020101; // 何を includeしたらいいかわからないので。
+#ifndef SCRIPT_E_REPORTED
+#define	SCRIPT_E_REPORTED	0x80020101L	// ActivScp.h(VS2012)と同じ様な形に変更
+#endif
 
 /* 2009.10.29 syat インタフェースオブジェクト部分をCWSHIfObj.hに分離
 class CInterfaceObjectTypeInfo: public ImplementsIUnknown<ITypeInfo>
