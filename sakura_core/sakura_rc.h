@@ -234,7 +234,7 @@
 #define IDC_BUTTON_HOKANFILE_REF        1186
 #define IDC_LIST_COLORS                 1188
 #define IDC_CHECK_DISP                  1189
-#define IDC_CHECK_FAT                   1190
+#define IDC_CHECK_BOLD                  1190
 #define IDC_RADIO_LINENUM_LAYOUT        1191
 #define IDC_RADIO_LINENUM_CRLF          1192
 #define IDC_STATIC_HAIKEI               1193

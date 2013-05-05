@@ -373,10 +373,10 @@ public: /* テスト用にアクセス属性を変更 */
 
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
 	static int		m_pnDx[MAXLINEKETAS + 10];	/* 文字列描画用文字幅配列 */
-	HFONT			m_hFont_HAN;		/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_FAT;	/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_UL;		/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_FAT_UL;	/* 現在のフォントハンドル */
+	HFONT			m_hFont_HAN;			/* 現在のフォントハンドル */
+	HFONT			m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */
+	HFONT			m_hFont_HAN_UL;			/* 現在のフォントハンドル(下線) */
+	HFONT			m_hFont_HAN_BOLD_UL;	/* 現在のフォントハンドル(太字、下線) */
 	HFONT			m_hFontOld;
 	BOOL			m_bCommandRunning;	/* コマンドの実行中 */
 	/* 分割状態 */
@@ -527,7 +527,7 @@ protected:
 	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
 	BOOL IsSearchString( const char*, int, int, int*, int* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
-	HFONT ChooseFontHandle( BOOL bFat, BOOL bUnderLine );		/* フォントを選ぶ */
+	HFONT ChooseFontHandle( bool bBold, bool bUnderLine );		/* フォントを選ぶ */
 	void ExecCmd(const char*, const int);						// 子プロセスの標準出力をリダイレクトする	//2006.12.03 maru 引数の拡張
 	void AddToCmdArr( const TCHAR* );
 	BOOL ChangeCurRegexp(bool bRedrawIfChanged= true);			// 2002.01.16 hor 正規表現の検索パターンを必要に応じて更新する(ライブラリが使用できないときはFALSEを返す)

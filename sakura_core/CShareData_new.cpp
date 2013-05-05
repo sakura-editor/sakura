@@ -1613,11 +1613,11 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 		wsprintf( szKeyName, "C[%s]", g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
-				pColorInfoArr[j].m_bUnderLine = FALSE;
+				pColorInfoArr[j].m_bUnderLine = false;
 				int buf[5];
 				scan_ints( szKeyData, pszForm, buf );
 				pColorInfoArr[j].m_bDisp      = (buf[0]!=0);
-				pColorInfoArr[j].m_bFatFont   = (buf[1]!=0);
+				pColorInfoArr[j].m_bBoldFont  = (buf[1]!=0);
 				pColorInfoArr[j].m_colTEXT    = buf[2];
 				pColorInfoArr[j].m_colBACK    = buf[3];
 				pColorInfoArr[j].m_bUnderLine = (buf[4]!=0);
@@ -1633,16 +1633,16 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 			// ñµèÇê›íËÇ™Ç†ÇÍÇŒèCïúÇ∑ÇÈ
 			unsigned int fAttribute = g_ColorAttributeArr[j].fAttribute;
 			if( 0 != (fAttribute & COLOR_ATTRIB_FORCE_DISP) )
-				pColorInfoArr[j].m_bDisp = TRUE;
+				pColorInfoArr[j].m_bDisp = true;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_BOLD) )
-				pColorInfoArr[j].m_bFatFont = FALSE;
+				pColorInfoArr[j].m_bBoldFont = false;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
-				pColorInfoArr[j].m_bUnderLine = FALSE;
+				pColorInfoArr[j].m_bUnderLine = false;
 		}
 		else{
 			wsprintf( szKeyData, pszForm,
-				pColorInfoArr[j].m_bDisp,
-				pColorInfoArr[j].m_bFatFont,
+				pColorInfoArr[j].m_bDisp?1:0,
+				pColorInfoArr[j].m_bBoldFont?1:0,
 				pColorInfoArr[j].m_colTEXT,
 				pColorInfoArr[j].m_colBACK,
 				pColorInfoArr[j].m_bUnderLine

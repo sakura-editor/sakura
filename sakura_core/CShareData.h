@@ -185,9 +185,9 @@ struct EditNodeEx{
 //! 色設定
 struct ColorInfo {
 	int			m_nColorIdx;
-	BOOL		m_bDisp;			/* 色分け/表示 をする */
-	BOOL		m_bFatFont;			/* 太字か */
-	BOOL		m_bUnderLine;		/* アンダーラインか */
+	bool		m_bDisp;			/* 色分け/表示 をする */
+	bool		m_bBoldFont;		/* 太字か */
+	bool		m_bUnderLine;		/* アンダーラインか */
 	COLORREF	m_colTEXT;			/* 前景色(文字色) */
 	COLORREF	m_colBACK;			/* 背景色 */
 	char		m_szName[32];		/* 名前 */
@@ -197,9 +197,9 @@ struct ColorInfo {
 //! 色設定(保存用)
 struct ColorInfoIni {
 	const char*	m_pszName;			/* 色名 */
-	BOOL		m_bDisp;			/* 色分け/表示 をする */
-	BOOL		m_bFatFont;			/* 太字か */
-	BOOL		m_bUnderLine;		/* アンダーラインか */
+	bool		m_bDisp;			/* 色分け/表示 をする */
+	bool		m_bBoldFont;		/* 太字か */
+	bool		m_bUnderLine;		/* アンダーラインか */
 	COLORREF	m_colTEXT;			/* 前景色(文字色) */
 	COLORREF	m_colBACK;			/* 背景色 */
 };

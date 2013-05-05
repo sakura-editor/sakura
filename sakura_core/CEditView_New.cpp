@@ -42,16 +42,16 @@
 #include "CDocLine.h"// 2002/2/10 aroka
 
 /*! フォントを選ぶ
-	@param bFat TRUEで太字
-	@param bUnderLine TRUEでアンダーライン
+	@param bBold trueで太字
+	@param bUnderLine trueでアンダーライン
 */
-HFONT CEditView::ChooseFontHandle( BOOL bFat, BOOL bUnderLine )
+HFONT CEditView::ChooseFontHandle( bool bBold, bool bUnderLine )
 {
-	if( bFat ){	/* 太字か */
+	if( bBold ){	/* 太字か */
 		if( bUnderLine ){	/* 下線か */
-			return m_hFont_HAN_FAT_UL;
+			return m_hFont_HAN_BOLD_UL;
 		}else{
-			return m_hFont_HAN_FAT;
+			return m_hFont_HAN_BOLD;
 		}
 	}else{
 		if( bUnderLine ){	/* 下線か */
@@ -589,7 +589,7 @@ searchnext:;
 							/* フォントを選ぶ */
 							hFontOld = (HFONT)::SelectObject( hdc,
 								ChooseFontHandle(
-									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bFatFont,
+									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 								)
 							);
@@ -608,7 +608,7 @@ searchnext:;
 								::SelectClipRgn(hdc, hRgn);
 								//@@@ 2001.12.21 YAZAKI
 								DrawEOL(hdc, nPosX + 1, nPosY, m_nCharWidth, m_nCharHeight,
-									pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bFatFont,
+									pcLayout2->m_cEol, TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_colTEXT );
 								::SelectClipRgn(hdc, NULL);
 								::DeleteObject(hRgn);
@@ -1127,7 +1127,7 @@ searchnext:;
 								/* フォントを選ぶ */
 								hFontOld = (HFONT)::SelectObject( hdc,
 									ChooseFontHandle(
-										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bFatFont,
+										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 									)
 								);
@@ -1159,7 +1159,7 @@ searchnext:;
 								 && rcClip2.left <= x + nX * nCharWidth ) // Apr. 1, 2003 MIK 行番号と重なる
 								{
 									DrawTabArrow( hdc, x + nX * ( nCharWidth ), y, m_nCharWidth, m_nCharHeight,
-										TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bFatFont,
+										TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
 										TypeDataPtr->m_ColorInfoArr[COLORIDX_TAB].m_colTEXT );
 								}
 							}
@@ -1201,7 +1201,7 @@ searchnext:;
 								/* フォントを選ぶ */
 								hFontOld = (HFONT)::SelectObject( hdc,
 									ChooseFontHandle(
-										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bFatFont,
+										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 									)
 								);
@@ -1254,7 +1254,7 @@ searchnext:;
 							colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIndex].m_colBACK );		/* 半角スペース文字背景の色 */
 							HFONT	hFontOld = (HFONT)::SelectObject( hdc,
 								ChooseFontHandle(
-									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bFatFont,
+									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 								)
 							);
@@ -1379,7 +1379,7 @@ searchnext:;
 						/* フォントを選ぶ */
 						hFontOld = (HFONT)::SelectObject( hdc,
 							ChooseFontHandle(
-								TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bFatFont,
+								TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bBoldFont,
 								TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bUnderLine
 							)
 						);
@@ -1757,15 +1757,10 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 		/* フォントを選ぶ */
 		hFontOld = (HFONT)::SelectObject( hdc,
 			ChooseFontHandle(
-				EofColInfo.m_bFatFont,
+				EofColInfo.m_bBoldFont,
 				EofColInfo.m_bUnderLine
 			)
 		);
-//		if( TypeDataPtr->m_ColorInfoArr[COLORIDX_EOF].m_bFatFont ){	/* 太字か */
-//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
-//		}else{
-//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-//								}
 
 		::ExtTextOut( hdc, x , y, fuOptions,
 			&rcClip, pszEOF, szEOFlen, m_pnDx );
@@ -1795,7 +1790,7 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol, int nRightCol )
 {
 	const STypeConfig&	typeData = m_pcEditDoc->GetDocumentAttribute();
-	if( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp == FALSE ){
+	if( !typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp ){
 		return;
 	}
 	nLeftCol = t_max( m_nViewLeftCol, nLeftCol );
@@ -1811,7 +1806,7 @@ void CEditView::DispVerticalLines( HDC hdc, int nTop, int nBottom, int nLeftCol,
 	bool bOddLine = ((((nLineHeight % 2) ? m_nViewTopLine : 0) + m_nViewAlignTop + nTop) % 2 == 1);
 
 	// 太線
-	const BOOL bBold = typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bFatFont;
+	const BOOL bBold = typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bBoldFont;
 	// ドット線(下線属性を転用/テスト用)
 	const BOOL bDot = typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_bUnderLine;
 	const bool bExorPen = ( typeData.m_ColorInfoArr[COLORIDX_VERTLINE].m_colTEXT 

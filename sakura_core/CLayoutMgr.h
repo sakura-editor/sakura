@@ -262,9 +262,9 @@ protected:
 	char*			m_pszKinsokuKuto_1;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
 	char*			m_pszKinsokuKuto_2;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
 	int				m_nTabSpace;				/* TAB文字スペース */
-	BOOL			m_bDispComment;				/* コメントの色分け */		// 2005.11.21 Moca
-	BOOL			m_bDispSString;				/* シングルクォーテーションの色分け */		// 2005.11.21 Moca
-	BOOL			m_bDispWString;				/* ダブルクォーテーションの色分け */		// 2005.11.21 Moca
+	bool			m_bDispComment;				/* コメントの色分け */		// 2005.11.21 Moca
+	bool			m_bDispSString;				/* シングルクォーテーションの色分け */		// 2005.11.21 Moca
+	bool			m_bDispWString;				/* ダブルクォーテーションの色分け */		// 2005.11.21 Moca
 	CLineComment	m_cLineComment;				/* 行コメントデリミタ */		//@@@ 2002.09.22 YAZAKI
 	CBlockComment	m_cBlockComments[2];		/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 	int				m_nStringType;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */

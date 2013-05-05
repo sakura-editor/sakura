@@ -274,9 +274,9 @@ BOOL CEditView::Create(
 	/* フォント作成 */
 	// 2010.05.30 Moca フォントの作成をCreateに移動
 	m_hFont_HAN = NULL;
-	m_hFont_HAN_FAT = NULL;
+	m_hFont_HAN_BOLD = NULL;
 	m_hFont_HAN_UL = NULL;
-	m_hFont_HAN_FAT_UL = NULL;
+	m_hFont_HAN_BOLD_UL = NULL;
 	
 
 	//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
@@ -346,7 +346,7 @@ BOOL CEditView::Create(
 		if( 1000 < lf.lfWeight ){
 			lf.lfWeight = 1000;
 		}
-		m_hFont_HAN_FAT = CreateFontIndirect( &lf );
+		m_hFont_HAN_BOLD = CreateFontIndirect( &lf );
 
 		/* 下線フォント作成 */
 		lf = m_pShareData->m_Common.m_sView.m_lf;
@@ -360,7 +360,7 @@ BOOL CEditView::Create(
 		if( 1000 < lf.lfWeight ){
 			lf.lfWeight = 1000;
 		}
-		m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
+		m_hFont_HAN_BOLD_UL = CreateFontIndirect( &lf );
 	}
 	m_dwTipTimer = ::GetTickCount();
 
@@ -462,10 +462,10 @@ BOOL CEditView::Create(
 
 CEditView::~CEditView()
 {
-	if( m_hFont_HAN )        DeleteObject( m_hFont_HAN );
-	if( m_hFont_HAN_FAT )    DeleteObject( m_hFont_HAN_FAT );
-	if( m_hFont_HAN_UL )     DeleteObject( m_hFont_HAN_UL );
-	if( m_hFont_HAN_FAT_UL ) DeleteObject( m_hFont_HAN_FAT_UL );
+	if( m_hFont_HAN )         DeleteObject( m_hFont_HAN );
+	if( m_hFont_HAN_BOLD )    DeleteObject( m_hFont_HAN_BOLD );
+	if( m_hFont_HAN_UL )      DeleteObject( m_hFont_HAN_UL );
+	if( m_hFont_HAN_BOLD_UL ) DeleteObject( m_hFont_HAN_BOLD_UL );
 
 	// キャレット用ビットマップ	// 2006.11.28 ryoji
 	if( m_hbmpCaret != NULL )
@@ -2040,7 +2040,7 @@ void CEditView::SetFont( void )
 
 	hdc = ::GetDC( m_hWnd );
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-//	hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
+//	hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_BOLD );
 	::GetTextMetrics( hdc, &tm );
 
 
@@ -3413,7 +3413,7 @@ BOOL CEditView::IsCurrentPositionURL(
 	int			nUrlLen;
 
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
-	BOOL bDispUrl = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp;
+	bool bDispUrl = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_URL].m_bDisp;
 	BOOL bUseRegexKeyword = FALSE;
 	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->GetDocumentAttribute());
 	if( TypeDataPtr->m_bUseRegexKeyword ){
@@ -6294,13 +6294,13 @@ void CEditView::OnChangeSetting( void )
 	m_hFont_HAN = CreateFontIndirect( &(m_pShareData->m_Common.m_sView.m_lf) );
 
 	/* 太字フォント作成 */
-	::DeleteObject( m_hFont_HAN_FAT );
+	::DeleteObject( m_hFont_HAN_BOLD );
 	lf = m_pShareData->m_Common.m_sView.m_lf;
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
 		lf.lfWeight = 1000;
 	}
-	m_hFont_HAN_FAT = CreateFontIndirect( &lf );
+	m_hFont_HAN_BOLD = CreateFontIndirect( &lf );
 
 	/* 下線フォント作成 */
 	::DeleteObject( m_hFont_HAN_UL );
@@ -6309,14 +6309,14 @@ void CEditView::OnChangeSetting( void )
 	m_hFont_HAN_UL = CreateFontIndirect( &lf );
 
 	/* 太字下線フォント作成 */
-	::DeleteObject( m_hFont_HAN_FAT_UL );
+	::DeleteObject( m_hFont_HAN_BOLD_UL );
 	lf = m_pShareData->m_Common.m_sView.m_lf;
 	lf.lfUnderline = TRUE;
 	lf.lfWeight += 300;
 	if( 1000 < lf.lfWeight ){
 		lf.lfWeight = 1000;
 	}
-	m_hFont_HAN_FAT_UL = CreateFontIndirect( &lf );
+	m_hFont_HAN_BOLD_UL = CreateFontIndirect( &lf );
 
 
 
@@ -9022,9 +9022,9 @@ void CCaretUnderLine::CaretUnderLineOFF( bool bDraw )
 void CEditView::CaretUnderLineON( bool bDraw )
 {
 
-	BOOL bUnderLine = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
-	BOOL bCursorVLine = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
-	if( FALSE == bUnderLine && FALSE == bCursorVLine ){
+	bool bUnderLine = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
+	bool bCursorVLine = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
+	if( !bUnderLine && !bCursorVLine ){
 		return;
 	}
 
@@ -9060,7 +9060,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		::MoveToEx( hdc, m_nOldCursorLineX, m_nViewAlignTop, NULL );
 		::LineTo(   hdc, m_nOldCursorLineX, m_nViewCy + m_nViewAlignTop );
 		// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
-		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont &&
+		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bBoldFont &&
 			m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
 			::MoveToEx( hdc, m_nOldCursorLineX - 1, m_nViewAlignTop, NULL );
 			::LineTo(   hdc, m_nOldCursorLineX - 1, m_nViewCy + m_nViewAlignTop );
@@ -9117,7 +9117,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 void CEditView::CaretUnderLineOFF( bool bDraw )
 {
 	if( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
-			FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp ){
+			!m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp ){
 		return;
 	}
 
@@ -9171,7 +9171,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			ps.rcPaint.right = m_nOldCursorLineX + 1;
 			ps.rcPaint.top = m_nViewAlignTop;
 			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bFatFont ){
+			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bBoldFont ){
 				ps.rcPaint.left += -1;
 			}
 			HDC hdc = ::GetDC( m_hWnd );

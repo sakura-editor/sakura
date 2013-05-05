@@ -5083,7 +5083,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 
 	static ColorInfoIni ColorInfo_DEFAULT[] = {
 	//	Nov. 9, 2000 Jepro note: color setting (詳細は CshareData.h を参照のこと)
-	//	0,							1(Disp),	 2(FatFont),3(UnderLIne) , 4(colTEXT),	5(colBACK),
+	//	0,							1(Disp),	 2(BoldFont),3(UnderLIne) , 4(colTEXT),	5(colBACK),
 	//	szName(項目名),				色分け／表示, 太字,		下線,		文字色,		背景色,
 	//
 	//Oct. 8, 2000 JEPRO 背景色を真っ白RGB(255,255,255)→(255,251,240)に変更(眩しさを押さえた)
@@ -5146,7 +5146,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	for( i = 0; i < COLORIDX_LAST; ++i ){
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_nColorIdx		= i;
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bDisp			= ColorInfo_DEFAULT[i].m_bDisp;
-		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bFatFont		= ColorInfo_DEFAULT[i].m_bFatFont;
+		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bBoldFont		= ColorInfo_DEFAULT[i].m_bBoldFont;
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bUnderLine		= ColorInfo_DEFAULT[i].m_bUnderLine;
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colTEXT			= ColorInfo_DEFAULT[i].m_colTEXT;
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colBACK			= ColorInfo_DEFAULT[i].m_colBACK;
@@ -5276,9 +5276,9 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 //		pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_UNKNOWN;	/* アウトライン解析方法 */	//Jul. 08, 2001 JEPRO 使わないように変更
 	pShareData->m_Types[0].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[0].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 
 //		nIdx = 0;
 	/* テキスト */
@@ -5287,9 +5287,9 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	//To Here Sept. 20, 2000
 	pShareData->m_Types[1].m_nDefaultOutline = OUTLINE_TEXT;		/* アウトライン解析方法 */
 	//Oct. 17, 2000 JEPRO	シングルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[1].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[1].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 	//Sept. 4, 2000 JEPRO	ダブルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[1].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[1].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 	pShareData->m_Types[1].m_bKinsokuHead = FALSE;				/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	pShareData->m_Types[1].m_bKinsokuTail = FALSE;				/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	pShareData->m_Types[1].m_bKinsokuRet  = FALSE;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
@@ -5317,9 +5317,9 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[2].m_nDefaultOutline = OUTLINE_CPP;			/* アウトライン解析方法 */
 	pShareData->m_Types[2].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
 	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
+	pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;
 	//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
-	pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
+	pShareData->m_Types[2].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= true;
 	//	2003.06.23 Moca ファイル内からの入力補完機能
 	pShareData->m_Types[2].m_bUseHokanByFile = true;			/*! 入力補完 開いているファイル内から候補を探す */
 
@@ -5329,7 +5329,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[3].m_nKeyWordSetIdx[0] = 1;						/* キーワードセット */
 	pShareData->m_Types[3].m_nDefaultOutline = OUTLINE_HTML;			/* アウトライン解析方法 */
 	// Feb. 2, 2005 genta 苦情が多いのでシングルクォートの色分けはHTMLでは行わない
-	pShareData->m_Types[3].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[3].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 
 	// nIdx = 3;
 	/* PL/SQL */
@@ -5349,7 +5349,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[5].m_nDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
 
 	// 2005.11.08 Moca 指定桁縦線
-	pShareData->m_Types[5].m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = TRUE;
+	pShareData->m_Types[5].m_ColorInfoArr[COLORIDX_VERTLINE].m_bDisp = true;
 	pShareData->m_Types[5].m_nVertLineIdx[0] = 7;
 	pShareData->m_Types[5].m_nVertLineIdx[1] = 8;
 	pShareData->m_Types[5].m_nVertLineIdx[2] = 12;
@@ -5363,16 +5363,16 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[6].m_nDefaultOutline = OUTLINE_JAVA;			/* アウトライン解析方法 */
 	pShareData->m_Types[6].m_nSmartIndent = SMARTINDENT_CPP;			/* スマートインデント種別 */
 	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	pShareData->m_Types[6].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
+	pShareData->m_Types[6].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;
 	//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
-	pShareData->m_Types[6].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
+	pShareData->m_Types[6].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= true;
 
 	/* アセンブラ */
 	//	2004.05.01 MIK/genta
 	pShareData->m_Types[7].m_cLineComment.CopyTo( 0, ";", -1 );		/* 行コメントデリミタ */
 	pShareData->m_Types[7].m_nDefaultOutline = OUTLINE_ASM;			/* アウトライン解析方法 */
 	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	pShareData->m_Types[7].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;
+	pShareData->m_Types[7].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;
 
 	/* awk */
 	pShareData->m_Types[8].m_cLineComment.CopyTo( 0, "#", -1 );		/* 行コメントデリミタ */
@@ -5391,7 +5391,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[10].m_nStringType = 1;						/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
 	pShareData->m_Types[10].m_nKeyWordSetIdx[0] = 8;						/* キーワードセット */
 	//Mar. 10, 2001 JEPRO	半角数値を色分け表示
-	pShareData->m_Types[10].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	//@@@ 2001.11.11 upd MIK
+	pShareData->m_Types[10].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;	//@@@ 2001.11.11 upd MIK
 
 	//From Here Oct. 31, 2000 JEPRO
 	/* TeX */
@@ -5400,11 +5400,11 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[11].m_nKeyWordSetIdx[0]  = 9;					/* キーワードセット */
 	pShareData->m_Types[11].m_nKeyWordSetIdx[1] = 10;					/* キーワードセット2 */	//Jan. 19, 2001 JEPRO
 	//シングルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 	//ダブルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 	//URLにアンダーラインを引かない(やっぱりやめた)
-//		pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_URL].m_bDisp = FALSE;
+//		pShareData->m_Types[11].m_ColorInfoArr[COLORIDX_URL].m_bDisp = false;
 	//To Here Oct. 31, 2000
 
 	//From Here Jul. 08, 2001 JEPRO
@@ -5413,10 +5413,10 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[12].m_nDefaultOutline = OUTLINE_PERL;			/* アウトライン解析方法 */
 	pShareData->m_Types[12].m_nKeyWordSetIdx[0]  = 11;					/* キーワードセット */
 	pShareData->m_Types[12].m_nKeyWordSetIdx[1] = 12;					/* キーワードセット2 */
-	pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
+	pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;	/* 半角数値を色分け表示 */
 	//To Here Jul. 08, 2001
 	//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
-	pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= TRUE;
+	pShareData->m_Types[12].m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp	= true;
 
 	//From Here Jul. 10, 2001 JEPRO
 	/* Visual Basic */
@@ -5424,22 +5424,22 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[13].m_nDefaultOutline = OUTLINE_VB;			/* アウトライン解析方法 */
 	pShareData->m_Types[13].m_nKeyWordSetIdx[0]  = 13;					/* キーワードセット */
 	pShareData->m_Types[13].m_nKeyWordSetIdx[1] = 14;					/* キーワードセット2 */
-	pShareData->m_Types[13].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
+	pShareData->m_Types[13].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;	/* 半角数値を色分け表示 */
 	pShareData->m_Types[13].m_nStringType = 1;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	//シングルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[13].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[13].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 
 	/* リッチテキスト */
 	pShareData->m_Types[14].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
 	pShareData->m_Types[14].m_nKeyWordSetIdx[0]  = 15;					/* キーワードセット */
-	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = TRUE;	/* 半角数値を色分け表示 */
+	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;	/* 半角数値を色分け表示 */
 	pShareData->m_Types[14].m_nStringType = 0;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	//シングルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 	//ダブルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 	//URLにアンダーラインを引かない
-	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_URL].m_bDisp = FALSE;
+	pShareData->m_Types[14].m_ColorInfoArr[COLORIDX_URL].m_bDisp = false;
 	//To Here Jul. 10, 2001
 
 	//From Here Nov. 9, 2000 JEPRO
@@ -5448,9 +5448,9 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	pShareData->m_Types[15].m_cLineComment.CopyTo( 1, ";", -1 );		/* 行コメントデリミタ2 */
 	pShareData->m_Types[15].m_nDefaultOutline = OUTLINE_TEXT;			/* アウトライン解析方法 */
 	//シングルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[15].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[15].m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
 	//ダブルクォーテーション文字列を色分け表示しない
-	pShareData->m_Types[15].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	pShareData->m_Types[15].m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 	//To Here Nov. 9, 2000
 }
 

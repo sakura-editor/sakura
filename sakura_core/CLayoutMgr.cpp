@@ -52,9 +52,9 @@ CLayoutMgr::CLayoutMgr()
 	m_pszKinsokuKuto_1 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 	m_pszKinsokuKuto_2 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 	// 2005.11.21 Moca 色分けフラグをメンバで持つ
-	m_bDispComment = FALSE; 
-	m_bDispSString = FALSE;
-	m_bDispWString = FALSE;
+	m_bDispComment = false; 
+	m_bDispSString = false;
+	m_bDispWString = false;
 
 	m_nTextWidth = 0;			// テキスト最大幅の記憶		// 2009.08.28 nasukoji
 	m_nTextWidthMaxLine = 0;	// 最大幅のレイアウト行		// 2009.08.28 nasukoji

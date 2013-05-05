@@ -93,7 +93,7 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
 				ChooseFontHandle(
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bBoldFont,
 					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
 				)
 			);
@@ -116,7 +116,7 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
 				ChooseFontHandle(
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bFatFont,
+					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bBoldFont,
 					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
 				)
 			);
@@ -225,15 +225,10 @@ void CEditView::DispLineNumber(
 		/* フォントを選ぶ */
 		hFontOld = (HFONT)::SelectObject( hdc,
 			ChooseFontHandle(
-				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bFatFont,
+				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bBoldFont,
 				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bUnderLine
 			)
 		);
-//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bFatFont ){	/* 太字か */
-//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN_FAT );
-//		}else{
-//			hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
-//		}
 
 		/* 余白を埋める */
 		rcClip.left = nLineNumAreaWidth;
@@ -318,7 +313,7 @@ void CEditView::DispLineNumber(
 // From Here 2001.12.03 hor
 	/* とりあえずブックマークに縦線 */
 	if(pCDocLine->IsBookmarked() &&	// Dec. 24, 2002 ai
-		(FALSE == m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_MARK].m_bDisp)){
+		( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_MARK].m_bDisp)){
 		hPen = ::CreatePen( PS_SOLID, 2, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
 		::MoveToEx( hdc, 1, y, NULL );

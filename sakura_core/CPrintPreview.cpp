@@ -770,9 +770,9 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_cBlockComments[1].SetBlockCommentRule("", "");	/* ブロックコメントデリミタ2 */
 
 	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = FALSE;
-	ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = FALSE;
-	ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = FALSE;
+	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false;
+	ref.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
+	ref.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 	ref.m_bKinsokuHead = m_pPrintSetting->m_bPrintKinsokuHead,	/* 行頭禁則する */	//@@@ 2002.04.08 MIK
 	ref.m_bKinsokuTail = m_pPrintSetting->m_bPrintKinsokuTail,	/* 行末禁則する */	//@@@ 2002.04.08 MIK
 	ref.m_bKinsokuRet = m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
