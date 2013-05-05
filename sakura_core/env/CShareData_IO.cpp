@@ -1150,7 +1150,7 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 				printsetting.m_nPrintPaperOrientation	= (short)buf[ 9];
 				printsetting.m_nPrintPaperSize			= (short)buf[10];
 				printsetting.m_bPrintWordWrap			= (buf[11]!=0);
-				printsetting.m_bPrintLineNumber			= buf[12];
+				printsetting.m_bPrintLineNumber			= (buf[12]!=0);
 				printsetting.m_bHeaderUse[0]			= buf[13];
 				printsetting.m_bHeaderUse[1]			= buf[14];
 				printsetting.m_bHeaderUse[2]			= buf[15];
