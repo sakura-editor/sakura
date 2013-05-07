@@ -129,7 +129,10 @@ BOOL CDlgPrintSetting::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_FONT_ZEN ), TRUE );
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_PAPER ), TRUE );
 
-	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
+	// タイマーでの更新をやめて、能動的に更新要求する 2013.5.5 aroka
+	// CDialog::OnInitDialogの奥でOnChangeSettingTypeが呼ばれるのでここでは更新要求しない
+	//	::SetTimer( GetHwnd(), IDT_PRINTSETTING, 500, NULL );
+	//UpdatePrintableLineAndColumn();
 
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
@@ -169,6 +172,7 @@ BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 	case IDC_SPIN_MARGINRX:
 		/* スピンコントロールの処理 */
 		OnSpin( idCtrl, bSpinDown );
+		UpdatePrintableLineAndColumn();
 		break;
 	}
 	return TRUE;
@@ -176,10 +180,17 @@ BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 
 BOOL CDlgPrintSetting::OnCbnSelChange( HWND hwndCtl, int wID )
 {
-	if( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ) == hwndCtl ){
+//	if( ::GetDlgItem( GetHwnd(), IDC_COMBO_SETTINGNAME ) == hwndCtl ){
+	switch( wID ){
+	case IDC_COMBO_SETTINGNAME:
 		/* 設定のタイプが変わった */
 		OnChangeSettingType( TRUE );
 		return TRUE;
+	case IDC_COMBO_FONT_HAN:
+	case IDC_COMBO_FONT_ZEN:
+	case IDC_COMBO_PAPER:
+		UpdatePrintableLineAndColumn();
+		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
 	}
 	return FALSE;
 }
@@ -242,9 +253,65 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
 		return TRUE;
+	case IDC_RADIO_PORTRAIT:
+	case IDC_RADIO_LANDSCAPE:
+		UpdatePrintableLineAndColumn();
+		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
 	}
 	/* 基底クラスメンバ */
 	return CDialog::OnBnClicked( wID );
+}
+
+
+BOOL CDlgPrintSetting::OnStnClicked( int wID )
+{
+	switch( wID ){
+	case IDC_STATIC_ENABLECOLMNS:
+	case IDC_STATIC_ENABLELINES:
+		// 現状クリックは受け付けていないが、メッセージ処理したいのでここに配置 2013.5.5 aroka
+		CalcPrintableLineAndColumn();
+		return TRUE;
+	}
+	/* 基底クラスメンバ */
+	return CDialog::OnStnClicked( wID );
+}
+
+
+BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
+{
+	switch( wID ){
+//	case IDC_EDIT_FONTWIDTH:	// フォント幅の最小値が非０のため'12'と入力すると'1'のところで蹴られてしまう 2013.5.5 aroka
+	case IDC_EDIT_LINESPACE:
+	case IDC_EDIT_DANSUU:
+	case IDC_EDIT_DANSPACE:
+	case IDC_EDIT_MARGINTY:
+	case IDC_EDIT_MARGINBY:
+	case IDC_EDIT_MARGINLX:
+	case IDC_EDIT_MARGINRX:
+		UpdatePrintableLineAndColumn();
+		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
+	}
+	/* 基底クラスメンバ */
+	return CDialog::OnEnChange( hwndCtl, wID );
+}
+
+
+BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
+{
+	switch( wID ){
+	case IDC_EDIT_FONTWIDTH:
+	//case IDC_EDIT_LINESPACE:	// EN_CHANGE で計算しているので冗長かな、と思いコメントアウト 2013.5.5 aroka
+	//case IDC_EDIT_DANSUU:
+	//case IDC_EDIT_DANSPACE:
+	//case IDC_EDIT_MARGINTY:
+	//case IDC_EDIT_MARGINBY:
+	//case IDC_EDIT_MARGINLX:
+	//case IDC_EDIT_MARGINRX:
+		UpdatePrintableLineAndColumn();
+		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
+	}
+	/* 基底クラスメンバ */
+	return CDialog::OnEnKillFocus( hwndCtl, wID );
 }
 
 
@@ -510,93 +577,51 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT2, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_CENTER] );	//	100文字で制限しないと。。。
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_FOOT3, m_PrintSettingArr[m_nCurrentPrintSetting].m_szFooterForm[POS_RIGHT] );	//	100文字で制限しないと。。。
 
+	UpdatePrintableLineAndColumn();
 	return;
 }
+
+
+const struct {
+	int ctrlid;
+	int minval;
+	int maxval;
+} sDataRange[] = {
+	IDC_EDIT_FONTWIDTH,	7,	100,	//!< 1/10mm
+	IDC_EDIT_LINESPACE,	0,	150,	//!< %
+	IDC_EDIT_DANSUU,	1,	4,
+	IDC_EDIT_DANSPACE,	0,	30,		//!< mm
+	IDC_EDIT_MARGINTY,	0,	50,		//!< mm
+	IDC_EDIT_MARGINBY,	0,	50,		//!< mm
+	IDC_EDIT_MARGINLX,	0,	50,		//!< mm
+	IDC_EDIT_MARGINRX,	0,	50,		//!< mm
+};
 
 /* スピンコントロールの処理 */
 void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 {
-	bool	bUnknown = false;
 	int		nData = 0;
 	int		nCtrlIdEDIT = 0;
+	int		nDiff = 1;
+	int		nIdx = -1;
 	switch( nCtrlId ){
-	case IDC_SPIN_FONTWIDTH:
-		nCtrlIdEDIT = IDC_EDIT_FONTWIDTH;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData-=1;
-		}else{
-			nData+=1;
-		}
-		break;
-	case IDC_SPIN_LINESPACE:
-		nCtrlIdEDIT = IDC_EDIT_LINESPACE;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData-=10;
-		}else{
-			nData+=10;
-		}
-		break;
-	case IDC_SPIN_DANSUU:
-		nCtrlIdEDIT = IDC_EDIT_DANSUU;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData--;
-		}else{
-			++nData;
-		}
-		break;
-	case IDC_SPIN_DANSPACE:
-		nCtrlIdEDIT = IDC_EDIT_DANSPACE;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData--;
-		}else{
-			++nData;
-		}
-		break;
-	case IDC_SPIN_MARGINTY:
-		nCtrlIdEDIT = IDC_EDIT_MARGINTY;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData--;
-		}else{
-			++nData;
-		}
-		break;
-	case IDC_SPIN_MARGINBY:
-		nCtrlIdEDIT = IDC_EDIT_MARGINBY;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData--;
-		}else{
-			++nData;
-		}
-		break;
-	case IDC_SPIN_MARGINLX:
-		nCtrlIdEDIT = IDC_EDIT_MARGINLX;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData--;
-		}else{
-			++nData;
-		}
-		break;
-	case IDC_SPIN_MARGINRX:
-		nCtrlIdEDIT = IDC_EDIT_MARGINRX;
-		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
-		if( bDown ){
-			nData--;
-		}else{
-			++nData;
-		}
-		break;
-	default:
-		bUnknown = true;
-		break;
+	case IDC_SPIN_FONTWIDTH:	nIdx = 0;				break;
+	case IDC_SPIN_LINESPACE:	nIdx = 1;	nDiff=10;	break;
+	case IDC_SPIN_DANSUU:		nIdx = 2;				break;
+	case IDC_SPIN_DANSPACE:		nIdx = 3;				break;
+	case IDC_SPIN_MARGINTY:		nIdx = 4;				break;
+	case IDC_SPIN_MARGINBY:		nIdx = 5;				break;
+	case IDC_SPIN_MARGINLX:		nIdx = 6;				break;
+	case IDC_SPIN_MARGINRX:		nIdx = 7;				break;
 	}
-	if( !bUnknown ){
+	if( nIdx >= 0 ){
+		nCtrlIdEDIT = sDataRange[nIdx].ctrlid;
+ 		nData = ::GetDlgItemInt( GetHwnd(), nCtrlIdEDIT, NULL, FALSE );
+ 		if( bDown ){
+			nData -= nDiff;
+ 		}else{
+			nData += nDiff;
+ 		}
 		/* 入力値(数値)のエラーチェックをして正しい値を返す */
 		nData = DataCheckAndCorrect( nCtrlIdEDIT, nData );
 		::SetDlgItemInt( GetHwnd(), nCtrlIdEDIT, nData, FALSE );
@@ -607,90 +632,45 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 /* 入力値(数値)のエラーチェックをして正しい値を返す */
 int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 {
+	int nIdx = -1;
 	switch( nCtrlId ){
-	case IDC_EDIT_FONTWIDTH:
-		if( 7 >= nData ){
-			nData = 7;
-		}
-		if( 100 < nData ){
-			nData = 100;
-		}
-		break;
-	case IDC_EDIT_LINESPACE:
-		if( 0 >= nData ){
-			nData = 0;
-		}
-		if( 150 < nData ){
-			nData = 150;
-		}
-		break;
-	case IDC_EDIT_DANSUU:
-		if( 1 >= nData ){
-			nData = 1;
-		}
-		if( 4 < nData ){
-			nData = 4;
-		}
-		break;
-	case IDC_EDIT_DANSPACE:
-		if( 0 >= nData ){
-			nData = 0;
-		}
-		if( 30 < nData ){
-			nData = 30;
-		}
-		break;
-	case IDC_EDIT_MARGINTY:
-		if( 0 >= nData ){
-			nData = 0;
-		}
-		if( 50 < nData ){
-			nData = 50;
-		}
-		break;
-	case IDC_EDIT_MARGINBY:
-		if( 0 >= nData ){
-			nData = 0;
-		}
-		if( 50 < nData ){
-			nData = 50;
-		}
-		break;
-	case IDC_EDIT_MARGINLX:
-		if( 0 >= nData ){
-			nData = 0;
-		}
-		if( 50 < nData ){
-			nData = 50;
-		}
-		break;
-	case IDC_EDIT_MARGINRX:
-		if( 0 >= nData ){
-			nData = 0;
-		}
-		if( 50 < nData ){
-			nData = 50;
-		}
-		break;
+	case IDC_EDIT_FONTWIDTH:	nIdx = 0;		break;
+	case IDC_EDIT_LINESPACE:	nIdx = 1;		break;
+	case IDC_EDIT_DANSUU:		nIdx = 2;		break;
+	case IDC_EDIT_DANSPACE:		nIdx = 3;		break;
+	case IDC_EDIT_MARGINTY:		nIdx = 4;		break;
+	case IDC_EDIT_MARGINBY:		nIdx = 5;		break;
+	case IDC_EDIT_MARGINLX:		nIdx = 6;		break;
+	case IDC_EDIT_MARGINRX:		nIdx = 7;		break;
+	}
+	if( nIdx >= 0 ){
+		if( nData <= sDataRange[nIdx].minval ){
+			nData = sDataRange[nIdx].minval;
+ 		}
+		if( nData > sDataRange[nIdx].maxval ){
+			nData = sDataRange[nIdx].maxval;
+ 		}
 	}
 	return nData;
 }
 
+
 /* タイマー処理 */
-BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
+BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 {
-	int nTimer;
 	int				nEnableColmns;		/* 行あたりの文字数 */
 	int				nEnableLines;		/* 縦方向の行数 */
 	MYDEVMODE		dmDummy;			// 2003.05.18 かろと 型変更
 	short			nPaperAllWidth;		/* 用紙幅 */
 	short			nPaperAllHeight;	/* 用紙高さ */
 	PRINTSETTING*	pPS;
-	nTimer = (int)wParam;
 
-	if( nTimer != IDT_PRINTSETTING ){
-		return FALSE;
+	// メッセージが連続して送られたときは一回だけ対応する 2013.5.5 aroka
+	if( m_bPrintableLinesAndColumnInvalid == false ){
+		return TRUE;
 	}
+	m_bPrintableLinesAndColumnInvalid = false;
+
 	/* ダイアログデータの取得 */
 	GetData();
 	pPS = &m_PrintSettingArr[m_nCurrentPrintSetting];
@@ -724,6 +704,16 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 
 	return TRUE;
 }
+
+
+// 行数と桁数の更新を要求（メッセージキューにポストする）
+// ダイアログ初期化の途中で EN_CHANGE に反応すると計算がおかしくなるため、関数呼び出しではなくPostMessageで処理 2013.5.5 aroka
+void CDlgPrintSetting::UpdatePrintableLineAndColumn()
+{
+	m_bPrintableLinesAndColumnInvalid = true;
+	::PostMessageA( GetHwnd(), WM_COMMAND, MAKELONG( IDC_STATIC_ENABLECOLMNS, STN_CLICKED ), (LPARAM)::GetDlgItem( GetHwnd(), IDC_STATIC_ENABLECOLMNS ) );
+}
+
 
 //@@@ 2002.01.18 add start
 LPVOID CDlgPrintSetting::GetHelpIdTable(void)
