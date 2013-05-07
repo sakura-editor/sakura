@@ -51,6 +51,10 @@
 #define _WIN32_WINNT_WIN7	0x0601
 #endif
 
+#ifdef USE_SSE
+#include <intrin.h>
+#endif
+
 class COsVersionInfo {
 public:
 	// 初期化を行う(引数はダミー)
@@ -59,6 +63,12 @@ public:
 		memset_raw( &m_cOsVersionInfo, 0, sizeof( m_cOsVersionInfo ) );
 		m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
 		m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
+
+#ifdef USE_SSE
+ 		int CPUInfo[4];
+		__cpuid(CPUInfo, 1);
+		m_bSSE = (CPUInfo[3] & (2<<25)) != 0;
+#endif
 	}
 
 	// 通常のコンストラクタ
@@ -175,10 +185,23 @@ public:
 		return ( IsWin32Windows() && (4 == m_cOsVersionInfo.dwMajorVersion) && ( 90 == m_cOsVersionInfo.dwMinorVersion ) );
 	}
 
+#ifdef USE_SSE
+	/*! SSEサポートかを調べる
+
+		@retval true support SSE
+	*/
+	bool _SupportSSE(){
+		return m_bSSE;
+	}
+#endif
+
 protected:
 	// Classはstatic(全クラス共有)変数以外持たない
 	static BOOL m_bSuccess;
 	static OSVERSIONINFO m_cOsVersionInfo;
+#ifdef USE_SSE
+	static bool m_bSSE;
+#endif
 };
 
 

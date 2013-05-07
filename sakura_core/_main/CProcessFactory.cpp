@@ -36,6 +36,9 @@ class CProcess;
 //	_os/COsVersionInfo.cppを作るべきか?
 BOOL	 		COsVersionInfo::m_bSuccess;
 OSVERSIONINFO	COsVersionInfo::m_cOsVersionInfo;
+#ifdef USE_SSE
+bool			COsVersionInfo::m_bSSE;
+#endif
 
 
 /*!
@@ -123,6 +126,19 @@ bool CProcessFactory::IsValidVersion()
 		InfoMessage( NULL, _T("OSのバージョンが取得できません。\nアプリケーションを終了します。") );
 		return false;
 	}
+
+	/* 拡張命令セットのチェック */
+#ifdef USE_SSE
+	if ( cOsVer._SupportSSE() ) {
+	} else {
+		InfoMessage( NULL,
+			_T("このアプリケーションを実行するには、\n")
+			_T("SSE命令セットをサポートしたCPUが必要です。\n")
+			_T("アプリケーションを終了します。")
+		);
+		return false;
+	}
+#endif
 
 #if (WINVER < _WIN32_WINNT_WIN2K)
 	/* システムリソースのチェック */
