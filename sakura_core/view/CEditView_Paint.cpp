@@ -520,7 +520,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	CGraphics gr(_hdc);
 
 	// 2004.01.28 Moca デスクトップに作画しないように
-	if( NULL == gr )return;
+	if( (HDC)NULL == gr )return;
 
 	if( !GetDrawSwitch() )return;
 	//@@@
