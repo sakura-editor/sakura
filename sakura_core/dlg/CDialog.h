@@ -92,6 +92,7 @@ public:
 	virtual BOOL OnBnClicked( int );
 	virtual BOOL OnStnClicked( int ){return FALSE;}
 	virtual BOOL OnEnChange( HWND hwndCtl, int wID ){return FALSE;}
+	virtual BOOL OnEnKillFocus( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
 	virtual BOOL OnCbnSelChange( HWND hwndCtl, int wID ){return FALSE;}

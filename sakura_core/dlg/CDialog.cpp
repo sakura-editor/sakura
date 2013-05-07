@@ -446,6 +446,7 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 		}else if( ::lstrcmpi(szClass, _T("Edit")) == 0 ){
 			switch( wNotifyCode ){
 			case EN_CHANGE:		return OnEnChange( hwndCtl, wID );
+			case EN_KILLFOCUS:	return OnEnKillFocus( hwndCtl, wID );
 			}
 		}else if( ::lstrcmpi(szClass, _T("ListBox")) == 0 ){
 			switch( wNotifyCode ){

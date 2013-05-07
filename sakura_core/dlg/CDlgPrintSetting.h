@@ -39,7 +39,7 @@ public:
 private:
 	int				m_nCurrentPrintSetting;
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
-
+	bool			m_bPrintableLinesAndColumnInvalid;
 
 protected:
 	/*
@@ -52,12 +52,16 @@ protected:
 	BOOL OnNotify( WPARAM,  LPARAM );
 	BOOL OnCbnSelChange( HWND, int );
 	BOOL OnBnClicked( int );
+	BOOL OnStnClicked( int );
+	BOOL OnEnChange( HWND hwndCtl, int wID );
+	BOOL OnEnKillFocus( HWND hwndCtl, int wID );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 
 	void OnChangeSettingType( BOOL );	/* 設定のタイプが変わった */
 	void OnSpin( int , BOOL );	/* スピンコントロールの処理 */
 	int DataCheckAndCorrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
-	BOOL OnTimer( WPARAM );	/* タイマー処理 */
+	BOOL CalcPrintableLineAndColumn();	/* 行数と桁数を計算 */
+	void UpdatePrintableLineAndColumn();	/* 行数と桁数の計算要求 */
 
 };
 
