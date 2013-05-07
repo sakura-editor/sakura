@@ -438,12 +438,40 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 
 inline COLORREF MakeColor2(COLORREF a, COLORREF b, int alpha)
 {
+#ifdef USE_SSE
+//	COLORREF result_mmx;
+	// (a * alpha + b * (256 - alpha)) / 256 -> ((a - b) * alpha) / 256 + b
+	_asm{
+		pxor mm0, mm0; // mm0 = 0
+
+		movd mm1, a;
+		movd mm2, b;
+		movd mm3, alpha;
+
+		punpcklbw mm1, mm0; // a:a:a:a
+		punpcklbw mm2, mm0; // b:b:b:b
+		pshufw mm3, mm3, 0; // alpha:alpha:alpha:alpha
+
+		psubw mm1, mm2;  // (a - b)
+		pmullw mm1, mm3; // (a - b) * alpha
+		psrlw mm1, 8;    // ((a - b) * alpha) / 256
+		paddb mm1, mm2;  // ((a - b) * alpha) / 256 + b
+
+		packuswb mm1, mm0;
+//		movd result_mmx, mm1;
+		movd eax, mm1;
+
+		emms
+	}
+//	return result_mmx;
+#else
 	const int ap = alpha;
 	const int bp = 256 - ap;
 	BYTE valR = (BYTE)((GetRValue(a) * ap + GetRValue(b) * bp) / 256);
 	BYTE valG = (BYTE)((GetGValue(a) * ap + GetGValue(b) * bp) / 256);
 	BYTE valB = (BYTE)((GetBValue(a) * ap + GetBValue(b) * bp) / 256);
 	return RGB(valR, valG, valB);
+#endif
 }
 
 COLORREF CEditView::GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2)
