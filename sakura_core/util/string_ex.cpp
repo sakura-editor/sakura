@@ -857,7 +857,7 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 // ※ ランタイムの towupper(c)/tolower(c) が将来期待する動作になったとしてもこの方法を使い続けて問題無いはず
 int skr_towupper( int c )
 {
-#ifndef __MINGW32__
+#if _MSC_VER>=1400 //VS2005以降なら
 	static wchar_t szMap[256];	// c < 256 用の変換テーブル
 	static bool bInit = false;
 	if( !bInit ){
@@ -878,7 +878,7 @@ int skr_towupper( int c )
 
 int skr_towlower( int c )
 {
-#ifndef __MINGW32__
+#if _MSC_VER>=1400 //VS2005以降なら
 	static wchar_t szMap[256];	// c < 256 用の変換テーブル
 	static bool bInit = false;
 	if( !bInit ){
