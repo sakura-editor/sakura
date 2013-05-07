@@ -537,7 +537,8 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 		if( 2 <= strlen( szLine ) && 0 == memcmp( szLine, "//", 2 )  ){
 		}else{
 			if( 0 < (int)strlen( szLine ) ){
-				for( i = 0; i < (int)strlen( szLine ); ++i ){
+				int nLen = (int)strlen( szLine );
+				for( i = 0; i < nLen; ++i ){
 					if( szLine[i] == '\r' || szLine[i] == '\n' ){
 						szLine[i] = '\0';
 					}

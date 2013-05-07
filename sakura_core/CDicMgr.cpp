@@ -88,7 +88,8 @@ BOOL CDicMgr::Search(
 			while( NULL != pszToken ){
 				nRes = my_strnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
 				if( 0 == nRes ){
-					for( i = 0; i < (int)_tcslen(pszWork); ++i ){
+					int nLen = (int)_tcslen(pszWork);
+					for( i = 0; i < nLen; ++i ){
 						if( pszWork[i] == '\r' ||
 							pszWork[i] == '\n' ){
 							pszWork[i] = '\0';

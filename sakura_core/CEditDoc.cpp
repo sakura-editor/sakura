@@ -2712,7 +2712,8 @@ void CEditDoc::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		pszText = new char[nLineLen + 1];
 		memcpy( pszText, (const char *)&pLine[i], nLineLen );
 		pszText[nLineLen] = '\0';
-		for( i = 0; i < (int)lstrlen(pszText); ++i ){
+		int nLen = (int)lstrlen(pszText);
+		for( i = 0; i < nLen; ++i ){
 			if( pszText[i] == CR ||
 				pszText[i] == LF ){
 				pszText[i] = '\0';
@@ -2809,7 +2810,8 @@ int CEditDoc::ReadRuleFile( const char* pszFilename, SOneRule* pcOneRule, int nM
 			char* pszToken = strtok( szLine, pszKeySeps );
 			while( NULL != pszToken ){
 //				nRes = _stricmp( pszKey, pszToken );
-				for( i = 0; i < (int)lstrlen(pszWork); ++i ){
+				int nLen = (int)lstrlen(pszWork);
+				for( i = 0; i < nLen; ++i ){
 					if( pszWork[i] == '\r' ||
 						pszWork[i] == '\n' ){
 						pszWork[i] = '\0';
@@ -3015,7 +3017,8 @@ void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			pszKeyWord = "division";
 			nKeyWordLen = lstrlen( pszKeyWord );
 			bDivision = FALSE;
-			for( i = 0; i <= (int)lstrlen( szLabel ) - nKeyWordLen; ++i ){
+			int nLen = (int)lstrlen( szLabel ) - nKeyWordLen;
+			for( i = 0; i <= nLen; ++i ){
 				if( 0 == my_memicmp( &szLabel[i], pszKeyWord, nKeyWordLen ) ){
 					szLabel[i + nKeyWordLen] = '\0';
 					strcpy( szDivision, szLabel );

@@ -1206,7 +1206,8 @@ const TCHAR* CMenuDrawer::GetLabel( int nFuncID )
 TCHAR CMenuDrawer::GetAccelCharFromLabel( const TCHAR* pszLabel )
 {
 	int i;
-	for( i = 0; i + 1 < (int)_tcslen( pszLabel ); ++i ){
+	int nLen = (int)_tcslen( pszLabel );
+	for( i = 0; i + 1 < nLen; ++i ){
 		if( _T('&') == pszLabel[i] ){
 			if( _T('&') == pszLabel[i + 1]  ){
 				i++;

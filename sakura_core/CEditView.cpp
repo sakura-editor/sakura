@@ -8965,7 +8965,8 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 	}
 
 	/* ŒŸõ•¶š—ñ‚Í‰üs‚Ü‚Å */
-	for( i = 0; i < (int)lstrlen( szTopic ); ++i ){
+	int nLen = (int)lstrlen( szTopic );
+	for( i = 0; i < nLen; ++i ){
 		if( szTopic[i] == CR || szTopic[i] == LF ){
 			szTopic[i] = '\0';
 			break;
