@@ -1939,9 +1939,10 @@ BEGIN
                     CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     CONTROL         "マクロを実行するたびにファイルを読み込みなおす（&L）",
                     IDC_CHECK_RELOADWHENEXECUTE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,6,211,185,10
-    LTEXT           "キャンセル確認待ち時間",IDC_STATIC,195,212,80,8
-    EDITTEXT        IDC_MACROCANCELTIMER,270,209,18,14,ES_AUTOHSCROLL
+                    WS_TABSTOP,6,211,175,10
+    LTEXT           "キャンセル確認待ち時間",IDC_STATIC,185,212,75,8
+    EDITTEXT        IDC_MACROCANCELTIMER,260,209,18,14,ES_AUTOHSCROLL
+    LTEXT           "秒",IDC_STATIC,280,212,8,8
     LTEXT           "自動実行:",IDC_STATIC,6,225,34,8
     CONTROL         "新規／開ファイル後(&O)",IDC_CHECK_MacroOnOpened,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,44,224,89,10
