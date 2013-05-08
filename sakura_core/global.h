@@ -165,13 +165,8 @@ extern const char* GSTR_APPNAME;
 #define FN_TOOL_BMP _T("my_icons.bmp")
 
 //	標準アプリケーションアイコンリソース名
-#ifdef _DEBUG
-	#define ICON_DEFAULT_APP IDI_ICON_DEBUG
-	#define ICON_DEFAULT_GREP IDI_ICON_GREP
-#else
-	#define ICON_DEFAULT_APP IDI_ICON_STD
-	#define ICON_DEFAULT_GREP IDI_ICON_GREP
-#endif
+#define ICON_DEFAULT_APP IDI_ICON_STD
+#define ICON_DEFAULT_GREP IDI_ICON_GREP
 
 
 /* ウィンドウのID */

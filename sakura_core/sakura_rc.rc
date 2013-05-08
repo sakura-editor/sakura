@@ -2374,8 +2374,11 @@ IDB_PRINTER             BITMAP  DISCARDABLE     "../resource/printer.bmp"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+#ifdef _DEBUG
+IDI_ICON_STD            ICON    DISCARDABLE     "../resource/icon_debug.ico"
+#else
 IDI_ICON_STD            ICON    DISCARDABLE     "../resource/icon_std.ico"
-IDI_ICON_DEBUG          ICON    DISCARDABLE     "../resource/icon_debug.ico"
+#endif
 IDI_ICON_GREP           ICON    DISCARDABLE     "../resource/icon_grep.ico"
 
 /////////////////////////////////////////////////////////////////////////////

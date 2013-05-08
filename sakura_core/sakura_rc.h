@@ -34,7 +34,7 @@
 #define IDD_CTRLCODE                    137
 #define IDB_MYTOOL                      200
 #define IDI_ICON_STD                    210
-#define IDI_ICON_DEBUG                  211
+//#define IDI_ICON_DEBUG                  211
 #define IDI_ICON_GREP                   212
 #define IDB_PRINTER                     215
 #define IDC_CURSOR_COPYARROW            220
