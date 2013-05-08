@@ -40,7 +40,7 @@
 #define IDB_SCROLL_VERTICAL             202
 #define IDB_SCROLL_HORIZONTAL           203
 #define IDI_ICON_STD                    210
-#define IDI_ICON_DEBUG                  211
+//#define IDI_ICON_DEBUG                  211
 #define IDI_ICON_GREP                   212
 #define IDI_PRINTER                     215
 #define IDC_CURSOR_COPYARROW            220
