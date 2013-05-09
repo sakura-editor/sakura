@@ -1212,9 +1212,9 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 
 	{
 		// 2009.01.17 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
-		BOOL bHorizontal = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
+		bool bHorizontal = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
 
-		BOOL bKeyPageScroll = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel );
+		bool bKeyPageScroll = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel );
 
 		/* マウスホイールによるスクロール行数をレジストリから取得 */
 		nRollLineNum = 3;
@@ -1302,46 +1302,46 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	マウスホイール時、行スクロールすべきかページスクロール・横スクロール
 	すべきかを判定する。
 	現在のキーまたはマウス状態が引数で指定された組み合わせに合致する場合
-	TRUEを返す。
+	trueを返す。
 
 	@param nSelect	[in] キー・マウスボタンの組み合わせ指定番号
 
-	@return ページスクロールまたは横スクロールすべき状態の時TRUEを返す
-	        通常の行スクロールすべき状態の時FALSEを返す
+	@return ページスクロールまたは横スクロールすべき状態の時trueを返す
+	        通常の行スクロールすべき状態の時falseを返す
 
 	@date 2009.01.17 nasukoji	新規作成
 */
-BOOL CEditView::IsSpecialScrollMode( int nSelect )
+bool CEditView::IsSpecialScrollMode( int nSelect )
 {
-	BOOL bSpecialScrollMode;
+	bool bSpecialScrollMode;
 
 	switch( nSelect ){
 	case 0:		// 指定の組み合わせなし
-		bSpecialScrollMode = FALSE;
+		bSpecialScrollMode = false;
 		break;
 
 	case MOUSEFUNCTION_CENTER:		// マウス中ボタン
-		bSpecialScrollMode = ( 0x8000 & ::GetAsyncKeyState( VK_MBUTTON ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = ( 0 != ( 0x8000 & ::GetAsyncKeyState( VK_MBUTTON ) ) );
 		break;
 
 	case MOUSEFUNCTION_LEFTSIDE:	// マウスサイドボタン1
-		bSpecialScrollMode = ( 0x8000 & ::GetAsyncKeyState( VK_XBUTTON1 ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = ( 0 != ( 0x8000 & ::GetAsyncKeyState( VK_XBUTTON1 ) ) );
 		break;
 
 	case MOUSEFUNCTION_RIGHTSIDE:	// マウスサイドボタン2
-		bSpecialScrollMode = ( 0x8000 & ::GetAsyncKeyState( VK_XBUTTON2 ) ) ? TRUE : FALSE;
+		bSpecialScrollMode = ( 0 != ( 0x8000 & ::GetAsyncKeyState( VK_XBUTTON2 ) ) );
 		break;
 
 	case VK_CONTROL:	// Controlキー
-		bSpecialScrollMode = GetKeyState_Control() ? TRUE : FALSE;
+		bSpecialScrollMode = GetKeyState_Control();
 		break;
 
 	case VK_SHIFT:		// Shiftキー
-		bSpecialScrollMode = GetKeyState_Shift() ? TRUE : FALSE;
+		bSpecialScrollMode = GetKeyState_Shift();
 		break;
 
 	default:	// 上記以外（ここには来ない）
-		bSpecialScrollMode = FALSE;
+		bSpecialScrollMode = false;
 		break;
 	}
 
