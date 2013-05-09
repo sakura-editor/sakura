@@ -1046,5 +1046,6 @@
 #define HIDC_BUTTON_NENU_CHECK				14411	//メニューの検査
 #define HIDC_BUTTON_TREE_CLEAR				14412	//メニューをクリア
 #define HIDC_BUTTON_TREE_INITIALIZE			14413	//メニューを初期状態に戻す
+#define HIDC_CHECK_KEY_PARENTHESES			14414	//アクセスキーを必ず( )付で表示(&P)
 
 #define HIDC_STATIC								19999 //不明

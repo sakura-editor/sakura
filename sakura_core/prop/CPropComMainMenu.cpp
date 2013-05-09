@@ -62,6 +62,7 @@ static const DWORD p_helpids[] = {
 	IDC_BUTTON_CHECK,				HIDC_BUTTON_NENU_CHECK,				//メニューの検査
 	IDC_BUTTON_CLEAR,				HIDC_BUTTON_TREE_CLEAR,				//メニューをクリア
 	IDC_BUTTON_INITIALIZE,			HIDC_BUTTON_TREE_INITIALIZE,		//メニューを初期状態に戻す
+	IDC_CHECK_KEY_PARENTHESES,		HIDC_CHECK_KEY_PARENTHESES,			//アクセスキーを必ず( )付で表示(&P)
 	0, 0
 };
 
