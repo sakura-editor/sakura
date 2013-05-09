@@ -1010,15 +1010,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			CFigure& cFigure = CFigureManager::getInstance()->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
 
 			//1•¶Žš•`‰æ
-			CLogicInt nPosOld = pInfo->nPosInLogic;
 			cFigure.DrawImp(pInfo);
-			if(pInfo->nPosInLogic == nPosOld){
-				pInfo->nPosInLogic += CNativeW::GetSizeOfChar(
-											cLineStr.GetPtr(),
-											cLineStr.GetLength(),
-											pInfo->nPosInLogic
-										);
-			}
 		}
 	}
 
