@@ -1011,6 +1011,7 @@ void CPrintPreview::OnPrint( void )
 	CDlgCancel	cDlgPrinting;
 	cDlgPrinting.DoModeless( CEditApp::getInstance()->GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
 	::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_JOBNAME, szJobName );
+	::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, _T("") );	// XPS対応 2013/5/8 Uchi
 
 	/* 親ウィンドウを無効化 */
 	::EnableWindow( m_pParentWnd->GetHwnd(), FALSE );
