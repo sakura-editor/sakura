@@ -90,21 +90,6 @@ public:
 		PushClipping(rc);
 	}
 
-	//色設定
-public:
-	//! 描画色を設定
-	void SetForegroundColor(COLORREF color)
-	{
-		//テキスト前景色
-		SetTextForeColor(color);
-	}
-	//! 背景色を設定
-	void SetBackgroundColor(COLORREF color)
-	{
-		//テキスト背景色
-		SetTextBackColor(color);
-	}
-
 	//テキスト文字色
 public:
 	void PushTextForeColor(COLORREF color);
