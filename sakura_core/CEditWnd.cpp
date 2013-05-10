@@ -162,6 +162,9 @@ CEditWnd::CEditWnd()
 
 CEditWnd::~CEditWnd()
 {
+	delete m_pPrintPreview;
+	m_pPrintPreview = NULL;
+
 	delete[] m_pszMenubarMessage;
 	delete[] m_pszLastCaption;
 
