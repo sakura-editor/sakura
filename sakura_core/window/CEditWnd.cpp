@@ -236,6 +236,9 @@ CEditWnd::~CEditWnd()
 {
 	g_pcEditWnd=NULL;
 
+	delete m_pPrintPreview;
+	m_pPrintPreview = NULL;
+
 	for( int i = 0; i < m_nEditViewMaxCount; i++ ){
 		delete m_pcEditViewArr[i];
 		m_pcEditViewArr[i] = NULL;
