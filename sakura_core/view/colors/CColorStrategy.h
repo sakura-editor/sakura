@@ -34,35 +34,33 @@ class	CEditView;
 bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
 
 
-//正規表現キーワードのEColorIndexType値を作る関数
-inline EColorIndexType ToColorIndexType_RegularExpression(const int& nRegexColorIndex)
+//! 正規表現キーワードのEColorIndexType値を作る関数
+inline EColorIndexType ToColorIndexType_RegularExpression(const int nRegexColorIndex)
 {
 	return (EColorIndexType)(COLORIDX_REGEX_FIRST + nRegexColorIndex);
 }
 
-//正規表現キーワードのEColorIndexType値かどうか
-inline bool IsRegularExpression(const EColorIndexType& eColorIndex)
-{
-	return (eColorIndex >= COLORIDX_REGEX_FIRST && eColorIndex <= COLORIDX_REGEX_LAST);
-}
-
-//正規表現キーワードのEColorIndexType値を色番号に戻す関数
-inline int ToColorInfoArrIndex_RegularExpression(const EColorIndexType& eRegexColorIndex)
+//! 正規表現キーワードのEColorIndexType値を色番号に戻す関数
+inline int ToColorInfoArrIndex_RegularExpression(const EColorIndexType eRegexColorIndex)
 {
 	return eRegexColorIndex - COLORIDX_REGEX_FIRST;
 }
 
-//EColorIndexType値を色番号に変換する関数
-inline int ToColorInfoArrIndex(const EColorIndexType& eColorIndex)
-{
-	if(eColorIndex>=0 && eColorIndex<COLORIDX_LAST)
-		return eColorIndex;
-	else if(eColorIndex==COLORIDX_BLOCK1 || eColorIndex==COLORIDX_BLOCK2)
-		return COLORIDX_COMMENT;
-	else if( IsRegularExpression(eColorIndex) )
-		return ToColorInfoArrIndex_RegularExpression(eColorIndex);
+/*! 色定数を色番号に変換する関数
 
-	return -1;
+	@date 2013.05.08 novice 範囲外のときはテキストを選択する
+*/
+inline int ToColorInfoArrIndex(const EColorIndexType eColorIndex)
+{
+	if( eColorIndex>=0 && eColorIndex<COLORIDX_LAST )
+		return eColorIndex;
+	else if( eColorIndex & COLORIDX_BLOCK_BIT )
+		return COLORIDX_COMMENT;
+	else if( eColorIndex & COLORIDX_REGEX_BIT )
+		return ToColorInfoArrIndex_RegularExpression( eColorIndex );
+
+	assert(0); // ここには来ない
+	return COLORIDX_TEXT;
 }
 
 // カラー名＜＞インデックス番号の変換	//@@@ 2002.04.30

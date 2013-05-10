@@ -380,30 +380,34 @@ EColorIndexType CEditView::GetColorIndex(
 }
 
 
-/* 現在の色を指定 */
+/*! 現在の色を指定
+	@param eColorIndex 現在の色
+
+	@date 2013.05.08 novice 範囲外チェック削除
+*/
 void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 {
 	//インデックス決定
 	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
 
 	//実際に色を設定
-	if( -1 != nColorIdx ){
-		const ColorInfo& info = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
-		gr.SetForegroundColor(info.m_colTEXT);
-		gr.SetBackgroundColor(info.m_colBACK);
-		gr.SetMyFont(
-			GetFontset().ChooseFontHandle(
-				info.m_bBoldFont,
-				info.m_bUnderLine
-			)
-		);
-	}
+	const ColorInfo& info = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
+	gr.SetForegroundColor(info.m_colTEXT);
+	gr.SetBackgroundColor(info.m_colBACK);
+	gr.SetMyFont(
+		GetFontset().ChooseFontHandle(
+			info.m_bBoldFont,
+			info.m_bUnderLine
+		)
+	);
 }
 
 /*! 現在の色を指定
 	@param eColorIndex   選択を含む現在の色
 	@param eColorIndex2  選択以外の現在の色
 	@param eColorIndexBg 背景色
+
+	@date 2013.05.08 novice 範囲外チェック削除
 */
 void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  EColorIndexType eColorIndex2, EColorIndexType eColorIndexBg)
 {
@@ -414,26 +418,23 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 	STypeConfig& config = m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	//実際に色を設定
-	if( -1 != nColorIdx ){
-		if(nColorIdx2 == -1){ nColorIdx2 = nColorIdx; }
-		const ColorInfo& info  = config.m_ColorInfoArr[nColorIdx];
-		const ColorInfo& info2 = config.m_ColorInfoArr[nColorIdx2];
-		const ColorInfo& infoBg = config.m_ColorInfoArr[nColorIdxBg];
-		gr.SetForegroundColor(GetTextColorByColorInfo2(info, info2));
-		// 2012.11.21 背景色がテキストとおなじなら背景色はカーソル行背景
-		const ColorInfo& info3 = (info2.m_colBACK == m_crBack ? infoBg : info2);
-		if( nColorIdx == nColorIdx2 ){
-			gr.SetBackgroundColor(info3.m_colBACK);
-		}else{
-			gr.SetBackgroundColor(GetBackColorByColorInfo2(info, info3));
-		}
-		gr.SetMyFont(
-			GetFontset().ChooseFontHandle(
-				info.m_colTEXT != info.m_colBACK ? info.m_bBoldFont  : info2.m_bBoldFont,
-				info.m_colTEXT != info.m_colBACK ? info.m_bUnderLine : info2.m_bUnderLine
-			)
-		);
+	const ColorInfo& info  = config.m_ColorInfoArr[nColorIdx];
+	const ColorInfo& info2 = config.m_ColorInfoArr[nColorIdx2];
+	const ColorInfo& infoBg = config.m_ColorInfoArr[nColorIdxBg];
+	gr.SetForegroundColor(GetTextColorByColorInfo2(info, info2));
+	// 2012.11.21 背景色がテキストとおなじなら背景色はカーソル行背景
+	const ColorInfo& info3 = (info2.m_colBACK == m_crBack ? infoBg : info2);
+	if( nColorIdx == nColorIdx2 ){
+		gr.SetBackgroundColor(info3.m_colBACK);
+	}else{
+		gr.SetBackgroundColor(GetBackColorByColorInfo2(info, info3));
 	}
+	gr.SetMyFont(
+		GetFontset().ChooseFontHandle(
+			info.m_colTEXT != info.m_colBACK ? info.m_bBoldFont  : info2.m_bBoldFont,
+			info.m_colTEXT != info.m_colBACK ? info.m_bUnderLine : info2.m_bUnderLine
+		)
+	);
 }
 
 inline COLORREF MakeColor2(COLORREF a, COLORREF b, int alpha)

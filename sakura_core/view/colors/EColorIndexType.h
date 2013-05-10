@@ -1,3 +1,26 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #ifndef SAKURA_ECOLORINDEXTYPE_H_
 #define SAKURA_ECOLORINDEXTYPE_H_
 
@@ -5,10 +28,16 @@
 //                          色定数                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// Stonee 注： 2000/01/12
-// ここを変更したときは、global.cpp のg_ColorAttributeArrの定義も変更して下さい。
-//	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
-//	2007.09.09 Moca  中間の定義はお任せに変更
+// 色定数を色番号に変換するための識別bit
+#define COLORIDX_BLOCK_BIT (2 << 9)		//!< ブロックコメント識別bit
+#define COLORIDX_REGEX_BIT (2 << 10)	//!< 正規表現キーワード識別bit
+
+/*! 色定数
+	@date 2000.01.12 Stonee ここを変更したときは、CColorStrategy.cpp のg_ColorAttributeArrの定義も変更して下さい。
+	@date 2000.09.18 JEPRO 順番を大幅に入れ替えた
+	@date 2007.09.09 Moca  中間の定義はお任せに変更
+	@date 2013.04.26 novice 色定数を色番号を変換するための識別bit導入
+*/
 enum EColorIndexType {
 	COLORIDX_TEXT = 0,		//!< テキスト
 	COLORIDX_RULER,			//!< ルーラー
@@ -67,17 +96,17 @@ enum EColorIndexType {
 	//カラーの最後
 	COLORIDX_LAST,			//!< カラーの最後
 
-	//カラー表示制御用
-	COLORIDX_BLOCK1,		//!< ブロックコメント1(文字色と背景色は行コメントと同じ)
-	COLORIDX_BLOCK2,		//!< ブロックコメント2(文字色と背景色は行コメントと同じ)
+	//カラー表示制御用(ブロックコメント)
+	COLORIDX_BLOCK1			= COLORIDX_BLOCK_BIT,			//!< ブロックコメント1(文字色と背景色は行コメントと同じ)
+	COLORIDX_BLOCK2,										//!< ブロックコメント2(文字色と背景色は行コメントと同じ)
 
-	//1000- : カラー表示制御用(正規表現キーワード)
-	COLORIDX_REGEX_FIRST	= 1000,										//!< 正規表現キーワード(最初)
+	//カラー表示制御用(正規表現キーワード)
+	COLORIDX_REGEX_FIRST	= COLORIDX_REGEX_BIT,						//!< 正規表現キーワード(最初)
 	COLORIDX_REGEX_LAST		= COLORIDX_REGEX_FIRST + COLORIDX_LAST - 1,	//!< 正規表現キーワード(最後)
 
 	// -- -- 別名 -- -- //
 	COLORIDX_DEFAULT		= COLORIDX_TEXT,							//!< デフォルト
 	COLORIDX_SEARCHTAIL		= COLORIDX_SEARCH5,
 };
-//	To Here Sept. 18, 2000
+
 #endif
