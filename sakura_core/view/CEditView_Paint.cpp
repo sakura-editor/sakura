@@ -617,7 +617,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	}
 
 	// 背景の表示
-	if( IsBkBitmap() ){
+	if( bTransText ){
 		HDC hdcBgImg = CreateCompatibleDC(gr);
 		HBITMAP hOldBmp = (HBITMAP)::SelectObject(hdcBgImg, m_pcEditDoc->m_hBackImg);
 		DrawBackImage(gr, pPs->rcPaint, hdcBgImg);
@@ -737,21 +737,14 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//              テキストの無い部分の塗りつぶし                 //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	if( IsBkBitmap() ){
-	}
-	else{
-		/* テキストのない部分を背景色で塗りつぶす */
-		if( sPos.GetDrawPos().y < pPs->rcPaint.bottom ){
-			if( !bTransText ){
-				RECT rcBack;
-				rcBack.left   = pPs->rcPaint.left;
-				rcBack.right  = pPs->rcPaint.right;
-				rcBack.top    = sPos.GetDrawPos().y;
-				rcBack.bottom = pPs->rcPaint.bottom;
+	if( !bTransText && sPos.GetDrawPos().y < pPs->rcPaint.bottom ){
+		RECT rcBack;
+		rcBack.left   = pPs->rcPaint.left;
+		rcBack.right  = pPs->rcPaint.right;
+		rcBack.top    = sPos.GetDrawPos().y;
+		rcBack.bottom = pPs->rcPaint.bottom;
 
-				cTextType.FillBack(gr,rcBack);
-			}
-		}
+		cTextType.FillBack(gr,rcBack);
 	}
 	{
 		// 2006.04.29 行部分は行ごとに作画し、ここでは縦線の残りを作画
@@ -964,7 +957,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	CTypeSupport&	cBackType = (cCaretLineBg.IsDisp() &&
 		GetCaret().GetCaretLayoutPos().GetY() == pInfo->pDispPos->GetLayoutLineRef() ?  cCaretLineBg : cTextType);
 	bool bTransText = IsBkBitmap();
-	if( IsBkBitmap() ){
+	if( bTransText ){
 		bTransText = cBackType.GetBackColor() == cTextType.GetBackColor();
 	}
 
