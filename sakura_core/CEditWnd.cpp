@@ -2053,7 +2053,10 @@ int	CEditWnd::OnClose()
 
 
 
-//Sept. 15, 2000→Nov. 25, 2000 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行(F_HELP_CONTENTS,F_HELP_SEARCH)を修正・復活
+/*! WM_COMMAND処理
+	@date 2000.11.15 JEPRO //ショートカットキーがうまく働かないので殺してあった下の2行(F_HELP_CONTENTS,F_HELP_SEARCH)を修正・復活
+	@date 2013.05.09 novice 重複するメッセージ処理削除
+*/
 void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 {
 
@@ -2061,77 +2064,51 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 	/* メニューからのメッセージ */
 	case 0:
 	case CMD_FROM_MOUSE: // 2006.05.19 genta マウスから呼びだされた場合
-		switch( wID ){
-		case F_EXITALL:	//Dec. 26, 2000 JEPRO F_に変更
-			/* サクラエディタの全終了 */
-			CEditApp::TerminateApplication( m_hWnd );	// 2006.12.25 ryoji 引数追加
-			break;
+		//ウィンドウ切り替え
+		if( wID - IDM_SELWINDOW >= 0 && wID - IDM_SELWINDOW < m_pShareData->m_sNodes.m_nEditArrNum ){
+			ActivateFrameWindow( m_pShareData->m_sNodes.m_pEditArr[wID - IDM_SELWINDOW].m_hWnd );
+		}
+		//最近使ったファイル
+		else if( wID - IDM_SELMRU >= 0 && wID - IDM_SELMRU < 999){
+			/* 指定ファイルが開かれているか調べる */
+			const CMRUFile cMRU;
+			EditInfo checkEditInfo;
+			cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
+			m_cEditDoc.OpenFile( checkEditInfo.m_szPath, checkEditInfo.m_nCharCode);
+		}
+		//最近使ったフォルダ
+		else if( wID - IDM_SELOPENFOLDER >= 0 && wID - IDM_SELOPENFOLDER < 999){
+			//フォルダ取得
+			const CMRUFolder cMRUFolder;
+			LPCTSTR pszFolderPath = cMRUFolder.GetPath( wID - IDM_SELOPENFOLDER );
 
-		case F_HELP_CONTENTS:
-			/* ヘルプ目次 */
-			ShowWinHelpContents( m_hWnd, CEditApp::GetHelpFilePath() );	//	目次を表示する
-			break;
+			//Stonee, 2001/12/21 UNCであれば接続を試みる
+			NetConnect( pszFolderPath );
 
-		case F_HELP_SEARCH:
-			/* ヘルプキーワード検索 */
-			MyWinHelp( m_hWnd, CEditApp::GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-			break;
-
-		case F_ABOUT:	//Dec. 25, 2000 JEPRO F_に変更
-			/* バージョン情報 */
-			{
-				CDlgAbout cDlgAbout;
-				cDlgAbout.DoModal( m_hInstance, m_hWnd );
+			//「ファイルを開く」ダイアログ
+			ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
+			bool bReadOnly = false;
+			char		szPath[_MAX_PATH + 3];
+			szPath[0] = '\0';
+			if( !m_cEditDoc.OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
+				return;
 			}
-			break;
-		default:
-			//ウィンドウ切り替え
-			if( wID - IDM_SELWINDOW >= 0 && wID - IDM_SELWINDOW < m_pShareData->m_sNodes.m_nEditArrNum ){
-				ActivateFrameWindow( m_pShareData->m_sNodes.m_pEditArr[wID - IDM_SELWINDOW].m_hWnd );
+			//	Oct.  9, 2004 genta 共通関数化
+			m_cEditDoc.OpenFile( szPath, nCharCode, bReadOnly );
+		}
+		//その他コマンド
+		else{
+			//ビューにフォーカスを移動しておく
+			if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
+				::SetFocus( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd );
+				//検索ボックスを更新	// 2010/6/6 Uchi
+				AcceptSharedSearchKey();
 			}
-			//最近使ったファイル
-			else if( wID - IDM_SELMRU >= 0 && wID - IDM_SELMRU < 999){
-				/* 指定ファイルが開かれているか調べる */
-				const CMRUFile cMRU;
-				EditInfo checkEditInfo;
-				cMRU.GetEditInfo(wID - IDM_SELMRU, &checkEditInfo);
-				m_cEditDoc.OpenFile( checkEditInfo.m_szPath, checkEditInfo.m_nCharCode);
-			}
-			//最近使ったフォルダ
-			else if( wID - IDM_SELOPENFOLDER >= 0 && wID - IDM_SELOPENFOLDER < 999){
-				//フォルダ取得
-				const CMRUFolder cMRUFolder;
-				LPCTSTR pszFolderPath = cMRUFolder.GetPath( wID - IDM_SELOPENFOLDER );
 
-				//Stonee, 2001/12/21 UNCであれば接続を試みる
-				NetConnect( pszFolderPath );
-
-				//「ファイルを開く」ダイアログ
-				ECodeType nCharCode = CODE_AUTODETECT;	/* 文字コード自動判別 */
-				bool bReadOnly = false;
-				char		szPath[_MAX_PATH + 3];
-				szPath[0] = '\0';
-				if( !m_cEditDoc.OpenFileDialog( m_hWnd, cMRUFolder.GetPath(wID - IDM_SELOPENFOLDER), szPath, &nCharCode, &bReadOnly ) ){
-					return;
-				}
-				//	Oct.  9, 2004 genta 共通関数化
-				m_cEditDoc.OpenFile( szPath, nCharCode, bReadOnly );
-			}
-			//その他コマンド
-			else{
-				//ビューにフォーカスを移動しておく
-				if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
-					::SetFocus( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd );
-					//検索ボックスを更新	// 2010/6/6 Uchi
-					AcceptSharedSearchKey();
-				}
-
-				// コマンドコードによる処理振り分け
-				//	May 19, 2006 genta 上位ビットを渡す
-				//	Jul. 7, 2007 genta 上位ビットを定数に
-				m_cEditDoc.HandleCommand( wID | 0 );
-			}
-			break;
+			// コマンドコードによる処理振り分け
+			//	May 19, 2006 genta 上位ビットを渡す
+			//	Jul. 7, 2007 genta 上位ビットを定数に
+			m_cEditDoc.HandleCommand( wID | 0 );
 		}
 		break;
 	/* アクセラレータからのメッセージ */
