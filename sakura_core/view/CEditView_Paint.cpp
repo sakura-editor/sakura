@@ -392,8 +392,8 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 
 	//実際に色を設定
 	const ColorInfo& info = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
-	gr.SetForegroundColor(info.m_colTEXT);
-	gr.SetBackgroundColor(info.m_colBACK);
+	gr.SetTextForeColor(info.m_colTEXT);
+	gr.SetTextBackColor(info.m_colBACK);
 	gr.SetMyFont(
 		GetFontset().ChooseFontHandle(
 			info.m_bBoldFont,
@@ -421,13 +421,13 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 	const ColorInfo& info  = config.m_ColorInfoArr[nColorIdx];
 	const ColorInfo& info2 = config.m_ColorInfoArr[nColorIdx2];
 	const ColorInfo& infoBg = config.m_ColorInfoArr[nColorIdxBg];
-	gr.SetForegroundColor(GetTextColorByColorInfo2(info, info2));
+	gr.SetTextForeColor(GetTextColorByColorInfo2(info, info2));
 	// 2012.11.21 背景色がテキストとおなじなら背景色はカーソル行背景
 	const ColorInfo& info3 = (info2.m_colBACK == m_crBack ? infoBg : info2);
 	if( nColorIdx == nColorIdx2 ){
-		gr.SetBackgroundColor(info3.m_colBACK);
+		gr.SetTextBackColor(info3.m_colBACK);
 	}else{
-		gr.SetBackgroundColor(GetBackColorByColorInfo2(info, info3));
+		gr.SetTextBackColor(GetBackColorByColorInfo2(info, info3));
 	}
 	gr.SetMyFont(
 		GetFontset().ChooseFontHandle(
@@ -647,7 +647,7 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 			rc.top    = GetTextArea().GetRulerHeight();
 			rc.right  = GetTextArea().GetLineNumberWidth(); //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
 			rc.bottom = GetTextArea().GetAreaTop();
-			gr.SetBackgroundColor(TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK);
+			gr.SetTextBackColor(TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK);
 			gr.FillMyRectTextBackColor(rc);
 		}
 	}
