@@ -178,7 +178,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, wstring sSelects, int index) 
+	CPluginOption( CPlugin* parent, wstring sLabel, wstring sSection, wstring sKey, wstring sType, wstring sSelects, wstring sDefaultVal, int index) 
 	{
 		m_parent	= parent;
 		m_sLabel	= sLabel;
@@ -188,6 +188,7 @@ public:
 		std::transform( sType.begin (), sType.end (), sType.begin (), tolower );
 		m_sType		= sType;
 		m_sSelects	= sSelects;
+		m_sDefaultVal = sDefaultVal;
 		m_index		= index;
 	}
 
@@ -208,6 +209,7 @@ public:
 	{
 		return (wstring_split(m_sSelects, L'|'));
 	}
+	wstring	GetDefaultVal(){ return m_sDefaultVal; }
 
 protected:
 	CPlugin*	m_parent;
@@ -216,6 +218,7 @@ protected:
 	wstring		m_sKey;
 	wstring		m_sType;
 	wstring		m_sSelects;		// 選択候補
+	wstring		m_sDefaultVal;
 	int 		m_index; 
 };
 

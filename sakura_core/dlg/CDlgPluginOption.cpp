@@ -107,6 +107,7 @@ void CDlgPluginOption::SetData( void )
 	int		i;
 	LV_ITEM	lvi;
 	TCHAR	buf[MAX_LENGTH_VALUE+1];
+	bool bLoadDefault = false;
 
 	// タイトル
 	auto_sprintf( buf, _T("%ls プラグインの設定"), m_cPlugin->m_sName.c_str());
@@ -144,7 +145,16 @@ void CDlgPluginOption::SetData( void )
 			sValue = L"";
 		}
 		else {
-			cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
+			if( !cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue ) ){
+				// Optionが見つからなかったらDefault値を設定
+				sValue = cOpt->GetDefaultVal();
+				if( sValue != wstring(L"") ){
+					bLoadDefault = true;
+					cProfile->SetWritingMode();
+					cProfile->IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
+					cProfile->SetReadingMode();
+				}
+			}
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
@@ -179,6 +189,11 @@ void CDlgPluginOption::SetData( void )
 		lvi.pszText  = buf;
 		ListView_SetItem( hwndList, &lvi );
 		ListView_SetItemState( hwndList, i, 0, LVIS_SELECTED | LVIS_FOCUSED );
+	}
+
+	if( bLoadDefault ){
+		cProfile->SetWritingMode();
+		cProfile->WriteProfile( m_cPlugin->GetOptionPath().c_str() ,(m_cPlugin->m_sName + L" プラグイン設定ファイル").c_str());
 	}
 
 	if (i ==0) {
