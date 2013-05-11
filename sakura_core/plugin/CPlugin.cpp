@@ -150,6 +150,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 	wstring sKey;
 	wstring sType;
 	wstring sSelect;
+	wstring sDefaultVal;
 	WCHAR bufKey[64];
 
 	sSection = L"";
@@ -173,6 +174,9 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 			// 項目選択候補
 			swprintf( bufKey, L"O[%d].Select", nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sSelect );
+			// デフォルト値
+			swprintf( bufKey, L"O[%d].Default", nCount );
+			cProfile->IOProfileData( PII_OPTION, bufKey, sDefaultVal );
 
 			if (sSection.empty() || sKey.empty()) {
 				// 設定が無かったら無視
@@ -183,7 +187,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 				sLabel = sKey;
 			}
 
-			m_options.push_back( new CPluginOption( this, sLabel, sSection, sKey, sType, sSelect, nCount ) );
+			m_options.push_back( new CPluginOption( this, sLabel, sSection, sKey, sType, sSelect, sDefaultVal, nCount ) );
 		}
 	}
 
