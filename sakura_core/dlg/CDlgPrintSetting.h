@@ -34,11 +34,12 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING* );	/* モーダルダイアログの表示 */
+	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING*, int );	/* モーダルダイアログの表示 */
 
 private:
 	int				m_nCurrentPrintSetting;
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
+	int				m_nLineNumberColmns;					// 行番号表示する場合の桁数
 	bool			m_bPrintableLinesAndColumnInvalid;
 
 protected:

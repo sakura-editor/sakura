@@ -124,6 +124,9 @@ public:
 		short*		pnPaperAllHeight,
 		MYDEVMODE*	pDEVMODE
 	);
+	/* 印字可能桁・行の計算 */
+	static int CalculatePrintableColumns( PRINTSETTING*, int width, int nLineNumberColmns );
+	static int CalculatePrintableLines( PRINTSETTING*, int height );
 
 public:
 	/*

@@ -750,14 +750,18 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_nPreview_ViewMarginLeft = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 	m_nPreview_ViewMarginTop = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 
-	m_bPreview_EnableColms =
-		CLayoutInt(
-			( m_nPreview_PaperAllWidth - m_pPrintSetting->m_nPrintMarginLX - m_pPrintSetting->m_nPrintMarginRX
-			- ( m_pPrintSetting->m_nPrintDansuu - 1 ) * m_pPrintSetting->m_nPrintDanSpace
-			- ( m_pPrintSetting->m_nPrintDansuu ) * ( ( m_nPreview_LineNumberColmns /*+ (m_nPreview_LineNumberColmns?1:0)*/ ) * m_pPrintSetting->m_nPrintFontWidth )
-			) / m_pPrintSetting->m_nPrintFontWidth / m_pPrintSetting->m_nPrintDansuu	/* 印字可能桁数/ページ */
-		);
-	m_bPreview_EnableLines = ( m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginTY - m_pPrintSetting->m_nPrintMarginBY ) / ( m_pPrintSetting->m_nPrintFontHeight + ( m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100 ) ) - 4;	/* 印字可能行数/ページ */
+	/* 行あたりの文字数(行番号込み) */
+	m_bPreview_EnableColms = CLayoutInt( CPrint::CalculatePrintableColumns( m_pPrintSetting, m_nPreview_PaperAllWidth, m_nPreview_LineNumberColmns ) );	/* 印字可能桁数/ページ */
+	/* 縦方向の行数 */
+	m_bPreview_EnableLines = CPrint::CalculatePrintableLines( m_pPrintSetting, m_nPreview_PaperAllHeight );			/* 印字可能行数/ページ */
+
+	// 印字可能領域がない場合は印刷プレビューを終了する 2013.5.10 aroka
+	if( m_bPreview_EnableColms == 0 || m_bPreview_EnableLines == 0 ){
+		CEditWnd* pcEditWnd = m_pParentWnd;
+		pcEditWnd->PrintPreviewModeONOFF();
+		pcEditWnd->SendStatusMessage( _T("印刷ページ設定エラー:印字可能領域がありません") );
+		return;
+	}
 
 	/* 印刷用のレイアウト管理情報の初期化 */
 	m_pLayoutMgr_Print->Create( &m_pParentWnd->GetDocument(), &m_pParentWnd->GetDocument().m_cDocLineMgr );
