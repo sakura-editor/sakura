@@ -1094,18 +1094,22 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			if( ArgSize != 1 ) return false;
 			if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
-			Wrap( &Result )->Receive( (Int)View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
-			View->m_pcEditDoc->m_pcEditWnd->ChangeLayoutParam(
-				false, 
-				CLayoutInt(varCopy.Data.iVal),
-				View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas()
-			);
+			int nTab = (Int)View->m_pcEditDoc->m_cLayoutMgr.GetTabSpace();
+			Wrap( &Result )->Receive( nTab );
+			// 2013.04.30 Moca 条件追加。不要な場合はChangeLayoutParamを呼ばない
+			if( 0 < varCopy.Data.iVal && nTab != varCopy.Data.iVal ){
+				View->m_pcEditDoc->m_pcEditWnd->ChangeLayoutParam(
+					false, 
+					CLayoutInt(varCopy.Data.iVal),
+					View->m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas()
+				);
 
-			// 2009.08.28 nasukoji	「折り返さない」選択時にTAB幅が変更されたらテキスト最大幅の再算出が必要
-			if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP && varCopy.Data.iVal ){
-				// 最大幅の再算出時に各行のレイアウト長の計算も行う
-				View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
-				View->m_pcEditDoc->m_pcEditWnd->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+				// 2009.08.28 nasukoji	「折り返さない」選択時にTAB幅が変更されたらテキスト最大幅の再算出が必要
+				if( View->m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
+					// 最大幅の再算出時に各行のレイアウト長の計算も行う
+					View->m_pcEditDoc->m_cLayoutMgr.CalculateTextWidth();
+					View->m_pcEditDoc->m_pcEditWnd->RedrawAllViews( NULL );		// スクロールバーの更新が必要なので再表示を実行する
+				}
 			}
 		}
 		return true;
