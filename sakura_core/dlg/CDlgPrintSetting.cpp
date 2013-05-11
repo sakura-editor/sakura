@@ -99,7 +99,8 @@ int CDlgPrintSetting::DoModal(
 	HINSTANCE		hInstance,
 	HWND			hwndParent,
 	int*			pnCurrentPrintSetting,
-	PRINTSETTING*	pPrintSettingArr
+	PRINTSETTING*	pPrintSettingArr,
+	int				nLineNumberColmns
 )
 {
 	int		nRet;
@@ -108,6 +109,7 @@ int CDlgPrintSetting::DoModal(
 	for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
 		m_PrintSettingArr[i] = pPrintSettingArr[i];
 	}
+	m_nLineNumberColmns = nLineNumberColmns;
 
 	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, NULL );
 	if( TRUE == nRet ){
@@ -255,6 +257,9 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_RADIO_PORTRAIT:
 	case IDC_RADIO_LANDSCAPE:
+		UpdatePrintableLineAndColumn();
+		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
+	case IDC_CHECK_LINENUMBER:
 		UpdatePrintableLineAndColumn();
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
 	}
@@ -690,17 +695,19 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 		return FALSE;
 	}
 	/* 行あたりの文字数(行番号込み) */
-	nEnableColmns =
-		( nPaperAllWidth - pPS->m_nPrintMarginLX - pPS->m_nPrintMarginRX
-		- ( pPS->m_nPrintDansuu - 1 ) * pPS->m_nPrintDanSpace
-		) / pPS->m_nPrintFontWidth / pPS->m_nPrintDansuu;	/* 印字可能桁数/ページ */
+	nEnableColmns = CPrint::CalculatePrintableColumns( pPS, nPaperAllWidth, pPS->m_bPrintLineNumber?m_nLineNumberColmns:0 );	/* 印字可能桁数/ページ */
 	/* 縦方向の行数 */
-	nEnableLines =
-		( nPaperAllHeight - pPS->m_nPrintMarginTY - pPS->m_nPrintMarginBY ) /
-		( pPS->m_nPrintFontHeight + ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 ) ) - 4;	/* 印字可能行数/ページ */
+	nEnableLines = CPrint::CalculatePrintableLines( pPS, nPaperAllHeight );			/* 印字可能行数/ページ */
 
 	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLECOLMNS, nEnableColmns, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLELINES, nEnableLines, FALSE );
+
+	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
+	if( nEnableColmns == 0 || nEnableLines == 0 ){
+		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), FALSE );
+	}else{
+		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), TRUE );
+	}
 
 	return TRUE;
 }

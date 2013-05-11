@@ -610,3 +610,40 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settin
 }
 
 
+/*!
+	印字可能桁数の計算
+	@date 2013.05.10 aroka 新規作成
+*/
+int CPrint::CalculatePrintableColumns( PRINTSETTING *pPS, int nPaperAllWidth, int nLineNumberColmns )
+{
+	int nPrintablePaperWidth = nPaperAllWidth - pPS->m_nPrintMarginLX - pPS->m_nPrintMarginRX;
+	if( nPrintablePaperWidth < 0 ){ return 0; }
+
+	int nPrintSpaceWidth = ( pPS->m_nPrintDansuu - 1 ) * pPS->m_nPrintDanSpace
+						 + ( pPS->m_nPrintDansuu ) * ( nLineNumberColmns * pPS->m_nPrintFontWidth );
+	if( nPrintablePaperWidth < nPrintSpaceWidth ){ return 0; }
+
+	int nEnableColmns =
+		( nPrintablePaperWidth - nPrintSpaceWidth
+		) / pPS->m_nPrintFontWidth / pPS->m_nPrintDansuu;	/* 印字可能桁数/ページ */
+	return nEnableColmns;
+}
+
+
+/*!
+	印字可能行数の計算
+	@date 2013.05.10 aroka 新規作成
+*/
+int CPrint::CalculatePrintableLines( PRINTSETTING *pPS, int nPaperAllHeight )
+{
+	int nPrintablePaperHeight = nPaperAllHeight - pPS->m_nPrintMarginTY - pPS->m_nPrintMarginBY;
+	if( nPrintablePaperHeight < 0 ){ return 0; }
+
+	int nPrintSpaceHeight = ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 );
+
+	int nEnableLines =
+		( nPrintablePaperHeight + nPrintSpaceHeight ) /
+		( pPS->m_nPrintFontHeight + nPrintSpaceHeight ) - 4;	/* 印字可能行数/ページ */
+	if( nEnableLines < 0 ){ return 0; }
+	return nEnableLines;
+}
