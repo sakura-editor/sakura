@@ -2798,6 +2798,23 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_BEGIN_BOX             "矩形範囲選択開始"
+    F_UP_BOX                "(矩形選択)カーソル上移動"
+    F_DOWN_BOX              "(矩形選択)カーソル下移動"
+    F_LEFT_BOX              "(矩形選択)カーソル左移動"
+    F_RIGHT_BOX             "(矩形選択)カーソル右移動"
+    F_UP2_BOX               "(矩形選択)カーソル上移動(２行ごと)"
+    F_DOWN2_BOX             "(矩形選択)カーソル下移動(２行ごと)"
+    F_WORDLEFT_BOX          "(矩形選択)単語の左端に移動"
+    F_WORDRIGHT_BOX         "(矩形選択)単語の右端に移動"
+    F_GOLOGICALLINETOP_BOX  "(矩形選択)行頭に移動(改行単位)"
+    F_GOLINETOP_BOX         "(矩形選択)行頭に移動(折り返し単位)"
+    F_GOLINEEND_BOX         "(矩形選択)行末に移動(折り返し単位)"
+    F_HalfPageUp_BOX        "(矩形選択)半ページアップ"
+    F_HalfPageDown_BOX      "(矩形選択)半ページダウン"
+    F_1PageUp_BOX           "(矩形選択)１ページアップ"
+    F_1PageDown_BOX         "(矩形選択)１ページダウン"
+    F_GOFILETOP_BOX         "(矩形選択)ファイルの先頭に移動"
+    F_GOFILEEND_BOX         "(矩形選択)ファイルの最後に移動"
 END
 
 STRINGTABLE DISCARDABLE 

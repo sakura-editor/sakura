@@ -165,7 +165,7 @@ public:
 	void Command_WORDRIGHT( bool bSelect );			/* 単語の右端に移動 */
 	//	Oct. 29, 2001 genta マクロ向け機能拡張
 	void Command_GOLINETOP( bool bSelect, int lparam );	/* 行頭に移動（折り返し単位） */
-	void Command_GOLINEEND( bool bSelect, int );		/* 行末に移動（折り返し単位） */
+	void Command_GOLINEEND( bool bSelect, int , int);		/* 行末に移動（折り返し単位） */
 //	void Command_ROLLDOWN( int );			/* スクロールダウン */
 //	void Command_ROLLUP( int );				/* スクロールアップ */
 	void Command_HalfPageUp( bool bSelect );			//半ページアップ	//Oct. 6, 2000 JEPRO 名称をPC-AT互換機系に変更(ROLL→PAGE) //Oct. 10, 2000 JEPRO 名称変更
@@ -192,7 +192,7 @@ public:
 
 	/* 矩形選択系 */
 //	void Command_BOXSELECTALL( void );		/* 矩形ですべて選択 */
-	void Command_BEGIN_BOXSELECT( void );	/* 矩形範囲選択開始 */
+	void Command_BEGIN_BOXSELECT( bool bSelectingLock = false );	/* 矩形範囲選択開始 */
 //	int Command_UP_BOX( BOOL );				/* (矩形選択)カーソル上移動 */
 
 	/* クリップボード系 */

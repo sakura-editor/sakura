@@ -88,10 +88,13 @@ void CViewCommander::Command_CHG_CHARSET(
 */
 void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 {
+	bool bBoxSelect = false;
 	if( m_pCommanderView->GetSelectionInfo().IsTextSelected() ) {
 		// 選択解除後のカーソル位置を決める。
 		CLayoutPoint ptTo ;
+		CLayoutRange rcMoveTo = GetSelect();
 		if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ) { // 矩形選択ではキャレットが改行の後ろに取り残されないように、左上。
+			bBoxSelect = true;
 			/* 2点を対角とする矩形を求める */
 			CLayoutRange rcSel;
 			TwoPointToRange(
@@ -99,11 +102,13 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 				GetSelect().GetFrom(),	// 範囲選択開始
 				GetSelect().GetTo()		// 範囲選択終了
 			);
-			ptTo = rcSel.GetFrom();
-		} else if( 1 == whereCursorIs ) { // 左上
-			ptTo = GetSelect().GetFrom();
+			// 2013.04.22 Moca 左上固定はやめる
+			rcMoveTo = rcSel;
+		}
+		if( 1 == whereCursorIs ) { // 左上
+			ptTo = rcMoveTo.GetFrom();
 		} else if( 2 == whereCursorIs ) { // 右下
-			ptTo = GetSelect().GetTo();
+			ptTo = rcMoveTo.GetTo();
 		} else {
 			ptTo = GetCaret().GetCaretLayoutPos();
 		}
@@ -116,6 +121,14 @@ void CViewCommander::Command_CANCEL_MODE( int whereCursorIs )
 			/* ファイルの最後に移動 */
 			Command_GOFILEEND(false);
 		} else {
+			if( !GetDllShareData().m_Common.m_sGeneral.m_bIsFreeCursorMode && bBoxSelect ){
+				// 2013.04.22 Moca 矩形選択のとき左上固定をやめたので代わりにEOLより右だった場合にEOLに補正する
+				const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( ptTo.y );
+				if(pcLayout){
+					ptTo.x = t_min(ptTo.x, pcLayout->CalcLayoutWidth(GetDocument()->m_cLayoutMgr));
+				}
+			}
+
 			GetCaret().MoveCursor( ptTo, true );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
 		}
