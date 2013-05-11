@@ -150,6 +150,7 @@ struct STypeConfig{
 	EOutlineType		m_eDefaultOutline;				/*!< アウトライン解析方法 */
 	SFilePath			m_szOutlineRuleFilename;		/*!< アウトライン解析ルールファイル */
 	int					m_nOutlineSortCol;				/*!< アウトライン解析ソート列番号 */
+	bool				m_bOutlineSortDesc;				/*!< アウトライン解析ソート降順 */
 	int					m_nOutlineSortType;				/*!< アウトライン解析ソート基準 */
 
 	ESmartIndentType	m_eSmartIndent;					/*!< スマートインデント種別 */
