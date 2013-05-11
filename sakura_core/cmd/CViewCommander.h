@@ -270,7 +270,7 @@ public:
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
 	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
 	bool Command_TagJumpByTagsFileMsg( bool );				//ダイレクトタグジャンプ(通知つき)
-	bool Command_TagJumpByTagsFile( void );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
+	bool Command_TagJumpByTagsFile( bool );				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
 
 	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	bool Command_TagJumpByTagsFileKeyword( const wchar_t* keyword );	//	@@ 2005.03.31 MIK
