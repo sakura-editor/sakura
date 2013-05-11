@@ -142,7 +142,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 				;
 		}
 		if( szJumpToFile[0] == L'\0' ){
-			if( !Command_TagJumpByTagsFile() )	//@@@ 2003.04.13
+			if( !Command_TagJumpByTagsFile(bClose) )	//@@@ 2003.04.13
 				goto can_not_tagjump;
 			return true;
 		}
@@ -420,7 +420,7 @@ finish:
 */
 bool CViewCommander::Command_TagJumpByTagsFileMsg( bool bMsg )
 {
-	bool ret = Command_TagJumpByTagsFile();
+	bool ret = Command_TagJumpByTagsFile(false);
 	if( false == ret && bMsg ){
 		m_pCommanderView->SendStatusMessage(_T("タグジャンプできません"));
 	}
@@ -437,7 +437,7 @@ bool CViewCommander::Command_TagJumpByTagsFileMsg( bool bMsg )
 	@date	2003.05.12	フォルダ階層も考慮して探す
 	@date	
 */
-bool CViewCommander::Command_TagJumpByTagsFile( void )
+bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 {
 	CNativeW	cmemKeyW;
 	m_pCommanderView->GetCurrentTextForSearch( cmemKeyW, true, true );
@@ -473,7 +473,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( void )
 		if( false == cDlgTagJumpList.GetSelectedFullPathAndLine( fileName, _countof(fileName), &fileLine , NULL ) ){
 			return false;
 		}
-		return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine) );
+		return m_pCommanderView->TagJumpSub( fileName, CMyPoint(0, fileLine), bClose );
 	}
 
 	return false;
