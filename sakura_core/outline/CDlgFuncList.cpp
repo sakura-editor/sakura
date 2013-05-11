@@ -754,14 +754,16 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 		const TCHAR*		pWork;
 		pWork = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+		int m = 0;
+		nClassNest = 0;
 		/* クラス名::メソッドの場合 */
-		if( NULL != ( pPos = _tcsstr( pWork, _T("::") ) ) ){
+		if( NULL != ( pPos = _tcsstr( pWork, _T("::") ) )
+			&& auto_strncmp( _T("operator "), pWork, 9) != 0 ){
 			/* インナークラスのネストレベルを調べる */
-			int	k, m;
+			int	k;
 			int	nWorkLen;
 			int	nCharChars;
-			nClassNest = 0;
-			m = 0;
+			int	nNestTemplate = 0;
 			nWorkLen = _tcslen( pWork );
 			for( k = 0; k < nWorkLen; ++k ){
 				//2009.9.21 syat ネストが深すぎる際のBOF対策
@@ -771,7 +773,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 				}
 				// 2005-09-02 D.S.Koba GetSizeOfChar
 				nCharChars = CNativeT::GetSizeOfChar( pWork, nWorkLen, k );
-				if( 1 == nCharChars && _T(':') == pWork[k] ){
+				if( 1 == nCharChars && 0 == nNestTemplate && _T(':') == pWork[k] ){
 					//	Jan. 04, 2001 genta
 					//	C++の統合のため、\に加えて::をクラス区切りとみなすように
 					if( k < nWorkLen - 1 && _T(':') == pWork[k+1] ){
@@ -780,6 +782,10 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 						++nClassNest;
 						m = k + 2;
 						++k;
+						// Klass::operator std::string
+						if( auto_strncmp( _T("operator "), pWork + m, 9) == 0 ){
+							break;
+						}
 					}
 					else 
 						break;
@@ -790,11 +796,22 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 					++nClassNest;
 					m = k + 1;
 				}
+				else if( 1 == nCharChars && _T('<') == pWork[k] ){
+					// namesp::function<std::string> のようなものを処理する
+					nNestTemplate++;
+				}
+				else if( 1 == nCharChars && _T('>') == pWork[k] ){
+					if( 0 < nNestTemplate ){
+						nNestTemplate--;
+					}
+				}
 				if( 2 == nCharChars ){
 					++k;
 				}
 			}
-
+		}
+		if( 0 < nClassNest ){
+			int	k;
 			//	Jan. 04, 2001 genta
 			//	関数先頭のセット(ツリー構築で使う)
 			pWork = pWork + m; // 2 == lstrlen( "::" );

@@ -50,7 +50,6 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 /*!
 	関数に用いることができる文字かどうかの判定
 */
-bool C_IsWordChar( char c );
 inline bool C_IsWordChar( wchar_t c )
 {
 	return (
@@ -59,7 +58,8 @@ inline bool C_IsWordChar( wchar_t c )
 		L'~' == c ||
 		(L'a' <= c && c <= L'z' )||
 		(L'A' <= c && c <= L'Z' )||
-		(L'0' <= c && c <= L'9' )
+		(L'0' <= c && c <= L'9' )||
+		(0xa1 <= c && !iswcntrl(c) && !iswspace(c))
 	);
 }
 //	To Here
@@ -96,7 +96,6 @@ static bool C_IsOperator( wchar_t* szStr, int nLen	)
 
 	@date 2005.12.06 じゅうじ 最後の1文字しか見ないと2バイトコードの後半がバックスラッシュの場合に誤認する
 */
-static bool C_IsLineEsc(const char *s, int len);
 static bool C_IsLineEsc(const wchar_t *s, int len)
 {
 	if ( len > 0 && s[len-1] == L'\n' ) len--;
@@ -119,6 +118,19 @@ static bool C_IsLineEsc(const wchar_t *s, int len)
 	return(false);
 }
 
+static bool CPP_IsFunctionAfterKeyword( const wchar_t* s )
+{
+	return
+		wcscmp( s, L"const" ) == 0 ||
+		wcscmp( s, L"volatile" ) == 0 ||
+		wcscmp( s, L"throw" ) == 0 ||
+		wcscmp( s, L"default" ) == 0 ||
+		wcscmp( s, L"delete" ) == 0 ||
+		wcscmp( s, L"override" ) == 0 ||
+		wcscmp( s, L"final" ) == 0 ||
+		wcscmp( s, L"noexcept" ) == 0
+		;
+}
 
 
 /*!
@@ -301,6 +313,9 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 */
 void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemberFunc )
 {
+#ifdef _DEBUG
+// #define TRACE_OUTLINE
+#endif
 	const wchar_t*	pLine;
 	CLogicInt	nLineLen;
 	CLogicInt	i;
@@ -315,13 +330,25 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	// 2002/10/27 frozen　ここまで
 
 	bool bInInitList = false;	// 2010.07.08 ryoji 関数名調査の際、現在位置が初期化リスト（':'以後）に到達したかどうかを示す
+	int			nNestLevel_template = 0; // template<> func<vector<int>> などの<>の数
 
-	int			nCharChars;			//	多バイト文字を読み飛ばすためのもの
 	wchar_t		szWordPrev[256];	//	1つ前のword
 	wchar_t		szWord[256];		//	現在解読中のwordを入れるところ
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 100;	//	許容されるwordの最大長さ
 	int			nMode;				//	現在のstate
+	/*
+		nMode
+		  0 : 初期値
+		  1 : 単語読み込み中
+		      szWordに単語を格納
+		  2 : 記号列
+		  8 : ブロックコメント中
+		 10 : // コメント中
+		 20 : 文字定数 ''
+		 21 : 文字列 ""
+		999 : 長い単語無視
+	*/
 
 	// 2002/10/27 frozen　ここから
 	//! 状態2
@@ -329,13 +356,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	{
 		M2_NORMAL			= 0x00,	//!< 通常
 		M2_ATTRIBUTE		= 0x02,	//!< C++/CLI attribute : 2007.05.26 genta
-
+		M2_TEMPLATE			= 0x03, //!< "template<" でM2_TEMPLATEになり '>' でM2_NORMALに戻る
 		M2_NAMESPACE_SAVE	= 0x11,	//!< ネームスペース名調査中
 			// 「通常」状態で単語 "class" "struct" "union" "enum" "namespace", "__interface" を読み込むと、この状態になり、';' '{' ',' '>' '='を読み込むと「通常」になる。
 			//	2007.05.26 genta キーワードに__interface追加
 			//
 			// ':' を読み込むと「ネームスペース名調査完了」へ移行すると同時に
-			// szWordをszTokenNameに保存し、あとで ':' 又は '{' の直前の単語が調べられるようにしている。
+			// szWordをszItemNameに保存し、あとで ':' 又は '{' の直前の単語が調べられるようにしている。
 			// これは "__declspec( dllexport )"のように"class"とクラス名の間にキーワードが書いてある場合でもクラス名を取得できるようにするため。
 			//
 			// '<' を読み込むと「テンプレートクラス名調査中」に移行する。
@@ -345,15 +372,21 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 			// 「template_name <paramA,paramB>」のような文字列を一つの単語をみなすようにする。
 			// これは特殊化したクラステンプレートを実装する際の構文で有効に働く。	
 		M2_NAMESPACE_END	= 0x13,	//!< ネームスペース名調査完了。(';' '{' を読み込んだ時点で「通常」になる。 )
-		M2_FUNC_NAME_END	= 0x14, //!< 関数名調査完了。(';' '{' を読み込んだ時点で「通常」になる。 )
+		M2_OPERATOR_WORD	= 0x14, //!< operator名調査中。operatorで '('で次に遷移　template<> names::operator<T>(x)
+		M2_TEMPLATE_WORD	= 0x15, //!< テンプレート特殊化を調査中 func<int>()等 '単語 <'でM2_TEMPLATE_WORDになり、'>'(ネスト認識)でM2_NORMAL/M2_OPERATOR_WORDに戻る
+		M2_FUNC_NAME_END	= 0x16, //!< 関数名調査完了。(';' '{' を読み込んだ時点で「通常」になる。 )
 		M2_AFTER_EQUAL		= 0x05,	//!< '='の後。
 			//「通常」かつ nNestLevel_fparam==0 で'='が見つかるとこの状態になる。（ただし "opreator"の直後は除く）
 			// ';'が見つかると「通常」に戻る。
 			// int val=abs(-1);
 			// のような文が関数とみなされないようにするために使用する。
-		M2_KR_FUNC			= 0x16,	//!< K&Rスタイルの関数定義を調査する。
+		M2_KR_FUNC	= 0x18,	//!< K&Rスタイル/C++の関数定義を調査する。func() word ←wordがあると遷移する
 		M2_AFTER_ITEM		= 0x10,
 	} nMode2 = M2_NORMAL;
+	MODE2 nMode2Old = M2_NORMAL; // M2_TEMPLATE_WORDになる直前のnMode2
+	MODE2 nMode2AttOld = M2_NORMAL;
+	bool  bDefinedTypedef = false;	// typedef が書かれている。trueの間は関数名として認識しない。;で復帰する
+	bool  bNoFunction = true; // fparamだけど関数定義でない可能性の場合
 
 	const int	nNamespaceNestMax	= 32;			//!< ネスト可能なネームスペース、クラス等の最大数
 	int			nNamespaceLen[nNamespaceNestMax+1];	//!< ネームスペース全体の長さ
@@ -361,6 +394,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	wchar_t		szNamespace[nNamespaceLenMax];		//!< 現在のネームスペース(終端が\0になっているとは限らないので注意)
 	const int 	nItemNameLenMax	 	= 256;
 	wchar_t		szItemName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
+	wchar_t		szTemplateName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
 	// 例えば下のコードの←の部分での
 	// szNamespaceは"Namespace\ClassName\"
 	// nMamespaceLenは{10,20}
@@ -370,6 +404,9 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	//　class ClassName{
 	//　←
 	//　}}
+	wchar_t		szRawStringTag[32];	// C++11 raw string litteral
+	int nRawStringTagLen = 0;
+	int nRawStringTagCompLen = 0;
 
 	CLogicInt	nItemLine(0);		//!< すぐ前の 関数 or クラス or 構造体 or 共用体 or 列挙体 or ネームスペースのある行
 	int			nItemFuncId = 0;
@@ -378,6 +415,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 	szWord[nWordIdx] = L'\0';
 	szNamespace[0] = L'\0';	// 2002/10/27 frozen
 	nNamespaceLen[0] = 0;	// 2002/10/27 frozen
+	szItemName[0] = L'\0';
+	szTemplateName[0] = L'\0';
 	nMode = 0;
 	
 	//	Aug. 10, 2004 genta プリプロセス処理クラス
@@ -399,15 +438,14 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 		//	C/C++としての処理が不要なケースでは i == nLineLenとなっているので
 		//	以下の解析処理はSKIPされる．
 		//	To Here Aug. 10, 2004 genta
-		
+#ifdef TRACE_OUTLINE
+		DEBUG_TRACE(_T("line:%ls"), pLine);
+#endif
 		for( ; i < nLineLen; ++i ){
-			/* 1バイト文字だけを処理する */
-			// 2005-09-02 D.S.Koba GetSizeOfChar
-			nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-			if( 1 < nCharChars ){
-				i += CLogicInt(nCharChars - 1);
-				continue;
-			}
+#ifdef TRACE_OUTLINE
+			DEBUG_TRACE(_T("%2d [%lc] %d %x %d %d %d wd[%ls] pre[%ls] tmp[%ls] til[%ls] %d\n"), int((Int)i), pLine[i], nMode, nMode2,
+				nNestLevel_global, nNestLevel_func, nNestLevel_fparam, szWord, szWordPrev, szTemplateName, szItemName, nWordIdx );
+#endif
 /* del start 2005/12/6 じゅうじ	*/
 			/* エスケープシーケンスは常に取り除く */
 			/* シングルクォーテーション文字列読み込み中 */
@@ -435,7 +473,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 			}
 			/* add start 2005/12/6 じゅうじ	*/
 			/* エスケープシーケンスは常に取り除く */
-			else if( '\\' == pLine[i] ){
+			else if( '\\' == pLine[i] && nRawStringTagLen == 0 ){
 				++i;
 			}
 			/* シングルクォーテーション文字列読み込み中 */
@@ -448,9 +486,27 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 			}
 			/* ダブルクォーテーション文字列読み込み中 */
 			else if( 21 == nMode ){
+				// operator "" _userliteral
+				if( nMode2 == M2_OPERATOR_WORD ){
+					int nLen = wcslen(szWordPrev);
+					if( nLen + 1 < _countof(szWordPrev) ){
+						szWordPrev[nLen] = pLine[i];
+						szWordPrev[nLen + 1] = L'\0';
+					}
+				}
 				if( '"' == pLine[i] ){
-					nMode = 0;
-					continue;
+					if( nRawStringTagLen ){
+						// R"abc(test
+						// )abc"
+						if( nRawStringTagLen <= i && wcsncmp( szRawStringTag, &pLine[i - nRawStringTagLen], nRawStringTagCompLen ) == 0 ){
+							nRawStringTagLen = 0;
+							nMode = 0;
+							continue;
+						}
+					}else{
+						nMode = 0;
+						continue;
+					}
 				}else{
 				}
 			}
@@ -463,142 +519,52 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						nMode = 999;
 						continue;
 					}else{
-						if( pLine[i] == L':')
-						{
-							if(nMode2 == M2_NAMESPACE_SAVE)
-							{
-								if(szWord[0]!='\0')
-									wcscpy( szItemName, szWord );
-								nMode2 = M2_NAMESPACE_END;
-							}
-							else if( nMode2 == M2_TEMPLATE_SAVE)
-							{
-								wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
-								szItemName[ nItemNameLenMax - 1 ] = L'\0';
-								nMode2 = M2_NAMESPACE_END;
+						if( pLine[i] == L':' ){
+							if( pLine[i + 1] == L':' ||  0 < i && pLine[i-1] == L':' ){
+								// name ::class or class :: member
+							}else{
+								// class Klass:base のように:の前にスペースがない場合
+								if(nMode2 == M2_NAMESPACE_SAVE)
+								{
+									if(szWord[0]!='\0')
+										wcscpy( szItemName, szWord );
+									nMode2 = M2_NAMESPACE_END;
+								}
+								else if( nMode2 == M2_TEMPLATE_SAVE)
+								{
+									wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) );
+									szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+									nMode2 = M2_NAMESPACE_END;
+								}
 							}
 						}
 						szWord[nWordIdx] = pLine[i];
 						szWord[nWordIdx + 1] = L'\0';
 					}
 				}else{
-					//	From Here Mar. 31, 2001 genta
-					//	operatorキーワード(演算子overload)の対応
-					//	ただし、operatorキーワードの後ろにスペースが入っているとうまく動かない。
-					if( C_IsOperator( szWord, nWordIdx + 1 ) ){
-						//	operatorだ！
-						/*  overloadする演算子一覧
-							& && &=
-							| || |=
-							+ ++ +=
-							- -- -= -> ->*
-							* *=
-							/ /=
-							% %=
-							^ ^=
-							! !=
-							= ==
-							< <= << <<=
-							> >= >> >>=
-							()
-							[]
-							~
-							,
-						*/
-						int oplen = 0;	// 演算子本体部の文字列長
-						switch( pLine[i] ){
-						case '&': // no break
-						case '|': // no break
-						case '+':
-							oplen = 1;
-							if( i + 1 < nLineLen ){
-								if( pLine[ i + 1 ] == pLine[ i ] ||
-									pLine[ i + 1 ] == L'=' )
-									oplen = 2;
-							}
-							break;
-						case '-':
-							oplen = 1;
-							if( i + 1 < nLineLen ){
-								if( pLine[ i + 1 ] == L'-' ||
-									pLine[ i + 1 ] == L'=' )
-									oplen = 2;
-								else if( pLine[ i + 1 ] == L'>' ){
-									oplen = 2;
-									if( i + 2 < nLineLen ){
-										if( pLine[ i + 2 ] == L'*' )
-											oplen = 3;
-									}
-								}
-							}
-							break;
-						case '*': // no break
-						case '/': // no break
-						case '%': // no break
-						case '^': // no break
-						case '!': // no break
-						case '=':
-							oplen = 1;
-							if( i + 1 < nLineLen ){
-								if( pLine[ i + 1 ] == L'=' )
-									oplen = 2;
-							}
-							break;
-						case '<': // no break
-						case '>':
-							oplen = 1;
-							if( i + 1 < nLineLen ){
-								if( pLine[ i + 1 ] == pLine[ i ] ){
-									oplen = 2;
-									if( i + 2 < nLineLen ){
-										if( pLine[ i + 2 ] == L'=' )
-											oplen = 3;
-									}
-								}
-								else if( pLine[ i + 1 ] == L'=' )
-									oplen = 2;
-							}
-							break;
-						case '(':
-							if( i + 1 < nLineLen )
-								if( pLine[ i + 1 ] == /* 括弧対応対策 ( */ ')' )
-									oplen = 2;
-							break;
-						case '[':
-							if( i + 1 < nLineLen )
-								if( pLine[ i + 1 ] == /* 括弧対応対策 [ */ ']' )
-									oplen = 2;
-							break;
-						case '~': // no break
-						case ',':
-							oplen = 2;
-							break;
-						}
-
-						//	oplen の長さだけキーワードに追加
-						for( ; oplen > 0 ; oplen--, i++ ){
-							++nWordIdx;
-							szWord[nWordIdx] = pLine[i];
-						}
-						szWord[nWordIdx + 1] = L'\0';
-							// 記号列の処理を行う前は記号列のiは記号列の先頭を指していた。
-							// この時点でiは記号列の1つ後を指している
-
-							// operatorの後ろに不正な文字がある場合の動作
-							// ( で始まる場合はoperatorという関数と認識される
-							// それ以外の記号だと従来通り記号列がglobalのしたに現れる。
-
-							// 演算子が抜けている場合の動作
-							// 引数部が()の場合はそれが演算子と見なされるため、その行は関数定義と認識されない
-							// それ以外の場合はoperatorという関数と認識される
-					}
 					// 2002/10/27 frozen　ここから
-					if( nMode2 == M2_NAMESPACE_SAVE )
-						wcscpy( szItemName, szWord );
-					else if( nMode2 == M2_TEMPLATE_SAVE)
-					{
-						wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
-						szItemName[ nItemNameLenMax - 1 ] = L'\0';
+					if( nMode2 == M2_NAMESPACE_SAVE ){
+						if( wcscmp(L"final", szWord) == 0 && wcscmp(L"無名", szItemName) != 0 ){
+							// strcut name final のfinalはクラス名の一部ではない
+							// ただし struct finalは名前
+						}else{
+							wcscpy( szTemplateName, szWord );
+							wcscpy( szItemName, szWord );
+						}
+					}else if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
+						// strcut name<X> final のfinalはクラス名の一部ではない
+						// struct name<final> のfinalは一部
+						if( wcscmp(L"final", szWord) != 0 || nNestLevel_template != 0 ){
+							int nLen = wcslen(szTemplateName);
+							if( 0 < nLen && C_IsWordChar(szTemplateName[nLen - 1]) && szTemplateName[nLen - 1] != L':' && szWord[nWordIdx] != L':' ){
+								// template func<const x>() のような場合にconstの後ろにスペースを挿入
+								if( nLen + 1 < nItemNameLenMax ){
+									wcscat( szTemplateName, L" " );
+								}
+							}
+							wcsncat( szTemplateName, szWord, nItemNameLenMax - nLen );
+							szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+						}
 					}
 					else if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_FUNC_NAME_END) )	// 2010.07.08 ryoji 関数型マクロ呼出しを関数と誤認することがある問題対策として nMode2 == M2_FUNC_NAME_END 条件を追加し、補正がかかるようにした。
 					{
@@ -606,7 +572,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							nItemFuncId = 0;
 						if( wcscmp(szWord,L"class")==0 )
 							nItemFuncId = 3;
-						if( wcscmp(szWord,L"struct")==0 )
+						else if( wcscmp(szWord,L"struct")==0 )
 							nItemFuncId = 4;
 						else if( wcscmp(szWord,L"namespace")==0 )
 							nItemFuncId = 7;
@@ -616,6 +582,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							nItemFuncId = 6;
 						else if( wcscmp(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
 							nItemFuncId = 8;
+						else if( wcscmp(szWord,L"typedef") == 0 )
+							bDefinedTypedef = true;
 						if( nItemFuncId != 0 && nItemFuncId != 2 )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END のときは nItemFuncId == 2 のはず
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
@@ -628,6 +596,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						nMode2 = M2_KR_FUNC;
 					}
 					// 2002/10/27 frozen　ここまで
+					if( nMode2 == M2_NORMAL ){
+						// templateは終わった
+						szTemplateName[0] = L'\0';
+					}
 
 					//	To Here Mar. 31, 2001 genta
 					// 2004/03/12 zenryaku キーワードに _ と PARAMS を使わせない (GNUのコードが見にくくなるから)
@@ -651,7 +623,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					 ';' == pLine[i] ||
 					'\'' == pLine[i] ||
 					 '"' == pLine[i] ||
-					 '/' == pLine[i]
+					 (L'/' == pLine[i] && (L'*' == pLine[i+1] || L'/' == pLine[i+1]))
 				){
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
@@ -667,6 +639,46 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					}else{
 						szWord[nWordIdx] = pLine[i];
 						szWord[nWordIdx + 1] = L'\0';
+					}
+					if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
+						int nItemNameLen = wcslen(szTemplateName);
+						if(nItemNameLen + 1 < nItemNameLenMax ){
+							szTemplateName[nItemNameLen] = pLine[i];
+							szTemplateName[nItemNameLen + 1 ] = L'\0';
+						}
+					}
+					if( nMode2 == M2_OPERATOR_WORD && L'<' == pLine[i] ){
+						const wchar_t* p = &szWord[nWordIdx-8];
+						if(  (8 <= nWordIdx && wcsncmp(L"operator<", p, 9) == 0)
+						 || ((9 <= nWordIdx && wcsncmp(L"operator<<", p-1, 10) == 0) && 0 < i && L'<' == pLine[i-1]) ){
+							// 違う：operator<<const() / operator<<()
+						}else{
+							// operator< <T>() / operator<<<T>() / operator+<T>()
+							nMode2Old = nMode2;
+							nMode2 = M2_TEMPLATE_WORD;
+							wcsncpy( szTemplateName, szWord, nItemNameLenMax );
+							szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+						}
+					}
+					if( nMode2 == M2_TEMPLATE || nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
+						if( pLine[i] == L'<' ){
+							nNestLevel_template++;
+						}else if( pLine[i] == L'>' ){
+							wcscpy( szItemName, szTemplateName );
+							nNestLevel_template--;
+							if( nNestLevel_template == 0 ){
+								if( nMode2 == M2_TEMPLATE ){
+									nMode2 = M2_NORMAL;
+								}else if( nMode2 == M2_TEMPLATE_WORD ){
+									nMode2 = nMode2Old;
+									if( nMode2 == M2_OPERATOR_WORD ){
+										wcscpy(szWord, szTemplateName);
+										nWordIdx = wcslen(szWord) - 1;
+										szTemplateName[0] = L'\0';
+									}
+								}
+							}
+						}
 					}
 				}
 			}else
@@ -699,6 +711,37 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					continue;
 				}else
 				if( '"' == pLine[i] ){
+					int nLen = (int)wcslen(szWordPrev);
+					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
+						// 演算子のオペレータだった operator ""i
+						if( nLen + 1 < _countof(szWordPrev) ){
+							szWordPrev[nLen] = pLine[i];
+							szWordPrev[nLen + 1] = L'\0';
+						}
+						nMode2 = M2_OPERATOR_WORD;
+					}else{
+						if( wcscmp( szWordPrev, L"R" ) == 0 ||
+							wcscmp( szWordPrev, L"LR" ) == 0 ||
+							wcscmp( szWordPrev, L"uR" ) == 0 ||
+							wcscmp( szWordPrev, L"UR" ) == 0 ||
+							wcscmp( szWordPrev, L"u8R" ) == 0
+						){
+							// C++11 raw string
+							// R"abc(string)abc"
+							for( int k = i + 1; k < nLineLen; k++ ){
+								if( pLine[k] == L'(' ){
+									// i = 1, k = 5, len = 5-1-1=3
+									CLogicInt tagLen = t_min(k - i - 1, CLogicInt(_countof(szRawStringTag) - 1));
+									nRawStringTagLen = tagLen + 1;
+									szRawStringTag[0] = L')';
+									wcsncpy( szRawStringTag + 1, &pLine[i+1], tagLen );
+									szRawStringTag[nRawStringTagLen] = L'\0';
+									nRawStringTagCompLen = auto_strlen(szRawStringTag);
+									break;
+								}
+							}
+						}
+					}
 					nMode = 21;
 					continue;
 				}else
@@ -706,25 +749,31 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 				// 2002/10/27 frozen ここから
 				if( '{' == pLine[i] )
 				{
-					int nItemNameLen;
-					if( nNestLevel_func !=0)
+					bool bAddFunction = false;
+					if( nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC ){
+						bAddFunction = true;
+					}
+					int nItemNameLen = 0;
+					if( nNestLevel_func !=0 || (szWordPrev[0] == L'=' && szWordPrev[1] == L'\0') || nMode2 == M2_AFTER_EQUAL )
 						++nNestLevel_func;
 					else if(
 							(nMode2 & M2_AFTER_ITEM) != 0  &&
 							nNestLevel_global < nNamespaceNestMax &&
-							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + 10 + 1) < nNamespaceLenMax)
+							(nNamespaceLen[nNestLevel_global] +  (nItemNameLen = wcslen(szItemName)) + 6 + 1) < nNamespaceLenMax)
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
-					// +10は追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
+					// +6は追加する文字列の最大長(追加する文字列は"::定義位置"が最長)
 					// +1は終端NUL文字
 					{
 						wcscpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
+						szItemName[0] = L'\0';
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
 						//	関数の後ろにconst, throw または初期化子があると
 						//	M2_KR_FUNCに遷移して，';'が見つからないとその状態のまま
 						//	中括弧に遭遇する．
-						if( nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC )
+						if( bAddFunction ){
 							++ nNestLevel_func;
+						}
 						else
 						{
 							++ nNestLevel_global;
@@ -750,9 +799,14 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							CLogicPoint(0, nItemLine - 1),
 							&ptPosXY
 						);
+#ifdef TRACE_OUTLINE
+						DEBUG_TRACE( _T("AppendData %d %ls\n"), nItemLine, szNamespace );
+#endif
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1) , szNamespace, nItemFuncId);
+						bDefinedTypedef = false;
+						nItemLine = -1;
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
-						if( nMode2 != M2_FUNC_NAME_END && nMode2 != M2_KR_FUNC )
+						if( !bAddFunction )
 						{
 							szNamespace[nNamespaceLen[nNestLevel_global]] = L':';
 							nNamespaceLen[nNestLevel_global] += 2;
@@ -761,7 +815,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					else
 					{
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
-						if(nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC)
+						if( bAddFunction )
 							++ nNestLevel_func;
 						else
 						{
@@ -771,8 +825,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						}
 					}
 					// bCppInitSkip = false;	//	Mar. 4, 2001 genta
+					nNestLevel_template = 0;
 					nMode = 0;
 					nMode2 = M2_NORMAL;
+					nMode2Old = M2_NORMAL;
 					// nNestLevel2 = 0;
 					continue;
 				}else
@@ -795,6 +851,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					//  2002/10/27 frozen ここまで
 					nMode = 0;
 					nMode2 = M2_NORMAL;
+					nMode2Old = M2_NORMAL;
 					continue;
 				}else
 				if( '(' == pLine[i] ){
@@ -805,23 +862,69 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 //						nNestLevel2 = 1;
 //					}
 //					nMode = 0;
+					int nLen = (int)wcslen(szWordPrev);
+					bool bOperator = false;
+					if( nMode2 == M2_NORMAL && nNestLevel_fparam == 0 && C_IsOperator(szWordPrev, nLen) ){
+						int k;
+						for( k = i + 1; k < nLineLen && C_IsSpace(pLine[k]); k++){}
+						if( k < nLineLen && pLine[k] == L')' ){
+							for( k++; k < nLineLen && C_IsSpace(pLine[k]); k++){}
+							if( k < nLineLen && (pLine[k] == L'<' || pLine[k] == L'(' ) ){
+								// オペレータだった operator()( / operator()<;
+								if( nLen + 1 < _countof(szWordPrev) ){
+									szWordPrev[nLen] = pLine[i];
+									szWordPrev[nLen + 1] = L'\0';
+								}
+								nMode2 = M2_OPERATOR_WORD;
+								bOperator = true;
+							}else{
+								// オペレータかoperatorというCの関数
+							}
+						}
+					}
 					//	2007.05.26 genta C++/CLI nMode2 == M2_NAMESPACE_ENDの場合を対象外に
 					//	NAMESPACE_END(class クラス名 :の後ろ)においては()を関数とみなさない．
 					//	TEMPLATE<sizeof(int)> のようなケースでsizeofを関数と誤認する．
-					if( nNestLevel_func == 0 && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE || nMode2 == M2_KR_FUNC) )	// 2010.07.08 ryoji 関数型マクロ呼出しを関数と誤認することがある問題対策として nMode2 == M2_KR_FUNC 条件を追加し、補正がかかるようにした。
-					{
-						if( wcscmp(szWordPrev, L"__declspec") == 0 ) {continue;}
+					if( !bOperator && nNestLevel_func == 0
+					  && (nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE || nMode2 == M2_OPERATOR_WORD || nMode2 == M2_KR_FUNC) ){
 						if(nNestLevel_fparam==0)
 						{
-							if( !(nMode2 == M2_KR_FUNC && bInInitList) && !(nMode2 == M2_KR_FUNC && wcscmp(szWordPrev, L"throw") == 0) )	// 2010.07.08 ryoji 初期化リストに入る以前までは後発の名前を優先的に関数名候補とする
-							{
-								wcscpy( szItemName, szWordPrev);
+							bool bAdd = true;
+							if( wcscmp(szWordPrev, L"__declspec") == 0
+									|| wcscmp(szWordPrev, L"alignas") == 0
+									|| wcscmp(szWordPrev, L"decltype") == 0
+									|| wcscmp(szWordPrev, L"_Alignas") == 0
+									|| wcscmp(szWordPrev, L"__attribute__") == 0
+							){
+								bAdd = false;
+							}else{
+								if( !(nMode2 == M2_KR_FUNC && bInInitList) && !(nMode2 == M2_KR_FUNC
+									&& CPP_IsFunctionAfterKeyword(szWordPrev)) )	// 2010.07.08 ryoji 初期化リストに入る以前までは後発の名前を優先的に関数名候補とする
+								{
+									bNoFunction = false;
+								}else{
+									bAdd = false;
+								}
+							}
+							if( bAdd ){
+								if( szTemplateName[0] ){
+									wcscpy(szItemName, szTemplateName);
+								}else{
+									wcscpy(szItemName, szWordPrev);
+								}
 								nItemLine = nLineCount + CLogicInt(1);
 							}
 						}
 						++ nNestLevel_fparam;
 					}
 					//  2002/10/27 frozen ここまで
+					if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
+						int nItemNameLen = wcslen(szTemplateName);
+						if( nItemNameLen + 1 < nItemNameLenMax ){
+							szTemplateName[nItemNameLen] = pLine[i];
+							szTemplateName[nItemNameLen + 1 ] = L'\0';
+						}
+					}
 					continue;
 				}else
 				if( ')' == pLine[i] ){
@@ -834,30 +937,63 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					{
 						--nNestLevel_fparam;
 						//	2007.05.26 genta C++/CLI Attribute内部ではnMode2の変更は行わない
-						if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE )
-						{
+						if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE && nMode2 != M2_TEMPLATE_WORD ){
 							if( nMode2 == M2_NORMAL )
 								bInInitList = false;
-							nMode2 = M2_FUNC_NAME_END;
-							nItemFuncId = 2;
+							if( !bNoFunction ){
+								nMode2 = M2_FUNC_NAME_END;
+								nItemFuncId = 2;
+							}
 						}
 					}
 					//  2002/10/27 frozen ここまで
+					if( nMode2 == M2_OPERATOR_WORD ){
+						int nLen = wcslen(szWordPrev);
+						if( nLen + 1 < _countof(szWordPrev) ){
+							szWordPrev[nLen] = pLine[i];
+							szWordPrev[nLen + 1] = L'\0';
+						}
+					}else if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
+						int nItemNameLen = wcslen(szTemplateName);
+						if( nItemNameLen + 1 < nItemNameLenMax ){
+							szTemplateName[nItemNameLen] = pLine[i];
+							szTemplateName[nItemNameLen + 1 ] = L'\0';
+						}
+					}
 					continue;
 				}else
 				// From Here 2007.05.26 genta C++/CLI Attributeの取り扱い
 				if( '[' == pLine[i] ){
-					if( nNestLevel_func == 0 && nNestLevel_fparam == 0 && nMode2 == M2_NORMAL ) {
+					int nLen = (int)wcslen(szWordPrev);
+					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
+						// 演算子のオペレータだった operator []
+						if( nLen + 1 < _countof(szWordPrev) ){
+							szWordPrev[nLen] = pLine[i];
+							szWordPrev[nLen + 1] = L'\0';
+						}
+						nMode2 = M2_OPERATOR_WORD;
+					}else
+					if( nNestLevel_func == 0 && nNestLevel_fparam == 0 &&
+						(nMode2 == M2_NORMAL || nMode2 == M2_NAMESPACE_SAVE || nMode2 ==  M2_TEMPLATE_SAVE
+						 || nMode2 == M2_OPERATOR_WORD || nMode2 == M2_TEMPLATE_WORD )) {
+						nMode2AttOld = nMode2;
 						nMode2 = M2_ATTRIBUTE;
-						continue;
 					}
+					continue;
 				} else
 				if( ']' == pLine[i] ){
 					//	Attribute内部でも[]を配列として使うかもしれないので，
 					//	括弧のレベルは元に戻っている必要有り
 					if( nNestLevel_fparam == 0 && nMode2 == M2_ATTRIBUTE ) {
-						nMode2 = M2_NORMAL;
+						nMode2 = nMode2AttOld;
 						continue;
+					}
+					if( nMode2 == M2_OPERATOR_WORD ){
+						int nLen = wcslen(szWordPrev);
+						if( nLen + 1 < _countof(szWordPrev) ){
+							szWordPrev[nLen] = pLine[i];
+							szWordPrev[nLen + 1] = L'\0';
+						}
 					}
 				} else
 				// To Here 2007.05.26 genta C++/CLI Attributeの取り扱い
@@ -865,23 +1001,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					//  2002/10/27 frozen ここから
 					if( nMode2 == M2_KR_FUNC )
 					{
-						//	Jan. 30, 2005 genta 関数後の const, throwの後ろの
-						//	';'はK&R形式宣言の終わりでなく関数宣言の終わり
-						if( wcscmp( szWordPrev, L"const" ) == 0 ||
-							wcscmp( szWordPrev, L"throw" ) == 0 ){
-								nMode2 = M2_FUNC_NAME_END;
-								//	すぐ下のif文に引っかかりますように
-						}
-						else {
-							// zenryaku K&Rスタイルの関数宣言の終了後 M2_FUNC_NAME_END にもどす
-							nMode2 = M2_FUNC_NAME_END;
-							continue;
-						}
+						// zenryaku K&Rスタイルの関数宣言の終了後 M2_FUNC_NAME_END にもどす
+						nMode2 = M2_FUNC_NAME_END;
 					} //	Jan. 30, 2005 genta K&R処理に引き続いて宣言処理も行う．
 					if( nMode2 == M2_FUNC_NAME_END &&
 						nNestLevel_global < nNamespaceNestMax &&
 						(nNamespaceLen[nNestLevel_global] + wcslen(szItemName)) < nNamespaceLenMax &&
-						nNestPoint_class == 0)
+						nNestPoint_class == 0 && !bDefinedTypedef && 0 < nItemLine)
 					// ３番目の(&&の後の)条件
 					// バッファが足りない場合は項目の追加を行わない。
 					{
@@ -899,10 +1025,18 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							CLogicPoint(0, nItemLine - 1),
 							&ptPosXY
 						);
+#ifdef TRACE_OUTLINE
+						DEBUG_TRACE( _T("AppendData %d %ls\n"), nItemLine, szNamespace );
+#endif
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1), szNamespace, nItemFuncId);
 					}
+					nItemLine = -1;
+					nNestLevel_template = 0;
 					nMode2 = M2_NORMAL;
 					//  2002/10/27 frozen ここまで
+					bNoFunction = true;
+					bDefinedTypedef = false;
+					nMode2Old = M2_NORMAL;
 					nMode = 0;
 					continue;
 				}else if( nNestLevel_fparam == 0 && nMode2 != M2_ATTRIBUTE ){
@@ -912,7 +1046,6 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						//	From Here
 						//	直前のwordの最後が::か，あるいは直後のwordの先頭が::なら
 						//	クラス限定子と考えて両者を接続する．
-
 						{
 							int pos = wcslen( szWordPrev ) - 2;
 							if( //	前の文字列の末尾チェック
@@ -923,15 +1056,34 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 									pLine[i+1] == L':' )
 							){
 								//	前の文字列に続ける
-								wcscpy( szWord, szWordPrev );
+								if( nMode2 == M2_NORMAL || nMode2 == M2_OPERATOR_WORD ){
+									if( szTemplateName[0] ){
+										wcscpy( szWord, szTemplateName );
+										szTemplateName[0] = '\0';
+									}else{
+										wcscpy( szWord, szWordPrev );
+									}
+								}
 								nWordIdx = wcslen( szWord );
 							}
 							//	From Here Apr. 1, 2001 genta
 							//	operator new/delete 演算子の対応
-							else if( C_IsOperator( szWordPrev, pos + 2 ) ){
-								//	スペースを入れて、前の文字列に続ける
-								szWordPrev[pos + 2] = L' ';
-								szWordPrev[pos + 3] = L'\0';
+							else if( nMode2 == M2_NORMAL && C_IsOperator( szWordPrev, pos + 2 ) ){
+								if( -1 < pos && C_IsWordChar( szWordPrev[pos + 1] ) ){
+									//	スペースを入れて、前の文字列に続ける
+									szWordPrev[pos + 2] = L' ';
+									szWordPrev[pos + 3] = L'\0';
+								}
+								wcscpy( szWord, szWordPrev );
+								nWordIdx = wcslen( szWord );
+								nMode2 = M2_OPERATOR_WORD;
+							}else if( nMode2 == M2_OPERATOR_WORD ){
+								// operator 継続中
+								if( -1 < pos && C_IsWordChar( szWordPrev[pos + 1] ) ){
+									//	スペースを入れて、前の文字列に続ける
+									szWordPrev[pos + 2] = L' ';
+									szWordPrev[pos + 3] = L'\0';
+								}
 								wcscpy( szWord, szWordPrev );
 								nWordIdx = wcslen( szWord );
 							}
@@ -942,8 +1094,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						}
 						//	wcscpy( szWordPrev, szWord );	不要？
 						//	To Here
-						
-						if( pLine[i] == L':')
+						if( pLine[i] == L':' && pLine[i+1] != L':')
 						{
 							if(nMode2 == M2_NAMESPACE_SAVE)
 							{
@@ -953,8 +1104,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 							}
 							else if( nMode2 == M2_TEMPLATE_SAVE)
 							{
-								wcsncat( szItemName, szWord, nItemNameLenMax - wcslen(szItemName) );
-								szItemName[ nItemNameLenMax - 1 ] = L'\0';
+								wcsncat( szTemplateName, szWord, nItemNameLenMax - wcslen(szTemplateName) );
+								szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
 								nMode2 = M2_NAMESPACE_END;
 							}
 							else if( nMode2 == M2_FUNC_NAME_END || nMode2 == M2_KR_FUNC )
@@ -976,24 +1127,52 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						}
 						//	To Here
 					}else{
+						// 2011.12.02 template対応
+						if( nMode2 == M2_NORMAL || nMode2 == M2_OPERATOR_WORD ){
+							if( pLine[i] == L'<' ){
+								int nLen = (int)wcslen(szWordPrev);
+								if( wcscmp(szWordPrev, L"template") == 0 ){
+									nMode2 = M2_TEMPLATE;
+									szTemplateName[0] = L'\0';
+								}else if( C_IsOperator(szWordPrev, nLen) ){
+									// operator<
+								}else{
+									// int func <int>();
+									nMode2Old = nMode2;
+									nMode2 = M2_TEMPLATE_WORD;
+									wcsncpy( szTemplateName, szWordPrev, nItemNameLenMax );
+									szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+								}
+							}else{
+								szTemplateName[0] = L'\0';
+							}
+						}
 						//	Aug. 13, 2004 genta
 						//	szWordPrevが失われないうちにoperatorの判定を行う
 						//	operatorの判定は前にクラス名が付いている可能性があるので
 						//	専用の判定関数を使うべし．
 						//	operatorで無ければ=は代入なのでここは宣言文ではない．
-						if( pLine[i] == L'=' && nNestLevel_func == 0 && nNestLevel_fparam==0
-							&& nMode2 == M2_NORMAL && ! C_IsOperator(szWordPrev,wcslen(szWordPrev)) ){
+						int nLen = (int)wcslen(szWordPrev);
+						if( pLine[i] == L'=' && nNestLevel_func == 0
+							&& nMode2 == M2_NORMAL && ! C_IsOperator(szWordPrev,nLen) ){
 							nMode2 = M2_AFTER_EQUAL;
+						}else if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
+							// 演算子のオペレータだった operator +
+							wcscpy(szWord, szWordPrev);
+							nWordIdx = (int)nLen -1;
+							nMode2 = M2_OPERATOR_WORD;
+						}else if( nMode2 == M2_OPERATOR_WORD ){
+							// operator 継続中
+							wcscpy(szWord, szWordPrev);
+							nWordIdx = (int)nLen -1;
+						}else{
+							wcscpy(szWordPrev, szWord);
+							nWordIdx = -1;
 						}
-						wcscpy( szWordPrev, szWord );
-						nWordIdx = 0;
-						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
-						nMode = 2;
-
 						// 2002/10/27 frozen ここから
 						if( nMode2 == M2_NAMESPACE_SAVE )
 						{
+#if 0
 							if( pLine[i] == L'>' || pLine[i] == L',' || pLine[i] == L'=')
 								// '<' の前に '>' , ',' , '=' があったので、おそらく
 								// 前にあった"class"はテンプレートパラメータの型を表していたと考えられる。
@@ -1002,20 +1181,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 								// ',' はテンプレートパラメータの区切り
 								// '=' はデフォルトテンプレートパラメータの指定
 								nMode2 = M2_NORMAL; 
-							else if( pLine[i] == L'<' )
+							else
+#endif
+							if( pLine[i] == L'<' )
 								nMode2 = M2_TEMPLATE_SAVE;
 						}
-
-						if( nMode2 == M2_TEMPLATE_SAVE)
-						{
-							int nItemNameLen = wcslen(szItemName);
-							if(nItemNameLen + 1 < nItemNameLenMax )
-							{
-								szItemName[nItemNameLen] = pLine[i];
-								szItemName[nItemNameLen + 1 ] = L'\0';
-							}
-						}
-						// 2002/10/27 frozen ここまで
+						nMode = 2;
+						i--;
 					}
 				}
 			}
