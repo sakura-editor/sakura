@@ -208,8 +208,7 @@ const int nFincList_Select_Num = _countof( pnFuncList_Select );
 const EFunctionCode pnFuncList_Box[] = {
 //	F_BOXSELALL			,	//矩形ですべて選択
 	F_BEGIN_BOX			,	//矩形範囲選択開始
-/*
-	F_UP_BOX				//(矩形選択)カーソル上移動
+	F_UP_BOX			,	//(矩形選択)カーソル上移動
 	F_DOWN_BOX			,	//(矩形選択)カーソル下移動
 	F_LEFT_BOX			,	//(矩形選択)カーソル左移動
 	F_RIGHT_BOX			,	//(矩形選択)カーソル右移動
@@ -217,15 +216,15 @@ const EFunctionCode pnFuncList_Box[] = {
 	F_DOWN2_BOX			,	//(矩形選択)カーソル下移動(２行ごと)
 	F_WORDLEFT_BOX		,	//(矩形選択)単語の左端に移動
 	F_WORDRIGHT_BOX		,	//(矩形選択)単語の右端に移動
+	F_GOLOGICALLINETOP_BOX	,	//(矩形選択)行頭に移動(改行単位)
 	F_GOLINETOP_BOX		,	//(矩形選択)行頭に移動(折り返し単位)
 	F_GOLINEEND_BOX		,	//(矩形選択)行末に移動(折り返し単位)
-	F_HalfPageUp_Box	,	//(矩形選択)半ページアップ
-	F_HalfPageDown_Box	,	//(矩形選択)半ページダウン
-	F_1PageUp_Box		,	//(矩形選択)１ページアップ
-	F_1PageDown_Box		,	//(矩形選択)１ページダウン
+	F_HalfPageUp_BOX	,	//(矩形選択)半ページアップ
+	F_HalfPageDown_BOX	,	//(矩形選択)半ページダウン
+	F_1PageUp_BOX		,	//(矩形選択)１ページアップ
+	F_1PageDown_BOX		,	//(矩形選択)１ページダウン
 	F_GOFILETOP_BOX		,	//(矩形選択)ファイルの先頭に移動
 	F_GOFILEEND_BOX			//(矩形選択)ファイルの最後に移動
-*/
 };
 const int nFincList_Box_Num = _countof( pnFuncList_Box );
 
@@ -1025,6 +1024,23 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 		return true;
 
 	case F_BEGIN_BOX:	//矩形範囲選択開始
+	case F_UP_BOX:
+	case F_DOWN_BOX:
+	case F_LEFT_BOX:
+	case F_RIGHT_BOX:
+	case F_UP2_BOX:
+	case F_DOWN2_BOX:
+	case F_WORDLEFT_BOX:
+	case F_WORDRIGHT_BOX:
+	case F_GOLOGICALLINETOP_BOX:
+	case F_GOLINETOP_BOX:
+	case F_GOLINEEND_BOX:
+	case F_HalfPageUp_BOX:
+	case F_HalfPageDown_BOX:
+	case F_1PageUp_BOX:
+	case F_1PageDown_BOX:
+	case F_GOFILETOP_BOX:
+	case F_GOFILEEND_BOX:
 		if( pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 			return true;
 		}else{

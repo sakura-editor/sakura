@@ -124,7 +124,7 @@ void CViewCommander::Command_SELECTLINE( int lparam )
 	}else{
 		// カーソルを最下行（レイアウト行）へ移動する
 		m_pCommanderView->MoveCursorSelecting( CLayoutPoint(CLayoutInt(0), GetDocument()->m_cLayoutMgr.GetLineCount()), TRUE );
-		Command_GOLINEEND( true, 0 );	// 行末に移動
+		Command_GOLINEEND( true, 0, 0 );	// 行末に移動
 
 		// 選択するものが無い（[EOF]のみの行）時は選択状態としない
 		if(( ! m_pCommanderView->GetSelectionInfo().IsTextSelected() )&&
@@ -171,7 +171,7 @@ void CViewCommander::Command_BEGIN_SELECT( void )
 
 
 /* 矩形範囲選択開始 */
-void CViewCommander::Command_BEGIN_BOXSELECT( void )
+void CViewCommander::Command_BEGIN_BOXSELECT( bool bSelectingLock )
 {
 	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		return;
@@ -186,7 +186,7 @@ void CViewCommander::Command_BEGIN_BOXSELECT( void )
 	/* 現在のカーソル位置から選択を開始する */
 	m_pCommanderView->GetSelectionInfo().BeginSelectArea();
 
-	m_pCommanderView->GetSelectionInfo().m_bSelectingLock = true;	/* 選択状態のロック */
+	m_pCommanderView->GetSelectionInfo().m_bSelectingLock = bSelectingLock;	/* 選択状態のロック */
 	m_pCommanderView->GetSelectionInfo().SetBoxSelect(true);	/* 矩形範囲選択中 */
 
 	m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();

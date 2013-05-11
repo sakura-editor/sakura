@@ -562,7 +562,7 @@ void CViewCommander::Command_GOLINETOP(
 	bool	bSelect,	//!< [in] 選択の有無。true: 選択しながら移動。false: 選択しないで移動。
 	int		lparam		/*!< [in] マクロから使用する拡張フラグ
 								  @li 0: キー操作と同一(default)
-								  @li 1: カーソル位置に関係なく行頭に移動。
+								  @li 1: カーソル位置に関係なく行頭に移動(合成可)
 								  @li 4: 選択して移動(合成可)
 								  @li 8: 改行単位で先頭に移動(合成可)
 						*/
@@ -640,9 +640,14 @@ void CViewCommander::Command_GOLINETOP(
 
 
 
-// 行末に移動(折り返し単位)
-void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection )
+/*! 行末に移動(折り返し単位)
+	@praram nOption	0x08 改行単位(合成可)
+*/
+void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection, int nOption )
 {
+	if( nOption & 4 ){
+		bSelect = true;
+	}
 	if( !bIgnoreCurrentSelection ){
 		if( bSelect ){
 			if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){	/* テキストが選択されているか */
@@ -661,6 +666,16 @@ void CViewCommander::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelectio
 
 	// 現在行のデータから、そのレイアウト幅を取得
 	CLayoutPoint	nPosXY = GetCaret().GetCaretLayoutPos();
+	if( nOption & 8 ){
+		// 改行単位の行末。1行中の最終レイアウト行を探す
+		const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nPosXY.y );
+		const CLayout*	pcLayoutNext = pcLayout->GetNextLayout();
+		while( pcLayout && pcLayoutNext && pcLayoutNext->GetLogicOffset() != 0 ){
+			pcLayout = pcLayoutNext;
+			pcLayoutNext = pcLayoutNext->GetNextLayout();
+			nPosXY.y++;
+		}
+	}
 	nPosXY.x = CLayoutInt(0);
 	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nPosXY.y );
 	if(pcLayout)
@@ -793,7 +808,7 @@ void CViewCommander::Command_GOFILEEND( bool bSelect )
 			改行のない最終行で選択肢ながら文書末へ移動した場合に
 			選択範囲が正しくない場合がある問題に対応
 		*/
-		Command_GOLINEEND( bSelect, 0 );				// 2001.12.21 hor Add
+		Command_GOLINEEND( bSelect, 0, 0 );				// 2001.12.21 hor Add
 	}
 	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), true );	// 2001.12.21 hor Add
 	// 2002.02.16 hor 矩形選択中を除き直前のカーソル位置をリセット
