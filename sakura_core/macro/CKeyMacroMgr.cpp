@@ -165,10 +165,11 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 
 	int line = 1;	//	エラー時に行番号を通知するため．1始まり．
 	for( ; in.Good() ; ++line ){
-		std::wstring szLine = in.ReadLineW();
+		std::wstring strLine = in.ReadLineW();
+		const WCHAR* szLine = strLine.c_str(); // '\0'終端文字列を取得
 		using namespace WCODE;
 
-		int nLineLen = auto_strlen( szLine.c_str() );
+		int nLineLen = strLine.length();
 		// 先行する空白をスキップ
 		for( i = 0; i < nLineLen; ++i ){
 			if( szLine[i] != SPACE && szLine[i] != TAB ){
@@ -283,7 +284,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					}
 
 					CNativeW cmemWork;
-					cmemWork.SetString( szLine.c_str() + nBgn, nEnd - nBgn );
+					cmemWork.SetString( strLine.c_str() + nBgn, nEnd - nBgn );
 					cmemWork.Replace( LTEXT("\\\'"), LTEXT("\'") );
 
 					//	Jun. 16, 2002 genta double quotationもエスケープ解除
@@ -291,7 +292,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					cmemWork.Replace( LTEXT("\\\\"), LTEXT("\\") );
 					macro->AddStringParam( cmemWork.GetStringPtr() );	//	引数を文字列として追加
 				}
- 				else if ( Is09(szLine[i]) || szLine[i] == '-' ){	//	数字で始まったら数字列だ(-記号も含む)。
+ 				else if ( Is09(szLine[i]) || szLine[i] == L'-' ){	//	数字で始まったら数字列だ(-記号も含む)。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( mInfo->m_varArguments[nArgs] != VT_I4 &&
@@ -325,7 +326,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					}
 
 					CNativeW cmemWork;
-					cmemWork.SetString( szLine.c_str() + nBgn, nEnd - nBgn );
+					cmemWork.SetString( strLine.c_str() + nBgn, nEnd - nBgn );
 					// Jun. 16, 2002 genta
 					//	数字の中にquotationは入っていないよ
 					//cmemWork.Replace( L"\\\'", L"\'" );
@@ -342,7 +343,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					//	Jun. 16, 2002 genta
 					nBgn = nEnd = i;
 					::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, MACRO_ERROR_TITLE,
-						_T("Line %d: Column %d: Syntax Error\n"), line, i );
+						_T("Line %d: Column %d: Syntax Error\n"), line, i + 1 );
 					m_nReady = false;
 					break;
 				}
