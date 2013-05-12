@@ -388,7 +388,7 @@ wchar_t* mbstowcs_new(const char* src)
 	ret[new_length]=L'\0';
 	return ret;
 }
-wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen)
+wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
 {
 	//必要な領域サイズ
 	int nNewLength = MultiByteToWideChar(
@@ -413,7 +413,9 @@ wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen)
 		nNewLength
 	);
 	pNew[nNewLength] = L'\0';
-
+	if( pnDstLen ){
+		*pnDstLen = nNewLength;
+	}
 	return pNew;
 }
 

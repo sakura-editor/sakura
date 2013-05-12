@@ -48,6 +48,7 @@ public:
 
 	//ê›íË
 	void set(const wchar_t* wszData){ m_wstr=wszData; m_delete2(m_str_cache); }
+	void set(const wchar_t* wszData, int nLength){ m_wstr.assign(wszData, nLength); m_delete2(m_str_cache); }
 	void set(const char* szData);
 	void set(const char* szData, int nLength);
 	void set(const CMyString& cszData){ set(cszData.c_wstr()); }

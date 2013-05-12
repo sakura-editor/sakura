@@ -82,8 +82,10 @@ void CNativeW::AppendNativeData( const CNativeW& cmemData )
 //! バッファの内容を置き換える。nDataLenは文字単位。
 void CNativeW::SetStringOld( const char* pData, int nDataLen )
 {
-	CNative::SetRawData(pData,nDataLen * sizeof(char));
-	CShiftJis::SJISToUnicode(this->_GetMemory());
+	int nLen;
+	wchar_t* szTmp=mbstowcs_new(pData,nDataLen,&nLen);
+	SetString(szTmp,nLen);
+	delete[] szTmp;
 }
 
 //! バッファの内容を置き換える
@@ -94,8 +96,9 @@ void CNativeW::SetStringOld( const char* pszData )
 
 void CNativeW::AppendStringOld( const char* pData, int nDataLen )
 {
-	wchar_t* szTmp=mbstowcs_new(pData,nDataLen);
-	AppendString(szTmp);
+	int nLen;
+	wchar_t* szTmp=mbstowcs_new(pData,nDataLen,&nLen);
+	AppendString(szTmp,nLen);
 	delete[] szTmp;
 }
 
