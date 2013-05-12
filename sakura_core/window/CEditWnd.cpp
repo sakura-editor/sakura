@@ -4466,7 +4466,7 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 {
 	const int NUM_OF_VIEW = GetAllViewCount();
-	const int NUM_OF_POS = 5;
+	const int NUM_OF_POS = 6;
 
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		CLayoutPoint tmp;
