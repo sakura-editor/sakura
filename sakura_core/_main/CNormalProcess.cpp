@@ -94,7 +94,7 @@ bool CNormalProcess::InitializeProcess()
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
 	CCommandLine::getInstance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
-	if( 0 < _tcslen( fi.m_szPath ) ){
+	if( fi.m_szPath[0] != _T('\0') ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
 		//	行われるのでここでは必要なし．
@@ -272,7 +272,7 @@ bool CNormalProcess::InitializeProcess()
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bViewMode = CCommandLine::getInstance()->IsViewMode(); // 2002/2/8 aroka ここに移動
-		if( 0 < _tcslen( fi.m_szPath ) ){
+		if( fi.m_szPath[0] != _T('\0') ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(
 				SLoadInfo(

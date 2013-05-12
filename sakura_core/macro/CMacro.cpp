@@ -815,7 +815,7 @@ void CMacro::HandleCommand(
 			if( lFlag & 0x20 )_tcscat( pOpt, _T("P") );	/* 行を出力するか該当部分だけ出力するか */
 			if( lFlag & 0x40 )_tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
 			else _tcscat( pOpt, _T("1") );
-			if( 0 < _tcslen( pOpt ) ){
+			if( pOpt[0] != _T('\0') ){
 				auto_sprintf( szTemp, _T(" -GOPT=%ts"), pOpt );
 				cCmdLine.AppendString(szTemp);
 			}

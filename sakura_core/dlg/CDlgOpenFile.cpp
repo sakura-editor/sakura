@@ -604,7 +604,7 @@ void CDlgOpenFile::Create(
 	}
 
 	/* 「開く」での初期フォルダ */
-	if( pszDefaultPath && 0 < _tcslen( pszDefaultPath ) ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
+	if( pszDefaultPath && pszDefaultPath[0] != _T('\0') ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		TCHAR szDrive[_MAX_DRIVE];
 		TCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta

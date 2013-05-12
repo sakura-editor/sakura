@@ -271,7 +271,7 @@ bool CViewCommander::Command_TagsMake( void )
 	TCHAR	options[1024];
 	_tcscpy( options, _T("--excmd=n") );	//デフォルトのオプション
 	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) _tcscat( options, _T(" -R") );	//サブフォルダも対象
-	if( _tcslen( cDlgTagsMake.m_szTagsCmdLine ) )	//個別指定のコマンドライン
+	if( cDlgTagsMake.m_szTagsCmdLine[0] != _T('\0') )	//個別指定のコマンドライン
 	{
 		_tcscat( options, _T(" ") );
 		_tcscat( options, cDlgTagsMake.m_szTagsCmdLine );

@@ -1587,7 +1587,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 				}
 			}/* 書き込み */
 			else{
-				if(_tcslen(types.m_KeyHelpArr[j].m_szPath)){
+				if(types.m_KeyHelpArr[j].m_szPath[0] != _T('\0')){
 					auto_sprintf( szKeyData, LTEXT("%d,%ts,%ts"),
 						types.m_KeyHelpArr[j].m_bUse?1:0,
 						types.m_KeyHelpArr[j].m_szAbout,
@@ -1709,7 +1709,7 @@ void CShareData_IO::ShareData_IO_Macro( CDataProfile& cProfile )
 		MacroRec& macrorec = pShare->m_Common.m_sMacro.m_MacroTable[i];
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
-		if( !cProfile.IsReadingMode() && !_tcslen(macrorec.m_szName) && !_tcslen(macrorec.m_szFile) ) continue;
+		if( !cProfile.IsReadingMode() && macrorec.m_szName[0] != _T('\0') && macrorec.m_szFile[0] != _T('\0') ) continue;
 		auto_sprintf( szKeyName, LTEXT("Name[%03d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(macrorec.m_szName) );
 		auto_sprintf( szKeyName, LTEXT("File[%03d]"), i );

@@ -92,7 +92,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 						/* その他のインデント文字 */
 						if( 0 < nCharChars
 						 && pLine[nPos] != L'\0'	// その他のインデント文字に L'\0' は含まれない	// 2009.02.04 ryoji L'\0'がインデントされてしまう問題修正
-						 && 0 < (int)wcslen( GetDocument()->m_cDocType.GetDocumentAttribute().m_szIndentChars )
+						 && GetDocument()->m_cDocType.GetDocumentAttribute().m_szIndentChars[0] != L'\0'
 						){
 							wchar_t szCurrent[10];
 							wmemcpy( szCurrent, &pLine[nPos], nCharChars );

@@ -113,7 +113,7 @@ void CDlgTypeAscertain::SetData( void )
 	// エディタ内の設定
 	for (nIdx = 0; nIdx < MAX_TYPES; ++nIdx) {
 		STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
-		if (0 < _tcslen( types.m_szTypeExts )) {		/* タイプ属性：拡張子リスト */
+		if (types.m_szTypeExts[0] != _T('\0')) {		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts (%ts)"),
 				types.m_szTypeName,	/* タイプ属性：名称 */
 				types.m_szTypeExts	/* タイプ属性：拡張子リスト */
