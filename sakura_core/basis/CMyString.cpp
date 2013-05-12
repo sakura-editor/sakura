@@ -12,8 +12,9 @@ void CMyString::set(const char* szData)
 
 void CMyString::set(const char* szData, int nLength)
 {
-	wchar_t* wszData=mbstowcs_new(szData,nLength);
-	set(wszData);
+	int nLen;
+	wchar_t* wszData=mbstowcs_new(szData,nLength,&nLen);
+	set(wszData,nLen);
 	delete[] wszData;
 }
 

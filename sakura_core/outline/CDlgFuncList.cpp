@@ -346,16 +346,8 @@ void CDlgFuncList::ChangeView( LPARAM pcEditView )
 /*! ダイアログデータの設定 */
 void CDlgFuncList::SetData()
 {
-	int				i;
-	TCHAR			szText[2048];
-	CFuncInfo*		pcFuncInfo;
-	LV_ITEM			item;
 	HWND			hwndList;
 	HWND			hwndTree;
-	int				bSelected;
-	CLayoutInt		nFuncLineOld;
-	int				nSelectedLine = 0;
-	RECT			rc;
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
 	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
@@ -365,7 +357,6 @@ void CDlgFuncList::SetData()
 	ListView_DeleteAllItems( hwndList );
 	TreeView_DeleteAllItems( hwndTree );
 
-	m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
 
 	if( OUTLINE_CPP == m_nListType ){	/* C++メソッドリスト */
 		m_nViewType = 1;
@@ -463,14 +454,32 @@ void CDlgFuncList::SetData()
 		case OUTLINE_LIST:	// 汎用リスト 2010.03.28 syat
 			::SetWindowText( GetHwnd(), _T("") );
 			break;
-//		case OUTLINE_COBOL:
-//			::SetWindowText( GetHwnd(), "COBOLアウトライン" );
-//			break;
 		}
 		//	May 18, 2001 genta
 		//	Windowがいなくなると後で都合が悪いので、表示しないだけにしておく
 		//::DestroyWindow( hwndTree );
 //		::ShowWindow( hwndTree, SW_HIDE );
+		int				i;
+		TCHAR			szText[2048];
+		const CFuncInfo*	pcFuncInfo;
+		LV_ITEM			item;
+		int				bSelected;
+		CLayoutInt		nFuncLineOld;
+		int				nSelectedLine = 0;
+		RECT			rc;
+
+		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
+		{
+			const int nBuffLenTag = 13 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+			const int nNum = m_pcFuncInfoArr->GetNum();
+			int nBuffLen = 0;
+			for(int i = 0; i < nNum; ++i ){
+				const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+			}
+			m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
+		}
+
 		::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
 		nFuncLineOld = CLayoutInt(0);
 		bSelected = FALSE;
@@ -524,7 +533,7 @@ void CDlgFuncList::SetData()
 			ListView_SetItem( hwndList, &item);
 
 			item.mask = LVIF_TEXT;
-			item.pszText = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+			item.pszText = const_cast<TCHAR*>(pcFuncInfo->m_cmemFuncName.GetStringPtr());
 			item.iItem = i;
 			item.iSubItem = FL_COL_NAME;
 			ListView_SetItem( hwndList, &item);
@@ -551,7 +560,7 @@ void CDlgFuncList::SetData()
 			ListView_SetItem( hwndList, &item);
 
 			/* クリップボードにコピーするテキストを編集 */
-			if(_tcslen(item.pszText)){
+			if(item.pszText[0] != _T('\0')){
 				// 検出結果の種類(関数,,,)があるとき
 				auto_sprintf(
 					szText,
@@ -562,7 +571,7 @@ void CDlgFuncList::SetData()
 				);
 				m_cmemClipText.AppendStringT(szText);
 				// "%ts(%ts)\r\n"
-				m_cmemClipText.AppendStringT(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+				m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
 				m_cmemClipText.AppendString(L"(");
 				m_cmemClipText.AppendStringT(item.pszText);
 				m_cmemClipText.AppendString(L")\r\n");
@@ -576,7 +585,7 @@ void CDlgFuncList::SetData()
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendStringT(szText);
-				m_cmemClipText.AppendStringT(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+				m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
 				m_cmemClipText.AppendString(L"\r\n");
 			}
 		}
@@ -734,7 +743,7 @@ int CDlgFuncList::GetData( void )
 void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 {
 	int				i;
-	CFuncInfo*		pcFuncInfo;
+	const CFuncInfo*	pcFuncInfo;
 	HWND			hwndTree;
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
@@ -757,6 +766,17 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 
 	hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
+	m_cmemClipText.SetString( L"" );
+	{
+		const int nBuffLenTag = 13 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+		const int nNum = m_pcFuncInfoArr->GetNum();
+		int nBuffLen = 0;
+		for( int i = 0; i < nNum; i++ ){
+			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+		}
+		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
+	}
 	nFuncLineOld = CLayoutInt(0);
 	nFuncColOld = CLayoutInt(0);
 	bSelected = FALSE;
@@ -974,7 +994,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%ts%ls\r\n"
-		m_cmemClipText.AppendStringT(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+		m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
 		m_cmemClipText.AppendString(1 == pcFuncInfo->m_nInfo ? L" (宣言)\r\n" : L"\r\n"); 	//	Jan. 04, 2001 genta C++で使用
 		delete [] pFuncName;
 
@@ -1034,7 +1054,7 @@ void CDlgFuncList::SetListVB (void)
 	int				i;
 	TCHAR			szType[64];
 	TCHAR			szOption[64];
-	CFuncInfo*		pcFuncInfo;
+	const CFuncInfo*	pcFuncInfo;
 	LV_ITEM			item;
 	HWND			hwndList;
 	int				bSelected;
@@ -1046,6 +1066,19 @@ void CDlgFuncList::SetListVB (void)
 	::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
 
 	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_FL );
+
+	
+	m_cmemClipText.SetString( L"" );
+	{
+		const int nBuffLenTag = 17 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+		const int nNum = m_pcFuncInfoArr->GetNum();
+		int nBuffLen = 0;
+		for( int i = 0; i < nNum; i++ ){
+			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+		}
+		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
+	}
 
 	nFuncLineOld = CLayoutInt(0);
 	nFuncColOld = CLayoutInt(0);
@@ -1108,7 +1141,7 @@ void CDlgFuncList::SetListVB (void)
 		ListView_SetItem( hwndList, &item);
 
 		item.mask = LVIF_TEXT;
-		item.pszText = pcFuncInfo->m_cmemFuncName.GetStringPtr();
+		item.pszText = const_cast<TCHAR*>(pcFuncInfo->m_cmemFuncName.GetStringPtr());
 		item.iItem = i;
 		item.iSubItem = FL_COL_NAME;
 		ListView_SetItem( hwndList, &item);
@@ -1138,7 +1171,8 @@ void CDlgFuncList::SetListVB (void)
 			default :	// パブリック(Public)
 				_tcsncat(szOption, _T("パブリック"), _countof(szOption) - _tcslen(szOption)); //	2006.12.17 genta サイズ誤り修正
 		}
-		switch (pcFuncInfo->m_nInfo & 0x0f) {
+		int nInfo = pcFuncInfo->m_nInfo;
+		switch (nInfo & 0x0f) {
 			case 1:		// 関数(Function)
 				_tcscpy(szType, _T("関数"));
 				break;
@@ -1177,19 +1211,19 @@ void CDlgFuncList::SetListVB (void)
 				break;
 
 			default:	// 未定義なのでクリア
-				pcFuncInfo->m_nInfo	= 0;
+				nInfo	= 0;
 
 		}
-		if ( 2 == ((pcFuncInfo->m_nInfo >> 8) & 0x02) ) {
+		if ( 2 == ((nInfo >> 8) & 0x02) ) {
 			// 宣言(Declareなど)
 			_tcsncat(szType, _T("宣言"), _countof(szType) - _tcslen(szType));
 		}
 
 		TCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
-		if ( 0 == pcFuncInfo->m_nInfo ) {
+		if ( 0 == nInfo ) {
 			szTypeOption[0] = _T('\0');	//	2006.12.17 genta 全体を0で埋める必要はない
 		} else
-		if ( 0 == _tcslen(szOption) ) {
+		if ( szOption[0] == _T('\0') ) {
 			auto_sprintf(szTypeOption, _T("%ts"), szType);
 		} else {
 			auto_sprintf(szTypeOption, _T("%ts（%ts）"), szType, szOption);
@@ -1200,7 +1234,7 @@ void CDlgFuncList::SetListVB (void)
 		ListView_SetItem( hwndList, &item);
 
 		/* クリップボードにコピーするテキストを編集 */
-		if(_tcslen(item.pszText)){
+		if(item.pszText[0] != _T('\0')){
 			// 検出結果の種類(関数,,,)があるとき
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
 			auto_sprintf(
@@ -1212,7 +1246,7 @@ void CDlgFuncList::SetListVB (void)
 			);
 			m_cmemClipText.AppendStringT(szText);
 			// "%ts(%ts)\r\n"
-			m_cmemClipText.AppendStringT(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+			m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"(");
 			m_cmemClipText.AppendStringT(item.pszText);
 			m_cmemClipText.AppendString(L")\r\n");
@@ -1227,7 +1261,7 @@ void CDlgFuncList::SetListVB (void)
 			);
 			m_cmemClipText.AppendStringT(szText);
 			// "%ts\r\n"
-			m_cmemClipText.AppendStringT(pcFuncInfo->m_cmemFuncName.GetStringPtr());
+			m_cmemClipText.AppendNativeDataT(pcFuncInfo->m_cmemFuncName);
 			m_cmemClipText.AppendString(L"\r\n");
 		}
 	}
@@ -1273,6 +1307,24 @@ void CDlgFuncList::SetTree(bool tagjump)
 	HTREEITEM* phParentStack;
 	phParentStack = (HTREEITEM*)malloc( nStackDepth * sizeof( HTREEITEM ) );
 	phParentStack[ nStackPointer ] = TVI_ROOT;
+
+	m_cmemClipText.SetString(L"");
+	{
+		int nCount = 0;
+		int nBuffLen = 0;
+		int nBuffLenTag = 3; // " \r\n"
+		if( tagjump ){
+			nBuffLenTag = 10 + wcslen(to_wchar(m_pcFuncInfoArr->m_szFilePath));
+		}
+		for( int i = 0; i < nFuncInfoArrNum; i++ ){
+			const CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
+			if( pcFuncInfo->IsAddClipText() ){
+				nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength() + pcFuncInfo->m_nDepth * 2;
+				nCount++;
+			}
+		}
+		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nCount );
+	}
 
 	for (i = 0; i < nFuncInfoArrNum; i++){
 		CFuncInfo* pcFuncInfo = m_pcFuncInfoArr->GetAt(i);
@@ -1322,42 +1374,26 @@ void CDlgFuncList::SetTree(bool tagjump)
 		/* クリップボードコピー用テキストを作成する */
 		//	2003.06.22 Moca dummy要素はツリーに入れるがTAGJUMPには加えない
 		if( pcFuncInfo->IsAddClipText() ){
-			CNativeT text;
 
 			if( tagjump ){
-
-				text.AllocStringBuffer(
-					  pcFuncInfo->m_cmemFuncName.GetStringLength()
-					+ nStackPointer * 2 + 1
-					+ _tcslen( m_pcFuncInfoArr->m_szFilePath )
-					+ 20
-				);
-				
 				//	2007.03.04 genta タグジャンプできる形式で書き込む
-				text.AppendString( m_pcFuncInfoArr->m_szFilePath );
+				m_cmemClipText.AppendStringT( m_pcFuncInfoArr->m_szFilePath.c_str() );
 				
-				TCHAR linenum[32];
-				auto_sprintf( linenum, _T("(%d,%d): "),
+				WCHAR linenum[32];
+				auto_sprintf( linenum, L"(%d,%d): ",
 					pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 					pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
 				);
-				text.AppendString( linenum );
-			}
-			else {
-				//	先に十分なサイズの領域を取っておく
-				text.AllocStringBuffer(
-					pcFuncInfo->m_cmemFuncName.GetStringLength() + nStackPointer * 2 + 1 + 5
-				);
+				m_cmemClipText.AppendString( linenum );
 			}
 
 			for( int cnt = 0; cnt < nStackPointer; cnt++ ){
-				text.AppendString(_T("  "));
+				m_cmemClipText.AppendString( L"  " );
 			}
-			text.AppendString(_T(" "));
+			m_cmemClipText.AppendString( L" " );
 			
-			text.AppendNativeData( pcFuncInfo->m_cmemFuncName );
-			text.AppendString( _T("\r\n") );
-			m_cmemClipText.AppendNativeDataT( text );	/* クリップボードコピー用テキスト */
+			m_cmemClipText.AppendNativeDataT( pcFuncInfo->m_cmemFuncName );
+			m_cmemClipText.AppendString( L"\r\n" );
 		}
 	}
 

@@ -270,7 +270,7 @@ size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count);
 
 //SJIS→UNICODE。
 wchar_t*	mbstowcs_new(const char* pszSrc);								//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
-wchar_t*	mbstowcs_new(const char* pSrc, int nSrcLen);					//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
+wchar_t*	mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen);		//戻り値はnew[]で確保して返す。使い終わったらdelete[]すること。
 void		mbstowcs_vector(const char* src, std::vector<wchar_t>* ret);	//戻り値はvectorとして返す。
 void		mbstowcs_vector(const char* pSrc, int nSrcLen, std::vector<wchar_t>* ret);	//戻り値はvectorとして返す。
 
