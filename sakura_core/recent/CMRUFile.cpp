@@ -187,7 +187,7 @@ bool CMRUFile::GetEditInfo( const TCHAR* pszPath, EditInfo* pfi ) const
 void CMRUFile::Add( EditInfo* pEditInfo )
 {
 	//	ƒtƒ@ƒCƒ‹–¼‚ª–³‚¯‚ê‚Î–³Ž‹
-	if( NULL == pEditInfo || 0 == _tcslen( pEditInfo->m_szPath ) ){
+	if( NULL == pEditInfo || pEditInfo->m_szPath[0] == L'\0' ){
 		return;
 	}
 	

@@ -84,7 +84,7 @@ bool IsFilePath(
 			  ( cur_pos > 1 && pLine[i] == L':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
 			  pLine[i] == L'"'
 			) &&
-			0 < wcslen( szJumpToFile )
+			szJumpToFile[0] != L'\0'
 		){
 			//	ファイル存在確認
 			if( IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
@@ -103,7 +103,7 @@ bool IsFilePath(
 
 	//	Jan. 04, 2002 genta
 	//	ファイル存在確認方法変更
-	if( 0 < wcslen( szJumpToFile ) && IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
+	if( szJumpToFile[0] != L'\0' && IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
 		//	Jan. 04, 2002 genta
 		//	あまりに変なコーディングなので移動
 		*pnPathLen = wcslen( szJumpToFile );

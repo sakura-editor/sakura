@@ -117,7 +117,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, _T("W") );	// 単語単位で探す
 	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
 	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
-	if( 0 < _tcslen( pOpt ) ){
+	if( pOpt[0] != _T('\0') ){
 		cCmdLine.AppendString( _T(" -GOPT=") );
 		cCmdLine.AppendString( pOpt );
 	}
@@ -953,7 +953,7 @@ bool CControlTray::OpenNewEditor(
 	cCmdLineBuf.AppendF( _T("\"%ts\""), szEXE );
 
 	// ファイル名
-	if( _tcslen(sLoadInfo.cFilePath.c_str()) )	cCmdLineBuf.AppendF( _T(" \"%ts\""), sLoadInfo.cFilePath.c_str() );
+	if( sLoadInfo.cFilePath.c_str()[0] != _T('\0') )	cCmdLineBuf.AppendF( _T(" \"%ts\""), sLoadInfo.cFilePath.c_str() );
 
 	// コード指定
 	if( IsValidCodeType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( _T(" -CODE=%d"), sLoadInfo.eCharCode );

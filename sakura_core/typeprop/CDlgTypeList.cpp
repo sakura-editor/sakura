@@ -263,7 +263,7 @@ void CDlgTypeList::SetData( void )
 	List_ResetContent( hwndList );	/* リストを空にする */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
 		STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
-		if( 0 < _tcslen( types.m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
+		if( types.m_szTypeExts[0] != _T('\0') ){		/* タイプ属性：拡張子リスト */
 			auto_sprintf( szText, _T("%ts ( %ts )"),
 				types.m_szTypeName,	/* タイプ属性：名称 */
 				types.m_szTypeExts	/* タイプ属性：拡張子リスト */
@@ -349,7 +349,7 @@ bool CDlgTypeList::InitializeType( void )
 	}
 	STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(iDocType));
 	int			nRet;
-	if (0 < _tcslen( types.m_szTypeExts )) { 
+	if ( types.m_szTypeExts[0] != _T('\0') ) { 
 		nRet = ::MYMESSAGEBOX(
 			GetHwnd(),
 			MB_YESNO | MB_ICONQUESTION,
@@ -518,7 +518,7 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 	keyExt.GetValue(NULL, szProgID, _countof(szProgID));
 
 	if(_tcscmp( sGenProgID.c_str(), szProgID ) != 0) {
-		if(_tcslen(szProgID) != 0)
+		if( szProgID[0] != _T('\0') )
 		{
 			if( (errorCode = keyExt.SetValue(PROGID_BACKUP_NAME, szProgID)) != 0 ){ return errorCode; }
 		} 
@@ -528,7 +528,7 @@ int RegistExt(LPCTSTR sExt, bool bDefProg)
 	tstring sProgIDPath = sBasePath + sGenProgID;
 	if( ! CRegKey::ExistsKey(HKEY_CURRENT_USER, sProgIDPath.c_str()) )
 	{
-		if( _tcslen(szProgID_HKLM) != 0 )
+		if( szProgID_HKLM[0] != _T('\0') )
 		{
 			if( (errorCode = CopyRegistry(HKEY_LOCAL_MACHINE, (sBasePath + szProgID_HKLM).c_str(), HKEY_CURRENT_USER, sProgIDPath.c_str())) != 0 ){ return errorCode; }
 		}
@@ -630,7 +630,7 @@ int UnregistExt(LPCTSTR sExt)
 	TCHAR szProgID[ BUFFER_SIZE ] = {0};
 	keyExt.GetValue(NULL, szProgID, _countof(szProgID));
 
-	if(_tcslen(szProgID) == 0)
+	if( szProgID[0] == _T('\0') )
 	{
 		return ERROR_SUCCESS;
 	}
@@ -669,7 +669,7 @@ int UnregistExt(LPCTSTR sExt)
 
 		TCHAR szBackupValue[ BUFFER_SIZE ] = {0};
 		keyExt.GetValue(PROGID_BACKUP_NAME, szBackupValue, _countof(szBackupValue));
-		if( _tcslen(szBackupValue) != 0 ){
+		if( szBackupValue[0] != _T('\0') ){
 			keyExt.SetValue(NULL, szBackupValue);
 		}else{
 			if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sDotExt)) != 0 ){ return errorCode; }
@@ -722,7 +722,7 @@ int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	TCHAR szProgID[ BUFFER_SIZE ] = {0};
 	keyExt.GetValue(NULL, szProgID, _countof(szProgID));
 
-	if(_tcslen(szProgID) == 0)
+	if(szProgID[0] == _T('\0'))
 	{
 		return ERROR_SUCCESS;
 	}

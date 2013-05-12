@@ -1872,7 +1872,7 @@ bool CEditView::GetSelectedData(
 				continue;
 			}
 
-			if( NULL != pszQuote && 0 < wcslen( pszQuote ) ){	/* 先頭に付ける引用符 */
+			if( NULL != pszQuote && pszQuote[0] != L'\0' ){	/* 先頭に付ける引用符 */
 				cmemBuf->AppendString( pszQuote );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */

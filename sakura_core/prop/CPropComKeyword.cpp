@@ -185,7 +185,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				if( NULL == plvi->pszText ){
 					return TRUE;
 				}
-				if( 0 < _tcslen( plvi->pszText ) ){
+				if( plvi->pszText[0] != _T('\0') ){
 					if( MAX_KEYWORDLEN < _tcslen( plvi->pszText ) ){
 						InfoMessage( hwndDlg, _T("キーワードの長さは%dバイトまでです。"), MAX_KEYWORDLEN );
 						return TRUE;
@@ -273,7 +273,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					){
 						return TRUE;
 					}
-					if( 0 < wcslen( szKeyWord ) ){
+					if( szKeyWord[0] != L'\0' ){
 						/* セットの追加 */
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, false );
 
@@ -352,7 +352,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 							return TRUE;
 						}
 					}
-					if( 0 < wcslen( szKeyWord ) ){
+					if( szKeyWord[0] != L'\0' ){
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
 
 						// ダイアログデータの設定 Keyword
@@ -374,7 +374,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
-					if( 0 < wcslen( szKeyWord ) ){
+					if( szKeyWord[0] != L'\0' ){
 						/* ｎ番目のセットにキーワードを追加 */
 						if( 0 == m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
 							// ダイアログデータの設定 Keyword 指定キーワードセットの設定
@@ -477,7 +477,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
-	if( 0 < wcslen( szKeyWord ) ){
+	if( szKeyWord[0] != L'\0' ){
 		/* ｎ番目のセットにキーワードを編集 */
 		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
 			m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
