@@ -57,11 +57,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 				break;
 			}
 		}
-		wchar_t* pszBuf = new wchar_t[i + 1];
-		wmemcpy( pszBuf, pszWork, i );
-		pszBuf[i] = L'\0';
-		cmemCurText.SetString( pszBuf, i );
-		delete [] pszBuf;
+		cmemCurText.SetString( pszWork, i );
 	}
 	/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
 	else if(GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord){
