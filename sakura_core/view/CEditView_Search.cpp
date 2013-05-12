@@ -49,7 +49,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
 	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 		wchar_t* pszWork = cmemCurText.GetStringPtr();
-		int nWorkLength	= wcslen( pszWork );
+		int nWorkLength	= cmemCurText.GetStringLength();
 		for( i = 0; i < nWorkLength; ++i ){
 			if( pszWork[i] == L'\0' ||
 				pszWork[i] == WCODE::CR ||
@@ -57,7 +57,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 				break;
 			}
 		}
-		cmemCurText.SetString( pszWork, i );
+		cmemCurText._SetStringLength( i );
 	}
 	/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
 	else if(GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord){
