@@ -37,25 +37,32 @@ const CLayout* SColorStrategyInfo::GetLayout() const
 	return pDispPos->GetLayoutRef();
 }
 
-void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
+/*! 色の切り替え
+	@retval true 色の変更あり
+	@retval false 色の変更/なし
+
+	@date 2013.05.11 novice 実際の変更は呼び出し側で行う
+*/
+bool SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr, CColor3Setting *pcColor)
 {
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pool->SetCurrentView(this->pcView);
 	CColor_Found*  pcFound  = pool->GetFoundStrategy();
 	CColor_Select* pcSelect = pool->GetSelectStrategy();
+	bool bChange = false;
 
 	//選択範囲色終了
 	if(this->pStrategySelect){
 		if(this->pStrategySelect->EndColor(cLineStr,this->GetPosInLogic())){
 			this->pStrategySelect = NULL;
-			ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+			bChange = true;
 		}
 	}
 	//選択範囲色開始
 	if(!this->pStrategySelect){
 		if(pcSelect->BeginColorEx(cLineStr,this->GetPosInLogic(), this->pDispPos->GetLayoutLineRef(), this->GetLayout())){
 			this->pStrategySelect = pcSelect;
-			ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+			bChange = true;
 		}
 	}
 
@@ -63,7 +70,7 @@ void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 	if(this->pStrategyFound){
 		if(this->pStrategyFound->EndColor(cLineStr,this->GetPosInLogic())){
 			this->pStrategyFound = NULL;
-			ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+			bChange = true;
 		}
 	}
 
@@ -71,7 +78,7 @@ void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 	if(!this->pStrategyFound){
 		if(pcFound->BeginColor(cLineStr,this->GetPosInLogic())){
 			this->pStrategyFound = pcFound;
-			ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+			bChange = true;
 		}
 	}
 
@@ -79,7 +86,7 @@ void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 	if(this->pStrategy){
 		if(this->pStrategy->EndColor(cLineStr,this->GetPosInLogic())){
 			this->pStrategy = NULL;
-			ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+			bChange = true;
 		}
 	}
 
@@ -89,27 +96,36 @@ void SColorStrategyInfo::DoChangeColor(const CStringRef& cLineStr)
 		for(int i = 0; i < size; i++ ){
 			if(pool->GetStrategy(i)->BeginColor(cLineStr,this->GetPosInLogic())){
 				this->pStrategy = pool->GetStrategy(i);
-				ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+				bChange = true;
 				break;
 			}
 		}
 	}
-	
+
 	//カーソル行背景色
 	CTypeSupport cCaretLineBg(this->pcView, COLORIDX_CARETLINEBG);
 	if( cCaretLineBg.IsDisp() ){
 		if(m_colorIdxBackLine==COLORIDX_CARETLINEBG){
 			if( this->pDispPos->GetLayoutLineRef() != this->pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
 				m_colorIdxBackLine = COLORIDX_TEXT;
-				ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+				bChange = true;
 			}
 		}else{
 			if( this->pDispPos->GetLayoutLineRef() == this->pcView->GetCaret().GetCaretLayoutPos().GetY2() ){
 				m_colorIdxBackLine = COLORIDX_CARETLINEBG;
-				ChangeColor2(GetCurrentColor(), GetCurrentColor2());
+				bChange = true;
 			}
 		}
 	}
+
+	// 色決定
+	if( bChange ){
+		pcColor->eColorIndex = GetCurrentColor();
+		pcColor->eColorIndex2 = GetCurrentColor2();
+		pcColor->eColorIndexBg = m_colorIdxBackLine;
+	}
+
+	return bChange;
 }
 
 EColorIndexType SColorStrategyInfo::GetCurrentColor() const
