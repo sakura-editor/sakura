@@ -934,7 +934,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	}
 
 	// 描画範囲外の場合は色切替だけで抜ける
-	if(pInfo->pDispPos->GetDrawPos().y < pInfo->pcView->GetTextArea().GetAreaTop()){
+	if(pInfo->pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
 		if(pcLayout){
 			while(pInfo->nPosInLogic < pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL()){
 				//色切替
@@ -964,7 +964,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        行番号描画                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	pInfo->pcView->GetTextDrawer().DispLineNumber(
+	GetTextDrawer().DispLineNumber(
 		pInfo->gr,
 		pInfo->pDispPos->GetLayoutLineRef(),
 		pInfo->pDispPos->GetDrawPos().y
@@ -1012,26 +1012,26 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	void _DispEOF( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 	if(pcLayout && pcLayout->GetNextLayout()==NULL && pcLayout->GetLayoutEol().GetLen()==0){
 		// 有文字行のEOF
-		_DispEOF(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
+		_DispEOF(pInfo->gr,pInfo->pDispPos,this);
 		bDispEOF = true;
 	}
 	else if(!pcLayout && pInfo->pDispPos->GetLayoutLineRef()==m_pcEditDoc->m_cLayoutMgr.GetLineCount()){
 		// 空行のEOF
 		CLayout* pBottom = m_pcEditDoc->m_cLayoutMgr.GetBottomLayout();
 		if(pBottom==NULL || (pBottom && pBottom->GetLayoutEol().GetLen())){
-			_DispEOF(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
+			_DispEOF(pInfo->gr,pInfo->pDispPos,this);
 			bDispEOF = true;
 		}
 	}
 
 	// 必要なら折り返し記号描画
 	if(pcLayout && pcLayout->GetLayoutEol().GetLen()==0 && pcLayout->GetNextLayout()!=NULL){
-		_DispWrap(pInfo->gr,pInfo->pDispPos,pInfo->pcView);
+		_DispWrap(pInfo->gr,pInfo->pDispPos,this);
 	}
 
 	// 行末背景描画
 	RECT rcClip;
-	bool rcClipRet = pInfo->pcView->GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos);
+	bool rcClipRet = GetTextArea().GenerateClipRectRight(&rcClip,*pInfo->pDispPos);
 	if(rcClipRet){
 		if( !bTransText ){
 			cBackType.FillBack(pInfo->gr,rcClip);
@@ -1039,17 +1039,16 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 		CTypeSupport cSelectType(this, COLORIDX_SELECT);
 		if( GetSelectionInfo().IsTextSelected() && cSelectType.IsDisp() ){
 			// 選択範囲の指定色：必要ならテキストのない部分の矩形選択を作画
-			const CEditView& view = *pInfo->pcView;
 			CLayoutRange selectArea = GetSelectionInfo().GetSelectAreaLine(pInfo->pDispPos->GetLayoutLineRef(), pcLayout);
 			// 2010.10.04 スクロール分の足し忘れ
-			int nSelectFromPx = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetFrom().x - view.GetTextArea().GetViewLeftCol());
-			int nSelectToPx   = view.GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetTo().x - view.GetTextArea().GetViewLeftCol());
+			int nSelectFromPx = GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetFrom().x - GetTextArea().GetViewLeftCol());
+			int nSelectToPx   = GetTextMetrics().GetHankakuDx() * (Int)(selectArea.GetTo().x - GetTextArea().GetViewLeftCol());
 			if( nSelectFromPx < nSelectToPx && selectArea.GetTo().x != INT_MAX ){
 				RECT rcSelect; // Pixel
 				rcSelect.top    = pInfo->pDispPos->GetDrawPos().y;
-				rcSelect.bottom = pInfo->pDispPos->GetDrawPos().y + view.GetTextMetrics().GetHankakuDy();
-				rcSelect.left   = view.GetTextArea().GetAreaLeft() + nSelectFromPx;
-				rcSelect.right  = view.GetTextArea().GetAreaLeft() + nSelectToPx;
+				rcSelect.bottom = pInfo->pDispPos->GetDrawPos().y + GetTextMetrics().GetHankakuDy();
+				rcSelect.left   = GetTextArea().GetAreaLeft() + nSelectFromPx;
+				rcSelect.right  = GetTextArea().GetAreaLeft() + nSelectToPx;
 				RECT rcDraw;
 				if( ::IntersectRect(&rcDraw, &rcClip, &rcSelect) ){
 					COLORREF color = GetBackColorByColorInfo2(cSelectType.GetColorInfo(), cBackType.GetColorInfo());
@@ -1062,7 +1061,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	}
 
 	// 指定桁縦線描画
-	pInfo->pcView->GetTextDrawer().DispVerticalLines(
+	GetTextDrawer().DispVerticalLines(
 		pInfo->gr,
 		pInfo->pDispPos->GetDrawPos().y,
 		pInfo->pDispPos->GetDrawPos().y + nLineHeight,
@@ -1071,15 +1070,15 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	);
 
 	// 折り返し桁縦線描画
-	pInfo->pcView->GetTextDrawer().DispWrapLine(
+	GetTextDrawer().DispWrapLine(
 		pInfo->gr,
 		pInfo->pDispPos->GetDrawPos().y,
 		pInfo->pDispPos->GetDrawPos().y + nLineHeight
 	);
 
 	// 反転描画
-	if( pcLayout && pInfo->pcView->GetSelectionInfo().IsTextSelected() ){
-		pInfo->pcView->DispTextSelected(
+	if( pcLayout && GetSelectionInfo().IsTextSelected() ){
+		DispTextSelected(
 			pInfo->gr,
 			pInfo->pDispPos->GetLayoutLineRef(),
 			CMyPoint(pInfo->sDispPosBegin.GetDrawPos().x, pInfo->pDispPos->GetDrawPos().y),
