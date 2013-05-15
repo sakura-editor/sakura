@@ -104,6 +104,11 @@ static const bool UNICODE_BOOL=false;
 		_fill_new_memory(p,nSize,"ﾆｭｰ",3); //確保されたばかりのメモリ状態は「ﾆｭｰﾆｭｰﾆｭｰ…」となります
 		return p;
 	}
+#ifdef _MSC_VER
+#if _MSC_VER == 1500
+	_Ret_bytecap_(_Size)	// for VS2008 Debug mode
+#endif
+#endif
 	inline void* operator new[](size_t nSize)
 	{
 		void* p = ::malloc(nSize);
