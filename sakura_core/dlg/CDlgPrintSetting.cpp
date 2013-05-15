@@ -702,6 +702,13 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLECOLMNS, nEnableColmns, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLELINES, nEnableLines, FALSE );
 
+	// フォントのポイント数	2013/5/9 Uchi
+	// 1pt = 1/72in = 25.4/72mm
+	int		nFontPoints = pPS->m_nPrintFontHeight * 720 / 254;
+	TCHAR	szFontPoints[20];
+	auto_sprintf_s( szFontPoints, _countof(szFontPoints), _T("%d.%dpt"), nFontPoints/10, nFontPoints%10 );
+	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
+
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
 	if( nEnableColmns == 0 || nEnableLines == 0 ){
 		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), FALSE );
