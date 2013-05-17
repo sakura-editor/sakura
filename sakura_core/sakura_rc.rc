@@ -812,7 +812,7 @@ FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
     LTEXT           "下からタイプを選択してください(&T):",IDC_STATIC,5,5,111,8
     LISTBOX         IDC_LIST_TYPES,5,15,120,243,LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
+                    WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "設定変更(&S)...",IDOK,130,15,50,14
     PUSHBUTTON      "一時適用(&R)",IDC_BUTTON_TEMPCHANGE,130,31,50,14
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,130,50,50,14
