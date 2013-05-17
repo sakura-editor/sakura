@@ -60,7 +60,9 @@ public:
 		std::vector<int>* vResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
 		const wchar_t* pText,           //!< [in]  文字列
 		int nLength,                    //!< [in]  文字列長
-		int nHankakuDx                  //!< [in]  半角文字の文字間隔
+		int	nHankakuDx,					//!< [in]  半角文字の文字間隔
+		int	nTabSpace = 8,				//   [in]  TAB幅
+		int	nIndent = 0					//   [in]  インデント
 	);
 
 	//!文字列のピクセル幅を返す。

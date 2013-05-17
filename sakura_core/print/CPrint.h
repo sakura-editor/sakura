@@ -8,12 +8,29 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2003, かろと
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
-#ifndef _CPRINT_H_
-#define _CPRINT_H_
+#ifndef SAKURA_CPRINT_12337831_217C_40E7_A646_C106350A3E91R_H_
+#define SAKURA_CPRINT_12337831_217C_40E7_A646_C106350A3E91R_H_
 
 #include <WinSpool.h>
 #include <CommDlg.h> // PRINTDLG
@@ -81,13 +98,13 @@ struct PRINTSETTING {
 	int				m_nPrintMarginRX;					/*!< 印刷用紙マージン 右(mm単位) */
 	short			m_nPrintPaperOrientation;			/*!< 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
 	short			m_nPrintPaperSize;					/*!< 用紙サイズ */
+	bool			m_bColorPrint;						//!< カラー印刷			// 2013/4/26 Uchi
 	bool			m_bPrintWordWrap;					//!< 英文ワードラップする
 	bool			m_bPrintKinsokuHead;				//!< 行頭禁則する		//@@@ 2002.04.09 MIK
 	bool			m_bPrintKinsokuTail;				//!< 行末禁則する		//@@@ 2002.04.09 MIK
 	bool			m_bPrintKinsokuRet;					//!< 改行文字のぶら下げ	//@@@ 2002.04.13 MIK
 	bool			m_bPrintKinsokuKuto;				//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
 	bool			m_bPrintLineNumber;					/*!< 行番号を印刷する */
-
 
 	MYDEVMODE		m_mdmDevMode;						/*!< プリンタ設定 DEVMODE用 */
 	BOOL			m_bHeaderUse[3];					/* ヘッダが使われているか？	*/
@@ -183,7 +200,4 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CPRINT_H_ */
-
-
-
+#endif /* SAKURA_CPRINT_12337831_217C_40E7_A646_C106350A3E91R_H_ */

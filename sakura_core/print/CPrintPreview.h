@@ -8,18 +8,38 @@
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, かろと
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
-#ifndef _CPRINTPREVIEW_H_
-#define _CPRINTPREVIEW_H_
+#ifndef SAKURA_CPRINTPREVIEW_4FBD8BE8_4E93_4714_A3F2_F69081A2EDBDR_H_
+#define SAKURA_CPRINTPREVIEW_4FBD8BE8_4E93_4714_A3F2_F69081A2EDBDR_H_
 
 #include <Windows.h> // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "CPrint.h" // 2002/2/10 aroka
 
+class CColorStrategy;
+class CColorStrategyPool;
 class CEditWnd;
+class CLayout;
 class CLayoutMgr;
 
 class CPrintPreview {
@@ -89,20 +109,49 @@ protected:
 	||	また、DrawXXXXX()から抜けてきたときは、半角フォントに設定されていることを期待してよい。
 	||	フォントは、半角フォントと全角フォントしかないことも期待してよい。
 	*/
-	void DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen );
-	void DrawPageText( HDC, int, int, int, HFONT hFontZen, class CDlgCancel* );
-	void DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen );
+	void DrawHeader( HDC hdc, const CMyRect& rect );
+	void DrawPageText( HDC, int, int, int, class CDlgCancel* );
+	void DrawFooter( HDC hdc, const CMyRect& rect );
 
-	/* 印刷／プレビュー 行描画 */
-	void Print_DrawLine(
+	// 印刷／プレビュー 行描画
+	CColorStrategy* Print_DrawLine(
 		HDC				hdc,
 		POINT			ptDraw,		//!< 描画座標。HDC内部単位。
 		const wchar_t*	pLine,
+		int				nDocLineLen,
+		int				nLineStart,
 		int				nLineLen,
 		CLayoutInt		nIndent,	//!< 折り返しインデント桁数 // 2006.08.14 Moca
-		HFONT			hFontZen
+		const CLayout*	pcLayout = NULL,	//!< 色付用Layout
+		CColorStrategy*	pStrategyStart = NULL
 	);
 
+	// 印刷／プレビュー ブロック描画
+	void Print_DrawBlock(
+		HDC				hdc,
+		POINT			ptDraw,		//!< 描画座標。HDC内部単位。
+		const wchar_t*	pPhysicalLine,
+		int				nBlockLen,
+		int				nKind,		//< 0:半角, 1:全角
+		const CLayout*	pcLayout,	//!< 色設定用Layout
+		const CColorStrategy*	pStrategy,
+		int				nBgnPhysical,
+		CLayoutInt		nLayoutX,
+		int				nDx,
+		const int*		pDxArray
+	);
+
+	// 指定ロジック位置のCColorStrategyを取得
+	CColorStrategy* GetColorStrategy(
+		const CStringRef&	cStringLine,
+		int					iLogic,
+		CColorStrategy*		pStrategy
+	);
+
+	// 印刷用フォントを作成する
+	void CtrateFonts(HDC hdc);
+	// 印刷用フォントを破棄する
+	void DestructFonts();
 
 public:
 	//	フォント列挙
@@ -112,7 +161,7 @@ public:
 		int				nFontType,	// type of font
 		LPARAM			lParam 		// address of application-defined data
 	);
-	
+
 	/*
 	||	アクセサ
 	*/
@@ -138,7 +187,7 @@ public:
 
 protected:
 	CEditWnd*		m_pParentWnd;	//	親のCEditDoc*。
-	
+
 	// 2006.08.17 Moca YAZAKIさんのメモの通りDC/BMPをCEditDocからCPrintPreviewへ移動
 	HDC				m_hdcCompatDC;	//!< 再描画用コンパチブルDC
 	HBITMAP			m_hbmpCompatBMP;	//!< 再描画用メモリBMP
@@ -158,10 +207,10 @@ protected:
 	//	サイズボックス
 	HWND			m_hwndSizeBox;		/* サイズボックスウィンドウハンドル */
 	BOOL			m_SizeBoxCanMove;	/* サイズボックスウィンドウハンドルを動かせるかどうか */
-	
+
 	//	表示
 	int				m_nPreview_Zoom;	/* 印刷プレビュー：倍率 */
-	
+
 	//	印刷位置を決定するための変数
 	int				m_nPreview_ViewWidth;		/* 印刷プレビュー：ビュー幅(ピクセル) */
 	int				m_nPreview_ViewHeight;		/* 印刷プレビュー：ビュー高さ(ピクセル) */
@@ -183,10 +232,23 @@ protected:
 	LOGFONT			m_lfPreviewHan;				/* プレビュー用フォント */
 	LOGFONT			m_lfPreviewZen;				/* プレビュー用フォント */
 
+	HFONT			m_hFontHan;					// 印刷用半角フォントハンドル
+	HFONT			m_hFontHan_b;				// 印刷用半角フォントハンドル 太字
+	HFONT			m_hFontHan_u;				// 印刷用半角フォントハンドル 下線
+	HFONT			m_hFontHan_bu;				// 印刷用半角フォントハンドル 太字、下線
+	HFONT			m_hFontZen;					// 印刷用全角フォントハンドル
+	HFONT			m_hFontZen_b;				// 印刷用全角フォントハンドル 太字
+	HFONT			m_hFontZen_u;				// 印刷用全角フォントハンドル 下線
+	HFONT			m_hFontZen_bu;				// 印刷用全角フォントハンドル 太字、下線
+	int				m_nAscentHan;				// 半角文字のアセント（文字高/基準ラインからの高さ）
+	int				m_nAscentZen;				// 全角文字のアセント（文字高/基準ラインからの高さ）
+
+	CColorStrategyPool*	m_pool;					// 色定義管理情報
+
 	class CLayoutMgr*	m_pLayoutMgr_Print;		/* 印刷用のレイアウト管理情報 */
 
 	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
 	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
 };
 
-#endif
+#endif /* SAKURA_CPRINTPREVIEW_4FBD8BE8_4E93_4714_A3F2_F69081A2EDBDR_H_ */
