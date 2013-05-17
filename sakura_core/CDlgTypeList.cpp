@@ -94,9 +94,14 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 void CDlgTypeList::SetData( void )
 {
 	int		nIdx;
-	HWND	hwndList;
-	char	szText[130];
-	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST_TYPES );
+	TCHAR	szText[64 + MAX_TYPES_EXTS + 10];
+	int		nExtent = 0;
+	HWND	hwndList = ::GetDlgItem( m_hWnd, IDC_LIST_TYPES );
+	HDC		hDC = ::GetDC( hwndList );
+	HFONT	hFont = (HFONT)::SendMessage(hwndList, WM_GETFONT, 0, 0);
+	HFONT	hFontOld = (HFONT)::SelectObject(hDC, hFont);
+
+	::SendMessage(hwndList, LB_RESETCONTENT, 0L, 0L);	/* リストを空にする */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
 		if( 0 < lstrlen( m_pShareData->m_Types[nIdx].m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
 			wsprintf( szText, "%s ( %s )",
@@ -109,7 +114,16 @@ void CDlgTypeList::SetData( void )
 			);
 		}
 		::SendMessage( hwndList, LB_ADDSTRING, 0, (LPARAM)szText );
+
+		SIZE sizeExtent;
+		if( ::GetTextExtentPoint32( hDC, szText, _tcslen(szText), &sizeExtent) && sizeExtent.cx > nExtent ){
+			nExtent = sizeExtent.cx;
+		}
 	}
+
+	::SelectObject(hDC, hFontOld);
+	::ReleaseDC( hwndList, hDC );
+	::SendMessage( hwndList, LB_SETHORIZONTALEXTENT, (WPARAM)(nExtent + 8), 0L );
 	::SendMessage( hwndList, LB_SETCURSEL, (WPARAM)m_nSettingType, (LPARAM)0 );
 	return;
 }
