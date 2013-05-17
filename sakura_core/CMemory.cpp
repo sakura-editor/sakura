@@ -42,6 +42,7 @@
 #include <ctype.h>
 #include <locale.h>
 #include <limits.h>
+#include <assert.h>
 #include "CMemory.h"
 #include "etc_uty.h"
 #include "CEol.h"// 2002/2/3 aroka
@@ -2844,6 +2845,14 @@ void CMemory::Empty( void )
 	m_nDataBufSize = 0;
 	m_nDataLen = 0;
 	return;
+}
+
+void CMemory::_SetRawLength(int nLength)
+{
+	assert(m_nDataLen <= m_nDataBufSize-1);
+	m_nDataLen = nLength;
+	assert(m_nDataLen <= m_nDataBufSize-1);
+	m_pData[m_nDataLen]=0;
 }
 
 /*!

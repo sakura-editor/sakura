@@ -65,6 +65,11 @@ public:
 	// 2005-09-02 D.S.Koba
 	static int GetSizeOfChar( const char*, const int, const int );	//!< 指定した位置の文字が何バイト文字かを返す
 
+	void _SetStringLength(int nLength)
+	{
+		_SetRawLength(nLength*sizeof(char));
+	}
+
 	static int IsEqual( CMemory&, CMemory& );	/* 等しい内容か */
 
 	/*
@@ -157,6 +162,7 @@ protected: // 2002/2/10 aroka アクセス権変更
 //	void Init( void );
 	void Empty( void );
 	void AddData( const char*, int );
+	void _SetRawLength(int nLength);
 	static int MemSJISToUnicode( char**, const char*, int );	/* ASCII&SJIS文字列をUnicode に変換 */
 	static int MemUnicodeToSJIS( char**, const char*, int );	/* Unicode文字列をASCII&SJIS に変換 */
 	long MemJIStoSJIS(unsigned char*, long );	/* JIS→SJIS変換 */

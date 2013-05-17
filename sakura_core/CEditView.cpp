@@ -3840,8 +3840,6 @@ VOID CEditView::OnTimer(
 BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 {
 	CMemory		cmemCurText;
-	char*		pszWork;
-	int			nWorkLength;
 	int			i;
 
 	/* キーワードヘルプを使用するか？ */
@@ -3870,12 +3868,12 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 		) )	goto end_of_search;
 		break;
 	default:
-		PleaseReportToAuthor( NULL, _T("CEditView::KeyWordHelpSearchDict\nnID=%d") );
+		PleaseReportToAuthor( NULL, _T("CEditView::KeyWordHelpSearchDict\nnID=%d"), (int)nID  );
 	}
 	/* 選択範囲のデータを取得(複数行選択の場合は先頭の行のみ) */
 	if( GetSelectedData( &cmemCurText, TRUE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
-		pszWork = cmemCurText.GetStringPtr();
-		nWorkLength	= lstrlen( pszWork );
+		char* pszWork = cmemCurText.GetStringPtr();
+		int nWorkLength	= lstrlen( pszWork );
 		for( i = 0; i < nWorkLength; ++i ){
 			if( pszWork[i] == '\0' ||
 				pszWork[i] == CR ||
@@ -3883,16 +3881,14 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 				break;
 			}
 		}
-		char*	pszBuf = new char[i + 1];
-		memcpy( pszBuf, pszWork, i );
-		pszBuf[i] = '\0';
-		cmemCurText.SetString( pszBuf, i );
-		delete [] pszBuf;
-	}/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
+		cmemCurText._SetStringLength( i );
+	}
+	/* キャレット位置の単語を取得する処理 */	// 2006.03.24 fon
 	else if(m_pShareData->m_Common.m_sSearch.m_bUseCaretKeyWord){
 		if(!GetCurrentWord(&cmemCurText))
 			goto end_of_search;
-	}else
+	}
+	else
 		goto end_of_search;
 
 	if( CMemory::IsEqual( cmemCurText, m_cTipWnd.m_cKey ) &&	/* 既に検索済みか */
