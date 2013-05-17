@@ -1216,6 +1216,9 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuTail"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuTail );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuRet"),  i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuRet );	//@@@ 2002.04.13 MIK
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuKuto"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuKuto );	//@@@ 2002.04.17 MIK
+
+		//ÉJÉâÅ[àÛç¸
+		auto_sprintf( szKeyName, LTEXT("PS[%02d].bColorPrint"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bColorPrint );	// 2013/4/26 Uchi
 	}
 }
 

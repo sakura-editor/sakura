@@ -11,9 +11,28 @@
 	Copyright (C) 2005, D.S.Koba
 	Copyright (C) 2006, ryoji, Moca
 	Copyright (C) 2008, nasukoji
+	Copyright (C) 2012, ossan (ossan@ongs.net)
+	Copyright (C) 2013, Uchi
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
 #include "StdAfx.h"
@@ -181,20 +200,10 @@ LRESULT CPrintPreview::OnPaint(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         フォント                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	// 印刷用半角フォントを作成 -> hFontHan
-	m_lfPreviewHan.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
-	m_lfPreviewHan.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
-	_tcscpy( m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan );
-	HFONT	hFontHan = CreateFontIndirect( &m_lfPreviewHan );
-
-	// 印刷用全角フォントを作成 -> hFontZen
-	m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
-	m_lfPreviewZen.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
-	_tcscpy( m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
-	HFONT	hFontZen = CreateFontIndirect( &m_lfPreviewZen );
-
+	// フォント作成
+	CtrateFonts( hdc );
 	// 印刷用半角フォントに設定し、以前のフォントを保持
-	HFONT	hFontOld = (HFONT)::SelectObject( hdc, hFontHan );
+	HFONT	hFontOld = (HFONT)::SelectObject( hdc, m_hFontHan );
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -249,7 +258,7 @@ LRESULT CPrintPreview::OnPaint(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	// ヘッダ
-	DrawHeader( hdc, cRect, hFontZen );
+	DrawHeader( hdc, cRect );
 
 	// 印刷/印刷プレビュー ページテキストの描画
 	DrawPageText(
@@ -257,25 +266,22 @@ LRESULT CPrintPreview::OnPaint(
 		m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX,
 		m_nPreview_ViewMarginTop  + m_pPrintSetting->m_nPrintMarginTY + 2 * ( m_pPrintSetting->m_nPrintFontHeight + (m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100) ),
 		m_nCurPageNum,
-		hFontZen,
 		NULL
 	);
 
 	// フッタ
-	DrawFooter( hdc, cRect, hFontZen );
+	DrawFooter( hdc, cRect );
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                          後始末                             //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	// 印刷フォント解除 & 破棄
-	::SelectObject( hdc, hFontOld );
-	::DeleteObject( hFontZen );
-	::DeleteObject( hFontHan );
-
 	// マッピングモードの変更
 	::SetMapMode( hdc, nMapModeOld );
+
+	// 印刷フォント破棄
+	DestructFonts();
 
 	// 物理座標原点をもとに戻す
 	::SetViewportOrgEx( hdc, poViewPortOld.x, poViewPortOld.y, NULL );
@@ -956,7 +962,9 @@ void CPrintPreview::OnCheckAntialias( void )
 
 
 
-
+/*!
+	印刷
+*/
 void CPrintPreview::OnPrint( void )
 {
 	HDC			hdc;
@@ -966,8 +974,6 @@ void CPrintPreview::OnPrint( void )
 	int			nDirectY = -1;
 	int			i;
 	HFONT		hFontOld;	//	OnPrint以前のフォント
-	HFONT		hFontHan;	//	印刷用半角フォント
-	HFONT		hFontZen;	//	印刷用全角フォント
 
 	if( 0 == m_nAllPageNum ){
 		TopWarningMessage( m_pParentWnd->GetHwnd(), _T("印刷するページがありません。") );
@@ -1030,12 +1036,10 @@ void CPrintPreview::OnPrint( void )
 //		MYTRACE( _T("%ts\n"), szErrMsg );
 	}
 
-	/* 印刷用半角フォントと、印刷用全角フォントを作成 */
-	hFontHan = CreateFontIndirect( &m_lfPreviewHan );
-	hFontZen = CreateFontIndirect( &m_lfPreviewZen );
-
+	// 印刷用半角フォントと、印刷用全角フォントを作成
+	CtrateFonts( hdc );
 	// 現在のフォントを印刷用半角フォントに設定＆以前のフォントを保持
-	hFontOld = (HFONT)::SelectObject( hdc, hFontHan );
+	hFontOld = (HFONT)::SelectObject( hdc, m_hFontHan );
 
 	/* 紙の大きさをあらわすRECTを設定 */
 	RECT cRect;
@@ -1068,11 +1072,11 @@ void CPrintPreview::OnPrint( void )
 		::SetMapMode( hdc, MM_ANISOTROPIC );	//論理単位は、任意にスケーリングされた軸上の任意の単位にマップされます
 
 		// 現在のフォントを印刷用半角フォントに設定
-		::SelectObject( hdc, hFontHan );
+		::SelectObject( hdc, m_hFontHan );
 		//	To Here Jun. 26, 2003 かろと / おきた
 
 		/* ヘッダ印刷 */
-		DrawHeader( hdc, cRect, hFontZen );
+		DrawHeader( hdc, cRect );
 
 		/* 印刷/印刷プレビュー ページテキストの描画 */
 		DrawPageText(
@@ -1080,12 +1084,11 @@ void CPrintPreview::OnPrint( void )
 			m_pPrintSetting->m_nPrintMarginLX - m_nPreview_PaperOffsetLeft ,
 			m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop+ 2 * ( m_pPrintSetting->m_nPrintFontHeight + (m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100) ),
 			nFrom + i,
-			hFontZen,
 			&cDlgPrinting
 		);
 
 		/* フッタ印刷 */
-		DrawFooter( hdc, cRect, hFontZen );
+		DrawFooter( hdc, cRect );
 
 		/* 印刷 ページ終了 */
 		m_cPrint.PrintEndPage( hdc );
@@ -1101,9 +1104,8 @@ void CPrintPreview::OnPrint( void )
 	/* 印刷 ジョブ終了 */
 	m_cPrint.PrintClose( hdc );
 
-	//	印刷用フォントを削除。
-	::DeleteObject( hFontZen );
-	::DeleteObject( hFontHan );
+	//	印刷用フォント破棄
+	DestructFonts();
 
 	::EnableWindow( m_pParentWnd->GetHwnd(), TRUE );
 	cDlgPrinting.CloseDialog( 0 );
@@ -1117,31 +1119,34 @@ void CPrintPreview::OnPrint( void )
 
 /*! 印刷/印刷プレビュー ヘッダの描画
 */
-void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen )
+void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect )
 {
-	int nTextWidth = 0;
-
 	// ヘッダ
-	const int nHeaderWorkLen = 1024;
-	wchar_t     szHeaderWork[1024 + 1];
-	
+	const int	nHeaderWorkLen = 1024;
+	wchar_t		szHeaderWork[1024 + 1];
+	int			nTextWidth;
+	int			nLen;
+
 	//文字間隔
 	int nDx = m_pPrintSetting->m_nPrintFontWidth;
 
 	// 左寄せ
 	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
+	nLen = wcslen( szHeaderWork );
 	Print_DrawLine(
 		hdc,
 		rect.UpperLeft(),
 		szHeaderWork,
-		wcslen( szHeaderWork ),
-		CLayoutInt(0),
-		hFontZen
+		nLen,
+		0,
+		nLen,
+		CLayoutInt(0)
 	);
 
 	// 中央寄せ
 	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
-	nTextWidth = CTextMetrics::CalcTextWidth2(szHeaderWork, wcslen(szHeaderWork), nDx); //テキスト幅
+	nLen = wcslen( szHeaderWork );
+	nTextWidth = CTextMetrics::CalcTextWidth2(szHeaderWork, nLen, nDx); //テキスト幅
 	Print_DrawLine(
 		hdc,
 		CMyPoint(
@@ -1149,14 +1154,16 @@ void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 			rect.top
 		),
 		szHeaderWork,
-		wcslen( szHeaderWork ),
-		CLayoutInt(0),
-		hFontZen
+		nLen,
+		0,
+		nLen,
+		CLayoutInt(0)
 	);
-	
+
 	// 右寄せ
 	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
 	nTextWidth = CTextMetrics::CalcTextWidth2(szHeaderWork, wcslen(szHeaderWork), nDx); //テキスト幅
+	nLen = wcslen( szHeaderWork );
 	Print_DrawLine(
 		hdc,
 		CMyPoint(
@@ -1164,22 +1171,23 @@ void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 			rect.top
 		),
 		szHeaderWork,
-		wcslen( szHeaderWork ),
-		CLayoutInt(0),
-		hFontZen
+		nLen,
+		0,
+		nLen,
+		CLayoutInt(0)
 	);
 }
 
 /*! 印刷/印刷プレビュー フッタの描画
 */
-void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
+void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect )
 {
-	int nTextWidth = 0;
-
 	// フッタ
-	const int nFooterWorkLen = 1024;
-	wchar_t   szFooterWork[1024 + 1];
-	
+	const int	nFooterWorkLen = 1024;
+	wchar_t		szFooterWork[1024 + 1];
+	int			nTextWidth;
+	int			nLen;
+
 	//文字間隔
 	int nDx = m_pPrintSetting->m_nPrintFontWidth;
 
@@ -1188,6 +1196,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 
 	// 左寄せ
 	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
+	nLen = wcslen( szFooterWork );
 	Print_DrawLine(
 		hdc,
 		CMyPoint(
@@ -1195,14 +1204,16 @@ void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 			nY
 		),
 		szFooterWork,
-		wcslen( szFooterWork ),
-		CLayoutInt(0),
-		hFontZen
+		nLen,
+		0,
+		nLen,
+		CLayoutInt(0)
 	);
 
 	// 中央寄せ
 	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
-	nTextWidth = CTextMetrics::CalcTextWidth2(szFooterWork, wcslen(szFooterWork), nDx); //テキスト幅
+	nLen = wcslen( szFooterWork );
+	nTextWidth = CTextMetrics::CalcTextWidth2(szFooterWork, nLen, nDx); //テキスト幅
 	Print_DrawLine(
 		hdc,
 		CMyPoint(
@@ -1210,14 +1221,16 @@ void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 			nY
 		),
 		szFooterWork,
-		wcslen( szFooterWork ),
-		CLayoutInt(0),
-		hFontZen
+		nLen,
+		0,
+		nLen,
+		CLayoutInt(0)
 	);
-	
+
 	// 右寄せ
 	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
 	nTextWidth = CTextMetrics::CalcTextWidth2(szFooterWork, wcslen(szFooterWork), nDx); //テキスト幅
+	nLen = wcslen( szFooterWork );
 	Print_DrawLine(
 		hdc,
 		CMyPoint(
@@ -1225,9 +1238,10 @@ void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect, HFONT hFontZen )
 			nY
 		),
 		szFooterWork,
-		wcslen( szFooterWork ),
-		CLayoutInt(0),
-		hFontZen
+		nLen,
+		0,
+		nLen,
+		CLayoutInt(0)
 	);
 }
 
@@ -1241,12 +1255,10 @@ void CPrintPreview::DrawPageText(
 	int				nOffX,
 	int				nOffY,
 	int				nPageNum,
-	HFONT			hFontZen,
 	CDlgCancel*		pCDlgCancel
 )
 {
 	int				nDirectY = -1;
-	TEXTMETRIC		tm;
 
 	const int		nLineHeight = m_pPrintSetting->m_nPrintFontHeight + ( m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100 );
 	// 段と段の間隔の幅
@@ -1255,11 +1267,37 @@ void CPrintPreview::DrawPageText(
 	const int		nLineNumWidth = m_nPreview_LineNumberColmns * m_pPrintSetting->m_nPrintFontWidth;
 
 	/* 半角フォントの情報を取得＆半角フォントに設定 */
-	::GetTextMetrics( hdc, &tm );
-	int nAscentHan = tm.tmAscent;
+
+	// ページトップの色指定を取得
+	CColorStrategy*		pStrategy = NULL;
+	if (m_pPrintSetting->m_bColorPrint) {
+		m_pool = CColorStrategyPool::getInstance();
+		m_pool->SetCurrentView(&(m_pParentWnd->GetActiveView()));
+
+		const CLayoutInt	nPageTopLineNum = CLayoutInt( (nPageNum * m_pPrintSetting->m_nPrintDansuu) * m_bPreview_EnableLines );
+		const CLayout*		pcPageTopLayout = m_pLayoutMgr_Print->SearchLineByLayoutY( nPageTopLineNum );
+		CLogicInt	nPageTopOff = pcPageTopLayout->GetLogicOffset();
+		CLogicInt	iLogic;
+
+		// ページトップの物理行の先頭を検索
+		while (pcPageTopLayout->GetLogicOffset()) {
+			pcPageTopLayout = pcPageTopLayout->GetPrevLayout();
+		}
+
+		// 論理行先頭のCColorStrategy取得
+		pStrategy = m_pool->GetStrategyByColor( pcPageTopLayout->GetColorTypePrev() );
+		m_pool->NotifyOnStartScanLogic();
+		if (pStrategy)	pStrategy->InitStrategyStatus();
+		if (nPageTopOff) {
+			CStringRef&	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
+			for (iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
+				pStrategy = GetColorStrategy( csr, iLogic, pStrategy );
+			}
+		}
+	}
 
 	int				nDan;	//	段数カウンタ
-	int				i;	//	行数カウンタ
+	int				i;		//	行数カウンタ
 	for( nDan = 0; nDan < m_pPrintSetting->m_nPrintDansuu; ++nDan ){
 		// 本文1桁目の左隅の座標(行番号がある場合はこの座標より左側)
 		const int nBasePosX = nOffX + nDanWidth * nDan + nLineNumWidth * (nDan + 1);
@@ -1321,7 +1359,7 @@ void CPrintPreview::DrawPageText(
 				ApiWrap::ExtTextOutW_AnyBuild(
 					hdc,
 					nBasePosX - nLineCols * m_pPrintSetting->m_nPrintFontWidth,
-					nDirectY * ( nOffY + nLineHeight * i + ( m_pPrintSetting->m_nPrintFontHeight - nAscentHan ) ),
+					nDirectY * ( nOffY + nLineHeight * i + ( m_pPrintSetting->m_nPrintFontHeight - m_nAscentHan ) ),
 					0,
 					NULL,
 					szLineNum,
@@ -1335,17 +1373,28 @@ void CPrintPreview::DrawPageText(
 				continue;
 			}
 
+			// 物理行頭の色指定を取得
+			if (m_pPrintSetting->m_bColorPrint
+				&& !(nDan == 0 && i == 0)
+				&& pcLayout->GetLogicOffset() == 0) {
+				pStrategy = m_pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
+				m_pool->NotifyOnStartScanLogic();
+				if (pStrategy)	pStrategy->InitStrategyStatus();
+			}
 			// 印刷／プレビュー 行描画
-			Print_DrawLine(
+			pStrategy = Print_DrawLine(
 				hdc,
 				CMyPoint(
 					nBasePosX,
 					nDirectY * ( nOffY + nLineHeight * i )
 				),
-				pcLayout->GetPtr(),
+				pcLayout->GetDocLineRef()->GetPtr(),	// pcLayout->GetPtr(),
+				(Int)pcLayout->GetDocLineRef()->GetLengthWithEOL(),
+				(Int)pcLayout->GetLogicOffset(),
 				nLineLen,
 				pcLayout->GetIndent(), // 2006.05.16 Add Moca. レイアウトインデント分ずらす。
-				hFontZen
+				m_pPrintSetting->m_bColorPrint ? pcLayout : NULL,
+				pStrategy
 			);
 		}
 
@@ -1439,27 +1488,21 @@ void CPrintPreview::InitPreviewScrollBar( void )
 	@date 2007.08    kobake 機械的にUNICODE化
 	@date 2007.12.12 kobake 全角フォントが反映されていない問題を修正
 */
-void CPrintPreview::Print_DrawLine(
+CColorStrategy* CPrintPreview::Print_DrawLine(
 	HDC				hdc,
 	POINT			ptDraw, //!< 描画座標。HDC内部単位。
 	const wchar_t*	pLine,
+	int				nDocLineLen,
+	int				nLineStart,
 	int				nLineLen,
 	CLayoutInt		nIndent,  // 2006.08.14 Moca 追加
-	HFONT			hFontZen
+	const CLayout*	pcLayout,	//!< 色付用Layout
+	CColorStrategy*	pStrategyStart
 )
 {
-	TEXTMETRIC	tm;
-
-	/* 全角文字のアセント（文字高）を取得 */
-	HFONT	hFontHan = (HFONT)::SelectObject( hdc, hFontZen );
-	::GetTextMetrics( hdc, &tm );
-	int nAscentZen = tm.tmAscent;
-
-	/* 半角文字のアセント（文字高）を取得 */
-	//	半角文字用フォントが選択されていることを期待している。
-	::SelectObject( hdc, hFontHan );
-	::GetTextMetrics( hdc, &tm );
-	int nAscentHan = tm.tmAscent;
+	if (nLineLen == 0) {
+		return pStrategyStart;
+	}
 
 	/*	pLineをスキャンして、半角文字は半角文字でまとめて、全角文字は全角文字でまとめて描画する。
 	*/
@@ -1467,27 +1510,35 @@ void CPrintPreview::Print_DrawLine(
 	//文字間隔
 	int nDx = m_pPrintSetting->m_nPrintFontWidth;
 
+	//タブ幅取得
+	CLayoutInt nTabSpace = m_pParentWnd->GetDocument().m_cLayoutMgr.GetTabSpace(); //	Sep. 23, 2002 genta LayoutMgrの値を使う
+
 	//文字間隔配列を生成
 	vector<int> vDxArray;
 	const int* pDxArray = CTextMetrics::GenerateDxArray(
 		&vDxArray,
-		pLine,
+		pLine + nLineStart,
 		nLineLen,
-		nDx
+		nDx,
+		(Int)nTabSpace,
+		(Int)nIndent
 	);
 
-	//タブ幅取得
-	CLayoutInt nTabSpace = m_pParentWnd->GetDocument().m_cLayoutMgr.GetTabSpace(); //	Sep. 23, 2002 genta LayoutMgrの値を使う
-
-	int nBgnLogic = 0;		// TABを展開する前のバイト数で、pLineの何バイト目まで描画したか？
-	int iLogic;				// pLineの何文字目をスキャン？
+	int nBgnLogic = nLineStart;	// TABを展開する前のバイト数で、pLineの何バイト目まで描画したか？
+	int iLogic;					// pLineの何文字目をスキャン？
 	CLayoutInt nLayoutX = nIndent;	// TABを展開した後のバイト数で、テキストの何バイト目まで描画したか？
 
 	//文字種判定フラグ
 	int nKind     = 0; //0:半角 1:全角 2:タブ
 	int nKindLast = 2; //直前のnKind状態
 
-	for( iLogic = 0; iLogic < nLineLen; ++iLogic, nKindLast = nKind ){
+	// 色設定	2012-03-07 ossan
+	CStringRef cStringLine( pLine, nDocLineLen );
+	CColorStrategy* pStrategy = pStrategyStart;
+	CColorStrategy*	pStrategyLast = (CColorStrategy*)-1;
+
+	for( iLogic = nLineStart; iLogic < nLineStart + nLineLen; 
+			++iLogic, nKindLast = nKind, pStrategyLast = pStrategy ){
 		//文字の種類
 		if(pLine[iLogic]==WCODE::TAB){
 			nKind = 2;
@@ -1499,60 +1550,161 @@ void CPrintPreview::Print_DrawLine(
 			nKind = 1;
 		}
 
-		// タブ文字出現 or 文字種の境界
-		if( nKind == 2 || (nKindLast!=2 && nKind!=nKindLast)){
+		pStrategy = pcLayout ? GetColorStrategy(cStringLine, iLogic, pStrategy) : NULL;
+
+		// タブ文字出現 or 文字種(全角／半角)の境界 or 色指定の境界
+		if (nKind != nKindLast || pStrategyLast != pStrategy) {
 			//iLogicの直前までを描画
-			if( 0 < iLogic - nBgnLogic ){
-				// タブ文字の前までを描画。
-				::SelectObject(hdc,nKindLast==0?hFontHan:hFontZen);
-				::ExtTextOutW_AnyBuild(
+			if ( 0 < iLogic - nBgnLogic ) {
+				Print_DrawBlock(
 					hdc,
-					ptDraw.x + (Int)nLayoutX * nDx,
-					ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - (nKindLast==0?nAscentHan:nAscentZen) ),
-					0,
-					NULL,
-					&pLine[nBgnLogic],
+					ptDraw,		//!< 描画座標。HDC内部単位。
+					pLine + nLineStart,
 					iLogic - nBgnLogic,
-					&pDxArray[nBgnLogic]
+					nKindLast,
+					pcLayout,	//!< 色設定用Layout
+					pStrategyLast,
+					nBgnLogic - nLineStart,
+					nLayoutX,
+					nDx,
+					pDxArray
 				);
 
 				//桁進め
-				for(int i=nBgnLogic;i<iLogic;i++){
-					nLayoutX += CLayoutInt(pDxArray[i]/nDx);
+				if (nKindLast == 2) {
+					nLayoutX += ( nTabSpace - nLayoutX % nTabSpace )
+						+ nTabSpace * (iLogic - nBgnLogic - 1);
 				}
-
+				else{
+					int		nIncrement = 0;
+					for (int i = nBgnLogic - nLineStart; i < iLogic - nLineStart; i++) {
+						nIncrement += pDxArray[i];
+					}
+					nLayoutX += CLayoutInt(nIncrement/nDx);
+				}
 				//ロジック進め
 				nBgnLogic = iLogic;
 			}
-
-			//タブ進め
-			if(pLine[iLogic]==WCODE::TAB){
-				//桁進め
-				nLayoutX += ( nTabSpace - nLayoutX % nTabSpace );
-				//ロジック進め
-				nBgnLogic = iLogic + 1;
-			}
 		}
 	}
-	
+
 	//残りを描画
-	if( 0 < iLogic - nBgnLogic ){
-		::SelectObject(hdc,nKindLast==0?hFontHan:hFontZen);
-		::ExtTextOutW_AnyBuild(
+	if (0 < nLineStart + nLineLen - nBgnLogic) {
+		Print_DrawBlock(
 			hdc,
-			ptDraw.x + (Int)nLayoutX * nDx,
-			ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - (nKindLast==0?nAscentHan:nAscentZen) ),
-			0,
-			NULL,
-			&pLine[nBgnLogic],
-			iLogic - nBgnLogic,
-			&pDxArray[nBgnLogic]
+			ptDraw,		//!< 描画座標。HDC内部単位。
+			pLine + nLineStart,
+			nLineStart + nLineLen - nBgnLogic,
+			nKindLast,
+			pcLayout,	//!< 色設定用Layout
+			pStrategyLast,
+			nBgnLogic - nLineStart,
+			nLayoutX,
+			nDx,
+			pDxArray
 		);
 	}
 
 	//フォントを元 (半角) に戻す
-	::SelectObject( hdc, hFontHan );
+	::SelectObject( hdc, m_hFontHan );
+
+	//色を元に戻す	2012-03-07 ossan
+	if (pcLayout) {
+		int nColorIdx = ToColorInfoArrIndex(COLORIDX_TEXT);
+		if (-1 != nColorIdx) {
+			const ColorInfo& info = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
+			::SetTextColor(hdc, info.m_colTEXT);
+//			::SetBkColor(hdc, info.m_colBACK);
+		}
+	}
+
+	return pStrategy;
 }
+
+/*! 印刷／プレビュー ブロック描画
+	@param[in] 
+
+	@date 2013.05.01 Uchi Print_DrawLineから切り出し
+*/
+void CPrintPreview::Print_DrawBlock(
+	HDC				hdc,
+	POINT			ptDraw,		//!< 描画座標。HDC内部単位。
+	const wchar_t*	pPhysicalLine,
+	int				nBlockLen,	// iLogic - nBgnLogic
+	int				nKind,
+	const CLayout*	pcLayout,	//!< 色設定用Layout
+	const CColorStrategy*	pStrategy,
+	int				nBgnPhysical,	// nBgnLogic - nLineStart
+	CLayoutInt		nLayoutX,
+	int				nDx,
+	const int*		pDxArray
+)
+{
+	if (nKind == 2 && pcLayout == NULL) {
+		// TABはカラーで無ければ印字不要
+		return;
+	}
+	HFONT	hFont = (nKind == 1 ? m_hFontZen : m_hFontHan);
+	// 色設定
+	if (pcLayout) {
+		int nColorIdx = ToColorInfoArrIndex( pStrategy ? pStrategy->GetStrategyColor() : COLORIDX_TEXT );
+		if (-1 != nColorIdx) {
+			const ColorInfo& info = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
+			if (nKind == 2 && !info.m_bUnderLine) {
+				// TABは下線が無ければ印字不要
+				return;
+			}
+			if (info.m_bBoldFont)
+				if (info.m_bUnderLine)	hFont = (nKind == 1 ? m_hFontZen_bu: m_hFontHan_bu);	// 太字、下線
+				else					hFont = (nKind == 1 ? m_hFontZen_b : m_hFontHan_b);		// 太字
+			else
+				if (info.m_bUnderLine)	hFont = (nKind == 1 ? m_hFontZen_u : m_hFontHan_u);		// 下線
+			//	else					hFont = (nKind == 1 ? m_hFontZen   : m_hFontHan);		// 標準
+			::SetTextColor( hdc, info.m_colTEXT);
+//			::SetBkColor( hdc, info.m_colBACK);
+		}
+	}
+	::SelectObject( hdc, hFont );
+	::ExtTextOutW_AnyBuild(
+		hdc,
+		ptDraw.x + (Int)nLayoutX * nDx,
+		ptDraw.y - ( m_pPrintSetting->m_nPrintFontHeight - (nKind == 1 ? m_nAscentZen : m_nAscentHan) ),
+		0,
+		NULL,
+		&pPhysicalLine[nBgnPhysical],
+		nBlockLen,
+		&pDxArray[nBgnPhysical]
+	);
+}
+
+/*! 指定ロジック位置のCColorStrategyを取得
+	@param[in] 
+
+	@date 2013.05.01 Uchi 新規作成
+*/
+CColorStrategy* CPrintPreview::GetColorStrategy(
+	const CStringRef&	cStringLine,
+	int					iLogic,
+	CColorStrategy*		pStrategy
+)
+{
+	if (pStrategy) {
+		if (pStrategy->EndColor(cStringLine, iLogic)) {
+			pStrategy = NULL;
+		}
+	}
+	if (!pStrategy) {
+		for (int i=0; i < m_pool->GetStrategyCount(); i++) {
+			if (m_pool->GetStrategy(i)->BeginColor(cStringLine, iLogic)) {
+				pStrategy = m_pool->GetStrategy(i);
+				break;
+			}
+		}
+	}
+
+	return pStrategy;
+}
+
 
 /*	印刷プレビューフォント（半角）を設定する
 	typedef struct tagLOGFONT {
@@ -1872,3 +2024,88 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 
 
 
+// 印刷用フォントを作成する
+void CPrintPreview::CtrateFonts( HDC hdc )
+{
+	LOGFONT	lf;
+	TEXTMETRIC	tm;
+
+	// 印刷用半角フォントを作成 -> m_hFontHan
+	m_lfPreviewHan.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
+	m_lfPreviewHan.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
+	_tcscpy( m_lfPreviewHan.lfFaceName, m_pPrintSetting->m_szPrintFontFaceHan );
+	m_hFontHan	= CreateFontIndirect( &m_lfPreviewHan );
+	if (m_pPrintSetting->m_bColorPrint) {
+		lf = m_lfPreviewHan;	lf.lfWeight = FW_BOLD;
+		m_hFontHan_b	= CreateFontIndirect( &lf );		// 太字
+		lf = m_lfPreviewHan;							lf.lfUnderline = true;
+		m_hFontHan_u	= CreateFontIndirect( &lf );		// 下線
+		lf = m_lfPreviewHan;	lf.lfWeight = FW_BOLD;	lf.lfUnderline = true;
+		m_hFontHan_bu	= CreateFontIndirect( &lf );		// 太字、下線
+	}
+#ifdef _DEEBUG
+	else {
+		m_hFontHan_b  = m_hFontHan_u  = m_hFontHan_bu = NULL;
+	}
+#endif
+	// 半角文字のアセント（文字高）を取得
+	::SelectObject( hdc, m_hFontHan );
+	::GetTextMetrics( hdc, &tm );
+	m_nAscentHan = tm.tmAscent;
+
+	// 印刷用全角フォントを作成 -> m_hFontZen
+	if (auto_strcmp(m_pPrintSetting->m_szPrintFontFaceHan, m_pPrintSetting->m_szPrintFontFaceZen)) {
+		m_lfPreviewZen.lfHeight	= m_pPrintSetting->m_nPrintFontHeight;
+		m_lfPreviewZen.lfWidth	= m_pPrintSetting->m_nPrintFontWidth;
+		_tcscpy( m_lfPreviewZen.lfFaceName, m_pPrintSetting->m_szPrintFontFaceZen );
+		m_hFontZen	= CreateFontIndirect( &m_lfPreviewZen );
+		if (m_pPrintSetting->m_bColorPrint) {
+			lf = m_lfPreviewZen;	lf.lfWeight = FW_BOLD;
+			m_hFontZen_b	= CreateFontIndirect( &lf );		// 太字
+			lf = m_lfPreviewZen;							lf.lfUnderline = true;
+			m_hFontZen_u	= CreateFontIndirect( &lf );		// 下線
+			lf = m_lfPreviewZen;	lf.lfWeight = FW_BOLD;	lf.lfUnderline = true;
+			m_hFontZen_bu	= CreateFontIndirect( &lf );		// 太字、下線
+		}
+#ifdef _DEEBUG
+		else {
+			m_hFontHan_b  = m_hFontHan_u  = m_hFontHan_bu = NULL;
+		}
+#endif
+		// 全角文字のアセント（文字高）を取得
+		::SelectObject( hdc, m_hFontZen );
+		::GetTextMetrics( hdc, &tm );
+		m_nAscentZen = tm.tmAscent;
+	}
+	else {
+		// 半角全角同じフォント
+		m_hFontZen		= m_hFontHan;
+		m_hFontZen_b	= m_hFontHan_b;		// 太字
+		m_hFontZen_u	= m_hFontHan_u;		// 下線
+		m_hFontZen_bu	= m_hFontHan_bu;	// 太字、下線
+		m_nAscentZen	= m_nAscentHan;		// 全角文字のアセント
+	}
+}
+
+// 印刷用フォントを破棄する
+void CPrintPreview::DestructFonts()
+{
+	if (m_hFontZen != m_hFontHan) {
+		::DeleteObject( m_hFontZen );
+		if (m_hFontZen_b) {
+			::DeleteObject( m_hFontZen_b );
+			::DeleteObject( m_hFontZen_u );
+			::DeleteObject( m_hFontZen_bu );
+		}
+	}
+	::DeleteObject( m_hFontHan );
+	if (m_hFontHan_b) {
+		::DeleteObject( m_hFontHan_b );
+		::DeleteObject( m_hFontHan_u );
+		::DeleteObject( m_hFontHan_bu );
+	}
+#ifdef _DEEBUG
+	m_hFontHan = m_hFontHan_b = m_hFontHan_u = m_hFontHan_bu =
+	m_hFontZen = m_hFontZen_b = m_hFontZen_u = m_hFontZen_bu = NULL;
+#endif
+}

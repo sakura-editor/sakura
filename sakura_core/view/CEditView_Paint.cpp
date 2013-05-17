@@ -1,3 +1,27 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 #include "StdAfx.h"
 #include <vector>
 #include <limits.h>
@@ -320,6 +344,7 @@ EColorIndexType CEditView::GetColorIndex(
 
 		//CColorStrategyPool初期化
 		CColorStrategyPool* pool = CColorStrategyPool::getInstance();
+		pool->SetCurrentView(this);
 		pool->NotifyOnStartScanLogic();
 
 
@@ -340,13 +365,6 @@ EColorIndexType CEditView::GetColorIndex(
 		//};
 		//pInfo->pDispPos->SetLayoutLineRef(CLayoutInt(TmpVisitor::CalcLayoutIndex(pcLayout)));
 	}
-
-	//@@@ 2001.11.17 add start MIK
-	if( TypeDataPtr->m_bUseRegexKeyword )
-	{
-		m_cRegexKeyword->RegexKeyLineStart();
-	}
-	//@@@ 2001.11.17 add end MIK
 
 	//文字列参照
 	const CDocLine* pcDocLine = pcLayout->GetDocLineRef();
@@ -832,6 +850,7 @@ bool CEditView::DrawLogicLine(
 
 	//CColorStrategyPool初期化
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
+	pool->SetCurrentView(this);
 	pool->NotifyOnStartScanLogic();
 
 	//DispPosを保存しておく
@@ -865,11 +884,6 @@ bool CEditView::DrawLogicLine(
 
 	//サポート
 	CTypeSupport cTextType(this,COLORIDX_TEXT);
-
-	//正規表現キーワードを使うか	//@@@ 2001.11.17 add MIK
-	if( TypeDataPtr->m_bUseRegexKeyword ){
-		m_cRegexKeyword->RegexKeyLineStart();
-	}
 
 	for (;;) {
 		//対象行が描画範囲外だったら終了

@@ -13,8 +13,25 @@
 	Copyright (C) 2003, かろと
 	Copyright (C) 2006, ryoji
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 #include "StdAfx.h"
 #include "dlg/CDlgPrintSetting.h"
@@ -56,6 +73,7 @@ const DWORD p_helpids[] = {	//12500
 	IDC_CHECK_PS_KINSOKUTAIL,		HIDC_PS_CHECK_KINSOKUTAIL,	//行末禁則	//@@@ 2002.04.09 MIK
 	IDC_CHECK_PS_KINSOKURET,		HIDC_PS_CHECK_KINSOKURET,	//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
 	IDC_CHECK_PS_KINSOKUKUTO,		HIDC_PS_CHECK_KINSOKUKUTO,	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	IDC_CHECK_COLORPRINT,			HIDC_PS_CHECK_COLORPRINT,	//カラー印刷			// 2013/4/26 Uchi
 	IDC_EDIT_HEAD1,					HIDC_PS_EDIT_HEAD1,			//ヘッダー(左寄せ)		// 2006.10.11 ryoji
 	IDC_EDIT_HEAD2,					HIDC_PS_EDIT_HEAD2,			//ヘッダー(中央寄せ)	// 2006.10.11 ryoji
 	IDC_EDIT_HEAD3,					HIDC_PS_EDIT_HEAD3,			//ヘッダー(右寄せ)		// 2006.10.11 ryoji
@@ -483,6 +501,10 @@ int CDlgPrintSetting::GetData( void )
 	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PS_KINSOKUKUTO );
 
+	// カラー印刷
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_bColorPrint =
+		( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_COLORPRINT ) );
+
 	//@@@ 2002.2.4 YAZAKI
 	/* ヘッダー */
 	::DlgItem_GetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[0], HEADER_MAX );	//	100文字で制限しないと。。。
@@ -571,6 +593,10 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PS_KINSOKURET, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuRet );
 	// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_PS_KINSOKUKUTO, m_PrintSettingArr[m_nCurrentPrintSetting].m_bPrintKinsokuKuto );
+
+	// カラー印刷
+	::CheckDlgButton( GetHwnd(), IDC_CHECK_COLORPRINT, 
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_bColorPrint ? BST_CHECKED : BST_UNCHECKED);
 
 	/* ヘッダー */
 	::DlgItem_SetText( GetHwnd(), IDC_EDIT_HEAD1, m_PrintSettingArr[m_nCurrentPrintSetting].m_szHeaderForm[POS_LEFT] );	//	100文字で制限しないと。。。
