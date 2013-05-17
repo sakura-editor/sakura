@@ -257,9 +257,13 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 void CDlgTypeList::SetData( void )
 {
 	int		nIdx;
-	HWND	hwndList;
 	TCHAR	szText[64 + MAX_TYPES_EXTS + 10];
-	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	int		nExtent = 0;
+	HWND	hwndList = ::GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
+	HDC		hDC = ::GetDC( hwndList );
+	HFONT	hFont = (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
+	HFONT	hFontOld = (HFONT)::SelectObject(hDC, hFont);
+
 	List_ResetContent( hwndList );	/* ƒŠƒXƒg‚ð‹ó‚É‚·‚é */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
 		STypeConfig& types = CDocTypeManager().GetTypeSetting(CTypeConfig(nIdx));
@@ -277,7 +281,16 @@ void CDlgTypeList::SetData( void )
 		m_bRegistryChecked[ nIdx ] = FALSE;
 		m_bExtRMenu[ nIdx ] = FALSE;
 		m_bExtDblClick[ nIdx ] = FALSE;
+
+		SIZE sizeExtent;
+		if( ::GetTextExtentPoint32( hDC, szText, _tcslen(szText), &sizeExtent) && sizeExtent.cx > nExtent ){
+			nExtent = sizeExtent.cx;
+		}
 	}
+
+	::SelectObject(hDC, hFontOld);
+	::ReleaseDC( hwndList, hDC );
+	List_SetHorizontalExtent( hwndList, nExtent + 8 );
 	List_SetCurSel( hwndList, m_nSettingType.GetIndex() );
 	::SendMessageAny( GetHwnd(), WM_COMMAND, MAKEWPARAM(IDC_LIST_TYPES, LBN_SELCHANGE), 0 );
 	return;
