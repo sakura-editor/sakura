@@ -35,6 +35,7 @@ public:
 	*/
 	int DoModal( HINSTANCE, HWND, int*, PRINTSETTING* );	/* モーダルダイアログの表示 */
 
+private:
 	int				m_nCurrentPrintSetting;
 	PRINTSETTING	m_PrintSettingArr[MAX_PRINTSETTINGARR];
 
@@ -54,7 +55,7 @@ protected:
 
 	void OnChangeSettingType( BOOL );	/* 設定のタイプが変わった */
 	void OnSpin( int , BOOL );	/* スピンコントロールの処理 */
-	int DataCheckAndCrrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
+	int DataCheckAndCorrect( int , int );	/* 入力値(数値)のエラーチェックをして正しい値を返す */
 	BOOL OnTimer( WPARAM );	/* タイマー処理 */
 
 };
