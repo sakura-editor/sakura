@@ -1,6 +1,0 @@
-#module /// module
-#modinit /// modinit
-#modfunc /// modfunc
-#deffunc /// func
-#global /// global
-* /// label
