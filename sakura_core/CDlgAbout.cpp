@@ -216,7 +216,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	cmemMsg.AppendString( _T("      ") );
 	const TCHAR* ptszPatchInfo = SKR_PATCH_INFO;
 	int patchInfoLen = _tcslen(ptszPatchInfo);
-	cmemMsg.Append( ptszPatchInfo, t_min(80, patchInfoLen) );
+	cmemMsg.AppendString( ptszPatchInfo, t_min(80, patchInfoLen) );
 #endif
 	cmemMsg.AppendString( _T("\r\n"));
 
