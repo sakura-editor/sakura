@@ -89,7 +89,7 @@ struct PRINTSETTING {
 	bool			m_bPrintKinsokuTail;				//!< 行末禁則する		//@@@ 2002.04.09 MIK
 	bool			m_bPrintKinsokuRet;					//!< 改行文字のぶら下げ	//@@@ 2002.04.13 MIK
 	bool			m_bPrintKinsokuKuto;				//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
-	BOOL			m_bPrintLineNumber;					/*!< 行番号を印刷する */
+	bool			m_bPrintLineNumber;					/*!< 行番号を印刷する */
 
 
 	MYDEVMODE		m_mdmDevMode;						/*!< プリンタ設定 DEVMODE用 */
