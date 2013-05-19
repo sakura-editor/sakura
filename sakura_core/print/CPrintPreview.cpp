@@ -201,7 +201,7 @@ LRESULT CPrintPreview::OnPaint(
 	//                         フォント                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// フォント作成
-	CtrateFonts( hdc );
+	CreateFonts( hdc );
 	// 印刷用半角フォントに設定し、以前のフォントを保持
 	HFONT	hFontOld = (HFONT)::SelectObject( hdc, m_hFontHan );
 
@@ -276,12 +276,14 @@ LRESULT CPrintPreview::OnPaint(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                          後始末                             //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+	//	印刷前のフォントに戻す
+	::SelectObject( hdc, hFontOld );
 
 	// マッピングモードの変更
 	::SetMapMode( hdc, nMapModeOld );
 
-	// 印刷フォント破棄
-	DestructFonts();
+	//	印刷用フォント破棄
+	DestroyFonts();
 
 	// 物理座標原点をもとに戻す
 	::SetViewportOrgEx( hdc, poViewPortOld.x, poViewPortOld.y, NULL );
@@ -1037,7 +1039,7 @@ void CPrintPreview::OnPrint( void )
 	}
 
 	// 印刷用半角フォントと、印刷用全角フォントを作成
-	CtrateFonts( hdc );
+	CreateFonts( hdc );
 	// 現在のフォントを印刷用半角フォントに設定＆以前のフォントを保持
 	hFontOld = (HFONT)::SelectObject( hdc, m_hFontHan );
 
@@ -1105,7 +1107,7 @@ void CPrintPreview::OnPrint( void )
 	m_cPrint.PrintClose( hdc );
 
 	//	印刷用フォント破棄
-	DestructFonts();
+	DestroyFonts();
 
 	::EnableWindow( m_pParentWnd->GetHwnd(), TRUE );
 	cDlgPrinting.CloseDialog( 0 );
@@ -2025,7 +2027,7 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 
 
 // 印刷用フォントを作成する
-void CPrintPreview::CtrateFonts( HDC hdc )
+void CPrintPreview::CreateFonts( HDC hdc )
 {
 	LOGFONT	lf;
 	TEXTMETRIC	tm;
@@ -2088,7 +2090,7 @@ void CPrintPreview::CtrateFonts( HDC hdc )
 }
 
 // 印刷用フォントを破棄する
-void CPrintPreview::DestructFonts()
+void CPrintPreview::DestroyFonts()
 {
 	if (m_hFontZen != m_hFontHan) {
 		::DeleteObject( m_hFontZen );

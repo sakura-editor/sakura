@@ -149,9 +149,9 @@ protected:
 	);
 
 	// 印刷用フォントを作成する
-	void CtrateFonts(HDC hdc);
+	void CreateFonts(HDC hdc);
 	// 印刷用フォントを破棄する
-	void DestructFonts();
+	void DestroyFonts();
 
 public:
 	//	フォント列挙
