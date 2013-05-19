@@ -108,7 +108,8 @@ void CDlgExec::SetData( void )
 	hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand );
 	Combo_ResetContent( hwndCombo );
 	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
-	for( i = 0; i < m_pShareData->m_sHistory.m_aCommands.size(); ++i ){
+	int nSize = m_pShareData->m_sHistory.m_aCommands.size();
+	for( i = 0; i < nSize; ++i ){
 		Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
 	}
 	Combo_SetCurSel( hwndCombo, 0 );

@@ -144,6 +144,7 @@ UINT_PTR CALLBACK OFNHookProc(
 	static HWND				hwndCheckBOM;	//	Jul. 26, 2003 ryoji BOMチェックボックス
 	static CDlgOpenFile*	pcDlgOpenFile;
 	int						i;
+	int						nSize;
 	OFNOTIFY*				pofn;
 	int						idCtrl;
 	LRESULT					lRes;
@@ -291,13 +292,15 @@ UINT_PTR CALLBACK OFNHookProc(
 
 			/* 最近開いたファイル コンボボックス初期値設定 */
 			//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
-			for( i = 0; i < (int)m_vMRU.size(); i++ ){
+			nSize = (int)m_vMRU.size();
+			for( i = 0; i < nSize; i++ ){
 				Combo_AddString( hwndComboMRU, m_vMRU[i] );
 			}
 
 			/* 最近開いたフォルダ コンボボックス初期値設定 */
 			//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
-			for( i = 0; i < (int)m_vOPENFOLDER.size(); i++ ){
+			nSize = (int)m_vOPENFOLDER.size();
+			for( i = 0; i < nSize; i++ ){
 				Combo_AddString( hwndComboOPENFOLDER, m_vOPENFOLDER[i] );
 			}
 		}

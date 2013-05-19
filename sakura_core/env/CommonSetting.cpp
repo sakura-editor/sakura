@@ -65,7 +65,8 @@ struct CommonValueInfo{
 vector<CommonValueInfo> g_commonvalues;
 void CommonValue_AllSave()
 {
-	for(int i=0;i<(int)g_commonvalues.size();i++){
+	int nSize = (int)g_commonvalues.size();
+	for(int i=0;i<nSize;i++){
 		g_commonvalues[i].Save();
 	}
 }

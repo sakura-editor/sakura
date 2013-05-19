@@ -32,10 +32,11 @@ ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 		if( !bDlgResult ){
 			return CALLBACK_INTERRUPT; //キャンセルされた場合は中断
 		}
-		if( 0 < files.size() ){
+		size_t nSize = files.size();
+		if( 0 < nSize ){
 			sLoadInfo.cFilePath = files[0].c_str();
 			// 他のファイルは新規ウィンドウ
-			for( size_t i = 1; i < files.size(); i++ ){
+			for( size_t i = 1; i < nSize; i++ ){
 				SLoadInfo sFilesLoadInfo = sLoadInfo;
 				sFilesLoadInfo.cFilePath = files[i].c_str();
 				CControlTray::OpenNewEditor(

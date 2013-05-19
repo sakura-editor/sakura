@@ -686,7 +686,8 @@ LRESULT CControlTray::DispatchEvent(
 						}
 						
 						// 新たな編集ウィンドウを起動
-						for( size_t f = 0; f < files.size(); f++ ){
+						size_t nSize = files.size();
+						for( size_t f = 0; f < nSize; f++ ){
 							sLoadInfo.cFilePath = files[f].c_str();
 							CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
 								NULL, true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );
@@ -781,7 +782,8 @@ LRESULT CControlTray::DispatchEvent(
 						}
 
 						// 新たな編集ウィンドウを起動
-						for( size_t f = 0; f < files.size(); f++ ){
+						size_t nSize = files.size();
+						for( size_t f = 0; f < nSize; f++ ){
 							sLoadInfo.cFilePath = files[f].c_str();
 							CControlTray::OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo,
 								NULL, true, NULL, m_pShareData->m_Common.m_sTabBar.m_bNewWindow? true : false );

@@ -411,7 +411,8 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 		Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
-		for( int i = 0; i < (int)m_SIndentArr.size(); ++i ){
+		int nSize = (int)m_SIndentArr.size();
+		for( int i = 0; i < nSize; ++i ){
 			Combo_InsertString( hwndCombo, i, m_SIndentArr[i].pszName );
 			if( m_SIndentArr[i].nMethod == m_Types.m_eSmartIndent ){	/* スマートインデント種別 */
 				nSelPos = i;
@@ -445,7 +446,8 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
 		Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
-		for( int i = 0; i < (int)m_OlmArr.size(); ++i ){
+		int nSize = (int)m_OlmArr.size();
+		for( int i = 0; i < nSize; ++i ){
 			Combo_InsertString( hwndCombo, i, m_OlmArr[i].pszName );
 			if( m_OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
 				nSelPos = i;

@@ -99,7 +99,8 @@ void CGraphics::ClearClipping()
 		::SelectClipRgn(m_hdc,m_vClippingRgns[0]);
 	}
 	//領域をすべて削除
-	for(int i=0;i<(int)m_vClippingRgns.size();i++){
+	int nSize = (int)m_vClippingRgns.size();
+	for(int i=0;i<nSize;i++){
 		::DeleteObject(m_vClippingRgns[i]);
 	}
 	m_vClippingRgns.clear();
@@ -271,7 +272,8 @@ void CGraphics::ClearPen()
 		SelectObject(m_hdc,m_hpnOrg);
 		m_hpnOrg = NULL;
 	}
-	for(int i=0;i<(int)m_vPens.size();i++){
+	int nSize = (int)m_vPens.size();
+	for(int i=0;i<nSize;i++){
 		DeleteObject(m_vPens[i]);
 	}
 	m_vPens.clear();
@@ -337,7 +339,8 @@ void CGraphics::ClearBrush()
 		::SelectObject(m_hdc,m_vBrushes[0]);
 	}
 	//ブラシをすべて削除 (0番要素以外)
-	for(int i=1;i<(int)m_vBrushes.size();i++){
+	int nSize = (int)m_vBrushes.size();
+	for(int i=1;i<nSize;i++){
 		::DeleteObject(m_vBrushes[i]);
 	}
 	m_vBrushes.resize(t_min(1,(int)m_vBrushes.size()));

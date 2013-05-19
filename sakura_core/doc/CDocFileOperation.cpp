@@ -538,7 +538,8 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 		}
 		sLoadInfo.cFilePath = files[0].c_str();
 		// 他のファイルは新規ウィンドウ
-		for( size_t i = 1; i < files.size(); i++ ){
+		size_t nSize = files.size();
+		for( size_t i = 1; i < nSize; i++ ){
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(

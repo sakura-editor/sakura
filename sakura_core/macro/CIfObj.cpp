@@ -322,7 +322,8 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
 		//大量にメッセージが出るので注意。
 		//DEBUG_TRACE( _T("GetIDsOfNames: %ls\n"), rgszNames[i] );
 #endif
-		for(unsigned j = 0; j < m_Methods.size(); ++j)
+		size_t nSize = m_Methods.size();
+		for(size_t j = 0; j < nSize; ++j)
 		{
 			//	Nov. 10, 2003 FILE Win9Xでは、[lstrcmpiW]が無効のため、[_wcsicmp]に修正
 			if(_wcsicmp(rgszNames[i], m_Methods[j].Name) == 0)

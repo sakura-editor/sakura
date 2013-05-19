@@ -225,7 +225,8 @@ void CPropTypesSupport::SetData( HWND hwndDlg )
 		std::vector<SHokanMethod>* pMedothList = GetHokanMethodList();
 		ApiWrap::Combo_AddString( hCombo, L"‚È‚µ" );
 		Combo_SetCurSel( hCombo, 0 );
-		for( size_t i = 0; i < pMedothList->size(); i++ ){
+		size_t nSize = pMedothList->size();
+		for( size_t i = 0; i < nSize; i++ ){
 			ApiWrap::Combo_AddString( hCombo, (*pMedothList)[i].name.c_str() );
 			if( m_Types.m_nHokanType == (*pMedothList)[i].nMethod ){
 				Combo_SetCurSel( hCombo, i + 1 );
