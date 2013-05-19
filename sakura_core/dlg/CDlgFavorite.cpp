@@ -852,7 +852,8 @@ int CDlgFavorite::DeleteSelected()
 			}
 			std::sort(selRecIndexs.rbegin(),selRecIndexs.rend());
 			// ‘å‚«‚¢‚Ù‚¤‚©‚çíœ‚µ‚È‚¢‚ÆACRecent‘¤‚Ìindex‚ª‚¸‚ê‚é
-			for( size_t n = 0; n < selRecIndexs.size(); n++ )
+			size_t nSize = selRecIndexs.size();
+			for( size_t n = 0; n < nSize; n++ )
 			{
 				pRecent->DeleteItem(selRecIndexs[n]);
 				++nDelItemCount;

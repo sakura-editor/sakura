@@ -87,7 +87,8 @@ INT_PTR CDlgReplace::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
 				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
 				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
-					for (int i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i) {
+					int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
+					for (int i = 0; i < nSize; ++i) {
 						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 					}
 				}
@@ -97,7 +98,8 @@ INT_PTR CDlgReplace::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM 
 			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
 				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT2 );
 				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
-					for (int i = 0; i < m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size(); ++i) {
+					int nSize = m_pShareData->m_sSearchKeywords.m_aReplaceKeys.size();
+					for (int i = 0; i < nSize; ++i) {
 						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aReplaceKeys[i] );
 					}
 				}

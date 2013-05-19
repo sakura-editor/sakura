@@ -66,7 +66,8 @@ void CEditView_Paint::Call_OnPaint(
 	if(nPaintFlag & PAINT_BODY)rcs.push_back(rcBody);
 	if(rcs.size()==0)return;
 	CMyRect rc=rcs[0];
-	for(int i=1;i<(int)rcs.size();i++)
+	int nSize = (int)rcs.size();
+	for(int i=1;i<nSize;i++)
 		rc=MergeRect(rc,rcs[i]);
 
 	//•`‰æ

@@ -234,7 +234,8 @@ const wchar_t* CSearchAgent::SearchStringWord(
 	CLogicInt nNextWordFrom2;
 	CLogicInt nNextWordTo2;
 	while( CWordParse::WhereCurrentWord_2( pLine, CLogicInt(nLineLen), nNextWordFrom, &nNextWordFrom2, &nNextWordTo2, NULL, NULL ) ){
-		for( unsigned iSW = 0; iSW < searchWords.size(); ++iSW ) {
+		size_t nSize = searchWords.size();
+		for( size_t iSW = 0; iSW < nSize; ++iSW ) {
 			if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
 				/* 1==‘å•¶š¬•¶š‚Ì‹æ•Ê */
 				if( (!bLoHiCase && 0 == auto_memicmp( &(pLine[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
@@ -516,7 +517,8 @@ int CSearchAgent::SearchWord(
 				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE ) ){
 					nNextWordFrom = nWork;
 					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , NULL, NULL ) ){
-						for( unsigned iSW = 0; iSW < searchWords.size(); ++iSW ) {
+						size_t nSize = searchWords.size();
+						for( size_t iSW = 0; iSW < nSize; ++iSW ) {
 							if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
 								const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory•ÏX
 								/* 1==‘å•¶š¬•¶š‚Ì‹æ•Ê */

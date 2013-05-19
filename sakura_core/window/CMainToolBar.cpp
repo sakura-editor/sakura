@@ -521,7 +521,8 @@ void CMainToolBar::AcceptSharedSearchKey()
 	{
 		int	i;
 		Combo_ResetContent( m_hwndSearchBox );
-		for( i = 0; i < GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size(); i++ )
+		int nSize = GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size();
+		for( i = 0; i < nSize; i++ )
 		{
 			Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
 		}

@@ -92,7 +92,8 @@ INT_PTR CDlgGrep::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPa
 			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
 				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_TEXT );
 				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
-					for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aSearchKeys.size(); ++i ){
+					int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
+					for( int i = 0; i < nSize; ++i ){
 						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
 					}
 				}
@@ -102,7 +103,8 @@ INT_PTR CDlgGrep::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPa
 			if ( HIWORD(wParam) == CBN_DROPDOWN ) {
 				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FILE );
 				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
-					for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size(); ++i ){
+					int nSize = m_pShareData->m_sSearchKeywords.m_aGrepFiles.size();
+					for( int i = 0; i < nSize; ++i ){
 						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFiles[i] );
 					}
 				}
@@ -113,7 +115,8 @@ INT_PTR CDlgGrep::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lPa
 				HWND hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
 				if ( ::SendMessage(hwndCombo, CB_GETCOUNT, 0L, 0L) == 0) {
 					hwndCombo = ::GetDlgItem( GetHwnd(), IDC_COMBO_FOLDER );
-					for( int i = 0; i < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size(); ++i ){
+					int nSize = m_pShareData->m_sSearchKeywords.m_aGrepFolders.size();
+					for( int i = 0; i < nSize; ++i ){
 						Combo_AddString( hwndCombo, m_pShareData->m_sSearchKeywords.m_aGrepFolders[i] );
 					}
 				}

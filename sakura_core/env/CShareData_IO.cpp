@@ -1983,9 +1983,10 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
 	cProfile.IOProfileData( pszSecName, LTEXT("_TagJumpKeyword_Counts"), pShare->m_sTagJump.m_aTagJumpKeywords._GetSizeRef() );
 	pShare->m_sHistory.m_aCommands.SetSizeLimit();
-	for( i = 0; i < pShare->m_sTagJump.m_aTagJumpKeywords.size(); ++i ){
+	int nSize = pShare->m_sTagJump.m_aTagJumpKeywords.size();
+	for( i = 0; i < nSize; ++i ){
 		auto_sprintf( szKeyName, LTEXT("TagJumpKeyword[%02d]"), i );
-		if( i >= pShare->m_sTagJump.m_aTagJumpKeywords.size() ){
+		if( i >= nSize ){
 			wcscpy( pShare->m_sTagJump.m_aTagJumpKeywords[i], LTEXT("") );
 		}
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sTagJump.m_aTagJumpKeywords[i] );
