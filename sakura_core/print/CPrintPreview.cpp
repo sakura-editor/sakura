@@ -257,20 +257,26 @@ LRESULT CPrintPreview::OnPaint(
 	//                         テキスト                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+	int nHeaderHeight = CPrint::CalcHeaderHeight( m_pPrintSetting );
+
 	// ヘッダ
-	DrawHeader( hdc, cRect );
+	if( nHeaderHeight ){
+		DrawHeader( hdc, cRect );
+	}
 
 	// 印刷/印刷プレビュー ページテキストの描画
 	DrawPageText(
 		hdc,
 		m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX,
-		m_nPreview_ViewMarginTop  + m_pPrintSetting->m_nPrintMarginTY + 2 * ( m_pPrintSetting->m_nPrintFontHeight + (m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100) ),
+		m_nPreview_ViewMarginTop  + m_pPrintSetting->m_nPrintMarginTY + nHeaderHeight*2,
 		m_nCurPageNum,
 		NULL
 	);
 
 	// フッタ
-	DrawFooter( hdc, cRect );
+	if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
+		DrawFooter( hdc, cRect );
+	}
 
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1077,20 +1083,26 @@ void CPrintPreview::OnPrint( void )
 		::SelectObject( hdc, m_hFontHan );
 		//	To Here Jun. 26, 2003 かろと / おきた
 
-		/* ヘッダ印刷 */
-		DrawHeader( hdc, cRect );
+		int nHeaderHeight = CPrint::CalcHeaderHeight( m_pPrintSetting );
 
-		/* 印刷/印刷プレビュー ページテキストの描画 */
+		// ヘッダ印刷
+		if( nHeaderHeight ){
+			DrawHeader( hdc, cRect );
+		}
+
+		// 印刷/印刷プレビュー ページテキストの描画
 		DrawPageText(
 			hdc,
 			m_pPrintSetting->m_nPrintMarginLX - m_nPreview_PaperOffsetLeft ,
-			m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop+ 2 * ( m_pPrintSetting->m_nPrintFontHeight + (m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100) ),
+			m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop + nHeaderHeight*2,
 			nFrom + i,
 			&cDlgPrinting
 		);
 
-		/* フッタ印刷 */
-		DrawFooter( hdc, cRect );
+		// フッタ印刷
+		if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
+			DrawFooter( hdc, cRect );
+		}
 
 		/* 印刷 ページ終了 */
 		m_cPrint.PrintEndPage( hdc );

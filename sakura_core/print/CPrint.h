@@ -145,6 +145,9 @@ public:
 	static int CalculatePrintableColumns( PRINTSETTING*, int width, int nLineNumberColmns );
 	static int CalculatePrintableLines( PRINTSETTING*, int height );
 
+	/* ヘッダ・フッタの高さ計算 */
+	static int CalcHeaderHeight( PRINTSETTING* );
+	static int CalcFooterHeight( PRINTSETTING* );
 public:
 	/*
 	||  Constructors
