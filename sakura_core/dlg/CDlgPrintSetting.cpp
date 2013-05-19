@@ -330,6 +330,12 @@ BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 	//case IDC_EDIT_MARGINBY:
 	//case IDC_EDIT_MARGINLX:
 	//case IDC_EDIT_MARGINRX:
+	case IDC_EDIT_HEAD1:	// テキスト編集のたびにチェックすると遅いのでフォーカス移動時のみ 2013.5.12 aroka
+	case IDC_EDIT_HEAD2:
+	case IDC_EDIT_HEAD3:
+	case IDC_EDIT_FOOT1:
+	case IDC_EDIT_FOOT2:
+	case IDC_EDIT_FOOT3:
 		UpdatePrintableLineAndColumn();
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
 	}

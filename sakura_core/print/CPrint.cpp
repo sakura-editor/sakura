@@ -660,8 +660,37 @@ int CPrint::CalculatePrintableLines( PRINTSETTING *pPS, int nPaperAllHeight )
 	int nPrintSpaceHeight = ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 );
 
 	int nEnableLines =
-		( nPrintablePaperHeight + nPrintSpaceHeight ) /
-		( pPS->m_nPrintFontHeight + nPrintSpaceHeight ) - 4;	/* 印字可能行数/ページ */
+		( nPrintablePaperHeight - CalcHeaderHeight( pPS )*2 - CalcFooterHeight( pPS )*2 + nPrintSpaceHeight ) /
+		( pPS->m_nPrintFontHeight + nPrintSpaceHeight );	// 印字可能行数/ページ
 	if( nEnableLines < 0 ){ return 0; }
 	return nEnableLines;
 }
+
+
+int CPrint::CalcHeaderHeight( PRINTSETTING *pPS )
+{
+	if( pPS->m_szHeaderForm[0][0] == 0 
+	 && pPS->m_szHeaderForm[1][0] == 0 
+	 && pPS->m_szHeaderForm[2][0] == 0 )
+	{
+		return 0;
+	}else{
+		int nPrintSpaceHeight = ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 );
+		return (pPS->m_nPrintFontHeight + nPrintSpaceHeight );
+	}
+}
+
+
+int CPrint::CalcFooterHeight( PRINTSETTING *pPS )
+{
+	if( pPS->m_szFooterForm[0][0] == 0 
+	 && pPS->m_szFooterForm[1][0] == 0 
+	 && pPS->m_szFooterForm[2][0] == 0 )
+	{
+		return 0;
+	}else{
+		int nPrintSpaceHeight = ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 );
+		return (pPS->m_nPrintFontHeight + nPrintSpaceHeight );
+	}
+}
+
