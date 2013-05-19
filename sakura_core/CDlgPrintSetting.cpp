@@ -360,7 +360,7 @@ int CDlgPrintSetting::GetData( void )
 	hwndCtrl = ::GetDlgItem( m_hWnd, IDC_COMBO_PAPER );
 	nIdx1 = ::SendMessage( hwndCtrl, CB_GETCURSEL, 0, 0 );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintPaperSize =
-		::SendMessage( hwndCtrl, CB_GETITEMDATA, nIdx1, 0 );
+		(short)::SendMessage( hwndCtrl, CB_GETITEMDATA, nIdx1, 0 );
 
 	// 用紙の向き
 	// 2006.08.14 Moca 用紙方向コンボボックスを廃止し、ボタンを有効化
@@ -683,8 +683,8 @@ BOOL CDlgPrintSetting::OnTimer( WPARAM wParam )
 	int				nEnableColmns;		/* 行あたりの文字数 */
 	int				nEnableLines;		/* 縦方向の行数 */
 	MYDEVMODE		dmDummy;			// 2003.05.18 かろと 型変更
-	int				nPaperAllWidth;		/* 用紙幅 */
-	int				nPaperAllHeight;	/* 用紙高さ */
+	short			nPaperAllWidth;		/* 用紙幅 */
+	short			nPaperAllHeight;	/* 用紙高さ */
 	PRINTSETTING*	pPS;
 	nTimer = (int)wParam;
 

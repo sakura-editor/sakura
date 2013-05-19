@@ -778,7 +778,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_bKinsokuRet = m_pPrintSetting->m_bPrintKinsokuRet,	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	ref.m_bKinsokuKuto = m_pPrintSetting->m_bPrintKinsokuKuto,	/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
 	m_pLayoutMgr_Print->SetLayoutInfo( true, NULL, ref );
-	m_nAllPageNum = m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu );		/* 全ページ数 */
+	m_nAllPageNum = (WORD)(m_pLayoutMgr_Print->GetLineCount() / ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ));		/* 全ページ数 */
 	if( 0 < m_pLayoutMgr_Print->GetLineCount() % ( m_bPreview_EnableLines * m_pPrintSetting->m_nPrintDansuu ) ){
 		m_nAllPageNum++;
 	}
@@ -843,7 +843,7 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 	if( 0 > nPage ){				/* 現在のページ */
 		nPage = 0;
 	}
-	m_nCurPageNum = nPage;
+	m_nCurPageNum = (short)nPage;
 
 	//	2008.01.29 nasukoji	印刷枚数が2枚の時操作できなくなることへの対処（SetFocusを移動）
 	//	2008.02.01 genta : ボタンのフォーカスが元の動作になるようにするため，
@@ -992,8 +992,8 @@ void CPrintPreview::OnPrint( void )
 		return;
 	}
 	// 印刷開始ページと、印刷ページ数を確認
-	int			nFrom;
-	int			nNum;
+	WORD		nFrom;
+	WORD		nNum;
 	if( 0 != (pd.Flags & PD_PAGENUMS) ){	// 2003.05.02 かろと
 		nFrom = pd.nFromPage - 1;
 		nNum  = pd.nToPage - nFrom;
@@ -1035,9 +1035,9 @@ void CPrintPreview::OnPrint( void )
 	cRect.bottom = nDirectY * ( m_nPreview_PaperAllHeight - (m_pPrintSetting->m_nPrintMarginBY + m_nPreview_PaperOffsetTop + 5) );
 
 	/* ヘッダ・フッタの$pを展開するために、m_nCurPageNumを保持 */
-	int nCurPageNumOld = m_nCurPageNum;
+	WORD	nCurPageNumOld = m_nCurPageNum;
 	for( i = 0; i < nNum; ++i ){
-		m_nCurPageNum = nFrom + i;
+		m_nCurPageNum = nFrom + (WORD)i;
 
 		/* 印刷過程を表示 */
 		//	Jun. 18, 2001 genta ページ番号表示の計算ミス修正

@@ -347,12 +347,12 @@ end_of_func:;
 /* 印刷/プレビューに必要な情報を取得 */
 BOOL CPrint::GetPrintMetrics(
 	MYDEVMODE*	pMYDEVMODE,
-	int*		pnPaperAllWidth,	/* 用紙幅 */
-	int*		pnPaperAllHeight,	/* 用紙高さ */
-	int*		pnPaperWidth,		/* 用紙印刷可能幅 */
-	int*		pnPaperHeight,		/* 用紙印刷可能高さ */
-	int*		pnPaperOffsetLeft,	/* 用紙余白左端 */
-	int*		pnPaperOffsetTop,	/* 用紙余白上端 */
+	short*		pnPaperAllWidth,	/* 用紙幅 */
+	short*		pnPaperAllHeight,	/* 用紙高さ */
+	short*		pnPaperWidth,		/* 用紙印刷可能幅 */
+	short*		pnPaperHeight,		/* 用紙印刷可能高さ */
+	short*		pnPaperOffsetLeft,	/* 用紙余白左端 */
+	short*		pnPaperOffsetTop,	/* 用紙余白上端 */
 	TCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 )
 {
@@ -364,22 +364,17 @@ BOOL CPrint::GetPrintMetrics(
 	if( !GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
 		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
-
-		bRet = TRUE;
 	}
 
 	// pMYDEVMODEを使って、hdcを取得
 	if ( NULL == (hdc = CreateDC( pMYDEVMODE, pszErrMsg )) ){
-		bRet = FALSE;
-		goto end_of_func;
+		return FALSE;
 	}
 
 	/* CreateDC実行によって得られた実際のプリンタの用紙の幅、高さを取得 */
 	if( !GetPaperSize( pnPaperAllWidth, pnPaperAllHeight, pMYDEVMODE ) ){
 		*pnPaperAllWidth = *pnPaperWidth + 2 * (*pnPaperOffsetLeft);
 		*pnPaperAllHeight = *pnPaperHeight + 2 * (*pnPaperOffsetTop);
-
-		bRet = TRUE;
 	}
 
 	/* マッピング モードの設定 */
@@ -389,23 +384,21 @@ BOOL CPrint::GetPrintMetrics(
 	POINT	po;
 	if( 0 < ::Escape( hdc, GETPRINTINGOFFSET, (int)NULL, NULL, (LPPOINT)&po ) ){
 		::DPtoLP( hdc, &po, 1 );
-		*pnPaperOffsetLeft = abs( po.x );	/* 用紙余白左端 */
-		*pnPaperOffsetTop = abs( po.y );	/* 用紙余白上端 */
+		*pnPaperOffsetLeft = (short)abs( po.x );	/* 用紙余白左端 */
+		*pnPaperOffsetTop  = (short)abs( po.y );	/* 用紙余白上端 */
 	}else{
 		*pnPaperOffsetLeft = 0;	/* 用紙余白左端 */
-		*pnPaperOffsetTop = 0;	/* 用紙余白上端 */
+		*pnPaperOffsetTop  = 0;	/* 用紙余白上端 */
 	}
 
 	/* 用紙の印刷可能な幅、高さ */
 	po.x = ::GetDeviceCaps( hdc, HORZRES );	/* 用紙印刷可能幅←物理ディスプレイの幅 (mm 単位) */
 	po.y = ::GetDeviceCaps( hdc, VERTRES );	/* 用紙印刷可能高さ←物理ディスプレイの高さ (mm 単位)  */
 	::DPtoLP( hdc, &po, 1 );
-	*pnPaperWidth = abs( po.x );
-	*pnPaperHeight = abs( po.y );
+	*pnPaperWidth  = (short)abs( po.x );
+	*pnPaperHeight = (short)abs( po.y );
 
 	::DeleteDC( hdc );
-
-end_of_func:;
 
 	return bRet;
 }
@@ -414,12 +407,12 @@ end_of_func:;
 
 /* 用紙の幅、高さ */
 BOOL CPrint::GetPaperSize(
-	int*		pnPaperAllWidth,
-	int*		pnPaperAllHeight,
+	short*		pnPaperAllWidth,
+	short*		pnPaperAllHeight,
 	MYDEVMODE*	pDEVMODE
 )
 {
-	int	nWork;
+	short	nWork;
 
 
 	if( pDEVMODE->dmFields &  DM_PAPERSIZE ){

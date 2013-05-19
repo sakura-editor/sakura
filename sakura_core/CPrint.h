@@ -53,8 +53,8 @@ struct	MYDEVMODE {
 //! 用紙情報
 struct PAPER_INFO {
 	int				m_nId;			//!< 用紙ID
-	int				m_nAllWidth;	//!< 幅 (0.1mm単位)
-	int				m_nAllHeight;	//!< 高さ (0.1mm単位)
+	short			m_nAllWidth;	//!< 幅 (0.1mm単位)
+	short			m_nAllHeight;	//!< 高さ (0.1mm単位)
 	const TCHAR*	m_pszName;		//!< 用紙名称
 };
 
@@ -82,8 +82,8 @@ struct PRINTSETTING {
 	int				m_nPrintMarginBY;					/*!< 印刷用紙マージン 下(mm単位) */
 	int				m_nPrintMarginLX;					/*!< 印刷用紙マージン 左(mm単位) */
 	int				m_nPrintMarginRX;					/*!< 印刷用紙マージン 右(mm単位) */
-	int				m_nPrintPaperOrientation;			/*!< 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
-	int				m_nPrintPaperSize;					/*!< 用紙サイズ */
+	short			m_nPrintPaperOrientation;			/*!< 用紙方向 DMORIENT_PORTRAIT (1) または DMORIENT_LANDSCAPE (2) */
+	short			m_nPrintPaperSize;					/*!< 用紙サイズ */
 	bool			m_bPrintWordWrap;					//!< 英文ワードラップする
 	bool			m_bPrintKinsokuHead;				//!< 行頭禁則する		//@@@ 2002.04.09 MIK
 	bool			m_bPrintKinsokuTail;				//!< 行末禁則する		//@@@ 2002.04.09 MIK
@@ -123,8 +123,8 @@ public:
 	static TCHAR* GetPaperName( int , TCHAR* );	/* 用紙の名前を取得 */
 	/* 用紙の幅、高さ */
 	static BOOL GetPaperSize(
-		int*		pnPaperAllWidth,
-		int*		pnPaperAllHeight,
+		short*		pnPaperAllWidth,
+		short*		pnPaperAllHeight,
 		MYDEVMODE*	pDEVMODE
 	);
 
@@ -143,12 +143,12 @@ public:
 	/* 印刷/プレビューに必要な情報を取得 */
 	BOOL GetPrintMetrics(
 		MYDEVMODE*	pMYDEVMODE,
-		int*		pnPaperAllWidth,	/* 用紙幅 */
-		int*		pnPaperAllHeight,	/* 用紙高さ */
-		int*		pnPaperWidth,		/* 用紙印刷可能幅 */
-		int*		pnPaperHeight,		/* 用紙印刷可能高さ */
-		int*		pnPaperOffsetLeft,	/* 用紙余白左端 */
-		int*		pnPaperOffsetTop,	/* 用紙余白上端 */
+		short*		pnPaperAllWidth,	/* 用紙幅 */
+		short*		pnPaperAllHeight,	/* 用紙高さ */
+		short*		pnPaperWidth,		/* 用紙印刷可能幅 */
+		short*		pnPaperHeight,		/* 用紙印刷可能高さ */
+		short*		pnPaperOffsetLeft,	/* 用紙余白左端 */
+		short*		pnPaperOffsetTop,	/* 用紙余白上端 */
 		TCHAR*		pszErrMsg			/* エラーメッセージ格納場所 */
 	);
 
