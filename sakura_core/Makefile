@@ -422,11 +422,12 @@ $(HEADERMAKE): $(HEADERMAKETOOLDIR)/HeaderMake.cpp
 .rc.o:
 	$(RCTOOL) $< sakura_grc.rc
 	$(RC) --language=0411 $(DEFINES) sakura_grc.rc -o $@
+	$(RM) sakura_grc.rc
 
 clean:
-	$(RM) $(exe) $(OBJS) $(RCTOOL) $(HEADERMAKE) sakura_grc.rc
+	$(RM) $(exe) $(OBJS) $(RCTOOL) $(HEADERMAKE) StdAfx.h.gch
 
-depend:
+depend: svnrev
 	$(CXX) -E -MM -w $(DEFINES) $(CXXFLAGS) *.cpp */*.cpp */*/*.cpp > depend.mak
 
 .SUFFIXES: .cpp .o .rc
