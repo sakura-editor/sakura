@@ -809,34 +809,35 @@
 
 //印刷設定
 #define HIDC_PS_BUTTON_EDITSETTINGNAME	12500	//設定名変更
-#define HIDOK_PS				12501	//OK
-#define HIDCANCEL_PS			12502	//キャンセル
-#define HIDC_PS_BUTTON_HELP		12503	//ヘルプ
-#define HIDC_PS_CHECK_WORDWRAP	12504	//ワードラップ
+#define HIDOK_PS					12501	//OK
+#define HIDCANCEL_PS				12502	//キャンセル
+#define HIDC_PS_BUTTON_HELP			12503	//ヘルプ
+#define HIDC_PS_CHECK_WORDWRAP		12504	//ワードラップ
 #define HIDC_PS_CHECK_LINENUMBER	12505	//行番号
-#define HIDC_PS_COMBO_FONT_HAN	12506	//半角フォント
-#define HIDC_PS_COMBO_FONT_ZEN	12507	//全角フォント
+#define HIDC_PS_COMBO_FONT_HAN		12506	//半角フォント
+#define HIDC_PS_COMBO_FONT_ZEN		12507	//全角フォント
 #define HIDC_PS_COMBO_SETTINGNAME	12508	//ページ設定
-#define HIDC_PS_COMBO_PAPER		12509	//用紙サイズ
+#define HIDC_PS_COMBO_PAPER			12509	//用紙サイズ
 #define HIDC_PS_STATIC_PAPERORIENT	12510	//用紙向き
-#define HIDC_PS_EDIT_FONTWIDTH	12511	//フォント幅
-#define HIDC_PS_EDIT_LINESPACE	12512	//行送り
-#define HIDC_PS_EDIT_DANSUU		12513	//段数
-#define HIDC_PS_EDIT_DANSPACE	12514	//段の隙間
-#define HIDC_PS_EDIT_MARGINTY	12515	//余白上
-#define HIDC_PS_EDIT_MARGINBY	12516	//余白下
-#define HIDC_PS_EDIT_MARGINLX	12517	//余白左
-#define HIDC_PS_EDIT_MARGINRX	12518	//余白右
+#define HIDC_PS_EDIT_FONTWIDTH		12511	//フォント幅
+#define HIDC_PS_EDIT_LINESPACE		12512	//行送り
+#define HIDC_PS_EDIT_DANSUU			12513	//段数
+#define HIDC_PS_EDIT_DANSPACE		12514	//段の隙間
+#define HIDC_PS_EDIT_MARGINTY		12515	//余白上
+#define HIDC_PS_EDIT_MARGINBY		12516	//余白下
+#define HIDC_PS_EDIT_MARGINLX		12517	//余白左
+#define HIDC_PS_EDIT_MARGINRX		12518	//余白右
 #define HIDC_PS_CHECK_KINSOKUHEAD	12519	//行頭禁則	//@@@ 2002.04.09 MIK
 #define HIDC_PS_CHECK_KINSOKUTAIL	12520	//行末禁則	//@@@ 2002.04.09 MIK
 #define HIDC_PS_CHECK_KINSOKURET	12521	//改行文字をぶら下げる	//@@@ 2002.04.14 MIK
 #define HIDC_PS_CHECK_KINSOKUKUTO	12522	//句読点をぶら下げる	//@@@ 2002.04.17 MIK
-#define HIDC_PS_EDIT_HEAD1		12523	//ヘッダー(左寄せ)		// 2006.10.11 ryoji
-#define HIDC_PS_EDIT_HEAD2		12524	//ヘッダー(中央寄せ)	// 2006.10.11 ryoji
-#define HIDC_PS_EDIT_HEAD3		12525	//ヘッダー(右寄せ)		// 2006.10.11 ryoji
-#define HIDC_PS_EDIT_FOOT1		12526	//フッター(左寄せ)		// 2006.10.11 ryoji
-#define HIDC_PS_EDIT_FOOT2		12527	//フッター(中央寄せ)	// 2006.10.11 ryoji
-#define HIDC_PS_EDIT_FOOT3		12528	//フッター(右寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_HEAD1			12523	//ヘッダー(左寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_HEAD2			12524	//ヘッダー(中央寄せ)	// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_HEAD3			12525	//ヘッダー(右寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_FOOT1			12526	//フッター(左寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_FOOT2			12527	//フッター(中央寄せ)	// 2006.10.11 ryoji
+#define HIDC_PS_EDIT_FOOT3			12528	//フッター(右寄せ)		// 2006.10.11 ryoji
+#define HIDC_PS_CHECK_COLORPRINT	12529	//カラー印刷			// 2013/4/26 Uchi
 
 //プロパティ
 #define HIDOK_PROP				12600	//
