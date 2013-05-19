@@ -1,0 +1,56 @@
+<html><head><title>S_Replace</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>S_Replace</h2>
+<dl>
+	<dt>機能</dt>
+		<dd>置換(実行)</dd>
+	<dt>説明</dt>
+		<dd>置換ダイアログで [置換(&R)] ボタンを押した時の動作</dd>
+	<dt>構文</dt>
+		<dd><i>void  S_Replace ( S1 ， S2 ， i1 )</i>
+		<br><br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th><nobr>引数</nobr></th><th>型</th><th>内容</th></tr>
+			<tr><td>S1</td><td>文字列</td><td>置換前の文字列<br>空文字列 (’’) は受け付けない。 </td></tr>
+			<tr><td>S2</td><td>文字列</td><td>置換後の文字列 </td></tr>
+			<tr><td>i1</td><td>整数数値</td><td>置換ダイアログの状態を10進数数値で指定する </td></tr>
+		</table>
+		</dd>
+	<dt>設定値</dt>
+		<dd>引数&nbsp;<i>i1</i>&nbsp;の設定値は次のとおりです。<br><br>
+		それぞれの bit が 0=チェックOFF / 1=チェックON<br>
+		<table border = "1" cellspacing = "0" cellpadding = "3" width = "85%">
+			<tr><th>bit</th><th>内容</th></tr>
+			<tr><td>0</td><td>単語単位で探す </td></tr>
+			<tr><td>1</td><td>英大文字と小文字を区別する </td></tr>
+			<tr><td>2</td><td>正規表現 </td></tr>
+			<tr><td>3</td><td>見つからないときにメッセージを表示 </td></tr>
+			<tr><td>4</td><td>置換ダイアログを自動的に閉じる </td></tr>
+			<tr><td>5</td><td>先頭（末尾）から再検索する </td></tr>
+			<tr><td>6</td><td>クリップボードから貼り付ける </td></tr>
+			<tr><td>7</td><td>0=ファイル全体 / 1=選択範囲 </td></tr>
+			<tr><td>9,8</td><td>00=選択文字 / 01=選択始点挿入 / 10=選択終点追加 </td></tr>
+		</table>
+		</dd>
+	<dt>補足</dt>
+		<dd>
+		PPAのマクロ中では $41 などの 16進数表記や変数・数式・関数の使用も可能だが、MACのマクロ中では 65 などの 10進数の定数表記しか受け付けない。
+		<hr>
+		bitでの指定方法が分からない場合は、文字列「bit」のキーワードヘルプを参照して下さい。(「bit」と文字入力し、範囲選択する)
+		</dd>
+	<dt>関連項目</dt>
+		<dd>
+		<a href = "./S_ReplaceAll.html">S_ReplaceAll()</a>
+		<a href = "./S_SearchPrev.html">S_SearchPrev()</a>
+		<a href = "./S_SearchNext.html">S_SearchNext()</a>
+		<a href = "./S_BookmarkPattern.html">S_BookmarkPattern()</a>
+		</dd>
+</dl>
+<hr>
+</body></html>
+

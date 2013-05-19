@@ -1,0 +1,27 @@
+<html><head><title>文字の書き出し例</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<body>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>文字の書き出し例</h2>
+
+<pre>
+<span style = "color:green;">//sample.js</span>
+<span style = "color:green;">//「あ」を書き出す</span>
+
+<span style = "color:green;">//Charは1バイトずつ書き出す</span>
+<span style = "color:blue;">Char</span>(<span style = "color:red;">130</span>);
+<span style = "color:blue;">Char</span>(<span style = "color:red;">160</span>);
+
+<span style = "color:green;">//CharImeは2バイト文字も書き出せる</span>
+<span style = "color:blue;">CharIme</span>(<span style = "color:red;">33440</span>);
+
+<span style = "color:green;">//文字列を書き出す</span>
+<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'あ'</span>);
+</pre>
+
+<hr>
+</body></html>

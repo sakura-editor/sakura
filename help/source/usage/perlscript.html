@@ -1,0 +1,149 @@
+<html><head><title>PerlScriptについて</title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="../sakura.css">
+<meta http-equiv="Content-type" content="text/html; charset=Shift_JIS">
+</head>
+<small>
+Sakura-Editor Macro Reference
+</small>
+<h2>PerlScriptについて</h2>
+<h3>日本語の使用</h3>
+<p>
+日本語文字列を使用すると動作がおかしくなります。
+文字数とバイト数の区別があいまいなため、日本語を使用した文字分だけ
+スクリプトの最後が削られていきます。
+</p>
+<p>
+この問題を回避するには、スクリプトの末尾にコメントなど（または'__END__'の後ろに）余分な文字列を付加します。
+</p>
+
+<pre>
+# 選択部分の文字列を取得
+$sel = GetSelectedString();
+:
+:（何か一連の処理）
+:
+InsText($result);
+#padding
+#padding
+#padding
+</pre>
+
+
+<a href = "http://miau.s9.xrea.com/blog/index.php?itemid=402" target = "_blank">この問題についての詳細</a>
+
+<h3>MsgBox関数</h3>
+<p>Perlには非公式にMsgBox関数がありますので、WScript.ShellのPupupよりもお手軽です。
+<pre>MsgBox($Message [, $Buttons [, $Title]]);</pre>
+</p>
+
+<h3>Tk モジュールの使用</h3>
+<p>
+以下のように別プロセスで実行します。
+<pre>system 'perl -e "use Tk; my $mw = MainWindow->new(); MainLoop();"'</pre>
+</p>
+
+<h3>マクロ関数の実行について</h3>
+<p>
+「use strict;」とすると「$Editor->マクロ関数名();」の書式では動作しません。
+Editorオブジェクトを省略するか、「our $Editor;」で回避できます。
+</p>
+<pre>
+use strict;
+our $Editor;
+$Editor-&gt;<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);
+<span style = "color:blue;">InsText</span>(<span style = "color:#800000;">'&lt;br /&gt;'</span>);             <span style = "color:green;"># Editorオブジェクトの省略</span>
+</pre>
+
+
+<h3>その他</h3>
+<p>
+ファイルパスを利用した変数（$0）、関数（）、モジュール（IPC::Open2）は使えません。ただし、open() や Cwd は問題なく使えます
+</p>
+
+<p>
+ＣＯＭオブジェクトの使用や<a href = "./scriptcontrol.html">ScriptControl</a>および<a href = "wsc.html">WSC</a>の取り扱いは、他のWSHマクロと同様です。
+</p>
+
+<h2>サンプルスクリプト</h2>
+<pre>
+# diet.pls
+SPACEToTAB();                   # スペースをタブに置き換え
+GoLineTop_Sel();                # 選択を崩さずにカーソルを行頭へ
+$str = GetSelectedString();     # 選択範囲を Perl 側に貰う
+if(! $str){exit;}
+foreach(split(/\r\n/,$str)){
+    $wk = $_;
+    $wk =~ s/[\t 　]*$//;
+    $wk =~ s/^[\t 　]*//;
+    if($wk ne $bk){
+        $bk = $wk;
+        $rtn = $rtn . $wk . "\r\n";
+    }
+}
+InsText($rtn);
+__END__
+選択範囲を貰って、その選択範囲を加工内容で置き換える
+連続したスペースはタブに置き換えると共に前後のスペース
+やタブを無視して、中身が同じ行が続いたら Uniq と
+同様にカットするバイト数のダイエットです。
+</pre>
+
+<pre>
+# KeySend.pls
+$| = 1;
+use Win32::OLE;
+$WshShell = Win32::OLE-&gt;CreateObject("WScript.Shell");
+system('C:\WINDOWS\notepad.exe');
+$WshShell-&gt;Sleep( 3000 );
+$WshShell-&gt;SendKeys("TEST");
+__END__
+プログラムを起動してキーを送って操作する
+</pre>
+
+<pre>
+# testFSO.pls
+use Win32::OLE;
+$FSO = Win32::OLE->CreateObject("Scripting.FileSystemObject");
+$FILE = $FSO->GetFile('C:\Program Files\sakura\sakura.exe');
+MsgBox ($FILE->Type, ,'', $FILE->Name);
+__END__
+FileSystemObjectを使用してファイルの種類を取得します。
+</pre>
+
+<pre>
+# MarkCollect.pls
+$orgLn = ExpandParameter('$y');
+
+GoFileTop();
+    BookmarkNext();
+    $newLn = ExpandParameter('$y');
+
+while($oldLn &lt; $newLn){
+    GoLineTop( \x01 ); 
+    GoLineEnd_Sel();
+    $str = GetSelectedString( 0 );
+    GoLineTop( \x01 );
+    if($oldLn &lt; $newLn){
+        $str =~ s/\w+$//;
+        $outStr = $outStr . $str . "\r\n";
+        $oldLn = $newLn;
+        BookmarkNext();
+        $newLn = ExpandParameter('$y');
+    }
+}
+use Win32::Clipboard;
+$CLIP = Win32::Clipboard();
+$str = GetSelectedString();
+$CLIP-&gt;Set( $outStr );
+
+Jump($orgLn, 0);
+__END__
+ファイル内のマークしてある行を全部集めて繋いで
+クリップボードに格納する。
+最初に、ExpandParameter('$y') は、現在のカーソル
+が何行目かを退避して最後に Jump() で戻してます。
+</pre>
+
+<hr>
+</body></html>
+
