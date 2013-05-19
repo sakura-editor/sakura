@@ -118,7 +118,7 @@ protected:
 
 
 private: // 2002/2/10 aroka アクセス権変更
-#if _DEBUG
+#ifdef _DEBUG
 	TCHAR		m_szClassInheritances[1024];
 #endif
 };
