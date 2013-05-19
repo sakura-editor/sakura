@@ -150,8 +150,6 @@ CEditApp::CEditApp()
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
-	// アクセラレータテーブル破棄
-	DeleteAccelTbl();
 	// アクセラレータテーブル作成
 	CreateAccelTbl();
 
@@ -540,9 +538,9 @@ LRESULT CEditApp::DispatchEvent(
 //@@			m_cShareData.SaveShareData();
 
 				/* アクセラレータテーブルの再作成 */
-				// ウィンドウ毎のアクセラレータテーブル破棄
+				// アクセラレータテーブル破棄
 				DeleteAccelTbl();
-				// ウィンドウ毎のアクセラレータテーブル作成
+				// アクセラレータテーブル作成
 				CreateAccelTbl();
 				break;
 			default:
@@ -1492,7 +1490,7 @@ void CEditApp::CreateAccelTbl( void )
 */
 void CEditApp::DeleteAccelTbl( void )
 {
-	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
+	if( m_pShareData->m_sHandles.m_hAccel ){
 		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
 		m_pShareData->m_sHandles.m_hAccel = NULL;
 	}
@@ -1544,11 +1542,8 @@ void CEditApp::OnDestroy()
 		TrayMessage( m_hWnd, NIM_DELETE, 0, NULL, NULL );
 	}
 
-	/* アクセラレータテーブルの削除 */
-	if( m_pShareData->m_sHandles.m_hAccel != NULL ){
-		::DestroyAcceleratorTable( m_pShareData->m_sHandles.m_hAccel );
-		m_pShareData->m_sHandles.m_hAccel = NULL;
-	}
+	// アクセラレータテーブルの削除
+	DeleteAccelTbl();
 
 	m_hWnd = NULL;
 }
