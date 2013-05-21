@@ -76,7 +76,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	//	編集用改行コードの設定
 	{
 		const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
-		if ( pcDoc->m_cDocFile.m_sFileInfo.eCharCode == type.m_encoding.m_eDefaultCodetype ){
+		if ( pcDoc->m_cDocFile.GetCodeSet() == type.m_encoding.m_eDefaultCodetype ){
 			SetNewLineCode( type.m_encoding.m_eDefaultEoltype );	// 2011.01.24 ryoji デフォルトEOL
 		}
 		else{

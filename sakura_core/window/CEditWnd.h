@@ -18,12 +18,29 @@
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
-#ifndef _CEDITWND_H_
-#define _CEDITWND_H_
+#ifndef SAKURA_CEDITWND_E9E9A41A_05E0_48D5_8F66_9C734A98FB30_H_
+#define SAKURA_CEDITWND_E9E9A41A_05E0_48D5_8F66_9C734A98FB30_H_
 
 #include <ShellAPI.h>// HDROP
 #include "_main/global.h"
@@ -402,4 +419,4 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CEDITWND_H_ */
+#endif /* SAKURA_CEDITWND_E9E9A41A_05E0_48D5_8F66_9C734A98FB30_H_ */

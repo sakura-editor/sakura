@@ -1,3 +1,26 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "doc/CDocListener.h" // 親クラス
 #include "CSaveAgent.h"
@@ -101,8 +124,7 @@ void CSaveAgent::OnSave(const SSaveInfo& sSaveInfo)
 
 	//セーブ情報の確定
 	pcDoc->SetFilePathAndIcon( sSaveInfo.cFilePath );
-	pcDoc->m_cDocFile.m_sFileInfo.eCharCode = sSaveInfo.eCharCode;
-	pcDoc->m_cDocFile.m_sFileInfo.bBomExist = sSaveInfo.bBomExist;
+	pcDoc->m_cDocFile.SetCodeSet( sSaveInfo.eCharCode, sSaveInfo.bBomExist );
 	if(sSaveInfo.cEol.IsValid()){
 		pcDoc->m_cDocEditor.SetNewLineCode(sSaveInfo.cEol);
 	}
@@ -116,7 +138,7 @@ void CSaveAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 	 * CloseHandle前ではFlushFileBuffersを呼んでもタイムスタンプが更新
 	 * されないことがある。
 	 */
-	GetLastWriteTimestamp( pcDoc->m_cDocFile.GetFilePath(), &pcDoc->m_cDocFile.m_sFileInfo.cFileTime );
+	GetLastWriteTimestamp( pcDoc->m_cDocFile.GetFilePath(), &pcDoc->m_cDocFile.GetFileTime() );
 
 	// タイプ別設定の変更を指示。
 	// 上書き（明示的な上書きや自動保存）では変更しない

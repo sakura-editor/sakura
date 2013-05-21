@@ -1,3 +1,26 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "CDocFileOperation.h"
 #include "CDocVisitor.h"
@@ -153,18 +176,8 @@ void CDocFileOperation::ReloadCurrentFile(
 
 	if( !fexist(m_pcDocRef->m_cDocFile.GetFilePath()) ){
 		/* ファイルが存在しない */
-		//	Jul. 26, 2003 ryoji BOMを標準設定に
-		m_pcDocRef->m_cDocFile.m_sFileInfo.eCharCode = nCharCode;
-		switch( m_pcDocRef->m_cDocFile.m_sFileInfo.eCharCode ){
-		case CODE_UNICODE:
-		case CODE_UNICODEBE:
-			m_pcDocRef->m_cDocFile.m_sFileInfo.bBomExist = true;
-			break;
-		case CODE_UTF8:
-		default:
-			m_pcDocRef->m_cDocFile.m_sFileInfo.bBomExist = false;
-			break;
-		}
+		//	Jul. 26, 2003 ryoji BOMを標準設定に	// IsBomDefOn使用 2013/5/17	Uchi
+		m_pcDocRef->m_cDocFile.SetCodeSet( nCharCode,  CCodeTypeName( nCharCode ).IsBomDefOn() );
 		// カーソル位置表示を更新する	// 2008.07.22 ryoji
 		m_pcDocRef->m_pcEditWnd->GetActiveView().GetCaret().ShowCaretPosInfo();
 		return;

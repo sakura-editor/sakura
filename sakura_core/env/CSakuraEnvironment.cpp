@@ -366,10 +366,10 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		case L'D':	//	タイムスタンプ
-			if (pcDoc->m_cDocFile.GetDocFileTime().GetFILETIME().dwLowDateTime){
+			if (!pcDoc->m_cDocFile.IsFileTimeZero()){
 				TCHAR szText[1024];
 				CFormatManager().MyGetDateFormat(
-					pcDoc->m_cDocFile.GetDocFileTime().GetSYSTEMTIME(),
+					pcDoc->m_cDocFile.GetFileSysTime(),
 					szText,
 					_countof( szText ) - 1
 				);
@@ -382,10 +382,10 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		case L'T':	//	タイムスタンプ
-			if (pcDoc->m_cDocFile.GetDocFileTime().GetFILETIME().dwLowDateTime){
+			if (!pcDoc->m_cDocFile.IsFileTimeZero()){
 				TCHAR szText[1024];
 				CFormatManager().MyGetTimeFormat(
-					pcDoc->m_cDocFile.GetDocFileTime().GetSYSTEMTIME(),
+					pcDoc->m_cDocFile.GetFileSysTime(),
 					szText,
 					_countof( szText ) - 1
 				);
