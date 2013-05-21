@@ -18,8 +18,25 @@
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2011, ryoji
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holders to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
 #include "StdAfx.h"
@@ -112,8 +129,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
 
 	// 文字コード種別を初期化
-	m_cDocFile.m_sFileInfo.eCharCode = ref.m_encoding.m_eDefaultCodetype;
-	m_cDocFile.m_sFileInfo.bBomExist = ref.m_encoding.m_bDefaultBom;
+	m_cDocFile.SetCodeSet( ref.m_encoding.m_eDefaultCodetype, ref.m_encoding.m_bDefaultBom );
 	m_cDocEditor.m_cNewLineCode = ref.m_encoding.m_eDefaultEoltype;
 
 	// 排他制御オプションを初期化
@@ -150,7 +166,7 @@ void CEditDoc::Clear()
 	SetFilePathAndIcon( _T("") );
 
 	// ファイルのタイムスタンプのクリア
-	m_cDocFile.m_sFileInfo.cFileTime.ClearFILETIME();
+	m_cDocFile.ClearFileTime();
 
 	// 「基本」のタイプ別設定を適用
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), true );
@@ -187,8 +203,7 @@ void CEditDoc::InitDoc()
 
 	/* 文字コード種別 */
 	STypeConfig ref = m_cDocType.GetDocumentAttribute();
-	m_cDocFile.m_sFileInfo.eCharCode = ref.m_encoding.m_eDefaultCodetype;
-	m_cDocFile.m_sFileInfo.bBomExist = ref.m_encoding.m_bDefaultBom;
+	m_cDocFile.SetCodeSet( ref.m_encoding.m_eDefaultCodetype, ref.m_encoding.m_bDefaultBom );
 	m_cDocEditor.m_cNewLineCode = ref.m_encoding.m_eDefaultEoltype;
 
 	//	Oct. 2, 2005 genta 挿入モード
@@ -356,15 +371,15 @@ void CEditDoc::SetFilePathAndIcon(const TCHAR* szFile)
 //! ドキュメントの文字コードを取得
 ECodeType CEditDoc::GetDocumentEncoding() const
 {
-	return m_cDocFile.m_sFileInfo.eCharCode;
+	return m_cDocFile.GetCodeSet();
 }
 
 //! ドキュメントの文字コードを設定
-void CEditDoc::SetDocumentEncoding(ECodeType eCharCode)
+void CEditDoc::SetDocumentEncoding(ECodeType eCharCode, bool bBom)
 {
 	if(!IsValidCodeType(eCharCode))return; //無効な範囲を受け付けない
 
-	m_cDocFile.m_sFileInfo.eCharCode = eCharCode;
+	m_cDocFile.SetCodeSet( eCharCode, bBom );
 }
 
 
@@ -372,10 +387,10 @@ void CEditDoc::SetDocumentEncoding(ECodeType eCharCode)
 
 void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 {
-	pSaveInfo->cFilePath = this->m_cDocFile.GetFilePath(),
-	pSaveInfo->eCharCode = this->m_cDocFile.m_sFileInfo.eCharCode;
+	pSaveInfo->cFilePath = this->m_cDocFile.GetFilePath();
+	pSaveInfo->eCharCode = this->m_cDocFile.GetCodeSet();
+	pSaveInfo->bBomExist = this->m_cDocFile.IsBomExist();
 	pSaveInfo->cEol      = this->m_cDocEditor.m_cNewLineCode; //編集時改行コードを保存時改行コードとして設定
-	pSaveInfo->bBomExist = this->m_cDocFile.m_sFileInfo.bBomExist;
 }
 
 
@@ -396,7 +411,7 @@ void CEditDoc::GetEditInfo(
 
 	//各種状態
 	pfi->m_bIsModified = m_cDocEditor.IsModified();			/* 変更フラグ */
-	pfi->m_nCharCode = m_cDocFile.m_sFileInfo.eCharCode;	/* 文字コード種別 */
+	pfi->m_nCharCode = m_cDocFile.GetCodeSet();				/* 文字コード種別 */
 	pfi->m_nType = m_cDocType.GetDocumentType();
 
 	//GREPモード
@@ -572,8 +587,7 @@ void CEditDoc::OnChangeType()
 	if( !m_cDocFile.GetFilePathClass().IsValidPath() ){
 		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
 			STypeConfig& types = m_cDocType.GetDocumentAttribute();
-			m_cDocFile.m_sFileInfo.eCharCode = types.m_encoding.m_eDefaultCodetype;
-			m_cDocFile.m_sFileInfo.bBomExist = types.m_encoding.m_bDefaultBom;
+			m_cDocFile.SetCodeSet( types.m_encoding.m_eDefaultCodetype, types.m_encoding.m_bDefaultBom );
 			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
 		}
 	}

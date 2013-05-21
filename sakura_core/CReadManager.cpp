@@ -1,6 +1,29 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
-#include "CReadManager.h"
 #include <io.h>	// access
+#include "CReadManager.h"
 #include "CEditApp.h"	// CAppExitException
 #include "window/CEditWnd.h"
 #include "charset/CCodeMediator.h"
@@ -26,19 +49,20 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 
 	// 文字コード種別
 	STypeConfig& type = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
-	pFileInfo->eCharCode = sLoadInfo.eCharCode;
-	if( CODE_AUTODETECT==pFileInfo->eCharCode) {
+	ECodeType	eCharCode = sLoadInfo.eCharCode;
+	if (CODE_AUTODETECT == eCharCode) {
 		CCodeMediator cmediator( type.m_encoding );
-		pFileInfo->eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
+		eCharCode = cmediator.CheckKanjiCodeOfFile( pszPath );
 	}
-	if( !IsValidCodeType(pFileInfo->eCharCode) ){
-		pFileInfo->eCharCode = type.m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
+	if (!IsValidCodeType( eCharCode )) {
+		eCharCode = type.m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
 	}
-	if ( pFileInfo->eCharCode == type.m_encoding.m_eDefaultCodetype ){
+	pFileInfo->eCharCode = eCharCode;
+	if (eCharCode == type.m_encoding.m_eDefaultCodetype) {
 		pFileInfo->bBomExist = type.m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
 	}
 	else{
-		pFileInfo->bBomExist = CCodeTypeName( pFileInfo->eCharCode ).IsBomDefOn() ;
+		pFileInfo->bBomExist = CCodeTypeName( eCharCode ).IsBomDefOn();
 	}
 
 	/* 既存データのクリア */
@@ -62,7 +86,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		/* ファイル時刻の取得 */
 		FILETIME	FileTime;
 		if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
-			pFileInfo->cFileTime.SetFILETIME(FileTime);
+			pFileInfo->cFileTime.SetFILETIME( FileTime );
 		}
 
 		// ReadLineはファイルから 文字コード変換された1行を読み出します

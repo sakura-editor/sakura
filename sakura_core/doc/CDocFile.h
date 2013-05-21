@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2013, Uchi
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -30,32 +31,39 @@ class CEditDoc;
 
 //####本来はここにあるべきでは無い
 struct SFileInfo{
+	friend class CDocFile;
+	friend class CReadManager;
+protected:
 	ECodeType	eCharCode;
-	CFileTime	cFileTime;
 	bool		bBomExist;
+	CFileTime	cFileTime;
 
+public:
 	SFileInfo()
 	{
 		eCharCode = CODE_DEFAULT;
-		cFileTime.ClearFILETIME();
 		bBomExist = false;
+		cFileTime.ClearFILETIME();
 	}
 };
 
+
 class CDocFile : public CFile{
 public:
-	CDocFile(CEditDoc* pcDoc);
+	CDocFile(CEditDoc* pcDoc) : m_pcDocRef(pcDoc) {}
+
+	void			SetCodeSet(ECodeType eCodeSet , bool bBomExist)	{ m_sFileInfo.eCharCode = eCodeSet; m_sFileInfo.bBomExist = bBomExist; }	//!< 文字コードセットを設定
+	ECodeType		GetCodeSet() const			{ return m_sFileInfo.eCharCode; }		//!< 文字コードセットを取得
+	void			SetBomDefoult()				{ m_sFileInfo.bBomExist= CCodeTypeName( m_sFileInfo.eCharCode ).IsBomDefOn(); }			//!< BOM付加のデフォルト値を設定する
 	bool			IsBomExist() const			{ return m_sFileInfo.bBomExist; }		//!< 保存時にBOMを付加するかどうかを取得
-	void			SetBomMode(bool bBomExist)	{ m_sFileInfo.bBomExist = bBomExist; }	//!< 保存時にBOMを付加するかどうかを設定
-	CFileTime		GetDocFileTime() const		{ return m_sFileInfo.cFileTime; }
-	const TCHAR*	GetFileName() const; //!< ファイル名(パスなし)を取得
-	const TCHAR*	GetSaveFilePath(void) const {
-		if (m_szSaveFilePath.IsValidPath()) {
-			return m_szSaveFilePath;
-		} else {
-			return GetFilePath();
-		}
-	}
+	CFileTime&		GetFileTime()				{ return m_sFileInfo.cFileTime; }
+	void			ClearFileTime()				{ m_sFileInfo.cFileTime.ClearFILETIME(); }
+	bool			IsFileTimeZero() const		{ return m_sFileInfo.cFileTime.IsZero(); }	// 新規ファイル？
+	const SYSTEMTIME	GetFileSysTime() const	{ return m_sFileInfo.cFileTime.GetSYSTEMTIME(); }
+	void			SetFileTime( FILETIME& Time )	{ m_sFileInfo.cFileTime.SetFILETIME( Time ); }
+
+	const TCHAR*	GetFileName() const{ return GetFileTitlePointer(GetFilePath()); }	//!< ファイル名(パスなし)を取得
+	const TCHAR*	GetSaveFilePath(void) const;
 	void			SetSaveFilePath(LPCTSTR pszPath){ m_szSaveFilePath.Assign(pszPath); }
 public: //####
 	CEditDoc*	m_pcDocRef;

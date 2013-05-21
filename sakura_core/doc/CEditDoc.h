@@ -16,12 +16,29 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, nasukoji
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
-#ifndef _CEDITDOC_H_
-#define _CEDITDOC_H_
+#ifndef SAKURA_CEDITDOC_CE42530D_FEC1_4B51_9CA3_470856295FEF8_H_
+#define SAKURA_CEDITDOC_CE42530D_FEC1_4B51_9CA3_470856295FEF8_H_
 
 
 #include "_main/global.h"
@@ -78,7 +95,7 @@ public:
 
 	//属性
 	ECodeType	GetDocumentEncoding() const;				//!< ドキュメントの文字コードを取得
-	void		SetDocumentEncoding(ECodeType eCharCode);	//!< ドキュメントの文字コードを設定
+	void		SetDocumentEncoding(ECodeType eCharCode, bool bBom);	//!< ドキュメントの文字コードを設定
 	bool IsModificationForbidden( EFunctionCode nCommand );	//!< 指定コマンドによる書き換えが禁止されているかどうか	//Aug. 14, 2000 genta
 	bool IsEditable() const { return !CAppMode::getInstance()->IsViewMode() && !(!m_cDocLocker.IsDocWritable() && GetDllShareData().m_Common.m_sFile.m_bUneditableIfUnwritable); }	//!< 編集可能かどうか
 	void GetSaveInfo(SSaveInfo* pSaveInfo) const;			//!< セーブ情報を取得
@@ -145,7 +162,4 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _CEDITDOC_H_ */
-
-
-
+#endif /* SAKURA_CEDITDOC_CE42530D_FEC1_4B51_9CA3_470856295FEF8_H_ */

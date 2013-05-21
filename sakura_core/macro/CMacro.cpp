@@ -17,8 +17,25 @@
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2011, syat
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holder to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
 #include "StdAfx.h"
@@ -861,9 +878,8 @@ void CMacro::HandleCommand(
 				nCharCode = (ECodeType)_wtoi( Argument[1] );
 			}
 			if (IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
-				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode);
 				//	From Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»
-				pcEditView->m_pcEditDoc->m_cDocFile.SetBomMode( CCodeTypeName(pcEditView->m_pcEditDoc->GetDocumentEncoding()).IsBomDefOn() );
+				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode, CCodeTypeName(pcEditView->m_pcEditDoc->GetDocumentEncoding()).IsBomDefOn() );
 				//	To Here Jul. 26, 2003 ryoji BOMó‘Ô‚ğ‰Šú‰»
 			}
 

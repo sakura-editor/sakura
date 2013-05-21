@@ -19,8 +19,25 @@
 	Copyright (C) 2011, ryoji
 	Copyright (C) 2013, Uchi
 
-	This source code is designed for sakura editor.
-	Please contact the copyright holders to use this code for other purpose.
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
 */
 
 #include "StdAfx.h"
@@ -778,13 +795,12 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 		if( !IsValidCodeType( nCharCode ) ){
 			nCharCode = eDefaultCharCode;	// 直接コード指定がなければタイプ指定のデフォルト文字コードを使用
 		}
-		GetDocument().SetDocumentEncoding( nCharCode );
 		if( nCharCode == eDefaultCharCode ){	// デフォルト文字コードと同じ文字コードが選択されたとき
-			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = types.m_encoding.m_bDefaultBom;
+			GetDocument().SetDocumentEncoding( nCharCode, types.m_encoding.m_bDefaultBom );
 			GetDocument().m_cDocEditor.m_cNewLineCode = static_cast<EEolType>( types.m_encoding.m_eDefaultEoltype );
 		}
 		else{
-			GetDocument().m_cDocFile.m_sFileInfo.bBomExist = CCodeTypeName( nCharCode ).IsBomDefOn();
+			GetDocument().SetDocumentEncoding( nCharCode, CCodeTypeName( nCharCode ).IsBomDefOn() );
 			GetDocument().m_cDocEditor.m_cNewLineCode = EOL_CRLF;
 		}
 	}
