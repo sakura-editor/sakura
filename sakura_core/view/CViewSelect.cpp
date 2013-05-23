@@ -700,7 +700,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 				// 最終行の処理
 				pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.GetTo().y, &nLineLen, &pcLayout );
 				if( pLine ){
-					if( pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() ) == 0 ){
+					if( pView->LineColumnToIndex( pcLayout, m_sSelect.GetTo().GetX2() ) == 0 ){
 						//	最終行の先頭にキャレットがある場合は
 						//	その行を行数に含めない
 						--select_line;
@@ -770,13 +770,13 @@ void CViewSelect::PrintSelectionInfoMsg() const
 				//	1行だけ選択されている場合
 				if( m_sSelect.IsLineOne() ){
 					select_sum =
-						pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() )
-						- pView->LineColmnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
+						pView->LineColumnToIndex( pcLayout, m_sSelect.GetTo().GetX2() )
+						- pView->LineColumnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
 				} else {	//	2行以上選択されている場合
 					select_sum =
 						pcLayout->GetLengthWithoutEOL()
 						+ pcLayout->GetLayoutEol().GetLen()
-						- pView->LineColmnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
+						- pView->LineColumnToIndex( pcLayout, m_sSelect.GetFrom().GetX2() );
 
 					//	GetSelectedDataと似ているが，先頭行と最終行は排除している
 					//	Aug. 16, 2005 aroka nLineNumはfor以降でも使われるのでforの前で宣言する
@@ -794,7 +794,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 					//	最終行の処理
 					pLine = pView->m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 					if( pLine ){
-						int last_line_chars = pView->LineColmnToIndex( pcLayout, m_sSelect.GetTo().GetX2() );
+						int last_line_chars = pView->LineColumnToIndex( pcLayout, m_sSelect.GetTo().GetX2() );
 						select_sum += last_line_chars;
 						if( last_line_chars == 0 ){
 							//	最終行の先頭にキャレットがある場合は

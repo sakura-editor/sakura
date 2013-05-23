@@ -46,7 +46,7 @@ const char* GetNextLimitedLengthText( const char*, int, int, int*, int* );/* w’
 const char*    GetNextLine  ( const char*   , int, int*, int*, CEol* ); /* CR0LF0,CRLF,LF,CR‚Å‹æØ‚ç‚ê‚éusv‚ğ•Ô‚·B‰üsƒR[ƒh‚Ís’·‚É‰Á‚¦‚È‚¢ */
 const wchar_t* GetNextLineW ( const wchar_t*, int, int*, int*, CEol* ); // GetNextLine‚Ìwchar_t”Å
 //wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLine‚Ìwchar_t”Å(ƒrƒbƒNƒGƒ“ƒfƒBƒAƒ“—p)  // –¢g—p
-void GetLineColm( const wchar_t*, int*, int* );
+void GetLineColumn( const wchar_t*, int*, int* );
 
 
 int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);

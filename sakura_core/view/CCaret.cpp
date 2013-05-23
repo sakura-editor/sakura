@@ -426,7 +426,7 @@ BOOL CCaret::GetAdjustCursorPos(
 			ptPosXY2.y = nLayoutLineCount - 1;
 			const CLayout* pcLayout = m_pEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptPosXY2.GetY2() );
 			if( pcLayout->GetLayoutEol() == EOL_NONE ){
-				ptPosXY2.x = m_pEditView->LineIndexToColmn( pcLayout, (CLogicInt)pcLayout->GetLengthWithEOL() );
+				ptPosXY2.x = m_pEditView->LineIndexToColumn( pcLayout, (CLogicInt)pcLayout->GetLengthWithEOL() );
 				// [EOF]のみ折り返すのはやめる	// 2009.02.17 ryoji
 				// 復活するなら ptPosXY2.x に折り返し行インデントを適用するのがよい
 
@@ -542,7 +542,7 @@ void CCaret::ShowEditCaret()
 
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdxFrom = m_pEditView->LineColmnToIndex( pcLayout, GetCaretLayoutPos().GetX2() );
+			nIdxFrom = m_pEditView->LineColumnToIndex( pcLayout, GetCaretLayoutPos().GetX2() );
 			if( nIdxFrom >= nLineLen ||
 				pLine[nIdxFrom] == CR || pLine[nIdxFrom] == LF ||
 				pLine[nIdxFrom] == TAB ){

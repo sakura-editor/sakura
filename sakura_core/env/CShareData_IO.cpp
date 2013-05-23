@@ -1265,7 +1265,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 			scan_ints( szKeyData, pszForm, buf );
 			types.m_nIdx					= buf[ 0];
 			types.m_nMaxLineKetas			= buf[ 1];
-			types.m_nColmSpace				= buf[ 2];
+			types.m_nColumnSpace			= buf[ 2];
 			types.m_nTabSpace				= buf[ 3];
 			types.m_nKeyWordSetIdx[0]		= buf[ 4];
 			types.m_nKeyWordSetIdx[1]		= buf[ 5];
@@ -1284,7 +1284,7 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 		auto_sprintf( szKeyData, pszForm,
 			types.m_nIdx,
 			types.m_nMaxLineKetas,
-			types.m_nColmSpace,
+			types.m_nColumnSpace,
 			types.m_nTabSpace,
 			types.m_nKeyWordSetIdx[0],
 			types.m_nKeyWordSetIdx[1],

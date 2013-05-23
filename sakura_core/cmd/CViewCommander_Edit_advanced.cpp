@@ -586,7 +586,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	CLayoutRange sRangeA;
 	CLogicRange sSelectOld;
 
-	int			nColmFrom, nColmTo;
+	int			nColumnFrom, nColumnTo;
 	CLayoutInt	nCF(0), nCT(0);
 	CLayoutInt	nCaretPosYOLD;
 	bool		bBeginBoxSelectOld;
@@ -653,13 +653,13 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		if( NULL == pLine ) continue;
 		SORTDATA* pst = new SORTDATA;
 		if( bBeginBoxSelectOld ){
-			nColmFrom = m_pCommanderView->LineColmnToIndex( pcDocLine, nCF );
-			nColmTo   = m_pCommanderView->LineColmnToIndex( pcDocLine, nCT );
-			if(nColmTo<nLineLenWithoutEOL){	// BOX選択範囲の右端が行内に収まっている場合
+			nColumnFrom = m_pCommanderView->LineColumnToIndex( pcDocLine, nCF );
+			nColumnTo   = m_pCommanderView->LineColumnToIndex( pcDocLine, nCT );
+			if(nColumnTo<nLineLenWithoutEOL){	// BOX選択範囲の右端が行内に収まっている場合
 				// 2006.03.31 genta std::string::assignを使って一時変数削除
-				pst->sKey.assign( &pLine[nColmFrom], nColmTo-nColmFrom );
-			}else if(nColmFrom<nLineLenWithoutEOL){	// BOX選択範囲の右端が行末より右にはみ出している場合
-				pst->sKey.assign( &pLine[nColmFrom], nLineLenWithoutEOL-nColmFrom );
+				pst->sKey.assign( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
+			}else if(nColumnFrom<nLineLenWithoutEOL){	// BOX選択範囲の右端が行末より右にはみ出している場合
+				pst->sKey.assign( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
 			}else{
 				// 選択範囲の左端もはみ出している==データなし
 				// pst->sKey = L"";

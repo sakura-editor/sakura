@@ -362,13 +362,13 @@ void CViewCommander::Command_DELETE_LINE( void )
 			CLogicInt nIndex;
 
 			CLayoutInt tmp;
-			nIndex = m_pCommanderView->LineColmnToIndex2( pcLayout, ptCaretPos_OLD.GetX2(), &tmp );
+			nIndex = m_pCommanderView->LineColumnToIndex2( pcLayout, ptCaretPos_OLD.GetX2(), &tmp );
 			ptCaretPos_OLD.x=tmp;
 
 			if (ptCaretPos_OLD.x > 0) {
 				ptCaretPos_OLD.x--;
 			} else {
-				ptCaretPos_OLD.x = m_pCommanderView->LineIndexToColmn( pcLayout, nIndex );
+				ptCaretPos_OLD.x = m_pCommanderView->LineIndexToColumn( pcLayout, nIndex );
 			}
 		}
 		/* 操作前の位置へカーソルを移動 */

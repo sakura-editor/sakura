@@ -16,7 +16,7 @@ CLayoutInt CViewCalc::GetTabSpace() const
 	
 	@@@ 2002.09.28 YAZAKI CDocLine版
 */
-CLogicInt CViewCalc::LineColmnToIndex( const CDocLine* pcDocLine, CLayoutInt nColumn ) const
+CLogicInt CViewCalc::LineColumnToIndex( const CDocLine* pcDocLine, CLayoutInt nColumn ) const
 {
 	CLogicInt i2 = CLogicInt(0);
 	CMemoryIterator it( pcDocLine, GetTabSpace() );
@@ -36,7 +36,7 @@ CLogicInt CViewCalc::LineColmnToIndex( const CDocLine* pcDocLine, CLayoutInt nCo
 	
 	@@@ 2002.09.28 YAZAKI CLayoutが必要になりました。
 */
-CLogicInt CViewCalc::LineColmnToIndex( const CLayout* pcLayout, CLayoutInt nColumn ) const
+CLogicInt CViewCalc::LineColumnToIndex( const CLayout* pcLayout, CLayoutInt nColumn ) const
 {
 	CLogicInt i2 = CLogicInt(0);
 	CMemoryIterator it( pcLayout, GetTabSpace() );
@@ -59,7 +59,7 @@ CLogicInt CViewCalc::LineColmnToIndex( const CLayout* pcLayout, CLayoutInt nColu
 	
 	@@@ 2002.09.28 YAZAKI CLayoutが必要になりました。
 */
-CLogicInt CViewCalc::LineColmnToIndex2( const CLayout* pcLayout, CLayoutInt nColumn, CLayoutInt* pnLineAllColLen ) const
+CLogicInt CViewCalc::LineColumnToIndex2( const CLayout* pcLayout, CLayoutInt nColumn, CLayoutInt* pnLineAllColLen ) const
 {
 	*pnLineAllColLen = CLayoutInt(0);
 
@@ -90,7 +90,7 @@ CLogicInt CViewCalc::LineColmnToIndex2( const CLayout* pcLayout, CLayoutInt nCol
 ||
 ||	@@@ 2002.09.28 YAZAKI CLayoutが必要になりました。
 */
-CLayoutInt CViewCalc::LineIndexToColmn( const CLayout* pcLayout, CLogicInt nIndex ) const
+CLayoutInt CViewCalc::LineIndexToColumn( const CLayout* pcLayout, CLogicInt nIndex ) const
 {
 	//	以下、iterator版
 	CLayoutInt nPosX2 = CLayoutInt(0);
@@ -112,7 +112,7 @@ CLayoutInt CViewCalc::LineIndexToColmn( const CLayout* pcLayout, CLogicInt nInde
 ||
 ||	@@@ 2002.09.28 YAZAKI CDocLine版
 */
-CLayoutInt CViewCalc::LineIndexToColmn( const CDocLine* pcDocLine, CLogicInt nIndex ) const
+CLayoutInt CViewCalc::LineIndexToColumn( const CDocLine* pcDocLine, CLogicInt nIndex ) const
 {
 	CLayoutInt nPosX2 = CLayoutInt(0);
 	CMemoryIterator it( pcDocLine, GetTabSpace() );

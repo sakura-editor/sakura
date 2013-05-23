@@ -394,7 +394,7 @@ void CEditView::ISearchExec(bool bNext)
 
 	//Œ…ˆÊ’u‚©‚çindex‚É•ÏŠ·
 	CLayout* pCLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLine );
-	CLogicInt nIdx = LineColmnToIndex( pCLayout, nIdx1 );
+	CLogicInt nIdx = LineColumnToIndex( pCLayout, nIdx1 );
 
 	m_nISearchHistoryCount ++ ;
 

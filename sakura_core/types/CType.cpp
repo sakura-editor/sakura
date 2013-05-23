@@ -138,7 +138,7 @@ void _DefaultConfig(STypeConfig* pType)
 
 	pType->m_nTextWrapMethod = WRAP_SETTING_WIDTH;	// テキストの折り返し方法		// 2008.05.30 nasukoji
 	pType->m_nMaxLineKetas = CLayoutInt(MAXLINEKETAS);	/* 折り返し桁数 */
-	pType->m_nColmSpace = 0;					/* 文字と文字の隙間 */
+	pType->m_nColumnSpace = 0;					/* 文字と文字の隙間 */
 	pType->m_nLineSpace = 1;					/* 行間のすきま */
 	pType->m_nTabSpace = CLayoutInt(4);					/* TABの文字数 */
 	for( int i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){

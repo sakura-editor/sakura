@@ -292,7 +292,7 @@ int LimitStringLengthW(
 
 
 
-void GetLineColm( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColm )
+void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn )
 {
 	int		i;
 	int		j;
@@ -338,7 +338,7 @@ void GetLineColm( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColm )
 				}
 				break;
 			}
-			*pnJumpToColm = _wtoi( szNumber );
+			*pnJumpToColumn = _wtoi( szNumber );
 		}
 	}
 	return;

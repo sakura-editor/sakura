@@ -341,7 +341,7 @@ normal_action:;
 					&pcLayout
 				);
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
+					nIdx = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
 					/* 現在位置の単語の範囲を調べる */
 					int nWhareResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						GetSelectionInfo().m_sSelect.GetFrom().GetY2(),
@@ -355,9 +355,9 @@ normal_action:;
 						// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 						/*
 						pLine            = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetFrom().GetY2(), &nLineLen, &pcLayout );
-						sRange.SetFromX( LineIndexToColmn( pcLayout, sRange.GetFrom().x ) );
+						sRange.SetFromX( LineIndexToColumn( pcLayout, sRange.GetFrom().x ) );
 						pLine            = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetTo().GetY2(), &nLineLen, &pcLayout );
-						sRange.SetToX( LineIndexToColmn( pcLayout, sRange.GetTo().x ) );
+						sRange.SetToX( LineIndexToColumn( pcLayout, sRange.GetTo().x ) );
 						*/
 
 						nWork = IsCurrentPositionSelected(
@@ -373,7 +373,7 @@ normal_action:;
 				}
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetSelectionInfo().m_sSelect.GetTo().GetY2(), &nLineLen, &pcLayout );
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetTo().GetX2() );
+					nIdx = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetTo().GetX2() );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						GetSelectionInfo().m_sSelect.GetTo().GetY2(), nIdx, &sRange, NULL, NULL )
@@ -382,9 +382,9 @@ normal_action:;
 						// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 						/*
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetFrom().GetY2(), &nLineLen, &pcLayout );
-						sRange.SetFromX( LineIndexToColmn( pcLayout, sRange.GetFrom().x ) );
+						sRange.SetFromX( LineIndexToColumn( pcLayout, sRange.GetFrom().x ) );
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetTo().GetY2(), &nLineLen, &pcLayout );
-						sRange.SetToX( LineIndexToColmn( pcLayout, sRange.GetTo().x ) );
+						sRange.SetToX( LineIndexToColumn( pcLayout, sRange.GetTo().x ) );
 						*/
 
 						nWork = IsCurrentPositionSelected(sRange.GetFrom());
@@ -1047,7 +1047,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				nNewPos.y += nLineHeight;
 
 			// カーソルを移動
-			nNewPos.x = GetTextArea().GetAreaLeft() - Int(GetTextArea().GetViewLeftCol()) * ( GetTextMetrics().GetHankakuWidth() + m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace );
+			nNewPos.x = GetTextArea().GetAreaLeft() - Int(GetTextArea().GetViewLeftCol()) * ( GetTextMetrics().GetHankakuWidth() + m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace );
 			GetCaret().MoveCursorToClientPoint( nNewPos, false, &ptNewCursor );
 
 			// 2.5クリックによる行単位のドラッグ
@@ -1119,7 +1119,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 			CLogicInt nLineLen;
 			const CLayout* pcLayout;
 			if( NULL != m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout ) ){
-				CLogicInt	nIdx = LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+				CLogicInt	nIdx = LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 				CLayoutRange sRange;
 
 				/* 現在位置の単語の範囲を調べる */
@@ -1135,9 +1135,9 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 					// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 					/*
 					pLine     = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetFrom().GetY2(), &nLineLen, &pcLayout );
-					sRange.SetFromX( LineIndexToColmn( pcLayout, sRange.GetFrom().x ) );
+					sRange.SetFromX( LineIndexToColumn( pcLayout, sRange.GetFrom().x ) );
 					pLine     = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.GetTo().GetY2(), &nLineLen, &pcLayout );
-					sRange.SetToX( LineIndexToColmn( pcLayout, sRange.GetTo().x ) );
+					sRange.SetToX( LineIndexToColumn( pcLayout, sRange.GetTo().x ) );
 					*/
 					int nWorkF = IsCurrentPositionSelectedTEST(
 						sRange.GetFrom(), //カーソル位置
@@ -1783,7 +1783,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		CLayoutPoint ptCaretLayoutPos_Old = GetCaret().GetCaretLayoutPos();
 		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptCaretLayoutPos_Old.GetY2(), &nLineLen, &pcLayout ) ){
 			CLayoutInt nLineAllColLen;
-			LineColmnToIndex2( pcLayout, ptCaretLayoutPos_Old.GetX2(), &nLineAllColLen );
+			LineColumnToIndex2( pcLayout, ptCaretLayoutPos_Old.GetX2(), &nLineAllColLen );
 			if( nLineAllColLen > CLayoutInt(0) ){	// 行終端より右の場合には nLineAllColLen に行全体の表示桁数が入っている
 				ptCaretLogicPos_Old.SetX(
 					ptCaretLogicPos_Old.GetX2()
@@ -2023,7 +2023,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		CLayoutPoint ptCaretLayoutPos_Old = GetCaret().GetCaretLayoutPos();
 		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptCaretLayoutPos_Old.GetY2(), &nLineLen, &pcLayout ) ){
 			CLayoutInt nLineAllColLen;
-			LineColmnToIndex2( pcLayout, ptCaretLayoutPos_Old.GetX2(), &nLineAllColLen );
+			LineColumnToIndex2( pcLayout, ptCaretLayoutPos_Old.GetX2(), &nLineAllColLen );
 			if( nLineAllColLen > CLayoutInt(0) ){	// 行終端より右の場合には nLineAllColLen に行全体の表示桁数が入っている
 				ptCaretLogicPos_Old.SetX(
 					ptCaretLogicPos_Old.GetX2()

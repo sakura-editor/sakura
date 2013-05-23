@@ -50,9 +50,9 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	//	2004.05.13 Moca 初期値を1ではなく元の位置を継承するように
 	// 0以下は未指定扱い。(1開始)
 	int			nJumpToLine;
-	int			nJumpToColm;
+	int			nJumpToColumn;
 	nJumpToLine = 0;
-	nJumpToColm = 0;
+	nJumpToColumn = 0;
 
 	/*
 	  カーソル位置変換
@@ -83,14 +83,14 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	if( 0 == wmemcmp( pLine, L"■\"", 2 ) ){
 		if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) ){
 			wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
-			GetLineColm( &pLine[2] + nPathLen, &nJumpToLine, &nJumpToColm );
+			GetLineColumn( &pLine[2] + nPathLen, &nJumpToLine, &nJumpToColumn );
 		}
 		else{
 			goto can_not_tagjump;
 		}
 	}
 	else if(0 == wmemcmp( pLine, L"・", 1 )){
-		GetLineColm( &pLine[1], &nJumpToLine, &nJumpToColm );
+		GetLineColumn( &pLine[1], &nJumpToLine, &nJumpToColumn );
 		ptXY.y--;
 
 		for( ; 0 <= ptXY.y; ptXY.y-- ){
@@ -132,7 +132,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			//	Check Path
 			if( IsFilePath( p, &nBgn, &nPathLen ) ){
 				wmemcpy( szJumpToFile, &p[nBgn], nPathLen );
-				GetLineColm( &p[nBgn + nPathLen], &nJumpToLine, &nJumpToColm );
+				GetLineColumn( &p[nBgn + nPathLen], &nJumpToLine, &nJumpToColumn );
 				break;
 			}
 			//	Jan. 04, 2001 genta Directoryを対象外にしたので文字列には柔軟に対応
@@ -150,7 +150,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	}
 
 	//	Apr. 21, 2003 genta bClose追加
-	if( !m_pCommanderView->TagJumpSub( to_tchar(szJumpToFile), CMyPoint(nJumpToColm, nJumpToLine), bClose ) )	//@@@ 2003.04.13
+	if( !m_pCommanderView->TagJumpSub( to_tchar(szJumpToFile), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) )	//@@@ 2003.04.13
 		goto can_not_tagjump;
 
 	return true;
