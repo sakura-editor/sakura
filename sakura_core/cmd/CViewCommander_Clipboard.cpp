@@ -337,7 +337,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 			if( bAddLastCR )
 			{
 //				MYTRACE( _T(" カーソル行が最後の行かつ行末に改行が無く、\n挿入すべきデータがまだある場合は行末に改行を挿入。\n") );
-				nInsPosX = m_pCommanderView->LineIndexToColmn( pcLayout, nLineLen );
+				nInsPosX = m_pCommanderView->LineIndexToColumn( pcLayout, nLineLen );
 
 				m_pCommanderView->InsertData_CEditView(
 					CLayoutPoint(nInsPosX, GetCaret().GetCaretLayoutPos().GetY2()),
@@ -501,7 +501,7 @@ void CViewCommander::Command_INSTEXT(
 			const CLayout* pcLayout;
 			line = GetDocument()->m_cLayoutMgr.GetLineStr( GetSelect().GetFrom().GetY2(), &len, &pcLayout );
 
-			pos = ( line == NULL ) ? 0 : m_pCommanderView->LineColmnToIndex( pcLayout, GetSelect().GetFrom().GetX2() );
+			pos = ( line == NULL ) ? 0 : m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() );
 
 			//	開始位置が行末より後ろで、終了位置が同一行
 			if( pos >= len && GetSelect().IsLineOne()){

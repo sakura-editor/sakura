@@ -104,7 +104,7 @@ void CEditView::InsertData_CEditView(
 		// 更新が次行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行末への文字入力や文字列貼り付けで現在行は更新されず次行以後が更新される場合もある
 		// 指定された桁に対応する行のデータ内の位置を調べる
-		nIdxFrom = LineColmnToIndex2( pcLayout, ptInsertPos.GetX2(), &nLineAllColLen );
+		nIdxFrom = LineColumnToIndex2( pcLayout, ptInsertPos.GetX2(), &nLineAllColLen );
 
 		// 行終端より右に挿入しようとした
 		if( nLineAllColLen > 0 ){
@@ -147,7 +147,7 @@ void CEditView::InsertData_CEditView(
 	if( !m_bDoing_UndoRedo && pcOpe ){	// アンドゥ・リドゥの実行中か
 		if( pLine ){
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-				CLayoutPoint(LineIndexToColmn( pcLayout, nIdxFrom ), ptInsertPos.y),
+				CLayoutPoint(LineIndexToColumn( pcLayout, nIdxFrom ), ptInsertPos.y),
 				&pcOpe->m_ptCaretPos_PHY_Before
 			);
 		}
@@ -179,7 +179,7 @@ void CEditView::InsertData_CEditView(
 	pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( pptNewPos->GetY2(), &nLineLen2, &pcLayout );
 	if( pLine2 ){
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
-		pptNewPos->x = pptNewPos->GetX2(); //LineIndexToColmn( pcLayout, pptNewPos->GetX2() );
+		pptNewPos->x = pptNewPos->GetX2(); //LineIndexToColumn( pcLayout, pptNewPos->GetX2() );
 	}
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
@@ -330,18 +330,18 @@ void CEditView::DeleteData2(
 	if( NULL == pLine ){
 		return;
 	}
-	nIdxFrom = LineColmnToIndex( pcLayout, _ptCaretPos.GetX2() );
+	nIdxFrom = LineColumnToIndex( pcLayout, _ptCaretPos.GetX2() );
 
 	//2007.10.18 kobake COpeの生成をここにまとめる
 	CDeleteOpe*	pcOpe = NULL;
 	if( !m_bDoing_UndoRedo ){
 		pcOpe = new CDeleteOpe();
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-			CLayoutPoint( LineIndexToColmn( pcLayout, nIdxFrom ), _ptCaretPos.GetY2() ),
+			CLayoutPoint( LineIndexToColumn( pcLayout, nIdxFrom ), _ptCaretPos.GetY2() ),
 			&pcOpe->m_ptCaretPos_PHY_Before
 		);
 		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-			CLayoutPoint( LineIndexToColmn( pcLayout, nIdxFrom + nDelLen ), _ptCaretPos.GetY2() ),
+			CLayoutPoint( LineIndexToColumn( pcLayout, nIdxFrom + nDelLen ), _ptCaretPos.GetY2() ),
 			&pcOpe->m_ptCaretPos_PHY_To
 		);
 	}
@@ -469,8 +469,8 @@ void CEditView::DeleteData(
 					using namespace WCODE;
 
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxFrom = LineColmnToIndex( pcLayout, rcSel.left  );
-					nIdxTo	 = LineColmnToIndex( pcLayout, rcSel.right );
+					nIdxFrom = LineColumnToIndex( pcLayout, rcSel.left  );
+					nIdxTo	 = LineColumnToIndex( pcLayout, rcSel.right );
 
 					for( CLogicInt i = nIdxFrom; i <= nIdxTo; ++i ){
 						if( pLine[i] == CR || pLine[i] == LF ){
@@ -515,8 +515,8 @@ void CEditView::DeleteData(
 			m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
 			if( rcSel.left <= pcLayout->CalcLayoutWidth( m_pcEditDoc->m_cLayoutMgr ) ){
 				// EOLより左なら文字の単位にそろえる
-				CLogicInt nIdxCaret = LineColmnToIndex( pcLayout, rcSel.left );
-				caretOld.SetX( LineIndexToColmn( pcLayout, nIdxCaret ) );
+				CLogicInt nIdxCaret = LineColumnToIndex( pcLayout, rcSel.left );
+				caretOld.SetX( LineIndexToColumn( pcLayout, nIdxCaret ) );
 			}
 			GetCaret().MoveCursor( caretOld, bRedraw );
 			GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
@@ -553,7 +553,7 @@ void CEditView::DeleteData(
 		bool bLastLine = ( GetCaret().GetCaretLayoutPos().GetY() == m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 );
 
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		nCurIdx = LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+		nCurIdx = LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 //		MYTRACE( _T("nLineLen=%d nCurIdx=%d \n"), nLineLen, nCurIdx);
 		if( nCurIdx == nLineLen && bLastLine ){	/* 全テキストの最後 */
 			goto end_of_func;
@@ -570,7 +570,7 @@ void CEditView::DeleteData(
 		else{
 			nNxtIdx = CLogicInt(CNativeW::GetCharNext( pLine, nLineLen, &pLine[nCurIdx] ) - pLine);
 			// 指定された行のデータ内の位置に対応する桁の位置を調べる
-			nNxtPos = LineIndexToColmn( pcLayout, nNxtIdx );
+			nNxtPos = LineIndexToColumn( pcLayout, nNxtIdx );
 		}
 
 
@@ -655,7 +655,7 @@ void CEditView::ReplaceData_CEditView(
 		const wchar_t*	line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetFrom().GetY2(), &len, &pcLayout );
 		bLineModifiedChange = (line)? !CModifyVisitor().IsLineModified(pcLayout->GetDocLineRef()): true;
 		if( line ){
-			CLogicInt pos = LineColmnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
+			CLogicInt pos = LineColumnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
 			//	Jun. 1, 2000 genta
 			//	同一行の行末以降のみが選択されている場合を考慮する
 
@@ -680,7 +680,7 @@ void CEditView::ReplaceData_CEditView(
 		//	末尾
 		line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetTo().GetY2(), &len, &pcLayout );
 		if( line ){
-			CLayoutInt p = LineIndexToColmn( pcLayout, len );
+			CLayoutInt p = LineIndexToColumn( pcLayout, len );
 
 			if( sDelRange.GetTo().x > p ){
 				sDelRange.SetToX( p );

@@ -419,7 +419,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 	}
 
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+	nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 
 	/* 現在位置の左の単語の先頭位置を調べる */
 	CLayoutPoint ptLayoutNew;
@@ -442,7 +442,7 @@ void CViewCommander::Command_WORDLEFT( bool bSelect )
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 		/*
-		ptLayoutNew.x = m_pCommanderView->LineIndexToColmn( pcLayout, ptLayoutNew.x );
+		ptLayoutNew.x = m_pCommanderView->LineIndexToColumn( pcLayout, ptLayoutNew.x );
 		*/
 
 		/* カーソル移動 */
@@ -502,7 +502,7 @@ try_again:;
 		}
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+	nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 
 	/* 現在位置の右の単語の先頭位置を調べる */
 	CLayoutPoint ptLayoutNew;
@@ -524,7 +524,7 @@ try_again:;
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 		/*
-		ptLayoutNew.x = m_pCommanderView->LineIndexToColmn( pcLayout, ptLayoutNew.x );
+		ptLayoutNew.x = m_pCommanderView->LineIndexToColumn( pcLayout, ptLayoutNew.x );
 		*/
 		// カーソル移動
 		GetCaret().GetAdjustCursorPos( &ptLayoutNew );
@@ -627,7 +627,7 @@ void CViewCommander::Command_GOLINETOP(
 		if(0 == nPosX_Logic) nPosY_Layout = ptCaretPos.y;	/* 物理行の移動なし */
 		
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
-		CLayoutInt nPosX_Layout = m_pCommanderView->LineIndexToColmn( pcLayout, nPosX_Logic );
+		CLayoutInt nPosX_Layout = m_pCommanderView->LineIndexToColumn( pcLayout, nPosX_Logic );
 		CLayoutPoint ptPos(nPosX_Layout, nPosY_Layout);
 		if( GetCaret().GetCaretLayoutPos() != ptPos ){
 			ptCaretPos = ptPos;

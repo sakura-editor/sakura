@@ -84,7 +84,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 					);
 
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxTo = m_pCommanderView->LineColmnToIndex( pcDocLine, GetCaret().GetCaretLayoutPos().GetX2() );
+					nIdxTo = m_pCommanderView->LineColumnToIndex( pcDocLine, GetCaret().GetCaretLayoutPos().GetX2() );
 					for( nPos = CLogicInt(0); nPos < nLineLen && nPos < ptXY.GetX2(); ){
 						// 2005-09-02 D.S.Koba GetSizeOfChar
 						nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -119,7 +119,7 @@ end_of_for:;
 						nPos += nCharChars;
 					}
 					if( nPos > 0 ){
-						nPosX = m_pCommanderView->LineIndexToColmn( pcDocLine, nPos );
+						nPosX = m_pCommanderView->LineIndexToColumn( pcDocLine, nPos );
 					}
 
 					//インデント取得
@@ -611,7 +611,7 @@ void CViewCommander::Command_DELETE( void )
 			if( pcLayout ){
 				CLayoutInt nLineLen;
 				CLogicInt nIndex;
-				nIndex = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
+				nIndex = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 				if( nLineLen != 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					if( EOL_NONE != pcLayout->GetLayoutEol().GetType() ){	// 行終端は改行コードか?
 						Command_INSTEXT( true, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
@@ -624,7 +624,7 @@ void CViewCommander::Command_DELETE( void )
 						if( nLineLen < GetCaret().GetCaretLayoutPos().GetX2() ){	// 折り返し行末とカーソルの間に隙間がある
 							Command_INSTEXT( true, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
 							pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-							nIndex = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
+							nIndex = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 						}
 						if( nLineLen != 0 ){	// （スペース挿入後も）折り返し行末なら次文字を削除するために次行の先頭に移動する必要がある
 							if( pcLayout->GetNextLayout() != NULL ){	// 最終行末ではない
@@ -667,7 +667,7 @@ void CViewCommander::Command_DELETE_BACK( void )
 			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 			if( pcLayout ){
 				CLayoutInt nLineLen;
-				CLogicInt nIdx = m_pCommanderView->LineColmnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
+				CLogicInt nIdx = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					// 右からの移動では折り返し末尾文字は削除するが改行は削除しない
 					// 下から（下の行の行頭から）の移動では改行も削除する
@@ -703,7 +703,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 	CLayoutInt nKetaAfterIns = CLayoutInt(0);
 	if( NULL != pcLayout ){
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		CLogicInt nIdxTo = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+		CLogicInt nIdxTo = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 		if( nIdxTo >= pcLayout->GetLengthWithoutEOL() ){
 			bEol = true;	// 現在位置は改行または折り返し以後
 			if( pcLayout->GetLayoutEol() != EOL_NONE ){

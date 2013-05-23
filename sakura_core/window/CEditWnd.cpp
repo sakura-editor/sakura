@@ -134,7 +134,7 @@ void ShowCodeBox(HWND hWnd)
 	//
 	if( pLine ){
 		// 指定された桁に対応する行のデータ内の位置を調べる
-		CLogicInt nIdx = pcView->LineColmnToIndex( pcLayout, pcCaret->GetCaretLayoutPos().GetX2() );
+		CLogicInt nIdx = pcView->LineColumnToIndex( pcLayout, pcCaret->GetCaretLayoutPos().GetX2() );
 		if( nIdx < nLineLen ){
 			if( nIdx < nLineLen - (pcLayout->GetLayoutEol().GetLen()?1:0) ){
 				// 一時的に表示方法の設定を変更する

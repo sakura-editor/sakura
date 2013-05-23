@@ -34,7 +34,7 @@ bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 		return false;	//	単語選択に失敗
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, ptCaretPos.GetX2() );
+	nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, ptCaretPos.GetX2() );
 
 	/* 現在位置の単語の範囲を調べる */
 	if( GetDocument()->m_cLayoutMgr.WhereCurrentWord(	ptCaretPos.GetY2(), nIdx, &sRange, NULL, NULL ) ){
@@ -43,9 +43,9 @@ bool CViewCommander::Command_SELECTWORD( CLayoutPoint* pptCaretPos )
 		// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 		/*
 		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sRange.GetFrom().GetY2() );
-		sRange.SetFromX( m_pCommanderView->LineIndexToColmn( pcLayout, sRange.GetFrom().x ) );
+		sRange.SetFromX( m_pCommanderView->LineIndexToColumn( pcLayout, sRange.GetFrom().x ) );
 		pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( sRange.GetTo().GetY2() );
-		sRange.SetToX( m_pCommanderView->LineIndexToColmn( pcLayout, sRange.GetTo().x ) );
+		sRange.SetToX( m_pCommanderView->LineIndexToColumn( pcLayout, sRange.GetTo().x ) );
 		*/
 
 		/* 選択範囲の変更 */

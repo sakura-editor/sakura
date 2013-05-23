@@ -603,7 +603,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
 	CalTextWidthArg ctwArg;
 	ctwArg.nLineFrom    = nLineNum;				// 編集開始行
-	ctwArg.nColmFrom    = CLayoutInt(nDelPos);	// 編集開始桁
+	ctwArg.nColumnFrom  = CLayoutInt(nDelPos);	// 編集開始桁
 	ctwArg.nDelLines    = 0;					// 削除行は1行
 	ctwArg.nAllLinesOld = nAllLinesOld;			// 編集前のテキスト行数
 	ctwArg.bInsData     = FALSE;				// 追加文字列なし
@@ -782,7 +782,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
 	CalTextWidthArg ctwArg;
 	ctwArg.nLineFrom    = nLineNum;				// 編集開始行
-	ctwArg.nColmFrom    = CLayoutInt(nInsPos);	// 編集開始桁
+	ctwArg.nColumnFrom  = CLayoutInt(nInsPos);	// 編集開始桁
 	ctwArg.nDelLines    = -1;					// 削除行なし
 	ctwArg.nAllLinesOld = nAllLinesOld;			// 編集前のテキスト行数
 	ctwArg.bInsData     = TRUE;					// 追加文字列あり

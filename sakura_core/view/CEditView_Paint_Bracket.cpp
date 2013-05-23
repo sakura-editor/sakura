@@ -133,7 +133,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 			if( pLine )
 			{
 				EColorIndexType		nColorIndex;
-				CLogicInt	OutputX = LineColmnToIndex( pcLayout, ptColLine.GetX2() );
+				CLogicInt	OutputX = LineColumnToIndex( pcLayout, ptColLine.GetX2() );
 				if( bDraw )	{
 					nColorIndex = COLORIDX_BRACKET_PAIR;
 				}

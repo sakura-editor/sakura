@@ -162,7 +162,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
 // 2002.02.08 hor EOFのみの行からも次検索しても再検索可能に (2/2)
-	nIdx = pcLayout ? m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() ) : CLogicInt(0);
+	nIdx = pcLayout ? m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() ) : CLogicInt(0);
 	if( b0Match ) {
 		// 現在、長さ０でマッチしている場合は物理行で１文字進める(無限マッチ対策)
 		if( nIdx < nLineLen ) {
@@ -368,7 +368,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		nIdx = CLogicInt(pCLayout->GetDocLineRef()->GetLengthWithEOL() + 1);		// 行末のヌル文字(\0)にマッチさせるために+1 2003.05.16 かろと
 	} else {
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
-		nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+		nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 	}
 
 	bRedo		=	true;		//	hor
@@ -594,7 +594,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(GetSelect().GetFrom().GetY2());
 			const wchar_t* pLine = pcLayout->GetDocLineRef()->GetPtr();
-			CLogicInt nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, GetSelect().GetFrom().GetX2() ) + pcLayout->GetLogicOffset();
+			CLogicInt nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() ) + pcLayout->GetLogicOffset();
 			CLogicInt nLen = pcLayout->GetDocLineRef()->GetLengthWithEOL();
 			// 正規表現で選択始点・終点への挿入を記述
 			//	Jun. 6, 2005 かろと
@@ -1047,7 +1047,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = rLayoutMgr.SearchLineByLayoutY(GetSelect().GetFrom().GetY2());
 			const wchar_t* pLine = pcLayout->GetDocLineRef()->GetPtr();
-			CLogicInt nIdx = m_pCommanderView->LineColmnToIndex( pcLayout, GetSelect().GetFrom().GetX2() ) + pcLayout->GetLogicOffset();
+			CLogicInt nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() ) + pcLayout->GetLogicOffset();
 			CLogicInt nLen = pcLayout->GetDocLineRef()->GetLengthWithEOL();
 			CLogicInt colDiff = CLogicInt(0);
 			if( !bConsecutiveAll ){	// 一括置換

@@ -390,7 +390,7 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		Combo_SetCurSel( hwndCombo, nSelPos );
 
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_MAXLINELEN, (Int)m_Types.m_nMaxLineKetas, FALSE );	// ê‹ÇËï‘Çµï∂éöêî
-		::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Types.m_nColmSpace, FALSE );			// ï∂éöÇÃä‘äu
+		::SetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, m_Types.m_nColumnSpace, FALSE );			// ï∂éöÇÃä‘äu
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Types.m_nLineSpace, FALSE );			// çsÇÃä‘äu
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, (Int)m_Types.m_nTabSpace, FALSE );			// TABïù	//	Sep. 22, 2002 genta
 		::DlgItem_SetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );		// TABï\é¶(8ï∂éö)
@@ -533,12 +533,12 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		}
 
 		/* ï∂éöÇÃä‘äu */
-		m_Types.m_nColmSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
-		if( m_Types.m_nColmSpace < 0 ){
-			m_Types.m_nColmSpace = 0;
+		m_Types.m_nColumnSpace = ::GetDlgItemInt( hwndDlg, IDC_EDIT_CHARSPACE, NULL, FALSE );
+		if( m_Types.m_nColumnSpace < 0 ){
+			m_Types.m_nColumnSpace = 0;
 		}
-		if( m_Types.m_nColmSpace > COLUMNSPACE_MAX ){ // Feb. 18, 2003 genta ç≈ëÂílÇÃíËêîâª
-			m_Types.m_nColmSpace = COLUMNSPACE_MAX;
+		if( m_Types.m_nColumnSpace > COLUMNSPACE_MAX ){ // Feb. 18, 2003 genta ç≈ëÂílÇÃíËêîâª
+			m_Types.m_nColumnSpace = COLUMNSPACE_MAX;
 		}
 
 		/* çsÇÃä‘äu */

@@ -1344,8 +1344,8 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColmnToIndex( pcLayout, rcSelLayout.left );
-				nIdxTo		= LineColmnToIndex( pcLayout, rcSelLayout.right );
+				nIdxFrom	= LineColumnToIndex( pcLayout, rcSelLayout.left );
+				nIdxTo		= LineColumnToIndex( pcLayout, rcSelLayout.right );
 
 				for( CLogicInt i = nIdxFrom; i <= nIdxTo; ++i ){
 					if( pLine[i] == WCODE::CR || pLine[i] == WCODE::LF ){
@@ -1362,7 +1362,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			if( nLineNum < rcSelLayout.bottom && 0 < nDelLen ){
 				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + CLayoutInt(1), &nLineLen2, &pcLayout );
 				sPos.Set(
-					LineIndexToColmn( pcLayout, nDelPos ),
+					LineIndexToColumn( pcLayout, nDelPos ),
 					nLineNum + 1
 				);
 
@@ -1760,8 +1760,8 @@ bool CEditView::GetSelectedData(
 			if( NULL != pLine )
 			{
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColmnToIndex( pcLayout, rcSel.left  );
-				nIdxTo		= LineColmnToIndex( pcLayout, rcSel.right );
+				nIdxFrom	= LineColumnToIndex( pcLayout, rcSel.left  );
+				nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
 
 				nBufSize += nIdxTo - nIdxFrom;
 			}
@@ -1779,8 +1779,8 @@ bool CEditView::GetSelectedData(
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom	= LineColmnToIndex( pcLayout, rcSel.left  );
-				nIdxTo		= LineColmnToIndex( pcLayout, rcSel.right );
+				nIdxFrom	= LineColumnToIndex( pcLayout, rcSel.left  );
+				nIdxTo		= LineColumnToIndex( pcLayout, rcSel.right );
 				//2002.02.08 hor
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
@@ -1858,13 +1858,13 @@ bool CEditView::GetSelectedData(
 			}
 			if( nLineNum == GetSelectionInfo().m_sSelect.GetFrom().y ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = LineColmnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
+				nIdxFrom = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
 			}else{
 				nIdxFrom = CLogicInt(0);
 			}
 			if( nLineNum == GetSelectionInfo().m_sSelect.GetTo().y ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxTo = LineColmnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetTo().GetX2() );
+				nIdxTo = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetTo().GetX2() );
 			}else{
 				nIdxTo = nLineLen;
 			}
@@ -2218,7 +2218,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 	if( bCursorVLine ){
 		// カーソル位置縦線。-1してキャレットの左に来るように。
 		nCursorVLineX = GetTextArea().GetAreaLeft() + (Int)(GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol())
-			* (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColmSpace + GetTextMetrics().GetHankakuWidth() ) - 1;
+			* (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace + GetTextMetrics().GetHankakuWidth() ) - 1;
 	}
 
 	if( bDraw
@@ -2541,9 +2541,9 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 {
 	bool result;
 
-	CLayoutInt nColmFrom = ptFrom.GetX2();
+	CLayoutInt nColumnFrom = ptFrom.GetX2();
 	CLayoutInt nLineFrom = ptFrom.GetY2();
-	CLayoutInt nColmTo = ptTo.GetX2();
+	CLayoutInt nColumnTo = ptTo.GetX2();
 	CLayoutInt nLineTo = ptTo.GetY2();
 
 	if( bSelect && !bBoxSelect && nLineFrom != nLineTo ){	// 複数行の範囲指定
@@ -2560,10 +2560,10 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 				nLineTo = nTemp;
 			}
 
-			if( nColmFrom > nColmTo ){
-				nTemp = nColmFrom;
-				nColmFrom = nColmTo;
-				nColmTo = nTemp;
+			if( nColumnFrom > nColumnTo ){
+				nTemp = nColumnFrom;
+				nColumnFrom = nColumnTo;
+				nColumnTo = nTemp;
 			}
 		}else{
 			nLineTo = nLineFrom;
@@ -2576,7 +2576,7 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 		for( CLayoutInt nLineNum = nLineFrom; nLineNum <= nLineTo; nLineNum++ ){
 			if( (pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum )) != NULL ){
 				// 指定位置に対応する行のデータ内の位置
-				LineColmnToIndex2( pcLayout, nColmFrom, &nLineLen );
+				LineColumnToIndex2( pcLayout, nColumnFrom, &nLineLen );
 				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					result = FALSE;		// 指定位置または指定範囲内にテキストがある
 					break;

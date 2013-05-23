@@ -206,7 +206,7 @@ void CEditView::GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPa
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdx = LineColmnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
+			nIdx = LineColumnToIndex( pcLayout, GetCaret().GetCaretLayoutPos().GetX2() );
 
 			/* 現在位置の単語の範囲を調べる */
 			bool bWhere = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
