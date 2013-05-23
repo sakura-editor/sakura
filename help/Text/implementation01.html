@@ -17,6 +17,8 @@
 
 <h3 id=c0301>3.1. プラグイン定義ファイル(plugin.def)</h3>
 プラグイン定義ファイルは以下の内容を含む。<br>
+文字コードセットはShift_JISまたはBOM付きUTF-8です。文字コードセットはBOMの有無で判断する。<br>
+=の前後に空白は付けない。<br>
 ■全プラグイン共通<br>
 <div class=li200>
 	<table class=f>
@@ -47,19 +49,20 @@
 	<tr><td width=120><b>[Command]</b></td><td>- 本体に追加するプラグインコマンドの定義</td></tr>
 	<tr><td>　C[n]</td>			<td>= ハンドラ</td></tr>
 	<tr><td>　C[n].Label</td>	<td>= コマンド名</td></tr>
-	<tr><td>　C[n].Icon</td>	<td>= アイコンファイル（16x16のBMPファイル）</td></tr>
-	<tr><td></td>				<td>　指定されなかった場合は<img src="images/PluginCommand.png" alt="規定のアイコン">で表示される</td></tr>
+	<tr><td>　C[n].Icon</td>	<td>= アイコンファイル(16x16のBMPファイル)</td></tr>
+	<tr><td></td>				<td>　指定されなかった場合は<img src="images/PluginCommand.png" alt="規定のアイコン" title="(mytool.bmpが無い場合)">で表示される</td></tr>
 	</table>
-	　（n=1～99。欠番があるとその後は読み込まれない）<br>
+	　(n=1～99。欠番があるとその後は読み込まれない)<br>
 <br>
 	<table class=f>
 	<tr><td width=120><b>[Option]</b></td><td>- プラグインオプションの定義</td></tr>
-	<tr><td>　O[n].Section</td>		<td>= オプションファイル中のSection名（最初のみ必須）</td></tr>
+	<tr><td>　O[n].Section</td>		<td>= オプションファイル中のSection名(最初のみ必須)</td></tr>
 	<tr><td></td><td>　未指定の場合には、直前の値を使用する。</td></tr>
-	<tr><td>　O[n].Key</td>			<td>= オプションファイル中のKey名（必須）</td></tr>
+	<tr><td>　O[n].Key</td>			<td>= オプションファイル中のKey名(必須)</td></tr>
 	<tr><td>　O[n].Label</td>		<td>= 表示項目</td></tr>
 	<tr><td></td><td>　未指定の場合には、Keyを使用する。</td></tr>
-	<tr><td>　O[n].Type </td>		<td>= 型、以下に定義する。未定義、未指定の場合には文字列型として処理する。</td></tr>
+	<tr><td>　O[n].Type</td>		<td>= 型、以下に定義する。</td></tr>
+	<tr><td></td><td>　未定義、未指定の場合には文字列型として処理する。</td></tr>
 	<tr><td></td><td><table class=f>
 		<tr><td>　Str</td>	<td>: 文字列型(1024文字まで)</td></tr>
 		<tr><td>　Bool</td>	<td>: ブール型 True で 1 False で 0 をプラグインオプションに設定する。</td></tr>
@@ -67,12 +70,13 @@
 		<tr><td>　Sel</td>	<td>: 選択型(ドロップダウンリストで選択)</td></tr>
 		<tr><td></td>		<td>　選択項目は Select で指定する。</td></tr>
 	</table></td></tr>
+	<tr><td>　O[n].Default</td>		<td>= デフォルト値を設定する。 (Ver.2.0.8.0以降)</td></tr>
 	<tr><td>　O[n].Select </td><td>= 選択項目</td></tr>
 	<tr><td></td><td>　各項目は <b>|</b> で区切り、項目の中で 表示 <b>:</b> 値 の様に設定する。</td></tr>
 	<tr><td></td><td>　項目内に <b>:</b> が無かった場合には、項目の値を表示、値の両方に使用する。</td></tr>
 	<tr><td colspan=2>　　例） O[3].Select=自動:0|XML固定:1|XML/XHTML検出:2|XHTML固定:3|HTML固定:6</td></tr>
 	</table>
-	　（n=1～99。欠番があっても読み込む）<br>
+	　(n=1～99。欠番があっても読み込む)<br>
 </div><br>
 	■WSHプラグイン固有<br>
 <div class=li200>
