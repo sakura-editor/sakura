@@ -249,7 +249,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			return TRUE;
 		}
 	}
-	return CDialog::OnNotify( wParam, lParam );
+	return result;
 }
 
 
