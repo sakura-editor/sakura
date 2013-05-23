@@ -151,11 +151,11 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		}
 		//10–Ú·‚¨‚«‚Ì‹æØ‚è(‘å)‚Æ”š
 		else if( 0 == i % 10 ){
-			wchar_t szColm[32];
+			wchar_t szColumn[32];
 			::MoveToEx( gr, nX, nY, NULL );
 			::LineTo( gr, nX, 0 );
-			_itow( ((Int)i) / 10, szColm, 10 );
-			::TextOutW_AnyBuild( gr, nX + 2 + 0, -1 + 0, szColm, wcslen( szColm ) );
+			_itow( ((Int)i) / 10, szColumn, 10 );
+			::TextOutW_AnyBuild( gr, nX + 2 + 0, -1 + 0, szColumn, wcslen( szColumn ) );
 		}
 		//5–Ú·‚¨‚«‚Ì‹æØ‚è(’†)
 		else if( 0 == i % 5 ){
