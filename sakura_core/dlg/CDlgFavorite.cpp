@@ -89,7 +89,7 @@ static const SAnchorList anchorList[] = {
 //#endif
 #endif
 
-static int FormatFavoriteColm( TCHAR*, int, int , bool );
+static int FormatFavoriteColumn( TCHAR*, int, int , bool );
 static int ListView_GetLParamInt( HWND, int );
 static int CALLBACK CompareListViewFunc( LPARAM, LPARAM, LPARAM );
 
@@ -282,7 +282,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 	TCHAR	tmp[1024];
 	for( int i = 0; i < nItemCount; i++ )
 	{
-		FormatFavoriteColm( tmp, _countof(tmp), i, i < nViewCount );
+		FormatFavoriteColumn( tmp, _countof(tmp), i, i < nViewCount );
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = tmp;
 		lvi.iItem    = i;
@@ -420,7 +420,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		TCHAR szBuf[200];
 		for(int i = 0; i < 40; i++ ){
 			// 「M (非表示)」等の幅を求める
-			FormatFavoriteColm( szBuf, _countof(szBuf), i, false);
+			FormatFavoriteColumn( szBuf, _countof(szBuf), i, false);
 			calc.SetTextWidthIfMax( szBuf, CTextWidthCalc::WIDTH_LV_ITEM_CHECKBOX );
 		}
 		
@@ -1061,7 +1061,7 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	}
 }
 
-int FormatFavoriteColm(TCHAR* buf, int size, int index, bool view)
+int FormatFavoriteColumn(TCHAR* buf, int size, int index, bool view)
 {
 	// 2010.03.21 Moca Textに連番を設定することによってアクセスキーにする
 	// 0 - 9 A - Z
@@ -1091,15 +1091,15 @@ static int ListView_GetLParamInt( HWND hwndList, int lvIndex )
 	
 	@param info [in,out] リストビューのソート状態情報
 	@param pRecent       ソートアイテム
-	@param colm          ソートしたい列番号
+	@param column          ソートしたい列番号
 	@param bReverse      ソート済みの場合に降順に切り替える
 */
 // static
-void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int colm, bool bReverse )
+void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse )
 {
 	CompareListViewLParam lparamInfo;
 	// ソート順の決定
-	if( info.nSortColumn != colm ){
+	if( info.nSortColumn != column ){
 		info.bSortAscending = true;
 	}else{
 		// ソート逆順(降順)
@@ -1130,16 +1130,16 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 	col.pszText = szHeader;
 	col.cchTextMax = _countof(szHeader) - 4;
 	col.iSubItem = 0;
-	ListView_GetColumn( info.hListView, colm, &col );
+	ListView_GetColumn( info.hListView, column, &col );
 	_tcscat(szHeader, info.bSortAscending ? _T("▼") : _T("▲"));
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.iSubItem = 0;
-	ListView_SetColumn( info.hListView, colm, &col );
+	ListView_SetColumn( info.hListView, column, &col );
 
-	info.nSortColumn = colm;
+	info.nSortColumn = column;
 
-	lparamInfo.nSortColumn = colm;
+	lparamInfo.nSortColumn = column;
 	lparamInfo.hwndListView = info.hListView;
 	lparamInfo.pRecent = pRecent;
 	lparamInfo.bAbsOrder = info.bSortAscending;
