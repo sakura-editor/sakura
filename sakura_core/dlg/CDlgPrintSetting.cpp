@@ -48,8 +48,8 @@ const DWORD p_helpids[] = {	//12500
 	IDC_BUTTON_EDITSETTINGNAME,		HIDC_PS_BUTTON_EDITSETTINGNAME,	//設定名変更
 	IDC_COMBO_FONT_HAN,				HIDC_PS_COMBO_FONT_HAN,		//半角フォント
 	IDC_COMBO_FONT_ZEN,				HIDC_PS_COMBO_FONT_ZEN,		//全角フォント
-	IDC_EDIT_FONTWIDTH,				HIDC_PS_EDIT_FONTWIDTH,		//フォント幅
-	IDC_SPIN_FONTWIDTH,				HIDC_PS_EDIT_FONTWIDTH,		//12570,
+	IDC_EDIT_FONTHEIGHT,			HIDC_PS_EDIT_FONTHEIGHT,	//フォント高
+	IDC_SPIN_FONTHEIGHT,			HIDC_PS_EDIT_FONTHEIGHT,	//12570,
 	IDC_SPIN_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//12571,
 	IDC_EDIT_LINESPACE,				HIDC_PS_EDIT_LINESPACE,		//行送り
 	IDC_EDIT_DANSUU,				HIDC_PS_EDIT_DANSUU,		//段数
@@ -182,7 +182,7 @@ BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 		bSpinDown = TRUE;
 	}
 	switch( idCtrl ){
-	case IDC_SPIN_FONTWIDTH:
+	case IDC_SPIN_FONTHEIGHT:
 	case IDC_SPIN_LINESPACE:
 	case IDC_SPIN_DANSUU:
 	case IDC_SPIN_DANSPACE:
@@ -309,8 +309,8 @@ BOOL CDlgPrintSetting::OnStnClicked( int wID )
 BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 {
 	switch( wID ){
-	case IDC_EDIT_FONTWIDTH:	// フォント幅の最小値が非０のため'12'と入力すると'1'のところで蹴られてしまう 2013.5.5 aroka
-		if( ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTWIDTH, NULL, FALSE ) >=10 ){	// 二桁以上の場合は領域チェック 2013.5.20 aroka
+	case IDC_EDIT_FONTHEIGHT:	// フォント幅の最小値が非０のため'12'と入力すると'1'のところで蹴られてしまう 2013.5.5 aroka
+		if( ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE ) >=10 ){	// 二桁以上の場合は領域チェック 2013.5.20 aroka
 			UpdatePrintableLineAndColumn();
 		}
 		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
@@ -332,7 +332,7 @@ BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 BOOL CDlgPrintSetting::OnEnKillFocus( HWND hwndCtl, int wID )
 {
 	switch( wID ){
-	case IDC_EDIT_FONTWIDTH:
+	case IDC_EDIT_FONTHEIGHT:
 	//case IDC_EDIT_LINESPACE:	// EN_CHANGE で計算しているので冗長かな、と思いコメントアウト 2013.5.5 aroka
 	//case IDC_EDIT_DANSUU:
 	//case IDC_EDIT_DANSPACE:
@@ -433,18 +433,18 @@ int CDlgPrintSetting::GetData( void )
 		m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen
 	);
 
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTWIDTH, NULL, FALSE );
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, NULL, FALSE );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_LINESPACE, NULL, FALSE );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSUU, NULL, FALSE );
 	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, NULL, FALSE ) * 10;
 
 	/* 入力値(数値)のエラーチェックをして正しい値を返す */
-	nWork = DataCheckAndCorrect( IDC_EDIT_FONTWIDTH, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth );
-	if( nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth ){
-		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth = nWork;
-		::SetDlgItemInt( GetHwnd(), IDC_EDIT_FONTWIDTH, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth, FALSE );
+	nWork = DataCheckAndCorrect( IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight );
+	if( nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight ){
+		m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = nWork;
+		::SetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight, FALSE );
 	}
-	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight = m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth * 2;
+	m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth = ( m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight+1 ) / 2;
 
 	nWork = DataCheckAndCorrect( IDC_EDIT_LINESPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing );
 	if( nWork != m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing ){
@@ -567,7 +567,7 @@ void CDlgPrintSetting::OnChangeSettingType( BOOL bGetData )
 	nIdx1 = Combo_FindStringExact( hwndCtrl, 0, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceZen );
 	Combo_SetCurSel( hwndCtrl, nIdx1 );
 
-	::SetDlgItemInt( GetHwnd(), IDC_EDIT_FONTWIDTH, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontWidth, FALSE );
+	::SetDlgItemInt( GetHwnd(), IDC_EDIT_FONTHEIGHT, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintFontHeight, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINESPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintLineSpacing, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_DANSUU, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDansuu, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_EDIT_DANSPACE, m_PrintSettingArr[m_nCurrentPrintSetting].m_nPrintDanSpace / 10, FALSE );
@@ -634,7 +634,7 @@ const struct {
 	int minval;
 	int maxval;
 } sDataRange[] = {
-	IDC_EDIT_FONTWIDTH,	7,	100,	//!< 1/10mm
+	IDC_EDIT_FONTHEIGHT,7,	200,	//!< 1/10mm
 	IDC_EDIT_LINESPACE,	0,	150,	//!< %
 	IDC_EDIT_DANSUU,	1,	4,
 	IDC_EDIT_DANSPACE,	0,	30,		//!< mm
@@ -652,7 +652,7 @@ void CDlgPrintSetting::OnSpin( int nCtrlId, BOOL bDown )
 	int		nDiff = 1;
 	int		nIdx = -1;
 	switch( nCtrlId ){
-	case IDC_SPIN_FONTWIDTH:	nIdx = 0;				break;
+	case IDC_SPIN_FONTHEIGHT:	nIdx = 0;				break;
 	case IDC_SPIN_LINESPACE:	nIdx = 1;	nDiff=10;	break;
 	case IDC_SPIN_DANSUU:		nIdx = 2;				break;
 	case IDC_SPIN_DANSPACE:		nIdx = 3;				break;
@@ -681,7 +681,7 @@ int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 {
 	int nIdx = -1;
 	switch( nCtrlId ){
-	case IDC_EDIT_FONTWIDTH:	nIdx = 0;		break;
+	case IDC_EDIT_FONTHEIGHT:	nIdx = 0;		break;
 	case IDC_EDIT_LINESPACE:	nIdx = 1;		break;
 	case IDC_EDIT_DANSUU:		nIdx = 2;		break;
 	case IDC_EDIT_DANSPACE:		nIdx = 3;		break;

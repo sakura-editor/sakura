@@ -276,13 +276,13 @@
 #define IDC_SPIN_MARGINBY               1210
 #define IDC_SPIN_MARGINLX               1211
 #define IDC_SPIN_MARGINRX               1212
-#define IDC_SPIN_FONTWIDTH              1213
+#define IDC_SPIN_FONTHEIGHT             1213
 #define IDC_SPIN_DANSUU                 1214
 #define IDC_EDIT_FOOT1                  1215
 #define IDC_COMBO_FONT_HAN              1216
 #define IDC_COMBO_FONT_ZEN              1217
 #define IDC_SPIN_DANSPACE               1218
-#define IDC_EDIT_FONTWIDTH              1219
+#define IDC_EDIT_FONTHEIGHT             1219
 #define IDC_EDIT_DANSUU                 1220
 #define IDC_CHECK_WORDWRAP              1221
 #define IDC_CHECK_LINENUMBER            1222

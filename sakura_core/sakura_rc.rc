@@ -409,9 +409,9 @@ BEGIN
     LTEXT           "全角フォント(&K)",IDC_STATIC,8,52,50,8,0,WS_EX_RIGHT
     COMBOBOX        IDC_COMBO_FONT_ZEN,62,50,75,230,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "フォント幅(&P)",IDC_STATIC,8,71,50,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_EDIT_FONTWIDTH,62,69,30,12,ES_AUTOHSCROLL
-    CONTROL         "Spin5",IDC_SPIN_FONTWIDTH,"msctls_updown32",
+    LTEXT           "フォント高(&P)",IDC_STATIC,8,71,50,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_EDIT_FONTHEIGHT,62,69,30,12,ES_AUTOHSCROLL
+    CONTROL         "Spin5",IDC_SPIN_FONTHEIGHT,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,90,69,9,
                     12
     LTEXT           "(1/10mm)",IDC_STATIC,94,71,33,8
