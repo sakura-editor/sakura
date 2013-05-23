@@ -267,8 +267,10 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		}
 		return TRUE;
 	case IDOK:
-		/* ダイアログデータの取得 */
-		::EndDialog( GetHwnd(), GetData() );
+		if( CalcPrintableLineAndColumn() ){
+			/* ダイアログデータの取得 */
+			::EndDialog( GetHwnd(), GetData() );
+		}
 		return TRUE;
 	case IDCANCEL:
 		::EndDialog( GetHwnd(), FALSE );
@@ -292,7 +294,11 @@ BOOL CDlgPrintSetting::OnStnClicked( int wID )
 	case IDC_STATIC_ENABLECOLMNS:
 	case IDC_STATIC_ENABLELINES:
 		// 現状クリックは受け付けていないが、メッセージ処理したいのでここに配置 2013.5.5 aroka
-		CalcPrintableLineAndColumn();
+		// メッセージが連続して送られたときは一回だけ対応する 2013.5.5 aroka
+		if( m_bPrintableLinesAndColumnInvalid ){
+			m_bPrintableLinesAndColumnInvalid = false;
+			CalcPrintableLineAndColumn();
+		}
 		return TRUE;
 	}
 	/* 基底クラスメンバ */
@@ -303,7 +309,11 @@ BOOL CDlgPrintSetting::OnStnClicked( int wID )
 BOOL CDlgPrintSetting::OnEnChange( HWND hwndCtl, int wID )
 {
 	switch( wID ){
-//	case IDC_EDIT_FONTWIDTH:	// フォント幅の最小値が非０のため'12'と入力すると'1'のところで蹴られてしまう 2013.5.5 aroka
+	case IDC_EDIT_FONTWIDTH:	// フォント幅の最小値が非０のため'12'と入力すると'1'のところで蹴られてしまう 2013.5.5 aroka
+		if( ::GetDlgItemInt( GetHwnd(), IDC_EDIT_FONTWIDTH, NULL, FALSE ) >=10 ){	// 二桁以上の場合は領域チェック 2013.5.20 aroka
+			UpdatePrintableLineAndColumn();
+		}
+		break;	// ここでは行と桁の更新要求のみ。後の処理はCDialogに任せる。
 	case IDC_EDIT_LINESPACE:
 	case IDC_EDIT_DANSUU:
 	case IDC_EDIT_DANSPACE:
@@ -692,7 +702,11 @@ int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 }
 
 
-/* タイマー処理 */
+/*!
+	印字可能行数と桁数を計算
+	@date 2013.05.05 aroka OnTimerから移動
+	@retval 印字可能領域があれば TRUE  // 2013.05.20 aroka
+*/
 BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 {
 	int				nEnableColmns;		/* 行あたりの文字数 */
@@ -701,12 +715,6 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	short			nPaperAllWidth;		/* 用紙幅 */
 	short			nPaperAllHeight;	/* 用紙高さ */
 	PRINTSETTING*	pPS;
-
-	// メッセージが連続して送られたときは一回だけ対応する 2013.5.5 aroka
-	if( m_bPrintableLinesAndColumnInvalid == false ){
-		return TRUE;
-	}
-	m_bPrintableLinesAndColumnInvalid = false;
 
 	/* ダイアログデータの取得 */
 	GetData();
@@ -744,11 +752,11 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
 	if( nEnableColmns == 0 || nEnableLines == 0 ){
 		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), FALSE );
+		return FALSE;
 	}else{
 		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), TRUE );
+		return TRUE;
 	}
-
-	return TRUE;
 }
 
 
