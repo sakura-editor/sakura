@@ -688,7 +688,7 @@ void CMacro::HandleCommand(
 		//		**********************************
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
 		//		0x800	(マクロ専用)検索キーを履歴に登録しない
-		if( Argument[0] == NULL || Argument[0] == L'\0' ){
+		if( Argument[0] == NULL || Argument[0][0] == L'\0' ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("置換元パターンが指定されていません．"));
 			break;
