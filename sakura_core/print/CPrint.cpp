@@ -632,19 +632,19 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settin
 	印字可能桁数の計算
 	@date 2013.05.10 aroka 新規作成
 */
-int CPrint::CalculatePrintableColumns( PRINTSETTING *pPS, int nPaperAllWidth, int nLineNumberColmns )
+int CPrint::CalculatePrintableColumns( PRINTSETTING *pPS, int nPaperAllWidth, int nLineNumberColumns )
 {
 	int nPrintablePaperWidth = nPaperAllWidth - pPS->m_nPrintMarginLX - pPS->m_nPrintMarginRX;
 	if( nPrintablePaperWidth < 0 ){ return 0; }
 
 	int nPrintSpaceWidth = ( pPS->m_nPrintDansuu - 1 ) * pPS->m_nPrintDanSpace
-						 + ( pPS->m_nPrintDansuu ) * ( nLineNumberColmns * pPS->m_nPrintFontWidth );
+						 + ( pPS->m_nPrintDansuu ) * ( nLineNumberColumns * pPS->m_nPrintFontWidth );
 	if( nPrintablePaperWidth < nPrintSpaceWidth ){ return 0; }
 
-	int nEnableColmns =
+	int nEnableColumns =
 		( nPrintablePaperWidth - nPrintSpaceWidth
 		) / pPS->m_nPrintFontWidth / pPS->m_nPrintDansuu;	/* 印字可能桁数/ページ */
-	return nEnableColmns;
+	return nEnableColumns;
 }
 
 

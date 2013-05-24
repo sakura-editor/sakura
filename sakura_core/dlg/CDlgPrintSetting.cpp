@@ -121,7 +121,7 @@ int CDlgPrintSetting::DoModal(
 	HWND			hwndParent,
 	int*			pnCurrentPrintSetting,
 	PRINTSETTING*	pPrintSettingArr,
-	int				nLineNumberColmns
+	int				nLineNumberColumns
 )
 {
 	int		nRet;
@@ -130,7 +130,7 @@ int CDlgPrintSetting::DoModal(
 	for( i = 0; i < MAX_PRINTSETTINGARR; ++i ){
 		m_PrintSettingArr[i] = pPrintSettingArr[i];
 	}
-	m_nLineNumberColmns = nLineNumberColmns;
+	m_nLineNumberColumns = nLineNumberColumns;
 
 	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_PRINTSETTING, NULL );
 	if( TRUE == nRet ){
@@ -378,7 +378,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 BOOL CDlgPrintSetting::OnStnClicked( int wID )
 {
 	switch( wID ){
-	case IDC_STATIC_ENABLECOLMNS:
+	case IDC_STATIC_ENABLECOLUMNS:
 	case IDC_STATIC_ENABLELINES:
 		// 現状クリックは受け付けていないが、メッセージ処理したいのでここに配置 2013.5.5 aroka
 		// メッセージが連続して送られたときは一回だけ対応する 2013.5.5 aroka
@@ -814,7 +814,7 @@ int CDlgPrintSetting::DataCheckAndCorrect( int nCtrlId, int nData )
 */
 BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 {
-	int				nEnableColmns;		/* 行あたりの文字数 */
+	int				nEnableColumns;		/* 行あたりの文字数 */
 	int				nEnableLines;		/* 縦方向の行数 */
 	MYDEVMODE		dmDummy;			// 2003.05.18 かろと 型変更
 	short			nPaperAllWidth;		/* 用紙幅 */
@@ -840,11 +840,11 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 		return FALSE;
 	}
 	/* 行あたりの文字数(行番号込み) */
-	nEnableColmns = CPrint::CalculatePrintableColumns( pPS, nPaperAllWidth, pPS->m_bPrintLineNumber?m_nLineNumberColmns:0 );	/* 印字可能桁数/ページ */
+	nEnableColumns = CPrint::CalculatePrintableColumns( pPS, nPaperAllWidth, pPS->m_bPrintLineNumber?m_nLineNumberColumns:0 );	/* 印字可能桁数/ページ */
 	/* 縦方向の行数 */
 	nEnableLines = CPrint::CalculatePrintableLines( pPS, nPaperAllHeight );			/* 印字可能行数/ページ */
 
-	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLECOLMNS, nEnableColmns, FALSE );
+	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLECOLUMNS, nEnableColumns, FALSE );
 	::SetDlgItemInt( GetHwnd(), IDC_STATIC_ENABLELINES, nEnableLines, FALSE );
 
 	// フォントのポイント数	2013/5/9 Uchi
@@ -855,7 +855,7 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
 
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
-	if( nEnableColmns == 0 || nEnableLines == 0 ){
+	if( nEnableColumns == 0 || nEnableLines == 0 ){
 		::EnableWindow( GetDlgItem( GetHwnd(), IDOK ), FALSE );
 		return FALSE;
 	}else{
@@ -870,7 +870,7 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 void CDlgPrintSetting::UpdatePrintableLineAndColumn()
 {
 	m_bPrintableLinesAndColumnInvalid = true;
-	::PostMessageA( GetHwnd(), WM_COMMAND, MAKELONG( IDC_STATIC_ENABLECOLMNS, STN_CLICKED ), (LPARAM)::GetDlgItem( GetHwnd(), IDC_STATIC_ENABLECOLMNS ) );
+	::PostMessageA( GetHwnd(), WM_COMMAND, MAKELONG( IDC_STATIC_ENABLECOLUMNS, STN_CLICKED ), (LPARAM)::GetDlgItem( GetHwnd(), IDC_STATIC_ENABLECOLUMNS ) );
 }
 
 
