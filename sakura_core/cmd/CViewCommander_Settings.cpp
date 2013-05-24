@@ -193,12 +193,6 @@ void CViewCommander::Command_FONT( void )
 		GetDllShareData().m_Common.m_sView.m_lf = lf;
 		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 
-		// 文字幅キャッシュの初期化	// 2008/5/15 Uchi
-		InitCharWidthCache(lf);
-
-//		/* 変更フラグ フォント */
-//		GetDllShareData().m_bFontModify = TRUE;
-
 		if( GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
 			GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH = TRUE;	/* 現在のフォントは固定幅フォントである */
 		}else{
