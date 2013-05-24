@@ -432,7 +432,7 @@ void CDlgGrep::SetData( void )
 	}
 	// To Here Jun. 29, 2001 genta
 
-	if( m_szCurrentFilePath != _T('\0') ){
+	if( m_szCurrentFilePath[0] != _T('\0') ){
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_FROMTHISTEXT ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHK_FROMTHISTEXT ), FALSE );
