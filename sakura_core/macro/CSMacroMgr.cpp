@@ -377,15 +377,18 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_CHGTABWIDTH,			LTEXT("ChangeTabWidth"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //タブサイズ変更 2004.03.16 zenryaku
 	{F_ISTEXTSELECTED,		LTEXT("IsTextSelected"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //テキストが選択されているか 2005.7.30 maru
 	{F_GETSELLINEFROM,		LTEXT("GetSelectLineFrom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始行の取得 2005.7.30 maru
-	{F_GETSELCOLMFROM,		LTEXT("GetSelectColmFrom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNFROM,	LTEXT("GetSelectColmFrom"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNFROM,	LTEXT("GetSelectColumnFrom"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始桁の取得 2005.7.30 maru
 	{F_GETSELLINETO,		LTEXT("GetSelectLineTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了行の取得 2005.7.30 maru
-	{F_GETSELCOLMTO,		LTEXT("GetSelectColmTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNTO,		LTEXT("GetSelectColmTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNTO,		LTEXT("GetSelectColumnTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了桁の取得 2005.7.30 maru
 	{F_ISINSMODE,			LTEXT("IsInsMode"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 挿入／上書きモードの取得 2005.7.30 maru
 	{F_GETCHARCODE,			LTEXT("GetCharCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 文字コード取得 2005.07.31 maru
 	{F_GETLINECODE,			LTEXT("GetLineCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 改行コード取得 2005.08.05 maru
 	{F_ISPOSSIBLEUNDO,		LTEXT("IsPossibleUndo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Undo可能か調べる 2005.08.05 maru
 	{F_ISPOSSIBLEREDO,		LTEXT("IsPossibleRedo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Redo可能か調べる 2005.08.05 maru
-	{F_CHGWRAPCOLM,			LTEXT("ChangeWrapColm"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
+	{F_CHGWRAPCOLUMN,		LTEXT("ChangeWrapColm"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
+	{F_CHGWRAPCOLUMN,		LTEXT("ChangeWrapColumn"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
 	{F_ISCURTYPEEXT,		LTEXT("IsCurTypeExt"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 	{F_ISSAMETYPEEXT,		LTEXT("IsSameTypeExt"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 	{F_INPUTBOX,			LTEXT("InputBox"),				{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_BSTR,	NULL }, //テキスト入力ダイアログの表示

@@ -162,7 +162,7 @@ void CViewCommander::Command_PASTE( int option )
 	//砂時計
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
-	// クリップボードからデータを取得 -> cmemClip, bColmnSelect
+	// クリップボードからデータを取得 -> cmemClip, bColumnSelect
 	CNativeW	cmemClip;
 	bool		bColumnSelect;
 	bool		bLineSelect = false;
