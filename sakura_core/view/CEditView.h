@@ -161,8 +161,8 @@ public:
 	bool MyGetClipboardData( CNativeW&, bool*, bool* = NULL );			/* クリップボードからデータを取得 */
 
 	//設定
-	bool MySetClipboardData( const ACHAR*, int, bool bColmnSelect, bool = false );	/* クリップボードにデータを設定 */
-	bool MySetClipboardData( const WCHAR*, int, bool bColmnSelect, bool = false );	/* クリップボードにデータを設定 */
+	bool MySetClipboardData( const ACHAR*, int, bool bColumnSelect, bool = false );	/* クリップボードにデータを設定 */
+	bool MySetClipboardData( const WCHAR*, int, bool bColumnSelect, bool = false );	/* クリップボードにデータを設定 */
 
 	//利用
 	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji

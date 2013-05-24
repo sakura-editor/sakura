@@ -2097,10 +2097,10 @@ void CEditView::CopySelectedAllLines(
 	@date 2007.10.04 ryoji MSDEVLineSelect対応処理を追加
 	@date 2008.09.10 bosagami パス貼り付け対応
 */
-bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColmnSelect, bool* pbLineSelect /*= NULL*/ )
+bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect /*= NULL*/ )
 {
-	if(pbColmnSelect)
-		*pbColmnSelect = false;
+	if(pbColumnSelect)
+		*pbColumnSelect = false;
 
 	if(pbLineSelect)
 		*pbLineSelect = false;
@@ -2112,10 +2112,10 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColmnSelect, bool
 	if(!cClipboard)
 		return false;
 
-//	return cClipboard.GetText(&cmemBuf,pbColmnSelect,pbLineSelect);
+//	return cClipboard.GetText(&cmemBuf,pbColumnSelect,pbLineSelect);
 	int nClipType = CClipboard::GetDataType();
 
-	if(!cClipboard.GetText(&cmemBuf,pbColmnSelect,pbLineSelect)){
+	if(!cClipboard.GetText(&cmemBuf,pbColumnSelect,pbLineSelect)){
 		return false;
 	}
 	if(nClipType == CF_HDROP)
@@ -2130,14 +2130,14 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColmnSelect, bool
 /* クリップボードにデータを設定
 	@date 2004.02.17 Moca エラーチェックするように
  */
-bool CEditView::MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= false*/ )
+bool CEditView::MySetClipboardData( const ACHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
 {
 	//WCHARに変換
 	std::vector<wchar_t> buf;
 	mbstowcs_vector(pszText,nTextLen,&buf);
-	return MySetClipboardData(&buf[0],buf.size()-1,bColmnSelect,bLineSelect);
+	return MySetClipboardData(&buf[0],buf.size()-1,bColumnSelect,bLineSelect);
 }
-bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColmnSelect, bool bLineSelect /*= false*/ )
+bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bColumnSelect, bool bLineSelect /*= false*/ )
 {
 	/* Windowsクリップボードにコピー */
 	CClipboard cClipboard(GetHwnd());
@@ -2145,7 +2145,7 @@ bool CEditView::MySetClipboardData( const WCHAR* pszText, int nTextLen, bool bCo
 		return false;
 	}
 	cClipboard.Empty();
-	return cClipboard.SetText(pszText,nTextLen,bColmnSelect,bLineSelect);
+	return cClipboard.SetText(pszText,nTextLen,bColumnSelect,bLineSelect);
 }
 
 

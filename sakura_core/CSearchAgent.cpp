@@ -290,7 +290,7 @@ bool CSearchAgent::WhereCurrentWord(
 bool CSearchAgent::PrevOrNextWord(
 	CLogicInt	nLineNum,		//	行数
 	CLogicInt	nIdx,			//	桁数
-	CLogicInt*	pnColmNew,		//	見つかった位置
+	CLogicInt*	pnColumnNew,	//	見つかった位置
 	BOOL		bLEFT,			//	TRUE:前方（左）へ向かう。FALSE:後方（右）へ向かう。
 	BOOL		bStopsBothEnds	//	単語の両端で止まる
 )
@@ -359,9 +359,9 @@ bool CSearchAgent::PrevOrNextWord(
 			nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
 			++nCount;
 		}
-		*pnColmNew = nIdxNext;
+		*pnColumnNew = nIdxNext;
 	}else{
-		CWordParse::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColmNew, bStopsBothEnds);
+		CWordParse::SearchNextWordPosition(pLine, nLineLen, nIdx, pnColumnNew, bStopsBothEnds);
 	}
 	return true;
 }

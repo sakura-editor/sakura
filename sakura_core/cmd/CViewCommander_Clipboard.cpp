@@ -164,14 +164,14 @@ void CViewCommander::Command_PASTE( int option )
 
 	// クリップボードからデータを取得 -> cmemClip, bColmnSelect
 	CNativeW	cmemClip;
-	bool		bColmnSelect;
+	bool		bColumnSelect;
 	bool		bLineSelect = false;
 	bool		bLineSelectOption = 
 		((option & 0x04) == 0x04) ? true :
 		((option & 0x08) == 0x08) ? false :
 		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste;
 
-	if( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
+	if( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColumnSelect, bLineSelectOption ? &bLineSelect: NULL ) ){
 		ErrorBeep();
 		return;
 	}
@@ -185,15 +185,15 @@ void CViewCommander::Command_PASTE( int option )
 		((option & 0x02) == 0x02) ? false :
 		GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste;
 
-	bool bAutoColmnPaste = 
+	bool bAutoColumnPaste = 
 		((option & 0x10) == 0x10) ? true :
 		((option & 0x20) == 0x20) ? false :
-		GetDllShareData().m_Common.m_sEdit.m_bAutoColmnPaste != FALSE;
+		GetDllShareData().m_Common.m_sEdit.m_bAutoColumnPaste != FALSE;
 
 	// 矩形コピーのテキストは常に矩形貼り付け
-	if( bAutoColmnPaste ){
+	if( bAutoColumnPaste ){
 		// 矩形コピーのデータなら矩形貼り付け
-		if( bColmnSelect ){
+		if( bColumnSelect ){
 			if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){
 				ErrorBeep();
 				return;

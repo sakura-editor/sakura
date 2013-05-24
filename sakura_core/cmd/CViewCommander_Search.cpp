@@ -791,7 +791,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	// 速く動かすことを最優先に組んでみました。
 	// ループの外で文字列の長さを特定できるので、一時変数化。
 	const wchar_t *szREPLACEKEY;		// 置換後文字列。
-	bool		bColmnSelect = false;	// 矩形貼り付けを行うかどうか。
+	bool		bColumnSelect = false;	// 矩形貼り付けを行うかどうか。
 	bool		bLineSelect = false;	// ラインモード貼り付けを行うかどうか
 	CNativeW	cmemClip;				// 置換後文字列のデータ（データを格納するだけで、ループ内ではこの形ではデータを扱いません）。
 
@@ -799,14 +799,14 @@ void CViewCommander::Command_REPLACE_ALL()
 	if( nPaste != 0 )
 	{
 		// クリップボードからデータを取得。
-		if ( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
+		if ( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColumnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
 		{
 			ErrorBeep();
 			return;
 		}
 
 		// 矩形貼り付けが許可されていて、クリップボードのデータが矩形選択のとき。
-		if ( GetDllShareData().m_Common.m_sEdit.m_bAutoColmnPaste && bColmnSelect )
+		if ( GetDllShareData().m_Common.m_sEdit.m_bAutoColumnPaste && bColumnSelect )
 		{
 			// マウスによる範囲選択中
 			if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )
@@ -824,7 +824,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		else
 		// クリップボードからのデータは普通に扱う。
 		{
-			bColmnSelect = false;
+			bColumnSelect = false;
 		}
 	}
 	else
@@ -1024,7 +1024,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		/* テキストを貼り付け */
 		if( nPaste )
 		{
-			if ( !bColmnSelect )
+			if ( !bColumnSelect )
 			{
 				/* 本当は Command_INSTEXT を使うべきなんでしょうが、無駄な処理を避けるために直接たたく。
 				** →m_nSelectXXXが-1の時に m_pCommanderView->ReplaceData_CEditViewを直接たたくと動作不良となるため

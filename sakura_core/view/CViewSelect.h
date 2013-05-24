@@ -127,7 +127,7 @@ public:
 	{
 		return m_sSelect.IsValid();
 //		return 0!=(
-//			~((DWORD)(m_sSelect.nLineFrom | m_sSelect.nLineTo | m_sSelect.nColmFrom | m_sSelect.nColmTo)) >> 31
+//			~((DWORD)(m_sSelect.nLineFrom | m_sSelect.nLineTo | m_sSelect.nColumnFrom | m_sSelect.nColumnTo)) >> 31
 //			);
 	}
 
