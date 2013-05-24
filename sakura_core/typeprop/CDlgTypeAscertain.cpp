@@ -98,8 +98,8 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 void CDlgTypeAscertain::SetData( void )
 {
 	// ƒ^ƒCƒv–¼Ý’è
-	::SetWindowTextW( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_TO   ), m_psi->sTypeNameTo.c_str() );
-	::SetWindowTextW( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_FILE ), m_psi->sTypeNameFile.c_str() );
+	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_TO   ), to_tchar(m_psi->sTypeNameTo.c_str()) );
+	::SetWindowText( ::GetDlgItem( GetHwnd(), IDC_STATIC_TYPE_FILE ), to_tchar(m_psi->sTypeNameFile.c_str()) );
 
 	int		nIdx;
 	HWND	hwndCombo;
