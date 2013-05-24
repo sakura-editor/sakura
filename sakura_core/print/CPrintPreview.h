@@ -109,9 +109,8 @@ protected:
 	||	また、DrawXXXXX()から抜けてきたときは、半角フォントに設定されていることを期待してよい。
 	||	フォントは、半角フォントと全角フォントしかないことも期待してよい。
 	*/
-	void DrawHeader( HDC hdc, const CMyRect& rect );
+	void DrawHeaderFooter( HDC hdc, const CMyRect& rect , bool bHeader );
 	void DrawPageText( HDC, int, int, int, class CDlgCancel* );
-	void DrawFooter( HDC hdc, const CMyRect& rect );
 
 	// 印刷／プレビュー 行描画
 	CColorStrategy* Print_DrawLine(

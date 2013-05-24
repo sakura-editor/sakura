@@ -667,30 +667,52 @@ int CPrint::CalculatePrintableLines( PRINTSETTING *pPS, int nPaperAllHeight )
 }
 
 
-int CPrint::CalcHeaderHeight( PRINTSETTING *pPS )
+/*!
+	ヘッダ高さの計算(行送り分こみ)
+	@date 2013.05.16 Uchi 新規作成
+*/
+int CPrint::CalcHeaderHeight( PRINTSETTING* pPS )
 {
-	if( pPS->m_szHeaderForm[0][0] == 0 
-	 && pPS->m_szHeaderForm[1][0] == 0 
-	 && pPS->m_szHeaderForm[2][0] == 0 )
-	{
+	if (pPS->m_szHeaderForm[0][0] == _T('\0')
+	 && pPS->m_szHeaderForm[1][0] == _T('\0')
+	 && pPS->m_szHeaderForm[2][0] == _T('\0')) {
+		// 使ってなければ 0
 		return 0;
-	}else{
-		int nPrintSpaceHeight = ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 );
-		return (pPS->m_nPrintFontHeight + nPrintSpaceHeight );
 	}
+
+	int		nHeight;
+	if (pPS->m_lfHeader.lfFaceName[0] == _T('\0')) {
+		// フォント指定無し
+		nHeight = pPS->m_nPrintFontHeight;
+	}
+	else {
+		// フォントのサイズ計算(pt->1/10mm)
+		nHeight = pPS->m_nHeaderPointSize * 254 / 720;
+	}
+	return nHeight * (pPS->m_nPrintLineSpacing + 100) / 100;	// 行送り計算
 }
 
-
-int CPrint::CalcFooterHeight( PRINTSETTING *pPS )
+/*!
+	フッタ高さの計算(行送り分こみ)
+	@date 2013.05.16 Uchi 新規作成
+*/
+int CPrint::CalcFooterHeight( PRINTSETTING* pPS )
 {
-	if( pPS->m_szFooterForm[0][0] == 0 
-	 && pPS->m_szFooterForm[1][0] == 0 
-	 && pPS->m_szFooterForm[2][0] == 0 )
-	{
-		return 0;
-	}else{
-		int nPrintSpaceHeight = ( pPS->m_nPrintFontHeight * pPS->m_nPrintLineSpacing / 100 );
-		return (pPS->m_nPrintFontHeight + nPrintSpaceHeight );
+	if (pPS->m_szFooterForm[0][0] == _T('\0')
+	 && pPS->m_szFooterForm[1][0] == _T('\0')
+	 && pPS->m_szFooterForm[2][0] == _T('\0')) {
+		// 使ってなければ 0
+		 return 0;
 	}
-}
 
+	int		nHeight;
+	if (pPS->m_lfFooter.lfFaceName[0] == _T('\0')) {
+		// フォント指定無し
+		nHeight = pPS->m_nPrintFontHeight;
+	}
+	else {
+		// フォントのサイズ計算(pt->1/10mm)
+		nHeight = pPS->m_nFooterPointSize * 254 / 720;
+	}
+	return nHeight * (pPS->m_nPrintLineSpacing + 100) / 100;	// 行送り計算
+}
