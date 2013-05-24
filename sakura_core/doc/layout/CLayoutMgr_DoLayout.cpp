@@ -217,15 +217,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 	//1ロジック行を消化するまでループ
 	while( pWork->nPos < pWork->cLineStr.GetLength() - CLogicInt(nEol_1) ){
-		//	インデント幅の計算コストを下げるための方策
-		if ( pWork->pLayout && pWork->pLayout != pWork->pLayoutCalculated && pWork->nBgn ){
-			//	計算
-			//	Oct, 1, 2002 genta Indentサイズを取得するように変更
-			pWork->nIndent = (this->*m_getIndentOffset)( pWork->pLayout );
-
-			//	計算済み
-			pWork->pLayoutCalculated = pWork->pLayout;
-		}
+		// インデント幅は_OnLineで計算済みなのでここからは削除
 
 SEARCH_START:;
 		//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
@@ -293,7 +285,6 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 	pWork->nBgn = pWork->nPos;
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	pWork->nPosX = pWork->nIndent = (this->*m_getIndentOffset)( pWork->pLayout );
-	pWork->pLayoutCalculated = pWork->pLayout;
 }
 
 /*!
@@ -348,7 +339,6 @@ void CLayoutMgr::_DoLayout()
 		pWork->nWordLen		= CLogicInt(0);
 		pWork->nPosX		= CLayoutInt(0);	// 表示上のX位置
 		pWork->nIndent		= CLayoutInt(0);	// インデント幅
-		pWork->pLayoutCalculated	= NULL;		// インデント幅計算済みのCLayout.
 
 
 		_MakeOneLine(pWork, &CLayoutMgr::_OnLine1);
@@ -412,7 +402,6 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 	pWork->nBgn = pWork->nPos;
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	pWork->nPosX = pWork->nIndent = (this->*m_getIndentOffset)( pWork->pLayout );
-	pWork->pLayoutCalculated = pWork->pLayout;
 	if( ( pWork->ptDelLogicalFrom.GetY2() == pWork->nCurLine && pWork->ptDelLogicalFrom.GetX2() < pWork->nPos ) ||
 		( pWork->ptDelLogicalFrom.GetY2() < pWork->nCurLine )
 	){
@@ -480,7 +469,6 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 		pWork->nWordLen		= CLogicInt(0);
 		pWork->nPosX		= CLayoutInt(0);			// 表示上のX位置
 		pWork->nIndent		= CLayoutInt(0);			// インデント幅
-		pWork->pLayoutCalculated	= pWork->pLayout;	// インデント幅計算済みのCLayout.
 
 		_MakeOneLine(pWork, &CLayoutMgr::_OnLine2);
 
