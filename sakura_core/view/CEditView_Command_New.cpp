@@ -123,7 +123,9 @@ void CEditView::InsertData_CEditView(
 					cMem += L' ';
 				}
 				cMem.AppendString( pData, nDataLen );
-				bHintNext = true;	// 更新が次行からになる可能性がある
+				if( 0 < nDataLen && WCODE::IsLineDelimiter(pData[nDataLen-1]) ){
+					bHintNext = true;	// 更新が次行からになる可能性がある
+				}
 			}
 		}
 		else{
@@ -217,6 +219,10 @@ void CEditView::InsertData_CEditView(
 
 		if( bRedraw ){
 			CLayoutInt nStartLine(ptInsertPos.y);
+			// 2013.05.08 折り返し行でEOF直前で改行したときEOFが再描画されないバグの修正
+			if( nModifyLayoutLinesOld < 1 ){
+				nModifyLayoutLinesOld = CLayoutInt(1);
+			}
 			// 2011.12.26 正規表現キーワード・検索文字列などは、ロジック行頭までさかのぼって更新する必要がある
 			{
 				const CLayout* pcLayoutLineFirst = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( ptInsertPos.GetY2() );
@@ -229,7 +235,7 @@ void CEditView::InsertData_CEditView(
 					nModifyLayoutLinesOld++;
 				}
 			}
-			if( 0 < nInsLineNum ){
+			if( 0 != nInsLineNum ){
 				// スクロールバーの状態を更新する
 				AdjustScrollBars();
 
@@ -244,10 +250,6 @@ void CEditView::InsertData_CEditView(
 				ps.rcPaint.bottom = GetTextArea().GetAreaBottom();
 			}
 			else{
-				if( nModifyLayoutLinesOld < 1 ){
-					nModifyLayoutLinesOld = CLayoutInt(1);
-				}
-
 				// 描画開始行位置と描画行数を調整する	// 2009.02.17 ryoji
 				if( bHintPrev ){	// 更新が前行からになる可能性がある
 					nStartLine--;
