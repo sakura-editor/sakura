@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <link rel="stylesheet" href="dsk_sakura.css" type="text/css">
 <link rel="shortcut icon" href="images/favicon.ico">
-<TITLE>ページ設定</TITLE>
+<TITLE>印刷ページ設定</TITLE>
 <META NAME="MS-HKWD" CONTENT="ページ設定">
 <META NAME="MS-HKWD" CONTENT="印刷ページ設定">
 <META NAME="MS-HKWD" CONTENT="PrintPageSetup">
@@ -12,7 +12,7 @@
 <BODY>
 <script type="text/javascript" src="item.js"></script>
 <noscript>[<a href="HLP000001.html">目次</a>]<br></noscript>
-<h2>ページ設定</h2>
+<h2>印刷ページ設定</h2>
 印刷のページレイアウトに関する設定をします。<br>
 8種類の設定を記憶しておくことができます。<br>
 <br>
@@ -24,11 +24,11 @@
 <br>
 <b>半角フォント</b>	印刷に使用する半角フォントを指定します。<br>
 <b>全角フォント</b>	印刷に使用する全角フォントを指定します。<br>
-<b>フォント高</b>(24)	フォント幅 を1/10mm単位で指定します。(sakura:2.0.8.1 以降)<br>
+<b>フォント高</b>(24)	フォント高 を1/10mm単位で指定します。(sakura:2.0.8.1 以降)<br>
 <b>フォント幅</b>(12)	フォント幅 を1/10mm単位で指定します。(sakura:2.0.8.1 以前)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヒント<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ポイント単位ではありません。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;ポイント単位の高さは右下に表示されます。(sakura:2.0.8.1 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ポイント単位の高さは右に表示されます。(sakura:2.0.8.1 以降)<br>
 <b>行送り</b>(30)	行と行の間の幅を隙間を指定します。<br>
 <b>段数</b>(1)	段数を指定します。<br>
 <b>段の隙間</b>(7)	段と段の隙間を指定します。<br>
@@ -54,7 +54,17 @@
 <b>フッター</b>()(- $p -)()<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ヘッダー及びフッターは、左寄せ、中央寄せ、右寄せそれぞれに印字内容が指定できます。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="HLP000284.html">ExpandParameter</a>の特殊文字が利用可能です。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヘッダーもしくはフッターが未設定の場合、縦方向の行数がそれぞれ２増えます。(sakura: 2.0.8.1以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヒント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ヘッダーもしくはフッターが未設定の場合、縦方向の行数が増えます。(sakura: 2.0.8.1以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;　フォントが設定さていなければ、それぞれ２増えます。<br>
+□<b>使用</b><br>
+<b>[フォント]</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ヘッダー及びフッターに使用するフォントを指定します。(sakura:2.0.8.1 以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;指定を解除するには使用のチェックをはずしてください。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/hint.png">ヒント<br>
+&nbsp;&nbsp;&nbsp;&nbsp;フォントが未指定ならば、本文と同じ半角・全角フォント,サイズで印刷します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;サイズはポイントで指定します。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;指定フォントはサイズと共に入力領域の上に表示されます。<br>
 <br>
 <b>行あたりの文字数：</b>	現在の設定での文字数を半角文字単位で表示します。<br>
 <b>縦方向の行数：</b>	現在の設定での行数を表示します。<br>

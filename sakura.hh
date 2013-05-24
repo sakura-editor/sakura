@@ -838,6 +838,9 @@
 #define HIDC_PS_EDIT_FOOT2			12527	//フッター(中央寄せ)	// 2006.10.11 ryoji
 #define HIDC_PS_EDIT_FOOT3			12528	//フッター(右寄せ)		// 2006.10.11 ryoji
 #define HIDC_PS_CHECK_COLORPRINT	12529	//カラー印刷			// 2013/4/26 Uchi
+#define HIDC_PS_EDIT_FONTHEIGHT		12530	//フォント高さ
+#define HIDC_PS_FONT_HEAD			12531	//ヘッダー(フォント)	// 2013/5/16 Uchi
+#define HIDC_PS_FONT_FOOT			12532	//フッター(フォント)	// 2013/5/16 Uchi
 
 //プロパティ
 #define HIDOK_PROP				12600	//
