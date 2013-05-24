@@ -89,13 +89,15 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					L'~' == pLine[i] ||
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )
+					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 “ú–{Œê‘Î‰ž
 					) )
 				 || 2 == nCharChars
 				){
 //					++nWordIdx;
 					if( nWordIdx >= nMaxWordLeng ){
 						nMode = 999;
+						i += (nCharChars - 1);
 						continue;
 					}else{
 //						szWord[nWordIdx] = pLine[i];
@@ -218,6 +220,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 “ú–{Œê‘Î‰ž
 					L'\t' == pLine[i] ||
 					 L' ' == pLine[i] ||
 					 WCODE::CR == pLine[i] ||
@@ -229,7 +232,8 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					 L';' == pLine[i] ||
 					L'\'' == pLine[i] ||
 					 L'/' == pLine[i] ||
-					 L'-' == pLine[i]
+					 L'-' == pLine[i] ||
+					 2 == nCharChars
 				){
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
@@ -315,7 +319,8 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						L'~' == pLine[i] ||
 						(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 						(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )
+						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
+						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 “ú–{Œê‘Î‰ž
 						) )
 					 || 2 == nCharChars
 					){

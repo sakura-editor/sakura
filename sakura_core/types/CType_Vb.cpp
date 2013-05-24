@@ -85,7 +85,6 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 		nFuncId = 0;
 		bDQuote	= false;
 		for( i = 0; i < nLineLen; ++i ){
-			/* 1バイト文字だけを処理する */
 			// 2005-09-02 D.S.Koba GetSizeOfChar
 			nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
 			if(	0 == nCharChars ){
@@ -98,12 +97,14 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					L'~' == pLine[i] ||
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )
+					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 					) )
 				 || 2 == nCharChars
 				){
 					if( nWordIdx >= nMaxWordLeng ){
 						nMode = 999;
+						i += (nCharChars - 1);
 						continue;
 					}else{
 						auto_memcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
@@ -260,6 +261,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
 					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
+					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 日本語対応
 					L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
 					WCODE::CR == pLine[i] ||
@@ -272,7 +274,8 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					L'\'' == pLine[i] ||
 					L'/' == pLine[i]	||
 					L'-' == pLine[i] ||
-					L'#' == pLine[i]
+					L'#' == pLine[i] ||
+					2 == nCharChars
 				){
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
@@ -329,7 +332,8 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						L'~' == pLine[i] ||
 						(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
 						(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )
+						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
+						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 						) )
 					 || 2 == nCharChars
 					){
