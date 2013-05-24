@@ -131,7 +131,12 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					else
 						m_cTipWnd.m_cInfo.AppendString( _T("■") );	/* 先頭の場合 */
 					/* 辞書のパス挿入 */
-					m_cTipWnd.m_cInfo.AppendString( CDocTypeManager().GetTypeSetting(nTypeNo).m_KeyHelpArr[i].m_szPath );
+					{
+						TCHAR szFile[MAX_PATH];
+						// 2013.05.08 表示するのはファイル名(拡張子なし)のみにする
+						_tsplitpath( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
+						m_cTipWnd.m_cInfo.AppendString( szFile );
+					}
 					m_cTipWnd.m_cInfo.AppendString( _T("\n") );
 					/* 前方一致でヒットした単語を挿入 */
 					if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
