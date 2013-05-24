@@ -148,7 +148,7 @@ public:
 		MYDEVMODE*	pDEVMODE
 	);
 	/* 印字可能桁・行の計算 */
-	static int CalculatePrintableColumns( PRINTSETTING*, int width, int nLineNumberColmns );
+	static int CalculatePrintableColumns( PRINTSETTING*, int width, int nLineNumberColumns );
 	static int CalculatePrintableLines( PRINTSETTING*, int height );
 
 	/* ヘッダ・フッタの高さ計算 */

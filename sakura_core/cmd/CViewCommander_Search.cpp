@@ -757,7 +757,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		sRangeA = GetSelect();
 
 		//	From Here 2007.09.20 genta 矩形範囲の選択置換ができない
-		//	左下～右上と選択した場合，m_nSelectColmTo < m_nSelectColmFrom となるが，
+		//	左下～右上と選択した場合，m_nSelectColumnTo < m_nSelectColumnFrom となるが，
 		//	範囲チェックで colFrom < colTo を仮定しているので，
 		//	矩形選択の場合は左上～右下指定になるよう桁を入れ換える．
 		if( bBeginBoxSelect && sRangeA.GetTo().x < sRangeA.GetFrom().x )
