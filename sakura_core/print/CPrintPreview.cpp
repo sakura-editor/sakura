@@ -698,12 +698,12 @@ void CPrintPreview::OnChangePrintSetting( void )
 	}
 
 	/* 印刷プレビュー表示情報 */
-	m_nPreview_LineNumberColmns = 0;	/* 行番号エリアの幅(文字数) */
+	m_nPreview_LineNumberColumns = 0;	/* 行番号エリアの幅(文字数) */
 
 	/* 行番号を表示するか */
 	if( m_pPrintSetting->m_bPrintLineNumber ){
 		/* 行番号表示に必要な桁数を計算 */
-		m_nPreview_LineNumberColmns = m_pParentWnd->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate();
+		m_nPreview_LineNumberColumns = m_pParentWnd->GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate();
 	}
 	/* 現在のページ設定の、用紙サイズと用紙方向を反映させる */
 	m_pPrintSetting->m_mdmDevMode.dmPaperSize = m_pPrintSetting->m_nPrintPaperSize;
@@ -765,12 +765,12 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_nPreview_ViewMarginTop = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 
 	/* 行あたりの文字数(行番号込み) */
-	m_bPreview_EnableColms = CLayoutInt( CPrint::CalculatePrintableColumns( m_pPrintSetting, m_nPreview_PaperAllWidth, m_nPreview_LineNumberColmns ) );	/* 印字可能桁数/ページ */
+	m_bPreview_EnableColumns = CLayoutInt( CPrint::CalculatePrintableColumns( m_pPrintSetting, m_nPreview_PaperAllWidth, m_nPreview_LineNumberColumns ) );	/* 印字可能桁数/ページ */
 	/* 縦方向の行数 */
 	m_bPreview_EnableLines = CPrint::CalculatePrintableLines( m_pPrintSetting, m_nPreview_PaperAllHeight );			/* 印字可能行数/ページ */
 
 	// 印字可能領域がない場合は印刷プレビューを終了する 2013.5.10 aroka
-	if( m_bPreview_EnableColms == 0 || m_bPreview_EnableLines == 0 ){
+	if( m_bPreview_EnableColumns == 0 || m_bPreview_EnableLines == 0 ){
 		CEditWnd* pcEditWnd = m_pParentWnd;
 		pcEditWnd->PrintPreviewModeONOFF();
 		pcEditWnd->SendStatusMessage( _T("印刷ページ設定エラー:印字可能領域がありません") );
@@ -783,7 +783,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 	/* 印刷用のレイアウト情報の変更 */
 //	STypeConfig& ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
 	STypeConfig ref = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute();
-	ref.m_nMaxLineKetas = 		m_bPreview_EnableColms;
+	ref.m_nMaxLineKetas = 		m_bPreview_EnableColumns;
 	ref.m_bWordWrap =			m_pPrintSetting->m_bPrintWordWrap;	/* 英文ワードラップをする */
 	//	Sep. 23, 2002 genta LayoutMgrの値を使う
 	ref.m_nTabSpace =			m_pParentWnd->GetDocument().m_cLayoutMgr.GetTabSpace();
@@ -1298,9 +1298,9 @@ void CPrintPreview::DrawPageText(
 
 	const int		nLineHeight = m_pPrintSetting->m_nPrintFontHeight + ( m_pPrintSetting->m_nPrintFontHeight * m_pPrintSetting->m_nPrintLineSpacing / 100 );
 	// 段と段の間隔の幅
-	const int		nDanWidth = (Int)m_bPreview_EnableColms * m_pPrintSetting->m_nPrintFontWidth + m_pPrintSetting->m_nPrintDanSpace;
+	const int		nDanWidth = (Int)m_bPreview_EnableColumns * m_pPrintSetting->m_nPrintFontWidth + m_pPrintSetting->m_nPrintDanSpace;
 	// 行番号の幅
-	const int		nLineNumWidth = m_nPreview_LineNumberColmns * m_pPrintSetting->m_nPrintFontWidth;
+	const int		nLineNumWidth = m_nPreview_LineNumberColumns * m_pPrintSetting->m_nPrintFontWidth;
 
 	/* 半角フォントの情報を取得＆半角フォントに設定 */
 

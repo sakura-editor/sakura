@@ -3412,13 +3412,13 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 	CDlgPrintSetting	cDlgPrintSetting;
 	BOOL				bRes;
 	int					nCurrentPrintSetting;
-	int					nLineNumberColmns;
+	int					nLineNumberColumns;
 
 	nCurrentPrintSetting = GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting;
 	if( m_pPrintPreview ){
-		nLineNumberColmns = GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate(); // 印刷プレビュー時は文書の桁数 2013.5.10 aroka
+		nLineNumberColumns = GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate(); // 印刷プレビュー時は文書の桁数 2013.5.10 aroka
 	}else{
-		nLineNumberColmns = 3; // ファイルメニューからの設定時は最小値 2013.5.10 aroka
+		nLineNumberColumns = 3; // ファイルメニューからの設定時は最小値 2013.5.10 aroka
 	}
 
 	bRes = cDlgPrintSetting.DoModal(
@@ -3427,7 +3427,7 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 		GetHwnd(),
 		&nCurrentPrintSetting, /* 現在選択している印刷設定 */
 		m_pShareData->m_PrintSettingArr, // 現在の設定はダイアログ側で保持する 2013.5.1 aroka
-		m_pPrintPreview ? GetActiveView().GetTextArea().DetectWidthOfLineNumberArea_calculate():3 // 行番号表示用に桁数を渡す 2013.5.10 aroka
+		nLineNumberColumns // 行番号表示用に桁数を渡す 2013.5.10 aroka
 	);
 
 	if( TRUE == bRes ){
