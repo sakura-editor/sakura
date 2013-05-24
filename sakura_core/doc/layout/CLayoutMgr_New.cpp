@@ -326,7 +326,7 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 	CLayoutInt nMaxLen = CLayoutInt(0);
 	CLayoutInt nMaxLineNum = CLayoutInt(0);
 
-	CLayoutInt nLines = CLayoutInt( GetLineCount() );		// テキストのレイアウト行数
+	CLayoutInt nLines = GetLineCount();		// テキストのレイアウト行数
 
 	// 開始・終了位置がどちらも指定されていない
 	if( nStart < 0 && nEnd < 0 )
@@ -345,6 +345,13 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 	CLayout* pLayout;
 
 	// 算出開始レイアウト行を探す
+	// 2013.05.13 SearchLineByLayoutYを使う
+	if( nStart == 0 ){
+		pLayout = m_pLayoutTop;
+	}else{
+		pLayout = SearchLineByLayoutY(nStart);
+	}
+#if 0
 	if( nStart * 2 < nLines ){
 		// 前方からサーチ
 		CLayoutInt nCount = CLayoutInt(0);
@@ -368,6 +375,7 @@ BOOL CLayoutMgr::CalculateTextWidth( BOOL bCalLineLen, CLayoutInt nStart, CLayou
 			nCount--;
 		}
 	}
+#endif
 
 	// レイアウト行の最大幅を取り出す
 	for( CLayoutInt i = nStart; i < nEnd; i++ ){
