@@ -961,6 +961,9 @@ void CEditView::OnSize( int cx, int cy )
 	if( !wrapChanged )	// 折り返し位置が変更されていない
 		AdjustScrollBars();				// スクロールバーの状態を更新する
 
+	// キャレットの表示(右・下に隠れていた場合)
+	GetCaret().ShowEditCaret();
+
 	/* 再描画用メモリＢＭＰ */
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	if( m_hdcCompatDC != NULL ){

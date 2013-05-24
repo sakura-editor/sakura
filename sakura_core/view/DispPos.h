@@ -40,7 +40,7 @@ public:
 		m_ptDrawLayout.y=CLayoutInt(0);
 		m_nLineRef=CLayoutInt(0);
 		//ƒLƒƒƒbƒVƒ…
-		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( m_nLineRef );
+		m_pcLayoutRef = CEditDoc::GetInstance(0)->m_cLayoutMgr.GetTopLayout();
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

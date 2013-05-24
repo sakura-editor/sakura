@@ -445,10 +445,12 @@ void CTextDrawer::DispLineNumber(
 
 		/* s”Ô†‹æØ‚è 0=‚È‚µ 1=cü 2=”CˆÓ */
 		if( 1 == pTypes->m_nLineTermType ){
-			gr.PushPen(cColorType.GetTextColor(),0);
-			::MoveToEx( gr, nLineNumAreaWidth - 2, y, NULL );
-			::LineTo( gr, nLineNumAreaWidth - 2, y + nLineHeight );
-			gr.PopPen();
+			RECT rc;
+			rc.left = nLineNumAreaWidth - 2;
+			rc.top = y;
+			rc.right = nLineNumAreaWidth - 1;
+			rc.bottom = y + nLineHeight;
+			gr.FillSolidMyRect(rc, cColorType.GetTextColor());
 		}
 
 		gr.PopTextForeColor();

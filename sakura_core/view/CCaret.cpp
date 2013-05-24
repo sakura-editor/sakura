@@ -486,6 +486,13 @@ void CCaret::ShowEditCaret()
 		return;
 	}
 
+	POINT ptDrawPos=CalcCaretDrawPos(GetCaretLayoutPos());
+	bool bShowCaret = false;
+	if ( m_pEditView->GetTextArea().GetAreaLeft() <= ptDrawPos.x && m_pEditView->GetTextArea().GetAreaTop() <= ptDrawPos.y
+		&& ptDrawPos.x < m_pEditView->GetTextArea().GetAreaRight() && ptDrawPos.y < m_pEditView->GetTextArea().GetAreaBottom() ){
+		// キャレットの表示
+		bShowCaret = true;
+	}
 	/* キャレットの幅、高さを決定 */
 	int				nCaretWidth = 0;
 	int				nCaretHeight = 0;
@@ -503,10 +510,13 @@ void CCaret::ShowEditCaret()
 		else{
 			nCaretWidth = GetHankakuDx();
 
-			const wchar_t*	pLine;
-			CLogicInt		nLineLen;
-			const CLayout*	pcLayout;
-			pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
+			const wchar_t*	pLine = NULL;
+			CLogicInt		nLineLen = CLogicInt(0);
+			const CLayout*	pcLayout = NULL;
+			if( bShowCaret ){
+				// 画面外のときはGetLineStrを呼ばない
+				pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
+			}
 
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -535,10 +545,12 @@ void CCaret::ShowEditCaret()
 		}
 		nCaretWidth = GetHankakuDx();
 
-		const wchar_t*	pLine;
-		CLogicInt		nLineLen;
-		const CLayout*	pcLayout;
-		pLine= pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
+		const wchar_t*	pLine = NULL;
+		CLogicInt		nLineLen = CLogicInt(0);
+		const CLayout*	pcLayout = NULL;
+		if( bShowCaret ){
+			pLine= pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
+		}
 
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
@@ -590,9 +602,8 @@ void CCaret::ShowEditCaret()
 
 	/* キャレットの位置を調整 */
 	//2007.08.26 kobake キャレットX座標の計算をUNICODE仕様にした。
-	POINT ptDrawPos=CalcCaretDrawPos(GetCaretLayoutPos());
 	::SetCaretPos( ptDrawPos.x, ptDrawPos.y );
-	if ( m_pEditView->GetTextArea().GetAreaLeft() <= ptDrawPos.x && m_pEditView->GetTextArea().GetAreaTop() <= ptDrawPos.y ){
+	if ( bShowCaret ){
 		/* キャレットの表示 */
 		ShowCaret_( m_pEditView->GetHwnd() ); // 2002/07/22 novice
 	}
