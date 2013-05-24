@@ -201,7 +201,7 @@ struct CommonSetting_Edit
 	SFilePath	m_OpenDialogSelDir;		// 指定フォルダ
 
 	// (ダイアログ項目無し)
-	BOOL	m_bAutoColmnPaste;			// 矩形コピーのテキストは常に矩形貼り付け
+	BOOL	m_bAutoColumnPaste;			// 矩形コピーのテキストは常に矩形貼り付け
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

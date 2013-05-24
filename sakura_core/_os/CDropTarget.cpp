@@ -193,11 +193,11 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 /** 転送対象の文字列を設定する
 	@param lpszText [in] 文字列
 	@param nTextLen [in] pszTextの長さ
-	@param bColmnSelect [in] 矩形選択か
+	@param bColumnSelect [in] 矩形選択か
 
 	@date 2008.03.26 ryoji 複数フォーマット対応
 */
-void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColmnSelect )
+void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	int i;
@@ -210,7 +210,7 @@ void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColmnSelect )
 		m_nFormat = 0;
 	}
 	if( lpszText != NULL ){
-		m_nFormat = bColmnSelect? 4: 3;	// 矩形を含めるか
+		m_nFormat = bColumnSelect? 4: 3;	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
 
 		i = 0;
@@ -234,7 +234,7 @@ void CDataObject::SetText( LPCWSTR lpszText, int nTextLen, BOOL bColmnSelect )
 		memcpy_raw( m_pData[i].data + sizeof(int), lpszText, nTextLen * sizeof( wchar_t ) );
 
 		i++;
-		if( bColmnSelect ){
+		if( bColumnSelect ){
 			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
 			m_pData[i].size = 1;
 			m_pData[i].data = new BYTE[1];

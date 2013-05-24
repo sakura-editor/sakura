@@ -127,7 +127,7 @@ void CHokanMgr::Hide( void )
 int CHokanMgr::Search(
 	POINT*			ppoWin,
 	int				nWinHeight,
-	int				nColmWidth,
+	int				nColumnWidth,
 	const wchar_t*	pszCurWord,
 	const TCHAR*	pszHokanFile,
 	bool			bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
@@ -227,7 +227,7 @@ int CHokanMgr::Search(
 	m_poWin.x = ppoWin->x;
 	m_poWin.y = ppoWin->y;
 	m_nWinHeight = nWinHeight;
-	m_nColmWidth = nColmWidth;
+	m_nColumnWidth = nColumnWidth;
 //	m_cmemCurWord.SetData( pszCurWord, lstrlen( pszCurWord ) );
 	m_cmemCurWord.SetString( pszCurWord );
 
@@ -268,7 +268,7 @@ int CHokanMgr::Search(
 	//	May 01, 2004 genta マルチモニタ対応
 	::GetMonitorWorkRect( GetHwnd(), &rcDesktop );
 
-	nX = m_poWin.x - m_nColmWidth;
+	nX = m_poWin.x - m_nColumnWidth;
 	nY = m_poWin.y + m_nWinHeight + 4;
 	nCX = m_nWidth;
 	nCY = m_nHeight;

@@ -127,14 +127,14 @@ private:
 	PDATA m_pData;
 
 public:
-	CDataObject (LPCWSTR lpszText, int nTextLen, BOOL bColmnSelect ):
+	CDataObject (LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect ):
 		m_nFormat(0),
 		m_pData(NULL)
 	{
-		SetText( lpszText, nTextLen, bColmnSelect );
+		SetText( lpszText, nTextLen, bColumnSelect );
 	}
 	~CDataObject(){SetText( NULL, 0, FALSE );}
-	void	SetText( LPCWSTR lpszText, int nTextLen, BOOL bColmnSelect );
+	void	SetText( LPCWSTR lpszText, int nTextLen, BOOL bColumnSelect );
 	DWORD	DragDrop( BOOL bLeft, DWORD dwEffects );
 
 	STDMETHOD( GetData )( LPFORMATETC, LPSTGMEDIUM );

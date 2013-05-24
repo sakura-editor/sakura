@@ -39,7 +39,7 @@ void CClipboard::Close()
 bool CClipboard::SetText(
 	const wchar_t*	pData,			//!< コピーするUNICODE文字列
 	int				nDataLen,		//!< pDataの長さ（文字単位）
-	bool			bColmnSelect,
+	bool			bColumnSelect,
 	bool			bLineSelect
 )
 {
@@ -112,19 +112,19 @@ bool CClipboard::SetText(
 	while(0);	//	1回しか通らない. breakでここまで飛ぶ
 
 	// 矩形選択を示すダミーデータ
-	HGLOBAL hgClipMSDEVColm = NULL;
-	if( bColmnSelect ){
+	HGLOBAL hgClipMSDEVColumn = NULL;
+	if( bColumnSelect ){
 		UINT uFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
 		if( 0 != uFormat ){
-			hgClipMSDEVColm = ::GlobalAlloc(
+			hgClipMSDEVColumn = ::GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
 				1
 			);
-			if( hgClipMSDEVColm ){
-				BYTE* pClip = GlobalLockBYTE( hgClipMSDEVColm );
+			if( hgClipMSDEVColumn ){
+				BYTE* pClip = GlobalLockBYTE( hgClipMSDEVColumn );
 				pClip[0] = 0;
-				::GlobalUnlock( hgClipMSDEVColm );
-				::SetClipboardData( uFormat, hgClipMSDEVColm );
+				::GlobalUnlock( hgClipMSDEVColumn );
+				::SetClipboardData( uFormat, hgClipMSDEVColumn );
 			}
 		}
 	}
@@ -163,7 +163,7 @@ bool CClipboard::SetText(
 		}
 	}
 
-	if( bColmnSelect && !hgClipMSDEVColm ){
+	if( bColumnSelect && !hgClipMSDEVColumn ){
 		return false;
 	}
 	if( bLineSelect && !(hgClipMSDEVLine && hgClipMSDEVLine2) ){
@@ -176,27 +176,27 @@ bool CClipboard::SetText(
 }
 
 //! テキストを取得する
-bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColmnSelect, bool* pbLineSelect)
+bool CClipboard::GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect)
 {
 	if( !m_bOpenResult ){
 		return false;
 	}
-	if( NULL != pbColmnSelect ){
-		*pbColmnSelect = false;
+	if( NULL != pbColumnSelect ){
+		*pbColumnSelect = false;
 	}
 	if( NULL != pbLineSelect ){
 		*pbLineSelect = false;
 	}
 
 	//矩形選択や行選択のデータがあれば取得
-	if( NULL != pbColmnSelect || NULL != pbLineSelect ){
+	if( NULL != pbColumnSelect || NULL != pbLineSelect ){
 		UINT uFormat = 0;
 		while( ( uFormat = ::EnumClipboardFormats( uFormat ) ) != 0 ){
 			// Jul. 2, 2005 genta : check return value of GetClipboardFormatName
 			TCHAR szFormatName[128];
 			if( ::GetClipboardFormatName( uFormat, szFormatName, _countof(szFormatName) - 1 ) ){
-				if( NULL != pbColmnSelect && 0 == lstrcmpi( _T("MSDEVColumnSelect"), szFormatName ) ){
-					*pbColmnSelect = true;
+				if( NULL != pbColumnSelect && 0 == lstrcmpi( _T("MSDEVColumnSelect"), szFormatName ) ){
+					*pbColumnSelect = true;
 					break;
 				}
 				if( NULL != pbLineSelect && 0 == lstrcmpi( _T("MSDEVLineSelect"), szFormatName ) ){

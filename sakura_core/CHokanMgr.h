@@ -39,7 +39,7 @@ public:
 	int Search(
 		POINT*			ppoWin,
 		int				nWinHeight,
-		int				nColmWidth,
+		int				nColumnWidth,
 		const wchar_t*	pszCurWord,
 		const TCHAR*	pszHokanFile,
 		bool			bHokanLoHiCase,			// “ü—Í•âŠ®‹@”\F‰p‘å•¶š¬•¶š‚ğ“¯ˆê‹‚·‚é 2001/06/19 asa-o
@@ -84,7 +84,7 @@ public:
 
 	POINT			m_poWin;
 	int				m_nWinHeight;
-	int				m_nColmWidth;
+	int				m_nColumnWidth;
 	int				m_bTimerFlag;
 
 protected:

@@ -101,7 +101,7 @@ public:
 		const wchar_t*	pLine,
 		CLogicInt		nLineLen,
 		CLogicInt		nIdx,		//	桁数
-		CLogicInt*		pnColmNew,	//	見つかった位置
+		CLogicInt*		pnColumnNew,	//	見つかった位置
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
 
@@ -110,7 +110,7 @@ public:
 		const wchar_t*	pLine,
 		CLogicInt		nLineLen,
 		CLogicInt		nIdx,		//	桁数
-		CLogicInt*		pnColmNew,	//	見つかった位置
+		CLogicInt*		pnColumnNew,	//	見つかった位置
 		BOOL			bStopsBothEnds	//	単語の両端で止まる
 	);
 

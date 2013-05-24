@@ -692,15 +692,8 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	// ”ÍˆÍ‘I‘ð’†‚È‚ç‘}“üŒã‚à‘I‘ðó‘Ô‚É‚·‚é‚½‚ß	/* 2007.04.29 maru */
 	BOOL	bBeforeTextSelected = m_pCommanderView->GetSelectionInfo().IsTextSelected();
 	CLayoutPoint ptFrom;
-	/*
-	int	nLineFrom, nColmFrom;
-	*/
 	if (bBeforeTextSelected){
 		ptFrom = m_pCommanderView->GetSelectionInfo().m_sSelect.GetFrom();
-		/*
-		nLineFrom = m_nSelectLineFrom;
-		nColmFrom = m_nSelectColmFrom;
-		*/
 	}
 
 
@@ -778,9 +771,6 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 		m_pCommanderView->GetSelectionInfo().SetSelectArea(
 			CLayoutRange(
 				ptFrom,
-				/*
-				nLineFrom, nColmFrom,
-				*/
 				GetCaret().GetCaretLayoutPos()
 				/*
 				m_nCaretPosY, m_nCaretPosX

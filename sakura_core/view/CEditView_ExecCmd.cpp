@@ -85,11 +85,11 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	if( nFlgOpt & 0x40 ) bOutputExtInfo = FALSE;
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
-	CLayoutInt	nLineFrom(0), nColmFrom(0);
+	CLayoutInt	nLineFrom(0), nColumnFrom(0);
 	bool bBeforeTextSelected = GetSelectionInfo().IsTextSelected();
 	if (bBeforeTextSelected){
-		nLineFrom = this->GetSelectionInfo().m_sSelect.GetFrom().y; //m_nSelectLineFrom;
-		nColmFrom = this->GetSelectionInfo().m_sSelect.GetFrom().x; //m_nSelectColmFrom;
+		nLineFrom   = this->GetSelectionInfo().m_sSelect.GetFrom().y; //m_nSelectLineFrom;
+		nColumnFrom = this->GetSelectionInfo().m_sSelect.GetFrom().x; //m_nSelectColumnFrom;
 	}
 
 	//子プロセスの標準出力と接続するパイプを作成
@@ -466,7 +466,7 @@ user_cancel:
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
 				GetSelectionInfo().SetSelectArea(
 					CLayoutRange(
-						CLayoutPoint(nColmFrom, nLineFrom),
+						CLayoutPoint(nColumnFrom, nLineFrom),
 						GetCaret().GetCaretLayoutPos()// CLayoutPoint(m_nCaretPosY, m_nCaretPosX )
 					)
 				);

@@ -837,7 +837,7 @@ void CGrepAgent::SetGrepResult(
 	const TCHAR*		pszCodeName,	/*!< [in] 文字コード情報．" [SJIS]"とか */
 	/* マッチした行の情報 */
 	int			nLine,				/*!< [in] マッチした行番号(1～) */
-	int			nColm,				/*!< [in] マッチした桁番号(1～) */
+	int			nColumn,			/*!< [in] マッチした桁番号(1～) */
 	const wchar_t*	pCompareData,	/*!< [in] 行の文字列 */
 	int			nLineLen,			/*!< [in] 行の文字列の長さ */
 	int			nEolCodeLen,		/*!< [in] EOLの長さ */
@@ -858,12 +858,12 @@ void CGrepAgent::SetGrepResult(
 
 	/* ノーマル */
 	if( 1 == nGrepOutputStyle ){
-		nWorkLen = ::auto_sprintf( pWork, L"%ts(%d,%d)%ts: ", pszFullPath, nLine, nColm, pszCodeName );
+		nWorkLen = ::auto_sprintf( pWork, L"%ts(%d,%d)%ts: ", pszFullPath, nLine, nColumn, pszCodeName );
 		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
 	}
 	/* WZ風 */
 	else if( 2 == nGrepOutputStyle ){
-		nWorkLen = ::auto_sprintf( pWork, L"・(%6d,%-5d): ", nLine, nColm );
+		nWorkLen = ::auto_sprintf( pWork, L"・(%6d,%-5d): ", nLine, nColumn );
 		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
 	}
 
@@ -933,7 +933,7 @@ int CGrepAgent::DoGrepFile(
 	const wchar_t*	pszRes; // 2002/08/29 const付加
 	ECodeType	nCharCode;
 	const wchar_t*	pCompareData; // 2002/08/29 const付加
-	int		nColm;
+	int		nColumn;
 	BOOL	bOutFileName;
 	bOutFileName = FALSE;
 	CEol	cEol;
@@ -1165,7 +1165,7 @@ int CGrepAgent::DoGrepFile(
 		else {
 			const CSearchStringPattern pattern(pszKey, nKeyLen, sSearchOption.bLoHiCase);
 			/* 文字列検索 */
-			int nColmPrev = 0;
+			int nColumnPrev = 0;
 			//	Jun. 21, 2003 genta ループ条件見直し
 			//	マッチ箇所を1行から複数検出するケースを標準に，
 			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
@@ -1179,13 +1179,13 @@ int CGrepAgent::DoGrepFile(
 				);
 				if(!pszRes)break;
 
-				nColm = pszRes - pCompareData + 1;
+				nColumn = pszRes - pCompareData + 1;
 
 				/* Grep結果を、szWorkに格納する */
 				SetGrepResult(
 					szWork, &nWorkLen,
 					pszFullPath, pszCodeName,
-					nLine, nColm + nColmPrev, pCompareData, nLineLen, nEolCodeLen,
+					nLine, nColumn + nColumnPrev, pCompareData, nLineLen, nEolCodeLen,
 					pszRes, nKeyLen,
 					bGrepOutputLine, nGrepOutputStyle
 				);
@@ -1213,10 +1213,10 @@ int CGrepAgent::DoGrepFile(
 				//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
 				//	nClom : マッチ位置
 				//	matchlen : マッチした文字列の長さ
-				int nPosDiff = nColm += nKeyLen - 1;
+				int nPosDiff = nColumn += nKeyLen - 1;
 				pCompareData += nPosDiff;
 				nLineLen -= nPosDiff;
-				nColmPrev += nPosDiff;
+				nColumnPrev += nPosDiff;
 			}
 		}
 	}
