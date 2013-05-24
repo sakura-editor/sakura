@@ -264,13 +264,17 @@ LRESULT CPrintPreview::OnPaint(
 		DrawHeaderFooter( hdc, cRect, true );
 	}
 
+
+	CColorStrategy* pStrategyStart = DrawPageTextFirst( m_nCurPageNum );
+
 	// 印刷/印刷プレビュー ページテキストの描画
 	DrawPageText(
 		hdc,
 		m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX,
 		m_nPreview_ViewMarginTop  + m_pPrintSetting->m_nPrintMarginTY + nHeaderHeight*2,
 		m_nCurPageNum,
-		NULL
+		NULL,
+		pStrategyStart
 	);
 
 	// フッタ
@@ -1058,6 +1062,7 @@ void CPrintPreview::OnPrint( void )
 
 	/* ヘッダ・フッタの$pを展開するために、m_nCurPageNumを保持 */
 	WORD	nCurPageNumOld = m_nCurPageNum;
+	CColorStrategy* pStrategy = DrawPageTextFirst( m_nCurPageNum );
 	for( i = 0; i < nNum; ++i ){
 		m_nCurPageNum = nFrom + (WORD)i;
 
@@ -1090,13 +1095,23 @@ void CPrintPreview::OnPrint( void )
 			DrawHeaderFooter( hdc, cRect, true );
 		}
 
+		const CLayoutInt	nPageTopLineNum = CLayoutInt( ((nFrom + i) * m_pPrintSetting->m_nPrintDansuu) * m_bPreview_EnableLines );
+		const CLayout*		pcPageTopLayout = m_pLayoutMgr_Print->SearchLineByLayoutY( nPageTopLineNum );
+		if (m_pPrintSetting->m_bColorPrint
+			&& !(i == 0)
+			&& pcPageTopLayout->GetLogicOffset() == 0) {
+			pStrategy = m_pool->GetStrategyByColor(pcPageTopLayout->GetColorTypePrev());
+			m_pool->NotifyOnStartScanLogic();
+			if (pStrategy)	pStrategy->InitStrategyStatus();
+		}
 		// 印刷/印刷プレビュー ページテキストの描画
-		DrawPageText(
+		pStrategy = DrawPageText(
 			hdc,
 			m_pPrintSetting->m_nPrintMarginLX - m_nPreview_PaperOffsetLeft ,
 			m_pPrintSetting->m_nPrintMarginTY - m_nPreview_PaperOffsetTop + nHeaderHeight*2,
 			nFrom + i,
-			&cDlgPrinting
+			&cDlgPrinting,
+			pStrategy
 		);
 
 		// フッタ印刷
@@ -1281,17 +1296,56 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 	}
 }
 
+/* 印刷/印刷プレビュー ページテキストの色分け処理
+	最初のページ用
+	@date 2013.05.19 Moca 新規追加 
+*/
+CColorStrategy* CPrintPreview::DrawPageTextFirst(int nPageNum)
+{
+	// ページトップの色指定を取得
+	CColorStrategy*	pStrategy = NULL;
+	if (m_pPrintSetting->m_bColorPrint) {
+		m_pool = CColorStrategyPool::getInstance();
+		m_pool->SetCurrentView(&(m_pParentWnd->GetActiveView()));
+
+		const CLayoutInt	nPageTopLineNum = CLayoutInt( (nPageNum * m_pPrintSetting->m_nPrintDansuu) * m_bPreview_EnableLines );
+		const CLayout*		pcPageTopLayout = m_pLayoutMgr_Print->SearchLineByLayoutY( nPageTopLineNum );
+		const CLogicInt		nPageTopOff = pcPageTopLayout->GetLogicOffset();
+
+		// ページトップの物理行の先頭を検索
+		while (pcPageTopLayout->GetLogicOffset()) {
+			pcPageTopLayout = pcPageTopLayout->GetPrevLayout();
+		}
+
+		// 論理行先頭のCColorStrategy取得
+		pStrategy = m_pool->GetStrategyByColor( pcPageTopLayout->GetColorTypePrev() );
+		m_pool->NotifyOnStartScanLogic();
+		if (pStrategy)	pStrategy->InitStrategyStatus();
+		if (nPageTopOff) {
+			CStringRef&	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
+			CLogicInt	iLogic;
+			for ( iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
+				pStrategy = GetColorStrategy( csr, iLogic, pStrategy );
+			}
+		}
+	}
+	return pStrategy;
+}
+
+
 /* 印刷/印刷プレビュー ページテキストの描画
 	DrawPageTextでは、行番号を（半角フォントで）印刷。
 	本文はPrint_DrawLineにお任せ
 	@date 2006.08.14 Moca 共通式のくくりだしと、コードの整理 
+	@date 2013.05.19 Moca 色分け処理のpStrategyをページをまたいで利用する
 */
-void CPrintPreview::DrawPageText(
+CColorStrategy* CPrintPreview::DrawPageText(
 	HDC				hdc,
 	int				nOffX,
 	int				nOffY,
 	int				nPageNum,
-	CDlgCancel*		pCDlgCancel
+	CDlgCancel*		pCDlgCancel,
+	CColorStrategy* pStrategyStart
 )
 {
 	int				nDirectY = -1;
@@ -1305,32 +1359,7 @@ void CPrintPreview::DrawPageText(
 	/* 半角フォントの情報を取得＆半角フォントに設定 */
 
 	// ページトップの色指定を取得
-	CColorStrategy*		pStrategy = NULL;
-	if (m_pPrintSetting->m_bColorPrint) {
-		m_pool = CColorStrategyPool::getInstance();
-		m_pool->SetCurrentView(&(m_pParentWnd->GetActiveView()));
-
-		const CLayoutInt	nPageTopLineNum = CLayoutInt( (nPageNum * m_pPrintSetting->m_nPrintDansuu) * m_bPreview_EnableLines );
-		const CLayout*		pcPageTopLayout = m_pLayoutMgr_Print->SearchLineByLayoutY( nPageTopLineNum );
-		CLogicInt	nPageTopOff = pcPageTopLayout->GetLogicOffset();
-		CLogicInt	iLogic;
-
-		// ページトップの物理行の先頭を検索
-		while (pcPageTopLayout->GetLogicOffset()) {
-			pcPageTopLayout = pcPageTopLayout->GetPrevLayout();
-		}
-
-		// 論理行先頭のCColorStrategy取得
-		pStrategy = m_pool->GetStrategyByColor( pcPageTopLayout->GetColorTypePrev() );
-		m_pool->NotifyOnStartScanLogic();
-		if (pStrategy)	pStrategy->InitStrategyStatus();
-		if (nPageTopOff) {
-			CStringRef&	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
-			for (iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
-				pStrategy = GetColorStrategy( csr, iLogic, pStrategy );
-			}
-		}
-	}
+	CColorStrategy*	pStrategy = pStrategyStart;
 
 	int				nDan;	//	段数カウンタ
 	int				i;		//	行数カウンタ
@@ -1342,7 +1371,7 @@ void CPrintPreview::DrawPageText(
 			if( NULL != pCDlgCancel ){
 				/* 処理中のユーザー操作を可能にする */
 				if( !::BlockingHook( pCDlgCancel->GetHwnd() ) ){
-					return;
+					return NULL;
 				}
 			}
 
@@ -1448,10 +1477,8 @@ void CPrintPreview::DrawPageText(
 			);
 		}
 	}
-	return;
+	return pStrategy;
 }
-
-
 
 
 

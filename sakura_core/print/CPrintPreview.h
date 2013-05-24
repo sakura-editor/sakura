@@ -38,6 +38,7 @@
 
 class CColorStrategy;
 class CColorStrategyPool;
+class CDlgCancel;
 class CEditWnd;
 class CLayout;
 class CLayoutMgr;
@@ -110,7 +111,8 @@ protected:
 	||	フォントは、半角フォントと全角フォントしかないことも期待してよい。
 	*/
 	void DrawHeaderFooter( HDC hdc, const CMyRect& rect , bool bHeader );
-	void DrawPageText( HDC, int, int, int, class CDlgCancel* );
+	CColorStrategy* DrawPageTextFirst( int nPageNum );
+	CColorStrategy* DrawPageText( HDC, int, int, int nPageNum, CDlgCancel*, CColorStrategy* pStrategyStart );
 
 	// 印刷／プレビュー 行描画
 	CColorStrategy* Print_DrawLine(
