@@ -1144,6 +1144,15 @@ void CLayoutMgr::LogicToLayout(
 	//	Layoutを１つずつ先に進めながらptLogic.yが物理行に一致するLayoutを探す
 	do{
 		if( ptLogic.GetY2() == pLayout->GetLogicLineNo() ){
+			// 2013.05.10 Moca 高速化
+			const CLayout* pLayoutNext = pLayout->GetNextLayout();
+			if( pLayoutNext && ptLogic.GetY2() ==pLayoutNext->GetLogicLineNo()
+					&& pLayoutNext->GetLogicOffset() <= ptLogic.x ){
+				nCaretPosY++;
+				pLayout = pLayout->GetNextLayout();
+				continue;
+			}
+
 			//	2004.06.16 Moca インデント表示の際に位置がずれる(TAB位置ずれによる)
 			//	TAB幅を正確に計算するには当初からインデント分を加えておく必要がある．
 			nCaretPosX = pLayout->GetIndent();
