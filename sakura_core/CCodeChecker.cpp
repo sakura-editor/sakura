@@ -23,7 +23,7 @@ static bool _CheckSavingEolcode(const CDocLineMgr& pcDocLineMgr, CEol cEolType)
 		}
 		while( pcDocLine ){
 			CEol cEol = pcDocLine->GetEol();
-			if( cEol != EOL_NONE && cEol != cEolCheck ){
+			if( cEol != cEolCheck && cEol != EOL_NONE ){
 				bMix = true;
 				break;
 			}
@@ -64,12 +64,15 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	//改行コードが混在しているかどうか判定
-	bool bTmpResult = _CheckSavingEolcode(
-		pcDoc->m_cDocLineMgr, pSaveInfo->cEol
-	);
+	bool bTmpResult = false;
+	if( pcDoc->m_cDocType.GetDocumentType()->m_bChkEnterAtEnd ){
+		bTmpResult = _CheckSavingEolcode(
+			pcDoc->m_cDocLineMgr, pSaveInfo->cEol
+		);
+	}
 
 	//ユーザ問い合わせ
-	if (bTmpResult && pcDoc->m_cDocType.GetDocumentType()->m_bChkEnterAtEnd) {	// 問い合わせの抑制を追加	2013/4/14 Uchi
+	if (bTmpResult) {
 		int nDlgResult = MYMESSAGEBOX(
 			CEditWnd::getInstance()->GetHwnd(),
 			MB_YESNOCANCEL | MB_ICONWARNING,
