@@ -1182,26 +1182,42 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 			);
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(szKeyData) );
 		}
-		
+
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szSName")	, i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_szPrintSettingName) );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szFF")	, i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_szPrintFontFaceHan) );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szFFZ")	, i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_szPrintFontFaceZen) );
+		// ヘッダ/フッタ
 		for( j = 0; j < 3; ++j ){
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szHF[%d]") , i, j );
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szHeaderForm[j]) );
 			auto_sprintf( szKeyName, LTEXT("PS[%02d].szFTF[%d]"), i, j );
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(printsetting.m_szFooterForm[j]) );
 		}
+		{ // ヘッダ/フッタ フォント設定
+			WCHAR	szKeyName2[64];
+			WCHAR	szKeyName3[64];
+			auto_sprintf( szKeyName,  LTEXT("PS[%02d].lfHeader"),			i );
+			auto_sprintf( szKeyName2, LTEXT("PS[%02d].nHeaderPointSize"),	i );
+			auto_sprintf( szKeyName3, LTEXT("PS[%02d].lfHeaderFaceName"),	i );
+			ShareData_IO_Sub_LogFont( cProfile, pszSecName, szKeyName,szKeyName2, szKeyName3,
+				printsetting.m_lfHeader, printsetting.m_nHeaderPointSize );
+			auto_sprintf( szKeyName,  LTEXT("PS[%02d].lfFooter"),			i );
+			auto_sprintf( szKeyName2, LTEXT("PS[%02d].nFooterPointSize"),	i );
+			auto_sprintf( szKeyName3, LTEXT("PS[%02d].lfFooterFaceName"),	i );
+			ShareData_IO_Sub_LogFont( cProfile, pszSecName, szKeyName,szKeyName2, szKeyName3,
+				printsetting.m_lfFooter, printsetting.m_nFooterPointSize );
+		}
+
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szDriver"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_mdmDevMode.m_szPrinterDriverName) );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szDevice"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_mdmDevMode.m_szPrinterDeviceName) );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].szOutput"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferT(printsetting.m_mdmDevMode.m_szPrinterOutputName) );
-		
+
 		// 2002.02.16 hor とりあえず旧設定を変換しとく
 		if(0==wcscmp(printsetting.m_szHeaderForm[0],_EDITL("&f")) &&
 		   0==wcscmp(printsetting.m_szFooterForm[0],_EDITL("&C- &P -"))
@@ -1210,7 +1226,7 @@ void CShareData_IO::ShareData_IO_Print( CDataProfile& cProfile )
 			auto_strcpy( printsetting.m_szFooterForm[0], _EDITL("") );
 			auto_strcpy( printsetting.m_szFooterForm[1], _EDITL("- $p -") );
 		}
-		
+
 		//禁則	//@@@ 2002.04.09 MIK
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuHead"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuHead );
 		auto_sprintf( szKeyName, LTEXT("PS[%02d].bKinsokuTail"), i ); cProfile.IOProfileData( pszSecName, szKeyName, printsetting.m_bPrintKinsokuTail );

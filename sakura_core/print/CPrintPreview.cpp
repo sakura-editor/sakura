@@ -261,7 +261,7 @@ LRESULT CPrintPreview::OnPaint(
 
 	// ヘッダ
 	if( nHeaderHeight ){
-		DrawHeader( hdc, cRect );
+		DrawHeaderFooter( hdc, cRect, true );
 	}
 
 	// 印刷/印刷プレビュー ページテキストの描画
@@ -275,7 +275,7 @@ LRESULT CPrintPreview::OnPaint(
 
 	// フッタ
 	if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
-		DrawFooter( hdc, cRect );
+		DrawHeaderFooter( hdc, cRect, false );
 	}
 
 
@@ -1074,7 +1074,7 @@ void CPrintPreview::OnPrint( void )
 		//	このとき開発者は次のページの印刷を始める前にオブジェクトを選択し直し，
 		//	マッピングモードをもう一度設定しなければなりません
 		//	Windows NT/2000ではStartPageでも属性はリセットされません．
-		
+
 		/* マッピングモードの変更 */
 		::SetMapMode( hdc, MM_LOMETRIC );		//それぞれの論理単位は、0.1 mm にマップされます
 		::SetMapMode( hdc, MM_ANISOTROPIC );	//論理単位は、任意にスケーリングされた軸上の任意の単位にマップされます
@@ -1087,7 +1087,7 @@ void CPrintPreview::OnPrint( void )
 
 		// ヘッダ印刷
 		if( nHeaderHeight ){
-			DrawHeader( hdc, cRect );
+			DrawHeaderFooter( hdc, cRect, true );
 		}
 
 		// 印刷/印刷プレビュー ページテキストの描画
@@ -1101,7 +1101,7 @@ void CPrintPreview::OnPrint( void )
 
 		// フッタ印刷
 		if( CPrint::CalcFooterHeight( m_pPrintSetting ) ){
-			DrawFooter( hdc, cRect );
+			DrawHeaderFooter( hdc, cRect, false );
 		}
 
 		/* 印刷 ページ終了 */
@@ -1131,132 +1131,154 @@ void CPrintPreview::OnPrint( void )
 	return;
 }
 
-/*! 印刷/印刷プレビュー ヘッダの描画
+
+/*! 印刷/印刷プレビュー ヘッダ･フッタの描画
 */
-void CPrintPreview::DrawHeader( HDC hdc, const CMyRect& rect )
+void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader )
 {
-	// ヘッダ
-	const int	nHeaderWorkLen = 1024;
-	wchar_t		szHeaderWork[1024 + 1];
-	int			nTextWidth;
+	bool		bFontSetting = (bHeader ? m_pPrintSetting->m_lfHeader.lfFaceName[0] : m_pPrintSetting->m_lfFooter.lfFaceName[0]) != _T('\0');
+	const int	nWorkLen = 1024;
+	wchar_t		szWork[1024 + 1];
 	int			nLen;
 
-	//文字間隔
-	int nDx = m_pPrintSetting->m_nPrintFontWidth;
+	if (bFontSetting) {
+		// フォント指定有り
+		HFONT	hFontForce = NULL;
+		HFONT	hFontOld = NULL;
 
-	// 左寄せ
-	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_LEFT], szHeaderWork, nHeaderWorkLen);
-	nLen = wcslen( szHeaderWork );
-	Print_DrawLine(
-		hdc,
-		rect.UpperLeft(),
-		szHeaderWork,
-		nLen,
-		0,
-		nLen,
-		CLayoutInt(0)
-	);
+		// フォント作成
+		LOGFONT	lf = (bHeader ? m_pPrintSetting->m_lfHeader : m_pPrintSetting->m_lfFooter);
+		lf.lfHeight = -( bHeader ? m_pPrintSetting->m_nHeaderPointSize : m_pPrintSetting->m_nFooterPointSize) * 254 / 720;	// フォントのサイズ計算(pt->1/10mm)
+		hFontForce = ::CreateFontIndirect( &lf );
 
-	// 中央寄せ
-	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_CENTER], szHeaderWork, nHeaderWorkLen);
-	nLen = wcslen( szHeaderWork );
-	nTextWidth = CTextMetrics::CalcTextWidth2(szHeaderWork, nLen, nDx); //テキスト幅
-	Print_DrawLine(
-		hdc,
-		CMyPoint(
-			( rect.right + rect.left - nTextWidth) / 2,
-			rect.top
-		),
-		szHeaderWork,
-		nLen,
-		0,
-		nLen,
-		CLayoutInt(0)
-	);
+		// フォント設定
+		hFontOld = (HFONT)::SelectObject( hdc, hFontForce );
 
-	// 右寄せ
-	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szHeaderForm[POS_RIGHT], szHeaderWork, nHeaderWorkLen);
-	nTextWidth = CTextMetrics::CalcTextWidth2(szHeaderWork, wcslen(szHeaderWork), nDx); //テキスト幅
-	nLen = wcslen( szHeaderWork );
-	Print_DrawLine(
-		hdc,
-		CMyPoint(
-			rect.right - nTextWidth,
-			rect.top
-		),
-		szHeaderWork,
-		nLen,
-		0,
-		nLen,
-		CLayoutInt(0)
-	);
-}
+		// TextMetricの取得
+		TEXTMETRIC	tm;
+		::GetTextMetrics( hdc, &tm );
 
-/*! 印刷/印刷プレビュー フッタの描画
-*/
-void CPrintPreview::DrawFooter( HDC hdc, const CMyRect& rect )
-{
-	// フッタ
-	const int	nFooterWorkLen = 1024;
-	wchar_t		szFooterWork[1024 + 1];
-	int			nTextWidth;
-	int			nLen;
+		// Y座標基準
+		int		nY = bHeader ? rect.top : rect.bottom + tm.tmHeight;
 
-	//文字間隔
-	int nDx = m_pPrintSetting->m_nPrintFontWidth;
-
-	// Y座標基準
-	int nY = rect.bottom + m_pPrintSetting->m_nPrintFontHeight;
-
-	// 左寄せ
-	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_LEFT], szFooterWork, nFooterWorkLen);
-	nLen = wcslen( szFooterWork );
-	Print_DrawLine(
-		hdc,
-		CMyPoint(
+		// 左寄せ
+		CSakuraEnvironment::ExpandParameter(
+			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_LEFT] : m_pPrintSetting->m_szFooterForm[POS_LEFT],
+			szWork, nWorkLen);
+		::ExtTextOutW_AnyBuild(
+			hdc,
 			rect.left,
-			nY
-		),
-		szFooterWork,
-		nLen,
-		0,
-		nLen,
-		CLayoutInt(0)
-	);
+			nY,
+			0,
+			NULL,
+			szWork,
+			wcslen( szWork ),
+			NULL
+		);
 
-	// 中央寄せ
-	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_CENTER], szFooterWork, nFooterWorkLen);
-	nLen = wcslen( szFooterWork );
-	nTextWidth = CTextMetrics::CalcTextWidth2(szFooterWork, nLen, nDx); //テキスト幅
-	Print_DrawLine(
-		hdc,
-		CMyPoint(
-			( rect.right + rect.left - nTextWidth) / 2,
-			nY
-		),
-		szFooterWork,
-		nLen,
-		0,
-		nLen,
-		CLayoutInt(0)
-	);
+		// 中央寄せ
+		CSakuraEnvironment::ExpandParameter(
+			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_CENTER] : m_pPrintSetting->m_szFooterForm[POS_CENTER],
+			szWork, nWorkLen);
+		SIZE	Size;
+		nLen = wcslen(szWork);
+		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
+		::ExtTextOutW_AnyBuild(
+			hdc,
+			( rect.right + rect.left - Size.cx) / 2,
+			nY,
+			0,
+			NULL,
+			szWork,
+			nLen,
+			NULL
+		);
 
-	// 右寄せ
-	CSakuraEnvironment::ExpandParameter(m_pPrintSetting->m_szFooterForm[POS_RIGHT], szFooterWork, nFooterWorkLen);
-	nTextWidth = CTextMetrics::CalcTextWidth2(szFooterWork, wcslen(szFooterWork), nDx); //テキスト幅
-	nLen = wcslen( szFooterWork );
-	Print_DrawLine(
-		hdc,
-		CMyPoint(
-			rect.right - nTextWidth,
-			nY
-		),
-		szFooterWork,
-		nLen,
-		0,
-		nLen,
-		CLayoutInt(0)
-	);
+		// 右寄せ
+		CSakuraEnvironment::ExpandParameter(
+			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
+			szWork, nWorkLen);
+		nLen = wcslen(szWork);
+		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
+		::ExtTextOutW_AnyBuild(
+			hdc,
+			rect.right - Size.cx,
+			nY,
+			0,
+			NULL,
+			szWork,
+			nLen,
+			NULL
+		);
+		// フォントの戻し
+		::SelectObject( hdc, hFontOld );
+		::DeleteObject( hFontForce );
+	}
+	else {
+		int		nTextWidth;
+
+		// 文字間隔
+		int nDx = m_pPrintSetting->m_nPrintFontWidth;
+
+		// Y座標基準
+		int nY = nY = bHeader ? rect.top : rect.bottom + m_pPrintSetting->m_nPrintFontHeight;
+
+		// 左寄せ
+		CSakuraEnvironment::ExpandParameter(
+			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_LEFT] : m_pPrintSetting->m_szFooterForm[POS_LEFT],
+			szWork, nWorkLen);
+		nLen = wcslen( szWork );
+		Print_DrawLine(
+			hdc,
+			CMyPoint(
+				rect.left,
+				nY
+			),
+			szWork,
+			nLen,
+			0,
+			nLen,
+			CLayoutInt(0)
+		);
+
+		// 中央寄せ
+		CSakuraEnvironment::ExpandParameter(
+			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_CENTER] : m_pPrintSetting->m_szFooterForm[POS_CENTER],
+			szWork, nWorkLen);
+		nLen = wcslen( szWork );
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx); //テキスト幅
+		Print_DrawLine(
+			hdc,
+			CMyPoint(
+				( rect.right + rect.left - nTextWidth) / 2,
+				nY
+			),
+			szWork,
+			nLen,
+			0,
+			nLen,
+			CLayoutInt(0)
+		);
+
+		// 右寄せ
+		CSakuraEnvironment::ExpandParameter(
+			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
+			szWork, nWorkLen);
+		nLen = wcslen( szWork );
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx); //テキスト幅
+		Print_DrawLine(
+			hdc,
+			CMyPoint(
+				rect.right - nTextWidth,
+				nY
+			),
+			szWork,
+			nLen,
+			0,
+			nLen,
+			CLayoutInt(0)
+		);
+	}
 }
 
 /* 印刷/印刷プレビュー ページテキストの描画
