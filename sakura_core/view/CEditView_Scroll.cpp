@@ -486,13 +486,12 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 
 void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, const RECT& rcScroll, const RECT& rcClip, const RECT& rcClip2)
 {
-	const STypeConfig& typeConfig = GetDocument()->m_cDocType.GetDocumentAttribute();
 	const CTextArea& area = GetTextArea();
 
 	// 背景は画面に対して固定か
 	bool bBackImgFixed = IsBkBitmap() &&
-		(0 != nScrollRowNum && !typeConfig.m_backImgScrollY ||
-		 0 != nScrollColNum && !typeConfig.m_backImgScrollX);
+		(0 != nScrollRowNum && !m_pTypeData->m_backImgScrollY ||
+		 0 != nScrollColNum && !m_pTypeData->m_backImgScrollX);
 	if( bBackImgFixed ){
 		CMyRect rcBody = area.GetAreaRect();
 		rcBody.left = 0; // 行番号も移動
@@ -520,7 +519,7 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 
 		if( 0 < area.GetTopYohaku() &&
 		  IsBkBitmap() &&
-		  (0 != nScrollRowNum && typeConfig.m_backImgScrollY || 0 != nScrollColNum && typeConfig.m_backImgScrollX) ){
+		  (0 != nScrollRowNum && m_pTypeData->m_backImgScrollY || 0 != nScrollColNum && m_pTypeData->m_backImgScrollX) ){
 			// Scrollのときにルーラー余白更新
 			CMyRect rcTopYohaku;
 			if( CTypeSupport(this, COLORIDX_TEXT).GetBackColor() == CTypeSupport(this, COLORIDX_GYOU).GetBackColor() ){
@@ -541,7 +540,7 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 				DeleteObject(hdcBgImg);
 			}
 		}
-		if( IsBkBitmap() && 0 != nScrollColNum && typeConfig.m_backImgScrollX ){
+		if( IsBkBitmap() && 0 != nScrollColNum && m_pTypeData->m_backImgScrollX ){
 			// 行番号背景のために更新
 			CMyRect rcLineNum;
 			area.GenerateLineNumberRect(&rcLineNum);
@@ -639,10 +638,10 @@ void CEditView::SyncScrollH( CLayoutInt col )
 CLayoutInt CEditView::GetWrapOverhang( void ) const
 {
 	int nMargin = 1;	// 折り返し記号
-	if (!m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuHide) {	// ぶら下げを隠す時はスキップ	2012/11/30 Uchi
-		if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuRet )
+	if (!m_pTypeData->m_bKinsokuHide) {	// ぶら下げを隠す時はスキップ	2012/11/30 Uchi
+		if( m_pTypeData->m_bKinsokuRet )
 			nMargin += 1;	// 改行ぶら下げ
-		if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto )
+		if( m_pTypeData->m_bKinsokuKuto )
 			nMargin += 2;	// 句読点ぶら下げ
 	}
 	return CLayoutInt( nMargin );

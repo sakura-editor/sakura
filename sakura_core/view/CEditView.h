@@ -567,6 +567,7 @@ public:
 	//参照
 	CEditWnd*		m_pcEditWnd;	//!< ウィンドウ
 	CEditDoc*		m_pcEditDoc;	//!< ドキュメント
+	const STypeConfig*	m_pTypeData;
 
 	//主要構成部品
 	CTextArea*		m_pcTextArea;

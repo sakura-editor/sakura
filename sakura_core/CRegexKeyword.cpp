@@ -157,7 +157,7 @@ BOOL CRegexKeyword::RegexKeyInit( void )
 
 	@note タイプ設定が変わったら再ロードしコンパイルする。
 */
-BOOL CRegexKeyword::RegexKeySetTypes( STypeConfig *pTypesPtr )
+BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 {
 	MYDBGMSG("RegexKeySetTypes")
 	if( pTypesPtr == NULL ) 
@@ -209,7 +209,7 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 	int	i;
 	int	matched;
 	static const wchar_t dummy[2] = L"\0";
-	struct RegexKeywordInfo	*rp;
+	const struct RegexKeywordInfo	*rp;
 
 	MYDBGMSG("RegexKeyCompile")
 	//コンパイル済みのバッファを解放する。

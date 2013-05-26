@@ -1,3 +1,27 @@
+/*
+	Copyright (C) 2008, kobake
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
+
 #include "StdAfx.h"
 #include "CEditView.h"
 #include "parse/CWordParse.h"
@@ -19,7 +43,7 @@ BOOL CEditView::KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc )
 	int			i;
 
 	/* キーワードヘルプを使用するか？ */
-	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyWordHelp )	/* キーワードヘルプ機能を使用する */	// 2006.04.10 fon
+	if( !m_pTypeData->m_bUseKeyWordHelp )	/* キーワードヘルプ機能を使用する */	// 2006.04.10 fon
 		goto end_of_search;
 	/* フォーカスがあるか？ */
 	if( !GetCaret().ExistCaretFocus() ) 
@@ -98,13 +122,13 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 	CTypeConfig nTypeNo = m_pcEditDoc->m_cDocType.GetDocumentType();
 	m_cTipWnd.m_cInfo.SetString( _T("") );	/* tooltipバッファ初期化 */
 	/* 1行目にキーワード表示の場合 */
-	if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
+	if(m_pTypeData->m_bUseKeyHelpKeyDisp){	/* キーワードも表示する */	// 2006.04.10 fon
 		m_cTipWnd.m_cInfo.AppendString( _T("[ ") );
 		m_cTipWnd.m_cInfo.AppendString( pcmemCurText->GetStringT() );
 		m_cTipWnd.m_cInfo.AppendString( _T(" ]") );
 	}
 	/* 途中まで一致を使う場合 */
-	if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix)
+	if(m_pTypeData->m_bUseKeyHelpPrefix)
 		nCmpLen = wcslen( pcmemCurText->GetStringPtr() );	// 2006.04.10 fon
 	m_cTipWnd.m_KeyWasHit = FALSE;
 	for(int i=0;i<CDocTypeManager().GetTypeSetting(nTypeNo).m_nKeyHelpNum;i++){	//最大数：MAX_KEYHELP_FILE
@@ -124,7 +148,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 				LPWSTR		pszWork;
 				pszWork = pcmemRefText->GetStringPtr();
 				/* 有効になっている辞書を全部なめて、ヒットの都度説明の継ぎ増し */
-				if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
+				if(m_pTypeData->m_bUseKeyHelpAllSearch){	/* ヒットした次の辞書も検索 */	// 2006.04.10 fon
 					/* バッファに前のデータが詰まっていたらseparator挿入 */
 					if(m_cTipWnd.m_cInfo.GetStringLength() != 0)
 						m_cTipWnd.m_cInfo.AppendString( _T("\n--------------------\n■") );
@@ -134,12 +158,12 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 					{
 						TCHAR szFile[MAX_PATH];
 						// 2013.05.08 表示するのはファイル名(拡張子なし)のみにする
-						_tsplitpath( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
+						_tsplitpath( m_pTypeData->m_KeyHelpArr[i].m_szPath, NULL, NULL, szFile, NULL );
 						m_cTipWnd.m_cInfo.AppendString( szFile );
 					}
 					m_cTipWnd.m_cInfo.AppendString( _T("\n") );
 					/* 前方一致でヒットした単語を挿入 */
-					if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringT() );
 						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
 					}/* 調査した「意味」を挿入 */
@@ -159,7 +183,7 @@ BOOL CEditView::KeySearchCore( const CNativeW* pcmemCurText )
 						m_cTipWnd.m_cInfo.AppendString( _T("\n--------------------\n") );
 					
 					/* 前方一致でヒットした単語を挿入 */
-					if(m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
+					if(m_pTypeData->m_bUseKeyHelpPrefix){	/* 選択範囲で前方一致検索 */
 						m_cTipWnd.m_cInfo.AppendString( pcmemRefKey->GetStringT() );
 						m_cTipWnd.m_cInfo.AppendString( _T(" >>\n") );
 					}

@@ -315,9 +315,6 @@ EColorIndexType CEditView::GetColorIndex(
 		return COLORIDX_TEXT;
 	}
 
-	//	May 9, 2000 genta
-	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
-
 	/* 論理行データの取得 */
 	DispPos _sPos(0,0); // 注意：この値はダミー。DoChangeColorでの参照位置は不正確
 	SColorStrategyInfo _sInfo;
@@ -411,7 +408,7 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
 
 	//実際に色を設定
-	const ColorInfo& info = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
+	const ColorInfo& info = m_pTypeData->m_ColorInfoArr[nColorIdx];
 	gr.SetTextForeColor(info.m_colTEXT);
 	gr.SetTextBackColor(info.m_colBACK);
 	gr.SetMyFont(
@@ -435,12 +432,11 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 	int		nColorIdx = ToColorInfoArrIndex(eColorIndex);
 	int		nColorIdx2 = ToColorInfoArrIndex(eColorIndex2);
 	int		nColorIdxBg = ToColorInfoArrIndex(eColorIndexBg);
-	STypeConfig& config = m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	//実際に色を設定
-	const ColorInfo& info  = config.m_ColorInfoArr[nColorIdx];
-	const ColorInfo& info2 = config.m_ColorInfoArr[nColorIdx2];
-	const ColorInfo& infoBg = config.m_ColorInfoArr[nColorIdxBg];
+	const ColorInfo& info  = m_pTypeData->m_ColorInfoArr[nColorIdx];
+	const ColorInfo& info2 = m_pTypeData->m_ColorInfoArr[nColorIdx2];
+	const ColorInfo& infoBg = m_pTypeData->m_ColorInfoArr[nColorIdxBg];
 	gr.SetTextForeColor(GetTextColorByColorInfo2(info, info2));
 	// 2012.11.21 背景色がテキストとおなじなら背景色はカーソル行背景
 	const ColorInfo& info3 = (info2.m_colBACK == m_crBack ? infoBg : info2);
@@ -589,9 +585,6 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	bool bCaretShowFlag_Old = GetCaret().GetCaretShowFlag();	// 2008.06.09 ryoji
 	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
 
-	//	May 9, 2000 genta
-	STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
-
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	const CLayoutInt nWrapKeta = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 
@@ -604,10 +597,10 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 
 //@@@ 2001.11.17 add start MIK
 	//変更があればタイプ設定を行う。
-	if( TypeDataPtr->m_bUseRegexKeyword || m_cRegexKeyword->m_bUseRegexKeyword ) //OFFなのに前回のデータが残ってる
+	if( m_pTypeData->m_bUseRegexKeyword || m_cRegexKeyword->m_bUseRegexKeyword ) //OFFなのに前回のデータが残ってる
 	{
 		//タイプ別設定をする。設定済みかどうかは呼び先でチェックする。
-		m_cRegexKeyword->RegexKeySetTypes(TypeDataPtr);
+		m_cRegexKeyword->RegexKeySetTypes(m_pTypeData);
 	}
 //@@@ 2001.11.17 add end MIK
 
@@ -661,13 +654,13 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	//	From Here Sep. 7, 2001 genta
 	//	Sep. 23, 2002 genta 行番号非表示でも行番号色の帯があるので隙間を埋める
 	if( GetTextArea().GetTopYohaku() ){
-		if( bTransText && TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK == cTextType.GetBackColor() ){
+		if( bTransText && m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK == cTextType.GetBackColor() ){
 		}else{
 			rc.left   = 0;
 			rc.top    = GetTextArea().GetRulerHeight();
 			rc.right  = GetTextArea().GetLineNumberWidth(); //	Sep. 23 ,2002 genta 余白はテキスト色のまま残す
 			rc.bottom = GetTextArea().GetAreaTop();
-			gr.SetTextBackColor(TypeDataPtr->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK);
+			gr.SetTextBackColor(m_pTypeData->m_ColorInfoArr[COLORIDX_GYOU].m_colBACK);
 			gr.FillMyRectTextBackColor(rc);
 		}
 	}
@@ -859,10 +852,6 @@ bool CEditView::DrawLogicLine(
 
 	//	Aug. 14, 2005 genta 折り返し幅をLayoutMgrから取得するように
 	const CLayoutInt nWrapKeta = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
-
-
-	//サイズ
-	STypeConfig* TypeDataPtr = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	//処理する文字位置
 	pInfo->nPosInLogic = CLogicInt(0); //☆開始
