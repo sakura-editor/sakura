@@ -261,16 +261,17 @@ BOOL CEditView::Create(
 	WNDCLASS	wc;
 	m_hwndParent = hwndParent;
 	m_pcEditDoc = pcEditDoc;
+	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	m_nMyIndex = nMyIndex;
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
 	m_cRegexKeyword = new CRegexKeyword( GetDllShareData().m_Common.m_sSearch.m_szRegexpLib );	//@@@ 2001.11.17 add MIK
-	m_cRegexKeyword->RegexKeySetTypes(&(m_pcEditDoc->m_cDocType.GetDocumentAttribute()));	//@@@ 2001.11.17 add MIK
+	m_cRegexKeyword->RegexKeySetTypes(m_pTypeData);	//@@@ 2001.11.17 add MIK
 
 	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 	/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );								/* 表示域の上端座標 */
 	/* ルーラー表示 */
-	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
+	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		GetTextArea().SetAreaTop( GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
 
@@ -972,7 +973,7 @@ void CEditView::OnSize( int cx, int cy )
 	// To Here 2007.09.09 Moca
 
 	if( IsBkBitmap() ){
-		EBackgroundImagePos imgPos = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_backImgPos;
+		EBackgroundImagePos imgPos = m_pTypeData->m_backImgPos;
 		if( imgPos != BGIMAGE_TOP_LEFT ){
 			bool bUpdateWidth = false;
 			bool bUpdateHeight = false;
@@ -1179,13 +1180,12 @@ bool CEditView::IsCurrentPositionURL(
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
 	bool bDispUrl = CTypeSupport(this,COLORIDX_URL).IsDisp();
 	bool bUseRegexKeyword = false;
-	const STypeConfig	*TypeDataPtr = &(m_pcEditDoc->m_cDocType.GetDocumentAttribute());
-	if( TypeDataPtr->m_bUseRegexKeyword ){
-		const wchar_t* pKeyword = TypeDataPtr->m_RegexKeywordList;
+	if( m_pTypeData->m_bUseRegexKeyword ){
+		const wchar_t* pKeyword = m_pTypeData->m_RegexKeywordList;
 		for( int i = 0; i < MAX_REGEX_KEYWORD; i++ ){
 			if( *pKeyword == L'\0' )
 				break;
-			if( TypeDataPtr->m_RegexKeywordArr[i].m_nColorIndex == COLORIDX_URL ){
+			if( m_pTypeData->m_RegexKeywordArr[i].m_nColorIndex == COLORIDX_URL ){
 				bUseRegexKeyword = true;	// URL色指定の正規表現キーワードがある
 				break;
 			}
@@ -1565,8 +1565,11 @@ void CEditView::OnChangeSetting()
 	GetTextArea().SetTopYohaku( GetDllShareData().m_Common.m_sWindow.m_nRulerBottomSpace ); 		/* ルーラーとテキストの隙間 */
 	GetTextArea().SetAreaTop( GetTextArea().GetTopYohaku() );									/* 表示域の上端座標 */
 
+	// 文書種別更新
+	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
+
 	/* ルーラー表示 */
-	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
+	if( m_pTypeData->m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
 	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
@@ -2171,9 +2174,9 @@ inline bool CEditView::IsDrawCursorVLinePos( int posX ){
 /* カーソル行アンダーラインのON */
 void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 {
-	bool bUnderLine = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
-	bool bCursorVLine = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
-	bool bCursorLineBg = m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CARETLINEBG].m_bDisp;
+	bool bUnderLine = m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp;
+	bool bCursorVLine = m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp;
+	bool bCursorLineBg = m_pTypeData->m_ColorInfoArr[COLORIDX_CARETLINEBG].m_bDisp;
 	if( !bUnderLine && !bCursorVLine && !bCursorLineBg ){
 		return;
 	}
@@ -2221,7 +2224,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 	if( bCursorVLine ){
 		// カーソル位置縦線。-1してキャレットの左に来るように。
 		nCursorVLineX = GetTextArea().GetAreaLeft() + (Int)(GetCaret().GetCaretLayoutPos().GetX2() - GetTextArea().GetViewLeftCol())
-			* (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nColumnSpace + GetTextMetrics().GetHankakuWidth() ) - 1;
+			* (m_pTypeData->m_nColumnSpace + GetTextMetrics().GetHankakuWidth() ) - 1;
 	}
 
 	if( bDraw
@@ -2236,12 +2239,12 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 		HDC		hdc = ::GetDC( GetHwnd() );
 		{
 			CGraphics gr(hdc);
-			gr.SetPen( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
+			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
 			::MoveToEx( gr, m_nOldCursorLineX, GetTextArea().GetAreaTop(), NULL );
 			::LineTo(   gr, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
 			int nBoldX = m_nOldCursorLineX - 1;
 			// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
-			if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bBoldFont &&
+			if( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bBoldFont &&
 				IsDrawCursorVLinePos(nBoldX) ){
 				::MoveToEx( gr, nBoldX, GetTextArea().GetAreaTop(), NULL );
 				::LineTo(   gr, nBoldX, GetTextArea().GetAreaBottom() );
@@ -2280,7 +2283,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 		HDC		hdc = ::GetDC( GetHwnd() );
 		{
 			CGraphics gr(hdc);
-			gr.SetPen( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
+			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
 			::MoveToEx(
 				gr,
 				GetTextArea().GetAreaLeft(),
@@ -2300,9 +2303,9 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 /* カーソル行アンダーラインのOFF */
 void CEditView::CaretUnderLineOFF( bool bDraw, bool bDrawPaint, bool bResetFlag )
 {
-	if( !m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
-			!m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp &&
-			!m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CARETLINEBG].m_bDisp ){
+	if( !m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp &&
+			!m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bDisp &&
+			!m_pTypeData->m_ColorInfoArr[COLORIDX_CARETLINEBG].m_bDisp ){
 		return;
 	}
 	if( -1 != m_nOldUnderLineY ){
@@ -2473,7 +2476,7 @@ bool  CEditView::ShowKeywordHelp( POINT po, LPCWSTR pszHelp, LPRECT prcHokanWin)
 	RECT		rcTipWin,
 				rcDesktop;
 
-	if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
+	if( m_pTypeData->m_bUseKeyWordHelp ){ /* キーワードヘルプを使用する */
 		if( m_bInMenuLoop == FALSE	&&	/* メニュー モーダル ループに入っていない */
 			0 != m_dwTipTimer			/* 辞書Tipを表示していない */
 		){

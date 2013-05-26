@@ -125,11 +125,11 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 		GetTextMetrics().GetHankakuHeight(),
 		GetTextMetrics().GetHankakuDx(),
 		cmemData.GetStringPtr(),
-		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_szHokanFile,
-		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bHokanLoHiCase,
-		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseHokanByFile, // 2003.06.22 Moca
-		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nHokanType,
-		m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bUseHokanByKeyword,
+		m_pTypeData->m_szHokanFile,
+		m_pTypeData->m_bHokanLoHiCase,
+		m_pTypeData->m_bUseHokanByFile, // 2003.06.22 Moca
+		m_pTypeData->m_nHokanType,
+		m_pTypeData->m_bUseHokanByKeyword,
 		pcmemHokanWord
 	);
 	/* •âŠ®Œó•â‚Ì”‚É‚æ‚Á‚Ä“®ì‚ð•Ï‚¦‚é */

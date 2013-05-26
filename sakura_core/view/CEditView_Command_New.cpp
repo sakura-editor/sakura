@@ -83,11 +83,11 @@ void CEditView::InsertData_CEditView(
 	bool			bLineModifiedChange = (pLine)? !CModifyVisitor().IsLineModified(pcLayout->GetDocLineRef()): true;
 
 	//‹Ö‘¥‚ª‚ ‚éê‡‚Í1s‘O‚©‚çÄ•`‰æ‚ðs‚¤	@@@ 2002.04.19 MIK
-	bKinsoku = ( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bWordWrap
-			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuHead	//@@@ 2002.04.19 MIK
-			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuTail	//@@@ 2002.04.19 MIK
-			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuRet	//@@@ 2002.04.19 MIK
-			 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto );	//@@@ 2002.04.19 MIK
+	bKinsoku = ( m_pTypeData->m_bWordWrap
+			 || m_pTypeData->m_bKinsokuHead	//@@@ 2002.04.19 MIK
+			 || m_pTypeData->m_bKinsokuTail	//@@@ 2002.04.19 MIK
+			 || m_pTypeData->m_bKinsokuRet	//@@@ 2002.04.19 MIK
+			 || m_pTypeData->m_bKinsokuKuto );	//@@@ 2002.04.19 MIK
 
 	CLayoutInt	nLineAllColLen;
 	CLogicInt	nIdxFrom = CLogicInt(0);
@@ -186,8 +186,8 @@ void CEditView::InsertData_CEditView(
 
 	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
 	if( pptNewPos->x >= m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas() ){
-		if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuRet
-		 || m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
+		if( m_pTypeData->m_bKinsokuRet
+		 || m_pTypeData->m_bKinsokuKuto )	//@@@ 2002.04.16 MIK
 		{
 			if( m_pcEditDoc->m_cLayoutMgr.IsEndOfLine( *pptNewPos ) )	//@@@ 2002.04.18
 			{
