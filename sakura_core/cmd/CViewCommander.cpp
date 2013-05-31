@@ -404,8 +404,6 @@ BOOL CViewCommander::HandleCommand(
 	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( true, bRedraw, (HWND)lparam1, (const WCHAR*)lparam2 );break;	//次を検索
 	case F_SEARCH_PREV:			Command_SEARCH_PREV( bRedraw, (HWND)lparam1 );break;						//前を検索
 	case F_REPLACE_DIALOG:	//置換(置換ダイアログ)
-		/* 再帰処理対策 */
-		ClearOpeBlk();
 		Command_REPLACE_DIALOG();	//@@@ 2002.2.2 YAZAKI ダイアログ呼び出しと、実行を分離
 		break;
 	case F_REPLACE:				Command_REPLACE( (HWND)lparam1 );break;			//置換実行 @@@ 2002.2.2 YAZAKI
@@ -413,9 +411,9 @@ BOOL CViewCommander::HandleCommand(
 	case F_SEARCH_CLEARMARK:	Command_SEARCH_CLEARMARK();break;	//検索マークのクリア
 	case F_GREP_DIALOG:	//Grepダイアログの表示
 		/* 再帰処理対策 */
-		ClearOpeBlk();
+		m_pCommanderView->SetUndoBuffer( true );
 		Command_GREP_DIALOG();
-		break;
+		return bRet;
 	case F_GREP:			Command_GREP();break;							//Grep
 	case F_JUMP_DIALOG:		Command_JUMP_DIALOG();break;					//指定行ヘジャンプダイアログの表示
 	case F_JUMP:			Command_JUMP();break;							//指定行ヘジャンプ
@@ -483,19 +481,17 @@ BOOL CViewCommander::HandleCommand(
 	case F_LOADKEYMACRO:	Command_LOADKEYMACRO();break;	/* キーマクロの読み込み */
 	case F_EXECKEYMACRO:									/* キーマクロの実行 */
 		/* 再帰処理対策 */
-		ClearOpeBlk();
-		Command_EXECKEYMACRO();break;
+		m_pCommanderView->SetUndoBuffer( true );
+		Command_EXECKEYMACRO(); return bRet;
 	case F_EXECEXTMACRO:
 		/* 再帰処理対策 */
-		ClearOpeBlk();
+		m_pCommanderView->SetUndoBuffer( true );
 		/* 名前を指定してマクロ実行 */
 		Command_EXECEXTMACRO( (const WCHAR*)lparam1, (const WCHAR*)lparam2 );
-		break;
+		return bRet;
 	//	From Here Sept. 20, 2000 JEPRO 名称CMMANDをCOMMANDに変更
 	//	case F_EXECCMMAND:		Command_EXECCMMAND();break;	/* 外部コマンド実行 */
 	case F_EXECMD_DIALOG:
-		/* 再帰処理対策 */// 2001/06/23 N.Nakatani
-		ClearOpeBlk();
 		//Command_EXECCOMMAND_DIALOG((const char*)lparam1);	/* 外部コマンド実行 */
 		Command_EXECCOMMAND_DIALOG();	/* 外部コマンド実行 */	//	引数つかってないみたいなので
 		break;
@@ -508,9 +504,9 @@ BOOL CViewCommander::HandleCommand(
 	/* カスタムメニュー */
 	case F_MENU_RBUTTON:	/* 右クリックメニュー */
 		/* 再帰処理対策 */
-		ClearOpeBlk();
+		m_pCommanderView->SetUndoBuffer( true );
 		Command_MENU_RBUTTON();
-		break;
+		return bRet;
 	case F_CUSTMENU_1:  /* カスタムメニュー1 */
 	case F_CUSTMENU_2:  /* カスタムメニュー2 */
 	case F_CUSTMENU_3:  /* カスタムメニュー3 */
@@ -536,14 +532,14 @@ BOOL CViewCommander::HandleCommand(
 	case F_CUSTMENU_23: /* カスタムメニュー23 */
 	case F_CUSTMENU_24: /* カスタムメニュー24 */
 		/* 再帰処理対策 */
-		ClearOpeBlk();
+		m_pCommanderView->SetUndoBuffer( true );
 		nFuncID = Command_CUSTMENU( nCommand - F_CUSTMENU_1 + 1 );
 		if( 0 != nFuncID ){
 			/* コマンドコードによる処理振り分け */
 //			HandleCommand( nFuncID, true, 0, 0, 0, 0 );
 			::PostMessageCmd( GetMainWindow(), WM_COMMAND, MAKELONG( nFuncID, 0 ), (LPARAM)NULL );
 		}
-		break;
+		return bRet;
 
 	/* ウィンドウ系 */
 	case F_SPLIT_V:			Command_SPLIT_V();break;	/* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
@@ -585,8 +581,8 @@ BOOL CViewCommander::HandleCommand(
 	case F_TOGGLE_KEY_SEARCH:	Command_ToggleKeySearch();break;	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 	case F_MENU_ALLFUNC:									/* コマンド一覧 */
 		/* 再帰処理対策 */
-		ClearOpeBlk();
-		Command_MENU_ALLFUNC();break;
+		m_pCommanderView->SetUndoBuffer( true );
+		Command_MENU_ALLFUNC();return bRet;
 	case F_EXTHELP1:	Command_EXTHELP1();break;		/* 外部ヘルプ１ */
 	case F_EXTHTMLHELP:	/* 外部HTMLヘルプ */
 		//	Jul. 5, 2002 genta
@@ -602,6 +598,8 @@ BOOL CViewCommander::HandleCommand(
 	default:
 		//プラグインコマンドを実行する
 		{
+			m_pCommanderView->SetUndoBuffer( true ); // 2013.05.01 追加。再帰対応
+
 			CPlug::Array plugs;
 			CJackManager::getInstance()->GetUsablePlug( PP_COMMAND, nCommand, &plugs );
 
@@ -614,7 +612,7 @@ BOOL CViewCommander::HandleCommand(
 
 				/* フォーカス移動時の再描画 */
 				m_pCommanderView->RedrawAll();
-				break;
+				return bRet;
 			}
 		}
 

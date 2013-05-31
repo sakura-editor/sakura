@@ -44,16 +44,11 @@ inline HWND CViewCommander::GetMainWindow()
 }
 inline COpeBlk* CViewCommander::GetOpeBlk()
 {
-	return m_pCommanderView->m_pcOpeBlk;
-}
-inline void CViewCommander::ClearOpeBlk()
-{
-	delete m_pCommanderView->m_pcOpeBlk;
-	m_pCommanderView->m_pcOpeBlk=NULL;
+	return GetDocument()->m_cDocEditor.m_pcOpeBlk;
 }
 inline void CViewCommander::SetOpeBlk(COpeBlk* p)
 {
-	m_pCommanderView->m_pcOpeBlk = p;
+	GetDocument()->m_cDocEditor.m_pcOpeBlk = p;
 }
 inline CLayoutRange& CViewCommander::GetSelect()
 {

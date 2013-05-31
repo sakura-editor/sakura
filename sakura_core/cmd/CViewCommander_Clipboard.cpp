@@ -518,7 +518,7 @@ void CViewCommander::Command_INSTEXT(
 					bLinePaste? L"": pszText,	// 挿入するデータ
 					bLinePaste? CLogicInt(0): nTextLen,	// 挿入するデータの長さ
 					bRedraw,
-					m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
+					m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
 				);
 				if( !bLinePaste )	// 2007.10.04 ryoji
 					goto end_of_func;

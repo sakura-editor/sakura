@@ -31,6 +31,7 @@
 #include "window/CEditWnd.h"
 #include "window/CSplitBoxWnd.h"///
 #include "COpeBlk.h"///
+#include "cmd/CViewCommander_inline.h"
 #include "_os/CDropTarget.h"///
 #include "_os/CClipboard.h"
 #include "_os/COsVersionInfo.h"
@@ -168,7 +169,6 @@ BOOL CEditView::Create(
 
 	/* 共有データ構造体のアドレスを返す */
 	m_bCommandRunning = FALSE;	/* コマンドの実行中 */
-	m_pcOpeBlk = NULL;			/* 操作ブロック */
 	m_bDoing_UndoRedo = FALSE;	/* アンドゥ・リドゥの実行中か */
 	m_pcsbwVSplitBox = NULL;	/* 垂直分割ボックス */
 	m_pcsbwHSplitBox = NULL;	/* 水平分割ボックス */
@@ -1403,7 +1403,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe(
+			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
 					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
@@ -1426,7 +1426,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			cmemBuf.GetStringPtr(),		/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
 			cmemBuf.GetStringLength(),	/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
 			false,
-			m_bDoing_UndoRedo?NULL:m_pcOpeBlk
+			m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 		);
 
 		// From Here 2001.12.03 hor
@@ -1442,7 +1442,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe(
+			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
 					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
@@ -2597,10 +2597,11 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 /*! アンドゥバッファの処理 */
 void CEditView::SetUndoBuffer(bool bPaintLineNumber)
 {
-	if( NULL != m_pcOpeBlk && m_pcOpeBlk->Release() == 0 ){
-		if( 0 < m_pcOpeBlk->GetNum() ){	/* 操作の数を返す */
+	
+	if( NULL != m_cCommander.GetOpeBlk() && m_cCommander.GetOpeBlk()->Release() == 0 ){
+		if( 0 < m_cCommander.GetOpeBlk()->GetNum() ){	/* 操作の数を返す */
 			/* 操作の追加 */
-			m_pcEditDoc->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_pcOpeBlk );
+			GetDocument()->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_cCommander.GetOpeBlk() );
 
 			if( bPaintLineNumber
 			 &&	m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
@@ -2610,8 +2611,8 @@ void CEditView::SetUndoBuffer(bool bPaintLineNumber)
 				m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新
 		}
 		else{
-			delete m_pcOpeBlk;
+			delete m_cCommander.GetOpeBlk();
 		}
-		m_pcOpeBlk = NULL;
+		m_cCommander.SetOpeBlk(NULL);
 	}
 }

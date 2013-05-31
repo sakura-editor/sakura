@@ -679,7 +679,6 @@ public:
 	BOOL			m_bHokan;			//	補完中か？＝補完ウィンドウが表示されているか？かな？
 
 	//編集
-	COpeBlk*		m_pcOpeBlk;			/* 操作ブロック */
 	bool			m_bDoing_UndoRedo;	/* アンドゥ・リドゥの実行中か */
 
 	// 辞書Tip関連

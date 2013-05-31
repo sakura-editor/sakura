@@ -48,7 +48,6 @@ public:
 	CEditWnd* GetEditWindow();
 	HWND GetMainWindow();
 	COpeBlk* GetOpeBlk();
-	void ClearOpeBlk();
 	void SetOpeBlk(COpeBlk* p);
 	CLayoutRange& GetSelect();
 	CCaret& GetCaret();
