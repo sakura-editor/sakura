@@ -35,7 +35,9 @@ public:
 	void Empty(); //!< クリップボードを空にする
 	void Close(); //!< クリップボードを閉じる
 	bool SetText(const wchar_t* pData, int nDataLen, bool bColumnSelect, bool bLineSelect);   //!< テキストを設定する
+	bool SetHtmlText(const CNativeW& cmemBUf);
 	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect); //!< テキストを取得する
+
 
 	//演算子
 	operator bool() const{ return m_bOpenResult!=FALSE; } //!< クリップボードを開けたならtrue

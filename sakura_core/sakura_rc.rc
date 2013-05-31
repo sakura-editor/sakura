@@ -2847,6 +2847,8 @@ BEGIN
     F_COPYLINES             "選択範囲内全行コピー"
     F_COPYLINESASPASSAGE    "選択範囲内全行引用符付きコピー"
     F_COPYLINESWITHLINENUMBER "選択範囲内全行行番号付きコピー"
+    F_COPY_COLOR_HTML       "選択範囲内色付きHTMLコピー"
+    F_COPY_COLOR_HTML_LINENUMBER "選択範囲内行番号色付きHTMLコピー"
     F_COPYPATH              "このファイルのパス名をコピー"
     F_COPYTAG               "このファイルのパス名とカーソル位置をコピー"
     F_COPYFNAME             "このファイル名をコピー"

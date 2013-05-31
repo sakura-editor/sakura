@@ -1752,7 +1752,7 @@ bool CEditView::GetSelectedData(
 		//<< 2002/04/18 Azumaiya
 		// サイズ分だけ要領をとっておく。
 		// 結構大まかに見ています。
-		CLayoutInt i = rcSel.bottom - rcSel.top;
+		CLayoutInt i = rcSel.bottom - rcSel.top + 1; // 2013.05.06 「+1」
 
 		// 最初に行数分の改行量を計算してしまう。
 		int nBufSize = wcslen(WCODE::CRLF) * (Int)i;
@@ -1847,7 +1847,7 @@ bool CEditView::GetSelectedData(
 		// 実際の各行の長さ。
 		for (; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->GetNextLayout() )
 		{
-			nBufSize += pcLayout->GetLengthWithEOL() + appendEol.GetLen();
+			nBufSize += pcLayout->GetLengthWithoutEOL() + appendEol.GetLen();
 			if( bLineOnly ){	/* 複数行選択の場合は先頭の行のみ */
 				break;
 			}

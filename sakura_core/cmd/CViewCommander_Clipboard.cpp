@@ -20,7 +20,8 @@
 #include "StdAfx.h"
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
-
+#include "view/colors/CColorStrategy.h"
+#include "view/colors/CColor_Found.h"
 #include "uiparts/CWaitCursor.h"
 #include "util/os.h"
 
@@ -660,6 +661,438 @@ void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 		TRUE	/* 行番号を付与する */
 	);
 	return;
+}
+
+
+
+static bool AppendHTMLColor(
+	COLORREF cTEXTLast, COLORREF& cTEXTLast2, COLORREF cBACKLast, COLORREF& cBACKLast2,
+	bool bBoldLast, bool& bBoldLast2, bool bUnderLineLast, bool& bUnderLineLast2,
+	const WCHAR* pAppendStr, int nLen,
+	CNativeW& cmemClip)
+{
+	if( bBoldLast != bBoldLast2 || bUnderLineLast != bUnderLineLast2
+	  || cTEXTLast != cTEXTLast2 || cBACKLast != cBACKLast2 ){
+		if( bBoldLast2 ){
+			cmemClip.AppendString( L"</b>", 4 );
+		}
+		if( bUnderLineLast2 ){
+			if( cTEXTLast != cTEXTLast2 || cBACKLast != cBACKLast2 || bUnderLineLast != bUnderLineLast2 ){
+				cmemClip.AppendString( L"</u>", 4 );
+			}
+		}
+		if( cTEXTLast != cTEXTLast2 || cBACKLast != cBACKLast2 ){
+			if( cTEXTLast2 != (COLORREF)-1 ){
+					cmemClip.AppendString( L"</span>", 7 );
+				}
+			if( cTEXTLast != (COLORREF)-1 ){
+				if( cTEXTLast != cTEXTLast2 || cBACKLast != cBACKLast2 ){
+					WCHAR szColor[60];
+					DWORD dwTEXTColor = (GetRValue(cTEXTLast) << 16) + (GetGValue(cTEXTLast) << 8) + GetBValue(cTEXTLast);
+					DWORD dwBACKColor = (GetRValue(cBACKLast) << 16) + (GetGValue(cBACKLast) << 8) + GetBValue(cBACKLast);
+					swprintf( szColor, L"<span style=\"color:#%06x;background-color:#%06x\">", dwTEXTColor, dwBACKColor);
+					cmemClip.AppendString( szColor );
+				}
+			}
+		}
+		if( bUnderLineLast ){
+			if( cTEXTLast != cTEXTLast2 || cBACKLast != cBACKLast2 || bUnderLineLast != bUnderLineLast2 ){
+				cmemClip.AppendString( L"<u>", 3 );
+			}
+		}
+		if( bBoldLast ){
+			cmemClip.AppendString( L"<b>", 3 );
+		}
+		cTEXTLast2 = cTEXTLast;
+		cBACKLast2 = cBACKLast;
+		bUnderLineLast2 = bUnderLineLast;
+		bBoldLast2 = bBoldLast;
+	}
+	CNativeW cmemBuf(pAppendStr, nLen);
+	cmemBuf.Replace(L"&", L"&amp;");
+	cmemBuf.Replace(L"<", L"&lt;");
+	cmemBuf.Replace(L">", L"&gt;");
+	cmemClip.AppendNativeData(cmemBuf);
+	if( 0 < nLen ){
+		return WCODE::IsLineDelimiter(pAppendStr[nLen-1]);
+	}
+	return false;
+}
+
+
+
+//!選択範囲内色付きHTMLコピー
+void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
+{
+	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected()
+	  || GetSelect().GetFrom() == GetSelect().GetTo() ){
+		return;
+	}
+	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
+	bool bLineNumLayout = GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy
+		|| m_pCommanderView->GetSelectionInfo().IsBoxSelecting();
+	CLayoutRect rcSel;
+	TwoPointToRect(
+		&rcSel,
+		GetSelect().GetFrom(),	// 範囲選択開始
+		GetSelect().GetTo()		// 範囲選択終了
+	);
+	// 修飾分を除いたバッファの長さをだいたいで計算
+	CLogicRange sSelectLogic;
+	sSelectLogic.Clear(-1);
+	int nBuffSize = 0;
+	const CLayout* pcLayoutTop = NULL;
+	{
+		const CLayout* pcLayout;
+		{
+			CLogicInt nLineLenTmp;
+			GetDocument()->m_cLayoutMgr.GetLineStr(rcSel.top, &nLineLenTmp, &pcLayout);
+		}
+		pcLayoutTop = pcLayout;
+		CLayoutInt i = rcSel.top;
+		for(; pcLayout != NULL && i <= rcSel.bottom; i++, pcLayout = pcLayout->GetNextLayout())
+		{
+			/* 指定された桁に対応する行のデータ内の位置を調べる */
+			CLogicInt nIdxFrom;
+			CLogicInt nIdxTo;
+			if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+				nIdxFrom = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.left );
+				nIdxTo   = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.right);
+				// 改行は除く
+				if( nIdxTo - nIdxFrom > 0 ){
+					const WCHAR* pLine = pcLayout->GetPtr();
+					if( pLine[nIdxTo - 1] == L'\n' || pLine[nIdxTo - 1] == L'\r' ){
+						--nIdxTo;
+					}
+				}
+				if( i == rcSel.top ){
+					sSelectLogic.SetFromY(pcLayout->GetLogicLineNo());
+					sSelectLogic.SetFromX(nIdxFrom);
+				}
+				if( i == rcSel.bottom ){
+					sSelectLogic.SetToY(pcLayout->GetLogicLineNo());
+					sSelectLogic.SetToX(nIdxTo);
+				}
+			}else{
+				if( i == rcSel.top ){
+					nIdxFrom = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.left);
+					sSelectLogic.SetFromY(pcLayout->GetLogicLineNo());
+					sSelectLogic.SetFromX(nIdxFrom);
+				}else{
+					nIdxFrom = CLogicInt(0);
+				}
+				if( i == rcSel.bottom ){
+					nIdxTo = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.right);
+					sSelectLogic.SetToY(pcLayout->GetLogicLineNo());
+					sSelectLogic.SetToX(nIdxTo);
+				}else{
+					nIdxTo = pcLayout->GetLengthWithoutEOL();
+				}
+			}
+			nBuffSize += nIdxTo - nIdxFrom;
+			if( bLineNumLayout ){
+				nBuffSize += 2;
+			}else{
+				nBuffSize += pcLayout->GetLayoutEol().GetLen();
+			}
+		}
+		if( sSelectLogic.GetTo().x == -1 ){
+			sSelectLogic.SetToY(GetDocument()->m_cDocLineMgr.GetLineCount());
+			sSelectLogic.SetToX(CLogicInt(0));
+		}
+	}
+	// 行番号の幅を計算
+	int nLineNumberMaxLen = 0;
+	WCHAR szLineFormat[10];
+	szLineFormat[0] = L'\0';
+	CNativeW cmemNullLine;
+	if( bLineNumber ){
+		int nLineNumberMax;
+		if( type.m_bLineNumIsCRLF ){
+			nLineNumberMax = sSelectLogic.GetTo().GetY();
+		}else{
+			nLineNumberMax = (Int)rcSel.bottom;
+		}
+		int nWork = 10;
+		int i;
+		cmemNullLine.AppendString(L" ");
+		for( i = 1; i < 12; ++i ){
+			if( nWork > nLineNumberMax ){
+				break;
+			}
+			nWork *= 10;
+			cmemNullLine.AppendString(L" ");
+		}
+		nLineNumberMaxLen = i + 1; // "%d:"
+		cmemNullLine.AppendString(L":");
+		swprintf(szLineFormat, L"%%%dd:", i);
+	}
+	if( bLineNumLayout ){
+		nBuffSize += (Int)(nLineNumberMaxLen * (rcSel.bottom - rcSel.top + 1));
+	}else{
+		nBuffSize += (Int)(nLineNumberMaxLen * (sSelectLogic.GetTo().y - sSelectLogic.GetFrom().y + 1));
+	}
+	CNativeW cmemClip;
+	cmemClip.AllocStringBuffer(nBuffSize + 11);
+	{
+		COLORREF cBACK = type.m_ColorInfoArr[COLORIDX_TEXT].m_colBACK;
+		DWORD dwBACKColor = (GetRValue(cBACK) << 16) + (GetGValue(cBACK) << 8) + GetBValue(cBACK);
+		WCHAR szBuf[50];
+		swprintf(szBuf, L"<pre style=\"background-color:#%06x\">", dwBACKColor);
+		cmemClip.AppendString( szBuf );
+	}
+	CLayoutInt nLayoutLineNum = rcSel.top;
+	const CLogicInt nLineNumLast = sSelectLogic.GetTo().y;
+	const CDocLine* pcDocLine = pcLayoutTop->GetDocLineRef();
+	const CLayout* pcLayout = pcLayoutTop;
+	while( pcLayout && pcLayout->GetLogicOffset() ){
+		pcLayout = pcLayout->GetPrevLayout();
+	}
+	COLORREF cTEXT = (COLORREF)-1, cBACK = (COLORREF)-1;
+	COLORREF cTEXTNext = (COLORREF)-1, cBACKNext = (COLORREF)-1;
+	COLORREF cTEXTLast = (COLORREF)-1, cBACKLast = (COLORREF)-1;
+	COLORREF cTEXTLast2 = (COLORREF)-1, cBACKLast2 = (COLORREF)-1;
+	bool bBold = false, bUnderLine = false;
+	bool bBoldNext = false, bUnderLineNext = false;
+	bool bBoldLast = false, bUnderLineLast = false;
+	bool bBoldLast2 = false, bUnderLineLast2 = false;
+	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
+	pool->SetCurrentView(m_pCommanderView);
+	for(CLogicInt nLineNum = sSelectLogic.GetFrom().y; nLineNum <= nLineNumLast; nLineNum++, pcDocLine = pcDocLine->GetNextLine()){
+		if( pcDocLine == NULL ){
+			break;
+		}
+		pool->NotifyOnStartScanLogic();
+		CColorStrategy* pStrategyNormal = NULL;
+		CColorStrategy* pStrategyFound = NULL;
+		CColorStrategy* pStrategy = NULL;
+		CColorStrategy*	pStrategyLast = (CColorStrategy*)-1;
+		CStringRef cStringLine(pcDocLine->GetPtr(), pcDocLine->GetLengthWithEOL());
+		{
+			pStrategy = pStrategyNormal = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
+			if( pStrategy ){
+				pStrategy->InitStrategyStatus();
+			}
+			int nColorIdx = ToColorInfoArrIndex(pcLayout->GetColorTypePrev());
+			if (-1 != nColorIdx) {
+				const ColorInfo& info = type.m_ColorInfoArr[nColorIdx];
+				bBold      = info.m_bBoldFont;
+				bUnderLine = info.m_bUnderLine;
+				cTEXT      = info.m_colTEXT;
+				cBACK      = info.m_colBACK;
+			}
+		}
+		const WCHAR* pLine = pcDocLine->GetPtr();
+		for(;pcLayout->GetLogicLineNo() == nLineNum; nLayoutLineNum++, pcLayout = pcLayout->GetNextLayout() )
+		{
+			CLogicInt nIdxFrom;
+			CLogicInt nIdxTo;
+			const int nLineLen = pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
+			if( nLayoutLineNum < rcSel.top ){
+				nIdxTo = nIdxFrom = CLogicInt(-1);
+			}else{
+				if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
+					nIdxFrom = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.left );
+					nIdxTo   = m_pCommanderView->LineColumnToIndex(pcLayout, rcSel.right);
+					// 改行は除く
+					if( nIdxTo - nIdxFrom > 0 ){
+						const WCHAR* pLine = pcLayout->GetPtr();
+						if( pLine[nIdxTo - 1] == L'\n' || pLine[nIdxTo - 1] == L'\r' ){
+							--nIdxTo;
+						}
+					}
+				}else{
+					if( nLayoutLineNum == rcSel.top ){
+						nIdxFrom = sSelectLogic.GetFrom().x;
+					}else{
+						nIdxFrom = CLogicInt(0);
+					}
+					if( nLayoutLineNum == rcSel.bottom ){
+						nIdxTo = sSelectLogic.GetTo().x;
+					}else{
+						nIdxTo = nLineLen;
+					}
+				}
+			}
+			// 最後の改行の次の行番号を表示しないように
+			if( nIdxTo == 0 && nLayoutLineNum == rcSel.bottom ){
+				break;
+			}
+			if( bLineNumber ){
+				WCHAR szLineNum[14];
+				if( type.m_bLineNumIsCRLF ){
+					if( pcLayout->GetLogicOffset() != 0 ){
+						if( bLineNumLayout ){
+							cmemClip.AppendNativeData(cmemNullLine);
+						}
+					}else{
+						int ret = swprintf(szLineNum, szLineFormat, nLineNum + 1);
+						cmemClip.AppendString(szLineNum, ret);
+					}
+				}else{
+					if( bLineNumLayout || pcLayout->GetLogicOffset() == 0 ){
+						int ret = swprintf(szLineNum, szLineFormat, nLayoutLineNum + 1);
+						cmemClip.AppendString(szLineNum, ret);
+					}
+				}
+			}
+			const int nLineStart = pcLayout->GetLogicOffset();
+			int nBgnLogic = nIdxFrom + nLineStart;
+			int iLogic = nLineStart;
+			bool bAddCRLF = false;
+			for( ; iLogic < nLineStart + nLineLen; ++iLogic ){
+				pStrategy = GetColorStrategyHTML(cStringLine, iLogic, pool, &pStrategyNormal, &pStrategyFound);
+				if( pStrategy != pStrategyLast ){
+					int nColorIdx = ToColorInfoArrIndex( pStrategy ? pStrategy->GetStrategyColor() : COLORIDX_TEXT );
+					if (-1 != nColorIdx) {
+						const ColorInfo& info = type.m_ColorInfoArr[nColorIdx];
+						cTEXTNext      = info.m_colTEXT;
+						cBACKNext      = info.m_colBACK;
+						bBoldNext      = info.m_bBoldFont;
+						bUnderLineNext = info.m_bUnderLine;
+					}
+					pStrategyLast = pStrategy;
+				}
+				if( nIdxFrom != -1 && nIdxFrom + nLineStart <= iLogic && iLogic <= nIdxTo + nLineStart ){
+					if( nIdxFrom + nLineStart == iLogic ){
+						cTEXTLast      = cTEXTNext;
+						cBACKLast      = cBACKNext;
+						bBoldLast      = bBoldNext;
+						bUnderLineLast = bUnderLineNext;
+					}else if( nIdxFrom + nLineStart < iLogic
+					  && (bBold != bBoldNext || bUnderLine != bUnderLineNext
+					  || cTEXT != cTEXTNext || cBACK != cBACKNext) ){
+						bAddCRLF = AppendHTMLColor(cTEXTLast, cTEXTLast2, cBACKLast, cBACKLast2, bBoldLast, bBoldLast2,
+							bUnderLineLast, bUnderLineLast2, pLine + nBgnLogic, iLogic - nBgnLogic, cmemClip);
+						cTEXTLast      = cTEXTNext;
+						cBACKLast      = cBACKNext;
+						bBoldLast      = bBoldNext;
+						bUnderLineLast = bUnderLineNext;
+						nBgnLogic = iLogic;
+					}else if( nIdxTo + nLineStart == iLogic ){
+						bAddCRLF = AppendHTMLColor(cTEXTLast, cTEXTLast2, cBACKLast, cBACKLast2, bBoldLast, bBoldLast2,
+							bUnderLineLast, bUnderLineLast2, pLine + nBgnLogic, iLogic - nBgnLogic, cmemClip);
+						nBgnLogic = iLogic;
+					}
+				}
+				cTEXT = cTEXTNext;
+				cBACK = cBACKNext;
+				bBold = bBoldNext;
+				bUnderLine = bUnderLineNext;
+			}
+			if( nIdxFrom != -1 && nIdxTo + nLineStart == iLogic ){
+				bAddCRLF = AppendHTMLColor(cTEXTLast, cTEXTLast2, cBACKLast, cBACKLast2, bBoldLast, bBoldLast2,
+					bUnderLineLast, bUnderLineLast2, pLine + nBgnLogic, iLogic - nBgnLogic, cmemClip);
+			}
+			if( bLineNumber ){
+				bool bAddLineNum = true;
+				const CLayout* pcLayoutNext = pcLayout->GetNextLayout();
+				if( pcLayoutNext ){
+					if( type.m_bLineNumIsCRLF ){
+						if( bLineNumLayout && pcLayoutNext->GetLogicOffset() != 0 ){
+							bAddLineNum = true;
+						}else{
+							bAddLineNum = true;
+						}
+					}else{
+						if( bLineNumLayout || pcLayoutNext->GetLogicOffset() == 0 ){
+							bAddLineNum = true;
+						}
+					}
+				}
+				if( bAddLineNum ){
+					if( bBoldLast2 ){
+						cmemClip.AppendString(L"</b>", 4);
+					}
+					if( bUnderLineLast2 ){
+						cmemClip.AppendString(L"</u>", 4);
+					}
+					if( cTEXTLast2 != (COLORREF)-1 ){
+						cmemClip.AppendString(L"</span>", 7);
+					}
+					bBoldLast = bBoldLast2 = false;
+					bUnderLineLast = bUnderLineLast2 = false;
+					cTEXTLast = cTEXTLast2 = (COLORREF)-1;
+					cBACKLast = cBACKLast2 = (COLORREF)-1;
+				}
+			}
+			if( bLineNumLayout && !bAddCRLF ){
+				cmemClip.AppendString(WCODE::CRLF, 2);
+			}
+		}
+	}
+	if( bBoldLast2 ){
+		cmemClip.AppendString(L"</b>", 4);
+	}
+	if( bUnderLineLast2 ){
+		cmemClip.AppendString(L"</u>", 4);
+	}
+	if( cTEXTLast2 != (COLORREF)-1 ){
+		cmemClip.AppendString(L"</span>", 7);
+	}
+	cmemClip.AppendString(L"</pre>", 6);
+
+	CClipboard cClipboard(GetDocument()->m_pcEditWnd->GetHwnd());
+	if(!cClipboard){
+		return;
+	}
+	cClipboard.Empty();
+	cClipboard.SetHtmlText(cmemClip);
+	cClipboard.SetText(cmemClip.GetStringPtr(), cmemClip.GetStringLength(), false, false);
+}
+
+
+
+CColorStrategy* CViewCommander::GetColorStrategyHTML(
+	const CStringRef&	cStringLine,
+	int					iLogic,
+	const CColorStrategyPool*	pool,
+	CColorStrategy**	ppStrategy,
+	CColorStrategy**	ppStrategyFound		// [in,out]
+)
+{
+	//検索色終了
+	if(*ppStrategyFound){
+		if((*ppStrategyFound)->EndColor(cStringLine, iLogic)){
+			*ppStrategyFound = NULL;
+		}
+	}
+
+	//検索色開始
+	if(!*ppStrategyFound){
+		CColor_Found*  pcFound  = pool->GetFoundStrategy();
+		if(pcFound->BeginColor(cStringLine, iLogic)){
+			*ppStrategyFound = pcFound;
+		}
+	}
+
+	//色終了
+	if(*ppStrategy){
+		if((*ppStrategy)->EndColor(cStringLine, iLogic)){
+			*ppStrategy = NULL;
+		}
+	}
+
+	//色開始
+	if(!*ppStrategy){
+		int size = pool->GetStrategyCount();
+		for(int i = 0; i < size; i++ ){
+			if(pool->GetStrategy(i)->BeginColor(cStringLine, iLogic)){
+				*ppStrategy = pool->GetStrategy(i);
+				break;
+			}
+		}
+	}
+	if( *ppStrategyFound ){
+		return *ppStrategyFound;
+	}
+	return *ppStrategy;
+}
+
+//!選択範囲内行番号色付きHTMLコピー
+void CViewCommander::Command_COPY_COLOR_HTML_LINENUMBER()
+{
+	Command_COPY_COLOR_HTML(true);
 }
 
 

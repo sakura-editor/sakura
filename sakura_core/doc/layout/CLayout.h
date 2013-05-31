@@ -90,8 +90,10 @@ public:
 	CStringRef GetStringRef() const{ return CStringRef(GetPtr(), GetLengthWithEOL()); }
 
 	//É`ÉFÅ[ÉìëÆê´
-	CLayout* GetPrevLayout() const{ return m_pPrev; }
-	CLayout* GetNextLayout() const{ return m_pNext; }
+	CLayout* GetPrevLayout(){ return m_pPrev; }
+	const CLayout* GetPrevLayout() const{ return m_pPrev; }
+	CLayout* GetNextLayout(){ return m_pNext; }
+	const CLayout* GetNextLayout() const{ return m_pNext; }
 	void _SetPrevLayout(CLayout* pcLayout){ m_pPrev = pcLayout; }
 	void _SetNextLayout(CLayout* pcLayout){ m_pNext = pcLayout; }
 

@@ -361,6 +361,9 @@ BOOL CViewCommander::HandleCommand(
 	case F_COPYLINES:				Command_COPYLINES();break;				//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		Command_COPYLINESASPASSAGE();break;		//選択範囲内全行引用符付きコピー
 	case F_COPYLINESWITHLINENUMBER:	Command_COPYLINESWITHLINENUMBER();break;//選択範囲内全行行番号付きコピー
+	case F_COPY_COLOR_HTML:				Command_COPY_COLOR_HTML();break;	//選択範囲内色付きHTMLコピー
+	case F_COPY_COLOR_HTML_LINENUMBER:	Command_COPY_COLOR_HTML_LINENUMBER();break;	//選択範囲内行番号色付きHTMLコピー
+
 	case F_CREATEKEYBINDLIST:		Command_CREATEKEYBINDLIST();break;		//キー割り当て一覧をコピー //Sept. 15, 2000 JEPRO 追加 //Dec. 25, 2000 復活
 
 	/* 挿入系 */

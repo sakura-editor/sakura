@@ -242,6 +242,8 @@ const EFunctionCode pnFuncList_Clip[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List2
 	F_COPYLINES					,	//選択範囲内全行コピー
 	F_COPYLINESASPASSAGE		,	//選択範囲内全行引用符付きコピー
 	F_COPYLINESWITHLINENUMBER	,	//選択範囲内全行行番号付きコピー
+	F_COPY_COLOR_HTML			,	//選択範囲内色付きHTMLコピー
+	F_COPY_COLOR_HTML_LINENUMBER,	//選択範囲内行番号色付きHTMLコピー
 	F_COPYFNAME					,	//このファイル名をクリップボードにコピー //2002/2/3 aroka
 	F_COPYPATH					,	//このファイルのパス名をクリップボードにコピー
 	F_COPYTAG					,	//このファイルのパス名とカーソル位置をコピー	//Sept. 14, 2000 JEPRO メニューに合わせて下に移動
@@ -698,6 +700,8 @@ int FuncID_To_HelpContextID( EFunctionCode nFuncID )
 	case F_COPYLINES:				return HLP000036;	//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		return HLP000037;	//選択範囲内全行引用符付きコピー
 	case F_COPYLINESWITHLINENUMBER:	return HLP000038;	//選択範囲内全行行番号付きコピー
+	case F_COPY_COLOR_HTML:			return HLP000342;	//選択範囲内色付きHTMLコピー
+	case F_COPY_COLOR_HTML_LINENUMBER:	return HLP000343;	//選択範囲内行番号色付きHTMLコピー
 	case F_COPYPATH:		return HLP000056;			//このファイルのパス名をクリップボードにコピー
 	case F_COPYTAG:			return HLP000175;			//このファイルのパス名とカーソル位置をコピー	//Oct. 17, 2000 JEPRO 追加
 	case F_COPYFNAME:		return HLP000303;			//このファイル名をクリップボードにコピー // 2002/2/3 aroka
@@ -1088,6 +1092,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, EFunctionCode 
 	case F_COPYLINES:				//選択範囲内全行コピー
 	case F_COPYLINESASPASSAGE:		//選択範囲内全行引用符付きコピー
 	case F_COPYLINESWITHLINENUMBER:	//選択範囲内全行行番号付きコピー
+	case F_COPY_COLOR_HTML:				//選択範囲内色付きHTMLコピー
+	case F_COPY_COLOR_HTML_LINENUMBER:	//選択範囲内行番号色付きHTMLコピー
 		//テキストが選択されていればtrue
 		return pcEditDoc->m_pcEditWnd->GetActiveView().GetSelectionInfo().IsTextSelected();
 
