@@ -36,7 +36,10 @@ const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM] = {
 	EOL_NONE			,	// == 0
 	EOL_CRLF			,	// == 2
 	EOL_LF				,	// == 1
-	EOL_CR					// == 1
+	EOL_CR				,	// == 1
+	EOL_NEL				,	// == 1
+	EOL_LS				,	// == 1
+	EOL_PS					// == 1
 };
 
 
@@ -51,13 +54,16 @@ struct SEolDefinition{
 	int				m_nLen;
 
 	bool StartsWith(const WCHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==auto_memcmp(pData,m_szDataW,m_nLen); }
-	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
+	bool StartsWith(const ACHAR* pData, int nLen) const{ return m_nLen<=nLen && m_szDataA[0] != '\0' && 0==auto_memcmp(pData,m_szDataA,m_nLen); }
 };
 static const SEolDefinition g_aEolTable[] = {
 	_T("‰üs–³"),	L"",			"",			0,
 	_T("CRLF"),		L"\x0d\x0a",	"\x0d\x0a",	2,
 	_T("LF"),		L"\x0a",		"\x0a",		1,
 	_T("CR"),		L"\x0d",		"\x0d",		1,
+	_T("NEL"),		L"\x85",		"",			1,
+	_T("LS"),		L"\u2028",		"",			1,
+	_T("PS"),		L"\u2029",		"",			1,
 };
 
 
@@ -75,6 +81,9 @@ static const SEolDefinitionForUniFile g_aEolTable_uni_file[] = {
 	"\x0d\x00\x0a\x00",	"\x00\x0d\x00\x0a",		4,
 	"\x0a\x00",			"\x00\x0a",				2,
 	"\x0d\x00",			"\x00\x0d",				2,
+	"\x85\x00",			"\x00\x85",				2,
+	"\x28\x20",			"\x20\x28",				2,
+	"\x29\x20",			"\x20\x29",				2,
 };
 
 
@@ -155,7 +164,7 @@ const wchar_t* CEol::GetValue2() const
 */
 bool CEol::SetType( EEolType t )
 {
-	if( t < EOL_NONE || EOL_CR < t ){
+	if( t < EOL_NONE || EOL_CODEMAX <= t ){
 		//	ˆÙí’l
 		m_eEolType = EOL_CRLF;
 		return false;

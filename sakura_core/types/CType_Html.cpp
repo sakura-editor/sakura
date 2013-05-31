@@ -251,7 +251,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr)
 								szTitle[k++]	=	L' ';
 								for(j-=k-1;i+j+k<nLineLen && k<_countof(szTitle)-1;k++)
 								{
-									if( pLine[j+k]==L'<' || pLine[j+k]==L'\r' || pLine[j+k]==L'\n' )
+									if( pLine[j+k]==L'<' || WCODE::IsLineDelimiter(pLine[j+k]) )
 									{
 										break;
 									}

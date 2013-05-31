@@ -181,6 +181,9 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 //			case EOL_LFCR:	nFlag = 2; break;
 			case EOL_LF:	nFlag = 3; break;
 			case EOL_CR:	nFlag = 4; break;
+			case EOL_NEL:	nFlag = 5; break;
+			case EOL_LS:	nFlag = 6; break;
+			case EOL_PS:	nFlag = 7; break;
 			default:		nFlag = 0; break;
 			}
 			AddIntParam( nFlag );
@@ -480,9 +483,14 @@ void CMacro::HandleCommand(
 //			case 2:		nEol = EOL_LFCR; break;
 			case 3:		nEol = EOL_LF; break;
 			case 4:		nEol = EOL_CR; break;
+			case 5:		nEol = EOL_NEL; break;
+			case 6:		nEol = EOL_LS; break;
+			case 7:		nEol = EOL_PS; break;
 			default:	nEol = EOL_NONE; break;
 			}
-			pcEditView->GetCommander().HandleCommand( Index, false, nEol, 0, 0, 0 );
+			if( nEol != EOL_NONE ){
+				pcEditView->GetCommander().HandleCommand( Index, false, nEol, 0, 0, 0 );
+			}
 		}
 		break;
 	case F_INSTEXT_W:		//	テキスト挿入

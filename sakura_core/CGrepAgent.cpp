@@ -884,7 +884,7 @@ void CGrepAgent::SetGrepResult(
 		}
 		// 該当部分に改行を含む場合はその改行コードをそのまま利用する(次の行に空行を作らない)
 		// 2003.06.10 Moca k==0のときにバッファアンダーランしないように
-		if( 0 < k && (pMatchData[ k - 1 ] == L'\r' || pMatchData[ k - 1 ] == L'\n') ){
+		if( 0 < k && WCODE::IsLineDelimiter(pMatchData[ k - 1 ]) ){
 			bEOL = false;
 		}
 	}

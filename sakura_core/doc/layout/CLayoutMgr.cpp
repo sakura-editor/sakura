@@ -676,9 +676,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 			using namespace WCODE;
 
 			pLine = GetLineStr( m_nLines - CLayoutInt(1), &nLineLen );
-			//終端2文字のどちらかにcr,lfのいずれかが含まれている場合
-			if( ( nLineLen > 0 && ( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF )) ||
-				( nLineLen > 1 && ( pLine[nLineLen - 2] == CR || pLine[nLineLen - 2] == LF )) ){
+			//終端に改行文字が含まれている場合
+			if( nLineLen > 0 && WCODE::IsLineDelimiter(pLine[nLineLen - 1]) ){
 				// 空でないテキストの最後に行を作る場合
 				pLayout = NULL;
 				nLineWork = CLayoutInt(0);
@@ -1266,7 +1265,7 @@ void CLayoutMgr::LayoutToLogicEx(
 			}
 			else{
 				pData = GetLineStr( ptLayout.GetY2() - CLayoutInt(1), &nDataLen );
-				if( pData[nDataLen - 1] == L'\r' || pData[nDataLen - 1] == L'\n' ){
+				if( WCODE::IsLineDelimiter(pData[nDataLen - 1]) ){
 					pptLogic->Set(CLogicInt(0), m_pcDocLineMgr->GetLineCount());
 					return;
 				}

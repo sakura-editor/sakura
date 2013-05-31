@@ -264,8 +264,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 日本語対応
 					L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
-					WCODE::CR == pLine[i] ||
-					WCODE::LF == pLine[i] ||
+					WCODE::IsLineDelimiter(pLine[i]) ||
 					L'{' == pLine[i] ||
 					L'}' == pLine[i] ||
 					L'(' == pLine[i] ||
@@ -303,8 +302,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 				/* 空白やタブ記号等を飛ばす */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
-					WCODE::CR == pLine[i] ||
-					WCODE::LF == pLine[i]
+					WCODE::IsLineDelimiter(pLine[i])
 				){
 					nMode = 0;
 					continue;
@@ -315,8 +313,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 				/* 空白やタブ記号等を飛ばす */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
-					WCODE::CR == pLine[i] ||
-					WCODE::LF == pLine[i]
+					WCODE::IsLineDelimiter(pLine[i])
 				){
 					continue;
 				}else

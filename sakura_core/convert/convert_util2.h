@@ -511,7 +511,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, TCHAR *pszFilename )
 	for( ; nwlen > 0; --nwlen ){
 		CHAR_TYPE c = pwstart[nwlen-1];
 		if( sizeof(CHAR_TYPE) == 2 ){
-			if( c != L'\r' && c != L'\n' && c != L' ' && c != L'\t' ){
+			if( !WCODE::IsLineDelimiter(c) && c != L' ' && c != L'\t' ){
 				break;
 			}
 		}else{
@@ -590,7 +590,7 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 		CHAR_TYPE c = psrc[i];
 		if( sizeof(CHAR_TYPE) == 2 ){
 			// WCHAR ÇÃèÍçáÇÃèàóù
-			if( c != L'\r' && c != L'\n' && c != L' ' && c != L'\t' ){
+			if( !WCODE::IsLineDelimiter(c) && c != L' ' && c != L'\t' ){
 				return false;
 			}
 		}else{

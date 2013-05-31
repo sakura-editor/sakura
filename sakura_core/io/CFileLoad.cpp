@@ -403,7 +403,8 @@ const char* CFileLoad::GetNextLineCharCode(
 	switch( m_CharCode ){
 	case CODE_UNICODE:
 		for( i = nbgn; i < nDataLen; i += 2 ){
-			if( (pData[i] == '\r' || pData[i] == '\n') && pData[i+1] == 0x00 ){
+			wchar_t c = static_cast<wchar_t>((pData[i + 1] << 8) | pData[i]);
+			if( WCODE::IsLineDelimiter(c) ){
 				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
 				break;
 			}
@@ -411,7 +412,8 @@ const char* CFileLoad::GetNextLineCharCode(
 		break;
 	case CODE_UNICODEBE:
 		for( i = nbgn; i < nDataLen; i += 2 ){
-			if( pData[i] == 0x00 && (pData[i+1] == '\r' || pData[i+1] == '\n') ){
+			wchar_t c = static_cast<wchar_t>((pData[i] << 8) | pData[i + 1]);
+			if( WCODE::IsLineDelimiter(c) ){
 				pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
 				break;
 			}

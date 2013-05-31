@@ -70,11 +70,17 @@ static const wchar_t* aszEolStr[] = {
 	L"CR+LF",
 	L"LF (UNIX)",
 	L"CR (Mac)",
+	L"NEL",
+	L"LS",
+	L"PS",
 };
 static const EEolType aeEolType[] = {
 	EOL_CRLF,
 	EOL_LF,
 	EOL_CR,
+	EOL_NEL,
+	EOL_LS,
+	EOL_PS,
 };
 
 /* window メッセージ処理 */

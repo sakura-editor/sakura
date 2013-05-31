@@ -213,7 +213,7 @@ void CViewCommander::Command_PASTE( int option )
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
 	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
 	if( bLineSelect ){
-		if( pszText[nTextLen - 1] != WCODE::CR && pszText[nTextLen - 1] != WCODE::LF ){
+		if( !WCODE::IsLineDelimiter(pszText[nTextLen - 1]) ){
 			cmemClip.AppendString(GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 			pszText = cmemClip.GetStringPtr( &nTextLen );
 		}
@@ -297,7 +297,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		// Jul. 10, 2005 genta 貼り付けデータの最後にCR/LFが無いと
 		//	最終行のPaste処理が動かないので，
 		//	データの末尾に来た場合は強制的に処理するようにする
-		if( szPaste[nPos] == WCODE::CR || szPaste[nPos] == WCODE::LF || nPos == nPasteSize )
+		if( WCODE::IsLineDelimiter(szPaste[nPos]) || nPos == nPasteSize )
 		{
 			/* 現在位置にデータを挿入 */
 			if( nPos - nBgn > 0 ){
@@ -322,7 +322,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 			if( NULL != pLine && 1 <= nLineLen )
 			{
-				if( pLine[nLineLen - 1] == WCODE::CR || pLine[nLineLen - 1] == WCODE::LF )
+				if( WCODE::IsLineDelimiter(pLine[nLineLen - 1]) )
 				{
 				}
 				else
@@ -486,7 +486,7 @@ void CViewCommander::Command_INSTEXT(
 			//改行までを抜き出す
 			CLogicInt i;
 			for( i = CLogicInt(0); i < nTextLen; i++ ){
-				if( pszText[i] == WCODE::CR || pszText[i] == WCODE::LF ){
+				if( WCODE::IsLineDelimiter(pszText[i]) ){
 					break;
 				}
 			}

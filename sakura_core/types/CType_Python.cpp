@@ -221,7 +221,7 @@ int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offs
 				( linelen - 2 == col && 
 				( data[ col + 1 ] == WCODE::CR && data[ col + 2 ] == WCODE::LF )) ||
 				( linelen - 1 == col && 
-				( data[ col + 1 ] == WCODE::CR || data[ col + 1 ] == WCODE::LF ))
+				( WCODE::IsLineDelimiter(data[ col + 1 ]) ))
 			){
 				m_state = STATE_CONTINUE;
 				break;
@@ -281,7 +281,7 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 					continue;
 				}
 			}
-			if( key == WCODE::CR || key == WCODE::LF ){
+			if( WCODE::IsLineDelimiter(key) ){
 				// \r\nをまとめて\nとして扱う必要がある
 				if( col + 1 >= linelen ||
 					data[ col + 2 ] == key ){
@@ -295,7 +295,7 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 			}
 		}
 		//	short string + 改行の場合はエラーから強制復帰
-		else if( data[ col ] == WCODE::CR || data[ col ] == WCODE::LF ){
+		else if( WCODE::IsLineDelimiter(data[ col ]) ){
 			//あとで
 			if( ! m_long_string ){
 				//	文字列の末尾を発見した
@@ -419,8 +419,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					break;
 				}
 			}
-			if( pLine[col] == L'\r' ||
-				pLine[col] == L'\n' ||
+			if( WCODE::IsLineDelimiter(pLine[col] == L'\r') ||
 				pLine[col] == L'\0' ||
 				pLine[col] == L'#' ){
 				//	blank line or comment line are ignored

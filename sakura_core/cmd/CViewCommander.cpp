@@ -636,7 +636,7 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 
 	nConvertedTextLen = 0;
 	for( int i = 0; i < nTextLen; i++ ){
-		if( pszText[i] == WCODE::CR || pszText[i] == WCODE::LF ){
+		if( WCODE::IsLineDelimiter(pszText[i]) ){
 			if( pszText[i] == WCODE::CR ){
 				if( i + 1 < nTextLen && pszText[i + 1] == WCODE::LF ){
 					i++;

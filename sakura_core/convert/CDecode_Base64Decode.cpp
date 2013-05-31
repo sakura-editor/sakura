@@ -61,7 +61,7 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 		for( ; i < nSrcLen; ++i ){
 		// バッファに文字をためるループ
 			c = pSrc[i];
-			if( c == CR || c == LF || c == TAB || c == SPACE ){
+			if( IsLineDelimiter(c) || c == TAB || c == SPACE ){
 				continue;
 			}
 			if( j == _BUFSIZE || c == LTEXT('=') ){
