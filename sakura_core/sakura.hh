@@ -772,8 +772,10 @@
 #define HIDC_RADIO_OUTPUT			12106	//標準出力リダイレクト先：アウトプットウィンドウ
 #define HIDC_RADIO_EDITWINDOW		12107	//標準出力リダイレクト先：編集中のウィンドウ
 #define HIDC_CHECK_SENDSTDIN		12108	//標準入力に送る
-#define HIDC_CHECK_UNICODE_GET		12109	//Unicodeで標準出力
-#define HIDC_CHECK_UNICODE_SEND		12110	//Unicodeで標準入力
+#define HIDC_COMBO_CODE_GET			12109	//標準出力文字コード
+#define HIDC_COMBO_CODE_SEND		12110	//標準入力文字コード
+#define HIDC_CHECK_CUR_DIR			12111	//カレントディレクトリ
+#define HIDC_COMBO_CUR_DIR			12112	//カレントディレクトリ指定
 
 //アウトライン解析
 #define HIDC_FL_BUTTON_COPY		12200	//コピー
@@ -958,6 +960,7 @@
 #define	HIDC_BUTTON_FAVORITE_DELETE_SELECTED	13521
 #define	HIDC_LIST_FAVORITE_EXCEPTMRU	13522
 #define	HIDC_BUTTON_ADD_FAVORITE	13523
+#define	HIDC_LIST_FAVORITE_CUR_DIR	13524
 //タグジャンプリスト
 #define	HIDC_LIST_TAGJUMPLIST		13600
 #define	HIDC_TAGJUMPLIST_IDOK		13601

@@ -6,6 +6,8 @@
 #include "env/DLLSHAREDATA.h"
 #include "env/CFormatManager.h"
 #include "dlg/CDlgCancel.h"
+#include "charset/CCodeFactory.h"
+#include "charset/CUtf8.h"
 #include "util/window.h"
 #include "util/tchar_template.h"
 #include "sakura_rc.h" // IDD_EXECRUNNING
@@ -16,13 +18,16 @@
 class OutputAdapter
 {
 public:
-	OutputAdapter(CEditView* view, BOOL bToEditWindow) : m_view(view),m_bWindow(bToEditWindow){
+	OutputAdapter(CEditView* view, BOOL bToEditWindow) : m_view(view),m_bWindow(bToEditWindow)
+		,pcCodeBase(CCodeFactory::CreateCodeBase(CODE_UTF8,0))
+	{
 		m_pCShareData = CShareData::getInstance();
 		m_pCommander  = &(view->GetCommander());
 	}
 
 	void OutputW(const WCHAR* pBuf, int size = -1);
 	void OutputA(const ACHAR* pBuf, int size = -1);
+	void OutputUTF8(const ACHAR* pBuf, int size = -1);
 	void Output(const WCHAR* pBuf, int size = -1){ OutputW(pBuf, size); }
 	void Output(const ACHAR* pBuf, int size = -1){ OutputA(pBuf, size); }
 
@@ -31,6 +36,7 @@ private:
 	CEditView* m_view;
 	CShareData* m_pCShareData;
 	CViewCommander* m_pCommander;
+	std::auto_ptr<CCodeBase> pcCodeBase;
 };
 
 /*!	@brief	外部コマンドの実行
@@ -44,6 +50,9 @@ private:
 		@li	0x10	標準入力をUnicodeで行う
 		@li	0x20	情報出力する
 		@li	0x40	情報出力しない
+		@li	0x80	標準出力をUTF-8で行う
+		@li	0x100	標準入力をUTF-8で行う
+		@li	0x200	カレントディレクトリを指定
 
 	@note	子プロセスの標準出力取得はパイプを使用する
 	@note	子プロセスの標準入力への送信は一時ファイルを使用
@@ -63,7 +72,7 @@ private:
 
 	TODO:	標準入力・標準エラーの取込選択。カレントディレクトリ。UTF-8等への対応
 */
-void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
+void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDir )
 {
 	HANDLE				hStdOutWrite, hStdOutRead, hStdIn;
 	PROCESS_INFORMATION	pi;
@@ -76,13 +85,30 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	BOOL	bGetStdout		= nFlgOpt & 0x01 ? TRUE : FALSE;	//	子プロセスの標準出力を得る
 	BOOL	bToEditWindow	= ((nFlgOpt & 0x02) && bEditable) ? TRUE : FALSE;	//	TRUE=編集中のウィンドウ / FALSAE=アウトプットウィンドウ
 	BOOL	bSendStdin		= nFlgOpt & 0x04 ? TRUE : FALSE;	//	編集中ファイルを子プロセスSTDINに渡す
-	BOOL	bIOUnicodeGet	= nFlgOpt & 0x08 ? TRUE : FALSE;	//	標準出力をUnicodeで行う	2008/6/17 Uchi
-	BOOL	bIOUnicodeSend	= nFlgOpt & 0x10 ? TRUE : FALSE;	//	標準入力をUnicodeで行う	2008/6/20 Uchi
+	// BOOL	bIOUnicodeGet	= nFlgOpt & 0x08 ? TRUE : FALSE;	//	標準出力をUnicodeで行う	2008/6/17 Uchi
+	// BOOL	bIOUnicodeSend	= nFlgOpt & 0x10 ? TRUE : FALSE;	//	標準入力をUnicodeで行う	2008/6/20 Uchi
+	ECodeType outputEncoding;
+	if( nFlgOpt & 0x08 ){
+		outputEncoding = CODE_UNICODE;
+	}else if( nFlgOpt & 0x80 ){
+		outputEncoding = CODE_UTF8;
+	}else{
+		outputEncoding = CODE_SJIS;
+	}
+	ECodeType sendEncoding;
+	if( nFlgOpt & 0x10 ){
+		sendEncoding = CODE_UNICODE;
+	}else if( nFlgOpt & 0x100 ){
+		sendEncoding = CODE_UTF8;
+	}else{
+		sendEncoding = CODE_SJIS;
+	}
 	//	To Here 2006.12.03 maru 引数を拡張のため
 	// 2010.04.12 Moca 情報出力
 	BOOL	bOutputExtInfo	= !bToEditWindow;
 	if( nFlgOpt & 0x20 ) bOutputExtInfo = TRUE;
 	if( nFlgOpt & 0x40 ) bOutputExtInfo = FALSE;
+	bool	bCurDir = (nFlgOpt & 0x200) == 0x200;
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
 	CLayoutInt	nLineFrom(0), nColumnFrom(0);
@@ -124,7 +150,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 
-		if( !GetCommander().Command_PUTFILE( to_wchar(szTempFileName), bIOUnicodeSend? CODE_UNICODE : CODE_SJIS, nFlgOpt) ){	// 一時ファイル出力
+		if( !GetCommander().Command_PUTFILE( to_wchar(szTempFileName), sendEncoding, nFlgOpt) ){	// 一時ファイル出力
 			hStdIn = NULL;
 		} else {
 			// 子プロセスへの継承用にファイルを開く
@@ -164,7 +190,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 	TCHAR	cmdline[1024];
 	_tcscpy( cmdline, pszCmd );
 	if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
-				CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
+				CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi ) == FALSE ) {
 		//実行に失敗した場合、コマンドラインベースのアプリケーションと判断して
 		// command(9x) か cmd(NT) を呼び出す
 
@@ -182,12 +208,12 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 			_T("\"%ts\\%ts\" %ts%ts%ts"),
 			szCmdDir,
 			( IsWin32NT() ? _T("cmd.exe") : _T("command.com") ),
-			( bIOUnicodeGet ? _T("/U") : _T("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
+			( outputEncoding == CODE_UNICODE ? _T("/U") : _T("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
 			( bGetStdout ? _T("/C ") : _T("/K ") ),
 			pszCmd
 		);
 		if( CreateProcess( NULL, cmdline, NULL, NULL, TRUE,
-					CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) == FALSE ) {
+					CREATE_NEW_CONSOLE, NULL, bCurDir ? pszCurDir : NULL, &sui, &pi ) == FALSE ) {
 			MessageBox( NULL, cmdline, _T("コマンド実行は失敗しました。"), MB_OK | MB_ICONEXCLAMATION );
 			goto finish;
 		}
@@ -300,7 +326,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 					if( new_cnt > MAX_WORK_READ) {							//パイプから読み出す量を調整
 						new_cnt = MAX_WORK_READ;
 					}
-					DWORD	read_cnt;
+					DWORD	read_cnt = 0;
 					::ReadFile( hStdOutRead, &work[bufidx], new_cnt, &read_cnt, NULL );	//パイプから読み出し
 					read_cnt += bufidx;													//work内の実際のサイズにする
 
@@ -309,7 +335,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						break;
 					}
 					// Unicode で データを受け取る start 2008/6/8 Uchi
-					if (bIOUnicodeGet) {
+					if( outputEncoding == CODE_UNICODE ){
 						wchar_t*	workw;
 						int			read_cntw;
 						bool		bCarry;
@@ -344,7 +370,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						}
 					}
 					// end 2008/6/8 Uchi
-					else {
+					else if (outputEncoding == CODE_SJIS) {
 						//読み出した文字列をチェックする
 						// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
 						//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
@@ -357,8 +383,6 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 							} else {
 								if( work[j] == _T2(PIPE_CHAR,'\r') && work[j+1] == _T2(PIPE_CHAR,'\n') ) {
 									j++;
-								} else if( work[j] == _T2(PIPE_CHAR,'\n') && work[j+1] == _T2(PIPE_CHAR,'\r') ) {
-									j++;
 								}
 							}
 						}
@@ -367,7 +391,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 						if( j == read_cnt - 1 ){
 							if( _IS_SJIS_1(work[j]) ) {
 								j = read_cnt + 1; // ぴったり出力できないことを主張
-							}else if( work[j] == _T2(PIPE_CHAR,'\r') || work[j] == _T2(PIPE_CHAR,'\n') ) {
+							}else if( work[j] == _T2(PIPE_CHAR,'\r') ) {
 								// CRLFの一部ではない改行が末尾にある
 								// 次の読み込みで、CRLFの一部になる可能性がある
 								j = read_cnt + 1;
@@ -390,6 +414,41 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt )
 							work[0] = tmp;
 							bufidx = 1;
 							DEBUG_TRACE( _T("ExecCmd: Carry last character [%x]\n"), tmp );
+						}
+					}
+					else if (outputEncoding == CODE_UTF8) {
+						int		j;
+						int checklen = 0;
+						for( j = 0; j < (int)read_cnt;){
+							ECharSet echarset;
+							checklen = CheckUtf8Char2(work + j , read_cnt - j, &echarset, true, 0);
+							if( echarset == CHARSET_BINARY2 ){
+								break;
+							}else if( read_cnt - 1 == j && work[j] == _T2(PIPE_CHAR,'\r') ){
+								// CRLFの一部ではない改行が末尾にある
+								// 次の読み込みで、CRLFの一部になる可能性がある
+								break;
+							}else{
+								j += checklen;
+							}
+						}
+						if( j == (int)read_cnt ) {	//ぴったり出力できる場合
+							work[read_cnt] = '\0';
+							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
+							oa.OutputUTF8(work, read_cnt);
+							bufidx = 0;
+						}
+						else {
+							DEBUG_TRACE(_T("read_cnt %d j %d\n"), read_cnt, j);
+							char tmp[5];
+							int len = read_cnt - j;
+							memcpy(tmp, &work[j], len);
+							work[j] = '\0';
+							//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
+							oa.OutputUTF8(work, j);
+							memcpy(work, tmp, len);
+							bufidx = len;
+							DEBUG_TRACE(_T("ExecCmd: Carry last character [%x]\n"), tmp[0]);
 						}
 					}
 					// Jan. 23, 2004 genta
@@ -426,7 +485,7 @@ user_cancel:
 
 		// 最後の文字の出力(たいていCR)
 		if( 0 < bufidx ){
-			if( bIOUnicodeGet ){
+			if( outputEncoding == CODE_UNICODE ){
 				if( bufidx % (int)sizeof(wchar_t) ){
 					DEBUG_TRACE( _T("ExecCmd: Carry last Unicode byte [%x]\n"), work[bufidx-1] );
 					// UTF-16なのに奇数バイトだった
@@ -437,9 +496,12 @@ user_cancel:
 				int bufidxw = bufidx / (int)sizeof(wchar_t);
 				workw[bufidxw] = L'\0';
 				oa.OutputW( workw, bufidxw );
-			}else{
+			}else if( outputEncoding == CODE_SJIS ) {
 				work[bufidx] = '\0';
 				oa.OutputA( work, bufidx );
+			}else if( outputEncoding == CODE_UTF8 ) {
+				work[bufidx] = '\0';
+				oa.OutputUTF8( work, bufidx );
 			}
 		}
 
@@ -522,6 +584,27 @@ void OutputAdapter::OutputA(const ACHAR* pBuf, int size)
 		}else{
 			buf.SetStringOld(pBuf,size);
 		}
+		m_pCShareData->TraceOutString( buf.GetStringPtr(), (int)buf.GetStringLength() );
+	}
+}
+
+/*
+	@param pBuf size未指定なら要NUL終端
+	@param size ACHAR単位 
+*/
+void OutputAdapter::OutputUTF8(const ACHAR* pBuf, int size)
+{
+	CMemory input;
+	CNativeW buf;
+	if( -1 == size ){
+		input.SetRawData(pBuf, strlen(pBuf));
+	}else{
+		input.SetRawData(pBuf, size);
+	}
+	pcCodeBase->CodeToUnicode(input, &buf);
+	if( m_bWindow ){
+		m_pCommander->Command_INSTEXT(FALSE, buf.GetStringPtr(), buf.GetStringLength(), TRUE);
+	}else{
 		m_pCShareData->TraceOutString( buf.GetStringPtr(), (int)buf.GetStringLength() );
 	}
 }

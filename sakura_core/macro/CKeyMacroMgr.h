@@ -43,7 +43,7 @@ public:
 	||  Attributes & Operations
 	*/
 	void ClearAll( void );				/* キーマクロのバッファをクリアする */
-	void Append( EFunctionCode , LPARAM, class CEditView* pcEditView );		/* キーマクロのバッファにデータ追加 */
+	void Append( EFunctionCode, const LPARAM*, class CEditView* pcEditView );		/* キーマクロのバッファにデータ追加 */
 	void Append( class CMacro* macro );		/* キーマクロのバッファにデータ追加 */
 	
 	/* キーボードマクロをまとめて取り扱う */

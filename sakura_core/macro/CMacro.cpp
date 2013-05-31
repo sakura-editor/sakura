@@ -81,19 +81,26 @@ CMacro::~CMacro( void )
 
 	lParamは、HandleCommandのparamに値を渡しているコマンドの場合にのみ使います。
 */
-void CMacro::AddLParam( LPARAM lParam, const CEditView* pcEditView )
+void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 {
+	LPARAM lParam = lParams[0];
 	switch( m_nFuncID ){
 	/*	文字列パラメータを追加 */
 	case F_INSTEXT_W:
 	case F_FILEOPEN:
-	case F_EXECMD:
 	case F_EXECEXTMACRO:
 		{
 			AddStringParam( (const wchar_t*)lParam );	//	lParamを追加。
-			LPARAM lFlag = 0x00;
-			lFlag |= GetDllShareData().m_nExecFlgOpt;
-			AddIntParam( lFlag );
+		}
+		break;
+
+	case F_EXECMD:
+		{
+			AddStringParam( (const wchar_t*)lParam );	//	lParamを追加。
+			AddIntParam( (int)lParams[1] );
+			if( lParams[2] != NULL ){
+				AddStringParam( (const wchar_t*)lParams[2] );
+			}
 		}
 		break;
 
@@ -318,19 +325,32 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			);
 			break;
 		case F_EXECMD:
-			//	引数ひとつ分だけ保存
 			pText = m_pParamTop->m_pData;
 			nTextLen = wcslen(pText);
 			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
 			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			out.WriteF(
-				LTEXT("S_%ls(\'%ls\', %d);\t// %ls\r\n"),
-				szFuncName,
-				cmemWork.GetStringPtr(),
-				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
-				szFuncNameJapanese
-			);
+			if( NULL != m_pParamTop->m_pNext->m_pNext ){
+				CNativeW cmemWork2(m_pParamTop->m_pNext->m_pNext->m_pData); 
+				cmemWork2.Replace( LTEXT("\\"), LTEXT("\\\\") );
+				cmemWork2.Replace( LTEXT("\'"), LTEXT("\\\'") );
+				out.WriteF(
+					LTEXT("S_%ls(\'%ls\', %d, '%ls');\t// %ls\r\n"),
+					szFuncName,
+					cmemWork.GetStringPtr(),
+					m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
+					cmemWork2.GetStringPtr(),
+					szFuncNameJapanese
+				);
+			}else{
+				out.WriteF(
+					LTEXT("S_%ls(\'%ls\', %d);\t// %ls\r\n"),
+					szFuncName,
+					cmemWork.GetStringPtr(),
+					m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
+					szFuncNameJapanese
+				);
+			}
 			break;
 		case F_REPLACE:
 		case F_REPLACE_ALL:

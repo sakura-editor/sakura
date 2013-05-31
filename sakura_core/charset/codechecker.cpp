@@ -37,6 +37,7 @@
 #include "convert/convert_util2.h"
 #include "charset/codeutil.h"
 #include "charset/charcode.h"
+#include <algorithm>
 
 
 
@@ -701,6 +702,108 @@ EndFunc:
 			ncwidth = 1;
 		}
 	}
+
+	if( peCharset ){
+		*peCharset = echarset;
+	}
+	return ncwidth;
+}
+
+int CheckUtf8Char2( const char *pS, const int nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
+{
+	unsigned char c0, c1, c2;
+	int ncwidth;
+	ECharSet echarset;
+
+	ECharSet echarset1;
+	int nclen1;
+
+	if( nLen < 1 ){
+		return 0;
+	}
+
+	nclen1 = CheckUtf8Char( pS, nLen, &echarset1, true, 0 );
+	echarset = echarset1;
+	c0 = pS[0];
+	if( echarset1 == CHARSET_BINARY ){
+		if( 1 == nLen && (c0 & 0xe0) == 0xc0 ){	// 第１バイトが110aaabbの場合
+			echarset = CHARSET_BINARY2;
+			ncwidth = 1;
+			goto EndFunc;
+		}else
+		if( 2 == nLen && (c0 & 0xf0) == 0xe0 ){	// 第１バイトが1110aaaaの場合
+			c1 = pS[1];
+			// 第２バイトが10bbbbcc、第３バイトが10ccddddの場合
+			if( (c1 & 0xc0) == 0x80 ){
+				ncwidth = 2;	// ３バイトコードの先頭2バイトである
+				if( (c0 & 0x0f) == 0 && (c1 & 0x20) == 0 ){
+					// デコードできない.(往復変換不可領域)
+					echarset = CHARSET_BINARY;
+					ncwidth = 1;
+				}
+				//if( (c0 & 0x0f) == 0x0f && (c1 & 0x3f) == 0x3f && (c2 & 0x3e) == 0x3e ){
+				//	// Unicode でない文字(U+FFFE, U+FFFF)
+				//	charset = CHARSET_BINARY;
+				//	ncwidth = 1;
+				//}
+				if( bAllow4byteCode == true && (c0 & 0x0f) == 0x0d && (c1 & 0x20) != 0 ){
+					// サロゲート領域 (U+D800 から U+DFFF)
+					echarset = CHARSET_BINARY;
+					ncwidth = 1;
+				}
+				goto EndFunc;
+			}
+		}else
+		if( 1 == nLen && (c0 & 0xf0) == 0xe0 ){
+			echarset = CHARSET_BINARY2;
+			ncwidth = 1;
+			goto EndFunc;
+		}else
+		if( 0 < nLen && nLen <= 3 && (c0 & 0xf8) == 0xf0 ){
+			if( 1 < nLen ){
+				c1 = pS[1];
+			}else{
+				c1 = 0xbf;
+			}
+			if( 2 < nLen ){
+				c2 = pS[2];
+			}else{
+				c2 = 0xbf;
+			}
+			// 第2バイトが10bbcccc、第3バイトが10ddddee
+			if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 ){
+				ncwidth = std::max(nLen,3);  // ４バイトコードである
+				echarset = CHARSET_UNI_SURROG;  // サロゲートペアの文字（初期化）
+				// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
+				if( (c0 & 0x07) == 0 && (c1 & 0x30) == 0 ){
+					// デコードできない.(往復変換不可領域)
+					echarset = CHARSET_BINARY;
+					ncwidth = 1;
+				}
+				// １バイト目が 11110xxx=11110100のとき、
+				// かつ、1111 01xx : 10xx oooo の x のところに値があるとき
+				if( (c0 & 0x04) != 0 && (c0 & 0x03) != 0 ){
+					// 値が大きすぎ（0x10ffffより大きい）
+					echarset = CHARSET_BINARY;
+					ncwidth = 1;
+				}
+				if( bAllow4byteCode == false ){
+					echarset = CHARSET_BINARY;
+					ncwidth = 1;
+				}
+				goto EndFunc;
+			}
+		}
+	}else{
+		ncwidth = nclen1;
+		goto EndFunc;
+	}
+
+	// 規定外のフォーマット
+	echarset = CHARSET_BINARY;
+	ncwidth = 1;
+
+EndFunc:
 
 	if( peCharset ){
 		*peCharset = echarset;

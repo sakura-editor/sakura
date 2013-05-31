@@ -1587,6 +1587,12 @@
 				<File
 					RelativePath="..\sakura_core\recent\CRecentCmd.h">
 				</File>
+ 				<File
+					RelativePath="..\sakura_core\recent\CRecentCurDir.cpp">
+				</File>
+				<File
+					RelativePath="..\sakura_core\recent\CRecentCurDir.h">
+				</File>
 				<File
 					RelativePath="..\sakura_core\recent\CRecentEditNode.cpp">
 				</File>

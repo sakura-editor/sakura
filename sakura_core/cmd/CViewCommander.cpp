@@ -112,7 +112,8 @@ BOOL CViewCommander::HandleCommand(
 		){
 			/* キーマクロのバッファにデータ追加 */
 			//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
-			CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparam1, m_pCommanderView );
+			LPARAM lparams[] = {lparam1, lparam2, lparam3, lparam4};
+			CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, nCommand, lparams, m_pCommanderView );
 		}
 	}
 
@@ -498,7 +499,7 @@ BOOL CViewCommander::HandleCommand(
 	//	To Here Sept. 20, 2000
 	case F_EXECMD:
 		//Command_EXECCOMMAND((const char*)lparam1);
-		Command_EXECCOMMAND((LPCWSTR)lparam1, (int)lparam2);	//	2006.12.03 maru 引数の拡張のため
+		Command_EXECCOMMAND((LPCWSTR)lparam1, (int)lparam2, (LPCWSTR)lparam3);	//	2006.12.03 maru 引数の拡張のため
 		break;
 
 	/* カスタムメニュー */

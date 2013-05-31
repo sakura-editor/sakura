@@ -44,6 +44,7 @@ struct SShare_History{
 	//MRU以外の情報
 	SFilePath													m_szIMPORTFOLDER;	// インポートディレクトリの履歴
 	StaticVector< StaticString<TCHAR, MAX_CMDLEN>, MAX_CMDARR > m_aCommands;		// 外部コマンド実行履歴
+	StaticVector< StaticString<TCHAR, _MAX_PATH>, MAX_CMDARR > m_aCurDirs;		// カレントディレクトリ履歴
 };
 
 #endif /* SAKURA_SSHARE_HISTORY_9F7E6200_FEE2_4CAC_A5D3_32EEC4130CFC_H_ */

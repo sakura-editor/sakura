@@ -499,6 +499,7 @@ bool CShareData::InitShareData()
 		}
 
 		m_pShareData->m_sHistory.m_aCommands.clear();
+		m_pShareData->m_sHistory.m_aCurDirs.clear();
 
 		InitKeyword( m_pShareData );
 		InitTypeConfigs( m_pShareData );

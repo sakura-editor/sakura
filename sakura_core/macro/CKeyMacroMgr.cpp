@@ -68,12 +68,12 @@ void CKeyMacroMgr::ClearAll( void )
 */
 void CKeyMacroMgr::Append(
 	EFunctionCode	nFuncID,
-	LPARAM			lParam1,
+	const LPARAM*	lParams,
 	CEditView*		pcEditView
 )
 {
 	CMacro* macro = new CMacro( nFuncID );
-	macro->AddLParam( lParam1, pcEditView );
+	macro->AddLParam( lParams, pcEditView );
 	Append(macro);
 }
 

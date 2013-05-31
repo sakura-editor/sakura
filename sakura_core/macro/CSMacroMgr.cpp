@@ -288,7 +288,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 
 
 	//	Oct. 9, 2001 genta 追加
-	{F_EXECMD,				LTEXT("ExecCommand"),		{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部コマンド実行 */
+	{F_EXECMD,					LTEXT("ExecCommand"),		{VT_BSTR,  VT_I4,    VT_BSTR,  VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部コマンド実行 */
 
 	/* カスタムメニュー */
 	{F_MENU_RBUTTON,			LTEXT("RMenu"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 右クリックメニュー */
@@ -482,7 +482,7 @@ void CSMacroMgr::ClearAll( void )
 int CSMacroMgr::Append(
 	int				idx,		//!<
 	EFunctionCode	nFuncID,	//!< [in] 機能番号
-	LPARAM			lParam1,	//!< [in] パラメータ。
+	const LPARAM*	lParams,	//!< [in] パラメータ。
 	CEditView*		pcEditView	//!< 
 )
 {
@@ -497,7 +497,7 @@ int CSMacroMgr::Append(
 			m_pKeyMacro = new CKeyMacroMgr;
 			pKeyMacro = dynamic_cast<CKeyMacroMgr*>( m_pKeyMacro );
 		}
-		pKeyMacro->Append( nFuncID, lParam1, pcEditView );
+		pKeyMacro->Append( nFuncID, lParams, pcEditView );
 	}
 	return TRUE;
 }

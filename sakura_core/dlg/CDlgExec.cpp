@@ -21,6 +21,7 @@
 #include "dlg/CDlgOpenFile.h"	//Mar. 28, 2001 JEPRO
 #include "func/Funccode.h"	//Stonee, 2001/03/12  コメントアウトされてたのを有効にした
 #include "util/shell.h"
+#include "util/window.h"
 #include "_main/CAppMode.h"
 #include "doc/CEditDoc.h"
 #include "sakura_rc.h"
@@ -33,12 +34,15 @@ const DWORD p_helpids[] = {	//12100
 	IDCANCEL,						HIDCANCEL_EXEC,					//キャンセル
 	IDC_BUTTON_HELP,				HIDC_EXEC_BUTTON_HELP,			//ヘルプ
 	IDC_CHECK_GETSTDOUT,			HIDC_EXEC_CHECK_GETSTDOUT,		//標準出力を得る
+	IDC_COMBO_CODE_GET,				HIDC_COMBO_CODE_GET,			//標準出力文字コード
 	IDC_COMBO_m_szCommand,			HIDC_EXEC_COMBO_m_szCommand,	//コマンド
 	IDC_RADIO_OUTPUT,				HIDC_RADIO_OUTPUT,				//標準出力リダイレクト先：アウトプットウィンドウ
 	IDC_RADIO_EDITWINDOW,			HIDC_RADIO_EDITWINDOW,			//標準出力リダイレクト先：編集中のウィンドウ
 	IDC_CHECK_SENDSTDIN,			HIDC_CHECK_SENDSTDIN,			//標準入力に送る
-	IDC_CHECK_UNICODE_GET,			HIDC_CHECK_UNICODE_GET,			//Unicodeで標準出力	// 2008/6/17 Uchi
-	IDC_CHECK_UNICODE_SEND,			HIDC_CHECK_UNICODE_SEND,		//Unicodeで標準入力	// 2008/6/20 Uch
+	IDC_COMBO_CODE_SEND,			HIDC_COMBO_CODE_SEND,			//標準出力文字コード
+	IDC_CHECK_CUR_DIR,				HIDC_CHECK_CUR_DIR,				//カレントディレクトリ
+	IDC_COMBO_CUR_DIR,				HIDC_COMBO_CUR_DIR,				//カレントディレクトリ指定
+	IDC_BUTTON_REFERENCE2,			HIDC_COMBO_CUR_DIR,				//カレントディレクトリ指定(参照)
 //	IDC_STATIC,						-1,
 	0, 0
 };	//@@@ 2002.01.07 add end MIK
@@ -49,6 +53,8 @@ CDlgExec::CDlgExec()
 	return;
 }
 
+static const int codeTable1[] = { 0x00, 0x08, 0x80 };
+static const int codeTable2[] = { 0x00, 0x10, 0x100 };
 
 
 
@@ -61,7 +67,23 @@ int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 }
 
 
-
+BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
+{
+	_SetHwnd( hwnd );
+	
+	ECodeType codes[] = { CODE_SJIS, CODE_UNICODE, CODE_UTF8 };
+	HWND hwndCombo;
+	int i;
+	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
+	for( i = 0; i < _countof(codes); ++i ){
+		Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
+	}
+	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
+	for( i = 0; i < _countof(codes); ++i ){
+		Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
+	}
+	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+}
 
 /* ダイアログデータの設定 */
 void CDlgExec::SetData( void )
@@ -75,6 +97,7 @@ void CDlgExec::SetData( void )
 	*****************************/
 	/* ユーザーがコンボ ボックスのエディット コントロールに入力できるテキストの長さを制限する */
 	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), _countof( m_szCommand ) - 1 );
+	Combo_LimitText( ::GetDlgItem( GetHwnd(), IDC_COMBO_CUR_DIR ), _countof2( m_szCurDir ) - 1 );
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( ::GetDlgItem( GetHwnd(), IDC_COMBO_m_szCommand ), TRUE );
 
@@ -92,13 +115,14 @@ void CDlgExec::SetData( void )
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_OUTPUT, nExecFlgOpt & 0x02 ? BST_UNCHECKED : BST_CHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_EDITWINDOW, nExecFlgOpt & 0x02 ? BST_CHECKED : BST_UNCHECKED );
 		::CheckDlgButton( GetHwnd(), IDC_CHECK_SENDSTDIN, nExecFlgOpt & 0x04 ? BST_CHECKED : BST_UNCHECKED );
-		::CheckDlgButton( GetHwnd(), IDC_CHECK_UNICODE_GET, nExecFlgOpt & 0x08 ? BST_CHECKED : BST_UNCHECKED );		// 2008/6/17 Uchi
-		::CheckDlgButton( GetHwnd(), IDC_CHECK_UNICODE_SEND, nExecFlgOpt & 0x10 ? BST_CHECKED : BST_UNCHECKED );	// 2008/6/20 Uchi
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_CUR_DIR, nExecFlgOpt & 0x200 ? BST_CHECKED : BST_UNCHECKED );
 
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_OUTPUT ), nExecFlgOpt & 0x01 ? TRUE : FALSE );
 		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_RADIO_EDITWINDOW ), ((nExecFlgOpt & 0x01) && m_bEditable)? TRUE : FALSE );
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_GET ), nExecFlgOpt & 0x01 ? TRUE : FALSE );		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CODE_SEND ), nExecFlgOpt & 0x04 ? TRUE : FALSE );		// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_COMBO_CUR_DIR ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
+		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_BUTTON_REFERENCE2 ), nExecFlgOpt & 0x200 ? TRUE : FALSE );
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 
 	/*****************************
@@ -113,6 +137,33 @@ void CDlgExec::SetData( void )
 		Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
 	}
 	Combo_SetCurSel( hwndCombo, 0 );
+
+	_tcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
+	hwndCombo = GetItemHwnd( IDC_COMBO_CUR_DIR );
+	Combo_ResetContent( hwndCombo );
+	::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
+	for( i = 0; i < m_pShareData->m_sHistory.m_aCurDirs.size(); ++i ){
+		Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
+	}
+	Combo_SetCurSel( hwndCombo, 0 );
+	
+	int nOpt;
+	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_GET );
+	nOpt = m_pShareData->m_nExecFlgOpt & 0x88;
+	for( i = 0; _countof(codeTable1); i++ ){
+		if( codeTable1[i] == nOpt ){
+			Combo_SetCurSel( hwndCombo, i );
+			break;
+		}
+	}
+	hwndCombo = GetItemHwnd( IDC_COMBO_CODE_SEND );
+	nOpt = m_pShareData->m_nExecFlgOpt & 0x110;
+	for( i = 0; _countof(codeTable2); i++ ){
+		if( codeTable2[i] == nOpt ){
+			Combo_SetCurSel( hwndCombo, i );
+			break;
+		}
+	}
 	return;
 }
 
@@ -123,14 +174,23 @@ void CDlgExec::SetData( void )
 int CDlgExec::GetData( void )
 {
 	DlgItem_GetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand, _countof( m_szCommand ));
+	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_CUR_DIR ) ){
+		DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], _countof2( m_szCurDir ));
+	}else{
+		m_szCurDir[0] = _T('\0');
+	}
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
 		int nFlgOpt = 0;
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT ) ) ? 0x01 : 0;	// 標準出力を得る
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_EDITWINDOW ) ) ? 0x02 : 0;	// 標準出力を編集中のウインドウへ
 		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) ) ? 0x04 : 0;	// 編集中ファイルを標準入力へ
-		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_UNICODE_GET ) ) ? 0x08 : 0;	// Unicodeで標準出力	2008/6/17 Uchi
-		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_UNICODE_SEND ) ) ? 0x10 : 0;	// Unicodeで標準入力	2008/6/20 Uchi
+		nFlgOpt |= ( BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CUR_DIR ) ) ? 0x200 : 0;	// カレントディレクトリ指定
+		int sel;
+		sel = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_GET ) );
+		nFlgOpt |= codeTable1[sel];
+		sel = Combo_GetCurSel( GetItemHwnd( IDC_COMBO_CODE_SEND ) );
+		nFlgOpt |= codeTable2[sel];
 		m_pShareData->m_nExecFlgOpt = nFlgOpt;
 	}	//	To Here 2007.01.02 maru 引数を拡張のため
 	return 1;
@@ -151,13 +211,19 @@ BOOL CDlgExec::OnBnClicked( int wID )
 
 		// 標準出力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
 		::EnableWindow(
-			::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_GET ), 
+			GetItemHwnd( IDC_COMBO_CODE_GET ), 
 			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_GETSTDOUT )
 		);
 		break;
 	case IDC_CHECK_SENDSTDIN:	// 標準入力Off時、Unicodeを使用するをDesableする	2008/6/20 Uchi
-		::EnableWindow( ::GetDlgItem( GetHwnd(), IDC_CHECK_UNICODE_SEND ), 
+		::EnableWindow( GetItemHwnd( IDC_COMBO_CODE_SEND ), 
 			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_SENDSTDIN ) );
+		break;
+	case IDC_CHECK_CUR_DIR:
+		::EnableWindow( GetItemHwnd( IDC_COMBO_CUR_DIR ),
+			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CUR_DIR ) );
+		::EnableWindow( GetItemHwnd( IDC_BUTTON_REFERENCE2 ),
+			BST_CHECKED == ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_CUR_DIR ) );
 		break;
 
 	case IDC_BUTTON_HELP:
@@ -178,7 +244,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			cDlgOpenFile.Create(
 				m_hInstance,
 				GetHwnd(),
-				_T("*.com;*.exe;*.bat"),
+				_T("*.com;*.exe;*.bat;*.cmd"),
 				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
@@ -188,6 +254,15 @@ BOOL CDlgExec::OnBnClicked( int wID )
 		}
 		return TRUE;
 	//To Here Mar. 28, 2001
+
+	case IDC_BUTTON_REFERENCE2:
+		{
+			if( SelectDir( GetHwnd(), _T("カレントディレクトリを選んでください"), &m_szCurDir[0], &m_szCurDir[0] ) ){
+				::DlgItem_SetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0] );
+				
+			}
+		}
+		return TRUE;
 
 	case IDOK:			/* 下検索 */
 		/* ダイアログデータの取得 */
