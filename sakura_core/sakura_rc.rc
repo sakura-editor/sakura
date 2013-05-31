@@ -949,7 +949,7 @@ BEGIN
     LISTBOX         IDC_LIST_COLORS,6,18,142,148,LBS_OWNERDRAWFIXED | 
                     WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "êFï™ÇØ/ï\é¶(&D)",IDC_CHECK_DISP,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,6,165,67,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,165,65,10
     CONTROL         "ëæéö(&B)",IDC_CHECK_BOLD,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,72,165,36,10
     CONTROL         "â∫ê¸(&U)",IDC_CHECK_UNDERLINE,"Button",BS_AUTOCHECKBOX | 
