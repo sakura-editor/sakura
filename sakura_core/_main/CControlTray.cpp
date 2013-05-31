@@ -69,6 +69,12 @@ void CControlTray::DoGrep()
 		&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence ){
 		m_cDlgGrep.m_strText = m_pShareData->m_sSearchKeywords.m_aSearchKeys[0];
 	}
+	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
+		_tcscpy( m_cDlgGrep.m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
+	}
+	if( 0 < m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
+		_tcscpy( m_cDlgGrep.m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダ */
+	}
 
 	/* Grepダイアログの表示 */
 	int nRet = m_cDlgGrep.DoModal( m_hInstance, NULL, _T("") );

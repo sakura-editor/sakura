@@ -217,8 +217,15 @@ bool CNormalProcess::InitializeProcess()
 			if( gi.cmGrepFile.GetStringLength() < _MAX_PATH ){
 				CSearchKeywordManager().AddToGrepFileArr( gi.cmGrepFile.GetStringPtr() );
 			}
+			CNativeW cmemGrepFolder = gi.cmGrepFolder;
 			if( gi.cmGrepFolder.GetStringLength() < _MAX_PATH ){
 				CSearchKeywordManager().AddToGrepFolderArr( gi.cmGrepFolder.GetStringPtr() );
+				// 2013.05.21 指定なしの場合はカレントフォルダにする
+				if( cmemGrepFolder.GetStringLength() == 0 ){
+					TCHAR szCurDir[_MAX_PATH];
+					::GetCurrentDirectory( _countof(szCurDir), szCurDir );
+					cmemGrepFolder.SetString( szCurDir );
+				}
 			}
 			GetDllShareData().m_Common.m_sSearch.m_bGrepSubFolder = gi.bGrepSubFolder;
 			GetDllShareData().m_Common.m_sSearch.m_sSearchOption = gi.sGrepSearchOption;
@@ -239,7 +246,7 @@ bool CNormalProcess::InitializeProcess()
 			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
 			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = _T('\0');
 			nSize = _countof2(pEditWnd->m_cDlgGrep.m_szFolder);
-			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, gi.cmGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
+			_tcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダ */
 			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = _T('\0');
 
 			
