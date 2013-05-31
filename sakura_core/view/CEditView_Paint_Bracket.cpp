@@ -193,12 +193,18 @@ void CEditView::DrawBracketPair( bool bDraw )
 					//色設定
 					CTypeSupport cTextType(this,COLORIDX_TEXT);
 					cTextType.SetGraphicsState_WhileThisObj(gr);
+					// 2013.05.24 背景色がテキストの背景色と同じならカーソル行の背景色を適用
+					CTypeSupport cColorIndexType(this,nColorIndex);
+					CTypeSupport* pcColorBack = &cColorIndexType;
+					if( cColorIndexType.GetBackColor() == cTextType.GetBackColor() && nColorIndexBg == COLORIDX_CARETLINEBG ){
+						pcColorBack = &cCuretLineBg;
+					}
 
 					SetCurrentColor3( gr, nColorIndex, nColorIndex, nColorIndexBg );
 					bool bTrans = false;
 					// DEBUG_TRACE( _T("DrawBracket %d %d ") , ptColLine.y, ptColLine.x );
 					if( IsBkBitmap() &&
-							cTextType.GetBackColor() == CTypeSupport(this,nColorIndex).GetBackColor() ){
+							cTextType.GetBackColor() == pcColorBack->GetBackColor() ){
 						bTrans = true;
 						RECT rcChar;
 						rcChar.left  = nLeft;
