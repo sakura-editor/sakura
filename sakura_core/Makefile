@@ -259,6 +259,7 @@ recent/CMRUFolder.o \
 recent/CMruListener.o \
 recent/CRecent.o \
 recent/CRecentCmd.o \
+recent/CRecentCurDir.o \
 recent/CRecentEditNode.o \
 recent/CRecentExceptMru.o \
 recent/CRecentFile.o \

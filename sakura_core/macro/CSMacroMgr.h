@@ -131,7 +131,7 @@ public:
 	void UnloadAll(void);
 
 	/*! キーマクロのバッファにデータ追加 */
-	int Append( int idx, EFunctionCode nFuncID, LPARAM lParam1, CEditView* pcEditView );
+	int Append( int idx, EFunctionCode nFuncID, const LPARAM* lParams, CEditView* pcEditView );
 
 	/*
 	||  Attributes & Operations

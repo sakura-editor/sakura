@@ -327,7 +327,7 @@ public:
 //	void Command_EXECCOMMAND( const WCHAR* cmd );	/* 外部コマンド実行 */
 	void Command_EXECCOMMAND_DIALOG( void );	/* 外部コマンド実行ダイアログ表示 */	//	引数使ってないみたいなので
 	//	マクロからの呼び出しではオプションを保存させないため、Command_EXECCOMMAND_DIALOG内で処理しておく．
-	void Command_EXECCOMMAND( LPCWSTR cmd, const int nFlgOpt );	/* 外部コマンド実行 */
+	void Command_EXECCOMMAND( LPCWSTR cmd, const int nFlgOpt, LPCWSTR );	/* 外部コマンド実行 */
 //	To Here Sept. 20, 2000
 //	To Here 2006.12.03 maru 引数の拡張
 

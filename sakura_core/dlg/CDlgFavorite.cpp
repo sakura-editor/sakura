@@ -56,6 +56,7 @@ const DWORD p_helpids[] = {
 	IDC_LIST_FAVORITE_GREP_FILE,	HIDC_LIST_FAVORITE_GREPFILE,	//GREPファイル
 	IDC_LIST_FAVORITE_GREP_FOLDER,	HIDC_LIST_FAVORITE_GREPFOLDER,	//GREPフォルダ
 	IDC_LIST_FAVORITE_CMD,			HIDC_LIST_FAVORITE_CMD,			//コマンド
+	IDC_LIST_FAVORITE_CUR_DIR,		HIDC_LIST_FAVORITE_CUR_DIR,		//カレントディレクトリ
 //	IDC_STATIC_BUTTONS,				-1,
 	IDC_BUTTON_CLEAR,				HIDC_BUTTON_FAVORITE_CLEAR,		//すべて	// 2006.10.10 ryoji
 	IDC_BUTTON_DELETE_NOFAVORATE,   HIDC_BUTTON_FAVORITE_DELETE_NOFAVORATE,  //お気に入り以外
@@ -203,6 +204,15 @@ CDlgFavorite::CDlgFavorite()
 		m_aFavoriteInfo[i].m_bHaveView  = false;
 		m_aFavoriteInfo[i].m_bEditable  = true;
 		m_aFavoriteInfo[i].m_bAddExcept = false;
+
+		i++;
+		m_aFavoriteInfo[i].m_pRecent    = &m_cRecentCurDir;
+		m_aFavoriteInfo[i].m_pszCaption = _T("カレントディレクトリ");
+		m_aFavoriteInfo[i].m_nId        = IDC_LIST_FAVORITE_CUR_DIR;
+		m_aFavoriteInfo[i].m_bHaveFavorite = false;
+		m_aFavoriteInfo[i].m_bFilePath  = true;
+		m_aFavoriteInfo[i].m_bHaveView  = false;
+		m_aFavoriteInfo[i].m_bEditable  = false;
 
 		i++;
 		m_aFavoriteInfo[i].m_pRecent    = NULL;

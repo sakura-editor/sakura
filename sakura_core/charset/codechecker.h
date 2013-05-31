@@ -88,7 +88,7 @@ enum ECharSet {
 	CHARSET_JIS_SUPPLEMENTAL,		//!< 日本語の補助漢字文字  (JIS X 0213)
 	CHARSET_UNI_NORMAL,			//!< サロゲート領域を除いたユニコード文字
 	CHARSET_UNI_SURROG,			//!< ユニコードのサロゲート領域にある文字
-
+	CHARSET_BINARY2,			//!< 文字列断片(継続用)
 	/*
 		＊ CHARSET_JIS_SUPPLEMENTAL は、JIS_ZENKAKU と一部重なり合うため
 		　 あまりご利益がなさそうだが、一応知られているもの。
@@ -438,6 +438,7 @@ inline int CheckUtf16leChar( const wchar_t* p, const int n, ECharSet* e, const i
 inline int CheckUtf16beChar( const wchar_t* p, const int n, ECharSet* e, const int o ) { return _CheckUtf16Char( p, n, e, o, true ); }
 
 int CheckUtf8Char( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
+int CheckUtf8Char2( const char*, const int, ECharSet*, const bool bAllow4byteCode, const int nOption );
 int CheckCesu8Char( const char*, const int, ECharSet*, const int nOption );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char*, const int, char **ppNextChar, bool *pbError );

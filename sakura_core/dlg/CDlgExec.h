@@ -32,11 +32,13 @@ public:
 	int DoModal( HINSTANCE, HWND, LPARAM );	/* モーダルダイアログの表示 */
 
 	TCHAR	m_szCommand[1024 + 1];	/* コマンドライン */
+	SFilePath	m_szCurDir;	/* カレントディレクトリ */
 	bool	m_bEditable;			/* 編集ウィンドウへの入力可能 */	// 2009.02.21 ryoji
 
 
 protected:
 	/* オーバーライド? */
+	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	int GetData( void );	/* ダイアログデータの取得 */
 	void SetData( void );	/* ダイアログデータの設定 */
 	BOOL OnBnClicked( int );

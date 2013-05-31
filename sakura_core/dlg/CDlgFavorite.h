@@ -92,10 +92,11 @@ private:
 	CRecentGrepFile		m_cRecentGrepFile;
 	CRecentGrepFolder	m_cRecentGrepFolder;
 	CRecentCmd			m_cRecentCmd;
+	CRecentCurDir		m_cRecentCurDir;
 
 	enum {
 		// ! ŠÇ—”
-		FAVORITE_INFO_MAX = 9 // ŠÇ—” +1(”Ô•º)
+		FAVORITE_INFO_MAX = 10 // ŠÇ—” +1(”Ô•º)
 	};
 
 	struct FavoriteInfo {

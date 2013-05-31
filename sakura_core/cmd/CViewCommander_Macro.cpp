@@ -26,6 +26,7 @@
 #include "macro/CSMacroMgr.h"
 #include "dlg/CDlgExec.h"
 #include "CEditApp.h"
+#include "recent/CRecentCurDir.h"
 #include "util/module.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
@@ -256,7 +257,8 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro &&									/* キーボードマクロの記録中 */
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro == GetMainWindow()	/* キーボードマクロを記録中のウィンドウ */
 	){
-		CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, (LPARAM)pszPath, m_pCommanderView );
+		LPARAM lparams[] = {(LPARAM)pszPath, 0, 0, 0};
+		CEditApp::getInstance()->m_pcSMacroMgr->Append( STAND_KEYMACRO, F_EXECEXTMACRO, lparams, m_pCommanderView );
 
 		//キーマクロの記録を一時停止する
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
@@ -314,9 +316,18 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 
 	m_pCommanderView->AddToCmdArr( cDlgExec.m_szCommand );
 	const WCHAR* cmd_string = to_wchar(cDlgExec.m_szCommand);
+	const WCHAR* curDir = to_wchar(cDlgExec.m_szCurDir);
+	const WCHAR* pszDir = curDir;
+	if( curDir[0] == L'\0' ){
+		pszDir = NULL;
+	}else{
+		CRecentCurDir cRecentCurDir;
+		cRecentCurDir.AppendItem( cDlgExec.m_szCurDir );
+		cRecentCurDir.Terminate();
+	}
 
 	//HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, 0, 0, 0);	//	外部コマンド実行コマンドの発行
-	HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, (LPARAM)(GetDllShareData().m_nExecFlgOpt), 0, 0);	//	外部コマンド実行コマンドの発行
+	HandleCommand( F_EXECMD, true, (LPARAM)cmd_string, (LPARAM)(GetDllShareData().m_nExecFlgOpt), (LPARAM)pszDir, 0);	//	外部コマンド実行コマンドの発行
 }
 
 
@@ -326,7 +337,7 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 //	Oct. 9, 2001   genta  マクロ対応のため引数追加
 //  2002.2.2       YAZAKI ダイアログ呼び出し部とコマンド実行部を分離
 //void CEditView::Command_EXECCOMMAND( const char *cmd_string )
-void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt)	//	2006.12.03 maru 引数の拡張
+void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt, LPCWSTR pszCurDir)	//	2006.12.03 maru 引数の拡張
 {
 	//	From Here Aug. 21, 2001 genta
 	//	パラメータ置換 (超暫定)
@@ -335,7 +346,12 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt)
 	CSakuraEnvironment::ExpandParameter(cmd_string, buf, bufmax);
 
 	// 子プロセスの標準出力をリダイレクトする
-	m_pCommanderView->ExecCmd( to_tchar(buf), nFlgOpt );
+	std::tstring buf2 = to_tchar(buf);
+	std::tstring buf3;
+	if( pszCurDir ){
+		buf3 = to_tchar(pszCurDir);
+	}
+	m_pCommanderView->ExecCmd( buf2.c_str(), nFlgOpt, (pszCurDir ? buf3.c_str() : NULL) );
 	//	To Here Aug. 21, 2001 genta
 	return;
 }

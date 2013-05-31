@@ -343,6 +343,14 @@ void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 		auto_sprintf( szKeyName, LTEXT("szCmdArr[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCommands[i] );
 	}
+
+	cProfile.IOProfileData( pszSecName, LTEXT("nCurDirArrNum"), pShare->m_sHistory.m_aCurDirs._GetSizeRef() );
+	pShare->m_sHistory.m_aCurDirs.SetSizeLimit();
+	nSize = pShare->m_sHistory.m_aCurDirs.size();
+	for( i = 0; i < nSize; ++i ){
+		auto_sprintf( szKeyName, LTEXT("szCurDirArr[%02d]"), i );
+		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCurDirs[i] );
+	}
 }
 
 /*!

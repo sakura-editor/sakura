@@ -71,7 +71,7 @@ public:
 	void Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake const’Ç‰Á
 	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake const’Ç‰Á
 	
-	void AddLParam( LPARAM lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditView‚à“n‚·
+	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditView‚à“n‚·
 	void AddStringParam( const WCHAR* lParam );
 	void AddStringParam( const ACHAR* lParam ){ return AddStringParam(to_wchar(lParam)); }
 	void AddIntParam( const int lParam );
