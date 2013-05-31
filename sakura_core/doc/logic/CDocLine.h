@@ -83,7 +83,9 @@ public:
 
 	//ƒ`ƒF[ƒ“‘®«
 	CDocLine* GetPrevLine(){ return m_pPrev; }
+	const CDocLine* GetPrevLine() const { return m_pPrev; }
 	CDocLine* GetNextLine(){ return m_pNext; }
+	const CDocLine* GetNextLine() const { return m_pNext; }
 	void _SetPrevLine(CDocLine* pcDocLine){ m_pPrev = pcDocLine; }
 	void _SetNextLine(CDocLine* pcDocLine){ m_pNext = pcDocLine; }
 	

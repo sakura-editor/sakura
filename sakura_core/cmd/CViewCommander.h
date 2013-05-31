@@ -31,6 +31,8 @@ struct DLLSHAREDATA;
 class COpeBlk;
 class CCaret;
 class CEditWnd;
+class CColorStrategy;
+class CColorStrategyPool;
 #include "CEol.h"
 
 class CViewCommander{
@@ -213,6 +215,9 @@ public:
 	void Command_COPYLINES( void );					/* 選択範囲内全行コピー */
 	void Command_COPYLINESASPASSAGE( void );		/* 選択範囲内全行引用符付きコピー */
 	void Command_COPYLINESWITHLINENUMBER( void );	/* 選択範囲内全行行番号付きコピー */
+	void Command_COPY_COLOR_HTML(bool bLineNumber = false);	//選択範囲内全行行番号付きコピー
+	void Command_COPY_COLOR_HTML_LINENUMBER( void );		//選択範囲内色付きHTMLコピー
+	CColorStrategy* CViewCommander::GetColorStrategyHTML(const CStringRef&, int, const CColorStrategyPool*, CColorStrategy**, CColorStrategy**);
 	void Command_CREATEKEYBINDLIST( void );			// キー割り当て一覧をコピー //Sept. 15, 2000 JEPRO	Command_の作り方がわからないので殺してある
 
 

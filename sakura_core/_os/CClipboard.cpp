@@ -2,6 +2,7 @@
 #include <ShellAPI.h>// HDROP
 #include "CClipboard.h"
 #include "charset/CShiftJis.h"
+#include "charset/CUtf8.h"
 #include "CEol.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -172,6 +173,52 @@ bool CClipboard::SetText(
 	if( !(hgClipText && hgClipSakura) ){
 		return false;
 	}
+	return true;
+}
+
+bool CClipboard::SetHtmlText(const CNativeW& cmemBUf)
+{
+	if( !m_bOpenResult ){
+		return false;
+	}
+
+	CNativeA cmemUtf8;
+	CUtf8().UnicodeToCode(cmemBUf, cmemUtf8._GetMemory());
+
+	CNativeA cmemHeader;
+	char szFormat[32];
+	size_t size = cmemUtf8.GetStringLength() + 134;
+	cmemHeader.AppendString("Version:0.9\r\n");
+	cmemHeader.AppendString("StartHTML:00000097\r\n");
+	sprintf( szFormat, "EndHTML:%08d\r\n", size + 36 );
+	cmemHeader.AppendString(szFormat);
+	cmemHeader.AppendString("StartFragment:00000134\r\n");
+	sprintf( szFormat, "EndFragment:%08d\r\n", size );
+	cmemHeader.AppendString(szFormat);
+	cmemHeader.AppendString("<html><body>\r\n<!--StartFragment -->\r\n");
+	CNativeA cmemFooter;
+	cmemFooter.AppendString("\r\n<!--EndFragment-->\r\n</body></html>\r\n");
+
+	HGLOBAL hgClipText = NULL;
+	size_t nLen = cmemHeader.GetStringLength() + cmemUtf8.GetStringLength() + cmemFooter.GetStringLength();
+	//領域確保
+	hgClipText = ::GlobalAlloc(
+		GMEM_MOVEABLE | GMEM_DDESHARE,
+		nLen + 1
+	);
+	if( !hgClipText ) return false;
+
+	//確保した領域にデータをコピー
+	char* pszClip = GlobalLockChar( hgClipText );
+	memcpy_raw( pszClip, cmemHeader.GetStringPtr(), cmemHeader.GetStringLength() );	//データ
+	memcpy_raw( pszClip + cmemHeader.GetStringLength(), cmemUtf8.GetStringPtr(), cmemUtf8.GetStringLength() );	//データ
+	memcpy_raw( pszClip + cmemHeader.GetStringLength() + cmemUtf8.GetStringLength(), cmemFooter.GetStringPtr(), cmemFooter.GetStringLength() );	//データ
+	pszClip[nLen] = '\0';				//終端ヌル
+	::GlobalUnlock( hgClipText );
+
+	//クリップボードに設定
+	UINT uFormat = ::RegisterClipboardFormat( _T("HTML Format") );
+	::SetClipboardData( uFormat, hgClipText );
 	return true;
 }
 
