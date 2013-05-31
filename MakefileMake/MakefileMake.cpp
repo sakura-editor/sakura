@@ -51,6 +51,41 @@
 #include <vector>
 #include <string>
 
+#ifdef __MINGW32__
+#include <windows.h>
+#ifndef _countof
+#define _countof(A) (sizeof(A)/sizeof(A[0]))
+#endif
+#define sprintf_s(A, B, C, ...) sprintf((A), (C), (__VA_ARGS__))
+#define strncpy_s(A, B, C, D) strncpy((A), (C), (D))
+
+#undef PREPROCESSOR
+#define PREPROCESSOR "gcc -x c++ -finput-charset=cp932 -fexec-charset=cp932 -E %s"
+
+void fopen_s( 
+   FILE** pFile,
+   const char *filename,
+   const char *mode 
+)
+{
+	*pFile = fopen(filename, mode);
+}
+#endif	// __MINGW32__
+
+#ifdef _MSC_VER
+#if _MSC_VER < 1400	// VC2003
+#ifndef _countof
+#define _countof(A) (sizeof(A)/sizeof(A[0]))
+#endif
+#define sprintf_s(A, B, C, D) sprintf((A), (C), (D))
+#define strncpy_s(A, B, C, D) strncpy((A), (C), (D))
+#define fopen_s(A, B, C) ( *(A) = fopen((B), (C)), 0 )
+#define _splitpath_s(A, B, C, D, E, F, G, H, I) (_splitpath((A), (B), (D), (F), (H)), 0)
+#define _makepath_s(A, B, C, D, E, F) (_makepath((A), (C), (D), (E), (F)), 0)
+#define _mktemp_s(A, B) (_mktemp((A)), 0)
+#endif	// VC2003
+#endif	// _MSC_VER
+
 int usage()
 {
 	printf("MakefileMake -file=<makefile> -dir=<トップディレクトリ>\n");
