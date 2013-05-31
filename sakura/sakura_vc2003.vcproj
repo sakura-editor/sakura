@@ -47,9 +47,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="call postBuild.bat"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="call preBuild.bat"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
