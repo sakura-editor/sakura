@@ -1322,7 +1322,7 @@ CColorStrategy* CPrintPreview::DrawPageTextFirst(int nPageNum)
 		m_pool->NotifyOnStartScanLogic();
 		if (pStrategy)	pStrategy->InitStrategyStatus();
 		if (nPageTopOff) {
-			CStringRef&	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
+			CStringRef	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
 			CLogicInt	iLogic;
 			for ( iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
 				pStrategy = GetColorStrategy( csr, iLogic, pStrategy );
