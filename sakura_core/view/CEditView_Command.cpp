@@ -368,7 +368,6 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
 	bool	bChangeState = false;
 
-	m_bCurSrchKeyMark = true;									// 検索文字列のマーク
 	if( GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
 			&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
 		|| 0 == m_strCurSearchKey.size() ){
@@ -381,23 +380,31 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 		bChangeState = true;
 	}
 	m_bCurSearchUpdate = false;
-	/* 正規表現 */
-	if( m_sCurSearchOption.bRegularExp
-	 && bChangeState
-	){
-		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
-			return FALSE;
+	if( bChangeState ){
+		/* 正規表現 */
+		if( m_sCurSearchOption.bRegularExp ){
+			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
+			if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
+				m_bCurSrchKeyMark = false;
+				return FALSE;
+			}
+			int nFlag = 0x00;
+			nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
+			/* 検索パターンのコンパイル */
+			m_CurRegexp.Compile( m_strCurSearchKey.c_str(), nFlag );
 		}
-		int nFlag = 0x00;
-		nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
-		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile( m_strCurSearchKey.c_str(), nFlag );
+		m_bCurSrchKeyMark = true;
+		if( bRedrawIfChanged ){
+			Redraw();
+		}
+		return TRUE;
 	}
-
-	if( bChangeState && bRedrawIfChanged ){
-		/* フォーカス移動時の再描画 */
-		RedrawAll();
+	if( ! m_bCurSrchKeyMark ){
+		m_bCurSrchKeyMark = true;
+		// 検索文字列のマークだけ設定
+		if( bRedrawIfChanged ){
+			Redraw(); // 自View再描画
+		}
 	}
 
 	return TRUE;
