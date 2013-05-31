@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "CDocVisitor.h"
 #include "doc/CEditDoc.h"
+#include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
 #include "COpeBlk.h"
@@ -12,9 +13,11 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	CEditView* pcView = &CEditWnd::getInstance()->GetActiveView();
 
 	//アンドゥ記録開始
-	COpeBlk* pcOpeBlk = NULL;
 	if(!pcView->m_bDoing_UndoRedo){
-		pcOpeBlk = new COpeBlk();
+		if(pcView->m_cCommander.GetOpeBlk() == NULL){
+			pcView->m_cCommander.SetOpeBlk(new COpeBlk());
+		}
+		pcView->m_cCommander.GetOpeBlk()->AddRef();
 	}
 
 	//カーソル位置記憶
@@ -26,6 +29,7 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	//改行コードを統一する
 	if(cEol.IsValid()){
 		CLogicInt	nLine = CLogicInt(0);
+		COpeBlk* pcOpeBlk = pcView->m_bDoing_UndoRedo ? NULL : pcView->m_cCommander.GetOpeBlk();
 		for (;;) {
 			CDocLine* pcDocLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLine); //#######非効率
 			if(!pcDocLine)break;
@@ -51,25 +55,22 @@ void CDocVisitor::SetAllEol(CEol cEol)
 	}
 
 	//アンドゥ記録
-	if(pcOpeBlk){
-		if(pcOpeBlk->GetNum()>0){
+	if(pcView->m_cCommander.GetOpeBlk()){
+		if(pcView->m_cCommander.GetOpeBlk()->GetNum()>0){
 			// カーソル位置復元
 			pcView->GetTextArea().SetViewTopLine(nViewTopLine);
 			pcView->GetTextArea().SetViewLeftCol(nViewLeftCol);
 			pcView->GetCaret().MoveCursor( ptCaretPosXY, true );
 			pcView->GetCaret().m_nCaretPosX_Prev = nCaretPosX_Prev;
-			pcOpeBlk->AppendOpe(
+			pcView->m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					pcView->GetCaret().GetCaretLogicPos(),
 					pcView->GetCaret().GetCaretLogicPos()
 				)
 			);
 
-			m_pcDocRef->m_cDocEditor.m_cOpeBuf.AppendOpeBlk(pcOpeBlk);
 		}
-		else{
-			delete pcOpeBlk;
-		}
+		pcView->SetUndoBuffer();
 	}
 }
 

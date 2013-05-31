@@ -703,7 +703,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		cmemBuf.GetStringPtr(),
 		cmemBuf.GetStringLength(),
 		false,
-		m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
+		m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
 	);
 
 	//	選択エリアの復元
@@ -720,7 +720,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	}
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		m_pCommanderView->m_pcOpeBlk->AppendOpe(
+		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
 				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
 				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
@@ -834,7 +834,7 @@ void CViewCommander::Command_MERGE(void)
 			cmemBuf.GetStringPtr(),
 			cmemBuf.GetStringLength(),
 			false,
-			m_pCommanderView->m_bDoing_UndoRedo?NULL:m_pCommanderView->m_pcOpeBlk
+			m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
 		);
 	}else{
 		// 2010.08.23 未変更なら変更しない
@@ -855,7 +855,7 @@ void CViewCommander::Command_MERGE(void)
 	}
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 	if( !m_pCommanderView->m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-		m_pCommanderView->m_pcOpeBlk->AppendOpe(
+		GetOpeBlk()->AppendOpe(
 			new CMoveCaretOpe(
 				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
 				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置

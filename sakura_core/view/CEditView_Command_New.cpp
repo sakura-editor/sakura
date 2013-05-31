@@ -28,6 +28,7 @@
 #include "doc/CDocReader.h"
 #include "doc/layout/CLayout.h"
 #include "doc/logic/CDocLine.h"
+#include "cmd/CViewCommander_inline.h"
 #include "window/CEditWnd.h"
 #include "dlg/CDlgCtrlCode.h"	//コントロールコードの入力(ダイアログ)
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
@@ -302,7 +303,7 @@ void CEditView::InsertData_CEditView(
 		);
 
 		// 操作の追加
-		m_pcOpeBlk->AppendOpe( pcOpe );
+		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 	}
 }
 
@@ -375,7 +376,7 @@ void CEditView::DeleteData2(
 			&pcOpe->m_ptCaretPos_PHY_After
 		);
 		// 操作の追加
-		m_pcOpeBlk->AppendOpe( pcOpe );
+		m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 	}
 
 }
@@ -437,7 +438,7 @@ void CEditView::DeleteData(
 		CWaitCursor cWaitCursor( this->GetHwnd() );  // 2002.02.05 hor
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			/* 操作の追加 */
-			m_pcOpeBlk->AppendOpe(
+			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
 					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
@@ -531,7 +532,7 @@ void CEditView::DeleteData(
 
 				pcOpe->m_ptCaretPos_PHY_After = GetCaret().GetCaretLogicPos();	// 操作後のキャレット位置
 				/* 操作の追加 */
-				m_pcOpeBlk->AppendOpe( pcOpe );
+				m_cCommander.GetOpeBlk()->AppendOpe( pcOpe );
 			}
 		}else{
 			/* データ置換 削除&挿入にも使える */
@@ -541,7 +542,7 @@ void CEditView::DeleteData(
 				L"",					/* 挿入するデータ */
 				CLogicInt(0),			/* 挿入するデータの長さ */
 				bRedraw,
-				m_bDoing_UndoRedo?NULL:m_pcOpeBlk
+				m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 			);
 		}
 	}else{
@@ -586,7 +587,7 @@ void CEditView::DeleteData(
 			L"",				/* 挿入するデータ */
 			CLogicInt(0),		/* 挿入するデータの長さ */
 			bRedraw,
-			m_bDoing_UndoRedo?NULL:m_pcOpeBlk
+			m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 		);
 	}
 
@@ -889,7 +890,7 @@ void CEditView::RTrimPrevLine( void )
 						NULL,		/* 挿入するデータ */
 						CLogicInt(0),			/* 挿入するデータの長さ */
 						true,
-						m_bDoing_UndoRedo?NULL:m_pcOpeBlk
+						m_bDoing_UndoRedo?NULL:m_cCommander.GetOpeBlk()
 					);
 					CLayoutPoint ptCP;
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptCaretPos_PHY, &ptCP );
@@ -897,7 +898,7 @@ void CEditView::RTrimPrevLine( void )
 
 					if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 						/* 操作の追加 */
-						m_pcOpeBlk->AppendOpe(
+						m_cCommander.GetOpeBlk()->AppendOpe(
 							new CMoveCaretOpe(
 								GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
 								GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置

@@ -230,6 +230,7 @@ bool CNormalProcess::InitializeProcess()
 			SetMainWindow( pEditWnd->GetHwnd() );
 			::ReleaseMutex( hMutex );
 			::CloseHandle( hMutex );
+			hMutex = NULL;
 			
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
@@ -366,8 +367,10 @@ bool CNormalProcess::InitializeProcess()
 	//再描画
 	::InvalidateRect( pEditWnd->GetHwnd(), NULL, TRUE );
 
-	::ReleaseMutex( hMutex );
-	::CloseHandle( hMutex );
+	if( hMutex ){
+		::ReleaseMutex( hMutex );
+		::CloseHandle( hMutex );
+	}
 
 	//プラグイン：EditorStartイベント実行
 	CPlug::Array plugs;

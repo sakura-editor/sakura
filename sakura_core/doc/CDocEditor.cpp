@@ -38,6 +38,7 @@ CDocEditor::CDocEditor(CEditDoc* pcDoc)
 , m_bInsMode( true )	// Oct. 2, 2005 genta
 , m_cNewLineCode( EOL_CRLF )		//	New Line Type
 , m_bIsDocModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
+, m_pcOpeBlk( NULL )
 {
 	//	Oct. 2, 2005 genta 挿入モード
 	this->SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
