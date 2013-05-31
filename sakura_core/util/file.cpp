@@ -70,7 +70,7 @@ bool IsFilePath(
 	int cur_pos = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
 		//ファイル名終端を検知する
-		if( pLine[i] == L'\r' || pLine[i] == L'\n' || pLine[i] == L'\0' ){
+		if( WCODE::IsLineDelimiter(pLine[i]) || pLine[i] == L'\0' ){
 			break;
 		}
 

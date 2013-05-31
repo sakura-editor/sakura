@@ -203,7 +203,7 @@ end_of_for:;
 	}
 
 	/* 2005.10.11 ryoji 改行時に末尾の空白を削除 */
-	if( WCODE::CR == wcChar && GetDocument()->m_cDocType.GetDocumentAttribute().m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
+	if( WCODE::IsLineDelimiter(wcChar) && GetDocument()->m_cDocType.GetDocumentAttribute().m_bRTrimPrevLine ){	/* 改行時に末尾の空白を削除 */
 		/* 前の行にある末尾の空白を削除する */
 		m_pCommanderView->RTrimPrevLine();
 	}

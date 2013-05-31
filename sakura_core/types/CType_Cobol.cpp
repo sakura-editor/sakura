@@ -63,8 +63,7 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			k = 0;
 			for( i = 7; i < nLineLen; ){
 				if( pLine[i] == '.'
-				 || pLine[i] == WCODE::CR
-				 || pLine[i] == WCODE::LF
+				 || WCODE::IsLineDelimiter(pLine[i])
 				){
 					break;
 				}

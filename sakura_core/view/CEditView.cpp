@@ -1351,7 +1351,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 				nIdxTo		= LineColumnToIndex( pcLayout, rcSelLayout.right );
 
 				for( CLogicInt i = nIdxFrom; i <= nIdxTo; ++i ){
-					if( pLine[i] == WCODE::CR || pLine[i] == WCODE::LF ){
+					if( WCODE::IsLineDelimiter(pLine[i]) ){
 						nIdxTo = i;
 						break;
 					}
@@ -1790,7 +1790,7 @@ bool CEditView::GetSelectedData(
 				//2002.02.08 hor
 				// pLineがNULLのとき(矩形エリアの端がEOFのみの行を含むとき)は以下を処理しない
 				if( nIdxTo - nIdxFrom > 0 ){
-					if( pLine[nIdxTo - 1] == L'\n' || pLine[nIdxTo - 1] == L'\r' ){
+					if( WCODE::IsLineDelimiter(pLine[nIdxTo - 1]) ){
 						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom - 1 );
 					}else{
 						cmemBuf->AppendString( &pLine[nIdxFrom], nIdxTo - nIdxFrom );

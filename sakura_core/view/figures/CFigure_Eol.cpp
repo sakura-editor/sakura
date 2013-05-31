@@ -30,8 +30,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 bool CFigure_Eol::Match(const wchar_t* pText) const
 {
 	if(pText[0]==L'\r' && pText[1]==L'\n' && pText[2]==L'\0')return true;
-	if(pText[0]==L'\n' && pText[1]==L'\0')return true;
-	if(pText[0]==L'\r' && pText[1]==L'\0')return true;
+	if(WCODE::IsLineDelimiter(pText[0]) && pText[1]==L'\0')return true;
 	return false;
 }
 
@@ -359,6 +358,10 @@ void _DrawEOL(
 		}
 		break;
 	case EOL_LF:	//	â∫å¸Ç´ñÓàÛ	// 2007.08.17 ryoji EOL_CR -> EOL_LF
+	// 2013.04.22 Moca NEL,LS,PSëŒâûÅBébíËÇ≈LFÇ∆ìØÇ∂Ç…Ç∑ÇÈ
+	case EOL_NEL:
+	case EOL_LS:
+	case EOL_PS:
 		{
 			sx = rcEol.left + ( rcEol.Width() / 2 );
 			sy = rcEol.top + ( rcEol.Height() * 3 / 4 );

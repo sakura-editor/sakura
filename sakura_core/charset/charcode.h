@@ -163,7 +163,7 @@ namespace WCODE
 	//!‰üs•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©
 	inline bool IsLineDelimiter(wchar_t wc)
 	{
-		return wc==CR || wc==LF;
+		return wc==CR || wc==LF || wc==0x85 || wc==0x2028 || wc==0x2029;
 	}
 
 	//!’PŒê‚Ì‹æØ‚è•¶š‚Å‚ ‚é‚©‚Ç‚¤‚©

@@ -98,9 +98,8 @@ static bool C_IsOperator( wchar_t* szStr, int nLen	)
 */
 static bool C_IsLineEsc(const wchar_t *s, int len)
 {
-	if ( len > 0 && s[len-1] == L'\n' ) len--;
+	if ( len > 0 && WCODE::IsLineDelimiter(s[len-1]) ) len--;
 	if ( len > 0 && s[len-1] == L'\r' ) len--;
-	if ( len > 0 && s[len-1] == L'\n' ) len--;
 
 	if ( len > 0 && s[len-1] == L'\\' ) {
 		if ( len == 1 ) {

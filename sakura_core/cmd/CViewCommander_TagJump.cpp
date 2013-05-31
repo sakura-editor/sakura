@@ -124,7 +124,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 		//	Borland 形式のメッセージからのTAG JUMP
 		while( p < p_end ){
 			//	skip space
-			for( ; p < p_end && ( *p == L' ' || *p == L'\t' || *p == L'\n' ); ++p )
+			for( ; p < p_end && ( *p == L' ' || *p == L'\t' || WCODE::IsLineDelimiter(*p) ); ++p )
 				;
 			if( p >= p_end )
 				break;

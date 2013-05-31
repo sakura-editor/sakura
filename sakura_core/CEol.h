@@ -41,11 +41,14 @@ enum EEolType {
 	EOL_CRLF,			//!< 0d0a
 	EOL_LF,				//!< 0a
 	EOL_CR,				//!< 0d
+	EOL_NEL,			//!< 85
+	EOL_LS,				//!< 2028
+	EOL_PS,				//!< 2029
 	EOL_CODEMAX,		//
 	EOL_UNKNOWN = -1	//
 };
 
-#define EOL_TYPE_NUM	EOL_CODEMAX // 5
+#define EOL_TYPE_NUM	EOL_CODEMAX // 8
 
 /* 行終端子の配列 */
 extern const EEolType gm_pnEolTypeArr[EOL_TYPE_NUM];

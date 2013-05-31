@@ -191,8 +191,7 @@ void CViewCommander::Command_JUMP( void )
 				/* 空白やタブ記号等を飛ばす */
 				if( L'\t' == pLine[i] ||
 					L' ' == pLine[i] ||
-					WCODE::CR == pLine[i] ||
-					WCODE::LF == pLine[i]
+					WCODE::IsLineDelimiter( pLine[i] )
 				){
 					continue;
 				}else
@@ -224,8 +223,7 @@ void CViewCommander::Command_JUMP( void )
 				bValidLine = TRUE;
 			}
 			/* コメントブロック内の改行だけの行 */
-			if( WCODE::CR == pLine[nBgn] ||
-				WCODE::LF == pLine[nBgn] ){
+			if( WCODE::IsLineDelimiter(pLine[nBgn]) ){
 				bValidLine = FALSE;
 			}
 		}
