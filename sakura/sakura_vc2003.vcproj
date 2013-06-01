@@ -104,9 +104,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="call preBuild.bat"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -161,9 +163,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="call preBuild.bat"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -216,9 +220,11 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="call preBuild.bat"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -1589,7 +1595,7 @@
 				<File
 					RelativePath="..\sakura_core\recent\CRecentCmd.h">
 				</File>
- 				<File
+				<File
 					RelativePath="..\sakura_core\recent\CRecentCurDir.cpp">
 				</File>
 				<File
