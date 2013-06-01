@@ -135,7 +135,6 @@ public:
 	int				m_xPos;
 	int				m_yPos;
 //	void*			m_pcEditView;
-	LPCTSTR			m_pszHelpFile;
 	DLLSHAREDATA*	m_pShareData;
 	BOOL			m_bInited;
 

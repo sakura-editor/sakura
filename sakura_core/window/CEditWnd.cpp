@@ -1235,7 +1235,7 @@ LRESULT CEditWnd::DispatchEvent(
 		lphi = (LPHELPINFO) lParam;
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
-			CEditApp::getInstance()->ShowFuncHelp( hwnd, (EFunctionCode)lphi->iCtrlId );
+			MyWinHelp( hwnd, HELP_CONTEXT, FuncID_To_HelpContextID( (EFunctionCode)lphi->iCtrlId ) );
 			break;
 		}
 		return TRUE;

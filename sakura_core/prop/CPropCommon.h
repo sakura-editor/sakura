@@ -126,7 +126,6 @@ public:
 	/*
 	|| ダイアログデータ
 	*/
-	LPCTSTR			m_pszHelpFile;
 	CommonSetting	m_Common;
 
 	// 2005.01.13 MIK セット数増加

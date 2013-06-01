@@ -398,7 +398,7 @@ BOOL CDlgPluginOption::OnBnClicked( int wID )
 
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
-		MyWinHelp( GetHwnd(), m_pszHelpFile, HELP_CONTEXT, HLP000153 );	// 『プラグイン設定』Helpの指定 	2011/11/26 Uchi
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000153 );	// 『プラグイン設定』Helpの指定 	2011/11/26 Uchi
 		return TRUE;
 
 	case IDOK:

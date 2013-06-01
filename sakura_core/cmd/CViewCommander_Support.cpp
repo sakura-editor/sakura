@@ -101,7 +101,7 @@ void CViewCommander::Command_ToggleKeySearch( void )
 /* ヘルプ目次 */
 void CViewCommander::Command_HELP_CONTENTS( void )
 {
-	ShowWinHelpContents( m_pCommanderView->GetHwnd(), CEditApp::getInstance()->GetHelpFilePath() );	//	目次を表示する
+	ShowWinHelpContents( m_pCommanderView->GetHwnd() );	//	目次を表示する
 	return;
 }
 
@@ -110,7 +110,7 @@ void CViewCommander::Command_HELP_CONTENTS( void )
 /* ヘルプキーワード検索 */
 void CViewCommander::Command_HELP_SEARCH( void )
 {
-	MyWinHelp( m_pCommanderView->GetHwnd(), CEditApp::getInstance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 

@@ -202,7 +202,7 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		// ヘルプ	// 2006.10.07 ryoji
-		MyWinHelp( GetHwnd(), m_pszHelpFile, HELP_CONTEXT, HLP000316 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000316 );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 
 	case IDC_BUTTON_SELALL:

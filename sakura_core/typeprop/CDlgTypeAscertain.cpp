@@ -69,7 +69,7 @@ BOOL CDlgTypeAscertain::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「タイプ別設定インポート」のヘルプ */
-		MyWinHelp( GetHwnd(), m_pszHelpFile, HELP_CONTEXT, HLP000338 );
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, HLP000338 );
 		return TRUE;
 	case IDOK:
 		TCHAR	buff1[_MAX_PATH + 20];
