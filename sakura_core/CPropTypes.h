@@ -59,7 +59,6 @@ protected:
 	HINSTANCE	m_hInstance;	//!< アプリケーションインスタンスのハンドル
 	HWND		m_hwndParent;	//!< オーナーウィンドウのハンドル
 	HWND		m_hwndThis;		//!< このダイアログのハンドル
-	LPCTSTR		m_pszHelpFile;
 	DLLSHAREDATA*	m_pShareData;
 
 	//ダイアログデータ

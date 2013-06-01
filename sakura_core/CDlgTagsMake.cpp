@@ -80,7 +80,7 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_HELP:
 		/* ヘルプ */
-		MyWinHelp( m_hWnd, m_pszHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TAGS_MAKE) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( m_hWnd, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_TAGS_MAKE) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 
 	case IDC_BUTTON_TAG_MAKE_REF:	/* 参照 */

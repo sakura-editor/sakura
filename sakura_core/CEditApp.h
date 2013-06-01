@@ -38,8 +38,6 @@ class CEditApp;
 	MRU、キー割り当て、共通設定、編集ウィンドウの管理など
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-	@date 2007.10.30 kobake OnHelp_MenuItemをCEditWndから持ってきた
-	@date 2007.10.30 kobake 関数名変更: OnHelp_MenuItem→ShowFuncHelp
 */
 class CEditApp
 {
@@ -87,9 +85,6 @@ public:
 
 	static BOOL CloseAllEditor( BOOL bCheckConfirm, HWND hWndFrom, BOOL bExit, int nGroup );	/* すべてのウィンドウを閉じる */	//Oct. 7, 2000 jepro 「編集ウィンドウの全終了」という説明を左記のように変更	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	static void TerminateApplication( HWND hWndFrom );	/* サクラエディタの全終了 */	// 2006.12.25 ryoji 引数追加
-
-	static LPCTSTR GetHelpFilePath();		//!< ヘルプファイルのフルパスを返す
-	static void ShowFuncHelp( HWND, int );	//!< メニューアイテムに対応するヘルプを表示
 
 	/*
 	|| 実装ヘルパ系

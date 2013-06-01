@@ -49,7 +49,6 @@ public:
 	int			m_nMaxTextLen;	/* 入力サイズ上限 */
 //	char*		m_pszText;		/* テキスト */
 	CMemory		m_cmemText;		/* テキスト */
-	LPCTSTR		m_pszHelpFile;	//@@@ 2002.01.07 add
 protected:
 	/*
 	||  実装ヘルパ関数

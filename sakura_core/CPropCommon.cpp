@@ -93,9 +93,6 @@ CPropCommon::CPropCommon()
 	m_hwndThis  = NULL;		/* このダイアログのハンドル */
 	m_nPageNum = ID_PAGENUM_GENERAL;
 
-	/* ヘルプファイルのフルパスを返す */
-	m_pszHelpFile = CEditApp::GetHelpFilePath();
-
 	return;
 }
 
@@ -388,7 +385,7 @@ void CPropCommon::OnHelp( HWND hwndParent, int nPageID )
 		break;
 	}
 	if( -1 != nContextID ){
-		MyWinHelp( hwndParent, m_pszHelpFile, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( hwndParent, HELP_CONTEXT, nContextID );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	}
 	return;
 }

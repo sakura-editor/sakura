@@ -72,7 +72,7 @@ BOOL CDlgCompare::OnBnClicked( int wID )
 	case IDC_BUTTON_HELP:
 		/* 「内容比較」のヘルプ */
 		//Stonee, 2001/03/12 第四引数を、機能番号からヘルプトピック番号を調べるようにした
-		MyWinHelp( m_hWnd, m_pszHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_COMPARE) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+		MyWinHelp( m_hWnd, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_COMPARE) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //	From Here Oct. 10, 2000 JEPRO added  Ref. code はCDlgFind.cpp の OnBnClicked
 //	チェックボックスをボタン化してCDlgCompare.cppに直接書き込んでみたが失敗

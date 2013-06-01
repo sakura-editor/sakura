@@ -116,7 +116,7 @@ class CMemory;// 2002/2/3 aroka ヘッダ軽量化
 class CEol;// 2002/2/3 aroka ヘッダ軽量化
 class CBregexp;// 2002/2/3 aroka ヘッダ軽量化
 
-BOOL MyWinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
+BOOL MyWinHelp(HWND hWndMain, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 //!フォント選択ダイアログ
 BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );   // 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
@@ -175,7 +175,7 @@ int cescape(const TCHAR* org, TCHAR* buf, TCHAR cesc, TCHAR cwith);
 int cescape_j(const char* org, char* out, char cesc, char cwith);
 
 /* ヘルプの目次を表示 */
-void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
+void ShowWinHelpContents( HWND hwnd );
 
 bool SetClipboardText( HWND, const char*, int );	//!クリープボードにText形式でコピーする
 
