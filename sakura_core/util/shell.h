@@ -26,7 +26,7 @@
 #ifndef SAKURA_SHELL_A129670C_6564_4E0D_AF52_E323B0C7CA099_H_
 #define SAKURA_SHELL_A129670C_6564_4E0D_AF52_E323B0C7CA099_H_
 
-BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
+BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 /* Shell Interface系(?) */
 BOOL SelectDir(HWND, const TCHAR*, const TCHAR*, TCHAR* );	/* フォルダ選択ダイアログ */
@@ -36,7 +36,7 @@ HWND OpenHtmlHelp( HWND hWnd, LPCTSTR szFile, UINT uCmd, DWORD_PTR data,bool msg
 DWORD NetConnect ( const TCHAR strNetWorkPass[] );
 
 /* ヘルプの目次を表示 */
-void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp );
+void ShowWinHelpContents( HWND hwnd );
 
 BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath );	// 特殊フォルダのパスを取得する	// 2007.05.19 ryoji
 

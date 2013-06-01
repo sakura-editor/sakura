@@ -268,15 +268,15 @@ int MyPropertySheet( LPPROPSHEETHEADER lppsph )
 /*	ヘルプの目次を表示
 	目次タブを表示。問題があるバージョンでは、目次ページを表示。
 */
-void ShowWinHelpContents( HWND hwnd, LPCTSTR lpszHelp )
+void ShowWinHelpContents( HWND hwnd )
 {
 	if ( HasWinHelpContentsProblem() ){
 		/* 目次ページを表示する */
-		MyWinHelp( hwnd, lpszHelp, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更
+		MyWinHelp( hwnd, HELP_CONTENTS , 0 );	// 2006.10.10 ryoji MyWinHelpに変更
 		return;
 	}
 	/* 目次タブを表示する */
-	MyWinHelp( hwnd, lpszHelp, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更
+	MyWinHelp( hwnd, HELP_COMMAND, (ULONG_PTR)"CONTENTS()" );	// 2006.10.10 ryoji MyWinHelpに変更
 	return;
 }
 
@@ -448,12 +448,33 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCTSTR lpszLinkFile, LPTSTR lpszPath )
 
 
 
+/*! ヘルプファイルのフルパスを返す
+ 
+    @return パスを格納したバッファのポインタ
+ 
+    @note 実行ファイルと同じ位置の sakura.chm ファイルを返す。
+        パスが UNC のときは _MAX_PATH に収まらない可能性がある。
+ 
+    @date 2002/01/19 aroka ；nMaxLen 引数追加
+	@date 2007/10/23 kobake 引数説明の誤りを修正(in→out)
+	@date 2007/10/23 kobake CEditAppのメンバ関数に変更
+	@date 2007/10/23 kobake シグニチャ変更。constポインタを返すだけのインターフェースにしました。
+*/
+static LPCTSTR GetHelpFilePath()
+{
+	static TCHAR szHelpFile[_MAX_PATH] = _T("");
+	if(szHelpFile[0]==_T('\0')){
+		GetExedir( szHelpFile, _T("sakura.chm") );
+	}
+	return szHelpFile;
+}
+
 /*!	WinHelp のかわりに HtmlHelp を呼び出す
 
 	@author ryoji
 	@date 2006.07.22 ryoji 新規
 */
-BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwData)
+BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 {
 	UINT uCommandOrg = uCommand;	// WinHelp のコマンド
 	bool bDesktop = false;	// デスクトップを親にしてヘルプ画面を出すかどうか
@@ -532,6 +553,7 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 		return FALSE;
 	}
 
+	LPCTSTR lpszHelp = GetHelpFilePath();
 	if( IsFileExists( lpszHelp, true ) ){
 		// HTML ヘルプを呼び出す
 		HWND hWnd = OpenHtmlHelp( hwndCaller, lpszHelp, uCommand, dwData );
@@ -554,9 +576,6 @@ BOOL MyWinHelp(HWND hwndCaller, LPCTSTR lpszHelp, UINT uCommand, DWORD_PTR dwDat
 
 	return TRUE;
 }
-
-
-
 
 /*フォント選択ダイアログ
 	@param plf [in/out]

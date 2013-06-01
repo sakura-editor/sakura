@@ -79,7 +79,7 @@ BOOL CDlgSetCharSet::OnBnClicked( int wID )
 	switch( wID ){
 	case IDC_BUTTON_HELP:
 		/* 「文字コードセット設定」のヘルプ */
-		MyWinHelp( GetHwnd(), m_pszHelpFile, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_CHG_CHARSET) );
+		MyWinHelp( GetHwnd(), HELP_CONTEXT, ::FuncID_To_HelpContextID(F_CHG_CHARSET) );
 		return TRUE;
 	case IDOK:
 		/* ダイアログデータの取得 */

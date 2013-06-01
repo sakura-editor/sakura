@@ -533,7 +533,7 @@ LRESULT CControlTray::DispatchEvent(
 		lphi = (LPHELPINFO) lParam;
 		switch( lphi->iContextType ){
 		case HELPINFO_MENUITEM:
-			CEditApp::getInstance()->ShowFuncHelp( hwnd, (EFunctionCode)lphi->iCtrlId );
+			MyWinHelp( hwnd, HELP_CONTEXT, FuncID_To_HelpContextID( (EFunctionCode)lphi->iCtrlId ) );
 			break;
 		}
 		return TRUE;
@@ -593,11 +593,11 @@ LRESULT CControlTray::DispatchEvent(
 				switch( nId ){
 				case F_HELP_CONTENTS:
 					/* ヘルプ目次 */
-					ShowWinHelpContents( GetTrayHwnd(), CEditApp::getInstance()->GetHelpFilePath() );	//	目次を表示する
+					ShowWinHelpContents( GetTrayHwnd() );	//	目次を表示する
 					break;
 				case F_HELP_SEARCH:
 					/* ヘルプキーワード検索 */
-					MyWinHelp( GetTrayHwnd(), CEditApp::getInstance()->GetHelpFilePath(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+					MyWinHelp( GetTrayHwnd(), HELP_KEY, (ULONG_PTR)_T("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 					break;
 				case F_EXTHELP1:
 					/* 外部ヘルプ１ */
