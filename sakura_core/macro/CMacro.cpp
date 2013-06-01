@@ -506,7 +506,7 @@ void CMacro::HandleCommand(
 			break;
 		}
 		{
-			pcEditView->GetCommander().HandleCommand( Index, false, (LPARAM)Argument[0], 0, 0, 0 );	//	•W€
+			pcEditView->GetCommander().HandleCommand( Index, LOWORD(Index) == F_INSTEXT_W, (LPARAM)Argument[0], 0, 0, 0 );	//	•W€
 		}
 		}
 		break;
