@@ -57,13 +57,14 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	if (!IsValidCodeType( eCharCode )) {
 		eCharCode = type.m_encoding.m_eDefaultCodetype;	// 2011.01.24 ryoji デフォルト文字コード
 	}
-	pFileInfo->eCharCode = eCharCode;
+	bool	bBom;
 	if (eCharCode == type.m_encoding.m_eDefaultCodetype) {
-		pFileInfo->bBomExist = type.m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
+		bBom = type.m_encoding.m_bDefaultBom;	// 2011.01.24 ryoji デフォルトBOM
 	}
 	else{
-		pFileInfo->bBomExist = CCodeTypeName( eCharCode ).IsBomDefOn();
+		bBom = CCodeTypeName( eCharCode ).IsBomDefOn();
 	}
+	pFileInfo->SetCodeSet( eCharCode, bBom );
 
 	/* 既存データのクリア */
 	pcDocLineMgr->DeleteAllLine();
@@ -81,12 +82,13 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		// ファイルを開く
 		// ファイルを閉じるにはFileCloseメンバ又はデストラクタのどちらかで処理できます
 		//	Jul. 28, 2003 ryoji BOMパラメータ追加
-		cfl.FileOpen( pszPath, pFileInfo->eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &pFileInfo->bBomExist );
+		cfl.FileOpen( pszPath, eCharCode, GetDllShareData().m_Common.m_sFile.GetAutoMIMEdecode(), &bBom );
+		pFileInfo->SetBomExist( bBom );
 
 		/* ファイル時刻の取得 */
 		FILETIME	FileTime;
 		if( cfl.GetFileTime( NULL, NULL, &FileTime ) ){
-			pFileInfo->cFileTime.SetFILETIME( FileTime );
+			pFileInfo->SetFileTime( FileTime );
 		}
 
 		// ReadLineはファイルから 文字コード変換された1行を読み出します
