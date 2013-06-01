@@ -48,7 +48,7 @@
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="call postBuild.bat"/>
+				CommandLine="call postBuild.bat &quot;$(TargetPath).manifest&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="call preBuild.bat"/>
