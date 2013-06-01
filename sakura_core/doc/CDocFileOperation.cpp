@@ -346,7 +346,9 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 			// 上書きの場合
 			if(pSaveInfo->bOverwriteMode){
 				// 無変更の場合は警告音を出し、終了
-				if(!m_pcDocRef->m_cDocEditor.IsModified() && pSaveInfo->cEol==EOL_NONE){ //※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
+				if (!m_pcDocRef->m_cDocEditor.IsModified() &&
+					pSaveInfo->cEol==EOL_NONE &&	//※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
+					!pSaveInfo->bChgCodeSet) {		// 文字コードセットの変更が有った場合は、「変更があったもの」とみなす
 					CEditApp::getInstance()->m_cSoundSet.NeedlessToSaveBeep();
 					throw CFlowInterruption();
 				}

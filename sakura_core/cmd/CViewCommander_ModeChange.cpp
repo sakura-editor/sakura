@@ -82,7 +82,7 @@ void CViewCommander::Command_CHG_CHARSET(
 		// 文字コードが指定されていないならば
 		// 文字コードの確認
 		eCharSet = GetDocument()->GetDocumentEncoding();	// 設定する文字コードセット
-		bBom     = GetDocument()->m_cDocFile.IsBomExist();	// 設定するBOM
+		bBom     = GetDocument()->GetDocumentBomExist();	// 設定するBOM
 		int nRet = GetEditWindow()->m_cDlgSetCharSet.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 
 						&eCharSet, &bBom );
 		if (!nRet) {
@@ -91,7 +91,7 @@ void CViewCommander::Command_CHG_CHARSET(
 	}
 
 	// 文字コードの設定
-	GetDocument()->SetDocumentEncoding( eCharSet, CCodeTypeName( eCharSet ).UseBom() & bBom );
+	GetDocument()->m_cDocFile.SetCodeSetChg( eCharSet, CCodeTypeName( eCharSet ).UseBom() & bBom );
 
 	// ステータス表示
 	GetCaret().ShowCaretPosInfo();

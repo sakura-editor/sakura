@@ -17,6 +17,7 @@
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2011, ryoji
+	Copyright (C) 2013, Uchi
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -374,6 +375,12 @@ ECodeType CEditDoc::GetDocumentEncoding() const
 	return m_cDocFile.GetCodeSet();
 }
 
+//! ドキュメントのBOM付加を取得
+bool CEditDoc::GetDocumentBomExist() const
+{
+	return m_cDocFile.IsBomExist();
+}
+
 //! ドキュメントの文字コードを設定
 void CEditDoc::SetDocumentEncoding(ECodeType eCharCode, bool bBom)
 {
@@ -387,10 +394,11 @@ void CEditDoc::SetDocumentEncoding(ECodeType eCharCode, bool bBom)
 
 void CEditDoc::GetSaveInfo(SSaveInfo* pSaveInfo) const
 {
-	pSaveInfo->cFilePath = this->m_cDocFile.GetFilePath();
-	pSaveInfo->eCharCode = this->m_cDocFile.GetCodeSet();
-	pSaveInfo->bBomExist = this->m_cDocFile.IsBomExist();
-	pSaveInfo->cEol      = this->m_cDocEditor.m_cNewLineCode; //編集時改行コードを保存時改行コードとして設定
+	pSaveInfo->cFilePath   = m_cDocFile.GetFilePath();
+	pSaveInfo->eCharCode   = m_cDocFile.GetCodeSet();
+	pSaveInfo->bBomExist   = m_cDocFile.IsBomExist();
+	pSaveInfo->bChgCodeSet = m_cDocFile.IsChgCodeSet();
+	pSaveInfo->cEol        = m_cDocEditor.m_cNewLineCode; //編集時改行コードを保存時改行コードとして設定
 }
 
 
@@ -719,8 +727,10 @@ BOOL CEditDoc::OnFileClose()
 			return TRUE;
 		}
 	}else{
-		//テキストが変更されていない場合は保存確認しない
-		if( !m_cDocEditor.IsModified() ) return TRUE;
+		//テキスト,文字コードセットが変更されていない場合は保存確認しない
+		if (!m_cDocEditor.IsModified() && !m_cDocFile.IsChgCodeSet()) {
+			return TRUE;
+		}
 	}
 
 	// -- -- 保存確認 -- -- //
@@ -767,13 +777,26 @@ BOOL CEditDoc::OnFileClose()
 	}
 	else{
 		ConfirmBeep();
-		nRet = ::MYMESSAGEBOX(
-			hwndMainFrame,
-			MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
-			GSTR_APPNAME,
-			_T("%ts\nは変更されています。 閉じる前に保存しますか？"),
-			pszTitle
-		);
+		if (m_cDocFile.IsChgCodeSet()) {
+			nRet = ::MYMESSAGEBOX(
+				hwndMainFrame,
+				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
+				GSTR_APPNAME,
+				_T("%ts\n")
+				_T("はテキストの変更は有りませんが、\n")
+				_T("文字コードセットが変更されています。\n")
+				_T("閉じる前に保存しますか？"),
+				pszTitle);
+		}
+		else {
+			nRet = ::MYMESSAGEBOX(
+				hwndMainFrame,
+				MB_YESNOCANCEL | MB_ICONQUESTION | MB_TOPMOST,
+				GSTR_APPNAME,
+				_T("%ts\nは変更されています。 閉じる前に保存しますか？"),
+				pszTitle
+			);
+		}
 		switch( nRet ){
 		case IDYES:
 			if( m_cDocFile.GetFilePathClass().IsValidPath() ){
@@ -787,6 +810,10 @@ BOOL CEditDoc::OnFileClose()
 			return TRUE;
 		case IDCANCEL:
 		default:
+			if (m_cDocFile.IsChgCodeSet()) {
+				m_cDocFile.CancelChgCodeSet();	// 文字コードセットの変更をキャンセルする
+				this->m_pcEditWnd->GetActiveView().GetCaret().ShowCaretPosInfo();	// ステータス表示
+			}
 			return FALSE;
 		}
 	}

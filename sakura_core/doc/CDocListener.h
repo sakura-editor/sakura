@@ -9,6 +9,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2013, Uchi
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -106,13 +107,14 @@ struct SLoadInfo
 struct SSaveInfo{
 	CFilePath	cFilePath;	//!< 保存ファイル名
 	ECodeType	eCharCode;	//!< 保存文字コードセット
-	CEol		cEol;		//!< 保存改行コード
 	bool		bBomExist;	//!< 保存時BOM付加
+	bool		bChgCodeSet;//!< 文字コードセット変更	2013/5/19 Uchi
+	CEol		cEol;		//!< 保存改行コード
 
 	//モード
 	bool		bOverwriteMode;	//!< 上書き要求
 
-	SSaveInfo() : cFilePath(_T("")), eCharCode(CODE_AUTODETECT), cEol(EOL_NONE), bBomExist(false), bOverwriteMode(false) { }
+	SSaveInfo() : cFilePath(_T("")), eCharCode(CODE_AUTODETECT), bBomExist(false), bChgCodeSet(false), cEol(EOL_NONE), bOverwriteMode(false) { }
 	SSaveInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, const CEol& _cEol, bool _bBomExist)
 		: cFilePath(_cFilePath), eCharCode(_eCodeType), cEol(_cEol), bBomExist(_bBomExist), bOverwriteMode(false) { }
 

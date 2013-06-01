@@ -651,13 +651,13 @@ void CCaret::ShowCaretPosInfo()
 	CNativeT cmemCodeName;
 	if (hwndStatusBar) {
 		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Normal() );
-		if(m_pEditDoc->m_cDocFile.IsBomExist()){
+		if (m_pEditDoc->GetDocumentBomExist()) {
 			cmemCodeName.AppendString( _T(" BOM付") );
 		}
 	}
 	else {
 		cmemCodeName.AppendString( CCodeTypeName(m_pEditDoc->GetDocumentEncoding()).Short() );
-		if (m_pEditDoc->m_cDocFile.IsBomExist()) {
+		if (m_pEditDoc->GetDocumentBomExist()) {
 			cmemCodeName.AppendString( _T("#") );		// BOM付(メニューバーなので小さく)	// 2013/4/17 Uchi
 		}
 	}
