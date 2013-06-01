@@ -48,10 +48,9 @@
 #include "sakura_rc.h"
 
 /////////////////////////////////////////////////////////////////////////
-LRESULT CALLBACK CEditAppWndProc( HWND, UINT, WPARAM, LPARAM );
+static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
 
-
-CControlTray*	g_m_pCEditApp;
+static CControlTray*	g_m_pCControlTray;
 
 //Stonee, 2001/03/21
 //Stonee, 2001/07/01  多重起動された場合は前回のダイアログを前面に出すようにした。
@@ -139,7 +138,7 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 
 
 /* ウィンドウプロシージャじゃ */
-LRESULT CALLBACK CEditAppWndProc(
+static LRESULT CALLBACK CControlTrayWndProc(
 	HWND	hwnd,	// handle of window
 	UINT	uMsg,	// message identifier
 	WPARAM	wParam,	// first message parameter
@@ -149,7 +148,7 @@ LRESULT CALLBACK CEditAppWndProc(
 	CControlTray* pSApp;
 	switch( uMsg ){
 	case WM_CREATE:
-		pSApp = ( CControlTray* )g_m_pCEditApp;
+		pSApp = ( CControlTray* )g_m_pCControlTray;
 		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
@@ -219,7 +218,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 								CS_DBLCLKS |
 								CS_BYTEALIGNCLIENT |
 								CS_BYTEALIGNWINDOW;
-		wc.lpfnWndProc		= CEditAppWndProc;
+		wc.lpfnWndProc		= CControlTrayWndProc;
 		wc.cbClsExtra		= 0;
 		wc.cbWndExtra		= 0;
 		wc.hInstance		= m_hInstance;
@@ -233,7 +232,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 			ErrorMessage( NULL, _T("CControlTray::Create()\nウィンドウクラスを登録できませんでした。") );
 		}
 	}
-	g_m_pCEditApp = this;
+	g_m_pCControlTray = this;
 
 	// ウィンドウ作成 (WM_CREATEで、GetHwnd() に HWND が格納される)
 	::CreateWindow(
@@ -267,7 +266,7 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 bool CControlTray::CreateTrayIcon( HWND hWnd )
 {
 	// タスクトレイのアイコンを作る
-	if( TRUE == m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
+	if( m_pShareData->m_Common.m_sGeneral.m_bUseTaskTray ){	/* タスクトレイのアイコンを使う */
 		//	Dec. 02, 2002 genta
 		HICON hIcon = GetAppIcon( m_hInstance, ICON_DEFAULT_APP, FN_APP_ICON, true );
 //From Here Jan. 12, 2001 JEPRO トレイアイコンにポイントするとバージョンno.が表示されるように修正
