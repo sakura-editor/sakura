@@ -27,8 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_COMPLEMENTIFOBJ_H_
-#define SAKURA_COMPLEMENTIFOBJ_H_
+#ifndef SAKURA_CCOMPLEMENTIFOBJ_CE6919C7_F8F8_479E_BC70_7BA4651351D27_H_
+#define SAKURA_CCOMPLEMENTIFOBJ_CE6919C7_F8F8_479E_BC70_7BA4651351D27_H_
 
 #include "macro/CWSHIfObj.h"
 #include "util/ole_convert.h"
@@ -133,4 +133,4 @@ MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] =
 	{F_INVALID,	NULL, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}
 };
 
-#endif /* SAKURA_COMPLEMENTIFOBJ_H_ */
+#endif /* SAKURA_CCOMPLEMENTIFOBJ_CE6919C7_F8F8_479E_BC70_7BA4651351D27_H_ */

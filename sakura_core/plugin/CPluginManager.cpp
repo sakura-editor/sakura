@@ -89,19 +89,23 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 	}
 	::FindClose(hFind);
 
+	bool	bCancel = false;
 	//プラグインフォルダの配下を検索
-	bool bFindNewDir = SearchNewPluginDir(common, hWndOwner, m_sBaseDir);
-	if (m_sBaseDir != m_sExePluginDir) {
-		bFindNewDir |= SearchNewPluginDir(common, hWndOwner, m_sExePluginDir);
+	bool bFindNewDir = SearchNewPluginDir(common, hWndOwner, m_sBaseDir, bCancel);
+	if (!bCancel && m_sBaseDir != m_sExePluginDir) {
+		bFindNewDir |= SearchNewPluginDir(common, hWndOwner, m_sExePluginDir, bCancel);
 	}
-	if (cZipFile.IsOk()) {
-		bFindNewDir |= SearchNewPluginZip(common, hWndOwner, m_sBaseDir);
-		if (m_sBaseDir != m_sExePluginDir) {
-			bFindNewDir |= SearchNewPluginZip(common, hWndOwner, m_sExePluginDir);
+	if (!bCancel && cZipFile.IsOk()) {
+		bFindNewDir |= SearchNewPluginZip(common, hWndOwner, m_sBaseDir, bCancel);
+		if (!bCancel && m_sBaseDir != m_sExePluginDir) {
+			bFindNewDir |= SearchNewPluginZip(common, hWndOwner, m_sExePluginDir, bCancel);
 		}
 	}
 
-	if(!bFindNewDir){
+	if (bCancel) {
+		InfoMessage( hWndOwner, _T("%s"), _T("キャンセルされました"));
+	}
+	else if (!bFindNewDir) {
 		InfoMessage( hWndOwner, _T("%s"), _T("新しいプラグインは見つかりませんでした"));
 	}
 
@@ -110,7 +114,7 @@ bool CPluginManager::SearchNewPlugin( CommonSetting& common, HWND hWndOwner )
 
 
 //新規プラグインを追加する(下請け)
-bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, tstring sSearchDir )
+bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, tstring sSearchDir, bool& bCancel )
 {
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter SearchNewPluginDir\n"));
@@ -149,15 +153,18 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 			}
 
 			bFindNewDir = true;
-			TCHAR msg[512];
-			auto_snprintf_s( msg, _countof(msg), _T("プラグイン「%ts」をインストールしますか？"), wf.cFileName );
-			if( ConfirmMessage( hWndOwner, _T("%s"), msg ) == IDYES ){
+			int nRes = Select3Message( hWndOwner, _T("プラグイン「%ts」をインストールしますか？"), wf.cFileName );
+			if (nRes == IDYES) {
 				std::wstring errMsg;
 				int pluginNo = InstallPlugin( common, wf.cFileName, hWndOwner, errMsg );
 				if( pluginNo < 0 ){
-					auto_snprintf_s( msg, _countof(msg), _T("プラグイン「%ts」をインストールできませんでした\n理由：%ls"), wf.cFileName, errMsg.c_str() );
-					WarningMessage( hWndOwner, _T("%s"), msg );
+					WarningMessage( hWndOwner, _T("プラグイン「%ts」をインストールできませんでした\n理由：%ls"),
+						wf.cFileName, errMsg.c_str() );
 				}
+			}
+			else if (nRes == IDCANCEL) {
+				bCancel = true;
+				break;	// for loop
 			}
 		}
 	} while( FindNextFile( hFind, &wf ));
@@ -168,7 +175,7 @@ bool CPluginManager::SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, 
 
 
 //新規プラグインを追加する(下請け)Zip File
-bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, tstring sSearchDir )
+bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, tstring sSearchDir, bool& bCancel )
 {
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter SearchNewPluginZip\n"));
@@ -190,7 +197,10 @@ bool CPluginManager::SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, 
 		for (bFound = (hFind != INVALID_HANDLE_VALUE); bFound; bFound = (FindNextFile( hFind, &wf ) != 0)) {
 			if( (wf.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_HIDDEN)) == 0)
 			{
-				bNewPlugin |= InstZipPluginSub(common, hWndOwner, sSearchDir + wf.cFileName, wf.cFileName, true);
+				bNewPlugin |= InstZipPluginSub(common, hWndOwner, sSearchDir + wf.cFileName, wf.cFileName, true, bCancel);
+				if (bCancel) {
+					break;
+				}
 			}
 		}
 	}
@@ -223,15 +233,13 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, tstri
 	if ((hFind = ::FindFirstFile( (m_sBaseDir + _T("*")).c_str(), &wf )) == INVALID_HANDLE_VALUE) {
 		//プラグインフォルダが存在しない
 		if (m_sBaseDir == m_sExePluginDir) {
-			auto_snprintf_s( msg, _countof(msg), _T("プラグインフォルダがありません") );
-			InfoMessage( hWndOwner, _T("%s"), msg);
+			InfoMessage( hWndOwner, _T("プラグインフォルダがありません"));
 			::FindClose(hFind);
 			return false;
 		}
 		else {
 			if (!CreateDirectory(m_sBaseDir.c_str(), NULL)) {
-				auto_strcpy_s( msg, _countof(msg), _T("プラグインフォルダを作成出来ません") );
-				WarningMessage( hWndOwner, _T("%s"), msg);
+				WarningMessage( hWndOwner, _T("プラグインフォルダを作成出来ません") );
 				::FindClose(hFind);
 				return false;
 			}
@@ -239,11 +247,12 @@ bool CPluginManager::InstZipPlugin( CommonSetting& common, HWND hWndOwner, tstri
 	}
 	::FindClose(hFind);
 
-	return CPluginManager::InstZipPluginSub( common, hWndOwner, sZipFile, sZipFile, false );
+	bool	bCancel;
+	return CPluginManager::InstZipPluginSub( common, hWndOwner, sZipFile, sZipFile, false, bCancel );
 }
 
 //Zipプラグインを導入する(下請け)
-bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, tstring sZipFile, tstring sDispName, bool bInSearch )
+bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, tstring sZipFile, tstring sDispName, bool bInSearch, bool& bCancel )
 {
 	PluginRec*		plugin_table = common.m_sPlugin.m_PluginTable;
 	CZipFile		cZipFile;
@@ -284,8 +293,8 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, ts
 				bNewPlugin = true;
 			}
 			else {
-				auto_snprintf_s( msg, _countof(msg), _T("「%ts」は既にインストールされています\n上書きしますか？"), sDispName.c_str());
-				if( ConfirmMessage( hWndOwner, _T("%s"), msg ) != IDYES ){
+				if( ConfirmMessage( hWndOwner, _T("「%ts」は既にインストールされています\n上書きしますか？"),
+						sDispName.c_str() ) != IDYES ){
 					// Yesで無いなら終了
 					return false;
 				}
@@ -302,10 +311,16 @@ bool CPluginManager::InstZipPluginSub( CommonSetting& common, HWND hWndOwner, ts
 		}
 		if (bOk) {
 			bNewPlugin= true;
-			auto_snprintf_s( msg, _countof(msg), _T("ZIPプラグイン「%ts」を「%ts」にインストールしますか？"), sDispName.c_str(), sFolderName.c_str());
-			if( ConfirmMessage( hWndOwner, _T("%s"), msg ) != IDYES ){
+			int nRes = Select3Message( hWndOwner, _T("ZIPプラグイン「%ts」を「%ts」にインストールしますか？"),
+				sDispName.c_str(), sFolderName.c_str() );
+			switch (nRes) {
+			case IDCANCEL:
+				bCancel = true;
+				// through
+			case IDNO:
 				bOk = false;
 				bSkip = true;
+				break;
 			}
 		}
 	}

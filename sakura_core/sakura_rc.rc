@@ -2086,21 +2086,23 @@ EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "プラグインの設定"
 FONT 9, "ＭＳ Ｐゴシック"
 BEGIN
-    LTEXT           "プラグインのオプションを設定してください", IDC_STATIC_MSG, 
-                    11, 7, 119, 8
+    LTEXT           "プラグインのオプションを設定してください", 
+                    IDC_STATIC_MSG, 11, 7, 119, 8
     CONTROL         "List1", IDC_LIST_PLUGIN_OPTIONS, "SysListView32",
                     LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | 
                     LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,22,257,186
     LTEXT           "値：", IDC_STATIC, 11, 217, 11, 8
     EDITTEXT        IDC_EDIT_PLUGIN_OPTION, 26, 214, 238, 14, ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_PLUGIN_OPTION_DIR, 26, 214, 215, 14, ES_AUTOHSCROLL
+    PUSHBUTTON      "&...", IDC_BUTTON_PLUGIN_OPTION_DIR, 243, 214, 21, 14
     EDITTEXT        IDC_EDIT_PLUGIN_OPTION_NUM, 26, 214, 60, 14,  ES_RIGHT
     CONTROL         "Spin1",IDC_SPIN_PLUGIN_OPTION,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,
                     148, 25, 10, 14,WS_EX_TRANSPARENT
-    CONTROL         "Check", IDC_CHECK_PLUGIN_OPTION, "Button", BS_AUTOCHECKBOX, 
-                    26, 216, 200, 10
-    COMBOBOX        IDC_COMBO_PLUGIN_OPTION, 26, 214, 100, 30, CBS_DROPDOWNLIST | 
-                    CBS_HASSTRINGS
+    CONTROL         "Check", IDC_CHECK_PLUGIN_OPTION, "Button", 
+                    BS_AUTOCHECKBOX | WS_TABSTOP, 26, 216, 200, 10
+    COMBOBOX        IDC_COMBO_PLUGIN_OPTION, 26, 214, 183, 30, 
+                    CBS_DROPDOWNLIST | CBS_HASSTRINGS| WS_TABSTOP
     PUSHBUTTON      "ReadMe(&M)", IDC_PLUGIN_README, 49, 234, 50, 14
     DEFPUSHBUTTON   "&OK", IDOK, 104, 234, 50, 14
     PUSHBUTTON      "キャンセル(&X)", IDCANCEL, 159, 234, 50, 14
