@@ -27,13 +27,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-
-
-
-class CDlgPluginOption;
-
-#ifndef	_CDLGPLUGINOPTION_H_
-#define	_CDLGPLUGINOPTION_H_
+#ifndef SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_
+#define SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_
 
 #include "dlg/CDialog.h"
 #include "plugin/CPluginManager.h"
@@ -55,6 +50,7 @@ typedef std::wstring wstring;
 static const wstring	OPTION_TYPE_BOOL = wstring( L"bool" );
 static const wstring	OPTION_TYPE_INT  = wstring( L"int" );
 static const wstring	OPTION_TYPE_SEL  = wstring( L"sel" );
+static const wstring	OPTION_TYPE_DIR  = wstring( L"dir" );
 
 class CDlgPluginOption : public CDialog
 {
@@ -85,11 +81,13 @@ protected:
 	void	SetData( void );	/* ダイアログデータの設定 */
 	int		GetData( void );	/* ダイアログデータの取得 */
 
-	void	ChangeListPosition( void );
+	void	ChangeListPosition( void );					// 編集領域をリストビューに合せて切替える
+	void	MoveFocusToEdit( void );					// 編集領域にフォーカスを移す
 	void	SetToEdit( int );
 	void	SetFromEdit( int );
 	void	SelectEdit( int );							// 編集領域の切り替え
 	void	SepSelect( wstring, wstring*, wstring* );	// 選択用文字列分解
+	void	SelectDirectory( int iLine );				// ディレクトリを選択する
 
 private:
 	CPlugin*		m_cPlugin;
@@ -99,5 +97,4 @@ private:
 	std::tstring	m_sReadMeName;	// ReadMe ファイル名
 };
 
-#endif	//_CDLGPLUGINOPTION_H_
-
+#endif /* SAKURA_CDLGPLUGINOPTION_7BD4A901_BC40_4CA1_8311_85B8CAA783F08_H_ */

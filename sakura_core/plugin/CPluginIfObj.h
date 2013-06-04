@@ -107,7 +107,20 @@ public:
 				}else{
 					cProfile.ReadProfile( m_cPlugin.GetOptionPath().c_str() );
 				}
-				cProfile.IOProfileData( sSection.c_str(), sKey.c_str(), sValue );
+				if (!cProfile.IOProfileData( sSection.c_str(), sKey.c_str(), sValue )
+					&& LOWORD(ID) == F_PL_GETOPTION ) {
+					// 設定されていなければデフォルトを取得 
+					CPluginOption::ArrayIter it;
+					for (it = m_cPlugin.m_options.begin(); it != m_cPlugin.m_options.end(); it++) {
+						wstring sSectionTmp;
+						wstring sKeyTmp;
+						(*it)->GetKey(&sSectionTmp, &sKeyTmp);
+						if (sSection == sSectionTmp && sKey == sKeyTmp) {
+							sValue = (*it)->GetDefaultVal();
+							break;
+						}
+					}
+				}
 
 				SysString S(sValue.c_str(), sValue.size());
 				Wrap(&Result)->Receive(S);
