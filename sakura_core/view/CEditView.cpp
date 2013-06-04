@@ -164,7 +164,7 @@ BOOL CEditView::Create(
 	m_pcTextArea = new CTextArea(this);
 	m_pcCaret = new CCaret(this, pcEditDoc);
 	m_pcRuler = new CRuler(this, pcEditDoc);
-	m_pcFontset = new CViewFont();
+	m_pcViewFont = m_pcEditWnd->m_pcViewFont;
 
 	m_cHistory = new CAutoMarkMgr;
 	m_cRegexKeyword = NULL;				// 2007.04.08 ryoji
@@ -410,7 +410,6 @@ CEditView::~CEditView()
 	delete m_pcTextArea;
 	delete m_pcCaret;
 	delete m_pcRuler;
-	delete m_pcFontset;
 }
 
 
@@ -1098,7 +1097,7 @@ void CEditView::OnKillFocus( void )
 void CEditView::SetFont( void )
 {
 	// メトリクス更新
-	this->GetTextMetrics().Update(GetFontset().GetFontHan());
+	GetTextMetrics().Update(GetFontset().GetFontHan());
 
 	// エリア情報を更新
 	HDC hdc = ::GetDC( GetHwnd() );
@@ -1590,8 +1589,6 @@ void CEditView::OnChangeSetting()
 		GetTextArea().SetAreaTop(GetTextArea().GetAreaTop() + GetDllShareData().m_Common.m_sWindow.m_nRulerHeight);	/* ルーラー高さ */
 	}
 	GetTextArea().SetLeftYohaku( GetDllShareData().m_Common.m_sWindow.m_nLineNumRightSpace );
-	// フォント更新
-	GetFontset().UpdateFont();
 
 	/* フォントの変更 */
 	SetFont();

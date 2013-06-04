@@ -26,10 +26,21 @@
 
 class CViewFont{
 public:
-	CViewFont();
-	virtual ~CViewFont();
+	CViewFont(const LOGFONT *plf)
+	{
+		CreateFont(plf);
+	}
+	virtual ~CViewFont()
+	{
+		DeleteFont();
+	}
 
-	void UpdateFont();
+	void UpdateFont(const LOGFONT *plf)
+	{
+		DeleteFont();
+		CreateFont(plf);
+	}
+
 	HFONT ChooseFontHandle( bool bBold, bool bUnderLine ) const;		/* フォントを選ぶ */
 
 	HFONT GetFontHan() const
@@ -37,10 +48,13 @@ public:
 		return m_hFont_HAN;
 	}
 private:
-	HFONT			m_hFont_HAN;			/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */
-	HFONT			m_hFont_HAN_UL;			/* 現在のフォントハンドル(下線) */
-	HFONT			m_hFont_HAN_BOLD_UL;	/* 現在のフォントハンドル(太字、下線) */
+	void CreateFont(const LOGFONT *plf);
+	void DeleteFont();
+
+	HFONT	m_hFont_HAN;			/* 現在のフォントハンドル */
+	HFONT	m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */
+	HFONT	m_hFont_HAN_UL;			/* 現在のフォントハンドル(下線) */
+	HFONT	m_hFont_HAN_BOLD_UL;	/* 現在のフォントハンドル(太字、下線) */
 };
 
 #endif /* SAKURA_CVIEWFONT_9E51373D_58BA_4A64_9930_5174F7BF9C929_H_ */

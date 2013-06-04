@@ -568,8 +568,8 @@ public:
 	const CViewSelect& GetSelectionInfo() const{ return m_cViewSelect; }
 
 	//主要オブジェクトアクセス
-	CViewFont& GetFontset(){ assert(m_pcFontset); return *m_pcFontset; }
-	const CViewFont& GetFontset() const{ assert(m_pcFontset); return *m_pcFontset; }
+	CViewFont& GetFontset(){ assert(m_pcViewFont); return *m_pcViewFont; }
+	const CViewFont& GetFontset() const{ assert(m_pcViewFont); return *m_pcViewFont; }
 
 	//主要ヘルパアクセス
 	const CViewParser& GetParser() const{ return m_cParser; }
@@ -596,7 +596,7 @@ public:
 	CViewSelect		m_cViewSelect;
 
 	//主要オブジェクト
-	CViewFont*		m_pcFontset;
+	CViewFont*		m_pcViewFont;
 
 	//主要ヘルパ
 	CViewParser		m_cParser;

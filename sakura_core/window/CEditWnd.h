@@ -61,6 +61,7 @@
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
 #include "uiparts/CMenuDrawer.h"
+#include "view/CViewFont.h"
 
 const static int MENUBAR_MESSAGE_MAX_LEN = 30;
 
@@ -357,6 +358,7 @@ public:
 	CSplitterWnd	m_cSplitterWnd;		//!< 分割フレーム
 	int				m_nActivePaneIndex;	//!< アクティブなビュー
 	CEditView*		m_pcDragSourceView;	//!< ドラッグ元のビュー
+	CViewFont*		m_pcViewFont;		//!< フォント
 
 	//ダイアログ達
 	CDlgFind		m_cDlgFind;			// 「検索」ダイアログ

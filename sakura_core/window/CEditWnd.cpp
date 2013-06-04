@@ -232,6 +232,8 @@ CEditWnd::CEditWnd()
 	// [0] - [3] まで作成・初期化していたものを[0]だけ作る。ほかは分割されるまで何もしない
 	m_pcEditViewArr[0] = new CEditView(this);
 
+	m_pcViewFont = new CViewFont(&GetLogfont());
+
 	auto_memset( m_pszMenubarMessage, _T(' '), MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
 
 	//	Dec. 4, 2002 genta
@@ -260,6 +262,10 @@ CEditWnd::~CEditWnd()
 		delete m_pcEditViewArr[i];
 		m_pcEditViewArr[i] = NULL;
 	}
+
+	delete m_pcViewFont;
+	m_pcViewFont = NULL;
+
 	delete[] m_pszMenubarMessage;
 	delete[] m_pszLastCaption;
 
@@ -1753,6 +1759,9 @@ LRESULT CEditWnd::DispatchEvent(
 		case PM_CHANGESETTING_FONT:
 			// Font変更の通知 2008/5/17 Uchi
 			InitCharWidthCache(GetLogfont());
+
+			// フォント更新
+			m_pcViewFont->UpdateFont(&GetLogfont());
 
 			GetDocument().OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
 			break;
