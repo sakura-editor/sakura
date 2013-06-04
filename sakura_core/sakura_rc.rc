@@ -434,8 +434,8 @@ BEGIN
     RTEXT           "ópéÜÇÃå¸Ç´",IDC_STATIC,7,146,45,8
     CONTROL         "èc(&I)",IDC_RADIO_PORTRAIT,"Button",BS_AUTORADIOBUTTON | 
                     WS_GROUP,58,145,40,10
-    CONTROL         "â°(&A)",IDC_RADIO_LANDSCAPE,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP,102,145,40,10
+    CONTROL         "â°(&A)",IDC_RADIO_LANDSCAPE,"Button",BS_AUTORADIOBUTTON,
+                    102,145,40,10
     RTEXT           "ó]îíÅ^è„(&T)",IDC_STATIC,7,163,45,8
     EDITTEXT        IDC_EDIT_MARGINTY,56,161,30,12,ES_AUTOHSCROLL
     CONTROL         "Spin5",IDC_SPIN_MARGINTY,"msctls_updown32",
