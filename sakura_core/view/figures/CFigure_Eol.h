@@ -34,9 +34,8 @@ public:
 
 	//action
 	bool DrawImp(SColorStrategyInfo* pInfo);
-	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const;
+	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const {};
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_EOL; }
-	CEol m_cEol;
 };
 
 #endif /* SAKURA_CFIGURE_EOL_F6A22B9F_DDED_4BE9_9A2C_62931DB224F6_H_ */
