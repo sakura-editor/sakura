@@ -160,7 +160,7 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile )
 	WCHAR bufKey[64];
 
 	sSection = L"";
-	for( int nCount = 1; nCount < MAX_PLUG_CMD; nCount++ ){	//“Y‚¦Žš‚Í‚P‚©‚çŽn‚ß‚é
+	for( int nCount = 1; nCount < MAX_PLUG_OPTION; nCount++ ){	//“Y‚¦Žš‚Í‚P‚©‚çŽn‚ß‚é
 		sKey = sLabel = sType = sDefaultVal= L"";
 		//Key‚ÌŽæ“¾
 		swprintf( bufKey, L"O[%d].Key", nCount );
