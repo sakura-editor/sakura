@@ -25,35 +25,13 @@
 #define SAKURA_CHARCODE_5A887F7C_8E08_4940_AF65_BD6850C3A7B5_H_
 
 //2007.09.13 kobake 作成
+#include "parse/CWordParse.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         判定関数                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-#include "charset/codechecker.h"
-inline bool _IS_SJIS_1(unsigned char c)
-{
-	return IsSjisZen1(static_cast<char>(c));
-}
-inline bool _IS_SJIS_2(unsigned char c)
-{
-	return IsSjisZen2(static_cast<char>(c));
-}
-inline bool _IS_SJIS_1(char c)
-{
-	return IsSjisZen1(c);
-}
-inline bool _IS_SJIS_2(char c)
-{
-	return IsSjisZen2(c);
-}
-inline int my_iskanji1( int c )
-{
-	return IsSjisZen1(static_cast<char>(c & 0x00ff));
-}
-inline int my_iskanji2( int c )
-{
-	return IsSjisZen2(static_cast<char>(c & 0x00ff));
-}
+// #include "charset/codechecker.h"
+// SJIS関連コードは codecheker.hに移動
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           定数                              //
@@ -307,16 +285,13 @@ namespace ACODE
 	//!ファイル名に使える文字であるかどうか
 	inline bool IsValidFilenameChar(const char* pData, size_t nIndex)
 	{
-		static const TCHAR* table = _T("<>?\"|*");
+		static const char* table = "<>?\"|*";
 		char c = pData[nIndex];
 
 		//table内の文字が含まれていて
-		if(_tcschr(table,c)!=NULL){
-			//それが1バイト文字だったら
-			if( nIndex==0 || (nIndex>0 && !_IS_SJIS_1(pData[nIndex-1])) ){
-				//使っちゃいけない文字！
-				return false;
-			}
+		if(strchr(table,c)!=NULL){
+			// 2013.06.01 判定間違いを削除
+			return false;
 		}
 
 		return true;

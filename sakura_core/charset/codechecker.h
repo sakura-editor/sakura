@@ -224,6 +224,32 @@ inline bool IsSjisZen( const char* pC ){
 	return ( CHARCODE__IS_SJIS_ZEN1(static_cast<unsigned char>(pC[0]))
 		&& CHARCODE__IS_SJIS_ZEN2(static_cast<unsigned char>(pC[1])) );
 }
+
+inline bool _IS_SJIS_1(unsigned char c)
+{
+	return IsSjisZen1(static_cast<char>(c));
+}
+inline bool _IS_SJIS_2(unsigned char c)
+{
+	return IsSjisZen2(static_cast<char>(c));
+}
+inline bool _IS_SJIS_1(char c)
+{
+	return IsSjisZen1(c);
+}
+inline bool _IS_SJIS_2(char c)
+{
+	return IsSjisZen2(c);
+}
+inline int my_iskanji1( int c )
+{
+	return IsSjisZen1(static_cast<char>(c & 0x00ff));
+}
+inline int my_iskanji2( int c )
+{
+	return IsSjisZen2(static_cast<char>(c & 0x00ff));
+}
+
 //! SJIS 半角カタカナか
 inline bool IsSjisHankata( const char c ){
 	return ( 0xa1 <= static_cast<unsigned char>(c) && static_cast<unsigned char>(c) <= 0xdf );

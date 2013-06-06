@@ -281,7 +281,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 				_tcscpy(szPath, &(szPath[8]));
 			}
 			int len = _tcslen(szPath);
-			for (int i = 0; i < len ; i ++) {
+			for (int i = 0; i < len ; ) {
 				if ( !TCODE::IsValidFilenameChar(szPath,i) ){
 					TCHAR msg_str[_MAX_PATH + 1];
 					_stprintf(
@@ -294,6 +294,8 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 					szPath[0] = _T('\0');
 					break;
 				}
+				int nChars = t_max(1, CNativeT::GetCharNext( szPath, len, szPath + i ) - (szPath + i));
+				i += nChars;
 			}
 
 			if (szPath[0] != _T('\0')) {
