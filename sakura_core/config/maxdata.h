@@ -71,6 +71,7 @@ enum maxdata{
 
 	MAX_PLUGIN					= 40,	// 登録できるプラグインの数
 	MAX_PLUG_CMD				= 50,	// 登録できるプラグイン コマンドの数+1(1 origin分)
+	MAX_PLUG_OPTION				= 100,	// 登録できるプラグインオプションの数
 	MAX_PLUGIN_ID				= 63+1,	// プラグインIDの最大長さ
 	MAX_PLUGIN_NAME				= 63+1,	// プラグイン名の最大長さ
 
