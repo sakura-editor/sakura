@@ -49,7 +49,7 @@ protected:
 
 	// 操作
 public:
-	bool LoadAllPlugin();				//全プラグインを読み込む
+	bool LoadAllPlugin(CommonSetting* common = NULL);				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
 	int InstallPlugin( CommonSetting& common, const TCHAR* pszPluginName, HWND hWndOwner, wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
@@ -60,6 +60,7 @@ public:
 private:
 	CPlugin* LoadPlugin( const TCHAR* pszPluginDir, const TCHAR* pszPluginName );	//プラグインを読み込む
 	bool RegisterPlugin( CPlugin* plugin );	//プラグインをCJackManagerに登録する
+	bool UnRegisterPlugin( CPlugin* plugin );	//プラグインのCJackManagerの登録を解除する
 
 	//属性
 public:

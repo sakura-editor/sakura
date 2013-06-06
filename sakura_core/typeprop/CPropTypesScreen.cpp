@@ -653,10 +653,22 @@ void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME<EOutlineType> method;
 	method.nMethod = (EOutlineType)nMethod;
 	const TCHAR* tszName = to_tchar( szName );
-	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
+	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];
 	_tcscpy( pszName, tszName );
 	method.pszName = pszName;
 	m_OlmArr.push_back(method);
+}
+
+void CPropTypesScreen::RemoveOutlineMethod(int nMethod, const WCHAR* szName)
+{
+	int nSize = (int)m_OlmArr.size();
+	for(int i = 0; i < nSize; i++ ){
+		if( m_OlmArr[i].nMethod == (EOutlineType)nMethod ){
+			delete [] m_OlmArr[i].pszName;
+			m_OlmArr.erase( m_OlmArr.begin() + i );
+			break;
+		}
+	}
 }
 
 //スマートインデントルールの追加
@@ -668,8 +680,20 @@ void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* szName)
 	TYPE_NAME<ESmartIndentType> method;
 	method.nMethod = (ESmartIndentType)nMethod;
 	const TCHAR* tszName = to_tchar( szName );
-	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];	//リークします。
+	TCHAR* pszName = new TCHAR[ _tcslen(tszName) + 1 ];
 	_tcscpy( pszName, tszName );
 	method.pszName = pszName;
 	m_SIndentArr.push_back(method);
+}
+
+void CPropTypesScreen::RemoveSIndentMethod(int nMethod, const WCHAR* szName)
+{
+	int nSize = (int)m_SIndentArr.size();
+	for(int i = 0; i < nSize; i++ ){
+		if( m_SIndentArr[i].nMethod == (EOutlineType)nMethod ){
+			delete [] m_SIndentArr[i].pszName;
+			m_SIndentArr.erase( m_SIndentArr.begin() + i );
+			break;
+		}
+	}
 }

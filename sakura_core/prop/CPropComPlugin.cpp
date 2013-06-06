@@ -31,6 +31,9 @@
 #include "StdAfx.h"
 #include <ShellAPI.h>
 #include "prop/CPropCommon.h"
+#include "CEditApp.h"
+#include "plugin/CJackManager.h"
+#include "uiparts/CMenuDrawer.h"
 #include "util/shell.h"
 #include "dlg/CDlgOpenFile.h"
 #include "dlg/CDlgPluginOption.h"	// 2010/3/22 Uchi
@@ -38,6 +41,8 @@
 #include "io/CZipFile.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+
+static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer);
 
 //! Popup Help用ID
 static const DWORD p_helpids[] = {	//11700
@@ -160,7 +165,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		case BN_CLICKED:
 			switch( wID ){
 			case IDC_PLUGIN_SearchNew:		// 新規プラグインを追加
+				GetData( hwndDlg );
 				CPluginManager::getInstance()->SearchNewPlugin( m_Common, hwndDlg );
+				LoadPluginTemp(m_Common, *m_pcMenuDrawer);
 				SetData_LIST( hwndDlg );	//リストの再構築
 				break;
 			case IDC_PLUGIN_INST_ZIP:		// ZIPプラグインを追加
@@ -177,7 +184,9 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						szPath
 					);
 					if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
+						GetData( hwndDlg );
 						CPluginManager::getInstance()->InstZipPlugin( m_Common, hwndDlg, szPath );
+						LoadPluginTemp(m_Common, *m_pcMenuDrawer);
 						SetData_LIST( hwndDlg );	//リストの再構築
 					}
 					// フォルダを記憶
@@ -550,4 +559,24 @@ bool CPropPlugin::BrowseReadMe(const std::tstring& sReadMeName)
 	auto_strcpy_s(szCmdLine, _countof(szCmdLine), cCmdLineBuf.c_str());
 	return (::CreateProcess( NULL, szCmdLine, NULL, NULL, TRUE,
 		CREATE_NEW_CONSOLE, NULL, NULL, &sui, &pi ) != 0);
+}
+
+static void LoadPluginTemp(CommonSetting& common, CMenuDrawer& cMenuDrawer)
+{
+	if( !CEditApp::getInstance() ){
+		// 2013.05.31 コントロールプロセスなら即時読み込み
+		CPluginManager::getInstance()->LoadAllPlugin( &common );
+		// ツールバーアイコンの更新
+		const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
+		cMenuDrawer.m_pcIcons->ResetExtend();
+		for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
+			int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
+			const CPlug* plug = *it;
+			if( !plug->m_sIcon.empty() ){
+				iBitmap = cMenuDrawer.m_pcIcons->Add(
+					to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
+			}
+			cMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
+		}
+	}
 }

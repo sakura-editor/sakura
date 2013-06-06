@@ -30,9 +30,13 @@
 #include <HtmlHelp.h>
 #include "CControlTray.h"
 #include "CEditApp.h"
+#include "CPropertyManager.h"
+#include "typeprop/CDlgTypeList.h"
 #include "debug/CRunningTimer.h"
 #include "window/CEditWnd.h"		//Nov. 21, 2000 JEPROtest
 #include "dlg/CDlgAbout.h"		//Nov. 21, 2000 JEPROtest
+#include "plugin/CPluginManager.h"
+#include "plugin/CJackManager.h"
 #include "io/CTextStream.h"
 #include "util/module.h"
 #include "util/shell.h"
@@ -174,6 +178,7 @@ CControlTray::CControlTray()
 , m_hInstance( NULL )
 , m_hWnd( NULL )
 , m_nCurSearchKeySequence(-1)
+, m_pcPropertyManager(NULL)
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
@@ -189,6 +194,7 @@ CControlTray::CControlTray()
 
 CControlTray::~CControlTray()
 {
+	delete m_pcPropertyManager;
 	return;
 }
 
@@ -258,6 +264,8 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	if( GetTrayHwnd() ){
 		CreateTrayIcon( GetTrayHwnd() );
 	}
+
+	m_pcPropertyManager = new CPropertyManager( GetTrayHwnd(), &m_hIcons, &m_CMenuDrawer );
 
 	return GetTrayHwnd();
 }
@@ -618,6 +626,41 @@ LRESULT CControlTray::DispatchEvent(
 					/* 外部HTMLヘルプ */
 					{
 //						CEditView::Command_EXTHTMLHELP();
+					}
+					break;
+				case F_TYPE_LIST:	// タイプ別設定一覧
+					{
+						CDlgTypeList			cDlgTypeList;
+						CDlgTypeList::SResult	sResult;
+						sResult.cDocumentType = CTypeConfig(0);
+						sResult.bTempChange = false;
+						if( cDlgTypeList.DoModal( G_AppInstance(), GetTrayHwnd(), &sResult ) ){
+							// タイプ別設定
+							CPluginManager::getInstance()->LoadAllPlugin();
+							m_pcPropertyManager->OpenPropertySheetTypes( -1, sResult.cDocumentType );
+							CPluginManager::getInstance()->UnloadAllPlugin();
+						}
+					}
+					break;
+				case F_OPTION:	// 共通設定
+					{
+						CPluginManager::getInstance()->LoadAllPlugin();
+						{
+							// アイコンの登録
+							const CPlug::Array& plugs = CJackManager::getInstance()->GetPlugs( PP_COMMAND );
+							m_CMenuDrawer.m_pcIcons->ResetExtend();
+							for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ) {
+								int iBitmap = CMenuDrawer::TOOLBAR_ICON_PLUGCOMMAND_DEFAULT - 1;
+								const CPlug* plug = *it;
+								if( !plug->m_sIcon.empty() ){
+									iBitmap = m_CMenuDrawer.m_pcIcons->Add(
+										to_tchar(plug->m_cPlugin.GetFilePath( to_tchar(plug->m_sIcon.c_str()) ).c_str()) );
+								}
+								m_CMenuDrawer.AddToolButton( iBitmap, plug->GetFunctionCode() );
+							}
+						}
+						m_pcPropertyManager->OpenPropertySheet(-1);
+						CPluginManager::getInstance()->UnloadAllPlugin();
 					}
 					break;
 				case F_ABOUT:
@@ -1476,6 +1519,9 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	/* トレイ右クリックの「ヘルプ」メニュー */
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_SEARCH , _T(""), _T("S"), FALSE );	//Nov. 25, 2000 JEPRO 「トピックの」→「キーワード」に変更
+	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_TYPE_LIST, _T(""), _T("L"), FALSE );
+	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_OPTION, _T(""), _T("C"), FALSE );
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_ABOUT, _T(""), _T("A"), FALSE );	//Dec. 25, 2000 JEPRO F_に変更
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );

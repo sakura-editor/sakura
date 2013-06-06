@@ -33,6 +33,7 @@
 struct SLoadInfo;
 struct EditInfo;
 struct DLLSHAREDATA;
+class CPropertyManager;
 
 //!	常駐部の管理
 /*!
@@ -113,6 +114,7 @@ protected:
 	*/
 private:
 	CMenuDrawer		m_CMenuDrawer;
+	CPropertyManager*	m_pcPropertyManager;
 	bool			m_bUseTrayMenu;			//トレイメニュー表示中
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd;

@@ -58,11 +58,14 @@ CPluginManager::CPluginManager()
 void CPluginManager::UnloadAllPlugin()
 {
 	for( CPlugin::ListIter it = m_plugins.begin(); it != m_plugins.end(); it++ ){
+		UnRegisterPlugin( *it );
+	}
+
+	for( CPlugin::ListIter it = m_plugins.begin(); it != m_plugins.end(); it++ ){
 		delete *it;
 	}
 	
 	// 2010.08.04 Moca m_plugins.claerする
-	// ただし、CJackManagerにUnRegisterPlugがないので再読み込みするとおかしくなります
 	m_plugins.clear();
 }
 
@@ -440,20 +443,22 @@ int CPluginManager::InstallPlugin( CommonSetting& common, const TCHAR* pszPlugin
 }
 
 //全プラグインを読み込む
-bool CPluginManager::LoadAllPlugin()
+bool CPluginManager::LoadAllPlugin(CommonSetting* common)
 {
 #ifdef _UNICODE
 	DEBUG_TRACE(_T("Enter LoadAllPlugin\n"));
 #endif
+	CommonSetting_Plugin& pluginSetting = (common ? common->m_sPlugin : GetDllShareData().m_Common.m_sPlugin);
 
-	if( ! GetDllShareData().m_Common.m_sPlugin.m_bEnablePlugin ) return true;
+	if( ! pluginSetting.m_bEnablePlugin ) return true;
 
 	//プラグインテーブルに登録されたプラグインを読み込む
-	PluginRec* plugin_table = GetDllShareData().m_Common.m_sPlugin.m_PluginTable;
+	PluginRec* plugin_table = pluginSetting.m_PluginTable;
 	for( int iNo=0; iNo < MAX_PLUGIN; iNo++ ){
 		if( plugin_table[iNo].m_szName[0] == '\0' ) continue;
 		// 2010.08.04 削除状態を見る(今のところ保険)
 		if( plugin_table[iNo].m_state == PLS_DELETED ) continue;
+		if( NULL != GetPlugin( iNo ) ) continue; // 2013.05.31 読み込み済み
 		std::tstring name = to_tchar(plugin_table[iNo].m_szName);
 		CPlugin* plugin = LoadPlugin( m_sBaseDir.c_str(), name.c_str() );
 		if( !plugin ){
@@ -467,11 +472,9 @@ bool CPluginManager::LoadAllPlugin()
 			plugin_table[iNo].m_state = PLS_LOADED;
 			// コマンド数設定
 			plugin_table[iNo].m_nCmdNum = plugin->GetCommandCount();
-		}
-	}
 
-	for( CPlugin::ListIter it = m_plugins.begin(); it != m_plugins.end(); it++ ){
-		RegisterPlugin( *it );
+			RegisterPlugin( plugin );
+		}
 	}
 	
 	return true;
@@ -538,6 +541,19 @@ bool CPluginManager::RegisterPlugin( CPlugin* plugin )
 
 	for( CPlug::ArrayIter plug = plugs.begin() ; plug != plugs.end(); plug++ ){
 		pJackMgr->RegisterPlug( (*plug)->m_sJack.c_str(), *plug );
+	}
+
+	return true;
+}
+
+//プラグインのCJackManagerの登録を解除する
+bool CPluginManager::UnRegisterPlugin( CPlugin* plugin )
+{
+	CJackManager* pJackMgr = CJackManager::getInstance();
+	CPlug::Array plugs = plugin->GetPlugs();
+
+	for( CPlug::ArrayIter plug = plugs.begin() ; plug != plugs.end(); plug++ ){
+		pJackMgr->UnRegisterPlug( (*plug)->m_sJack.c_str(), *plug );
 	}
 
 	return true;
