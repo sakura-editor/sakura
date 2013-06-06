@@ -5,11 +5,11 @@
 #include "env/DLLSHAREDATA.h"
 #include "macro/CSMacroMgr.h"
 
-CPropertyManager::CPropertyManager()
+CPropertyManager::CPropertyManager( HWND hwndOwner, CImageListMgr* pImageList, CMenuDrawer* menu )
 {
 	/* 設定プロパティシートの初期化１ */
-	m_cPropCommon.Create( CEditWnd::getInstance()->GetHwnd(), &CEditApp::getInstance()->GetIcons(), &CEditWnd::getInstance()->GetMenuDrawer() );
-	m_cPropTypes.Create( G_AppInstance(), CEditWnd::getInstance()->GetHwnd() );
+	m_cPropCommon.Create( hwndOwner, pImageList, menu );
+	m_cPropTypes.Create( G_AppInstance(), hwndOwner );
 }
 
 /*! 共通設定 プロパティシート */
@@ -31,7 +31,9 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		// 自ウィンドウには最後に通知されます。大抵は、OnChangeSetting にあります。
 		// ここでしか適用しないと、ほかのウィンドウが変更されません。
 		
-		CEditApp::getInstance()->m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
+		if( CEditApp::getInstance() ){
+			CEditApp::getInstance()->m_pcSMacroMgr->UnloadAll();	// 2007.10.19 genta マクロ登録変更を反映するため，読み込み済みのマクロを破棄する
+		}
 		if( bGroup != (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin ) ){
 			CAppNodeManager::getInstance()->ResetGroupId();
 		}
@@ -41,12 +43,16 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 
 
 		/* 設定変更を反映させる */
+		HWND hWnd = NULL;
+		if( CEditWnd::getInstance() ){
+			hWnd = CEditWnd::getInstance()->GetHwnd();
+		}
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)0,
 			(LPARAM)PM_CHANGESETTING_ALL,
-			CEditWnd::getInstance()->GetHwnd()
+			hWnd
 		);
 
 		return TRUE;
@@ -68,25 +74,35 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 	/* プロパティシートの作成 */
 	if( m_cPropTypes.DoPropertySheet( nPageNum ) ){
 		/* 変更された設定値のコピー */
-		int nTextWrapMethodOld = CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
+		int nTextWrapMethodOld = -1;
+		if( CEditWnd::getInstance() ){
+			nTextWrapMethodOld = CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
+		}
 		m_cPropTypes.GetTypeData( types );
 
 		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
 		// タイプ別設定を呼び出したウィンドウについては、タイプ別設定が変更されたら
 		// 折り返し方法の一時設定適用中を解除してタイプ別設定を有効とする。
-		if( nTextWrapMethodOld != CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod )		// 設定が変更された
-			CEditWnd::getInstance()->GetDocument().m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
+		if( CEditWnd::getInstance() ){
+			if( nTextWrapMethodOld != CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod ){		// 設定が変更された
+				CEditWnd::getInstance()->GetDocument().m_bTextWrapMethodCurTemp = false;	// 一時設定適用中を解除
+			}
+		}
 
 		/* アクセラレータテーブルの再作成 */
 		::SendMessageAny( GetDllShareData().m_sHandles.m_hwndTray, MYWM_CHANGESETTING,  (WPARAM)0, (LPARAM)PM_CHANGESETTING_ALL );
 
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
+		HWND hWnd = NULL;
+		if( CEditWnd::getInstance() ){
+			hWnd = CEditWnd::getInstance()->GetHwnd();
+		}
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)0,
 			(LPARAM)PM_CHANGESETTING_ALL,
-			CEditWnd::getInstance()->GetHwnd()
+			hWnd
 		);
 
 		return TRUE;

@@ -84,6 +84,9 @@ public:
 	//! アイコンを追加する
 	int Add(const TCHAR* szPath);
 
+	//! アイコンの追加を元に戻す
+	void ResetExtend();
+
 	/*!
 		イメージのToolBarへの登録
 	
@@ -121,7 +124,7 @@ protected:
                         int nHeight, HBITMAP bmp, int nXSrc, int nYSrc ) const;
 
 	//! ビットマップを一行拡張する
-	void Extend();
+	void Extend(bool = true);
 
 };
 

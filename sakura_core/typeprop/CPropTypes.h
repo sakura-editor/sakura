@@ -115,6 +115,8 @@ protected:
 public:
 	static void AddOutlineMethod(int nMethod, const WCHAR* szName);	//!<アウトライン解析ルールの追加
 	static void AddSIndentMethod(int nMethod, const WCHAR* szName);	//!<スマートインデントルールの追加
+	static void RemoveOutlineMethod(int nMethod, const WCHAR* szName);	//!<アウトライン解析ルールの追加
+	static void RemoveSIndentMethod(int nMethod, const WCHAR* szName);	//!<スマートインデントルールの追加
 	void CPropTypes_Screen();										//!<スクリーンタブのコンストラクタ
 };
 
@@ -171,6 +173,7 @@ protected:
 	int  GetData( HWND );											//!< ダイアログデータの取得
 public:
 	static void AddHokanMethod(int nMethod, const WCHAR* szName);	//!<補完種別の追加
+	static void RemoveHokanMethod(int nMethod, const WCHAR* szName);	//!<補完種別の追加
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

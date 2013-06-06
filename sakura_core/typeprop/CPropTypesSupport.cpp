@@ -299,3 +299,13 @@ void CPropTypesSupport::AddHokanMethod(int nMethod, const WCHAR* szName)
 	GetHokanMethodList()->push_back(item);
 }
 
+void CPropTypesSupport::RemoveHokanMethod(int nMethod, const WCHAR* szName)
+{
+	int nSize = GetHokanMethodList()->size();
+	for(int i = 0; i < nSize; i++ ){
+		if( (*GetHokanMethodList())[i].nMethod == (EOutlineType)nMethod ){
+			GetHokanMethodList()->erase( GetHokanMethodList()->begin() + i );
+			break;
+		}
+	}
+}

@@ -407,7 +407,7 @@ int CImageListMgr::Add(const TCHAR* szPath)
 }
 
 // ビットマップを一行（MAX_X個）拡張する
-void CImageListMgr::Extend()
+void CImageListMgr::Extend(bool bExtend)
 {
 	int curY = m_nIconCount / MAX_X;
 	if( curY < MAX_Y )
@@ -418,13 +418,15 @@ void CImageListMgr::Extend()
 
 	//1行拡張したビットマップを作成
 	HDC hDestDC = ::CreateCompatibleDC( hSrcDC );
-	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hSrcDC, MAX_X * cx(), (curY + 1) * cy() );
+	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hSrcDC, MAX_X * cx(), (curY + (bExtend ? 1 : 0)) * cy() );
 	HBITMAP hDestBmpOld = (HBITMAP)::SelectObject( hDestDC, hDestBmp );
 
 	::BitBlt( hDestDC, 0, 0, MAX_X * cx(), curY * cy(), hSrcDC, 0, 0, SRCCOPY );
 
 	//拡張した部分は透過色で塗る
-	FillSolidRect( hDestDC, 0, curY * cy(), MAX_X * cx(), cy(), m_cTrans );
+	if( bExtend ){
+		FillSolidRect( hDestDC, 0, curY * cy(), MAX_X * cx(), cy(), m_cTrans );
+	}
 
 	::SelectObject( hSrcDC, hSrcBmpOld );
 	::DeleteObject( m_hIconBitmap );
@@ -435,4 +437,10 @@ void CImageListMgr::Extend()
 
 	//ビットマップの差し替え
 	m_hIconBitmap = hDestBmp;
+}
+
+void CImageListMgr::ResetExtend()
+{
+	m_nIconCount = MAX_TOOLBAR_ICON_COUNT;
+	Extend(false);
 }

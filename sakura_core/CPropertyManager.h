@@ -27,9 +27,13 @@
 #include "prop/CPropCommon.h"
 #include "typeprop/CPropTypes.h"
 
+class CImageListMgr;
+class CMenuDrawer;
+
 class CPropertyManager{
 public:
-	CPropertyManager();
+	CPropertyManager( HWND, CImageListMgr*, CMenuDrawer* );
+
 	/*
 	|| ‚»‚Ì‘¼
 	*/

@@ -129,9 +129,31 @@ bool CJackManager::UnRegisterPlug( wstring pszJack, CPlug* plug )
 {
 	EJack ppId = GetJackFromName( pszJack );
 
+	switch( ppId ){
+	case PP_OUTLINE:					//アウトライン解析方法を追加
+		{
+			int nMethod = CPlug::GetOutlineType( plug->GetFunctionCode() );
+			CPropTypesScreen::RemoveOutlineMethod( nMethod, plug->m_sLabel.c_str() );
+		}
+		break;
+	case PP_SMARTINDENT:				//スマートインデント方法を追加
+		{
+			int nMethod = CPlug::GetSmartIndentType( plug->GetFunctionCode() );
+			CPropTypesScreen::RemoveSIndentMethod( nMethod, plug->m_sLabel.c_str() );
+		}
+		break;
+	case PP_COMPLEMENT:
+		{
+			int nMethod = CPlug::GetPluginFunctionCode( plug->m_cPlugin.m_id, 0 );
+			CPropTypesSupport::RemoveHokanMethod( nMethod, plug->m_sLabel.c_str() );
+		}
+		break;
+	}
+
 	for( unsigned int index=0; index<m_Jacks[ ppId ].plugs.size(); index++ ){
 		if( m_Jacks[ ppId ].plugs[index] == plug ){
 			m_Jacks[ ppId ].plugs.erase( m_Jacks[ ppId ].plugs.begin() + index );
+			break;
 		}
 	}
 

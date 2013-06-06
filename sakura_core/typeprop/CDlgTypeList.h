@@ -58,6 +58,7 @@ private:
 	bool m_bExtRMenu[ MAX_TYPES ];			//右クリック登録 未／済
 	bool m_bExtDblClick[ MAX_TYPES ];		//ダブルクリック 未／済
 	bool m_bAlertFileAssociation;			//関連付け警告の表示フラグ
+	bool m_bEnableTempChange;				//一時適用の有効化
 };
 
 

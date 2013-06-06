@@ -64,6 +64,7 @@ int CDlgTypeList::DoModal( HINSTANCE hInstance, HWND hwndParent, SResult* psResu
 	int	nRet;
 	m_nSettingType = psResult->cDocumentType;
 	m_bAlertFileAssociation = true;
+	m_bEnableTempChange = psResult->bTempChange;
 	nRet = (int)CDialog::DoModal( hInstance, hwndParent, IDD_TYPELIST, (LPARAM)NULL );
 	if( -1 == nRet ){
 		return FALSE;
@@ -293,6 +294,7 @@ void CDlgTypeList::SetData( void )
 	List_SetHorizontalExtent( hwndList, nExtent + 8 );
 	List_SetCurSel( hwndList, m_nSettingType.GetIndex() );
 	::SendMessageAny( GetHwnd(), WM_COMMAND, MAKEWPARAM(IDC_LIST_TYPES, LBN_SELCHANGE), 0 );
+	::EnableWindow( GetItemHwnd(IDC_BUTTON_TEMPCHANGE), m_bEnableTempChange );
 	return;
 }
 

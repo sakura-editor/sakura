@@ -70,7 +70,11 @@ CEditApp::CEditApp(HINSTANCE hInst, int nGroupId)
 	m_pcMruListener = new CMruListener();
 
 	//プロパティ管理
-	m_pcPropertyManager = new CPropertyManager();
+	m_pcPropertyManager = new CPropertyManager(
+		m_pcEditWnd->GetHwnd(),
+		&GetIcons(),
+		&m_pcEditWnd->GetMenuDrawer()
+	);
 }
 
 CEditApp::~CEditApp()
