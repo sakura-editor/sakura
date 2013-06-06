@@ -16,6 +16,21 @@
 #define _CFUNCINFOARR_H_
 
 class CFuncInfo;
+#include <string>
+#include <map>
+
+// 標準的な付加情報定数
+#define FL_OBJ_DEFINITION	0	// 親クラスの定義位置
+#define FL_OBJ_DECLARE		1	// 関数プロトタイプ宣言
+#define FL_OBJ_FUNCTION		2	// 関数
+#define FL_OBJ_CLASS		3	// クラス
+#define FL_OBJ_STRUCT		4	// 構造体
+#define FL_OBJ_ENUM			5	// 列挙体
+#define FL_OBJ_UNION		6	// 共用体
+#define FL_OBJ_NAMESPACE	7	// 名前空間
+#define FL_OBJ_INTERFACE	8	// インタフェース
+#define FL_OBJ_GLOBAL		9	// グローバル（組み込み解析では使用しない）
+#define FL_OBJ_ELEMENT_MAX	30	// プラグインで追加可能な定数の上限
 
 //! アウトライン解析 データ配列
 class CFuncInfoArr {
@@ -31,7 +46,9 @@ public:
 	int	GetNum( void ){	return m_nFuncInfoArrNum; }	/* 配列要素数を返す */
 	void Empty( void );
 	void DUMP( void );
-
+	void SetAppendText( int info, std::wstring s, bool overwrite );
+	std::wstring GetAppendText( int info );
+	int AppendTextLenMax(){ return m_nAppendTextLenMax; }
 
 
 
@@ -40,6 +57,8 @@ public:
 private:
 	int			m_nFuncInfoArrNum;	/*!< 配列要素数 */
 	CFuncInfo**	m_ppcFuncInfoArr;	/*!< 配列 */
+	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
+	int			m_nAppendTextLenMax;
 };
 
 

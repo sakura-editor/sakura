@@ -57,6 +57,7 @@ enum EOutlineType{
 	OUTLINE_DEFAULT =-1,//	2001.12.03 hor
 	OUTLINE_UNKNOWN	= 99,
 	OUTLINE_TREE = 100,		// 汎用ツリー 2010.03.28 syat
+	OUTLINE_TREE_TAGJUMP = 101,	// 汎用ツリー(タグジャンプ付き) 2013.05.01 Moca
 	OUTLINE_CLSTREE = 200,	// 汎用ツリー(クラス) 2010.03.28 syat
 	OUTLINE_LIST = 300,		// 汎用リスト 2010.03.28 syat
 };

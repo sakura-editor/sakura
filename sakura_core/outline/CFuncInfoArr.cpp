@@ -23,6 +23,7 @@ CFuncInfoArr::CFuncInfoArr()
 {
 	m_nFuncInfoArrNum = 0;	/* 配列要素数 */
 	m_ppcFuncInfoArr = NULL;	/* 配列 */
+	m_nAppendTextLenMax = 0;
 	return;
 }
 
@@ -48,6 +49,8 @@ void CFuncInfoArr::Empty( void )
 		free( m_ppcFuncInfoArr );
 		m_ppcFuncInfoArr = NULL;
 	}
+	m_AppendTextArr.clear();
+	m_nAppendTextLenMax = 0;
 	return;
 }
 
@@ -152,5 +155,37 @@ void CFuncInfoArr::DUMP( void )
 #endif
 }
 
+void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
+{
+	if( m_AppendTextArr.find( info ) == m_AppendTextArr.end() ){
+		// キーが存在しない場合、追加する
+		std::pair<int, std::wstring> pair(info, s);
+		m_AppendTextArr.insert( pair );
+		if( m_nAppendTextLenMax < (int)s.length() ){
+			m_nAppendTextLenMax = s.length();
+		}
+#ifndef	_UNICODE
+		std::tstring t = to_tchar(s.c_str());
+		if( m_nAppendTextLenMax < (int)t.length() ){
+			m_nAppendTextLenMax = t.length();
+		}
+#endif
+	}else{
+		// キーが存在する場合、値を書き換える
+		if( overwrite ){
+			m_AppendTextArr[ info ] = s;
+		}
+	}
+}
 
+std::wstring CFuncInfoArr::GetAppendText( int info )
+{
+	if( m_AppendTextArr.find( info ) == m_AppendTextArr.end() ){
+		// キーが存在しない場合、空文字列を返す
+		return std::wstring();
+	}else{
+		// キーが存在する場合、値を返す
+		return m_AppendTextArr[ info ];
+	}
+}
 

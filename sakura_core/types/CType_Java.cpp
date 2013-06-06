@@ -133,7 +133,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						}
 						wcscat( szClass, szWord );
 
-						nFuncId = 0;
+						nFuncId = FL_OBJ_DEFINITION;
 						++nFuncNum;
 						/*
 						  カーソル位置変換
@@ -236,7 +236,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						 && 0 != wcscmp( L"switch", szFuncName )
 						 && 0 != wcscmp( L"return", szFuncName )
 						){
-							nFuncId = 2;
+							nFuncId = FL_OBJ_FUNCTION;
 							++nFuncNum;
 							/*
 							  カーソル位置変換
@@ -377,7 +377,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						 && 0 != wcscmp( L"switch", szFuncName )
 						 && 0 != wcscmp( L"return", szFuncName )
 						){
-							nFuncId = 1;
+							nFuncId = FL_OBJ_DECLARE;
 							++nFuncNum;
 							/*
 							  カーソル位置変換
