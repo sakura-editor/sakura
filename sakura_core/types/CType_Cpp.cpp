@@ -571,20 +571,20 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						if( nMode2 == M2_NORMAL )
 							nItemFuncId = 0;
 						if( wcscmp(szWord,L"class")==0 )
-							nItemFuncId = 3;
+							nItemFuncId = FL_OBJ_CLASS;
 						else if( wcscmp(szWord,L"struct")==0 )
-							nItemFuncId = 4;
+							nItemFuncId = FL_OBJ_STRUCT;
 						else if( wcscmp(szWord,L"namespace")==0 )
-							nItemFuncId = 7;
+							nItemFuncId = FL_OBJ_NAMESPACE;
 						else if( wcscmp(szWord,L"enum")==0 )
-							nItemFuncId = 5;
+							nItemFuncId = FL_OBJ_ENUM;
 						else if( wcscmp(szWord,L"union")==0 )
-							nItemFuncId = 6;
+							nItemFuncId = FL_OBJ_UNION;
 						else if( wcscmp(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
-							nItemFuncId = 8;
+							nItemFuncId = FL_OBJ_INTERFACE;
 						else if( wcscmp(szWord,L"typedef") == 0 )
 							bDefinedTypedef = true;
-						if( nItemFuncId != 0 && nItemFuncId != 2 )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END のときは nItemFuncId == 2 のはず
+						if( nItemFuncId != 0 && nItemFuncId != FL_OBJ_FUNCTION )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END のときは nItemFuncId == 2 のはず
 						{
 							nMode2 = M2_NAMESPACE_SAVE;
 							nItemLine = nLineCount + CLogicInt(1);
@@ -778,7 +778,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 						{
 							++ nNestLevel_global;
 							nNamespaceLen[nNestLevel_global] = nNamespaceLen[nNestLevel_global-1] + nItemNameLen;
-							if( nItemFuncId == 7)
+							if( nItemFuncId == FL_OBJ_NAMESPACE )
 								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]],L"::定義位置");
 							else
 							{
@@ -942,7 +942,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 								bInInitList = false;
 							if( !bNoFunction ){
 								nMode2 = M2_FUNC_NAME_END;
-								nItemFuncId = 2;
+								nItemFuncId = FL_OBJ_FUNCTION;
 							}
 						}
 					}
@@ -1013,7 +1013,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,bool bVisibleMemb
 					{
 						wcscpy( &szNamespace[nNamespaceLen[ nNestLevel_global]] , szItemName);
 
-						nItemFuncId = 1;
+						nItemFuncId = FL_OBJ_DECLARE;
 						/*
 						  カーソル位置変換
 						  物理位置(行頭からのバイト数、折り返し無し行位置)
