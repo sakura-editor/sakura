@@ -472,8 +472,12 @@ void CDlgFuncList::SetData()
 		TCHAR			szText[2048];
 		const CFuncInfo*	pcFuncInfo;
 		LV_ITEM			item;
-		int				bSelected;
-		CLayoutInt		nFuncLineOld;
+		bool			bSelected;
+		CLayoutInt		nFuncLineOld(-1);
+		CLayoutInt		nFuncColOld(-1);
+		CLayoutInt		nFuncLineTop(INT_MAX);
+		CLayoutInt		nFuncColTop(INT_MAX);
+		int				nSelectedLineTop = 0;
 		int				nSelectedLine = 0;
 		RECT			rc;
 
@@ -490,25 +494,32 @@ void CDlgFuncList::SetData()
 		}
 
 		::EnableWindow( ::GetDlgItem( GetHwnd() , IDC_BUTTON_COPY ), TRUE );
-		nFuncLineOld = CLayoutInt(0);
-		bSelected = FALSE;
+		bSelected = false;
 		for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 			pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 			if( !bSelected ){
-				if( i == 0 && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
-					bSelected = TRUE;
-					nSelectedLine = i;
-				}
-				else if( i > 0 && nFuncLineOld <= m_nCurLine && m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT ){
-					bSelected = TRUE;
-					nSelectedLine = i - 1;
+				if( pcFuncInfo->m_nFuncLineLAYOUT < nFuncLineTop
+					|| (pcFuncInfo->m_nFuncLineLAYOUT == nFuncLineTop && pcFuncInfo->m_nFuncColLAYOUT <= nFuncColTop) ){
+					nFuncLineTop = pcFuncInfo->m_nFuncLineLAYOUT;
+					nFuncColTop = pcFuncInfo->m_nFuncColLAYOUT;
+					nSelectedLineTop = i;
 				}
 			}
-			nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
+			{
+				if( (nFuncLineOld	 < pcFuncInfo->m_nFuncLineLAYOUT
+					|| (nFuncLineOld == pcFuncInfo->m_nFuncColLAYOUT && nFuncColOld <= pcFuncInfo->m_nFuncColLAYOUT))
+				  && (pcFuncInfo->m_nFuncLineLAYOUT < m_nCurLine
+					|| (pcFuncInfo->m_nFuncLineLAYOUT == m_nCurLine && pcFuncInfo->m_nFuncColLAYOUT <= m_nCurCol)) ){
+					nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
+					nFuncColOld = pcFuncInfo->m_nFuncColLAYOUT;
+					bSelected = true;
+					nSelectedLine = i;
+				}
+			}
 		}
 		if( 0 < m_pcFuncInfoArr->GetNum() && !bSelected ){
-			bSelected = TRUE;
-			nSelectedLine =  m_pcFuncInfoArr->GetNum() - 1;
+			bSelected = true;
+			nSelectedLine =  nSelectedLineTop;
 		}
 		for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 			/* 現在の解析結果要素 */
@@ -757,6 +768,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
 	CLayoutInt		nFuncColOld;
+	CLayoutInt		nFuncLineTop(INT_MAX);
+	CLayoutInt		nFuncColTop(INT_MAX);
 	int				nSelectedLine;
 	TV_INSERTSTRUCT	tvis;
 	const TCHAR*	pPos;
@@ -764,7 +777,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	HTREEITEM		htiGlobal = NULL;	// Jan. 04, 2001 genta C++と統合
 	HTREEITEM		htiClass;
 	HTREEITEM		htiItem;
-	HTREEITEM		htiItemOld = NULL;
+	HTREEITEM		htiSelectedTop = NULL;
 	HTREEITEM		htiSelected = NULL;
 	TV_ITEM			tvi;
 	int				nClassNest;
@@ -796,8 +809,8 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	m_pcFuncInfoArr->SetAppendText( FL_OBJ_INTERFACE,	L" インターフェース", false );
 	m_pcFuncInfoArr->SetAppendText( FL_OBJ_GLOBAL,		L"グローバル", false );
 	
-	nFuncLineOld = CLayoutInt(0);
-	nFuncColOld = CLayoutInt(0);
+	nFuncLineOld = CLayoutInt(-1);
+	nFuncColOld = CLayoutInt(-1);
 	bSelected = FALSE;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
@@ -1022,25 +1035,25 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 
 		/* 現在カーソル位置のメソッドかどうか調べる */
 		if( !bSelected ){
-			if( i == 0 &&
-				( m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT
-				|| ( m_nCurLine == pcFuncInfo->m_nFuncLineLAYOUT && m_nCurCol < pcFuncInfo->m_nFuncColLAYOUT ) ) ){
+			if( pcFuncInfo->m_nFuncLineLAYOUT < nFuncLineTop
+				|| (pcFuncInfo->m_nFuncLineLAYOUT == nFuncLineTop && pcFuncInfo->m_nFuncColLAYOUT <= nFuncColTop) ){
+				nFuncLineTop = pcFuncInfo->m_nFuncLineLAYOUT;
+				nFuncColTop = pcFuncInfo->m_nFuncColLAYOUT;
+				htiSelectedTop = htiItem;
+			}
+		}
+		{
+			if( (nFuncLineOld < pcFuncInfo->m_nFuncLineLAYOUT
+				|| (nFuncLineOld == pcFuncInfo->m_nFuncColLAYOUT && nFuncColOld <= pcFuncInfo->m_nFuncColLAYOUT))
+			  && (pcFuncInfo->m_nFuncLineLAYOUT < m_nCurLine
+				|| (pcFuncInfo->m_nFuncLineLAYOUT == m_nCurLine && pcFuncInfo->m_nFuncColLAYOUT <= m_nCurCol)) ){
+				nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
+				nFuncColOld = pcFuncInfo->m_nFuncColLAYOUT;
 				bSelected = TRUE;
 				nSelectedLine = i;
 				htiSelected = htiItem;
-			}else
-			if( i > 0 &&
-				( nFuncLineOld < m_nCurLine || ( nFuncLineOld == m_nCurLine && nFuncColOld <= m_nCurCol ) ) &&
-				( m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT
-				|| ( m_nCurLine == pcFuncInfo->m_nFuncLineLAYOUT && m_nCurCol < pcFuncInfo->m_nFuncColLAYOUT ) ) ){
-				bSelected = TRUE;
-				nSelectedLine = i - 1;
-				htiSelected = htiItemOld;
 			}
 		}
-		nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
-		nFuncColOld = pcFuncInfo->m_nFuncColLAYOUT;
-		htiItemOld = htiItem;
 		//	Jan. 04, 2001 genta
 		//	deleteはその都度行うのでここでは不要
 	}
@@ -1056,9 +1069,7 @@ void CDlgFuncList::SetTreeJava( HWND hwndDlg, BOOL bAddClass )
 	if( bSelected ){
 		TreeView_SelectItem( hwndTree, htiSelected );
 	}else{
-		if( NULL != htiItemOld ){
-			TreeView_SelectItem( hwndTree, htiItemOld );
-		}
+		TreeView_SelectItem( hwndTree, htiSelectedTop );
 	}
 //	GetTreeTextNext( hwndTree, NULL, 0 );
 	return;
@@ -1102,32 +1113,37 @@ void CDlgFuncList::SetListVB (void)
 		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
 	}
 
-	nFuncLineOld = CLayoutInt(0);
-	nFuncColOld = CLayoutInt(0);
+	nFuncLineOld = CLayoutInt(-1);
+	nFuncColOld = CLayoutInt(-1);
+	CLayoutInt nFuncLineTop(INT_MAX);
+	CLayoutInt nFuncColTop(INT_MAX);
+	int nSelectedLineTop = 0;
 	bSelected = FALSE;
 	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
 		pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 		if( !bSelected ){
-			if( i == 0 &&
-				( m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT
-				|| ( m_nCurLine == pcFuncInfo->m_nFuncLineLAYOUT && m_nCurCol < pcFuncInfo->m_nFuncColLAYOUT ) ) ){
-				bSelected = TRUE;
-				nSelectedLine = i;
-			} else
-			if( i > 0 &&
-				( nFuncLineOld < m_nCurLine || ( nFuncLineOld == m_nCurLine && nFuncColOld <= m_nCurCol ) ) &&
-				( m_nCurLine < pcFuncInfo->m_nFuncLineLAYOUT
-				|| ( m_nCurLine == pcFuncInfo->m_nFuncLineLAYOUT && m_nCurCol < pcFuncInfo->m_nFuncColLAYOUT ) ) ){
-				bSelected = TRUE;
-				nSelectedLine = i - 1;
+			if( pcFuncInfo->m_nFuncLineLAYOUT < nFuncLineTop
+				|| (pcFuncInfo->m_nFuncLineLAYOUT == nFuncLineTop && pcFuncInfo->m_nFuncColLAYOUT <= nFuncColTop) ){
+				nFuncLineTop = pcFuncInfo->m_nFuncLineLAYOUT;
+				nFuncColTop = pcFuncInfo->m_nFuncColLAYOUT;
+				nSelectedLineTop = i;
 			}
 		}
-		nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
-		nFuncColOld = pcFuncInfo->m_nFuncColLAYOUT;
+		{
+			if( (nFuncLineOld < pcFuncInfo->m_nFuncLineLAYOUT
+				|| (nFuncLineOld == pcFuncInfo->m_nFuncColLAYOUT && nFuncColOld <= pcFuncInfo->m_nFuncColLAYOUT))
+			  && (pcFuncInfo->m_nFuncLineLAYOUT < m_nCurLine
+				|| (pcFuncInfo->m_nFuncLineLAYOUT == m_nCurLine && pcFuncInfo->m_nFuncColLAYOUT <= m_nCurCol)) ){
+				nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
+				nFuncColOld = pcFuncInfo->m_nFuncColLAYOUT;
+				bSelected = TRUE;
+				nSelectedLine = i;
+			}
+		}
 	}
 	if( 0 < m_pcFuncInfoArr->GetNum() && !bSelected ){
 		bSelected = TRUE;
-		nSelectedLine =  m_pcFuncInfoArr->GetNum() - 1;
+		nSelectedLine =  nSelectedLineTop;
 	}
 
 	TCHAR			szText[2048];
@@ -1320,6 +1336,7 @@ void CDlgFuncList::SetListVB (void)
 void CDlgFuncList::SetTree(bool tagjump)
 {
 	HTREEITEM hItemSelected = NULL;
+	HTREEITEM hItemSelectedTop = NULL;
 	HWND hwndTree = ::GetDlgItem( GetHwnd(), IDC_TREE_FL );
 
 	int i;
@@ -1329,6 +1346,11 @@ void CDlgFuncList::SetTree(bool tagjump)
 	HTREEITEM* phParentStack;
 	phParentStack = (HTREEITEM*)malloc( nStackDepth * sizeof( HTREEITEM ) );
 	phParentStack[ nStackPointer ] = TVI_ROOT;
+	CLayoutInt nFuncLineOld(-1);
+	CLayoutInt nFuncColOld(-1);
+	CLayoutInt nFuncLineTop(INT_MAX);
+	CLayoutInt nFuncColTop(INT_MAX);
+	bool bSelected = false;
 
 	m_cmemClipText.SetString(L"");
 	{
@@ -1388,9 +1410,22 @@ void CDlgFuncList::SetTree(bool tagjump)
 
 		/*	pcFuncInfoに登録されている行数、桁を確認して、選択するアイテムを考える
 		*/
-		if ( pcFuncInfo->m_nFuncLineLAYOUT < m_nCurLine
-			|| ( pcFuncInfo->m_nFuncLineLAYOUT == m_nCurLine && pcFuncInfo->m_nFuncColLAYOUT <= m_nCurCol ) ){
+		if( !bSelected ){
+			if( pcFuncInfo->m_nFuncLineLAYOUT < nFuncLineTop
+				|| (pcFuncInfo->m_nFuncLineLAYOUT == nFuncLineTop && pcFuncInfo->m_nFuncColLAYOUT <= nFuncColTop) ){
+				nFuncLineTop = pcFuncInfo->m_nFuncLineLAYOUT;
+				nFuncColTop = pcFuncInfo->m_nFuncColLAYOUT;
+				hItemSelectedTop = hItem;
+			}
+		}
+		if( (nFuncLineOld < pcFuncInfo->m_nFuncLineLAYOUT
+			|| (nFuncLineOld == pcFuncInfo->m_nFuncColLAYOUT && nFuncColOld <= pcFuncInfo->m_nFuncColLAYOUT))
+		  && (pcFuncInfo->m_nFuncLineLAYOUT < m_nCurLine
+			|| (pcFuncInfo->m_nFuncLineLAYOUT == m_nCurLine && pcFuncInfo->m_nFuncColLAYOUT <= m_nCurCol)) ){
+			nFuncLineOld = pcFuncInfo->m_nFuncLineLAYOUT;
+			nFuncColOld = pcFuncInfo->m_nFuncColLAYOUT;
 			hItemSelected = hItem;
+			bSelected = true;
 		}
 
 		/* クリップボードコピー用テキストを作成する */
@@ -1426,6 +1461,8 @@ end_of_func:;
 	if( NULL != hItemSelected ){
 		/* 現在カーソル位置のメソッドを選択状態にする */
 		TreeView_SelectItem( hwndTree, hItemSelected );
+	}else if( NULL != hItemSelectedTop ){
+		TreeView_SelectItem( hwndTree, hItemSelectedTop );
 	}
 
 	free( phParentStack );
