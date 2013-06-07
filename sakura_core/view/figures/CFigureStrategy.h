@@ -24,9 +24,8 @@
 #ifndef SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_
 #define SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_
 
-#include "view/colors/CColorStrategy.h" //SColorStrategyInfo
-#include "util/design_template.h"
 #include <vector>
+#include "view/colors/CColorStrategy.h" //SColorStrategyInfo
 
 
 //$$レイアウト構築フロー(DoLayout)も CFigure で行うと整理しやすい
@@ -47,6 +46,16 @@ protected:
 	const STypeConfig* m_pTypeData;
 };
 
+//! 通常テキスト描画
+class CFigure_Text : public CFigure{
+public:
+	bool DrawImp(SColorStrategyInfo* pInfo);
+	bool Match(const wchar_t* pText) const
+	{
+		return true;
+	}
+};
+
 //! 各種空白（半角空白／全角空白／タブ／改行）描画用の基本クラス
 class CFigureSpace : public CFigure{
 public:
@@ -59,21 +68,6 @@ protected:
 	bool DrawImp_StyleSelect(SColorStrategyInfo* pInfo);
 	void DrawImp_StylePop(SColorStrategyInfo* pInfo);
 	void DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos&);
-};
-
-
-
-class CFigureManager : public TSingleton<CFigureManager>{
-public:
-	CFigureManager();
-	virtual ~CFigureManager();
-	CFigure& GetFigure(const wchar_t* pText);
-
-	// 設定変更
-	void OnChangeSetting(void);
-
-private:
-	std::vector<CFigure*>	m_vFigures;
 };
 
 #endif /* SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_ */

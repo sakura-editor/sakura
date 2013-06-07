@@ -24,5 +24,22 @@
 #ifndef SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_
 #define SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_
 
+#include <vector>
+#include "util/design_template.h"
+#include "CFigureStrategy.h"
+
+class CFigureManager : public TSingleton<CFigureManager>{
+public:
+	CFigureManager();
+	virtual ~CFigureManager();
+	CFigure& GetFigure(const wchar_t* pText);
+
+	// ê›íËïœçX
+	void OnChangeSetting(void);
+
+private:
+	std::vector<CFigure*>	m_vFigures;
+};
+
 #endif /* SAKURA_CFIGUREMANAGER_470D38ED_45D5_4E64_8D29_FFEA361C59E4_H_ */
 /*[EOF]*/
