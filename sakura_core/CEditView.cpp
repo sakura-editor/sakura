@@ -10441,7 +10441,7 @@ searchnext:;
 					}
 					break;
 				default:	//@@@ 2002.01.04 add start
-					if( nCOMMENTMODE >= COLORIDX_REGEX_FIRST && nCOMMENTMODE <= COLORIDX_REGEX_LAST ){	//正規表現キーワード1～10
+					if( nCOMMENTMODE & COLORIDX_REGEX_BIT ){	//正規表現キーワード1～10
 						if( nPos == nCOMMENTEND ){
 							nBgn = nPos;
 							nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
@@ -10459,14 +10459,14 @@ searchnext:;
 					nCharChars = 1;
 				}else
 				if( (unsigned char)pLine[nPos] == 0x81 && (unsigned char)pLine[nPos + 1] == 0x40	//@@@ 2001.11.17 upd MIK
-				 && (nCOMMENTMODE < COLORIDX_REGEX_FIRST || nCOMMENTMODE > COLORIDX_REGEX_LAST) )	//@@@ 2002.01.04
+				 && !(nCOMMENTMODE & COLORIDX_REGEX_BIT) )	//@@@ 2002.01.04
 				{	//@@@ 2001.11.17 add MIK	//@@@ 2002.01.04
 					nBgn = nPos + 2;
 					nCharChars = 2;
 				}
 				//半角空白（半角スペース）を表示 2002.04.28 Add by KK 
 				else if (pLine[nPos] == ' ' && TypeDataPtr->m_ColorInfoArr[COLORIDX_SPACE].m_bDisp 
-					 && (nCOMMENTMODE < COLORIDX_REGEX_FIRST || nCOMMENTMODE > COLORIDX_REGEX_LAST) )
+				 && !(nCOMMENTMODE & COLORIDX_REGEX_BIT) )
 				{
 					nBgn = nPos + 1;
 					nCharChars = 1;

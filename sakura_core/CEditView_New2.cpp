@@ -80,7 +80,7 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 
 //@@@ 2001.11.17 add start MIK
 	default:	/* 正規表現キーワード */
-		if( nCOMMENTMODE >= COLORIDX_REGEX_FIRST && nCOMMENTMODE <= COLORIDX_REGEX_LAST )
+		if( nCOMMENTMODE & COLORIDX_REGEX_BIT )
 		{
 			nColorIdx = (EColorIndexType)(nCOMMENTMODE - COLORIDX_REGEX_FIRST);	//下駄を履かせているのをはずす
 			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;

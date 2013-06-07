@@ -251,10 +251,16 @@ extern const int		SELECTEDAREA_ROP2;
 //                          色定数                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-// Stonee 注： 2000/01/12
-// ここを変更したときは、global.cpp のg_ColorAttributeArrの定義も変更して下さい。
-//	From Here Sept. 18, 2000 JEPRO 順番を大幅に入れ替えた
-//	2007.09.09 Moca  中間の定義はお任せに変更
+// 色定数を色番号に変換するための識別bit
+#define COLORIDX_BLOCK_BIT (2 << 9)		//!< ブロックコメント識別bit
+#define COLORIDX_REGEX_BIT (2 << 10)	//!< 正規表現キーワード識別bit
+
+/*! 色定数
+	@date 2000.01.12 Stonee ここを変更したときは、CColorStrategy.cpp のg_ColorAttributeArrの定義も変更して下さい。
+	@date 2000.09.18 JEPRO 順番を大幅に入れ替えた
+	@date 2007.09.09 Moca  中間の定義はお任せに変更
+	@date 2013.04.26 novice 色定数を色番号を変換するための識別bit導入
+*/
 enum EColorIndexType {
 	COLORIDX_TEXT = 0,      //!< テキスト
 	COLORIDX_RULER,         //!< ルーラー
@@ -307,18 +313,17 @@ enum EColorIndexType {
 	//カラーの最後
 	COLORIDX_LAST,			//!< カラーの最後
 
-	//カラー表示制御用
-	COLORIDX_BLOCK1,        //!< ブロックコメント1(文字色と背景色は行コメントと同じ)
-	COLORIDX_BLOCK2,        //!< ブロックコメント2(文字色と背景色は行コメントと同じ)
+	//カラー表示制御用(ブロックコメント)
+	COLORIDX_BLOCK1			= COLORIDX_BLOCK_BIT,			//!< ブロックコメント1(文字色と背景色は行コメントと同じ)
+	COLORIDX_BLOCK2,        								//!< ブロックコメント2(文字色と背景色は行コメントと同じ)
 
-	//1000- : カラー表示制御用(正規表現キーワード)
-	COLORIDX_REGEX_FIRST = 1000,										//!< 正規表現キーワード(最初)
-	COLORIDX_REGEX_LAST  = COLORIDX_REGEX_FIRST + COLORIDX_LAST - 1,	//!< 正規表現キーワード(最後)
+	//カラー表示制御用(正規表現キーワード)
+	COLORIDX_REGEX_FIRST	= COLORIDX_REGEX_BIT,						//!< 正規表現キーワード(最初)
+	COLORIDX_REGEX_LAST  	= COLORIDX_REGEX_FIRST + COLORIDX_LAST - 1,	//!< 正規表現キーワード(最後)
 
 	// -- -- 別名 -- -- //
 	COLORIDX_DEFAULT		= COLORIDX_TEXT,							//!< デフォルト
 };
-//	To Here Sept. 18, 2000
 
 
 
