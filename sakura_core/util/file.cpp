@@ -27,7 +27,7 @@ bool fexist(LPCTSTR pszPath)
 	@date 2004.11.13 genta/Moca ファイル名先頭の*?を考慮
 	@date 2005.01.10 genta 変数名変更 j -> cur_pos
 	@date 2005.01.23 genta 警告抑制のため，gotoをreturnに変更
-	
+	@date 2013.05.27 Moca 最長一致に変更
 */
 bool IsFilePath(
 	const wchar_t*	pLine,		//!< [in]  探査対象文字列
@@ -36,7 +36,7 @@ bool IsFilePath(
 	bool			bFileOnly	//!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
 )
 {
-	wchar_t	szJumpToFile[1024];
+	wchar_t	szJumpToFile[_MAX_PATH];
 	wmemset( szJumpToFile, 0, _countof( szJumpToFile ) );
 
 	int	nLineLen = wcslen( pLine );
@@ -68,6 +68,7 @@ bool IsFilePath(
 
 	*pnBgn = i;
 	int cur_pos = 0;
+	int tmp_end = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < _countof(szJumpToFile); ++i ){
 		//ファイル名終端を検知する
 		if( WCODE::IsLineDelimiter(pLine[i]) || pLine[i] == L'\0' ){
@@ -79,22 +80,24 @@ bool IsFilePath(
 			  pLine[i] == L' '  ||
 			  pLine[i] == L'\t' ||	//@@@ 2002.01.08 YAZAKI タブ文字も。
 			  pLine[i] == L'('  ||
-			  pLine[i] == L'>'  ||
-			  // May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
-			  ( cur_pos > 1 && pLine[i] == L':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
-			  pLine[i] == L'"'
+			  pLine[i] == L'"' ||
+			  wcschr(L")'`[]{};#!@&%$", pLine[i]) != NULL // 2013.05.27 Moca 文字種追加
 			) &&
 			szJumpToFile[0] != L'\0'
 		){
 			//	ファイル存在確認
 			if( IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
-				break;
+				tmp_end = cur_pos;
 			}
 		}
 
-		//ファイル名に使えない文字が含まれていたら、即、falseを返す
+		// May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
+		if( cur_pos > 1 && pLine[i] == L':' ){   //@@@ 2003/1/15/ matsumo (for gcc)
+			break;
+		}
+		//ファイル名に使えない文字が含まれていたら、即ループ終了
 		if( !WCODE::IsValidFilenameChar(pLine,i) ){
-			return false;
+			break;
 		}
 
 		szJumpToFile[cur_pos] = pLine[i];
@@ -104,9 +107,10 @@ bool IsFilePath(
 	//	Jan. 04, 2002 genta
 	//	ファイル存在確認方法変更
 	if( szJumpToFile[0] != L'\0' && IsFileExists(to_tchar(szJumpToFile), bFileOnly)){
-		//	Jan. 04, 2002 genta
-		//	あまりに変なコーディングなので移動
-		*pnPathLen = wcslen( szJumpToFile );
+		tmp_end = cur_pos;
+	}
+	if( tmp_end != 0 ){
+		*pnPathLen = tmp_end;
 		return true;
 	}
 
