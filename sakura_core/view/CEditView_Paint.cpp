@@ -31,7 +31,7 @@
 #include "view/CRuler.h"
 #include "view/colors/CColorStrategy.h"
 #include "view/colors/CColor_Found.h"
-#include "view/figures/CFigureStrategy.h"
+#include "view/figures/CFigureManager.h"
 #include "types/CTypeSupport.h"
 #include "doc/CEditDoc.h"
 #include "doc/layout/CLayout.h"
