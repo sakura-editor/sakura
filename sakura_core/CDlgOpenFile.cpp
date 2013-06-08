@@ -19,17 +19,17 @@
 */
 
 #include "StdAfx.h"
+#include <cderr.h>
+#include <dlgs.h>
 #include "CDlgOpenFile.h"
+#include "Funccode.h"	//Stonee, 2001/05/18
 #include "Debug.h"
 #include "etc_uty.h"
 #include "global.h"
-#include "Funccode.h"	//Stonee, 2001/05/18
 #include "MY_SP.h"	// Jun. 23, 2002 genta
 #include "CFileExt.h"
 #include "CEditApp.h"
 #include "my_icmp.h"
-#include <dlgs.h>    // stc3,...
-#include <cderr.h>   // FNERR...,CDERR...
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -68,23 +68,18 @@ BOOL			m_bIsSaveDialog;	/* 保存のダイアログか */
 */
 LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-//	WPARAM					wCtlFocus;	/* フォーカスを持つコントロールのID */
-//	BOOL					fHandle;	/* wParamが処理するフラグ */
 	int						idCtrl;
 	OFNOTIFY*				pofn;
-//	int						nIdx;
-//	char*					pszWork;
 	WORD					wNotifyCode;
 	WORD					wID;
 	HWND					hwndCtl;
-//	HWND					hwndFrame;
 	static DLLSHAREDATA*	pShareData;
 	switch( uMsg ){
 	case WM_MOVE:
 		/* 「開く」ダイアログのサイズと位置 */
 		pShareData = CShareData::getInstance()->GetShareData();
 		::GetWindowRect( hwnd, &pShareData->m_Common.m_sOthers.m_rcOpenDialog );
-//		MYTRACE_A( "WM_MOVE 1\n" );
+//		MYTRACE( _T("WM_MOVE 1\n") );
 		break;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	// notification code
@@ -109,14 +104,14 @@ LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	case WM_NOTIFY:
 		idCtrl = (int) wParam;
 		pofn = (OFNOTIFY*) lParam;
-//		MYTRACE_A( "=========WM_NOTIFY=========\n" );
-//		MYTRACE_A( "pofn->hdr.hwndFrom=%xh\n", pofn->hdr.hwndFrom );
-//		MYTRACE_A( "pofn->hdr.idFrom=%xh(%d)\n", pofn->hdr.idFrom, pofn->hdr.idFrom );
-//		MYTRACE_A( "pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
+//		MYTRACE( _T("=========WM_NOTIFY=========\n") );
+//		MYTRACE( _T("pofn->hdr.hwndFrom=%xh\n"), pofn->hdr.hwndFrom );
+//		MYTRACE( _T("pofn->hdr.idFrom=%xh(%d)\n"), pofn->hdr.idFrom, pofn->hdr.idFrom );
+//		MYTRACE( _T("pofn->hdr.code=%xh(%d)\n"), pofn->hdr.code, pofn->hdr.code );
 		break;
 	}
 //	return ::CallWindowProc( (int (__stdcall *)( void ))(WNDPROC)m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
-	return ::CallWindowProc( (WNDPROC)m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
+	return ::CallWindowProc( m_wpOpenDialogProc, hwnd, uMsg, wParam, lParam );
 }
 
 
@@ -136,7 +131,6 @@ UINT_PTR CALLBACK OFNHookProc(
 )
 {
 	POINT					po;
-//	RECT					rc0;
 	RECT					rc;
 	static OPENFILENAME*	pOf;
 	static HWND				hwndOpenDlg;
@@ -147,12 +141,10 @@ UINT_PTR CALLBACK OFNHookProc(
 	static HWND				hwndCheckBOM;	//	Jul. 26, 2003 ryoji BOMチェックボックス
 	static CDlgOpenFile*	pcDlgOpenFile;
 	int						i;
+	int						nSize;
 	OFNOTIFY*				pofn;
 	int						idCtrl;
-//	HWND					hwndCtrl;
 	LRESULT					lRes;
-	const int				nExtraSize = 100;
-	const int				nControls = 9;
 	WORD					wNotifyCode;
 	WORD					wID;
 	HWND					hwndCtl;
@@ -181,20 +173,12 @@ UINT_PTR CALLBACK OFNHookProc(
 	int nEolNameArrNum = (int)_countof(pEolNameArr);
 
 //	To Here	Feb. 9, 2001 genta
-	int	Controls[nControls] = {
-		stc3, stc2,		// The two label controls
-		edt1, cmb1,		// The edit control and the drop-down box
-		IDOK, IDCANCEL,
-		pshHelp,		// The Help command button (push button)
-		lst1,			// The Explorer window
-		chx1			// The read-only check box
-	};
 	int	nRightMargin = 24;
 	HWND	hwndFrame;
 
 	switch( uiMsg ){
 	case WM_MOVE:
-//		MYTRACE_A( "WM_MOVE 2\n" );
+//		MYTRACE( _T("WM_MOVE 2\n") );
 		break;
 	case WM_SIZE:
 		fwSizeType = wParam;		// resizing flag
@@ -308,13 +292,15 @@ UINT_PTR CALLBACK OFNHookProc(
 
 			/* 最近開いたファイル コンボボックス初期値設定 */
 			//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
-			for( i = 0; i < (int)m_vMRU.size(); i++ ){
+			nSize = (int)m_vMRU.size();
+			for( i = 0; i < nSize; i++ ){
 				::SendMessage( hwndComboMRU, CB_ADDSTRING, 0, (LPARAM)m_vMRU[i] );
 			}
 
 			/* 最近開いたフォルダ コンボボックス初期値設定 */
 			//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
-			for( i = 0; i < (int)m_vOPENFOLDER.size(); i++ ){
+			nSize = (int)m_vOPENFOLDER.size();
+			for( i = 0; i < nSize; i++ ){
 				::SendMessage( hwndComboOPENFOLDER, CB_ADDSTRING, 0, (LPARAM)m_vOPENFOLDER[i] );
 			}
 		}
@@ -330,10 +316,10 @@ UINT_PTR CALLBACK OFNHookProc(
 	case WM_NOTIFY:
 		idCtrl = (int) wParam;
 		pofn = (OFNOTIFY*) lParam;
-//		MYTRACE_A( "=========WM_NOTIFY=========\n" );
-//		MYTRACE_A( "pofn->hdr.hwndFrom=%xh\n", pofn->hdr.hwndFrom );
-//		MYTRACE_A( "pofn->hdr.idFrom=%xh(%d)\n", pofn->hdr.idFrom, pofn->hdr.idFrom );
-//		MYTRACE_A( "pofn->hdr.code=%xh(%d)\n", pofn->hdr.code, pofn->hdr.code );
+//		MYTRACE( _T("=========WM_NOTIFY=========\n") );
+//		MYTRACE( _T("pofn->hdr.hwndFrom=%xh\n"), pofn->hdr.hwndFrom );
+//		MYTRACE( _T("pofn->hdr.idFrom=%xh(%d)\n"), pofn->hdr.idFrom, pofn->hdr.idFrom );
+//		MYTRACE( _T("pofn->hdr.code=%xh(%d)\n"), pofn->hdr.code, pofn->hdr.code );
 
 		switch( pofn->hdr.code ){
 		case CDN_FILEOK:
@@ -418,29 +404,29 @@ UINT_PTR CALLBACK OFNHookProc(
 			}
 			//	To Here Jul. 26, 2003 ryoji
 
-//			MYTRACE_A( "文字コード  lRes=%d\n", lRes );
-//			MYTRACE_A( "pofn->hdr.code=CDN_FILEOK        \n" );break;
+//			MYTRACE( _T("文字コード  lRes=%d\n"), lRes );
+//			MYTRACE( _T("pofn->hdr.code=CDN_FILEOK        \n") );break;
 			break;	/* CDN_FILEOK */
 
 		case CDN_FOLDERCHANGE  :
-//			MYTRACE_A( "pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
+//			MYTRACE( _T("pofn->hdr.code=CDN_FOLDERCHANGE  \n") );
 			{
 				TCHAR szFolder[_MAX_PATH];
 				lRes = ::SendMessage( hwndOpenDlg, CDM_GETFOLDERPATH, _countof( szFolder ), (LPARAM)szFolder );
 			}
-//			MYTRACE_A( "\tlRes=%d\tszFolder=[%s]\n", lRes, szFolder );
+//			MYTRACE( _T("\tlRes=%d\tszFolder=[%s]\n"), lRes, szFolder );
 
 			break;
-//		case CDN_HELP			:	MYTRACE_A( "pofn->hdr.code=CDN_HELP          \n" );break;
-//		case CDN_INITDONE		:	MYTRACE_A( "pofn->hdr.code=CDN_INITDONE      \n" );break;
-//		case CDN_SELCHANGE		:	MYTRACE_A( "pofn->hdr.code=CDN_SELCHANGE     \n" );break;
-//		case CDN_SHAREVIOLATION	:	MYTRACE_A( "pofn->hdr.code=CDN_SHAREVIOLATION\n" );break;
-//		case CDN_TYPECHANGE		:	MYTRACE_A( "pofn->hdr.code=CDN_TYPECHANGE    \n" );break;
-//		default:					MYTRACE_A( "pofn->hdr.code=???\n" );break;
+//		case CDN_HELP			:	MYTRACE( _T("pofn->hdr.code=CDN_HELP          \n") );break;
+//		case CDN_INITDONE		:	MYTRACE( _T("pofn->hdr.code=CDN_INITDONE      \n") );break;
+//		case CDN_SELCHANGE		:	MYTRACE( _T("pofn->hdr.code=CDN_SELCHANGE     \n") );break;
+//		case CDN_SHAREVIOLATION	:	MYTRACE( _T("pofn->hdr.code=CDN_SHAREVIOLATION\n") );break;
+//		case CDN_TYPECHANGE		:	MYTRACE( _T("pofn->hdr.code=CDN_TYPECHANGE    \n") );break;
+//		default:					MYTRACE( _T("pofn->hdr.code=???\n") );break;
 
 		}
 
-//		MYTRACE_A( "=======================\n" );
+//		MYTRACE( _T("=======================\n") );
 		break;
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	// notification code
@@ -538,7 +524,6 @@ CDlgOpenFile::CDlgOpenFile()
 {
 	/* メンバの初期化 */
 	long	lPathLen;
-//	int		nCharChars;
 
 	m_nCharCode = CODE_AUTODETECT;	/* 文字コード *//* 文字コード自動判別 */
 
@@ -584,31 +569,6 @@ CDlgOpenFile::~CDlgOpenFile()
 }
 
 
-#if 0
-/*! 初期化
-	DoModal_GetSaveFileName/DoModal_GetOpenFileName用
-	
-	@author Moca
-	@date 2003.06.23
-*/
-void CDlgOpenFile::Create(
-	HINSTANCE		hInstance,
-	HWND			hwndParent,
-	const char*		pszUserWildCard,
-	const char*		pszDefaultPath
-)
-{
-	Create(
-		hInstance,
-		hwndParent,
-		pszUserWildCard,
-		pszDefaultPath,
-		NULL,
-		NULL
-	);
-}
-#endif
-
 /* 初期化 */
 void CDlgOpenFile::Create(
 	HINSTANCE					hInstance,
@@ -628,7 +588,7 @@ void CDlgOpenFile::Create(
 	}
 
 	/* 「開く」での初期フォルダ */
-	if( pszDefaultPath && 0 < _tcslen( pszDefaultPath ) ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
+	if( pszDefaultPath && pszDefaultPath[0] != _T('\0') ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		TCHAR szDrive[_MAX_DRIVE];
 		TCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
@@ -796,7 +756,8 @@ bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* p
 	cFileExt.AppendExtRaw( _T("すべてのファイル"), _T("*.*") );
 	cFileExt.AppendExtRaw( _T("テキストファイル"), _T("*.txt") );
 	for( i = 0; i < MAX_TYPES; i++ ){
-		cFileExt.AppendExt( m_pShareData->m_Types[i].m_szTypeName, m_pShareData->m_Types[i].m_szTypeExts );
+		const STypeConfig& types = m_pShareData->m_Types[i];
+		cFileExt.AppendExt( types.m_szTypeName, types.m_szTypeExts );
 	}
 
 	//OPENFILENAME構造体の初期化
@@ -861,7 +822,7 @@ bool CDlgOpenFile::DoModalOpenDlg( char* pszPath, ECodeType* pnCharCode, bool* p
 			例）hoge.abc -> hoge.abc.txt
 		自前で補完することでこれを回避する。（実際の処理はフックプロシージャの中）
 */
-BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, bool* pbBom )
+bool CDlgOpenFile::DoModalSaveDlg( char* pszPath, ECodeType* pnCharCode, CEol* pcEol, bool* pbBom )
 {
 	m_bIsSaveDialog = TRUE;	/* 保存のダイアログか */
 
@@ -939,12 +900,12 @@ BOOL CDlgOpenFile::DoModalSaveDlg( char* pszPath, ECodeType* pnCharCode, CEol* p
 		if( m_bUseBom ){
 			*pbBom = m_bBom;
 		}
-		return TRUE;
+		return true;
 	}
 	else{
 		//	May 29, 2004 genta 関数にまとめた
 		DlgOpenFail();
-		return FALSE;
+		return false;
 	}
 }
 

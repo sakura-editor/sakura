@@ -51,14 +51,9 @@ struct OPENFILENAMEZ : public OPENFILENAME {
 class CDlgOpenFile
 {
 public:
-	/*
-	||  Constructors
-	*/
+	//コンストラクタ・デストラクタ
 	CDlgOpenFile();
 	~CDlgOpenFile();
-	/*
-	||  Attributes & Operations
-	*/
 	void Create(
 		HINSTANCE					hInstance,
 		HWND						hwndParent,
@@ -67,31 +62,29 @@ public:
 		const std::vector<LPCTSTR>& vMRU			= std::vector<LPCTSTR>(),
 		const std::vector<LPCTSTR>& vOPENFOLDER		= std::vector<LPCTSTR>()
 	);
-	//void Create( HINSTANCE, HWND, const char*, const char* );
-	//	2002/08/21 moca	引数追加
-	bool DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */
-	//	2002/08/21 30,2002 moca	引数追加
-	bool DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */
-	bool DoModalOpenDlg( char* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
-	//	Feb. 9, 2001 genta	引数追加
-	//	Jul. 26, 2003 ryoji BOM用引数追加
-	BOOL DoModalSaveDlg( char* , ECodeType*, CEol*, bool* );	/* 保存ダイアログ モーダルダイアログの表示 */
 
+	//操作
+	bool DoModal_GetOpenFileName( TCHAR*, bool bSetCurDir = false );	/* 開くダイアログ モーダルダイアログの表示 */	//2002/08/21 moca	引数追加
+	bool DoModal_GetSaveFileName( TCHAR*, bool bSetCurDir = false );	/* 保存ダイアログ モーダルダイアログの表示 */	//2002/08/21 30,2002 moca	引数追加
+	bool DoModalOpenDlg( char* , ECodeType*, bool* );	/* 開くダイアグ モーダルダイアログの表示 */
+	bool DoModalSaveDlg( char* , ECodeType*, CEol*, bool* );	/* 保存ダイアログ モーダルダイアログの表示 */
+
+public:
 	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
 	HWND			m_hWnd;			/* このダイアログのハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 
-	char			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
-	char			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
+	TCHAR			m_szDefaultWildCard[_MAX_PATH + 1];	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	TCHAR			m_szInitialDir[_MAX_PATH + 1];		/* 「開く」での初期ディレクトリ */
 	OPENFILENAMEZ	m_ofn;							/* 2005.10.29 ryoji OPENFILENAMEZ「ファイルを開く」ダイアログ用構造体 */
 	ECodeType		m_nCharCode;					/* 文字コード */
 
 	CEol			m_cEol;		//	Feb. 9, 2001 genta
 	bool			m_bUseEol;	//	Feb. 9, 2001 genta
 
-	bool			m_bBom;		//!< BOMを付けるかどうか
+	bool			m_bBom;		//!< BOMを付けるかどうか	//	Jul. 26, 2003 ryoji BOM
 	bool			m_bUseBom;	//!< BOMの有無を選択する機能を利用するかどうか
 
 	TCHAR			m_szPath[_MAX_PATH];	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
