@@ -78,7 +78,8 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 	CLayoutRange sSelectOld;		//”ÍˆÍ‘I‘ð
 	CLayoutPoint ptInserted;		//‘}“üŒã‚Ì‘}“üˆÊ’u
-	const struct {
+	const struct IsIndentCharSpaceTab{
+		IsIndentCharSpaceTab(){}
 		bool operator()( const wchar_t ch ) const
 		{ return ch == WCODE::SPACE || ch == WCODE::TAB; }
 	} IsIndentChar;
