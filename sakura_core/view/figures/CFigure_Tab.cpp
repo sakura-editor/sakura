@@ -119,7 +119,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	タブ矢印描画関数
 */
 void _DrawTabArrow(
-	CGraphics&	_gr,
+	CGraphics&	gr,
 	int			nPosX,   //ピクセルX
 	int			nPosY,   //ピクセルY
 	int			nWidth,  //ピクセルW
@@ -128,21 +128,41 @@ void _DrawTabArrow(
 	COLORREF	pColor
 )
 {
-	// 一時的なペンを使用するため、新しく CGraphics オブジェクトを作成。
-	CGraphics gr(_gr);
-
 	// ペン設定
-	gr.SetPen( pColor );
+	gr.PushPen( pColor, 0 );
 
 	// 矢印の先頭
 	int sx = nPosX + nWidth - 2;
 	int sy = nPosY + ( nHeight / 2 );
 	int sa = nHeight / 4;								// 鏃のsize
 
-	for(int i = 0; i < (bBold?2:1); i++){
-		int y = sy + i;
-		gr.DrawLine(nPosX,	y,	sx,			y		);	//「─」左端から右端
-		gr.DrawLine(sx,		y,	sx - sa,	y + sa	);	//「／」右端から斜め左下
-		gr.DrawLine(sx,		y,	sx - sa,	y - sa	);	//「＼」右端から斜め左上
+	DWORD pp[] = { 3, 2 };
+	POINT pt[5];
+	pt[0].x = nPosX;	//「─」左端から右端
+	pt[0].y = sy;
+	pt[1].x = sx;		//「／」右端から斜め左下
+	pt[1].y = sy;
+	pt[2].x = sx - sa;	//	矢印の先端に戻る
+	pt[2].y = sy + sa;
+	pt[3].x = sx;		//「＼」右端から斜め左上
+	pt[3].y = sy;
+	pt[4].x = sx - sa;
+	pt[4].y = sy - sa;
+	::PolyPolyline( gr, pt, pp, _countof(pp));
+
+	if( bBold ){
+		pt[0].x += 0;	//「─」左端から右端
+		pt[0].y += 1;
+		pt[1].x += 0;	//「／」右端から斜め左下
+		pt[1].y += 1;
+		pt[2].x += 0;	//	矢印の先端に戻る
+		pt[2].y += 1;
+		pt[3].x += 0;	//「＼」右端から斜め左上
+		pt[3].y += 1;
+		pt[4].x += 0;
+		pt[4].y += 1;
+		::PolyPolyline( gr, pt, pp, _countof(pp));
 	}
+
+	gr.PopPen();
 }
