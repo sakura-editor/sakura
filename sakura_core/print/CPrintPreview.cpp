@@ -1147,6 +1147,15 @@ void CPrintPreview::OnPrint( void )
 }
 
 
+// Tab文字をSpace文字に置換え
+static void Tab2Space(wchar_t* pTrg)
+{
+	for (;*pTrg != L'\0'; pTrg++) {
+		if (*pTrg == L'\t')	*pTrg = L' ';
+	}
+}
+
+
 /*! 印刷/印刷プレビュー ヘッダ･フッタの描画
 */
 void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader )
@@ -1180,6 +1189,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		CSakuraEnvironment::ExpandParameter(
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_LEFT] : m_pPrintSetting->m_szFooterForm[POS_LEFT],
 			szWork, nWorkLen);
+		Tab2Space( szWork );
 		::ExtTextOutW_AnyBuild(
 			hdc,
 			rect.left,
@@ -1195,6 +1205,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		CSakuraEnvironment::ExpandParameter(
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_CENTER] : m_pPrintSetting->m_szFooterForm[POS_CENTER],
 			szWork, nWorkLen);
+		Tab2Space( szWork );
 		SIZE	Size;
 		nLen = wcslen(szWork);
 		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
@@ -1213,6 +1224,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		CSakuraEnvironment::ExpandParameter(
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
 			szWork, nWorkLen);
+		Tab2Space( szWork );
 		nLen = wcslen(szWork);
 		::GetTextExtentPoint32W( hdc, szWork, nLen, &Size);		//テキスト幅
 		::ExtTextOutW_AnyBuild(
