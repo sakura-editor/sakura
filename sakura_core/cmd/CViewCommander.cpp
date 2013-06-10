@@ -140,10 +140,6 @@ BOOL CViewCommander::HandleCommand(
 				CEditApp::getInstance()->m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
 			);
 		}
-
-		/* フォーカス移動時の再描画 */
-		m_pCommanderView->RedrawAll();
-
 		return TRUE;
 	}
 	//	To Here Sep. 29, 2001 genta マクロの実行機能追加
@@ -610,8 +606,6 @@ BOOL CViewCommander::HandleCommand(
 				//プラグイン呼び出し
 				( *plugs.begin() )->Invoke( m_pCommanderView, params );
 
-				/* フォーカス移動時の再描画 */
-				m_pCommanderView->RedrawAll();
 				return bRet;
 			}
 		}
