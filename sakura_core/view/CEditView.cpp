@@ -1052,6 +1052,8 @@ void CEditView::OnSetFocus( void )
 	// 03/02/18 ‘ÎŠ‡ŒÊ‚Ì‹­’²•\Ž¦(•`‰æ) ai
 	m_bDrawBracketPairFlag = TRUE;
 	DrawBracketPair( true );
+
+	GetDocument()->m_pcEditWnd->m_cToolbar.AcceptSharedSearchKey();
 }
 
 
