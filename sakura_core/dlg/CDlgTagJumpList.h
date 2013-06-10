@@ -34,6 +34,7 @@
 #define	SAKURA_CDLGTAGJUMPLIST_H_
 
 #include "dlg/CDialog.h"
+#include "recent/CRecentTagjumpKeyword.h"
 
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
 #define TAG_FILENAME_T        _T("tags")
@@ -150,6 +151,9 @@ private:
 	CNativeW	m_strOldKeyword;	//!< 前回のキーワード
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
 	BOOL	m_bOldTagJumpAnyWhere;	//!< 前回の文字列の途中にマッチ
+
+	SComboBoxItemDeleter	m_comboDel;
+	CRecentTagjumpKeyword	m_cRecentKeyword;
 	
 	POINT	m_ptDefaultSize;
 	RECT	m_rcItems[11];

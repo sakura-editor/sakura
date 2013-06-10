@@ -22,6 +22,7 @@
 class CDialog;
 
 struct DLLSHAREDATA;
+class CRecent;
 
 enum EAnchorStyle
 {
@@ -47,6 +48,16 @@ struct SAnchorList
 {
 	int id;
 	EAnchorStyle anchor;
+};
+
+struct SComboBoxItemDeleter
+{
+	CRecent*	pRecent;
+	HWND		hwndCombo;
+	WNDPROC		pComboBoxWndProc;
+	WNDPROC		pEditWndProc;
+	WNDPROC		pListBoxWndProc;
+	SComboBoxItemDeleter(): pRecent(NULL), hwndCombo(NULL), pComboBoxWndProc(NULL), pEditWndProc(NULL), pListBoxWndProc(NULL){}
 };
 
 /*-----------------------------------------------------------------------
@@ -111,6 +122,7 @@ public:
 
 	void ResizeItem( HWND hTarget, const POINT& ptDlgDefalut, const POINT& ptDlgNew, const RECT& rcItemDefault, EAnchorStyle anchor, bool bUpdate = true);
 	void GetItemClientRect( int wID, RECT& rc );
+	static void SetComboBoxDeleter( HWND hwndCtl, SComboBoxItemDeleter* data );
 public:
 	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
 	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath);

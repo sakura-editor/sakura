@@ -369,6 +369,14 @@ BOOL CDlgReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 //		::CheckDlgButton( GetHwnd(), IDC_RADIO_SELECTEDAREA, FALSE );					// 2001.12.03 hor コメント
 		::CheckDlgButton( GetHwnd(), IDC_RADIO_ALLAREA, TRUE );
 	}
+
+	m_comboDelText = SComboBoxItemDeleter();
+	m_comboDelText.pRecent = &m_cRecentSearch;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDelText);
+	m_comboDelText2 = SComboBoxItemDeleter();
+	m_comboDelText2.pRecent = &m_cRecentReplace;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT2), &m_comboDelText2);
+
 	/* 基底クラスメンバ */
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
 

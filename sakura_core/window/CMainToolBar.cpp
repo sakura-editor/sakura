@@ -312,6 +312,10 @@ void CMainToolBar::CreateToolBar( void )
 
 							//検索ボックスを更新	// 関数化 2010/6/6 Uchi
 							AcceptSharedSearchKey();
+
+							m_comboDel = SComboBoxItemDeleter(); // 再表示用の初期化
+							m_comboDel.pRecent = &m_cRecentSearch;
+							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_comboDel);
 						}
 						break;
 

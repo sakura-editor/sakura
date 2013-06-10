@@ -185,6 +185,15 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	g_pOnFolderProc = (WNDPROC)GetWindowLongPtr(hFolder, GWLP_WNDPROC);
 	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (LONG_PTR)OnFolderProc);
 
+	m_comboDelText = SComboBoxItemDeleter();
+	m_comboDelText.pRecent = &m_cRecentSearch;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDelText);
+	m_comboDelFile = SComboBoxItemDeleter();
+	m_comboDelFile.pRecent = &m_cRecentGrepFile;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FILE), &m_comboDelFile);
+	m_comboDelFolder = SComboBoxItemDeleter();
+	m_comboDelFolder.pRecent = &m_cRecentGrepFolder;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_comboDelFolder);
 
 	/* äÓíÍÉNÉâÉXÉÅÉìÉo */
 //	CreateSizeBox();

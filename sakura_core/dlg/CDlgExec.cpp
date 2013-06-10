@@ -82,7 +82,16 @@ BOOL CDlgExec::OnInitDialog( HWND hwnd, WPARAM wParam, LPARAM lParam )
 	for( i = 0; i < _countof(codes); ++i ){
 		Combo_AddString( hwndCombo, CCodeTypeName(codes[i]).Normal() );
 	}
-	return CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+
+	BOOL bRet = CDialog::OnInitDialog(hwnd, wParam, lParam);
+
+	m_comboDel = SComboBoxItemDeleter();
+	m_comboDel.pRecent = &m_cRecentCmd;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_m_szCommand), &m_comboDel);
+	m_comboDelCur = SComboBoxItemDeleter();
+	m_comboDelCur.pRecent = &m_cRecentCur;
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_CUR_DIR), &m_comboDelCur);
+	return bRet;
 }
 
 /* ダイアログデータの設定 */

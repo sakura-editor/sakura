@@ -13,7 +13,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "dlg/CDialog.h"
-
+#include "recent/CRecentSearch.h"
 #ifndef _CDLGFIND_H_
 #define _CDLGFIND_H_
 
@@ -48,6 +48,9 @@ public:
 
 	CLogicPoint	m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 
+	CRecentSearch			m_cRecentSearch;
+	SComboBoxItemDeleter	m_comboDel;
+
 protected:
 //@@@ 2002.2.2 YAZAKI CShareDataに移動
 //	void AddToSearchKeyArr( const char* );
@@ -55,6 +58,7 @@ protected:
 	int GetData( void );		/* ダイアログデータの取得 */
 	void SetCombosList( void );	/* 検索文字列/置換後文字列リストの設定 */
 	void SetData( void );		/* ダイアログデータの設定 */
+	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
 	BOOL OnActivate( WPARAM wParam, LPARAM lParam );	// 2009.11.29 ryoji
 

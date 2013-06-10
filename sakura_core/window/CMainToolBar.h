@@ -24,6 +24,9 @@
 #ifndef SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_
 #define SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_
 
+#include "recent/CRecent.h"
+#include "dlg/CDialog.h"
+
 class CEditWnd;
 
 class CMainToolBar{
@@ -67,6 +70,9 @@ private:
 
 	//フォント
 	HFONT		m_hFontSearchBox;	//!< 検索コンボボックスのフォント
+
+	SComboBoxItemDeleter	m_comboDel;
+	CRecentSearch			m_cRecentSearch;
 };
 
 #endif /* SAKURA_CMAINTOOLBAR_F8D148A4_02B1_42E7_8B00_B51B3DB49E749_H_ */
