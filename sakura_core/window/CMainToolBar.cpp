@@ -49,14 +49,14 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 		if( msg->wParam == VK_RETURN )  //リターンキー
 		{
 			//検索キーワードを取得
-			wchar_t	szText[_MAX_PATH];
-			wmemset( szText, 0, _countof(szText) );
-			::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH, (LPARAM)szText );
-			if( szText[0] )	//キー文字列がある
+			std::wstring strText;
+			if( 0 < GetSearchKey(strText) )	//キー文字列がある
 			{
-				//検索キーを登録
-				CSearchKeywordManager().AddToSearchKeyArr( szText );
-				m_pOwner->GetActiveView().m_strCurSearchKey = szText;
+				if( strText.size() < _MAX_PATH ){
+					//検索キーを登録
+					CSearchKeywordManager().AddToSearchKeyArr( strText.c_str() );
+				}
+				m_pOwner->GetActiveView().m_strCurSearchKey = strText;
 				m_pOwner->GetActiveView().m_bCurSearchUpdate = true;
 				m_pOwner->GetActiveView().ChangeCurRegexp();
 
@@ -307,8 +307,8 @@ void CMainToolBar::CreateToolBar( void )
 								::SendMessage( m_hwndSearchBox, WM_SETFONT, (WPARAM)m_hFontSearchBox, MAKELONG (TRUE, 0) );
 							}
 
-							//入力長制限
-							Combo_LimitText( m_hwndSearchBox, (WPARAM)_MAX_PATH - 1 );
+							// //入力長制限
+							// Combo_LimitText( m_hwndSearchBox, (WPARAM)_MAX_PATH - 1 );
 
 							//検索ボックスを更新	// 関数化 2010/6/6 Uchi
 							AcceptSharedSearchKey();
@@ -524,24 +524,47 @@ void CMainToolBar::AcceptSharedSearchKey()
 	if( m_hwndSearchBox )
 	{
 		int	i;
-		Combo_ResetContent( m_hwndSearchBox );
+		// 2013.05.28 Combo_ResetContentだとちらつくのでDeleteStringでリストだけ削除
+		while (Combo_GetCount(m_hwndSearchBox) > 0) {
+			Combo_DeleteString(m_hwndSearchBox, 0);
+		}
 		int nSize = GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size();
 		for( i = 0; i < nSize; i++ )
 		{
 			Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
 		}
-		Combo_SetCurSel( m_hwndSearchBox, 0 );
+		const wchar_t* pszText;
+		if( GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
+			&& m_pOwner->GetActiveView().m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence
+				|| 0 == m_pOwner->GetActiveView().m_strCurSearchKey.size() ){
+			if( 0 < nSize ){
+				pszText = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];
+			}else{
+				pszText = L"";
+			}
+		}else{
+			pszText = m_pOwner->GetActiveView().m_strCurSearchKey.c_str();
+		}
+		std::wstring strText;
+		GetSearchKey(strText);
+		if( 0 < nSize && 0 != wcscmp(strText.c_str(), pszText) ){
+			::SetWindowText(m_hwndSearchBox, to_tchar(pszText));
+		}
 	}
 }
 
-int CMainToolBar::GetSearchKey(wchar_t* pBuf, int nBufCount)
+int CMainToolBar::GetSearchKey(std::wstring& strText)
 {
-	pBuf[0]=L'\0';
-	return ::GetWindowText( m_hwndSearchBox, TcharReceiver<wchar_t>(pBuf,nBufCount), nBufCount );
-	/*
-	wmemset( szText, 0, _countof(szText) );
-	::SendMessage( m_hwndSearchBox, WM_GETTEXT, _MAX_PATH - 1, (LPARAM)szText );
-	*/
+	if( m_hwndSearchBox ){
+		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
+		std::vector<TCHAR> vText(nBufferSize);
+
+		::GetWindowText( m_hwndSearchBox, &vText[0], vText.size() );
+		strText = to_wchar(&vText[0]);
+	}else{
+		strText = L"";
+	}
+	return strText.length();
 }
 
 

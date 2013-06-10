@@ -1385,9 +1385,6 @@ LRESULT CEditWnd::DispatchEvent(
 			m_pPrintPreview->SetFocusToPrintPreviewBar();
 		}
 
-		//検索ボックスを更新
-		m_cToolbar.AcceptSharedSearchKey();
-		
 		return lRes;
 
 	case WM_NOTIFY:
@@ -2081,12 +2078,14 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			m_nCurrentFocus = 0;
 			//フォーカスがはずれたときに検索キーにしてしまう。
 			//検索キーワードを取得
-			wchar_t	szText[_MAX_PATH];
-			if( m_cToolbar.GetSearchKey(szText,_countof(szText)) )	//キー文字列がある
+			std::wstring	strText;
+			if( m_cToolbar.GetSearchKey(strText) )	//キー文字列がある
 			{
 				//検索キーを登録
-				CSearchKeywordManager().AddToSearchKeyArr( szText );
-				GetActiveView().m_strCurSearchKey = szText;
+				if( strText.length() < _MAX_PATH ){
+					CSearchKeywordManager().AddToSearchKeyArr( strText.c_str() );
+				}
+				GetActiveView().m_strCurSearchKey = strText;
 				GetActiveView().m_bCurSearchUpdate = true;
 				GetActiveView().ChangeCurRegexp();
 			}
@@ -2140,8 +2139,6 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 			//ビューにフォーカスを移動しておく
 			if( wID != F_SEARCH_BOX && m_nCurrentFocus == F_SEARCH_BOX ) {
 				::SetFocus( GetActiveView().GetHwnd() );
-				//検索ボックスを更新	// 2010/6/6 Uchi
-				m_cToolbar.AcceptSharedSearchKey();
 			}
 
 			// コマンドコードによる処理振り分け
