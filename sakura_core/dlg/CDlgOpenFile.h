@@ -24,6 +24,8 @@
 #include <vector>
 #include "CEol.h"
 #include "basis/CMyString.h"
+#include "dlg/CDialog.h"
+#include "recent/CRecent.h"
 
 struct DLLSHAREDATA;
 struct SLoadInfo;	// doc/CDocListener.h
@@ -92,6 +94,11 @@ public:
 	SFilePath		m_szPath;	// 拡張子の補完を自前で行ったときのファイルパス	// 2006.11.10 ryoji
 
 protected:
+	SComboBoxItemDeleter	m_combDelFile;
+	CRecentFile				m_cRecentFile;
+	SComboBoxItemDeleter	m_combDelFolder;
+	CRecentFolder			m_cRecentFolder;
+
 	/*
 	||  実装ヘルパ関数
 	*/

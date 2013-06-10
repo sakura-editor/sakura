@@ -21,6 +21,8 @@ class CDlgReplace;
 #define _CDLGREPLACE_H_
 
 #include "dlg/CDialog.h"
+#include "recent/CRecent.h"
+
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
@@ -62,6 +64,11 @@ public:
 	CLogicPoint		m_ptEscCaretPos_PHY;	// 検索/置換開始時のカーソル位置退避エリア
 
 protected:
+	CRecentSearch			m_cRecentSearch;
+	SComboBoxItemDeleter	m_comboDelText;
+	CRecentReplace			m_cRecentReplace;
+	SComboBoxItemDeleter	m_comboDelText2;
+
 	/*
 	||  実装ヘルパ関数
 	*/

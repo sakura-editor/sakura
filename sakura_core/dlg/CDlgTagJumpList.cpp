@@ -38,7 +38,6 @@
 #include "CSortedTagJumpList.h"
 #include "func/Funccode.h"
 #include "env/DLLSHAREDATA.h"
-#include "recent/CRecent.h"
 #include "util/container.h"
 #include "util/shell.h"
 #include "util/file.h"
@@ -526,6 +525,10 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		::SetFocus( hwndKey );
 		bRet = FALSE;	//for set focus
 	}
+
+	m_comboDel = SComboBoxItemDeleter();
+	m_comboDel.pRecent = &m_cRecentKeyword;
+	SetComboBoxDeleter(hwndKey, &m_comboDel);
 
 	/* äÓíÍÉNÉâÉXÉÅÉìÉo */
 	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );

@@ -302,6 +302,13 @@ UINT_PTR CALLBACK OFNHookProc(
 			for( i = 0; i < nSize; i++ ){
 				Combo_AddString( hwndComboOPENFOLDER, m_vOPENFOLDER[i] );
 			}
+
+			pcDlgOpenFile->m_combDelFile = SComboBoxItemDeleter();
+			pcDlgOpenFile->m_combDelFile.pRecent = &pcDlgOpenFile->m_cRecentFile;
+			CDialog::SetComboBoxDeleter(hwndComboMRU, &pcDlgOpenFile->m_combDelFile);
+			pcDlgOpenFile->m_combDelFolder = SComboBoxItemDeleter();
+			pcDlgOpenFile->m_combDelFolder.pRecent = &pcDlgOpenFile->m_cRecentFolder;
+			CDialog::SetComboBoxDeleter(hwndComboOPENFOLDER, &pcDlgOpenFile->m_combDelFolder);
 		}
 		break;
 

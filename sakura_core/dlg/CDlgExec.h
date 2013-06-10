@@ -12,6 +12,7 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "dlg/CDialog.h"
+#include "recent/CRecentCmd.h"
 
 #ifndef _CDLGEXEC_H_
 #define _CDLGEXEC_H_
@@ -37,10 +38,15 @@ public:
 
 
 protected:
+	SComboBoxItemDeleter m_comboDel;
+	CRecentCmd m_cRecentCmd;
+	SComboBoxItemDeleter m_comboDelCur;
+	CRecentCurDir m_cRecentCur;
+
 	/* オーバーライド? */
-	virtual BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam );
 	int GetData( void );	/* ダイアログデータの取得 */
 	void SetData( void );	/* ダイアログデータの設定 */
+	BOOL OnInitDialog( HWND, WPARAM, LPARAM );
 	BOOL OnBnClicked( int );
 	LPVOID GetHelpIdTable(void);	//@@@ 2002.01.18 add
 

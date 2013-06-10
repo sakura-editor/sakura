@@ -19,6 +19,7 @@ class CDlgGrep;
 #define _CDLGGREP_H_
 
 #include "dlg/CDialog.h"
+#include "recent/CRecent.h"
 
 //! GREPダイアログボックス
 class CDlgGrep : public CDialog
@@ -56,6 +57,13 @@ public:
 	SFilePath	m_szFolder;					/*!< 検索フォルダ */
 	SFilePath	m_szCurrentFilePath;
 protected:
+	SComboBoxItemDeleter	m_comboDelText;
+	CRecentSearch			m_cRecentSearch;
+	SComboBoxItemDeleter	m_comboDelFile;
+	CRecentGrepFile			m_cRecentGrepFile;
+	SComboBoxItemDeleter	m_comboDelFolder;
+	CRecentGrepFolder		m_cRecentGrepFolder;
+
 	/*
 	||  実装ヘルパ関数
 	*/
