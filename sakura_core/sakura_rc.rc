@@ -1005,11 +1005,13 @@ BEGIN
     CONTROL         "",IDC_SPIN_LCColNum3,"msctls_updown32",UDS_ALIGNRIGHT | 
                     UDS_AUTOBUDDY | UDS_ARROWKEYS,295,136,6,12
     GROUPBOX        "コメントスタイル",IDC_STATIC,156,68,142,85,WS_GROUP
-    CONTROL         "C言語風: ""&\\""""",IDC_RADIO_ESCAPETYPE_1,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,162,180,68,10
-    CONTROL         "PL/S&QL風: """"""""",IDC_RADIO_ESCAPETYPE_2,"Button",
-                    BS_AUTORADIOBUTTON,162,194,68,10
-    GROUPBOX        "エスケープ",IDC_STATIC,156,168,77,42,WS_GROUP
+    GROUPBOX        "文字列エスケープ(&Q)",IDC_STATIC,156,168,142,42,WS_GROUP
+    COMBOBOX        IDC_COMBO_STRINGLITERAL,162,180,68,80,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "行内のみ(&\\)",IDC_CHECK_STRINGLINEONLY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,233,180,68,10
+    CONTROL         "終了文字がない場合行末まで色分け(&N)",IDC_CHECK_STRINGENDLINE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,162,194,136,10
     LTEXT           "縦線桁指定(&3)",IDC_STATIC,164,218,46,8
     EDITTEXT        IDC_EDIT_VERTLINE,210,216,74,12,ES_AUTOHSCROLL
     LTEXT           "*桁またはStep(Begin,End)でコンマ区切り",IDC_STATIC,165,

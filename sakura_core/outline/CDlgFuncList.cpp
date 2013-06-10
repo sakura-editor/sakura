@@ -28,11 +28,11 @@
 #include "outline/CFuncInfo.h"
 #include "outline/CFuncInfoArr.h"// 2002/2/3 aroka
 #include "window/CEditWnd.h"	//	2006/2/11 aroka ’Ç‰Á
+#include "uiparts/CGraphics.h"
 #include "util/shell.h"
 #include "util/os.h"
 #include "util/input.h"
 #include "util/window.h"
-#include "view/colors/CColorStrategy.h"
 #include "env/CAppNodeManager.h"
 #include "extmodule/CUxTheme.h"
 #include "sakura_rc.h"

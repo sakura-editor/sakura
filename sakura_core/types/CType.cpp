@@ -155,7 +155,10 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_cBlockComments[0].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ */
 	pType->m_cBlockComments[1].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ2 */
 
-	pType->m_nStringType = 0;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+	pType->m_nStringType = STRING_LITERAL_CPP;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+	pType->m_bStringLineOnly = false;
+	pType->m_bStringEndLine  = false;
+	pType->m_nHeredocType = HEREDOC_PHP;
 	wcscpy( pType->m_szIndentChars, L"" );		/* その他のインデント対象文字 */
 
 	pType->m_nColorInfoArrNum = COLORIDX_LAST;

@@ -10,6 +10,7 @@
 //Oct. 31, 2000 JEPRO VC++の生成するテキストファイルも読み込めるようにする
 //Feb. 7, 2001 JEPRO .cc/cp/c++/.hpp/hxx/hh/hp/h++を追加	//Mar. 15, 2001 JEPRO .hmを追加
 //Feb. 2, 2005 genta 苦情が多いのでシングルクォートの色分けはHTMLでは行わない
+//2012.01.03 シングルクォートの色分けをする
 void CType_Html::InitTypeConfigImp(STypeConfig* pType)
 {
 	_tcscpy( pType->m_szTypeName, _T("HTML") );
@@ -17,10 +18,11 @@ void CType_Html::InitTypeConfigImp(STypeConfig* pType)
 
 	//設定
 	pType->m_cBlockComments[0].SetBlockCommentRule( L"<!--", L"-->" );	/* ブロックコメントデリミタ */
-	pType->m_nStringType = 0;											/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	pType->m_nStringType = STRING_LITERAL_HTML;							/* 文字列区切り記号エスケープ方法 */
+	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 	pType->m_nKeyWordSetIdx[0] = 1;										/* キーワードセット */
 	pType->m_eDefaultOutline = OUTLINE_HTML;							/* アウトライン解析方法 */
-	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;			//シングルクォートの色分けOFF
+	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = true;				//シングルクォートの色分けOFF
 }
 
 

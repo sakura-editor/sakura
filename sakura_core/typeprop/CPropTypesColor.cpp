@@ -26,8 +26,8 @@
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
+#include "uiparts/CGraphics.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"
@@ -64,11 +64,20 @@ static const DWORD p_helpids2[] = {	//11400
 	IDC_CHECK_LCPOS,				HIDC_CHECK_LCPOS,				//桁指定１
 	IDC_CHECK_LCPOS2,				HIDC_CHECK_LCPOS2,				//桁指定２
 	IDC_CHECK_LCPOS3,				HIDC_CHECK_LCPOS3,				//桁指定３
-	IDC_RADIO_ESCAPETYPE_1,			HIDC_RADIO_ESCAPETYPE_1,		//文字列エスケープ（C言語風）
-	IDC_RADIO_ESCAPETYPE_2,			HIDC_RADIO_ESCAPETYPE_2,		//文字列エスケープ（PL/SQL風）
+	IDC_COMBO_STRINGLITERAL,		HIDC_COMBO_STRINGLITERAL,		//文字列エスケープ
+	IDC_CHECK_STRINGLINEONLY,		HIDC_CHECK_STRINGLINEONLY,		//文字列は行内のみ
+	IDC_CHECK_STRINGENDLINE,		HIDC_CHECK_STRINGENDLINE,		//終了文字がない場合行末まで色分け
 	IDC_EDIT_VERTLINE,				HIDC_EDIT_VERTLINE,				//縦線の桁指定	// 2006.08.06 ryoji
 //	IDC_STATIC,						-1,
 	0, 0
+};
+
+TYPE_NAME<EStringLiteralType> StringLitteralArr[] = {
+	{ STRING_LITERAL_CPP,       _T("C/C++言語風 \\\" ") },
+	{ STRING_LITERAL_PLSQL,     _T("PL/SQL風    \"\"") },
+	{ STRING_LITERAL_HTML,      _T("HTML/XML風  =\"\"") },
+	{ STRING_LITERAL_CSHARP,    _T("C#風        @\"\"") },
+	{ STRING_LITERAL_PYTHON,    _T("Python風    \"\"\"") },
 };
 
 
@@ -483,6 +492,12 @@ INT_PTR CPropTypesColor::DispatchEvent(
 					delete pPropKeyword;
 					return TRUE;
 				}
+			case IDC_CHECK_STRINGLINEONLY:
+				{
+					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STRINGENDLINE),
+						::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_STRINGLINEONLY ) );
+					return TRUE;
+				}
 			}
 			break;	/* BN_CLICKED */
 		}
@@ -656,13 +671,20 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 		}
 	}
 
-	if( 0 == m_Types.m_nStringType ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_1, TRUE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_2, FALSE );
-	}else{
-		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_1, FALSE );
-		::CheckDlgButton( hwndDlg, IDC_RADIO_ESCAPETYPE_2, TRUE );
+	HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_STRINGLITERAL );
+	Combo_ResetContent( hwndCombo );
+	int		nSelPos = 0;
+	for( i = 0; i < _countof( StringLitteralArr ); ++i ){
+		Combo_InsertString( hwndCombo, i, StringLitteralArr[i].pszName );
+		if( StringLitteralArr[i].nMethod == m_Types.m_nStringType ){		// テキストの折り返し方法
+			nSelPos = i;
+		}
 	}
+	Combo_SetCurSel( hwndCombo, nSelPos );
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_STRINGLINEONLY, m_Types.m_bStringLineOnly );
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_STRINGENDLINE, m_Types.m_bStringEndLine );
+	::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_STRINGENDLINE),
+		::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_STRINGLINEONLY ) );
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
@@ -791,12 +813,14 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 	::DlgItem_GetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO2	, szToBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(To) */
 	m_Types.m_cBlockComments[1].SetBlockCommentRule( szFromBuffer, szToBuffer );
 
-	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	if( ::IsDlgButtonChecked( hwndDlg, IDC_RADIO_ESCAPETYPE_1 ) ){
-		m_Types.m_nStringType = 0;
-	}else{
-		m_Types.m_nStringType = 1;
+	/* 文字列区切り記号エスケープ方法 */
+	int		nSelPos = Combo_GetCurSel( GetDlgItem(hwndDlg, IDC_COMBO_STRINGLITERAL) );
+	if( nSelPos >= 0 ){
+		m_Types.m_nStringType = StringLitteralArr[nSelPos].nMethod;
 	}
+	m_Types.m_bStringLineOnly = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_STRINGLINEONLY );
+	m_Types.m_bStringEndLine = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_STRINGENDLINE );
+	
 
 	/* セット名コンボボックスの値セット */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );

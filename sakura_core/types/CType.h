@@ -68,6 +68,12 @@ enum ESmartIndentType {
 	SMARTINDENT_CPP
 };
 
+enum EHereDocType{
+	HEREDOC_PHP,
+	HEREDOC_RUBY,
+	HEREDOC_PERL
+};
+
 enum EBackgroundImagePos {
 	BGIMAGE_TOP_LEFT,
 	BGIMAGE_TOP_RIGHT,
@@ -85,6 +91,14 @@ struct SEncodingConfig{
 	ECodeType			m_eDefaultCodetype;				/* デフォルト文字コード */
 	EEolType			m_eDefaultEoltype;				/* デフォルト改行コード */	// 2011.01.24 ryoji
 	bool				m_bDefaultBom;					// デフォルトBOM			// 2011.01.24 ryoji
+};
+
+enum EStringLiteralType{
+	STRING_LITERAL_CPP,
+	STRING_LITERAL_PLSQL,
+	STRING_LITERAL_HTML,
+	STRING_LITERAL_CSHARP,
+	STRING_LITERAL_PYTHON,
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -112,6 +126,9 @@ struct STypeConfig{
 	CBlockComment		m_cBlockComments[2];			/*!< ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
 
 	int					m_nStringType;					/*!< 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	bool				m_bStringLineOnly;				//!< 文字列は行内のみ
+	bool				m_bStringEndLine;				//!< (終了文字列がない場合)行末まで色分け
+	int					m_nHeredocType;
 	wchar_t				m_szIndentChars[64];			/*!< その他のインデント対象文字 */
 
 	int					m_nColorInfoArrNum;				/*!< 色設定配列の有効数 */

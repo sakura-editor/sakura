@@ -213,8 +213,8 @@
 #define IDC_RADIO_CARETTYPE0            1147
 #define IDC_COMBO_EOL                   1148
 #define IDC_BUTTON_COPY                 1149
-#define IDC_RADIO_ESCAPETYPE_1          1150
-#define IDC_RADIO_ESCAPETYPE_2          1151
+#define IDC_COMBO_STRINGLITERAL         1150
+#define IDC_CHECK_STRINGLINEONLY        1151
 #define IDC_LIST_TYPES                  1152
 #define IDC_RADIO_OUTPUTSTYLE1          1153
 #define IDC_COMBO_PLSQLBLOCKS           1154
@@ -717,6 +717,7 @@
 #define IDC_LIST_FAVORITE_CUR_DIR       1649
 #define IDC_EDIT_PLUGIN_OPTION_DIR      1650
 #define IDC_BUTTON_PLUGIN_OPTION_DIR    1651
+#define IDC_CHECK_STRINGENDLINE         1652
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -757,7 +758,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        230
 #define _APS_NEXT_COMMAND_VALUE         4057
-#define _APS_NEXT_CONTROL_VALUE         1652
+#define _APS_NEXT_CONTROL_VALUE         1653
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

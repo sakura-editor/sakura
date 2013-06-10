@@ -3,7 +3,6 @@
 #include "CViewFont.h"
 #include "CRuler.h"
 #include "CEditView.h"
-#include "view/colors/CColorStrategy.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "doc/CEditDoc.h"

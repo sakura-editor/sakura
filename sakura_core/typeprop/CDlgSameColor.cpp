@@ -30,9 +30,10 @@
 
 #include "StdAfx.h"
 #include "CDlgSameColor.h"
+#include "types/CType.h"
+#include "view/colors/EColorIndexType.h"
+#include "uiparts/CGraphics.h"
 #include "util/shell.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

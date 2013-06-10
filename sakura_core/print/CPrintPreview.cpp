@@ -1102,7 +1102,10 @@ void CPrintPreview::OnPrint( void )
 			&& pcPageTopLayout->GetLogicOffset() == 0) {
 			pStrategy = m_pool->GetStrategyByColor(pcPageTopLayout->GetColorTypePrev());
 			m_pool->NotifyOnStartScanLogic();
-			if (pStrategy)	pStrategy->InitStrategyStatus();
+			if (pStrategy) {
+				pStrategy->InitStrategyStatus();
+				pStrategy->SetStrategyColorInfo(pcPageTopLayout->GetColorInfo());
+			}
 		}
 		// 印刷/印刷プレビュー ページテキストの描画
 		pStrategy = DrawPageText(
@@ -1332,7 +1335,10 @@ CColorStrategy* CPrintPreview::DrawPageTextFirst(int nPageNum)
 		// 論理行先頭のCColorStrategy取得
 		pStrategy = m_pool->GetStrategyByColor( pcPageTopLayout->GetColorTypePrev() );
 		m_pool->NotifyOnStartScanLogic();
-		if (pStrategy)	pStrategy->InitStrategyStatus();
+		if (pStrategy) {
+			pStrategy->InitStrategyStatus();
+			pStrategy->SetStrategyColorInfo(pcPageTopLayout->GetColorInfo());
+		}
 		if (nPageTopOff) {
 			CStringRef	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
 			CLogicInt	iLogic;
@@ -1456,7 +1462,10 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				&& pcLayout->GetLogicOffset() == 0) {
 				pStrategy = m_pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
 				m_pool->NotifyOnStartScanLogic();
-				if (pStrategy)	pStrategy->InitStrategyStatus();
+				if (pStrategy) {
+					pStrategy->InitStrategyStatus();
+					pStrategy->SetStrategyColorInfo(pcLayout->GetColorInfo());
+				}
 			}
 			// 印刷／プレビュー 行描画
 			pStrategy = Print_DrawLine(

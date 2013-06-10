@@ -129,8 +129,12 @@ public:
 	virtual ~CColorStrategy(){}
 	//! 色定義
 	virtual EColorIndexType GetStrategyColor() const = 0;
+	virtual CLayoutColorInfo* GetStrategyColorInfo() const{
+		return NULL;
+	}
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
 	virtual void InitStrategyStatus() = 0;
+	virtual void SetStrategyColorInfo(const CLayoutColorInfo* = NULL){};
 	virtual bool BeginColor(const CStringRef& cStr, int nPos){ return false; }
 	virtual bool EndColor(const CStringRef& cStr, int nPos){ return true; }
 	//イベント
@@ -139,15 +143,20 @@ public:
 	//! 設定更新
 	virtual void Update(void)
 	{
-		m_pCEditDoc = CEditDoc::GetInstance(0);
-		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
+		const CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
+		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 	}
 
 	//#######ラップ
 	EColorIndexType GetStrategyColorSafe() const{ if(this)return GetStrategyColor(); else return COLORIDX_TEXT; }
+	CLayoutColorInfo* GetStrategyColorInfoSafe() const{
+		if(this){
+			return GetStrategyColorInfo();
+		}
+		return NULL;
+	}
 
 protected:
-	const CEditDoc* m_pCEditDoc;
 	const STypeConfig* m_pTypeData;
 };
 
@@ -158,6 +167,7 @@ class CColor_BlockComment;
 class CColor_BlockComment;
 class CColor_SingleQuote;
 class CColor_DoubleQuote;
+class CColor_Heredoc;
 
 class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
 public:
@@ -182,7 +192,7 @@ public:
 	*/
 	//@@@ 2002.09.22 YAZAKI
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	bool CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
+	void CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
 
 	//設定変更
 	void OnChangeSetting(void);
@@ -201,6 +211,7 @@ private:
 	CColor_BlockComment*			m_pcBlockComment2;
 	CColor_SingleQuote*				m_pcSingleQuote;
 	CColor_DoubleQuote*				m_pcDoubleQuote;
+	CColor_Heredoc*					m_pcHeredoc;
 
 	CEditView*						m_pcView;
 };

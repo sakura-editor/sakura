@@ -67,6 +67,7 @@ enum EColorIndexType {
 	COLORIDX_COMMENT,		//!< 行コメント						//Dec. 4, 2000 shifted by MIK
 	COLORIDX_SSTRING,		//!< シングルクォーテーション文字列	//Dec. 4, 2000 shifted by MIK
 	COLORIDX_WSTRING,		//!< ダブルクォーテーション文字列		//Dec. 4, 2000 shifted by MIK
+	COLORIDX_HEREDOC,		//!< ヒアドキュメント
 	COLORIDX_URL,			//!< URL								//Dec. 4, 2000 shifted by MIK
 	COLORIDX_KEYWORD1,		//!< 強調キーワード1 // 2002/03/13 novice
 	COLORIDX_KEYWORD2,		//!< 強調キーワード2 // 2002/03/13 novice  //MIK ADDED

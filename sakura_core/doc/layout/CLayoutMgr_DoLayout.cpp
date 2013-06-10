@@ -62,9 +62,10 @@ CLayout* CLayoutMgr::SLayoutWork::_CreateLayout(CLayoutMgr* mgr)
 		this->pcDocLine,
 		CLogicPoint(this->nBgn, this->nCurLine),
 		this->nPos - this->nBgn,
-		this->pcColorStrategy_Prev->GetStrategyColorSafe(),
+		this->colorPrev,
 		this->nIndent,
-		this->nPosX
+		this->nPosX,
+		this->exInfoPrev.DetachColorInfo()
 	);
 }
 
@@ -214,12 +215,12 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 	}
 
 	if(pWork->pcColorStrategy)pWork->pcColorStrategy->InitStrategyStatus();
+	CColorStrategyPool& color = *CColorStrategyPool::getInstance();
 
 	//1ロジック行を消化するまでループ
 	while( pWork->nPos < pWork->cLineStr.GetLength() - CLogicInt(nEol_1) ){
 		// インデント幅は_OnLineで計算済みなのでここからは削除
 
-SEARCH_START:;
 		//禁則処理中ならスキップする	@@@ 2002.04.20 MIK
 		if(_DoKinsokuSkip(pWork, pfOnLine)){ }
 		else{
@@ -237,9 +238,7 @@ SEARCH_START:;
 		}
 
 		//@@@ 2002.09.22 YAZAKI
-		bool bGotoSEARCH_START = CColorStrategyPool::getInstance()->CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
-		if ( bGotoSEARCH_START )
-			goto SEARCH_START;
+		color.CheckColorMODE( &pWork->pcColorStrategy, pWork->nPos, pWork->cLineStr );
 		
 		if( pWork->cLineStr.At(pWork->nPos) == WCODE::TAB ){
 			if(_DoTab(pWork, pfOnLine)){
@@ -279,9 +278,9 @@ SEARCH_START:;
 void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 {
 	AddLineBottom( pWork->_CreateLayout(this) );
-	m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
 	pWork->pLayout = m_pLayoutBot;
-	pWork->pcColorStrategy_Prev = pWork->pcColorStrategy;
+	pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
+	pWork->exInfoPrev.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
 	pWork->nBgn = pWork->nPos;
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
 	pWork->nPosX = pWork->nIndent = (this->*m_getIndentOffset)( pWork->pLayout );
@@ -325,9 +324,9 @@ void CLayoutMgr::_DoLayout()
 	SLayoutWork	_sWork;
 	SLayoutWork* pWork = &_sWork;
 	pWork->pcDocLine				= m_pcDocLineMgr->GetDocLineTop(); // 2002/2/10 aroka CDocLineMgr変更
-	pWork->pLayout					= m_pLayoutBot;
+	pWork->pLayout					= NULL;
 	pWork->pcColorStrategy			= NULL;
-	pWork->pcColorStrategy_Prev		= NULL;
+	pWork->colorPrev				= COLORIDX_DEFAULT;
 	pWork->nCurLine					= CLogicInt(0);
 
 	while( NULL != pWork->pcDocLine ){
@@ -345,12 +344,9 @@ void CLayoutMgr::_DoLayout()
 
 		if( pWork->nPos - pWork->nBgn > 0 ){
 // 2002/03/13 novice
-			if( pWork->pcColorStrategy->GetStrategyColorSafe() == COLORIDX_COMMENT ){	/* 行コメントである */
-				pWork->pcColorStrategy = NULL;
-			}
 			AddLineBottom( pWork->_CreateLayout(this) );
-			m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
-			pWork->pcColorStrategy_Prev = pWork->pcColorStrategy;
+			pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
+			pWork->exInfoPrev.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
 		}
 
 		// 次の行へ
@@ -364,11 +360,11 @@ void CLayoutMgr::_DoLayout()
 		}
 
 // 2002/03/13 novice
-		if( pWork->pcColorStrategy_Prev->GetStrategyColorSafe() == COLORIDX_COMMENT ){	/* 行コメントである */
-			pWork->pcColorStrategy_Prev = NULL;
-		}
-		pWork->pcColorStrategy = pWork->pcColorStrategy_Prev;
 	}
+
+	// 2011.12.31 Botの色分け情報は最後に設定
+	m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
+	m_cLayoutExInfoBot.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
 
 	m_nPrevReferLine = CLayoutInt(0);
 	m_pLayoutPrevRefer = NULL;
@@ -391,13 +387,15 @@ void CLayoutMgr::_OnLine2(SLayoutWork* pWork)
 	//@@@ 2002.09.23 YAZAKI 最適化
 	if( pWork->bNeedChangeCOMMENTMODE ){
 		pWork->pLayout = pWork->pLayout->GetNextLayout();
-		pWork->pLayout->SetColorTypePrev(pWork->pcColorStrategy_Prev->GetStrategyColorSafe());
+		pWork->pLayout->SetColorTypePrev(pWork->colorPrev);
+		pWork->pLayout->GetLayoutExInfo()->SetColorInfo(pWork->exInfoPrev.DetachColorInfo());
 		(*pWork->pnExtInsLineNum)++;								//	再描画してほしい行数+1
 	}
 	else {
 		pWork->pLayout = InsertLineNext( pWork->pLayout, pWork->_CreateLayout(this) );
 	}
-	pWork->pcColorStrategy_Prev = pWork->pcColorStrategy;
+	pWork->colorPrev = pWork->pcColorStrategy->GetStrategyColorSafe();
+	pWork->exInfoPrev.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
 
 	pWork->nBgn = pWork->nPos;
 	// 2004.03.28 Moca pWork->nPosXはインデント幅を含むように変更(TAB位置調整のため)
@@ -428,6 +426,7 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	CLogicInt		nLineNum,
 	CLogicPoint		_ptDelLogicalFrom,
 	EColorIndexType	nCurrentLineType,
+	CLayoutColorInfo*	colorInfo,
 	const CalTextWidthArg*	pctwArg,
 	CLayoutInt*		_pnExtInsLineNum
 )
@@ -445,7 +444,8 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	SLayoutWork* pWork = &_sWork;
 	pWork->pLayout					= pLayoutPrev;
 	pWork->pcColorStrategy			= CColorStrategyPool::getInstance()->GetStrategyByColor(nCurrentLineType);
-	pWork->pcColorStrategy_Prev		= pWork->pcColorStrategy;
+	pWork->colorPrev				= nCurrentLineType;
+	pWork->exInfoPrev.SetColorInfo(colorInfo);
 	pWork->bNeedChangeCOMMENTMODE	= false;
 	if( NULL == pWork->pLayout ){
 		pWork->nCurLine = CLogicInt(0);
@@ -458,7 +458,10 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 	pWork->ptDelLogicalFrom		= _ptDelLogicalFrom;
 	pWork->pnExtInsLineNum		= _pnExtInsLineNum;
 
-	if(pWork->pcColorStrategy)pWork->pcColorStrategy->InitStrategyStatus();
+	if(pWork->pcColorStrategy){
+		pWork->pcColorStrategy->InitStrategyStatus();
+		pWork->pcColorStrategy->SetStrategyColorInfo(colorInfo);
+	}
 
 	while( NULL != pWork->pcDocLine ){
 		pWork->cLineStr		= pWork->pcDocLine->GetStringRefWithEOL();
@@ -474,9 +477,6 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 
 		if( pWork->nPos - pWork->nBgn > 0 ){
 // 2002/03/13 novice
-			if( pWork->pcColorStrategy->GetStrategyColorSafe() == COLORIDX_COMMENT ){	/* 行コメントである */
-				pWork->pcColorStrategy = NULL;
-			}
 			//@@@ 2002.09.23 YAZAKI 最適化
 			_OnLine2(pWork);
 		}
@@ -487,30 +487,33 @@ CLayoutInt CLayoutMgr::DoLayout_Range(
 		/* 目的の行数(nLineNum)に達したか、または通り過ぎた（＝行数が増えた）か確認 */
 		//@@@ 2002.09.23 YAZAKI 最適化
 		if( nLineNumWork >= nLineNum ){
-			if( pWork->pLayout && pWork->pLayout->m_pNext 
-				&& ( pWork->pcColorStrategy_Prev->GetStrategyColorSafe() != pWork->pLayout->m_pNext->GetColorTypePrev() )
-			){
-				//	COMMENTMODEが異なる行が増えましたので、次の行→次の行と更新していきます。
-				pWork->bNeedChangeCOMMENTMODE = true;
+			if( pWork->pLayout && pWork->pLayout->GetNextLayout() ){
+				if( pWork->colorPrev != pWork->pLayout->GetNextLayout()->GetColorTypePrev() ){
+					//	COMMENTMODEが異なる行が増えましたので、次の行→次の行と更新していきます。
+					pWork->bNeedChangeCOMMENTMODE = true;
+				}else if( pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo()
+				 && !pWork->exInfoPrev.GetColorInfo()->IsEqual(pWork->pLayout->GetNextLayout()->GetColorInfo()) ){
+					pWork->bNeedChangeCOMMENTMODE = true;
+				}else if( pWork->exInfoPrev.GetColorInfo() && NULL == pWork->pLayout->GetNextLayout()->GetColorInfo() ){
+					pWork->bNeedChangeCOMMENTMODE = true;
+				}else if( NULL == pWork->exInfoPrev.GetColorInfo() && pWork->pLayout->GetNextLayout()->GetColorInfo() ){
+					pWork->bNeedChangeCOMMENTMODE = true;
+				}else{
+					break;
+				}
 			}else{
 				break;	//	while( NULL != pWork->pcDocLine ) 終了
 			}
 		}
 		pWork->pcDocLine = pWork->pcDocLine->GetNextLine();
 // 2002/03/13 novice
-		if( pWork->pcColorStrategy_Prev->GetStrategyColorSafe() == COLORIDX_COMMENT ){	/* 行コメントである */
-			pWork->pcColorStrategy_Prev = NULL;
-		}
-		pWork->pcColorStrategy = pWork->pcColorStrategy_Prev;
 	}
 
 
 	// 2004.03.28 Moca EOFだけの論理行の直前の行の色分けが確認・更新された
 	if( pWork->nCurLine == m_pcDocLineMgr->GetLineCount() ){
-		m_nLineTypeBot = pWork->pcColorStrategy_Prev->GetStrategyColorSafe();
-		// 2006.10.01 Moca 最終行が変更された。EOF位置情報を破棄する。
-		m_nEOFColumn = CLayoutInt(-1);
-		m_nEOFLine = CLayoutInt(-1);
+		m_nLineTypeBot = pWork->pcColorStrategy->GetStrategyColorSafe();
+		m_cLayoutExInfoBot.SetColorInfo(pWork->pcColorStrategy->GetStrategyColorInfoSafe());
 	}
 
 	// 2009.08.28 nasukoji	テキストが編集されたら最大幅を算出する

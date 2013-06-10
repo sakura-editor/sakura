@@ -17,6 +17,7 @@ void CType_Pascal::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nStringType = 1;										/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */	//Nov. 5, 2000 JEPRO 追加
 	pType->m_nKeyWordSetIdx[0] = 8;									/* キーワードセット */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;			//@@@ 2001.11.11 upd MIK
+	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
 

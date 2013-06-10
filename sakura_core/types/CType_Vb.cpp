@@ -21,8 +21,9 @@ void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_nKeyWordSetIdx[0]  = 13;							/* キーワードセット */
 	pType->m_nKeyWordSetIdx[1] = 14;							/* キーワードセット2 */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;		/* 半角数値を色分け表示 */
-	pType->m_nStringType = 1;									/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	pType->m_nStringType = STRING_LITERAL_PLSQL;				/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	pType->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;	//シングルクォーテーション文字列を色分け表示しない
+	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
 
