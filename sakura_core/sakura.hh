@@ -643,6 +643,9 @@
 #define HIDC_RADIO_LINETERMTYPE2				11466 //行番号区切り（任意）
 #define HIDC_BUTTON_KEYWORD_SELECT				11467 //強調キーワード2～10	// 2006.08.06 ryoji
 #define HIDC_EDIT_VERTLINE						11468 //縦線の桁指定	// 2006.08.06 ryoji
+#define HIDC_COMBO_STRINGLITERAL				11469 //文字列エスケープ
+#define HIDC_CHECK_STRINGLINEONLY				11470 //文字列は行内のみ
+#define HIDC_CHECK_STRINGENDLINE				11471 //終了文字がない場合行末まで色分け
 #define HIDC_BUTTON_HOKANFILE_REF				11500 //入力補完 単語ファイル参照		//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANLOHICASE				11510 //入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANBYFILE					11512 //現在のファイルから入力補完		// 2003.06.25 Moca

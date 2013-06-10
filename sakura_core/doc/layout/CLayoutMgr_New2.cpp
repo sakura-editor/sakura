@@ -17,8 +17,6 @@
 #include "CLayout.h" // 2002/2/10 aroka
 #include "doc/logic/CDocLineMgr.h" // 2002/2/10 aroka
 #include "charset/charcode.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
 #include "CSearchAgent.h"
 
 
@@ -33,6 +31,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	/* 置換先頭位置のレイアウト情報 */
 	CLayout*		pLayout = SearchLineByLayoutY( pArg->sDelRange.GetFrom().GetY2() );
 	EColorIndexType	nCurrentLineType = COLORIDX_DEFAULT;
+	CLayoutColorInfo*	colorInfo = NULL;
 	CLayoutInt		nLineWork = pArg->sDelRange.GetFrom().GetY2();
 
 	CLayout*		pLayoutWork = pLayout;
@@ -42,9 +41,11 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 			nLineWork--;
 		}
 		nCurrentLineType = pLayoutWork->GetColorTypePrev();
+		colorInfo = pLayoutWork->GetLayoutExInfo()->DetachColorInfo();
 	}else if( GetLineCount() == pArg->sDelRange.GetFrom().GetY2() ){
 		// 2012.01.05 最終行のRedo/Undoでの色分けが正しくないのを修正
 		nCurrentLineType = m_nLineTypeBot;
+		colorInfo = m_cLayoutExInfoBot.DetachColorInfo();
 	}
 
 
@@ -142,6 +143,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		nRowNum,
 		ptFrom,
 		nCurrentLineType,
+		colorInfo,
 		&ctwArg,
 		&nAddInsLineNum
 	);

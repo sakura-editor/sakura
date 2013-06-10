@@ -321,6 +321,7 @@ EColorIndexType CEditView::GetColorIndex(
 	SColorStrategyInfo* pInfo = &_sInfo;
 	pInfo->pcView = this;
 	pInfo->pDispPos=&_sPos;
+	const CLayoutColorInfo* colorInfo;
 	{
 		// 2002/2/10 aroka CMemory変更
 		pInfo->pLineOfLogic = pcLayout->GetDocLineRef()->GetPtr();
@@ -338,6 +339,7 @@ EColorIndexType CEditView::GetColorIndex(
 
 		// 2005.11.20 Moca 色が正しくないことがある問題に対処
 		eRet = pcLayoutLineFirst->GetColorTypePrev();	/* 現在の色を指定 */	// 02/12/18 ai
+		colorInfo = pcLayoutLineFirst->GetColorInfo();
 		pInfo->nPosInLogic = pcLayoutLineFirst->GetLogicOffset();
 
 		//CColorStrategyPool初期化
@@ -371,7 +373,10 @@ EColorIndexType CEditView::GetColorIndex(
 	//color strategy
 	CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 	pInfo->pStrategy = pool->GetStrategyByColor(eRet);
-	if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
+	if(pInfo->pStrategy){
+		pInfo->pStrategy->InitStrategyStatus();
+		pInfo->pStrategy->SetStrategyColorInfo(colorInfo);
+	}
 
 	int nPosTo = pcLayout->GetLogicOffset() + t_min(nIndex, (int)pcLayout->GetLengthWithEOL() - 1);
 	CColor3Setting cColor;
@@ -931,13 +936,18 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	CStringRef cLineStr = pcDocLine->GetStringRefWithEOL();
 
 	//color strategy
+#if 0
+// DrawLogicLineのGetColorIndexで呼び出し済み
 	if(pcLayout && pcLayout->GetLogicOffset()==0){
 		CColorStrategyPool* pool = CColorStrategyPool::getInstance();
 		pInfo->pStrategy = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
-		if(pInfo->pStrategy)pInfo->pStrategy->InitStrategyStatus();
+		if(pInfo->pStrategy){
+			pInfo->pStrategy->InitStrategyStatus();
+			pInfo->pStrategy->SetStrategyColorInfo(pcLayout->GetColorInfo());
+		}
 		SetCurrentColor(pInfo->gr, pcLayout->GetColorTypePrev());
 	}
-
+#endif
 	// 描画範囲外の場合は色切替だけで抜ける
 	if(pInfo->pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
 		if(pcLayout){

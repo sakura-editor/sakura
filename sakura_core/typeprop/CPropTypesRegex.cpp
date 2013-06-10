@@ -22,8 +22,7 @@
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "util/shell.h"
 #include "util/other_util.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 

@@ -17,15 +17,15 @@
 #include "StdAfx.h"
 #include "doc/layout/CLayoutMgr.h"
 #include "doc/layout/CLayout.h"/// 2002/2/10 aroka
+#include "doc/CEditDoc.h"
 #include "doc/CDocReader.h" // for _DEBUG
+#include "doc/CDocEditor.h"
 #include "doc/logic/CDocLine.h"/// 2002/2/10 aroka
 #include "doc/logic/CDocLineMgr.h"/// 2002/2/10 aroka
 #include "charset/charcode.h"
 #include "mem/CMemory.h"/// 2002/2/10 aroka
 #include "mem/CMemoryIterator.h" // 2006.07.29 genta
 #include "basis/SakuraBasis.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
 #include "CSearchAgent.h"
 #include "debug/CRunningTimer.h"
 
@@ -359,7 +359,8 @@ CLayout* CLayoutMgr::CreateLayout(
 	CLogicInt		nLength,
 	EColorIndexType	nTypePrev,
 	CLayoutInt		nIndent,
-	CLayoutInt		nPosX
+	CLayoutInt		nPosX,
+	CLayoutColorInfo*	colorInfo
 )
 {
 	CLayout* pLayout = new CLayout(
@@ -367,7 +368,8 @@ CLayout* CLayoutMgr::CreateLayout(
 		ptLogicPos,
 		nLength,
 		nTypePrev,
-		nIndent
+		nIndent,
+		colorInfo
 	);
 
 	if( EOL_NONE == pCDocLine->GetEol() ){
@@ -530,6 +532,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 	CLogicInt		nDelStartLogicalLine;
 	CLogicInt		nDelStartLogicalPos;
 	EColorIndexType	nCurrentLineType;
+	CLayoutColorInfo*	colorInfo;
 	CLayoutInt		nLineWork;
 
 	/* 現在行のデータを取得 */
@@ -548,6 +551,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		--nLineWork;
 	}
 	nCurrentLineType = pLayoutWork->GetColorTypePrev();
+	colorInfo = pLayoutWork->GetLayoutExInfo()->DetachColorInfo();
 
 	/* テキストのデータを削除 */
 	CDocEditAgent(m_pcDocLineMgr).DeleteData_CDocLineMgr(
@@ -615,6 +619,7 @@ void CLayoutMgr::DeleteData_CLayoutMgr(
 		nRowNum,
 		CLogicPoint(nDelStartLogicalPos, nDelStartLogicalLine),
 		nCurrentLineType,
+		colorInfo,
 		&ctwArg,
 		&nAddInsLineNum
 	);
@@ -651,6 +656,8 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 	CLogicInt		nInsLineNum;
 	CLogicInt		nRowNum;
 	EColorIndexType	nCurrentLineType;
+	CLayoutColorInfo*	colorInfo;
+	CLayoutExInfo* exInfo;
 	CLayoutInt		nLineWork;
 
 
@@ -671,6 +678,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 			nInsStartLogicalLine = m_pcDocLineMgr->GetLineCount();
 			nInsStartLogicalPos  = CLogicInt(0);
 			nCurrentLineType = COLORIDX_DEFAULT;
+			exInfo = NULL;
 		}
 		else{
 			using namespace WCODE;
@@ -684,6 +692,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 				nInsStartLogicalLine = m_pcDocLineMgr->GetLineCount();
 				nInsStartLogicalPos  = CLogicInt(0);
 				nCurrentLineType = m_nLineTypeBot;
+				exInfo = &m_cLayoutExInfoBot;
 			}
 			else{
 				/* 空でないテキストの最後の行を変更する場合 */
@@ -696,6 +705,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 				nInsStartLogicalLine = pLayout->GetLogicLineNo();
 				nInsStartLogicalPos  = nInsPos + pLayout->GetLogicOffset();
 				nCurrentLineType = pLayout->GetColorTypePrev();
+				exInfo = pLayout->GetLayoutExInfo();
 			}
 		}
 	}else{
@@ -706,6 +716,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nInsStartLogicalLine = pLayout->GetLogicLineNo();
 		nInsStartLogicalPos  = nInsPos + pLayout->GetLogicOffset();
 		nCurrentLineType = pLayout->GetColorTypePrev();
+		exInfo = pLayout->GetLayoutExInfo();
 	}
 
 	if( NULL != pLayout ){
@@ -716,9 +727,17 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		}
 		if( NULL != pLayoutWork ){
 			nCurrentLineType = pLayoutWork->GetColorTypePrev();
+			exInfo = pLayoutWork->GetLayoutExInfo();
 		}else{
 			nCurrentLineType = COLORIDX_DEFAULT;
+			exInfo = NULL;
 		}
+	}
+	
+	if( exInfo ){
+		colorInfo = exInfo->DetachColorInfo();
+	}else{
+		colorInfo = NULL;
 	}
 
 
@@ -793,6 +812,7 @@ void CLayoutMgr::InsertData_CLayoutMgr(
 		nRowNum,
 		CLogicPoint(nInsStartLogicalPos, nInsStartLogicalLine),
 		nCurrentLineType,
+		colorInfo,
 		&ctwArg,
 		&nAddInsLineNum
 	);

@@ -34,7 +34,6 @@
 #include "types/CTypeSupport.h"
 #include "charset/charcode.h"
 #include "doc/layout/CLayout.h"
-#include "view/colors/CColorStrategy.h"
 
 
 const CTextArea* CTextDrawer::GetTextArea() const

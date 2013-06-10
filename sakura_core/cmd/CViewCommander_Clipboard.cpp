@@ -872,6 +872,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 			pStrategy = pStrategyNormal = pool->GetStrategyByColor(pcLayout->GetColorTypePrev());
 			if( pStrategy ){
 				pStrategy->InitStrategyStatus();
+				pStrategy->SetStrategyColorInfo(pcLayout->GetColorInfo());
 			}
 			int nColorIdx = ToColorInfoArrIndex(pcLayout->GetColorTypePrev());
 			if (-1 != nColorIdx) {

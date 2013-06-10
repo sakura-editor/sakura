@@ -20,8 +20,8 @@
 #include "StdAfx.h"
 #include "CRegexKeyword.h"
 #include "extmodule/CBregexp.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "types/CType.h"
+#include "view/colors/EColorIndexType.h"
 
 #if 0
 #include <stdio.h>

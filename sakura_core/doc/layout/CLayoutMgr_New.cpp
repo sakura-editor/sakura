@@ -23,8 +23,6 @@
 #include "charset/charcode.h"
 #include "mem/CMemoryIterator.h"
 #include "util/window.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
 
 
 
@@ -148,39 +146,6 @@ bool CLayoutMgr::IsKinsokuPosTail(
 	return false;
 }
 
-int CLayoutMgr::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr/*int nLineLen, const wchar_t* pLine*/ ) const
-{
-	int nCharChars;
-	int i;
-	for( i = nPos; i < cLineStr.GetLength(); ++i ){
-		// 2005-09-02 D.S.Koba GetSizeOfChar
-		nCharChars = CNativeW::GetSizeOfChar( cLineStr.GetPtr(), cLineStr.GetLength(), i );
-		if( 0 == nCharChars ){
-			nCharChars = 1;
-		}
-		if(	m_sTypeConfig.m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-			if( 1 == nCharChars && cLineStr.At(i) == L'\\' ){
-				++i;
-			}else
-			if( 1 == nCharChars && cLineStr.At(i) == wcQuote ){
-				return i + 1;
-			}
-		}
-		else if(	m_sTypeConfig.m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-			if( 1 == nCharChars && cLineStr.At(i) == wcQuote ){
-				if( i + 1 < cLineStr.GetLength() && cLineStr.At(i + 1) == wcQuote ){
-					++i;
-				}else{
-					return i + 1;
-				}
-			}
-		}
-		if( 2 == nCharChars ){
-			++i;
-		}
-	}
-	return cLineStr.GetLength();
-}
 
 /*!
 	@brief 行の長さを計算する (2行目以降の字下げ無し)

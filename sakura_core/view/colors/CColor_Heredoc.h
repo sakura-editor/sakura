@@ -1,9 +1,5 @@
-/*!	@file
-	@brief assertä÷êî
-
-*/
 /*
-	Copyright (C) 2007, kobake
+	Copyright (C) 2011, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,39 +21,24 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
-#define SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
+#ifndef SAKURA_CCOLOR_HEREDOC_H_
+#define SAKURA_CCOLOR_HEREDOC_H_
 
-//2007.08.30 kobake í«â¡
-#ifdef assert
-#undef assert
+#include "view/colors/CColorStrategy.h"
+
+class CColor_Heredoc : public CColorStrategy{
+public:
+	virtual EColorIndexType GetStrategyColor() const{ return COLORIDX_HEREDOC; }
+	virtual CLayoutColorInfo* GetStrategyColorInfo() const;
+	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; }
+	virtual void SetStrategyColorInfo(const CLayoutColorInfo*);
+	virtual bool BeginColor(const CStringRef& cStr, int nPos);
+	virtual bool EndColor(const CStringRef& cStr, int nPos);
+private:
+	std::wstring m_id;
+	int	     m_nSize;
+	const wchar_t* m_pszId;
+	int m_nCOMMENTEND;
+};
+
 #endif
-
-#ifdef _DEBUG
-	void debug_output(const char* str, ...);
-	void debug_exit();
-	void warning_point();
-
-	#define assert(exp) \
-	{ \
-		if(!(exp)){ \
-			debug_output("!assert: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
-			debug_exit(); \
-		} \
-	}
-
-	#define assert_warning(exp) \
-	{ \
-		if(!(exp)){ \
-			debug_output("!warning: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
-			warning_point(); \
-		} \
-	}
-
-#else
-	#define assert(exp)
-	#define assert_warning(exp)
-#endif
-
-#endif /* SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_ */
-/*[EOF]*/

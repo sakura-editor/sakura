@@ -49,8 +49,8 @@ public:
 	CColor_BlockComment(EColorIndexType nType) : m_nType(nType), m_nCOMMENTEND(0){}
 	virtual void Update(void)
 	{
-		m_pCEditDoc = CEditDoc::GetInstance(0);
-		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
+		const CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
+		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 		m_pcBlockComment = &m_pTypeData->m_cBlockComments[m_nType - COLORIDX_BLOCK1];
 	}
 	virtual EColorIndexType GetStrategyColor() const{ return m_nType; }

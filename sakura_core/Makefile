@@ -354,6 +354,7 @@ view/DispPos.o \
 view/colors/CColorStrategy.o \
 view/colors/CColor_Comment.o \
 view/colors/CColor_Found.o \
+view/colors/CColor_Heredoc.o \
 view/colors/CColor_KeywordSet.o \
 view/colors/CColor_Numeric.o \
 view/colors/CColor_Quote.o \

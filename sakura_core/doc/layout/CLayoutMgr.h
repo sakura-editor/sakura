@@ -28,6 +28,7 @@
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
 #include "types/CType.h"
+#include "CLayoutExInfo.h"
 #include "view/colors/EColorIndexType.h"
 #include "util/container.h"
 
@@ -249,7 +250,7 @@ protected:
 	void _DoLayout();	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	// 2009.08.28 nasukoji	テキスト最大幅算出用引数追加
-	CLayoutInt DoLayout_Range( CLayout* , CLogicInt, CLogicPoint, EColorIndexType, const CalTextWidthArg*, CLayoutInt* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
+	CLayoutInt DoLayout_Range( CLayout* , CLogicInt, CLogicPoint, EColorIndexType, CLayoutColorInfo*, const CalTextWidthArg*, CLayoutInt* );	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	void CalculateTextWidth_Range( const CalTextWidthArg* pctwArg );	/* テキストが編集されたら最大幅を算出する */	// 2009.08.28 nasukoji
 	CLayout* DeleteLayoutAsLogical( CLayout*, CLayoutInt, CLogicInt , CLogicInt, CLogicPoint, CLayoutInt* );	/* 論理行の指定範囲に該当するレイアウト情報を削除 */
 	void ShiftLogicalLineNum( CLayout* , CLogicInt );	/* 指定行より後の行のレイアウト情報について、論理行番号を指定行数だけシフトする */
@@ -271,7 +272,8 @@ protected:
 		CDocLine*		pcDocLine;
 		CLayout*		pLayout;
 		CColorStrategy*	pcColorStrategy;
-		CColorStrategy*	pcColorStrategy_Prev;
+		EColorIndexType	colorPrev;
+		CLayoutExInfo	exInfoPrev;
 		CLogicInt		nCurLine;
 
 		//ループ外 (DoLayoutのみ)
@@ -320,8 +322,6 @@ private:
 	}
 	bool IsKinsokuPosHead(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行頭禁則の処理位置か
 	bool IsKinsokuPosTail(CLayoutInt, CLayoutInt, CLayoutInt);	//!< 行末禁則の処理位置か
-public:
-	int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr ) const;
 private:
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
@@ -334,7 +334,7 @@ protected:
 	*/
 	//@@@ 2002.09.23 YAZAKI
 	// 2009.08.28 nasukoji	nPosX引数追加
-	CLayout* CreateLayout( CDocLine* pCDocLine, CLogicPoint ptLogicPos, CLogicInt nLength, EColorIndexType nTypePrev, CLayoutInt nIndent, CLayoutInt nPosX );
+	CLayout* CreateLayout( CDocLine* pCDocLine, CLogicPoint ptLogicPos, CLogicInt nLength, EColorIndexType nTypePrev, CLayoutInt nIndent, CLayoutInt nPosX, CLayoutColorInfo* );
 	CLayout* InsertLineNext( CLayout*, CLayout* );
 	void AddLineBottom( CLayout* );
 
@@ -365,6 +365,7 @@ protected:
 
 	//フラグ等
 	EColorIndexType			m_nLineTypeBot;				//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
+	CLayoutExInfo			m_cLayoutExInfoBot;
 	CLayoutInt				m_nLines;					// 全レイアウト行数
 
 	mutable CLayoutInt		m_nPrevReferLine;

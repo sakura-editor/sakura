@@ -30,14 +30,33 @@
 
 class CColor_Quote : public CColorStrategy{
 public:
-	CColor_Quote(wchar_t cQuote) : m_cQuote(cQuote), m_nCOMMENTEND(0) { }
+	CColor_Quote(wchar_t cQuote) : m_cQuote(cQuote), m_nCOMMENTEND(-1),m_nColorTypeIndex(0) {
+		m_szQuote[0] = cQuote;
+		m_szQuote[1] = cQuote;
+		m_szQuote[2] = cQuote;
+	}
+	virtual void Update(void);
 	virtual EColorIndexType GetStrategyColor() const = 0;
-	virtual void InitStrategyStatus(){ m_nCOMMENTEND = 0; }
+	virtual CLayoutColorInfo* GetStrategyColorInfo() const;
+	virtual void InitStrategyStatus(){ m_nCOMMENTEND = -1; }
+	virtual void SetStrategyColorInfo(const CLayoutColorInfo*);
 	virtual bool BeginColor(const CStringRef& cStr, int nPos);
 	virtual bool EndColor(const CStringRef& cStr, int nPos);
 private:
+	static int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd = NULL );
+	static int Match_QuoteStr( const wchar_t* szQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape );
+
 	wchar_t m_cQuote;
+	wchar_t m_szQuote[3];
 	int m_nCOMMENTEND;
+	std::wstring m_tag;
+
+	int m_nStringType;
+	int m_nEscapeType;
+	bool* m_pbEscapeEnd;
+	bool m_bEscapeEnd;
+protected:
+	int m_nColorTypeIndex;
 };
 
 

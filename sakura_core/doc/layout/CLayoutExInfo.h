@@ -1,9 +1,5 @@
-/*!	@file
-	@brief assertä÷êî
-
-*/
 /*
-	Copyright (C) 2007, kobake
+	Copyright (C) 2011, Moca
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,39 +21,43 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
-#ifndef SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
-#define SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_
+#ifndef SAKURA_CLAYOUTEXINFO_H_
+#define SAKURA_CLAYOUTEXINFO_H_
 
-//2007.08.30 kobake í«â¡
-#ifdef assert
-#undef assert
-#endif
+class CLayoutColorInfo{
+public:
+	CLayoutColorInfo(){}
+	virtual ~CLayoutColorInfo(){};
+	virtual bool IsEqual(const CLayoutColorInfo*)const = 0;
+};
 
-#ifdef _DEBUG
-	void debug_output(const char* str, ...);
-	void debug_exit();
-	void warning_point();
 
-	#define assert(exp) \
-	{ \
-		if(!(exp)){ \
-			debug_output("!assert: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
-			debug_exit(); \
-		} \
+class CLayoutExInfo
+{
+public:
+	CLayoutExInfo() : m_colorInfo(NULL){}
+	~CLayoutExInfo(){
+		delete m_colorInfo;
 	}
-
-	#define assert_warning(exp) \
-	{ \
-		if(!(exp)){ \
-			debug_output("!warning: %hs(%d): %hs\n", __FILE__, __LINE__, #exp); \
-			warning_point(); \
-		} \
+	void SetColorInfo(CLayoutColorInfo* p){
+		if( m_colorInfo ){
+			delete m_colorInfo;
+		}
+		m_colorInfo = p;
 	}
+	const CLayoutColorInfo* GetColorInfo() const{
+		return m_colorInfo;
+	}
+	CLayoutColorInfo* DetachColorInfo(){
+		CLayoutColorInfo* p = m_colorInfo;
+		m_colorInfo = NULL;
+		return p;
+	}
+private:
+	CLayoutColorInfo* m_colorInfo;
 
-#else
-	#define assert(exp)
-	#define assert_warning(exp)
+	CLayoutExInfo(const CLayoutExInfo&);
+	CLayoutExInfo& operator=(const CLayoutExInfo&);
+};
+
 #endif
-
-#endif /* SAKURA_DEBUG2_69DB6343_0580_4F92_98D6_63216724B2D19_H_ */
-/*[EOF]*/

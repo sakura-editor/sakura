@@ -1414,6 +1414,12 @@
 					<File
 						RelativePath="..\sakura_core\view\colors\CColor_Found.h">
 					</File>
+ 					<File
+						RelativePath="..\sakura_core\view\colors\CColor_Heredoc.cpp">
+					</File>
+					<File
+						RelativePath="..\sakura_core\view\colors\CColor_Heredoc.h">
+					</File>
 					<File
 						RelativePath="..\sakura_core\view\colors\CColor_KeywordSet.cpp">
 					</File>
@@ -1750,6 +1756,9 @@
 					<File
 						RelativePath="..\sakura_core\doc\layout\CLayout.h">
 					</File>
+					<File
+						RelativePath="..\sakura_core\doc\layout\CLayoutExInfo.h">
+ 					</File>
 					<File
 						RelativePath="..\sakura_core\doc\layout\CLayoutMgr.cpp">
 					</File>

@@ -10,8 +10,7 @@
 #include "typeprop/CImpExpManager.h"	// 2010/4/23 Uchi
 #include "CDlgSameColor.h"
 #include "CDlgKeywordSelect.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "view/colors/EColorIndexType.h"
 #include "util/shell.h"
 #include "util/window.h"
 #include "sakura_rc.h"

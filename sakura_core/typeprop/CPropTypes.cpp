@@ -24,8 +24,8 @@
 #include "StdAfx.h"
 #include "CPropTypes.h"
 #include "CEditApp.h"
-#include "view/CEditView.h" // SColorStrategyInfo
-#include "view/colors/CColorStrategy.h"
+#include "env/DLLSHAREDATA.h"
+#include "view/colors/EColorIndexType.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
 

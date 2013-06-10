@@ -24,6 +24,7 @@ class CLayoutMgr;
 #include "CEol.h"// 2002/2/10 aroka
 #include "doc/logic/CDocLine.h"// 2002/4/21 YAZAKI
 #include "mem/CMemory.h"// 2002/4/21 YAZAKI
+#include "CLayoutExInfo.h"
 #include "view/colors/EColorIndexType.h"
 
 
@@ -44,7 +45,8 @@ public:
 		CLogicPoint		ptLogicPos,		//!< 実データ参照位置
 		CLogicInt		nLength,		//!< 実データ内データ長
 		EColorIndexType	nTypePrev,
-		CLayoutInt		nTypeIndent
+		CLayoutInt		nTypeIndent,
+		CLayoutColorInfo*		pColorInfo
 	)
 	{
 		m_pPrev			= NULL;
@@ -54,6 +56,7 @@ public:
 		m_nLength		= nLength;		// 実データ内データ長
 		m_nTypePrev		= nTypePrev;	// タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
 		m_nIndent		= nTypeIndent;	// このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
+		m_cExInfo.SetColorInfo(pColorInfo);
 	}
 	~CLayout();
 	void DUMP( void );
@@ -102,6 +105,10 @@ public:
 
 	//その他属性参照
 	const CEol& GetLayoutEol() const{ return m_cEol; }
+	const CLayoutColorInfo* GetColorInfo() const{ return m_cExInfo.GetColorInfo(); }
+	CLayoutExInfo* GetLayoutExInfo(){
+		return &m_cExInfo;
+	}
 
 private:
 	CLayout*			m_pPrev;
@@ -117,6 +124,7 @@ private:
 	CLayoutInt			m_nIndent;			//!< このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
 	CEol				m_cEol;
 	CLayoutInt			m_nLayoutWidth;		//!< このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ）	// 2009.08.28 nasukoji
+	CLayoutExInfo		m_cExInfo;			//!< 色分け詳細情報
 };
 
 

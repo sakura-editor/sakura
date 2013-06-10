@@ -1352,6 +1352,9 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 
 	cProfile.IOProfileData( pszSecName, LTEXT("nTextWrapMethod"), types.m_nTextWrapMethod );		// 2008.05.30 nasukoji
 
+	cProfile.IOProfileData( pszSecName, LTEXT("bStringLineOnly"), types.m_bStringLineOnly );
+	cProfile.IOProfileData( pszSecName, LTEXT("bStringEndLine"), types.m_bStringEndLine );
+
 	// From Here Sep. 28, 2002 genta / YAZAKI
 	if( cProfile.IsReadingMode() ){
 		//	Block Comment

@@ -41,6 +41,7 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;					//半角数値を色分け表示	//Mar. 10, 2001 JEPRO
 	pType->m_ColorInfoArr[COLORIDX_BRACKET_PAIR].m_bDisp = true;			//	Sep. 21, 2002 genta 対括弧の強調をデフォルトONに
 	pType->m_bUseHokanByFile = true;										/*! 入力補完 開いているファイル内から候補を探す */
+	pType->m_bStringLineOnly = true; // 文字列は行内のみ
 }
 
 
