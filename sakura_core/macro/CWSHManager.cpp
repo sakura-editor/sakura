@@ -76,9 +76,6 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 		}
 
 		Engine->Execute(m_Source.c_str());
-		
-		//EditView->Redraw();
-		EditView->GetCaret().ShowEditCaret();
 	}
 	delete Engine;
 }

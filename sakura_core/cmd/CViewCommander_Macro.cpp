@@ -198,10 +198,6 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 			CEditApp::getInstance()->m_pcSMacroMgr->Exec( STAND_KEYMACRO, G_AppInstance(), m_pCommanderView, 0 );
 		}
 	}
-
-	/* フォーカス移動時の再描画 */
-	m_pCommanderView->RedrawAll();
-
 	return;
 }
 
@@ -293,10 +289,6 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPathW, const WCHAR* p
 		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = TRUE;
 		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = hwndRecordingKeyMacro;	/* キーボードマクロを記録中のウィンドウ */
 	}
-
-	/* フォーカス移動時の再描画 */
-	m_pCommanderView->RedrawAll();
-
 	return;
 }
 
