@@ -665,8 +665,14 @@ void CEditDoc::OnChangeSetting(
 	{
 		// 2008.06.07 nasukoji	折り返し方法の追加に対応
 		// 折り返し方法の一時設定とタイプ別設定が一致したら一時設定適用中は解除
-		if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod )
-			m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
+		if( m_nTextWrapMethodCur == ref.m_nTextWrapMethod ){
+			if( m_nTextWrapMethodCur == WRAP_SETTING_WIDTH
+				&& m_cLayoutMgr.GetMaxLineKetas() != ref.m_nMaxLineKetas ){
+				// 2013.05.29 折り返し幅が違うのでそのままにする
+			}else{
+				m_bTextWrapMethodCurTemp = false;		// 一時設定適用中を解除
+			}
+		}
 
 		// 一時設定適用中でなければ折り返し方法変更
 		if( !m_bTextWrapMethodCurTemp )
@@ -675,11 +681,19 @@ void CEditDoc::OnChangeSetting(
 		// 指定桁で折り返す：タイプ別設定を使用
 		// 右端で折り返す：仮に現在の折り返し幅を使用
 		// 上記以外：MAXLINEKETASを使用
-		if( m_nTextWrapMethodCur != WRAP_SETTING_WIDTH ){
-			if( m_nTextWrapMethodCur == WRAP_WINDOW_WIDTH )
-				ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
-			else
-				ref.m_nMaxLineKetas = MAXLINEKETAS;
+		switch( m_nTextWrapMethodCur ){
+		case WRAP_NO_TEXT_WRAP:
+			ref.m_nMaxLineKetas = MAXLINEKETAS;
+			break;
+		case WRAP_SETTING_WIDTH:
+			if( m_bTextWrapMethodCurTemp ){
+				// 2013.05.29 現在の一時適用の折り返し幅を使うように
+				ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();
+			}
+			break;
+		case WRAP_WINDOW_WIDTH:
+			ref.m_nMaxLineKetas = m_cLayoutMgr.GetMaxLineKetas();	// 現在の折り返し幅
+			break;
 		}
 	}
 	CProgressSubject* pOld = CEditApp::getInstance()->m_pcVisualProgress->CProgressListener::Listen(&m_cLayoutMgr);
