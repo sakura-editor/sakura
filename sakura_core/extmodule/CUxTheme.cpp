@@ -71,8 +71,12 @@ LPCTSTR CUxTheme::GetDllNameImp(int nIndex)
 bool CUxTheme::InitDllImp()
 {
 	const ImportTable table[] = {
-		{ &m_pfnIsThemeActive,		"IsThemeActive" },
-		{ &m_pfnSetWindowTheme,		"SetWindowTheme" },
+		{ &m_pfnIsThemeActive,							"IsThemeActive" },
+		{ &m_pfnSetWindowTheme,							"SetWindowTheme" },
+		{ &m_pfnOpenThemeData,							"OpenThemeData" },
+		{ &m_pfnDrawThemeBackground,					"DrawThemeBackground" },
+		{ &m_pfnDrawThemeParentBackground,				"DrawThemeParentBackground" },
+		{ &m_pfnIsThemeBackgroundPartiallyTransparent,	"IsThemeBackgroundPartiallyTransparent" },
 		{ NULL, 0 }
 	};
 
@@ -97,6 +101,38 @@ HRESULT CUxTheme::SetWindowTheme( HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszS
 	if( !InitThemeDll() )
 		return S_FALSE;
 	return m_pfnSetWindowTheme( hwnd, pszSubAppName, pszSubIdList );
+}
+
+/*! SetWindowTheme API Wrapper */
+HTHEME CUxTheme::OpenThemeData( HWND hwnd, LPCWSTR pszClassList )
+{
+	if( !InitThemeDll() )
+		return NULL;
+	return (HTHEME)m_pfnOpenThemeData( hwnd, pszClassList );
+}
+
+/*! SetWindowTheme API Wrapper */
+HRESULT CUxTheme::DrawThemeBackground( HTHEME htheme, HDC hdc, int iPartId, int iStateId, RECT* prc, RECT* prcClip )
+{
+	if( !InitThemeDll() )
+		return S_FALSE;
+	return m_pfnDrawThemeBackground( htheme, hdc, iPartId, iStateId, prc, prcClip );
+}
+
+/*! SetWindowTheme API Wrapper */
+HRESULT CUxTheme::DrawThemeParentBackground( HWND hwnd, HDC hdc, RECT *prc )
+{
+	if( !InitThemeDll() )
+		return S_FALSE;
+	return m_pfnDrawThemeParentBackground( hwnd, hdc, prc );
+}
+
+/*! SetWindowTheme API Wrapper */
+HRESULT CUxTheme::IsThemeBackgroundPartiallyTransparent( HTHEME htheme, int iPartId, int iStateId )
+{
+	if( !InitThemeDll() )
+		return S_FALSE;
+	return m_pfnIsThemeBackgroundPartiallyTransparent( htheme, iPartId, iStateId );
 }
 
 

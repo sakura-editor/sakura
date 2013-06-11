@@ -158,6 +158,7 @@ struct CommonSetting_TabBar
 	wchar_t		m_szTabWndCaption[MAX_CAPTION_CONF_LEN];	//タブウインドウキャプション	//@@@ 2003.06.13 MIK
 	BOOL		m_bSameTabWidth;				//タブを等幅にする			//@@@ 2006.01.28 ryoji
 	BOOL		m_bDispTabIcon;					//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
+	BOOL		m_bDispTabClose;				//タブに閉じるボタンを表示する	//@@@ 2012.04.14 syat
 	BOOL		m_bSortTabList;					//タブ一覧をソートする	//@@@ 2006.03.23 fon
 	BOOL		m_bTab_ListFull;				//タブ一覧をフルパス表示する	//@@@ 2007.02.28 ryoji
 

@@ -131,9 +131,12 @@ protected:
 	// 2006.02.01 ryoji タブ一覧を追加
 	void DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted );	/*!< ボタン背景描画処理 */	// 2006.10.21 ryoji
 	void DrawListBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< 一覧ボタン描画処理 */
+	void DrawCloseFigure( CGraphics& gr, const RECT &btnRect );			/*!< 閉じるマーク描画処理 */
 	void DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< 閉じるボタン描画処理 */		// 2006.10.21 ryoji
+	void DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected );	/*!< タブを閉じるボタン描画処理 */		// 2012.04.14 syat
 	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
 	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 閉じるボタンの矩形取得処理 */	// 2006.10.21 ryoji
+	void GetTabCloseBtnRect( const LPRECT lprcClient, LPRECT lprc, bool selected );	/*!< タブを閉じるボタンの矩形取得処理 */	// 2012.04.14 syat
 
 	HFONT CreateMenuFont( void )
 	{
@@ -147,7 +150,7 @@ protected:
 
 protected:
 	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
-	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE };
+	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE, CAPT_TABCLOSE };
 
 	typedef HIMAGELIST (WINAPI *FN_ImageList_Duplicate)(HIMAGELIST himl);
 
@@ -181,6 +184,7 @@ private:
 	BOOL		m_bHovering;
 	BOOL		m_bListBtnHilighted;
 	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
+	BOOL		m_bOwnerDraw;			//!< タブオーナードロー状態
 	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
