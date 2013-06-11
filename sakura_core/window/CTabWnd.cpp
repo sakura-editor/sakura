@@ -37,11 +37,13 @@
 
 #include "StdAfx.h"
 #include <limits.h>
+#include <vsstyle.h>
 #include "CTabWnd.h"
 #include "window/CEditWnd.h"
 #include "_main/global.h"
+#include "_os/COSVersionInfo.h"
 #include "charset/charcode.h"
-
+#include "extmodule/CUxTheme.h"
 #include "env/CShareData.h"
 #include "env/CSakuraEnvironment.h"
 #include "uiparts/CGraphics.h"
@@ -192,6 +194,21 @@ LRESULT CTabWnd::OnTabLButtonDown( WPARAM wParam, LPARAM lParam )
 	int nSrcTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
 	if( 0 > nSrcTab )
 		return 1L;
+
+	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
+		// 閉じるボタンのチェック
+		RECT rcItem;
+		TabCtrl_GetItemRect(m_hwndTab, nSrcTab, &rcItem);
+		::InflateRect(&rcItem, DpiScaleX(2), DpiScaleY(2));
+		RECT rcClose;
+		GetTabCloseBtnRect(&rcItem, &rcClose, nSrcTab == TabCtrl_GetCurSel(m_hwndTab));
+		if( ::PtInRect(&rcClose, hitinfo.pt) ){
+			// 閉じるボタン上ならキャプチャー開始
+			m_eCaptureSrc = CAPT_TABCLOSE;
+			::SetCapture( GetHwnd() );
+			return 0L;
+		}
+	}
 
 	m_eDragState = DRAG_CHECK;	// ドラッグのチェックを開始
 
@@ -695,6 +712,7 @@ CTabWnd::CTabWnd()
 , m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
 , m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
 , m_nTabBorderArray( NULL )		//  2012.04.22 syat
+, m_bOwnerDraw( FALSE )
 {
 	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
@@ -876,6 +894,7 @@ void CTabWnd::Close( void )
 		}
 
 		this->DestroyWindow();
+		this->m_bOwnerDraw = false;	// 次回作成で再びオーナードロー化するためフラグを落とす
 	}
 }
 
@@ -1041,6 +1060,41 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				}
 				::PostMessageAny( GetParentHwnd(), WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
 			}
+		}else if( m_eCaptureSrc == CAPT_TABCLOSE ){	// キャプチャー元はタブを閉じるボタン?
+			int nTabIdx = 0;
+			int iTabCount = TabCtrl_GetItemCount(m_hwndTab);
+			RECT rcItem;
+			for( ; nTabIdx < iTabCount; nTabIdx++ ){
+				TabCtrl_GetItemRect(m_hwndTab, nTabIdx, &rcItem);
+				::InflateRect(&rcItem, DpiScaleX(2), DpiScaleY(2));
+				if( ::PtInRect(&rcItem, pt)){
+					RECT rcClose;
+					GetTabCloseBtnRect(&rcItem, &rcClose, nTabIdx == TabCtrl_GetCurSel(m_hwndTab));
+					if( ::PtInRect(&rcClose, pt) ){
+						// 閉じるボタン上ならタブを閉じる
+						EditNode* pTopNode = CAppNodeManager::getInstance()->GetEditNode( ::GetParent(::GetParent(m_hwndTab)) );
+						EditNode* nodes = NULL;
+						int nNodeCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &nodes, TRUE, TRUE );
+						int nEditIdx = 0;
+						for ( ; nEditIdx < nNodeCount; nEditIdx++ ){
+							EditNode* node = &nodes[nEditIdx];
+							if( node->m_nGroup != pTopNode->m_nGroup ){
+								continue;
+							}
+							if( nTabIdx == 0 ){
+								// ウィンドウを閉じるコマンドを実行する
+								return ExecTabCommand( F_WINCLOSE, MAKEPOINTS(lParam) );
+								break;
+							}
+							nTabIdx --;
+						}
+						if( nNodeCount > 0 ){
+							delete[] nodes;
+						}
+					}
+					break;
+				}
+			}
 		}
 
 		// キャプチャー解除
@@ -1115,6 +1169,7 @@ LRESULT CTabWnd::OnMeasureItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 /*!	WM_DRAWITEM処理
 	@date 2006.02.01 ryoji 新規作成
+	@date 2012.04.14 syat タブのオーナードロー追加
 */
 LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
@@ -1179,6 +1234,135 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 			gr.SetPen( ::GetSysColor(COLOR_HIGHLIGHT) );
 			gr.SetBrushColor(-1); //NULL_BRUSH
 			::Rectangle( gr, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom );
+		}
+	}
+	else if( lpdis->CtlType == ODT_TAB ) {
+		// タブを描画する
+		int nTabIndex = lpdis->itemID;
+		HWND hwndItem = lpdis->hwndItem;
+		TCITEM item;
+		TCHAR szBuf[256];
+		int nSelIndex = TabCtrl_GetCurSel(m_hwndTab);
+		bool bSelected = ( nSelIndex == nTabIndex );
+		int nTabCount = TabCtrl_GetItemCount(m_hwndTab);
+
+		item.mask = TCIF_TEXT | TCIF_PARAM | TCIF_IMAGE;
+		item.pszText = szBuf;
+		item.cchTextMax = sizeof(szBuf) / sizeof(TCHAR);
+		TabCtrl_GetItem(hwndItem, nTabIndex, &item);
+
+		//描画対象
+		HDC hdc = lpdis->hDC;
+		CGraphics gr(hdc);
+		RECT rcItem = lpdis->rcItem;
+		RECT rcFullItem(rcItem);
+
+		// 状態に従ってテキストと背景色を決める
+		COLORREF clrText;
+
+		// 背景描画
+		if( !IsVisualStyle() ) {
+			::FillRect( gr, &rcItem, (HBRUSH)(COLOR_BTNFACE + 1) );
+		}else{
+			CUxTheme& uxTheme = *CUxTheme::getInstance();
+			int iPartId = TABP_TABITEM;
+			int iStateId = TIS_NORMAL;
+			int cxEdge = ::GetSystemMetrics( SM_CXEDGE );	// 3D枠線幅（横）
+			int cyEdge = ::GetSystemMetrics( SM_CYEDGE );	// 3D枠線幅（縦）
+			HTHEME hTheme = uxTheme.OpenThemeData( m_hwndTab, L"TAB" );
+			if( hTheme ) {
+				if( !bSelected ){
+					::InflateRect( &rcFullItem, DpiScaleX(2), DpiScaleY(2) );
+					if( nTabIndex == nSelIndex - 1 ){
+						rcFullItem.right -= DpiScaleX(1);
+					}else if( nTabIndex == nSelIndex + 1 ){
+						rcFullItem.left += DpiScaleX(1);
+					}
+				}
+				bool bHotTracked = ::GetTextColor(hdc) == GetSysColor(COLOR_HOTLIGHT);
+
+				RECT rcBk(rcFullItem);
+				if( bSelected ){
+					iStateId = TIS_SELECTED;
+					if( nTabIndex == 0 ){
+						if( nTabIndex == nTabCount - 1 ){
+							iPartId = TABP_TOPTABITEMBOTHEDGE;
+						}else{
+							iPartId = TABP_TOPTABITEMLEFTEDGE;
+						}
+					}else if( nTabIndex == nTabCount - 1 ){
+						iPartId = TABP_TOPTABITEMRIGHTEDGE;
+					}else{
+						iPartId = TABP_TOPTABITEM;
+					}
+				}else{
+					rcFullItem.top += DpiScaleY(2);
+					rcBk.top += DpiScaleY(2);
+					iStateId = bHotTracked ? TIS_HOT : TIS_NORMAL;
+					if( nTabIndex == 0 ){
+						if( nTabIndex == nTabCount - 1 ){
+							iPartId = TABP_TABITEMBOTHEDGE;
+						}else{
+							iPartId = TABP_TABITEMLEFTEDGE;
+						}
+					}else if( nTabIndex == nTabCount - 1 ){
+						iPartId = TABP_TABITEMRIGHTEDGE;
+					}else{
+						iPartId = TABP_TABITEM;
+					}
+				}
+
+				if( uxTheme.IsThemeBackgroundPartiallyTransparent(hTheme, iPartId, iStateId) ) {
+					uxTheme.DrawThemeParentBackground(m_hwndTab, hdc, &rcFullItem);
+				}
+				uxTheme.DrawThemeBackground(hTheme, hdc, iPartId, iStateId, &rcBk, NULL);
+			}
+		}
+
+		rcItem.left += DpiScaleX(4) + (bSelected ? DpiScaleX(4) : 0);
+
+		// アイコン描画
+		int cxIcon = CX_SMICON;
+		int cyIcon = CY_SMICON;
+		if( NULL != m_hIml )
+		{
+			ImageList_GetIconSize( m_hIml, &cxIcon, &cyIcon );
+			if( 0 <= item.iImage )
+			{
+				int top = rcItem.top + ( rcItem.bottom - rcItem.top - cyIcon ) / 2 - 1;
+				ImageList_Draw( m_hIml, item.iImage, lpdis->hDC, rcItem.left,
+					top + (bSelected ? 0 : DpiScaleY(3)), ILD_TRANSPARENT );
+				rcItem.left += cxIcon + DpiScaleX(6);
+			}
+		}
+
+		// テキスト描画
+		clrText = COLOR_MENUTEXT;
+		gr.PushTextForeColor( clrText );
+		gr.SetTextBackTransparent(true);
+		HFONT hfnt = CreateMenuFont();
+		gr.PushMyFont(hfnt);
+		RECT rcText = rcItem;
+		rcText.top += (bSelected ? 0 : DpiScaleY(5)) - DpiScaleY(1);
+		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
+			rcText.right -= (rcBtnBase.right + DpiScaleX(2));
+		}
+
+		::DrawText( gr, szBuf, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
+
+		gr.RestoreTextColors();
+		gr.PopMyFont();
+		::DeleteObject( hfnt );
+
+		// タブを閉じるボタンを描画
+		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
+			DrawTabCloseBtn( gr, &rcItem, bSelected );
+		}
+
+		// Vista以降ではオーナードロータブに自動で3D枠が描画されてしまうため、
+		// 描画範囲を無効化する
+		if ( IsVisualStyle() ){
+			ExcludeClipRect(hdc, rcFullItem.left, rcFullItem.top, rcFullItem.right, rcFullItem.bottom);
 		}
 	}
 
@@ -1668,6 +1852,17 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 
 	if( NULL == m_hwndTab ) return;
 
+	// オーナードロー状態を共通設定に追随させる
+	UINT lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
+	if( ! m_bOwnerDraw && m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
+		m_bOwnerDraw = TRUE;
+		lngStyle |= TCS_OWNERDRAWFIXED;
+	}else if( m_bOwnerDraw && ! m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
+		m_bOwnerDraw = FALSE;
+		lngStyle &= ~TCS_OWNERDRAWFIXED;
+	}
+	::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
+
 	pEditNode = NULL;
 	nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 
@@ -1691,6 +1886,18 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 
 		if( bRebuild )
 			TabCtrl_DeleteAllItems( m_hwndTab );	// 作成しなおす
+
+		// タブ余白設定
+		if( IsWin2000_or_later() ){
+			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose
+					&& ! m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth ){
+				// 閉じるボタン表示（オーナードロー）
+				TabCtrl_SetPadding( m_hwndTab, DpiScaleX(14), 0 );
+			}else{
+				// 閉じるボタン非表示
+				TabCtrl_SetPadding( m_hwndTab, DpiScaleX(6), DpiScaleY(3) );
+			}
+		}
 
 		// 作成するタブ数と選択状態にするタブ位置（自ウィンドウの位置）を調べる
 		for( i = 0, j = 0; i < nCount; i++ )
@@ -2286,11 +2493,8 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 	::Polygon( gr, pt, _countof(pt) );
 }
 
-/*! 閉じるボタン描画処理
-	@date 2006.10.21 ryoji 新規作成
-	@date 2009.10.01 ryoji 描画イメージを矩形中央にもってくる
-*/
-void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
+/*! 閉じるマーク描画処理 */
+void CTabWnd::DrawCloseFigure( CGraphics& gr, const RECT& rcBtn )
 {
 	const POINT ptBase1[6][2] =	// [x]描画イメージ形状（直線6本）
 	{
@@ -2301,6 +2505,28 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 		{{12, 4}, {3, 13}},
 		{{12, 5}, {4, 13}}
 	};
+	POINT pt[2];
+	int i;
+
+	// [x]を描画（直線6本）
+	for( i = 0; i < _countof(ptBase1); i++ )
+	{
+		pt[0].x = ptBase1[i][0].x + rcBtn.left;
+		pt[0].y = ptBase1[i][0].y + rcBtn.top;
+		pt[1].x = ptBase1[i][1].x + rcBtn.left;
+		pt[1].y = ptBase1[i][1].y + rcBtn.top;
+		::MoveToEx( gr, pt[0].x, pt[0].y, NULL );
+		::LineTo( gr, pt[1].x, pt[1].y );
+	}
+}
+
+/*! 閉じるボタン描画処理
+	@date 2006.10.21 ryoji 新規作成
+	@date 2009.10.01 ryoji 描画イメージを矩形中央にもってくる
+	@date 2012.05.12 syat マーク描画部分を関数に切り出し
+*/
+void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
+{
 	const POINT ptBase2[10][2] = // [xx]描画イメージ形状（矩形10個）
 	{
 		{{3, 4}, {5, 6}},
@@ -2342,16 +2568,7 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 		!m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin			// 2007.02.13 ryoji 条件追加（ウィンドウの閉じるボタンは全部閉じる）
 		)
 	{
-		// [x]を描画（直線6本）
-		for( i = 0; i < _countof(ptBase1); i++ )
-		{
-			pt[0].x = ptBase1[i][0].x + rcBtn.left;
-			pt[0].y = ptBase1[i][0].y + rcBtn.top;
-			pt[1].x = ptBase1[i][1].x + rcBtn.left;
-			pt[1].y = ptBase1[i][1].y + rcBtn.top;
-			::MoveToEx( gr, pt[0].x, pt[0].y, NULL );
-			::LineTo( gr, pt[1].x, pt[1].y );
-		}
+		DrawCloseFigure( gr, rcBtn );
 	}
 	else
 	{
@@ -2365,6 +2582,28 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 			::Rectangle( gr, pt[0].x, pt[0].y, pt[1].x, pt[1].y );
 		}
 	}
+}
+
+/*! タブを閉じるボタン描画処理
+	@date 2012.04.08 syat 新規作成
+*/
+void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected )
+{
+	RECT rcBtn;
+	GetTabCloseBtnRect( lprcClient, &rcBtn, selected );
+
+	DrawBtnBkgnd( gr, &rcBtn, m_bCloseBtnHilighted );
+
+	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
+	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
+	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2 - 1;
+	rcBtn.right = rcBtn.left + (rcBtnBase.right - rcBtnBase.left);
+	rcBtn.bottom = rcBtn.top + (rcBtnBase.bottom - rcBtnBase.left);
+
+	int nIndex = COLOR_BTNTEXT;
+	gr.SetPen( ::GetSysColor(nIndex) );
+	gr.SetBrushColor( ::GetSysColor(nIndex) );
+	DrawCloseFigure( gr, rcBtn );
 }
 
 /*! 一覧ボタンの矩形取得処理
@@ -2384,7 +2623,22 @@ void CTabWnd::GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
 	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(7), lprcClient->top + TAB_MARGIN_TOP + DpiScaleX(2) );
+	::OffsetRect(lprc,
+		lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(7),
+		lprcClient->top + TAB_MARGIN_TOP + DpiScaleY(2) );
+}
+
+/*! タブを閉じるボタンの矩形取得処理
+	@date 2012.04.08 syat 新規作成
+*/
+void CTabWnd::GetTabCloseBtnRect( const LPRECT lprcTab, LPRECT lprc, bool selected )
+{
+	*lprc = rcBtnBase;
+	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
+	::OffsetRect(lprc,
+		lprcTab->right - TAB_MARGIN_RIGHT + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left))
+			+ DpiScaleX(6) + (selected ? 0 : DpiScaleX(4)),
+		lprcTab->top + TAB_MARGIN_TOP );
 }
 
 
