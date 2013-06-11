@@ -116,7 +116,7 @@ void CGraphics::PushTextForeColor(COLORREF color)
 	//Ý’è
 	COLORREF cOld = ::SetTextColor(m_hdc,color);
 	//‹L˜^
-	if(m_vTextForeColors.size()==0){
+	if(m_vTextForeColors.empty()){
 		m_vTextForeColors.push_back(cOld);
 	}
 	m_vTextForeColors.push_back(color);
@@ -149,7 +149,7 @@ void CGraphics::PushTextBackColor(COLORREF color)
 	//Ý’è
 	COLORREF cOld = ::SetBkColor(m_hdc,color);
 	//‹L˜^
-	if(m_vTextBackColors.size()==0){
+	if(m_vTextBackColors.empty()){
 		m_vTextBackColors.push_back(cOld);
 	}
 	m_vTextBackColors.push_back(color);
@@ -208,8 +208,6 @@ void CGraphics::PopMyFont()
 	//–ß‚·
 	if(m_vFonts.size()>=2){
 		m_vFonts.pop_back();
-	}
-	if(!m_vFonts.empty()){
 		SelectObject(m_hdc,m_vFonts.back());
 	}
 }
@@ -218,8 +216,8 @@ void CGraphics::ClearMyFont()
 {
 	if(!m_vFonts.empty()){
 		SelectObject(m_hdc,m_vFonts[0]);
+		m_vFonts.clear();
 	}
-	m_vFonts.clear();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
