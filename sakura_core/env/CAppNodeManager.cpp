@@ -184,7 +184,7 @@ BOOL CAppNodeGroupHandle::AddEditWndList( HWND hWnd )
 
 			//連番を更新する。
 			sMyEditNode.m_nIndex = pShare->m_sNodes.m_nSequences;
-			sMyEditNode.m_nId = pShare->m_sNodes.m_nSequences;
+			sMyEditNode.m_nId = -1;
 
 			/* タブグループ連番 */
 			if( m_nGroup > 0 )
@@ -484,6 +484,23 @@ EditNode* CAppNodeManager::GetEditNode( HWND hWnd )
 	}
 
 	return NULL;
+}
+
+
+
+//! 無題番号取得
+int CAppNodeManager::GetNoNameNumber( HWND hWnd )
+{
+	DLLSHAREDATA* pShare = &GetDllShareData();
+	EditNode* editNode = GetEditNode( hWnd );
+	if( editNode ){
+		if( -1 == editNode->m_nId ){
+			pShare->m_sNodes.m_nNonameSequences++;
+			editNode->m_nId = pShare->m_sNodes.m_nNonameSequences;
+		}
+		return editNode->m_nId;
+	}
+	return -1;
 }
 
 

@@ -447,7 +447,11 @@ bool CFileNameManager::GetMenuFullLabel(
 			pszName = szFileName;
 		}
 	}else{
-		wsprintf( szFileName, _T("(–³‘è)%d"), nId);
+		if( nId == -1 ){
+			wsprintf( szFileName, _T("(–³‘è)"));
+		}else{
+			wsprintf( szFileName, _T("(–³‘è)%d"), nId);
+		}
 		pszName = szFileName;
 	}
 	const TCHAR* pszCharset = _T("");

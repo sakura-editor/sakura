@@ -166,6 +166,10 @@ bool CNormalProcess::InitializeProcess()
 	if( bDebugMode ){
 		/* デバッグモニタモードに設定 */
 		CAppMode::getInstance()->SetDebugModeON();
+		if( !CAppMode::getInstance()->IsDebugMode() ){
+			// デバッグではなくて(無題)
+			CAppNodeManager().GetNoNameNumber( pEditWnd->GetHwnd() );
+		}
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
 		// 2010.06.16 Moca アウトプットは CCommnadLineで -TYPE=output 扱いとする
@@ -210,6 +214,9 @@ bool CNormalProcess::InitializeProcess()
 			//return true; // 2003.06.23 Moca
 		}
 		else{
+			CAppNodeManager().GetNoNameNumber( pEditWnd->GetHwnd() );
+			pEditWnd->UpdateCaption();
+			
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
 			if( gi.cmGrepKey.GetStringLength() < _MAX_PATH ){
 				CSearchKeywordManager().AddToSearchKeyArr( gi.cmGrepKey.GetStringPtr() );
@@ -353,6 +360,9 @@ bool CNormalProcess::InitializeProcess()
 				bViewMode,	// ビューモードか
 				nType
 			);
+		}
+		if( !pEditWnd->GetDocument().m_cDocFile.GetFilePathClass().IsValidPath() ){
+			CAppNodeManager().GetNoNameNumber( pEditWnd->GetHwnd() );
 		}
 	}
 
