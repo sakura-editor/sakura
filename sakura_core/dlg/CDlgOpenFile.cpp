@@ -1105,7 +1105,7 @@ void CDlgOpenFile::OnCmbDropdown( HWND hwnd )
 	hDC = ::GetDC( hwnd );
 	if( NULL == hDC )
 		return;
-	hFont = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, NULL );
+	hFont = (HFONT)::SendMessageAny( hwnd, WM_GETFONT, 0, (LPARAM)NULL );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
 	nItem = Combo_GetCount( hwnd );
 	::GetWindowRect( hwnd, &rc );

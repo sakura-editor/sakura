@@ -354,7 +354,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		if( plugin ){
 			sItem.pszText = const_cast<LPTSTR>( to_tchar(plugin->m_sName.c_str()) );
 		}else{
-			sItem.pszText = _T("-");
+			sItem.pszText = const_cast<TCHAR*>(_T("-"));
 		}
 		ListView_SetItem( hListView, &sItem );
 
@@ -364,13 +364,13 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 2;
 		switch( plugin_table[index].m_state ){
-		case PLS_INSTALLED: sItem.pszText = _T("追加"); break;
-		case PLS_UPDATED:   sItem.pszText = _T("更新"); break;
-		case PLS_STOPPED:   sItem.pszText = _T("停止"); break;
-		case PLS_LOADED:    sItem.pszText = _T("稼働"); break;
-		case PLS_DELETED:   sItem.pszText = _T("削除"); break;
-		case PLS_NONE:      sItem.pszText = _T(""); break;
-		default:            sItem.pszText = _T("未定義"); break;
+		case PLS_INSTALLED: sItem.pszText = const_cast<TCHAR*>(_T("追加")); break;
+		case PLS_UPDATED:   sItem.pszText = const_cast<TCHAR*>(_T("更新")); break;
+		case PLS_STOPPED:   sItem.pszText = const_cast<TCHAR*>(_T("停止")); break;
+		case PLS_LOADED:    sItem.pszText = const_cast<TCHAR*>(_T("稼働")); break;
+		case PLS_DELETED:   sItem.pszText = const_cast<TCHAR*>(_T("削除")); break;
+		case PLS_NONE:      sItem.pszText = const_cast<TCHAR*>(_T("")); break;
+		default:            sItem.pszText = const_cast<TCHAR*>(_T("未定義")); break;
 		}
 		ListView_SetItem( hListView, &sItem );
 		
@@ -381,7 +381,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		if( plugin_table[index].m_state != PLS_NONE ){
 			sItem.pszText = const_cast<TCHAR*>(plugin ? _T("読込") : _T(""));
 		}else{
-			sItem.pszText = _T("");
+			sItem.pszText = const_cast<TCHAR*>(_T(""));
 		}
 		ListView_SetItem( hListView, &sItem );
 
@@ -403,7 +403,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 			}
 			break;
 		default:
-			sItem.pszText = _T("");
+			sItem.pszText = const_cast<TCHAR*>(_T(""));
 		}
 		ListView_SetItem( hListView, &sItem );
 	}

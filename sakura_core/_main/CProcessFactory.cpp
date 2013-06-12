@@ -205,7 +205,7 @@ bool CProcessFactory::StartControlProcess()
 	s.cb          = sizeof( s );
 	s.lpReserved  = NULL;
 	s.lpDesktop   = NULL;
-	s.lpTitle     = _T("sakura control process"); //2007.09.21 kobake デバッグしやすいように、名前を付ける
+	s.lpTitle     = const_cast<TCHAR*>(_T("sakura control process")); //2007.09.21 kobake デバッグしやすいように、名前を付ける
 	s.dwFlags     = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
 	s.cbReserved2 = 0;

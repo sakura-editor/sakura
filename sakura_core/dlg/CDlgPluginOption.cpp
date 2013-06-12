@@ -101,7 +101,7 @@ int CDlgPluginOption::DoModal(
 		return 0;
 	}
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PLUGIN_OPTION, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PLUGIN_OPTION, (LPARAM)NULL );
 }
 
 /* ダイアログデータの設定 */
@@ -304,14 +304,14 @@ BOOL CDlgPluginOption::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 40 / 100;
-	col.pszText  = _T("項目");
+	col.pszText  = const_cast<TCHAR*>(_T("項目"));
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 55 / 100;
-	col.pszText  = _T("値");
+	col.pszText  = const_cast<TCHAR*>(_T("値"));
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 

@@ -71,7 +71,7 @@ CDialog::CDialog()
 	m_hwndParent = NULL;	/* オーナーウィンドウのハンドル */
 	m_hWnd  = NULL;			/* このダイアログのハンドル */
 	m_hwndSizeBox = NULL;
-	m_lParam = NULL;
+	m_lParam = (LPARAM)NULL;
 	m_nShowCmd = SW_SHOW;
 	m_xPos = -1;
 	m_yPos = -1;
@@ -546,7 +546,7 @@ BOOL CDialog::OnCbnDropDown( HWND hwndCtl, int wID )
 	hDC = ::GetDC( hwndCtl );
 	if( NULL == hDC )
 		return FALSE;
-	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, NULL );
+	hFont = (HFONT)::SendMessageAny( hwndCtl, WM_GETFONT, 0, (LPARAM)NULL );
 	hFont = (HFONT)::SelectObject( hDC, hFont );
 	nItem = Combo_GetCount( hwndCtl );
 	::GetWindowRect( hwndCtl, &rc );

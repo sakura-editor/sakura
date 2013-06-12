@@ -141,7 +141,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const TCHAR* pszCur
 		_tcscpy(m_szCurrentFilePath, pszCurrentFilePath);
 	}
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_GREP, (LPARAM)NULL );
 }
 
 //	2007.02.09 bosagami

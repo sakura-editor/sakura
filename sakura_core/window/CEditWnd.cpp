@@ -98,10 +98,10 @@
 //		2010/5/19	Uchi
 struct SFuncMenuName {
 	EFunctionCode	eFunc;
-	WCHAR*			sName[3];		// 選択文字列
+	const WCHAR*	sName[3];		// 選択文字列
 };
 
-static SFuncMenuName	sFuncMenuName[] = {
+const static SFuncMenuName	sFuncMenuName[] = {
 	{F_RECKEYMACRO,			{L"キーマクロの記録開始",			L"キーマクロの記録終了"}},
 	{F_SAVEKEYMACRO,		{L"キーマクロの保存",				L"キーマクロの記録終了&&保存"}},
 	{F_LOADKEYMACRO,		{L"キーマクロの読み込み",			L"キーマクロの記録終了&&読み込み"}},
@@ -2584,7 +2584,7 @@ void CEditWnd::CheckFreeSubMenuSub( HMENU hMenu, int nLv )
 void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bool flag )
 {
 	int				i;
-	WCHAR*			sName;
+	const WCHAR*	sName;
 
 	sName = L"";
 	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
@@ -2598,7 +2598,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bo
 void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bool flag0, bool flag1 )
 {
 	int				i;
-	WCHAR*			sName;
+	const WCHAR*	sName;
 
 	sName = L"";
 	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
