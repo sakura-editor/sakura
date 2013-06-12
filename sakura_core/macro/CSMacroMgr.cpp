@@ -360,6 +360,12 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_EXTHTMLHELP,				LTEXT("ExtHtmlHelp"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 外部HTMLヘルプ */
 	{F_ABOUT,					LTEXT("About"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* バージョン情報 */	//Dec. 24, 2000 JEPRO 追加
 
+	/*マクロ用*/
+	{F_COMMITUNDOBUFFER,		LTEXT("CommitUndoBuffer"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlKコミット
+	{F_ADDREFUNDOBUFFER,		LTEXT("AddRefUndoBuffer"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK AddRef
+	{F_SETUNDOBUFFER,			LTEXT("SetUndoBuffer"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK Release
+	{F_APPENDUNDOBUFFERCURSOR,	L"AppendUndoBufferCursor",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL }, //OpeBlK にカーソル位置を追加
+
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，
@@ -526,7 +532,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			//	Sep. 15, 2005 FILE
 			//	Jul. 01, 2007 マクロの多重実行時に備えて直前のマクロ番号を退避
 			int prevmacro = SetCurrentIdx( idx );
-			m_pKeyMacro->ExecKeyMacro( pcEditView, flags );
+			m_pKeyMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
 			return TRUE;
 		}
@@ -537,7 +543,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	if( idx == TEMP_KEYMACRO ){		// 一時マクロ
 		if( m_pTempMacro != NULL ){
 			SetCurrentIdx( idx );
-			m_pTempMacro->ExecKeyMacro( pcEditView, flags );
+			m_pTempMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( INVALID_MACRO_IDX );
 			return TRUE;
 		}
@@ -568,7 +574,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	//	Jul. 01, 2007 マクロの多重実行時に備えて直前のマクロ番号を退避
 	int prevmacro = SetCurrentIdx( idx );
 	SetCurrentIdx( idx );
-	m_cSavedKeyMacro[idx]->ExecKeyMacro(pcEditView, flags);
+	m_cSavedKeyMacro[idx]->ExecKeyMacro2(pcEditView, flags);
 	SetCurrentIdx( prevmacro );
 
 	return TRUE;

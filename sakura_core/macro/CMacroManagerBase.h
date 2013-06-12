@@ -33,11 +33,22 @@
 
 #include <Windows.h>
 class CEditView;
+
+class CMacroBeforeAfter {
+public:
+	CMacroBeforeAfter() : m_nOpeBlkCount(0){};
+	virtual ~CMacroBeforeAfter(){};
+	virtual void ExecKeyMacroBefore( class CEditView* pcEditView, int flags );
+	virtual void ExecKeyMacroAfter( class CEditView* pcEditView, int flags, bool bRet );
+private:
+	int m_nOpeBlkCount;
+};
+
 /*!
 	@brief マクロを処理するエンジン部分の基底クラス
 
 */
-class CMacroManagerBase {
+class CMacroManagerBase : CMacroBeforeAfter {
 public:
 
 	/*! キーボードマクロの実行
@@ -47,7 +58,8 @@ public:
 		
 		@date 2007.07.20 genta マクロ実行属性を渡すためにflagsを追加
 	*/
-	virtual void ExecKeyMacro( class CEditView* pcEditView, int flags ) const = 0;
+	virtual bool ExecKeyMacro( class CEditView* pcEditView, int flags ) const = 0;
+	virtual void ExecKeyMacro2( class CEditView* pcEditView, int flags );
 	
 	/*! キーボードマクロをファイルから読み込む
 

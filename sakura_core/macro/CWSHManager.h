@@ -38,7 +38,7 @@ public:
 	virtual ~CWSHMacroManager();
 
 	//	2007.07.20 genta : flags’Ç‰Á
-	virtual void ExecKeyMacro(CEditView *EditView, int flags) const;
+	virtual bool ExecKeyMacro(CEditView *EditView, int flags) const;
 	virtual BOOL LoadKeyMacro(HINSTANCE Instance, const TCHAR* Path);
 	virtual BOOL LoadKeyMacroStr(HINSTANCE Instance, const TCHAR* Code);
 

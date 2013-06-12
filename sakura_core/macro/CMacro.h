@@ -68,7 +68,7 @@ public:
 	void SetNext(CMacro* pNext){ m_pNext = pNext; }
 	CMacro* GetNext(){ return m_pNext; }
 	// 2007.07.20 genta : flagsí«â¡
-	void Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake constí«â¡
+	bool Exec( CEditView* pcEditView, int flags ) const; //2007.09.30 kobake constí«â¡
 	void Save( HINSTANCE hInstance, CTextOutputStream& out ) const; //2007.09.30 kobake constí«â¡
 	
 	void AddLParam( const LPARAM* lParam, const CEditView* pcEditView  );	//@@@ 2002.2.2 YAZAKI pcEditViewÇ‡ìnÇ∑
@@ -76,7 +76,7 @@ public:
 	void AddStringParam( const ACHAR* lParam ){ return AddStringParam(to_wchar(lParam)); }
 	void AddIntParam( const int lParam );
 
-	static void HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgSize );
+	static bool HandleCommand( CEditView *View, EFunctionCode ID, const WCHAR* Argument[], const int ArgSize );
 	static bool HandleFunction( CEditView *View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);
 	//2009.10.29 syat HandleCommandÇ∆HandleFunctionÇÃà¯êîÇè≠ÇµÇªÇÎÇ¶ÇΩ
 #if 0

@@ -336,8 +336,9 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 }
 
 
-void CWSHClient::Execute(wchar_t const *AScript)
+bool CWSHClient::Execute(wchar_t const *AScript)
 {
+	bool bRet = false;
 	IActiveScriptParse *Parser;
 	if(m_Engine->QueryInterface(IID_IActiveScriptParse, reinterpret_cast<void **>(&Parser)) != S_OK)
 		Error(L"パーサを取得できません");
@@ -391,6 +392,8 @@ void CWSHClient::Execute(wchar_t const *AScript)
 					*/
 					} else if(hr != S_OK) {
 						Error(L"実行に失敗しました");
+					} else {
+						bRet = true;
 					}
 				}
 
@@ -408,6 +411,7 @@ void CWSHClient::Execute(wchar_t const *AScript)
 		Parser->Release();
 	}
 	m_Engine->Close();
+	return bRet;
 }
 
 void CWSHClient::Error(BSTR Description, BSTR Source)

@@ -295,6 +295,19 @@ void CViewCommander::Command_UNDO( void )
 		return;
 	}
 
+	{
+		COpeBlk* opeBlk = m_pCommanderView->m_cCommander.GetOpeBlk();
+		if( opeBlk ){
+			int nCount = opeBlk->GetRefCount();
+			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
+			m_pCommanderView->SetUndoBuffer();
+			if( m_pCommanderView->m_cCommander.GetOpeBlk() == NULL && 0 < nCount ){
+				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
+				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
+			}
+		}
+	}
+
 	if( !GetDocument()->m_cDocEditor.IsEnableUndo() ){	/* Undo(元に戻す)可能な状態か？ */
 		return;
 	}
@@ -454,6 +467,19 @@ void CViewCommander::Command_REDO( void )
 		return;
 	}
 
+	{
+		COpeBlk* opeBlk = m_pCommanderView->m_cCommander.GetOpeBlk();
+		if( opeBlk ){
+			int nCount = opeBlk->GetRefCount();
+			opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
+			m_pCommanderView->SetUndoBuffer();
+			if( m_pCommanderView->m_cCommander.GetOpeBlk() == NULL && 0 < nCount ){
+				m_pCommanderView->m_cCommander.SetOpeBlk(new COpeBlk());
+				m_pCommanderView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
+			}
+		}
+		// 注意：Opeを追加するとRedoはできなくなる
+	}
 
 	if( !GetDocument()->m_cDocEditor.IsEnableRedo() ){	/* Redo(やり直し)可能な状態か？ */
 		return;

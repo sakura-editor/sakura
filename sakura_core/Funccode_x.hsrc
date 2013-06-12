@@ -471,6 +471,10 @@ F_TEXTWRAPMETHOD		= 32805,		// テキストの折り返し方法					なし
 F_INSBOXTEXT			= 32806,		// 矩形テキスト挿入
 F_MOVECURSOR			= 32807,		// カーソル移動
 F_MOVECURSORLAYOUT		= 32808,		// カーソル移動(レイアウト)
+F_COMMITUNDOBUFFER	= 32813,	// OpeBlKコミット
+F_ADDREFUNDOBUFFER	= 32814,	// OpeBlK AddRef
+F_SETUNDOBUFFER		= 32815,	// OpeBlK Release
+F_APPENDUNDOBUFFERCURSOR	= 32816,	// OpeBlK にカーソル位置を追加
 
 F_FUNCTION_FIRST	= 40000,	// 2003-02-21 鬼 これ以上だと関数
 

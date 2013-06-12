@@ -128,14 +128,19 @@ BOOL CKeyMacroMgr::SaveKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath ) con
 	@date 2007.07.20 genta flags追加．CMacro::Exec()に
 		FA_FROMMACROを含めた値を渡す．
 */
-void CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
+bool CKeyMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 {
 	CMacro* p = m_pTop;
 	int macroflag = flags | FA_FROMMACRO;
+	bool bRet = true;
 	while (p){
-		p->Exec(pcEditView, macroflag);
+		if( !p->Exec(pcEditView, macroflag) ){
+			bRet = false;
+			break;
+		}
 		p = p->GetNext();
 	}
+	return bRet;
 }
 
 /*! キーボードマクロの読み込み

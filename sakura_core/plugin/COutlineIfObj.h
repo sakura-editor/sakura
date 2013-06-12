@@ -70,17 +70,17 @@ public:
 		return false;
 	}
 	//コマンドを処理する
-	void HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize)
+	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize)
 	{
 		switch ( LOWORD(ID) ) 
 		{
 		case F_OL_ADDFUNCINFO:			//アウトライン解析に追加する
 		case F_OL_ADDFUNCINFO2:			//アウトライン解析に追加する（深さ指定）
 			{
-				if( Arguments[0] == NULL )break;
-				if( Arguments[1] == NULL )break;
-				if( Arguments[2] == NULL )break;
-				if( Arguments[3] == NULL )break;
+				if( Arguments[0] == NULL )return false;
+				if( Arguments[1] == NULL )return false;
+				if( Arguments[2] == NULL )return false;
+				if( Arguments[3] == NULL )return false;
 				CLogicPoint ptLogic( _wtoi(Arguments[1])-1, _wtoi(Arguments[0])-1 );
 				if( ptLogic.x < 0 )ptLogic.x = 0;
 				if( ptLogic.y < 0 )ptLogic.y = 0;
@@ -97,19 +97,24 @@ public:
 			}
 			break;
 		case F_OL_SETTITLE:				//アウトラインダイアログタイトルを指定
-			if( Arguments[0] == NULL )break;
+			if( Arguments[0] == NULL )return false;
 			m_sOutlineTitle = to_tchar( Arguments[0] );
 			break;
 		case F_OL_SETLISTTYPE:			//アウトラインリスト種別を指定
-			if( Arguments[0] == NULL )break;
+			if( Arguments[0] == NULL )return false;
 			m_nListType = (EOutlineType)_wtol(Arguments[0]);
 			break;
 		case F_OL_SETLABEL:				//ラベル文字列を指定
-			if( Arguments[0] == NULL || Arguments[1] == NULL )break;
-			std::wstring sLabel = Arguments[1];
-			m_cFuncInfoArr.SetAppendText( _wtol(Arguments[0]), sLabel, true );
+			if( Arguments[0] == NULL || Arguments[1] == NULL ) return false;
+			{
+				std::wstring sLabel = Arguments[1];
+				m_cFuncInfoArr.SetAppendText( _wtol(Arguments[0]), sLabel, true );
+			}
 			break;
+		default:
+			return false;
 		}
+		return true;
 	}
 
 	// メンバ変数

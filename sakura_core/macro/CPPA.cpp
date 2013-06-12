@@ -62,14 +62,14 @@ CPPA::~CPPA()
 }
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-void CPPA::Execute(CEditView* pcEditView, int flags )
+bool CPPA::Execute(CEditView* pcEditView, int flags )
 {
 	//PPAの多重起動禁止 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {
 		MYMESSAGEBOX( pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("PPA実行中に新たにPPAマクロを呼び出すことはできません") );
 		m_fnAbort();
 		CPPA::m_bIsRunning = false;
-		return;
+		return false;
 	}
 	CPPA::m_bIsRunning = true;
 
@@ -90,6 +90,7 @@ void CPPA::Execute(CEditView* pcEditView, int flags )
 
 	//PPAの多重起動禁止 2008.10.22 syat
 	CPPA::m_bIsRunning = false;
+	return !info.m_bError;
 }
 
 LPCTSTR CPPA::GetDllNameImp(int nIndex)
@@ -335,35 +336,45 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	if( 0 < Err_CD ){
 		int i, FuncID;
 		FuncID = Err_CD - 1;
-		for( i = 0; CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1; i++ ){
-			if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID == FuncID ){
+		char szFuncDec[1024];
+		szFuncDec[0] = '\0';
+		for( i = 0; CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID != -1; i++ ){
+			if( CSMacroMgr::m_MacroFuncInfoCommandArr[i].m_nFuncID == FuncID ){
+				GetDeclarations( CSMacroMgr::m_MacroFuncInfoCommandArr[i], szFuncDec );
 				break;
 			}
 		}
 		if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1 ){
-			char szFuncDec[1024];
-			GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], szFuncDec );
+			for( i = 0; CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID != -1; i++ ){
+				if( CSMacroMgr::m_MacroFuncInfoArr[i].m_nFuncID == FuncID ){
+					GetDeclarations( CSMacroMgr::m_MacroFuncInfoArr[i], szFuncDec );
+					break;
+				}
+			}
+		}
+		if( szFuncDec[0] != '\0' ){
 			auto_sprintf( szMes, "関数の実行エラー\n%hs", szFuncDec );
 		}else{
 			auto_sprintf( szMes, "不明な関数の実行エラー(バグです)\nFunc_ID=%d", FuncID );
 		}
 	}else{
-		switch( Err_CD ){
-		case 0:
-			if( '\0' == Err_Mes[0] ){
-				pszErr = "詳細不明のエラー";
-			}else{
-				pszErr = Err_Mes;
+		//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
+		//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
+		if( IsBadStringPtrA( Err_Mes, 256 )){
+			pszErr = "エラー情報が不正";
+		}else{
+			switch( Err_CD ){
+			case 0:
+				if( '\0' == Err_Mes[0] ){
+					pszErr = "詳細不明のエラー";
+				}else{
+					pszErr = Err_Mes;
+				}
+				break;
+			default:
+				auto_sprintf( szMes, "未定義のエラー\nError_CD=%d\n%hs", Err_CD, Err_Mes );
 			}
-			break;
-		default:
-			auto_sprintf( szMes, "未定義のエラー\nError_CD=%d\n%hs", Err_CD, Err_Mes );
 		}
-	}
-	//	2007.07.26 genta : ネスト実行した場合にPPAが不正なポインタを渡す可能性を考慮．
-	//	実際には不正なエラーは全てPPA.DLL内部でトラップされるようだが念のため．
-	if( IsBadStringPtrA( pszErr, 256 )){
-		pszErr = "エラー情報が不正";
 	}
 	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
 		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, _T("PPA実行エラー"), _T("%hs"), pszErr );
@@ -406,7 +417,10 @@ void __stdcall CPPA::stdProc(
 	const WCHAR** tmpArguments=(const WCHAR**)tmpArguments2;
 
 	//処理
-	CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments, ArgSize );
+	bool bRet = CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments, ArgSize );
+	if( !bRet ){
+		*Err_CD = Index + 1;
+	}
 
 	//tmpArgumentsを解放
 	for(int i=0;i<ArgSize;i++){
