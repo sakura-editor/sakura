@@ -29,12 +29,11 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	CLayoutInt	nWork_nLines = m_nLines;	//変更前の全行数の保存	@@@ 2002.04.19 MIK
 
 	/* 置換先頭位置のレイアウト情報 */
-	CLayout*		pLayout = SearchLineByLayoutY( pArg->sDelRange.GetFrom().GetY2() );
 	EColorIndexType	nCurrentLineType = COLORIDX_DEFAULT;
 	CLayoutColorInfo*	colorInfo = NULL;
 	CLayoutInt		nLineWork = pArg->sDelRange.GetFrom().GetY2();
 
-	CLayout*		pLayoutWork = pLayout;
+	CLayout*		pLayoutWork = SearchLineByLayoutY( pArg->sDelRange.GetFrom().GetY2() );
 	if( pLayoutWork ){
 		while( 0 != pLayoutWork->GetLogicOffset() ){
 			pLayoutWork = pLayoutWork->GetPrevLayout();
@@ -68,10 +67,11 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	DLRArg.sDelRange.SetTo(ptTo);		//削除範囲to
 	DLRArg.pcmemDeleted = pArg->pcmemDeleted;	// 削除されたデータを保存
 	DLRArg.pInsData = pArg->pInsData;			// 挿入するデータ
-	DLRArg.nInsDataLen = pArg->nInsDataLen;		// 挿入するデータの長さ
+	DLRArg.nDelSeq = pArg->nDelSeq;
 	CSearchAgent(m_pcDocLineMgr).ReplaceData(
 		&DLRArg
 	);
+	pArg->nInsSeq = DLRArg.nInsSeq;
 
 
 	/*--- 変更された行のレイアウト情報を再生成 ---*/
@@ -134,7 +134,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	ctwArg.nColumnFrom  = pArg->sDelRange.GetFrom().GetX2();		// 編集開始桁
 	ctwArg.nDelLines    = pArg->sDelRange.GetTo().GetY2() - pArg->sDelRange.GetFrom().GetY2();	// 削除行数 - 1
 	ctwArg.nAllLinesOld = nWork_nLines;								// 編集前のテキスト行数
-	ctwArg.bInsData     = pArg->nInsDataLen ? TRUE : FALSE;			// 追加文字列の有無
+	ctwArg.bInsData     = (pArg->pInsData && pArg->pInsData->size()) ? TRUE : FALSE;			// 追加文字列の有無
 
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	CLayoutInt nAddInsLineNum;
@@ -148,7 +148,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		&nAddInsLineNum
 	);
 
-	pArg->nAddLineNum = nWork_nLines - m_nLines;	//変更後の全行数との差分	@@@ 2002.04.19 MIK
+	pArg->nAddLineNum = m_nLines - nWork_nLines;	//変更後の全行数との差分	@@@ 2002.04.19 MIK
 	if( 0 == pArg->nAddLineNum )
 		pArg->nAddLineNum = nModifyLayoutLinesOld - pArg->nModLineTo;	/* 再描画ヒント レイアウト行の増減 */
 	pArg->nModLineFrom = pArg->sDelRange.GetFrom().GetY2();	/* 再描画ヒント 変更されたレイアウト行From */

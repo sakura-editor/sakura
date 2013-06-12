@@ -250,6 +250,7 @@ void CDocLineMgr::_Init()
 	m_nLines = CLogicInt(0);
 	m_nPrevReferLine = CLogicInt(0);
 	m_pCodePrevRefer = NULL;
+	m_pDocLineCurrent = NULL;
 	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFFg—p’† */	//@@@ 2002.05.25 MIK     //##Œã‚ÅCDocListener::OnClear (OnAfterClose) ‚ğì¬‚µA‚»‚±‚ÉˆÚ“®
 }
 

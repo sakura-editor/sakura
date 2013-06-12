@@ -107,26 +107,6 @@ public:
 	//	May 15, 2000 genta
 	void AddLineStrX( const wchar_t*, int );	/* 末尾に行を追加 Ver1.5 */
 
-	void DeleteData_CDocLineMgr(
-		CLogicInt	nLine,
-		CLogicInt	nDelPos,
-		CLogicInt	nDelLen,
-		CLogicInt*	pnModLineOldFrom,	/* 影響のあった変更前の行(from) */
-		CLogicInt*	pnModLineOldTo,		/* 影響のあった変更前の行(to) */
-		CLogicInt*	pnDelLineOldFrom,	/* 削除された変更前論理行(from) */
-		CLogicInt*	pnDelLineOldNum,	/* 削除された行数 */
-		CNativeW*	cmemDeleted			/* 削除されたデータ */
-	);
-
-	/* データの挿入 */
-	void InsertData_CDocLineMgr(
-		CLogicInt		nLine,
-		CLogicInt		nInsPos,
-		const wchar_t*	pInsData,
-		CLogicInt		nInsDataLen,
-		CLogicInt*		pnInsLineNum,	// 挿入によって増えた行の数
-		CLogicPoint*	pptNewPos		// 挿入された部分の次の位置
-	);
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };

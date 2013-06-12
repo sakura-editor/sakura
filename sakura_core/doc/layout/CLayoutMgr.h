@@ -30,6 +30,7 @@
 #include "types/CType.h"
 #include "CLayoutExInfo.h"
 #include "view/colors/EColorIndexType.h"
+#include "COpe.h"
 #include "util/container.h"
 
 class CBregexp;// 2002/2/10 aroka
@@ -41,14 +42,15 @@ class CEditDoc;// 2003/07/20 genta
 class CColorStrategy;
 
 struct LayoutReplaceArg {
-	CLayoutRange	sDelRange;		//!< 削除範囲。レイアウト単位。
-	CNativeW*		pcmemDeleted;	//!< 削除されたデータ
-	const wchar_t*	pInsData;		//!< 挿入するデータ
-	CLogicInt		nInsDataLen;	//!< 挿入するデータの長さ
-	CLayoutInt		nAddLineNum;	//!< 再描画ヒント レイアウト行の増減
-	CLayoutInt		nModLineFrom;	//!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
-	CLayoutInt		nModLineTo;		//!< 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
-	CLayoutPoint	ptLayoutNew;	//!< 挿入された部分の次の位置の位置(レイアウト桁位置, レイアウト行)
+	CLayoutRange	sDelRange;		//!< [in]削除範囲。レイアウト単位。
+	COpeLineData*	pcmemDeleted;	//!< [out]削除されたデータ
+	COpeLineData*	pInsData;		//!< [in/out]挿入するデータ
+	CLayoutInt		nAddLineNum;	//!< [out] 再描画ヒント レイアウト行の増減
+	CLayoutInt		nModLineFrom;	//!< [out] 再描画ヒント 変更されたレイアウト行From(レイアウト行の増減が0のとき使う)
+	CLayoutInt		nModLineTo;		//!< [out] 再描画ヒント 変更されたレイアウト行To(レイアウト行の増減が0のとき使う)
+	CLayoutPoint	ptLayoutNew;	//!< [out]挿入された部分の次の位置の位置(レイアウト桁位置, レイアウト行)
+	int				nDelSeq;		//!< [in]削除行のOpeシーケンス
+	int				nInsSeq;		//!< [out]挿入行の元のシーケンス
 };
 
 // 編集時のテキスト最大幅算出用		// 2009.08.28 nasukoji
@@ -199,30 +201,6 @@ public:
 	void SetLayoutInfo(
 		bool			bDoRayout,
 		const STypeConfig&	refType
-	);
-	
-	/* 行内文字削除 */
-	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	void DeleteData_CLayoutMgr(
-		CLayoutInt	nLineNum,
-		CLogicInt	nDelPos,
-		CLogicInt	nDelLen,
-		CLayoutInt*	pnModifyLayoutLinesOld,
-		CLayoutInt*	pnModifyLayoutLinesNew,
-		CLayoutInt*	pnDeleteLayoutLines,
-		CNativeW*	cmemDeleted			/* 削除されたデータ */
-	);
-
-	/* 文字列挿入 */
-	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	void InsertData_CLayoutMgr(
-		CLayoutInt		nLineNum,
-		CLogicInt		nInsPos,
-		const wchar_t*	pInsData,
-		CLogicInt		nInsDataLen,
-		CLayoutInt*		pnModifyLayoutLinesOld,
-		CLayoutInt*		pnInsLineNum,		/* 挿入によって増えたレイアウト行の数 */
-		CLayoutPoint*	pptNewLayout		// 挿入された部分の次の位置のデータ位置
 	);
 
 	/* 文字列置換 */

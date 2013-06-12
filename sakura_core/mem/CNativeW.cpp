@@ -123,12 +123,6 @@ wchar_t CNativeW::operator[](int nIndex) const
 	}
 }
 
-//! 文字列長を返す。文字単位。
-CLogicInt CNativeW::GetStringLength() const
-{
-	return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
-}
-
 
 /* 等しい内容か */
 bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )

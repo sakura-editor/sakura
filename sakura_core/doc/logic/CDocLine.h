@@ -74,12 +74,15 @@ public:
 	}
 	const CEol& GetEol() const{ return m_cEol; }
 	void SetEol(const CEol& cEol, COpeBlk* pcOpeBlk);
+	void SetEol(); // 現在のバッファから設定
 
 	const CNativeW& _GetDocLineDataWithEOL() const { return m_cLine; } //###仮
+	CNativeW& _GetDocLineData() { return m_cLine; }
 
 	//データ設定
 	void SetDocLineString(const wchar_t* pData, int nLength);
 	void SetDocLineString(const CNativeW& cData);
+	void SetDocLineStringMove(CNativeW* pcData);
 
 	//チェーン属性
 	CDocLine* GetPrevLine(){ return m_pPrev; }

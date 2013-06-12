@@ -1473,7 +1473,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			/* データ置換 削除&挿入にも使える */
 			ReplaceData_CEditView(
 				sRangeLayout,
-				NULL,		/* 削除されたデータのコピー(NULL可能) */
 				pszData,	/* 挿入するデータ */
 				nDataLen,	/* 挿入するデータの長さ */
 				true,

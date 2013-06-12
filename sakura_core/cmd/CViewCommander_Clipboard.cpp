@@ -514,7 +514,6 @@ void CViewCommander::Command_INSTEXT(
 				// 行コピーの貼り付けでは選択範囲は削除（後で行頭に貼り付ける）	// 2007.10.04 ryoji
 				m_pCommanderView->ReplaceData_CEditView(
 					GetSelect(),				// 選択範囲
-					NULL,					// 削除されたデータのコピー(NULL可能)
 					bLinePaste? L"": pszText,	// 挿入するデータ
 					bLinePaste? CLogicInt(0): nTextLen,	// 挿入するデータの長さ
 					bRedraw,

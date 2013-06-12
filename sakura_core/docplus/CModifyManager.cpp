@@ -10,18 +10,22 @@ void CModifyManager::OnAfterSave(const SSaveInfo& sSaveInfo)
 	CEditDoc* pcDoc = GetListeningDoc();
 
 	// 行変更状態をすべてリセット
-	CModifyVisitor().ResetAllModifyFlag(&pcDoc->m_cDocLineMgr);
+	CModifyVisitor().ResetAllModifyFlag(&pcDoc->m_cDocLineMgr, pcDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer());
 }
 
 
 
-bool CModifyVisitor::IsLineModified(const CDocLine* pcDocLine) const
+bool CModifyVisitor::IsLineModified(const CDocLine* pcDocLine, int saveSeq) const
 {
-	return pcDocLine->m_sMark.m_cModified;
+	return pcDocLine->m_sMark.m_cModified.GetSeq() != saveSeq;
 }
-void CModifyVisitor::SetLineModified(CDocLine* pcDocLine, bool bModified)
+int CModifyVisitor::GetLineModifiedSeq(const CDocLine* pcDocLine) const
 {
-	pcDocLine->m_sMark.m_cModified = bModified;
+	return pcDocLine->m_sMark.m_cModified.GetSeq();
+}
+void CModifyVisitor::SetLineModified(CDocLine* pcDocLine, int seq)
+{
+	pcDocLine->m_sMark.m_cModified = seq;
 }
 
 /* 行変更状態をすべてリセット */
@@ -38,12 +42,12 @@ void CModifyVisitor::SetLineModified(CDocLine* pcDocLine, bool bModified)
   変更回数はUndoしたときに-1される
   変更回数が0になった場合は変更フラグをFALSEにする
 */
-void CModifyVisitor::ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr)
+void CModifyVisitor::ResetAllModifyFlag(CDocLineMgr* pcDocLineMgr, int seq)
 {
 	CDocLine* pDocLine = pcDocLineMgr->GetDocLineTop();
 	while( pDocLine ){
 		CDocLine* pDocLineNext = pDocLine->GetNextLine();
-		SetLineModified(pDocLine, false);
+		SetLineModified(pDocLine, seq);
 		pDocLine = pDocLineNext;
 	}
 }

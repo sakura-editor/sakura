@@ -40,6 +40,8 @@ public:
 	bool IsEnableUndo();						//!< Undo可能な状態か
 	bool IsEnableRedo();						//!< Redo可能な状態か
 	int GetCurrentPointer( void ) const { return m_nCurrentPointer; }	/* 現在位置を返す */	// 2007.12.09 ryoji
+	int GetNextSeq() const { return m_nCurrentPointer + 1; }
+	int GetNoModifiedSeq() const { return m_nNoModifiedIndex; }
 
 	//操作
 	void ClearAll();							//!< 全要素のクリア

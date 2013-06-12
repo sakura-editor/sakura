@@ -87,6 +87,12 @@ protected:
 public:
 	void _AppendSz(const char* str);
 	void _SetRawLength(int nLength);
+	void swap( CMemory& left ){
+		std::swap( m_nDataBufSize, left.m_nDataBufSize );
+		std::swap( m_pRawData, left.m_pRawData );
+		std::swap( m_nRawLen, left.m_nRawLen );
+	}
+	int capacity() const { return m_nDataBufSize ? m_nDataBufSize - 2: 0; }
 
 
 protected:

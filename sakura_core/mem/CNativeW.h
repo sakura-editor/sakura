@@ -87,7 +87,10 @@ public:
 
 	//ネイティブ取得インターフェース
 	wchar_t operator[](int nIndex) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
-	CLogicInt GetStringLength() const;                       //!< 文字列長を返す。文字単位。
+	CLogicInt GetStringLength() const                        //!< 文字列長を返す。文字単位。
+	{
+		return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
+	}
 	const wchar_t* GetStringPtr() const
 	{
 		return reinterpret_cast<const wchar_t*>(GetRawPtr());
@@ -124,6 +127,12 @@ public:
 		if(n>=0){
 			_SetStringLength(n);
 		}
+	}
+	void swap( CNativeW& left ){
+		_GetMemory()->swap( *left._GetMemory() );
+	}
+	int capacity(){
+		return _GetMemory()->capacity() / sizeof(wchar_t);
 	}
 
 
@@ -197,6 +206,14 @@ public:
 		return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), nIdx);
 	}
 };
+
+namespace std {
+template <>
+	inline void swap(CNativeW& n1, CNativeW& n2)
+	{
+		n1.swap(n2);
+	}
+}
 
 #endif /* SAKURA_CNATIVEW_59D44E96_F966_471D_A399_73D86F939DDA9_H_ */
 /*[EOF]*/

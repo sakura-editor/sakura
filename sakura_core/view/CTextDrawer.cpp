@@ -355,7 +355,7 @@ void CTextDrawer::DispLineNumber(
 	if( pcLayout ){
 		pCDocLine = pcLayout->GetDocLineRef();
 
-		if( pView->m_pcEditDoc->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine) ){		/* 変更フラグ */
+		if( pView->GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, pView->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
 			if( CTypeSupport(pView,COLORIDX_GYOU_MOD).IsDisp() )	// 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 		}
@@ -414,6 +414,8 @@ void CTextDrawer::DispLineNumber(
 					wcscpy( szLineNum, L" " );
 				}else{
 					_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
+//###デバッグ用
+//					_itow( CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10 );	// 行の変更番号
 				}
 			}else{
 				/* 物理行（レイアウト行）番号表示モード */

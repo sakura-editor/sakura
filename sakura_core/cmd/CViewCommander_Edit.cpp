@@ -351,13 +351,14 @@ void CViewCommander::Command_UNDO( void )
 					m_pCommanderView->GetSelectionInfo().m_sSelect.SetTo(ptCaretPos_After);
 
 					/* データ置換 削除&挿入にも使える */
-					m_pCommanderView->ReplaceData_CEditView(
+					m_pCommanderView->ReplaceData_CEditView3(
 						m_pCommanderView->GetSelectionInfo().m_sSelect,				// 削除範囲
 						&pcInsertOpe->m_pcmemData,	// 削除されたデータのコピー(NULL可能)
-						L"",						// 挿入するデータ
-						CLogicInt(0),				// 挿入するデータの長さ
+						NULL,
 						false,						// 再描画するか否か
-						m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
+						NULL,
+						pcInsertOpe->m_nOrgSeq,
+						NULL
 					);
 
 					/* 選択範囲の変更 */
@@ -370,20 +371,21 @@ void CViewCommander::Command_UNDO( void )
 					CDeleteOpe* pcDeleteOpe = static_cast<CDeleteOpe*>(pcOpe);
 
 					//2007.10.17 kobake メモリリークしてました。修正。
-					if( 0 < pcDeleteOpe->m_pcmemData.GetStringLength() ){
+					if( 0 < pcDeleteOpe->m_pcmemData.size() ){
 						/* データ置換 削除&挿入にも使える */
 						CLayoutRange sRange;
 						sRange.Set(ptCaretPos_Before);
-						m_pCommanderView->ReplaceData_CEditView(
+						m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
-							pcDeleteOpe->m_pcmemData.GetStringPtr(),	/* 挿入するデータ */
-							pcDeleteOpe->m_nDataLen,					/* 挿入するデータの長さ */
+							&pcDeleteOpe->m_pcmemData,
 							false,										/*再描画するか否か*/
-							m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
+							NULL,
+							0,
+							&pcDeleteOpe->m_nOrgSeq
 						);
 					}
-					pcDeleteOpe->m_pcmemData.Clear();
+					pcDeleteOpe->m_pcmemData.clear();
 				}
 				break;
 			case OPE_MOVECARET:
@@ -507,21 +509,22 @@ void CViewCommander::Command_REDO( void )
 					CInsertOpe* pcInsertOpe = static_cast<CInsertOpe*>(pcOpe);
 
 					//2007.10.17 kobake メモリリークしてました。修正。
-					if( 0 < pcInsertOpe->m_pcmemData.GetStringLength() ){
+					if( 0 < pcInsertOpe->m_pcmemData.size() ){
 						/* データ置換 削除&挿入にも使える */
 						CLayoutRange sRange;
 						sRange.Set(ptCaretPos_Before);
-						m_pCommanderView->ReplaceData_CEditView(
+						m_pCommanderView->ReplaceData_CEditView3(
 							sRange,
 							NULL,										/* 削除されたデータのコピー(NULL可能) */
-							pcInsertOpe->m_pcmemData.GetStringPtr(),	/* 挿入するデータ */
-							pcInsertOpe->m_pcmemData.GetStringLength(),	/* 挿入するデータの長さ */
+							&pcInsertOpe->m_pcmemData,					/* 挿入するデータ */
 							false,										/*再描画するか否か*/
-							m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
+							NULL,
+							0,
+							&pcInsertOpe->m_nOrgSeq
 						);
 
 					}
-					pcInsertOpe->m_pcmemData.Clear();
+					pcInsertOpe->m_pcmemData.clear();
 				}
 				break;
 			case OPE_DELETE:
@@ -534,13 +537,14 @@ void CViewCommander::Command_REDO( void )
 					);
 
 					/* データ置換 削除&挿入にも使える */
-					m_pCommanderView->ReplaceData_CEditView(
+					m_pCommanderView->ReplaceData_CEditView3(
 						CLayoutRange(ptCaretPos_Before,ptCaretPos_To),
 						&pcDeleteOpe->m_pcmemData,	/* 削除されたデータのコピー(NULL可能) */
-						L"",						/* 挿入するデータ */
-						CLogicInt(0),				/* 挿入するデータの長さ */
+						NULL,
 						false,
-						m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
+						NULL,
+						pcDeleteOpe->m_nOrgSeq,
+						NULL
 					);
 				}
 				break;
