@@ -124,7 +124,7 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 /* モーダルダイアログの表示 */
 int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 {
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)NULL );
 }
 
 /*! 初期化処理

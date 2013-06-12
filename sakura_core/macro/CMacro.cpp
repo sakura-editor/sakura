@@ -98,7 +98,7 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 		{
 			AddStringParam( (const wchar_t*)lParam );	//	lParamÇí«â¡ÅB
 			AddIntParam( (int)lParams[1] );
-			if( lParams[2] != NULL ){
+			if( lParams[2] != 0 ){
 				AddStringParam( (const wchar_t*)lParams[2] );
 			}
 		}

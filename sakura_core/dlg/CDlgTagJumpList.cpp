@@ -350,7 +350,7 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.iItem    = nIndex;
 		lvi.iSubItem = 0;
-		lvi.pszText  = _T("(通知)");
+		lvi.pszText  = const_cast<TCHAR*>(_T("(通知)"));
 		lvi.lParam   = -1;
 		ListView_InsertItem( hwndList, &lvi );
 //		ListView_SetItemText( hwndList, nIndex, 1, _T("") );
@@ -466,42 +466,42 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 20 / 100;
-	col.pszText  = _T("キーワード");
+	col.pszText  = const_cast<TCHAR*>(_T("キーワード"));
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_CENTER;
 	col.cx       = nWidth * 7 / 100;
-	col.pszText  = _T("階層");
+	col.pszText  = const_cast<TCHAR*>(_T("階層"));
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_RIGHT;
 	col.cx       = nWidth * 8 / 100;
-	col.pszText  = _T("行番号");
+	col.pszText  = const_cast<TCHAR*>(_T("行番号"));
 	col.iSubItem = 2;
 	ListView_InsertColumn( hwndList, 2, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 9 / 100;
-	col.pszText  = _T("種類");
+	col.pszText  = const_cast<TCHAR*>(_T("種類"));
 	col.iSubItem = 3;
 	ListView_InsertColumn( hwndList, 3, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 35 / 100;
-	col.pszText  = _T("ファイル名");
+	col.pszText  = const_cast<TCHAR*>(_T("ファイル名"));
 	col.iSubItem = 4;
 	ListView_InsertColumn( hwndList, 4, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = nWidth * 21 / 100;
-	col.pszText  = _T("備考");
+	col.pszText  = const_cast<TCHAR*>(_T("備考"));
 	col.iSubItem = 5;
 	ListView_InsertColumn( hwndList, 5, &col );
 

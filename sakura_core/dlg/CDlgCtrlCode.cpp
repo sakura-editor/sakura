@@ -199,28 +199,28 @@ BOOL CDlgCtrlCode::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 15 / 100;
-	col.pszText  = _T("コード");
+	col.pszText  = const_cast<TCHAR*>(_T("コード"));
 	col.iSubItem = 0;
 	ListView_InsertColumn( hwndList, 0, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 15 / 100;
-	col.pszText  = _T("表記");
+	col.pszText  = const_cast<TCHAR*>(_T("表記"));
 	col.iSubItem = 1;
 	ListView_InsertColumn( hwndList, 1, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 15 / 100;
-	col.pszText  = _T("名前");
+	col.pszText  = const_cast<TCHAR*>(_T("名前"));
 	col.iSubItem = 2;
 	ListView_InsertColumn( hwndList, 2, &col );
 
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = (rc.right - rc.left) * 46 / 100;
-	col.pszText  = _T("説明");
+	col.pszText  = const_cast<TCHAR*>(_T("説明"));
 	col.iSubItem = 3;
 	ListView_InsertColumn( hwndList, 3, &col );
 

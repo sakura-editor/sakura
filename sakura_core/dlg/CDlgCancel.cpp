@@ -56,13 +56,13 @@ void CDlgCancel::DeleteAsync( void )
 int CDlgCancel::DoModal( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )
 {
 	m_bCANCEL = FALSE;	/* IDCANCELボタンが押された */
-	return (int)CDialog::DoModal( hInstance, hwndParent, nDlgTemplete, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, nDlgTemplete, (LPARAM)NULL );
 }
 /* モードレスダイアログの表示 */
 HWND CDlgCancel::DoModeless( HINSTANCE hInstance, HWND hwndParent, int nDlgTemplete )
 {
 	m_bCANCEL = FALSE;	/* IDCANCELボタンが押された */
-	return CDialog::DoModeless( hInstance, hwndParent, nDlgTemplete, NULL, SW_SHOW );
+	return CDialog::DoModeless( hInstance, hwndParent, nDlgTemplete, (LPARAM)NULL, SW_SHOW );
 }
 
 

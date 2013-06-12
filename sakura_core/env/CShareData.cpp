@@ -869,8 +869,8 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 {
 	if( -1 != idx && !m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() )
 		return 0;
-	TCHAR *ptr;
-	TCHAR *pszFile;
+	const TCHAR *ptr;
+	const TCHAR *pszFile;
 
 	if( -1 == idx ){
 		pszFile = _T("RecKey.mac");
@@ -917,7 +917,7 @@ int CShareData::GetMacroFilename( int idx, TCHAR *pszPath, int nBufLen )
 		}
 
 		_tcscpy( pszPath, pszDir );
-		ptr = pszPath + nDirLen;
+		TCHAR *ptr = pszPath + nDirLen;
 		if( -1 == nFolderSep ){
 			*ptr++ = _T('\\');
 		}

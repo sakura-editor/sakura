@@ -44,7 +44,7 @@ int CDlgSetCharSet::DoModal( HINSTANCE hInstance, HWND hwndParent, ECodeType* pn
 	m_pnCharSet = pnCharSet;	// 文字コードセット
 	m_pbBom = pbBom;			// BOM
 
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_SETCHARSET, NULL );
+	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_SETCHARSET, (LPARAM)NULL );
 }
 
 

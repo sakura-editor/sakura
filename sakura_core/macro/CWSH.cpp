@@ -416,7 +416,7 @@ void CWSHClient::Error(BSTR Description, BSTR Source)
 		m_OnError(Description, Source, m_Data);
 }
 
-void CWSHClient::Error(wchar_t* Description)
+void CWSHClient::Error(const wchar_t* Description)
 {
 	BSTR S = SysAllocString(L"WSH");
 	BSTR D = SysAllocString(Description);

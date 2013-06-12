@@ -118,13 +118,13 @@ static void my_va_forward(va_list& v, const char* field)
 		va_arg(v,int);
 		break;
 	case 'c':
-		if(field_end-1>=field && *(field_end-1)=='w')va_arg(v,wchar_t);
-		else if(field_end-1>=field && *(field_end-1)=='l')va_arg(v,wchar_t);
+		if(field_end-1>=field && *(field_end-1)=='w')va_arg(v,int); // wchar_t
+		else if(field_end-1>=field && *(field_end-1)=='l')va_arg(v,int); // wchar_t
 		else va_arg(v,int);
 		break;
 	case 'C':
 		if(field_end-1>=field && *(field_end-1)=='h')va_arg(v,int);
-		else va_arg(v,wchar_t);
+		else va_arg(v,int); // wchar_t
 		break;
 	case 'e':
 	case 'E':
@@ -160,8 +160,8 @@ static void my_va_forward(va_list& v, const wchar_t* field)
 		else va_arg(v,int);
 		break;
 	case 'C':
-		if(field_end-1>=field && *(field_end-1)==L'l')va_arg(v,wchar_t);
-		else if(field_end-1>=field && *(field_end-1)==L'w')va_arg(v,wchar_t);
+		if(field_end-1>=field && *(field_end-1)==L'l')va_arg(v,int); // wchar_t
+		else if(field_end-1>=field && *(field_end-1)==L'w')va_arg(v,int); // wchar_t
 		else va_arg(v,int);
 		break;
 	case L'e':
