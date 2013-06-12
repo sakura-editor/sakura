@@ -712,6 +712,9 @@ void CEditDoc::OnChangeSetting(
 		m_pcEditWnd->GetView(i).OnChangeSetting();
 	}
 	m_pcEditWnd->RestorePhysPosOfAllView( posSaveAry );
+	for( i = 0; i < viewCount; i++ ){
+		m_pcEditWnd->GetView(i).AdjustScrollBars();	// 2008.06.18 ryoji
+	}
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
 	}

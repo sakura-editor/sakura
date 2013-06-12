@@ -4551,9 +4551,11 @@ void CEditWnd::RestorePhysPosOfAllView( CLogicPointEx* pptPosArray )
 			pptPosArray[i * NUM_OF_POS + 5],
 			&ptPosXY
 		);
-		this->GetView(i).GetCaret().MoveCursor( ptPosXY, true );
+		this->GetView(i).GetCaret().MoveCursor( ptPosXY, false ); // 2013.06.05 bScroll‚ðtrue=>falase
 		this->GetView(i).GetCaret().m_nCaretPosX_Prev = this->GetView(i).GetCaret().GetCaretLayoutPos().GetX2();
+		this->GetView(i).GetCaret().ShowEditCaret();
 	}
+	GetActiveView().GetCaret().ShowCaretPosInfo();
 	delete[] pptPosArray;
 }
 
