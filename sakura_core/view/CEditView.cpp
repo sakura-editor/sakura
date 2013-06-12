@@ -1595,10 +1595,11 @@ void CEditView::OnChangeSetting()
 	SetFont();
 
 	/* フォントが変わっているかもしれないので、カーソル移動 */
-	GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), true );
+	// スクロールバーが移動するので呼び出し元でやる
+	// GetCaret().MoveCursor( GetCaret().GetCaretLayoutPos(), true );
 
 	/* スクロールバーの状態を更新する */
-	AdjustScrollBars();
+	// AdjustScrollBars();
 
 	//	2007.09.30 genta 画面キャッシュ用CompatibleDCを用意する
 	UseCompatibleDC( GetDllShareData().m_Common.m_sWindow.m_bUseCompatibleBMP );
