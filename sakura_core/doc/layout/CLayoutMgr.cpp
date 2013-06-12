@@ -733,11 +733,9 @@ int CLayoutMgr::PrevOrNextWord(
 int CLayoutMgr::SearchWord(
 	CLayoutInt				nLine,				//!< [in] 検索開始レイアウト行
 	CLogicInt				nIdx,				//!< [in] 検索開始データ位置
-	const wchar_t*			pszPattern,			//!< [in] 検索条件
 	ESearchDirection		eSearchDirection,	//!< [in] 検索方向
-	const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
 	CLayoutRange*			pMatchRange,		//!< [out] マッチレイアウト範囲
-	CBregexp*				pRegexp				//!< [in]  正規表現コンパイルデータ  Jun. 26, 2001 genta
+	const CSearchStringPattern&	pattern
 )
 {
 	int			nRetCode;
@@ -751,11 +749,9 @@ int CLayoutMgr::SearchWord(
 	CLogicRange cLogicRange;
 	nRetCode = CSearchAgent(m_pcDocLineMgr).SearchWord(
 		CLogicPoint(pLayout->GetLogicOffset() + nIdx, pLayout->GetLogicLineNo()),
-		pszPattern,
 		eSearchDirection,
-		sSearchOption,
 		&cLogicRange, //pMatchRange,
-		pRegexp			/* 正規表現コンパイルデータ */
+		pattern
 	);
 
 	// 論理位置→レイアウト位置変換

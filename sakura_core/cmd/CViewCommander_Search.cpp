@@ -184,11 +184,9 @@ re_do:;
 	nSearchResult = GetDocument()->m_cLayoutMgr.SearchWord(
 		nLineNum,						// 検索開始レイアウト行
 		nIdx,							// 検索開始データ位置
-		m_pCommanderView->m_strCurSearchKey.c_str(),					// 検索条件
 		SEARCH_FORWARD,					// 0==前方検索 1==後方検索
-		m_pCommanderView->m_sCurSearchOption,				// 検索オプション
 		&sRangeA,						// マッチレイアウト範囲
-		&m_pCommanderView->m_CurRegexp					// 正規表現コンパイルデータ
+		m_pCommanderView->m_sSearchPattern
 	);
 	if( nSearchResult ){
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
@@ -379,11 +377,9 @@ re_do:;							//	hor
 	if( GetDocument()->m_cLayoutMgr.SearchWord(
 		nLineNum,								// 検索開始レイアウト行
 		nIdx,									// 検索開始データ位置
-		m_pCommanderView->m_strCurSearchKey.c_str(),							// 検索条件
 		SEARCH_BACKWARD,						// 0==前方検索 1==後方検索
-		m_pCommanderView->m_sCurSearchOption,						// 検索オプション
 		&sRangeA,								// マッチレイアウト範囲
-		&m_pCommanderView->m_CurRegexp							// 正規表現コンパイルデータ
+		m_pCommanderView->m_sSearchPattern
 	) ){
 		if( bSelecting ){
 			/* 現在のカーソル位置によって選択範囲を変更 */

@@ -394,9 +394,7 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 	if( !m_pCommanderView->ChangeCurRegexp(false) ) return;
 	
 	CBookmarkManager(&GetDocument()->m_cDocLineMgr).MarkSearchWord(
-		m_pCommanderView->m_strCurSearchKey.c_str(),		// 検索条件
-		m_pCommanderView->m_sCurSearchOption,	// 検索条件
-		&m_pCommanderView->m_CurRegexp							// 正規表現コンパイルデータ
+		m_pCommanderView->m_sSearchPattern
 	);
 	// 2002.01.16 hor 分割したビューも更新
 	GetEditWindow()->Views_Redraw();

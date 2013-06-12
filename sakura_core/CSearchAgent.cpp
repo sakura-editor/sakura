@@ -25,34 +25,97 @@ inline int CSearchStringPattern::GetMapIndex( wchar_t c )
 	return ((c & 0xff00) ? 0x100 : 0 ) | (c & 0xff);
 }
 
-CSearchStringPattern::CSearchStringPattern( const wchar_t* pszPattern, int nPatternLen, bool bLoHiCase ) : 
+CSearchStringPattern::CSearchStringPattern() : 
 #ifdef SEARCH_STRING_KMP
 	m_pnNextPossArr(NULL),
 #endif
 #ifdef SEARCH_STRING_SUNDAY_QUICK
 	m_pnUseCharSkipArr(NULL),
 #endif
-	m_pszPatternCase(NULL)
+	m_pszPatternCase(NULL),
+	m_pszKey(NULL),
+	m_pszCaseKeyRef(NULL),
+	m_psSearchOption(NULL),
+	m_pRegexp(NULL)
 {
-	m_pszPatternCase = new wchar_t[nPatternLen + 1];
+}
+
+	CSearchStringPattern::CSearchStringPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp) :
+#ifdef SEARCH_STRING_KMP
+	m_pnNextPossArr(NULL),
+#endif
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	m_pnUseCharSkipArr(NULL),
+#endif
+	m_pszPatternCase(NULL),
+	m_pszKey(NULL),
+	m_pszCaseKeyRef(NULL),
+	m_psSearchOption(NULL),
+	m_pRegexp(NULL)
+{
+	SetPattern(hwnd, pszPattern, nPatternLen, sSearchOption, pRegexp);
+}
+
+CSearchStringPattern::~CSearchStringPattern()
+{
+	Reset();
+}
+
+void CSearchStringPattern::Reset(){
+	m_pszKey = NULL;
+	m_pszCaseKeyRef = NULL;
+	m_psSearchOption = NULL;
+	m_pRegexp = NULL;
+
+	delete [] m_pszPatternCase;
+	m_pszPatternCase = NULL;
+#ifdef SEARCH_STRING_KMP
+	delete [] m_pnNextPossArr;
+	m_pnNextPossArr = NULL;
+#endif
+#ifdef SEARCH_STRING_SUNDAY_QUICK
+	delete [] m_pnUseCharSkipArr;
+	m_pnUseCharSkipArr = NULL;
+#endif
+}
+
+bool CSearchStringPattern::SetPattern(HWND hwnd, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* regexp)
+{
+	Reset();
+	m_pszCaseKeyRef = m_pszKey = pszPattern;
 	m_nPatternLen = nPatternLen;
-	m_bIgnoreCase = !bLoHiCase; // 注: フラグが反対
-	if( m_bIgnoreCase ){
-		//note: 合成文字,サロゲートの「大文字小文字同一視」未対応
-		for( int i = 0; i < m_nPatternLen; i++ ){
-			m_pszPatternCase[i] = (wchar_t)skr_towupper(pszPattern[i]);
+	m_psSearchOption = &sSearchOption;
+	m_pRegexp = regexp;
+	if( m_psSearchOption->bRegularExp ){
+		if( !m_pRegexp ){
+			return false;
 		}
+		if( !InitRegexp( hwnd, *m_pRegexp, true ) ){
+			return false;
+		}
+		int nFlag = (GetLoHiCase() ? CBregexp::optCaseSensitive : CBregexp::optNothing);
+		/* 検索パターンのコンパイル */
+		if( !m_pRegexp->Compile( pszPattern, nFlag ) ){
+			return false;
+		}
+	}else if( m_psSearchOption->bWordOnly ){
 	}else{
-		wmemcpy( m_pszPatternCase, pszPattern, m_nPatternLen );
-	}
-	m_pszPatternCase[nPatternLen] = L'\0';
-	
+		if( GetIgnoreCase() ){
+			m_pszPatternCase = new wchar_t[nPatternLen + 1];
+			m_pszCaseKeyRef = m_pszPatternCase;
+			//note: 合成文字,サロゲートの「大文字小文字同一視」未対応
+			for( int i = 0; i < m_nPatternLen; i++ ){
+				m_pszPatternCase[i] = (wchar_t)skr_towlower(pszPattern[i]);
+			}
+			m_pszPatternCase[nPatternLen] = L'\0';
+		}
+
 #ifdef SEARCH_STRING_KMP
 	// "ABCDE" => {-1, 0, 0, 0, 0}
 	// "AAAAA" => {-1, 0, 1, 2, 3}
 	// "AABAA" => {-1, 0, 0, 0, 0}
 	// "ABABA" => {-1, 0, 0, 2, 0}
-//	if( m_bIgnoreCase ){
+//	if( GetIgnoreCase() ){
 		m_pnNextPossArr = new int[nPatternLen + 1];
 		int* next = m_pnNextPossArr;
 		const wchar_t* key = m_pszPatternCase;
@@ -66,33 +129,25 @@ CSearchStringPattern::CSearchStringPattern( const wchar_t* pszPattern, int nPatt
 #endif
 
 #ifdef SEARCH_STRING_SUNDAY_QUICK
-	const int BM_MAPSIZE = 0x1ff + 1;
-	// 64KB も作らないで、ASCII それ以外(包括) の2つの情報のみ記録する
-	// 「あ」と「乂」　「ぅ」と「居」は値を共有している
-	m_pnUseCharSkipArr = new int[BM_MAPSIZE];
-	for( int n = 0; n < BM_MAPSIZE; ++n ){
-		m_pnUseCharSkipArr[n] = nPatternLen + 1;
-	}
-	for( int n = 0; n < nPatternLen; ++n ){
-		const int index = GetMapIndex(m_pszPatternCase[n]);
-		m_pnUseCharSkipArr[index] = nPatternLen - n;
-	}
+		const int BM_MAPSIZE = 0x200;
+		// 64KB も作らないで、ISO-8859-1 それ以外(包括) の2つの情報のみ記録する
+		// 「あ」と「乂」　「ぅ」と「居」は値を共有している
+		m_pnUseCharSkipArr = new int[BM_MAPSIZE];
+		for( int n = 0; n < BM_MAPSIZE; ++n ){
+			m_pnUseCharSkipArr[n] = nPatternLen + 1;
+		}
+		for( int n = 0; n < nPatternLen; ++n ){
+			const int index = GetMapIndex(m_pszCaseKeyRef[n]);
+			m_pnUseCharSkipArr[index] = nPatternLen - n;
+		}
 #endif
+	}
+	return true;
 }
 
 
-CSearchStringPattern::~CSearchStringPattern()
-{
-	delete [] m_pszPatternCase;
-#ifdef SEARCH_STRING_KMP
-	delete [] m_pnNextPossArr;
-#endif
-#ifdef SEARCH_STRING_SUNDAY_QUICK
-	delete [] m_pnUseCharSkipArr;
-#endif
-}
 
-#define toLoHiUpper(bLoHiCase, ch) (bLoHiCase? (ch) : skr_towupper(ch))
+#define toLoHiLower(bLoHiCase, ch) (bLoHiCase? (ch) : skr_towlower(ch))
 
 /*!
 	文字列検索
@@ -106,11 +161,11 @@ const wchar_t* CSearchAgent::SearchString(
 )
 {
 	const int      nPatternLen = pattern.GetLen();
-	const wchar_t* pszPattern  = pattern.GetString();
+	const wchar_t* pszPattern  = pattern.GetCaseKey();
 #ifdef SEARCH_STRING_SUNDAY_QUICK
 	const int* const useSkipMap = pattern.GetUseCharSkipMap();
 #endif
-	bool bLoHiCase = ! pattern.GetIgnoreCase();
+	bool bLoHiCase = pattern.GetLoHiCase();
 
 	if( nLineLen < nPatternLen ){
 		return NULL;
@@ -122,16 +177,40 @@ const wchar_t* CSearchAgent::SearchString(
 	// 線形探索
 	const int nCompareTo = nLineLen - nPatternLen;	//	Mar. 4, 2001 genta
 
+#if defined(SEARCH_STRING_SUNDAY_QUICK) && !defined(SEARCH_STRING_KMP)
+	// SUNDAY_QUICKのみ版
+	if( !bLoHiCase || nPatternLen > 5 ){
+		for( int nPos = nIdxPos; nPos <= nCompareTo;){
+			int i;
+			for( i = 0; i < nPatternLen && toLoHiLower(bLoHiCase, pLine[nPos + i]) == pszPattern[i]; i++ ){
+			}
+			if( i >= nPatternLen ){
+				return &pLine[nPos];
+			}
+			int index = CSearchStringPattern::GetMapIndex((wchar_t)skr_towlower(pLine[nPos + nPatternLen]));
+			nPos += useSkipMap[index];
+		}
+	} else {
+		for( int nPos = nIdxPos; nPos <= nCompareTo; ){
+			int n = wmemcmp( &pLine[nPos], pszPattern, nPatternLen );
+			if( n == 0 ){
+				return &pLine[nPos];
+			}
+			int index = CSearchStringPattern::GetMapIndex(pLine[nPos + nPatternLen]);
+			nPos += useSkipMap[index];
+		}
+	}
+#else
 #ifdef SEARCH_STRING_KMP
 	/* 大文字小文字を区別しない、かつ、検索語が5文字以下の場合は通常の検索を行う
 	 * そうでない場合はKMP＋SUNDAY QUICKアルゴリズムを使った検索を行う */
-	if ( bLoHiCase || nPatternLen > 5 ) {
+	if ( !bLoHiCase || nPatternLen > 5 ) {
 		const wchar_t pattern0 = pszPattern[0];
 		const int* const nextTable = pattern.GetKMPNextTable();
 		for( int nPos = nIdxPos; nPos <= nCompareTo; ){
-			if( toLoHiUpper(bLoHiCase, pLine[nPos]) != pattern0 ){
+			if( toLoHiLower(bLoHiCase, pLine[nPos]) != pattern0 ){
 #ifdef SEARCH_STRING_SUNDAY_QUICK
-				int index = CSearchStringPattern::GetMapIndex((wchar_t)toLoHiUpper( bLoHiCase, pLine[nPos + nPatternLen]) );
+				int index = CSearchStringPattern::GetMapIndex((wchar_t)toLoHiLower( bLoHiCase, pLine[nPos + nPatternLen]) );
 				nPos += useSkipMap[index];
 #else
 				nPos++;
@@ -142,7 +221,7 @@ const wchar_t* CSearchAgent::SearchString(
 			int i = 1;
 			nPos++;
 			while ( 0 < i ){
-				while( i < nPatternLen && toLoHiUpper( bLoHiCase, pLine[nPos] ) == pszPattern[i] ){
+				while( i < nPatternLen && toLoHiLower( bLoHiCase, pLine[nPos] ) == pszPattern[i] ){
 					i++;
 					nPos++;
 				}
@@ -168,6 +247,7 @@ const wchar_t* CSearchAgent::SearchString(
 #ifdef SEARCH_STRING_KMP
 	}
 #endif
+#endif // defined(SEARCH_STRING_) && !defined(SEARCH_STRING_KMP)
 	return NULL;
 }
 
@@ -379,11 +459,9 @@ bool CSearchAgent::PrevOrNextWord(
 /* 見つからない場合は０を返す */
 int CSearchAgent::SearchWord(
 	CLogicPoint				ptSerachBegin,	//!< 検索開始位置
-	const wchar_t*			pszPattern,		//!< 検索条件
 	ESearchDirection		eDirection,		//!< 検索方向
-	const SSearchOption&	sSearchOption,	//!< 検索オプション
 	CLogicRange*			pMatchRange,	//!< [out] マッチ範囲。ロジック単位。
-	CBregexp*				pRegexp			//!< [in]  正規表現コンパイルデータ。既にコンパイルされている必要がある
+	const CSearchStringPattern&	pattern		//!< 検索パターン
 )
 {
 	CDocLine*	pDocLine;
@@ -397,9 +475,8 @@ int CSearchAgent::SearchWord(
 	CLogicInt	nHitPos;
 	CLogicInt	nHitPosOld;
 	int			nRetVal = 0;
-	//	Jun. 10, 2003 Moca
-	//	lstrlenを毎回呼ばずにnPatternLenを使うようにする
-	const int	nPatternLen = wcslen( pszPattern );	//2001/06/23 N.Nakatani
+	const SSearchOption&	sSearchOption = pattern.GetSearchOption();
+	CBregexp*	pRegexp = pattern.GetRegexp();
 #ifdef MEASURE_SEARCH_TIME
 	long clockStart, clockEnd;
 	clockStart = clock();
@@ -498,6 +575,8 @@ int CSearchAgent::SearchWord(
 	//単語のみ検索
 	else if( sSearchOption.bWordOnly ){
 		// 検索語を単語に分割して searchWordsに格納する。
+		const wchar_t* pszPattern = pattern.GetKey();
+		const int	nPatternLen = pattern.GetLen();
 		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
 		CreateWordList( searchWords, pszPattern, nPatternLen );
 		/*
@@ -579,7 +658,7 @@ int CSearchAgent::SearchWord(
 	}
 	//普通の検索 (正規表現でも単語単位でもない)
 	else{
-		const CSearchStringPattern pattern(pszPattern, nPatternLen, sSearchOption.bLoHiCase);
+		const int	nPatternLen = pattern.GetLen();
 		//前方検索
 		if( eDirection == SEARCH_BACKWARD ){
 			nLinePos = ptSerachBegin.GetY2();

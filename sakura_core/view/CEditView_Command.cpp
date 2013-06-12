@@ -381,17 +381,10 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 	}
 	m_bCurSearchUpdate = false;
 	if( bChangeState ){
-		/* 正規表現 */
-		if( m_sCurSearchOption.bRegularExp ){
-			//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-			if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
+		if( !m_sSearchPattern.SetPattern(this->GetHwnd(), m_strCurSearchKey.c_str(), m_strCurSearchKey.size(),
+			m_sCurSearchOption, &m_CurRegexp) ){
 				m_bCurSrchKeyMark = false;
 				return FALSE;
-			}
-			int nFlag = 0x00;
-			nFlag |= m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
-			/* 検索パターンのコンパイル */
-			m_CurRegexp.Compile( m_strCurSearchKey.c_str(), nFlag );
 		}
 		m_bCurSrchKeyMark = true;
 		if( bRedrawIfChanged ){
