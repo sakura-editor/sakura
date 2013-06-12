@@ -168,7 +168,7 @@ bool CNormalProcess::InitializeProcess()
 		CAppMode::getInstance()->SetDebugModeON();
 		if( !CAppMode::getInstance()->IsDebugMode() ){
 			// デバッグではなくて(無題)
-			CAppNodeManager().GetNoNameNumber( pEditWnd->GetHwnd() );
+			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
 		}
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
@@ -214,7 +214,7 @@ bool CNormalProcess::InitializeProcess()
 			//return true; // 2003.06.23 Moca
 		}
 		else{
-			CAppNodeManager().GetNoNameNumber( pEditWnd->GetHwnd() );
+			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
 			pEditWnd->UpdateCaption();
 			
 			//-GREPDLGでダイアログを出す。　引数も反映（2002/03/24 YAZAKI）
@@ -362,7 +362,7 @@ bool CNormalProcess::InitializeProcess()
 			);
 		}
 		if( !pEditWnd->GetDocument().m_cDocFile.GetFilePathClass().IsValidPath() ){
-			CAppNodeManager().GetNoNameNumber( pEditWnd->GetHwnd() );
+			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
 		}
 	}
 

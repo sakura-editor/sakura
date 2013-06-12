@@ -513,7 +513,7 @@ bool CDocFileOperation::FileClose()
 	m_pcDocRef->InitAllView();
 
 	// 無題番号取得
-	CAppNodeManager().GetNoNameNumber( m_pcDocRef->m_pcEditWnd->GetHwnd() );
+	CAppNodeManager::getInstance()->GetNoNameNumber( m_pcDocRef->m_pcEditWnd->GetHwnd() );
 
 	/* 親ウィンドウのタイトルを更新 */
 	m_pcDocRef->m_pcEditWnd->UpdateCaption();
@@ -583,7 +583,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	FileLoadWithoutAutoMacro(&sLoadInfo);
 
 	if( !m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		CAppNodeManager().GetNoNameNumber( m_pcDocRef->m_pcEditWnd->GetHwnd() );
+		CAppNodeManager::getInstance()->GetNoNameNumber( m_pcDocRef->m_pcEditWnd->GetHwnd() );
 		m_pcDocRef->m_pcEditWnd->UpdateCaption();
 	}
 
