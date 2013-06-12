@@ -116,20 +116,17 @@ LPCWSTR CBookmarkManager::GetBookMarks()
 	@date 2002.01.16 hor
 */
 void CBookmarkManager::MarkSearchWord(
-	const wchar_t*			pszPattern,		//!< 検索条件
-	const SSearchOption&	sSearchOption,	//!< 検索オプション
-	CBregexp*				pRegexp			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
+	const CSearchStringPattern& pattern
 )
 {
+	const SSearchOption&	sSearchOption = pattern.GetSearchOption();
 	CDocLine*	pDocLine;
 	const wchar_t*	pLine;
 	int			nLineLen;
-	//	Jun. 10, 2003 Moca
-	//	wcslenを毎回呼ばずにnPatternLenを使うようにする
-	const int	nPatternLen = wcslen( pszPattern );
 
 	/* 1==正規表現 */
 	if( sSearchOption.bRegularExp ){
+		CBregexp*	pRegexp = pattern.GetRegexp();
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
 		while( pDocLine ){
 			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
@@ -144,6 +141,8 @@ void CBookmarkManager::MarkSearchWord(
 	}
 	/* 1==単語のみ検索 */
 	else if( sSearchOption.bWordOnly ){
+		const wchar_t*	pszPattern = pattern.GetKey();
+		const int	nPatternLen = pattern.GetLen();
 		// 検索語を単語に分割して searchWordsに格納する。
 		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
 		CSearchAgent::CreateWordList(searchWords, pszPattern, nPatternLen);
@@ -163,7 +162,6 @@ void CBookmarkManager::MarkSearchWord(
 	}
 	else{
 		/* 検索条件の情報 */
-		const CSearchStringPattern pattern(pszPattern, nPatternLen, sSearchOption.bLoHiCase);
 		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
 		while( NULL != pDocLine ){
 			if(!CBookmarkGetter(pDocLine).IsBookmarked()){

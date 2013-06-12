@@ -120,26 +120,14 @@ DWORD CGrepAgent::DoGrep(
 		Note: ここで強調するのは最後の検索文字列であって
 		Grep対象パターンではないことに注意
 	*/
-	if( pcViewDst->m_sCurSearchOption.bRegularExp ){
-		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-		if( !InitRegexp( pcViewDst->GetHwnd(), pcViewDst->m_CurRegexp, true ) ){
-			this->m_bGrepRunning = false;
-			pcViewDst->m_bDoing_UndoRedo = false;
-			pcViewDst->SetUndoBuffer();
-			return 0;
-		}
-
-		/* 検索パターンのコンパイル */
-		int nFlag = 0x00;
-		nFlag |= pcViewDst->m_sCurSearchOption.bLoHiCase ? 0x01 : 0x00;
-		pcViewDst->m_CurRegexp.Compile( pcViewDst->m_strCurSearchKey.c_str(), nFlag );
+	if( !pcViewDst->m_sSearchPattern.SetPattern(pcViewDst->GetHwnd(), pcViewDst->m_strCurSearchKey.c_str(), pcViewDst->m_strCurSearchKey.size(),
+			pcViewDst->m_sCurSearchOption, &pcViewDst->m_CurRegexp) ){
+		this->m_bGrepRunning = false;
+		pcViewDst->m_bDoing_UndoRedo = false;
+		pcViewDst->SetUndoBuffer();
+		return 0;
 	}
-	//	To Here Jun. 27 genta
 
-//まだ m_bCurSrchWordOnly = GetDllShareData().m_Common.m_bWordOnly;	/* 検索／置換  1==単語のみ検索 */
-
-//	cDlgCancel.Create( G_AppInstance(), m_hwndParent );
-//	hwndCancel = cDlgCancel.Open( MAKEINTRESOURCE(IDD_GREPRUNNING) );
 	hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), pcViewDst->m_hwndParent, IDD_GREPRUNNING );
 
 	::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
@@ -154,22 +142,13 @@ DWORD CGrepAgent::DoGrep(
 
 	//	2007.07.22 genta
 	//	バージョン番号取得のため，処理を前の方へ移動した
-	if( sSearchOption.bRegularExp ){
-		if( !InitRegexp( pcViewDst->GetHwnd(), cRegexp, true ) ){
-			this->m_bGrepRunning = false;
-			pcViewDst->m_bDoing_UndoRedo = false;
-			pcViewDst->SetUndoBuffer();
-			return 0;
-		}
-		/* 検索パターンのコンパイル */
-		int nFlag = 0x00;
-		nFlag |= sSearchOption.bLoHiCase ? 0x01 : 0x00;
-		if( !cRegexp.Compile( pcmGrepKey->GetStringPtr(), nFlag ) ){
-			this->m_bGrepRunning = false;
-			pcViewDst->m_bDoing_UndoRedo = false;
-			pcViewDst->SetUndoBuffer();
-			return 0;
-		}
+	CSearchStringPattern pattern;
+	if( !pattern.SetPattern(pcViewDst->GetHwnd(), pcmGrepKey->GetStringPtr(), pcmGrepKey->GetStringLength(),
+			sSearchOption, &cRegexp) ){
+		this->m_bGrepRunning = false;
+		pcViewDst->m_bDoing_UndoRedo = false;
+		pcViewDst->SetUndoBuffer();
+		return 0;
 	}
 
 //2002.02.08 Grepアイコンも大きいアイコンと小さいアイコンを別々にする。
@@ -318,6 +297,7 @@ DWORD CGrepAgent::DoGrep(
 		nGrepCharSet,
 		bGrepOutputLine,
 		nGrepOutputStyle,
+		pattern,
 		&cRegexp,
 		0,
 		&nHitCount
@@ -436,6 +416,7 @@ int CGrepAgent::DoGrepTree(
 	ECodeType				nGrepCharSet,		//!< [in] 文字コードセット (0:自動認識)～
 	BOOL					bGrepOutputLine,	//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
 	int						nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
+	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 	int						nNest,				//!< [in] ネストレベル
 	int*					pnHitCount			//!< [i/o] ヒット数の合計
@@ -645,6 +626,7 @@ int CGrepAgent::DoGrepTree(
 						nGrepCharSet,
 						bGrepOutputLine,
 						nGrepOutputStyle,
+						pattern,
 						pRegexp,
 						pnHitCount,
 						currentFile,
@@ -762,6 +744,7 @@ int CGrepAgent::DoGrepTree(
 					nGrepCharSet,
 					bGrepOutputLine,
 					nGrepOutputStyle,
+					pattern,
 					pRegexp,
 					nNest + 1,
 					pnHitCount
@@ -922,6 +905,7 @@ int CGrepAgent::DoGrepFile(
 	ECodeType				nGrepCharSet,		//!< [in] 文字コードセット (0:自動認識)～
 	BOOL					bGrepOutputLine,	//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
 	int						nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
+	const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 	CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 	int*					pnHitCount,			//!< [i/o] ヒット数の合計．元々の値に見つかった数を加算して返す．
 	const TCHAR*			pszFullPath,		//!< [in] 処理対象ファイルパス
@@ -1167,7 +1151,6 @@ int CGrepAgent::DoGrepFile(
 			}
 		}
 		else {
-			const CSearchStringPattern pattern(pszKey, nKeyLen, sSearchOption.bLoHiCase);
 			/* 文字列検索 */
 			int nColumnPrev = 0;
 			//	Jun. 21, 2003 genta ループ条件見直し

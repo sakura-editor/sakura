@@ -52,6 +52,7 @@
 #include "CEditView_Paint.h"	// parent
 #include "CViewParser.h"
 #include "CViewSelect.h"
+#include "CSearchAgent.h"
 #include "view/colors/EColorIndexType.h"
 #include "window/CTipWnd.h"
 #include "window/CAutoScrollWnd.h"
@@ -679,6 +680,7 @@ public:
 	bool			m_bAutoScrollHorizontal;	//!< 水平スクロール可
 
 	//検索
+	CSearchStringPattern m_sSearchPattern;
 	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */
 	bool				m_bCurSrchKeyMark;			/* 検索文字列のマーク */
 	bool				m_bCurSearchUpdate;			//<! コンパイルデータ更新要求

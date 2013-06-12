@@ -30,31 +30,44 @@ class CDocLineMgr;
 struct DocLineReplaceArg;
 class CBregexp;
 
-#define SEARCH_STRING_KMP
+// #define SEARCH_STRING_KMP
 #define SEARCH_STRING_SUNDAY_QUICK
 
 class CSearchStringPattern
 {
 public:
-	CSearchStringPattern( const wchar_t* pszPattern, int nPatternLen, bool bLoHiCase );
+	CSearchStringPattern();
+	CSearchStringPattern(HWND, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp);
 	~CSearchStringPattern();
-	const wchar_t* GetString() const{ return m_pszPatternCase; }
+	void Reset();
+	bool SetPattern(HWND, const wchar_t* pszPattern, int nPatternLen, const SSearchOption& sSearchOption, CBregexp* m_pRegexp);
+	const wchar_t* GetKey() const{ return m_pszKey; }
+	const wchar_t* GetCaseKey() const{ return m_pszCaseKeyRef; }
 	int GetLen() const{ return m_nPatternLen; }
-	bool GetIgnoreCase() const{ return m_bIgnoreCase; }
-	bool GetLoHiCase() const{ return !m_bIgnoreCase; }
-
+	bool GetIgnoreCase() const{ return !m_psSearchOption->bLoHiCase; }
+	bool GetLoHiCase() const{ return m_psSearchOption->bLoHiCase; }
+	const SSearchOption& GetSearchOption() const{ return *m_psSearchOption; }
+	CBregexp* GetRegexp() const{ return m_pRegexp; }
 #ifdef SEARCH_STRING_KMP
 	const int* GetKMPNextTable() const{ return m_pnNextPossArr; }
 #endif
-	static int GetMapIndex( wchar_t c );
 #ifdef SEARCH_STRING_SUNDAY_QUICK
 	const int* GetUseCharSkipMap() const{ return m_pnUseCharSkipArr; }
+
+	static int GetMapIndex( wchar_t c );
 #endif
 
 private:
+	// 外部依存
+	const wchar_t*	m_pszKey;
+	const SSearchOption* m_psSearchOption;
+	mutable CBregexp* m_pRegexp;
+
+	const wchar_t* m_pszCaseKeyRef;
+
+	// 内部バッファ
 	wchar_t* m_pszPatternCase;
 	int  m_nPatternLen;
-	bool m_bIgnoreCase;
 #ifdef SEARCH_STRING_KMP
 	int* m_pnNextPossArr;
 #endif
@@ -104,7 +117,7 @@ public:
 
 	bool PrevOrNextWord( CLogicInt , CLogicInt , CLogicInt* , BOOL bLEFT, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
 	//	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
-	int SearchWord( CLogicPoint ptSerachBegin, const wchar_t* , ESearchDirection eDirection, const SSearchOption& sSearchOption , CLogicRange* pMatchRange, CBregexp* ); /* 単語検索 */
+	int SearchWord( CLogicPoint ptSerachBegin, ESearchDirection eDirection, CLogicRange* pMatchRange, const CSearchStringPattern& pattern ); /* 単語検索 */
 
 	void ReplaceData( DocLineReplaceArg* );
 private:

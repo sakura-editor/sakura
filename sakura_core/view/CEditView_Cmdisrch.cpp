@@ -415,11 +415,9 @@ void CEditView::ISearchExec(bool bNext)
 	int nSearchResult = m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLine,						// 検索開始レイアウト行
 		nIdx,						// 検索開始データ位置
-		m_strCurSearchKey.c_str(),	// 検索条件
 		m_nISearchDirection,		// 0==前方検索 1==後方検索
-		m_sCurSearchOption,			// 2011.12.15 Moca 色分け「次検索」と同期をとるためm_sCurSearchOptionをそのまま指定
 		&sMatchRange,				// マッチレイアウト範囲
-		&m_CurRegexp
+		m_sSearchPattern
 	);
 	if( nSearchResult == 0 ){
 		/*検索結果がない*/
@@ -504,30 +502,19 @@ void CEditView::ISearchBack(void) {
 //!	入力文字から、検索文字を生成する。
 void CEditView::ISearchWordMake(void)
 {
-	int nFlag = 0x00;
 	switch ( m_nISearchMode ) {
 	case 1: // 通常インクリメンタルサーチ
-		break;
 	case 2: // 正規表現インクリメンタルサーチ
-		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
-			return ;
-		}
-		nFlag |= m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
-		/* 検索パターンのコンパイル */
-		m_CurRegexp.Compile(m_strCurSearchKey.c_str() , nFlag );
+		m_sSearchPattern.SetPattern(this->GetHwnd(), m_strCurSearchKey.c_str(), m_strCurSearchKey.size(), m_sCurSearchOption, &m_CurRegexp);
 		break;
 	case 3: // MIGEMOインクリメンタルサーチ
-		if( !InitRegexp( this->GetHwnd(), m_CurRegexp, true ) ){
-			return ;
-		}
-		nFlag |= m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : 0;
-
 		{
 			//migemoで捜す
 			std::wstring strMigemoWord = m_pcmigemo->migemo_query_w(m_strCurSearchKey.c_str());
 			
 			/* 検索パターンのコンパイル */
-			m_CurRegexp.Compile(strMigemoWord.c_str(), nFlag );
+			const wchar_t* p = strMigemoWord.c_str();
+			m_sSearchPattern.SetPattern(this->GetHwnd(), p, (int)strMigemoWord.size(), m_sCurSearchOption, &m_CurRegexp);
 
 		}
 		break;

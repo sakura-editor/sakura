@@ -348,8 +348,6 @@ int CEditView::IsSearchString(
 	CLogicInt*		pnSearchEnd
 ) const
 {
-	CLogicInt		nKeyLength;
-
 	*pnSearchStart = nPos;	// 2002.02.08 hor
 
 	if( m_sCurSearchOption.bRegularExp ){
@@ -410,24 +408,13 @@ int CEditView::IsSearchString(
 		return 0; // 指定位置の単語と検索文字列に含まれる単語は一致しなかった。
 	}
 	else {
-		nKeyLength = CLogicInt(m_strCurSearchKey.size());
-
-		//検索条件が未定義 または 検索条件の長さより調べるデータが短いときはヒットしない
-		if( 0 == nKeyLength || nKeyLength > cStr.GetLength() - nPos ){
-			return 0;
+		const wchar_t* pHit = CSearchAgent::SearchString(cStr.GetPtr(), cStr.GetLength(), nPos, m_sSearchPattern);
+		if( pHit ){
+			*pnSearchStart = pHit - cStr.GetPtr();
+			*pnSearchEnd = *pnSearchStart + m_sSearchPattern.GetLen();
+			return 1;
 		}
-		//英大文字小文字の区別をするかどうか
-		if( m_sCurSearchOption.bLoHiCase ){	/* 1==英大文字小文字の区別 */
-			if( 0 == auto_memcmp( &cStr.GetPtr()[nPos], m_strCurSearchKey.data(), nKeyLength ) ){
-				*pnSearchEnd = nPos + nKeyLength;
-				return 1;
-			}
-		}else{
-			if( 0 == auto_memicmp( &cStr.GetPtr()[nPos], m_strCurSearchKey.data(), nKeyLength ) ){
-				*pnSearchEnd = nPos + nKeyLength;
-				return 1;
-			}
-		}
+		return 0; // この行はヒットしなかった
 	}
 	return 0;
 }
