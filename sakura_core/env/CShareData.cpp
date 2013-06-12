@@ -141,6 +141,7 @@ bool CShareData::InitShareData()
 		m_pShareData->m_sHandles.m_hAccel = NULL;
 		m_pShareData->m_sHandles.m_hwndDebug = NULL;
 		m_pShareData->m_sNodes.m_nSequences = 0;					/* ウィンドウ連番 */
+		m_pShareData->m_sNodes.m_nNonameSequences = 0;
 		m_pShareData->m_sNodes.m_nGroupSequences = 0;			/* タブグループ連番 */	// 2007.06.20 ryoji
 		m_pShareData->m_sNodes.m_nEditArrNum = 0;
 

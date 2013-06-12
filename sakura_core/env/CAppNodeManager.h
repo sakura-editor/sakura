@@ -59,6 +59,7 @@ struct SShare_Nodes{
 	int					m_nEditArrNum;	//short->intに修正	//@@@ 2003.05.31 MIK
 	EditNode			m_pEditArr[MAX_EDITWINDOWS];	//最大値修正	@@@ 2003.05.31 MIK
 	LONG				m_nSequences;	/* ウィンドウ連番 */
+	LONG				m_nNonameSequences;	/* 無題連番 */
 	LONG				m_nGroupSequences;	// タブグループ連番	// 2007.06.20 ryoji
 };
 
@@ -108,6 +109,7 @@ public:
 
 	//ウィンドウハンドル → ノード　変換
 	EditNode* GetEditNode( HWND hWnd );							/* 編集ウィンドウ情報を取得する */
+	int GetNoNameNumber( HWND );
 
 	//タブ
 	bool ReorderTab( HWND hSrcTab, HWND hDstTab );				/* タブ移動に伴うウィンドウの並び替え 2007.07.07 genta */
