@@ -53,6 +53,7 @@
 #include "charset/CCodeFactory.h"
 #include "plugin/CPlugin.h"
 #include "plugin/CJackManager.h"
+#include "env/CSakuraEnvironment.h"
 #include "debug/CRunningTimer.h"
 #include "sakura_rc.h"
 
@@ -65,7 +66,8 @@ void CViewCommander::Command_FILENEW( void )
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, NULL, false, NULL, false );
+	std::tstring curDir = CSakuraEnvironment::GetDlgInitialDir();
+	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, NULL, false, curDir.c_str(), false );
 	return;
 }
 
@@ -79,10 +81,11 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
+	std::tstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
 		NULL,
 		false,
-		NULL,
+		curDir.c_str(),
 		true
 		);
 	return;
