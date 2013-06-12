@@ -88,9 +88,12 @@ bool CDllPlugin::InvokePlug( CEditView* view, CPlug& plug_raw, CWSHIfObj::List& 
 			return false;
 		}
 	}
-
+	CMacroBeforeAfter ba;
+	int flags = FA_NONRECORD | FA_FROMMACRO;
+	ba.ExecKeyMacroBefore(view, flags);
 	//DLLä÷êîÇÃåƒÇ—èoÇµ
 	plug.m_handler();
+	ba.ExecKeyMacroAfter(view, flags, true);
 	
 	return true;
 }

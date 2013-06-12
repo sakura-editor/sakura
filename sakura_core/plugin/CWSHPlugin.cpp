@@ -94,7 +94,7 @@ bool CWSHPlugin::InvokePlug( CEditView* view, CPlug& plug, CWSHIfObj::List& para
 
 	pWsh->AddParam( params );			//ƒpƒ‰ƒ[ƒ^‚ð’Ç‰Á
 
-	pWsh->ExecKeyMacro( view, FA_NONRECORD | FA_FROMMACRO );
+	pWsh->ExecKeyMacro2( view, FA_NONRECORD | FA_FROMMACRO );
 
 	pWsh->ClearParam();
 

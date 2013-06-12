@@ -42,7 +42,7 @@ public:
 	MacroFuncInfoArray GetMacroCommandInfo() const;	//コマンド情報を取得する
 	MacroFuncInfoArray GetMacroFuncInfo() const;	//関数情報を取得する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, const VARIANT *Arguments, const int ArgSize, VARIANT &Result);	//関数を処理する
-	void HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize);	//コマンドを処理する
+	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize);	//コマンドを処理する
 };
 
 

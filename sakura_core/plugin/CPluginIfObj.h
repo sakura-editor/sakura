@@ -135,12 +135,15 @@ public:
 		return false;
 	}
 	//コマンドを処理する
-	void HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize)
+	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize)
 	{
 		switch ( LOWORD(ID) ) 
 		{
 		case F_PL_SETOPTION:			//オプションファイルに値を書く
 			{
+				if( Arguments[0] == NULL )return false;
+				if( Arguments[1] == NULL )return false;
+				if( Arguments[2] == NULL )return false;
 				CDataProfile cProfile;
 
 				cProfile.ReadProfile( m_cPlugin.GetOptionPath().c_str() );
@@ -157,6 +160,7 @@ public:
 			}
 			break;
 		}
+		return true;
 	}
 
 	// メンバ変数

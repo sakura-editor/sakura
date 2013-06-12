@@ -42,6 +42,7 @@
 #include "func/Funccode.h"
 #include "CMacro.h"
 #include "_main/CControlTray.h"
+#include "cmd/CViewCommander_inline.h"
 #include "view/CEditView.h" //2002/2/10 aroka
 #include "macro/CSMacroMgr.h" //2002/2/10 aroka
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダ整理
@@ -257,7 +258,7 @@ void CMacro::AddIntParam( const int nParam )
 	@date 2007.07.20 genta : flags追加．FA_FROMMACROはflagsに含めて渡すものとする．
 		(1コマンド発行毎に毎回演算する必要はないので)
 */
-void CMacro::Exec( CEditView* pcEditView, int flags ) const
+bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 {
 	const WCHAR* paramArr[4] = {NULL, NULL, NULL, NULL};	//	4つに限定。
 	
@@ -268,7 +269,7 @@ void CMacro::Exec( CEditView* pcEditView, int flags ) const
 		paramArr[i] = p->m_pData;
 		p = p->m_pNext;
 	}
-	CMacro::HandleCommand(pcEditView, (EFunctionCode)(m_nFuncID | flags), paramArr, i);
+	return CMacro::HandleCommand(pcEditView, (EFunctionCode)(m_nFuncID | flags), paramArr, i);
 }
 
 /*	CMacroを再現するための情報をhFileに書き出します。
@@ -426,7 +427,7 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	
 	@date 2007.07.08 genta Indexのコマンド番号を下位ワードに制限
 */
-void CMacro::HandleCommand(
+bool CMacro::HandleCommand(
 	CEditView*			pcEditView,
 	const EFunctionCode	Index,
 	const WCHAR*		Argument[],
@@ -447,7 +448,7 @@ void CMacro::HandleCommand(
 				EXEC_ERROR_TITLE,
 				_T("挿入すべき文字コードが指定されていません．")
 			);
-			break;
+			return false;
 		}
 	case F_PASTE:	// 2011.06.26 Moca
 	case F_PASTEBOX:	// 2011.06.26 Moca
@@ -473,7 +474,7 @@ void CMacro::HandleCommand(
 				EXEC_ERROR_TITLE,
 				_T("入力改行コードが指定されていません．")
 			);
-			break;
+			return false;
 		}
 		{
 			// マクロ引数値をEOLタイプ値に変換する	// 2009.08.18 ryoji
@@ -503,7 +504,7 @@ void CMacro::HandleCommand(
 				EXEC_ERROR_TITLE,
 				_T("引数(文字列)が指定されていません．")
 			);
-			break;
+			return false;
 		}
 		{
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], 0, 0, 0 );	//	標準
@@ -520,7 +521,7 @@ void CMacro::HandleCommand(
 				EXEC_ERROR_TITLE,
 				_T("引数(文字列)が指定されていません．")
 			);
-			break;
+			return false;
 		}
 		{
 			int len = wcslen(Argument[0]);
@@ -551,7 +552,7 @@ void CMacro::HandleCommand(
 				EXEC_ERROR_TITLE,
 				_T("ジャンプ先行番号が指定されていません．")
 			);
-			break;
+			return false;
 		}
 		{
 			pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgJump.m_nLineNum = _wtoi(Argument[0]);	//ジャンプ先
@@ -570,7 +571,7 @@ void CMacro::HandleCommand(
 				EXEC_ERROR_TITLE,
 				_T("マーク行のパターンが指定されていません．")
 			);
-			break;
+			return false;
 		}
 		/* NO BREAK */
 	case F_SEARCH_NEXT:
@@ -656,7 +657,7 @@ void CMacro::HandleCommand(
 				EXEC_ERROR_TITLE,
 				_T(	"引数(文字列)が指定されていません．" )
 			);
-			break;
+			return false;
 		}
 		{
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)(Argument[1] != NULL ? _wtoi(Argument[1]) : 0 ), 0, 0);
@@ -678,7 +679,7 @@ void CMacro::HandleCommand(
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T(	"ファイル名が指定されていません．" ));
-			break;
+			return false;
 		}
 		{
 			pcEditView->GetCommander().HandleCommand(
@@ -719,12 +720,12 @@ void CMacro::HandleCommand(
 		if( Argument[0] == NULL || Argument[0][0] == L'\0' ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("置換元パターンが指定されていません．"));
-			break;
+			return false;
 		}
 		if( Argument[1] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("置換先パターンが指定されていません．"));
-			break;
+			return false;
 		}
 		{
 			CDlgReplace& cDlgReplace = pcEditView->m_pcEditDoc->m_pcEditWnd->m_cDlgReplace;
@@ -803,17 +804,17 @@ void CMacro::HandleCommand(
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("GREPパターンが指定されていません．"));
-			break;
+			return false;
 		}
 		if( Argument[1] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("ファイル種別が指定されていません．"));
-			break;
+			return false;
 		}
 		if( Argument[2] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("検索先フォルダが指定されていません．"));
-			break;
+			return false;
 		}
 		{
 			//	常に外部ウィンドウに。
@@ -885,7 +886,7 @@ void CMacro::HandleCommand(
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("読み込みファイル名が指定されていません．"));
-			break;
+			return false;
 		}
 		{
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], 0, 0, 0);
@@ -896,7 +897,7 @@ void CMacro::HandleCommand(
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("保存ファイル名が指定されていません．"));
-			break;
+			return false;
 		}
 		{
 			// 文字コードセット
@@ -982,6 +983,7 @@ void CMacro::HandleCommand(
 			}else{
 				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("数値を指定してください．"));
+				return false;
 			}
 		}
 		break;
@@ -993,9 +995,8 @@ void CMacro::HandleCommand(
 			//	一つ目の引数が数値。
 			vArg[0].vt = VT_I4;
 			vArg[0].intVal = (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 );
-			HandleFunction( pcEditView, Index, vArg, 1, vResult );
+			return HandleFunction( pcEditView, Index, vArg, 1, vResult );
 		}
-		break;
 	case F_SETFONTSIZE:
 		{
 			int val0 = Argument[0] != NULL ? _wtoi(Argument[0]) : 0;
@@ -1003,11 +1004,57 @@ void CMacro::HandleCommand(
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)val0, (LPARAM)val1, 0, 0 );
 		}
 		break;
+	case F_COMMITUNDOBUFFER:
+		{
+			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+			if( opeBlk ){
+				int nCount = opeBlk->GetRefCount();
+				opeBlk->SetRefCount(1); // 強制的にリセットするため1を指定
+				pcEditView->SetUndoBuffer();
+				if( pcEditView->m_cCommander.GetOpeBlk() == NULL && 0 < nCount ){
+					pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
+					pcEditView->m_cCommander.GetOpeBlk()->SetRefCount( nCount );
+				}
+			}
+		}
+		break;
+	case F_ADDREFUNDOBUFFER:
+		{
+			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+			if( opeBlk == NULL ){
+				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
+			}
+			pcEditView->m_cCommander.GetOpeBlk()->AddRef();
+		}
+		break;
+	case F_SETUNDOBUFFER:
+		{
+			pcEditView->SetUndoBuffer();
+		}
+		break;
+	case F_APPENDUNDOBUFFERCURSOR:
+		{
+			COpeBlk* opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+			if( opeBlk == NULL ){
+				pcEditView->m_cCommander.SetOpeBlk(new COpeBlk());
+			}
+			opeBlk = pcEditView->m_cCommander.GetOpeBlk();
+			opeBlk->AddRef();
+			opeBlk->AppendOpe(
+				new CMoveCaretOpe(
+					pcEditView->GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
+					pcEditView->GetCaret().GetCaretLogicPos() 	// 操作後のキャレット位置
+				)
+			);
+			pcEditView->SetUndoBuffer();
+		}
+		break;
 	default:
 		//	引数なし。
 		pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	標準
 		break;
 	}
+	return true;
 }
 
 

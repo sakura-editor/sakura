@@ -175,7 +175,7 @@ private:
 public:
 	// exported
 	//	2007.07.22 genta : flags’Ç‰Á
-	void Execute(class CEditView* pcEditView, int flags );
+	bool Execute(class CEditView* pcEditView, int flags );
 	void SetSource(const char* ss)
 		{ m_fnSetSource(ss); }
 	void SetDeclare(const char* ss)

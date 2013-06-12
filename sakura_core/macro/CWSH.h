@@ -51,7 +51,7 @@ public:
 
 	// 操作
 	void AddInterfaceObject( CIfObj* obj );
-	void Execute(wchar_t const *AScript);
+	bool Execute(wchar_t const *AScript);
 	void Error(BSTR Description, BSTR Source); ///< ScriptErrorHandlerを呼び出す。
 	void Error(const wchar_t* Description);          ///< ScriptErrorHandlerを呼び出す。
 

@@ -92,9 +92,9 @@ public:
 		return false;
 	}
 	//コマンドを処理する
-	void HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize)
+	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize)
 	{
-		return;
+		return false;
 	}
 
 	// メンバ変数

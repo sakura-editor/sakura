@@ -35,10 +35,10 @@ CPPAMacroMgr::~CPPAMacroMgr()
 
 	@date 2007.07.20 genta flags追加
 */
-void CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
+bool CPPAMacroMgr::ExecKeyMacro( CEditView* pcEditView, int flags ) const
 {
 	m_cPPA.SetSource( to_achar(m_cBuffer.GetStringPtr()) );
-	m_cPPA.Execute(pcEditView, flags);
+	return m_cPPA.Execute(pcEditView, flags);
 }
 
 /*! キーボードマクロの読み込み（ファイルから）
