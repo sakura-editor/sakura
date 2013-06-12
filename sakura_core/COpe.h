@@ -13,10 +13,9 @@
 
 class COpe;
 
-#ifndef _COPE_H_
-#define _COPE_H_
+#ifndef SAKURA_COPE_H_
+#define SAKURA_COPE_H_
 
-class CMemory;// 2002/2/10 aroka
 
 
 // アンドゥバッファ用 操作コード
@@ -27,6 +26,25 @@ enum EOpeCode {
 	OPE_MOVECARET	= 3,
 };
 
+class CLineData {
+public:
+	CNativeW cmemLine;
+	int nSeq;
+	void swap(CLineData& o){
+		std::swap(cmemLine, o.cmemLine);
+		std::swap(nSeq, o.nSeq);
+	}
+};
+
+namespace std {
+template <>
+	inline void swap(CLineData& n1, CLineData& n2)
+	{
+		n1.swap(n2);
+	}
+}
+
+typedef std::vector<CLineData> COpeLineData;
 
 /*!
 	編集操作要素
@@ -58,12 +76,11 @@ public:
 	CDeleteOpe() : COpe(OPE_DELETE)
 	{
 		m_ptCaretPos_PHY_To.Set(CLogicInt(0),CLogicInt(0));
-		m_nDataLen = CLogicInt(0);
 	}
 public:
 	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。	[DELETE]
-	CLogicInt	m_nDataLen;					//!< 操作に関連するデータのサイズ		[DELETE]
-	CNativeW	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+	COpeLineData	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+	int				m_nOrgSeq;
 };
 
 //!挿入
@@ -71,7 +88,8 @@ class CInsertOpe : public COpe{
 public:
 	CInsertOpe() : COpe(OPE_INSERT) { }
 public:
-	CNativeW	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+	COpeLineData	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
+	int				m_nOrgSeq;
 };
 
 //!キャレット移動
@@ -95,7 +113,7 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////
-#endif /* _COPE_H_ */
+#endif /* SAKURA_COPE_H_ */
 
 
 

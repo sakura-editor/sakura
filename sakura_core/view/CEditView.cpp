@@ -1440,7 +1440,6 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
 			GetSelectionInfo().m_sSelect,
-			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			cmemBuf.GetStringPtr(),		/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
 			cmemBuf.GetStringLength(),	/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
 			false,
@@ -2619,9 +2618,10 @@ void CEditView::SetUndoBuffer(bool bPaintLineNumber)
 			/* 操作の追加 */
 			GetDocument()->m_cDocEditor.m_cOpeBuf.AppendOpeBlk( m_cCommander.GetOpeBlk() );
 
-			if( bPaintLineNumber
-			 &&	m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
-				Call_OnPaint( PAINT_LINENUMBER, false );	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
+			// 2013.05.01 Moca 正確に変更行を表示するようになったので不要
+			//  if( bPaintLineNumber
+			//   &&	m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == 1 )	// 全Undo状態からの変更か？	// 2009.03.26 ryoji
+			//  	Call_OnPaint( PAINT_LINENUMBER, false );	// 自ペインの行番号（変更行）表示を更新 ← 変更行のみの表示更新で済ませている場合があるため
 
 			if( !m_pcEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 				m_pcEditWnd->RedrawAllViews( this );	//	他のペインの表示を更新

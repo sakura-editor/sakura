@@ -700,7 +700,6 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	GetDocument()->m_cLayoutMgr.LogicToLayout(sSelectOld, &sSelectOld_Layout);
 	m_pCommanderView->ReplaceData_CEditView(
 		sSelectOld_Layout,
-		NULL,					/* 削除されたデータのコピー(NULL可能) */
 		cmemBuf.GetStringPtr(),
 		cmemBuf.GetStringLength(),
 		false,
@@ -831,7 +830,6 @@ void CViewCommander::Command_MERGE(void)
 		}
 		m_pCommanderView->ReplaceData_CEditView(
 			sSelectOld_Layout,
-			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			cmemBuf.GetStringPtr(),
 			cmemBuf.GetStringLength(),
 			false,

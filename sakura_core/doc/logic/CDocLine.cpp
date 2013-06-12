@@ -44,11 +44,10 @@ bool CDocLine::IsEmptyLine() const
 	return true;	//	すべてスペースかタブだけだったらtrue。
 }
 
-
-void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
+void CDocLine::SetEol()
 {
-	m_cLine.SetString(pData, nLength);
-
+	const wchar_t* pData = m_cLine.GetStringPtr();
+	int nLength = m_cLine.GetStringLength();
 	//改行コード設定
 	const wchar_t* p = &pData[nLength] - 1;
 	while(p>=pData && WCODE::IsLineDelimiter(*p))p--;
@@ -61,9 +60,25 @@ void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
 	}
 }
 
+
+void CDocLine::SetDocLineString(const wchar_t* pData, int nLength)
+{
+	m_cLine.SetString(pData, nLength);
+	SetEol();
+}
+
 void CDocLine::SetDocLineString(const CNativeW& cData)
 {
 	SetDocLineString(cData.GetStringPtr(), cData.GetStringLength());
+}
+
+void CDocLine::SetDocLineStringMove(CNativeW* pcDataFrom)
+{
+	m_cLine.swap(*pcDataFrom);
+
+	const wchar_t* pData = m_cLine.GetStringPtr();
+	int nLength = m_cLine.GetStringLength();
+	SetEol();
 }
 
 void CDocLine::SetEol(const CEol& cEol, COpeBlk* pcOpeBlk)

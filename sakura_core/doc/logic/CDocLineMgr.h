@@ -23,18 +23,20 @@
 #include <Windows.h>
 #include "_main/global.h" // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
+#include "COpe.h"
+
 class CDocLine; // 2002/2/10 aroka
-class CMemory; // 2002/2/10 aroka
 class CBregexp; // 2002/2/10 aroka
 
 struct DocLineReplaceArg {
-	CLogicRange		sDelRange;			//!< 削除範囲。ロジック単位。
-	CNativeW*		pcmemDeleted;		//!< 削除されたデータを保存
-	CLogicInt		nDeletedLineNum;	//!< 削除した行の総数
-	const wchar_t*	pInsData;			//!< 挿入するデータ
-	int				nInsDataLen;		//!< 挿入するデータの長さ
-	CLogicInt		nInsLineNum;		//!< 挿入によって増えた行の数
-	CLogicPoint		ptNewPos;			//!< 挿入された部分の次の位置
+	CLogicRange		sDelRange;			//!< [in] 削除範囲。ロジック単位。
+	COpeLineData*	pcmemDeleted;		//!< [out] 削除されたデータを保存
+	COpeLineData*	pInsData;			//!< [in/out] 挿入するデータ(中身が移動する)
+	CLogicInt		nDeletedLineNum;	//!< [out] 削除した行の総数
+	CLogicInt		nInsLineNum;		//!< [out] 挿入によって増えた行の数
+	CLogicPoint		ptNewPos;			//!< [out] 挿入された部分の次の位置
+	int				nDelSeq;			//!< [in] 削除行のOpeシーケンス
+	int				nInsSeq;			//!< [out] 挿入行の元のシーケンス
 };
 
 /*-----------------------------------------------------------------------

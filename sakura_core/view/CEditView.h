@@ -398,7 +398,6 @@ public:
 	/* データ置換 削除&挿入にも使える */
 	void ReplaceData_CEditView(
 		CLayoutRange	sDelRange,			// 削除範囲。レイアウト単位。
-		CNativeW*		pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
 		const wchar_t*	pInsData,			// 挿入するデータ
 		CLogicInt		nInsDataLen,		// 挿入するデータの長さ
 		bool			bRedraw,
@@ -406,11 +405,19 @@ public:
 	);
 	void ReplaceData_CEditView2(
 		const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
-		CNativeW*			pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
 		const wchar_t*		pInsData,			// 挿入するデータ
 		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 		bool				bRedraw,
 		COpeBlk*			pcOpeBlk
+	);
+	void ReplaceData_CEditView3(
+		CLayoutRange	sDelRange,			// 削除範囲。レイアウト単位。
+		COpeLineData*	pcmemCopyOfDeleted,	// 削除されたデータのコピー(NULL可能)
+		COpeLineData*	pInsData,
+		bool			bRedraw,
+		COpeBlk*		pcOpeBlk,
+		int				nDelSeq,
+		int*			pnInsSeq
 	);
 	void RTrimPrevLine( void );		/* 2005.10.11 ryoji 前の行にある末尾の空白を削除 */
 

@@ -166,7 +166,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	}
 
 	/* 行変更状態をすべてリセット */
-	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr);
+//	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr, 0);
 	return eRet;
 }
 
