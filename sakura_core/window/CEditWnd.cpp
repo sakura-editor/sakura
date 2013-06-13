@@ -2128,7 +2128,8 @@ void CEditWnd::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 				sLoadInfo.cFilePath = files[0].c_str();
 				//開く
 				cDocOp.FileLoad( &sLoadInfo );
-				for( size_t f = 1; f < files.size(); f++ ){
+				size_t nSize = files.size();
+				for( size_t f = 1; f < nSize; f++ ){
 					sLoadInfo.cFilePath = files[f].c_str();
 					CControlTray::OpenNewEditor( G_AppInstance(), GetHwnd(), sLoadInfo, NULL, true );
 				}
@@ -2739,6 +2740,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 /*! WM_TIMER 処理 
 	@date 2007.04.03 ryoji 新規
 	@date 2008.04.19 ryoji IDT_FIRST_IDLE での MYWM_FIRST_IDLE ポスト処理を追加
+	@date 2013.06.09 novice コントロールプロセスへの MYWM_FIRST_IDLE ポスト処理を追加
 */
 LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 {
@@ -2760,6 +2762,7 @@ LRESULT CEditWnd::OnTimer( WPARAM wParam, LPARAM lParam )
 	case IDT_FIRST_IDLE:
 		m_cDlgFuncList.m_bEditWndReady = true;	// エディタ画面の準備完了
 		CAppNodeGroupHandle(0).PostMessageToAllEditors( MYWM_FIRST_IDLE, ::GetCurrentProcessId(), 0, NULL );	// プロセスの初回アイドリング通知	// 2008.04.19 ryoji
+		::PostMessage( m_pShareData->m_sHandles.m_hwndTray, MYWM_FIRST_IDLE, (WPARAM)::GetCurrentProcessId(), (LPARAM)0 );
 		::KillTimer( m_hWnd, wParam );
 		break;
 	default:
