@@ -96,7 +96,6 @@ struct SColorStrategyInfo{
 	//スキャン位置
 	LPCWSTR			pLineOfLogic;
 	CLogicInt		nPosInLogic;
-	CLayoutInt		nLayoutLineNum;
 
 	//描画位置
 	DispPos*		pDispPos;
@@ -119,9 +118,14 @@ struct SColorStrategyInfo{
 	{
 		return nPosInLogic;
 	}
-	CLogicInt GetPosInLayout() const;
-	const CDocLine* GetDocLine() const;
-	const CLayout* GetLayout() const;
+	const CDocLine* GetDocLine() const
+	{
+		return pDispPos->GetLayoutRef()->GetDocLineRef();
+	}
+	const CLayout* GetLayout() const
+	{
+		return pDispPos->GetLayoutRef();
+	}
 };
 
 class CColorStrategy{
