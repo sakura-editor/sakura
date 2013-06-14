@@ -166,7 +166,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				if( NULL == plvi->pszText ){
 					return TRUE;
 				}
-				if( 0 < _tcslen( plvi->pszText ) ){
+				if( plvi->pszText[0] != _T('\0') ){
 					if( MAX_KEYWORDLEN < _tcslen( plvi->pszText ) ){
 						InfoMessage( hwndDlg, _T("キーワードの長さは%dバイトまでです。"), MAX_KEYWORDLEN );
 						return TRUE;
@@ -254,7 +254,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					){
 						return TRUE;
 					}
-					if( 0 < _tcslen( szKeyWord ) ){
+					if( szKeyWord[0] != _T('\0') ){
 						/* セットの追加 */
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, false );
 
@@ -332,7 +332,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 							return TRUE;
 						}
 					}
-					if( 0 < _tcslen( szKeyWord ) ){
+					if( szKeyWord[0] != _T('\0') ){
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
 
 						// ダイアログデータの設定 Keyword
@@ -354,7 +354,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					if( !cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード追加"), _T("キーワードを入力してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
-					if( 0 < _tcslen( szKeyWord ) ){
+					if( szKeyWord[0] != _T('\0') ){
 						/* ｎ番目のセットにキーワードを追加 */
 						if( 0 == m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
 							// ダイアログデータの設定 Keyword 指定キーワードセットの設定
@@ -450,7 +450,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	if( !cDlgInput1.DoModal( m_hInstance, hwndDlg, _T("キーワード編集"), _T("キーワードを編集してください。"), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
-	if( 0 < _tcslen( szKeyWord ) ){
+	if( szKeyWord[0] != _T('\0') ){
 		/* ｎ番目のセットにキーワードを編集 */
 		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
 			m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,
@@ -536,7 +536,7 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	while( NULL != fgets( szLine, sizeof(szLine), pFile ) ){
 		if( 2 <= strlen( szLine ) && 0 == memcmp( szLine, "//", 2 )  ){
 		}else{
-			if( 0 < (int)strlen( szLine ) ){
+			if( '\0' != szLine[0] ){
 				int nLen = (int)strlen( szLine );
 				for( i = 0; i < nLen; ++i ){
 					if( szLine[i] == '\r' || szLine[i] == '\n' ){
@@ -544,7 +544,7 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 					}
 				}
 			}
-			if( 0 < (int)strlen( szLine ) ){
+			if( '\0' != szLine[0] ){
 				/* ｎ番目のセットにキーワードを追加 */
 				int nRetValue = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szLine );
 				if( 2 == nRetValue ){

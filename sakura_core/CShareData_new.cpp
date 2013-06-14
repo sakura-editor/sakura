@@ -1347,7 +1347,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 				}
 			}
 			// 2002.02.08 hor 未定義値を無視
-			else if(lstrlen(types.m_RegexKeywordArr[j].m_szKeyword))
+			else if(types.m_RegexKeywordArr[j].m_szKeyword[0] != '\0')
 			{
 				wsprintf( szKeyData, "%s,%s",
 					GetColorNameByIndex( types.m_RegexKeywordArr[j].m_nColorIndex ),
@@ -1409,7 +1409,7 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 				}
 			}/* 書き込み */
 			else{
-				if(_tcslen(types.m_KeyHelpArr[j].m_szPath)){
+				if(types.m_KeyHelpArr[j].m_szPath[0] != _T('\0')){
 					wsprintf( szKeyData, pszForm,
 						types.m_KeyHelpArr[j].m_nUse,
 						types.m_KeyHelpArr[j].m_szAbout,
@@ -1526,7 +1526,7 @@ void CShareData::ShareData_IO_Macro( CProfile& cProfile )
 		MacroRec& macrorec = m_pShareData->m_Common.m_sMacro.m_MacroTable[i];
 		//	Oct. 4, 2001 genta あまり意味がなさそうなので削除：3行
 		// 2002.02.08 hor 未定義値を無視
-		if( !cProfile.IsReadingMode() && !_tcslen(macrorec.m_szName) && !_tcslen(macrorec.m_szFile) ) continue;
+		if( !cProfile.IsReadingMode() && macrorec.m_szName[0] == _T('\0') && macrorec.m_szFile[0] == _T('\0') ) continue;
 		wsprintf( szKeyName, "Name[%03d]", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, macrorec.m_szName, MACRONAME_MAX - 1 );
 		wsprintf( szKeyName, "File[%03d]", i );

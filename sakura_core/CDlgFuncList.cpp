@@ -407,7 +407,7 @@ void CDlgFuncList::SetData()
 			ListView_SetItem( hwndList, &item);
 
 			/* クリップボードにコピーするテキストを編集 */
-			if(_tcslen(item.pszText)){
+			if(item.pszText[0] != _T('\0')){
 				// 検出結果の種類(関数,,,)があるとき
 				wsprintf(
 					szText,
@@ -1018,7 +1018,7 @@ void CDlgFuncList::SetListVB (void)
 		if ( 0 == pcFuncInfo->m_nInfo ) {
 			szTypeOption[0] = _T('\0');	//	2006.12.17 genta 全体を0で埋める必要はない
 		} else
-		if ( 0 == _tcslen(szOption) ) {
+		if ( szOption[0] == _T('\0') ) {
 			wsprintf(szTypeOption, _T("%s"), szType);
 		} else {
 			wsprintf(szTypeOption, _T("%s（%s）"), szType, szOption);
@@ -1029,7 +1029,7 @@ void CDlgFuncList::SetListVB (void)
 		ListView_SetItem( hwndList, &item);
 
 		/* クリップボードにコピーするテキストを編集 */
-		if(_tcslen(item.pszText)){
+		if(item.pszText[0] != _T('\0')){
 			// 検出結果の種類(関数,,,)があるとき
 			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
 			wsprintf(

@@ -98,7 +98,7 @@ void CEditApp::DoGrep()
 	if( m_cDlgGrep.m_sSearchOption.bWordOnly	)_tcscat( pOpt, _T("W") );	// 単語単位で探す
 	if( 1 == m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
 	if( 2 == m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
-	if( 0 < _tcslen( pOpt ) ){
+	if( pOpt[0] != _T('\0') ){
 		_tcscat( pCmdLine, _T(" -GOPT=") );
 		_tcscat( pCmdLine, pOpt );
 	}
@@ -1096,7 +1096,7 @@ bool CEditApp::OpenNewEditor2(
 	char pszCmdLine[1024];
 	if( pfi != NULL ){
 		if( pfi->m_szPath != NULL ){
-			if( strlen( pfi->m_szPath ) > 0 ){
+			if( pfi->m_szPath[0] != '\0' ){
 				nPos += wsprintf( pszCmdLine + nPos, _T(" \"%s\""), pfi->m_szPath );
 			}
 		}

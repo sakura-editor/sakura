@@ -5385,7 +5385,7 @@ BOOL CEditView::GetSelectedData(
 			}
 #endif
 
-			if( NULL != pszQuote && 0 < lstrlen( pszQuote ) ){	/* 先頭に付ける引用符 */
+			if( NULL != pszQuote && pszQuote[0] != '\0' ){	/* 先頭に付ける引用符 */
 //				cmemBuf->Append( pszQuote, lstrlen( pszQuote ) );
 				cmemBuf->AppendString( pszQuote );
 			}

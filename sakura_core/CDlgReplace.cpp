@@ -274,7 +274,7 @@ int CDlgReplace::GetData( void )
 	/* 先頭（末尾）から再検索 2002.01.26 hor */
 	m_pShareData->m_Common.m_sSearch.m_bSearchAll = ::IsDlgButtonChecked( m_hWnd, IDC_CHECK_SEARCHALL );
 
-	if( 0 < lstrlen( m_szText ) ){
+	if( '\0' != m_szText[0] ){
 		/* 正規表現？ */
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し

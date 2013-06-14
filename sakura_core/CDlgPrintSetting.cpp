@@ -211,7 +211,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 				return TRUE;
 			}
 		}
-		if( 0 < _tcslen( szWork ) ){
+		if( szWork[0] != _T('\0') ){
 			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
 			_tcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = _T('\0');

@@ -103,7 +103,7 @@ void CDlgTypeList::SetData( void )
 
 	::SendMessage(hwndList, LB_RESETCONTENT, 0L, 0L);	/* リストを空にする */
 	for( nIdx = 0; nIdx < MAX_TYPES; ++nIdx ){
-		if( 0 < lstrlen( m_pShareData->m_Types[nIdx].m_szTypeExts ) ){		/* タイプ属性：拡張子リスト */
+		if( m_pShareData->m_Types[nIdx].m_szTypeExts[0] != '\0' ){		/* タイプ属性：拡張子リスト */
 			wsprintf( szText, "%s ( %s )",
 				m_pShareData->m_Types[nIdx].m_szTypeName,	/* タイプ属性：名称 */
 				m_pShareData->m_Types[nIdx].m_szTypeExts	/* タイプ属性：拡張子リスト */

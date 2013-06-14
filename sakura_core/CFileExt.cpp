@@ -64,8 +64,8 @@ bool CFileExt::AppendExtRaw( const TCHAR *pszName, const TCHAR *pszExt )
 {
 	FileExtInfoTag	*p;
 
-	if( NULL == pszName || 0 == _tcslen( pszName ) ) return false;
-	if( NULL == pszExt  || 0 == _tcslen( pszExt  ) ) return false;
+	if( NULL == pszName || pszName[0] == _T('\0') ) return false;
+	if( NULL == pszExt  || pszExt[0] == _T('\0') ) return false;
 
 	if( NULL == m_puFileExtInfo )
 	{

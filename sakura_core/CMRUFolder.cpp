@@ -120,7 +120,7 @@ void CMRUFolder::ClearAll()
 void CMRUFolder::Add( const TCHAR* pszFolder )
 {
 	if( NULL == pszFolder
-	 || 0 == _tcslen( pszFolder ) )
+	 || pszFolder[0] == _T('\0') )
 	{	//	’·‚³‚ª0‚È‚ç”rœB
 		return;
 	}

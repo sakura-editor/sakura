@@ -911,7 +911,7 @@ int CShareData::GetDocumentTypeOfPath( const char* pszFilePath )
 {
 	char	szExt[_MAX_EXT];
 
-	if( NULL != pszFilePath && 0 < (int)strlen( pszFilePath ) ){
+	if( NULL != pszFilePath && pszFilePath[0] != '\0' ){
 		_splitpath( pszFilePath, NULL, NULL, NULL, szExt );
 		if( szExt[0] == '.' )
 			return GetDocumentTypeOfExt( szExt + 1 );

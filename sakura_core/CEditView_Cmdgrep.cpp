@@ -151,7 +151,7 @@ void CEditView::Command_GREP( void )
 		if( m_pcEditDoc->m_cDlgGrep.m_bGrepOutputLine			)_tcscat( pOpt, _T("P") );	// 行を出力するか該当部分だけ出力するか
 		if( 1 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
 		if( 2 == m_pcEditDoc->m_cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
-		if( 0 < _tcslen( pOpt ) ){
+		if( pOpt[0] != _T('\0') ){
 			_tcscat( pCmdLine, _T(" -GOPT=") );
 			_tcscat( pCmdLine, pOpt );
 		}

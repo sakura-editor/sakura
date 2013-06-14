@@ -355,7 +355,7 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	}else{
 		switch( Err_CD ){
 		case 0:
-			if( 0 == lstrlen( Err_Mes ) ){
+			if( '\0' == Err_Mes[0] ){
 				pszErr = "Ú×•s–¾‚ÌƒGƒ‰[";
 			}else{
 				pszErr = Err_Mes;

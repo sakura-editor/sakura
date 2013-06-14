@@ -66,7 +66,7 @@ BOOL CDicMgr::Search(
 
 
 	/* 辞書ファイル */
-	if( 0 >= _tcslen( pszKeyWordHelpFile ) ){
+	if( pszKeyWordHelpFile[0] == _T('\0') ){
 		return FALSE;
 	}
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
@@ -139,7 +139,7 @@ int CDicMgr::HokanSearch(
 	int		nKouhoNum;
 	int		nRet;
 	*ppcmemKouho = NULL;
-	if( 0 >= _tcslen( pszKeyWordFile ) ){
+	if( pszKeyWordFile[0] == _T('\0') ){
 		return 0;
 	}
 

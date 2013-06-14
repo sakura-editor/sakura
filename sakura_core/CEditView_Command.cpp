@@ -2812,7 +2812,7 @@ void CEditView::Command_CHAR( char cChar )
 						/* その他のインデント文字 */
 						if( 0 < nCharChars
 						 && pLine[nPos] != '\0'	// その他のインデント文字に '\0' は含まれない	// 2009.02.04 ryoji L'\0'がインデントされてしまう問題修正
-						 && 0 < (int)lstrlen( m_pcEditDoc->GetDocumentAttribute().m_szIndentChars )
+						 && m_pcEditDoc->GetDocumentAttribute().m_szIndentChars[0] != '\0'
 						){
 							memcpy( szCurrent, &pLine[nPos], nCharChars );
 							szCurrent[nCharChars] = '\0';
@@ -5999,7 +5999,7 @@ bool CEditView::Command_TagsMake( void )
 	TCHAR	options[1024];
 	_tcscpy( options, _T("--excmd=n") );	//デフォルトのオプション
 	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) _tcscat( options, _T(" -R") );	//サブフォルダも対象
-	if( _tcslen( cDlgTagsMake.m_szTagsCmdLine ) )	//個別指定のコマンドライン
+	if( cDlgTagsMake.m_szTagsCmdLine[0] != _T('\0') )	//個別指定のコマンドライン
 	{
 		_tcscat( options, _T(" ") );
 		_tcscat( options, cDlgTagsMake.m_szTagsCmdLine );

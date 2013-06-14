@@ -593,7 +593,7 @@ void CMacro::HandleCommand(
 		//		0x200	見つかった文字列の後に追加
 		//		**********************************
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
-		if( Argument[0] == NULL || 0 == _tcslen( Argument[0] ) ){
+		if( Argument[0] == NULL || Argument[0][0] == _T('\0') ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("置換元パターンが指定されていません．"));
 			break;
@@ -718,7 +718,7 @@ void CMacro::HandleCommand(
 			if( lFlag & 0x20 ) _tcscat( pOpt, _T("P") );	/* 行を出力するか該当部分だけ出力するか */
 			if( lFlag & 0x40 ) _tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
 			else _tcscat( pOpt, _T("1") );
-			if( 0 < _tcslen( pOpt ) ){
+			if( pOpt[0] !=  _T('\0') ){
 				_tcscat( pCmdLine, _T(" -GOPT=") );
 				_tcscat( pCmdLine, pOpt );
 			}

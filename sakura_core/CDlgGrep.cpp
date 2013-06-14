@@ -229,7 +229,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		return TRUE;
 	case IDC_BUTTON_CURRENTFOLDER:	/* 現在編集中のファイルのフォルダ */
 		/* ファイルを開いているか */
-		if( 0 < _tcslen( m_szCurrentFilePath ) ){
+		if( m_szCurrentFilePath[0] != _T('\0') ){
 			TCHAR	szWorkFolder[MAX_PATH];
 			TCHAR	szWorkFile[MAX_PATH];
 			SplitPath_FolderAndFile( m_szCurrentFilePath, szWorkFolder, szWorkFile );
@@ -287,7 +287,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			TCHAR	szFolder[MAX_PATH];
 			/* 検索フォルダ */
 			::GetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, szFolder, _MAX_PATH - 1 );
-			if( 0 == _tcslen( szFolder ) ){
+			if( szFolder[0] == _T('\0') ){
 				::GetCurrentDirectory( _countof( szFolder ), szFolder );
 			}
 			if( SelectDir( m_hWnd, _T("検索するフォルダを選んでください"), szFolder, szFolder ) ){
@@ -333,8 +333,8 @@ void CDlgGrep::SetData( void )
 	/* 検索フォルダ */
 	::SetDlgItemText( m_hWnd, IDC_COMBO_FOLDER, m_szFolder );
 
-	if((0 == _tcslen( m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0] ) || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder ) &&
-		0 < _tcslen( m_szCurrentFilePath )
+	if((m_pShareData->m_sSearchKeywords.m_szGREPFOLDERArr[0][0] == _T('\0') || m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder) &&
+		 m_szCurrentFilePath[0] != _T('\0')
 	){
 		TCHAR	szWorkFolder[MAX_PATH];
 		TCHAR	szWorkFile[MAX_PATH];
@@ -416,7 +416,7 @@ void CDlgGrep::SetData( void )
 	}
 	// To Here Jun. 29, 2001 genta
 
-	if( 0 < _tcslen( m_szCurrentFilePath ) ){
+	if( m_szCurrentFilePath[0] != _T('\0') ){
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_FROMTHISTEXT ), TRUE );
 	}else{
 		::EnableWindow( ::GetDlgItem( m_hWnd, IDC_CHK_FROMTHISTEXT ), FALSE );
@@ -522,13 +522,13 @@ int CDlgGrep::GetData( void )
 //		return FALSE;
 //	}
 	/* この編集中のテキストから検索する */
-	if( 0 == _tcslen( m_szFile ) ){
+	if( m_szFile[0] == _T('\0') ){
 		//	Jun. 16, 2003 Moca
 		//	検索パターンが指定されていない場合のメッセージ表示をやめ、
 		//	「*.*」が指定されたものと見なす．
 		_tcscpy( m_szFile, _T("*.*") );
 	}
-	if( 0 == _tcslen( m_szFolder ) ){
+	if( m_szFolder[0] == _T('\0') ){
 		WarningMessage(	m_hWnd,	_T("検索対象フォルダを指定してください。") );
 		return FALSE;
 	}
@@ -546,7 +546,7 @@ int CDlgGrep::GetData( void )
 
 //@@@ 2002.2.2 YAZAKI CShareData.AddToSearchKeyArr()追加に伴う変更
 	/* 検索文字列 */
-	if( 0 < _tcslen( m_szText ) ){
+	if( _T('\0') != m_szText[0] ){
 		// From Here Jun. 26, 2001 genta
 		//	正規表現ライブラリの差し替えに伴う処理の見直し
 		int nFlag = 0;

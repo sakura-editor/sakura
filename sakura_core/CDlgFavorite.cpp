@@ -555,7 +555,7 @@ bool CDlgFavorite::RefreshList( void )
 		{
 			ret_val = true;
 
-			if( _tcslen( msg ) > 0 ) _tcscat( msg, _T("ÅA") );
+			if( msg[0] != _T('\0') ) _tcscat( msg, _T("ÅA") );
 			_tcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
 		}
 	}

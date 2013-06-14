@@ -1427,7 +1427,7 @@ bool IsFilePath(
 			  ( cur_pos > 1 && pLine[i] == ':' ) ||   //@@@ 2003/1/15/ matsumo (for gcc)
 			  pLine[i] == '"'
 			) &&
-			0 < strlen( szJumpToFile )
+			szJumpToFile[0] != '\0' 
 		){
 			if( IsFileExists(szJumpToFile, bFileOnly))
 			{
@@ -1459,7 +1459,7 @@ bool IsFilePath(
 		}
 	}
 
-	if( 0 < strlen( szJumpToFile ) && IsFileExists(szJumpToFile, bFileOnly)){
+	if( szJumpToFile[0] != _T('\0')  && IsFileExists(szJumpToFile, bFileOnly)){
 		*pnPathLen = strlen( szJumpToFile );
 		return true;
 	}
