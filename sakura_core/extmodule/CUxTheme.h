@@ -33,11 +33,33 @@
 #ifndef _SAKURA_UXTHEME_H_
 #define _SAKURA_UXTHEME_H_
 
+#if (_MSC_VER>=1500)
+#include <vsstyle.h>
+#else
+typedef HANDLE HTHEME;
+enum TABPARTS {
+	TABP_TABITEM = 1,
+	TABP_TABITEMLEFTEDGE = 2,
+	TABP_TABITEMRIGHTEDGE = 3,
+	TABP_TABITEMBOTHEDGE = 4,
+	TABP_TOPTABITEM = 5,
+	TABP_TOPTABITEMLEFTEDGE = 6,
+	TABP_TOPTABITEMRIGHTEDGE = 7,
+	TABP_TOPTABITEMBOTHEDGE = 8,
+	TABP_PANE = 9,
+	TABP_BODY = 10,
+	TABP_AEROWIZARDBODY = 11,
+};
+enum TABITEMSTATES {
+	TIS_NORMAL = 1,
+	TIS_HOT = 2,
+	TIS_SELECTED = 3,
+	TIS_DISABLED = 4,
+	TIS_FOCUSED = 5,
+};
+#endif
 #include "CDllHandler.h"
 #include "util/design_template.h"
-#ifdef __MINGW32__
-typedef HANDLE HTHEME;
-#endif
 
 /*!
 	@brief UxTheme ìÆìIÉçÅ[Éh
