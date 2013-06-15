@@ -23,6 +23,7 @@
 #include "mymessage.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
+#include "os.h"
 
 WNDPROC			gm_wpHokanListProc;
 

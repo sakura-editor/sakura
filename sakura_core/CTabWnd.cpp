@@ -44,6 +44,7 @@
 #include "global.h"
 #include "mymessage.h"
 #include "etc_uty.h"
+#include "os.h"
 #include "charcode.h"
 #include "my_tchar.h"	//Unicode対応 Moca
 
@@ -55,11 +56,6 @@
 #define SPI_SETFOREGROUNDLOCKTIMEOUT        0x2001
 #endif
 //#endif
-
-// 2007.04.01 ryoji WM_THEMECHANGED
-#ifndef	WM_THEMECHANGED
-#define WM_THEMECHANGED		0x031A
-#endif
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 // 2009.10.01 ryoji 高DPI対応スケーリング

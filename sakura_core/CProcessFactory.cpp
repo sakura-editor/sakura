@@ -28,6 +28,7 @@
 #include "CRunningTimer.h"
 #include "Debug.h"
 #include "etc_uty.h"
+#include "os.h"
 #include <io.h>
 #include <tchar.h>
 

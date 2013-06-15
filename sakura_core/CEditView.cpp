@@ -37,6 +37,7 @@
 #include "CEditWnd.h"
 #include "CDlgCancel.h"
 #include "etc_uty.h"
+#include "os.h"
 #include "CLayout.h"/// 2002/2/3 aroka
 #include "COpe.h"///
 #include "COpeBlk.h"///
@@ -51,30 +52,6 @@
 #include <vector> // 2008/02/16 bosagami add
 #include <algorithm> // 2008/02/16 bosagami add
 #include <assert.h>
-
-#ifndef WM_MOUSEWHEEL
-	#define WM_MOUSEWHEEL	0x020A
-#endif
-
-// novice 2004/10/10 マウスサイドボタン対応
-#ifndef WM_XBUTTONDOWN
-	#define WM_XBUTTONDOWN   0x020B
-	#define WM_XBUTTONUP     0x020C
-	#define WM_XBUTTONDBLCLK 0x020D
-#endif
-#ifndef XBUTTON1
-	#define XBUTTON1 0x0001
-	#define XBUTTON2 0x0002
-#endif
-
-#ifndef IMR_RECONVERTSTRING
-#define IMR_RECONVERTSTRING             0x0004
-#endif // IMR_RECONVERTSTRING
-
-/* 2002.04.09 minfu 再変換調整 */
-#ifndef IMR_CONFIRMRECONVERTSTRING
-#define IMR_CONFIRMRECONVERTSTRING             0x0005
-#endif // IMR_CONFIRMRECONVERTSTRING
 
 const int STRNCMP_MAX = 100;	/* MAXキーワード長：strnicmp文字列比較最大値(CEditView::KeySearchCore) */	// 2006.04.10 fon
 

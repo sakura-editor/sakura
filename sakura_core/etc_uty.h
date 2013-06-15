@@ -137,8 +137,6 @@ BOOL IsMailAddress( const char*, int, int* );	/* Œ»İˆÊ’u‚ªƒ[ƒ‹ƒAƒhƒŒƒX‚È‚ç‚Î
 int IsNumber( const char*, int, int );/* ”’l‚È‚ç‚»‚Ì’·‚³‚ğ•Ô‚· */	//@@@ 2001.02.17 by MIK
 //#endif
 void ActivateFrameWindow( HWND );	/* ƒAƒNƒeƒBƒu‚É‚·‚é */
-BOOL GetSystemResources( int*, int*, int* );	/* ƒVƒXƒeƒ€ƒŠƒ\[ƒX‚ğ’²‚×‚é */
-BOOL CheckSystemResources( const TCHAR* );	/* ƒVƒXƒeƒ€ƒŠƒ\[ƒX‚Ìƒ`ƒFƒbƒN */
 //BOOL CheckWindowsVersion( const char* pszAppName );	/* Windowsƒo[ƒWƒ‡ƒ“‚Ìƒ`ƒFƒbƒN */
 // Jul. 5, 2001 shoji masami
 //bool CheckWindowsVersionNT( void );	/* NTƒvƒ‰ƒbƒgƒtƒH[ƒ€‚©‚Ç‚¤‚© */
@@ -177,8 +175,6 @@ int cescape_j(const char* org, char* out, char cesc, char cwith);
 /* ƒwƒ‹ƒv‚Ì–ÚŸ‚ğ•\¦ */
 void ShowWinHelpContents( HWND hwnd );
 
-bool SetClipboardText( HWND, const char*, int );	//!ƒNƒŠ[ƒvƒ{[ƒh‚ÉTextŒ`®‚ÅƒRƒs[‚·‚é
-
 /*!	&‚Ì“ñd‰»
 	ƒƒjƒ…[‚ÉŠÜ‚Ü‚ê‚é&‚ğ&&‚É’u‚«Š·‚¦‚é
 	@author genta
@@ -209,9 +205,6 @@ int scan_ints(
 int GetColorIndexByName( const char *name );
 const char* GetColorNameByIndex( int index );
 
-//	Sep. 10, 2002 genta CWSH.cpp‚©‚ç‚ÌˆÚ“®‚É”º‚¤’Ç‰Á
-bool ReadRegistry(HKEY Hive, const TCHAR *Path, const TCHAR* Item, TCHAR* Buffer, unsigned BufferSize);
-
 //	Dec. 2, 2002 genta
 void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
 void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji
@@ -227,12 +220,6 @@ FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 200
 //	Apr. 30, 2003 genta
 //	ƒfƒBƒŒƒNƒgƒŠ‚Ì[‚³‚ğ’²‚×‚é
 int CalcDirectoryDepth(const TCHAR* path);
-
-//	May 01, 2004 genta ƒ}ƒ‹ƒ`ƒ‚ƒjƒ^‘Î‰‚ÌƒfƒXƒNƒgƒbƒv—Ìˆææ“¾
-bool GetMonitorWorkRect(HWND hWnd, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji ƒpƒ‰ƒ[ƒ^ prcMonitor ‚ğ’Ç‰Á
-bool GetMonitorWorkRect(LPCRECT prc, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji
-bool GetMonitorWorkRect(POINT pt, LPRECT prcWork, LPRECT prcMonitor = NULL);		// 2006.04.21 ryoji
-bool GetMonitorWorkRect(HMONITOR hMon, LPRECT prcWork, LPRECT prcMonitor = NULL);	// 2006.04.21 ryoji
 
 HWND MyGetAncestor( HWND hWnd, UINT gaFlags );	// w’è‚µ‚½ƒEƒBƒ“ƒhƒE‚Ì‘cæ‚Ìƒnƒ“ƒhƒ‹‚ğæ“¾‚·‚é	// 2007.07.01 ryoji
 
@@ -299,24 +286,7 @@ inline bool _IS_REL_PATH(const char* path)
 // 2005.11.26 aroka
 bool IsLocalDrive( const TCHAR* pszDrive );
 
-// 2006.06.17 ryoji
-#define PACKVERSION( major, minor ) MAKELONG( minor, major )
 DWORD GetDllVersion( LPCTSTR lpszDllName );	// ƒVƒFƒ‹‚âƒRƒ‚ƒ“ƒRƒ“ƒgƒ[ƒ‹ DLL ‚Ìƒo[ƒWƒ‡ƒ“”Ô†‚ğæ“¾	// 2006.06.17 ryoji
-DWORD GetComctl32Version();					// Comctl32.dll ‚Ìƒo[ƒWƒ‡ƒ“”Ô†‚ğæ“¾						// 2006.06.17 ryoji
-BOOL IsVisualStyle();						// ©•ª‚ªŒ»İƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹•\¦ó‘Ô‚©‚Ç‚¤‚©‚ğ¦‚·		// 2006.06.17 ryoji
-void PreventVisualStyle( HWND hWnd );		// w’èƒEƒBƒ“ƒhƒE‚ÅƒrƒWƒ…ƒAƒ‹ƒXƒ^ƒCƒ‹‚ğg‚í‚È‚¢‚æ‚¤‚É‚·‚é	// 2006.06.23 ryoji
-void MyInitCommonControls();				// ƒRƒ‚ƒ“ƒRƒ“ƒgƒ[ƒ‹‚ğ‰Šú‰»‚·‚é							// 2006.06.21 ryoji
-
-//ƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠƒ†[ƒeƒBƒŠƒeƒBB
-//ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÅƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğ•Û‘¶‚µAƒfƒXƒgƒ‰ƒNƒ^‚ÅƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚ğ•œŒ³‚·‚éƒ‚ƒmB
-//2008.03.01 kobake ì¬
-class CCurrentDirectoryBackupPoint{
-public:
-	CCurrentDirectoryBackupPoint();
-	~CCurrentDirectoryBackupPoint();
-private:
-	TCHAR m_szCurDir[_MAX_PATH];
-};
 
 void ChangeCurrentDirectoryToExeDir();
 HMODULE LoadLibraryExedir(LPCTSTR pszDll);

@@ -643,6 +643,10 @@ SOURCE=..\sakura_core\MY_SP.C
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\os.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\sakura_rc.rc
 # End Source File
 # Begin Source File
@@ -1085,6 +1089,10 @@ SOURCE=..\sakura_core\mymessage.h
 # Begin Source File
 
 SOURCE=..\sakura_core\OleTypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\os.h
 # End Source File
 # Begin Source File
 

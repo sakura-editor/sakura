@@ -24,6 +24,7 @@
 #include "CProcessFactory.h"
 #include "CProcess.h"
 #include "etc_uty.h"
+#include "os.h"
 #include "CRunningTimer.h"
 #include "Debug.h"
 

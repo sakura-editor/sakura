@@ -19,11 +19,6 @@
 CWnd* gm_pCWnd = NULL;
 
 
-#ifndef	WM_MOUSEWHEEL
-	#define WM_MOUSEWHEEL	0x020A
-#endif
-
-
 /* CWndウィンドウメッセージのコールバック関数 */
 LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {

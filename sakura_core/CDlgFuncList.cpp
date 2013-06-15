@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "CDlgFuncList.h"
 #include "etc_uty.h"
+#include "os.h"
 #include "Debug.h"
 #include "CEditView.h"
 #include "Funccode.h"		//Stonee, 2001/03/12

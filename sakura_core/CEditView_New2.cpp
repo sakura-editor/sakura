@@ -33,6 +33,7 @@
 #include "CDlgCancel.h"
 #include "sakura_rc.h"
 #include "etc_uty.h"
+#include "os.h"
 #include "CLayout.h" /// 2002/2/3 aroka
 #include "CDocLine.h" /// 2002/2/3 aroka
 #include "CMarkMgr.h" /// 2002/2/3 aroka

@@ -39,6 +39,7 @@
 //@@@ 2002.2.2 YAZAKI ƒ}ƒNƒ‚ÍCSMacroMgr‚É“ˆê
 #include "CSMacroMgr.h"
 #include "etc_uty.h"
+#include "os.h"
 #include "CDlgTypeList.h"
 #include "CDlgProperty.h"
 #include "CDlgCompare.h"

@@ -24,9 +24,6 @@ class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ヘッダ軽量化
 
-BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
-HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
-
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
