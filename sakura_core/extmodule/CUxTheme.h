@@ -33,6 +33,9 @@
 #ifndef _SAKURA_UXTHEME_H_
 #define _SAKURA_UXTHEME_H_
 
+#if defined(_MSC_VER) && _MSC_VER>=1500
+#include <vsstyle.h>
+#else
 typedef HANDLE HTHEME;
 enum TABPARTS {
 	TABP_TABITEM = 1,
@@ -54,6 +57,7 @@ enum TABITEMSTATES {
 	TIS_DISABLED = 4,
 	TIS_FOCUSED = 5,
 };
+#endif
 #include "CDllHandler.h"
 #include "util/design_template.h"
 
