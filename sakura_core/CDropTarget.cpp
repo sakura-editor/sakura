@@ -15,9 +15,9 @@
 */
 
 #include "StdAfx.h"
+#include "CDropTarget.h"
 #include "CEditWnd.h"	// 2008.06.20 ryoji
 #include "CEditView.h"// 2002/2/3 aroka
-#include "CDropTarget.h"
 #include "global.h"
 #include "Debug.h"// 2002/2/3 aroka
 
@@ -196,9 +196,7 @@ BOOL CDropTarget::Revoke_DropTarget( void )
 }
 STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-#ifdef _DEBUG
-	MYTRACE_A( "CDropTarget::DragEnter()\n" );
-#endif
+	DEBUG_TRACE( _T("CDropTarget::DragEnter()\n") );
 	if( m_pCEditWnd ){	// 2008.06.20 ryoji
 		return m_pCEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 	}
@@ -250,11 +248,11 @@ STDMETHODIMP CDropSource::GiveFeedback( DWORD dropEffect )
 /** 転送対象の文字列を設定する
 	@param lpszText [in] 文字列
 	@param nTextLen [in] pszTextの長さ
-	@param bColmnSelect [in] 矩形選択か
+	@param bColumnSelect [in] 矩形選択か
 
 	@date 2008.03.26 ryoji 複数フォーマット対応
 */
-void CDataObject::SetText( LPCSTR lpszText, int nTextLen, BOOL bColmnSelect )
+void CDataObject::SetText( LPCSTR lpszText, int nTextLen, BOOL bColumnSelect )
 {
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	int i;
@@ -267,7 +265,7 @@ void CDataObject::SetText( LPCSTR lpszText, int nTextLen, BOOL bColmnSelect )
 		m_nFormat = 0;
 	}
 	if( lpszText != NULL ){
-		m_nFormat = bColmnSelect? 3: 2;	// 矩形を含めるか
+		m_nFormat = bColumnSelect? 3: 2;	// 矩形を含めるか
 		m_pData = new DATA[m_nFormat];
 
 		i = 0;
@@ -291,8 +289,8 @@ void CDataObject::SetText( LPCSTR lpszText, int nTextLen, BOOL bColmnSelect )
 		memcpy( m_pData[i].data + sizeof(int), lpszText, nTextLen );
 
 		i++;
-		if( bColmnSelect ){
-			m_pData[i].cfFormat = ::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
+		if( bColumnSelect ){
+			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( _T("MSDEVColumnSelect") );
 			m_pData[i].size = 1;
 			m_pData[i].data = new BYTE[1];
 			m_pData[i].data[0] = '\0';

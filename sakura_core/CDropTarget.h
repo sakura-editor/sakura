@@ -13,14 +13,14 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CDropTarget;
-class CYbInterfaceBase;
-class COleLibrary;
 
 #ifndef _CEDITDROPTARGET_H_
 #define _CEDITDROPTARGET_H_
 
-#include <windows.h>
+#include <Unknwn.h>
+
+class CDropTarget;
+class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ヘッダ軽量化
 
@@ -130,14 +130,14 @@ private:
 	PDATA m_pData;	// フォーマットデータの配列	// 2008.03.26 ryoji
 
 public:
-	CDataObject (LPCSTR lpszText, int nTextLen, BOOL bColmnSelect ):
+	CDataObject (LPCSTR lpszText, int nTextLen, BOOL bColumnSelect ):
 		m_nFormat(0),
 		m_pData(NULL)
 	{
-		SetText( lpszText, nTextLen, bColmnSelect );
+		SetText( lpszText, nTextLen, bColumnSelect );
 	}
 	~CDataObject(){SetText( NULL, 0, FALSE );}
-	void	SetText( LPCSTR lpszText, int nTextLen, BOOL bColmnSelect );
+	void	SetText( LPCSTR lpszText, int nTextLen, BOOL bColumnSelect );
 	DWORD	DragDrop( BOOL bLeft, DWORD dwEffects );
 
 	STDMETHOD( GetData )( LPFORMATETC, LPSTGMEDIUM );
