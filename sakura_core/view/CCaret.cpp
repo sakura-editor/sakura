@@ -675,11 +675,19 @@ void CCaret::ShowCaretPosInfo()
 	CMyPoint ptCaret;
 	//行番号をロジック単位で表示
 	if(pTypes->m_bLineNumIsCRLF){
-		ptCaret.x = (Int)GetCaretLayoutPos().GetX();
+		ptCaret.x = 0;
 		ptCaret.y = (Int)GetCaretLogicPos().y;
 		if(pcLayout){
-			ptCaret.x -= (Int)pcLayout->GetIndent();
-			ptCaret.x += (Int)pcLayout->CalcLayoutOffset(*pLayoutMgr);
+			// 2013.05.11 折り返しなしとして計算する
+			CLayoutInt offset = pcLayout->CalcLayoutOffset(*pLayoutMgr);
+			CLayout cLayout(
+				pcLayout->GetDocLineRef(),
+				pcLayout->GetLogicPos(),
+				pcLayout->GetLengthWithEOL(),
+				pcLayout->GetColorTypePrev(),
+				offset
+			);
+			ptCaret.x = (Int)m_pEditView->LineIndexToColumn(&cLayout, GetCaretLogicPos().x - pcLayout->GetLogicPos().x);
 		}
 	}
 	//行番号をレイアウト単位で表示

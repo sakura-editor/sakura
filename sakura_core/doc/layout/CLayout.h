@@ -83,7 +83,7 @@ public:
 	}
 	void SetLayoutWidth(CLayoutInt nWidth){ m_nLayoutWidth = nWidth; }
 
-	//!レイアウト幅を計算。インデントも改行も含まない。2007.10.11 kobake
+	//!レイアウト幅を計算。改行は含まない。2007.10.11 kobake
 	CLayoutInt CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const;
 
 	//! オフセット値をレイアウト単位に変換して取得。2007.10.17 kobake
