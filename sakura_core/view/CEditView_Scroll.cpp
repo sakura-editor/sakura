@@ -28,6 +28,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
+#include <limits.h>
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -164,6 +165,18 @@ CLayoutInt CEditView::OnVScroll( int nScrollCode, int nPos )
 {
 	CLayoutInt nScrollVal = CLayoutInt(0);
 
+	// nPos 32bit対応
+	if( nScrollCode == SB_THUMBTRACK || nScrollCode == SB_THUMBPOSITION ){
+		if( m_hwndVScrollBar ){
+			HWND hWndScroll = m_hwndVScrollBar;
+			SCROLLINFO info;
+			info.cbSize = sizeof(SCROLLINFO);
+			info.fMask = SIF_TRACKPOS;
+			::GetScrollInfo(hWndScroll, SB_CTL, &info);
+			nPos = info.nTrackPos;
+		}
+	}
+
 	switch( nScrollCode ){
 	case SB_LINEDOWN:
 //		for( i = 0; i < 4; ++i ){
@@ -212,15 +225,28 @@ CLayoutInt CEditView::OnVScroll( int nScrollCode, int nPos )
 */
 CLayoutInt CEditView::OnHScroll( int nScrollCode, int nPos )
 {
+	const CLayoutInt nHScrollNum = CLayoutInt(4);
 	CLayoutInt nScrollVal = CLayoutInt(0);
+
+	// nPos 32bit対応
+	if( nScrollCode == SB_THUMBTRACK || nScrollCode == SB_THUMBPOSITION ){
+		if( m_hwndHScrollBar ){
+			HWND hWndScroll = m_hwndHScrollBar;
+			SCROLLINFO info;
+			info.cbSize = sizeof(SCROLLINFO);
+			info.fMask = SIF_TRACKPOS;
+			::GetScrollInfo(hWndScroll, SB_CTL, &info);
+			nPos = info.nTrackPos;
+		}
+	}
 
 	GetRuler().SetRedrawFlag(); // YAZAKI
 	switch( nScrollCode ){
 	case SB_LINELEFT:
-		nScrollVal = ScrollAtH( GetTextArea().GetViewLeftCol() - CLayoutInt(4) );
+		nScrollVal = ScrollAtH( GetTextArea().GetViewLeftCol() - nHScrollNum );
 		break;
 	case SB_LINERIGHT:
-		nScrollVal = ScrollAtH( GetTextArea().GetViewLeftCol() + CLayoutInt(4) );
+		nScrollVal = ScrollAtH( GetTextArea().GetViewLeftCol() + nHScrollNum );
 		break;
 	case SB_PAGELEFT:
 		nScrollVal = ScrollAtH( GetTextArea().GetViewLeftCol() - GetTextArea().m_nViewColNum );
@@ -264,27 +290,28 @@ void CEditView::AdjustScrollBars()
 	}
 
 
-	CLayoutInt	nAllLines;
-	int			nVScrollRate;
 	SCROLLINFO	si;
 	bool		bEnable;
 
 	if( NULL != m_hwndVScrollBar ){
 		/* 垂直スクロールバー */
-		/* nAllLines / nVScrollRate < 65535 となる整数nVScrollRateを求める */
-		nAllLines = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-		nAllLines+=2;
-		nVScrollRate = 1;
-		while( nAllLines / nVScrollRate > 65535 ){
+		const CLayoutInt	nEofMargin = CLayoutInt(2); // EOFとその下のマージン
+		const CLayoutInt	nAllLines = m_pcEditDoc->m_cLayoutMgr.GetLineCount() + nEofMargin;
+		int	nVScrollRate = 1;
+#ifdef _WIN64
+		/* nAllLines / nVScrollRate < INT_MAX となる整数nVScrollRateを求める */
+		// 64bit版用スクロール率
+		while( nAllLines / nVScrollRate > INT_MAX ){
 			++nVScrollRate;
 		}
+#endif
 		si.cbSize = sizeof( si );
 		si.fMask = SIF_ALL | SIF_DISABLENOSCROLL;
 		si.nMin  = 0;
 		si.nMax  = (Int)nAllLines / nVScrollRate - 1;	/* 全行数 */
 		si.nPage = (Int)GetTextArea().m_nViewRowNum / nVScrollRate;	/* 表示域の行数 */
 		si.nPos  = (Int)GetTextArea().GetViewTopLine() / nVScrollRate;	/* 表示域の一番上の行(0開始) */
-		si.nTrackPos = nVScrollRate;
+		si.nTrackPos = 0;
 		::SetScrollInfo( m_hwndVScrollBar, SB_CTL, &si, TRUE );
 		m_nVScrollRate = nVScrollRate;				/* 垂直スクロールバーの縮尺 */
 		
@@ -410,7 +437,6 @@ CLayoutInt CEditView::ScrollAtV( CLayoutInt nPos )
 */
 CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 {
-	CLayoutInt	nScrollColNum;
 	RECT		rcScrol;
 	RECT		rcClip2;
 	if( nPos < 0 ){
@@ -431,7 +457,7 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 		return CLayoutInt(0);
 	}
 	/* 水平スクロール量（文字数）の算出 */
-	nScrollColNum = GetTextArea().GetViewLeftCol() - nPos;
+	const CLayoutInt	nScrollColNum = GetTextArea().GetViewLeftCol() - nPos;
 
 	/* スクロール */
 	if( t_abs( nScrollColNum ) >= GetTextArea().m_nViewColNum /*|| abs( nScrollRowNum ) >= GetTextArea().m_nViewRowNum*/ ){
@@ -442,19 +468,20 @@ CLayoutInt CEditView::ScrollAtH( CLayoutInt nPos )
 		rcScrol.right = GetTextArea().GetAreaRight();
 		rcScrol.top = GetTextArea().GetAreaTop();
 		rcScrol.bottom = GetTextArea().GetAreaBottom();
+		int nScrollColPxWidth = (Int)nScrollColNum * GetTextMetrics().GetHankakuDx();
 		if( nScrollColNum > 0 ){
 			rcScrol.left = GetTextArea().GetAreaLeft();
 			rcScrol.right =
-				GetTextArea().GetAreaRight() - (Int)nScrollColNum * GetTextMetrics().GetHankakuDx();
+				GetTextArea().GetAreaRight() - nScrollColPxWidth;
 			rcClip2.left = GetTextArea().GetAreaLeft();
-			rcClip2.right = GetTextArea().GetAreaLeft() + (Int)nScrollColNum * GetTextMetrics().GetHankakuDx();
+			rcClip2.right = GetTextArea().GetAreaLeft() + nScrollColPxWidth;
 			rcClip2.top = GetTextArea().GetAreaTop();
 			rcClip2.bottom = GetTextArea().GetAreaBottom();
 		}
 		else if( nScrollColNum < 0 ){
-			rcScrol.left = GetTextArea().GetAreaLeft() - (Int)nScrollColNum * GetTextMetrics().GetHankakuDx();
+			rcScrol.left = GetTextArea().GetAreaLeft() - nScrollColPxWidth;
 			rcClip2.left =
-				GetTextArea().GetAreaRight() + (Int)nScrollColNum * GetTextMetrics().GetHankakuDx();
+				GetTextArea().GetAreaRight() + nScrollColPxWidth;
 			rcClip2.right = GetTextArea().GetAreaRight();
 			rcClip2.top = GetTextArea().GetAreaTop();
 			rcClip2.bottom = GetTextArea().GetAreaBottom();
