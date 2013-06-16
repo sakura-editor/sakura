@@ -61,6 +61,7 @@ void CViewCommander::Command_CtrlCode_Dialog( void )
 	if( cDlgCtrlCode.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() ) )
 	{
 		//コントロールコードを入力する
-		Command_WCHAR( cDlgCtrlCode.GetCharCode() );
+		// 2013.06.11 Command_WCHAR -> HandleCommand マクロ記録対応
+		HandleCommand( F_WCHAR, true, cDlgCtrlCode.GetCharCode(), 0, 0, 0 );
 	}
 }
