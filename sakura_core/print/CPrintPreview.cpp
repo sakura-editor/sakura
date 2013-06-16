@@ -1079,6 +1079,9 @@ void CPrintPreview::OnPrint( void )
 	/* 親ウィンドウを無効化 */
 	::EnableWindow( m_pParentWnd->GetHwnd(), FALSE );
 
+	// 2013.06.10 Moca キーワード強調設定をロックして、印刷中に共通設定を更新されないようにする
+	CShareDataLockCounter lock;
+
 	/* 印刷 ジョブ開始 */
 	if( !m_cPrint.PrintOpen(
 		szJobName,

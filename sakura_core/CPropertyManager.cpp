@@ -78,6 +78,9 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 		if( CEditWnd::getInstance() ){
 			nTextWrapMethodOld = CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
 		}
+		// 2013.06.10 Moca 印刷終了まで待機する
+		CShareDataLockCounter::WaitLock( m_cPropTypes.GetHwndParent() );
+		
 		m_cPropTypes.GetTypeData( types );
 
 		// 2008.06.01 nasukoji	テキストの折り返し位置変更対応
