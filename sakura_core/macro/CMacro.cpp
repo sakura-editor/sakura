@@ -1257,17 +1257,28 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_GETLINECODE:
 		//	2005.08.04 maru ƒ}ƒNƒ’Ç‰Á
 		{
+			int n = 0;
 			switch( View->m_pcEditDoc->m_cDocEditor.GetNewLineCode() ){
 			case EOL_CRLF:
-				Wrap( &Result )->Receive( 0 );
+				n = 0;
 				break;
 			case EOL_CR:
-				Wrap( &Result )->Receive( 1 );
+				n = 1;
 				break;
 			case EOL_LF:
-				Wrap( &Result )->Receive( 2 );
+				n = 2;
+				break;
+			case EOL_NEL:
+				n = 3;
+				break;
+			case EOL_LS:
+				n = 4;
+				break;
+			case EOL_PS:
+				n = 5;
 				break;
 			}
+			Wrap( &Result )->Receive( n );
 		}
 		return true;
 	case F_ISPOSSIBLEUNDO:
