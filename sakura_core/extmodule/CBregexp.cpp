@@ -188,6 +188,25 @@ wchar_t* CBregexp::MakePatternSub(
 	if( (nOption & optGlobal) ) {
 		*pPat++ = L'g';			// 全域(global)オプション、行単位の置換をする時に使用する
 	}
+	if( (nOption & optExtend) ) {
+		*pPat++ = L'x';
+	}
+	if( (nOption & optASCII ) ){
+		*pPat++ = L'a';
+	}
+	if( (nOption & optUnicode ) ){
+		*pPat++ = L'u';
+	}
+	if( (nOption & optDefault ) ){
+		*pPat++ = L'd';
+	}
+	if( (nOption & optLocale ) ){
+		*pPat++ = L'l';
+	}
+	if( (nOption & optR ) ){
+		*pPat++ = L'R';
+	}
+
 	*pPat = L'\0';
 	return szNPattern;
 }

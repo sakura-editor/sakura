@@ -71,7 +71,13 @@ public:
 	enum Option {
 		optNothing = 0,					//!< オプションなし
 		optCaseSensitive = 1,			//!< 大文字小文字区別オプション(/iをつけない)
-		optGlobal = 2					//!< 全域オプション(/g)
+		optGlobal = 2,					//!< 全域オプション(/g)
+		optExtend = 4,					//!< 拡張正規表現(/x)
+		optASCII = 8,					//!< ASCII(/a)
+		optUnicode = 0xf,				//!< Unicode(/u)
+		optDefault = 0x10,				//!< Default(/d)
+		optLocale = 0x20,				//!< Locale(/l)
+		optR = 0x40,					//!< CRLF(/R)
 	};
 	//! 検索パターン定義
 	enum Pattern {

@@ -26,17 +26,7 @@
 
 class CEditDoc;
 class CFuncInfoArr;
-
-/*! ルールファイルの1行を管理する構造体
-
-	@date 2002.04.01 YAZAKI
-	@date 2007.11.29 kobake 名前変更: oneRule→SOneRule
-*/
-struct SOneRule {
-	wchar_t szMatch[256];
-	int		nLength;
-	wchar_t szGroupName[256];
-};
+struct SOneRule;
 
 class CDocOutline{
 public:
@@ -54,8 +44,8 @@ public:
 	void	MakeTopicList_wztxt(CFuncInfoArr*);												//!< 階層付きテキスト アウトライン解析 // 2003.05.20 zenryaku
 	void	MakeTopicList_html(CFuncInfoArr*);												//!< HTML アウトライン解析 // 2003.05.20 zenryaku
 	void	MakeTopicList_tex(CFuncInfoArr*);												//!< TeX アウトライン解析 // 2003.07.20 naoh
-	void	MakeFuncList_RuleFile( CFuncInfoArr* );											//!< ルールファイルを使ってリスト作成 2002.04.01 YAZAKI
-	int		ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount );	//!< ルールファイル読込 2002.04.01 YAZAKI
+	void	MakeFuncList_RuleFile( CFuncInfoArr*, std::tstring& );											//!< ルールファイルを使ってリスト作成 2002.04.01 YAZAKI
+	int		ReadRuleFile( const TCHAR*, SOneRule*, int, bool&, std::wstring& );	//!< ルールファイル読込 2002.04.01 YAZAKI
 	void	MakeFuncList_BookMark( CFuncInfoArr* );											//!< ブックマークリスト作成 //2001.12.03 hor
 private:
 	CEditDoc* m_pcDocRef;
