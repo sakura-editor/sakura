@@ -79,7 +79,9 @@ CPrintPreview::CPrintPreview(CEditWnd* pParentWnd ) :
 	m_hdcCompatDC( NULL ),			// 再描画用コンパチブルDC
 	m_hbmpCompatBMP( NULL ),		// 再描画用メモリBMP
 	m_hbmpCompatBMPOld( NULL ),		// 再描画用メモリBMP(OLD)
-	m_nbmpCompatScale( COMPAT_BMP_BASE )
+	m_nbmpCompatScale( COMPAT_BMP_BASE ),
+	m_bLockSetting( false ),
+	m_bDemandUpdateSetting( false )
 {
 	/* 印刷用のレイアウト情報の作成 */
 	m_pLayoutMgr_Print = new CLayoutMgr;
@@ -682,6 +684,16 @@ LRESULT CPrintPreview::OnMouseWheel( WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
+void CPrintPreview::OnChangeSetting()
+{
+	if( m_bLockSetting ){
+		m_bDemandUpdateSetting = true;
+	}
+	m_bDemandUpdateSetting = false;
+	*m_pPrintSetting = *m_pPrintSettingOrg;
+	OnChangePrintSetting();
+}
+
 void CPrintPreview::OnChangePrintSetting( void )
 {
 	HDC		hdc = ::GetDC( m_pParentWnd->GetHwnd() );
@@ -694,6 +706,9 @@ void CPrintPreview::OnChangePrintSetting( void )
 		(FONTENUMPROC)CPrintPreview::MyEnumFontFamProc,
 		(LPARAM)this
 	);
+
+	bool bLockOld = m_bLockSetting;
+	m_bLockSetting = true;
 
 	// 2009.08.08 印刷で用紙サイズ、横指定が効かない問題対応 syat
 	/* DEVMODE構造体が設定されていなかったら既定のプリンタを設定 */
@@ -765,6 +780,9 @@ void CPrintPreview::OnChangePrintSetting( void )
 	m_pPrintSetting->m_nPrintPaperSize = m_pPrintSetting->m_mdmDevMode.dmPaperSize;
 	m_pPrintSetting->m_nPrintPaperOrientation = m_pPrintSetting->m_mdmDevMode.dmOrientation;	// 用紙方向の反映忘れを修正 2003/07/03 かろと
 
+	// プリンタ設定はここで変更されるがそれぞれのウィンドウで再設定するので更新メッセージは投げない
+	*m_pPrintSettingOrg = *m_pPrintSetting;
+
 	m_nPreview_ViewMarginLeft = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 	m_nPreview_ViewMarginTop = 8 * 10;		/* 印刷プレビュー：ビュー左端と用紙の間隔(1/10mm単位) */
 
@@ -823,6 +841,11 @@ void CPrintPreview::OnChangePrintSetting( void )
 	::ReleaseDC( m_pParentWnd->GetHwnd(), hdc );
 	/* プレビュー ページ指定 */
 	OnPreviewGoPage( m_nCurPageNum );
+	m_bLockSetting = bLockOld;
+	if( m_bDemandUpdateSetting ){
+		// やりなおし
+		OnChangeSetting();
+	}
 	return;
 }
 
@@ -1015,9 +1038,27 @@ void CPrintPreview::OnPrint( void )
 	pd.nFromPage = 1;
 	pd.nToPage = m_nAllPageNum;
 	pd.Flags = PD_ALLPAGES | PD_NOSELECTION | PD_USEDEVMODECOPIESANDCOLLATE;
+
+	m_bLockSetting = true; // プリント設定でページ数がきまるのでロックする
+
 	if( !m_cPrint.PrintDlg(&pd, &m_pPrintSetting->m_mdmDevMode) ){
+		m_bLockSetting = false;
+		if( m_bDemandUpdateSetting ){
+			OnChangePrintSetting();
+		}
 		return;
 	}
+	if( 0 != memcmp(&m_pPrintSettingOrg->m_mdmDevMode, &m_pPrintSetting->m_mdmDevMode, sizeof(m_pPrintSetting->m_mdmDevMode)) ){
+		m_pPrintSettingOrg->m_mdmDevMode = m_pPrintSetting->m_mdmDevMode;
+		// 自分はLockで更新しない
+		CAppNodeGroupHandle(0).PostMessageToAllEditors(
+			MYWM_CHANGESETTING,
+			(WPARAM)0,
+			(LPARAM)PM_PRINTSETTING,
+			CEditWnd::getInstance()->GetHwnd()
+		);
+	}
+
 	// 印刷開始ページと、印刷ページ数を確認
 	WORD		nFrom;
 	WORD		nNum;
@@ -1143,6 +1184,8 @@ void CPrintPreview::OnPrint( void )
 	cDlgPrinting.CloseDialog( 0 );
 
 	m_nCurPageNum = nCurPageNumOld;
+
+	m_bLockSetting = false;
 
 	// 印刷が終わったら、Previewから抜ける 2003.05.02 かろと
 	m_pParentWnd->PrintPreviewModeONOFF();
@@ -2052,8 +2095,14 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 					m_pPrintSetting->m_nPrintPaperSize = m_pPrintSetting->m_mdmDevMode.dmPaperSize;
 					m_pPrintSetting->m_nPrintPaperOrientation = m_pPrintSetting->m_mdmDevMode.dmOrientation;
 					/* 印刷プレビュー スクロールバー初期化 */
+					CAppNodeGroupHandle(0).SendMessageToAllEditors(
+						MYWM_CHANGESETTING,
+						(WPARAM)0,
+						(LPARAM)PM_PRINTSETTING,
+						CEditWnd::getInstance()->GetHwnd()
+					);
 					InitPreviewScrollBar();
-					OnChangePrintSetting();
+					// OnChangePrintSetting();
 					::InvalidateRect( m_pParentWnd->GetHwnd(), NULL, TRUE );
 				}
 				// To Here 2003.05.03 かろと

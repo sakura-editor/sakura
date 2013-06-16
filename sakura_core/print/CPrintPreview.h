@@ -64,6 +64,7 @@ public:
 	LRESULT OnMouseWheel( WPARAM wParam, LPARAM lParam );
 
 	//	User Messages
+	void OnChangeSetting();
 	void OnChangePrintSetting( void );
 	void OnPreviewGoPage( int nPage );	/* プレビュー ページ指定 */
 	void OnPreviewGoPreviousPage(){ OnPreviewGoPage( m_nCurPageNum - 1 ); }		//	前のページへ
@@ -166,7 +167,11 @@ public:
 	/*
 	||	アクセサ
 	*/
-	void SetPrintSetting( PRINTSETTING* pPrintSetting ){ m_pPrintSetting = pPrintSetting; }
+	void SetPrintSetting( PRINTSETTING* pPrintSetting ){
+		m_sPrintSetting = *pPrintSetting;
+		m_pPrintSetting = &m_sPrintSetting;
+		m_pPrintSettingOrg = pPrintSetting;
+	}
 	BOOL GetDefaultPrinterInfo(){ return m_cPrint.GetDefaultPrinter( &m_pPrintSetting->m_mdmDevMode ); }
 	int  GetCurPageNum(){ return m_nCurPageNum; }	/* 現在のページ */
 	int  GetAllPageNum(){ return m_nAllPageNum; }	/* 現在のページ */
@@ -229,7 +234,9 @@ protected:
 	WORD			m_nAllPageNum;				/* 全ページ数 */
 	WORD			m_nCurPageNum;				/* 現在のページ */
 
-	PRINTSETTING*	m_pPrintSetting;			/* 現在の印刷設定 */
+	PRINTSETTING*	m_pPrintSetting;			/* 現在の印刷設定(キャッシュへのポインタ) */
+	PRINTSETTING*	m_pPrintSettingOrg;			/* 現在の印刷設定(共有データ) */
+	PRINTSETTING	m_sPrintSetting;			/* 現在の印刷設定(キャッシュ) */
 	LOGFONT			m_lfPreviewHan;				/* プレビュー用フォント */
 	LOGFONT			m_lfPreviewZen;				/* プレビュー用フォント */
 
@@ -250,6 +257,9 @@ protected:
 
 	// プレビューから出ても現在のプリンタ情報を記憶しておけるようにstaticにする 2003.05.02 かろと 
 	static CPrint	m_cPrint;					//!< 現在のプリンタ情報
+
+	bool			m_bLockSetting;				// 設定のロック
+	bool			m_bDemandUpdateSetting;		// 設定の更新要求
 };
 
 #endif /* SAKURA_CPRINTPREVIEW_4FBD8BE8_4E93_4714_A3F2_F69081A2EDBDR_H_ */

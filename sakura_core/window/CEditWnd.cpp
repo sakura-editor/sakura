@@ -1770,6 +1770,13 @@ LRESULT CEditWnd::DispatchEvent(
 		case PM_CHANGESETTING_FONTSIZE:
 			GetDocument().OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
 			break;
+		case PM_PRINTSETTING:
+			{
+				if( m_pPrintPreview ){
+					m_pPrintPreview->OnChangeSetting();
+				}
+			}
+			break;
 		default:
 			break;
 		}
@@ -3501,16 +3508,22 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 		//	印刷プレビュー時のみ。
 		if ( m_pPrintPreview ){
 			/* 現在の印刷設定 */
-			m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
+			// m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
 
 			/* 印刷プレビュー スクロールバー初期化 */
 			m_pPrintPreview->InitPreviewScrollBar();
 
 			/* 印刷設定の反映 */
-			m_pPrintPreview->OnChangePrintSetting( );
+			// m_pPrintPreview->OnChangePrintSetting( );
 
 			::InvalidateRect( GetHwnd(), NULL, TRUE );
 		}
+		CAppNodeGroupHandle(0).SendMessageToAllEditors(
+			MYWM_CHANGESETTING,
+			(WPARAM)0,
+			(LPARAM)PM_PRINTSETTING,
+			CEditWnd::getInstance()->GetHwnd()
+		);
 	}
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	::UpdateWindow( GetHwnd() /* m_pPrintPreview->GetPrintPreviewBarHANDLE() */);
