@@ -685,7 +685,8 @@ void CCaret::ShowCaretPosInfo()
 				pcLayout->GetLogicPos(),
 				pcLayout->GetLengthWithEOL(),
 				pcLayout->GetColorTypePrev(),
-				offset
+				offset,
+				NULL
 			);
 			ptCaret.x = (Int)m_pEditView->LineIndexToColumn(&cLayout, GetCaretLogicPos().x - pcLayout->GetLogicPos().x);
 		}
