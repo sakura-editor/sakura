@@ -430,12 +430,15 @@
 	Version 136:
 	–³‘è”Ô†‚ÌC³ 2013.02.22 Moca
 
+	Version 137:
+	ƒ^ƒCƒv•ÊƒtƒHƒ“ƒg 2013.03.25 aroka
+
 	-- “‡‚³‚ê‚½‚Ì‚ÅŒ³‚É–ß‚·i1000`1023‚ªŽg—pÏ‚Ýj 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- ƒo[ƒWƒ‡ƒ“1000ˆÈ~‚ð–{‰Æ“‡‚Ü‚Å‚ÌŠÔAŽg‚í‚¹‚Ä‚­‚¾‚³‚¢B‚©‚È‚è•p”É‚É\¬‚ª•ÏX‚³‚ê‚é‚ÆŽv‚í‚ê‚é‚Ì‚ÅBby kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		136
+#define N_SHAREDATA_VERSION		137
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
@@ -529,7 +532,10 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 enum e_PM_CHANGESETTING_SELECT {
 	PM_CHANGESETTING_ALL		= 0, //!< ‘S•”
 	PM_CHANGESETTING_FONT		= 1, //!< ƒtƒHƒ“ƒg•ÏX
+	PM_CHANGESETTING_FONTSIZE	= 2, //!< ƒtƒHƒ“ƒgƒTƒCƒY•ÏX
 };
+//!À•WˆÊ’uî•ñ‚Ì•Û‘¶
+#define MYWM_SAVEEDITSTATE  (WM_APP+1521)
 
 //! ƒ^ƒXƒNƒgƒŒƒC‚©‚ç‚Ì’Ê’mƒƒbƒZ[ƒW
 #define MYWM_NOTIFYICON		(WM_APP+100)

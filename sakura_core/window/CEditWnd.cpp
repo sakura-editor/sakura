@@ -220,6 +220,7 @@ CEditWnd::CEditWnd()
 , m_nSelectCountMode( SELECT_COUNT_TOGGLE )	//文字カウント方法の初期値はSELECT_COUNT_TOGGLE→共通設定に従う
 , m_hAccelWine( NULL )
 , m_hAccel( NULL )
+, m_posSaveAry( NULL )
 {
 	g_pcEditWnd=this;
 
@@ -669,6 +670,10 @@ HWND CEditWnd::Create(
 
 	// プラグインコマンドを登録する
 	RegisterPluginCommand();
+
+	SelectCharWidthCache( CWM_FONT_EDIT, GetLogfontCacheMode() );
+	InitCharWidthCache( GetLogfont() );
+
 
 	// -- -- -- -- 子ウィンドウ作成 -- -- -- -- //
 
@@ -1754,18 +1759,29 @@ LRESULT CEditWnd::DispatchEvent(
 			}
 			break;
 		case PM_CHANGESETTING_FONT:
-			// Font変更の通知 2008/5/17 Uchi
-			InitCharWidthCache(GetLogfont());
-
-			// フォント更新
-			m_pcViewFont->UpdateFont(&GetLogfont());
-
+			GetDocument().OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
+			break;
+		case PM_CHANGESETTING_FONTSIZE:
 			GetDocument().OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
 			break;
 		default:
 			break;
 		}
 		return 0L;
+	case MYWM_SAVEEDITSTATE:
+		{
+			if( m_pPrintPreview ){
+				// 一時的に設定を戻す
+				SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_NEUTRAL );
+			}
+			// フォント変更前の座標の保存
+			m_posSaveAry = SavePhysPosOfAllView();
+			if( m_pPrintPreview ){
+				// 設定を戻す
+				SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
+			}
+		}
+		return 0L; 
 	case MYWM_SETACTIVEPANE:
 		if( -1 == (int)wParam ){
 			if( 0 == lParam ){
@@ -4445,7 +4461,7 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 
 	@return データを保存した配列へのポインタ
 
-	@note 取得した値はレイアウト変更後にCEditDoc::RestorePhysPosOfAllViewへ渡す．
+	@note 取得した値はレイアウト変更後にCEditWnd::RestorePhysPosOfAllViewへ渡す．
 	渡し忘れるとメモリリークとなる．
 
 	@date 2005.08.11 genta  新規作成
@@ -4506,7 +4522,7 @@ CLogicPointEx* CEditWnd::SavePhysPosOfAllView()
 
 /*!	座標の復元
 
-	CEditDoc::SavePhysPosOfAllViewで保存したデータを元に座標値を再計算する．
+	CEditWnd::SavePhysPosOfAllViewで保存したデータを元に座標値を再計算する．
 
 	@date 2005.08.11 genta  新規作成
 	@date 2007.09.06 kobake 引数をCLogicPoint*に変更
@@ -4657,6 +4673,19 @@ LOGFONT& CEditWnd::GetLogfont()
 {
 	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
 
-	return pShareData->m_Common.m_sView.m_lf;
+	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	if( bUseTypeFont ){
+		return GetDocument().m_cDocType.GetDocumentAttribute().m_lf;
+	}else{
+		return pShareData->m_Common.m_sView.m_lf;
+	}
 }
 
+ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
+{
+	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	if( bUseTypeFont ){
+		return CWM_CACHE_LOCAL;
+	}
+	return CWM_CACHE_SHARE;
+}

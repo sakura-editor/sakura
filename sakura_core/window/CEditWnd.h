@@ -337,6 +337,7 @@ public:
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
 
 	LOGFONT&	GetLogfont();
+	ECharWidthCacheMode GetLogfontCacheMode();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -392,6 +393,7 @@ private:
 	LPTSTR			m_pszMenubarMessage; //!< メニューバー右端に表示するメッセージ
 public:
 	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
+	CLogicPointEx*	m_posSaveAry;
 private:
 	int				m_nCurrentFocus;	//!< 現在のフォーカス情報
 	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。

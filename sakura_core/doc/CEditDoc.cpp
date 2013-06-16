@@ -171,6 +171,9 @@ void CEditDoc::Clear()
 
 	// 「基本」のタイプ別設定を適用
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), true );
+	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
+	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
+
 	// 2008.06.07 nasukoji	折り返し方法の追加に対応
 	STypeConfig ref = m_cDocType.GetDocumentAttribute();
 	if( ref.m_nTextWrapMethod != WRAP_SETTING_WIDTH ){
@@ -655,10 +658,26 @@ void CEditDoc::OnChangeSetting(
 	/* 共有データ構造体のアドレスを返す */
 	CFileNameManager::getInstance()->TransformFileName_MakeCache();
 
+	CLogicPointEx* posSaveAry;
+	if( m_pcEditWnd->m_posSaveAry ){
+		posSaveAry = m_pcEditWnd->m_posSaveAry;
+		m_pcEditWnd->m_posSaveAry = NULL;
+	}else{
+		if( m_pcEditWnd->m_pPrintPreview ){
+			// 一時的に設定を戻す
+			SelectCharWidthCache( CWM_FONT_EDIT, CWM_CACHE_NEUTRAL );
+		}
+		posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
+	}
+
 	// 文書種別
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), false );
 
-	CLogicPointEx* posSaveAry = m_pcEditWnd->SavePhysPosOfAllView();
+	// フォント更新
+	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
+
+	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
+	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
 
 	/* レイアウト情報の作成 */
 	STypeConfig ref = m_cDocType.GetDocumentAttribute();
@@ -717,6 +736,10 @@ void CEditDoc::OnChangeSetting(
 	}
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_HIDE );
+	}
+	if( m_pcEditWnd->m_pPrintPreview ){
+		// 設定を戻す
+		SelectCharWidthCache( CWM_FONT_PRINT, CWM_CACHE_LOCAL );
 	}
 }
 

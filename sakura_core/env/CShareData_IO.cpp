@@ -1640,6 +1640,12 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, int nType, co
 
 	// 終了時、改行の一致を検査する	2013/4/14 Uchi
 	cProfile.IOProfileData( pszSecName, LTEXT("bChkEnterAtEnd")	, types.m_bChkEnterAtEnd );
+
+	{ // フォント設定
+		cProfile.IOProfileData( pszSecName, LTEXT("bUseTypeFont"), types.m_bUseTypeFont );
+		ShareData_IO_Sub_LogFont( cProfile, pszSecName, L"lf", L"nPointSize", L"lfFaceName",
+			types.m_lf, types.m_nPointSize );
+	}
 }
 
 /*!

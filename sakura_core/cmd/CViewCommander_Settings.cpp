@@ -202,6 +202,10 @@ void CViewCommander::Command_FONT( void )
 		/* 設定変更を反映させる */
 		/* 全編集ウィンドウへメッセージをポストする */
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(
+			MYWM_SAVEEDITSTATE,
+			(WPARAM)0, (LPARAM)0, hwndFrame
+		);
+		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_CHANGESETTING,
 			(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONT, hwndFrame
 		);
@@ -275,7 +279,7 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift )
 	/* 全編集ウィンドウへメッセージをポストする */
 	CAppNodeGroupHandle(0).PostMessageToAllEditors(
 		MYWM_CHANGESETTING,
-		(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONT, hwndFrame
+		(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONTSIZE, hwndFrame
 	);
 }
 

@@ -1613,7 +1613,9 @@ void CEditView::OnChangeSetting()
 
 
 	/* Ä•`‰æ */
-	::InvalidateRect( GetHwnd(), NULL, TRUE );
+	if( !m_pcEditWnd->m_pPrintPreview ){
+		::InvalidateRect( GetHwnd(), NULL, TRUE );
+	}
 }
 
 
