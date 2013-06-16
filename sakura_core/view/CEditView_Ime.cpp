@@ -23,7 +23,7 @@ bool CEditView::IsImeON( void )
 	DWORD	conv, sent;
 
 	//	From here Nov. 26, 2006 genta
-	hIme = ImmGetContext( m_hwndParent );
+	hIme = ImmGetContext( GetHwnd() );
 	if( ImmGetOpenStatus( hIme ) != FALSE ){
 		ImmGetConversionStatus( hIme, &conv, &sent );
 		if(( conv & IME_CMODE_NOCONVERSION ) == 0 ){
@@ -36,7 +36,7 @@ bool CEditView::IsImeON( void )
 	else {
 		bRet = false;
 	}
-	ImmReleaseContext( m_hwndParent, hIme );
+	ImmReleaseContext( GetHwnd(), hIme );
 	//	To here Nov. 26, 2006 genta
 
 	return bRet;
@@ -55,8 +55,6 @@ void CEditView::SetIMECompFormPos( void )
 	COMPOSITIONFORM	CompForm;
 	HIMC			hIMC = ::ImmGetContext( GetHwnd() );
 	POINT			point;
-	HWND			hwndFrame;
-	hwndFrame = ::GetParent( m_hwndParent );
 
 	::GetCaretPos( &point );
 	CompForm.dwStyle = CFS_POINT;

@@ -128,8 +128,9 @@ void CDocEditor::SetImeMode( int mode )
 {
 	DWORD	conv, sent;
 	HIMC	hIme;
+	HWND	hwnd = m_pcDocRef->m_pcEditWnd->GetActiveView().GetHwnd();
 
-	hIme = ImmGetContext( CEditWnd::getInstance()->GetHwnd() ); //######大丈夫？
+	hIme = ImmGetContext( hwnd ); //######大丈夫？ // 2013.06.04 EditWndからViewに変更
 
 	//	最下位ビットはIME自身のOn/Off制御
 	if( ( mode & 3 ) == 2 ){
@@ -160,7 +161,7 @@ void CDocEditor::SetImeMode( int mode )
 	if( ( mode & 3 ) == 1 ){
 		ImmSetOpenStatus( hIme, TRUE );
 	}
-	ImmReleaseContext( CEditWnd::getInstance()->GetHwnd(), hIme ); //######大丈夫？
+	ImmReleaseContext( hwnd, hIme ); //######大丈夫？
 }
 //	To Here Nov. 20, 2000 genta
 

@@ -1345,6 +1345,7 @@ LRESULT CEditWnd::DispatchEvent(
 			return 0L;
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+#if 0
 	case WM_IME_COMPOSITION:
 		if ( lParam & GCS_RESULTSTR ) {
 			/* メッセージの配送 */
@@ -1352,13 +1353,16 @@ LRESULT CEditWnd::DispatchEvent(
 		}else{
 			return DefWindowProc( hwnd, uMsg, wParam, lParam );
 		}
+#endif
 	//case WM_KILLFOCUS:
 	case WM_CHAR:
 	case WM_IME_CHAR:
 	case WM_KEYUP:
 	case WM_SYSKEYUP:	// 2004.04.28 Moca ALT+キーのキーリピート処理のため追加
 	case WM_ENTERMENULOOP:
+#if 0
 	case MYWM_IME_REQUEST:   /*  再変換対応 by minfu 2002.03.27  */ // 20020331 aroka
+#endif
 		if( GetActiveView().m_nAutoScrollMode ){
 			GetActiveView().AutoScrollExit();
 		}
@@ -1381,7 +1385,9 @@ LRESULT CEditWnd::DispatchEvent(
 		m_nTimerCount = 9;
 
 		// ビューにフォーカスを移動する	// 2007.10.16 ryoji
-		::SetFocus( this->GetActiveView().GetHwnd() );
+		if( !m_pPrintPreview ){
+			::SetFocus( this->GetActiveView().GetHwnd() );
+		}
 		lRes = 0;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
@@ -1945,11 +1951,13 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_LBUTTONDBLCLK:
 		return OnLButtonDblClk(wParam, lParam);
 
+#if 0
 	case WM_IME_NOTIFY:	// Nov. 26, 2006 genta
 		if( wParam == IMN_SETCONVERSIONMODE || wParam == IMN_SETOPENSTATUS){
 			this->GetActiveView().GetCaret().ShowEditCaret();
 		}
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+#endif
 
 	case WM_NCPAINT:
 		DefWindowProc( hwnd, uMsg, wParam, lParam );
@@ -1989,11 +1997,13 @@ LRESULT CEditWnd::DispatchEvent(
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	default:
+#if 0
 // << 20020331 aroka 再変換対応 for 95/NT
 		if( uMsg == m_uMSIMEReconvertMsg || uMsg == m_uATOKReconvertMsg){
 			return Views_DispatchEvent( hwnd, uMsg, wParam, lParam );
 		}
 // >> by aroka
+#endif
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 	}
 }
