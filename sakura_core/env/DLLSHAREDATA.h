@@ -131,6 +131,8 @@ struct DLLSHAREDATA{
 	CommonSetting				m_Common;								// 共通設定
 	STypeConfig					m_Types[MAX_TYPES];						// タイプ別設定
 	PRINTSETTING				m_PrintSettingArr[MAX_PRINTSETTINGARR];	// 印刷ページ設定
+	int							m_nLockCount;	//!< ロックカウント
+	
 	//その他
 	SShare_SearchKeywords		m_sSearchKeywords;
 	SShare_TagJump				m_sTagJump;
@@ -151,5 +153,13 @@ struct DLLSHAREDATA{
 	bool						m_bLineNumIsCRLF_ForJump;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
 
+class CShareDataLockCounter{
+public:
+	CShareDataLockCounter();
+	~CShareDataLockCounter();
+
+	static int GetLockCounter();
+	static void WaitLock( HWND );
+};
 #endif /* SAKURA_DLLSHAREDATA_3A6DD7E0_90DC_4219_8570_F5C1B8B6A306_H_ */
 /*[EOF]*/

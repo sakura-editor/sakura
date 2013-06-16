@@ -476,6 +476,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				{
 					CPropKeyword* pPropKeyword = new CPropKeyword;
 					CPropCommon* pCommon = (CPropCommon*)pPropKeyword;
+					pCommon->m_hwndParent = ::GetParent(hwndDlg);
 					pCommon->InitData();
 					pCommon->m_nKeywordSet1 = m_nSet[0];
 					INT_PTR res = ::DialogBoxParam(

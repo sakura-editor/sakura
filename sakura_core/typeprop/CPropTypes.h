@@ -57,6 +57,7 @@ public:
 	//インターフェース	
 	void SetTypeData( const STypeConfig& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta
 	void GetTypeData( STypeConfig& t ) const { t = m_Types; }	//!< タイプ別設定データの取得  Jan. 23, 2005 genta
+	HWND GetHwndParent()const { return m_hwndParent; }
 
 protected:
 	//イベント

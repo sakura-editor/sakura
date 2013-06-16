@@ -49,6 +49,7 @@ namespace ApiWrap
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	inline int Progress_SetRange(HWND hwndCtl, int minimum, int maximum)	{ return (int)(DWORD)::SendMessage(hwndCtl, PBM_SETRANGE, 0L, MAKELPARAM(minimum, maximum)); }
 	inline int Progress_SetPos(HWND hwndCtl, int position)					{ return (int)(DWORD)::SendMessage(hwndCtl, PBM_SETPOS, (WPARAM)position, 0L); }
+	inline void Progress_SetMarquee(HWND hwndCtl, BOOL mode, int updateTime)	{ ::SendMessage(hwndCtl, PBM_SETMARQUEE, mode, updateTime); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      Up-Down ÉRÉìÉgÉçÅ[Éã                   //
