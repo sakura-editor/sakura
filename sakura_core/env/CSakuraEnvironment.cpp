@@ -36,6 +36,7 @@
 #include "CEditApp.h"
 #include "CGrepAgent.h"
 #include "recent/CMRUFile.h"
+#include "recent/CMRUFolder.h"
 #include "util/string_ex2.h"
 #include "util/module.h" //GetAppVersionInfo
 #include "util/shell.h"
@@ -630,43 +631,69 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 	return 0;
 }
 
+/*!	@brief 初期フォルダ取得
 
-
-std::tstring CSakuraEnvironment::GetDlgInitialDir()
+	@param bControlProcess [in] trueのときはOPENDIALOGDIR_CUR->OPENDIALOGDIR_MRUに変更
+	@return 初期フォルダ
+*/
+std::tstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
 	CEditDoc* pcDoc = CEditDoc::GetInstance(0); //######
-	if( pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
+	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		return to_tchar(pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str());
 	}
-	else if( GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_CUR ){
-		// 2002.10.25 Moca
-		TCHAR pszCurDir[_MAX_PATH];
-		int nCurDir = ::GetCurrentDirectory( _countof(pszCurDir), pszCurDir );
-		if( 0 == nCurDir || _MAX_PATH < nCurDir ){
-			return _T("");
-		}
-		else{
-			return pszCurDir;
-		}
-	}else if( GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir == OPENDIALOGDIR_MRU ){
-		const CMRUFile cMRU;
-		std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
-		if( !vMRU.empty() ){
-			return vMRU[0];
-		}else{
-			TCHAR pszCurDir[_MAX_PATH];
-			int nCurDir = ::GetCurrentDirectory( _countof(pszCurDir), pszCurDir );
+
+	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
+	if( bControlProcess && eOpenDialogDir == OPENDIALOGDIR_CUR ){
+		eOpenDialogDir = OPENDIALOGDIR_MRU;
+	}
+
+	switch( eOpenDialogDir ){
+	case OPENDIALOGDIR_CUR:
+		{
+			// 2002.10.25 Moca
+			TCHAR szCurDir[_MAX_PATH];
+			int nCurDir = ::GetCurrentDirectory( _countof(szCurDir), szCurDir );
 			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
 				return _T("");
 			}
 			else{
-				return pszCurDir;
+				return szCurDir;
 			}
 		}
-	}else{
-		TCHAR selDir[_MAX_PATH];
-		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, selDir, _countof(selDir) );
-		return selDir;
+		break;
+	case OPENDIALOGDIR_MRU:
+		{
+			const CMRUFolder cMRU;
+			std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
+			int nCount = cMRU.Length();
+			for( int i = 0; i < nCount ; i++ ){
+				DWORD attr = GetFileAttributes( vMRU[i] );
+				if( ( attr != -1 ) && ( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
+					return vMRU[i];
+				}
+			}
+
+			TCHAR szCurDir[_MAX_PATH];
+			int nCurDir = ::GetCurrentDirectory( _countof(szCurDir), szCurDir );
+			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
+				return _T("");
+			}
+			else{
+				return szCurDir;
+			}
+		}
+		break;
+	case OPENDIALOGDIR_SEL:
+		{
+			TCHAR szSelDir[_MAX_PATH];
+			CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, _countof(szSelDir) );
+			return szSelDir;
+		}
+		break;
+	default:
+		assert(0);
+		return _T("");
 	}
 }
 

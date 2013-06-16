@@ -704,23 +704,19 @@ LRESULT CControlTray::DispatchEvent(
 					break;
 				case F_FILEOPEN:	/* 開く */
 					{
-						CDlgOpenFile	cDlgOpenFile;
-
-						// MRUリストのファイルのリスト
-						const CMRUFile cMRU;
-						std::vector<LPCTSTR> vMRU = cMRU.GetPathList();
-
 						// ファイルオープンダイアログの初期化
 						SLoadInfo sLoadInfo;
 						sLoadInfo.cFilePath = _T("");
 						sLoadInfo.eCharCode = CODE_AUTODETECT;	// 文字コード自動判別
 						sLoadInfo.bViewMode = false;
+						// 2013.03.21 novice カレントディレクトリ変更(MRUは使用しない)
+						CDlgOpenFile	cDlgOpenFile;
 						cDlgOpenFile.Create(
 							m_hInstance,
 							NULL,
 							_T("*.*"),
-							vMRU.empty()? NULL: vMRU[0],//@@@ 2001.12.26 YAZAKI m_fiMRUArrにはアクセスしない
-							vMRU,
+							CSakuraEnvironment::GetDlgInitialDir(true).c_str(),
+							CMRUFile().GetPathList(),
 							CMRUFolder().GetPathList()	// OPENFOLDERリストのファイルのリスト
 						);
 						std::vector<std::tstring> files;
@@ -914,53 +910,25 @@ void CControlTray::OnCommand( WORD wNotifyCode, WORD wID , HWND hwndCtl )
 
 /*!
 	@brief 新規ウィンドウを作成する
-	
-	タスクトレイからの新規作成の場合にはカレントディレクトリ＝
-	保存時のデフォルトディレクトリを最後に使われたディレクトリとする．
-	ただし最後に使われたディレクトリが存在しない場合は次に使われたディレクトリとし，
-	順次存在するディレクトリが見つかるまで履歴を順に試す．
-	
-	どの履歴も見つからなかった場合には現在のカレントディレクトリで作成する．
 
 	@author genta
 	@date 2003.05.30 新規作成
+	@date 2013.03.21 novice MRUは使用しない
 */
 void CControlTray::OnNewEditor( bool bNewWindow )
 {
-
-	const TCHAR* szCurDir = NULL;
-
-	//
-	//  szCurDir を設定
-	//
-	//	最近使ったフォルダを順番にたどる
-	const CMRUFolder mrufolder;
-
 	// 新規ウィンドウで開くオプションは、タブバー＆グループ化を前提とする
 	bNewWindow = bNewWindow
 				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd == TRUE
 				 && m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin == FALSE;
-
-	int nCount = mrufolder.Length();
-	for( int i = 0; i < nCount ; i++ ){
-		const TCHAR* recentdir = mrufolder.GetPath( i );
-		DWORD attr = GetFileAttributes( recentdir );
-
-		if( attr != -1 ){
-			if(( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
-				szCurDir = recentdir;
-				break;
-			}
-		}
-	}
-
 
 	// 編集ウインドウを開く
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = _T("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, szCurDir, bNewWindow );
+	std::tstring tstrCurDir = CSakuraEnvironment::GetDlgInitialDir(true);
+	OpenNewEditor( m_hInstance, GetTrayHwnd(), sLoadInfo, NULL, false, tstrCurDir.c_str(), bNewWindow );
 }
 
 /*!
@@ -979,7 +947,7 @@ bool CControlTray::OpenNewEditor(
 	const SLoadInfo&	sLoadInfo,			//!< [in]
 	const TCHAR*		szCmdLineOption,	//!< [in] 追加のコマンドラインオプション
 	bool				sync,				//!< [in] trueなら新規エディタの起動まで待機する
-	const TCHAR*		szCurDir,			//!< [in] 新規エディタのカレントディレクトリ
+	const TCHAR*		pszCurDir,			//!< [in] 新規エディタのカレントディレクトリ(NULL可)
 	bool				bNewWindow			//!< [in] 新規エディタを新しいウインドウで開く
 )
 {
@@ -1064,6 +1032,15 @@ bool CControlTray::OpenNewEditor(
 	}
 	// -- -- -- -- プロセス生成 -- -- -- -- //
 
+	// 無効なディレクトリのときはNULLに変更
+	if( pszCurDir ){
+		DWORD attr = GetFileAttributes( pszCurDir );
+		if( ( attr != -1) && ( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
+		} else {
+			pszCurDir = NULL;
+		}
+	}
+
 	//	プロセスの起動
 	PROCESS_INFORMATION p;
 	STARTUPINFO s;
@@ -1093,7 +1070,7 @@ bool CControlTray::OpenNewEditor(
 		FALSE,					// ハンドルの継承オプション
 		dwCreationFlag,			// 作成のフラグ
 		NULL,					// 新しい環境ブロック
-		szCurDir,				// カレントディレクトリの名前
+		pszCurDir,				// カレントディレクトリの名前
 		&s,						// スタートアップ情報
 		&p						// プロセス情報
 	);

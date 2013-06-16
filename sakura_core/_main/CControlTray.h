@@ -71,7 +71,7 @@ public:
 		const SLoadInfo&	sLoadInfo,					//!< [in]
 		const TCHAR*		szCmdLineOption	= NULL,		//!< [in] 追加のコマンドラインオプション
 		bool				sync			= false,	//!< [in] trueなら新規エディタの起動まで待機する
-		const TCHAR*		szCurDir		= NULL,		//!< [in] 新規エディタのカレントディレクトリ
+		const TCHAR*		pszCurDir		= NULL,		//!< [in] 新規エディタのカレントディレクトリ
 		bool				bNewWindow		= false		//!< [in] 新規エディタをウインドウで開く
 	);
 	static bool OpenNewEditor2(						//!< 新規編集ウィンドウの追加 ver 1
