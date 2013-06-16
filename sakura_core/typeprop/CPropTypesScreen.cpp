@@ -227,6 +227,33 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				}
 				return TRUE;
 
+			case IDC_BUTTON_TYPEFONT:
+				{
+					LOGFONT lf;
+					INT nPointSize;
+
+					if( m_Types.m_bUseTypeFont ){
+						lf = m_Types.m_lf;
+					}
+					else{
+						lf = GetDllShareData().m_Common.m_sView.m_lf;
+					}
+
+					bool bFixedFont = true;
+					if( GetDllShareData().m_Common.m_sView.m_lf.lfPitchAndFamily & FIXED_PITCH  ){
+					}else{
+						bool bFixedFont = false;
+					}
+
+					if( MySelectFont( &lf, &nPointSize, hwndDlg, bFixedFont) ){
+						m_Types.m_lf = lf;
+						m_Types.m_nPointSize = nPointSize;
+						m_Types.m_bUseTypeFont = true;		// タイプ別フォントの使用
+						::CheckDlgButton( hwndDlg, IDC_CHECK_USETYPEFONT, m_Types.m_bUseTypeFont );
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), m_Types.m_bUseTypeFont );
+					}
+				}
+				return TRUE;
 			case IDC_CHECK_KINSOKURET:		//改行文字をぶら下げる
 			case IDC_CHECK_KINSOKUKUTO:		//句読点をぶら下げる
 				// ぶら下げを隠すの有効化	2012/11/30 Uchi
@@ -479,6 +506,12 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		}
 	}
 
+	//フォント
+	{
+		::CheckDlgButton( hwndDlg, IDC_CHECK_USETYPEFONT, m_Types.m_bUseTypeFont );			// タイプ別フォントの使用
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_USETYPEFONT ), m_Types.m_bUseTypeFont );
+	}
+
 	//その他
 	{
 		/* 英文ワードラップをする */
@@ -620,6 +653,18 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 
 		//ルールファイル	//2003.06.23 Moca ルールを使っていなくてもファイル名を保持
 		::DlgItem_GetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename, _countof2( m_Types.m_szOutlineRuleFilename ));
+	}
+
+	//フォント
+	{
+		LOGFONT lf;
+		m_Types.m_bUseTypeFont = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_USETYPEFONT ) ? true : false;		// タイプ別フォントの使用
+		if( m_Types.m_bUseTypeFont ){
+			lf = m_Types.m_lf;
+		}
+		else{
+			lf = GetDllShareData().m_Common.m_sView.m_lf;
+		}
 	}
 
 	//その他

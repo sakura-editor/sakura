@@ -216,8 +216,11 @@ struct STypeConfig{
 	int					m_nIndentLayout;				/* 折り返しは2行目以降を字下げ表示 */
 
 	//	Sep. 10, 2002 genta
-	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */
+	int					m_bUseDocumentIcon;				/*!< ファイルに関連づけられたアイコンを使う */
 
+	bool				m_bUseTypeFont;
+	LOGFONT				m_lf;							//!< フォント // 2013.03.18 aroka
+	INT					m_nPointSize;
 
 	STypeConfig()
 	: m_nMaxLineKetas(10) //	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する	//	2004.04.03 Moca
