@@ -32,7 +32,7 @@ class CSakuraEnvironment{
 public:
 	static CEditWnd* GetMainWindow();
 	static void ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen);
-	static std::tstring GetDlgInitialDir();
+	static std::tstring GetDlgInitialDir(bool bControlProcess = false);
 
 	static void ResolvePath(TCHAR* pszPath); //!< ショートカットの解決とロングファイル名へ変換を行う。
 private:
