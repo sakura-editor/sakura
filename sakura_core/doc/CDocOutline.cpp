@@ -23,8 +23,26 @@
 #include "doc/logic/CDocLine.h"
 #include "_main/global.h"
 #include "outline/CFuncInfoArr.h"
+#include "outline/CFuncInfo.h"
 #include "charset/charcode.h"
+#include "io/CTextStream.h"
+#include "extmodule/CBregexp.h"
 #include "util/other_util.h"
+
+
+
+/*! ルールファイルの1行を管理する構造体
+
+	@date 2002.04.01 YAZAKI
+	@date 2007.11.29 kobake 名前変更: oneRule→SOneRule
+*/
+struct SOneRule {
+	wchar_t szMatch[256];
+	int		nLength;
+	wchar_t szGroupName[256];
+	int		nLv;
+	int		nRegexOption;
+};
 
 
 
@@ -32,53 +50,122 @@
 
 	@date 2002.04.01 YAZAKI
 	@date 2002.11.03 Moca 引数nMaxCountを追加。バッファ長チェックをするように変更
+	@date 2013.06.02 _tfopen_absini,fgetwsをCTextInputStream_AbsIniに変更。UTF-8対応。Regex対応
 */
-int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount )
+int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount, bool& bRegex, std::wstring& title )
 {
-	long	i;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-	FILE*	pFile = _tfopen_absini( pszFilename, _T("r") );
-	if( NULL == pFile ){
+	CTextInputStream_AbsIni	file = CTextInputStream_AbsIni( pszFilename );
+	if( !file.Good() ){
 		return 0;
 	}
-	wchar_t	szLine[LINEREADBUFSIZE];
+	std::wstring	strLine;
+	wchar_t			szLine[LINEREADBUFSIZE];
 	const wchar_t*	pszDelimit = L" /// ";
 	const wchar_t*	pszKeySeps = L",\0";
-	wchar_t*	pszWork;
+	const wchar_t*	pszWork;
+	wchar_t	cComment = L';';
 	int nDelimitLen = wcslen( pszDelimit );
 	int nCount = 0;
-	szLine[LINEREADBUFSIZE-1] = '\0';
-	while( NULL != fgetws( szLine, _countof(szLine), pFile ) && nCount < nMaxCount ){
-		pszWork = wcsstr( szLine, pszDelimit );
-		if( NULL != pszWork && szLine[0] != L';' ){
-			*pszWork = L'\0';
+	bRegex = false;
+	title = L"";
+	int regexOption = CBregexp::optCaseSensitive;
+	
+	while( file.Good() && nCount < nMaxCount ){
+		strLine = file.ReadLineW();
+		pszWork = wcsstr( strLine.c_str(), pszDelimit );
+		if( NULL != pszWork && 0 < strLine.length() && strLine[0] != cComment ){
+			int nLen = pszWork - strLine.c_str();
+			if( nLen < LINEREADBUFSIZE ){
+				wmemcpy(szLine, strLine.c_str(), nLen);
+				szLine[nLen] = L'\0';
+			}else{
+				// この行は長すぎる
+				continue;
+			}
 			pszWork += nDelimitLen;
 
 			/* 最初のトークンを取得します。 */
-			wchar_t* pszToken = wcstok( szLine, pszKeySeps );
-			while( NULL != pszToken ){
-//				nRes = wcsicmp( pszKey, pszToken );
-				int nLen = (int)wcslen(pszWork);
-				for( i = 0; i < nLen; ++i ){
-					if( WCODE::IsLineDelimiter(pszWork[i]) ){
-						pszWork[i] = L'\0';
-						break;
+			wchar_t* pszToken;
+			bool bTopDummy = false;
+			if( bRegex ){
+				// regexのときは,区切りにしない
+				pszToken = szLine;
+				if( szLine[0] == L'\0' ){
+					if( 0 < nCount ){
+						pszToken = NULL;
+					}else{
+						bTopDummy = true;
 					}
 				}
+			}else{
+				pszToken = wcstok( szLine, pszKeySeps );
+				if( nCount == 0 && pszToken == NULL ){
+					pszToken = szLine;
+					bTopDummy = true;
+				}
+			}
+			const WCHAR* p = wcsstr( pszWork, L",Lv=" );
+			int nLv = 0;
+			if( p ){
+				nLv = _wtoi( p + 4 );
+			}
+			while( NULL != pszToken ){
 				wcsncpy( pcOneRule[nCount].szMatch, pszToken, 255 );
 				wcsncpy( pcOneRule[nCount].szGroupName, pszWork, 255 );
 				pcOneRule[nCount].szMatch[255] = L'\0';
 				pcOneRule[nCount].szGroupName[255] = L'\0';
+				pcOneRule[nCount].nLv = nLv;
 				pcOneRule[nCount].nLength = wcslen(pcOneRule[nCount].szMatch);
+				pcOneRule[nCount].nRegexOption = regexOption;
 				nCount++;
-				pszToken = wcstok( NULL, pszKeySeps );
+				if( bTopDummy || bRegex ){
+					pszToken = NULL;
+				}else{
+					pszToken = wcstok( NULL, pszKeySeps );
+				}
+			}
+		}else{
+			if( 0 < strLine.length() && strLine[0] == cComment ){
+				if( 13 <= strLine.length() && strLine.length() <= 14 && 0 == _wcsnicmp( strLine.c_str() + 1, L"CommentChar=", 12 ) ){
+					if( 13 == strLine.length() ){
+						cComment = L'\0';
+					}else{
+						cComment = strLine[13];
+					}
+				}else if( 11 == strLine.length() && 0 == wcsicmp( strLine.c_str() + 1, L"Mode=Regex" ) ){
+					bRegex = true;
+				}else if( 7 <= strLine.length() && 0 == _wcsnicmp( strLine.c_str() + 1, L"Title=", 6 ) ){
+					title = strLine.c_str() + 7;
+				}else if( 13 < strLine.length() && 0 == _wcsnicmp( strLine.c_str() + 1, L"RegexOption=", 12 ) ){
+					int nCaseFlag = CBregexp::optCaseSensitive;
+					regexOption = 0;
+					for( int i = 13; i < (int)strLine.length(); i++ ){
+						if( strLine[i] == L'i' ){
+							nCaseFlag = 0;
+						}else if( strLine[i] == L'g' ){
+							regexOption |= CBregexp::optGlobal;
+						}else if( strLine[i] == L'x' ){
+							regexOption |= CBregexp::optExtend;
+						}else if( strLine[i] == L'a' ){
+							regexOption |= CBregexp::optASCII;
+						}else if( strLine[i] == L'u' ){
+							regexOption |= CBregexp::optUnicode;
+						}else if( strLine[i] == L'd' ){
+							regexOption |= CBregexp::optDefault;
+						}else if( strLine[i] == L'l' ){
+							regexOption |= CBregexp::optLocale;
+						}else if( strLine[i] == L'R' ){
+							regexOption |= CBregexp::optR;
+						}
+					}
+					regexOption |= nCaseFlag;
+				}
 			}
 		}
-		assert_warning( '\0' != szLine[LINEREADBUFSIZE-1] && '\n' != szLine[LINEREADBUFSIZE-1] );
-		// TODO:後ろのデータ読み飛ばし
 	}
-	fclose( pFile );
+	file.Close();
 	return nCount;
 }
 
@@ -89,15 +176,20 @@ int CDocOutline::ReadRuleFile( const TCHAR* pszFilename, SOneRule* pcOneRule, in
 		最大値以上は追加せずに無視する
 	@date 2007.11.29 kobake SOneRule test[1024] でスタックが溢れていたのを修正
 */
-void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
+void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::tstring& sTitleOverride )
 {
 	wchar_t*		pszText;
 
 	/* ルールファイルの内容をバッファに読み込む */
 	auto_array_ptr<SOneRule> test(new SOneRule[1024]);	// 1024個許可。 2007.11.29 kobake スタック使いすぎなので、ヒープに確保するように修正。
-	int nCount = ReadRuleFile(m_pcDocRef->m_cDocType.GetDocumentAttribute().m_szOutlineRuleFilename, test.get(), 1024 );
+	bool bRegex;
+	std::wstring title;
+	int nCount = ReadRuleFile(m_pcDocRef->m_cDocType.GetDocumentAttribute().m_szOutlineRuleFilename, test.get(), 1024, bRegex, title );
 	if ( nCount < 1 ){
 		return;
+	}
+	if( 0 < title.size() ){
+		sTitleOverride = to_tchar(title.c_str());
 	}
 
 	/*	ネストの深さは、32レベルまで、ひとつのヘッダは、最長256文字まで区別
@@ -106,7 +198,47 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 	const int	nMaxStack = 32;	//	ネストの最深
 	int			nDepth = 0;				//	いまのアイテムの深さを表す数値。
 	wchar_t		pszStack[nMaxStack][256];
+	wchar_t		nLvStack[nMaxStack];
 	wchar_t		szTitle[256];			//	一時領域
+	CBregexp*	pRegex = NULL;
+	if( bRegex ){
+		pRegex = new CBregexp[nCount];
+		for( int i = 0; i < nCount; i++ ){
+			if( 0 == test[i].nLength ){
+				continue;
+			}
+			if( !InitRegexp( NULL, pRegex[i], true ) ){
+				delete [] pRegex;
+				return;
+			}
+			if( !pRegex[i].Compile(test[i].szMatch, test[i].nRegexOption) ){
+				ErrorMessage( NULL, _T("正規表現ルール\"%ls\"でエラーが発生しました。\n%ts"),
+					test[i].szMatch,
+					pRegex[i].GetLastMessage()
+				);
+				delete [] pRegex;
+				return;
+			}
+		}
+	}
+	// 1つめが空行だった場合は、ルート要素とする
+	// 項目名はグループ名
+	if( test[0].nLength == 0 ){
+		const wchar_t* g = test[0].szGroupName;
+		wcscpy(pszStack[0], g);
+		nLvStack[0] = test[0].nLv;
+		const wchar_t *p = wcschr(g, L',');
+		int len;
+		if( p != NULL ){
+			len = p - g;
+		}else{
+			len = wcslen(g);
+		}
+		CNativeW mem;
+		mem.SetString(g, len);
+		pcFuncInfoArr->AppendData( CLogicInt(1), CLayoutInt(1), mem.GetStringPtr(), FUNCINFO_NOCLIPTEXT, nDepth );
+		nDepth = 1;
+	}
 	for( CLogicInt nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount )
 	{
 		//行取得
@@ -131,12 +263,22 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		//先頭文字が見出し記号のいずれかであれば、次へ進む
 		int		j;
 		for( j = 0; j < nCount; j++ ){
-			if ( 0 == wcsncmp( &pLine[i], test[j].szMatch, test[j].nLength ) ){
-				wcscpy( szTitle, test[j].szGroupName );
-				break;
+			if( bRegex ){
+				if( 0 < test[j].nLength && pRegex[j].Match( pLine, nLineLen, 0 ) ){
+					wcscpy( szTitle, test[j].szGroupName );
+					break;
+				}
+			}else{
+				if ( 0 < test[j].nLength && 0 == wcsncmp( &pLine[i], test[j].szMatch, test[j].nLength ) ){
+					wcscpy( szTitle, test[j].szGroupName );
+					break;
+				}
 			}
 		}
 		if( j >= nCount ){
+			continue;
+		}
+		if( 0 == wcscmp( szTitle, L"Except" ) ){
 			continue;
 		}
 
@@ -147,8 +289,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		pszText = new wchar_t[nLineLen + 1];
 		wmemcpy( pszText, &pLine[i], nLineLen );
 		pszText[nLineLen] = L'\0';
-		int nTextLen = wcslen( pszText );
-		for( i = 0; i < nTextLen; ++i ){
+		for( i = 0; i < pszText[i] != L'\0'; ++i ){
 			if( WCODE::IsLineDelimiter(pszText[i]) ){
 				pszText[i] = L'\0';
 				break;
@@ -184,8 +325,19 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		}
 		else if( nMaxStack> k ){
 			//	いままでに同じ見出しが存在しなかった。
-			//	ので、pszStackにコピーしてAppendData.
-			wcscpy(pszStack[nDepth], szTitle);
+			//	Lvが高い場合は、一致するまでさかのぼる
+			for ( k = nDepth - 1; 0 <= k ; k-- ){
+				if ( nLvStack[k] <= test[j].nLv ){
+					k++;
+					break;
+				}
+			}
+			if( k < 0 ){
+				k = 0;
+			}
+			wcscpy(pszStack[k], szTitle);
+			nLvStack[k] = test[j].nLv;
+			nDepth = k;
 		}else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する
 			// nDepth = nMaxStack;
@@ -199,6 +351,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr )
 		delete [] pszText;
 
 	}
+	delete [] pRegex;
 	return;
 }
 
