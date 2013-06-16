@@ -533,6 +533,7 @@ enum e_PM_CHANGESETTING_SELECT {
 	PM_CHANGESETTING_ALL		= 0, //!< 全部
 	PM_CHANGESETTING_FONT		= 1, //!< フォント変更
 	PM_CHANGESETTING_FONTSIZE	= 2, //!< フォントサイズ変更
+	PM_PRINTSETTING				= 5, //!< プリント設定
 };
 //!座標位置情報の保存
 #define MYWM_SAVEEDITSTATE  (WM_APP+1521)
