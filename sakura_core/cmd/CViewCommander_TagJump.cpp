@@ -83,6 +83,13 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	nJumpToLine = 0;
 	nJumpToColumn = 0;
 
+	//ファイル名バッファ
+	wchar_t		szJumpToFile[1024];
+	wchar_t		szFile[_MAX_PATH] = {L'\0'};
+	int			nBgn;
+	int			nPathLen;
+	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
+
 	/*
 	  カーソル位置変換
 	  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
@@ -95,6 +102,7 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 		&ptXY
 	);
 	ptXYOrg = ptXY;
+
 	/* 現在行のデータを取得 */
 	CLogicInt		nLineLen;
 	const wchar_t*	pLine;
@@ -102,13 +110,6 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	if( NULL == pLine ){
 		goto can_not_tagjump;
 	}
-
-	//ファイル名バッファ
-	wchar_t		szJumpToFile[1024];
-	wchar_t		szFile[_MAX_PATH] = {L'\0'};
-	int			nBgn;
-	int			nPathLen;
-	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
 
 	// ノーマル
 	// C:\RootFolder\SubFolders\FileName.ext(5395,11): str
