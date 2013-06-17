@@ -460,6 +460,9 @@ void CShareData_IO::ShareData_IO_Common( CDataProfile& cProfile )
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepSubFolder")			, common.m_sSearch.m_bGrepSubFolder );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepOutputLine")		, common.m_sSearch.m_bGrepOutputLine );
 	cProfile.IOProfileData( pszSecName, LTEXT("nGrepOutputStyle")		, common.m_sSearch.m_nGrepOutputStyle );
+	cProfile.IOProfileData( pszSecName, LTEXT("bGrepOutputFileOnly")	, common.m_sSearch.m_bGrepOutputFileOnly );
+	cProfile.IOProfileData( pszSecName, LTEXT("bGrepOutputBaseFolder")	, common.m_sSearch.m_bGrepOutputBaseFolder );
+	cProfile.IOProfileData( pszSecName, LTEXT("bGrepSeparateFolder")	, common.m_sSearch.m_bGrepSeparateFolder );
 	cProfile.IOProfileData( pszSecName, LTEXT("bGrepDefaultFolder")		, common.m_sSearch.m_bGrepDefaultFolder );
 	// 2002/09/21 Moca ’Ç‰Á
 	cProfile.IOProfileData_WrapInt( pszSecName, LTEXT("nGrepCharSet")	, common.m_sSearch.m_nGrepCharSet );

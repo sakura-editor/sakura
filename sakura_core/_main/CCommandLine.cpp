@@ -424,6 +424,15 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 					case '2':
 						// Grep: 出力形式
 						m_gi.nGrepOutputStyle = 2;	break;
+					case '3':
+						// Grep: 出力形式
+						m_gi.nGrepOutputStyle = 3;	break;
+					case 'F':
+						m_gi.bGrepOutputFileOnly = true;	break;
+					case 'B':
+						m_gi.bGrepOutputBaseFolder = true;	break;
+					case 'D':
+						m_gi.bGrepSeparateFolder = true;	break;
 					}
 				}
 				break;
@@ -494,6 +503,9 @@ CCommandLine::CCommandLine()
 	m_gi.nGrepCharSet		= CODE_SJIS;
 	m_gi.bGrepOutputLine	= false;
 	m_gi.nGrepOutputStyle	= 1;
+	m_gi.bGrepOutputFileOnly = false;
+	m_gi.bGrepOutputBaseFolder = false;
+	m_gi.bGrepSeparateFolder = false;
 	m_bViewMode			= false;
 	m_nGroup				= -1;		// 2007.06.26 ryoji
 }

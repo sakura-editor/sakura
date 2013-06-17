@@ -208,7 +208,10 @@ bool CNormalProcess::InitializeProcess()
 				gi.sGrepSearchOption,
 				gi.nGrepCharSet,	//	2002/09/21 Moca
 				gi.bGrepOutputLine,
-				gi.nGrepOutputStyle
+				gi.nGrepOutputStyle,
+				gi.bGrepOutputFileOnly,
+				gi.bGrepOutputBaseFolder,
+				gi.bGrepSeparateFolder
 			);
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 			//return true; // 2003.06.23 Moca

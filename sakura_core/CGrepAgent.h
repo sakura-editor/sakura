@@ -28,6 +28,29 @@
 class CDlgCancel;
 class CEditView;
 class CSearchStringPattern;
+class CGrepEnumKeys;
+class CGrepEnumFiles;
+class CGrepEnumFolders;
+
+struct SGrepOption{
+	bool		bGrepSubFolder;			//!< サブフォルダからも検索する
+	ECodeType	nGrepCharSet;			//!< 文字コードセット選択
+	bool		bGrepOutputLine;		//!< true: ヒット行を出力 / false: ヒット部分を出力
+	int			nGrepOutputStyle;		//!< 出力形式 1: Normal, 2: WZ風(ファイル単位) 3: 結果のみ
+	bool		bGrepOutputFileOnly;	//!< ファイル毎最初のみ検索
+	bool		bGrepOutputBaseFolder;	//!< ベースフォルダ表示
+	bool		bGrepSeparateFolder;	//!< フォルダ毎に表示
+
+	SGrepOption() : 
+		 bGrepSubFolder(true)
+		,nGrepCharSet(CODE_AUTODETECT)
+		,bGrepOutputLine(true)
+		,nGrepOutputStyle(true)
+		,bGrepOutputFileOnly(false)
+		,bGrepOutputBaseFolder(false)
+		,bGrepSeparateFolder(false)
+	{}
+};
 
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 //	Mar. 28, 2004 genta DoGrepFileから不要な引数を削除
@@ -39,6 +62,8 @@ public:
 	ECallbackResult OnBeforeClose();
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 
+	static void CreateFolders( const TCHAR* pszPath, std::vector<std::tstring>& vPaths );
+
 	// Grep実行
 	DWORD DoGrep(
 		CEditView*				pcViewDst,
@@ -49,7 +74,10 @@ public:
 		const SSearchOption&	sSearchOption,
 		ECodeType				nGrepCharSet,	// 2002/09/21 Moca 文字コードセット選択
 		BOOL					bGrepOutputLine,
-		int						nGrepOutputStyle
+		int						nGrepOutputStyle,
+		bool					bGrepOutputFileOnly,	//!< [in] ファイル毎最初のみ出力
+		bool					bGrepOutputBaseFolder,	//!< [in] ベースフォルダ表示
+		bool					bGrepSeparateFolder	//!< [in] フォルダ毎に表示
 	);
 
 private:
@@ -57,18 +85,18 @@ private:
 	int DoGrepTree(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,		//!< [in] Cancelダイアログへのポインタ
-		HWND					hwndCancel,			//!< [in] Cancelダイアログのウィンドウハンドル
 		const wchar_t*			pszKey,				//!< [in] 検索パターン
-		const TCHAR*			pszFile,			//!< [in] 検索対象ファイルパターン(!で除外指定)
+		CGrepEnumKeys&			cGrepEnumKeys,		//!< [in] 検索対象ファイルパターン(!で除外指定)
+		CGrepEnumFiles&			cGrepExceptAbsFiles,
+		CGrepEnumFolders&		cGrepExceptAbsFolders,
 		const TCHAR*			pszPath,			//!< [in] 検索対象パス
-		BOOL					bGrepSubFolder,		//!< [in] TRUE: サブフォルダを再帰的に探索する / FALSE: しない
+		const TCHAR*			pszBasePath,		//!< [in] 検索対象パス(ベース)
 		const SSearchOption&	sSearchOption,		//!< [in] 検索オプション
-		ECodeType				nGrepCharSet,		//!< [in] 文字コードセット (0:自動認識)～
-		BOOL					bGrepOutputLine,	//!< [in] TRUE: ヒット行を出力 / FALSE: ヒット部分を出力
-		int						nGrepOutputStyle,	//!< [in] 出力形式 1: Normal, 2: WZ風(ファイル単位)
+		const SGrepOption&		sGrepOption,		//!< [in] Grepオプション
 		const CSearchStringPattern& pattern,		//!< [in] 検索パターン
 		CBregexp*				pRegexp,			//!< [in] 正規表現コンパイルデータ。既にコンパイルされている必要がある
 		int						nNest,				//!< [in] ネストレベル
+		bool&					bOutputBaseFolder,
 		int*					pnHitCount			//!< [i/o] ヒット数の合計
 	);
 
@@ -76,17 +104,19 @@ private:
 	int DoGrepFile(
 		CEditView*				pcViewDst,
 		CDlgCancel*				pcDlgCancel,
-		HWND					hwndCancel,
 		const wchar_t*			pszKey,
 		const TCHAR*			pszFile,
 		const SSearchOption&	sSearchOption,
-		ECodeType				nGrepCharSet,
-		BOOL					bGrepOutputLine,
-		int						nGrepOutputStyle,
+		const SGrepOption&		sGrepOption,
 		const CSearchStringPattern& pattern,
 		CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		int*					pnHitCount,
 		const TCHAR*			pszFullPath,
+		const TCHAR*			pszBaseFolder,
+		const TCHAR*			pszFolder,
+		const TCHAR*			pszRelPath,
+		bool&					bOutputBaseFolder,
+		bool&					bOutputFolderName,
 		CNativeW&				cmemMessage
 	);
 
@@ -96,7 +126,7 @@ private:
 		wchar_t*		pWork,
 		int*			pnWorkLen,
 		// マッチしたファイルの情報
-		const TCHAR*	pszFullPath,	//	フルパス
+		const TCHAR*	pszFilePath,	//	フルパス or 相対パス
 		const TCHAR*	pszCodeName,	//	文字コード情報"[SJIS]"とか
 		// マッチした行の情報
 		int				nLine,			//	マッチした行番号
@@ -108,8 +138,7 @@ private:
 		const wchar_t*	pMatchData,		//	マッチした文字列
 		int				nMatchLen,		//	マッチした文字列の長さ
 		// オプション
-		BOOL			bGrepOutputLine,
-		int				nGrepOutputStyle
+		const SGrepOption&	sGrepOption
 	);
 
 public: //$$ 仮

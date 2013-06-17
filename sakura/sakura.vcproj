@@ -605,6 +605,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\sakura_core\CGrepEnumFileBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CGrepEnumFiles.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CGrepEnumFilterFiles.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CGrepEnumFilterFolders.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CGrepEnumFolders.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CGrepEnumKeys.h"
+				>
+			</File>
+			<File
 				RelativePath="..\sakura_core\CHokanMgr.cpp"
 				>
 			</File>

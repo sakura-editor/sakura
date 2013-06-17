@@ -38,12 +38,41 @@
 #include "sakura_rc.h"
 
 
+// "までを切り取る
+static bool GetQuoteFilePath( const wchar_t* pLine, wchar_t* pFile, size_t size ){
+	const wchar_t* pFileEnd = wcschr( pLine, L'\"' );
+	if( pFileEnd ){
+		int nFileLen = pFileEnd - pLine;
+		if( 0 < nFileLen && nFileLen < (int)size ){
+			wmemcpy( pFile, pLine, nFileLen );
+			pFile[nFileLen] = L'\0';
+			return true;
+		}
+	}
+	return false;
+}
+
+
+static bool IsFileExists2( const wchar_t* pszFile )
+{
+	for(int i = 0; pszFile[i]; i++ ){
+		if( !WCODE::IsValidFilenameChar(pszFile, i) ){
+			return false;
+		}
+	}
+	if( _IS_REL_PATH(to_tchar(pszFile)) ){
+		return false;
+	}
+	return IsFileExists(to_tchar(pszFile), true);
+}
+
 /*! タグジャンプ
 
 	@param bClose [in] true:元ウィンドウを閉じる
 
 	@date 2003.04.03 genta 元ウィンドウを閉じるかどうかの引数を追加
 	@date 2004.05.13 Moca 行桁位置の指定が無い場合は、行桁を移動しない
+	@date 2011.11.24 Moca Grepフォルダ毎表示対応
 */
 bool CViewCommander::Command_TAGJUMP( bool bClose )
 {
@@ -60,62 +89,224 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 	  →
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	CLogicPoint ptXY;
+	CLogicPoint ptXY, ptXYOrg;
 	GetDocument()->m_cLayoutMgr.LayoutToLogic(
 		GetCaret().GetCaretLayoutPos(),
 		&ptXY
 	);
+	ptXYOrg = ptXY;
 	/* 現在行のデータを取得 */
 	CLogicInt		nLineLen;
 	const wchar_t*	pLine;
 	pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen);
 	if( NULL == pLine ){
-		goto can_not_tagjump_end;
+		goto can_not_tagjump;
 	}
 
 	//ファイル名バッファ
 	wchar_t		szJumpToFile[1024];
+	wchar_t		szFile[_MAX_PATH] = {L'\0'};
 	int			nBgn;
 	int			nPathLen;
 	wmemset( szJumpToFile, 0, _countof(szJumpToFile) );
 
-	/* WZ風のタグリストか */
-	if( 0 == wmemcmp( pLine, L"■\"", 2 ) ){
-		if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) ){
-			wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
-			GetLineColumn( &pLine[2] + nPathLen, &nJumpToLine, &nJumpToColumn );
+	// ノーマル
+	// C:\RootFolder\SubFolders\FileName.ext(5395,11): str
+
+	// ノーマル/ベースフォルダ/フォルダ毎
+	// ◎"C:\RootFolder"
+	// ■
+	// ・FileName.ext(5395,11): str
+	// ■"SubFolders"
+	// ・FileName.ext(5395,11): str
+	// ・FileName.ext(5396,11): str
+	// ・FileName2.ext(123,12): str
+
+	// ノーマル/ベースフォルダ
+	// ■"C:\RootFolder"
+	// ・FileName.ext(5395,11): str
+	// ・SubFolders\FileName2.ext(5395,11): str
+	// ・SubFolders\FileName2.ext(5396,11): str
+	// ・SubFolders\FileName3.ext(123,11): str
+
+	// ファイル毎(WZ風)
+	// ■"C:\RootFolder\FileName.ext"
+	// ・(  5395,11   ): str
+	// ■"C:\RootFolder\SubFolders\FileName2.ext"
+	// ・(  5395,11   ): str
+	// ・(  5396,11   ): str
+	// ■"C:\RootFolder\SubFolders\FileName3.ext"
+	// ・(   123,12   ): str
+
+	// ファイル毎/ベースフォルダ
+	// ◎"C:\RootFolder"
+	// ■"FileName.ext"
+	// ・(  5395,11   ): str
+	// ■"SubFolders\FileName2.ext"
+	// ・(  5395,11   ): str
+	// ・(  5396,11   ): str
+	// ■"SubFolders\FileName3.ext"
+	// ・(   123,12   ): str
+
+	// ファイル毎/ベースフォルダ/フォルダ毎
+	// ◎"C:\RootFolder"
+	// ■
+	// ◆"FileName.ext"
+	// ・(  5395,11   ): str
+	// ■"SubFolders"
+	// ◆"FileName2.ext"
+	// ・(  5395,11   ): str
+	// ・(  5396,11   ): str
+	// ◆"FileName3.ext"
+	// ・(   123,12   ): str
+
+	// Grep結果のタグジャンプ検索
+	// ・→◆→■→◎ の順に検索してパスを結合する
+	do{
+		enum TagListSeachMode{
+			TAGLIST_FILEPATH,
+			TAGLIST_SUBPATH,
+			TAGLIST_ROOT,
+		} searchMode = TAGLIST_FILEPATH;
+		if( 0 == wmemcmp( pLine, L"■\"", 2 ) ){
+			/* WZ風のタグリストか */
+			if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( to_tchar(&pLine[2]) ) ){
+				wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
+				GetLineColumn( &pLine[2] + nPathLen, &nJumpToLine, &nJumpToColumn );
+				break;
+			}else if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+				break;
+			}
+			searchMode = TAGLIST_ROOT;
+		}else if( 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
+			if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+				break;
+			}
+			searchMode = TAGLIST_SUBPATH;
+		}else if( 0 == wmemcmp( pLine, L"・", 1 ) ){
+			if( pLine[1] == L'"' ){
+				// ・"FileName.ext"
+				if( !GetQuoteFilePath( &pLine[2], szFile, _countof(szFile) ) ){
+					break;
+				}
+				searchMode = TAGLIST_SUBPATH;
+			}else if( pLine[1] == L'(' ){
+				// ファイル毎(WZ風)
+				GetLineColumn( &pLine[1], &nJumpToLine, &nJumpToColumn );
+				searchMode = TAGLIST_FILEPATH;
+			}else{
+				// ノーマル/ファイル相対パス
+				// ･FileName.ext(123,45): str
+				// ･FileName.ext(123,45)  [SJIS]: str
+				const wchar_t* pTagEnd = wcsstr( pLine, L"): " );
+				if( !pTagEnd ){
+					pTagEnd = wcsstr( pLine, L"]: " );
+					if( pTagEnd ){
+						int fileEnd = pTagEnd - pLine - 1;
+						for( ; 1 < fileEnd; fileEnd-- ){
+							if( L'[' == pLine[fileEnd] ){
+								fileEnd--;
+								break;
+							}
+						}
+						for( ; 1 < fileEnd && L' ' == pLine[fileEnd]; fileEnd-- ){}
+						if( ')' == pLine[fileEnd] ){
+							pTagEnd = &pLine[fileEnd];
+						}else{
+							pTagEnd = NULL;
+						}
+					}
+				}
+				if( pTagEnd ){
+					int fileEnd = pTagEnd - pLine - 1;
+					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
+					if(    1 < fileEnd && (L',' == pLine[fileEnd]) ){ fileEnd--; }
+					for( ; 1 < fileEnd && (L'0' <= pLine[fileEnd] && pLine[fileEnd] <= L'9'); fileEnd-- ){}
+					if( 1 < fileEnd && L'(' == pLine[fileEnd] && fileEnd - 1 < (int)_countof(szFile) ){
+						wmemcpy( szFile, pLine + 1, fileEnd - 1 );
+						szFile[fileEnd - 1] = L'\0';
+						GetLineColumn( &pLine[fileEnd + 1], &nJumpToLine, &nJumpToColumn );
+						searchMode = TAGLIST_SUBPATH;
+					}else{
+						break;
+					}
+				}
+			}
+		}else{
+			break;
 		}
-		else{
-			goto can_not_tagjump;
-		}
-	}
-	else if(0 == wmemcmp( pLine, L"・", 1 )){
-		GetLineColumn( &pLine[1], &nJumpToLine, &nJumpToColumn );
 		ptXY.y--;
 
 		for( ; 0 <= ptXY.y; ptXY.y-- ){
 			pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXY.GetY2())->GetDocLineStrWithEOL(&nLineLen);
 			if( NULL == pLine ){
-				goto can_not_tagjump;
+				break;
 			}
 			if( 0 == wmemcmp( pLine, L"・", 1 ) ){
 				continue;
-			}
-			else if( 0 == wmemcmp( pLine, L"■\"", 2 ) ){
-				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) ){
+			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◆\"", 2 ) ){
+				if( searchMode == TAGLIST_SUBPATH || searchMode == TAGLIST_ROOT ){
+					continue;
+				}
+				// フォルダ毎：ファイル名
+				if( GetQuoteFilePath(&pLine[2], szFile, _countof(szFile)) ){
+					searchMode = TAGLIST_SUBPATH;
+					continue;
+				}
+				break;
+			}else if( 2 <= nLineLen && pLine[0] == L'■' && (pLine[1] == L'\r' || pLine[1] == L'\n') ){
+				// ルートフォルダ
+				if( searchMode == TAGLIST_ROOT ){
+					continue;
+				}
+				searchMode = TAGLIST_ROOT;
+			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"■\"", 2 ) ){
+				if( searchMode == TAGLIST_ROOT ){
+					continue;
+				}
+				// ファイル毎(WZ風)：フルパス
+				if( IsFilePath( &pLine[2], &nBgn, &nPathLen ) && !_IS_REL_PATH( to_tchar(&pLine[2]) ) ){
 					wmemcpy( szJumpToFile, &pLine[2 + nBgn], nPathLen );
 					break;
 				}
-				else{
-					goto can_not_tagjump;
+				// 相対フォルダorファイル名
+				wchar_t		szPath[_MAX_PATH];
+				if( GetQuoteFilePath( &pLine[2], szPath, _countof(szPath) ) ){
+					if( szFile[0] ){
+						AddLastYenFromDirectoryPath( szPath );
+					}
+					auto_strcat( szPath, szFile );
+					if( IsFileExists2( szPath ) ){
+						auto_strcpy( szJumpToFile, szPath );
+						break;
+					}
+					// 相対パスだった→◎”を探す
+					auto_strcpy( szFile, szPath );
+					searchMode = TAGLIST_ROOT;
+					continue;
 				}
+				break;
+			}else if( 3 <= nLineLen && 0 == wmemcmp( pLine, L"◎\"", 2 ) ){
+				if( GetQuoteFilePath( &pLine[2], szJumpToFile, _countof(szJumpToFile) ) ){
+					AddLastYenFromDirectoryPath( szJumpToFile );
+					auto_strcat( szJumpToFile, szFile );
+					if( IsFileExists2( szJumpToFile ) ){
+						break;
+					}
+				}
+				break;
 			}
 			else{
-				goto can_not_tagjump;
+				break;
 			}
 		}
-	}
-	else{
+	}while(0);
+
+	if( szJumpToFile[0] == L'\0' ){
+		pLine = GetDocument()->m_cDocLineMgr.GetLine(ptXYOrg.GetY2())->GetDocLineStrWithEOL(&nLineLen);
+		if( NULL == pLine ){
+			goto can_not_tagjump;
+		}
 		//@@@ 2001.12.31 YAZAKI
 		const wchar_t *p = pLine;
 		const wchar_t *p_end = p + nLineLen;
@@ -141,22 +332,24 @@ bool CViewCommander::Command_TAGJUMP( bool bClose )
 			for( ; p < p_end && ( *p != L' ' && *p != L'\t' ); ++p )
 				;
 		}
-		if( szJumpToFile[0] == L'\0' ){
-			if( !Command_TagJumpByTagsFile(bClose) )	//@@@ 2003.04.13
-				goto can_not_tagjump;
+	}
+	
+	// 2011.11.29 Grep形式で失敗した後もTagsを検索する
+	if( szJumpToFile[0] == L'\0' ){
+		if( Command_TagJumpByTagsFile(bClose) ){	//@@@ 2003.04.13
 			return true;
 		}
 		//	From Here Aug. 27, 2001 genta
 	}
 
 	//	Apr. 21, 2003 genta bClose追加
-	if( !m_pCommanderView->TagJumpSub( to_tchar(szJumpToFile), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) )	//@@@ 2003.04.13
-		goto can_not_tagjump;
-
-	return true;
+	if( szJumpToFile[0] ){
+		if( m_pCommanderView->TagJumpSub( to_tchar(szJumpToFile), CMyPoint(nJumpToColumn, nJumpToLine), bClose ) ){	//@@@ 2003.04.13
+			return true;
+		}
+	}
 
 can_not_tagjump:;
-can_not_tagjump_end:;
 	m_pCommanderView->SendStatusMessage(_T("タグジャンプできません"));	//@@@ 2003.04.13
 	return false;
 }

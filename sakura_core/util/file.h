@@ -43,7 +43,8 @@ FILE *_tfopen_absini(LPCTSTR fname, LPCTSTR mode, BOOL bOrExedir = TRUE); // 200
 
 //パス文字列処理
 void CutLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-void AddLastYenFromDirectoryPath( TCHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+void AddLastYenFromDirectoryPath(  CHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+void AddLastYenFromDirectoryPath( WCHAR* );						/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 void SplitPath_FolderAndFile( const TCHAR*, TCHAR*, TCHAR* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 void Concat_FolderAndFile( const TCHAR*, const TCHAR*, TCHAR* );/* フォルダ、ファイル名から、結合したパスを作成 */
 BOOL GetLongFileName( const TCHAR*, TCHAR* );					/* ロングファイル名を取得する */

@@ -236,30 +236,51 @@ void CutLastYenFromDirectoryPath( TCHAR* pszFolder )
 
 
 /* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-void AddLastYenFromDirectoryPath( TCHAR* pszFolder )
+void AddLastYenFromDirectoryPath( CHAR* pszFolder )
 {
-	if( 3 == _tcslen( pszFolder )
-	 && pszFolder[1] == _T(':')
-	 && pszFolder[2] == _T('\\')
+	if( 3 == auto_strlen( pszFolder )
+	 && pszFolder[1] == ':'
+	 && pszFolder[2] == '\\'
 	){
 		/* ドライブ名:\ */
 	}else{
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
 		int	nFolderLen;
 		int	nCharChars;
-		nFolderLen = _tcslen( pszFolder );
+		nFolderLen = auto_strlen( pszFolder );
 		if( 0 < nFolderLen ){
-			nCharChars = &pszFolder[nFolderLen] - CNativeT::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
-			if( 1 == nCharChars && _T('\\') == pszFolder[nFolderLen - 1] ){
+			nCharChars = &pszFolder[nFolderLen] - CNativeA::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] );
+			if( 1 == nCharChars && ('\\' == pszFolder[nFolderLen - 1] || '/' == pszFolder[nFolderLen - 1]) ){
 			}else{
-				pszFolder[nFolderLen] = _T('\\');
-				pszFolder[nFolderLen + 1] = _T('\0');
+				pszFolder[nFolderLen] = '\\';
+				pszFolder[nFolderLen + 1] = '\0';
 			}
 		}
 	}
 	return;
 }
 
+void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
+{
+	if( 3 == auto_strlen( pszFolder )
+	 && pszFolder[1] == L':'
+	 && pszFolder[2] == L'\\'
+	){
+		/* ドライブ名:\ */
+	}else{
+		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
+		int	nFolderLen;
+		nFolderLen = auto_strlen( pszFolder );
+		if( 0 < nFolderLen ){
+			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
+			}else{
+				pszFolder[nFolderLen] = L'\\';
+				pszFolder[nFolderLen + 1] = L'\0';
+			}
+		}
+	}
+	return;
+}
 
 
 /* ファイルのフルパスを、フォルダとファイル名に分割 */

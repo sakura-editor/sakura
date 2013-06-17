@@ -126,6 +126,10 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 	if( cDlgGrep.m_sSearchOption.bWordOnly		)_tcscat( pOpt, _T("W") );	// 単語単位で探す
 	if( 1 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("1") );	// Grep: 出力形式
 	if( 2 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("2") );	// Grep: 出力形式
+	if( 3 == cDlgGrep.m_nGrepOutputStyle		)_tcscat( pOpt, _T("3") );
+	if( cDlgGrep.m_bGrepOutputFileOnly		)_tcscat( pOpt, _T("F") );
+	if( cDlgGrep.m_bGrepOutputBaseFolder		)_tcscat( pOpt, _T("B") );
+	if( cDlgGrep.m_bGrepSeparateFolder		)_tcscat( pOpt, _T("D") );
 	if( pOpt[0] != _T('\0') ){
 		cCmdLine.AppendString( _T(" -GOPT=") );
 		cCmdLine.AppendString( pOpt );

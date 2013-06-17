@@ -88,7 +88,10 @@ void CViewCommander::Command_GREP( void )
 			GetEditWindow()->m_cDlgGrep.m_sSearchOption,
 			GetEditWindow()->m_cDlgGrep.m_nGrepCharSet,
 			GetEditWindow()->m_cDlgGrep.m_bGrepOutputLine,
-			GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle
+			GetEditWindow()->m_cDlgGrep.m_nGrepOutputStyle,
+			GetEditWindow()->m_cDlgGrep.m_bGrepOutputFileOnly,
+			GetEditWindow()->m_cDlgGrep.m_bGrepOutputBaseFolder,
+			GetEditWindow()->m_cDlgGrep.m_bGrepSeparateFolder
 		);
 
 		//プラグイン：DocumentOpenイベント実行
