@@ -165,7 +165,12 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet == CODE_AUTODETECT) ? 0x10 : 0x00;	//	2002/09/21 Moca 下位互換性のための処理
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
+			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 3)		? 0x80 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet << 8;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x10000 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputFileOnly			? 0x20000 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputBaseFolder		? 0x40000 : 0x00;
+			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSeparateFolder			? 0x80000 : 0x00;
 			AddIntParam( lFlag );
 		}
 		break;
@@ -799,8 +804,14 @@ bool CMacro::HandleCommand(
 		//		******** 以下「出力形式」 ********
 		//		0x00	ノーマル
 		//		0x40	ファイル毎
+		//		0x80	結果のみ // 2011.11.24
+		//		0xC0	(未使用) // 2011.11.24
 		//		**********************************
 		//		0x0100 ～ 0xff00	文字コードセット番号 * 0x100
+		//		0x010000	単語単位で探す
+		//		0x020000	ファイル毎最初のみ検索
+		//		0x040000	ベースフォルダ表示
+		//		0x080000	フォルダ毎に表示
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("GREPパターンが指定されていません．"));
@@ -859,8 +870,13 @@ bool CMacro::HandleCommand(
 			if( lFlag & 0x04 )_tcscat( pOpt, _T("L") );	/* 英大文字と英小文字を区別する */
 			if( lFlag & 0x08 )_tcscat( pOpt, _T("R") );	/* 正規表現 */
 			if( lFlag & 0x20 )_tcscat( pOpt, _T("P") );	/* 行を出力するか該当部分だけ出力するか */
-			if( lFlag & 0x40 )_tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
+			if(      0x40 == (lFlag & 0xC0) )_tcscat( pOpt, _T("2") );	/* Grep: 出力形式 */
+			else if( 0x80 == (lFlag & 0xC0) )_tcscat( pOpt, _T("3") );
 			else _tcscat( pOpt, _T("1") );
+			if( lFlag & 0x10000 )_tcscat( pOpt, _T("W") );
+			if( lFlag & 0x20000 )_tcscat( pOpt, _T("F") );
+			if( lFlag & 0x40000 )_tcscat( pOpt, _T("B") );
+			if( lFlag & 0x80000 )_tcscat( pOpt, _T("D") );
 			if( pOpt[0] != _T('\0') ){
 				auto_sprintf( szTemp, _T(" -GOPT=%ts"), pOpt );
 				cCmdLine.AppendString(szTemp);

@@ -47,11 +47,14 @@ public:
 	BOOL		m_bWordOnly;	//!< 単語単位で検索
 	*/
 
-	BOOL		m_bGrepOutputLine;	/*!< 行を出力するか該当部分だけ出力するか */
+	ECodeType	m_nGrepCharSet;			/*!< 文字コードセット */
+	int			m_nGrepOutputStyle;		/*!< Grep: 出力形式 */
+	BOOL		m_bGrepOutputLine;		/*!< 行を出力するか該当部分だけ出力するか */
+	bool		m_bGrepOutputFileOnly;		/*!< ファイル毎最初のみ検索 */
+	bool		m_bGrepOutputBaseFolder;	/*!< ベースフォルダ表示 */
+	bool		m_bGrepSeparateFolder;		/*!< フォルダ毎に表示 */
 
-	ECodeType	m_nGrepCharSet;		/*!< 文字コードセット */
 
-	int			m_nGrepOutputStyle;			/*!< Grep: 出力形式 */
 	std::wstring	m_strText;				/*!< 検索文字列 */
 	SFilePath	m_szFile;					/*!< 検索ファイル */
 	SFilePath	m_szFolder;					/*!< 検索フォルダ */

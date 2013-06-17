@@ -767,6 +767,10 @@
 #define HIDC_GREP_RADIO_OUTPUTSTYLE2	12017	//結果出力形式：ファイル毎
 #define HIDC_GREP_STATIC_JRE32VER		12018	//正規表現バージョン
 #define HIDC_GREP_CHK_DEFAULTFOLDER		12019	//フォルダの初期値をカレントフォルダにする
+#define HIDC_RADIO_OUTPUTSTYLE3			12020	//結果出力形式：結果のみ
+#define HIDC_CHECK_FILE_ONLY			12021	//ファイル毎最初のみ検索
+#define HIDC_CHECK_BASE_PATH			12022	//ベースフォルダ表示
+#define HIDC_CHECK_SEP_FOLDER			12023	//フォルダ毎に表示
 
 //外部コマンド
 #define HIDC_EXEC_BUTTON_REFERENCE	12100	//参照
