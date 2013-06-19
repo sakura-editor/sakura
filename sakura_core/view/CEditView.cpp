@@ -564,8 +564,12 @@ LRESULT CEditView::DispatchEvent(
 				m_nMousePouse = -1;
 				::SetCursor( NULL );
 			}
-			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)to_wchar(lptstr), TRUE, 0, 0 );
-
+#ifdef _UNICODE
+			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)lptstr, wcslen(lptstr), TRUE, 0 );
+#else
+			std::wstring wstr = to_wchar(lptstr);
+			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)wstr.c_str(), wstr.length(), TRUE, 0 );
+#endif
 			ImmReleaseContext( hwnd, hIMC );
 
 			// add this string into text buffer of application
@@ -869,10 +873,10 @@ LRESULT CEditView::DispatchEvent(
 		// wParam RedoUndoƒtƒ‰ƒO‚Í–³Ž‹‚·‚é
 		if( lParam ){
 #ifdef _UNICODE
-			GetCommander().HandleCommand( F_INSTEXT_W, true, lParam, TRUE, 0, 0 );
+			GetCommander().HandleCommand( F_INSTEXT_W, true, lParam, wcslen((wchar_t*)lParam), TRUE, 0 );
 #else
 			std::wstring text = to_wchar((LPCTSTR)lParam);
-			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)text.c_str(), TRUE, 0, 0 );
+			GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)text.c_str(), text.length(), TRUE, 0 );
 #endif
 		}
 		return 0L; // not use.

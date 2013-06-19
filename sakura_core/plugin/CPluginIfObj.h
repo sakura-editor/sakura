@@ -135,7 +135,7 @@ public:
 		return false;
 	}
 	//ƒRƒ}ƒ“ƒh‚ğˆ—‚·‚é
-	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgSize)
+	bool HandleCommand(CEditView* View, EFunctionCode ID, const WCHAR* Arguments[], const int ArgLengths[], const int ArgSize)
 	{
 		switch ( LOWORD(ID) ) 
 		{

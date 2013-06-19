@@ -646,7 +646,6 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				// To Here Jun. 6, 2005 ‚©‚ë‚Æ
 			}
 		}else{
-			//	HandleCommand( F_INSTEXT_W, false, (LPARAM)GetDllShareData().m_sSearchKeywords.m_aReplaceKeys[0], FALSE, 0, 0 );
 			Command_INSTEXT( false, cMemRepKey.GetStringPtr(), cMemRepKey.GetStringLength(), TRUE );
 		}
 

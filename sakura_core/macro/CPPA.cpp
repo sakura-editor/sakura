@@ -406,18 +406,21 @@ void __stdcall CPPA::stdProc(
 
 	//Argument‚ðwchar_t[]‚É•ÏŠ· -> tmpArguments
 	WCHAR** tmpArguments2=new WCHAR*[ArgSize];
+	int* tmpArgLengths = new int[ArgSize];
 	for(int i=0;i<ArgSize;i++){
 		if(Argument[i]){
 			tmpArguments2[i]=mbstowcs_new(Argument[i]);
+			tmpArgLengths[i]=wcslen(tmpArguments2[i]);
 		}
 		else{
 			tmpArguments2[i]=NULL;
+			tmpArgLengths[i]=0;
 		}
 	}
 	const WCHAR** tmpArguments=(const WCHAR**)tmpArguments2;
 
 	//ˆ—
-	bool bRet = CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments, ArgSize );
+	bool bRet = CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments,tmpArgLengths, ArgSize );
 	if( !bRet ){
 		*Err_CD = Index + 1;
 	}
@@ -430,6 +433,7 @@ void __stdcall CPPA::stdProc(
 		}
 	}
 	delete[] tmpArguments2;
+	delete[] tmpArgLengths;
 }
 
 //----------------------------------------------------------------------
