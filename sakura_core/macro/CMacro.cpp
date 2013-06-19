@@ -988,6 +988,29 @@ bool CMacro::HandleCommand(
 	case F_PREVWINDOW:
 		pcEditView->GetDocument()->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWが動作しなかったのを修正
 		break;
+	case F_MESSAGEBOX:	// メッセージボックスの表示
+	case F_ERRORMSG:	// メッセージボックス（エラー）の表示
+	case F_WARNMSG:		// メッセージボックス（警告）の表示
+	case F_INFOMSG:		// メッセージボックス（情報）の表示
+	case F_OKCANCELBOX:	// メッセージボックス（確認：OK／キャンセル）の表示
+	case F_YESNOBOX:	// メッセージボックス（確認：はい／いいえ）の表示
+		{
+			VARIANT vArg[2];			// HandleFunctionに渡す引数
+			VARIANT vResult;			// HandleFunctionから返る値
+			if( Argument[0] == NULL ){
+				break;
+			}
+			SysString S( Argument[0], wcslen(Argument[0]) );
+			Wrap( &vArg[0] )->Receive( S );
+			int nArgSize = 1;
+			//	2つ目の引数が数値。
+			if( F_MESSAGEBOX == LOWORD(Index) ){
+				vArg[1].vt = VT_I4;
+				vArg[1].intVal = (Argument[1] != NULL ? _wtoi(Argument[1]) : 0 );
+				nArgSize = 2;
+			}
+			return HandleFunction( pcEditView, Index, vArg, nArgSize, vResult );
+		}
 	case F_MOVECURSORLAYOUT:
 	case F_MOVECURSOR:
 		{
@@ -1005,6 +1028,7 @@ bool CMacro::HandleCommand(
 		break;
 	case F_CHGTABWIDTH:		//  タブサイズを取得、設定する（キーマクロでは取得は無意味）
 	case F_CHGWRAPCOLUMN:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
+	case F_MACROSLEEP:
 	case F_SETDRAWSWITCH:	//  再描画スイッチを取得、設定する
 		{
 			VARIANT vArg[1];			// HandleFunctionに渡す引数
@@ -1019,6 +1043,43 @@ bool CMacro::HandleCommand(
 			int val0 = Argument[0] != NULL ? _wtoi(Argument[0]) : 0;
 			int val1 = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)val0, (LPARAM)val1, 0, 0 );
+		}
+		break;
+	case F_STATUSMSG:
+		{
+			if( Argument[0] == NULL ){
+				::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
+					_T("引数(文字列)が指定されていません．") );
+				return false;
+			}
+			std::tstring val0 = to_tchar(Argument[0]);
+			int val1 = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
+			if( (val1 & 0x03) == 0 ){
+				pcEditView->SendStatusMessage( val0.c_str() );
+			}else if( (val1 & 0x03) == 1 ){
+				if( NULL != pcEditView->GetDocument()->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ){
+					pcEditView->SendStatusMessage( val0.c_str() );
+				}else{
+					InfoMessage( pcEditView->GetHwnd(), _T("%ts"), val0.c_str() );
+				}
+			}else if( (val1 & 0x03) == 2 ){
+				pcEditView->m_pcEditDoc->m_pcEditWnd->m_cStatusBar.SendStatusMessage2( val0.c_str() );
+			}
+		}
+		break;
+	case F_MSGBEEP:
+		{
+			int val0 = Argument[0] != NULL ? _wtoi(Argument[0]) : 0;
+			switch( val0 ){
+			case -1: break;
+			case 0: val0 = MB_OK; break;
+			case 1: val0 = MB_ICONERROR; break;
+			case 2: val0 = MB_ICONQUESTION; break;
+			case 3: val0 = MB_ICONWARNING; break;
+			case 4: val0 = MB_ICONINFORMATION; break;
+			default: val0 = MB_OK; break;
+			}
+			::MessageBeep( val0 );
 		}
 		break;
 	case F_COMMITUNDOBUFFER:
@@ -1761,6 +1822,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_GETDRAWSWITCH:
 		{
 			int ret = (View->GetDrawSwitch() ? 1: 0);
+			Wrap( &Result )->Receive( ret );
+			return true;
+		}
+	case F_ISSHOWNSTATUS:
+		{
+			int ret = (NULL != View->GetDocument()->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ? 1: 0);
 			Wrap( &Result )->Receive( ret );
 			return true;
 		}
