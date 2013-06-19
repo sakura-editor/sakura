@@ -237,17 +237,25 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 		}
 	}
 	
-	char szArguments[4][20];	//	引数用バッファ
+	char szArguments[8][20];	//	引数用バッファ
 	int i;
-	for (i=0; i<4; i++){
-		if ( cMacroFuncInfo.m_varArguments[i] == VT_EMPTY ){
+	for (i=0; i<8; i++){
+		VARTYPE type = VT_EMPTY;
+		if( i < 4 ){
+			type = cMacroFuncInfo.m_varArguments[i];
+		}else{
+			if( cMacroFuncInfo.m_pData && cMacroFuncInfo.m_pData->m_nArgSize < i ){
+				type = cMacroFuncInfo.m_pData->m_pVarArgEx[i];
+			}
+		}
+		if ( type == VT_EMPTY ){
 			break;
 		}
-		if ( cMacroFuncInfo.m_varArguments[i] == VT_BSTR ){
+		if ( type == VT_BSTR ){
 			strcpy( szArguments[i], "s0: string" );
 			szArguments[i][1] = '0' + (char)i;
 		}
-		else if ( cMacroFuncInfo.m_varArguments[i] == VT_I4 ){
+		else if ( type == VT_I4 ){
 			strcpy( szArguments[i], "i0: Integer" );
 			szArguments[i][1] = '0' + (char)i;
 		}
@@ -257,7 +265,7 @@ char* CPPA::GetDeclarations( const MacroFuncInfo& cMacroFuncInfo, char* szBuffer
 	}
 	if ( i > 0 ){	//	引数があったとき
 		int j;
-		char szArgument[80];
+		char szArgument[8*20];
 		// 2002.12.06 Moca 原因不明だが，strcatがVC6Proでうまく動かなかったため，strcpyにしてみたら動いた
 		strcpy( szArgument, szArguments[0] );
 		for ( j=1; j<i; j++){
@@ -523,20 +531,29 @@ bool CPPA::CallHandleFunction(
 	int ArgSize, VARIANT* Result )
 {
 	int i, ArgCnt;
-	VARIANT vtArg[4];
+	const int maxArgSize = 8;
+	VARIANT vtArg[maxArgSize];
 	const MacroFuncInfo* mfi;
 	bool Ret;
 
 	mfi = CSMacroMgr::GetFuncInfoByID(Index);
-	for( i=0; i<4; i++ ){
+	for( i=0; i<maxArgSize && i<ArgSize; i++ ){
 		::VariantInit( &vtArg[i] );
 	}
-	for(i=0, ArgCnt=0; i<4 && i<ArgSize; i++ ){
-		if(VT_EMPTY == mfi->m_varArguments[i]){
+	for(i=0, ArgCnt=0; i<maxArgSize && i<ArgSize; i++ ){
+		VARTYPE type = VT_EMPTY;
+		if( i < 4 ){
+			type = mfi->m_varArguments[i];
+		}else{
+			if( mfi->m_pData && mfi->m_pData->m_nArgSize < i ){
+				type = mfi->m_pData->m_pVarArgEx[i];
+			}
+		}
+		if(VT_EMPTY == type){
 			break;
 		}
 
-		switch( mfi->m_varArguments[i] ){
+		switch( type ){
 		case VT_I4:
 		{
 			vtArg[i].vt = VT_I4;
@@ -550,7 +567,7 @@ bool CPPA::CallHandleFunction(
 			break;
 		}
 		default:
-			for( i=0; i<4; i++ ){
+			for( i=0; i<maxArgSize && i<ArgSize; i++ ){
 				::VariantClear( &vtArg[i] );
 			}
 			return false;
@@ -561,12 +578,12 @@ bool CPPA::CallHandleFunction(
 	if(Index >= F_FUNCTION_FIRST)
 	{
 		Ret = CMacro::HandleFunction(m_CurInstance->m_pcEditView, (EFunctionCode)Index, vtArg, ArgCnt, *Result);
-		for( i=0; i<4; i++ ){
+		for( i=0; i<maxArgSize && i<ArgSize; i++ ){
 			::VariantClear( &vtArg[i] );
 		}
 		return Ret;
 	}else{
-		for( i=0; i<4; i++ ){
+		for( i=0; i<maxArgSize && i<ArgSize; i++ ){
 			::VariantClear( &vtArg[i] );
 		}
 		return false;

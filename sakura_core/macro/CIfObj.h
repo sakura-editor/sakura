@@ -84,7 +84,7 @@ public:
 		FUNCDESC		Desc;
 		wchar_t			Name[64];
 		CIfObjMethod	Method;
-		ELEMDESC		Arguments[8];
+		ELEMDESC		Arguments[9];
 		int				ID;
 	};
 	typedef std::vector<CMethodInfo> CMethodInfoList;

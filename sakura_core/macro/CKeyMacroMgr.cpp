@@ -214,10 +214,14 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 			// Jun. 16, 2002 genta プロトタイプチェック用に追加
 			int nArgs;
 			const MacroFuncInfo* mInfo= CSMacroMgr::GetFuncInfoByID( nFuncID );
-			//	Skip Space
+			VARTYPE type = VT_EMPTY;
+			int nArgSizeMax = _countof( mInfo->m_varArguments );
+			if( mInfo->m_pData  ){
+				nArgSizeMax = mInfo->m_pData->m_nArgSize;
+			}
 			for(nArgs = 0; szLine[i] ; ++nArgs ) {
 				// Jun. 16, 2002 genta プロトタイプチェック
-				if( nArgs >= _countof( mInfo->m_varArguments ) ){
+				if( nArgs >= nArgSizeMax ){
 					::MYMESSAGEBOX(
 						NULL,
 						MB_OK | MB_ICONSTOP | MB_TOPMOST,
@@ -228,7 +232,16 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 					);
 					m_nReady = false;
 				}
+				VARTYPE type = VT_EMPTY;
+				if( nArgs < 4 ){
+					type = mInfo->m_varArguments[nArgs];
+				}else{
+					if( mInfo->m_pData && mInfo->m_pData->m_nArgSize < nArgs ){
+						type = mInfo->m_pData->m_pVarArgEx[nArgs];
+					}
+				}
 
+				//	Skip Space
 				while( szLine[i] == LTEXT(' ') || szLine[i] == LTEXT('\t') )
 					i++;
 
@@ -237,8 +250,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
 				if( LTEXT('\'') == szLine[i] || LTEXT('\"') == szLine[i]  ){	//	'で始まったら文字列だよきっと。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
-					if( mInfo->m_varArguments[nArgs] != VT_BSTR && 
-						mInfo->m_varArguments[nArgs] != VT_EMPTY ){
+					if( type != VT_BSTR && 
+						type != VT_EMPTY ){
 						::MYMESSAGEBOX(
 							NULL,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,
@@ -300,8 +313,8 @@ BOOL CKeyMacroMgr::LoadKeyMacro( HINSTANCE hInstance, const TCHAR* pszPath )
  				else if ( Is09(szLine[i]) || szLine[i] == L'-' ){	//	数字で始まったら数字列だ(-記号も含む)。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
-					if( mInfo->m_varArguments[nArgs] != VT_I4 &&
-						mInfo->m_varArguments[nArgs] != VT_EMPTY){
+					if( type != VT_I4 &&
+						type != VT_EMPTY){
 						::MYMESSAGEBOX(
 							NULL,
 							MB_OK | MB_ICONSTOP | MB_TOPMOST,

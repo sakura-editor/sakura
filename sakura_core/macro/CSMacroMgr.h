@@ -48,14 +48,20 @@ const int STAND_KEYMACRO	= -1;	//!< 標準マクロ(キーマクロ)
 const int TEMP_KEYMACRO		= -2;	//!< 一時マクロ(名前を指定してマクロ実行)
 const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
+struct MacroFuncInfoEx
+{
+	int			m_nArgSize;
+	VARTYPE*	m_pVarArgEx;
+};
+
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
-	EFunctionCode	m_nFuncID;
+	int				m_nFuncID;
 	const WCHAR*	m_pszFuncName;
 	VARTYPE			m_varArguments[4];	//!< 引数の型の配列
 	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
-	wchar_t*		m_pszData;
+	MacroFuncInfoEx*	m_pData;
 };
 //マクロ関数情報構造体配列
 typedef MacroFuncInfo* MacroFuncInfoArray;

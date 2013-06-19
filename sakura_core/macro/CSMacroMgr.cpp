@@ -30,6 +30,15 @@
 #include "view/CEditView.h"
 #include "debug/CRunningTimer.h"
 
+VARTYPE s_MacroArgEx_i[] = {VT_I4};
+MacroFuncInfoEx s_MacroInfoEx_i = {5, s_MacroArgEx_i};
+#if 0
+VARTYPE s_MacroArgEx_ii[] = {VT_I4, VT_I4};
+MacroFuncInfoEx s_MacroInfoEx_ii = {6, s_MacroArgEx_ii};
+VARTYPE s_MacroArgEx_s[] = {VT_BSTR};
+MacroFuncInfoEx s_MacroInfoEx_s = {5, s_MacroArgEx_s};
+#endif
+
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = 
 {
 //	機能番号			関数名			引数				作業用バッファ
@@ -241,7 +250,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_REPLACE_ALL,				LTEXT("ReplaceAll"),		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, //すべて置換(実行)
 	{F_SEARCH_CLEARMARK,		LTEXT("SearchClearMark"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索マークのクリア
 	{F_JUMP_SRCHSTARTPOS,		LTEXT("SearchStartPos"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //検索開始位置へ戻る			// 02/06/26 ai
-	{F_GREP,					LTEXT("Grep"),				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	NULL}, //Grep
+	{F_GREP,					LTEXT("Grep"),				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	&s_MacroInfoEx_i}, //Grep
 	{F_JUMP,					LTEXT("Jump"),				{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //指定行ヘジャンプ
 	{F_OUTLINE,					LTEXT("Outline"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //アウトライン解析
 	{F_TAGJUMP,					LTEXT("TagJump"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, //タグジャンプ機能
@@ -827,7 +836,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	// コマンド関数を検索
 	for( int i = 0; m_MacroFuncInfoCommandArr[i].m_pszFuncName != NULL; ++i ){
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoCommandArr[i].m_pszFuncName )){
-			EFunctionCode nFuncID = m_MacroFuncInfoCommandArr[i].m_nFuncID;
+			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoCommandArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
 				::LoadStringW_AnyBuild( hInstance, nFuncID, pszFuncNameJapanese, 255 );
 			}
@@ -837,7 +846,7 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 	// 非コマンド関数を検索
 	for( int i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( 0 == auto_strcmp( normalizedFuncName, m_MacroFuncInfoArr[i].m_pszFuncName )){
-			EFunctionCode nFuncID = m_MacroFuncInfoArr[i].m_nFuncID;
+			EFunctionCode nFuncID = EFunctionCode(m_MacroFuncInfoArr[i].m_nFuncID);
 			if( pszFuncNameJapanese != NULL ){
 				::LoadStringW_AnyBuild( hInstance, nFuncID, pszFuncNameJapanese, 255 );
 			}
