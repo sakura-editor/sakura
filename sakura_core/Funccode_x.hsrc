@@ -471,6 +471,8 @@ F_TEXTWRAPMETHOD		= 32805,		// テキストの折り返し方法					なし
 F_INSBOXTEXT			= 32806,		// 矩形テキスト挿入
 F_MOVECURSOR			= 32807,		// カーソル移動
 F_MOVECURSORLAYOUT		= 32808,		// カーソル移動(レイアウト)
+F_STATUSMSG				= 32809,		// ステータスメッセージ
+F_MSGBEEP				= 32810,		// ビープ音
 F_COMMITUNDOBUFFER	= 32813,	// OpeBlKコミット
 F_ADDREFUNDOBUFFER	= 32814,	// OpeBlK AddRef
 F_SETUNDOBUFFER		= 32815,	// OpeBlK Release
@@ -523,6 +525,7 @@ F_DELETECOOKIE		= 40043,	// Cookie削除
 F_GETCOOKIENAMES	= 40044,	// Cookie名前取得
 F_SETDRAWSWITCH		= 40045,	// 再描画スイッチ設定
 F_GETDRAWSWITCH		= 40046,	// 再描画スイッチ取得
+F_ISSHOWNSTATUS		= 40047,	// ステータスウィンドウが表示されているか
 
 
 //	= 2005,.01.10 genta ISearch用補助コード
