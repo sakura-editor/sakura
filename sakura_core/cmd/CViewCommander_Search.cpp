@@ -693,8 +693,8 @@ void CViewCommander::Command_REPLACE_ALL()
 	// From Here 2001.12.03 hor
 	if( nPaste && !GetDocument()->m_cDocEditor.IsEnablePaste() ){
 		OkMessage( m_pCommanderView->GetHwnd(), _T("クリップボードに有効なデータがありません！") );
-		::CheckDlgButton( m_pCommanderView->GetHwnd(), IDC_CHK_PASTE, FALSE );
-		::EnableWindow( ::GetDlgItem( m_pCommanderView->GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
+		::CheckDlgButton( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_CHK_PASTE, FALSE );
+		::EnableWindow( ::GetDlgItem( GetEditWindow()->m_cDlgReplace.GetHwnd(), IDC_COMBO_TEXT2 ), TRUE );
 		return;	// TRUE;
 	}
 	// To Here 2001.12.03 hor
@@ -798,6 +798,9 @@ void CViewCommander::Command_REPLACE_ALL()
 		if ( !m_pCommanderView->MyGetClipboardData( cmemClip, &bColumnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: NULL ) )
 		{
 			ErrorBeep();
+			::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
+			::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
+			::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), TRUE );
 			return;
 		}
 
@@ -808,12 +811,18 @@ void CViewCommander::Command_REPLACE_ALL()
 			if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )
 			{
 				ErrorBeep();
+				::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
+				::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
+				::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), TRUE );
 				return;
 			}
 
 			// 現在のフォントは固定幅フォントである
 			if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )
 			{
+				::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
+				::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
+				::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), TRUE );
 				return;
 			}
 		}
@@ -860,26 +869,28 @@ void CViewCommander::Command_REPLACE_ALL()
 	// 呼ばれて遅くなるので、ここで宣言。
 	CBregexp cRegexp;
 	// 初期化も同様に毎ループごとにやると遅いので、最初に済ましてしまう。
-	if( bRegularExp )
+	if( bRegularExp && nPaste == 0 )
 	{
 		if ( !InitRegexp( m_pCommanderView->GetHwnd(), cRegexp, true ) )
 		{
+			::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
+			::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
+			::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), TRUE );
 			return;
 		}
 
-		const CNativeW	cMemRepKey( szREPLACEKEY, wcslen(szREPLACEKEY) );
 		// Nov. 9, 2005 かろと 正規表現で選択始点・終点への挿入方法を変更(再)
 		CNativeW cMemRepKey2;
 		CNativeW cMemMatchStr;
 		cMemMatchStr.SetString(L"$&");
 		if (nReplaceTarget == 1 ) {	//選択始点へ挿入
-			cMemRepKey2 = cMemRepKey;
+			cMemRepKey2 = cmemClip;
 			cMemRepKey2 += cMemMatchStr;
 		} else if (nReplaceTarget == 2) { // 選択終点へ挿入
 			cMemRepKey2 = cMemMatchStr;
-			cMemRepKey2 += cMemRepKey;
+			cMemRepKey2 += cmemClip;
 		} else {
-			cMemRepKey2 = cMemRepKey;
+			cMemRepKey2 = cmemClip;
 		}
 		// 正規表現オプションの設定2006.04.01 かろと
 		int nFlag = (m_pCommanderView->m_sCurSearchOption.bLoHiCase ? CBregexp::optCaseSensitive : CBregexp::optNothing);
@@ -908,6 +919,9 @@ void CViewCommander::Command_REPLACE_ALL()
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( hwndCancel ) )
 		{
+			::EnableWindow( m_pCommanderView->GetHwnd(), TRUE );
+			::EnableWindow( ::GetParent( m_pCommanderView->GetHwnd() ), TRUE );
+			::EnableWindow( ::GetParent( ::GetParent( m_pCommanderView->GetHwnd() ) ), TRUE );
 			return;// -1;
 		}
 
@@ -1031,9 +1045,10 @@ void CViewCommander::Command_REPLACE_ALL()
 			else
 			{
 				Command_PASTEBOX(szREPLACEKEY, nREPLACEKEY);
+				// 2013.06.11 再描画しないように
 				// 再描画を行わないとどんな結果が起きているのか分からずみっともないので・・・。
-				m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
-				m_pCommanderView->Redraw();
+				// m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
+				// m_pCommanderView->Redraw();
 			}
 			++nReplaceNum;
 		}
