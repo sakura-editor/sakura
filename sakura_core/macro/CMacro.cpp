@@ -166,12 +166,16 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputLine				? 0x20 : 0x00;
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 2)		? 0x40 : 0x00;	//	CShareDataに入れなくていいの？
 			lFlag |= (GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle == 3)		? 0x80 : 0x00;
-			lFlag |= GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet << 8;
+			ECodeType code = GetDllShareData().m_Common.m_sSearch.m_nGrepCharSet;
+			if( IsValidCodeType(code) || CODE_AUTODETECT == code ){
+				lFlag |= code << 8;
+			}
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_sSearchOption.bWordOnly		? 0x10000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputFileOnly			? 0x20000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepOutputBaseFolder		? 0x40000 : 0x00;
 			lFlag |= GetDllShareData().m_Common.m_sSearch.m_bGrepSeparateFolder			? 0x80000 : 0x00;
 			AddIntParam( lFlag );
+			AddIntParam( code );
 		}
 		break;
 	/*	数値パラメータを追加 */
@@ -280,6 +284,23 @@ bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 	return CMacro::HandleCommand(pcEditView, (EFunctionCode)(m_nFuncID | flags), paramArr, paramLenArr, i);
 }
 
+WCHAR* CMacro::GetParamAt(CMacroParam* p, int index)
+{
+	CMacroParam* x = p;
+	int i = 0;
+	while(i < index){
+		if( x == NULL ){
+			return NULL;
+		}
+		x = x->m_pNext;
+		i++;
+	}
+	if( x == NULL ){
+		return NULL;
+	}
+	return x->m_pData;
+}
+
 /*	CMacroを再現するための情報をhFileに書き出します。
 
 	InsText("なんとか");
@@ -305,10 +326,9 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 			cmemWork.SetString( pText, nTextLen );
 			cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
 			cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
-			out.WriteF(
-				LTEXT("S_%ls(\'%ls\');\t// %ls\r\n"),
-				szFuncName,
-				cmemWork.GetStringPtr(),
+			out.WriteF( L"S_%ls(\'", szFuncName );
+			out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
+			out.WriteF( L"\');\t// %ls\r\n",
 				szFuncNameJapanese
 			);
 			break;
@@ -401,13 +421,16 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				cmemWork3.Replace( LTEXT("\'"), LTEXT("\\\'") );
 				out.WriteF( L"S_%ls(\'", szFuncName );
 				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
-				out.WriteF(
-					L"\', \'%ls\', \'%ls\', %d);\t// %ls\r\n",
-					cmemWork2.GetStringPtr(),
-					cmemWork3.GetStringPtr(),
-					m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pNext->m_pNext->m_pData) : 0,
-					szFuncNameJapanese
-				);
+				out.WriteString( L"\', \'" );
+				out.WriteString( cmemWork2.GetStringPtr(), cmemWork2.GetStringLength() );
+				out.WriteString( L"\', \'" );
+				out.WriteString( cmemWork3.GetStringPtr(), cmemWork3.GetStringLength() );
+				out.WriteF( L"', %d", (GetParamAt(m_pParamTop, 3) ? _wtoi(GetParamAt(m_pParamTop, 3)) : 0) );
+				// 古いマクロは引数4つなので5つめはオプション
+				if( GetParamAt(m_pParamTop, 4) ){
+					out.WriteF( L", %d", _wtoi(GetParamAt(m_pParamTop, 4)) );
+				}
+				out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
 			}
 			break;
 		default:
@@ -862,6 +885,10 @@ bool CMacro::HandleCommand(
 				int nCode = (lFlag >> 8) & 0xff; // 下から 7-15 ビット目(0開始)を使う
 				if( IsValidCodeTypeExceptSJIS(nCode) || CODE_AUTODETECT == nCode ){
 					nCharSet = (ECodeType)nCode;
+				}
+				// 2013.06.11 5番目の引き数を文字コードにする
+				if( 5 <= ArgSize ){
+					nCharSet = (ECodeType)_wtoi(Argument[4]);
 				}
 			}
 

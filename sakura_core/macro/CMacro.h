@@ -93,6 +93,7 @@ protected:
 		WCHAR*			m_pData;
 		CMacroParam*	m_pNext;
 	};
+	static WCHAR* GetParamAt(CMacroParam*, int);
 
 	/*
 	||  À‘•ƒwƒ‹ƒpŠÖ”
