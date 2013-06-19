@@ -170,6 +170,17 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 	if (hStdIn == NULL) {	/* 標準入力を制御しない場合、または一時ファイルの生成に失敗した場合 */
 		bSendStdin = FALSE;
 		hStdIn = GetStdHandle( STD_INPUT_HANDLE );
+		if(hStdIn == NULL){
+			// 2013.06.12 Moca 標準入力ハンドルを用意する
+			HANDLE hStdInWrite = NULL;
+			if( CreatePipe( &hStdIn, &hStdInWrite, &sa, 1000 ) == FALSE ) {
+				//エラー
+				hStdIn = hStdInWrite = NULL;
+			}
+			if( hStdInWrite != NULL ){
+				::CloseHandle( hStdInWrite );
+			}
+		}
 	}
 	// To Here 2007.03.18 maru 子プロセスの標準入力ハンドル
 	
@@ -542,7 +553,7 @@ user_cancel:
 
 finish:
 	//終了処理
-	if(bSendStdin) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
+	if(hStdIn != NULL) CloseHandle( hStdIn );	/* 2007.03.18 maru 標準入力の制御のため */
 	if(hStdOutWrite) CloseHandle( hStdOutWrite );
 	CloseHandle( hStdOutRead );
 	if( pi.hProcess ) CloseHandle( pi.hProcess );
