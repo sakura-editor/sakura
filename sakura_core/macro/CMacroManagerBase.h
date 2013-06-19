@@ -36,12 +36,13 @@ class CEditView;
 
 class CMacroBeforeAfter {
 public:
-	CMacroBeforeAfter() : m_nOpeBlkCount(0){};
+	CMacroBeforeAfter() : m_nOpeBlkCount(0), m_bDrawSwitchOld(true){};
 	virtual ~CMacroBeforeAfter(){};
 	virtual void ExecKeyMacroBefore( class CEditView* pcEditView, int flags );
 	virtual void ExecKeyMacroAfter( class CEditView* pcEditView, int flags, bool bRet );
 private:
 	int m_nOpeBlkCount;
+	bool m_bDrawSwitchOld;
 };
 
 /*!

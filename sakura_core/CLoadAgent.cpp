@@ -265,10 +265,13 @@ void CLoadAgent::OnFinalLoad(ELoadResult eLoadResult)
 	}
 
 	//Ä•`‰æ $$•s‘«
-	CEditWnd::getInstance()->GetActiveView().SetDrawSwitch(true);
-	CEditWnd::getInstance()->Views_RedrawAll(); //ƒrƒ…[Ä•`‰æ
-	InvalidateRect( CEditWnd::getInstance()->GetHwnd(), NULL, TRUE );
-	//m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+	// CEditWnd::getInstance()->GetActiveView().SetDrawSwitch(true);
+	bool bDraw = CEditWnd::getInstance()->GetActiveView().GetDrawSwitch();
+	if( bDraw ){
+		CEditWnd::getInstance()->Views_RedrawAll(); //ƒrƒ…[Ä•`‰æ
+		InvalidateRect( CEditWnd::getInstance()->GetHwnd(), NULL, TRUE );
+		//m_cEditViewArr[m_nActivePaneIndex].DrawCaretPosInfo();
+	}
 	CCaret& cCaret = CEditWnd::getInstance()->GetActiveView().GetCaret();
 	cCaret.MoveCursor(cCaret.GetCaretLayoutPos(),true);
 	CEditWnd::getInstance()->GetActiveView().AdjustScrollBars();

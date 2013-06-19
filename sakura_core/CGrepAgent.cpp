@@ -358,7 +358,7 @@ DWORD CGrepAgent::DoGrep(
 //	SetDrawSwitch(false);
 	if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
 		CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
-	pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
+	const bool bDrawSwitchOld = pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
 
 	CGrepEnumFiles cGrepExceptAbsFiles;
 	cGrepExceptAbsFiles.Enumerates(_T(""), cGrepEnumKeys.m_vecExceptAbsFileKeys);
@@ -424,7 +424,7 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->m_bDoing_UndoRedo = false;
 
 	/* 表示処理ON/OFF */
-	pCEditWnd->SetDrawSwitchOfAllViews( true );
+	pCEditWnd->SetDrawSwitchOfAllViews( bDrawSwitchOld );
 
 	/* 再描画 */
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji

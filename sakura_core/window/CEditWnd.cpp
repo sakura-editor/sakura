@@ -4312,13 +4312,15 @@ int CEditWnd::GetActivePane( void ) const
 
 	@date 2008.06.08 ryoji 新規作成
 */
-void CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
+bool CEditWnd::SetDrawSwitchOfAllViews( bool bDraw )
 {
 	int i;
+	bool bDrawSwitchOld = GetActiveView().GetDrawSwitch();
 
 	for( i = 0; i < GetAllViewCount(); i++ ){
 		GetView(i).SetDrawSwitch( bDraw );
 	}
+	return bDrawSwitchOld;
 }
 
 
@@ -4459,9 +4461,9 @@ void CEditWnd::ChangeLayoutParam( bool bShowProgress, CLayoutInt nTabSize, CLayo
 
 	//	座標の復元
 	//	レイアウト変更途中はカーソル移動の画面スクロールを見せない	// 2008.06.18 ryoji
-	SetDrawSwitchOfAllViews( false );
+	const bool bDrawSwitchOld = SetDrawSwitchOfAllViews( false );
 	RestorePhysPosOfAllView( posSave );
-	SetDrawSwitchOfAllViews( true );
+	SetDrawSwitchOfAllViews( bDrawSwitchOld );
 
 	for( int i = 0; i < GetAllViewCount(); i++ ){
 		if( GetView(i).GetHwnd() ){

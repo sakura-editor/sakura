@@ -327,7 +327,7 @@ re_do:;
 	}
 	else{
 		m_pCommanderView->SendStatusMessage( _T("▽見つかりませんでした") );
-		AlertNotFound( m_pCommanderView->GetHwnd(), _T("前方(↓) に差分が見つかりません。") );
+		AlertNotFound( m_pCommanderView->GetHwnd(), false, _T("前方(↓) に差分が見つかりません。") );
 	}
 
 	return;
@@ -380,7 +380,7 @@ re_do:;
 	}
 	else{
 		m_pCommanderView->SendStatusMessage( _T("△見つかりませんでした") );
-		AlertNotFound( m_pCommanderView->GetHwnd(), _T("後方(↑) に差分が見つかりません。") );
+		AlertNotFound( m_pCommanderView->GetHwnd(), false, _T("後方(↑) に差分が見つかりません。") );
 	}
 
 	return;

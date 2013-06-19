@@ -124,7 +124,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		}
 		return;
 	}
-	m_pCommanderView->SetDrawSwitch(false);	// 2002.01.25 hor
+	const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	// 2002.01.25 hor
 	/* 矩形範囲選択中か */
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 // 2012.10.31 Moca 上書きモードのときの選択範囲削除をやめる
@@ -370,7 +370,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		// To Here 2001.12.03 hor
 	}
 	/* 再描画 */
-	m_pCommanderView->SetDrawSwitch(true);	// 2002.01.25 hor
+	m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	// 2002.01.25 hor
 	m_pCommanderView->RedrawAll();			// 2002.01.25 hor	// 2009.07.25 ryoji Redraw()->RedrawAll()
 	return;
 }
