@@ -297,7 +297,7 @@ end_of_func:;
 			);
 		}
 		else{
-			AlertNotFound(hwndParent, _T("%ls"),pszNotFoundMessage);
+			AlertNotFound(hwndParent, bReplaceAll, _T("%ls"), pszNotFoundMessage);
 		}
 	}
 }
@@ -451,6 +451,7 @@ end_of_func:;
 		}
 		AlertNotFound(
 			hwndParent,
+			false,
 			_T("後方(↑) に文字列 '%ls' が１つも見つかりません。"),	//Jan. 25, 2001 jepro メッセージを若干変更
 			KeyName.GetStringPtr()
 		);
