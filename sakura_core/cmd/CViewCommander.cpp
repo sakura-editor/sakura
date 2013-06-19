@@ -397,7 +397,7 @@ BOOL CViewCommander::HandleCommand(
 	/* 検索系 */
 	case F_SEARCH_DIALOG:		Command_SEARCH_DIALOG();break;												//検索(単語検索ダイアログ)
 	case F_SEARCH_BOX:			Command_SEARCH_BOX();break;		// Jan. 13, 2003 MIK					//検索(ボックス)	// 2006.06.04 yukihane Command_SEARCH_BOX()
-	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( true, bRedraw, (HWND)lparam1, (const WCHAR*)lparam2 );break;	//次を検索
+	case F_SEARCH_NEXT:			Command_SEARCH_NEXT( true, bRedraw, false, (HWND)lparam1, (const WCHAR*)lparam2 );break;	//次を検索
 	case F_SEARCH_PREV:			Command_SEARCH_PREV( bRedraw, (HWND)lparam1 );break;						//前を検索
 	case F_REPLACE_DIALOG:	//置換(置換ダイアログ)
 		Command_REPLACE_DIALOG();	//@@@ 2002.2.2 YAZAKI ダイアログ呼び出しと、実行を分離
@@ -650,10 +650,10 @@ CLogicInt CViewCommander::ConvertEol(const wchar_t* pszText, CLogicInt nTextLen,
 
 	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
 */
-void CViewCommander::AlertNotFound(HWND hwnd, LPCTSTR format, ...)
+void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCTSTR format, ...)
 {
 	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
-		&& m_pCommanderView->GetDrawSwitch()	// ← たぶん「全て置換」実行中判定の代用品（もとは Command_SEARCH_NEXT() の中でだけ使用されていた）
+		&& !bReplaceAll
 	){
 		if( NULL == hwnd ){
 			hwnd = m_pCommanderView->GetHwnd();

@@ -277,7 +277,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
-	m_pCommanderView->SetDrawSwitch(false);	// 2002.01.25 hor
+	bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	// 2002.01.25 hor
 
 	// ‚Æ‚è‚ ‚¦‚¸‘I‘ð”ÍˆÍ‚ðíœ
 	// 2004.06.30 Moca m_pCommanderView->GetSelectionInfo().IsTextSelected()‚ª‚È‚¢‚Æ–¢‘I‘ðŽžAˆê•¶ŽšÁ‚¦‚Ä‚µ‚Ü‚¤
@@ -385,7 +385,7 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		);
 	}
 
-	m_pCommanderView->SetDrawSwitch(true);	// 2002.01.25 hor
+	m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	// 2002.01.25 hor
 	return;
 }
 

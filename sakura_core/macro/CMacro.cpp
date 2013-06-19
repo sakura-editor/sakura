@@ -1005,6 +1005,7 @@ bool CMacro::HandleCommand(
 		break;
 	case F_CHGTABWIDTH:		//  タブサイズを取得、設定する（キーマクロでは取得は無意味）
 	case F_CHGWRAPCOLUMN:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
+	case F_SETDRAWSWITCH:	//  再描画スイッチを取得、設定する
 		{
 			VARIANT vArg[1];			// HandleFunctionに渡す引数
 			VARIANT vResult;			// HandleFunctionから返る値
@@ -1746,6 +1747,22 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				return true;
 			}
 			return false;
+		}
+	case F_SETDRAWSWITCH:
+		{
+			if( 1 <= ArgSize ){
+				if( !VariantToI4(varCopy, Arguments[0]) ) return false;
+				int ret = (View->GetDocument()->m_pcEditWnd->SetDrawSwitchOfAllViews(varCopy.Data.iVal != 0) ? 1: 0);
+				Wrap( &Result )->Receive( ret );
+				return true;
+			}
+			return false;
+		}
+	case F_GETDRAWSWITCH:
+		{
+			int ret = (View->GetDrawSwitch() ? 1: 0);
+			Wrap( &Result )->Receive( ret );
+			return true;
 		}
 	default:
 		return false;

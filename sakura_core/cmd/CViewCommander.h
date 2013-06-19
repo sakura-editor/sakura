@@ -254,7 +254,7 @@ public:
 	/* 検索系 */
 	void Command_SEARCH_BOX( void );					/* 検索(ボックス) */	// 2006.06.04 yukihane
 	void Command_SEARCH_DIALOG( void );					/* 検索(単語検索ダイアログ) */
-	void Command_SEARCH_NEXT( bool, bool, HWND, const WCHAR* );/* 次を検索 */
+	void Command_SEARCH_NEXT( bool, bool, bool, HWND, const WCHAR* );/* 次を検索 */
 	void Command_SEARCH_PREV( bool bReDraw, HWND );		/* 前を検索 */
 	void Command_REPLACE_DIALOG( void );				/* 置換(置換ダイアログ) */
 	void Command_REPLACE( HWND hwndParent );			/* 置換(実行) 2002/04/08 YAZAKI 親ウィンドウを指定するように変更 */
@@ -386,7 +386,7 @@ public:
 //	void Command_SENDMAIL( void );		/* メール送信 */
 
 private:
-	void AlertNotFound(HWND hwnd, LPCTSTR format, ...);
+	void AlertNotFound(HWND hwnd, bool, LPCTSTR format, ...);
 	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 	bool Sub_PreProcTagJumpByTagsFile( TCHAR* szCurrentPath, int count ); // タグジャンプの前処理

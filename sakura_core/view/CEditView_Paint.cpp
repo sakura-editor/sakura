@@ -86,12 +86,15 @@ void CEditView_Paint::Call_OnPaint(
 */
 void CEditView::RedrawAll()
 {
-	// ウィンドウ全体を再描画
-	PAINTSTRUCT	ps;
-	HDC hdc = ::GetDC( GetHwnd() );
-	::GetClientRect( GetHwnd(), &ps.rcPaint );
-	OnPaint( hdc, &ps, FALSE );
-	::ReleaseDC( GetHwnd(), hdc );
+	
+	if( GetDrawSwitch() ){
+		// ウィンドウ全体を再描画
+		PAINTSTRUCT	ps;
+		HDC hdc = ::GetDC( GetHwnd() );
+		::GetClientRect( GetHwnd(), &ps.rcPaint );
+		OnPaint( hdc, &ps, FALSE );
+		::ReleaseDC( GetHwnd(), hdc );
+	}
 
 	// キャレットの表示
 	GetCaret().ShowEditCaret();
@@ -112,6 +115,10 @@ void CEditView::RedrawAll()
 // 2001/06/21 Start by asa-o 再描画
 void CEditView::Redraw()
 {
+	if( !GetDrawSwitch() ){
+		return;
+	}
+
 	HDC			hdc;
 	PAINTSTRUCT	ps;
 

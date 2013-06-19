@@ -297,7 +297,9 @@ CLayoutInt CCaret::MoveCursor(
 		if( t_abs( nScrollColNum ) >= m_pEditView->GetTextArea().m_nViewColNum ||
 			t_abs( nScrollRowNum ) >= m_pEditView->GetTextArea().m_nViewRowNum ){
 			m_pEditView->GetTextArea().OffsetViewTopLine(-nScrollRowNum);
-			m_pEditView->InvalidateRect( NULL );
+			if( m_pEditView->GetDrawSwitch() ){
+				m_pEditView->InvalidateRect( NULL );
+			}
 		}
 		else if( nScrollRowNum != 0 || nScrollColNum != 0 ){
 			RECT	rcClip;

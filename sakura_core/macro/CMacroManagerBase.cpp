@@ -43,6 +43,7 @@ void CMacroBeforeAfter::ExecKeyMacroBefore( class CEditView* pcEditView, int fla
 	}else{
 		m_nOpeBlkCount = 0;
 	}
+	m_bDrawSwitchOld = pcEditView->GetDrawSwitch();
 }
 
 void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flags, bool bRet )
@@ -62,6 +63,7 @@ void CMacroBeforeAfter::ExecKeyMacroAfter( class CEditView* pcEditView, int flag
 			pcEditView->SetUndoBuffer();
 		}
 	}
+	pcEditView->GetDocument()->m_pcEditWnd->SetDrawSwitchOfAllViews(m_bDrawSwitchOld);
 }
 
 // CMacroManagerBase

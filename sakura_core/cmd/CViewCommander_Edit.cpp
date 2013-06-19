@@ -335,7 +335,7 @@ void CViewCommander::Command_UNDO( void )
 
 	/* 現在のUndo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoUndo( &bIsModified ) ) ){
-		m_pCommanderView->SetDrawSwitch(false);	//	hor
+		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	//	hor
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		for( i = nOpeBlkNum - 1; i >= 0; i-- ){
 			pcOpe = pcOpeBlk->GetOpe( i );
@@ -419,7 +419,7 @@ void CViewCommander::Command_UNDO( void )
 				GetCaret().MoveCursor( ptCaretPos_Before, false );
 			}
 		}
-		m_pCommanderView->SetDrawSwitch(true);	//	hor
+		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	//	hor
 		m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 
 		/* Undo後の変更フラグ */
@@ -507,7 +507,7 @@ void CViewCommander::Command_REDO( void )
 
 	/* 現在のRedo対象の操作ブロックを返す */
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoRedo( &bIsModified ) ) ){
-		m_pCommanderView->SetDrawSwitch(false);	// 2007.07.22 ryoji
+		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	// 2007.07.22 ryoji
 		nOpeBlkNum = pcOpeBlk->GetNum();
 		for( i = 0; i < nOpeBlkNum; ++i ){
 			pcOpe = pcOpeBlk->GetOpe( i );
@@ -590,7 +590,7 @@ void CViewCommander::Command_REDO( void )
 				GetCaret().MoveCursor( ptCaretPos_After, false );
 			}
 		}
-		m_pCommanderView->SetDrawSwitch(true); // 2007.07.22 ryoji
+		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld); // 2007.07.22 ryoji
 		m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
 
 		/* Redo後の変更フラグ */

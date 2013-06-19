@@ -422,6 +422,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_SETCOOKIE,			LTEXT("SetCookie"),				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_EMPTY},	VT_I4,		NULL }, //Cookie設定
 	{F_DELETECOOKIE,		LTEXT("DeleteCookie"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //Cookie削除
 	{F_GETCOOKIENAMES,		LTEXT("GetCookieNames"),		{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //Cookie名前取得
+	{F_SETDRAWSWITCH,		LTEXT("SetDrawSwitch"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //再描画スイッチ設定
+	{F_GETDRAWSWITCH,		LTEXT("GetDrawSwitch"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //再描画スイッチ取得
 
 	//	終端
 	//	Jun. 27, 2002 genta

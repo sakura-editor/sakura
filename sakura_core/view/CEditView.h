@@ -266,9 +266,11 @@ public:
 	{
 		return m_bDrawSWITCH;
 	}
-	void SetDrawSwitch(bool b)
+	bool SetDrawSwitch(bool b)
 	{
+		bool bOld = m_bDrawSWITCH;
 		m_bDrawSWITCH = b;
+		return bOld;
 	}
 	bool IsDrawCursorVLinePos( int );
 	void DrawBracketCursorLine( bool );
