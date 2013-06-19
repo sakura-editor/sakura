@@ -443,16 +443,27 @@ bool CDocFileOperation::FileSave()
 
 	@date 2006.12.30 ryoji CEditView::Command_FILESAVEAS_DIALOG()から処理本体を切り出し
 */
-bool CDocFileOperation::FileSaveAs( const WCHAR* filename, EEolType eEolType )
+bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, EEolType eEolType, bool bDialog )
 {
 	//セーブ情報
 	SSaveInfo sSaveInfo;
 	m_pcDocRef->GetSaveInfo(&sSaveInfo);
+	sSaveInfo.cEol = EOL_NONE; // 初期値は変換しない
 	if( filename ){
+		// ダイアログなし保存、またはマクロの引数あり
 		sSaveInfo.cFilePath = to_tchar(filename);
-		sSaveInfo.cEol = eEolType;
-	}else{
-		if(CAppMode::getInstance()->IsViewMode())sSaveInfo.cFilePath = _T(""); //※読み込み専用モードのときはファイル名を指定しない
+		if( EOL_NONE <= eEolType && eEolType < EOL_CODEMAX ){
+			sSaveInfo.cEol = eEolType;
+		}
+		if( IsValidCodeType(eCodeType) && eCodeType != sSaveInfo.eCharCode ){
+			sSaveInfo.eCharCode = eCodeType;
+			sSaveInfo.bBomExist = CCodeTypeName(eCodeType).IsBomDefOn();
+		}
+	}
+	if( bDialog ){
+		if(!filename && CAppMode::getInstance()->IsViewMode()){
+			sSaveInfo.cFilePath = _T(""); //※読み込み専用モードのときはファイル名を指定しない
+		}
 
 		//ダイアログ表示
 		if(!SaveFileDialog(&sSaveInfo))return false;

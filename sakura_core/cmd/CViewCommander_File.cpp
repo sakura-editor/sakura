@@ -98,17 +98,38 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 	@date 2003.03.30 genta 「閉じて開く」から利用するために引数追加
 	@date 2004.10.09 genta 実装をCEditDocへ移動
 */
-void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCode, bool bViewMode )
+void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCode, bool bViewMode, const WCHAR* defaultName )
 {
+	if( !IsValidCodeType(nCharCode) && nCharCode != CODE_AUTODETECT ){
+		nCharCode = CODE_AUTODETECT;
+	}
 	//ロード情報
 	SLoadInfo sLoadInfo(filename?to_tchar(filename):_T(""), nCharCode, bViewMode);
 	std::vector<std::tstring> files;
+	std::tstring defName = (defaultName?to_tchar(defaultName):_T(""));
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
+		if( !defName.empty() ){
+			TCHAR szPath[_MAX_PATH];
+			TCHAR szDir[_MAX_DIR];
+			TCHAR szName[_MAX_FNAME];
+			TCHAR szExt  [_MAX_EXT];
+			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
+			auto_strcat(szPath, szDir);
+			if( 0 == auto_stricmp(defName.c_str(), szPath) ){
+				// defNameはフォルダ名だった
+			}else{
+				CFilePath path = defName.c_str();
+				if( 0 == auto_stricmp(path.GetDirPath().c_str(), szPath) ){
+					// フォルダ名までは実在している
+					sLoadInfo.cFilePath = defName.c_str();
+				}
+			}
+		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
 			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
-			NULL,								//[in]  フォルダ
+			defName.length()==0 ? NULL : defName.c_str(),	//[in]  フォルダ
 			&sLoadInfo,							//[out] ロード情報受け取り
 			files								//[out] ファイル名
 		);
@@ -174,9 +195,9 @@ bool CViewCommander::Command_FILESAVE( bool warnbeep, bool askname )
 
 
 /* 名前を付けて保存ダイアログ */
-bool CViewCommander::Command_FILESAVEAS_DIALOG()
+bool CViewCommander::Command_FILESAVEAS_DIALOG(const WCHAR* fileNameDef,ECodeType eCodeType, EEolType eEolType)
 {
-	return 	GetDocument()->m_cDocFileOperation.FileSaveAs();
+	return 	GetDocument()->m_cDocFileOperation.FileSaveAs(fileNameDef, eCodeType, eEolType, true);
 }
 
 
@@ -186,7 +207,7 @@ bool CViewCommander::Command_FILESAVEAS_DIALOG()
 */
 BOOL CViewCommander::Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType )
 {
-	return 	GetDocument()->m_cDocFileOperation.FileSaveAs(filename, eEolType);
+	return 	GetDocument()->m_cDocFileOperation.FileSaveAs(filename, CODE_NONE, eEolType, false);
 }
 
 
@@ -400,7 +421,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 				nBool = Command_FILESAVE();
 			}else{
 				//nBool = HandleCommand( F_FILESAVEAS_DIALOG, true, 0, 0, 0, 0 );
-				nBool = Command_FILESAVEAS_DIALOG();
+				nBool = Command_FILESAVEAS_DIALOG(NULL, CODE_NONE, EOL_NONE);
 			}
 			if( !nBool ){
 				return;

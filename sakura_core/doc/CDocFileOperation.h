@@ -65,7 +65,7 @@ public:
 
 	//セーブフロー
 	bool DoSaveFlow(SSaveInfo* pSaveInfo);
-	bool FileSaveAs( const WCHAR* filename = NULL, EEolType eEolType = EOL_NONE );			//!< ダイアログでファイル名を入力させ、保存。	// 2006.12.30 ryoji
+	bool FileSaveAs( const WCHAR* filename = NULL,ECodeType eCodeType = CODE_NONE, EEolType eEolType = EOL_NONE, bool bDialog = true);	//!< ダイアログでファイル名を入力させ、保存。	// 2006.12.30 ryoji
 	bool FileSave();			//!< 上書き保存。ファイル名が指定されていなかったらダイアログで入力を促す。	// 2006.12.30 ryoji
 
 	//クローズ

@@ -412,7 +412,7 @@ F_TAB_CLOSERIGHT	= 31390,	// 右をすべて閉じる							なし
 
 // 支援
 F_HOKAN				= 31430,	// 入力補完											なし
-F_TOGGLE_KEY_SEARCH	= 31431,	// キーワードヘルプ自動表示							なし
+F_TOGGLE_KEY_SEARCH	= 31431,	// キーワードヘルプ自動表示							int option
 F_HELP_CONTENTS		= 31440,	// ヘルプ目次										なし
 F_HELP_SEARCH		= 31441,	// ヘルプキーワード検索								なし
 F_MENU_ALLFUNC		= 31445,	// コマンド一覧										なし
@@ -473,6 +473,8 @@ F_MOVECURSOR			= 32807,		// カーソル移動
 F_MOVECURSORLAYOUT		= 32808,		// カーソル移動(レイアウト)
 F_STATUSMSG				= 32809,		// ステータスメッセージ
 F_MSGBEEP				= 32810,		// ビープ音
+F_CHANGETYPE			= 32811,		// タイプ別設定一時適用						int nTypeIndex
+F_FILEOPEN2				= 32812,		// 開く2									const WCHAR* filename, ECodeType nCharCode, bool bViewMode, const WCHAR* defaultName
 F_COMMITUNDOBUFFER	= 32813,	// OpeBlKコミット
 F_ADDREFUNDOBUFFER	= 32814,	// OpeBlK AddRef
 F_SETUNDOBUFFER		= 32815,	// OpeBlK Release

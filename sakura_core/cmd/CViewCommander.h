@@ -88,12 +88,13 @@ public:
 	void Command_FILEOPEN(
 		const WCHAR*	filename		= NULL,
 		ECodeType		nCharCode		= CODE_AUTODETECT,
-		bool			bViewMode	= false
+		bool			bViewMode	= false,
+		const WCHAR*	defaultName		= NULL
 	);
 
 	/* 上書き保存 */ // Feb. 28, 2004 genta 引数追加, Jan. 24, 2005 genta 引数追加
 	bool Command_FILESAVE( bool warnbeep = true, bool askname = true );
-	bool Command_FILESAVEAS_DIALOG();									/* 名前を付けて保存 */
+	bool Command_FILESAVEAS_DIALOG(const WCHAR*, ECodeType, EEolType);		/* 名前を付けて保存 */
 	BOOL Command_FILESAVEAS( const WCHAR* filename, EEolType eEolType);	/* 名前を付けて保存 */
 	BOOL Command_FILESAVEALL( void );					/* 全て上書き保存 */ // Jan. 23, 2005 genta
 	void Command_FILECLOSE( void );						/* 開じて(無題) */	//Oct. 17, 2000 jepro 「ファイルを閉じる」というキャプションを変更
@@ -307,6 +308,7 @@ public:
 	void Command_SHOWTAB( void );			/* タブの表示/非表示 */	//@@@ 2003.06.10 MIK
 	void Command_SHOWSTATUSBAR( void );		/* ステータスバーの表示/非表示 */
 	void Command_TYPE_LIST( void );			/* タイプ別設定一覧 */
+	void Command_CHANGETYPE( int nTypePlusOne );	// タイプ別設定一時適用
 	void Command_OPTION_TYPE( void );		/* タイプ別設定 */
 	void Command_OPTION( void );			/* 共通設定 */
 	void Command_FONT( void );				/* フォント設定 */
@@ -370,7 +372,7 @@ public:
 	void Command_TAB_CLOSERIGHT( void );/* 右をすべて閉じる */		// 2008.11.22 syat
 
 
-	void Command_ToggleKeySearch( void );	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
+	void Command_ToggleKeySearch( int );	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 
 	void Command_HOKAN( void );			/* 入力補完 */
 	void Command_HELP_CONTENTS( void );	/* ヘルプ目次 */			//Nov. 25, 2000 JEPRO added
