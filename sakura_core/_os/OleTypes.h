@@ -50,7 +50,8 @@ struct SysString
 		int Len = ::SysStringLen(Data);
 		*S = new wchar_t[Len + 1];
 		*L = Len;
-		wcscpy(*S, Data);
+		wmemcpy(*S, Data, Len);
+		S[Len] = L'\0';
 	}
 #ifdef _UNICODE
 	void GetT(TCHAR **S, int *L){GetW(S, L);}

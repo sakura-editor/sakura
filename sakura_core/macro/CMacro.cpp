@@ -265,16 +265,19 @@ void CMacro::AddIntParam( const int nParam )
 */
 bool CMacro::Exec( CEditView* pcEditView, int flags ) const
 {
-	const WCHAR* paramArr[4] = {NULL, NULL, NULL, NULL};	//	4つに限定。
-	
+	const int maxArg = 8;
+	const WCHAR* paramArr[maxArg] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+	int paramLenArr[maxArg] = {0, 0, 0, 0, 0, 0, 0, 0};
+
 	CMacroParam* p = m_pParamTop;
 	int i = 0;
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < maxArg; i++) {
 		if (!p) break;	//	pが無ければbreak;
 		paramArr[i] = p->m_pData;
+		paramLenArr[i] = wcslen(paramArr[i]);
 		p = p->m_pNext;
 	}
-	return CMacro::HandleCommand(pcEditView, (EFunctionCode)(m_nFuncID | flags), paramArr, i);
+	return CMacro::HandleCommand(pcEditView, (EFunctionCode)(m_nFuncID | flags), paramArr, paramLenArr, i);
 }
 
 /*	CMacroを再現するための情報をhFileに書き出します。
@@ -445,6 +448,7 @@ bool CMacro::HandleCommand(
 	CEditView*			pcEditView,
 	const EFunctionCode	Index,
 	const WCHAR*		Argument[],
+	const int			ArgLengths[],
 	const int			ArgSize
 )
 {
@@ -510,7 +514,6 @@ bool CMacro::HandleCommand(
 			}
 		}
 		break;
-	case F_INSTEXT_W:		//	テキスト挿入
 	case F_SET_QUOTESTRING:	// Jan. 29, 2005 genta 追加 テキスト引数1つを取るマクロはここに統合していこう．
 		{
 		if( Argument[0] == NULL ){
@@ -527,6 +530,7 @@ bool CMacro::HandleCommand(
 		}
 		}
 		break;
+	case F_INSTEXT_W:		//	テキスト挿入
 	case F_ADDTAIL_W:		//	この操作はキーボード操作では存在しないので保存することができない？
 	case F_INSBOXTEXT:
 		//	一つ目の引数が文字列。
@@ -540,7 +544,7 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			int len = wcslen(Argument[0]);
+			int len = ArgLengths[0];
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], len, 0, 0 );	//	標準
 		}
 		break;
@@ -676,7 +680,7 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)(Argument[1] != NULL ? _wtoi(Argument[1]) : 0 ), 0, 0);
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], ArgLengths[0], (LPARAM)(Argument[1] != NULL ? _wtoi(Argument[1]) : 0 ), 0);
 		}
 		break;
 

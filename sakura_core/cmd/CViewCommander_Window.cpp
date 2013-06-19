@@ -681,7 +681,7 @@ void CViewCommander::Command_WIN_OUTPUT( void )
 /*!	@brief マクロ用アウトプットウインドウに表示
 	@date 2006.04.26 maru 新規作成
 */
-void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nFlgOpt )
+void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nLen, int nFlgOpt )
 {
 	if( outputstr == NULL )
 		return;
@@ -692,7 +692,7 @@ void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nFlgOpt )
 		CSakuraEnvironment::ExpandParameter(outputstr, Buffer, 2047);
 		CShareData::getInstance()->TraceOutString( Buffer );
 	} else {
-		CShareData::getInstance()->TraceOutString(outputstr );
+		CShareData::getInstance()->TraceOutString(outputstr, nLen);
 	}
 
 	// 0x02 改行コードの有無

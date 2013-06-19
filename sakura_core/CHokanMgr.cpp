@@ -548,7 +548,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	pcEditView = (CEditView*)m_lParam;
 	//	Apr. 28, 2000 genta
 	pcEditView->GetCommander().HandleCommand( F_WordDeleteToStart, false, 0, 0, 0, 0 );
-	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)wszLabel, TRUE, 0, 0 );
+	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)wszLabel, wcslen(wszLabel), TRUE, 0 );
 
 	// Until here
 //	pcEditView->GetCommander().HandleCommand( F_INSTEXT_W, true, (LPARAM)(wszLabel + m_cmemCurWord.GetLength()), TRUE, 0, 0 );
