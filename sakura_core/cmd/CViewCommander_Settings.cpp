@@ -145,9 +145,7 @@ void CViewCommander::Command_TYPE_LIST( void )
 		//	Nov. 29, 2000 genta
 		//	一時的な設定適用機能を無理矢理追加
 		if( sResult.bTempChange ){
-			GetDocument()->m_cDocType.SetDocumentType( sResult.cDocumentType, true );
-			GetDocument()->m_cDocType.LockDocumentType();
-			GetDocument()->OnChangeType();
+			HandleCommand( F_CHANGETYPE, true, (LPARAM)sResult.cDocumentType.GetIndex() + 1, 0, 0, 0 );
 		}
 		else{
 			/* タイプ別設定 */
@@ -155,6 +153,21 @@ void CViewCommander::Command_TYPE_LIST( void )
 		}
 	}
 	return;
+}
+
+
+
+/*! タイプ説設定一時適用 */
+void CViewCommander::Command_CHANGETYPE( int nTypePlusOne ){
+	CTypeConfig type = CTypeConfig(nTypePlusOne - 1);
+	if( nTypePlusOne == 0 ){
+		type = GetDocument()->m_cDocType.GetDocumentType();
+	}
+	if( type.IsValid() ){
+		GetDocument()->m_cDocType.SetDocumentType( type, true );
+		GetDocument()->m_cDocType.LockDocumentType();
+		GetDocument()->OnChangeType();
+	}
 }
 
 

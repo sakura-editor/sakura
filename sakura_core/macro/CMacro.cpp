@@ -420,6 +420,15 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	out.WriteF( LTEXT("CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n") );
 }
 
+static inline int wtoi_def( const WCHAR* arg, int def_val )
+{
+	return (arg == NULL ? def_val: _wtoi(arg));
+}
+
+static inline const WCHAR* wtow_def( const WCHAR* arg, const WCHAR* def_val )
+{
+	return (arg == NULL ? def_val: arg);
+}
 /**	マクロ引数変換
 
 	MacroコマンドをpcEditView->GetCommander().HandleCommandに引き渡す．
@@ -467,6 +476,8 @@ bool CMacro::HandleCommand(
 	case F_GOLINEEND_BOX:
 	case F_SELECT_COUNT_MODE:	//	文字カウントの方法を指定。数値は、0x0（変更せず取得のみ）、0x1（文字数）、0x2（バイト数）、0x3（文字数⇔バイト数トグル）	// 2009.07.06 syat
 	case F_OUTLINE:	//	アウトライン解析のアクションを指定。数値は、0x0（画面表示）、0x1（画面表示＆再解析）、0x2（画面表示トグル）
+	case F_CHANGETYPE:
+	case F_TOGGLE_KEY_SEARCH:
 		//	一つ目の引数が数値。
 		pcEditView->GetCommander().HandleCommand( Index, true, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;
@@ -897,7 +908,7 @@ bool CMacro::HandleCommand(
 			/* Grep結果ウィンドウの表示 */
 		}
 		break;
-	case F_FILEOPEN:
+	case F_FILEOPEN2:
 		//	Argument[0]を開く。
 		if( Argument[0] == NULL ){
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
@@ -905,12 +916,17 @@ bool CMacro::HandleCommand(
 			return false;
 		}
 		{
-			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], 0, 0, 0);
+			int  nCharCode = wtoi_def( Argument[1], CODE_AUTODETECT );
+			BOOL nViewMode = wtoi_def( Argument[2], FALSE );
+			const WCHAR* pDefFileName = wtow_def( Argument[3], L"" );
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)nCharCode, (LPARAM)nViewMode, (LPARAM)pDefFileName );
 		}
 		break;
+	case F_FILESAVEAS_DIALOG:
 	case F_FILESAVEAS:
 		//	Argument[0]を別名で保存。
-		if( Argument[0] == NULL ){
+		if( LOWORD(Index) == F_FILESAVEAS && (Argument[0] == NULL ||  L'\0' == Argument[0][0]) ){
+			// F_FILESAVEAS_DIALOGの場合は空文字列を許容
 			::MYMESSAGEBOX( NULL, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				_T("保存ファイル名が指定されていません．"));
 			return false;
@@ -918,11 +934,11 @@ bool CMacro::HandleCommand(
 		{
 			// 文字コードセット
 			//	Sep. 11, 2004 genta 文字コード設定の範囲チェック
-			ECodeType nCharCode = CODE_AUTODETECT;	//デフォルト値
+			ECodeType nCharCode = CODE_NONE;	//デフォルト値
 			if (Argument[1] != NULL){
 				nCharCode = (ECodeType)_wtoi( Argument[1] );
 			}
-			if (IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
+			if (LOWORD(Index) == F_FILESAVEAS && IsValidCodeType(nCharCode) && nCharCode != pcEditView->m_pcEditDoc->GetDocumentEncoding()) {
 				//	From Here Jul. 26, 2003 ryoji BOM状態を初期化
 				pcEditView->m_pcEditDoc->SetDocumentEncoding(nCharCode, CCodeTypeName(pcEditView->m_pcEditDoc->GetDocumentEncoding()).IsBomDefOn() );
 				//	To Here Jul. 26, 2003 ryoji BOM状態を初期化
@@ -942,7 +958,7 @@ bool CMacro::HandleCommand(
 			default:	eEol = EOL_NONE;	break;
 			}
 			
-			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], 0, (LPARAM)eEol, 0);
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)nCharCode, (LPARAM)eEol, 0);
 		}
 		break;
 	/* 2つの引数が文字列 */

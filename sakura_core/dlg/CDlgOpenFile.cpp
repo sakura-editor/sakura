@@ -231,12 +231,16 @@ UINT_PTR CALLBACK OFNHookProc(
 			//	必要なときのみ利用する
 			if( pcDlgOpenFile->m_bUseEol ){
 				//	値の設定
+				// 2013.05.27 初期値をSaveInfoから設定する
+				nIdxSel = 0;
 				for( i = 0; i < nEolNameArrNum; ++i ){
 					nIdx = Combo_AddString( hwndComboEOL, pEolNameArr[i] );
 					Combo_SetItemData( hwndComboEOL, nIdx, nEolValueArr[i] );
+					if( nEolValueArr[i] == pcDlgOpenFile->m_cEol ){
+						nIdxSel = nIdx;
+					}
 				}
-				//	使うときは先頭の要素を選択状態にする
-				Combo_SetCurSel( hwndComboEOL, 0 );
+				Combo_SetCurSel( hwndComboEOL, nIdxSel );
 			}
 			else {
 				//	使わないときは隠す
@@ -792,14 +796,14 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 
 	//ファイルパス受け取りバッファ
 	TCHAR* pszPathBuf = new TCHAR[2000];
-	pszPathBuf[0] = _T('\0');
+	auto_strcpy(pszPathBuf, pLoadInfo->cFilePath); // 2013.05.27 デフォルトファイル名を設定する
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
 	m_ofn.hInstance = m_hInstance;
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
-	m_ofn.lpstrFile = pszPathBuf;	// 2005/02/20 novice デフォルトのファイル名は何も設定しない
+	m_ofn.lpstrFile = pszPathBuf;
 	m_ofn.nMaxFile = 2000;
 	m_ofn.lpstrInitialDir = m_szInitialDir;
 	m_ofn.Flags = OFN_EXPLORER | OFN_CREATEPROMPT | OFN_FILEMUSTEXIST | OFN_ENABLETEMPLATE | OFN_ENABLEHOOK | OFN_SHOWHELP | OFN_ENABLESIZING;
@@ -903,7 +907,7 @@ bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 
 	//	From Here Feb. 9, 2001 genta
 	if(!bSimpleMode){
-		m_cEol = EOL_NONE;	//	初期値は「改行コードを保存」に固定
+		m_cEol = pSaveInfo->cEol;	//	初期値は「改行コードを保存」に固定 // 2013.05.27 初期値を指定
 		m_bUseEol = true;
 	}
 	else{

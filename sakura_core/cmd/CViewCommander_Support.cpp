@@ -87,12 +87,18 @@ retry:;
 
 	@date 2006.03.24 fon 新規作成
 */
-void CViewCommander::Command_ToggleKeySearch( void )
+void CViewCommander::Command_ToggleKeySearch( int option )
 {	/* 共通設定ダイアログの設定をキー割り当てでも切り替えられるように */
-	if( GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord ){
-		GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
-	}else{
+	if( option == 0 ){
+		if( GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord ){
+			GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
+		}else{
+			GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
+		}
+	}else if( option == 1 ){
 		GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = TRUE;
+	}else if( option == 2 ){
+		GetDllShareData().m_Common.m_sSearch.m_bUseCaretKeyWord = FALSE;
 	}
 }
 
@@ -258,16 +264,19 @@ retry:;
 */
 void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* kwd )
 {
-	const TCHAR* helpfile = to_tchar(_helpfile);
+	std::tstring helpfile;
+	if( _helpfile != NULL ){
+		helpfile = to_tchar(_helpfile);
+	}
 
 	HWND		hwndHtmlHelp;
 	int			nLen;
 
-	DEBUG_TRACE( _T("helpfile=%ts\n"), helpfile );
+	DEBUG_TRACE( _T("helpfile=%ts\n"), helpfile.c_str() );
 
 	//	From Here Jul. 5, 2002 genta
 	const TCHAR *filename = NULL;
-	if ( helpfile == NULL || helpfile[0] == _T('\0') ){
+	if ( 0 == helpfile.length() ){
 		while( !CHelpManager().ExtHTMLHelpIsSet( GetDocument()->m_cDocType.GetDocumentType()) ){
 			ErrorBeep();
 	//	From Here Sept. 15, 2000 JEPRO
@@ -286,7 +295,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 		filename = CHelpManager().GetExtHTMLHelp( GetDocument()->m_cDocType.GetDocumentType() );
 	}
 	else {
-		filename = helpfile;
+		filename = helpfile.c_str();
 	}
 	//	To Here Jul. 5, 2002 genta
 

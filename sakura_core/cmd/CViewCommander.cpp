@@ -179,9 +179,10 @@ BOOL CViewCommander::HandleCommand(
 	case F_FILENEW_NEWWINDOW:	Command_FILENEW_NEWWINDOW();break;
 	//	Oct. 2, 2001 genta マクロ用機能拡張
 	case F_FILEOPEN:			Command_FILEOPEN((const WCHAR*)lparam1);break;			/* ファイルを開く */
+	case F_FILEOPEN2:			Command_FILEOPEN((const WCHAR*)lparam1, (ECodeType)lparam2, lparam3 != 0, (const WCHAR*)lparam4);break;	//ファイルを開く2
 	case F_FILEOPEN_DROPDOWN:	Command_FILEOPEN((const WCHAR*)lparam1);break;			/* ファイルを開く(ドロップダウン) */	//@@@ 2002.06.15 MIK
 	case F_FILESAVE:			bRet = Command_FILESAVE();break;	/* 上書き保存 */
-	case F_FILESAVEAS_DIALOG:	bRet = Command_FILESAVEAS_DIALOG();break;	/* 名前を付けて保存 */
+	case F_FILESAVEAS_DIALOG:	bRet = Command_FILESAVEAS_DIALOG((const WCHAR*)lparam1, (ECodeType)lparam2, (EEolType)lparam3);break;	/* 名前を付けて保存 */
 	case F_FILESAVEAS:			bRet = Command_FILESAVEAS((const WCHAR*)lparam1,(EEolType)lparam3);break;	/* 名前を付けて保存 */
 	case F_FILESAVEALL:			bRet = Command_FILESAVEALL();break;	/* 全ての編集ウィンドウで上書き保存 */ // Jan. 23, 2005 genta
 	case F_FILESAVE_QUIET:		bRet = Command_FILESAVE(false,false); break;	/* 静かに上書き保存 */ // Jan. 24, 2005 genta
@@ -457,6 +458,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_SHOWTAB:			Command_SHOWTAB();break;		/* タブの表示/非表示 */	//@@@ 2003.06.10 MIK
 	case F_SHOWSTATUSBAR:	Command_SHOWSTATUSBAR();break;	/* ステータスバーの表示/非表示 */
 	case F_TYPE_LIST:		Command_TYPE_LIST();break;		/* タイプ別設定一覧 */
+	case F_CHANGETYPE:		Command_CHANGETYPE((int)lparam1);break;		// タイプ別設定一時適用
 	case F_OPTION_TYPE:		Command_OPTION_TYPE();break;	/* タイプ別設定 */
 	case F_OPTION:			Command_OPTION();break;			/* 共通設定 */
 	case F_FONT:			Command_FONT();break;			/* フォント設定 */
@@ -574,7 +576,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_HOKAN:			Command_HOKAN();break;			//入力補完
 	case F_HELP_CONTENTS:	Command_HELP_CONTENTS();break;	/* ヘルプ目次 */				//Nov. 25, 2000 JEPRO 追加
 	case F_HELP_SEARCH:		Command_HELP_SEARCH();break;	/* ヘルプトキーワード検索 */	//Nov. 25, 2000 JEPRO 追加
-	case F_TOGGLE_KEY_SEARCH:	Command_ToggleKeySearch();break;	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
+	case F_TOGGLE_KEY_SEARCH:	Command_ToggleKeySearch((int)lparam1);break;	/* キャレット位置の単語を辞書検索する機能ON-OFF */	// 2006.03.24 fon
 	case F_MENU_ALLFUNC:									/* コマンド一覧 */
 		/* 再帰処理対策 */
 		m_pCommanderView->SetUndoBuffer( true );
