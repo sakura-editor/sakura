@@ -30,7 +30,7 @@
 #include <dlgs.h>
 #include <io.h>
 #include <cderr.h> // Nov. 3, 2005 genta
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "CEditDoc.h"
 #include "Debug.h"
 #include "Funccode.h"
@@ -430,7 +430,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 			if( -1 != nPane ){
 				SetActivePane( nPane );
 			}else{
-				CEditApp::ActiveNextWindow(m_hwndParent);
+				CControlTray::ActiveNextWindow(m_hwndParent);
 			}
 		}
 		return TRUE;
@@ -441,7 +441,7 @@ BOOL CEditDoc::HandleCommand( int nCommand )
 				SetActivePane( nPane );
 			}
 			else{
-				CEditApp::ActivePrevWindow(m_hwndParent);
+				CControlTray::ActivePrevWindow(m_hwndParent);
 			}
 		}
 		return TRUE;

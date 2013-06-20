@@ -33,7 +33,7 @@
 #include "Funccode.h"
 #include "CRunningTimer.h"
 #include "charcode.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "CWaitCursor.h"
 #include "CSplitterWnd.h"
 //@@@ 2002.2.2 YAZAKI マクロはCSMacroMgrに統一
@@ -3563,7 +3563,7 @@ void CEditView::Command_BEGIN_BOXSELECT( void )
 void CEditView::Command_FILENEW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
-	CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, CODE_NONE, FALSE, false, NULL, false );
+	CControlTray::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, CODE_NONE, FALSE, false, NULL, false );
 	return;
 }
 
@@ -3571,7 +3571,7 @@ void CEditView::Command_FILENEW( void )
 void CEditView::Command_FILENEW_NEWWINDOW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
-	CEditApp::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, false,
+	CControlTray::OpenNewEditor( m_hInstance, m_hWnd, (char*)NULL, 0, false,
 		false,
 		NULL,
 		true
@@ -5883,7 +5883,7 @@ bool CEditView::TagJumpSub(
 		inf.m_nViewLeftCol = inf.m_nViewTopLine = -1;
 		inf.m_nCharCode    = CODE_AUTODETECT;
 
-		bSuccess = CEditApp::OpenNewEditor2(
+		bSuccess = CControlTray::OpenNewEditor2(
 			m_hInstance,
 			m_hWnd,
 			&inf,
@@ -6319,7 +6319,7 @@ open_c:;
 			strcpy( szPath2, szPath );
 		}
 		/* 文字コードはこのファイルに合わせる */
-		CEditApp::OpenNewEditor(
+		CControlTray::OpenNewEditor(
 			m_hInstance,
 			m_hWnd,
 			szPath2,
@@ -7818,14 +7818,14 @@ void CEditView::Command_PROPERTY_FILE( void )
 /* 編集の全終了 */	// 2007.02.13 ryoji 追加
 void CEditView::Command_EXITALLEDITORS( void )
 {
-	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE, 0 );
+	CControlTray::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE, 0 );
 	return;
 }
 
 /* サクラエディタの全終了 */	//Dec. 27, 2000 JEPRO 追加
 void CEditView::Command_EXITALL( void )
 {
-	CEditApp::TerminateApplication( ::GetParent(m_hwndParent) );	// 2006.12.25 ryoji 引数追加
+	CControlTray::TerminateApplication( ::GetParent(m_hwndParent) );	// 2006.12.25 ryoji 引数追加
 	return;
 }
 
@@ -7837,7 +7837,7 @@ void CEditView::Command_GROUPCLOSE( void )
 {
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin ){
 		int nGroup = CShareData::getInstance()->GetGroupId( ::GetParent(m_hwndParent) );
-		CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE, nGroup );
+		CControlTray::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), TRUE, nGroup );
 	}
 	return;
 }
@@ -7846,7 +7846,7 @@ void CEditView::Command_GROUPCLOSE( void )
 void CEditView::Command_FILECLOSEALL( void )
 {
 	int nGroup = CShareData::getInstance()->GetGroupId( ::GetParent(m_hwndParent) );
-	CEditApp::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), FALSE, nGroup );	// 2006.12.25, 2007.02.13 ryoji 引数追加
+	CControlTray::CloseAllEditor( TRUE, ::GetParent(m_hwndParent), FALSE, nGroup );	// 2006.12.25, 2007.02.13 ryoji 引数追加
 	return;
 }
 
@@ -7867,7 +7867,7 @@ void CEditView::Command_WIN_OUTPUT( void )
 	if( NULL == m_pShareData->m_sHandles.m_hwndDebug
 		|| !IsSakuraMainWindow( m_pShareData->m_sHandles.m_hwndDebug )
 	){
-		CEditApp::OpenNewEditor( NULL, m_hWnd, "-DEBUGMODE", CODE_SJIS, false, true );
+		CControlTray::OpenNewEditor( NULL, m_hWnd, "-DEBUGMODE", CODE_SJIS, false, true );
 	}else{
 		/* 開いているウィンドウをアクティブにする */
 		/* アクティブにする */

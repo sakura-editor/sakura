@@ -17,7 +17,7 @@
 #include "StdAfx.h"
 #include "CEditView.h"
 #include "CEditDoc.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "charcode.h"
 #include "Debug.h"
 #include "sakura_rc.h"
@@ -158,7 +158,7 @@ void CEditView::Command_GREP( void )
 
 //		MYTRACE_A( "pCmdLine=[%s]\n", pCmdLine );
 		/* 新規編集ウィンドウの追加 ver 0 */
-		CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pCmdLine, 0, false );
+		CControlTray::OpenNewEditor( m_hInstance, m_hWnd, pCmdLine, 0, false );
 		delete [] pCmdLine;
 		delete [] pOpt;
 		/*======= Grepの実行 =============*/

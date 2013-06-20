@@ -25,7 +25,7 @@
 #include "StdAfx.h"
 #include <io.h>
 #include "CShareData.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "mymessage.h"
 #include "Debug.h"
 #include "global.h"
@@ -1776,7 +1776,7 @@ void CShareData::TraceOut( LPCTSTR lpFmt, ... )
 		// アウトプットウィンドウを作成元と同じグループに作成するために m_hwndTraceOutSource を使っています
 		// （m_hwndTraceOutSource は CEditWnd::Create() で予め設定）
 		// ちょっと不恰好だけど、TraceOut() の引数にいちいち起動元を指定するのも．．．
-		CEditApp::OpenNewEditor( NULL, m_hwndTraceOutSource, "-DEBUGMODE", CODE_SJIS, false, true );
+		CControlTray::OpenNewEditor( NULL, m_hwndTraceOutSource, "-DEBUGMODE", CODE_SJIS, false, true );
 		//	2001/06/23 N.Nakatani 窓が出るまでウエイトをかけるように修正
 		//アウトプットウインドウが出来るまで5秒ぐらい待つ。
 		//	Jun. 25, 2001 genta OpenNewEditorの同期機能を利用するように変更

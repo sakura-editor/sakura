@@ -29,7 +29,7 @@
 #include <mbstring.h>
 #include "CShareData.h"
 #include "CRunningTimer.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "CEditWnd.h"
 #include "CEditDoc.h"
 #include "CDocLine.h"
@@ -1656,7 +1656,7 @@ LRESULT CEditWnd::DispatchEvent(
 						EditNode* pEditNode = CShareData::getInstance()->GetEditNode( m_hWnd );
 						if( pEditNode )
 							pEditNode->m_bClosing = TRUE;	// 自分はタブ表示してもらわなくていい
-						CEditApp::OpenNewEditor(
+						CControlTray::OpenNewEditor(
 							m_hInstance,
 							m_hWnd,
 							(char*)NULL,
@@ -3059,7 +3059,7 @@ void CEditWnd::OnDropFiles( HDROP hDrop )
 						strcpy( szFile, szFile2 );
 					}
 					/* 新たな編集ウィンドウを起動 */
-					CEditApp::OpenNewEditor(
+					CControlTray::OpenNewEditor(
 						m_hInstance,
 						m_hWnd,
 						szFile,

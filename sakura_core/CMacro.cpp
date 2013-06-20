@@ -24,7 +24,7 @@
 #include "StdAfx.h"
 #include "Funccode.h"
 #include "CMacro.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "CEditView.h" //2002/2/10 aroka
 #include "CSMacroMgr.h" //2002/2/10 aroka
 #include "etc_uty.h" //2002/2/10 aroka
@@ -724,7 +724,7 @@ void CMacro::HandleCommand(
 			}
 
 			/* 新規編集ウィンドウの追加 ver 0 */
-			CEditApp::OpenNewEditor( pcEditView->m_hInstance, pcEditView->m_hWnd, pCmdLine, CODE_NONE, false );
+			CControlTray::OpenNewEditor( pcEditView->m_hInstance, pcEditView->m_hWnd, pCmdLine, CODE_NONE, false );
 			/*======= Grepの実行 =============*/
 			/* Grep結果ウィンドウの表示 */
 		}

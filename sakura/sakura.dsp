@@ -113,6 +113,10 @@ SOURCE=..\sakura_core\CControlProcess.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CControlTray.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CDialog.cpp
 # End Source File
 # Begin Source File
@@ -681,6 +685,10 @@ SOURCE=..\sakura_core\CCommandLine.h
 # Begin Source File
 
 SOURCE=..\sakura_core\CControlProcess.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\sakura_core\CControlTray.h
 # End Source File
 # Begin Source File
 

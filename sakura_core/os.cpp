@@ -26,6 +26,7 @@
 #include "etc_uty.h"
 #include "os.h"
 #include "CUxTheme.h"
+#include "Debug.h"
 
 /*!	Comctl32.dll のバージョン番号を取得
 
@@ -337,7 +338,6 @@ BOOL GetSystemResources(
 }
 
 
-#if (WINVER < _WIN32_WINNT_WIN2K)
 // NTではリソースチェックを行わない
 /* システムリソースのチェック */
 BOOL CheckSystemResources( const TCHAR* pszAppName )
@@ -386,7 +386,6 @@ BOOL CheckSystemResources( const TCHAR* pszAppName )
 	}
 	return TRUE;
 }
-#endif	// (WINVER < _WIN32_WINNT_WIN2K)
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

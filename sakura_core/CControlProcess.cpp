@@ -20,7 +20,7 @@
 #include "CCommandLine.h"
 #include "CShareData.h"
 #include "Debug.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "etc_uty.h"
 #include "CRunningTimer.h"
 #include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダ整理
@@ -33,7 +33,7 @@
 	@brief コントロールプロセスを初期化する
 	
 	MutexCPを作成・ロックする。
-	CEditAppを作成する。
+	CControlTrayを作成する。
 	
 	@author aroka
 	@date 2002/01/07
@@ -96,14 +96,14 @@ bool CControlProcess::InitializeProcess()
 		}
 	}
 
-	MY_TRACETIME( cRunningTimer, "Before new CEditApp" );
+	MY_TRACETIME( cRunningTimer, "Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
-	m_pcEditApp = new CEditApp;
+	m_pcTray = new CControlTray;
 
-	MY_TRACETIME( cRunningTimer, "After new CEditApp" );
+	MY_TRACETIME( cRunningTimer, "After new CControlTray" );
 
-	m_hWnd = m_pcEditApp->Create( m_hInstance );
+	m_hWnd = m_pcTray->Create( m_hInstance );
 	if( !m_hWnd ){
 		ErrorBeep();
 		TopErrorMessage( NULL, _T("ウィンドウの作成に失敗しました。\n起動できません。") );
@@ -129,8 +129,8 @@ bool CControlProcess::InitializeProcess()
 */
 bool CControlProcess::MainLoop()
 {
-	if( m_pcEditApp && m_hWnd ){
-		m_pcEditApp->MessageLoop();	/* メッセージループ */
+	if( m_pcTray && m_hWnd ){
+		m_pcTray->MessageLoop();	/* メッセージループ */
 		return true;
 	}
 	return false;
@@ -141,7 +141,7 @@ bool CControlProcess::MainLoop()
 	
 	@author aroka
 	@date 2002/01/07
-	@date 2006/07/02 ryoji 共有データ保存を CEditApp へ移動
+	@date 2006/07/02 ryoji 共有データ保存を CControlTray へ移動
 */
 void CControlProcess::OnExitProcess()
 {
@@ -150,7 +150,7 @@ void CControlProcess::OnExitProcess()
 
 CControlProcess::~CControlProcess()
 {
-	delete m_pcEditApp;
+	delete m_pcTray;
 
 	if( m_hEventCPInitialized ){
 		::ResetEvent( m_hEventCPInitialized );

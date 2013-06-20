@@ -23,7 +23,7 @@
 #include "StdAfx.h"
 #include "CNormalProcess.h"
 #include "CCommandLine.h"
-#include "CEditApp.h"
+#include "CControlTray.h"
 #include "CEditWnd.h" // 2002/2/3 aroka
 #include "CShareData.h"
 #include "CDocLine.h" // 2003/03/28 MIK
@@ -325,7 +325,7 @@ bool CNormalProcess::InitializeProcess()
 		for( i = 0; i < fileNum; i++ ){
 			// ƒtƒ@ƒCƒ‹–¼·‚µ‘Ö‚¦
 			_tcscpy(openFileInfo.m_szPath, CCommandLine::getInstance()->GetFileName(i));
-			bool ret = CEditApp::OpenNewEditor2( m_hInstance, hWnd, &openFileInfo, bReadOnly );
+			bool ret = CControlTray::OpenNewEditor2( m_hInstance, hWnd, &openFileInfo, bReadOnly );
 			if( ret == false ){
 				break;
 			}

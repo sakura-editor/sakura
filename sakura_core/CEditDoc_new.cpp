@@ -32,7 +32,7 @@
 #include "etc_uty.h"
 #include "my_icmp.h" // Nov. 29, 2002 genta/moca
 #include "mymessage.h"	//	Oct. 9, 2004 genta
-#include "CEditApp.h"	//	Oct. 9, 2004 genta
+#include "CControlTray.h"
 
 /* Java解析モード */
 enum EFuncListJavaMode {
@@ -1222,7 +1222,7 @@ void CEditDoc::OpenFile( const char *filename, ECodeType nCharCode, bool bReadOn
 				strcpy( pszPath, szFile2 );
 			}
 			/* 新たな編集ウィンドウを起動 */
-			CEditApp::OpenNewEditor( m_hInstance, m_hWnd, pszPath, nCharCode, bReadOnly );
+			CControlTray::OpenNewEditor( m_hInstance, m_hWnd, pszPath, nCharCode, bReadOnly );
 		}
 	}
 	return;
