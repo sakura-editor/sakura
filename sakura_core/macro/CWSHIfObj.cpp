@@ -116,12 +116,10 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 		VariantInit(&ret);
 
 		// 2011.3.18 syat 引数の順序を正しい順にする
-		auto_array_ptr<VARIANTARG> rgvargBak( new VARIANTARG[ArgCount] );
 		auto_array_ptr<VARIANTARG> rgvargParam( new VARIANTARG[ArgCount] );
-		memcpy( &rgvargBak[0], Arguments->rgvarg, sizeof(VARIANTARG) * ArgCount );
 		for(I = 0; I < ArgCount; I++){
 			::VariantInit(&rgvargParam[ArgCount - I - 1]);
-			::VariantCopyInd(&rgvargParam[ArgCount - I - 1], &rgvargBak[I]);
+			::VariantCopy(&rgvargParam[ArgCount - I - 1], &Arguments->rgvarg[I]);
 		}
 
 		// 2009.9.5 syat HandleFunctionはサブクラスでオーバーライドする
@@ -129,7 +127,7 @@ HRESULT CWSHIfObj::MacroCommand(int IntID, DISPPARAMS *Arguments, VARIANT* Resul
 		if(Result) {::VariantCopyInd(Result, &ret);}
 		VariantClear(&ret);
 		for(I = 0; I < ArgCount; I++){
-			::VariantClear(&rgvargParam[1]);
+			::VariantClear(&rgvargParam[I]);
 		}
 		return r ? S_OK : E_FAIL;
 	}
