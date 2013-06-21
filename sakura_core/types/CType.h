@@ -33,6 +33,13 @@
 #include "CRegexKeyword.h"	// RegexKeywordInfo
 
 
+//! タブ表示方法
+enum ETabArrow {
+	TABARROW_STRING = 0,	//!< 文字指定
+	TABARROW_SHORT,			//!< 短い矢印
+	TABARROW_LONG,			//!< 長い矢印
+};
+
 /* アウトライン解析の種類 */
 enum EOutlineType{
 	OUTLINE_C,
@@ -116,7 +123,7 @@ struct STypeConfig{
 	int					m_nColumnSpace;					/*!< 文字と文字の隙間 */
 	int					m_nLineSpace;					/*!< 行間のすきま */
 	CLayoutInt			m_nTabSpace;					/*!< TABの文字数 */
-	bool				m_bTabArrow;					//!< タブ矢印表示		//@@@ 2003.03.26 MIK
+	ETabArrow			m_bTabArrow;					//!< タブ矢印表示		//@@@ 2003.03.26 MIK
 	EDIT_CHAR			m_szTabViewString[8+1];			/*!< TAB表示文字列 */	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
 	int					m_bInsSpace;					/* スペースの挿入 */	// 2001.12.03 hor
 	// 2005.01.13 MIK 配列化

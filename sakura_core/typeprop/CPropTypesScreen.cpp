@@ -91,6 +91,12 @@ TYPE_NAME<EOutlineType> OlmArr[] = {
 	{ OUTLINE_TEXT,		_T("テキスト") }			//Jul. 08, 2001 JEPRO 常に最後尾におく
 };
 
+TYPE_NAME<ETabArrow> TabArrowArr[] = {
+	{ TABARROW_STRING,	_T("文字指定") },
+	{ TABARROW_SHORT,	_T("短い矢印") },
+	{ TABARROW_LONG,	_T("長い矢印") },
+};
+
 TYPE_NAME<ESmartIndentType> SmartIndentArr[] = {
 	{ SMARTINDENT_NONE,	_T("なし") },
 	{ SMARTINDENT_CPP,	_T("C/C++") }
@@ -172,6 +178,24 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
 //		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
+		case CBN_SELCHANGE:
+			switch( wID ){
+			case IDC_CHECK_TAB_ARROW:
+				{
+					// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
+					HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_TAB_ARROW );
+					int nSelPos = Combo_GetCurSel( hwndCombo );
+					if( TABARROW_STRING == TabArrowArr[nSelPos].nMethod ){
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), TRUE );
+					}
+					else {
+						::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), FALSE );
+					}
+				}
+				break;
+			}
+			break;
+
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
 			switch( wID ){
@@ -214,16 +238,6 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 						_tcscpy( m_Types.m_szOutlineRuleFilename, szPath );
 						::DlgItem_SetText( hwndDlg, IDC_EDIT_OUTLINERULEFILE, m_Types.m_szOutlineRuleFilename );
 					}
-				}
-				return TRUE;
-
-			case IDC_CHECK_TAB_ARROW:
-				// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TAB_ARROW ) ){
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), FALSE );
-				}
-				else {
-					::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), TRUE );
 				}
 				return TRUE;
 
@@ -421,8 +435,20 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_LINESPACE, m_Types.m_nLineSpace, FALSE );			// 行の間隔
 		::SetDlgItemInt( hwndDlg, IDC_EDIT_TABSPACE, (Int)m_Types.m_nTabSpace, FALSE );			// TAB幅	//	Sep. 22, 2002 genta
 		::DlgItem_SetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, m_Types.m_szTabViewString );		// TAB表示(8文字)
-		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), !m_Types.m_bTabArrow );	// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
-		::CheckDlgButton( hwndDlg, IDC_CHECK_TAB_ARROW, m_Types.m_bTabArrow );					// 矢印表示 [チェックボックス]	//@@@ 2003.03.26 MIK
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_EDIT_TABVIEWSTRING ), m_Types.m_bTabArrow == TABARROW_STRING );	// Mar. 31, 2003 genta 矢印表示のON/OFFをTAB文字列設定に連動させる
+
+		// 矢印表示	//@@@ 2003.03.26 MIK
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_TAB_ARROW );
+		Combo_ResetContent( hwndCombo );
+		nSelPos = 0;
+		for( int i = 0; i < _countof( TabArrowArr ); ++i ){
+			Combo_InsertString( hwndCombo, i, TabArrowArr[i].pszName );
+			if( TabArrowArr[i].nMethod == m_Types.m_bTabArrow ){
+				nSelPos = i;
+			}
+		}
+		Combo_SetCurSel( hwndCombo, nSelPos );
+
 		::CheckDlgButton( hwndDlg, IDC_CHECK_INS_SPACE, m_Types.m_bInsSpace );					// SPACEの挿入 [チェックボックス]	// From Here 2001.12.03 hor
 	}
 
@@ -602,7 +628,9 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		}
 
 		// タブ矢印表示	//@@@ 2003.03.26 MIK
-		m_Types.m_bTabArrow = (0 != ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_TAB_ARROW ));
+		hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_TAB_ARROW );
+		nSelPos = Combo_GetCurSel( hwndCombo );
+		m_Types.m_bTabArrow = TabArrowArr[nSelPos].nMethod;		// テキストの折り返し方法
 
 		// SPACEの挿入
 		m_Types.m_bInsSpace = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_INS_SPACE );

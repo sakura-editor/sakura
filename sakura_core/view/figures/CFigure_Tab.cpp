@@ -30,10 +30,13 @@ bool CFigure_Tab::Match(const wchar_t* pText) const
 //                         描画実装                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//	Sep. 22, 2002 genta 共通式のくくりだし
-//	Sep. 23, 2002 genta LayoutMgrの値を使う
-//@@@ 2001.03.16 by MIK
-//@@@ 2003.03.26 MIK タブ矢印表示
+/*! TAB描画
+	@date 2001.03.16 by MIK
+	@date 2002.09.22 genta 共通式のくくりだし
+	@date 2002.09.23 genta LayoutMgrの値を使う
+	@date 2003.03.26 MIK タブ矢印表示
+	@date 2013.05.31 novice TAB表示対応(文字指定/短い矢印/長い矢印)
+*/
 void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const
 {
 	DispPos& sPos=*pDispPos;
@@ -61,7 +64,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 	rcClip2.bottom = sPos.GetDrawPos().y + nLineHeight;
 
 	if( pArea->IsRectIntersected(rcClip2) ){
-		if( cTabType.IsDisp() && !m_pTypeData->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
+		if( cTabType.IsDisp() && TABARROW_STRING == m_pTypeData->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
 			//@@@ 2001.03.16 by MIK
 			::ExtTextOutW_AnyBuild(
 				gr,
@@ -87,24 +90,39 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 			);
 
 			//タブ矢印表示
-			if( cTabType.IsDisp() && m_pTypeData->m_bTabArrow /*&& rcClip2.left <= sPos.GetDrawPos().x*/ ){ // Apr. 1, 2003 MIK 行番号と重なる
+			if( cTabType.IsDisp() ){
 				// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
 				// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
 				//	太字かどうか設定も見る様にする 2013/4/11 Uchi
 				TEXTMETRIC tm;
 				::GetTextMetrics(gr, &tm);
 				LONG lfWeightNormal = pcView->m_pcEditWnd->GetLogfont().lfWeight;
-				int	nPosLeft = rcClip2.left > sPos.GetDrawPos().x ? rcClip2.left : sPos.GetDrawPos().x;
-				_DrawTabArrow(
-					gr,
-					nPosLeft,
-					sPos.GetDrawPos().y,
-					nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Area一杯に 2013/4/11 Uchi
-					pMetrics->GetHankakuHeight(),
-					tm.tmWeight > lfWeightNormal ||
-						m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
-					::GetTextColor(gr)//cTabType.GetTextColor()
-				);
+
+				if( TABARROW_SHORT == m_pTypeData->m_bTabArrow ){
+					if( rcClip2.left <= sPos.GetDrawPos().x ){ // Apr. 1, 2003 MIK 行番号と重なる
+						_DrawTabArrow(
+							gr,
+							sPos.GetDrawPos().x,
+							sPos.GetDrawPos().y,
+							pMetrics->GetHankakuWidth(),
+							pMetrics->GetHankakuHeight(),
+							tm.tmWeight > lfWeightNormal,
+							::GetTextColor(gr)//cTabType.GetTextColor()
+						);
+					}
+				} else if( TABARROW_LONG == m_pTypeData->m_bTabArrow ){
+					int	nPosLeft = rcClip2.left > sPos.GetDrawPos().x ? rcClip2.left : sPos.GetDrawPos().x;
+					_DrawTabArrow(
+						gr,
+						nPosLeft,
+						sPos.GetDrawPos().y,
+						nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Area一杯に 2013/4/11 Uchi
+						pMetrics->GetHankakuHeight(),
+						tm.tmWeight > lfWeightNormal ||
+							m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
+						::GetTextColor(gr)//cTabType.GetTextColor()
+					);
+				}
 			}
 		}
 	}
