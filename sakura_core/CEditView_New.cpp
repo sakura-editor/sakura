@@ -41,28 +41,6 @@
 #include "CLayout.h"// 2002/2/10 aroka
 #include "CDocLine.h"// 2002/2/10 aroka
 
-/*! フォントを選ぶ
-	@param bBold trueで太字
-	@param bUnderLine trueでアンダーライン
-*/
-HFONT CEditView::ChooseFontHandle( bool bBold, bool bUnderLine )
-{
-	if( bBold ){	/* 太字か */
-		if( bUnderLine ){	/* 下線か */
-			return m_hFont_HAN_BOLD_UL;
-		}else{
-			return m_hFont_HAN_BOLD;
-		}
-	}else{
-		if( bUnderLine ){	/* 下線か */
-			return m_hFont_HAN_UL;
-		}else{
-			return m_hFont_HAN;
-		}
-	}
-}
-
-
 /*! 通常の描画処理 new 
 	@param pPs  pPs.rcPaint は正しい必要がある
 	@param bDrawFromComptibleBmp  TRUE 画面バッファからhdcに作画する(コピーするだけ)。
@@ -209,7 +187,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	//	To Here Sep. 7, 2001 genta
 
 	::SetBkMode( hdc, TRANSPARENT );
-	hFontOld = (HFONT)::SelectObject( hdc, m_hFont_HAN );
+	hFontOld = (HFONT)::SelectObject( hdc, m_pcViewFont->GetFontHan() );
 	m_hFontOld = NULL;
 
 
@@ -588,7 +566,7 @@ searchnext:;
 							HFONT	hFontOld;
 							/* フォントを選ぶ */
 							hFontOld = (HFONT)::SelectObject( hdc,
-								ChooseFontHandle(
+								m_pcViewFont->ChooseFontHandle(
 									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 								)
@@ -1126,7 +1104,7 @@ searchnext:;
 								HFONT	hFontOld;
 								/* フォントを選ぶ */
 								hFontOld = (HFONT)::SelectObject( hdc,
-									ChooseFontHandle(
+									m_pcViewFont->ChooseFontHandle(
 										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 									)
@@ -1200,7 +1178,7 @@ searchnext:;
 								HFONT	hFontOld;
 								/* フォントを選ぶ */
 								hFontOld = (HFONT)::SelectObject( hdc,
-									ChooseFontHandle(
+									m_pcViewFont->ChooseFontHandle(
 										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 										TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 									)
@@ -1253,7 +1231,7 @@ searchnext:;
 							colTextColorOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIndex].m_colTEXT );	/* 半角スペース文字の色 */
 							colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[nColorIndex].m_colBACK );		/* 半角スペース文字背景の色 */
 							HFONT	hFontOld = (HFONT)::SelectObject( hdc,
-								ChooseFontHandle(
+								m_pcViewFont->ChooseFontHandle(
 									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bBoldFont,
 									TypeDataPtr->m_ColorInfoArr[nColorIndex].m_bUnderLine
 								)
@@ -1378,7 +1356,7 @@ searchnext:;
 						colBkColorOld = ::SetBkColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_colBACK );		/* 折り返し記号背景の色 */
 						/* フォントを選ぶ */
 						hFontOld = (HFONT)::SelectObject( hdc,
-							ChooseFontHandle(
+							m_pcViewFont->ChooseFontHandle(
 								TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bBoldFont,
 								TypeDataPtr->m_ColorInfoArr[COLORIDX_WRAP].m_bUnderLine
 							)
@@ -1756,7 +1734,7 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 		HFONT	hFontOld;
 		/* フォントを選ぶ */
 		hFontOld = (HFONT)::SelectObject( hdc,
-			ChooseFontHandle(
+			m_pcViewFont->ChooseFontHandle(
 				EofColInfo.m_bBoldFont,
 				EofColInfo.m_bUnderLine
 			)

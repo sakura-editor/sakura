@@ -93,7 +93,7 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 			}
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
-				ChooseFontHandle(
+				m_pcViewFont->ChooseFontHandle(
 					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bBoldFont,
 					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
 				)
@@ -116,7 +116,7 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 			}
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
-				ChooseFontHandle(
+				m_pcViewFont->ChooseFontHandle(
 					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bBoldFont,
 					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
 				)
@@ -225,7 +225,7 @@ void CEditView::DispLineNumber(
 		HFONT	hFontOld;
 		/* フォントを選ぶ */
 		hFontOld = (HFONT)::SelectObject( hdc,
-			ChooseFontHandle(
+			m_pcViewFont->ChooseFontHandle(
 				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bBoldFont,
 				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bUnderLine
 			)

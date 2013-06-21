@@ -30,6 +30,7 @@
 
 #include <windows.h>
 #include "CShareData.h"
+#include "CViewFont.h"
 #include "CTipWnd.h"
 #include "CDicMgr.h"
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
@@ -373,10 +374,7 @@ public: /* テスト用にアクセス属性を変更 */
 
 //@@@2002.01.14 YAZAKI staticにしてメモリの節約（(10240+10) * 3 バイト）
 	static int		m_pnDx[MAXLINEKETAS + 10];	/* 文字列描画用文字幅配列 */
-	HFONT			m_hFont_HAN;			/* 現在のフォントハンドル */
-	HFONT			m_hFont_HAN_BOLD;		/* 現在のフォントハンドル(太字) */
-	HFONT			m_hFont_HAN_UL;			/* 現在のフォントハンドル(下線) */
-	HFONT			m_hFont_HAN_BOLD_UL;	/* 現在のフォントハンドル(太字、下線) */
+	CViewFont*		m_pcViewFont;
 	HFONT			m_hFontOld;
 	BOOL			m_bCommandRunning;	/* コマンドの実行中 */
 	/* 分割状態 */
