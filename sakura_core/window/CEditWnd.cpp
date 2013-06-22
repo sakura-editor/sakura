@@ -224,6 +224,9 @@ CEditWnd::CEditWnd()
 {
 	g_pcEditWnd=this;
 
+	/* 共有データ構造体のアドレスを返す */
+	m_pShareData = CShareData::getInstance()->GetShareData();
+
 	for( int i = 0; i < _countof(m_pcEditViewArr); i++ ){
 		m_pcEditViewArr[i] = NULL;
 	}
@@ -239,9 +242,6 @@ CEditWnd::CEditWnd()
 
 	//	Dec. 4, 2002 genta
 	InitMenubarMessageFont();
-
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = CShareData::getInstance()->GetShareData();
 
 	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
 
@@ -4696,13 +4696,11 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 
 LOGFONT& CEditWnd::GetLogfont()
 {
-	DLLSHAREDATA* pShareData = CShareData::getInstance()->GetShareData();
-
 	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
 	if( bUseTypeFont ){
 		return GetDocument().m_cDocType.GetDocumentAttribute().m_lf;
 	}else{
-		return pShareData->m_Common.m_sView.m_lf;
+		return m_pShareData->m_Common.m_sView.m_lf;
 	}
 }
 
