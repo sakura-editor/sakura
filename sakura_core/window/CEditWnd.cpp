@@ -101,7 +101,7 @@ struct SFuncMenuName {
 	const WCHAR*	sName[3];		// 選択文字列
 };
 
-const static SFuncMenuName	sFuncMenuName[] = {
+static const SFuncMenuName	sFuncMenuName[] = {
 	{F_RECKEYMACRO,			{L"キーマクロの記録開始",			L"キーマクロの記録終了"}},
 	{F_SAVEKEYMACRO,		{L"キーマクロの保存",				L"キーマクロの記録終了&&保存"}},
 	{F_LOADKEYMACRO,		{L"キーマクロの読み込み",			L"キーマクロの記録終了&&読み込み"}},

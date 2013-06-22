@@ -231,7 +231,7 @@ public:
 
 //implementation
 
-CWSHClient::CWSHClient(wchar_t const *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
+CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
 				m_Engine(NULL), m_Data(AData), m_OnError(AErrorHandler), m_Valid(false)
 { 
 	// 2010.08.28 DLL インジェクション対策としてEXEのフォルダに移動する
@@ -336,7 +336,7 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 }
 
 
-bool CWSHClient::Execute(wchar_t const *AScript)
+bool CWSHClient::Execute(const wchar_t *AScript)
 {
 	bool bRet = false;
 	IActiveScriptParse *Parser;
