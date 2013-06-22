@@ -119,12 +119,12 @@ private:
 protected:
 	ScriptErrorHandler m_OnError;
 public:
-	CWSHClient(wchar_t const *AEngine, ScriptErrorHandler AErrorHandler, void *AData);
+	CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData);
 	~CWSHClient();
 	CInterfaceObject *m_InterfaceObject;
 	void *m_Data;
 	bool m_Valid; //trueÇÃèÍçáégópâ¬î\
-	void Execute(wchar_t const *AScript);
+	void Execute(const wchar_t *AScript);
 	void Error(BSTR Description, BSTR Source);
 	void Error(wchar_t* Description);
 };

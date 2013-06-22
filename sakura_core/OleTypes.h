@@ -27,8 +27,8 @@ struct SysString
 	SysString()                         { Data = NULL; }
 	SysString(const SysString &Source)  { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); }
 	SysString(BSTR &Source)             { Data = ::SysAllocStringLen(Source, SysStringLen(Source)); }
-	SysString(wchar_t const *S, int L)  { Data = ::SysAllocStringLen(S, L); }
-	SysString(char const *S, int L)
+	SysString(const wchar_t *S, int L)  { Data = ::SysAllocStringLen(S, L); }
+	SysString(const char *S, int L)
 	{ 
 		wchar_t *buf = new wchar_t[L + 1];
 		int L2 = ::MultiByteToWideChar(CP_ACP, 0, S, L, buf, L);

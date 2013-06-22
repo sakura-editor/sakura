@@ -37,7 +37,7 @@ class CEditWnd;
 //by 鬼
 #include"CDropTarget.h"
 
-const static int MENUBAR_MESSAGE_MAX_LEN = 30;
+static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 class CPrintPreview;// 2002/2/10 aroka

@@ -48,8 +48,8 @@
 #include "etc_uty.h"
 
 //	2007.07.22 genta : DLL判別用
-const static TCHAR P_BREG[] = _T("BREGEXP.DLL");
-const static TCHAR P_ONIG[] = _T("bregonig.dll");
+static const TCHAR P_BREG[] = _T("BREGEXP.DLL");
+static const TCHAR P_ONIG[] = _T("bregonig.dll");
 
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
 const char CBregexp::m_tmpBuf[2] = "\0";

@@ -505,7 +505,7 @@ void CInterfaceObject::AddMethod(wchar_t *Name, int ID, VARTYPE *ArgumentTypes, 
 	Info->Arguments[ArgumentCount].paramdesc.wParamFlags = PARAMFLAG_FRETVAL;
 }
 
-CWSHClient::CWSHClient(wchar_t const *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
+CWSHClient::CWSHClient(const wchar_t *AEngine, ScriptErrorHandler AErrorHandler, void *AData): 
 				m_Engine(NULL), m_Data(AData), m_OnError(AErrorHandler), m_Valid(false)
 { 
 	m_InterfaceObject = new CInterfaceObject(this);
@@ -547,7 +547,7 @@ CWSHClient::~CWSHClient()
 		m_Engine->Release();
 }
 
-void CWSHClient::Execute(wchar_t const *AScript)
+void CWSHClient::Execute(const wchar_t *AScript)
 {
 	IActiveScriptParse *Parser;
 	if(m_Engine->QueryInterface(IID_IActiveScriptParse, reinterpret_cast<void **>(&Parser)) != S_OK)
@@ -734,7 +734,7 @@ void CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 	@param Instance [in] インスタンスハンドル(未使用)
 	@param Path		[in] ファイルのパス
 */
-BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE Instance, char const* Path)
+BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE Instance, const char* Path)
 {
 	BOOL Result = FALSE;
 	
@@ -765,7 +765,7 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE Instance, char const* Path)
 	@param Instance [in] インスタンスハンドル(未使用)
 	@param pszCode	[in] コード文字列
 */
-BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE Instance, char const* pszCode)
+BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE Instance, const char* pszCode)
 {
 	unsigned long Size = strlen(pszCode); //ギガ単位のマクロはさすがに無いでしょう…
 	wchar_t *WideBuffer = new wchar_t[Size + 1]; //Unicode化して長くはならない
@@ -778,7 +778,7 @@ BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE Instance, char const* pszCode)
 	return TRUE;
 }
 
-CMacroManagerBase* CWSHMacroManager::Creator(char const *FileExt)
+CMacroManagerBase* CWSHMacroManager::Creator(const char *FileExt)
 {
 	char FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
 	wchar_t EngineNameW[1024];
