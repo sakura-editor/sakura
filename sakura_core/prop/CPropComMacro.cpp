@@ -368,12 +368,14 @@ int CPropMacro::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
+struct ColumnData_CPropMacro_Init {
+	const TCHAR *title;
+	int width;
+};
+
 void CPropMacro::InitDialog( HWND hwndDlg )
 {
-	struct ColumnData {
-		const TCHAR *title;
-		int width;
-	} ColumnList[] = {
+	struct ColumnData_CPropMacro_Init ColumnList[] = {
 		{ _T("番号"), 40 },
 		{ _T("マクロ名"), 150 },
 		{ _T("ファイル名"), 150 },

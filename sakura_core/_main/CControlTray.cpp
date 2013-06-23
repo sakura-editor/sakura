@@ -1369,7 +1369,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	// リソースを使わないように
 	hMenuTop = ::CreatePopupMenu();
 	hMenu = ::CreatePopupMenu();
-	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenu, L"TrayL", L"" );
+	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayL", L"" );
 
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILENEW, _T(""), _T("N"), FALSE );
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_FILEOPEN, _T(""), _T("O"), FALSE );
@@ -1383,11 +1383,11 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	hMenuPopUp = cMRU.CreateMenu( &m_CMenuDrawer );	//	ファイルメニュー
 	if ( cMRU.MenuLength() > 0 ){
 		//	アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , _T("最近使ったファイル"), _T("F") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , _T("最近使ったファイル"), _T("F") );
 	}
 	else {
 		//	非アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp , _T("最近使ったファイル"), _T("F") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT_PTR)hMenuPopUp , _T("最近使ったファイル"), _T("F") );
 	}
 
 	/* 最近使ったフォルダのメニューを作成 */
@@ -1396,11 +1396,11 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	hMenuPopUp = cMRUFolder.CreateMenu( &m_CMenuDrawer );
 	if ( cMRUFolder.MenuLength() > 0 ){
 		//	アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
 	}
 	else {
 		//	非アクティブ
-		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
+		m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP | MF_GRAYED, (UINT_PTR)hMenuPopUp, _T("最近使ったフォルダ"), _T("D") );
 	}
 
 	m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL, FALSE );
@@ -1495,7 +1495,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	// リソースを使わないように
 	hMenuTop = ::CreatePopupMenu();
 	hMenu = ::CreatePopupMenu();
-	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenu, L"TrayR", L"" );
+	m_CMenuDrawer.MyAppendMenu( hMenuTop, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenu, L"TrayR", L"" );
 
 	/* トレイ右クリックの「ヘルプ」メニュー */
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_HELP_CONTENTS , _T(""), _T("O"), FALSE );

@@ -6,11 +6,7 @@
 #if !defined(AFX_STDAFX_H__11490042_E569_11D3_BCE2_444553540001__INCLUDED_)
 #define AFX_STDAFX_H__11490042_E569_11D3_BCE2_444553540001__INCLUDED_
 
-#if !defined(_MSC_VER)
-#define _MSC_VER 0
-#endif
-
-#if _MSC_VER > 1000
+#if defined(_MSC_VER) && _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
@@ -20,7 +16,7 @@
 #define STRICT 1
 #endif
 
-#if _MSC_VER >= 1400
+#if defined(_MSC_VER) && _MSC_VER >= 1400
 
 //#pragma warning(disable: 4786)
 #pragma warning(disable: 4996)	//warning C4996: 'xxxx': This function or variable may be unsafe. Consider using wcscpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
@@ -37,6 +33,12 @@
 #endif
 #endif
 
+#ifdef __MINGW32__
+#include <_mingw.h>
+#ifdef MINGW_HAS_SECURE_API
+#undef MINGW_HAS_SECURE_API
+#endif  // MINGW_HAS_SECURE_API
+#endif  // __MINGW32__
 
 //ビルドオプション的なヘッダ
 #include "config/build_config.h"
@@ -72,6 +74,10 @@
 #include <algorithm>
 #include <memory>
 #endif // ifndef SAKURA_PCH_MODE_MIN
+
+#if defined(__MINGW32__) && defined(_countof)
+#define BUILD_OPT_NEW_HEADERS
+#endif
 
 //デバッグ
 #include "debug/Debug1.h"

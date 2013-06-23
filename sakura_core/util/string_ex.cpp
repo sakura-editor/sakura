@@ -222,7 +222,7 @@ const char* stristr_j( const char* s1, const char* s2 )
 //                           互換                              //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-#if _MSC_VER<1400 //VS2005より前なら
+#if (defined(_MSC_VER) && _MSC_VER<1400) || defined(__MINGW32__) //VS2005より前なら
 errno_t wcscat_s(wchar_t* szDst, size_t nDstCount, const wchar_t* szSrc)
 {
 	// 本物は _set_invalid_parameter_handler で設定されたハンドラが起動します
@@ -859,7 +859,7 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 // ※ ランタイムの towupper(c)/tolower(c) が将来期待する動作になったとしてもこの方法を使い続けて問題無いはず
 int skr_towupper( int c )
 {
-#if _MSC_VER>=1400 //VS2005以降なら
+#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら
 	static wchar_t szMap[256];	// c < 256 用の変換テーブル
 	static bool bInit = false;
 	if( !bInit ){
@@ -880,7 +880,7 @@ int skr_towupper( int c )
 
 int skr_towlower( int c )
 {
-#if _MSC_VER>=1400 //VS2005以降なら
+#if defined(_MSC_VER) && _MSC_VER>=1400 //VS2005以降なら
 	static wchar_t szMap[256];	// c < 256 用の変換テーブル
 	static bool bInit = false;
 	if( !bInit ){

@@ -810,7 +810,7 @@ void CMenuDrawer::ResetContents( void )
 void CMenuDrawer::MyAppendMenu(
 	HMENU			hMenu,
 	int				nFlag,
-	int				nFuncId,
+	UINT_PTR		nFuncId,
 	const TCHAR*	pszLabel,
 	const TCHAR*	pszKey,			// 2010/5/18 Uchi
 	BOOL			bAddKeyStr,

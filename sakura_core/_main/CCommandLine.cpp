@@ -294,7 +294,7 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc, bool bResponse )
 					szPath[0] = _T('\0');
 					break;
 				}
-				int nChars = t_max(1, CNativeT::GetCharNext( szPath, len, szPath + i ) - (szPath + i));
+				int nChars = t_max(1, int(CNativeT::GetCharNext( szPath, len, szPath + i ) - (szPath + i)));
 				i += nChars;
 			}
 
