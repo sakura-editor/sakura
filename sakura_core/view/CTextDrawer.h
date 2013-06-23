@@ -63,11 +63,6 @@ public:
 	// -- -- çsî‘çÜ -- -- //
 	void DispLineNumber( CGraphics& gr, CLayoutInt nLineNum, int y ) const;		// çsî‘çÜï\é¶
 
-public: //####âº
-	// -- -- é¿ëïï‚èï -- -- //
-	EColorIndexType _GetColorIdx(EColorIndexType nColorIdx) const;
-
-
 private:
 	const CEditView* m_pEditView;
 };
