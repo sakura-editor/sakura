@@ -1174,6 +1174,12 @@ bool CMacro::HandleCommand(
 			pcEditView->SetUndoBuffer();
 		}
 		break;
+	case F_CLIPBOARDEMPTY:
+		{
+			CClipboard cClipboard(pcEditView->GetHwnd());
+			cClipboard.Empty();
+		}
+		break;
 	default:
 		//	引数なし。
 		pcEditView->GetCommander().HandleCommand( Index, true, 0, 0, 0, 0 );	//	標準
@@ -1699,8 +1705,6 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 	case F_SETCLIPBOARD:
 		//	2011.03.18 syat クリップボードに文字列を設定
 		{
-			TCHAR *Source;
-			int SourceLength;
 			std::tstring sValue;
 			int nOpt = 0;
 
@@ -1711,13 +1715,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[1]) ), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
-				Wrap(&varCopy.Data.bstrVal)->GetT(&Source, &SourceLength);
-				sValue = Source;	// 設定する文字列
-				delete[] Source;
+				Wrap(&varCopy.Data.bstrVal)->GetT(&sValue);
 			}
 
-			bool bColumnSelect = false;
-			bool bLineSelect = false;
+			// 2013.06.12 オプション設定
+			bool bColumnSelect = ((nOpt & 0x01) == 0x01);
+			bool bLineSelect = ((nOpt & 0x02) == 0x02);
 			bool bRet = View->MySetClipboardData( sValue.c_str(), sValue.size(), bColumnSelect, bLineSelect );
 			Wrap( &Result )->Receive( bRet );
 		}
@@ -1943,6 +1946,57 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			CLayoutXInt width = View->GetTextMetrics().GetLayoutXDefault();
 			Wrap( &Result )->Receive( (Int)width );
 			return true;
+		}
+	case F_ISINCLUDECLIPBOARDFORMAT:
+		{
+			if( 1 <= ArgSize ){
+				if( !VariantToBStr(varCopy, Arguments[0]) ) return false;
+				CClipboard cClipboard(View->GetHwnd());
+				bool bret = cClipboard.IsIncludeClipboradFormat(varCopy.Data.bstrVal);
+				Wrap( &Result )->Receive( bret ? 1 : 0 );
+				return true;
+			}
+			return false;
+		}
+	case F_GETCLIPBOARDBYFORMAT:
+		{
+			Variant varCopy2, varCopy3;
+			if( 2 <= ArgSize ){
+				if( !VariantToBStr(varCopy, Arguments[0]) ) return false;
+				if( !VariantToI4(varCopy2, Arguments[1]) ) return false;
+				if( 3 <= ArgSize ){
+					if( !VariantToI4(varCopy3, Arguments[2]) ) return false;
+				}else{
+					varCopy3.Data.iVal = -1;
+				}
+				CClipboard cClipboard(View->GetHwnd());
+				CNativeW mem;
+				cClipboard.GetClipboradByFormat(mem, varCopy.Data.bstrVal, varCopy2.Data.iVal, varCopy3.Data.iVal);
+				SysString ret = SysString(mem.GetStringPtr(), mem.GetStringLength());
+				Wrap( &Result )->Receive( ret );
+				return true;
+			}
+			return false;
+		}
+	case F_SETCLIPBOARDBYFORMAT:
+		{
+			Variant varCopy2, varCopy3, varCopy4;
+			if( 3 <= ArgSize ){
+				if( !VariantToBStr(varCopy, Arguments[0]) ) return false;
+				if( !VariantToBStr(varCopy2, Arguments[1]) ) return false;
+				if( !VariantToI4(varCopy3, Arguments[2]) ) return false;
+				if( 3 <= ArgSize ){
+					if( !VariantToI4(varCopy4, Arguments[3]) ) return false;
+				}else{
+					varCopy4.Data.iVal = -1;
+				}
+				CClipboard cClipboard(View->GetHwnd());
+				CStringRef cstr(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
+				bool bret = cClipboard.SetClipboradByFormat(cstr, varCopy2.Data.bstrVal, varCopy3.Data.iVal, varCopy4.Data.iVal);
+				Wrap( &Result )->Receive( bret ? 1 : 0 );
+				return true;
+			}
+			return false;
 		}
 	default:
 		return false;

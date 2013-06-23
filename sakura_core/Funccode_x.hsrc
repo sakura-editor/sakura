@@ -479,6 +479,8 @@ F_COMMITUNDOBUFFER	= 32813,	// OpeBlKコミット
 F_ADDREFUNDOBUFFER	= 32814,	// OpeBlK AddRef
 F_SETUNDOBUFFER		= 32815,	// OpeBlK Release
 F_APPENDUNDOBUFFERCURSOR	= 32816,	// OpeBlK にカーソル位置を追加
+F_CLIPBOARDEMPTY		= 32817,		// クリップボードクリア
+
 
 F_FUNCTION_FIRST	= 40000,	// 2003-02-21 鬼 これ以上だと関数
 
@@ -531,6 +533,9 @@ F_ISSHOWNSTATUS		= 40047,	// ステータスウィンドウが表示されているか
 F_GETSTRWIDTH		= 40048,	// 文字列幅取得
 F_GETSTRLAYOUTLENGTH = 40049,	// 文字列のレイアウト幅取得
 F_GETDEFAULTCHARLENGTH = 40050,	// デフォルト文字幅の取得
+F_ISINCLUDECLIPBOARDFORMAT	= 40051,	// クリップボードの形式取得
+F_GETCLIPBOARDBYFORMAT	= 40052,	// クリップボードの指定形式で取得
+F_SETCLIPBOARDBYFORMAT	= 40053,	// クリップボードの指定形式で設定
 
 
 //	= 2005,.01.10 genta ISearch用補助コード

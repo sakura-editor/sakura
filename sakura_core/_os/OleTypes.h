@@ -53,10 +53,25 @@ struct SysString
 		wmemcpy(*S, Data, Len);
 		(*S)[Len] = L'\0';
 	}
+	void Get(std::string* str)
+	{
+		char* S;
+		int Len;
+		Get(&S, &Len);
+		str->assign(S, Len);
+		delete [] S;
+	}
+	void GetW(std::wstring* str)
+	{
+		int Len = ::SysStringLen(Data);
+		str->assign(Data, Len);
+	}
 #ifdef _UNICODE
 	void GetT(TCHAR **S, int *L){GetW(S, L);}
+	void GetT(std::wstring* str){GetW(str);}
 #else
 	void GetT(TCHAR **S, int *L){Get(S, L);}
+	void GetT(std::string* str){Get(str);}
 #endif
 };
 
