@@ -19,13 +19,16 @@
 <h3 id=c0201>2.1. 利用イメージ</h3>
 <div class=li200>
 ・ネット上からプラグインのzipファイルをダウンロードする。<br>
-・ダウンロードしたファイルを解凍し、sakura/plugins/ 配下にフォルダを作って配置する。<br>
-　あるいはユーザ別設定が有効な場合、ユーザ別フォルダ(sakura.iniがある)配下のpluginsフォルダに配置することができる。<br>
+・ダウンロードしたファイルをsakura/plugins/ 配下に配置する。<br>
+　あるいはユーザ別設定が有効な場合、ユーザ別フォルダ(sakura.iniがある)配下のpluginsフォルダに配置する。<br>
 　以下、pluginsをプラグインフォルダと呼び、その下のプラグインごとのフォルダを個別フォルダと呼ぶ。<br>
+<img src="images/hint.png">【Windows2000の場合は、ダウンロードしたファイルを解凍し、プラグインフォルダ配下に配置する。】<br>
 ・設定画面のプラグインタブからプラグインの追加を行う。<br>
+　ZIPファイルは解凍され個別フォルダが作成される。<br>
 ・エディタ本体を再起動する(または新しいウィンドウを開く)とプラグインが読み込まれ、利用可能な状態になる。<br>
 ・プラグインのアンインストールは、設定画面からプラグインの削除を行う。<br>
-・プラグインの新バージョンが出た場合は、個別フォルダの内容を上書きしてエディタを再起動することで更新できる。<br>
+・プラグインの新バージョンが出た場合は、設定画面からZIPプラグインの導入でファイルを指定し更新し、エディタ本体を再起動すると利用可能になる。<br>
+<img src="images/hint.png">【Windows2000の場合は、個別フォルダの内容を上書きして更新する。】<br>
 </div><br>
 
 <h3 id=c0202>2.2. 動き</h3>
@@ -90,11 +93,11 @@ Program Files/
 <div class=li200>
 <table class=box>
 <tr><th class=box>プラグインの種類</th><th class=box>ジャック名<br>([Plug]で定義)</th><th class=box><em>ジャック名</em>.Label</th><th class=box>インタフェースオブジェクト</th></tr>
-<tr><td class=box><a href="implementation03.html#c030301">アウトライン解析</a></td><td class=box>Outline</td><td class=box>アウトライン標準ルール選択肢</td><td class=box><a href="implementation02.html#c030203">Outline</a></td></tr>
-<tr><td class=box><a href="implementation03.html#c030302">スマートインデント</a></td><td class=box>Indent</td><td class=box>スマートインデント選択肢</td><td class=box><a href="implementation02.html#c030204">Indent</a></td></tr>
-<tr><td class=box rowspan=2><a href="implementation03.html#c030303">補完候補検索</a><br>(Ver.2.0.6.0以降)</td><td class=box>ComplementGlobal</td><td class=box>no</td><td class=box rowspan=2><a href="implementation02.html#c030205">Complement</a></td></tr>
+<tr><td class=box><a href="implementation03.html#c030501">アウトライン解析</a></td><td class=box>Outline</td><td class=box>アウトライン標準ルール選択肢</td><td class=box><a href="implementation02.html#c030403">Outline</a></td></tr>
+<tr><td class=box><a href="implementation03.html#c030502">スマートインデント</a></td><td class=box>Indent</td><td class=box>スマートインデント選択肢</td><td class=box><a href="implementation02.html#c030404">Indent</a></td></tr>
+<tr><td class=box rowspan=2><a href="implementation03.html#c030503">補完候補検索</a><br>(Ver.2.0.6.0以降)</td><td class=box>ComplementGlobal</td><td class=box>no</td><td class=box rowspan=2><a href="implementation02.html#c030405">Complement</a></td></tr>
 <tr><td class=box>Complement</td><td class=box>入力補完機能選択肢</td></tr>
-<tr><td class=box rowspan=6><a href="implementation03.html#c030304">エディタイベント</a><br>(Ver.2.0.8.0以降)</td><td class=box>EditorStart</td><td class=box>no</td><td class=box rowspan=6></td></tr>
+<tr><td class=box rowspan=6><a href="implementation03.html#c030504">エディタイベント</a><br>(Ver.2.0.8.0以降)</td><td class=box>EditorStart</td><td class=box>no</td><td class=box rowspan=6></td></tr>
 <tr><td class=box>EditorEnd</td><td class=box>no</td></tr>
 <tr><td class=box>DocumentOpen</td><td class=box>no</td></tr>
 <tr><td class=box>DocumentClose</td><td class=box>no</td></tr>

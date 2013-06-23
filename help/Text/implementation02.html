@@ -13,16 +13,16 @@
 <!--
 <noscript>[<a href="index.html">目次</a>] [<a href="web_frame.html" target="_top">フレームで表示</a>] [<a href="web_search.html">検索</a>]<br></noscript>
 -->
-<h3 id=c0302>3.2. インタフェースオブジェクト</h3>
+<h3 id=c0304>3.4. インタフェースオブジェクト</h3>
 <div class=li100>
 JScriptやVBScript等から参照してエディタの情報取得・操作を行うオブジェクト。<br>
 </div>
-<h4 id=c030201>3.2.1. Editor ・・・ おなじみEditorオブジェクト。</h4>
+<h4 id=c030401>3.4.1. Editor ・・・ おなじみEditorオブジェクト。</h4>
 <div class=li200>
 利用可能： マクロ、プラグイン(プラグ、コマンド)<br>
 </div>
 
-<h4 id=c030202>3.2.2. Plugin ・・・ プラグインの共通機能を提供する。</h4>
+<h4 id=c030402>3.4.2. Plugin ・・・ プラグインの共通機能を提供する。</h4>
 <div class=li200>
 利用可能： プラグイン(プラグ、コマンド)<br>
 <div class=li300>
@@ -38,7 +38,7 @@ JScriptやVBScript等から参照してエディタの情報取得・操作を行うオブジェクト。<br>
 </div>
 </div>
 
-<h4 id=c030203>3.2.3. Outline ・・・ アウトライン解析用の機能を提供する。</h4>
+<h4 id=c030403>3.4.3. Outline ・・・ アウトライン解析用の機能を提供する。</h4>
 <div class=li200>
 利用可能： プラグイン(Outlineのみ)<br>
 <div class=li300>
@@ -58,11 +58,8 @@ JScriptやVBScript等から参照してエディタの情報取得・操作を行うオブジェクト。<br>
 		<tr><td></td><td align=right>3</td><td>: 汎用のツリー表示</td></tr>
 		<tr><td></td><td align=right>8</td><td>: VisualBasic向けの関数一覧表</td></tr>
 	</table></td></tr>
-	<tr><td colspan=2><b><em><a href="" onclick="hideDiv('Patch170_2');return false;">(SetLabelはパッチPatchunicode#170適用で使用可能)</a></em></b></td></tr>
-	</table>
-	<table class=f id="Patch170_2" style="display: none;">
 	<tr><th></th><th></th></tr>
-	<tr><td>SetLabel ( nInfo, sText )</td>			<td>タイプにの200ツリー表示の付加文字を変更する。</td></tr>
+	<tr><td>SetLabel( nInfo, sText )</td>					<td>タイプにの200ツリー表示の付加文字を変更する。 (Ver.2.0.9.0以降)</td></tr>
 	<tr><td></td><td><table class=f>
 		<tr><td>nInfo</td><td>: 付加情報の数字</td></tr>
 		<tr><td>sText</td><td>: 文字列</td></tr>
@@ -75,7 +72,7 @@ JScriptやVBScript等から参照してエディタの情報取得・操作を行うオブジェクト。<br>
 </div>
 </div>
 
-<h4 id=c030204>3.2.4. Indent ・・・ スマートインデント用の機能を提供する。</h4>
+<h4 id=c030404>3.4.4. Indent ・・・ スマートインデント用の機能を提供する。</h4>
 <div class=li200>
 利用可能： プラグイン(SmartIndentのみ)<br>
 <div class=li300>
@@ -86,7 +83,7 @@ JScriptやVBScript等から参照してエディタの情報取得・操作を行うオブジェクト。<br>
 </div>
 </div>
 
-<h4 id=c030205>3.2.5. Complement ・・・ 補完候補の機能を提供する。(Ver.2.0.6.0以降)</h4>
+<h4 id=c030405>3.4.5. Complement ・・・ 補完候補の機能を提供する。(Ver.2.0.6.0以降)</h4>
 <div class=li200>
 利用可能： プラグイン(Complement, ComplementGlobalのみ)<br>
 <div class=li300>

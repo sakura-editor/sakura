@@ -58,53 +58,61 @@
 				<param name="Local" value="Text/implementation01.html#c0301">
 				</OBJECT>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="3.2. インタフェースオブジェクト">
-				<param name="Local" value="Text/implementation02.html#c0302">
+				<param name="Name" value="3.2. ReadMeファイル">
+				<param name="Local" value="Text/implementation01.html#c0302">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="3.3. ZIPプラグイン">
+				<param name="Local" value="Text/implementation01.html#c0303">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="3.4. インタフェースオブジェクト">
+				<param name="Local" value="Text/implementation02.html#c0304">
 				<param name="ImageNumber" value="3">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.2.1. Editor">
-					<param name="Local" value="Text/implementation02.html#c030201">
+					<param name="Name" value="3.4.1. Editor">
+					<param name="Local" value="Text/implementation02.html#c030401">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.2.2. Plugin">
-					<param name="Local" value="Text/implementation02.html#c030202">
+					<param name="Name" value="3.4.2. Plugin">
+					<param name="Local" value="Text/implementation02.html#c030402">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.2.3. Outline">
-					<param name="Local" value="Text/implementation02.html#c030203">
+					<param name="Name" value="3.4.3. Outline">
+					<param name="Local" value="Text/implementation02.html#c030403">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.2.4. Indent">
-					<param name="Local" value="Text/implementation02.html#c030204">
+					<param name="Name" value="3.4.4. Indent">
+					<param name="Local" value="Text/implementation02.html#c030404">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.2.5. Complement">
-					<param name="Local" value="Text/implementation02.html#c030205">
+					<param name="Name" value="3.4.5. Complement">
+					<param name="Local" value="Text/implementation02.html#c030405">
 					</OBJECT>
 			</UL>
 			<LI> <OBJECT type="text/sitemap">
-				<param name="Name" value="3.3. プラグインコーディングガイド">
-				<param name="Local" value="Text/implementation03.html#c0303">
+				<param name="Name" value="3.5. プラグインコーディングガイド">
+				<param name="Local" value="Text/implementation03.html#c0305">
 				<param name="ImageNumber" value="3">
 				</OBJECT>
 			<UL>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.3.1. アウトライン解析">
-					<param name="Local" value="Text/implementation03.html#c030301">
+					<param name="Name" value="3.5.1. アウトライン解析">
+					<param name="Local" value="Text/implementation03.html#c030501">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.3.2. スマートインデント">
-					<param name="Local" value="Text/implementation03.html#c030302">
+					<param name="Name" value="3.5.2. スマートインデント">
+					<param name="Local" value="Text/implementation03.html#c030502">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.3.3. 補完候補検索">
-					<param name="Local" value="Text/implementation03.html#c030303">
+					<param name="Name" value="3.5.3. 補完候補検索">
+					<param name="Local" value="Text/implementation03.html#c030503">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="3.3.4. エディタイベント">
-					<param name="Local" value="Text/implementation03.html#c030304">
+					<param name="Name" value="3.5.4. エディタイベント">
+					<param name="Local" value="Text/implementation03.html#c030504">
 					</OBJECT>
 			</UL>
 		</UL>
