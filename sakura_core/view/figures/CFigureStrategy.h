@@ -64,10 +64,28 @@ protected:
 	virtual void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const = 0;
 	virtual EColorIndexType GetColorIdx(void) const = 0;
 
+	virtual void Update(void)
+	{
+		m_pCEditDoc = CEditDoc::GetInstance(0);
+		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
+
+		EColorIndexType nColorIndex = GetColorIdx();
+		if( m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp ){
+			m_nColorIndex = nColorIndex;
+		}else{
+			m_nColorIndex = COLORIDX_TEXT;
+		}
+	}
+
+	EColorIndexType GetDispColorIdx(void) const{ return m_nColorIndex; }
+
 	// é¿ëïï‚èï
 	bool DrawImp_StyleSelect(SColorStrategyInfo* pInfo);
 	void DrawImp_StylePop(SColorStrategyInfo* pInfo);
 	void DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos&);
+
+protected:
+	EColorIndexType m_nColorIndex;
 };
 
 #endif /* SAKURA_CFIGURESTRATEGY_ADBE415F_6FA5_4412_9679_B0045ACE4881_H_ */
