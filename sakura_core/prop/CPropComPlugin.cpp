@@ -435,6 +435,11 @@ int CPropPlugin::GetData( HWND hwndDlg )
 	return TRUE;
 }
 
+struct ColumnData_CPropPlugin_Init {
+	const TCHAR *title;
+	int width;
+};
+
 /*!
 	ダイアログ上のコントロールを初期化する
 
@@ -442,10 +447,7 @@ int CPropPlugin::GetData( HWND hwndDlg )
 */
 void CPropPlugin::InitDialog( HWND hwndDlg )
 {
-	struct ColumnData {
-		const TCHAR *title;
-		int width;
-	} ColumnList[] = {
+	struct ColumnData_CPropPlugin_Init ColumnList[] = {
 		{ _T("番号"), 40 },
 		{ _T("プラグイン名"), 200 },
 		{ _T("状態"), 40 },

@@ -41,6 +41,13 @@
 	usage() ÇéQè∆
 */
 
+#ifdef __MINGW32__
+#include <_mingw.h>
+#ifdef MINGW_HAS_SECURE_API
+#undef MINGW_HAS_SECURE_API
+#endif  // MINGW_HAS_SECURE_API
+#endif  // __MINGW32__
+
 #include <Windows.h>
 #include <stdio.h>
 #include <stdlib.h>

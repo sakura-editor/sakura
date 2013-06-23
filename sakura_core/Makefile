@@ -1,9 +1,25 @@
+# Makefile for MinGW32/MinGW-W64
 
+ifndef PREFIX
 PREFIX=
+RCPREFIX=
+else
+ifeq ($(PREFIX),x86_64-w64-mingw32-)
+RCPREFIX=$(PREFIX)
+else
+ifeq ($(PREFIX),i686-w64-mingw32-)
+ifeq ($(OS),Windows_NT)
+RCPREFIX=
+else
+RCPREFIX=$(PREFIX)
+endif
+endif
+endif
+endif
 
 CC= $(PREFIX)gcc
 CXX= $(PREFIX)g++
-RC= windres
+RC= $(RCPREFIX)windres
 SUBWCREV= SubWCRev.exe
 
 DEFINES= \

@@ -1608,7 +1608,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		ti.uFlags      = TTF_SUBCLASS | TTF_IDISHWND;	// TTF_IDISHWND: uId は HWND で rect は無視（HWND 全体）
 		ti.hwnd        = GetHwnd();
 		ti.hinst       = m_hInstance;
-		ti.uId         = (UINT)GetHwnd();
+		ti.uId         = (UINT_PTR)GetHwnd();
 		ti.lpszText    = NULL;
 		ti.rect.left   = 0;
 		ti.rect.top    = 0;
@@ -2450,7 +2450,7 @@ INT_PTR CDlgFuncList::OnNcMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		ti.cbSize       = sizeof(ti);
 		ti.hwnd         = GetHwnd();
 		ti.hinst        = m_hInstance;
-		ti.uId          = (UINT)GetHwnd();
+		ti.uId          = (UINT_PTR)GetHwnd();
 		switch( m_nHilightedBtn ){
 		case 0: ti.lpszText = const_cast<TCHAR*>(_T("閉じる")); break;
 		case 1: ti.lpszText = const_cast<TCHAR*>(_T("ウィンドウの位置")); break;
@@ -2761,7 +2761,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 450, _T("更新(&U)") );
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING, 451, _T("コピー(&C)") );
 		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_SEPARATOR, 0,	NULL );
-		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuSub,	_T("ウィンドウの位置(&W)") );
+		::InsertMenu( hMenu, iPos++, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuSub,	_T("ウィンドウの位置(&W)") );
 	}
 
 	int iFrom = iPosRef;
