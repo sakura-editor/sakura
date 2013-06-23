@@ -23,7 +23,8 @@ enum EOpeCode {
 	OPE_UNKNOWN		= 0,
 	OPE_INSERT		= 1,
 	OPE_DELETE		= 2,
-	OPE_MOVECARET	= 3,
+	OPE_REPLACE		= 3,
+	OPE_MOVECARET	= 4,
 };
 
 class CLineData {
@@ -90,6 +91,21 @@ public:
 public:
 	COpeLineData	m_pcmemData;				//!< 操作に関連するデータ				[DELETE/INSERT]
 	int				m_nOrgSeq;
+};
+
+//!挿入
+class CReplaceOpe : public COpe{
+public:
+	CReplaceOpe() : COpe(OPE_REPLACE)
+	{
+		m_ptCaretPos_PHY_To.Set(CLogicInt(0),CLogicInt(0));
+	}
+public:
+	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置。文字単位。	[DELETE]
+	COpeLineData	m_pcmemDataIns;			//!< 操作に関連するデータ				[INSERT]
+	COpeLineData	m_pcmemDataDel;			//!< 操作に関連するデータ				[DELETE]
+	int				m_nOrgInsSeq;
+	int				m_nOrgDelSeq;
 };
 
 //!キャレット移動

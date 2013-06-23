@@ -783,20 +783,22 @@ void CEditView::ReplaceData_CEditView3(
 	ptCaretPos_PHY_Old = GetCaret().GetCaretLogicPos();
 	if( pcOpeBlk ){	/* アンドゥ・リドゥの実行中か */
 		/* 操作の追加 */
-		pcOpeBlk->AppendOpe(
-			new CMoveCaretOpe(
-				GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
-				GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
-			)
-		);
+		if( sDelRangeLogic.GetFrom() != GetCaret().GetCaretLogicPos() ){
+			pcOpeBlk->AppendOpe(
+				new CMoveCaretOpe(
+					GetCaret().GetCaretLogicPos(),	// 操作前のキャレット位置
+					GetCaret().GetCaretLogicPos()	// 操作後のキャレット位置
+				)
+			);
+		}
 	}
 
-	CDeleteOpe* pcDeleteOpe = NULL;	// 編集操作要素 COpe
+	CReplaceOpe* pcReplaceOpe = NULL;	// 編集操作要素 COpe
 	if( pcOpeBlk ){
-		pcDeleteOpe = new CDeleteOpe();
-		pcDeleteOpe->m_ptCaretPos_PHY_Before = sDelRangeLogic.GetFrom();
-		pcDeleteOpe->m_ptCaretPos_PHY_To = sDelRangeLogic.GetTo();
-		pcDeleteOpe->m_ptCaretPos_PHY_After = pcDeleteOpe->m_ptCaretPos_PHY_Before;	// 操作後のキャレット位置
+		pcReplaceOpe = new CReplaceOpe();
+		pcReplaceOpe->m_ptCaretPos_PHY_Before = sDelRangeLogic.GetFrom();
+		pcReplaceOpe->m_ptCaretPos_PHY_To = sDelRangeLogic.GetTo();
+		pcReplaceOpe->m_ptCaretPos_PHY_After = pcReplaceOpe->m_ptCaretPos_PHY_Before;	// 操作後のキャレット位置
 	}
 
 	COpeLineData* pcMemDeleted = NULL;
@@ -886,31 +888,23 @@ void CEditView::ReplaceData_CEditView3(
 	}
 
 	// 削除されたデータのコピー(NULL可能)
-	if( pcmemCopyOfDeleted && 0 < pcMemDeleted->size() ){
-		if( pcOpeBlk ){
-			pcDeleteOpe->m_pcmemData = *pcMemDeleted;
-		}else{
+	if( 0 < pcMemDeleted->size() ){
+		if( pcmemCopyOfDeleted ){
+			if( pcOpeBlk ){
+				pcReplaceOpe->m_pcmemDataDel = *pcMemDeleted;
+			}
 			pcmemCopyOfDeleted->swap(*pcMemDeleted);
+		}else if( pcOpeBlk ){
+			pcReplaceOpe->m_pcmemDataDel.swap(*pcMemDeleted);
 		}
 	}
 
-	if( pcOpeBlk && 0 < pcMemDeleted->size() ){
-		pcDeleteOpe->m_pcmemData.swap(*pcMemDeleted);
+	if( pcOpeBlk ){
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(LRArg.ptLayoutNew,   &pcReplaceOpe->m_ptCaretPos_PHY_After);
+		pcReplaceOpe->m_nOrgInsSeq = LRArg.nInsSeq;
 		/* 操作の追加 */
-		pcOpeBlk->AppendOpe( pcDeleteOpe );
+		pcOpeBlk->AppendOpe( pcReplaceOpe );
 	}
-
-
-	if( pcOpeBlk && pInsData && pInsData->size() ){
-		CInsertOpe* pcInsertOpe = new CInsertOpe();
-		pcInsertOpe->m_ptCaretPos_PHY_Before = sDelRangeLogic.GetFrom();	// 2009.07.18 ryoji レイアウトは変化するのに以前のsDelRangeからLayoutToLogicで計算していたバグを修正
-		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(LRArg.ptLayoutNew,   &pcInsertOpe->m_ptCaretPos_PHY_After);
-		pcInsertOpe->m_nOrgSeq = LRArg.nInsSeq;
-
-		/* 操作の追加 */
-		pcOpeBlk->AppendOpe( pcInsertOpe );
-	}
-
 
 	// 挿入直後位置へカーソルを移動
 	GetCaret().MoveCursor(
