@@ -160,9 +160,6 @@ void CViewCommander::Command_PASTE( int option )
 		return;
 	}
 
-	//砂時計
-	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
-
 	// クリップボードからデータを取得 -> cmemClip, bColumnSelect
 	CNativeW	cmemClip;
 	bool		bColumnSelect;
@@ -285,6 +282,13 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		m_pCommanderView->DeleteData( false/*true 2002.01.25 hor*/ );
 	}
 
+	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 10000 < nPasteSize );
+	HWND hwndProgress = NULL;
+	int nProgressPos = 0;
+	if( cWaitCursor.IsEnable() ){
+		hwndProgress = m_pCommanderView->StartProgress();
+	}
+
 	CLayoutPoint ptCurOld = GetCaret().GetCaretLayoutPos();
 
 	nCount = CLayoutInt(0);
@@ -368,6 +372,18 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, int nPasteSize )
 		{
 			++nPos;
 		}
+		if( (nPos % 100) == 0 && hwndProgress ){
+			int newPos = ::MulDiv(nPos, 100, nPasteSize);
+			if( newPos != nProgressPos ){
+				nProgressPos = newPos;
+				Progress_SetPos( hwndProgress, newPos + 1 );
+				Progress_SetPos( hwndProgress, newPos );
+			}
+		}
+	}
+
+	if( hwndProgress ){
+		::ShowWindow( hwndProgress, SW_HIDE );
 	}
 
 	/* 挿入データの先頭位置へカーソルを移動 */
@@ -466,16 +482,12 @@ void CViewCommander::Command_INSTEXT(
 		return;
 	}
 
-	CWaitCursor*	pcWaitCursor;
-	if( bNoWaitCursor ){
-		pcWaitCursor = NULL;
-	}else{
-		pcWaitCursor = new CWaitCursor( m_pCommanderView->GetHwnd() );
-	}
-
 	if( nTextLen < 0 ){
 		nTextLen = CLogicInt(wcslen( pszText ));
 	}
+
+	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(),
+		10000 < nTextLen && !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() );
 
 	GetDocument()->m_cDocEditor.SetModified(true,bRedraw);	//	Jan. 22, 2002 genta
 
@@ -586,7 +598,6 @@ void CViewCommander::Command_INSTEXT(
 	}
 
 end_of_func:
-	delete pcWaitCursor;
 
 	return;
 }

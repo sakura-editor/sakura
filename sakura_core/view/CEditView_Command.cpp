@@ -463,3 +463,14 @@ void CEditView::DrawBracketCursorLine(bool bDraw)
 		DrawBracketPair(true);
 	}
 }
+
+HWND CEditView::StartProgress()
+{
+	HWND hwndProgress = GetDocument()->m_pcEditWnd->m_cStatusBar.GetProgressHwnd();
+	if( NULL != hwndProgress ){
+		::ShowWindow( hwndProgress, SW_SHOW );
+		Progress_SetRange( hwndProgress, 0, 101 );
+		Progress_SetPos( hwndProgress, 0 );
+	}
+	return hwndProgress;
+}
