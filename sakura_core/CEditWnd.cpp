@@ -1778,6 +1778,9 @@ LRESULT CEditWnd::DispatchEvent(
 			m_cEditDoc.OnChangeSetting();	// ビューに設定変更を反映させる
 			break;
 		case PM_CHANGESETTING_FONT:
+			m_cEditDoc.OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
+			break;
+		case PM_CHANGESETTING_FONTSIZE:
 			m_cEditDoc.OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
 			break;
 		default:

@@ -42,6 +42,7 @@
 enum e_PM_CHANGESETTING_SELECT {
 	PM_CHANGESETTING_ALL		= 0, //!< 全部
 	PM_CHANGESETTING_FONT		= 1, //!< フォント変更
+	PM_CHANGESETTING_FONTSIZE	= 2, //!< フォントサイズ変更
 };
 
 //! タスクトレイからの通知メッセージ

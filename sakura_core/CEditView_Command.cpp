@@ -3969,9 +3969,7 @@ void CEditView::Command_FONT( void )
 		/* 全編集ウィンドウへメッセージをポストする */
 		CShareData::getInstance()->PostMessageToAllEditors(
 			MYWM_CHANGESETTING,
-			(WPARAM)0,
-			(LPARAM)PM_CHANGESETTING_FONT,
-			hwndFrame
+			(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONT, hwndFrame
 		);
 
 		/* キャレットの表示 */
@@ -4041,7 +4039,7 @@ void CEditView::Command_SETFONTSIZE( int fontSize, int shift )
 	/* 全編集ウィンドウへメッセージをポストする */
 	CShareData::getInstance()->PostMessageToAllEditors(
 		MYWM_CHANGESETTING,
-		(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONT, hwndFrame
+		(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONTSIZE, hwndFrame
 	);
 }
 
