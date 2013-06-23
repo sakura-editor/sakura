@@ -444,6 +444,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_SETDRAWSWITCH,		LTEXT("SetDrawSwitch"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //再描画スイッチ設定
 	{F_GETDRAWSWITCH,		LTEXT("GetDrawSwitch"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //再描画スイッチ取得
 	{F_ISSHOWNSTATUS,		LTEXT("IsShownStatus"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //ステータスバーが表示されているか
+	{F_GETSTRWIDTH,			LTEXT("GetStrWidth"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //文字列幅取得
+	{F_GETSTRLAYOUTLENGTH,	LTEXT("GetStrLayoutLength"),	{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //文字列のレイアウト幅取得
+	{F_GETDEFAULTCHARLENGTH,	L"GetDefaultCharLength",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //デフォルト文字幅の取得
 
 	//	終端
 	//	Jun. 27, 2002 genta

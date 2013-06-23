@@ -1847,7 +1847,6 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		}
 	case F_GETCOOKIENAMES:
 		{
-			Variant varCopy2, varCopy3;
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, const_cast<VARIANTARG*>( &(Arguments[0]) ), 0, VT_BSTR) != S_OK) return false;
 				SysString ret = View->GetDocument()->m_cCookie.GetCookieNames(varCopy.Data.bstrVal);
@@ -1876,6 +1875,73 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 		{
 			int ret = (NULL != View->GetDocument()->m_pcEditWnd->m_cStatusBar.GetStatusHwnd() ? 1: 0);
 			Wrap( &Result )->Receive( ret );
+			return true;
+		}
+	case F_GETSTRWIDTH:
+		{
+			Variant varCopy2;
+			if( 1 <= ArgSize ){
+				if( !VariantToBStr(varCopy, Arguments[0]) ){ return false; }
+				if( 2 <= ArgSize ){
+					if( !VariantToI4(varCopy2, Arguments[1]) ){ return false; }
+				}else{
+					varCopy2.Data.iVal = 1;
+				}
+				const wchar_t* pLine = varCopy.Data.bstrVal;
+				int nLen = ::SysStringLen(varCopy.Data.bstrVal);
+				if( 2 <= nLen ){
+					if( pLine[nLen-2] == WCODE::CR && pLine[nLen-1] == WCODE::LF ){
+						nLen--;
+					}
+				}
+				const int nTabWidth = (Int)View->GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
+				int nPosX = varCopy2.Data.iVal - 1;
+				for( int i =0; i < nLen; ){
+					if( pLine[i] == WCODE::TAB ){
+						nPosX += nTabWidth - (nPosX % nTabWidth);
+					}else{
+						nPosX += (Int)CNativeW::GetKetaOfChar(pLine, nLen, i);
+					}
+					i += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(pLine, nLen, i));
+				}
+				nPosX -=  varCopy2.Data.iVal - 1;
+				Wrap( &Result )->Receive( nPosX );
+				return true;
+			}
+			return false;
+		}
+	case F_GETSTRLAYOUTLENGTH:
+		{
+			Variant varCopy2;
+			if( 1 <= ArgSize ){
+				if( !VariantToBStr(varCopy, Arguments[0]) ){ return false; }
+				if( 2 <= ArgSize ){
+					if( !VariantToI4(varCopy2, Arguments[1]) ){ return false; }
+				}else{
+					varCopy2.Data.iVal = 1;
+				}
+				CDocLine tmpDocLine;
+				tmpDocLine.SetDocLineString(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
+				const int tmpLenWithEol1 = tmpDocLine.GetLengthWithoutEOL() + (0 < tmpDocLine.GetEol().GetLen() ? 1: 0);
+				const CLayoutXInt offset(varCopy2.Data.iVal - 1);
+				const CLayout tmpLayout(
+					&tmpDocLine,
+					CLogicPoint(0,0),
+					CLogicXInt(tmpLenWithEol1),
+					COLORIDX_TEXT,
+					offset,
+					NULL
+				);
+				CLayoutXInt width = View->LineIndexToColumn(&tmpLayout, tmpDocLine.GetLengthWithEOL()) - offset;
+				Wrap( &Result )->Receive( (Int)width );
+				return true;
+			}
+			return false;
+		}
+	case F_GETDEFAULTCHARLENGTH:
+		{
+			CLayoutXInt width = View->GetTextMetrics().GetLayoutXDefault();
+			Wrap( &Result )->Receive( (Int)width );
 			return true;
 		}
 	default:

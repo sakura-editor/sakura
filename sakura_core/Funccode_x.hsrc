@@ -528,6 +528,9 @@ F_GETCOOKIENAMES	= 40044,	// Cookie名前取得
 F_SETDRAWSWITCH		= 40045,	// 再描画スイッチ設定
 F_GETDRAWSWITCH		= 40046,	// 再描画スイッチ取得
 F_ISSHOWNSTATUS		= 40047,	// ステータスウィンドウが表示されているか
+F_GETSTRWIDTH		= 40048,	// 文字列幅取得
+F_GETSTRLAYOUTLENGTH = 40049,	// 文字列のレイアウト幅取得
+F_GETDEFAULTCHARLENGTH = 40050,	// デフォルト文字幅の取得
 
 
 //	= 2005,.01.10 genta ISearch用補助コード
