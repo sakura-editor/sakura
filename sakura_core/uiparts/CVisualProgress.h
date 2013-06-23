@@ -51,6 +51,7 @@ protected:
 	void _End();
 private:
 	CWaitCursor* m_pcWaitCursor;
+	int	nOldValue;
 };
 
 #endif /* SAKURA_CVISUALPROGRESS_64023BB9_BFA3_45B6_9E06_553B0F5EDCC5_H_ */

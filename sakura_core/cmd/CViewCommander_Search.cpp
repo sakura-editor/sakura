@@ -728,7 +728,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	//<< 2002/03/26 Azumaiya
 	// 割り算掛け算をせずに進歩状況を表せるように、シフト演算をする。
 	int nShiftCount;
-	for ( nShiftCount = 0; SHRT_MAX < nAllLineNum; nShiftCount++ )
+	for ( nShiftCount = 0; 300 < nAllLineNum; nShiftCount++ )
 	{
 		nAllLineNum/=2;
 	}
@@ -736,8 +736,9 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	/* プログレスバー初期化 */
 	HWND		hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS_REPLACE );
-	Progress_SetRange( hwndProgress, 0, nAllLineNum );
+	Progress_SetRange( hwndProgress, 0, nAllLineNum + 1 );
 	int			nNewPos = 0;
+	int			nOldPos = -1;
 	Progress_SetPos( hwndProgress, nNewPos);
 
 	/* 置換個数初期化 */
@@ -942,7 +943,11 @@ void CViewCommander::Command_REPLACE_ALL()
 		// と思ったけど、逆にこちらの方が自然ではないので、やめる。
 		{
 			nNewPos = (Int)GetSelect().GetFrom().GetY2() >> nShiftCount;
-			Progress_SetPos( hwndProgress, nNewPos);
+			if( nOldPos != nNewPos ){
+				Progress_SetPos( hwndProgress, nNewPos +1 );
+				Progress_SetPos( hwndProgress, nNewPos );
+				nOldPos = nNewPos;
+			}
 			_itot( nReplaceNum, szLabel, 10 );
 			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 		}
@@ -1211,6 +1216,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	if( 0 < nAllLineNum )
 	{
 		nNewPos = (Int)GetSelect().GetFrom().GetY2() >> nShiftCount;
+		Progress_SetPos( hwndProgress, nNewPos + 1 );
 		Progress_SetPos( hwndProgress, nNewPos);
 	}
 	//>> 2002/03/26 Azumaiya
@@ -1220,6 +1226,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	if( !cDlgCancel.IsCanceled() ){
 		nNewPos = nAllLineNum;
+		Progress_SetPos( hwndProgress, nNewPos + 1 );
 		Progress_SetPos( hwndProgress, nNewPos);
 	}
 	cDlgCancel.CloseDialog( 0 );

@@ -818,7 +818,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		pCDlgCancel = new CDlgCancel;
 		if( NULL != ( hwndCancel = pCDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
 			hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
-			Progress_SetRange( hwndProgress, 0, 100 );
+			Progress_SetRange( hwndProgress, 0, 101 );
  			Progress_SetPos( hwndProgress, 0 );
 		}
 	}
@@ -1053,6 +1053,7 @@ prev_line:;
 				nProgress = ::MulDiv(nLines, 100, nEditLines);
 				if( nProgressOld != nProgress ){
 					nProgressOld = nProgress;
+					Progress_SetPos( hwndProgress, nProgress + 1 );
 					Progress_SetPos( hwndProgress, nProgress );
 				}
 			}
@@ -1187,6 +1188,7 @@ prev_line:;
 					nProgress = ::MulDiv(nCount + nDelLines, 100, nEditLines);
 					if( nProgressOld != nProgress ){
 						nProgressOld = nProgress;
+						Progress_SetPos( hwndProgress, nProgress + 1 );
 						Progress_SetPos( hwndProgress, nProgress );
 					}
 				}
