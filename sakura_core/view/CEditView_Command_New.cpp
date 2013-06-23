@@ -888,7 +888,7 @@ void CEditView::ReplaceData_CEditView3(
 	}
 
 	// 削除されたデータのコピー(NULL可能)
-	if( 0 < pcMemDeleted->size() ){
+	if( pcMemDeleted && 0 < pcMemDeleted->size() ){
 		if( pcmemCopyOfDeleted ){
 			if( pcOpeBlk ){
 				pcReplaceOpe->m_pcmemDataDel = *pcMemDeleted;
