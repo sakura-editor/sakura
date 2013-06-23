@@ -322,7 +322,6 @@ void CViewCommander::Command_UNDO( void )
 	bool		bIsModified;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
-	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
 	CLayoutPoint ptCaretPos_Before;
 
@@ -337,6 +336,14 @@ void CViewCommander::Command_UNDO( void )
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoUndo( &bIsModified ) ) ){
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	//	hor
 		nOpeBlkNum = pcOpeBlk->GetNum();
+
+		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < nOpeBlkNum );
+		HWND hwndProgress = NULL;
+		int nProgressPos = 0;
+		if( cWaitCursor.IsEnable() ){
+			hwndProgress = m_pCommanderView->StartProgress();
+		}
+
 		for( i = nOpeBlkNum - 1; i >= 0; i-- ){
 			pcOpe = pcOpeBlk->GetOpe( i );
 			GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -439,6 +446,14 @@ void CViewCommander::Command_UNDO( void )
 				/* カーソルを移動 */
 				GetCaret().MoveCursor( ptCaretPos_Before, false );
 			}
+			if( hwndProgress && (i % 100) == 0 ){
+				int newPos = ::MulDiv(nOpeBlkNum - i, 100, nOpeBlkNum);
+				if( newPos != nProgressPos ){
+					nProgressPos = newPos;
+					Progress_SetPos( hwndProgress, newPos + 1 );
+					Progress_SetPos( hwndProgress, newPos );
+				}
+			}
 		}
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	//	hor
 		m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
@@ -469,6 +484,7 @@ void CViewCommander::Command_UNDO( void )
 		if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
 
+		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );
 	}
 
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().x;	// 2007.10.11 ryoji 追加
@@ -514,7 +530,6 @@ void CViewCommander::Command_REDO( void )
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
 	bool		bIsModified;
-	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 
 	CLayoutPoint ptCaretPos_Before;
 	CLayoutPoint ptCaretPos_To;
@@ -530,6 +545,14 @@ void CViewCommander::Command_REDO( void )
 	if( NULL != ( pcOpeBlk = GetDocument()->m_cDocEditor.m_cOpeBuf.DoRedo( &bIsModified ) ) ){
 		const bool bDrawSwitchOld = m_pCommanderView->SetDrawSwitch(false);	// 2007.07.22 ryoji
 		nOpeBlkNum = pcOpeBlk->GetNum();
+
+		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < nOpeBlkNum );
+		HWND hwndProgress = NULL;
+		int nProgressPos = 0;
+		if( cWaitCursor.IsEnable() ){
+			hwndProgress = m_pCommanderView->StartProgress();
+		}
+
 		for( i = 0; i < nOpeBlkNum; ++i ){
 			pcOpe = pcOpeBlk->GetOpe( i );
 			/*
@@ -632,6 +655,14 @@ void CViewCommander::Command_REDO( void )
 				/* カーソルを移動 */
 				GetCaret().MoveCursor( ptCaretPos_After, false );
 			}
+			if( hwndProgress && (i % 100) == 0 ){
+				int newPos = ::MulDiv(i + 1, 100, nOpeBlkNum);
+				if( newPos != nProgressPos ){
+					nProgressPos = newPos;
+					Progress_SetPos( hwndProgress, newPos + 1 );
+					Progress_SetPos( hwndProgress, newPos );
+				}
+			}
 		}
 		m_pCommanderView->SetDrawSwitch(bDrawSwitchOld); // 2007.07.22 ryoji
 		m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
@@ -661,6 +692,8 @@ void CViewCommander::Command_REDO( void )
 
 		if( !GetEditWindow()->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
 			GetEditWindow()->RedrawAllViews( m_pCommanderView );	//	他のペインの表示を更新
+
+		if(hwndProgress) ::ShowWindow( hwndProgress, SW_HIDE );
 	}
 
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().x;	// 2007.10.11 ryoji 追加

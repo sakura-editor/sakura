@@ -75,7 +75,6 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 {
 	if( nDataLen <= 0 ) return;
 
-	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
 	CLayoutRange sSelectOld;		//範囲選択
 	CLayoutPoint ptInserted;		//挿入後の挿入位置
 	const struct IsIndentCharSpaceTab{
@@ -174,6 +173,12 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 #if 1	// ↓ここを残せば選択幅1のSPACEインデントで全角文字を揃える機能(2)が追加される。
 		alignFullWidthChar = alignFullWidthChar || (eIndent == INDENT_SPACE && 1 == rcSel.GetTo().x - rcSel.GetFrom().x);
 #endif
+		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < rcSel.GetTo().y - rcSel.GetFrom().y );
+		HWND hwndProgress = NULL;
+		int nProgressPos = 0;
+		if( cWaitCursor.IsEnable() ){
+			hwndProgress = m_pCommanderView->StartProgress();
+		}
 		for( bool insertionWasDone = false; ; alignFullWidthChar = false ) {
 			minOffset = CLayoutInt( -1 );
 			for( CLayoutInt nLineNum = rcSel.GetFrom().y; nLineNum <= rcSel.GetTo().y; ++nLineNum ){
@@ -265,10 +270,23 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 
 				GetCaret().MoveCursor( ptInserted, false );
 				GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX2();
+
+				if( hwndProgress ){
+					int newPos = ::MulDiv((Int)nLineNum, 100, (Int)rcSel.GetTo().y);
+					if( newPos != nProgressPos ){
+						nProgressPos = newPos;
+						Progress_SetPos( hwndProgress, newPos + 1 );
+						Progress_SetPos( hwndProgress, newPos );
+					}
+				}
 			}
 			if( insertionWasDone || !alignFullWidthChar ) {
 				break; // ループの必要はない。(1.文字の挿入が行われたから。2.そうではないが文字の挿入を控えたせいではないから)
 			}
+		}
+
+		if( hwndProgress ){
+			::ShowWindow( hwndProgress, SW_HIDE );
 		}
 
 		// 挿入された文字の分だけ選択範囲を後ろにずらし、rcSelにセットする。
@@ -323,6 +341,13 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		// 現在の選択範囲を非選択状態に戻す
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false );
 
+		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < sSelectOld.GetTo().GetY2() - sSelectOld.GetFrom().GetY2() );
+		HWND hwndProgress = NULL;
+		int nProgressPos = 0;
+		if( cWaitCursor.IsEnable() ){
+			hwndProgress = m_pCommanderView->StartProgress();
+		}
+
 		for( CLayoutInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().GetY2(); i++ ){
 			CLayoutInt nLineCountPrev = GetDocument()->m_cLayoutMgr.GetLineCount();
 			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( i );
@@ -352,6 +377,18 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 				//	行数が変化した!!
 				sSelectOld.GetToPointer()->y += GetDocument()->m_cLayoutMgr.GetLineCount() - nLineCountPrev;
 			}
+			if( hwndProgress ){
+				int newPos = ::MulDiv((Int)i, 100, (Int)sSelectOld.GetTo().GetY());
+				if( newPos != nProgressPos ){
+					nProgressPos = newPos;
+					Progress_SetPos( hwndProgress, newPos + 1 );
+					Progress_SetPos( hwndProgress, newPos );
+				}
+			}
+		}
+
+		if( hwndProgress ){
+			::ShowWindow( hwndProgress, SW_HIDE );
 		}
 
 		GetSelect() = sSelectOld;
@@ -400,9 +437,6 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 		return;
 	}
 
-	//砂時計
-	CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd() );
-
 	/* 矩形範囲選択中か */
 	if( m_pCommanderView->GetSelectionInfo().IsBoxSelecting() ){
 		ErrorBeep();
@@ -422,6 +456,13 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 
 		/* 現在の選択範囲を非選択状態に戻す */
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false );
+
+		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < sSelectOld.GetTo().GetY() - sSelectOld.GetFrom().GetY() );
+		HWND hwndProgress;
+		int nProgressPos = 0;
+		if( cWaitCursor.IsEnable() ){
+			hwndProgress = m_pCommanderView->StartProgress();
+		}
 
 		CLogicInt		nDelLen;
 		for( CLayoutInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().GetY2(); i++ ){
@@ -480,6 +521,17 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 				//	行数が変化した!!
 				sSelectOld.GetToPointer()->y += GetDocument()->m_cLayoutMgr.GetLineCount() - nLineCountPrev;
 			}
+			if( hwndProgress ){
+				int newPos = ::MulDiv((Int)i, 100, (Int)sSelectOld.GetTo().GetY());
+				if( newPos != nProgressPos ){
+					nProgressPos = newPos;
+					Progress_SetPos( hwndProgress, newPos + 1 );
+					Progress_SetPos( hwndProgress, newPos );
+				}
+			}
+		}
+		if( hwndProgress ){
+			::ShowWindow( hwndProgress, SW_HIDE );
 		}
 		GetSelect() = sSelectOld;	//範囲選択
 
