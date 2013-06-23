@@ -11,6 +11,7 @@
 
 CVisualProgress::CVisualProgress()
 : m_pcWaitCursor(NULL)
+, nOldValue(-1)
 {
 }
 
@@ -76,7 +77,7 @@ void CVisualProgress::_Begin()
 	if( hwndProgress ){
 		::ShowWindow( hwndProgress, SW_SHOW );
 		//範囲設定・リセット
-		Progress_SetRange( hwndProgress, 0, 100 );
+		Progress_SetRange( hwndProgress, 0, 101 );
 		Progress_SetPos( hwndProgress, 0);
 	}
 }
@@ -85,8 +86,13 @@ void CVisualProgress::_Doing(int nPer)
 {
 	//プログレスバー更新
 	HWND hwndProgress = CEditWnd::getInstance()->m_cStatusBar.GetProgressHwnd();
-	if(hwndProgress)
-		Progress_SetPos( hwndProgress, nPer );
+	if(hwndProgress){
+		if( nOldValue != nPer ){
+			Progress_SetPos( hwndProgress, nPer + 1 ); // 2013.06.10 Moca Vista/7等でプログレスバーがアニメーションで遅れる対策
+			Progress_SetPos( hwndProgress, nPer );
+			nOldValue = nPer;
+		}
+	}
 }
 
 void CVisualProgress::_End()

@@ -721,6 +721,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 	CDlgCancel*	pcDlgCancel = NULL;
 	HWND		hwndCancel = NULL;
 	HWND		hwndProgress = NULL;
+	int			nOldPercent = -1;
 	BOOL		bResult = TRUE;
 
 	if(filename[0] == L'\0') {
@@ -761,7 +762,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 			pcDlgCancel = new CDlgCancel;
 			if( NULL != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( NULL ), NULL, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
-				Progress_SetRange( hwndProgress, 0, 100 );
+				Progress_SetRange( hwndProgress, 0, 101 );
 				Progress_SetPos( hwndProgress, 0);
 			}
 		}
@@ -790,7 +791,11 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, int
 				break;
 			}
 			if( 0 == ( nLineNum & 0xFF ) ){
-				Progress_SetPos( hwndProgress, cfl.GetPercent() );
+				if( nOldPercent != cfl.GetPercent() ){
+					Progress_SetPos( hwndProgress, cfl.GetPercent() + 1 );
+					Progress_SetPos( hwndProgress, cfl.GetPercent() );
+					nOldPercent = cfl.GetPercent();
+				}
 				m_pCommanderView->Redraw();
 			}
 		}
