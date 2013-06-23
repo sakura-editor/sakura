@@ -51,6 +51,11 @@ public:
 	int GetZenkakuDx() const{ return m_nDxBasis*2; }		//!< ‘SŠp•¶Žš‚Ì•¶ŽšŠÔŠu‚ðŽæ“¾B’PˆÊ‚ÍƒsƒNƒZƒ‹B
 	int GetHankakuDy() const{ return m_nDyBasis; }			//!< Y•ûŒü•¶ŽšŠÔŠuB•¶Žšc•{sŠÔŠuB’PˆÊ‚ÍƒsƒNƒZƒ‹B
 
+	// ŒÅ’è•¶ŽšxŒ…‚ÌƒŒƒCƒAƒEƒg•‚ðŽæ“¾‚·‚é
+	CLayoutXInt GetLayoutXDefault(CKetaXInt chars = CKetaXInt(1)) const{
+		return CLayoutXInt(chars);
+	}
+
 	//•¶ŽšŠÔŠu”z—ñ‚ðŽæ“¾
 	const int* GetDxArray_AllHankaku() const{ return m_anHankakuDx; } //!<”¼Šp•¶Žš—ñ‚Ì•¶ŽšŠÔŠu”z—ñ‚ðŽæ“¾B—v‘f”‚Í64B
 	const int* GetDxArray_AllZenkaku() const{ return m_anZenkakuDx; } //!<”¼Šp•¶Žš—ñ‚Ì•¶ŽšŠÔŠu”z—ñ‚ðŽæ“¾B—v‘f”‚Í64B

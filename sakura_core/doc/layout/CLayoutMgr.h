@@ -95,6 +95,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
 	//! ƒ^ƒu•‚Ìæ“¾
+	CKetaXInt GetTabSpaceKetas() const { return m_sTypeConfig.m_nTabSpace; }
 	CLayoutInt GetTabSpace() const { return m_sTypeConfig.m_nTabSpace; }
 
 

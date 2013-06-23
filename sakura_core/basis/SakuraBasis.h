@@ -66,6 +66,20 @@
 
 #endif
 
+typedef CLogicInt  CLogicXInt;
+typedef CLogicInt  CLogicYInt;
+typedef CLayoutInt CLayoutXInt;
+typedef CLayoutInt CLayoutYInt;
+typedef int CPixelYInt;
+typedef int CPixelXInt;
+
+#ifdef BUILD_OPT_ENALBE_PPFONT_SUPPORT
+typedef CLayoutXInt CHabaXInt;
+typedef int         CKetaXInt;
+#else
+typedef CPixelXInt  CHabaXInt;
+typedef CLayoutXInt CKetaXInt;
+#endif
 
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
