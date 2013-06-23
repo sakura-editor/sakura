@@ -401,6 +401,27 @@ void CViewCommander::Command_UNDO( void )
 					pcDeleteOpe->m_pcmemData.clear();
 				}
 				break;
+			case OPE_REPLACE:
+				{
+					CReplaceOpe* pcReplaceOpe = static_cast<CReplaceOpe*>(pcOpe);
+
+					CLayoutRange sRange;
+					sRange.SetFrom(ptCaretPos_Before);
+					sRange.SetTo(ptCaretPos_After);
+
+					/* データ置換 削除&挿入にも使える */
+					m_pCommanderView->ReplaceData_CEditView3(
+						sRange,				// 削除範囲
+						&pcReplaceOpe->m_pcmemDataIns,	// 削除されたデータのコピー(NULL可能)
+						&pcReplaceOpe->m_pcmemDataDel,	// 挿入するデータ
+						false,						// 再描画するか否か
+						NULL,
+						pcReplaceOpe->m_nOrgInsSeq,
+						&pcReplaceOpe->m_nOrgDelSeq
+					);
+					pcReplaceOpe->m_pcmemDataDel.clear();
+				}
+				break;
 			case OPE_MOVECARET:
 				/* カーソルを移動 */
 				GetCaret().MoveCursor( ptCaretPos_After, false );
@@ -572,6 +593,28 @@ void CViewCommander::Command_REDO( void )
 						pcDeleteOpe->m_nOrgSeq,
 						NULL
 					);
+				}
+				break;
+			case OPE_REPLACE:
+				{
+					CReplaceOpe* pcReplaceOpe = static_cast<CReplaceOpe*>(pcOpe);
+
+					GetDocument()->m_cLayoutMgr.LogicToLayout(
+						pcReplaceOpe->m_ptCaretPos_PHY_To,
+						&ptCaretPos_To
+					);
+
+					/* データ置換 削除&挿入にも使える */
+					m_pCommanderView->ReplaceData_CEditView3(
+						CLayoutRange(ptCaretPos_Before,ptCaretPos_To),
+						&pcReplaceOpe->m_pcmemDataDel,	// 削除されたデータのコピー(NULL可能)
+						&pcReplaceOpe->m_pcmemDataIns,	// 挿入するデータ
+						false,
+						NULL,
+						pcReplaceOpe->m_nOrgDelSeq,
+						&pcReplaceOpe->m_nOrgInsSeq
+					);
+					pcReplaceOpe->m_pcmemDataIns.clear();
 				}
 				break;
 			case OPE_MOVECARET:
