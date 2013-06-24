@@ -216,6 +216,7 @@ LRESULT CWnd::DispatchEvent( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 	CALLH( WM_MBUTTONDBLCLK		, OnMButtonDblClk	);
 	CALLH( WM_MOUSEMOVE			, OnMouseMove		);
 	CALLH( WM_MOUSEWHEEL		, OnMouseWheel		);
+	CALLH( WM_MOUSEHWHEEL		, OnMouseHWheel		);
 	CALLH( WM_PAINT				, OnPaint			);
 	CALLH( WM_TIMER				, OnTimer			);
 	CALLH( WM_QUERYENDSESSION	, OnQueryEndSession	);

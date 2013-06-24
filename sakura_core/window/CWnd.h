@@ -93,6 +93,7 @@ protected:
 	virtual DECLH( OnMButtonDblClk	);	// WM_MBUTTONDBLCLK
 	virtual DECLH( OnMouseMove		);	// WM_MOUSEMOVE
 	virtual DECLH( OnMouseWheel		);	// WM_MOUSEWHEEL
+	virtual DECLH( OnMouseHWheel	);	// WM_MOUSEHWHEEL
 	virtual DECLH( OnTimer			);	// WM_TIMER
 	virtual DECLH( OnSize			);	// WM_SIZE
 	virtual DECLH( OnMove			);	// WM_MOVE

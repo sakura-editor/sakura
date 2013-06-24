@@ -293,6 +293,14 @@ BOOL CViewCommander::HandleCommand(
 	case F_GONEXTPARAGRAPH:	Command_GONEXTPARAGRAPH( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;			//次の段落へ進む
 	case F_GOPREVPARAGRAPH:	Command_GOPREVPARAGRAPH( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ); break;			//前の段落へ戻る
 	case F_AUTOSCROLL:	Command_AUTOSCROLL(); break;	//オートスクロール
+	case F_WHELLUP:			Command_WHELLUP(lparam1); break;
+	case F_WHELLDOWN:		Command_WHELLDOWN(lparam1); break;
+	case F_WHELLLEFT:		Command_WHELLLEFT(lparam1); break;
+	case F_WHELLRIGHT:		Command_WHELLRIGHT(lparam1); break;
+	case F_WHELLPAGEUP:		Command_WHELLPAGEUP(lparam1); break;
+	case F_WHELLPAGEDOWN:	Command_WHELLPAGEDOWN(lparam1); break;
+	case F_WHELLPAGELEFT:	Command_WHELLPAGELEFT(lparam1); break;
+	case F_WHELLPAGERIGHT:	Command_WHELLPAGERIGHT(lparam1); break;
 
 	/* 選択系 */
 	case F_SELECTWORD:		Command_SELECTWORD();break;						//現在位置の単語選択

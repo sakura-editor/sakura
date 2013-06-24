@@ -1207,13 +1207,16 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 //m_dwTipTimerm_dwTipTimerm_dwTipTimer
 
 
+#ifndef SPI_GETWHEELSCROLLCHARS
+#define SPI_GETWHEELSCROLLCHARS 0x006C
+#endif
 
 
 /* マウスホイールのメッセージ処理
 	2009.01.17 nasukoji	ホイールスクロールを利用したページスクロール・横スクロール対応
 	2011.11.16 Moca スクロール変化量への対応
 */
-LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
+LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontalMsg, EFunctionCode nCmdFuncID )
 {
 	WORD	fwKeys;
 	short	zDelta;
@@ -1222,7 +1225,6 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	int		i;
 	int		nScrollCode;
 	int		nRollLineNum;
-	eWheelScrollType scrollType = WHEEL_SCROLL_NONE;
 
 	fwKeys = LOWORD(wParam);			// key flags
 	zDelta = (short) HIWORD(wParam);	// wheel rotation
@@ -1230,17 +1232,75 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	yPos = (short) HIWORD(lParam);		// vertical position of pointer
 //	MYTRACE( _T("CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n"), fwKeys, zDelta, xPos, yPos );
 
-	if( 0 < zDelta ){
-		nScrollCode = SB_LINEUP;
+	if( bHorizontalMsg ){
+		if( 0 < zDelta ){
+			nScrollCode = SB_LINEDOWN; // 右
+		}else{
+			nScrollCode = SB_LINEUP; // 左
+		}
+		zDelta *= -1; // 反対にする
 	}else{
-		nScrollCode = SB_LINEDOWN;
+		if( 0 < zDelta ){
+			nScrollCode = SB_LINEUP;
+		}else{
+			nScrollCode = SB_LINEDOWN;
+		}
 	}
 
 	{
 		// 2009.01.17 nasukoji	キー/マウスボタン + ホイールスクロールで横スクロールする
-		bool bHorizontal = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
+		bool bHorizontal = false;
+		bool bKeyPageScroll = false;
+		if( nCmdFuncID != F_0 ){
+			bHorizontal = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nHorizontalScrollByWheel );
+			bKeyPageScroll = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel );
+		}
 
-		bool bKeyPageScroll = IsSpecialScrollMode( GetDllShareData().m_Common.m_sGeneral.m_nPageScrollByWheel );
+		// 2013.05.30 Moca ホイールスクロールにキー割り当て
+		int nIdx = getCtrlKeyState();
+		EFunctionCode nFuncID = nCmdFuncID;
+		if( nFuncID != F_0 || bHorizontal | bKeyPageScroll ){
+			// コード指定とスペシャルモードを除く
+		}else if( bHorizontalMsg ){
+			if( nScrollCode == SB_LINEUP ){
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLLEFT].m_nFuncCodeArr[nIdx];
+			}else{
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLRIGHT].m_nFuncCodeArr[nIdx];
+			}
+		}else{
+			if( nScrollCode == SB_LINEUP ){
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLUP].m_nFuncCodeArr[nIdx];
+			}else{
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLDOWN].m_nFuncCodeArr[nIdx];
+			}
+		}
+		bool bExecCmd = false;
+		if( !bHorizontal && !bKeyPageScroll ){
+			if( nFuncID < F_WHELL_FIRST || F_WHELL_LAST < nFuncID ){
+				bExecCmd = true;
+			}
+			if( nFuncID == F_WHELLLEFT || nFuncID == F_WHELLRIGHT
+				|| nFuncID == F_WHELLPAGELEFT ||  nFuncID == F_WHELLPAGERIGHT ){
+				bHorizontal = true;
+			}
+			if( nFuncID == F_WHELLPAGEUP || nFuncID == F_WHELLPAGEDOWN
+				|| nFuncID == F_WHELLPAGELEFT ||  nFuncID == F_WHELLPAGERIGHT ){
+				bKeyPageScroll = true;
+			}
+			if( nFuncID == F_WHELLUP || nFuncID == F_WHELLLEFT
+				|| nFuncID == F_WHELLPAGEUP || nFuncID == F_WHELLPAGELEFT ){
+				if( nScrollCode != SB_LINEUP ){
+					zDelta *= -1;
+					nScrollCode = SB_LINEUP;
+				}
+			}else if( nFuncID == F_WHELLDOWN || nFuncID == F_WHELLRIGHT
+				|| nFuncID == F_WHELLPAGEDOWN || nFuncID == F_WHELLPAGERIGHT ){
+				if( nScrollCode != SB_LINEDOWN ){
+					zDelta *= -1;
+					nScrollCode = SB_LINEDOWN;
+				}
+			}
+		}
 
 		/* マウスホイールによるスクロール行数をレジストリから取得 */
 		nRollLineNum = 3;
@@ -1250,8 +1310,20 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		unsigned int uDataLen;	// size of value data
 		TCHAR szValStr[256];
 		uDataLen = _countof(szValStr) - 1;
-		if( ReadRegistry( HKEY_CURRENT_USER, _T("Control Panel\\desktop"), _T("WheelScrollLines"), szValStr, uDataLen ) ){
-			nRollLineNum = ::_ttoi( szValStr );
+		if( !bExecCmd ){
+			bool bGetParam = false;
+			if( bHorizontal ){
+				int nScrollChars = 3;
+				if( ::SystemParametersInfo( SPI_GETWHEELSCROLLCHARS, 0, &nScrollChars, 0 ) ){
+					bGetParam = true;
+					nRollLineNum = nScrollChars;
+				}
+			}
+			if( !bGetParam ){
+				if( ReadRegistry( HKEY_CURRENT_USER, _T("Control Panel\\desktop"), _T("WheelScrollLines"), szValStr, uDataLen ) ){
+					nRollLineNum = ::_ttoi( szValStr );
+				}
+			}
 		}
 
 		if( -1 == nRollLineNum || bKeyPageScroll ){
@@ -1267,36 +1339,30 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 				nRollLineNum = 30;
 			}
 		}
-		if( nRollLineNum < 1 ){
+		if( nRollLineNum < 1 || bExecCmd ){
 			nRollLineNum = 1;
 		}
 
-		// スクロール操作の種類(通常方法のページするクロールはNORMAL扱い)
+		// スクロール操作の種類(通常方法のページスクロールはNORMAL扱い)
 		if( bKeyPageScroll ){
 			if( bHorizontal ){
-				scrollType = WHEEL_SCROLL_HPAGE;
 				// ホイール操作による横スクロールあり
 				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
-			}else{
-				scrollType = WHEEL_SCROLL_VPAGE;
 			}
 			// ホイール操作によるページスクロールあり
 			m_pcEditDoc->m_pcEditWnd->SetPageScrollByWheel( TRUE );
 		}else{
 			if( bHorizontal ){
-				scrollType = WHEEL_SCROLL_HNORMAL;
 				// ホイール操作による横スクロールあり
 				m_pcEditDoc->m_pcEditWnd->SetHScrollByWheel( TRUE );
-			}else{
-				scrollType = WHEEL_SCROLL_VNORMAL;
 			}
 		}
 
-		if( scrollType != m_eWheelScroll
+		if( nFuncID != m_eWheelScroll
 				|| ( zDelta < 0 && 0 < m_nWheelDelta )
 				|| ( 0 < zDelta && m_nWheelDelta < 0 ) ){
 			m_nWheelDelta = 0;
-			m_eWheelScroll = scrollType;
+			m_eWheelScroll = nFuncID;
 		}
 		m_nWheelDelta += zDelta;
 
@@ -1304,7 +1370,17 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 		int nRollNum = abs(m_nWheelDelta) * nRollLineNum / 120;
 		// 次回持越しの変化量(上記式Deltaのあまり。スクロール方向とzDeltaは符号が反対)
 		m_nWheelDelta = (abs(m_nWheelDelta) - nRollNum * 120 / nRollLineNum) * ((nScrollCode == SB_LINEUP) ? 1 : -1);
-		
+
+		if( bExecCmd ){
+			if( nFuncID != F_0 ){
+				// スクロール変化量分コマンド実行(zDeltaが120あたりで1回)
+				for( int i = 0; i < nRollNum; i++ ){
+					::PostMessageCmd( ::GetParent( m_hwndParent ), WM_COMMAND, MAKELONG( nFuncID, CMD_FROM_MOUSE ),  (LPARAM)NULL );
+				}
+			}
+			return bHorizontalMsg ? TRUE: 0;
+		}
+
 		const bool bSmooth = !! GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScroll_Smooth;
 		const int nRollActions = bSmooth ? nRollNum : 1;
 		const CLayoutInt nCount = CLayoutInt(((nScrollCode == SB_LINEUP) ? -1 : 1) * (bSmooth ? 1 : nRollNum) );
@@ -1318,9 +1394,27 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 			}
 		}
 	}
-	return 0;
+	return bHorizontalMsg ? TRUE: 0;
 }
 
+
+/*! 垂直マウススクロール
+*/
+LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
+{
+	return OnMOUSEWHEEL2( wParam, lParam, false, F_0 );
+}
+
+/*! 水平マウススクロール
+	@note http://msdn.microsoft.com/en-us/library/ms997498.aspx
+	Best Practices for Supporting Microsoft Mouse and Keyboard Devices
+	によると、WM_MOUSEHWHEELを処理した場合はTRUEを返す必要があるそうです。
+	MSDNのWM_MOUSEHWHEEL Messageのページは間違っているので注意。
+*/
+LRESULT CEditView::OnMOUSEHWHEEL( WPARAM wParam, LPARAM lParam )
+{
+	return OnMOUSEWHEEL2( wParam, lParam, true, F_0 );
+}
 
 /*!
 	@brief キー・マウスボタン状態よりスクロールモードを判定する
