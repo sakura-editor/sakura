@@ -202,6 +202,8 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 			}
 		}
 	}
+	EditInfo tmpEditInfo = *pEditInfo;
+	tmpEditInfo.m_bIsModified = FALSE; // •ÏXƒtƒ‰ƒO‚ð–³Œø‚É
 
 	TCHAR	szDrive[_MAX_DRIVE];
 	TCHAR	szDir[_MAX_DIR];
@@ -224,7 +226,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 	CMRUFolder cMRUFolder;
 	cMRUFolder.Add(szFolder);
 
-	m_cRecentFile.AppendItem( pEditInfo );
+	m_cRecentFile.AppendItem( &tmpEditInfo );
 	
 	::SHAddToRecentDocs( SHARD_PATH, to_wchar(pEditInfo->m_szPath) );
 }
