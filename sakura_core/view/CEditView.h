@@ -222,7 +222,9 @@ public:
 	void OnXLBUTTONUP( WPARAM, int, int );				/* マウスサイドボタン1開放 */		// 2009.01.17 nasukoji
 	void OnXRBUTTONDOWN( WPARAM, int, int );			/* マウスサイドボタン2押下 */
 	void OnXRBUTTONUP( WPARAM, int, int );				/* マウスサイドボタン2開放 */		// 2009.01.17 nasukoji
-	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );				/* マウスホイールのメッセージ処理 */
+	LRESULT OnMOUSEWHEEL( WPARAM, LPARAM );				//!< 垂直マウスホイールのメッセージ処理
+	LRESULT OnMOUSEHWHEEL( WPARAM, LPARAM );			//!< 水平マウスホイールのメッセージ処理
+	LRESULT OnMOUSEWHEEL2( WPARAM, LPARAM, bool, EFunctionCode );		//!< マウスホイールのメッセージ処理
 	bool IsSpecialScrollMode( int );					/* キー・マウスボタン状態よりスクロールモードを判定する */		// 2009.01.17 nasukoji
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -664,14 +666,7 @@ public:
 	DWORD			m_dwTripleClickCheck;	//!< トリプルクリックチェック用時刻	//2007.10.02 nasukoji
 	CMyPoint		m_cMouseDownPos;	//!< クリック時のマウス座標
 	int				m_nWheelDelta;	//!< ホイール変化量
-	enum eWheelScrollType{
-		WHEEL_SCROLL_NONE,
-		WHEEL_SCROLL_HNORMAL,
-		WHEEL_SCROLL_HPAGE,
-		WHEEL_SCROLL_VNORMAL,
-		WHEEL_SCROLL_VPAGE,
-	};
-	eWheelScrollType	m_eWheelScroll; //!< スクロールの種類
+	EFunctionCode	m_eWheelScroll; //!< スクロールの種類
 	int				m_nMousePouse;	// マウス停止時間
 	CMyPoint		m_cMousePousePos;	// マウスの停止位置
 	bool			m_bHideMouse;

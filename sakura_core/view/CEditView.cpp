@@ -146,7 +146,7 @@ CEditView::CEditView(CEditWnd* pcEditWnd)
 , m_AT_ImmSetReconvertString(NULL)
 , m_bActivateByMouse( FALSE )	// 2007.10.02 nasukoji
 , m_nWheelDelta(0)
-, m_eWheelScroll(WHEEL_SCROLL_NONE)
+, m_eWheelScroll(F_0)
 , m_nAutoScrollMode(0)
 , m_nMousePouse(0)
 {
@@ -451,6 +451,9 @@ LRESULT CEditView::DispatchEvent(
 			return 0L;
 		}
 		return OnMOUSEWHEEL( wParam, lParam );
+
+	case WM_MOUSEHWHEEL:
+		return OnMOUSEHWHEEL( wParam, lParam );
 
 	case WM_CREATE:
 		::SetWindowLongPtr( hwnd, 0, (LONG_PTR) this );

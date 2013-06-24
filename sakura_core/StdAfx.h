@@ -39,6 +39,8 @@
 #undef MINGW_HAS_SECURE_API
 #endif  // MINGW_HAS_SECURE_API
 #endif  // __MINGW32__
+//グローバル
+#include "_main/global.h"
 
 //ビルドオプション的なヘッダ
 #include "config/build_config.h"
@@ -47,16 +49,11 @@
 #include "config/system_constants.h"	//システム定数
 #include "config/app_constants.h"		//アプリケーション定数
 
-//グローバル
-#include "_main/global.h"
-
 //高頻度API等
-#include <Windows.h>
 // #include <CommDlg.h> // WIN32_LEAN_AND_MEANでは必要。OpenFileDialg系
 #include <CommCtrl.h> // コモンコントロール
 #include <stdlib.h>  // _MAX_PATH
 #include <wchar.h>
-#include <tchar.h>
 
 #ifndef SAKURA_PCH_MODE_MIN
 // 2010.04.19 重そうなので追加

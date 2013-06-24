@@ -185,6 +185,14 @@ public:
 	void Command_GONEXTPARAGRAPH( bool bSelect );	// 次の段落へ進む
 	void Command_GOPREVPARAGRAPH( bool bSelect );	// 前の段落へ戻る
 	void Command_AUTOSCROLL();		// オートスクロール
+	void Command_WHELLUP(int);
+	void Command_WHELLDOWN(int);
+	void Command_WHELLLEFT(int);
+	void Command_WHELLRIGHT(int);
+	void Command_WHELLPAGEUP(int);
+	void Command_WHELLPAGEDOWN(int);
+	void Command_WHELLPAGELEFT(int);
+	void Command_WHELLPAGERIGHT(int);
 
 	/* 選択系 */
 	bool Command_SELECTWORD( CLayoutPoint* pptCaretPos = NULL );		/* 現在位置の単語選択 */

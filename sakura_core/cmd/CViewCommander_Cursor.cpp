@@ -1156,3 +1156,67 @@ void CViewCommander::Command_AUTOSCROLL()
 		m_pCommanderView->AutoScrollExit();
 	}
 }
+
+void CViewCommander::Command_WHELLUP(int zDelta)
+{
+	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLUP );
+}
+
+void CViewCommander::Command_WHELLDOWN(int zDelta)
+{
+	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLDOWN );
+}
+
+void CViewCommander::Command_WHELLLEFT(int zDelta)
+{
+	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLLEFT );
+}
+
+void CViewCommander::Command_WHELLRIGHT(int zDelta)
+{
+	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLRIGHT );
+}
+
+void CViewCommander::Command_WHELLPAGEUP(int zDelta)
+{
+	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLPAGEUP );
+}
+
+void CViewCommander::Command_WHELLPAGEDOWN(int zDelta)
+{
+	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLPAGEDOWN );
+}
+
+void CViewCommander::Command_WHELLPAGELEFT(int zDelta)
+{
+	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLPAGELEFT );
+}
+
+void CViewCommander::Command_WHELLPAGERIGHT(int zDelta)
+{
+	int zDelta2 = (zDelta == 0 ? 120: zDelta);
+	WPARAM wParam = MAKELONG(0, zDelta2);
+	LPARAM lParam = 0;
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLPAGERIGHT );
+}

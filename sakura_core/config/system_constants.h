@@ -442,12 +442,15 @@
 	Version 140:
 	TAB表示対応(文字指定/短い矢印/長い矢印)
 
+	Version 141:
+	マウススクロールキー割り当て 2013.06.12 Moca
+
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		140
+#define N_SHAREDATA_VERSION		141
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(_T("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
@@ -629,8 +632,18 @@ enum e_PM_SETCARETPOS_SELECTSTATE {
 #define MSGNAME_ATOK_RECONVERT TEXT("Atok Message for ReconvertString")
 #define RWM_RECONVERT TEXT("MSIMEReconvert")
 
+#ifndef VK_XBUTTON1
 #define	VK_XBUTTON1		0x05	// マウスサイドボタン1（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
 #define	VK_XBUTTON2		0x06    // マウスサイドボタン2（Windows2000以降で使用可能）	// 2009.01.17 nasukoji
+#endif
+
+#ifndef WM_MOUSEHWHEEL
+#define WM_MOUSEHWHEEL 0x020E
+#endif
+
+
+
+
 
 #ifndef PBM_SETMARQUEE
 #define PBM_SETMARQUEE	(WM_USER+10)

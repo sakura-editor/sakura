@@ -160,6 +160,16 @@ F_WndScrollUp		= 30381,	//テキストを１行上へスクロール				なし
 F_GONEXTPARAGRAPH	= 30382,	//次の段落へ								なし
 F_GOPREVPARAGRAPH	= 30383,	//前の段落へ								なし
 F_AUTOSCROLL 		= 30384,	//オートスクロール
+F_WHELL_FIRST		= 30385,
+F_WHELLUP			= 30385,	//ホイールアップ								int zDelta
+F_WHELLDOWN			= 30386,	//ホイールダウン								int zDelta
+F_WHELLLEFT			= 30387,	//ホイール左								int zDelta
+F_WHELLRIGHT		= 30388,	//ホイール右								int zDelta
+F_WHELLPAGEUP		= 30389,	//ホイールページアップ						int zDelta
+F_WHELLPAGEDOWN		= 30390,	//ホイールページダウン						int zDelta
+F_WHELLPAGELEFT		= 30391,	//ホイールページ左							int zDelta
+F_WHELLPAGERIGHT	= 30392,	//ホイールページ右							int zDelta
+F_WHELL_LAST		= 30392,
 
 // 選択系
 F_SELECTWORD		= 30400,	//現在位置の単語選択						なし

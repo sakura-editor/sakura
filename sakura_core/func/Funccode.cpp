@@ -187,6 +187,14 @@ const EFunctionCode pnFuncList_Move[] = {	//Oct. 16, 2000 JEPRO 変数名変更(List1
 	F_GONEXTPARAGRAPH	,	//次の段落へ
 	F_GOPREVPARAGRAPH	,	//前の段落へ
 	F_AUTOSCROLL		,	//オートスクロール
+	F_WHELLUP			,	//ホイールアップ
+	F_WHELLDOWN			,	//ホイールダウン
+	F_WHELLLEFT			,	//ホイール左
+	F_WHELLRIGHT		,	//ホイール右
+	F_WHELLPAGEUP		,	//ホイールページアップ
+	F_WHELLPAGEDOWN		,	//ホイールページダウン
+	F_WHELLPAGELEFT		,	//ホイールページ左
+	F_WHELLPAGERIGHT	,	//ホイールページ右
 };
 const int nFincList_Move_Num = _countof( pnFuncList_Move );	//Oct. 16, 2000 JEPRO 変数名変更(List1→List_Move)
 

@@ -129,7 +129,11 @@ enum MOUSEFUNCTION_ASSIGN {
 	MOUSEFUNCTION_RIGHTSIDE		= 4,	//!< 右サイドクリック
 	MOUSEFUNCTION_TRIPLECLICK	= 5,	//!< トリプルクリック
 	MOUSEFUNCTION_QUADCLICK		= 6,	//!< クアドラプルクリック
-	MOUSEFUNCTION_KEYBEGIN		= 7,	//!< マウスへの割り当て個数＝本当のキー割り当て先頭INDEX
+	MOUSEFUNCTION_WHELLUP		= 7,	//!< ホイールアップ
+	MOUSEFUNCTION_WHELLDOWN		= 8,	//!< ホイールダウン
+	MOUSEFUNCTION_WHELLLEFT		= 9,	//!< ホイール左
+	MOUSEFUNCTION_WHELLRIGHT	= 10,	//!< ホイール右
+	MOUSEFUNCTION_KEYBEGIN		= 11,	//!< マウスへの割り当て個数＝本当のキー割り当て先頭INDEX
 };
 
 // 2008.05.30 nasukoji	テキストの折り返し方法
