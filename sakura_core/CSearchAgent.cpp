@@ -839,7 +839,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 		if( 0 < nLen && WCODE::IsLineDelimiter(pInsLine[nLen - 1]) ){
 			// 行挿入
 		}else{
-			bChangeOneLine = true;
+			bChangeOneLine = true; // 「abc\ndef」=>「123」のような置換もtrueなのに注意
 		}
 	}
 	const wchar_t* pInsData = L"";
@@ -964,15 +964,14 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 					tmp.AppendNativeData(pCDocLineNext->_GetDocLineDataWithEOL());
 					pCDocLine->SetDocLineStringMove(&tmp);
 				}
-				if( bChangeOneLine && !bInsOneLine ){
+				if( bChangeOneLine ){
 					pArg->nInsSeq = CModifyVisitor().GetLineModifiedSeq(pCDocLine);
 					CModifyVisitor().SetLineModified(pCDocLine, nSetSeq);
-					pArg->ptNewPos.x = pArg->ptNewPos.x + nInsLen;
-					bInsOneLine = true;
-				}else{
-					if( bChangeOneLine ){
-						PleaseReportToAuthor( NULL, _T("bChangeOneLine = true && bInsOneLine == true") );
+					if( !bInsOneLine ){
+						pArg->ptNewPos.x = pArg->ptNewPos.x + nInsLen;
+						bInsOneLine = true;
 					}
+				}else{
 					CModifyVisitor().SetLineModified(pCDocLine, pArg->nDelSeq);
 					// 削除される行のマーク類を保存
 					markNext = pCDocLineNext->m_sMark;
@@ -1035,6 +1034,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg )
 				CModifyVisitor().SetLineModified(pCDocLine, nSetSeq);
 				pArg->ptNewPos.x = pArg->ptNewPos.x + nInsLen;
 				bInsOneLine = true;
+				pInsData = L"";
+				nInsLen = 0;
 			}else{
 				CModifyVisitor().SetLineModified(pCDocLine, pArg->nDelSeq);
 			}
