@@ -26,7 +26,6 @@
 #include "view/CEditView.h" // SColorStrategyInfo
 #include "CFigure_Eol.h"
 #include "types/CTypeSupport.h"
-#include "doc/layout/CLayout.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "window/CEditWnd.h"
@@ -65,8 +64,8 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 	CEditView* pcView = pInfo->pcView;
 
 	// 改行取得
-	const CLayout*	pcLayout2 = m_pCEditDoc->m_cLayoutMgr.SearchLineByLayoutY(pInfo->pDispPos->GetLayoutLineRef());
-	CEol cEol = pcLayout2->GetLayoutEol();
+	const CLayout* pcLayout = pInfo->pDispPos->GetLayoutRef();
+	CEol cEol = pcLayout->GetLayoutEol();
 	if(cEol.GetLen()){
 		// CFigureSpace::DrawImp_StyleSelectもどき。選択・検索色を優先する
 		CTypeSupport cCurrentType(pcView, pInfo->GetCurrentColor());	// 周辺の色（現在の指定色/選択色）
