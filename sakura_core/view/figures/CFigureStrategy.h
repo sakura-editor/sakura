@@ -38,11 +38,10 @@ public:
 	//! Ý’èXV
 	virtual void Update(void)
 	{
-		m_pCEditDoc = CEditDoc::GetInstance(0);
-		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
+		CEditDoc* pCEditDoc = CEditDoc::GetInstance(0);
+		m_pTypeData = &pCEditDoc->m_cDocType.GetDocumentAttribute();
 	}
 protected:
-	const CEditDoc* m_pCEditDoc;
 	const STypeConfig* m_pTypeData;
 };
 
@@ -66,8 +65,7 @@ protected:
 
 	virtual void Update(void)
 	{
-		m_pCEditDoc = CEditDoc::GetInstance(0);
-		m_pTypeData = &m_pCEditDoc->m_cDocType.GetDocumentAttribute();
+		CFigure::Update();
 
 		EColorIndexType nColorIndex = GetColorIdx();
 		if( m_pTypeData->m_ColorInfoArr[nColorIndex].m_bDisp ){
