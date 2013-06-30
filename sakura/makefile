@@ -60,13 +60,13 @@ STDLIBS=import32.lib cw32mt.lib
 # Micrsoft Optimizing Compiler
 #------------------------------------------
 !ifdef DEBUG
-OPTFLAGS=/W3 /GR /GX /GS /Od /MLd /D "DEBUG" /D "_DEBUG" /Zi
+OPTFLAGS=/W3 /GR /GX /GS /Od /MTd /D "DEBUG" /D "_DEBUG" /Zi
 OBJDIR=.\Debug_one
-OPTLIBS=libcd.lib libcpd.lib
+OPTLIBS=libcmtd.lib libcpmtd.lib
 !else
-OPTFLAGS=/W3 /GR /GX /O1 /ML /D "NDEBUG" 
+OPTFLAGS=/W3 /GR /GX /O1 /MT /D "NDEBUG" 
 OBJDIR=.\Release_one
-OPTLIBS=libc.lib libcp.lib
+OPTLIBS=libcmt.lib libcpmt.lib
 !endif
 
 RC=rc.exe
@@ -91,6 +91,7 @@ OBJS =\
 	$(OBJDIR)\CBlockComment.obj \
 	$(OBJDIR)\CCommandLine.obj \
 	$(OBJDIR)\CControlProcess.obj \
+	$(OBJDIR)\CControlTray.obj \
 	$(OBJDIR)\CDialog.obj \
 	$(OBJDIR)\CDicMgr.obj \
 	$(OBJDIR)\CDlgAbout.obj \
@@ -214,6 +215,7 @@ OBJS =\
 	$(OBJDIR)\CTabWnd.obj \
 	$(OBJDIR)\CTipWnd.obj \
 	$(OBJDIR)\CUxTheme.obj \
+	$(OBJDIR)\CViewFont.obj \
 	$(OBJDIR)\CWnd.obj \
 	$(OBJDIR)\CWaitCursor.obj \
 	$(OBJDIR)\CWSH.obj \
@@ -224,6 +226,7 @@ OBJS =\
 	$(OBJDIR)\global.obj \
 	$(OBJDIR)\my_icmp.obj \
 	$(OBJDIR)\MY_SP.obj \
+	$(OBJDIR)\os.obj \
 	$(OBJDIR)\StdAfx.obj \
 	$(OBJDIR)\WinMain.obj \
 

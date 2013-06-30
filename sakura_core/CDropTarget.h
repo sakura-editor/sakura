@@ -17,7 +17,7 @@
 #ifndef _CEDITDROPTARGET_H_
 #define _CEDITDROPTARGET_H_
 
-#include <Unknwn.h>
+#include <unknwn.h>
 
 class CDropTarget;
 class CYbInterfaceBase;

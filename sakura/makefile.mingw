@@ -42,6 +42,7 @@ OBJS= \
 	$(OBJDIR)/CBregexp.o \
 	$(OBJDIR)/CCommandLine.o \
 	$(OBJDIR)/CControlProcess.o \
+	$(OBJDIR)/CControlTray.o \
 	$(OBJDIR)/CDialog.o \
 	$(OBJDIR)/CDicMgr.o \
 	$(OBJDIR)/CDlgAbout.o \
@@ -164,6 +165,7 @@ OBJS= \
 	$(OBJDIR)/CTabWnd.o \
 	$(OBJDIR)/CTipWnd.o \
 	$(OBJDIR)/CUxTheme.o \
+	$(OBJDIR)/CViewFont.o \
 	$(OBJDIR)/CWSH.o \
 	$(OBJDIR)/CWaitCursor.o \
 	$(OBJDIR)/CWnd.o \
@@ -176,6 +178,7 @@ OBJS= \
 	$(OBJDIR)/etc_uty.o \
 	$(OBJDIR)/global.o \
 	$(OBJDIR)/my_icmp.o \
+	$(OBJDIR)/os.o \
 	$(OBJDIR)/sakura_rc.o
 
 all: $(exe)
@@ -196,6 +199,8 @@ $(OBJDIR)/CBregexp.o: $(SRCDIR)/CBregexp.cpp
 $(OBJDIR)/CCommandLine.o: $(SRCDIR)/CCommandLine.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CControlProcess.o: $(SRCDIR)/CControlProcess.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CControlTray.o: $(SRCDIR)/CControlTray.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CDialog.o: $(SRCDIR)/CDialog.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
@@ -441,6 +446,8 @@ $(OBJDIR)/CTipWnd.o: $(SRCDIR)/CTipWnd.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CUxTheme.o: $(SRCDIR)/CUxTheme.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CViewFont.o: $(SRCDIR)/CViewFont.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CWSH.o: $(SRCDIR)/CWSH.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CWaitCursor.o: $(SRCDIR)/CWaitCursor.cpp
@@ -464,6 +471,8 @@ $(OBJDIR)/etc_uty.o: $(SRCDIR)/etc_uty.cpp
 $(OBJDIR)/global.o: $(SRCDIR)/global.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/my_icmp.o: $(SRCDIR)/my_icmp.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/os.o: $(SRCDIR)/os.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OBJDIR)/sakura_rc.o: $(SRCDIR)/sakura_rc.res

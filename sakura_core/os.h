@@ -24,6 +24,8 @@
 #ifndef _OS_H_
 #define _OS_H_
 
+#include "etc_uty.h" // HMONITOR
+
 //システム資源
 BOOL GetSystemResources( int*, int*, int* );	/* システムリソースを調べる */
 BOOL CheckSystemResources( const TCHAR* );	/* システムリソースのチェック */

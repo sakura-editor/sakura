@@ -15,6 +15,7 @@
 */
 #include "StdAfx.h"
 #include "CWnd.h"
+#include "os.h" //WM_MOUSEWHEEL
 
 CWnd* gm_pCWnd = NULL;
 
