@@ -191,16 +191,17 @@ void CGraphics::RestoreTextColors()
 //                         フォント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CGraphics::PushMyFont(HFONT hFont)
+void CGraphics::PushMyFont(const SFONT& sFont)
 {
 	//設定
-	HFONT hFontOld = (HFONT)SelectObject(m_hdc, hFont);
+	HFONT hFontOld = (HFONT)SelectObject(m_hdc, sFont.m_hFont);
 
 	//記録
 	if(m_vFonts.empty()){
-		m_vFonts.push_back(hFontOld);
+		SFONT sFontOld = { false, false, hFontOld };
+		m_vFonts.push_back(sFontOld);
 	}
-	m_vFonts.push_back(hFont);
+	m_vFonts.push_back(sFont);
 }
 
 void CGraphics::PopMyFont()
@@ -208,14 +209,14 @@ void CGraphics::PopMyFont()
 	//戻す
 	if(m_vFonts.size()>=2){
 		m_vFonts.pop_back();
-		SelectObject(m_hdc,m_vFonts.back());
+		SelectObject(m_hdc, m_vFonts.back().m_hFont);
 	}
 }
 
 void CGraphics::ClearMyFont()
 {
 	if(!m_vFonts.empty()){
-		SelectObject(m_hdc,m_vFonts[0]);
+		SelectObject(m_hdc, m_vFonts[0].m_hFont);
 		m_vFonts.clear();
 	}
 }

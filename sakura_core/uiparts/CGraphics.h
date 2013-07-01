@@ -66,6 +66,13 @@ private:
 };
 
 
+//! フォント情報管理
+struct SFONT {
+	bool	m_bBoldFont;	//!< 太字
+	bool	m_bUnderLine;	//!< 下線
+	HFONT	m_hFont;		//!< フォントハンドル
+};
+
 //! 描画管理
 //最新実装：ブラシ
 class CGraphics{
@@ -100,6 +107,11 @@ public:
 		ClearTextForeColor();
 		PushTextForeColor(color);
 	}
+	COLORREF GetCurrentTextForeColor()
+	{
+		assert(!m_vTextForeColors.empty());
+		return m_vTextForeColors.back();
+	}
 
 	//テキスト背景色
 public:
@@ -110,6 +122,11 @@ public:
 	{
 		ClearTextBackColor();
 		PushTextBackColor(color);
+	}
+	COLORREF GetTextBackColor()
+	{
+		assert(!m_vTextBackColors.empty());
+		return m_vTextBackColors.back();
 	}
 
 	//テキストモード
@@ -125,14 +142,24 @@ public:
 
 	//フォント
 public:
-	void PushMyFont(HFONT hFont);
+	void PushMyFont(HFONT hFont)
+	{
+		SFONT sFont = { false, false, hFont };
+		PushMyFont(sFont);
+	}
+	void PushMyFont(const SFONT& sFont);
 	void PopMyFont();
 	void ClearMyFont();
 	//! フォント設定
-	void SetMyFont(HFONT hFont)
+	void SetMyFont(const SFONT& sFont)
 	{
 		ClearMyFont();
-		PushMyFont(hFont);
+		PushMyFont(sFont);
+	}
+	bool GetCurrentMyFontBold()
+	{
+		assert(!m_vFonts.empty());
+		return  m_vFonts.back().m_bBoldFont;
 	}
 
 	//ペン
@@ -208,7 +235,7 @@ private:
 	//テキスト
 	std::vector<COLORREF>	m_vTextForeColors;
 	std::vector<COLORREF>	m_vTextBackColors;
-	std::vector<HFONT>		m_vFonts;
+	std::vector<SFONT>		m_vFonts;
 
 	//テキスト
 	COrgInt				m_nTextModeOrg;
