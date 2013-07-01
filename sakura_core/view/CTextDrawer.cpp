@@ -392,9 +392,11 @@ void CTextDrawer::DispLineNumber(
 		}
 	}
 	else if( CTypeSupport(pView,COLORIDX_GYOU).IsDisp() ){ /* 行番号表示／非表示 */
-		gr.PushTextForeColor(cColorType.GetTextColor());	//テキスト：行番号の色
-		gr.PushTextBackColor( cColorType.GetBackColor() );	//テキスト：行番号背景の色
-		gr.PushMyFont(cColorType.GetTypeFont());			//フォント：行番号のフォント
+		COLORREF fgcolor = cColorType.GetTextColor();
+		gr.PushTextForeColor(fgcolor);	//テキスト：行番号の色
+		COLORREF bgcolor = cColorType.GetBackColor();
+		gr.PushTextBackColor(bgcolor);	//テキスト：行番号背景の色
+		gr.PushMyFont(cColorType.GetTypeFont());	//フォント：行番号のフォント
 
 		//描画文字列
 		wchar_t szLineNum[18];

@@ -4,7 +4,6 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "types/CTypeSupport.h"
-#include "window/CEditWnd.h"
 
 //2007.08.28 kobake 追加
 void _DispTab( CGraphics& gr, DispPos* pDispPos, const CEditView* pcView );
@@ -94,9 +93,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 				// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
 				// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
 				//	太字かどうか設定も見る様にする 2013/4/11 Uchi
-				TEXTMETRIC tm;
-				::GetTextMetrics(gr, &tm);
-				LONG lfWeightNormal = pcView->m_pcEditWnd->GetLogfont().lfWeight;
+				// 2013.06.21 novice 文字色、太字をCGraphicsから取得
 
 				if( TABARROW_SHORT == m_pTypeData->m_bTabArrow ){
 					if( rcClip2.left <= sPos.GetDrawPos().x ){ // Apr. 1, 2003 MIK 行番号と重なる
@@ -106,8 +103,8 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 							sPos.GetDrawPos().y,
 							pMetrics->GetHankakuWidth(),
 							pMetrics->GetHankakuHeight(),
-							tm.tmWeight > lfWeightNormal,
-							::GetTextColor(gr)//cTabType.GetTextColor()
+							gr.GetCurrentMyFontBold() || m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
+							gr.GetCurrentTextForeColor()
 						);
 					}
 				} else if( TABARROW_LONG == m_pTypeData->m_bTabArrow ){
@@ -118,9 +115,8 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 						sPos.GetDrawPos().y,
 						nCharWidth * tabDispWidth - (nPosLeft -  sPos.GetDrawPos().x),	// Tab Area一杯に 2013/4/11 Uchi
 						pMetrics->GetHankakuHeight(),
-						tm.tmWeight > lfWeightNormal ||
-							m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
-						::GetTextColor(gr)//cTabType.GetTextColor()
+						gr.GetCurrentMyFontBold() || m_pTypeData->m_ColorInfoArr[COLORIDX_TAB].m_bBoldFont,
+						gr.GetCurrentTextForeColor()
 					);
 				}
 			}

@@ -28,7 +28,6 @@
 #include "types/CTypeSupport.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
-#include "window/CEditWnd.h"
 
 //折り返し描画
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
@@ -104,10 +103,12 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 		pInfo->gr.PushTextForeColor(crText);
 		pInfo->gr.PushTextBackColor(crBack);
 		bool bTrans = pcView->IsBkBitmap() && cTextType.GetBackColor() == crBack;
-		pInfo->gr.PushMyFont(
-			pInfo->pcView->GetFontset().ChooseFontHandle(cSpaceType.IsBoldFont() || currentStyle.IsBoldFont(), cSpaceType.HasUnderLine())
-		);
-		
+		SFONT sFont;
+		sFont.m_bBoldFont = cSpaceType.IsBoldFont() || currentStyle.IsBoldFont();
+		sFont.m_bUnderLine = cSpaceType.HasUnderLine();
+		sFont.m_hFont = pInfo->pcView->GetFontset().ChooseFontHandle(sFont.m_bBoldFont, sFont.m_bUnderLine);
+		pInfo->gr.PushMyFont(sFont);
+
 		DispPos sPos(*pInfo->pDispPos);	// 現在位置を覚えておく
 		_DispEOL(pInfo->gr, pInfo->pDispPos, cEol, pcView, bTrans);
 		DrawImp_StylePop(pInfo);
@@ -262,14 +263,12 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 			// 描画
 			// 文字色や太字かどうかを現在の DC から調べる	// 2009.05.29 ryoji 
 			// （検索マッチ等の状況に柔軟に対応するため、ここは記号の色指定には決め打ちしない）
-			TEXTMETRIC tm;
-			::GetTextMetrics(gr, &tm);
-			LONG lfWeightNormal = pcView->m_pcEditWnd->GetLogfont().lfWeight;
-			_DrawEOL(gr, rcEol, cEol, tm.tmWeight > lfWeightNormal, GetTextColor(gr));
+			// 2013.06.21 novice 文字色、太字をCGraphicsから取得
+			_DrawEOL(gr, rcEol, cEol, gr.GetCurrentMyFontBold(), gr.GetCurrentTextForeColor());
 
 			// リージョン破棄
 			gr.ClearClipping();
-			
+
 			// To Here 2003.08.17 ryoji 改行文字が欠けないように
 		}
 	}

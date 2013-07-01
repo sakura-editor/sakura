@@ -107,12 +107,13 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           Ý’è                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	HFONT GetTypeFont()
+	SFONT GetTypeFont()
 	{
-		return m_pFontset->ChooseFontHandle(
-			m_pColorInfoArr->m_bBoldFont,
-			m_pColorInfoArr->m_bUnderLine
-		);
+		SFONT sFont;
+		sFont.m_bBoldFont = m_pColorInfoArr->m_bBoldFont;
+		sFont.m_bUnderLine = m_pColorInfoArr->m_bUnderLine;
+		sFont.m_hFont = m_pFontset->ChooseFontHandle( sFont.m_bBoldFont, sFont.m_bUnderLine );
+		return sFont;
 	}
 	void SetGraphicsState_WhileThisObj(CGraphics& gr)
 	{

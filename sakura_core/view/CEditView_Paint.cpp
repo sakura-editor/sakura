@@ -423,12 +423,11 @@ void CEditView::SetCurrentColor( CGraphics& gr, EColorIndexType eColorIndex )
 	const ColorInfo& info = m_pTypeData->m_ColorInfoArr[nColorIdx];
 	gr.SetTextForeColor(info.m_colTEXT);
 	gr.SetTextBackColor(info.m_colBACK);
-	gr.SetMyFont(
-		GetFontset().ChooseFontHandle(
-			info.m_bBoldFont,
-			info.m_bUnderLine
-		)
-	);
+	SFONT sFont;
+	sFont.m_bBoldFont = info.m_bBoldFont;
+	sFont.m_bUnderLine = info.m_bUnderLine;
+	sFont.m_hFont = GetFontset().ChooseFontHandle(sFont.m_bBoldFont, sFont.m_bUnderLine);
+	gr.SetMyFont(sFont);
 }
 
 /*! 現在の色を指定
@@ -449,20 +448,17 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 	const ColorInfo& info  = m_pTypeData->m_ColorInfoArr[nColorIdx];
 	const ColorInfo& info2 = m_pTypeData->m_ColorInfoArr[nColorIdx2];
 	const ColorInfo& infoBg = m_pTypeData->m_ColorInfoArr[nColorIdxBg];
-	gr.SetTextForeColor(GetTextColorByColorInfo2(info, info2));
+	COLORREF fgcolor = GetTextColorByColorInfo2(info, info2);
+	gr.SetTextForeColor(fgcolor);
 	// 2012.11.21 背景色がテキストとおなじなら背景色はカーソル行背景
 	const ColorInfo& info3 = (info2.m_colBACK == m_crBack ? infoBg : info2);
-	if( nColorIdx == nColorIdx2 ){
-		gr.SetTextBackColor(info3.m_colBACK);
-	}else{
-		gr.SetTextBackColor(GetBackColorByColorInfo2(info, info3));
-	}
-	gr.SetMyFont(
-		GetFontset().ChooseFontHandle(
-			info.m_colTEXT != info.m_colBACK ? info.m_bBoldFont  : info2.m_bBoldFont,
-			info.m_colTEXT != info.m_colBACK ? info.m_bUnderLine : info2.m_bUnderLine
-		)
-	);
+	COLORREF bkcolor = (nColorIdx == nColorIdx2) ? info3.m_colBACK : GetBackColorByColorInfo2(info, info3);
+	gr.SetTextBackColor(bkcolor);
+	SFONT sFont;
+	sFont.m_bBoldFont = (info.m_colTEXT != info.m_colBACK) ? info.m_bBoldFont : info2.m_bBoldFont;
+	sFont.m_bUnderLine = (info.m_colTEXT != info.m_colBACK) ? info.m_bUnderLine : info2.m_bUnderLine;
+	sFont.m_hFont = GetFontset().ChooseFontHandle(sFont.m_bBoldFont, sFont.m_bUnderLine);
+	gr.SetMyFont(sFont);
 }
 
 inline COLORREF MakeColor2(COLORREF a, COLORREF b, int alpha)
