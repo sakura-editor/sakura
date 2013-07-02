@@ -688,6 +688,7 @@ void CPrintPreview::OnChangeSetting()
 {
 	if( m_bLockSetting ){
 		m_bDemandUpdateSetting = true;
+		return;
 	}
 	m_bDemandUpdateSetting = false;
 	*m_pPrintSetting = *m_pPrintSettingOrg;
@@ -1371,25 +1372,28 @@ CColorStrategy* CPrintPreview::DrawPageTextFirst(int nPageNum)
 
 		const CLayoutInt	nPageTopLineNum = CLayoutInt( (nPageNum * m_pPrintSetting->m_nPrintDansuu) * m_bPreview_EnableLines );
 		const CLayout*		pcPageTopLayout = m_pLayoutMgr_Print->SearchLineByLayoutY( nPageTopLineNum );
-		const CLogicInt		nPageTopOff = pcPageTopLayout->GetLogicOffset();
 
-		// ページトップの物理行の先頭を検索
-		while (pcPageTopLayout->GetLogicOffset()) {
-			pcPageTopLayout = pcPageTopLayout->GetPrevLayout();
-		}
+		if (pcPageTopLayout != NULL) {
+			const CLogicInt		nPageTopOff = pcPageTopLayout->GetLogicOffset();
 
-		// 論理行先頭のCColorStrategy取得
-		pStrategy = m_pool->GetStrategyByColor( pcPageTopLayout->GetColorTypePrev() );
-		m_pool->NotifyOnStartScanLogic();
-		if (pStrategy) {
-			pStrategy->InitStrategyStatus();
-			pStrategy->SetStrategyColorInfo(pcPageTopLayout->GetColorInfo());
-		}
-		if (nPageTopOff) {
-			CStringRef	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
-			CLogicInt	iLogic;
-			for ( iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
-				pStrategy = GetColorStrategy( csr, iLogic, pStrategy );
+			// ページトップの物理行の先頭を検索
+			while (pcPageTopLayout->GetLogicOffset()) {
+				pcPageTopLayout = pcPageTopLayout->GetPrevLayout();
+			}
+
+			// 論理行先頭のCColorStrategy取得
+			pStrategy = m_pool->GetStrategyByColor( pcPageTopLayout->GetColorTypePrev() );
+			m_pool->NotifyOnStartScanLogic();
+			if (pStrategy) {
+				pStrategy->InitStrategyStatus();
+				pStrategy->SetStrategyColorInfo(pcPageTopLayout->GetColorInfo());
+			}
+			if (nPageTopOff) {
+				CStringRef	csr = pcPageTopLayout->GetDocLineRef()->GetStringRefWithEOL();
+				CLogicInt	iLogic;
+				for ( iLogic = 0; iLogic < nPageTopOff; ++iLogic) {
+					pStrategy = GetColorStrategy( csr, iLogic, pStrategy );
+				}
 			}
 		}
 	}
@@ -2093,10 +2097,10 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 				memset_raw( &pd, 0, sizeof(pd) );
 				pd.Flags = PD_PRINTSETUP | PD_NONETWORKBUTTON;
 				pd.hwndOwner = m_pParentWnd->GetHwnd();
-				if (m_cPrint.PrintDlg( &pd, &m_pPrintSetting->m_mdmDevMode )) {
+				if (m_cPrint.PrintDlg( &pd, &m_pPrintSettingOrg->m_mdmDevMode )) {
 					// 用紙サイズと用紙方向を反映させる 2003.05.03 かろと
-					m_pPrintSetting->m_nPrintPaperSize = m_pPrintSetting->m_mdmDevMode.dmPaperSize;
-					m_pPrintSetting->m_nPrintPaperOrientation = m_pPrintSetting->m_mdmDevMode.dmOrientation;
+					m_pPrintSettingOrg->m_nPrintPaperSize = m_pPrintSettingOrg->m_mdmDevMode.dmPaperSize;
+					m_pPrintSettingOrg->m_nPrintPaperOrientation = m_pPrintSettingOrg->m_mdmDevMode.dmOrientation;
 					/* 印刷プレビュー スクロールバー初期化 */
 					CAppNodeGroupHandle(0).SendMessageToAllEditors(
 						MYWM_CHANGESETTING,
@@ -2104,9 +2108,8 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 						(LPARAM)PM_PRINTSETTING,
 						CEditWnd::getInstance()->GetHwnd()
 					);
-					InitPreviewScrollBar();
 					// OnChangePrintSetting();
-					::InvalidateRect( m_pParentWnd->GetHwnd(), NULL, TRUE );
+					// ::InvalidateRect( m_pParentWnd->GetHwnd(), NULL, TRUE );
 				}
 				// To Here 2003.05.03 かろと
 				break;

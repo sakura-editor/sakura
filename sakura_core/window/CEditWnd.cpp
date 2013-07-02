@@ -3511,12 +3511,12 @@ BOOL CEditWnd::OnPrintPageSetting( void )
 			// m_pPrintPreview->SetPrintSetting( &m_pShareData->m_PrintSettingArr[GetDocument().m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting] );
 
 			/* 印刷プレビュー スクロールバー初期化 */
-			m_pPrintPreview->InitPreviewScrollBar();
+			//m_pPrintPreview->InitPreviewScrollBar();
 
 			/* 印刷設定の反映 */
 			// m_pPrintPreview->OnChangePrintSetting( );
 
-			::InvalidateRect( GetHwnd(), NULL, TRUE );
+			//::InvalidateRect( GetHwnd(), NULL, TRUE );
 		}
 		CAppNodeGroupHandle(0).SendMessageToAllEditors(
 			MYWM_CHANGESETTING,
