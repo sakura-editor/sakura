@@ -601,7 +601,7 @@ void CViewCommander::Command_TRIM(
 /*!	物理行のソートに使う構造体*/
 struct SORTDATA {
 	const CNativeW* pCmemLine;
-	std::wstring  sKey;
+	CStringRef sKey;
 };
 
 inline int CNativeW_comp(const CNativeW& lhs, const CNativeW& rhs )
@@ -617,11 +617,20 @@ bool SortByLineAsc (SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1-
 /*!	物理行のソートに使う関数(降順) */
 bool SortByLineDesc(SORTDATA* pst1, SORTDATA* pst2) {return CNativeW_comp(*pst1->pCmemLine, *pst2->pCmemLine) > 0;}
 
+inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
+{
+	int ret = wmemcmp(c1.GetPtr(), c2.GetPtr(), t_min(c1.GetLength(), c2.GetLength()));
+	if( ret == 0 ){
+		return c1.GetLength() - c2.GetLength();
+	}
+	return ret;
+}
+
 /*!	物理行のソートに使う関数(昇順) */
-bool SortByKeyAsc(SORTDATA* pst1, SORTDATA* pst2)  {return (pst1->sKey < pst2->sKey);}
+bool SortByKeyAsc(SORTDATA* pst1, SORTDATA* pst2)  {return CStringRef_comp(pst1->sKey, pst2->sKey) < 0 ;}
 
 /*!	物理行のソートに使う関数(降順) */
-bool SortByKeyDesc(SORTDATA* pst1, SORTDATA* pst2) {return (pst1->sKey > pst2->sKey);}
+bool SortByKeyDesc(SORTDATA* pst1, SORTDATA* pst2) {return CStringRef_comp(pst1->sKey, pst2->sKey) > 0 ;}
 
 /*!	@brief 物理行のソート
 
@@ -633,6 +642,7 @@ bool SortByKeyDesc(SORTDATA* pst1, SORTDATA* pst2) {return (pst1->sKey > pst2->s
 	@date 2001.12.03 hor 新規作成
 	@date 2001.12.21 hor 選択範囲の調整ロジックを訂正
 	@data 2010.07.27 行ソートでコピーを減らす/NULより後ろも比較対照に
+	@date 2013.06.19 Moca 矩形選択時最終行に改行がない場合は付加+ソート後の最終行の改行を削除
 */
 void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 {
@@ -646,7 +656,6 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 	int			j;
-	CNativeW	cmemBuf;
 	std::vector<SORTDATA*> sta;
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* テキストが選択されているか */
@@ -710,17 +719,26 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 			nColumnTo   = m_pCommanderView->LineColumnToIndex( pcDocLine, nCT );
 			if(nColumnTo<nLineLenWithoutEOL){	// BOX選択範囲の右端が行内に収まっている場合
 				// 2006.03.31 genta std::string::assignを使って一時変数削除
-				pst->sKey.assign( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
+				pst->sKey = CStringRef( &pLine[nColumnFrom], nColumnTo-nColumnFrom );
 			}else if(nColumnFrom<nLineLenWithoutEOL){	// BOX選択範囲の右端が行末より右にはみ出している場合
-				pst->sKey.assign( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
+				pst->sKey = CStringRef( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
 			}else{
 				// 選択範囲の左端もはみ出している==データなし
-				// pst->sKey = L"";
+				pst->sKey = CStringRef( L"", 0 );
 			}
 		}
 		pst->pCmemLine = &cmemLine;
-		nStrDataLength += nLineLen;
 		sta.push_back(pst);
+	}
+	const wchar_t* pStrLast = NULL; // 最後の行に改行がなければそのポインタ
+	if( 0 < sta.size() ){
+		pStrLast = sta[sta.size()-1]->pCmemLine->GetStringPtr();
+		int nlen = sta[sta.size()-1]->pCmemLine->GetStringLength();
+		if( 0 < nlen ){
+			if( WCODE::IsLineDelimiter(pStrLast[nlen-1]) ){
+				pStrLast = NULL;
+			}
+		}
 	}
 	if( bBeginBoxSelectOld ){
 		if(bAsc){
@@ -735,12 +753,27 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 			std::stable_sort(sta.begin(), sta.end(), SortByLineDesc);
 		}
 	}
-	cmemBuf.SetString(L"");
-	cmemBuf.AllocStringBuffer( nStrDataLength );
+	COpeLineData repData;
 	j=(int)sta.size();
+	repData.resize(sta.size());
+	int opeSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNextSeq();
 	for (int i=0; i<j; i++){
-		cmemBuf.AppendString( sta[i]->pCmemLine->GetStringPtr(), sta[i]->pCmemLine->GetStringLength() );
-		delete sta[i];
+		repData[i].nSeq = opeSeq;
+		repData[i].cmemLine.SetString( sta[i]->pCmemLine->GetStringPtr(), sta[i]->pCmemLine->GetStringLength() );
+		if( pStrLast == sta[i]->pCmemLine->GetStringPtr() ){
+			// 元最終行に改行がないのでつける
+			CEol cWork = GetDocument()->m_cDocEditor.GetNewLineCode();
+			repData[i].cmemLine.AppendString( cWork.GetValue2(), cWork.GetLen() );
+		}
+	}
+	if( pStrLast ){
+		// 最終行の改行を削除
+		CLineData& lastData = repData[repData.size()-1];
+		int nLen = lastData.cmemLine.GetStringLength();
+		while( 0 <nLen && WCODE::IsLineDelimiter(lastData.cmemLine[nLen-1]) ){
+			nLen--;
+		}
+		lastData.cmemLine._SetStringLength(nLen);
 	}
 	// 2010.08.22 Moca swapで削除
 	{
@@ -750,12 +783,14 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 
 	CLayoutRange sSelectOld_Layout;
 	GetDocument()->m_cLayoutMgr.LogicToLayout(sSelectOld, &sSelectOld_Layout);
-	m_pCommanderView->ReplaceData_CEditView(
+	m_pCommanderView->ReplaceData_CEditView3(
 		sSelectOld_Layout,
-		cmemBuf.GetStringPtr(),
-		cmemBuf.GetStringLength(),
+		NULL,
+		&repData,
 		false,
-		m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
+		m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk(),
+		opeSeq,
+		NULL
 	);
 
 	//	選択エリアの復元
@@ -855,7 +890,6 @@ void CViewCommander::Command_MERGE(void)
 
 	// 2010.08.22 NUL対応修正
 	std::vector<CStringRef> lineArr;
-	size_t nMergeDataLen = 0;
 	pLinew=NULL;
 	int nLineLenw = 0;
 	bool bMerge = false;
@@ -865,7 +899,6 @@ void CViewCommander::Command_MERGE(void)
 		if( NULL == pLine ) continue;
 		if( NULL == pLinew || nLineLen != nLineLenw || wmemcmp(pLine, pLinew, nLineLen) ){
 			lineArr.push_back( CStringRef(pLine, nLineLen) );
-			nMergeDataLen += nLineLen;
 		}else{
 			bMerge = true;
 		}
@@ -873,19 +906,22 @@ void CViewCommander::Command_MERGE(void)
 		nLineLenw=nLineLen;
 	}
 	if( bMerge ){
-		CNativeW cmemBuf;
-		cmemBuf.SetString(L"");
-		cmemBuf.AllocStringBuffer( nMergeDataLen );
+		COpeLineData repData;
 		int nSize = (int)lineArr.size();
+		repData.resize(nSize);
+		int opeSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNextSeq();
 		for( int idx = 0; idx < nSize; idx++ ){
-			cmemBuf.AppendString( lineArr[idx].GetPtr(), lineArr[idx].GetLength() );
+			repData[idx].nSeq = opeSeq;
+			repData[idx].cmemLine.SetString( lineArr[idx].GetPtr(), lineArr[idx].GetLength() );
 		}
-		m_pCommanderView->ReplaceData_CEditView(
+		m_pCommanderView->ReplaceData_CEditView3(
 			sSelectOld_Layout,
-			cmemBuf.GetStringPtr(),
-			cmemBuf.GetStringLength(),
+			NULL,
+			&repData,
 			false,
-			m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk()
+			m_pCommanderView->m_bDoing_UndoRedo?NULL:GetOpeBlk(),
+			opeSeq,
+			NULL
 		);
 	}else{
 		// 2010.08.23 未変更なら変更しない
