@@ -1137,12 +1137,10 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	}else{
 		if( lpdis->itemState & ODS_DISABLED ){
 			// アイテムが使用不可
-#ifdef DRAW_MENU_3DSTYLE
-			nTxSysColor = COLOR_3DSHADOW;
-#else
 			// 背景を黒にすると同じ色になることがある
-			nTxSysColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
-#endif
+			// 2013.06.21 GRAYTEXTに変更
+			// nTxSysColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
+			nTxSysColor = COLOR_GRAYTEXT;
 		}else{
 			nTxSysColor = COLOR_MENUTEXT;
 		}
