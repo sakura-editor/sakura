@@ -173,6 +173,7 @@ void CEditDoc::Clear()
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), true );
 	SelectCharWidthCache( CWM_FONT_EDIT, m_pcEditWnd->GetLogfontCacheMode() );
 	InitCharWidthCache( m_pcEditWnd->GetLogfont() );
+	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
 
 	// 2008.06.07 nasukoji	Ü‚è•Ô‚µ•û–@‚Ì’Ç‰Á‚É‘Î‰
 	STypeConfig ref = m_cDocType.GetDocumentAttribute();
