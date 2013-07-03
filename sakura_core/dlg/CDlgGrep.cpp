@@ -46,6 +46,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_COMBO_TEXT,					HIDC_GREP_COMBO_TEXT,				//条件
 	IDC_COMBO_FILE,					HIDC_GREP_COMBO_FILE,				//ファイル
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダ
+	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//上
 	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//結果出力：行単位
 	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_RADIO_OUTPUTMARKED,		//結果出力：該当部分
 	IDC_RADIO_OUTPUTSTYLE1,			HIDC_GREP_RADIO_OUTPUTSTYLE1,		//結果出力形式：ノーマル
@@ -276,6 +277,38 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 			TCHAR	szWorkFolder[MAX_PATH];
 			::GetCurrentDirectory( _countof( szWorkFolder ) - 1, szWorkFolder );
 			SetGrepFolder( GetItemHwnd(IDC_COMBO_FOLDER), szWorkFolder );
+		}
+		return TRUE;
+	case IDC_BUTTON_FOLDER_UP:
+		{
+			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
+			TCHAR szFolder[_MAX_PATH];
+			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
+			std::vector<std::tstring> vPaths;
+			CGrepAgent::CreateFolders( szFolder, vPaths );
+			int nFolderLen = 0;
+			if( 0 < vPaths.size() ){
+				// 最後のパスが操作対象
+				auto_strcpy( szFolder, vPaths.rbegin()->c_str() );
+				if( DirectoryUp( szFolder ) ){
+					*(vPaths.rbegin()) = szFolder;
+					szFolder[0] = _T('\0');
+					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
+						TCHAR szFolderItem[_MAX_PATH];
+						auto_strcpy( szFolderItem, vPaths[i].c_str() );
+						if( auto_strchr( szFolderItem, _T(';') ) ){
+							szFolderItem[0] = _T('"');
+							auto_strcpy( szFolderItem + 1, vPaths[i].c_str() );
+							auto_strcat( szFolderItem, _T("\"") );
+						}
+						if( i ){
+							auto_strcat( szFolder, _T(";") );
+						}
+						auto_strcat( szFolder, szFolderItem );
+					}
+					::SetWindowText( hwnd, szFolder );
+				}
+			}
 		}
 		return TRUE;
 

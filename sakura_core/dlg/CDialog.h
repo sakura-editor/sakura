@@ -126,6 +126,7 @@ public:
 public:
 	// 設定フォルダ相対ファイル選択(共有データ,ini位置依存)
 	static BOOL SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool resolvePath);
+	static bool DirectoryUp( TCHAR* );
 
 public:
 	HWND GetHwnd() const{ return m_hWnd; }

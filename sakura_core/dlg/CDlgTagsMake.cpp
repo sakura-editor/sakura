@@ -40,6 +40,7 @@
 const DWORD p_helpids[] = {	//13700
 	IDC_EDIT_TAG_MAKE_FOLDER,	HIDC_EDIT_TAG_MAKE_FOLDER,	//タグ作成フォルダ
 	IDC_BUTTON_TAG_MAKE_REF,	HIDC_BUTTON_TAG_MAKE_REF,	//参照
+	IDC_BUTTON_FOLDER_UP,		HIDC_BUTTON_TAG_MAKE_FOLDER_UP,	// 上
 	IDC_EDIT_TAG_MAKE_CMDLINE,	HIDC_EDIT_TAG_MAKE_CMDLINE,	//コマンドライン
 	IDC_CHECK_TAG_MAKE_RECURSE,	HIDC_CHECK_TAG_MAKE_RECURSE,	//サブフォルダも対象
 	IDOK,						HIDC_TAG_MAKE_IDOK,
@@ -81,6 +82,17 @@ BOOL CDlgTagsMake::OnBnClicked( int wID )
 
 	case IDC_BUTTON_TAG_MAKE_REF:	/* 参照 */
 		SelectFolder( GetHwnd() );
+		return TRUE;
+
+	case IDC_BUTTON_FOLDER_UP:
+		{
+			TCHAR szDir[_MAX_PATH];
+			HWND hwnd = GetItemHwnd( IDC_EDIT_TAG_MAKE_FOLDER );
+			::GetWindowText( hwnd, szDir, _countof(szDir) );
+			if( DirectoryUp( szDir ) ){
+				::SetWindowText( hwnd, szDir );
+			}
+		}
 		return TRUE;
 
 	case IDOK:
