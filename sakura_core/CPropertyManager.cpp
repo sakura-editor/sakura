@@ -26,6 +26,11 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 		// ShareData に 設定を適用・コピーする
 		// 2007.06.20 ryoji グループ化に変更があったときはグループIDをリセットする
 		BOOL bGroup = (GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd && !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin);
+
+		// 印刷中にキーワードを上書きしないように
+		CShareDataLockCounter* pLock = NULL;
+		CShareDataLockCounter::WaitLock( m_cPropCommon.m_hwndParent, &pLock );
+
 		m_cPropCommon.ApplyData();
 		// note: 基本的にここで適用しないで、MYWM_CHANGESETTINGからたどって適用してください。
 		// 自ウィンドウには最後に通知されます。大抵は、OnChangeSetting にあります。
@@ -55,6 +60,7 @@ BOOL CPropertyManager::OpenPropertySheet( int nPageNum )
 			hWnd
 		);
 
+		delete pLock;
 		return TRUE;
 	}else{
 		return FALSE;
@@ -79,7 +85,8 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 			nTextWrapMethodOld = CEditWnd::getInstance()->GetDocument().m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;
 		}
 		// 2013.06.10 Moca 印刷終了まで待機する
-		CShareDataLockCounter::WaitLock( m_cPropTypes.GetHwndParent() );
+		CShareDataLockCounter* pLock = NULL;
+		CShareDataLockCounter::WaitLock( m_cPropTypes.GetHwndParent(), &pLock );
 		
 		m_cPropTypes.GetTypeData( types );
 
@@ -108,6 +115,7 @@ BOOL CPropertyManager::OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettin
 			hWnd
 		);
 
+		delete pLock;
 		return TRUE;
 	}else{
 		return FALSE;

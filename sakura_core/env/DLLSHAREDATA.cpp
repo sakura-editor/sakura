@@ -104,15 +104,27 @@ public:
 	}
 };
 
+// count‚ª0‚¾‚Á‚½‚çLock‚µ‚Ä•Ô‚·
+static int GetCountIf0Lock( CShareDataLockCounter** ppLock )
+{
+	LockGuard<CMutex> guard(g_cKeywordMutex);
+	int count = GetDllShareData().m_nLockCount;
+	if( count <= 0 ){
+		if( ppLock ){
+			*ppLock = new CShareDataLockCounter();
+		}
+	}
+	return count;
+}
 
-void CShareDataLockCounter::WaitLock( HWND hwndParent ){
-	if( 0 < GetLockCounter() ){
+void CShareDataLockCounter::WaitLock( HWND hwndParent, CShareDataLockCounter** ppLock ){
+	if( 0 < GetCountIf0Lock(ppLock) ){
 		DWORD dwTime = ::GetTickCount();
 		CWaitCursor cWaitCursor(hwndParent);
 		CLockCancel* pDlg = NULL;
 		HWND hwndCancel = NULL;
 		::EnableWindow(hwndParent, FALSE);
-		while( 0 < GetLockCounter() ){
+		while( 0 < GetCountIf0Lock(ppLock) ){
 			DWORD dwResult = MsgWaitForMultipleObjects(0, NULL, FALSE, 100, QS_ALLEVENTS);
 			if( dwResult == 0xFFFFFFFF ){
 				break;

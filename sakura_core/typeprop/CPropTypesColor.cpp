@@ -487,6 +487,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 						(LPARAM)pPropKeyword
 					);
 					if( res == IDOK ){
+						CShareDataLockCounter::WaitLock( pCommon->m_hwndParent );
 						pCommon->ApplyData();
 						SetData(hwndDlg);
 					}
