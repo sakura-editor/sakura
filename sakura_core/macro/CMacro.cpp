@@ -693,7 +693,22 @@ bool CMacro::HandleCommand(
 		//		0x01	標準出力を得る
 		//		0x02	標準出力をキャレット位置に	//	2007.01.02 maru 引数の拡張
 		//		0x04	編集中ファイルを標準入力へ	//	2007.01.02 maru 引数の拡張
-		/* NO BREAK */
+		//	Argument[2]:カレントディレクトリ
+		if( Argument[0] == NULL ){
+			::MYMESSAGEBOX(
+				NULL,
+				MB_OK | MB_ICONSTOP | MB_TOPMOST,
+				EXEC_ERROR_TITLE,
+				_T(	"引数(文字列)が指定されていません．" )
+			);
+			return false;
+		}
+		{
+			int nOpt = wtoi_def(Argument[1], 0);
+			const wchar_t* pDir = wtow_def(Argument[2], NULL);
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], nOpt, (LPARAM)pDir, 0 );
+		}
+		break;
 
 	case F_TRACEOUT:		// 2006.05.01 マクロ用アウトプットウインドウに出力
 		//	Argument[0]を出力。オプションはArgument[1]に。
