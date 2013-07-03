@@ -323,9 +323,6 @@ void CPropCommon::InitData( void )
 */
 void CPropCommon::ApplyData( void )
 {
-	// キーワードのロック中は更新しない
-	CShareDataLockCounter::WaitLock( m_hwndParent );
-
 	m_pShareData->m_Common = m_Common;
 
 	int i;
