@@ -610,6 +610,28 @@ BOOL CDialog::SelectFile(HWND parent, HWND hwndCtl, const TCHAR* filter, bool re
 	return FALSE;
 }
 
+
+// static
+bool CDialog::DirectoryUp( TCHAR* szDir )
+{
+	int nLen = auto_strlen( szDir );
+	if( 3 < nLen ){
+		// X:\ や\\. より長い
+		CutLastYenFromDirectoryPath( szDir );
+		const TCHAR *p = GetFileTitlePointer(szDir);
+		if( 0 < p - szDir){
+			if( 3 < p - szDir ){
+				szDir[p - szDir - 1] = '\0'; // \を削るので-1
+			}else{
+				// 「C:\」の\を残す
+				szDir[p - szDir] = '\0';
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
 // コントロールに画面のフォントを設定	2012/11/27 Uchi
 void	CDialog::SetMainFont( HWND hTarget )
 {
