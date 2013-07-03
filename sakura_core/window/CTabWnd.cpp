@@ -1223,7 +1223,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		::DrawText( gr, pData->szText, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
 
-		gr.RestoreTextColors();
+		gr.PopTextForeColor();
 		gr.PopMyFont();
 		::DeleteObject( hFont );
 
@@ -1257,7 +1257,6 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		RECT rcFullItem(rcItem);
 
 		// èÛë‘Ç…è]Ç¡ÇƒÉeÉLÉXÉgÇ∆îwåiêFÇåàÇﬂÇÈ
-		COLORREF clrText;
 
 		// îwåiï`âÊ
 		if( !IsVisualStyle() ) {
@@ -1336,7 +1335,8 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		}
 
 		// ÉeÉLÉXÉgï`âÊ
-		clrText = COLOR_MENUTEXT;
+		COLORREF clrText;
+		clrText = ::GetSysColor(COLOR_MENUTEXT);
 		gr.PushTextForeColor( clrText );
 		gr.SetTextBackTransparent(true);
 		HFONT hfnt = CreateMenuFont();
@@ -1349,7 +1349,7 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 
 		::DrawText( gr, szBuf, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
 
-		gr.RestoreTextColors();
+		gr.PopTextForeColor();
 		gr.PopMyFont();
 		::DeleteObject( hfnt );
 
