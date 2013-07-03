@@ -291,6 +291,7 @@ protected:
 	//! Message Handler
 	INT_PTR DispatchEvent( HWND, UINT, WPARAM, LPARAM );
 	void SetData( HWND );	//!< ダイアログデータの設定
+	void SetDataMenuList( HWND, int );
 	int  GetData( HWND );	//!< ダイアログデータの取得
 	void Import( HWND );	//!< カスタムメニュー設定をインポートする
 	void Export( HWND );	//!< カスタムメニュー設定をエクスポートする

@@ -348,13 +348,16 @@ bool CShareData::InitShareData()
 
 		/* カスタムメニュー情報 */
 		auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0], LTEXT("右クリックメニュー") );
-		for( int i = 1; i < MAX_CUSTOM_MENU; ++i ){
-			auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[i], LTEXT("メニュー%d"), i );
+		for( int i = 0; i < MAX_CUSTOM_MENU; ++i ){
+			if( 1 <= i ){
+				auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[i], LTEXT("メニュー%d"), i );
+			}
 			m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[i] = 0;
 			for( int j = 0; j < MAX_CUSTOM_MENU_ITEMS; ++j ){
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[i][j] = F_0;
 				m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr [i][j] = '\0';
 			}
+			m_pShareData->m_Common.m_sCustomMenu.m_bCustMenuPopupArr[i] = true;
 		}
 		auto_sprintf( m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[CUSTMENU_INDEX_FOR_TABWND], LTEXT("タブメニュー") );	//@@@ 2003.06.13 MIK
 

@@ -412,6 +412,7 @@
 #define HIDC_BUTTON_MENUNAME					10133 //メニュー名設定	// 2009.02.20 ryoji
 #define HIDC_LIST_FUNC							10150 //機能一覧
 #define HIDC_LIST_RES							10151 //メニュー一覧
+#define HIDC_CHECK_SUBMENU						10152 //サブメニューとして表示
 #define HIDC_CHECK_ADDCRLFWHENCOPY				10210 //折り返し行に改行を付けてコピー
 #define HIDC_CHECK_COPYnDISABLESELECTEDAREA		10211 //コピーしたら選択解除
 #define HIDC_CHECK_bEnableNoSelectCopy			10216 //選択なしでコピーを可能にする	// 2007.11.18 ryoji

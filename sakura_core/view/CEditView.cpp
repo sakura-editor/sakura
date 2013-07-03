@@ -1487,17 +1487,10 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 /* ポップアップメニュー(右クリック) */
 int	CEditView::CreatePopUpMenu_R( void )
 {
-	int			nId;
 	HMENU		hMenu;
 	POINT		po;
 	RECT		rc;
-	CMemory		cmemCurText;
-	int			i;
 	int			nMenuIdx;
-	WCHAR		szLabel[300];
-	WCHAR		szLabel2[300];
-	UINT		uFlags;
-
 
 	CEditWnd*	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	CMenuDrawer& cMenuDrawer = pCEditWnd->GetMenuDrawer();
@@ -1506,9 +1499,7 @@ int	CEditView::CreatePopUpMenu_R( void )
 	/* 右クリックメニューの定義はカスタムメニュー配列の0番目 */
 	nMenuIdx = CUSTMENU_INDEX_FOR_RBUTTONUP;	//マジックナンバー排除	//@@@ 2003.06.13 MIK
 
-	//	Oct. 3, 2001 genta
-	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
-	
+
 	// Note: CViewCommander::Command_CUSTMENU と大体同じ
 
 	hMenu = ::CreatePopupMenu();
@@ -1521,36 +1512,120 @@ int	CEditView::CreatePopUpMenu_R( void )
 			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
 		}
 	}
+	return CreatePopUpMenuSub( hMenu, nMenuIdx, NULL );
+}
+
+/*! ポップアップメニューの作成(Sub)
+	hMenuは作成済み
+	@date 2013.06.15 新規作成 ポップアップメニューとメインメニューの表示方法を統合
+*/
+int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus )
+{
+	int			nId;
+	int			i;
+	WCHAR		szLabel[300];
+	int			nParentMenu[MAX_CUSTOM_MENU + 1];
+
+	CMenuDrawer& cMenuDrawer = GetDocument()->m_pcEditWnd->GetMenuDrawer();
+	CFuncLookup& FuncLookup = m_pcEditDoc->m_cFuncLookup;
+
+	int nParamIndex = 0;
+	int *pNextParam = nParentMenu;
+	{
+		if( pParentMenus ){
+			int k;
+			for(k = 0; pParentMenus[k] != 0; k++ ){
+			}
+			nParamIndex = k;
+			pNextParam = pParentMenus;
+		}else{
+			memset_raw( nParentMenu, 0, sizeof(nParentMenu) );
+		}
+		EFunctionCode nThisCode = F_0;
+		if( nMenuIdx == CUSTMENU_INDEX_FOR_RBUTTONUP ){
+			nThisCode = F_MENU_RBUTTON;
+		}else{
+			nThisCode = EFunctionCode(nMenuIdx + F_CUSTMENU_1 - 1);
+		}
+		pNextParam[nParamIndex] = nThisCode;
+	}
 
 	for( i = 0; i < GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( F_0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
+		EFunctionCode code = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i];
+		bool bAppend = false;
+		if( F_0 == code ){
 			// 2010.07.24 メニュー配列に入れる
 			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, _T("") );
-		}else{
+			bAppend = true;
+		}else if( F_MENU_RBUTTON == code || (F_CUSTMENU_1 <= code && code <= F_CUSTMENU_LAST) ){
+			int nCustIdx = 0;
+			if( F_MENU_RBUTTON == code ){
+				nCustIdx = CUSTMENU_INDEX_FOR_RBUTTONUP;
+			}else{
+				nCustIdx = code - F_CUSTMENU_1 + 1;
+			}
+			bool bMenuLoop = !GetDllShareData().m_Common.m_sCustomMenu.m_bCustMenuPopupArr[nCustIdx];
+			if( !bMenuLoop ){
+				for(int k = 0; pNextParam[k] != 0; k++ ){
+					if( pNextParam[k] == code ){
+						bMenuLoop = true;
+						break;
+					}
+				}
+			}
+			if( !bMenuLoop ){
+				const wchar_t * p = GetDllShareData().m_Common.m_sCustomMenu.m_szCustMenuNameArr[nCustIdx];
+				wchar_t keys[2];
+				keys[0] = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i];
+				keys[1] = 0;
+				HMENU hMenuPopUp = ::CreatePopupMenu();
+				cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , p, keys );
+				CreatePopUpMenuSub( hMenuPopUp, nCustIdx, pNextParam );
+				bAppend = true;
+			}else{
+				// ループしているときは、従来同様別で表示
+			}
+		}
+		if( !bAppend ){
 			//	Oct. 3, 2001 genta
-			FuncLookup.Funccode2Name( GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
+			FuncLookup.Funccode2Name( code, szLabel, 256 );
 			/* キー */
-			if( L'\0' == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
-				auto_strcpy( szLabel2, szLabel );
+			if( F_SPECIAL_FIRST <= code && code <= F_SPECIAL_LAST ){
+				GetDocument()->m_pcEditWnd->InitMenu_Special( hMenu, code );
 			}else{
-				auto_sprintf( szLabel2, LTEXT("%ls (&%hc)"),
-					szLabel,
-					GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
-				);
+				wchar_t keys[2];
+				keys[0] = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i];
+				keys[1] = 0;
+				GetDocument()->m_pcEditWnd->InitMenu_Function( hMenu, code, szLabel, keys );
 			}
-			/* 機能が利用可能か調べる */
-			if( IsFuncEnable( m_pcEditDoc, &GetDllShareData(), GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
-				uFlags = MF_STRING | MF_ENABLED;
-			}else{
-				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
-			}
-			cMenuDrawer.MyAppendMenu(
-				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel2, L"" );
-
 		}
 	}
 
+	pNextParam[nParamIndex] = 0;
+	if( NULL != pParentMenus ){
+		// 後は親に処理してもらう
+		return -1;
+	}
+
+	int cMenuItems = ::GetMenuItemCount( hMenu );
+	for (int nPos = 0; nPos < cMenuItems; nPos++) {
+		EFunctionCode	id = (EFunctionCode)::GetMenuItemID(hMenu, nPos);
+		UINT		fuFlags;
+		/* 機能が利用可能か調べる */
+		//	Jan.  8, 2006 genta 機能が有効な場合には明示的に再設定しないようにする．
+		if( ! IsFuncEnable( GetDocument(), &GetDllShareData(), id ) ){
+			fuFlags = MF_BYCOMMAND | MF_GRAYED;
+			::EnableMenuItem(hMenu, id, fuFlags);
+		}
+
+		/* 機能がチェック状態か調べる */
+		if( IsFuncChecked( GetDocument(), &GetDllShareData(), id ) ){
+			fuFlags = MF_BYCOMMAND | MF_CHECKED;
+			::CheckMenuItem(hMenu, id, fuFlags);
+		}
+	}
+
+	POINT		po;
 	po.x = 0;
 	po.y = 0;
 	::GetCursorPos( &po );

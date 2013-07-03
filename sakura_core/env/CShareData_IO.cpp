@@ -857,6 +857,8 @@ void CShareData_IO::IO_CustMenu( CDataProfile& cProfile, CommonSetting_CustomMen
 	for( i = 0; i < MAX_CUSTOM_MENU; ++i ){
 		auto_sprintf( szKeyName, LTEXT("szCMN[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW(menu.m_szCustMenuNameArr[i]) );	//	Oct. 15, 2001 genta Å‘å’·Žw’è
+		auto_sprintf( szKeyName, LTEXT("bCMPOP[%02d]"), i );
+		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_bCustMenuPopupArr[i] );
 		auto_sprintf( szKeyName, LTEXT("nCMIN[%02d]"), i );
 		cProfile.IOProfileData( pszSecName, szKeyName, menu.m_nCustMenuItemNumArr[i] );
 		SetValueLimit( menu.m_nCustMenuItemNumArr[i], _countof(menu.m_nCustMenuItemFuncArr[0]) );

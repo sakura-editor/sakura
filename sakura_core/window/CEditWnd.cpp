@@ -2216,7 +2216,6 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	UINT		fuFlags;
 	int			i;
 	BOOL		bRet;
-	int			nRowNum;
 	HMENU		hMenuPopUp;
 
 
@@ -2228,9 +2227,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		int			nIdxStr;
 		int			nIdxEnd;
 		int			nLv;
-		int			j;
 		std::vector<HMENU>	hSubMenu;
-		WCHAR const*		psName;
 
 		nIdxStr = pcMenu->m_nMenuTopIdx[uPos];
 		nIdxEnd = (uPos < MAX_MAINMENU_TOP) ? pcMenu->m_nMenuTopIdx[uPos+1] : -1;
@@ -2275,250 +2272,14 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 				}
 				break;
 			case T_LEAF:
-				/* メニューラベルの作成 */
-				// カスタムメニュー
-				if (cMainMenu->m_nFunc == F_MENU_RBUTTON
-				  || cMainMenu->m_nFunc >= F_CUSTMENU_1 && cMainMenu->m_nFunc <= F_CUSTMENU_24) {
-					//	右クリックメニュー
-					if (cMainMenu->m_nFunc == F_MENU_RBUTTON) {
-						j = 0;
-					}
-					else {
-						j = cMainMenu->m_nFunc - F_CUSTMENU_BASE;
-					}
-
-					if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
-						 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-					 		cMainMenu->m_nFunc, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[j], cMainMenu->m_sKey );
-					}
-					else {
-						 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED,
-					 		cMainMenu->m_nFunc, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[j], cMainMenu->m_sKey );
-					}
-					break;
-				}
-				// マクロ
-				if (cMainMenu->m_nFunc >= F_USERMACRO_0 && cMainMenu->m_nFunc < F_USERMACRO_0+MAX_CUSTMACRO) {
-					MacroRec *mp = &m_pShareData->m_Common.m_sMacro.m_MacroTable[cMainMenu->m_nFunc - F_USERMACRO_0];
-					if (mp->IsEnabled()) {
-						psName = to_wchar(mp->m_szName[0] ? mp->m_szName : mp->m_szFile);
-						m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-							cMainMenu->m_nFunc, psName, cMainMenu->m_sKey );
-					}
-					else {
-						psName = L"-- undefined macro --";
-						m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED,
-							cMainMenu->m_nFunc, psName, cMainMenu->m_sKey );
-					}
-					break;
-				}
-				// プラグインコマンド
-				if (cMainMenu->m_nFunc >= F_PLUGCOMMAND_FIRST && cMainMenu->m_nFunc < F_PLUGCOMMAND_LAST) {
-					const CJackManager* pcJackManager = CJackManager::getInstance();
-
-					CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
-					j = -1;
-					for (CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++) {
-						if ((*it)->GetFunctionCode() == cMainMenu->m_nFunc) {
-							//コマンドを登録
-							j = cMainMenu->m_nFunc - F_PLUGCOMMAND_FIRST;
-							m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-								(*it)->GetFunctionCode(), (*it)->m_sLabel.c_str(), cMainMenu->m_sKey,
-								TRUE, (*it)->GetFunctionCode() );
-						}
-					}
-					if (j == -1) {
-						// not found
-						psName = L"-- undefined plugin command --";
-						m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED,
-							cMainMenu->m_nFunc, psName, cMainMenu->m_sKey );
-					}
-					break;
-				}
-				switch (cMainMenu->m_nFunc) {
-				case F_RECKEYMACRO:
-				case F_SAVEKEYMACRO:
-				case F_LOADKEYMACRO:
-				case F_EXECKEYMACRO:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						!m_pShareData->m_sFlags.m_bRecordingKeyMacro);
-					break;
-				case F_SPLIT_V:	
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						m_cSplitterWnd.GetAllSplitRows() == 1 );
-					break;
-				case F_SPLIT_H:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						m_cSplitterWnd.GetAllSplitCols() == 1 );
-					break;
-				case F_SPLIT_VH:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						m_cSplitterWnd.GetAllSplitRows() == 1 || m_cSplitterWnd.GetAllSplitCols() == 1 );
-					break;
-				case F_TAB_CLOSEOTHER:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd != 0 );
-					break;
-				case F_TOPMOST:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						((DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST) == 0 );
-					break;
-				case F_BIND_WINDOW:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						(!m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd 
-						|| m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) );
-					break;
-				case F_SHOWTOOLBAR:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cToolbar.GetToolbarHwnd() == NULL );
-					break;
-				case F_SHOWFUNCKEY:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_CFuncKeyWnd.GetHwnd() == NULL );
-					break;
-				case F_SHOWTAB:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cTabWnd.GetHwnd() == NULL );
-					break;
-				case F_SHOWSTATUSBAR:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cStatusBar.GetStatusHwnd() == NULL );
-					break;
-				case F_TOGGLE_KEY_SEARCH:
-					SetMenuFuncSel( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sKey, 
-						!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, !IsFuncChecked( &GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
-					break;
-				case F_WRAPWINDOWWIDTH:
-					{
-						CLayoutInt ketas;
-						WCHAR*	pszLabel;
-						CEditView::TOGGLE_WRAP_ACTION mode = this->GetActiveView().GetWrapMode( &ketas );
-						if( mode == CEditView::TGWRAP_NONE ){
-							m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , L"", cMainMenu->m_sKey );
-						}
-						else {
-							WCHAR szBuf[60];
-							pszLabel = szBuf;
-							if( mode == CEditView::TGWRAP_FULL ){
-								auto_sprintf(
-									szBuf,
-									L"折り返し桁数: %d 桁（最大）",
-									MAXLINEKETAS
-								);
-							}
-							else if( mode == CEditView::TGWRAP_WINDOW ){
-								auto_sprintf(
-									szBuf,
-									L"折り返し桁数: %d 桁（右端）",
-									this->GetActiveView().ViewColNumToWrapColNum(
-										this->GetActiveView().GetTextArea().m_nViewColNum
-									)
-								);
-							}
-							else {
-								auto_sprintf(
-									szBuf,
-									L"折り返し桁数: %d 桁（指定）",
-									GetDocument().m_cDocType.GetDocumentAttribute().m_nMaxLineKetas
-								);
-							}
-							m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel, cMainMenu->m_sKey );
-						}
-					}
-					break;
-				default:
-					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, cMainMenu->m_nFunc, 
-						cMainMenu->m_sName, cMainMenu->m_sKey );
-					break;
-				}
+				InitMenu_Function( hMenu, cMainMenu->m_nFunc, cMainMenu->m_sName, cMainMenu->m_sKey );
 				break;
 			case T_SEPARATOR:
 				m_CMenuDrawer.MyAppendMenuSep( hMenu, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
 				break;
 			case T_SPECIAL:
-				bool	bInList = false;		// リストが1個以上ある
-				switch (cMainMenu->m_nFunc) {
-				case F_WINDOW_LIST:				// ウィンドウリスト
-					EditNode*	pEditNodeArr;
-					nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
-					WinListMenu(hMenu, pEditNodeArr, nRowNum, false);
-					bInList = (nRowNum > 0);
-					delete [] pEditNodeArr;
-					break;
-				case F_FILE_USED_RECENTLY:		// 最近使ったファイル
-					/* MRUリストのファイルのリストをメニューにする */
-					{
-						//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
-						const CMRUFile cMRU;
-						hMenuPopUp = cMRU.CreateMenu( hMenu, &m_CMenuDrawer );	//	ファイルメニュー
-						bInList = (cMRU.MenuLength() > 0);
-					}
-					break;
-				case F_FOLDER_USED_RECENTLY:	// 最近使ったフォルダ
-					/* 最近使ったフォルダのメニューを作成 */
-					{
-						//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
-						const CMRUFolder cMRUFolder;
-						hMenuPopUp = cMRUFolder.CreateMenu( hMenu, &m_CMenuDrawer );
-						bInList = (cMRUFolder.MenuLength() > 0);
-					}
-					break;
-				case F_CUSTMENU_LIST:			// カスタムメニューリスト
-					//	右クリックメニュー
-					if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[0] > 0 ){
-						 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-					 		F_MENU_RBUTTON, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0], L"" );
-						bInList = true;
-					}
-					//	カスタムメニュー
-					for( j = 1; j < MAX_CUSTOM_MENU; ++j ){
-						if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
-							 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
-						 		F_CUSTMENU_BASE + j, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[j], L""  );
-							bInList = true;
-						}
-					}
-					break;
-				case F_USERMACRO_LIST:			// 登録済みマクロリスト
-					for( j = 0; j < MAX_CUSTMACRO; ++j ){
-						MacroRec *mp = &m_pShareData->m_Common.m_sMacro.m_MacroTable[j];
-						if( mp->IsEnabled() ){
-							if(  mp->m_szName[0] ){
-								m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + j, mp->m_szName, _T("") );
-							}
-							else {
-								m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + j, mp->m_szFile, _T("") );
-							}
-							bInList = true;
-						}
-					}
-					break;
-				case F_PLUGIN_LIST:				// プラグインコマンドリスト
-					//プラグインコマンドを提供するプラグインを列挙する
-					{
-						const CJackManager* pcJackManager = CJackManager::getInstance();
-						const CPlugin* prevPlugin = NULL;
-						HMENU hMenuPlugin = 0;
-
-						CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
-						for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
-							const CPlugin* curPlugin = &(*it)->m_cPlugin;
-							if( curPlugin != prevPlugin ){
-								//プラグインが変わったらプラグインポップアップメニューを登録
-								hMenuPlugin = ::CreatePopupMenu();
-								m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPlugin, curPlugin->m_sName.c_str(), L"" );
-								prevPlugin = curPlugin;
-							}
-
-							//コマンドを登録
-							m_CMenuDrawer.MyAppendMenu( hMenuPlugin, MF_BYPOSITION | MF_STRING,
-								(*it)->GetFunctionCode(), to_tchar( (*it)->m_sLabel.c_str() ), _T(""),
-								TRUE, (*it)->GetFunctionCode() );
-						}
-						bInList = (prevPlugin != NULL);
-					}
-					break;
-				}
+				bool	bInList;		// リストが1個以上ある
+				bInList = InitMenu_Special( hMenu, cMainMenu->m_nFunc );
 				// リストが無い場合の処理
 				if (!bInList) {
 					//分割線に囲まれ、かつリストなし ならば 次の分割線をスキップ
@@ -2572,6 +2333,261 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 
 
 
+/*!	通常コマンド(Special以外)のメニューへの追加
+*/
+void CEditWnd::InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t* pszName, const wchar_t* pszKey)
+{
+	int j = 0;
+	const wchar_t* psName = NULL;
+	/* メニューラベルの作成 */
+	// カスタムメニュー
+	if (eFunc == F_MENU_RBUTTON
+	  || eFunc >= F_CUSTMENU_1 && eFunc <= F_CUSTMENU_24) {
+		//	右クリックメニュー
+		if (eFunc == F_MENU_RBUTTON) {
+			j = CUSTMENU_INDEX_FOR_RBUTTONUP;
+		}
+		else {
+			j = eFunc - F_CUSTMENU_BASE;
+		}
+
+		int nFlag = MF_BYPOSITION | MF_STRING | MF_GRAYED;
+		if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
+			nFlag = MF_BYPOSITION | MF_STRING;
+		}
+		m_CMenuDrawer.MyAppendMenu( hMenu, nFlag,
+	 		eFunc, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[j], pszKey );
+	}
+	// マクロ
+	else if (eFunc >= F_USERMACRO_0 && eFunc < F_USERMACRO_0+MAX_CUSTMACRO) {
+		MacroRec *mp = &m_pShareData->m_Common.m_sMacro.m_MacroTable[eFunc - F_USERMACRO_0];
+		if (mp->IsEnabled()) {
+			psName = to_wchar(mp->m_szName[0] ? mp->m_szName : mp->m_szFile);
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
+				eFunc, psName, pszKey );
+		}
+		else {
+			psName = L"-- undefined macro --";
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED,
+				eFunc, psName, pszKey );
+		}
+	}
+	// プラグインコマンド
+	else if (eFunc >= F_PLUGCOMMAND_FIRST && eFunc < F_PLUGCOMMAND_LAST) {
+		const CJackManager* pcJackManager = CJackManager::getInstance();
+
+		CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
+		j = -1;
+		for (CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++) {
+			if ((*it)->GetFunctionCode() == eFunc) {
+				//コマンドを登録
+				j = eFunc - F_PLUGCOMMAND_FIRST;
+				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
+					(*it)->GetFunctionCode(), (*it)->m_sLabel.c_str(), pszKey,
+					TRUE, (*it)->GetFunctionCode() );
+			}
+		}
+		if (j == -1) {
+			// not found
+			psName = L"-- undefined plugin command --";
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED,
+				eFunc, psName, pszKey );
+		}
+	}else{
+		switch (eFunc) {
+		case F_RECKEYMACRO:
+		case F_SAVEKEYMACRO:
+		case F_LOADKEYMACRO:
+		case F_EXECKEYMACRO:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				!m_pShareData->m_sFlags.m_bRecordingKeyMacro);
+			break;
+		case F_SPLIT_V:	
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				m_cSplitterWnd.GetAllSplitRows() == 1 );
+			break;
+		case F_SPLIT_H:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				m_cSplitterWnd.GetAllSplitCols() == 1 );
+			break;
+		case F_SPLIT_VH:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				m_cSplitterWnd.GetAllSplitRows() == 1 || m_cSplitterWnd.GetAllSplitCols() == 1 );
+			break;
+		case F_TAB_CLOSEOTHER:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd != 0 );
+			break;
+		case F_TOPMOST:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				((DWORD)::GetWindowLongPtr( GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST) == 0 );
+			break;
+		case F_BIND_WINDOW:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				(!m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd 
+				|| m_pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin) );
+			break;
+		case F_SHOWTOOLBAR:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cToolbar.GetToolbarHwnd() == NULL );
+			break;
+		case F_SHOWFUNCKEY:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_CFuncKeyWnd.GetHwnd() == NULL );
+			break;
+		case F_SHOWTAB:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cTabWnd.GetHwnd() == NULL );
+			break;
+		case F_SHOWSTATUSBAR:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, m_cStatusBar.GetStatusHwnd() == NULL );
+			break;
+		case F_TOGGLE_KEY_SEARCH:
+			SetMenuFuncSel( hMenu, eFunc, pszKey, 
+				!m_pShareData->m_Common.m_sWindow.m_bMenuIcon, !IsFuncChecked( &GetDocument(), m_pShareData, F_TOGGLE_KEY_SEARCH ) );
+			break;
+		case F_WRAPWINDOWWIDTH:
+			{
+				CLayoutInt ketas;
+				WCHAR*	pszLabel;
+				CEditView::TOGGLE_WRAP_ACTION mode = this->GetActiveView().GetWrapMode( &ketas );
+				if( mode == CEditView::TGWRAP_NONE ){
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_GRAYED, F_WRAPWINDOWWIDTH , L"", pszKey );
+				}
+				else {
+					WCHAR szBuf[60];
+					pszLabel = szBuf;
+					if( mode == CEditView::TGWRAP_FULL ){
+						auto_sprintf(
+							szBuf,
+							L"折り返し桁数: %d 桁（最大）",
+							MAXLINEKETAS
+						);
+					}
+					else if( mode == CEditView::TGWRAP_WINDOW ){
+						auto_sprintf(
+							szBuf,
+							L"折り返し桁数: %d 桁（右端）",
+							this->GetActiveView().ViewColNumToWrapColNum(
+								this->GetActiveView().GetTextArea().m_nViewColNum
+							)
+						);
+					}
+					else {
+						auto_sprintf(
+							szBuf,
+							L"折り返し桁数: %d 桁（指定）",
+							GetDocument().m_cDocType.GetDocumentAttribute().m_nMaxLineKetas
+						);
+					}
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_WRAPWINDOWWIDTH , pszLabel, pszKey );
+				}
+			}
+			break;
+		default:
+			m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, eFunc, 
+				pszName, pszKey );
+			break;
+		}
+	}
+}
+
+
+/*!	Specialコマンドのメニューへの追加
+*/
+bool CEditWnd::InitMenu_Special(HMENU hMenu, EFunctionCode eFunc)
+{
+	int j;
+	bool bInList = false;
+	switch (eFunc) {
+	case F_WINDOW_LIST:				// ウィンドウリスト
+		{
+			EditNode*	pEditNodeArr;
+			int nRowNum = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNodeArr, TRUE );
+			WinListMenu(hMenu, pEditNodeArr, nRowNum, false);
+			bInList = (nRowNum > 0);
+			delete [] pEditNodeArr;
+		}
+		break;
+	case F_FILE_USED_RECENTLY:		// 最近使ったファイル
+		/* MRUリストのファイルのリストをメニューにする */
+		{
+			//@@@ 2001.12.26 YAZAKI MRUリストは、CMRUに依頼する
+			const CMRUFile cMRU;
+			cMRU.CreateMenu( hMenu, &m_CMenuDrawer );	//	ファイルメニュー
+			bInList = (cMRU.MenuLength() > 0);
+		}
+		break;
+	case F_FOLDER_USED_RECENTLY:	// 最近使ったフォルダ
+		/* 最近使ったフォルダのメニューを作成 */
+		{
+			//@@@ 2001.12.26 YAZAKI OPENFOLDERリストは、CMRUFolderにすべて依頼する
+			const CMRUFolder cMRUFolder;
+			cMRUFolder.CreateMenu( hMenu, &m_CMenuDrawer );
+			bInList = (cMRUFolder.MenuLength() > 0);
+		}
+		break;
+	case F_CUSTMENU_LIST:			// カスタムメニューリスト
+		//	右クリックメニュー
+		if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[0] > 0 ){
+			 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
+		 		F_MENU_RBUTTON, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[0], L"" );
+			bInList = true;
+		}
+		//	カスタムメニュー
+		for( j = 1; j < MAX_CUSTOM_MENU; ++j ){
+			if( m_pShareData->m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[j] > 0 ){
+				 m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING,
+			 		F_CUSTMENU_BASE + j, m_pShareData->m_Common.m_sCustomMenu.m_szCustMenuNameArr[j], L""  );
+				bInList = true;
+			}
+		}
+		break;
+	case F_USERMACRO_LIST:			// 登録済みマクロリスト
+		for( j = 0; j < MAX_CUSTMACRO; ++j ){
+			MacroRec *mp = &m_pShareData->m_Common.m_sMacro.m_MacroTable[j];
+			if( mp->IsEnabled() ){
+				if(  mp->m_szName[0] ){
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + j, mp->m_szName, _T("") );
+				}
+				else {
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_USERMACRO_0 + j, mp->m_szFile, _T("") );
+				}
+				bInList = true;
+			}
+		}
+		break;
+	case F_PLUGIN_LIST:				// プラグインコマンドリスト
+		//プラグインコマンドを提供するプラグインを列挙する
+		{
+			const CJackManager* pcJackManager = CJackManager::getInstance();
+			const CPlugin* prevPlugin = NULL;
+			HMENU hMenuPlugin = 0;
+
+			CPlug::Array plugs = pcJackManager->GetPlugs( PP_COMMAND );
+			for( CPlug::ArrayIter it = plugs.begin(); it != plugs.end(); it++ ){
+				const CPlugin* curPlugin = &(*it)->m_cPlugin;
+				if( curPlugin != prevPlugin ){
+					//プラグインが変わったらプラグインポップアップメニューを登録
+					hMenuPlugin = ::CreatePopupMenu();
+					m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPlugin, curPlugin->m_sName.c_str(), L"" );
+					prevPlugin = curPlugin;
+				}
+
+				//コマンドを登録
+				m_CMenuDrawer.MyAppendMenu( hMenuPlugin, MF_BYPOSITION | MF_STRING,
+					(*it)->GetFunctionCode(), to_tchar( (*it)->m_sLabel.c_str() ), _T(""),
+					TRUE, (*it)->GetFunctionCode() );
+			}
+			bInList = (prevPlugin != NULL);
+		}
+		break;
+	}
+	return bInList;
+}
+
+
 // メニューバーの無効化を検査	2010/6/18 Uchi
 void CEditWnd::CheckFreeSubMenu( HWND hWnd, HMENU hMenu, UINT uPos )
 {
@@ -2615,7 +2631,7 @@ void CEditWnd::CheckFreeSubMenuSub( HMENU hMenu, int nLv )
 
 //	フラグにより表示文字列の選択をする。
 //		2010/5/19	Uchi
-void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bool flag )
+void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag )
 {
 	int				i;
 	const WCHAR*	sName;
@@ -2629,7 +2645,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bo
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
-void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, WCHAR* sKey, bool flag0, bool flag1 )
+void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sKey, bool flag0, bool flag1 )
 {
 	int				i;
 	const WCHAR*	sName;

@@ -90,8 +90,8 @@ struct SSpecialFunc	{
 	const WCHAR* 	m_sName;		// 名前
 };
 
-static	const	TCHAR*	NAME_SPECIAL_TOP	= _T("特別機能");
-static	SSpecialFunc	sSpecialFuncs[] = {
+extern const	TCHAR*	NAME_SPECIAL_TOP	= _T("特別機能");
+extern const	SSpecialFunc	sSpecialFuncs[] = {
 		{F_WINDOW_LIST,				L"ウィンドウリスト",},
 		{F_FILE_USED_RECENTLY,		L"最近使ったファイル",},
 		{F_FOLDER_USED_RECENTLY,	L"最近使ったフォルダ",},
@@ -99,6 +99,7 @@ static	SSpecialFunc	sSpecialFuncs[] = {
 		{F_USERMACRO_LIST,			L"登録済みマクロリスト",},
 		{F_PLUGIN_LIST,				L"プラグインコマンドリスト",},
 };
+extern const int nSpecialFuncsCount = (int)_countof(sSpecialFuncs);
 
 static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 

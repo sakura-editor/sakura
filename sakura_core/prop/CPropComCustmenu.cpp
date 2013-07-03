@@ -21,11 +21,23 @@
 #include "dlg/CDlgInput1.h"
 #include "env/CShareData.h"
 #include "util/shell.h"
+#include "util/window.h"
 #include "typeprop/CImpExpManager.h"	// 20210/4/23 Uchi
 #include "sakura_rc.h"
 #include "sakura.hh"
 
 using namespace std;
+
+// 特別機能
+struct SSpecialFunc	{
+	EFunctionCode	m_nFunc;		// Function
+	const WCHAR* 	m_sName;		// 名前
+};
+extern const	TCHAR*	NAME_SPECIAL_TOP;
+extern const	SSpecialFunc	sSpecialFuncs[];
+extern const int nSpecialFuncsCount;
+
+static	int 	nSpecialFuncsNum;		// 特別機能のコンボボックス内での番号
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10100
@@ -43,6 +55,7 @@ static const DWORD p_helpids[] = {	//10100
 	IDC_BUTTON_MENUNAME,			HIDC_BUTTON_MENUNAME,			//メニュー名設定	// 2009.02.20 ryoji
 	IDC_LIST_FUNC,					HIDC_LIST_FUNC,					//機能一覧
 	IDC_LIST_RES,					HIDC_LIST_RES,					//メニュー一覧
+	IDC_CHECK_SUBMENU,				HIDC_CHECK_SUBMENU,				//サブメニューとして表示
 //	IDC_LABEL_MENUFUNCKIND,			-1,
 //	IDC_LABEL_MENUCHOICE,			-1,
 //	IDC_LABEL_MENUFUNC,				-1,
@@ -52,6 +65,19 @@ static const DWORD p_helpids[] = {	//10100
 	0, 0
 };
 //@@@ 2001.02.04 End
+
+static bool SetSpecialFuncName(EFunctionCode code, wchar_t *ptr)
+{
+	if( F_SPECIAL_FIRST <= code && code <= F_SPECIAL_LAST ){
+		for( int k = 0; k < nSpecialFuncsCount; k++ ){
+			if( sSpecialFuncs[k].m_nFunc == code ){
+				auto_strcpy( ptr, sSpecialFuncs[k].m_sName );
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 //	From Here Jun. 2, 2001 genta
 /*!
@@ -199,26 +225,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				if( CB_ERR == nIdx1 ){
 					break;
 				}
-				/* メニュー項目一覧に文字列をセット（リストボックス）*/
-				List_ResetContent( hwndLIST_RES );
-				for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]; ++i ){
-					if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i] ){
-						auto_strcpy( szLabel2, LTEXT(" ─────────────") );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
-					}else{
-						//	Oct. 3, 2001 genta
-						m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][i], szLabel, 256 );
-						/* キー */
-						if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] ){
-							auto_strcpy( szLabel2, szLabel );
-						}else{
-							auto_sprintf( szLabel2, LTEXT("%ls(%hc)"), szLabel, m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] );
-						}
-					}
-					::List_AddString( hwndLIST_RES, szLabel2 );
-				}
-				//	Oct. 15, 2001 genta メニュー名を設定
-				::DlgItem_SetText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx1] );
-				
+				SetDataMenuList( hwndDlg, nIdx1 );
 				break;	/* CBN_SELCHANGE */
 			}
 		}else
@@ -256,8 +263,9 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					}
 				}
 				//	Oct. 3, 2001 genta
-				m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
-				//::LoadString( G_AppInstance(), m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 );
+				if( !m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel, 255 ) ){
+					SetSpecialFuncName( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2], szLabel );
+				}
 
 				{
 					KEYCODE keycode[3]={0}; _tctomb(szKey, keycode);
@@ -306,14 +314,22 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			case CBN_SELCHANGE:
 				nIdx3 = Combo_GetCurSel( hwndCOMBO_FUNCKIND );
 
-				/* 機能一覧に文字列をセット（リストボックス）*/
-//	Oct. 14, 2000 jepro note: ここのforブロックで実際にリストを書いているようである
-				// Oct. 3, 2001 genta
-				// 専用ルーチンに置き換え
-				m_cLookup.SetListItem( hwndLIST_FUNC, nIdx3 );
+				if (nIdx3 == nSpecialFuncsNum) {
+					// 機能一覧に特殊機能をセット
+					List_ResetContent( hwndLIST_FUNC );
+					for (i = 0; i < nSpecialFuncsCount; i++) {
+						List_AddString( hwndLIST_FUNC, sSpecialFuncs[i].m_sName );
+					}
+				}
+				else {
+					// Oct. 3, 2001 genta
+					// 専用ルーチンに置き換え
+					m_cLookup.SetListItem( hwndLIST_FUNC, nIdx3 );
+				}
 				return TRUE;
 			}
 		}else{
+			EFunctionCode	eFuncCode = F_0;
 			switch( wNotifyCode ){
 			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED:
@@ -414,7 +430,13 @@ INT_PTR CPropCustmenu::DispatchEvent(
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i] = m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][i - 1];
 					}
 					//	Oct. 3, 2001 genta
-					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
+					if (nIdx3 == nSpecialFuncsNum) {
+						// 特殊機能
+						eFuncCode = sSpecialFuncs[nIdx4].m_nFunc;
+					}else{
+						eFuncCode = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
+					}
+					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nIdx2] = eFuncCode;
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] = '\0';
 					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
@@ -453,14 +475,21 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					if( LB_ERR == nIdx4 ){
 						break;
 					}
-					//	Oct. 3, 2001 genta
-					if( m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0 )
-						break;
 
 					List_GetText( hwndLIST_FUNC, nIdx4, szLabel );
-
+					eFuncCode = F_DISABLE;
+					if (nIdx3 == nSpecialFuncsNum) {
+						// 特殊機能
+						if( 0 <= nIdx4 && nIdx4 < nSpecialFuncsCount ){
+							eFuncCode = sSpecialFuncs[nIdx4].m_nFunc;
+						}
+					}else{
+						eFuncCode = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
+					}
 					//	Oct. 3, 2001 genta
-					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nNum2] = m_cLookup.Pos2FuncCode( nIdx3, nIdx4 );
+					if( eFuncCode == F_DISABLE )
+						break;
+					m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx1][nNum2] = eFuncCode;
 					m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nNum2] = '\0';
 					m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx1]++;
 
@@ -530,6 +559,13 @@ INT_PTR CPropCustmenu::DispatchEvent(
 					List_InsertString( hwndLIST_RES, nIdx2 + 1, szLabel );
 					List_SetCurSel( hwndLIST_RES, nIdx2 + 1 );
 					break;
+				case IDC_CHECK_SUBMENU:
+					nIdx1 = Combo_GetCurSel( hwndCOMBO_MENU );
+					if( CB_ERR == nIdx1 ){
+						break;
+					}
+					m_Common.m_sCustomMenu.m_bCustMenuPopupArr[nIdx1] = IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_SUBMENU );
+					break;
 				}
 
 				break;
@@ -576,7 +612,8 @@ INT_PTR CPropCustmenu::DispatchEvent(
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
 		}
 		if( CB_ERR != nIdx3 && LB_ERR != nIdx4 &&
-		 	m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0
+		 	m_cLookup.Pos2FuncCode( nIdx3, nIdx4 ) == 0 &&
+			!(nIdx3 == nSpecialFuncsNum && 0 <= nIdx4 && nIdx4 < nSpecialFuncsCount)
 		){
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_INSERT ), FALSE );
 			::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADD ), FALSE );
@@ -616,15 +653,13 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 {
 	HWND		hwndCOMBO_MENU;
 	HWND		hwndCombo;
-	HWND		hwndLIST_RES;
 	int			i;
-	int			nIdx;
-	WCHAR		szLabel[300];
-	WCHAR		szLabel2[300];
 
 	/* 機能種別一覧に文字列をセット（コンボボックス） */
 	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_FUNCKIND );
 	m_cLookup.SetCategory2Combo( hwndCombo );	//	Oct. 3, 2001 genta
+	// 特別機能追加
+	nSpecialFuncsNum = Combo_AddString( hwndCombo, NAME_SPECIAL_TOP );
 
 	/* 種別の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCombo, 0 );	//Oct. 14, 2000 JEPRO 「--未定義--」を表示させないように大元 Funcode.cpp で変更してある
@@ -636,25 +671,38 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	}
 	/* メニュー一覧の先頭の項目を選択（コンボボックス）*/
 	Combo_SetCurSel( hwndCOMBO_MENU, 0 );
+	SetDataMenuList( hwndDlg, 0 );
+
+//	/* カスタムメニューの先頭の項目を選択（リストボックス）*/	//Oct. 8, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
+	HWND hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
+	List_SetCurSel( hwndLIST_RES, 0 );
+}
+
+void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
+{
+	int			i;
+	WCHAR		szLabel[300];
+	WCHAR		szLabel2[300];
 
 	/* メニュー項目一覧に文字列をセット（リストボックス）*/
-	hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
+	HWND hwndLIST_RES = ::GetDlgItem( hwndDlg, IDC_LIST_RES );
 //	hwndEDIT_KEY = ::GetDlgItem( hwndDlg, IDC_EDIT_KEY );
 	List_ResetContent( hwndLIST_RES );
-	nIdx = 0;
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
 			auto_strcpy( szLabel, LTEXT(" ─────────────") );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
 		}else{
+			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
-			m_cLookup.Funccode2Name( m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
-			//::LoadString( G_AppInstance(), m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i], szLabel, 256 );
+			if( !m_cLookup.Funccode2Name( code, szLabel, 256 ) ){
+				SetSpecialFuncName( code, szLabel );
+			}
 		}
 		/* キー */
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
 			auto_strcpy( szLabel2, szLabel );
 		}else{
-			auto_sprintf( szLabel2, LTEXT("%ts(%hc)"),
+			auto_sprintf( szLabel2, LTEXT("%ls(%hc)"),
 				szLabel,
 				m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]
 			);
@@ -663,10 +711,9 @@ void CPropCustmenu::SetData( HWND hwndDlg )
 	}
 	
 	//	Oct. 15, 2001 genta メニュー名を設定
-	::DlgItem_SetText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[0] );
-	
-//	/* カスタムメニューの先頭の項目を選択（リストボックス）*/	//Oct. 8, 2000 JEPRO ここをコメントアウトすると先頭項目が選択されなくなる
-	List_SetCurSel( hwndLIST_RES, 0 );
+	::DlgItem_SetText( hwndDlg, IDC_EDIT_MENUNAME, m_Common.m_sCustomMenu.m_szCustMenuNameArr[nIdx] );
+
+	CheckDlgButtonBool( hwndDlg, IDC_CHECK_SUBMENU, m_Common.m_sCustomMenu.m_bCustMenuPopupArr[nIdx] );
 	return;
 }
 
