@@ -465,12 +465,13 @@ LRESULT CPrintPreview::OnVScroll( WPARAM wParam, LPARAM lParam )
 	int			nPos;
 	HWND		hwndScrollBar;
 	nScrollCode = (int) LOWORD(wParam);
-	nPos = (int) HIWORD(wParam);
+	//nPos = (int) HIWORD(wParam);
 	hwndScrollBar = (HWND) lParam;
 	si.cbSize = sizeof( si );
 	si.fMask = SIF_PAGE | SIF_POS | SIF_RANGE | SIF_TRACKPOS;
 	::GetScrollInfo( hwndScrollBar, SB_CTL, &si );
-	nNowPos = ::GetScrollPos( hwndScrollBar, SB_CTL );
+	nPos = si.nTrackPos; // 2013.05.30 32bit対応
+	nNowPos = -1 * m_nPreviewVScrollPos;
 	nNewPos = 0;
 	nMove = 0;
 	switch( nScrollCode ){
@@ -510,7 +511,9 @@ LRESULT CPrintPreview::OnVScroll( WPARAM wParam, LPARAM lParam )
 	nMove = nNowPos - nNewPos;
 	nPreviewVScrollPos = -1 * nNewPos;
 	if( nPreviewVScrollPos != m_nPreviewVScrollPos ){
-		::SetScrollPos( hwndScrollBar, SB_CTL, nNewPos, TRUE);
+		si.fMask = SIF_POS;
+		si.nPos = nNewPos;
+		::SetScrollInfo( hwndScrollBar, SB_CTL, &si, TRUE);
 		m_nPreviewVScrollPos = nPreviewVScrollPos;
 		/* 描画 */
 		::ScrollWindowEx( m_pParentWnd->GetHwnd(), 0, nMove, NULL, NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE );
@@ -532,12 +535,14 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 	int			nPos;
 	HWND		hwndScrollBar;
 	nScrollCode = (int) LOWORD(wParam);
-	nPos = (int) HIWORD(wParam);
+	//nPos = (int) HIWORD(wParam);
 	hwndScrollBar = (HWND) lParam;
 	si.cbSize = sizeof( si );
 	si.fMask = SIF_PAGE | SIF_POS | SIF_RANGE | SIF_TRACKPOS;
 	::GetScrollInfo( hwndScrollBar, SB_CTL, &si );
-	nNowPos = ::GetScrollPos( hwndScrollBar, SB_CTL );
+	nPos = si.nTrackPos; // 2013.05.30 32bit対応
+	//nNowPos = GetScrollPosだとロジクールのSetPointで不具合があり、nPos == nNowPosになってしまう
+	nNowPos = m_nPreviewHScrollPos;
 	nMove = 0;
 	switch( nScrollCode ){
 	case SB_LINEUP:
@@ -576,7 +581,9 @@ LRESULT CPrintPreview::OnHScroll( WPARAM wParam, LPARAM lParam )
 	nMove = nNowPos - nNewPos;
 	nPreviewHScrollPos = nNewPos;
 	if( nPreviewHScrollPos != m_nPreviewHScrollPos ){
-		::SetScrollPos( hwndScrollBar, SB_CTL, nNewPos, TRUE);
+		si.fMask = SIF_POS;
+		si.nPos = nNewPos;
+		::SetScrollInfo( hwndScrollBar, SB_CTL, &si, TRUE);
 		m_nPreviewHScrollPos = nPreviewHScrollPos;
 		/* 描画 */
 		::ScrollWindowEx( m_pParentWnd->GetHwnd(), nMove, 0, NULL, NULL, NULL , NULL, SW_ERASE | SW_INVALIDATE );
@@ -610,7 +617,7 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 	GetScrollInfo( m_hwndVScrollBar, SB_CTL, &siV );
 	int			nMoveY;
 	if( m_SCROLLBAR_VERT ){
-		int		nNowPosY = GetScrollPos( m_hwndVScrollBar, SB_CTL );
+		int		nNowPosY = siV.nTrackPos;
 		nMoveY = m_pParentWnd->GetDragPosOrg().y - yPos;
 
 		int		nNewPosY = nNowPosY + nMoveY;
@@ -621,7 +628,9 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 			nNewPosY = (int)(siV.nMax - siV.nPage + 1);
 		}
 		nMoveY = nNowPosY - nNewPosY;
-		SetScrollPos( m_hwndVScrollBar, SB_CTL, nNewPosY, TRUE );
+		siV.fMask = SIF_POS;
+		siV.nPos = nNewPosY;
+		SetScrollInfo( m_hwndVScrollBar, SB_CTL, &siV, TRUE );
 		m_nPreviewVScrollPos = -1 * nNewPosY;
 	}else{
 		nMoveY = 0;
@@ -634,7 +643,7 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 	GetScrollInfo( m_hwndHScrollBar, SB_CTL, &siH );
 	int			nMoveX;
 	if( m_SCROLLBAR_HORZ ){
-		int		nNowPosX = GetScrollPos( m_hwndHScrollBar, SB_CTL );
+		int		nNowPosX = siH.nTrackPos;
 		nMoveX = m_pParentWnd->GetDragPosOrg().x - xPos;
 		
 		int		nNewPosX = nNowPosX + nMoveX;
@@ -645,7 +654,9 @@ LRESULT CPrintPreview::OnMouseMove( WPARAM wParam, LPARAM lParam )
 			nNewPosX = (int)(siH.nMax - siH.nPage + 1);
 		}
 		nMoveX = nNowPosX - nNewPosX;
-		SetScrollPos( m_hwndHScrollBar, SB_CTL, nNewPosX, TRUE );
+		siH.fMask = SIF_POS;
+		siH.nPos = nNewPosX;
+		SetScrollInfo( m_hwndHScrollBar, SB_CTL, &siH, TRUE );
 		m_nPreviewHScrollPos = nNewPosX;
 	}else{
 		nMoveX = 0;
@@ -955,12 +966,22 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 	
 	//	縮小ボタンのON/OFF
 	if( MIN_PREVIEW_ZOOM == m_nPreview_Zoom ){
+		// 2013.05.30 FocusがDisableなウィンドウだとマウススクロールできない対策
+		HWND focus = ::GetFocus();
+		if( focus == GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_ZOOMDOWN ) ){
+			::SetFocus( m_pParentWnd->GetHwnd() );
+		}
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_ZOOMDOWN ), FALSE );
 	}else{
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_ZOOMDOWN ), TRUE );
 	}
 	//	拡大ボタンのON/OFF
 	if( MAX_PREVIEW_ZOOM == m_nPreview_Zoom ){
+		// 2013.05.30 FocusがDisableなウィンドウだとマウススクロールできない対策
+		HWND focus = ::GetFocus();
+		if( focus == GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_ZOOMUP ) ){
+			::SetFocus( m_pParentWnd->GetHwnd() );
+		}
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_ZOOMUP ), FALSE );
 	}else{
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_ZOOMUP ), TRUE );
