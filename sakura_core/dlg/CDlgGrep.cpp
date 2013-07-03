@@ -652,6 +652,7 @@ int CDlgGrep::GetData( void )
 				auto_strcat( szFolder, _T(";") );
 			}
 			auto_strcat( szFolder, szFolderItem );
+			nFolderLen = auto_strlen( szFolder );
 		}
 		auto_strcpy( m_szFolder, szFolder );
 	}
