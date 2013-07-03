@@ -458,7 +458,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 		m_pCommanderView->GetSelectionInfo().DisableSelectArea( false );
 
 		CWaitCursor cWaitCursor( m_pCommanderView->GetHwnd(), 1000 < sSelectOld.GetTo().GetY() - sSelectOld.GetFrom().GetY() );
-		HWND hwndProgress;
+		HWND hwndProgress = NULL;
 		int nProgressPos = 0;
 		if( cWaitCursor.IsEnable() ){
 			hwndProgress = m_pCommanderView->StartProgress();
