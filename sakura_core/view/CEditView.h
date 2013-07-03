@@ -519,6 +519,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	int	CreatePopUpMenu_R( void );		/* ポップアップメニュー(右クリック) */
+	int	CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus );		/* ポップアップメニュー */
 
 
 

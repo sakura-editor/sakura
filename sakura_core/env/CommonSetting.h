@@ -412,6 +412,7 @@ struct CommonSetting_CustomMenu
 	int				m_nCustMenuItemNumArr [MAX_CUSTOM_MENU];
 	EFunctionCode	m_nCustMenuItemFuncArr[MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
 	KEYCODE			m_nCustMenuItemKeyArr [MAX_CUSTOM_MENU][MAX_CUSTOM_MENU_ITEMS];
+	bool			m_bCustMenuPopupArr   [MAX_CUSTOM_MENU];
 };
 
 

@@ -461,6 +461,7 @@ F_CUSTMENU_21		= 31521,	// カスタムメニュー21		なし
 F_CUSTMENU_22		= 31522,	// カスタムメニュー22		なし
 F_CUSTMENU_23		= 31523,	// カスタムメニュー23		なし
 F_CUSTMENU_24		= 31524,	// カスタムメニュー24		なし
+F_CUSTMENU_LAST = F_CUSTMENU_24,
 
 F_CUSTMENU_BASE		= 31500,	// カスタムメニュー基準番号
 

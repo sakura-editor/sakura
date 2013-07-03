@@ -85,10 +85,6 @@ void CViewCommander::Command_MENU_RBUTTON( void )
 int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 {
 	HMENU		hMenu;
-	int			nId;
-	POINT		po;
-	int			i;
-	UINT		uFlags;
 
 	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	pCEditWnd->GetMenuDrawer().ResetContents();
@@ -103,54 +99,5 @@ int CViewCommander::Command_CUSTMENU( int nMenuIdx )
 		return 0;
 	}
 	hMenu = ::CreatePopupMenu();
-	for( i = 0; i < GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nMenuIdx]; ++i ){
-		if( F_0 == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ){
-			// 2010.07.24 メニュー配列に入れる
-			pCEditWnd->GetMenuDrawer().MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0 , _T("") );
-		}else{
-			//	Oct. 3, 2001 genta
-			WCHAR		szLabel[300];
-			WCHAR		szLabel2[300];
-			const WCHAR*	pszMenuLabel = szLabel2;
-			FuncLookup.Funccode2Name( GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i], szLabel, 256 );
-			/* キー */
-			if( L'\0' == GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i] ){
-				pszMenuLabel = szLabel;
-			}else{
-				auto_sprintf( szLabel2, LTEXT("%ls (&%hc)"),
-					szLabel,
-					GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i]
-				);
-			}
-			/* 機能が利用可能か調べる */
-			if( IsFuncEnable( GetDocument(), &GetDllShareData(), GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] ) ){
-				uFlags = MF_STRING | MF_ENABLED;
-			}else{
-				uFlags = MF_STRING | MF_DISABLED | MF_GRAYED;
-			}
-			pCEditWnd->GetMenuDrawer().MyAppendMenu(
-				hMenu, /*MF_BYPOSITION | MF_STRING*/uFlags,
-				GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nMenuIdx][i] , pszMenuLabel, L"" );
-		}
-	}
-	po.x = 0;
-	po.y = 0;
-	//2002/04/08 YAZAKI カスタムメニューもマウスカーソルの位置に表示するように変更。
-	::GetCursorPos( &po );
-	po.y -= 4;
-	nId = ::TrackPopupMenu(
-		hMenu,
-		TPM_TOPALIGN
-		| TPM_LEFTALIGN
-		| TPM_RETURNCMD
-		| TPM_LEFTBUTTON
-		,
-		po.x,
-		po.y,
-		0,
-		GetMainWindow(),
-		NULL
-	);
-	::DestroyMenu( hMenu );
-	return nId;
+	return m_pCommanderView->CreatePopUpMenuSub( hMenu, nMenuIdx, NULL );
 }
