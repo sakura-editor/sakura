@@ -99,5 +99,7 @@ void my_splitpath_t ( const TCHAR *comln , TCHAR *drv,TCHAR *dir,TCHAR *fnm,TCHA
 #define my_splitpath_t my_splitpath
 #endif
 
+int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 );
+
 #endif /* SAKURA_FILE_2813BD8E_F6B9_400F_AA27_A6DDC372D6B89_H_ */
 /*[EOF]*/

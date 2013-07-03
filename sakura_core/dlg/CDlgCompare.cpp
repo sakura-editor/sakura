@@ -21,6 +21,7 @@
 #include "window/CEditWnd.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/shell.h"
+#include "util/file.h"
 #include "util/string_ex2.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -130,6 +131,7 @@ void CDlgCompare::SetData( void )
 	int				i;
 	TCHAR			szMenu[512];
 	int				nItem;
+	int				selIndex = 0;
 
 	hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_FILES );
 
@@ -145,6 +147,9 @@ void CDlgCompare::SetData( void )
 		HFONT hFont = (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
 		HFONT hFontOld = (HFONT)::SelectObject(hDC, hFont);
 		int nExtent = 0;	// 文字列の横幅
+		int score = 0;
+		TCHAR		szFile1[_MAX_PATH];
+		SplitPath_FolderAndFile(m_pszPath, NULL, szFile1);
 		for( i = 0; i < nRowNum; ++i ){
 			/* トレイからエディタへの編集ファイル名要求通知 */
 			::SendMessageAny( pEditNodeArr[i].GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
@@ -168,6 +173,16 @@ void CDlgCompare::SetData( void )
 			if( ::GetTextExtentPoint32( hDC, szMenu, _tcslen(szMenu), &sizeExtent ) && sizeExtent.cx > nExtent ){
 				nExtent = sizeExtent.cx;
 			}
+
+			// ファイル名一致のスコアを計算する
+			TCHAR szFile2[_MAX_PATH];
+			SplitPath_FolderAndFile( pfi->m_szPath, NULL, szFile2 );
+			int scoreTemp = FileMatchScoreSepExt( szFile1, szFile2 );
+			if( score < scoreTemp ){
+				// スコアのいいものを選択
+				score = scoreTemp;
+				selIndex = nItem;
+			}
 		}
 		delete [] pEditNodeArr;
 		// 2002/11/01 Moca 追加 リストビューの横幅を設定。これをやらないと水平スクロールバーが使えない
@@ -175,7 +190,7 @@ void CDlgCompare::SetData( void )
 		::ReleaseDC( hwndList, hDC );
 		List_SetHorizontalExtent( hwndList, nExtent + 8 );
 	}
-	List_SetCurSel( hwndList, 0 );
+	List_SetCurSel( hwndList, selIndex );
 
 	/* 左右に並べて表示 */
 	//@@@ 2003.06.12 MIK

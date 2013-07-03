@@ -1069,6 +1069,86 @@ void my_splitpath_w (
 //
 //
 // -----------------------------------------------------------------------------
+int FileMatchScore( const TCHAR *file1, const TCHAR *file2 );
 
+int FileMatchScoreSepExt( const TCHAR *file1, const TCHAR *file2 )
+{
+	TCHAR szFile1[_MAX_PATH];
+	TCHAR szFile2[_MAX_PATH];
+	TCHAR szFileExt1[_MAX_PATH];
+	TCHAR szFileExt2[_MAX_PATH];
+	const TCHAR* p = auto_strchr(file1, _T('.'));
+	if( p ){
+		auto_memcpy(szFile1, file1, p - file1);
+		szFile1[p - file1] = _T('\0');
+		auto_strcpy(szFileExt1, p);
+	}else{
+		auto_strcpy(szFile1, file1);
+		szFileExt1[0] = _T('\0');
+	}
+	const TCHAR* p2 = auto_strchr(file2, _T('.'));
+	if( p2 ){
+		auto_memcpy(szFile2, file2, p2 - file2);
+		szFile2[p2 - file2] = _T('\0');
+		auto_strcpy(szFileExt2, p2);
+	}else{
+		auto_strcpy(szFile2, file2);
+		szFileExt2[0] = _T('\0');
+	}
+	int score = FileMatchScore(szFile1, szFile2);
+	score += FileMatchScore(szFileExt1, szFileExt2);
+	return score;
+}
+
+/*!	2Ç¬ÇÃÉtÉ@ÉCÉãñºÇÃç≈í∑àÍívïîï™ÇÃí∑Ç≥Çï‘Ç∑
+*/
+int FileMatchScore( const TCHAR *file1, const TCHAR *file2 )
+{
+	int score = 0;
+	int len1 = auto_strlen(file1);
+	int len2 = auto_strlen(file2);
+	if( len1 < len2 ){
+		const TCHAR * tmp = file1;
+		file1 = file2;
+		file2 = tmp;
+		int tmpLen = len1;
+		len1 = len2;
+		len2 = tmpLen;
+	}
+	for( int i = 0; i < len1; ){
+		for( int k = 0; k < len2 && score < (len2 - k); ){
+			int tmpScore = 0;
+			for( int m = k; m < len2; ){
+				int pos1 = i + (m - k);
+				int chars1 = (Int)CNativeT::GetSizeOfChar(file1, len1, pos1);
+				int chars2 = (Int)CNativeT::GetSizeOfChar(file2, len2, m);
+				if( chars1 == chars2 ){
+					if( chars1 == 1 ){
+						if( _tcs_tolower(file1[pos1]) == _tcs_tolower(file2[m]) ){
+							tmpScore += chars1;
+						}else{
+							break;
+						}
+					}else{
+						if( 0 == auto_strnicmp(&file1[pos1], &file2[m], chars1) ){
+							tmpScore += chars1;
+						}else{
+							break;
+						}
+					}
+				}else{
+					break;
+				}
+				m += t_max(1, chars1);
+			}
+			if( score < tmpScore ){
+				score = tmpScore;
+			}
+			k += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(file2, len2, k));
+		}
+		i += t_max(1, (int)(Int)CNativeT::GetSizeOfChar(file1, len1, i));
+	}
+	return score;
+}
 
 
