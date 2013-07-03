@@ -77,6 +77,13 @@ inline int my_towupper( int c ){ return (((c) >= L'a') && ((c) <= L'z')) ? ((c) 
 inline int my_towlower( int c ){ return (((c) >= L'A') && ((c) <= L'Z')) ? ((c) - L'A' + L'a') : (c); }
 int skr_towupper( int c );
 int skr_towlower( int c );
+#ifdef _UNICODE
+#define _tcs_toupper skr_towupper
+#define _tcs_tolower skr_towlower
+#else
+#define _tcs_toupper my_toupper
+#define _tcs_tolower my_tolower
+#endif
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                           Šg’£E“ÆŽ©ŽÀ‘•                    //

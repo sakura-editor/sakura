@@ -24,6 +24,7 @@
 #include "func/Funccode.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
+#include "util/file.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -241,6 +242,14 @@ void CDlgDiff::SetData( void )
 		int			nItem;
 		WIN_CHAR	szName[_MAX_PATH];
 		int			count = 0;
+		int			selIndex = 0;
+		ECodeType	code;
+		int			selCode = CODE_NONE;
+
+		// 自分の文字コードを取得
+		::SendMessageAny( CEditWnd::getInstance()->GetHwnd(), MYWM_GETFILEINFO, 0, 0 );
+		pFileInfo = &m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
+		code = pFileInfo->m_nCharCode;
 
 		/* リストのハンドル取得 */
 		hwndList = :: GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
@@ -254,6 +263,9 @@ void CDlgDiff::SetData( void )
 			HFONT hFont = (HFONT)::SendMessageAny(hwndList, WM_GETFONT, 0, 0);
 			HFONT hFontOld = (HFONT)::SelectObject(hDC, hFont);
 			int nExtent = 0;	// 文字列の横幅
+			int score = 0;
+			TCHAR		szFile1[_MAX_PATH];
+			SplitPath_FolderAndFile(m_szFile1, NULL, szFile1);
 			for( i = 0; i < nRowNum; i++ )
 			{
 				/* トレイからエディタへの編集ファイル名要求通知 */
@@ -282,6 +294,18 @@ void CDlgDiff::SetData( void )
 				SIZE sizeExtent;
 				if( ::GetTextExtentPoint32( hDC, szName, _tcslen(szName), &sizeExtent ) && sizeExtent.cx > nExtent ){
 					nExtent = sizeExtent.cx;
+				}
+
+				// ファイル名一致のスコアを計算する
+				TCHAR szFile2[_MAX_PATH];
+				SplitPath_FolderAndFile( pFileInfo->m_szPath, NULL, szFile2 );
+				int scoreTemp = FileMatchScoreSepExt( szFile1, szFile2 );
+				if( score < scoreTemp ||
+					(selCode != code && code == pFileInfo->m_nCharCode && score == scoreTemp) ){
+					// スコアのいいものを選択. 同じなら文字コードが同じものを選択
+					score = scoreTemp;
+					selIndex = nItem;
+					selCode = pFileInfo->m_nCharCode;
 				}
 			}
 
@@ -315,12 +339,12 @@ void CDlgDiff::SetData( void )
 			HWND hwndList = GetDlgItem( GetHwnd(), IDC_LIST_DIFF_FILES );
 			if( List_GetCurSel( hwndList ) == LB_ERR )
 			{
-			    List_SetCurSel( hwndList, 0 /*先頭アイテム*/ );
+			    List_SetCurSel( hwndList, selIndex );
 			}
 		}
 		//	To Here 2004.02.22 じゅうじ
 		//	Feb. 28, 2004 genta 一番上を選択位置とする．
-		m_nIndexSave = 0;
+		m_nIndexSave = selIndex;
 	}
 
 	return;
