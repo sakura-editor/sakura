@@ -55,6 +55,10 @@
 <META NAME="MS-HKWD" CONTENT="StatusMsg">
 <META NAME="MS-HKWD" CONTENT="IsShownStatus">
 <META NAME="MS-HKWD" CONTENT="MsgBeep">
+<META NAME="MS-HKWD" CONTENT="CommitUndoBuffer">
+<META NAME="MS-HKWD" CONTENT="AddRefUndoBuffer">
+<META NAME="MS-HKWD" CONTENT="SetUndoBuffer">
+<META NAME="MS-HKWD" CONTENT="AppendUndoBufferCursor">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -124,9 +128,13 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#SetFontSize">SetFontSize</a>( int1: Integer, int2: Integer );<br>
 ・<a href="#GetDrawSwitch">GetDrawSwitch</a>( int1: Integer ) :Integer;<br>
 ・<a href="#SetDrawSwitch">SetDrawSwitch</a>() :Integer;<br>
-・<a href="#StatusMsg"></a>StatusMsg( str1 :String, int1 :Integer );<br>
-・<a href="#IsShownStatus"></a>() :Integer;<br>
-・<a href="#MsgBeep"></a>( int1: Integer );<br>
+・<a href="#StatusMsg">StatusMsg</a>( str1 :String, int1 :Integer );<br>
+・<a href="#IsShownStatus">IsShownStatus</a>() :Integer;<br>
+・<a href="#MsgBeep">MsgBeep</a>( int1: Integer );<br>
+・<a href="#CommitUndoBuffer">CommitUndoBuffer</a>(); <br>
+・<a href="#AddRefUndoBuffer">AddRefUndoBuffer</a>(); <br>
+・<a href="#SetUndoBuffer">SetUndoBuffer</a>(); <br>
+・<a href="#AppendUndoBufferCursor">AppendUndoBufferCursor</a>(); <br>
 <hr>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -736,7 +744,6 @@ int1&nbsp;&nbsp;&nbsp;&nbsp;表示設定値<br>
 画面描画の表示・非表示を設定します。<br>
 戻り値で以前の値が取得できます。<br>
 マクロ・プラグインの実行が完了すると、自動的に実行する直前の値に再設定されます。<br>
-再設定された後に表示設定であれば再描画されます。<br>
 </div>
 sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
@@ -782,5 +789,56 @@ int1&nbsp;&nbsp;&nbsp;&nbsp;音の選択<br>
 </div>
 sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
+■ function <span id="CommitUndoBuffer">CommitUndoBuffer</span>(); <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>解説</b><br>
+Undoバッファを強制登録します。中身がない場合は登録されません。参照カウンタの数は維持されます。<br>
+</div>
+sakura:2.1.0.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
+■ function <span id="AddRefUndoBuffer">AddRefUndoBuffer</span>(); <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>解説</b><br>
+Undoバッファをまとめるように指示を出します。<br>
+参照カウンタを1増加させます。<br>
+</div>
+sakura:2.1.0.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
+■ function <span id="SetUndoBuffer">SetUndoBuffer</span>(); <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>解説</b><br>
+AddRefUndoBufferを実行した回数呼び出すとUndoバッファの内容をRedo/Undoのリストに登録します。中身がない場合は登録されません。<br>
+<br>
+InsText('a');<br>
+AddRefUndoBuffer(); // これ以降、Undoバッファをまとめる<br>
+InsText('b');<br>
+InsText('c');<br>
+SetUndoBuffer(); // ここで'bc'がまとめてUndoバッファのリストに登録される<br>
+InsText('d'); // ここは個別にUndoバッファのリストに登録される<br>
+AddRefUndoBuffer(); // これ以降、Undoバッファをまとめる<br>
+InsText('e');<br>
+InsText('f');<br>
+CommitUndoBuffer(); // ここで'ef'がまとめてUndoバッファのリストに登録される<br>
+// CommitUndoBuffer() は、SetUndoBuffer() + AddRefUndoBuffer() の意味になる<br>
+InsText('g');<br>
+InsText('h');<br>
+SetUndoBuffer(); // ここで'gh'がまとめてUndoバッファのリストに登録される<br>
+InsText('i'); // iがUndoバッファに登録される<br>
+SetUndoBuffer(); // ここでは、何もUndoバッファに登録されない<br>
+</div>
+sakura:2.1.0.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
+■ function <span id="AppendUndoBufferCursor">AppendUndoBufferCursor</span>(); <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>解説</b><br>
+Undoバッファに現在のカーソル位置を追加し登録します。<br>
+</div>
+sakura:2.1.0.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
 
 </BODY></HTML>
