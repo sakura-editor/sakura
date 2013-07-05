@@ -35,11 +35,5 @@ void ChangeCurrentDirectoryToExeDir();
 //! カレントディレクトリ移動機能付LoadLibrary
 HMODULE LoadLibraryExedir( LPCTSTR pszDll);
 
-
-//※サクラ依存
-void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
-void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji
-void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
-
 #endif /* SAKURA_MODULE_4F382EF5_EF52_47E1_A774_5CDFB545AB25_H_ */
 /*[EOF]*/
