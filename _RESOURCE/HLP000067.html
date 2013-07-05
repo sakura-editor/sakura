@@ -95,6 +95,7 @@
 「出力形式」<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x00&nbsp;&nbsp;&nbsp;&nbsp;ノーマル（省略時規定値）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x40&nbsp;&nbsp;&nbsp;&nbsp;ファイル毎<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x80&nbsp;&nbsp;&nbsp;&nbsp;結果のみ(sakura:2.1.0.0以降)<br>
 「<a href="HLP000271.html">文字コードセット</a>」<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0000&nbsp;&nbsp;&nbsp;&nbsp;SJIS（省略時規定値）<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0100&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
@@ -106,6 +107,10 @@
 &nbsp;&nbsp;&nbsp;&nbsp;0x0700&nbsp;&nbsp;&nbsp;&nbsp;CESU-8<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x0800&nbsp;&nbsp;&nbsp;&nbsp;Latin1(Windows-1252)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0x6300&nbsp;&nbsp;&nbsp;&nbsp;自動選択<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x010000;&nbsp;&nbsp;単語単位で探す(sakura:2.1.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x020000;&nbsp;&nbsp;ファイル毎最初のみ検索(sakura:2.1.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x040000;&nbsp;&nbsp;ベースフォルダ表示(sakura:2.1.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0x080000;&nbsp;&nbsp;フォルダ毎に表示(sakura:2.1.0.0以降)<br>
 文字コード自動判別を設定した場合と文字コードセットを 自動選択にした場合の動作は同じです。<br>
 int4の文字コードセットよりint5が優先されます。<br>
 <br>
