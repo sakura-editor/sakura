@@ -925,7 +925,7 @@ void CPropTypesColor::DrawColorButton( DRAWITEMSTRUCT* pDis, COLORREF cColor )
 	gr.FillMyRect( pDis->rcItem );
 
 	/* ˜g‚Ì•`‰æ */
-	rcFocus = rc = pDis->rcItem;
+	rc = pDis->rcItem;
 	rc.top += 4;
 	rc.left += 4;
 	rc.right -= 4;
