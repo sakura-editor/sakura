@@ -50,6 +50,11 @@
 <META NAME="MS-HKWD" CONTENT="DeleteCookie">
 <META NAME="MS-HKWD" CONTENT="GetCookieNames">
 <META NAME="MS-HKWD" CONTENT="SetFontSize">
+<META NAME="MS-HKWD" CONTENT="GetDrawSwitch">
+<META NAME="MS-HKWD" CONTENT="SetDrawSwitch">
+<META NAME="MS-HKWD" CONTENT="StatusMsg">
+<META NAME="MS-HKWD" CONTENT="IsShownStatus">
+<META NAME="MS-HKWD" CONTENT="MsgBeep">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -107,16 +112,21 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#Sleep">Sleep</a>( int1 :Integer ) :Integer<br>
 ・<a href="#GetClipboard">GetClipboard</a>( int1 :Integer ) :String<br>
 ・<a href="#SetClipboard">SetClipboard</a>( int1 :Integer, str1 :String ) :Integer<br>
-・<a href="#LayoutToLogicLineNum">LayoutToLogicLineNum</a>( int1: Integer ) :Integer<br>
-・<a href="#LogicToLayoutLineNum">LogicToLayoutLineNum</a>( int1: Integer, int2: Integer ) :Integer<br>
-・<a href="#LineColumnToIndex">LineColumnToIndex</a>( int1: Integer, int2: Integer ) :Integer<br>
-・<a href="#LineIndexToColumn">LineIndexToColumn</a>( int1: Integer, int2: Integer ) :Integer<br>
+・<a href="#LayoutToLogicLineNum">LayoutToLogicLineNum</a>( int1 :Integer ) :Integer<br>
+・<a href="#LogicToLayoutLineNum">LogicToLayoutLineNum</a>( int1 :Integer, int2 :Integer ) :Integer<br>
+・<a href="#LineColumnToIndex">LineColumnToIndex</a>( int1 :Integer, int2 :Integer ) :Integer<br>
+・<a href="#LineIndexToColumn">LineIndexToColumn</a>( int1 :Integer, int2 :Integer ) :Integer<br>
 ・<a href="#GetCookie">GetCookie</a>( str1: String, str2: String ) :String;<br>
 ・<a href="#GetCookieDefault">GetCookieDefault</a>( str1: String, str2: String, str3: String ) :String;<br>
 ・<a href="#SetCookie">SetCookie</a>( str1: String, str2: String, str3: String ) :Integer;<br>
 ・<a href="#DeleteCookie">DeleteCookie</a>( str1: String, str2: String ) :Integer;<br>
 ・<a href="#GetCookieNames">GetCookieNames</a>( str1: String ) :String;<br>
 ・<a href="#SetFontSize">SetFontSize</a>( int1: Integer, int2: Integer );<br>
+・<a href="#GetDrawSwitch">GetDrawSwitch</a>( int1: Integer ) :Integer;<br>
+・<a href="#SetDrawSwitch">SetDrawSwitch</a>() :Integer;<br>
+・<a href="#StatusMsg"></a>StatusMsg( str1 :String, int1 :Integer );<br>
+・<a href="#IsShownStatus"></a>() :Integer;<br>
+・<a href="#MsgBeep"></a>( int1: Integer );<br>
 <hr>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -445,6 +455,7 @@ int1&nbsp;&nbsp;&nbsp;&nbsp;メッセージボックス種別<br>
 メッセージボックスを表示します。<br>
 </div>
 sakura:2.0.3.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。(sakura 2.1.0.0 以降)<br>
 <br>
 ■ function <span id="ErrorMsg">ErrorMsg</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 ■ function <span id="WarnMsg">WarnMsg</span>( str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
@@ -463,6 +474,7 @@ sakura:2.0.3.0以降<br>
 </table>
 </div>
 sakura:2.0.3.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。(sakura 2.1.0.0 以降)<br>
 <br>
 ■ function <span id="FileOpenDialog">FileOpenDialog</span>( str1 :String, str2 :String ) :String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -526,6 +538,7 @@ int1&nbsp;&nbsp;&nbsp;&nbsp;スリープ時間（ミリ秒）<br>
 指定した時間だけマクロを止めます。<br>
 </div>
 sakura:2.0.3.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。(sakura 2.1.0.0 以降)<br>
 <br>
 ■ function <span id="GetClipboard">GetClipboard</span>( int1 :Integer ) :String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -700,4 +713,74 @@ int1=0に設定したときに、int2でフォントサイズの拡大or縮小ができます。<br>
 sakura:2.0.8.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
 <br>
+■ function <span id="GetDrawSwitch">GetDrawSwitch</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>戻り値</b><br>
+0: 非表示に設定されている<br>
+1: 表示に設定されている<br>
+<b>解説</b><br>
+画面描画の表示・非表示を取得します。<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="SetDrawSwitch">SetDrawSwitch</span>( int1: Integer ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;表示設定値<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0: 非表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1: 表示<br>
+<b>戻り値</b><br>
+0: 設定する前は非表示に設定されていた<br>
+1: 設定する前は表示に設定されていた<br>
+<b>解説</b><br>
+画面描画の表示・非表示を設定します。<br>
+戻り値で以前の値が取得できます。<br>
+マクロ・プラグインの実行が完了すると、自動的に実行する直前の値に再設定されます。<br>
+再設定された後に表示設定であれば再描画されます。<br>
+</div>
+sakura:2.1.0.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
+■ function <span id="StatusMsg">StatusMsg</span>( str1 :String, int1 :Integer ); <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;表示文字列<br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;表示オプション<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0: ステータスバーが非表示のとき、右上に表示(省略時規定値)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1: ステータスバーが非表示のとき、InfoMsgに表示<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2: ステータスバーが非表示のとき、何もしない<br>
+<b>解説</b><br>
+ステータスバーに文字列を表示します。<br>
+ただしカーソル移動、次・前検索・再描画等のコマンドでステータス表示が上書きされます。<br>
+</div>
+sakura:2.1.0.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
+■ function <span id="IsShownStatus">IsShownStatus</span>() :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>戻り値</b><br>
+0: 非表示<br>
+1: 表示<br>
+<br>
+<b>解説</b><br>
+ステータスバーが表示されているかを取得します。<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="MsgBeep">MsgBeep</span>( int1 :Integer ); <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;音の選択<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-1: ビープ音<br>
+&nbsp;&nbsp;&nbsp;&nbsp; 0: 一般の警告音(省略時規定値)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; 1: エラー音<br>
+&nbsp;&nbsp;&nbsp;&nbsp; 2: 問い合わせ音<br>
+&nbsp;&nbsp;&nbsp;&nbsp; 3: 警告音<br>
+&nbsp;&nbsp;&nbsp;&nbsp; 4: 情報音<br>
+<b>解説</b><br>
+音をならします。OSのシステムで設定されている音がなります。<br>
+</div>
+sakura:2.1.0.0以降<br>
+この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+
 </BODY></HTML>
