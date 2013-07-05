@@ -59,6 +59,9 @@
 <META NAME="MS-HKWD" CONTENT="AddRefUndoBuffer">
 <META NAME="MS-HKWD" CONTENT="SetUndoBuffer">
 <META NAME="MS-HKWD" CONTENT="AppendUndoBufferCursor">
+<META NAME="MS-HKWD" CONTENT="GetStrWidth">
+<META NAME="MS-HKWD" CONTENT="GetStrLayoutLength">
+<META NAME="MS-HKWD" CONTENT="GetDefaultCharLength">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -135,6 +138,9 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#AddRefUndoBuffer">AddRefUndoBuffer</a>(); <br>
 ・<a href="#SetUndoBuffer">SetUndoBuffer</a>(); <br>
 ・<a href="#AppendUndoBufferCursor">AppendUndoBufferCursor</a>(); <br>
+・<a href="#GetStrWidth">GetStrWidth</a>(str1 :String, int2 :Integer):Integer<br>
+・<a href="#GetStrLayoutLength">GetStrLayoutLength</a>(str1 :String, int2 :Integer):Integer<br>
+・<a href="#GetDefaultCharLength">GetDefaultCharLength</a>():Integer<br>
 <hr>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
@@ -839,6 +845,43 @@ Undoバッファに現在のカーソル位置を追加し登録します。<br>
 </div>
 sakura:2.1.0.0以降<br>
 この関数は、特別にキーマクロ(.mac)形式でも使えます。<br>
+<br>
+■ function <span id="GetStrWidth">GetStrWidth</span>(str1 :String, int2 :Integer):Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;対象文字列<br>
+int2&nbsp;&nbsp;&nbsp;&nbsp;開始Offset（省略可能）<br>
+<b>戻り値</b><br>
+文字列の幅<br>
+<b>解説</b><br>
+文字列の幅を取得します。<br>
+開始Offsetは1開始です。省略時は1です。タブ幅計算などに使います。改行を含んだ計算はできません。<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="GetStrLayoutLength">GetStrLayoutLength</span>(str1 :String, int2 :Integer):Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;対象文字列<br>
+int2&nbsp;&nbsp;&nbsp;&nbsp;開始Offset（省略可能）<br>
+<b>戻り値</b><br>
+文字列のレイアウト幅<br>
+<b>解説</b><br>
+文字列のレイアウト幅を取得します。<br>
+開始Offsetは1開始です。省略時は1です。タブ幅計算などに使います。改行を含んだ計算はできません。<br>
+現在のバージョンでは、GetStrWidthと値は同じです。<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="GetDefaultCharLength">GetDefaultCharLength</span>():Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>戻り値</b><br>
+レイアウト幅<br>
+<b>解説</b><br>
+ルーラー等の1文字幅あたりのレイアウト幅を取得します。<br>
+現在のバージョンでは、1です。<br>
+</div>
+sakura:2.1.0.0以降<br>
 <br>
 
 </BODY></HTML>
