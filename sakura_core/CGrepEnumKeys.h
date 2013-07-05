@@ -105,6 +105,7 @@ public:
 			bool bRelPath = _IS_REL_PATH( token );
 			int nValidStatus = ValidateKey( token );
 			if( 0 != nValidStatus ){
+				delete [] pWildCard;
 				return nValidStatus;
 			}
 			if( keyType == FILTER_SEARCH ){
@@ -113,6 +114,7 @@ public:
 				}else{
 //					push_back_unique( m_vecSearchAbsFileKeys, token );
 //					push_back_unique( m_vecSearchFileKeys, token );
+					delete [] pWildCard;
 					return 2; // 絶対パス指定は不可
 				}
 			}else if( keyType == FILTER_EXCEPT_FILE ){
