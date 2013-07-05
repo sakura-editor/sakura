@@ -442,8 +442,8 @@ LRESULT CEditView::DispatchEvent(
 )
 {
 	HDC			hdc;
-	int			nPosX;
-	int			nPosY;
+//	int			nPosX;
+//	int			nPosY;
 
 	switch ( uMsg ){
 	case WM_MOUSEWHEEL:
@@ -791,8 +791,8 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case MYWM_DOSPLIT:
-		nPosX = (int)wParam;
-		nPosY = (int)lParam;
+//		nPosX = (int)wParam;
+//		nPosY = (int)lParam;
 //		MYTRACE( _T("MYWM_DOSPLIT nPosX=%d nPosY=%d\n"), nPosX, nPosY );
 		::SendMessage( m_hwndParent, MYWM_DOSPLIT, wParam, lParam );
 		return 0L;
@@ -1330,11 +1330,9 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 	CLogicInt	nDelLenNext;
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine2;
 	CLogicInt		nLineLen2;
 	CWaitCursor cWaitCursor( GetHwnd() );
 
-	BOOL		bBeginBoxSelectOld;
 
 	/* テキストが選択されているか */
 	if( !GetSelectionInfo().IsTextSelected() ){
@@ -1346,8 +1344,6 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		GetSelectionInfo().m_sSelect.GetFrom(),
 		&ptFromLogic
 	);
-
-	bBeginBoxSelectOld	= GetSelectionInfo().IsBoxSelecting();
 
 	/* 矩形範囲選択中か */
 	if( GetSelectionInfo().IsBoxSelecting() ){
@@ -1388,7 +1384,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 			CLogicInt	nDelPos = nDelPosNext;
 			nDelLen	= nDelLenNext;
 			if( nLineNum < rcSelLayout.bottom && 0 < nDelLen ){
-				pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + CLayoutInt(1), &nLineLen2, &pcLayout );
+				m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum + CLayoutInt(1), &nLineLen2, &pcLayout );
 				sPos.Set(
 					LineIndexToColumn( pcLayout, nDelPos ),
 					nLineNum + 1

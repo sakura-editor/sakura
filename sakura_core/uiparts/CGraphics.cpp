@@ -247,9 +247,8 @@ void CGraphics::PopPen()
 	}
 
 	//‘I‘ğ
-	HPEN hpnOld = NULL;
 	if(hpnNew){
-		hpnOld = (HPEN)SelectObject(m_hdc,hpnNew);
+		SelectObject(m_hdc,hpnNew);
 	}
 
 	//íœ

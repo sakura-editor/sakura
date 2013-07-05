@@ -135,7 +135,6 @@ INT_PTR CDlgInput1::DispatchEvent(
 {
 	WORD	wNotifyCode;
 	WORD	wID;
-	HWND	hwndCtl;
 //	int		nRet;
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -152,7 +151,6 @@ INT_PTR CDlgInput1::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:

@@ -84,12 +84,10 @@ INT_PTR CALLBACK CPropMacro::DlgProc_page(
 INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
 
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
 
 	switch( uMsg ){
 
@@ -111,7 +109,6 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( idCtrl ){
 		case IDC_MACROLIST:
 			switch( pNMHDR->code ){
@@ -141,7 +138,6 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID = LOWORD(wParam);			/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl = (HWND) lParam;		/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */

@@ -704,13 +704,11 @@ void CDlgFavorite::TabSelectChange(bool bSetFocus)
 
 BOOL CDlgFavorite::OnActivate( WPARAM wParam, LPARAM lParam )
 {
-	bool	bret;
-
 	switch( LOWORD( wParam ) )
 	{
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		bret = RefreshList();
+		RefreshList();
 		::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, m_szMsg );
 		return TRUE;
 		//break;
@@ -1026,8 +1024,6 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	case MENU_ADD_EXCEPT:
 		{
 			::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, _T("") );
-			const int nLIST_SUBITEM_TEXT = 1;
-			int     nDelItemCount = 0;
 			CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				HWND hwndList = m_aListViewInfo[m_nCurrentTab].hListView;

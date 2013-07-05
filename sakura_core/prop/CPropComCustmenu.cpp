@@ -105,8 +105,6 @@ INT_PTR CPropCustmenu::DispatchEvent(
 	WORD		wID;
 	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
 	static HWND	hwndCOMBO_FUNCKIND;
 	static HWND	hwndLIST_FUNC;
 	static HWND	hwndCOMBO_MENU;
@@ -145,9 +143,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 			OnHelp( hwndDlg, IDD_PROP_CUSTMENU );

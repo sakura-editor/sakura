@@ -89,8 +89,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 {
 	WORD	wNotifyCode;
 	WORD	wID;
-	HWND	hwndCtl, hwndList;
-	int	idCtrl;
+	HWND	hwndList;
 	NMHDR*	pNMHDR;
 	int	nIndex, nIndex2, i, j, nRet;
 	LV_ITEM	lvi;
@@ -149,7 +148,6 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID	= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl	= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:
@@ -456,7 +454,6 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 		break;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:

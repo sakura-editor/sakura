@@ -108,7 +108,7 @@ void CLayoutMgr::_DoWordWrap(SLayoutWork* pWork, PF_OnLine pfOnLine)
 		/* 英単語の先頭か */
 		if( pWork->nPos >= pWork->nBgn && IS_KEYWORD_CHAR(pWork->cLineStr.At(pWork->nPos)) ){
 			// キーワード長を取得
-			CLayoutInt nWordKetas;
+			CLayoutInt nWordKetas = CLayoutInt(0);
 			_GetKeywordLength(
 				pWork->cLineStr, pWork->nPos,
 				&pWork->nWordBgn, &pWork->nWordLen, &nWordKetas

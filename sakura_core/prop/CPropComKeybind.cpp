@@ -43,11 +43,11 @@ static const DWORD p_helpids[] = {	//10700
 	IDC_LIST_FUNC,					HIDC_LIST_FUNC_KEYBIND,			//機能一覧
 	IDC_LIST_KEY,					HIDC_LIST_KEY,					//キー一覧
 	IDC_LIST_ASSIGNEDKEYS,			HIDC_LIST_ASSIGNEDKEYS,			//機能に割り当てられているキー
-	IDC_LABEL_MENUFUNCKIND,			-1,
-	IDC_LABEL_MENUFUNC,				-1,
-	IDC_LABEL_KEYKIND,				-1,
-	IDC_LABEL_FUNCtoKEY,			-1,
-	IDC_LABEL_KEYtoFUNC,			-1,
+	IDC_LABEL_MENUFUNCKIND,			(DWORD)-1,
+	IDC_LABEL_MENUFUNC,				(DWORD)-1,
+	IDC_LABEL_KEYKIND,				(DWORD)-1,
+	IDC_LABEL_FUNCtoKEY,			(DWORD)-1,
+	IDC_LABEL_KEYtoFUNC,			(DWORD)-1,
 	IDC_CHECK_ACCELTBL_EACHWIN,		HIDC_CHECK_ACCELTBL_EACHWIN,	// ウィンドウ毎にアクセラレータテーブルを作成する(Wine用)
 //	IDC_STATIC,						-1,
 	0, 0
@@ -102,8 +102,6 @@ INT_PTR CPropKeybind::DispatchEvent(
 	WORD		wID;
 	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
 	static HWND	hwndCombo;
 	static HWND	hwndFuncList;
 	static HWND	hwndKeyList;
@@ -155,9 +153,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 //			OnHelp( hwndDlg, IDD_PROP1P5 );		// Sept. 9, 2000 JEPRO 実際のID名に変更

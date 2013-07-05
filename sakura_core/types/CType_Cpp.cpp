@@ -1218,7 +1218,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	CLogicInt	nDataLen;
 
 	int			nWork = 0;
-	CDocLine*	pCDocLine = NULL;
 	int			nCharChars;
 	int			nSrcLen;
 	wchar_t		pszSrc[1024];
@@ -1250,7 +1249,6 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			/* ’²®‚É‚æ‚Á‚Ä’uŠ·‚³‚ê‚é‰ÓŠ */
 			sRangeA.Set(CLogicPoint(0,GetCaret().GetCaretLogicPos().y));
 		}else{
-			pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( GetCaret().GetCaretLogicPos().GetY2() );
 
 
 			//	nWork‚Éˆ—‚ÌŠî€Œ…ˆÊ’u‚ğİ’è‚·‚é

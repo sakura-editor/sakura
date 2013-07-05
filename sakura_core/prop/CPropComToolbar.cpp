@@ -38,9 +38,9 @@ static const DWORD p_helpids[] = {	//11000
 	IDC_LIST_FUNC,					HIDC_LIST_FUNC_TOOLBAR,					//機能一覧
 	IDC_LIST_RES,					HIDC_LIST_RES_TOOLBAR,					//ツールバー一覧
 	IDC_BUTTON_INSERTWRAP,			HIDC_BUTTON_INSERTWRAP,					//ツールバー折返	// 2006.08.06 ryoji
-	IDC_LABEL_MENUFUNCKIND,			-1,
-	IDC_LABEL_MENUFUNC,				-1,
-	IDC_LABEL_TOOLBAR,				-1,
+	IDC_LABEL_MENUFUNCKIND,			(DWORD)-1,
+	IDC_LABEL_MENUFUNC,				(DWORD)-1,
+	IDC_LABEL_TOOLBAR,				(DWORD)-1,
 //	IDC_STATIC,						-1,
 	0, 0
 };
@@ -137,7 +137,6 @@ INT_PTR CPropToolbar::DispatchEvent(
 	WORD				wID;
 	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;
 	int					idCtrl;
 	static HWND			hwndCombo;
 	static HWND			hwndFuncList;
@@ -149,7 +148,6 @@ INT_PTR CPropToolbar::DispatchEvent(
 	int					nNum;
 	int					i;
 	int					j;
-	static char			pszLabel[256];
 	HDC					hdc;
 	TEXTMETRIC			tm;
 	static int			nListItemHeight;
@@ -199,7 +197,6 @@ INT_PTR CPropToolbar::DispatchEvent(
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 			OnHelp( hwndDlg, IDD_PROP_TOOLBAR );

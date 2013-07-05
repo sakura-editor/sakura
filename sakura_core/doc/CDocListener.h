@@ -116,7 +116,7 @@ struct SSaveInfo{
 
 	SSaveInfo() : cFilePath(_T("")), eCharCode(CODE_AUTODETECT), bBomExist(false), bChgCodeSet(false), cEol(EOL_NONE), bOverwriteMode(false) { }
 	SSaveInfo(const CFilePath& _cFilePath, ECodeType _eCodeType, const CEol& _cEol, bool _bBomExist)
-		: cFilePath(_cFilePath), eCharCode(_eCodeType), cEol(_cEol), bBomExist(_bBomExist), bOverwriteMode(false) { }
+		: cFilePath(_cFilePath), eCharCode(_eCodeType), bBomExist(_bBomExist), bChgCodeSet(false), cEol(_cEol), bOverwriteMode(false) { }
 
 	//! ファイルパスの比較
 	bool IsSamePath(LPCTSTR pszPath) const;

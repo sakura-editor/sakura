@@ -78,7 +78,6 @@ INT_PTR CPropFile::DispatchEvent(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
 	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
@@ -212,7 +211,6 @@ INT_PTR CPropFile::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 
 		if( wID == IDC_COMBO_FILESHAREMODE && wNotifyCode == CBN_SELCHANGE ){	// コンボボックスの選択変更
 			EnableFilePropInput(hwndDlg);

@@ -286,13 +286,10 @@ void CEditView::ISearchExec(DWORD wChar)
 		//	break;
 	}
 	
-	int l;
 	if (m_bISearchFirst){
 		m_bISearchFirst = false;
-		l = 0 ;
 		m_strCurSearchKey.clear();
-	}else	
-		l = (int)m_strCurSearchKey.size() ;
+	}
 
 	if( wChar <= 0xffff ){
 		m_strCurSearchKey.append(1, (WCHAR)wChar);

@@ -79,12 +79,10 @@ INT_PTR CALLBACK CPropPlugin::DlgProc_page(
 INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
 	int			idCtrl;
 
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
 
 	switch( uMsg ){
 
@@ -99,7 +97,6 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 	case WM_NOTIFY:
 		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( idCtrl ){
 		case IDC_PLUGINLIST:
 			switch( pNMHDR->code ){
@@ -158,7 +155,6 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID = LOWORD(wParam);			/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl = (HWND) lParam;		/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */

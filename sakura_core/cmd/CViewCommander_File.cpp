@@ -318,11 +318,10 @@ void CViewCommander::Command_PRINT_PREVIEW( void )
 /* 印刷のページレイアウトの設定 */
 void CViewCommander::Command_PRINT_PAGESETUP( void )
 {
-	BOOL		bRes;
 	CEditWnd*	pCEditWnd = GetDocument()->m_pcEditWnd;	//	Sep. 10, 2002 genta
 
 	/* 印刷ページ設定 */
-	bRes = pCEditWnd->OnPrintPageSetting();
+	pCEditWnd->OnPrintPageSetting();
 	return;
 }
 

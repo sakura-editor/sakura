@@ -355,7 +355,7 @@ bool CBackupAgent::FormatBackUpPath(
 	/* 相対フォルダを挿入 */
 	if( !bup_setting.m_bBackUpPathAdvanced ){
 		time_t	ltime;
-		struct	tm *today, *gmt;
+		struct	tm *today;
 		wchar_t	szTime[64];
 		wchar_t	szForm[64];
 
@@ -380,7 +380,6 @@ bool CBackupAgent::FormatBackUpPath(
 			_tzset();
 			_wstrdate( szTime );
 			time( &ltime );				/* システム時刻を得ます */
-			gmt = gmtime( &ltime );		/* 万国標準時に変換する */
 			today = localtime( &ltime );/* 現地時間に変換する */
 
 			wcscpy( szForm, L"" );

@@ -222,7 +222,7 @@ DWORD CGrepAgent::DoGrep(
 			pcViewDst->m_bDoing_UndoRedo = false;
 			pcViewDst->SetUndoBuffer();
 
-			const TCHAR* pszErrorMessage;
+			const TCHAR* pszErrorMessage = _T("(不明)");
 			if( nErrorNo == 1 ){
 				pszErrorMessage = _T("ファイル指定のフォルダ部分にはワイルドカードは使えません");
 			}else if( nErrorNo == 2 ){

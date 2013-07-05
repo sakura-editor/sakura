@@ -139,7 +139,6 @@ int CDicMgr::HokanSearch(
 )
 {
 	int		nKeyLen;
-	int		nKouhoNum;
 	int		nRet;
 	if( pszKeyWordFile[0] == _T('\0') ){
 		return 0;
@@ -149,7 +148,6 @@ int CDicMgr::HokanSearch(
 	if(!in){
 		return 0;
 	}
-	nKouhoNum = 0;
 	nKeyLen = wcslen( pszKey );
 	wstring szLine;
 	while( in ){

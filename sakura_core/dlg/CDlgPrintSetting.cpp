@@ -190,12 +190,10 @@ BOOL CDlgPrintSetting::OnDestroy( void )
 BOOL CDlgPrintSetting::OnNotify( WPARAM wParam, LPARAM lParam )
 {
 	CDlgInput1		cDlgInput1;
-	NMHDR*			pNMHDR;
 	NM_UPDOWN*		pMNUD;
 	int				idCtrl;
 	BOOL			bSpinDown;
 	idCtrl = (int)wParam;
-	pNMHDR = (NMHDR*)lParam;
 	pMNUD  = (NM_UPDOWN*)lParam;
 	if( pMNUD->iDelta < 0 ){
 		bSpinDown = FALSE;

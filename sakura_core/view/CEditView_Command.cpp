@@ -174,13 +174,11 @@ BOOL CEditView::OPEN_ExtFromtoExt(
 {
 //From Here Feb. 7, 2001 JEPRO 追加
 	int		i;
-	BOOL	bwantopen_c;
 //To Here Feb. 7, 2001
 
 	/* 編集中ファイルの拡張子を調べる */
 	for( i = 0; i < file_extno; i++ ){
 		if( CheckEXT( GetDocument()->m_cDocFile.GetFilePath(), file_ext[i] ) ){
-			bwantopen_c = TRUE;
 			goto open_c;
 		}
 	}

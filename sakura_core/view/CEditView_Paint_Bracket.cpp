@@ -499,7 +499,6 @@ bool CEditView::SearchBracketBackward(
 	const wchar_t* cPos;
 	const wchar_t* pPos;
 	const wchar_t* cline;
-	const wchar_t* lineend;
 	int			level = 1;
 	
 	CLayoutPoint ptColLine;
@@ -512,7 +511,6 @@ bool CEditView::SearchBracketBackward(
 	nSearchNum = ptColLine.y - GetTextArea().GetViewTopLine();										// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
 	cline = ci->GetDocLineStrWithEOL( &len );
-	lineend = cline + len;
 	cPos = cline + ptPos.x;
 
 	do {
@@ -691,7 +689,6 @@ bool CEditView::SearchBracketBackward2(
 	const wchar_t* cPos;
 	const wchar_t* pPos;
 	const wchar_t* cline;
-	const wchar_t* lineend;
 	int level = 1;
 
 	CLayoutPoint ptColLine;
@@ -704,7 +701,6 @@ bool CEditView::SearchBracketBackward2(
 	nSearchNum = ptColLine.y - GetTextArea().GetViewTopLine();										// 02/09/19 ai
 	ci = m_pcEditDoc->m_cDocLineMgr.GetLine( ptPos.GetY2() );
 	cline = ci->GetDocLineStrWithEOL( &len );
-	lineend = cline + len;
 	cPos = cline + ptPos.x;
 
 	do {

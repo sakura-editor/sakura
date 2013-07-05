@@ -1085,7 +1085,6 @@ LRESULT CEditWnd::DispatchEvent(
 )
 {
 	int					nRet;
-	int					idCtrl;
 	LPNMHDR				pnmh;
 	int					nPane;
 	EditInfo*			pfi;
@@ -1099,8 +1098,6 @@ LRESULT CEditWnd::DispatchEvent(
 	int					nItemWidth;
 	int					nItemHeight;
 	UINT				uItem;
-	UINT				fuFlags;
-	HMENU				hmenu;
 	LRESULT				lRes;
 
 	switch( uMsg ){
@@ -1138,8 +1135,6 @@ LRESULT CEditWnd::DispatchEvent(
 			return 1;
 		}
 		uItem = (UINT) LOWORD(wParam);		// menu item or submenu index
-		fuFlags = (UINT) HIWORD(wParam);	// menu flags
-		hmenu = (HMENU) lParam;				// handle to menu clicked
 		{
 			/* メニュー機能のテキストをセット */
 			CNativeT	cmemWork;
@@ -1399,7 +1394,6 @@ LRESULT CEditWnd::DispatchEvent(
 		return lRes;
 
 	case WM_NOTIFY:
-		idCtrl = (int) wParam;
 		pnmh = (LPNMHDR) lParam;
 		//	From Here Feb. 15, 2004 genta 
 		//	ステータスバーのダブルクリックでモード切替ができるようにする
@@ -2215,7 +2209,6 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 	int			nPos;
 	UINT		fuFlags;
 	int			i;
-	BOOL		bRet;
 	HMENU		hMenuPopUp;
 
 
@@ -2239,7 +2232,7 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 		m_CMenuDrawer.ResetContents();
 		cMenuItems = ::GetMenuItemCount( hMenu );
 		for( i = cMenuItems - 1; i >= 0; i-- ){
-			bRet = ::DeleteMenu( hMenu, i, MF_BYPOSITION );
+			::DeleteMenu( hMenu, i, MF_BYPOSITION );
 		}
 
 		// メニュー作成
@@ -2979,10 +2972,6 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	int			nFuncKeyWndHeight;
 	int			nTabWndHeight;	//タブウインドウ	//@@@ 2003.05.31 MIK
 	RECT		rc, rcClient;
-	int			nCxHScroll;
-	int			nCyHScroll;
-	int			nCxVScroll;
-	int			nCyVScroll;
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる
 //	変数削除
 
@@ -3031,10 +3020,6 @@ LRESULT CEditWnd::OnSize( WPARAM wParam, LPARAM lParam )
 	}
 
 	m_nWinSizeType = wParam;	/* サイズ変更のタイプ */
-	nCxHScroll = ::GetSystemMetrics( SM_CXHSCROLL );
-	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
-	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
-	nCyVScroll = ::GetSystemMetrics( SM_CYVSCROLL );
 
 	// 2006.06.17 ryoji Rebar があればそれをツールバー扱いする
 	hwndToolBar = (NULL != m_cToolbar.GetRebarHwnd())? m_cToolbar.GetRebarHwnd(): m_cToolbar.GetToolbarHwnd();
@@ -3221,12 +3206,11 @@ LRESULT CEditWnd::OnPaint(
 	LPARAM			lParam 	// second message parameter
 )
 {
-	HDC				hdc;
 //@@@ 2002.01.14 YAZAKI 印刷プレビューをCPrintPreviewに独立させたことによる変更
 	/* 印刷プレビューモードか */
 	if( !m_pPrintPreview ){
 		PAINTSTRUCT		ps;
-		hdc = ::BeginPaint( hwnd, &ps );
+		::BeginPaint( hwnd, &ps );
 		::EndPaint( hwnd, &ps );
 		return 0L;
 	}
