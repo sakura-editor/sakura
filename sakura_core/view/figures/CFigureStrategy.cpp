@@ -105,16 +105,19 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 	COLORREF crText;
 	COLORREF crBack;
 	bool blendColor = pInfo->GetCurrentColor() != pInfo->GetCurrentColor2() && cCurrentType.GetTextColor() == cCurrentType.GetBackColor(); // 選択混合色
+	bool bBold;
 	if( blendColor ){
 		CTypeSupport& cText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? cCurrentType2 : cSpaceType;
 		CTypeSupport& cBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? cCurrentType3 : cSpaceType;
 		crText = pcView->GetTextColorByColorInfo2(cCurrentType.GetColorInfo(), cText.GetColorInfo());
 		crBack = pcView->GetBackColorByColorInfo2(cCurrentType.GetColorInfo(), cBack.GetColorInfo());
+		bBold = cCurrentType2.IsBoldFont();
 	}else{
 		CTypeSupport& cText = cSpaceType.GetTextColor() == cTextType.GetTextColor() ? cCurrentType : cSpaceType;
 		CTypeSupport& cBack = cSpaceType.GetBackColor() == cTextType.GetBackColor() ? cCurrentType1 : cSpaceType;
 		crText = cText.GetTextColor();
 		crBack = cBack.GetBackColor();
+		bBold = cCurrentType.IsBoldFont();
 	}
 	//cSpaceType.SetGraphicsState_WhileThisObj(pInfo->gr);
 
@@ -122,7 +125,7 @@ bool CFigureSpace::DrawImp_StyleSelect(SColorStrategyInfo* pInfo)
 	pInfo->gr.PushTextBackColor(crBack);
 	// Figureが下線指定ならこちらで下線を指定。元の色のほうが下線指定なら、DrawImp_DrawUnderlineで下線だけ指定
 	SFONT sFont;
-	sFont.m_bBoldFont = cSpaceType.IsBoldFont() || cCurrentType.IsBoldFont();
+	sFont.m_bBoldFont = cSpaceType.IsBoldFont() || bBold;
 	sFont.m_bUnderLine = cSpaceType.HasUnderLine();
 	sFont.m_hFont = pInfo->pcView->GetFontset().ChooseFontHandle(sFont.m_bBoldFont, sFont.m_bUnderLine);
 	pInfo->gr.PushMyFont(sFont);
