@@ -52,6 +52,13 @@ BOOL CheckEXT( const TCHAR*, const TCHAR* );					/* 拡張子を調べる */
 const TCHAR* GetFileTitlePointer(const TCHAR* tszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成
 bool _IS_REL_PATH(const TCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
 
+//※サクラ依存
+void GetExedir( LPTSTR pDir, LPCTSTR szFile = NULL );
+void GetInidir( LPTSTR pDir, LPCTSTR szFile = NULL ); // 2007.05.19 ryoji
+void GetInidirOrExedir( LPTSTR pDir, LPCTSTR szFile = NULL, BOOL bRetExedirIfFileEmpty = FALSE ); // 2007.05.22 ryoji
+
+LPCTSTR GetRelPath( LPCTSTR pszPath );
+
 //ファイル時刻
 class CFileTime{
 public:
