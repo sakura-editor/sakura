@@ -62,6 +62,10 @@
 <META NAME="MS-HKWD" CONTENT="GetStrWidth">
 <META NAME="MS-HKWD" CONTENT="GetStrLayoutLength">
 <META NAME="MS-HKWD" CONTENT="GetDefaultCharLength">
+<META NAME="MS-HKWD" CONTENT="ClipboardEmpty">
+<META NAME="MS-HKWD" CONTENT="IsIncludeClipboardFormat">
+<META NAME="MS-HKWD" CONTENT="GetClipboardByFormat">
+<META NAME="MS-HKWD" CONTENT="SetClipboardByFormat">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -141,7 +145,10 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#GetStrWidth">GetStrWidth</a>(str1 :String, int2 :Integer):Integer<br>
 ・<a href="#GetStrLayoutLength">GetStrLayoutLength</a>(str1 :String, int2 :Integer):Integer<br>
 ・<a href="#GetDefaultCharLength">GetDefaultCharLength</a>():Integer<br>
-<hr>
+・<a href="#ClipboardEmpty">ClipboardEmpty</a>()
+・<a href="#IsIncludeClipboardFormat">IsIncludeClipboardFormat</span>(str1 :String) :Integer
+・<a href="#GetClipboardByFormat">GetClipboardByFormat</span>str1 :String, int2 :Integer, int3:Integer) :String
+・<a href="#SetClipboardByFormat">SetClipboardByFormat</span>str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>戻り値</b><br>
@@ -568,12 +575,16 @@ sakura:2.0.3.0以降<br>
 ■ function <span id="SetClipboard">SetClipboard</span>( int1 :Integer, str1 :String ) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>引数</b><br>
-int1&nbsp;&nbsp;&nbsp;&nbsp;予約値。0を指定してください<br>
+int1&nbsp;&nbsp;&nbsp;&nbsp;オプション<br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;設定する文字列<br>
 <b>戻り値</b><br>
 0<br>
 <b>解説</b><br>
 クリップボードに文字列を設定します。<br>
+オプションは以下の通りです。<br>
+0x00&nbsp;&nbsp;&nbsp;&nbsp;通常コピー<br>
+0x01&nbsp;&nbsp;&nbsp;&nbsp;矩形選択 (sakura:2.1.0.0以降)<br>
+0x02&nbsp;&nbsp;&nbsp;&nbsp;ラインモード (sakura:2.1.0.0以降)<br>
 </div>
 sakura:2.0.3.0以降<br>
 <br>
@@ -880,6 +891,76 @@ sakura:2.1.0.0以降<br>
 <b>解説</b><br>
 ルーラー等の1文字幅あたりのレイアウト幅を取得します。<br>
 現在のバージョンでは、1です。<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="ClipboardEmpty">ClipboardEmpty</span>(); <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>解説</b><br>
+クリップボードを空にします。<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="IsIncludeClipboardFormat">IsIncludeClipboardFormat</span>(str1 :String) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名
+<b>戻り値</b><br>
+0: 該当フォーマットなし<br>
+1: 該当フォーマットあり<br>
+<b>解説</b><br>
+クリップボードに指定したフォーマットの形式があるか調べます。<br>
+クリップボードフォーマット名にはシステムに登録されたCF_xxxや登録された物が使えます。<br>
+フォーマット名の例一覧：
+&nbsp;&nbsp;&nbsp;&nbsp;'CF_UNICODETEXT'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'CF_TEXT'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'CF_OEMTEXT'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'CF_HDROP'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'HTML Format'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'SAKURAClipW'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'MSDEVColumnSelect' (矩形コピーマーク)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'MSDEVLineSelect' (行コピーマーク)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;'VisualStudioEditorOperationsLineCutCopyClipboardTag' (行コピーマーク)<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="GetClipboardByFormat">GetClipboardByFormat</span>str1 :String, int2 :Integer, int3:Integer) :String; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名
+int2&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)
+int3&nbsp;&nbsp;&nbsp;&nbsp;終端モード
+<b>戻り値</b><br>
+クリップボードの内容の文字列<br>
+<b>解説</b><br>
+クリップボードに指定したフォーマットの形式があるか調べます。<br>
+モードには以下のものが使えます。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-2&nbsp;&nbsp;&nbsp;&nbsp;サクラ標準処理(使えるフォーマットのみ)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;x00-xffをU+00-U+ffにマップ<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0～&nbsp;&nbsp;&nbsp;&nbsp;文字コードセット<br>
+&nbsp;&nbsp;&nbsp;&nbsp;99&nbsp;&nbsp;&nbsp;&nbsp;文字コードセット(自動認識)<br>
+終端モードには以下のものが使えます。
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;モード依存<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;バイナリ<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;ASCII互換の0x00で切り取り<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;UTF-16で切り取り<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;UTF-32で切り取り<br>
+</div>
+sakura:2.1.0.0以降<br>
+<br>
+■ function <span id="SetClipboardByFormat">SetClipboardByFormat</span>str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+<div class=li200>
+<b>引数</b><br>
+str1&nbsp;&nbsp;&nbsp;&nbsp;データ(文字列)
+str2&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名
+int3&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)
+int4&nbsp;&nbsp;&nbsp;&nbsp;終端モード
+<b>戻り値</b><br>
+1: 成功<br>
+0: 失敗<br>
+<b>解説</b><br>
+クリップボードに指定形式でデータを追加します。<br>
+元からあるデータは削除しないので、ClipboardEmptyと併用してください。<br>
 </div>
 sakura:2.1.0.0以降<br>
 <br>
