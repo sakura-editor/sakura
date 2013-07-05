@@ -96,7 +96,6 @@ public:
 	BOOL DetectWidthOfLineNumberAreaAllPane( BOOL bRedraw );	/* すべてのペインで、行番号表示に必要な幅を再設定する（必要なら再描画する） */
 	BOOL WrapWindowWidth( int nPane );	/* 右端で折り返す */	// 2008.06.08 ryoji
 	BOOL UpdateTextWrap( void );		/* 折り返し方法関連の更新 */	// 2008.06.10 ryoji
-	BOOL SelectFont( LOGFONT* );
 	BOOL FileRead( /*const*/ TCHAR* , BOOL*, ECodeType, bool, bool );	/* ファイルを開く */
 	//	Feb. 9, 2001 genta 引数追加
 	BOOL FileWrite( const char*, EEolType cEolType );

@@ -716,50 +716,6 @@ BOOL CEditDoc::IsTextSelected( void )
 
 
 
-BOOL CEditDoc::SelectFont( LOGFONT* plf )
-{
-	// 2004.02.16 Moca CHOOSEFONTをメンバから外す
-	CHOOSEFONT cf;
-	/* CHOOSEFONTの初期化 */
-	::ZeroMemory( &cf, sizeof( CHOOSEFONT ) );
-	cf.lStructSize = sizeof( cf );
-	cf.hwndOwner = m_hWnd;
-	cf.hDC = NULL;
-//	cf.lpLogFont = &(m_pShareData->m_Common.m_lf);
-	cf.Flags = CF_FIXEDPITCHONLY | CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-//#ifdef _DEBUG
-//	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
-//#endif
-	cf.lpLogFont = plf;
-	if( FALSE == ChooseFont( &cf ) ){
-#ifdef _DEBUG
-		DWORD nErr;
-		nErr = CommDlgExtendedError();
-		switch( nErr ){
-		case CDERR_FINDRESFAILURE:	MYTRACE_A( "CDERR_FINDRESFAILURE \n" );	break;
-		case CDERR_INITIALIZATION:	MYTRACE_A( "CDERR_INITIALIZATION \n" );	break;
-		case CDERR_LOCKRESFAILURE:	MYTRACE_A( "CDERR_LOCKRESFAILURE \n" );	break;
-		case CDERR_LOADRESFAILURE:	MYTRACE_A( "CDERR_LOADRESFAILURE \n" );	break;
-		case CDERR_LOADSTRFAILURE:	MYTRACE_A( "CDERR_LOADSTRFAILURE \n" );	break;
-		case CDERR_MEMALLOCFAILURE:	MYTRACE_A( "CDERR_MEMALLOCFAILURE\n" );	break;
-		case CDERR_MEMLOCKFAILURE:	MYTRACE_A( "CDERR_MEMLOCKFAILURE \n" );	break;
-		case CDERR_NOHINSTANCE:		MYTRACE_A( "CDERR_NOHINSTANCE \n" );		break;
-		case CDERR_NOHOOK:			MYTRACE_A( "CDERR_NOHOOK \n" );			break;
-		case CDERR_NOTEMPLATE:		MYTRACE_A( "CDERR_NOTEMPLATE \n" );		break;
-		case CDERR_STRUCTSIZE:		MYTRACE_A( "CDERR_STRUCTSIZE \n" );		break;
-		case CFERR_MAXLESSTHANMIN:	MYTRACE_A( "CFERR_MAXLESSTHANMIN \n" );	break;
-		case CFERR_NOFONTS:			MYTRACE_A( "CFERR_NOFONTS \n" );			break;
-		}
-#endif
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-
-
-
 /*! ファイルを開く
 
 	@return 成功: TRUE/pbOpened==FALSE,
