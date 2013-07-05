@@ -38,8 +38,6 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 
 	CLogicInt		nPos;
 	CLogicInt		nCharChars;
-	CLogicInt		nIdxTo;
-	CLayoutInt		nPosX;
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
@@ -49,7 +47,6 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 	}
 
 	/* 現在位置にデータを挿入 */
-	nPosX = CLayoutInt(-1);
 	CNativeW cmemDataW2;
 	cmemDataW2 = wcChar;
 	if( WCODE::IsLineDelimiter(wcChar) ){ 
@@ -84,7 +81,6 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 					);
 
 					/* 指定された桁に対応する行のデータ内の位置を調べる */
-					nIdxTo = m_pCommanderView->LineColumnToIndex( pcDocLine, GetCaret().GetCaretLayoutPos().GetX2() );
 					for( nPos = CLogicInt(0); nPos < nLineLen && nPos < ptXY.GetX2(); ){
 						// 2005-09-02 D.S.Koba GetSizeOfChar
 						nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nPos );
@@ -117,9 +113,6 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar )
 
 end_of_for:;
 						nPos += nCharChars;
-					}
-					if( nPos > 0 ){
-						nPosX = m_pCommanderView->LineIndexToColumn( pcDocLine, nPos );
 					}
 
 					//インデント取得

@@ -78,11 +78,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 	WORD				wID;
 	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;
-	int					idCtrl;
 	int					nIndex1;
 	int					i;
-	static int			nListItemHeight;
 	LV_COLUMN			lvc;
 	LV_ITEM*			plvi;
 	static HWND			hwndCOMBO_SET;
@@ -141,10 +138,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 		pnkd = (LV_KEYDOWN *)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		plvdi = (LV_DISPINFO*)lParam;
 		plvi = &plvdi->item;
 

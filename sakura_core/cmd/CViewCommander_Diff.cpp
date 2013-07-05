@@ -206,7 +206,7 @@ void CViewCommander::Command_Diff( const WCHAR* _szTmpFile2, int nFlgOpt )
 	bool	bTmpFile1 = false;
 	TCHAR	szTmpFile1[_MAX_PATH * 2];
 
-	if( -1 == ::GetFileAttributes( szTmpFile2 ) )
+	if( (DWORD)-1 == ::GetFileAttributes( szTmpFile2 ) )
 	{
 		WarningMessage( m_pCommanderView->GetHwnd(), _T("差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。") );
 		return;

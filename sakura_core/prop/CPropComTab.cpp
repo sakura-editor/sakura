@@ -77,8 +77,7 @@ INT_PTR CALLBACK CPropTab::DlgProc_page(
 INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
+//	int			idCtrl;
 
 	switch( uMsg ){
 
@@ -92,9 +91,8 @@ INT_PTR CPropTab::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 
 		return TRUE;
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
+//		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 //		switch( idCtrl ){
 //		default:
 			switch( pNMHDR->code ){

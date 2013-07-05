@@ -123,10 +123,9 @@ INT_PTR CPropFormat::DispatchEvent(
 {
 	WORD		wNotifyCode;
 	WORD		wID;
-	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
+//	NM_UPDOWN*	pMNUD;
+//	int			idCtrl;
 //	int			nVal;
 
 	switch( uMsg ){
@@ -157,7 +156,6 @@ INT_PTR CPropFormat::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		case EN_CHANGE:
 			if( IDC_EDIT_DFORM == wID ){
@@ -200,9 +198,9 @@ INT_PTR CPropFormat::DispatchEvent(
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
+//		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
+//		pMNUD  = (NM_UPDOWN*)lParam;
 //		switch( idCtrl ){
 //		case ???????:
 //			return 0L;

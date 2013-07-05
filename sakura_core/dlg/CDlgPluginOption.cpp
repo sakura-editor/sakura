@@ -704,7 +704,7 @@ void CDlgPluginOption::SepSelect( wstring sTrg, wstring* spView, wstring* spValu
 {
 	int		ix;
 	ix = sTrg.find(L':');
-	if (ix == std::wstring::npos) {
+	if ((std::wstring::size_type)ix == std::wstring::npos) {
 		*spView = *spValue = sTrg;
 	}
 	else {

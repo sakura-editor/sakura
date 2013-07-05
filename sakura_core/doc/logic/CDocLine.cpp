@@ -75,9 +75,6 @@ void CDocLine::SetDocLineString(const CNativeW& cData)
 void CDocLine::SetDocLineStringMove(CNativeW* pcDataFrom)
 {
 	m_cLine.swap(*pcDataFrom);
-
-	const wchar_t* pData = m_cLine.GetStringPtr();
-	int nLength = m_cLine.GetStringLength();
 	SetEol();
 }
 

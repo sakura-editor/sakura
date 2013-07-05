@@ -137,7 +137,6 @@ static LRESULT CALLBACK TreeViewProc(
 	TV_ITEM			tvi;		// 取得用
 	WCHAR			cKey;
 	SMainMenuWork*	pFuncWk;	// 機能
-	short	AltKey;
 
 	switch (uMsg) {
 	case WM_GETDLGCODE:
@@ -173,7 +172,6 @@ static LRESULT CALLBACK TreeViewProc(
 			return 0;
 		}
 
-		AltKey = GetKeyState(VK_MENU);
 
 		switch (wParam) {
 		case VK_BACK:
@@ -220,7 +218,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	WORD		wID;
 	HWND		hwndCtl;
 	NMHDR*		pNMHDR;
-	int			idCtrl;
 	static HWND	hwndComboFunkKind;
 	static HWND	hwndListFunk;
 	static HWND	hwndTreeRes;
@@ -273,7 +270,6 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 		ptdi = (TV_DISPINFO*)lParam;
 
@@ -401,7 +397,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				if (nIdxFIdx == nSpecialFuncsNum) {
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndListFunk );
-					for (i = 0; i <_countof(sSpecialFuncs); i++) {
+					for (i = 0; i < _countof(sSpecialFuncs); i++) {
 						List_AddString( hwndListFunk, sSpecialFuncs[i].m_sName );
 					}
 				}
@@ -497,10 +493,10 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					case IDC_BUTTON_ADD:				// 追加
 						// Function 取得
 						if (CB_ERR == (nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind ))) {
-							break;
+							return FALSE;
 						}
 						if (LB_ERR == (nIdxFunc = List_GetCurSel( hwndListFunk ))) {
-							break;
+							return FALSE;
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能

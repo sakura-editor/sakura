@@ -1035,7 +1035,6 @@ CLayoutInt CCaret::MoveCursorProperly(
 	int				dx					//!< [in] nNewXとマウスカーソル位置との誤差(カラム幅未満のドット数)
 )
 {
-	const wchar_t*		pLine;
 	CLogicInt		nLineLen;
 	const CLayout*	pcLayout;
 
@@ -1064,7 +1063,7 @@ CLayoutInt CCaret::MoveCursorProperly(
 	}
 	else{
 		/* 移動先の行のデータを取得 */
-		pLine = m_pEditDoc->m_cLayoutMgr.GetLineStr( ptNewXY.GetY2(), &nLineLen, &pcLayout );
+		m_pEditDoc->m_cLayoutMgr.GetLineStr( ptNewXY.GetY2(), &nLineLen, &pcLayout );
 
 		int nColWidth = m_pEditView->GetTextMetrics().GetHankakuDx();
 		CLayoutInt nPosX = CLayoutInt(0);

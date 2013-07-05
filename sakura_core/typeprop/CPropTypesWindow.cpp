@@ -92,10 +92,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 {
 	WORD				wNotifyCode;
 	WORD				wID;
-	HWND				hwndCtl;
 	NMHDR*				pNMHDR;
-	NM_UPDOWN*			pMNUD;
-	int					idCtrl;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -113,7 +110,6 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode	= HIWORD( wParam );	/* 通知コード */
 		wID			= LOWORD( wParam );	/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
 		case CBN_SELCHANGE:
@@ -156,9 +152,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 		}
 		break;	/* WM_COMMAND */
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 //	Sept. 10, 2000 JEPRO ID名を実際の名前に変更するため以下の行はコメントアウト

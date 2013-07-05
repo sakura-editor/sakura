@@ -1265,8 +1265,6 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 			CUxTheme& uxTheme = *CUxTheme::getInstance();
 			int iPartId = TABP_TABITEM;
 			int iStateId = TIS_NORMAL;
-			int cxEdge = ::GetSystemMetrics( SM_CXEDGE );	// 3D枠線幅（横）
-			int cyEdge = ::GetSystemMetrics( SM_CYEDGE );	// 3D枠線幅（縦）
 			HTHEME hTheme = uxTheme.OpenThemeData( m_hwndTab, L"TAB" );
 			if( hTheme ) {
 				if( !bSelected ){

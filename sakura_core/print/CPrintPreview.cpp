@@ -1319,7 +1319,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 		int nDx = m_pPrintSetting->m_nPrintFontWidth;
 
 		// Y座標基準
-		int nY = nY = bHeader ? rect.top : rect.bottom + m_pPrintSetting->m_nPrintFontHeight;
+		int nY = bHeader ? rect.top : rect.bottom + m_pPrintSetting->m_nPrintFontHeight;
 
 		// 左寄せ
 		CSakuraEnvironment::ExpandParameter(
@@ -2087,7 +2087,6 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 {
 	WORD				wNotifyCode;
 	WORD				wID;
-	HWND				hwndCtl;
 
 
 
@@ -2106,7 +2105,6 @@ INT_PTR CPrintPreview::DispatchEvent_PPB(
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID			= LOWORD(wParam);	/* 項目ID、コントロールID またはアクセラレータID */
-		hwndCtl		= (HWND) lParam;	/* コントロールのハンドル */
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
 		case BN_CLICKED:

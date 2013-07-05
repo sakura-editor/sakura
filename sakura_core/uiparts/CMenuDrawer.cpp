@@ -1575,11 +1575,9 @@ struct WorkData{
 LRESULT CMenuDrawer::OnMenuChar( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	TCHAR				chUser;
-	UINT				fuFlag;
 	HMENU				hmenu;
 	int i;
 	chUser = (TCHAR) LOWORD(wParam);	// character code
-	fuFlag = (UINT) HIWORD(wParam);		// menu flag
 	hmenu = (HMENU) lParam;				// handle to menu
 //	MYTRACE( _T("::GetMenuItemCount( %xh )==%d\n"), hmenu, ::GetMenuItemCount( hmenu ) );
 

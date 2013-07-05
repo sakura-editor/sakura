@@ -407,17 +407,14 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 		IDC_LIST_WORDS
 	};
 	int		nControls = _countof( Controls );
-	int		fwSizeType;
 	int		nWidth;
 	int		nHeight;
 	int		i;
-	int		nWork;
 	RECT	rc;
 	HWND	hwndCtrl;
 	POINT	po;
 	RECT	rcDlg;
 
-	fwSizeType = wParam;	// resizing flag
 
 	::GetClientRect( GetHwnd(), &rcDlg );
 	nWidth = rcDlg.right - rcDlg.left;  // width of client area
@@ -429,7 +426,6 @@ BOOL CHokanMgr::OnSize( WPARAM wParam, LPARAM lParam )
 	::ClientToScreen(GetHwnd(),&m_poWin);
 //	2001/06/18 End
 
-	nWork = 48;
 	for ( i = 0; i < nControls; ++i ){
 		hwndCtrl = ::GetDlgItem( GetHwnd(), Controls[i] );
 		::GetWindowRect( hwndCtrl, &rc );
@@ -605,11 +601,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 {
 	WORD vkey;
-	WORD nCaretPos;
-	LPARAM hwndLB;
 	vkey = LOWORD(wParam);		// virtual-key code
-	nCaretPos = HIWORD(wParam);	// caret position
-	hwndLB = lParam;			// handle to list box
 //	MYTRACE( _T("CHokanMgr::OnVKeyToItem vkey=%xh\n"), vkey );
 	switch( vkey ){
 	case VK_HOME:

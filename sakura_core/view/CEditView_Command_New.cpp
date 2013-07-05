@@ -462,7 +462,6 @@ void CEditView::DeleteData(
 	CLogicInt	nNxtIdx;
 	CLogicInt	nIdxFrom;
 	CLogicInt	nIdxTo;
-	CLogicInt	nDelPos;
 	CLogicInt	nDelLen;
 	CLogicInt	nDelPosNext;
 	CLogicInt	nDelLenNext;
@@ -543,7 +542,6 @@ void CEditView::DeleteData(
 					nIdxFrom = CLogicInt(0);
 					nIdxTo	 = CLogicInt(0);
 				}
-				nDelPos = nDelPosNext;
 				nDelLen	= nDelLenNext;
 				if( nLineNum < rcSel.bottom && 0 < nDelLen ){
 					// 指定位置の指定長データ削除

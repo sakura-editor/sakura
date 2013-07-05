@@ -541,7 +541,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			for (;;) {
 				if( *pHelpIDs == 0 )
 					return FALSE;	// Œ©‚Â‚©‚ç‚È‚©‚Á‚½
-				if( *pHelpIDs == nCtrlID )
+				if( *pHelpIDs == (DWORD)nCtrlID )
 					break;			// Œ©‚Â‚©‚Á‚½
 				pHelpIDs += 2;
 			}

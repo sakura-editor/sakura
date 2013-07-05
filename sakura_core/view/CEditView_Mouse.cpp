@@ -1218,18 +1218,18 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 */
 LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontalMsg, EFunctionCode nCmdFuncID )
 {
-	WORD	fwKeys;
+//	WORD	fwKeys;
 	short	zDelta;
-	short	xPos;
-	short	yPos;
+//	short	xPos;
+//	short	yPos;
 	int		i;
 	int		nScrollCode;
 	int		nRollLineNum;
 
-	fwKeys = LOWORD(wParam);			// key flags
+//	fwKeys = LOWORD(wParam);			// key flags
 	zDelta = (short) HIWORD(wParam);	// wheel rotation
-	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
-	yPos = (short) HIWORD(lParam);		// vertical position of pointer
+//	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
+//	yPos = (short) HIWORD(lParam);		// vertical position of pointer
 //	MYTRACE( _T("CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n"), fwKeys, zDelta, xPos, yPos );
 
 	if( bHorizontalMsg ){

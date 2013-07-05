@@ -79,14 +79,12 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 {
 	WORD	wNotifyCode;
 	WORD	wID;
-	HWND	hwndCtl, hwndList;
-	int		idCtrl;
+	HWND	hwndList;
 	NMHDR*	pNMHDR;
 	int		nIndex, nIndex2;
 	LV_ITEM	lvi;
 	LV_COLUMN	col;
 	RECT		rc;
-	static int	nPrevIndex = -1;	//更新時におかしくなるバグ修正 @@@ 2003.03.26 MIK
 
 	BOOL	bUse;						/* 辞書を 使用する/しない */
 	TCHAR	szAbout[DICT_ABOUT_LEN];	/* 辞書の説明(辞書ファイルの1行目から生成) */
@@ -123,7 +121,6 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		col.pszText  = const_cast<TCHAR*>(_T("パス"));				/* 指定辞書ファイルパス */
 		col.iSubItem = 2;
 		ListView_InsertColumn( hwndList, 2, &col );
-		nPrevIndex = -1;	//@@@ 2003.05.12 MIK
 		SetData( hwndDlg );	/* ダイアログデータの設定 辞書ファイル一覧 */
 
 		/* リストがあれば先頭をフォーカスする */
@@ -144,7 +141,6 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 	case WM_COMMAND:
 		wNotifyCode = HIWORD(wParam);	/* 通知コード */
 		wID	= LOWORD(wParam);			/* 項目ID､ コントロールID､ またはアクセラレータID */
-		hwndCtl	= (HWND) lParam;		/* コントロールのハンドル */
 
 		switch( wNotifyCode ){
 		/* ボタン／チェックボックスがクリックされた */
@@ -210,8 +206,6 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 					}if( -1 == nIndex ){
 						/* 選択中でなければ最後にする。 */
 						nIndex = nIndex2;
-						if(nIndex == 0)
-							nPrevIndex = 0;
 					}
 				}else{								/* 更新 */
 					if( -1 == nIndex ){
@@ -481,7 +475,6 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 		break;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
 
 		switch( pNMHDR->code ){
@@ -509,7 +502,6 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				ListView_GetItemText(hwndList, nIndex, 2, szPath, _countof(szPath));
 				::DlgItem_SetText( hwndDlg, IDC_LABEL_KEYHELP_ABOUT, szAbout );	/* 辞書の説明 */
 				::DlgItem_SetText( hwndDlg, IDC_EDIT_KEYHELP, szPath );			/* ファイルパス */
-				nPrevIndex = nIndex;
 			}
 			break;
 		}

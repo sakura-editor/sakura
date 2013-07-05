@@ -593,8 +593,6 @@ void CEditView::OnPaint( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp 
 	bool bCaretShowFlag_Old = GetCaret().GetCaretShowFlag();	// 2008.06.09 ryoji
 	GetCaret().HideCaret_( this->GetHwnd() ); // 2002/07/22 novice
 
-	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-	const CLayoutInt nWrapKeta = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 
 	RECT			rc;
 	int				nLineHeight = GetTextMetrics().GetHankakuDy();
@@ -855,9 +853,6 @@ bool CEditView::DrawLogicLine(
 
 	//DispPos‚ð•Û‘¶‚µ‚Ä‚¨‚­
 	pInfo->sDispPosBegin = *pInfo->pDispPos;
-
-	//	Aug. 14, 2005 genta Ü‚è•Ô‚µ•‚ðLayoutMgr‚©‚çŽæ“¾‚·‚é‚æ‚¤‚É
-	const CLayoutInt nWrapKeta = m_pcEditDoc->m_cLayoutMgr.GetMaxLineKetas();
 
 	//ˆ—‚·‚é•¶ŽšˆÊ’u
 	pInfo->nPosInLogic = CLogicInt(0); //™ŠJŽn

@@ -55,8 +55,6 @@ INT_PTR CPropStatusbar::DispatchEvent(
 )
 {
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
 
 	switch( uMsg ){
 
@@ -71,9 +69,7 @@ INT_PTR CPropStatusbar::DispatchEvent(
 		break;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
 		switch( pNMHDR->code ){
 		case PSN_HELP:
 			OnHelp( hwndDlg, IDD_PROP_STATUSBAR );

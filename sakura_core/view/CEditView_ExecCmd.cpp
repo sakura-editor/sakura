@@ -289,7 +289,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 		typedef char PIPE_CHAR;
 		const int WORK_NULL_TERMS = sizeof(wchar_t); // 出力用\0の分
 		const int MAX_BUFIDX = 10; // bufidxの分
-		const int MAX_WORK_READ = 1024*5; // 5KiB ReadFileで読み込む限界値
+		const DWORD MAX_WORK_READ = 1024*5; // 5KiB ReadFileで読み込む限界値
 		// 2010.04.13 Moca バッファサイズの調整 1022 Byte 読み取りを 5KiBに変更
 		// ボトルネックはアウトプットウィンドウへの転送
 		// 相手のプログラムがVC9のstdoutではデフォルトで4096。VC6,VC8やWinXPのtypeコマンドでは1024
@@ -399,7 +399,7 @@ void CEditView::ExecCmd( const TCHAR* pszCmd, int nFlgOpt, const TCHAR* pszCurDi
 						}
 						//	From Here Jan. 28, 2004 Moca
 						//	改行コードが分割されるのを防ぐ
-						if( j == read_cnt - 1 ){
+						if( (DWORD)j == read_cnt - 1 ){
 							if( _IS_SJIS_1(work[j]) ) {
 								j = read_cnt + 1; // ぴったり出力できないことを主張
 							}else if( work[j] == _T2(PIPE_CHAR,'\r') ) {

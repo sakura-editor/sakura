@@ -419,7 +419,7 @@ bool CViewCommander::Command_TagsMake( void )
 	SplitPath_FolderAndFile( cmdline, szExeFolder, NULL );
 
 	//ctags.exeの存在チェック
-	if( -1 == ::GetFileAttributes( cmdline ) )
+	if( (DWORD)-1 == ::GetFileAttributes( cmdline ) )
 	{
 		WarningMessage( m_pCommanderView->GetHwnd(), _T( "タグ作成コマンド実行は失敗しました。\n\nCTAGS.EXE が見つかりません。" ) );
 		return false;

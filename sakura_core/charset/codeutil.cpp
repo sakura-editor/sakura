@@ -307,7 +307,7 @@ unsigned int __fastcall SjisFilter_ibm2nec( const unsigned int uCode )
 */
 unsigned int __fastcall SjisFilter_nec2ibm( const unsigned int uCode )
 {
-	uchar_t c1, c2;
+	uchar_t c1;
 	unsigned int code = (unsigned int) uCode;
 
 	/*
@@ -317,7 +317,6 @@ unsigned int __fastcall SjisFilter_nec2ibm( const unsigned int uCode )
 		ee40 Å` ee7e, ee80 Å` eefc
 	*/
 	c1 = static_cast<unsigned char>( (code >> 8) & 0x000000ff );
-	c2 = static_cast<unsigned char>( code & 0x000000ff );
 	if( c1 == 0xed || c1 == 0xee ){
 		if     ( code <= 0xed62 ) { code += 0x0d1c; }	/* ed40Å`ed62 Å® fa5cÅ`fa7e (˙\Å`˙~) */
 		else if( code <= 0xed7e ) { code += 0x0d1d; }	/* ed63Å`ed7e Å® fa80Å`fa9b (˙ÄÅ`˙õ) */

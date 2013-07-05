@@ -136,10 +136,8 @@ BOOL CDlgTypeList::OnBnClicked( int wID )
 
 INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam )
 {
-	NMHDR*	pNMHDR;
 	HWND	hwndList;
 
-	pNMHDR = (NMHDR*)lParam;
 
 	hwndList = GetDlgItem( GetHwnd(), IDC_LIST_TYPES );
 	int nIdx = List_GetCurSel( hwndList );
@@ -437,7 +435,7 @@ int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstri
 		}else if( errorCode ){
 			return errorCode;
 		}else{
-			if( errorCode = CopyRegistry(srcRoot, srcPath + _T("\\") + szSubKey, destRoot, destPath + _T("\\") + szSubKey) ){ return errorCode; }
+			if( (errorCode = CopyRegistry(srcRoot, srcPath + _T("\\") + szSubKey, destRoot, destPath + _T("\\") + szSubKey)) ){ return errorCode; }
 			index++;
 		}
 	}
