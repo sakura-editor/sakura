@@ -7,6 +7,7 @@
 <TITLE>名前を付けて保存</TITLE>
 <META NAME="MS-HKWD" CONTENT="名前を付けて保存">
 <META NAME="MS-HKWD" CONTENT="FileSaveAs">
+<META NAME="MS-HKWD" CONTENT="FileSaveAsDialog">
 </HEAD>
 <BODY>
 <script type="text/javascript" src="item.js"></script>
@@ -54,7 +55,8 @@ BOMを付加する場合にチェックしてください。<br>
 ・記録:	×<br>
 ・解説<br>
 文字コードは以下のいずれかを指定することができます。<br>
-&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;SJIS（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;変更しない（省略時規定値）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;SJIS<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;JIS<br>
 &nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;EUC<br>
 &nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;UNICODE<br>
@@ -68,10 +70,15 @@ BOMを付加する場合にチェックしてください。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;CRLF(Windows)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;LF(UNIX)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;CR(Mac)<br>
-<br>
 <img src="images/note.png"><b>注意</b><br>
-名前を付けて保存のダイアログをマクロで出すことはできません。<br>
+拡張子の自動補完は、FileSaveAsマクロからの実行では動作しません。<br>
 <br>
-<img src="images/note.png"><b>注意</b><br>
-拡張子の自動補完は、マクロからの実行では動作しません。<br>
+・構文:	FileSaveAsDialog( str1 :String, int2 :Integer, int3 :Integer ); (sakura 2.1.0.0以降)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str1&nbsp;&nbsp;&nbsp;&nbsp;ファイル名（省略可能）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int2&nbsp;&nbsp;&nbsp;&nbsp;文字コード（省略可能）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int3&nbsp;&nbsp;&nbsp;&nbsp;改行コード（省略可能）<br>
+・記録:	×<br>
+・解説<br>
+名前を付けて保存ダイアログを表示し、ファイルを保存します。<br>
+文字コード・改行コードは、FileSaveAsと同じです。<br>
 </BODY></HTML>
