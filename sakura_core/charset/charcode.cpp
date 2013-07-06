@@ -215,10 +215,8 @@ public:
 	~LocalCacheSelector()
 	{
 		for( int i=0; i<CWM_FONT_MAX; i++ ){
-			if( m_parCache[i] != &(GetDllShareData().m_sCharWidth) ){
-				delete m_parCache[i];
-				m_parCache[i] = 0;
-			}
+			delete m_parCache[i];
+			m_parCache[i] = 0;
 		}
 	}
 	void Init( const LOGFONT &lf, ECharWidthFontMode fMode )
