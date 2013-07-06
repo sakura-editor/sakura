@@ -151,6 +151,7 @@ BOOL CEditView::Create(
 	BOOL		bShow			//!< 作成時に表示するかどうか
 )
 {
+	m_pcViewFont = pcEditDoc->m_pcEditWnd->m_pcViewFont;
 
 	m_bDrawSWITCH = true;
 	m_pcDropTarget = new CDropTarget( this );
@@ -304,9 +305,6 @@ BOOL CEditView::Create(
 	m_pcEditDoc = pcEditDoc;
 	m_nMyIndex = nMyIndex;
 	
-	// 2010.05.30 Moca フォントの作成をコンストラクタからCreateに移動
-	m_pcViewFont = new CViewFont(&(m_pShareData->m_Common.m_sView.m_lf));
-
 	m_dwTipTimer = ::GetTickCount();
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
@@ -407,8 +405,6 @@ BOOL CEditView::Create(
 
 CEditView::~CEditView()
 {
-	delete m_pcViewFont;
-
 	// キャレット用ビットマップ	// 2006.11.28 ryoji
 	if( m_hbmpCaret != NULL )
 		DeleteObject( m_hbmpCaret );
@@ -6225,9 +6221,6 @@ void CEditView::OnChangeSetting( void )
 	if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_RULER].m_bDisp ){
 		m_nViewAlignTop += m_pShareData->m_Common.m_sWindow.m_nRulerHeight;	/* ルーラー高さ */
 	}
-
-	/* フォント作成 */
-	m_pcViewFont->UpdateFont(&(m_pShareData->m_Common.m_sView.m_lf));
 
 	/* フォントの変更 */
 	SetFont();

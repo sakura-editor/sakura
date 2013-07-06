@@ -35,7 +35,8 @@ class CEditWnd;
 #include "CImageListMgr.h"
 
 //by ‹S
-#include"CDropTarget.h"
+#include "CDropTarget.h"
+#include "CViewFont.h"
 
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
@@ -216,6 +217,7 @@ public:
 	int				m_nDragPosOrgX;
 	int				m_nDragPosOrgY;
 	CDropTarget*	m_pcDropTarget;
+	CViewFont*		m_pcViewFont;		//!< ƒtƒHƒ“ƒg
 
 
 

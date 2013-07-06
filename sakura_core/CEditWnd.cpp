@@ -136,16 +136,19 @@ CEditWnd::CEditWnd()
 , m_hAccelWine( NULL )
 , m_hAccel( NULL )
 {
-	//	Dec. 4, 2002 genta
-	InitMenubarMessageFont();
-
-	// Sep. 10, 2002 genta
 	m_cEditDoc.m_pcEditWnd = this;
+
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = CShareData::getInstance()->GetShareData();
 
-	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
+	m_pcViewFont = new CViewFont(&m_pShareData->m_Common.m_sView.m_lf);
+
 	memset( m_pszMenubarMessage, ' ', MENUBAR_MESSAGE_MAX_LEN );	// null終端は不要
+
+	//	Dec. 4, 2002 genta
+	InitMenubarMessageFont();
+
+	m_pcDropTarget = new CDropTarget( this );	// 右ボタンドロップ用	// 2008.06.20 ryoji
 
 	// 2009.01.12 nasukoji	ホイールスクロール有無状態をクリア
 	ClearMouseState();
@@ -158,6 +161,9 @@ CEditWnd::~CEditWnd()
 {
 	delete m_pPrintPreview;
 	m_pPrintPreview = NULL;
+
+	delete m_pcViewFont;
+	m_pcViewFont = NULL;
 
 	delete[] m_pszMenubarMessage;
 	delete[] m_pszLastCaption;
@@ -1778,9 +1784,13 @@ LRESULT CEditWnd::DispatchEvent(
 			m_cEditDoc.OnChangeSetting();	// ビューに設定変更を反映させる
 			break;
 		case PM_CHANGESETTING_FONT:
+			// フォント更新
+			m_pcViewFont->UpdateFont(&m_pShareData->m_Common.m_sView.m_lf);
 			m_cEditDoc.OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
 			break;
 		case PM_CHANGESETTING_FONTSIZE:
+			// フォント更新
+			m_pcViewFont->UpdateFont(&m_pShareData->m_Common.m_sView.m_lf);
 			m_cEditDoc.OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
 			break;
 		default:
