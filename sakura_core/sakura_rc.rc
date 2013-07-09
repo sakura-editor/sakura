@@ -3041,6 +3041,9 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_FONT                  "フォント設定..."
+    F_SETFONTSIZE           "フォントサイズ設定"
+    F_SETFONTSIZEUP         "フォントサイズ拡大"
+    F_SETFONTSIZEDOWN       "フォントサイズ縮小"
 END
 
 STRINGTABLE DISCARDABLE 

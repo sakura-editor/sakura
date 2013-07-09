@@ -199,6 +199,13 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 			AddIntParam( nFlag );
 		}
 		break;
+	case F_SETFONTSIZE:
+		{
+			AddIntParam( lParam );
+			AddIntParam( lParams[1] );
+			AddIntParam( lParams[2] );
+		}
+		break;
 
 	/*	標準もパラメータを追加 */
 	default:
@@ -301,10 +308,21 @@ WCHAR* CMacro::GetParamAt(CMacroParam* p, int index)
 	return x->m_pData;
 }
 
+static inline int wtoi_def( const WCHAR* arg, int def_val )
+{
+	return (arg == NULL ? def_val: _wtoi(arg));
+}
+
+static inline const WCHAR* wtow_def( const WCHAR* arg, const WCHAR* def_val )
+{
+	return (arg == NULL ? def_val: arg);
+}
+
 /*	CMacroを再現するための情報をhFileに書き出します。
 
 	InsText("なんとか");
 	のように。
+	AddLParam以外にCKeyMacroMgr::LoadKeyMacroによってもCMacroが作成される点に注意
 */
 void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 {
@@ -340,6 +358,19 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				m_pParamTop->m_pNext->m_pData ? _wtoi(m_pParamTop->m_pNext->m_pData) : 0,
 				szFuncNameJapanese
 			);
+			break;
+		case F_SETFONTSIZE:	// 2013.05.31
+			out.WriteF(
+				L"S_%ls(%d",
+				szFuncName,
+				_wtoi(m_pParamTop->m_pData) );
+			if( GetParamAt(m_pParamTop,1) ){
+				out.WriteF( L", %d", wtoi_def(GetParamAt(m_pParamTop,1), 0) );
+			}
+			if( GetParamAt(m_pParamTop,2) ){
+				out.WriteF( L", %d", wtoi_def(GetParamAt(m_pParamTop,2), 0) );
+			}
+			out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
 			break;
 		case F_BOOKMARK_PATTERN:	//2002.02.08 hor
 		case F_SEARCH_NEXT:
@@ -446,15 +477,6 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	out.WriteF( LTEXT("CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n") );
 }
 
-static inline int wtoi_def( const WCHAR* arg, int def_val )
-{
-	return (arg == NULL ? def_val: _wtoi(arg));
-}
-
-static inline const WCHAR* wtow_def( const WCHAR* arg, const WCHAR* def_val )
-{
-	return (arg == NULL ? def_val: arg);
-}
 /**	マクロ引数変換
 
 	MacroコマンドをpcEditView->GetCommander().HandleCommandに引き渡す．
@@ -1112,7 +1134,8 @@ bool CMacro::HandleCommand(
 		{
 			int val0 = Argument[0] != NULL ? _wtoi(Argument[0]) : 0;
 			int val1 = Argument[1] != NULL ? _wtoi(Argument[1]) : 0;
-			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)val0, (LPARAM)val1, 0, 0 );
+			int val2 = Argument[2] != NULL ? _wtoi(Argument[2]) : 0;
+			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)val0, (LPARAM)val1, (LPARAM)val2, 0 );
 		}
 		break;
 	case F_STATUSMSG:

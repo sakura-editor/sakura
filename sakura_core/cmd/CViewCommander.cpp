@@ -470,7 +470,9 @@ BOOL CViewCommander::HandleCommand(
 	case F_OPTION_TYPE:		Command_OPTION_TYPE();break;	/* タイプ別設定 */
 	case F_OPTION:			Command_OPTION();break;			/* 共通設定 */
 	case F_FONT:			Command_FONT();break;			/* フォント設定 */
-	case F_SETFONTSIZE:		Command_SETFONTSIZE((int)lparam1, (int)lparam2);break;	/* フォントサイズ設定 */
+	case F_SETFONTSIZE:		Command_SETFONTSIZE((int)lparam1, (int)lparam2, (int)lparam3);break;	/* フォントサイズ設定 */
+	case F_SETFONTSIZEUP:	HandleCommand( F_SETFONTSIZE, bRedraw, 0, 1, 2, 0);break;	/* フォントサイズ拡大 */
+	case F_SETFONTSIZEDOWN:	HandleCommand( F_SETFONTSIZE, bRedraw, 0, -1, 2, 0);break;	/* フォントサイズ縮小 */
 	case F_WRAPWINDOWWIDTH:	Command_WRAPWINDOWWIDTH();break;/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	case F_FAVORITE:		Command_Favorite();break;		//履歴の管理	//@@@ 2003.04.08 MIK
 	//	Jan. 29, 2005 genta 引用符の設定

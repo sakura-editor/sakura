@@ -128,6 +128,7 @@ CEditDoc::CEditDoc(CEditApp* pcApp)
 	// 2008.06.07 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+	m_blfCurTemp = false;
 
 	// 文字コード種別を初期化
 	m_cDocFile.SetCodeSet( ref.m_encoding.m_eDefaultCodetype, ref.m_encoding.m_bDefaultBom );
@@ -298,6 +299,7 @@ void CEditDoc::InitAllView( void )
 	// 2008.05.30 nasukoji	テキストの折り返し方法を初期化
 	m_nTextWrapMethodCur = m_cDocType.GetDocumentAttribute().m_nTextWrapMethod;	// 折り返し方法
 	m_bTextWrapMethodCurTemp = false;									// 一時設定適用中を解除
+	m_blfCurTemp = false;
 
 	// 2009.08.28 nasukoji	「折り返さない」ならテキスト最大幅を算出、それ以外は変数をクリア
 	if( m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP )
@@ -605,6 +607,7 @@ void CEditDoc::OnChangeType()
 	}
 	/* 設定変更を反映させる */
 	m_bTextWrapMethodCurTemp = false;	// 折り返し方法の一時設定適用中を解除	// 2008.06.08 ryoji
+	m_blfCurTemp = false;
 	OnChangeSetting();
 
 	// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
@@ -673,6 +676,18 @@ void CEditDoc::OnChangeSetting(
 
 	// 文書種別
 	m_cDocType.SetDocumentType( CDocTypeManager().GetDocumentTypeOfPath( m_cDocFile.GetFilePath() ), false );
+
+	// フォントサイズの一時設定
+	if( m_blfCurTemp ){
+		if( m_nPointSizeOrg != pCEditWnd->GetFontPointSize() ){
+			m_blfCurTemp = false; // フォント設定が変更された。元に戻す
+		}else{
+			// フォントの種類の変更に追随する
+			int lfHeight = m_lfCur.lfHeight;
+			m_lfCur = pCEditWnd->GetLogfont(false);
+			m_lfCur.lfHeight = lfHeight;
+		}
+	}
 
 	// フォント更新
 	m_pcEditWnd->m_pcViewFont->UpdateFont(&m_pcEditWnd->GetLogfont());
