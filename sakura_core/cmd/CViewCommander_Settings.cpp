@@ -244,11 +244,12 @@ void CViewCommander::Command_FONT( void )
 
 	@date 2013.04.10 novice 新規作成
 */
-void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift )
+void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift, int mode )
 {
 	// The point sizes recommended by "The Windows Interface: An Application Design Guide", 1/10ポイント単位
 	static const INT sizeTable[] = { 8*10, 9*10, 10*10, (INT)(10.5*10), 11*10, 12*10, 14*10, 16*10, 18*10, 20*10, 22*10, 24*10, 26*10, 28*10, 36*10, 48*10, 72*10 };
-	LOGFONT& lf = GetDllShareData().m_Common.m_sView.m_lf;
+	const LOGFONT& lf = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_lf
+		: GetDocument()->m_pcEditWnd->GetLogfont( mode == 2 ));
 	INT nPointSize;
 
 	// TrueTypeのみ対応
@@ -256,16 +257,17 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift )
 		return;
 	}
 
+	if( !(0 <= mode && mode <= 2) ){
+		return;
+	}
+
 	if( 0 != fontSize ){
 		// フォントサイズを直接選択する場合
 		nPointSize = t_max(sizeTable[0], t_min(sizeTable[_countof(sizeTable)-1], fontSize));
-
-		// 新しいフォントサイズ設定
-		lf.lfHeight = DpiPointsToPixels(-nPointSize, 10);
-		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 	} else if( 0 != shift ) {
 		// 現在のフォントに対して、縮小or拡大したフォント選択する場合
-		nPointSize = GetDllShareData().m_Common.m_sView.m_nPointSize;
+		nPointSize = (mode == 0 ? GetDllShareData().m_Common.m_sView.m_nPointSize
+			: GetDocument()->m_pcEditWnd->GetFontPointSize( mode == 2 ));
 
 		// フォントの拡大or縮小するためのサイズ検索
 		int i;
@@ -276,24 +278,47 @@ void CViewCommander::Command_SETFONTSIZE( int fontSize, int shift )
 				break;
 			}
 		}
-
-		// 新しいフォントサイズ設定
-		lf.lfHeight = DpiPointsToPixels(-nPointSize, 10);
-		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
 	} else {
 		// フォントサイズが変わらないので終了
 		return;
+	}
+	// 新しいフォントサイズ設定
+	int lfHeight = DpiPointsToPixels(-nPointSize, 10);
+	int nTypeIndex = -1;
+	if( mode == 0 ){
+		GetDllShareData().m_Common.m_sView.m_lf.lfHeight = lfHeight;
+		GetDllShareData().m_Common.m_sView.m_nPointSize = nPointSize;
+	}else if( mode == 1 ){
+		CTypeConfig nDocType = GetDocument()->m_cDocType.GetDocumentType();
+		STypeConfig* type = &GetDocument()->m_cDocType.GetDocumentAttribute();
+		type->m_bUseTypeFont = true; // タイプ別フォントを有効にする
+		type->m_lf = lf;
+		type->m_lf.lfHeight = lfHeight;
+		type->m_nPointSize = nPointSize;
+		nTypeIndex = nDocType.GetIndex();
+	}else if( mode == 2 ){
+		GetDocument()->m_blfCurTemp = true;
+		GetDocument()->m_lfCur = lf;
+		GetDocument()->m_lfCur.lfHeight = lfHeight;
+		GetDocument()->m_nPointSizeCur = nPointSize;
+		GetDocument()->m_nPointSizeOrg = nPointSize;
 	}
 
 	HWND	hwndFrame;
 	hwndFrame = GetMainWindow();
 
 	/* 設定変更を反映させる */
-	/* 全編集ウィンドウへメッセージをポストする */
-	CAppNodeGroupHandle(0).PostMessageToAllEditors(
-		MYWM_CHANGESETTING,
-		(WPARAM)0, (LPARAM)PM_CHANGESETTING_FONTSIZE, hwndFrame
-	);
+	// 新たにタイプ別や一時設定が有効になってもフォント名は変わらないのでSIZEのみの変更通知をする
+	if( mode == 0 || mode == 1 ){
+		/* 全編集ウィンドウへメッセージをポストする */
+		CAppNodeGroupHandle(0).PostMessageToAllEditors(
+			MYWM_CHANGESETTING,
+			(WPARAM)nTypeIndex, (LPARAM)PM_CHANGESETTING_FONTSIZE, hwndFrame
+		);
+	}else if( mode == 2 ){
+		// 自分だけ更新
+		GetDocument()->OnChangeSetting( false );
+	}
 }
 
 

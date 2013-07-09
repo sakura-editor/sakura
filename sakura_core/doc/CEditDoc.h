@@ -154,6 +154,10 @@ public:
 public:
 	int				m_nTextWrapMethodCur;		// 折り返し方法					// 2008.05.30 nasukoji
 	bool			m_bTextWrapMethodCurTemp;	// 折り返し方法一時設定適用中	// 2008.05.30 nasukoji
+	LOGFONT			m_lfCur;					// 一時設定フォント
+	int				m_nPointSizeCur;			// 一時設定フォントサイズ
+	int				m_nPointSizeOrg;			// 元のフォントサイズ
+	bool			m_blfCurTemp;				// フォント設定適用中
 
 	HBITMAP			m_hBackImg;
 	int				m_nBackImgWidth;

@@ -1762,7 +1762,10 @@ LRESULT CEditWnd::DispatchEvent(
 			GetDocument().OnChangeSetting( true );	// フォントで文字幅が変わるので、レイアウト再構築
 			break;
 		case PM_CHANGESETTING_FONTSIZE:
-			GetDocument().OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
+			if( (-1 == wParam && CWM_CACHE_SHARE == GetLogfontCacheMode())
+					|| GetDocument().m_cDocType.GetDocumentType().GetIndex() == wParam ){
+				GetDocument().OnChangeSetting( false );	// ビューに設定変更を反映させる(レイアウト情報の再作成しない)
+			}
 			break;
 		case PM_PRINTSETTING:
 			{
@@ -4694,18 +4697,34 @@ void CEditWnd::RegisterPluginCommand( CPlug* plug )
 }
 
 
-LOGFONT& CEditWnd::GetLogfont()
+const LOGFONT& CEditWnd::GetLogfont(bool bTempSetting)
 {
+	if( bTempSetting && GetDocument().m_blfCurTemp ){
+		return GetDocument().m_lfCur;
+	}
 	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
 	if( bUseTypeFont ){
 		return GetDocument().m_cDocType.GetDocumentAttribute().m_lf;
-	}else{
-		return m_pShareData->m_Common.m_sView.m_lf;
 	}
+	return m_pShareData->m_Common.m_sView.m_lf;
 }
 
+int CEditWnd::GetFontPointSize(bool bTempSetting)
+{
+	if( bTempSetting && GetDocument().m_blfCurTemp ){
+		return GetDocument().m_nPointSizeCur;
+	}
+	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
+	if( bUseTypeFont ){
+		return GetDocument().m_cDocType.GetDocumentAttribute().m_nPointSize;
+	}
+	return m_pShareData->m_Common.m_sView.m_nPointSize;
+}
 ECharWidthCacheMode CEditWnd::GetLogfontCacheMode()
 {
+	if( GetDocument().m_blfCurTemp ){
+		return CWM_CACHE_LOCAL;
+	}
 	bool bUseTypeFont = GetDocument().m_cDocType.GetDocumentAttribute().m_bUseTypeFont;
 	if( bUseTypeFont ){
 		return CWM_CACHE_LOCAL;

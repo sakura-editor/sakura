@@ -549,7 +549,7 @@ const int LINEREADBUFSIZE	= 10240;	//!< ƒtƒ@ƒCƒ‹‚©‚ç1s•ªƒf[ƒ^‚ð“Ç‚Ýž‚Þ‚Æ‚«‚Ìƒ
 enum e_PM_CHANGESETTING_SELECT {
 	PM_CHANGESETTING_ALL		= 0, //!< ‘S•”
 	PM_CHANGESETTING_FONT		= 1, //!< ƒtƒHƒ“ƒg•ÏX
-	PM_CHANGESETTING_FONTSIZE	= 2, //!< ƒtƒHƒ“ƒgƒTƒCƒY•ÏX
+	PM_CHANGESETTING_FONTSIZE	= 2, //!< ƒtƒHƒ“ƒgƒTƒCƒY•ÏX(WPARAM ƒ^ƒCƒv•Ê”Ô†B-1‚Å‹¤’ÊÝ’è•ÏX)
 	PM_PRINTSETTING				= 5, //!< ƒvƒŠƒ“ƒgÝ’è
 };
 //!À•WˆÊ’uî•ñ‚Ì•Û‘¶

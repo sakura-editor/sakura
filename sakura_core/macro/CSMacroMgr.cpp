@@ -301,7 +301,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_OPTION_TYPE,				LTEXT("OptionType"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* タイプ別設定 */
 	{F_OPTION,					LTEXT("OptionCommon"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定 */
 	{F_FONT,					LTEXT("SelectFont"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* フォント設定 */
-	{F_SETFONTSIZE,				LTEXT("SetFontSize"),		{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* フォントサイズ設定 */
+	{F_SETFONTSIZE,				LTEXT("SetFontSize"),		{VT_I4,    VT_I4,    VT_I4,    VT_EMPTY},	VT_EMPTY,	NULL}, /* フォントサイズ設定 */
 	{F_WRAPWINDOWWIDTH,			LTEXT("WrapWindowWidth"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	{F_FAVORITE,				LTEXT("OptionFavorite"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 履歴の管理 */	//@@@ 2003.04.08 MIK
 	{F_SET_QUOTESTRING,			LTEXT("SetMsgQuoteStr"),	{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	NULL}, /* 共通設定→書式→引用符の設定 */	//Jan. 29, 2005 genta
@@ -1112,6 +1112,7 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 //	case F_OPTION_TYPE				:/* タイプ別設定 */
 //	case F_OPTION					:/* 共通設定 */
 //	case F_FONT						:/* フォント設定 */
+	case F_SETFONTSIZE				:// フォントサイズ設定
 //	case F_WRAPWINDOWWIDTH			:/* 現在のウィンドウ幅で折り返し */	//Oct. 15, 2000 JEPRO
 //	case F_FAVORITE					:/* 履歴の管理 */	//@@@ 2003.04.08 MIK
 //	case F_TMPWRAPNOWRAP			:// 折り返さない（一時設定）		// 2008.05.30 nasukoji
