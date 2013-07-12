@@ -127,28 +127,29 @@ sakura: その関数が利用可能なバージョンを示します。<br>
 ・<a href="#LogicToLayoutLineNum">LogicToLayoutLineNum</a>( int1 :Integer, int2 :Integer ) :Integer<br>
 ・<a href="#LineColumnToIndex">LineColumnToIndex</a>( int1 :Integer, int2 :Integer ) :Integer<br>
 ・<a href="#LineIndexToColumn">LineIndexToColumn</a>( int1 :Integer, int2 :Integer ) :Integer<br>
-・<a href="#GetCookie">GetCookie</a>( str1: String, str2: String ) :String;<br>
-・<a href="#GetCookieDefault">GetCookieDefault</a>( str1: String, str2: String, str3: String ) :String;<br>
-・<a href="#SetCookie">SetCookie</a>( str1: String, str2: String, str3: String ) :Integer;<br>
-・<a href="#DeleteCookie">DeleteCookie</a>( str1: String, str2: String ) :Integer;<br>
-・<a href="#GetCookieNames">GetCookieNames</a>( str1: String ) :String;<br>
-・<a href="#SetFontSize">SetFontSize</a>( int1: Integer, int2: Integer );<br>
-・<a href="#GetDrawSwitch">GetDrawSwitch</a>( int1: Integer ) :Integer;<br>
-・<a href="#SetDrawSwitch">SetDrawSwitch</a>() :Integer;<br>
-・<a href="#StatusMsg">StatusMsg</a>( str1 :String, int1 :Integer );<br>
-・<a href="#IsShownStatus">IsShownStatus</a>() :Integer;<br>
-・<a href="#MsgBeep">MsgBeep</a>( int1: Integer );<br>
-・<a href="#CommitUndoBuffer">CommitUndoBuffer</a>(); <br>
-・<a href="#AddRefUndoBuffer">AddRefUndoBuffer</a>(); <br>
-・<a href="#SetUndoBuffer">SetUndoBuffer</a>(); <br>
-・<a href="#AppendUndoBufferCursor">AppendUndoBufferCursor</a>(); <br>
+・<a href="#GetCookie">GetCookie</a>( str1: String, str2: String ) :String<br>
+・<a href="#GetCookieDefault">GetCookieDefault</a>( str1: String, str2: String, str3: String ) :String<br>
+・<a href="#SetCookie">SetCookie</a>( str1: String, str2: String, str3: String ) :Integer<br>
+・<a href="#DeleteCookie">DeleteCookie</a>( str1: String, str2: String ) :Integer<br>
+・<a href="#GetCookieNames">GetCookieNames</a>( str1: String ) :String<br>
+・<a href="#SetFontSize">SetFontSize</a>( int1: Integer, int2: Integer )<br>
+・<a href="#GetDrawSwitch">GetDrawSwitch</a>( int1: Integer ) :Integer<br>
+・<a href="#SetDrawSwitch">SetDrawSwitch</a>() :Integer<br>
+・<a href="#StatusMsg">StatusMsg</a>( str1 :String, int1 :Integer )<br>
+・<a href="#IsShownStatus">IsShownStatus</a>() :Integer<br>
+・<a href="#MsgBeep">MsgBeep</a>( int1: Integer )<br>
+・<a href="#CommitUndoBuffer">CommitUndoBuffer</a>()<br>
+・<a href="#AddRefUndoBuffer">AddRefUndoBuffer</a>()<br>
+・<a href="#SetUndoBuffer">SetUndoBuffer</a>()<br>
+・<a href="#AppendUndoBufferCursor">AppendUndoBufferCursor</a>()<br>
 ・<a href="#GetStrWidth">GetStrWidth</a>(str1 :String, int2 :Integer):Integer<br>
 ・<a href="#GetStrLayoutLength">GetStrLayoutLength</a>(str1 :String, int2 :Integer):Integer<br>
 ・<a href="#GetDefaultCharLength">GetDefaultCharLength</a>():Integer<br>
-・<a href="#ClipboardEmpty">ClipboardEmpty</a>()
-・<a href="#IsIncludeClipboardFormat">IsIncludeClipboardFormat</span>(str1 :String) :Integer
-・<a href="#GetClipboardByFormat">GetClipboardByFormat</span>str1 :String, int2 :Integer, int3:Integer) :String
-・<a href="#SetClipboardByFormat">SetClipboardByFormat</span>str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer
+・<a href="#ClipboardEmpty">ClipboardEmpty</a>()<br>
+・<a href="#IsIncludeClipboardFormat">IsIncludeClipboardFormat</a>(str1 :String) :Integer<br>
+・<a href="#GetClipboardByFormat">GetClipboardByFormat</a>(str1 :String, int2 :Integer, int3:Integer) :String<br>
+・<a href="#SetClipboardByFormat">SetClipboardByFormat</a>(str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer<br>
+<br>
 ■ function <span id="GetFilename">GetFilename</span>(): String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>戻り値</b><br>
@@ -273,7 +274,7 @@ sakura:1.5.5.0以降<br>
 int1&nbsp;&nbsp;&nbsp;&nbsp;折り返し桁数を指定します。<br>
 <br>
 <b>戻り値</b><br>
-元の折り返し桁数を返します。
+元の折り返し桁数を返します。<br>
 <br>
 <b>解説</b><br>
 引数で指定した桁数で折り返します。<br>
@@ -679,7 +680,7 @@ str3&nbsp;&nbsp;&nbsp;&nbsp;設定値<br>
 <b>解説</b><br>
 Cookie系マクロでは、マクロ/プラグイン実行終了後も保持できる一時的な文字列を格納しておくことができます。<br>
 プラグインのPlugin.SetOption/GetOptionはグローバルな値を保持するのに使います。<br>
-Cookieでは各ウィンドウごとに別々の値を保持します。
+Cookieでは各ウィンドウごとに別々の値を保持します。<br>
 スコープ名には、"document"と"window"を指定できます。<br>
 "document"は、ファイルを開いてから閉じるまで有効です。ファイルを開きなおすしたり閉じるとクリアされます。<br>
 "window"は、ウィンドウを開いてから閉じるまで有効です。<br>
@@ -710,8 +711,7 @@ sakura:2.0.6.0以降<br>
 <b>引数</b><br>
 str1&nbsp;&nbsp;&nbsp;&nbsp;スコープ名<br>
 <b>戻り値</b><br>
-該当のスコープの全Cookie名がカンマ区切り(例：「option1,option2」)で取得できます。
-<br>
+該当のスコープの全Cookie名がカンマ区切り(例：「option1,option2」)で取得できます。<br>
 <b>解説</b><br>
 スコープ名、Cookie名は大文字小文字を区別します。<br>
 </div>
@@ -904,14 +904,14 @@ sakura:2.1.0.0以降<br>
 ■ function <span id="IsIncludeClipboardFormat">IsIncludeClipboardFormat</span>(str1 :String) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>引数</b><br>
-str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名
+str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名<br>
 <b>戻り値</b><br>
 0: 該当フォーマットなし<br>
 1: 該当フォーマットあり<br>
 <b>解説</b><br>
 クリップボードに指定したフォーマットの形式があるか調べます。<br>
 クリップボードフォーマット名にはシステムに登録されたCF_xxxや登録された物が使えます。<br>
-フォーマット名の例一覧：
+フォーマット名の例一覧：<br>
 &nbsp;&nbsp;&nbsp;&nbsp;'CF_UNICODETEXT'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;'CF_TEXT'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;'CF_OEMTEXT'<br>
@@ -924,12 +924,12 @@ str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名
 </div>
 sakura:2.1.0.0以降<br>
 <br>
-■ function <span id="GetClipboardByFormat">GetClipboardByFormat</span>str1 :String, int2 :Integer, int3:Integer) :String; <small>[<a href="#list">↑</a>]</small><br>
+■ function <span id="GetClipboardByFormat">GetClipboardByFormat</span>(str1 :String, int2 :Integer, int3:Integer) :String; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>引数</b><br>
-str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名
-int2&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)
-int3&nbsp;&nbsp;&nbsp;&nbsp;終端モード
+str1&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名<br>
+int2&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)<br>
+int3&nbsp;&nbsp;&nbsp;&nbsp;終端モードv
 <b>戻り値</b><br>
 クリップボードの内容の文字列<br>
 <b>解説</b><br>
@@ -939,7 +939,7 @@ int3&nbsp;&nbsp;&nbsp;&nbsp;終端モード
 &nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;x00-xffをU+00-U+ffにマップ<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0～&nbsp;&nbsp;&nbsp;&nbsp;文字コードセット<br>
 &nbsp;&nbsp;&nbsp;&nbsp;99&nbsp;&nbsp;&nbsp;&nbsp;文字コードセット(自動認識)<br>
-終端モードには以下のものが使えます。
+終端モードには以下のものが使えます。<br>
 &nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;モード依存<br>
 &nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;バイナリ<br>
 &nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;ASCII互換の0x00で切り取り<br>
@@ -948,13 +948,13 @@ int3&nbsp;&nbsp;&nbsp;&nbsp;終端モード
 </div>
 sakura:2.1.0.0以降<br>
 <br>
-■ function <span id="SetClipboardByFormat">SetClipboardByFormat</span>str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer; <small>[<a href="#list">↑</a>]</small><br>
+■ function <span id="SetClipboardByFormat">SetClipboardByFormat</span>(str1 :String, str2 :String, int3 :Integer, int4:Integer) :Integer; <small>[<a href="#list">↑</a>]</small><br>
 <div class=li200>
 <b>引数</b><br>
-str1&nbsp;&nbsp;&nbsp;&nbsp;データ(文字列)
-str2&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名
-int3&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)
-int4&nbsp;&nbsp;&nbsp;&nbsp;終端モード
+str1&nbsp;&nbsp;&nbsp;&nbsp;データ(文字列)<br>
+str2&nbsp;&nbsp;&nbsp;&nbsp;クリップボードフォーマット名<br>
+int3&nbsp;&nbsp;&nbsp;&nbsp;モード(文字コードセット)<br>
+int4&nbsp;&nbsp;&nbsp;&nbsp;終端モード<br>
 <b>戻り値</b><br>
 1: 成功<br>
 0: 失敗<br>
