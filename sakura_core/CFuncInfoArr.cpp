@@ -116,15 +116,15 @@ void CFuncInfoArr::DUMP( void )
 {
 #ifdef _DEBUG
 	int i;
-	MYTRACE_A( "=============================\n" );
+	MYTRACE( _T("=============================\n") );
 	for( i = 0; i < m_nFuncInfoArrNum; i++ ){
-		MYTRACE_A( "[%d]------------------\n", i );
-		MYTRACE_A( "m_nFuncLineCRLF	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
-		MYTRACE_A( "m_nFuncLineLAYOUT	=%d\n", m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
-		MYTRACE_A( "m_cmemFuncName	=[%s]\n", m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
-		MYTRACE_A( "m_nInfo			=%d\n", m_ppcFuncInfoArr[i]->m_nInfo );
+		MYTRACE( _T("[%d]------------------\n"), i );
+		MYTRACE( _T("m_nFuncLineCRLF	=%d\n"), m_ppcFuncInfoArr[i]->m_nFuncLineCRLF );
+		MYTRACE( _T("m_nFuncLineLAYOUT	=%d\n"), m_ppcFuncInfoArr[i]->m_nFuncLineLAYOUT );
+		MYTRACE( _T("m_cmemFuncName	=[%s]\n"), m_ppcFuncInfoArr[i]->m_cmemFuncName.GetStringPtr() );
+		MYTRACE( _T("m_nInfo			=%d\n"), m_ppcFuncInfoArr[i]->m_nInfo );
 	}
-	MYTRACE_A( "=============================\n" );
+	MYTRACE( _T("=============================\n") );
 #endif
 }
 

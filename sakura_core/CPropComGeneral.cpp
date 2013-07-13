@@ -200,7 +200,7 @@ INT_PTR CPropGeneral::DispatchEvent(
 		switch( idCtrl ){
 		case IDC_SPIN_REPEATEDSCROLLLINENUM:
 			/* キーリピート時のスクロール行数 */
-//			MYTRACE_A( "IDC_SPIN_REPEATEDSCROLLLINENUM\n" );
+//			MYTRACE( _T("IDC_SPIN_REPEATEDSCROLLLINENUM\n") );
 			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_REPEATEDSCROLLLINENUM, NULL, FALSE );
 			if( pMNUD->iDelta < 0 ){
 				++nVal;

@@ -922,11 +922,11 @@ void CLayoutMgr::CalculateTextWidth_Range( const CalTextWidthArg* pctwArg )
 
 		// テキスト最大幅を算出する
 		if( bCalTextWidth ){
-//			MYTRACE_A( "CLayoutMgr::DoLayout_Range(%d) nCalTextWidthLinesFrom=%d nCalTextWidthLinesTo=%d\n", testcount, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
+//			MYTRACE( _T("CLayoutMgr::DoLayout_Range(%d) nCalTextWidthLinesFrom=%d nCalTextWidthLinesTo=%d\n"), testcount, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
 			CalculateTextWidth( FALSE, nCalTextWidthLinesFrom, nCalTextWidthLinesTo );
-//			MYTRACE_A( "CLayoutMgr::DoLayout_Range() m_nTextWidthMaxLine=%d\n", m_nTextWidthMaxLine );
+//			MYTRACE( _T("CLayoutMgr::DoLayout_Range() m_nTextWidthMaxLine=%d\n"), m_nTextWidthMaxLine );
 		}else{
-//			MYTRACE_A( "CLayoutMgr::DoLayout_Range(%d) FALSE\n", testcount );
+//			MYTRACE( _T("CLayoutMgr::DoLayout_Range(%d) FALSE\n"), testcount );
 		}
 #else
 		// テキスト最大幅を算出する

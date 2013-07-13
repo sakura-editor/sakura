@@ -20,12 +20,52 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+#if defined(_DEBUG) || defined(USE_RELPRINT)
+void DebugOutW( LPCWSTR lpFmt, ...);
 void DebugOutA( LPCSTR lpFmt, ...);
-#ifdef _UNICODE
-#define DebugOut DebugOutW
+#endif	// _DEBUG || USE_RELPRINT
+
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                 デバッグ用メッセージ出力                    //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+/*
+	MYTRACEはリリースモードではコンパイルエラーとなるようにしてあるので，
+	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
+*/
+#ifdef _DEBUG
+	#ifdef _UNICODE
+	#define MYTRACE DebugOutW
+	#else
+	#define MYTRACE DebugOutA
+	#endif
 #else
-#define DebugOut DebugOutA
+	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode
 #endif
+
+//#ifdef _DEBUG～#endifで囲まなくても良い版
+#ifdef _DEBUG
+	#ifdef _UNICODE
+	#define DEBUG_TRACE DebugOutW
+	#else
+	#define DEBUG_TRACE DebugOutA
+	#endif
+#elif (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
+	#define DEBUG_TRACE(...)
+#else
+	// Not support C99 variable macro
+	inline void DEBUG_TRACE( ... ){}
+#endif
+
+//RELEASE版でも出力する版 (RELEASEでのみ発生するバグを監視する目的)
+#ifdef USE_RELPRINT
+	#ifdef _UNICODE
+	#define RELPRINT DebugOutW
+	#else
+	#define RELPRINT DebugOutA
+	#endif
+#else
+	#define RELPRINT   Do_not_define_USE_RELPRINT
+#endif	// USE_RELPRINT
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                 メッセージボックス：実装                    //
@@ -36,41 +76,6 @@ void DebugOutA( LPCSTR lpFmt, ...);
 //テキスト整形機能付きMessageBox
 int VMessageBoxF( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, va_list& v );
 int MessageBoxF ( HWND hwndOwner, UINT uType, LPCTSTR lpCaption, LPCTSTR lpText, ... );
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                 デバッグ用メッセージ出力                    //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-/*
-	MYTRACEはリリースモードではコンパイルエラーとなるようにしてあるので，
-	MYTRACEを使う場合には必ず#ifdef _DEBUG ～ #endif で囲む必要がある．
-*/
-#ifdef _DEBUG
-	#define MYTRACE DebugOut
-	#define MYTRACE_A DebugOutA
-#else
-	#define MYTRACE   Do_not_use_the_MYTRACE_function_if_release_mode
-	#define MYTRACE_A Do_not_use_the_MYTRACE_A_function_if_release_mode
-#endif
-
-//#ifdef _DEBUG～#endifで囲まなくても良い版
-#ifdef _DEBUG
-#define DBPRINT_A DebugOutA
-#else
-#if (defined(_MSC_VER) && 1400 <= _MSC_VER) || (defined(__GNUC__) && 3 <= __GNUC__ )
-#define DBPRINT_A(...)
-#else
-// Not support C99 variable macro
-inline void DBPRINT_A( ... ){}
-#endif
-#endif
-
-#ifdef _UNICODE
-#define DBPRINT DBPRINT_W
-#else
-#define DBPRINT DBPRINT_A
-#endif
-
-#define DEBUG_TRACE DBPRINT
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                ユーザ用メッセージボックス                   //

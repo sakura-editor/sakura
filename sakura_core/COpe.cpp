@@ -48,19 +48,17 @@ COpe::~COpe()
 /* 編集操作要素のダンプ */
 void COpe::DUMP( void )
 {
-#ifdef _DEBUG
-	MYTRACE_A( "\t\tm_nOpe              = [%d]\n", m_nOpe               );
-	MYTRACE_A( "\t\tm_nCaretPosX_PHY_Before = [%d]\n", m_nCaretPosX_PHY_Before   );
-	MYTRACE_A( "\t\tm_nCaretPosY_PHY_Before = [%d]\n", m_nCaretPosY_PHY_Before   );
-	MYTRACE_A( "\t\tm_nCaretPosX_PHY_After; = [%d]\n", m_nCaretPosX_PHY_After   );
-	MYTRACE_A( "\t\tm_nCaretPosY_PHY_After; = [%d]\n", m_nCaretPosY_PHY_After   );
-	MYTRACE_A( "\t\tm_nDataLen              = [%d]\n", m_nDataLen           );
+	DEBUG_TRACE( _T("\t\tm_nOpe                  = [%d]\n"), m_nOpe               );
+	DEBUG_TRACE( _T("\t\tm_nCaretPosX_PHY_Before = [%d]\n"), m_nCaretPosX_PHY_Before   );
+	DEBUG_TRACE( _T("\t\tm_nCaretPosY_PHY_Before = [%d]\n"), m_nCaretPosY_PHY_Before   );
+	DEBUG_TRACE( _T("\t\tm_nCaretPosX_PHY_After; = [%d]\n"), m_nCaretPosX_PHY_After   );
+	DEBUG_TRACE( _T("\t\tm_nCaretPosY_PHY_After; = [%d]\n"), m_nCaretPosY_PHY_After   );
+	DEBUG_TRACE( _T("\t\tm_nDataLen              = [%d]\n"), m_nDataLen           );
 	if( NULL == m_pcmemData ){
-		MYTRACE_A( "\t\tm_pcmemData         = [NULL]\n" );
+		DEBUG_TRACE( _T("\t\tm_pcmemData         = [NULL]\n") );
 	}else{
-		MYTRACE_A( "\t\tm_pcmemData         = [%s]\n", m_pcmemData->GetStringPtr() );
+		DEBUG_TRACE( _T("\t\tm_pcmemData         = [%s]\n"), m_pcmemData->GetStringPtr() );
 	}
-#endif
 	return;
 }
 

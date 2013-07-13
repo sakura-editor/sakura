@@ -379,7 +379,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_FOLDERDIALOG,		_T("FolderDialog"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //フォルダを開くダイアログの表示
 	{F_GETCLIPBOARD,		_T("GetClipboard"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //クリップボードの文字列を取得
 	{F_SETCLIPBOARD,		_T("SetClipboard"),			{VT_I4,    VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //クリップボードに文字列を設定
-	
+
 	//	終端
 	//	Jun. 27, 2002 genta
 	//	終端としては決して現れないものを使うべきなので，
@@ -552,11 +552,10 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const TCHAR* pszPath, const
 {
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
-#ifdef _DEBUG
 	if( ppMacro == NULL ){
-	MYTRACE_A( "CSMacroMgr::Load() Out of range: idx=%d Path=%s\n", idx, pszPath);
+		DEBUG_TRACE( _T("CSMacroMgr::Load() Out of range: idx=%d Path=%s\n"), idx, pszPath);
 	}
-#endif
+
 	//	バッファクリア
 	delete *ppMacro;
 	*ppMacro = NULL;
@@ -1134,9 +1133,7 @@ CMacroManagerBase** CSMacroMgr::Idx2Ptr(int idx)
 		return &m_cSavedKeyMacro[idx];
 	}
 
-#ifdef _DEBUG
-	MYTRACE_A( "CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n", idx);
-#endif
+	DEBUG_TRACE( _T("CSMacroMgr::Idx2Ptr() Out of range: idx=%d\n"), idx);
 
 	return NULL;
 }

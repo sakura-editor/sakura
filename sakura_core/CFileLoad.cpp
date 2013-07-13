@@ -223,7 +223,7 @@ const char* CFileLoad::ReadLine(
 	int			nEolLen;
 #ifdef _DEBUG
 	if( m_eMode < FLMODE_READY ){
-		MYTRACE_A( "CFileLoad::ReadLine(): m_eMode = %d\n", m_eMode );
+		MYTRACE( _T("CFileLoad::ReadLine(): m_eMode = %d\n"), m_eMode );
 		return NULL;
 	}
 #endif

@@ -65,8 +65,8 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 	}
 
 	//@@@
-#ifdef _DEBUG
-	::MYTRACE_A( "OnPaint(%d,%d)-(%d,%d) : %d\n",
+#if 0
+	::MYTRACE( _T("OnPaint(%d,%d)-(%d,%d) : %d\n"),
 		pPs->rcPaint.left,
 		pPs->rcPaint.top,
 		pPs->rcPaint.right,
@@ -426,7 +426,7 @@ bool CEditView::DispLineNew(
 
 		y -= nLineHeight;
 		nLineNum--;
-//		MYTRACE_A( "\n\n=======================================" );
+//		MYTRACE( _T("\n\n=======================================") );
 
 		int			nBgn = 0;
 		int			nPos = 0;
@@ -452,7 +452,7 @@ bool CEditView::DispLineNew(
 		RECT		rcClip2;
 
 		while( nPos < nLineLen ){
-//			MYTRACE_A( "nLineNum = %d\n", nLineNum );
+//			MYTRACE( _T("nLineNum = %d\n"), nLineNum );
 
 			y += nLineHeight;
 			nLineNum++;

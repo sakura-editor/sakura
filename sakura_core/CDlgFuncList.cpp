@@ -186,7 +186,7 @@ HWND CDlgFuncList::DoModeless(
 	m_nCurCol = nCurCol;				/* 現在桁 */
 	m_nListType = nListType;			/* 一覧の種類 */
 	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-	
+
 	// 2007.04.18 genta : 「フォーカスを移す」と「自動的に閉じる」がチェックされている場合に
 	// ダブルクリックを行うと，trueのまま残ってしまうので，ウィンドウを開いたときにリセットする．
 	m_bWaitTreeProcess = false;
@@ -1381,7 +1381,7 @@ BOOL CDlgFuncList::OnNotify( WPARAM wParam, LPARAM lParam )
 	if( hwndList == pnmh->hwndFrom ){
 		switch( pnmh->code ){
 		case LVN_COLUMNCLICK:
-//				MYTRACE_A( "LVN_COLUMNCLICK\n" );
+//			MYTRACE( _T("LVN_COLUMNCLICK\n") );
 			m_nSortCol =  pnlv->iSubItem;
 			//	Apr. 23, 2005 genta 関数として独立させた
 			SortListView( hwndList, m_nSortCol );

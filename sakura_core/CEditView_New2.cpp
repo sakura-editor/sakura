@@ -437,7 +437,7 @@ int CEditView::DispText( HDC hdc, int x, int y, const char* pData, int nLength )
 */
 void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 {
-//	MYTRACE_A( "CEditView::DispTextSelected()\n" );
+//	MYTRACE( _T("CEditView::DispTextSelected()\n") );
 
 	int			nROP_Old;
 	int			nSelectFrom;

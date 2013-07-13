@@ -1017,7 +1017,7 @@ void CPrintPreview::OnPrint( void )
 		&hdc,
 		szErrMsg						/* エラーメッセージ格納場所 */
 	) ){
-//		MYTRACE_A( "%s\n", szErrMsg );
+//		MYTRACE( _T("%s\n"), szErrMsg );
 	}
 
 	/* 印刷用半角フォントと、印刷用全角フォントを作成 */
@@ -1052,7 +1052,7 @@ void CPrintPreview::OnPrint( void )
 		//	このとき開発者は次のページの印刷を始める前にオブジェクトを選択し直し，
 		//	マッピングモードをもう一度設定しなければなりません
 		//	Windows NT/2000ではStartPageでも属性はリセットされません．
-		
+
 		/* マッピングモードの変更 */
 		::SetMapMode( hdc, MM_LOMETRIC );		//それぞれの論理単位は、0.1 mm にマップされます
 		::SetMapMode( hdc, MM_ANISOTROPIC );	//論理単位は、任意にスケーリングされた軸上の任意の単位にマップされます
@@ -1195,6 +1195,7 @@ void CPrintPreview::DrawFooter( HDC hdc, const RECT& rect, HFONT hFontZen )
 		hFontZen
 	);
 }
+
 
 /* 印刷/印刷プレビュー ページテキストの描画
 	DrawPageTextでは、行番号を（半角フォントで）印刷。

@@ -1529,7 +1529,7 @@ void CMemory::UnicodeToUTF7( void )
 					-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
 					FALSE	// パディングするか
 				);
-//				MYTRACE_A( "pszBase64Buf=[%s]\n", pszBase64Buf );
+//				MYTRACE( _T("pszBase64Buf=[%s]\n"), pszBase64Buf );
 				//////////////
 				k++;
 				k += nBase64BufLen;
@@ -1562,7 +1562,7 @@ void CMemory::UnicodeToUTF7( void )
 			-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
 			FALSE	// パディングするか
 		);
-//		MYTRACE_A( "pszBase64Buf=[%s]\n", pszBase64Buf );
+//		MYTRACE( _T("pszBase64Buf=[%s]\n"), pszBase64Buf );
 		//////////////
 		k++;
 		k += nBase64BufLen;
@@ -1615,7 +1615,7 @@ void CMemory::UnicodeToUTF7( void )
 					-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
 					FALSE	// パディングするか
 				);
-//				MYTRACE_A( "pszBase64Buf=[%s]\n", pszBase64Buf );
+//				MYTRACE( _T("pszBase64Buf=[%s]\n"), pszBase64Buf );
 				//////////////
 				pDes[k] = '+';
 				k++;
@@ -1649,7 +1649,7 @@ void CMemory::UnicodeToUTF7( void )
 			-1,		// エンコード後のデータを自動的にCRLFで折り返す場合の１行最大文字数 (-1が指定された場合は折り返さない)
 			FALSE	// パディングするか
 		);
-//		MYTRACE_A( "pszBase64Buf=[%s]\n", pszBase64Buf );
+//		MYTRACE( _T("pszBase64Buf=[%s]\n"), pszBase64Buf );
 		//////////////
 		pDes[k] = '+';
 		k++;
@@ -1936,7 +1936,7 @@ int CMemory::MemSJISToUnicode( char** ppBufUnicode, const char*pBuf, int nBufLen
 #if 0
 		// 2005.11.16 実用に耐えないほど速度低下するので無効化する
 			if( j != 2 ){
-				MYTRACE_A( "%dバイトのUnicode文字に変換された SJIS(?)=%x %x\n", j,pBuf[i],((nCharChars >= 2)?(pBuf[i + 1]):0) );
+				MYTRACE( _T("%dバイトのUnicode文字に変換された SJIS(?)=%x %x\n"), j,pBuf[i],((nCharChars >= 2)?(pBuf[i + 1]):0) );
 			}
 #endif
 			*((wchar_t*)&(pBufUnicode[k])) = wchar;

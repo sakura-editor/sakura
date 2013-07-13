@@ -641,7 +641,7 @@ bool CProfile::SetProfileData(
 bool CProfile::GetProfileData(
 	const tstring&	strSectionName,	//!< [in] セクション名
 	const tstring&	strEntryKey,	//!< [in] エントリ名
-	tstring&			strEntryValue	//!< [out] エントリ値
+	tstring&		strEntryValue	//!< [out] エントリ値
 )
 {
 	tstring strWork;
@@ -713,15 +713,15 @@ void CProfile::DUMP( void )
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
 	MAP_STR_STR::iterator mapiter;
 	MAP_STR_STR::iterator mapiterEnd;
-	MYTRACE_A( "\n\nCProfile::DUMP()======================" );
+	MYTRACE( _T("\n\nCProfile::DUMP()======================") );
 	for( iter = m_ProfileData.begin(); iter != iterEnd; iter++ ) {
-		MYTRACE_A( "\n■strSectionName=%s", iter->strSectionName.c_str() );
+		MYTRACE( _T("\n■strSectionName=%s"), iter->strSectionName.c_str() );
 		mapiterEnd = iter->mapEntries.end();
 		for( mapiter = iter->mapEntries.begin(); mapiter != mapiterEnd; mapiter++ ) {
-			MYTRACE_A( "\"%s\" = \"%s\"\n", mapiter->first.c_str(), mapiter->second.c_str() );
+			MYTRACE( _T("\"%s\" = \"%s\"\n"), mapiter->first.c_str(), mapiter->second.c_str() );
 		}
 	}
-	MYTRACE_A( "========================================\n" );
+	MYTRACE( _T("========================================\n") );
 #endif
 	return;
 }

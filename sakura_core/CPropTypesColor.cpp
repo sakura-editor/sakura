@@ -1,4 +1,4 @@
-/*!	@file
+/*! @file
 	@brief タイプ別設定 - カラー
 
 	@date 2008.04.12 kobake CPropTypes.cppから分離
@@ -699,7 +699,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_COLOR );
 				return TRUE;
 			case PSN_KILLACTIVE:
-//				MYTRACE_A( "color PSN_KILLACTIVE\n" );
+//				MYTRACE( _T("color PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 color */
 				GetData( hwndDlg );
 				return TRUE;

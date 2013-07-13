@@ -589,7 +589,7 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
 		return;
 	}
-//	MYTRACE_A( "%s\n", szPath );
+//	MYTRACE( _T("%s\n"), szPath );
 	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 	/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 	::SplitPath_FolderAndFile( szPath, m_pShareData->m_sHistory.m_szIMPORTFOLDER, NULL );

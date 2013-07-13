@@ -66,7 +66,7 @@ void CEditView::Command_GREP_DIALOG( void )
 
 	/* Grepダイアログの表示 */
 	int nRet = m_pcEditDoc->m_cDlgGrep.DoModal( m_hInstance, m_hWnd, m_pcEditDoc->GetFilePath() );
-//	MYTRACE_A( "nRet=%d\n", nRet );
+//	MYTRACE( _T("nRet=%d\n"), nRet );
 	if( !nRet ){
 		return;
 	}
@@ -156,7 +156,7 @@ void CEditView::Command_GREP( void )
 			_tcscat( pCmdLine, pOpt );
 		}
 
-//		MYTRACE_A( "pCmdLine=[%s]\n", pCmdLine );
+//		MYTRACE( _T("pCmdLine=[%s]\n"), pCmdLine );
 		/* 新規編集ウィンドウの追加 ver 0 */
 		CControlTray::OpenNewEditor( m_hInstance, m_hWnd, pCmdLine, 0, false );
 		delete [] pCmdLine;

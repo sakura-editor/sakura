@@ -22,15 +22,6 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-/* for TRACE() of MFC */
-//#ifdef _DEBUG
-//	#include <afx.h>
-//#endif
-//#ifndef _DEBUG
-//	#include <windows.h>
-//#endif
-
-
 #include "StdAfx.h"
 #include "CDocLineMgr.h"
 #include "Debug.h"
@@ -321,10 +312,8 @@ void CDocLineMgr::AddLineStrX( const char* pData, int nDataLen, CEol cEol )
 */
 int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgress, ECodeType nCharCode, CFileTime* pcFileTime, int nFlags, bool* pbBomExist)
 {
-#ifdef _DEBUG
-	MYTRACE_A( "pszPath=[%s]\n", pszPath );
+	DEBUG_TRACE( _T("pszPath=[%s]\n"), pszPath );
 	MY_RUNNINGTIMER( cRunningTimer, "CDocLineMgr::ReadFile" );
-#endif
 	int			nRetVal = TRUE;
 	int			nLineNum = 0;
 	//	May 15, 2000 genta
@@ -1712,7 +1701,7 @@ int	CDocLineMgr::WhatKindOfChar(
 		//<< 2002/03/28 Azumaiya
 		// 判定条件部分の比較回数を少なくして最適化。
 		wChar =  MAKEWORD(pData[nIdx + 1], pData[nIdx]);
-//		MYTRACE_A( "wChar=%0xh\n", wChar );
+//		MYTRACE( _T("wChar=%0xh\n"), wChar );
 		if( wChar == (WORD)0x8140 ){
 			return CK_MBC_SPACE;	/* 2バイトのスペース */
 		}
@@ -1809,7 +1798,7 @@ int CDocLineMgr::WhatKindOfTwoChars( int kindPre, int kindCur )
 void CDocLineMgr::DUMP()
 {
 #ifdef _DEBUG
-	MYTRACE_A( "------------------------\n" );
+	MYTRACE( _T("------------------------\n") );
 
 	CDocLine* pDocLine;
 	CDocLine* pDocLineNext;
@@ -1821,10 +1810,10 @@ void CDocLineMgr::DUMP()
 	bool bIncludePrevRefer = false;
 	int nNum = 0;
 	if( m_pDocLineTop->m_pPrev != NULL ){
-		MYTRACE_A( "error: m_pDocLineTop->m_pPrev != NULL\n");
+		MYTRACE( _T("error: m_pDocLineTop->m_pPrev != NULL\n"));
 	}
 	if( m_pDocLineBot->m_pNext != NULL ){
-		MYTRACE_A( "error: m_pDocLineBot->m_pNext != NULL\n" );
+		MYTRACE( _T("error: m_pDocLineBot->m_pNext != NULL\n") );
 	}
 	while( NULL != pDocLine ){
 		if( m_pDocLineCurrent == pDocLine ){
@@ -1835,11 +1824,11 @@ void CDocLineMgr::DUMP()
 		}
 		if( NULL != pDocLine->m_pNext ){
 			if( pDocLine->m_pNext == pDocLine ){
-				MYTRACE_A( "error: pDocLine->m_pPrev Invalid value.\n" );
+				MYTRACE( _T("error: pDocLine->m_pPrev Invalid value.\n") );
 				break;
 			}
 			if( pDocLine->m_pNext->m_pPrev != pDocLine ){
-				MYTRACE_A( "error: pDocLine->m_pNext->m_pPrev != pDocLine.\n" );
+				MYTRACE( _T("error: pDocLine->m_pNext->m_pPrev != pDocLine.\n") );
 				break;
 			}
 		}else{
@@ -1850,44 +1839,44 @@ void CDocLineMgr::DUMP()
 	}
 	
 	if( pDocLineEnd != m_pDocLineBot ){
-		MYTRACE_A( "error: pDocLineEnd != m_pDocLineBot" );
+		MYTRACE( _T("error: pDocLineEnd != m_pDocLineBot") );
 	}
 	
 	if( nNum != m_nLines ){
-		MYTRACE_A( "error: nNum(%d) != m_nLines(%d)\n", nNum, m_nLines );
+		MYTRACE( _T("error: nNum(%d) != m_nLines(%d)\n"), nNum, m_nLines );
 	}
 	if( false == bIncludeCurrent && m_pDocLineCurrent != NULL ){
-		MYTRACE_A( "error: m_pDocLineCurrent=%08lxh Invalid value.\n", m_pDocLineCurrent );
+		MYTRACE( _T("error: m_pDocLineCurrent=%08lxh Invalid value.\n"), m_pDocLineCurrent );
 	}
 	if( false == bIncludePrevRefer && m_pCodePrevRefer != NULL ){
-		MYTRACE_A( "error: m_pCodePrevRefer =%08lxh Invalid value.\n", m_pCodePrevRefer );
+		MYTRACE( _T("error: m_pCodePrevRefer =%08lxh Invalid value.\n"), m_pCodePrevRefer );
 	}
 
 	// DUMP
-	MYTRACE_A( "m_nLines=%d\n", m_nLines );
-	MYTRACE_A( "m_pDocLineTop=%08lxh\n", m_pDocLineTop );
-	MYTRACE_A( "m_pDocLineBot=%08lxh\n", m_pDocLineBot );
+	MYTRACE( _T("m_nLines=%d\n"), m_nLines );
+	MYTRACE( _T("m_pDocLineTop=%08lxh\n"), m_pDocLineTop );
+	MYTRACE( _T("m_pDocLineBot=%08lxh\n"), m_pDocLineBot );
 	pDocLine = m_pDocLineTop;
 	while( NULL != pDocLine ){
 		pDocLineNext = pDocLine->m_pNext;
-		MYTRACE_A( "\t-------\n" );
-		MYTRACE_A( "\tthis=%08lxh\n", pDocLine );
-		MYTRACE_A( "\tpPrev; =%08lxh\n", pDocLine->m_pPrev );
-		MYTRACE_A( "\tpNext; =%08lxh\n", pDocLine->m_pNext );
+		MYTRACE( _T("\t-------\n") );
+		MYTRACE( _T("\tthis=%08lxh\n"), pDocLine );
+		MYTRACE( _T("\tpPrev; =%08lxh\n"), pDocLine->m_pPrev );
+		MYTRACE( _T("\tpNext; =%08lxh\n"), pDocLine->m_pNext );
 
-		MYTRACE_A( "\tm_enumEOLType =%s\n", pDocLine->m_cEol.GetName() );
-		MYTRACE_A( "\tm_nEOLLen =%d\n", pDocLine->m_cEol.GetLen() );
+		MYTRACE( _T("\tm_enumEOLType =%s\n"), pDocLine->m_cEol.GetName() );
+		MYTRACE( _T("\tm_nEOLLen =%d\n"), pDocLine->m_cEol.GetLen() );
 
 
-//		MYTRACE_A( "\t[%s]\n", (char*)*(pDocLine->m_pLine) );
-		MYTRACE_A( "\tpDocLine->m_cLine.GetStringLength()=[%d]\n", pDocLine->m_cLine.GetStringLength() );
-		MYTRACE_A( "\t[%s]\n", pDocLine->m_cLine.GetStringPtr() );
+//		MYTRACE( _T("\t[%s]\n"), (char*)*(pDocLine->m_pLine) );
+		MYTRACE( _T("\tpDocLine->m_cLine.GetStringLength()=[%d]\n"), pDocLine->m_cLine.GetStringLength() );
+		MYTRACE( _T("\t[%s]\n"), pDocLine->m_cLine.GetStringPtr() );
 
 
 		pDocLine = pDocLineNext;
 	}
-	MYTRACE_A( "------------------------\n" );
-#endif
+	MYTRACE( _T("------------------------\n") );
+#endif // _DEBUG
 	return;
 }
 

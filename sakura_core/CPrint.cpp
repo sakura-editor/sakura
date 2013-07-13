@@ -172,12 +172,10 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
-#ifdef _DEBUG
-	MYTRACE_A( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE_A( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE_A( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	MYTRACE_A( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
-#endif
+	DEBUG_TRACE( _T(" (入力/出力) デバイス ドライバ=[%s]\n"), (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	DEBUG_TRACE( _T(" (入力/出力) デバイス名=[%s]\n"),        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	DEBUG_TRACE( _T("物理出力メディア (出力ポート) =[%s]\n"), (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	DEBUG_TRACE( _T("デフォルトのプリンタか=[%d]\n"),          pDEVNAMES->wDefault );
 
 	::GlobalUnlock( m_hDevMode );
 	::GlobalUnlock( m_hDevNames );
@@ -253,12 +251,10 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
-#ifdef _DEBUG
-	MYTRACE_A( " (入力/出力) デバイス ドライバ=[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	MYTRACE_A( " (入力/出力) デバイス名=[%s]\n",        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	MYTRACE_A( "物理出力メディア (出力ポート) =[%s]\n", (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	MYTRACE_A( "デフォルトのプリンタか=[%d]\n",          pDEVNAMES->wDefault );
-#endif
+	DEBUG_TRACE( _T(" (入力/出力) デバイス ドライバ=[%s]\n"), (TCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	DEBUG_TRACE( _T(" (入力/出力) デバイス名=[%s]\n"),        (TCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	DEBUG_TRACE( _T("物理出力メディア (出力ポート) =[%s]\n"), (TCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	DEBUG_TRACE( _T("デフォルトのプリンタか=[%d]\n"),          pDEVNAMES->wDefault );
 
 	::GlobalUnlock( m_hDevMode );
 	::GlobalUnlock( m_hDevNames );
@@ -573,10 +569,10 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 */
 void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const TCHAR* settingName )
 {
-	_tcscpy( pPrintSetting.m_szPrintSettingName, settingName );	/* 印刷設定の名前 */
-	_tcscpy( pPrintSetting.m_szPrintFontFaceHan, _T("ＭＳ 明朝") );				/* 印刷フォント */
-	_tcscpy( pPrintSetting.m_szPrintFontFaceZen, _T("ＭＳ 明朝") );				/* 印刷フォント */
-	pPrintSetting.m_nPrintFontWidth = 12;  								/* 印刷フォント幅(1/10mm単位) */
+	_tcscpy( pPrintSetting.m_szPrintSettingName, settingName );			/* 印刷設定の名前 */
+	_tcscpy( pPrintSetting.m_szPrintFontFaceHan, _T("ＭＳ 明朝") );		/* 印刷フォント */
+	_tcscpy( pPrintSetting.m_szPrintFontFaceZen, _T("ＭＳ 明朝") );		/* 印刷フォント */
+	pPrintSetting.m_nPrintFontWidth = 12;		// 印刷フォント幅(1/10mm単位)
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
 	pPrintSetting.m_nPrintDansuu = 1;			/* 段組の段数 */
 	pPrintSetting.m_nPrintDanSpace = 70; 		/* 段と段の隙間(1/10mm) */

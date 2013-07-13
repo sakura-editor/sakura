@@ -2966,7 +2966,7 @@ void CEditDoc::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 				}
 			}
 			szLabel[k] = '\0';
-//			MYTRACE_A( "szLabel=[%s]\n", szLabel );
+//			MYTRACE( _T("szLabel=[%s]\n"), szLabel );
 
 
 

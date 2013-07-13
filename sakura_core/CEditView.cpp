@@ -256,7 +256,7 @@ BOOL CEditView::Create(
 	// 2004.02.08 m_hFont_ZENは未使用により削除
 	m_dwTipTimer = ::GetTickCount();	/* 辞書Tip起動タイマー */
 	m_bInMenuLoop = FALSE;				/* メニュー モーダル ループに入っています */
-//	MYTRACE_A( "CEditView::CEditView()おわり\n" );
+//	MYTRACE( _T("CEditView::CEditView()おわり\n") );
 	m_bHokan = FALSE;
 
 	m_hFontOld = NULL;
@@ -445,14 +445,10 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 			hdc = ::GetDC( m_hWnd );
 			m_hdcCompatDC = ::CreateCompatibleDC( hdc );
 			::ReleaseDC( m_hWnd, hdc );
-#ifdef _DEBUG
-			MYTRACE_A("CEditView::UseCompatibleDC: Created\n", fCache);
-#endif
+			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Created\n"), fCache);
 		}
 		else {
-#ifdef _DEBUG
-			MYTRACE_A("CEditView::UseCompatibleDC: Reused\n", fCache);
-#endif
+			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Reused\n"), fCache);
 		}
 	}
 	else {
@@ -460,9 +456,7 @@ void CEditView::UseCompatibleDC(BOOL fCache)
 		DeleteCompatibleBitmap();
 		if( m_hdcCompatDC != NULL ){
 			::DeleteDC( m_hdcCompatDC );
-#ifdef _DEBUG
-			MYTRACE_A("CEditView::UseCompatibleDC: Deleted.\n");
-#endif
+			DEBUG_TRACE(_T("CEditView::UseCompatibleDC: Deleted.\n"));
 			m_hdcCompatDC = NULL;
 		}
 	}
@@ -739,7 +733,7 @@ LRESULT CEditView::DispatchEvent(
 			// 2007.10.02 nasukoji
 			m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
 		}
-		//		MYTRACE_A( " WM_LBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+		//		MYTRACE( _T(" WM_LBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDBLCLK( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
@@ -757,13 +751,13 @@ LRESULT CEditView::DispatchEvent(
 	case WM_LBUTTONDOWN:
 		// 2007.10.02 nasukoji
 		m_bActivateByMouse = FALSE;		// マウスによるアクティベートを示すフラグをOFF
-//		MYTRACE_A( " WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_LBUTTONDOWN wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
 	case WM_LBUTTONUP:
 
-//		MYTRACE_A( " WM_LBUTTONUP wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_LBUTTONUP wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnLBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 	case WM_MOUSEMOVE:
@@ -771,10 +765,10 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_RBUTTONDBLCLK:
-//		MYTRACE_A( " WM_RBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_RBUTTONDBLCLK wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		return 0L;
 //	case WM_RBUTTONDOWN:
-//		MYTRACE_A( " WM_RBUTTONDOWN wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_RBUTTONDOWN wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 //		OnRBUTTONDOWN( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 //		if( m_nMyIndex != m_pcEditDoc->GetActivePane() ){
 //			/* アクティブなペインを設定 */
@@ -782,7 +776,7 @@ LRESULT CEditView::DispatchEvent(
 //		}
 //		return 0L;
 	case WM_RBUTTONUP:
-//		MYTRACE_A( " WM_RBUTTONUP wParam=%08xh, x=%d y=%d\n", wParam, LOWORD( lParam ), HIWORD( lParam ) );
+//		MYTRACE( _T(" WM_RBUTTONUP wParam=%08xh, x=%d y=%d\n"), wParam, LOWORD( lParam ), HIWORD( lParam ) );
 		OnRBUTTONUP( wParam, (short)LOWORD( lParam ), (short)HIWORD( lParam ) );
 		return 0L;
 
@@ -813,7 +807,7 @@ LRESULT CEditView::DispatchEvent(
 		return TRUE;
 
 	case WM_VSCROLL:
-//		MYTRACE_A( "	WM_VSCROLL nPos=%d\n", GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
+//		MYTRACE( _T("	WM_VSCROLL nPos=%d\n"), GetScrollPos( m_hwndVScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
 			int Scroll = OnVScroll(
@@ -828,7 +822,7 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_HSCROLL:
-//		MYTRACE_A( "	WM_HSCROLL nPos=%d\n", GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
+//		MYTRACE( _T("	WM_HSCROLL nPos=%d\n"), GetScrollPos( m_hwndHScrollBar, SB_CTL ) );
 		//	Sep. 11, 2004 genta 同期スクロールの関数化
 		{
 			int Scroll = OnHScroll(
@@ -872,7 +866,7 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 
 	case WM_CLOSE:
-//		MYTRACE_A( "	WM_CLOSE\n" );
+//		MYTRACE( _T("	WM_CLOSE\n") );
 		::DestroyWindow( hwnd );
 		return 0L;
 	case WM_DESTROY:
@@ -882,7 +876,7 @@ LRESULT CEditView::DispatchEvent(
 		::KillTimer( m_hWnd, IDT_ROLLMOUSE );
 
 
-//		MYTRACE_A( "	WM_DESTROY\n" );
+//		MYTRACE( _T("	WM_DESTROY\n") );
 		/*
 		||子ウィンドウの破棄
 		*/
@@ -909,7 +903,7 @@ LRESULT CEditView::DispatchEvent(
 	case MYWM_DOSPLIT:
 		nPosX = (int)wParam;
 		nPosY = (int)lParam;
-//		MYTRACE_A( "MYWM_DOSPLIT nPosX=%d nPosY=%d\n", nPosX, nPosY );
+//		MYTRACE( _T("MYWM_DOSPLIT nPosX=%d nPosY=%d\n"), nPosX, nPosY );
 		::SendMessage( m_hwndParent, MYWM_DOSPLIT, wParam, lParam );
 		return 0L;
 
@@ -1112,9 +1106,7 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 	int nBmpWidthNew  = ((cx + 63) & (0x7fffffff - 63));
 	int nBmpHeightNew = ((cy + 63) & (0x7fffffff - 63));
 	if( nBmpWidthNew != m_nCompatBMPWidth || nBmpHeightNew != m_nCompatBMPHeight ){
-#ifdef _DEBUG
-	MYTRACE_A( "CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n", cx, cy );
-#endif
+		DEBUG_TRACE( _T("CEditView::CreateOrUpdateCompatibleBitmap( %d, %d ): resized\n"), cx, cy );
 		HDC	hdc = ::GetDC( m_hWnd );
 		HBITMAP hBitmapNew = NULL;
 		if( m_hbmpCompatBMP ){
@@ -1556,11 +1548,11 @@ int CEditView::OnHScroll( int nScrollCode, int nPos )
 		break;
 	case SB_THUMBPOSITION:
 		nScrollVal = ScrollAtH( nPos );
-//		MYTRACE_A( "nPos=%d\n", nPos );
+//		MYTRACE( _T("nPos=%d\n"), nPos );
 		break;
 	case SB_THUMBTRACK:
 		nScrollVal = ScrollAtH( nPos );
-//		MYTRACE_A( "nPos=%d\n", nPos );
+//		MYTRACE( _T("nPos=%d\n"), nPos );
 		break;
 	case SB_LEFT:
 		nScrollVal = ScrollAtH( 0 );
@@ -1634,7 +1626,7 @@ void CEditView::DrawSelectArea( void )
 	}
 	// To Here 2007.09.09 Moca
 
-//	MYTRACE_A( "DrawSelectArea()  m_bBeginBoxSelect=%s\n", m_bBeginBoxSelect?"TRUE":"FALSE" );
+//	MYTRACE( _(T"DrawSelectArea()  m_bBeginBoxSelect=%s\n"), m_bBeginBoxSelect?"TRUE":"FALSE" );
 	if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
 		// 2001.12.21 hor 矩形エリアにEOFがある場合、RGN_XORで結合すると
 		// EOF以降のエリアも反転してしまうので、この場合はRedrawを使う
@@ -1880,7 +1872,7 @@ void CEditView::DrawSelectAreaLine(
 		HDC hdc, int nLineNum, int nFromLine, int nFromCol, int nToLine, int nToCol
 )
 {
-//	MYTRACE_A( "CEditView::DrawSelectAreaLine()\n" );
+//	MYTRACE( _T("CEditView::DrawSelectAreaLine()\n") );
 	RECT			rcClip;
 	int				nSelectFrom;	// 描画行の選択開始桁位置
 	int				nSelectTo;		// 描画行の選択開始終了位置
@@ -2959,7 +2951,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), m_bBeginBoxSelect );	// 2008.03.26 ryoji テキスト長、矩形の指定を追加
 					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
 					m_pcEditDoc->SetDragSourceView( NULL );
-//					MYTRACE_A( "dwEffects=%d\n", dwEffects );
+//					MYTRACE( _T("dwEffects=%d\n"), dwEffects );
 					if( m_pcEditDoc->m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
 						m_pcEditDoc->SetActivePane( m_nMyIndex );
 						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
@@ -4219,7 +4211,7 @@ LRESULT CEditView::OnMOUSEWHEEL( WPARAM wParam, LPARAM lParam )
 	zDelta = (short) HIWORD(wParam);	// wheel rotation
 	xPos = (short) LOWORD(lParam);		// horizontal position of pointer
 	yPos = (short) HIWORD(lParam);		// vertical position of pointer
-//	MYTRACE_A( "CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n", fwKeys, zDelta, xPos, yPos );
+//	MYTRACE( _T("CEditView::DispatchEvent() WM_MOUSEWHEEL fwKeys=%xh zDelta=%d xPos=%d yPos=%d \n"), fwKeys, zDelta, xPos, yPos );
 
 	if( 0 < zDelta ){
 		nScrollCode = SB_LINEUP;
@@ -4410,15 +4402,6 @@ void CEditView::DisableSelectArea( bool bDraw )
 /* 現在のカーソル位置によって選択範囲を変更 */
 void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY )
 {
-//	MYTRACE_A( "ChangeSelectAreaByCurrentCursor( %d, %d )\n", nCaretPosX, nCaretPosY );
-//	int			nLineFrom;
-//	int			nColmFrom;
-//	int			nLineTo;
-//	int			nColmTo;
-//	const char*	pLine;
-//	int			nLineLen;
-//	int			nIdx;
-
 	m_nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
 	m_nSelectColmFromOld = m_nSelectColmFrom; 	/* 範囲選択開始桁 */
 	m_nSelectLineToOld = m_nSelectLineTo;		/* 範囲選択終了行 */
@@ -4448,16 +4431,6 @@ void CEditView::ChangeSelectAreaByCurrentCursorTEST(
 	int&	nSelectColmTo
 )
 {
-//	MYTRACE_A( "ChangeSelectAreaByCurrentCursor( %d, %d )\n", nCaretPosX, nCaretPosY );
-//	int			nLineFrom;
-//	int			nColmFrom;
-//	int			nLineTo;
-//	int			nColmTo;
-//	const char*	pLine;
-//	int			nLineLen;
-//	int			nIdx;
-
-
 	if( m_nSelectLineBgnFrom == m_nSelectLineBgnTo /* 範囲選択開始行(原点) */
 	 && m_nSelectColmBgnFrom == m_nSelectColmBgnTo ){
 		if( nCaretPosY == m_nSelectLineBgnFrom
@@ -4518,7 +4491,7 @@ void CEditView::ChangeSelectAreaByCurrentCursorTEST(
 /* マウス左ボタン開放のメッセージ処理 */
 void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
-//	MYTRACE_A( "OnLBUTTONUP()\n" );
+//	MYTRACE( _T("OnLBUTTONUP()\n") );
 	CMemory		cmemBuf, cmemClip;
 
 	/* 範囲選択終了 & マウスキャプチャーおわり */
@@ -7471,7 +7444,7 @@ int CEditView::DoGrepFile(
 					int matchlen = pRegexp->GetMatchLen();
 #ifdef _DEBUG
 					if( nIndex <= nIndexPrev ){
-						MYTRACE_A( "ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n" );
+						MYTRACE( _T("ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n") );
 						break;
 					}
 					nIndexPrev = nIndex;
@@ -7769,9 +7742,9 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, &cmemWord, pcmemWord )
 	){
 		pcmemWord->AppendString( &pLine[nIdx], nCharChars );
-//		MYTRACE_A( "==========\n" );
-//		MYTRACE_A( "cmemWord=[%s]\n", cmemWord.GetPtr() );
-//		MYTRACE_A( "pcmemWord=[%s]\n", pcmemWord->GetPtr() );
+//		MYTRACE( _T("==========\n") );
+//		MYTRACE( _T("cmemWord=[%s]\n"), cmemWord.GetPtr() );
+//		MYTRACE( _T("pcmemWord=[%s]\n"), pcmemWord->GetPtr() );
 
 		return pcmemWord->GetStringLength();
 	}else{
@@ -8209,9 +8182,7 @@ bool CEditView::MySetClipboardData( const char* pszText, int nTextLen, bool bCol
 */
 STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-#ifdef _DEBUG
-	MYTRACE_A( "CEditView::DragEnter()\n" );
-#endif
+	DEBUG_TRACE( _T("CEditView::DragEnter()\n") );
 
 	if( TRUE == m_pShareData->m_Common.m_sEdit.m_bUseOLE_DragDrop	/* OLEによるドラッグ & ドロップを使う */
 		//	Oct. 22, 2005 genta 上書き禁止(ファイルがロックされている)場合も不可
@@ -8253,9 +8224,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-#ifdef _DEBUG
-	MYTRACE_A( "CEditView::DragOver()\n" );
-#endif
+	DEBUG_TRACE( _T("CEditView::DragOver()\n") );
 
 	/* マウス移動のメッセージ処理 */
 	::ScreenToClient( m_hWnd, (LPPOINT)&pt );
@@ -8283,9 +8252,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 
 STDMETHODIMP CEditView::DragLeave( void )
 {
-#ifdef _DEBUG
-	MYTRACE_A( "CEditView::DragLeave()\n" );
-#endif
+	DEBUG_TRACE( _T("CEditView::DragLeave()\n") );
 	/* 選択テキストのドラッグ中か */
 	m_bDragMode = FALSE;
 
@@ -8308,9 +8275,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 */
 STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-#ifdef _DEBUG
-	MYTRACE_A( "CEditView::Drop()\n" );
-#endif
+	DEBUG_TRACE( _T("CEditView::Drop()\n") );
 	CMemory		cmemBuf;
 	COpe*		pcOpe;
 	BOOL		bBoxData;
@@ -8989,7 +8954,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	 && m_nOldUnderLineY >=m_nViewAlignTop
 	 && m_bDoing_UndoRedo == FALSE	/* アンドゥ・リドゥの実行中か */
 	){
-//		MYTRACE_A( "★カーソル行アンダーラインの描画\n" );
+//		MYTRACE( _T("★カーソル行アンダーラインの描画\n") );
 		/* ★カーソル行アンダーラインの描画 */
 		HDC		hdc;
 		HPEN	hPen, hPenOld;
@@ -9181,7 +9146,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 
 		GetTempPath( MAX_PATH, szPathName );
 		GetTempFileName( szPathName, TEXT("skr_"), 0, szTempFileName );
-		DBPRINT( _T("CEditView::ExecCmd() TempFilename=[%s]\n"), szTempFileName );
+		DEBUG_TRACE( _T("CEditView::ExecCmd() TempFilename=[%s]\n"), szTempFileName );
 		
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 		
@@ -9370,9 +9335,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 							Command_INSTEXT( false, work, read_cnt, TRUE);
 						}
 						bufidx = 0;
-#ifdef _DEBUG
-	//MYTRACE_A( "ExecCmd: No leap character\n");
-#endif
+						//DEBUG_TRACE( _T("ExecCmd: No leap character\n"));
 					} else {
 						char tmp = work[read_cnt-1];
 						//	2006.12.03 maru アウトプットウィンドウor編集中のウィンドウ分岐追加
@@ -9384,9 +9347,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 						}
 						work[0] = tmp;
 						bufidx = 1;
-#ifdef _DEBUG
-	MYTRACE_A( "ExecCmd: Carry last character [%d]\n", tmp );
-#endif
+						DEBUG_TRACE( _T("ExecCmd: Carry last character [%d]\n"), tmp );
 					}
 					// Jan. 23, 2004 genta
 					// 子プロセスの出力をどんどん受け取らないと子プロセスが

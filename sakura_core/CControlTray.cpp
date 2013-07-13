@@ -126,6 +126,7 @@ static LRESULT CALLBACK CControlTrayWndProc(
 		return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );
 	default:
 		// Modified by KEITA for WIN64 2003.9.6
+		//RELPRINT( _T("dispatch\n") );
 		pSApp = ( CControlTray* )::GetWindowLongPtr( hwnd, GWLP_USERDATA );
 		if( NULL != pSApp ){
 			return pSApp->DispatchEvent( hwnd, uMsg, wParam, lParam );

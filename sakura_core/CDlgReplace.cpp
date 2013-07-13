@@ -401,13 +401,13 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		MyWinHelp( m_hWnd, HELP_CONTEXT, ::FuncID_To_HelpContextID(F_REPLACE_DIALOG) );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 		return TRUE;
 //	case IDC_CHK_LOHICASE:	/* 大文字と小文字を区別する */
-//		MYTRACE_A( "IDC_CHK_LOHICASE\n" );
+//		MYTRACE( _T("IDC_CHK_LOHICASE\n") );
 //		return TRUE;
 //	case IDC_CHK_WORDONLY:	/* 一致する単語のみ検索 */
-//		MYTRACE_A( "IDC_CHK_WORDONLY\n" );
+//		MYTRACE( _T("IDC_CHK_WORDONLY\n") );
 //		break;
 	case IDC_CHK_REGULAREXP:	/* 正規表現 */
-//		MYTRACE_A( "IDC_CHK_REGULAREXP ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) = %d\n", ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) );
+//		MYTRACE( _T("IDC_CHK_REGULAREXP ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) = %d\n"), ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) );
 		if( ::IsDlgButtonChecked( m_hWnd, IDC_CHK_REGULAREXP ) ){
 			// From Here Jun. 26, 2001 genta
 			//	正規表現ライブラリの差し替えに伴う処理の見直し

@@ -63,7 +63,7 @@ int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 /* ダイアログデータの設定 */
 void CDlgExec::SetData( void )
 {
-//	MYTRACE_A( "CDlgExec::SetData()" );
+//	MYTRACE( _T("CDlgExec::SetData()") );
 	int		i;
 	HWND	hwndCombo;
 
