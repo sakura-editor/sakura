@@ -30,31 +30,27 @@
 #include "CEditDoc.h"		// 2009.08.28 nasukoji
 
 CLayoutMgr::CLayoutMgr()
-: m_cLineComment(), m_cBlockComments(),
-	//	2004.04.03 Moca
-	//	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する
-	m_nMaxLineKetas( 10 ),
-	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
-	m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta
+: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
 {
 	m_pcDocLineMgr = NULL;
-	m_bWordWrap = TRUE;		/* 英文ワードラップをする */
-	m_nTabSpace = 8;		/* TAB文字スペース */
-	m_nStringType = 0;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	m_bKinsokuHead = FALSE;		/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_bKinsokuTail = FALSE;		/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	m_bKinsokuRet  = FALSE;		/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	m_bKinsokuKuto = FALSE;		/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	m_pszKinsokuHead_1 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuHead_2 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuTail_1 = NULL;	/* 行末禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuTail_2 = NULL;	/* 行頭禁則 */	//@@@ 2002.04.08 MIK
-	m_pszKinsokuKuto_1 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-	m_pszKinsokuKuto_2 = NULL;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+	m_sTypeConfig.m_bWordWrap = true;				// 英文ワードラップをする
+	m_sTypeConfig.m_nTabSpace = 8;					// TAB文字スペース
+	m_sTypeConfig.m_nStringType = 0;				// 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""]['']
+	m_sTypeConfig.m_bKinsokuHead = false;			// 行頭禁則				//@@@ 2002.04.08 MIK
+	m_sTypeConfig.m_bKinsokuTail = false;			// 行末禁則				//@@@ 2002.04.08 MIK
+	m_sTypeConfig.m_bKinsokuRet  = false;			// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
+	m_sTypeConfig.m_bKinsokuKuto = false;			// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
+	m_pszKinsokuHead_1 = NULL;						// 行頭禁則				//@@@ 2002.04.08 MIK
+	m_pszKinsokuHead_2 = NULL;						// 行頭禁則				//@@@ 2002.04.08 MIK
+	m_pszKinsokuTail_1 = NULL;						// 行末禁則				//@@@ 2002.04.08 MIK
+	m_pszKinsokuTail_2 = NULL;						// 行頭禁則				//@@@ 2002.04.08 MIK
+	m_pszKinsokuKuto_1 = NULL;						// 句読点ぶらさげ		//@@@ 2002.04.17 MIK
+	m_pszKinsokuKuto_2 = NULL;						// 句読点ぶらさげ		//@@@ 2002.04.17 MIK
+
 	// 2005.11.21 Moca 色分けフラグをメンバで持つ
-	m_bDispComment = false; 
-	m_bDispSString = false;
-	m_bDispWString = false;
+	m_sTypeConfig.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false; 
+	m_sTypeConfig.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp = false;
+	m_sTypeConfig.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp = false;
 
 	m_nTextWidth = 0;			// テキスト最大幅の記憶		// 2009.08.28 nasukoji
 	m_nTextWidthMaxLine = 0;	// 最大幅のレイアウト行		// 2009.08.28 nasukoji
@@ -125,30 +121,20 @@ void CLayoutMgr::_Empty()
 
 
 
-/*
-|| レイアウト情報の変更
+/*! レイアウト情報の変更
+	@param bDoRayout [in] レイアウト情報の再作成
+	@param refType [in] タイプ別設定
 */
 void CLayoutMgr::SetLayoutInfo(
-	bool			bDoRayout,
-	HWND			hwndProgress,
-	STypeConfig&	refType			/* タイプ別設定 */
+	bool				bDoRayout,
+	HWND				hwndProgress,
+	const STypeConfig&	refType
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, "CLayoutMgr::SetLayoutInfo" );
 
-	m_nMaxLineKetas = refType.m_nMaxLineKetas;
-	m_bWordWrap		= refType.m_bWordWrap;		/* 英文ワードラップをする */
-	m_nTabSpace		= refType.m_nTabSpace;
-	m_nStringType	= refType.m_nStringType;		/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-
-	m_cLineComment = refType.m_cLineComment;	/* 行コメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-	m_cBlockComments[0] = refType.m_cBlockComments[0];	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-	m_cBlockComments[1] = refType.m_cBlockComments[1];	/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-
-	// 2005.11.21 Moca 色分けフラグをメンバで持つ
-	m_bDispComment = refType.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp;
-	m_bDispSString = refType.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp;
-	m_bDispWString = refType.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp;
+	//タイプ別設定
+	m_sTypeConfig = refType;
 
 	//	Oct. 1, 2002 genta タイプによって処理関数を変更する
 	//	数が増えてきたらテーブルにすべき
@@ -170,7 +156,7 @@ void CLayoutMgr::SetLayoutInfo(
 		int	length;
 
 		//句読点のぶらさげ
-		m_bKinsokuKuto = refType.m_bKinsokuKuto;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
+		m_sTypeConfig.m_bKinsokuKuto = refType.m_bKinsokuKuto;	/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
 		delete [] m_pszKinsokuKuto_1;
 		m_pszKinsokuKuto_1 = NULL;
 		delete [] m_pszKinsokuKuto_2;
@@ -182,7 +168,7 @@ void CLayoutMgr::SetLayoutInfo(
 		q2 = (unsigned char *)m_pszKinsokuKuto_2;
 		memset( (void *)q1, 0, length );
 		memset( (void *)q2, 0, length );
-		if( m_bKinsokuKuto )	// 2009.08.06 ryoji m_bKinsokuKutoで振り分ける(Fix)
+		if( m_sTypeConfig.m_bKinsokuKuto )	// 2009.08.06 ryoji m_bKinsokuKutoで振り分ける(Fix)
 		{
 			for( p = (unsigned char *)refType.m_szKinsokuKuto; *p; p++ )
 			{
@@ -201,7 +187,7 @@ void CLayoutMgr::SetLayoutInfo(
 		}
 
 		//行頭禁則文字の1,2バイト文字を分けて管理する。
-		m_bKinsokuHead = refType.m_bKinsokuHead;
+		m_sTypeConfig.m_bKinsokuHead = refType.m_bKinsokuHead;
 		delete [] m_pszKinsokuHead_1;
 		delete [] m_pszKinsokuHead_2;
 		length = strlen( refType.m_szKinsokuHead ) + 1;
@@ -241,7 +227,7 @@ void CLayoutMgr::SetLayoutInfo(
 		}
 
 		//行末禁則文字の1,2バイト文字を分けて管理する。
-		m_bKinsokuTail = refType.m_bKinsokuTail;
+		m_sTypeConfig.m_bKinsokuTail = refType.m_bKinsokuTail;
 		delete [] m_pszKinsokuTail_1;
 		delete [] m_pszKinsokuTail_2;
 		length = strlen( refType.m_szKinsokuTail ) + 1;
@@ -266,7 +252,7 @@ void CLayoutMgr::SetLayoutInfo(
 			}
 		}
 
-		m_bKinsokuRet = refType.m_bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
+		m_sTypeConfig.m_bKinsokuRet = refType.m_bKinsokuRet;	/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
 	}	//@@@ 2002.04.08 MIK end
 
 	if( bDoRayout ){
@@ -939,8 +925,6 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	// 1999.11.22
 	m_pLayoutPrevRefer = pLayoutInThisArea->m_pPrev;
 	m_nPrevReferLine = nLineOf_pLayoutInThisArea - 1;
-//	m_pLayoutPrevRefer = NULL;
-//	m_nPrevReferLine = 0;
 
 
 	/* 範囲内先頭に該当するレイアウト情報をサーチ */
@@ -948,8 +932,6 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	while( NULL != pLayoutWork && nLineFrom <= pLayoutWork->m_nLinePhysical){
 		pLayoutWork = pLayoutWork->m_pPrev;
 	}
-//			m_pLayoutPrevRefer = pLayout->m_pPrev;
-//			--m_nPrevReferLine;
 
 
 
@@ -1470,8 +1452,8 @@ bool CLayoutMgr::ChangeLayoutParam(
 	if( nTabSize < 1 || nTabSize > 64 ) { return false; }
 	if( nMaxLineKetas < MINLINEKETAS || nMaxLineKetas > MAXLINEKETAS ){ return false; }
 
-	m_nTabSpace = nTabSize;
-	m_nMaxLineKetas = nMaxLineKetas;
+	m_sTypeConfig.m_nTabSpace = nTabSize;
+	m_sTypeConfig.m_nMaxLineKetas = nMaxLineKetas;
 
 	_DoLayout( hwndProgress );
 
@@ -1488,9 +1470,9 @@ void CLayoutMgr::DUMP()
 	MYTRACE( _T("m_nLines=%d\n"), m_nLines );
 	MYTRACE( _T("m_pLayoutTop=%08lxh\n"), m_pLayoutTop );
 	MYTRACE( _T("m_pLayoutBot=%08lxh\n"), m_pLayoutBot );
-	MYTRACE( _T("m_nMaxLineKetas=%d\n"), m_nMaxLineKetas );
+	MYTRACE( _T("m_nMaxLineKetas=%d\n"), m_sTypeConfig.m_nMaxLineKetas );
 
-	MYTRACE( _T("m_nTabSpace=%d\n"), m_nTabSpace );
+	MYTRACE( _T("m_nTabSpace=%d\n"), m_sTypeConfig.m_nTabSpace );
 	CLayout* pLayout;
 	CLayout* pLayoutNext;
 	pLayout = m_pLayoutTop;

@@ -340,6 +340,11 @@ struct STypeConfig {
 	//	Sep. 10, 2002 genta
 	int					m_bUseDocumentIcon;	/*!< ファイルに関連づけられたアイコンを使う */
 
+	STypeConfig()
+	: m_nMaxLineKetas(10) //	画面折り返し幅がTAB幅以下にならないことを初期値でも保証する	//	2004.04.03 Moca
+	{
+	}
+
 }; /* STypeConfig */
 
 //! マクロ情報

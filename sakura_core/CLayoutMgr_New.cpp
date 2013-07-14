@@ -99,8 +99,8 @@ void CLayoutMgr::_DoLayout(
 	//	折り返し幅 <= TAB幅のとき無限ループするのを避けるため，
 	//	TABが折り返し幅以上の時はTAB=4としてしまう
 	//	折り返し幅の最小値=10なのでこの値は問題ない
-	if( m_nTabSpace >= m_nMaxLineKetas ){
-		m_nTabSpace = 4;
+	if( m_sTypeConfig.m_nTabSpace >= m_sTypeConfig.m_nMaxLineKetas ){
+		m_sTypeConfig.m_nTabSpace = 4;
 	}
 
 //	pLine = m_pcDocLineMgr->GetFirstLinrStr( &nLineLen );
@@ -119,7 +119,7 @@ void CLayoutMgr::_DoLayout(
 		2004.03.28 Moca TAB計算を正しくするためにインデントを幅で調整することはしない
 		nMaxLineSizeは変更しないので，ここでm_nMaxLineKetasを設定する．
 	*/
-	nMaxLineSize = m_nMaxLineKetas;
+	nMaxLineSize = m_sTypeConfig.m_nMaxLineKetas;
 
 	while( NULL != pCDocLine ){
 		pLine = pCDocLine->m_cLine.GetStringPtr( &nLineLen );
@@ -163,7 +163,7 @@ void CLayoutMgr::_DoLayout(
 					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
 					 && nPos == nWordBgn + nWordLen )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{
 							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
@@ -183,7 +183,7 @@ void CLayoutMgr::_DoLayout(
 			{
 			
 				/* ワードラップ処理 */
-				if( m_bWordWrap	/* 英文ワードラップをする */
+				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
 				 && nKinsokuType == KINSOKU_TYPE_NONE )
 				{
 //				if( 0 == nWordLen ){
@@ -236,7 +236,7 @@ void CLayoutMgr::_DoLayout(
 
 				//@@@ 2002.04.07 MIK start
 				/* 句読点のぶらさげ */
-				if( m_bKinsokuKuto
+				if( m_sTypeConfig.m_bKinsokuKuto
 				 && (nMaxLineSize - nPosX < 2)
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
@@ -254,7 +254,7 @@ void CLayoutMgr::_DoLayout(
 				}
 
 				/* 行頭禁則 */
-				if( m_bKinsokuHead
+				if( m_sTypeConfig.m_bKinsokuHead
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -283,7 +283,7 @@ void CLayoutMgr::_DoLayout(
 				}
 
 				/* 行末禁則 */
-				if( m_bKinsokuTail
+				if( m_sTypeConfig.m_bKinsokuTail
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -342,7 +342,7 @@ void CLayoutMgr::_DoLayout(
 				if( nPosX + nCharChars2 > nMaxLineSize ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
 							AddLineBottom( CreateLayout(pCDocLine, nLineNum, nBgn, nPos - nBgn, nCOMMENTMODE_Prev, nIndent, nPosX) );
 							m_nLineTypeBot = nCOMMENTMODE;
@@ -454,7 +454,7 @@ int CLayoutMgr::DoLayout_Range(
 	CLayout*	pLayoutCalculated;	//	インデント幅計算済みのCLayout.
 	
 	//	2004.04.09 genta 関数内では値が変化しないのでループの外に出す
-	int			nMaxLineSize= m_nMaxLineKetas;
+	int			nMaxLineSize = m_sTypeConfig.m_nMaxLineKetas;
 
 	nLineNumWork = 0;
 	*pnExtInsLineNum = 0;
@@ -530,7 +530,7 @@ int CLayoutMgr::DoLayout_Range(
 					if( nKinsokuType == KINSOKU_TYPE_KINSOKU_KUTO
 					 && nPos == nWordBgn + nWordLen )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol ) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{
 							//@@@ 2002.09.23 YAZAKI 最適化
 							if( bNeedChangeCOMMENTMODE ){
@@ -563,7 +563,7 @@ int CLayoutMgr::DoLayout_Range(
 			{
 			
 				/* ワードラップ処理 */
-				if( m_bWordWrap	/* 英文ワードラップをする */
+				if( m_sTypeConfig.m_bWordWrap	/* 英文ワードラップをする */
 				 && nKinsokuType == KINSOKU_TYPE_NONE )
 				{
 					/* 英単語の先頭か */
@@ -623,7 +623,7 @@ int CLayoutMgr::DoLayout_Range(
 
 				//@@@ 2002.04.07 MIK start
 				/* 句読点のぶらさげ */
-				if( m_bKinsokuKuto
+				if( m_sTypeConfig.m_bKinsokuKuto
 				 && (nMaxLineSize - nPosX < 2)
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
 				{
@@ -641,7 +641,7 @@ int CLayoutMgr::DoLayout_Range(
 				}
 
 				/* 行頭禁則 */
-				if( m_bKinsokuHead
+				if( m_sTypeConfig.m_bKinsokuHead
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -683,7 +683,7 @@ int CLayoutMgr::DoLayout_Range(
 				}
 
 				/* 行末禁則 */
-				if( m_bKinsokuTail
+				if( m_sTypeConfig.m_bKinsokuTail
 				 && (nMaxLineSize - nPosX < 4)
 				 && ( nPosX > nIndent )	//	2004.04.09 nPosXの解釈変更のため，行頭チェックも変更
 				 && (nKinsokuType == KINSOKU_TYPE_NONE) )
@@ -767,7 +767,7 @@ int CLayoutMgr::DoLayout_Range(
 				if( nPosX + nCharChars > nMaxLineSize ){
 					if( nKinsokuType != KINSOKU_TYPE_KINSOKU_KUTO )
 					{
-						if( ! (m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
+						if( ! (m_sTypeConfig.m_bKinsokuRet && (nPos == nLineLen - nEol) && nEol) )	//改行文字をぶら下げる		//@@@ 2002.04.14 MIK
 						{	//@@@ 2002.04.14 MIK
 							//@@@ 2002.09.23 YAZAKI 最適化
 							if( bNeedChangeCOMMENTMODE ){
@@ -1103,7 +1103,7 @@ int CLayoutMgr::Match_Quote( char szQuote, int nPos, int nLineLen, const char* p
 		if( 0 == nCharChars ){
 			nCharChars = 1;
 		}
-		if(	m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+		if(	m_sTypeConfig.m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 			if( 1 == nCharChars && pLine[i] == _T('\\') ){
 				++i;
 			}else
@@ -1111,7 +1111,7 @@ int CLayoutMgr::Match_Quote( char szQuote, int nPos, int nLineLen, const char* p
 				return i + 1;
 			}
 		}
-		else if(	m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
+		else if( m_sTypeConfig.m_nStringType == 1 ){	/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 			if( 1 == nCharChars && pLine[i] == szQuote ){
 				if( i + 1 < nLineLen && pLine[i + 1] == szQuote ){
 					++i;
@@ -1132,29 +1132,27 @@ bool CLayoutMgr::CheckColorMODE( EColorIndexType &nCOMMENTMODE, int &nCOMMENTEND
 	switch( nCOMMENTMODE ){
 	case COLORIDX_TEXT: // 2002/03/13 novice
 		// 2005.11.20 Mocaコメントの色分けがON/OFF関係なく行われていたバグを修正
-		if( m_bDispComment && m_cLineComment.Match( nPos, nLineLen, pLine ) ){
+		if( m_sTypeConfig.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && m_sTypeConfig.m_cLineComment.Match( nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_COMMENT;	/* 行コメントである */ // 2002/03/13 novice
 		}else
-		if( m_bDispComment && m_cBlockComments[0].Match_CommentFrom(nPos, nLineLen, pLine ) ){
+		if( m_sTypeConfig.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp && m_sTypeConfig.m_cBlockComments[0].Match_CommentFrom(nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_BLOCK1;	/* ブロックコメント1である */ // 2002/03/13 novice
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComments[0].Match_CommentTo(nPos + m_cBlockComments[0].getBlockFromLen(), nLineLen, pLine );
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
+			nCOMMENTEND = m_sTypeConfig.m_cBlockComments[0].Match_CommentTo(nPos + m_sTypeConfig.m_cBlockComments[0].getBlockFromLen(), nLineLen, pLine );
 		}else
-		if( m_bDispComment &&  m_cBlockComments[1].Match_CommentFrom(nPos, nLineLen, pLine ) ){
+		if( m_sTypeConfig.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&  m_sTypeConfig.m_cBlockComments[1].Match_CommentFrom(nPos, nLineLen, pLine ) ){
 			nCOMMENTMODE = COLORIDX_BLOCK2;	/* ブロックコメント2である */ // 2002/03/13 novice
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComments[1].Match_CommentTo(nPos + m_cBlockComments[1].getBlockFromLen(), nLineLen, pLine );
-//#endif
+			nCOMMENTEND = m_sTypeConfig.m_cBlockComments[1].Match_CommentTo(nPos + m_sTypeConfig.m_cBlockComments[1].getBlockFromLen(), nLineLen, pLine );
 		}else
-		if( m_bDispSString && /* シングルクォーテーション文字列を表示する */
+		if( m_sTypeConfig.m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp && /* シングルクォーテーション文字列を表示する */
 			pLine[nPos] == '\''
 		){
 			nCOMMENTMODE = COLORIDX_SSTRING;	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 			/* シングルクォーテーション文字列の終端があるか */
 			nCOMMENTEND = Match_Quote( '\'', nPos + 1, nLineLen, pLine );
 		}else
-		if( m_bDispWString && /* ダブルクォーテーション文字列を表示する */
+		if( m_sTypeConfig.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp && /* ダブルクォーテーション文字列を表示する */
 			pLine[nPos] == '"'
 		){
 			nCOMMENTMODE = COLORIDX_WSTRING;	/* ダブルクォーテーション文字列である */ // 2002/03/13 novice
@@ -1167,25 +1165,23 @@ bool CLayoutMgr::CheckColorMODE( EColorIndexType &nCOMMENTMODE, int &nCOMMENTEND
 	case COLORIDX_BLOCK1:	/* ブロックコメント1である */ // 2002/03/13 novice
 		if( 0 == nCOMMENTEND ){
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComments[0].Match_CommentTo(nPos, nLineLen, pLine );
+			nCOMMENTEND = m_sTypeConfig.m_cBlockComments[0].Match_CommentTo(nPos, nLineLen, pLine );
 		}else
 		if( nPos == nCOMMENTEND ){
 			nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 			return true;
 		}
 		break;
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 	case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 		if( 0 == nCOMMENTEND ){
 			/* この物理行にブロックコメントの終端があるか */
-			nCOMMENTEND = m_cBlockComments[1].Match_CommentTo(nPos, nLineLen, pLine );
+			nCOMMENTEND = m_sTypeConfig.m_cBlockComments[1].Match_CommentTo(nPos, nLineLen, pLine );
 		}else
 		if( nPos == nCOMMENTEND ){
 			nCOMMENTMODE = COLORIDX_TEXT; // 2002/03/13 novice
 			return true;
 		}
 		break;
-//#endif
 	case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 		if( 0 == nCOMMENTEND ){
 			/* シングルクォーテーション文字列の終端があるか */
@@ -1249,7 +1245,7 @@ int CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 	if( pLayoutPrev->m_nOffset > 0 )
 		return nIpos;
 	
-	CMemoryIterator<CLayout> it( pLayoutPrev, m_nTabSpace );
+	CMemoryIterator<CLayout> it( pLayoutPrev, m_sTypeConfig.m_nTabSpace );
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndexDelta() == 1 && it.getCurrentChar() == TAB ){
@@ -1258,7 +1254,7 @@ int CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 		it.addDelta();
 	}
 	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
-	if ( m_nMaxLineKetas - nIpos < m_nTabSpace + 2 ){
+	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < m_sTypeConfig.m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント
@@ -1289,7 +1285,7 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		return nIpos;
 	
 	//	2002.10.07 YAZAKI インデントの計算
-	CMemoryIterator<CLayout> it( pLayoutPrev, m_nTabSpace );
+	CMemoryIterator<CLayout> it( pLayoutPrev, m_sTypeConfig.m_nTabSpace );
 
 	//	Jul. 20, 2003 genta 自動インデントに準じた動作にする
 	bool bZenSpace = m_pcEditDoc->GetDocumentAttribute().m_bAutoIndent_ZENSPACE != FALSE ? 1 : 0;
@@ -1323,7 +1319,7 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 		it.addDelta();
 	}
 	// 2010.07.06 Moca TAB=8などの場合に折り返すと無限ループする不具合の修正. 6固定を m_nTabSpace + 2に変更
-	if ( m_nMaxLineKetas - nIpos < m_nTabSpace + 2 ){
+	if ( m_sTypeConfig.m_nMaxLineKetas - nIpos < m_sTypeConfig.m_nTabSpace + 2 ){
 		nIpos = pLayoutPrev->GetIndent();	//	あきらめる
 	}
 	return nIpos;	//	インデント

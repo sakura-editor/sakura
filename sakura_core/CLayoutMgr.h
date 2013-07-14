@@ -21,13 +21,12 @@
 	Please contact the copyright holder to use this code for other purpose.
 */
 
-class CLayoutMgr;
-
 #ifndef _CLAYOUTMGR_H_
 #define _CLAYOUTMGR_H_
 
 #include <windows.h>// 2002/2/10 aroka
 #include "global.h"// 2002/2/10 aroka
+#include "CShareData.h"
 #include "CLineComment.h"	//@@@ 2002.09.22 YAZAKI
 #include "CBlockComment.h"	//@@@ 2002.09.22 YAZAKI
 
@@ -76,6 +75,9 @@ struct CalTextWidthArg {
 */
 class CLayoutMgr
 {
+private:
+	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)( CLayout* );
+
 public:
 	/*
 	||  Constructors
@@ -97,16 +99,16 @@ public:
 	int WhereCurrentWord( int , int , int* , int* , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 	//	Sep. 23, 2002 genta
 	//! タブ幅の取得
-	int GetTabSpace() const { return m_nTabSpace; }
+	int GetTabSpace() const { return m_sTypeConfig.m_nTabSpace; }
 	/*! 次のTAB位置までの幅
 		@param pos [in] 現在の位置
 		@return 次のTAB位置までの文字数．1～TAB幅
 	 */
-	int GetActualTabSpace(int pos) const { return m_nTabSpace - pos % m_nTabSpace; }
+	int GetActualTabSpace(int pos) const { return m_sTypeConfig.m_nTabSpace - pos % m_sTypeConfig.m_nTabSpace; }
 
 	//	Aug. 14, 2005 genta
 	// Sep. 07, 2007 kobake 関数名変更 GetMaxLineSize→GetMaxLineKetas
-	int GetMaxLineKetas(void) const { return m_nMaxLineKetas; }
+	int GetMaxLineKetas(void) const { return m_sTypeConfig.m_nMaxLineKetas; }
 
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	bool ChangeLayoutParam( HWND hwndProgress, int nTabSize, int nMaxLineKetas );
@@ -141,7 +143,7 @@ public:
 	void SetLayoutInfo(
 		bool	bDoRayout,
 		HWND	hwndProgress,
-		STypeConfig& refType
+		const STypeConfig& refType
 	);
 	
 	/* 行内文字削除 */
@@ -241,47 +243,33 @@ public:
 	CDocLineMgr*	m_pcDocLineMgr;	/* 行バッファ管理マネージャ */
 
 protected:
-	// 2002.10.07 YAZAKI add m_nLineTypeBot 
+	// 2002.10.07 YAZAKI add m_nLineTypeBot
 	// 2007.09.07 kobake 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	// 2007.10.08 kobake 変数名変更: getIndentOffset→m_getIndentOffset
 
+	CEditDoc*		m_pcEditDoc;
+
 	CLayout*		m_pLayoutTop;
 	CLayout*		m_pLayoutBot;
-	EColorIndexType	m_nLineTypeBot;				/*!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
-	int				m_nLines;					/* 全物理行数 */
-	int				m_nMaxLineKetas;			/* 折り返し文字数 */
-	BOOL			m_bWordWrap;				/* 英文ワードラップをする */
-	BOOL			m_bKinsokuHead;				/* 行頭禁則をする */	//@@@ 2002.04.08 MIK
-	BOOL			m_bKinsokuTail;				/* 行末禁則をする */	//@@@ 2002.04.08 MIK
-	BOOL			m_bKinsokuRet;				/* 改行文字をぶら下げる */	//@@@ 2002.04.13 MIK
-	BOOL			m_bKinsokuKuto;				/* 句読点をぶら下げる */	//@@@ 2002.04.17 MIK
-	char*			m_pszKinsokuHead_1;			/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-	char*			m_pszKinsokuHead_2;			/* 行頭禁則文字 */	//@@@ 2002.04.08 MIK
-	char*			m_pszKinsokuTail_1;			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
-	char*			m_pszKinsokuTail_2;			/* 行末禁則文字 */	//@@@ 2002.04.08 MIK
-	char*			m_pszKinsokuKuto_1;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
-	char*			m_pszKinsokuKuto_2;			/* 句読点ぶらさげ文字 */	//@@@ 2002.04.17 MIK
-	int				m_nTabSpace;				/* TAB文字スペース */
-	bool			m_bDispComment;				/* コメントの色分け */		// 2005.11.21 Moca
-	bool			m_bDispSString;				/* シングルクォーテーションの色分け */		// 2005.11.21 Moca
-	bool			m_bDispWString;				/* ダブルクォーテーションの色分け */		// 2005.11.21 Moca
-	CLineComment	m_cLineComment;				/* 行コメントデリミタ */		//@@@ 2002.09.22 YAZAKI
-	CBlockComment	m_cBlockComments[2];		/* ブロックコメントデリミタ */	//@@@ 2002.09.22 YAZAKI
-	int				m_nStringType;				/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
-	//	Oct. 1, 2002 genta インデント幅計算関数を保持
-	int (CLayoutMgr::*m_getIndentOffset)( CLayout* );
 
+	STypeConfig		m_sTypeConfig;
+	char*			m_pszKinsokuHead_1;			// 行頭禁則文字	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuHead_2;			// 行頭禁則文字	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuTail_1;			// 行末禁則文字	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuTail_2;			// 行末禁則文字	//@@@ 2002.04.08 MIK
+	char*			m_pszKinsokuKuto_1;			// 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
+	char*			m_pszKinsokuKuto_2;			// 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
+	CalcIndentProc	m_getIndentOffset;			//	Oct. 1, 2002 genta インデント幅計算関数を保持
+
+	EColorIndexType	m_nLineTypeBot;				//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
+	int				m_nLines;					// 全物理行数
 
 	int				m_nPrevReferLine;
 	CLayout*		m_pLayoutPrevRefer;
 	
-	// EOFカーソル位置を記憶する(DoLayout/DoLayout_Rangeで無効にする)	// 2006.10.01 Moca 
+	// EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)	//2006.10.01 Moca 
 	int				m_nEOFLine; //!< EOF行数
 	int				m_nEOFColumn; //!< EOF幅位置
-
-	//	Jul. 20, 2003 genta
-	//	タイプ別の設定を取得するためにCEditDocへの参照が必要
-	CEditDoc*		m_pcEditDoc;
 
 	// テキスト最大幅を記憶（折り返し位置算出に使用）	// 2009.08.28 nasukoji
 	int m_nTextWidth;				// テキスト最大幅の記憶
