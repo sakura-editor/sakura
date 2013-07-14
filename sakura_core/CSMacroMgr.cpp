@@ -345,26 +345,29 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] = 
 {
 	//ID					関数名						引数										戻り値の型	m_pszData
-	{F_GETFILENAME,			"GetFilename",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //ファイル名を返す
-	{F_GETSAVEFILENAME,		"GetSaveFilename",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //保存時のファイル名を返す	2006.09.04	ryoji
-	{F_GETSELECTED,			"GetSelectedString",		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //選択部分
-	{F_EXPANDPARAMETER,		"ExpandParameter",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, //特殊文字の展開
-	{F_GETLINESTR,			"GetLineStr",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL}, // 指定論理行の取得 2003.06.01 Moca
-	{F_GETLINECOUNT,		"GetLineCount",				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 全論理行数の取得 2003.06.01 Moca
-	{F_CHGTABWIDTH,			"ChangeTabWidth",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //タブサイズ変更 2004.03.16 zenryaku
-	{F_ISTEXTSELECTED,		"IsTextSelected",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //テキストが選択されているか 2005.7.30 maru
-	{F_GETSELLINEFROM,		"GetSelectLineFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始行の取得 2005.7.30 maru
-	{F_GETSELCOLMFROM,		"GetSelectColmFrom",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択開始桁の取得 2005.7.30 maru
-	{F_GETSELLINETO,		"GetSelectLineTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了行の取得 2005.7.30 maru
-	{F_GETSELCOLMTO,		"GetSelectColmTo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 選択終了桁の取得 2005.7.30 maru
-	{F_ISINSMODE,			"IsInsMode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 挿入／上書きモードの取得 2005.7.30 maru
-	{F_GETCHARCODE,			"GetCharCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 文字コード取得 2005.07.31 maru
-	{F_GETLINECODE,			"GetLineCode",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 改行コード取得 2005.08.05 maru
-	{F_ISPOSSIBLEUNDO,		"IsPossibleUndo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Undo可能か調べる 2005.08.05 maru
-	{F_ISPOSSIBLEREDO,		"IsPossibleRedo",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // Redo可能か調べる 2005.08.05 maru
-	{F_CHGWRAPCOLM,			"ChangeWrapColm",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, //折り返し桁変更 2008.06.19 ryoji
-	{F_ISCURTYPEEXT,		"IsCurTypeExt",				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
-	{F_ISSAMETYPEEXT,		"IsSameTypeExt",			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL}, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_GETFILENAME,			_T("GetFilename"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイル名を返す
+	{F_GETSAVEFILENAME,		_T("GetSaveFilename"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //保存時のファイル名を返す 2006.09.04 ryoji
+	{F_GETSELECTED,			_T("GetSelectedString"),	{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //選択部分
+	{F_EXPANDPARAMETER,		_T("ExpandParameter"),		{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //特殊文字の展開
+	{F_GETLINESTR,			_T("GetLineStr"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, // 指定論理行の取得 2003.06.01 Moca
+	{F_GETLINECOUNT,		_T("GetLineCount"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 全論理行数の取得 2003.06.01 Moca
+	{F_CHGTABWIDTH,			_T("ChangeTabWidth"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //タブサイズ変更 2004.03.16 zenryaku
+	{F_ISTEXTSELECTED,		_T("IsTextSelected"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //テキストが選択されているか 2005.7.30 maru
+	{F_GETSELLINEFROM,		_T("GetSelectLineFrom"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始行の取得 2005.7.30 maru
+	{F_GETSELCOLUMNFROM,	_T("GetSelectColmFrom"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNFROM,	_T("GetSelectColumnFrom"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択開始桁の取得 2005.7.30 maru
+	{F_GETSELLINETO,		_T("GetSelectLineTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了行の取得 2005.7.30 maru
+	{F_GETSELCOLUMNTO,		_T("GetSelectColmTo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了桁の取得 2005.7.30 maru
+	{F_GETSELCOLUMNTO,		_T("GetSelectColumnTo"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 選択終了桁の取得 2005.7.30 maru
+	{F_ISINSMODE,			_T("IsInsMode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 挿入／上書きモードの取得 2005.7.30 maru
+	{F_GETCHARCODE,			_T("GetCharCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 文字コード取得 2005.07.31 maru
+	{F_GETLINECODE,			_T("GetLineCode"),			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 改行コード取得 2005.08.05 maru
+	{F_ISPOSSIBLEUNDO,		_T("IsPossibleUndo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Undo可能か調べる 2005.08.05 maru
+	{F_ISPOSSIBLEREDO,		_T("IsPossibleRedo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // Redo可能か調べる 2005.08.05 maru
+	{F_CHGWRAPCOLUMN,		_T("ChangeWrapColm"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
+	{F_CHGWRAPCOLUMN,		_T("ChangeWrapColumn"),		{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //折り返し桁変更 2008.06.19 ryoji
+	{F_ISCURTYPEEXT,		_T("IsCurTypeExt"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
+	{F_ISSAMETYPEEXT,		_T("IsSameTypeExt"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 	{F_INPUTBOX,			_T("InputBox"),				{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_BSTR,	NULL }, //テキスト入力ダイアログの表示
 	{F_MESSAGEBOX,			_T("MessageBox"),			{VT_BSTR,  VT_I4,    VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックスの表示
 	{F_ERRORMSG,			_T("ErrorMsg"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（エラー）の表示
@@ -373,7 +376,7 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoArr[] =
 	{F_OKCANCELBOX,			_T("OkCancelBox"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（確認：OK／キャンセル）の表示
 	{F_YESNOBOX,			_T("YesNoBox"),				{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //メッセージボックス（確認：はい／いいえ）の表示
 	{F_COMPAREVERSION,		_T("CompareVersion"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //バージョン番号の比較
-	{F_MACROSLEEP,			_T("Sleep"),					{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //指定した時間（ミリ秒）停止
+	{F_MACROSLEEP,			_T("Sleep"),				{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		NULL }, //指定した時間（ミリ秒）停止
 	{F_FILEOPENDIALOG,		_T("FileOpenDialog"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイルを開くダイアログの表示
 	{F_FILESAVEDIALOG,		_T("FileSaveDialog"),		{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //ファイルを保存ダイアログの表示
 	{F_FOLDERDIALOG,		_T("FolderDialog"),			{VT_BSTR,  VT_BSTR,  VT_EMPTY, VT_EMPTY},	VT_BSTR,	NULL }, //フォルダを開くダイアログの表示
@@ -784,7 +787,7 @@ int CSMacroMgr::GetFuncInfoByName(
 	// 非コマンド関数を検索
 	for( i = 0; m_MacroFuncInfoArr[i].m_pszFuncName != NULL; ++i ){
 		if( m_MacroFuncInfoArr[i].m_nFuncID != F_CHGTABWIDTH &&
-			m_MacroFuncInfoArr[i].m_nFuncID != F_CHGWRAPCOLM ){
+			m_MacroFuncInfoArr[i].m_nFuncID != F_CHGWRAPCOLUMN ){
 			// キーマクロではChangeTabWidthとChangeWrapColm以外は許可しない
 			continue;
 		}
@@ -925,10 +928,10 @@ BOOL CSMacroMgr::CanFuncIsKeyMacro( int nFuncID )
 	case F_WORDRIGHT_BOX			://(矩形選択)単語の右端に移動
 	case F_GOLINETOP_BOX			://(矩形選択)行頭に移動(折り返し単位)
 	case F_GOLINEEND_BOX			://(矩形選択)行末に移動(折り返し単位)
-	case F_HalfPageUp_Box			://(矩形選択)半ページアップ
-	case F_HalfPageDown_Box			://(矩形選択)半ページダウン
-	case F_1PageUp_Box				://(矩形選択)１ページアップ
-	case F_1PageDown_Box			://(矩形選択)１ページダウン
+	case F_HalfPageUp_BOX			://(矩形選択)半ページアップ
+	case F_HalfPageDown_BOX			://(矩形選択)半ページダウン
+	case F_1PageUp_BOX				://(矩形選択)１ページアップ
+	case F_1PageDown_BOX			://(矩形選択)１ページダウン
 	case F_GOFILETOP_BOX			://(矩形選択)ファイルの先頭に移動
 	case F_GOFILEEND_BOX			://(矩形選択)ファイルの最後に移動
 */

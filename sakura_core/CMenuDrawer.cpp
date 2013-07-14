@@ -283,10 +283,10 @@ CMenuDrawer::CMenuDrawer()
 /* 139 */		F_DISABLE/*F_WORDRIGHT_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)単語の右端に移動
 /* 140 */		F_DISABLE/*F_GOLINETOP_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)行頭に移動(折り返し単位)
 /* 141 */		F_DISABLE/*F_GOLINEEND_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)行末に移動(折り返し単位)
-/* 142 */		F_DISABLE/*F_HalfPageUp_Box*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)半ページアップ
-/* 143 */		F_DISABLE/*F_HalfPageDown_Box*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)半ページダウン
-/* 144 */		F_DISABLE/*F_1PageUp_Box*/				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)１ページアップ
-/* 145 */		F_DISABLE/*F_1PageDown_Box*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)１ページダウン
+/* 142 */		F_DISABLE/*F_HalfPageUp_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)半ページアップ
+/* 143 */		F_DISABLE/*F_HalfPageDown_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)半ページダウン
+/* 144 */		F_DISABLE/*F_1PageUp_BOX*/				/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)１ページアップ
+/* 145 */		F_DISABLE/*F_1PageDown_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)１ページダウン
 /* 146 */		F_DISABLE/*F_DISABLE/*F_DISPLAYTOP_BOX*//* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)画面の先頭に移動(未実装)
 /* 147 */		F_DISABLE/*F_DISPLAYEND_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)画面の最後に移動(未実装)
 /* 148 */		F_DISABLE/*F_GOFILETOP_BOX*/			/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//(矩形選択)ファイルの先頭に移動

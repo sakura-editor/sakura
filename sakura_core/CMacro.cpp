@@ -834,7 +834,7 @@ void CMacro::HandleCommand(
 		pcEditView->m_pcEditDoc->HandleCommand( Index );	// 2009.04.11 ryoji F_NEXTWINDOW/F_PREVWINDOWが動作しなかったのを修正
 		break;
 	case F_CHGTABWIDTH:		//  タブサイズを取得、設定する（キーマクロでは取得は無意味）
-	case F_CHGWRAPCOLM:		//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
+	case F_CHGWRAPCOLUMN:	//  折り返し桁を取得、設定する（キーマクロでは取得は無意味）
 		{
 			VARIANT vArg[1];			// HandleFunctionに渡す引数
 			VARIANT vResult;			// HandleFunctionから返る値
@@ -1009,7 +1009,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			Wrap( &Result )->Receive( View->m_nSelectLineFrom + 1 );
 		}
 		return true;
-	case F_GETSELCOLMFROM:
+	case F_GETSELCOLUMNFROM:
 		//	2005.07.30 maru マクロ追加
 		{
 			Wrap( &Result )->Receive( View->m_nSelectColmFrom + 1 );
@@ -1021,7 +1021,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			Wrap( &Result )->Receive( View->m_nSelectLineTo + 1 );
 		}
 		return true;
-	case F_GETSELCOLMTO:
+	case F_GETSELCOLUMNTO:
 		//	2005.07.30 maru マクロ追加
 		{
 			Wrap( &Result )->Receive( View->m_nSelectColmTo + 1);
@@ -1067,7 +1067,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 			Wrap( &Result )->Receive( View->m_pcEditDoc->IsEnableRedo() );
 		}
 		return true;
-	case F_CHGWRAPCOLM:
+	case F_CHGWRAPCOLUMN:
 		//	2008.06.19 ryoji マクロ追加
 		{
 			if( ArgSize != 1 ) return false;

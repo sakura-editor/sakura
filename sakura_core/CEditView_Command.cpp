@@ -398,12 +398,12 @@ BOOL CEditView::HandleCommand(
 //	case F_WORDRIGHT_BOX:	Command_WORDRIGHT( true );break;			//(矩形選択)単語の右端に移動
 //	case F_GOLINETOP_BOX:	Command_GOLINETOP( true, 0 );break;			//(矩形選択)行頭に移動(折り返し単位)
 //	case F_GOLINEEND_BOX:	Command_GOLINEEND( true, 0 );break;			//(矩形選択)行末に移動(折り返し単位)
-//	case F_HalfPageUp_Box:	Command_HalfPageUp( true ); break;			//(矩形選択)半ページアップ
-//	case F_HalfPageDown_Box:Command_HalfPageDown( true ); break;		//(矩形選択)半ページダウン
-//	case F_1PageUp_Box:		Command_1PageUp( true ); break;				//(矩形選択)１ページアップ
-//	case F_1PageDown_Box:	Command_1PageDown( true ); break;			//(矩形選択)１ページダウン
-//	case F_GOFILETOP_Box:	Command_GOFILETOP( true );break;			//(矩形選択)ファイルの先頭に移動
-//	case F_GOFILEEND_Box:	Command_GOFILEEND( true );break;			//(矩形選択)ファイルの最後に移動
+//	case F_HalfPageUp_BOX:	Command_HalfPageUp( true ); break;			//(矩形選択)半ページアップ
+//	case F_HalfPageDown_BOX:Command_HalfPageDown( true ); break;		//(矩形選択)半ページダウン
+//	case F_1PageUp_BOX:		Command_1PageUp( true ); break;				//(矩形選択)１ページアップ
+//	case F_1PageDown_BOX:	Command_1PageDown( true ); break;			//(矩形選択)１ページダウン
+//	case F_GOFILETOP_BOX:	Command_GOFILETOP( true );break;			//(矩形選択)ファイルの先頭に移動
+//	case F_GOFILEEND_BOX:	Command_GOFILEEND( true );break;			//(矩形選択)ファイルの最後に移動
 
 	/* クリップボード系 */
 	case F_CUT:						Command_CUT();break;					//切り取り(選択範囲をクリップボードにコピーして削除)

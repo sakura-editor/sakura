@@ -213,10 +213,10 @@ enum FunctionAttribute {
 ////#define F_GOLINEEND_BOX		30531	//(矩形選択)行末に移動(改行単位)
 //#define F_GOLINETOP_BOX		30532	//(矩形選択)行頭に移動(折り返し単位)
 //#define F_GOLINEEND_BOX		30533	//(矩形選択)行末に移動(折り返し単位)
-//#define F_HalfPageUp_Box	30540	//(矩形選択)半ページアップ
-//#define F_HalfPageDown_Box	30541	//(矩形選択)半ページダウン
-//#define F_1PageUp_Box		30542	//(矩形選択)１ページアップ
-//#define F_1PageDown_Box		30543	//(矩形選択)１ページダウン
+//#define F_HalfPageUp_BOX	30540	//(矩形選択)半ページアップ
+//#define F_HalfPageDown_BOX	30541	//(矩形選択)半ページダウン
+//#define F_1PageUp_BOX		30542	//(矩形選択)１ページアップ
+//#define F_1PageDown_BOX		30543	//(矩形選択)１ページダウン
 ////#define F_DISPLAYTOP_BOX	30444	//(矩形選択)画面の先頭に移動(未実装)
 ////#define F_DISPLAYEND_BOX	30445	//(矩形選択)画面の最後に移動(未実装)
 //#define F_GOFILETOP_BOX		30550	//(矩形選択)ファイルの先頭に移動
@@ -484,15 +484,15 @@ enum FunctionAttribute {
 #define F_CHGTABWIDTH     40006 // タブサイズを取得、設定する 2004.03.16 zenryaku
 #define F_ISTEXTSELECTED  40007 // テキストが選択されているか 2005.7.30 maru
 #define F_GETSELLINEFROM  40008 // 選択開始行の取得 2005.7.30 maru
-#define F_GETSELCOLMFROM  40009 // 選択開始桁の取得 2005.7.30 maru
+#define F_GETSELCOLUMNFROM 40009 // 選択開始桁の取得 2005.7.30 maru
 #define F_GETSELLINETO    40010 // 選択終了行の取得 2005.7.30 maru
-#define F_GETSELCOLMTO    40011 // 選択終了桁の取得 2005.7.30 maru
+#define F_GETSELCOLUMNTO  40011 // 選択終了桁の取得 2005.7.30 maru
 #define F_ISINSMODE       40012 // 挿入／上書きモードの取得 2005.7.30 maru
 #define F_GETCHARCODE     40013 // 文字コード取得 2005.07.31 maru
 #define F_GETLINECODE     40014 // 改行コード取得 2005.08.05 maru
 #define F_ISPOSSIBLEUNDO  40015 // Undo可能か調べる 2005.08.05 maru
 #define F_ISPOSSIBLEREDO  40016 // Redo可能か調べる 2005.08.05 maru
-#define F_CHGWRAPCOLM     40017 // 折り返し桁を取得、設定する 2008.06.19 ryoji
+#define F_CHGWRAPCOLUMN   40017 // 折り返し桁を取得、設定する 2008.06.19 ryoji
 #define F_ISCURTYPEEXT    40019 // 指定した拡張子が現在のタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 #define F_ISSAMETYPEEXT   40020 // ２つの拡張子が同じタイプ別設定に含まれているかどうかを調べる 2006.09.04 ryoji
 

@@ -212,10 +212,10 @@ const int pnFuncList_Box[] = {
 	F_WORDRIGHT_BOX		,	//(矩形選択)単語の右端に移動
 	F_GOLINETOP_BOX		,	//(矩形選択)行頭に移動(折り返し単位)
 	F_GOLINEEND_BOX		,	//(矩形選択)行末に移動(折り返し単位)
-	F_HalfPageUp_Box	,	//(矩形選択)半ページアップ
-	F_HalfPageDown_Box	,	//(矩形選択)半ページダウン
-	F_1PageUp_Box		,	//(矩形選択)１ページアップ
-	F_1PageDown_Box		,	//(矩形選択)１ページダウン
+	F_HalfPageUp_BOX	,	//(矩形選択)半ページアップ
+	F_HalfPageDown_BOX	,	//(矩形選択)半ページダウン
+	F_1PageUp_BOX		,	//(矩形選択)１ページアップ
+	F_1PageDown_BOX		,	//(矩形選択)１ページダウン
 	F_GOFILETOP_BOX		,	//(矩形選択)ファイルの先頭に移動
 	F_GOFILEEND_BOX			//(矩形選択)ファイルの最後に移動
 */
@@ -662,10 +662,10 @@ int FuncID_To_HelpContextID( int nFuncID )
 	case F_WORDRIGHT_BOX:	return ;	//(矩形選択)単語の右端に移動
 	case F_GOLINETOP_BOX:	return ;	//(矩形選択)行頭に移動(折り返し単位)
 	case F_GOLINEEND_BOX:	return ;	//(矩形選択)行末に移動(折り返し単位)
-	case F_HalfPageUp_Box:	return ;	//(矩形選択)半ページアップ
-	case F_HalfPageDown_Box:return ;	//(矩形選択)半ページダウン
-	case F_1PageUp_Box:		return ;	//(矩形選択)１ページアップ
-	case F_1PageDown_Box:	return ;	//(矩形選択)１ページダウン
+	case F_HalfPageUp_BOX:	return ;	//(矩形選択)半ページアップ
+	case F_HalfPageDown_BOX:return ;	//(矩形選択)半ページダウン
+	case F_1PageUp_BOX:		return ;	//(矩形選択)１ページアップ
+	case F_1PageDown_BOX:	return ;	//(矩形選択)１ページダウン
 	case F_GOFILETOP_BOX:	return ;	//(矩形選択)ファイルの先頭に移動
 	case F_GOFILEEND_BOX:	return ;	//(矩形選択)ファイルの最後に移動
 */
