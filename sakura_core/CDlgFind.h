@@ -46,8 +46,7 @@ public:
 	int		m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	char	m_szText[_MAX_PATH + 1];	// 検索文字列
 
-	int		m_nEscCaretPosX_PHY;	// 検索開始時のカーソル位置退避エリア 02/07/28 ai/
-	int		m_nEscCaretPosY_PHY;	// 検索開始時のカーソル位置退避エリア 02/07/28 ai/
+	CLogicPoint	m_ptEscCaretPos_PHY;	// 検索開始時のカーソル位置退避エリア
 
 protected:
 //@@@ 2002.2.2 YAZAKI CShareDataに移動

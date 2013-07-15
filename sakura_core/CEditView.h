@@ -333,17 +333,12 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_nCaretPosX_Prev;
 	int		m_nCaretPosX;		/* ビュー左端からのカーソル桁位置（０開始）*/
 	int		m_nCaretPosY;		/* ビュー上端からのカーソル行位置（０開始）*/
-	int		m_nCaretPosX_PHY;	/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
-	int		m_nCaretPosY_PHY;	/* カーソル位置  改行単位行の行番号（０開始）*/
-
-	int		m_nSrchStartPosX_PHY;	/* 検索/置換開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
-	int		m_nSrchStartPosY_PHY;	/* 検索/置換開始時のカーソル位置  改行単位行の行番号(0開始) */				// 02/06/26 ai
+	CLogicPoint	m_ptCaretPos_PHY;		/* カーソル位置 */
+	CLogicPoint	m_ptSrchStartPos_PHY;	/* 検索/置換開始時のカーソル位置 */
 	BOOL	m_bSearch;				/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
 	int		m_nCharSize;			/* 対括弧の文字サイズ */	// 02/09/18 ai 
-	int		m_nBracketCaretPosX_PHY;/* 前カーソル位置の括弧の位置 改行単位行先頭からのバイト数(0開始) */	// 03/02/18 ai
-	int		m_nBracketCaretPosY_PHY;/* 前カーソル位置の括弧の位置 改行単位行の行番号(0開始) */				// 03/02/18 ai
-	int		m_nBracketPairPosX_PHY;	/* 対括弧の位置 改行単位行先頭からのバイト数(0開始) */	// 02/12/13 ai
-	int		m_nBracketPairPosY_PHY;	/* 対括弧の位置 改行単位行の行番号(0開始) */			// 02/12/13 ai
+	CLogicPoint	m_ptBracketCaretPos_PHY;/* 前カーソル位置の括弧の位置 */
+	CLogicPoint	m_ptBracketPairPos_PHY;	/* 対括弧の位置 */
 	BOOL	m_bDrawBracketPairFlag;	/* 対括弧の強調表示を行なうか */						// 03/02/18 ai
 	bool	m_bDrawSelectArea;		/* 選択範囲を描画したか */	// 02/12/13 ai
 

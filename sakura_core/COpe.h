@@ -43,19 +43,13 @@ public:
 
 	EOpeCode	m_nOpe;						//!< 操作種別
 
-	int		m_nCaretPosX_PHY_Before;	//!< カーソル位置 改行単位行先頭からのバイト数（０開始）
-	int		m_nCaretPosY_PHY_Before;	//!< カーソル位置 改行単位行の行番号（０開始）
-	int		m_nCaretPosX_PHY_To;		//!< 操作前のキャレット位置Ｘ To 改行単位行先頭からのバイト数（０開始）
-	int		m_nCaretPosY_PHY_To;		//!< 操作前のキャレット位置Ｙ To 改行単位行の行番号（０開始）*/
-	int		m_nCaretPosX_PHY_After;		//!< カーソル位置 改行単位行先頭からのバイト数（０開始）
-	int		m_nCaretPosY_PHY_After;		//!< カーソル位置 改行単位行の行番号（０開始）
+	CLogicPoint	m_ptCaretPos_PHY_Before;	//!< カーソル位置
+	CLogicPoint	m_ptCaretPos_PHY_To;		//!< 操作前のキャレット位置
+	CLogicPoint	m_ptCaretPos_PHY_After;		//!< カーソル位置
 
-
-	int		m_nDataLen;				//!< 操作に関連するデータのサイズ
+	int			m_nDataLen;			//!< 操作に関連するデータのサイズ
 	CMemory*	m_pcmemData;		//!< 操作に関連するデータ
 
-	public:
-	private:
 };
 
 

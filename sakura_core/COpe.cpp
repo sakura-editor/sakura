@@ -22,12 +22,12 @@ COpe::COpe()
 {
 	m_nOpe = OPE_UNKNOWN;					// 操作種別
 
-	m_nCaretPosX_PHY_To = 0;		// 操作前のキャレット位置Ｘ To 改行単位行の行番号（０開始）
-	m_nCaretPosY_PHY_To = 0;		// 操作前のキャレット位置Ｙ To 改行単位行先頭からのバイト数（０開始）
-	m_nCaretPosX_PHY_Before = -1;	// カーソル位置 改行単位行先頭からのバイト数（０開始）
-	m_nCaretPosY_PHY_Before = -1;	// カーソル位置 改行単位行の行番号（０開始）
-	m_nCaretPosX_PHY_After = -1;	// カーソル位置 改行単位行先頭からのバイト数（０開始）
-	m_nCaretPosY_PHY_After = -1;	// カーソル位置 改行単位行の行番号（０開始）
+	m_ptCaretPos_PHY_To.x = 0;		// 操作前のキャレット位置Ｘ To 改行単位行の行番号（０開始）
+	m_ptCaretPos_PHY_To.y = 0;		// 操作前のキャレット位置Ｙ To 改行単位行先頭からのバイト数（０開始）
+	m_ptCaretPos_PHY_Before.x = -1;	// カーソル位置 改行単位行先頭からのバイト数（０開始）
+	m_ptCaretPos_PHY_Before.y = -1;	// カーソル位置 改行単位行の行番号（０開始）
+	m_ptCaretPos_PHY_After.x = -1;	// カーソル位置 改行単位行先頭からのバイト数（０開始）
+	m_ptCaretPos_PHY_After.y = -1;	// カーソル位置 改行単位行の行番号（０開始）
 	m_nDataLen = 0;					// 操作に関連するデータのサイズ 
 	m_pcmemData = NULL;				// 操作に関連するデータ 
 }
@@ -49,10 +49,10 @@ COpe::~COpe()
 void COpe::DUMP( void )
 {
 	DEBUG_TRACE( _T("\t\tm_nOpe                  = [%d]\n"), m_nOpe               );
-	DEBUG_TRACE( _T("\t\tm_nCaretPosX_PHY_Before = [%d]\n"), m_nCaretPosX_PHY_Before   );
-	DEBUG_TRACE( _T("\t\tm_nCaretPosY_PHY_Before = [%d]\n"), m_nCaretPosY_PHY_Before   );
-	DEBUG_TRACE( _T("\t\tm_nCaretPosX_PHY_After; = [%d]\n"), m_nCaretPosX_PHY_After   );
-	DEBUG_TRACE( _T("\t\tm_nCaretPosY_PHY_After; = [%d]\n"), m_nCaretPosY_PHY_After   );
+	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_Before.x = [%d]\n"), m_ptCaretPos_PHY_Before.x   );
+	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_Before.y = [%d]\n"), m_ptCaretPos_PHY_Before.y   );
+	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_After.x; = [%d]\n"), m_ptCaretPos_PHY_After.x   );
+	DEBUG_TRACE( _T("\t\tm_ptCaretPos_PHY_After.y; = [%d]\n"), m_ptCaretPos_PHY_After.y   );
 	DEBUG_TRACE( _T("\t\tm_nDataLen              = [%d]\n"), m_nDataLen           );
 	if( NULL == m_pcmemData ){
 		DEBUG_TRACE( _T("\t\tm_pcmemData         = [NULL]\n") );

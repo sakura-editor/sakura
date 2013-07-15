@@ -238,8 +238,8 @@ int CEditView::HokanSearchByFile(
 	const char* pszLine;
 	const char* word;
 
-	int nCurX = m_nCaretPosX_PHY;	//物理カーソル位置
-	int nCurY = m_nCaretPosY_PHY;	//物理カーソル位置
+	int nCurX = m_ptCaretPos_PHY.x;	//物理カーソル位置
+	int nCurY = m_ptCaretPos_PHY.y;	//物理カーソル位置
 	bool bKeyStartWithMark;			//キーが記号で始まるか
 	bool bWordStartWithMark;		//候補が記号で始まるか
 

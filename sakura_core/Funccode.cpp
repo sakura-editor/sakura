@@ -982,8 +982,8 @@ bool IsFuncEnable( CEditDoc* pcEditDoc, DLLSHAREDATA* pShareData, int nId )
 
 	// 02/06/26 ai Start
 	case F_JUMP_SRCHSTARTPOS:	// åüçıäJénà íuÇ÷ñﬂÇÈ
-		if( 0 <= pcEditDoc->m_pcEditViewArr[pcEditDoc->m_nActivePaneIndex]->m_nSrchStartPosX_PHY &&
-			0 <= pcEditDoc->m_pcEditViewArr[pcEditDoc->m_nActivePaneIndex]->m_nSrchStartPosY_PHY) {
+		if( 0 <= pcEditDoc->m_pcEditViewArr[pcEditDoc->m_nActivePaneIndex]->m_ptSrchStartPos_PHY.x &&
+			0 <= pcEditDoc->m_pcEditViewArr[pcEditDoc->m_nActivePaneIndex]->m_ptSrchStartPos_PHY.y) {
 			return true;
 		}else{
 			return false;

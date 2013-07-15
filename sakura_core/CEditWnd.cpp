@@ -4090,8 +4090,8 @@ void CEditWnd::ProcSearchBox( MSG *msg )
 				::SetFocus( m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_hWnd );
 
 				// 検索開始時のカーソル位置登録条件を変更 02/07/28 ai start
-				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nSrchStartPosX_PHY = m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosX_PHY;
-				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nSrchStartPosY_PHY = m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosY_PHY;
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_ptSrchStartPos_PHY.x = m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_ptCaretPos_PHY.x;
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_ptSrchStartPos_PHY.y = m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_ptCaretPos_PHY.y;
 				// 02/07/28 ai end
 
 				//次を検索

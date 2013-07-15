@@ -184,16 +184,16 @@ BOOL CEditView::Create(
 	m_nCaretPosX_Prev = 0;		/* ビュー左端からのカーソル桁直前の位置(０オリジン) */
 	m_nCaretPosY = 0;			/* ビュー上端からのカーソル行位置(０オリジン) */
 
-	m_nCaretPosX_PHY = 0;		/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
-	m_nCaretPosY_PHY = 0;		/* カーソル位置 改行単位行の行番号(０開始) */
+	m_ptCaretPos_PHY.x = 0;		/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
+	m_ptCaretPos_PHY.y = 0;		/* カーソル位置 改行単位行の行番号(０開始) */
 
-	m_nSrchStartPosX_PHY = -1;	/* 検索/置換開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
-	m_nSrchStartPosY_PHY = -1;	/* 検索/置換開始時のカーソル位置  改行単位行の行番号(0開始) */				// 02/06/26 ai
+	m_ptSrchStartPos_PHY.x = -1;	/* 検索/置換開始時のカーソル位置  改行単位行先頭からのバイト数(0開始) */	// 02/06/26 ai
+	m_ptSrchStartPos_PHY.y = -1;	/* 検索/置換開始時のカーソル位置  改行単位行の行番号(0開始) */				// 02/06/26 ai
 	m_bSearch = FALSE;			/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
-	m_nBracketPairPosX_PHY = -1;/* 対括弧の位置 改行単位行先頭からのバイト数(0開始) */	// 02/12/13 ai
-	m_nBracketPairPosY_PHY = -1;/* 対括弧の位置 改行単位行の行番号(0開始) */			// 02/12/13 ai
-	m_nBracketCaretPosX_PHY = -1;	/* 03/02/18 ai */
-	m_nBracketCaretPosY_PHY = -1;	/* 03/02/18 ai */
+	m_ptBracketPairPos_PHY.x = -1;/* 対括弧の位置 改行単位行先頭からのバイト数(0開始) */	// 02/12/13 ai
+	m_ptBracketPairPos_PHY.y = -1;/* 対括弧の位置 改行単位行の行番号(0開始) */			// 02/12/13 ai
+	m_ptBracketCaretPos_PHY.x = -1;	/* 03/02/18 ai */
+	m_ptBracketCaretPos_PHY.y = -1;	/* 03/02/18 ai */
 	m_bDrawBracketPairFlag = FALSE;	/* 03/02/18 ai */
 	m_bDrawSelectArea = false;	/* 選択範囲を描画したか */	// 02/12/13 ai
 
@@ -2577,8 +2577,8 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 		m_nCaretPosX,
 		m_nCaretPosY,
-		&m_nCaretPosX_PHY,	/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
-		&m_nCaretPosY_PHY	/* カーソル位置 改行単位行の行番号(０開始) */
+		&m_ptCaretPos_PHY.x,	/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
+		&m_ptCaretPos_PHY.y	/* カーソル位置 改行単位行の行番号(０開始) */
 	);
 	// 横スクロールが発生したら、ルーラー全体を再描画 2002.02.25 Add By KK
 	if (nScrollColNum != 0 ){
@@ -3063,7 +3063,7 @@ normal_action:;
 				return;
 
 			// 2007.10.13 nasukoji	選択するものが無い（[EOF]のみの行）時は通常クリックと同じ処理
-			if(( ! IsTextSelected() )&&( m_nCaretPosY_PHY >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() )){
+			if(( ! IsTextSelected() )&&( m_ptCaretPos_PHY.y >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() )){
 				BeginSelectArea();				// 現在のカーソル位置から選択を開始する
 				m_bBeginLineSelect = FALSE;		// 行単位選択中 OFF
 			}
@@ -4070,7 +4070,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					int nCaretPosY;
 
 					int nCaretPrevPosX_PHY;
-					int nCaretPrevPosY_PHY = m_nCaretPosY_PHY;
+					int nCaretPrevPosY_PHY = m_ptCaretPos_PHY.y;
 
 					// 選択開始行より下にカーソルがある時は1行前と物理行番号の違いをチェックする
 					// 選択開始行にカーソルがある時はチェック不要
@@ -4082,10 +4082,10 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					}
 
 					// 前の行と同じ物理行
-					if( nCaretPrevPosY_PHY == m_nCaretPosY_PHY ){
+					if( nCaretPrevPosY_PHY == m_ptCaretPos_PHY.y ){
 						// 1行先の物理行からレイアウト行を求める
 						m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-							0, m_nCaretPosY_PHY + 1, &nCaretPosX, &nCaretPosY
+							0, m_ptCaretPos_PHY.y + 1, &nCaretPosX, &nCaretPosY
 						);
 
 						// カーソルを次の物理行頭へ移動する
@@ -5508,8 +5508,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 						nPosX,
 						nPosY,
-						&pcOpe->m_nCaretPosX_PHY_Before,
-						&pcOpe->m_nCaretPosY_PHY_Before
+						&pcOpe->m_ptCaretPos_PHY_Before.x,
+						&pcOpe->m_ptCaretPos_PHY_Before.y
 					);
 				}else{
 					pcOpe = NULL;
@@ -5531,8 +5531,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 						nPosX,
 						nPosY,
-						&pcOpe->m_nCaretPosX_PHY_After,
-						&pcOpe->m_nCaretPosY_PHY_After
+						&pcOpe->m_ptCaretPos_PHY_After.x,
+						&pcOpe->m_ptCaretPos_PHY_After.y
 					);
 					/* 操作の追加 */
 					m_pcOpeBlk->AppendOpe( pcOpe );
@@ -5547,8 +5547,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 					m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 						nPosX,
 						nPosY,
-						&pcOpe->m_nCaretPosX_PHY_Before,
-						&pcOpe->m_nCaretPosY_PHY_Before
+						&pcOpe->m_ptCaretPos_PHY_Before.x,
+						&pcOpe->m_ptCaretPos_PHY_Before.y
 					);
 				}
 				/* 現在位置にデータを挿入 */
@@ -5566,8 +5566,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				MoveCursor( nNewPos, nNewLine, false );
 				m_nCaretPosX_Prev = m_nCaretPosX;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
-					pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;	/* 操作後のキャレット位置Ｘ */
-					pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;	/* 操作後のキャレット位置Ｙ */
+					pcOpe->m_ptCaretPos_PHY_After.x = m_ptCaretPos_PHY.x;	/* 操作後のキャレット位置Ｘ */
+					pcOpe->m_ptCaretPos_PHY_After.y = m_ptCaretPos_PHY.y;	/* 操作後のキャレット位置Ｙ */
 					/* 操作の追加 */
 					m_pcOpeBlk->AppendOpe( pcOpe );
 				}
@@ -5580,10 +5580,10 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
-			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;				/* 操作前のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;				/* 操作前のキャレット位置Ｙ */
-			pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
+			pcOpe->m_ptCaretPos_PHY_Before.x = m_ptCaretPos_PHY.x;				/* 操作前のキャレット位置Ｘ */
+			pcOpe->m_ptCaretPos_PHY_Before.y = m_ptCaretPos_PHY.y;				/* 操作前のキャレット位置Ｙ */
+			pcOpe->m_ptCaretPos_PHY_After.x = pcOpe->m_ptCaretPos_PHY_Before.x;	/* 操作後のキャレット位置Ｘ */
+			pcOpe->m_ptCaretPos_PHY_After.y = pcOpe->m_ptCaretPos_PHY_Before.y;	/* 操作後のキャレット位置Ｙ */
 			/* 操作の追加 */
 			m_pcOpeBlk->AppendOpe( pcOpe );
 		}
@@ -5622,10 +5622,10 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;									/* 操作種別 */
-			pcOpe->m_nCaretPosX_PHY_Before = m_nCaretPosX_PHY;				/* 操作前のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_Before = m_nCaretPosY_PHY;				/* 操作前のキャレット位置Ｙ */
-			pcOpe->m_nCaretPosX_PHY_After = pcOpe->m_nCaretPosX_PHY_Before;	/* 操作後のキャレット位置Ｘ */
-			pcOpe->m_nCaretPosY_PHY_After = pcOpe->m_nCaretPosY_PHY_Before;	/* 操作後のキャレット位置Ｙ */
+			pcOpe->m_ptCaretPos_PHY_Before.x = m_ptCaretPos_PHY.x;				/* 操作前のキャレット位置Ｘ */
+			pcOpe->m_ptCaretPos_PHY_Before.y = m_ptCaretPos_PHY.y;				/* 操作前のキャレット位置Ｙ */
+			pcOpe->m_ptCaretPos_PHY_After.x = pcOpe->m_ptCaretPos_PHY_Before.x;	/* 操作後のキャレット位置Ｘ */
+			pcOpe->m_ptCaretPos_PHY_After.y = pcOpe->m_ptCaretPos_PHY_Before.y;	/* 操作後のキャレット位置Ｙ */
 			/* 操作の追加 */
 			m_pcOpeBlk->AppendOpe( pcOpe );
 		}
@@ -5948,7 +5948,7 @@ void CEditView::DrawCaretPosInfo( void )
 	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 		if (pcLayout && pcLayout->m_nOffset){
 			char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nLineLen = m_nCaretPosX_PHY;	//	 - pcLayout->m_nOffset;
+			int nLineLen = m_ptCaretPos_PHY.x;	//	 - pcLayout->m_nOffset;
 			nPosX = 0;
 			int i;
 			//	Oct. 4, 2002 genta
@@ -5971,7 +5971,7 @@ void CEditView::DrawCaretPosInfo( void )
 		else {
 			nPosX = m_nCaretPosX + 1;
 		}
-		nPosY = m_nCaretPosY_PHY + 1;
+		nPosY = m_ptCaretPos_PHY.y + 1;
 	}
 	else {
 		nPosX = m_nCaretPosX + 1;
@@ -6306,8 +6306,8 @@ void CEditView::CopyViewStatus( CEditView* pView )
 	pView->m_nCaretPosX 			= m_nCaretPosX;			/* ビュー左端からのカーソル桁位置（０開始）*/
 	pView->m_nCaretPosX_Prev		= m_nCaretPosX_Prev;	/* ビュー左端からのカーソル桁位置（０オリジン）*/
 	pView->m_nCaretPosY				= m_nCaretPosY;			/* ビュー上端からのカーソル行位置（０開始）*/
-	pView->m_nCaretPosX_PHY			= m_nCaretPosX_PHY;		/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
-	pView->m_nCaretPosY_PHY			= m_nCaretPosY_PHY;		/* カーソル位置  改行単位行の行番号（０開始）*/
+	pView->m_ptCaretPos_PHY.x			= m_ptCaretPos_PHY.x;		/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
+	pView->m_ptCaretPos_PHY.y			= m_ptCaretPos_PHY.y;		/* カーソル位置  改行単位行の行番号（０開始）*/
 //	キャレットの幅・高さはコピーしない。2002/05/12 YAZAKI
 //	pView->m_nCaretWidth			= m_nCaretWidth;		/* キャレットの幅 */
 //	pView->m_nCaretHeight			= m_nCaretHeight;		/* キャレットの高さ */
@@ -8443,8 +8443,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 		// 挿入前のキャレット位置を記憶する
 		// （キャレットが行終端より右の場合は埋め込まれる空白分だけ桁位置をシフト）
-		int nCaretPosX_PHY_Old = m_nCaretPosX_PHY;
-		int nCaretPosY_PHY_Old = m_nCaretPosY_PHY;
+		int nCaretPosX_PHY_Old = m_ptCaretPos_PHY.x;
+		int nCaretPosY_PHY_Old = m_ptCaretPos_PHY.y;
 		const CLayout* pcLayout;
 		int nLineLen;
 		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ){
@@ -8559,10 +8559,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			// 削除位置から移動先へのカーソル移動をアンドゥ操作に追加する	// 2008.03.26 ryoji
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;
-			pcOpe->m_nCaretPosX_PHY_Before = nSelectColmFrom_PHY_Old;
-			pcOpe->m_nCaretPosY_PHY_Before = nSelectLineFrom_PHY_Old;
-			pcOpe->m_nCaretPosX_PHY_After = m_nCaretPosX_PHY;
-			pcOpe->m_nCaretPosY_PHY_After = m_nCaretPosY_PHY;
+			pcOpe->m_ptCaretPos_PHY_Before.x = nSelectColmFrom_PHY_Old;
+			pcOpe->m_ptCaretPos_PHY_Before.y = nSelectLineFrom_PHY_Old;
+			pcOpe->m_ptCaretPos_PHY_After.x = m_ptCaretPos_PHY.x;
+			pcOpe->m_ptCaretPos_PHY_After.y = m_ptCaretPos_PHY.y;
 			m_pcOpeBlk->AppendOpe( pcOpe );
 		}
 	}
@@ -8687,8 +8687,8 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 
 		// 挿入前のキャレット位置を記憶する
 		// （キャレットが行終端より右の場合は埋め込まれる空白分だけ桁位置をシフト）
-		int nCaretPosX_PHY_Old = m_nCaretPosX_PHY;
-		int nCaretPosY_PHY_Old = m_nCaretPosY_PHY;
+		int nCaretPosX_PHY_Old = m_ptCaretPos_PHY.x;
+		int nCaretPosY_PHY_Old = m_ptCaretPos_PHY.y;
 		const CLayout* pcLayout;
 		int nLineLen;
 		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ){
@@ -9664,24 +9664,24 @@ void CEditView::SetBracketPairPos( bool flag )
 			// 表示領域内の場合
 
 			// レイアウト位置から物理位置へ変換(強調表示位置を登録)
-			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( nCol, nLine, &m_nBracketPairPosX_PHY, &m_nBracketPairPosY_PHY );
-			m_nBracketCaretPosY_PHY = m_nCaretPosY_PHY;
+			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( nCol, nLine, &m_ptBracketPairPos_PHY.x, &m_ptBracketPairPos_PHY.y );
+			m_ptBracketCaretPos_PHY.y = m_ptCaretPos_PHY.y;
 			if( 0 == ( mode & 4 ) ){
 				// カーソルの後方文字位置
-				m_nBracketCaretPosX_PHY = m_nCaretPosX_PHY;
+				m_ptBracketCaretPos_PHY.x = m_ptCaretPos_PHY.x;
 			}else{
 				// カーソルの前方文字位置
-				m_nBracketCaretPosX_PHY = m_nCaretPosX_PHY - m_nCharSize;
+				m_ptBracketCaretPos_PHY.x = m_ptCaretPos_PHY.x - m_nCharSize;
 			}
 			return;
 		}
 	}
 
 	// 括弧の強調表示位置情報初期化
-	m_nBracketPairPosX_PHY  = -1;
-	m_nBracketPairPosY_PHY  = -1;
-	m_nBracketCaretPosX_PHY = -1;
-	m_nBracketCaretPosY_PHY = -1;
+	m_ptBracketPairPos_PHY.x  = -1;
+	m_ptBracketPairPos_PHY.y  = -1;
+	m_ptBracketCaretPos_PHY.x = -1;
+	m_ptBracketCaretPos_PHY.y = -1;
 
 	return;
 }
@@ -9710,8 +9710,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 	}
 
 	// 括弧の強調表示位置が未登録の場合は終了
-	if( ( m_nBracketPairPosX_PHY  < 0 ) || ( m_nBracketPairPosY_PHY  < 0 )
-	 || ( m_nBracketCaretPosX_PHY < 0 ) || ( m_nBracketCaretPosY_PHY < 0 ) ){
+	if( ( m_ptBracketPairPos_PHY.x  < 0 ) || ( m_ptBracketPairPos_PHY.y  < 0 )
+	 || ( m_ptBracketCaretPos_PHY.x < 0 ) || ( m_ptBracketCaretPos_PHY.y < 0 ) ){
 		return;
 	}
 
@@ -9738,9 +9738,9 @@ void CEditView::DrawBracketPair( bool bDraw )
 		//   ＃ この順序変更によりカーソル位置が括弧でなくなっていても対括弧があれば対括弧側の強調表示は解除される
 
 		if( i == 0 ){
-			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_nBracketPairPosX_PHY,  m_nBracketPairPosY_PHY,  &nCol, &nLine );
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketPairPos_PHY.x,  m_ptBracketPairPos_PHY.y,  &nCol, &nLine );
 		}else{
-			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_nBracketCaretPosX_PHY, m_nBracketCaretPosY_PHY, &nCol, &nLine );
+			m_pcEditDoc->m_cLayoutMgr.LogicToLayout( m_ptBracketCaretPos_PHY.x, m_ptBracketCaretPos_PHY.y, &nCol, &nLine );
 		}
 
 		if ( ( nCol >= m_nViewLeftCol ) && ( nCol <= m_nViewLeftCol + m_nViewColNum )
@@ -9765,9 +9765,9 @@ void CEditView::DrawBracketPair( bool bDraw )
 						// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 						//nColorIndex = GetColorIndex( hdc, pcLayout, OutputX );
 						if( i == 0 ){
-							nColorIndex = GetColorIndex( hdc, pcLayout, m_nBracketPairPosX_PHY );
+							nColorIndex = GetColorIndex( hdc, pcLayout, m_ptBracketPairPos_PHY.x );
 						}else{
-							nColorIndex = GetColorIndex( hdc, pcLayout, m_nBracketCaretPosX_PHY );
+							nColorIndex = GetColorIndex( hdc, pcLayout, m_ptBracketCaretPos_PHY.x );
 						}
 					}
 					else{

@@ -938,7 +938,7 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 				const char *Buffer;
 				int nLength, nLine;
 				if( 0 == varCopy.Data.lVal ){
-					nLine = View->m_nCaretPosY_PHY;
+					nLine = View->m_ptCaretPos_PHY.y;
 				}else{
 					nLine = varCopy.Data.lVal - 1;
 				}

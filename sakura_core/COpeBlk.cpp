@@ -36,22 +36,22 @@ COpeBlk::~COpeBlk()
 /* 操作の追加 */
 bool COpeBlk::AppendOpe( COpe* pcOpe )
 {
-	if( -1 == pcOpe->m_nCaretPosX_PHY_Before	/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
-	 || -1 == pcOpe->m_nCaretPosY_PHY_Before	/* カーソル位置 改行単位行の行番号（０開始）*/
-	 || -1 == pcOpe->m_nCaretPosX_PHY_After		/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
-	 || -1 == pcOpe->m_nCaretPosY_PHY_After		/* カーソル位置 改行単位行の行番号（０開始）*/
+	if( -1 == pcOpe->m_ptCaretPos_PHY_Before.x	/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
+	 || -1 == pcOpe->m_ptCaretPos_PHY_Before.y	/* カーソル位置 改行単位行の行番号（０開始）*/
+	 || -1 == pcOpe->m_ptCaretPos_PHY_After.x		/* カーソル位置 改行単位行先頭からのバイト数（０開始）*/
+	 || -1 == pcOpe->m_ptCaretPos_PHY_After.y		/* カーソル位置 改行単位行の行番号（０開始）*/
 	){
 		TopErrorMessage( NULL,
 			_T("COpeBlk::AppendOpe() error.\n")
 			_T("バグ\n")
-			_T("pcOpe->m_nCaretPosX_PHY_Before = %d\n")
-			_T("pcOpe->m_nCaretPosY_PHY_Before = %d\n")
-			_T("pcOpe->m_nCaretPosX_PHY_After = %d\n")
-			_T("pcOpe->m_nCaretPosY_PHY_After = %d\n"),
-			pcOpe->m_nCaretPosX_PHY_Before,
-			pcOpe->m_nCaretPosY_PHY_Before,
-			pcOpe->m_nCaretPosX_PHY_After,
-			pcOpe->m_nCaretPosY_PHY_After
+			_T("pcOpe->m_ptCaretPos_PHY_Before.x = %d\n")
+			_T("pcOpe->m_ptCaretPos_PHY_Before.y = %d\n")
+			_T("pcOpe->m_ptCaretPos_PHY_After.x = %d\n")
+			_T("pcOpe->m_ptCaretPos_PHY_After.y = %d\n"),
+			pcOpe->m_ptCaretPos_PHY_Before.x,
+			pcOpe->m_ptCaretPos_PHY_Before.y,
+			pcOpe->m_ptCaretPos_PHY_After.x,
+			pcOpe->m_ptCaretPos_PHY_After.y
 		);
 	}
 

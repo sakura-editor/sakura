@@ -536,7 +536,7 @@ void CEditView::Command_Diff_Next( void )
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
 
-	nY = m_nCaretPosY_PHY;
+	nY = m_ptCaretPos_PHY.y;
 	nYOld = nY;
 
 re_do:;	
@@ -589,7 +589,7 @@ void CEditView::Command_Diff_Prev( void )
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
 
-	nY = m_nCaretPosY_PHY;
+	nY = m_ptCaretPos_PHY.y;
 	nYOld = nY;
 
 re_do:;

@@ -125,8 +125,8 @@ HWND CDlgReplace::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lPara
 	m_bSelectedArea = m_pShareData->m_Common.m_sSearch.m_bSelectedArea;		// 選択範囲内置換
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	m_bSelected = bSelected;
-	m_nEscCaretPosX_PHY = ((CEditView*)lParam)->m_nCaretPosX_PHY;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
-	m_nEscCaretPosY_PHY = ((CEditView*)lParam)->m_nCaretPosY_PHY;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
+	m_ptEscCaretPos_PHY.x = ((CEditView*)lParam)->m_ptCaretPos_PHY.x;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
+	m_ptEscCaretPos_PHY.y = ((CEditView*)lParam)->m_ptCaretPos_PHY.y;	// 検索/置換開始時のカーソル位置退避	02/07/28 ai
 	((CEditView*)lParam)->m_bSearch = TRUE;							// 検索/置換開始位置の登録有無			02/07/28 ai
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_REPLACE, lParam, SW_SHOW );
 }
@@ -461,8 +461,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 			// 検索開始位置を登録 02/07/28 ai start
 			if( TRUE == pcEditView->m_bSearch ){
-				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
-				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_ptSrchStartPos_PHY.x = m_ptEscCaretPos_PHY.x;
+				pcEditView->m_ptSrchStartPos_PHY.y = m_ptEscCaretPos_PHY.y;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
 
@@ -480,8 +480,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 			// 検索開始位置を登録 02/07/28 ai start
 			if( TRUE == pcEditView->m_bSearch ){
-				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
-				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_ptSrchStartPos_PHY.x = m_ptEscCaretPos_PHY.x;
+				pcEditView->m_ptSrchStartPos_PHY.y = m_ptEscCaretPos_PHY.y;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
 
@@ -507,8 +507,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 
 			// 置換開始位置を登録 02/07/28 ai start
 			if( TRUE == pcEditView->m_bSearch ){
-				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
-				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_ptSrchStartPos_PHY.x = m_ptEscCaretPos_PHY.x;
+				pcEditView->m_ptSrchStartPos_PHY.y = m_ptEscCaretPos_PHY.y;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
 
@@ -526,8 +526,8 @@ BOOL CDlgReplace::OnBnClicked( int wID )
 		if( 0 < GetData() ){
 			// 置換開始位置を登録 02/07/28 ai start
 			if( TRUE == pcEditView->m_bSearch ){
-				pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
-				pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
+				pcEditView->m_ptSrchStartPos_PHY.x = m_ptEscCaretPos_PHY.x;
+				pcEditView->m_ptSrchStartPos_PHY.y = m_ptEscCaretPos_PHY.y;
 				pcEditView->m_bSearch = FALSE;
 			}// 02/07/28 ai end
 

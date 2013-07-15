@@ -4465,7 +4465,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 		case 'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
 			{
 				char szText[11];
-				_itot( m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX_PHY + 1, szText, 10 );
+				_itot( m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos_PHY.x + 1, szText, 10 );
 				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}
@@ -4473,7 +4473,7 @@ void CEditDoc::ExpandParameter(const char* pszSource, char* pszBuffer, int nBuff
 		case 'y':	//	現在の物理行位置(1開始)
 			{
 				char szText[11];
-				_itot( m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosY_PHY + 1, szText, 10 );
+				_itot( m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos_PHY.y + 1, szText, 10 );
 				q = strncpy_ex( q, q_max - q, szText, strlen(szText));
 				++p;
 			}

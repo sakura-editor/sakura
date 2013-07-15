@@ -488,6 +488,16 @@ typedef int CLogicInt;
 //レイアウト単位
 typedef int CLayoutInt;
 
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//                      ２次元型の定義                         //
+// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+//
+
+struct CLogicPoint {
+	CLogicInt x;
+	CLogicInt y;
+};
+
 namespace ApiWrap
 {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
