@@ -498,6 +498,16 @@ struct CLogicPoint {
 	CLogicInt y;
 };
 
+struct CLayoutPoint {
+	CLayoutInt x;
+	CLayoutInt y;
+};
+
+struct CLayoutRange {
+	CLayoutPoint m_ptFrom;
+	CLayoutPoint m_ptTo;
+};
+
 namespace ApiWrap
 {
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

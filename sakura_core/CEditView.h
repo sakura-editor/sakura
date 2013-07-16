@@ -146,7 +146,7 @@ public:
 		// ジャンプ回数を減らして、一気に判定。
 		// すべてを or 演算した後に、ビット反転して最上位ビット(符号フラグ)を返す。
 		/* すなわち、いずれかがひとつでも-1(0xFFFF)なら、FALSEを返す？ */
-		return ~((DWORD)(m_nSelectLineFrom|m_nSelectLineTo|m_nSelectColmFrom|m_nSelectColmTo)) >> 31;
+		return ~((DWORD)(m_sSelect.m_ptFrom.y|m_sSelect.m_ptTo.y|m_sSelect.m_ptFrom.x|m_sSelect.m_ptTo.x)) >> 31;
 	}
 	BOOL IsTextSelecting( void )	/* テキストの選択中か */
 	{
@@ -297,8 +297,7 @@ public: /* テスト用にアクセス属性を変更 */
 	BOOL			m_bDragMode;	/* 選択テキストのドラッグ中か */
 	CLIPFORMAT		m_cfDragData;	/* ドラッグデータのクリップ形式 */	// 2008.06.20 ryoji
 	BOOL			m_bDragBoxData;	/* ドラッグデータは矩形か */
-	int		m_nCaretPosX_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
-	int		m_nCaretPosY_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
+	CLayoutPoint	m_ptCaretPos_DragEnter;	/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
 	int		m_nCaretPosX_Prev_DragEnter;	/* ドラッグ開始時のX座標記憶 */		// 2007.12.09 ryoji
 
 	/* 単語検索の状態 */
@@ -323,7 +322,7 @@ public: /* テスト用にアクセス属性を変更 */
 		@par 使い方
 		読み出しはCEditView::Cursor_UPDOWN()のみで行う．
 		カーソル上下移動以外でカーソル移動を行った場合には
-		直ちにm_nCaretPosXの値を設定する．そうしないと
+		直ちにm_ptCaretPos.xの値を設定する．そうしないと
 		その直後のカーソル上下移動で移動前のX座標に戻ってしまう．
 	
 		ビュー左端からのカーソル桁位置(０開始)
@@ -331,8 +330,7 @@ public: /* テスト用にアクセス属性を変更 */
 		@date 2004.04.09 genta 説明文追加
 	*/
 	int		m_nCaretPosX_Prev;
-	int		m_nCaretPosX;		/* ビュー左端からのカーソル桁位置（０開始）*/
-	int		m_nCaretPosY;		/* ビュー上端からのカーソル行位置（０開始）*/
+	CLayoutPoint	m_ptCaretPos;		/* カーソル桁位置 */
 	CLogicPoint	m_ptCaretPos_PHY;		/* カーソル位置 */
 	CLogicPoint	m_ptSrchStartPos_PHY;	/* 検索/置換開始時のカーソル位置 */
 	BOOL	m_bSearch;				/* 検索/置換開始位置を登録するか */											// 02/06/26 ai
@@ -396,25 +394,17 @@ public: /* テスト用にアクセス属性を変更 */
 	int		m_bBeginBoxSelect;		/* 矩形範囲選択中 */
 	int		m_bBeginLineSelect;		/* 行単位選択中 */
 	int		m_bBeginWordSelect;		/* 単語単位選択中 */
-	/* 選択範囲を保持するための変数群
-		これらはすべて折り返し行と、折り返し桁を保持している。
-	*/
-	int		m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
-	int		m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
-	int		m_nSelectLineBgnTo;		/* 範囲選択開始行(原点) */
-	int		m_nSelectColmBgnTo;		/* 範囲選択開始桁(原点) */
-	int		m_nSelectLineFrom;		/* 範囲選択開始行 */
-	int		m_nSelectColmFrom;		/* 範囲選択開始桁 */
-	int		m_nSelectLineTo;		/* 範囲選択終了行 */
-	int		m_nSelectColmTo;		/* 範囲選択終了桁 */
-	/* DrawSelectArea()に現在の選択範囲を教えて差分のみ描画するためのもの
+	// 選択範囲を保持するための変数群
+	// これらはすべて折り返し行と、折り返し桁を保持している。
+	CLayoutRange	m_sSelectBgn; //範囲選択(原点)
+	CLayoutRange	m_sSelect;    //範囲選択
+	CLayoutRange	m_sSelectOld; //範囲選択Old
+	/*
+	   m_sSelectOldについて
+	   DrawSelectArea()に現在の選択範囲を教えて差分のみ描画するためのもの
 	   現在の選択範囲をOldへコピーした上で新しい選択範囲をSelectに設定して
 	   DrawSelectArea()を呼びだすことで新しい範囲が描かれる．
 	*/
-	int		m_nSelectLineFromOld;	/* 範囲選択開始行 */
-	int		m_nSelectColmFromOld;	/* 範囲選択開始桁 */
-	int		m_nSelectLineToOld;		/* 範囲選択終了行 */
-	int		m_nSelectColmToOld;		/* 範囲選択終了桁 */
 	int		m_nMouseRollPosXOld;	/* マウス範囲選択前回位置(X座標) */
 	int		m_nMouseRollPosYOld;	/* マウス範囲選択前回位置(Y座標) */
 	/* 画面情報 */
@@ -480,14 +470,14 @@ protected:
 		@date 2005.06.24 Moca
 	*/
 	void SetSelectArea( int nLineFrom, int nColmFrom, int nLineTo, int nColmTo ){
-		m_nSelectLineBgnFrom = nLineFrom;
-		m_nSelectColmBgnFrom = nColmFrom;
-		m_nSelectLineBgnTo = nLineFrom;
-		m_nSelectColmBgnTo = nColmFrom;
-		m_nSelectLineFrom = nLineFrom;
-		m_nSelectColmFrom = nColmFrom;
-		m_nSelectLineTo = nLineTo;
-		m_nSelectColmTo = nColmTo;
+		m_sSelectBgn.m_ptFrom.y = nLineFrom;
+		m_sSelectBgn.m_ptFrom.x = nColmFrom;
+		m_sSelectBgn.m_ptTo.y = nLineFrom;
+		m_sSelectBgn.m_ptTo.x = nColmFrom;
+		m_sSelect.m_ptFrom.y = nLineFrom;
+		m_sSelect.m_ptFrom.x = nColmFrom;
+		m_sSelect.m_ptTo.y = nLineTo;
+		m_sSelect.m_ptTo.x = nColmTo;
 	}
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
 	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */

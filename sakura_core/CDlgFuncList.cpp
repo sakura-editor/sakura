@@ -1320,7 +1320,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		if(wID==IDC_CHECK_bMarkUpBlankLineEnable&&m_nListType==OUTLINE_BOOKMARK){
 			CEditView* pcEditView=(CEditView*)m_lParam;
 			pcEditView->HandleCommand( F_BOOKMARK_VIEW, true, TRUE, 0, 0, 0 );
-			m_nCurLine=pcEditView->m_nCaretPosY + CLayoutInt(1);
+			m_nCurLine=pcEditView->m_ptCaretPos.y + CLayoutInt(1);
 			SetData();
 		}else
 		if(m_nViewType){

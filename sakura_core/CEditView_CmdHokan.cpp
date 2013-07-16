@@ -88,10 +88,10 @@ void CEditView::ShowHokanMgr( CMemory& cmemData, BOOL bAutoDecided )
 	POINT		poWin;
 	/* 補完ウィンドウの表示位置を算出 */
 	poWin.x = m_nViewAlignLeft
-			 + (m_nCaretPosX - m_nViewLeftCol)
+			 + (m_ptCaretPos.x - m_nViewLeftCol)
 			  * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 	poWin.y = m_nViewAlignTop
-			 + (m_nCaretPosY - m_nViewTopLine)
+			 + (m_ptCaretPos.y - m_nViewTopLine)
 			  * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight );
 	::ClientToScreen( m_hWnd, &poWin );
 	poWin.x -= (

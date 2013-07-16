@@ -1088,7 +1088,7 @@ BOOL CEditDoc::FileRead(
 			}
 			// To Here Mar. 28, 2003 MIK
 			m_pcEditViewArr[m_nActivePaneIndex]->MoveCursor( nCaretPosX, nCaretPosY, true );
-			m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX_Prev = m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX;
+			m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX_Prev = m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos.x;
 		}
 	}
 	// 2002.01.16 hor ブックマーク復元
@@ -3835,39 +3835,39 @@ int* CEditDoc::SavePhysPosOfAllView(void)
 	
 	for( int i = 0; i < NUM_OF_VIEW; ++i ){
 		m_cLayoutMgr.LayoutToLogic(
-			m_pcEditViewArr[i]->m_nCaretPosX,
-			m_pcEditViewArr[i]->m_nCaretPosY,
+			m_pcEditViewArr[i]->m_ptCaretPos.x,
+			m_pcEditViewArr[i]->m_ptCaretPos.y,
 			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 0 ],
 			&posary[i * ( NUM_OF_POS * XY ) + 0 * XY + 1 ]
 		);
-		if( m_pcEditViewArr[i]->m_nSelectLineBgnFrom >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y >= 0 ){
 			m_cLayoutMgr.LayoutToLogic(
-				m_pcEditViewArr[i]->m_nSelectColmBgnFrom,
-				m_pcEditViewArr[i]->m_nSelectLineBgnFrom,
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.x,
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y,
 				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
 				&posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ]
 			);
 		}
-		if( m_pcEditViewArr[i]->m_nSelectLineBgnTo >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y >= 0 ){
 			m_cLayoutMgr.LayoutToLogic(
-				m_pcEditViewArr[i]->m_nSelectColmBgnTo,
-				m_pcEditViewArr[i]->m_nSelectLineBgnTo,
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.x,
+				m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y,
 				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
 				&posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ]
 			);
 		}
-		if( m_pcEditViewArr[i]->m_nSelectLineFrom >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y >= 0 ){
 			m_cLayoutMgr.LayoutToLogic(
-				m_pcEditViewArr[i]->m_nSelectColmFrom,
-				m_pcEditViewArr[i]->m_nSelectLineFrom,
+				m_pcEditViewArr[i]->m_sSelect.m_ptFrom.x,
+				m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y,
 				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
 				&posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ]
 			);
 		}
-		if( m_pcEditViewArr[i]->m_nSelectLineTo >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptTo.y >= 0 ){
 			m_cLayoutMgr.LayoutToLogic(
-				m_pcEditViewArr[i]->m_nSelectColmTo,
-				m_pcEditViewArr[i]->m_nSelectLineTo,
+				m_pcEditViewArr[i]->m_sSelect.m_ptTo.x,
+				m_pcEditViewArr[i]->m_sSelect.m_ptTo.y,
 				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
 				&posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ]
 			);
@@ -3898,38 +3898,38 @@ void CEditDoc::RestorePhysPosOfAllView( int* posary )
 			&nPosY
 		);
 		m_pcEditViewArr[i]->MoveCursor( nPosX, nPosY, true );
-		m_pcEditViewArr[i]->m_nCaretPosX_Prev = m_pcEditViewArr[i]->m_nCaretPosX;
+		m_pcEditViewArr[i]->m_nCaretPosX_Prev = m_pcEditViewArr[i]->m_ptCaretPos.x;
 
-		if( m_pcEditViewArr[i]->m_nSelectLineBgnFrom >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y >= 0 ){
 			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 1 * XY + 1 ],
-				&m_pcEditViewArr[i]->m_nSelectColmBgnFrom,
-				&m_pcEditViewArr[i]->m_nSelectLineBgnFrom
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.x,
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptFrom.y
 			);
 		}
-		if( m_pcEditViewArr[i]->m_nSelectLineBgnTo >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y >= 0 ){
 			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 2 * XY + 1 ],
-				&m_pcEditViewArr[i]->m_nSelectColmBgnTo,
-				&m_pcEditViewArr[i]->m_nSelectLineBgnTo
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.x,
+				&m_pcEditViewArr[i]->m_sSelectBgn.m_ptTo.y
 			);
 		}
-		if( m_pcEditViewArr[i]->m_nSelectLineFrom >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y >= 0 ){
 			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 3 * XY + 1 ],
-				&m_pcEditViewArr[i]->m_nSelectColmFrom,
-				&m_pcEditViewArr[i]->m_nSelectLineFrom
+				&m_pcEditViewArr[i]->m_sSelect.m_ptFrom.x,
+				&m_pcEditViewArr[i]->m_sSelect.m_ptFrom.y
 			);
 		}
-		if( m_pcEditViewArr[i]->m_nSelectLineTo >= 0 ){
+		if( m_pcEditViewArr[i]->m_sSelect.m_ptTo.y >= 0 ){
 			m_cLayoutMgr.LogicToLayout(
 				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 0 ],
 				posary[i * ( NUM_OF_POS * XY ) + 4 * XY + 1 ],
-				&m_pcEditViewArr[i]->m_nSelectColmTo,
-				&m_pcEditViewArr[i]->m_nSelectLineTo
+				&m_pcEditViewArr[i]->m_sSelect.m_ptTo.x,
+				&m_pcEditViewArr[i]->m_sSelect.m_ptTo.y
 			);
 		}
 	}
@@ -3958,8 +3958,8 @@ void CEditDoc::GetEditInfo(
 	  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
 	m_cLayoutMgr.LayoutToLogic(
-		m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX,	/* ビュー左端からのカーソル桁位置(０開始) */
-		m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosY,	/* ビュー上端からのカーソル行位置(０開始) */
+		m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos.x,	/* ビュー左端からのカーソル桁位置(０開始) */
+		m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos.y,	/* ビュー上端からのカーソル行位置(０開始) */
 		&nX,
 		&nY
 	);
@@ -4123,8 +4123,8 @@ void CEditDoc::ReloadCurrentFile(
 	int		nCaretPosY;
 	nViewTopLine = m_pcEditViewArr[m_nActivePaneIndex]->m_nViewTopLine;	/* 表示域の一番上の行(0開始) */
 	nViewLeftCol = m_pcEditViewArr[m_nActivePaneIndex]->m_nViewLeftCol;	/* 表示域の一番左の桁(0開始) */
-	nCaretPosX = m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX;
-	nCaretPosY = m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosY;
+	nCaretPosX = m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos.x;
+	nCaretPosY = m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos.y;
 
 	strcpy( szFilePath, GetFilePath() );
 
@@ -4157,7 +4157,7 @@ void CEditDoc::ReloadCurrentFile(
 		m_pcEditViewArr[m_nActivePaneIndex]->m_nViewLeftCol = nViewLeftCol;
 	}
 	m_pcEditViewArr[m_nActivePaneIndex]->MoveCursorProperly( nCaretPosX, nCaretPosY, true );	// 2007.08.23 ryoji MoveCursor()->MoveCursorProperly()
-	m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX_Prev = m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX;
+	m_pcEditViewArr[m_nActivePaneIndex]->m_nCaretPosX_Prev = m_pcEditViewArr[m_nActivePaneIndex]->m_ptCaretPos.x;
 
 	// 2006.09.01 ryoji オープン後自動実行マクロを実行する
 	RunAutoMacro( m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened );

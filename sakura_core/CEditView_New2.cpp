@@ -454,10 +454,10 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 
 	/* 選択範囲内の行かな */
 //	if( IsTextSelected() ){
-		if( nLineNum >= m_nSelectLineFrom && nLineNum <= m_nSelectLineTo ){
+		if( nLineNum >= m_sSelect.m_ptFrom.y && nLineNum <= m_sSelect.m_ptTo.y ){
 			if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
-				nSelectFrom = m_nSelectColmFrom;
-				nSelectTo   = m_nSelectColmTo;
+				nSelectFrom = m_sSelect.m_ptFrom.x;
+				nSelectTo   = m_sSelect.m_ptTo.x;
 				// 2006.09.30 Moca From 矩形選択時[EOF]とその右側は反転しないように修正。処理を追加
 				if( m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 <= nLineNum ){
 					int EndX = 0;
@@ -474,17 +474,17 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 				}
 				// 2006.09.30 Moca To
 			}else{
-				if( m_nSelectLineFrom == m_nSelectLineTo ){
-						nSelectFrom = m_nSelectColmFrom;
-						nSelectTo   = m_nSelectColmTo;
+				if( m_sSelect.m_ptFrom.y == m_sSelect.m_ptTo.y ){
+						nSelectFrom = m_sSelect.m_ptFrom.x;
+						nSelectTo   = m_sSelect.m_ptTo.x;
 				}else{
-					if( nLineNum == m_nSelectLineFrom ){
-						nSelectFrom = m_nSelectColmFrom;
+					if( nLineNum == m_sSelect.m_ptFrom.y ){
+						nSelectFrom = m_sSelect.m_ptFrom.x;
 						nSelectTo   = nX;
 					}else
-					if( nLineNum == m_nSelectLineTo ){
+					if( nLineNum == m_sSelect.m_ptTo.y ){
 						nSelectFrom = pcLayout ? pcLayout->GetIndent() : 0;
-						nSelectTo   = m_nSelectColmTo;
+						nSelectTo   = m_sSelect.m_ptTo.x;
 					}else{
 						nSelectFrom = pcLayout ? pcLayout->GetIndent() : 0;
 						nSelectTo   = nX;
@@ -517,8 +517,8 @@ void CEditView::DispTextSelected( HDC hdc, int nLineNum, int x, int y, int nX  )
 			// 2005/06/26 zenryaku 選択解除でキャレットの残骸が残る問題を修正
 			// 2005/09/29 ryoji スクロール時にキャレットのようなゴミが表示される問題を修正
 			if (IsTextSelected() && rcClip.right == rcClip.left &&
-				m_nSelectLineFrom == m_nSelectLineTo &&
-				m_nSelectColmFrom >= m_nViewLeftCol)
+				m_sSelect.m_ptFrom.y == m_sSelect.m_ptTo.y &&
+				m_sSelect.m_ptFrom.x >= m_nViewLeftCol)
 			{
 				HWND hWnd = ::GetForegroundWindow();
 				if( hWnd && (hWnd == m_pcEditDoc->m_cDlgFind.m_hWnd || hWnd == m_pcEditDoc->m_cDlgReplace.m_hWnd) ){
@@ -629,10 +629,10 @@ inline void CEditView::DrawRulerCaret( HDC hdc )
 	RECT		rc;
 	int			nROP_Old;
 
-	if( m_nViewLeftCol <= m_nCaretPosX
-	 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
+	if( m_nViewLeftCol <= m_ptCaretPos.x
+	 && m_nViewLeftCol + m_nViewColNum + 2 >= m_ptCaretPos.x
 	){
-		if (m_nOldCaretPosX == m_nCaretPosX && m_nCaretWidth == m_nOldCaretWidth) {
+		if (m_nOldCaretPosX == m_ptCaretPos.x && m_nCaretWidth == m_nOldCaretWidth) {
 			//前描画した位置画同じ かつ ルーラーのキャレット幅が同じ 
 			return;
 		}
@@ -663,7 +663,7 @@ inline void CEditView::DrawRulerCaret( HDC hdc )
 		}
 
 		//新しい位置で描画
-		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+		rc.left = m_nViewAlignLeft + ( m_ptCaretPos.x - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
 		rc.right = rc.left + m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace - 1;
 
 		hRgn = ::CreateRectRgnIndirect( &rc );
@@ -804,11 +804,11 @@ void CEditView::DispRuler( HDC hdc )
 		::DeleteObject( hPen );
 
 		/* キャレット描画（現在の位置に描画するだけ。古い位置はすでに消されている） */
-		if( m_nViewLeftCol <= m_nCaretPosX
-		 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
+		if( m_nViewLeftCol <= m_ptCaretPos.x
+		 && m_nViewLeftCol + m_nViewColNum + 2 >= m_ptCaretPos.x
 		){
 			//	Aug. 18, 2000 あお
-			rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + typeData.m_nColmSpace ) + 1;
+			rc.left = m_nViewAlignLeft + ( m_ptCaretPos.x - m_nViewLeftCol ) * ( m_nCharWidth + typeData.m_nColmSpace ) + 1;
 			rc.right = rc.left + m_nCharWidth + typeData.m_nColmSpace - 1;
 			rc.top = 0;
 			rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;
@@ -836,7 +836,7 @@ void CEditView::DispRuler( HDC hdc )
 	}
 
 	//描画したルーラーのキャレット位置・幅を保存 2002.02.25 Add By KK
-	m_nOldCaretPosX = m_nCaretPosX;
+	m_nOldCaretPosX = m_ptCaretPos.x;
 	m_nOldCaretWidth = m_nCaretWidth ;
 
 	return;
@@ -1424,7 +1424,7 @@ void CEditView::AddCurrentLineToHistory( void )
 {
 	int PosX, PosY;	//	物理位置（改行単位の計算）
 
-	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( m_nCaretPosX, m_nCaretPosY, &PosX, &PosY );
+	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( m_ptCaretPos.x, m_ptCaretPos.y, &PosX, &PosY );
 
 	CMarkMgr::CMark m( PosX, PosY );
 	m_cHistory->Add( m );

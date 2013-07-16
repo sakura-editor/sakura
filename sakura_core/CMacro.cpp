@@ -1006,25 +1006,25 @@ bool CMacro::HandleFunction(CEditView *View, int ID, VARIANT *Arguments, int Arg
 	case F_GETSELLINEFROM:
 		//	2005.07.30 maru マクロ追加
 		{
-			Wrap( &Result )->Receive( View->m_nSelectLineFrom + 1 );
+			Wrap( &Result )->Receive( View->m_sSelect.m_ptFrom.y + 1 );
 		}
 		return true;
 	case F_GETSELCOLUMNFROM:
 		//	2005.07.30 maru マクロ追加
 		{
-			Wrap( &Result )->Receive( View->m_nSelectColmFrom + 1 );
+			Wrap( &Result )->Receive( View->m_sSelect.m_ptFrom.x + 1 );
 		}
 		return true;
 	case F_GETSELLINETO:
 		//	2005.07.30 maru マクロ追加
 		{
-			Wrap( &Result )->Receive( View->m_nSelectLineTo + 1 );
+			Wrap( &Result )->Receive( View->m_sSelect.m_ptTo.y + 1 );
 		}
 		return true;
 	case F_GETSELCOLUMNTO:
 		//	2005.07.30 maru マクロ追加
 		{
-			Wrap( &Result )->Receive( View->m_nSelectColmTo + 1);
+			Wrap( &Result )->Receive( View->m_sSelect.m_ptTo.x + 1);
 		}
 		return true;
 	case F_ISINSMODE:

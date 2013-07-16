@@ -226,10 +226,10 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		m_nISearchMode = mode;
 		
 		m_nISearchHistoryCount = 0;
-		m_nISearchX1History[m_nISearchHistoryCount] = m_nCaretPosX;
-		m_nISearchY1History[m_nISearchHistoryCount] = m_nCaretPosY;
-		m_nISearchX2History[m_nISearchHistoryCount] = m_nCaretPosX;
-		m_nISearchY2History[m_nISearchHistoryCount] = m_nCaretPosY;
+		m_nISearchX1History[m_nISearchHistoryCount] = m_ptCaretPos.x;
+		m_nISearchY1History[m_nISearchHistoryCount] = m_ptCaretPos.y;
+		m_nISearchX2History[m_nISearchHistoryCount] = m_ptCaretPos.x;
+		m_nISearchY2History[m_nISearchHistoryCount] = m_ptCaretPos.y;
 
 		Redraw();
 		
@@ -382,19 +382,19 @@ void CEditView::ISearchExec(bool bNext)
 			case 2 : //前方検索で現在位置から検索のとき
 			case 1 : //後方検索で次を検索のとき
 				//選択範囲の先頭を検索開始位置に
-				nLine = m_nSelectLineFrom;
-				nIdx1 = m_nSelectColmFrom;
+				nLine = m_sSelect.m_ptFrom.y;
+				nIdx1 = m_sSelect.m_ptFrom.x;
 				break;
 			case 0 : //前方検索で次を検索
 			case 3 : //後方検索で現在位置から検索
 				//選択範囲の後ろから
-				nLine = m_nSelectLineTo;
-				nIdx1 = m_nSelectColmTo;
+				nLine = m_sSelect.m_ptTo.y;
+				nIdx1 = m_sSelect.m_ptTo.x;
 				break;
 		}
 	}else{
-		nLine = m_nCaretPosY;
-		nIdx1  = m_nCaretPosX;
+		nLine = m_ptCaretPos.y;
+		nIdx1  = m_ptCaretPos.x;
 	}
 
 	//桁位置からindexに変換
@@ -437,15 +437,15 @@ void CEditView::ISearchExec(bool bNext)
 		
 		if (bNext) 	m_bISearchWrap = true;
 		if (IsTextSelected()){
-			m_nISearchX1History[m_nISearchHistoryCount] = m_nSelectColmFrom;
-			m_nISearchY1History[m_nISearchHistoryCount] = m_nSelectLineFrom;
-			m_nISearchX2History[m_nISearchHistoryCount] = m_nSelectColmTo;
-			m_nISearchY2History[m_nISearchHistoryCount] = m_nSelectLineTo;
+			m_nISearchX1History[m_nISearchHistoryCount] = m_sSelect.m_ptFrom.x;
+			m_nISearchY1History[m_nISearchHistoryCount] = m_sSelect.m_ptFrom.y;
+			m_nISearchX2History[m_nISearchHistoryCount] = m_sSelect.m_ptTo.x;
+			m_nISearchY2History[m_nISearchHistoryCount] = m_sSelect.m_ptTo.y;
 		}else{
-			m_nISearchX1History[m_nISearchHistoryCount] = m_nCaretPosX;
-			m_nISearchY1History[m_nISearchHistoryCount] = m_nCaretPosY;
-			m_nISearchX2History[m_nISearchHistoryCount] = m_nCaretPosX;
-			m_nISearchY2History[m_nISearchHistoryCount] = m_nCaretPosY;
+			m_nISearchX1History[m_nISearchHistoryCount] = m_ptCaretPos.x;
+			m_nISearchY1History[m_nISearchHistoryCount] = m_ptCaretPos.y;
+			m_nISearchX2History[m_nISearchHistoryCount] = m_ptCaretPos.x;
+			m_nISearchY2History[m_nISearchHistoryCount] = m_ptCaretPos.y;
 		}
 	}else{
 		//検索結果あり

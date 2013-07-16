@@ -180,9 +180,9 @@ BOOL CEditView::Create(
 	m_nVScrollRate = 1;			/* 垂直スクロールバーの縮尺 */
 	m_hwndHScrollBar = NULL;
 	m_hwndSizeBox = NULL;
-	m_nCaretPosX = 0;			/* ビュー左端からのカーソル桁位置(０オリジン) */
+	m_ptCaretPos.x = 0;			/* ビュー左端からのカーソル桁位置(０オリジン) */
 	m_nCaretPosX_Prev = 0;		/* ビュー左端からのカーソル桁直前の位置(０オリジン) */
-	m_nCaretPosY = 0;			/* ビュー上端からのカーソル行位置(０オリジン) */
+	m_ptCaretPos.y = 0;			/* ビュー上端からのカーソル行位置(０オリジン) */
 
 	m_ptCaretPos_PHY.x = 0;		/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
 	m_ptCaretPos_PHY.y = 0;		/* カーソル位置 改行単位行の行番号(０開始) */
@@ -209,20 +209,20 @@ BOOL CEditView::Create(
 	m_bBeginLineSelect = FALSE;	/* 行単位選択中 */
 	m_bBeginWordSelect = FALSE;	/* 単語単位選択中 */
 
-	m_nSelectLineBgnFrom = -1;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnFrom = -1;	/* 範囲選択開始桁(原点) */
-	m_nSelectLineBgnTo = -1;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnTo = -1;	/* 範囲選択開始桁(原点) */
+	m_sSelectBgn.m_ptFrom.y = -1;	/* 範囲選択開始行(原点) */
+	m_sSelectBgn.m_ptFrom.x = -1;	/* 範囲選択開始桁(原点) */
+	m_sSelectBgn.m_ptTo.y = -1;	/* 範囲選択開始行(原点) */
+	m_sSelectBgn.m_ptTo.x = -1;	/* 範囲選択開始桁(原点) */
 
-	m_nSelectLineFrom = -1;		/* 範囲選択開始行 */
-	m_nSelectColmFrom = -1;		/* 範囲選択開始桁 */
-	m_nSelectLineTo = -1;		/* 範囲選択終了行 */
-	m_nSelectColmTo = -1;		/* 範囲選択終了桁 */
+	m_sSelect.m_ptFrom.y = -1;		/* 範囲選択開始行 */
+	m_sSelect.m_ptFrom.x = -1;		/* 範囲選択開始桁 */
+	m_sSelect.m_ptTo.y = -1;		/* 範囲選択終了行 */
+	m_sSelect.m_ptTo.x = -1;		/* 範囲選択終了桁 */
 
-	m_nSelectLineFromOld = 0;	/* 範囲選択開始行 */
-	m_nSelectColmFromOld = 0;	/* 範囲選択開始桁 */
-	m_nSelectLineToOld = 0;		/* 範囲選択終了行 */
-	m_nSelectColmToOld = 0;		/* 範囲選択終了桁 */
+	m_sSelectOld.m_ptFrom.y = 0;	/* 範囲選択開始行 */
+	m_sSelectOld.m_ptFrom.x = 0;	/* 範囲選択開始桁 */
+	m_sSelectOld.m_ptTo.y = 0;		/* 範囲選択終了行 */
+	m_sSelectOld.m_ptTo.x = 0;		/* 範囲選択終了桁 */
 	m_nViewAlignLeft = 0;		/* 表示域の左端座標 */
 	m_nViewAlignLeftCols = 0;	/* 行番号域の桁数 */
 	m_nTopYohaku = m_pShareData->m_Common.m_sWindow.m_nRulerBottomSpace; 	/* ルーラーとテキストの隙間 */
@@ -1311,10 +1311,10 @@ void CEditView::ShowEditCaret( void )
 		}else{
 			const CLayout* pcLayout;
 			nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
+				nIdxFrom = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 				if( nIdxFrom >= nLineLen ||
 					pLine[nIdxFrom] == CR || pLine[nIdxFrom] == LF ||
 					pLine[nIdxFrom] == TAB ){
@@ -1337,10 +1337,10 @@ void CEditView::ShowEditCaret( void )
 		}
 		const CLayout* pcLayout;
 		nCaretWidth = ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout );
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
+			nIdxFrom = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 			if( nIdxFrom >= nLineLen ||
 				pLine[nIdxFrom] == CR || pLine[nIdxFrom] == LF ||
 				pLine[nIdxFrom] == TAB ){
@@ -1387,8 +1387,8 @@ void CEditView::ShowEditCaret( void )
 		}
 	}
 	/* キャレットの位置を調整 */
-	int nPosX = m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
-	int nPosY = m_nViewAlignTop  + (m_nCaretPosY - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight;
+	int nPosX = m_nViewAlignLeft + (m_ptCaretPos.x - m_nViewLeftCol) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
+	int nPosY = m_nViewAlignTop  + (m_ptCaretPos.y - m_nViewTopLine) * ( m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight ) + m_nCharHeight - nCaretHeight;
 	::SetCaretPos( nPosX, nPosY );
 	if ( m_nViewAlignLeft <= nPosX && m_nViewAlignTop <= nPosY ){
 		/* キャレットの表示 */
@@ -1411,11 +1411,11 @@ void CEditView::OnSetFocus( void )
 {
 	// 2004.04.02 Moca EOFのみのレイアウト行は、0桁目のみ有効.EOFより下の行のある場合は、EOF位置にする
 	{
-		int nPosX = m_nCaretPosX;
-		int nPosY = m_nCaretPosY;
+		int nPosX = m_ptCaretPos.x;
+		int nPosY = m_ptCaretPos.y;
 		if( GetAdjustCursorPos( &nPosX, &nPosY ) ){
 			MoveCursor( nPosX, nPosY, false );
-			m_nCaretPosX_Prev = m_nCaretPosX;
+			m_nCaretPosX_Prev = m_ptCaretPos.x;
 		}
 	}
 
@@ -1632,8 +1632,8 @@ void CEditView::DrawSelectArea( void )
 		// EOF以降のエリアも反転してしまうので、この場合はRedrawを使う
 		// 2002.02.16 hor ちらつきを抑止するためEOF以降のエリアが反転したらもう一度反転して元に戻すことにする
 		//if((m_nViewTopLine+m_nViewRowNum+1>=m_pcEditDoc->m_cLayoutMgr.GetLineCount()) &&
-		//   (m_nSelectLineTo+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ||
-		//	m_nSelectLineToOld+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) ) {
+		//   (m_sSelect.m_ptTo.y+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ||
+		//	m_sSelectOld.m_ptTo.y+1 >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ) ) {
 		//	Redraw();
 		//	return;
 		//}
@@ -1650,10 +1650,10 @@ void CEditView::DrawSelectArea( void )
 		/* 2点を対角とする矩形を求める */
 		TwoPointToRect(
 			&rcOld,
-			m_nSelectLineFromOld,	/* 範囲選択開始行 */
-			m_nSelectColmFromOld,	/* 範囲選択開始桁 */
-			m_nSelectLineToOld,		/* 範囲選択終了行 */
-			m_nSelectColmToOld		/* 範囲選択終了桁 */
+			m_sSelectOld.m_ptFrom.y,	/* 範囲選択開始行 */
+			m_sSelectOld.m_ptFrom.x,	/* 範囲選択開始桁 */
+			m_sSelectOld.m_ptTo.y,		/* 範囲選択終了行 */
+			m_sSelectOld.m_ptTo.x		/* 範囲選択終了桁 */
 		);
 		if( rcOld.left	< m_nViewLeftCol ){
 			rcOld.left = m_nViewLeftCol;
@@ -1682,10 +1682,10 @@ void CEditView::DrawSelectArea( void )
 		/* 2点を対角とする矩形を求める */
 		TwoPointToRect(
 			&rcNew,
-			m_nSelectLineFrom,		/* 範囲選択開始行 */
-			m_nSelectColmFrom,		/* 範囲選択開始桁 */
-			m_nSelectLineTo,		/* 範囲選択終了行 */
-			m_nSelectColmTo			/* 範囲選択終了桁 */
+			m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
+			m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
+			m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
+			m_sSelect.m_ptTo.x			/* 範囲選択終了桁 */
 		);
 		if( rcNew.left	< m_nViewLeftCol ){
 			rcNew.left = m_nViewLeftCol;
@@ -1729,8 +1729,8 @@ void CEditView::DrawSelectArea( void )
 				int  nLastLine;
 				m_pcEditDoc->m_cLayoutMgr.GetEndLayoutPos( nLastLen, nLastLine );
 				// 2006.10.01 Moca End
-				if(m_nSelectLineFrom>=nLastLine || m_nSelectLineTo>=nLastLine ||
-					m_nSelectLineFromOld>=nLastLine || m_nSelectLineToOld>=nLastLine){
+				if(m_sSelect.m_ptFrom.y>=nLastLine || m_sSelect.m_ptTo.y>=nLastLine ||
+					m_sSelectOld.m_ptFrom.y>=nLastLine || m_sSelectOld.m_ptTo.y>=nLastLine){
 					//	Jan. 24, 2004 genta nLastLenは物理桁なので変換必要
 					//	最終行にTABが入っていると反転範囲が不足する．
 					//	2006.10.01 Moca GetEndLayoutPosで処理するためColumnToIndexは不要に。
@@ -1769,21 +1769,21 @@ void CEditView::DrawSelectArea( void )
 	}else{
 
 		/* 現在描画されている範囲と始点が同じ */
-		if( m_nSelectLineFrom == m_nSelectLineFromOld &&
-			m_nSelectColmFrom  == m_nSelectColmFromOld ){
+		if( m_sSelect.m_ptFrom.y == m_sSelectOld.m_ptFrom.y &&
+			m_sSelect.m_ptFrom.x  == m_sSelectOld.m_ptFrom.x ){
 			/* 範囲が後方に拡大された */
-			if( m_nSelectLineTo > m_nSelectLineToOld ||
-			   (m_nSelectLineTo == m_nSelectLineToOld &&
-				m_nSelectColmTo > m_nSelectColmToOld ) ){
-				nFromLine	= m_nSelectLineToOld;
-				nFromCol	= m_nSelectColmToOld;
-				nToLine		= m_nSelectLineTo;
-				nToCol		= m_nSelectColmTo;
+			if( m_sSelect.m_ptTo.y > m_sSelectOld.m_ptTo.y ||
+			   (m_sSelect.m_ptTo.y == m_sSelectOld.m_ptTo.y &&
+				m_sSelect.m_ptTo.x > m_sSelectOld.m_ptTo.x ) ){
+				nFromLine	= m_sSelectOld.m_ptTo.y;
+				nFromCol	= m_sSelectOld.m_ptTo.x;
+				nToLine		= m_sSelect.m_ptTo.y;
+				nToCol		= m_sSelect.m_ptTo.x;
 			}else{
-				nFromLine	= m_nSelectLineTo;
-				nFromCol	= m_nSelectColmTo;
-				nToLine		= m_nSelectLineToOld;
-				nToCol		= m_nSelectColmToOld;
+				nFromLine	= m_sSelect.m_ptTo.y;
+				nFromCol	= m_sSelect.m_ptTo.x;
+				nToLine		= m_sSelectOld.m_ptTo.y;
+				nToCol		= m_sSelectOld.m_ptTo.x;
 			}
 			for( nLineNum = nFromLine; nLineNum <= nToLine; ++nLineNum ){
 				if( nLineNum >= m_nViewTopLine && nLineNum <= m_nViewTopLine + m_nViewRowNum + 1 ){
@@ -1791,21 +1791,21 @@ void CEditView::DrawSelectArea( void )
 				}
 			}
 		}else
-		if( m_nSelectLineTo == m_nSelectLineToOld &&
-			m_nSelectColmTo  == m_nSelectColmToOld ){
+		if( m_sSelect.m_ptTo.y == m_sSelectOld.m_ptTo.y &&
+			m_sSelect.m_ptTo.x  == m_sSelectOld.m_ptTo.x ){
 			/* 範囲が前方に拡大された */
-			if( m_nSelectLineFrom < m_nSelectLineFromOld ||
-			   (m_nSelectLineFrom == m_nSelectLineFromOld &&
-				m_nSelectColmFrom < m_nSelectColmFromOld ) ){
-				nFromLine	= m_nSelectLineFrom;
-				nFromCol	= m_nSelectColmFrom;
-				nToLine		= m_nSelectLineFromOld;
-				nToCol		= m_nSelectColmFromOld;
+			if( m_sSelect.m_ptFrom.y < m_sSelectOld.m_ptFrom.y ||
+			   (m_sSelect.m_ptFrom.y == m_sSelectOld.m_ptFrom.y &&
+				m_sSelect.m_ptFrom.x < m_sSelectOld.m_ptFrom.x ) ){
+				nFromLine	= m_sSelect.m_ptFrom.y;
+				nFromCol	= m_sSelect.m_ptFrom.x;
+				nToLine		= m_sSelectOld.m_ptFrom.y;
+				nToCol		= m_sSelectOld.m_ptFrom.x;
 			}else{
-				nFromLine	= m_nSelectLineFromOld;
-				nFromCol	= m_nSelectColmFromOld;
-				nToLine		= m_nSelectLineFrom;
-				nToCol		= m_nSelectColmFrom;
+				nFromLine	= m_sSelectOld.m_ptFrom.y;
+				nFromCol	= m_sSelectOld.m_ptFrom.x;
+				nToLine		= m_sSelect.m_ptFrom.y;
+				nToCol		= m_sSelect.m_ptFrom.x;
 			}
 			for( nLineNum = nFromLine; nLineNum <= nToLine; ++nLineNum ){
 				if( nLineNum >= m_nViewTopLine && nLineNum <= m_nViewTopLine + m_nViewRowNum + 1 ){
@@ -1813,19 +1813,19 @@ void CEditView::DrawSelectArea( void )
 				}
 			}
 		}else{
-			nFromLine		= m_nSelectLineFromOld;
-			nFromCol		= m_nSelectColmFromOld;
-			nToLine			= m_nSelectLineToOld;
-			nToCol			= m_nSelectColmToOld;
+			nFromLine		= m_sSelectOld.m_ptFrom.y;
+			nFromCol		= m_sSelectOld.m_ptFrom.x;
+			nToLine			= m_sSelectOld.m_ptTo.y;
+			nToCol			= m_sSelectOld.m_ptTo.x;
 			for( nLineNum	= nFromLine; nLineNum <= nToLine; ++nLineNum ){
 				if( nLineNum >= m_nViewTopLine && nLineNum <= m_nViewTopLine + m_nViewRowNum + 1 ){
 					DrawSelectAreaLine( hdc, nLineNum, nFromLine, nFromCol, nToLine, nToCol );
 				}
 			}
-			nFromLine	= m_nSelectLineFrom;
-			nFromCol	= m_nSelectColmFrom;
-			nToLine		= m_nSelectLineTo;
-			nToCol		= m_nSelectColmTo;
+			nFromLine	= m_sSelect.m_ptFrom.y;
+			nFromCol	= m_sSelect.m_ptFrom.x;
+			nToLine		= m_sSelect.m_ptTo.y;
+			nToCol		= m_sSelect.m_ptTo.x;
 			for( nLineNum = nFromLine; nLineNum <= nToLine; ++nLineNum ){
 				if( nLineNum >= m_nViewTopLine && nLineNum <= m_nViewTopLine + m_nViewRowNum + 1 ){
 					DrawSelectAreaLine( hdc, nLineNum, nFromLine, nFromCol, nToLine, nToCol );
@@ -2248,18 +2248,18 @@ int CEditView::GetRightEdgeForScrollBar( void )
 		// 選択範囲あり かつ 範囲の右端がテキストの幅より右側
 		if( IsTextSelected() ){
 			// 開始位置・終了位置のより右側にある方で比較
-			if( m_nSelectColmFrom < m_nSelectColmTo ){
-				if( nRightEdge < m_nSelectColmTo )
-					nRightEdge = m_nSelectColmTo;
+			if( m_sSelect.m_ptFrom.x < m_sSelect.m_ptTo.x ){
+				if( nRightEdge < m_sSelect.m_ptTo.x )
+					nRightEdge = m_sSelect.m_ptTo.x;
 			}else{
-				if( nRightEdge < m_nSelectColmFrom )
-					nRightEdge = m_nSelectColmFrom;
+				if( nRightEdge < m_sSelect.m_ptFrom.x )
+					nRightEdge = m_sSelect.m_ptFrom.x;
 			}
 		}
 
 		// フリーカーソルモード かつ キャレット位置がテキストの幅より右側
-		if( m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode && nRightEdge < m_nCaretPosX )
-			nRightEdge = m_nCaretPosX;
+		if( m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode && nRightEdge < m_ptCaretPos.x )
+			nRightEdge = m_ptCaretPos.x;
 
 		// 右マージン分（3桁）を考慮しつつnWidthを超えないようにする
 		nWidth = ( nRightEdge + 3 < nWidth ) ? nRightEdge + 3 : nWidth;
@@ -2303,7 +2303,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool 
 		}
 	}
 	MoveCursor( nWk_CaretPosX, nWk_CaretPosY, true, nCaretMarginRate );	// 2007.08.22 ryoji nCaretMarginRateが使われていなかった
-	m_nCaretPosX_Prev = m_nCaretPosX;
+	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	if( bSelect ){
 		/*	現在のカーソル位置によって選択範囲を変更．
 		
@@ -2312,7 +2312,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool 
 			引数で与えた座標とは異なることがあるため，
 			nPosX, nPosYの代わりに実際の移動結果を使うように．
 		*/
-		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+		ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 	}
 	
 }
@@ -2557,8 +2557,8 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 		if( m_pcEditDoc->m_nTextWrapMethodCur == WRAP_NO_TEXT_WRAP ){
 			// AdjustScrollBars()で移動後のキャレット位置が必要なため、ここでコピー
 			if( IsTextSelected() || m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode ){
-				m_nCaretPosX = nWk_CaretPosX;
-				m_nCaretPosY = nWk_CaretPosY;
+				m_ptCaretPos.x = nWk_CaretPosX;
+				m_ptCaretPos.y = nWk_CaretPosY;
 			}
 		}
 
@@ -2567,16 +2567,16 @@ int CEditView::MoveCursor( int nWk_CaretPosX, int nWk_CaretPosY, bool bScroll, i
 	}
 
 	/* キャレット移動 */
-	m_nCaretPosX = nWk_CaretPosX;
-	m_nCaretPosY = nWk_CaretPosY;
+	m_ptCaretPos.x = nWk_CaretPosX;
+	m_ptCaretPos.y = nWk_CaretPosY;
 
 	/* カーソル位置変換
 	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 	||  →物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-		m_nCaretPosX,
-		m_nCaretPosY,
+		m_ptCaretPos.x,
+		m_ptCaretPos.y,
 		&m_ptCaretPos_PHY.x,	/* カーソル位置 改行単位行先頭からのバイト数(０開始) */
 		&m_ptCaretPos_PHY.y	/* カーソル位置 改行単位行の行番号(０開始) */
 	);
@@ -2836,7 +2836,7 @@ int CEditView::MoveCursorToPoint( int xPos, int yPos )
 	dx = (xPos - m_nViewAlignLeft) % ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace );
 
 	nScrollRowNum = MoveCursorProperly( nNewX, nNewY, true, 1000, dx );
-	m_nCaretPosX_Prev = m_nCaretPosX;
+	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	return nScrollRowNum;
 }
 //_CARETMARGINRATE_CARETMARGINRATE_CARETMARGINRATE
@@ -2876,7 +2876,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	if( m_nCaretWidth == 0 ){ //フォーカスがないとき
 		return;
 	}
-	nCaretPosY_Old = m_nCaretPosY;
+	nCaretPosY_Old = m_ptCaretPos.y;
 
 	/* 辞書Tipが起動されている */
 	if( 0 == m_dwTipTimer ){
@@ -3123,13 +3123,13 @@ normal_action:;
 
 		int	nWorkRel;
 		nWorkRel = IsCurrentPositionSelected(
-			m_nCaretPosX,	// カーソル位置X
-			m_nCaretPosY	// カーソル位置Y
+			m_ptCaretPos.x,	// カーソル位置X
+			m_ptCaretPos.y	// カーソル位置Y
 		);
 
 
 		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+		ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 
 
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
@@ -3138,10 +3138,10 @@ normal_action:;
 			if( !IsTextSelected() ){
 				/* 現在位置の単語選択 */
 				if ( Command_SELECTWORD() ){
-					m_nSelectLineBgnFrom = m_nSelectLineFrom;	/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnFrom = m_nSelectColmFrom;	/* 範囲選択開始桁(原点) */
-					m_nSelectLineBgnTo = m_nSelectLineTo;		/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnTo = m_nSelectColmTo;		/* 範囲選択開始桁(原点) */
+					m_sSelectBgn.m_ptFrom.y = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行(原点) */
+					m_sSelectBgn.m_ptFrom.x = m_sSelect.m_ptFrom.x;	/* 範囲選択開始桁(原点) */
+					m_sSelectBgn.m_ptTo.y = m_sSelect.m_ptTo.y;		/* 範囲選択開始行(原点) */
+					m_sSelectBgn.m_ptTo.x = m_sSelect.m_ptTo.x;		/* 範囲選択開始桁(原点) */
 				}
 			}else{
 
@@ -3151,12 +3151,12 @@ normal_action:;
 
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
 				const CLayout* pcLayout;
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineFrom, &nLineLen, &pcLayout );
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.m_ptFrom.y, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pcLayout, m_nSelectColmFrom );
+					nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-						m_nSelectLineFrom, nIdx, &nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
+						m_sSelect.m_ptFrom.y, nIdx, &nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 					){
 						/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
 						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
@@ -3170,23 +3170,23 @@ normal_action:;
 							nLineFrom	// カーソル位置Y
 						);
 						if( -1 == nWork || 0 == nWork ){
-							m_nSelectLineFrom = nLineFrom;
-							m_nSelectColmFrom = nColmFrom;
+							m_sSelect.m_ptFrom.y = nLineFrom;
+							m_sSelect.m_ptFrom.x = nColmFrom;
 							if( 1 == nWorkRel ){
-								m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-								m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-								m_nSelectLineBgnTo = nLineTo;		/* 範囲選択開始行(原点) */
-								m_nSelectColmBgnTo = nColmTo;		/* 範囲選択開始桁(原点) */
+								m_sSelectBgn.m_ptFrom.y = nLineFrom;	/* 範囲選択開始行(原点) */
+								m_sSelectBgn.m_ptFrom.x = nColmFrom;	/* 範囲選択開始桁(原点) */
+								m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
+								m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
 							}
 						}
 					}
 				}
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineTo, &nLineLen, &pcLayout );
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.m_ptTo.y, &nLineLen, &pcLayout );
 				if( NULL != pLine ){
-					nIdx = LineColmnToIndex( pcLayout, m_nSelectColmTo );
+					nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptTo.x );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-						m_nSelectLineTo, nIdx,
+						m_sSelect.m_ptTo.y, nIdx,
 						&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 					){
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる
@@ -3200,21 +3200,21 @@ normal_action:;
 							nLineFrom	// カーソル位置Y
 						);
 						if( -1 == nWork || 0 == nWork ){
-							m_nSelectLineTo = nLineFrom;
-							m_nSelectColmTo = nColmFrom;
+							m_sSelect.m_ptTo.y = nLineFrom;
+							m_sSelect.m_ptTo.x = nColmFrom;
 						}
 						if( 1 == IsCurrentPositionSelected(
 							nColmTo,	// カーソル位置X
 							nLineTo		// カーソル位置Y
 						) ){
-							m_nSelectLineTo = nLineTo;
-							m_nSelectColmTo = nColmTo;
+							m_sSelect.m_ptTo.y = nLineTo;
+							m_sSelect.m_ptTo.x = nColmTo;
 						}
 						if( -1 == nWorkRel || 0 == nWorkRel ){
-							m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-							m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-							m_nSelectLineBgnTo = nLineTo;		/* 範囲選択開始行(原点) */
-							m_nSelectColmBgnTo = nColmTo;		/* 範囲選択開始桁(原点) */
+							m_sSelectBgn.m_ptFrom.y = nLineFrom;	/* 範囲選択開始行(原点) */
+							m_sSelectBgn.m_ptFrom.x = nColmFrom;	/* 範囲選択開始桁(原点) */
+							m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
+							m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
 						}
 					}
 				}
@@ -3237,7 +3237,7 @@ normal_action:;
 			bool bDrawSwitchOld = m_bDrawSWITCH;
 			BOOL bDrawAfter = FALSE;
 			if( bDrawSwitchOld ){
-				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
+				const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
 				if( pcLayout ){
 					int nColumn = LineIndexToColmn( pcLayout, pcLayout->GetLengthWithoutEOL() );
 					bDrawAfter = (nColumn + SCROLLMARGIN_RIGHT >= m_nViewColNum);
@@ -3256,15 +3256,15 @@ normal_action:;
 			//	Apr. 14, 2003 genta
 			//	行番号の下をクリックしてドラッグを開始するとおかしくなるのを修正
 			//	行番号をクリックした場合にはChangeSelectAreaByCurrentCursor()にて
-			//	m_nSelectColmTo/m_nSelectLineToに-1が設定されるが、上の
+			//	m_sSelect.m_ptTo.x/m_sSelect.m_ptTo.yに-1が設定されるが、上の
 			//	Command_GOLINEEND(), Command_RIGHT()によって行選択が行われる。
 			//	しかしキャレットが末尾にある場合にはキャレットが移動しないので
-			//	m_nSelectColmTo/m_nSelectLineToが-1のまま残ってしまい、それが
+			//	m_sSelect.m_ptTo.x/m_sSelect.m_ptTo.yが-1のまま残ってしまい、それが
 			//	原点に設定されるためにおかしくなっていた。
 			//	なので、範囲選択が行われていない場合は起点末尾の設定を行わないようにする
 			if( IsTextSelected() ){
-				m_nSelectLineBgnTo = m_nSelectLineTo;	/* 範囲選択開始行(原点) */
-				m_nSelectColmBgnTo = m_nSelectColmTo;	/* 範囲選択開始桁(原点) */
+				m_sSelectBgn.m_ptTo.y = m_sSelect.m_ptTo.y;	/* 範囲選択開始行(原点) */
+				m_sSelectBgn.m_ptTo.x = m_sSelect.m_ptTo.x;	/* 範囲選択開始桁(原点) */
 			}
 		}
 		else{
@@ -3276,8 +3276,8 @@ normal_action:;
 				int			nUrlLen;	// URLの長さ(バイト数)
 				// カーソル位置にURLが有る場合のその範囲を調べる
 				if( IsCurrentPositionURL(
-					m_nCaretPosX,	// カーソル位置X
-					m_nCaretPosY,	// カーソル位置Y
+					m_ptCaretPos.x,	// カーソル位置X
+					m_ptCaretPos.y,	// カーソル位置Y
 					&nUrlLine,		// URLの行(改行単位)
 					&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
 					&nUrlLen,		// URLの長さ(バイト数)
@@ -3297,15 +3297,15 @@ normal_action:;
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn          , nUrlLine, &nColmFrom, &nLineFrom );
 					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn + nUrlLen, nUrlLine, &nColmTo, &nLineTo );
 
-					m_nSelectLineBgnFrom = nLineFrom;		/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnFrom = nColmFrom;		/* 範囲選択開始桁(原点) */
-					m_nSelectLineBgnTo = nLineTo;		/* 範囲選択開始行(原点) */
-					m_nSelectColmBgnTo = nColmTo;		/* 範囲選択開始桁(原点) */
+					m_sSelectBgn.m_ptFrom.y = nLineFrom;		/* 範囲選択開始行(原点) */
+					m_sSelectBgn.m_ptFrom.x = nColmFrom;		/* 範囲選択開始桁(原点) */
+					m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
+					m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
 
-					m_nSelectLineFrom = nLineFrom;
-					m_nSelectColmFrom = nColmFrom;
-					m_nSelectLineTo = nLineTo;
-					m_nSelectColmTo = nColmTo;
+					m_sSelect.m_ptFrom.y = nLineFrom;
+					m_sSelect.m_ptFrom.x = nColmFrom;
+					m_sSelect.m_ptTo.y = nLineTo;
+					m_sSelect.m_ptTo.x = nColmTo;
 
 					/* 選択領域描画 */
 					DrawSelectArea();
@@ -3949,14 +3949,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 	int			nSelectLineTo;
 	int			nSelectColmTo;
 
-	nSelectLineBgnFrom_Old	= m_nSelectLineBgnFrom;		/* 範囲選択開始行(原点) */
-	nSelectColmBgnFrom_Old	= m_nSelectColmBgnFrom;		/* 範囲選択開始桁(原点) */
-	nSelectLineBgnTo_Old	= m_nSelectLineBgnTo;		/* 範囲選択開始行(原点) */
-	nSelectColmBgnTo_Old	= m_nSelectColmBgnTo;		/* 範囲選択開始桁(原点) */
-	nSelectLineFrom_Old		= m_nSelectLineFrom;
-	nSelectColmFrom_Old		= m_nSelectColmFrom;
-	nSelectLineTo_Old		= m_nSelectLineTo;
-	nSelectColmTo_Old		= m_nSelectColmTo;
+	nSelectLineBgnFrom_Old	= m_sSelectBgn.m_ptFrom.y;		/* 範囲選択開始行(原点) */
+	nSelectColmBgnFrom_Old	= m_sSelectBgn.m_ptFrom.x;		/* 範囲選択開始桁(原点) */
+	nSelectLineBgnTo_Old	= m_sSelectBgn.m_ptTo.y;		/* 範囲選択開始行(原点) */
+	nSelectColmBgnTo_Old	= m_sSelectBgn.m_ptTo.x;		/* 範囲選択開始桁(原点) */
+	nSelectLineFrom_Old		= m_sSelect.m_ptFrom.y;
+	nSelectColmFrom_Old		= m_sSelect.m_ptFrom.x;
+	nSelectLineTo_Old		= m_sSelect.m_ptTo.y;
+	nSelectColmTo_Old		= m_sSelect.m_ptTo.x;
 
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
 		::GetCursorPos( &po );
@@ -4040,7 +4040,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 		/* 座標指定によるカーソル移動 */
 		nScrollRowNum = MoveCursorToPoint( xPos , yPos );
 		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+		ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 		m_nMouseRollPosXOld = xPos;	/* マウス範囲選択前回位置(X座標) */
 		m_nMouseRollPosYOld = yPos;	/* マウス範囲選択前回位置(Y座標) */
 	}
@@ -4052,7 +4052,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			int nLineHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;		// 1行の高さ
 
 			// 選択開始行以下へのドラッグ時は1行下にカーソルを移動する
-			if( m_nViewTopLine + (yPos - m_nViewAlignTop) / nLineHeight >= m_nSelectLineBgnTo )
+			if( m_nViewTopLine + (yPos - m_nViewAlignTop) / nLineHeight >= m_sSelectBgn.m_ptTo.y )
 				nNewY += nLineHeight;
 
 			// カーソルを移動
@@ -4060,10 +4060,10 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 			// 2007.10.13 nasukoji	2.5クリックによる行単位のドラッグ
 			if( m_dwTripleClickCheck ){
-				int nSelectStartLine = m_nSelectLineBgnTo;
+				int nSelectStartLine = m_sSelectBgn.m_ptTo.y;
 
 				// 選択開始行以上にドラッグした
-				if( m_nCaretPosY <= nSelectStartLine ){
+				if( m_ptCaretPos.y <= nSelectStartLine ){
 					Command_GOLINETOP( true, 0x09 );	// 改行単位の行頭へ移動
 				}else{
 					int nCaretPosX;
@@ -4074,10 +4074,10 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 					// 選択開始行より下にカーソルがある時は1行前と物理行番号の違いをチェックする
 					// 選択開始行にカーソルがある時はチェック不要
-					if(m_nCaretPosY > nSelectStartLine){
+					if(m_ptCaretPos.y > nSelectStartLine){
 						// 1行前の物理行を取得する
 						m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-							0, m_nCaretPosY - 1, &nCaretPrevPosX_PHY, &nCaretPrevPosY_PHY
+							0, m_ptCaretPos.y - 1, &nCaretPrevPosX_PHY, &nCaretPrevPosY_PHY
 						);
 					}
 
@@ -4101,14 +4101,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 		if( !m_bBeginWordSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+			ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 		}else{
 //			/* 現在のカーソル位置によって選択範囲を変更 */
-//			ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+//			ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 			/* 現在のカーソル位置によって選択範囲を変更(テストのみ) */
 			ChangeSelectAreaByCurrentCursorTEST(
-				(int)m_nCaretPosX,
-				(int)m_nCaretPosY,
+				(int)m_ptCaretPos.x,
+				(int)m_ptCaretPos.y,
 				(int&)nSelectLineFrom,
 				(int&)nSelectColmFrom,
 				(int&)nSelectLineTo,
@@ -4121,17 +4121,17 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			 && nSelectColmTo_Old == nSelectColmTo
 			){
 				ChangeSelectAreaByCurrentCursor(
-					(int)m_nCaretPosX,
-					(int)m_nCaretPosY
+					(int)m_ptCaretPos.x,
+					(int)m_ptCaretPos.y
 				);
 				return;
 			}
 			const CLayout* pcLayout;
-			if( NULL != ( pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ) ){
-				nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
+			if( NULL != ( pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout ) ) ){
+				nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 				/* 現在位置の単語の範囲を調べる */
 				if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-					m_nCaretPosY, nIdx,
+					m_ptCaretPos.y, nIdx,
 					&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 				){
 					/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
@@ -4180,11 +4180,11 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					}
 				}else{
 					/* 現在のカーソル位置によって選択範囲を変更 */
-					ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+					ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 				}
 			}else{
 				/* 現在のカーソル位置によって選択範囲を変更 */
-				ChangeSelectAreaByCurrentCursor( m_nCaretPosX, m_nCaretPosY );
+				ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 			}
 		}
 	}
@@ -4338,15 +4338,15 @@ BOOL CEditView::IsSpecialScrollMode( int nSelect )
 /* 現在のカーソル位置から選択を開始する */
 void CEditView::BeginSelectArea( void )
 {
-	m_nSelectLineBgnFrom = m_nCaretPosY;/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnFrom = m_nCaretPosX;/* 範囲選択開始桁(原点) */
-	m_nSelectLineBgnTo = m_nCaretPosY;	/* 範囲選択開始行(原点) */
-	m_nSelectColmBgnTo = m_nCaretPosX;	/* 範囲選択開始桁(原点) */
+	m_sSelectBgn.m_ptFrom.y = m_ptCaretPos.y;/* 範囲選択開始行(原点) */
+	m_sSelectBgn.m_ptFrom.x = m_ptCaretPos.x;/* 範囲選択開始桁(原点) */
+	m_sSelectBgn.m_ptTo.y = m_ptCaretPos.y;	/* 範囲選択開始行(原点) */
+	m_sSelectBgn.m_ptTo.x = m_ptCaretPos.x;	/* 範囲選択開始桁(原点) */
 
-	m_nSelectLineFrom = m_nCaretPosY;	/* 範囲選択開始行 */
-	m_nSelectColmFrom = m_nCaretPosX;	/* 範囲選択開始桁 */
-	m_nSelectLineTo = m_nCaretPosY;		/* 範囲選択終了行 */
-	m_nSelectColmTo = m_nCaretPosX;		/* 範囲選択終了桁 */
+	m_sSelect.m_ptFrom.y = m_ptCaretPos.y;	/* 範囲選択開始行 */
+	m_sSelect.m_ptFrom.x = m_ptCaretPos.x;	/* 範囲選択開始桁 */
+	m_sSelect.m_ptTo.y = m_ptCaretPos.y;		/* 範囲選択終了行 */
+	m_sSelect.m_ptTo.x = m_ptCaretPos.x;		/* 範囲選択終了桁 */
 	return;
 }
 
@@ -4357,35 +4357,35 @@ void CEditView::BeginSelectArea( void )
 /* 現在の選択範囲を非選択状態に戻す */
 void CEditView::DisableSelectArea( bool bDraw )
 {
-	m_nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
-	m_nSelectColmFromOld = m_nSelectColmFrom;	/* 範囲選択開始桁 */
-	m_nSelectLineToOld = m_nSelectLineTo;		/* 範囲選択終了行 */
-	m_nSelectColmToOld = m_nSelectColmTo;		/* 範囲選択終了桁 */
-//	m_nSelectLineFrom = 0;
-//	m_nSelectColmFrom = 0;
-//	m_nSelectLineTo = 0;
-//	m_nSelectColmTo = 0;
+	m_sSelectOld.m_ptFrom.y = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
+	m_sSelectOld.m_ptFrom.x = m_sSelect.m_ptFrom.x;	/* 範囲選択開始桁 */
+	m_sSelectOld.m_ptTo.y = m_sSelect.m_ptTo.y;		/* 範囲選択終了行 */
+	m_sSelectOld.m_ptTo.x = m_sSelect.m_ptTo.x;		/* 範囲選択終了桁 */
+//	m_sSelect.m_ptFrom.y = 0;
+//	m_sSelect.m_ptFrom.x = 0;
+//	m_sSelect.m_ptTo.y = 0;
+//	m_sSelect.m_ptTo.x = 0;
 
-	m_nSelectLineFrom	= -1;
-	m_nSelectColmFrom	= -1;
-	m_nSelectLineTo		= -1;
-	m_nSelectColmTo		= -1;
+	m_sSelect.m_ptFrom.y	= -1;
+	m_sSelect.m_ptFrom.x	= -1;
+	m_sSelect.m_ptTo.y		= -1;
+	m_sSelect.m_ptTo.x		= -1;
 
 	if( bDraw ){
 		DrawSelectArea();
 		m_bDrawSelectArea = false;	// 02/12/13 ai
 	}
 	m_bSelectingLock	 = false;	/* 選択状態のロック */
-	m_nSelectLineFromOld = 0;		/* 範囲選択開始行 */
-	m_nSelectColmFromOld = 0; 		/* 範囲選択開始桁 */
-	m_nSelectLineToOld = 0;			/* 範囲選択終了行 */
-	m_nSelectColmToOld = 0;			/* 範囲選択終了桁 */
+	m_sSelectOld.m_ptFrom.y = 0;		/* 範囲選択開始行 */
+	m_sSelectOld.m_ptFrom.x = 0; 		/* 範囲選択開始桁 */
+	m_sSelectOld.m_ptTo.y = 0;			/* 範囲選択終了行 */
+	m_sSelectOld.m_ptTo.x = 0;			/* 範囲選択終了桁 */
 	m_bBeginBoxSelect = FALSE;		/* 矩形範囲選択中 */
 	m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
 	m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
 
 	// 2002.02.16 hor 直前のカーソル位置をリセット
-	m_nCaretPosX_Prev=m_nCaretPosX;
+	m_nCaretPosX_Prev=m_ptCaretPos.x;
 
 	//	From Here Dec. 6, 2000 genta
 	//	To Here Dec. 6, 2000 genta
@@ -4402,19 +4402,19 @@ void CEditView::DisableSelectArea( bool bDraw )
 /* 現在のカーソル位置によって選択範囲を変更 */
 void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY )
 {
-	m_nSelectLineFromOld = m_nSelectLineFrom;	/* 範囲選択開始行 */
-	m_nSelectColmFromOld = m_nSelectColmFrom; 	/* 範囲選択開始桁 */
-	m_nSelectLineToOld = m_nSelectLineTo;		/* 範囲選択終了行 */
-	m_nSelectColmToOld = m_nSelectColmTo;		/* 範囲選択終了桁 */
+	m_sSelectOld.m_ptFrom.y = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
+	m_sSelectOld.m_ptFrom.x = m_sSelect.m_ptFrom.x; 	/* 範囲選択開始桁 */
+	m_sSelectOld.m_ptTo.y = m_sSelect.m_ptTo.y;		/* 範囲選択終了行 */
+	m_sSelectOld.m_ptTo.x = m_sSelect.m_ptTo.x;		/* 範囲選択終了桁 */
 
 	//	2002/04/08 YAZAKI コードの重複を排除
 	ChangeSelectAreaByCurrentCursorTEST(
 		nCaretPosX,
 		nCaretPosY, 
-		m_nSelectLineFrom,
-		m_nSelectColmFrom,
-		m_nSelectLineTo,
-		m_nSelectColmTo
+		m_sSelect.m_ptFrom.y,
+		m_sSelect.m_ptFrom.x,
+		m_sSelect.m_ptTo.y,
+		m_sSelect.m_ptTo.x
 	);
 	/* 選択領域の描画 */
 	DrawSelectArea();
@@ -4431,54 +4431,54 @@ void CEditView::ChangeSelectAreaByCurrentCursorTEST(
 	int&	nSelectColmTo
 )
 {
-	if( m_nSelectLineBgnFrom == m_nSelectLineBgnTo /* 範囲選択開始行(原点) */
-	 && m_nSelectColmBgnFrom == m_nSelectColmBgnTo ){
-		if( nCaretPosY == m_nSelectLineBgnFrom
-		 && nCaretPosX == m_nSelectColmBgnFrom ){
+	if( m_sSelectBgn.m_ptFrom.y == m_sSelectBgn.m_ptTo.y /* 範囲選択開始行(原点) */
+	 && m_sSelectBgn.m_ptFrom.x == m_sSelectBgn.m_ptTo.x ){
+		if( nCaretPosY == m_sSelectBgn.m_ptFrom.y
+		 && nCaretPosX == m_sSelectBgn.m_ptFrom.x ){
 			/* 選択解除 */
 			nSelectLineFrom = -1;
 			nSelectColmFrom  = -1;
 			nSelectLineTo = -1;
 			nSelectColmTo = -1;
 		}else
-		if( nCaretPosY < m_nSelectLineBgnFrom
-		 || ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX < m_nSelectColmBgnFrom ) ){
+		if( nCaretPosY < m_sSelectBgn.m_ptFrom.y
+		 || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX < m_sSelectBgn.m_ptFrom.x ) ){
 			nSelectLineFrom = nCaretPosY;
 			nSelectColmFrom = nCaretPosX;
-			nSelectLineTo = m_nSelectLineBgnFrom;
-			nSelectColmTo = m_nSelectColmBgnFrom;
+			nSelectLineTo = m_sSelectBgn.m_ptFrom.y;
+			nSelectColmTo = m_sSelectBgn.m_ptFrom.x;
 		}else{
-			nSelectLineFrom = m_nSelectLineBgnFrom;
-			nSelectColmFrom = m_nSelectColmBgnFrom;
+			nSelectLineFrom = m_sSelectBgn.m_ptFrom.y;
+			nSelectColmFrom = m_sSelectBgn.m_ptFrom.x;
 			nSelectLineTo = nCaretPosY;
 			nSelectColmTo = nCaretPosX;
 		}
 	}else{
 		/* 常時選択範囲の範囲内 */
-		if( ( nCaretPosY > m_nSelectLineBgnFrom || ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX >= m_nSelectColmBgnFrom ) )
-		 && ( nCaretPosY < m_nSelectLineBgnTo || ( nCaretPosY == m_nSelectLineBgnTo && nCaretPosX < m_nSelectColmBgnTo ) )
+		if( ( nCaretPosY > m_sSelectBgn.m_ptFrom.y || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX >= m_sSelectBgn.m_ptFrom.x ) )
+		 && ( nCaretPosY < m_sSelectBgn.m_ptTo.y || ( nCaretPosY == m_sSelectBgn.m_ptTo.y && nCaretPosX < m_sSelectBgn.m_ptTo.x ) )
 		){
-			nSelectLineFrom = m_nSelectLineBgnFrom;
-			nSelectColmFrom = m_nSelectColmBgnFrom;
-			if ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX == m_nSelectColmBgnFrom ){
-				nSelectLineTo = m_nSelectLineBgnTo;	//	m_nSelectLineBgnTo;
-				nSelectColmTo = m_nSelectColmBgnTo;	//	m_nSelectColmBgnTo;
+			nSelectLineFrom = m_sSelectBgn.m_ptFrom.y;
+			nSelectColmFrom = m_sSelectBgn.m_ptFrom.x;
+			if ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX == m_sSelectBgn.m_ptFrom.x ){
+				nSelectLineTo = m_sSelectBgn.m_ptTo.y;	//	m_sSelectBgn.m_ptTo.y;
+				nSelectColmTo = m_sSelectBgn.m_ptTo.x;	//	m_sSelectBgn.m_ptTo.x;
 			}
 			else {
-				nSelectLineTo = nCaretPosY;	//	m_nSelectLineBgnTo;
-				nSelectColmTo = nCaretPosX;	//	m_nSelectColmBgnTo;
+				nSelectLineTo = nCaretPosY;	//	m_sSelectBgn.m_ptTo.y;
+				nSelectColmTo = nCaretPosX;	//	m_sSelectBgn.m_ptTo.x;
 			}
 		}else
-		if( !( nCaretPosY > m_nSelectLineBgnFrom || ( nCaretPosY == m_nSelectLineBgnFrom && nCaretPosX >= m_nSelectColmBgnFrom ) ) ){
+		if( !( nCaretPosY > m_sSelectBgn.m_ptFrom.y || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX >= m_sSelectBgn.m_ptFrom.x ) ) ){
 			/* 常時選択範囲の前方向 */
 			nSelectLineFrom = nCaretPosY;
 			nSelectColmFrom  = nCaretPosX;
-			nSelectLineTo = m_nSelectLineBgnTo;
-			nSelectColmTo = m_nSelectColmBgnTo;
+			nSelectLineTo = m_sSelectBgn.m_ptTo.y;
+			nSelectColmTo = m_sSelectBgn.m_ptTo.x;
 		}else{
 			/* 常時選択範囲の後ろ方向 */
-			nSelectLineFrom = m_nSelectLineBgnFrom;
-			nSelectColmFrom = m_nSelectColmBgnFrom;
+			nSelectLineFrom = m_sSelectBgn.m_ptFrom.y;
+			nSelectColmFrom = m_sSelectBgn.m_ptFrom.x;
 			nSelectLineTo = nCaretPosY;
 			nSelectColmTo = nCaretPosX;
 		}
@@ -4502,8 +4502,8 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 
 		m_bBeginSelect = FALSE;
 
-		if( m_nSelectLineFrom == m_nSelectLineTo &&
-			m_nSelectColmFrom == m_nSelectColmTo
+		if( m_sSelect.m_ptFrom.y == m_sSelect.m_ptTo.y &&
+			m_sSelect.m_ptFrom.x == m_sSelect.m_ptTo.x
 		){
 			/* 現在の選択範囲を非選択状態に戻す */
 			DisableSelectArea( true );
@@ -4548,8 +4548,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 		/* カーソル位置にURLが有る場合のその範囲を調べる */
 		if(
 			IsCurrentPositionURL(
-				m_nCaretPosX,	// カーソル位置X
-				m_nCaretPosY,	// カーソル位置Y
+				m_ptCaretPos.x,	// カーソル位置X
+				m_ptCaretPos.y,	// カーソル位置Y
 				&nUrlLine,		// URLの行(改行単位)
 				&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
 				&nUrlLen,		// URLの長さ(バイト数)
@@ -4684,8 +4684,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	HideCaret_( m_hWnd ); // 2002/07/22 novice
 	if( IsTextSelected() ){
 		/* 常時選択範囲の範囲 */
-		m_nSelectLineBgnTo = m_nSelectLineTo;
-		m_nSelectColmBgnTo = m_nSelectColmTo;
+		m_sSelectBgn.m_ptTo.y = m_sSelect.m_ptTo.y;
+		m_sSelectBgn.m_ptTo.x = m_sSelect.m_ptTo.x;
 	}else{
 		/* 現在のカーソル位置から選択を開始する */
 		BeginSelectArea( );
@@ -4704,7 +4704,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 	const char*		pLine;
 	int				nLineLen;
 	int				nPosX = 0;
-	int				nPosY = m_nCaretPosY;
+	int				nPosY = m_ptCaretPos.y;
 	int				i;
 	int				nLineCols;
 	int				nScrollLines;
@@ -4712,11 +4712,11 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 	nScrollLines = 0;
 	if( nMoveLines > 0 ){
 		/* カーソルがテキスト最下端行にあるか */
-		if( m_nCaretPosY + nMoveLines >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
-			nMoveLines = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - m_nCaretPosY  - 1;
+		if( m_ptCaretPos.y + nMoveLines >= m_pcEditDoc->m_cLayoutMgr.GetLineCount() ){
+			nMoveLines = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - m_ptCaretPos.y  - 1;
 		}
 		if( nMoveLines <= 0 ){
-			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
+			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout );
 			if( NULL != pLine ){
 				nLineCols = LineIndexToColmn( pcLayout, nLineLen );
 				/* 改行で終わっているか */
@@ -4752,8 +4752,8 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 		}
 	}else{
 		/* カーソルがテキスト最上端行にあるか */
-		if( m_nCaretPosY + nMoveLines < 0 ){
-			nMoveLines = - m_nCaretPosY;
+		if( m_ptCaretPos.y + nMoveLines < 0 ){
+			nMoveLines = - m_ptCaretPos.y;
 		}
 		if( nMoveLines >= 0 ){
 			//	Sep. 11, 2004 genta 同期スクロールの関数化
@@ -4773,7 +4773,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 		}
 	}
 	/* 次の行のデータを取得 */
-	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY + nMoveLines, &nLineLen, &pcLayout );
+	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y + nMoveLines, &nLineLen, &pcLayout );
 	CMemoryIterator<CLayout> it( pcLayout, m_pcEditDoc->m_cLayoutMgr.GetTabSpace() );
 	while( !it.end() ){
 		it.scanNext();
@@ -4797,7 +4797,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 		if( m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode
 		 || IsTextSelected() && m_bBeginBoxSelect	/* 矩形範囲選択中 */
 		){
-			if( m_nCaretPosY + nMoveLines + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount()  ){
+			if( m_ptCaretPos.y + nMoveLines + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount()  ){
 				if( NULL != pLine ){
 					if( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF ){
 						nPosX = m_nCaretPosX_Prev;
@@ -4808,7 +4808,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			}
 		}
 	}
-	nScrollLines = MoveCursor( nPosX, m_nCaretPosY + nMoveLines, m_bDrawSWITCH /* true */ ); // YAZAKI.
+	nScrollLines = MoveCursor( nPosX, m_ptCaretPos.y + nMoveLines, m_bDrawSWITCH /* true */ ); // YAZAKI.
 	if( bSelect ){
 //		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && !IsTextSelected() && -1 != m_nOldUnderLineY ){
 //			HDC		hdc;
@@ -4834,8 +4834,8 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 //			::ReleaseDC( m_hWnd, hdc );
 //		}
 		/* 現在のカーソル位置によって選択範囲を変更 */
-//		ChangeSelectAreaByCurrentCursor( nPosX, m_nCaretPosY + nMoveLines );
-		ChangeSelectAreaByCurrentCursor( nPosX, m_nCaretPosY );
+//		ChangeSelectAreaByCurrentCursor( nPosX, m_ptCaretPos.y + nMoveLines );
+		ChangeSelectAreaByCurrentCursor( nPosX, m_ptCaretPos.y );
 	}
 
 	return nScrollLines;
@@ -5150,10 +5150,10 @@ BOOL CEditView::GetSelectedData(
 		/* 2点を対角とする矩形を求める */
 		TwoPointToRect(
 			&rcSel,
-			m_nSelectLineFrom,		/* 範囲選択開始行 */
-			m_nSelectColmFrom,		/* 範囲選択開始桁 */
-			m_nSelectLineTo,		/* 範囲選択終了行 */
-			m_nSelectColmTo			/* 範囲選択終了桁 */
+			m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
+			m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
+			m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
+			m_sSelect.m_ptTo.x			/* 範囲選択終了桁 */
 		);
 //		cmemBuf.SetData( "", 0 );
 		cmemBuf->SetString( "" );
@@ -5224,9 +5224,9 @@ BOOL CEditView::GetSelectedData(
 		//  無駄な容量確保が出ていますので、もう少し精度を上げたいところですが・・・。
 		//  とはいえ、逆に小さく見積もることになってしまうと、かなり速度をとられる要因になってしまうので
 		// 困ってしまうところですが・・・。
-		m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineFrom, &nLineLen, &pcLayout );
+		m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.m_ptFrom.y, &nLineLen, &pcLayout );
 		int nBufSize = 0;
-		int i = m_nSelectLineTo - m_nSelectLineFrom;
+		int i = m_sSelect.m_ptTo.y - m_sSelect.m_ptFrom.y;
 		// 先頭に引用符を付けるとき。
 		if ( NULL != pszQuote )
 		{
@@ -5265,21 +5265,21 @@ BOOL CEditView::GetSelectedData(
 		cmemBuf->AllocStringBuffer(nBufSize);
 		//>> 2002/04/18 Azumaiya
 
-		for( nLineNum = m_nSelectLineFrom; nLineNum <= m_nSelectLineTo; ++nLineNum ){
+		for( nLineNum = m_sSelect.m_ptFrom.y; nLineNum <= m_sSelect.m_ptTo.y; ++nLineNum ){
 //			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen );
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 			if( NULL == pLine ){
 				break;
 			}
-			if( nLineNum == m_nSelectLineFrom ){
+			if( nLineNum == m_sSelect.m_ptFrom.y ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxFrom = LineColmnToIndex( pcLayout, m_nSelectColmFrom );
+				nIdxFrom = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
 			}else{
 				nIdxFrom = 0;
 			}
-			if( nLineNum == m_nSelectLineTo ){
+			if( nLineNum == m_sSelect.m_ptTo.y ){
 				/* 指定された桁に対応する行のデータ内の位置を調べる */
-				nIdxTo = LineColmnToIndex( pcLayout, m_nSelectColmTo );
+				nIdxTo = LineColmnToIndex( pcLayout, m_sSelect.m_ptTo.x );
 			}else{
 				nIdxTo = nLineLen;
 			}
@@ -5367,13 +5367,13 @@ void CEditView::CopySelectedAllLines(
 		return;
 	}
 	{	// 選択範囲内の全行を選択状態にする
-		nSelectLineFrom = m_nSelectLineFrom;	/* 範囲選択開始行 */
-		nSelectLineTo = m_nSelectLineTo;		/* 範囲選択終了行 */
-		const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nSelectLineFrom );
+		nSelectLineFrom = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
+		nSelectLineTo = m_sSelect.m_ptTo.y;		/* 範囲選択終了行 */
+		const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_sSelect.m_ptFrom.y );
 		if( !pcLayout ) return;
 		nSelectColmFrom = pcLayout->GetIndent();	/* 範囲選択開始桁 */
-		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nSelectLineTo );
-		if( pcLayout && (m_bBeginBoxSelect || m_nSelectColmTo > pcLayout->GetIndent()) ){
+		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_sSelect.m_ptTo.y );
+		if( pcLayout && (m_bBeginBoxSelect || m_sSelect.m_ptTo.x > pcLayout->GetIndent()) ){
 			// 選択範囲を次行頭まで拡大する
 			nSelectLineTo++;
 			pcLayout = pcLayout->m_pNext;
@@ -5384,7 +5384,7 @@ void CEditView::CopySelectedAllLines(
 		DisableSelectArea( false ); // 2011.06.03 true →false
 		SetSelectArea( nSelectLineFrom, nSelectColmFrom, nSelectLineTo, nSelectColmTo );
 
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, false );
+		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, false );
 		ShowEditCaret();
 	}
 	/* 再描画 */
@@ -5453,8 +5453,8 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 	}
 
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(	// 2009.07.18 ryoji PHYで記憶するように変更
-		m_nSelectColmFrom,
-		m_nSelectLineFrom,
+		m_sSelect.m_ptFrom.x,
+		m_sSelect.m_ptFrom.y,
 		&nSelectColFromOld_PHY,	/* 範囲選択開始桁(PHY) */
 		&nSelectLineFromOld_PHY	/* 範囲選択開始行(PHY) */
 	);
@@ -5466,10 +5466,10 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		/* 2点を対角とする矩形を求める */
 		TwoPointToRect(
 			&rcSel,
-			m_nSelectLineFrom,					/* 範囲選択開始行 */
-			m_nSelectColmFrom,					/* 範囲選択開始桁 */
-			m_nSelectLineTo,					/* 範囲選択終了行 */
-			m_nSelectColmTo						/* 範囲選択終了桁 */
+			m_sSelect.m_ptFrom.y,					/* 範囲選択開始行 */
+			m_sSelect.m_ptFrom.x,					/* 範囲選択開始桁 */
+			m_sSelect.m_ptTo.y,					/* 範囲選択終了行 */
+			m_sSelect.m_ptTo.x						/* 範囲選択終了桁 */
 		);
 
 		/* 現在の選択範囲を非選択状態に戻す */
@@ -5564,7 +5564,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 				);
 				/* カーソルを移動 */
 				MoveCursor( nNewPos, nNewLine, false );
-				m_nCaretPosX_Prev = m_nCaretPosX;
+				m_nCaretPosX_Prev = m_ptCaretPos.x;
 				if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 					pcOpe->m_ptCaretPos_PHY_After.x = m_ptCaretPos_PHY.x;	/* 操作後のキャレット位置Ｘ */
 					pcOpe->m_ptCaretPos_PHY_After.y = m_ptCaretPos_PHY.y;	/* 操作後のキャレット位置Ｙ */
@@ -5575,7 +5575,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		}
 		/* 挿入データの先頭位置へカーソルを移動 */
 		MoveCursor( rcSel.left, rcSel.top, true );
-		m_nCaretPosX_Prev = m_nCaretPosX;
+		m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
@@ -5593,14 +5593,14 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		GetSelectedData( &cmemBuf, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy );
 
 		/* 機能種別によるバッファの変換 */
-		ConvMemory( &cmemBuf, nFuncCode, m_nSelectColmFrom );
+		ConvMemory( &cmemBuf, nFuncCode, m_sSelect.m_ptFrom.x );
 
 		/* データ置換 削除&挿入にも使える */
 		ReplaceData_CEditView(
-			m_nSelectLineFrom,		/* 範囲選択開始行 */
-			m_nSelectColmFrom,		/* 範囲選択開始桁 */
-			m_nSelectLineTo,		/* 範囲選択終了行 */
-			m_nSelectColmTo,		/* 範囲選択終了桁 */
+			m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
+			m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
+			m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
+			m_sSelect.m_ptTo.x,		/* 範囲選択終了桁 */
 			NULL,					/* 削除されたデータのコピー(NULL可能) */
 			cmemBuf.GetStringPtr(),	/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
 			cmemBuf.GetStringLength(),		/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
@@ -5612,12 +5612,12 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(	// 2009.07.18 ryoji PHYから戻す
 			nSelectColFromOld_PHY,
 			nSelectLineFromOld_PHY,
-			&m_nSelectColmFrom,	/* 範囲選択開始桁 */
-			&m_nSelectLineFrom	/* 範囲選択開始行 */
+			&m_sSelect.m_ptFrom.x,	/* 範囲選択開始桁 */
+			&m_sSelect.m_ptFrom.y	/* 範囲選択開始行 */
 		);
-		SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nCaretPosY, m_nCaretPosX );	// 2009.07.25 ryoji
-		MoveCursor( m_nSelectColmTo, m_nSelectLineTo, true );
-		m_nCaretPosX_Prev = m_nCaretPosX;
+		SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_ptCaretPos.y, m_ptCaretPos.x );	// 2009.07.25 ryoji
+		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, true );
+		m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 		if( !m_bDoing_UndoRedo ){	/* アンドゥ・リドゥの実行中か */
 			pcOpe = new COpe;
@@ -5934,8 +5934,8 @@ void CEditView::DrawCaretPosInfo( void )
 	hwndFrame = ::GetParent( m_hwndParent );
 	pCEditWnd = m_pcEditDoc->m_pcEditWnd;	//	Sep. 10, 2002 genta
 	/* カーソル位置の文字コード */
-//	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen );
-	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
+//	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen );
+	pLine = (unsigned char*)m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout );
 
 	//	May 12, 2000 genta
 	//	改行コードの表示を追加
@@ -5969,13 +5969,13 @@ void CEditView::DrawCaretPosInfo( void )
 			nPosX ++;	//	補正
 		}
 		else {
-			nPosX = m_nCaretPosX + 1;
+			nPosX = m_ptCaretPos.x + 1;
 		}
 		nPosY = m_ptCaretPos_PHY.y + 1;
 	}
 	else {
-		nPosX = m_nCaretPosX + 1;
-		nPosY = m_nCaretPosY + 1;
+		nPosX = m_ptCaretPos.x + 1;
+		nPosY = m_ptCaretPos.y + 1;
 	}
 
 	/* ステータス情報を書き出す */
@@ -5986,7 +5986,7 @@ void CEditView::DrawCaretPosInfo( void )
 		//	From Here
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
+			nIdxFrom = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 			if( nIdxFrom >= nLineLen ){
 				/* szText */
 				wsprintf( szText, "%s(%s)       %6d：%d", pCodeName, nNlTypeName, nPosY, nPosX );	//Oct. 31, 2000 JEPRO //Oct. 31, 2000 JEPRO メニューバーでの表示桁を節約
@@ -6032,7 +6032,7 @@ void CEditView::DrawCaretPosInfo( void )
 		nCharChars = 0;
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdxFrom = LineColmnToIndex( pcLayout, m_nCaretPosX );
+			nIdxFrom = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 			if( nIdxFrom >= nLineLen ){
 			}else{
 				if( nIdxFrom < nLineLen - (pcLayout->m_cEol.GetLen()?1:0) ){
@@ -6095,21 +6095,21 @@ void CEditView::PrintSelectionInfoMsg(void)
 	char msg[128];
 	//	From here 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策
 	int nLineCount = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
-	if( m_nSelectLineFrom >= nLineCount ){	// 先頭行が実在しない
+	if( m_sSelect.m_ptFrom.y >= nLineCount ){	// 先頭行が実在しない
 		m_pcEditDoc->m_pcEditWnd->SendStatusMessage2( "" );
 		return;
 	}
 	int select_line;
-	if( m_nSelectLineTo >= nLineCount ){	// 最終行が実在しない
-		select_line = nLineCount - m_nSelectLineFrom + 1;
+	if( m_sSelect.m_ptTo.y >= nLineCount ){	// 最終行が実在しない
+		select_line = nLineCount - m_sSelect.m_ptFrom.y + 1;
 	}
 	else {
-		select_line = m_nSelectLineTo - m_nSelectLineFrom + 1;
+		select_line = m_sSelect.m_ptTo.y - m_sSelect.m_ptFrom.y + 1;
 	}
 	//	To here 2006.06.06 ryoji 選択範囲の行が実在しない場合の対策
 	if( m_bBeginBoxSelect ){
 		//	矩形の場合は幅と高さだけでごまかす
-		int select_col = m_nSelectColmFrom - m_nSelectColmTo;
+		int select_col = m_sSelect.m_ptFrom.x - m_sSelect.m_ptTo.x;
 		if( select_col < 0 ){
 			select_col = -select_col;
 		}
@@ -6125,23 +6125,23 @@ void CEditView::PrintSelectionInfoMsg(void)
 		const CLayout*	pcLayout;
 
 		//	1行目
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nSelectLineFrom, &nLineLen, &pcLayout );
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_sSelect.m_ptFrom.y, &nLineLen, &pcLayout );
 		if( pLine ){
 			//	1行だけ選択されている場合
-			if( m_nSelectLineFrom == m_nSelectLineTo ){
-				select_sum = LineColmnToIndex( pcLayout, m_nSelectColmTo )
-					- LineColmnToIndex( pcLayout, m_nSelectColmFrom );
+			if( m_sSelect.m_ptFrom.y == m_sSelect.m_ptTo.y ){
+				select_sum = LineColmnToIndex( pcLayout, m_sSelect.m_ptTo.x )
+					- LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
 			}
 			else {	//	2行以上選択されている場合
 				select_sum = pcLayout->GetLengthWithoutEOL() + pcLayout->m_cEol.GetLen()
-					- LineColmnToIndex( pcLayout, m_nSelectColmFrom );
+					- LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
 
 				//	GetSelectedDataと似ているが，先頭行と最終行は排除している
 				//	Aug. 16, 2005 aroka nLineNumはfor以降でも使われるのでforの前で宣言する
 				//	VC .NET以降でもMicrosoft拡張を有効にした標準動作はVC6と同じことに注意
 				int nLineNum;
-				for( nLineNum = m_nSelectLineFrom + 1;
-					nLineNum < m_nSelectLineTo; ++nLineNum ){
+				for( nLineNum = m_sSelect.m_ptFrom.y + 1;
+					nLineNum < m_sSelect.m_ptTo.y; ++nLineNum ){
 					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 					//	2006.06.06 ryoji 指定行のデータが存在しない場合の対策
 					if( NULL == pLine )
@@ -6152,7 +6152,7 @@ void CEditView::PrintSelectionInfoMsg(void)
 				//	最終行の処理
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout );
 				if( pLine ){
-					int last_line_chars = LineColmnToIndex( pcLayout, m_nSelectColmTo );
+					int last_line_chars = LineColmnToIndex( pcLayout, m_sSelect.m_ptTo.x );
 					select_sum += last_line_chars;
 					if( last_line_chars == 0 ){
 						//	最終行の先頭にキャレットがある場合は
@@ -6172,8 +6172,8 @@ void CEditView::PrintSelectionInfoMsg(void)
 #ifdef _DEBUG
 		wsprintf( msg, "%d bytes (%d lines) selected. [%d:%d]-[%d:%d]",
 			select_sum, select_line,
-			m_nSelectColmFrom, m_nSelectLineFrom,
-			m_nSelectColmTo, m_nSelectLineTo );
+			m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y,
+			m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y );
 #else
 		wsprintf( msg, "%d bytes (%d lines) selected.", select_sum, select_line );
 #endif
@@ -6199,7 +6199,7 @@ void CEditView::OnChangeSetting( void )
 	SetFont();
 
 	/* フォントが変わっているかもしれないので、カーソル移動 */
-	MoveCursor( m_nCaretPosX, m_nCaretPosY, true );
+	MoveCursor( m_ptCaretPos.x, m_ptCaretPos.y, true );
 
 
 	/* スクロールバーの状態を更新する */
@@ -6303,9 +6303,9 @@ void CEditView::CopyViewStatus( CEditView* pView )
 	}
 
 	/* 入力状態 */
-	pView->m_nCaretPosX 			= m_nCaretPosX;			/* ビュー左端からのカーソル桁位置（０開始）*/
+	pView->m_ptCaretPos.x 			= m_ptCaretPos.x;			/* ビュー左端からのカーソル桁位置（０開始）*/
 	pView->m_nCaretPosX_Prev		= m_nCaretPosX_Prev;	/* ビュー左端からのカーソル桁位置（０オリジン）*/
-	pView->m_nCaretPosY				= m_nCaretPosY;			/* ビュー上端からのカーソル行位置（０開始）*/
+	pView->m_ptCaretPos.y				= m_ptCaretPos.y;			/* ビュー上端からのカーソル行位置（０開始）*/
 	pView->m_ptCaretPos_PHY.x			= m_ptCaretPos_PHY.x;		/* カーソル位置  改行単位行先頭からのバイト数（０開始）*/
 	pView->m_ptCaretPos_PHY.y			= m_ptCaretPos_PHY.y;		/* カーソル位置  改行単位行の行番号（０開始）*/
 //	キャレットの幅・高さはコピーしない。2002/05/12 YAZAKI
@@ -6317,19 +6317,19 @@ void CEditView::CopyViewStatus( CEditView* pView )
 	pView->m_bBeginSelect			= m_bBeginSelect;		/* 範囲選択中 */
 	pView->m_bBeginBoxSelect		= m_bBeginBoxSelect;	/* 矩形範囲選択中 */
 
-	pView->m_nSelectLineBgnFrom		= m_nSelectLineBgnFrom;	/* 範囲選択開始行(原点) */
-	pView->m_nSelectColmBgnFrom		= m_nSelectColmBgnFrom;	/* 範囲選択開始桁(原点) */
-	pView->m_nSelectLineBgnTo		= m_nSelectLineBgnTo;	/* 範囲選択開始行(原点) */
-	pView->m_nSelectColmBgnTo		= m_nSelectColmBgnTo;	/* 範囲選択開始桁(原点) */
+	pView->m_sSelectBgn.m_ptFrom.y		= m_sSelectBgn.m_ptFrom.y;	/* 範囲選択開始行(原点) */
+	pView->m_sSelectBgn.m_ptFrom.x		= m_sSelectBgn.m_ptFrom.x;	/* 範囲選択開始桁(原点) */
+	pView->m_sSelectBgn.m_ptTo.y		= m_sSelectBgn.m_ptTo.y;	/* 範囲選択開始行(原点) */
+	pView->m_sSelectBgn.m_ptTo.x		= m_sSelectBgn.m_ptTo.x;	/* 範囲選択開始桁(原点) */
 
-	pView->m_nSelectLineFrom		= m_nSelectLineFrom;	/* 範囲選択開始行 */
-	pView->m_nSelectColmFrom		= m_nSelectColmFrom;	/* 範囲選択開始桁 */
-	pView->m_nSelectLineTo			= m_nSelectLineTo;		/* 範囲選択終了行 */
-	pView->m_nSelectColmTo			= m_nSelectColmTo;		/* 範囲選択終了桁 */
-	pView->m_nSelectLineFromOld		= m_nSelectLineFromOld;	/* 範囲選択開始行 */
-	pView->m_nSelectColmFromOld		= m_nSelectColmFromOld;	/* 範囲選択開始桁 */
-	pView->m_nSelectLineToOld		= m_nSelectLineToOld;	/* 範囲選択終了行 */
-	pView->m_nSelectColmToOld		= m_nSelectColmToOld;	/* 範囲選択終了桁 */
+	pView->m_sSelect.m_ptFrom.y		= m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
+	pView->m_sSelect.m_ptFrom.x		= m_sSelect.m_ptFrom.x;	/* 範囲選択開始桁 */
+	pView->m_sSelect.m_ptTo.y			= m_sSelect.m_ptTo.y;		/* 範囲選択終了行 */
+	pView->m_sSelect.m_ptTo.x			= m_sSelect.m_ptTo.x;		/* 範囲選択終了桁 */
+	pView->m_sSelectOld.m_ptFrom.y		= m_sSelectOld.m_ptFrom.y;	/* 範囲選択開始行 */
+	pView->m_sSelectOld.m_ptFrom.x		= m_sSelectOld.m_ptFrom.x;	/* 範囲選択開始桁 */
+	pView->m_sSelectOld.m_ptTo.y		= m_sSelectOld.m_ptTo.y;	/* 範囲選択終了行 */
+	pView->m_sSelectOld.m_ptTo.x		= m_sSelectOld.m_ptTo.x;	/* 範囲選択終了桁 */
 	pView->m_nMouseRollPosXOld		= m_nMouseRollPosXOld;	/* マウス範囲選択前回位置(X座標) */
 	pView->m_nMouseRollPosYOld		= m_nMouseRollPosYOld;	/* マウス範囲選択前回位置(Y座標) */
 
@@ -7652,14 +7652,14 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 	int			nCharChars;
 	const CLayout* pcLayout;
 
-	nCurLine = m_nCaretPosY;
+	nCurLine = m_ptCaretPos.y;
 	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nCurLine, &nLineLen, &pcLayout );
 	if( NULL == pLine ){
 //		return 0;
 		nIdxTo = 0;
 	}else{
 		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
-		nIdxTo = LineColmnToIndex( pcLayout, m_nCaretPosX );
+		nIdxTo = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 	}
 	if( 0 == nIdxTo || NULL == pLine ){
 		if( nCurLine <= 0 ){
@@ -7674,7 +7674,7 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 			return 0;
 		}
 		/* 指定された桁に対応する行のデータ内の位置を調べる Ver1 */
-//		nIdxTo = LineColmnToIndex( pLine, nLineLen, m_nCaretPosX );
+//		nIdxTo = LineColmnToIndex( pLine, nLineLen, m_ptCaretPos.x );
 
 		nCharChars = &pLine[nLineLen] - CMemory::MemCharPrev( pLine, nLineLen, &pLine[nLineLen] );
 		if( 0 == nCharChars ){
@@ -7769,16 +7769,16 @@ BOOL CEditView::GetCurrentWord(
 	int				nLineTo;
 	int				nColmTo;
 	int				nIdx;
-	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_nCaretPosY );
+	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
 	if( NULL == pcLayout ){
 		return false;	/* 単語選択に失敗 */
 	}
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
+	nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 
 	/* 現在位置の単語の範囲を調べる */
 	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-		m_nCaretPosY, nIdx,
+		m_ptCaretPos.y, nIdx,
 		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, pcmemWord, NULL ) ){
 		return true;	/* 単語選択に成功 */
 	}
@@ -7811,10 +7811,10 @@ int CEditView::IsCurrentPositionSelected(
 		/* 2点を対角とする矩形を求める */
 		TwoPointToRect(
 			&rcSel,
-			m_nSelectLineFrom,		/* 範囲選択開始行 */
-			m_nSelectColmFrom,		/* 範囲選択開始桁 */
-			m_nSelectLineTo,		/* 範囲選択終了行 */
-			m_nSelectColmTo			/* 範囲選択終了桁 */
+			m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
+			m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
+			m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
+			m_sSelect.m_ptTo.x			/* 範囲選択終了桁 */
 		);
 		++rcSel.bottom;
 		po.x = nCaretPosX;
@@ -7842,41 +7842,41 @@ int CEditView::IsCurrentPositionSelected(
 			return 1;
 		}
 	}else{
-		if( m_nSelectLineFrom > nCaretPosY ){
+		if( m_sSelect.m_ptFrom.y > nCaretPosY ){
 			return -1;
 		}
-		if( m_nSelectLineTo < nCaretPosY ){
+		if( m_sSelect.m_ptTo.y < nCaretPosY ){
 			return 1;
 		}
-		if( m_nSelectLineFrom == nCaretPosY ){
+		if( m_sSelect.m_ptFrom.y == nCaretPosY ){
 			if( IsDragSource() ){
 				if(GetKeyState_Control()){	/* Ctrlキーが押されていたか */
-					if( m_nSelectColmFrom >= nCaretPosX ){
+					if( m_sSelect.m_ptFrom.x >= nCaretPosX ){
 						return -1;
 					}
 				}else{
-					if( m_nSelectColmFrom > nCaretPosX ){
+					if( m_sSelect.m_ptFrom.x > nCaretPosX ){
 						return -1;
 					}
 				}
 			}else
-			if( m_nSelectColmFrom > nCaretPosX ){
+			if( m_sSelect.m_ptFrom.x > nCaretPosX ){
 				return -1;
 			}
 		}
-		if( m_nSelectLineTo == nCaretPosY ){
+		if( m_sSelect.m_ptTo.y == nCaretPosY ){
 			if( IsDragSource() ){
 				if(GetKeyState_Control()){	/* Ctrlキーが押されていたか */
-					if( m_nSelectColmTo <= nCaretPosX ){
+					if( m_sSelect.m_ptTo.x <= nCaretPosX ){
 						return 1;
 					}
 				}else{
-					if( m_nSelectColmTo < nCaretPosX ){
+					if( m_sSelect.m_ptTo.x < nCaretPosX ){
 						return 1;
 					}
 				}
 			}else
-			if( m_nSelectColmTo <= nCaretPosX ){
+			if( m_sSelect.m_ptTo.x <= nCaretPosX ){
 				return 1;
 			}
 		}
@@ -8208,8 +8208,8 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	m_pcEditDoc->SetActivePane( m_nMyIndex );
 
 	// 現在のカーソル位置を記憶する	// 2007.12.09 ryoji
-	m_nCaretPosX_DragEnter = m_nCaretPosX;
-	m_nCaretPosY_DragEnter = m_nCaretPosY;
+	m_ptCaretPos_DragEnter.x = m_ptCaretPos.x;
+	m_ptCaretPos_DragEnter.y = m_ptCaretPos.y;
 	m_nCaretPosX_Prev_DragEnter = m_nCaretPosX_Prev;
 
 	// ドラッグデータは矩形か
@@ -8240,7 +8240,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
 	if( pcDragSourceView && !IsDragSource() &&
-		!pcDragSourceView->IsCurrentPositionSelected( m_nCaretPosX, m_nCaretPosY )
+		!pcDragSourceView->IsCurrentPositionSelected( m_ptCaretPos.x, m_ptCaretPos.y )
 	){
 		*pdwEffect = DROPEFFECT_NONE;
 	}
@@ -8257,7 +8257,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 	m_bDragMode = FALSE;
 
 	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
-	MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, false );
+	MoveCursor( m_ptCaretPos_DragEnter.x, m_ptCaretPos_DragEnter.y, false );
 	m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
 	RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
 
@@ -8324,12 +8324,12 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
 	if( pcDragSourceView &&
-		!pcDragSourceView->IsCurrentPositionSelected( m_nCaretPosX, m_nCaretPosY )
+		!pcDragSourceView->IsCurrentPositionSelected( m_ptCaretPos.x, m_ptCaretPos.y )
 	){
 		// DragEnter時のカーソル位置を復元
 		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
 		*pdwEffect = DROPEFFECT_NONE;
-		MoveCursor( m_nCaretPosX_DragEnter, m_nCaretPosY_DragEnter, false );
+		MoveCursor( m_ptCaretPos_DragEnter.x, m_ptCaretPos_DragEnter.y, false );
 		m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
 		if( !IsDragSource() )	// ドラッグ元の場合はここでは再描画不要（DragDrop後処理のSetActivePaneで再描画される）
 			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
@@ -8361,29 +8361,29 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			/* 2点を対角とする矩形を求める */
 			TwoPointToRect(
 				&rcSel,
-				pcDragSourceView->m_nSelectLineFrom,		/* 範囲選択開始行 */
-				pcDragSourceView->m_nSelectColmFrom,		/* 範囲選択開始桁 */
-				pcDragSourceView->m_nSelectLineTo,		/* 範囲選択終了行 */
-				pcDragSourceView->m_nSelectColmTo			/* 範囲選択終了桁 */
+				pcDragSourceView->m_sSelect.m_ptFrom.y,		/* 範囲選択開始行 */
+				pcDragSourceView->m_sSelect.m_ptFrom.x,		/* 範囲選択開始桁 */
+				pcDragSourceView->m_sSelect.m_ptTo.y,		/* 範囲選択終了行 */
+				pcDragSourceView->m_sSelect.m_ptTo.x			/* 範囲選択終了桁 */
 			);
 			++rcSel.bottom;
-			if( m_nCaretPosY >= rcSel.bottom ){
+			if( m_ptCaretPos.y >= rcSel.bottom ){
 				bMoveToPrev = FALSE;
 			}else
-			if( m_nCaretPosY + rcSel.bottom - rcSel.top < rcSel.top ){
+			if( m_ptCaretPos.y + rcSel.bottom - rcSel.top < rcSel.top ){
 				bMoveToPrev = TRUE;
 			}else
-			if( m_nCaretPosX < rcSel.left ){
+			if( m_ptCaretPos.x < rcSel.left ){
 				bMoveToPrev = TRUE;
 			}else{
 				bMoveToPrev = FALSE;
 			}
 		}else{
-			if( pcDragSourceView->m_nSelectLineFrom > m_nCaretPosY ){
+			if( pcDragSourceView->m_sSelect.m_ptFrom.y > m_ptCaretPos.y ){
 				bMoveToPrev = TRUE;
 			}else
-			if( pcDragSourceView->m_nSelectLineFrom == m_nCaretPosY ){
-				if( pcDragSourceView->m_nSelectColmFrom > m_nCaretPosX ){
+			if( pcDragSourceView->m_sSelect.m_ptFrom.y == m_ptCaretPos.y ){
+				if( pcDragSourceView->m_sSelect.m_ptFrom.x > m_ptCaretPos.x ){
 					bMoveToPrev = TRUE;
 				}else{
 					bMoveToPrev = FALSE;
@@ -8394,8 +8394,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		}
 	}
 
-	nCaretPosX_Old = m_nCaretPosX;
-	nCaretPosY_Old = m_nCaretPosY;
+	nCaretPosX_Old = m_ptCaretPos.x;
+	nCaretPosY_Old = m_ptCaretPos.y;
 	if( !bMove ){
 		/* コピーモード */
 		/* 現在の選択範囲を非選択状態に戻す */
@@ -8403,14 +8403,14 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}else{
 		// ドラッグ元の選択範囲を記憶
 		bBeginBoxSelect_Old = pcDragSourceView->m_bBeginBoxSelect;
-		nSelectLineBgnFrom_Old = pcDragSourceView->m_nSelectLineBgnFrom;
-		nSelectColBgnFrom_Old = pcDragSourceView->m_nSelectColmBgnFrom;
-		nSelectLineBgnTo_Old = pcDragSourceView->m_nSelectLineBgnTo;
-		nSelectColBgnTo_Old = pcDragSourceView->m_nSelectColmBgnTo;
-		nSelectLineFrom_Old = pcDragSourceView->m_nSelectLineFrom;
-		nSelectColFrom_Old = pcDragSourceView->m_nSelectColmFrom;
-		nSelectLineTo_Old = pcDragSourceView->m_nSelectLineTo;
-		nSelectColTo_Old = pcDragSourceView->m_nSelectColmTo;
+		nSelectLineBgnFrom_Old = pcDragSourceView->m_sSelectBgn.m_ptFrom.y;
+		nSelectColBgnFrom_Old = pcDragSourceView->m_sSelectBgn.m_ptFrom.x;
+		nSelectLineBgnTo_Old = pcDragSourceView->m_sSelectBgn.m_ptTo.y;
+		nSelectColBgnTo_Old = pcDragSourceView->m_sSelectBgn.m_ptTo.x;
+		nSelectLineFrom_Old = pcDragSourceView->m_sSelect.m_ptFrom.y;
+		nSelectColFrom_Old = pcDragSourceView->m_sSelect.m_ptFrom.x;
+		nSelectLineTo_Old = pcDragSourceView->m_sSelect.m_ptTo.y;
+		nSelectColTo_Old = pcDragSourceView->m_sSelect.m_ptTo.x;
 
 		if( bMoveToPrev ){
 			/* 移動モード & 前に移動 */
@@ -8420,14 +8420,14 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				pcDragSourceView->DisableSelectArea( true );
 				DisableSelectArea( true );
 				m_bBeginBoxSelect = bBeginBoxSelect_Old;
-				m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;
-				m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;
-				m_nSelectLineBgnTo = nSelectLineBgnTo_Old;
-				m_nSelectColmBgnTo = nSelectColBgnTo_Old;
-				m_nSelectLineFrom = nSelectLineFrom_Old;
-				m_nSelectColmFrom = nSelectColFrom_Old;
-				m_nSelectLineTo = nSelectLineTo_Old;
-				m_nSelectColmTo = nSelectColTo_Old;
+				m_sSelectBgn.m_ptFrom.y = nSelectLineBgnFrom_Old;
+				m_sSelectBgn.m_ptFrom.x = nSelectColBgnFrom_Old;
+				m_sSelectBgn.m_ptTo.y = nSelectLineBgnTo_Old;
+				m_sSelectBgn.m_ptTo.x = nSelectColBgnTo_Old;
+				m_sSelect.m_ptFrom.y = nSelectLineFrom_Old;
+				m_sSelect.m_ptFrom.x = nSelectColFrom_Old;
+				m_sSelect.m_ptTo.y = nSelectLineTo_Old;
+				m_sSelect.m_ptTo.x = nSelectColTo_Old;
 			}
 			DeleteData( true );
 			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, true );
@@ -8447,10 +8447,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		int nCaretPosY_PHY_Old = m_ptCaretPos_PHY.y;
 		const CLayout* pcLayout;
 		int nLineLen;
-		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ){
-			LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
+		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout ) ){
+			LineColmnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
 			if( nLineLen > 0 ){	// 行終端より右の場合には nLineLen に行全体の表示桁数が入っている
-				nCaretPosX_PHY_Old += (m_nCaretPosX - nLineLen);
+				nCaretPosX_PHY_Old += (m_ptCaretPos.x - nLineLen);
 			}
 		}
 
@@ -8459,9 +8459,9 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
-			&m_nSelectColmFrom, &m_nSelectLineFrom
+			&m_sSelect.m_ptFrom.x, &m_sSelect.m_ptFrom.y
 		);
-		SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nCaretPosY, m_nCaretPosX );	// 2009.07.25 ryoji
+		SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_ptCaretPos.y, m_ptCaretPos.x );	// 2009.07.25 ryoji
 	}else{
 		// 2004.07.12 Moca クリップボードを書き換えないように
 		// TRUE == bBoxData
@@ -8482,11 +8482,11 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			int nSelectLineTo_PHY;
 			int nSelectColmTo_PHY;
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-				m_nSelectColmFrom, m_nSelectLineFrom,
+				m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y,
 				&nSelectColmFrom_PHY, &nSelectLineFrom_PHY
 			);
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-				m_nSelectColmTo, m_nSelectLineTo,
+				m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y,
 				&nSelectColmTo_PHY, &nSelectLineTo_PHY
 			);
 
@@ -8509,14 +8509,14 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 			// 以前の選択範囲を選択する
 			m_bBeginBoxSelect = bBeginBoxSelect_Old;
-			m_nSelectLineBgnFrom = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnFrom = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
-			m_nSelectLineBgnTo = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-			m_nSelectColmBgnTo = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
-			m_nSelectLineFrom = nSelectLineFrom_Old;
-			m_nSelectColmFrom = nSelectColFrom_Old;
-			m_nSelectLineTo = nSelectLineTo_Old;
-			m_nSelectColmTo = nSelectColTo_Old;
+			m_sSelectBgn.m_ptFrom.y = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
+			m_sSelectBgn.m_ptFrom.x = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
+			m_sSelectBgn.m_ptTo.y = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
+			m_sSelectBgn.m_ptTo.x = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
+			m_sSelect.m_ptFrom.y = nSelectLineFrom_Old;
+			m_sSelect.m_ptFrom.x = nSelectColFrom_Old;
+			m_sSelect.m_ptTo.y = nSelectLineTo_Old;
+			m_sSelect.m_ptTo.x = nSelectColTo_Old;
 
 			/* 選択エリアを削除 */
 			DeleteData( true );
@@ -8541,20 +8541,20 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				// 調整後の選択範囲を設定する
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 					nSelectColmFrom_PHY, nSelectLineFrom_PHY,
-					&m_nSelectColmFrom, &m_nSelectLineFrom
+					&m_sSelect.m_ptFrom.x, &m_sSelect.m_ptFrom.y
 				);
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 					nSelectColmTo_PHY, nSelectLineTo_PHY,
-					&m_nSelectColmTo, &m_nSelectLineTo
+					&m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y
 				);
-				SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nSelectLineTo, m_nSelectColmTo );	// 2009.07.25 ryoji
-				nCaretPosX_Old = m_nSelectColmTo;
-				nCaretPosY_Old = m_nSelectLineTo;
+				SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_sSelect.m_ptTo.y, m_sSelect.m_ptTo.x );	// 2009.07.25 ryoji
+				nCaretPosX_Old = m_sSelect.m_ptTo.x;
+				nCaretPosY_Old = m_sSelect.m_ptTo.y;
 			}
 
 			// キャレットを移動する
 			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, true );
-			m_nCaretPosX_Prev = m_nCaretPosX;
+			m_nCaretPosX_Prev = m_ptCaretPos.x;
 
 			// 削除位置から移動先へのカーソル移動をアンドゥ操作に追加する	// 2008.03.26 ryoji
 			pcOpe = new COpe;
@@ -8691,10 +8691,10 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		int nCaretPosY_PHY_Old = m_ptCaretPos_PHY.y;
 		const CLayout* pcLayout;
 		int nLineLen;
-		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout ) ){
-			LineColmnToIndex2( pcLayout, m_nCaretPosX, nLineLen );
+		if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout ) ){
+			LineColmnToIndex2( pcLayout, m_ptCaretPos.x, nLineLen );
 			if( nLineLen > 0 ){	// 行終端より右の場合には nLineLen に行全体の表示桁数が入っている
-				nCaretPosX_PHY_Old += (m_nCaretPosX - nLineLen);
+				nCaretPosX_PHY_Old += (m_ptCaretPos.x - nLineLen);
 			}
 		}
 
@@ -8704,9 +8704,9 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 		// 挿入前のキャレット位置から挿入後のキャレット位置までを選択範囲にする
 		m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
 			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
-			&m_nSelectColmFrom, &m_nSelectLineFrom
+			&m_sSelect.m_ptFrom.x, &m_sSelect.m_ptFrom.y
 		);
-		SetSelectArea( m_nSelectLineFrom, m_nSelectColmFrom, m_nCaretPosY, m_nCaretPosX );	// 2009.07.25 ryoji
+		SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_ptCaretPos.y, m_ptCaretPos.x );	// 2009.07.25 ryoji
 		DrawSelectArea();
 		break;
 	}
@@ -8794,14 +8794,14 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 		}
 	}else{
 		const CLayout*	pcLayout;
-		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_nCaretPosY, &nLineLen, &pcLayout );
+		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout );
 		if( NULL != pLine ){
 			/* 指定された桁に対応する行のデータ内の位置を調べる */
-			nIdx = LineColmnToIndex( pcLayout, m_nCaretPosX );
+			nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 
 			/* 現在位置の単語の範囲を調べる */
 			if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-				m_nCaretPosY, nIdx,
+				m_ptCaretPos.y, nIdx,
 				&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
 			){
 				/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
@@ -8810,15 +8810,15 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
 				nColmTo = LineIndexToColmn( pcLayout, nColmTo );
 				/* 選択範囲の変更 */
-				m_nSelectLineBgnFrom = nLineFrom;	/* 範囲選択開始行(原点) */
-				m_nSelectColmBgnFrom = nColmFrom;	/* 範囲選択開始桁(原点) */
-				m_nSelectLineBgnTo = nLineTo;		/* 範囲選択開始行(原点) */
-				m_nSelectColmBgnTo = nColmTo;		/* 範囲選択開始桁(原点) */
+				m_sSelectBgn.m_ptFrom.y = nLineFrom;	/* 範囲選択開始行(原点) */
+				m_sSelectBgn.m_ptFrom.x = nColmFrom;	/* 範囲選択開始桁(原点) */
+				m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
+				m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
 
-				m_nSelectLineFrom = nLineFrom;
-				m_nSelectColmFrom = nColmFrom;
-				m_nSelectLineTo = nLineTo;
-				m_nSelectColmTo = nColmTo;
+				m_sSelect.m_ptFrom.y = nLineFrom;
+				m_sSelect.m_ptFrom.x = nColmFrom;
+				m_sSelect.m_ptTo.y = nLineTo;
+				m_sSelect.m_ptTo.x = nColmTo;
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					/* 検索文字列を現在位置の単語で初期化 */
@@ -8902,7 +8902,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 	// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 	if( bCursorVLine ){
 		// カーソル位置縦線。-1してキャレットの左に来るように。
-		m_nOldCursorLineX = m_nViewAlignLeft + (m_nCaretPosX - m_nViewLeftCol)
+		m_nOldCursorLineX = m_nViewAlignLeft + (m_ptCaretPos.x - m_nViewLeftCol)
 			* (m_pcEditDoc->GetDocumentAttribute().m_nColmSpace + m_nCharWidth ) - 1;
 		if( -1 == m_nOldCursorLineX ){
 			m_nOldCursorLineX = -2;
@@ -8939,7 +8939,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		hdc= NULL;
 	}
 	if( bUnderLine ){
-		m_nOldUnderLineY = m_nViewAlignTop + (m_nCaretPosY - m_nViewTopLine)
+		m_nOldUnderLineY = m_nViewAlignTop + (m_ptCaretPos.y - m_nViewTopLine)
 			 * (m_pcEditDoc->GetDocumentAttribute().m_nLineSpace + m_nCharHeight) + m_nCharHeight;
 		if( -1 == m_nOldUnderLineY ){
 			m_nOldUnderLineY = -2;
@@ -9004,21 +9004,21 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			HDC hdc = ::GetDC( m_hWnd );
 			m_cUnderLine.Lock();
 			//	不本意ながら選択情報をバックアップ。
-			int nSelectLineFrom = m_nSelectLineFrom;
-			int nSelectLineTo = m_nSelectLineTo;
-			int nSelectColmFrom = m_nSelectColmFrom;
-			int nSelectColmTo = m_nSelectColmTo;
-			m_nSelectLineFrom = -1;
-			m_nSelectLineTo = -1;
-			m_nSelectColmFrom = -1;
-			m_nSelectColmTo = -1;
+			int nSelectLineFrom = m_sSelect.m_ptFrom.y;
+			int nSelectLineTo = m_sSelect.m_ptTo.y;
+			int nSelectColmFrom = m_sSelect.m_ptFrom.x;
+			int nSelectColmTo = m_sSelect.m_ptTo.x;
+			m_sSelect.m_ptFrom.y = -1;
+			m_sSelect.m_ptTo.y = -1;
+			m_sSelect.m_ptFrom.x = -1;
+			m_sSelect.m_ptTo.x = -1;
 			// 可能なら互換BMPからコピーして再作画
 			OnPaint( hdc, &ps, TRUE );
 			//	選択情報を復元
-			m_nSelectLineFrom = nSelectLineFrom;
-			m_nSelectLineTo = nSelectLineTo;
-			m_nSelectColmFrom = nSelectColmFrom;
-			m_nSelectColmTo = nSelectColmTo;
+			m_sSelect.m_ptFrom.y = nSelectLineFrom;
+			m_sSelect.m_ptTo.y = nSelectLineTo;
+			m_sSelect.m_ptFrom.x = nSelectColmFrom;
+			m_sSelect.m_ptTo.x = nSelectColmTo;
 			m_cUnderLine.UnLock();
 			ReleaseDC( m_hWnd, hdc );
 		}
@@ -9045,21 +9045,21 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			HDC hdc = ::GetDC( m_hWnd );
 			m_cUnderLine.Lock();
 			//	不本意ながら選択情報をバックアップ。
-			int nSelectLineFrom = m_nSelectLineFrom;
-			int nSelectLineTo = m_nSelectLineTo;
-			int nSelectColmFrom = m_nSelectColmFrom;
-			int nSelectColmTo = m_nSelectColmTo;
-			m_nSelectLineFrom = -1;
-			m_nSelectLineTo = -1;
-			m_nSelectColmFrom = -1;
-			m_nSelectColmTo = -1;
+			int nSelectLineFrom = m_sSelect.m_ptFrom.y;
+			int nSelectLineTo = m_sSelect.m_ptTo.y;
+			int nSelectColmFrom = m_sSelect.m_ptFrom.x;
+			int nSelectColmTo = m_sSelect.m_ptTo.x;
+			m_sSelect.m_ptFrom.y = -1;
+			m_sSelect.m_ptTo.y = -1;
+			m_sSelect.m_ptFrom.x = -1;
+			m_sSelect.m_ptTo.x = -1;
 			// 可能なら互換BMPからコピーして再作画
 			OnPaint( hdc, &ps, TRUE );
 			//	選択情報を復元
-			m_nSelectLineFrom = nSelectLineFrom;
-			m_nSelectLineTo = nSelectLineTo;
-			m_nSelectColmFrom = nSelectColmFrom;
-			m_nSelectColmTo = nSelectColmTo;
+			m_sSelect.m_ptFrom.y = nSelectLineFrom;
+			m_sSelect.m_ptTo.y = nSelectLineTo;
+			m_sSelect.m_ptFrom.x = nSelectColmFrom;
+			m_sSelect.m_ptTo.x = nSelectColmTo;
 			m_cUnderLine.UnLock();
 			ReleaseDC( m_hWnd, hdc );
 		}
@@ -9115,8 +9115,8 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	int	nLineFrom, nColmFrom;
 	BOOL	bBeforeTextSelected = IsTextSelected();
 	if (bBeforeTextSelected){
-		nLineFrom = m_nSelectLineFrom;
-		nColmFrom = m_nSelectColmFrom;
+		nLineFrom = m_sSelect.m_ptFrom.y;
+		nColmFrom = m_sSelect.m_ptFrom.x;
 	}
 	
 	//子プロセスの標準出力と接続するパイプを作成
@@ -9375,7 +9375,7 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			Command_INSTEXT( false, work, bufidx, TRUE);	/* 最後の文字の処理 */
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
-				SetSelectArea( nLineFrom, nColmFrom, m_nCaretPosY, m_nCaretPosX );
+				SetSelectArea( nLineFrom, nColmFrom, m_ptCaretPos.y, m_ptCaretPos.x );
 				DrawSelectArea();
 			}
 			RedrawAll();
@@ -9438,11 +9438,11 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 	
 	if( IsTextSelected() ){
 		//テキストが選択されているとき
-		nSelectColumnFrom = m_nSelectColmFrom;
-		nSelectLineFrom   = m_nSelectLineFrom;
+		nSelectColumnFrom = m_sSelect.m_ptFrom.x;
+		nSelectLineFrom   = m_sSelect.m_ptFrom.y;
 		
-		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_nSelectColmFrom, m_nSelectLineFrom, &nSelectedIndex, &nCurrentLine);
-		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_nSelectColmTo, m_nSelectLineTo, &nSelectedEndIndex, &nSelectLineTo);
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y, &nSelectedIndex, &nCurrentLine);
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, &nSelectedEndIndex, &nSelectLineTo);
 		
 		//選択範囲が複数行の時は
 		if (nSelectLineTo != nCurrentLine){
@@ -9455,7 +9455,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bUnicode)
 		
 	}else{
 		//テキストが選択されていないとき
-		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_nCaretPosX ,m_nCaretPosY , &nSelectedIndex, &nCurrentLine);
+		m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(m_ptCaretPos.x ,m_ptCaretPos.y , &nSelectedIndex, &nCurrentLine);
 		nSelectedLen = 0;
 	}
 	
@@ -9604,13 +9604,13 @@ LRESULT CEditView::SetSelectionFromReonvert(const PRECONVERTSTRING pReconv, bool
 	
 	//選択開始の位置を取得
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout(m_nLastReconvIndex + dwOffset 
-												, m_nLastReconvLine, &m_nSelectColmFrom, &m_nSelectLineFrom);
+												, m_nLastReconvLine, &m_sSelect.m_ptFrom.x, &m_sSelect.m_ptFrom.y);
 	//選択終了の位置を取得
 	m_pcEditDoc->m_cLayoutMgr.LogicToLayout(m_nLastReconvIndex + dwOffset + dwLen
-												, m_nLastReconvLine, &m_nSelectColmTo, &m_nSelectLineTo);
+												, m_nLastReconvLine, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y);
 
 	// 単語の先頭にカーソルを移動
-	MoveCursor( m_nSelectColmFrom, m_nSelectLineFrom, true );
+	MoveCursor( m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y, true );
 
 	//選択範囲再描画 
 	DrawSelectArea();
@@ -9651,7 +9651,7 @@ void CEditView::SetBracketPairPos( bool flag )
 	mode = 2;
 
 	if( ( flag == true ) && !IsTextSelected() && !m_bDrawSelectArea
-		&& ( m_bBeginBoxSelect == FALSE ) && SearchBracket( m_nCaretPosX, m_nCaretPosY, &nCol, &nLine, &mode ) )
+		&& ( m_bBeginBoxSelect == FALSE ) && SearchBracket( m_ptCaretPos.x, m_ptCaretPos.y, &nCol, &nLine, &mode ) )
 	{
 		// 登録指定(flag=true)			&&
 		// テキストが選択されていない	&&
@@ -9787,7 +9787,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 
 				// 03/03/03 ai カーソルの左に括弧があり括弧が強調表示されている状態でShift+←で選択開始すると
 				//             選択範囲内に反転表示されない部分がある問題の修正
-				if( ( nCol == m_nCaretPosX ) && ( m_bCaretShowFlag == true ) ){
+				if( ( nCol == m_ptCaretPos.x ) && ( m_bCaretShowFlag == true ) ){
 					HideCaret_( m_hWnd );	// キャレットが一瞬消えるのを防止
 					DispText( hdc, nLeft, nTop, &pLine[OutputX], m_nCharSize );
 					// 2006.04.30 Moca 対括弧の縦線対応
@@ -9808,7 +9808,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 				::SelectObject( hdc, hFontOld );
 
 				if( ( m_pcEditDoc->m_nActivePaneIndex == m_nMyIndex )
-					&& ( ( nLine == m_nCaretPosY ) || ( nLine - 1 == m_nCaretPosY ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
+					&& ( ( nLine == m_ptCaretPos.y ) || ( nLine - 1 == m_ptCaretPos.y ) ) ){	// 03/02/27 ai 行の間隔が"0"の時にアンダーラインが欠ける事がある為修正
 					m_cUnderLine.CaretUnderLineON( true );
 				}
 			}

@@ -242,15 +242,15 @@ void CEditView::DispRulerEx( HDC hdc )
 
 //	return;
 
-	if( m_nViewLeftCol <= m_nCaretPosX
-	 && m_nViewLeftCol + m_nViewColNum + 2 >= m_nCaretPosX
+	if( m_nViewLeftCol <= m_ptCaretPos.x
+	 && m_nViewLeftCol + m_nViewColNum + 2 >= m_ptCaretPos.x
 	){
 		if( 0 == m_nCaretWidth ){
 			hBrush = ::CreateSolidBrush( RGB( 128, 128, 128 ) );
 		}else{
 			hBrush = ::CreateSolidBrush( RGB( 0, 0, 0 ) );
 		}
-		rc.left = m_nViewAlignLeft + ( m_nCaretPosX - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
+		rc.left = m_nViewAlignLeft + ( m_ptCaretPos.x - m_nViewLeftCol ) * ( m_nCharWidth + m_pcEditDoc->GetDocumentAttribute().m_nColmSpace ) + 1;
 //		rc.top = 0;
 		rc.right = rc.left + m_nCharWidth;
 //		rc.bottom = m_nViewAlignTop - m_nTopYohaku - 1;

@@ -459,7 +459,7 @@ void CSplitterWnd::DoSplit( int nHorizontal, int nVertical )
 			// （シンプルに0固定にしてしまっても良い気はするけれど．．．）
 			nActivePane = 0;
 			if( nAllSplitRowsOld == 1 && nAllSplitColsOld == 1 ){
-				if ( pcViewArr[2]->m_nViewTopLine < pcViewArr[2]->m_nCaretPosY ){
+				if ( pcViewArr[2]->m_nViewTopLine < pcViewArr[2]->m_ptCaretPos.y ){
 					nActivePane = 2;
 				}
 				else{

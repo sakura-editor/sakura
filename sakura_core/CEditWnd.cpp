@@ -1865,8 +1865,8 @@ LRESULT CEditWnd::DispatchEvent(
 		*/
 		{
 			m_cEditDoc.m_cLayoutMgr.LayoutToLogic(
-				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosX,
-				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_nCaretPosY,
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_ptCaretPos.x,
+				m_cEditDoc.m_pcEditViewArr[m_cEditDoc.m_nActivePaneIndex]->m_ptCaretPos.y,
 				(int*)&ppoCaret->x,
 				(int*)&ppoCaret->y
 			);

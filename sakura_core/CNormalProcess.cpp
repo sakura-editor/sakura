@@ -271,7 +271,7 @@ bool CNormalProcess::InitializeProcess()
 
 				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->MoveCursor( nPosX, nPosY, true );
 				m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nCaretPosX_Prev =
-					m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_nCaretPosX;
+					m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->m_ptCaretPos.x;
 			}
 			m_pcEditWnd->m_cEditDoc.m_pcEditViewArr[0]->RedrawAll();
 		}

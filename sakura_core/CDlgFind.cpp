@@ -384,8 +384,8 @@ BOOL CDlgFind::OnActivate( WPARAM wParam, LPARAM lParam )
 	// 0文字幅マッチ描画のON/OFF	// 2009.11.29 ryoji
 	CEditView*	pcEditView = (CEditView*)m_lParam;
 	if( pcEditView->IsTextSelected()
-		&& pcEditView->m_nSelectLineFrom == pcEditView->m_nSelectLineTo
-		&& pcEditView->m_nSelectColmFrom == pcEditView->m_nSelectColmTo
+		&& pcEditView->m_sSelect.m_ptFrom.y == pcEditView->m_sSelect.m_ptTo.y
+		&& pcEditView->m_sSelect.m_ptFrom.x == pcEditView->m_sSelect.m_ptTo.x
 	){
 		::InvalidateRect( pcEditView->m_hWnd, NULL, TRUE );	// アクティブ化／非アクティブ化が完了してから再描画
 	}
