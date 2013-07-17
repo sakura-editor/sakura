@@ -417,7 +417,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 		}
 		break;
 	}
-	return CallWindowProc( (WNDPROC)m_wpColorListProc, hwnd, uMsg, wParam, lParam );
+	return CallWindowProc( m_wpColorListProc, hwnd, uMsg, wParam, lParam );
 }
 
 

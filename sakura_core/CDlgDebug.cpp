@@ -79,7 +79,7 @@ int CDlgDebug::DoModal( HINSTANCE hInstance, HWND hwndParent, const CMemory& cme
 		m_hInstance,
 		MAKEINTRESOURCE( IDD_DEBUG ),
 		m_hwndParent,
-		(DLGPROC)CDlgDebug_Proc,
+		CDlgDebug_Proc,
 		(LPARAM)this
 	);
 }

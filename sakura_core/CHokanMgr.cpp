@@ -68,7 +68,7 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 //		MYTRACE( _T("WM_GETDLGCODE  pMsg->message = %xh\n"), pMsg->message );
 		return DLGC_WANTALLKEYS;/* すべてのキーストロークを私に下さい */	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	}
-	return CallWindowProc( (WNDPROC)gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
+	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
 }
 
 

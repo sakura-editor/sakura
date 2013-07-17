@@ -108,7 +108,7 @@ WNDPROC	gm_pOldWndProc = NULL;
 inline LRESULT CALLBACK DefTabWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	if( gm_pOldWndProc )
-		return ::CallWindowProc( (WNDPROC)gm_pOldWndProc, hwnd, uMsg, wParam, lParam );
+		return ::CallWindowProc( gm_pOldWndProc, hwnd, uMsg, wParam, lParam );
 	else
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
 }

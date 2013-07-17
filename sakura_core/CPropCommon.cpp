@@ -214,7 +214,7 @@ int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
 			p->hInstance   = m_hInstance;
 			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
 			p->pszIcon     = NULL;
-			p->pfnDlgProc  = (DLGPROC)(ComPropSheetInfoList[i].DProc);
+			p->pfnDlgProc  = ComPropSheetInfoList[i].DProc;
 			p->pszTitle    = ComPropSheetInfoList[i].szTabname;
 			p->lParam      = (LPARAM)this;
 			p->pfnCallback = NULL;

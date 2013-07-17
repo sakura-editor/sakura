@@ -163,7 +163,7 @@ public:
 	//
 	void OnChangeSetting();										/* 設定変更を反映させる */
 	void OnPaint( HDC, PAINTSTRUCT *, BOOL );			/* 通常の描画処理 */
-	void OnTimer( HWND, UINT, UINT, DWORD );
+	void OnTimer( HWND, UINT, UINT_PTR, DWORD );
 	//ウィンドウ
 	void OnSize( int, int );							/* ウィンドウサイズの変更処理 */
 	void OnMove( int, int, int, int );

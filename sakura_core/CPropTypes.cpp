@@ -237,7 +237,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SCREEN );
 	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesScreen;
+	psp[nIdx].pfnDlgProc  = PropTypesScreen;
 	psp[nIdx].pszTitle    = _T("スクリーン");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
@@ -249,7 +249,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_COLOR );
 	psp[nIdx].pszIcon     = NULL /*MAKEINTRESOURCE( IDI_BORDER) */;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesColor;
+	psp[nIdx].pfnDlgProc  = PropTypesColor;
 	psp[nIdx].pszTitle    = _T("カラー");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
@@ -262,7 +262,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SUPPORT );
 	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesSupport;
+	psp[nIdx].pfnDlgProc  = PropTypesSupport;
 	psp[nIdx].pszTitle    = _T("支援");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
@@ -276,7 +276,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_REGEX );
 	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesRegex;
+	psp[nIdx].pfnDlgProc  = PropTypesRegex;
 	psp[nIdx].pszTitle    = _T("正規表現キーワード");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;
@@ -290,7 +290,7 @@ int CPropTypes::DoPropertySheet( int nPageNum )
 	psp[nIdx].hInstance   = m_hInstance;
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_KEYHELP );
 	psp[nIdx].pszIcon     = NULL;
-	psp[nIdx].pfnDlgProc  = (DLGPROC)PropTypesKeyHelp;
+	psp[nIdx].pfnDlgProc  = PropTypesKeyHelp;
 	psp[nIdx].pszTitle    = _T("キーワードヘルプ");
 	psp[nIdx].lParam      = (LPARAM)this;
 	psp[nIdx].pfnCallback = NULL;

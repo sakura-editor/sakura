@@ -1525,7 +1525,7 @@ void CControlTray::OnDestroy()
 			m_hInstance,
 			MAKEINTRESOURCE( IDD_EXITING ),
 			m_hWnd/*::GetDesktopWindow()*/,
-			(DLGPROC)ExitingDlgProc
+			ExitingDlgProc
 		);
 		::ShowWindow( hwndExitingDlg, SW_SHOW );
 	}

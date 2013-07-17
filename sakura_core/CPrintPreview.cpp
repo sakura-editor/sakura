@@ -1598,7 +1598,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		m_pParentWnd->m_hInstance,							// handle to application instance
 		MAKEINTRESOURCE( IDD_PRINTPREVIEWBAR ),				// identifies dialog box template name
 		m_pParentWnd->m_hWnd,								// handle to owner window
-		(DLGPROC)CPrintPreview::PrintPreviewBar_DlgProc,	// pointer to dialog box procedure
+		CPrintPreview::PrintPreviewBar_DlgProc,	// pointer to dialog box procedure
 		(LPARAM)this
 	);
 

@@ -212,7 +212,7 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	}
 	while(0);	//	1‰ñ‚µ‚©’Ê‚ç‚È‚¢. break‚Å‚±‚±‚Ü‚Å”ò‚Ô
 
-	return  CallWindowProc((WNDPROC)g_pOnFolderProc,hwnd,msg,wparam,lparam);
+	return  CallWindowProc(g_pOnFolderProc,hwnd,msg,wparam,lparam);
 }
 
 BOOL CDlgGrep::OnBnClicked( int wID )
