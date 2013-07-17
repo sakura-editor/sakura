@@ -686,15 +686,6 @@ inline void CEditView::DrawRulerCaret( HDC hdc )
 */
 void CEditView::DispRuler( HDC hdc )
 {
-
-#ifdef _DEBUG
-//	if( 0 != m_pShareData->m_Common.m_nRulerType ){	/* ルーラーのタイプ */
-//		DispRulerEx( hdc );
-//		return;
-//	}
-#endif
-
-
 	if( !m_bDrawSWITCH ){
 		return;
 	}

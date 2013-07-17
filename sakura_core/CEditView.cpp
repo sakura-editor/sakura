@@ -3936,10 +3936,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 	int			nWorkF;
 	int			nWorkT;
 
-	int			nSelectLineBgnFrom_Old;		/* 範囲選択開始行(原点) */
-	int			nSelectColmBgnFrom_Old;		/* 範囲選択開始桁(原点) */
-	int			nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-	int			nSelectColmBgnTo_Old;		/* 範囲選択開始桁(原点) */
 	int			nSelectLineFrom_Old;
 	int			nSelectColmFrom_Old;
 	int			nSelectLineTo_Old;
@@ -3949,10 +3945,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 	int			nSelectLineTo;
 	int			nSelectColmTo;
 
-	nSelectLineBgnFrom_Old	= m_sSelectBgn.m_ptFrom.y;		/* 範囲選択開始行(原点) */
-	nSelectColmBgnFrom_Old	= m_sSelectBgn.m_ptFrom.x;		/* 範囲選択開始桁(原点) */
-	nSelectLineBgnTo_Old	= m_sSelectBgn.m_ptTo.y;		/* 範囲選択開始行(原点) */
-	nSelectColmBgnTo_Old	= m_sSelectBgn.m_ptTo.x;		/* 範囲選択開始桁(原点) */
 	nSelectLineFrom_Old		= m_sSelect.m_ptFrom.y;
 	nSelectColmFrom_Old		= m_sSelect.m_ptFrom.x;
 	nSelectLineTo_Old		= m_sSelect.m_ptTo.y;
@@ -8921,7 +8913,6 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		// アンダーラインと縦線の交点で、下線が上になるように先に縦線を引く。
 		HDC		hdc;
 		HPEN	hPen, hPenOld;
-		int     nROP_Old = 0;
 		hdc = ::GetDC( m_hWnd );
 		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );

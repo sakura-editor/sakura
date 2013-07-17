@@ -138,7 +138,6 @@ OBJS =\
 	$(OBJDIR)\CEditView_Diff.obj \
 	$(OBJDIR)\CEditView_New.obj \
 	$(OBJDIR)\CEditView_New2.obj \
-	$(OBJDIR)\CEditView_New3.obj \
 	$(OBJDIR)\CEditWnd.obj \
 	$(OBJDIR)\CEol.obj \
 	$(OBJDIR)\CESI.obj \

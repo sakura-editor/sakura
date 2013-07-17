@@ -301,10 +301,6 @@ SOURCE=..\sakura_core\CEditView_New2.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\sakura_core\CEditView_New3.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\sakura_core\CEditWnd.cpp
 # End Source File
 # Begin Source File
