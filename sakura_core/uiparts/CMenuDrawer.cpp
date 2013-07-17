@@ -31,6 +31,9 @@
 // メニューアイコンの背景をボタンの色にする
 #define DRAW_MENU_ICON_BACKGROUND_3DFACE
 
+// メニューの選択色を淡くする
+#define DRAW_MENU_SELECTION_LIGHT
+
 // //! メニューアイコンを3Dボタンにする(旧仕様)
 // //! 未定義なら、選択色との混合色とフラットな枠で選択を表現
 // #define DRAW_MENU_ICON_3DBUTTON
@@ -965,7 +968,7 @@ int CMenuDrawer::MeasureItem( int nFuncID, int* pnItemHeight )
 
 	int nMenuWidth = rc.Width() + 3;
 	if( m_pShareData->m_Common.m_sWindow.m_bMenuIcon ){
-		nMenuWidth += 26 + DpiScaleX(8); // アイコンと枠 + アクセスキー隙間
+		nMenuWidth += 28+ DpiScaleX(8); // アイコンと枠 + アクセスキー隙間
 	}else{
 		// WM_MEASUREITEMで報告するメニュー幅より実際の幅は1文字分相当位広いので、その分は加えない
 		nMenuWidth += ::GetSystemMetrics(SM_CXMENUCHECK) + 2 + 2;
@@ -996,7 +999,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	const int nCyCheck = ::GetSystemMetrics(SM_CYMENUCHECK);
 
 	if( bMenuIconDraw ){
-		nIndentLeft  = 28; // 2+[2+16+2]+2 +4
+		nIndentLeft  = 29; // 2+[2+16+2]+2 +5
 	}else{
 		nIndentLeft = 2 + 2 + nCxCheck;
 	}
@@ -1115,7 +1118,6 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 	nBkModeOld = ::SetBkMode( hdc, TRANSPARENT );
 	if( lpdis->itemState & ODS_SELECTED ){
 		// アイテムが選択されている
-		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 		RECT rc1 = lpdis->rcItem;
 		if( bMenuIconDraw
 #ifdef DRAW_MENU_ICON_BACKGROUND_3DFACE
@@ -1125,14 +1127,36 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		){
 			//rc1.left += (nIndentLeft - 3);
 		}
+#ifdef DRAW_MENU_SELECTION_LIGHT
+		HPEN hPenBorder = ::CreatePen( PS_SOLID, 1, ::GetSysColor( COLOR_HIGHLIGHT ) );
+		HPEN hOldPen = (HPEN)::SelectObject( hdc, hPenBorder );
+		COLORREF colHilight = ::GetSysColor( COLOR_HIGHLIGHT );
+		COLORREF colMenu = ::GetSysColor( COLOR_MENU );
+		BYTE valR = ((GetRValue(colHilight) * 4 + GetRValue(colMenu) * 6) / 10) | 0x18;
+		BYTE valG = ((GetGValue(colHilight) * 4 + GetGValue(colMenu) * 6) / 10) | 0x18;
+		BYTE valB = ((GetBValue(colHilight) * 4 + GetBValue(colMenu) * 6) / 10) | 0x18;
+		hBrush = ::CreateSolidBrush( RGB(valR, valG, valB) );
+		HBRUSH hOldBrush = (HBRUSH)::SelectObject( hdc, hBrush );
+		::Rectangle( hdc, rc1.left, rc1.top, rc1.right, rc1.bottom );
+		::SelectObject( hdc, hOldPen );
+		::SelectObject( hdc, hOldBrush );
+		::DeleteObject( hPenBorder );
+		::DeleteObject( hBrush );
+#else
+		hBrush = ::GetSysColorBrush( COLOR_HIGHLIGHT );
 		/* 選択ハイライト矩形 */
 		::FillRect( hdc, &rc1, hBrush );
+#endif
 
 		if( lpdis->itemState & ODS_DISABLED ){
 			// アイテムが使用不可
 			nTxSysColor = COLOR_MENU;
 		}else{
+#ifdef DRAW_MENU_SELECTION_LIGHT
+			nTxSysColor = COLOR_MENUTEXT;
+#else
 			nTxSysColor = COLOR_HIGHLIGHTTEXT;
+#endif
 		}
 	}else{
 		if( lpdis->itemState & ODS_DISABLED ){
@@ -1177,7 +1201,7 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 #endif
 
 	rcText = lpdis->rcItem;
-	rcText.left += nIndentLeft;
+	rcText.left += nIndentLeft + 1;
 	rcText.right -= nIndentRight;
 
 	/* TAB文字の前と後ろに分割してテキストを描画する */
