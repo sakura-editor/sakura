@@ -2589,8 +2589,6 @@ void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool sele
 	RECT rcBtn;
 	GetTabCloseBtnRect( lprcClient, &rcBtn, selected );
 
-	DrawBtnBkgnd( gr, &rcBtn, m_bCloseBtnHilighted );
-
 	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
 	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
 	rcBtn.top = rcBtn.top + ((rcBtn.bottom - rcBtn.top) - (rcBtnBase.bottom - rcBtnBase.top)) / 2 - 1;
