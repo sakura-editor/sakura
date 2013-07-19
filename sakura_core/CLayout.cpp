@@ -18,21 +18,6 @@
 
 
 
-CLayout::CLayout()
-{
-	m_pPrev = NULL;
-	m_pNext = NULL;
-	m_nLinePhysical = 0;	/* 対応する論理行番号 */
-	m_pCDocLine = NULL;
-	m_nOffset = 0;	/* 対応する論理行の先頭からのオフセット */
-	m_nLength = 0;	/* 対応する論理行のハイト数 */
-	m_nIndent = 0;	/* このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI */
-	m_nTypePrev = COLORIDX_DEFAULT;/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
-	m_nLayoutWidth = 0;		/* このレイアウト行の改行を含むレイアウト長（「折り返さない」選択時のみ） */	// 2009.08.28 nasukoji
-	return;
-}
-
-
 CLayout::~CLayout()
 {
 	return;
