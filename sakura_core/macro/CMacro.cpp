@@ -1789,6 +1789,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				const CLayout* pcLayout = View->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(nLineNum);
 				if( pcLayout != NULL ){
 					ret = pcLayout->GetLogicLineNo() + 1;
+				}else{
+					return false;
 				}
 			}
 			Wrap(&Result)->Receive(ret);
@@ -1809,6 +1811,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				return false;
 			}
 			CLayoutInt nLineCol = CLayoutInt(varCopy.Data.lVal - 1);
+			if( nLineNum < 0 ){
+				return false;
+			}
 
 			CLayoutPoint nLayoutPos(nLineCol, nLineNum);
 			CLogicPoint nLogicPos( CLogicInt(0), CLogicInt(0) );
@@ -1833,6 +1838,9 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				return false;
 			}
 			CLogicInt nLineIdx = CLogicInt(varCopy.Data.lVal - 1);
+			if( nLineNum < 0 ){
+				return false;
+			}
 
 			CLogicPoint nLogicPos(nLineIdx, nLineNum);
 			CLayoutPoint nLayoutPos(CLayoutInt(0),CLayoutInt(0));
