@@ -169,6 +169,7 @@ bool CNormalProcess::InitializeProcess()
 		if( !CAppMode::getInstance()->IsDebugMode() ){
 			// デバッグではなくて(無題)
 			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
+			pEditWnd->UpdateCaption();
 		}
 		// 2004.09.20 naoh アウトプット用タイプ別設定
 		// 文字コードを有効とする Uchi 2008/6/8
@@ -366,6 +367,7 @@ bool CNormalProcess::InitializeProcess()
 		}
 		if( !pEditWnd->GetDocument().m_cDocFile.GetFilePathClass().IsValidPath() ){
 			CAppNodeManager::getInstance()->GetNoNameNumber( pEditWnd->GetHwnd() );
+			pEditWnd->UpdateCaption();
 		}
 	}
 

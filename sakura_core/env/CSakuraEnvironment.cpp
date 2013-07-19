@@ -200,8 +200,10 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				}else{
 					WCHAR szText[10];
 					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow()->GetHwnd() );
-					swprintf( szText, L"%d", node->m_nId );
-					q = wcs_pushW( q, q_max - q, szText );
+					if( 0 < node->m_nId ){
+						swprintf( szText, L"%d", node->m_nId );
+						q = wcs_pushW( q, q_max - q, szText );
+					}
 				}
 			}
 			++p;
