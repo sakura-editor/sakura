@@ -1781,7 +1781,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			if( !VariantToI4(varCopy, Arguments[0]) ){
 				return false;
 			}
-			CLayoutInt nLineNum = CLayoutInt(varCopy.Data.iVal - 1);
+			CLayoutInt nLineNum = CLayoutInt(varCopy.Data.lVal - 1);
 			int ret = 0;
 			if( View->m_pcEditDoc->m_cLayoutMgr.GetLineCount() == nLineNum ){
 				ret = (Int)View->m_pcEditDoc->m_cDocLineMgr.GetLineCount() + 1;
@@ -1804,11 +1804,11 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			if( !VariantToI4(varCopy, Arguments[0]) ){
 				return false;
 			}
-			CLayoutInt nLineNum = CLayoutInt(varCopy.Data.iVal - 1);
+			CLayoutInt nLineNum = CLayoutInt(varCopy.Data.lVal - 1);
 			if( !VariantToI4(varCopy, Arguments[1]) ){
 				return false;
 			}
-			CLayoutInt nLineCol = CLayoutInt(varCopy.Data.iVal - 1);
+			CLayoutInt nLineCol = CLayoutInt(varCopy.Data.lVal - 1);
 
 			CLayoutPoint nLayoutPos(nLineCol, nLineNum);
 			CLogicPoint nLogicPos( CLogicInt(0), CLogicInt(0) );
@@ -1828,11 +1828,11 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 			if( !VariantToI4(varCopy, Arguments[0]) ){
 				return false;
 			}
-			CLogicInt nLineNum = CLogicInt(varCopy.Data.iVal - 1);
+			CLogicInt nLineNum = CLogicInt(varCopy.Data.lVal - 1);
 			if( !VariantToI4(varCopy, Arguments[1]) ){
 				return false;
 			}
-			CLogicInt nLineIdx = CLogicInt(varCopy.Data.iVal - 1);
+			CLogicInt nLineIdx = CLogicInt(varCopy.Data.lVal - 1);
 
 			CLogicPoint nLogicPos(nLineIdx, nLineNum);
 			CLayoutPoint nLayoutPos(CLayoutInt(0),CLayoutInt(0));
@@ -1934,7 +1934,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				if( 2 <= ArgSize ){
 					if( !VariantToI4(varCopy2, Arguments[1]) ){ return false; }
 				}else{
-					varCopy2.Data.iVal = 1;
+					varCopy2.Data.lVal = 1;
 				}
 				const wchar_t* pLine = varCopy.Data.bstrVal;
 				int nLen = ::SysStringLen(varCopy.Data.bstrVal);
@@ -1944,7 +1944,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					}
 				}
 				const int nTabWidth = (Int)View->GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
-				int nPosX = varCopy2.Data.iVal - 1;
+				int nPosX = varCopy2.Data.lVal - 1;
 				for( int i =0; i < nLen; ){
 					if( pLine[i] == WCODE::TAB ){
 						nPosX += nTabWidth - (nPosX % nTabWidth);
@@ -1953,7 +1953,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 					}
 					i += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(pLine, nLen, i));
 				}
-				nPosX -=  varCopy2.Data.iVal - 1;
+				nPosX -=  varCopy2.Data.lVal - 1;
 				Wrap( &Result )->Receive( nPosX );
 				return true;
 			}
@@ -1967,12 +1967,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				if( 2 <= ArgSize ){
 					if( !VariantToI4(varCopy2, Arguments[1]) ){ return false; }
 				}else{
-					varCopy2.Data.iVal = 1;
+					varCopy2.Data.lVal = 1;
 				}
 				CDocLine tmpDocLine;
 				tmpDocLine.SetDocLineString(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
 				const int tmpLenWithEol1 = tmpDocLine.GetLengthWithoutEOL() + (0 < tmpDocLine.GetEol().GetLen() ? 1: 0);
-				const CLayoutXInt offset(varCopy2.Data.iVal - 1);
+				const CLayoutXInt offset(varCopy2.Data.lVal - 1);
 				const CLayout tmpLayout(
 					&tmpDocLine,
 					CLogicPoint(0,0),
@@ -2013,11 +2013,11 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				if( 3 <= ArgSize ){
 					if( !VariantToI4(varCopy3, Arguments[2]) ) return false;
 				}else{
-					varCopy3.Data.iVal = -1;
+					varCopy3.Data.lVal = -1;
 				}
 				CClipboard cClipboard(View->GetHwnd());
 				CNativeW mem;
-				cClipboard.GetClipboradByFormat(mem, varCopy.Data.bstrVal, varCopy2.Data.iVal, varCopy3.Data.iVal);
+				cClipboard.GetClipboradByFormat(mem, varCopy.Data.bstrVal, varCopy2.Data.lVal, varCopy3.Data.lVal);
 				SysString ret = SysString(mem.GetStringPtr(), mem.GetStringLength());
 				Wrap( &Result )->Receive( ret );
 				return true;
@@ -2034,11 +2034,11 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, const VARIANT *Ar
 				if( 3 <= ArgSize ){
 					if( !VariantToI4(varCopy4, Arguments[3]) ) return false;
 				}else{
-					varCopy4.Data.iVal = -1;
+					varCopy4.Data.lVal = -1;
 				}
 				CClipboard cClipboard(View->GetHwnd());
 				CStringRef cstr(varCopy.Data.bstrVal, ::SysStringLen(varCopy.Data.bstrVal));
-				bool bret = cClipboard.SetClipboradByFormat(cstr, varCopy2.Data.bstrVal, varCopy3.Data.iVal, varCopy4.Data.iVal);
+				bool bret = cClipboard.SetClipboradByFormat(cstr, varCopy2.Data.bstrVal, varCopy3.Data.lVal, varCopy4.Data.lVal);
 				Wrap( &Result )->Receive( bret ? 1 : 0 );
 				return true;
 			}
