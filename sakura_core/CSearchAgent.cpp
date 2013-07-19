@@ -187,7 +187,7 @@ const wchar_t* CSearchAgent::SearchString(
 			if( i >= nPatternLen ){
 				return &pLine[nPos];
 			}
-			int index = CSearchStringPattern::GetMapIndex((wchar_t)skr_towlower(pLine[nPos + nPatternLen]));
+			int index = CSearchStringPattern::GetMapIndex((wchar_t)toLoHiLower(bLoHiCase, pLine[nPos + nPatternLen]));
 			nPos += useSkipMap[index];
 		}
 	} else {
