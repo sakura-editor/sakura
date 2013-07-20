@@ -546,6 +546,16 @@
 						<param name="ImageNumber" value="9">
 						</OBJECT>
 					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="選択範囲内色付きHTMLコピー">
+						<param name="Local" value="_RESOURCE\HLP000342.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
+						<param name="Name" value="選択範囲内行番号色付きHTMLコピー">
+						<param name="Local" value="_RESOURCE\HLP000343.html">
+						<param name="ImageNumber" value="9">
+						</OBJECT>
+					<LI> <OBJECT type="text/sitemap">
 						<param name="Name" value="このファイル名をコピー">
 						<param name="Local" value="_RESOURCE\HLP000303.html">
 						<param name="ImageNumber" value="9">
