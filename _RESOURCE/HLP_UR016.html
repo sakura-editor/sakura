@@ -13,6 +13,136 @@
 <h2>変更履歴(2013/05/13～)</h2>
 <!--<h3>xxx. xx, 2011 (2.x.x.x)</h3>-->
 
+<h3>Jul. 20, 2013 (2.1.0.0)</h3>
+[機能追加]<br />
+<ul>
+	<li>カラー印刷 (svn:3030 upatchid:491 Request/105 ossan&Uchi)</li>
+	<li>印刷でヘッダ･フッタのフォントを設定 (svn:3059svn:3099svn:3117 upatchid:536 Uchi)</li>
+	<li>外部コマンド実行の拡張 (svn:3078svn:3156 upatchid:324upatchid:599 Request/149 Moca)</li>
+	<li>カラーHTMLコピー (svn:3080 upatchid:500 Request/431 Moca)</li>
+	<li>NEL,LS,PS限定的サポート (svn:3081 upatchid:450 Moca)</li>
+	<li>トレイメニューで共通設定・タイプ別設定呼び出し (svn:3107 upatchid:525 Moca)</li>
+	<li>アウトラインプラグインから付加文字を変更する (svn:3108 upatchid:170 syat,Moca)</li>
+	<li>PHPヒアドキュメント/C++ RowString/C# quoted String等対応 (svn:3118 upatchid:431 Request/330 Moca)</li>
+	<li>各履歴のコンボボックスでDelキーで項目を削除する (svn:3120 upatchid:563 Moca)</li>
+	<li>タブを閉じるボタンの追加 (svn:3124 upatchid:214 Request/282 syat)</li>
+	<li>Redoバッファ操作マクロ追加 (svn:3132 upatchid:495 Moca)</li>
+	<li>タイプ別フォント設定 (svn:3142 upatchid:371 Request/350 Moca,aroka)</li>
+	<li>Grep拡張 (svn:3153svn:3154 upatchid:325 Moca,wakura)</li>
+	<li>DrawSwitchマクロ (svn:3157svn:3159 upatchid:474 Moca)</li>
+	<li>ステータスメッセージ表示マクロ等 (svn:3158 upatchid:477 Moca)</li>
+	<li>ダイアログ表示/結果適用のマクロを追加 (svn:3160 upatchid:489 Moca)</li>
+	<li>5つ以上のマクロ引数のサポート (svn:3162 upatchid:596 Moca)</li>
+	<li>文字幅取得マクロの追加 (svn:3177 upatchid:587 Moca)</li>
+	<li>クリップボード操作拡張マクロの追加 (svn:3178 upatchid:603 Moca)</li>
+	<li>マウスホイールにキー割り当てをする (svn:3185 upatchid:568 Moca)</li>
+	<li>カスタムメニューの強化 (svn:3203 upatchid:607 Moca)</li>
+</ul>
+[仕様変更]<br />
+<ul>
+	<li>ヘッダ・フッタを設定していないときに印字可能領域を広げる (svn:3049 upatchid:527 aroka)</li>
+	<li>印刷ページ設定のフォントサイズを高さで入力 (svn:3055 upatchid:550 aroka)</li>
+	<li>キーワードヘルプで「次の辞書も検索」で利用時に、フルパスではなくファイル名を表示するように (svn:3067 upatchid:511 Request/190 Moca)</li>
+	<li>折り返し行インデントが限界のとき最大値のままにする (svn:3072 upatchid:531 BugReport/120 Moca)</li>
+	<li>文字コードセット指定後の保存確認チェック (svn:3093 upatchid:552 Uchi)</li>
+	<li>プラグインオプションのタイプにDirを追加 (svn:3098 upatchid:554 Uchi)</li>
+	<li>plugin.defで[Plug],[Command]のLabelが無かったらハンドルを使用する様に (svn:3098 upatchid:554 Uchi)</li>
+	<li>プラグイン新規追加にキャンセルボタンを追加 (svn:3098 upatchid:554 Uchi)</li>
+	<li>プラグインオプション設定でリストのダブルクリックで値設定へ (svn:3098 upatchid:554 Uchi)</li>
+	<li>タグジャンプを最長一致にする (svn:3110 upatchid:565 BugReport/28 Moca)</li>
+	<li>タグジャンプの区切り文字を増やした (svn:3110 upatchid:565 Moca)</li>
+	<li>Grep・アウトプットでダブルクリックタグジャンプに失敗したら通常コマンドを実行 (svn:3114 upatchid:566 Moca)</li>
+	<li>マクロのbDraw=trueと実行後の再描画の削除 (svn:3122 upatchid:575 Moca)</li>
+	<li>新規作成のカレントディレクトリ指定 (svn:3128 upatchid:385 Moca)</li>
+	<li>アウトラインルールファイル拡張 (svn:3144 upatchid:580 Moca)</li>
+	<li>ファイルからの補完を既定値で有効にする (svn:3163 upatchid:605 syat)</li>
+	<li>矩形選択をメインメニューへ追加 (svn:3167 upatchid:602 Uchi)</li>
+	<li>TAB表示対応(文字指定/短い矢印/長い矢印) (svn:3168 upatchid:571 Request/436 novice)</li>
+	<li>ファイル比較/Diffでデフォルト選択をファイル名により決める (svn:3201 upatchid:623 Moca)</li>
+	<li>タグファイル作成/Grepのフォルダを1つ上にするボタンを追加 (svn:3202 upatchid:624 Moca)</li>
+	<li>座標変換マクロで異常値のときマクロを中止する (svn:3235 upatchid:639 Moca)</li>
+</ul>
+[バグ修正]<br />
+<ul>
+	<li>印字可能領域がないとき０になる設定がEnterで確定できてしまう (svn:3053 upatchid:549 aroka)</li>
+	<li>CDlgTypeList::DispachEventでOnNotifyが呼ばれている (svn:3056 upatchid:547 Moca)</li>
+	<li>無題、Grepダイアログを開いたときに"現在編集中のファイルから検索"が選択無効にならない(r3013-) (svn:3063 upatchid:480 novice)</li>
+	<li>ReplaceAllマクロの引数str1=""のときに"置換元パターンが指定されていません"が表示されない。(r2453-) (svn:3063 upatchid:480 novice)</li>
+	<li>PL/SQL,VBアウトラインの日本語対応 (svn:3066 upatchid:510 Request/406 Moca)</li>
+	<li>折り返し行でEOF直前で改行したときEOFが再描画されない(r2368-) (svn:3069 upatchid:503 BugReport/118 Moca)</li>
+	<li>再帰時のOpeBlk問題（メモリリークとUndo/Redoバッファ破壊）の修正 (svn:3082 upatchid:479 Moca)</li>
+	<li>背景画像表示とカーソル行背景色を設定しているとき対括弧強調表示がおかしい (svn:3083 upatchid:556 Moca)</li>
+	<li>Grepダイアログのファイル・フォルダの値修正 (svn:3084 upatchid:551 Request/267 Moca)</li>
+	<li>カラータブの色分け/表示が太字にかぶってる (svn:3085 upatchid:557 Moca)</li>
+	<li>検索マーク無効にしたあとの検索で再描画が必要 (svn:3086 upatchid:561 Moca)</li>
+	<li>インデントプラグイン実行時に画面が更新されない (svn:3092 data:7657 syat)</li>
+	<li>プラグインオプションにデフォルト値を設定しないとそれ以前の設定値が設定された様に振舞う (svn:3098 upatchid:554 Uchi)</li>
+	<li>プラグインオプションにオプション設定を通さないとデフォルト値が有効にならない (svn:3098 upatchid:554 Uchi)</li>
+	<li>印刷設定の紙の方向が変更できない(r3059-) (svn:3101 upatchid:569 aroka)</li>
+	<li>プラグインのオプションが49個になっている (svn:3105 upatchid:564 BugReport/122 Moca)</li>
+	<li>アウトラインでデータが行桁順でないときも正しく選択する (svn:3109 upatchid:555 Moca)</li>
+	<li>設定変更後でも折り返し桁数での折り返しを継続するように (svn:3119 upatchid:567 Moca)</li>
+	<li>検索マーク切り替えで検索ボックスが更新されない (svn:3121 upatchid:514 Moca)</li>
+	<li>次に検索されるキーを検索ボックスに表示 (svn:3121 upatchid:514 Moca)</li>
+	<li>変更行が一致しない問題 (svn:3127svn:3186 upatchid:194 Moca)</li>
+	<li>設定変更時、カーソル位置よりスクロール位置を優先する (svn:3129 upatchid:577 Moca)</li>
+	<li>無題番号を無題が必要なときのみカウントする (svn:3131 upatchid:578 BugReport/119 Moca)</li>
+	<li>シングルトンのアサートに引っかかる (svn:3133 upatchid:600 Moca)</li>
+	<li>タスクトレイから複数ファイルを開くのに時間がかかる (svn:3134 upatchid:589 novice)</li>
+	<li>フォント設定を変更するとカーソルがずれる (svn:3142 upatchid:371 Moca)</li>
+	<li>フォントを変更して文字幅が変わってもレイアウトを再構築しない (svn:3142 upatchid:371 Moca)</li>
+	<li>印刷プレビュー中の設定変更対応(EditView側) (svn:3142 upatchid:371 Moca)</li>
+	<li>ATOK2013で再変換できない (svn:3143 upatchid:576 Moca)</li>
+	<li>GetLineCodeのNEL等の対応 (svn:3145 upatchid:581 Moca)</li>
+	<li>プリント中の設定変更対応 (svn:3146svn:3149svn:3191 upatchid:583upatchid:594 Moca, syat)</li>
+	<li>カーソル位置表示の修正 (svn:3147svn:3148 upatchid:558 Moca)</li>
+	<li>スクロールバーの32bit化 (svn:3150 upatchid:595 Moca)</li>
+	<li>コントロールコード入力のマクロ記録対応 (svn:3151 upatchid:598 Moca)</li>
+	<li>マクロ文字列のNUL文字列の修正 (svn:3161svn:3165 upatchid:582 Moca)</li>
+	<li>５つ以上の引数の修正 (svn:3161 upatchid:582 Moca)</li>
+	<li>ファイルダイアログ初期位置の指定フォルダに長いパスが編集できない (svn:3164 upatchid:601 Moca)</li>
+	<li>プログレスバーの進捗を正確にする (svn:3180 upatchid:592 Moca)</li>
+	<li>MinGW-W64コンパイルサポート (svn:3182 upatchid:591 Moca)</li>
+	<li>最近使ったファイルに更新マークがつく (svn:3187 upatchid:609 Moca)</li>
+	<li>印刷プレビューのスクロール修正 (svn:3192 upatchid:570 aroka,Moca)</li>
+	<li>メニューの使用不可の項目の色をシステム設定通りに変更 (svn:3193 upatchid:612 Moca)</li>
+	<li>タブバーの文字色の修正 (svn:3194 upatchid:613 Moca)</li>
+	<li>ソート・uniqの修正その2 (svn:3195 upatchid:610 Moca)</li>
+	<li>マクロExecCommandの引数がおかしい (svn:3196 upatchid:619 Moca)</li>
+	<li>ファイルを開いたときタイプ別フォントが適用されない (svn:3197 upatchid:620 Moca)</li>
+	<li>Grepフォルダの文字列長チェックが不正 (svn:3198 upatchid:625 Moca)</li>
+	<li>逆インデントでhwndProgressが初期化されていない (svn:3199 upatchid:626 Moca)</li>
+	<li>印刷のロックで複数待機しているとデッドロック状態になる (svn:3200 upatchid:628 Moca)</li>
+	<li>選択範囲の半透明で太線指定のときタブ文字等が太くなる (svn:3205 upatchid:631 Moca)</li>
+	<li>cppcheckで検出したエラー、警告修正 (svn:3214 upatchid:635 novice)</li>
+	<li>背景画像の相対パス (svn:3219 upatchid:622 novice)</li>
+	<li>エディタがビジーのとき、LocalCacheSelectorでNULLポインタアクセス(svn:2909-) (svn:3221 upatchid:439 Moca)</li>
+	<li>MinGW v4.5以前でのコンパイルエラー対応 (svn:3232 unicode:2015 syat)</li>
+	<li>一部マクロで16bitを超える値が扱えない (svn:3234 upatchid:638 Moca)</li>
+	<li>無題番号が-1と表示されることがある (svn:3238 upatchid:642 Moca)</li>
+</ul>
+[その他変更]<br />
+<ul>
+	<li>印刷ページ設定でフォントのポイント数を表示 (svn:3024 upatchid:515 Uchi)</li>
+	<li>タイプ別設定一覧ダイアログのリストに水平スクロールバー追加 (svn:3029 upatchid:524 novice)</li>
+	<li>HeaderMakeとMakefileMakeのフィルターを削除 (svn:3033 upatchid:538 Uchi)</li>
+	<li>カラー印刷の性能改善 (svn:3064 upatchid:545 Moca)</li>
+	<li>LogicToLayoutが遅いのを修正 (svn:3071svn:3075 upatchid:517upatchid:530 Moca)</li>
+	<li>折り返さないだと全行矩形入力が遅い (svn:3073 upatchid:532 Moca)</li>
+	<li>ファイル中央を表示していると画面描画が遅い (svn:3074 upatchid:537 Moca)</li>
+	<li>VS2003ビルド対応 (svn:3088svn:3089svn:3090svn:3091svn:3096 syat,novice)</li>
+	<li>画面分割時のフォント共有 (svn:3104 upatchid:541 novice)</li>
+	<li>Mingwでのwarningの修正 (svn:3126 upatchid:579 Moca)</li>
+	<li>すべて置換・Grepの高速化(CSearchStringPatternの再利用) (svn:3130svn:3155 upatchid:534upatchid:597 Moca)</li>
+	<li>ファイルダイアログの初期位置を指定 (svn:3152 upatchid:358 novice)</li>
+	<li>置換Opeの追加 (svn:3179svn:3184 upatchid:606 Moca)</li>
+	<li>いくつかの操作でプログレスバーを表示 (svn:3181 upatchid:593 Moca)</li>
+	<li>デバイスコンテキストから情報を取得しない (svn:3190 upatchid:614 novice)</li>
+	<li>MinGWの-Wallでの警告削減 (svn:3204 upatchid:627 Moca)</li>
+	<li>SetFontSize拡張と拡大・縮小コマンドの追加 (svn:3223 upatchid:573 Moca)</li>
+	<li>メニューの選択色を淡くする (svn:3233 upatchid:611 syat)</li>
+</ul>
+
 <h3>May. 13, 2013 (2.0.8.1)</h3>
 [バグ修正]<br />
 <ul>
