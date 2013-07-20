@@ -569,6 +569,54 @@
 <param name="Local" value="_RESOURCE\HLP000244.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)カーソル上移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000344.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)カーソル下移動(２行ごと)">
+<param name="Local" value="_RESOURCE\HLP000345.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)単語の左端に移動">
+<param name="Local" value="_RESOURCE\HLP000346.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)単語の右端に移動">
+<param name="Local" value="_RESOURCE\HLP000347.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)前の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000348.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)次の段落に移動">
+<param name="Local" value="_RESOURCE\HLP000349.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)行頭に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000350.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)行末に移動(折り返し単位)">
+<param name="Local" value="_RESOURCE\HLP000351.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)１ページアップ">
+<param name="Local" value="_RESOURCE\HLP000352.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)１ページダウン">
+<param name="Local" value="_RESOURCE\HLP000353.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)ファイルの先頭に移動">
+<param name="Local" value="_RESOURCE\HLP000354.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)ファイルの最後に移動">
+<param name="Local" value="_RESOURCE\HLP000355.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="左(先頭)の空白を削除">
 <param name="Local" value="_RESOURCE\HLP000210.html">
 </OBJECT>
@@ -1330,6 +1378,14 @@
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="オートスクロール">
 <param name="Local" value="_RESOURCE\HLP000296.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)半ページアップ">
+<param name="Local" value="_RESOURCE\HLP000356.html">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="(矩形選択)半ページダウン">
+<param name="Local" value="_RESOURCE\HLP000357.html">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="デフォルト設定値（インストール時）">
