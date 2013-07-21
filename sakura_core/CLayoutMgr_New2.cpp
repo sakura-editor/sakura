@@ -44,7 +44,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	nLineWork = pArg->nDelLineFrom;
 
 	if( pLayoutWork ){
-		while( 0 != pLayoutWork->m_nOffset ){
+		while( 0 != pLayoutWork->m_ptLogicPos.x ){
 			pLayoutWork = pLayoutWork->m_pPrev;
 			nLineWork--;
 		}
@@ -119,18 +119,18 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 		if( NULL == m_pLayoutTop ){
 			nRowNum = m_pcDocLineMgr->GetLineCount();
 		}else{
-			nRowNum = m_pLayoutTop->m_nLinePhysical;
+			nRowNum = m_pLayoutTop->m_ptLogicPos.y;
 		}
 	}
 	else{
 		if( NULL == pLayoutPrev->m_pNext ){
 			nRowNum =
 				m_pcDocLineMgr->GetLineCount() -
-				pLayoutPrev->m_nLinePhysical - 1;
+				pLayoutPrev->m_ptLogicPos.y - 1;
 		}else{
 			nRowNum =
-				pLayoutPrev->m_pNext->m_nLinePhysical -
-				pLayoutPrev->m_nLinePhysical - 1;
+				pLayoutPrev->m_pNext->m_ptLogicPos.y -
+				pLayoutPrev->m_ptLogicPos.y - 1;
 		}
 	}
 

@@ -5162,7 +5162,7 @@ BOOL CEditView::GetSelectedData(
 		pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( rcSel.top, &nLineLen, &pcLayout );
 		for(; i != 0 && pcLayout != NULL; i--, pcLayout = pcLayout->m_pNext)
 		{
-			pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr() + pcLayout->m_nOffset;
+			pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr() + pcLayout->m_ptLogicPos.x;
 			nLineLen = pcLayout->m_nLength;
 			if( NULL != pLine )
 			{
@@ -5938,9 +5938,9 @@ void CEditView::DrawCaretPosInfo( void )
 
 	int nPosX, nPosY;
 	if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){	/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
-		if (pcLayout && pcLayout->m_nOffset){
+		if (pcLayout && pcLayout->m_ptLogicPos.x){
 			char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nLineLen = m_ptCaretPos_PHY.x;	//	 - pcLayout->m_nOffset;
+			int nLineLen = m_ptCaretPos_PHY.x;
 			nPosX = 0;
 			int i;
 			//	Oct. 4, 2002 genta
@@ -9836,13 +9836,13 @@ EColorIndexType CEditView::GetColorIndex(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength()/* - pcLayout->m_nOffset*/;	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
-		pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr()/* + pcLayout->m_nOffset*/;			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength();	// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
+		pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr();			// 03/10/24 ai 折り返し行のColorIndexが正しく取得できない問題に対応
 
 		// 2005.11.20 Moca 色が正しくないことがある問題に対処
 		const CLayout* pcLayoutLineFirst = pcLayout;
 		// 論理行の最初のレイアウト情報を取得する
-		while( 0 != pcLayoutLineFirst->m_nOffset ){
+		while( 0 != pcLayoutLineFirst->m_ptLogicPos.x ){
 			pcLayoutLineFirst = pcLayoutLineFirst->m_pPrev;
 		}
 		nCOMMENTMODE = pcLayoutLineFirst->m_nTypePrev;

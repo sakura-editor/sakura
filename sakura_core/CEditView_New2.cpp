@@ -151,7 +151,6 @@ void CEditView::DispLineNumber(
 
 	nColorIndex = COLORIDX_GYOU;	/* 行番号 */
 	if( NULL != pcLayout ){
-//		pCDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( pcLayout->m_nLinePhysical );
 		pCDocLine = pcLayout->m_pCDocLine;
 
 		if( m_pcEditDoc->IsModified()	/* ドキュメントが無変更の状態か */
@@ -207,10 +206,10 @@ void CEditView::DispLineNumber(
 		/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 		if( m_pcEditDoc->GetDocumentAttribute().m_bLineNumIsCRLF ){
 			/* 論理行番号表示モード */
-			if( NULL == pcLayout || 0 != pcLayout->m_nOffset ){
+			if( NULL == pcLayout || 0 != pcLayout->m_ptLogicPos.x ){
 				strcpy( szLineNum, " " );
 			}else{
-				_itoa( pcLayout->m_nLinePhysical + 1, szLineNum, 10 );	/* 対応する論理行番号 */
+				_itoa( pcLayout->m_ptLogicPos.y + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 			}
 		}else{
 			/* 物理行（レイアウト行）番号表示モード */

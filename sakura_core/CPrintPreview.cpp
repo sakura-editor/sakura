@@ -1255,10 +1255,10 @@ void CPrintPreview::DrawPageText(
 				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */
 				if( m_pParentWnd->m_cEditDoc.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
-					if( 0 != pcLayout->m_nOffset ){
+					if( 0 != pcLayout->m_ptLogicPos.x ){
 						strcpy( szLineNum, " " );
 					}else{
-						_itoa( pcLayout->m_nLinePhysical + 1, szLineNum, 10 );	/* 対応する論理行番号 */
+						_itoa( pcLayout->m_ptLogicPos.y + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 					}
 				}
 				else{

@@ -217,7 +217,7 @@ void CEditView::OnPaint( HDC hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp )
 		if( NULL == pcLayout ){
 			break;
 		}
-		if( 0 == pcLayout->m_nOffset ){	/* 対応する論理行の先頭からのオフセット */
+		if( 0 == pcLayout->m_ptLogicPos.x ){	/* 対応する論理行の先頭からのオフセット */
 			break;
 		}
 		i--;
@@ -385,8 +385,8 @@ bool CEditView::DispLineNew(
 	/* 論理行データの取得 */
 	if( NULL != pcLayout ){
 		// 2002/2/10 aroka CMemory変更
-		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength() - pcLayout->m_nOffset;
-		pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr() + pcLayout->m_nOffset;
+		nLineLen = pcLayout->m_pCDocLine->m_cLine.GetStringLength() - pcLayout->m_ptLogicPos.x;
+		pLine = pcLayout->m_pCDocLine->m_cLine.GetStringPtr() + pcLayout->m_ptLogicPos.x;
 
 		nCOMMENTMODE = pcLayout->m_nTypePrev;	/* タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 */
 		nCOMMENTEND = 0;

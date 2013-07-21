@@ -466,7 +466,7 @@ int CLayoutMgr::DoLayout_Range(
 	if( NULL == pLayout ){
 		nCurLine = 0;
 	}else{
-		nCurLine = pLayout->m_nLinePhysical + 1;
+		nCurLine = pLayout->m_ptLogicPos.y + 1;
 	}
 	nCOMMENTMODE = nCurrentLineType;
 	nCOMMENTMODE_Prev = nCOMMENTMODE;
@@ -1242,7 +1242,7 @@ int CLayoutMgr::getIndentOffset_Tx2x( CLayout* pLayoutPrev )
 	int nIpos = pLayoutPrev->GetIndent();
 
 	//	前の行が折り返し行ならばそれに合わせる
-	if( pLayoutPrev->m_nOffset > 0 )
+	if( pLayoutPrev->m_ptLogicPos.x > 0 )
 		return nIpos;
 	
 	CMemoryIterator<CLayout> it( pLayoutPrev, m_sTypeConfig.m_nTabSpace );
@@ -1281,7 +1281,7 @@ int CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 	
 	//	Oct. 5, 2002 genta
 	//	折り返しの3行目以降は1つ前の行のインデントに合わせる．
-	if( pLayoutPrev->m_nOffset > 0 )
+	if( pLayoutPrev->m_ptLogicPos.x > 0 )
 		return nIpos;
 	
 	//	2002.10.07 YAZAKI インデントの計算

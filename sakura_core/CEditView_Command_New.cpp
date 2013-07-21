@@ -109,7 +109,7 @@ void CEditView::InsertData_CEditView(
 		// 更新が前行からになる可能性を調べる	// 2009.02.17 ryoji
 		// ※折り返し行頭への句読点入力で前の行だけが更新される場合もある
 		// ※挿入位置は行途中でも句読点入力＋ワードラップで前の文字列から続けて前行に回り込む場合もある
-		if (pcLayout->m_nOffset && bKinsoku){	// 折り返しレイアウト行か？
+		if (pcLayout->m_ptLogicPos.x && bKinsoku){	// 折り返しレイアウト行か？
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 
@@ -282,7 +282,7 @@ void CEditView::InsertData_CEditView(
 			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
 			if( bLineModifiedChange ){	// 無変更だった行が変更された
 				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nStartLine );
-				if( pcLayoutWk && pcLayoutWk->m_nOffset ){	// 折り返しレイアウト行か？
+				if( pcLayoutWk && pcLayoutWk->m_ptLogicPos.x ){	// 折り返しレイアウト行か？
 					RedrawLineNumber();
 				}
 			}
@@ -1229,7 +1229,7 @@ void CEditView::ReplaceData_CEditView(
 			// 行番号（変更行）表示は改行単位の行頭から更新する必要がある	// 2009.03.26 ryoji
 			if( bLineModifiedChange ){	// 無変更だった行が変更された
 				const CLayout* pcLayoutWk = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( LRArg.nModLineFrom );
-				if( pcLayoutWk && pcLayoutWk->m_nOffset ){	// 折り返しレイアウト行か？
+				if( pcLayoutWk && pcLayoutWk->m_ptLogicPos.x ){	// 折り返しレイアウト行か？
 					RedrawLineNumber();
 				}
 			}

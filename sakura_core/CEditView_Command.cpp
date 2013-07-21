@@ -1844,7 +1844,7 @@ void CEditView::Command_LineCutToStart( void )
 		return;
 	}
 
-	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, pCLayout->m_nLinePhysical, &nX, &nY );
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, pCLayout->m_ptLogicPos.y, &nX, &nY );
 	if( m_ptCaretPos.x == nX && m_ptCaretPos.y == nY ){
 		ErrorBeep();
 		return;
@@ -1879,10 +1879,10 @@ void CEditView::Command_LineCutToEnd( void )
 	}
 
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() , pCLayout->m_ptLogicPos.y, &nX, &nY );
 	}
 	else{
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_ptLogicPos.y, &nX, &nY );
 	}
 	if( ( m_ptCaretPos.x == nX && m_ptCaretPos.y == nY )
 	 || ( m_ptCaretPos.x >  nX && m_ptCaretPos.y == nY )
@@ -1918,7 +1918,7 @@ void CEditView::Command_LineDeleteToStart( void )
 		return;
 	}
 
-	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, pCLayout->m_nLinePhysical, &nX, &nY );
+	m_pcEditDoc->m_cLayoutMgr.LogicToLayout( 0, pCLayout->m_ptLogicPos.y, &nX, &nY );
 	if( m_ptCaretPos.x == nX && m_ptCaretPos.y == nY ){
 		ErrorBeep();
 		return;
@@ -1952,9 +1952,9 @@ void CEditView::Command_LineDeleteToEnd( void )
 	}
 
 	if( EOL_NONE == pCLayout->m_pCDocLine->m_cEol ){	/* 改行コードの種類 */
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() , pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() , pCLayout->m_ptLogicPos.y, &nX, &nY );
 	}else{
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_nLinePhysical, &nX, &nY );
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( pCLayout->m_pCDocLine->m_cLine.GetStringLength() - pCLayout->m_pCDocLine->m_cEol.GetLen(), pCLayout->m_ptLogicPos.y, &nX, &nY );
 	}
 	if( ( m_ptCaretPos.x == nX && m_ptCaretPos.y == nY )
 	 || ( m_ptCaretPos.x >  nX && m_ptCaretPos.y == nY )
@@ -2786,8 +2786,8 @@ void CEditView::Command_CHAR( char cChar )
 			pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pCLayout );
 			if( NULL != pCLayout ){
 				const CDocLine* pcDocLine;
-				pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( pCLayout->m_nLinePhysical );
-				pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( pCLayout->m_nLinePhysical, &nLineLen );
+				pcDocLine = m_pcEditDoc->m_cDocLineMgr.GetLine( pCLayout->m_ptLogicPos.y );
+				pLine = m_pcEditDoc->m_cDocLineMgr.GetLineStr( pCLayout->m_ptLogicPos.y, &nLineLen );
 				if( NULL != pLine ){
 					/*
 					  カーソル位置変換
@@ -5224,7 +5224,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			int nLineCountPrev = m_pcEditDoc->m_cLayoutMgr.GetLineCount();
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( i );
 			if( NULL == pcLayout ||						//	テキストが無いEOLの行は無視
-				pcLayout->m_nOffset > 0 ||				//	折り返し行は無視
+				pcLayout->m_ptLogicPos.x > 0 ||				//	折り返し行は無視
 				pcLayout->GetLengthWithoutEOL() == 0 ){	//	改行のみの行は無視する。
 				continue;
 			}
@@ -5347,7 +5347,7 @@ void CEditView::Command_UNINDENT( char cChar )
 			const CLayout*	pcLayout;
 			int				nLineLen;
 			const char*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( i, &nLineLen, &pcLayout );
-			if( NULL == pcLayout || pcLayout->m_nOffset > 0 ){
+			if( NULL == pcLayout || pcLayout->m_ptLogicPos.x > 0 ){
 				continue;
 			}
 			if( TAB == cChar ){
@@ -6882,7 +6882,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY(m_sSelect.m_ptFrom.y);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_nOffset;
+			int nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_ptLogicPos.x;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
 			// 正規表現で選択始点・終点への挿入を記述
 			//	Jun. 6, 2005 かろと
@@ -6917,7 +6917,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 					}
 					// 無限置換しないように、１文字増やしたので１文字選択に変更
 					// 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-					rLayoutMgr.LogicToLayout( nIdxTo, pcLayout->m_nLinePhysical, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 行位置も取得する
+					rLayoutMgr.LogicToLayout( nIdxTo, pcLayout->m_ptLogicPos.y, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 行位置も取得する
 				}
 				// 行末から検索文字列末尾までの文字数
 				int colDiff = nLen - nIdxTo;
@@ -6926,7 +6926,7 @@ void CEditView::Command_REPLACE( HWND hwndParent )
 				if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
 					// 改行にかかっていたら、行全体をINSTEXTする。
 					colDiff = 0;
-					rLayoutMgr.LogicToLayout( nLen, pcLayout->m_nLinePhysical, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 追加
+					rLayoutMgr.LogicToLayout( nLen, pcLayout->m_ptLogicPos.y, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 追加
 				}
 				// 置換後文字列への書き換え(行末から検索文字列末尾までの文字を除く)
 				Command_INSTEXT( false, cRegexp.GetString(), cRegexp.GetStringLen() - colDiff, TRUE );
@@ -7345,7 +7345,7 @@ void CEditView::Command_REPLACE_ALL()
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = rLayoutMgr.SearchLineByLayoutY(m_sSelect.m_ptFrom.y);
 			const char* pLine = pcLayout->m_pCDocLine->GetPtr();
-			int nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_nOffset;
+			int nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x ) + pcLayout->m_ptLogicPos.x;
 			int nLen = pcLayout->m_pCDocLine->GetLength();
 			int colDiff = 0;
 			if( !bConsecutiveAll ){	// 一括置換
@@ -7382,7 +7382,7 @@ void CEditView::Command_REPLACE_ALL()
 				if ( !bConsecutiveAll ) { // 2006.04.01 かろと	// 2007.01.16 ryoji
 					// 行単位での置換処理
 					// 選択範囲を物理行末までにのばす
-					rLayoutMgr.LogicToLayout( nLen, pcLayout->m_nLinePhysical, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );
+					rLayoutMgr.LogicToLayout( nLen, pcLayout->m_ptLogicPos.y, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );
 				} else {
 				    // From Here Jun. 6, 2005 かろと
 				    // 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
@@ -7398,7 +7398,7 @@ void CEditView::Command_REPLACE_ALL()
 					    }
 					    // 無限置換しないように、１文字増やしたので１文字選択に変更
 					    // 選択始点・終点への挿入の場合も０文字マッチ時は動作は同じになるので
-						rLayoutMgr.LogicToLayout( nIdxTo, pcLayout->m_nLinePhysical, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 行位置も取得する
+						rLayoutMgr.LogicToLayout( nIdxTo, pcLayout->m_ptLogicPos.y, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 行位置も取得する
 				    }
 				    // 行末から検索文字列末尾までの文字数
 					colDiff =  nLen - nIdxTo;
@@ -7408,7 +7408,7 @@ void CEditView::Command_REPLACE_ALL()
 				    if (colDiff < pcLayout->m_pCDocLine->m_cEol.GetLen()) {
 					    // 改行にかかっていたら、行全体をINSTEXTする。
 					    colDiff = 0;
-						rLayoutMgr.LogicToLayout( nLen, pcLayout->m_nLinePhysical, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 追加
+						rLayoutMgr.LogicToLayout( nLen, pcLayout->m_ptLogicPos.y, &m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y );	// 2007.01.19 ryoji 追加
 						colOld = pcLayout->m_pCDocLine->GetLengthWithoutEOL() + 1;	// 2007.01.19 ryoji 追加
 				    }
 				}

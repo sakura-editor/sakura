@@ -40,8 +40,8 @@ public:
 		m_pPrev = NULL;
 		m_pNext = NULL;
 		m_pCDocLine = NULL;
-		m_nOffset = 0;	// 対応する論理行の先頭からのオフセット
-		m_nLinePhysical = 0;	// 対応する論理行番号
+		m_ptLogicPos.x = 0;	// 対応する論理行の先頭からのオフセット
+		m_ptLogicPos.y = 0;	// 対応する論理行番号
 		m_nLength = 0;	// 対応する論理行のハイト数
 		m_nTypePrev = COLORIDX_DEFAULT;// タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
 		m_nIndent = 0;	// このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI */
@@ -50,8 +50,8 @@ public:
 	~CLayout();
 	void DUMP( void );
 	
-	// m_nOffsetで補正したあとの文字列を得る
-	char*	GetPtr() const {	return m_pCDocLine->m_cLine.GetStringPtr() + m_nOffset;	}
+	// m_ptLogicPos.xで補正したあとの文字列を得る
+	char*	GetPtr() const {	return m_pCDocLine->m_cLine.GetStringPtr() + m_ptLogicPos.x;	}
 	int		GetLengthWithEOL() const {	return m_nLength;	}	//	ただしEOLは常に1文字とカウント？？
 	int		GetLengthWithoutEOL() const {	return m_nLength - (m_cEol.GetLen() ? 1 : 0);	}
 	int		GetLength() const {	return m_nLength;	}	//	CMemoryIterator用（EOL含む）
@@ -62,8 +62,7 @@ public:
 	CLayout*		m_pNext;
 
 	const CDocLine*	m_pCDocLine;		//!< 実データへの参照
-	int				m_nOffset;			//!< 対応する改行単位の行頭からのオフセット
-	int				m_nLinePhysical;	//!< 対応する改行単位の行の番号
+	CLogicPoint		m_ptLogicPos;		//!< 対応するロジック参照位置
 	int				m_nLength;			//!< このレイアウト行の長さ(ハイト数)
 
 	EColorIndexType	m_nTypePrev;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
