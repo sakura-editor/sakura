@@ -1712,8 +1712,18 @@
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="ホイール移動">
+					<param name="Local" value="_RESOURCE\HLP000298.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="(選択)カーソル移動">
 					<param name="Local" value="_RESOURCE\HLP000290.html">
+					<param name="ImageNumber" value="9">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="(矩形選択)カーソル移動">
+					<param name="Local" value="_RESOURCE\HLP000299.html">
 					<param name="ImageNumber" value="9">
 					</OBJECT>
 				<LI> <OBJECT type="text/sitemap">
