@@ -505,7 +505,7 @@ protected:
 public:
 	void DrawCaretPosInfo( void );								/* キャレットの行桁位置を表示する */
 protected:
-	BOOL IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
+	bool IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( int, int);							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
 	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */

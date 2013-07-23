@@ -3275,15 +3275,15 @@ normal_action:;
 				int			nUrlIdxBgn;	// URLの位置(行頭からのバイト位置)
 				int			nUrlLen;	// URLの長さ(バイト数)
 				// カーソル位置にURLが有る場合のその範囲を調べる
-				if( IsCurrentPositionURL(
+				bool bIsUrl = IsCurrentPositionURL(
 					m_ptCaretPos.x,	// カーソル位置X
 					m_ptCaretPos.y,	// カーソル位置Y
 					&nUrlLine,		// URLの行(改行単位)
 					&nUrlIdxBgn,	// URLの位置(行頭からのバイト位置)
 					&nUrlLen,		// URLの長さ(バイト数)
 					NULL			// URL受け取り先
-				) ){
-
+				);
+				if( bIsUrl ){
 					/* 現在の選択範囲を非選択状態に戻す */
 					DisableSelectArea( true );
 
@@ -3293,19 +3293,12 @@ normal_action:;
 					  →レイアウト位置(行頭からの表示桁位置、折り返しあり行位置)
 						2002/04/08 YAZAKI 少しでもわかりやすく。
 					*/
-					int nColmFrom, nLineFrom, nColmTo, nLineTo;
-					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn          , nUrlLine, &nColmFrom, &nLineFrom );
-					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn + nUrlLen, nUrlLine, &nColmTo, &nLineTo );
+					CLayoutRange sRangeB;
+					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn          , nUrlLine, &sRangeB.m_ptFrom.x, &sRangeB.m_ptFrom.y );
+					m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nUrlIdxBgn + nUrlLen, nUrlLine, &sRangeB.m_ptTo.x,   &sRangeB.m_ptTo.y );
 
-					m_sSelectBgn.m_ptFrom.y = nLineFrom;		/* 範囲選択開始行(原点) */
-					m_sSelectBgn.m_ptFrom.x = nColmFrom;		/* 範囲選択開始桁(原点) */
-					m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
-					m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
-
-					m_sSelect.m_ptFrom.y = nLineFrom;
-					m_sSelect.m_ptFrom.x = nColmFrom;
-					m_sSelect.m_ptTo.y = nLineTo;
-					m_sSelect.m_ptTo.x = nColmTo;
+					m_sSelectBgn = sRangeB;
+					m_sSelect = sRangeB;
 
 					/* 選択領域描画 */
 					DrawSelectArea();
@@ -3320,7 +3313,7 @@ normal_action:;
 	2009.05.27 ryoji URL色指定の正規表現キーワードにマッチする文字列もURLとみなす
 	                 URLの強調表示OFFのチェックはこの関数内で行うように変更
  */
-BOOL CEditView::IsCurrentPositionURL(
+bool CEditView::IsCurrentPositionURL(
 		int		nCaretPosX,		// カーソル位置X
 		int		nCaretPosY,		// カーソル位置Y
 		int*	pnUrlLine,		// URLの行(改行単位)
@@ -3357,7 +3350,7 @@ BOOL CEditView::IsCurrentPositionURL(
 		}
 	}
 	if( !bDispUrl && !bUseRegexKeyword ){
-		return FALSE;	// URL強調表示しないのでURLではない
+		return false;	// URL強調表示しないのでURLではない
 	}
 
 	// 正規表現キーワード（URL色指定）行検索開始処理	// 2009.05.27 ryoji
@@ -3405,7 +3398,7 @@ BOOL CEditView::IsCurrentPositionURL(
 				*pnUrlLen = nUrlLen;
 				*pnUrlLine = nY;
 				*pnUrlIdxBgn = i;
-				return TRUE;
+				return true;
 			}else{
 				i += nUrlLen;
 				continue;
@@ -3415,7 +3408,7 @@ BOOL CEditView::IsCurrentPositionURL(
 		bKeyWordTop = (nCharChars == 2 || !IS_KEYWORD_CHAR(pLine[i]));
 		i += nCharChars;
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -4484,7 +4477,6 @@ void CEditView::ChangeSelectAreaByCurrentCursorTEST(
 void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 {
 //	MYTRACE( _T("OnLBUTTONUP()\n") );
-	CMemory		cmemBuf, cmemClip;
 
 	/* 範囲選択終了 & マウスキャプチャーおわり */
 	if( m_bBeginSelect ){	/* 範囲選択中 */
