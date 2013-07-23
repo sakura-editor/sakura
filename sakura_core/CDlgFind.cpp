@@ -91,8 +91,7 @@ HWND CDlgFind::DoModeless( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	m_sSearchOption = m_pShareData->m_Common.m_sSearch.m_sSearchOption;		// 検索オプション
 	m_bNOTIFYNOTFOUND = m_pShareData->m_Common.m_sSearch.m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
-	m_ptEscCaretPos_PHY.x = ((CEditView*)lParam)->m_ptCaretPos_PHY.x;	// 検索開始時のカーソル位置退避	02/07/28 ai
-	m_ptEscCaretPos_PHY.y = ((CEditView*)lParam)->m_ptCaretPos_PHY.y;	// 検索開始時のカーソル位置退避	02/07/28 ai
+	m_ptEscCaretPos_PHY = ((CEditView*)lParam)->m_ptCaretPos_PHY;	// 検索開始時のカーソル位置退避	02/07/28 ai
 	((CEditView*)lParam)->m_bSearch = TRUE;							// 検索開始位置の登録有無		02/07/28 ai
 	return CDialog::DoModeless( hInstance, hwndParent, IDD_FIND, lParam, SW_SHOW );
 }
@@ -308,8 +307,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				// 検索開始位置を登録
 				if( TRUE == pcEditView->m_bSearch ){
 					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-					pcEditView->m_ptSrchStartPos_PHY.x = m_ptEscCaretPos_PHY.x;
-					pcEditView->m_ptSrchStartPos_PHY.y = m_ptEscCaretPos_PHY.y;
+					pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 					pcEditView->m_bSearch = FALSE;
 					// 02/07/28 ai end
 				}//  02/06/26 ai End
@@ -341,8 +339,7 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				// 検索開始位置を登録
 				if( TRUE == pcEditView->m_bSearch ){
 					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
-					pcEditView->m_ptSrchStartPos_PHY.x = m_ptEscCaretPos_PHY.x;
-					pcEditView->m_ptSrchStartPos_PHY.y = m_ptEscCaretPos_PHY.y;
+					pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
 					pcEditView->m_bSearch = FALSE;
 				}
 
