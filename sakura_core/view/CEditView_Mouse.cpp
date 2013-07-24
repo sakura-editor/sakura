@@ -194,10 +194,6 @@ normal_action:;
 			}
 		}
 		GetSelectionInfo().m_ptMouseRollPosOld = ptMouse;	// マウス範囲選択前回位置(XY座標)
-		/*
-		m_nMouseRollPosXOld = xPos;		// マウス範囲選択前回位置(X座標)
-		m_nMouseRollPosYOld = yPos;		// マウス範囲選択前回位置(Y座標)
-		*/
 
 		/* 範囲選択開始 & マウスキャプチャー */
 		GetSelectionInfo().SelectBeginBox();
