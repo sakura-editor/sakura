@@ -37,7 +37,7 @@ public:
 
 	//! キャレット位置の単語を取得
 	// 2006.03.24 fon
-	BOOL GetCurrentWord( CNativeW* pcmemWord ) const;
+	bool GetCurrentWord( CNativeW* pcmemWord ) const;
 
 private:
 	const CEditView* m_pEditView;
