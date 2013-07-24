@@ -66,14 +66,14 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 
 	/* 現在位置の単語の範囲を調べる */
 	CLayoutRange sRange;
-	int nResult=m_pEditView->m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
+	bool bResult = m_pEditView->m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 		nCurLine,
 		nIdx,
 		&sRange,
 		&cmemWord,
 		pcmemWord
 	);
-	if( nResult ){
+	if( bResult ){
 		pcmemWord->AppendString( &pLine[nIdx], nCharChars );
 
 		return pcmemWord->GetStringLength();
@@ -92,8 +92,8 @@ int CViewParser::GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const
 	
 	@date 2006.03.24 fon (CEditView::Command_SELECTWORDを流用)
 */
-BOOL CViewParser::GetCurrentWord(
-		CNativeW* pcmemWord
+bool CViewParser::GetCurrentWord(
+	CNativeW* pcmemWord
 ) const
 {
 	const CLayout*	pcLayout = m_pEditView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_pEditView->GetCaret().GetCaretLayoutPos().GetY2() );
@@ -106,18 +106,14 @@ BOOL CViewParser::GetCurrentWord(
 
 	/* 現在位置の単語の範囲を調べる */
 	CLayoutRange sRange;
-	int nResult=m_pEditView->m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
+	bool bResult = m_pEditView->m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 		m_pEditView->GetCaret().GetCaretLayoutPos().GetY2(),
 		nIdx,
 		&sRange,
 		pcmemWord,
 		NULL
 	);
-	if( nResult ){
-		return true;	/* 単語選択に成功 */
-	}
-	else {
-		return false;	/* 単語選択に失敗 */
-	}
+
+	return bResult;
 }
 

@@ -365,14 +365,14 @@ normal_action:;
 				if( NULL != pLine ){
 					nIdx = LineColumnToIndex( pcLayout, GetSelectionInfo().m_sSelect.GetFrom().GetX2() );
 					/* 現在位置の単語の範囲を調べる */
-					int nWhareResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
+					bool bWhareResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						GetSelectionInfo().m_sSelect.GetFrom().GetY2(),
 						nIdx,
 						&sRange,
 						NULL,
 						NULL
 					);
-					if( nWhareResult ){
+					if( bWhareResult ){
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる。
 						// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 						/*
@@ -1145,14 +1145,14 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos_, int yPos_ )
 				CLayoutRange sRange;
 
 				/* 現在位置の単語の範囲を調べる */
-				int nResult=m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
+				bool bResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 					GetCaret().GetCaretLayoutPos().GetY2(),
 					nIdx,
 					&sRange,
 					NULL,
 					NULL
 				);
-				if( nResult ){
+				if( bResult ){
 					// 指定された行のデータ内の位置に対応する桁の位置を調べる
 					// 2007.10.15 kobake 既にレイアウト単位なので変換は不要
 					/*
