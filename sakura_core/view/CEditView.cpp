@@ -2650,22 +2650,16 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 
 	if( bSelect && !bBoxSelect && nLineFrom != nLineTo ){	// 複数行の範囲指定
 		// 複数行通常選択した場合、必ずテキストを含む
-		result = FALSE;
+		result = false;
 	}else{
 		if( bSelect ){
-			CLayoutInt nTemp;
-
 			// 範囲の調整
 			if( nLineFrom > nLineTo ){
-				nTemp = nLineFrom;
-				nLineFrom = nLineTo;
-				nLineTo = nTemp;
+				std::swap( nLineFrom, nLineTo );
 			}
 
 			if( nColumnFrom > nColumnTo ){
-				nTemp = nColumnFrom;
-				nColumnFrom = nColumnTo;
-				nColumnTo = nTemp;
+				std::swap( nColumnFrom, nColumnTo );
 			}
 		}else{
 			nLineTo = nLineFrom;
@@ -2674,13 +2668,13 @@ bool CEditView::IsEmptyArea( CLayoutPoint ptFrom, CLayoutPoint ptTo, bool bSelec
 		const CLayout*	pcLayout;
 		CLayoutInt nLineLen;
 
-		result = TRUE;
+		result = true;
 		for( CLayoutInt nLineNum = nLineFrom; nLineNum <= nLineTo; nLineNum++ ){
 			if( (pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum )) != NULL ){
 				// 指定位置に対応する行のデータ内の位置
 				LineColumnToIndex2( pcLayout, nColumnFrom, &nLineLen );
 				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
-					result = FALSE;		// 指定位置または指定範囲内にテキストがある
+					result = false;		// 指定位置または指定範囲内にテキストがある
 					break;
 				}
 			}
