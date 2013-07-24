@@ -43,7 +43,6 @@ bool CColor_Numeric::EndColor(const CStringRef& cStr, int nPos)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //@@@ 2001.11.07 Start by MIK
-//#ifdef COMPILE_COLOR_DIGIT
 /*
  * 数値なら長さを返す。
  * 10進数の整数または小数。16進数(正数)。

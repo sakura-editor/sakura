@@ -331,10 +331,6 @@ BOOL CDlgFind::OnBnClicked( int wID )
 				if( TRUE == pcEditView->m_bSearch ){
 					// 検索開始時のカーソル位置登録条件変更 02/07/28 ai start
 					pcEditView->m_ptSrchStartPos_PHY = m_ptEscCaretPos_PHY;
-					/*
-					pcEditView->m_nSrchStartPosX_PHY = m_nEscCaretPosX_PHY;
-					pcEditView->m_nSrchStartPosY_PHY = m_nEscCaretPosY_PHY;
-					*/
 					pcEditView->m_bSearch = FALSE;
 					// 02/07/28 ai end
 				}//  02/06/26 ai End
