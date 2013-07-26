@@ -346,8 +346,7 @@ void CEditView::ISearchExec(const char* pszText)
 void CEditView::ISearchExec(bool bNext) 
 {
 	//検索を実行する.
-	int nLineFrom, nColmFrom, nColmTo, nLineTo;
-	
+
 	if ( (m_szCurSrchKey[0] == '\0') || (m_nISearchMode == 0)){
 		//ステータスの表示
 		CMemory msg;
@@ -418,16 +417,18 @@ void CEditView::ISearchExec(bool bNext)
 	}
 	m_bISearchFlagHistory[m_nISearchHistoryCount] = bNext;
 
+	CLayoutRange sMatchRange;
+
 	int nSearchResult = m_pcEditDoc->m_cLayoutMgr.SearchWord(
 		nLine,						// 検索開始行
 		nIdx,						// 検索開始位置
 		m_szCurSrchKey,				// 検索条件
 		m_nISearchDirection,		// 0==前方検索 1==後方検索
 		m_sCurSearchOption,			// 2011.12.15 Moca 色分け「次検索」と同期をとるためm_sCurSearchOptionをそのまま指定
-		&nLineFrom,					// マッチレイアウト行from
-		&nColmFrom, 				// マッチレイアウト位置from
-		&nLineTo, 					// マッチレイアウト行to
-		&nColmTo, 					// マッチレイアウト位置to
+		&sMatchRange.m_ptFrom.y,	// マッチレイアウト行from
+		&sMatchRange.m_ptFrom.x,	// マッチレイアウト位置from
+		&sMatchRange.m_ptTo.y,		// マッチレイアウト行to
+		&sMatchRange.m_ptTo.x,		// マッチレイアウト位置to
 		&m_CurRegexp
 	);
 	if( nSearchResult == 0 ){
@@ -450,15 +451,15 @@ void CEditView::ISearchExec(bool bNext)
 	}else{
 		//検索結果あり
 		//キャレット移動
-		MoveCursor( nColmFrom, nLineFrom , true, _CARETMARGINRATE / 3 );
+		MoveCursor( sMatchRange.m_ptFrom.x, sMatchRange.m_ptFrom.y, true, _CARETMARGINRATE / 3 );
 		//	2005.06.24 Moca
-		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );
+		SetSelectArea( sMatchRange.m_ptFrom.y, sMatchRange.m_ptFrom.x, sMatchRange.m_ptTo.y, sMatchRange.m_ptTo.x );
 
 		m_bISearchWrap = false;
-		m_nISearchX1History[m_nISearchHistoryCount] = nColmFrom;
-		m_nISearchY1History[m_nISearchHistoryCount] = nLineFrom;
-		m_nISearchX2History[m_nISearchHistoryCount] = nColmTo;
-		m_nISearchY2History[m_nISearchHistoryCount] = nLineTo;
+		m_nISearchX1History[m_nISearchHistoryCount] = sMatchRange.m_ptFrom.x;
+		m_nISearchY1History[m_nISearchHistoryCount] = sMatchRange.m_ptFrom.y;
+		m_nISearchX2History[m_nISearchHistoryCount] = sMatchRange.m_ptTo.x;
+		m_nISearchY2History[m_nISearchHistoryCount] = sMatchRange.m_ptTo.y;
 	}
 
 	m_bCurSrchKeyMark = true;
@@ -494,21 +495,22 @@ void CEditView::ISearchBack(void) {
 		}
 	}
 	m_nISearchHistoryCount --;
-	int nLineFrom, nColmFrom, nColmTo, nLineTo;
-	nColmFrom = m_nISearchX1History[m_nISearchHistoryCount];
-	nLineFrom = m_nISearchY1History[m_nISearchHistoryCount];
-	nColmTo   = m_nISearchX2History[m_nISearchHistoryCount];
-	nLineTo   = m_nISearchY2History[m_nISearchHistoryCount];
+
+	CLayoutRange sRange;
+	sRange.m_ptFrom.x = m_nISearchX1History[m_nISearchHistoryCount];
+	sRange.m_ptFrom.y = m_nISearchY1History[m_nISearchHistoryCount];
+	sRange.m_ptTo.x   = m_nISearchX2History[m_nISearchHistoryCount];
+	sRange.m_ptTo.y   = m_nISearchY2History[m_nISearchHistoryCount];
 
 	if(m_nISearchHistoryCount == 0){
 		DisableSelectArea( true );
-		nColmTo = nColmFrom;
+		sRange.m_ptTo.x = sRange.m_ptFrom.x;
 	}
 
-	MoveCursor( nColmFrom , nLineFrom , true, _CARETMARGINRATE / 3 );
+	MoveCursor( sRange.m_ptFrom.x, sRange.m_ptFrom.y, true, _CARETMARGINRATE / 3 );
 	if(m_nISearchHistoryCount != 0){
 		//	2005.06.24 Moca
-		SetSelectArea( nLineFrom, nColmFrom, nLineTo, nColmTo );
+		SetSelectArea( sRange.m_ptFrom.y, sRange.m_ptFrom.x, sRange.m_ptTo.y, sRange.m_ptTo.x );
 	}
 
 	Redraw();
