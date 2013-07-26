@@ -9958,8 +9958,6 @@ searchnext:;
 						}
 						/* この物理行にブロックコメントの終端があるか */
 						nCOMMENTEND = TypeDataPtr->m_cBlockComments[0].Match_CommentTo(nPos + (int)lstrlen( TypeDataPtr->m_cBlockComments[0].getBlockCommentFrom() ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 					}else
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
 						TypeDataPtr->m_cBlockComments[1].Match_CommentFrom(nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
@@ -9972,7 +9970,6 @@ searchnext:;
 						}
 						/* この物理行にブロックコメントの終端があるか */
 						nCOMMENTEND = TypeDataPtr->m_cBlockComments[1].Match_CommentTo(nPos + (int)lstrlen( TypeDataPtr->m_cBlockComments[1].getBlockCommentFrom() ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-//#endif
 					}else
 					if( pLine[nPos] == '\'' &&
 						TypeDataPtr->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp  /* シングルクォーテーション文字列を表示する */

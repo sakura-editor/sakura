@@ -5038,9 +5038,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	for( i = 0; i < MAX_KEYWORDSET_PER_TYPE; i++ ){
 		pShareData->m_Types[nIdx].m_nKeyWordSetIdx[i] = -1;
 	}
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	strcpy( pShareData->m_Types[nIdx].m_szTabViewString, "^       " );	/* TAB表示文字列 */
-//#endif
 	pShareData->m_Types[nIdx].m_bTabArrow = FALSE;				/* タブ矢印表示 */	// 2001.12.03 hor
 	pShareData->m_Types[nIdx].m_bInsSpace = FALSE;				/* スペースの挿入 */	// 2001.12.03 hor
 	
@@ -5104,9 +5102,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 		"折り返し記号",						TRUE , FALSE, FALSE, RGB( 255, 0, 255 )		, RGB( 255, 251, 240 ),
 		"指定桁縦線",						FALSE, FALSE, FALSE, RGB( 192, 192, 192 )	, RGB( 255, 251, 240 ), //2005.11.08 Moca
 		"EOF記号",							TRUE , FALSE, FALSE, RGB( 0, 255, 255 )		, RGB( 0, 0, 0 ),
-//#ifdef COMPILE_COLOR_DIGIT
 		"半角数値",							FALSE, FALSE, FALSE, RGB( 235, 0, 0 )		, RGB( 255, 251, 240 ),	//@@@ 2001.02.17 by MIK		//Mar. 7, 2001 JEPRO RGB(0,0,255)を変更  Mar.10, 2001 標準は色なしに
-//#endif
 		"検索文字列",						TRUE , FALSE, FALSE, RGB( 0, 0, 0 )			, RGB( 255, 255, 0 ),
 		"強調キーワード1",					TRUE , FALSE, FALSE, RGB( 0, 0, 255 )		, RGB( 255, 251, 240 ),
 		"強調キーワード2",					TRUE , FALSE, FALSE, RGB( 255, 128, 0 )		, RGB( 255, 251, 240 ),	//Dec. 4, 2000 MIK added	//Jan. 19, 2001 JEPRO キーワード1とは違う色に変更

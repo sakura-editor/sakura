@@ -133,13 +133,8 @@ bool IsFilePath( const char*, int*, int*, bool = true );
 bool IsFileExists(const TCHAR* path, bool bFileOnly = false);
 BOOL IsURL( const char*, int, int* );/* 指定アドレスがURLの先頭ならばTRUEとその長さを返す */
 BOOL IsMailAddress( const char*, int, int* );	/* 現在位置がメールアドレスならば、NULL以外と、その長さを返す */
-//#ifdef COMPILE_COLOR_DIGIT
 int IsNumber( const char*, int, int );/* 数値ならその長さを返す */	//@@@ 2001.02.17 by MIK
-//#endif
 void ActivateFrameWindow( HWND );	/* アクティブにする */
-//BOOL CheckWindowsVersion( const char* pszAppName );	/* Windowsバージョンのチェック */
-// Jul. 5, 2001 shoji masami
-//bool CheckWindowsVersionNT( void );	/* NTプラットフォームかどうか */
 void GetAppVersionInfo( HINSTANCE, int, DWORD*, DWORD* );	/* リソースから製品バージョンの取得 */
 void SplitPath_FolderAndFile( const char*, char*, char* );	/* ファイルのフルパスを、フォルダとファイル名に分割 */
 BOOL GetAbsolutePath( const char*, char*, BOOL );	/* 相対パス→絶対パス */

@@ -1171,11 +1171,9 @@ void CShareData::ShareData_IO_Type_One( CProfile& cProfile, int nType, const cha
 	cProfile.IOProfileData( pszSecName, "szTypeExts",
 		types.m_szTypeExts,
 		sizeof( m_pShareData->m_Types[0].m_szTypeExts ));
-//#ifdef COMPILE_TAB_VIEW  //@@@ 2001.03.16 by MIK
 	cProfile.IOProfileData( pszSecName, "szTabViewString",
 		/*&*/types.m_szTabViewString,
 		sizeof( types.m_szTabViewString ));
-//#endif
 	cProfile.IOProfileData( pszSecName, "bTabArrow"			, types.m_bTabArrow );	//@@@ 2003.03.26 MIK
 	cProfile.IOProfileData( pszSecName, "bInsSpace"			, types.m_bInsSpace );	// 2001.12.03 hor
 

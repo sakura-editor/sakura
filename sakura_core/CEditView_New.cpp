@@ -668,8 +668,6 @@ searchnext:;
 						}
 						/* この物理行にブロックコメントの終端があるか */
 						nCOMMENTEND = TypeDataPtr->m_cBlockComments[0].Match_CommentTo(nPos + (int)lstrlen( TypeDataPtr->m_cBlockComments[0].getBlockCommentFrom() ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-
-//#ifdef COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 					}else
 					if( TypeDataPtr->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp &&
 						TypeDataPtr->m_cBlockComments[1].Match_CommentFrom(nPos, nLineLen, pLine )	//@@@ 2002.09.22 YAZAKI
@@ -686,7 +684,6 @@ searchnext:;
 						}
 						/* この物理行にブロックコメントの終端があるか */
 						nCOMMENTEND = TypeDataPtr->m_cBlockComments[1].Match_CommentTo(nPos + (int)lstrlen( TypeDataPtr->m_cBlockComments[1].getBlockCommentFrom() ), nLineLen, pLine );	//@@@ 2002.09.22 YAZAKI
-//#endif
 					}else
 					if( pLine[nPos] == '\'' &&
 						TypeDataPtr->m_ColorInfoArr[COLORIDX_SSTRING].m_bDisp  /* シングルクォーテーション文字列を表示する */
@@ -796,7 +793,6 @@ searchnext:;
 							SetCurrentColor( hdc, nCOMMENTMODE );
 						}
 //@@@ 2001.02.17 Start by MIK: 半角数値を強調表示
-//#ifdef COMPILE_COLOR_DIGIT
 					}else if( bKeyWordTop && TypeDataPtr->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp
 						&& (nNumLen = IsNumber( pLine, nPos, nLineLen )) > 0 )		/* 半角数字を表示する */
 					{
@@ -814,7 +810,6 @@ searchnext:;
 						if( !bSearchStringMode ){
 							SetCurrentColor( hdc, nCOMMENTMODE );
 						}
-//#endif
 //@@@ 2001.02.17 End by MIK: 半角数値を強調表示
 					}else
 					if( bKeyWordTop && TypeDataPtr->m_nKeyWordSetIdx[0] != -1 && /* キーワードセット */
@@ -936,7 +931,6 @@ searchnext:;
 						goto SEARCH_START;
 					}
 					break;
-//#ifdef	COMPILE_BLOCK_COMMENT2	//@@@ 2001.03.10 by MIK
 				case COLORIDX_BLOCK2:	/* ブロックコメント2である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* この物理行にブロックコメントの終端があるか */
@@ -956,7 +950,6 @@ searchnext:;
 						goto SEARCH_START;
 					}
 					break;
-//#endif
 				case COLORIDX_SSTRING:	/* シングルクォーテーション文字列である */ // 2002/03/13 novice
 					if( 0 == nCOMMENTEND ){
 						/* シングルクォーテーション文字列の終端があるか */
