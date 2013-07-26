@@ -1026,9 +1026,9 @@ BEGIN
     COMBOBOX        IDC_COMBO_STRINGLITERAL,162,180,68,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "行内のみ(&\\)",IDC_CHECK_STRINGLINEONLY,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,233,180,68,10
+                    WS_TABSTOP,233,180,64,10
     CONTROL         "終了文字がない場合行末まで色分け(&N)",IDC_CHECK_STRINGENDLINE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,162,194,136,10
+                    WS_TABSTOP,162,194,133,10
     LTEXT           "縦線桁指定(&3)",IDC_STATIC,164,218,46,8
     EDITTEXT        IDC_EDIT_VERTLINE,210,216,74,12,ES_AUTOHSCROLL
     LTEXT           "*桁またはStep(Begin,End)でコンマ区切り",IDC_STATIC,165,
