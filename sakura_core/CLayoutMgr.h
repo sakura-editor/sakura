@@ -40,10 +40,7 @@ struct STypeConfig;// 2005.11.20 Moca
 
 
 struct LayoutReplaceArg {
-	int			nDelLineFrom;			//!< 削除範囲行  From レイアウト行番号
-	int			nDelColmFrom;			//!< 削除範囲位置From レイアウト行桁位置
-	int			nDelLineTo;				//!< 削除範囲行  To   レイアウト行番号
-	int			nDelColmTo;				//!< 削除範囲位置To   レイアウト行桁位置
+	CLayoutRange	sDelRange;			//!< [in]削除範囲。レイアウト単位。
 	CMemory*	pcmemDeleted;			//!< 削除されたデータ
 	const char*	pInsData;				//!< 挿入するデータ
 	int			nInsDataLen;			//!< 挿入するデータの長さ

@@ -38,10 +38,10 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	int	nWork_nLines = m_nLines;	//変更前の全行数の保存	@@@ 2002.04.19 MIK
 
 	/* 置換先頭位置のレイアウト情報 */
-	CLayout* pLayout = (CLayout*)SearchLineByLayoutY( pArg->nDelLineFrom );
+	CLayout* pLayout = (CLayout*)SearchLineByLayoutY( pArg->sDelRange.m_ptFrom.y );
 	EColorIndexType nCurrentLineType = COLORIDX_DEFAULT;
 	CLayout* pLayoutWork = pLayout;
-	nLineWork = pArg->nDelLineFrom;
+	nLineWork = pArg->sDelRange.m_ptFrom.y;
 
 	if( pLayoutWork ){
 		while( 0 != pLayoutWork->m_ptLogicPos.x ){
@@ -57,8 +57,8 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	||  レイアウト位置(行頭からの表示桁位置、折り返しあり行位置) →
 	||  物理位置(行頭からのバイト数、折り返し無し行位置)
 	*/
-	LayoutToLogic( pArg->nDelColmFrom, pArg->nDelLineFrom, &nxFrom, &nyFrom );
-	LayoutToLogic( pArg->nDelColmTo, pArg->nDelLineTo, &nxTo, &nyTo );
+	LayoutToLogic( pArg->sDelRange.m_ptFrom.x, pArg->sDelRange.m_ptFrom.y, &nxFrom, &nyFrom );
+	LayoutToLogic( pArg->sDelRange.m_ptTo.x, pArg->sDelRange.m_ptTo.y, &nxTo, &nyTo );
 
 	/* 指定範囲のデータを置換(削除 & データを挿入)
 	  Fromを含む位置からToの直前を含むデータを削除する
@@ -136,11 +136,11 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 
 	// 2009.08.28 nasukoji	テキスト最大幅算出用の引数を設定
 	CalTextWidthArg ctwArg;
-	ctwArg.nLineFrom    = pArg->nDelLineFrom;						// 編集開始桁
-	ctwArg.nColmFrom    = pArg->nDelColmFrom;						// 編集開始列
-	ctwArg.nDelLines    = pArg->nDelLineTo - pArg->nDelLineFrom;	// 削除行なし
-	ctwArg.nAllLinesOld = nWork_nLines;								// 編集前のテキスト行数
-	ctwArg.bInsData     = pArg->nInsDataLen ? TRUE : FALSE;			// 追加文字列の有無
+	ctwArg.nLineFrom    = pArg->sDelRange.m_ptFrom.y;								// 編集開始桁
+	ctwArg.nColmFrom    = pArg->sDelRange.m_ptFrom.x;								// 編集開始列
+	ctwArg.nDelLines    = pArg->sDelRange.m_ptTo.y - pArg->sDelRange.m_ptFrom.y;	// 削除行なし
+	ctwArg.nAllLinesOld = nWork_nLines;												// 編集前のテキスト行数
+	ctwArg.bInsData     = pArg->nInsDataLen ? TRUE : FALSE;							// 追加文字列の有無
 
 	/* 指定レイアウト行に対応する論理行の次の論理行から指定論理行数だけ再レイアウトする */
 	int nAddInsLineNum;
@@ -156,7 +156,7 @@ void CLayoutMgr::ReplaceData_CLayoutMgr(
 	pArg->nAddLineNum = nWork_nLines - m_nLines;	//変更後の全行数との差分	@@@ 2002.04.19 MIK
 	if( 0 == pArg->nAddLineNum )
 		pArg->nAddLineNum = nModifyLayoutLinesOld - pArg->nModLineTo;	/* 再描画ヒント レイアウト行の増減 */
-	pArg->nModLineFrom = pArg->nDelLineFrom;	/* 再描画ヒント 変更されたレイアウト行From */
+	pArg->nModLineFrom = pArg->sDelRange.m_ptFrom.y;	/* 再描画ヒント 変更されたレイアウト行From */
 	pArg->nModLineTo += ( pArg->nModLineFrom - 1 ) ;	/* 再描画ヒント 変更されたレイアウト行To */
 
 	/* レイアウト位置への変換 */

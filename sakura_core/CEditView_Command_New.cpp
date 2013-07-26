@@ -1154,10 +1154,10 @@ void CEditView::ReplaceData_CEditView(
 
 	/* 文字列置換 */
 	LayoutReplaceArg	LRArg;
-	LRArg.nDelLineFrom = nDelLineFrom;	// 削除範囲行  From レイアウト行番号
-	LRArg.nDelColmFrom = nDelColmFrom;	// 削除範囲位置From レイアウト行桁位置
-	LRArg.nDelLineTo = nDelLineTo;		// 削除範囲行  To   レイアウト行番号
-	LRArg.nDelColmTo = nDelColmTo;		// 削除範囲位置To   レイアウト行桁位置
+	LRArg.sDelRange.m_ptFrom.y = nDelLineFrom;	// 削除範囲行  From レイアウト行番号
+	LRArg.sDelRange.m_ptFrom.x = nDelColmFrom;	// 削除範囲位置From レイアウト行桁位置
+	LRArg.sDelRange.m_ptTo.y   = nDelLineTo;	// 削除範囲行  To   レイアウト行番号
+	LRArg.sDelRange.m_ptTo.x   = nDelColmTo;	// 削除範囲位置To   レイアウト行桁位置
 	LRArg.pcmemDeleted = pcMemDeleted;	// 削除されたデータ
 	LRArg.pInsData = pInsData;			// 挿入するデータ
 	LRArg.nInsDataLen = nInsDataLen;	// 挿入するデータの長さ
@@ -1199,7 +1199,7 @@ void CEditView::ReplaceData_CEditView(
 				// 文書末が改行なし→ありに変化したら				// 2009.11.11 ryoji
 				// EOFのみ行が追加になるので、1行余分に描画する。
 				// （文書末が改行あり→なしに変化する場合の末尾EOF消去は描画関数側で行われる）
-				int nAddLine = ( LRArg.nNewLine > LRArg.nDelLineTo )? 1: 0;
+				int nAddLine = ( LRArg.nNewLine > LRArg.sDelRange.m_ptTo.y )? 1: 0;
 
 				ps.rcPaint.left = 0;
 				ps.rcPaint.right = m_nViewAlignLeft + m_nViewCx;
