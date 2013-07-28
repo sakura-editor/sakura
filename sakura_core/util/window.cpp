@@ -219,7 +219,6 @@ bool CTextWidthCalc::SetTextWidthIfMax(LPCTSTR pszText)
 bool CTextWidthCalc::SetTextWidthIfMax(LPCTSTR pszText, int extCx)
 {
 	SIZE size;
-	::GetTextExtentPoint32( hDC, pszText, _tcslen(pszText), &size );
 	if( ::GetTextExtentPoint32( hDC, pszText, _tcslen(pszText), &size ) ){
 		return SetWidthIfMax(size.cx, extCx);
 	}

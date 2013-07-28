@@ -873,9 +873,6 @@ bool CEditView::DrawLogicLine(
 		pInfo->nPosInLogic = pcLayout?pcLayout->GetLogicOffset():CLogicInt(0);
 	}
 
-	//サポート
-	CTypeSupport cTextType(this,COLORIDX_TEXT);
-
 	for (;;) {
 		//対象行が描画範囲外だったら終了
 		if( GetTextArea().GetBottomLine() < pInfo->pDispPos->GetLayoutLineRef() ){
