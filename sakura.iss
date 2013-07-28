@@ -18,8 +18,8 @@ DisableStartupPrompt=no
 PrivilegesRequired=None
 
 ; エディタのバージョンに応じて書き換える場所
-OutputBaseFilename=sinst2-0-5-0
-VersionInfoVersion=2.0.5.0
+OutputBaseFilename=sinst2-1-0-0
+VersionInfoVersion=2.1.0.0
 
 ; OSバージョン制限
 MinVersion=0,5.0
