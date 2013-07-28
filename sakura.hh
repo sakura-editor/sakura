@@ -82,6 +82,8 @@
 #define HLP000262	262 //前の段落に移動
 #define HLP000263	263 //次の段落に移動
 #define HLP000296	296 //オートスクロール
+#define HLP000344	344 //フォントサイズ拡大
+#define HLP000345	345 //フォントサイズ縮小
 #define HLP000224	224 //行頭に移動（折り返し単位）
 #define HLP000225	225 //行末に移動（折り返し単位）
 #define HLP000226	226 //1ページアップ
@@ -112,6 +114,8 @@
 #define HLP000036	36 //選択範囲内全行コピー
 #define HLP000037	37 //選択範囲内全行引用符付きコピー
 #define HLP000038	38 //選択範囲内全行行番号付きコピー
+#define HLP000342	342 //選択範囲内色付きHTMLコピー
+#define HLP000343	343 //選択範囲内行番号色付きHTMLコピー
 #define HLP000303	303 //このファイル名をコピー
 #define HLP000056	56 //このファイルのパス名をコピー
 #define HLP000175	175 //このファイルのパス名とカーソル位置をコピー
@@ -410,6 +414,7 @@
 #define HIDC_BUTTON_MENUNAME					10133 //メニュー名設定	// 2009.02.20 ryoji
 #define HIDC_LIST_FUNC							10150 //機能一覧
 #define HIDC_LIST_RES							10151 //メニュー一覧
+#define HIDC_CHECK_SUBMENU						10152 //サブメニューとして表示
 #define HIDC_CHECK_ADDCRLFWHENCOPY				10210 //折り返し行に改行を付けてコピー
 #define HIDC_CHECK_COPYnDISABLESELECTEDAREA		10211 //コピーしたら選択解除
 #define HIDC_CHECK_bEnableNoSelectCopy			10216 //選択なしでコピーを可能にする	// 2007.11.18 ryoji
@@ -567,6 +572,7 @@
 #define HIDC_CHECK_OpenNewWin					11276 //外部から起動するときは新しいウインドウ開く	// 2009.06.19
 #define HIDC_BUTTON_TABFONT						11277 //タブフォント
 #define HIDC_CHECK_INHERIT_KEY_OTHER_VIEW		11278 //次・前検索で他のビューの検索条件を引き継ぐ
+#define HIDC_CHECK_DispTabClose					11279 //タブを閉じるボタン表示	// 2012.04.14 syat
 #define HIDC_CHECK_WORDWRAP						11310 //英文ワードラップ
 #define HIDC_CHECK_INS_SPACE					11311 //スペースの挿入
 #define HIDC_CHECK_KINSOKUHEAD					11312 //行頭禁則	//@@@ 2002.04.08 MIK
@@ -641,6 +647,9 @@
 #define HIDC_RADIO_LINETERMTYPE2				11466 //行番号区切り（任意）
 #define HIDC_BUTTON_KEYWORD_SELECT				11467 //強調キーワード2～10	// 2006.08.06 ryoji
 #define HIDC_EDIT_VERTLINE						11468 //縦線の桁指定	// 2006.08.06 ryoji
+#define HIDC_COMBO_STRINGLITERAL				11469 //文字列エスケープ
+#define HIDC_CHECK_STRINGLINEONLY				11470 //文字列は行内のみ
+#define HIDC_CHECK_STRINGENDLINE				11471 //終了文字がない場合行末まで色分け
 #define HIDC_BUTTON_HOKANFILE_REF				11500 //入力補完 単語ファイル参照		//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANLOHICASE				11510 //入力補完の英大文字小文字		//Jul. 05, 2001 JEPRO 共通から移動・変更
 #define HIDC_CHECK_HOKANBYFILE					11512 //現在のファイルから入力補完		// 2003.06.25 Moca
@@ -761,6 +770,11 @@
 #define HIDC_GREP_RADIO_OUTPUTSTYLE2	12017	//結果出力形式：ファイル毎
 #define HIDC_GREP_STATIC_JRE32VER		12018	//正規表現バージョン
 #define HIDC_GREP_CHK_DEFAULTFOLDER		12019	//フォルダの初期値をカレントフォルダにする
+#define HIDC_RADIO_OUTPUTSTYLE3			12020	//結果出力形式：結果のみ
+#define HIDC_CHECK_FILE_ONLY			12021	//ファイル毎最初のみ検索
+#define HIDC_CHECK_BASE_PATH			12022	//ベースフォルダ表示
+#define HIDC_CHECK_SEP_FOLDER			12023	//フォルダ毎に表示
+#define HIDC_GREP_BUTTON_FOLDER_UP		12024	//Up
 
 //外部コマンド
 #define HIDC_EXEC_BUTTON_REFERENCE	12100	//参照
@@ -772,8 +786,10 @@
 #define HIDC_RADIO_OUTPUT			12106	//標準出力リダイレクト先：アウトプットウィンドウ
 #define HIDC_RADIO_EDITWINDOW		12107	//標準出力リダイレクト先：編集中のウィンドウ
 #define HIDC_CHECK_SENDSTDIN		12108	//標準入力に送る
-#define HIDC_CHECK_UNICODE_GET		12109	//Unicodeで標準出力
-#define HIDC_CHECK_UNICODE_SEND		12110	//Unicodeで標準入力
+#define HIDC_COMBO_CODE_GET			12109	//標準出力文字コード
+#define HIDC_COMBO_CODE_SEND		12110	//標準入力文字コード
+#define HIDC_CHECK_CUR_DIR			12111	//カレントディレクトリ
+#define HIDC_COMBO_CUR_DIR			12112	//カレントディレクトリ指定
 
 //アウトライン解析
 #define HIDC_FL_BUTTON_COPY		12200	//コピー
@@ -958,6 +974,7 @@
 #define	HIDC_BUTTON_FAVORITE_DELETE_SELECTED	13521
 #define	HIDC_LIST_FAVORITE_EXCEPTMRU	13522
 #define	HIDC_BUTTON_ADD_FAVORITE	13523
+#define	HIDC_LIST_FAVORITE_CUR_DIR	13524
 //タグジャンプリスト
 #define	HIDC_LIST_TAGJUMPLIST		13600
 #define	HIDC_TAGJUMPLIST_IDOK		13601
@@ -977,6 +994,7 @@
 #define	HIDC_TAG_MAKE_IDOK			13705
 #define	HIDC_TAG_MAKE_IDCANCEL		13706
 #define	HIDC_BUTTON_TAG_MAKE_HELP	13707
+#define	HIDC_BUTTON_TAG_MAKE_FOLDER_UP	13708
 
 //ウィンドウの位置と大きさ	2004.05.13 Moca
 #define	HIDC_EDIT_WX			13801
