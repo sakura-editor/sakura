@@ -28,6 +28,7 @@
 #endif
 
 #include <windows.h>
+#include <commctrl.h> // PROPSHEETHEADER
 #include <tchar.h>
 
 /*
