@@ -52,7 +52,7 @@ public:
 	CPropTypes();
 	~CPropTypes();
 	void Create( HINSTANCE, HWND );	//!< 初期化
-	int DoPropertySheet( int );		//!< プロパティシートの作成
+	INT_PTR DoPropertySheet( int );		//!< プロパティシートの作成
 
 	//インターフェース	
 	void SetTypeData( const STypeConfig& t ){ m_Types = t; }	//!< タイプ別設定データの設定  Jan. 23, 2005 genta

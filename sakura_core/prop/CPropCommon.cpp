@@ -189,9 +189,9 @@ struct ComPropSheetInfo {
 /*! プロパティシートの作成
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-int CPropCommon::DoPropertySheet( int nPageNum/*, int nActiveItem*/ )
+INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 {
-	int					nRet;
+	INT_PTR				nRet;
 	int					nIdx;
 	int					i;
 
