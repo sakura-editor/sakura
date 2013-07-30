@@ -123,7 +123,7 @@ void CViewCommander::Command_COPY(
 	if( !bIgnoreLockAndDisable ){
 		/* ‘I‘ðó‘Ô‚ÌƒƒbƒN */
 		if( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){
-			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = FALSE;
+			m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false;
 			m_pCommanderView->GetSelectionInfo().PrintSelectionInfoMsg();
 			if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){
 				GetCaret().m_cUnderLine.CaretUnderLineON(true, false);

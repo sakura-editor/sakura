@@ -340,7 +340,7 @@ void CViewCommander::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		bSelectingLock_Old = m_pCommanderView->GetSelectionInfo().m_bSelectingLock;
 
 		/* 矩形範囲選択中か */
-		if( !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && TRUE == m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){	/* 選択状態のロック */
+		if( !m_pCommanderView->GetSelectionInfo().IsBoxSelecting() && m_pCommanderView->GetSelectionInfo().m_bSelectingLock ){	/* 選択状態のロック */
 			bSelecting = true;
 		}
 		else{
