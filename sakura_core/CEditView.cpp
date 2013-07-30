@@ -204,10 +204,10 @@ BOOL CEditView::Create(
 	m_hbmpCaret = NULL;			/* キャレット用ビットマップ */	// 2006.11.28 ryoji
 
 	m_bSelectingLock = false;	/* 選択状態のロック */
-	m_bBeginSelect = FALSE;		/* 範囲選択中 */
-	m_bBeginBoxSelect = FALSE;	/* 矩形範囲選択中 */
-	m_bBeginLineSelect = FALSE;	/* 行単位選択中 */
-	m_bBeginWordSelect = FALSE;	/* 単語単位選択中 */
+	m_bBeginSelect = false;		/* 範囲選択中 */
+	m_bBeginBoxSelect = false;	/* 矩形範囲選択中 */
+	m_bBeginLineSelect = false;	/* 行単位選択中 */
+	m_bBeginWordSelect = false;	/* 単語単位選択中 */
 
 	m_sSelectBgn.m_ptFrom.y = -1;	/* 範囲選択開始行(原点) */
 	m_sSelectBgn.m_ptFrom.x = -1;	/* 範囲選択開始桁(原点) */
@@ -1626,7 +1626,7 @@ void CEditView::DrawSelectArea( void )
 	}
 	// To Here 2007.09.09 Moca
 
-//	MYTRACE( _(T"DrawSelectArea()  m_bBeginBoxSelect=%s\n"), m_bBeginBoxSelect?"TRUE":"FALSE" );
+//	MYTRACE( _(T"DrawSelectArea()  m_bBeginBoxSelect=%s\n"), m_bBeginBoxSelect?"true":"false" );
 	if( m_bBeginBoxSelect ){		/* 矩形範囲選択中 */
 		// 2001.12.21 hor 矩形エリアにEOFがある場合、RGN_XORで結合すると
 		// EOF以降のエリアも反転してしまうので、この場合はRedrawを使う
@@ -2996,10 +2996,10 @@ normal_action:;
 		m_nMouseRollPosXOld = xPos;		// マウス範囲選択前回位置(X座標)
 		m_nMouseRollPosYOld = yPos;		// マウス範囲選択前回位置(Y座標)
 		/* 範囲選択開始 & マウスキャプチャー */
-		m_bBeginSelect = TRUE;			/* 範囲選択中 */
-		m_bBeginBoxSelect = TRUE;		/* 矩形範囲選択中 */
-		m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
-		m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
+		m_bBeginSelect = true;			/* 範囲選択中 */
+		m_bBeginBoxSelect = true;		/* 矩形範囲選択中 */
+		m_bBeginLineSelect = false;		/* 行単位選択中 */
+		m_bBeginWordSelect = false;		/* 単語単位選択中 */
 
 		::SetCapture( m_hWnd );
 		HideCaret_( m_hWnd ); // 2002/07/22 novice
@@ -3034,9 +3034,9 @@ normal_action:;
 		m_nMouseRollPosXOld = xPos;		/* マウス範囲選択前回位置(X座標) */
 		m_nMouseRollPosYOld = yPos;		/* マウス範囲選択前回位置(Y座標) */
 		/* 範囲選択開始 & マウスキャプチャー */
-		m_bBeginSelect = TRUE;			/* 範囲選択中 */
-		m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
-		m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
+		m_bBeginSelect = true;			/* 範囲選択中 */
+		m_bBeginLineSelect = false;		/* 行単位選択中 */
+		m_bBeginWordSelect = false;		/* 単語単位選択中 */
 		::SetCapture( m_hWnd );
 		HideCaret_( m_hWnd ); // 2002/07/22 novice
 
@@ -3065,7 +3065,7 @@ normal_action:;
 			// 2007.10.13 nasukoji	選択するものが無い（[EOF]のみの行）時は通常クリックと同じ処理
 			if(( ! IsTextSelected() )&&( m_ptCaretPos_PHY.y >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() )){
 				BeginSelectArea();				// 現在のカーソル位置から選択を開始する
-				m_bBeginLineSelect = FALSE;		// 行単位選択中 OFF
+				m_bBeginLineSelect = false;		// 行単位選択中 OFF
 			}
 		}else
 		/* 選択開始処理 */
@@ -3134,7 +3134,7 @@ normal_action:;
 
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
 		if( GetKeyState_Control() &&( ! tripleClickMode)){
-			m_bBeginWordSelect = TRUE;		/* 単語単位選択中 */
+			m_bBeginWordSelect = true;		/* 単語単位選択中 */
 			if( !IsTextSelected() ){
 				/* 現在位置の単語選択 */
 				if ( Command_SELECTWORD() ){
@@ -3230,7 +3230,7 @@ normal_action:;
 		// 2007.12.08 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
 		if(( xPos < m_nViewAlignLeft )&& !GetKeyState_Shift() ){
 			/* 現在のカーソル位置から選択を開始する */
-			m_bBeginLineSelect = TRUE;
+			m_bBeginLineSelect = true;
 
 			// 2002.10.07 YAZAKI 折り返し行をインデントしているときに選択がおかしいバグの対策
 			// １行が画面幅よりも長いと左右にスクロールしてちらつきが激しくなるので後で全体を再描画	// 2008.05.20 ryoji
@@ -4365,9 +4365,9 @@ void CEditView::DisableSelectArea( bool bDraw )
 	m_sSelectOld.m_ptFrom.x = 0; 		/* 範囲選択開始桁 */
 	m_sSelectOld.m_ptTo.y = 0;			/* 範囲選択終了行 */
 	m_sSelectOld.m_ptTo.x = 0;			/* 範囲選択終了桁 */
-	m_bBeginBoxSelect = FALSE;		/* 矩形範囲選択中 */
-	m_bBeginLineSelect = FALSE;		/* 行単位選択中 */
-	m_bBeginWordSelect = FALSE;		/* 単語単位選択中 */
+	m_bBeginBoxSelect = false;		/* 矩形範囲選択中 */
+	m_bBeginLineSelect = false;		/* 行単位選択中 */
+	m_bBeginWordSelect = false;		/* 単語単位選択中 */
 
 	// 2002.02.16 hor 直前のカーソル位置をリセット
 	m_nCaretPosX_Prev=m_ptCaretPos.x;
@@ -4484,7 +4484,7 @@ void CEditView::OnLBUTTONUP( WPARAM fwKeys, int xPos , int yPos )
 		::ReleaseCapture();
 		ShowCaret_( m_hWnd ); // 2002/07/22 novice
 
-		m_bBeginSelect = FALSE;
+		m_bBeginSelect = false;
 
 		if( m_sSelect.m_ptFrom.y == m_sSelect.m_ptTo.y &&
 			m_sSelect.m_ptFrom.x == m_sSelect.m_ptTo.x
@@ -4647,21 +4647,21 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int xPos , int yPos )
 	/*	2007.07.09 maru 機能コードの判定を追加
 		ダブルクリックからのドラッグでは単語単位の範囲選択(エディタの一般的動作)になるが
 		この動作は、ダブルクリック＝単語選択を前提としたもの。
-		キー割り当ての変更により、ダブルクリック≠単語選択のときには m_bBeginWordSelect = TRUE
+		キー割り当ての変更により、ダブルクリック≠単語選択のときには m_bBeginWordSelect = true
 		にすると、処理の内容によっては表示がおかしくなるので、ここで抜けるようにする。
 	*/
 	if(F_SELECTWORD != nFuncID) return;
 
 	/* 範囲選択開始 & マウスキャプチャー */
-	m_bBeginSelect = TRUE;				/* 範囲選択中 */
-	m_bBeginBoxSelect = FALSE;			/* 矩形範囲選択中でない */
-	m_bBeginLineSelect = FALSE;			/* 行単位選択中 */
-	m_bBeginWordSelect = TRUE;			/* 単語単位選択中 */
+	m_bBeginSelect = true;				/* 範囲選択中 */
+	m_bBeginBoxSelect = false;			/* 矩形範囲選択中でない */
+	m_bBeginLineSelect = false;			/* 行単位選択中 */
+	m_bBeginWordSelect = true;			/* 単語単位選択中 */
 
 	if( m_pShareData->m_Common.m_sView.m_bFontIs_FIXED_PITCH ){	/* 現在のフォントは固定幅フォントである */
 		/* ALTキーが押されていたか */
 		if(GetKeyState_Alt()){
-			m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
+			m_bBeginBoxSelect = true;	/* 矩形範囲選択中 */
 		}
 	}
 	::SetCapture( m_hWnd );
@@ -8268,7 +8268,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	RECT		rcSel;
 	int			nCaretPosX_Old;
 	int			nCaretPosY_Old;
-	int			bBeginBoxSelect_Old;
+	bool		bBeginBoxSelect_Old;
 	int			nSelectLineBgnFrom_Old;		/* 範囲選択開始行(原点) */
 	int			nSelectColBgnFrom_Old;		/* 範囲選択開始桁(原点) */
 	int			nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
@@ -8449,7 +8449,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}else{
 		// 2004.07.12 Moca クリップボードを書き換えないように
 		// TRUE == bBoxData
-		// FALSE == m_bBeginBoxSelect
+		// false == m_bBeginBoxSelect
 		/* 貼り付け（クリップボードから貼り付け）*/
 		Command_PASTEBOX( cmemBuf.GetStringPtr(), cmemBuf.GetStringLength() );
 		AdjustScrollBars(); // 2007.07.22 ryoji
@@ -9634,7 +9634,7 @@ void CEditView::SetBracketPairPos( bool flag )
 	mode = 2;
 
 	if( ( flag == true ) && !IsTextSelected() && !m_bDrawSelectArea
-		&& ( m_bBeginBoxSelect == FALSE ) && SearchBracket( m_ptCaretPos.x, m_ptCaretPos.y, &nCol, &nLine, &mode ) )
+		&& ( m_bBeginBoxSelect == false ) && SearchBracket( m_ptCaretPos.x, m_ptCaretPos.y, &nCol, &nLine, &mode ) )
 	{
 		// 登録指定(flag=true)			&&
 		// テキストが選択されていない	&&

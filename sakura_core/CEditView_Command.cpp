@@ -2113,7 +2113,7 @@ void CEditView::Command_SELECTLINE( int lparam )
 	// 改行単位で1行選択する
 	Command_GOLINETOP( false, 0x9 );	// 物理行頭に移動
 
-	m_bBeginLineSelect = TRUE;		// 行単位選択中
+	m_bBeginLineSelect = true;		// 行単位選択中
 
 	int nCaretPosX;
 	int nCaretPosY;
@@ -3552,7 +3552,7 @@ void CEditView::Command_BEGIN_BOXSELECT( void )
 	BeginSelectArea();
 
 	m_bSelectingLock = true;	/* 選択状態のロック */
-	m_bBeginBoxSelect = TRUE;	/* 矩形範囲選択中 */
+	m_bBeginBoxSelect = true;	/* 矩形範囲選択中 */
 	return;
 }
 
@@ -5079,7 +5079,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 			m_sSelect.m_ptFrom.x	= nSelectColFromOld;
 			m_sSelect.m_ptTo.y		= nSelectLineToOld;
 			m_sSelect.m_ptTo.x		= nSelectColToOld;
-			m_bBeginBoxSelect	= TRUE;
+			m_bBeginBoxSelect	= true;
 		}
 		// To Here 2001.12.03 hor
 
@@ -5207,7 +5207,7 @@ void CEditView::Command_INDENT( const char* pData, int nDataLen , BOOL bIndent )
 		m_sSelect.m_ptTo.y = rcSel.bottom;			/* 範囲選択終了行 */
 	//	m_sSelect.m_ptTo.x = nNewPos;				/* 範囲選択終了桁 */	// 2001.12.03 hor
 		m_sSelect.m_ptTo.x = rcSel.right;			/* 範囲選択終了桁 */	// 2001.12.03 hor
-		m_bBeginBoxSelect = TRUE;
+		m_bBeginBoxSelect = true;
 	}else{
 		nSelectLineFromOld = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
 		nSelectColFromOld = 0;					/* 範囲選択開始桁 */
@@ -6998,13 +6998,13 @@ void CEditView::Command_REPLACE_ALL()
 	}
 	// To Here 2001.12.03 hor
 
-	int			bBeginBoxSelect; // 矩形選択？
+	bool		bBeginBoxSelect; // 矩形選択？
 	if(IsTextSelected()){
 		bBeginBoxSelect=m_bBeginBoxSelect;
 	}
 	else{
 		bSelectedArea=FALSE;
-		bBeginBoxSelect=FALSE;
+		bBeginBoxSelect=false;
 	}
 
 	/* 表示処理ON/OFF */

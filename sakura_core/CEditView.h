@@ -389,11 +389,11 @@ public: /* テスト用にアクセス属性を変更 */
 	bool	m_bRedrawRuler;		// ルーラー全体を描き直す時 = true      2002.02.25 Add By KK
 
 	/* 選択状態 */
-	bool	m_bSelectingLock;		/* 選択状態のロック */
-	int		m_bBeginSelect;			/* 範囲選択中 */
-	int		m_bBeginBoxSelect;		/* 矩形範囲選択中 */
-	int		m_bBeginLineSelect;		/* 行単位選択中 */
-	int		m_bBeginWordSelect;		/* 単語単位選択中 */
+	bool	m_bSelectingLock;		// 選択状態のロック
+	bool	m_bBeginSelect;			// 範囲選択中
+	bool	m_bBeginBoxSelect;		// 矩形範囲選択中
+	bool	m_bBeginLineSelect;		// 行単位選択中
+	bool	m_bBeginWordSelect;		// 単語単位選択中
 	// 選択範囲を保持するための変数群
 	// これらはすべて折り返し行と、折り返し桁を保持している。
 	CLayoutRange	m_sSelectBgn; //範囲選択(原点)

@@ -2231,7 +2231,7 @@ void CEditView::Command_SORT(BOOL bAsc)	//bAsc:TRUE=è∏èá,FALSE=ç~èá
 	int			nColmFrom,nColmTo;
 	int			nCF,nCT;
 	int			nCaretPosYOLD;
-	BOOL		bBeginBoxSelectOld;
+	bool		bBeginBoxSelectOld;
 	const char*	pLine;
 	int			nLineLen;
 	int			i,j;
