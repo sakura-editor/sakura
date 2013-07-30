@@ -287,7 +287,7 @@ void ChangeCurrentDirectoryToExeDir();
 HMODULE LoadLibraryExedir(LPCTSTR pszDll);
 
 BOOL GetSpecialFolderPath( int nFolder, LPTSTR pszPath );	// 特殊フォルダのパスを取得する	// 2007.05.19 ryoji
-int MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 2007.05.24 ryoji
+INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパティシート	// 2007.05.24 ryoji
 
 #endif /* _ETC_UTY_H_ */
 

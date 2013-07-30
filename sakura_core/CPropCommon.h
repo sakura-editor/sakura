@@ -76,7 +76,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	int DoPropertySheet( int/*, int*/ );	/* プロパティシートの作成 */
+	INT_PTR DoPropertySheet( int );	/* プロパティシートの作成 */
 
 	// 2002.12.11 Moca 追加
 	void InitData( void );		//!< DLLSHAREDATAから一時データ領域に設定を複製する

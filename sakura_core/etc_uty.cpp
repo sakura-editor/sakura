@@ -2906,7 +2906,7 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 	@author ryoji
 	@date 2007.05.25 新規
 */
-int MyPropertySheet( LPPROPSHEETHEADER lppsph )
+INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 {
 	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
 	if( CShareData::getInstance()->IsPrivateSettings() ){

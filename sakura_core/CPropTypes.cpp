@@ -220,9 +220,9 @@ void CPropTypes::Create( HINSTANCE hInstApp, HWND hwndParent )
 
 // キーワード：タイプ別設定タブ順序(プロパティシート)
 /* プロパティシートの作成 */
-int CPropTypes::DoPropertySheet( int nPageNum )
+INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 {
-	int					nRet;
+	INT_PTR				nRet;
 	PROPSHEETPAGE		psp[16];
 	int					nIdx;
 
