@@ -271,7 +271,7 @@ normal_action:;
 			   ( GetCaret().GetCaretLogicPos().y >= m_pcEditDoc->m_cDocLineMgr.GetLineCount() ))
 			{
 				GetSelectionInfo().BeginSelectArea();				// 現在のカーソル位置から選択を開始する
-				GetSelectionInfo().m_bBeginLineSelect = FALSE;		// 行単位選択中 OFF
+				GetSelectionInfo().m_bBeginLineSelect = false;		// 行単位選択中 OFF
 			}
 		}else
 		/* 選択開始処理 */
@@ -342,7 +342,7 @@ normal_action:;
 		bool bSelectWord = false;
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.11.15 nasukoji	トリプルクリック対応
 		if( GetKeyState_Control() &&( ! tripleClickMode)){
-			GetSelectionInfo().m_bBeginWordSelect = TRUE;		/* 単語単位選択中 */
+			GetSelectionInfo().m_bBeginWordSelect = true;		/* 単語単位選択中 */
 			if( !GetSelectionInfo().IsTextSelected() ){
 				/* 現在位置の単語選択 */
 				if ( GetCommander().Command_SELECTWORD( &ptNewCaret ) ){
@@ -433,7 +433,7 @@ normal_action:;
 		// 2008.05.22 nasukoji	シフトキーを押している場合は行頭クリックとして扱う
 		if( ptMouse.x < GetTextArea().GetAreaLeft() && !GetKeyState_Shift() ){
 			/* 現在のカーソル位置から選択を開始する */
-			GetSelectionInfo().m_bBeginLineSelect = TRUE;
+			GetSelectionInfo().m_bBeginLineSelect = true;
 
 			// 2009.02.22 ryoji 
 			// Command_GOLINEEND()/Command_RIGHT()ではなく次のレイアウトを調べて移動選択する方法に変更
@@ -1627,7 +1627,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	/*	2007.07.09 maru 機能コードの判定を追加
 		ダブルクリックからのドラッグでは単語単位の範囲選択(エディタの一般的動作)になるが
 		この動作は、ダブルクリック＝単語選択を前提としたもの。
-		キー割り当ての変更により、ダブルクリック≠単語選択のときには GetSelectionInfo().m_bBeginWordSelect = TRUE
+		キー割り当ての変更により、ダブルクリック≠単語選択のときには GetSelectionInfo().m_bBeginWordSelect = true
 		にすると、処理の内容によっては表示がおかしくなるので、ここで抜けるようにする。
 	*/
 	if(F_SELECTWORD != nFuncID) return;

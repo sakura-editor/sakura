@@ -288,7 +288,7 @@ void CViewSelect::DrawSelectArea2( HDC hdc ) const
 	}
 	// To Here 2007.09.09 Moca
 
-//	MYTRACE( _T("DrawSelectArea()  m_bBeginBoxSelect=%hs\n", m_bBeginBoxSelect?"TRUE":"FALSE") );
+//	MYTRACE( _T("DrawSelectArea()  m_bBeginBoxSelect=%hs\n", m_bBeginBoxSelect?"true":"false") );
 	if( IsBoxSelecting() ){		// 矩形範囲選択中
 		// 2001.12.21 hor 矩形エリアにEOFがある場合、RGN_XORで結合すると
 		// EOF以降のエリアも反転してしまうので、この場合はRedrawを使う

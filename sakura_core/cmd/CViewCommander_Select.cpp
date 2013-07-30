@@ -107,7 +107,7 @@ void CViewCommander::Command_SELECTLINE( int lparam )
 	// 改行単位で1行選択する
 	Command_GOLINETOP( false, 0x9 );	// 物理行頭に移動
 
-	m_pCommanderView->GetSelectionInfo().m_bBeginLineSelect = TRUE;		// 行単位選択中
+	m_pCommanderView->GetSelectionInfo().m_bBeginLineSelect = true;		// 行単位選択中
 
 	CLayoutPoint ptCaret;
 
@@ -156,10 +156,10 @@ void CViewCommander::Command_BEGIN_SELECT( void )
 
 	//	ロックの解除切り替え
 	if ( m_pCommanderView->GetSelectionInfo().m_bSelectingLock ) {
-		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = FALSE;	/* 選択状態のロック解除 */
+		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = false;	/* 選択状態のロック解除 */
 	}
 	else {
-		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = TRUE;	/* 選択状態のロック */
+		m_pCommanderView->GetSelectionInfo().m_bSelectingLock = true;	/* 選択状態のロック */
 	}
 	if( GetSelect().IsOne() ){
 		GetCaret().m_cUnderLine.CaretUnderLineOFF(true);

@@ -77,7 +77,7 @@ public:
 	void SelectBeginNazo()
 	{
 		m_bBeginSelect     = true;			/* 範囲選択中 */
-//		m_bBeginBoxSelect  = FALSE;		/* 矩形範囲選択中でない */
+//		m_bBeginBoxSelect  = false;		/* 矩形範囲選択中でない */
 		m_bBeginLineSelect = false;		/* 行単位選択中 */
 		m_bBeginWordSelect = false;		/* 単語単位選択中 */
 	}
