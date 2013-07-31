@@ -494,13 +494,13 @@ BOOL CDlgDiff::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CreateSizeBox();
 	CDialog::OnSize();
 	
-	LONG style;
-		style = ::GetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE );
-		::SetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE, style | WS_EX_TRANSPARENT );
-		style = ::GetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE );
-		::SetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE, style | WS_EX_TRANSPARENT );
-		style = ::GetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE );
-		::SetWindowLong( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE, style | WS_EX_TRANSPARENT );
+	LONG_PTR lStyle;
+	lStyle = ::GetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE );
+	::SetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_DST ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
+	lStyle = ::GetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE );
+	::SetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_DIFF_FILE12 ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
+	lStyle = ::GetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE );
+	::SetWindowLongPtr( GetDlgItem(GetHwnd(), IDC_FRAME_SEARCH_MSG ), GWL_EXSTYLE, lStyle | WS_EX_TRANSPARENT );
 
 	RECT rc;
 	::GetWindowRect( hwndDlg, &rc );

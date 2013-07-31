@@ -87,7 +87,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 	RECT				rc;
 	CDlgInput1			cDlgInput1;
 	wchar_t				szKeyWord[MAX_KEYWORDLEN + 1];
-	DWORD				dwStyle;
+	LONG_PTR			lStyle;
 	LV_DISPINFO*		plvdi;
 	LV_KEYDOWN*			pnkd;
 
@@ -127,9 +127,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 		lvc.iSubItem = 0;
 		ListView_InsertColumn( hwndLIST_KEYWORD, 0, &lvc );
 
-		dwStyle = (DWORD)::GetWindowLong( hwndLIST_KEYWORD, GWL_STYLE );
-		::SetWindowLong( hwndLIST_KEYWORD, GWL_STYLE, dwStyle | LVS_SHOWSELALWAYS );
-//				(dwStyle & ~LVS_TYPEMASK) | dwView);
+		lStyle = ::GetWindowLongPtr( hwndLIST_KEYWORD, GWL_STYLE );
+		::SetWindowLongPtr( hwndLIST_KEYWORD, GWL_STYLE, lStyle | LVS_SHOWSELALWAYS );
 
 
 		/* コントロール更新のタイミング用のタイマーを起動 */
