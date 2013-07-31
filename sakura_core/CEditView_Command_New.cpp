@@ -427,7 +427,7 @@ void CEditView::DeleteData(
 
 	// テキストの存在しないエリアの削除は、選択範囲のキャンセルとカーソル移動のみとする	// 2008.08.05 ryoji
 	if( IsTextSelected() ){		// テキストが選択されているか
-		if( IsEmptyArea( m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y, m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, TRUE, m_bBeginBoxSelect ) ){
+		if( IsEmptyArea( m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y, m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, true, m_bBeginBoxSelect ) ){
 			// カーソルを選択範囲の左上に移動
 			MoveCursor( ( m_sSelect.m_ptFrom.x < m_sSelect.m_ptTo.x ) ? m_sSelect.m_ptFrom.x : m_sSelect.m_ptTo.x,
 						( m_sSelect.m_ptFrom.y < m_sSelect.m_ptTo.y ) ? m_sSelect.m_ptFrom.y : m_sSelect.m_ptTo.y, bRedraw );
@@ -3012,28 +3012,22 @@ void CEditView::Command_TEXTWRAPMETHOD( int nWrapMethod )
 
 	@date 2008.08.03 nasukoji	新規作成
 */
-BOOL CEditView::IsEmptyArea( int nColmFrom, int nLineFrom, int nColmTo, int nLineTo, BOOL bSelect, BOOL bBoxSelect )
+bool CEditView::IsEmptyArea( int nColmFrom, int nLineFrom, int nColmTo, int nLineTo, bool bSelect, bool bBoxSelect )
 {
-	BOOL result;
+	bool result;
 
 	if( bSelect && !bBoxSelect && nLineFrom != nLineTo ){	// 複数行の範囲指定
 		// 複数行通常選択した場合、必ずテキストを含む
-		result = FALSE;
+		result = false;
 	}else{
 		if( bSelect ){
-			int nTemp;
-
 			// 範囲の調整
 			if( nLineFrom > nLineTo ){
-				nTemp = nLineFrom;
-				nLineFrom = nLineTo;
-				nLineTo = nTemp;
+				std::swap( nLineFrom, nLineTo );
 			}
 
 			if( nColmFrom > nColmTo ){
-				nTemp = nColmFrom;
-				nColmFrom = nColmTo;
-				nColmTo = nTemp;
+				std::swap( nColmFrom, nColmTo );
 			}
 		}else{
 			nLineTo = nLineFrom;
@@ -3042,13 +3036,13 @@ BOOL CEditView::IsEmptyArea( int nColmFrom, int nLineFrom, int nColmTo, int nLin
 		const CLayout*	pcLayout;
 		int nLineLen;
 
-		result = TRUE;
+		result = true;
 		for( int nLineNum = nLineFrom; nLineNum <= nLineTo; nLineNum++ ){
 			if( m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineNum, &nLineLen, &pcLayout ) ){
 				// 指定位置に対応する行のデータ内の位置
 				LineColmnToIndex2( pcLayout, nColmFrom, nLineLen );
 				if( nLineLen == 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
-					result = FALSE;		// 指定位置または指定範囲内にテキストがある
+					result = false;		// 指定位置または指定範囲内にテキストがある
 					break;
 				}
 			}
