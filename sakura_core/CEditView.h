@@ -935,13 +935,10 @@ private:
 	ESearchDirection m_nISearchDirection;
 	int m_nISearchMode;
 	bool m_bISearchWrap;
-	int m_nISearchX1History[256];
-	int m_nISearchY1History[256];
-	int m_nISearchX2History[256];
-	int m_nISearchY2History[256];
 	bool m_bISearchFlagHistory[256];
 	int m_nISearchHistoryCount;
 	bool m_bISearchFirst;
+	CLayoutRange m_sISearchHistory[256];
 
 	// 2007.10.02 nasukoji
 	bool	m_bActivateByMouse;		//!< マウスによるアクティベート

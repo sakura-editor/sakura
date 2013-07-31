@@ -226,10 +226,8 @@ void CEditView::ISearchEnter( int mode, ESearchDirection direction)
 		m_nISearchMode = mode;
 		
 		m_nISearchHistoryCount = 0;
-		m_nISearchX1History[m_nISearchHistoryCount] = m_ptCaretPos.x;
-		m_nISearchY1History[m_nISearchHistoryCount] = m_ptCaretPos.y;
-		m_nISearchX2History[m_nISearchHistoryCount] = m_ptCaretPos.x;
-		m_nISearchY2History[m_nISearchHistoryCount] = m_ptCaretPos.y;
+		m_sISearchHistory[m_nISearchHistoryCount].m_ptFrom = m_ptCaretPos;
+		m_sISearchHistory[m_nISearchHistoryCount].m_ptTo   = m_ptCaretPos;
 
 		Redraw();
 		
@@ -409,10 +407,7 @@ void CEditView::ISearchExec(bool bNext)
 		m_nISearchHistoryCount = 156;
 		for(int i = 100 ; i<= 255 ; i++){
 			m_bISearchFlagHistory[i-100] = m_bISearchFlagHistory[i];
-			m_nISearchX1History[i-100] = m_nISearchX1History[i] ;
-			m_nISearchY1History[i-100] = m_nISearchY1History[i] ;
-			m_nISearchX2History[i-100] = m_nISearchX2History[i] ;
-			m_nISearchY2History[i-100] = m_nISearchY2History[i] ;
+			m_sISearchHistory[i-100] = m_sISearchHistory[i];
 		}
 	}
 	m_bISearchFlagHistory[m_nISearchHistoryCount] = bNext;
@@ -438,15 +433,10 @@ void CEditView::ISearchExec(bool bNext)
 		
 		if (bNext) 	m_bISearchWrap = true;
 		if (IsTextSelected()){
-			m_nISearchX1History[m_nISearchHistoryCount] = m_sSelect.m_ptFrom.x;
-			m_nISearchY1History[m_nISearchHistoryCount] = m_sSelect.m_ptFrom.y;
-			m_nISearchX2History[m_nISearchHistoryCount] = m_sSelect.m_ptTo.x;
-			m_nISearchY2History[m_nISearchHistoryCount] = m_sSelect.m_ptTo.y;
+			m_sISearchHistory[m_nISearchHistoryCount] = m_sSelect;
 		}else{
-			m_nISearchX1History[m_nISearchHistoryCount] = m_ptCaretPos.x;
-			m_nISearchY1History[m_nISearchHistoryCount] = m_ptCaretPos.y;
-			m_nISearchX2History[m_nISearchHistoryCount] = m_ptCaretPos.x;
-			m_nISearchY2History[m_nISearchHistoryCount] = m_ptCaretPos.y;
+			m_sISearchHistory[m_nISearchHistoryCount].m_ptFrom = m_ptCaretPos;
+			m_sISearchHistory[m_nISearchHistoryCount].m_ptTo   = m_ptCaretPos;
 		}
 	}else{
 		//ŒŸõŒ‹‰Ê‚ ‚è
@@ -456,10 +446,7 @@ void CEditView::ISearchExec(bool bNext)
 		SetSelectArea( sMatchRange.m_ptFrom.y, sMatchRange.m_ptFrom.x, sMatchRange.m_ptTo.y, sMatchRange.m_ptTo.x );
 
 		m_bISearchWrap = false;
-		m_nISearchX1History[m_nISearchHistoryCount] = sMatchRange.m_ptFrom.x;
-		m_nISearchY1History[m_nISearchHistoryCount] = sMatchRange.m_ptFrom.y;
-		m_nISearchX2History[m_nISearchHistoryCount] = sMatchRange.m_ptTo.x;
-		m_nISearchY2History[m_nISearchHistoryCount] = sMatchRange.m_ptTo.y;
+		m_sISearchHistory[m_nISearchHistoryCount] = sMatchRange;
 	}
 
 	m_bCurSrchKeyMark = true;
@@ -496,11 +483,7 @@ void CEditView::ISearchBack(void) {
 	}
 	m_nISearchHistoryCount --;
 
-	CLayoutRange sRange;
-	sRange.m_ptFrom.x = m_nISearchX1History[m_nISearchHistoryCount];
-	sRange.m_ptFrom.y = m_nISearchY1History[m_nISearchHistoryCount];
-	sRange.m_ptTo.x   = m_nISearchX2History[m_nISearchHistoryCount];
-	sRange.m_ptTo.y   = m_nISearchY2History[m_nISearchHistoryCount];
+	CLayoutRange sRange = m_sISearchHistory[m_nISearchHistoryCount];
 
 	if(m_nISearchHistoryCount == 0){
 		DisableSelectArea( true );
