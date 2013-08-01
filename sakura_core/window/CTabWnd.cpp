@@ -12,7 +12,8 @@
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2012, Moca, syat, ryoji
+	Copyright (C) 2012, Moca, syat, novice, uchi
+	Copyright (C) 2013, Moca, Uchi, aroka, novice, syat, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -711,7 +712,6 @@ CTabWnd::CTabWnd()
 , m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
 , m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
 , m_nTabBorderArray( NULL )		//  2012.04.22 syat
-, m_bOwnerDraw( FALSE )
 {
 	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
@@ -893,7 +893,6 @@ void CTabWnd::Close( void )
 		}
 
 		this->DestroyWindow();
-		this->m_bOwnerDraw = false;	// 次回作成で再びオーナードロー化するためフラグを落とす
 	}
 }
 
@@ -1337,8 +1336,6 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		clrText = ::GetSysColor(COLOR_MENUTEXT);
 		gr.PushTextForeColor( clrText );
 		gr.SetTextBackTransparent(true);
-		HFONT hfnt = CreateMenuFont();
-		gr.PushMyFont(hfnt);
 		RECT rcText = rcItem;
 		rcText.top += (bSelected ? 0 : DpiScaleY(5)) - DpiScaleY(1);
 		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
@@ -1348,8 +1345,6 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		::DrawText( gr, szBuf, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
 
 		gr.PopTextForeColor();
-		gr.PopMyFont();
-		::DeleteObject( hfnt );
 
 		// タブを閉じるボタンを描画
 		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
@@ -1849,17 +1844,6 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 
 	if( NULL == m_hwndTab ) return;
 
-	// オーナードロー状態を共通設定に追随させる
-	UINT lngStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
-	if( ! m_bOwnerDraw && m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
-		m_bOwnerDraw = TRUE;
-		lngStyle |= TCS_OWNERDRAWFIXED;
-	}else if( m_bOwnerDraw && ! m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
-		m_bOwnerDraw = FALSE;
-		lngStyle &= ~TCS_OWNERDRAWFIXED;
-	}
-	::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lngStyle );
-
 	pEditNode = NULL;
 	nCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &pEditNode, TRUE );
 
@@ -1883,18 +1867,6 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 
 		if( bRebuild )
 			TabCtrl_DeleteAllItems( m_hwndTab );	// 作成しなおす
-
-		// タブ余白設定
-		if( IsWin2000_or_later() ){
-			if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose
-					&& ! m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth ){
-				// 閉じるボタン表示（オーナードロー）
-				TabCtrl_SetPadding( m_hwndTab, DpiScaleX(14), 0 );
-			}else{
-				// 閉じるボタン非表示
-				TabCtrl_SetPadding( m_hwndTab, DpiScaleX(6), DpiScaleY(3) );
-			}
-		}
 
 		// 作成するタブ数と選択状態にするタブ位置（自ウィンドウの位置）を調べる
 		for( i = 0, j = 0; i < nCount; i++ )
@@ -2212,7 +2184,8 @@ void CTabWnd::TabWnd_ActivateFrameWindow( HWND hwnd, bool bForeground )
 void CTabWnd::LayoutTab( void )
 {
 	// フォントを切り替える 2011.12.01 Moca
-	if( 0 != memcmp( &m_lf, &m_pShareData->m_Common.m_sTabBar.m_lf, sizeof(m_lf) ) ){
+	bool bChgFont = (0 != memcmp( &m_lf, &m_pShareData->m_Common.m_sTabBar.m_lf, sizeof(m_lf) ));
+	if( bChgFont ){
 		HFONT hFontOld = m_hFont;
 		m_lf = m_pShareData->m_Common.m_sTabBar.m_lf;
 		m_hFont = ::CreateFontIndirect( &m_lf );
@@ -2228,51 +2201,80 @@ void CTabWnd::LayoutTab( void )
 	}
 
 	// アイコンの表示を切り替える
+	BOOL bDispTabIcon = m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon;
 	HIMAGELIST hImg = TabCtrl_GetImageList( m_hwndTab );
-	if( NULL == hImg && m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )
+	if( NULL == hImg && bDispTabIcon )
 	{
 		if( NULL != InitImageList() )
 			Refresh( TRUE, TRUE );
 	}
-	else if( NULL != hImg && !m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon )
+	else if( NULL != hImg && !bDispTabIcon )
 	{
 		InitImageList();
 	}
 
+	// 現在のウィンドウスタイルを取得する
+	UINT lStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
+	UINT lStyleOld = lStyle;
+
 	// タブのアイテム幅の等幅を切り替える
-	UINT lStyle;
-	lStyle = (UINT)::GetWindowLongPtr( m_hwndTab, GWL_STYLE );
-	if( (lStyle & TCS_FIXEDWIDTH) && !m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth )
-	{
+	BOOL bSameTabWidth = m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth;
+	if( bSameTabWidth && !(lStyle & TCS_FIXEDWIDTH) ){
+		lStyle |= (TCS_FIXEDWIDTH | TCS_FORCELABELLEFT);
+	}else if( !bSameTabWidth && (lStyle & TCS_FIXEDWIDTH) ){
 		lStyle &= ~(TCS_FIXEDWIDTH | TCS_FORCELABELLEFT);
-		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
-		return;
-	}
-	else if( !(lStyle & TCS_FIXEDWIDTH) && m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth )
-	{
-		lStyle |= TCS_FIXEDWIDTH | TCS_FORCELABELLEFT;
-		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
 	}
 
-	// タブのアイテム幅を調整する
+	// オーナードロー状態を共通設定に追随させる
+	BOOL bDispTabClose = m_pShareData->m_Common.m_sTabBar.m_bDispTabClose;
+	BOOL bOwnerDraw = bDispTabClose;
+	if( bOwnerDraw && !(lStyle & TCS_OWNERDRAWFIXED) ){
+		lStyle |= TCS_OWNERDRAWFIXED;
+	}else if( !bOwnerDraw && (lStyle & TCS_OWNERDRAWFIXED) ){
+		lStyle &= ~TCS_OWNERDRAWFIXED;
+	}
+
+	// タブのアイテムサイズを調整する（等幅のときのサイズやフォント切替時の高さ調整）
+	// ※ 画面のちらつきや体感性能にさほど影響は無さそうなので条件を絞らず毎回 TabCtrl_SetItemSize() を実行する
 	RECT rcTab;
 	int nCount;
 	int cx;
-
 	::GetClientRect( m_hwndTab, &rcTab );
 	nCount = TabCtrl_GetItemCount( m_hwndTab );
 	if( 0 < nCount )
 	{
-		if( m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth ){
-			cx = (rcTab.right - rcTab.left - 8) / nCount;
-			if( MAX_TABITEM_WIDTH < cx )
-				cx = MAX_TABITEM_WIDTH;
-			else if( MIN_TABITEM_WIDTH > cx )
-				cx = MIN_TABITEM_WIDTH;
-		}else{
+		cx = (rcTab.right - rcTab.left - 8) / nCount;
+		if( MAX_TABITEM_WIDTH < cx )
 			cx = MAX_TABITEM_WIDTH;
-		}
+		else if( MIN_TABITEM_WIDTH > cx )
+			cx = MIN_TABITEM_WIDTH;
 		TabCtrl_SetItemSize( m_hwndTab, cx, TAB_ITEM_HEIGHT );
+	}
+
+	// タブ余白設定（「閉じるボタン」や「アイコン」の設定切替時の余白切替）
+	// ※ 画面のちらつきや体感性能にさほど影響は無さそうなので条件を絞らず毎回 TabCtrl_SetPadding() を実行する
+	cx = 6;
+	if( bDispTabClose ){
+		// 閉じるボタンの分だけパディングを追加して横幅を広げる
+		int nWidth = rcBtnBase.right - rcBtnBase.left;
+		cx += bDispTabIcon? (nWidth + 2)/3: (nWidth + 1)/2;	// それっぽく調整: ボタン幅の 1/3（アイコン有） or 1/2（アイコン無）
+	}
+	TabCtrl_SetPadding( m_hwndTab, DpiScaleX(cx), DpiScaleY(3) );
+
+	// 新しいウィンドウスタイルを適用する
+	// ※ TabCtrl_SetPadding() の後でやらないと設定変更の直後にアイコンやテキストの描画位置がずれる場合がある
+	// （例）Ver 2.1.0 では下記の設定変更をすると直後に描画位置がずれていた
+	//           変更前：[等幅]OFF、[閉じるボタン]ON
+	//           変更後：[等幅]ON、[閉じるボタン]OFF
+	if( lStyle != lStyleOld ){
+		::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
+		if( bOwnerDraw ){
+			// オーナードローに切り替えるときは再度ウィンドウスタイルを設定する。
+			// ※ 設定が１度だけだと、非アクティブタブ上でマウスオーバーしてもタブがハイライト表示にならず、
+			//    何かのタイミングで ::SetWindowLongPtr() が再実行されると以後はハイライト表示される。
+			//    （Vista/7/8 で同様の症状を確認）
+			::SetWindowLongPtr( m_hwndTab, GWL_STYLE, lStyle );
+		}
 	}
 }
 

@@ -11,6 +11,7 @@
 	Copyright (C) 2006, ryoji, fon
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2012, Moca, syat
+	Copyright (C) 2013, Uchi, aroka, novice, syat, ryoji
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -184,7 +185,6 @@ private:
 	BOOL		m_bHovering;
 	BOOL		m_bListBtnHilighted;
 	BOOL		m_bCloseBtnHilighted;	//!< 閉じるボタンハイライト状態	// 2006.10.21 ryoji
-	BOOL		m_bOwnerDraw;			//!< タブオーナードロー状態
 	CaptureSrc	m_eCaptureSrc;			//!< キャプチャー元
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
