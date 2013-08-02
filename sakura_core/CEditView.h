@@ -445,7 +445,7 @@ public: /* テスト用にアクセス属性を変更 */
 	bool MySetClipboardData( const char*, int, bool, bool = false );	/* クリップボードにデータを設定 */	// 2007.10.04 ryoji MSDEVLineSelect対応パラメータを追加
 protected:
 	int GetLeftWord( CMemory*, int );					/* カーソル直前の単語を取得 */
-	BOOL GetCurrentWord( CMemory* );					/* キャレット位置の単語を取得 */	// 2006.03.24 fon
+	bool GetCurrentWord( CMemory* );					/* キャレット位置の単語を取得 */	// 2006.03.24 fon
 	bool DispLineNew( HDC, const CLayout*, int&, int, int&, int, BOOL );	/* 行のテキスト／選択状態の描画 */
 	void DispLineNumber( HDC, const CLayout*, int, int );		/* 行番号表示 */
 	void SetCurrentColor( HDC, EColorIndexType );				/* 現在の色を指定 */

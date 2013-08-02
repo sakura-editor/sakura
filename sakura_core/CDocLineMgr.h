@@ -104,9 +104,9 @@ public:
 	const char* GetFirstLinrStr( int* );	/* 順アクセスモード：先頭行を得る */
 	const char* GetNextLinrStr( int* );	/* 順アクセスモード：次の行を得る */
 
-	int WhereCurrentWord( int , int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
+	bool WhereCurrentWord( int , int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 	// 2001/06/23 N.Nakatani WhereCurrentWord_2()追加 staticメンバ
-	static int WhereCurrentWord_2( const char*, int, int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
+	static bool WhereCurrentWord_2( const char*, int, int , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 
 	// 現在位置の文字の種類を調べる
 	static int WhatKindOfChar( const char*, int, int );	/* 現在位置の文字の種類を調べる */

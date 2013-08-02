@@ -1016,7 +1016,7 @@ void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, int nShiftLines )
 }
 
 /* 現在位置の単語の範囲を調べる */
-int CLayoutMgr::WhereCurrentWord(
+bool CLayoutMgr::WhereCurrentWord(
 	int			nLineNum,
 	int			nIdx,
 	int*		pnLineFrom,
@@ -1029,11 +1029,11 @@ int CLayoutMgr::WhereCurrentWord(
 {
 	CLayout* pLayout = SearchLineByLayoutY( nLineNum );
 	if( NULL == pLayout ){
-		return FALSE;
+		return false;
 	}
 
 	// 現在位置の単語の範囲を調べる
-	int nRetCode = m_pcDocLineMgr->WhereCurrentWord(
+	bool nRetCode = m_pcDocLineMgr->WhereCurrentWord(
 		pLayout->m_ptLogicPos.y,
 		pLayout->m_ptLogicPos.x + nIdx,
 		pnIdxFrom,

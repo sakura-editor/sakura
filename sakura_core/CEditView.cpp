@@ -7688,38 +7688,6 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 		}
 	}
 
-
-//	nIdx = nIdxTo - 1;
-//	if( 0 > nIdx ){
-//		return 0;
-//	}
-//	if( pLine[nIdx] == SPACE ||
-//		pLine[nIdx] == TAB ||
-//		(
-//			nIdx > 0 &&
-//			pLine[nIdx] == 0x40 &&
-//			(unsigned char)pLine[nIdx - 1] == (unsigned char)0x81
-//		)
-//	){
-//		return 0;
-//	}
-//	while( 0 <= nIdx && ( pLine[nIdx] != SPACE && pLine[nIdx] != TAB ) ){
-//		nIdx--;
-//	}
-//	++nIdx;
-//	if( nIdxTo - nIdx > 0 ){
-//		if( nMaxWordLen < nIdxTo - nIdx ){
-//			return 0;
-//		}else{
-//			pcmemWord->SetData( &pLine[nIdx], nIdxTo - nIdx );
-//			return nIdxTo - nIdx;
-//		}
-//	}else{
-//		return 0;
-//	}
-
-
-
 	/* 現在位置の単語の範囲を調べる */
 	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 		nCurLine, nIdx,
@@ -7744,8 +7712,8 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 	
 	@date 2006.03.24 fon (CEditView::Command_SELECTWORDを流用)
 */
-BOOL CEditView::GetCurrentWord(
-		CMemory* pcmemWord
+bool CEditView::GetCurrentWord(
+	CMemory* pcmemWord
 )
 {
 	int				nLineFrom;
@@ -7761,14 +7729,11 @@ BOOL CEditView::GetCurrentWord(
 	nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 
 	/* 現在位置の単語の範囲を調べる */
-	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
+	bool bResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 		m_ptCaretPos.y, nIdx,
-		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, pcmemWord, NULL ) ){
-		return true;	/* 単語選択に成功 */
-	}
-	else {
-		return false;	/* 単語選択に失敗 */
-	}
+		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, pcmemWord, NULL );
+
+	return bResult;
 }
 
 

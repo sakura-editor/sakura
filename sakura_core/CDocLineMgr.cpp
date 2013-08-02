@@ -990,7 +990,7 @@ void CDocLineMgr::InsertData_CDocLineMgr(
 
 /* 現在位置の単語の範囲を調べる */
 // 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
-int	CDocLineMgr::WhereCurrentWord(
+bool CDocLineMgr::WhereCurrentWord(
 	int			nLineNum,
 	int			nIdx,
 	int*		pnIdxFrom,
@@ -1003,7 +1003,7 @@ int	CDocLineMgr::WhereCurrentWord(
 	*pnIdxTo = nIdx;
 	CDocLine*	pDocLine = GetLine( nLineNum );
 	if( NULL == pDocLine ){
-		return FALSE;
+		return false;
 	}
 
 	int			nLineLen;
@@ -1022,7 +1022,7 @@ int	CDocLineMgr::WhereCurrentWord(
 	@retval true	成功 現在位置のデータは「単語」と認識する。
 	@retval false	失敗 現在位置のデータは「単語」とは言いきれない気がする。
 */
-int	CDocLineMgr::WhereCurrentWord_2(
+bool CDocLineMgr::WhereCurrentWord_2(
 	const char*	pLine,			//!< [in]  調べるメモリ全体の先頭アドレス
 	int			nLineLen,		//!< [in]  調べるメモリ全体の有効長
 	int			nIdx,			//!< [out] 調査開始地点:pLineからの相対的な位置
@@ -1036,15 +1036,15 @@ int	CDocLineMgr::WhereCurrentWord_2(
 	*pnIdxTo = nIdx;
 
 	if( NULL == pLine ){
-		return FALSE;
+		return false;
 	}
 	if( nIdx >= nLineLen ){
-		return FALSE;
+		return false;
 	}
 
 	// 現在位置の文字の種類によっては選択不能
 	if( pLine[nIdx] == CR || pLine[nIdx] == LF ){
-		return FALSE;
+		return false;
 	}
 
 	// 現在位置の文字の種類を調べる
@@ -1091,7 +1091,7 @@ int	CDocLineMgr::WhereCurrentWord_2(
 	if( NULL != pcmcmWord ){
 		pcmcmWord->SetString( &pLine[*pnIdxFrom], *pnIdxTo - *pnIdxFrom );
 	}
-	return TRUE;
+	return true;
 }
 
 
