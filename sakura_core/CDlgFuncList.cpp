@@ -1270,8 +1270,8 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* äÓíÍÉNÉâÉXÉÅÉìÉo */
 	CreateSizeBox();
 
-	LONG style = ::GetWindowLong( m_hWnd, GWL_STYLE );
-	::SetWindowLong( m_hWnd, GWL_STYLE, style | WS_THICKFRAME );
+	LONG_PTR lStyle = ::GetWindowLongPtr( m_hWnd, GWL_STYLE );
+	::SetWindowLongPtr( m_hWnd, GWL_STYLE, lStyle | WS_THICKFRAME );
 	::SetWindowPos( m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED );
 
 	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );

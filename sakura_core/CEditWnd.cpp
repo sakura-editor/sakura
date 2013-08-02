@@ -748,7 +748,7 @@ void CEditWnd::CreateToolBar( void )
 	TBBUTTON		tbb;
 	int				i;
 	int				nIdx;
-	UINT			uToolType;
+	LONG_PTR		lToolType;
 	nFlag = 0;
 
 	// 2006.06.17 ryoji
@@ -955,9 +955,9 @@ void CEditWnd::CreateToolBar( void )
 			//@@@ 2002.06.15 MIK end
 		}
 		if( m_pShareData->m_Common.m_sToolBar.m_bToolBarIsFlat ){	/* フラットツールバーにする／しない */
-			uToolType = (UINT)::GetWindowLong(m_hwndToolBar, GWL_STYLE);
-			uToolType |= (TBSTYLE_FLAT);
-			::SetWindowLong(m_hwndToolBar, GWL_STYLE, uToolType);
+			lToolType = ::GetWindowLongPtr(m_hwndToolBar, GWL_STYLE);
+			lToolType |= (TBSTYLE_FLAT);
+			::SetWindowLongPtr(m_hwndToolBar, GWL_STYLE, lToolType);
 			::InvalidateRect(m_hwndToolBar, NULL, TRUE);
 		}
 		delete []pTbbArr;// 2005/8/29 aroka
