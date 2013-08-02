@@ -293,6 +293,10 @@ SOURCE=..\sakura_core\CEditView_Diff.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CEditView_ExecCmd.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CEditView_New.cpp
 # End Source File
 # Begin Source File
