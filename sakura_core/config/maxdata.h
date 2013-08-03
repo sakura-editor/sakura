@@ -78,7 +78,7 @@ enum maxdata{
 	// MainMenu
 	MAX_MAINMENU				= 500,	// 登録できるメインメニューの数
 	MAX_MAINMENU_TOP			= 20,	// 登録できるメインメニューの数
-	MAX_MAIN_MENU_NAME_LEN		= 32,	// メインメニュー名文字列長
+	MAX_MAIN_MENU_NAME_LEN		= 40,	// メインメニュー名文字列長
 };
 
 #endif /* SAKURA_MAXDATA_CEFC5993_30DF_4A7C_981A_512B8CE6FD979_H_ */

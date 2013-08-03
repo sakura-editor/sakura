@@ -1969,12 +1969,13 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, CommonSetting_MainMenu&
 				}
 			}
 			// 書き込み
+			// ラベル編集後のノードはノード名を出力する 2012.10.14 syat 各国語対応
 			auto_sprintf( szLine, L"%d,%d,%ls,%ls,%ls", 
 				pcMenu->m_nLevel, 
 				pcMenu->m_nType, 
 				szFuncName, 
 				pcMenu->m_sKey, 
-				pcMenu->m_sName );
+				pcMenu->m_nFunc == F_NODE ? pcMenu->m_sName : L"" );
 			cProfile.IOProfileData( pszSecName, szKeyName, MakeStringBufferW( szLine ) );
 		}
 

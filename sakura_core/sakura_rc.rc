@@ -10,8 +10,9 @@
 #define APSTUDIO_HIDDEN_SYMBOLS
 #include <Windows.h>
 #undef APSTUDIO_HIDDEN_SYMBOLS
-#include "funccode_define.h"
+#include "Funccode_define.h"
 #include "svnrev.h"
+#include "String_define.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -2647,8 +2648,9 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+	F_FILE_TOPMENU			"ファイル"
     F_FILENEW               "新規作成"
-    F_FILENEW_NEWWINDOW     "新規ウインドウを開く"
+    F_FILENEW_NEWWINDOW		"新規ウインドウを開く"
     F_FILEOPEN              "開く..."
     F_FILESAVE              "上書き保存"
     F_FILESAVEAS_DIALOG     "名前を付けて保存..."
@@ -2657,6 +2659,9 @@ BEGIN
     F_FILEOPEN_DROPDOWN     "開く(ドロップダウン)..."
     F_FILESAVECLOSE         "保存して閉じる"
     F_FILE_REOPEN_SJIS      "SJISで開き直す"
+	F_FILE_REOPEN_SUBMENU	"開き直す"
+	F_FILE_RCNTFILE_SUBMENU	"最近使ったファイル"
+	F_FILE_RCNTFLDR_SUBMENU	"最近使ったフォルダ"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2704,6 +2709,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+	F_EDIT_TOPMENU			"編集"
     F_UNDO                  "元に戻す"
     F_REDO                  "やり直し"
     F_DELETE                "削除"
@@ -2872,6 +2878,12 @@ BEGIN
     F_PASTE                 "貼り付け"
     F_PASTEBOX              "矩形貼り付け"
     F_INSTEXT_W             "テキストを貼り付け"
+	F_EDIT_INS_SUBMENU		"挿入"
+	F_EDIT_HLV_SUBMENU		"高度な操作"
+	F_EDIT_MOV_SUBMENU		"移動"
+	F_EDIT_SEL_SUBMENU		"選択"
+	F_EDIT_BOX_SEL_SUBMENU	"矩形選択"
+	F_EDIT_COS_SUBMENU		"整形"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2901,6 +2913,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_CONVERT_TOPMENU		"変換"
     F_TOLOWER               "小文字"
     F_TOUPPER               "大文字"
     F_TOHANKAKU             "全角→半角"
@@ -2917,6 +2930,7 @@ BEGIN
     F_TOHANKATA             "全角カタカナ→半角カタカナ"
     F_TABTOSPACE            "TAB→空白"
     F_SPACETOTAB            "空白→TAB"
+	F_CONV_ENCODE_SUBMENU	"文字コード変換"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2946,6 +2960,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_SEARCH_TOPMENU		"検索"
     F_SEARCH_DIALOG         "検索..."
     F_SEARCH_NEXT           "次を検索"
     F_SEARCH_PREV           "前を検索"
@@ -2991,6 +3006,8 @@ BEGIN
     F_BOOKMARK_PREV         "前のブックマークへ"
     F_BOOKMARK_RESET        "ブックマークの全解除"
     F_BOOKMARK_VIEW         "ブックマークの一覧..."
+
+    F_BOOKMARK_SUBMENU      "ブックマーク"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3006,10 +3023,13 @@ BEGIN
     F_ISEARCH_REGEXP_PREV   "正規表現後方インクリメンタルサーチ"
     F_ISEARCH_MIGEMO_NEXT   "MIGEMO前方インクリメンタルサーチ"
     F_ISEARCH_MIGEMO_PREV   "MIGEMO後方インクリメンタルサーチ"
+
+    F_ISEARCH_SUBMENU       "インクリメンタルサーチ"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_OPTION_TOPMENU        "設定"
     F_CHGMOD_INS            "挿入／上書きモード切り替え"
     F_CHG_CHARSET           "文字コードセット指定..."
 END
@@ -3019,6 +3039,7 @@ BEGIN
     F_CHGMOD_EOL_CRLF       "入力改行コード指定(CRLF)"
     F_CHGMOD_EOL_LF         "入力改行コード指定(LF)"
     F_CHGMOD_EOL_CR         "入力改行コード指定(CR)"
+	F_CHGMOD_EOL_SUBMENU	"入力改行コード指定"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3028,6 +3049,17 @@ BEGIN
     F_SHOWFUNCKEY           "ファンクションキーの表示／非表示"
     F_SHOWSTATUSBAR         "ステータスバーの表示／非表示"
     F_SHOWTAB               "タブバーの表示／非表示"
+
+	F_SHOWTOOLBAR_ON		"ツールバーを表示"
+	F_SHOWFUNCKEY_ON		"ファンクションキーを表示"
+	F_SHOWTAB_ON			"タブバーを表示"
+	F_SHOWSTATUSBAR_ON		"ステータスバーを表示"
+
+	F_SHOWTOOLBAR_OFF		"表示中のツールバーを隠す"
+	F_SHOWFUNCKEY_OFF		"表示中のファンクションキーを隠す"
+	F_SHOWTAB_OFF			"表示中のタブバーを隠す"
+	F_SHOWSTATUSBAR_OFF		"表示中のステータスバーを隠す"
+
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3057,11 +3089,26 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_TOOL_TOPMENU          "ツール"
     F_RECKEYMACRO           "キーマクロの記録開始／終了"
     F_SAVEKEYMACRO          "キーマクロの保存"
     F_LOADKEYMACRO          "キーマクロの読み込み"
     F_EXECKEYMACRO          "キーマクロの実行"
+
     F_EXECEXTMACRO          "名前を指定してマクロ実行..."
+
+    F_RECKEYMACRO_REC		"キーマクロの記録開始"
+    F_SAVEKEYMACRO_REC		"キーマクロの保存"
+    F_LOADKEYMACRO_REC		"キーマクロの読み込み"
+    F_EXECKEYMACRO_REC		"キーマクロの実行"
+
+    F_RECKEYMACRO_APPE		"キーマクロの記録終了"
+    F_SAVEKEYMACRO_APPE		"キーマクロの記録終了&&保存"
+    F_LOADKEYMACRO_APPE		"キーマクロの記録終了&&読み込み"
+    F_EXECKEYMACRO_APPE		"キーマクロの記録終了&&実行"
+    
+	F_EXECKEYMACRO_REGD		"登録済みマクロ"
+	F_TOOL_CUSTOM_SUBMENU	"カスタムメニュー"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3072,16 +3119,26 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_WINDOW_TOPMENU        "ウィンドウ"
     F_SPLIT_V               "上下に分割／分割解除"
+    F_SPLIT_V_ON            "上下に分割"
+    F_SPLIT_V_OFF           "上下分割の解除"
     F_SPLIT_H               "左右に分割／分割解除"
+    F_SPLIT_H_ON            "左右に分割"
+    F_SPLIT_H_OFF           "左右分割の解除"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_SPLIT_VH              "縦横に分割／分割解除"
+	F_SPLIT_VH_ON           "縦横に分割"
+	F_SPLIT_VH_OFF          "縦横分割の解除"
+
     F_WINCLOSE              "閉じる"
     F_WIN_CLOSEALL          "すべて閉じる"
     F_TAB_CLOSEOTHER        "このタブ／ウィンドウ以外を閉じる"
+	F_TAB_CLOSEOTHER_TAB	"このタブ以外を閉じる(&O)"
+	F_TAB_CLOSEOTHER_WINDOW	"このウィンドウ以外を閉じる(&O)"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3091,6 +3148,8 @@ BEGIN
     F_TILE_H                "左右に並べて表示"
     F_BIND_WINDOW           "グループ化"
     F_TOPMOST               "常に手前に表示"
+	F_TOPMOST_REL			"常に手前を解除"
+	F_TOPMOST_SET			"常に手前に表示"
     F_WINLIST               "ウィンドウ一覧..."
     F_NEXTWINDOW            "次のウィンドウ"
     F_PREVWINDOW            "前のウィンドウ"
@@ -3119,6 +3178,9 @@ BEGIN
     F_TAB_SEPARATE          "新規グループ"
     F_TAB_JOINTNEXT         "次のグループに移動"
     F_TAB_JOINTPREV         "前のグループに移動"
+    F_TAB_MANIP_SUBMENU     "タブの操作"
+	F_TAB_GROUPDEL			"グループ化を解除"			// LMP -- added
+	F_TAB_GROUPIZE			"グループ化"				// LMP -- added
     F_TAB_CLOSELEFT         "左をすべて閉じる"
     F_TAB_CLOSERIGHT        "右をすべて閉じる"
 END
@@ -3127,10 +3189,13 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_HOKAN                 "入力補完"
     F_TOGGLE_KEY_SEARCH     "キーワードヘルプ自動表示"
+    F_TOGGLE_KEY_SEARCH_ON  "キーワードヘルプ自動表示する"
+    F_TOGGLE_KEY_SEARCH_OFF "キーワードヘルプ自動表示しない"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
+    F_HELP_TOPMENU          "ヘルプ"
     F_HELP_CONTENTS         "ヘルプ目次"
     F_HELP_SEARCH           "ヘルプキーワード検索"
     F_MENU_ALLFUNC          "コマンド一覧"
@@ -3196,6 +3261,1126 @@ BEGIN
     IDS_AUTHOR_PAGE         "http://sakura-editor.sourceforge.net/"
     IDS_ABOUT_DESCRIPTION   "このソフトウェアは「テキストエディタ(共同開発版)」を改称したものです．\r\n商用・非商用を問わず無償で利用できますが，ソースコードの著作権は各箇所を記述した人が留保しています．\r\nこのソフトウェアは無保証です．\r\n"
 END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    STR_SQLERR_EXEC_BUT_NOT_RUN	"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
+    STR_SQLERR_ACTV_BUT_NOT_RUN	"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
+	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
+
+
+	// CCommandLine.cpp - cant map properly	
+	STR_ERR_OVERFLOW1			"ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。"
+	STR_ERR_PARSECMD1			"%s\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
+
+	// CControlProcess.cpp
+	STR_ERR_CTRLMTX1			"CreateMutex()失敗。\n終了します。"
+	STR_ERR_CTRLMTX2			"CreateEvent()失敗。\n終了します。"
+	STR_ERR_CTRLMTX3			"ウィンドウの作成に失敗しました。\n起動できません。"
+	STR_ERR_CTRLMTX4			"SetEvent()失敗。\n終了します。"
+
+	// CDlgCompare.cpp
+	STR_ERR_DLGCMP1				"(無題)"
+	
+	// CDlgCtrlCode.cpp
+	STR_DLGCTRLCODE_CODE		"コード"
+	STR_DLGCTRLCODE_SYMBOL		"表記"
+	STR_DLGCTRLCODE_NAME		"名前"
+	STR_DLGCTRLCODE_DESC		"説明"
+
+	STR_ERR_DLGCTL5				"空文字"			// Codes for p_ctrl_list
+	STR_ERR_DLGCTL6				"ヘッダ開始"   
+	STR_ERR_DLGCTL7				"テキスト開始" 
+	STR_ERR_DLGCTL8				"テキスト終了" 
+	STR_ERR_DLGCTL9				"転送終了"     
+	STR_ERR_DLGCTL10			"照会"         
+	STR_ERR_DLGCTL11			"受信OK"       
+	STR_ERR_DLGCTL12			"警告(ベル)"   
+	STR_ERR_DLGCTL13			"後退"         
+	STR_ERR_DLGCTL14			"タブ"         
+	STR_ERR_DLGCTL15			"改行"         	
+	STR_ERR_DLGCTL16			"垂直タブ"     
+	STR_ERR_DLGCTL17			"改ページ"     	
+	STR_ERR_DLGCTL18			"復帰"         
+	STR_ERR_DLGCTL19			"シフトアウト" 
+	STR_ERR_DLGCTL20			"シフトイン"
+	STR_ERR_DLGCTL21			"データリンクエスケープ"
+	STR_ERR_DLGCTL22			"装置制御1"    
+	STR_ERR_DLGCTL23			"装置制御2"    
+	STR_ERR_DLGCTL24			"装置制御3"    
+	STR_ERR_DLGCTL25			"装置制御4"    
+	STR_ERR_DLGCTL26			"受信失敗"     
+	STR_ERR_DLGCTL27			"同期"         
+	STR_ERR_DLGCTL28			"転送ブロック終了"
+	STR_ERR_DLGCTL29			"キャンセル"   
+	STR_ERR_DLGCTL30			"メディア終了" 
+	STR_ERR_DLGCTL31			"置換"         
+	STR_ERR_DLGCTL32			"エスケープ"   
+	STR_ERR_DLGCTL33			"フォーム区切" 
+	STR_ERR_DLGCTL34			"グループ区切" 
+	STR_ERR_DLGCTL35			"レコード区切" 
+	STR_ERR_DLGCTL36			"ユニット区切" 
+	STR_ERR_DLGCTL37			"削除"         
+
+
+	// CDlgDiff.cpp
+	STR_ERR_DLGDIFF1			"(無題)"
+
+	// CDlgFavorite.cpp
+	STR_ERR_DLGFAV1				"ファイル"
+	STR_ERR_DLGFAV2				"フォルダ"
+	STR_ERR_DLGFAV3				"検索"
+	STR_ERR_DLGFAV4				"置換"
+	STR_ERR_DLGFAV5				"GREPファイル"
+	STR_ERR_DLGFAV6				"GREPフォルダ"
+	STR_ERR_DLGFAV7				"コマンド"
+	STR_ERR_DLGFAV8				"(非表示)"
+	STR_ERR_DLGFAV9				"お気に入り"
+	STR_ERR_DLGFAV10			"最近使った%sの履歴を削除します。\n\nよろしいですか？\n\n「はい」\tすべて削除します。\n「いいえ」\tお気に入り以外を削除します。\n"
+	STR_ERR_DLGFAV11			"最近使った%sの履歴を削除します。\n\nよろしいですか？\n"
+	STR_ERR_DLGFAV12			"最近使った%sの履歴を削除しました。"
+	STR_ERR_DLGFAV13			"最近使った%sの履歴(お気に入り以外)を削除しました。"
+	STR_ERR_DLGFAV14			"履歴(%s)が更新されたため編集中情報を破棄し再表示しました。"
+
+	// CDlgFileUpdateQuery.cpp
+	STR_ERR_DLGUPQRY1			"再ロードを行うと変更が失われますがよろしいですか?"
+	STR_ERR_DLGUPQRY2			"再ロードしますか?"
+
+	// CDlgFind.cpp
+	STR_ERR_DLGFIND1			"検索条件を指定してください。"
+
+	// CDlgFuncList.cpp
+	STR_ERR_DLGFNCLST1			"C++ メソッドツリー"
+	STR_ERR_DLGFNCLST2			"ルールファイル" 
+	STR_ERR_DLGFNCLST3			"WZ階層付テキスト"
+	STR_ERR_DLGFNCLST4			"テキスト トピックツリー"
+	STR_ERR_DLGFNCLST4_1		"Java メソッドツリー"
+	STR_ERR_DLGFNCLST5			"Python メソッドツリー"
+	STR_ERR_DLGFNCLST6			"COBOL アウトライン"
+	STR_ERR_DLGFNCLST7			"Visual Basic アウトライン"
+	STR_ERR_DLGFNCLST8			"C 関数一覧"
+	STR_ERR_DLGFNCLST9			"PL/SQL 関数一覧"
+	STR_ERR_DLGFNCLST10			"アセンブラ アウトライン"
+	STR_ERR_DLGFNCLST11			"Perl 関数一覧"
+	STR_ERR_DLGFNCLST12			"テキスト"
+	STR_ERR_DLGFNCLST13			"ブックマーク"
+
+	STR_ERR_DLGFNCLST14			"宣言"
+	STR_ERR_DLGFNCLST15			"関数宣言"
+	STR_ERR_DLGFNCLST16			"プロシージャ宣言"
+	STR_ERR_DLGFNCLST17			"関数"
+	STR_ERR_DLGFNCLST18			"プロシージャ"
+	STR_ERR_DLGFNCLST19			"■パッケージ仕様部"
+	STR_ERR_DLGFNCLST20			"■パッケージ本体部"
+	STR_ERR_DLGFNCLST21			"PROC"
+	STR_ERR_DLGFNCLST22			"ラベル"
+	STR_ERR_DLGFNCLST23			"ENDP"
+
+	STR_ERR_DLGFNCLST24			"デフォルト"
+	STR_ERR_DLGFNCLST25			"アルファベット順"
+
+	// NOT complete....
+	STR_ERR_DLGFNCLST26			" クラス"
+	STR_ERR_DLGFNCLST27			" 名前空間"
+	STR_ERR_DLGFNCLST28			"グローバル"
+
+	STR_ERR_DLGFNCLST29			"(宣言)" 
+	STR_ERR_DLGFNCLST30			" クラス"
+	STR_ERR_DLGFNCLST31			" 構造体"
+	STR_ERR_DLGFNCLST32			" 列挙体"
+	STR_ERR_DLGFNCLST33			" 共用体"
+	STR_ERR_DLGFNCLST34			" インターフェース"
+
+	STR_ERR_DLGFNCLST35			"静的 "
+
+	STR_ERR_DLGFNCLST36			"プライベート"
+	STR_ERR_DLGFNCLST37			"フレンド"
+	STR_ERR_DLGFNCLST38			"パブリック"
+	STR_ERR_DLGFNCLST39			"関数"
+	STR_ERR_DLGFNCLST40			"プロシージャ"
+	STR_ERR_DLGFNCLST41			"プロパティ 取得"
+	STR_ERR_DLGFNCLST42			"プロパティ 設定"
+	STR_ERR_DLGFNCLST43			"プロパティ 参照"
+	STR_ERR_DLGFNCLST44			"定数"
+	STR_ERR_DLGFNCLST45			"列挙型"
+	STR_ERR_DLGFNCLST46			"ユーザ定義型"
+	STR_ERR_DLGFNCLST47			"イベント"
+
+	STR_ERR_DLGFNCLST48			"宣言"
+	STR_ERR_DLGFNCLST49			"行 *"
+	STR_ERR_DLGFNCLST50			"関数名"
+
+	STR_ERR_DLGFNCLST51			"テキスト *"
+	STR_ERR_DLGFNCLST52			"関数名 *"
+	STR_ERR_DLGFNCLST53			"テキスト"
+	STR_ERR_DLGFNCLST54			"関数名"
+	STR_ERR_DLGFNCLST55			"行"
+	STR_ERR_DLGFNCLST56			"行 *"
+
+	STR_ERR_DLGFNCLST57			"Erlang 関数一覧"
+
+
+	// CDlgGrep.cpp
+	STR_ERR_DLGGREP1			"検索するフォルダを選んでください"
+	STR_ERR_DLGGREP2			"検索対象フォルダを指定してください。"
+	STR_ERR_DLGGREP3			"検索対象フォルダが正しくありません。"
+
+	// CDlgJump.cpp
+	STR_ERR_DLGJUMP1			"正しく行番号を入力してください。"
+	STR_ERR_DLGJUMP2			"%d 行  %s  パッケージ仕様部"
+
+	// CDlgOpenFile.cpp
+	STR_ERR_DLGOPNFL1			"変換なし"				// Max 32 bytes.
+	STR_ERR_DLGOPNFL2			" は既に存在します。\r\n上書きしますか？"
+	STR_ERR_DLGOPNFL3			"名前を付けて保存"
+
+	STR_ERR_DLGOPNFL4			"ユーザー指定"
+	STR_ERR_DLGOPNFL5			"テキストファイル"
+	STR_ERR_DLGOPNFL6			"すべてのファイル"
+
+	STR_ERR_DLGOPNFL7			"無題"
+
+	STR_ERR_DLGOPNFL8			"ダイアログが開けません。\n\nエラー:%s"
+
+	STR_ERR_DLGOPNFL9			"ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。"
+
+	// CDlgPrintPage.cpp
+	STR_ERR_DLGPRNPG1			"%d ～ %d ページ"
+	STR_ERR_DLGPRNPG2			"入力エラー"
+	STR_ERR_DLGPRNPG3			"ページ範囲指定が正しくありません。"
+
+	// CDlgPrintSetting.cpp
+	STR_ERR_DLGPRNST1			"設定名の変更" 
+	STR_ERR_DLGPRNST2			"設定の名称を入力してください。"
+
+	// CDlgProperty.cpp
+	STR_ERR_DLGFLPROP1			"ファイル名  "
+	STR_ERR_DLGFLPROP2			"設定のタイプ  "
+	STR_ERR_DLGFLPROP3			"文字コード  "
+
+	STR_ERR_DLGFLPROP4			"行数  %d行\r\n"
+	STR_ERR_DLGFLPROP5			"レイアウト行数  %d行\r\n"
+	STR_ERR_DLGFLPROP6			"読み取り専用モードで開いています。\r\n"
+	STR_ERR_DLGFLPROP7			"変更されています。\r\n"
+	STR_ERR_DLGFLPROP8			"変更されていません。\r\n"
+	STR_ERR_DLGFLPROP9			"\r\nコマンド実行回数    %d回\r\n"
+	STR_ERR_DLGFLPROP10			"--ファイル情報-----------------\r\n"
+	STR_ERR_DLGFLPROP11			"あなたはこのファイルを、他プロセスからの上書き禁止モードでロックしています。\r\n"
+	STR_ERR_DLGFLPROP12			"あなたはこのファイルを、他プロセスからの読み書き禁止モードでロックしています。\r\n"
+	STR_ERR_DLGFLPROP13			"あなたはこのファイルをロックしています。\r\n"
+	STR_ERR_DLGFLPROP14			"あなたはこのファイルをロックしていません。\r\n"
+	STR_ERR_DLGFLPROP15			"ファイル属性  "
+	STR_ERR_DLGFLPROP16			"/アーカイブ"
+	STR_ERR_DLGFLPROP17			"/圧縮"
+	STR_ERR_DLGFLPROP18			"/フォルダ"
+	STR_ERR_DLGFLPROP19			"/隠し"
+	STR_ERR_DLGFLPROP20			"/ノーマル"
+	STR_ERR_DLGFLPROP21			"/オフライン"
+	STR_ERR_DLGFLPROP22			"/読み取り専用"
+	STR_ERR_DLGFLPROP23			"/システム"
+	STR_ERR_DLGFLPROP24			"/テンポラリ"
+	STR_ERR_DLGFLPROP25			"作成日時  "
+	STR_ERR_DLGFLPROP26			"%d年%d月%d日 %02d:%02d:%02d"
+	STR_ERR_DLGFLPROP27			"更新日時  "
+//	STR_ERR_DLGFLPROP28			"%d年%d月%d日 %02d:%02d:%02d"
+	STR_ERR_DLGFLPROP29			"アクセス日  "
+	STR_ERR_DLGFLPROP30			"%d年%d月%d日"
+	STR_ERR_DLGFLPROP31			"MS-DOSファイル名  %s\r\n"
+	STR_ERR_DLGFLPROP32			"ファイルサイズ  %d バイト\r\n"
+
+	// CDlgReplace.cpp
+	STR_ERR_DLGREPLC1			"クリップボードに有効なデータがありません！"
+	STR_ERR_DLGREPLC2			"文字列を指定してください。"
+	STR_ERR_DLGREPLC3			"%d箇所を置換しました。"
+	STR_ERR_DLGREPLC4			"置換条件を指定してください。"
+
+	// CDlgSameColor.cpp
+	STR_ERR_DLGSMCLR1			"文字色統一"
+	STR_ERR_DLGSMCLR2			"背景色統一"
+
+	// CDlgTagJumpList.cpp
+	STR_ERR_DLGTAGJMP1			"(通知)"
+	STR_ERR_DLGTAGJMP2			"(これ以降は切り捨てました)"
+	STR_ERR_DLGTAGJMP3			"キーワード"
+	STR_ERR_DLGTAGJMP4			"階層"
+	STR_ERR_DLGTAGJMP5			"行番号"
+	STR_ERR_DLGTAGJMP6			"種類"
+	STR_ERR_DLGTAGJMP7			"ファイル名"
+	STR_ERR_DLGTAGJMP8			"備考"
+
+	// CDlgTagsMake.cpp
+	STR_ERR_DLGTAGMAK1			"タグ作成フォルダの選択"
+
+	// CDlgWinSize.cpp
+	STR_ERR_DLGWINSZ1			"普通"
+	STR_ERR_DLGWINSZ2			"最大化"
+	STR_ERR_DLGWINSZ3			"(最小化)"
+
+	// CDocLineMgr.cpp
+	STR_ERR_DLGDOCLM1			"%s\nというファイルを開けません。\nファイルが存在しません。"
+	STR_ERR_DLGDOCLM2			"'%s'\nというファイルを開けません。\n読み込みアクセス権がありません。"
+	STR_ERR_DLGDOCLM3			"'%s'\nというファイルを開けません。\n他のアプリケーションで使用されている可能性があります。"
+	STR_ERR_DLGDOCLM4			"'%s'というファイルの読み込み中にエラーが発生しました。\nファイルの読み込みを中止します。"
+	STR_ERR_DLGDOCLM5			"'%s'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。"
+	STR_ERR_DLGDOCLM6			"CDocLineMgr::GetAllData()\nメモリ確保に失敗しました。\n%dバイト"
+
+	// CDocLineMgr_New.cpp
+	STR_ERR_DLGDOCLMN1			"作者に教えて欲しいエラー"
+
+	// CDropTarget.cpp
+	STR_ERR_DLGDRPTGT1			"::RegisterDragDrop()\n失敗"
+
+	// CEditApp.cpp
+	STR_ERR_DLGEDITAPP1			"CEditApp::CEditApp()\nアクセラレータ テーブルが作成できません。\nシステムリソースが不足しています。"
+	STR_ERR_DLGEDITAPP2			"CEditApp::Create()\nウィンドウクラスを登録できませんでした。"
+	STR_ERR_DLGEDITAPP3			"共通設定" // <--- check this strcmp
+	STR_ERR_DLGEDITAPP4			"CEditApp::DispatchEvent()\nアクセラレータ テーブルが作成できません。\nシステムリソースが不足しています。"
+	STR_ERR_DLGEDITAPP5			"外部ヘルプ１が設定されていません。\n今すぐ設定しますか?"
+	STR_ERR_DLGEDITAPP6			"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"
+	STR_ERR_DLGEDITAPP7			"'%s'\nプロセスの起動に失敗しました。\n%s"
+	STR_ERR_DLGEDITAPP8			"'%s'\nプロセスの起動に失敗しました。"
+	STR_ERR_DLGEDITAPP9			"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"
+	STR_ERR_DLGEDITAPP10		"最近使ったファイル(&F)"
+	STR_ERR_DLGEDITAPP11		"最近使ったフォルダ(&D)"
+	STR_ERR_DLGEDITAPP12		"現在開いている編集用のウィンドウをすべて閉じて終了しますか?"
+	STR_ERR_DLGEDITAPP13		"（無題）"
+
+
+	// CEditDoc.cpp
+	STR_ERR_DLGEDITDOC1			"'%s'\nというファイルを開けません。\n読み込みアクセス権がありません。"
+	STR_ERR_DLGEDITDOC2			"バグじゃぁあああ！！！"
+	STR_ERR_DLGEDITDOC3			"CEditDoc::FileRead()\n\nNULL == pszPath\n【対処】エラーの出た状況を作者に連絡してくださいね。"
+	STR_ERR_DLGEDITDOC4			"%s\n文字コードの判別処理でエラーが発生しました。"
+	STR_ERR_DLGEDITDOC5			"文字コード情報"
+	STR_ERR_DLGEDITDOC6			"%s\n\nこのファイルは、前回は別の文字コード %s で開かれています。\n前回と同じ文字コードを使いますか？\n\n・[はい(Y)]  ＝%s\n・[いいえ(N)]＝%s\n・[キャンセル]＝開きません"
+	STR_ERR_DLGEDITDOC7			"バグじゃぁあああ！！！"
+	STR_ERR_DLGEDITDOC8			"【対処】エラーの出た状況を作者に連絡してください。"
+	STR_ERR_DLGEDITDOC9			"c%s\nというファイルは存在しません。\n\nファイルを保存したときに、ディスク上にこのファイルが作成されます。"
+	STR_ERR_DLGEDITDOC10		"ファイル保存"
+	STR_ERR_DLGEDITDOC11		"バックアップの作成に失敗しました．元ファイルへの上書きを継続して行いますか．"
+	STR_ERR_DLGEDITDOC12		"ファイルパスが長すぎるためバックアップの作成に失敗しました．\nANSI 版では %d バイト以上の絶対パスを扱えません．\n\n元ファイルへの上書きを継続して行いますか．"
+	STR_ERR_DLGEDITDOC13		"バックアップエラー"
+	STR_ERR_DLGEDITDOC14		"以下のバックアップフォルダが見つかりません．\n%s\nバックアップを作成せずに上書き保存してよろしいですか．"
+	STR_ERR_DLGEDITDOC15		"バックアップ作成の確認"
+	STR_ERR_DLGEDITDOC16		"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n作成したバックアップファイルをごみ箱に放り込みます。\n"
+	STR_ERR_DLGEDITDOC17		"バックアップ作成の確認"
+	STR_ERR_DLGEDITDOC18		"変更される前に、バックアップファイルを作成します。\nよろしいですか？  [いいえ(N)] を選ぶと作成せずに上書き（または名前を付けて）保存になります。\n\n%s\n    ↓\n%s\n\n"
+	STR_ERR_DLGEDITDOC19		"削除失敗"
+	STR_ERR_DLGEDITDOC20		"移動失敗"
+	STR_ERR_DLGEDITDOC21		"%s\nは現在他のプロセスによって書込みが禁止されています。"
+	STR_ERR_DLGEDITDOC22		"（無題）"
+
+	STR_ERR_DLGEDITDOC23		"読み書き禁止モード"
+	STR_ERR_DLGEDITDOC24		"書き込み禁止モード"
+	STR_ERR_DLGEDITDOC25		"未定義のモード（問題があります）"
+	STR_ERR_DLGEDITDOC26		"%s\nを%sでロックできませんでした。\n現在このファイルに対する排他制御は無効となります。"
+	STR_ERR_DLGEDITDOC27		"（無題）"
+	STR_ERR_DLGEDITDOC28		"(無題)"
+
+	STR_ERR_DLGEDITDOC29		"Grepの処理中です。\n"
+	STR_ERR_DLGEDITDOC30		"%s\nは変更されています。 閉じる前に保存しますか？\n\n読み取り専用で開いているので、名前を付けて保存すればいいと思います。\n"
+	STR_ERR_DLGEDITDOC31		"%s\nは変更されています。 閉じる前に保存しますか？"
+	STR_ERR_DLGEDITDOC32		"★ファイル更新 %02d:%02d:%02d"
+
+	// 64 bytes max, automatically 
+	STR_ERR_DLGEDITDOC33		"(印刷プレビューでのみ使用できます)"
+	STR_ERR_DLGEDITDOC34		"(無題)"
+	STR_ERR_DLGEDITDOC35		"(保存されていません)"
+
+
+	// CEditDoc_FuncList1.cpp
+	STR_ERR_DLGEDITDOCFL11		"無名"
+	STR_ERR_DLGEDITDOCFL12		"::定義位置"
+
+	// CEditDoc_FuncList2.cpp
+	STR_ERR_DLGEDITDOCFL21		"名称未定"
+	STR_ERR_DLGEDITDOCFL22		" クラス"
+
+	// CEditDoc_new.cpp
+	STR_ERR_DLGEDITDOCNEW1		"定義位置"
+	STR_ERR_DLGEDITDOCNEW2		"ファイル名の変換に失敗しました [%s]"
+	STR_ERR_DLGEDITDOCNEW3		"%s\n\nは読み取り専用モードで開いています。 上書き保存はできません。\n\n名前を付けて保存をすればいいと思います。"
+	STR_ERR_DLGEDITDOCNEW4		"（無題）"
+	STR_ERR_DLGEDITDOCNEW5		"読み取り専用モードでは同一ファイルへの上書き保存はできません。"
+
+	// CEditView.cpp
+	STR_ERR_DLGEDITVW1			"CEditView::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+	STR_ERR_DLGEDITVW2			"大"
+	STR_ERR_DLGEDITVW3			"バグってる"
+	STR_ERR_DLGEDITVW4			"作者に教えて欲しいエラー"
+	STR_ERR_DLGEDITVW5			"\n--------------------\n■"
+	STR_ERR_DLGEDITVW6			"■"
+	STR_ERR_DLGEDITVW7			"キーワードの説明をクリップボードにコピー(&K)"
+	STR_ERR_DLGEDITVW8			"キーワード辞書を開く(&J)"
+	STR_ERR_DLGEDITVW9			"%5d 行 %4d 桁"
+	STR_INS_MODE_INS			"挿入"
+	STR_INS_MODE_OVR			"上書"
+	STR_ERR_DLGEDITVW12			"\r\n□検索条件  "
+	STR_ERR_DLGEDITVW13			"「ファイル検索」\r\n"
+	STR_ERR_DLGEDITVW14			"検索対象   "
+	STR_ERR_DLGEDITVW15			"フォルダ   "
+	STR_ERR_DLGEDITVW16			"    (サブフォルダも検索)\r\n"
+	STR_ERR_DLGEDITVW17			"    (サブフォルダを検索しない)\r\n"
+	STR_ERR_DLGEDITVW18			"    (単語単位で探す)\r\n"
+	STR_ERR_DLGEDITVW19			"    (英大文字小文字を区別する)\r\n"
+	STR_ERR_DLGEDITVW20			"    (英大文字小文字を区別しない)\r\n"
+	STR_ERR_DLGEDITVW21			"    (正規表現:"
+	STR_ERR_DLGEDITVW22			"    (文字コードセットの自動判別)\r\n"
+	STR_ERR_DLGEDITVW23			"    (文字コードセット："
+	STR_ERR_DLGEDITVW24			"    (一致した行を出力)\r\n"
+	STR_ERR_DLGEDITVW25			"    (一致した箇所のみ出力)\r\n"
+	STR_ERR_DLGEDITVW26			"中断しました。\r\n"
+	STR_ERR_DLGEDITVW27			"%d 個が検索されました。\r\n"
+	STR_ERR_DLGEDITVW28			"■""%s""%s\r\n"						// LMP: Double quites one would hope FIXME?
+	STR_ERR_DLGEDITVW29			"CEditView::DoGrepFile() ファイルの読み込み中にエラーが発生しました。\r\n"
+	STR_ERR_DLGEDITVW30			"パス名貼り付け(&P)"
+	STR_ERR_DLGEDITVW31			"ファイル名貼り付け(&F)"
+	STR_ERR_DLGEDITVW32			"ファイルを開く(&O)"
+	STR_ERR_DLGEDITVW33			"キャンセル"
+	STR_ERR_DLGEDITVW34			"コマンド実行は失敗しました。"
+	STR_ERR_DLGEDITVW35			"\r\n中断しました。\r\n"
+	STR_ERR_DLGEDITVW36			"\r\n終了コード: %d\r\n"
+
+	// CEditView_Cmdgrep.cpp
+	STR_ERR_DLGEDITVWGREP1		"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"
+
+	// CEditView_CmdHokan.cpp
+	STR_ERR_DLGEDITVWHOKAN1		"補完候補一覧ファイルが設定されていません。\n今すぐ設定しますか?"
+
+	// CEditView_Cmdisrch.cpp
+	STR_ERR_DLGEDITVWISRCH1		"BREGREP.DLLが使用できません。"
+	STR_ERR_DLGEDITVWISRCH2		"MIGEMO.DLLが使用できません。"
+	STR_ERR_DLGEDITVWISRCH3		" (見つかりません)"
+
+	// CEditView_Command.cpp
+	STR_ERR_MACRO1				"マクロ %d (%s) の実行に失敗しました。"
+	STR_ERR_INSTXT1				"バグじゃないの？ @Command_INSTEXT"
+	STR_ERR_SRPREV1				"▲末尾から再検索しました"
+	STR_ERR_SRPREV2				"△見つかりませんでした"
+	STR_ERR_SRPREV3				"前方(↑) に文字列 '%s' が１つも見つかりません。"
+	STR_ERR_SRNEXT1				"▼先頭から再検索しました"
+	STR_ERR_SRNEXT2				"▽見つかりませんでした"
+	STR_ERR_SRNEXT3				"後方(↓) に文字列 '%s' が１つも見つかりません。"
+	STR_ERR_UNINDENT1			"★逆インデントは選択時のみ"
+	STR_ERR_TAGJMP1				"タグジャンプできません"
+	STR_ERR_TAGJMPBK1			"タグジャンプバックできません"
+	STR_ERR_MACROERR1			"マクロの読み込みに失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD01		"外部ヘルプ１が設定されていません。\n今すぐ設定しますか?"
+	STR_ERR_CEDITVIEW_CMD02		"外部HTMLヘルプが設定されていません。\n今すぐ設定しますか?"
+	STR_ERR_CEDITVIEW_CMD03		"タグ作成コマンド実行は失敗しました。\n\nCTAGS.EXE が見つかりません。"
+	STR_ERR_CEDITVIEW_CMD04		"タグ作成コマンド実行は失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD05		"タグファイルを作成中です。"
+	STR_ERR_CEDITVIEW_CMD06		"タグ作成コマンド実行は失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD07		"タグファイルの作成が終了しました。"
+	STR_ERR_CEDITVIEW_CMD08		"C/C++ヘッダファイルのオープンに失敗しました。"
+	STR_ERR_CEDITVIEW_CMD09		"C/C++ソースファイルのオープンに失敗しました。"
+	STR_ERR_CEDITVIEW_CMD10		"クリップボードに有効なデータがありません！"
+	STR_ERR_CEDITVIEW_CMD11		"最後まで置換しました。"
+	STR_ERR_CEDITVIEW_CMD12		"クリップボードに有効なデータがありません！"
+	STR_ERR_CEDITVIEW_CMD13		"ファイルの作成に失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD14		"ファイルの書き込みに失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD15		"ファイルの作成に失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD16		"ファイルの書き込みに失敗しました。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD17		"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
+	STR_ERR_CEDITVIEW_CMD18		"%s\nは変更されています。 Oracle SQL*Plusで実行する前に保存しますか？"
+	STR_ERR_CEDITVIEW_CMD19		"(無題)"  // Answer to the above if no auto path
+	STR_ERR_CEDITVIEW_CMD20		"Oracle SQL*Plusからの反応がありません。\nしばらく待ってから再び実行してください。"
+	STR_ERR_CEDITVIEW_CMD21		"SQLをファイルに保存しないとOracle SQL*Plusで実行できません。\n"
+	STR_ERR_CEDITVIEW_CMD22		"異なる箇所は見つかりませんでした。"
+	STR_ERR_CEDITVIEW_CMD23		"異なる箇所が見つかりました。"
+	STR_ERR_CEDITVIEW_CMD24		"マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"
+	STR_ERR_CEDITVIEW_CMD25		"マクロファイルを作成できませんでした。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD26		"保存可能なマクロがありません．キーボードマクロ以外は保存できません．"
+	STR_ERR_CEDITVIEW_CMD27		"マクロファイルを作成できませんでした。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD28		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_CEDITVIEW_CMD29		"%s\n\nこのファイルは変更されています。\n再ロードを行うと変更が失われますが、よろしいですか?"
+
+	// FIXME -- possibly some left over text in the form of square blocks in the TAGList
+	// inside funciton Command_EXTHELP1
+
+	// CEditView_Command_New.cpp
+	STR_ERR_DLGEDITVWCMDNW1		"▼先頭から再検索しました"
+	STR_ERR_DLGEDITVWCMDNW2		"▽見つかりませんでした"
+	STR_ERR_DLGEDITVWCMDNW3		"後方(↓) にブックマークが見つかりません。"
+	STR_ERR_DLGEDITVWCMDNW4		"▲末尾から再検索しました"
+	STR_ERR_DLGEDITVWCMDNW5		"△見つかりませんでした"
+	STR_ERR_DLGEDITVWCMDNW6		"前方(↑) にブックマークが見つかりません。"
+	STR_ERR_DLGEDITVWCMDNW7		"%d行をマージしました。"
+	STR_ERR_DLGEDITVWCMDNW8		"マージ可能な行がみつかりませんでした。"
+	STR_ERR_DLGEDITVWCMDNW9		"作者に教えて欲しいエラー"
+	STR_ERR_DLGEDITVWCMDNW10	"'%s'\nファイルを保存できません。\nパスが存在しないか、他のアプリケーションで使用されている可能性があります。"
+	STR_ERR_DLGEDITVWCMDNW11	"ファイルの書き込み中にエラーが発生しました。"
+	STR_ERR_DLGEDITVWCMDNW12	"ファイルの読み込み中にエラーが発生しました。"
+
+	// CEditView_Diff.cpp
+	STR_ERR_DLGEDITVWDIFF1		"差分コマンド実行は失敗しました。\n\n比較するファイルが見つかりません。"
+	STR_ERR_DLGEDITVWDIFF2		"差分コマンド実行は失敗しました。\n\nDIFF.EXE が見つかりません。"
+	STR_ERR_DLGEDITVWDIFF3		"差分コマンド実行は失敗しました。\n\n%s"
+	STR_ERR_DLGEDITVWDIFF4		"DIFF差分を行おうとしたファイルはバイナリファイルです。"
+	STR_ERR_DLGEDITVWDIFF5		"DIFF差分は見つかりませんでした。"
+	STR_ERR_DLGEDITVWDIFF6		"▼先頭から再検索しました"
+	STR_ERR_DLGEDITVWDIFF7		"▽見つかりませんでした"
+	STR_ERR_DLGEDITVWDIFF8		"後方(↓) に差分が見つかりません。"
+	STR_ERR_DLGEDITVWDIFF9		"▲末尾から再検索しました"
+	STR_ERR_DLGEDITVWDIFF10		"△見つかりませんでした"
+	STR_ERR_DLGEDITVWDIFF11		"前方(↑) に差分が見つかりません。"
+	STR_ERR_DLGEDITVWDIFF12		"差分コマンド実行は失敗しました。"
+	STR_ERR_DLGEDITVWDIFF13		"差分コマンド実行は失敗しました。\n\n一時ファイルを作成できません。"
+	STR_ERR_DLGEDITVWDIFF14		"差分コマンド実行は失敗しました。\n\n行が長すぎます。"
+
+	// CEditView_New.cpp -- no words, going to ignore for now ( just block [], ... etc )
+
+	// CEditView_New2.cpp -- no words, going to ignore for now ( just block [], ... etc )
+
+	// CEditView_New3.cpp -- no words, going to ignore for now ( just block [], ... etc )
+
+	// CEditWnd.cpp
+	STR_ERR_DLGEDITWND1			"CEditWnd::CEditWnd()\nアクセラレータ テーブルが作成できません。\nシステムリソースが不足しています。"
+	STR_ERR_DLGEDITWND2			"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"		// Used in two places..
+	STR_ERR_DLGEDITWND3			"クライアントウィンドウの作成に失敗しました"
+	STR_ERR_DLGEDITWND4			"エディタ間の対話に失敗しました。\n権限レベルの異なるエディタが既に起動している可能性があります。"
+	STR_ERR_DLGEDITWND5			"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"
+	STR_ERR_DLGEDITWND6			"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+	STR_ERR_DLGEDITWND7			"Rebar の作成に失敗しました。"
+	STR_ERR_DLGEDITWND8			"ツールバーの作成に失敗しました。"
+	STR_ERR_DLGEDITWND9			"入力改行コード指定(&CRLF)"
+	STR_ERR_DLGEDITWND10		"入力改行コード指定(&LF)"
+	STR_ERR_DLGEDITWND11		"入力改行コード指定(C&R)"
+	STR_ERR_DLGEDITWND12		"CEditWnd::DispatchEvent()\nアクセラレータ テーブルが作成できません。\nシステムリソースが不足しています。"
+		// Others handled in dialog box statements, or otherwise already labeled in the above...
+
+	STR_ERR_DLGEDITWND13		"ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。"
+	STR_ERR_DLGEDITWND14		"印刷プレビューを実行する前に、プリンタをインストールしてください。\n"
+	STR_ERR_DLGEDITWND15		"最近使ったフォルダ(&D)"
+	STR_ERR_DLGEDITWND16		"CEditWnd::Create()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+	STR_ERR_DLGEDITWND17		"&%c アウトプット"
+	STR_ERR_DLGEDITWND18		"(無題)"
+
+	//		const char*	pszLabel[7] = { "", "99999 行 9999 列", "CRLF", "0000", "Unicode", "REC", "上書" };	//Oct. 30, 2000 JEPRO 千万行も要らん
+	STR_ERR_DLGEDITWND19		""
+	STR_ERR_DLGEDITWND20		"99999 L 9999 C"
+//	STR_ERR_DLGEDITWND20		"99999 行 9999 列"
+	STR_ERR_DLGEDITWND21		"CFLF"
+	STR_ERR_DLGEDITWND22		"0000"
+	STR_ERR_DLGEDITWND23		"Unicode"
+	STR_ERR_DLGEDITWND24		"REC"
+	STR_ERR_DLGEDITWND25		"上書"
+
+
+	// CEol.cpp
+
+	// CESI.cpp
+
+	// CFileExt.cpp
+
+	// CFileLoad.cpp
+
+	// CFileWrite.cpp
+
+	// CFuncInfo.cpp
+
+	// CFuncInfoArr.cpp
+	STR_ERR_DLGFUNCKEYWN1		"CFuncKeyWnd::Open()\nタイマーが起動できません。\nシステムリソースが不足しているのかもしれません。"
+
+	// CFuncLookup.cpp
+	STR_ERR_DLGFUNCLKUP1		"外部マクロ"
+	STR_ERR_DLGFUNCLKUP2		"カスタムメニュー"
+	STR_ERR_DLGFUNCLKUP3		"マクロ %d (未登録)"
+
+	// Related Commands Menu
+	STR_ERR_DLGFUNCLKUP04		"ファイル操作系"
+	STR_ERR_DLGFUNCLKUP05		"編集系"
+	STR_ERR_DLGFUNCLKUP06		"カーソル移動系"
+	STR_ERR_DLGFUNCLKUP07		"選択系"		//Oct. 15, 2000 JEPRO 「カーソル移動系」が多くなったので「選択系」として独立化(サブメニュー化は構造上できないので)
+	STR_ERR_DLGFUNCLKUP08		"矩形選択系"	//Oct. 17, 2000 JEPRO 「選択系」に一緒にすると多くなりすぎるので「矩形選択系」も独立させた
+	STR_ERR_DLGFUNCLKUP09		"クリップボード系"
+	STR_ERR_DLGFUNCLKUP10		"挿入系"
+	STR_ERR_DLGFUNCLKUP11		"変換系"
+	STR_ERR_DLGFUNCLKUP12		"検索系"
+	STR_ERR_DLGFUNCLKUP13		"モード切り替え系"
+	STR_ERR_DLGFUNCLKUP14		"設定系"
+	STR_ERR_DLGFUNCLKUP15		"マクロ系"
+	STR_ERR_DLGFUNCLKUP16		"ウィンドウ系"
+	STR_ERR_DLGFUNCLKUP17		"支援"
+	STR_ERR_DLGFUNCLKUP18		"その他"
+
+	// charchode.cpp
+
+	// CHokanMgr.cpp
+
+	// CHtmlHelp.cpp
+
+	// CImageListMgr.cpp
+
+	// CKeyBind.cpp
+	STR_ERR_DLGKEYBIND1			"キー\t機能名\t関数名\t機能番号\tキーマクロ記録可/不可"
+	STR_ERR_DLGKEYBIND2			"---名前が定義されていない-----"
+
+	// CKeyMacroMgr.cpp
+	STR_ERR_DLGKEYMACMGR1		"//キーボードマクロのファイル\r\n"
+	STR_ERR_DLGKEYMACMGR2		"Macro読み込みエラー"
+	STR_ERR_DLGKEYMACMGR3		"Line %d: Column %d: 引数が多すぎます\n"
+	STR_ERR_DLGKEYMACMGR4		"Line %d: Column %d\r\n関数%sの%d番目の引数に文字列は置けません．"
+	STR_ERR_DLGKEYMACMGR5		"Line %d:\r\n関数%sの%d番目の引数の終わりに%cがありません．"
+	STR_ERR_DLGKEYMACMGR6		"Line %d: Column %d\r\n関数%sの%d番目の引数に数値は置けません．"
+	STR_ERR_DLGKEYMACMGR7		"Line %d: Column %d: Syntax Error\n"
+	STR_ERR_DLGKEYMACMGR8		"Line %d: %sは存在しない関数です．\n"
+
+	// CKeyWordSetMgr.cpp
+
+	// CLayout.cpp
+
+	// CLayoutMgr.cpp
+
+	// CLayoutMgr.cpp
+
+	// CLayoutMgr_New.cpp
+
+	// CLayoutMgr_New2.cpp
+
+	// CLineComment.cpp
+
+	// CMacro.cpp
+	STR_ERR_DLGMACRO1			"CMacro::GetFuncInfoByID()に、バグがあるのでエラーが出ましたぁぁぁぁぁぁあああ\r\n"
+	STR_ERR_DLGMACRO2			"Macro実行エラー"
+	STR_ERR_DLGMACRO3			"挿入すべき文字コードが指定されていません．"
+	STR_ERR_DLGMACRO4			"引数(文字列)が指定されていません．"
+	STR_ERR_DLGMACRO5			"ジャンプ先行番号が指定されていません．"
+	STR_ERR_DLGMACRO6			"マーク行のパターンが指定されていません．"
+	STR_ERR_DLGMACRO7			"引数(文字列)が指定されていません．"
+	STR_ERR_DLGMACRO8			"ファイル名が指定されていません．"
+	STR_ERR_DLGMACRO9			"置換元パターンが指定されていません．"
+	STR_ERR_DLGMACRO10			"置換先パターンが指定されていません．"
+	STR_ERR_DLGMACRO11			"GREPパターンが指定されていません．"
+	STR_ERR_DLGMACRO12			"ファイル種別が指定されていません．"
+	STR_ERR_DLGMACRO13			"検索先フォルダが指定されていません．"
+	STR_ERR_DLGMACRO14			"読み込みファイル名が指定されていません．"
+	STR_ERR_DLGMACRO15			"保存ファイル名が指定されていません．"
+
+	// CMacroFactory.cpp
+	
+	// CMacroManagerBase.cpp
+
+	// CMarkMgr.cpp
+
+	// CMemory.cpp
+	STR_ERR_DLGMEM1				"CMemory::AllocBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n"
+
+	// CMenuDrawer.cpp
+	STR_ERR_DLGMNUDRAW1			"CMenuDrawer::MyAppendMenu()エラー\n\nCMenuDrawerが管理できるメニューアイテムの上限はCMenuDrawer::MAX_MENUITEMS==%dです。\n "
+
+	// CMigemo.cpp
+
+	// CMRU.cpp
+
+	// CMRUFolder.cpp
+
+	// CNormalProcess.cpp
+	STR_ERR_DLGNRMPROC1			"CreateMutex()失敗。\n終了します。"
+	STR_ERR_DLGNRMPROC2			"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
+
+	// COpe.cpp
+
+	// COpeBlk.cpp
+	STR_ERR_DLGOPEBLK1			"COpeBlk::AppendOpe() error.\n バグ\n pcOpe->m_nCaretPosX_PHY_Before = %d\npcOpe->m_nCaretPosY_PHY_Before = %d\npcOpe->m_nCaretPosX_PHY_After = %d\npcOpe->m_nCaretPosY_PHY_After = %d\n"
+	STR_ERR_DLGOPEBLK2			"メモリ確保に失敗しました。\n非常に危険な状態です。"
+	
+	// CPPA.cpp
+	STR_ERR_DLGPPA1				"PPA実行中に新たにPPAマクロを呼び出すことはできません"
+	STR_ERR_DLGPPA2				"関数の実行エラー\n%s"
+	STR_ERR_DLGPPA3				"不明な関数の実行エラー(バグです)\nFunc_ID=%d"
+	STR_ERR_DLGPPA4				"詳細不明のエラー"
+	STR_ERR_DLGPPA5				"未定義のエラー\nError_CD=%d\n%s"
+	STR_ERR_DLGPPA6				"エラー情報が不正"
+	STR_ERR_DLGPPA7				"PPA実行エラー"
+
+	// CPPAMacroMgr.cpp
+
+	// CPrint.cpp
+	STR_ERR_CPRINT01			"OpenPrinter()に失敗。\nプリンタデバイス名=[%s]"
+	STR_ERR_CPRINT02			"StartDoc()に失敗。\nプリンタデバイス名=[%s]"
+	STR_ERR_CPRINT03			"不明"
+
+
+	// CPrintPreview.cpp
+	STR_ERR_DLGPRNPRVW1			"横"
+	STR_ERR_DLGPRNPRVW2			"縦"
+	STR_ERR_DLGPRNPRVW3			"現在のプリンタ %s では、\n指定された用紙 %s は使用できません。\n利用可能な用紙 %s に変更しました。"
+	STR_ERR_DLGPRNPRVW4			"表示するページ番号を指定してください。(1 - %d)"
+	STR_ERR_DLGPRNPRVW5			"プレビューページ指定"
+	STR_ERR_DLGPRNPRVW6			"%d/%d頁"
+	STR_ERR_DLGPRNPRVW7			"印刷するページがありません。"
+	STR_ERR_DLGPRNPRVW8			"無題"
+
+	// CProcess.cpp
+	STR_ERR_DLGPROCESS1			"異なるバージョンのエディタを同時に起動することはできません。"
+	
+	// CProcessFactory.cpp
+	STR_ERR_DLGPROCFACT1		"このアプリケーションを実行するには、\nWindows95以上 または WindowsNT4.0以上のOSが必要です。\nアプリケーションを終了します。"
+	STR_ERR_DLGPROCFACT2		"OSのバージョンが取得できません。\nアプリケーションを終了します。"
+	STR_ERR_DLGPROCFACT3		"'%s'\nプロセスの起動に失敗しました。\n%s"
+	STR_ERR_DLGPROCFACT4		"'%s'\nコントロールプロセスの起動に失敗しました。"
+	STR_ERR_DLGPROCFACT5		"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
+
+	// CProfile.cpp
+
+	// CPropComBackup.cpp
+	STR_ERR_DLGPROPCOMBK1		"バックアップを作成するフォルダを選んでください"
+	STR_ERR_DLGPROPCOMBK2		"(ゴミ箱)\\"  // <--- fixme, \ is \\?
+
+	// CPropComCustmenu.cpp
+	STR_ERR_DLGPROPCOMCUST1		" ─────────────"
+	STR_ERR_DLGPROPCOMCUST2		"メニューアイテムのアクセスキー設定"
+	STR_ERR_DLGPROPCOMCUST3		"キーを入力してください。"
+	STR_ERR_DLGPROPCOMCUST4		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPCOMCUST5		"カスタムメニュー設定ファイルの形式が違います。\n\n%s"
+	STR_ERR_DLGPROPCOMCUST6		"ファイルの書き込みに失敗しました。\n\n%s"
+	// Has a HEADER #define, should we also fix this?
+
+	// CPropComEdit.cpp
+
+	// CPropComFile.cpp
+	STR_ERR_DLGPROPCOMFNM1		"置換前"
+	STR_ERR_DLGPROPCOMFNM2		"置換後"
+	STR_ERR_DLGPROPCOMFNM3		"これ以上登録できません。"
+
+	// CPropComFormat.cpp
+	// Has static date-time string
+
+	// CPropComGrep.cpp 
+	STR_ERR_DLGPROPCOMGREP1		"正規表現は使用できません"
+
+	// CPropComHelper.cpp
+	STR_ERR_DLGPROPCOMHELP1		"検索するフォルダを選んでください"
+	
+	// CPropComKeybind.cpp
+	// STR_KEYDATA_HEAD... 
+	STR_ERR_DLGPROPCOMKEYBIND1	"未割付"
+	STR_ERR_DLGPROPCOMKEYBIND2	"ファイルを開けませんでした。\n\n%s"  // used in 3 places
+	STR_ERR_DLGPROPCOMKEYBIND3	"キー設定ファイルの形式が違います。\n\n%s"
+	
+	// CPropComKeyword.cpp
+	STR_ERR_DLGPROPCOMKEYWORD1	"キーワードの長さは%dバイトまでです。"
+	STR_ERR_DLGPROPCOMKEYWORD2	"セットは%d個までしか登録できません。\n"
+	STR_ERR_DLGPROPCOMKEYWORD3	"キーワードのセット追加"
+	STR_ERR_DLGPROPCOMKEYWORD4	"セット名を入力してください。"
+	STR_ERR_DLGPROPCOMKEYWORD5	"「%s」のセットを削除します。\nよろしいですか？\n削除しようとするセットは、以下のファイルタイプに割り当てられています。\n削除したセットは無効になります。\n\n%s"
+	STR_ERR_DLGPROPCOMKEYWORD6	"セットの名称変更"
+	STR_ERR_DLGPROPCOMKEYWORD7	"セット名を入力してください。"
+	STR_ERR_DLGPROPCOMKEYWORD8	"登録できるキーワード数が上限に達しています。\n"
+	STR_ERR_DLGPROPCOMKEYWORD9	"キーワード追加"
+	STR_ERR_DLGPROPCOMKEYWORD10	"キーワードを入力してください。"
+	STR_ERR_DLGPROPCOMKEYWORD11	"キーワード編集"
+	STR_ERR_DLGPROPCOMKEYWORD12	"キーワードを編集してください。"
+	STR_ERR_DLGPROPCOMKEYWORD13	"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPCOMKEYWORD14	"キーワードの数が上限に達したため、いくつかのキーワードを追加できませんでした。"
+	STR_ERR_DLGPROPCOMKEYWORD15	"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPCOMKEYWORD16	"  キーワード定義ファイル"
+	STR_ERR_DLGPROPCOMKEYWORD17	"ファイルへエクスポートしました。\n\n%s"
+	STR_ERR_DLGPROPCOMKEYWORD18	"現在の設定では強調キーワードとして表示できないキーワードを削除しますか？"
+	STR_ERR_DLGPROPCOMKEYWORD19	"(最大 %d 文字, 登録数 %d, 空き %d 個)"
+
+	// CPropComMacro.cpp
+	STR_ERR_DLGPROPCOMMACRO01	"番号"
+	STR_ERR_DLGPROPCOMMACRO02	"マクロ名"
+	STR_ERR_DLGPROPCOMMACRO03	"ファイル名"
+	STR_ERR_DLGPROPCOMMACRO04	"実行時に読み込み"
+	STR_ERR_DLGPROPCOMMACRO05	"自動実行"
+	STR_ERR_DLGPROPCOMMACRO06	"バグ報告お願い"
+	STR_ERR_DLGPROPCOMMACRO07	"Macroディレクトリの選択"
+	STR_ERR_DLGPROPCOMMACRO08	"バグ報告お願い"
+
+
+	// CPropCommon.cpp
+	STR_ERR_DLGPROPCOMMON01		"全般"
+	STR_ERR_DLGPROPCOMMON02		"ウィンドウ"
+	STR_ERR_DLGPROPCOMMON03		"タブバー"
+	STR_ERR_DLGPROPCOMMON04		"編集"
+	STR_ERR_DLGPROPCOMMON05		"ファイル"
+	STR_ERR_DLGPROPCOMMON06		"バックアップ"
+	STR_ERR_DLGPROPCOMMON07		"書式"
+	STR_ERR_DLGPROPCOMMON08		"検索"
+	STR_ERR_DLGPROPCOMMON09		"キー割り当て"
+	STR_ERR_DLGPROPCOMMON10		"カスタムメニュー"
+	STR_ERR_DLGPROPCOMMON11		"ツールバー"
+	STR_ERR_DLGPROPCOMMON12		"強調キーワード"
+	STR_ERR_DLGPROPCOMMON13		"支援"
+	STR_ERR_DLGPROPCOMMON14		"マクロ"
+	STR_ERR_DLGPROPCOMMON15		"ファイル名表示"
+
+	// General Settings::File Tab
+	STR_ERR_DLGPROPCOMMON16		"組み合わせなし"
+	STR_ERR_DLGPROPCOMMON17		"マウス中ボタン"
+	STR_ERR_DLGPROPCOMMON18		"マウスサイドボタン1"
+	STR_ERR_DLGPROPCOMMON19		"マウスサイドボタン2"
+	STR_ERR_DLGPROPCOMMON20		"CONTROLキー"
+	STR_ERR_DLGPROPCOMMON21		"SHIFTキー"
+
+	STR_ERR_DLGPROPCOMMON22		"共通設定"
+	STR_ERR_DLGPROPCOMMON23		"作者に教えて欲しいエラー"
+	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗\n\n%s\n"
+	STR_ERR_DLGPROPCOMMON25		"最近使ったファイルの履歴を削除します。\nよろしいですか？\n"
+	STR_ERR_DLGPROPCOMMON26		"最近使ったファイルの履歴を削除しました。\n"
+	STR_ERR_DLGPROPCOMMON27		"最近使ったフォルダの履歴を削除します。\nよろしいですか？\n"
+	STR_ERR_DLGPROPCOMMON28		"最近使ったフォルダの履歴を削除しました。\n"
+
+
+	// CPropComTab.cpp
+
+
+	// CPropComToolbar.cpp
+	STR_ERR_DLGPROPCOMTOOL01	"Toolbar Dialog: 要素の挿入に失敗しました。(%d:%d)"
+	STR_ERR_DLGPROPCOMTOOL02	"Toolbar Dialog: INS: 値の設定に失敗しました。:%d"
+	STR_ERR_DLGPROPCOMTOOL03	"Toolbar Dialog: 要素の追加に失敗しました。(%d:%d)"
+	STR_ERR_DLGPROPCOMTOOL04	"Toolbar Dialog: ADD: 値の設定に失敗しました。:%d"
+	STR_ERR_DLGPROPCOMTOOL05	"Toolbar Dialog: 要素の追加に失敗しました。:%d"
+	STR_ERR_DLGPROPCOMTOOL06	"───────────"
+	STR_ERR_DLGPROPCOMTOOL07	"――ツールバー折返――"
+	STR_ERR_DLGPROPCOMTOOL08	"────不　明────"
+
+	// CPropComWin.cpp
+
+	// CPropTypes.cpp	
+	STR_ERR_DLGCPROPTYPES01		"C/C++"
+	STR_ERR_DLGCPROPTYPES02		"PL/SQL"
+	STR_ERR_DLGCPROPTYPES03		"Java"
+	STR_ERR_DLGCPROPTYPES04		"COBOL"
+	STR_ERR_DLGCPROPTYPES05		"Perl"	
+	STR_ERR_DLGCPROPTYPES06		"アセンブラ"
+	STR_ERR_DLGCPROPTYPES07		"Visual Basic"
+	STR_ERR_DLGCPROPTYPES08		"Python"
+	STR_ERR_DLGCPROPTYPES09		"WZ階層付テキスト"
+	STR_ERR_DLGCPROPTYPES10		"HTML"
+	STR_ERR_DLGCPROPTYPES11		"TeX"
+	STR_ERR_DLGCPROPTYPES12		"テキスト"
+	STR_ERR_DLGCPROPTYPES13		"なし"				// smart indent
+	STR_ERR_DLGCPROPTYPES14		"C/C++"
+	STR_ERR_DLGCPROPTYPES15		"標準設定"			// ime state
+	STR_ERR_DLGCPROPTYPES16		"全角"
+	STR_ERR_DLGCPROPTYPES17		"全角ひらがな"
+	STR_ERR_DLGCPROPTYPES18		"全角カタカナ"
+	STR_ERR_DLGCPROPTYPES19		"無変換"
+	STR_ERR_DLGCPROPTYPES20		"そのまま"			// ime switch
+	STR_ERR_DLGCPROPTYPES21		"常にON" 
+	STR_ERR_DLGCPROPTYPES22		"常にOFF" 
+	STR_ERR_DLGCPROPTYPES23		"なし"				// ident
+	STR_ERR_DLGCPROPTYPES24		"tx2x"
+	STR_ERR_DLGCPROPTYPES25		"論理行先頭"
+	STR_ERR_DLGCPROPTYPES26		"折り返さない"		// wrap method
+	STR_ERR_DLGCPROPTYPES27		"指定桁で折り返す"
+	STR_ERR_DLGCPROPTYPES28		"右端で折り返す"
+
+	// File Type Settings Tab names
+	STR_ERR_DLGCPROPTYPES29		"スクリーン"					// Property Sheet
+	STR_ERR_DLGCPROPTYPES30		"カラー"
+	STR_ERR_DLGCPROPTYPES31		"支援"
+	STR_ERR_DLGCPROPTYPES32		"正規表現キーワード"
+	STR_ERR_DLGCPROPTYPES33		"キーワードヘルプ"
+	STR_ERR_DLGCPROPTYPES34		"タイプ別設定"
+	STR_ERR_DLGCPROPTYPES35		"作者に教えて欲しいエラー"		// dlg box
+	STR_ERR_DLGCPROPTYPES36		"CPropTypes::DoPropertySheet()内でエラーが出ました。\npsh.nStartPage=[%d]\n::PropertySheet()失敗。\n\n%s\n"
+	STR_ERR_DLGCPROPTYPES37		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGCPROPTYPES38		"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n%s\n\n\
+色設定Ver3では CI[番号] から C[名前] に変更されました。\n\
+上記ファイルの設定内容を利用したい場合は、以下の修正を行ってからインポートしてください。\n\n\
+・UR1.2.24.0 (00/12/04) 以降で使っていた場合は\n\
+  (1) 一行目を Ver3 と書き換え、CI をすべて C に縮める\n\
+  (2) (1)の後、番号を( )内の文字列に変更:\n\
+      00(TXT), 01(RUL), 02(UND), 03(LNO), 04(MOD), 05(TAB), 06(ZEN), 07(CTL), 08(EOL),\n\
+      09(RAP), 10(EOF), 11(FND), 12(KW1), 13(KW2), 14(CMT), 15(SQT), 16(WQT), 17(URL)\n\n\
+・ur3β10 (00/09/28)～UR1.2.23.0 (00/11/29) で使っていた場合は\n\
+  (3) (1)の後、00-12 までは(2)と同じ  13(CMT), 14(SQT), 15(WQT), 16(URL)\n\n\
+・ur3β9 (00/09/26) 以前で使っていた場合は\n\
+  (4) (1)の後、(2)と同様:\n\
+      00(TXT), 01(LNO), 02(EOL), 03(TAB), 04(ZEN), 05(EOF), 06(KW1), 07(CMT), 08(SQT),\n\
+      09(WQT), 10(UND), 11(RAP), 12(CTL), 13(URL), 14(FND), 15(MOD), 16(RUL)\n\n"
+	STR_ERR_DLGCPROPTYPES39		"色設定ファイルの形式が違います。古い形式はサポートされなくなりました。\n%s\n\n\
+現在の色設定Ver2.1ではVer2での仕様が一部変更されました。\n\
+上記のファイルの設定内容を利用したい場合は、そのファイルをコピーしエディタで\n\
+以下の修正を行ってからインポートしてください。\n\n\
+・0.3.9.0 UR1.2.24.0 (2000/12/04) 以降で使っていた場合は\n\
+  (1) 一行目に書かれている Ver2 を Ver2.1 と書き換える\n\n\
+・0.3.9.0:ur3β10 (2000/09/28)～UR1.2.23.0 (2000/11/29) で使っていた場合は\n\
+  (2) (1)に加えて CI[12] の次行に CI[12] の設定をコピーして CI[13] とし\n\
+      元の CI[13] 以降の番号を1つづつ17までずらす\n\n\
+・0.3.9.0:ur3β9 (2000/09/26) 以前で使っていた場合は\n\
+  (3) (1)に加えて CI の[ ]内を順に\n\
+      00, 17, 10, 01, 16, 03, 04, 12, 02, 11, 05, 15, 06, 07, 08, 09, 14\n\
+      と書き換えた後、CI[12] の設定をコピーして CI[13] とする\n\n"
+
+	STR_ERR_DLGCPROPTYPES40		"ファイルを開けませんでした。\n\n%s"
+
+
+	// CPropTypesKeyHelp.cpp
+	STR_ERR_DLGPROPTYPKEYHELP01		"   辞書ファイル"
+	STR_ERR_DLGPROPTYPKEYHELP02		"辞書の説明"
+	STR_ERR_DLGPROPTYPKEYHELP03		"パス"
+	STR_ERR_DLGPROPTYPKEYHELP04		"辞書ファイルの１行目の文字列"
+	STR_ERR_DLGPROPTYPKEYHELP05		"キーワード辞書ファイル パス"
+	STR_ERR_DLGPROPTYPKEYHELP06		"これ以上登録できません。"
+	STR_ERR_DLGPROPTYPKEYHELP07		"更新する辞書をリストから選択してください。"
+	STR_ERR_DLGPROPTYPKEYHELP08		"既に登録済みの辞書です。"
+	STR_ERR_DLGPROPTYPKEYHELP09		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPTYPKEYHELP10		"辞書ファイルの１行目の文字列"
+	STR_ERR_DLGPROPTYPKEYHELP11		"キーワード辞書ファイル パス"
+	STR_ERR_DLGPROPTYPKEYHELP12		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPTYPKEYHELP13		"【辞書ファイルが見つかりません】"
+	STR_ERR_DLGPROPTYPKEYHELP14		"辞書の説明は%d文字以内にしてください。\n"
+	STR_ERR_DLGPROPTYPKEYHELP15		"一部のデータが読み込めませんでした\n不正な行数: %d"
+	STR_ERR_DLGPROPTYPKEYHELP16		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPTYPKEYHELP17		"// キーワード辞書設定 Ver1\n"
+	STR_ERR_DLGPROPTYPKEYHELP18		"ファイルへエクスポートしました。\n\n%s"
+
+	// CPropTypesRegex.cpp
+	STR_ERR_DLGPROPTYPESREGEX01		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPTYPESREGEX02		"ファイルを開けませんでした。\n\n%s"
+	STR_ERR_DLGPROPTYPESREGEX03		"// 正規表現キーワード Ver1\n"
+	STR_ERR_DLGPROPTYPESREGEX04		"ファイルへエクスポートしました。\n\n%s"
+	STR_ERR_DLGPROPTYPESREGEX05		"キーワード"
+	STR_ERR_DLGPROPTYPESREGEX06		"色指定"
+	STR_ERR_DLGPROPTYPESREGEX07		"正規表現キーワードは使えません。"
+	STR_ERR_DLGPROPTYPESREGEX08		"正規表現ライブラリが見つかりません。\n\n正規表現キーワードは機能しませんが、それでも有効にしますか？"
+	STR_ERR_DLGPROPTYPESREGEX09		"正規表現キーワードを使用する"
+	STR_ERR_DLGPROPTYPESREGEX10		"これ以上登録できません。"
+	STR_ERR_DLGPROPTYPESREGEX11		"同じキーワードで登録済みです。"
+	STR_ERR_DLGPROPTYPESREGEX12		"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"
+	STR_ERR_DLGPROPTYPESREGEX13		"正規表現キーワード"
+	STR_ERR_DLGPROPTYPESREGEX14		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
+	STR_ERR_DLGPROPTYPESREGEX15		"正規表現キーワード"
+	STR_ERR_DLGPROPTYPESREGEX16		"これ以上登録できません。"
+	STR_ERR_DLGPROPTYPESREGEX17		"同じキーワードで登録済みです。"
+	STR_ERR_DLGPROPTYPESREGEX18		"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"
+	STR_ERR_DLGPROPTYPESREGEX19		"正規表現キーワード"
+	STR_ERR_DLGPROPTYPESREGEX20		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
+	STR_ERR_DLGPROPTYPESREGEX21		"正規表現キーワード"
+	STR_ERR_DLGPROPTYPESREGEX22		"キーワードが選択されていません。"
+	STR_ERR_DLGPROPTYPESREGEX23		"同じキーワードで登録済みです。"
+	STR_ERR_DLGPROPTYPESREGEX24		"正規表現キーワードを / と /k で囲ってください。\nキーワードに / がある場合は m# と #k で囲ってください。"
+	STR_ERR_DLGPROPTYPESREGEX25		"正規表現キーワード"
+	STR_ERR_DLGPROPTYPESREGEX26		"書式が正しくないか、正規表現ライブラリが見つかりません。\n\n登録しますか？"
+	STR_ERR_DLGPROPTYPESREGEX27		"正規表現キーワード"
+
+	// CRecent.cpp
+
+	// CRegexKeyword.cpp
+
+	// CRunningTimer.cpp
+
+	// CShareData.cpp
+	STR_ERR_CSHAREDATA01			"CreateFileMapping()に失敗しました"
+	STR_ERR_CSHAREDATA02			"予期せぬエラー"
+	STR_ERR_CSHAREDATA03			"デスクトップ\\"
+	STR_ERR_CSHAREDATA04			"マイドキュメント\\"
+	STR_ERR_CSHAREDATA05			"IEキャッシュ\\"
+	STR_ERR_CSHAREDATA06			"共有デスクトップ\\"
+	STR_ERR_CSHAREDATA07			"共有ドキュメント\\"
+	STR_ERR_CSHAREDATA08			"アプリデータ\\"
+	STR_ERR_CSHAREDATA09			"印刷設定 %d"
+
+									// Common Prop::Tab/Title bar
+	STR_ERR_CSHAREDATA10			"${w?【Grep】$h$:【アウトプット】$:$f$}${U?(更新)$}${R?(読みとり専用)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
+	STR_ERR_CSHAREDATA11			"右クリックメニュー"
+	STR_ERR_CSHAREDATA12			"メニュー%d"
+	STR_ERR_CSHAREDATA13			"タブメニュー"
+	STR_ERR_CSHAREDATA14			"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍"
+	STR_ERR_CSHAREDATA15			"yyyy'年'M'月'd'日('dddd')'"
+	STR_ERR_CSHAREDATA16			"tthh'時'mm'分'ss'秒'"
+	STR_ERR_CSHAREDATA17			"${w?$h$:アウトプット$:${I?$f$:$N$}$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}"
+	STR_ERR_CSHAREDATA18			"${w?$h$:アウトプット$:$f$}${U?(更新)$} - sakura $V ${R?(読みとり専用)$:（上書き禁止）$}${M?  【キーマクロの記録中】$}" )
+	STR_ERR_CSHAREDATA19			"同時に複数の編集用ウィンドウを閉じようとしています。これらを閉じますか?"
+	STR_ERR_CSHAREDATA20			"%s\n\n\n既に開いているファイルを違う文字コードで開く場合は、\nファイルメニューから「開き直す」を使用してください。\n\n現在の文字コードセット=[%s]\n新しい文字コードセット=[%s]"
+	STR_ERR_CSHAREDATA21			"%s\n\n多重オープンの確認で不明な文字コードが指定されました。\n\n現在の文字コードセット=%d [%s]\n新しい文字コードセット=%d [%s]"
+	STR_ERR_CSHAREDATA22			"不明" // relates to above two [%s]
+	STR_ERR_CSHAREDATA23			"リッチテキスト"
+
+	// Key settings dialog box ( loop so must be N items long in a row )
+	STR_ERR_CSHAREDATA24			"ダブルクリック"
+	STR_ERR_CSHAREDATA25			"右クリック"
+	STR_ERR_CSHAREDATA26			"中クリック"
+	STR_ERR_CSHAREDATA27			"左サイドクリック"
+	STR_ERR_CSHAREDATA28			"右サイドクリック"
+	STR_ERR_CSHAREDATA29			"トリプルクリック"
+	STR_ERR_CSHAREDATA30			"クアドラプルクリック"
+	STR_ERR_CSHAREDATA31			"^(英語')"
+	STR_ERR_CSHAREDATA32			"@(英語`)"
+	STR_ERR_CSHAREDATA33			"アプリキー"
+
+	// Error message
+	STR_ERR_CSHAREDATA34			"作者に教えて欲しいエラー"
+	STR_ERR_CSHAREDATA35			"キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています"
+
+
+	// Color Names in the Settings Color Box
+	STR_ERR_CSHAREDATA36			"テキスト"						
+	STR_ERR_CSHAREDATA37			"ルーラー"						
+	STR_ERR_CSHAREDATA38			"カーソル"						
+	STR_ERR_CSHAREDATA39			"カーソル(IME ON)"				
+	STR_ERR_CSHAREDATA40			"カーソル行アンダーライン"		
+	STR_ERR_CSHAREDATA41			"カーソル位置縦線"				
+	STR_ERR_CSHAREDATA42			"行番号"						
+	STR_ERR_CSHAREDATA43			"行番号(変更行)"				
+	STR_ERR_CSHAREDATA44			"TAB記号"						
+	STR_ERR_CSHAREDATA45			"半角空白"						
+	STR_ERR_CSHAREDATA46			"日本語空白"					
+	STR_ERR_CSHAREDATA47			"コントロールコード"
+	STR_ERR_CSHAREDATA48			"改行記号"					
+	STR_ERR_CSHAREDATA49			"折り返し記号"					
+	STR_ERR_CSHAREDATA50			"指定桁縦線"					
+	STR_ERR_CSHAREDATA51			"EOF記号"
+
+	STR_ERR_CSHAREDATA52			"半角数値"			
+
+	STR_ERR_CSHAREDATA53			"検索文字列"		
+	STR_ERR_CSHAREDATA54			"強調キーワード1"	
+	STR_ERR_CSHAREDATA55			"強調キーワード2"	
+	STR_ERR_CSHAREDATA56			"強調キーワード3"	
+	STR_ERR_CSHAREDATA57			"強調キーワード4"	
+	STR_ERR_CSHAREDATA58			"強調キーワード5"	
+	STR_ERR_CSHAREDATA59			"強調キーワード6"	
+	STR_ERR_CSHAREDATA60			"強調キーワード7"	
+	STR_ERR_CSHAREDATA61			"強調キーワード8"	
+	STR_ERR_CSHAREDATA62			"強調キーワード9"	
+	STR_ERR_CSHAREDATA63			"強調キーワード10"	
+	STR_ERR_CSHAREDATA64			"コメント"			
+
+	STR_ERR_CSHAREDATA65			"シングルクォーテーション文字列"
+	STR_ERR_CSHAREDATA66			"ダブルクォーテーション文字列"	
+	STR_ERR_CSHAREDATA67			"URL"							
+	STR_ERR_CSHAREDATA68			"正規表現キーワード1"		
+	STR_ERR_CSHAREDATA69			"正規表現キーワード2"		
+	STR_ERR_CSHAREDATA70			"正規表現キーワード3"		
+	STR_ERR_CSHAREDATA71			"正規表現キーワード4"		
+	STR_ERR_CSHAREDATA72			"正規表現キーワード5"		
+	STR_ERR_CSHAREDATA73			"正規表現キーワード6"		
+	STR_ERR_CSHAREDATA74			"正規表現キーワード7"		
+	STR_ERR_CSHAREDATA75			"正規表現キーワード8"		
+	STR_ERR_CSHAREDATA76			"正規表現キーワード9"		
+	STR_ERR_CSHAREDATA77			"正規表現キーワード10"		
+	STR_ERR_CSHAREDATA78			"DIFF差分表示(追加)"		
+	STR_ERR_CSHAREDATA79			"DIFF差分表示(変更)"		
+	STR_ERR_CSHAREDATA80			"DIFF差分表示(削除)"		
+	STR_ERR_CSHAREDATA81			"対括弧の強調表示"			
+	STR_ERR_CSHAREDATA82			"ブックマーク"				
+
+	// Type names array (16 elements in a for loop)
+	STR_ERR_CSHAREDATA83			"基本"
+	STR_ERR_CSHAREDATA84			"テキスト"
+	STR_ERR_CSHAREDATA85			"C/C++"
+	STR_ERR_CSHAREDATA86			"HTML"
+	STR_ERR_CSHAREDATA87			"PL/SQL"
+	STR_ERR_CSHAREDATA88			"COBOL"
+	STR_ERR_CSHAREDATA89			"Java"
+	STR_ERR_CSHAREDATA90			"アセンブラ"
+	STR_ERR_CSHAREDATA91			"AWK"
+	STR_ERR_CSHAREDATA92			"MS-DOSバッチファイル"
+	STR_ERR_CSHAREDATA93			"Pascal"
+	STR_ERR_CSHAREDATA94			"TeX"
+	STR_ERR_CSHAREDATA95			"Perl"
+	STR_ERR_CSHAREDATA96			"Visual Basic"
+	STR_ERR_CSHAREDATA97			"リッチテキスト"
+	STR_ERR_CSHAREDATA98			"設定ファイル"
+
+	STR_ERR_CSHAREDATA99			"設定%d"
+
+	// ... could be many places left in this file I think, but couldnt decide if they should STAY as JPZ or not eg |*
+
+	// CShareData_new.cpp
+	// CSMacroMgr.cpp
+	// CSortedTagJumpList.cpp
+	// CSplitBoxWnd.cpp
+	
+	// CSplitterWnd.cpp
+	STR_ERR_CSPLITTER01				"SplitterWndクラスの登録に失敗しました。"
+
+	// CTabWnd.cpp
+	STR_ERR_CTABWND01				"左クリック: タブ名一覧\n右クリック: パス名一覧"
+	STR_ERR_CTABWND02				"タブを閉じる"
+	STR_ERR_CTABWND03				"(無題)"	// Empty tab
+	STR_ERR_CTABWND04				"(無題)"	// Empty Tab
+	STR_ERR_CTABWND05				"(無題)"	// Empty Tab
+	
+	STR_ERR_CTABWND06				"すべて表示(&A)"	// Menus 
+	STR_ERR_CTABWND07				"タブ名一覧に切替える(&W)"  // 表示切替メニュー
+	STR_ERR_CTABWND08				"パス名一覧に切替える(&W)"  // 表示切替メニュー
+
+	// CTipWnd.cpp
+
+	// CUxTheme.cpp
+
+	// CWaitCursor.cpp
+
+	// CWnd.cpp
+
+	// CWSH.cpp
+	STR_ERR_CWSH01					"指名のスクリプトエンジンが見つかりません"
+	STR_ERR_CWSH02					"指名のスクリプトエンジンが作成できません"
+	STR_ERR_CWSH03					"サイトを登録できません"
+	STR_ERR_CWSH04					"パーサを取得できません"
+	STR_ERR_CWSH05					"初期化できません"
+	STR_ERR_CWSH06					"オブジェクトを渡せなかった"
+	STR_ERR_CWSH07					"状態変更エラー"
+	STR_ERR_CWSH08					"実行に失敗しました"
+
+
+	// Debug.cpp
+	// CONAINTS STRINGS... only for debug, so ignoring.
+
+	// etc_uty.cpp
+	// CONTAINS a few STRINGS...
+	STR_ERR_ETCUTY01				"システム "
+	STR_ERR_ETCUTY02				"ユーザー "
+	STR_ERR_ETCUTY03				"%sリソースが極端に不足しています。\n\
+このまま%sを起動すると、正常に動作しない可能性があります。\n\
+新しい%sの起動を中断します。\n\
+\n\
+システム リソース\t残り  %d%%\n\
+User リソース\t残り  %d%%\n\
+GDI リソース\t残り  %d%%\n\n"
+	STR_ERR_ETCUTY04				"正規表現ライブラリが見つかりません。\r\n\
+正規表現を利用するにはBREGEXP.DLL互換のライブラリが必要です。\r\n\
+入手方法はヘルプを参照してください。"
+	STR_ERR_ETCUTY05				"正規表現エラー"
+	STR_ERR_ETCUTY06				"HHCTRL.OCXが見つかりません。\r\n\
+HTMLヘルプを利用するにはHHCTRL.OCXが必要です。\r\n"
+	STR_ERR_ETCUTY07				"情報"
+	STR_ERR_ETCUTY08				"開く(&O)..."
+	STR_ERR_ETCUTY09				"インポート／エクスポートの起点リセット(&R)"
+	STR_ERR_ETCUTY10				"各種設定のインポート／エクスポート用ファイル選択画面の\n初期表示フォルダを設定フォルダに戻します。"
+	STR_ERR_ETCUTY11				"設定フォルダ(&/) >>"
+
+	// Funccode.cpp
+	// CONTAINS one array with Japanese, ppszFuncKind.
+	//  - CPropCom* -- in code that is no longer used.
+	//  - CFuncLookup.cpp -- usedi in func CFuncLookup::Category2Name
+	//  - CEditView_Command.cpp -- Command_MENU_ALLFUNC() uses CFuncLookup::Category2Name.
+
+	// global.cpp
+	// GSTR_APPNAME (for debug) contains the words "sakura(debug version)"
+	// gm_pszCodeComboNameArr contains the string "Automatic" as its first entry.
+	//   - CDlgGrep.cpp
+	//   - CDlgOpenFile.cpp
+	STR_ERR_GLOBAL01				"自動選択"
+
+	// my_icmp.cpp
+
+	// MY_SP.C
+
+	// StdAfx.cpp
+
+	// WinMain.cpp
+
+
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+	// Select Language
+	STR_SELLANG_NAME				"Japanese"						// language name [Primary language (Sublanguage)]
+	STR_SELLANG_LANGID				"0x0411"						// language id (hexadecimal string)
+		// See following link:
+		//  http://msdn.microsoft.com/en-us/library/dd318693.aspx
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

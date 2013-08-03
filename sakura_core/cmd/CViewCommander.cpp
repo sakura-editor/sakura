@@ -17,7 +17,7 @@
 	Copyright (C) 2008, ryoji, nasukoji
 	Copyright (C) 2009, ryoji, nasukoji
 	Copyright (C) 2010, ryoji
-	Copyright (C) 2011, ryoji
+	Copyright (C) 2011, ryoji, nasukoji
 	Copyright (C) 2012, Moca, ryoji
 
 	This source code is designed for sakura editor.

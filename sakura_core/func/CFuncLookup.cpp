@@ -119,6 +119,8 @@ bool CFuncLookup::Pos2FuncName(
 */
 bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 {
+	LPCWSTR pszStr = NULL;
+
 	if( F_USERMACRO_0 <= funccode && funccode < F_USERMACRO_0 + MAX_CUSTMACRO ){
 		int position = funccode - F_USERMACRO_0;
 		if( m_pMacroRec[position].IsEnabled() ){
@@ -142,7 +144,9 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 		return true;
 	}
 	else if( F_MENU_FIRST <= funccode && funccode < F_MENU_NOT_USED_FIRST ){
-		if( ::LoadStringW_AnyBuild( G_AppInstance(), funccode, ptr, bufsize ) > 0 ){
+		if( ( pszStr = LSW( funccode ) )[0] != L'\0' ){
+			wcsncpy( ptr, pszStr, bufsize );
+			ptr[bufsize-1] = LTEXT('\0');
 			return true;	// 定義されたコマンド
 		}
 	}
@@ -153,10 +157,11 @@ bool CFuncLookup::Funccode2Name( int funccode, WCHAR* ptr, int bufsize ) const
 	}
 
 	// 未定義コマンド
-	if( ::LoadStringW_AnyBuild( G_AppInstance(), F_DISABLE, ptr, bufsize ) > 0 ){
+	if( ( pszStr = LSW( funccode ) )[0] != L'\0' ){
+		wcsncpy( ptr, pszStr, bufsize );
+		ptr[bufsize-1] = LTEXT('\0');
 		return false;
 	}
-	ptr[0] = LTEXT('\0');
 	return false;
 }
 

@@ -15,6 +15,7 @@
 	Copyright (C) 2006, aroka, ryoji, D.S.Koba, fon
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji, Uchi
+	Copyright (C) 2011, nasukoji
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -30,6 +31,8 @@
 
 #ifndef SAKURA_ENV_CSHAREDATA_H_
 #define SAKURA_ENV_CSHAREDATA_H_
+
+#include "CSelectLang.h"		// 2011.04.10 nasukoji
 
 class CShareData;
 
@@ -111,6 +114,7 @@ protected:
 
 private:
 	static CShareData* _instance;
+	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
 
 private:
 	HANDLE			m_hFileMap;

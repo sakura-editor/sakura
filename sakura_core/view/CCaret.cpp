@@ -794,9 +794,9 @@ void CCaret::ShowCaretPosInfo()
 
 		TCHAR	szText_6[16];
 		if( m_pEditView->IsInsMode() /* Oct. 2, 2005 genta */ ){
-			_tcscpy( szText_6, _T("ë}ì¸") );
+			_tcscpy( szText_6, LS( STR_INS_MODE_INS ) );	// "ë}ì¸"
 		}else{
-			_tcscpy( szText_6, _T("è„èë") );
+			_tcscpy( szText_6, LS( STR_INS_MODE_OVR ) );	// "è„èë"
 		}
 		if( m_bClearStatus ){
 			::StatusBar_SetText( hwndStatusBar, 0 | SBT_NOBORDERS, _T("") );

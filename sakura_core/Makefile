@@ -71,6 +71,7 @@ CReadManager.o \
 CRegexKeyword.o \
 CSaveAgent.o \
 CSearchAgent.o \
+CSelectLang.o \
 CSortedTagJumpList.o \
 CWriteManager.o \
 StdAfx.o \
