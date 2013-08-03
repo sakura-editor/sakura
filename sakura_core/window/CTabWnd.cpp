@@ -2468,7 +2468,7 @@ void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 */
 void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 {
-	const POINT ptBase[4] = { {4, 8}, {7, 11}, {8, 11}, {11, 8} };	// 描画イメージ形状
+	static const POINT ptBase[4] = { {4, 8}, {7, 11}, {8, 11}, {11, 8} };	// 描画イメージ形状
 	POINT pt[4];
 
 	RECT rcBtn;
@@ -2495,7 +2495,7 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 /*! 閉じるマーク描画処理 */
 void CTabWnd::DrawCloseFigure( CGraphics& gr, const RECT& rcBtn )
 {
-	const POINT ptBase1[6][2] =	// [x]描画イメージ形状（直線6本）
+	static const POINT ptBase1[6][2] =	// [x]描画イメージ形状（直線6本）
 	{
 		{{4, 5}, {12, 13}},
 		{{4, 4}, {13, 13}},
@@ -2526,7 +2526,7 @@ void CTabWnd::DrawCloseFigure( CGraphics& gr, const RECT& rcBtn )
 */
 void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 {
-	const POINT ptBase2[10][2] = // [xx]描画イメージ形状（矩形10個）
+	static const POINT ptBase2[10][2] = // [xx]描画イメージ形状（矩形10個）
 	{
 		{{3, 4}, {5, 6}},
 		{{6, 4}, {8, 6}},

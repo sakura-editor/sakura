@@ -307,7 +307,7 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 
 	DlgItem_SetText( hwndDlg, IDC_EDIT_BACKIMG_PATH, m_Types.m_szBackImgPath );
 	{
-		const TCHAR* posNames[] ={
+		static const TCHAR* posNames[] ={
 			_T("ç∂è„"),
 			_T("âEè„"),
 			_T("ç∂â∫"),

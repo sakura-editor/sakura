@@ -162,7 +162,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					if( !m_bRegistryChecked[ nIdx ] ){
 						TCHAR exts[_countof(types.m_szTypeExts)] = {0};
 						_tcscpy( exts, types.m_szTypeExts );
-						const TCHAR	pszSeps[] = _T(" ;,");	// separator
+						static const TCHAR	pszSeps[] = _T(" ;,");	// separator
 						TCHAR *ext = _tcstok( exts, pszSeps );
 
 						m_bExtRMenu[ nIdx ] = true;
@@ -193,7 +193,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 			TCHAR exts[_countof(types.m_szTypeExts)] = {0};
 			_tcscpy( exts, types.m_szTypeExts );
-			const TCHAR	pszSeps[] = _T(" ;,");	// separator
+			static const TCHAR	pszSeps[] = _T(" ;,");	// separator
 			TCHAR *ext = _tcstok( exts, pszSeps );
 			int nRet;
 			while( NULL != ext ){
@@ -231,7 +231,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 			}
 			TCHAR exts[_countof(types.m_szTypeExts)] = {0};
 			_tcscpy( exts, types.m_szTypeExts );
-			const TCHAR	pszSeps[] = _T(" ;,");	// separator
+			static const TCHAR	pszSeps[] = _T(" ;,");	// separator
 			TCHAR *ext = _tcstok( exts, pszSeps );
 			int nRet;
 			while( NULL != ext ){

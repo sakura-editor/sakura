@@ -75,7 +75,7 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const TCHAR* pszFilePath )
 */
 CTypeConfig CDocTypeManager::GetDocumentTypeOfExt( const TCHAR* pszExt )
 {
-	const TCHAR	pszSeps[] = _T(" ;,");	// separator
+	static const TCHAR	pszSeps[] = _T(" ;,");	// separator
 
 	int		i;
 	TCHAR*	pszToken;

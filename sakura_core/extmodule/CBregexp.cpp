@@ -310,8 +310,8 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 {
 	this->CheckPattern( szSearch );
 
-	const wchar_t szDotAlternative[] = L"[^\\r\\n]";
-	const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
+	static const wchar_t szDotAlternative[] = L"[^\\r\\n]";
+	static const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
 
 	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$) へ置換すると仮定して、strModifiedSearchの最大長を決定する。
 	std::wstring::size_type modifiedSearchSize = 0;
