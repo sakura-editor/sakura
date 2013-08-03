@@ -89,6 +89,7 @@ OBJS= \
 	$(OBJDIR)/CEditView_Command_New.o \
 	$(OBJDIR)/CEditView_Diff.o \
 	$(OBJDIR)/CEditView_ExecCmd.o \
+	$(OBJDIR)/CEditView_Ime.o \
 	$(OBJDIR)/CEditView_Mouse.o \
 	$(OBJDIR)/CEditView_New.o \
 	$(OBJDIR)/CEditView_New2.o \
@@ -294,6 +295,8 @@ $(OBJDIR)/CEditView_Command_New.o: $(SRCDIR)/CEditView_Command_New.cpp
 $(OBJDIR)/CEditView_Diff.o: $(SRCDIR)/CEditView_Diff.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CEditView_ExecCmd.o: $(SRCDIR)/CEditView_ExecCmd.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CEditView_Ime.o: $(SRCDIR)/CEditView_Ime.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CEditView_Mouse.o: $(SRCDIR)/CEditView_Mouse.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

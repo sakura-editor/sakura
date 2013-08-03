@@ -297,6 +297,10 @@ SOURCE=..\sakura_core\CEditView_ExecCmd.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CEditView_Ime.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\CEditView_Mouse.cpp
 # End Source File
 # Begin Source File
