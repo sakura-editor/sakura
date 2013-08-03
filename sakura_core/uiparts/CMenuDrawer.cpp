@@ -136,7 +136,7 @@ CMenuDrawer::CMenuDrawer()
 //	注4. ユーザー用に確保された場所は特にないので各段の空いている後ろの方を使ってください。
 //	注5. アイコンビットマップの有効段数は、CImageListMgr の MAX_Y です。
 
-	const int /* TBUTTONDATA */ tbd[] = {
+	static const int /* TBUTTONDATA */ tbd[] = {
 /* ファイル操作系(1段目32個: 1-32) */
 /*  1 */		F_FILENEW					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規作成
 /*  2 */		F_FILEOPEN					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く
@@ -660,7 +660,7 @@ CMenuDrawer::CMenuDrawer()
 
 /* 481 */		F_DISABLE			/*, TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */	//最終行用ダミー(Jepro note: 最終行末にはカンマを付けないこと)
 
-};
+	};
 	int tbd_num = _countof( tbd );
 
 	// m_tbMyButton[0]にはセパレータが入っているため、アイコン番号とボタン番号は１つずれる
