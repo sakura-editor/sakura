@@ -38,11 +38,6 @@ public:
 	void ChangeView( LPARAM );
 
 	SSearchOption m_sSearchOption;	// 検索オプション
-	/*
-	int		m_bLoHiCase;	// 英大文字と英小文字を区別する
-	int		m_bWordOnly;	// 一致する単語のみ検索する
-	int		m_bRegularExp;	// 正規表現
-	*/
 	int		m_bNOTIFYNOTFOUND;	// 検索／置換  見つからないときメッセージを表示
 	char	m_szText[_MAX_PATH + 1];	// 検索文字列
 

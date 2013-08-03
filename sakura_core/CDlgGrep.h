@@ -40,11 +40,6 @@ public:
 	BOOL		m_bFromThisText;/*!< この編集中のテキストから検索する */
 
 	SSearchOption	m_sSearchOption;	//!< 検索オプション
-	/*
-	int			m_bRegularExp;	//!< 正規表現
-	int			m_bLoHiCase;	//!< 英大文字と小文字を区別する
-	BOOL		m_bWordOnly;	//!< 単語単位で検索
-	*/
 
 	BOOL		m_bGrepOutputLine;	/*!< 行を出力するか該当部分だけ出力するか */
 

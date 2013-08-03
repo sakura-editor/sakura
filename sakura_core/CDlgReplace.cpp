@@ -60,11 +60,6 @@ const DWORD p_helpids[] = {	//11900
 CDlgReplace::CDlgReplace()
 {
 	m_sSearchOption.Reset();	// 検索オプション
-	/*
-	m_bLoHiCase = FALSE;		// 英大文字と英小文字を区別する
-	m_bWordOnly = FALSE;		// 一致する単語のみ検索する
-	m_bRegularExp = FALSE;		// 正規表現
-	*/
 	m_bConsecutiveAll = FALSE;	// 「すべて置換」は置換の繰返し	// 2007.01.16 ryoji
 	m_bSelectedArea = FALSE;	// 選択範囲内置換
 	m_szText[0] = _T('\0');		// 検索文字列

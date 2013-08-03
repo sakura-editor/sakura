@@ -42,11 +42,6 @@ public:
 	void ChangeView( LPARAM );	/* モードレス時：置換・検索対象となるビューの変更 */
 
 	SSearchOption	m_sSearchOption;	// 検索オプション
-	/*
-	int				m_bLoHiCase;	// 英大文字と英小文字を区別する
-	int				m_bWordOnly;	// 一致する単語のみ検索する
-	int				m_bRegularExp;	// 正規表現
-	*/
 	int				m_bConsecutiveAll;	/* 「すべて置換」は置換の繰返し */	// 2007.01.16 ryoji
 	char			m_szText[_MAX_PATH + 1];	// 検索文字列
 	char			m_szText2[_MAX_PATH + 1];	// 置換後文字列
