@@ -399,6 +399,10 @@
 				RelativePath="..\sakura_core\svnrev.h"
 				>
 			</File>
+			<File
+				RelativePath="..\sakura_core\String_define.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -730,6 +734,14 @@
 			</File>
 			<File
 				RelativePath="..\sakura_core\CSearchAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSelectLang.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\sakura_core\CSelectLang.h"
 				>
 			</File>
 			<File

@@ -73,6 +73,7 @@ struct SMainMenuWork {
 	EFunctionCode	m_nFunc;		// Function
 	WCHAR			m_sKey[2];		// アクセスキー
 	bool			m_bDupErr;		// アクセスキー重複エラー
+	bool			m_bIsNode;		// ノードか否か（ノードでもm_nFuncがF_NODE(0)でないものがあるため）
 };
 
 static	std::map<int, SMainMenuWork>	msMenu;	// 一時データ
@@ -244,6 +245,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	CDlgInput1		cDlgInput1;
 
 	static	bool	bInMove;
+	bool			bIsNode;
 
 	switch( uMsg ){
 	case WM_INITDIALOG:
@@ -297,7 +299,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 		case TVN_BEGINLABELEDIT:	//	アイテムの編集開始
 			if (pNMHDR->hwndFrom == hwndTreeRes) { 
 				HWND hEdit = TreeView_GetEditControl( hwndTreeRes );
-				if (msMenu[ptdi->item.lParam].m_nFunc == F_NODE) {
+				if (msMenu[ptdi->item.lParam].m_bIsNode) {
 					// ノードのみ有効
 					SetWindowText( hEdit, to_tchar( msMenu[ptdi->item.lParam].m_sName.c_str() ) ) ;
 					EditCtl_LimitText( hEdit, MAX_MAIN_MENU_NAME_LEN );
@@ -312,7 +314,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			return TRUE;
 		case TVN_ENDLABELEDIT:		//	アイテムの編集が終了
  			if (pNMHDR->hwndFrom == hwndTreeRes 
-			  && (msMenu[ptdi->item.lParam].m_nFunc == F_NODE)) {
+			  && msMenu[ ptdi->item.lParam ].m_bIsNode) {
 				// ノード有効
 				pFuncWk = &msMenu[ptdi->item.lParam];
 				if (ptdi->item.pszText == NULL) {
@@ -326,6 +328,8 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				else {
 					pFuncWk->m_sName = to_wchar(ptdi->item.pszText);
 				}
+				// ラベルを編集したらリソースからの文字列取得をやめる 2012.10.14 syat 各国語対応
+				pFuncWk->m_nFunc = F_NODE;
 				ptdi->item.pszText = const_cast<TCHAR*>( MakeDispLabel( pFuncWk ) );
 				TreeView_SetItem( hwndTreeRes , &ptdi->item );	//	編集結果を反映
 
@@ -479,9 +483,11 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				case IDC_BUTTON_INSERT_A:				// 挿入(下)
 				case IDC_BUTTON_ADD:					// 追加
 					eFuncCode = F_INVALID;
+					bIsNode = false;
 					switch (wID) {
 					case IDC_BUTTON_INSERT_NODE:		// ノード挿入
 						eFuncCode = F_NODE;
+						bIsNode = true;
 						auto_strcpy( szLabel , DEFAULT_NODE );
 						break;
 					case IDC_BUTTON_INSERTSEPARATOR:	// 区切線挿入
@@ -532,7 +538,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 								htiTemp = TVI_LAST;
 							}
 							else {
-								if (msMenu[tvi.lParam].m_nFunc == F_NODE) {
+								if (msMenu[tvi.lParam].m_bIsNode) {
 									// ノード
 									htiParent = htiTemp;
 									htiTemp = TVI_LAST;
@@ -560,7 +566,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 								tvi.mask = TVIF_HANDLE | TVIF_PARAM;
 								tvi.hItem = htiTemp;
 								if (TreeView_GetItem( hwndTreeRes, &tvi )) {
-									if (msMenu[tvi.lParam].m_nFunc == F_NODE) {
+									if (msMenu[tvi.lParam].m_bIsNode) {
 										// ノード
 										htiParent = htiTemp;
 										htiTemp = TVI_FIRST;
@@ -606,6 +612,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					pFuncWk->m_nFunc = (EFunctionCode)eFuncCode;
 					pFuncWk->m_sName = szLabel;
 					pFuncWk->m_bDupErr = false;
+					pFuncWk->m_bIsNode = bIsNode;
 					auto_strcpy(pFuncWk->m_sKey, L"");
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 					tvis.hParent = htiParent;
@@ -919,6 +926,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 		// 内部データを作成
 		pFuncWk = &msMenu[nMenuCnt];
 		pFuncWk->m_nFunc = pcFunc->m_nFunc;
+		pFuncWk->m_bIsNode = false;
 		switch (pcFunc->m_nType) {
 			case T_LEAF:
 				m_cLookup.Funccode2Name( pcFunc->m_nFunc, szLabel, MAX_MAIN_MENU_NAME_LEN );
@@ -938,8 +946,14 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 					}
 				}
 				break;
-			default:
-				pFuncWk->m_sName = RemoveAmpersand( pcFunc->m_sName );
+			case T_NODE:
+				pFuncWk->m_bIsNode = true;
+				// ラベル編集後のノードはiniから、それ以外はリソースからラベルを取得 2012.10.14 syat 各国語対応
+				if (pFuncWk->m_nFunc == F_NODE) {
+					pFuncWk->m_sName = RemoveAmpersand( pcFunc->m_sName );
+				} else {
+					pFuncWk->m_sName = LSW( pFuncWk->m_nFunc );
+				}
 				break;
 		}
 		auto_strcpy(pFuncWk->m_sKey, pcFunc->m_sKey);
@@ -1027,6 +1041,12 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			pcFunc->m_sName[0] = L'\0';
 			break;
 		default:
+			if ( pFuncWk->m_bIsNode ) {
+				// コマンド定義外のIDの場合、ノードとして扱う 2012.10.14 syat 各国語対応
+				pcFunc->m_nType = T_NODE;
+				auto_strcpy_s( pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN+1, SupplementAmpersand( pFuncWk->m_sName ).c_str() );
+				break;
+			}
 			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST) {
 				pcFunc->m_nType = T_SPECIAL;
 				if (nLevel == 0) {
@@ -1326,6 +1346,9 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 		default:
 			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST) {
 				nType = T_SPECIAL;
+			}
+			else if (pFuncWk->m_bIsNode) {
+				nType = T_NODE;
 			}
 			else {
 				if (pFuncWk->m_nFunc == F_OPTION) {

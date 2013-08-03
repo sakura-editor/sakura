@@ -377,7 +377,7 @@ void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 	HWND		hwndSQLPLUS;
 	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
 	if( NULL == hwndSQLPLUS ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), _T("Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n") );
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_ACTV_BUT_NOT_RUN ) );	//"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
 	}
 	/* Oracle SQL*Plusをアクティブにする */
@@ -401,7 +401,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 
 	hwndSQLPLUS = ::FindWindow( _T("SqlplusWClass"), _T("Oracle SQL*Plus") );
 	if( NULL == hwndSQLPLUS ){
-		ErrorMessage( m_pCommanderView->GetHwnd(), _T("Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n") );
+		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_EXEC_BUT_NOT_RUN ) );	//"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
 	}
 	/* テキストが変更されている場合 */

@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, genta, maru
 	Copyright (C) 2008, ryoji, Uchi, nasukoji
 	Copyright (C) 2009, nasukoji, ryoji
+	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Moca, ryoji
 
 	This source code is designed for sakura editor.
@@ -111,6 +112,9 @@ bool CShareData::InitShareData()
 		);
 		return false;
 	}
+
+	HINSTANCE hLangRsrc;		// メッセージリソースDLLのインスタンスハンドル
+
 	if( GetLastError() != ERROR_ALREADY_EXISTS ){
 		/* オブジェクトが存在していなかった場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
@@ -122,6 +126,9 @@ bool CShareData::InitShareData()
 			0
 		);
 		m_pShareData->OnInit();
+
+		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
+		hLangRsrc = m_cSelectLang.InitializeLanguageEnvironment();
 
 		// 2007.05.19 ryoji 実行ファイルフォルダ->設定ファイルフォルダに変更
 		TCHAR	szIniFolder[_MAX_PATH];
@@ -578,6 +585,9 @@ bool CShareData::InitShareData()
 			return false;
 		}
 		//	To Here Oct. 27, 2000 genta
+
+		// 2011.04.10 nasukoji	メッセージリソースDLLをロードする
+		hLangRsrc = m_cSelectLang.InitializeLanguageEnvironment();
 	}
 	return true;
 }

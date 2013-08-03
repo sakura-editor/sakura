@@ -106,8 +106,7 @@ void CViewCommander::Command_COMPARE( void )
 		}
 		if( nLineLenDes > (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>() ){
 			TopErrorMessage( m_pCommanderView->GetHwnd(),
-				_T("比較先のファイル\n%ts\n%d文字を超える行があります。\n")
-				_T("比較できません。"),
+				LS( STR_ERR_CMPERR ), // "比較先のファイル\n%ts\n%d文字を超える行があります。\n比較できません。"
 				szPath,
 				GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>()
 			);

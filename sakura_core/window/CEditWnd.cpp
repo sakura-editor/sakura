@@ -96,27 +96,28 @@
 
 //	状況によりメニューの表示を変えるコマンドリスト(SetMenuFuncSelで使用)
 //		2010/5/19	Uchi
+//		2012/10/19	syat	各国語対応のため定数化
 struct SFuncMenuName {
 	EFunctionCode	eFunc;
-	const WCHAR*	sName[3];		// 選択文字列
+	int				nNameId[3];		// 選択文字列ID
 };
 
 static const SFuncMenuName	sFuncMenuName[] = {
-	{F_RECKEYMACRO,			{L"キーマクロの記録開始",			L"キーマクロの記録終了"}},
-	{F_SAVEKEYMACRO,		{L"キーマクロの保存",				L"キーマクロの記録終了&&保存"}},
-	{F_LOADKEYMACRO,		{L"キーマクロの読み込み",			L"キーマクロの記録終了&&読み込み"}},
-	{F_EXECKEYMACRO,		{L"キーマクロの実行",				L"キーマクロの記録終了&&実行"}},
-	{F_SPLIT_V,				{L"上下に分割",						L"上下分割の解除"}},
-	{F_SPLIT_H,				{L"左右に分割",						L"左右分割の解除"}},
-	{F_SPLIT_VH,			{L"縦横に分割",						L"縦横分割の解除"}},
-	{F_TAB_CLOSEOTHER,		{L"このタブ以外を閉じる",			L"このウィンドウ以外を閉じる"}},
-	{F_TOPMOST,				{L"常に手前に表示",					L"常に手前を解除"}},
-	{F_BIND_WINDOW,			{L"グループ化",						L"グループ化を解除"}},
-	{F_SHOWTOOLBAR,			{L"ツールバーを表示",				L"ツールバーを表示",				L"表示中のツールバーを隠す"}},
-	{F_SHOWFUNCKEY,			{L"ファンクションキーを表示",		L"ファンクションキーを表示",		L"表示中のファンクションキーを隠す"}},
-	{F_SHOWTAB,				{L"タブバーを表示",					L"タブバーを表示",					L"表示中のタブバーを隠す"}},
-	{F_SHOWSTATUSBAR,		{L"ステータスバーを表示",			L"ステータスバーを表示",			L"表示中のステータスバーを隠す"}},
-	{F_TOGGLE_KEY_SEARCH,	{L"キーワードヘルプ自動表示",		L"キーワードヘルプ自動表示する",	L"キーワードヘルプ自動表示しない"}},
+	{F_RECKEYMACRO,			{F_RECKEYMACRO_REC,					F_RECKEYMACRO_APPE}},
+	{F_SAVEKEYMACRO,		{F_SAVEKEYMACRO_REC,				F_SAVEKEYMACRO_APPE}},
+	{F_LOADKEYMACRO,		{F_LOADKEYMACRO_REC,				F_LOADKEYMACRO_APPE}},
+	{F_EXECKEYMACRO,		{F_EXECKEYMACRO_REC,				F_EXECKEYMACRO_APPE}},
+	{F_SPLIT_V,				{F_SPLIT_V_ON,						F_SPLIT_V_OFF}},
+	{F_SPLIT_H,				{F_SPLIT_H_ON,						F_SPLIT_H_OFF}},
+	{F_SPLIT_VH,			{F_SPLIT_VH_ON,						F_SPLIT_VH_OFF}},
+	{F_TAB_CLOSEOTHER,		{F_TAB_CLOSEOTHER_TAB,				F_TAB_CLOSEOTHER_WINDOW}},
+	{F_TOPMOST,				{F_TOPMOST_SET,						F_TOPMOST_REL}},
+	{F_BIND_WINDOW,			{F_TAB_GROUPIZE,					F_TAB_GROUPDEL}},
+	{F_SHOWTOOLBAR,			{F_SHOWTOOLBAR_ON,					F_SHOWTOOLBAR_ON,			F_SHOWTOOLBAR_OFF}},
+	{F_SHOWFUNCKEY,			{F_SHOWFUNCKEY_ON,					F_SHOWFUNCKEY_ON,			F_SHOWFUNCKEY_OFF}},
+	{F_SHOWTAB,				{F_SHOWTAB_ON,						F_SHOWTAB_ON,				F_SHOWTAB_OFF}},
+	{F_SHOWSTATUSBAR,		{F_SHOWSTATUSBAR_ON,				F_SHOWSTATUSBAR_ON,			F_SHOWSTATUSBAR_OFF}},
+	{F_TOGGLE_KEY_SEARCH,	{F_TOGGLE_KEY_SEARCH_ON,			F_TOGGLE_KEY_SEARCH_ON,		F_TOGGLE_KEY_SEARCH_OFF}},
 };
 
 void ShowCodeBox(HWND hWnd)
@@ -827,7 +828,8 @@ void CEditWnd::SetDocumentTypeWhenCreate(
 
 
 /*! メインメニューの配置処理
-	@date 20105/16 Uchi
+	@date 2010/05/16 Uchi
+	@date 2012/10/18 syat 各国語対応
 */
 void CEditWnd::LayoutMainMenu()
 {
@@ -840,6 +842,7 @@ void CEditWnd::LayoutMainMenu()
 	int			i;
 	int 		j;
 	int 		nCount;
+	LPCTSTR		pszName;
 
 	hMenu = ::CreateMenu();
 	for (i = 0; i < MAX_MAINMENU_TOP && pcMenu->m_nMenuTopIdx[i] >= 0; i++) {
@@ -848,8 +851,11 @@ void CEditWnd::LayoutMainMenu()
 		cMainMenu = &pcMenu->m_cMainMenuTbl[pcMenu->m_nMenuTopIdx[i]];
 		switch (cMainMenu->m_nType) {
 		case T_NODE:
+			// ラベル未設定かつFunctionコードがありならストリングテーブルから取得 2012/10/18 syat 各国語対応
+			pszName = ( cMainMenu->m_sName[0] == L'\0' && cMainMenu->m_nFunc != F_NODE )
+								? LS( cMainMenu->m_nFunc ) : to_tchar(cMainMenu->m_sName);
 			::AppendMenu( hMenu, MF_POPUP | MF_STRING | (nCount<=1 ? MF_GRAYED : 0), (UINT_PTR)CreatePopupMenu(), 
-				CKeyBind::MakeMenuLabel( to_tchar(cMainMenu->m_sName), to_tchar(cMainMenu->m_sKey) ) );
+				CKeyBind::MakeMenuLabel( pszName, to_tchar(cMainMenu->m_sKey) ) );
 			break;
 		case T_LEAF:
 			/* メニューラベルの作成 */
@@ -1427,11 +1433,11 @@ LRESULT CEditWnd::DispatchEvent(
 					m_CMenuDrawer.ResetContents();
 					HMENU hMenuPopUp = ::CreatePopupMenu();
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CRLF, 
-						_T("入力改行コード指定(&CRLF)"), _T("") ); // 入力改行コード指定(CRLF)
+						LS( F_CHGMOD_EOL_CRLF ), _T("") ); // 入力改行コード指定(CRLF)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LF,
-						_T("入力改行コード指定(&LF)"), _T("") ); // 入力改行コード指定(LF)
+						LS( F_CHGMOD_EOL_LF ), _T("") ); // 入力改行コード指定(LF)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_CR,
-						_T("入力改行コード指定(C&R)"), _T("") ); // 入力改行コード指定(CR)
+						LS( F_CHGMOD_EOL_CR ), _T("") ); // 入力改行コード指定(CR)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_NEL,
 						_T("入力改行コード指定(&NEL)"), _T(""), TRUE, -2 ); // 入力改行コード指定(NEL)
 					m_CMenuDrawer.MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, F_CHGMOD_EOL_LS,
@@ -2258,6 +2264,10 @@ void CEditWnd::InitMenu( HMENU hMenu, UINT uPos, BOOL fSystemMenu )
 			switch (cMainMenu->m_nType) {
 			case T_NODE:
 				hMenuPopUp = ::CreatePopupMenu();
+				if (cMainMenu->m_nFunc != 0 && cMainMenu->m_sName[0] == L'\0') {
+					// ストリングテーブルから読み込み
+					wcsncpy( cMainMenu->m_sName, LSW( cMainMenu->m_nFunc ), MAX_MAIN_MENU_NAME_LEN );
+				}
 				m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , 
 					cMainMenu->m_sName, cMainMenu->m_sKey );
 				if (hSubMenu.size() > (size_t)nLv) {
@@ -2635,7 +2645,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	sName = L"";
 	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
 		if (sFuncMenuName[i].eFunc == nFunc) {
-			sName = flag ? sFuncMenuName[i].sName[0] : sFuncMenuName[i].sName[1];
+			sName = flag ? LSW( sFuncMenuName[i].nNameId[0] ) : LSW( sFuncMenuName[i].nNameId[1] );
 		}
 	}
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
@@ -2649,7 +2659,7 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	sName = L"";
 	for (i = 0; i < _countof(sFuncMenuName) ;i++) {
 		if (sFuncMenuName[i].eFunc == nFunc) {
-			sName = flag0 ? sFuncMenuName[i].sName[0] : (flag1 ? sFuncMenuName[i].sName[1] : sFuncMenuName[i].sName[2]);
+			sName = LSW( flag0 ? sFuncMenuName[i].nNameId[0] : (flag1 ? sFuncMenuName[i].nNameId[1] : sFuncMenuName[i].nNameId[2]) );
 		}
 	}
 	m_CMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
