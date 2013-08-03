@@ -32,7 +32,8 @@ COpeBuf::~COpeBuf()
 {
 	int		i;
 	/* 操作ブロックの配列を削除する */
-	for( i = 0; i < (int)m_vCOpeBlkArr.size(); ++i ){
+	int size = (int)m_vCOpeBlkArr.size();
+	for( i = 0; i < size; ++i ){
 		delete(m_vCOpeBlkArr[i]);
 	}
 	m_vCOpeBlkArr.clear();
@@ -65,8 +66,9 @@ bool COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 {
 	int i;
 	/* 現在位置より後ろ（アンドゥ対象）がある場合は、消去 */
-	if( m_nCurrentPointer < (int)m_vCOpeBlkArr.size() ){
-		for( i = m_nCurrentPointer; i < (int)m_vCOpeBlkArr.size(); ++i ){
+	int size = (int)m_vCOpeBlkArr.size();
+	if( m_nCurrentPointer < size ){
+		for( i = m_nCurrentPointer; i < size; ++i ){
 			delete(m_vCOpeBlkArr[i]);
 		}
 		m_vCOpeBlkArr.resize(m_nCurrentPointer);
@@ -82,7 +84,8 @@ void COpeBuf::ClearAll()
 {
 	int		i;
 	/* 操作ブロックの配列を削除する */
-	for( i = 0; i < (int)m_vCOpeBlkArr.size(); ++i ){
+	int size = (int)m_vCOpeBlkArr.size();
+	for( i = 0; i < size; ++i ){
 		delete(m_vCOpeBlkArr[i]);
 	}
 	m_vCOpeBlkArr.clear();
