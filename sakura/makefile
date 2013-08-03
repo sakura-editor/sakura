@@ -137,6 +137,7 @@ OBJS =\
 	$(OBJDIR)\CEditView_Command_New.obj \
 	$(OBJDIR)\CEditView_Diff.obj \
 	$(OBJDIR)\CEditView_ExecCmd.obj \
+	$(OBJDIR)\CEditView_Mouse.obj \
 	$(OBJDIR)\CEditView_New.obj \
 	$(OBJDIR)\CEditView_New2.obj \
 	$(OBJDIR)\CEditWnd.obj \
