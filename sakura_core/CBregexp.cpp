@@ -353,8 +353,8 @@ char* CBregexp::MakePatternAlternate( const char* const szSearch, const char* co
 
 	const bool nestedRawBracketIsDisallowed = this->m_checkedSyntax.nestedRawBracketIsDisallowed;
 	const bool qeEscapeIsAvailable = this->m_checkedSyntax.qeEscapeIsAvailable;
-	const char szDotAlternative[] = "[^\\r\\n]";
-	const char szDollarAlternative[] = "(?<![\\r\\n])(?=\\r|$)";
+	static const char szDotAlternative[] = "[^\\r\\n]";
+	static const char szDollarAlternative[] = "(?<![\\r\\n])(?=\\r|$)";
 
 	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$) へ置換すると仮定して、strModifiedSearchの最大長を決定する。
 	std::string::size_type modifiedSearchSize = 0;
@@ -465,22 +465,22 @@ char* CBregexp::MakePatternAlternate( const char* const szSearch, const char* co
 void CBregexp::CheckSupportedSyntax()
 {
 	BREGEXP* pBREGEXP = 0;
-	const char szTarget[] = "$";
+	static const char szTarget[] = "$";
 	char szErrMsg[128] = "";
 
 	// 戻り読みチェック
 	szErrMsg[0] = '\0';
-	const char szLookBehind[] = "m/(?<=)/";
+	static const char szLookBehind[] = "m/(?<=)/";
 	this->m_checkedSyntax.lookBehindIsAvailable = 0 <= this->BMatch( szLookBehind, szTarget, szTarget + 1, &pBREGEXP, szErrMsg );
 
 	// 文字集合の中の(POSIXブラケット以外の) [ が常にエスケープを必要としているかをチェック。
 	szErrMsg[0] = '\0';
-	const char szNestedRawBracket[] = "m/[[]/";
+	static const char szNestedRawBracket[] = "m/[[]/";
 	this->m_checkedSyntax.nestedRawBracketIsDisallowed = this->BMatch( szNestedRawBracket, szTarget, szTarget + 1, &pBREGEXP, szErrMsg ) < 0;
 
 	// \Q...\Eが有効か調べる。
 	szErrMsg[0] = '\0';
-	const char szQEEscape[] = "m/\\Q$\\E/";
+	static const char szQEEscape[] = "m/\\Q$\\E/";
 	this->m_checkedSyntax.qeEscapeIsAvailable = 0 < this->BMatch( szQEEscape, szTarget, szTarget + 1, &pBREGEXP, szErrMsg )
 		&& pBREGEXP->startp[0] == szTarget;
 

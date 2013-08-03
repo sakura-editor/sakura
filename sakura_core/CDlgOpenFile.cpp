@@ -158,14 +158,14 @@ UINT_PTR CALLBACK OFNHookProc(
 	WPARAM					fCheck;	//	Jul. 26, 2003 ryoji BOMèÛë‘óp
 
 	//	From Here	Feb. 9, 2001 genta
-	const int			nEolValueArr[] = {
+	static const int		nEolValueArr[] = {
 		EOL_NONE,
 		EOL_CRLF,
 		EOL_LF,
 		EOL_CR,
 	};
 	//	ï∂éöóÒÇÕResourceì‡Ç…ì¸ÇÍÇÈ
-	const TCHAR*	const	pEolNameArr[] = {
+	static const TCHAR*	const	pEolNameArr[] = {
 		_T("ïœä∑Ç»Çµ"),
 		_T("CR+LF"),
 		_T("LF (UNIX)"),

@@ -1709,7 +1709,7 @@ int CEditView::DispEOF( HDC hdc, int x, int y, int nCharWidth, int nLineHeight, 
 	COLORREF	colTextColorOld;
 	COLORREF	colBkColorOld;
 	RECT		rcClip;
-	const char	pszEOF[] = "[EOF]";
+	static const char	pszEOF[] = "[EOF]";
 	const int	szEOFlen = sizeof( pszEOF) - 1;
 
 	colTextColorOld = ::SetTextColor( hdc, EofColInfo.m_colTEXT );	/* EOFÇÃêF */

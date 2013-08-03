@@ -132,7 +132,7 @@ CMenuDrawer::CMenuDrawer()
 //  注5. F_DISABLE は未定義用(ダミーとしても使う)
 //	注6. ユーザー用に確保された場所は特にないので各段の空いている後ろの方を使ってください。
 
-	const int /* TBUTTONDATA */ tbd[] = {
+	static const int /* TBUTTONDATA */ tbd[] = {
 /* ファイル操作系(1段目32個: 1-32) */
 /*  1 */		F_FILENEW					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//新規作成
 /*  2 */		F_FILEOPEN					/* , TBSTATE_ENABLED, TBSTYLE_BUTTON, 0, 0 */,	//開く

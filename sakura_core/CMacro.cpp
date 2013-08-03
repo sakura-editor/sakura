@@ -378,7 +378,7 @@ void CMacro::HandleCommand(
 	const int			ArgSize
 )
 {
-	const TCHAR EXEC_ERROR_TITLE[] = _T("Macro実行エラー");
+	static const TCHAR EXEC_ERROR_TITLE[] = _T("Macro実行エラー");
 
 	switch ( LOWORD(Index) ) 
 	{

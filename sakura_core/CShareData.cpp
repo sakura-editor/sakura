@@ -933,7 +933,7 @@ int CShareData::GetDocumentTypeOfPath( const char* pszFilePath )
 */
 int CShareData::GetDocumentTypeOfExt( const char* pszExt )
 {
-	const char	pszSeps[] = " ;,";	// separator
+	static const char	pszSeps[] = " ;,";	// separator
 
 	int		i;
 	char*	pszToken;
