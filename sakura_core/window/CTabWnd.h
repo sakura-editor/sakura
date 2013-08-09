@@ -110,6 +110,7 @@ protected:
 	LRESULT OnTabLButtonDown( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_LBUTTONDOWN 処理 */
 	LRESULT OnTabLButtonUp( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_LBUTTONUP 処理 */
 	LRESULT OnTabMouseMove( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_MOUSEMOVE 処理 */
+	LRESULT OnTabTimer( WPARAM wParam, LPARAM lParam );			/*!< タブ部 WM_TIMER処理 */
 	LRESULT OnTabCaptureChanged( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_CAPTURECHANGED 処理 */
 	LRESULT OnTabRButtonDown( WPARAM wParam, LPARAM lParam );	/*!< タブ部 WM_RBUTTONDOWN 処理 */
 	LRESULT OnTabRButtonUp( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_RBUTTONUP 処理 */
@@ -118,7 +119,7 @@ protected:
 	LRESULT OnTabNotify( WPARAM wParam, LPARAM lParam );		/*!< タブ部 WM_NOTIFY 処理 */
 
 	//実装補助インターフェース
-	void BreakDrag( void ) { if( ::GetCapture() == m_hwndTab ) ::ReleaseCapture(); m_eDragState = DRAG_NONE; }	/*!< ドラッグ状態解除処理 */
+	void BreakDrag( void ) { if( ::GetCapture() == m_hwndTab ) ::ReleaseCapture(); m_eDragState = DRAG_NONE; m_nTabCloseCapture = -1; }	/*!< ドラッグ状態解除処理 */
 	BOOL ReorderTab( int nSrcTab, int nDstTab );	/*!< タブ順序変更処理 */
 	void BroadcastRefreshToGroup( void );
 	BOOL SeparateGroup( HWND hwndSrc, HWND hwndDst, POINT ptDrag, POINT ptDrop );	/*!< タブ分離処理 */	// 2007.06.20 ryoji
@@ -134,7 +135,7 @@ protected:
 	void DrawListBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< 一覧ボタン描画処理 */
 	void DrawCloseFigure( CGraphics& gr, const RECT &btnRect );			/*!< 閉じるマーク描画処理 */
 	void DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient );			/*!< 閉じるボタン描画処理 */		// 2006.10.21 ryoji
-	void DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected );	/*!< タブを閉じるボタン描画処理 */		// 2012.04.14 syat
+	void DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected, bool bHover );	/*!< タブを閉じるボタン描画処理 */		// 2012.04.14 syat
 	void GetListBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 一覧ボタンの矩形取得処理 */
 	void GetCloseBtnRect( const LPRECT lprcClient, LPRECT lprc );	/*!< 閉じるボタンの矩形取得処理 */	// 2006.10.21 ryoji
 	void GetTabCloseBtnRect( const LPRECT lprcClient, LPRECT lprc, bool selected );	/*!< タブを閉じるボタンの矩形取得処理 */	// 2012.04.14 syat
@@ -151,7 +152,7 @@ protected:
 
 protected:
 	enum DragState { DRAG_NONE, DRAG_CHECK, DRAG_DRAG };
-	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE, CAPT_TABCLOSE };
+	enum CaptureSrc { CAPT_NONE, CAPT_CLOSE };
 
 	typedef HIMAGELIST (WINAPI *FN_ImageList_Duplicate)(HIMAGELIST himl);
 
@@ -189,6 +190,11 @@ private:
 	BOOL		m_bTabSwapped;			//!< ドラッグ中にタブの入れ替えがあったかどうか
 	LONG*		m_nTabBorderArray;		//!< ドラッグ前のタブ境界位置配列
 	LOGFONT		m_lf;					//!< 表示フォントの特性情報
+
+	// タブ内の閉じるボタン用変数
+	int			m_nTabHover;			//!< マウスカーソル下のタブ（無いときは-1）
+	bool		m_bTabCloseHover;		//!< マウスカーソル下にタブ内の閉じるボタンがあるか
+	int			m_nTabCloseCapture;		//!< 閉じるボタンがマウス押下されているタブ（無いときは-1）
 };
 
 #endif /* SAKURA_WINDOW_CTABWND_H_ */
