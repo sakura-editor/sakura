@@ -332,7 +332,7 @@ bool CShareData::InitShareData()
 		);
 		m_pShareData->m_Common.m_sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
-		m_pShareData->m_Common.m_sTabBar.m_bDispTabClose = FALSE;			//タブに閉じるボタンを表示する	//@@@ 2012.04.14 syat
+		m_pShareData->m_Common.m_sTabBar.m_bDispTabClose = DISPTABCLOSE_NO;	//タブに閉じるボタンを表示する	//@@@ 2012.04.14 syat
 		m_pShareData->m_Common.m_sTabBar.m_bSortTabList = TRUE;			//タブ一覧をソートする		//@@@ 2006.05.10 ryoji
 		m_pShareData->m_Common.m_sTabBar.m_bTab_RetainEmptyWin = TRUE;	// 最後のファイルが閉じられたとき(無題)を残す	// 2007.02.11 genta
 		m_pShareData->m_Common.m_sTabBar.m_bTab_CloseOneWin = FALSE;	// タブモードでもウィンドウの閉じるボタンで現在のファイルのみ閉じる	// 2007.02.11 genta

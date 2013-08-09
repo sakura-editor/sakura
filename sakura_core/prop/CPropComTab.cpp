@@ -38,6 +38,7 @@
 
 #include "StdAfx.h"
 #include "prop/CPropCommon.h"
+#include "CPropertyManager.h"
 #include "util/shell.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
@@ -57,6 +58,12 @@ static const DWORD p_helpids[] = {
 	IDC_CHECK_OpenNewWin,			HIDC_CHECK_OpenNewWin,			//外部から起動するときは新しいウインドウで開く 2009.06.19
 	IDC_BUTTON_TABFONT,				HIDC_BUTTON_TABFONT,			//タブフォント
 	0, 0
+};
+
+TYPE_NAME<EDispTabClose> DispTabCloseArr[] = {
+	{ DISPTABCLOSE_NO,		_T("なし") },
+	{ DISPTABCLOSE_ALLWAYS,	_T("常に表示") },
+	{ DISPTABCLOSE_AUTO,	_T("自動表示") },
 };
 
 //	From Here Jun. 2, 2001 genta
@@ -175,11 +182,21 @@ void CPropTab::SetData( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWnd, m_Common.m_sTabBar.m_bDispTabWnd );	//@@@ 2003.05.31 MIK
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SameTabWidth, m_Common.m_sTabBar.m_bSameTabWidth );	//@@@ 2006.01.28 ryoji
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabIcon, m_Common.m_sTabBar.m_bDispTabIcon );	//@@@ 2006.01.28 ryoji
-	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabClose, m_Common.m_sTabBar.m_bDispTabClose );	//@@@ 2012.04.14 syat
 	::CheckDlgButton( hwndDlg, IDC_CHECK_SortTabList, m_Common.m_sTabBar.m_bSortTabList );			//@@@ 2006.03.23 fon
 	::CheckDlgButton( hwndDlg, IDC_CHECK_DispTabWndMultiWin, ! m_Common.m_sTabBar.m_bDispTabWndMultiWin ); //@@@ 2003.05.31 MIK
 	EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_TABWND_CAPTION ), _countof( m_Common.m_sTabBar.m_szTabWndCaption ) - 1 );
 	::DlgItem_SetText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption );
+
+	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabClose );
+	Combo_ResetContent( hwndCombo );
+	int nSelPos = 0;
+	for( int i = 0; i < _countof( DispTabCloseArr ); ++i ){
+		Combo_InsertString( hwndCombo, i, DispTabCloseArr[i].pszName );
+		if( DispTabCloseArr[i].nMethod == m_Common.m_sTabBar.m_bDispTabClose ){
+			nSelPos = i;
+		}
+	}
+	Combo_SetCurSel( hwndCombo, nSelPos );
 
 	//	Feb. 11, 2007 genta 新規作成
 	::CheckDlgButton( hwndDlg, IDC_CHECK_RetainEmptyWindow, m_Common.m_sTabBar.m_bTab_RetainEmptyWin );
@@ -200,11 +217,14 @@ int CPropTab::GetData( HWND hwndDlg )
 	m_Common.m_sTabBar.m_bDispTabWnd = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWnd );
 	m_Common.m_sTabBar.m_bSameTabWidth = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SameTabWidth );		// 2006.01.28 ryoji
 	m_Common.m_sTabBar.m_bDispTabIcon = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabIcon );		// 2006.01.28 ryoji
-	m_Common.m_sTabBar.m_bDispTabClose = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabClose );		// 2012.04.14 syat
 	m_Common.m_sTabBar.m_bSortTabList = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SortTabList );		// 2006.03.23 fon
 	m_Common.m_sTabBar.m_bDispTabWndMultiWin =
 		( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DispTabWndMultiWin ) == BST_CHECKED ) ? FALSE : TRUE;
 	::DlgItem_GetText( hwndDlg, IDC_TABWND_CAPTION, m_Common.m_sTabBar.m_szTabWndCaption, _countof( m_Common.m_sTabBar.m_szTabWndCaption ) );
+
+	HWND hwndCombo = ::GetDlgItem( hwndDlg, IDC_CHECK_DispTabClose );
+	int nSelPos = Combo_GetCurSel( hwndCombo );
+	m_Common.m_sTabBar.m_bDispTabClose = DispTabCloseArr[nSelPos].nMethod;
 
 	//	Feb. 11, 2007 genta 新規作成
 	m_Common.m_sTabBar.m_bTab_RetainEmptyWin = ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RetainEmptyWindow );
