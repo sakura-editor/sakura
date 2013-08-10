@@ -794,19 +794,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 	int			nWorkF;
 	int			nWorkT;
 
-	int			nSelectLineFrom_Old;
-	int			nSelectColmFrom_Old;
-	int			nSelectLineTo_Old;
-	int			nSelectColmTo_Old;
-	int			nSelectLineFrom;
-	int			nSelectColmFrom;
-	int			nSelectLineTo;
-	int			nSelectColmTo;
-
-	nSelectLineFrom_Old		= m_sSelect.m_ptFrom.y;
-	nSelectColmFrom_Old		= m_sSelect.m_ptFrom.x;
-	nSelectLineTo_Old		= m_sSelect.m_ptTo.y;
-	nSelectColmTo_Old		= m_sSelect.m_ptTo.x;
+	CLayoutRange	sSelect_Old = m_sSelect;
 
 	if( !m_bBeginSelect ){	/* 範囲選択中 */
 		::GetCursorPos( &po );
@@ -953,22 +941,19 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			/* 現在のカーソル位置によって選択範囲を変更 */
 			ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
 		}else{
-//			/* 現在のカーソル位置によって選択範囲を変更 */
-//			ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+			CLayoutRange sSelect;
+
 			/* 現在のカーソル位置によって選択範囲を変更(テストのみ) */
 			ChangeSelectAreaByCurrentCursorTEST(
 				(int)m_ptCaretPos.x,
 				(int)m_ptCaretPos.y,
-				(int&)nSelectLineFrom,
-				(int&)nSelectColmFrom,
-				(int&)nSelectLineTo,
-				(int&)nSelectColmTo
+				&sSelect
 			);
 			/* 選択範囲に変更なし */
-			if( nSelectLineFrom_Old == nSelectLineFrom
-			 && nSelectColmFrom_Old == nSelectColmFrom
-			 && nSelectLineTo_Old == nSelectLineTo
-			 && nSelectColmTo_Old == nSelectColmTo
+			if( sSelect_Old.m_ptFrom.y == sSelect.m_ptFrom.y
+			 && sSelect_Old.m_ptFrom.x == sSelect.m_ptFrom.x
+			 && sSelect_Old.m_ptTo.y == sSelect.m_ptTo.y
+			 && sSelect_Old.m_ptTo.x == sSelect.m_ptTo.x
 			){
 				ChangeSelectAreaByCurrentCursor(
 					(int)m_ptCaretPos.x,
@@ -993,18 +978,12 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					nWorkF = IsCurrentPositionSelectedTEST(
 						nColmFrom,	// カーソル位置X
 						nLineFrom,	// カーソル位置Y
-						(int)nSelectLineFrom,
-						(int)nSelectColmFrom,
-						(int)nSelectLineTo,
-						(int)nSelectColmTo
+						sSelect
 					);
 					nWorkT = IsCurrentPositionSelectedTEST(
 						nColmTo,	// カーソル位置X
 						nLineTo,	// カーソル位置Y
-						(int)nSelectLineFrom,
-						(int)nSelectColmFrom,
-						(int)nSelectLineTo,
-						(int)nSelectColmTo
+						sSelect
 					);
 					if( -1 == nWorkF/* || 0 == nWorkF*/ ){
 						/* 始点が前方に移動。現在のカーソル位置によって選択範囲を変更 */
@@ -1014,15 +993,15 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 						/* 終点が後方に移動。現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
 					}
-					else if( nSelectLineFrom_Old == nSelectLineFrom
-					 && nSelectColmFrom_Old == nSelectColmFrom
+					else if( sSelect_Old.m_ptFrom.y == sSelect.m_ptFrom.y
+					 && sSelect_Old.m_ptFrom.x == sSelect.m_ptFrom.x
 					){
 						/* 始点が無変更＝前方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
 						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
 					}
-					else if( nSelectLineTo_Old == nSelectLineTo
-					 && nSelectColmTo_Old == nSelectColmTo
+					else if( sSelect_Old.m_ptTo.y == sSelect.m_ptTo.y
+					 && sSelect_Old.m_ptTo.x == sSelect.m_ptTo.x
 					){
 						/* 終点が無変更＝後方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
@@ -1502,14 +1481,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	int			nCaretPosX_Old;
 	int			nCaretPosY_Old;
 	bool		bBeginBoxSelect_Old;
-	int			nSelectLineBgnFrom_Old;		/* 範囲選択開始行(原点) */
-	int			nSelectColBgnFrom_Old;		/* 範囲選択開始桁(原点) */
-	int			nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-	int			nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
-	int			nSelectLineFrom_Old;
-	int			nSelectColFrom_Old;
-	int			nSelectLineTo_Old;
-	int			nSelectColTo_Old;
+	CLayoutRange	sSelectBgn_Old;
+	CLayoutRange	sSelect_Old;
 
 	/* 選択テキストのドラッグ中か */
 	m_bDragMode = FALSE;
@@ -1620,14 +1593,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}else{
 		// ドラッグ元の選択範囲を記憶
 		bBeginBoxSelect_Old = pcDragSourceView->m_bBeginBoxSelect;
-		nSelectLineBgnFrom_Old = pcDragSourceView->m_sSelectBgn.m_ptFrom.y;
-		nSelectColBgnFrom_Old = pcDragSourceView->m_sSelectBgn.m_ptFrom.x;
-		nSelectLineBgnTo_Old = pcDragSourceView->m_sSelectBgn.m_ptTo.y;
-		nSelectColBgnTo_Old = pcDragSourceView->m_sSelectBgn.m_ptTo.x;
-		nSelectLineFrom_Old = pcDragSourceView->m_sSelect.m_ptFrom.y;
-		nSelectColFrom_Old = pcDragSourceView->m_sSelect.m_ptFrom.x;
-		nSelectLineTo_Old = pcDragSourceView->m_sSelect.m_ptTo.y;
-		nSelectColTo_Old = pcDragSourceView->m_sSelect.m_ptTo.x;
+		sSelectBgn_Old = pcDragSourceView->m_sSelectBgn;
+		sSelect_Old = pcDragSourceView->m_sSelect;
 
 		if( bMoveToPrev ){
 			/* 移動モード & 前に移動 */
@@ -1637,14 +1604,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				pcDragSourceView->DisableSelectArea( true );
 				DisableSelectArea( true );
 				m_bBeginBoxSelect = bBeginBoxSelect_Old;
-				m_sSelectBgn.m_ptFrom.y = nSelectLineBgnFrom_Old;
-				m_sSelectBgn.m_ptFrom.x = nSelectColBgnFrom_Old;
-				m_sSelectBgn.m_ptTo.y = nSelectLineBgnTo_Old;
-				m_sSelectBgn.m_ptTo.x = nSelectColBgnTo_Old;
-				m_sSelect.m_ptFrom.y = nSelectLineFrom_Old;
-				m_sSelect.m_ptFrom.x = nSelectColFrom_Old;
-				m_sSelect.m_ptTo.y = nSelectLineTo_Old;
-				m_sSelect.m_ptTo.x = nSelectColTo_Old;
+				m_sSelectBgn = sSelectBgn_Old;
+				m_sSelect = sSelect_Old;
 			}
 			DeleteData( true );
 			MoveCursor( nCaretPosX_Old, nCaretPosY_Old, true );
@@ -1713,11 +1674,11 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			int nSelectLineTo_PHY_Old;
 			int nSelectColmTo_PHY_Old;
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-				nSelectColFrom_Old, nSelectLineFrom_Old,
+				sSelect_Old.m_ptFrom.x, sSelect_Old.m_ptFrom.y,
 				&nSelectColmFrom_PHY_Old, &nSelectLineFrom_PHY_Old
 			);
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
-				nSelectColTo_Old, nSelectLineTo_Old,
+				sSelect_Old.m_ptTo.x, sSelect_Old.m_ptTo.y,
 				&nSelectColmTo_PHY_Old, &nSelectLineTo_PHY_Old
 			);
 
@@ -1726,14 +1687,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 
 			// 以前の選択範囲を選択する
 			m_bBeginBoxSelect = bBeginBoxSelect_Old;
-			m_sSelectBgn.m_ptFrom.y = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
-			m_sSelectBgn.m_ptFrom.x = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
-			m_sSelectBgn.m_ptTo.y = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-			m_sSelectBgn.m_ptTo.x = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
-			m_sSelect.m_ptFrom.y = nSelectLineFrom_Old;
-			m_sSelect.m_ptFrom.x = nSelectColFrom_Old;
-			m_sSelect.m_ptTo.y = nSelectLineTo_Old;
-			m_sSelect.m_ptTo.x = nSelectColTo_Old;
+			m_sSelectBgn = sSelectBgn_Old;	/* 範囲選択開始(原点) */
+			m_sSelect = sSelect_Old;
 
 			/* 選択エリアを削除 */
 			DeleteData( true );

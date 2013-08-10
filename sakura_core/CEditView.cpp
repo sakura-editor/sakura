@@ -3154,10 +3154,7 @@ void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY 
 	ChangeSelectAreaByCurrentCursorTEST(
 		nCaretPosX,
 		nCaretPosY, 
-		m_sSelect.m_ptFrom.y,
-		m_sSelect.m_ptFrom.x,
-		m_sSelect.m_ptTo.y,
-		m_sSelect.m_ptTo.x
+		&m_sSelect
 	);
 	/* 選択領域の描画 */
 	DrawSelectArea();
@@ -3168,10 +3165,7 @@ void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY 
 void CEditView::ChangeSelectAreaByCurrentCursorTEST(
 	int		nCaretPosX,
 	int		nCaretPosY,
-	int&	nSelectLineFrom,
-	int&	nSelectColmFrom,
-	int&	nSelectLineTo,
-	int&	nSelectColmTo
+	CLayoutRange* pSelect
 )
 {
 	if( m_sSelectBgn.m_ptFrom.y == m_sSelectBgn.m_ptTo.y /* 範囲選択開始行(原点) */
@@ -3179,51 +3173,51 @@ void CEditView::ChangeSelectAreaByCurrentCursorTEST(
 		if( nCaretPosY == m_sSelectBgn.m_ptFrom.y
 		 && nCaretPosX == m_sSelectBgn.m_ptFrom.x ){
 			/* 選択解除 */
-			nSelectLineFrom = -1;
-			nSelectColmFrom  = -1;
-			nSelectLineTo = -1;
-			nSelectColmTo = -1;
+			pSelect->m_ptFrom.y = -1;
+			pSelect->m_ptFrom.x  = -1;
+			pSelect->m_ptTo.y = -1;
+			pSelect->m_ptTo.x = -1;
 		}else
 		if( nCaretPosY < m_sSelectBgn.m_ptFrom.y
 		 || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX < m_sSelectBgn.m_ptFrom.x ) ){
-			nSelectLineFrom = nCaretPosY;
-			nSelectColmFrom = nCaretPosX;
-			nSelectLineTo = m_sSelectBgn.m_ptFrom.y;
-			nSelectColmTo = m_sSelectBgn.m_ptFrom.x;
+			pSelect->m_ptFrom.y = nCaretPosY;
+			pSelect->m_ptFrom.x = nCaretPosX;
+			pSelect->m_ptTo.y = m_sSelectBgn.m_ptFrom.y;
+			pSelect->m_ptTo.x = m_sSelectBgn.m_ptFrom.x;
 		}else{
-			nSelectLineFrom = m_sSelectBgn.m_ptFrom.y;
-			nSelectColmFrom = m_sSelectBgn.m_ptFrom.x;
-			nSelectLineTo = nCaretPosY;
-			nSelectColmTo = nCaretPosX;
+			pSelect->m_ptFrom.y = m_sSelectBgn.m_ptFrom.y;
+			pSelect->m_ptFrom.x = m_sSelectBgn.m_ptFrom.x;
+			pSelect->m_ptTo.y = nCaretPosY;
+			pSelect->m_ptTo.x = nCaretPosX;
 		}
 	}else{
 		/* 常時選択範囲の範囲内 */
 		if( ( nCaretPosY > m_sSelectBgn.m_ptFrom.y || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX >= m_sSelectBgn.m_ptFrom.x ) )
 		 && ( nCaretPosY < m_sSelectBgn.m_ptTo.y || ( nCaretPosY == m_sSelectBgn.m_ptTo.y && nCaretPosX < m_sSelectBgn.m_ptTo.x ) )
 		){
-			nSelectLineFrom = m_sSelectBgn.m_ptFrom.y;
-			nSelectColmFrom = m_sSelectBgn.m_ptFrom.x;
+			pSelect->m_ptFrom.y = m_sSelectBgn.m_ptFrom.y;
+			pSelect->m_ptFrom.x = m_sSelectBgn.m_ptFrom.x;
 			if ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX == m_sSelectBgn.m_ptFrom.x ){
-				nSelectLineTo = m_sSelectBgn.m_ptTo.y;	//	m_sSelectBgn.m_ptTo.y;
-				nSelectColmTo = m_sSelectBgn.m_ptTo.x;	//	m_sSelectBgn.m_ptTo.x;
+				pSelect->m_ptTo.y = m_sSelectBgn.m_ptTo.y;
+				pSelect->m_ptTo.x = m_sSelectBgn.m_ptTo.x;
 			}
 			else {
-				nSelectLineTo = nCaretPosY;	//	m_sSelectBgn.m_ptTo.y;
-				nSelectColmTo = nCaretPosX;	//	m_sSelectBgn.m_ptTo.x;
+				pSelect->m_ptTo.y = nCaretPosY;
+				pSelect->m_ptTo.x = nCaretPosX;
 			}
 		}else
 		if( !( nCaretPosY > m_sSelectBgn.m_ptFrom.y || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX >= m_sSelectBgn.m_ptFrom.x ) ) ){
 			/* 常時選択範囲の前方向 */
-			nSelectLineFrom = nCaretPosY;
-			nSelectColmFrom  = nCaretPosX;
-			nSelectLineTo = m_sSelectBgn.m_ptTo.y;
-			nSelectColmTo = m_sSelectBgn.m_ptTo.x;
+			pSelect->m_ptFrom.y = nCaretPosY;
+			pSelect->m_ptFrom.x  = nCaretPosX;
+			pSelect->m_ptTo.y = m_sSelectBgn.m_ptTo.y;
+			pSelect->m_ptTo.x = m_sSelectBgn.m_ptTo.x;
 		}else{
 			/* 常時選択範囲の後ろ方向 */
-			nSelectLineFrom = m_sSelectBgn.m_ptFrom.y;
-			nSelectColmFrom = m_sSelectBgn.m_ptFrom.x;
-			nSelectLineTo = nCaretPosY;
-			nSelectColmTo = nCaretPosX;
+			pSelect->m_ptFrom.y = m_sSelectBgn.m_ptFrom.y;
+			pSelect->m_ptFrom.x = m_sSelectBgn.m_ptFrom.x;
+			pSelect->m_ptTo.y = nCaretPosY;
+			pSelect->m_ptTo.x = nCaretPosX;
 		}
 	}
 	return;
@@ -3889,32 +3883,29 @@ void CEditView::CopySelectedAllLines(
 {
 	HDC			hdc;
 	PAINTSTRUCT	ps;
-	int			nSelectLineFrom;	/* 範囲選択開始行 */
-	int			nSelectColmFrom;	/* 範囲選択開始桁 */
-	int			nSelectLineTo;		/* 範囲選択終了行 */
-	int			nSelectColmTo;		/* 範囲選択終了桁 */
+	CLayoutRange	sSelect;
 	CMemory		cmemBuf;
 
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		return;
 	}
 	{	// 選択範囲内の全行を選択状態にする
-		nSelectLineFrom = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
-		nSelectLineTo = m_sSelect.m_ptTo.y;		/* 範囲選択終了行 */
+		sSelect.m_ptFrom.y = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
+		sSelect.m_ptTo.y = m_sSelect.m_ptTo.y;		/* 範囲選択終了行 */
 		const CLayout* pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_sSelect.m_ptFrom.y );
 		if( !pcLayout ) return;
-		nSelectColmFrom = pcLayout->GetIndent();	/* 範囲選択開始桁 */
+		sSelect.m_ptFrom.x = pcLayout->GetIndent();	/* 範囲選択開始桁 */
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_sSelect.m_ptTo.y );
 		if( pcLayout && (m_bBeginBoxSelect || m_sSelect.m_ptTo.x > pcLayout->GetIndent()) ){
 			// 選択範囲を次行頭まで拡大する
-			nSelectLineTo++;
+			sSelect.m_ptTo.y++;
 			pcLayout = pcLayout->m_pNext;
 		}
-		nSelectColmTo = pcLayout? pcLayout->GetIndent(): 0;	/* 範囲選択終了桁 */
-		GetAdjustCursorPos( &nSelectColmTo, &nSelectLineTo );	// EOF行を超えていたら座標修正
+		sSelect.m_ptTo.x = pcLayout? pcLayout->GetIndent(): 0;	/* 範囲選択終了桁 */
+		GetAdjustCursorPos( &sSelect.m_ptTo.x, &sSelect.m_ptTo.y );	// EOF行を超えていたら座標修正
 
 		DisableSelectArea( false ); // 2011.06.03 true →false
-		SetSelectArea( nSelectLineFrom, nSelectColmFrom, nSelectLineTo, nSelectColmTo );
+		SetSelectArea( sSelect.m_ptFrom.y, sSelect.m_ptFrom.x, sSelect.m_ptTo.y, sSelect.m_ptTo.x );
 
 		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, false );
 		ShowEditCaret();
@@ -6391,32 +6382,26 @@ int CEditView::IsCurrentPositionSelected(
 int CEditView::IsCurrentPositionSelectedTEST(
 	int		nCaretPosX,		// カーソル位置X
 	int		nCaretPosY,		// カーソル位置Y
-	int		nSelectLineFrom,
-	int		nSelectColmFrom,
-	int		nSelectLineTo,
-	int		nSelectColmTo
+	const CLayoutRange& sSelect
 )
 {
 	if( !IsTextSelected() ){	/* テキストが選択されているか */
 		return -1;
 	}
-//	RECT	rcSel;
-//	POINT	po;
 
-
-	if( nSelectLineFrom > nCaretPosY ){
+	if( sSelect.m_ptFrom.y > nCaretPosY ){
 		return -1;
 	}
-	if( nSelectLineTo < nCaretPosY ){
+	if( sSelect.m_ptTo.y < nCaretPosY ){
 		return 1;
 	}
-	if( nSelectLineFrom == nCaretPosY ){
-		if( nSelectColmFrom > nCaretPosX ){
+	if( sSelect.m_ptFrom.y == nCaretPosY ){
+		if( sSelect.m_ptFrom.x > nCaretPosX ){
 			return -1;
 		}
 	}
-	if( nSelectLineTo == nCaretPosY ){
-		if( nSelectColmTo <= nCaretPosX ){
+	if( sSelect.m_ptTo.y == nCaretPosY ){
+		if( sSelect.m_ptTo.x <= nCaretPosX ){
 			return 1;
 		}
 	}
@@ -6905,10 +6890,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			HDC hdc = ::GetDC( m_hWnd );
 			m_cUnderLine.Lock();
 			//	不本意ながら選択情報をバックアップ。
-			int nSelectLineFrom = m_sSelect.m_ptFrom.y;
-			int nSelectLineTo = m_sSelect.m_ptTo.y;
-			int nSelectColmFrom = m_sSelect.m_ptFrom.x;
-			int nSelectColmTo = m_sSelect.m_ptTo.x;
+			CLayoutRange sSelect = m_sSelect;
 			m_sSelect.m_ptFrom.y = -1;
 			m_sSelect.m_ptTo.y = -1;
 			m_sSelect.m_ptFrom.x = -1;
@@ -6916,10 +6898,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			// 可能なら互換BMPからコピーして再作画
 			OnPaint( hdc, &ps, TRUE );
 			//	選択情報を復元
-			m_sSelect.m_ptFrom.y = nSelectLineFrom;
-			m_sSelect.m_ptTo.y = nSelectLineTo;
-			m_sSelect.m_ptFrom.x = nSelectColmFrom;
-			m_sSelect.m_ptTo.x = nSelectColmTo;
+			m_sSelect = sSelect;
 			m_cUnderLine.UnLock();
 			ReleaseDC( m_hWnd, hdc );
 		}
@@ -6946,10 +6925,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			HDC hdc = ::GetDC( m_hWnd );
 			m_cUnderLine.Lock();
 			//	不本意ながら選択情報をバックアップ。
-			int nSelectLineFrom = m_sSelect.m_ptFrom.y;
-			int nSelectLineTo = m_sSelect.m_ptTo.y;
-			int nSelectColmFrom = m_sSelect.m_ptFrom.x;
-			int nSelectColmTo = m_sSelect.m_ptTo.x;
+			CLayoutRange sSelect = m_sSelect;
 			m_sSelect.m_ptFrom.y = -1;
 			m_sSelect.m_ptTo.y = -1;
 			m_sSelect.m_ptFrom.x = -1;
@@ -6957,10 +6933,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			// 可能なら互換BMPからコピーして再作画
 			OnPaint( hdc, &ps, TRUE );
 			//	選択情報を復元
-			m_sSelect.m_ptFrom.y = nSelectLineFrom;
-			m_sSelect.m_ptTo.y = nSelectLineTo;
-			m_sSelect.m_ptFrom.x = nSelectColmFrom;
-			m_sSelect.m_ptTo.x = nSelectColmTo;
+			m_sSelect = sSelect;
 			m_cUnderLine.UnLock();
 			ReleaseDC( m_hWnd, hdc );
 		}

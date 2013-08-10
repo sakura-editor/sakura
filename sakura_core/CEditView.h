@@ -481,7 +481,7 @@ protected:
 	}
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
 	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
-	void ChangeSelectAreaByCurrentCursorTEST( int, int, int&, int&, int&, int& );/* 現在のカーソル位置によって選択範囲を変更 */
+	void ChangeSelectAreaByCurrentCursorTEST( int, int, CLayoutRange* pSelect );// 現在のカーソル位置によって選択範囲を変更
 	void PrintSelectionInfoMsg(void);		// 選択情報データの作成	2005.07.09 genta
 	int  MoveCursorToPoint( int, int );							/* マウス等による座標指定によるカーソル移動 */
 	int  GetRightEdgeForScrollBar( void );						/* スクロールバー制御用に右端座標を取得する */		// 2009.08.28 nasukoji
@@ -508,7 +508,7 @@ protected:
 	bool IsCurrentPositionURL( int, int, int*, int*, int*, char** );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( int, int);							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
 	int IsCurrentPositionSelected( int, int );					/* 指定カーソル位置が選択エリア内にあるか */
-	int IsCurrentPositionSelectedTEST( int, int, int, int, int, int );/* 指定カーソル位置が選択エリア内にあるか */
+	int IsCurrentPositionSelectedTEST( int, int, const CLayoutRange& sSelect );/* 指定カーソル位置が選択エリア内にあるか */
 	BOOL IsSearchString( const char*, int, int, int*, int* );	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
 	HFONT ChooseFontHandle( bool bBold, bool bUnderLine );		/* フォントを選ぶ */
 	void ExecCmd(const char*, const int);						// 子プロセスの標準出力をリダイレクトする	//2006.12.03 maru 引数の拡張

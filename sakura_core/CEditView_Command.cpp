@@ -3102,14 +3102,8 @@ void CEditView::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 	int			nLineTo;
 	int			nColmTo;
 	BOOL		bSelecting;
-	int			nSelectLineBgnFrom_Old;
-	int			nSelectColBgnFrom_Old;
-	int			nSelectLineBgnTo_Old;
-	int			nSelectColBgnTo_Old;
-	int			nSelectLineFrom_Old;
-	int			nSelectColFrom_Old;
-	int			nSelectLineTo_Old;
-	int			nSelectColTo_Old;
+	CLayoutRange	sSelectBgn_Old;
+	CLayoutRange	sSelect_Old;
 	bool		bSelectingLock_Old;
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = FALSE;			//	hor
@@ -3126,14 +3120,8 @@ void CEditView::Command_SEARCH_PREV( bool bReDraw, HWND hwndParent )
 		goto end_of_func;
 	}
 	if( IsTextSelected() ){	/* テキストが選択されているか */
-		nSelectLineBgnFrom_Old = m_sSelectBgn.m_ptFrom.y;	/* 範囲選択開始行(原点) */
-		nSelectColBgnFrom_Old = m_sSelectBgn.m_ptFrom.x;	/* 範囲選択開始桁(原点) */
-		nSelectLineBgnTo_Old = m_sSelectBgn.m_ptTo.y;		/* 範囲選択開始行(原点) */
-		nSelectColBgnTo_Old = m_sSelectBgn.m_ptTo.x;		/* 範囲選択開始桁(原点) */
-		nSelectLineFrom_Old = m_sSelect.m_ptFrom.y;
-		nSelectColFrom_Old = m_sSelect.m_ptFrom.x;
-		nSelectLineTo_Old = m_sSelect.m_ptTo.y;
-		nSelectColTo_Old = m_sSelect.m_ptTo.x;
+		sSelectBgn_Old = m_sSelectBgn;	/* 範囲選択開始(原点) */
+		sSelect_Old = m_sSelect;
 		bSelectingLock_Old = m_bSelectingLock;
 
 		/* 矩形範囲選択中か */
@@ -3219,15 +3207,9 @@ re_do:;							//	hor
 		if( bSelecting ){
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 			/* 選択範囲の変更 */
-			m_sSelectBgn.m_ptFrom.y = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
-			m_sSelectBgn.m_ptFrom.x = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
-			m_sSelectBgn.m_ptTo.y = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-			m_sSelectBgn.m_ptTo.x = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
+			m_sSelectBgn = sSelectBgn_Old;	/* 範囲選択開始(原点) */
+			m_sSelect =	sSelect_Old;
 
-			m_sSelect.m_ptFrom.y =	nSelectLineFrom_Old;
-			m_sSelect.m_ptFrom.x = nSelectColFrom_Old;
-			m_sSelect.m_ptTo.y = nSelectLineTo_Old;
-			m_sSelect.m_ptTo.x = nSelectColTo_Old;
 			/* カーソル移動 */
 			MoveCursor( nColmFrom, nLineFrom, bReDraw );
 			m_nCaretPosX_Prev = m_ptCaretPos.x;
@@ -3282,14 +3264,8 @@ void CEditView::Command_SEARCH_NEXT(
 	int			nLineNum;
 	int			nIdx;
 	BOOL		bSelecting;
-	int			nSelectLineBgnFrom_Old;
-	int			nSelectColBgnFrom_Old;
-	int			nSelectLineBgnTo_Old;
-	int			nSelectColBgnTo_Old;
-	int			nSelectLineFrom_Old;
-	int			nSelectColFrom_Old;
-	int			nSelectLineTo_Old;
-	int			nSelectColTo_Old;
+	CLayoutRange	sSelectBgn_Old;
+	CLayoutRange	sSelect_Old;
 	BOOL		bFlag1;
 	bool		bSelectingLock_Old;
 	BOOL		bFound = FALSE;
@@ -3319,14 +3295,8 @@ void CEditView::Command_SEARCH_NEXT(
 		if( !m_bBeginBoxSelect && m_bSelectingLock ){
 			bSelecting = TRUE;
 			bSelectingLock_Old = m_bSelectingLock;
-			nSelectLineBgnFrom_Old = m_sSelectBgn.m_ptFrom.y;	/* 範囲選択開始行(原点) */
-			nSelectColBgnFrom_Old = m_sSelectBgn.m_ptFrom.x;	/* 範囲選択開始桁(原点) */
-			nSelectLineBgnTo_Old = m_sSelectBgn.m_ptTo.y;		/* 範囲選択開始行(原点) */
-			nSelectColBgnTo_Old = m_sSelectBgn.m_ptTo.x;		/* 範囲選択開始桁(原点) */
-			nSelectLineFrom_Old = m_sSelect.m_ptFrom.y;
-			nSelectColFrom_Old = m_sSelect.m_ptFrom.x;
-			nSelectLineTo_Old = m_sSelect.m_ptTo.y;
-			nSelectColTo_Old = m_sSelect.m_ptTo.x;
+			sSelectBgn_Old = m_sSelectBgn;	/* 範囲選択開始(原点) */
+			sSelect_Old = m_sSelect;
 
 			if( ( m_sSelectBgn.m_ptFrom.y >  m_ptCaretPos.y ) ||
 				( m_sSelectBgn.m_ptFrom.y == m_ptCaretPos.y && m_sSelectBgn.m_ptFrom.x >= m_ptCaretPos.x )
@@ -3440,12 +3410,9 @@ re_do:;
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 
 			/* 選択範囲の変更 */
-			m_sSelectBgn.m_ptFrom.y = nSelectLineBgnFrom_Old;	/* 範囲選択開始行(原点) */
-			m_sSelectBgn.m_ptFrom.x = nSelectColBgnFrom_Old;	/* 範囲選択開始桁(原点) */
-			m_sSelectBgn.m_ptTo.y = nSelectLineBgnTo_Old;		/* 範囲選択開始行(原点) */
-			m_sSelectBgn.m_ptTo.x = nSelectColBgnTo_Old;		/* 範囲選択開始桁(原点) */
-			m_sSelect.m_ptFrom.y =	nSelectLineFrom_Old;
-			m_sSelect.m_ptFrom.x = nSelectColFrom_Old;
+			m_sSelectBgn = sSelectBgn_Old;	/* 範囲選択開始(原点) */
+			m_sSelect.m_ptFrom.y = sSelect_Old.m_ptFrom.y;
+			m_sSelect.m_ptFrom.x = sSelect_Old.m_ptFrom.x;
 			m_sSelect.m_ptTo.y = nLineFrom;
 			m_sSelect.m_ptTo.x = nColmFrom;
 
