@@ -36,8 +36,8 @@ class CProcess;
 //	_os/COsVersionInfo.cppを作るべきか?
 BOOL	 		COsVersionInfo::m_bSuccess;
 OSVERSIONINFO	COsVersionInfo::m_cOsVersionInfo;
-#ifdef USE_SSE
-bool			COsVersionInfo::m_bSSE;
+#ifdef USE_SSE2
+bool			COsVersionInfo::m_bSSE2;
 #endif
 
 
@@ -128,12 +128,12 @@ bool CProcessFactory::IsValidVersion()
 	}
 
 	/* 拡張命令セットのチェック */
-#ifdef USE_SSE
-	if ( cOsVer._SupportSSE() ) {
+#ifdef USE_SSE2
+	if ( cOsVer._SupportSSE2() ) {
 	} else {
 		InfoMessage( NULL,
 			_T("このアプリケーションを実行するには、\n")
-			_T("SSE命令セットをサポートしたCPUが必要です。\n")
+			_T("SSE2命令セットをサポートしたCPUが必要です。\n")
 			_T("アプリケーションを終了します。")
 		);
 		return false;
