@@ -28,7 +28,7 @@
 #include "doc/CDocListener.h"
 
 class CAppMode : public TSingleton<CAppMode>, public CDocListenerEx{ //###仮
-public:
+	friend class TSingleton<CAppMode>;
 	CAppMode()
 	: m_bViewMode( false )	// ビューモード
 	, m_bDebugMode( false )		// デバッグモニタモード
@@ -36,6 +36,7 @@ public:
 		wcscpy( m_szGrepKey, L"" );
 	}
 
+public:
 	//インターフェース
 	bool	IsViewMode() const				{ return m_bViewMode; }			//!< ビューモードを取得
 	void	SetViewMode(bool bViewMode)		{ m_bViewMode = bViewMode; }	//!< ビューモードを設定

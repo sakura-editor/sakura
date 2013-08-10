@@ -45,6 +45,9 @@ enum EDiffMark{
 
 //! DIFF‹““®‚ÌŠÇ—
 class CDiffManager : public TSingleton<CDiffManager>{
+	friend class TSingleton<CDiffManager>;
+	CDiffManager(){}
+
 public:
 	void SetDiffUse(bool b){ m_bIsDiffUse = b; }
 	bool IsDiffUse() const{ return m_bIsDiffUse; }		//!< DIFFg—p’†

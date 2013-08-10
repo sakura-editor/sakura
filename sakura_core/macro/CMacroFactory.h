@@ -54,8 +54,10 @@ class CMacroManagerBase;
 	Singleton
 */
 class CMacroFactory : public TSingleton<CMacroFactory> {
-public:
 	friend class TSingleton<CMacroFactory>;
+	CMacroFactory();
+
+public:
 	typedef CMacroManagerBase* (*Creator)(const TCHAR*);
 
 	bool RegisterCreator( Creator );
@@ -67,7 +69,6 @@ public:
 	CMacroManagerBase* Create(const TCHAR* ext);
 
 private:
-	CMacroFactory();
 	std::tstring Ext2Key(const TCHAR *ext);
 
 	// Jan. 31, 2004 genta

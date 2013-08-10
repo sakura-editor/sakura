@@ -51,17 +51,14 @@ struct GrepInfo {
 	@brief コマンドラインパーサ クラス
 */
 class CCommandLine  : public TSingleton<CCommandLine> {
-public:
 	friend class TSingleton<CCommandLine>;
-private:
+	CCommandLine();
+
 	static int CheckCommandLine(
 		LPTSTR	str,		//!< [in] 検証する文字列（先頭の-は含まない）
 		TCHAR**	arg,		//!< [out] 引数がある場合はその先頭へのポインタ
 		int*	arglen		//!< [out] 引数の長さ
 	);
-	
-	// 外から作らせない。
-	CCommandLine();
 
 	/*!
 		引用符で囲まれている数値を認識するようにする

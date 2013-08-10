@@ -41,22 +41,16 @@ public:
 	//公開インターフェース
 	static T* getInstance()
 	{
-		if(!gm_instance)
-			gm_instance = new T;
-		return gm_instance;
+		static T instance;
+		return &instance;
 	}
 
 protected:
-	//※2個以上のインスタンスは想定していません。assertが破綻を検出します。
-	TSingleton(){ assert(gm_instance==NULL); gm_instance=static_cast<T*>(this); }
-	~TSingleton(){ assert(gm_instance); gm_instance=NULL; }
-
+	TSingleton(){}
 private:
-	static T* gm_instance;
+	TSingleton(TSingleton const&);
+	void operator=(TSingleton const&);
 };
-template <class T>
-T* TSingleton<T>::gm_instance = NULL;
-
 
 /*!
 	1個しかインスタンスが存在しないクラスからのインスタンス取得インターフェースをstaticで提供。

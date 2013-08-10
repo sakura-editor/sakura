@@ -103,6 +103,9 @@ private:
 
 
 class CAppNodeManager : public TSingleton<CAppNodeManager>{
+	friend class TSingleton<CAppNodeManager>;
+	CAppNodeManager(){}
+
 public:
 	//グループ
 	void ResetGroupId();									/* グループをIDリセットする */

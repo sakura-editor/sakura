@@ -32,6 +32,9 @@ class CDocLineMgr;
 
 //! Modifiedä«óù
 class CModifyManager : public TSingleton<CModifyManager>, public CDocListenerEx{
+	friend class TSingleton<CModifyManager>;
+	CModifyManager(){}
+
 public:
 	void OnAfterSave(const SSaveInfo& sSaveInfo);
 

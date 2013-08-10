@@ -53,10 +53,9 @@ typedef struct _migemo migemo;
 #include "util/design_template.h"
 
 class CMigemo : public TSingleton<CMigemo>, public CDllImp {
-public:
 	friend class TSingleton<CMigemo>;
-private:
 	CMigemo(){}
+
 public:
 	virtual ~CMigemo();
 
