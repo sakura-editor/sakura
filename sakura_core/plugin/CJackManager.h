@@ -73,14 +73,10 @@ enum ERegisterPlugResult {
 
 //ジャック管理クラス
 class CJackManager : public TSingleton<CJackManager>{
-	typedef std::wstring wstring;
-
-public:
 	friend class TSingleton<CJackManager>;
-
-	//コンストラクタ
-protected:
 	CJackManager();
+
+	typedef std::wstring wstring;
 
 	//操作
 public:

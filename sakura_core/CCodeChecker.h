@@ -28,6 +28,9 @@
 #include "util/design_template.h"
 
 class CCodeChecker : public CDocListenerEx, public TSingleton<CCodeChecker>{
+	friend class TSingleton<CCodeChecker>;
+	CCodeChecker(){}
+
 public:
 	//セーブ時チェック
 	ECallbackResult OnCheckSave(SSaveInfo* pSaveInfo);
