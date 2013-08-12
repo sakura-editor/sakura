@@ -2791,14 +2791,14 @@ BEGIN
     F_GONEXTPARAGRAPH       "次の段落へ移動"
     F_GOPREVPARAGRAPH       "前の段落へ移動"
     F_AUTOSCROLL            "オートスクロール"
-    F_WHELLUP               "ホイールアップ"
-    F_WHELLDOWN             "ホイールダウン"
-    F_WHELLLEFT             "ホイール左"
-    F_WHELLRIGHT            "ホイール右"
-    F_WHELLPAGEUP           "ホイールページアップ"
-    F_WHELLPAGEDOWN         "ホイールページダウン"
-    F_WHELLPAGELEFT         "ホイールページ左"
-    F_WHELLPAGERIGHT        "ホイールページ右"
+    F_WHEELUP               "ホイールアップ"
+    F_WHEELDOWN             "ホイールダウン"
+    F_WHEELLEFT             "ホイール左"
+    F_WHEELRIGHT            "ホイール右"
+    F_WHEELPAGEUP           "ホイールページアップ"
+    F_WHEELPAGEDOWN         "ホイールページダウン"
+    F_WHEELPAGELEFT         "ホイールページ左"
+    F_WHEELPAGERIGHT        "ホイールページ右"
 END
 
 STRINGTABLE DISCARDABLE 
