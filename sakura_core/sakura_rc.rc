@@ -215,13 +215,13 @@ BEGIN
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
                     BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,96,55,10
     LTEXT           "",IDC_STATIC_JRE32VER,18,106,159,8
-    CONTROL         "ファイル毎最初のみ検索(&R)",
+    CONTROL         "ファイル毎最初のみ検索(&G)",
                     IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,5,116,119,10
-    CONTROL         "ベースフォルダ表示(&B)",
+    CONTROL         "ベースフォルダ表示(&V)",
                     IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,5,128,83,10
-    CONTROL         "フォルダ毎に表示(&R)",
+    CONTROL         "フォルダ毎に表示(&Y)",
                     IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,90,128,83,10
     LTEXT           "文字コードセット(&A)",IDC_STATIC,16,142,62,8
