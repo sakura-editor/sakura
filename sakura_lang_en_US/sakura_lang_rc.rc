@@ -2555,13 +2555,13 @@ BEGIN
             VALUE "Comments", "This is free software\0"
             VALUE "CompanyName", "Project: Sakura-Editor\0"
             VALUE "FileDescription", "Sakura Editor\0"
-            VALUE "FileVersion", "2.0\0"
+            VALUE "FileVersion", FL_VER_STR
             VALUE "InternalName", "sakura\0"
-            VALUE "LegalCopyright", "Copyright (C) Norio Nakatani & Collaborators\0"
+            VALUE "LegalCopyright", S_COPYRIGHT
             VALUE "LegalTrademarks", " \0"
             VALUE "OriginalFilename", "sakura.exe\0"
             VALUE "ProductName", "Sakura Editor\0"
-            VALUE "ProductVersion", "2.0.5.0\0"
+            VALUE "ProductVersion", PR_VER_STR
 #if (SVN_REV != 0)
                 " (r" SVN_REV_STR ")"
 #endif
