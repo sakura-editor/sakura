@@ -528,14 +528,14 @@ bool CMacro::HandleCommand(
 	case F_CHANGETYPE:
 	case F_TOGGLE_KEY_SEARCH:
 		//	一つ目の引数が数値。
-	case F_WHELLUP:
-	case F_WHELLDOWN:
-	case F_WHELLLEFT:
-	case F_WHELLRIGHT:
-	case F_WHELLPAGEUP:
-	case F_WHELLPAGEDOWN:
-	case F_WHELLPAGELEFT:
-	case F_WHELLPAGERIGHT:
+	case F_WHEELUP:
+	case F_WHEELDOWN:
+	case F_WHEELLEFT:
+	case F_WHEELRIGHT:
+	case F_WHEELPAGEUP:
+	case F_WHEELPAGEDOWN:
+	case F_WHEELPAGELEFT:
+	case F_WHEELPAGERIGHT:
 		pcEditView->GetCommander().HandleCommand( Index, true, (Argument[0] != NULL ? _wtoi(Argument[0]) : 0 ), 0, 0, 0 );
 		break;
 	case F_CHGMOD_EOL:	//	入力改行コード指定。EEolTypeの数値を指定。2003.06.23 Moca

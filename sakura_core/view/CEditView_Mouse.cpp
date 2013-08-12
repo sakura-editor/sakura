@@ -1259,38 +1259,38 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, LPARAM lParam, bool bHorizontal
 			// コード指定とスペシャルモードを除く
 		}else if( bHorizontalMsg ){
 			if( nScrollCode == SB_LINEUP ){
-				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLLEFT].m_nFuncCodeArr[nIdx];
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELLEFT].m_nFuncCodeArr[nIdx];
 			}else{
-				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLRIGHT].m_nFuncCodeArr[nIdx];
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELRIGHT].m_nFuncCodeArr[nIdx];
 			}
 		}else{
 			if( nScrollCode == SB_LINEUP ){
-				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLUP].m_nFuncCodeArr[nIdx];
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELUP].m_nFuncCodeArr[nIdx];
 			}else{
-				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHELLDOWN].m_nFuncCodeArr[nIdx];
+				nFuncID = GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr[MOUSEFUNCTION_WHEELDOWN].m_nFuncCodeArr[nIdx];
 			}
 		}
 		bool bExecCmd = false;
 		if( !bHorizontal && !bKeyPageScroll ){
-			if( nFuncID < F_WHELL_FIRST || F_WHELL_LAST < nFuncID ){
+			if( nFuncID < F_WHEEL_FIRST || F_WHEEL_LAST < nFuncID ){
 				bExecCmd = true;
 			}
-			if( nFuncID == F_WHELLLEFT || nFuncID == F_WHELLRIGHT
-				|| nFuncID == F_WHELLPAGELEFT ||  nFuncID == F_WHELLPAGERIGHT ){
+			if( nFuncID == F_WHEELLEFT || nFuncID == F_WHEELRIGHT
+				|| nFuncID == F_WHEELPAGELEFT ||  nFuncID == F_WHEELPAGERIGHT ){
 				bHorizontal = true;
 			}
-			if( nFuncID == F_WHELLPAGEUP || nFuncID == F_WHELLPAGEDOWN
-				|| nFuncID == F_WHELLPAGELEFT ||  nFuncID == F_WHELLPAGERIGHT ){
+			if( nFuncID == F_WHEELPAGEUP || nFuncID == F_WHEELPAGEDOWN
+				|| nFuncID == F_WHEELPAGELEFT ||  nFuncID == F_WHEELPAGERIGHT ){
 				bKeyPageScroll = true;
 			}
-			if( nFuncID == F_WHELLUP || nFuncID == F_WHELLLEFT
-				|| nFuncID == F_WHELLPAGEUP || nFuncID == F_WHELLPAGELEFT ){
+			if( nFuncID == F_WHEELUP || nFuncID == F_WHEELLEFT
+				|| nFuncID == F_WHEELPAGEUP || nFuncID == F_WHEELPAGELEFT ){
 				if( nScrollCode != SB_LINEUP ){
 					zDelta *= -1;
 					nScrollCode = SB_LINEUP;
 				}
-			}else if( nFuncID == F_WHELLDOWN || nFuncID == F_WHELLRIGHT
-				|| nFuncID == F_WHELLPAGEDOWN || nFuncID == F_WHELLPAGERIGHT ){
+			}else if( nFuncID == F_WHEELDOWN || nFuncID == F_WHEELRIGHT
+				|| nFuncID == F_WHEELPAGEDOWN || nFuncID == F_WHEELPAGERIGHT ){
 				if( nScrollCode != SB_LINEDOWN ){
 					zDelta *= -1;
 					nScrollCode = SB_LINEDOWN;

@@ -1157,66 +1157,66 @@ void CViewCommander::Command_AUTOSCROLL()
 	}
 }
 
-void CViewCommander::Command_WHELLUP(int zDelta)
+void CViewCommander::Command_WHEELUP(int zDelta)
 {
 	int zDelta2 = (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLUP );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELUP );
 }
 
-void CViewCommander::Command_WHELLDOWN(int zDelta)
+void CViewCommander::Command_WHEELDOWN(int zDelta)
 {
 	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLDOWN );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELDOWN );
 }
 
-void CViewCommander::Command_WHELLLEFT(int zDelta)
+void CViewCommander::Command_WHEELLEFT(int zDelta)
 {
 	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLLEFT );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELLEFT );
 }
 
-void CViewCommander::Command_WHELLRIGHT(int zDelta)
+void CViewCommander::Command_WHEELRIGHT(int zDelta)
 {
 	int zDelta2 = (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLRIGHT );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELRIGHT );
 }
 
-void CViewCommander::Command_WHELLPAGEUP(int zDelta)
+void CViewCommander::Command_WHEELPAGEUP(int zDelta)
 {
 	int zDelta2 = (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLPAGEUP );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELPAGEUP );
 }
 
-void CViewCommander::Command_WHELLPAGEDOWN(int zDelta)
+void CViewCommander::Command_WHEELPAGEDOWN(int zDelta)
 {
 	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHELLPAGEDOWN );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, false, F_WHEELPAGEDOWN );
 }
 
-void CViewCommander::Command_WHELLPAGELEFT(int zDelta)
+void CViewCommander::Command_WHEELPAGELEFT(int zDelta)
 {
 	int zDelta2 = -1 * (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLPAGELEFT );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELPAGELEFT );
 }
 
-void CViewCommander::Command_WHELLPAGERIGHT(int zDelta)
+void CViewCommander::Command_WHEELPAGERIGHT(int zDelta)
 {
 	int zDelta2 = (zDelta == 0 ? 120: zDelta);
 	WPARAM wParam = MAKELONG(0, zDelta2);
 	LPARAM lParam = 0;
-	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHELLPAGERIGHT );
+	m_pCommanderView->OnMOUSEWHEEL2( wParam, lParam, true, F_WHEELPAGERIGHT );
 }
