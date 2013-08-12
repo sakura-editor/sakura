@@ -174,10 +174,11 @@ class CColor_DoubleQuote;
 class CColor_Heredoc;
 
 class CColorStrategyPool : public TSingleton<CColorStrategyPool>{
-public:
-	//コンストラクタ・デストラクタ
+	friend class TSingleton<CColorStrategyPool>;
 	CColorStrategyPool();
 	virtual ~CColorStrategyPool();
+
+public:
 
 	//取得
 	CColorStrategy*	GetStrategy(int nIndex) const{ return m_vStrategies[nIndex]; }

@@ -188,7 +188,7 @@ void _DispEOF(
 	const CTextArea* pArea=&pcView->GetTextArea();
 
 	//定数
-	const wchar_t	szEof[] = L"[EOF]";
+	static const wchar_t	szEof[] = L"[EOF]";
 	const int		nEofLen = _countof(szEof) - 1;
 
 	//クリッピング領域を計算

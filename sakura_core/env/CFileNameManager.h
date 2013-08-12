@@ -53,14 +53,13 @@ struct SShare_FileNameManagement{
 
 //!ファイル名管理
 class CFileNameManager : public TSingleton<CFileNameManager>{
-public:
 	friend class TSingleton<CFileNameManager>;
-protected:
 	CFileNameManager()
 	{
 		m_pShareData = &GetDllShareData();
 		m_nTransformFileNameCount = -1;
 	}
+
 public:
 	//ファイル名関連
 	LPTSTR GetTransformFileNameFast( LPCTSTR, LPTSTR, int );	// 2002.11.24 Moca Add

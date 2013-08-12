@@ -29,9 +29,11 @@
 #include "CFigureStrategy.h"
 
 class CFigureManager : public TSingleton<CFigureManager>{
-public:
+	friend class TSingleton<CFigureManager>;
 	CFigureManager();
 	virtual ~CFigureManager();
+
+public:
 	CFigure& GetFigure(const wchar_t* pText);
 
 	// İ’è•ÏX

@@ -67,12 +67,8 @@ enum TABITEMSTATES {
 	UxTheme コンポーネントの動的ロードをサポートするクラス
 */
 class CUxTheme : public TSingleton<CUxTheme>, public CDllImp {
-public:
 	friend class TSingleton<CUxTheme>;
-private:
 	CUxTheme();
-
-public:
 	virtual ~CUxTheme();
 
 protected:

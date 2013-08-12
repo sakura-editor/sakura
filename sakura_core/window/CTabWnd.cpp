@@ -152,6 +152,9 @@ LRESULT CTabWnd::TabWndDispatchEvent( HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 	case WM_MOUSEMOVE:
 		return OnTabMouseMove( wParam, lParam );
 
+	case WM_TIMER:
+		return OnTabTimer( wParam, lParam );
+
 	case WM_CAPTURECHANGED:
 		return OnTabCaptureChanged( wParam, lParam );
 
@@ -195,21 +198,22 @@ LRESULT CTabWnd::OnTabLButtonDown( WPARAM wParam, LPARAM lParam )
 	if( 0 > nSrcTab )
 		return 1L;
 
+	// タブの閉じるボタン押下処理
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
 		// 閉じるボタンのチェック
 		RECT rcItem;
-		TabCtrl_GetItemRect(m_hwndTab, nSrcTab, &rcItem);
-		::InflateRect(&rcItem, DpiScaleX(2), DpiScaleY(2));
 		RECT rcClose;
+		TabCtrl_GetItemRect(m_hwndTab, nSrcTab, &rcItem);
 		GetTabCloseBtnRect(&rcItem, &rcClose, nSrcTab == TabCtrl_GetCurSel(m_hwndTab));
 		if( ::PtInRect(&rcClose, hitinfo.pt) ){
 			// 閉じるボタン上ならキャプチャー開始
-			m_eCaptureSrc = CAPT_TABCLOSE;
-			::SetCapture( GetHwnd() );
+			m_nTabCloseCapture = nSrcTab;
+			::SetCapture( m_hwndTab );
 			return 0L;
 		}
 	}
 
+	// マウスドラッグ開始処理
 	m_eDragState = DRAG_CHECK;	// ドラッグのチェックを開始
 
 	// ドラッグ元タブを記憶する
@@ -230,6 +234,22 @@ LRESULT CTabWnd::OnTabLButtonUp( WPARAM wParam, LPARAM lParam )
 	int nDstTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
 	int nSelfTab = FindTabIndexByHWND( GetParentHwnd() );
 
+	// タブの閉じるボタン押下処理
+	if( m_nTabCloseCapture >= 0 ){	// タブ内の閉じるボタンが押し下げられていた?
+		// 元の閉じるボタンと同一の閉じるボタン上ならタブを閉じる
+		RECT rcItem;
+		RECT rcClose;
+		TabCtrl_GetItemRect(m_hwndTab, m_nTabCloseCapture, &rcItem);
+		GetTabCloseBtnRect(&rcItem, &rcClose, m_nTabCloseCapture == TabCtrl_GetCurSel(m_hwndTab));
+		if( ::PtInRect(&rcClose, hitinfo.pt) ){
+			ExecTabCommand( F_WINCLOSE, MAKEPOINTS(lParam) );
+		}
+		// キャプチャー解除
+		BreakDrag();
+		return 0L;
+	}
+
+	// マウスドロップ処理
 	switch( m_eDragState )
 	{
 	case DRAG_CHECK:
@@ -299,6 +319,67 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 	hitinfo.pt.y = HIWORD( (DWORD)lParam );
 	int nDstTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
 
+	// 各タブの閉じるボタン描画用処理
+	EDispTabClose bDispTabClose = m_pShareData->m_Common.m_sTabBar.m_bDispTabClose;
+	if( bDispTabClose && ::GetCapture() != m_hwndTab ){
+		int nTabHoverPrev = m_nTabHover;
+		int nTabHoverCur = nDstTab;
+		RECT rcPrev;
+		RECT rcCur;
+		RECT rcCurClose;
+		TabCtrl_GetItemRect( m_hwndTab, nTabHoverPrev, &rcPrev );
+		TabCtrl_GetItemRect( m_hwndTab, nTabHoverCur, &rcCur );
+		GetTabCloseBtnRect(&rcCur, &rcCurClose, nTabHoverCur == TabCtrl_GetCurSel(m_hwndTab));
+
+		m_nTabHover = nTabHoverCur;
+		if( nTabHoverCur >= 0 ){	// カーソルがどれかタブ内にある
+			if( nTabHoverPrev < 0 ){	// タブ外から入った
+				::SetTimer( m_hwndTab, 1, 200, NULL );	// タイマー起動
+			}
+
+			// 閉じるボタンの自動表示
+			if( bDispTabClose == DISPTABCLOSE_AUTO ){
+				if( nTabHoverCur != nTabHoverPrev ){	// タブ外または別のタブから入った
+					if( nTabHoverPrev >= 0 ){	// 別のタブから入った
+						// 前回のタブを再描画する
+						::InvalidateRect( m_hwndTab, &rcPrev, TRUE );
+					}
+					// このタブを再描画する
+					::InvalidateRect( m_hwndTab, &rcCur, TRUE );
+				}
+			}
+
+			// 閉じるボタン上のホバー状態を変える
+			if( ::PtInRect(&rcCurClose, hitinfo.pt) ){	// 閉じるボタン上
+				if( !m_bTabCloseHover || nTabHoverCur != nTabHoverPrev ){	// 以前はマウス下の閉じるボタンをハイライトしていなかった
+					m_bTabCloseHover = true;
+					if( nTabHoverCur != nTabHoverPrev ){
+						// 前回のタブを再描画する
+						::InvalidateRect( m_hwndTab, &rcPrev, TRUE );
+					}
+					// このタブを再描画する
+					::InvalidateRect( m_hwndTab, &rcCur, TRUE );
+				}
+			}else{
+				if( m_bTabCloseHover ){	// 閉じるボタンから出た
+					// 前回、閉じるボタンをハイライトしていたタブを再描画する
+					m_bTabCloseHover = false;
+					::InvalidateRect( m_hwndTab, &rcPrev, TRUE );
+				}
+			}
+		}else{	// カーソルがタブ外に出た
+			::KillTimer( m_hwndTab, 1 );	// タイマー削除
+			if( bDispTabClose == DISPTABCLOSE_AUTO || m_bTabCloseHover ){
+				if( nTabHoverPrev >= 0 ){
+					// 前回のタブを再描画する
+					::InvalidateRect( m_hwndTab, &rcPrev, TRUE );
+				}
+			}
+			m_bTabCloseHover = false;
+		}
+	}
+
+	// マウスドラッグ中の処理
 	switch( m_eDragState )
 	{
 	case DRAG_CHECK:
@@ -353,6 +434,9 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 					// TABまとめない場合は、Refresh通知をした方がいいがマウスキャプチャが終了するので、まとめると同じ動きにする
 					ReorderTab( m_nSrcTab, nDstTab );
 					Refresh( FALSE );
+					if( m_nTabHover == m_nSrcTab ){
+						m_nTabHover = nDstTab;	// 自動表示の閉じるボタンも一緒に移動する
+					}
 					m_nSrcTab = nDstTab;
 					m_bTabSwapped = TRUE;
 					::InvalidateRect( GetHwnd(), NULL, TRUE );
@@ -394,6 +478,23 @@ LRESULT CTabWnd::OnTabMouseMove( WPARAM wParam, LPARAM lParam )
 
 	default:
 		return 1L;
+	}
+
+	return 0L;
+}
+
+/*! タブ部 WM_TIMER 処理 */
+LRESULT CTabWnd::OnTabTimer( WPARAM wParam, LPARAM lParam )
+{
+	if( wParam == 1 )
+	{
+		// カーソルがタブ外にある場合にも WM_MOUSEMOVE を送る
+		TCHITTESTINFO	hitinfo;
+		::GetCursorPos( &hitinfo.pt );
+		::ScreenToClient( m_hwndTab, &hitinfo.pt );
+		int nDstTab = TabCtrl_HitTest( m_hwndTab, (LPARAM)&hitinfo );
+		if( nDstTab < 0 )
+			::SendMessageAny( m_hwndTab, WM_MOUSEMOVE, 0, MAKELONG( hitinfo.pt.x, hitinfo.pt.y ) );
 	}
 
 	return 0L;
@@ -712,6 +813,9 @@ CTabWnd::CTabWnd()
 , m_bCloseBtnHilighted( FALSE )	//	2006.10.21 ryoji
 , m_eCaptureSrc( CAPT_NONE )	//	2006.11.30 ryoji
 , m_nTabBorderArray( NULL )		//  2012.04.22 syat
+, m_nTabHover( -1 )
+, m_bTabCloseHover( false )
+, m_nTabCloseCapture( -1 )
 {
 	m_pszClassName = _T("CTabWnd");
 	/* 共有データ構造体のアドレスを返す */
@@ -1058,41 +1162,6 @@ LRESULT CTabWnd::OnLButtonUp( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				}
 				::PostMessageAny( GetParentHwnd(), WM_COMMAND, MAKEWPARAM( nId, 0 ), (LPARAM)NULL );
 			}
-		}else if( m_eCaptureSrc == CAPT_TABCLOSE ){	// キャプチャー元はタブを閉じるボタン?
-			int nTabIdx = 0;
-			int iTabCount = TabCtrl_GetItemCount(m_hwndTab);
-			RECT rcItem;
-			for( ; nTabIdx < iTabCount; nTabIdx++ ){
-				TabCtrl_GetItemRect(m_hwndTab, nTabIdx, &rcItem);
-				::InflateRect(&rcItem, DpiScaleX(2), DpiScaleY(2));
-				if( ::PtInRect(&rcItem, pt)){
-					RECT rcClose;
-					GetTabCloseBtnRect(&rcItem, &rcClose, nTabIdx == TabCtrl_GetCurSel(m_hwndTab));
-					if( ::PtInRect(&rcClose, pt) ){
-						// 閉じるボタン上ならタブを閉じる
-						EditNode* pTopNode = CAppNodeManager::getInstance()->GetEditNode( ::GetParent(::GetParent(m_hwndTab)) );
-						EditNode* nodes = NULL;
-						int nNodeCount = CAppNodeManager::getInstance()->GetOpenedWindowArr( &nodes, TRUE, TRUE );
-						int nEditIdx = 0;
-						for ( ; nEditIdx < nNodeCount; nEditIdx++ ){
-							EditNode* node = &nodes[nEditIdx];
-							if( node->m_nGroup != pTopNode->m_nGroup ){
-								continue;
-							}
-							if( nTabIdx == 0 ){
-								// ウィンドウを閉じるコマンドを実行する
-								return ExecTabCommand( F_WINCLOSE, MAKEPOINTS(lParam) );
-								break;
-							}
-							nTabIdx --;
-						}
-						if( nNodeCount > 0 ){
-							delete[] nodes;
-						}
-					}
-					break;
-				}
-			}
 		}
 
 		// キャプチャー解除
@@ -1338,8 +1407,17 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		gr.SetTextBackTransparent(true);
 		RECT rcText = rcItem;
 		rcText.top += (bSelected ? 0 : DpiScaleY(5)) - DpiScaleY(1);
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
-			rcText.right -= (rcBtnBase.right + DpiScaleX(2));
+
+		// テキスト矩形は最大でもタブを閉じるボタンの左端までに切り詰める
+		// タブを閉じるボタンの矩形は他の箇所と同様 TabCtrl_GetItemRect の矩形から取得（lpdis->rcItem の矩形だと若干ずれる）
+		EDispTabClose bDispTabClose = m_pShareData->m_Common.m_sTabBar.m_bDispTabClose;
+		bool bDrawTabCloseBtn = (bDispTabClose == DISPTABCLOSE_ALLWAYS || (bDispTabClose == DISPTABCLOSE_AUTO && nTabIndex == m_nTabHover));
+		RECT rcGetItemRect;
+		TabCtrl_GetItemRect(m_hwndTab, nTabIndex, &rcGetItemRect);
+		if( bDrawTabCloseBtn ){
+			RECT rcClose;
+			GetTabCloseBtnRect(&rcGetItemRect, &rcClose, nTabIndex == TabCtrl_GetCurSel(m_hwndTab));
+			rcText.right = rcClose.left;
 		}
 
 		::DrawText( gr, szBuf, -1, &rcText, DT_SINGLELINE | DT_LEFT | DT_VCENTER );
@@ -1347,8 +1425,8 @@ LRESULT CTabWnd::OnDrawItem( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam 
 		gr.PopTextForeColor();
 
 		// タブを閉じるボタンを描画
-		if( m_pShareData->m_Common.m_sTabBar.m_bDispTabClose ){
-			DrawTabCloseBtn( gr, &rcItem, bSelected );
+		if( bDrawTabCloseBtn ){
+			DrawTabCloseBtn( gr, &rcGetItemRect, bSelected, (nTabIndex == m_nTabHover) && m_bTabCloseHover );
 		}
 
 		// Vista以降ではオーナードロータブに自動で3D枠が描画されてしまうため、
@@ -2254,7 +2332,7 @@ void CTabWnd::LayoutTab( void )
 	// タブ余白設定（「閉じるボタン」や「アイコン」の設定切替時の余白切替）
 	// ※ 画面のちらつきや体感性能にさほど影響は無さそうなので条件を絞らず毎回 TabCtrl_SetPadding() を実行する
 	cx = 6;
-	if( bDispTabClose ){
+	if( bDispTabClose == DISPTABCLOSE_ALLWAYS ){
 		// 閉じるボタンの分だけパディングを追加して横幅を広げる
 		int nWidth = rcBtnBase.right - rcBtnBase.left;
 		cx += bDispTabIcon? (nWidth + 2)/3: (nWidth + 1)/2;	// それっぽく調整: ボタン幅の 1/3（アイコン有） or 1/2（アイコン無）
@@ -2468,7 +2546,7 @@ void CTabWnd::DrawBtnBkgnd( HDC hdc, const LPRECT lprcBtn, BOOL bBtnHilighted )
 */
 void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 {
-	const POINT ptBase[4] = { {4, 8}, {7, 11}, {8, 11}, {11, 8} };	// 描画イメージ形状
+	static const POINT ptBase[4] = { {4, 8}, {7, 11}, {8, 11}, {11, 8} };	// 描画イメージ形状
 	POINT pt[4];
 
 	RECT rcBtn;
@@ -2495,7 +2573,7 @@ void CTabWnd::DrawListBtn( CGraphics& gr, const LPRECT lprcClient )
 /*! 閉じるマーク描画処理 */
 void CTabWnd::DrawCloseFigure( CGraphics& gr, const RECT& rcBtn )
 {
-	const POINT ptBase1[6][2] =	// [x]描画イメージ形状（直線6本）
+	static const POINT ptBase1[6][2] =	// [x]描画イメージ形状（直線6本）
 	{
 		{{4, 5}, {12, 13}},
 		{{4, 4}, {13, 13}},
@@ -2526,7 +2604,7 @@ void CTabWnd::DrawCloseFigure( CGraphics& gr, const RECT& rcBtn )
 */
 void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 {
-	const POINT ptBase2[10][2] = // [xx]描画イメージ形状（矩形10個）
+	static const POINT ptBase2[10][2] = // [xx]描画イメージ形状（矩形10個）
 	{
 		{{3, 4}, {5, 6}},
 		{{6, 4}, {8, 6}},
@@ -2586,10 +2664,12 @@ void CTabWnd::DrawCloseBtn( CGraphics& gr, const LPRECT lprcClient )
 /*! タブを閉じるボタン描画処理
 	@date 2012.04.08 syat 新規作成
 */
-void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected )
+void CTabWnd::DrawTabCloseBtn( CGraphics& gr, const LPRECT lprcClient, bool selected, bool bHover )
 {
 	RECT rcBtn;
 	GetTabCloseBtnRect( lprcClient, &rcBtn, selected );
+
+	DrawBtnBkgnd( gr, &rcBtn, bHover );
 
 	// 描画イメージを矩形中央にもってくる	// 2009.10.01 ryoji
 	rcBtn.left = rcBtn.left + ((rcBtn.right - rcBtn.left) - (rcBtnBase.right - rcBtnBase.left)) / 2;
@@ -2610,7 +2690,7 @@ void CTabWnd::GetListBtnRect( const LPRECT lprcClient, LPRECT lprc )
 {
 	*lprc = rcBtnBase;
 	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
-	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4), lprcClient->top + TAB_MARGIN_TOP + DpiScaleX(2) );
+	::OffsetRect(lprc, lprcClient->right - TAB_MARGIN_RIGHT + DpiScaleX(4), lprcClient->top + TAB_MARGIN_TOP + DpiScaleY(2) );
 }
 
 /*! 閉じるボタンの矩形取得処理
@@ -2633,9 +2713,8 @@ void CTabWnd::GetTabCloseBtnRect( const LPRECT lprcTab, LPRECT lprc, bool select
 	*lprc = rcBtnBase;
 	DpiScaleRect(lprc);	// 2009.10.01 ryoji 高DPI対応スケーリング
 	::OffsetRect(lprc,
-		lprcTab->right - TAB_MARGIN_RIGHT + DpiScaleX(4) + (DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left))
-			+ DpiScaleX(6) + (selected ? 0 : DpiScaleX(4)),
-		lprcTab->top + TAB_MARGIN_TOP );
+		(lprcTab->right + (selected ? 0: -2)) - ((DpiScaleX(rcBtnBase.right) - DpiScaleX(rcBtnBase.left)) + DpiScaleX(2)),
+		(lprcTab->top + (selected ? -2: 0)) + DpiScaleY(2) );
 }
 
 
