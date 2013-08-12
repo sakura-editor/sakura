@@ -33,19 +33,13 @@
 #include <string>
 
 class CPluginManager : public TSingleton<CPluginManager>{
+	friend class TSingleton<CPluginManager>;
+	CPluginManager();
+
 	// 型定義
 private:
 	typedef std::wstring wstring;
 	typedef std::string string;
-public:
-	friend class TSingleton<CPluginManager>;
-
-	// コンストラクタ
-protected:
-	CPluginManager();
-
-	// デストラクタ
-	// Singletonのため呼ばれない。
 
 	// 操作
 public:

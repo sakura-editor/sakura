@@ -51,8 +51,12 @@
 #define _WIN32_WINNT_WIN7	0x0601
 #endif
 
-#ifdef USE_SSE
+#ifdef USE_SSE2
+#ifdef __MINGW32__
+#include <cpuid.h>
+#else
 #include <intrin.h>
+#endif
 #endif
 
 class COsVersionInfo {
@@ -64,10 +68,14 @@ public:
 		m_cOsVersionInfo.dwOSVersionInfoSize = sizeof( m_cOsVersionInfo );
 		m_bSuccess = ::GetVersionEx( &m_cOsVersionInfo );
 
-#ifdef USE_SSE
- 		int CPUInfo[4];
-		__cpuid(CPUInfo, 1);
-		m_bSSE = (CPUInfo[3] & (2<<25)) != 0;
+#ifdef USE_SSE2
+ 		int data[4];
+#ifdef __MINGW32__
+		__cpuid(1, data[0], data[1], data[2], data[3]);
+#else
+		__cpuid(data, 1);
+#endif
+		m_bSSE2 = (data[3] & (1<<26)) != 0;
 #endif
 	}
 
@@ -185,13 +193,13 @@ public:
 		return ( IsWin32Windows() && (4 == m_cOsVersionInfo.dwMajorVersion) && ( 90 == m_cOsVersionInfo.dwMinorVersion ) );
 	}
 
-#ifdef USE_SSE
-	/*! SSEサポートかを調べる
+#ifdef USE_SSE2
+	/*! SSE2サポートかを調べる
 
-		@retval true support SSE
+		@retval true support SSE2
 	*/
-	bool _SupportSSE(){
-		return m_bSSE;
+	bool _SupportSSE2(){
+		return m_bSSE2;
 	}
 #endif
 
@@ -199,8 +207,8 @@ protected:
 	// Classはstatic(全クラス共有)変数以外持たない
 	static BOOL m_bSuccess;
 	static OSVERSIONINFO m_cOsVersionInfo;
-#ifdef USE_SSE
-	static bool m_bSSE;
+#ifdef USE_SSE2
+	static bool m_bSSE2;
 #endif
 };
 

@@ -38,6 +38,13 @@
 #include "window/CEditWnd.h"
 #include "parse/CWordParse.h"
 #include "util/string_ex2.h"
+#ifdef USE_SSE2
+#ifdef __MINGW32__
+#include <x86intrin.h>
+#else
+#include <intrin.h>
+#endif
+#endif
 
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView);
 
@@ -463,32 +470,28 @@ void CEditView::SetCurrentColor3( CGraphics& gr, EColorIndexType eColorIndex,  E
 
 inline COLORREF MakeColor2(COLORREF a, COLORREF b, int alpha)
 {
-#ifdef USE_SSE
-//	COLORREF result_mmx;
+#ifdef USE_SSE2
 	// (a * alpha + b * (256 - alpha)) / 256 -> ((a - b) * alpha) / 256 + b
-	_asm{
-		pxor mm0, mm0; // mm0 = 0
+	__m128i xmm0, xmm1, xmm2, xmm3;
+	COLORREF color;
+	xmm0 = _mm_setzero_si128();
+	xmm1 = _mm_cvtsi32_si128( a );
+	xmm2 = _mm_cvtsi32_si128( b );
+	xmm3 = _mm_cvtsi32_si128( alpha );
 
-		movd mm1, a;
-		movd mm2, b;
-		movd mm3, alpha;
+	xmm1 = _mm_unpacklo_epi8( xmm1, xmm0 ); // a:a:a:a
+	xmm2 = _mm_unpacklo_epi8( xmm2, xmm0 ); // b:b:b:b
+	xmm3 = _mm_shufflelo_epi16( xmm3, 0 ); // alpha:alpha:alpha:alpha
 
-		punpcklbw mm1, mm0; // a:a:a:a
-		punpcklbw mm2, mm0; // b:b:b:b
-		pshufw mm3, mm3, 0; // alpha:alpha:alpha:alpha
+	xmm1 = _mm_sub_epi16( xmm1, xmm2 ); // (a - b)
+	xmm1 = _mm_mullo_epi16( xmm1, xmm3 ); // (a - b) * alpha
+	xmm1 = _mm_srli_epi16( xmm1, 8 ); // ((a - b) * alpha) / 256
+	xmm1 = _mm_add_epi8( xmm1, xmm2 ); // ((a - b) * alpha) / 256 + b
 
-		psubw mm1, mm2;  // (a - b)
-		pmullw mm1, mm3; // (a - b) * alpha
-		psrlw mm1, 8;    // ((a - b) * alpha) / 256
-		paddb mm1, mm2;  // ((a - b) * alpha) / 256 + b
+	xmm1 = _mm_packus_epi16( xmm1, xmm0 );
+	color = _mm_cvtsi128_si32( xmm1 );
 
-		packuswb mm1, mm0;
-//		movd result_mmx, mm1;
-		movd eax, mm1;
-
-		emms
-	}
-//	return result_mmx;
+	return color;
 #else
 	const int ap = alpha;
 	const int bp = 256 - ap;

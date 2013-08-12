@@ -2796,14 +2796,14 @@ BEGIN
     F_GONEXTPARAGRAPH       "Next Paragraph (&Z)"
     F_GOPREVPARAGRAPH       "Prev Paragraph (&A)"
     F_AUTOSCROLL            "Auto Scroll"
-    F_WHELLUP               "Wheel Up"
-    F_WHELLDOWN             "Wheel Down"
-    F_WHELLLEFT             "Wheel Left"
-    F_WHELLRIGHT            "Wheel Right"
-    F_WHELLPAGEUP           "Wheel Page Up"
-    F_WHELLPAGEDOWN         "Wheel Page Down"
-    F_WHELLPAGELEFT         "Wheel Page Left"
-    F_WHELLPAGERIGHT        "Wheel Page Right"
+    F_WHEELUP               "Wheel Up"
+    F_WHEELDOWN             "Wheel Down"
+    F_WHEELLEFT             "Wheel Left"
+    F_WHEELRIGHT            "Wheel Right"
+    F_WHEELPAGEUP           "Wheel Page Up"
+    F_WHEELPAGEDOWN         "Wheel Page Down"
+    F_WHEELPAGELEFT         "Wheel Page Left"
+    F_WHEELPAGERIGHT        "Wheel Page Right"
 END
 
 STRINGTABLE DISCARDABLE 

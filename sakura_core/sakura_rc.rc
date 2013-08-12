@@ -216,13 +216,13 @@ BEGIN
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",
                     BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,5,96,55,10
     LTEXT           "",IDC_STATIC_JRE32VER,18,106,159,8
-    CONTROL         "ファイル毎最初のみ検索(&R)",
+    CONTROL         "ファイル毎最初のみ検索(&G)",
                     IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,5,116,119,10
-    CONTROL         "ベースフォルダ表示(&B)",
+    CONTROL         "ベースフォルダ表示(&V)",
                     IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,5,128,83,10
-    CONTROL         "フォルダ毎に表示(&R)",
+    CONTROL         "フォルダ毎に表示(&Y)",
                     IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,90,128,83,10
     LTEXT           "文字コードセット(&A)",IDC_STATIC,16,142,62,8
@@ -1476,14 +1476,15 @@ BEGIN
                     WS_TABSTOP,24,66,226,10
     CONTROL         "外部から起動するときは新しいウインドウで開く(&O)",
                     IDC_CHECK_OpenNewWin,"Button",BS_AUTOCHECKBOX |
-					WS_TABSTOP,24,79,160,10
+					WS_TABSTOP,24,79,170,10
     GROUPBOX        "動作モード",IDC_STATIC,7,27,280,68
     CONTROL         "アイコン表示(&I)",IDC_CHECK_DispTabIcon,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,15,115,63,10
     CONTROL         "等幅(&E)",IDC_CHECK_SameTabWidth,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,86,115,39,10
-    CONTROL         "閉じるボタン(&X)",IDC_CHECK_DispTabClose,"Button",
-                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,136,115,63,10
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,80,115,39,10
+    LTEXT           "閉じるボタン(&X)",IDC_STATIC,124,116,48,8
+    COMBOBOX        IDC_CHECK_DispTabClose,173,113,46,80,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "フォント(&F)...",IDC_BUTTON_TABFONT,232,113,51,14
     RTEXT           "Font", IDC_STATIC_TABFONT,102,127,180,17,SS_RIGHT
     CONTROL         "タブ一覧をソートする(&S)",IDC_CHECK_SortTabList,"Button",
@@ -2796,14 +2797,14 @@ BEGIN
     F_GONEXTPARAGRAPH       "次の段落へ移動"
     F_GOPREVPARAGRAPH       "前の段落へ移動"
     F_AUTOSCROLL            "オートスクロール"
-    F_WHELLUP               "ホイールアップ"
-    F_WHELLDOWN             "ホイールダウン"
-    F_WHELLLEFT             "ホイール左"
-    F_WHELLRIGHT            "ホイール右"
-    F_WHELLPAGEUP           "ホイールページアップ"
-    F_WHELLPAGEDOWN         "ホイールページダウン"
-    F_WHELLPAGELEFT         "ホイールページ左"
-    F_WHELLPAGERIGHT        "ホイールページ右"
+    F_WHEELUP               "ホイールアップ"
+    F_WHEELDOWN             "ホイールダウン"
+    F_WHEELLEFT             "ホイール左"
+    F_WHEELRIGHT            "ホイール右"
+    F_WHEELPAGEUP           "ホイールページアップ"
+    F_WHEELPAGEDOWN         "ホイールページダウン"
+    F_WHEELPAGELEFT         "ホイールページ左"
+    F_WHEELPAGERIGHT        "ホイールページ右"
 END
 
 STRINGTABLE DISCARDABLE 
