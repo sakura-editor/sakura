@@ -590,12 +590,12 @@ END
 
 IDD_PRINTING DIALOG DISCARDABLE  0, 0, 145, 75
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "印刷中"
+CAPTION "Printing..."
 FONT 9, "Tahoma"
 BEGIN
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,90,56,50,14
-    LTEXT           "印刷しています・・・・",IDC_STATIC,25,10,65,8
-    LTEXT           "12/123頁",IDC_STATIC_PROGRESS,25,43,100,8
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,90,56,50,14
+    LTEXT           "Printing . . . .",IDC_STATIC,25,10,65,8
+    LTEXT           "12/123pages",IDC_STATIC_PROGRESS,25,43,100,8
     LTEXT           "CEditView.cpp",IDC_STATIC_JOBNAME,25,20,115,20
     ICON            IDI_PRINTER, IDC_STATIC, 10, 8, 11, 9, SS_REALSIZEIMAGE
 END
@@ -606,37 +606,37 @@ STYLE DS_3DLOOK | DS_CONTROL | WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
 FONT 9, "Tahoma"
 BEGIN
     LTEXT           "",IDC_STATIC_STC32,0,0,261,8
-    LTEXT           "文字コードセット(&C):",IDC_STATIC,5,15,64,8
+    LTEXT           "Set Char Code(&C):",IDC_STATIC,5,15,64,8
     COMBOBOX        IDC_COMBO_CODE,71,13,50,126,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    LTEXT           "改行コード(&E):",IDC_STATIC_EOL,127,15,45,8
+    LTEXT           "CR Code(&E):",IDC_STATIC_EOL,127,15,45,8
     COMBOBOX        IDC_COMBO_EOL,173,13,50,126,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "&BOM",IDC_CHECK_BOM,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,226,14,30,10
-    LTEXT           "最近のファイル(&F):",IDC_STATIC,5,32,59,8
+    LTEXT           "Recent File(&F):",IDC_STATIC,5,32,59,8
     COMBOBOX        IDC_COMBO_MRU,71,30,185,236,CBS_DROPDOWNLIST | 
                     CBS_AUTOHSCROLL | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "最近のフォルダ(&D):",IDC_STATIC,5,49,61,8
+    LTEXT           "Recent Folder(&D):",IDC_STATIC,5,49,61,8
     COMBOBOX        IDC_COMBO_OPENFOLDER,71,46,185,236,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_FILEUPDATEQUERY DIALOG DISCARDABLE  0, 0, 223, 107
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
-CAPTION "ファイルが更新されました"
+CAPTION "File has changed"
 FONT 9, "Tahoma"
 BEGIN
-    PUSHBUTTON      "再読込(&R)",IDC_BTN_RELOAD,7,63,50,14
-    DEFPUSHBUTTON   "閉じる(&C)",IDC_BTN_CLOSE,59,63,50,14
-    PUSHBUTTON      "以後未編集で再読込(&L)",IDC_BTN_AUTOLOAD, 114,63,102,14
-    PUSHBUTTON      "以後通知メッセージのみ(&M)",IDC_BTN_NOTIFYONLY,7,81,102,
+    PUSHBUTTON      "Reload(&R)",IDC_BTN_RELOAD,7,63,50,14
+    DEFPUSHBUTTON   "Close(&C)",IDC_BTN_CLOSE,59,63,50,14
+    PUSHBUTTON      "Autoload while not modified(&L)",IDC_BTN_AUTOLOAD, 114,63,102,14
+    PUSHBUTTON      "Notify me later(&M)",IDC_BTN_NOTIFYONLY,7,81,102,
                     14
-    PUSHBUTTON      "以後更新を監視しない(&N)",IDC_BTN_NOSUPERVISION, 114,81,
+    PUSHBUTTON      "Dont Notify me again(&N)",IDC_BTN_NOSUPERVISION, 114,81,
                     102,14
     EDITTEXT        IDC_UPDATEDFILENAME,7,7,209,25,ES_READONLY | 
                     NOT WS_TABSTOP | ES_MULTILINE
-    LTEXT           "このファイルは外部のエディタ等で変更されています。",
+    LTEXT           "This file has been altered by an external editor or other program.",
                     IDC_FILEUPDATEMSG,7,36,209,8
     LTEXT           "",IDC_QUERYRELOADMSG,7,48,209,8
 END
@@ -645,7 +645,7 @@ IDD_FAVORITE DIALOGEX 0, 0, 380, 274
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_THICKFRAME | WS_CLIPCHILDREN | WS_CAPTION | 
 WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "履歴とお気に入りの管理"
+CAPTION "History Management"
 FONT 9, "Tahoma"
 BEGIN
     CONTROL         "List1",IDC_LIST_FAVORITE_FILE,"SysListView32",
@@ -673,19 +673,19 @@ BEGIN
                     LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,25,127,243,79
     CONTROL         "List1",IDC_LIST_FAVORITE_CUR_DIR,"SysListView32",LVS_REPORT | 
                     LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,25,127,243,79
-    PUSHBUTTON      "追加(&I)",IDC_BUTTON_ADD_FAVORITE,5,237,50,14
-    LTEXT           " 履歴の削除：",IDC_STATIC_BUTTONS,65,237,45,14,
+    PUSHBUTTON      "Add(&I)",IDC_BUTTON_ADD_FAVORITE,5,237,50,14
+    LTEXT           " Clear History:",IDC_STATIC_BUTTONS,65,237,45,14,
                     SS_CENTERIMAGE
-    PUSHBUTTON      "すべて(&A)...",IDC_BUTTON_CLEAR,111,237,50,14
-    PUSHBUTTON      "お気に入り以外(&F)...",IDC_BUTTON_DELETE_NOFAVORATE,163,
+    PUSHBUTTON      "All(&A)...",IDC_BUTTON_CLEAR,111,237,50,14
+    PUSHBUTTON      "Except Favorite(&F)...",IDC_BUTTON_DELETE_NOFAVORATE,163,
                     237,75,14
-    PUSHBUTTON      "存在しない項目(&N)...",IDC_BUTTON_DELETE_NOTFOUND,241,237,
+    PUSHBUTTON      "Missing(&N)...",IDC_BUTTON_DELETE_NOTFOUND,241,237,
                     72,14
-    PUSHBUTTON      "選択項目(&D)",IDC_BUTTON_DELETE_SELECTED,315,237,58,14
-    DEFPUSHBUTTON   "閉じる(&C)",IDOK,260,255,50,14
+    PUSHBUTTON      "Selected(&D)",IDC_BUTTON_DELETE_SELECTED,315,237,58,14
+    DEFPUSHBUTTON   "Close(&C)",IDOK,260,255,50,14
     CONTROL         "Tab1",IDC_TAB_FAVORITE,"SysTabControl32",WS_TABSTOP,3,4,
                     374,15
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,320,255,50,14
+    PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,320,255,50,14
     LTEXT           "Message",IDC_STATIC_FAVORITE_MSG,4,254,250,19
 END
 
@@ -693,57 +693,57 @@ IDD_TAGJUMPLIST DIALOGEX 0, 0, 410, 189
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_THICKFRAME | WS_CAPTION | 
 WS_SYSMENU | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "ダイレクトタグジャンプ一覧"
+CAPTION "Direct Tag Jump List"
 FONT 9, "Tahoma"
 BEGIN
     LTEXT           "DIR",IDC_STATIC_BASEDIR,4,151,276,8,SS_NOPREFIX
-    LTEXT           "キーワード(&K)",IDC_STATIC_KEYWORD,4,162,100,8,SS_NOPREFIX
+    LTEXT           "Keyword(&K)",IDC_STATIC_KEYWORD,4,162,100,8,SS_NOPREFIX
     COMBOBOX        IDC_KEYWORD,3,172,134,180,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP
     CONTROL         "List1",IDC_LIST_TAGJUMP,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | 
                     WS_BORDER | WS_TABSTOP,3,4,403,143
-    PUSHBUTTON      "前へ(&P)",IDC_BUTTON_PREVTAG,296,152,50,14
-    PUSHBUTTON      "次へ(&N)",IDC_BUTTON_NEXTTAG,349,152,50,14
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,243,170,50,14
-    DEFPUSHBUTTON   "ジャンプ(&J)",IDOK,296,170,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,349,170,50,14
-    CONTROL         "大文字小文字の同一視(&F)",IDC_CHECK_ICASE,"Button",
+    PUSHBUTTON      "Previous(&P)",IDC_BUTTON_PREVTAG,296,152,50,14
+    PUSHBUTTON      "Next(&N)",IDC_BUTTON_NEXTTAG,349,152,50,14
+    PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,243,170,50,14
+    DEFPUSHBUTTON   "Jump(&J)",IDOK,296,170,50,14
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,349,170,50,14
+    CONTROL         "Case Insensitive(&F)",IDC_CHECK_ICASE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,144,163,93,10
-    CONTROL         "文字列の途中にマッチ(&A)",IDC_CHECK_ANYWHERE,"Button",
+    CONTROL         "Match inside string(&A)",IDC_CHECK_ANYWHERE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,144,175,93,10
 END
 
 IDD_TAG_MAKE DIALOGEX 0, 0, 233, 85
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "タグファイルの作成"
+CAPTION "Make Tag File"
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "タグ作成フォルダ",IDC_STATIC,7,7,65,8
+    LTEXT           "Tag Creation Folder",IDC_STATIC,7,7,65,8
     EDITTEXT        IDC_EDIT_TAG_MAKE_FOLDER,7,18,201,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BUTTON_TAG_MAKE_REF,211,17,15,12
-    PUSHBUTTON      "上(&B)",IDC_BUTTON_FOLDER_UP,186,31,25,14
-    CONTROL         "サブフォルダも対象にする",
+    PUSHBUTTON      "Up(&B)",IDC_BUTTON_FOLDER_UP,186,31,25,14
+    CONTROL         "Recurse subfolders",
                     IDC_CHECK_TAG_MAKE_RECURSE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,7,34,107,10
-    LTEXT           "コマンドラインオプション",IDC_STATIC,7,49,86,8
+    LTEXT           "Command line options",IDC_STATIC,7,49,86,8
     EDITTEXT        IDC_EDIT_TAG_MAKE_CMDLINE,96,47,130,12,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "作成(&O)",IDOK,68,64,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,122,64,50,14
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,176,64,50,14
+    DEFPUSHBUTTON   "Create(&O)",IDOK,68,64,50,14
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,122,64,50,14
+    PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,176,64,50,14
 END
 
 IDD_OPERATIONRUNNING DIALOG DISCARDABLE  0, 0, 190, 35
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "処理の実行中"
+CAPTION "Processing..."
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "処理中です・・・・",IDC_STATIC_MSG,5,5,54,8,NOT 
+    LTEXT           "Processing . . . .",IDC_STATIC_MSG,5,5,54,8,NOT 
                     WS_GROUP
     CONTROL         "Progress1",IDC_PROGRESS,"msctls_progress32",WS_BORDER,5,
                     20,120,10
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,135,16,50,14
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,135,16,50,14
     RTEXT           "",IDC_STATIC_KENSUU,61,5,123,8,NOT WS_GROUP
 END
 
@@ -751,52 +751,52 @@ IDD_DIFF DIALOGEX 0, 0, 263, 303
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_THICKFRAME | WS_CLIPCHILDREN | WS_CAPTION | 
 WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "DIFF差分表示"
+CAPTION "DIFF Differences"
 FONT 9, "Tahoma"
 BEGIN
-    GROUPBOX        "比較するファイル",IDC_FRAME_DIFF_DST,7,47,249,138,
+    GROUPBOX        "Compare with",IDC_FRAME_DIFF_DST,7,47,249,138,
                     WS_GROUP
     EDITTEXT        IDC_EDIT_DIFF_DST,13,72,191,13,ES_AUTOHSCROLL
-    CONTROL         "外部ファイルを指定",IDC_RADIO_DIFF_DST1,"Button",
+    CONTROL         "Using External File",IDC_RADIO_DIFF_DST1,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,13,58,78,11
-    PUSHBUTTON      "参照(&R)...",IDC_BUTTON_DIFF_DST,208,72,42,14,WS_GROUP
-    CONTROL         "他の編集中のファイル",IDC_RADIO_DIFF_DST2,"Button",
+    PUSHBUTTON      "Select(&R)...",IDC_BUTTON_DIFF_DST,208,72,42,14,WS_GROUP
+    CONTROL         "Other Open Editor Files",IDC_RADIO_DIFF_DST2,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,13,89,147,11
     LISTBOX         IDC_LIST_DIFF_FILES,13,102,236,77,LBS_SORT | 
                     LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | 
                     LBS_DISABLENOSCROLL | WS_VSCROLL | WS_HSCROLL | 
                     WS_TABSTOP
-    CONTROL         "大文字小文字の同一視(&C)",IDC_CHECK_DIFF_OPT_CASE,
+    CONTROL         "Case Insensitive(&C)",IDC_CHECK_DIFF_OPT_CASE,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,191,
                     101,10
-    CONTROL         "空白無視(&W)",IDC_CHECK_DIFF_OPT_SPACE,"Button",
+    CONTROL         "Ignore Whitespace(&W)",IDC_CHECK_DIFF_OPT_SPACE,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,203,64,10
-    CONTROL         "空白変更無視(&B)",IDC_CHECK_DIFF_OPT_SPCCHG,"Button",
+    CONTROL         "Ignore differences in whitespace(&B)",IDC_CHECK_DIFF_OPT_SPCCHG,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,216,73,10
-    CONTROL         "空白行無視(&L)",IDC_CHECK_DIFF_OPT_BLINE,"Button",
+    CONTROL         "Ignore Blank Lines(&L)",IDC_CHECK_DIFF_OPT_BLINE,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,229,74,10
-    CONTROL         "タブ空白変換(&T)",IDC_CHECK_DIFF_OPT_TABSPC,"Button",
+    CONTROL         "Tab whitespace difference(&T)",IDC_CHECK_DIFF_OPT_TABSPC,"Button",
                     BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,242,74,10
-    GROUPBOX        "編集中ファイルが...",IDC_FRAME_DIFF_FILE12,110,190,146,
+    GROUPBOX        "Editor File is...",IDC_FRAME_DIFF_FILE12,110,190,146,
                     26,WS_GROUP
-    CONTROL         "新ファイル(&N)",IDC_RADIO_DIFF_FILE1,"Button",
+    CONTROL         "New File(&N)",IDC_RADIO_DIFF_FILE1,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,119,201,59,10
-    CONTROL         "旧ファイル(&D)",IDC_RADIO_DIFF_FILE2,"Button",
+    CONTROL         "Old File(&D)",IDC_RADIO_DIFF_FILE2,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,183,201,59,10
-    GROUPBOX        "次の差分(前の差分)へ移動時",IDC_FRAME_SEARCH_MSG,110,
+    GROUPBOX        "Jump to Prev(Next) diff",IDC_FRAME_SEARCH_MSG,110,
                     221,146,41
-    CONTROL         "見つからないときにメッセージを表示(&M)",
+    CONTROL         "Show message if not found(&M)",
                     IDC_CHECK_NOTIFYNOTFOUND,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,114,232,140,10
-    CONTROL         "先頭（末尾）から再検索する(&Z)",IDC_CHECK_SEARCHALL,
+    CONTROL         "Continue search from top of file(&Z)",IDC_CHECK_SEARCHALL,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,245,130,10
-    CONTROL         "DIFF差分がないときにメッセージを表示",
+    CONTROL         "Show message if no differences found",
                     IDC_CHECK_DIFF_EXEC_STATE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,110,267,139,10
     DEFPUSHBUTTON   "&OK",IDOK,93,282,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,147,282,50,14
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,202,282,50,14
-    LTEXT           "編集中のファイル",IDC_STATIC,7,7,61,8
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,147,282,50,14
+    PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,202,282,50,14
+    LTEXT           "Current Editor File",IDC_STATIC,7,7,61,8
     EDITTEXT        IDC_STATIC_DIFF_SRC,7,18,249,23,ES_MULTILINE | 
                     ES_AUTOVSCROLL | ES_READONLY | NOT WS_BORDER | 
                     WS_VSCROLL,WS_EX_STATICEDGE
@@ -805,56 +805,56 @@ END
 IDD_CTRLCODE DIALOGEX 0, 0, 179, 185
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "コントロールコード"
+CAPTION "Control Code"
 FONT 9, "Tahoma"
 BEGIN
     CONTROL         "List1",IDC_LIST_CTRLCODE,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_NOSORTHEADER | 
                     WS_BORDER | WS_TABSTOP,2,2,175,162
     DEFPUSHBUTTON   "&OK",IDOK,19,168,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,73,168,50,14
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,127,168,50,14
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,73,168,50,14
+    PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,127,168,50,14
 END
 
 IDD_SETCHARSET DIALOGEX 0, 0, 186, 45
 STYLE DS_CENTER | DS_MODALFRAME | DS_SETFONT | WS_BORDER | WS_CAPTION | WS_DLGFRAME | WS_POPUP
-CAPTION "文字コードの指定"
+CAPTION "Select Character Set"
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "文字コードセット(&C):", IDC_STATIC, 5, 9, 64, 8
+    LTEXT           "Character Set(&C):", IDC_STATIC, 5, 9, 64, 8
     COMBOBOX        IDC_COMBO_CHARSET, 71, 7, 50, 126, CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     AUTOCHECKBOX    "&BOM", IDC_CHECK_BOM, 71, 26, 30, 10
     DEFPUSHBUTTON   "&OK", IDOK, 129, 7, 50, 14
-    PUSHBUTTON      "キャンセル(&X)", IDCANCEL, 129, 24, 50, 14
+    PUSHBUTTON      "Cancel(&X)", IDCANCEL, 129, 24, 50, 14
 END
 
 IDD_TYPELIST DIALOGEX 0, 0, 187, 265
 STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
-CAPTION "タイプ別設定一覧"
+CAPTION "Document Type List"
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "下からタイプを選択してください(&T):",IDC_STATIC,5,5,111,8
+    LTEXT           "Selec(&T) the type from below:",IDC_STATIC,5,5,111,8
     LISTBOX         IDC_LIST_TYPES,5,15,120,243,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "設定変更(&S)...",IDOK,130,15,50,14
-    PUSHBUTTON      "一時適用(&R)",IDC_BUTTON_TEMPCHANGE,130,31,50,14
-    PUSHBUTTON      "キャンセル(&X)",IDCANCEL,130,50,50,14
-    PUSHBUTTON      "インポート(&I)", IDC_BUTTON_IMPORT, 130, 99, 50, 14
-    PUSHBUTTON      "エクスポート(&E)", IDC_BUTTON_EXPORT, 130, 118, 50, 14
-    PUSHBUTTON      "初期化(&N)", IDC_BUTTON_INITIALIZE, 130, 137, 50, 14
-    CONTROL         "右クリックメニューに追加",IDC_CHECK_EXT_RMENU,"Button",BS_AUTOCHECKBOX |
+    DEFPUSHBUTTON   "Change (&S)ettings...",IDOK,130,15,50,14
+    PUSHBUTTON      "Tempo(&R)arily Apply",IDC_BUTTON_TEMPCHANGE,130,31,50,14
+    PUSHBUTTON      "Cancel(&X)",IDCANCEL,130,50,50,14
+    PUSHBUTTON      "Import(&I)", IDC_BUTTON_IMPORT, 130, 99, 50, 14
+    PUSHBUTTON      "Export(&E)", IDC_BUTTON_EXPORT, 130, 118, 50, 14
+    PUSHBUTTON      "Initialize(&N)", IDC_BUTTON_INITIALIZE, 130, 137, 50, 14
+    CONTROL         "Add to Context Menu",IDC_CHECK_EXT_RMENU,"Button",BS_AUTOCHECKBOX |
                     BS_MULTILINE | WS_DISABLED | WS_TABSTOP,130,189,50,28
-    CONTROL         "ダブルクリックで開く",IDC_CHECK_EXT_DBLCLICK,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Open on Double Click",IDC_CHECK_EXT_DBLCLICK,"Button",BS_AUTOCHECKBOX | 
                     BS_MULTILINE | WS_DISABLED | WS_TABSTOP,130,213,50,28
-    PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,130,244,50,14
+    PUSHBUTTON      "Help(&H)",IDC_BUTTON_HELP,130,244,50,14
 END
 
 IDD_TYPE_ASCERTAIN DIALOGEX 0, 0, 187, 100
 STYLE DS_MODALFRAME | DS_CENTER | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
-CAPTION "インポート確認"
+CAPTION "Import Document Type Settings"
 FONT 9, "Tahoma"
 BEGIN
     LTEXT           "読込先:", IDC_STATIC, 7, 7, 33, 8
@@ -877,45 +877,45 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "設定の名前(&N)",IDC_STATIC,5,6,49,8
+    LTEXT           "Name(&N)",IDC_STATIC,5,6,49,8
     EDITTEXT        IDC_EDIT_TYPENAME,55,4,59,12,ES_AUTOHSCROLL
-    LTEXT           "ファイル拡張子(&X)",IDC_STATIC,124,6,58,8
+    LTEXT           "File Ext(&X)",IDC_STATIC,124,6,58,8
     EDITTEXT        IDC_EDIT_TYPEEXTS,184,4,113,12,ES_AUTOHSCROLL
-    RTEXT           "折り返し方法(&<)",IDC_STATIC,8,34,56,8,NOT WS_GROUP
+    RTEXT           "Line Wrap Method(&<)",IDC_STATIC,8,34,56,8,NOT WS_GROUP
     COMBOBOX        IDC_COMBO_WRAPMETHOD,70,32,72,78,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "折り返し桁数(&R)",IDC_STATIC,8,49,56,8,NOT WS_GROUP
+    RTEXT           "Wrap@Col(&R)",IDC_STATIC,8,49,56,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_MAXLINELEN,70,48,40,12
     CONTROL         "Spin1",IDC_SPIN_MAXLINELEN,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,117,48,9,
                     12,WS_EX_TRANSPARENT
-    RTEXT           "文字の間隔(&C)",IDC_STATIC,8,64,56,8,NOT WS_GROUP
+    RTEXT           "Letter spacing(&C)",IDC_STATIC,8,64,56,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_CHARSPACE,70,63,40,12
     CONTROL         "Spin1",IDC_SPIN_CHARSPACE,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,117,63,9,
                     12,WS_EX_TRANSPARENT
-    LTEXT           "ドット",IDC_STATIC,114,64,18,8
-    RTEXT           "行の間隔(&L)",IDC_STATIC,8,79,56,8,NOT WS_GROUP
+    LTEXT           "dot",IDC_STATIC,114,64,18,8
+    RTEXT           "Line spaceing(&L)",IDC_STATIC,8,79,56,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_LINESPACE,70,78,40,12,ES_AUTOHSCROLL
     CONTROL         "Spin3",IDC_SPIN_LINESPACE,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,117,78,9,
                     12
-    LTEXT           "ドット",IDC_STATIC,114,79,18,8
-    RTEXT           "TAB幅(&T)",IDC_STATIC,8,94,56,8,NOT WS_GROUP
+    LTEXT           "dot",IDC_STATIC,114,79,18,8
+    RTEXT           "TAB Width(&T)",IDC_STATIC,8,94,56,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_TABSPACE,70,93,40,12,ES_AUTOHSCROLL
     CONTROL         "Spin3",IDC_SPIN_TABSPACE,"msctls_updown32",
                     UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,117,93,7,
                     12
-    LTEXT           "T&AB表示",IDC_STATIC,16,110,56,8,NOT WS_GROUP
+    LTEXT           "T&AB Symbol",IDC_STATIC,16,110,56,8,NOT WS_GROUP
     COMBOBOX        IDC_CHECK_TAB_ARROW,48,108,46,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_EDIT_TABVIEWSTRING,102,108,40,12,ES_AUTOHSCROLL
-    CONTROL         "S&PACEの挿入",IDC_CHECK_INS_SPACE,"Button",
+    CONTROL         "Insert S&PACE",IDC_CHECK_INS_SPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,70,123,57,10
-    GROUPBOX        "レイアウト",IDC_STATIC,3,22,145,117
-    CONTROL         "自動インデント(&U)",IDC_CHECK_INDENT,"Button",
+    GROUPBOX        "Layout",IDC_STATIC,3,22,145,117
+    CONTROL         "Auto-Indent(&U)",IDC_CHECK_INDENT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,8,154,72,10
-    CONTROL         "全角空白も(&Z)",IDC_CHECK_INDENT_WSPACE,"Button",
+    CONTROL         "Full Width Space Chr(&Z)",IDC_CHECK_INDENT_WSPACE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,83,154,61,10
     LTEXT           "スマートインデント(&S)",IDC_STATIC,8,169,68,8
     COMBOBOX        IDC_COMBO_SMARTINDENT,82,167,60,80,CBS_DROPDOWNLIST | 
@@ -2660,8 +2660,8 @@ BEGIN
     F_FILESAVECLOSE         "Save&&Close"
     F_FILE_REOPEN_SJIS      "Re-open as SJIS"
 	F_FILE_REOPEN_SUBMENU	"Re-open With encoding"
-	F_FILE_RCNTFILE_SUBMENU	"Recently Used &File"
-	F_FILE_RCNTFLDR_SUBMENU	"Recently Used Fol&der"
+	F_FILE_RCNTFILE_SUBMENU	"Recently Used File"
+	F_FILE_RCNTFLDR_SUBMENU	"Recently Used Folder"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2673,6 +2673,7 @@ BEGIN
     F_FILE_REOPEN_UTF7      "Re-Open as UTF-&7"
     F_FILE_REOPEN_UNICODEBE "Re-Open as U&nicodeBE"
     F_FILE_REOPEN_CESU8     "Re-Open as CESU-8"
+    F_FILE_REOPEN_LATIN1    "Re-Open as Latin1"
     F_FILE_REOPEN           "Re-Open (&W)"
     F_FILESAVEALL           "Save all (&Z)"
 END
@@ -2794,15 +2795,15 @@ BEGIN
     F_WndScrollUp           "Scroll text down 1 line"
     F_GONEXTPARAGRAPH       "Next Paragraph (&Z)"
     F_GOPREVPARAGRAPH       "Prev Paragraph (&A)"
-    F_AUTOSCROLL            "オートスクロール"
-    F_WHELLUP               "ホイールアップ"
-    F_WHELLDOWN             "ホイールダウン"
-    F_WHELLLEFT             "ホイール左"
-    F_WHELLRIGHT            "ホイール右"
-    F_WHELLPAGEUP           "ホイールページアップ"
-    F_WHELLPAGEDOWN         "ホイールページダウン"
-    F_WHELLPAGELEFT         "ホイールページ左"
-    F_WHELLPAGERIGHT        "ホイールページ右"
+    F_AUTOSCROLL            "Auto Scroll"
+    F_WHELLUP               "Wheel Up"
+    F_WHELLDOWN             "Wheel Down"
+    F_WHELLLEFT             "Wheel Left"
+    F_WHELLRIGHT            "Wheel Right"
+    F_WHELLPAGEUP           "Wheel Page Up"
+    F_WHELLPAGEDOWN         "Wheel Page Down"
+    F_WHELLPAGELEFT         "Wheel Page Left"
+    F_WHELLPAGERIGHT        "Wheel Page Right"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2815,7 +2816,7 @@ BEGIN
     F_DOWN_SEL              "(Sel.)Cursor Down"
     F_LEFT_SEL              "(Sel.)Cursor Left"
     F_RIGHT_SEL             "(Sel.)Cursor Right"
-    F_UP2_SEL               "Select to lines above (&Q)"
+    F_UP2_SEL               "Select 2 lines above (&Q)"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2850,23 +2851,23 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_BEGIN_BOX             "&Box select being"
-    F_UP_BOX                "(矩形選択)カーソル上移動"
-    F_DOWN_BOX              "(矩形選択)カーソル下移動"
-    F_LEFT_BOX              "(矩形選択)カーソル左移動"
-    F_RIGHT_BOX             "(矩形選択)カーソル右移動"
-    F_UP2_BOX               "(矩形選択)カーソル上移動(２行ごと)"
-    F_DOWN2_BOX             "(矩形選択)カーソル下移動(２行ごと)"
-    F_WORDLEFT_BOX          "(矩形選択)単語の左端に移動"
-    F_WORDRIGHT_BOX         "(矩形選択)単語の右端に移動"
-    F_GOLOGICALLINETOP_BOX  "(矩形選択)行頭に移動(改行単位)"
-    F_GOLINETOP_BOX         "(矩形選択)行頭に移動(折り返し単位)"
-    F_GOLINEEND_BOX         "(矩形選択)行末に移動(折り返し単位)"
-    F_HalfPageUp_BOX        "(矩形選択)半ページアップ"
-    F_HalfPageDown_BOX      "(矩形選択)半ページダウン"
-    F_1PageUp_BOX           "(矩形選択)１ページアップ"
-    F_1PageDown_BOX         "(矩形選択)１ページダウン"
-    F_GOFILETOP_BOX         "(矩形選択)ファイルの先頭に移動"
-    F_GOFILEEND_BOX         "(矩形選択)ファイルの最後に移動"
+    F_UP_BOX                "(Box Sel.)Cursor Up"
+    F_DOWN_BOX              "(Box Sel.)Cursor Down"
+    F_LEFT_BOX              "(Box Sel.)Cursor Left"
+    F_RIGHT_BOX             "(Box Sel.)Cursor Right"
+    F_UP2_BOX               "(Box Sel.) 2 lines above (&Q)"
+    F_DOWN2_BOX             "(Box Sel.) 2 lines below (&K)"
+    F_WORDLEFT_BOX          "(Box Sel.)To &Left side of word"
+    F_WORDRIGHT_BOX         "(Box Sel.)To &Right side of word"
+    F_GOLOGICALLINETOP_BOX  "(Box Sel.)To start of line"
+    F_GOLINETOP_BOX         "(Box Sel.)To left side of line"
+    F_GOLINEEND_BOX         "(Box Sel.)To end of line"
+    F_HalfPageUp_BOX        "(Box Sel.)Half page up"
+    F_HalfPageDown_BOX      "(Box Sel.)Half page down"
+    F_1PageUp_BOX           "(Box Sel.) 1 page &Up"
+    F_1PageDown_BOX         "(Box Sel.) 1 page &Down"
+    F_GOFILETOP_BOX         "(Box Sel.)To top of file"
+    F_GOFILEEND_BOX         "(Box Sel.)To end of file"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -2881,7 +2882,7 @@ BEGIN
 	F_EDIT_HLV_SUBMENU		"High Le&vel Editing"
 	F_EDIT_MOV_SUBMENU		"Cursor M&ovement"
 	F_EDIT_SEL_SUBMENU		"&Selection"
-	F_EDIT_BOX_SEL_SUBMENU	"Box Selection(&F)"
+	F_EDIT_BOX_SEL_SUBMENU	"Box Selection"
 	F_EDIT_COS_SUBMENU		"Cosmeti&k"
 END
 
@@ -2891,8 +2892,8 @@ BEGIN
     F_COPYLINES             "Copy selected lines(&@)"
     F_COPYLINESASPASSAGE    "Copy selected as passage(&.)"			// 選択範囲内全行引用符付きコピー" <<--check
 	F_COPYLINESWITHLINENUMBER "Copy selected with line nr.(&:)"		// 選択範囲内全行行番号付きコピー" <<--check
-    F_COPY_COLOR_HTML       "選択範囲内色付きHTMLコピー"
-    F_COPY_COLOR_HTML_LINENUMBER "選択範囲内行番号色付きHTMLコピー"
+    F_COPY_COLOR_HTML       "Copy selected with HTML markup"
+    F_COPY_COLOR_HTML_LINENUMBER "Copy selected with line nr && HTML"
     F_COPYPATH              "Copy this file's path(&\\)"
     F_COPYTAG               "Copy file path and cursor location (&^)"
     F_COPYFNAME             "Copy this file's name(&-)"
@@ -2912,7 +2913,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    F_CONVERT_TOPMENU		"&Convert"
+    F_CONVERT_TOPMENU		"Convert"
     F_TOLOWER               "&Lower case"
     F_TOUPPER               "&Upper case"
     F_TOHANKAKU             "&Full Height → Half Height (&F)"
@@ -2966,7 +2967,7 @@ BEGIN
     F_REPLACE_DIALOG        "&Replace"
     F_SEARCH_CLEARMARK      "&Clear search marker"
     F_REPLACE               "Replace"
-    F_REPLACE_ALL           "すべて置換"
+    F_REPLACE_ALL           "Replace All"
     F_SEARCH_BOX            "Search (Box)"
     F_JUMP_SRCHSTARTPOS     "Jump to &Initial search start position"
     F_GREP_DIALOG           "&Grep"
@@ -3001,7 +3002,7 @@ BEGIN
     F_BRACKETPAIR           "Matching Bracket Search(&[)"
     F_BOOKMARK_SET          "&Set/Delete Bookmark"
     F_BOOKMARK_NEXT         "Next Bookmark (&A)"
-    F_BOOKMARK_PATTERN      "該当行マーク"
+    F_BOOKMARK_PATTERN      "Set Bookmark"
     F_BOOKMARK_PREV         "Prev Bookmark (&Z)"
     F_BOOKMARK_RESET        "Delete all bookmarks (&X)"
     F_BOOKMARK_VIEW         "&View Bookmark list"
@@ -3030,7 +3031,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
     F_OPTION_TOPMENU        "Option"
     F_CHGMOD_INS            "&Insert/Overwrite mode toggle"
-    F_CHG_CHARSET           "文字コードセット指定..."
+    F_CHG_CHARSET           "Select Character Set..."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3072,9 +3073,9 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_FONT                  "&Font settings"
-    F_SETFONTSIZE           "フォントサイズ設定"
-    F_SETFONTSIZEUP         "フォントサイズ拡大"
-    F_SETFONTSIZEDOWN       "フォントサイズ縮小"
+    F_SETFONTSIZE           "Font Size Settings"
+    F_SETFONTSIZEUP         "Increase Font Size"
+    F_SETFONTSIZEDOWN       "Decrease Font Size"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3083,7 +3084,7 @@ BEGIN
     F_TMPWRAPNOWRAP         "Dont wrap (&X)"
     F_TMPWRAPSETTING        "Wrap at &set line"
     F_TMPWRAPWINDOW         "Wrap at &right side of window"						// FIXME - &W
-    F_SELECT_COUNT_MODE     "文字カウント方法"
+    F_SELECT_COUNT_MODE     "Count Byte Count"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -3252,7 +3253,7 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     F_CHGMOD_EOL            "Newline code setting"
-    F_TEXTWRAPMETHOD        "折り返し方法"
+    F_TEXTWRAPMETHOD        "Line Wrap Method"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -4216,7 +4217,7 @@ BEGIN
 	STR_ERR_CSHAREDATA38			"Cursor"						
 	STR_ERR_CSHAREDATA39			"Cursor(IME ON)"				
 	STR_ERR_CSHAREDATA40			"CursorLine Underline"		
-	STR_ERR_CSHAREDATA41			"Cursor pos HorizLine"				
+	STR_ERR_CSHAREDATA41			"Cursor pos VertLine"				
 	STR_ERR_CSHAREDATA42			"Line No."						
 	STR_ERR_CSHAREDATA43			"Line No.(edited)"				
 	STR_ERR_CSHAREDATA44			"TAB Mark"						
@@ -4225,7 +4226,7 @@ BEGIN
 	STR_ERR_CSHAREDATA47			"Control Code"
 	STR_ERR_CSHAREDATA48			"Newline Mark"					
 	STR_ERR_CSHAREDATA49			"Wrapping Point"					
-	STR_ERR_CSHAREDATA50			"指定桁縦線"							// FIXME 指定桁縦線					
+	STR_ERR_CSHAREDATA50			"Specific pos VertLine"							// FIXME 指定桁縦線					
 	STR_ERR_CSHAREDATA51			"EOF Mark"
 
 	STR_ERR_CSHAREDATA52			"HalfHeight Numerals"			
