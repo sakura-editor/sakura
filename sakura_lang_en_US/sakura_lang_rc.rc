@@ -3787,6 +3787,7 @@ BEGIN
 	STR_ERR_DLGFUNCLKUP1		"External Macro"
 	STR_ERR_DLGFUNCLKUP2		"Custom Menu"
 	STR_ERR_DLGFUNCLKUP3		"Macro %d (Unregistered)"
+	STR_ERR_DLGFUNCLKUP19		"Plugin"
 
 	// Related Commands Menu
 	STR_ERR_DLGFUNCLKUP04		"File related"		
