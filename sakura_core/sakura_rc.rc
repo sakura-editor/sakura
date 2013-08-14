@@ -3787,6 +3787,7 @@ BEGIN
 	STR_ERR_DLGFUNCLKUP1		"外部マクロ"
 	STR_ERR_DLGFUNCLKUP2		"カスタムメニュー"
 	STR_ERR_DLGFUNCLKUP3		"マクロ %d (未登録)"
+	STR_ERR_DLGFUNCLKUP19		"プラグイン"
 
 	// Related Commands Menu
 	STR_ERR_DLGFUNCLKUP04		"ファイル操作系"

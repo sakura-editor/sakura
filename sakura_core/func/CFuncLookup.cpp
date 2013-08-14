@@ -41,13 +41,6 @@ const int LUOFFSET_MACRO = 0;
 const int LUOFFSET_CUSTMENU = 1;
 const int LUOFFSET_PLUGIN = 2;
 
-//! 動的に内容が変わる分類の名前
-const TCHAR *DynCategory[] = {
-	_T("外部マクロ"),
-	_T("カスタムメニュー"),
-	_T("プラグイン")
-};
-
 /*!	@brief 分類中の位置に対応する機能番号を返す．
 
 	@param category [in] 分類番号 (0-)
@@ -177,16 +170,16 @@ const TCHAR* CFuncLookup::Category2Name( int category ) const
 		return NULL;
 
 	if( category < nsFuncCode::nFuncKindNum ){
-		return nsFuncCode::ppszFuncKind[category];
+		return LS( nsFuncCode::ppszFuncKind[category] );
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_MACRO ){
-		return DynCategory[0];
+		return LS( STR_ERR_DLGFUNCLKUP1 );
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_CUSTMENU ){
-		return DynCategory[1];
+		return LS( STR_ERR_DLGFUNCLKUP2 );
 	}
 	else if( category == nsFuncCode::nFuncKindNum + LUOFFSET_PLUGIN ){
-		return DynCategory[2];
+		return LS( STR_ERR_DLGFUNCLKUP19 );
 	}
 	return NULL;
 }
@@ -204,15 +197,15 @@ void CFuncLookup::SetCategory2Combo( HWND hComboBox ) const
 
 	//	固定機能リスト
 	for( i = 0; i < nsFuncCode::nFuncKindNum; ++i ){
-		Combo_AddString( hComboBox, nsFuncCode::ppszFuncKind[i] );
+		Combo_AddString( hComboBox, LS( nsFuncCode::ppszFuncKind[i] ) );
 	}
 
 	//	ユーザマクロ
-	Combo_AddString( hComboBox, DynCategory[0] );
+	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP1 ) );
 	//	カスタムメニュー
-	Combo_AddString( hComboBox, DynCategory[1] );
+	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP2 ) );
 	//	プラグイン
-	Combo_AddString( hComboBox, DynCategory[2] );
+	Combo_AddString( hComboBox, LS( STR_ERR_DLGFUNCLKUP19 ) );
 }
 
 /*!	@brief 指定された分類に属する機能リストをListBoxに登録する．
