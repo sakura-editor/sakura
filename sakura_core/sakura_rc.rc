@@ -3269,6 +3269,9 @@ BEGIN
     STR_SQLERR_ACTV_BUT_NOT_RUN	"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
 
+	STR_NO_TITLE1				"(無題)"
+	STR_PREVIEW_ONLY			"(印刷プレビューでのみ使用できます)"
+	STR_NOT_SAVED				"(保存されていません)"
 
 	// CCommandLine.cpp - cant map properly	
 	STR_ERR_OVERFLOW1			"ファイルパスが長すぎます。 ANSI 版では %d バイト以上の絶対パスを扱えません。"
@@ -3279,9 +3282,6 @@ BEGIN
 	STR_ERR_CTRLMTX2			"CreateEvent()失敗。\n終了します。"
 	STR_ERR_CTRLMTX3			"ウィンドウの作成に失敗しました。\n起動できません。"
 	STR_ERR_CTRLMTX4			"SetEvent()失敗。\n終了します。"
-
-	// CDlgCompare.cpp
-	STR_ERR_DLGCMP1				"(無題)"
 	
 	// CDlgCtrlCode.cpp
 	STR_DLGCTRLCODE_CODE		"コード"

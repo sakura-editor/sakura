@@ -41,6 +41,8 @@
 #include "util/module.h" //GetAppVersionInfo
 #include "util/shell.h"
 
+typedef std::wstring wstring;
+
 CEditWnd* CSakuraEnvironment::GetMainWindow()
 {
 	return CEditWnd::getInstance();
@@ -88,12 +90,12 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0); //###
 
 	// Apr. 03, 2003 genta 固定文字列をまとめる
-	static const wchar_t	PRINT_PREVIEW_ONLY[]	= L"(印刷プレビューでのみ使用できます)";
-	const int				PRINT_PREVIEW_ONLY_LEN	= _countof( PRINT_PREVIEW_ONLY ) - 1;
-	static const wchar_t	NO_TITLE[]				= L"(無題)";
-	const int				NO_TITLE_LEN			= _countof( NO_TITLE ) - 1;
-	static const wchar_t	NOT_SAVED[]				= L"(保存されていません)";
-	const int				NOT_SAVED_LEN			= _countof( NOT_SAVED ) - 1;
+	static const wstring	PRINT_PREVIEW_ONLY		= LSW( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
+	const int				PRINT_PREVIEW_ONLY_LEN	= PRINT_PREVIEW_ONLY.length();
+	static const wstring	NO_TITLE				= LSW( STR_NO_TITLE1 );	//L"(無題)";
+	const int				NO_TITLE_LEN			= NO_TITLE.length();
+	static const wstring	NOT_SAVED				= LSW( STR_NOT_SAVED );	//L"(保存されていません)";
+	const int				NOT_SAVED_LEN			= NOT_SAVED.length();
 
 	const wchar_t *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
 	wchar_t *q, *q_max;
@@ -113,7 +115,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			break;
 		case L'F':	//	開いているファイルの名前（フルパス）
 			if ( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 				++p;
 			} 
 			else {
@@ -127,7 +129,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			//	ファイル名のみを渡すバージョン
 			//	ポインタを末尾に
 			if ( ! pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 				++p;
 			} 
 			else {
@@ -140,7 +142,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'g':	//	開いているファイルの名前（拡張子を除くファイル名のみ）
 			//	From Here Sep. 16, 2002 genta
 			if ( ! pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 				++p;
 			} 
 			else {
@@ -165,7 +167,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		case L'/':	//	開いているファイルの名前（フルパス。パスの区切りが/）
 			// Oct. 28, 2001 genta
 			if ( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 				++p;
 			} 
 			else {
@@ -182,7 +184,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		//	From Here 2003/06/21 Moca
 		case L'N':	//	開いているファイルの名前(簡易表示)
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 				++p;
 			}
 			else {
@@ -210,7 +212,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			break;
 		case L'E':	// 開いているファイルのあるフォルダの名前(簡易表示)	2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
 			else {
 				WCHAR	buff[_MAX_PATH];		// \の処理をする為WCHAR
@@ -238,7 +240,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			break;
 		case L'e':	// 開いているファイルのあるフォルダの名前		2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
-				q = wcs_pushW( q, q_max - q, NO_TITLE, NO_TITLE_LEN );
+				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
 			else {
 				const WCHAR*	pStr;
@@ -348,7 +350,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 					++p;
 				}
 				else {
-					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY, PRINT_PREVIEW_ONLY_LEN );
+					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
 					++p;
 				}
 			}
@@ -363,7 +365,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 					++p;
 				}
 				else {
-					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY, PRINT_PREVIEW_ONLY_LEN );
+					q = wcs_pushW( q, q_max - q, PRINT_PREVIEW_ONLY.c_str(), PRINT_PREVIEW_ONLY_LEN );
 					++p;
 				}
 			}
@@ -380,7 +382,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			else {
-				q = wcs_pushW( q, q_max - q, NOT_SAVED, NOT_SAVED_LEN );
+				q = wcs_pushW( q, q_max - q, NOT_SAVED.c_str(), NOT_SAVED_LEN );
 				++p;
 			}
 			break;
@@ -396,7 +398,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			else {
-				q = wcs_pushW( q, q_max - q, NOT_SAVED, NOT_SAVED_LEN );
+				q = wcs_pushW( q, q_max - q, NOT_SAVED.c_str(), NOT_SAVED_LEN );
 				++p;
 			}
 			break;

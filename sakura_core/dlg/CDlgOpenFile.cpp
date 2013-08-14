@@ -790,7 +790,7 @@ bool CDlgOpenFile::DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::tstrin
 	//OPENFILENAME構造体の初期化
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
-	m_ofn.hInstance = m_hInstance;
+	m_ofn.hInstance = CSelectLang::getLangRsrcInstance();
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrFile = pszPathBuf;
 	m_ofn.nMaxFile = 2000;
@@ -865,12 +865,12 @@ bool CDlgOpenFile::DoModalSaveDlg(SSaveInfo* pSaveInfo, bool bSimpleMode)
 
 	// ファイル名の初期設定	// 2006.11.10 ryoji
 	if( pSaveInfo->cFilePath[0] == _T('\0') )
-		lstrcpyn(pSaveInfo->cFilePath, _T("無題"), _MAX_PATH);
+		lstrcpyn(pSaveInfo->cFilePath, LS( STR_ERR_DLGOPNFL7 ), _MAX_PATH);	// 無題
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &m_ofn );		// 2005.10.29 ryoji
 	m_ofn.hwndOwner = m_hwndParent;
-	m_ofn.hInstance = m_hInstance;
+	m_ofn.hInstance = CSelectLang::getLangRsrcInstance();
 	m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	m_ofn.lpstrFile = pSaveInfo->cFilePath;	// 2005/02/20 novice デフォルトのファイル名は何も設定しない
 	m_ofn.nMaxFile = _MAX_PATH;

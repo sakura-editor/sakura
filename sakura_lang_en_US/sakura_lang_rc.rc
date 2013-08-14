@@ -3269,6 +3269,9 @@ BEGIN
 	STR_ERR_CMPERR				"Comparison destination folder\n%s\nhas a %d byte line \ncan not perform comparison."			// FIXME - ok?
 //	STR_ERR_CMPERR				"比較先のファイル\n%s\n%dバイトを超える行があります。\n比較できません。"
 
+	STR_NO_TITLE1				"(No Title)"
+	STR_PREVIEW_ONLY			"(Available in Print Preview)"
+	STR_NOT_SAVED				"(Not Saved)"
 
 	// CCommandLine.cpp - cant map properly	
 	STR_ERR_OVERFLOW1			"File path is too long. ANSI paths over %d bytes cannot be used."
@@ -3279,9 +3282,6 @@ BEGIN
 	STR_ERR_CTRLMTX2			"CreateEvent() failed.\n Will exit app."
 	STR_ERR_CTRLMTX3			"Failed to create window\nCant start it up."
 	STR_ERR_CTRLMTX4			"SetEvent() failed.\nWeill exit app."
-
-	// CDlgCompare.cpp
-	STR_ERR_DLGCMP1				"(No Title01)"
 	
 	// CDlgCtrlCode.cpp
 	STR_DLGCTRLCODE_CODE		"Code"
@@ -3439,7 +3439,7 @@ BEGIN
 	STR_ERR_DLGOPNFL5			"Text File"
 	STR_ERR_DLGOPNFL6			"All Files"
 
-	STR_ERR_DLGOPNFL7			"No Title03"								// Save/Save as dialog box file name
+	STR_ERR_DLGOPNFL7			"No Title"								// Save/Save as dialog box file name
 
 	STR_ERR_DLGOPNFL8			"Dialog didnt open.\n\nError:%s"
 
@@ -3569,7 +3569,7 @@ BEGIN
 	STR_ERR_DLGEDITDOC19		"failed to delete"
 	STR_ERR_DLGEDITDOC20		"failed to move"
 	STR_ERR_DLGEDITDOC21		"%s\nis currently prohibited from writing by another process."
-	STR_ERR_DLGEDITDOC22		"（NoTitle08）"
+	STR_ERR_DLGEDITDOC22		"(NoTitle)"
 
 	STR_ERR_DLGEDITDOC23		"Deny R-W Exclusive Access Mode"														// Dialog title for message 26 below
 	STR_ERR_DLGEDITDOC24		"Deny-Write Exclusive Mode"
