@@ -91,6 +91,8 @@
 #define STR_ERR_TAGJMPBK1				34061
 
 
+
+
 // CCommandLine.cpp - cant map properly	
 #define STR_ERR_MACROERR1				34062
 #define STR_ERR_OVERFLOW1				34063
@@ -102,10 +104,7 @@
 #define STR_ERR_CTRLMTX2				34066
 #define STR_ERR_CTRLMTX3				34067
 #define STR_ERR_CTRLMTX4				34068
-
-
-// CDlgCompare.cpp
-#define STR_ERR_DLGCMP1					34069
+#define STR_NO_TITLE1					34069
 
 
 // CDlgCtrlCode.cpp
@@ -1210,3 +1209,5 @@
 #define F_OPTION_TOPMENU 				34811
 #define F_WINDOW_TOPMENU 				34812
 #define F_HELP_TOPMENU 					34813
+#define STR_PREVIEW_ONLY				34815
+#define STR_NOT_SAVED					34816

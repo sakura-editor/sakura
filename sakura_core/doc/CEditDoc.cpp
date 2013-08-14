@@ -805,7 +805,7 @@ BOOL CEditDoc::OnFileClose()
 	}
 	if( NULL == pszTitle ){
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
-		auto_sprintf( szGrepTitle, _T("(無題)%d"), node->m_nId );
+		auto_sprintf( szGrepTitle, _T("%s%d"), LS( STR_ERR_DLGEDITDOC22 ), node->m_nId );	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */

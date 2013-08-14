@@ -85,8 +85,8 @@ void CDocLocker::CheckWritable(bool bMsg)
 		if( ::GetLastError() == ERROR_SHARING_VIOLATION ){
 			TopWarningMessage(
 				CEditWnd::getInstance()->GetHwnd(),
-				_T("%ts\nは現在他のプロセスによって書込みが禁止されています。"),
-				cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath() : _T("(無題)")
+				LS( STR_ERR_DLGEDITDOC21 ),	//"%ts\nは現在他のプロセスによって書込みが禁止されています。"
+				cDocFile.GetFilePathClass().IsValidPath() ? cDocFile.GetFilePath() : LS( STR_ERR_DLGEDITDOC22 )	//"(無題)"
 			);
 		}
 	}
