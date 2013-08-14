@@ -127,7 +127,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
 	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
 	psp[nIdx].dwFlags     = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
+	psp[nIdx].hInstance   = CSelectLang::getLangRsrcInstance();
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SCREEN );
 	psp[nIdx].pszIcon     = NULL;
 	psp[nIdx].pfnDlgProc  = PropTypesScreen;
@@ -139,7 +139,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
 	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
 	psp[nIdx].dwFlags     = /*PSP_USEICONID |*/ PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
+	psp[nIdx].hInstance   = CSelectLang::getLangRsrcInstance();
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_COLOR );
 	psp[nIdx].pszIcon     = NULL /*MAKEINTRESOURCE( IDI_BORDER) */;
 	psp[nIdx].pfnDlgProc  = PropTypesColor;
@@ -152,7 +152,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
 	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
 	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
+	psp[nIdx].hInstance   = CSelectLang::getLangRsrcInstance();
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_WINDOW );
 	psp[nIdx].pszIcon     = NULL;
 	psp[nIdx].pfnDlgProc  = PropTypesWindow;
@@ -166,7 +166,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
 	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
 	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
+	psp[nIdx].hInstance   = CSelectLang::getLangRsrcInstance();
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_SUPPORT );
 	psp[nIdx].pszIcon     = NULL;
 	psp[nIdx].pfnDlgProc  = PropTypesSupport;
@@ -180,7 +180,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
 	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
 	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
+	psp[nIdx].hInstance   = CSelectLang::getLangRsrcInstance();
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_REGEX );
 	psp[nIdx].pszIcon     = NULL;
 	psp[nIdx].pfnDlgProc  = PropTypesRegex;
@@ -194,7 +194,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );
 	psp[nIdx].dwSize      = sizeof_raw( psp[nIdx] );
 	psp[nIdx].dwFlags     = PSP_USETITLE | PSP_HASHELP;
-	psp[nIdx].hInstance   = m_hInstance;
+	psp[nIdx].hInstance   = CSelectLang::getLangRsrcInstance();
 	psp[nIdx].pszTemplate = MAKEINTRESOURCE( IDD_PROP_KEYHELP );
 	psp[nIdx].pszIcon     = NULL;
 	psp[nIdx].pfnDlgProc  = PropTypesKeyHelp;

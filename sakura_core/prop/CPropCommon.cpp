@@ -228,7 +228,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 			memset_raw( p, 0, sizeof_raw( *p ) );
 			p->dwSize      = sizeof_raw( *p );
 			p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
-			p->hInstance   = G_AppInstance();
+			p->hInstance   = CSelectLang::getLangRsrcInstance();
 			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
 			p->pszIcon     = NULL;
 			p->pfnDlgProc  = ComPropSheetInfoList[i].DProc;
