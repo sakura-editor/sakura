@@ -190,9 +190,11 @@ public:
 	const TCHAR* GetStringT() const						{ return GetStringPtrOld(); }
 #endif
 
+#if _DEBUG
 private:
 	typedef wchar_t* PWCHAR;
 	PWCHAR& m_pDebugData; //デバッグ用。CMemoryの内容をwchar_t*型でウォッチするためのモノ
+#endif
 
 public:
 	// -- -- staticインターフェース -- -- //
