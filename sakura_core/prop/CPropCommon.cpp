@@ -179,7 +179,7 @@ void CPropCommon::Create( HWND hwndParent, CImageListMgr* cIcons, CMenuDrawer* p
 	保持する構造体
 */
 struct ComPropSheetInfo {
-	const TCHAR* szTabname;									//!< TABの表示名
+	std::wstring sTabname;									//!< TABの表示名
 	unsigned int resId;										//!< Property sheetに対応するDialog resource
 	INT_PTR (CALLBACK *DProc)(HWND, UINT, WPARAM, LPARAM);	//!< Dialog Procedure
 };
@@ -201,42 +201,40 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 	//	順序変更 Win,Toolbar,Tab,Statusbarの順に、File,FileName 順に	2008/6/22 Uchi 
 	//	DProcの変更	2010/5/9 Uchi
 	static ComPropSheetInfo ComPropSheetInfoList[] = {
-		{ _T("全般"), 				IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
-		{ _T("ウィンドウ"),			IDD_PROP_WIN,		CPropWin::DlgProc_page },
-		{ _T("メインメニュー"),		IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
-		{ _T("ツールバー"),			IDD_PROP_TOOLBAR,	CPropToolbar::DlgProc_page },
-		{ _T("タブバー"),			IDD_PROP_TAB,		CPropTab::DlgProc_page },
-		{ _T("ステータスバー"),		IDD_PROP_STATUSBAR,	CPropStatusbar::DlgProc_page },	// 文字コード表示指定	2008/6/21	Uchi
-		{ _T("編集"),				IDD_PROP_EDIT,		CPropEdit::DlgProc_page },
-		{ _T("ファイル"),			IDD_PROP_FILE,		CPropFile::DlgProc_page },
-		{ _T("ファイル名表示"),		IDD_PROP_FNAME,		CPropFileName::DlgProc_page },
-		{ _T("バックアップ"),		IDD_PROP_BACKUP,	CPropBackup::DlgProc_page },
-		{ _T("書式"),				IDD_PROP_FORMAT,	CPropFormat::DlgProc_page },
-		{ _T("検索"),				IDD_PROP_GREP,		CPropGrep::DlgProc_page },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
-		{ _T("キー割り当て"),		IDD_PROP_KEYBIND,	CPropKeybind::DlgProc_page },
-		{ _T("カスタムメニュー"),	IDD_PROP_CUSTMENU,	CPropCustmenu::DlgProc_page },
-		{ _T("強調キーワード"),		IDD_PROP_KEYWORD,	CPropKeyword::DlgProc_page },
-		{ _T("支援"),				IDD_PROP_HELPER,	CPropHelper::DlgProc_page },
-		{ _T("マクロ"),				IDD_PROP_MACRO,		CPropMacro::DlgProc_page },
-		{ _T("プラグイン"),			IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_GENERAL ),	IDD_PROP_GENERAL,	CPropGeneral::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_WINDOW ),		IDD_PROP_WIN,		CPropWin::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_MAINMENU ),	IDD_PROP_MAINMENU,	CPropMainMenu::DlgProc_page },	// 2010/5/8 Uchi
+		{ LSW( STR_PROPCOMMON_TOOLBAR ),	IDD_PROP_TOOLBAR,	CPropToolbar::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_TABS ),		IDD_PROP_TAB,		CPropTab::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_STATBAR ),	IDD_PROP_STATUSBAR,	CPropStatusbar::DlgProc_page },	// 文字コード表示指定	2008/6/21	Uchi
+		{ LSW( STR_PROPCOMMON_EDITING ),	IDD_PROP_EDIT,		CPropEdit::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_FILE ),		IDD_PROP_FILE,		CPropFile::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_FILENAME ),	IDD_PROP_FNAME,		CPropFileName::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_BACKUP ),		IDD_PROP_BACKUP,	CPropBackup::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_FORMAT ),		IDD_PROP_FORMAT,	CPropFormat::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_SEARCH ),		IDD_PROP_GREP,		CPropGrep::DlgProc_page },	// 2006.08.23 ryoji タイトル変更（Grep -> 検索）
+		{ LSW( STR_PROPCOMMON_KEYS ),		IDD_PROP_KEYBIND,	CPropKeybind::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_CUSTMENU ),	IDD_PROP_CUSTMENU,	CPropCustmenu::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_KEYWORD ),	IDD_PROP_KEYWORD,	CPropKeyword::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_SUPPORT ),	IDD_PROP_HELPER,	CPropHelper::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_MACRO ),		IDD_PROP_MACRO,		CPropMacro::DlgProc_page },
+		{ LSW( STR_PROPCOMMON_PLUGIN ),		IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
 	};
 
 	PROPSHEETPAGE		psp[32];
 	for( nIdx = 0, i = 0; i < _countof(ComPropSheetInfoList) && nIdx < 32 ; i++ ){
-		if( ComPropSheetInfoList[i].szTabname != NULL ){
-			PROPSHEETPAGE *p = &psp[nIdx];
-			memset_raw( p, 0, sizeof_raw( *p ) );
-			p->dwSize      = sizeof_raw( *p );
-			p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
-			p->hInstance   = CSelectLang::getLangRsrcInstance();
-			p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
-			p->pszIcon     = NULL;
-			p->pfnDlgProc  = ComPropSheetInfoList[i].DProc;
-			p->pszTitle    = ComPropSheetInfoList[i].szTabname;
-			p->lParam      = (LPARAM)this;
-			p->pfnCallback = NULL;
-			nIdx++;
-		}
+		PROPSHEETPAGE *p = &psp[nIdx];
+		memset_raw( p, 0, sizeof_raw( *p ) );
+		p->dwSize      = sizeof_raw( *p );
+		p->dwFlags     = PSP_USETITLE | PSP_HASHELP;
+		p->hInstance   = CSelectLang::getLangRsrcInstance();
+		p->pszTemplate = MAKEINTRESOURCE( ComPropSheetInfoList[i].resId );
+		p->pszIcon     = NULL;
+		p->pfnDlgProc  = ComPropSheetInfoList[i].DProc;
+		p->pszTitle    = ComPropSheetInfoList[i].sTabname.c_str();
+		p->lParam      = (LPARAM)this;
+		p->pfnCallback = NULL;
+		nIdx++;
 	}
 	//	To Here Jun. 2, 2001 genta
 
@@ -250,9 +248,9 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum )
 	//	JEPROtest Sept. 30, 2000 共通設定の隠れ[適用]ボタンの正体はここ。行頭のコメントアウトを入れ替えてみればわかる
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE;
 	psh.hwndParent = m_hwndParent;
-	psh.hInstance  = G_AppInstance();
+	psh.hInstance  = CSelectLang::getLangRsrcInstance();
 	psh.pszIcon    = NULL;
-	psh.pszCaption = _T("共通設定");
+	psh.pszCaption = LSW( STR_PROPCOMMON );	//_T("共通設定");
 	psh.nPages     = nIdx;
 
 	//- 20020106 aroka # psh.nStartPage は unsigned なので負にならない
