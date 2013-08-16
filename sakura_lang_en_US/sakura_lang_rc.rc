@@ -963,76 +963,76 @@ IDD_PROP_COLOR DIALOGEX DISCARDABLE  0, 0, 302, 244
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 FONT 9, "Tahoma"
 BEGIN
-    GROUPBOX        "色指定(&L)",IDC_STATIC,3,6,148,204,WS_GROUP
+    GROUPBOX        "Colors(&L)",IDC_STATIC,3,6,148,204,WS_GROUP
     LISTBOX         IDC_LIST_COLORS,6,18,142,148,LBS_OWNERDRAWFIXED | 
                     WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "色分け/表示(&D)",IDC_CHECK_DISP,"Button",
+    CONTROL         "Enable HiLite(&D)",IDC_CHECK_DISP,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,6,165,65,10
-    CONTROL         "太字(&B)",IDC_CHECK_BOLD,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Bold(&B)",IDC_CHECK_BOLD,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,72,165,36,10
-    CONTROL         "下線(&U)",IDC_CHECK_UNDERLINE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Underline(&U)",IDC_CHECK_UNDERLINE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,112,165,36,10
-    LTEXT           "文字色(C)",IDC_STATIC_MOZI,16,181,34,8
+    LTEXT           "Text(C)",IDC_STATIC_MOZI,16,181,34,8
     CONTROL         "&C",IDC_BUTTON_TEXTCOLOR,"Button",BS_OWNERDRAW | 
                     WS_TABSTOP,54,178,25,14
-    PUSHBUTTON      "文字色統一(&<)...",IDC_BUTTON_SAMETEXTCOLOR,84,178,58,
+    PUSHBUTTON      "Unify color(&<)...",IDC_BUTTON_SAMETEXTCOLOR,84,178,58,
                     14
-    LTEXT           "背景色(K)",IDC_STATIC_HAIKEI,16,196,33,8,NOT WS_GROUP
+    LTEXT           "Background(K)",IDC_STATIC_HAIKEI,16,196,33,8,NOT WS_GROUP
     CONTROL         "&K",IDC_BUTTON_BACKCOLOR,"Button",BS_OWNERDRAW | 
                     WS_TABSTOP,54,193,25,14
-    PUSHBUTTON      "背景色統一(&>)...",IDC_BUTTON_SAMEBKCOLOR,84,193,58,14
-    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_IMPORT,25,215,60,14,
+    PUSHBUTTON      "Unify color(&>)...",IDC_BUTTON_SAMEBKCOLOR,84,193,58,14
+    PUSHBUTTON      "Import(&I)...",IDC_BUTTON_IMPORT,25,215,60,14,
                     WS_GROUP
-    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_EXPORT,88,215,60,14
-    LTEXT           "強調キーワード&1",IDC_STATIC,162,18,54,8
+    PUSHBUTTON      "Export(&X)...",IDC_BUTTON_EXPORT,88,215,60,14
+    LTEXT           "Keyword Set &1",IDC_STATIC,162,18,54,8
     COMBOBOX        IDC_COMBO_SET,218,16,75,180,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP
-    PUSHBUTTON      "&2～10...",IDC_BUTTON_KEYWORD_SELECT,228,31,65,14
-    PUSHBUTTON      "共通設定(&C)...",IDC_BUTTON_EDITKEYWORD,228,47,65,14
-    GROUPBOX        "強調キーワード",IDC_STATIC,156,6,142,60,WS_GROUP
-    LTEXT           "ブロック型(&F)",IDC_STATIC,164,80,42,8
+    PUSHBUTTON      "Set &2～10...",IDC_BUTTON_KEYWORD_SELECT,228,31,65,14
+    PUSHBUTTON      "Keyword Setting(&C)...",IDC_BUTTON_EDITKEYWORD,228,47,65,14
+    GROUPBOX        "Keyword Highlighting",IDC_STATIC,156,6,142,60,WS_GROUP
+    LTEXT           "Block Type(&F)",IDC_STATIC,164,80,42,8
     EDITTEXT        IDC_EDIT_BLOCKCOMMENT_FROM,211,78,27,12,ES_AUTOHSCROLL
-    LTEXT           "～(&T)",IDC_STATIC,245,80,18,8,NOT WS_GROUP
+    LTEXT           "to(&T)",IDC_STATIC,245,80,18,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_BLOCKCOMMENT_TO,267,78,26,12,ES_AUTOHSCROLL
-    LTEXT           "ブロック型(&A)",IDC_STATIC,164,94,42,8
+    LTEXT           "Block Type(&A)",IDC_STATIC,164,94,42,8
     EDITTEXT        IDC_EDIT_BLOCKCOMMENT_FROM2,211,92,27,12,ES_AUTOHSCROLL
-    LTEXT           "～(&Z)",IDC_STATIC,245,94,18,8,NOT WS_GROUP
+    LTEXT           "to(&Z)",IDC_STATIC,245,94,18,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_BLOCKCOMMENT_TO2,267,92,26,12,ES_AUTOHSCROLL
-    LTEXT           "行型(&M)",IDC_STATIC,164,110,27,8
+    LTEXT           "Type(&M)",IDC_STATIC,164,110,27,8
     EDITTEXT        IDC_EDIT_LINECOMMENT,195,108,24,12,ES_AUTOHSCROLL
-    CONTROL         "桁(&P)",IDC_CHECK_LCPOS,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Col(&P)",IDC_CHECK_LCPOS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,223,109,33,10
     RTEXT           "&@",IDC_LABEL_LCPOS,256,110,8,8
     EDITTEXT        IDC_EDIT_LINECOMMENTPOS,267,108,26,12,ES_AUTOHSCROLL
     CONTROL         "",IDC_SPIN_LCColNum,"msctls_updown32",UDS_ALIGNRIGHT | 
                     UDS_AUTOBUDDY | UDS_ARROWKEYS,295,108,6,12
-    LTEXT           "行型(&E)",IDC_STATIC,164,124,25,8
+    LTEXT           "Type(&E)",IDC_STATIC,164,124,25,8
     EDITTEXT        IDC_EDIT_LINECOMMENT2,195,122,24,12,ES_AUTOHSCROLL
-    CONTROL         "桁(&O)",IDC_CHECK_LCPOS2,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Col(&O)",IDC_CHECK_LCPOS2,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,223,123,34,10
     RTEXT           "&[",IDC_LABEL_LCPOS2,256,124,8,8
     EDITTEXT        IDC_EDIT_LINECOMMENTPOS2,267,122,26,12,ES_AUTOHSCROLL
     CONTROL         "",IDC_SPIN_LCColNum2,"msctls_updown32",UDS_ALIGNRIGHT | 
                     UDS_AUTOBUDDY | UDS_ARROWKEYS,295,122,6,12
-    LTEXT           "行型(&G)",IDC_STATIC,164,138,26,8
+    LTEXT           "Type(&G)",IDC_STATIC,164,138,26,8
     EDITTEXT        IDC_EDIT_LINECOMMENT3,195,136,24,12,ES_AUTOHSCROLL
-    CONTROL         "桁(&J)",IDC_CHECK_LCPOS3,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Col(&J)",IDC_CHECK_LCPOS3,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,223,137,33,10
     RTEXT           "&]",IDC_LABEL_LCPOS3,256,138,8,8
     EDITTEXT        IDC_EDIT_LINECOMMENTPOS3,267,136,26,12,ES_AUTOHSCROLL
     CONTROL         "",IDC_SPIN_LCColNum3,"msctls_updown32",UDS_ALIGNRIGHT | 
                     UDS_AUTOBUDDY | UDS_ARROWKEYS,295,136,6,12
-    GROUPBOX        "コメントスタイル",IDC_STATIC,156,68,142,85,WS_GROUP
-    GROUPBOX        "文字列エスケープ(&Q)",IDC_STATIC,156,168,142,42,WS_GROUP
+    GROUPBOX        "Comments",IDC_STATIC,156,68,142,85,WS_GROUP
+    GROUPBOX        "Escape(&Q)",IDC_STATIC,156,168,142,42,WS_GROUP
     COMBOBOX        IDC_COMBO_STRINGLITERAL,162,180,68,80,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    CONTROL         "行内のみ(&\\)",IDC_CHECK_STRINGLINEONLY,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Single line(&\\)",IDC_CHECK_STRINGLINEONLY,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,233,180,64,10
-    CONTROL         "終了文字がない場合行末まで色分け(&N)",IDC_CHECK_STRINGENDLINE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "Highlight to eol if without end mark(&N)",IDC_CHECK_STRINGENDLINE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,162,194,133,10
-    LTEXT           "縦線桁指定(&3)",IDC_STATIC,164,218,46,8
+    LTEXT           "Vertical Line(&3)",IDC_STATIC,164,218,46,8
     EDITTEXT        IDC_EDIT_VERTLINE,210,216,74,12,ES_AUTOHSCROLL
-    LTEXT           "*桁またはStep(Begin,End)でコンマ区切り",IDC_STATIC,165,
+    LTEXT           "* Align using Step(Begin,End) and sperate with commas",IDC_STATIC,165,
                     230,142,8
 END
 
@@ -1042,33 +1042,33 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CONTEXTHELP | WS_POPUP |
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    LTEXT           "単語ファイル(&W)",IDC_STATIC,8,17,53,8,NOT WS_GROUP
+    LTEXT           "Lexicon File(&W)",IDC_STATIC,8,17,53,8,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_HOKANFILE,63,15,150,12,ES_AUTOHSCROLL | 
                     WS_GROUP
     PUSHBUTTON      "(&1)...",IDC_BUTTON_HOKANFILE_REF,215,14,19,14
     COMBOBOX        IDC_COMBO_HOKAN_TYPE,236,15,58,57,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    CONTROL         "英大文字小文字を同一視(&I)",IDC_CHECK_HOKANLOHICASE,
+    CONTROL         "Case Insensitive(&I)",IDC_CHECK_HOKANLOHICASE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,31,110,10
-    LTEXT           "候補：",IDC_STATIC,122,32,20,8,NOT WS_GROUP
-    CONTROL         "編集中のファイル(&F)",IDC_CHECK_HOKANBYFILE,"Button",
+    LTEXT           "Candidate：",IDC_STATIC,122,32,20,8,NOT WS_GROUP
+    CONTROL         "Search for candidate in current file(&F)",IDC_CHECK_HOKANBYFILE,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,142,31,75,10
-    CONTROL         "強調キーワード(&K)",IDC_CHECK_HOKANBYKEYWORD,"Button",
+    CONTROL         "From Keyword Set(&K)",IDC_CHECK_HOKANBYKEYWORD,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,217,31,75,10
-    GROUPBOX        "入力補完機能",IDC_STATIC,3,3,295,45,WS_GROUP
-    GROUPBOX        "外部ヘルプの設定(&L)",IDC_STATIC,3,55,295,32,WS_GROUP
+    GROUPBOX        "Input Auto-complete Support",IDC_STATIC,3,3,295,45,WS_GROUP
+    GROUPBOX        "External Help Setup(&L)",IDC_STATIC,3,55,295,32,WS_GROUP
     EDITTEXT        IDC_EDIT_TYPEEXTHELP,8,68,264,12,ES_AUTOHSCROLL | 
                     WS_GROUP
     PUSHBUTTON      "(&2)...",IDC_BUTTON_TYPEOPENHELP,275,67,19,14
-    GROUPBOX        "外部HTMLヘルプの設定(&P)",IDC_STATIC,3,95,295,45,
+    GROUPBOX        "External HTML Help Setup(&P)",IDC_STATIC,3,95,295,45,
                     WS_GROUP
     EDITTEXT        IDC_EDIT_TYPEEXTHTMLHELP,8,109,264,12,ES_AUTOHSCROLL | 
                     WS_GROUP
     PUSHBUTTON      "(&3)...",IDC_BUTTON_TYPEOPENEXTHTMLHELP,275,107,19,14
-    CONTROL         "ビューアを複数起動しない(&N)",
+    CONTROL         "Dont open multiple viewers(&N)",
                     IDC_CHECK_TYPEHTMLHELPISSINGLE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,8,125,109,10
-    CONTROL         "終了時、改行の一致を検査する(&E)",IDC_CHECK_CHKENTERATEND,
+    CONTROL         "Check CR consistence when exit editor(&E)",IDC_CHECK_CHKENTERATEND,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,145,116,8
 END
 
@@ -1077,36 +1077,36 @@ STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    CONTROL         "正規表現キーワードを使用する(&R)",IDC_CHECK_REGEX,
+    CONTROL         "Use Regular Expression Keywords(&R)",IDC_CHECK_REGEX,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,5,6,
                     124,10
     RTEXT           "BREGONIG.DLL Version",IDC_LABEL_REGEX_VERSION,89,16,208,
                     10,NOT WS_GROUP,WS_EX_TRANSPARENT
-    GROUPBOX        "正規表現キーワード(&K)",IDC_FRAME_REGEX,3,24,295,169
+    GROUPBOX        "Regular Expression Keyword(&K)",IDC_FRAME_REGEX,3,24,295,169
     CONTROL         "List5",IDC_LIST_REGEX,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | 
                     LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | 
                     WS_TABSTOP,8,33,243,118
-    LTEXT           "正規表現(&N)",IDC_LABEL_REGEX_KEYWORD,13,157,41,8,NOT 
+    LTEXT           "Regular Expression(&N)",IDC_LABEL_REGEX_KEYWORD,13,157,41,8,NOT 
                     WS_GROUP
     EDITTEXT        IDC_EDIT_REGEX,59,155,191,14,ES_AUTOHSCROLL
-    LTEXT           "色指定(&C)",IDC_LABEL_REGEX_COLOR,20,174,34,8,NOT 
+    LTEXT           "Colorization(&C)",IDC_LABEL_REGEX_COLOR,20,174,34,8,NOT 
                     WS_GROUP
     COMBOBOX        IDC_COMBO_REGEX_COLOR,59,172,128,180,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "挿入(&S)",IDC_BUTTON_REGEX_INS,255,118,38,15
-    PUSHBUTTON      "追加(&A)",IDC_BUTTON_REGEX_ADD,255,136,38,15
-    PUSHBUTTON      "更新(&E)",IDC_BUTTON_REGEX_UPD,255,154,38,15
-    PUSHBUTTON      "削除(&D)",IDC_BUTTON_REGEX_DEL,255,172,38,15
-    PUSHBUTTON      "先頭(&T)",IDC_BUTTON_REGEX_TOP,255,33,38,15
-    PUSHBUTTON      "上へ(&U)",IDC_BUTTON_REGEX_UP,255,51,38,15
-    PUSHBUTTON      "下へ(&G)",IDC_BUTTON_REGEX_DOWN,255,69,38,15
-    PUSHBUTTON      "最終(&B)",IDC_BUTTON_REGEX_LAST,255,87,38,15
-    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_REGEX_IMPORT,173,196,60,
+    PUSHBUTTON      "Insert(&S)",IDC_BUTTON_REGEX_INS,255,118,38,15
+    PUSHBUTTON      "Append(&A)",IDC_BUTTON_REGEX_ADD,255,136,38,15
+    PUSHBUTTON      "Edit(&E)",IDC_BUTTON_REGEX_UPD,255,154,38,15
+    PUSHBUTTON      "Delete(&D)",IDC_BUTTON_REGEX_DEL,255,172,38,15
+    PUSHBUTTON      "Delete(&T)",IDC_BUTTON_REGEX_TOP,255,33,38,15
+    PUSHBUTTON      "Up(&U)",IDC_BUTTON_REGEX_UP,255,51,38,15
+    PUSHBUTTON      "Down(&G)",IDC_BUTTON_REGEX_DOWN,255,69,38,15
+    PUSHBUTTON      "Last(&B)",IDC_BUTTON_REGEX_LAST,255,87,38,15
+    PUSHBUTTON      "Import(&I)...",IDC_BUTTON_REGEX_IMPORT,173,196,60,
                     14,WS_GROUP
-    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_REGEX_EXPORT,236,196,60,
+    PUSHBUTTON      "Export(&X)...",IDC_BUTTON_REGEX_EXPORT,236,196,60,
                     14
-    LTEXT           "[色指定]で「URL」を選択するとマッチ文字列がクリッカブルになります",
+    LTEXT           "If you specify [URL] in the [Colorize] field then the matched text will become clickable.",
                     IDC_STATIC,14,195,138,18
 END
 
@@ -1115,42 +1115,42 @@ STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 FONT 9, "Tahoma"
 BEGIN
-    CONTROL         "キーワードヘルプ機能を使う(&K)",IDC_CHECK_KEYHELP,
+    CONTROL         "Use Keyword Help(&K)",IDC_CHECK_KEYHELP,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,5,6,
                     114,10
-    GROUPBOX        "辞書ファイル一覧(&L)",IDC_FRAME_KEYHELP,3,21,295,174
+    GROUPBOX        "Dictonary File List(&L)",IDC_FRAME_KEYHELP,3,21,295,174
     CONTROL         "List5",IDC_LIST_KEYHELP,"SysListView32",LVS_REPORT | 
                     LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | 
                     LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | 
                     WS_TABSTOP,8,33,238,118
-    LTEXT           "<辞書の説明>",IDC_LABEL_KEYHELP_TITLE,10,159,50,8,NOT 
+    LTEXT           "<Dictionary Description>",IDC_LABEL_KEYHELP_TITLE,10,159,50,8,NOT 
                     WS_GROUP
-    LTEXT           "辞書ファイルの概要",IDC_LABEL_KEYHELP_ABOUT,61,159,185,
+    LTEXT           "Dict file desc.",IDC_LABEL_KEYHELP_ABOUT,61,159,185,
                     8,NOT WS_GROUP,WS_EX_TRANSPARENT
-    LTEXT           "辞書ファイル",IDC_LABEL_KEYHELP_KEYWORD,13,173,41,8,NOT 
+    LTEXT           "Dictionary File",IDC_LABEL_KEYHELP_KEYWORD,13,173,41,8,NOT 
                     WS_GROUP
     EDITTEXT        IDC_EDIT_KEYHELP,61,172,170,12,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BUTTON_KEYHELP_REF,234,172,12,13,WS_GROUP
-    LTEXT           "↑優先度(高)",IDC_LABEL_KEYHELP_PRIOR,249,33,44,8,NOT 
+    LTEXT           "↑Priority (Top)",IDC_LABEL_KEYHELP_PRIOR,249,33,44,8,NOT 
                     WS_GROUP
-    PUSHBUTTON      "挿入(&S)",IDC_BUTTON_KEYHELP_INS,251,136,38,15
-    PUSHBUTTON      "更新(&E)",IDC_BUTTON_KEYHELP_UPD,251,154,38,15
-    PUSHBUTTON      "削除(&D)",IDC_BUTTON_KEYHELP_DEL,251,172,38,15
-    PUSHBUTTON      "先頭(&T)",IDC_BUTTON_KEYHELP_TOP,251,44,38,15
-    PUSHBUTTON      "上へ(&U)",IDC_BUTTON_KEYHELP_UP,251,62,38,15
-    PUSHBUTTON      "下へ(&G)",IDC_BUTTON_KEYHELP_DOWN,251,80,38,15
-    PUSHBUTTON      "最終(&B)",IDC_BUTTON_KEYHELP_LAST,251,98,38,15
-    PUSHBUTTON      "インポート(&I)...",IDC_BUTTON_KEYHELP_IMPORT,173,199,60,
+    PUSHBUTTON      "Insert(&S)",IDC_BUTTON_KEYHELP_INS,251,136,38,15
+    PUSHBUTTON      "Delete(&E)",IDC_BUTTON_KEYHELP_UPD,251,154,38,15
+    PUSHBUTTON      "Delete(&D)",IDC_BUTTON_KEYHELP_DEL,251,172,38,15
+    PUSHBUTTON      "Top(&T)",IDC_BUTTON_KEYHELP_TOP,251,44,38,15
+    PUSHBUTTON      "Up(&U)",IDC_BUTTON_KEYHELP_UP,251,62,38,15
+    PUSHBUTTON      "Down(&G)",IDC_BUTTON_KEYHELP_DOWN,251,80,38,15
+    PUSHBUTTON      "Last(&B)",IDC_BUTTON_KEYHELP_LAST,251,98,38,15
+    PUSHBUTTON      "Import(&I)...",IDC_BUTTON_KEYHELP_IMPORT,173,199,60,
                     14,WS_GROUP
-    PUSHBUTTON      "エクスポート(&X)...",IDC_BUTTON_KEYHELP_EXPORT,236,199,
+    PUSHBUTTON      "Export(&X)...",IDC_BUTTON_KEYHELP_EXPORT,236,199,
                     60,14
-    CONTROL         "ヒットした次の辞書も検索(&A)",
+    CONTROL         "Cont. searching other dict.(&A)",
                     IDC_CHECK_KEYHELP_ALLSEARCH,"Button",BS_AUTOCHECKBOX | 
                     BS_NOTIFY | WS_TABSTOP,7,200,105,10
-    CONTROL         "キーワードも表示する(&W)",IDC_CHECK_KEYHELP_KEYDISP,
+    CONTROL         "Also show KeyWord(&W)",IDC_CHECK_KEYHELP_KEYDISP,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,212,
                     95,10
-    CONTROL         "選択範囲で前方一致検索(&P)",IDC_CHECK_KEYHELP_PREFIX,
+    CONTROL         "Search within selection(&P)",IDC_CHECK_KEYHELP_PREFIX,
                     "Button",BS_AUTOCHECKBOX | BS_NOTIFY | WS_TABSTOP,7,224,
                     108,10
 END
