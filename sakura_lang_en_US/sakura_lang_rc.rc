@@ -3994,21 +3994,25 @@ BEGIN
 
 
 	// CPropCommon.cpp
-	STR_ERR_DLGPROPCOMMON01		"General"
-	STR_ERR_DLGPROPCOMMON02		"Window"
-	STR_ERR_DLGPROPCOMMON03		"Tabs"
-	STR_ERR_DLGPROPCOMMON04		"Editing"
-	STR_ERR_DLGPROPCOMMON05		"File"
-	STR_ERR_DLGPROPCOMMON06		"Backup"
-	STR_ERR_DLGPROPCOMMON07		"Format"
-	STR_ERR_DLGPROPCOMMON08		"Search"
-	STR_ERR_DLGPROPCOMMON09		"Function Key"
-	STR_ERR_DLGPROPCOMMON10		"Custom Menu"
-	STR_ERR_DLGPROPCOMMON11		"Tool Bar"
-	STR_ERR_DLGPROPCOMMON12		"Keyword Highlight"
-	STR_ERR_DLGPROPCOMMON13		"Support"
-	STR_ERR_DLGPROPCOMMON14		"Macro"
-	STR_ERR_DLGPROPCOMMON15		"Filename Display"
+	STR_PROPCOMMON				"Common Setting"
+	STR_PROPCOMMON_GENERAL		"General"
+	STR_PROPCOMMON_WINDOW		"Window"
+	STR_PROPCOMMON_TABS			"Tabs"
+	STR_PROPCOMMON_EDITING		"Editing"
+	STR_PROPCOMMON_FILE			"File"
+	STR_PROPCOMMON_BACKUP		"Backup"
+	STR_PROPCOMMON_FORMAT		"Format"
+	STR_PROPCOMMON_SEARCH		"Search"
+	STR_PROPCOMMON_KEYS			"Function Key"
+	STR_PROPCOMMON_CUSTMENU		"Custom Menu"
+	STR_PROPCOMMON_TOOLBAR		"Tool Bar"
+	STR_PROPCOMMON_KEYWORD		"Keyword Highlight"
+	STR_PROPCOMMON_SUPPORT		"Support"
+	STR_PROPCOMMON_MACRO		"Macro"
+	STR_PROPCOMMON_FILENAME		"Filename Display"
+	STR_PROPCOMMON_PLUGIN		"Plugin"
+	STR_PROPCOMMON_MAINMENU		"Main Menu"
+	STR_PROPCOMMON_STATBAR		"Status Bar"
 
 	// General Settings::File Tab
 	STR_ERR_DLGPROPCOMMON16		"Not used"
@@ -4018,7 +4022,6 @@ BEGIN
 	STR_ERR_DLGPROPCOMMON20		"Control Key"
 	STR_ERR_DLGPROPCOMMON21		"Shift Key"
 
-	STR_ERR_DLGPROPCOMMON22		"Common Setting"
 	STR_ERR_DLGPROPCOMMON23		"Please report this bug"
 	STR_ERR_DLGPROPCOMMON24		"CPropCommon::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed\n\n%s\n"
 	STR_ERR_DLGPROPCOMMON25		"Deleting recent file history,\nOKÅH\n"
@@ -4073,12 +4076,13 @@ BEGIN
 	STR_ERR_DLGCPROPTYPES28		"Wrap at window edge"
 
 	// File Type Settings Tab names
-	STR_ERR_DLGCPROPTYPES29		"Screen"					// Property Sheet
-	STR_ERR_DLGCPROPTYPES30		"Color"
-	STR_ERR_DLGCPROPTYPES31		"Support"
-	STR_ERR_DLGCPROPTYPES32		"RegEx Keyword"
-	STR_ERR_DLGCPROPTYPES33		"Keyword Help"
-	STR_ERR_DLGCPROPTYPES34		"File Type Setting"
+	STR_PROPTYPE				"File Type Setting"
+	STR_PROPTYPE_SCREEN			"Screen"					// Property Sheet
+	STR_PROPTYPE_COLOR			"Color"
+	STR_PROPTYPE_SUPPORT		"Support"
+	STR_PROPTYPE_REGEX_KEYWORD	"RegEx Keyword"
+	STR_PROPTYPE_KEYWORD_HELP	"Keyword Help"
+	STR_PROPTYPE_WINDOW			"Window"
 	STR_ERR_DLGCPROPTYPES35		"Please report the bug"		// dlg box
 	STR_ERR_DLGCPROPTYPES36		"CPropTypes::DoPropertySheet() failed.\npsh.nStartPage=[%d]\n::PropertySheet() failed.\n\n%s\n"
 	STR_ERR_DLGCPROPTYPES37		"Could not open file\n\n%s"
