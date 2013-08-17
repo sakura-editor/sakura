@@ -104,16 +104,16 @@ bool CNormalProcess::InitializeProcess()
 		if( m_cShareData.ActiveAlreadyOpenedWindow( fi.m_szPath, &hwndOwner, fi.m_nCharCode ) ){
 			//	From Here Oct. 19, 2001 genta
 			//	カーソル位置が引数に指定されていたら指定位置にジャンプ
-			if( fi.m_nY >= 0 ){	//	行の指定があるか
+			if( fi.m_ptCursor.y >= 0 ){	//	行の指定があるか
 				POINT& pt = *(POINT*)CProcess::m_pShareData->m_sWorkBuffer.m_szWork;
-				if( fi.m_nX < 0 ){
+				if( fi.m_ptCursor.x < 0 ){
 					//	桁の指定が無い場合
 					::SendMessage( hwndOwner, MYWM_GETCARETPOS, 0, 0 );
 				}
 				else {
-					pt.x = fi.m_nX;
+					pt.x = fi.m_ptCursor.x;
 				}
-				pt.y = fi.m_nY;
+				pt.y = fi.m_ptCursor.y;
 				::SendMessage( hwndOwner, MYWM_SETCARETPOS, 0, 0 );
 			}
 			//	To Here Oct. 19, 2001 genta
@@ -242,7 +242,7 @@ bool CNormalProcess::InitializeProcess()
 			//	オプション指定がないときはカーソル位置設定を行わないようにする
 			//	Oct. 19, 2001 genta
 			//	0も位置としては有効な値なので判定に含めなくてはならない
-			if( 0 <= fi.m_nX || 0 <= fi.m_nY ){
+			if( 0 <= fi.m_ptCursor.x || 0 <= fi.m_ptCursor.y ){
 				/*
 				  カーソル位置変換
 				  物理位置(行頭からのバイト数、折り返し無し行位置)
@@ -252,8 +252,8 @@ bool CNormalProcess::InitializeProcess()
 				int		nPosX;
 				int		nPosY;
 				m_pcEditWnd->m_cEditDoc.m_cLayoutMgr.LogicToLayout(
-					fi.m_nX,
-					fi.m_nY,
+					fi.m_ptCursor.x,
+					fi.m_ptCursor.y,
 					&nPosX,
 					&nPosY
 				);
@@ -263,9 +263,9 @@ bool CNormalProcess::InitializeProcess()
 				// From Here Mar. 28, 2003 MIK
 				// 改行の真ん中にカーソルが来ないように。
 				// 2008.08.20 ryoji 改行単位の行番号を渡すように修正
-				const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_nY );
+				const CDocLine *pTmpDocLine = m_pcEditWnd->m_cEditDoc.m_cDocLineMgr.GetLine( fi.m_ptCursor.y );
 				if( pTmpDocLine ){
-					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nPosX--;
+					if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_ptCursor.x ) nPosX--;
 				}
 				// To Here Mar. 28, 2003 MIK
 

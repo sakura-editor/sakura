@@ -5815,8 +5815,8 @@ bool CEditView::TagJumpSub(
 		bool		bSuccess;
 
 		_tcscpy( inf.m_szPath, szJumpToFile );
-		inf.m_nX           = nJumpToColm - 1;
-		inf.m_nY           = nJumpToLine - 1;
+		inf.m_ptCursor.x   = nJumpToColm - 1;
+		inf.m_ptCursor.y   = nJumpToLine - 1;
 		inf.m_nViewLeftCol = inf.m_nViewTopLine = -1;
 		inf.m_nCharCode    = CODE_AUTODETECT;
 

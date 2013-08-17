@@ -377,9 +377,9 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 		wsprintf( szKeyName, "MRU[%02d].nViewLeftCol", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nViewLeftCol );
 		wsprintf( szKeyName, "MRU[%02d].nX", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nX );
+		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_ptCursor.x );
 		wsprintf( szKeyName, "MRU[%02d].nY", i );
-		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_nY );
+		cProfile.IOProfileData( pszSecName, szKeyName, pfiWork->m_ptCursor.y );
 		wsprintf( szKeyName, "MRU[%02d].nCharCode", i );
 		cProfile.IOProfileData( pszSecName, szKeyName, (int&)pfiWork->m_nCharCode );
 		wsprintf( szKeyName, "MRU[%02d].szPath", i );
@@ -401,8 +401,8 @@ void CShareData::ShareData_IO_Mru( CProfile& cProfile )
 		fiInit.m_nCharCode = CODE_DEFAULT;
 		fiInit.m_nViewLeftCol = 0;
 		fiInit.m_nViewTopLine = 0;
-		fiInit.m_nX = 0;
-		fiInit.m_nY = 0;
+		fiInit.m_ptCursor.x = 0;
+		fiInit.m_ptCursor.y = 0;
 		_tcscpy( fiInit.m_szPath, _T("") );
 		strcpy( fiInit.m_szMarkLines, "" );	// 2002.01.16 hor
 		for( ; i < MAX_MRU; ++i){

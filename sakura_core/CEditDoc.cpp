@@ -1069,8 +1069,8 @@ BOOL CEditDoc::FileRead(
 		int		nCaretPosX;
 		int		nCaretPosY;
 		m_cLayoutMgr.LogicToLayout(
-			fi.m_nX,
-			fi.m_nY,
+			fi.m_ptCursor.x,
+			fi.m_ptCursor.y,
 			&nCaretPosX,
 			&nCaretPosY
 		);
@@ -1082,9 +1082,9 @@ BOOL CEditDoc::FileRead(
 			m_pcEditViewArr[m_nActivePaneIndex]->m_nViewLeftCol = fi.m_nViewLeftCol; // 2001/10/20 novice
 			// From Here Mar. 28, 2003 MIK
 			// 改行の真ん中にカーソルが来ないように。
-			const CDocLine *pTmpDocLine = m_cDocLineMgr.GetLine( fi.m_nY );	// 2008.08.22 ryoji 改行単位の行番号を渡すように修正
+			const CDocLine *pTmpDocLine = m_cDocLineMgr.GetLine( fi.m_ptCursor.y );	// 2008.08.22 ryoji 改行単位の行番号を渡すように修正
 			if( pTmpDocLine ){
-				if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_nX ) nCaretPosX--;
+				if( pTmpDocLine->GetLengthWithoutEOL() < fi.m_ptCursor.x ) nCaretPosX--;
 			}
 			// To Here Mar. 28, 2003 MIK
 			m_pcEditViewArr[m_nActivePaneIndex]->MoveCursor( nCaretPosX, nCaretPosY, true );
@@ -3963,8 +3963,8 @@ void CEditDoc::GetEditInfo(
 		&nX,
 		&nY
 	);
-	pfi->m_nX = nX;		/* カーソル 物理位置(行頭からのバイト数) */
-	pfi->m_nY = nY;		/* カーソル 物理位置(折り返し無し行位置) */
+	pfi->m_ptCursor.x = nX;		/* カーソル 物理位置(行頭からのバイト数) */
+	pfi->m_ptCursor.y = nY;		/* カーソル 物理位置(折り返し無し行位置) */
 
 	//各種状態
 	pfi->m_bIsModified = IsModified();			/* 変更フラグ */

@@ -333,10 +333,10 @@ void CCommandLine::ParseCommandLine( LPCTSTR pszCmdLineSrc )
 			switch( CheckCommandLine( pszToken, nQuoteLen, &arg, &nArgLen ) ){
 			case CMDLINEOPT_X: //	X
 				/* 行桁指定を1開始にした */
-				m_fi.m_nX = AtoiOptionInt( arg ) - 1;
+				m_fi.m_ptCursor.x = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_Y:	//	Y
-				m_fi.m_nY = AtoiOptionInt( arg ) - 1;
+				m_fi.m_ptCursor.y = AtoiOptionInt( arg ) - 1;
 				break;
 			case CMDLINEOPT_VX:	// VX
 				/* 行桁指定を1開始にした */

@@ -1101,11 +1101,11 @@ bool CControlTray::OpenNewEditor2(
 				nPos += wsprintf( pszCmdLine + nPos, _T(" \"%s\""), pfi->m_szPath );
 			}
 		}
-		if( pfi->m_nX >= 0 ){
-			nPos += wsprintf( pszCmdLine + nPos, _T(" -X=%d"), pfi->m_nX +1 );
+		if( pfi->m_ptCursor.x >= 0 ){
+			nPos += wsprintf( pszCmdLine + nPos, _T(" -X=%d"), pfi->m_ptCursor.x +1 );
 		}
-		if( pfi->m_nY >= 0 ){
-			nPos += wsprintf( pszCmdLine + nPos, _T(" -Y=%d"), pfi->m_nY +1 );
+		if( pfi->m_ptCursor.y >= 0 ){
+			nPos += wsprintf( pszCmdLine + nPos, _T(" -Y=%d"), pfi->m_ptCursor.y +1 );
 		}
 		if( pfi->m_nViewLeftCol >= 0 ){
 			nPos += wsprintf( pszCmdLine + nPos, _T(" -VX=%d"), pfi->m_nViewLeftCol +1 );
