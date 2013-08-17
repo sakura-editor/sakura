@@ -948,8 +948,9 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	if(pInfo->pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
 		if(pcLayout){
 			bool bChange = false;
+			int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 			CColor3Setting cColor;
-			while(pInfo->nPosInLogic < pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL()){
+			while(pInfo->nPosInLogic < nPosTo){
 				//色切替
 				bChange |= pInfo->DoChangeColor(cLineStr, &cColor);
 
@@ -1012,15 +1013,17 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//行終端または折り返しに達するまでループ
 	if(pcLayout){
-		while(pInfo->nPosInLogic < pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL()){
+		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
+		CColor3Setting cColor;
+		CFigureManager* pcFigureManager = CFigureManager::getInstance();
+		while(pInfo->nPosInLogic < nPosTo){
 			//色切替
-			CColor3Setting cColor;
 			if( pInfo->DoChangeColor(cLineStr, &cColor) ){
 				SetCurrentColor3(pInfo->gr, cColor.eColorIndex, cColor.eColorIndex2, cColor.eColorIndexBg);
 			}
 
 			//1文字情報取得 $$高速化可能
-			CFigure& cFigure = CFigureManager::getInstance()->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
+			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[pInfo->GetPosInLogic()]);
 
 			//1文字描画
 			cFigure.DrawImp(pInfo);
