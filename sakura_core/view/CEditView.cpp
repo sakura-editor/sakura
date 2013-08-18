@@ -2335,12 +2335,12 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 		HDC		hdc = ::GetDC( GetHwnd() );
 		{
 			CGraphics gr(hdc);
-			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
+			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sColorAttr.m_cTEXT );
 			::MoveToEx( gr, m_nOldCursorLineX, GetTextArea().GetAreaTop(), NULL );
 			::LineTo(   gr, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
 			int nBoldX = m_nOldCursorLineX - 1;
 			// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
-			if( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bBoldFont &&
+			if( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sFontAttr.m_bBoldFont &&
 				IsDrawCursorVLinePos(nBoldX) ){
 				::MoveToEx( gr, nBoldX, GetTextArea().GetAreaTop(), NULL );
 				::LineTo(   gr, nBoldX, GetTextArea().GetAreaBottom() );
@@ -2379,7 +2379,7 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint )
 		HDC		hdc = ::GetDC( GetHwnd() );
 		{
 			CGraphics gr(hdc);
-			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
+			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_sColorAttr.m_cTEXT );
 			::MoveToEx(
 				gr,
 				GetTextArea().GetAreaLeft(),

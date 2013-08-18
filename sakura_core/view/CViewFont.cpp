@@ -69,19 +69,19 @@ void CViewFont::DeleteFont()
 }
 
 /*! フォントを選ぶ
-	@param bBold trueで太字
-	@param bUnderLine trueで下線
+	@param m_bBoldFont trueで太字
+	@param m_bUnderLine trueで下線
 */
-HFONT CViewFont::ChooseFontHandle( bool bBold, bool bUnderLine ) const
+HFONT CViewFont::ChooseFontHandle( SFontAttr sFontAttr ) const
 {
-	if( bBold ){	/* 太字か */
-		if( bUnderLine ){	/* 下線か */
+	if( sFontAttr.m_bBoldFont ){	/* 太字か */
+		if( sFontAttr.m_bUnderLine ){	/* 下線か */
 			return m_hFont_HAN_BOLD_UL;
 		}else{
 			return m_hFont_HAN_BOLD;
 		}
 	}else{
-		if( bUnderLine ){	/* 下線か */
+		if( sFontAttr.m_bUnderLine ){	/* 下線か */
 			return m_hFont_HAN_UL;
 		}else{
 			return m_hFont_HAN;

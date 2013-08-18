@@ -104,9 +104,9 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 		pInfo->gr.PushTextBackColor(crBack);
 		bool bTrans = pcView->IsBkBitmap() && cTextType.GetBackColor() == crBack;
 		SFONT sFont;
-		sFont.m_bBoldFont = cSpaceType.IsBoldFont() || currentStyle.IsBoldFont();
-		sFont.m_bUnderLine = cSpaceType.HasUnderLine();
-		sFont.m_hFont = pInfo->pcView->GetFontset().ChooseFontHandle(sFont.m_bBoldFont, sFont.m_bUnderLine);
+		sFont.m_sFontAttr.m_bBoldFont = cSpaceType.IsBoldFont() || currentStyle.IsBoldFont();
+		sFont.m_sFontAttr.m_bUnderLine = cSpaceType.HasUnderLine();
+		sFont.m_hFont = pInfo->pcView->GetFontset().ChooseFontHandle( sFont.m_sFontAttr );
 		pInfo->gr.PushMyFont(sFont);
 
 		DispPos sPos(*pInfo->pDispPos);	// Œ»ÝˆÊ’u‚ðŠo‚¦‚Ä‚¨‚­

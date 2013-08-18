@@ -572,8 +572,8 @@ void CCaret::ShowEditCaret()
 	//	キャレット色の取得
 	const ColorInfo* ColorInfoArr = pTypes->m_ColorInfoArr;
 	int nCaretColor = ( ColorInfoArr[COLORIDX_CARET_IME].m_bDisp && m_pEditView->IsImeON() )? COLORIDX_CARET_IME: COLORIDX_CARET;
-	COLORREF crCaret = ColorInfoArr[nCaretColor].m_colTEXT;
-	COLORREF crBack = ColorInfoArr[COLORIDX_TEXT].m_colBACK;
+	COLORREF crCaret = ColorInfoArr[nCaretColor].m_sColorAttr.m_cTEXT;
+	COLORREF crBack = ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
 	if( !ExistCaretFocus() ){
 		/* キャレットがなかった場合 */

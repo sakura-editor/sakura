@@ -1768,7 +1768,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 		int nColorIdx = ToColorInfoArrIndex(COLORIDX_TEXT);
 		if (-1 != nColorIdx) {
 			const ColorInfo& info = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
-			::SetTextColor(hdc, info.m_colTEXT);
+			::SetTextColor(hdc, info.m_sColorAttr.m_cTEXT);
 //			::SetBkColor(hdc, info.m_colBACK);
 		}
 	}
@@ -1805,17 +1805,17 @@ void CPrintPreview::Print_DrawBlock(
 		int nColorIdx = ToColorInfoArrIndex( pStrategy ? pStrategy->GetStrategyColor() : COLORIDX_TEXT );
 		if (-1 != nColorIdx) {
 			const ColorInfo& info = m_pParentWnd->GetDocument().m_cDocType.GetDocumentAttribute().m_ColorInfoArr[nColorIdx];
-			if (nKind == 2 && !info.m_bUnderLine) {
+			if (nKind == 2 && !info.m_sFontAttr.m_bUnderLine) {
 				// TABは下線が無ければ印字不要
 				return;
 			}
-			if (info.m_bBoldFont)
-				if (info.m_bUnderLine)	hFont = (nKind == 1 ? m_hFontZen_bu: m_hFontHan_bu);	// 太字、下線
+			if (info.m_sFontAttr.m_bBoldFont)
+				if (info.m_sFontAttr.m_bUnderLine)	hFont = (nKind == 1 ? m_hFontZen_bu: m_hFontHan_bu);	// 太字、下線
 				else					hFont = (nKind == 1 ? m_hFontZen_b : m_hFontHan_b);		// 太字
 			else
-				if (info.m_bUnderLine)	hFont = (nKind == 1 ? m_hFontZen_u : m_hFontHan_u);		// 下線
+				if (info.m_sFontAttr.m_bUnderLine)	hFont = (nKind == 1 ? m_hFontZen_u : m_hFontHan_u);		// 下線
 			//	else					hFont = (nKind == 1 ? m_hFontZen   : m_hFontHan);		// 標準
-			::SetTextColor( hdc, info.m_colTEXT);
+			::SetTextColor( hdc, info.m_sColorAttr.m_cTEXT);
 //			::SetBkColor( hdc, info.m_colBACK);
 		}
 	}
