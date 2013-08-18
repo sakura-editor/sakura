@@ -28,13 +28,23 @@
 //                          色設定                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
+//! フォント属性
+struct SFontAttr{
+	bool		m_bBoldFont;		//!< 太字
+	bool		m_bUnderLine;		//!< 下線
+};
+
+//! 色属性
+struct SColorAttr{
+	COLORREF	m_cTEXT;			//!< 文字色
+	COLORREF	m_cBACK;			//!< 背景色
+};
+
 //! 色設定
 struct ColorInfoBase{
 	bool		m_bDisp;			//!< 表示
-	bool		m_bBoldFont;		//!< 太字
-	bool		m_bUnderLine;		//!< 下線
-	COLORREF	m_colTEXT;			//!< 文字色
-	COLORREF	m_colBACK;			//!< 背景色
+	SFontAttr	m_sFontAttr;		//!< フォント属性
+	SColorAttr	m_sColorAttr;		//!< 色属性
 };
 
 //! 名前とインデックス付き色設定

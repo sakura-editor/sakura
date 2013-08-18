@@ -181,13 +181,8 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 下線 */
 			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			{
-				if( pColorInfo->m_bUnderLine ){	/* 下線で表示 */
-					pColorInfo->m_bUnderLine = false;
-					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, FALSE );
-				}else{
-					pColorInfo->m_bUnderLine = true;
-					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, TRUE );
-				}
+				pColorInfo->m_sFontAttr.m_bUnderLine = !pColorInfo->m_sFontAttr.m_bUnderLine; // toggle true/false
+				::CheckDlgButtonBool( ::GetParent( hwnd ), IDC_CHECK_UNDERLINE, pColorInfo->m_sFontAttr.m_bUnderLine );
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 			}
 		}
@@ -202,13 +197,8 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 太字で表示 */
 			if( 0 == (g_ColorAttributeArr[nIndex].fAttribute & COLOR_ATTRIB_NO_BOLD) )	// 2006.12.18 ryoji フラグ利用で簡素化
 			{
-				if( pColorInfo->m_bBoldFont ){	/* 太字で表示 */
-					pColorInfo->m_bBoldFont = false;
-					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_BOLD, FALSE );
-				}else{
-					pColorInfo->m_bBoldFont = true;
-					::CheckDlgButton( ::GetParent( hwnd ), IDC_CHECK_BOLD, TRUE );
-				}
+				pColorInfo->m_sFontAttr.m_bBoldFont = !pColorInfo->m_sFontAttr.m_bBoldFont; // toggle true/false
+				::CheckDlgButtonBool( ::GetParent( hwnd ), IDC_CHECK_BOLD, pColorInfo->m_sFontAttr.m_bBoldFont );
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 			}
 		}
@@ -242,7 +232,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_colTEXT, pColors ) ){
+			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_sColorAttr.m_cTEXT, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 			}
@@ -255,7 +245,7 @@ LRESULT APIENTRY ColorList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			/* 色選択ダイアログ */
 			// 2005.11.30 Moca カスタム色保持
 			DWORD* pColors = (DWORD*)::GetProp( hwnd, _T("ptrCustomColors") );
-			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_colBACK, pColors ) ){
+			if( CPropTypesColor::SelectColor( hwnd, &pColorInfo->m_sColorAttr.m_cBACK, pColors ) ){
 				::InvalidateRect( hwnd, &rcItem, TRUE );
 				::InvalidateRect( ::GetDlgItem( ::GetParent( hwnd ), IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 			}
@@ -337,24 +327,11 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				}
 
 				/* 色分け/表示 をする */
-				if( m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp ){
-					::CheckDlgButton( hwndDlg, IDC_CHECK_DISP, TRUE );
-				}else{
-					::CheckDlgButton( hwndDlg, IDC_CHECK_DISP, FALSE );
-				}
+				::CheckDlgButtonBool( hwndDlg, IDC_CHECK_DISP, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp );
 				/* 太字で表示 */
-				if( m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bBoldFont ){
-					::CheckDlgButton( hwndDlg, IDC_CHECK_BOLD, TRUE );
-				}else{
-					::CheckDlgButton( hwndDlg, IDC_CHECK_BOLD, FALSE );
-				}
+				::CheckDlgButtonBool( hwndDlg, IDC_CHECK_BOLD, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sFontAttr.m_bBoldFont );
 				/* 下線を表示 */
-				if( m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine ){
-					::CheckDlgButton( hwndDlg, IDC_CHECK_UNDERLINE, TRUE );
-				}else{
-					::CheckDlgButton( hwndDlg, IDC_CHECK_UNDERLINE, FALSE );
-				}
-
+				::CheckDlgButtonBool( hwndDlg, IDC_CHECK_UNDERLINE, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sFontAttr.m_bUnderLine );
 
 				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 				::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
@@ -369,7 +346,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				{
 					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
 					CDlgSameColor cDlgSameColor;
-					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT;
+					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT;
 					cDlgSameColor.DoModal( ::GetModuleHandle(NULL), hwndDlg, wID, &m_Types, cr );
 				}
 				::InvalidateRect( hwndListColor, NULL, TRUE );
@@ -379,7 +356,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				{
 					// 2006.04.26 ryoji 文字色／背景色統一ダイアログを使う
 					CDlgSameColor cDlgSameColor;
-					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK;
+					COLORREF cr = m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cBACK;
 					cDlgSameColor.DoModal( ::GetModuleHandle(NULL), hwndDlg, wID, &m_Types, cr );
 				}
 				::InvalidateRect( hwndListColor, NULL, TRUE );
@@ -387,7 +364,7 @@ INT_PTR CPropTypesColor::DispatchEvent(
 
 			case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
 				/* 色選択ダイアログ */
-				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT, m_dwCustColors ) ){
+				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT, m_dwCustColors ) ){
 					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_TEXTCOLOR ), NULL, TRUE );
 				}
 				/* 現在選択されている色タイプ */
@@ -395,37 +372,25 @@ INT_PTR CPropTypesColor::DispatchEvent(
 				return TRUE;
 			case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
 				/* 色選択ダイアログ */
-				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK, m_dwCustColors ) ){
+				if( SelectColor( hwndDlg, &m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cBACK, m_dwCustColors ) ){
 					::InvalidateRect( ::GetDlgItem( hwndDlg, IDC_BUTTON_BACKCOLOR ), NULL, TRUE );
 				}
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
 			case IDC_CHECK_DISP:	/* 色分け/表示 をする */
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_DISP ) ){
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = true;
-				}else{
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = false;
-				}
+				m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bDisp = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_DISP );
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				m_Types.m_nRegexKeyMagicNumber++;	//Need Compile	//@@@ 2001.11.17 add MIK 正規表現キーワードのため
 				return TRUE;
 			case IDC_CHECK_BOLD:	/* 太字か */
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_BOLD ) ){
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bBoldFont = true;
-				}else{
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bBoldFont = false;
-				}
+				m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sFontAttr.m_bBoldFont = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_BOLD );
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
 			case IDC_CHECK_UNDERLINE:	/* 下線を表示 */
-				if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_UNDERLINE ) ){
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine = true;
-				}else{
-					m_Types.m_ColorInfoArr[m_nCurrentColorType].m_bUnderLine = false;
-				}
+				m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sFontAttr.m_bUnderLine = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_UNDERLINE );
 				/* 現在選択されている色タイプ */
 				List_SetCurSel( hwndListColor, m_nCurrentColorType );
 				return TRUE;
@@ -591,10 +556,10 @@ INT_PTR CPropTypesColor::DispatchEvent(
 		switch( idCtrl ){
 
 		case IDC_BUTTON_TEXTCOLOR:	/* テキスト色 */
-			DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colTEXT );
+			DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cTEXT );
 			return TRUE;
 		case IDC_BUTTON_BACKCOLOR:	/* 背景色 */
-			DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_colBACK );
+			DrawColorButton( pDis, m_Types.m_ColorInfoArr[m_nCurrentColorType].m_sColorAttr.m_cBACK );
 			return TRUE;
 		case IDC_LIST_COLORS:		/* 色種別リスト */
 			DrawColorListItem( pDis );
@@ -1067,28 +1032,13 @@ void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 
 				//	色設定を入れ替える
 				//	構造体ごと入れ替えると名前が変わってしまうので注意
-				ColorInfo colT;
 				ColorInfo &col1 = m_Types.m_ColorInfoArr[ COLORIDX_KEYWORD1 + i ];
 				ColorInfo &col2   = m_Types.m_ColorInfoArr[ COLORIDX_KEYWORD1 + j ];
 
-				colT.m_bDisp		= col1.m_bDisp;
-				colT.m_bBoldFont	= col1.m_bBoldFont;
-				colT.m_bUnderLine	= col1.m_bUnderLine;
-				colT.m_colTEXT		= col1.m_colTEXT;
-				colT.m_colBACK		= col1.m_colBACK;
+				std::swap( col1.m_bDisp, col1.m_bDisp );
+				std::swap( col1.m_sFontAttr, col2.m_sFontAttr );
+				std::swap( col1.m_sColorAttr, col2.m_sColorAttr );
 
-				col1.m_bDisp		= col2.m_bDisp;
-				col1.m_bBoldFont	= col2.m_bBoldFont;
-				col1.m_bUnderLine	= col2.m_bUnderLine;
-				col1.m_colTEXT		= col2.m_colTEXT;
-				col1.m_colBACK		= col2.m_colBACK;
-
-				col2.m_bDisp		= colT.m_bDisp;
-				col2.m_bBoldFont	= colT.m_bBoldFont;
-				col2.m_bUnderLine	= colT.m_bUnderLine;
-				col2.m_colTEXT		= colT.m_colTEXT;
-				col2.m_colBACK		= colT.m_colBACK;
-				
 				break;
 			}
 		}
@@ -1148,10 +1098,10 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 	/* テキスト */
 	::SetBkMode( gr, TRANSPARENT );
 	::TextOut( gr, rc1.left, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
-	if( pColorInfo->m_bBoldFont ){	/* 太字か */
+	if( pColorInfo->m_sFontAttr.m_bBoldFont ){	/* 太字か */
 		::TextOut( gr, rc1.left + 1, rc1.top, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ) );
 	}
-	if( pColorInfo->m_bUnderLine ){	/* 下線か */
+	if( pColorInfo->m_sFontAttr.m_bUnderLine ){	/* 下線か */
 		SIZE	sz;
 		::GetTextExtentPoint32( gr, pColorInfo->m_szName, _tcslen( pColorInfo->m_szName ), &sz );
 		::MoveToEx( gr, rc1.left,		rc1.bottom - 2, NULL );
@@ -1203,7 +1153,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		rc1.right = rc1.left + 12;
 		rc1.bottom -= 2;
 
-		gr.SetBrushColor( pColorInfo->m_colBACK );
+		gr.SetBrushColor( pColorInfo->m_sColorAttr.m_cBACK );
 		gr.SetPen( cRim );
 		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , 3, 3 );
 	}
@@ -1217,7 +1167,7 @@ void CPropTypesColor::DrawColorListItem( DRAWITEMSTRUCT* pDis )
 		rc1.top += 2;
 		rc1.right = rc1.left + 12;
 		rc1.bottom -= 2;
-		gr.SetBrushColor( pColorInfo->m_colTEXT );
+		gr.SetBrushColor( pColorInfo->m_sColorAttr.m_cTEXT );
 		gr.SetPen( cRim );
 		::RoundRect( pDis->hDC, rc1.left, rc1.top, rc1.right, rc1.bottom , 3, 3 );
 	}

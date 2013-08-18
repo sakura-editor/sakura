@@ -120,8 +120,8 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	int					nIdx;
 
 	// 2005.11.30 Moca カスタム色の先頭にテキスト色を設定しておく
-	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT;
-	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_colBACK;
+	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
+	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
 	nIdx = 0;
 	memset_raw( &psp[nIdx], 0, sizeof_raw( psp[nIdx] ) );

@@ -63,13 +63,13 @@ public:
 	//!‘OŒiF(•¶ŽšF)
 	COLORREF GetTextColor() const
 	{
-		return m_pColorInfoArr->m_colTEXT;
+		return m_pColorInfoArr->m_sColorAttr.m_cTEXT;
 	}
 
 	//!”wŒiF
 	COLORREF GetBackColor() const
 	{
-		return m_pColorInfoArr->m_colBACK;
+		return m_pColorInfoArr->m_sColorAttr.m_cBACK;
 	}
 
 	//!•\Ž¦‚·‚é‚©‚Ç‚¤‚©
@@ -81,13 +81,13 @@ public:
 	//!‘¾Žš‚©‚Ç‚¤‚©
 	bool IsBoldFont() const
 	{
-		return m_pColorInfoArr->m_bBoldFont;
+		return m_pColorInfoArr->m_sFontAttr.m_bBoldFont;
 	}
 
 	//!‰ºü‚ðŽ‚Â‚©‚Ç‚¤‚©
 	bool HasUnderLine() const
 	{
-		return m_pColorInfoArr->m_bUnderLine;
+		return m_pColorInfoArr->m_sFontAttr.m_bUnderLine;
 	}
 
 
@@ -101,7 +101,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void FillBack(CGraphics& gr,const RECT& rc)
 	{
-		gr.FillSolidMyRect(rc, m_pColorInfoArr->m_colBACK);
+		gr.FillSolidMyRect(rc, m_pColorInfoArr->m_sColorAttr.m_cBACK);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -110,9 +110,8 @@ public:
 	SFONT GetTypeFont()
 	{
 		SFONT sFont;
-		sFont.m_bBoldFont = m_pColorInfoArr->m_bBoldFont;
-		sFont.m_bUnderLine = m_pColorInfoArr->m_bUnderLine;
-		sFont.m_hFont = m_pFontset->ChooseFontHandle( sFont.m_bBoldFont, sFont.m_bUnderLine );
+		sFont.m_sFontAttr = m_pColorInfoArr->m_sFontAttr;
+		sFont.m_hFont = m_pFontset->ChooseFontHandle( m_pColorInfoArr->m_sFontAttr );
 		return sFont;
 	}
 	void SetGraphicsState_WhileThisObj(CGraphics& gr)

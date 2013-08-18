@@ -68,9 +68,8 @@ private:
 
 //! フォント情報管理
 struct SFONT {
-	bool	m_bBoldFont;	//!< 太字
-	bool	m_bUnderLine;	//!< 下線
-	HFONT	m_hFont;		//!< フォントハンドル
+	SFontAttr	m_sFontAttr;
+	HFONT		m_hFont;      //!< フォントハンドル
 };
 
 //! 描画管理
@@ -159,7 +158,7 @@ public:
 	bool GetCurrentMyFontBold()
 	{
 		assert(!m_vFonts.empty());
-		return  m_vFonts.back().m_bBoldFont;
+		return  m_vFonts.back().m_sFontAttr.m_bBoldFont;
 	}
 
 	//ペン
