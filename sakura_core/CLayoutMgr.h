@@ -93,7 +93,7 @@ public:
 	const char* GetLineStr( int , int*, const CLayout** );	/* 指定された物理行のデータへのポインタとその長さを返す */
 	bool IsEndOfLine( int nLine, int nPos );	/* 指定位置が行末(改行文字の直前)か調べる */	//@@@ 2002.04.18 MIK
 	CLayout* SearchLineByLayoutY( int );	/* 指定された物理行のレイアウトデータ(CLayout)へのポインタを返す */
-	bool WhereCurrentWord( int , int , int* , int* , int* , int*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
+	bool WhereCurrentWord( int , int , CLayoutRange*, CMemory*, CMemory* );	/* 現在位置の単語の範囲を調べる */
 	//	Sep. 23, 2002 genta
 	//! タブ幅の取得
 	int GetTabSpace() const { return m_sTypeConfig.m_nTabSpace; }

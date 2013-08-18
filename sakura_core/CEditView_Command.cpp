@@ -2164,7 +2164,7 @@ bool CEditView::Command_SELECTWORD( void )
 	nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 
 	/* 現在位置の単語の範囲を調べる */
-	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord( m_ptCaretPos.y, nIdx, &sRange.m_ptFrom.y, &sRange.m_ptFrom.x, &sRange.m_ptTo.y, &sRange.m_ptTo.x, NULL, NULL ) ){
+	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord( m_ptCaretPos.y, nIdx, &sRange, NULL, NULL ) ){
 
 		// 指定された行のデータ内の位置に対応する桁の位置を調べる
 		pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( sRange.m_ptFrom.y );

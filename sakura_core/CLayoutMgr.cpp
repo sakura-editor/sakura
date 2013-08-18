@@ -1017,14 +1017,11 @@ void CLayoutMgr::ShiftLogicalLineNum( CLayout* pLayoutPrev, int nShiftLines )
 
 /* 現在位置の単語の範囲を調べる */
 bool CLayoutMgr::WhereCurrentWord(
-	int			nLineNum,
-	int			nIdx,
-	int*		pnLineFrom,
-	int*		pnIdxFrom,
-	int*		pnLineTo,
-	int*		pnIdxTo,
-	CMemory*	pcmcmWord,		//!< [out]
-	CMemory*	pcmcmWordLeft	//!< [out]
+	int				nLineNum,
+	int				nIdx,
+	CLayoutRange*	pSelect,		//!< [out]
+	CMemory*		pcmcmWord,		//!< [out]
+	CMemory*		pcmcmWordLeft	//!< [out]
 )
 {
 	CLayout* pLayout = SearchLineByLayoutY( nLineNum );
@@ -1033,19 +1030,21 @@ bool CLayoutMgr::WhereCurrentWord(
 	}
 
 	// 現在位置の単語の範囲を調べる
+	int nFromX;
+	int nToX;
 	bool nRetCode = m_pcDocLineMgr->WhereCurrentWord(
 		pLayout->m_ptLogicPos.y,
 		pLayout->m_ptLogicPos.x + nIdx,
-		pnIdxFrom,
-		pnIdxTo,
+		&nFromX,
+		&nToX,
 		pcmcmWord,
 		pcmcmWordLeft
 	);
 
 	if( nRetCode ){
 		/* 論理位置→レイアウト位置変換 */
-		XYLogicalToLayout( pLayout, nLineNum, pLayout->m_ptLogicPos.y, *pnIdxFrom, pnLineFrom, pnIdxFrom );
-		XYLogicalToLayout( pLayout, nLineNum, pLayout->m_ptLogicPos.y, *pnIdxTo,	pnLineTo, pnIdxTo );
+		XYLogicalToLayout( pLayout, nLineNum, pLayout->m_ptLogicPos.y, nFromX, &pSelect->m_ptFrom.y, &pSelect->m_ptFrom.x );
+		XYLogicalToLayout( pLayout, nLineNum, pLayout->m_ptLogicPos.y, nToX, &pSelect->m_ptTo.y, &pSelect->m_ptTo.x );
 	}
 	return nRetCode;
 

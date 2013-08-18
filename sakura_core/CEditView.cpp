@@ -6166,10 +6166,6 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 	int			nLineLen;
 	int			nIdx;
 	int			nIdxTo;
-	int			nLineFrom;
-	int			nColmFrom;
-	int			nLineTo;
-	int			nColmTo;
 	CMemory		cmemWord;
 	int			nCurLine;
 	int			nCharChars;
@@ -6228,14 +6224,11 @@ int CEditView::GetLeftWord( CMemory* pcmemWord, int nMaxWordLen )
 	}
 
 	/* 現在位置の単語の範囲を調べる */
+	CLayoutRange sRange;
 	if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-		nCurLine, nIdx,
-		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, &cmemWord, pcmemWord )
+		nCurLine, nIdx, &sRange, &cmemWord, pcmemWord )
 	){
 		pcmemWord->AppendString( &pLine[nIdx], nCharChars );
-//		MYTRACE( _T("==========\n") );
-//		MYTRACE( _T("cmemWord=[%s]\n"), cmemWord.GetPtr() );
-//		MYTRACE( _T("pcmemWord=[%s]\n"), pcmemWord->GetPtr() );
 
 		return pcmemWord->GetStringLength();
 	}else{
@@ -6255,22 +6248,19 @@ bool CEditView::GetCurrentWord(
 	CMemory* pcmemWord
 )
 {
-	int				nLineFrom;
-	int				nColmFrom;
-	int				nLineTo;
-	int				nColmTo;
-	int				nIdx;
 	const CLayout*	pcLayout = m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( m_ptCaretPos.y );
 	if( NULL == pcLayout ){
 		return false;	/* 単語選択に失敗 */
 	}
+
 	/* 指定された桁に対応する行のデータ内の位置を調べる */
-	nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+	int nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
 
 	/* 現在位置の単語の範囲を調べる */
+	CLayoutRange sRange;
 	bool bResult = m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 		m_ptCaretPos.y, nIdx,
-		&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, pcmemWord, NULL );
+		&sRange, pcmemWord, NULL );
 
 	return bResult;
 }
@@ -6660,15 +6650,10 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 
 	int				i;
 	char			szTopic[_MAX_PATH];
-//	CMemory			cmemCurText;
 	const char*		pLine;
 	int				nLineLen;
 	int				nIdx;
-	int				nLineFrom;
-	int				nColmFrom;
-	int				nLineTo;
-	int				nColmTo;
-//	const CLayout*	pcLayout;
+	CLayoutRange	sRange;
 
 	cmemCurText.SetString( "" );
 	szTopic[0] = '\0';
@@ -6689,23 +6674,17 @@ void CEditView::GetCurrentTextForSearch( CMemory& cmemCurText )
 			/* 現在位置の単語の範囲を調べる */
 			if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 				m_ptCaretPos.y, nIdx,
-				&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
+				&sRange, NULL, NULL )
 			){
 				/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
-				nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
-				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
-				nColmTo = LineIndexToColmn( pcLayout, nColmTo );
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptFrom.y, &nLineLen, &pcLayout );
+				sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+				pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
+				sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
 				/* 選択範囲の変更 */
-				m_sSelectBgn.m_ptFrom.y = nLineFrom;	/* 範囲選択開始行(原点) */
-				m_sSelectBgn.m_ptFrom.x = nColmFrom;	/* 範囲選択開始桁(原点) */
-				m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
-				m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
+				m_sSelectBgn = sRange;
+				m_sSelect = sRange;
 
-				m_sSelect.m_ptFrom.y = nLineFrom;
-				m_sSelect.m_ptFrom.x = nColmFrom;
-				m_sSelect.m_ptTo.y = nLineTo;
-				m_sSelect.m_ptTo.x = nColmTo;
 				/* 選択範囲のデータを取得 */
 				if( GetSelectedData( &cmemCurText, FALSE, NULL, FALSE, m_pShareData->m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
 					/* 検索文字列を現在位置の単語で初期化 */

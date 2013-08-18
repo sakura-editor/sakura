@@ -53,11 +53,11 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int xPos , int yPos )
 	CMemory		cmemCurText;
 	const char*	pLine;
 	int			nLineLen;
-	int			nLineFrom;
-	int			nColmFrom;
-	int			nLineTo;
-	int			nColmTo;
+
+	CLayoutRange sRange;
+
 	int			nIdx;
+
 	int			nWork;
 	BOOL		tripleClickMode = FALSE;	// 2007.10.02 nasukoji	トリプルクリックであることを示す
 	int			nFuncID = 0;				// 2007.11.30 nasukoji	マウス左クリックに対応する機能コード
@@ -348,27 +348,23 @@ normal_action:;
 					nIdx = LineColmnToIndex( pcLayout, m_sSelect.m_ptFrom.x );
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-						m_sSelect.m_ptFrom.y, nIdx, &nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
+						m_sSelect.m_ptFrom.y, nIdx, &sRange, NULL, NULL )
 					){
 						/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
-						nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
-						nColmTo = LineIndexToColmn( pcLayout, nColmTo );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptFrom.y, &nLineLen, &pcLayout );
+						sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
+						sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
 
 
 						nWork = IsCurrentPositionSelected(
-							nColmFrom,	// カーソル位置X
-							nLineFrom	// カーソル位置Y
+							sRange.m_ptFrom.x,	// カーソル位置X
+							sRange.m_ptFrom.y	// カーソル位置Y
 						);
 						if( -1 == nWork || 0 == nWork ){
-							m_sSelect.m_ptFrom.y = nLineFrom;
-							m_sSelect.m_ptFrom.x = nColmFrom;
+							m_sSelect.m_ptFrom = sRange.m_ptFrom;
 							if( 1 == nWorkRel ){
-								m_sSelectBgn.m_ptFrom.y = nLineFrom;	/* 範囲選択開始行(原点) */
-								m_sSelectBgn.m_ptFrom.x = nColmFrom;	/* 範囲選択開始桁(原点) */
-								m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
-								m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
+								m_sSelectBgn = sRange;
 							}
 						}
 					}
@@ -379,34 +375,29 @@ normal_action:;
 					/* 現在位置の単語の範囲を調べる */
 					if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
 						m_sSelect.m_ptTo.y, nIdx,
-						&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
+						&sRange, NULL, NULL )
 					){
 						// 指定された行のデータ内の位置に対応する桁の位置を調べる
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
-						nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
-						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
-						nColmTo = LineIndexToColmn( pcLayout, nColmTo );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptFrom.y, &nLineLen, &pcLayout );
+						sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+						pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
+						sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
 
 						nWork = IsCurrentPositionSelected(
-							nColmFrom,	// カーソル位置X
-							nLineFrom	// カーソル位置Y
+							sRange.m_ptFrom.x,	// カーソル位置X
+							sRange.m_ptFrom.y	// カーソル位置Y
 						);
 						if( -1 == nWork || 0 == nWork ){
-							m_sSelect.m_ptTo.y = nLineFrom;
-							m_sSelect.m_ptTo.x = nColmFrom;
+							m_sSelect.m_ptTo = sRange.m_ptFrom;
 						}
 						if( 1 == IsCurrentPositionSelected(
-							nColmTo,	// カーソル位置X
-							nLineTo		// カーソル位置Y
+							sRange.m_ptTo.x,	// カーソル位置X
+							sRange.m_ptTo.y		// カーソル位置Y
 						) ){
-							m_sSelect.m_ptTo.y = nLineTo;
-							m_sSelect.m_ptTo.x = nColmTo;
+							m_sSelect.m_ptTo = sRange.m_ptTo;
 						}
 						if( -1 == nWorkRel || 0 == nWorkRel ){
-							m_sSelectBgn.m_ptFrom.y = nLineFrom;	/* 範囲選択開始行(原点) */
-							m_sSelectBgn.m_ptFrom.x = nColmFrom;	/* 範囲選択開始桁(原点) */
-							m_sSelectBgn.m_ptTo.y = nLineTo;		/* 範囲選択開始行(原点) */
-							m_sSelectBgn.m_ptTo.x = nColmTo;		/* 範囲選択開始桁(原点) */
+							m_sSelectBgn = sRange;
 						}
 					}
 				}
@@ -786,10 +777,6 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 	POINT		po;
 	const char*	pLine;
 	int			nLineLen;
-	int			nLineFrom;
-	int			nColmFrom;
-	int			nLineTo;
-	int			nColmTo;
 	int			nIdx;
 	int			nWorkF;
 	int			nWorkT;
@@ -964,48 +951,49 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			const CLayout* pcLayout;
 			if( NULL != ( pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( m_ptCaretPos.y, &nLineLen, &pcLayout ) ) ){
 				nIdx = LineColmnToIndex( pcLayout, m_ptCaretPos.x );
+				CLayoutRange sRange;
+
 				/* 現在位置の単語の範囲を調べる */
 				if( m_pcEditDoc->m_cLayoutMgr.WhereCurrentWord(
-					m_ptCaretPos.y, nIdx,
-					&nLineFrom, &nColmFrom, &nLineTo, &nColmTo, NULL, NULL )
+					m_ptCaretPos.y, nIdx, &sRange, NULL, NULL )
 				){
 					/* 指定された行のデータ内の位置に対応する桁の位置を調べる */
-					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineFrom, &nLineLen, &pcLayout );
-					nColmFrom = LineIndexToColmn( pcLayout, nColmFrom );
-					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( nLineTo, &nLineLen, &pcLayout );
-					nColmTo = LineIndexToColmn( pcLayout, nColmTo );
+					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptFrom.y, &nLineLen, &pcLayout );
+					sRange.m_ptFrom.x = LineIndexToColmn( pcLayout, sRange.m_ptFrom.x );
+					pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sRange.m_ptTo.y, &nLineLen, &pcLayout );
+					sRange.m_ptTo.x = LineIndexToColmn( pcLayout, sRange.m_ptTo.x );
 
 					nWorkF = IsCurrentPositionSelectedTEST(
-						nColmFrom,	// カーソル位置X
-						nLineFrom,	// カーソル位置Y
+						sRange.m_ptFrom.x,	// カーソル位置X
+						sRange.m_ptFrom.y,	// カーソル位置Y
 						sSelect
 					);
 					nWorkT = IsCurrentPositionSelectedTEST(
-						nColmTo,	// カーソル位置X
-						nLineTo,	// カーソル位置Y
+						sRange.m_ptTo.x,	// カーソル位置X
+						sRange.m_ptTo.y,	// カーソル位置Y
 						sSelect
 					);
 					if( -1 == nWorkF/* || 0 == nWorkF*/ ){
 						/* 始点が前方に移動。現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( nColmFrom, nLineFrom );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom.x, sRange.m_ptFrom.y );
 					}
 					else if( /*0 == nWorkT ||*/ 1 == nWorkT ){
 						/* 終点が後方に移動。現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptTo.x, sRange.m_ptTo.y );
 					}
 					else if( sSelect_Old.m_ptFrom.y == sSelect.m_ptFrom.y
 					 && sSelect_Old.m_ptFrom.x == sSelect.m_ptFrom.x
 					){
 						/* 始点が無変更＝前方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( nColmTo, nLineTo );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptTo.x, sRange.m_ptTo.y );
 					}
 					else if( sSelect_Old.m_ptTo.y == sSelect.m_ptTo.y
 					 && sSelect_Old.m_ptTo.x == sSelect.m_ptTo.x
 					){
 						/* 終点が無変更＝後方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( nColmFrom, nLineFrom );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom.x, sRange.m_ptFrom.y );
 					}
 				}else{
 					/* 現在のカーソル位置によって選択範囲を変更 */
