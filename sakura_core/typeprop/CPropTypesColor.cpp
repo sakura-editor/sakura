@@ -1035,7 +1035,7 @@ void CPropTypesColor::RearrangeKeywordSet( HWND hwndDlg )
 				ColorInfo &col1 = m_Types.m_ColorInfoArr[ COLORIDX_KEYWORD1 + i ];
 				ColorInfo &col2   = m_Types.m_ColorInfoArr[ COLORIDX_KEYWORD1 + j ];
 
-				std::swap( col1.m_bDisp, col1.m_bDisp );
+				std::swap( col1.m_bDisp, col2.m_bDisp );
 				std::swap( col1.m_sFontAttr, col2.m_sFontAttr );
 				std::swap( col1.m_sColorAttr, col2.m_sColorAttr );
 
