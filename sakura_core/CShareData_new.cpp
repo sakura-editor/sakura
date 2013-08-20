@@ -1611,21 +1611,20 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 		wsprintf( szKeyName, "C[%s]", g_ColorAttributeArr[j].szName );	//Stonee, 2001/01/12, 2001/01/15
 		if( pcProfile->IsReadingMode() ){
 			if( pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, sizeof( szKeyData )) ){
-				pColorInfoArr[j].m_bUnderLine = false;
 				int buf[5];
 				scan_ints( szKeyData, pszForm, buf );
-				pColorInfoArr[j].m_bDisp      = (buf[0]!=0);
-				pColorInfoArr[j].m_bBoldFont  = (buf[1]!=0);
-				pColorInfoArr[j].m_colTEXT    = buf[2];
-				pColorInfoArr[j].m_colBACK    = buf[3];
-				pColorInfoArr[j].m_bUnderLine = (buf[4]!=0);
+				pColorInfoArr[j].m_bDisp                  = (buf[0]!=0);
+				pColorInfoArr[j].m_sFontAttr.m_bBoldFont  = (buf[1]!=0);
+				pColorInfoArr[j].m_sColorAttr.m_cTEXT     = buf[2];
+				pColorInfoArr[j].m_sColorAttr.m_cBACK     = buf[3];
+				pColorInfoArr[j].m_sFontAttr.m_bUnderLine = (buf[4]!=0);
 			}
 			else{
 				// 2006.12.07 ryoji
 				// sakura Ver1.5.13.1 以前のiniファイルを読んだときにキャレットがテキスト背景色と同じになると
 				// ちょっと困るのでキャレット色が読めないときはキャレット色をテキスト色と同じにする
 				if( COLORIDX_CARET == j )
-					pColorInfoArr[j].m_colTEXT = pColorInfoArr[COLORIDX_TEXT].m_colTEXT;
+					pColorInfoArr[j].m_sColorAttr.m_cTEXT = pColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 			}
 			// 2006.12.18 ryoji
 			// 矛盾設定があれば修復する
@@ -1633,17 +1632,17 @@ void CShareData::IO_ColorSet( CProfile* pcProfile, const char* pszSecName, Color
 			if( 0 != (fAttribute & COLOR_ATTRIB_FORCE_DISP) )
 				pColorInfoArr[j].m_bDisp = true;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_BOLD) )
-				pColorInfoArr[j].m_bBoldFont = false;
+				pColorInfoArr[j].m_sFontAttr.m_bBoldFont = false;
 			if( 0 != (fAttribute & COLOR_ATTRIB_NO_UNDERLINE) )
-				pColorInfoArr[j].m_bUnderLine = false;
+				pColorInfoArr[j].m_sFontAttr.m_bUnderLine = false;
 		}
 		else{
 			wsprintf( szKeyData, pszForm,
 				pColorInfoArr[j].m_bDisp?1:0,
-				pColorInfoArr[j].m_bBoldFont?1:0,
-				pColorInfoArr[j].m_colTEXT,
-				pColorInfoArr[j].m_colBACK,
-				pColorInfoArr[j].m_bUnderLine
+				pColorInfoArr[j].m_sFontAttr.m_bBoldFont?1:0,
+				pColorInfoArr[j].m_sColorAttr.m_cTEXT,
+				pColorInfoArr[j].m_sColorAttr.m_cBACK,
+				pColorInfoArr[j].m_sFontAttr.m_bUnderLine
 			);
 			pcProfile->IOProfileData( pszSecName, szKeyName, szKeyData, 0 );
 		}

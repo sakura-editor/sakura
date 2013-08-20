@@ -84,8 +84,8 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 		if( nCOMMENTMODE & COLORIDX_REGEX_BIT )
 		{
 			nColorIdx = (EColorIndexType)(nCOMMENTMODE - COLORIDX_REGEX_FIRST);	//下駄を履かせているのをはずす
-			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
-			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
+			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_sColorAttr.m_cTEXT;
+			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_sColorAttr.m_cBACK;
 			::SetTextColor( hdc, colText );
 			::SetBkColor( hdc, colBack );
 			if( NULL != m_hFontOld ){
@@ -93,10 +93,7 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 			}
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
-				m_pcViewFont->ChooseFontHandle(
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bBoldFont,
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
-				)
+				m_pcViewFont->ChooseFontHandle( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_sFontAttr )
 			);
 			return;
 		}
@@ -107,8 +104,8 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 
 	if( (EColorIndexType)(-1) != nColorIdx ){
 		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bDisp ){
-			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colTEXT;
-			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_colBACK;
+			colText = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_sColorAttr.m_cTEXT;
+			colBack = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_sColorAttr.m_cBACK;
 			::SetTextColor( hdc, colText );
 			::SetBkColor( hdc, colBack );
 			if( NULL != m_hFontOld ){
@@ -116,10 +113,7 @@ void CEditView::SetCurrentColor( HDC hdc, EColorIndexType nCOMMENTMODE )
 			}
 			/* フォントを選ぶ */
 			m_hFontOld = (HFONT)::SelectObject( hdc,
-				m_pcViewFont->ChooseFontHandle(
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bBoldFont,
-					m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_bUnderLine
-				)
+				m_pcViewFont->ChooseFontHandle( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIdx].m_sFontAttr )
 			);
 		}
 	}
@@ -217,17 +211,14 @@ void CEditView::DispLineNumber(
 		}
 		nLineCols = lstrlen( szLineNum );
 
-		colTextColorOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );	/* 行番号の色 */
+		colTextColorOld = ::SetTextColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_sColorAttr.m_cTEXT );	/* 行番号の色 */
 		//	Sep. 23, 2002 余白をテキストの背景色にする
-		colBkColorOld = ::SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );		/* テキスト背景の色 */
+		colBkColorOld = ::SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK );		/* テキスト背景の色 */
 
 		HFONT	hFontOld;
 		/* フォントを選ぶ */
 		hFontOld = (HFONT)::SelectObject( hdc,
-			m_pcViewFont->ChooseFontHandle(
-				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bBoldFont,
-				m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_bUnderLine
-			)
+		m_pcViewFont->ChooseFontHandle( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_sFontAttr )
 		);
 
 		/* 余白を埋める */
@@ -242,7 +233,7 @@ void CEditView::DispLineNumber(
 		);
 		
 		//	Sep. 23, 2002 余白をテキストの背景色にするため，背景色の設定を移動
-		SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colBACK );		/* 行番号背景の色 */
+		SetBkColor( hdc, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_sColorAttr.m_cBACK );		/* 行番号背景の色 */
 
 //		/* 行番号のテキストを表示 */
 //		m_pShareData->m_Types[nIdx].m_nLineTermType = 1;			/* 行番号区切り 0=なし 1=縦線 2=任意 */
@@ -277,7 +268,7 @@ void CEditView::DispLineNumber(
 
 		/* 行番号区切り 0=なし 1=縦線 2=任意 */
 		if( 1 == m_pcEditDoc->GetDocumentAttribute().m_nLineTermType ){
-			hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
+			hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_sColorAttr.m_cTEXT );
 			hPenOld = (HPEN)::SelectObject( hdc, hPen );
 			::MoveToEx( hdc, nLineNumAreaWidth - 2, y, NULL );
 			::LineTo( hdc, nLineNumAreaWidth - 2, y + nLineHeight );
@@ -294,7 +285,7 @@ void CEditView::DispLineNumber(
 		rcClip.top = y;
 		rcClip.bottom = y + nLineHeight;
 //		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_colorBACK );
-		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex/*COLORIDX_TEXT*/].m_colBACK );
+		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_sColorAttr.m_cBACK );
 		::FillRect( hdc, &rcClip, hBrush );
 		::DeleteObject( hBrush );
 		
@@ -304,7 +295,7 @@ void CEditView::DispLineNumber(
 		rcClip.right = m_nViewAlignLeft;
 		rcClip.top = y;
 		rcClip.bottom = y + nLineHeight;
-		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
+		hBrush = ::CreateSolidBrush( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK );
 		::FillRect( hdc, &rcClip, hBrush );
 		::DeleteObject( hBrush );
 		// To Here Mar. 5, 2003, Moca
@@ -314,7 +305,7 @@ void CEditView::DispLineNumber(
 	/* とりあえずブックマークに縦線 */
 	if(pCDocLine->IsBookmarked() &&	// Dec. 24, 2002 ai
 		( !m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_MARK].m_bDisp)){
-		hPen = ::CreatePen( PS_SOLID, 2, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
+		hPen = ::CreatePen( PS_SOLID, 2, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_sColorAttr.m_cTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
 		::MoveToEx( hdc, 1, y, NULL );
 		::LineTo( hdc, 1, y + nLineHeight );
@@ -327,7 +318,7 @@ void CEditView::DispLineNumber(
 	{
 		int	cy = y + nLineHeight / 2;
 
-		hPen = ::CreatePen( PS_SOLID, 1, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_colTEXT );
+		hPen = ::CreatePen( PS_SOLID, 1, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[nColorIndex].m_sColorAttr.m_cTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
 
 		switch( type )
@@ -738,7 +729,7 @@ void CEditView::DispRuler( HDC hdc )
 		hFontOld = (HFONT)::SelectObject( hdc, hFont );
 		::SetBkMode( hdc, TRANSPARENT );
 
-		hBrush = ::CreateSolidBrush( typeData.m_ColorInfoArr[COLORIDX_RULER].m_colBACK );
+		hBrush = ::CreateSolidBrush( typeData.m_ColorInfoArr[COLORIDX_RULER].m_sColorAttr.m_cBACK );
 		rc.left = 0;
 		rc.top = 0;
 		rc.right = m_nViewAlignLeft + m_nViewCx;
@@ -749,9 +740,9 @@ void CEditView::DispRuler( HDC hdc )
 		nX = m_nViewAlignLeft;
 		nY = m_nViewAlignTop - m_nTopYohaku - 2;
 
-		hPen = ::CreatePen( PS_SOLID, 0, typeData.m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+		hPen = ::CreatePen( PS_SOLID, 0, typeData.m_ColorInfoArr[COLORIDX_RULER].m_sColorAttr.m_cTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		colTextOld = ::SetTextColor( hdc, typeData.m_ColorInfoArr[COLORIDX_RULER].m_colTEXT );
+		colTextOld = ::SetTextColor( hdc, typeData.m_ColorInfoArr[COLORIDX_RULER].m_sColorAttr.m_cTEXT );
 
 
 		//nToX = m_nViewAlignLeft + m_nViewCx;

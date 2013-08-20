@@ -1329,8 +1329,8 @@ void CEditView::ShowEditCaret( void )
 	//	キャレット色の取得
 	ColorInfo* ColorInfoArr = m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr;
 	int nCaretColor = ( ColorInfoArr[COLORIDX_CARET_IME].m_bDisp && IsImeON() )? COLORIDX_CARET_IME: COLORIDX_CARET;
-	COLORREF crCaret = ColorInfoArr[nCaretColor].m_colTEXT;
-	COLORREF crBack = ColorInfoArr[COLORIDX_TEXT].m_colBACK;
+	COLORREF crCaret = ColorInfoArr[nCaretColor].m_sColorAttr.m_cTEXT;
+	COLORREF crBack = ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
 	if( m_nCaretWidth == 0 ){
 		/* キャレットがなかった場合 */
@@ -6788,12 +6788,12 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		HDC		hdc;
 		HPEN	hPen, hPenOld;
 		hdc = ::GetDC( m_hWnd );
-		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_colTEXT );
+		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sColorAttr.m_cTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
 		::MoveToEx( hdc, m_nOldCursorLineX, m_nViewAlignTop, NULL );
 		::LineTo(   hdc, m_nOldCursorLineX, m_nViewCy + m_nViewAlignTop );
 		// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
-		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bBoldFont &&
+		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sFontAttr.m_bBoldFont &&
 			m_nViewAlignLeft - m_pShareData->m_Common.m_sWindow.m_nLineNumRightSpace < m_nOldCursorLineX - 1 ){
 			::MoveToEx( hdc, m_nOldCursorLineX - 1, m_nViewAlignTop, NULL );
 			::LineTo(   hdc, m_nOldCursorLineX - 1, m_nViewCy + m_nViewAlignTop );
@@ -6824,7 +6824,7 @@ void CEditView::CaretUnderLineON( bool bDraw )
 		HDC		hdc;
 		HPEN	hPen, hPenOld;
 		hdc = ::GetDC( m_hWnd );
-		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_colTEXT );
+		hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_sColorAttr.m_cTEXT );
 		hPenOld = (HPEN)::SelectObject( hdc, hPen );
 		::MoveToEx(
 			hdc,
@@ -6898,7 +6898,7 @@ void CEditView::CaretUnderLineOFF( bool bDraw )
 			ps.rcPaint.right = m_nOldCursorLineX + 1;
 			ps.rcPaint.top = m_nViewAlignTop;
 			ps.rcPaint.bottom = m_nViewAlignTop + m_nViewCy;
-			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_bBoldFont ){
+			if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sFontAttr.m_bBoldFont ){
 				ps.rcPaint.left += -1;
 			}
 			HDC hdc = ::GetDC( m_hWnd );
@@ -7088,8 +7088,8 @@ void CEditView::DrawBracketPair( bool bDraw )
 				}
 				hFontOld = (HFONT)::SelectObject( hdc, m_pcViewFont->GetFontHan() );
 				m_hFontOld = NULL;
-				crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-				crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_colTEXT );
+				crBackOld = ::SetBkColor(	hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK );
+				crTextOld = ::SetTextColor( hdc, TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT );
 				SetCurrentColor( hdc, nColorIndex );
 
 				int nHeight = m_nCharHeight + m_pcEditDoc->GetDocumentAttribute().m_nLineSpace;

@@ -5143,10 +5143,8 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData)
 	for( i = 0; i < COLORIDX_LAST; ++i ){
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_nColorIdx		= i;
 		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bDisp			= ColorInfo_DEFAULT[i].m_bDisp;
-		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bBoldFont		= ColorInfo_DEFAULT[i].m_bBoldFont;
-		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_bUnderLine		= ColorInfo_DEFAULT[i].m_bUnderLine;
-		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colTEXT			= ColorInfo_DEFAULT[i].m_colTEXT;
-		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_colBACK			= ColorInfo_DEFAULT[i].m_colBACK;
+		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_sFontAttr		= ColorInfo_DEFAULT[i].m_sFontAttr;
+		pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_sColorAttr	= ColorInfo_DEFAULT[i].m_sColorAttr;
 		strcpy( pShareData->m_Types[nIdx].m_ColorInfoArr[i].m_szName, ColorInfo_DEFAULT[i].m_pszName );
 	}
 	pShareData->m_Types[nIdx].m_bLineNumIsCRLF = TRUE;				/* 行番号の表示 FALSE=折り返し単位／TRUE=改行単位 */

@@ -181,26 +181,34 @@ struct EditNodeEx{
 	int			nGroupMru;	//!< グループ単位のMRU番号
 };
 
+//! フォント属性
+struct SFontAttr{
+	bool		m_bBoldFont;		//!< 太字
+	bool		m_bUnderLine;		//!< 下線
+};
+
+//! 色属性
+struct SColorAttr{
+	COLORREF	m_cTEXT;			//!< 文字色
+	COLORREF	m_cBACK;			//!< 背景色
+};
+
 //! 色設定
 struct ColorInfo {
 	int			m_nColorIdx;
-	bool		m_bDisp;			/* 色分け/表示 をする */
-	bool		m_bBoldFont;		/* 太字か */
-	bool		m_bUnderLine;		/* アンダーラインか */
-	COLORREF	m_colTEXT;			/* 前景色(文字色) */
-	COLORREF	m_colBACK;			/* 背景色 */
-	char		m_szName[32];		/* 名前 */
+	bool		m_bDisp;			//!< 色分け/表示 をする
+	SFontAttr	m_sFontAttr;		//!< フォント属性
+	SColorAttr	m_sColorAttr;		//!< 色属性
+	char		m_szName[32];		//!< 名前
 	char		m_cReserved[60];
 };
 
 //! 色設定(保存用)
 struct ColorInfoIni {
-	const char*	m_pszName;			/* 色名 */
-	bool		m_bDisp;			/* 色分け/表示 をする */
-	bool		m_bBoldFont;		/* 太字か */
-	bool		m_bUnderLine;		/* アンダーラインか */
-	COLORREF	m_colTEXT;			/* 前景色(文字色) */
-	COLORREF	m_colBACK;			/* 背景色 */
+	const char*	m_pszName;			//!< 色名
+	bool		m_bDisp;			//!< 色分け/表示 をする
+	SFontAttr	m_sFontAttr;		//!< フォント属性
+	SColorAttr	m_sColorAttr;		//!< 色属性
 };
 
 //@@@ 2001.11.17 add start MIK

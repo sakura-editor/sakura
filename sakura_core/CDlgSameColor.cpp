@@ -144,8 +144,8 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		// タイプ別設定から文字色を重複しないように取り出す
 		::SetWindowText( m_hWnd, _T("文字色統一") );
 		for( i = 0; i < COLORIDX_LAST; ++i ){
-			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_colTEXT ){
-				_ultot( m_pTypes->m_ColorInfoArr[i].m_colTEXT, szText, 10 );
+			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cTEXT ){
+				_ultot( m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cTEXT, szText, 10 );
 				if( LB_ERR == ::SendMessage( hwndList, LB_FINDSTRING, (WPARAM)-1, (LPARAM)szText ) ){
 					nItem = ::SendMessage( hwndList, LB_ADDSTRING, (WPARAM)0, (LPARAM)szText );
 					::SendMessage( hwndList, LB_SETITEMDATA, (WPARAM)nItem, (LPARAM)FALSE ); 
@@ -160,8 +160,8 @@ BOOL CDlgSameColor::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		for( i = 0; i < COLORIDX_LAST; ++i ){
 			if( 0 != (g_ColorAttributeArr[i].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 				continue;
-			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_colBACK ){
-				_ultot( m_pTypes->m_ColorInfoArr[i].m_colBACK, szText, 10 );
+			if( m_cr != m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cBACK ){
+				_ultot( m_pTypes->m_ColorInfoArr[i].m_sColorAttr.m_cBACK, szText, 10 );
 				if( LB_ERR == ::SendMessage( hwndList, LB_FINDSTRING, (WPARAM)-1, (LPARAM)szText ) ){
 					nItem = ::SendMessage( hwndList, LB_ADDSTRING, (WPARAM)0, (LPARAM)szText );
 					::SendMessage( hwndList, LB_SETITEMDATA, (WPARAM)nItem, (LPARAM)FALSE ); 
@@ -226,16 +226,16 @@ BOOL CDlgSameColor::OnBnClicked( int wID )
 				{
 				case IDC_BUTTON_SAMETEXTCOLOR:
 					for( j = 0; j < COLORIDX_LAST; ++j ){
-						if( cr == m_pTypes->m_ColorInfoArr[j].m_colTEXT ){
-							m_pTypes->m_ColorInfoArr[j].m_colTEXT = m_cr;
+						if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT ){
+							m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT = m_cr;
 						}
 					}
 					break;
 
 				case IDC_BUTTON_SAMEBKCOLOR:
 					for( j = 0; j < COLORIDX_LAST; ++j ){
-						if( cr == m_pTypes->m_ColorInfoArr[j].m_colBACK ){
-							m_pTypes->m_ColorInfoArr[j].m_colBACK = m_cr;
+						if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK ){
+							m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK = m_cr;
 						}
 					}
 					break;
@@ -350,7 +350,7 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 		{
 		case IDC_BUTTON_SAMETEXTCOLOR:
 			for( j = 0; j < COLORIDX_LAST; ++j ){
-				if( cr == m_pTypes->m_ColorInfoArr[j].m_colTEXT ){
+				if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cTEXT ){
 					::SendMessage( hwndListInfo, LB_ADDSTRING, (WPARAM)0, (LPARAM)m_pTypes->m_ColorInfoArr[j].m_szName);
 				}
 			}
@@ -360,7 +360,7 @@ BOOL CDlgSameColor::OnSelChangeListColors( HWND hwndCtl )
 			for( j = 0; j < COLORIDX_LAST; ++j ){
 			if( 0 != (g_ColorAttributeArr[j].fAttribute & COLOR_ATTRIB_NO_BACK) )	// 2006.12.18 ryoji フラグ利用で簡素化
 					continue;
-				if( cr == m_pTypes->m_ColorInfoArr[j].m_colBACK ){
+				if( cr == m_pTypes->m_ColorInfoArr[j].m_sColorAttr.m_cBACK ){
 					::SendMessage( hwndListInfo, LB_ADDSTRING, (WPARAM)0, (LPARAM)m_pTypes->m_ColorInfoArr[j].m_szName);
 				}
 			}

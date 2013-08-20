@@ -24,6 +24,8 @@
 #ifndef SAKURA_CVIEWFONT_9E51373D_58BA_4A64_9930_5174F7BF9C929_H_
 #define SAKURA_CVIEWFONT_9E51373D_58BA_4A64_9930_5174F7BF9C929_H_
 
+#include "CShareData.h" // ColorInfo !!
+
 class CViewFont{
 public:
 	CViewFont(const LOGFONT *plf)
@@ -41,7 +43,7 @@ public:
 		CreateFont(plf);
 	}
 
-	HFONT ChooseFontHandle( bool bBold, bool bUnderLine ) const;		/* フォントを選ぶ */
+	HFONT ChooseFontHandle( SFontAttr sFontAttr ) const;		/* フォントを選ぶ */
 
 	HFONT GetFontHan() const
 	{
