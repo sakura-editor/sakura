@@ -2860,11 +2860,10 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 	CWaitCursor cWaitCursor( m_hWnd );
 
 	// ”ÍˆÍ‘I‘ğ’†‚È‚ç‘}“üŒã‚à‘I‘ğó‘Ô‚É‚·‚é‚½‚ß	/* 2007.04.29 maru */
-	int	nLineFrom, nColmFrom;
 	BOOL	bBeforeTextSelected = IsTextSelected();
+	CLayoutPoint ptFrom;
 	if (bBeforeTextSelected){
-		nLineFrom = m_sSelect.m_ptFrom.y;
-		nColmFrom = m_sSelect.m_ptFrom.x;
+		ptFrom = m_sSelect.m_ptFrom;
 	}
 
 
@@ -2934,7 +2933,8 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 	delete pcDlgCancel;
 
 	if (bBeforeTextSelected){	// ‘}“ü‚³‚ê‚½•”•ª‚ğ‘I‘ğó‘Ô‚É
-		SetSelectArea( nLineFrom, nColmFrom, m_ptCaretPos.y, m_ptCaretPos.x );
+		CLayoutRange sRange = { ptFrom, m_ptCaretPos };
+		SetSelectArea( sRange );
 		DrawSelectArea();
 	}
 	Redraw();

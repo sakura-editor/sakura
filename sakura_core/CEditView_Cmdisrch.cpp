@@ -443,7 +443,7 @@ void CEditView::ISearchExec(bool bNext)
 		//ƒLƒƒƒŒƒbƒgˆÚ“®
 		MoveCursor( sMatchRange.m_ptFrom.x, sMatchRange.m_ptFrom.y, true, _CARETMARGINRATE / 3 );
 		//	2005.06.24 Moca
-		SetSelectArea( sMatchRange.m_ptFrom.y, sMatchRange.m_ptFrom.x, sMatchRange.m_ptTo.y, sMatchRange.m_ptTo.x );
+		SetSelectArea( sMatchRange );
 
 		m_bISearchWrap = false;
 		m_sISearchHistory[m_nISearchHistoryCount] = sMatchRange;
@@ -493,7 +493,7 @@ void CEditView::ISearchBack(void) {
 	MoveCursor( sRange.m_ptFrom.x, sRange.m_ptFrom.y, true, _CARETMARGINRATE / 3 );
 	if(m_nISearchHistoryCount != 0){
 		//	2005.06.24 Moca
-		SetSelectArea( sRange.m_ptFrom.y, sRange.m_ptFrom.x, sRange.m_ptTo.y, sRange.m_ptTo.x );
+		SetSelectArea( sRange );
 	}
 
 	Redraw();

@@ -74,11 +74,10 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	//	To Here 2006.12.03 maru 引数を拡張のため
 
 	// 編集中のウィンドウに出力する場合の選択範囲処理用	/* 2007.04.29 maru */
-	int	nLineFrom, nColmFrom;
+	CLayoutPoint ptFrom = { 0, 0 };
 	BOOL	bBeforeTextSelected = IsTextSelected();
 	if (bBeforeTextSelected){
-		nLineFrom = m_sSelect.m_ptFrom.y;
-		nColmFrom = m_sSelect.m_ptFrom.x;
+		ptFrom = m_sSelect.m_ptFrom;
 	}
 	
 	//子プロセスの標準出力と接続するパイプを作成
@@ -175,7 +174,8 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 	//	コマンドの出力結果と置き換える．
 	//	2007.05.20 maru
 	if((FALSE == bBeforeTextSelected) && bSendStdin && bGetStdout && bToEditWindow){
-		SetSelectArea( 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), 0 );
+		CLayoutRange sRange = { 0, 0, m_pcEditDoc->m_cLayoutMgr.GetLineCount(), 0 };
+		SetSelectArea( sRange );
 		DeleteData( true );
 	}
 
@@ -337,7 +337,8 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			Command_INSTEXT( false, work, bufidx, TRUE);	/* 最後の文字の処理 */
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
-				SetSelectArea( nLineFrom, nColmFrom, m_ptCaretPos.y, m_ptCaretPos.x );
+				CLayoutRange sRange = { ptFrom, m_ptCaretPos };
+				SetSelectArea( sRange );
 				DrawSelectArea();
 			}
 			RedrawAll();

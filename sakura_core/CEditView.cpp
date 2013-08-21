@@ -3905,7 +3905,7 @@ void CEditView::CopySelectedAllLines(
 		GetAdjustCursorPos( &sSelect.m_ptTo.x, &sSelect.m_ptTo.y );	// EOF行を超えていたら座標修正
 
 		DisableSelectArea( false ); // 2011.06.03 true →false
-		SetSelectArea( sSelect.m_ptFrom.y, sSelect.m_ptFrom.x, sSelect.m_ptTo.y, sSelect.m_ptTo.x );
+		SetSelectArea( sSelect );
 
 		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, false );
 		ShowEditCaret();
@@ -4138,7 +4138,7 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			&m_sSelect.m_ptFrom.x,	/* 範囲選択開始桁 */
 			&m_sSelect.m_ptFrom.y	/* 範囲選択開始行 */
 		);
-		SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_ptCaretPos.y, m_ptCaretPos.x );	// 2009.07.25 ryoji
+		SetSelectArea( m_sSelect );	// 2009.07.25 ryoji
 		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 

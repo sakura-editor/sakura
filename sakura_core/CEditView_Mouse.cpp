@@ -1627,7 +1627,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
 			&m_sSelect.m_ptFrom.x, &m_sSelect.m_ptFrom.y
 		);
-		SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_ptCaretPos.y, m_ptCaretPos.x );	// 2009.07.25 ryoji
+		SetSelectArea( m_sSelect );	// 2009.07.25 ryoji
 	}else{
 		// 2004.07.12 Moca クリップボードを書き換えないように
 		// TRUE == bBoxData
@@ -1707,7 +1707,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 					nSelectColmTo_PHY, nSelectLineTo_PHY,
 					&m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y
 				);
-				SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_sSelect.m_ptTo.y, m_sSelect.m_ptTo.x );	// 2009.07.25 ryoji
+				SetSelectArea( m_sSelect );	// 2009.07.25 ryoji
 				nCaretPosX_Old = m_sSelect.m_ptTo.x;
 				nCaretPosY_Old = m_sSelect.m_ptTo.y;
 			}
@@ -1866,7 +1866,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			nCaretPosX_PHY_Old, nCaretPosY_PHY_Old,
 			&m_sSelect.m_ptFrom.x, &m_sSelect.m_ptFrom.y
 		);
-		SetSelectArea( m_sSelect.m_ptFrom.y, m_sSelect.m_ptFrom.x, m_ptCaretPos.y, m_ptCaretPos.x );	// 2009.07.25 ryoji
+		SetSelectArea( m_sSelect );	// 2009.07.25 ryoji
 		DrawSelectArea();
 		break;
 	}

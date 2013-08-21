@@ -469,15 +469,9 @@ protected:
 
 		@date 2005.06.24 Moca
 	*/
-	void SetSelectArea( int nLineFrom, int nColmFrom, int nLineTo, int nColmTo ){
-		m_sSelectBgn.m_ptFrom.y = nLineFrom;
-		m_sSelectBgn.m_ptFrom.x = nColmFrom;
-		m_sSelectBgn.m_ptTo.y = nLineFrom;
-		m_sSelectBgn.m_ptTo.x = nColmFrom;
-		m_sSelect.m_ptFrom.y = nLineFrom;
-		m_sSelect.m_ptFrom.x = nColmFrom;
-		m_sSelect.m_ptTo.y = nLineTo;
-		m_sSelect.m_ptTo.x = nColmTo;
+	void SetSelectArea( const CLayoutRange& sRange ){
+		m_sSelectBgn = sRange;
+		m_sSelect = sRange;
 	}
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
 	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
