@@ -1848,7 +1848,9 @@ void CEditView::Command_LineCutToStart( void )
 
 	/* 選択範囲の変更 */
 	//	2005.06.24 Moca
-	CLayoutRange sRange = { ptPos, m_ptCaretPos };
+	CLayoutRange sRange;
+	sRange.m_ptFrom = ptPos;
+	sRange.m_ptTo = m_ptCaretPos;
 	SetSelectArea( sRange );
 
 	/*切り取り(選択範囲をクリップボードにコピーして削除) */
@@ -1890,7 +1892,9 @@ void CEditView::Command_LineCutToEnd( void )
 
 	/* 選択範囲の変更 */
 	//	2005.06.24 Moca
-	CLayoutRange sRange = { m_ptCaretPos, ptPos };
+	CLayoutRange sRange;
+	sRange.m_ptFrom = m_ptCaretPos;
+	sRange.m_ptTo = ptPos;
 	SetSelectArea( sRange );
 
 	/*切り取り(選択範囲をクリップボードにコピーして削除) */
@@ -1924,7 +1928,9 @@ void CEditView::Command_LineDeleteToStart( void )
 
 	/* 選択範囲の変更 */
 	//	2005.06.24 Moca
-	CLayoutRange sRange = { ptPos, m_ptCaretPos };
+	CLayoutRange sRange;
+	sRange.m_ptFrom = ptPos;
+	sRange.m_ptTo = m_ptCaretPos;
 	SetSelectArea( sRange );
 
 	/* 選択領域削除 */
@@ -1964,7 +1970,9 @@ void CEditView::Command_LineDeleteToEnd( void )
 
 	/* 選択範囲の変更 */
 	//	2005.06.24 Moca
-	CLayoutRange sRange = { m_ptCaretPos, ptPos };
+	CLayoutRange sRange;
+	sRange.m_ptFrom = m_ptCaretPos;
+	sRange.m_ptTo = ptPos;
 	SetSelectArea( sRange );
 
 	/* 選択領域削除 */

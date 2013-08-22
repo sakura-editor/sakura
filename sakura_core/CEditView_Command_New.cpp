@@ -2933,7 +2933,9 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 	delete pcDlgCancel;
 
 	if (bBeforeTextSelected){	// ‘}“ü‚³‚ê‚½•”•ª‚ğ‘I‘ğó‘Ô‚É
-		CLayoutRange sRange = { ptFrom, m_ptCaretPos };
+		CLayoutRange sRange;
+		sRange.m_ptFrom = ptFrom;
+		sRange.m_ptTo = m_ptCaretPos;
 		SetSelectArea( sRange );
 		DrawSelectArea();
 	}

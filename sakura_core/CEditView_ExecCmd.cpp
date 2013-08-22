@@ -337,7 +337,9 @@ void CEditView::ExecCmd( const char* pszCmd, const int nFlgOpt )
 		else {						//	2006.12.03 maru 編集中のウィンドウに出力時は最後に再描画
 			Command_INSTEXT( false, work, bufidx, TRUE);	/* 最後の文字の処理 */
 			if (bBeforeTextSelected){	// 挿入された部分を選択状態に
-				CLayoutRange sRange = { ptFrom, m_ptCaretPos };
+				CLayoutRange sRange;
+				sRange.m_ptFrom = ptFrom;
+				sRange.m_ptTo = m_ptCaretPos;
 				SetSelectArea( sRange );
 				DrawSelectArea();
 			}
