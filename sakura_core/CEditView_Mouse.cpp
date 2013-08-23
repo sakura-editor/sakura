@@ -1643,31 +1643,27 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			/* 移動モード & 後ろに移動*/
 
 			// 現在の選択範囲を記憶する	// 2008.03.26 ryoji
-			int nSelectLineFrom_PHY;
-			int nSelectColmFrom_PHY;
-			int nSelectLineTo_PHY;
-			int nSelectColmTo_PHY;
+			CLogicPoint ptSelectFrom_PHY;
+			CLogicPoint ptSelectTo_PHY;
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				m_sSelect.m_ptFrom.x, m_sSelect.m_ptFrom.y,
-				&nSelectColmFrom_PHY, &nSelectLineFrom_PHY
+				&ptSelectFrom_PHY.x, &ptSelectFrom_PHY.y
 			);
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y,
-				&nSelectColmTo_PHY, &nSelectLineTo_PHY
+				&ptSelectTo_PHY.x, &ptSelectTo_PHY.y
 			);
 
 			// 以前の選択範囲を記憶する	// 2008.03.26 ryoji
-			int nSelectLineFrom_PHY_Old;
-			int nSelectColmFrom_PHY_Old;
-			int nSelectLineTo_PHY_Old;
-			int nSelectColmTo_PHY_Old;
+			CLogicPoint ptSelectFrom_PHY_Old;
+			CLogicPoint ptSelect_PHY_Old;
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				sSelect_Old.m_ptFrom.x, sSelect_Old.m_ptFrom.y,
-				&nSelectColmFrom_PHY_Old, &nSelectLineFrom_PHY_Old
+				&ptSelectFrom_PHY_Old.x, &ptSelectFrom_PHY_Old.y
 			);
 			m_pcEditDoc->m_cLayoutMgr.LayoutToLogic(
 				sSelect_Old.m_ptTo.x, sSelect_Old.m_ptTo.y,
-				&nSelectColmTo_PHY_Old, &nSelectLineTo_PHY_Old
+				&ptSelect_PHY_Old.x, &ptSelect_PHY_Old.y
 			);
 
 			// 現在の行数を記憶する	// 2008.03.26 ryoji
@@ -1684,27 +1680,27 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			// 削除前の選択範囲を復元する	// 2008.03.26 ryoji
 			if( !bBoxData ){
 				// 削除された範囲を考慮して選択範囲を調整する
-				if( nSelectLineFrom_PHY == nSelectLineTo_PHY_Old ){	// 選択開始が削除末尾と同一行
-					nSelectColmFrom_PHY -= (nSelectColmTo_PHY_Old - nSelectColmFrom_PHY_Old);
+				if( ptSelectFrom_PHY.y == ptSelect_PHY_Old.y ){	// 選択開始が削除末尾と同一行
+					ptSelectFrom_PHY.x -= (ptSelect_PHY_Old.x - ptSelectFrom_PHY_Old.x);
 				}
-				if( nSelectLineTo_PHY == nSelectLineTo_PHY_Old ){	// 選択終了が削除末尾と同一行
-					nSelectColmTo_PHY -= (nSelectColmTo_PHY_Old - nSelectColmFrom_PHY_Old);
+				if( ptSelectTo_PHY.y == ptSelect_PHY_Old.y ){	// 選択終了が削除末尾と同一行
+					ptSelectTo_PHY.x -= (ptSelect_PHY_Old.x - ptSelectFrom_PHY_Old.x);
 				}
 				// Note.
-				// (nSelectLineTo_PHY_Old - nSelectLineFrom_PHY_Old) は実際の削除行数と同じになる
+				// (ptSelect_PHY_Old.y - ptSelectFrom_PHY_Old.y) は実際の削除行数と同じになる
 				// こともあるが、（削除行数－１）になることもある．
 				// 例）フリーカーソルでの行番号クリック時の１行選択
 				int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-				nSelectLineFrom_PHY -= (nLines_Old - nLines);
-				nSelectLineTo_PHY -= (nLines_Old - nLines);
+				ptSelectFrom_PHY.y -= (nLines_Old - nLines);
+				ptSelectTo_PHY.y -= (nLines_Old - nLines);
 
 				// 調整後の選択範囲を設定する
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-					nSelectColmFrom_PHY, nSelectLineFrom_PHY,
+					ptSelectFrom_PHY.x, ptSelectFrom_PHY.y,
 					&m_sSelect.m_ptFrom.x, &m_sSelect.m_ptFrom.y
 				);
 				m_pcEditDoc->m_cLayoutMgr.LogicToLayout(
-					nSelectColmTo_PHY, nSelectLineTo_PHY,
+					ptSelectTo_PHY.x, ptSelectTo_PHY.y,
 					&m_sSelect.m_ptTo.x, &m_sSelect.m_ptTo.y
 				);
 				SetSelectArea( m_sSelect );	// 2009.07.25 ryoji
@@ -1719,10 +1715,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			// 削除位置から移動先へのカーソル移動をアンドゥ操作に追加する	// 2008.03.26 ryoji
 			pcOpe = new COpe;
 			pcOpe->m_nOpe = OPE_MOVECARET;
-			pcOpe->m_ptCaretPos_PHY_Before.x = nSelectColmFrom_PHY_Old;
-			pcOpe->m_ptCaretPos_PHY_Before.y = nSelectLineFrom_PHY_Old;
-			pcOpe->m_ptCaretPos_PHY_After.x = m_ptCaretPos_PHY.x;
-			pcOpe->m_ptCaretPos_PHY_After.y = m_ptCaretPos_PHY.y;
+			pcOpe->m_ptCaretPos_PHY_Before = ptSelectFrom_PHY_Old;
+			pcOpe->m_ptCaretPos_PHY_After = m_ptCaretPos_PHY;
 			m_pcOpeBlk->AppendOpe( pcOpe );
 		}
 	}
