@@ -85,15 +85,15 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 /*!
 	WSHマクロの読み込み（ファイルから）
 
-	@param Instance [in] インスタンスハンドル(未使用)
-	@param Path		[in] ファイルのパス
+	@param hInstance [in] インスタンスハンドル(未使用)
+	@param pszPath   [in] ファイルのパス
 */
-BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const TCHAR* szPath)
+BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const TCHAR* pszPath)
 {
 	//ソース読み込み -> m_Source
 	m_Source=L"";
 	
-	CTextInputStream in(szPath);
+	CTextInputStream in(pszPath);
 	if(!in)
 		return FALSE;
 
@@ -106,13 +106,13 @@ BOOL CWSHMacroManager::LoadKeyMacro(HINSTANCE hInstance, const TCHAR* szPath)
 /*!
 	WSHマクロの読み込み（文字列から）
 
-	@param Instance [in] インスタンスハンドル(未使用)
-	@param szCode	[in] マクロコード
+	@param hInstance [in] インスタンスハンドル(未使用)
+	@param pszCode   [in] マクロコード
 */
-BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const TCHAR* szCode)
+BOOL CWSHMacroManager::LoadKeyMacroStr(HINSTANCE hInstance, const TCHAR* pszCode)
 {
 	//ソース読み込み -> m_Source
-	m_Source = to_wchar( szCode );
+	m_Source = to_wchar( pszCode );
 	return TRUE;
 }
 
