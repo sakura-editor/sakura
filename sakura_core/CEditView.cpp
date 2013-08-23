@@ -4135,7 +4135,10 @@ void CEditView::ConvSelectedArea( int nFuncCode )
 			&m_sSelect.m_ptFrom.x,	/* 範囲選択開始桁 */
 			&m_sSelect.m_ptFrom.y	/* 範囲選択開始行 */
 		);
-		SetSelectArea( m_sSelect );	// 2009.07.25 ryoji
+		CLayoutRange sRange;
+		sRange.m_ptFrom = m_sSelect.m_ptFrom;
+		sRange.m_ptTo = m_ptCaretPos;
+		SetSelectArea( sRange );	// 2009.07.25 ryoji
 		MoveCursor( m_sSelect.m_ptTo.x, m_sSelect.m_ptTo.y, true );
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 

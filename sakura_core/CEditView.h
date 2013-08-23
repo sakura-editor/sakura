@@ -470,7 +470,8 @@ protected:
 		@date 2005.06.24 Moca
 	*/
 	void SetSelectArea( const CLayoutRange& sRange ){
-		m_sSelectBgn = sRange;
+		m_sSelectBgn.m_ptFrom = sRange.m_ptFrom;
+		m_sSelectBgn.m_ptTo = sRange.m_ptFrom;
 		m_sSelect = sRange;
 	}
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
