@@ -633,6 +633,10 @@ SOURCE=..\sakura_core\CWSH.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\sakura_core\CWSHManager.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\sakura_core\Debug.cpp
 # End Source File
 # Begin Source File

@@ -169,6 +169,7 @@ OBJS= \
 	$(OBJDIR)/CUxTheme.o \
 	$(OBJDIR)/CViewFont.o \
 	$(OBJDIR)/CWSH.o \
+	$(OBJDIR)/CWSHManager.o \
 	$(OBJDIR)/CWaitCursor.o \
 	$(OBJDIR)/CWnd.o \
 	$(OBJDIR)/Debug.o \
@@ -457,6 +458,8 @@ $(OBJDIR)/CUxTheme.o: $(SRCDIR)/CUxTheme.cpp
 $(OBJDIR)/CViewFont.o: $(SRCDIR)/CViewFont.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CWSH.o: $(SRCDIR)/CWSH.cpp
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJDIR)/CWSHManager.o: $(SRCDIR)/CWSHManager.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 $(OBJDIR)/CWaitCursor.o: $(SRCDIR)/CWaitCursor.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

@@ -221,6 +221,7 @@ OBJS =\
 	$(OBJDIR)\CWnd.obj \
 	$(OBJDIR)\CWaitCursor.obj \
 	$(OBJDIR)\CWSH.obj \
+	$(OBJDIR)\CWSHManager.obj \
 	$(OBJDIR)\CBregexp.obj \
 	$(OBJDIR)\Debug.obj \
 	$(OBJDIR)\etc_uty.obj \

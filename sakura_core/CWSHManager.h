@@ -40,11 +40,12 @@ public:
 
 	//	2007.07.20 genta : flags追加
 	virtual void ExecKeyMacro(CEditView *EditView, int flags) const;
-	virtual BOOL LoadKeyMacro(HINSTANCE Instance, const char* Path);		//WSHマクロをファイルから読み込む
-	virtual BOOL LoadKeyMacroStr(HINSTANCE Instance, const char* pszCode);	//WSHマクロを文字列から読み込む
+	virtual BOOL LoadKeyMacro(HINSTANCE hInstance, const TCHAR* pszPath);
+	virtual BOOL LoadKeyMacroStr(HINSTANCE hInstance, const TCHAR* pszCode);
 
-	static CMacroManagerBase* Creator(const char *FileExt);
+	static CMacroManagerBase* Creator(const TCHAR* FileExt);
 	static void declare();
+
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;

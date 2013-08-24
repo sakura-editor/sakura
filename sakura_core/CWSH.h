@@ -22,8 +22,6 @@
 
 #include <windows.h>
 #include <winreg.h>
-#include <objbase.h>
-#include <initguid.h>
 #include <ActivScp.h>
 //ªMicrosoft Platform SDK ‚æ‚è
 
@@ -126,6 +124,6 @@ public:
 	bool m_Valid; //true‚Ìê‡g—p‰Â”\
 	void Execute(const wchar_t *AScript);
 	void Error(BSTR Description, BSTR Source);
-	void Error(wchar_t* Description);
+	void Error(const wchar_t* Description);
 };
 #endif
