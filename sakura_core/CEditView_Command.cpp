@@ -7130,7 +7130,7 @@ void CEditView::Command_REPLACE_ALL()
 		// と思ったけど、逆にこちらの方が自然ではないので、やめる。
 		{
 			nNewPos = m_sSelect.m_ptFrom.y >> nShiftCount;
-			::PostMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
+			::SendMessage( hwndProgress, PBM_SETPOS, nNewPos, 0 );
 			_itot( nReplaceNum, szLabel, 10 );
 			::SendMessage( hwndStatic, WM_SETTEXT, 0, (LPARAM)szLabel );
 		}

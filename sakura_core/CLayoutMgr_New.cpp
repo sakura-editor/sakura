@@ -83,8 +83,8 @@ void CLayoutMgr::_DoLayout(
 	nCOMMENTMODE_Prev = COLORIDX_TEXT;
 
 	if( NULL != hwndProgress ){
-		::PostMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
-		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+		::SendMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
+		::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( NULL ) ){
 			return;
@@ -370,7 +370,7 @@ void CLayoutMgr::_DoLayout(
 		}
 		nLineNum++;
 		if( NULL != hwndProgress && 0 < nAllLineNum && 0 == ( nLineNum % 1024 ) ){
-			::PostMessage( hwndProgress, PBM_SETPOS, nLineNum * 100 / nAllLineNum , 0 );
+			::SendMessage( hwndProgress, PBM_SETPOS, nLineNum * 100 / nAllLineNum , 0 );
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook( NULL ) ){
 				return;
@@ -390,7 +390,7 @@ void CLayoutMgr::_DoLayout(
 //	m_pLayoutCurrent = NULL;
 
 	if( NULL != hwndProgress ){
-		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+		::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( NULL ) ){
 			return;

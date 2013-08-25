@@ -2888,7 +2888,7 @@ BOOL CEditView::Command_INSFILE( const char* filename, ECodeType nCharCode, int 
 				break;
 			}
 			if( 0 == ( nLineNum & 0xFF ) ){
-				::PostMessage( hwndProgress, PBM_SETPOS, cfl.GetPercent(), 0 );
+				::SendMessage( hwndProgress, PBM_SETPOS, cfl.GetPercent(), 0 );
 				Redraw();
 			}
 		}

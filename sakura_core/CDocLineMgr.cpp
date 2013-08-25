@@ -360,8 +360,8 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	}
 	
 	if( NULL != hwndProgress ){
-		::PostMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
-		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+		::SendMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
+		::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 	}
 
 	// ReadLineはファイルから 文字コード変換された1行を読み出します
@@ -370,7 +370,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 		++nLineNum;
 		AddLineStrX( pLine, nLineLen, cEol );
 		if( NULL != hwndProgress && 0 == ( nLineNum % 512 ) ){
-			::PostMessage( hwndProgress, PBM_SETPOS, cfl.GetPercent(), 0 );
+			::SendMessage( hwndProgress, PBM_SETPOS, cfl.GetPercent(), 0 );
 			/* 処理中のユーザー操作を可能にする */
 			if( !::BlockingHook( NULL ) ){
 				return FALSE;
@@ -428,7 +428,7 @@ int CDocLineMgr::ReadFile( const char* pszPath, HWND hWndParent, HWND hwndProgre
 	} // 例外処理終わり
 
 	if( NULL != hwndProgress ){
-		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+		::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 	}
 	/* 処理中のユーザー操作を可能にする */
 	if( !::BlockingHook( NULL ) ){
@@ -472,8 +472,8 @@ int CDocLineMgr::WriteFile(
 	cmemBuf.AllocStringBuffer( 32000 );
 
 	if( NULL != hwndProgress ){
-		::PostMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
-		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+		::SendMessage( hwndProgress, PBM_SETRANGE, 0, MAKELPARAM( 0, 100 ) );
+		::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 	}
 
 	nRetVal = TRUE;
@@ -510,7 +510,7 @@ int CDocLineMgr::WriteFile(
 
 
 				if( NULL != hwndProgress && 0 < m_nLines && 0 == ( nLineNumber % 1024 ) ){
-					::PostMessage( hwndProgress, PBM_SETPOS, nLineNumber * 100 / m_nLines , 0 );
+					::SendMessage( hwndProgress, PBM_SETPOS, nLineNumber * 100 / m_nLines , 0 );
 					// 処理中のユーザー操作を可能にする
 					if( !::BlockingHook( NULL ) ){
 						return FALSE;
@@ -610,7 +610,7 @@ int CDocLineMgr::WriteFile(
 	}
 
 	if( NULL != hwndProgress ){
-		::PostMessage( hwndProgress, PBM_SETPOS, 0, 0 );
+		::SendMessage( hwndProgress, PBM_SETPOS, 0, 0 );
 		/* 処理中のユーザー操作を可能にする */
 		if( !::BlockingHook( NULL ) ){
 			return FALSE;
