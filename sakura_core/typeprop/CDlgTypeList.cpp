@@ -34,7 +34,8 @@ typedef std::basic_string<TCHAR> tstring;
 #define ACTION_BACKUP_PATH	(_T("\\ShellBackup"))
 
 //関数プロトタイプ
-int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstring destPath);
+int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath);
+int DeleteRegistry(HKEY root, const tstring& path);
 int RegistExt(LPCTSTR sExt, bool bDefProg);
 int UnregistExt(LPCTSTR sExt);
 int CheckExt(LPCTSTR sExt, bool *pbRMenu, bool *pbDblClick);
@@ -391,7 +392,7 @@ bool CDlgTypeList::InitializeType( void )
 }
 
 /*! 再帰的レジストリコピー */
-int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstring destPath)
+int CopyRegistry(HKEY srcRoot, const tstring& srcPath, HKEY destRoot, const tstring& destPath)
 {
 	int errorCode;
 	CRegKey keySrc;
@@ -444,7 +445,7 @@ int CopyRegistry(HKEY srcRoot, const tstring srcPath, HKEY destRoot, const tstri
 }
 
 /*! 再帰的レジストリ削除 */
-int DeleteRegistry(HKEY root, const tstring path)
+int DeleteRegistry(HKEY root, const tstring& path)
 {
 	int errorCode;
 	CRegKey keySrc;
