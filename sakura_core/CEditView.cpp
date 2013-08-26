@@ -2279,7 +2279,7 @@ void CEditView::MoveCursorSelecting( int nWk_CaretPosX, int nWk_CaretPosY, bool 
 			引数で与えた座標とは異なることがあるため，
 			nPosX, nPosYの代わりに実際の移動結果を使うように．
 		*/
-		ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+		ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 	}
 	
 }
@@ -3143,85 +3143,67 @@ void CEditView::DisableSelectArea( bool bDraw )
 
 
 /* 現在のカーソル位置によって選択範囲を変更 */
-void CEditView::ChangeSelectAreaByCurrentCursor( int nCaretPosX, int nCaretPosY )
+void CEditView::ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPos )
 {
-	m_sSelectOld.m_ptFrom.y = m_sSelect.m_ptFrom.y;	/* 範囲選択開始行 */
-	m_sSelectOld.m_ptFrom.x = m_sSelect.m_ptFrom.x; 	/* 範囲選択開始桁 */
-	m_sSelectOld.m_ptTo.y = m_sSelect.m_ptTo.y;		/* 範囲選択終了行 */
-	m_sSelectOld.m_ptTo.x = m_sSelect.m_ptTo.x;		/* 範囲選択終了桁 */
+	m_sSelectOld = m_sSelect; // 範囲選択(Old)
 
 	//	2002/04/08 YAZAKI コードの重複を排除
 	ChangeSelectAreaByCurrentCursorTEST(
-		nCaretPosX,
-		nCaretPosY, 
+		ptCaretPos,
 		&m_sSelect
 	);
-	/* 選択領域の描画 */
+
+	// 選択領域の描画
 	DrawSelectArea();
-	return;
 }
 
 /* 現在のカーソル位置によって選択範囲を変更(テストのみ) */
 void CEditView::ChangeSelectAreaByCurrentCursorTEST(
-	int		nCaretPosX,
-	int		nCaretPosY,
+	const CLayoutPoint& ptCaretPos,
 	CLayoutRange* pSelect
 )
 {
 	if( m_sSelectBgn.m_ptFrom.y == m_sSelectBgn.m_ptTo.y /* 範囲選択開始行(原点) */
 	 && m_sSelectBgn.m_ptFrom.x == m_sSelectBgn.m_ptTo.x ){
-		if( nCaretPosY == m_sSelectBgn.m_ptFrom.y
-		 && nCaretPosX == m_sSelectBgn.m_ptFrom.x ){
-			/* 選択解除 */
+		if( ptCaretPos.y == m_sSelectBgn.m_ptFrom.y
+		 && ptCaretPos.x == m_sSelectBgn.m_ptFrom.x ){
+			// 選択解除
 			pSelect->m_ptFrom.y = -1;
 			pSelect->m_ptFrom.x  = -1;
 			pSelect->m_ptTo.y = -1;
 			pSelect->m_ptTo.x = -1;
 		}else
-		if( nCaretPosY < m_sSelectBgn.m_ptFrom.y
-		 || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX < m_sSelectBgn.m_ptFrom.x ) ){
-			pSelect->m_ptFrom.y = nCaretPosY;
-			pSelect->m_ptFrom.x = nCaretPosX;
-			pSelect->m_ptTo.y = m_sSelectBgn.m_ptFrom.y;
-			pSelect->m_ptTo.x = m_sSelectBgn.m_ptFrom.x;
+		if( ptCaretPos.y < m_sSelectBgn.m_ptFrom.y
+		 || ( ptCaretPos.y == m_sSelectBgn.m_ptFrom.y && ptCaretPos.x < m_sSelectBgn.m_ptFrom.x ) ){
+			pSelect->m_ptFrom = ptCaretPos;
+			pSelect->m_ptTo = m_sSelectBgn.m_ptFrom;
 		}else{
-			pSelect->m_ptFrom.y = m_sSelectBgn.m_ptFrom.y;
-			pSelect->m_ptFrom.x = m_sSelectBgn.m_ptFrom.x;
-			pSelect->m_ptTo.y = nCaretPosY;
-			pSelect->m_ptTo.x = nCaretPosX;
+			pSelect->m_ptFrom = m_sSelectBgn.m_ptFrom;
+			pSelect->m_ptTo = ptCaretPos;
 		}
 	}else{
-		/* 常時選択範囲の範囲内 */
-		if( ( nCaretPosY > m_sSelectBgn.m_ptFrom.y || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX >= m_sSelectBgn.m_ptFrom.x ) )
-		 && ( nCaretPosY < m_sSelectBgn.m_ptTo.y || ( nCaretPosY == m_sSelectBgn.m_ptTo.y && nCaretPosX < m_sSelectBgn.m_ptTo.x ) )
+		// 常時選択範囲の範囲内
+		if( ( ptCaretPos.y > m_sSelectBgn.m_ptFrom.y || ( ptCaretPos.y == m_sSelectBgn.m_ptFrom.y && ptCaretPos.x >= m_sSelectBgn.m_ptFrom.x ) )
+		 && ( ptCaretPos.y < m_sSelectBgn.m_ptTo.y || ( ptCaretPos.y == m_sSelectBgn.m_ptTo.y && ptCaretPos.x < m_sSelectBgn.m_ptTo.x ) )
 		){
-			pSelect->m_ptFrom.y = m_sSelectBgn.m_ptFrom.y;
-			pSelect->m_ptFrom.x = m_sSelectBgn.m_ptFrom.x;
-			if ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX == m_sSelectBgn.m_ptFrom.x ){
-				pSelect->m_ptTo.y = m_sSelectBgn.m_ptTo.y;
-				pSelect->m_ptTo.x = m_sSelectBgn.m_ptTo.x;
+			pSelect->m_ptFrom = m_sSelectBgn.m_ptFrom;
+			if ( ptCaretPos.y == m_sSelectBgn.m_ptFrom.y && ptCaretPos.x == m_sSelectBgn.m_ptFrom.x ){
+				pSelect->m_ptTo = m_sSelectBgn.m_ptTo;
 			}
 			else {
-				pSelect->m_ptTo.y = nCaretPosY;
-				pSelect->m_ptTo.x = nCaretPosX;
+				pSelect->m_ptTo = ptCaretPos;
 			}
 		}else
-		if( !( nCaretPosY > m_sSelectBgn.m_ptFrom.y || ( nCaretPosY == m_sSelectBgn.m_ptFrom.y && nCaretPosX >= m_sSelectBgn.m_ptFrom.x ) ) ){
-			/* 常時選択範囲の前方向 */
-			pSelect->m_ptFrom.y = nCaretPosY;
-			pSelect->m_ptFrom.x  = nCaretPosX;
-			pSelect->m_ptTo.y = m_sSelectBgn.m_ptTo.y;
-			pSelect->m_ptTo.x = m_sSelectBgn.m_ptTo.x;
+		if( !( ptCaretPos.y > m_sSelectBgn.m_ptFrom.y || ( ptCaretPos.y == m_sSelectBgn.m_ptFrom.y && ptCaretPos.x >= m_sSelectBgn.m_ptFrom.x ) ) ){
+			// 常時選択範囲の前方向
+			pSelect->m_ptFrom = ptCaretPos;
+			pSelect->m_ptTo = m_sSelectBgn.m_ptTo;
 		}else{
-			/* 常時選択範囲の後ろ方向 */
-			pSelect->m_ptFrom.y = m_sSelectBgn.m_ptFrom.y;
-			pSelect->m_ptFrom.x = m_sSelectBgn.m_ptFrom.x;
-			pSelect->m_ptTo.y = nCaretPosY;
-			pSelect->m_ptTo.x = nCaretPosX;
+			// 常時選択範囲の後ろ方向
+			pSelect->m_ptFrom = m_sSelectBgn.m_ptFrom;
+			pSelect->m_ptTo = ptCaretPos;
 		}
 	}
-	return;
-
 }
 
 /* カーソル上下移動処理 */
@@ -3229,8 +3211,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 {
 	const char*		pLine;
 	int				nLineLen;
-	int				nPosX = 0;
-	int				nPosY = m_ptCaretPos.y;
+	CLayoutPoint 	nPos = { 0, m_ptCaretPos.y };
 	int				i;
 	int				nLineCols;
 	int				nScrollLines;
@@ -3262,12 +3243,12 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 							DisableSelectArea( true );
 						}
 					}
-					nPosX = 0;
-					++nPosY;
-					nScrollLines = MoveCursor( nPosX, nPosY, m_bDrawSWITCH /* true */ ); // YAZAKI.
+					nPos.x = 0;
+					++nPos.y;
+					nScrollLines = MoveCursor( nPos.x, nPos.y, m_bDrawSWITCH /* true */ ); // YAZAKI.
 					if( bSelect ){
 						/* 現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( nPosX, nPosY );
+						ChangeSelectAreaByCurrentCursor( nPos );
 					}
 				}
 			}
@@ -3313,7 +3294,7 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 		}
 		it.addDelta();
 	}
-	nPosX += it.getColumn();
+	nPos.x += it.getColumn();
 	if ( it.end() ){
 		i = it.getIndex();
 	}
@@ -3326,42 +3307,18 @@ int CEditView::Cursor_UPDOWN( int nMoveLines, int bSelect )
 			if( m_ptCaretPos.y + nMoveLines + 1 == m_pcEditDoc->m_cLayoutMgr.GetLineCount()  ){
 				if( NULL != pLine ){
 					if( pLine[nLineLen - 1] == CR || pLine[nLineLen - 1] == LF ){
-						nPosX = m_nCaretPosX_Prev;
+						nPos.x = m_nCaretPosX_Prev;
 					}
 				}
 			}else{
-				nPosX = m_nCaretPosX_Prev;
+				nPos.x = m_nCaretPosX_Prev;
 			}
 		}
 	}
-	nScrollLines = MoveCursor( nPosX, m_ptCaretPos.y + nMoveLines, m_bDrawSWITCH /* true */ ); // YAZAKI.
+	nScrollLines = MoveCursor( nPos.x, m_ptCaretPos.y + nMoveLines, m_bDrawSWITCH /* true */ ); // YAZAKI.
 	if( bSelect ){
-//		if( m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_UNDERLINE].m_bDisp && !IsTextSelected() && -1 != m_nOldUnderLineY ){
-//			HDC		hdc;
-//			HPEN	hPen, hPenOld;
-//			hdc = ::GetDC( m_hWnd );
-//			/* カーソル行アンダーラインの消去 */
-//			hPen = ::CreatePen( PS_SOLID, 0, m_pcEditDoc->GetDocumentAttribute().m_ColorInfoArr[COLORIDX_TEXT].m_colBACK );
-//			hPenOld = (HPEN)::SelectObject( hdc, hPen );
-//			::MoveToEx(
-//				hdc,
-//				m_nViewAlignLeft,
-//				m_nOldUnderLineY,
-//				NULL
-//			);
-//			::LineTo(
-//				hdc,
-//				m_nViewCx + m_nViewAlignLeft,
-//				m_nOldUnderLineY
-//			);
-//			::SelectObject( hdc, hPenOld );
-//			::DeleteObject( hPen );
-//			m_nOldUnderLineY = -1;
-//			::ReleaseDC( m_hWnd, hdc );
-//		}
-		/* 現在のカーソル位置によって選択範囲を変更 */
-//		ChangeSelectAreaByCurrentCursor( nPosX, m_ptCaretPos.y + nMoveLines );
-		ChangeSelectAreaByCurrentCursor( nPosX, m_ptCaretPos.y );
+		CLayoutPoint ptCaretPos = { nPos.x, m_ptCaretPos.y };
+		ChangeSelectAreaByCurrentCursor( ptCaretPos );
 	}
 
 	return nScrollLines;

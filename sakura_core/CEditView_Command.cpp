@@ -846,7 +846,7 @@ int CEditView::Command_LEFT( bool bSelect, bool bRepeat )
 				引数で与えた座標とは異なることがあるため，
 				nPosX, nPosYの代わりに実際の移動結果を使うように．
 			*/
-			ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+			ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 		}
 		nRes = 1;
 		goto end_of_func;
@@ -994,7 +994,7 @@ void CEditView::Command_RIGHT( bool bSelect,  bool bIgnoreCurrentSelection, bool
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+			ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 		}
 
 end_of_func:;
@@ -1256,7 +1256,8 @@ void CEditView::Command_GOLINEEND( bool bSelect, int bIgnoreCurrentSelection )
 	m_nCaretPosX_Prev = m_ptCaretPos.x;
 	if( bSelect ){
 		// 現在のカーソル位置によって選択範囲を変更
-		ChangeSelectAreaByCurrentCursor( nPosX, m_ptCaretPos.y );
+		CLayoutPoint ptCaretPos = { nPosX, m_ptCaretPos.y };
+		ChangeSelectAreaByCurrentCursor( ptCaretPos );
 	}
 }
 
@@ -1360,7 +1361,7 @@ void CEditView::Command_WORDLEFT( bool bSelect )
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( ptLayoutNew.x, ptLayoutNew.y );
+			ChangeSelectAreaByCurrentCursor( ptLayoutNew );
 		}
 	}else{
 		bool bIsFreeCursorModeOld = m_pShareData->m_Common.m_sGeneral.m_bIsFreeCursorMode;	/* フリーカーソルモードか */
@@ -1432,7 +1433,7 @@ try_again:;
 		m_nCaretPosX_Prev = m_ptCaretPos.x;
 		if( bSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( ptLayoutNew.x, ptLayoutNew.y );
+			ChangeSelectAreaByCurrentCursor( ptLayoutNew );
 		}
 	}
 	else{
@@ -3166,7 +3167,7 @@ re_do:;							//	hor
 	) ){
 		if( bSelecting ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom.x, sRange.m_ptFrom.y );
+			ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom );
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 		}else{
 			/* 選択範囲の変更 */
@@ -3368,7 +3369,7 @@ re_do:;
 
 		if( bSelecting ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( sRange.m_ptTo.x, sRange.m_ptTo.y );
+			ChangeSelectAreaByCurrentCursor( sRange.m_ptTo );
 			m_bSelectingLock = bSelectingLock_Old;	/* 選択状態のロック */
 		}
 		else{

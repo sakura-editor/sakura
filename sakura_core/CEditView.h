@@ -475,8 +475,8 @@ protected:
 		m_sSelect = sRange;
 	}
 	void BeginSelectArea( void );								/* 現在のカーソル位置から選択を開始する */
-	void ChangeSelectAreaByCurrentCursor( int, int );			/* 現在のカーソル位置によって選択範囲を変更 */
-	void ChangeSelectAreaByCurrentCursorTEST( int, int, CLayoutRange* pSelect );// 現在のカーソル位置によって選択範囲を変更
+	void ChangeSelectAreaByCurrentCursor( const CLayoutPoint& ptCaretPos );			// 現在のカーソル位置によって選択範囲を変更
+	void ChangeSelectAreaByCurrentCursorTEST( const CLayoutPoint& ptCaretPos, CLayoutRange* pSelect );// 現在のカーソル位置によって選択範囲を変更
 	void PrintSelectionInfoMsg(void);		// 選択情報データの作成	2005.07.09 genta
 	int  MoveCursorToPoint( int, int );							/* マウス等による座標指定によるカーソル移動 */
 	int  GetRightEdgeForScrollBar( void );						/* スクロールバー制御用に右端座標を取得する */		// 2009.08.28 nasukoji

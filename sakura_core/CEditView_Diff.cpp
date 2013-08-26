@@ -530,44 +530,43 @@ void CEditView::AnalyzeDiffInfo(
 */
 void CEditView::Command_Diff_Next( void )
 {
-	int			nX = 0;
-	int			nY;
-	int			nYOld;
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
 
-	nY = m_ptCaretPos_PHY.y;
-	nYOld = nY;
+	CLogicPoint ptXY = { 0, m_ptCaretPos_PHY.y };
+	int nYOld_Logic = ptXY.y;
+	int tmp_y;
 
 re_do:;	
-	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, SEARCH_FORWARD, &nY ) )
-	{
+	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( ptXY.y, SEARCH_FORWARD, &tmp_y ) ){
+		ptXY.y = tmp_y;
 		bFound = TRUE;
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nX, nY, &nX, &nY );
+		CLayoutPoint ptXY_Layout;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptXY.x, ptXY.y, &ptXY_Layout.x, &ptXY_Layout.y );
 		if( m_bSelectingLock ){
 			if( !IsTextSelected() ) BeginSelectArea();
 		}
 		else{
 			if( IsTextSelected() ) DisableSelectArea( true );
 		}
-		MoveCursor( nX, nY, true );
-		if( m_bSelectingLock ){
-			ChangeSelectAreaByCurrentCursor( nX, nY );
-		}
-	}
 
+		if( m_bSelectingLock ){
+			ChangeSelectAreaByCurrentCursor( ptXY_Layout );
+		}
+		MoveCursor( ptXY_Layout.x, ptXY_Layout.y, true );
+	}
 
 	if( m_pShareData->m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった。かつ、最初の検索
 		if( !bFound	&& bRedo ){
-			nY = 0 - 1;	// 1個手前を指定
+			ptXY.y = 0 - 1;	// 1個手前を指定
 			bRedo = FALSE;
 			goto re_do;		// 先頭から再検索
 		}
 	}
 
 	if( bFound ){
-		if( nYOld >= nY ) SendStatusMessage( _T("▼先頭から再検索しました") );
+		if( nYOld_Logic >= ptXY.y ) SendStatusMessage( _T("▼先頭から再検索しました") );
 	}
 	else{
 		SendStatusMessage( _T("▽見つかりませんでした") );
@@ -583,19 +582,19 @@ re_do:;
 */
 void CEditView::Command_Diff_Prev( void )
 {
-	int			nX = 0;
-	int			nY;
-	int			nYOld;
 	BOOL		bFound = FALSE;
 	BOOL		bRedo = TRUE;
 
-	nY = m_ptCaretPos_PHY.y;
-	nYOld = nY;
+	CLogicPoint	ptXY = { 0, m_ptCaretPos_PHY.y };
+	int nYOld_Logic = ptXY.y;
+	int tmp_y;
 
 re_do:;
-	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( nY, SEARCH_BACKWARD, &nY ) ){
+	if( m_pcEditDoc->m_cDocLineMgr.SearchDiffMark( ptXY.y, SEARCH_BACKWARD, &tmp_y ) ){
+		ptXY.y = tmp_y;
 		bFound = TRUE;
-		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( nX, nY, &nX, &nY );
+		CLayoutPoint ptXY_Layout;
+		m_pcEditDoc->m_cLayoutMgr.LogicToLayout( ptXY.x, ptXY.y, &ptXY_Layout.x, &ptXY_Layout.x );
 		if( m_bSelectingLock ){
 			if( !IsTextSelected() ) BeginSelectArea();
 		}
@@ -603,23 +602,23 @@ re_do:;
 			if( IsTextSelected() ) DisableSelectArea( true );
 		}
 
-		MoveCursor( nX, nY, true );
 		if( m_bSelectingLock ){
-			ChangeSelectAreaByCurrentCursor( nX, nY );
+			ChangeSelectAreaByCurrentCursor( ptXY_Layout );
 		}
+		MoveCursor( ptXY_Layout.x, ptXY_Layout.y, true );
 	}
 
 	if( m_pShareData->m_Common.m_sSearch.m_bSearchAll ){
 		// 見つからなかった、かつ、最初の検索
 		if( !bFound	&& bRedo ){
-			nY = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 + 1;	// 1個手前を指定
+			ptXY.y = m_pcEditDoc->m_cLayoutMgr.GetLineCount() - 1 + 1;	// 1個手前を指定
 			bRedo = FALSE;
 			goto re_do;	// 末尾から再検索
 		}
 	}
 
 	if( bFound ){
-		if( nYOld <= nY ) SendStatusMessage( _T("▲末尾から再検索しました") );
+		if( nYOld_Logic <= ptXY.y ) SendStatusMessage( _T("▲末尾から再検索しました") );
 	}
 	else{
 		SendStatusMessage( _T("△見つかりませんでした") );

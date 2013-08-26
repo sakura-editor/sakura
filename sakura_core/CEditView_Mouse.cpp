@@ -321,7 +321,7 @@ normal_action:;
 
 
 		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+		ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 
 
 		// CTRLキーが押されている、かつトリプルクリックでない		// 2007.10.10 nasukoji	トリプルクリック対応
@@ -865,7 +865,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 		/* 座標指定によるカーソル移動 */
 		nScrollRowNum = MoveCursorToPoint( xPos , yPos );
 		/* 現在のカーソル位置によって選択範囲を変更 */
-		ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+		ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 		m_nMouseRollPosXOld = xPos;	/* マウス範囲選択前回位置(X座標) */
 		m_nMouseRollPosYOld = yPos;	/* マウス範囲選択前回位置(Y座標) */
 	}
@@ -926,14 +926,13 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 
 		if( !m_bBeginWordSelect ){
 			/* 現在のカーソル位置によって選択範囲を変更 */
-			ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+			ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 		}else{
 			CLayoutRange sSelect;
 
 			/* 現在のカーソル位置によって選択範囲を変更(テストのみ) */
 			ChangeSelectAreaByCurrentCursorTEST(
-				(int)m_ptCaretPos.x,
-				(int)m_ptCaretPos.y,
+				m_ptCaretPos,
 				&sSelect
 			);
 			/* 選択範囲に変更なし */
@@ -942,10 +941,7 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 			 && sSelect_Old.m_ptTo.y == sSelect.m_ptTo.y
 			 && sSelect_Old.m_ptTo.x == sSelect.m_ptTo.x
 			){
-				ChangeSelectAreaByCurrentCursor(
-					(int)m_ptCaretPos.x,
-					(int)m_ptCaretPos.y
-				);
+				ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 				return;
 			}
 			const CLayout* pcLayout;
@@ -975,33 +971,33 @@ void CEditView::OnMOUSEMOVE( WPARAM fwKeys, int xPos , int yPos )
 					);
 					if( -1 == nWorkF/* || 0 == nWorkF*/ ){
 						/* 始点が前方に移動。現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom.x, sRange.m_ptFrom.y );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom );
 					}
 					else if( /*0 == nWorkT ||*/ 1 == nWorkT ){
 						/* 終点が後方に移動。現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( sRange.m_ptTo.x, sRange.m_ptTo.y );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptTo );
 					}
 					else if( sSelect_Old.m_ptFrom.y == sSelect.m_ptFrom.y
 					 && sSelect_Old.m_ptFrom.x == sSelect.m_ptFrom.x
 					){
 						/* 始点が無変更＝前方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( sRange.m_ptTo.x, sRange.m_ptTo.y );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptTo );
 					}
 					else if( sSelect_Old.m_ptTo.y == sSelect.m_ptTo.y
 					 && sSelect_Old.m_ptTo.x == sSelect.m_ptTo.x
 					){
 						/* 終点が無変更＝後方に縮小された */
 						/* 現在のカーソル位置によって選択範囲を変更 */
-						ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom.x, sRange.m_ptFrom.y );
+						ChangeSelectAreaByCurrentCursor( sRange.m_ptFrom );
 					}
 				}else{
 					/* 現在のカーソル位置によって選択範囲を変更 */
-					ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+					ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 				}
 			}else{
 				/* 現在のカーソル位置によって選択範囲を変更 */
-				ChangeSelectAreaByCurrentCursor( m_ptCaretPos.x, m_ptCaretPos.y );
+				ChangeSelectAreaByCurrentCursor( m_ptCaretPos );
 			}
 		}
 	}
