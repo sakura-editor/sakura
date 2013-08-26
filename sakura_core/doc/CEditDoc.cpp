@@ -600,7 +600,7 @@ void CEditDoc::OnChangeType()
 	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
 	if( !m_cDocFile.GetFilePathClass().IsValidPath() ){
 		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
-			STypeConfig& types = m_cDocType.GetDocumentAttribute();
+			const STypeConfig& types = m_cDocType.GetDocumentAttribute();
 			m_cDocFile.SetCodeSet( types.m_encoding.m_eDefaultCodetype, types.m_encoding.m_bDefaultBom );
 			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
 		}

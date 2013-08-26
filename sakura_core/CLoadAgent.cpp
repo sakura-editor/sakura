@@ -210,7 +210,7 @@ ELoadResult CLoadAgent::OnLoad(const SLoadInfo& sLoadInfo)
 	}
 	else{
 		// 存在しないときもドキュメントに文字コードを反映する
-		STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
+		const STypeConfig& types = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
 		pcDoc->m_cDocFile.SetCodeSet( sLoadInfo.eCharCode, 
 			( sLoadInfo.eCharCode == types.m_encoding.m_eDefaultCodetype ) ?
 				types.m_encoding.m_bDefaultBom : CCodeTypeName( sLoadInfo.eCharCode ).IsBomDefOn() );
