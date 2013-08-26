@@ -259,7 +259,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		//	From Here Jan. 15, 2002 hor
 		case L'B':	// タイプ別設定の名前			2013/03/28 Uchi
 			{
-				STypeConfig&	sTypeCongig = pcDoc->m_cDocType.GetDocumentAttribute();
+				const STypeConfig&	sTypeCongig = pcDoc->m_cDocType.GetDocumentAttribute();
 				if (sTypeCongig.m_nIdx > 0) {	// 基本は表示しない
 					q = wcs_pushT( q, q_max - q, sTypeCongig.m_szTypeName);
 				}

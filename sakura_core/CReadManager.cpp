@@ -48,7 +48,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 	LPCTSTR pszPath = sLoadInfo.cFilePath.c_str();
 
 	// ï∂éöÉRÅ[ÉhéÌï 
-	STypeConfig& type = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
+	const STypeConfig& type = CDocTypeManager().GetTypeSetting( sLoadInfo.nType );
 	ECodeType	eCharCode = sLoadInfo.eCharCode;
 	if (CODE_AUTODETECT == eCharCode) {
 		CCodeMediator cmediator( type.m_encoding );
